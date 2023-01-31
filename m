@@ -1,133 +1,156 @@
-Return-Path: <ncaidin@linuxfoundation.org>
+Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEEBDC38142
-	for <webhook@archiver.kernel.org>; Tue, 31 Jan 2023 12:44:53 +0000 (UTC)
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (EUR03-DBA-obe.outbound.protection.outlook.com [40.107.104.40])
- by mx.groups.io with SMTP id smtpd.web11.8188.1675156191526112344
- for <cip-dev@lists.cip-project.org>;
- Tue, 31 Jan 2023 01:09:52 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C63C636CC
+	for <webhook@archiver.kernel.org>; Tue, 31 Jan 2023 12:54:54 +0000 (UTC)
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+ by mx.groups.io with SMTP id smtpd.web11.11184.1675169688227912146
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Tue, 31 Jan 2023 04:54:48 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=uqlvFe0J;
- spf=pass (domain: siemens.com, ip: 40.107.104.40, mailfrom: felix.moessbauer@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=f8MDqMBEkRcEHrGXXj/PPC9Y3zUmPnGMszr6AA56cS0xeTLFLZfTDMbSsDal6HtWQJErLCFQ67fQb3LrydLc8m89EjLRIwgmSfSAPu7arkk1nYr/26QilZ+0yzo/gqvwJZwC5JhOzAzNG6KIl6BxXQozFDFPVLZcmJ48ORrOOnnteZMIGNtuObC3gkj/YzCOpZxgb+xYMVaEilVaorRlrortq4NAoAQmuDDqwc1meGucTaNoIxJk4TqhhZTVpC9kXrNB/ixCx+pvbSwFKdMPxu672bbiArV4LT02mB6n4jeQhEvGVN/Thnck3s2oH5GuiC9U9NeePHadQHmj3wnvEA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YYtXBcHm50DWrk318NMmDzxThOjiU/mAIMR6PqQJ1nY=;
- b=lWWSbAPxGtnYKo3VQtvONJb7MUPogYvWfoEwpFabugJ/3tlmvmJfAGdODfZBgWSV9gZdP+GRNxx95MoEIjKN9riJCngWNVfZuEuvxaq7j1NMFc8UZt+9b4dOIac6blbY5WHmdmpQTybRWvo2JmEDhV6ucLKdGIIMRTS9Q+iPxHg+JoAL//mqKXrSzV3L8cHWfNUYRRkBUY3fUuTqTDe3eXbbpFBvrjjwQ7UIqpfbbKqNAaTdoN6mxXqn13g+g7y/VnIa8P5BUKJvDa3dJusdjKm9VfMYbkImLe6U4ukWTBsOxyOHL/VpmaByggK7ewlGoQrGF7UomHwffFhbVXZmUA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.76) smtp.rcpttodomain=lists.cip-project.org
- smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
- header.from=siemens.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YYtXBcHm50DWrk318NMmDzxThOjiU/mAIMR6PqQJ1nY=;
- b=uqlvFe0JeMhnmpGKRvg4vsbx6pyujsb1y/X0cEWbJuUVlVAK/TRNxNOg/Fnw1grJlaFupKPsV2F/3cIvRS0XAO1l4XpFUkXhDvsGVuSNN+uXyMBKtolcdGPY7a+HcvjtRz+Hk7KkiyXi/KREboj10Hnzhc97aPuvr/wYFL9z+HV7xlFeIQNuUyjnYo+I0oaqj3KVHOeINOu+q2axk8l1Wwx8vnbqk5lz9EufhBNnAum8a8n6wpFetUnNGKeTPOrGT5Fb82wj1I9B5baRle2lONTsOtoVtStQ8DDWtXEwMJYeNWtI6nMIGkyDeQhmGfu6Do/X7JHbGI7GLoq/Z4qclg==
-Received: from FR0P281CA0146.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:96::20)
- by DB8PR10MB3767.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:167::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6043.38; Tue, 31 Jan
- 2023 09:09:48 +0000
-Received: from VE1EUR01FT033.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:d10:96:cafe::c6) by FR0P281CA0146.outlook.office365.com
- (2603:10a6:d10:96::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6064.22 via Frontend
- Transport; Tue, 31 Jan 2023 09:09:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.76)
- smtp.mailfrom=siemens.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=siemens.com;
-Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.76 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.76; helo=hybrid.siemens.com; pr=C
-Received: from hybrid.siemens.com (194.138.21.76) by
- VE1EUR01FT033.mail.protection.outlook.com (10.152.2.230) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6043.25 via Frontend Transport; Tue, 31 Jan 2023 09:09:48 +0000
-Received: from CNPEK01M08MSX.ad011.siemens.net (139.24.237.225) by
- DEMCHDC8VSA.ad011.siemens.net (194.138.21.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1118.21; Tue, 31 Jan 2023 10:09:47 +0100
-Received: from CNPEK01M01MSX.ad011.siemens.net (139.24.237.214) by
- CNPEK01M08MSX.ad011.siemens.net (139.24.237.225) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.17; Tue, 31 Jan 2023 17:09:44 +0800
-Received: from CNPEK01M01MSX.ad011.siemens.net ([139.24.237.214]) by
- CNPEK01M01MSX.ad011.siemens.net ([139.24.237.214]) with mapi id
- 15.01.2507.017; Tue, 31 Jan 2023 17:09:43 +0800
-From: "Moessbauer, Felix" <felix.moessbauer@siemens.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"Gylstorff, Quirin" <quirin.gylstorff@siemens.com>
-Subject: Re: Override of sid distro config breaks mirrors
-Thread-Topic: Override of sid distro config breaks mirrors
-Thread-Index: AQHZNJFZ3aNSH/WFc0S3ecB2UIGf/K62RTgAgAFzAoA=
-Date: Tue, 31 Jan 2023 09:09:43 +0000
-Message-ID: <5ceac9cb0b555bb7678894eb3f151aefe797465a.camel@siemens.com>
-References: <0236184cd3f04ecb0a3282bdc6c8fb7eeb04ae81.camel@siemens.com>
-	 <65f143aa-3e48-9075-357a-08087a5e922c@siemens.com>
-In-Reply-To: <65f143aa-3e48-9075-357a-08087a5e922c@siemens.com>
-Accept-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.38.3-1+deb11u1 
-x-originating-ip: [140.231.210.92]
-MIME-Version: 1.0
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: VE1EUR01FT033:EE_|DB8PR10MB3767:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3afdbc90-0c9e-4d82-d4c2-08db036ae734
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	no/BNZ9MWDCKkx5cBxKp2pETHLOXCggJ8LmBMiEcrAlLHt/ZcLUR3QnZE5ixSe16V1PoRZu4rr3HaJhnTEHa1IpgYPuzAW4yWEIUzAr48UCg5HBn1XncbrB7kFPuY4e/IvZZg+ZH7C+xLs0nvPUPGi2OLf7x/MPEX3pCx6Ee6tQbapICBaN7zuan725bimvv7WMGQnwcoCPegT7sBAW5nij3dS9CREbJyPeKolResCAgobEmdha8Vhwybl65hpYGO1BBfCEH+NOeMWM7LQuTmiqRzuW+yERB9pSObl96hDSI5+evWr085Ge0cNUFZfqcrOMi6isK28hWyVPLhSVmw89it0xAIAVBzUvnSkdnT1i3h9eSceYv0LMkU1okv0GHCB2LXPoCcIcYoFs24B0mjXPkHhvjkJMtZBSHqz+9I3ak6AnNs2LfAOpCZvpEL7oZGrCD9cRb0R+45aB6lsHMVArYvrXEtrFTHxm6dwLlW4wloh6Mr6L0flgirrIaBP61ZFUzO0pFD0soNf9WuXWTzYEGvIyPiM4SmCfXlPhWYZ/6v5RKh5nJwudzgcPS4sa6LIbnzwE6NcnSkQWoT+4NZ/oZ29PscuQ4x6NST53TmeXInZhi6RlRtG1/HXyZk1GnEQikB/6wvy7TAug/nGQeCM68lEMAq+vJqAX6X07wdcxnSZY9fTBQwkc5JwnIZZc3J+5hIUh5XmMIaP7AMik8uOGO3tVjR9AmPeccPbzndEh26lV7nicMH3xgnERjwtphwS75sxicCp7MWPF18i77Zg==
-X-Forefront-Antispam-Report: 
-	CIP:194.138.21.76;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230025)(4636009)(136003)(346002)(376002)(39860400002)(396003)(451199018)(36840700001)(40470700004)(46966006)(70586007)(70206006)(47076005)(8936002)(8676002)(36860700001)(41300700001)(83380400001)(336012)(36756003)(40460700003)(53546011)(956004)(2616005)(82960400001)(82740400003)(110136005)(82310400005)(5660300002)(316002)(26005)(81166007)(40480700001)(356005)(6636002)(186003)(2906002)(86362001)(478600001)(966005)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jan 2023 09:09:48.2914
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3afdbc90-0c9e-4d82-d4c2-08db036ae734
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.76];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	VE1EUR01FT033.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR10MB3767
-Content-Language: en-US
+ dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=b5YQOwi3;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.181, mailfrom: bot@kernelci.org)
+Received: by mail-pf1-f181.google.com with SMTP id j20so3525124pfj.0
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Tue, 31 Jan 2023 04:54:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=h9Eprgdbzu9qitbHu/3B7md/BH8F5ifsihWg+SW9nbM=;
+        b=b5YQOwi3m3QqBr6JUlnPP/nPeOPv2q7lMeYKVFB+3lcVuj7F6O9s1UkFRPkrDYPRML
+         n2vcnbO7ZgTQEC/qcOnjKd/basvCgfBrCM95e9s/flyZuPs6kZkXZeXd3SRDOyfeVVjV
+         oEclHwRqlHUXNRqbwxE5jp6UZYW45uNuYUsnM73VXlzQ3tGYd/itVVUQMnsYhGdw7nof
+         7PeLA5uEuXUhoespZBunrdPqJ/QwPxvVILVHw0sUDfY/hTzVc5PjNntFL4NKZdcrIEa2
+         /I26gdrqBIMk5YKkCVaIFWBCw5/3T9gIqVems0mC5egSdsXWmhIke31XPI/jRTXKK41e
+         8GiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=h9Eprgdbzu9qitbHu/3B7md/BH8F5ifsihWg+SW9nbM=;
+        b=bndshiKxAFdjuFHDwoEg7bUiqEVi7Apby8uWz4tw6QA/8lAex4BJ2opS4EelMSb8WG
+         DcCIO3ud5t3qb67+ZPs28oX4nZt+1ZJgZJKaYFHAby2Fc/MzDVDs1YMG2KpVvmbSsgVO
+         lv6oxPQEZ4c1R65N82ofagUzMRCLXAZEUz2B7IX/CZMwYgOCy3pqMA5UXiNWEDM3g3CA
+         yCCi0DX7jlphT5k6dzLC5H/um1JE010UB7OrpPwCf0ddurcQdgvIqtYIK63gYySPSH3I
+         I8XyRgog9QV3w9ujVFuJCv9c2ls7dAVezCGE1EeENCSskkq+gWxNzvKInpF8pYhGNME2
+         JWvw==
+X-Gm-Message-State: AO0yUKXWIbHBnxnBg9jak9hNaFd4wJECxRaGhY/72L7TYj1s8Ch0bjXN
+	yeJ0f0JcQoxb8OCe+SHDX1xYSJjLdH+SK2XOKBWxUA==
+X-Google-Smtp-Source: AK7set8DmhVj83E7xVA0x5L+jeU6Bd1+VeL2Xp6W9lsvAfG2y44eBr5j9tsogzOyap2dx2GAVXVNgA==
+X-Received: by 2002:aa7:9511:0:b0:593:dc6d:53ab with SMTP id b17-20020aa79511000000b00593dc6d53abmr4147040pfp.27.1675169687358;
+        Tue, 31 Jan 2023 04:54:47 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id b3-20020aa78103000000b00582388bd80csm6403802pfi.83.2023.01.31.04.54.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Jan 2023 04:54:47 -0800 (PST)
+Message-ID: <63d90f97.a70a0220.98731.a8b4@mx.google.com>
+Date: Tue, 31 Jan 2023 04:54:47 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
-Content-ID: <071985C3A9AC6244875B40FD51805EA1@siemens.com>
-Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: cip
+X-Kernelci-Branch: linux-4.4.y-cip
+X-Kernelci-Kernel: v4.4.302-cip72
+X-Kernelci-Report-Type: test
+Subject: cip/linux-4.4.y-cip baseline: 54 runs, 2 regressions (v4.4.302-cip72)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
+ kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
+From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 31 Jan 2023 12:44:53 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10525
+ <cip-dev@lists.cip-project.org>; Tue, 31 Jan 2023 12:54:53 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10526
 
-T24gTW9uLCAyMDIzLTAxLTMwIGF0IDEyOjAxICswMTAwLCBHeWxzdG9yZmYgUXVpcmluIHdyb3Rl
-Og0KPiANCj4gDQo+IE9uIDEvMzAvMjMgMTA6NTgsIE1vZXNzYmF1ZXIsIEZlbGl4IChUIENFRCBJ
-TlctQ04pIHdyb3RlOg0KPiA+IERlYXIgZGV2cywNCj4gPiANCj4gPiB0aGUgZGlzdHJvICJkZWJp
-YW4tc2lkIiBhbmQgImRlYmlhbi1zaWQtcG9ydHMiIGlzIGN1cnJlbnRseQ0KPiA+IHNwZWNpZmll
-ZA0KPiA+IGJvdGggaW4gSVNBUiBhbmQgaW4gaXNhci1jaXAtY29yZS4gV2hpbGUgaW4gSVNBUiBz
-dGFuZGFyZCBkZWJpYW4NCj4gPiBtaXJyb3JzIGFyZSB1c2VkLCBjaXAtY29yZSBwaW5zIHRoYXQg
-dG8gYSBzcGVjaWZpYyByZWxlYXNlIG9uDQo+ID4gc25hcHNob3RzLmRlYmlhbi5vcmcuDQo+IFlv
-dSBtZWFuIHRoZSBsaXN0IGZpbGVzLCB3aGljaCBvdmVycmlkZSB0aGUgbGlzdCBmaWxlcyBwcm92
-aWRlZCBieQ0KPiBJU0FSPyANCj4gQmVjYXVzZSB0aGUgb25seSBkaXN0cmlidXRpb24gaW4gaXNh
-ci1jaXAtY29yZSBpcyBgY2lwLWNvcmUtc2lkLQ0KPiBwb3J0c2AuDQo+IA0KPiBUaGlzIGxvb2tz
-IHRvIG1lIGxpa2UgYSB3b3JrYXJvdW5kIHRvIG92ZXJyaWRlIERJU1RST19BUFRfU09VUkNFUw0K
-PiBmcm9tIGBjb25mL2Rpc3Ryby9kZWJpYW4tc2lkLXBvcnRzLmNvbmZgLg0KPiANCj4gSSBwdXNo
-ZWQgYSBmaXggYXQgDQo+IGh0dHBzOi8vZ2l0bGFiLmNvbS9jaXAtcHJvamVjdC9jaXAtY29yZS9p
-c2FyLWNpcC1jb3JlLy0vdHJlZS9xdWlyaW4vc2lkLWxpc3RzLw0KDQpUaGFua3MgUXVpcmluLiBJ
-IHRlc3RlZCBpdCBhbmQgY2FuIGNvbmZpcm0gdGhhdCB0aGlzIHNvbHZlcyB0aGUgaXNzdWUuDQoN
-CkZlbGl4DQoNCj4gDQo+ID4gDQo+ID4gVGhpcyBicmVha3MgdXNlLWNhc2VzIHdoZXJlIGxvY2Fs
-IG1pcnJvcnMgc2hhbGwgYmUgdXNlZCwgYXMgdGhlc2UNCj4gPiBkbw0KPiA+IG5vdCBzdXBwb3J0
-IHNuYXBzaG90cy4gQWxzbywgdGhpcyAiaW5mZWN0cyIgb3RoZXIgbGF5ZXJzIHRoYXQNCj4gPiBh
-Y3R1YWxseQ0KPiA+IHdhbnQgdG8gdXNlIHNpZCAiYXMtaXMiLg0KPiA+IA0KPiA+IFBsZWFzZSBj
-b25zaWRlciByZW5hbWluZyB0aGlzIGRpc3RybyB0byAiY2lwLTxkaXN0cm8+IiB0byBnZXQgcmlk
-DQo+ID4gb2YNCj4gPiB0aGlzIGFtYmlndWl0eS4NCj4gPiANCj4gPiBCZXN0IHJlZ2FyZHMsDQo+
-ID4gRmVsaXggTW9lc3NiYXVlcg0KPiA+IFNpZW1lbnMgQUcNCj4gQmVzdCByZWdhcmRzDQo+IA0K
-PiBRdWlyaW4NCg0K
+cip/linux-4.4.y-cip baseline: 54 runs, 2 regressions (v4.4.302-cip72)
+
+Regressions Summary
+-------------------
+
+platform          | arch | lab           | compiler | defconfig          | =
+regressions
+------------------+------+---------------+----------+--------------------+-=
+-----------
+rk3288-veyron-jaq | arm  | lab-collabora | gcc-10   | multi_v7_defconfig | =
+2          =
+
+
+  Details:  https://kernelci.org/test/job/cip/branch/linux-4.4.y-cip/kernel=
+/v4.4.302-cip72/plan/baseline/
+
+  Test:     baseline
+  Tree:     cip
+  Branch:   linux-4.4.y-cip
+  Describe: v4.4.302-cip72
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
+it
+  SHA:      0af99ca381ce97af181eab7f6fc808b1e039ac3d =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform          | arch | lab           | compiler | defconfig          | =
+regressions
+------------------+------+---------------+----------+--------------------+-=
+-----------
+rk3288-veyron-jaq | arm  | lab-collabora | gcc-10   | multi_v7_defconfig | =
+2          =
+
+
+  Details:     https://kernelci.org/test/plan/id/63d9081691c0de3f34915ed5
+
+  Results:     37 PASS, 22 FAIL, 2 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip/linux-4.4.y-cip/v4.4.302-c=
+ip72/arm/multi_v7_defconfig/gcc-10/lab-collabora/baseline-rk3288-veyron-jaq=
+.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-4.4.y-cip/v4.4.302-c=
+ip72/arm/multi_v7_defconfig/gcc-10/lab-collabora/baseline-rk3288-veyron-jaq=
+.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230127.0/armel/rootfs.cpio.gz =
+
+
+
+  * baseline.bootrr.dwhdmi-rockchip-driver-cec-present: https://kernelci.or=
+g/test/case/id/63d9081691c0de3f34915efe
+        failing since 5 days (last pass: v4.4.302-cip71-1-g61333eee4869, fi=
+rst fail: v4.4.302-cip71-590-g22fc523bf881)
+
+    2023-01-31T12:22:00.259613     =
+
+
+  * baseline.bootrr.dwhdmi-rockchip-driver-audio-present: https://kernelci.=
+org/test/case/id/63d9081691c0de3f34915eff
+        failing since 5 days (last pass: v4.4.302-cip71-1-g61333eee4869, fi=
+rst fail: v4.4.302-cip71-590-g22fc523bf881)
+
+    2023-01-31T12:22:00.220002  BusyBox v1.31.1 (2023-01-27 15:57:34 UTC) m=
+ulti-call binary.
+    2023-01-31T12:22:00.220223  =
+
+    2023-01-31T12:22:00.223824  Usage: seq [-w] [-s SEP] [FIRST [INC]] LAST
+    2023-01-31T12:22:00.224293  =
+
+    2023-01-31T12:22:00.228633  Print numbers from FIRST to LAST, in steps =
+of INC.
+    2023-01-31T12:22:00.231097  FIRST, INC default to 1.
+    2023-01-31T12:22:00.231313  =
+
+    2023-01-31T12:22:00.234240  	-w	Pad to last with leading zeros
+    2023-01-31T12:22:00.234718  =
+
+    2023-01-31T12:22:00.236459  	-s SEP	String separator =
+
+    ... (3 line(s) more)  =
+
+ =20
 
