@@ -2,139 +2,121 @@ Return-Path: <ncaidin@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47FC4C636CD
-	for <webhook@archiver.kernel.org>; Wed,  1 Feb 2023 13:04:42 +0000 (UTC)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
- by mx.groups.io with SMTP id smtpd.web11.18405.1675238981875715935
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E8B4C636CD
+	for <webhook@archiver.kernel.org>; Wed,  1 Feb 2023 13:04:52 +0000 (UTC)
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+ by mx.groups.io with SMTP id smtpd.web10.21819.1675254787644363755
  for <cip-dev@lists.cip-project.org>;
- Wed, 01 Feb 2023 00:09:42 -0800
+ Wed, 01 Feb 2023 04:33:07 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20210112 header.b=qSVe+BTb;
- spf=pass (domain: gmail.com, ip: 209.85.128.43, mailfrom: error27@gmail.com)
-Received: by mail-wm1-f43.google.com with SMTP id m5-20020a05600c4f4500b003db03b2559eso707521wmq.5
-        for <cip-dev@lists.cip-project.org>; Wed, 01 Feb 2023 00:09:41 -0800 (PST)
+ dkim=pass header.i=@gmail.com header.s=20210112 header.b=OKOKc9ga;
+ spf=pass (domain: gmail.com, ip: 209.85.128.47, mailfrom: error27@gmail.com)
+Received: by mail-wm1-f47.google.com with SMTP id l8so12550971wms.3
+        for <cip-dev@lists.cip-project.org>; Wed, 01 Feb 2023 04:33:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WqeQDDmSHxpAcyRA5iwxefwZV2xtgcG1SAs71mzU/Bc=;
-        b=qSVe+BTbIygGRjyt8w6uvaolrWDTcoTK4mCyWgNMbA/1MHGwfLAK6OPsYghowLBbfm
-         5cqEjDxdUAXZbLhxXfp4L6AvXPBBCGtKdai9OtSr2MeqWBUTpUIwFFjrR0DItgbjRJBR
-         HqaPNu/hzqzXRuFH98LcqNiR9dYYLn+pRkF9WCaQZm4GG+z5U81NkfCXX5+K1tjmJdQe
-         dpfvhicAHt126G4dejhr4zvZNrx25LsZeatzZ7tRtR5jQuyM+eYnmj2C1bWagonLd4RP
-         MLEgxWxyryVWaB5VdU0oR7wFBeEQpON1H87yczdvpvpU0dRseKTmMtz/yUfD7uj8Yg8L
-         RAgA==
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XRmrbfafZ2u/Btz65QhA5W17LjiB4tALokKgI/W8edE=;
+        b=OKOKc9gas9i2/PI5SMgZnB9jaLNLXNIkaffBPLn1343o1kpur9OYxFCqr9INgZFh8L
+         HdR11x0E2mbBcYSrJPYzqMNTUXDz3ZPbkrBVhujkeXkogNAOhutMeEG1djXOU2Id/zox
+         zZH4DzAXzpRcj0bpNy9hREdiIhZh58ujg3yb7BoswLg4cCVzyA4jVE5W6EHga6s/gIwH
+         BjzOC0q/jSYz5+8/M57hxCEaVaqmWYe2CiEBM0oLOUSyU0zwOOiyP4TLS3OVJo8W8ih7
+         VxIchOvu0Oc0btv6Yw7nl/Kx9vwqmmxSSseqrLlmylEnBq8A8cV1IN5Ja172UyMYnqit
+         jnKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WqeQDDmSHxpAcyRA5iwxefwZV2xtgcG1SAs71mzU/Bc=;
-        b=MZ6hyqN4IhBbPWJ1/16rrfDsIP6vRISl+G8ikNRqARjiCyjJJEvNTkyz8FikdiiBXQ
-         Hrv6dflSUG9u89O8X6v5Io7Ozofno4Q+0lofCC59wyVaBqa3O4ZWEvcXmFrjfHiQSlkC
-         uotosvi2lnIXY0sIn7848/zGbJ0x/K+oOI/XbbIJlaPolZbOSgri9hka9d3YUlAV0C2j
-         8M/hySmx0YmbLbZS7iarjzbCPvVx8ZwAnBTSnL2GAowkEAly3S+gBqz//Cg3PTyxfMzy
-         O5CbHOzIbwsytmQJx7ch7LQcbT7G8vFHr5PFovIX6SNVWkLrru36mzdedklVYt8ITM0i
-         kysg==
-X-Gm-Message-State: AO0yUKXyQAyVPXCSyt/S6e3Et08ckzhaJUO3YqvEk8w073FO5QyDfE9N
-	aHx2uTYgjhduHvYG5VH8ux0=
-X-Google-Smtp-Source: AK7set+UNOVq0m8bJIRyxxUGd2XOtwzFV9StW0MqPmvP/wAaggqw00B9XYKz1d6sGgSlrWVB5kA2Kg==
-X-Received: by 2002:a05:600c:46c9:b0:3db:1d8:9f25 with SMTP id q9-20020a05600c46c900b003db01d89f25mr1072303wmo.2.1675238980240;
-        Wed, 01 Feb 2023 00:09:40 -0800 (PST)
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XRmrbfafZ2u/Btz65QhA5W17LjiB4tALokKgI/W8edE=;
+        b=uICGNRqosxiDTS+a4EJnvNT02KFsYH0ymo4wP586t8x1NM1AaSOQ55bGwYcWnubc7u
+         A4rhUdX9cr78W+vXHzH/bc/PUEdUoqpJRT64zwVrLOyLPjvyS8ToJpEOgCzR3SSQQbpM
+         tXjVRCMTiYh6doZf8G+Bx19YiNj5zEyYGoDIca8nmSrKM/PAE7cosw0gJm09KpGN1YNP
+         nqGYnY3xGU+5+G+gvXn1sk7sq6VoTJnTuYDGX83nPwuaDLNhhcTLpmXcjAE62xTl3YBq
+         wN6Rz6c7QYbU5jlr+pNlamvw4BAY4pIaS3zSjqH336zeoUFV72FF1HaIacGHJ4bTmvWy
+         fqsA==
+X-Gm-Message-State: AO0yUKUq5OH4l5FOGOqkqOQd6xcd8QGROZD934DvEqZhaX1MBZezb8Op
+	Pz3BwUe9jPjKH5emUGMl6cI=
+X-Google-Smtp-Source: AK7set8IgVC7vdS6cBbDvuHVO8lLXGXyLSwCKEJNifcWGmdpgNJfoljKHfM3mylXBNRRo0xTqrEeSA==
+X-Received: by 2002:a1c:4c17:0:b0:3db:262a:8ef with SMTP id z23-20020a1c4c17000000b003db262a08efmr1924583wmf.38.1675254785897;
+        Wed, 01 Feb 2023 04:33:05 -0800 (PST)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id z12-20020adff74c000000b00291f1a5ced6sm16818415wrp.53.2023.02.01.00.09.38
+        by smtp.gmail.com with ESMTPSA id c12-20020a05600c0a4c00b003dc4b4dea31sm1889127wmq.27.2023.02.01.04.33.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Feb 2023 00:09:39 -0800 (PST)
-Date: Wed, 1 Feb 2023 11:09:33 +0300
+        Wed, 01 Feb 2023 04:33:05 -0800 (PST)
+Date: Wed, 1 Feb 2023 15:32:42 +0300
 From: Dan Carpenter <error27@gmail.com>
-To: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Cc: cip-dev <cip-dev@lists.cip-project.org>
-Subject: Re: New CVE entries this week
-Message-ID: <Y9oePa50jnpgnutu@kili>
-References: <CAODzB9phGdgNo0dOTHLyovXP7Gcj9EgR1QDHHaNrAXhBxrHQzg@mail.gmail.com>
+To: okaya@codeaurora.org
+Cc: dmaengine@vger.kernel.org,
+	Masami Ichikawa <masami.ichikawa@miraclelinux.com>,
+	cip-dev <cip-dev@lists.cip-project.org>
+Subject: [bug report] dmaengine: add Qualcomm Technologies HIDMA management driver
+Message-ID: <Y9pb6vRuK6WpsV3P@kili>
 MIME-Version: 1.0
-In-Reply-To: <CAODzB9phGdgNo0dOTHLyovXP7Gcj9EgR1QDHHaNrAXhBxrHQzg@mail.gmail.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 01 Feb 2023 13:04:42 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10555
+ <cip-dev@lists.cip-project.org>; Wed, 01 Feb 2023 13:04:52 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10556
 
-[ Still going through old stuff from the holiday season ]
+Hello Sinan Kaya,
 
-On Thu, Dec 22, 2022 at 07:58:48AM +0900, Masami Ichikawa wrote:
-> CVE-2022-47518: wifi: wilc1000: validate number of channels
-> 
-> CVSS v3 score is not provided
-> 
-> An issue was discovered in the Linux kernel before 6.0.11. Missing
-> validation of the number of channels in
-> drivers/net/wireless/microchip/wilc1000/cfg80211.c in the WILC1000
-> wireless driver can trigger a heap-based buffer overflow when copying
-> the list of operating channels from Wi-Fi management frames.
-> 
-> It looks like a vulnerable function is not present on 4.4 and 4.9.
-> That function is present in 5.4 and 4.19 however, this driver is
-> staging driver at that time.
-> Also, implementation of wilc_wfi_cfg_parse_ch_attr() in 5.4 and 4.19
-> are different from newer code. It seems as if they are not affected.
-> 
-> Fixed status
-> mainline: [0cdfa9e6f0915e3d243e2393bfa8a22e12d553b0]
-> stable/5.10: [3eb6b89a4e9f9e44c3170d70d8d16c3c8dc8c800]
-> stable/5.15: [7aed1dd5d221dabe3fe258f13ecf5fc7df393cbb]
-> stable/6.0: [6195b4838e10a557859862c4e7840dc0eafdd1cd]
-> 
-> CVE-2022-47519: wifi: wilc1000: validate length of
-> IEEE80211_P2P_ATTR_OPER_CHANNEL attribute
+The patch 7f8f209fd6e0: "dmaengine: add Qualcomm Technologies HIDMA
+management driver" from Feb 4, 2016, leads to the following Smatch
+static checker warning:
 
-This is probably something which could have been caught with static
-analysis.  The first problem was that cfg80211_find_vendor_ie() takes
-a struct and casts it to a char *.  Smatch correctly marks some of the
-struct members as user data, but loses that information when the cast
-happens.
+	drivers/dma/qcom/hidma_mgmt.c:101 hidma_mgmt_setup()
+	warn: uncapped user loop index 'i'
 
-It is easy to hard code cfg80211_find_vendor_ie() as returning user data
-so we avoid this bug in the future.
+drivers/dma/qcom/hidma_mgmt.c
+    91         }
+    92 
+    93         if (mgmtdev->max_rd_xactions > HIDMA_MAX_RD_XACTIONS_MASK) {
+    94                 dev_err(&mgmtdev->pdev->dev,
+    95                         "max_rd_xactions cannot be bigger than %ld\n",
+    96                         HIDMA_MAX_RD_XACTIONS_MASK);
+    97                 return -EINVAL;
+    98         }
+    99 
+    100         for (i = 0; i < mgmtdev->dma_channels; i++) {
+--> 101                 if (mgmtdev->priority[i] > 1) {
+                            ^^^^^^^^^^^^^^^^^^^^
+The sysfs interface lets you set mgmtdev->dma_channels so this is an
+array out of bounds access.  It's in hidma_mgmt_sys.c
 
-diff --git a/smatch_points_to_user_data.c b/smatch_points_to_user_data.c
-index 4267b85b53a7..f632d8c84452 100644
---- a/smatch_points_to_user_data.c
-+++ b/smatch_points_to_user_data.c
-@@ -49,7 +49,7 @@ STATE(user_data_set);
- static const char *returns_pointer_to_user_data[] = {
- 	"nlmsg_data", "nla_data", "memdup_user", "kmap_atomic", "skb_network_header",
- 	"cfg80211_find_elem_match", "ieee80211_bss_get_elem", "cfg80211_find_elem",
--	"ieee80211_bss_get_ie",
-+	"ieee80211_bss_get_ie", "cfg80211_find_vendor_ie",
- };
- 
- bool is_skb_data(struct expression *expr)
-
-Then from there, I actually have an unpublished static checker warning
-which would have triggered.
-
-drivers/net/wireless/microchip/wilc1000/cfg80211.c:991 wilc_wfi_cfg_parse_ch_attr() warn: uncapped user loop: 'attr_size'
-
-Currently it prints 178 warnings.  It warns for things like:
-
-        for (i = 0; i < user_controlled_value; i++)
-
-But it's kind of useless.  There are too many times where the loop is
-uncapped but it doesn't result in an out of bounds access.  For example,
-the user_controlled_value could be number of seconds instead of array
-offsets.  I need to add to the check and cut down on the false
-positives.  I will do that today.
-
-Update on my employment situation:  I have been lazy about looking for
-Smatch funding.  But a lot of the things I'm looking at are a
-subscription model where people get the warnings instead of the source
-code.  These emails are intended to help the Kernel security community
-to understand better how to continue the work after I have moved on.
-Please email me if you have questions, because right now I have time and
-I want to help people take on this work.
+drivers/dma/qcom/hidma_mgmt_sys.c
+    26  #define IMPLEMENT_GETSET(name)                                  \
+    27  static int get_##name(struct hidma_mgmt_dev *mdev)              \
+    28  {                                                               \
+    29          return mdev->name;                                      \
+    30  }                                                               \
+    31  static int set_##name(struct hidma_mgmt_dev *mdev, u64 val)     \
+    32  {                                                               \
+    33          u64 tmp;                                                \
+    34          int rc;                                                 \
+    35                                                                  \
+    36          tmp = mdev->name;                                       \
+    37          mdev->name = val;                                       \
+    38          rc = hidma_mgmt_setup(mdev);                            \
+    39          if (rc)                                                 \
+    40                  mdev->name = tmp;                               \
+    41          return rc;                                              \
+    42  }
+    43  
+    44  #define DECLARE_ATTRIBUTE(name, mode)                           \
+    45          {#name, mode, get_##name, set_##name}
+    46  
+    47  IMPLEMENT_GETSET(hw_version_major)
+    48  IMPLEMENT_GETSET(hw_version_minor)
+    49  IMPLEMENT_GETSET(max_wr_xactions)
+    50  IMPLEMENT_GETSET(max_rd_xactions)
+    51  IMPLEMENT_GETSET(max_write_request)
+    52  IMPLEMENT_GETSET(max_read_request)
+    53  IMPLEMENT_GETSET(dma_channels)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    54  IMPLEMENT_GETSET(chreset_timeout_cycles)
 
 regards,
 dan carpenter
