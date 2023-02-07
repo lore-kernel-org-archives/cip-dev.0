@@ -1,203 +1,144 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <ncaidin@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 119B9C64ED6
-	for <webhook@archiver.kernel.org>; Tue,  7 Feb 2023 08:16:00 +0000 (UTC)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
- by mx.groups.io with SMTP id smtpd.web10.78718.1675757755849721334
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Tue, 07 Feb 2023 00:15:55 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8033FC636CC
+	for <webhook@archiver.kernel.org>; Tue,  7 Feb 2023 13:07:01 +0000 (UTC)
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.89])
+ by mx.groups.io with SMTP id smtpd.web10.76279.1675744786326605797
+ for <cip-dev@lists.cip-project.org>;
+ Mon, 06 Feb 2023 20:39:47 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=kK+rOdXS;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.170, mailfrom: bot@kernelci.org)
-Received: by mail-pl1-f170.google.com with SMTP id u9so10593400plf.3
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Tue, 07 Feb 2023 00:15:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=+qEQIeRN3N1i4hS0AsqMwpeU8Jpp+IXsd1C/caqJedo=;
-        b=kK+rOdXSw1l14BdOJVLsJKSk65xYoLgtR5W33OUE6n2rAQvbhm0tnd1lU7vTMP/RSd
-         +58YtHvny4zQRjELP1mLN3VSUhEVz8VgX2eNJFjVB7gvdpGH7gtzr+ejUkXCvsxoqmOO
-         s47ZSpnf57jMymXbABh11Se2lQdWbue0QrzGK7LaI+s0dliTDxxBn/HbiO3/ImsDxmpv
-         wWMCk97OLJEam35H0wyZDR96t7ONp0Z5xRtVd7SjQ2lyx287MkdJaIAqpCOpMb5tjjKI
-         hLsbzbumLTcXH0rULK4yidJfKx+ux+7twCFikEM08CMrdS6hCVC08L6LQ0CcOUYBF6PV
-         Ltfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+qEQIeRN3N1i4hS0AsqMwpeU8Jpp+IXsd1C/caqJedo=;
-        b=NlppiWrQtaHziVzXi6ceP16AFCmQFZC/XfLcuCoDuRTXZTy4fFIxKI9AcFWBpePcBr
-         VDGbQq+ws9kRTRb/QxnSKSaM70gb9RZNvuAyw4Jrycy8BbeMLXSamxIQduME3OXEOvwJ
-         t2BNuLagoNA706EgqXSgv0VZQwmpX1rOUnzcfbRXdLKS+xYirz7vYjVb3XH4F/3vhfn3
-         hC4GCB+9eh5Gxk/gK04A9QzxV5Ec/8u2jdr0jKbl6Saa3QsxOtgjZHckFDwR0ujmAvBw
-         czhWqacYZSOQPgBGvS9zedybZuQ8YEp3/AOLPLBeGUHhmvP1bP0MelJ0HmEOFfxVOEVD
-         scaQ==
-X-Gm-Message-State: AO0yUKUksAYx6d3oL29DNJtPuQmrF5uJpTcINAzoCDL1pAfTO2a7ASDL
-	iePdUAjamcLTri/gptBn6GZ5w17jD9OLyhPi3JuCVQ==
-X-Google-Smtp-Source: AK7set8gNFK/OVNoDaHlXvzZ/kDSdoxojv9kbQFPEKa4S+QDpJQO27nbIk2egYQ3zHW9dlo6ohSkXQ==
-X-Received: by 2002:a17:902:cad1:b0:198:fb56:1a0a with SMTP id y17-20020a170902cad100b00198fb561a0amr1455484pld.34.1675757755053;
-        Tue, 07 Feb 2023 00:15:55 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id x2-20020a1709027c0200b0019472226769sm8204579pll.251.2023.02.07.00.15.54
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Feb 2023 00:15:54 -0800 (PST)
-Message-ID: <63e208ba.170a0220.3ce84.d08d@mx.google.com>
-Date: Tue, 07 Feb 2023 00:15:54 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=KAL2cihp;
+ spf=pass (domain: siemens.com, ip: 40.107.21.89, mailfrom: felix.moessbauer@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=e0T7CTawwVaUK5xQYl1A25iKh36bynYsd/1HcXQsYbFzHiX+9cuqoIekY+SeGZXtNEjwpZHClGGqeLgC18ac5SPhuMmZwdupDxZErfnEJBPnakHr0HwX7/a8WvpbZoiUPgJF9pOgvGPUwq/hgPJlF2ha6qhH6QSDwrqsIwICNViVxMPdk66w7iHZKzs/2gxkxbTP0Ul+irnIxdgnCZ9tkvKbsuwpqymXTcro1Oc44SO4XQi/oZEyvNg1xIuO5m6Brp/PhrQLAP+WEjXpKwXCdkwbzVVw5IbK0+zQPGbeZo9GFofqLH4HDSiXh3eMd77FEXvWQYFWDckNuuBTa5RpDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LANpVdt70JLFkQFXdlcj0HqhwzmZAFy56UU92xwpTY4=;
+ b=KqoUnIMlUKRpA92d9qRh3d8sarFTuoJxj1hf6KA0d8QAol+TSjiTdKtroQKsueH4wkPf6pUCXxxLke58x4SRWYTU7HLAptP4LuqXLWXrJT5MyVK0I1mDyqrH6yUllEcX+vEwbN8OuKt7zFtbgHgRqLeMlwpEppUFrH71dhXFJUkgetvbcfqLbFpTyh7wGNrpewJEYVLx9trJQmzgfIYVaQ32IuqBlVkRVmrBM6Wre+VcsBfID1+lEWxlXW2j6ZRfby68bVLFM4LlsnwxeXgyCny1bNXGXO8sTPSb0ExPF9kd8zlQqkHSgpFa9zZZ9nnJogDJaip46MhlF+T8eo1KQA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 194.138.21.74) smtp.rcpttodomain=lists.cip-project.org
+ smtp.mailfrom=siemens.com; dmarc=pass (p=none sp=none pct=100) action=none
+ header.from=siemens.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LANpVdt70JLFkQFXdlcj0HqhwzmZAFy56UU92xwpTY4=;
+ b=KAL2cihpUoZVqgk+slOJw4p+FRcCOjmylkSVI08X9iyYV7Ly3zgh05yS+iMzLMW+93ARVN9CMlVtM+e8SAqfITExMK1UovC98byJR+Jg4FY+yuv8uAhN1NqIIcK14FplagzmybM4NlQ9aMor7/Nc4mGysVi8VbVkGxBvzsz/Esyj66ThWxkhQO+uAgnhOGoXgoUnqdSTSTn3hpSJCQDjK+l02GfH2PsWduvNXttQSDGWoZXqwXc+RbdwCqikIGm4/aVskRaUOOTPGCAnIv32gpGqwZ98Ym0+nhjHd1R4r/1iOyrnLoif3XcCzQAvf26dzPBCMNp0ac7n5Mnft1SuMQ==
+Received: from DUZPR01CA0076.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:46a::7) by DB4PR10MB7471.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:10:3cd::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6064.35; Tue, 7 Feb
+ 2023 04:39:42 +0000
+Received: from DB5EUR01FT096.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:10:46a:cafe::fd) by DUZPR01CA0076.outlook.office365.com
+ (2603:10a6:10:46a::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6064.35 via Frontend
+ Transport; Tue, 7 Feb 2023 04:39:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.74)
+ smtp.mailfrom=siemens.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=siemens.com;
+Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
+ 194.138.21.74 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.74; helo=hybrid.siemens.com; pr=C
+Received: from hybrid.siemens.com (194.138.21.74) by
+ DB5EUR01FT096.mail.protection.outlook.com (10.152.5.170) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6064.35 via Frontend Transport; Tue, 7 Feb 2023 04:39:42 +0000
+Received: from CNPEK01M07MSX.ad011.siemens.net (139.24.237.224) by
+ DEMCHDC8VQA.ad011.siemens.net (194.138.21.74) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1118.21; Tue, 7 Feb 2023 05:39:41 +0100
+Received: from CNPEK01M01MSX.ad011.siemens.net (139.24.237.214) by
+ CNPEK01M07MSX.ad011.siemens.net (139.24.237.224) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.17; Tue, 7 Feb 2023 12:39:39 +0800
+Received: from CNPEK01M01MSX.ad011.siemens.net ([139.24.237.214]) by
+ CNPEK01M01MSX.ad011.siemens.net ([139.24.237.214]) with mapi id
+ 15.01.2507.017; Tue, 7 Feb 2023 12:39:39 +0800
+From: "Moessbauer, Felix" <felix.moessbauer@siemens.com>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, "Kiszka,
+ Jan" <jan.kiszka@siemens.com>, "venkata.pyla@toshiba-tsip.com"
+	<venkata.pyla@toshiba-tsip.com>
+CC: "isar-users@googlegroups.com" <isar-users@googlegroups.com>,
+	"dinesh.kumar@toshiba-tsip.com" <dinesh.kumar@toshiba-tsip.com>,
+	"kazuhiro3.hayashi@toshiba.co.jp" <kazuhiro3.hayashi@toshiba.co.jp>
+Subject: Re: [isar-cip-core] Update ISAR revision
+Thread-Topic: [isar-cip-core] Update ISAR revision
+Thread-Index: AQHZOq4whC+SoLH490qw3hpQFhHL8w==
+Date: Tue, 7 Feb 2023 04:39:39 +0000
+Message-ID: <bfa0ec43563dca91594858896c7e5c2fe751ef03.camel@siemens.com>
+References: <20230206115118.930-1-venkata.pyla@toshiba-tsip.com>
+	 <d5ebd21e-547b-1f94-8f38-986aec3ae39c@siemens.com>
+In-Reply-To: <d5ebd21e-547b-1f94-8f38-986aec3ae39c@siemens.com>
+Accept-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.38.3-1+deb11u1 
+x-originating-ip: [140.231.210.96]
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: ci/pavel/linux-test
-X-Kernelci-Tree: cip-gitlab
-X-Kernelci-Kernel: v4.4.302-cip72-rt42
-X-Kernelci-Report-Type: test
-Subject: cip-gitlab/ci/pavel/linux-test ltp-fcntl-locktests: 3 runs,
- 3 regressions (v4.4.302-cip72-rt42)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
-From: "kernelci.org bot" <bot@kernelci.org>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB5EUR01FT096:EE_|DB4PR10MB7471:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8c210d64-c962-4907-14ea-08db08c554c3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	h37gzCGLaal/EMyzUlWz868dYM16nLdOIJlxzjce7mPtHDlgM9HnDASOzApiNtvcS93/T31wPA7i9Z3XwuTonGu7oiZ6yFGzxJx5XZIuqcjClHzehaHJIOaewJM0lVlV8JcG/XYSAZom4jEAmsq77ltowRmgJywFxZ/UgbrQdILrIIEOMClam2jadB2IEi36XzNTALsJGvKngZ1/wH/CkKjse4tYDTXUlpZ6b0YRJkeeer402M2su3fajlZlj3kJrYyUO2KAgPkgsYpqpc4Nt6ZOM5qO4djdbNAzHeUvvM30YmRneQqywUpO6f/9RwxH03HjeDHb4L41WC6coTQdLdeIOYB9hv1mOYN72qRBXQtwwjAOK4Y5fuLT9ZqCj7T6Rg924NVGO5pc8/bAAG3D/vTtceDgtIwbzSKhDqF1ItZ5/IlRs/7ljegLQJgmNRiJGhvOHga902YbGxmdmgj1zMNNgJL3D0nRSx3RKuF3yr93a+am0CFT4eYk7aVlasla46VwWaEiLhThtDDmy4ImS7nfT2sMJma2G3Wp+48SEEXgZ67FsGSJTckH2zHTzM35xPzYZ53XNSlyhk+PfIypiTjndPV36R+JLXKHenBhnwCcZsiu7rf22BU8l2nyj6qWz0HTkLPXeH1Zao3JO3IdxbNaYm7l12OwsTg5O/Lja9YP0VhaloM0BWVLpGuiuqEoOdIpv3LNOSJp0/3pvxbdFm/Y9TTOZ9vu/whvzUsQOvU=
+X-Forefront-Antispam-Report: 
+	CIP:194.138.21.74;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:hybrid.siemens.com;CAT:NONE;SFS:(13230025)(4636009)(376002)(346002)(396003)(39860400002)(136003)(451199018)(46966006)(36840700001)(40470700004)(478600001)(82310400005)(966005)(186003)(356005)(26005)(53546011)(8676002)(4326008)(40480700001)(70586007)(2906002)(86362001)(36756003)(15650500001)(70206006)(8936002)(41300700001)(5660300002)(40460700003)(54906003)(110136005)(7596003)(316002)(83380400001)(336012)(47076005)(7636003)(36860700001)(82960400001)(82740400003)(2616005)(956004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Feb 2023 04:39:42.5926
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8c210d64-c962-4907-14ea-08db08c554c3
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.74];Helo=[hybrid.siemens.com]
+X-MS-Exchange-CrossTenant-AuthSource: 
+	DB5EUR01FT096.eop-EUR01.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB4PR10MB7471
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <3F1F1238782A1547A28691D1A08DCDA9@siemens.com>
+Content-Transfer-Encoding: base64
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 07 Feb 2023 08:16:00 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10619
+ <cip-dev@lists.cip-project.org>; Tue, 07 Feb 2023 13:07:01 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10625
 
-cip-gitlab/ci/pavel/linux-test ltp-fcntl-locktests: 3 runs, 3 regressions (=
-v4.4.302-cip72-rt42)
-
-Regressions Summary
--------------------
-
-platform                  | arch   | lab           | compiler | defconfig  =
-                  | regressions
---------------------------+--------+---------------+----------+------------=
-------------------+------------
-asus-C433TA-AJ0005-rammus | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...6-chromebook | 1          =
-
-asus-C523NA-A20057-coral  | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...6-chromebook | 1          =
-
-hp-11A-G6-EE-grunt        | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...6-chromebook | 1          =
-
-
-  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fpavel%2Fli=
-nux-test/kernel/v4.4.302-cip72-rt42/plan/ltp-fcntl-locktests/
-
-  Test:     ltp-fcntl-locktests
-  Tree:     cip-gitlab
-  Branch:   ci/pavel/linux-test
-  Describe: v4.4.302-cip72-rt42
-  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
-  SHA:      fe1cf8ef6e9d76107c4a6e1bf8cc27263abe6698
-
-  Test suite revisions:
-    ltp-tests
-      URL:  https://github.com/linux-test-project/ltp.git
-      SHA:  7b5ee038995273bcb614321dd1112311e3b7e8eb =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform                  | arch   | lab           | compiler | defconfig  =
-                  | regressions
---------------------------+--------+---------------+----------+------------=
-------------------+------------
-asus-C433TA-AJ0005-rammus | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...6-chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/63e1f92197f0c141bd8c86a7
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: x86_64_defconfig+x86-chromebook
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v4.4.302-cip72-rt42/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-coll=
-abora/ltp-fcntl-locktests-asus-C433TA-AJ0005-rammus.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v4.4.302-cip72-rt42/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-coll=
-abora/ltp-fcntl-locktests-asus-C433TA-AJ0005-rammus.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230203.0/amd64/initrd.cpio.gz =
-
-
-
-  * ltp-fcntl-locktests.login: https://kernelci.org/test/case/id/63e1f92197=
-f0c141bd8c86a8
-        new failure (last pass: v5.10.162-cip24-443-g1f8fb81fe752) =
-
- =
-
-
-
-platform                  | arch   | lab           | compiler | defconfig  =
-                  | regressions
---------------------------+--------+---------------+----------+------------=
-------------------+------------
-asus-C523NA-A20057-coral  | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...6-chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/63e1f956f96106a06e8c863b
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: x86_64_defconfig+x86-chromebook
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v4.4.302-cip72-rt42/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-coll=
-abora/ltp-fcntl-locktests-asus-C523NA-A20057-coral.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v4.4.302-cip72-rt42/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-coll=
-abora/ltp-fcntl-locktests-asus-C523NA-A20057-coral.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230203.0/amd64/initrd.cpio.gz =
-
-
-
-  * ltp-fcntl-locktests.login: https://kernelci.org/test/case/id/63e1f956f9=
-6106a06e8c863c
-        new failure (last pass: v5.10.162-cip24-443-g1f8fb81fe752) =
-
- =
-
-
-
-platform                  | arch   | lab           | compiler | defconfig  =
-                  | regressions
---------------------------+--------+---------------+----------+------------=
-------------------+------------
-hp-11A-G6-EE-grunt        | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...6-chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/63e1fb87f142b07ca08c8636
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: x86_64_defconfig+x86-chromebook
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v4.4.302-cip72-rt42/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-coll=
-abora/ltp-fcntl-locktests-hp-11A-G6-EE-grunt.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v4.4.302-cip72-rt42/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-coll=
-abora/ltp-fcntl-locktests-hp-11A-G6-EE-grunt.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230203.0/amd64/initrd.cpio.gz =
-
-
-
-  * ltp-fcntl-locktests.login: https://kernelci.org/test/case/id/63e1fb87f1=
-42b07ca08c8637
-        new failure (last pass: v5.10.162-cip24-443-g1f8fb81fe752) =
-
- =20
+T24gTW9uLCAyMDIzLTAyLTA2IGF0IDE0OjAxICswMTAwLCBKYW4gS2lzemthIHdyb3RlOg0KPiBP
+biAwNi4wMi4yMyAxMjo1MSwgdmVua2F0YS5weWxhQHRvc2hpYmEtdHNpcC5jb23CoHdyb3RlOg0K
+PiA+IEZyb206IHZlbmthdGEgcHlsYSA8dmVua2F0YS5weWxhQHRvc2hpYmEtdHNpcC5jb20+DQo+
+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogdmVua2F0YSBweWxhIDx2ZW5rYXRhLnB5bGFAdG9zaGli
+YS10c2lwLmNvbT4NCj4gPiAtLS0NCj4gPiDCoGthcy1jaXAueW1sIHwgMiArLQ0KPiA+IMKgMSBm
+aWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+ID4gDQo+ID4gZGlm
+ZiAtLWdpdCBhL2thcy1jaXAueW1sIGIva2FzLWNpcC55bWwNCj4gPiBpbmRleCBiOTcwZjM5Li4w
+NDllY2E4IDEwMDY0NA0KPiA+IC0tLSBhL2thcy1jaXAueW1sDQo+ID4gKysrIGIva2FzLWNpcC55
+bWwNCj4gPiBAQCAtMjIsNyArMjIsNyBAQCByZXBvczoNCj4gPiDCoA0KPiA+IMKgwqAgaXNhcjoN
+Cj4gPiDCoMKgwqDCoCB1cmw6IGh0dHBzOi8vZ2l0aHViLmNvbS9pbGJlcnMvaXNhci5naXQNCj4g
+PiAtwqDCoMKgIHJlZnNwZWM6IGZjNGYwMDRlYjY3MjM3ZDlkMDliMWZmYWQwZGUxYTE5MjE3ZmE5
+NGENCj4gPiArwqDCoMKgIHJlZnNwZWM6IDczZjBjYzE2Y2E1MGYxMTAyMDg0ODUxYjFiYzBmMmQ1
+OTkyNWM5YWQNCj4gPiDCoMKgwqDCoCBsYXllcnM6DQo+ID4gwqDCoMKgwqDCoMKgIG1ldGE6DQo+
+ID4gwqANCj4gDQo+IEkgaGF2ZSBhbiB1cGRhdGUgdG8gdGhlIGxhdGVzdCByZXZpc2lvbiBwZW5k
+aW5nLCBidXQgaXQgaXMgY3VycmVudGx5DQo+IGF3YWl0aW5nIGFuIHVwc3RyZWFtIGZpeC4gV2ls
+bCBicmluZyBiaXRiYWtlIDIgdGhlbi4NCg0KV2l0aCB0aGF0IHZlcnNpb24sIGRlYmlhbiBib29r
+d29ybSB0YXJnZXRzIGFyZSBzdGlsbCBicm9rZW4uDQpUaGUgcmVxdWlyZWQgZml4ZXMgZm9yIGF0
+IGxlYXN0IGFtZDY0IGFyZSBhbHJlYWR5IGluIG5leHQsIGJ1dA0KdW5mb3J0dW5hdGVseSBhZnRl
+ciB0aGUgYml0YmFrZSAyLjAgYnJlYWtpbmcgY2hhbmdlLiBBIGZpeCBmb3IgcmlzY3Y2NA0KaXMg
+c3RpbGwgd2FpdGluZyB0byBiZSBpbnRlZ3JhdGVkIChJJ20gdGhlIGF1dGhvcikuDQoNCklNSE8g
+d2Ugc2hvdWxkIGVpdGhlciB3YWl0IHRpbGwgbmV4dCBpcyBpbnRlZ3JhdGVkIGluIG1hc3Rlciwg
+b3Igc3dpdGNoDQp0byBuZXh0IHRoaXMgdGltZS4gRWl0aGVyIHdheSwgd2UgaGF2ZSB0byBkbyB0
+aGUgYml0YmFrZSAyLjAgbWlncmF0aW9uLg0KDQpIYXZpbmcgYml0YmFrZSAyLjAgc3VwcG9ydCBh
+bnl3YXlzIGhlbHBzIGFzIG1hbnkgZG93bnN0cmVhbSBsYXllcnMgYXJlDQpub3cgbG9ja2VkIHRv
+IGEgYnJva2VuIElTQVIgdmVyc2lvbiBmb3IgYm9va3dvcm06IG5vIHdheSBmb3J3YXJkDQpiZWNh
+dXNlIGNpcC1jb3JlIGlzIG5vdCBiYjIuMCwgbm8gd2F5IGJhY2t3YXJkIGJlY2F1c2Ugb2YgdGhl
+IHJlcG8NCmNoYW5nZXMgaW4gYm9va3dvcm0gYW5kIGV4cGlyZWQga2V5cy4NCg0KSnVzdCBidW1w
+aW5nIHRoZSB2ZXJzaW9uIGlzIG5vdCBzdWZmaWNpZW50IHRoaXMgdGltZS4NCg0KUFM6IHB1dHRp
+bmcgdGhlIElTQVIgTUwgaW4gQ0MgdG8gY3JlYXRlIG1vcmUgYXdhcmVuZXNzIG9uIHRoZSBpc3N1
+ZS4NCg0KRmVsaXgNCg0KPiANCj4gSmFuDQo+IA0KDQo=
 
