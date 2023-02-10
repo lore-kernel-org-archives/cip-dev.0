@@ -2,34 +2,34 @@ Return-Path: <ncaidin@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65242C636D3
-	for <webhook@archiver.kernel.org>; Fri, 10 Feb 2023 12:07:35 +0000 (UTC)
-Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
- by mx.groups.io with SMTP id smtpd.web11.6136.1676001947237970150
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F905C636D3
+	for <webhook@archiver.kernel.org>; Fri, 10 Feb 2023 12:07:45 +0000 (UTC)
+Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
+ by mx.groups.io with SMTP id smtpd.web11.6149.1676001968550009308
  for <cip-dev@lists.cip-project.org>;
- Thu, 09 Feb 2023 20:05:50 -0800
+ Thu, 09 Feb 2023 20:06:08 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=felix.moessbauer@siemens.com header.s=fm1 header.b=AgS5bpQk;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-72506-2023021004054982239e67df353c18f9-n_sz3f@rts-flowmailer.siemens.com)
-Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 2023021004054982239e67df353c18f9
+ dkim=pass header.i=felix.moessbauer@siemens.com header.s=fm1 header.b=HTmJeIJC;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-72506-20230210040606329a04828fecd64f17-9fo1so@rts-flowmailer.siemens.com)
+Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 20230210040606329a04828fecd64f17
         for <cip-dev@lists.cip-project.org>;
-        Fri, 10 Feb 2023 05:05:49 +0100
+        Fri, 10 Feb 2023 05:06:06 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=felix.moessbauer@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=upnjyhFouXaYSsSQK3qmNpX4jgwIyYFiMdHjrHYnlgk=;
- b=AgS5bpQk3U0N7r6tCfAbRDcLYWWiT0b/2jMzPvHpPkXBFfb85Z8Jvc8uN+5LD1QOKOwMaL
- GxdZ8ibHv6vh24UxnaFTXsafBolfQ0GK4N9GumV2NbgTNau+ahNqxkTTN/+3HWCCKtZtv3nG
- eDtRoURjDBL0F6S4j+DsPSUNE2RNg=;
+ bh=b/PI5KraOKL/V/kVevtMIU0uGf7oSI2Y0Uqp1L8cek0=;
+ b=HTmJeIJCvDYlcxiq4q+wj/sc0bS0ump3RRRoAYJ72oC0KhpHcUUjIVkcqhoAQSsQ7IvR9O
+ kML7D7UQzc+dUDPOIFmPlm4xtiHOkkli7m3oB+nYzqZ2qGRCFfK5hPLrMzcmbcRnoC+OBJc5
+ y4Cn/6ecHODz+lrGHC02h/SUPxO1g=;
 From: Felix Moessbauer <felix.moessbauer@siemens.com>
 To: cip-dev@lists.cip-project.org
 Cc: adriaan.schmidt@siemens.com,
 	jan.kiszka@siemens.com,
 	quirin.gylstorff@siemens.com,
 	Felix Moessbauer <felix.moessbauer@siemens.com>
-Subject: [isar-cip-core][PATCH 2/5] refactor: use imagetypes for swu generation
-Date: Fri, 10 Feb 2023 04:05:29 +0000
-Message-Id: <20230210040532.239406-3-felix.moessbauer@siemens.com>
+Subject: [isar-cip-core][PATCH 5/5] refactor verity image creation
+Date: Fri, 10 Feb 2023 04:05:32 +0000
+Message-Id: <20230210040532.239406-6-felix.moessbauer@siemens.com>
 In-Reply-To: <20230210040532.239406-1-felix.moessbauer@siemens.com>
 References: <20230210040532.239406-1-felix.moessbauer@siemens.com>
 MIME-Version: 1.0
@@ -39,113 +39,60 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 10 Feb 2023 12:07:35 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10652
+ <cip-dev@lists.cip-project.org>; Fri, 10 Feb 2023 12:07:45 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10655
 
-This patch reworks the implementation of the swupdate type.
-All generic aspects are moved from the swupdate.inc file into the
-swupdate class and made conditional on the swu type.
-The sw-description file is now referenced using the image-type
-infrastructure, which avoids manual additions to FILESEXTRAPATHS and
-accidental overwrites of SRC_URI. The templating logic is moved into the
-generic one provided by imagetypes.
+This patch simplifies the integration of verity with swupdate.
+We now directly copy the generated verity image into the swu file,
+instead of going via wic. This solves the issue with leading partitions,
+shifting the partition layout and resulting in a wrong partition in the
+swu file. Further, we cleanup some duplicated variables.
 
 Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
 ---
- classes/swupdate.bbclass         | 22 +++++++++++++---------
- kas/opt/swupdate.yml             |  5 +----
- recipes-core/images/swupdate.inc | 14 --------------
- 3 files changed, 14 insertions(+), 27 deletions(-)
+ classes/verity.bbclass               | 7 +------
+ kas/opt/ebg-secure-boot-snakeoil.yml | 1 -
+ 2 files changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/classes/swupdate.bbclass b/classes/swupdate.bbclass
-index 5eb4936..2e32729 100644
---- a/classes/swupdate.bbclass
-+++ b/classes/swupdate.bbclass
-@@ -8,23 +8,29 @@
- #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
- #
+diff --git a/classes/verity.bbclass b/classes/verity.bbclass
+index 154b9e1..747a7ae 100644
+--- a/classes/verity.bbclass
++++ b/classes/verity.bbclass
+@@ -9,21 +9,16 @@
  # SPDX-License-Identifier: MIT
-+ROOTFS_PARTITION_NAME ?= "${IMAGE_FULLNAME}.wic.p4.gz"
+ #
  
- SWU_IMAGE_FILE ?= "${DEPLOY_DIR_IMAGE}/${PN}-${DISTRO}-${MACHINE}.swu"
- SWU_DESCRIPTION_FILE ?= "sw-description"
--SWU_ADDITIONAL_FILES ?= ""
-+SWU_ADDITIONAL_FILES ?= "linux.efi ${ROOTFS_PARTITION_NAME}"
- SWU_SIGNED ?= ""
- SWU_SIGNATURE_EXT ?= "sig"
- SWU_SIGNATURE_TYPE ?= "rsa"
+-VERITY_IMAGE_TYPE ?= "squashfs"
+-
+-inherit ${VERITY_IMAGE_TYPE}
+-
+ IMAGE_TYPEDEP:verity = "${VERITY_IMAGE_TYPE}"
+ IMAGER_INSTALL:verity += "cryptsetup"
  
- BUILDCHROOT_IMAGE_FILE ?= "${PP_DEPLOY}/${@os.path.basename(d.getVar('SWU_IMAGE_FILE'))}"
++VERITY_IMAGE_TYPE ?= "squashfs"
+ VERITY_INPUT_IMAGE ?= "${IMAGE_FULLNAME}.${VERITY_IMAGE_TYPE}"
+ VERITY_OUTPUT_IMAGE ?= "${IMAGE_FULLNAME}.verity"
+ VERITY_IMAGE_METADATA = "${VERITY_OUTPUT_IMAGE}.metadata"
+ VERITY_HASH_BLOCK_SIZE ?= "1024"
+ VERITY_DATA_BLOCK_SIZE ?= "1024"
  
--IMAGER_INSTALL += "cpio"
--IMAGER_INSTALL += "${@'openssl' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
-+IMAGE_TYPEDEP:wic += "squashfs"
-+IMAGE_TYPEDEP:swu = "wic"
-+IMAGER_INSTALL:swu += "cpio ${@'openssl' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
+-IMAGER_INSTALL += "cryptsetup"
+-
+ create_verity_env_file() {
  
--do_swupdate_binary[stamp-extra-info] = "${DISTRO}-${MACHINE}"
--do_swupdate_binary[cleandirs] += "${WORKDIR}/swu"
--do_swupdate_binary[network] = "${TASK_USE_SUDO}"
--do_swupdate_binary() {
-+IMAGE_SRC_URI:swu = "file://${SWU_DESCRIPTION_FILE}.tmpl"
-+IMAGE_TEMPLATE_FILES:swu = "${SWU_DESCRIPTION_FILE}.tmpl"
-+IMAGE_TEMPLATE_VARS:swu = "ROOTFS_PARTITION_NAME TARGET_IMAGE_UUID ABROOTFS_PART_UUID_A ABROOTFS_PART_UUID_B"
-+
-+do_image_swu[stamp-extra-info] = "${DISTRO}-${MACHINE}"
-+do_image_swu[cleandirs] += "${WORKDIR}/swu"
-+IMAGE_CMD:swu[depends] = "${PN}:do_transform_template"
-+IMAGE_CMD:swu() {
-     rm -f '${SWU_IMAGE_FILE}'
-     cp '${WORKDIR}/${SWU_DESCRIPTION_FILE}' '${WORKDIR}/swu/${SWU_DESCRIPTION_FILE}'
+     local ENV="${DEPLOY_DIR_IMAGE}/${IMAGE_FULLNAME}.verity.env"
+diff --git a/kas/opt/ebg-secure-boot-snakeoil.yml b/kas/opt/ebg-secure-boot-snakeoil.yml
+index 8f2b7bb..3d0e3c9 100644
+--- a/kas/opt/ebg-secure-boot-snakeoil.yml
++++ b/kas/opt/ebg-secure-boot-snakeoil.yml
+@@ -16,7 +16,6 @@ header:
  
-@@ -91,5 +97,3 @@ do_swupdate_binary() {
-            fi
-         done | cpio -ovL -H crc > "${BUILDCHROOT_IMAGE_FILE}"'
- }
--
--addtask swupdate_binary before do_build after do_deploy do_copy_boot_files do_install_imager_deps do_transform_template
-diff --git a/kas/opt/swupdate.yml b/kas/opt/swupdate.yml
-index ae5e3a1..80cd86e 100644
---- a/kas/opt/swupdate.yml
-+++ b/kas/opt/swupdate.yml
-@@ -19,11 +19,8 @@ local_conf_header:
-     CIP_IMAGE_OPTIONS:append = " swupdate.inc"
- 
-   wic-swu: |
--    IMAGE_CLASSES += "squashfs"
--    IMAGE_TYPEDEP:wic += "squashfs"
--    IMAGE_FSTYPES = "wic"
-+    IMAGE_FSTYPES += "swu"
-     WKS_FILE ?= "${MACHINE}-${SWUPDATE_BOOTLOADER}.wks.in"
-     INITRAMFS_INSTALL:append = " initramfs-squashfs-hook"
--    WIC_DEPLOY_PARTITIONS = "1"
-     ABROOTFS_PART_UUID_A ?= "fedcba98-7654-3210-cafe-5e0710000001"
-     ABROOTFS_PART_UUID_B ?= "fedcba98-7654-3210-cafe-5e0710000002"
-diff --git a/recipes-core/images/swupdate.inc b/recipes-core/images/swupdate.inc
-index ee893dd..20ed600 100644
---- a/recipes-core/images/swupdate.inc
-+++ b/recipes-core/images/swupdate.inc
-@@ -16,20 +16,6 @@ inherit read-only-rootfs
- IMAGE_INSTALL += " swupdate"
- IMAGE_INSTALL += " swupdate-handler-roundrobin"
- 
--ROOTFS_PARTITION_NAME = "${IMAGE_FULLNAME}.wic.p4.gz"
--
--FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
--
--SRC_URI += "file://sw-description.tmpl"
--TEMPLATE_FILES += "sw-description.tmpl"
--
--do_transform_template[vardeps] += "TARGET_IMAGE_UUID"
--addtask do_transform_template before do_swupdate_binary after do_generate_image_uuid
--
--TEMPLATE_VARS += "ROOTFS_PARTITION_NAME TARGET_IMAGE_UUID ABROOTFS_PART_UUID_A ABROOTFS_PART_UUID_B"
--
--SWU_ADDITIONAL_FILES += "linux.efi ${ROOTFS_PARTITION_NAME}"
--
- python() {
-     for u in ['A', 'B']:
-         if not d.getVar('ABROOTFS_PART_UUID_' + u):
+ local_conf_header:
+   secure-boot-image: |
+-    IMAGE_CLASSES += "verity"
+     IMAGE_FSTYPES = "wic"
+     IMAGE_TYPEDEP:wic += "verity"
+     SWU_ROOTFS_TYPE = "verity"
 -- 
 2.34.1
 
