@@ -2,34 +2,34 @@ Return-Path: <felix.moessbauer@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93E74C61DA4
-	for <webhook@archiver.kernel.org>; Thu, 16 Feb 2023 03:46:56 +0000 (UTC)
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
- by mx.groups.io with SMTP id smtpd.web10.2608.1676519211625394888
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93339C61DA4
+	for <webhook@archiver.kernel.org>; Thu, 16 Feb 2023 03:47:16 +0000 (UTC)
+Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
+ by mx.groups.io with SMTP id smtpd.web11.2709.1676519226959568856
  for <cip-dev@lists.cip-project.org>;
- Wed, 15 Feb 2023 19:46:51 -0800
+ Wed, 15 Feb 2023 19:47:07 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=felix.moessbauer@siemens.com header.s=fm1 header.b=BvgzEBok;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-72506-2023021603464910ceed91ce5c6991c8-xebnkb@rts-flowmailer.siemens.com)
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 2023021603464910ceed91ce5c6991c8
+ dkim=pass header.i=felix.moessbauer@siemens.com header.s=fm1 header.b=HA1cH732;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228, mailfrom: fm-72506-20230216034704ac2f7f899b9a72ad00-pnanwu@rts-flowmailer.siemens.com)
+Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 20230216034704ac2f7f899b9a72ad00
         for <cip-dev@lists.cip-project.org>;
-        Thu, 16 Feb 2023 04:46:49 +0100
+        Thu, 16 Feb 2023 04:47:04 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=felix.moessbauer@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=ScAG0jE1nnnd6tTya54ccV+qmx/xOJr9VBvgp0eU5yw=;
- b=BvgzEBokWb2IKb5ZbdnLUi18mUKxJxDyBssT+SmovSOTGuwZQ3fM1b7jx72rg5PIZ1UR/n
- LFqh5uoq5z79hgnhICvJ4RdZbaAZPeW8wBO429nF8FweCatKlSka2+pZX50T98qeASmTvOa5
- 0d1+Mand73X7oCN+x7nHhv7aJ9tU8=;
+ bh=4tn4zdGcTt0xzyvTqCH+AzuTy7wqiJ9ih1NXePJMS/A=;
+ b=HA1cH732HrCpil3QcBwwXOo4qCYKzgY4xlxCrLT3pkzUUt+2yZ3HiYFegdvVwTZ7oit5Ze
+ 8pfakGVLd1xdB3yRV3td4e6B4zVytpxRWW1B3UiIfMzUULPfnm/r2rLppOcwlXXAfTkQfXPm
+ 2lhbIgxX4PPK56qqaWx2UgzBGp7/s=;
 From: Felix Moessbauer <felix.moessbauer@siemens.com>
 To: cip-dev@lists.cip-project.org
 Cc: adriaan.schmidt@siemens.com,
 	jan.kiszka@siemens.com,
 	quirin.gylstorff@siemens.com,
 	Felix Moessbauer <felix.moessbauer@siemens.com>
-Subject: [isar-cip-core][PATCH v5 7/8] prefix swu related variables with SWU
-Date: Thu, 16 Feb 2023 03:45:17 +0000
-Message-Id: <20230216034518.1993074-3-felix.moessbauer@siemens.com>
+Subject: [isar-cip-core][PATCH v5 8/8] refactor verity image creation
+Date: Thu, 16 Feb 2023 03:45:18 +0000
+Message-Id: <20230216034518.1993074-4-felix.moessbauer@siemens.com>
 In-Reply-To: <20230216034518.1993074-1-felix.moessbauer@siemens.com>
 References: <20230216034518.1993074-1-felix.moessbauer@siemens.com>
 MIME-Version: 1.0
@@ -39,84 +39,47 @@ Feedback-ID: 519:519-72506:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 16 Feb 2023 03:46:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10707
+ <cip-dev@lists.cip-project.org>; Thu, 16 Feb 2023 03:47:16 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10708
 
-This patch ensures that all variables used in the swupdate.bbclass are
-either only active when swu is selected, or are prefixed with SWU. By
-that, we avoid accidental name collisions in the image recipe, as this
-recipe always inherits the swupdate class (via the imagetype logic).
+This patch simplifies the integration of verity with swupdate.
+We now directly copy the generated verity image into the swu file,
+instead of going via wic. This solves the issue with leading partitions,
+shifting the partition layout and resulting in a wrong partition in the
+swu file. Further, we cleanup some duplicated variables.
 
 Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
 ---
- classes/swupdate.bbclass                    | 10 +++++-----
- recipes-core/images/swu/sw-description.tmpl |  4 ++--
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ classes/verity.bbclass | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/classes/swupdate.bbclass b/classes/swupdate.bbclass
-index 5f1ab6e..9fcaf3c 100644
---- a/classes/swupdate.bbclass
-+++ b/classes/swupdate.bbclass
-@@ -13,16 +13,16 @@ SWU_ROOTFS_TYPE ?= "squashfs"
- SWU_ROOTFS_NAME ?= "${IMAGE_FULLNAME}"
- # compression type as defined by swupdate (zlib or zstd)
- SWU_COMPRESSION_TYPE ?= "zlib"
--ROOTFS_PARTITION_NAME ?= "${SWU_ROOTFS_NAME}.${SWU_ROOTFS_TYPE}.${@get_swu_compression_type(d)}"
-+SWU_ROOTFS_PARTITION_NAME ?= "${SWU_ROOTFS_NAME}.${SWU_ROOTFS_TYPE}.${@get_swu_compression_type(d)}"
+diff --git a/classes/verity.bbclass b/classes/verity.bbclass
+index 154b9e1..747a7ae 100644
+--- a/classes/verity.bbclass
++++ b/classes/verity.bbclass
+@@ -9,21 +9,16 @@
+ # SPDX-License-Identifier: MIT
+ #
  
- SWU_IMAGE_FILE ?= "${DEPLOY_DIR_IMAGE}/${PN}-${DISTRO}-${MACHINE}.swu"
- SWU_DESCRIPTION_FILE ?= "sw-description"
--SWU_ADDITIONAL_FILES ?= "linux.efi ${ROOTFS_PARTITION_NAME}"
-+SWU_ADDITIONAL_FILES ?= "linux.efi ${SWU_ROOTFS_PARTITION_NAME}"
- SWU_SIGNED ?= ""
- SWU_SIGNATURE_EXT ?= "sig"
- SWU_SIGNATURE_TYPE ?= "rsa"
+-VERITY_IMAGE_TYPE ?= "squashfs"
+-
+-inherit ${VERITY_IMAGE_TYPE}
+-
+ IMAGE_TYPEDEP:verity = "${VERITY_IMAGE_TYPE}"
+ IMAGER_INSTALL:verity += "cryptsetup"
  
--BUILDCHROOT_IMAGE_FILE ?= "${PP_DEPLOY}/${@os.path.basename(d.getVar('SWU_IMAGE_FILE'))}"
-+SWU_BUILDCHROOT_IMAGE_FILE ?= "${PP_DEPLOY}/${@os.path.basename(d.getVar('SWU_IMAGE_FILE'))}"
++VERITY_IMAGE_TYPE ?= "squashfs"
+ VERITY_INPUT_IMAGE ?= "${IMAGE_FULLNAME}.${VERITY_IMAGE_TYPE}"
+ VERITY_OUTPUT_IMAGE ?= "${IMAGE_FULLNAME}.verity"
+ VERITY_IMAGE_METADATA = "${VERITY_OUTPUT_IMAGE}.metadata"
+ VERITY_HASH_BLOCK_SIZE ?= "1024"
+ VERITY_DATA_BLOCK_SIZE ?= "1024"
  
- IMAGE_TYPEDEP:swu = "wic ${SWU_ROOTFS_TYPE}.${@get_swu_compression_type(d)}"
- IMAGER_INSTALL:swu += "cpio ${@'openssl' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
-@@ -30,7 +30,7 @@ IMAGER_INSTALL:swu += "cpio ${@'openssl' if bb.utils.to_boolean(d.getVar('SWU_SI
- IMAGE_SRC_URI:swu = "file://${SWU_DESCRIPTION_FILE}.tmpl"
- IMAGE_TEMPLATE_FILES:swu = "${SWU_DESCRIPTION_FILE}.tmpl"
- IMAGE_TEMPLATE_VARS:swu = " \
--    ROOTFS_PARTITION_NAME \
-+    SWU_ROOTFS_PARTITION_NAME \
-     TARGET_IMAGE_UUID \
-     ABROOTFS_PART_UUID_A \
-     ABROOTFS_PART_UUID_B \
-@@ -98,7 +98,7 @@ IMAGE_CMD:swu() {
-                 fi
-                 echo "$file.${SWU_SIGNATURE_EXT}"
-            fi
--        done | cpio -ovL -H crc > "${BUILDCHROOT_IMAGE_FILE}"'
-+        done | cpio -ovL -H crc > "${SWU_BUILDCHROOT_IMAGE_FILE}"'
- }
+-IMAGER_INSTALL += "cryptsetup"
+-
+ create_verity_env_file() {
  
- python do_check_swu_partition_uuids() {
-diff --git a/recipes-core/images/swu/sw-description.tmpl b/recipes-core/images/swu/sw-description.tmpl
-index b5a8622..cade7c3 100644
---- a/recipes-core/images/swu/sw-description.tmpl
-+++ b/recipes-core/images/swu/sw-description.tmpl
-@@ -13,7 +13,7 @@ software =
-     version = "0.2";
-     name = "cip software update";
-     images: ({
--            filename = "${ROOTFS_PARTITION_NAME}";
-+            filename = "${SWU_ROOTFS_PARTITION_NAME}";
-             device = "C:BOOT0:linux.efi->${ABROOTFS_PART_UUID_A},C:BOOT1:linux.efi->${ABROOTFS_PART_UUID_B}";
-             type = "roundrobin";
-             compressed = "${SWU_COMPRESSION_TYPE}";
-@@ -21,7 +21,7 @@ software =
-                         subtype = "image";
-                         configfilecheck = "/etc/os-release@not_match@IMAGE_UUID=${TARGET_IMAGE_UUID}";
-             };
--            sha256 = "${ROOTFS_PARTITION_NAME}-sha256";
-+            sha256 = "${SWU_ROOTFS_PARTITION_NAME}-sha256";
-     });
-     files: ({
-             filename = "linux.efi";
+     local ENV="${DEPLOY_DIR_IMAGE}/${IMAGE_FULLNAME}.verity.env"
 -- 
 2.34.1
 
