@@ -1,130 +1,114 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <felix.moessbauer@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC7AC636D6
-	for <webhook@archiver.kernel.org>; Wed, 15 Feb 2023 23:19:54 +0000 (UTC)
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
- by mx.groups.io with SMTP id smtpd.web11.8485.1676503183828642215
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC864C61DA4
+	for <webhook@archiver.kernel.org>; Thu, 16 Feb 2023 03:36:46 +0000 (UTC)
+Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
+ by mx.groups.io with SMTP id smtpd.web11.2509.1676518597047642879
  for <cip-dev@lists.cip-project.org>;
- Wed, 15 Feb 2023 15:19:44 -0800
+ Wed, 15 Feb 2023 19:36:38 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112 header.b=lFf0oRpT;
- spf=pass (domain: miraclelinux.com, ip: 209.85.167.174, mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-oi1-f174.google.com with SMTP id bh15so78272oib.4
-        for <cip-dev@lists.cip-project.org>; Wed, 15 Feb 2023 15:19:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gOSaQSpaF4AeWQZou9544VTh/gl9tQJsiv/YhpeTdjA=;
-        b=lFf0oRpTwL8IbS2bUf4/l9McynfuZf7COExYbrsagrVv7pci9zyxTbMe9ELYJnSGtr
-         95LE3ucdIBNr8smChkenJJ+PxajhTXLM7EY64s0EbW5XAhRG/9DcjsuiIDo01/4FBrL6
-         B0KH9K36If/ZHVi0+7yuULyCuiZo6WU8oO4z4XNmpY8gfz2BRcAhRsaz9Ij33lEGU7ho
-         oQwQ8JxqM0os2vc/Ur7CW/soEomiY8L2uNyHGEZsieh/JyoLxYZkf5vHs9YGkmJIHEds
-         UI6a6v+ig8+4Jk9bIsII5auBB829/eM4j2ELB3l7ro3qeTldum8YrDTI4F5GeCpJ8TRM
-         KP9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gOSaQSpaF4AeWQZou9544VTh/gl9tQJsiv/YhpeTdjA=;
-        b=jYYL55yDAUQDHaKrw80JEcgXlsylSft/FI4klsMQBae/FQlWd3hZAjDfflOTsuxEF+
-         S1IbeXrQduQOtXXA9YGxo7xNtgB4tuxghSHMJUoRiSXwe8Tc0fzLjNAgh0vIWrJpQ4q3
-         +LMHaseTjFVmNtBwRXHAuLAGPtLlOcCsaLgPZE1te2NVuGL5hRopvIzgB3fH+y6AKeEz
-         zIuy7aGOYoq886bl7ibl3Mqotv8+S89o+buYTFOvK5KRDlSYzutEWdII3fmixLVU5fnB
-         L9ABcr6vI4c3SwobfsNEHcwEnZTbNNKMtxYY186yH4YLk9NbhzvX9nzvh4OrXmOSj8y+
-         Vibg==
-X-Gm-Message-State: AO0yUKUuanIvU+ZyV5APMWZXitPp/8SSC/yIzQS4g470NEp7u30MG00N
-	F5YzoO5K+DhXL4++ibsj9S0m/1xhqxAFUyzhpe7AF9aWYX9J1Hat
-X-Google-Smtp-Source: AK7set9KmN/0JeVCHbb4dVMPZYgAO0wXFy6kYC22UrhIGNoD7GC2ddK4/bIcGknN6QfuRYU46CWfLcteYWYc9WpWXDY=
-X-Received: by 2002:a05:6808:2087:b0:37d:81ab:3787 with SMTP id
- s7-20020a056808208700b0037d81ab3787mr21388oiw.58.1676503182691; Wed, 15 Feb
- 2023 15:19:42 -0800 (PST)
+ dkim=pass header.i=felix.moessbauer@siemens.com header.s=fm1 header.b=IA/2KNRA;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-72506-20230216033634fd3b509bc2d6d10a33-zm8q1i@rts-flowmailer.siemens.com)
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20230216033634fd3b509bc2d6d10a33
+        for <cip-dev@lists.cip-project.org>;
+        Thu, 16 Feb 2023 04:36:34 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=felix.moessbauer@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=7+S5od+wWmqGWIAsznLjqPDHYmLL/cGgcDP5cqM3MR8=;
+ b=IA/2KNRAPLeOQh73KxVKGChGPBk16BxSXf8Fq+gWlqOkwy56vWyFAQaGTD6Tujm6Rev96T
+ cdWeEzESPthDRNvpghrxAEc+EAyWdxKEpZ2rK7Gtx+2GkmtsfPPTipouspjkQ7SoXR0BGXUI
+ Uc8TqX7k6FRQlqECCGsPrFXDQqegM=;
+From: Felix Moessbauer <felix.moessbauer@siemens.com>
+To: cip-dev@lists.cip-project.org
+Cc: adriaan.schmidt@siemens.com,
+	jan.kiszka@siemens.com,
+	quirin.gylstorff@siemens.com,
+	Felix Moessbauer <felix.moessbauer@siemens.com>
+Subject: [isar-cip-core][PATCH v5 0/8] Rework image classes
+Date: Thu, 16 Feb 2023 03:35:36 +0000
+Message-Id: <20230216033544.1990604-1-felix.moessbauer@siemens.com>
 MIME-Version: 1.0
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 16 Feb 2023 08:19:06 +0900
-Message-ID: <CAODzB9qegyw30FEZLre5kW8hmp1U=DBcgOOQzneacEUtHePJxA@mail.gmail.com>
-Subject: New CVE entries this week
-To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-72506:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 15 Feb 2023 23:19:54 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10700
+ <cip-dev@lists.cip-project.org>; Thu, 16 Feb 2023 03:36:46 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10701
 
-Hi !
+Changes since v4:
 
-It's this week's CVE report.
+- append default sw-description path (instead of prepending)
+- remove IMAGE_CLASSES used in kas in correct patch
+- remove IMAGE_CLASSES from documentation (is now handled automatically)
 
-This week reported 2 new CVEs and no updated CVEs.
+Changes since v3:
 
-* New CVEs
+- add patch to make sw-description spec compliant
+- replace hand-crafted swu compression logic with imagetypes
+  (+ support for zstd) 
+- prefix variables in swupdate class to avoid collisions
+- avoid double-inherit in swupdate.inc
+- explicitly add sw-description path to FILESEXTRAPATHS as
+  FILESOVERRIDES do not apply here (see comment for details)
 
-CVE-2022-27672: Cross-Thread Return Address Predictions
+Changes since v2:
 
-CVSS v3 score is not provided
+- remove unnecessary dependency to template task (it is a dep anyways)
 
-When SMT is enabled, certain AMD processors may speculatively execute
-instructions using a target from the sibling thread after an SMT mode
-switch potentially resulting in information disclosure.
+Changes since v1:
 
-It affects certain AMD processors only. List of affected CPUs are
-listed on AMD's security advisory
-page(https://www.amd.com/en/corporate/product-security/bulletin/amd-sb-1045).
+- separation of concerns: do not append to :wic typedep in :swu [1]
 
-Fixed status
-mainline: [be8de49bea505e7777a69ef63d60e02ac1712683,
-6f0f2d5ef895d66a3f2b32dd05189ec34afa5a55,
-  493a2c2d23ca91afba96ac32b6cbafb54382c2a3]
-stable/5.15: [8f12dcab90e886d0169a9cd372a8bb35339cfc19,
-5122e0e44363e3d837592b78bc04222b9d289868,
-  17170acdc7c8b8585501bb443b4f196168ae9890]
-stable/6.1: [cc95b5d240b631e42e2863e1dcb6ad83920cc449,
-40c4fdfc942e0c93054884546bf785fe24c6831e,
-  da1ae884562cc22e2705113cc39712477e37ab4e]
+This series reworks the image classes so that they are fully based on
+the existing imagetypes infrastructure. Issues with swupdate on non
+default partition layouts are solved by directly using the underlying
+image / rootfs variant instead of a fixed wic partition. To support
+further customizations, an interface is provided to select the type of
+the rootfs image (e.g. squashfs). The verity class then uses this interface
+to configure the swu.
 
-CVE-2023-20937: Privilege escalation bug was found in Android kernel
+[1] As we now use the image (e.g. squashfs / verity) directly to create
+the swu file, we also explicity need that image type (compressed).
+For wic, we now explicitly have to state the imagetype again, as we copy
+that into one of the partitions (but this is not an aspect of the swu type).
+In addition, we cannot simply always add that type to IMAGE_TYPEDEP:wic, as
+otherwise always a squashfs is built when the swupdate.bbclass is included.
+One key aspect of the imagetypes is that they are non-intrusive. By that,
+the classes can always be added and only become into effect when selecting
+the corresponding type.
 
-CVSS v3 score is not provided
+Best regards,
+Felix Moessbauer
+Siemens AG
 
-This bug is in Android Common Kernel so that it doesn't affect to
-mainline/stable/cip kernels.
 
-* Updated CVEs
+Felix Moessbauer (8):
+  register image classes via layer.conf
+  refactor: use imagetypes for swu generation
+  swu: directly image from squashfs rootfs
+  swupdate: only check partition uuids on swupdate
+  make sw-description spec compliant
+  swu: replace custom image compression
+  prefix swu related variables with SWU
+  refactor verity image creation
 
-No updated CVEs this week.
+ classes/swupdate.bbclass                      | 73 +++++++++++--------
+ classes/verity.bbclass                        |  7 +-
+ conf/layer.conf                               |  2 +
+ doc/README.secureboot.md                      |  1 -
+ kas/opt/ebg-secure-boot-snakeoil.yml          |  2 +-
+ kas/opt/swupdate.yml                          |  4 +-
+ .../images/{files => swu}/sw-description.tmpl |  7 +-
+ recipes-core/images/swupdate.inc              | 21 ------
+ 8 files changed, 52 insertions(+), 65 deletions(-)
+ rename recipes-core/images/{files => swu}/sw-description.tmpl (84%)
 
-Currently tracking CVEs
-
-CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
-Bluetooth Core Specifications 4.0 through 5.2
-
-There is no fix information.
-
-CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
-Provisioning Leads to MITM
-
-No fix information.
-
-CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
-
-No fix information.
-
-Regards,
 -- 
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
+2.34.1
 
-Email :masami.ichikawa@cybertrust.co.jp
-          :masami.ichikawa@miraclelinux.com
 
