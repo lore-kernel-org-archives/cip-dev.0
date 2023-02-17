@@ -2,219 +2,515 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 828A4C6379F
-	for <webhook@archiver.kernel.org>; Fri, 17 Feb 2023 15:12:14 +0000 (UTC)
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.69])
- by mx.groups.io with SMTP id smtpd.web11.8624.1676646728858083224
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACF60C6379F
+	for <webhook@archiver.kernel.org>; Fri, 17 Feb 2023 15:20:54 +0000 (UTC)
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.51])
+ by mx.groups.io with SMTP id smtpd.web10.8906.1676647244648577247
  for <cip-dev@lists.cip-project.org>;
- Fri, 17 Feb 2023 07:12:09 -0800
+ Fri, 17 Feb 2023 07:20:45 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=VqktRL7d;
- spf=pass (domain: siemens.com, ip: 40.107.21.69, mailfrom: quirin.gylstorff@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=pE5TMOkW;
+ spf=pass (domain: siemens.com, ip: 40.107.21.51, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=P/AFNwjoZKIy4nhJwCZVVINFCOWc2uAnR1KMQxgLzk/qyC7SHJyhw8+CdRBecSRO2H6QJCkfmQHXp7suMEngcJAZrZQ1O6OtfORJQZgw7wngdzUB0oQU8X4RZFZGxnLzTQpaMU7o4ykajrUzg6FamjLkdgNrgVRGFzOA+AJ9A4vAax8dQZ2+265U64CWYVC6B4bFx78G5k9Kgjws2726gbWNoswgbpdmIbn4/xpppfHD3v4ACy2JCTHjgwD8pmpfq2G6nhB3yaqnESCxnx0V00wfudRdXRVkHWuHGAfaDT8LQPQcU2LdtH/5L4NKrtdxF2Q3giCMhSoNozZ/MYzeUg==
+ b=oKr8ph1R7kMb4APyX04QvIzOqfFQFAHLms4L8GkpKgsimzpD8LHWhmoSf5JygGfgObxjJJrHQgizAoCxxHfOv/iHY+OVcfYj7no4XV3r2sgKnN/GoZx2H62LG9q2ma/wA+d7T6bQBkbAdQmBDeqsxY5VQesK+B235D6G3Vo/hwrjzDfaTIu0eCGp9a92BHRy25iVgB0JgYQ58ilgzPLszdu5dcCnci3uwJlifk+2zSUZz1BAyCsgWiIUnESZzSJa3d3eIJApWj+QBGnVHgErxhcBdn6fttx8lUx2SykkJ7n5TA60uf/zXtjGIdxbCQYkYLGM3YqLf/K4QgoHt+Uddw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ddx9AYLnIodfWmiLcJjxzpTwksBlNdYVa0N7pjFO75A=;
- b=lu3/uqQUHxozLaiq42HtSdGaPWDle519/MNshwoTRw/Nrbmv/36VJlDrK/FBOXXdG3tnfl3o6bh3HdeXH6ff78tEb6pK+i3b/Hm1QlNYfq9itTIaREv4Ue4hO8JsMjH+pqt7fJIk1gnD9Vaj7YIbHcx4iys9FPUcA1S/OIzmA1tv19+nD3VUs49kZuT4euJNC54ilTuS1Aw3KjQaTtfQur7oPRPKAuMEWaqWKvwzSCsY1aGeKoHx4j3HQ8KlQwjW1I96wTx9VL+8Nt00gyDjRmeXxx13mCXetW8kNfoLXTVMnaHeDUne5cUUXrZk2nsoHr3p4OEu4az+fcZq71AoFw==
+ bh=jy9diO2xXiQsUws8ikxS9kcsGvg5MfBwtXo1FOPdBLk=;
+ b=kxlILvwfM40gqW15g7b0DnGi3RoivC9TpUEEWtuaWPasZQqAOV0480NTEtlL/N8D3wmseTigncjXUbzXk5qlw4+Jy6EmHLlfEuKpm0tfNayO8toE4elizp++gR0moDLlzinDJoF5cIU1eq3RdA0xhYuTk1ixqIY+tdzA3CPjK2SEEUwfEq02Tkihwo90O8qTjOiiCGGx7CxISbRYpaAPttNwezDMMHujuDzxvXhvz1wirypzaw0cgnI4b/aqNU/fJaMqbZS7GOxC1L3Q+sxc+A5QaRTA8CZn0XXZNep/ZkvIumBVBYeTOpn85pIAh5urrQOXujYF+drkfIUNJhQ3Sg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ddx9AYLnIodfWmiLcJjxzpTwksBlNdYVa0N7pjFO75A=;
- b=VqktRL7dYF/62tSZaLKKYzAouNv0oPdVDkR/we8OqKAsIeNX8AsMB+rNupakb673q34PQsY6aI8m3ZsH9Foh6GnvE6eF4nLDktiqWrsxs3nrjU61W3W5h+SLAa9+YY3kaucOpNDAsCrUCNyXzCZdZkhZPsla66w5IH9gfZAJ6rmRSA/6XtumSLOxETBbhx42iQeCVJv+PUQpQiiqXECTQBAC347YoYb99L5fPKU8OpU4ajHelNCEnJo69QSbBoJR558/9VG/Anhtc9+Vpa4Wa1wPl2KlgpZMHY0gSGTJO1PHGwpKJ7xMEeC9UdA3YqZrUtU0+wiii/E5u04KN4feng==
+ bh=jy9diO2xXiQsUws8ikxS9kcsGvg5MfBwtXo1FOPdBLk=;
+ b=pE5TMOkWSCEor3wKm2rGT/tUHg+FMhIX9zLXHJH8bHblNWBhRSFy5OogSVmw7NgCaqHoIOOaZ51p9/j85ZlWfMg8oE5Nl38i9S/B7ne/43g1y6IW52VlADk7AWJRNMbe0pQ7aYbdDHR/NNhgNkLuN+9OFYr1umRmoETkZSOmByMb9u8l+gVInJwDBmlNnvWVyEPnY72Z8B3TIlsb8Q3d7VjUDwN2YAnBqPlwpVV0qLsD1P4/rSi26EhG1V39TKE+WSfFTxTD7r9xd4ZMiYhjIA3pZWsDQjvGv/w/H9MDML4QjykHQWVfvezqL5v2fOm/6QJ6wVWkqacsVtksjYydMQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1f9::22)
- by AS8PR10MB7873.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:63e::15) with
+ by PR3PR10MB3788.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:29::8) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6111.13; Fri, 17 Feb
- 2023 15:12:05 +0000
+ 2023 15:20:41 +0000
 Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::e22:9724:665f:8d94]) by AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::e22:9724:665f:8d94%5]) with mapi id 15.20.6111.015; Fri, 17 Feb 2023
- 15:12:05 +0000
-Message-ID: <7598764a-a99e-a485-9df4-af7da43512c4@siemens.com>
-Date: Fri, 17 Feb 2023 16:11:33 +0100
+ 15:20:41 +0000
+Message-ID: <eead43b4-520d-aeb2-ba5b-e46d965306be@siemens.com>
+Date: Fri, 17 Feb 2023 16:20:23 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.1
-Subject: Re: [cip-dev][isar-cip-core][RFC v2 3/7] start-qemu: If swtpm is
- available create a tpm2 device
+Subject: Re: [cip-dev][isar-cip-core][RFC v2 4/7] Add initramfs hook to
+ encrypt a partition
 Content-Language: en-US, de-DE
 To: Jan Kiszka <jan.kiszka@siemens.com>, cip-dev@lists.cip-project.org,
  christian.storm@siemens.com
 References: <20230217130540.509910-1-Quirin.Gylstorff@siemens.com>
- <20230217130540.509910-4-Quirin.Gylstorff@siemens.com>
- <6fca94a3-1350-872c-ce6e-dd93abef654e@siemens.com>
+ <20230217130540.509910-5-Quirin.Gylstorff@siemens.com>
+ <2012e77d-1892-1797-3161-b834ccebda86@siemens.com>
+ <00766d63-d1cc-c792-c5bd-8c7d4a3778d4@siemens.com>
+ <eed2cb77-0980-58e2-5dcd-7a3414a0531c@siemens.com>
 From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
-In-Reply-To: <6fca94a3-1350-872c-ce6e-dd93abef654e@siemens.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms060301060502070903050303"
-X-ClientProxiedBy: CH2PR11CA0016.namprd11.prod.outlook.com
- (2603:10b6:610:54::26) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+In-Reply-To: <eed2cb77-0980-58e2-5dcd-7a3414a0531c@siemens.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms090300070504070500070101"
+X-ClientProxiedBy: FR0P281CA0048.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:48::10) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:1f9::22)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|AS8PR10MB7873:EE_
-X-MS-Office365-Filtering-Correlation-Id: c963147c-87a3-4355-a102-08db10f9546d
+X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|PR3PR10MB3788:EE_
+X-MS-Office365-Filtering-Correlation-Id: 75db07c6-d9fa-4348-81af-08db10fa87cb
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	knC7rjFX19dzxQJyyrMC3Bg/8WudpAumQQlTAQMDGDolWq0gkboImvftKocWJWD3Fl2RMnTUPORxKxV3WUgD52iBgCnMLaZSeqnJy8pdf58RYxm5dwxC8ZdDaGIM7VZr1h6ef4MWNDl0WLaSFeq0UM9poiQM0jsg5G4Ni2S4e6ub1mdAnzSC2zNegzEUPfAYyo30y2E9y30iZ6EiVfpRPQ8G0nM9j5LqLkb3BirAaqDpkBow3wBA8gzv9X2wB9DrPBOU8KHzSCgZl1UQVmVcnI+ruWXOiAbNeRzr/d8GgnBVL+1CWghJA6XMqfRMtw20VnxNNTVedPf+p9LOb1Zrxo5EH+3MlXNwfCVD83I/ft7M2sJQDf8ywT5P37xFksLfOWN3mKPpVWYolEK5KyWEdAQ26Oa80CeRqOOw3BzjARl7RyrtOmWPHFO8ARbuSrNbMWcrLMUvAujb84OkVkMXuG+y/f84gcL6/73panZcWssPut1dsuloSd5xIvww0S/QxqrNPOeCo/eFvtbtDQUQSGsB+BGpMdG1OBpgqigvv2iFellnaJGW169+WeBHfGsuFUdtGbN/Hi5BIfEi02t5ymCTdU8S1S/AMPb573LI/mi36Fg9lICRq6KQNia4wowmqyYlTgLWx3Dt2lBsdFlnBkoZpbnaE9FDOoeD24RLmtGq4fgJFd6n55zLnb3z0Dh2e/aEwM4Z4R8cG7lKVNj4klFFn1OQD6ItmdV6CcZZCPk=
+	pg9w/dL+mfTcLpju34oPoJ/LlDvnzJGICmr/382F6H3runhZ/6dOjOsSH+hFfropVG3NF8nV48m5NqmrbFspnZ9PvCSZxp07WPow7a31lIk4Qr4hL8e8szS+2n2AJTQhtakrLGdEk8IIq8SSihLioNe6xUFvBY4nKig95tULzjbNad4mvO9/7qFs55GeSZMsRWUGc56JmIrAi1CvB9wMS4iCx1iWJfvxpzv0Ol4JErVA7AUzeE2j8oESaK0WRdLYDOjwqwb/IqvheX/dN2achz4/2Y+7aC3x+4NNH2GG0jp0dIrFseEANDdsSZ0AEKNvWk7S5cMYRBjjM5xSGxY4wM76JDF0K/g30G7Pd3zp4t7PjCWL3Lqe6txAghD2yNqhYifP+kBN+whF8ae++3/2DcvGwm0F9KZCOlUhtpYzg/9LsP0+73KR1GVar6qqCSCAVpQA2qbpQ2OxDOmjH1EuMLoi3HF3ZP2guwS8kZ8/qeA8oqvqagtpk5qTZxRAUTD1MkVhpLmbqkKFviINrQE4nPJYytWz1tGGn72cthBkdpcdksJ599jWIsYYZhQeBijZ1fC0HVuBsRsFnVasEyEKpO76pzjjhgZbTtq78I4ghq6uMiUZgzSGpdULcK7ax4S734wR+KEO1NcV3TKJwh8pV8jljsfuplHXgqe8cnKQZ3TMEn53rDz9u2v0vE8d6Oy3Seg8F8e8VRdcL4y08zi/J3D1PtSdfasJlfal7uYirbMd0+MZJn6ax1LDS1wj0+oalXxBkUBkTos5A/Dk8vDpXQ==
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(396003)(136003)(346002)(376002)(366004)(451199018)(86362001)(82960400001)(2906002)(8676002)(8936002)(38100700002)(235185007)(41300700001)(5660300002)(66556008)(66946007)(31686004)(83380400001)(316002)(6636002)(2616005)(36756003)(66476007)(31696002)(6486002)(53546011)(33964004)(478600001)(26005)(6512007)(6666004)(186003)(6506007)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(396003)(366004)(136003)(346002)(376002)(451199018)(6512007)(2616005)(186003)(26005)(38100700002)(2906002)(6486002)(36756003)(82960400001)(31686004)(6506007)(33964004)(478600001)(53546011)(86362001)(31696002)(83380400001)(235185007)(41300700001)(5660300002)(316002)(30864003)(6636002)(66556008)(8676002)(66946007)(66476007)(6666004)(8936002)(403724002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?WTNQMEg2L0tiZkNnWk8wNmdHNGd4cXZTMXhoZDdGRXMxVWdVZTgxWEJ3dzIw?=
- =?utf-8?B?RGpFSVllazUzT0VCTWtaOXZxS2pBWnl0T1lUZ0thbWpuemxQR3daNHpSVXUw?=
- =?utf-8?B?MXFkVXhHSERZd2xDc2g5NzF5MUJVTWV0NndkQTByQ3hqWjNQV21xcEQ2bmhv?=
- =?utf-8?B?ak51QW1UTkxXUVRoU2ZqKzNXWkZVTmIzZk5FWlJNTFhZaTdsUTFtSUpLUTBM?=
- =?utf-8?B?NWdKYUkxc1NoSHNDUFM1SXFYb1d1QXlXVlo0dWppRFZaU0pzMmtBLzN2dSts?=
- =?utf-8?B?QUk5MzJiV054Tjl2TXJZQW9CVFlUc05ZNm5ZOFg0b1JYVFhhdWZyS0krWCtR?=
- =?utf-8?B?c3Y4L0p6ZTl2R3BSVHFSTml0RnJPVzY3bEdraDg5c0JlbkdHWDNZQjROZm5t?=
- =?utf-8?B?NU9BOGVJU012RndnWDI1T3JVaE1zNWlsRVFUdHIvajdqTjVuSDNoSlZlcnpi?=
- =?utf-8?B?ZWlBeTBxNUVOeVZ5OW95UEFtMGxaUFBIUmpodUlZdmJJOG1zNDZQOTZwaThk?=
- =?utf-8?B?WE1zVVVhUFUzT0hBcW5jTzVlT3U3c3Q0WG14K002elNTN0ZKYkp0TkRjNi80?=
- =?utf-8?B?QkhTWmdCTUNUTElLSmtXTFlXNUN0RnEwQ2hEejYyMzZvWUZqYnFNNjBtQk9F?=
- =?utf-8?B?N1pzRVI3S2lzTWpHRHI5VUFXZUo4YzFIanpnWXhtcEl4dUpFTUFubTVRNkcx?=
- =?utf-8?B?NGpqNzNrN1Frd2laQ2lUNXNUQjJsQyt4NjNJSS8xcElYUWZHVFdyRERBeXgy?=
- =?utf-8?B?am9JUjBEUkNtY3J0Y3FxT2NiVzl5UEova2FNeGZCZW80UEg3NHZmVk50WDJB?=
- =?utf-8?B?dkViMjVnOGpmUXlvMC9lR2dOVWFQeEdSb3lidWc1Tkd5ZEV6eW5tcUxDYVVG?=
- =?utf-8?B?czlNcld5VFpZU0ZBbXh5R2krWUtCVnUyMXowNmVaNEIzbnc3MmkzbXdNdnJB?=
- =?utf-8?B?UnVCQ3IvdVp3OFlSUXZYOE8wWFJMdVFZb0lPVW1vcEc2elRqa3I1ZFNqZk0x?=
- =?utf-8?B?MWUyb0t0UWd3WjlBK0ZYSUpGVjlDS3BtWEdwc3lMUitnZExzakEwL3I5TFlv?=
- =?utf-8?B?UThDLzE5am5ON0RvRWVteWZwWmxVRUxLbnhUaGsrQ2NaWXhqanBrY01OMkgx?=
- =?utf-8?B?TkhpaWNGeVpKYzVlT0xxQlAvOTY5OWNsMnRjTVliTEdXTGdDVXVscEpEcG1t?=
- =?utf-8?B?aTY0UWQ1REY2ZjFROGU1RVUxQmlQdHJodlcwUnpyNUFHSEw3cldZdElHTTVu?=
- =?utf-8?B?QkJmL29XcVBFYktvaEFJYXRod3JRNzFlNUpHaFFkbEpFVWVVZHR1QStmbVAx?=
- =?utf-8?B?VWwwWHNkYTBxK2YyY0dUTlRJMDlGSlJIUTcwcjhhOW9pS3V2UjJEQXVnSC9a?=
- =?utf-8?B?RXVtZGgvdVVrNjc4MU9EOWgvNmVucDU5ZUJjbnI4QU9hVkZRUFFURFRVUHhx?=
- =?utf-8?B?WFBLZzBkTE9SLytrbVNSUm9ONkxRekEyLys4R2dPUmV4dk42ZnlKanhycGFB?=
- =?utf-8?B?N2FoenFjaXZnczhZMkdETW5YYVNkVloxYUxkeUpVVklPSzVCdTZnaW1hNGVP?=
- =?utf-8?B?VktWQUtleWtzYUx0TFovaG00R1Q2bFJYWVN1LzgyS1Z3R2pWTkJEZHk5OFps?=
- =?utf-8?B?UGt6L0ZabmR5cXcwRlh1MkttR2cvV0FNcVNETUplOWhKeGRoREdOOUdFT2Jv?=
- =?utf-8?B?RnU4aW1MSy90SGdCSXhmeURzaCtoRXZzVTd0bUJ0R2FVMThWbGpwYTBtM3JC?=
- =?utf-8?B?cS9RQkJPTXFRWERaTEdQdlYzU2lTcXFWc1pySlhSR2pheFZmZXR4ZnMwZHNE?=
- =?utf-8?B?WVRQYS9Hc0hVQ09uS1gvbzJ5TkRkamVyb3VCdTcwMyt6L1U1TU9QY2RhTGVH?=
- =?utf-8?B?WWhRTVc2MDFHM0ZzcU52TlJZSTFxUHpWc1lJd21RenAwdUdiMzYvSnlnb2hi?=
- =?utf-8?B?Vnp0ZTJxVHZVQTZzVzFneml4aUZGMUdVS1c2TVdWa0Y4Y05FRitlN1VuZnRO?=
- =?utf-8?B?anFaTG5pcWUxU0N1S3ZZV0NtNlNIbHNNR0tXM2cxRU8vN3NkQndoemd4VThI?=
- =?utf-8?B?WkJHQTJpakNjRUxJdEUrcDVvb1NaTDNsZHB4bmVkTW1qSGNQUFh6VDdVUjRR?=
- =?utf-8?B?NzR0M2d2V0pxVENGWmZtTHgrdGFYNGNTSHNld2lnYk9JaDI0Ui9wZFpla1RE?=
- =?utf-8?B?U3c9PQ==?=
+	=?utf-8?B?ZUNUK2RUUnVvNGNSUm1UbHNubW92a01ob0p2YmxVSEw2em1YdFBoZG1PdDBh?=
+ =?utf-8?B?eVZLM2ZqN0duT295NmdoWlV2UzR0ZG8yNlE5K3pEWGlxYnFFaXlxdjYxeVdZ?=
+ =?utf-8?B?TmUrMmU2d21wNk1waDVVVjJJaWpYdDRqejJLVGc1blltMzdzeE1OSHlMaElC?=
+ =?utf-8?B?ZWRzVlRlYW9SRDk1aGNRVkFmNFBsaDdxZHhzS0JLVTl0VDV0U1g3UXdRVHY3?=
+ =?utf-8?B?RWZVVkpmb2tVOVVwQmVzYlBhNUR3dFFwczAyRXNVMzR6aS9hT0MzNXVyTlk4?=
+ =?utf-8?B?blNxRlhmRG40N0Z2b0RpYmI5bnBndDNnVldTRHVHRUZJaVJSNGl5R1hLNWZo?=
+ =?utf-8?B?ZDRkNTQzZUFIMjFCS05Sa2dJU0pVbXVlU0IzT2xDYTlyMFJhSnNZQ3VRb3BT?=
+ =?utf-8?B?RldvZnBzS1o4cktVVVRIZStReDhpcld1RnR5ZkZtQWQyckF3bXhnYjlBeHJD?=
+ =?utf-8?B?a2MxWmc1RGNiT0JPck1yRW5wNkJ2c3cvRUFkNHJkNmdUSVhTVkdnNGs1NjB3?=
+ =?utf-8?B?V2h4VW8yMWlqZ1RKNXBDcERibTBNZituM2R3TTZnd1VsR1l5Y3lRME9zSkZS?=
+ =?utf-8?B?QThZTXZBQkpzenpsZ0xMcHE4bTRDVEY3dnZXKytkMG5PdUlPK3ZXUFgrQkxl?=
+ =?utf-8?B?ckZ2eU1zM3J5K3J2SFVVRXo5RHlMSXJDUkNBRFVtam92blNWM2VWTDRrQ1Rr?=
+ =?utf-8?B?VlVlSWtCNVdIRXBKT2JNbVVZSGRIK2RwTHNaSGhkdlV2OUtveCtUUXArdUEy?=
+ =?utf-8?B?WVppOTdqck1JRkhFczVHbG8zeW5STkljQnRUS2krQWxtVUh0eFBzdkxRRE5D?=
+ =?utf-8?B?bWZ6OEE1Nm9aTWxJeGJwdTNBTEVFd0dpZmc2RndIaHd1WXFLZWYvVXQxeVQz?=
+ =?utf-8?B?TVBVQzlKazEzWURHMnJqR3pRNmlybUJFbEt0emM5bXZZTFcwL0RFeGlOYmRo?=
+ =?utf-8?B?dnFKVGgwUFZaaGJqQUswNVJVYTFucXdUaHd4dDJwMUc2L1kyNzZacHYwaTZ1?=
+ =?utf-8?B?REl1Yk96TmxKbXhwbERDOXBSNHQyWEIremlXU1JmSGtuRUZVRmhCLzZlaG1U?=
+ =?utf-8?B?VE1MVVBwYVdFRzhWT256bVZPWmlzZmVKc3lpL0tvSGFTWERGcHNaSjh4UmhO?=
+ =?utf-8?B?UWtKUEh6U2I3UDlkRE12OG1RUWdveTF2N2lBYk9jN0RwcmlzUm9zQlZQMzNo?=
+ =?utf-8?B?UTlBcjhQRnJ3dHpGcVlzVytJZThPMm5WZzI1bjBVUFhsdSswWGF2OVVuWW1B?=
+ =?utf-8?B?Mzl1WmJtS01VMld5SXdqSDlIVmdEbTc5ZDE3VU1LTDUydm5GWk5NWkFMVG1z?=
+ =?utf-8?B?dTJ2SmxtdzBYRDFvbHpUdjE4NmdiaEc4cjlEU253d3dta0toZU1XR0xJcEw5?=
+ =?utf-8?B?WUlHd0hNcDByeXllNXNSUm0rWnpBVlc1bnI5ZlhUWkNiaERxY3B5OUZZNFBp?=
+ =?utf-8?B?bXdZWmo3UWFLS3Nyd2hSZDlxOTgyQkd3b25CaG05RnJ4d1E5QXVlQW50dytK?=
+ =?utf-8?B?L3JySWNZVnZjZWxOKzFEWmJhRjNNSkVDUVR4K1pSU1l6dDVsSkdHZkw1Tmx3?=
+ =?utf-8?B?b3dCYjRpVWNYVEgzbUtURkxrTXZGK1ljcjBsVVM2VHp2RERrVThBY1JBSDlK?=
+ =?utf-8?B?c1ZjZ0dvaExpaGh3RG02Y1liVTExV1BJenFIdTRuUFRCNExMcnFJUVRHV25J?=
+ =?utf-8?B?T3dXQmhqOWUzYUl5MjFkU3NJYjR0aUhRaVo3NmdyRHRYMzNIMldnVWFxNGgv?=
+ =?utf-8?B?d01xeXVYSDNRaEJQM1h2bi9ySUZ1MHR3dURlcHZkdHk5YS9kWkhYZDBOaEdt?=
+ =?utf-8?B?NlZrM2xyc2xjT3FWZTVJeHcwcHZQVzJWNlp5ak5CQUI2MitmWWpZSnd0d0Nq?=
+ =?utf-8?B?TlBhaFRwSGV0Zmxvd0czVDFvcitzQlg3eHlkQ0VVbllEb1M0aUZxTG9RT09J?=
+ =?utf-8?B?ZTZZb2JjODVSU2hLcFllS0pJK0tzVGxGdGh3L3RIQmw3M0Y5ZFR4OS9GdkRK?=
+ =?utf-8?B?cW45RG5BZGN1OTd5WmE3Tnl1TlBud2o0MTRpUWkwTDVPSHpwMjl3WWdoNzhv?=
+ =?utf-8?B?WXA5K1BWZ2hqekxRcXRQUWpPRDIyM0s0VkoxTkg2MGl2bmZqUXFPUTBWVEtw?=
+ =?utf-8?B?UFZEZnd5NGlzU3lrMWdLYzVrUFhYRXoxSFNyUEdyU2ZQQ3FNbjdheHdZZS9Z?=
+ =?utf-8?B?dlE9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c963147c-87a3-4355-a102-08db10f9546d
+X-MS-Exchange-CrossTenant-Network-Message-Id: 75db07c6-d9fa-4348-81af-08db10fa87cb
 X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2023 15:12:05.5411
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2023 15:20:41.2467
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: X0W1J5vysjKi88yqHCM83IHHMgK78YL3trSWpTvpi9L9k8PoQ+Ramc5qyF9G/JsFPdcvn0AtZS7x1dCdE8OkubvC6FQv1PUhQCM9877vFuQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB7873
+X-MS-Exchange-CrossTenant-UserPrincipalName: CcFpLNCLAN8bPJRkw2tQPa04fWsmte5felzbd+tHboQK+acPMbs6HkLea00Qv59pgNEFOx8MI6HfsXnO36qQFc5GVzEm8PsJE8je0wpDsEo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR10MB3788
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 17 Feb 2023 15:12:14 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10728
+ <cip-dev@lists.cip-project.org>; Fri, 17 Feb 2023 15:20:54 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10729
 
---------------ms060301060502070903050303
+--------------ms090300070504070500070101
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 
 
-On 2/17/23 15:49, Jan Kiszka wrote:
-> On 17.02.23 14:05, Quirin Gylstorff wrote:
->> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+On 2/17/23 16:10, Jan Kiszka wrote:
+> On 17.02.23 16:06, Gylstorff Quirin wrote:
 >>
->> This allows testing the tpm2 encryption with qemu.
 >>
->> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
->> ---
->>   start-qemu.sh | 23 ++++++++++++++++++-----
->>   1 file changed, 18 insertions(+), 5 deletions(-)
+>> On 2/17/23 15:53, Jan Kiszka wrote:
+>>> On 17.02.23 14:05, Quirin Gylstorff wrote:
+>>>> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>>>>
+>>>> This creates a new luks encrypted ext4 partition with a the
+>>>> key stored in the tpm2.
+>>>>
+>>>> The initial key is randomly generated and removed from the
+>>>> LUKS partition. Therefore a new key cannot be added by the user
+>>>> and if the LUKS header is corrupted the data is no longer readable.
+>>>>
+>>>> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>>>> ---
+>>>>    .../files/encrypt_partition.env.tmpl          |   2 +
+>>>>    .../files/encrypt_partition.hook              |  49 +++++++
+>>>>    .../files/encrypt_partition.script            | 135 ++++++++++++++++++
+>>>>    .../initramfs-crypt-hook_0.1.bb               |  37 +++++
+>>>>    wic/x86-efibootguard.wks.in                   |   4 +-
+>>>>    5 files changed, 225 insertions(+), 2 deletions(-)
+>>>>    create mode 100644
+>>>> recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tmpl
+>>>>    create mode 100644
+>>>> recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.hook
+>>>>    create mode 100644
+>>>> recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.script
+>>>>    create mode 100644
+>>>> recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb
+>>>>
+>>>> diff --git
+>>>> a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tmpl b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tmpl
+>>>> new file mode 100644
+>>>> index 0000000..943fe4b
+>>>> --- /dev/null
+>>>> +++
+>>>> b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tmpl
+>>>> @@ -0,0 +1,2 @@
+>>>> +PARTITIONS="${CRYPT_PARTITIONS}"
+>>>> +REDUDUCE_DEVICE_SIZE="${CRYPT_REDUDUCE_DEVICE_SIZE}"
+>>>
+>>> Did you mean "REDUCE"?
+>> That was my intenion will fix it in v3.
+>>>
+>>> And what is this variable for?
 >>
->> diff --git a/start-qemu.sh b/start-qemu.sh
->> index dd16aed..3ef2acc 100755
->> --- a/start-qemu.sh
->> +++ b/start-qemu.sh
->> @@ -139,11 +139,24 @@ QEMU_COMMON_OPTIONS=" \
->>   	-m 1G \
->>   	-serial mon:stdio \
->>   	-netdev user,id=net,hostfwd=tcp:127.0.0.1:22222-:22 \
->> -	${QEMU_EXTRA_ARGS}"
->> +	"
->>   
->>   if [ -n "${SECURE_BOOT}${SWUPDATE_BOOT}" ]; then
->>   	case "${arch}" in
->>   		x86|x86_64|amd64)
->> +			if [ -x /usr/bin/swtpm ]; then
->> +				swtpm_dir="/tmp/qemu-swtpm"
->> +				mkdir -p ${swtpm_dir}
->> +                rm ${swtpm_dir}/*
->> +				if swtpm socket -d --tpmstate dir=${swtpm_dir} \
->> +						 --ctrl type=unixio,path=${swtpm_dir}/sock \
->> +						 --tpm2; then
->> +					QEMU_EXTRA_ARGS="${QEMU_EXTRA_ARGS} \
->> +                            -chardev socket,id=chrtpm,path=${swtpm_dir}/sock \
->> +					 		-tpmdev emulator,id=tpm0,chardev=chrtpm \
->> +					 		-device tpm-tis,tpmdev=tpm0"
->> +				fi
->> +			fi
+>> If you use online reencryption on a populated partition you need to
+>> create the space for the LUKS header. The necessary minimum size is 32MB.
+>> As an alternative you can detach the LUKS header.
+>>
 > 
-> There are some space-based indentions in this block, messing things up
-> visually.
-> 
-> Jan
+> And what does this variable contribute to that?
 
-I will fix that in v3 and add a check if if TPM2 is requested by KConfig.
+This variable is used to set the size by with cryptsetup reencrypt 
+reduces the partition size.
+
+Currently I am not sure if we need to adjust this size during the build 
+or not.
 
 Quirin
+
 > 
->>   			if [ -n "${SECURE_BOOT}" ]; then
->>   				ovmf_code=${OVMF_CODE:-./build/tmp/deploy/images/qemu-amd64/OVMF/OVMF_CODE_4M.secboot.fd}
->>   				ovmf_vars=${OVMF_VARS:-./build/tmp/deploy/images/qemu-amd64/OVMF/OVMF_VARS_4M.snakeoil.fd}
->> @@ -154,14 +167,14 @@ if [ -n "${SECURE_BOOT}${SWUPDATE_BOOT}" ]; then
->>   					-drive if=pflash,format=raw,unit=0,readonly=on,file=${ovmf_code} \
->>   					-drive if=pflash,format=raw,file=${ovmf_vars} \
->>   					-drive file=${IMAGE_PREFIX}.wic,discard=unmap,if=none,id=disk,format=raw \
->> -					${QEMU_COMMON_OPTIONS} "$@"
->> +					${QEMU_COMMON_OPTIONS} ${QEMU_EXTRA_ARGS} "$@"
->>   			else
->>   				ovmf_code=${OVMF_CODE:-./build/tmp/deploy/images/qemu-amd64/OVMF/OVMF_CODE_4M.fd}
->>   
->>   				${QEMU_PATH}${QEMU} \
->>   					-drive file=${IMAGE_PREFIX}.wic,discard=unmap,if=none,id=disk,format=raw \
->>   					-drive if=pflash,format=raw,unit=0,readonly=on,file=${ovmf_code} \
->> -					${QEMU_COMMON_OPTIONS} "$@"
->> +					${QEMU_COMMON_OPTIONS} ${QEMU_EXTRA_ARGS} "$@"
->>   			fi
->>   			;;
->>   		arm64|aarch64|arm|armhf)
->> @@ -170,7 +183,7 @@ if [ -n "${SECURE_BOOT}${SWUPDATE_BOOT}" ]; then
->>   			${QEMU_PATH}${QEMU} \
->>   				-drive file=${IMAGE_PREFIX}.wic,discard=unmap,if=none,id=disk,format=raw \
->>   				-bios ${u_boot_bin} \
->> -				${QEMU_COMMON_OPTIONS} "$@"
->> +				${QEMU_COMMON_OPTIONS} ${QEMU_EXTRA_ARGS} "$@"
->>   			;;
->>   		*)
->>   			echo "Unsupported architecture: ${arch}"
->> @@ -187,5 +200,5 @@ else
->>   			-drive file=${IMAGE_FILE},discard=unmap,if=none,id=disk,format=raw \
->>   			-kernel ${KERNEL_FILE} -append "${KERNEL_CMDLINE}" \
->>   			-initrd ${INITRD_FILE} \
->> -			${QEMU_COMMON_OPTIONS} "$@"
->> +			${QEMU_COMMON_OPTIONS} ${QEMU_EXTRA_ARGS} "$@"
->>   fi
+>>
+>>>
+>>>> diff --git
+>>>> a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.hook
+>>>> b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.hook
+>>>> new file mode 100644
+>>>> index 0000000..96e084a
+>>>> --- /dev/null
+>>>> +++
+>>>> b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.hook
+>>>> @@ -0,0 +1,49 @@
+>>>> +#!/bin/sh
+>>>> +# Copyright (C) Siemens AG, 2020-2022
+>>>> +#
+>>>> +# SPDX-License-Identifier: MIT
+>>>> +
+>>>> +PREREQ=""
+>>>> +
+>>>> +prereqs()
+>>>> +{
+>>>> +     echo "$PREREQ"
+>>>> +}
+>>>> +
+>>>> +case $1 in
+>>>> +prereqs)
+>>>> +     prereqs
+>>>> +     exit 0
+>>>> +     ;;
+>>>> +esac
+>>>> +
+>>>> +. /usr/share/initramfs-tools/scripts/functions
+>>>> +. /usr/share/initramfs-tools/hook-functions
+>>>> +
+>>>> +manual_add_modules tpm
+>>>> +manual_add_modules tpm_tis_core
+>>>> +manual_add_modules tpm_tis
+>>>> +manual_add_modules tpm_crb
+>>>> +manual_add_modules dm_mod
+>>>> +manual_add_modules dm_crypt
+>>>> +
+>>>> +copy_exec /usr/bin/openssl
+>>>> +copy_exec /usr/sbin/mke2fs
+>>>> +copy_exec /usr/bin/grep
+>>>> +copy_exec /usr/bin/awk
+>>>> +copy_exec /usr/bin/expr
+>>>> +copy_exec /usr/sbin/e2fsck
+>>>> +copy_exec /usr/sbin/resize2fs
+>>>> +copy_exec /usr/sbin/cryptsetup
+>>>> +copy_exec /usr/bin/systemd-cryptenroll
+>>>> +copy_exec /usr/lib/systemd/systemd-cryptsetup
+>>>> +
+>>>> +if [ -x cryptsetup-reencrypt ]; then
+>>>> +    copy_exec /usr/sbin/cryptsetup-reencrypt
+>>>> +fi
+>>>> +
+>>>> +for _LIBRARY in /usr/lib/*/libtss2*; do
+>>>> +    copy_exec "$_LIBRARY"
+>>>> +done
+>>>> +
+>>>> +copy_file library /usr/share/encrypt_partition/encrypt_partition.env
+>>>> /usr/share/encrypt_partition/encrypt_partition.env
+>>>> diff --git
+>>>> a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.script b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.script
+>>>> new file mode 100644
+>>>> index 0000000..e58794e
+>>>> --- /dev/null
+>>>> +++
+>>>> b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.script
+>>>> @@ -0,0 +1,135 @@
+>>>> +#!/bin/sh
+>>>> +#
+>>>> +# CIP Core, generic profile
+>>>> +#
+>>>> +# Copyright (c) Siemens AG, 2023
+>>>> +#
+>>>> +# Authors:
+>>>> +#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>>>> +#
+>>>> +# SPDX-License-Identifier: MIT
+>>>> +prereqs()
+>>>> +{
+>>>> +    # Make sure that this script is run last in local-top
+>>>> +    local req
+>>>> +    for req in "${0%/*}"/*; do
+>>>> +        script="${req##*/}"
+>>>> +        if [ "$script" != "${0##*/}" ]; then
+>>>> +            printf '%s\n' "$script"
+>>>> +        fi
+>>>> +    done
+>>>> +}
+>>>> +case $1 in
+>>>> +prereqs)
+>>>> +    prereqs
+>>>> +    exit 0
+>>>> +    ;;
+>>>> +esac
+>>>> +
+>>>> +. /scripts/functions
+>>>> +
+>>>> +# get configuration variables
+>>>> +. /usr/share/encrypt_partition/encrypt_partition.env
+>>>> +
+>>>> +# load necessary kernel modules:
+>>>> +modprobe tpm_tis
+>>>> +modprobe tpm_crb
+>>>> +
+>>>> +# fixed tpm device or do we need to find it
+>>>> +tpm_device=/dev/tpmrm0
+>>>> +partition_sets="$PARTITIONS"
+>>>> +
+>>>> +open_tpm2_partition() {
+>>>> +    if ! /usr/lib/systemd/systemd-cryptsetup attach
+>>>> "$crypt_mount_name" \
+>>>> +         "$1" - tpm2-device="$tpm_device"; then
+>>>> +        panic "Can't decrypt '$1' !"
+>>>> +    fi
+>>>> +}
+>>>> +
+>>>> +enroll_tpm2_token() {
+>>>> +    #check systemd version and export password if necessary
+>>>> +    if [ -x /usr/bin/systemd-cryptenroll ]; then
+>>>
+>>> And if that file does not exist? No error? No bail-out?
+>>>
+>>
+>> I will remove that check and move it to the hook and fail during build
+>> time. Is that better?
+> 
+> I just want to avoid that a realistic error leads to improper error
+> handling. Even worse if that could lead to a usable but unencrypted
+> partition.
+> 
+>>
+>>>> +        systemd_version=$(systemd-cryptenroll --version | \
+>>>> +                              awk -F " " 'NR==1{print $2 }')
+>>>> +        #check systemd version and export password if necessary
+>>>> +        if [ "$systemd_version" -ge "251" ]; then
+>>>> +            PASSWORD=$(cat "$2" )
+>>>> +            export PASSWORD
+>>>> +            /usr/bin/systemd-cryptenroll --tpm2-device="$tpm_device" \
+>>>> +                                         --tpm2-pcrs=7 "$1"
+>>>> +            PASSWORD=
+>>>> +        else
+>>>> +            panic "Unknown systemd version: '$systemd_version'!"
+>>>> +        fi
+>>>> +    fi
+>>>> +}
+>>>> +
+>>>> +reencrypt_existing_partition() {
+>>>> +    part_device=$(readlink -f "$partition")
+>>>> +    part_size_blocks=$(cat /sys/class/block/"$(awk -v
+>>>> dev=$part_device 'BEGIN{split(dev,a,"/"); print a[3]}' )"/size)
+>>>> +    reduced_size=$(expr $part_size_blocks - 65536 )
+>>>> +    reduced_size_in_byte=$(expr $reduced_size \* 512)
+>>>> +    reduced_size_in_kb=$(expr $reduced_size_in_byte / 1024)K
+>>>> +    resize2fs "$1" "$reduced_size_in_kb"
+>>>> +    if [ -x cryptsetup-reencrypt ]; then
+>>>> +        /usr/sbin/cryptsetup-reencrypt --new --reduce-device-size
+>>>> "${REDUDUCE_DEVICE_SIZE}" $1 < $2
+>>>> +    else
+>>>> +        /usr/sbin/cryptsetup reencrypt --encrypt
+>>>> --reduce-device-size "${REDUDUCE_DEVICE_SIZE}" $1 < $2
+>>>> +    fi
+>>>> +
+>>>> +}
+>>>> +
+>>>> +
+>>>
+>>> One newline should be enough here.
+>> Will fix in v3.
+>>
+>>>
+>>>> +if [ ! -e "$tpm_device" ]; then
+>>>> +    panic "tpm device '$tpm_device' does not exists - cannot create
+>>>> a encrypted device!"
+>>>> +fi
+>>>> +
+>>>> +for partition_set in $partition_sets; do
+>>>> +    partition_label=$(awk -v var=$partition_set
+>>>> 'BEGIN{split(var,a,":"); print a[1]}')
+>>>> +    partition_mountpoint=$(awk -v var=$partition_set
+>>>> 'BEGIN{split(var,a,":"); print a[2]}')
+>>>> +    partition_format=$(awk -v var=$partition_set
+>>>> 'BEGIN{split(var,a,":"); print a[3]}')
+>>>> +    partition=/dev/disk/by-partlabel/$partition_label
+>>>> +    crypt_mount_name="encrypted_$partition_label"
+>>>> +    decrypted_part=/dev/mapper/"$crypt_mount_name"
+>>>> +
+>>>> +    # check if partition is already encrypted with systemd-tpm2
+>>>> +    if /usr/sbin/cryptsetup luksDump --batch-mode "$partition" \
+>>>> +            | grep -q "systemd-tpm2"; then
+>>>> +        open_tpm2_partition "$partition"
+>>>> +        if ! mount -t $(get_fstype "${decrypted_part}")
+>>>> "${decrypted_part}" "${rootmnt}${partition_mountpoint}"; then
+>>>> +            panic "Can't mount encrypted partition
+>>>> '${decrypted_part}'!"
+>>>> +        fi
+>>>> +        continue
+>>>> +    fi
+>>>> +
+>>>> +    # create random password for initial encryption
+>>>> +    # this will be dropped after reboot
+>>>> +    tmp_key=/tmp/"$partition_label-lukskey"
+>>>> +    openssl rand -base64 32 > "$tmp_key"
+>>>> +
+>>>> +    case "${partition_format}" in
+>>>> +        "reencrypt")
+>>>> +            reencrypt_existing_partition "$partition" "$tmp_key"
+>>>> +            enroll_tpm2_token "$partition" "$tmp_key"
+>>>> +            open_tpm2_partition "$partition"
+>>>> +        ;;
+>>>> +        "format")
+>>>> +            /usr/sbin/cryptsetup luksFormat --batch-mode \
+>>>> +                                 --type luks2 "$partition" < "$tmp_key"
+>>>> +            enroll_tpm2_token "$partition" "$tmp_key"
+>>>> +            open_tpm2_partition_tpm2_partition "$partition"
+>>>> +            mke2fs -t ext4 "${decrypted_part}"
+>>>
+>>> We likely want to make this line configurable at recipe-level, both
+>>> regarding fs options as well as the fs type itself.
+>>
+>> I will add an additional field to the configuration string.
+>>
+>>>
+>>>> +        ;;
+>>>> +        *)
+>>>> +            panic "Unknown value ${partition_format}. Cannot create
+>>>> a encrypted partition !"
+>>>> +         ;;
+>>>> +    esac
+>>>> +
+>>>> +    if ! mount -t $(get_fstype "${decrypted_part}")
+>>>> "${decrypted_part}" "${rootmnt}${partition_mountpoint}"; then
+>>>> +        panic "Can't mount encrypted partition '${decrypted_part}'!"
+>>>> +    fi
+>>>> +
+>>>> +    # delete initial key
+>>>> +    # afterwards no new keys can be enrolled
+>>>> +    /usr/bin/systemd-cryptenroll "$partition" --wipe-slot=0
+>>>> +done
+>>>> diff --git
+>>>> a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb
+>>>> b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb
+>>>> new file mode 100644
+>>>> index 0000000..ba2b884
+>>>> --- /dev/null
+>>>> +++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb
+>>>> @@ -0,0 +1,37 @@
+>>>> +#
+>>>> +# CIP Core, generic profile
+>>>> +#
+>>>> +# Copyright (c) Siemens AG, 2020-2022
+>>>> +#
+>>>> +# Authors:
+>>>> +#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>>>> +#
+>>>> +# SPDX-License-Identifier: MIT
+>>>> +
+>>>> +
+>>>> +inherit dpkg-raw
+>>>> +
+>>>> +DEBIAN_DEPENDS = "initramfs-tools, cryptsetup, systemd(>= 251), \
+>>>> +    awk, openssl, libtss2-esys-3.0.2-0, libtss2-rc0, libtss2-mu0,
+>>>> e2fsprogs"
+>>>> +
+>>>> +SRC_URI += "file://encrypt_partition.hook \
+>>>> +            file://encrypt_partition.script \
+>>>> +    file://encrypt_partition.env.tmpl"
+>>>> +
+>>>> +CRYPT_PARTITIONS ??= "home:/home:reencrypt var:/var:reencrypt"
+>>>> +CRYPT_REDUDUCE_DEVICE_SIZE="32M"
+>>>> +
+>>>> +TEMPLATE_VARS = "CRYPT_PARTITIONS CRYPT_REDUDUCE_DEVICE_SIZE"
+>>>> +TEMPLATE_FILES = "encrypt_partition.env.tmpl"
+>>>> +
+>>>> +do_install[cleandirs] += " \
+>>>> +    ${D}/usr/share/initramfs-tools/hooks \
+>>>> +    ${D}/usr/share/encrypt_partition \
+>>>> +    ${D}/usr/share/initramfs-tools/scripts/local-bottom"
+>>>> +do_install() {
+>>>> +    install -m 0600 "${WORKDIR}/encrypt_partition.env"
+>>>> "${D}/usr/share/encrypt_partition/encrypt_partition.env"
+>>>> +    install -m 0755 "${WORKDIR}/encrypt_partition.script" \
+>>>> +
+>>>> "${D}/usr/share/initramfs-tools/scripts/local-bottom/encrypt_partition"
+>>>> +    install -m 0755 "${WORKDIR}/encrypt_partition.hook" \
+>>>> +        "${D}/usr/share/initramfs-tools/hooks/encrypt_partition"
+>>>> +}
+>>>> diff --git a/wic/x86-efibootguard.wks.in b/wic/x86-efibootguard.wks.in
+>>>> index b635a8b..1d29583 100644
+>>>> --- a/wic/x86-efibootguard.wks.in
+>>>> +++ b/wic/x86-efibootguard.wks.in
+>>>> @@ -7,7 +7,7 @@ part --source rawcopy --sourceparams
+>>>> "file=${IMAGE_FULLNAME}.squashfs" --align 1
+>>>>    part --source empty --align 1024 --fixed-size 1G --uuid
+>>>> "${ABROOTFS_PART_UUID_B}"
+>>>>      # home and var are extra partitions
+>>>> -part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home
+>>>> --fstype=ext4 --label home --align 1024  --size 1G
+>>>> -part /var --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var
+>>>> --fstype=ext4 --label var --align 1024  --size 2G
+>>>> +part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home
+>>>> --fstype=ext4 --label home --align 1024  --size 1G --extra-space=100M
+>>>> +part /var --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var
+>>>> --fstype=ext4 --label var --align 1024  --size 2G --extra-space=100M
+>>>>      bootloader --ptable gpt --append="console=tty0
+>>>> console=ttyS0,115200 rootwait earlyprintk"
+>>>
+>>> Jan
+>>>
+>> Thanks for the review
+>> Quirin
+> 
+> Jan
 > 
 
---------------ms060301060502070903050303
+--------------ms090300070504070500070101
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -345,8 +641,8 @@ MQ8wDQYDVQQIDAZCYXllcm4xETAPBgNVBAcMCE11ZW5jaGVuMRAwDgYDVQQKDAdTaWVtZW5z
 MREwDwYDVQQFEwhaWlpaWlpCMjEdMBsGA1UECwwUU2llbWVucyBUcnVzdCBDZW50ZXIxKDAm
 BgNVBAMMH1NpZW1lbnMgSXNzdWluZyBDQSBFRSBBdXRoIDIwMjACEFq+ceLdMfrpOzt3WJxg
 r1UwDQYJYIZIAWUDBAIBBQCgggJnMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZI
-hvcNAQkFMQ8XDTIzMDIxNzE1MTE0M1owLwYJKoZIhvcNAQkEMSIEIPFV0IilZQmg/FD2u0l6
-kD1WzjbZM9t65TeQUCAiB1HiMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUDBAEqMAsGCWCG
+hvcNAQkFMQ8XDTIzMDIxNzE1MjAzMFowLwYJKoZIhvcNAQkEMSIEIGJMra2RkzCQ0QUGBpKo
+4uFGvf7O66yfwZLvSU66GTMaMGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUDBAEqMAsGCWCG
 SAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcNAwICAUAwBwYF
 Kw4DAgcwDQYIKoZIhvcNAwICASgwgcQGCSsGAQQBgjcQBDGBtjCBszCBnjELMAkGA1UEBhMC
 REUxDzANBgNVBAgMBkJheWVybjERMA8GA1UEBwwITXVlbmNoZW4xEDAOBgNVBAoMB1NpZW1l
@@ -356,11 +652,11 @@ MCUGA1UEAwweU2llbWVucyBJc3N1aW5nIENBIEVFIEVuYyAyMDIwAhBOiqUnRfg4QgewMbM0
 eWVybjERMA8GA1UEBwwITXVlbmNoZW4xEDAOBgNVBAoMB1NpZW1lbnMxETAPBgNVBAUTCFpa
 WlpaWkIzMR0wGwYDVQQLDBRTaWVtZW5zIFRydXN0IENlbnRlcjEnMCUGA1UEAwweU2llbWVu
 cyBJc3N1aW5nIENBIEVFIEVuYyAyMDIwAhBOiqUnRfg4QgewMbM06383MA0GCSqGSIb3DQEB
-AQUABIIBAEE0cth+sdQAn4k9Ba4z6n+uklE+66BUI0xbfYJ1nT2GZH99kpjeJZy8n6Y8OPXh
-NkWLtLvZJyd4K/XrzSL32eER7ZqVgT5Qaw8jBqYOPUhWeC/gN35ABpxuvmNrJvbsX/bZFgHm
-Fe5TZIvndJMLNBr9U05B31/cG9QhDDmETBGQYimti735I49S32Wr1m2y7fvSN05Z0IVWsBZy
-DnEI8FoJpgiMaW90g/qJrAlDppYn2/kA3u4dPTUm80CrEVjmYTNb0ZfOrG6x2IGgci0/CHzu
-3565/UVphRkWOKH1rR+xwVPXYjpBKfNrA1zD3kehNnzgUc2XcO1yGc1dsJTUtG0AAAAAAAA=
+AQUABIIBAIb+UP7T8vFYP0vnzrIaJkExbgz4QRoJy5B6a5rtOtN1rE+VgnQf4QefMxnyRa6t
+qC+etXj81GX++VL8bvIBspP6i4cbh5qmkxtHNWEoKzR5sJnoS8buDFLJCBCaayT7kOc1xaMw
+EK6X+1nYCcqZEcQO/47CP6GvkFtOzQR8pGlcMbUi97GxoHiu7dXZgFPh1c+tiaMZmAiKC1zP
+A68lPr/T2P68O4wHNItQbDiATBq69f7a3O850jUPFs4KgzdTBVUO0qvrMmpwBpER7Jd9mTd+
+eKhTYOI6gtV7FWYy2dwb3IcTSu8hooBKXQUrXFf3Pb9z+sfHOhnWExMmsZS4Bf8AAAAAAAA=
 
---------------ms060301060502070903050303--
+--------------ms090300070504070500070101--
 
