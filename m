@@ -1,266 +1,182 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5FD8C636D6
-	for <webhook@archiver.kernel.org>; Wed, 22 Feb 2023 20:07:48 +0000 (UTC)
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
- by mx.groups.io with SMTP id smtpd.web10.3636.1677096468233975947
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Wed, 22 Feb 2023 12:07:48 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FBC5C636D6
+	for <webhook@archiver.kernel.org>; Wed, 22 Feb 2023 23:34:33 +0000 (UTC)
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+ by mx.groups.io with SMTP id smtpd.web10.2908.1677108870388644691
+ for <cip-dev@lists.cip-project.org>;
+ Wed, 22 Feb 2023 15:34:31 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=BfV/7iR6;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.50, mailfrom: bot@kernelci.org)
-Received: by mail-pj1-f50.google.com with SMTP id qi12-20020a17090b274c00b002341621377cso10013002pjb.2
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Wed, 22 Feb 2023 12:07:48 -0800 (PST)
+ dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112 header.b=WUEAHTsE;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.167.177, mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-oi1-f177.google.com with SMTP id bi17so9691447oib.3
+        for <cip-dev@lists.cip-project.org>; Wed, 22 Feb 2023 15:34:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=lxh38+MEeD1vFgdUs9rGCyyPuIMQ+pnwW3qdLAalw/E=;
-        b=BfV/7iR60zVnWSTS5Sbt1OIKH7+HvdZvL8OJHnhWCRgK8xnG5BzckW80D/eT85eJ44
-         WfQTwu14BXPKZq9ITJsLB7annP5Qu6mXsh1MYba4KBtQ4mK8Dbrqt2xujdP1mwbPA+gq
-         bAt8HUTO3mn7PuC/7DtLwZac/3Lz5kEBp/zcd/N6+S6lxPnsTu9IybHgL1WvNNSLJqK6
-         sD7lp13/NRdF2GvBG+nxk33+izxqIEhlMT6Y9dfZNCpz7H0P2QyznCMm1ZiGbIKH/bMe
-         areW2THupazaX0LMRPfVECyOYmpyNKrWsmB3e/7t5XZO129QHehM+B+o4EMEPmNGwa7L
-         FHxw==
+        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0/1coMypE5BzRBeNIjLhUxCdyjV1vTsTxJzPwA5x+Xk=;
+        b=WUEAHTsE9e0bXhI4S3+CraQ9SDG+Uypef8u8vMKQbLuL8bQABbk77Y6Ifc3RDQR/t3
+         wPivakobKGQzavYQMrv4NtWGDqOK7KNg8IlLRJmBT5C/fzK3KEajHG7mmwxIjQm0L44B
+         797GwI52emXuUHzlSFi4sAXH3iQPyF+MA+DOqtx+bRbFXYZXwvQZHJ6hqXuHBSFuaWl2
+         P3HuJqe5uYxZlh74PSkzlC1OJpho/y/uY8qhx7Z19dnr/5b8I7J9IyEKz5doQMoHMkC1
+         hbT5MLOC9xhy4PF5VU1QJBu4aVkum43cMKTOcZu5GOjl5EA6OMJvtNhUyf55JV3p2v8D
+         FOHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lxh38+MEeD1vFgdUs9rGCyyPuIMQ+pnwW3qdLAalw/E=;
-        b=hcoBsxdGl2pZ9Hl1Epd+7mIQf2qJyTFPIAQbhf1Orso+40ukXaMB9G7Rq1+hKfBd+Z
-         R70EPeCN2nIb4XzQ6qZ1LgP23P/Z4IX+INDF8O7s4YcE0ix611Eme0menR6mipaxqzCo
-         CZNnsqor/A2JBg3oYPNUh/bg1d2cEqY0SGMO1jocok/rn3wUMVtX7psm71W7rUWewnwL
-         0qyx31qWiqGNjyU8yqMQdLELSJPFIb1JhLbyRGU5BFAafzJPjmG/ThbGjcbmYuENaTTq
-         FrHE5dCIPfSWzHgI9o8En6hekY2pjpYNF8BsniLnmxe1zWluTLyxnztal+fFs7k+xQ3Y
-         J5og==
-X-Gm-Message-State: AO0yUKVOBaCSfbFpRA6TFNBYQNrPWrmhRopAsQmJYPzSZnuX1x91jUS+
-	dpPtl3KyQwMxm33Qx6x3zmXTTQCRrIykT1/bxPuDyg==
-X-Google-Smtp-Source: AK7set9a3tnAGJ1M9Pd7FoltVwoBSiLeEDuzvy2DM9H1jBuvlZW9fKrsj3WOYM16kLwuZAsLnZvqHQ==
-X-Received: by 2002:a17:903:1108:b0:19c:a9b8:58ea with SMTP id n8-20020a170903110800b0019ca9b858eamr3276601plh.45.1677096467316;
-        Wed, 22 Feb 2023 12:07:47 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id iy7-20020a170903130700b00196807b5189sm140975plb.292.2023.02.22.12.07.46
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Feb 2023 12:07:47 -0800 (PST)
-Message-ID: <63f67613.170a0220.19bbb.0a7f@mx.google.com>
-Date: Wed, 22 Feb 2023 12:07:47 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        bh=0/1coMypE5BzRBeNIjLhUxCdyjV1vTsTxJzPwA5x+Xk=;
+        b=mvQrbo+X7hGUUAy3u9JYwYM4FwmszuIBAJ6b6+R1VzoO+NK/mWng/syZZzO9oNEXqI
+         FUi6oOXhUCqMdlAHpd1RfzA6j/lOkk7kMT54FTRFL/LLAknmK+q2I9E6Egm+atdoZEIS
+         ikAM+soq/24lEH/Mhj/jgN/Z1hCOcKTkhz8ZjkeLyjY6wTDIv/UaIOICkqjcJIGHVy1Q
+         2XOtBHpSGXqd59hCw43Pe7jqA8ciazW3swO6Gs6V010Jjk7F/P762A8lDAY9TZSDyYA2
+         OsVANOu6FyMasHzzSGdOIhFsNvjX/k8/KiWAa3GAWJFMJ7bTn71V9+PUzEJgIMIwUnQY
+         NuhQ==
+X-Gm-Message-State: AO0yUKVGCGn1P3tKyuK/f7ex0tjSIzxOnfdAglIYxmLwyY5LkleWMJeB
+	wyYFtv9wqYPacjZjtT34epHljnJyzqD77TKHPGveGGuS4lXCvuaj
+X-Google-Smtp-Source: AK7set81HDzw8gt88V0Dfe9PngJ0YN3XgCTnSB8F9sUZ/KdW4b9hMoCFEq5ub0R5DYRVi7WveRkD30B+LXR5c1bvUKM=
+X-Received: by 2002:a05:6808:189e:b0:383:b21e:ad41 with SMTP id
+ bi30-20020a056808189e00b00383b21ead41mr631634oib.58.1677108869113; Wed, 22
+ Feb 2023 15:34:29 -0800 (PST)
 MIME-Version: 1.0
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 23 Feb 2023 08:33:52 +0900
+Message-ID: <CAODzB9qbDPvJAiMk5Jk1s0YqQ6fDxq6xms45Cc26KsxHvtBarg@mail.gmail.com>
+Subject: New CVE entries this week
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: ci/iwamatsu/linux-4.19.y-cip-rc
-X-Kernelci-Tree: cip-gitlab
-X-Kernelci-Kernel: v4.19.272-cip91-91-gb4755c11cb57
-X-Kernelci-Report-Type: test
-Subject: cip-gitlab/ci/iwamatsu/linux-4.19.y-cip-rc ltp-timers: 5 runs,
- 8 regressions (v4.19.272-cip91-91-gb4755c11cb57)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
-From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 22 Feb 2023 20:07:48 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10794
+ <cip-dev@lists.cip-project.org>; Wed, 22 Feb 2023 23:34:33 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10795
 
-cip-gitlab/ci/iwamatsu/linux-4.19.y-cip-rc ltp-timers: 5 runs, 8 regression=
-s (v4.19.272-cip91-91-gb4755c11cb57)
+Hi !
 
-Regressions Summary
--------------------
+It's this week's CVE report.
 
-platform                  | arch   | lab           | compiler | defconfig  =
-                  | regressions
---------------------------+--------+---------------+----------+------------=
-------------------+------------
-asus-C433TA-AJ0005-rammus | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...6-chromebook | 2          =
+This week reported 4 new CVEs and 0 updated CVEs.
 
-r8a774a1-hihope-rzg2m-ex  | arm64  | lab-cip       | gcc-10   | defconfig  =
-                  | 2          =
+* New CVEs
 
-r8a774a1-hihope-rzg2m-ex  | arm64  | lab-cip       | gcc-10   | defconfig+a=
-rm64-chromebook   | 2          =
+CVE-2022-36397:  Incorrect default permissions causes Escalation of
+Privilege bug in Intel=C2=AE QuickAssist Technology (QAT) drivers
 
-rk3399-gru-kevin          | arm64  | lab-collabora | gcc-10   | defconfig+a=
-rm64-chromebook   | 2          =
+CVSS v3 score is not provided (NVD)
+CVSS v3 score is 7.3 HIGH (CNA)
 
+Incorrect default permissions in the software installer for some
+Intel(R) QAT drivers for Linux before version 4.17 (which means QAT
+driver version 4.17 not Linux kernel 4.17) may allow an authenticated
+user to potentially enable escalation of privilege via local access.
 
-  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fiwamatsu%2=
-Flinux-4.19.y-cip-rc/kernel/v4.19.272-cip91-91-gb4755c11cb57/plan/ltp-timer=
-s/
+This bug is in the Intel QAT driver before version 4.17 so that is not
+Linux kernel bug.
 
-  Test:     ltp-timers
-  Tree:     cip-gitlab
-  Branch:   ci/iwamatsu/linux-4.19.y-cip-rc
-  Describe: v4.19.272-cip91-91-gb4755c11cb57
-  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
-  SHA:      b4755c11cb578851c6f8f50c94fcac17e987653c
+Fixed status
+ Not a kernel bug
 
-  Test suite revisions:
-    ltp-tests
-      URL:  https://github.com/linux-test-project/ltp.git
-      SHA:  86f0584539eb1567f009f3e38be6940830649b92 =
+CVE-2023-23586: memory leak/use-after-free bug is found in io_uring
+subsystem in linux 5.10.y
 
+CVSS v3 score is not provided (NVD)
+CVSS v3 score is 5.5 MEDIUM (CNA)
 
+Due to a vulnerability in the io_uring subsystem, it is possible to
+leak kernel memory information to the user process. timens_install
+calls current_is_single_threaded to determine if the current process
+is single-threaded, but this call does not consider io_uring's
+io_worker threads, thus it is possible to insert a time namespace's
+vvar page to process's memory space via a page fault. When this time
+namespace is destroyed, the vvar page is also freed, but not removed
+from the process' memory, and a next page allocated by the kernel will
+be still available from the user-space process and can leak memory
+contents via this (read-only) use-after-free vulnerability. We
+recommend upgrading past version 5.10.161 or commit
+788d0824269bef539fe31a785b1517882eafed93
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/io_=
+uring
 
-Test Regressions
----------------- =
+This bug is in kernel 5.10.y. Its fix is the same as CVE-2023-0240
+which backport io_uring codebase from 5.15.
 
+Fixed status
+stable/5.10: [788d0824269bef539fe31a785b1517882eafed93]
 
+CVE-2023-26242: fpga: dfl-afu-region: Add overflow checks for region
+size and offset
 
-platform                  | arch   | lab           | compiler | defconfig  =
-                  | regressions
---------------------------+--------+---------------+----------+------------=
-------------------+------------
-asus-C433TA-AJ0005-rammus | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-on...6-chromebook | 2          =
+CVSS v3 score is not provided
 
+afu_mmio_region_get_by_offset in drivers/fpga/dfl-afu-region.c in the
+Linux kernel through 6.1.12 has an integer overflow.
+According to the comment
+(https://patchwork.kernel.org/project/linux-fpga/patch/20230206054326.89323=
+-1-k1rh4.lee@gmail.com/),
+it might be false positive.
 
-  Details:     https://kernelci.org/test/plan/id/63f66bffec3997ad2e8c8645
+No CIP member enables CONFIG_FPGA_DFL_AFU.
 
-  Results:     32 PASS, 4 FAIL, 0 SKIP
-  Full config: x86_64_defconfig+x86-chromebook
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
-.19.y-cip-rc/v4.19.272-cip91-91-gb4755c11cb57/x86_64/x86_64_defconfig+x86-c=
-hromebook/gcc-10/lab-collabora/ltp-timers-asus-C433TA-AJ0005-rammus.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
-.19.y-cip-rc/v4.19.272-cip91-91-gb4755c11cb57/x86_64/x86_64_defconfig+x86-c=
-hromebook/gcc-10/lab-collabora/ltp-timers-asus-C433TA-AJ0005-rammus.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230217.0/amd64/initrd.cpio.gz =
+Fixed status
+Not fixed yet
 
+CVE-2023-0461: A use-after-free bug was found is Upper Level
+Protocol(ULP) subsystem
 
+CVSS v3 score is not provided
 
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/63f66bffec3=
-997ad2e8c8657
-        failing since 110 days (last pass: v4.19.256-cip80-1-g68250b8eafbe0=
-, first fail: v4.19.261-cip83-311-g41979a0fec1a) =
+A use-after-free bug was found in the Upper Level Protocol(ULP)
+subsystem which will cause a system crash or execute arbitrary code.
+It was introduced by commit 734942c ("tcp: ULP infrastructure") in
+4.13-rc1, so 4.4.y kernels are not affected by this issue.
 
+Fixed status
+mainline: [2c02d41d71f90a5168391b6a5f2954112ba2307c]
+stable/4.14: [b689125d04949841337dfa730d48dd91ada9ce3a]
+stable/4.19: [755193f2523ce5157c2f844a4b6d16b95593f830]
+stable/5.10: [f8ed0a93b5d576bbaf01639ad816473bdfd1dcb0]
+stable/5.15: [dadd0dcaa67d27f550131de95c8e182643d2c9d6]
+stable/5.4: [c6d29a5ffdbc362314853462a0e24e63330a654d]
+stable/6.1: [7d242f4a0c8319821548c7176c09a6e0e71f223c]
 
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/63f66bffec3=
-997ad2e8c8657
-        failing since 110 days (last pass: v4.19.256-cip80-1-g68250b8eafbe0=
-, first fail: v4.19.261-cip83-311-g41979a0fec1a) =
+* Updated CVEs
 
- =
+No update this week.
 
+Currently tracking CVEs
 
+CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
+Bluetooth Core Specifications 4.0 through 5.2
 
-platform                  | arch   | lab           | compiler | defconfig  =
-                  | regressions
---------------------------+--------+---------------+----------+------------=
-------------------+------------
-r8a774a1-hihope-rzg2m-ex  | arm64  | lab-cip       | gcc-10   | defconfig  =
-                  | 2          =
+There is no fix information.
 
+CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
 
-  Details:     https://kernelci.org/test/plan/id/63f66937dba72d8db68c8637
+No fix information.
 
-  Results:     32 PASS, 4 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
-.19.y-cip-rc/v4.19.272-cip91-91-gb4755c11cb57/arm64/defconfig/gcc-10/lab-ci=
-p/ltp-timers-r8a774a1-hihope-rzg2m-ex.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
-.19.y-cip-rc/v4.19.272-cip91-91-gb4755c11cb57/arm64/defconfig/gcc-10/lab-ci=
-p/ltp-timers-r8a774a1-hihope-rzg2m-ex.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230217.0/arm64/initrd.cpio.gz =
+CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
+Provisioning Leads to MITM
 
+No fix information.
 
+CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
 
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/63f66937dba=
-72d8db68c8642
-        new failure (last pass: v4.19.271-cip90-81-g5d0e00d43751) =
+No fix information.
 
+CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
 
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/63f66937dba=
-72d8db68c8642
-        new failure (last pass: v4.19.271-cip90-81-g5d0e00d43751) =
+No fix information.
 
- =
+Regards,
+--=20
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
 
-
-
-platform                  | arch   | lab           | compiler | defconfig  =
-                  | regressions
---------------------------+--------+---------------+----------+------------=
-------------------+------------
-r8a774a1-hihope-rzg2m-ex  | arm64  | lab-cip       | gcc-10   | defconfig+a=
-rm64-chromebook   | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/63f674dba27e45d88c8c8726
-
-  Results:     32 PASS, 4 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
-.19.y-cip-rc/v4.19.272-cip91-91-gb4755c11cb57/arm64/defconfig+arm64-chromeb=
-ook/gcc-10/lab-cip/ltp-timers-r8a774a1-hihope-rzg2m-ex.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
-.19.y-cip-rc/v4.19.272-cip91-91-gb4755c11cb57/arm64/defconfig+arm64-chromeb=
-ook/gcc-10/lab-cip/ltp-timers-r8a774a1-hihope-rzg2m-ex.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230217.0/arm64/initrd.cpio.gz =
-
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/63f674dba27=
-e45d88c8c8731
-        new failure (last pass: v4.19.271-cip90-81-g5d0e00d43751) =
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/63f674dba27=
-e45d88c8c8731
-        new failure (last pass: v4.19.271-cip90-81-g5d0e00d43751) =
-
- =
-
-
-
-platform                  | arch   | lab           | compiler | defconfig  =
-                  | regressions
---------------------------+--------+---------------+----------+------------=
-------------------+------------
-rk3399-gru-kevin          | arm64  | lab-collabora | gcc-10   | defconfig+a=
-rm64-chromebook   | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/63f66f7a590bbbcd048c8708
-
-  Results:     32 PASS, 4 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
-.19.y-cip-rc/v4.19.272-cip91-91-gb4755c11cb57/arm64/defconfig+arm64-chromeb=
-ook/gcc-10/lab-collabora/ltp-timers-rk3399-gru-kevin.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
-.19.y-cip-rc/v4.19.272-cip91-91-gb4755c11cb57/arm64/defconfig+arm64-chromeb=
-ook/gcc-10/lab-collabora/ltp-timers-rk3399-gru-kevin.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230217.0/arm64/initrd.cpio.gz =
-
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/63f66f7a590=
-bbbcd048c870d
-        failing since 91 days (last pass: v4.19.264-cip84-50-g1e56b70eaf66,=
- first fail: v4.19.265-cip85-36-gf1ffb3de9576) =
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/63f66f7a590=
-bbbcd048c870d
-        failing since 91 days (last pass: v4.19.264-cip84-50-g1e56b70eaf66,=
- first fail: v4.19.265-cip85-36-gf1ffb3de9576) =
-
- =20
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
