@@ -2,178 +2,75 @@ Return-Path: <venkata.pyla@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7792C61DA4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA95CC64ED6
 	for <webhook@archiver.kernel.org>; Wed, 22 Feb 2023 09:11:35 +0000 (UTC)
 Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.133])
- by mx.groups.io with SMTP id smtpd.web10.4642.1677057089703719331
+ by mx.groups.io with SMTP id smtpd.web11.4603.1677057089094593872
  for <cip-dev@lists.cip-project.org>;
  Wed, 22 Feb 2023 01:11:30 -0800
 Authentication-Results: mx.groups.io;
  dkim=missing; spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.133, mailfrom: venkata.pyla@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1116) id 31M9BRTo015752; Wed, 22 Feb 2023 18:11:27 +0900
-X-Iguazu-Qid: 2wHHOH2eTZ9CpZBw4i
-X-Iguazu-QSIG: v=2; s=0; t=1677057087; q=2wHHOH2eTZ9CpZBw4i; m=KAUqGfcIpGs+KIBI1G1tj9ZFRYhS2xFYmtm6jzPiMsI=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1111) id 31M9BQX6034620
+Received: by mo-csw.securemx.jp (mx-mo-csw1116) id 31M9BQSs015670; Wed, 22 Feb 2023 18:11:26 +0900
+X-Iguazu-Qid: 2wHHyxo6x6HVoaDhZ5
+X-Iguazu-QSIG: v=2; s=0; t=1677057086; q=2wHHyxo6x6HVoaDhZ5; m=gCaYdRYZxDryFOsh2v7vWwEwISY5mstfvIQ99T2/pXk=
+Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
+	by relay.securemx.jp (mx-mr1113) id 31M9BPc1002066
 	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
-	Wed, 22 Feb 2023 18:11:27 +0900
+	Wed, 22 Feb 2023 18:11:25 +0900
 From: venkata.pyla@toshiba-tsip.com
 To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
 Cc: venkata pyla <venkata.pyla@toshiba-tsip.com>,
         dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
-Subject: [isar-cip-core 2/2] .reproducible-check-ci.yml: Add ci for reproducible build checks
-Date: Wed, 22 Feb 2023 14:41:59 +0530
+Subject: [isar-cip-core 1/2] kas/opt/reproducible.yml: Add kas file for reproducible builds target
+Date: Wed, 22 Feb 2023 14:41:58 +0530
 X-TSB-HOP2: ON
-Message-Id: <20230222091159.18216-3-venkata.pyla@toshiba-tsip.com>
+Message-Id: <20230222091159.18216-2-venkata.pyla@toshiba-tsip.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20230222091159.18216-1-venkata.pyla@toshiba-tsip.com>
 References: <20230222091159.18216-1-venkata.pyla@toshiba-tsip.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 22 Feb 2023 09:11:23.0182 (UTC) FILETIME=[A25AF4E0:01D9469D]
+X-OriginalArrivalTime: 22 Feb 2023 09:11:23.0151 (UTC) FILETIME=[A25639F0:01D9469D]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 22 Feb 2023 09:11:35 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10774
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10775
 
 From: venkata pyla <venkata.pyla@toshiba-tsip.com>
 
-The reproducible check is added only for scheduled CI's in order to reduce
-burden on regular commit pushes and monitor only reproducible checks on
-specified intervals like bi-weekly or monthly.
+This kas file set the 'SOURCE_DATE_EPOCH' variable to last commit
+timestamp required for building reproducible image.
 
 Signed-off-by: venkata pyla <venkata.pyla@toshiba-tsip.com>
 ---
- .gitlab-ci.yml             |  5 +++
- .reproducible-check-ci.yml | 91 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 96 insertions(+)
- create mode 100644 .reproducible-check-ci.yml
+ kas/opt/reproducible.yml | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+ create mode 100644 kas/opt/reproducible.yml
 
-diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-index f7c8c88..3642661 100644
---- a/.gitlab-ci.yml
-+++ b/.gitlab-ci.yml
-@@ -13,6 +13,7 @@ variables:
- 
- stages:
-   - build
-+  - test
- 
- default:
-   before_script:
-@@ -26,6 +27,8 @@ default:
- 
- .build_base:
-   stage: build
-+  except:
-+    - schedules
-   tags:
-     - large
-   variables:
-@@ -281,3 +284,5 @@ build:qemu-amd64-secure-boot-buster:
-     use_rt: disable
-     wic_targz: disable
-     deploy: disable
-+
-+include: '.reproducible-check-ci.yml'
-diff --git a/.reproducible-check-ci.yml b/.reproducible-check-ci.yml
+diff --git a/kas/opt/reproducible.yml b/kas/opt/reproducible.yml
 new file mode 100644
-index 0000000..a50d683
+index 0000000..173c018
 --- /dev/null
-+++ b/.reproducible-check-ci.yml
-@@ -0,0 +1,91 @@
-+# extension to gitlab-ci for reproducible checks
++++ b/kas/opt/reproducible.yml
+@@ -0,0 +1,17 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Toshiba Corporation, 2023
++#
++# Authors:
++#  Venkata Pyla <venkata.pyla@toshiba-tsip.com>
++#
++# SPDX-License-Identifier: MIT
++#
++header:
++  version: 12
 +
-+.repro-build:
-+  variables:
-+    use_rt: disable
-+    wic_targz: disable
-+    targz: enable
-+    deploy: disable
-+    deploy_kernelci: disable
-+    artifact_suffix: ".tar.gz"
-+    base_yaml: "kas-cip.yml:kas/board/${target}.yml"
-+  stage: build
-+  tags:
-+    - large
-+  only:
-+    - schedules
-+  script:
-+    - if [ -f kas/opt/reproducible.yml ]; then base_yaml="${base_yaml}:kas/opt/reproducible.yml"; fi
-+    # Build 1st time
-+    - !reference [.build_base, script]
-+    - mv build/tmp/deploy/images/${target}/cip-core-image-cip-core-${release}-${target}${artifact_suffix} image1
-+    # clean
-+    - sudo rm -rf build/tmp
-+    - sudo rm -rf build/sstate-cache
-+    # Build 2nd time
-+    - !reference [.build_base, script]
-+    - mv build/tmp/deploy/images/${target}/cip-core-image-cip-core-${release}-${target}${artifact_suffix} image2
-+  artifacts:
-+    expire_in: 1 day
-+    paths:
-+      - image1
-+      - image2
++local_conf_header:
++  reproducible-builds: |
++    SOURCE_DATE_EPOCH = "${@bb.process.run("git -C ${LAYERDIR_cip-core} log -1 --pretty=%ct | tr -d '\n'")[0]}"
 +
-+.repro-test:
-+  image:
-+    name: debian:bullseye
-+  tags:
-+    - large
-+  stage: test
-+  only:
-+    - schedules
-+  variables:
-+    GIT_STRATEGY: none
-+  before_script:
-+    - apt update && DEBIAN_FRONTEND=noninteractive apt install -y diffoscope
-+  script:
-+    - diffoscope --text diffoscope_output.txt image1 image2
-+  artifacts:
-+    when: always
-+    expire_in: 1 day
-+    paths:
-+      - diffoscope_output.txt
-+
-+
-+# repro build
-+build:qemu-amd64-base-repro-build:
-+  extends:
-+    - .repro-build
-+  variables:
-+    target: qemu-amd64
-+
-+build:qemu-arm64-base-repro-build:
-+  extends:
-+    - .repro-build
-+  variables:
-+    target: qemu-arm64
-+
-+build:qemu-arm-base-repro-build:
-+  extends:
-+    - .repro-build
-+  variables:
-+    target: qemu-arm
-+
-+# repro build test
-+test:qemu-amd64-base-repro-test:
-+  extends:
-+    - .repro-test
-+  dependencies:
-+    - build:qemu-amd64-base-repro-build
-+
-+test:qemu-arm64-base-repro-test:
-+  extends:
-+    - .repro-test
-+  dependencies:
-+    - build:qemu-arm64-base-repro-build
-+
-+test:qemu-arm-base-repro-test:
-+  extends:
-+    - .repro-test
-+  dependencies:
-+    - build:qemu-arm-base-repro-build
 -- 
 2.20.1
 
