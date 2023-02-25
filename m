@@ -1,164 +1,358 @@
-Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
+Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3136C64ED8
-	for <webhook@archiver.kernel.org>; Fri, 24 Feb 2023 23:46:53 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.154])
- by mx.groups.io with SMTP id smtpd.web11.33869.1677282405959156704
- for <cip-dev@lists.cip-project.org>;
- Fri, 24 Feb 2023 15:46:46 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA38BC6FA8E
+	for <webhook@archiver.kernel.org>; Sat, 25 Feb 2023 00:02:03 +0000 (UTC)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+ by mx.groups.io with SMTP id smtpd.web11.34166.1677283316402404979
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Fri, 24 Feb 2023 16:01:56 -0800
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: toshiba.co.jp, ip: 210.130.202.154, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
-Received: by mo-csw.securemx.jp (mx-mo-csw1515) id 31ONkQuO011621; Sat, 25 Feb 2023 08:46:26 +0900
-X-Iguazu-Qid: 34trk59Yi2Qv8yKi81
-X-Iguazu-QSIG: v=2; s=0; t=1677282386; q=34trk59Yi2Qv8yKi81; m=yqI1YfmTuE4V3ula0rfIysbfUpCKw+uNybEGsVik0ck=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1512) id 31ONkOaQ002218
-	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
-	Sat, 25 Feb 2023 08:46:24 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CZV4RVk/3jnM+cTWeYboR9WqYwtVkIL+6m3MYY/+3jpqeIVU5rnUl0wYDQH1XyWzfx1HcVb7dEYLiiwfmGGwLCuyQ/rX1OaJUM0fHr5y1VTd4LKQ5HygWcpM52a9dro1vfGIwjjw9YrZ5EUo8Hp8+8FAY6Veb3n66/syRL7RpKg/BKtWQCiKXOqkYeBCaEgoUoEQMHRVYtQFRieeyX+C6bfEsWZgGaYCbLyi9mVET1kEVA6PofjR5yH2meWgXVGJrIII3P5WeDP07GE178K3yqHjlt6CsqrA5HZwLwDIzTGTAqv7M+evXfFWBytleIbAPTjAEwlRCLrPu6VFYR8sHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lLUvnGCJFaSLudD0+AepQDP3fpw1h3T2zqisvk2zu3w=;
- b=HFXWGPz+xCaFjTtH/HSxGSYSazjPh1YCUuHlFM5rDlaZ/7WBXaDzfP/C6yuxCHh+Xz6vvW882GyrFw1mnOkFQFtHo23GVQ7NwK9tBjO2PjRjFlwtdQr6RlqIj630yi1FVtVVmDI37ThrZf0thh2TpJWsI0HGn9KGNx3HE0XjevyDm1hMif31ndt6C3fQPhYI+2dxQyR+8w07vXsam4KhXI11HgXaIFcEbOxNRcTpXMjbbS4esMByqUDLfyZSNIbphB9bs9zvLydKrAs1PmFMfB0ENmbmIO0GjEvbxa9BHDJsYoxu9n02yviG1R8Efu0p0cYoVSx3I/SpfvIoeuLy6A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From: <nobuhiro1.iwamatsu@toshiba.co.jp>
-To: <cip-dev@lists.cip-project.org>
-CC: <pavel@denx.de>, <jan.kiszka@siemens.com>,
-        <masami.ichikawa@cybertrust.co.jp>, <Chris.Paterson2@renesas.com>,
-        <uli@fpond.eu>
-Subject: [ANNOUNCE] Release v4.19.273-cip92 and v5.10.168-cip27
-Thread-Topic: [ANNOUNCE] Release v4.19.273-cip92 and v5.10.168-cip27
-Thread-Index: AdlIqgmHJerlnHDOQJiTdmUFq6zlcg==
-Date: Fri, 24 Feb 2023 23:46:21 +0000
-X-TSB-HOP2: ON
-Message-ID: <TYCPR01MB9418ACB5738782BFC3FA908B92A89@TYCPR01MB9418.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYCPR01MB9418:EE_|TY3PR01MB11608:EE_
-x-ms-office365-filtering-correlation-id: 2b103ea7-22ac-4411-a073-08db16c1552a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Aadyfvm5epvKe2BkaptvW7sjEg94rVvZ/d4DLxI776O+YvSaGoUh4X1ITcprK9fquCg0MRx7qm3ykiwyx4OCH6LO7lnSKud79Ow3fbXjbdYPsQrsVXU6cj+I5J5PIhUYTp/8hfE5xdQojN1M7NVxxoM4CIl57O3Og7v9Lj1qZa4sU/0NhVX0LJnEOu2eaP8Ia+po/oLJcoDekQhv7FAVqKIBurSLQm3iI0bu0SbLca4rvDMWLuwkJuvA+74rmnmT7elEBow6vRbzNabjPD89TFmqFaN4bWPm6b+zQXQcavC5H1NJA4ekM/+LL+fzFuglhyQPiAVZiahiAjAyI19ZGkpyQpQoMgOrMV3cQlZscRZFB/C9K1SI2H/a0fXGC7QNH5BAroJ7Q9+FzqKghTeiN7tTSH37TorX0DGFUQH2dnJk2WiFG/dPbHz9PXNxfPyxPz+xqj1sFfUxqO6/Z+TbP6NH+wmp2khw5uVDOSdEqZngbmt0E0/O1FSHTLwc6vPLBqfHfA1oBSyiKwYk6okq2xjRAD01YDW4Hz9chlpuoWMaBsXyCy6/zTLsLjZ2dzTCGvmKV1g6mKgxlHsoLrSn27Y9Evx3IWf0orcRufKpiqugH6eXNPP/0j0DfYRMgs/3kv0sRTzkZzdc4WxZJWRrLXpBHI/d0oadCRvTC4RtFJfJlsUQfhi/F64ln3aUt7PG
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB9418.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(346002)(39860400002)(376002)(136003)(396003)(366004)(451199018)(52536014)(8936002)(6916009)(66946007)(66446008)(4326008)(64756008)(8676002)(76116006)(316002)(66556008)(66476007)(54906003)(71200400001)(2906002)(966005)(478600001)(7696005)(41300700001)(6506007)(186003)(26005)(9686003)(122000001)(38100700002)(83380400001)(5660300002)(33656002)(55016003)(38070700005)(86362001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-2022-jp?B?cmk3cXEzK3FQVnhpWTVScG5Ud3c4UFRQYjh4TzhQZlpvVy9wZ25Wa1dL?=
- =?iso-2022-jp?B?QjF1YklFVlNMTVlGT3hZYVFDWW9PQ3QrcC95cVUxbTZ6OE5FWG5kNzRT?=
- =?iso-2022-jp?B?c1lDTUtwTTlWT3U2YnJMUkpOZFVHTXQ5VGFkRHloNGNhZUR0QnFjR3dB?=
- =?iso-2022-jp?B?K0VIc093Q2JnM2hnaFdHR0VBdmFLR3B2UzNzckgvaEhHZVFLR0dndmR5?=
- =?iso-2022-jp?B?MDNEUWFwd2hVSDRPKzVFbFExaVMvK0QvQno5ZWFxdERxQnlIL1dtZngz?=
- =?iso-2022-jp?B?REFSWWNoazZqSXNjeXVZV0xORkI3WDdLRE9teVRIZGI5OVBucmtsSlZK?=
- =?iso-2022-jp?B?V0hXZEtBcHk3VGVsVy82NXpXL295QmpPU2d6MVJPbUc3TE53WmI3YnJU?=
- =?iso-2022-jp?B?WWxmcndaMjBMb2k0YkhOMTkxSWsvcWFvOTl4OFJ5UDNMS3krWDFjdDJy?=
- =?iso-2022-jp?B?SjZ3MXJ5S25UMFowcGs3WG1SY2tDZG9aeTlLanRGTDFpY0FEZVFyaGtI?=
- =?iso-2022-jp?B?K0ljQnhmaFVPTkNQWVFzVnF6OW5Fd1JiNUVuZUkzODJ2VkdJL211aS93?=
- =?iso-2022-jp?B?TTNRQWdsRUsxZzR3amhMeXByblpVZVBhNitLWUNyWWRMS21WTmtsVXE1?=
- =?iso-2022-jp?B?RTBXK01jcHFycDdrTmh2UzRPOTRPb2RTQjNJSGN3NjdKbDdkU3EvREw0?=
- =?iso-2022-jp?B?UTFqMmk5ZWZEVW8zdlVwWTljZlRmSVRxOUdmYWtodWFqNkJpZ2pTRUhU?=
- =?iso-2022-jp?B?RmtiR2VaZ3VtTktMSXcvcDk1LzY4a1o5Vk13WGxEb3lENENmdFlmWFZQ?=
- =?iso-2022-jp?B?VEZVbE5JdUsvL3k5MENiS21GU0Z4VmZzaDIxNUNjakR6eW42UGlsMm5J?=
- =?iso-2022-jp?B?VVh6ZkxlYkZ1WW9JK3NNYUZIMFFhQnBjdGpHSU50MFVFK2dlVEZpTXg1?=
- =?iso-2022-jp?B?REJJc2FDL0IvWjNIMEVHR0ZHMlNmakFMNmFIamNPb29LcU5GcU0rM3dy?=
- =?iso-2022-jp?B?dzJpVjAvZzFxdHUrcy81djFnR3dEOVNhYXJqaVhJSkpBSUgzSURkTWFj?=
- =?iso-2022-jp?B?REExNWh6VFJvSWs4dmRPdUlSd01XenF5QSt0UXRDdE1PalU4aUdWUmxT?=
- =?iso-2022-jp?B?bSs1dGMrTVNpNjAwb2llYVBtaUZvMjhnSm1TRTBIMXdPdG9KZHhDNlZU?=
- =?iso-2022-jp?B?WTNUc0J3MmthdWMwR1FoWEJENDBwbURnN0ZLY2IwRzFwYk1ZeXJNczJU?=
- =?iso-2022-jp?B?QlA2b2N1QkJvcHhXWTQrNTFXdGVINVNVYkF2enZWMWo3cXhPcHpDKzBi?=
- =?iso-2022-jp?B?SFRXcExXWmI4Q3ZPT2xzQnRhNnYwVzlyRnpSZzNXSThWQk9xSDJGbDYv?=
- =?iso-2022-jp?B?NEUvMXgxdk96alM0cUkyYkNXOG90azhPdW9JMnV5TndyQmlwU2ttWXd0?=
- =?iso-2022-jp?B?VWFJa1lvNXVXRHVWR2g2VC95TDBuZnkzN2Njb0tHNDJBSERMRVoyL2pR?=
- =?iso-2022-jp?B?elM4TGlqdkdnQWNJcm1mL1I4UUplVTZmWGhtNEZ2N29XSEQxbFFIK0FC?=
- =?iso-2022-jp?B?Z0ZWNFQycjEwSDVIQmRuaDZaTlpqN01YTGF5RjB6dXphNGpqN2hYT2x6?=
- =?iso-2022-jp?B?V0djNnByU1JjY2hEZlA5aXdldmIrKy9QdmF6NG9iVnozd1pYVHRPeUI4?=
- =?iso-2022-jp?B?RTBDUktiQ1JLeUFYRWl1b29zZlVoN0ZrWE9oOUx6SnpNL3dIVDdXMlgv?=
- =?iso-2022-jp?B?TG0zQzZtVXFYNlZWaUxuVU45aTFySzJEbWJ4S2RVVEQ5WXlNNFh0STdQ?=
- =?iso-2022-jp?B?UEtSazVaY09DK1hyZVNsdWFmdTIvSnFkcDVWZE1US1lVUlhucTZNcnp0?=
- =?iso-2022-jp?B?VnFQUG9WbEc2NXhtdXRxTUFEUUZqWm54Q1NzVGhncEtvSitBenl2K05D?=
- =?iso-2022-jp?B?WUpyaUVNN3pCNXhUaHEyeC9kYUx3c0EweHJVV3QyR0FzUkp3YzJFMGsy?=
- =?iso-2022-jp?B?TzQ5VjJUdjl4d1VyRlhkQUVXamxZOE5aRlhIVEZQRVg3aWVBV21oTFRU?=
- =?iso-2022-jp?B?eXV3blhMa3dyR3FveDFrS3NjdUJ6a0xuZGppRHpWQ3R5bENNRENKNjE5?=
- =?iso-2022-jp?B?N0YxbFVQblZtV3hBTVlZNklCSXJuOEk5LzBhajFuaktraFRvVHRRRmZa?=
- =?iso-2022-jp?B?VUxQeDkxd2kwM3V3N3BDSThFNTRBSFFaRmxuaUZCbkVVRWp6QWx6dzVY?=
- =?iso-2022-jp?B?UXJ6RGcwQ3ZXOHlZd0o2SnkrdU95dE13MUdTWEtaOFpINTRBbzFaN2hP?=
- =?iso-2022-jp?B?MS8yVkgvM0YwR0dBQ0RSazNZWHcydER3TXc9PQ==?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+ dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=SFbLTmOQ;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.170, mailfrom: bot@kernelci.org)
+Received: by mail-pl1-f170.google.com with SMTP id i10so1131436plr.9
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Fri, 24 Feb 2023 16:01:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=6REKQzRHWxh6bZcK1J+kcEoyZjVgJQGgjubF1DUQtt4=;
+        b=SFbLTmOQSi0NWJTCcujmGCb+93UECjTjzp2e0JquuvutuaFKNfMOOefHpRNmoYQSQ3
+         N6PLSddaKPreYNcNYkt4qyE9ZkmwHH1uxDwcKhi7p2cIGBsR+Zy5zMlthH0siJ7qo8mx
+         mRCvZ1Y5T3uXqZxM9vyRTNxn3EkkTHcAm59KWqhxvOI126NvN/xmsVTrHY6hQcIsQikr
+         Moa8sa1UjcDAobJ+aRqUyo+YfnEeDQiFq0FiArov1EMkzYJxZT2rISHp9X4RO2QmLex1
+         slxE/VyoTON7pra/LM3VtETmZaWvvlc8TcyRRN7ZmPO5jNQpK8EJUFQOho0GaovkOZsX
+         IJ1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6REKQzRHWxh6bZcK1J+kcEoyZjVgJQGgjubF1DUQtt4=;
+        b=NKpC1BGrhOixCbjBw8Iir4Z4C8sERntZzsv6mZMuBE85b6rRKIWijXMbEY1hOtMGXf
+         jDdz9ZAPsiOXcXNpgXYkOLYrs5UPXovJUNMcogVn6WxeU+eidQSPP8wryU1Hs4v3vqPz
+         LOt+RSg+5oZZmbPauRkanyiV7Bw38hg4RYGo2DAjKzpcbsg/E/LeYzD4u03RDgv4QpH/
+         lPi6C+NIIVEIVCYkrFeOlG9sHVAPzhF/dvyuqxobUd2IH5PmM9BZ1ovcl4dGgGfJa0Dv
+         jEnZqHaX/xDp+acWLbWdkFk/K+k1M+Dm3ELGwZ8+m7mpBUt/EMFrPMpeMARBDK+dtdUs
+         q/xA==
+X-Gm-Message-State: AO0yUKX15tQvQ7tkyDAhBzVXkAc9lcytFPK8eEGQelI+EXs+08iiJ7Ej
+	VJSliWX15Wz0+zH2HduGLtgF735Ymi7A03sWdLEnMg==
+X-Google-Smtp-Source: AK7set+0nt+8X9/PvvVMYZ2kecgS59vwIq0JKYSPbZMCAFfteviW/zYM0Ol7DoV783+x3xa6NV9QzA==
+X-Received: by 2002:a17:903:41cd:b0:199:10d2:b9da with SMTP id u13-20020a17090341cd00b0019910d2b9damr17236673ple.58.1677283315031;
+        Fri, 24 Feb 2023 16:01:55 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id s6-20020a17090302c600b00196519d8647sm85749plk.4.2023.02.24.16.01.54
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Feb 2023 16:01:54 -0800 (PST)
+Message-ID: <63f94ff2.170a0220.e4f3b.03c7@mx.google.com>
+Date: Fri, 24 Feb 2023 16:01:54 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB9418.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2b103ea7-22ac-4411-a073-08db16c1552a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Feb 2023 23:46:21.5787
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: o8E0XQJ7MYVPDsSG2gPPZA4aZqRsIoGaCHaB+IujGx74+jbyAkmmfcpQpkeHRqhiEs4c7w1qTPGLTkjzJ6c9wJgG8f3dxzVW8v0nYlFcAK1d9QI59QAYMYm3mXPRJ1Qm
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB11608
-X-OriginatorOrg: toshiba.co.jp
-MSSCP.TransferMailToMossAgent: 103
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: ci/pavel/linux-test
+X-Kernelci-Tree: cip-gitlab
+X-Kernelci-Kernel: v5.10.168-cip27-456-g42a59c4e5329
+X-Kernelci-Report-Type: test
+Subject: cip-gitlab/ci/pavel/linux-test baseline-nfs: 36 runs,
+ 8 regressions (v5.10.168-cip27-456-g42a59c4e5329)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
+From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 24 Feb 2023 23:46:53 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10830
+ <cip-dev@lists.cip-project.org>; Sat, 25 Feb 2023 00:02:03 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10832
 
-[ANNOUNCE] Release v4.19.273-cip92 and v5.10.168-cip27
+cip-gitlab/ci/pavel/linux-test baseline-nfs: 36 runs, 8 regressions (v5.10.=
+168-cip27-456-g42a59c4e5329)
 
-Hi,
+Regressions Summary
+-------------------
 
-CIP kernel team has released Linux kernel v4.19.273-cip92 and v5.10.168-cip=
-27.
-Linux-4.19.y-cip tree has been updated base version from v4.19.272 to v4.19=
-.273,=20
-and linux-5.10.y-cip tree has been updated base version from v5.10.167 to v=
-5.10.168.
-Linux-5.10.y-cip tree has applied fixes of Renesas RZG2L SoC.
+platform               | arch  | lab           | compiler | defconfig      =
+            | regressions
+-----------------------+-------+---------------+----------+----------------=
+------------+------------
+at91sam9g20ek          | arm   | lab-broonie   | gcc-10   | multi_v5_defcon=
+fig         | 1          =
 
-You can get this release via the git tree at:
+imx6dl-udoo            | arm   | lab-broonie   | gcc-10   | imx_v6_v7_defco=
+nfig        | 1          =
 
-  v5.10.168-cip27:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-5.10.y-cip
-    commit hash:
-      cc82f737b68c179240070fa34771bcfd0a5fa421
-    Fixed CVEs:
-      None
-    added commits:
-      CIP: Bump version suffix to -cip27 after merge from stable
-      pinctrl: renesas: rzg2l: remove unnecessary check from rzg2l_dt_node_=
-to_map()
-      watchdog: rzg2l_wdt: Issue a reset before we put the PM clocks
+imx6q-udoo             | arm   | lab-broonie   | gcc-10   | imx_v6_v7_defco=
+nfig        | 1          =
 
-  v4.19.273-cip92:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-4.19.y-cip
-    commit hash:
-      13b591404faff8a66449dfa80682930f5325b869
-    Fixed CVEs:
-      CVE-2023-23559: rndis_wlan: Prevent buffer overflow in rndis_query_oi=
-d
-    added commits:
-      CIP: Bump version suffix to -cip92 after merge from stable
+rk3399-gru-kevin       | arm64 | lab-collabora | gcc-10   | defconfig+arm64=
+-chromebook | 4          =
 
-Best regards,
-   Nobuhiro
+sun50i-a64-pine64-plus | arm64 | lab-broonie   | gcc-10   | defconfig      =
+            | 1          =
 
---
-Nobuhiro Iwamatsu
 
+  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fpavel%2Fli=
+nux-test/kernel/v5.10.168-cip27-456-g42a59c4e5329/plan/baseline-nfs/
+
+  Test:     baseline-nfs
+  Tree:     cip-gitlab
+  Branch:   ci/pavel/linux-test
+  Describe: v5.10.168-cip27-456-g42a59c4e5329
+  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
+  SHA:      42a59c4e5329312aec627def5fefeaf40a482f9c =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform               | arch  | lab           | compiler | defconfig      =
+            | regressions
+-----------------------+-------+---------------+----------+----------------=
+------------+------------
+at91sam9g20ek          | arm   | lab-broonie   | gcc-10   | multi_v5_defcon=
+fig         | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/63f944d7cc7f46004d8c8668
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v5_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.168-cip27-456-g42a59c4e5329/arm/multi_v5_defconfig/gcc-10/lab-brooni=
+e/baseline-nfs-at91sam9g20ek.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.168-cip27-456-g42a59c4e5329/arm/multi_v5_defconfig/gcc-10/lab-brooni=
+e/baseline-nfs-at91sam9g20ek.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230217.0/armel/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/63f944d7cc7f46004=
+d8c8669
+        new failure (last pass: v5.10.167-cip26-2-g28bb49f7179b) =
+
+ =
+
+
+
+platform               | arch  | lab           | compiler | defconfig      =
+            | regressions
+-----------------------+-------+---------------+----------+----------------=
+------------+------------
+imx6dl-udoo            | arm   | lab-broonie   | gcc-10   | imx_v6_v7_defco=
+nfig        | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/63f946c4b21000516a8c862f
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: imx_v6_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.168-cip27-456-g42a59c4e5329/arm/imx_v6_v7_defconfig/gcc-10/lab-broon=
+ie/baseline-nfs-imx6dl-udoo.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.168-cip27-456-g42a59c4e5329/arm/imx_v6_v7_defconfig/gcc-10/lab-broon=
+ie/baseline-nfs-imx6dl-udoo.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230217.0/armhf/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/63f946c4b21000516=
+a8c8630
+        failing since 3 days (last pass: v4.4.302-cip72-rt42, first fail: v=
+5.10.167-cip26-2-g28bb49f7179b) =
+
+ =
+
+
+
+platform               | arch  | lab           | compiler | defconfig      =
+            | regressions
+-----------------------+-------+---------------+----------+----------------=
+------------+------------
+imx6q-udoo             | arm   | lab-broonie   | gcc-10   | imx_v6_v7_defco=
+nfig        | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/63f946c6a4462cf7838c8644
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: imx_v6_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.168-cip27-456-g42a59c4e5329/arm/imx_v6_v7_defconfig/gcc-10/lab-broon=
+ie/baseline-nfs-imx6q-udoo.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.168-cip27-456-g42a59c4e5329/arm/imx_v6_v7_defconfig/gcc-10/lab-broon=
+ie/baseline-nfs-imx6q-udoo.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230217.0/armhf/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/63f946c6a4462cf78=
+38c8645
+        failing since 3 days (last pass: v4.4.302-cip72-rt42, first fail: v=
+5.10.167-cip26-2-g28bb49f7179b) =
+
+ =
+
+
+
+platform               | arch  | lab           | compiler | defconfig      =
+            | regressions
+-----------------------+-------+---------------+----------+----------------=
+------------+------------
+rk3399-gru-kevin       | arm64 | lab-collabora | gcc-10   | defconfig+arm64=
+-chromebook | 4          =
+
+
+  Details:     https://kernelci.org/test/plan/id/63f94344da3b0087a38c8664
+
+  Results:     86 PASS, 5 FAIL, 1 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.168-cip27-456-g42a59c4e5329/arm64/defconfig+arm64-chromebook/gcc-10/=
+lab-collabora/baseline-nfs-rk3399-gru-kevin.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.168-cip27-456-g42a59c4e5329/arm64/defconfig+arm64-chromebook/gcc-10/=
+lab-collabora/baseline-nfs-rk3399-gru-kevin.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230217.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.bootrr.rk3399-gru-sound-driver-rt5514-present: https://ker=
+nelci.org/test/case/id/63f94344da3b0087a38c869a
+        failing since 37 days (last pass: v5.10.158-cip22-435-g2c52868ae1cb=
+c, first fail: v4.19.269-rt119-1495-gc851fb1e222f)
+
+    2023-02-24T23:07:37.402283  seq: invalid floating point argument: =E2=
+=80=98sound/RT5514=E2=80=99
+
+    2023-02-24T23:07:37.406428  Try 'seq --help' for more information.
+
+    2023-02-24T23:07:37.410228  /lava-9323663/1/../bin/lava-test-case
+   =
+
+
+  * baseline-nfs.bootrr.rk3399-gru-sound-driver-max98357A-present: https://=
+kernelci.org/test/case/id/63f94344da3b0087a38c869b
+        failing since 37 days (last pass: v5.10.158-cip22-435-g2c52868ae1cb=
+c, first fail: v4.19.269-rt119-1495-gc851fb1e222f)
+
+    2023-02-24T23:07:37.343719  seq: invalid floating point argument: =E2=
+=80=98sound/MAX98357A=E2=80=99
+
+    2023-02-24T23:07:37.347619  Try 'seq --help' for more information.
+
+    2023-02-24T23:07:37.351199  /lava-9323663/1/../bin/lava-test-case
+
+    2023-02-24T23:07:37.379093  <8>[   40.576359] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Drk3399-gru-sound-driver-max98357A-present RESULT=3Dfail>
+   =
+
+
+  * baseline-nfs.bootrr.rk3399-gru-sound-driver-dp-present: https://kernelc=
+i.org/test/case/id/63f94344da3b0087a38c869c
+        failing since 37 days (last pass: v5.10.158-cip22-435-g2c52868ae1cb=
+c, first fail: v4.19.269-rt119-1495-gc851fb1e222f)
+
+    2023-02-24T23:07:37.298003  seq: invalid floating point argument: =E2=
+=80=98sound/DP=E2=80=99
+
+    2023-02-24T23:07:37.302013  Try 'seq --help' for more information.
+
+    2023-02-24T23:07:37.305726  /lava-9323663/1/../bin/lava-test-case
+
+    2023-02-24T23:07:37.330521  <8>[   40.529964] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Drk3399-gru-sound-driver-dp-present RESULT=3Dfail>
+   =
+
+
+  * baseline-nfs.bootrr.rk3399-gru-sound-driver-da7219-present: https://ker=
+nelci.org/test/case/id/63f94344da3b0087a38c869d
+        failing since 37 days (last pass: v5.10.158-cip22-435-g2c52868ae1cb=
+c, first fail: v4.19.269-rt119-1495-gc851fb1e222f)
+
+    2023-02-24T23:07:37.234414  <8>[   40.431341] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Drk3399-gru-sound-driver-present RESULT=3Dpass>
+
+    2023-02-24T23:07:37.243340  seq: invalid floating point argument: =E2=
+=80=98sound/DA7219=E2=80=99
+
+    2023-02-24T23:07:37.247388  Try 'seq --help' for more information.
+
+    2023-02-24T23:07:37.251103  /lava-9323663/1/../bin/lava-test-case
+
+    2023-02-24T23:07:37.274858  <8>[   40.473674] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Drk3399-gru-sound-driver-da7219-present RESULT=3Dfail>
+   =
+
+ =
+
+
+
+platform               | arch  | lab           | compiler | defconfig      =
+            | regressions
+-----------------------+-------+---------------+----------+----------------=
+------------+------------
+sun50i-a64-pine64-plus | arm64 | lab-broonie   | gcc-10   | defconfig      =
+            | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/63f94778920f1f8c528c864e
+
+  Results:     5 PASS, 1 FAIL, 1 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.168-cip27-456-g42a59c4e5329/arm64/defconfig/gcc-10/lab-broonie/basel=
+ine-nfs-sun50i-a64-pine64-plus.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.168-cip27-456-g42a59c4e5329/arm64/defconfig/gcc-10/lab-broonie/basel=
+ine-nfs-sun50i-a64-pine64-plus.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230217.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.bootrr.deferred-probe-empty: https://kernelci.org/test/cas=
+e/id/63f94778920f1f8c528c8657
+        failing since 37 days (last pass: v5.10.158-cip22-435-g2c52868ae1cb=
+c, first fail: v4.19.269-rt119-1495-gc851fb1e222f)
+
+    2023-02-24T23:25:24.971002  [   30.918017] <LAVA_SIGNAL_ENDRUN 0_dmesg =
+71912_1.6.2.4.1>
+    2023-02-24T23:25:25.090885  / # #
+    2023-02-24T23:25:25.193234  export SHELL=3D/bin/sh
+    2023-02-24T23:25:25.193804  #
+    2023-02-24T23:25:25.295711  / # export SHELL=3D/bin/sh. /lava-71912/env=
+ironment
+    2023-02-24T23:25:25.296594  =
+
+    2023-02-24T23:25:25.398697  / # . /lava-71912/environment/lava-71912/bi=
+n/lava-test-runner /lava-71912/1
+    2023-02-24T23:25:25.399495  =
+
+    2023-02-24T23:25:25.404295  / # /lava-71912/bin/lava-test-runner /lava-=
+71912/1
+    2023-02-24T23:25:25.556908  + export TESTRUN_ID=3D1_bootrr =
+
+    ... (11 line(s) more)  =
+
+ =20
 
