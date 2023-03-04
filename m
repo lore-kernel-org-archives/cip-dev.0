@@ -2,228 +2,325 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 156A1C6FA8E
-	for <webhook@archiver.kernel.org>; Sat,  4 Mar 2023 08:12:34 +0000 (UTC)
-Received: from EUR04-VI1-obe.outbound.protection.outlook.com (EUR04-VI1-obe.outbound.protection.outlook.com [40.107.8.54])
- by mx.groups.io with SMTP id smtpd.web10.5067.1677917551113674991
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F745C6FA8E
+	for <webhook@archiver.kernel.org>; Sat,  4 Mar 2023 08:35:54 +0000 (UTC)
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (EUR04-HE1-obe.outbound.protection.outlook.com [40.107.7.89])
+ by mx.groups.io with SMTP id smtpd.web11.5311.1677918946791285385
  for <cip-dev@lists.cip-project.org>;
- Sat, 04 Mar 2023 00:12:32 -0800
+ Sat, 04 Mar 2023 00:35:47 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=WjH3Ys4n;
- spf=pass (domain: siemens.com, ip: 40.107.8.54, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=LV2p23Wq;
+ spf=pass (domain: siemens.com, ip: 40.107.7.89, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=md7WEwORXFs3lH4HAqSOS6CVOQ9ejfIGaQwWA8TjXsZvagT6nkT1j2dRZhctYJfC2qTmYC/uvNGqgv/0tDEbEuuM9u45fc+bJdSby7MHnwCenN0+vDxCwBcnFgnPKYC9Gn49PtdOIcXuwH8T6Cwlk/Fxvpl94PJq26vqVJBAsq9RNM+srXV3I1tLn/uWeJjT0PwYsCHsBEDvhN5+08S8q4gJqTSp92bEqTxAXMDc7W/FeDMkFYddMpbLk3SEd3OzK8foiy2vQecMCDJ4kNWGpiHNxzg3O7kC5F2fVKua+W4PN2/zMQfV11SAqQpqN/Z8SEJyE+XAX1ctJ5Y4bZd51A==
+ b=CGHZfiMoQ42c+cC5Lg6WQRx00P/CPoJGUNP91o1yTpyZ70WKsUsy6TM7vpCiBpX/0dubwonZAZf55AnjbqY0cq9wV7ikOLu573sdhG0wY6HtiNk5gv1y2gt/Jn0sWtmq+KnpivdrjuiHRF9uUUBbFzu0TcLoso86RmYl61fHXj/QF/KhxMdejFFKWbKrxEajoc65RZ8lNgWv3dTx695YFaR8VjdW0I1X0u+qfWl/3F8PEdKP0E2UdPJZcdFaG71JXpo+kv6dG4nhuXyVeFppih6U2y3mUKYrlGNUbHUeIYoow4RqlYe/iO6BLVKP3zI4hB7Hc9Tmfp6iuU+f6pDLdA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wN5jRdnPk4tCcmCPKtjy+Q9J7zhdFabqacw4oxgWSys=;
- b=lB5iIfLdnbhunBHXQsDmK3Hf9S3Y2q+XuBnVFKk0t1E/Jc01aEDTQF9qTTnAvARjjLBsu65vDbn9Yag+53e2AvPJvHo9LQAd9xNxpKNMAJGoOVuWrp8aeSwcqgGxX5GhepA/EECvCBxpt3cB177oAKHJiGKf3vXuOz4ID9WqIUTTFHTowf5hDbOMsG4PrrvcoY5HlHB7EBK9mJ/KwEmLvQt1MZk6HGlTqnNvCb+11zPAwsCbgFUOiKcGKa4lrlQ8/GzelJn7ISTYZiv47FWgDjEcAU3cZ3kUjQG4XkUWwSmHA64nVQ08eILdvkx4NQ2HHWJbLdq+lslJPKYzCKK+hQ==
+ bh=nJ4JmSKqETjBVZk1UY+qQ762B82sGyV1Sojrf8tGEp4=;
+ b=k8hyolM9TYfZ60Q2BRfxXXkoYu/5rcHmOJrSsd0WwUO+egipMQsDjGGKdDfV9vjMIk5A0bWztU3xWIiJc5tJ6Tlu2PzCMnEnrKh4OiDoYuDAzczun8B4H8zh1w+vwmFqQOku3UPW0FelaZjy0hmxGxZcujwAd3ZTAnHNx0gB4KtpM1YqW90IyMVPQR2dSWMLenXNgj4zsXFqdDYMdXk/7/9+huKYEsX8S+3crjaabXj90yKwbI2ePftbwtsQRzot4G8jreuX3J3Y5pXS9tIZwRc/s54+zi+5t5cnNhsCYmg8HFkLkSTchlCrtiRpAPm12WTqwvYMqrCfRfpUxI16sA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wN5jRdnPk4tCcmCPKtjy+Q9J7zhdFabqacw4oxgWSys=;
- b=WjH3Ys4nxWgseNZj1qx9xhyCldo2s2lpuSguM3gVzNeDvM5+EdDfRPxAY0goCvtKv3qUbceVzWuc23m+abjsFTWB+u7VkGyx0k09FPkPvreXI+6SHfoTnzhI4+RnD79FULuGCkJ+dM4o0CStLGqyRhoakWUO/NmIfAjdhZ0tb/sy1cR58eqMpaAvJt8l8wHHSmGGdXfLlMVoSVSkTbXs9ur+XAHnMnrZBLInA8kqPo6QrJNHH/x/uQDbyZpb4GnfJXYG4l05eROpTX9u3ngUC+DSr8zhjX7Ok7enlCGx8pC0tadtwMcZ330iMvM4mA7rnENUUJSMfV5w8l+DcMrpGg==
+ bh=nJ4JmSKqETjBVZk1UY+qQ762B82sGyV1Sojrf8tGEp4=;
+ b=LV2p23WqCFuZkKQJ+7+pr3HHkjocE8upIzSChdx8YMtFoFvMh75nI/ws3OXviDX4viS1v9mpeb/vNI1WbbUySp57lZzx4l1x3dnOfaAhtBEcfnz1qxuBYKX7OCiBvur3ZPZmuwSh9Hw4TvE9MyQBzcLvFv7BHF3eh6nt0ZwsyDmXTWJwxN1yiCbBc/AJfSZT99TddOD+lXNepxWsa46OYfXDDNI9WS1a1/JpZreirggTSWSuf0H+/V5T9czakg+bivHtv7r/qdLLzalML33GQhr67hmFRrrcIwgBZOyyTgcwMq6Mz0F7g7msRd0BsnCJMpwPzIDGYSrHT3a4BxJ+9w==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by PA4PR10MB5562.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:273::5) with
+ by DB4PR10MB6919.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:3fd::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.6; Sat, 4 Mar
- 2023 08:12:28 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.8; Sat, 4 Mar
+ 2023 08:35:32 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::d4b2:77cc:31cd:a3a2]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::d4b2:77cc:31cd:a3a2%6]) with mapi id 15.20.6178.007; Sat, 4 Mar 2023
- 08:12:28 +0000
-Message-ID: <5de62f28-0858-95e8-03f8-013c2ea44600@siemens.com>
-Date: Sat, 4 Mar 2023 09:12:25 +0100
+ 08:35:27 +0000
+Message-ID: <fdf77d6f-a7b5-3c2e-1c74-e0e1264ca5a8@siemens.com>
+Date: Sat, 4 Mar 2023 09:35:24 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
-Subject: Re: [isar-cip-core][PATCH v4 6/8] add linux 6.1 mainline kernel
+Subject: Re: [isar-cip-core][PATCH v4 4/8] add opensbi with u-boot payload for
+ riscv64
 Content-Language: en-US
 To: Felix Moessbauer <felix.moessbauer@siemens.com>,
  cip-dev@lists.cip-project.org
 Cc: daniel.bovensiepen@siemens.com, quirin.gylstorff@siemens.com
 References: <20230303124820.2209954-1-felix.moessbauer@siemens.com>
- <20230303124820.2209954-7-felix.moessbauer@siemens.com>
+ <20230303124820.2209954-5-felix.moessbauer@siemens.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20230303124820.2209954-7-felix.moessbauer@siemens.com>
+In-Reply-To: <20230303124820.2209954-5-felix.moessbauer@siemens.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0111.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:9c::15) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR3P281CA0007.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:1d::6) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PA4PR10MB5562:EE_
-X-MS-Office365-Filtering-Correlation-Id: d60a1492-aeb6-4c79-6449-08db1c88319b
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB4PR10MB6919:EE_
+X-MS-Office365-Filtering-Correlation-Id: eb8ce4f9-b010-43cd-2838-08db1c8b6799
 X-LD-Processed: 38ae3bcd-9579-4fd4-adda-b42e1495d55a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	XeyBi0clhylHqACl4Fz+Fh7lmtLKeZIgNLZfrkh1VuNbGPVorFsCLE3a8p/+AcKdEyVLybIYaG9ilBBfjSAJO41hms/Pd4Ga/8jT9jVji32FgLoP9jUMnjXc+GJbU9HMXNe8mwYYwiqYoDjOymnCdAOUp96mj5surQNMtZbdvfkDBrDovchWgk5sWmO96MY7L13fRw+pWWA9fbjj8J/aoSz8FQ3bzXlviAo29TNCk4SMI8X9VItfFH+BJRUDDWMe6HtQE1902fDHnYESZODG0NPoBBWTDJUpCJdfTiQrx7R5yidpSw2MbdbS+YtLoNg/lOvbcUmb95W4HgAxhQ3bL7XK0gWrPDfB6XY6kdBAP1KyArHhfrNVQcTyMXglXS/tHOg2G1NmjcVA2aQVZto7l9eXFtFWHtmvFkbdJu133TIYKZx5izoqS5iUUv2UgertSNKirAbdB0UBrfbx9kjlROK9M447P5WgkKBbUpPDeu9ziwvbkDxL0GoNzfhhVVZxZg2Rszt2Vr0AqqDXJt843sJZiSBo6eYdoJJChKEZG8HZvjp5B7SEx6v1+7Kzbz1gBG/NPk9X/UvO6/BEaKrExEI4rNxIL3xdh4WhUJO7W6Bh6gD4a4sWtMxabSvZtG5mZsxrHV5XziClk5GULky69ZvEeCxwiY+UomS53avAOll6HUuzyx93A9ZqFQoxxiI3uAfSen8eyGOf1MQ/kf5EKXcaQnFCG4pvIRygcjFl2mQ=
+	A/8W7DcBGgiHDDzAmVjRtdGXgNZdXpBcNAxeTiIQu/wZBxCiCIsXmDvwY7LnIibmiUDkGNUkYYImk9/WQ71sPn2bEbMiprPZ9+3Qn+m4r8YzBoEZlAUr/gijdTTC3hNMFQ/S7YykA7AJX97bKZF7p4CQdPXTgeC8k6mepfSOVTNPJbdBExsKrkBOFsLQibKApxmR07tzboibZOvQ1zSYwgWNfl805dYz2VFcKbVCpol9ANOzKQ+M3xxHFgfaRtCDeyQhRkU+QIFPSrDFPQkPSx224tGDFr0+aZqtRg9TO4/QLBD0As1F830tLC56zohMmYv1IuHrRBmMPtEFBPqaUR0CbLikVVzx5UhbjDZIj+gnzGDFYCUVPyEN2NQFMdo17W0Aviyt4aIs+qqEElhmO6/QZwTid9U2KF8dT0UmZuLA1ayUBq9aTwwBsKypdd2TscFMEKiwaZIU2bkKyOUafCFjxt0G+vra/m9d40DuEZB+Wk/jYEhEN4kbWeH3+6u42bEu+3sBgcBw9dM+IINk7j7zGpPGwnk16C4B8/LLjo+Z2hn12aoJ0atnKN60Y8VYwZrII0LjUoyiXh150Gh4Nc1ZBKf9QZsJ8acR+0owmK4Kvw0jzLDzAyC7/z9it90Oxa8i2hrwwJPps//59af8Ei0z/aF4eBmv6ttJDSQp4T9Lxh2+qtjS35TFIyh0Y26oMjLOLmV0lbDxCVq9c0Me3AMXk7g2k34csHatNbJHLog=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230025)(4636009)(396003)(376002)(346002)(366004)(39860400002)(136003)(451199018)(36756003)(6666004)(107886003)(6486002)(966005)(82960400001)(83380400001)(186003)(6512007)(53546011)(6506007)(26005)(41300700001)(66476007)(66946007)(8676002)(66556008)(4326008)(44832011)(8936002)(2906002)(5660300002)(38100700002)(316002)(86362001)(31696002)(478600001)(31686004)(66899018)(2616005)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230025)(4636009)(136003)(39860400002)(366004)(346002)(396003)(376002)(451199018)(2616005)(107886003)(82960400001)(6486002)(966005)(6666004)(36756003)(478600001)(316002)(86362001)(31696002)(38100700002)(31686004)(26005)(41300700001)(83380400001)(186003)(53546011)(6506007)(6512007)(8936002)(2906002)(5660300002)(44832011)(66476007)(66946007)(8676002)(66556008)(4326008)(45980500001)(43740500002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?d3l3V2tQMy9iRGZIcjZJS3NQRkNMYk5BY3kyR2N4VThxL2gvUkJaTEplZng0?=
- =?utf-8?B?YnFZQmJMNTFrbWphcldjMG9jdHdwWnBMKzkwb1UxK1UzblFxT2Vtd2NpL1lq?=
- =?utf-8?B?VnZmaUx4WUsyendGcUFkQkh5VHNVRFp6dS9KMEJHU0hoNWtOVE5acjdHSGhJ?=
- =?utf-8?B?ZzhTRmwvMUxJdnJtMStiZTFYOWJsZUNLYkh1MHZ0c1JhVGhHYXBVVTdDaFdC?=
- =?utf-8?B?d2xPOWhVUmtidlEvckQ0WWh0L3E0SFptMGp1UDhqRStUZVp0WlFOTE9OUTBG?=
- =?utf-8?B?RjBJWG1HT2owalQrUlhBOHZzUkVqVnlVejdGOENwdmU1YVFNbitoR1h3NWZu?=
- =?utf-8?B?bjZBNWJBblhJZUdUQzZmbzZPZUlaREg2VUhaUXB1NHFycng3M0hQT0RTT1Mz?=
- =?utf-8?B?SllGN0w4L1Y4em52cjhJR3ptdFgrRW9TbUtMVTZ5QzFwWVhoWHgzTjZlMHJO?=
- =?utf-8?B?ZDduZnRaK2hpWVM1b0JQbUUxWlQrYk5hcGpPZWVsOTcvb2dETUFRQnRvY2hW?=
- =?utf-8?B?TXBicEhNU3plVmVpaU9VRUFBK0o3eTFSZWN4RUN3QkE1L2s5NWh0VmdDd0sy?=
- =?utf-8?B?aDBBcnFPQzJZRWVJOHkyMUNBQmtZMzZqQVRWVmVHRWpzeVgvWEl4SjlJVUd5?=
- =?utf-8?B?Umd5dkpyNWlJUjRLcWRwQ3p0UFZreDVOaFZmSWN4eW5DWmtwYWs5QjlOakZI?=
- =?utf-8?B?Z1ltN3dxcTI4Z1VZV3I2ckNqNVFEQ2k3TDB3UmI4Z21KS3lRS3lNL3hOWG5M?=
- =?utf-8?B?QkpYYWhTaVIzajhkMEJXTEVGR2w0clpJbVBEUGJ5bGpQY0N5NDhHMm8rQ3h5?=
- =?utf-8?B?TCszNCszUVlRVFN1ZU5idnlIbnBMOXRjSm9FMjJsV0h6d1FySjdhK2pKSnFF?=
- =?utf-8?B?YnlYOEExL3RzVjFtTk9KTnRGaldnRXVJZjgxR2hUUDVSNXREMWNuaUQ0NEVv?=
- =?utf-8?B?amNEOFpHN2d4am1IWTBtZEtvc0daR1YzSE9scW55YVdSbHdya3NXQUdRdjFX?=
- =?utf-8?B?U05ycTJ2RGxMdlA5RWt0MEJnL05xellGVkEyZDI1VDFDY252blJRdFd5Ymwx?=
- =?utf-8?B?bVc0enN0b0wyUU1zV1NuY3VsNkh2enkxa1lqR2xSbHFORG4rOUx4bjcrRS9z?=
- =?utf-8?B?ZENzV3hYOWVxQk5lY3BPS0R4bEw1TzFNSmlLbjVwRHFYYk5GQ1d6ZFN3TmxC?=
- =?utf-8?B?OVZrSzFsaklONllkQnVqNGZ2Y3RRZXM5OVBNeHI5Q3c2cHdiWFgvblQ2TUpZ?=
- =?utf-8?B?K0NaWEczS3IrODJ2NW83Tk9YOHo5aXNRUTVnbktTTitLTEV0bDZ5YzVZeTRL?=
- =?utf-8?B?bDVEcDhyMjBFZ2lDMlB3Y2hsZDVzU1JDaWlIa1BhVGROb3Nta2pNdkxzUnlo?=
- =?utf-8?B?SnZqOHZiNXdDS2RWSENGQ1E2b2NTS0xVbXg2WjJDa2lkOVlMTDcvNk1vb2pR?=
- =?utf-8?B?WXp2SHU3dkdweG4wcnh3dHdEMEUvcm5xc0tud3hJSjh3NnNib2NPTzNiM0R2?=
- =?utf-8?B?NFgzUGlSWkVNdGFxVFIySzdYS25PL05ralFrQU9LSW45SjJtWUxURVRSbzZY?=
- =?utf-8?B?a0tTUk1LVythNE0wa3JIc09sRmNxSWlzV3BIdjdpRFY1Uk1BTGFTayt3KzBQ?=
- =?utf-8?B?Qy82eWQrZ3BFOHArK2ZFTmNZZnEvL01zQjdjbVRDZG9SeVJ0aWtjSUhtMk5C?=
- =?utf-8?B?MFVQWFUwZG5XTGRjSE56eWkvMklNdDQxajQ0UDQycUMyaHozem15M3Rlb083?=
- =?utf-8?B?MUpZd1BoYkw5c2ROblZJaXBtTFFKMmlvZSs1STFRYUh3SDRhLzZmOXB2cnky?=
- =?utf-8?B?TWVNeE5lakVUMnQ3MDgzS25tNzBDQ0srZXJId0FSaWp1RWZCQ29QNnpWcnFD?=
- =?utf-8?B?c3E3K1JoMVFLWVc3N25rZVRIWFl6ZWtoVTNFWmwxMW1vb3lteldreElqOUJE?=
- =?utf-8?B?L0d4b0NVYkRNZjlOaEJOZTBVazZpcjVGYW0zMkc0VTFkRWdHY3JCSHR3N0Z1?=
- =?utf-8?B?aEV3dnlUUU9ZeVFYQkpaaGxWZzRjSnRSMERyRkF1OGlPb3ZQdmZ1OGRiWTJZ?=
- =?utf-8?B?cGkvSHA2ZHowV2RNYVZLczNySVpXUDVobytCVmM2QUdyOFpsMjNNU1pzL2F0?=
- =?utf-8?B?RGt6eS96Q28xMFJoY1RVSVNxM2dZVWFvY1UzRVFMZWsvWkFhOVNWYkpRcGl1?=
- =?utf-8?B?TUE9PQ==?=
+	=?utf-8?B?U3hsUW9TSE4xTGVySHBoekt1Nlc2RWEyaVFWME5WRkJSaUtycTRRRXltVzBR?=
+ =?utf-8?B?bXYyVWFOQ2l6MCtzcjRsd3hIcC9WN0xJSkNLQlkzUVdyV2o5Y2FZalVPVFlW?=
+ =?utf-8?B?VlNTSVloanhtKzdCRmR0QWhick5iSjVHdWZDQmlmOEl0NnhsT2RIZ0dTd2ZQ?=
+ =?utf-8?B?YTZRWUo2cnYyMmFXQnh6aUlTdVdxa3hyZ0RFRm5Qb3IySG9QK21YSHVpREtn?=
+ =?utf-8?B?NEM3ZmF2SkZiamZaMDllM3BtQXJWbkt1MXB1ajhXcmVEZldDUjJzOENkc01M?=
+ =?utf-8?B?d2V6TzhMRGFZaWdzUWJNSzhjTlN1L0JYc1pyWXdnZzZXcGRyaWRhUFVWL2c1?=
+ =?utf-8?B?ZThnUit0cjZ5V2E5QXVZWHpxUk5GZjNSYnBwTENnZ012RGp4Q1YrZ0JtOFJs?=
+ =?utf-8?B?bEpUampjLzNIUUt4cHMwL2ZYaCtvREYzYUx6NlErK3dJTVJYRHJ3Z25LMkRz?=
+ =?utf-8?B?WUwzQ0VWNStBUzBMT2laaWMyWW1mQitpOWk4M0hnbTdvdlRydmpEa0N2cC9w?=
+ =?utf-8?B?VklqQTV6T1JDV01UUnB5Ty84NVY5NXVObjFvZ2RMc1lmTkk4eGdXSzNxSU0x?=
+ =?utf-8?B?MlJBZlZxenNielc0NjNWam12THBtNEpDVHlzTlpzdERZUjdUNy9FYlRHRWhs?=
+ =?utf-8?B?bkhvOTVLNnF3MVhOcmxXWXdWMW5telhwN3Q0dmQzeHRDbzFnVkJBMlV0WGVO?=
+ =?utf-8?B?ZnNSUHNLa2FERUNWSkFwMTBqdlVybDh1NjJyNFB0RU1Nb3JyM0JNMHc4Zk9y?=
+ =?utf-8?B?aEI5Q1FheFQ3VnpHS0I5TVZTT0dkUHY0ZTZLeStZRjRvS3o0Vlp0S0cyTTFo?=
+ =?utf-8?B?NVN1SWRlcHRJblNWTUd2MXJsVFM2M2Izc1c1NThHUjJsMkVFZzEzaVlXTEZt?=
+ =?utf-8?B?RkdtSzBvMXNFSWVQTHhLUHh2SEZhUTVNd2lpU1FhaGMyZFQzVVArR0Yzb3hN?=
+ =?utf-8?B?RmUvWG9teUoxbk10WE5GaTVMK0dscUJyYUpwY3IxU2x2VDJjN3pFVkxHS0Zv?=
+ =?utf-8?B?ZEJDVU1jT1JkNGhWU1ZEVUFwNTh4ZTR3NlltbEM0UlYvbitGSVhGenhSS1hW?=
+ =?utf-8?B?TXQ3RDVCZUNLL2R5ZCszaHZEM2ExWUpLQWgxbUhocmY1U1RCaFcyejBGS1pP?=
+ =?utf-8?B?T0U5Qi9wTFFINjYrZzNySFFMUHJCQ3NIMWxqTUpSL05wRE5kVVJjUWwvckN3?=
+ =?utf-8?B?akhiOUE0anhXeHFOSkh2djJkR2dKVHBvK2J5MjV3cU1mTk5Bb3dzY1FBNnVm?=
+ =?utf-8?B?YXZCdVNSUlN4am9YRzZBdXJsdEJEQU9PUkZQT2RRZS9zNlJSS1hvWDdUNnFR?=
+ =?utf-8?B?azFqLzk4VmtZNCtrT0w5ZGF3UGE5R0lrQjdXVGp0Qmhwd01BajNSakMrQnFa?=
+ =?utf-8?B?QkxXUUowWnB2OEVkaEhnUkQ5OEdkZkd2cFhtcGx6bzZmVGNNMDZXaXk5QmJC?=
+ =?utf-8?B?d2gvcGpqM3pRR09Ob3VyYTFQbythaXBmd0dzOW00Q1NMTmRjTWpHZEFSQnJB?=
+ =?utf-8?B?TGN3eXIyZzRHZDJQUXFXTHN6L1B5WFA5WjRkRGZZRkgzUnRkT3d5QjlJSzdG?=
+ =?utf-8?B?SWd1WkpCVFU3cG1hNldERnVkc1hrU09iYXBiaGNMbTQrZWhyOXlUaWV1NWw4?=
+ =?utf-8?B?cVN2M1FBeTVYTmEvUmp1eEw0L1pzeW5ObWdPYTNYeTJvbVRoUTV4ZitHSTNi?=
+ =?utf-8?B?ZDZYb0RSNW95Zk8xSXVqSTJCUTFSNnVqY0I2d3l0Z3J4RWpxdjJoMSszTi8z?=
+ =?utf-8?B?ZlpybkxoaXAvaGF5R0ZuOFVSc25FU0VJVHpUcTNxWHY2bHpOclNIYm9tRlJu?=
+ =?utf-8?B?YTJTMEFXU2hmbFNDNHVKSEExMWZpTnRYMzIzN2tPUFR5dGVIbXBMZHZxQUR6?=
+ =?utf-8?B?V1lYSXVKc3A1ZEZPaFFkZlhubGE0aHhRWHA2TllGZytrbDhPQzJ6SVZwclM2?=
+ =?utf-8?B?d295Z1owLzdULzVBbTlVN0ZNQlIrblFkcWk0ZlJvRS9oOEJIS0xVWlBlZ2lQ?=
+ =?utf-8?B?RnFXZGw3S1V6VHUzem1EbWhXelNCVm9RRnhUMHlQNU0veEhFdzZncE5oWmQy?=
+ =?utf-8?B?K0F0N3lnQm5oR0xoTmZBaFA2MmhLM05ZaXY3U2dKVmJGU3B4dlZYdno0ZHBE?=
+ =?utf-8?B?dCtTUXZKckMwbGZoeVZHMU9YajNKUVhoR2lVS3RibithSzhUZnkyUm4wdXFG?=
+ =?utf-8?B?Q2c9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d60a1492-aeb6-4c79-6449-08db1c88319b
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb8ce4f9-b010-43cd-2838-08db1c8b6799
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2023 08:12:27.8484
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2023 08:35:26.8898
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gmIEEEAJwYu6/euzID3B6jmpSG3N7EpxYTTUXpTrBGo23EnM/gaBqM6B0/5yp2UkOppyFK3FuDoOEuojY573Aw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR10MB5562
+X-MS-Exchange-CrossTenant-UserPrincipalName: GIoeK3PyTI+QHNhoKkP1c1lQvXw/1wviRk4QaZw1NntGp4TKMHyArz8sENCjTLkJu8EiItKUrTAId7SoqZrSbQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB4PR10MB6919
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Sat, 04 Mar 2023 08:12:34 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10928
+ <cip-dev@lists.cip-project.org>; Sat, 04 Mar 2023 08:35:54 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10929
 
 On 03.03.23 13:48, Felix Moessbauer wrote:
-> This patch adds the vanilla 6.1 linux kernel for testing and for boards
-> which need a more recent kernel than what CIP can offer.
-> The kernel can be selected from the menu, similar to the other kernels.
-> As defconfig, we always use the kernels internal configuration, because
-> there is no cip-kernel-config for that version yet. In addition, the
-> squashfs knob is selected to support the swupdate pattern without any
-> modifications.
+> This patch adds the opensbi firmware with u-boot payload (smode) for the
+> qemu-riscv64 machine. Using that, the generated riscv64 images can be
+> booted on qemu.
 > 
 > Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
 > ---
->  Kconfig                                    |  4 ++++
->  kas/opt/6.1-mainline.yml                   | 18 ++++++++++++++++++
->  recipes-kernel/linux/files/squashfs.cfg    |  1 +
->  recipes-kernel/linux/linux-mainline_6.1.bb | 18 ++++++++++++++++++
->  4 files changed, 41 insertions(+)
->  create mode 100644 kas/opt/6.1-mainline.yml
->  create mode 100644 recipes-kernel/linux/files/squashfs.cfg
->  create mode 100644 recipes-kernel/linux/linux-mainline_6.1.bb
+>  recipes-bsp/opensbi/files/qemu-riscv64-rules  | 12 ++++
+>  .../opensbi/opensbi-qemu-riscv64_1.2.bb       |  8 +++
+>  recipes-bsp/opensbi/opensbi.inc               | 45 +++++++++++++++
+>  ...iscv-Fix-build-against-binutils-2.38.patch | 55 +++++++++++++++++++
+>  .../u-boot/u-boot-qemu-riscv64_2022.07.bb     | 22 ++++++++
+>  5 files changed, 142 insertions(+)
+>  create mode 100644 recipes-bsp/opensbi/files/qemu-riscv64-rules
+>  create mode 100644 recipes-bsp/opensbi/opensbi-qemu-riscv64_1.2.bb
+>  create mode 100644 recipes-bsp/opensbi/opensbi.inc
+>  create mode 100644 recipes-bsp/u-boot/files/riscv64/0001-riscv-Fix-build-against-binutils-2.38.patch
+>  create mode 100644 recipes-bsp/u-boot/u-boot-qemu-riscv64_2022.07.bb
 > 
-> diff --git a/Kconfig b/Kconfig
-> index cd24ce2..a932bbe 100644
-> --- a/Kconfig
-> +++ b/Kconfig
-> @@ -97,6 +97,9 @@ config KERNEL_4_19
->  config KERNEL_5_10
->  	bool "Kernel 5.10.x-cip"
->  
-> +config KERNEL_6_1_MAINLINE
-> +	bool "Kernel 6.1.x-mainline"
-> +
->  endchoice
->  
->  config KAS_INCLUDE_KERNEL
-> @@ -104,6 +107,7 @@ config KAS_INCLUDE_KERNEL
->  	default "kas/opt/4.4.yml" if KERNEL_4_4
->  	default "kas/opt/4.19.yml" if KERNEL_4_19
->  	default "kas/opt/5.10.yml" if KERNEL_5_10
-> +	default "kas/opt/6.1-mainline.yml" if KERNEL_6_1_MAINLINE
->  
->  config KERNEL_RT
->  	bool "Real-time CIP kernel"
-> diff --git a/kas/opt/6.1-mainline.yml b/kas/opt/6.1-mainline.yml
+> diff --git a/recipes-bsp/opensbi/files/qemu-riscv64-rules b/recipes-bsp/opensbi/files/qemu-riscv64-rules
 > new file mode 100644
-> index 0000000..84d12b0
+> index 0000000..960e10c
 > --- /dev/null
-> +++ b/kas/opt/6.1-mainline.yml
-> @@ -0,0 +1,18 @@
-> +#
-> +# CIP Core, generic profile
+> +++ b/recipes-bsp/opensbi/files/qemu-riscv64-rules
+> @@ -0,0 +1,12 @@
+> +#!/usr/bin/make -f
+> +
+> +ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
+> +export CROSS_COMPILE=$(DEB_HOST_GNU_TYPE)-
+> +endif
+> +
+> +override_dh_auto_build:
+> +	CFLAGS= LDFLAGS= $(MAKE) $(PARALLEL_MAKE) PLATFORM=generic \
+> +		FW_PAYLOAD_PATH=/usr/lib/u-boot/qemu-riscv64/u-boot.bin
+> +
+> +%:
+> +	dh $@
+> diff --git a/recipes-bsp/opensbi/opensbi-qemu-riscv64_1.2.bb b/recipes-bsp/opensbi/opensbi-qemu-riscv64_1.2.bb
+> new file mode 100644
+> index 0000000..b503afc
+> --- /dev/null
+> +++ b/recipes-bsp/opensbi/opensbi-qemu-riscv64_1.2.bb
+> @@ -0,0 +1,8 @@
 > +#
 > +# Copyright (c) Siemens AG, 2023
 > +#
-> +# Authors:
-> +#  Felix Moessbauer <felix.moessbauer@siemens.com>
-> +#
 > +# SPDX-License-Identifier: MIT
-> +#
 > +
-> +header:
-> +  version: 12
+> +include opensbi.inc
 > +
-> +local_conf_header:
-> +  kernel-version: |
-> +    KERNEL_DEFCONFIG = ""
-> +    KERNEL_NAME = "mainline"
-> diff --git a/recipes-kernel/linux/files/squashfs.cfg b/recipes-kernel/linux/files/squashfs.cfg
+> +SRC_URI[opensbi.sha256sum] = "8fcbce598a73acc2c7f7d5607d46b9d5107d3ecbede8f68f42631dcfc25ef2b2"
+> diff --git a/recipes-bsp/opensbi/opensbi.inc b/recipes-bsp/opensbi/opensbi.inc
 > new file mode 100644
-> index 0000000..7a89d00
+> index 0000000..b41a8bb
 > --- /dev/null
-> +++ b/recipes-kernel/linux/files/squashfs.cfg
-> @@ -0,0 +1 @@
-> +CONFIG_SQUASHFS=y
-> diff --git a/recipes-kernel/linux/linux-mainline_6.1.bb b/recipes-kernel/linux/linux-mainline_6.1.bb
-> new file mode 100644
-> index 0000000..8a879a0
-> --- /dev/null
-> +++ b/recipes-kernel/linux/linux-mainline_6.1.bb
-> @@ -0,0 +1,18 @@
-> +# Example recipe for building the mainline kernel
+> +++ b/recipes-bsp/opensbi/opensbi.inc
+> @@ -0,0 +1,45 @@
 > +#
-> +# This software is a part of ISAR.
-> +# Copyright (c) Siemens AG, 2018-2020
+> +# Copyright (c) Siemens AG, 2023
 > +#
 > +# SPDX-License-Identifier: MIT
 > +
-> +require recipes-kernel/linux/linux-custom.inc
+> +inherit dpkg
 > +
-> +ARCHIVE_VERSION = "${@ d.getVar('PV')[:-2] if d.getVar('PV').endswith('.0') else d.getVar('PV') }"
+> +U_BOOT_PACKAGE ?= "u-boot-${MACHINE}"
+> +PLATFORM ?= "generic"
 > +
-> +SRC_URI += " \
-> +    https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-${ARCHIVE_VERSION}.tar.xz \
-> +    file://squashfs.cfg"
+> +DEPLOYDIR_FIRMWARE = "${WORKDIR}/deploy-fw"
+> +SSTATETASKS += "do_deploy"
 > +
-> +SRC_URI[sha256sum] = "2ca1f17051a430f6fed1196e4952717507171acfd97d96577212502703b25deb"
-> +
-> +S = "${WORKDIR}/linux-${ARCHIVE_VERSION}"
+> +SRC_URI = " \
+> +    https://github.com/riscv/opensbi/archive/v${PV}.tar.gz;downloadfilename=opensbi-${PV}.tar.gz;name=opensbi \
+> +    file://${MACHINE}-rules"
 
-This is still the outdated 6.1 base releasing. Fixing on merge.
+This triggers fetcher warnings for other machines. Moving to the
+machine-specific recipe.
 
 Jan
+
+> +
+> +S = "${WORKDIR}/opensbi-${PV}"
+> +
+> +DEPENDS += "${U_BOOT_PACKAGE}"
+> +DEBIAN_BUILD_DEPENDS .= ",${U_BOOT_PACKAGE}"
+> +
+> +do_prepare_build[cleandirs] += "${S}/debian"
+> +do_prepare_build() {
+> +    cp ${WORKDIR}/${MACHINE}-rules ${WORKDIR}/rules
+> +    deb_debianize
+> +
+> +    echo "build/platform/${PLATFORM}/firmware/fw_payload.bin /usr/lib/opensbi/${MACHINE}/" > ${S}/debian/install
+> +}
+> +
+> +do_deploy[cleandirs] += "${DEPLOYDIR_FIRMWARE}"
+> +do_deploy[sstate-inputdirs] = "${DEPLOYDIR_FIRMWARE}"
+> +do_deploy[sstate-outputdirs] = "${DEPLOY_DIR_IMAGE}"
+> +do_deploy() {
+> +    dpkg --fsys-tarfile "${WORKDIR}/${PN}_${PV}_${DISTRO_ARCH}.deb" | \
+> +        tar xOf - "./usr/lib/opensbi/${MACHINE}/fw_payload.bin" \
+> +        > "${DEPLOYDIR_FIRMWARE}/fw_payload.bin"
+> +}
+> +
+> +python do_deploy_setscene () {
+> +    sstate_setscene(d)
+> +}
+> +addtask do_deploy_setscene
+> +
+> +addtask deploy after do_dpkg_build before do_deploy_deb
+> diff --git a/recipes-bsp/u-boot/files/riscv64/0001-riscv-Fix-build-against-binutils-2.38.patch b/recipes-bsp/u-boot/files/riscv64/0001-riscv-Fix-build-against-binutils-2.38.patch
+> new file mode 100644
+> index 0000000..6f8a2ae
+> --- /dev/null
+> +++ b/recipes-bsp/u-boot/files/riscv64/0001-riscv-Fix-build-against-binutils-2.38.patch
+> @@ -0,0 +1,55 @@
+> +From 5df4b2299f86933fa79aa3bc6a3986fc7e55b7e0 Mon Sep 17 00:00:00 2001
+> +From: Alexandre Ghiti <alexandre.ghiti@canonical.com>
+> +Date: Mon, 3 Oct 2022 18:07:54 +0200
+> +Subject: [PATCH 1/2] riscv: Fix build against binutils 2.38
+> +
+> +The following description is copied from the equivalent patch for the
+> +Linux Kernel proposed by Aurelien Jarno:
+> +
+> +>From version 2.38, binutils default to ISA spec version 20191213. This
+> +means that the csr read/write (csrr*/csrw*) instructions and fence.i
+> +instruction has separated from the `I` extension, become two standalone
+> +extensions: Zicsr and Zifencei. As the kernel uses those instruction,
+> +this causes the following build failure:
+> +
+> +arch/riscv/cpu/mtrap.S: Assembler messages:
+> +arch/riscv/cpu/mtrap.S:65: Error: unrecognized opcode `csrr a0,scause'
+> +arch/riscv/cpu/mtrap.S:66: Error: unrecognized opcode `csrr a1,sepc'
+> +arch/riscv/cpu/mtrap.S:67: Error: unrecognized opcode `csrr a2,stval'
+> +arch/riscv/cpu/mtrap.S:70: Error: unrecognized opcode `csrw sepc,a0'
+> +
+> +Signed-off-by: Alexandre Ghiti <alexandre.ghiti@canonical.com>
+> +Reviewed-by: Bin Meng <bmeng.cn@gmail.com>
+> +Tested-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+> +Tested-by: Heiko Stuebner <heiko@sntech.de>
+> +Tested-by: Christian Stewart <christian@paral.in>
+> +Reviewed-by: Rick Chen <rick@andestech.com>
+> +---
+> + arch/riscv/Makefile | 11 ++++++++++-
+> + 1 file changed, 10 insertions(+), 1 deletion(-)
+> +
+> +diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
+> +index 0b80eb8d86..53d1194ffb 100644
+> +--- a/arch/riscv/Makefile
+> ++++ b/arch/riscv/Makefile
+> +@@ -24,7 +24,16 @@ ifeq ($(CONFIG_CMODEL_MEDANY),y)
+> + 	CMODEL = medany
+> + endif
+> + 
+> +-ARCH_FLAGS = -march=$(ARCH_BASE)$(ARCH_A)$(ARCH_C) -mabi=$(ABI) \
+> ++RISCV_MARCH = $(ARCH_BASE)$(ARCH_A)$(ARCH_C)
+> ++
+> ++# Newer binutils versions default to ISA spec version 20191213 which moves some
+> ++# instructions from the I extension to the Zicsr and Zifencei extensions.
+> ++toolchain-need-zicsr-zifencei := $(call cc-option-yn, -mabi=$(ABI) -march=$(RISCV_MARCH)_zicsr_zifencei)
+> ++ifeq ($(toolchain-need-zicsr-zifencei),y)
+> ++	RISCV_MARCH := $(RISCV_MARCH)_zicsr_zifencei
+> ++endif
+> ++
+> ++ARCH_FLAGS = -march=$(RISCV_MARCH) -mabi=$(ABI) \
+> + 	     -mcmodel=$(CMODEL)
+> + 
+> + PLATFORM_CPPFLAGS	+= $(ARCH_FLAGS)
+> +-- 
+> +2.30.2
+> +
+> diff --git a/recipes-bsp/u-boot/u-boot-qemu-riscv64_2022.07.bb b/recipes-bsp/u-boot/u-boot-qemu-riscv64_2022.07.bb
+> new file mode 100644
+> index 0000000..8dfac45
+> --- /dev/null
+> +++ b/recipes-bsp/u-boot/u-boot-qemu-riscv64_2022.07.bb
+> @@ -0,0 +1,22 @@
+> +#
+> +# CIP Core, generic profile
+> +#
+> +# Copyright (c) Siemens AG, 2022
+> +#
+> +# Authors:
+> +#  Jan Kiszka <jan.kiszka@siemens.com>
+> +#
+> +# SPDX-License-Identifier: MIT
+> +#
+> +
+> +require u-boot-qemu-common.inc
+> +
+> +# we run as OpenSBI payload, hence use smode
+> +U_BOOT_CONFIG = "${MACHINE}_smode_defconfig"
+> +
+> +EFI_ARCH = "riscv64"
+> +
+> +SRC_URI += " \
+> +    file://riscv64/0001-riscv-Fix-build-against-binutils-2.38.patch"
+> +
+> +U_BOOT_BIN = "u-boot.bin"
 
 -- 
 Siemens AG, Technology
