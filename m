@@ -2,153 +2,309 @@ Return-Path: <ncaidin@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 105E6C6FA8E
-	for <webhook@archiver.kernel.org>; Sun,  5 Mar 2023 22:49:40 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
- by mx.groups.io with SMTP id smtpd.web10.20021.1678055822583245190
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C54C678DB
+	for <webhook@archiver.kernel.org>; Sun,  5 Mar 2023 22:49:49 +0000 (UTC)
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+ by mx.groups.io with SMTP id smtpd.web10.7842.1678019774233026580
  for <cip-dev@lists.cip-project.org>;
- Sun, 05 Mar 2023 14:37:03 -0800
+ Sun, 05 Mar 2023 04:36:14 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@suse.de header.s=susede2_rsa header.b=iPglPnA+;
- spf=pass (domain: suse.de, ip: 195.135.220.29, mailfrom: neilb@suse.de)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+ dkim=pass header.i=@kernel.org header.s=k20201202 header.b=bRcYSRlv;
+ spf=pass (domain: kernel.org, ip: 139.178.84.217, mailfrom: linkinjeon@kernel.org)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4BBDF1FD97;
-	Sun,  5 Mar 2023 22:37:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1678055820; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XCPTT2qdMX0LWixM9/JMiuBntMsiAprVzL7P/LgHMAA=;
-	b=iPglPnA+JiWCy70pak1dbGwOnqOoz3x1Mok3iQiGzXa56q0X1zG5d2hGShUrCdJ2fOxA7F
-	+3aewihldu8Ob7nyM5iSqjHLb4lJcMo9XWnCb1v/Rww7NQ5MiVMRDp146MIRPw4tLpDcIK
-	PnnNUd7fB/RrPGINEMVk61eIQs9Zp1k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1678055820;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XCPTT2qdMX0LWixM9/JMiuBntMsiAprVzL7P/LgHMAA=;
-	b=8CG8nqHDPadF9LZ9ffemTdyv7JGSv/dwCWNyd0lIhakvys3jPN8BGaaYD6HkGsMbkALp6L
-	WMFcTkZR5mCZJ2Cg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-	(No client certificate requested)
-	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0FF8F1339E;
-	Sun,  5 Mar 2023 22:36:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-	by imap2.suse-dmz.suse.de with ESMTPSA
-	id MZlfLYoZBWT1GAAAMHmgww
-	(envelope-from <neilb@suse.de>); Sun, 05 Mar 2023 22:36:58 +0000
+	by dfw.source.kernel.org (Postfix) with ESMTPS id 721D460A54
+	for <cip-dev@lists.cip-project.org>; Sun,  5 Mar 2023 12:36:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9C2CC433EF
+	for <cip-dev@lists.cip-project.org>; Sun,  5 Mar 2023 12:36:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1678019772;
+	bh=T36Q62YkSYpASUJvP4Qm2J/yGaGdFR47qY1LsGOFtZk=;
+	h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+	b=bRcYSRlv3HrEiv9JPfL7hScwXN3UFJSn7h5rhFLFz79ykY3MqMciGBOyPFpyGpagh
+	 1eM2dYVvnih3d8Trk8orfuEH99Q18eQmdQJxeLqSm+Mw87ptUyxZjtaujDFYcM4iz8
+	 YTHecdVsZeK/ngrYj/aTlLG3uMl8u32D1QEn5vObCEl0rd1vGF/TTXYelh615fMYuh
+	 Gc850Bdhz9lyqI97zVuZ4JYpGp6xhg4T+BGptGorFYqMGckmj7GYv2Utk40lJS0LWI
+	 YsWddyBq8bxE9PY61cAjDI8RQikp/58pfwjT2lM+mbqOXOHtMV/faQpeV3JXRtYO+p
+	 QE0aj5Z3kNBaw==
+Received: by mail-oi1-f172.google.com with SMTP id t22so5102675oiw.12
+        for <cip-dev@lists.cip-project.org>; Sun, 05 Mar 2023 04:36:12 -0800 (PST)
+X-Gm-Message-State: AO0yUKXFnlrYce9RbVsClSh+4uV43ZD1E8YhMWC2cCU1rm65XnMiJ84H
+	jrNnch5yj0HThyYOjS61enJn9nX1Sm8KXvkFyP4=
+X-Google-Smtp-Source: AK7set8cvpwx0swmeQMyOUxbU5jaXju4haHgA0luS4rX4qGe8DWRXB0k6yl7XXXgYDFJXxjlbNSG9n9nUZpuKtQF8Q8=
+X-Received: by 2002:aca:650b:0:b0:383:c3d5:6c9f with SMTP id
+ m11-20020aca650b000000b00383c3d56c9fmr2354651oim.11.1678019772053; Sun, 05
+ Mar 2023 04:36:12 -0800 (PST)
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Dan Carpenter" <error27@gmail.com>
-Cc: linux-raid@vger.kernel.org, "cip-dev" <cip-dev@lists.cip-project.org>
-Subject: Re: [bug report] md: range check slot number when manually adding a spare.
-In-reply-to: <e664f254-90a0-42df-8fc8-ad808f6dedeb@kili.mountain>
-References: <e664f254-90a0-42df-8fc8-ad808f6dedeb@kili.mountain>
-Date: Mon, 06 Mar 2023 09:36:55 +1100
-Message-id: <167805581590.8008.4986328374228396650@noble.neil.brown.name>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Received: by 2002:ac9:67ca:0:b0:4c2:5d59:8c51 with HTTP; Sun, 5 Mar 2023
+ 04:36:11 -0800 (PST)
+In-Reply-To: <b3d7e152-07f2-4e54-9c8a-3ed13b750e0f@kili.mountain>
+References: <b3d7e152-07f2-4e54-9c8a-3ed13b750e0f@kili.mountain>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Sun, 5 Mar 2023 21:36:11 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9=pjEegDXDRQ=7LjXdP-t==z_Do=Mm+RZxwm3+4A_SWA@mail.gmail.com>
+Message-ID: <CAKYAXd9=pjEegDXDRQ=7LjXdP-t==z_Do=Mm+RZxwm3+4A_SWA@mail.gmail.com>
+Subject: Re: [bug report] ksmbd: check invalid FileOffset and BeyondFinalZero in FSCTL_ZERO_DATA
+To: Dan Carpenter <error27@gmail.com>
+Cc: linux-cifs@vger.kernel.org, cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Sun, 05 Mar 2023 22:49:40 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10930
+ <cip-dev@lists.cip-project.org>; Sun, 05 Mar 2023 22:49:49 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10932
 
-On Sat, 04 Mar 2023, Dan Carpenter wrote:
-> [ Ancient code, but you're still at the same email address...  -dan ]
+2023-03-03 23:12 GMT+09:00, Dan Carpenter <error27@gmail.com>:
+> Hello Namjae Jeon,
+Hello Dan,
 
-Patch sent.  Thanks for the report.
+I have sent the patch for this to the list.
 
-NeilBrown
-
->=20
-> Hello NeilBrown,
->=20
-> The patch ba1b41b6b4e3: "md: range check slot number when manually
-> adding a spare." from Jan 14, 2011, leads to the following Smatch
-> static checker warning:
->=20
-> drivers/md/md.c:3170 slot_store() warn: no lower bound on 'slot'
-> drivers/md/md.c:3172 slot_store() warn: no lower bound on 'slot'
-> drivers/md/md.c:3190 slot_store() warn: no lower bound on 'slot'
->=20
-> drivers/md/md.c
->     3117 static ssize_t
->     3118 slot_store(struct md_rdev *rdev, const char *buf, size_t len)
->     3119 {
->     3120         int slot;
->     3121         int err;
->     3122=20
->     3123         if (test_bit(Journal, &rdev->flags))
->     3124                 return -EBUSY;
->     3125         if (strncmp(buf, "none", 4)=3D=3D0)
->     3126                 slot =3D -1;
->     3127         else {
->     3128                 err =3D kstrtouint(buf, 10, (unsigned int *)&slot);
->=20
-> slot comes from the user.
->=20
->     3129                 if (err < 0)
->     3130                         return err;
->     3131         }
->     3132         if (rdev->mddev->pers && slot =3D=3D -1) {
->     3133                 /* Setting 'slot' on an active array requires also
->     3134                  * updating the 'rd%d' link, and communicating
->     3135                  * with the personality with ->hot_*_disk.
->     3136                  * For now we only support removing
->     3137                  * failed/spare devices.  This normally happens au=
-tomatically,
->     3138                  * but not when the metadata is externally managed.
->     3139                  */
->     3140                 if (rdev->raid_disk =3D=3D -1)
->     3141                         return -EEXIST;
->     3142                 /* personality does all needed checks */
->     3143                 if (rdev->mddev->pers->hot_remove_disk =3D=3D NULL)
->     3144                         return -EINVAL;
->     3145                 clear_bit(Blocked, &rdev->flags);
->     3146                 remove_and_add_spares(rdev->mddev, rdev);
->     3147                 if (rdev->raid_disk >=3D 0)
->     3148                         return -EBUSY;
->     3149                 set_bit(MD_RECOVERY_NEEDED, &rdev->mddev->recovery=
-);
->     3150                 md_wakeup_thread(rdev->mddev->thread);
->     3151         } else if (rdev->mddev->pers) {
->     3152                 /* Activating a spare .. or possibly reactivating
->     3153                  * if we ever get bitmaps working here.
->     3154                  */
->     3155                 int err;
->     3156=20
->     3157                 if (rdev->raid_disk !=3D -1)
->     3158                         return -EBUSY;
->     3159=20
->     3160                 if (test_bit(MD_RECOVERY_RUNNING, &rdev->mddev->re=
-covery))
->     3161                         return -EBUSY;
->     3162=20
->     3163                 if (rdev->mddev->pers->hot_add_disk =3D=3D NULL)
->     3164                         return -EINVAL;
->     3165=20
->     3166                 if (slot >=3D rdev->mddev->raid_disks &&
->     3167                     slot >=3D rdev->mddev->raid_disks + rdev->mdde=
-v->delta_disks)
->     3168                         return -ENOSPC;
->=20
-> -1 is valid, but should this check if slot < -1?
->=20
->     3169=20
-> --> 3170                 rdev->raid_disk =3D slot;
->=20
->=20
+Thanks for your report!
+>
+> The patch b5e5f9dfc915: "ksmbd: check invalid FileOffset and
+> BeyondFinalZero in FSCTL_ZERO_DATA" from Jun 19, 2022, leads to the
+> following Smatch static checker warning:
+>
+> 	fs/ksmbd/smb2pdu.c:7759 smb2_ioctl()
+> 	warn: no lower bound on 'off'
+>
+> fs/ksmbd/smb2pdu.c
+>     7573 int smb2_ioctl(struct ksmbd_work *work)
+>     7574 {
+>     7575         struct smb2_ioctl_req *req;
+>     7576         struct smb2_ioctl_rsp *rsp;
+>     7577         unsigned int cnt_code, nbytes = 0, out_buf_len,
+> in_buf_len;
+>     7578         u64 id = KSMBD_NO_FID;
+>     7579         struct ksmbd_conn *conn = work->conn;
+>     7580         int ret = 0;
+>     7581
+>     7582         if (work->next_smb2_rcv_hdr_off) {
+>     7583                 req = ksmbd_req_buf_next(work);
+>     7584                 rsp = ksmbd_resp_buf_next(work);
+>     7585                 if (!has_file_id(req->VolatileFileId)) {
+>     7586                         ksmbd_debug(SMB, "Compound request set FID
+> = %llu\n",
+>     7587                                     work->compound_fid);
+>     7588                         id = work->compound_fid;
+>     7589                 }
+>     7590         } else {
+>     7591                 req = smb2_get_msg(work->request_buf);
+>     7592                 rsp = smb2_get_msg(work->response_buf);
+>     7593         }
+>     7594
+>     7595         if (!has_file_id(id))
+>     7596                 id = req->VolatileFileId;
+>     7597
+>     7598         if (req->Flags != cpu_to_le32(SMB2_0_IOCTL_IS_FSCTL)) {
+>     7599                 rsp->hdr.Status = STATUS_NOT_SUPPORTED;
+>     7600                 goto out;
+>     7601         }
+>     7602
+>     7603         cnt_code = le32_to_cpu(req->CtlCode);
+>     7604         ret = smb2_calc_max_out_buf_len(work, 48,
+>     7605
+> le32_to_cpu(req->MaxOutputResponse));
+>     7606         if (ret < 0) {
+>     7607                 rsp->hdr.Status = STATUS_INVALID_PARAMETER;
+>     7608                 goto out;
+>     7609         }
+>     7610         out_buf_len = (unsigned int)ret;
+>     7611         in_buf_len = le32_to_cpu(req->InputCount);
+>     7612
+>     7613         switch (cnt_code) {
+>     7614         case FSCTL_DFS_GET_REFERRALS:
+>     7615         case FSCTL_DFS_GET_REFERRALS_EX:
+>     7616                 /* Not support DFS yet */
+>     7617                 rsp->hdr.Status = STATUS_FS_DRIVER_REQUIRED;
+>     7618                 goto out;
+>     7619         case FSCTL_CREATE_OR_GET_OBJECT_ID:
+>     7620         {
+>     7621                 struct file_object_buf_type1_ioctl_rsp *obj_buf;
+>     7622
+>     7623                 nbytes = sizeof(struct
+> file_object_buf_type1_ioctl_rsp);
+>     7624                 obj_buf = (struct file_object_buf_type1_ioctl_rsp
+> *)
+>     7625                         &rsp->Buffer[0];
+>     7626
+>     7627                 /*
+>     7628                  * TODO: This is dummy implementation to pass
+> smbtorture
+>     7629                  * Need to check correct response later
+>     7630                  */
+>     7631                 memset(obj_buf->ObjectId, 0x0, 16);
+>     7632                 memset(obj_buf->BirthVolumeId, 0x0, 16);
+>     7633                 memset(obj_buf->BirthObjectId, 0x0, 16);
+>     7634                 memset(obj_buf->DomainId, 0x0, 16);
+>     7635
+>     7636                 break;
+>     7637         }
+>     7638         case FSCTL_PIPE_TRANSCEIVE:
+>     7639                 out_buf_len = min_t(u32, KSMBD_IPC_MAX_PAYLOAD,
+> out_buf_len);
+>     7640                 nbytes = fsctl_pipe_transceive(work, id,
+> out_buf_len, req, rsp);
+>     7641                 break;
+>     7642         case FSCTL_VALIDATE_NEGOTIATE_INFO:
+>     7643                 if (conn->dialect < SMB30_PROT_ID) {
+>     7644                         ret = -EOPNOTSUPP;
+>     7645                         goto out;
+>     7646                 }
+>     7647
+>     7648                 if (in_buf_len < offsetof(struct
+> validate_negotiate_info_req,
+>     7649                                           Dialects)) {
+>     7650                         ret = -EINVAL;
+>     7651                         goto out;
+>     7652                 }
+>     7653
+>     7654                 if (out_buf_len < sizeof(struct
+> validate_negotiate_info_rsp)) {
+>     7655                         ret = -EINVAL;
+>     7656                         goto out;
+>     7657                 }
+>     7658
+>     7659                 ret = fsctl_validate_negotiate_info(conn,
+>     7660                         (struct validate_negotiate_info_req
+> *)&req->Buffer[0],
+>     7661                         (struct validate_negotiate_info_rsp
+> *)&rsp->Buffer[0],
+>     7662                         in_buf_len);
+>     7663                 if (ret < 0)
+>     7664                         goto out;
+>     7665
+>     7666                 nbytes = sizeof(struct
+> validate_negotiate_info_rsp);
+>     7667                 rsp->PersistentFileId = SMB2_NO_FID;
+>     7668                 rsp->VolatileFileId = SMB2_NO_FID;
+>     7669                 break;
+>     7670         case FSCTL_QUERY_NETWORK_INTERFACE_INFO:
+>     7671                 ret = fsctl_query_iface_info_ioctl(conn, rsp,
+> out_buf_len);
+>     7672                 if (ret < 0)
+>     7673                         goto out;
+>     7674                 nbytes = ret;
+>     7675                 break;
+>     7676         case FSCTL_REQUEST_RESUME_KEY:
+>     7677                 if (out_buf_len < sizeof(struct
+> resume_key_ioctl_rsp)) {
+>     7678                         ret = -EINVAL;
+>     7679                         goto out;
+>     7680                 }
+>     7681
+>     7682                 ret = fsctl_request_resume_key(work, req,
+>     7683                                                (struct
+> resume_key_ioctl_rsp *)&rsp->Buffer[0]);
+>     7684                 if (ret < 0)
+>     7685                         goto out;
+>     7686                 rsp->PersistentFileId = req->PersistentFileId;
+>     7687                 rsp->VolatileFileId = req->VolatileFileId;
+>     7688                 nbytes = sizeof(struct resume_key_ioctl_rsp);
+>     7689                 break;
+>     7690         case FSCTL_COPYCHUNK:
+>     7691         case FSCTL_COPYCHUNK_WRITE:
+>     7692                 if (!test_tree_conn_flag(work->tcon,
+> KSMBD_TREE_CONN_FLAG_WRITABLE)) {
+>     7693                         ksmbd_debug(SMB,
+>     7694                                     "User does not have write
+> permission\n");
+>     7695                         ret = -EACCES;
+>     7696                         goto out;
+>     7697                 }
+>     7698
+>     7699                 if (in_buf_len < sizeof(struct
+> copychunk_ioctl_req)) {
+>     7700                         ret = -EINVAL;
+>     7701                         goto out;
+>     7702                 }
+>     7703
+>     7704                 if (out_buf_len < sizeof(struct
+> copychunk_ioctl_rsp)) {
+>     7705                         ret = -EINVAL;
+>     7706                         goto out;
+>     7707                 }
+>     7708
+>     7709                 nbytes = sizeof(struct copychunk_ioctl_rsp);
+>     7710                 rsp->VolatileFileId = req->VolatileFileId;
+>     7711                 rsp->PersistentFileId = req->PersistentFileId;
+>     7712                 fsctl_copychunk(work,
+>     7713                                 (struct copychunk_ioctl_req
+> *)&req->Buffer[0],
+>     7714                                 le32_to_cpu(req->CtlCode),
+>     7715                                 le32_to_cpu(req->InputCount),
+>     7716                                 req->VolatileFileId,
+>     7717                                 req->PersistentFileId,
+>     7718                                 rsp);
+>     7719                 break;
+>     7720         case FSCTL_SET_SPARSE:
+>     7721                 if (in_buf_len < sizeof(struct file_sparse)) {
+>     7722                         ret = -EINVAL;
+>     7723                         goto out;
+>     7724                 }
+>     7725
+>     7726                 ret = fsctl_set_sparse(work, id,
+>     7727                                        (struct file_sparse
+> *)&req->Buffer[0]);
+>     7728                 if (ret < 0)
+>     7729                         goto out;
+>     7730                 break;
+>     7731         case FSCTL_SET_ZERO_DATA:
+>     7732         {
+>     7733                 struct file_zero_data_information *zero_data;
+>     7734                 struct ksmbd_file *fp;
+>     7735                 loff_t off, len, bfz;
+>     7736
+>     7737                 if (!test_tree_conn_flag(work->tcon,
+> KSMBD_TREE_CONN_FLAG_WRITABLE)) {
+>     7738                         ksmbd_debug(SMB,
+>     7739                                     "User does not have write
+> permission\n");
+>     7740                         ret = -EACCES;
+>     7741                         goto out;
+>     7742                 }
+>     7743
+>     7744                 if (in_buf_len < sizeof(struct
+> file_zero_data_information)) {
+>     7745                         ret = -EINVAL;
+>     7746                         goto out;
+>     7747                 }
+>     7748
+>     7749                 zero_data =
+>     7750                         (struct file_zero_data_information
+> *)&req->Buffer[0];
+>     7751
+>     7752                 off = le64_to_cpu(zero_data->FileOffset);
+>     7753                 bfz = le64_to_cpu(zero_data->BeyondFinalZero);
+>     7754                 if (off > bfz) {
+>
+> Should we check for negative values of "off"?  To be honest,
+> Smatch doesn't really trust either off or bfz...
+>
+>     7755                         ret = -EINVAL;
+>     7756                         goto out;
+>     7757                 }
+>     7758
+> --> 7759                 len = bfz - off;
+>     7760                 if (len) {
+>     7761                         fp = ksmbd_lookup_fd_fast(work, id);
+>     7762                         if (!fp) {
+>     7763                                 ret = -ENOENT;
+>     7764                                 goto out;
+>     7765                         }
+>     7766
+>     7767                         ret = ksmbd_vfs_zero_data(work, fp, off,
+> len);
+>     7768                         ksmbd_fd_put(work, fp);
+>     7769                         if (ret < 0)
+>     7770                                 goto out;
+>     7771                 }
+>     7772                 break;
+>     7773         }
+>
 > regards,
 > dan carpenter
->=20
-
+>
 
