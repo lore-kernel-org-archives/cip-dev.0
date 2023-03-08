@@ -1,75 +1,103 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <ncaidin@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7936C678D5
-	for <webhook@archiver.kernel.org>; Tue,  7 Mar 2023 21:23:15 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web11.6543.1678224187652040242
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF56C678D5
+	for <webhook@archiver.kernel.org>; Wed,  8 Mar 2023 13:42:11 +0000 (UTC)
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+ by mx.groups.io with SMTP id smtpd.web11.2032.1678261936303454264
  for <cip-dev@lists.cip-project.org>;
- Tue, 07 Mar 2023 13:23:10 -0800
+ Tue, 07 Mar 2023 23:52:16 -0800
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id ED8D71C0AC1; Tue,  7 Mar 2023 22:23:04 +0100 (CET)
-Date: Tue, 7 Mar 2023 22:23:04 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Chris.Paterson2@renesas.com, cip-dev@lists.cip-project.org
-Subject: Tests of 6.1-stable and others
-Message-ID: <ZAerOFASj+Fgqe1o@duo.ucw.cz>
+ dkim=pass header.i=@suse.cz header.s=susede2_rsa header.b=yJWtV8Qq;
+ spf=pass (domain: suse.cz, ip: 195.135.220.28, mailfrom: vbabka@suse.cz)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D8392219CB;
+	Wed,  8 Mar 2023 07:52:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1678261933; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ajLJgfxVW7toycKUmqFHYGhNrFyJxe76oJOYl0j9fF4=;
+	b=yJWtV8QqKc/IUYslYDebBr+swXwwAaEjnkg/dULLsk7E2Jg6BgtZ56eOmdrvgtFkfyHWrF
+	8fpLROVh7eW0zbN4m1dGAnbY9JmlwdMJxc5KMLEebj0EjyOFW6acfHeqrXzJoLS5LqxPcX
+	VH83sRJZe6sJH73cfp1vNaAtachqLRU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1678261933;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ajLJgfxVW7toycKUmqFHYGhNrFyJxe76oJOYl0j9fF4=;
+	b=SpWznofVbE8h/bHADY7wN1pEKYEVByRT1rFyCYQ8JDeq12nPH3Jo/qN4n1JbPAQNH/cHhO
+	UGskiNJ2aSz3mLAw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+	(No client certificate requested)
+	by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A2D451391B;
+	Wed,  8 Mar 2023 07:52:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+	by imap2.suse-dmz.suse.de with ESMTPSA
+	id B6apJq0+CGSQAwAAMHmgww
+	(envelope-from <vbabka@suse.cz>); Wed, 08 Mar 2023 07:52:13 +0000
+Message-ID: <651ee4e5-b298-606e-938f-0e49fdf295c3@suse.cz>
+Date: Wed, 8 Mar 2023 08:52:33 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="eqvU7ZFUOnvsFyNG"
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: Who is looking at CVEs to prevent them?
+To: Dan Carpenter <error27@gmail.com>, oe-kbuild@lists.linux.dev,
+ lkp@intel.com
+Cc: Hillf Danton <hdanton@sina.com>,
+ Masami Ichikawa <masami.ichikawa@miraclelinux.com>,
+ cip-dev <cip-dev@lists.cip-project.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, lwn@lwn.net, smatch@vger.kernel.org
+References: <CAODzB9qjdhQkZ+tALHpDLHoK7GAf8Uybfzp8mxXt=Dwnn_0RjA@mail.gmail.com>
+ <20230307110029.1947-1-hdanton@sina.com>
+ <b27c7950-873a-f0e9-d7b4-322bb941a11f@suse.cz>
+ <6d1ad8e9-2bec-4cd4-b4dd-595c88855274@kili.mountain>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <6d1ad8e9-2bec-4cd4-b4dd-595c88855274@kili.mountain>
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 07 Mar 2023 21:23:15 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10950
+ <cip-dev@lists.cip-project.org>; Wed, 08 Mar 2023 13:42:11 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/10951
 
 
---eqvU7ZFUOnvsFyNG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On 3/7/23 12:53, Dan Carpenter wrote:
+> On Tue, Mar 07, 2023 at 12:42:03PM +0100, Vlastimil Babka wrote:
+>> Why do you keep adding linux-mm to the Cc list of random threads that are
+>> not about MM?
+> 
+> That's kbuild-bot stuff.  The kbuild-bot generates those emails and I
+> just look them over and hit send.
 
-6.1.16-rc1 review was announced, and I guess this would be great time to
-announce that we are now testing it.
+Sorry, wasn't clear that I was asking Hillf who did the Cc on this
+thread and other threads (not only kbuild bot threads).
 
-I see tree at:
+> I don't why the kbuild bot CCs linux-mm either...  Let me ask the devs
+> about that.  A lot of the -mm warning are correct but just the CC list
+> is weird.
 
-https://gitlab.com/cip-project/cip-kernel/linux-cip/-/commits/ci/patersonc/=
-linux-6.1.y
+Sure, it's fine if a bug is suspected to be mm related that linux-mm is
+Cc'd, even if it turns out a wrong guess in the end.
 
-=2E..but that one is does not contain recent commits from 6.1.16-rc1.
-
-I see it updates from linux-cip. I believe it should update from
-stable@kernel.org.
-
-Ideally, I'd like to see same setup we have at
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-5.10.y
-
-=2E.. (And prefferably do it at the same address).
-
-Thanks and best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---eqvU7ZFUOnvsFyNG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZAerOAAKCRAw5/Bqldv6
-8oOyAJ9bScuWVp0DywKGiyDhFs96T104XQCfcsORoCJa8ZtewhdhXMOAkhw4SAw=
-=3QQP
------END PGP SIGNATURE-----
-
---eqvU7ZFUOnvsFyNG--
+> The kbuild-bot stuff is really nice for me.  The kbuild-bot doesn't use
+> the cross function DB so everything is local to the function and easy to
+> review.
+> 
+> regards,
+> dan carpenter
+> 
+> 
 
