@@ -1,162 +1,325 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <dinesh.kumar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58328C6FD1F
-	for <webhook@archiver.kernel.org>; Tue, 14 Mar 2023 07:54:20 +0000 (UTC)
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.45])
- by mx.groups.io with SMTP id smtpd.web10.3604.1678780451038887791
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C22B1C7618A
+	for <webhook@archiver.kernel.org>; Tue, 14 Mar 2023 12:43:41 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.155])
+ by mx.groups.io with SMTP id smtpd.web11.7569.1678797811837385388
  for <cip-dev@lists.cip-project.org>;
- Tue, 14 Mar 2023 00:54:11 -0700
+ Tue, 14 Mar 2023 05:43:32 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=x7F7mk4g;
- spf=pass (domain: siemens.com, ip: 40.107.22.45, mailfrom: jan.kiszka@siemens.com)
+ dkim=missing; spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.155, mailfrom: dinesh.kumar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1516) id 32EChOsg020159; Tue, 14 Mar 2023 21:43:24 +0900
+X-Iguazu-Qid: 34trpHMSkrtLFkG8Zc
+X-Iguazu-QSIG: v=2; s=0; t=1678797804; q=34trpHMSkrtLFkG8Zc; m=tue9Pp3QsyN4/8X/RKjQwd57vnY0MhNbrmSvmVKckgg=
+Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
+	by relay.securemx.jp (mx-mr1512) id 32EChNED002443
+	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 14 Mar 2023 21:43:23 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CV4OiPymP4PWWod+yeZvvznD1lAylaltplWHpWAuRq+LVbcwOUm1QzXfFSoyRWzECPCEgO+t7zS/TU2fxKnDKQq+eteCItMFumpLwhE6y+m/jDFDshJ5Scyik5KlaXNz/CQANcYcOc5Sf2mmyYk29hsKH9YwDPjQA+RCggFH12fiSwQTE4yYrEyJzm5yxoi1TEUKgeYXjABm3C0P2ZOpY9ZkUbvaXx4/6poQgORldSQHfgqkwRjONWqN6fopoMuxG/KlcPmidm2TM50bOGz0kkHjjQHzTDWozrNvUN7WvedP0xEczEpd+iWSHYfm6H7EmFq2lAkm7lvAEBlc7wuHbw==
+ b=fzHVI5vPdy2ZO00b1wODKRx636U7HD4uRyzdDlgvQSXsgjJ+4QJJkXM0IC0edc4rHsQNEiSbihfbWup7DTC7KevisMIR2yP6id7oAFOpBBzC+Hh2Bt4dcfgrFcoAiYfKrA9rA+l3KAAUY2jupu/E0TKdxSoPPdG+gM88ksAfzBukK5uNX7pi/s+EIaSoB9PC/7twNZXQb+uQU1bWJiDfpOp0wm2DkceU5nK84hUehOltHtEugmt5mTAWoOvO0l+QXepFauCMNspvufyRWs4yZGt+3Oi/lw6Q5NSlCrGm2cFaANJ3LUyNxLgXhIfaTRqqszeBU2NzOP8LQoQQFFMKGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YXBEeSIJKVToSEpcXYMmgCsdnKQKg0ftnYphxYhbhu4=;
- b=WvX0LpsCZBr9aqs9imrFhLHzqFs81ZuFcGNw3o7CyBcewS+ACQcbdo30X10r73u6E/3FhhE+FRhXBTpYLCNZAvKHZzdElBBtjM8B9G8ZPyCuW+OjLgqy98D8FmzVOkRNWxLgmpHpRQaCbwbTHozBpKUipEckxmN/OLtNuJAAKTuB8mbHFFt/IkJS/JbWiTMkHuy8lLZGU11yx6T2ixMfL7Npsl6fu8ie0l3XJO4oHdHyV9muPKPcAckJxMEbj8LRO06PtMkF40RBtv2dT5FkE3NnZNDLUEdHcvzyoaMbJoMwV6i32c8MzkDGtTdJYjYkL2X0/PQmVfI6YmAtUpgnJA==
+ bh=2hAx2XvUd4gdlqF64m6+P7nkFr2HSiTzkqmxTt1sdBM=;
+ b=EbavbUO0ul3yXV8Qs2uiqwjP3C5ipBDPxsqTWdRuPrR10Ua6uj9DPb2jjJ9EzA5WJIRGw2wiWgIPHkgpuWy1/duSfrzExdCqPrDb1bOlVFwrAlUQ9rt8k+0/67PPTc1JI/3Se18HgFaqzY/71tHFdQp1ceOPutvRHZexcb7j58mOXrwNXVb55hZSbxpTPvQeFUnrnW7rDOkC0vbMpWG/KF9+4yVWrbkTJAFPge/y6dXCmqlZzlysSBuql2yVbvtgghRscP+Tr3iNrzn8Y2453Ft5Ofu//UTyl4VFYP4CujIofbJ9c4G76WIjA91/q5H9NRSdLOIDIwhVk5AGXw8HWg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YXBEeSIJKVToSEpcXYMmgCsdnKQKg0ftnYphxYhbhu4=;
- b=x7F7mk4gu32muc6/ipCumRr2rKe7pAaeyThwx6Jvy2KfJn4x1fyMqmSidMINKPtmE7uLWL8ome2enfGkBAIApj5lQimIoq41XrjmLuU3eDKnvOCI+a0Hi4Svq1+CGGu4UVt/yrMSXwo44mcRKWmbgfpcC/x41fUuOf9XI90iG1CymLEmyFsi+HmtcmLCOnc0+nAUPywlttou5WFQf9iOj52fxzFEa9syuaRqZBQ/ADshm9P4esycSH7aOKFE1Ue/gdb7fiMnF0vE33j8j0VA1lvof/6plMEFAzwmYRATf36d+tNSQQ9JLTpuhRM5Ttb07Cdy7hTMwaX2rJhuG5iZmA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by DB5PR10MB7776.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:4a7::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.24; Tue, 14 Mar
- 2023 07:54:08 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::d4b2:77cc:31cd:a3a2]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::d4b2:77cc:31cd:a3a2%9]) with mapi id 15.20.6178.026; Tue, 14 Mar 2023
- 07:54:08 +0000
-Message-ID: <29b3a6b2-1988-0470-45fd-12ed7ab14262@siemens.com>
-Date: Tue, 14 Mar 2023 08:53:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: FYI: efibootguard is available in bullseye-backports
+ smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
+ header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
+From: <dinesh.kumar@toshiba-tsip.com>
+To: <cip-dev@lists.cip-project.org>
+CC: <stefan.ss.schroeder@siemens.com>, <GeorgeY.Hsiao@moxa.com>,
+        <kento.yoshida.wz@renesas.com>, <Philipp.Ahmann@de.bosch.com>,
+        <sandeep.shivaraju@toshiba-tsip.com>
+Subject: About CIP Security image generation
+Thread-Topic: About CIP Security image generation
+Thread-Index: AdlWaUPbaGgryGgHRRCdsfXTRcaqSA==
+Date: Tue, 14 Mar 2023 12:43:20 +0000
+X-TSB-HOP2: ON
+Message-ID: <OSZPR01MB85155EAB6B807A73E6A201A4BFBE9@OSZPR01MB8515.jpnprd01.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-To: kazuhiro3.hayashi@toshiba.co.jp, quirin.gylstorff@siemens.com,
- christian.storm@siemens.com
-Cc: nobuhiro1.iwamatsu@toshiba.co.jp, cip-dev@lists.cip-project.org
-References: <TYCPR01MB8295463B41D4D1D9317FD779E1BE9@TYCPR01MB8295.jpnprd01.prod.outlook.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <TYCPR01MB8295463B41D4D1D9317FD779E1BE9@TYCPR01MB8295.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR3P281CA0117.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a3::8) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OSZPR01MB8515:EE_|OS3PR01MB8129:EE_
+x-ms-office365-filtering-correlation-id: 8f4191f9-5b30-4a3f-ea26-08db2489b125
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Ar0GEd2tADL95xeQPbjuULH5AbQVjAhfqjkxeDncKJlsfFaCS2ytvBklJzC0Xaqfdhhsh9BXzR/9Wz5wf9wpstKjfEhTdWCrTHCRgmv8yNfE0CAEN8TkMAB5hrhiFlweJgv+L+vYAug4Pxc4Ka2KP6JJylkgVpF/q9CVK0R8I38SCz6xI77aMSA66gLRqG0D5h3uIrw8EmIpoOwsmF0xCVd5lNbIf2mHuCSdxF8gSuRs+29mhid8UrEgy2OEH0H2I2wkqi3wyjgI7dqwFi3lqnXO8QawfggOK+u1yIkd22MV5b+rIah1xW9792Zh1NQRz9xZFN/ISnML287mhMrg9W39XztJE6qtKONV5rNxH6NK5CVGmJM0DLeaJstRvzg0YYooMMUfs4jwQKiRQ+C6bumqgQq7WRcHlJNUz/Ug6WSd7zDKdLpYYojR8WOWo5O3AJMkjSbG+BBB8062QsPSJOSo0MykQPuZ7Yej5gt7sVEktVD/oSsBeV10m5s9c9iggwfr7qkbdfpepuiO2ZS5pl9NMOeqNJJU3wX1JEQmGsWW86VYG4l5nxVZ0uvD81+Ue2j8w+XtFsQ6tLPkpL3E6zAbChTs5G/tJpvXw1fqVSV1NN5VnG4SLu0NRoh4fITJar7EQLCoqLaAgd5Avb7nAgj94ibTfNComVPdOL+ZXhZ3PJyl3BVbJ9xiPH6ifg5P
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB8515.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(136003)(346002)(396003)(376002)(366004)(451199018)(86362001)(166002)(38070700005)(33656002)(122000001)(8936002)(38100700002)(2906002)(41300700001)(15650500001)(52536014)(5660300002)(9326002)(55016003)(4326008)(7696005)(6506007)(26005)(9686003)(186003)(83380400001)(316002)(54906003)(8676002)(66946007)(66556008)(76116006)(64756008)(66446008)(66476007)(107886003)(966005)(478600001)(71200400001)(6916009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-2022-jp?B?b0xtaGhWT0JEeDJ3NDl2ZTZvOFkrem9ZeVgzSXdEUyswSW5DMUlJWWl2?=
+ =?iso-2022-jp?B?QmZ0UnEycGZsTDRvZFZKWUViM2tlclNnbGVWZVpNTVhscUxJRWlGNTY1?=
+ =?iso-2022-jp?B?TmZSVG90aEtWOGFvdFNpM21saEZBcDBpb29TdUJnVi91Wk03TlhMV0M0?=
+ =?iso-2022-jp?B?MlVxdVBXcUZiaUV3MTF2eFdSaTRZY1cxemRSalRWM012OWlpQXRkY01N?=
+ =?iso-2022-jp?B?V09iblZnWGN1YmJtb1dpRDRzblVsTFJaM21HejJjcUtFa1FPN2hNUkU5?=
+ =?iso-2022-jp?B?ay9PRjc2MUZzNjBhdmVSam5Bb0dmRjZWQjBnMlREMUozc2pTTjgzSWZu?=
+ =?iso-2022-jp?B?UHBYM1BuS0pkOXdibnA0MmxFNHpxQXV1YStYMnYzRERoZE51MnMvcktB?=
+ =?iso-2022-jp?B?RVBSS3ZZeXloS29rU0NEZmVSNVRRSlNYaGJkdXN6bnRGbURBTjNHZHBZ?=
+ =?iso-2022-jp?B?elY5YUNHQW1HNjlaSnJuUU9LOWgrc1VVN0w4RHNZblBKaUhlcy9TVWFq?=
+ =?iso-2022-jp?B?ZXdDZStaMUhxc0R6WlFwSVlqRVRrTjBKdEx3Wjk2YkxhdGRWSWhQMi95?=
+ =?iso-2022-jp?B?bHJLNWhrMnBtZkFsckNCU0Rsdy9yWVA0eGl3MHZYVEkrMTNDaGdzYkJU?=
+ =?iso-2022-jp?B?bnBtTVhGN09nd2ZYeVg1bmxVejF5dTVFa1hPa3VSLzMxRkdUNkF4aHdp?=
+ =?iso-2022-jp?B?R2ZQRzk1TnBoUFk1aVo5TmpSd1BXYytMTjJySVRacG1pOGg0L2lGeVFl?=
+ =?iso-2022-jp?B?Tnp2Z215QzFzSzcrUEhTQlBSNG0zZytCd0Y5RXhndHhiVElMZ3NYZWUz?=
+ =?iso-2022-jp?B?YUtvdnBMNXVxTy9iV0Q3a0ZqVGhVcHpyeEcwSS8wTlI4aGRJa1FtRUZY?=
+ =?iso-2022-jp?B?aUR5M2lxWFFVdjlUSlBQUWFtM3J4M2JVaXBXTGNja0JWYjU1emdxeXlR?=
+ =?iso-2022-jp?B?bHhyYUQ3dzRodDFEU2l1d1hiQXYxc0pnQjlNODR1NTgvdzUzVi9EYnlI?=
+ =?iso-2022-jp?B?emlYRW1KUFJxNjJzY0ZxOVpaSGhsM0E1VFcrbkJPeWdkMG5DbEFRRHFT?=
+ =?iso-2022-jp?B?dHRoNFJLQ3BkMTZ0YjRzY2EzeTduYzdwM0k1RG5KREtoaThoNUlmNVhK?=
+ =?iso-2022-jp?B?SmxzczJqY2k2RUpJaDg1M0t0dmQrdGpoWEVGQkdmenNuUFhMTjNwQWh2?=
+ =?iso-2022-jp?B?S3dkVXVoa2VNUmRxd1k4elNsSHNDSldjVnhkNThQNjJDeG9ROGZDRU9v?=
+ =?iso-2022-jp?B?bXZWUkxpK21DckpCdHRKckxubHh5N0pzUUNoRVZvcENoYjNWU2szU0tY?=
+ =?iso-2022-jp?B?d05FME9KU2FSaFl3cEt6MjdyeEsrcmVwNENWbC9Ea0NVeGtyelIveHNG?=
+ =?iso-2022-jp?B?dFpBSWx5TG9TSEdreGNJY0JGR1VEQjgwT29tUFY1NDlIYUR3ZW0wRlQ4?=
+ =?iso-2022-jp?B?dDJGdzZrbXRrTU95bGJJY0s5MDRHeExIL0hSTzc5RkcrSUtONmNMTXFx?=
+ =?iso-2022-jp?B?WCtpdUFRbUMyQ0lZN0FLTU5BNVUvaklzZWR4T1FtVk56ek1MbXFnTGJC?=
+ =?iso-2022-jp?B?b29ubENVTDN6RzlSNGVXWUJMWElzTE1YS2hNOENtL1BjOW8xM3FwaS8z?=
+ =?iso-2022-jp?B?Zlc1SFJGSG9EZm1jMVFsOU1mcU1GVTU3RmcvQVJPUFJQZFhjQVZ3RU00?=
+ =?iso-2022-jp?B?V1NWbkVuQnFMUGg2RFBIdXVEaFVKbHhtbWVXb2FMN3MyaWZLZzVqYzdi?=
+ =?iso-2022-jp?B?djNnMStrUzU2NndzdFdndENEZW9HMjZaVHhwKzllV3ppUHF6RVVOd0JI?=
+ =?iso-2022-jp?B?MFZoSVk1ci9vb29zMkdndkttRkNtZUkvdDQwQ01mNTBrVFBYQUFBWXFQ?=
+ =?iso-2022-jp?B?K0hpaXkwSS9saFhqUDVmVDROWFBYeFYxejRaOHFCTDliUUhucmNGNHdI?=
+ =?iso-2022-jp?B?eEs5SVM2emtSdUZ2NndnRzBub2NrY1N2YVptOGdnLzY0KytrcUpwa0I3?=
+ =?iso-2022-jp?B?Wi9wc2ZIN1lRWnpJcmVkNTZ6a0NnNmZmc05QZGVRZGMvS2FGd3h0aDZI?=
+ =?iso-2022-jp?B?Z0YvOTBiMHRUbStUQk9vZVZWcEw0R1lTODVvTmhtQWVTYmZqelhYVlc5?=
+ =?iso-2022-jp?B?NWltQ0ZrNDVVM2oyalZzRVJmRGlJSTd6aVVlRTlCQk9DRkVVVHNTZGNo?=
+ =?iso-2022-jp?B?U0IvNUVicHlHS2RWZ2F5aFpvQ0liK1QyRFVxTjZidXZZZlhpbzN0enRP?=
+ =?iso-2022-jp?B?MWdJRDdOSEF4dE1RSlgrSnIrcTN2U0M5OFRYdGNEWEFZMDVWcEt2NXo0?=
+ =?iso-2022-jp?B?RGtvU0NWc3pEUmNKTU40TXpKTm1hSlVOMEE9PQ==?=
+Content-Type: multipart/alternative;
+	boundary="_000_OSZPR01MB85155EAB6B807A73E6A201A4BFBE9OSZPR01MB8515jpnp_"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB5PR10MB7776:EE_
-X-MS-Office365-Filtering-Correlation-Id: a4796712-2c23-4f45-4691-08db24614a44
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	GKGZnq2UvDSj4FJ2CSRi9s/widSvdZDuZYIj7JtZ54PFtxUIs0PQmuYpvUUzea7c3IjgmvM7tFJn5dzKZ856qIg12iymv8S/tTpJ3MyacizrsckOkfrssu1agcPlZZGfWC1sW11HQuUYwY5NKjE4lt+DqLgmLR+SBXTlDLCiW32es479ICaku/IOuBbvd0jhYQbmVDT2IR9/2B3L3I6y6hw7+2k5dw/O3GgBFP/KmM85FML8fz0BDoMWrRhwlw4rmgZxVJbFjhI7F9KZwksIobCTt+z9uZaNu/s4Q6ory38YhdzawxXie1GZ+DUOYogOd1YEiTTNdA3d21ArkXv1u3ZBcED/K5/y5RWmao5Y7cLuZUmmHTeLIzMppLBe9v4g+BJXg8e3gXXZVR65/qazAKV3wGCqtt+TL7TKaFAXDuQqD/lSingzfCd0VQ9dLimLr0T+maIlygdDezs2zMTL83vWm5ENPVMMQ1PFvXW5MLL5bGxENiCSXY1hkwrG0+nd66PKVkvUJ8pYV4T0W5DrMHclrqaPVKt98UizXVbgemj0EVZRbNY44Q5SxNn9cGOVhL3y91TA991yKWEMt+qbtQsheGK9goWykdcf9cHeu5PnN3z5aztebQS/pi5hW+mnXhXOaCf+HGQznyxw9RCZlGTRbG/vnU89TSEGDXEF9bsnyDN6dL+VbfTFCBKmM7eypVdhD7acXSgbV+war321O1y0ZLf66Maw6jm2HFSptYM=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(136003)(396003)(376002)(346002)(366004)(451199018)(86362001)(31696002)(82960400001)(36756003)(38100700002)(4326008)(8676002)(66946007)(66476007)(66556008)(8936002)(41300700001)(6636002)(478600001)(316002)(6506007)(5660300002)(44832011)(2906002)(2616005)(83380400001)(6666004)(186003)(966005)(53546011)(26005)(6512007)(6486002)(31686004)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?Rm5zRjVIbU5HOGowbTJRbFl2TCtxOHU1RjNuMXNXc0lMZDNHRW9RMzN6RElM?=
- =?utf-8?B?QjVtVURxUTNCY05qM3l1eVNjWHRmeVRkaytBc0NTYlhDcXhvUG0zYmJyRExq?=
- =?utf-8?B?c3RYZ1g5NjBGWHVqdUZJbklvWFY2R0l2bEZzd3FIWU9wbjhzRWVoTCtNeE5w?=
- =?utf-8?B?eHhzWkpYa3dZWHdVODlJVWtsVGVabXB4ODhyRW14WklpUHdsdWl6Q3lEejRB?=
- =?utf-8?B?ODJ3dEJmZnhLQzFRcnQyYzNEQUZ1dmlVVmNTcnl5aE1NOTkwUGV5QVErdDUr?=
- =?utf-8?B?OElmTk9YU0F5SkZaS2oxRGtVeDAxWGhBQVBYUzJUaTRGbHlqRnBQb1A1d1NQ?=
- =?utf-8?B?d0E5SVhIT2QxOEFrUlA2QTQrNUVVbXkzb0Y3dkc1Q1RvcmRHVWQvK3RHWWFm?=
- =?utf-8?B?bThmaVJlM20rdk9iMnEyQyt5dEpmQVVsZVRFbStHY1N6b2UyWThOclp3YXdW?=
- =?utf-8?B?cmVaNHd2b1VIV2ZlSUVsUjVZQ2x4Ti82b3JqQjg2Y0pYVy9SYWk3R005YVlU?=
- =?utf-8?B?QjZ1QmRCbEhOQWpaelpVT2Fnd0hxZFY1VWo3R1hhWFhEcjYwZUVSTjJNU3NB?=
- =?utf-8?B?VzB0L0V4QVRPdWFSY0FuVTdTeU0wVE1QQXoxcUIzUVhQdHNPQklDTTdtdytj?=
- =?utf-8?B?SGRYR012RHM1MjBnSitoOFdTYWdUWFRSSTlTdnJ5SXljNnJEa3YyVTgvVXc4?=
- =?utf-8?B?bnkxbU1DQlVacENIdXlYR1BHUnNNckVnNGM2TW5ocEltZzZIVFk5bm1WaHEr?=
- =?utf-8?B?NTZJeWRrb0wrWWU0WHVYaFQvU24yY0JDaEU0VDdsU05KbTVxbHpNRHl6MjNK?=
- =?utf-8?B?eGhOOWZGK2RiUGtqNUF5RWcySjA0d3RBelJndWtYM3UxQ0lGR2xGUVMzK2RK?=
- =?utf-8?B?VHF6Q3dGenhNSk80WmoxY0RXejg4RmFmRUVKVnV5ZURaamtTTS9WcTRoenhZ?=
- =?utf-8?B?bnhGd1pUcnVrbVhtcE5RLzc0emhWa1VwbkNvcE1ScmlXSjFGdENIOCtWL1Qw?=
- =?utf-8?B?YXVkZ2VRdmxYdFdwTUgwTlBvSlFnTTdRd0prUldqS0NmQVZMYmlmdkFHd3NC?=
- =?utf-8?B?dVU2OC9tMmcrZW5IVndXbVgranZvdG9GTU4xQWFweWgxT1RHcTRmVGUzcXZz?=
- =?utf-8?B?UFVEbHFEaXN5bTFKNGlSZlordFJrRXAzcldNSHBuR2JKU2Q5L1REc2V0dEFM?=
- =?utf-8?B?UGRVcXBCUHFEN2N0cng5NFc1UUtKbVlPaWNkdzZRMmZadE5Fb0F2Z0NwNDlk?=
- =?utf-8?B?a0hGSmVFVTNPZ0V6dUw2bmV3b0JTcGRhNjFoQXdVVndPZ0d0VmM2TmhaZ3dE?=
- =?utf-8?B?K2FmdjlhZ1dCdkw3RHhlTTAwQnZxSUNJWm5qMmw4ODNPL283ZlZkMURlM00x?=
- =?utf-8?B?M2RhUDIrajdxVldtSFRaN1ZpN05tMGZ5NE40ck11L2hPaU5NQ2R4bElzM2gy?=
- =?utf-8?B?NERjQmkyWVNVUnRxUmRhMVdhalhOQ216Rko2NXo0dE9SL0FlVTBhL1l3YkRE?=
- =?utf-8?B?NFlrUWNOWUhLV1BFa2doRUlBNXFvYmNndTlQOFhad1lhMXBWZ2p0MFBMS0JQ?=
- =?utf-8?B?aDZvZTVsdzhtZjUrc0RoRWIrcVZWMmE1SjlCMWc4MkhLRHRGTG1DR3hhYWFj?=
- =?utf-8?B?eHlVNXFOekNubTVzME1wYzNXek1xaGt6OWpKeEliSEpsbi9xVlFCOEZDbkw4?=
- =?utf-8?B?YnQ4eXlWL2Q5bHR3VHZDMDZjR2J3K2kwZnFQWWJiRCtZMWE3RWJwZGlvQ3BZ?=
- =?utf-8?B?U1dMR2h5NEdDclNMcFBKZS9EWVNZOUtrNXhCWmRhQXdXaDViTHJaSmtUZUFl?=
- =?utf-8?B?ZDRTWFpTZVVaN0J1aFNadG5xZGdJT2dmeSs2UlhacmgvUW5VbXpXYlhVZ2lT?=
- =?utf-8?B?Y3FTZU5SNWU3RE1PVm1aVFBmSGc0bEh4dElsUW9pTWpobXFoNXlIbk15WFNz?=
- =?utf-8?B?aDNiY2Z0azlkMG9iWHovN0k3alErU3NlUFl0L085RldIM0FHTWNhRS9KWS9t?=
- =?utf-8?B?MjNndm1QcnB1b0tDVFYvbFFrT1BRVmtuaGFJaGJOM3JBMXArT25ucndMZmJ0?=
- =?utf-8?B?YW5aYlRmU0FYTWZQV1F5K3BEbnRuL1FsV0M0WmFqWUh6SjFYNjZpaVJGUzBW?=
- =?utf-8?B?N2x4RVoybllyajh6T21tMGJlOCtlZnlyeml5U2JFWnN2azM3a3hDUTkrWkE5?=
- =?utf-8?B?UUE9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4796712-2c23-4f45-4691-08db24614a44
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2023 07:54:08.1972
+X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB8515.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f4191f9-5b30-4a3f-ea26-08db2489b125
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Mar 2023 12:43:20.3759
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VPLay0tVBZk0TB3U/JvL2qnBa+q+K54UFfdEhwWie4/OTthLcM8RqcTBz9VLMs0c38dc4Rdz9plWRne7erQAgQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR10MB7776
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: whfzjzHpb1wFy8ASovUhDn/BaQQF8PXCxpQ0XPqTPFrHLDXRgZGNHZnWqX0UPwLDdMFMtAyPRNN0wBZ4bodTuuwDhxIkCl9TdU89JUwOwSI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB8129
+X-OriginatorOrg: toshiba-tsip.com
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 14 Mar 2023 07:54:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11024
+ <cip-dev@lists.cip-project.org>; Tue, 14 Mar 2023 12:43:41 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11025
 
-On 14.03.23 08:45, kazuhiro3.hayashi@toshiba.co.jp wrote:
-> Hello Jan, Quirin, Christian,
-> CC: Iwamatsu-san,
-> 
-> Just for your information, based on our internal requests,
-> Iwamatsu-san uploaded efibootguard package (and its build dependencies)
-> to bullseye-backports [1] and it's now available.
-> 
-> In response to this, efibootguard is (will be) enabled in bullseye-backports swupdate [2].
-> We internally tested the both (efibootguard and swupdate) in bullseye-backports
-> then confirm the basic A/B update is working.
-> 
-> Though backports packages are less maintained than the packages in the official releases,
-> it would be that the packages are used more widely.
-> I'm not sure if you have plans to replace the current efibootguard/swupdate in isar-cip-core by
-> backports ones from now, but let me know any possibilities.
-> 
+--_000_OSZPR01MB85155EAB6B807A73E6A201A4BFBE9OSZPR01MB8515jpnp_
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the info and for enabling this. It's surely valuable in case
-there are no needs for patches against EBG. Currently, the only reason
-for a self-built EBG is RISC-V support. That may change again, though.
+Hello All,
 
-So we will keep both options, using the official package by default but
-permitting to select the self-built one on per-machine basis, e.g.
+We would like to know if anyone has any preference or specific opinions abo=
+ut how CIP Security images should be generated from isar-cip-core meta data=
+ [1].
+In current configuration, by default no security packages are added for IEC=
+-62443 compliance, user needs to explicitly select cip-core-image-security =
+or through KAS menu security image option to generate CIP IEC security imag=
+e.
 
-Jan
+From IEC-62443 perspective it does not matter how security image is created=
+, it=1B$B!G=1B(Bs up to CIP members to decide.
 
-> [1] https://packages.debian.org/bullseye-backports/efibootguard
-> [2] https://salsa.debian.org/debian/swupdate/-/commit/6b833d909145c74c050e1934cc573c3b380d4f19
-> 
-> Best regards,
-> Kazu
-> 
+If we want to use current approach then in my understanding we have to test=
+ two images in future (one default image and another Security image).
+The options which we have are. (Feel free to add)
 
--- 
-Siemens AG, Technology
-Competence Center Embedded Linux
+Option-1: Continue to use existing recipes/meta data and generate security =
+image on need basis (Already supported)
+
+     Pros: 1. Only those users who need security enabled can generate CIP s=
+ecurity image
+               2. Default image remains minimal and smaller footprint
+     Cons: CIP Testing WG needs to separately test each image.
+
+Option-2: By default include all security packages & security customization=
+s (Currently not supported, needs recipe refactoring)
+     Cons: 1. Users who don=1B$B!G=1B(Bt need security packages have no cho=
+ice to exclude security packages
+                2. Larger image size
+     Pros:  CIP Testing WG can test only one image
+
+Option-3: Create a small debian package which will include all security pac=
+kages & security customizations (Currently not supported, needs further inv=
+estigation etc)
+    Pros: At run time security packages & customizations can be enabled or =
+disabled.
+    Cons: May need lots of extra effort for development and maintenance
+
+Any other options???
+
+Please share your opinion or suggestions which option is preferable by 24th=
+ Mar.
+
+Note:  1. As CIP Core WG is planning to make release of isar-cip-core meta =
+data very soon, we need to finalize the approach.
+             2. In case of no suggestions/inputs, current approach to creat=
+e security image will be followed in future and accordingly CIP Core WG wou=
+ld proceed to make isar-cip-core meta-data releases.
+
+
+@Chris, if you want to add any other perspective from testing point of view=
+, please feel free :)
+
+[1] https://gitlab.com/cip-project/cip-core/isar-cip-core/-/tree/master
+
+Thanks & Regards,
+Dinesh Kumar
+
+--_000_OSZPR01MB85155EAB6B807A73E6A201A4BFBE9OSZPR01MB8515jpnp_
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
+osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
+//www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
+<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
+<style><!--
+/* Font Definitions */
+@font-face
+	{font-family:Wingdings;
+	panose-1:5 0 0 0 0 0 0 0 0 0;}
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	font-size:11.0pt;
+	font-family:"Calibri",sans-serif;
+	mso-fareast-language:EN-US;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:#0563C1;
+	text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+	{mso-style-priority:99;
+	color:#954F72;
+	text-decoration:underline;}
+code
+	{mso-style-priority:99;
+	font-family:"Courier New";}
+span.EmailStyle17
+	{mso-style-type:personal-compose;
+	font-family:"Calibri",sans-serif;
+	color:windowtext;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-family:"Calibri",sans-serif;
+	mso-fareast-language:EN-US;}
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
+div.WordSection1
+	{page:WordSection1;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]-->
+</head>
+<body lang=3D"EN-IN" link=3D"#0563C1" vlink=3D"#954F72">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal">Hello All,<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">We would like to know if anyone has any preference o=
+r specific opinions about how CIP Security images should be generated from =
+isar-cip-core meta data [1].<o:p></o:p></p>
+<p class=3D"MsoNormal">In current configuration, by default no security pac=
+kages are added for IEC-62443 compliance, user needs to explicitly select
+<code><span style=3D"font-size:10.0pt">cip-core-image-security </span></cod=
+e>or through KAS menu security image option to generate CIP IEC security im=
+age.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">From IEC-62443 perspective it does not matter how se=
+curity image is created, it=1B$B!G=1B(Bs up to CIP members to decide.<o:p><=
+/o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">If we want to use current approach then in my unders=
+tanding we have to test two images in future (one default image and another=
+ Security image).<o:p></o:p></p>
+<p class=3D"MsoNormal">The options which we have are. (Feel free to add)<o:=
+p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Option-1: Continue to use existing recipes/meta data=
+ and generate security image on need basis (Already supported)<o:p></o:p></=
+p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">&nbsp;&nbsp;&nbsp;&nbsp; Pros: 1. Only those users w=
+ho need security enabled can generate CIP security image<o:p></o:p></p>
+<p class=3D"MsoNormal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2. Default image remains minimal and small=
+er footprint<o:p></o:p></p>
+<p class=3D"MsoNormal">&nbsp;&nbsp;&nbsp;&nbsp; Cons: CIP Testing WG needs =
+to separately test each image.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Option-2: By default include all security packages &=
+amp; security customizations (Currently not supported, needs recipe refacto=
+ring)<o:p></o:p></p>
+<p class=3D"MsoNormal">&nbsp;&nbsp;&nbsp;&nbsp; Cons: 1. Users who don=1B$B=
+!G=1B(Bt need security packages have no choice to exclude security packages=
+<o:p></o:p></p>
+<p class=3D"MsoNormal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2. Larger image size<o:p></o:p></p>
+<p class=3D"MsoNormal">&nbsp;&nbsp;&nbsp;&nbsp; Pros:&nbsp; CIP Testing WG =
+can test only one image<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Option-3: Create a small debian package which will i=
+nclude all security packages &amp; security customizations (Currently not s=
+upported, needs further investigation etc)<o:p></o:p></p>
+<p class=3D"MsoNormal">&nbsp;&nbsp;&nbsp; Pros: At run time security packag=
+es &amp; customizations can be enabled or disabled.<o:p></o:p></p>
+<p class=3D"MsoNormal">&nbsp;&nbsp;&nbsp; Cons: May need lots of extra effo=
+rt for development and maintenance<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Any other options???<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Please share your opinion or suggestions which optio=
+n is preferable by 24<sup>th</sup> Mar.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Note: &nbsp;1. As CIP Core WG is planning to make re=
+lease of isar-cip-core meta data very soon, we need to finalize the approac=
+h.<o:p></o:p></p>
+<p class=3D"MsoNormal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp; 2. In case of no suggestions/inputs, current approach =
+to create security image will be followed in future and accordingly CIP Cor=
+e WG would proceed to make isar-cip-core meta-data releases.<o:p></o:p></p>
+<p class=3D"MsoNormal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p; <o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">@Chris, if you want to add any other perspective fro=
+m testing point of view, please feel free
+<span style=3D"font-family:Wingdings">J</span><o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">[1] <a href=3D"https://gitlab.com/cip-project/cip-co=
+re/isar-cip-core/-/tree/master">
+https://gitlab.com/cip-project/cip-core/isar-cip-core/-/tree/master</a><o:p=
+></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Thanks &amp; Regards,<o:p></o:p></p>
+<p class=3D"MsoNormal">Dinesh Kumar<o:p></o:p></p>
+</div>
+</body>
+</html>
+
+--_000_OSZPR01MB85155EAB6B807A73E6A201A4BFBE9OSZPR01MB8515jpnp_--
 
 
