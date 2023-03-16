@@ -1,149 +1,270 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <chris.paterson2@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFA04C6FD19
-	for <webhook@archiver.kernel.org>; Thu, 16 Mar 2023 07:27:05 +0000 (UTC)
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (EUR05-DB8-obe.outbound.protection.outlook.com [40.107.20.61])
- by mx.groups.io with SMTP id smtpd.web10.6791.1678951619602978437
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61411C6FD1F
+	for <webhook@archiver.kernel.org>; Thu, 16 Mar 2023 13:38:57 +0000 (UTC)
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (JPN01-TYC-obe.outbound.protection.outlook.com [40.107.114.106])
+ by mx.groups.io with SMTP id smtpd.web10.12287.1678973932817068567
  for <cip-dev@lists.cip-project.org>;
- Thu, 16 Mar 2023 00:27:00 -0700
+ Thu, 16 Mar 2023 06:38:53 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=RD0bVJMR;
- spf=pass (domain: siemens.com, ip: 40.107.20.61, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@renesas.com header.s=selector1 header.b=nZuh2/M2;
+ spf=pass (domain: renesas.com, ip: 40.107.114.106, mailfrom: chris.paterson2@renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QnqJAdGWf1BCKlL8msM9DMMg1VsW+KVKyIUMge97dIGKp9zEdopblz0Wthakm3zWOu1Pnf159NusVA9O3QSv8VlXrNWKf3tBIxgMfFsHtVdmKsSPzWFj50iuuAAtpZ/iZikq6099OoluomEf8mOi1L/Tz3kEZBXw05eHsUtlfOvjz5vty2f+5hQw0Or+pwg129LfJEWuy8+bW8z86kSbVfxl0zCz0TzUiQUBFlzm8WeugfeO7rAvPpUSnvJE3puinM21DTg09E+EyWUppERLt6ETqkucuHWNCt2KhBizbtGbQfw+b2cunP0dx71XKeEzDBVw/qsabjbkG4Yr8eMPwQ==
+ b=GmnuxDNEGcDExFx3zfoylBbSYXTXX277tUENGwPz3T/gGofi0cTCth4SvgUPKF5qns0Bo9BKsYVQfi+kdRxnPzbLyGgCDK1A9yyfAF9oGMcuFqSQNT4UdCtYH8lE9Cc3uFs0fKLHkMfpPku4Ejkn3iEuf92W+iXmzwWF9aGoC8nUnVyBMaY3f6g/nl0UNJuHKn9ej9jhYhHww6vzHeBrGvclZkGzWEfo1kDqgMXCom6iIoWQJuixUcWxdj+GZ60DSAhJP3FQN0+wjpoJmj5vsXi1PaBIQ7aRBXi0r3pqL+SRwnS7iwuw6N/9uk/SK8DojCPWvtnrOI3Cmy88/M3Yrg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=B8hhVSqclQA0/Rcl1oomy75GUwf8m/ZzubFDhHT0bNo=;
- b=DqUkSH6HLyE7CFKvylX+xSijIMepCz+8C1HBMfj0KjwBWvQP7PCc2nAk7busfUYBQca4vRmTtg9tW6wYYIS45m2rk06dlWd70+ft/c8tOoua3Yl/BlEo2+SU8sYzMY2REciXdQTuj0feUzYhZ7lIo6fhU2A9Tb2/I6wP/TdCM7blridaIoNkSegOMDK3nQ1PFln/SkcaXyAo9IW4iydE6evDz6fhBz2uZWvqWXcODD4pDyompjGGdbA1hVlzVSCP6NTsCS0EK9EYPTF5ZV7UFzTu6IFVaWEHh+Y77m6xpd8Mudr5YKD13N2rDVFAJDslxafQwiuEx1l6iAo9Q4geDg==
+ bh=jVHKKhLeqi9ZuyFyRfoa46Cx3+CCa/e4835CagvH4Ng=;
+ b=Em/ZabkF7lmelRZny9s8nfAhCKQcP08ujSBwp9Yeo1S14tjwQtMJI9kT2yhmnkeM5dxd9IfKkyi7Ho/ucO7MRayECoBhJdDeplC1t8Qfd7JGDYObLs6SDowAiCWNVrKPOXlmKqXoSxToD0FP5XtfIqshXNpQtynocFdDoMLNwaDybhYamno2M8oKJHIeHAGxJImnZcJ/i8rNL5tuDhQKqeC2q0UpRwagVOUJLbBwOBJi6cqgRq63IdIMDuQ9OIGZ0zAECx9/cQCUlVg4GPS9ASuR3XnodfzR3/GIaT0zRY4vtsP2en7lwl0xxeDSkQjMKdKcV57fj1q1VstEh4aFDQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=B8hhVSqclQA0/Rcl1oomy75GUwf8m/ZzubFDhHT0bNo=;
- b=RD0bVJMR966fb3n6fJ0+MlFIMpRPojq6vmv436CbQ7s0soQrFmBu2Np9cQoFje6kZMPtYYdaWouXbQ70aN2E1FNkJ3hQmZ/s64O5fZxVSM1nX3HGL5UuAHJRIfOqxPD619GtFlSfqF6tzDXlOlh7qhYp30js8BuBea3l6+kDIngo7DFro81lxZDB+utsAP6rimph+hixFTw9ba4SWh0QvffL4N53OT0mnvE0Wi+ts4WcGAwtAKQc/34EFa0gMP75AJNCBqTYlYyDvBxLj4XOCXGuXunYq3pSLzNZNNE39JZFjm7EYrLheheXxhQdECVJueUswSB3nhsnUM7RfUVDYw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by DB9PR10MB5593.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:30c::11) with
+ bh=jVHKKhLeqi9ZuyFyRfoa46Cx3+CCa/e4835CagvH4Ng=;
+ b=nZuh2/M2e66v3JkR9XbAZdSnkJHQ8rMcFh149tC1ibNjeHTBUyaZ4UqyBE2J5OJ3x2Hc2bHsrjrgTDSKY2zMPSn55T4an1lz9VwkteJOeCsIvgUZvg+3WXu0b/g9wxZ3MyJ9ANePDp7L6UP9/9L8GU9JqI4XZKTw9eBMQfSd7zk=
+Received: from TYCPR01MB10588.jpnprd01.prod.outlook.com (2603:1096:400:309::8)
+ by OSRPR01MB11522.jpnprd01.prod.outlook.com (2603:1096:604:231::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.24; Thu, 16 Mar
- 2023 07:26:57 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::d4b2:77cc:31cd:a3a2]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::d4b2:77cc:31cd:a3a2%9]) with mapi id 15.20.6178.026; Thu, 16 Mar 2023
- 07:26:56 +0000
-Message-ID: <3cda366c-3b58-291f-42f2-4e8bb6069aa5@siemens.com>
-Date: Thu, 16 Mar 2023 08:26:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: CIP IRC weekly meeting today on libera.chat
-To: cip-dev <cip-dev@lists.cip-project.org>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.31; Thu, 16 Mar
+ 2023 13:38:48 +0000
+Received: from TYCPR01MB10588.jpnprd01.prod.outlook.com
+ ([fe80::dc49:e307:b424:4a53]) by TYCPR01MB10588.jpnprd01.prod.outlook.com
+ ([fe80::dc49:e307:b424:4a53%4]) with mapi id 15.20.6178.030; Thu, 16 Mar 2023
+ 13:38:48 +0000
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"dinesh.kumar@toshiba-tsip.com" <dinesh.kumar@toshiba-tsip.com>
+CC: "stefan.ss.schroeder@siemens.com" <stefan.ss.schroeder@siemens.com>,
+	"GeorgeY.Hsiao@moxa.com" <GeorgeY.Hsiao@moxa.com>, Kento Yoshida
+	<kento.yoshida.wz@renesas.com>, "Philipp.Ahmann@de.bosch.com"
+	<Philipp.Ahmann@de.bosch.com>, "sandeep.shivaraju@toshiba-tsip.com"
+	<sandeep.shivaraju@toshiba-tsip.com>
+Subject: RE: About CIP Security image generation
+Thread-Topic: About CIP Security image generation
+Thread-Index: AdlWaUPbaGgryGgHRRCdsfXTRcaqSABotgnw
+Date: Thu, 16 Mar 2023 13:38:48 +0000
+Message-ID: 
+ <TYCPR01MB10588EDBBF653B6739E9E190AB7BC9@TYCPR01MB10588.jpnprd01.prod.outlook.com>
+References: 
+ <OSZPR01MB85155EAB6B807A73E6A201A4BFBE9@OSZPR01MB8515.jpnprd01.prod.outlook.com>
+In-Reply-To: 
+ <OSZPR01MB85155EAB6B807A73E6A201A4BFBE9@OSZPR01MB8515.jpnprd01.prod.outlook.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0011.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a::21) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCPR01MB10588:EE_|OSRPR01MB11522:EE_
+x-ms-office365-filtering-correlation-id: c4f59fb7-7cb0-46ec-c8c1-08db2623c5b5
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ bTygitEKwIsGr6BVJdq9xPvjoWHItpjdB8o25lIIoOUxaF8mMvwkYrnEx1047hTB4iKX2vDt5vSUVXPVe99E9SehA1P4jmEOhRPsFO7F/B2zU870LLuk5WvT1qGiDaqWWvq7zPh/bpOxPV3Xyc4jhQCqe5rGoGrAymGXaLAxj3GarhP2jNUl0dBC/IbYZ+Wi1SiN1gIcUEr1DbMYxoYR4LrhnxjLIDes2VXVYRKz8MUGx2c9K78R4rLmr8TQa1Z3OfueIfqaWyQM8zucROzkFWQ6fIvnexAtatNByPM5lZBEHBy6KdSTyhS75DJ3awJQQm79RTCbPlsMhzOaOJKPjiy7rytt8Wzbhl16pvg9ovDJynHzmZW+0CjSGNqHxZ2RfzSPO7Av72P5hzaWWAken5VGYk4A5XJ/ItmfZpj9PpdCrCb8ZXEZ/Oe7qsTkxGxcI40aawJ9RS91A57lVmp7opVjNOSqu3QLa/Mepe+Yh4mGmoTCF0SN7ZAulyxE5KCqK3NQ4PpLP9GbSSFnwZS0Q/5307ql13JOsnSEdelJbynAlI6451WQ5zlrxvqeqvSPzw5YGLFd2EaecYE4TKOJChIwucM0zJkriaMsjeJh+Zpupac9vVzuZZGpGk1o6S8jkj6ofHBVU6gglX8GSH5fzP+S2CPGxAxqz8uqG9I6ZApZzSV1nv003xg01HQsYVXp
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10588.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(376002)(396003)(366004)(346002)(136003)(451199018)(15650500001)(2906002)(5660300002)(33656002)(66446008)(186003)(478600001)(54906003)(83380400001)(7696005)(71200400001)(26005)(9686003)(6506007)(110136005)(66556008)(4326008)(55016003)(76116006)(66946007)(66476007)(86362001)(52536014)(38070700005)(41300700001)(8936002)(64756008)(8676002)(966005)(316002)(38100700002)(122000001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?YlM0NmZCZ29Od0s0MGxVTXhERVBYTWxMYnFFalFWUmJaQW5Wb3JGWmpx?=
+ =?iso-2022-jp?B?cVhiRENGS284S053UjdnT1dhOFpiQ2ZSUHd5U2QycGpnR3V1M2VzQ1Bp?=
+ =?iso-2022-jp?B?ejN4OUtocWRRdXd5NGIyRUE4Y0VHVXpkaDZKMkxYbGEvQ2t1WVV3SzhY?=
+ =?iso-2022-jp?B?Zm5DRXd0L2xuc2FEVUZ6RzdmSFAzNXR2MTVyOFcvcXpCeG4wRC9VUjQ4?=
+ =?iso-2022-jp?B?Z3BrcC80YmpqcEhYa0Q2ZVFpSWlEblRWb01EWGc2SzlGZUpzQk81WDM3?=
+ =?iso-2022-jp?B?Sjg4L0p0NG1NQTJCZHkvZ3VKamFVbDZtSnF2dndHTlgyNXFpOERNVFZm?=
+ =?iso-2022-jp?B?RzY5OU0wS3JiZnIvZEx1V0duMXN0VnRLeGxnSW5mN0NCc0xDaGZRK0pG?=
+ =?iso-2022-jp?B?ZTk0V25idXd5UkNYV2ZVMmxPaCtaQ0tGb0wycHAwS09ja0U5Qnp1ekxC?=
+ =?iso-2022-jp?B?OWk0dGFBR1AvbUZpV3dkb0JFS1p3RGV2Y0lzWVU2eVFwaCsyczU1Vms5?=
+ =?iso-2022-jp?B?dy83WEhOZmR4Q1JiYUJLZTlMMlFiSmFGWG5QWkpFTjlHczRNaklGR3JJ?=
+ =?iso-2022-jp?B?Z1ZKbEFEeGdPeVZyTGJJNjRUbHpxVm1NYit6T05xM0UzcEJ0cExuaXFj?=
+ =?iso-2022-jp?B?UVZ3RVdObGZQUzc3NCtzak1aZnpLNlU2VmVRS25QaHJiMmZnZGFTUFVz?=
+ =?iso-2022-jp?B?RXNhSHBOMy9wYjBGQWFHMjFNQTBUbWJRVEZmQU9EOE1kUEtMZDFRRENi?=
+ =?iso-2022-jp?B?TTJxQjQ3a29aUHlSVDhOaVFESmRiUnkyTFVKVkNLWHh1L1NEcjBFdWVD?=
+ =?iso-2022-jp?B?eUhxYXgzTUdXMzZGRjI5c2xaamg4RzhlSERSSmJNKzNrWHhpN1V2cVRN?=
+ =?iso-2022-jp?B?WHFQQTdNUExxUzhpUmZZLzlYZ1k1UURMcHVUUnRmMzlJZWl1WGJyYTFy?=
+ =?iso-2022-jp?B?ajI3MGRCN3hBOHNEVmIzV1g4a1NXRTZJVzhZRXNnOGVyWm44czhzTkRJ?=
+ =?iso-2022-jp?B?bUJyNk1KL3pRZ1cwK1ZzNlYvNjk3UGh0dkpBT3prcWRRQnA3b3I1L1NM?=
+ =?iso-2022-jp?B?cXRXM2t3ZnZINXVVdk9CLzUrODdSdUZaR1FnMHlkUk5JOFRmb2N1K2FK?=
+ =?iso-2022-jp?B?clVZL05EU01jdFZiZTlIVmdvU3RLOVRqUFVkcFVBNXY5bnZMN0JEYzBD?=
+ =?iso-2022-jp?B?cHBBeENrL1dOUmhxS1pIVGloWlV1VGVwQVEwUG1HQzJLUlIwV3k5Vm0v?=
+ =?iso-2022-jp?B?NzVjNW91VHZVdHlRMURWaE85OUtvT1p1YjU0MENrcFNxTjhaZi9RM2Va?=
+ =?iso-2022-jp?B?ZHZkQS9qY3lMei8yZmdHSmhCUVlNWUFSeG5NTWlZTnhDNGEzZkNxQ1Zm?=
+ =?iso-2022-jp?B?SEJ3VzhPSjhXN3gwSDNBdVNSRUtzTy9PVUt6dXI4WVJJZC9FRmRGWkNH?=
+ =?iso-2022-jp?B?UFY5VlJySlpDUlovb2ZZY3JKY3cvQ2NMTTFSWkNiWVZjeGdZMnhwQzVo?=
+ =?iso-2022-jp?B?ekJqUUJnYlZvSTA0MEFvZzZEL2lVWmhkaFVnU2tjSXBFSFRHa0R2bGFi?=
+ =?iso-2022-jp?B?SC9nUFEvcFppcXFNS1NDOFJhakRGc3F1Z2pWdGdwaFl2L3NmenNocFdk?=
+ =?iso-2022-jp?B?L1B5NlF3aXJoZ1I3b3VBaFU5RXczV2JDZTNRTExEdDBsN3I1Mmt2a0w2?=
+ =?iso-2022-jp?B?WlJINndKZlFFZWNSM1YzUVhwT1djaG96WFF5QW9SUi9uYlNPblN1eVNm?=
+ =?iso-2022-jp?B?WjR5S0xyRWJHd05vb3pKNkZSR3FBeG1FWjZmT0lmbEUyRVFlNTRPek1Z?=
+ =?iso-2022-jp?B?SjJtL2JkSFE0ZHVZNktaWC9KVjNId2hjT1doQVV6WUV5blRKaVFrbG54?=
+ =?iso-2022-jp?B?L3RlY0NWdmRRRG9HYUI4ZXdkSVp4Z0crZ3hsY1Z0R2ZzenBleUE1bHB4?=
+ =?iso-2022-jp?B?K2dybTcxVitnRWZvciszWHNkOWVhdHBLNXFEby9NMFc1dlcwRjhhU1pJ?=
+ =?iso-2022-jp?B?MHZmK1hwU25pMTVxcjR2ZmNpWGs0WWovQ2kyUnUvaFpPQ3A2Z0t5TmFO?=
+ =?iso-2022-jp?B?endnQm1mTW9FMTJOTzRoU0NXNkJZYVRyMFVGcGJIKytaNmFXZlduSG9T?=
+ =?iso-2022-jp?B?dE5wUFQxdnRkY1JNR24vVGUvNlVBajdYRmhBTUIrb3kyL2hyb0VlWElR?=
+ =?iso-2022-jp?B?bytQR3YyWGFJMXJoTkpyc0tPV0VIWmE2dEs4c3RFYklGa0lFSUlaOVY5?=
+ =?iso-2022-jp?B?ckd0aWF1RnEzd3l5QTMrUm5rQ21xQkltNWtvWk5tckMrMDJ4S1I4WVk1?=
+ =?iso-2022-jp?B?ZVJ4M2xGeWxUZ0pwaUdqVkdKOWdqVlpiRGc9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB9PR10MB5593:EE_
-X-MS-Office365-Filtering-Correlation-Id: 62fbc41e-07a5-4a30-13b3-08db25efd2dd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	JQSmkhT+egV0VzKbqVqisQH8IQs7hmBBaYDxUiMZ0p3vKuv7bKuFb//w2MGxo8FR3+iHgfZjG0v7xEz45kxgvvsa+dhPiBDu4asmsxy9vS3+rcL2LxjnFhedoeN6tHr5Lteqvbav3VHw7DSABKnHZArjY9lckkt+inYqtnbt1CKDNeMjWZ4SZi164j2Q32HKPGFjxo8/Y1OfalUXOOoJwaiwhlftpbgQI5nGF5ZKDWPde3cKs9dneAelIwwreQ9286+FHT9iBBJ4/5AnpLEOwc6k7rJKIEhcAQ7K9DatlqPMuHfD1BaYbv4q81USRRTNBn/SGFP8DA/QplsCR1qpWm92hIrRjdd0HIcFJmFfpFau8OVGuZhy4BdQUsSEJLe09CGk9BlBJqeMG7b0HRVKwZ+9srG+xfntk6baTzEtoL7FHUuv4TkNAwYn9PDngvO10RfGa/hzTGLvBn5FTcqF+s3BiFNrNfboiLossk+sNlGdsCaY6wBt/KRwBlN3zQ7gYeO7INHlTLA92ihf+CNaUNASDT0ROnVOoAv1jOEDP5xaADDiUaRErOdwPy9riCCVD8hciLRre6k/FL5ZNi1nxu6AMS05dUeNBeGmoD/G6/s31ZQUxTMkJeYUhfZtHOAp3rtKivAFk7wFes8K2EdvRrmHyjaNatUse4/JF8yZ0FyZIQMtzHdi7O2hRfr9r6bYNY1skOn/BxdO19+nFYFDsS8RjJnddxayxGQLDkOj/gX43BgssjPRHHEBOiLbxW8j
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230025)(4636009)(346002)(366004)(136003)(376002)(396003)(39860400002)(451199018)(5660300002)(36756003)(41300700001)(66556008)(44832011)(6916009)(4744005)(186003)(83380400001)(31696002)(6486002)(6506007)(6512007)(478600001)(2616005)(966005)(26005)(8676002)(66476007)(38100700002)(8936002)(66946007)(316002)(86362001)(82960400001)(31686004)(2906002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?a0J6NkJTNmNXWnhpYkNwSERVN0hjaXRIeXVCQlBWb25wZ2M4ZDRobWVoajhl?=
- =?utf-8?B?cy9uOE5hM0JLUDh5NGxLV1MwNGxpR3h3LzJGOCtWdk04OW5OM201b2tEaEtk?=
- =?utf-8?B?U2hDSFZhcE02c2hVR0VudFdnVFR2WjZESVBxaFdxYkZtZFQzQkhscWlKOEZn?=
- =?utf-8?B?d1A0eUo3cjZSQjRlMVZYQ1YyQ09iMlcxYXV1Nk1Mb2IvSzVrMnNYSjYwUzJn?=
- =?utf-8?B?SkhpT2ZndFJNcStJcWVqUk50bEFaRlo4eit0MXF5QnFheWsrVmczUTBzS2Mw?=
- =?utf-8?B?aUdaM0QvVFFQNkJidTU3RnZvSFJUekNNNVV1aFFXN1daT0dId2JLOTNjUzha?=
- =?utf-8?B?b2o5dE50RmFLRnl3cVVTM3BiK3phUk5VVHR4MzdMSERuREw5TVFyQUVtZVhU?=
- =?utf-8?B?RU1EMzBUNWUyMWRtaVNOU1R0M2JtcjVEMHoxYUZiNjA3OUhJOENnNkxPbUdt?=
- =?utf-8?B?WWM3eXcrTEVrb3NpVnZkc0lCUm1YMEpkbjJWNDJET0NHRUNyTWpNeExDSUdR?=
- =?utf-8?B?SVQzSnlubXY3V2MzOTNDa3FaZTZPZFVUV0ZTOWs5K3M0UVZHNHdiTk5kOXI3?=
- =?utf-8?B?eTJaWUtoVHlDSkt2RE0rWk1IMlJXTUdTd3pWN3ZqdGxIMlVFeStWN3huVkRm?=
- =?utf-8?B?c3RwS3VUZmhQSndRYTU4Y3RIRy9ld3BYbGFSUW5NQlVWelBQNXFoZFB6cnd2?=
- =?utf-8?B?U1JBUjZYVWJOOWNLdUNqUnZ6RjhzbWZMemZlcUVHa1Y4c3M1YXM3Q3h6d09U?=
- =?utf-8?B?VWo1VXJzOGNwQUp4eWNDMTBPLy9Jc2orUzlLQjN4bmN1UC9JUDVEczRVdjFa?=
- =?utf-8?B?MUdQSHFHemc5anhhekR3TENPbVBIaEFEMy9ORE9uTy95ek5wbDc1MnIzK2dx?=
- =?utf-8?B?SFpzU0xZb09TczdhR0RCMkNpbjJwTit3ZU1rNGorenNmaGdWUjBkd1ZtZHp6?=
- =?utf-8?B?akU1bW9tNVB2bmNuWlhQVXh4NklzdkhmUURQa29ob29XN1pIQnArUkxGemRY?=
- =?utf-8?B?bkZxcUhlVVJSMTdtbVRrTEdUTERRaGNSRHVUcEU1OGl3ZlRNU3Znd0tiUDRI?=
- =?utf-8?B?LzRDd0ZHZEdwK2lzRjlEaUg5eWJydzRHcmk2bEdpNE9lR2pFcWR2UDZlaUcz?=
- =?utf-8?B?aUJHWkhsV29wUmVRRTUwYUtCWUxVU1JFemFZQ1d1RnJCRC9wZlFJTGs4TWQ0?=
- =?utf-8?B?bGxiY2Z2T0c4UHp3OWF6RVZnNXFtSnNEUDhhZjgvWUhpKzhaekJlQ1FXMHhX?=
- =?utf-8?B?M2RrKy84dmZERnM1R2MvUkpXR0FpTUY3SFNiMFhHYzEzdmdwWkRzcjg4TGwz?=
- =?utf-8?B?SWZPQjlRa2JnK1U5bWtjMU4xQ3JJOVpLTWNFMEdYQ0k3N2UrQ1VJUmJScHFD?=
- =?utf-8?B?NURGRDZoOTJWMmRtRTAvZElQbWRUUVROUmlhWCtYc28yVEc3d1JVUFpFQWFX?=
- =?utf-8?B?eW1YQ0IrRlo4aUFnWTgrTTREbGpwdk00YjZZSExQWW5BT09ra2RNU25mTEJm?=
- =?utf-8?B?UTNNYWlFZDVIYm91czAzUFlzZHBKRThJd0tDbVRoZGFGWFVYNFdNWXNBUnZj?=
- =?utf-8?B?dVFBRE5TdEdEcWkwNE12ZVBnTCtFNmFQeDZycW9pRWxUYnZwaWlSTGJXZ3or?=
- =?utf-8?B?Nkp3MkFFbDRyenRRelhxcFFsWFBDeWJzNXhIby9HRGpsQjBhTnNzNXVYU08z?=
- =?utf-8?B?QXo1NWhYNHc1VmowNU5FRFhSRTZlRzZSYS9aV0xYSjdlSTVZbjBIYnRSckVK?=
- =?utf-8?B?MXVkTGtDZVY5a0tGek9PWE4zYW4xaTJ4TEwzT0dKUWNMMSt2ZlpjRDFuQWpn?=
- =?utf-8?B?OWQ4ZG5pK0swNzRiUGZRY1pBdENRc3NMUitYc3JGNk9IQ1pyRGdLRVZmS0c1?=
- =?utf-8?B?TGttVURJYms4TXZmeHNNdmYrQ3c4QmhPYVJFalFXNWVEalQ4ZjBEMEV4RDV2?=
- =?utf-8?B?ODdxM045cDNmNnZSODBBODh6cHdDaVAxUFJNWG56Nkp4dTYrNjY0OHhRZUF1?=
- =?utf-8?B?UHhXUWZEaDJsbW5iUHZiM1dZalRPY2pHYm5TR1liNUhVdzBzdm0zVWZwVHZl?=
- =?utf-8?B?cmc1OFJSVW5ET3NwSldGZ0FZZWZaK1VRcFNKQzgxSmovY1VndElWLzZmWDBB?=
- =?utf-8?B?a2xhRDRqREJ1dTBxL3ZlaVZqUEoyeG5OTElKa1ZDbXNHK1E0eFFGR2ZjSjFC?=
- =?utf-8?B?cWc9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 62fbc41e-07a5-4a30-13b3-08db25efd2dd
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-OriginatorOrg: renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2023 07:26:56.9266
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10588.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c4f59fb7-7cb0-46ec-c8c1-08db2623c5b5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Mar 2023 13:38:48.5324
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pysCZHLT/42bRKGaGULHvEx/CTp0+fS8RNRG7UEBWQnlFagMqU4Ii7pdqHrFMxqfAzBxjYSuvNeb9RAbqX11oQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB5593
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: x9Xf4NTcZY1O3g0svhc4Og60qbO1Q+Uemhwt5gaVu02dCSNFjZHp8xH/nNliHoZJp05VKdBjpuJJCfpV85hVj5Hr0WbeHjSWZ7olgQWQs6k=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSRPR01MB11522
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 16 Mar 2023 07:27:05 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11029
+ <cip-dev@lists.cip-project.org>; Thu, 16 Mar 2023 13:38:57 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11030
 
-Hi all,
+Hello Dinesh,
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss
-technical topics with CIP kernel today. Our channel is the following:
+> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
+> Behalf Of Dinesh Kumar via lists.cip-project.org
+> Sent: 14 March 2023 12:43
+>=20
+> Hello All,
+>=20
+>=20
+>=20
+> We would like to know if anyone has any preference or specific opinions
+> about how CIP Security images should be generated from isar-cip-core meta
+> data [1].
+>=20
+> In current configuration, by default no security packages are added for I=
+EC-
+> 62443 compliance, user needs to explicitly select cip-core-image-security=
+ or
+> through KAS menu security image option to generate CIP IEC security image=
+.
+>=20
+>=20
+>=20
+> From IEC-62443 perspective it does not matter how security image is creat=
+ed,
+> it=1B$B!G=1B(Bs up to CIP members to decide.
+>=20
+>=20
+>=20
+> If we want to use current approach then in my understanding we have to
+> test two images in future (one default image and another Security image).
+>=20
+> The options which we have are. (Feel free to add)
+>=20
+>=20
+>=20
+> Option-1: Continue to use existing recipes/meta data and generate securit=
+y
+> image on need basis (Already supported)
+>=20
+>=20
+>=20
+>      Pros: 1. Only those users who need security enabled can generate CIP
+> security image
+>=20
+>                2. Default image remains minimal and smaller footprint
+>=20
+>      Cons: CIP Testing WG needs to separately test each image.
 
-    irc:irc.libera.chat:6667/cip
+This may not be much of a con in reality. At least not unless we start runn=
+ing a lot more tests with these images.
 
-The IRC meeting is scheduled to UTC (GMT) 13:00:
+If we have multiple versions of cip-core - which do we use for kernel testi=
+ng?
 
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2023&month=3&day=16&hour=13&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
+>=20
+>=20
+>=20
+> Option-2: By default include all security packages & security customizati=
+ons
+> (Currently not supported, needs recipe refactoring)
+>=20
+>      Cons: 1. Users who don=1B$B!G=1B(Bt need security packages have no c=
+hoice to
+> exclude security packages
+>=20
+>                 2. Larger image size
 
-USWest    USEast    UK        DE        TW        JP
-06:00     09:00     13:00     14:00     21:00     22:00
+Do we have any figures?
 
-Last meeting minutes:
-https://ircbot.wl.linuxfoundation.org/meetings/cip/2023/03/cip.2023-03-09-13.03.log.html
+Kind regards, Chris
 
-* Action items
-  1. clarify usage of .sources files in cip-kernel-config (patersonc)
-  2. reach out to Greg regarding LTS (jan)
-* Kernel maintenance updates
-* Kernel release status
-  - 4.4
-  - 4.19
-  - 5.10
-* Kernel testing
-* AOB
+>=20
+>      Pros:  CIP Testing WG can test only one image
+>=20
+>=20
+>=20
+> Option-3: Create a small debian package which will include all security
+> packages & security customizations (Currently not supported, needs furthe=
+r
+> investigation etc)
+>=20
+>     Pros: At run time security packages & customizations can be enabled o=
+r
+> disabled.
+>=20
+>     Cons: May need lots of extra effort for development and maintenance
+>=20
+>=20
+>=20
+> Any other options???
+>=20
+>=20
+>=20
+> Please share your opinion or suggestions which option is preferable by 24=
+th
+> Mar.
+>=20
+>=20
+>=20
+> Note:  1. As CIP Core WG is planning to make release of isar-cip-core met=
+a
+> data very soon, we need to finalize the approach.
+>=20
+>              2. In case of no suggestions/inputs, current approach to cre=
+ate security
+> image will be followed in future and accordingly CIP Core WG would procee=
+d
+> to make isar-cip-core meta-data releases.
+>=20
+>=20
+>=20
+>=20
+>=20
+> @Chris, if you want to add any other perspective from testing point of vi=
+ew,
+> please feel free :)
+>=20
+>=20
+>=20
+> [1] https://gitlab.com/cip-project/cip-core/isar-cip-core/-/tree/master
+> <https://jpn01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fgitl=
+a
+> b.com%2Fcip-project%2Fcip-core%2Fisar-cip-core%2F-
+> %2Ftree%2Fmaster&data=3D05%7C01%7Cchris.paterson2%40renesas.com%7C
+> a9e5fcf71dea4976398c08db2489bdd3%7C53d82571da1947e49cb4625a166a4a
+> 2a%7C0%7C0%7C638143946235804034%7CUnknown%7CTWFpbGZsb3d8eyJ
+> WIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%
+> 7C3000%7C%7C%7C&sdata=3D3IMNg%2BoxT0jqzH%2BbbEXqSdcZ%2BupqCu%
+> 2BOpLB6HrS0XD0%3D&reserved=3D0>
+>=20
+>=20
+>=20
+> Thanks & Regards,
+>=20
+> Dinesh Kumar
 
-Jan
 
