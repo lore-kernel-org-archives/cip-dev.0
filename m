@@ -1,417 +1,283 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F131DC6FD1D
-	for <webhook@archiver.kernel.org>; Wed, 15 Mar 2023 11:03:49 +0000 (UTC)
-Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
- by mx.groups.io with SMTP id smtpd.web10.4935.1678878222161834974
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B053AC61DA4
+	for <webhook@archiver.kernel.org>; Thu, 16 Mar 2023 00:04:33 +0000 (UTC)
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+ by mx.groups.io with SMTP id smtpd.web10.1021.1678925063154862591
  for <cip-dev@lists.cip-project.org>;
- Wed, 15 Mar 2023 04:03:43 -0700
+ Wed, 15 Mar 2023 17:04:23 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=pglVcMIH;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228, mailfrom: fm-51332-20230315110339fde21659ff074a70a9-ecxejt@rts-flowmailer.siemens.com)
-Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 20230315110339fde21659ff074a70a9
-        for <cip-dev@lists.cip-project.org>;
-        Wed, 15 Mar 2023 12:03:39 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
- bh=GeU4FB9LSml8c/Fk8/ReNtXFunfKL6AxoK1fyt4XzJ0=;
- b=pglVcMIHOJt+rLuTKKy4FwYOJuiD8aUKHI+Ofd3DRhNP03pvRoG1Utd6kAkdMkC/uMrwY9
- 90c4XCpjW5CyxB4OosGCqHgjy1NIcx/HfzA5nXn1mkBWb8e14/ZOfkcoDAZzjFmKr5r840a7
- LSIOJcfnX9Ux2tOIi7i5KNf3qivDk=;
-From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: jan.kiszka@siemens.com,
-	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][RFC] initramfs-crypt-hook: Add clevis for buster and bullseye
-Date: Wed, 15 Mar 2023 12:03:38 +0100
-Message-Id: <20230315110338.379064-1-Quirin.Gylstorff@siemens.com>
+ dkim=pass header.i=@miraclelinux-com.20210112.gappssmtp.com header.s=20210112 header.b=Y/J6Lbw2;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.210.54, mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-ot1-f54.google.com with SMTP id v2-20020a056830090200b0069c6952f4d3so90366ott.7
+        for <cip-dev@lists.cip-project.org>; Wed, 15 Mar 2023 17:04:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20210112.gappssmtp.com; s=20210112; t=1678925061;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=AqPoGHgelkTTq6RnNGsl8IhuEwshgPV/3V2QtfLScuI=;
+        b=Y/J6Lbw2wtoYvfaGjGpUNSwludtzUb3CaFYH/sERMXV1lBiRyVDHRwEQ3qhDhYHtwW
+         itymiyT39u3XhW9NR7nxKkXHhLGG/XRovZvlyTnVz87PZ+DNerA1bk9KFrgHRUWuIecd
+         NIUgveoQASo9BfRgOn9j3Etv7i6WcNXUzMksQHjLl7XN2PwUjd5yj3jOfgS1jVEgiBI7
+         x4IS51DnwFfsFtlMRbzD9ggYKsnXyPCfAqmdti1oph0v5tP1LfTOYpvlbkbaBoZrNqzw
+         YoTxUKgMexbfs26uGdJ5JWdQ1wMSi5/vjjJbuaiGlKuAlyH/3wJbhfrhMuU27dZHJ0zp
+         P0Fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678925061;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AqPoGHgelkTTq6RnNGsl8IhuEwshgPV/3V2QtfLScuI=;
+        b=3O/OwV5uXaAnGc4DunCNRWpo000g9/vLwRiUBN3yJflnOGtJow9zeUKF2UJ5N4yujV
+         k3RUXDK35f7ejWyTLZA1ELWcTDmYGQi5zUZA8liEgI1sF0FfodG+CwAN4K8onFhLdccw
+         i/xdDcIATLNFA1wa2nt5ENPC16OrItrSz6HrnhqxyXPRurYtArQTEPS+pjNbfV5kpDMj
+         rieLvgqHjWXERDXSmnAVFxsUPKxlz/REYnXBFgLDsKC4PG0ZulZ1a0Slqdit61u7v+yB
+         duqvZ5RfLLVQv/FcnvV0SeaWaasEjw1rv+Rq7D9kw3mN/0KFUHKUGFoVvcmkNujovD1o
+         m74w==
+X-Gm-Message-State: AO0yUKWFElja9rJDAbSWDZw4f26QnkIYeYamC5/K9nGK3uk7mNdUwtb5
+	/ye7LaLlSSisnhKzzdSwfEuV11OjJhm20JbxGHh8OTNtUpvmzA5AYm8=
+X-Google-Smtp-Source: AK7set/qMnh9wcoRI8PRUIyv9sJBSKTVTKJevL4tmnDo6SAmkgyic7hDsWbNekMGVIa9AoqGh81UC32GzUhGpekebzw=
+X-Received: by 2002:a9d:6092:0:b0:699:78fe:8f24 with SMTP id
+ m18-20020a9d6092000000b0069978fe8f24mr1604479otj.4.1678925061397; Wed, 15 Mar
+ 2023 17:04:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 16 Mar 2023 09:03:44 +0900
+Message-ID: <CAODzB9qc6gzsAjfaJcu22tgEJzOtnsNE0+A5p+=FFd50+FipAA@mail.gmail.com>
+Subject: New CVE entries this week
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 15 Mar 2023 11:03:49 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11027
+ <cip-dev@lists.cip-project.org>; Thu, 16 Mar 2023 00:04:33 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11028
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+Hi !
 
-This will remove the requirement to use bullseye backports.
+It's this week's CVE report.
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- .../preferences.bullseye-backports.tpm.conf   |   8 -
- doc/README.tpm2.encryption.md                 |   7 +-
- kas/opt/encrypt-partitions.yml                |   3 -
- .../files/encrypt_partition.clevis.hook       |  79 ++++++++++
- .../files/encrypt_partition.clevis.script     | 138 ++++++++++++++++++
- ...on.hook => encrypt_partition.systemd.hook} |   0
- ...cript => encrypt_partition.systemd.script} |   0
- .../initramfs-crypt-hook/files/pwquality.conf |   1 +
- .../initramfs-crypt-hook_0.1.bb               |  30 +++-
- 9 files changed, 242 insertions(+), 24 deletions(-)
- delete mode 100644 conf/distro/preferences.bullseye-backports.tpm.conf
- create mode 100755 recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook
- create mode 100644 recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script
- rename recipes-initramfs/initramfs-crypt-hook/files/{encrypt_partition.hook => encrypt_partition.systemd.hook} (100%)
- mode change 100644 => 100755
- rename recipes-initramfs/initramfs-crypt-hook/files/{encrypt_partition.script => encrypt_partition.systemd.script} (100%)
- create mode 100644 recipes-initramfs/initramfs-crypt-hook/files/pwquality.conf
+This week reported 6 new CVEs and 7 updated CVEs.
 
-diff --git a/conf/distro/preferences.bullseye-backports.tpm.conf b/conf/distro/preferences.bullseye-backports.tpm.conf
-deleted file mode 100644
-index 60c4265..0000000
---- a/conf/distro/preferences.bullseye-backports.tpm.conf
-+++ /dev/null
-@@ -1,8 +0,0 @@
--Package: *
--Pin: release n=bullseye-backports
--Pin-Priority: -1
--
--Explanation: Use systemd and its dependencies from debian-backports to support systemd-cryptenroll
--Package: libnss-myhostname libnss-mymachines libnss-resolve libnss-systemd libpam-systemd libudev* libsystemd* systemd systemd-* udev
--Pin: release n=bullseye-backports
--Pin-Priority: 801
-diff --git a/doc/README.tpm2.encryption.md b/doc/README.tpm2.encryption.md
-index 7914bf3..ef03596 100644
---- a/doc/README.tpm2.encryption.md
-+++ b/doc/README.tpm2.encryption.md
-@@ -6,10 +6,6 @@ passphrase on the device.
- 
- ## Requirements
- 
--To enroll the keys Debian 12(bookworm) or Debian 11(bullseye) with backports is required.
--The implementation in Debian 11 is for *demonstration purpose only* as we need backports for
--systemd >= 248. [systemd version 248](https://github.com/systemd/systemd/blob/a41ac8ac407a1a58612059a45229f0d440f58e28/NEWS#L3391) adds the necessary systemd-cryptenroll functionality.
--
- Testing with qemu-amd64 requires the package `swtpm`. Under Debian/Ubuntu this can be installed
- 
- ``` shell
-@@ -18,7 +14,8 @@ apt-get install swtpm
- 
- ## TPM2 protected LUKS passphrase
- 
--The recipe `initramfs-crypt-hook` uses `systemd-cryptenroll` to enroll a TPM2 protected LUKS passphrase.
-+The recipe `initramfs-crypt-hook` uses `systemd-cryptenroll`(Debian 12(bookworm) and later) 
-+or `clevis`(Debian 10 and Debian 11)to enroll a TPM2 protected LUKS passphrase.
- The procedure for storing a key is described in [systemd/src/shared/tpm2-util.c](https://github.com/systemd/systemd/blob/0254e4d66af7aa893b31b2326335ded5dde48b51/src/shared/tpm2-util.c#L1395).
- 
- ## How to build an QEMU image with TPM encryption
-diff --git a/kas/opt/encrypt-partitions.yml b/kas/opt/encrypt-partitions.yml
-index 418e753..2fe38f8 100644
---- a/kas/opt/encrypt-partitions.yml
-+++ b/kas/opt/encrypt-partitions.yml
-@@ -13,8 +13,5 @@ header:
-   version: 12
- 
- local_conf_header:
--  systemd-cryptenroll: |
--    DISTRO_APT_SOURCES:append:bullseye = " conf/distro/debian-bullseye-backports.list"
--    DISTRO_APT_PREFERENCES:append:bullseye = " conf/distro/preferences.bullseye-backports.tpm.conf"
-   initramfs-option-encrypt-partitions: |
-     OVERRIDES .= ":encrypt-partitions"
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook
-new file mode 100755
-index 0000000..8adcd8b
---- /dev/null
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook
-@@ -0,0 +1,79 @@
-+#!/bin/sh
-+# Copyright (C) Siemens AG, 2020-2022
-+#
-+# SPDX-License-Identifier: MIT
-+
-+PREREQ=""
-+set -x
-+prereqs()
-+{
-+     echo "$PREREQ"
-+}
-+
-+case $1 in
-+prereqs)
-+     prereqs
-+     exit 0
-+     ;;
-+esac
-+
-+. /usr/share/initramfs-tools/hook-functions
-+
-+hook_error() {
-+    echo "(ERROR): $2" >&2
-+    exit 1
-+}
-+
-+manual_add_modules tpm
-+manual_add_modules tpm_tis_core
-+manual_add_modules tpm_tis
-+manual_add_modules tpm_crb
-+manual_add_modules dm_mod
-+manual_add_modules dm_crypt
-+
-+copy_exec /usr/bin/openssl || hook_error "/usr/bin/openssl not found"
-+copy_exec /usr/sbin/mke2fs || hook_error "/usr/sbin/mke2fs not found"
-+copy_exec /usr/bin/grep || hook_error "/usr/bin/grep not found"
-+copy_exec /usr/bin/awk || hook_error "/usr/bin/awk not found"
-+copy_exec /usr/bin/expr || hook_error "/usr/bin/expr not found"
-+copy_exec /usr/sbin/e2fsck || hook_error "/usr/sbin/e2fsck not found"
-+copy_exec /usr/sbin/resize2fs || hook_error "/usr/sbin/resize2fs not found"
-+copy_exec /usr/sbin/cryptsetup || hook_error "/usr/sbin/cryptsetup not found"
-+copy_exec /usr/bin/clevis || hook_error "/usr/bin/clevis not found"
-+copy_exec /usr/bin/clevis-decrypt || hook_error "/usr/bin/clevis-decrypt not found"
-+copy_exec /usr/bin/clevis-encrypt-tpm2 || hook_error "/usr/bin/clevis-encrypt-tpm2 not found"
-+copy_exec /usr/bin/clevis-decrypt-tpm2 || hook_error "/usr/bin/clevis-decrypt-tpm2 not found"
-+copy_exec /usr/bin/clevis-luks-bind || hook_error "/usr/bin/clevis-luks-bind not found"
-+copy_exec /usr/bin/clevis-luks-unlock || hook_error "/usr/bin/clevis-luks-unlock not found"
-+copy_exec /usr/bin/clevis-luks-list || hook_error "/usr/bin/clevis-luks-list not found"
-+copy_exec /usr/bin/clevis-luks-common-functions || hook_error "/usr/bin/clevis-luks-common-functions not found"
-+copy_exec /usr/bin/tpm2_createprimary || hook_error "Unable to copy /usr/bin/tpm2_createprimary" 
-+copy_exec /usr/bin/tpm2_unseal || hook_error "Unable to copy /usr/bin/tpm2_unseal"
-+copy_exec /usr/bin/tpm2_create || hook_error "Unable to copy /usr/bin/tpm2_create"
-+copy_exec /usr/bin/tpm2_load || hook_error "Unable to copy /usr/bin/tpm2_load"
-+copy_exec /usr/bin/tpm2_pcrread || hook_error "Unable to copy /usr/bin/tpm2_pcrread"
-+copy_exec /usr/bin/tpm2_createpolicy || hook_error "Unable to copy /usr/bin/tpm2_createpolicy"
-+copy_exec /usr/bin/tpm2_flushcontext || hook_error "Unable to copy /usr/bin/tpm2_flushcontext"
-+copy_exec /usr/bin/bash || hook_error "Unable to copy /usr/bin/bash"
-+copy_exec /usr/bin/luksmeta || hook_error "Unable to copy /usr/bin/luksmeta"
-+copy_exec /usr/bin/jose || hook_error "Unable to copy /usr/bin/jose"
-+copy_exec /usr/bin/sed || hook_error "Unable to copy /usr/bin/sed"
-+copy_exec /usr/bin/tail || hook_error "Unable to copy /usr/bin/tail"
-+copy_exec /usr/bin/sort || hook_error "Unable to copy /usr/bin/sort"
-+copy_exec /usr/bin/rm || hook_error "Unable to copy /usr/bin/rm"
-+copy_exec /usr/bin/mktemp || hook_error "Unable to copy /usr/bin/mktemp"
-+copy_exec /usr/bin/basename || hook_error "Unable to copy /usr/bin/basename"
-+copy_exec /usr/bin/seq || hook_error "Unable to copy /usr/bin/seq"
-+copy_exec /usr/bin/pwmake || hook_error "Unable to copy /usr/bin/pwmake"
-+copy_exec /usr/bin/file || hook_error "Unable to copy /usr/bin/file "
-+
-+if [ -x cryptsetup-reencrypt ]; then
-+    copy_exec /usr/sbin/cryptsetup-reencrypt
-+fi
-+
-+for _LIBRARY in /usr/lib/*/libtss2*; do
-+    copy_exec "$_LIBRARY"
-+done
-+
-+copy_file library /usr/share/encrypt_partition/encrypt_partition.env /usr/share/encrypt_partition/encrypt_partition.env
-+copy_file pwmake-config /usr/share/encrypt_partition/pwquality.conf /etc/security/pwquality.conf
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script
-new file mode 100644
-index 0000000..37bb024
---- /dev/null
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script
-@@ -0,0 +1,138 @@
-+#!/bin/sh
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2023
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+prereqs()
-+{
-+	# Make sure that this script is run last in local-top
-+	local req
-+	for req in "${0%/*}"/*; do
-+		script="${req##*/}"
-+		if [ "$script" != "${0##*/}" ]; then
-+			printf '%s\n' "$script"
-+		fi
-+	done
-+}
-+case $1 in
-+prereqs)
-+	prereqs
-+	exit 0
-+	;;
-+esac
-+
-+. /scripts/functions
-+
-+# get configuration variables
-+. /usr/share/encrypt_partition/encrypt_partition.env
-+
-+# load necessary kernel modules:
-+modprobe tpm_tis
-+modprobe tpm_crb
-+
-+# fixed tpm device or do we need to find it
-+tpm_device=/dev/tpmrm0
-+partition_sets="$PARTITIONS"
-+create_file_system_cmd="$CREATE_FILE_SYSTEM_CMD"
-+
-+if [ -z "${create_file_system_cmd}" ];then
-+	create_file_system_cmd="mke2fs -t ext4"
-+fi
-+
-+open_tpm2_partition() {
-+	if ! /usr/bin/clevis luks unlock -n "$crypt_mount_name" \
-+		 -d "$1"; then
-+		panic "Can't decrypt '$1' !"
-+	fi
-+}
-+
-+enroll_tpm2_token() {
-+	if [ -x /usr/bin/clevis ]; then
-+		 clevis luks bind -d "$1" tpm2 '{"pcr_ids":"7"}' < "$2"
-+	else
-+		panic "clevis not available cannot enroll tpm2 key!"
-+	fi
-+}
-+
-+reencrypt_existing_partition() {
-+	part_size_blocks="$(cat /sys/class/block/"$(awk -v dev="$1" 'BEGIN{split(dev,a,"/"); print a[3]}' )"/size)"
-+	# reduce the filesystem and partition by 32M to fit the LUKS header
-+	reduce_device_size=32768
-+	reduced_size="$(expr "$part_size_blocks" - 65536 )"
-+	reduced_size_in_byte="$(expr "$reduced_size" \* 512)"
-+	reduced_size_in_kb="$(expr "$reduced_size_in_byte" / 1024)K"
-+	resize2fs "$1" "${reduced_size_in_kb}"
-+	if [ -x cryptsetup-reencrypt ]; then
-+		/usr/sbin/cryptsetup-reencrypt --new --reduce-device-size "$reduce_device_size"k "$1" < "$2"
-+	else
-+		/usr/sbin/cryptsetup reencrypt --encrypt --reduce-device-size "$reduce_device_size"k "$1" < "$2"
-+	fi
-+
-+}
-+
-+if [ ! -e "$tpm_device" ]; then
-+	panic "tpm device '$tpm_device' does not exists - cannot create a encrypted device!"
-+fi
-+
-+# clevis needs /dev/fd create it in the initramfs
-+if [ ! -e /dev/fd ]; then
-+	ln -s /proc/self/fd /dev/fd
-+fi
-+
-+for partition_set in $partition_sets; do
-+	partition_label="$(awk -v var="$partition_set" 'BEGIN{split(var,a,":"); print a[1]}')"
-+	partition_mountpoint="$(awk -v var="$partition_set" 'BEGIN{split(var,a,":"); print a[2]}')"
-+	partition_format="$(awk -v var="$partition_set" 'BEGIN{split(var,a,":"); print a[3]}')"
-+	partition=/dev/disk/by-partlabel/$partition_label
-+	crypt_mount_name="encrypted_$partition_label"
-+	decrypted_part=/dev/mapper/"$crypt_mount_name"
-+	# clevis does not work with links in /dev/disk*
-+	part_device=$(readlink -f "$partition")
-+
-+	if /usr/sbin/cryptsetup luksDump --batch-mode "$partition" \
-+			| grep -q "clevis"; then
-+		open_tpm2_partition "$part_device"
-+		if ! mount -t "$(get_fstype "${decrypted_part}")" "${decrypted_part}" \
-+			 "${rootmnt}${partition_mountpoint}"; then
-+			panic "Can't mount encrypted partition '${decrypted_part}'!"
-+		fi
-+		continue
-+	fi
-+
-+	# create random password for initial encryption
-+	# this will be dropped after reboot
-+	tmp_key=/tmp/"$partition_label-lukskey"
-+	openssl rand -base64 32 > "$tmp_key"
-+
-+	case "${partition_format}" in
-+		"reencrypt")
-+			reencrypt_existing_partition "$part_device" "$tmp_key"
-+			enroll_tpm2_token "$part_device" "$tmp_key"
-+			open_tpm2_partition "$part_device"
-+		;;
-+		"format")
-+			/usr/sbin/cryptsetup luksFormat --batch-mode \
-+				 --type luks2 "$partition" < "$tmp_key"
-+			enroll_tpm2_token "$part_device" "$tmp_key"
-+			open_tpm2_partition_tpm2_partition "$part_device"
-+			eval "${create_file_system_cmd} ${decrypted_part}"
-+		;;
-+		*)
-+			panic "Unknown value ${partition_format}. Cannot create a encrypted partition !"
-+		 ;;
-+	esac
-+
-+	if ! mount -t "$(get_fstype "${decrypted_part}")" "${decrypted_part}" \
-+		 "${rootmnt}${partition_mountpoint}"; then
-+		panic "Can't mount encrypted partition '${decrypted_part}'!"
-+	fi
-+
-+	# delete initial key
-+	# afterwards no new keys can be enrolled
-+	cryptsetup -v luksKillSlot -q  "$part_device" 0
-+done
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.hook b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.hook
-old mode 100644
-new mode 100755
-similarity index 100%
-rename from recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.hook
-rename to recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.hook
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.script b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script
-similarity index 100%
-rename from recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.script
-rename to recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/pwquality.conf b/recipes-initramfs/initramfs-crypt-hook/files/pwquality.conf
-new file mode 100644
-index 0000000..0d8afa5
---- /dev/null
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/pwquality.conf
-@@ -0,0 +1 @@
-+dictcheck = 0
-diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb
-index c5b2268..ae6916a 100644
---- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb
-+++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb
-@@ -9,13 +9,25 @@
- # SPDX-License-Identifier: MIT
- 
- inherit dpkg-raw
--
--DEBIAN_DEPENDS = "initramfs-tools, cryptsetup, systemd(>= 251), \
-+DEBIAN_DEPENDS = "initramfs-tools, cryptsetup,  \
-     awk, openssl, libtss2-esys-3.0.2-0, libtss2-rc0, libtss2-mu0, e2fsprogs"
- 
--SRC_URI += "file://encrypt_partition.hook \
--            file://encrypt_partition.script \
--            file://encrypt_partition.env.tmpl"
-+CLEVIS_DEPEND = ", clevis-tpm2, clevis-luks, jose, bash, luksmeta, file, libpwquality-tools, libpwquality-common"
-+
-+DEBIAN_DEPENDS:append:buster = "${CLEVIS_DEPEND}"
-+DEBIAN_DEPENDS:append:bullseye = "${CLEVIS_DEPEND}"
-+DEBIAN_DEPENDS:append:bookworm = ", systemd (>= 251)" 
-+DEBIAN_DEPENDS:append:sid = ", systemd (>= 251)" 
-+
-+CRYPT_BACKEND:buster = "clevis"
-+CRYPT_BACKEND:bullseye = "clevis"
-+CRYPT_BACKEND:bookworm = "systemd"
-+CRYPT_BACKEND:sid = "systemd"
-+
-+SRC_URI += "file://encrypt_partition.env.tmpl \
-+            file://encrypt_partition.${CRYPT_BACKEND}.script \
-+            file://encrypt_partition.${CRYPT_BACKEND}.hook \
-+            file://pwquality.conf"
- 
- # CRYPT_PARTITIONS elements are <partition-label>:<mountpoint>:<reencrypt or format>
- CRYPT_PARTITIONS ??= "home:/home:reencrypt var:/var:reencrypt"
-@@ -29,11 +41,13 @@ TEMPLATE_FILES = "encrypt_partition.env.tmpl"
- do_install[cleandirs] += " \
-     ${D}/usr/share/initramfs-tools/hooks \
-     ${D}/usr/share/encrypt_partition \
--    ${D}/usr/share/initramfs-tools/scripts/local-bottom"
-+    ${D}/usr/share/initramfs-tools/scripts/local-bottom \
-+    ${D}/usr/lib/encrypt_partition"
- do_install() {
-     install -m 0600 "${WORKDIR}/encrypt_partition.env" "${D}/usr/share/encrypt_partition/encrypt_partition.env"
--    install -m 0755 "${WORKDIR}/encrypt_partition.script" \
-+    install -m 0755 "${WORKDIR}/encrypt_partition.${CRYPT_BACKEND}.script" \
-         "${D}/usr/share/initramfs-tools/scripts/local-bottom/encrypt_partition"
--    install -m 0755 "${WORKDIR}/encrypt_partition.hook" \
-+    install -m 0755 "${WORKDIR}/encrypt_partition.${CRYPT_BACKEND}.hook" \
-         "${D}/usr/share/initramfs-tools/hooks/encrypt_partition"
-+    install -m 0644 "${WORKDIR}/pwquality.conf" "${D}/usr/share/encrypt_partition/pwquality.conf"
- }
+* New CVEs
+
+CVE-2023-1032: net: avoid double iput when sock_alloc_file fails
+
+CVSS v3 score is not provided.
+
+A double-free bug was found in io_uring subsystem when handling
+IORING_OPSOCKET operation.
+This bug was introduced by commit da214a4 ("net: add
+__sys_socket_file()") in 5.19-rc1. This patch is not backported to
+older stable kernels. So, before 5.19 kernels are not affected by this
+issue.
+
+Fixed status
+mainline: [649c15c7691e9b13cbe9bf6c65c365350e056067]
+stable/6.1: [7c7570791b15c3b78e3229ae97825e7eb869c7da]
+stable/6.2: [cb6aedc1fd9d808d7319db2f953f4886dd46c627]
+
+CVE-2023-1380: wifi: brcmfmac: slab-out-of-bounds read in brcmf_get_assoc_ies()
+
+CVSS v3 score is not provided.
+
+A slab-out-of-bounds read was found in brcmf_get_assoc_ies() in brcmfmac driver.
+It hasn't been fixed in the mainline yet but it has been merged into
+wireless-next tree.
+
+It looks like 4.4 will be vulnerable as well.
+
+CVE-2023-1382: Kernel: denial of service in tipc_conn_close
+
+CVSS v3 score is not provided.
+
+A race condition bug was found in net/tipc/topsrv.c. This results in a
+null pointer dereference and use-after-free may be triggered.
+It was introduced by commit c5fa7b3 ("tipc: introduce new TIPC server
+infrastructure") in 3.11-rc1.
+
+Fixed status
+mainline: [0e5d56c64afcd6fd2d132ea972605b66f8a7d3c4,
+a7b42969d63f47320853a802efd879fbdc4e010e]
+stable/4.19: [2c9c64a95d97727c9ada0d35abc90ee5fdbaeff7,
+f46826a6fce33c3549332c3eb1fbf615dc79be18]
+stable/5.10: [e87a077d09c05985a0edac7c6c49bb307f775d12,
+4058e3b74ab3eabe0835cee9a0c6deda79e8a295]
+stable/5.15: [4ae907c45fcad4450423b8cdefa5a74bad772068,
+33fb115a76ae6683e34f76f7e07f6f0734b2525f]
+stable/5.4: [30f91687fa2502abb0b4d79569b63d1381169ccf,
+59f9aad22fd743572bdafa37d3e1dd5dc5658e26]
+
+CVE-2023-1390: components for: CVE-2023-1390 kernel: remote DoS in
+TIPC kernel module
+
+CVSS v3 score is not provided.
+
+A null pointer dereference bug was found in the tipc module. If a
+remote attacker sends a malicious packet, the system will crash.
+It was introduced by commit af9b028 ("tipc: make media xmit call
+outside node spinlock context") in 4.3-rc1.
+
+Fixed status
+mainline: [b77413446408fdd256599daf00d5be72b5f3e7c6]
+stable/4.14: [3ed0b5bb8cf71b4b9f995d4b3763648674fa032a]
+stable/4.19: [4d1d3dddcb3f26000e66cd0a9b8b16f7c2eb41bb]
+stable/5.10: [60b8b4e6310b7dfc551ba68e8639eeaf70a0b2dd]
+stable/5.4: [56e8947bcf814d195eb4954b4821868803d3dd67]
+
+CVE-2023-28327: kernel: denial of service problem in net/unix/diag.c
+
+CVSS v3 score is not provided.
+
+A null pointer dereference issue was found in the unix protocol in
+net/unix/diag.c. It allows a local user to crash the system.
+Introduced by commit cae9910 ("net: Add UNIX_DIAG_UID to Netlink UNIX
+socket diagnostics.") in 5.3-rc1. Before 5.3 kernels aren't affected.
+
+Fixed status
+mainline: [b3abe42e94900bdd045c472f9c9be620ba5ce553]
+stable/5.10: [575a6266f63dbb3b8eb1da03671451f0d81b8034]
+stable/5.15: [5c014eb0ed6c8c57f483e94cc6e90f34ce426d91]
+stable/5.4: [c66d78aee55dab72c92020ebfbebc464d4f5dd2a]
+
+CVE-2023-28328: media: dvb-usb: az6027: fix null-ptr-deref in az6027_i2c_xfer()
+
+CVSS v3 score is not provided.
+
+A null pointer dereference bug was found in dvd-usb driver.
+Introduced by commit 76f9a82 ("V4L/DVB: AZ6027: Initial import of the
+driver") in 2.6.34-rc1.
+
+Fixed status
+mainline: [0ed554fd769a19ea8464bb83e9ac201002ef74ad]
+stable/4.14: [c712d1ccbfb787620422b437a5b8fac0802547bd]
+stable/4.19: [7abfe467cd685f5da7ecb415441e45e3e4e2baa8]
+stable/5.10: [559891d430e3f3a178040c4371ed419edbfa7d65]
+stable/5.15: [210fcf64be4db82c0e190e74b5111e4eef661a7a]
+stable/5.4: [8b256d23361c51aa4b7fdb71176c1ca50966fb39]
+stable/6.1: [6b60cf73a931af34b7a0a3f467a79d9fe0df2d70]
+
+* Updated CVEs
+
+CVE-2023-1076: tap: tap_open(): correctly initialize socket uid
+
+stable 5.10, 5.15, 5.4, 6.1, and 6.2 were fixed.
+
+Fixed status
+mainline: [66b2c338adce580dfce2199591e65e2bab889cff,
+a096ccca6e503a5c575717ff8a36ace27510ab0a]
+stable/5.10: [4a9272a864cbf6dacc3f4b35213108dd01691d31,
+9a31af61f397500ccae49d56d809b2217d1e2178]
+stable/5.15: [db6efde0ab809d68c0db9284aae8224317367206,
+67f9f02928a34aad0a2c11dab5eea269f5ecf427]
+stable/5.4: [522d319cda951d5c7464490dfdd341e8b73eb7f8,
+d92d87000eda9884d49f1acec1c1fccd63cd9b11]
+stable/6.1: [035a80733ec47ed81aa159e16e56d2de106d3335,
+b4ada752eaf1341f47bfa3d8ada377eca75a8d44]
+stable/6.2: [fce60a29cc0cf888687e2686538a23d1a0db0468,
+4aa4b4b3b3e9551c4de2bf2987247c28805fb8f6]
+
+CVE-2023-1077: sched/rt: pick_next_rt_entity(): check list_entry
+
+stable 5.10, 5.15, 5.4, 6.1, and 6.2 were fixed.
+
+Fixed status
+mainline: [7c4a5b89a0b5a57a64b601775b296abf77a9fe97]
+stable/5.10: [80a1751730b302d8ab63a084b2fa52c820ad0273]
+stable/5.15: [2c36c390a74981d03f04f01fe7ee9c3ac3ea11f7]
+stable/5.4: [084cd75643b61fb924f70cba98a71dea14942938]
+stable/6.1: [6b4fcc4e8a3016e85766c161daf0732fca16c3a3]
+stable/6.2: [1099004ae1664703ec573fc4c61ffb24144bcb63]
+
+CVE-2023-1079: Use-After-Free in asus_kbd_backlight_set()
+
+stable 4.14, 4.19, 5.10, 5.15, 5.4, 6.1, and 6.2 were fixed.
+
+Fixed status
+mainline: [4ab3a086d10eeec1424f2e8a968827a6336203df]
+stable/4.14: [df0fad94ca3787727b9cdd76797aaacf46fe93ed]
+stable/4.19: [74b78391a9b6f67de90b13f5a85e329e3b3f5a72]
+stable/5.10: [21a2eec4a440060a6eb294dc890eaf553101ba09]
+stable/5.15: [3959316f8ceb17866646abc6be4a332655407138]
+stable/5.4: [dd08e68d04d08d2f42b09162c939a0b0841216cc]
+stable/6.1: [ee907829b36949c452c6f89485cb2a58e97c048e]
+stable/6.2: [b08bcfb4c97d7bd41b362cff44b2c537ce9e8540]
+
+CVE-2023-1118: kernel: use-after-free in drivers/media/rc/ene_ir.c due
+to race condition
+
+stable 4.14, 4.19, 5.10, 5.15, 5.4, 6.1, and 6.2 were fixed.
+
+Fixed status
+mainline: [29b0589a865b6f66d141d79b2dd1373e4e50fe17]
+stable/4.14: [0987f836bc1a258cb8fb51669a5afb67bb01c31b]
+stable/4.19: [52bde2754d76fc97390f097fba763413607f157a]
+stable/5.10: [78da5a378bdacd5bf68c3a6389bdc1dd0c0f5b3c]
+stable/5.15: [29962c478e8b2e6a6154d8d84b8806dbe36f9c28]
+stable/5.4: [d120334278b370b6a1623a75ebe53b0c76cb247c]
+stable/6.1: [029c1410e345ce579db5c007276340d072aac54a]
+stable/6.2: [182ea492aae5b64067277e60a4ea5995c4628555]
+
+CVE-2023-25012: HID: bigben_remove: manually unregister leds
+
+stable 5.10, 5.15, 5.4, 6.1, and 6.2 were fixed.
+
+Fixed status
+mainline: [76ca8da989c7d97a7f76c75d475fe95a584439d7]
+stable/5.10: [fddde36316da8acb45a3cca2e5fda102f5215877]
+stable/5.15: [0fd9998052926ed24cfb30ab1a294cfeda4d0a8f]
+stable/5.4: [25e14bf0c894f9003247e3475372f33d9be1e424]
+stable/6.1: [f2bf592ebd5077661e00aa11e12e054c4c8f6dd0]
+stable/6.2: [90289e71514e9533a9c44d694e2b492be9ed2b77]
+
+CVE-2023-23004: malidp: Fix NULL vs IS_ERR() checking
+
+stable 5.10 and 5.15 were fixed.
+
+Fixed status
+mainline: [15342f930ebebcfe36f2415049736a77d7d2e045]
+stable/5.10: [a5bbea50d622b8f49ab8ee3b0eb283107febcf1a]
+stable/5.15: [1c7988d5c79f72287177bb774cde15fde69f3c97]
+
+CVE-2023-26606: KASAN: use-after-free Read in ntfs_trim_fs
+
+The mainline, 5.15, and 6.1 were fixed.
+
+Fixed status
+mainline: [557d19675a470bb0a98beccec38c5dc3735c20fa]
+stable/5.15: [ab53749c32db90eeb4495227c998d21dc07ad8c1]
+stable/6.1: [f2e58e95273ce072ca95a2afa1f274825a1e1772]
+
+Currently tracking CVEs
+
+CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
+Bluetooth Core Specifications 4.0 through 5.2
+
+There is no fix information.
+
+CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
+Provisioning Leads to MITM
+
+No fix information.
+
+CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
+
+No fix information.
+
+Regards,
 -- 
-2.39.2
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
 
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
