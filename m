@@ -2,45 +2,45 @@ Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E20D5C6FD18
-	for <webhook@archiver.kernel.org>; Wed, 29 Mar 2023 22:29:47 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.157])
- by mx.groups.io with SMTP id smtpd.web11.11603.1680128978058686404
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BACD8C6FD18
+	for <webhook@archiver.kernel.org>; Wed, 29 Mar 2023 22:33:47 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.156])
+ by mx.groups.io with SMTP id smtpd.web10.11443.1680129223403948754
  for <cip-dev@lists.cip-project.org>;
- Wed, 29 Mar 2023 15:29:38 -0700
+ Wed, 29 Mar 2023 15:33:44 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: toshiba.co.jp, ip: 210.130.202.157, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
-Received: by mo-csw.securemx.jp (mx-mo-csw1115) id 32TMTOCo021059; Thu, 30 Mar 2023 07:29:26 +0900
-X-Iguazu-Qid: 2wHH8MjPZOJslhfsZc
-X-Iguazu-QSIG: v=2; s=0; t=1680128964; q=2wHH8MjPZOJslhfsZc; m=3Tks4iLfEm/FjU37XWIzqFvgpX177Ije4ouCEk176ZI=
-Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1112) id 32TMTMXW037326
+ dkim=missing; spf=pass (domain: toshiba.co.jp, ip: 210.130.202.156, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
+Received: by mo-csw.securemx.jp (mx-mo-csw1114) id 32TMXaaR019158; Thu, 30 Mar 2023 07:33:36 +0900
+X-Iguazu-Qid: 2wHHmhMsGNLbKmLD0w
+X-Iguazu-QSIG: v=2; s=0; t=1680129215; q=2wHHmhMsGNLbKmLD0w; m=n7+lKrVxIcFiKs1A2/qLUhEvuwdSv6hIXIq1rV/YcYI=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1111) id 32TMXYxA039442
 	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
-	Thu, 30 Mar 2023 07:29:23 +0900
+	Thu, 30 Mar 2023 07:33:35 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lxw1prvfrEP8Xtw9Z7cZlf63Vf28F8egqHcTRSIt1iaUeDsP+d0ae6XucFxQHcQo0ks14sQxTW1L3yj1XdTwFURhTEB2vedVkf1V9q4pTIBfo25Sxz8Asa7fV0D6aLlfX+cJRVnEd6APo8tpy0eVyQH2IQvWsalfqdQWDUKfvD0MDFJDg9p+ZCtZN36vOFzqYwvx2snmOY6xJp+8CkWG/9Ip7DppyuQNgTgm0VW/WZ0Qwg5nNOAHC09yMKE+biQImSYAICLHoK1ZxINiMMefO6wdMWFIehHFwglnMQEc2tT724RXXoIr59vfgDMcYW+I0JUMXjsDRTHLqBsEAo31Nw==
+ b=Pv+0eK441n2vHq+WbPZw5JqjlwgjXETTBw7gOcL7tsO6NAhbvktmhC5DLMipsKB+8RU8Mi6WzSzggkRGAQFQ/oGM3pKcDSaJmdAZk64AuGYuOr7iNGyZ++WAZSv4Pjpxy/YF14i0Blgi5H8aajIRQ12LlHO7ltltVycItFAQ5h47fcT7PbJuv7Y8kB5b9XG3zZ/J7z/S9RvV+7shdu3udR9tq/fuZ7h2bx63xMhQxdRAmZWr+dsXSOKEYU66sKtVzBN3lXZuJpbVQu4uTMUakAvoXDG4G4gh0Ji9sMTtTTjp8p3CGdknLRLl6731kaJWCJdjpL7aVLt9cFqxor3qlA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Qantzo/rnJ6Uc/3/1WYZM0Z+HotDQDDNPpYKYsisT7s=;
- b=M9uq1/LKxSmbrVsyMfFaGE2xXN8RyRy1yMRuTT/b2dSGFDULsVyGb5y76dSq2QwJvE52JaT1GW2oTF5FPt5cCzCHKzeuZxn3mffRRbaMv/HtCFi/O9YKmJUmIVcraFcXFMsD2pS6VKBEmKkVehlsdnsxuhxnwMXpy2Xa8EIFoj2INaVORU7HFXpGZQKqcqTAhcrtohgAZTrHrxhDoPhs9CTFpIdycbccJrQXMvgDPhamRd/UkhPR//KLHWjtYnz6OwsSwlZeAgHQeNBubR/RhL4t2J8A+dR6WevzzynR/Bzb3BgrBt58upsWxuqY99a1jiuPACYdmSJqmPKTXofhtw==
+ bh=eHF+zQ6ips26nhqhrZrvSR3e7OAfihwZ7QV6gfKBC1g=;
+ b=RIkNidWNLg/6be8rGM4Kdlllxyqtr6O3bhlPBZKmK9y90fkBvNzirfR/q1KBRoNg8lkMq5V0z7z+iPVl76XOY5RHevKJChLJReu40Lipy/Yr+sNHCTQ+l7lofKY+s5CeBTPXM5GXgcWDqOaOgXtPiWncwk+PPr/0roR+hyKVHTPiY2h6q4G8f2DU5vp8j+5d8/1xd30Y5Dry3g9bGMG8cX50DSWqEI9fwFuruxMEQ1FwIf35H/GpbYsmdiPQI/oKlJPDfHznVKgU6Sgn2yl6rFPXSn/E5BDy2JCm8CeDVKrY+k+CLT8hjwHkVZ1ss/Qk/ZeOzxuJ66rB2hp6f83tpA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
  header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
 From: <nobuhiro1.iwamatsu@toshiba.co.jp>
 To: <cip-dev@lists.cip-project.org>
 CC: <uli+cip@fpond.eu>
-Subject: RE: [cip-dev] [PATCH 4.4 1/3] ALSA: control: code refactoring for
- ELEM_READ/ELEM_WRITE operations
-Thread-Topic: [cip-dev] [PATCH 4.4 1/3] ALSA: control: code refactoring for
- ELEM_READ/ELEM_WRITE operations
-Thread-Index: AQHZXnS9AZNQegOHgEq2R5sUh0AQO68SXO4w
-Date: Wed, 29 Mar 2023 22:29:19 +0000
+Subject: RE: [cip-dev] [PATCH 4.4 2/3] ALSA: control: Fix memory corruption
+ risk in snd_ctl_elem_read
+Thread-Topic: [cip-dev] [PATCH 4.4 2/3] ALSA: control: Fix memory corruption
+ risk in snd_ctl_elem_read
+Thread-Index: AQHZXnS/iWsZkO3bnEWA2LGm2eJmt68SX2Mw
+Date: Wed, 29 Mar 2023 22:33:27 +0000
 X-TSB-HOP2: ON
-Message-ID: <TYWPR01MB9420EB2622E1AE6641A9F0C192899@TYWPR01MB9420.jpnprd01.prod.outlook.com>
+Message-ID: <TYWPR01MB9420FE8AF97997211998C94C92899@TYWPR01MB9420.jpnprd01.prod.outlook.com>
 References: <20230324171812.221086-1-theflamefire89@gmail.com>
- <20230324171812.221086-2-theflamefire89@gmail.com>
-In-Reply-To: <20230324171812.221086-2-theflamefire89@gmail.com>
+ <20230324171812.221086-3-theflamefire89@gmail.com>
+In-Reply-To: <20230324171812.221086-3-theflamefire89@gmail.com>
 Accept-Language: ja-JP, en-US
 Content-Language: ja-JP
 X-MS-Has-Attach: 
@@ -49,73 +49,76 @@ authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: TYWPR01MB9420:EE_|TYWPR01MB11235:EE_
-x-ms-office365-filtering-correlation-id: 49b436c3-e54a-4dd6-940f-08db30a50a01
+x-ms-office365-filtering-correlation-id: b30599ff-a3ee-4b83-a4a8-08db30a59d8a
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: xDTCFjaiVst5sZGbBkh6KKA5p9qUaoFg5QwdzIvWIvOTOfXG42emlPj/zyUIhW+4DoU1GkAD7tfP4Pg+kK51TNrhFsC294PkEDIkhHhf70TkDvN3WaXkq3J9YONmGylrAwWa0eOEGN/ZQLpJYsKIH1UYAJ26Ach5qPugZRdxdCceqE5QKEAVs7YTEgDPhzlFB2r2U2rfV4ESD0W3XtehEdIS40svDfFNmXbN9rTZy+npnHKE1QvcwYqD2+x8sk5RiuR/3LPA6jLNw+FM/pzndEsTjYd9ZXOxIy13p1ktHk2+DxIWNUyrIc7XQwNpv5zRJj86l1uV5Sf7WVPDbZMH5XVZDAHmQPjKOBRLmtJbr4gGMtd3d/vjUjdbxWX8jP8ReBZ8tEzUmLKLCNoaBIlT2VQoIKO7TZjMPT4cglGytpQqJl5bTn1NZmCSzsTvNu2l5FLgqoRThvs4yUPdbi3sfR7zZw6S3/7ZYCyBLZICANlxrUmKpwXYtGpLV37jjVZ3/V59CaK5kIF9YLjWPFYY1bVyISWEhKjWc4CKeyp/oCalR4HSpLIl4mGfkWu9R0JGeQrU74WwBgzlfzl5r4D+YU1zoH3cv6finRB809S+ZyRMfhazQ/dmt1HJNtohIc6j
+x-microsoft-antispam-message-info: OS33P6bC6OvESl42RW2LZMtkIHP6yNnxnE7MKdBfkUgH1SpD/QPHqqpTbKxdanvUuVIt5ioSZUmKovkqIIMHCmKtX2r4odLiLhbgTdcg4aVxTHvKCIiZkWVubzVMB+r+0wZc3dmlrY/+RAGXTdqPIfb5CBUviTw6ZTLb5nARIITyailDLGUQztPXoI49BBdnQhtK3fOcw5cJwlnmRcqspUiaKhVTO48FsDBs96VvuRUauaj3kAr8lsU+QPWbfXbbw8LQweEQVxEdriKWeQhwBgd3RRQbAss/04s4dNmmM4o/rrH90xPvwzHPAAK27edjiMgEMumal1FKcI8OP80SxX5lJZj9nc9GAUkKxziFyMCx0M8S31c/BPaYZoERrMLJvSSPiCQXhaQE3Fph30eWtjR04mVWv643MX9vS3K6aadDhRWRhzKzlfFH3nnnpiw1DlDnvnsVYlnZ6QVCy3pEdQKM2rkCBNd6zRT6a//rBW0SocsrB+LfI/ZDwuWL/dmgKnUx0cuX+yhbNcGnRNeSMP0BLtF5p0Jz5H2XU6zJnpAM/QmFfJhHnkn/UmfTF3qKMbhKYGcM5bLAKlgI5IM0Hx8CvomjsH5SDimiy96L/Jk5qbvnSAas/Ln2e55OvNYX
 x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB9420.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(346002)(366004)(136003)(396003)(39860400002)(451199021)(2906002)(38100700002)(8936002)(41300700001)(4326008)(52536014)(5660300002)(55016003)(38070700005)(86362001)(33656002)(122000001)(478600001)(6916009)(316002)(7696005)(71200400001)(66476007)(26005)(9686003)(53546011)(6506007)(76116006)(66946007)(66556008)(66446008)(64756008)(8676002)(83380400001)(186003);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-2022-jp?B?VUczSmdlWlIvc2ZPbXgramgzR1ZpQUg0dlRiaXFtSXpSYitMR2loQWRD?=
- =?iso-2022-jp?B?Qmw5VkFLZ2pXM2d4RUQzbzNrVmV1QWxwQmFCT3dWeFk1WENPRlB5NXU1?=
- =?iso-2022-jp?B?UGdsNEJSN244bFdYWXFzV29jMjNodXhiSWNqU2Q3UDdZMkxoT3pGUDZ3?=
- =?iso-2022-jp?B?UHlQOUZNZ3RhQ2wxYlhqZVU0Tm5LSXBDbUsvd2Z3Lyt6cmZJejV6ckwz?=
- =?iso-2022-jp?B?QnQ4WmlwVEJENTZYUzFDbFB4anlNMXVjcVU5UmI1QUdDZHN6bFFkeHoz?=
- =?iso-2022-jp?B?YnRwWm1uQnhrY0tldnZqRTdOenIvM2RCN2QvZ3dkMUZtbDBvd0dXTldt?=
- =?iso-2022-jp?B?ajlFV1IzeGxSNkJlWkZQSUJiRGtPR3duRS81VkZqV3J3ZXh1QnBCcXVU?=
- =?iso-2022-jp?B?cGc4UjdxakpXYVQxS0tTdWVnRTY3dExOaVRwbkl1aEFodG5WTmJ1WnFK?=
- =?iso-2022-jp?B?UXIzczdPTy9nU0ZzZXozZGZveHhmKzAwRUZxZXpPN2haQ0ZsZjIvbHhQ?=
- =?iso-2022-jp?B?bm9YOU8yMzVMbnNWNkxPcUwxTHkvemtkZkg3dXlPU0l3RWJ3NHd1LytW?=
- =?iso-2022-jp?B?ZkNPdDBaM3FTOFQ4LzNkZ0FNTUR4aCtzUUdkTTMyd3k1dkMyL0g5dXNk?=
- =?iso-2022-jp?B?ZTk1N0dXYXNOZ3lFK2NGcDNTV25mSjhHWDFzcHlHT1Z2blh2bjRnWUtC?=
- =?iso-2022-jp?B?MjJOUngrQ2xrNm45V1RpakIwNTRjVHNaWXV1U1pNYzZHMHBrZVZuM3Zu?=
- =?iso-2022-jp?B?N0lPQitIVldyT0RLK3VnbWN1UFJpK21peGIxcXFHbVpUZzJhWmVEYlZl?=
- =?iso-2022-jp?B?ZU5aZVJDUjkxRFFNWHphYlliS01oS3QrSS8vWHdaaEpxdEtaQlFXbGF3?=
- =?iso-2022-jp?B?UEQwVXk2c2ZPSnhQMWUyZzlFUlZmQlg5VGJPQjlTbVFLQ2tkOFFyTFlN?=
- =?iso-2022-jp?B?M3ZLNStyTnJCRE1XdWNuZWpubXd3LzFhajlKVEROZjF5ZXJtSEt1YTJR?=
- =?iso-2022-jp?B?WjZBTzNwbXZYVTJVQWFqRXowRG5UVDVGWlBYYWNTUUJwVks5d1dkc3dj?=
- =?iso-2022-jp?B?VWpkd01ZKzl1ZHdTUmJzTmtwdnJsZ0tjMm1MRGw2cGN5RU1jWERQeFY0?=
- =?iso-2022-jp?B?N3hSZVZYOHpsVGpKVG9MTEVUTEJ0anhyQms1Nm9nMzhCY3RobFB3aHZJ?=
- =?iso-2022-jp?B?Y0dMRXhmT1pxMU9qbml1NEg4ZmNld1pvd2ZPWUxXZmVmcnVPRFd3T3Bk?=
- =?iso-2022-jp?B?NVZ6ZWdPZmtKUENobE9GaFZYNVRidjhGc2JOMVlkOEtTMHc3T3NMelVz?=
- =?iso-2022-jp?B?MEswcVp0aWh6UDcyQXY3blVQQTB3QlU1OWQvOVhwdTVxK3ZWZGRYN2c5?=
- =?iso-2022-jp?B?RDFXYVNTUi9OUk5kQzdWOWtRdDBNZXF1Ymp0K1lDSHZNN1FlTW9iUy9C?=
- =?iso-2022-jp?B?cDRaMVF2ZGVHdDFERXM4RVhPOXR4WElUNzVGT1NYaHBtZ25yVXd6VkFW?=
- =?iso-2022-jp?B?VUpxbndhYWQ1QXVZa3VwOEtCcFNFTkMxdTBDczFTOVdqbDhqWHYyRkFi?=
- =?iso-2022-jp?B?ckh4dU1mNWtjeGo4cS9MV0hMVkV6aGJha2k0bHBjNWhXL3JhRzgxRElD?=
- =?iso-2022-jp?B?eTlGMVpKRXo3d3MveHlCQTB6SlNSNnpBV2hDRGJyNmJOWHJTbFZBZVNR?=
- =?iso-2022-jp?B?anM4Sjhqczk5eVk5MnVLL2pVQjVQUVEyREhabXlWZWRDZzZqUWxXSktE?=
- =?iso-2022-jp?B?YTlBcTVXd1NNWWlvVEJUa3Q2MWVmS2x6T1JWcVJMc1ZBVVZSTTBydjRq?=
- =?iso-2022-jp?B?RGVyeXBVcU8zU3FLNTY3S2Y0T2tsWkxIOEhzOWluTzlnblRtUitTdS9C?=
- =?iso-2022-jp?B?cjVjcG5XRHhMWjdVS0ZKV3J0TlhqV25DTjMycFo1aTc5ejNTNWlTOTc5?=
- =?iso-2022-jp?B?bncyZENXM1dRYVpiT1NQYzBmZEs5MTcya1ZIazZHTHFiS2tGNzdNQmNh?=
- =?iso-2022-jp?B?cjMyZGxvT3JtMjNMOG5UU3FtV1JjWEMvTU5JZjM3VkJyeS9LTGlCa1Mv?=
- =?iso-2022-jp?B?Rk9GVDJ5Mlc0QnplNFRkUGczT1hqdlFSaDdGWS9CalJ5MWhxdjlsOTdZ?=
- =?iso-2022-jp?B?clR5dmVVNnpCVHQrNDZHV0lhVnB4NFZ4UVFrNGZvOUNqRHFMK1BjMDhI?=
- =?iso-2022-jp?B?bDlhSDJ3QzV1M2k2MCtjZlVsQndqdXg0WldlRnJSVDBod1czQ3NnWjQy?=
- =?iso-2022-jp?B?cWQzRll1OWwzWkY3TzVValBNVEVhb1p3SkpzbVFBc1l1UUJwVXJDcmIw?=
- =?iso-2022-jp?B?NUE0TmhwYTkydGt0ZkVtQ0d0Mkcxc1NQTlE9PQ==?=
+x-ms-exchange-antispam-messagedata-0: =?iso-2022-jp?B?UUhJTDZ3a2QxWjhKU2ZrQXJIeDc2V2pjNWg1djhQYmtXblNvUkpmYm1Z?=
+ =?iso-2022-jp?B?NXczM1NNU3pLQzN5MDVEN2U4NFYyZnpZVENSR3kvbUV0MnRjMzdsRVUz?=
+ =?iso-2022-jp?B?S0JWaWNvWS9NaUd2SzE0d29GWUZBbGczaFJlaklFVUNOeU5IakQvTXBP?=
+ =?iso-2022-jp?B?eHRtbmE2RzZhSDlubnV3alBUZTFGdkYrNlRtVWJsVlVFSmcxbDBWVE52?=
+ =?iso-2022-jp?B?SG9EVTc2MDFRTVNXaFAyejRXUmMyV2Y5alg2eGlZZlg2SjdsNHQxWnlN?=
+ =?iso-2022-jp?B?UXV5bDNQZFZ0ZytDYXN4ZjVHRXVSVGhYTFlXMDB0Z2QyL2hZUEJzYVQ1?=
+ =?iso-2022-jp?B?K1IveUpXUmNPbFZSYTlaTFY2aHQ1bUFnWTlUSThrbGtwdm5vZkpFbzdN?=
+ =?iso-2022-jp?B?YjNQekRzMjBOWjNhcXZOdFVKZFF2SktRdC9BTnN5ZnYxT1BvOUxmK0pY?=
+ =?iso-2022-jp?B?blNqa3BhMVpCam9EaUplQW1tQUkxaEFiY0t4QjBzTUNNUHhqUzVrdzRJ?=
+ =?iso-2022-jp?B?TGNlc2VPbGJPTlhudkhCU1oyb1RMdGJORGplNUlYRzExLzNEamcyVWdS?=
+ =?iso-2022-jp?B?eWZzeHdCa0Y5QkhkcWVid1hSMkpNeWNiK2xSSjIyeFJ4UGtMQnZUMEJN?=
+ =?iso-2022-jp?B?QjM1VjZaMVFVUURzc1dUbnlmQ0IxMWxyY2xWUU00anByUlFMZ3RDbXVa?=
+ =?iso-2022-jp?B?V0lmQ1drYXBEaTZ5Q0tBTnlnbjllalljSURxSWY2L2ZKZnJmRVp6T1E0?=
+ =?iso-2022-jp?B?K1k3Y2J1QzF3S0R6dUV5SGpyTURFTFFsVUdoY0tSQTFCWFpKNFhxWnd0?=
+ =?iso-2022-jp?B?Y3FYTnBLS1FQOGhrNlRTbWc2MGU4S0ZKWTRPSG9wb1ViWFlPdFFVdkNF?=
+ =?iso-2022-jp?B?TTA5WHNCM2tKbmdyR0dDakQxYk1WYnkwNU5NZ0FKYloxN3l2cnJoZTZT?=
+ =?iso-2022-jp?B?V3RNRWZHRkJtZ0E0RStxOENQclM1Tllmb1VHZEVUZS9rU0NHQ1R1Rm5L?=
+ =?iso-2022-jp?B?bFFERkN2YWRXU2xVbE1vMm1tYWFUTzlVSUNWWVJkZWNRY0d3a3paaWtt?=
+ =?iso-2022-jp?B?MDNmVmxSekFzOGxmVk50bGVnWnJqd2hQRzFOSGJCR3ZwMDVSSVc1VGQy?=
+ =?iso-2022-jp?B?ZGtrVGY4UTY0SnAwdVRXeC8yKzBHZ3htREZHZ2J5bEEzWDNDSGFDOEVB?=
+ =?iso-2022-jp?B?dWZaQS9wdThVLy8wRnFPVEcxVmRlTzRSd1dmOVNOUUxIbmFkaWlnenIv?=
+ =?iso-2022-jp?B?ZnI4VHpLZzQ1SlMyK0FzN0x4VTdEYkVteC9DT0Rhd3poZnBPV2dlTXoz?=
+ =?iso-2022-jp?B?Q3ZQSThxZ2dqTjNiTGUxWjZCVkh5V0UrUk1jRzl6OVFWYjNXZ0MwdHM4?=
+ =?iso-2022-jp?B?RFptTmNmU0RZeS84TG9oOUFDRjlhNzEzem5tampqclpoTm1FQ3lrMWdT?=
+ =?iso-2022-jp?B?MnB6Vjl5Z0NSOC9Qb2JpR01qaURvL3FwdkRoRlRVNS9ueDhKdDd3eWlH?=
+ =?iso-2022-jp?B?Z2xqejlEWlpyUCtvNnVlblY4di81amtYK05jYmticWxocmpKY0orczkw?=
+ =?iso-2022-jp?B?a0hEN2JLQWRMWTB6NW5teDk0QjRUWTNnRG9KV3BvME9rNGRENHF6K0h4?=
+ =?iso-2022-jp?B?YUhNZjdzOURRRDFtNjNGaFV5Mnkyc2JmSEJoRHZPK0VJM3hoWWpybXR6?=
+ =?iso-2022-jp?B?TDRRZzBYYzVUeUZVVGwrenlXZzU3d3laWVpISmNrL3hFRVpIQUNXMVFD?=
+ =?iso-2022-jp?B?aHdBSTFqdThNTk1ZSWVON3lqUC9HZUt5NmlsZ2JEMUdjektvNjFQUU96?=
+ =?iso-2022-jp?B?aUdXZWM2OFdmUDhEMDk1TE5EZFBhMXVMT21mcWJqUDBrNlZEVWd0UDZF?=
+ =?iso-2022-jp?B?TGJQK2I1VDhaZkhGODlyaXNDWlpTTnhPK0x5RklwTDdQNDA0alRTZnRU?=
+ =?iso-2022-jp?B?UWJ0QnUxTEpYN1Vnb285Zk1CYlpyMVZ4YjZOU0pISDQxR1dacTNBSE9W?=
+ =?iso-2022-jp?B?WThVejNPdVpucVpwL2drQUJNYVM5RytkRlE0SE5SbEFtTUVPUUZMRWE0?=
+ =?iso-2022-jp?B?emNUNDJMTVhDTkxFMkx3ajZHU0EvZGY1ZTRBWWJqd0pPTjZFQ2ErSkdZ?=
+ =?iso-2022-jp?B?L3ZxQ0RFeWx2b3VhZTZiQ2dhQ0JmbThzU0EyUkc5U0FCeFdibDd3YVZu?=
+ =?iso-2022-jp?B?dGVac1E0UzZ5YW1UK1p2WlIwaTVHeUdHQWhrQ3ZTZ3hPL1FUSWFaK2ZZ?=
+ =?iso-2022-jp?B?VUZUZVNNeHNUMGZGUDJFUmhpRmc4b0tqeDhpRXk0K29kOG42ZUk4OXM1?=
+ =?iso-2022-jp?B?VlJjcXZiZDdvdThIVnByYmlYZW5FNVZMNlE9PQ==?=
 Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB9420.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 49b436c3-e54a-4dd6-940f-08db30a50a01
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Mar 2023 22:29:19.8537
+X-MS-Exchange-CrossTenant-Network-Message-Id: b30599ff-a3ee-4b83-a4a8-08db30a59d8a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Mar 2023 22:33:27.3861
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: WYxUvPmNBoCnOOP3kIimKcOJFmsM59D6BEq8gPTuAqwV7aQ2uvaYBbLKWqhbFS0hdzobuip7JkzOLQGXPVoLP/pMDXOGxDDkasZKQ09Av8abN2ju6y3dBJg4Ke/g72Kj
+X-MS-Exchange-CrossTenant-userprincipalname: jsWY0Icka2i9jTMCafAOz2K//dq4wyFcXNICYFRGGbtZ12n9z0Pe8RGAiJVoZppdmckKcRMIhUxkSDROTGPGTghoicelKj7oriVxDTuo6pdV7sx5KMqAcA80fvyGiBFv
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB11235
 X-OriginatorOrg: toshiba.co.jp
+MSSCP.TransferMailToMossAgent: 103
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 29 Mar 2023 22:29:47 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11130
+ <cip-dev@lists.cip-project.org>; Wed, 29 Mar 2023 22:33:47 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11131
 
 Hi,
+
+Thanks for your patch!
 
 > -----Original Message-----
 > From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
@@ -123,200 +126,71 @@ Hi,
 > Sent: Saturday, March 25, 2023 2:18 AM
 > To: cip-dev@lists.cip-project.org
 > Cc: uli+cip@fpond.eu
-> Subject: [cip-dev] [PATCH 4.4 1/3] ALSA: control: code refactoring for
-> ELEM_READ/ELEM_WRITE operations
+> Subject: [cip-dev] [PATCH 4.4 2/3] ALSA: control: Fix memory corruption r=
+isk in
+> snd_ctl_elem_read
 >=20
-> From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-
-Please add original commit id.
-
+> From: Richard Fitzgerald <rf@opensource.cirrus.com>
 >=20
-> ALSA control core handles ELEM_READ/ELEM_WRITE requests within lock
-> acquisition of a counting semaphore. The lock is acquired in helper funct=
-ions
-> in the end of call path before calling implementations of each driver.
+> commit 5a23699a39abc5328921a81b89383d088f6ba9cc upstream.
 >=20
-> ioctl(2) with SNDRV_CTL_ELEM_READ
-> ...
-> ->snd_ctl_ioctl()
->   ->snd_ctl_elem_read_user()
->     ->snd_ctl_elem_read()
->       ->down_read(controls_rwsem)
->       ->snd_ctl_find_id()
->       ->struct snd_kcontrol.get()
->       ->up_read(controls_rwsem)
+> The patch "ALSA: control: code refactoring for ELEM_READ/ELEM_WRITE
+> operations" introduced a potential for kernel memory corruption due to an
+> incorrect if statement allowing non-readable controls to fall through and=
+ call
+> the get function. For TLV controls a driver can omit
+> SNDRV_CTL_ELEM_ACCESS_READ to ensure that only the TLV get function
+> can be called. Instead the normal get() can be invoked unexpectedly and a=
+s the
+> driver expects that this will only be called for controls <=3D 512 bytes,=
+ potentially
+> try to copy >512 bytes into the 512 byte return array, so corrupting kern=
+el
+> memory.
 >=20
-> ioctl(2) with SNDRV_CTL_ELEM_WRITE
-> ...
-> ->snd_ctl_ioctl()
->   ->snd_ctl_elem_write_user()
->     ->snd_ctl_elem_write()
->       ->down_read(controls_rwsem)
->       ->snd_ctl_find_id()
->       ->struct snd_kcontrol.put()
->       ->up_read(controls_rwsem)
+> The problem is an attempt to refactor the snd_ctl_elem_read function to i=
+nvert
+> the logic so that it conditionally aborted if the control is unreadable i=
+nstead of
+> conditionally executing. But the if statement wasn't inverted correctly.
 >=20
-> This commit moves the lock acquisition to middle of the call graph to sim=
-plify
-> the helper functions. As a result:
+> The correct inversion of
 >=20
-> ioctl(2) with SNDRV_CTL_ELEM_READ
-> ...
-> ->snd_ctl_ioctl()
->   ->snd_ctl_elem_read_user()
->     ->down_read(controls_rwsem)
->     ->snd_ctl_elem_read()
->       ->snd_ctl_find_id()
->       ->struct snd_kcontrol.get()
->     ->up_read(controls_rwsem)
+>     if (a && !b)
 >=20
-> ioctl(2) with SNDRV_CTL_ELEM_WRITE
-> ...
-> ->snd_ctl_ioctl()
->   ->snd_ctl_elem_write_user()
->     ->down_read(controls_rwsem)
->     ->snd_ctl_elem_write()
->       ->snd_ctl_find_id()
->       ->struct snd_kcontrol.put()
->     ->up_read(controls_rwsem)
+> is
+>     if (!a || b)
 >=20
-> Change-Id: I6b39209aaf08afcbeca7c759b77bc96c67db4c77
-
-The original commit doesn't seem to have this tag.
-
-> Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+> Fixes: becf9e5d553c2 ("ALSA: control: code refactoring for
+> ELEM_READ/ELEM_WRITE operations")
+> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+> Cc: <stable@vger.kernel.org>
 > Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 >=20
-> Fixes: e8064dec769e6 "ALSA: pcm: Move rwsem lock inside
-> snd_ctl_elem_read to prevent UAF"
+
+Space here is not required.
+
 > Signed-off-by: Alexander Grund <theflamefire89@gmail.com>
 > ---
->  sound/core/control.c | 78
-> +++++++++++++++++++++-----------------------
->  1 file changed, 38 insertions(+), 40 deletions(-)
+>  sound/core/control.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >=20
 > diff --git a/sound/core/control.c b/sound/core/control.c index
-> 43c8eac250b8a..a042a30d6a728 100644
+> a042a30d6a728..3ca81e85a1492 100644
 > --- a/sound/core/control.c
 > +++ b/sound/core/control.c
-> @@ -877,24 +877,18 @@ static int snd_ctl_elem_read(struct snd_card *card,
->  	struct snd_kcontrol *kctl;
->  	struct snd_kcontrol_volatile *vd;
->  	unsigned int index_offset;
-> -	int result;
+> @@ -884,7 +884,7 @@ static int snd_ctl_elem_read(struct snd_card *card,
 >=20
-> -	down_read(&card->controls_rwsem);
->  	kctl =3D snd_ctl_find_id(card, &control->id);
-> -	if (kctl =3D=3D NULL) {
-> -		result =3D -ENOENT;
-> -	} else {
-> -		index_offset =3D snd_ctl_get_ioff(kctl, &control->id);
-> -		vd =3D &kctl->vd[index_offset];
-> -		if ((vd->access & SNDRV_CTL_ELEM_ACCESS_READ) &&
-> -		    kctl->get !=3D NULL) {
-> -			snd_ctl_build_ioff(&control->id, kctl, index_offset);
-> -			result =3D kctl->get(kctl, control);
-> -		} else
-> -			result =3D -EPERM;
-> -	}
-> -	up_read(&card->controls_rwsem);
-> -	return result;
-> +	if (kctl =3D=3D NULL)
-> +		return -ENOENT;
-> +
-> +	index_offset =3D snd_ctl_get_ioff(kctl, &control->id);
-> +	vd =3D &kctl->vd[index_offset];
-> +	if (!(vd->access & SNDRV_CTL_ELEM_ACCESS_READ) && kctl->get
+>  	index_offset =3D snd_ctl_get_ioff(kctl, &control->id);
+>  	vd =3D &kctl->vd[index_offset];
+> -	if (!(vd->access & SNDRV_CTL_ELEM_ACCESS_READ) && kctl->get
 > =3D=3D NULL)
-> +		return -EPERM;
-> +
-> +	snd_ctl_build_ioff(&control->id, kctl, index_offset);
-> +	return kctl->get(kctl, control);
->  }
+> +	if (!(vd->access & SNDRV_CTL_ELEM_ACCESS_READ) || kctl->get
+> =3D=3D NULL)
+>  		return -EPERM;
 >=20
->  static int snd_ctl_elem_read_user(struct snd_card *card, @@ -909,8 +903,=
-11
-> @@ static int snd_ctl_elem_read_user(struct snd_card *card,
->=20
->  	snd_power_lock(card);
->  	result =3D snd_power_wait(card, SNDRV_CTL_POWER_D0);
-> -	if (result >=3D 0)
-> +	if (result >=3D 0) {
-> +		down_read(&card->controls_rwsem);
->  		result =3D snd_ctl_elem_read(card, control);
-> +		up_read(&card->controls_rwsem);
-> +	}
->  	snd_power_unlock(card);
->  	if (result >=3D 0)
->  		if (copy_to_user(_control, control, sizeof(*control))) @@
-> -927,30 +924,28 @@ static int snd_ctl_elem_write(struct snd_card *card,
-> struct snd_ctl_file *file,
->  	unsigned int index_offset;
->  	int result;
->=20
-> -	down_read(&card->controls_rwsem);
->  	kctl =3D snd_ctl_find_id(card, &control->id);
-> -	if (kctl =3D=3D NULL) {
-> -		result =3D -ENOENT;
-> -	} else {
-> -		index_offset =3D snd_ctl_get_ioff(kctl, &control->id);
-> -		vd =3D &kctl->vd[index_offset];
-> -		if (!(vd->access & SNDRV_CTL_ELEM_ACCESS_WRITE) ||
-> -		    kctl->put =3D=3D NULL ||
-> -		    (file && vd->owner && vd->owner !=3D file)) {
-> -			result =3D -EPERM;
-> -		} else {
-> -			snd_ctl_build_ioff(&control->id, kctl, index_offset);
-> -			result =3D kctl->put(kctl, control);
-> -		}
-> -		if (result > 0) {
-> -			struct snd_ctl_elem_id id =3D control->id;
-> -			up_read(&card->controls_rwsem);
-> -			snd_ctl_notify(card,
-> SNDRV_CTL_EVENT_MASK_VALUE, &id);
-> -			return 0;
-> -		}
-> +	if (kctl =3D=3D NULL)
-> +		return -ENOENT;
-> +
-> +	index_offset =3D snd_ctl_get_ioff(kctl, &control->id);
-> +	vd =3D &kctl->vd[index_offset];
-> +	if (!(vd->access & SNDRV_CTL_ELEM_ACCESS_WRITE) || kctl->put
-> =3D=3D NULL ||
-> +	    (file && vd->owner && vd->owner !=3D file)) {
-> +		return -EPERM;
->  	}
-> -	up_read(&card->controls_rwsem);
-> -	return result;
-> +
-> +	snd_ctl_build_ioff(&control->id, kctl, index_offset);
-> +	result =3D kctl->put(kctl, control);
-> +	if (result < 0)
-> +		return result;
-> +
-> +	if (result > 0) {
-> +		struct snd_ctl_elem_id id =3D control->id;
-> +		snd_ctl_notify(card, SNDRV_CTL_EVENT_MASK_VALUE,
-> &id);
-> +	}
-> +
-> +	return 0;
->  }
->=20
->  static int snd_ctl_elem_write_user(struct snd_ctl_file *file, @@ -967,8
-> +962,11 @@ static int snd_ctl_elem_write_user(struct snd_ctl_file *file,
->  	card =3D file->card;
->  	snd_power_lock(card);
->  	result =3D snd_power_wait(card, SNDRV_CTL_POWER_D0);
-> -	if (result >=3D 0)
-> +	if (result >=3D 0) {
-> +		down_read(&card->controls_rwsem);
->  		result =3D snd_ctl_elem_write(card, file, control);
-> +		up_read(&card->controls_rwsem);
-> +	}
->  	snd_power_unlock(card);
->  	if (result >=3D 0)
->  		if (copy_to_user(_control, control, sizeof(*control)))
+>  	snd_ctl_build_ioff(&control->id, kctl, index_offset);
 > --
 > 2.40.0
 
