@@ -2,79 +2,79 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C14D7C761A6
-	for <webhook@archiver.kernel.org>; Mon,  3 Apr 2023 11:53:24 +0000 (UTC)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
- by mx.groups.io with SMTP id smtpd.web11.68022.1680522797743593905
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D52F7C76196
+	for <webhook@archiver.kernel.org>; Mon,  3 Apr 2023 12:12:14 +0000 (UTC)
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+ by mx.groups.io with SMTP id smtpd.web10.68290.1680523930664717772
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Mon, 03 Apr 2023 04:53:18 -0700
+ Mon, 03 Apr 2023 05:12:10 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=x+GL0IWS;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.180, mailfrom: bot@kernelci.org)
-Received: by mail-pl1-f180.google.com with SMTP id iw3so27736297plb.6
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Mon, 03 Apr 2023 04:53:17 -0700 (PDT)
+ dkim=pass header.i=@kernelci-org.20210112.gappssmtp.com header.s=20210112 header.b=rmgge58/;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.49, mailfrom: bot@kernelci.org)
+Received: by mail-pj1-f49.google.com with SMTP id l9-20020a17090a3f0900b0023d32684e7fso13560001pjc.1
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Mon, 03 Apr 2023 05:12:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112; t=1680522797;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112; t=1680523930;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=9I/JFolGR9JzZpgJ3UqNCy7swFzlQJ4BvhkFJMKBnQ8=;
-        b=x+GL0IWSnOG3zvWRbsErHD7MSoDpSqLrwO5LWNngYIkjDZaTLPCKRCHVU7e5cxObsE
-         dpVQRGG42DEVQDr3ISI56+XL1jq6A6aO33b54nLy+glSWucSGlUrke/11WcVM9n/Vssu
-         9lJZY9heOfTAQ8wtkSDkT+kow7KyDkpY4fDudsLe+qAV463dbdoyOQm5lytewFPol6iG
-         +9cLGRmFLOZuJCRtWRuCMG1QvvombbU8aM1DOoHNSchhNhEWxpuJC/80GrlNzBDousoM
-         staUxvzG7kg9B+MOjN4Y65EFBRG/UGE/KQ8KeqGfp4M7GJXndC7/IBgUfMOR4LA8l4rm
-         tpSg==
+        bh=VbS+xM9zJ6k/OLzUO2RTBpcrXR+e7NiTfGJbPi7HNws=;
+        b=rmgge58/1WVtAXWTQPZ403A9QPWB/PcyiMqAG31/iC6NAaBnTPCy1tWIRjqVdeuIzr
+         /NgkH9fffOLsDRxkQg7J0a10Qx3IY+yDg89ews7hQrohinhEktUT8B3vQ6orPBKn6Alq
+         m3NYtaSo0xm81JhoZdweHeVHWptU3UDMQQDtY3PUrnDba6ZZTMcU+8B5cGMCVH7BqlSC
+         WRGplPt7zdFAzHKvDOv+Lixyx2ErRkLOXqxynsmrkoJeeo3BCp0Acn/bY6DGwsBgIxQv
+         sVWHt/0TyB2YH8bCJKCQJbCVs1oMzLEVArYCQ1kv1lPnFn5axBqeEo+AfRv+SQfHmCW4
+         RvWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680522797;
+        d=1e100.net; s=20210112; t=1680523930;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9I/JFolGR9JzZpgJ3UqNCy7swFzlQJ4BvhkFJMKBnQ8=;
-        b=MLyzMFpeN65h+aLY1pSpxsm7F11tPIL4G260PHIjT6USwlzP4IjSfubhQWG4kwJUYF
-         Am0VrwQNKmdtO15JWV5AoYhM6ptTYGqVMpLbyODGeRkmjzFkT+tqV6LUyTSL3JtOOIxM
-         FKcvT7L/LDD/laGTb0BWP6xnY2tfIBhHkwARqjjOMxn+Pz3dYmAkyTl5OA0uln8G+CC9
-         oXmWRGUQa45IwXFja8C/UTabJ1Bw7qseqcQZ3mWPIifLExnJu4YuA5QHIlNby82/xfIA
-         6FN2zi5ID0Q65yKSJgAV+inrU/Qzm/jHBmIyGs/7/si5xD7vXHGD3kiYjrYEPa1NMKbN
-         XRyQ==
-X-Gm-Message-State: AAQBX9cLqPelItH8BsCrj/9jXgHsyxdOSk3vSM4QcNl67NnsIxJLumIo
-	BQILqVeQfwBRZ2w+NdB0EB5R85O0aiTLlcrXGew=
-X-Google-Smtp-Source: AKy350bFKFzgkQyNac4AwjZqHFglUwyK9RFQ1UdHuOoQ5c0bSMiPXJAjQ1s8mAVEEFf6SQwGVviatQ==
-X-Received: by 2002:a17:903:32cd:b0:1a2:9ce6:648b with SMTP id i13-20020a17090332cd00b001a29ce6648bmr16312117plr.12.1680522796315;
-        Mon, 03 Apr 2023 04:53:16 -0700 (PDT)
+        bh=VbS+xM9zJ6k/OLzUO2RTBpcrXR+e7NiTfGJbPi7HNws=;
+        b=4xvTSubKKpLLMMH43jF5pF5FQJNIRweY/DrtICU/72KYRHNpGItYm1RS6goszbBGYc
+         Q2r+se/N6B0aDEBA/hHfI8dGiqcGsE7nEAeje/q0TiZGcB3kB+VD3U34oH26u3vPsoyw
+         7/pyu94Qfkl1eYFTVblLNn8q9d5K5XyUkShjFLUwckuUP8IEx2CZGZKLC8SB4tM7oEHq
+         aVP+n0FxiQBENX0/lYjzIZiaxd97ZDjpVju/KKCvLieWgb1tsBWqaOtsSm7MfUnIc1dZ
+         nNys0xB7YcbHkR69dJnA6Lv4RwIr7EUuheaCc0tfe/hLyfWES5Pho/IhC+LszBWRtiUB
+         auiA==
+X-Gm-Message-State: AAQBX9cNGUVqVaVYfBytOpNvEAv2fe1/4aEadIQV64BcPKIJJsEB/Y5K
+	FhjUNe4rGiDOBoHLFNjntFEW7SDBlCxAE7eyqWA=
+X-Google-Smtp-Source: AK7set/EMEgXdP9TQ4v04ygkaryj6efpIXyOvonFBiZzWaw3hQIfn66sKKnLf4wmpypGXOaVqpvNhQ==
+X-Received: by 2002:a17:903:32c1:b0:1a1:f70c:c81a with SMTP id i1-20020a17090332c100b001a1f70cc81amr47408758plr.9.1680523929158;
+        Mon, 03 Apr 2023 05:12:09 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id ja7-20020a170902efc700b001a1ddd224desm6514393plb.89.2023.04.03.04.53.15
+        by smtp.gmail.com with ESMTPSA id b1-20020a170902ed0100b0019ab3308554sm6494330pld.85.2023.04.03.05.12.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Apr 2023 04:53:16 -0700 (PDT)
-Message-ID: <642abe2c.170a0220.dc45b.c278@mx.google.com>
-Date: Mon, 03 Apr 2023 04:53:16 -0700 (PDT)
+        Mon, 03 Apr 2023 05:12:08 -0700 (PDT)
+Message-ID: <642ac298.170a0220.aa65e.be9c@mx.google.com>
+Date: Mon, 03 Apr 2023 05:12:08 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-Kernelci-Tree: cip
-X-Kernelci-Branch: linux-4.4.y-st
+X-Kernelci-Branch: linux-4.4.y-st-rc
 X-Kernelci-Report-Type: build
-X-Kernelci-Kernel: v4.4-st20-1098-g8d34bf42efd9b
-Subject: cip/linux-4.4.y-st build: 186 builds: 4 failed, 182 passed, 4 errors,
- 38 warnings (v4.4-st20-1098-g8d34bf42efd9b)
+X-Kernelci-Kernel: v4.4-st20-1097-g52d843097a439
+Subject: cip/linux-4.4.y-st-rc build: 186 builds: 4 failed, 182 passed,
+ 4 errors, 38 warnings (v4.4-st20-1097-g52d843097a439)
 To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
  kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
 From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 03 Apr 2023 11:53:24 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11150
+ <cip-dev@lists.cip-project.org>; Mon, 03 Apr 2023 12:12:14 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11151
 
-cip/linux-4.4.y-st build: 186 builds: 4 failed, 182 passed, 4 errors, 38 wa=
-rnings (v4.4-st20-1098-g8d34bf42efd9b)
+cip/linux-4.4.y-st-rc build: 186 builds: 4 failed, 182 passed, 4 errors, 38=
+ warnings (v4.4-st20-1097-g52d843097a439)
 
-Full Build Summary: https://kernelci.org/build/cip/branch/linux-4.4.y-st/ke=
-rnel/v4.4-st20-1098-g8d34bf42efd9b/
+Full Build Summary: https://kernelci.org/build/cip/branch/linux-4.4.y-st-rc=
+/kernel/v4.4-st20-1097-g52d843097a439/
 
 Tree: cip
-Branch: linux-4.4.y-st
-Git Describe: v4.4-st20-1098-g8d34bf42efd9b
-Git Commit: 8d34bf42efd9bbd9f2b159d4e40217ea530ba3ff
+Branch: linux-4.4.y-st-rc
+Git Describe: v4.4-st20-1097-g52d843097a439
+Git Commit: 52d843097a439b3e38b2dde18a7c7fc256a94f4e
 Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
 Built: 6 unique architectures
 
@@ -182,26 +182,6 @@ section mismatches
 
 ---------------------------------------------------------------------------=
 -----
-allnoconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
-
----------------------------------------------------------------------------=
------
-allnoconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
-allnoconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
-allnoconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
-
----------------------------------------------------------------------------=
------
 allnoconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 3 warnings, 0 sectio=
 n mismatches
 
@@ -212,6 +192,26 @@ given and no register operands; using default for `btr'
 given and no register operands; using default for `btr'
     arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
 given and no register operands; using default for `btr'
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -1071,8 +1071,18 @@ on mismatches
 
 ---------------------------------------------------------------------------=
 -----
+tinyconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
 tinyconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
 ismatches
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
 
 ---------------------------------------------------------------------------=
 -----
@@ -1088,16 +1098,6 @@ given and no register operands; using default for `btr'
 ---------------------------------------------------------------------------=
 -----
 tinyconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
-smatches
-
----------------------------------------------------------------------------=
------
-tinyconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
-tinyconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
 smatches
 
 ---------------------------------------------------------------------------=
