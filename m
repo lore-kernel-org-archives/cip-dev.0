@@ -2,166 +2,315 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A75C7619A
-	for <webhook@archiver.kernel.org>; Wed,  5 Apr 2023 09:39:07 +0000 (UTC)
-Received: from EUR01-HE1-obe.outbound.protection.outlook.com (EUR01-HE1-obe.outbound.protection.outlook.com [40.107.13.42])
- by mx.groups.io with SMTP id smtpd.web11.126028.1680687543199714826
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD4DC76188
+	for <webhook@archiver.kernel.org>; Wed,  5 Apr 2023 09:42:07 +0000 (UTC)
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (EUR05-DB8-obe.outbound.protection.outlook.com [40.107.20.56])
+ by mx.groups.io with SMTP id smtpd.web10.125912.1680687718767210652
  for <cip-dev@lists.cip-project.org>;
- Wed, 05 Apr 2023 02:39:04 -0700
+ Wed, 05 Apr 2023 02:41:59 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=GgFzfDkb;
- spf=pass (domain: siemens.com, ip: 40.107.13.42, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=iU0QWDnJ;
+ spf=pass (domain: siemens.com, ip: 40.107.20.56, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Qy2HrePsEUO5oKSWnxcvGyRs35Ao8AOjpmti+x4B3GOfBLBpzEXGRSsHUMgs7khYd5f+P+tTcHb/fdoNbqKy1LpQ2eRW/0fx2nArrImmvwsbo17a6CTSP8Q6CVs99S2NnAgR2T56MlX/4EIN2EnvdyhBsrXtJDikq05yBteB1yZD49/jgazHu15jTXFAo4w7fo7b65m6BePw53liq+eDZyYHQ2MSTgzhwZKpKvHkjTi/2C6167cP0ExvbqFfGC1Ljx7fGsMHCmwHaPNjS8WfV3Ukuck6qXBePaExd/6WVlVNuFeJey6PyTEU1U5cDsQdZ0JnEzhVUYVz0/FFNN4ipw==
+ b=IckZ5rCRwbsoWsi//yEysWBlMF8yqqTU1bzpfEzxZMfHXHMHADPDThECyaM/IUNVzi/12GUrw9ghcvuusk7/NPzwf146uMRForWXnDjLiaYLI21D9vJe39Gw9mVj4DNxmPWYyu5nnfulQQ0qel/Ie7NK+IkZN7GTCTCuI4ybcu35ox+nC6gP7BZC9FKHl8X4s80hecoJabKvUV1lPmOZOJNh2vzvZzmB0fgEfFgKokyCr89izYxo93sV30YvUAxV5intwqACPcuHsBPPs7te9dDMAS+aaWot1kmZWmvt0VpKsVKiwpaOjzoe2NYg2+GYwmWmyHyrUEckzmCqLs9Jbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=y5qRoQWlJl7FOP9Qc1dF4Thjn7PqxoDBiPrNOdCPblM=;
- b=nJY1rai++aMcIC+isd5R72JFKdrbzLkwIs8DbDTUWyux+1B99DMBYyAIrf8B1RziZ59hDLpUOdW9omt5vKTrZweo9ZSlTiUygFseR9TVFj55qoXnCeg69ooYcFrcf/hoiIlVp2+01+yS13Ev6cz8TSbUf/DIJeb/ZWgEAV8WGWKXeUZaitu4q8fBF0l/t0aVTxcEyqsqcJLwDe1WxtONqGpqi+T/2Zs7Nj4Kw79bcef8kpMyRESXITGODMZaduTm5FYr+ywbEGRSyqwYkeabl1UssIbXDOu2VYSEop124ya5bwnCkS7nIrGOdhKBhELrbKy0eYH/x1fmzsSSzXSbyw==
+ bh=OOg3zRqhgjmQqW1np9TjCpDrCxNzNDFiRSQqZZ1nkJU=;
+ b=FjrcTUJAKvzTK5wcqcSSOyLinNbyTvn0TXo1oZtbQbUEoCdb619f9A8yDSYxBkl6+U+1Ql8r68ov70HiAehgZj6u5uUKWayC41X5Hs8DRZ5oZQGFkkruN8g9JUPC17k5sqvb2T7VxPXgbQ1FpN8rCZxAzrzThgyj0/Ns5F9o60rfKNvdd/xdNJfh47vqpsJx23Qf+SEV2AhrWKKXCDmKminVdZ+FlwDy2C5pZWC6pEF5B7fesmE3JNvncW9TfANTLJaBgPamIr/VcKCAt4JOyUPA0Pz9/dQxdEwTSktlhiDf1lJYOmw6Ab2unF0ac6bpgGfEUMI9cegpP+fdYz1PxQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=y5qRoQWlJl7FOP9Qc1dF4Thjn7PqxoDBiPrNOdCPblM=;
- b=GgFzfDkbOprRIIPfFvapMeIG40XKYx5tahRMHaJnnN0QJBUjXYaOlEp9f2Lp+Qpr5MaGJwlkoTCa7FsxW6zlKnHahDjxvhv1narXNvs4xLdR/SlBjtTIkZQrYCEClz/Wt9JYj+BZ5u1LFVbnyPUR77Ixhn3Orll6Yvld5298rgEZyZvt7Clr5nyq0cUVk35aMUoNhiaS4QGUfCSbrFgBskKKvp2Ulkx/Xz6dCXYnhlGRcfxcygVs/MgSEHvTcpyCiOVMTg2UT0Nm1C0wei6+PrIJRNxUZagH3OXiB2LRQcNqCVNv8HuLbWgf3PFKCg0lNEKcR/FE9Xd441XGIKzebQ==
+ bh=OOg3zRqhgjmQqW1np9TjCpDrCxNzNDFiRSQqZZ1nkJU=;
+ b=iU0QWDnJhp+7b1mwBCKW4pYnnxZQeCWp8x1hRxYyUMnhw6PYITdYPcJBcp+oaqnMM0HRt3cmnRdFzHTdnEkHTAhLcOTFuWN+tLA9eGngoWh6FZP2GupCiDKrt+6/9BF2TSUCkh00+jrFeBmmScsdaf5j7UO01z3FI0iWIZl4wDqaRsSA7KWbrEQnNffuoAE93O7d4FfL9U3g2RJTfpB+5u2IJ4S0/eFssVEfR/rmxjYolUZStfL8v54+4wjn/j7v8IH/oKDWnt/hsWDRl9pHQjEoULZpu7HsS2jpQZ2C9kmQ1WkGQy3prYqZvHuxkPjCe1dYCfP3NBHv+oMDB3LEVQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by DU0PR10MB7094.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:42e::11) with
+ by PAWPR10MB8259.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:38c::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.26; Wed, 5 Apr
- 2023 09:38:59 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.30; Wed, 5 Apr
+ 2023 09:41:56 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::d4b2:77cc:31cd:a3a2]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::d4b2:77cc:31cd:a3a2%9]) with mapi id 15.20.6277.012; Wed, 5 Apr 2023
- 09:38:59 +0000
-Message-ID: <ce6d8f5c-d703-3898-9839-7dd8c77d3e74@siemens.com>
-Date: Wed, 5 Apr 2023 11:38:57 +0200
+ 09:41:55 +0000
+Message-ID: <1f6ac84a-96ad-711a-11db-f541130c0608@siemens.com>
+Date: Wed, 5 Apr 2023 11:41:53 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.1
-Subject: Re: [isar-cip-core][PATCH] scripts/deploy-cip-core.sh: fix style
- issues
-Content-Language: en-US
-To: Srinuvasan Arjunan <srinuvasan_a@mentor.com>,
- cip-dev@lists.cip-project.org
-References: <20230405071927.600015-1-srinuvasan_a@mentor.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20230405071927.600015-1-srinuvasan_a@mentor.com>
+Subject: [isar-cip-core][PATCH] scripts: Address shellcheck findings
+To: cip-dev <cip-dev@lists.cip-project.org>
+Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>,
+ Srinuvasan A <srinuvasan.a@siemens.com>
+Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR3P281CA0016.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:1d::21) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR3P281CA0037.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:4a::21) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DU0PR10MB7094:EE_
-X-MS-Office365-Filtering-Correlation-Id: a053c95d-d4a8-4aa3-5fdb-08db35b99560
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PAWPR10MB8259:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3209ddc0-c2de-425a-5770-08db35b9fe69
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	5rZCHDiq2Pb9rTeLXXEFJaCAqBaHyZ6g+MC2V7lfrDcdE78d2xMfl4y7u02/4BcLkwKDn5gJjHSohuzWVixP/3IPI6tbq7bg6fdFVrs+dmZDGWPLCRm8lQhRR9tFIWVoCjzLfEoTGmN1sfoLqP+kW12TEtXfYO4+kbQfBpOpbdrSoL/pxat3OTwAOYgvE2kF7YDtt+3XCrVK65wovDfsmzd3HJGm48Zqpnc/aICUG1mIUgckrCJxw/daitn5lLQXXBpFYwvC6kUhApid8vDc8MQ6WUCESUN+s3D59xkbvFkOok61P/aViuiy3YsenOvtKtxRQV1Q1IvSW+3XQybwnzdv+BbFh1EEGaUcr+2yT4zWJ2eOTJPutA3HFIYoSeHjn/FkpFtOCF8BUg5as67R2UWL5YaDUHRWjHyVWHUDMXFYam559t6Hl+DW8Qfn79uR7XT5bDfa2xKX6j3v0ex3G1aefGdVC2igST97nG/fAjWdK6ZbGQKC8/3/NFRuSOJgg+8cs9jBiVJEb1NqGum55YCprz+haVfujSFmqcoM/1soOo88vL+w/WX1DgfQYuCwS7Oqpe1Tssc5my6g89Ezh6h+xBK8GreOax2oY5ja0fL7zJHRJkrSAt3fqudb28lt2ZCvYUoN6x2Bu/3eojCD/Q==
+	6OM/vLYxH6Mecb0eD3SLohm4UVJ9zwQqrZ8hew7oh1wJL+7Tv1vK5xO1phI465aXBW+UxkI3N1bnjaCtHMpI3BfVNBBNI/qq7bSn+tb/0wHkKLM6DaD3XmxY/qaX+Ar4dEGcoegtP+jDas9g+V5E5jPbiHkS1JDYEIF9gnrBFwwXLWh24qW8/LqGIsJTRvFo+PHE/eMQn0maLp5FX4KlRCnMXWAizfMtfUJNpTuiTs3Xg9lsk0U58hlePrRbxQlK8l3gMSXsMAmum0t2nH6Lbxkc+BOPV9ItMi8qckiq+IiGPspfpqYw5S1GFJm2QMcw45DmejdrOwon3+j1ucwTkPr+3vH9voNZm5Loh2ijmSZA8ysdI5U2b/KRihVUA9eeRyLFu618zsX1g2d3eR5jNqCXaMfvc4TOXlQ+S37JWRbMRUjLpye33oF9JLb5YYxozcb5qWVoYUeQUdTkQRlp4ey0d4crqlGofGbMyv4mbPUJE7m4ZyFSHLedVduekAHIZloKyMq1gS0GoRByuBqWyF4bLzTgRHExpGXlDFvCaLL78NiRONdpd1vyCA4IlTjHc5bAaQ4UA8cu3i+khbNmoWqLbF0rTnx8l6/r1+xk6irARqRfO7nN0w8TLL/4lO25fWkQ48C1lO49muhFqz9pkw==
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(376002)(136003)(39860400002)(346002)(396003)(451199021)(2906002)(83380400001)(186003)(36756003)(2616005)(6512007)(53546011)(26005)(6506007)(6486002)(5660300002)(38100700002)(8936002)(316002)(82960400001)(31686004)(44832011)(66946007)(8676002)(66556008)(66476007)(41300700001)(31696002)(478600001)(86362001)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(136003)(39860400002)(366004)(396003)(376002)(451199021)(2616005)(83380400001)(6486002)(478600001)(316002)(54906003)(26005)(6506007)(186003)(6512007)(107886003)(2906002)(44832011)(36756003)(4326008)(5660300002)(38100700002)(6916009)(66556008)(41300700001)(66476007)(8676002)(82960400001)(86362001)(31696002)(8936002)(66946007)(31686004)(45980500001)(43740500002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?bnB2ekNqTWNldDZoYjZ4WXJZZWlxdXFPYUpmREFyYm1xcXoxSTBsMU1HNFZp?=
- =?utf-8?B?bkp0N1pEOURiZXNKMjNjS3RoTTBDaGNMenNPaVFsckJWYjJHY1ZRbWJPcTB1?=
- =?utf-8?B?VDZXZ2d1d3FYL0RqVFdFQ1Y3RCt2THptTkd2VnVZT2JKYmxRSzFIQ0VQKzRm?=
- =?utf-8?B?WDVMRW5pUW42alhycVhkVXoyTDlhVWJYVnFyRWtidFd6TGp4T3N1dERNS3pw?=
- =?utf-8?B?Z29PWWdZTmpUSzlvaC9OeWlod1Q3blgydzlpTWNMZk5DSFg2cGJNTVlnYzV2?=
- =?utf-8?B?YkRpZmhjME1oNVhpbXRaMGF4bnpwcWcxNGdQbEVxT29VV0hJdEliejRlR05K?=
- =?utf-8?B?MllYMnFOanJrQXhxVEN1M3FSNjM5RUJZZWZ0SkY3b1cxOWN5OUVUQk9YTmFt?=
- =?utf-8?B?cDBhVEhtT1RRRGNrc28yeGNtcVhSaDlJdzRTVWhFRWRSeU9XSkRFNTdlMHp1?=
- =?utf-8?B?NDBIaGxHNlJBcy8rWU02OXk3U2Y1Vi93NDN5ODJiK0o2RFcwUi9KR1ZDVjFn?=
- =?utf-8?B?SFlsam5EWG0yZ0tGUThGYVc1bmhMWVBkOFBmaUVubTVtRXIyVkk5RjRkZ1Vl?=
- =?utf-8?B?NThnVXdFSnhLZmdZMThscDFXS0RPaXVHNE1BYlNLYjJIWVpKMEl6TEhqWTNm?=
- =?utf-8?B?YzhSYTZGUVFVV2FuaWRjdzVLQmFheExsVkpzSTBnWk5rc3ZpSElTNmNyaDlT?=
- =?utf-8?B?YWs5RFR6d0ZzcExRTjdoUWNmTVF1ZWtJT3dyL3lpdXhqYWxzK0FZbVU4RHBD?=
- =?utf-8?B?TlNrR0lRYmtYSHhOb3hwSXNsV3VwcmVaSklWbFNoS3JUNHBYTmtLM1grcFQw?=
- =?utf-8?B?aSsvUDMwbW1FUWpTWkU5dDQ1c0szcktMK0s1cENuUGVvbzZCZEc3U2V3bWZ0?=
- =?utf-8?B?NWVaVXFkSW0wamdndVlsZmZkNE45MWxNT3NNdWRoa3F0SmFmN3lnNXZ1N1p1?=
- =?utf-8?B?aXF4ZHJTU0J2UFRoSVJLWS96QnRraUJHdW5qNks4VVcyRzF4NGFhcWlYUU1F?=
- =?utf-8?B?WmFURElYaDdkNmRkWE9mWWxZMDE4Z2NtR2hET1lqeXpJOUZlYkEraFJsVlBR?=
- =?utf-8?B?OGFXOEFzZFUyRnhOOXk5RVdsak5kOU1ha0pDZHhRVHpTY2syTDJrYUY3dXdZ?=
- =?utf-8?B?aXJ5bjVoNkY1cGxXcjBSdFR4R1ZvWko4dHNxOFVMM0ExdWZCbFJZRGNNa3FW?=
- =?utf-8?B?RUlWUVpMMmI2YzFsbVdsNXFldC8zVkt2N1FCL1dKTG9JL0M4TnJ2NzA2Q3B5?=
- =?utf-8?B?YXQ2NmR2b1lBM051VW9jY3A4TDVrS0hTRHZmMGxMbFdORzZUc0RHNDJ5MS85?=
- =?utf-8?B?VGNRcWxaMEl0cFJRdGhsWEFjWmdHVHFhT1hYRUYyaVgxN2sva3RrN29YOFVM?=
- =?utf-8?B?NjVpVWh0QS91MXVQb09wOXFXRTJpNExMTDFaYlhyek9JUUlEQ1YvME8yZnM4?=
- =?utf-8?B?WWpQSXdsN3VyNDR0TWdKbGRhS0M1T3g2U3lDVFloRGZaWVdnbFNZZ0dieEJk?=
- =?utf-8?B?clc4VU1aVk9YRm0zWndidVVtZHo5RS9qcDFYSWdhbTZnRU1iYmVRcHNucFor?=
- =?utf-8?B?SmxJcXpEUG1uYUJlbVVGdytnSk16Q0R6bzVTczlUZlgwTHBGcENzMWhOMTVF?=
- =?utf-8?B?eStxdnI0dkVqcEtidHowTklZT0Z5TG1neUptZ2hPaFdrU2cyZVI2MEJNTHU2?=
- =?utf-8?B?ZWYvWG8zZFZZMmljR29IQkNOK3hnMHU1Q0VPRDRkSG1xdzhTOEpZUGxSZGVL?=
- =?utf-8?B?LzBpM0VrcU5uWDBYM3F5VkFhVXlDS3NsYlJMempQbjg4VWRidFpucTNBZWlS?=
- =?utf-8?B?N1ZMeGNKYy9kNlg0WGZHc2RTRHQ1VWEyYkFoeU12a2JpSmdPOVpsK2VVNGNM?=
- =?utf-8?B?SWZKNlQ2dEo0bmtiWkpvbFREeW8ydEVublUrRlNSQWZKVnBPWFpJRTZITDFD?=
- =?utf-8?B?S3lDMm9FRm9KbUluSmtqbGRqa0Q3R2pVUDNKZmliSmhocW1tQ3VrRnMzeW9h?=
- =?utf-8?B?VDdJZTBieVZkNnNidXR6UEhXR2s5ZzNvQS9PM0ppRXk3MVNZNklDc2R6RFph?=
- =?utf-8?B?a3RXRmdrQldmLy9JMENpZWFhK3hKdzJoTkUxTGx3dVN5ZXRna0dBYXFvWUFR?=
- =?utf-8?B?UGM4MSt3MndxVHpzbWNGWVpJdE83Y0dNN21BY2pRbTZtYW5CbnlFTXV5Yys2?=
- =?utf-8?B?UEE9PQ==?=
+	=?utf-8?B?SHNHTzZEYVA0b3BUUXIyeTZ5aDFhVi9WazF0TGU0TVhSazh4SG96bzJUK2tZ?=
+ =?utf-8?B?Qnkrc3FIbHgvZGp0YktkMUpOOTNEVEtRdXZJT2J0NzBsa25nV2I1TDJGWmZt?=
+ =?utf-8?B?dlJsODBzSGpwaCthSkV4Q2pLS21seXdMVk5BOFptTThnaFBvTnpsNmlzYndx?=
+ =?utf-8?B?UkRPOGU3U09VVnVFWGxOeUtmUy9tRHRjVCtVTWdCN2hKRUt2cVFtSi9MQkdz?=
+ =?utf-8?B?VTRGZm12L3VDRTc0Nllrc1Q0ZlJoaFUzd2RoSmVJSUliQXhpZEFwLzRSOFVH?=
+ =?utf-8?B?VTRtT0hkYk1Lb25WZzlZZ2RCbEc4bnY4SGNzMktTUG1sWk04Y1N4T24yL0dl?=
+ =?utf-8?B?RXJKTUxTT1d0WG82c1J5R3p1NmFKOWVKM3pMc2NkZkNXdTJZQ3hpL1NkUVJk?=
+ =?utf-8?B?bHNudjJoaExwTVpSa1NJZ2lPT0J0NS93Wk0wZlp2VmhZRnZybHZ0YW5RejRm?=
+ =?utf-8?B?R2V1Y0F4d2lUdkVVVDFxcnBSdmdoM2lRY3BrdWVoN3ZXMHpQZ0taNUhtREgw?=
+ =?utf-8?B?enJpSHJwa2xhTXVQUGZLZ0lnbzhMR2lsZXB4SmVpb2tJZUt5NUcwemFnS2VO?=
+ =?utf-8?B?VElWc0o0aGRzODJKM2F1UUtvMHdWT2tVaUtydHVSUmZpZWp2U2tDS2ZvOURE?=
+ =?utf-8?B?UUs0RHMybDZ6VVkxSzdaNlRkWUZnQXhDeWFXZ29MZzhsUERwVFFCYVp5UVU3?=
+ =?utf-8?B?aHJ6dkxTOS9hNGdaMW0wZjI4VTN1b2RmTTMybThhUlpHVWVLOEFxeUN0TTBk?=
+ =?utf-8?B?U1UxZXdrWUxSQnNEQTJFd21ORXZuQTdoek5MR1F1eHdsQXVIMWp3OWpxN2tS?=
+ =?utf-8?B?ZnVSWXdhMUlkSlhvZmFKWUpqYkdSVkd5TU9jY21oaEhjY1NzRU1TdCswRjRm?=
+ =?utf-8?B?UUdyOS8rdXl2VXRuY2RZdE5Dai9pYmtMNXNSMUprREFLQjFncTVJTS9QUlEy?=
+ =?utf-8?B?UnZMZE80dENnaHdZcmZ2Q0NzNW9RaVVsSk9YT1FuMnJVUDA2R0dFangvNm04?=
+ =?utf-8?B?czZuYWRMeDEyWDFlNitrRXo0T2Vyb3lJanQwWHoyTU1Xc2wwbWNJaVpsWnJi?=
+ =?utf-8?B?aFZsaHVIMmFqZjRybzJaSGxPNUkwRFoyTk0xbWJKWjFYeE9qQUtmbkMrSVMx?=
+ =?utf-8?B?bDNGRDJ3TzNXR3pYSHJBSk5wMWIyWGt4MGNWWVEyMllNWVVIMDFlK1FxVksv?=
+ =?utf-8?B?S1poUHQ0SVB0QWM4aURucnlKbXpyYWlPT1Q3eWZTZVJkOXpHRlYvTHhydTYz?=
+ =?utf-8?B?R3kreWpnclRuYjRTWjZPYXFhNnNORk5xcFRpaUhGMjgyWVg2eUIxaGFPU0R2?=
+ =?utf-8?B?UW1MRi83c3JieEF5cEo5SmY3VkZnWlJnUlRtWCsvYXlOTkpBdGlHdWtBWFow?=
+ =?utf-8?B?Y2Y2L2UxNTkwMHRORk00eUpGUEI4SUMwL3pJTDMzN3ZCOFhucXptVVZZdzBs?=
+ =?utf-8?B?NFJJZWlrcjBYWEZwdmRta1lJdlJPV2VLZWtvU08yYm1qa2N3d2UrdzJWM1Zs?=
+ =?utf-8?B?V1pPU21yUElzeEVSYXM4UG9iN2pkb1oydXRpVy9VcVpwcHg4cGhIYWlNeGNV?=
+ =?utf-8?B?c3lRTVFYT1ZYanN4RThTQWFDcm9pSXhQbHhRMTMvZUpHOVNjbmZmMHZ6QURB?=
+ =?utf-8?B?MThNL3VSbWw3NWw3M24vWG1kWWVCTjFobS9Vd3hvRFlrOXVMbEJIWmR5ekNQ?=
+ =?utf-8?B?YnIwSy8wQ0FLQjZOYStYMVM3VWxld3J2WXdFSGJtMzNSb2xBamd5anphd1Rh?=
+ =?utf-8?B?N0VIdGFQT0RGL3ZwLzNGakJNc3MvcnUxRWtlVWhSSlk3NHdKdTR6ak9PRThX?=
+ =?utf-8?B?WDdIcVBVQjYxN1BpWlI2TkppRTJ0cjF6YjN2MVhmcGxIbkZIU0tMaGhPNS8r?=
+ =?utf-8?B?M2VZa25TWEtNV3F4cEUxc0J2YklqVTFxWUMvdjFmaHlySVJsa3libUVxbGtx?=
+ =?utf-8?B?YzhTbWJNMFZtVGRSaUs5NktBVmNjVFZFTGVOSHBjM0dxTU9pNHN0eWd6eHVn?=
+ =?utf-8?B?Rm1XNUlhTlRDZzBEbjc4WTVtZlNIM3ZDbFJtUlRHWU5VTy9lZm50ZHAvYmpw?=
+ =?utf-8?B?dS92bk5KUGU2cnFxS1Fwanp3Z3NXbVd4Ny8wMzhyQlNKdHcxRXdrRWNlYlNn?=
+ =?utf-8?B?aTlXdFpJQlVRWmI0c3RyRC9lc2lzRjFNVEhhT3gxMnozQi9WUjZRTUFiOEVY?=
+ =?utf-8?B?Y3c9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a053c95d-d4a8-4aa3-5fdb-08db35b99560
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3209ddc0-c2de-425a-5770-08db35b9fe69
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Apr 2023 09:38:59.5650
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Apr 2023 09:41:55.8111
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2D7EH+k6LSYH8uuAL2dTvrKftK0pG/eibr8q4eBJQEGdh1CTFhsdEwC3FaW/w+wSfOBBFSD4HhCIY6tQtaSZXw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB7094
+X-MS-Exchange-CrossTenant-UserPrincipalName: J4nHarXCicwK4Mwk3NLZZKzHieUSogCJ+dPi0Nkxw0CHDAHT2nQm5CIjNkF7HmSLN07oCNEMhOpekO9vqtLUcQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR10MB8259
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 05 Apr 2023 09:39:07 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11178
+ <cip-dev@lists.cip-project.org>; Wed, 05 Apr 2023 09:42:07 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11179
 
-On 05.04.23 09:19, Srinuvasan Arjunan wrote:
-> From: Srinuvasan A <srinuvasan_a@mentor.com>
-> 
-> Align same coding style with other scripts.
-> 
-> Signed-off-by: Srinuvasan A <srinuvasan_a@mentor.com>
-> ---
->  scripts/deploy-cip-core.sh | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/scripts/deploy-cip-core.sh b/scripts/deploy-cip-core.sh
-> index ab98468..b185a84 100755
-> --- a/scripts/deploy-cip-core.sh
-> +++ b/scripts/deploy-cip-core.sh
-> @@ -17,8 +17,8 @@ DTB=$4
->  REF=$5
->  
->  BASE_FILENAME=cip-core-image-cip-core-$RELEASE-$TARGET
-> -if [ "${EXTENSION}" != "none" ] ; then
-> -	if [ "${EXTENSION}" = "security" ] ; then
-> +if [ "${EXTENSION}" != "none" ]; then
-> +	if [ "${EXTENSION}" = "security" ]; then
->  		BASE_FILENAME=cip-core-image-$EXTENSION-cip-core-$RELEASE-$TARGET
->  	else
->  		BASE_FILENAME=cip-core-image-cip-core-$RELEASE-$TARGET-$EXTENSION
-> @@ -28,7 +28,7 @@ fi
->  BASE_PATH=build/tmp/deploy/images/$TARGET/$BASE_FILENAME
->  S3_TARGET=s3://download2.cip-project.org/cip-core/$REF/$TARGET/
->  
-> -if [ -f $BASE_PATH.wic ] ; then
-> +if [ -f $BASE_PATH.wic ]; then
->  	echo "Compressing $BASE_FILENAME.wic..."
->  	xz -9 -k -T0 $BASE_PATH.wic
->  
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Thanks, applied.
+Mostly quoting warnings, but also a non-functional stderr>stdout
+redirection.
 
-Jan
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ scripts/deploy-cip-core.sh                    | 20 ++---
+ ...enerate-sb-db-from-existing-certificate.sh | 16 ++--
+ scripts/generate_secure_boot_keys.sh          | 82 +++++++++----------
+ scripts/start-efishell.sh                     |  6 +-
+ 4 files changed, 62 insertions(+), 62 deletions(-)
 
+diff --git a/scripts/deploy-cip-core.sh b/scripts/deploy-cip-core.sh
+index b185a847..186e88a4 100755
+--- a/scripts/deploy-cip-core.sh
++++ b/scripts/deploy-cip-core.sh
+@@ -4,7 +4,7 @@ set -e
+  PATH=$PATH:~/.local/bin
+ -if ! which aws 2>&1 >/dev/null; then
++if ! which aws >/dev/null 2>&1; then
+ 	echo "Installing awscli..."
+ 	pip3 install wheel
+ 	pip3 install awscli
+@@ -28,27 +28,27 @@ fi
+ BASE_PATH=build/tmp/deploy/images/$TARGET/$BASE_FILENAME
+ S3_TARGET=s3://download2.cip-project.org/cip-core/$REF/$TARGET/
+ -if [ -f $BASE_PATH.wic ]; then
++if [ -f "${BASE_PATH}.wic" ]; then
+ 	echo "Compressing $BASE_FILENAME.wic..."
+-	xz -9 -k -T0 $BASE_PATH.wic
++	xz -9 -k -T0 "${BASE_PATH}.wic"
+  	echo "Uploading artifacts..."
+-	aws s3 cp --no-progress --acl public-read $BASE_PATH.wic.xz ${S3_TARGET}
++	aws s3 cp --no-progress --acl public-read "${BASE_PATH}.wic.xz" "${S3_TARGET}"
+ fi
+ -if [ -f $BASE_PATH.tar.gz ]; then
++if [ -f "${BASE_PATH}.tar.gz" ]; then
+ 	echo "Uploading artifacts..."
+-	aws s3 cp --no-progress --acl public-read $BASE_PATH.tar.gz ${S3_TARGET}
++	aws s3 cp --no-progress --acl public-read "${BASE_PATH}.tar.gz" "${S3_TARGET}"
+ fi
+  KERNEL_IMAGE="$BASE_PATH-vmlinu[xz]"
+ # iwg20m workaround
+-if [ -f build/tmp/deploy/images/$TARGET/zImage ]; then
++if [ -f "build/tmp/deploy/images/$TARGET/zImage" ]; then
+ 	KERNEL_IMAGE=build/tmp/deploy/images/$TARGET/zImage
+ fi
+-aws s3 cp --no-progress --acl public-read $KERNEL_IMAGE ${S3_TARGET}
+-aws s3 cp --no-progress --acl public-read $BASE_PATH-initrd.img ${S3_TARGET}
++aws s3 cp --no-progress --acl public-read "$KERNEL_IMAGE" "${S3_TARGET}"
++aws s3 cp --no-progress --acl public-read "${BASE_PATH}-initrd.img" "${S3_TARGET}"
+  if [ "$DTB" != "none" ]; then
+-	aws s3 cp --no-progress --acl public-read build/tmp/deploy/images/*/$DTB ${S3_TARGET}
++	aws s3 cp --no-progress --acl public-read build/tmp/deploy/images/*/"$DTB" "${S3_TARGET}"
+ fi
+diff --git a/scripts/generate-sb-db-from-existing-certificate.sh b/scripts/generate-sb-db-from-existing-certificate.sh
+index ddaf4c95..dddd9b5f 100755
+--- a/scripts/generate-sb-db-from-existing-certificate.sh
++++ b/scripts/generate-sb-db-from-existing-certificate.sh
+@@ -4,16 +4,16 @@ set -e
+  name=${SB_NAME:-snakeoil}
+ keydir=${SB_KEYDIR:-./keys}
+-if [ ! -d  ${keydir} ]; then
+-    mkdir -p ${keydir}
++if [ ! -d  "${keydir}" ]; then
++    mkdir -p "${keydir}"
+ fi
+ inkey=${INKEY:-/usr/share/ovmf/PkKek-1-snakeoil.key}
+ incert=${INCERT:-/usr/share/ovmf/PkKek-1-snakeoil.pem}
+ nick_name=${IN_NICK:-snakeoil}
+ TMP=$(mktemp -d)
+-mkdir -p ${keydir}/${name}certdb
+-certutil -N --empty-password -d ${keydir}/${name}certdb
+-openssl pkcs12 -export -out ${TMP}/foo_key.p12 -inkey $inkey  -in $incert  -name $nick_name
+-pk12util -i ${TMP}/foo_key.p12 -d ${keydir}/${name}certdb
+-cp $incert ${keydir}/$(basename $incert)
+-rm -rf $TMP
++mkdir -p "${keydir}/${name}certdb"
++certutil -N --empty-password -d "${keydir}/${name}certdb"
++openssl pkcs12 -export -out "${TMP}/foo_key.p12" -inkey "$inkey" -in "$incert" -name "$nick_name"
++pk12util -i "${TMP}/foo_key.p12" -d "${keydir}/${name}certdb"
++cp "$incert" "${keydir}/$(basename "$incert")"
++rm -rf "$TMP"
+diff --git a/scripts/generate_secure_boot_keys.sh b/scripts/generate_secure_boot_keys.sh
+index 4988a689..8be05695 100755
+--- a/scripts/generate_secure_boot_keys.sh
++++ b/scripts/generate_secure_boot_keys.sh
+@@ -4,51 +4,51 @@ set -e
+  name=${SB_NAME:-demo}
+ keydir=${SB_KEYDIR:-./keys}
+-if [ ! -d  ${keydir} ]; then
+-    mkdir -p ${keydir}
++if [ ! -d "${keydir}" ]; then
++    mkdir -p "${keydir}"
+ fi
+ openssl req -new -x509 -newkey rsa:4096 -subj "/CN=${name}PK/" -outform PEM \
+-        -keyout ${keydir}/${name}PK.key  -out ${keydir}/${name}PK.crt  -days 3650 -nodes -sha256
++        -keyout "${keydir}/${name}PK.key" -out "${keydir}/${name}PK.crt" -days 3650 -nodes -sha256
+ openssl req -new -x509 -newkey rsa:4096 -subj "/CN=${name}KEK/" -outform PEM \
+-        -keyout ${keydir}/${name}KEK.key -out ${keydir}/${name}KEK.crt -days 3650 -nodes -sha256
++        -keyout "${keydir}/${name}KEK.key" -out "${keydir}/${name}KEK.crt" -days 3650 -nodes -sha256
+ openssl req -new -x509 -newkey rsa:4096 -subj "/CN=${name}DB/" -outform PEM \
+-        -keyout ${keydir}/${name}DB.key  -out ${keydir}/${name}DB.crt  -days 3650 -nodes -sha256
+-openssl x509 -in ${keydir}/${name}PK.crt  -out ${keydir}/${name}PK.cer  -outform DER
+-openssl x509 -in ${keydir}/${name}KEK.crt -out ${keydir}/${name}KEK.cer -outform DER
+-openssl x509 -in ${keydir}/${name}DB.crt  -out ${keydir}/${name}DB.cer  -outform DER
++        -keyout "${keydir}/${name}DB.key" -out "${keydir}/${name}DB.crt" -days 3650 -nodes -sha256
++openssl x509 -in "${keydir}/${name}PK.crt" -out "${keydir}/${name}PK.cer" -outform DER
++openssl x509 -in "${keydir}/${name}KEK.crt" -out "${keydir}/${name}KEK.cer" -outform DER
++openssl x509 -in "${keydir}/${name}DB.crt" -out "${keydir}/${name}DB.cer" -outform DER
+ -openssl pkcs12 -export -out ${keydir}/${name}DB.p12 \
+-        -in ${keydir}/${name}DB.crt -inkey ${keydir}/${name}DB.key -passout pass:
++openssl pkcs12 -export -out "${keydir}/${name}DB.p12" \
++        -in "${keydir}/${name}DB.crt" -inkey "${keydir}/${name}DB.key" -passout pass:
+  GUID=$(uuidgen --random)
+-echo $GUID > ${keydir}/${name}GUID
+-
+-cert-to-efi-sig-list -g $GUID ${keydir}/${name}PK.crt  ${keydir}/${name}PK.esl
+-cert-to-efi-sig-list -g $GUID ${keydir}/${name}KEK.crt ${keydir}/${name}KEK.esl
+-cert-to-efi-sig-list -g $GUID ${keydir}/${name}DB.crt  ${keydir}/${name}DB.esl
+-rm -f ${keydir}/${name}noPK.esl
+-touch ${keydir}/${name}noPK.esl
+-
+-sign-efi-sig-list -g $GUID  \
+-                  -k ${keydir}/${name}PK.key -c ${keydir}/${name}PK.crt \
+-                  PK ${keydir}/${name}PK.esl   ${keydir}/${name}PK.auth
+-sign-efi-sig-list -g $GUID  \
+-                  -k ${keydir}/${name}PK.key -c ${keydir}/${name}PK.crt \
+-                  PK ${keydir}/${name}noPK.esl ${keydir}/${name}noPK.auth
+-sign-efi-sig-list -g $GUID  \
+-                  -k ${keydir}/${name}PK.key -c ${keydir}/${name}PK.crt \
+-                  KEK ${keydir}/${name}KEK.esl ${keydir}/${name}KEK.auth
+-sign-efi-sig-list -g $GUID  \
+-                  -k ${keydir}/${name}PK.key -c ${keydir}/${name}PK.crt \
+-                  DB ${keydir}/${name}DB.esl ${keydir}/${name}DB.auth
+-
+-chmod 0600 ${keydir}/${name}*.key
+-mkdir -p ${keydir}/${name}certdb
+-certutil -N --empty-password -d ${keydir}/${name}certdb
+-
+-certutil -A -n 'PK' -d ${keydir}/${name}certdb -t CT,CT,CT -i ${keydir}/${name}PK.crt
+-pk12util -W "" -d ${keydir}/${name}certdb -i ${keydir}/${name}DB.p12
+-certutil -d ${keydir}/${name}certdb -A -i ${keydir}/${name}DB.crt -n "" -t u
+-
+-certutil -d ${keydir}/${name}certdb -K
+-certutil -d ${keydir}/${name}certdb -L
++echo "$GUID" > "${keydir}/${name}GUID"
++
++cert-to-efi-sig-list -g "$GUID" "${keydir}/${name}PK.crt"  "${keydir}/${name}PK.esl"
++cert-to-efi-sig-list -g "$GUID" "${keydir}/${name}KEK.crt" "${keydir}/${name}KEK.esl"
++cert-to-efi-sig-list -g "$GUID" "${keydir}/${name}DB.crt"  "${keydir}/${name}DB.esl"
++rm -f "${keydir}/${name}noPK.esl"
++touch "${keydir}/${name}noPK.esl"
++
++sign-efi-sig-list -g "$GUID" \
++                  -k "${keydir}/${name}PK.key" -c "${keydir}/${name}PK.crt" \
++                  PK "${keydir}/${name}PK.esl" "${keydir}/${name}PK.auth"
++sign-efi-sig-list -g "$GUID" \
++                  -k "${keydir}/${name}PK.key" -c "${keydir}/${name}PK.crt" \
++                  PK "${keydir}/${name}noPK.esl" "${keydir}/${name}noPK.auth"
++sign-efi-sig-list -g "$GUID" \
++                  -k "${keydir}/${name}PK.key" -c "${keydir}/${name}PK.crt" \
++                  KEK "${keydir}/${name}KEK.esl" "${keydir}/${name}KEK.auth"
++sign-efi-sig-list -g "$GUID" \
++                  -k "${keydir}/${name}PK.key" -c "${keydir}/${name}PK.crt" \
++                  DB "${keydir}/${name}DB.esl" "${keydir}/${name}DB.auth"
++
++chmod 0600 "${keydir}/${name}"*.key
++mkdir -p "${keydir}/${name}certdb"
++certutil -N --empty-password -d "${keydir}/${name}certdb"
++
++certutil -A -n 'PK' -d "${keydir}/${name}certdb" -t CT,CT,CT -i "${keydir}/${name}PK.crt"
++pk12util -W "" -d "${keydir}/${name}certdb" -i "${keydir}/${name}DB.p12"
++certutil -d "${keydir}/${name}certdb" -A -i "${keydir}/${name}DB.crt" -n "" -t u
++
++certutil -d "${keydir}/${name}certdb" -K
++certutil -d "${keydir}/${name}certdb" -L
+diff --git a/scripts/start-efishell.sh b/scripts/start-efishell.sh
+index cc8dc580..5ec85e07 100755
+--- a/scripts/start-efishell.sh
++++ b/scripts/start-efishell.sh
+@@ -10,6 +10,6 @@ qemu-system-x86_64 -enable-kvm -M q35 -nographic \
+                    -global ICH9-LPC.disable_s3=1 \
+                    -global isa-fdc.driveA= \
+                    -boot menu=on \
+-                   -drive if=pflash,format=raw,unit=0,readonly=on,file=${ovmf_code} \
+-                   -drive if=pflash,format=raw,file=${ovmf_vars} \
+-                   -drive file=fat:rw:$DISK
++                   -drive if=pflash,format=raw,unit=0,readonly=on,file="${ovmf_code}" \
++                   -drive if=pflash,format=raw,file="${ovmf_vars}" \
++                   -drive file=fat:rw:"$DISK"
 -- 
-Siemens AG, Technology
-Competence Center Embedded Linux
-
+2.35.3
 
