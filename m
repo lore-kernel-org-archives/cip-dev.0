@@ -1,184 +1,826 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E8D7C77B6F
-	for <webhook@archiver.kernel.org>; Fri, 14 Apr 2023 09:33:40 +0000 (UTC)
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.70])
- by mx.groups.io with SMTP id smtpd.web11.5207.1681464818646076838
- for <cip-dev@lists.cip-project.org>;
- Fri, 14 Apr 2023 02:33:39 -0700
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A2CC77B6E
+	for <webhook@archiver.kernel.org>; Fri, 14 Apr 2023 10:15:10 +0000 (UTC)
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+ by mx.groups.io with SMTP id smtpd.web10.5717.1681467304998924315
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Fri, 14 Apr 2023 03:15:05 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=NsUutDxL;
- spf=pass (domain: siemens.com, ip: 40.107.6.70, mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mpm8IFsJWxm9++zQ12l/TGWV98wDSfkK84KNtHooV+fCHSzUftyOzzG+ZttoopytwJHvwmPp4O+TBSQEALPuYkvOSglo/KzqDVSyuochogMPabPzCNWUicIWpGmyVpJ96lh9E4WXHFE5suuzyEx72xhuq2m9VbEnuMU8aTh6NzrZ4EBEwLQ4jVewjMguACqUYJbj1+pywuQC/zv7rjtQVSdqLrKNVY54aDRBcerctatJq8aE3YzICCXiFtI6vwMjJeUJd/CUX9yZwH5wYy0X/jRok5hfeLB8uLKKCsxGvDRVlnAoHbl4XBv0eyv16RxQkqqbrT8ns2/oV1Y+iaYdDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ySYK5vDwCocXvyQ+f91seNtb7TXVAAgBEgNzabAIzUQ=;
- b=DVaatKuwkKMkCUlCtRcn7mH8WLAM68c5Lx0QNM8BFZJd7Bboh6KfOShzEZ7Z60wb2uxDoagh+Kv6DeNZfzsvdhlRUKJePHGa6gc2s0rC9N2sU7ujanRxwPg6kKOvshG+0zCmB4Cm1/Axya8aQyn20QFvAGiUDdcAhA85ehwDSAUy6XjwaLZ34BwRnZI0RhDNDkOay0sbnMVYNzjazacur2i5KvOi7DItI1UaUi+5RlLSATSC/mDqgsOU7ZpAOLvwe+OKr/zHWoMd/OeaTlgBNhrW7MTm83iT5JN5ut4PjmZ8lZXbMGL95W6H3359kQSttR6ExNa9V8tScTju38NYqw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ySYK5vDwCocXvyQ+f91seNtb7TXVAAgBEgNzabAIzUQ=;
- b=NsUutDxLPWkOciShW0u1Ct54sTdExt2WNoumnMfSv9YyEGgB8TxcYkTQ6FrARsNPrBgheQrCD19S0TQ8D5B3e12vzMXttHQS6evFKrGHYb+kNIYY74Kplx3E3m/1MYzqs/LPuo3LB2eNbDr6QWCuvqFct1U63KjsXP1FtaXJzFjvMVTj/L8pmQAjInn2eqEg+UMSh9uEIocuohTgU67PG85S3DZJ6PLoSijAk3CLyNzy908qo7dfatD6dGKg+UQUDhB4GbPdiLRarUfxHvlCwAd2ps/VgQQueyi47AwDhZ1yu7VsqY0kr0YuSFB5u3+JBsT5X1cLrehYxXkvDyRytw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by PRAPR10MB5424.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:29e::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6298.25; Fri, 14 Apr
- 2023 09:33:35 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::f5ab:5f59:3b47:fc2e]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::f5ab:5f59:3b47:fc2e%5]) with mapi id 15.20.6319.004; Fri, 14 Apr 2023
- 09:33:35 +0000
-Message-ID: <f9ae5295-5534-1ade-80e8-159f623d5e8d@siemens.com>
-Date: Fri, 14 Apr 2023 11:33:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [isar-cip-core][PATCH v2] add support to limit resource
- consumption of squashfs creation
-Content-Language: en-US
-To: Felix Moessbauer <felix.moessbauer@siemens.com>,
- cip-dev@lists.cip-project.org
-Cc: adriaan.schmidt@siemens.com
-References: <20230414092408.679342-1-felix.moessbauer@siemens.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20230414092408.679342-1-felix.moessbauer@siemens.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM4PR0302CA0019.eurprd03.prod.outlook.com
- (2603:10a6:205:2::32) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+ dkim=fail reason="signature has expired" header.i=@kernelci-org.20221208.gappssmtp.com header.s=20221208 header.b=1L+9h7OG;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.182, mailfrom: bot@kernelci.org)
+Received: by mail-pl1-f182.google.com with SMTP id o2so17849395plg.4
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Fri, 14 Apr 2023 03:15:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1681467304; x=1684059304;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=OS2GWVcnss53QvZ67JMuAUIcELAmV4bSLjW+/knEH/w=;
+        b=1L+9h7OG9JgTiRbfjFniD8mHkRBD79+g44MxF0nZrqkip4jwli03sSxMHDHK5Jm4kT
+         OJRK8Gj+Q3I6N/c0cl7A+9Gxy4cgcvuL2QGdmYfvXyoRPwoPMfJWGOER/D2rVWHGzT7V
+         o5L4p5Oh6h0cjAkgV56IY4ZA6zRPyZYCoa0/2ug+r/xgJjCBEvGiS8dfoz2vUiQifPqp
+         IqNye0Rxe2ov9Y8IPJaX+ZhI6EAdoopJwks3WIT0T1fr/aMpUWuHi5p2c57q3gNDwpat
+         /NtLBmJgJUIFYDkZAABLJpH0riNtkjHOxM06PyTOU3WvLCEQ+3y49ZJDd1x9sktvMFma
+         gDlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681467304; x=1684059304;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OS2GWVcnss53QvZ67JMuAUIcELAmV4bSLjW+/knEH/w=;
+        b=GxFRru8+tacZPoOqivUAyu42MWp9CEpom0TwIXjhnH1NFfb7YQQBJCxGENJDZ1TEaX
+         D0jWql290+7HUX8zOe+B8fz3qc7L34SNGDK47qYoqC9tGpRb0RfTEEimvNyKLj32Qix9
+         W3czVyP7ERO+dhOxQaNymSsLKi7S4cFmpAtZMbyd8NA/lBKIXb2RJQPf9wFgrNdHjX0U
+         zmHA6m+cS9ND/r6eWX4rfLvHHeKGkRPw0XecclVbnZc+ddWoQfTPwjGrbnAglQLL1gkG
+         6Gox0r7AynM/cl0TWMJeKNiDBt3nWLCJ7Nk1YXQ1LHaL+KhM2qvLMmDFekdfBDJ2qYYe
+         PO+A==
+X-Gm-Message-State: AAQBX9fc0TL+alu8Jd8MGkqCq+7BoDGqLbeziN+wjWijY7apbFGCab4h
+	4rmQW16cgcglSzLyMBclRL2Bfv7eeVDaMq3E9UjUx79C
+X-Google-Smtp-Source: AKy350alw7VWljmrQfUYY6i0GysmMTOBlzH7lq6cQHwvMGIzwvjiVsc/SLHV66nBpoA5igKSdsvpFA==
+X-Received: by 2002:a17:903:22d0:b0:1a6:6d9f:2fc9 with SMTP id y16-20020a17090322d000b001a66d9f2fc9mr2965695plg.30.1681467303725;
+        Fri, 14 Apr 2023 03:15:03 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id j9-20020a170902690900b001a52e3e3745sm2734511plk.296.2023.04.14.03.15.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Apr 2023 03:15:03 -0700 (PDT)
+Message-ID: <643927a7.170a0220.6bc77.6207@mx.google.com>
+Date: Fri, 14 Apr 2023 03:15:03 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PRAPR10MB5424:EE_
-X-MS-Office365-Filtering-Correlation-Id: e2895c59-9d9f-4b31-dfd1-08db3ccb51f1
-X-LD-Processed: 38ae3bcd-9579-4fd4-adda-b42e1495d55a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	XbE14OPiU+7LreSS+tWbqeaOTd1+6EXNu2Y4rGNla9Ip9gY3M6drUWqCOaTIHfwQ8XGsEKRSJLGSSxLMQXcWqWoOIwi1pEgiC4J7wTAS6jNntT4JZHxfTbzPGeKmfx8vMhFk8qCV+rn5uup68mmUSEIgnHHNft0hpO6fWZoga1rPbEwzCYX7/DeyYQnSMGlkaVLm5fiGh3iTyXykyieDXTfkkpEWE4Cie1JwSrh0FY9h1RZQPGDU6X/Ff0pV1EOr6mP5doCntnz/x27b8kOjk5d9npQbQ2cjwYrEJPGnozo/7VVVJcKEGhOC1yoV6D9w2c8Ab+J/KkIybLxDRDR/gwD+326vRVG0m8lP+0vTUrHO81GnUbyS8eqCyqHKP9bEtSSFnQVl0jkhpDNWdUpMgXcNMqIUfQUY9dCc4i5nC8C0invn5G5PAitXGyGQ0dCegFByv2Z8kTFvva5KBigjiGFHLaN4AVrGACNWXhJBUWEWoI+jSQwYlon0zawb49kDB1qR++oDj1AxAD+KPZb7Q/hG9eL/HFzcuShFtRlzJbSoAhzM4djFz1VPSjhkI/F5xkpuf+ph1EsheoYPwGPky2DKr7AcOLwAUk1lZHBSs57HxzB9D8BMz+zSsf+kk4gvLxj1RgfkZJHjLjyanGfX8g==
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(39860400002)(396003)(376002)(136003)(346002)(451199021)(31686004)(8676002)(66946007)(66556008)(66476007)(6486002)(4326008)(316002)(41300700001)(36756003)(478600001)(86362001)(31696002)(6512007)(2616005)(6506007)(26005)(107886003)(6666004)(53546011)(83380400001)(82960400001)(5660300002)(44832011)(8936002)(38100700002)(186003)(2906002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?UTN6U1ZvMXNIK241Vms5Zkpxb2FMc280NW1hNVRMRXhNUmdubmdXNUF3NWN1?=
- =?utf-8?B?KzJxaUIrSHYzVjNiOFBWNkVlaEZDeXB3cnZjR1pPZmVyUUlJcm9CZldpdG9j?=
- =?utf-8?B?ZDRpS1hieUpOUm0wamF0a3RtOWREMm9XMXVoK3VrT2c3b1VCOXlFcHN5TjZC?=
- =?utf-8?B?eTF5QzQxdkFrWkJubVZNbXJJVWNTNFBaRmxiam9xTFdPYXVVWHMyQnBlODND?=
- =?utf-8?B?ZjB1L0VnZERjcysrN1huT3ZGa0FPUXYwNkpRSHBIWklia0xRRW1XeU52MW40?=
- =?utf-8?B?WWZRcVh2cnFHaDl1OWZXejdQRGRMeHNsaS9XNGN2WThKcGdzMHpqbkR6cU94?=
- =?utf-8?B?aGNWcVdMZ0JHN3hmdHhTS3ptenh3eWZtVDdrSU12Z3lzWlVuUTkwUmx5aE1k?=
- =?utf-8?B?Ti9rN0xaRE5HdmF2Q3c3VHliTWpzVmhRZm1SWjdRVXJJQi9td0NwanlkdzE1?=
- =?utf-8?B?RGxlaWhlSWZNNFlScUdzM05xR2ZoQTN4SlBIOUZWTWpOcWU5YW0wWWYrTHRK?=
- =?utf-8?B?MU5lTUhYc2pzSXBlbS9DVzIyeFFOU3pDWnBrSlBteGFGdkxJRFFBUVF6cDFH?=
- =?utf-8?B?aFNYMlVodmdrQ0VXZWgzNHMwSzMybGRsWk9yVnBwbmJyanB0SS9IcTAxTHRj?=
- =?utf-8?B?ZkY1SEtqdjREZGlHbE1hSk4ySU1ERGNBdnBuTmozMk5VRHVxbHFTQXlUdkMw?=
- =?utf-8?B?d3dUajZGWWo4dGFsZzBzMFFkMENtbVZXb0JBS0dkN0xHOHZWZ2ZtOGJKaTN5?=
- =?utf-8?B?RGVrRE9iMStFYVFTa1d2bytmelpJWlFvSzArRmd0Wk83aURFc09wUHdNdVNS?=
- =?utf-8?B?bElzMGhqcUUwZUhvU3ZlaElpOUdiQTBzZW04bnpKZytQTm13Wmp6dmZmME1h?=
- =?utf-8?B?K2N1Syt2dG4weFViM2JPdlhLVUFlOHZKYWsxKytFazQxZU5sWE1rOTJCcG1L?=
- =?utf-8?B?WVV5d3dreVZQNjFMa25xTUdBcTZ3dUt2ZGxqb05RcnFybFV6S1l6K2lGbVV0?=
- =?utf-8?B?TGFRbFg0N05BV0x2SEE0cG5uUWx2b1p0ZGQ2ZnNzTVBXdHltQU5tRVdxc0kw?=
- =?utf-8?B?MEZjcVV3TkpUbXBzMEdUd1ViOTRBcUJndU01TmF3enAyWUpkcXFWbndkb2hX?=
- =?utf-8?B?a2RXcWxBUDhHNk91dW84K2Y5cDVOYldHTkhaOE1SaWpwYXFZaFg3OG04WENF?=
- =?utf-8?B?amlkMFlhbXVLd09oWFRGaUR6U2xuckZncFVvYXlBalJXREt6ZE5CUENMNzY1?=
- =?utf-8?B?Zm43Y1JFOFEwaGc0SGpIWllmVWpHeXZtRnF6Rk1GS3ZMQUUwa21NTmlmd281?=
- =?utf-8?B?REwyZkdPUlRsQW1jY1IralVzSnJNZFpuRk8rUXdOTDdDSlB4RWtkMXdUVGtw?=
- =?utf-8?B?S3U3WXh2SXhuWnBRQnpSazY2clNtUDlRTjFOcWhNQVB4Q3U4M3h0VEJob2g3?=
- =?utf-8?B?djRyMVIveSs0L0pLOWNBN2lyb2JEVnk2NDBpUmo3UXA3MENkMEdsaEV4b09q?=
- =?utf-8?B?M2VhNXZpZ0tnWlNrbjMxM1N4M2t2M245N3ZZb2pRWUdWZndZN1RKajRzUmc1?=
- =?utf-8?B?NzBONDJzaTIzdlE2WjdTRkdqUzFEZmpuemtzUHpMQlM1KzYweWs3UjY2Y1Rr?=
- =?utf-8?B?SkdEd3JZc0xRNERBNFBJVVBwcDZSOWJNWHBsckhuUEU1Rkt0RDFZVWZQNjVV?=
- =?utf-8?B?U04xZTl2ZVp6cGRFNG94ZDJwQXJXSk50cmRpNC94WVpBQTNkamJ4UTNIVXJB?=
- =?utf-8?B?Q1I4Y0ltVmkzT2tSbXlHcHRjU1lZOURuWGYxQ1hNaVhkNGt5ZlEyOTdNVjFl?=
- =?utf-8?B?QU0rYUlTUkc2bEhIN3A4aFNQRnFDM3ZBV1UxMmszN0RwV1VpK0s5TmZRbE1Q?=
- =?utf-8?B?L3drODRtTkpXRmRnL1V3VSt6dW0xYkFDdDk4azRKQXJKRHF2clNrYWJqNmlL?=
- =?utf-8?B?aGlKOG9UZDFVczdPby91VDBqa0NJOFBOK0dQT0lRYjYyWHpDVHhuTWRnT2w1?=
- =?utf-8?B?OWZCTHVxcmRGaGFta3UwUHhVMEtjMUF6M21ZRmhnTTVhaGxvaTJwNWFtQWdn?=
- =?utf-8?B?TitWenVzRXpXQk1wdEFobTZwWDhpaWpKOTVTSTU2em9SN3krd1ZRRnM4NlRE?=
- =?utf-8?Q?RNX+kdhZuEQxrJiQ7z4g3kQEt?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2895c59-9d9f-4b31-dfd1-08db3ccb51f1
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Apr 2023 09:33:35.5699
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2CWafMR88uL04+ucEyIJdOOIr1duKi6lS55RlzadQwIFLdNF9Edw8Dntml3Dli2rWBOJDKpdhWDsH7YA7pnLhw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PRAPR10MB5424
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: linux-4.19.y-cip
+X-Kernelci-Tree: cip
+X-Kernelci-Kernel: v4.19.280-cip96
+X-Kernelci-Report-Type: build
+Subject: cip/linux-4.19.y-cip build: 122 builds: 0 failed, 122 passed,
+ 23 warnings (v4.19.280-cip96)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
+ kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
+From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 14 Apr 2023 09:33:40 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11203
+ <cip-dev@lists.cip-project.org>; Fri, 14 Apr 2023 10:15:10 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11204
 
-On 14.04.23 11:24, Felix Moessbauer wrote:
-> This patch makes it possible to control the number of CPUs and the
-> memory usage when generating a squashfs. The variable names used
-> follow the imagetype variable scheme.
-> 
-> Especially when compressing a squashfs internally with cpu and memory
-> heavy compressors like xz, we inherit the issues we had with the image
-> compression in the past. On CI systems, where many tasks might run in
-> parallel, this often led to OOMs and poor performance. By providing
-> these options similiar to the other imagetype options, we give CI
-> administrators an easy way to control the memory consumption,
-> independent of the other options passed to mksquashfs.
+cip/linux-4.19.y-cip build: 122 builds: 0 failed, 122 passed, 23 warnings (=
+v4.19.280-cip96)
 
-If this is targeting CI tunings, we should also export the related
-variables via kas to allow pickup from the environment, not?
+Full Build Summary: https://kernelci.org/build/cip/branch/linux-4.19.y-cip/=
+kernel/v4.19.280-cip96/
 
-Jan
+Tree: cip
+Branch: linux-4.19.y-cip
+Git Describe: v4.19.280-cip96
+Git Commit: 0f5788ca10e5121ce62a8a58a84c723b7d99607f
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+Built: 3 unique architectures
 
-> 
-> Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
-> ---
-> Changes since v1:
-> 
-> - add reasoning in the commit message
-> - no functional changes
-> 
->  classes/squashfs.bbclass | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/classes/squashfs.bbclass b/classes/squashfs.bbclass
-> index a06c501..b14768c 100644
-> --- a/classes/squashfs.bbclass
-> +++ b/classes/squashfs.bbclass
-> @@ -15,6 +15,13 @@ SQUASHFS_EXCLUDE_DIRS ?= ""
->  SQUASHFS_CONTENT ?= "${PP_ROOTFS}"
->  SQUASHFS_CREATION_ARGS ?= ""
->  
-> +SQUASHFS_THREADS ?= "${@oe.utils.cpu_count(at_least=2)}"
-> +SQUASHFS_THREADS[vardepvalue] = "1"
-> +# default according to mksquasfs docs
-> +SQUASHFS_MEMLIMIT ?= "7982M"
-> +SQUASHFS_DEFAULTS ?= "-mem ${SQUASHFS_MEMLIMIT} -processors ${SQUASHFS_THREADS}"
-> +SQUASHFS_DEFAULTS[vardepsexclude] += "SQUASHFS_MEMLIMIT SQUASHFS_THREADS"
-> +
->  python __anonymous() {
->      exclude_directories = d.getVar('SQUASHFS_EXCLUDE_DIRS').split()
->      if len(exclude_directories) == 0:
-> @@ -31,5 +38,5 @@ IMAGE_CMD:squashfs[depends] = "${PN}:do_transform_template"
->  IMAGE_CMD:squashfs() {
->      ${SUDO_CHROOT} /bin/mksquashfs \
->          '${SQUASHFS_CONTENT}' '${IMAGE_FILE_CHROOT}' \
-> -        -noappend ${SQUASHFS_CREATION_ARGS}
-> +        -noappend ${SQUASHFS_DEFAULTS} ${SQUASHFS_CREATION_ARGS}
->  }
+Warnings Detected:
 
--- 
-Siemens AG, Technology
-Competence Center Embedded Linux
+arm64:
+    cip://4.19.y-cip/arm64/qemu_arm64_defconfig (gcc-10): 3 warnings
+    defconfig (gcc-10): 3 warnings
+    defconfig+arm64-chromebook (gcc-10): 3 warnings
+    defconfig+kselftest (gcc-10): 3 warnings
 
+arm:
+    omap1_defconfig (gcc-10): 1 warning
+
+x86_64:
+    allnoconfig (gcc-10): 2 warnings
+    cip://4.19.y-cip/x86/cip_qemu_defconfig (gcc-10): 2 warnings
+    x86_64_defconfig (gcc-10): 2 warnings
+    x86_64_defconfig+kselftest (gcc-10): 2 warnings
+    x86_64_defconfig+x86-chromebook (gcc-10): 2 warnings
+
+
+Warnings summary:
+
+    12   aarch64-linux-gnu-ld: warning: -z norelro ignored
+    5    ld: warning: creating DT_TEXTREL in a PIE
+    5    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in rea=
+d-only section `.head.text'
+    1    drivers/gpio/gpio-omap.c:1233:34: warning: array =E2=80=98omap_gpi=
+o_match=E2=80=99 assumed to have one element
+
+Section mismatches summary:
+
+    15   WARNING: modpost: Found 1 section mismatch(es).
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+
+Detailed per-defconfig build reports:
+
+---------------------------------------------------------------------------=
+-----
+acs5k_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+acs5k_tiny_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sectio=
+n mismatches
+
+Warnings:
+    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in read-onl=
+y section `.head.text'
+    ld: warning: creating DT_TEXTREL in a PIE
+
+---------------------------------------------------------------------------=
+-----
+am200epdkit_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+aspeed_g4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+aspeed_g5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+assabet_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+at91_dt_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+axm55xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+badge4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+bcm2835_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+cerfcube_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+cip://4.19.y-cip/arm/qemu_arm_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 err=
+ors, 0 warnings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+cip://4.19.y-cip/arm64/qemu_arm64_defconfig (arm64, gcc-10) =E2=80=94 PASS,=
+ 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+    aarch64-linux-gnu-ld: warning: -z norelro ignored
+    aarch64-linux-gnu-ld: warning: -z norelro ignored
+    aarch64-linux-gnu-ld: warning: -z norelro ignored
+
+Section mismatches:
+    WARNING: modpost: Found 1 section mismatch(es).
+
+---------------------------------------------------------------------------=
+-----
+cip://4.19.y-cip/x86/cip_qemu_defconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 =
+errors, 2 warnings, 0 section mismatches
+
+Warnings:
+    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in read-onl=
+y section `.head.text'
+    ld: warning: creating DT_TEXTREL in a PIE
+
+---------------------------------------------------------------------------=
+-----
+cm_x2xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+cm_x300_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+colibri_pxa270_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings=
+, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+colibri_pxa300_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings=
+, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+collie_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+corgi_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+davinci_all_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 3 warnings, 0 section m=
+ismatches
+
+Warnings:
+    aarch64-linux-gnu-ld: warning: -z norelro ignored
+    aarch64-linux-gnu-ld: warning: -z norelro ignored
+    aarch64-linux-gnu-ld: warning: -z norelro ignored
+
+Section mismatches:
+    WARNING: modpost: Found 1 section mismatch(es).
+
+---------------------------------------------------------------------------=
+-----
+defconfig+arm64-chromebook (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 3 warn=
+ings, 0 section mismatches
+
+Warnings:
+    aarch64-linux-gnu-ld: warning: -z norelro ignored
+    aarch64-linux-gnu-ld: warning: -z norelro ignored
+    aarch64-linux-gnu-ld: warning: -z norelro ignored
+
+Section mismatches:
+    WARNING: modpost: Found 1 section mismatch(es).
+
+---------------------------------------------------------------------------=
+-----
+defconfig+kselftest (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 3 warnings, 0=
+ section mismatches
+
+Warnings:
+    aarch64-linux-gnu-ld: warning: -z norelro ignored
+    aarch64-linux-gnu-ld: warning: -z norelro ignored
+    aarch64-linux-gnu-ld: warning: -z norelro ignored
+
+Section mismatches:
+    WARNING: modpost: Found 1 section mismatch(es).
+
+---------------------------------------------------------------------------=
+-----
+dove_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+ebsa110_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+efm32_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+em_x270_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+ep93xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+Section mismatches:
+    WARNING: modpost: Found 1 section mismatch(es).
+
+---------------------------------------------------------------------------=
+-----
+eseries_pxa_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+exynos_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+ezx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+footbridge_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+gemini_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+h3600_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+h5000_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+hackkit_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+hisi_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+imote2_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+imx_v4_v5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+imx_v6_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+integrator_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+Section mismatches:
+    WARNING: modpost: Found 1 section mismatch(es).
+
+---------------------------------------------------------------------------=
+-----
+iop13xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+iop32x_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+iop33x_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+ixp4xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+jornada720_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+keystone_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+ks8695_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+lart_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+lpc18xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+lpc32xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+lpd270_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+lubbock_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+magician_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+mainstone_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+mini2440_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+mmp2_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+moxart_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+mps2_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v4t_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+Section mismatches:
+    WARNING: modpost: Found 1 section mismatch(es).
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig+kselftest (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warn=
+ings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+mvebu_v5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+mvebu_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+mxs_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+neponset_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+netwinder_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+netx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+Section mismatches:
+    WARNING: modpost: Found 1 section mismatch(es).
+
+---------------------------------------------------------------------------=
+-----
+nhk8815_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+Section mismatches:
+    WARNING: modpost: Found 1 section mismatch(es).
+
+---------------------------------------------------------------------------=
+-----
+nuc910_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+nuc950_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+nuc960_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+omap1_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
+n mismatches
+
+Warnings:
+    drivers/gpio/gpio-omap.c:1233:34: warning: array =E2=80=98omap_gpio_mat=
+ch=E2=80=99 assumed to have one element
+
+---------------------------------------------------------------------------=
+-----
+omap2plus_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+orion5x_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+oxnas_v6_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+palmz72_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+pcm027_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+pleb_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+prima2_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+pxa168_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+pxa255-idp_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+pxa3xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+pxa910_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+pxa_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+qcom_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+raumfeld_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+realview_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+s3c2410_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+s3c6400_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+Section mismatches:
+    WARNING: modpost: Found 1 section mismatch(es).
+
+---------------------------------------------------------------------------=
+-----
+s5pv210_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+Section mismatches:
+    WARNING: modpost: Found 1 section mismatch(es).
+
+---------------------------------------------------------------------------=
+-----
+sama5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+shannon_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+shmobile_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+simpad_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+socfpga_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+spear13xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+spear3xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+Section mismatches:
+    WARNING: modpost: Found 1 section mismatch(es).
+
+---------------------------------------------------------------------------=
+-----
+spear6xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+Section mismatches:
+    WARNING: modpost: Found 1 section mismatch(es).
+
+---------------------------------------------------------------------------=
+-----
+spitz_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+stm32_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+sunxi_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+tango4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+tct_hammer_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+tegra_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+trizeps4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+u300_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+Section mismatches:
+    WARNING: modpost: Found 1 section mismatch(es).
+
+---------------------------------------------------------------------------=
+-----
+u8500_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+versatile_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+Section mismatches:
+    WARNING: modpost: Found 1 section mismatch(es).
+
+---------------------------------------------------------------------------=
+-----
+vexpress_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+vf610m4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+viper_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+vt8500_v6_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, =
+0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 2 warnings, 0 s=
+ection mismatches
+
+Warnings:
+    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in read-onl=
+y section `.head.text'
+    ld: warning: creating DT_TEXTREL in a PIE
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig+kselftest (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 2 war=
+nings, 0 section mismatches
+
+Warnings:
+    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in read-onl=
+y section `.head.text'
+    ld: warning: creating DT_TEXTREL in a PIE
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig+x86-chromebook (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, =
+2 warnings, 0 section mismatches
+
+Warnings:
+    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in read-onl=
+y section `.head.text'
+    ld: warning: creating DT_TEXTREL in a PIE
+
+---------------------------------------------------------------------------=
+-----
+xcep_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+zeus_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+zx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
+
+---
+For more info write to <info@kernelci.org>
 
