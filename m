@@ -1,125 +1,205 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23979C77B73
-	for <webhook@archiver.kernel.org>; Thu, 20 Apr 2023 20:10:16 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web11.1609.1682021407891058288
- for <cip-dev@lists.cip-project.org>;
- Thu, 20 Apr 2023 13:10:08 -0700
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2884DC77B7C
+	for <webhook@archiver.kernel.org>; Thu, 20 Apr 2023 20:26:26 +0000 (UTC)
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+ by mx.groups.io with SMTP id smtpd.web10.2104.1682022384085796464
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Thu, 20 Apr 2023 13:26:24 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 830FC1C0DED; Thu, 20 Apr 2023 22:10:04 +0200 (CEST)
-Date: Thu, 20 Apr 2023 22:10:04 +0200
-From: Pavel Machek <pavel@denx.de>
-To: cip-dev@lists.cip-project.org
-Subject: CVE-2023-0459: Spectre-v1 Usercopy Hardening was Re: [cip-dev] New
- CVE entries this week
-Message-ID: <ZEGcHOWAk8S0zEBz@duo.ucw.cz>
-References: <CAODzB9p6MuyqPJeiEpun8CDR9+ZJ9PHhhWG-wyM7f7C0d=krwA@mail.gmail.com>
+ dkim=fail reason="signature has expired" header.i=@kernelci-org.20221208.gappssmtp.com header.s=20221208 header.b=vIUzsHNz;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.215.177, mailfrom: bot@kernelci.org)
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-517c840f181so889226a12.3
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Thu, 20 Apr 2023 13:26:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1682022383; x=1684614383;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=esMxEuu806dFirkGjHa/sZpEau4ifck6+EOROqhIz+4=;
+        b=vIUzsHNzwkdKonFZxGwf0yxQByjTYiiLI30EKGmupg4w9hzoYVS1yENbd8Hd0ebgbn
+         A+dDLOvNT18j4KyvKKbn8QS9QwZ5W51lKLMufynX+gzljSH17KGgId1g+VJ+YkseWJXV
+         xGZyjSd5e8UFUk2H0CwXlHfDMt+ZvWRnA3tlBgRbFGI6/IDW0tgrmHqAMwZOsJvCL/xG
+         kTINbuh2hCvXOAJmGgbkWXC+hWqJdcFttGQgnp86u7tRvF3Gq7r9D3SZ+hpZApNvsac3
+         20Q2HyTVneGoDWTFXFoQU/e61ptmXJeRuVHZShixySmQV6GqeOBZo1rjWuGh0WhEzMNu
+         6V5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682022383; x=1684614383;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=esMxEuu806dFirkGjHa/sZpEau4ifck6+EOROqhIz+4=;
+        b=YO7tVzfLJ9+B63OfO621PvZ6mAEm/FLhPxpINgqUFVDxdubNaDYiomZ12ek1akR68y
+         2XJJY8Pfnv2kVJiF48Xy4kc96d6ihI3HR+8zlCQ1B284mNL5d2ZUTfXgSMIdHddHB4VE
+         hoxD/nVkiri/pijaI8DPD10Q1YAMF+8hBTNaFLTGYgCALUzzxGyyXpiwfxq0xBh4AsqM
+         7L2OnXpVd4LIT4dpdYJpNJKDq9K1B/eYcSqt1vn1x8Bhd2+60v5/Yo8dwljCDxRmwUzm
+         vPIMCfgiZcr7CkR5Bpc5lfRx0m9k8atD0md5Cv2rrdsd6Oz2uWYMrbtYEcaIxF+vqCj/
+         ZzFA==
+X-Gm-Message-State: AAQBX9egld1DN4ZRh8q2UHy1lDdCBbWBMPGXL+594+5JJ4IEaEB0FMjw
+	pei/KHlTYwlpGaBLu52gGr5TT2S8nxMGpqrYqneC2+XX
+X-Google-Smtp-Source: AKy350bFavj8zTVpHeuw2MtQG0pskmRgW37tPV0oh2az+fhUJS4g8NodNLY7mWwhUnsYltVvQkXqyw==
+X-Received: by 2002:a17:90b:1191:b0:247:9422:62b4 with SMTP id gk17-20020a17090b119100b00247942262b4mr2866628pjb.14.1682022383175;
+        Thu, 20 Apr 2023 13:26:23 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id mn9-20020a17090b188900b002478d21de2bsm1519261pjb.36.2023.04.20.13.26.22
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Apr 2023 13:26:22 -0700 (PDT)
+Message-ID: <64419fee.170a0220.1e9d8.3b5f@mx.google.com>
+Date: Thu, 20 Apr 2023 13:26:22 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="nG0PgOPwFuOtt7Bc"
-Content-Disposition: inline
-In-Reply-To: <CAODzB9p6MuyqPJeiEpun8CDR9+ZJ9PHhhWG-wyM7f7C0d=krwA@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: ci/pavel/linux-test
+X-Kernelci-Tree: cip-gitlab
+X-Kernelci-Kernel: v4.4-st20-1100-ga8cadce4b9649
+X-Kernelci-Report-Type: test
+Subject: cip-gitlab/ci/pavel/linux-test ltp-fcntl-locktests: 3 runs,
+ 3 regressions (v4.4-st20-1100-ga8cadce4b9649)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
+From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 20 Apr 2023 20:10:16 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11264
+ <cip-dev@lists.cip-project.org>; Thu, 20 Apr 2023 20:26:26 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11267
+
+cip-gitlab/ci/pavel/linux-test ltp-fcntl-locktests: 3 runs, 3 regressions (=
+v4.4-st20-1100-ga8cadce4b9649)
+
+Regressions Summary
+-------------------
+
+platform                  | arch   | lab           | compiler | defconfig  =
+                  | regressions
+--------------------------+--------+---------------+----------+------------=
+------------------+------------
+asus-C433TA-AJ0005-rammus | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
+on...6-chromebook | 1          =
+
+asus-C523NA-A20057-coral  | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
+on...6-chromebook | 1          =
+
+hp-11A-G6-EE-grunt        | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
+on...6-chromebook | 1          =
 
 
---nG0PgOPwFuOtt7Bc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fpavel%2Fli=
+nux-test/kernel/v4.4-st20-1100-ga8cadce4b9649/plan/ltp-fcntl-locktests/
 
-Hi!
+  Test:     ltp-fcntl-locktests
+  Tree:     cip-gitlab
+  Branch:   ci/pavel/linux-test
+  Describe: v4.4-st20-1100-ga8cadce4b9649
+  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
+  SHA:      a8cadce4b9649177791a9adf0eef53ef0c90de78
 
-> CVE-2023-0459: Spectre-v1 Usercopy Hardening
->=20
-> CVSS v3 score is not provided.
->=20
-> Missing speculation barriers causes a leaking kernel memory.
-> The 4.4 kernel _copy_from_user() implementation is different from
-> 4.19 and later. So this patch can not be applied.
-> It seems as if the 4.4 kernel needs some barrier to prevent
-> speculation bug in other ways.
-
-I have this, and it passes basic testing, but no good way to really
-test it or asses performance impact.
-
-    Attempt to fix CVE-2023-0459. Inspiration from
-    e0fbff18bbcee4f07d46bee172803fad63f6f4dd, but we simply add the check
-    to access_ok, as it is used in about gazillion places.
-
-Best regards,
-								Pavel
-
-diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uacc=
-ess.h
-index 829fa6d3e5611..ce45b6dcb6293 100644
---- a/arch/arm64/include/asm/uaccess.h
-+++ b/arch/arm64/include/asm/uaccess.h
-@@ -101,6 +101,7 @@ static inline void set_fs(mm_segment_t fs)
- 		: "1" (__addr), "Ir" (size),				\
- 		  "r" (current_thread_info()->addr_limit)		\
- 		: "cc");						\
-+	barrier_nospec();						\
- 	flag;								\
- })
-=20
-diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-index ac6932bf1a016..ea1e4ef4a4d8e 100644
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -95,8 +95,11 @@ static inline bool __chk_range_not_ok(unsigned long addr=
-, unsigned long size, un
-  */
- #define access_ok(type, addr, size)					\
- ({									\
-+	bool ret;							\
- 	WARN_ON_IN_IRQ();						\
--	likely(!__range_not_ok(addr, size, user_addr_max()));		\
-+	ret =3D likely(!__range_not_ok(addr, size, user_addr_max()));	\
-+	barrier_nospec();						\
-+	ret;								\
- })
-=20
- /*
-diff --git a/include/linux/nospec.h b/include/linux/nospec.h
-index 0c5ef54fd4162..207ef2a20e485 100644
---- a/include/linux/nospec.h
-+++ b/include/linux/nospec.h
-@@ -9,6 +9,10 @@
-=20
- struct task_struct;
-=20
-+#ifndef barrier_nospec
-+# define barrier_nospec() do { } while (0)
-+#endif
-+
- /**
-  * array_index_mask_nospec() - generate a ~0 mask when index < size, 0 oth=
-erwise
-  * @index: array element index
+  Test suite revisions:
+    ltp-tests
+      URL:  https://github.com/linux-test-project/ltp.git
+      SHA:  458f3554675aace42e9750086d26799e82829f11 =
 
 
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---nG0PgOPwFuOtt7Bc
-Content-Type: application/pgp-signature; name="signature.asc"
+Test Regressions
+---------------- =
 
------BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZEGcHAAKCRAw5/Bqldv6
-8t9kAJ4zUd+XZBBbfEzNtOsrH+YJRQuhswCfa0leGRaPl/cqF4O2/XDsB822iYM=
-=Biuh
------END PGP SIGNATURE-----
 
---nG0PgOPwFuOtt7Bc--
+platform                  | arch   | lab           | compiler | defconfig  =
+                  | regressions
+--------------------------+--------+---------------+----------+------------=
+------------------+------------
+asus-C433TA-AJ0005-rammus | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
+on...6-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/64419302e7fc7620b22e85fa
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-1100-ga8cadce4b9649/x86_64/x86_64_defconfig+x86-chromebook/gcc-1=
+0/lab-collabora/ltp-fcntl-locktests-asus-C433TA-AJ0005-rammus.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-1100-ga8cadce4b9649/x86_64/x86_64_defconfig+x86-chromebook/gcc-1=
+0/lab-collabora/ltp-fcntl-locktests-asus-C433TA-AJ0005-rammus.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
+p/20230414.0/amd64/initrd.cpio.gz =
+
+
+
+  * ltp-fcntl-locktests.login: https://kernelci.org/test/case/id/64419302e7=
+fc7620b22e85fb
+        failing since 29 days (last pass: v4.19.277-cip94-1098-g26d9f86d942=
+d, first fail: v5.10.175-cip29-rt12) =
+
+ =
+
+
+
+platform                  | arch   | lab           | compiler | defconfig  =
+                  | regressions
+--------------------------+--------+---------------+----------+------------=
+------------------+------------
+asus-C523NA-A20057-coral  | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
+on...6-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6441946e78e8ddcf242e85f8
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-1100-ga8cadce4b9649/x86_64/x86_64_defconfig+x86-chromebook/gcc-1=
+0/lab-collabora/ltp-fcntl-locktests-asus-C523NA-A20057-coral.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-1100-ga8cadce4b9649/x86_64/x86_64_defconfig+x86-chromebook/gcc-1=
+0/lab-collabora/ltp-fcntl-locktests-asus-C523NA-A20057-coral.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
+p/20230414.0/amd64/initrd.cpio.gz =
+
+
+
+  * ltp-fcntl-locktests.login: https://kernelci.org/test/case/id/6441946e78=
+e8ddcf242e85f9
+        new failure (last pass: v4.4-st20-1099-g7b2580e1565dd) =
+
+ =
+
+
+
+platform                  | arch   | lab           | compiler | defconfig  =
+                  | regressions
+--------------------------+--------+---------------+----------+------------=
+------------------+------------
+hp-11A-G6-EE-grunt        | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
+on...6-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/644197dbb095c836ee2e85ee
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-1100-ga8cadce4b9649/x86_64/x86_64_defconfig+x86-chromebook/gcc-1=
+0/lab-collabora/ltp-fcntl-locktests-hp-11A-G6-EE-grunt.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-1100-ga8cadce4b9649/x86_64/x86_64_defconfig+x86-chromebook/gcc-1=
+0/lab-collabora/ltp-fcntl-locktests-hp-11A-G6-EE-grunt.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
+p/20230414.0/amd64/initrd.cpio.gz =
+
+
+
+  * ltp-fcntl-locktests.login: https://kernelci.org/test/case/id/644197dbb0=
+95c836ee2e85ef
+        failing since 16 days (last pass: v5.10.175-cip29-rt12, first fail:=
+ v4.4.302-cip74-rt43) =
+
+ =20
 
