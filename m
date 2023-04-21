@@ -2,21 +2,21 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68CE2C77B7E
-	for <webhook@archiver.kernel.org>; Fri, 21 Apr 2023 07:18:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA4FC77B7E
+	for <webhook@archiver.kernel.org>; Fri, 21 Apr 2023 07:18:30 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.6169.1682061470715228262
+ by mx.groups.io with SMTP id smtpd.web11.6178.1682061505900396648
  for <cip-dev@lists.cip-project.org>;
- Fri, 21 Apr 2023 00:18:13 -0700
+ Fri, 21 Apr 2023 00:18:28 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.99,214,1677510000"; 
-   d="scan'208";a="156786970"
+   d="scan'208";a="156787011"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 21 Apr 2023 16:18:12 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 21 Apr 2023 16:18:27 +0900
 Received: from localhost.localdomain (unknown [10.226.93.14])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id B788B41AA88B;
-	Fri, 21 Apr 2023 16:18:10 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E46B741AA65A;
+	Fri, 21 Apr 2023 16:18:25 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -24,9 +24,9 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 5.10.y-cip 16/33] clk: renesas: rzg2l: Make use of CLK_MON registers optional
-Date: Fri, 21 Apr 2023 08:17:12 +0100
-Message-Id: <20230421071729.130347-17-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 22/33] dt-bindings: net: renesas,etheravb: Document RZ/V2M SoC
+Date: Fri, 21 Apr 2023 08:17:18 +0100
+Message-Id: <20230421071729.130347-23-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230421071729.130347-1-biju.das.jz@bp.renesas.com>
 References: <20230421071729.130347-1-biju.das.jz@bp.renesas.com>
@@ -35,106 +35,150 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 21 Apr 2023 07:18:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11289
+ <cip-dev@lists.cip-project.org>; Fri, 21 Apr 2023 07:18:30 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11295
 
 From: Phil Edworthy <phil.edworthy@renesas.com>
 
-commit 63804400f2a5ababe596b4ec908321d6b54f45aa upstream.
+commit a7931ac16128bb3af5c4ac482057a711da117856 upstream.
 
-The RZ/V2M SoC doesn't use CLK_MON registers, so make them optional.
+Document the Ethernet AVB IP found on RZ/V2M SoC.
+It includes the Ethernet controller (E-MAC) and Dedicated Direct memory
+access controller (DMAC) for transferring transmitted Ethernet frames
+to and received Ethernet frames from respective storage areas in the
+RAM at high speed.
+The AVB-DMAC is compliant with IEEE 802.1BA, IEEE 802.1AS timing and
+synchronization protocol, IEEE 802.1Qav real-time transfer, and the
+IEEE 802.1Qat stream reservation protocol.
+
+R-Car has a pair of combined interrupt lines:
+ ch22 = Line0_DiA | Line1_A | Line2_A
+ ch23 = Line0_DiB | Line1_B | Line2_B
+Line0 for descriptor interrupts (which we call dia and dib).
+Line1 for error related interrupts (which we call err_a and err_b).
+Line2 for management and gPTP related interrupts (mgmt_a and mgmt_b).
+
+RZ/V2M hardware has separate interrupt lines for each of these.
+
+It has 3 clocks; the main AXI clock, the AMBA CHI (Coherent Hub
+Interface) clock and a gPTP reference clock.
 
 Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20220503115557.53370-9-phil.edworthy@renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a07g043-cpg.c | 2 ++
- drivers/clk/renesas/r9a07g044-cpg.c | 4 ++++
- drivers/clk/renesas/rzg2l-cpg.c     | 8 +++++++-
- drivers/clk/renesas/rzg2l-cpg.h     | 3 +++
- 4 files changed, 16 insertions(+), 1 deletion(-)
+ .../bindings/net/renesas,etheravb.yaml        | 82 ++++++++++++++-----
+ 1 file changed, 61 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/clk/renesas/r9a07g043-cpg.c b/drivers/clk/renesas/r9a07g043-cpg.c
-index 53a58034bef4..33c2bd8df2e5 100644
---- a/drivers/clk/renesas/r9a07g043-cpg.c
-+++ b/drivers/clk/renesas/r9a07g043-cpg.c
-@@ -315,4 +315,6 @@ const struct rzg2l_cpg_info r9a07g043_cpg_info = {
- 	/* Resets */
- 	.resets = r9a07g043_resets,
- 	.num_resets = R9A07G043_TSU_PRESETN + 1, /* Last reset ID + 1 */
-+
-+	.has_clk_mon_regs = true,
- };
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index de1fe6d277dc..b31201c7ca7b 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -366,6 +366,8 @@ const struct rzg2l_cpg_info r9a07g044_cpg_info = {
- 	/* Resets */
- 	.resets = r9a07g044_resets,
- 	.num_resets = R9A07G044_TSU_PRESETN + 1, /* Last reset ID + 1 */
-+
-+	.has_clk_mon_regs = true,
- };
- #endif
+diff --git a/Documentation/devicetree/bindings/net/renesas,etheravb.yaml b/Documentation/devicetree/bindings/net/renesas,etheravb.yaml
+index 86c3252971c8..846ad0352c71 100644
+--- a/Documentation/devicetree/bindings/net/renesas,etheravb.yaml
++++ b/Documentation/devicetree/bindings/net/renesas,etheravb.yaml
+@@ -42,6 +42,11 @@ properties:
+               - renesas,etheravb-r8a77995     # R-Car D3
+           - const: renesas,etheravb-rcar-gen3 # R-Car Gen3 and RZ/G2
  
-@@ -389,5 +391,7 @@ const struct rzg2l_cpg_info r9a07g054_cpg_info = {
- 	/* Resets */
- 	.resets = r9a07g044_resets,
- 	.num_resets = R9A07G054_STPAI_ARESETN + 1, /* Last reset ID + 1 */
++      - items:
++          - enum:
++              - renesas,etheravb-r9a09g011 # RZ/V2M
++          - const: renesas,etheravb-rzv2m  # RZ/V2M compatible
 +
-+	.has_clk_mon_regs = true,
- };
- #endif
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 42c6405d6025..c34577c44519 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -496,6 +496,9 @@ static int rzg2l_mod_clock_endisable(struct clk_hw *hw, bool enable)
- 	if (!enable)
- 		return 0;
+       - items:
+           - enum:
+               - renesas,r9a07g043-gbeth # RZ/G2UL
+@@ -159,16 +164,33 @@ allOf:
+             - const: arp_ns
+         rx-internal-delay-ps: false
+     else:
+-      properties:
+-        interrupts:
+-          minItems: 25
+-          maxItems: 25
+-        interrupt-names:
+-          items:
+-            pattern: '^ch[0-9]+$'
+-      required:
+-        - interrupt-names
+-        - rx-internal-delay-ps
++      if:
++        properties:
++          compatible:
++            contains:
++              const: renesas,etheravb-rzv2m
++      then:
++        properties:
++          interrupts:
++            minItems: 29
++            maxItems: 29
++          interrupt-names:
++            items:
++              pattern: '^(ch(1?)[0-9])|ch20|ch21|dia|dib|err_a|err_b|mgmt_a|mgmt_b|line3$'
++          rx-internal-delay-ps: false
++        required:
++          - interrupt-names
++      else:
++        properties:
++          interrupts:
++            minItems: 25
++            maxItems: 25
++          interrupt-names:
++            items:
++              pattern: '^ch[0-9]+$'
++        required:
++          - interrupt-names
++          - rx-internal-delay-ps
  
-+	if (!priv->info->has_clk_mon_regs)
-+		return 0;
-+
- 	for (i = 1000; i > 0; --i) {
- 		if (((readl(priv->base + CLK_MON_R(reg))) & bitmask))
- 			break;
-@@ -566,7 +569,10 @@ static int rzg2l_mod_clock_is_enabled(struct clk_hw *hw)
- 	if (clock->sibling)
- 		return clock->enabled;
+   - if:
+       properties:
+@@ -229,17 +251,35 @@ allOf:
+             - const: chi
+             - const: refclk
+     else:
+-      properties:
+-        clocks:
+-          minItems: 1
+-          items:
+-            - description: AVB functional clock
+-            - description: Optional TXC reference clock
+-        clock-names:
+-          minItems: 1
+-          items:
+-            - const: fck
+-            - const: refclk
++      if:
++        properties:
++          compatible:
++            contains:
++              const: renesas,etheravb-rzv2m
++      then:
++        properties:
++          clocks:
++            items:
++              - description: Main clock
++              - description: Coherent Hub Interface clock
++              - description: gPTP reference clock
++          clock-names:
++            items:
++              - const: axi
++              - const: chi
++              - const: gptp
++      else:
++        properties:
++          clocks:
++            minItems: 1
++            items:
++              - description: AVB functional clock
++              - description: Optional TXC reference clock
++          clock-names:
++            minItems: 1
++            items:
++              - const: fck
++              - const: refclk
  
--	value = readl(priv->base + CLK_MON_R(clock->off));
-+	if (priv->info->has_clk_mon_regs)
-+		value = readl(priv->base + CLK_MON_R(clock->off));
-+	else
-+		value = readl(priv->base + clock->off);
+ additionalProperties: false
  
- 	return value & bitmask;
- }
-diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
-index 57c935ecd782..80fc07404246 100644
---- a/drivers/clk/renesas/rzg2l-cpg.h
-+++ b/drivers/clk/renesas/rzg2l-cpg.h
-@@ -191,6 +191,7 @@ struct rzg2l_reset {
-  * @crit_mod_clks: Array with Module Clock IDs of critical clocks that
-  *                 should not be disabled without a knowledgeable driver
-  * @num_crit_mod_clks: Number of entries in crit_mod_clks[]
-+ * @has_clk_mon_regs: Flag indicating whether the SoC has CLK_MON registers
-  */
- struct rzg2l_cpg_info {
- 	/* Core Clocks */
-@@ -211,6 +212,8 @@ struct rzg2l_cpg_info {
- 	/* Critical Module Clocks that should not be disabled */
- 	const unsigned int *crit_mod_clks;
- 	unsigned int num_crit_mod_clks;
-+
-+	bool has_clk_mon_regs;
- };
- 
- extern const struct rzg2l_cpg_info r9a07g043_cpg_info;
 -- 
 2.25.1
 
