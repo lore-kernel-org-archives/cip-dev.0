@@ -1,208 +1,145 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3D95C77B71
-	for <webhook@archiver.kernel.org>; Fri, 21 Apr 2023 15:05:52 +0000 (UTC)
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
- by mx.groups.io with SMTP id smtpd.web10.14961.1682089549592423807
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9B31C7618E
+	for <webhook@archiver.kernel.org>; Fri, 21 Apr 2023 17:57:13 +0000 (UTC)
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (EUR02-AM0-obe.outbound.protection.outlook.com [40.107.247.74])
+ by mx.groups.io with SMTP id smtpd.web11.19511.1682099825453844702
  for <cip-dev@lists.cip-project.org>;
- Fri, 21 Apr 2023 08:05:51 -0700
+ Fri, 21 Apr 2023 10:57:05 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=pR3ohWS2;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-51332-20230421150546bb773b437caf825de7-z7taln@rts-flowmailer.siemens.com)
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20230421150546bb773b437caf825de7
-        for <cip-dev@lists.cip-project.org>;
-        Fri, 21 Apr 2023 17:05:46 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=XSH9pZ0bvaskuPvePHGGT0aUvyqjBQRHwsRd8nLUM5o=;
- b=pR3ohWS2An/3K3ropJL467i+XXy9wQZ3ydnO1xCEHf2wtammXybMb1n/lv61NjHrN/XwD0
- bQszPjneI3lp0ccaDUGT31HuAZJ+W6rt8ZlrgMNAcOuW7XG66A0weiQVV0LTXp5TX67yDEx7
- 0yjPKCC1uXgXBlvp1Iuoac6P89R54=;
-From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: jan.kiszka@siemens.com,
-	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH v2 1/4] secure-boot-secrets: Use distro specific snakeoil certs and keys
-Date: Fri, 21 Apr 2023 17:05:42 +0200
-Message-Id: <20230421150545.4073324-2-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20230421150545.4073324-1-Quirin.Gylstorff@siemens.com>
-References: <20230421150545.4073324-1-Quirin.Gylstorff@siemens.com>
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=KRcPHXgY;
+ spf=pass (domain: siemens.com, ip: 40.107.247.74, mailfrom: jan.kiszka@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TRcdKDfI1fmfHmL3hEp9Z2LTnM402hDG5HM3ih9TSfwbUMNtZAzESHjCg9AYotQ9CnForF4ugg8TApKqPkp73afm8LOMpV7Nx+Y8WvHXN51ju7bqCv28ehTMX3FpMxTiyA58QqZ+pZ4HMHU584ubr0jpBYJJL1rlJiL2VjQNqJjnB1rTkP7j4kZRCZ+BkL+k2HKRMf2A8J1kxaWXniLbLc5EgRhnZOy4jh0hzmQYzKi2Q1jbbQfW6kUBYa1V7Kzw6d0QNaaRwWGPo3R8nuHZ2nc5xz2Sra+ZT/YhnKxcN1wLB3C+brOnMeCv5yFz8Vok1I0dh5RdR61OkTDAmmFGaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Eat4seKHBLHIKaysvBVbW8TZ1LzmFyr55c5gOnSrHA4=;
+ b=jNfRRCvnXUmzu6HFm+ZGmGQkXkoY7bZcr5n4RLC/DmK2Ckhp/sbHaQR8yFfJcDLu4Awg78VBlYQQ1lAl4YEc2wAFlDhvB86rt/PncBJTrxnGwYJmg2t000z4TppLulFrKoa85bKXEoKVFNUT2Esu6IDHLOYHHsAzLy05B1ayBoQ9xDzn8dmK7Ykq1S8xkpJAn1iAyMxGb9NG9dxfHb3XhDM0IVZUXzLDmgn4zAEJpmK7qQASyh0yMYA8ibRgtfVGDvWE+zx0MlhRmIQFrbkhFFNI9IFENtFRcdrO14IK9sxNxJ+XDfGZCAB+fYq0tWj8ymI8CPV/aYplmvdN2vmE+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Eat4seKHBLHIKaysvBVbW8TZ1LzmFyr55c5gOnSrHA4=;
+ b=KRcPHXgYgGgN5tsSgoFBa7fAHAcw36HIADq9bjBVI5+tYSM/9Xn/tizh5emx1ILCYJyBV8JR/2naA2xRDoWvcEdSS1pVugmy/9ZagUk4AveV/oFanDg4tgYTQKD/TkiGoLxSvuSHJx3kkL4XUYrKvp7UGXAVGIhdV+eFnsNIstds1Eqa6hNPG3L0UftTgDvk7oozUfqjTPPIlRKS7ypVHunISaUTQphN/15TtXTyNxxGHa2yOGSyjrWFmvZjuWZxKSjp2UZQpKlgYynLPqN9UtYO7LUdbM3VRNvX1RvYWN1/BbLksFjIvoiVACC43cyO0HKJ7wuj23Wzfp/TG0UBZA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by PAXPR10MB5205.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:287::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6340.11; Fri, 21 Apr
+ 2023 17:57:02 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::f5ab:5f59:3b47:fc2e]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::f5ab:5f59:3b47:fc2e%5]) with mapi id 15.20.6319.021; Fri, 21 Apr 2023
+ 17:57:02 +0000
+Message-ID: <f4ec927f-5d19-48e3-84ec-b8dea9b5c13e@siemens.com>
+Date: Fri, 21 Apr 2023 19:56:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [cip-dev][isar-cip-core][PATCH v4] efibootguard: use debian
+ folder from salsa
+Content-Language: en-US
+To: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>,
+ felix.moessbauer@siemens.com, cip-dev@lists.cip-project.org
+References: <20230421141330.3905234-1-Quirin.Gylstorff@siemens.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+In-Reply-To: <20230421141330.3905234-1-Quirin.Gylstorff@siemens.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM0PR01CA0158.eurprd01.prod.exchangelabs.com
+ (2603:10a6:208:aa::27) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PAXPR10MB5205:EE_
+X-MS-Office365-Filtering-Correlation-Id: 82c24ae3-99bf-4ea8-46e0-08db4291cee8
+X-LD-Processed: 38ae3bcd-9579-4fd4-adda-b42e1495d55a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	kmJDHCqUgyM4nIG1gOmvJcEIKgiMVAmBxITZ9XX6ZUPLO2opA6bfyQbzyKaeYd8fwbiAHLBwr2B5k4TQGm2LRGCCRwE/F9GSSmoFhSbWiCcTVMQHuxVYVnTUd9eLa6OS1BczRtS4yysjuI3EJbEOk/kbexmh/WBGxBTJCyRCJQ9fZngpunXifa6CX3+5HrUIQszDHirzv4tvlAnoFxZFbgKBI8MCoEX+rHKTeNk87TsLVnDY7u/m6iVjMcY8tkXGpEgEQUPDBmvic/HizeGRSTiWq4UdMOI1JsjnXCc9R831PgSzta6cTzE57RchTtXPiLonrzaPVyUmcC8AHoVwauDWXxZpZaZGreXCUX9KUjT5zhkXHQGjSklyDeqlq2ml5YBYj4fU8J1iVU8PawHeU7p0bhyymkPlzBVLIGsm3iuEhb/GS5ETRUy7wk/ON2hNkpPXf09afHR9gxxWb+flkqy2TVHvClOagg6/ZPyOIBK16pwzUtsYw0EOvfyQEn6TsASFH55sZx07JIcX+kII4fAaAc7v+F4aNoKLyoCdINW0Uwce8FDSuUgdkSAPY/vrhQIGAHp17ia9dyKhor6VOyMLRAOayvWAkJMWB68NfFolOYl0qIu8JB4EbCw//j6nF8C6FQ+xvSeNE3WvDLZlmA==
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(376002)(39860400002)(366004)(136003)(346002)(451199021)(186003)(6506007)(6512007)(53546011)(26005)(31686004)(2616005)(966005)(6486002)(6666004)(5660300002)(41300700001)(8676002)(8936002)(38100700002)(82960400001)(86362001)(316002)(31696002)(478600001)(66946007)(36756003)(66556008)(66476007)(4744005)(44832011)(2906002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?dyszU3QxNERYbElZKzNQYjh1NC81THM5Mi9tcERJT2h5TFpLS3RoTEpicnE0?=
+ =?utf-8?B?cENMWWVVODVySXpKZlYzS1Y4ZGpGMlhjZXIvOU5TKzB2MTVNekZaaHJuNFg2?=
+ =?utf-8?B?WEpRMFlEaXYyT0VIaGhDRXg1aUpTZlpXaVB5T3NzZjBoamwxVS9sWmVpdGZa?=
+ =?utf-8?B?SFZwRFBBNzcvVVlETTJGRTF2a3QwcFV5L0RRNnBEQjhad29yWHdIR1U3S2xP?=
+ =?utf-8?B?WkQvSTlaRkJ3ODR2Y2p6UGt2a2xGTyt0OFRHMDVzeXhZTVYxMG9oQ0dTN1Y0?=
+ =?utf-8?B?THJLNE9Bb3FyZ0dxNWtldXFRSWVXUXY1SXdkRGF1T2FTdVgyQTd0RFdVQ2NO?=
+ =?utf-8?B?T1hyVC9xZWMraFNwWnBITS9rOVd2bDIwN0N3bkVaREJlUWhmUHg1eVV0bTZ5?=
+ =?utf-8?B?Zkh1b08xVTNDZUJqaVBUWFU2Ynp0d2d3akdYRWtLL1Q2STZWUVNFV1NhS1hW?=
+ =?utf-8?B?ZUE2T2F2OG1NTmNiMzZGa1E2L0x2eGlvU1FkTmphc20wQlN6MS91SVUrUWRz?=
+ =?utf-8?B?U09xbGxqOStBaUgyYy9hTjJMN21DUzB5aDRrYm1MV1Z5cGFDUXJOaDRQYXZI?=
+ =?utf-8?B?VmtkVFI1YkFXRndDdmdYdGVCcEFsVU9nTXBueDZDa1Q4amZ4emJtREIvUlRz?=
+ =?utf-8?B?OXVxSHY2TkZyUHlnZ0RZcG1KZGpleWNqcXBJL2RFY2VJdVhaL3dueVBiTHBW?=
+ =?utf-8?B?bERmVjl5djlLVWprNWdzUUZLQjFFaTN6SXNITVVyWUZKSkRjOEpnMDRINVps?=
+ =?utf-8?B?dUhpTkNXUmVvWHdQaXQyV09RWGNseHF2QzhHZjVidFczWGVqUlp2Mk5WQ3BE?=
+ =?utf-8?B?ZzV6SW1aWmdHVHNnWDR4LytUdGkvd2FkaUhma28xcUU0a2k1KzN3NlNYY2Fx?=
+ =?utf-8?B?Y1pqbFlXbkRhanFGMUJqdVFwMi9JZ3A0QitIRWZOdzBmMWFrL3BzU1Q0WFY5?=
+ =?utf-8?B?bk9rVWdSYjJBWFI5SUc4bm9pMVlJUmE2b3lTcU1kUnZpMGNMRFFnOTNqZTJi?=
+ =?utf-8?B?TGVlY3FMQ0JWN1V6bEFOeWdxMndxdVpzQnZaRm50bGc0RmVNUUtwbmlsRmxz?=
+ =?utf-8?B?WlptOTluMzhRaXhaU29JVWpKcFhDK2hQVWpGKzZIMUI3SENmdUNiRHcwR1JK?=
+ =?utf-8?B?cm9WUFJrdHBEMk5OUHk5MUo1Q2tWSGhuZk1zRFhhNW1hRUpQS3drblA4OFlK?=
+ =?utf-8?B?UVRVaE9meHR4QmxwMDNiQTlJb2JVazh5d1pUVFVTYjNEUmF1ZngyK0xOVzYv?=
+ =?utf-8?B?SG1IWSs1MDNNWmhsOHZJbWFTQUIwNDBVYTV6bmFUWkpJUkIrQ3AyVmVLalFm?=
+ =?utf-8?B?cXMzTVlYRlFCbFdsRjVSNFhyMGthUEl4Zm10RXNWUFY2YVlkRTNodTArMGo2?=
+ =?utf-8?B?YXpjNGt3UmgvQ3Bhb2pLSHpKaW1mOFNPSS9hZWxtYWJBZlFaWEhZdkhtYitG?=
+ =?utf-8?B?SEwzMjVuOVExc3pBVmlPZlJyZW5XWk5CZFBITm1RUGt5VGo2L0RmNFRvT0gz?=
+ =?utf-8?B?Zzh5UDFkZnZYOUZqNFQ1Ynp1WkEvaU11MXdzZExaamlGMjB6RmR6ODFQaXIx?=
+ =?utf-8?B?RndzMWhlSE5pU2pNdkZvT3RUa1FBdG1wbWxUaWl0ckp3SkxOZWtMV2RGaVkr?=
+ =?utf-8?B?N3FVZTNvbFRab3cycmt6Y1MvcE15a3VrWkd5WDZlcHJxc1luQlZ3ay9GSFht?=
+ =?utf-8?B?ZjZKeFhRY0FpamFraWtNYVZZSGNRRmJPOWtjeTZZaGRNd0ZGaVFlNG1YNlhQ?=
+ =?utf-8?B?d0RDZzRCNEEyMkh3bE9JVXdSZVdmS2h3YllDeTB2ekJoRFBRbUlpcEY4Zjhu?=
+ =?utf-8?B?UkhnN3JCOGxOdWxaZzlSZVMraExtcnZBc0pHSkd4ZzJoWDZ2QWRNY0YwSjE1?=
+ =?utf-8?B?NlZBdWwxUUJtNmt6VUdjSE1aZytpb0tXYlp2aWNzZjJPcUF5dENwelVEZ2d2?=
+ =?utf-8?B?cDlwRVZnT3FraHVFb0VlNnlldnk1a1hPWGZSakxZdzhpUFdOR3lTci9ueEhN?=
+ =?utf-8?B?TktYOHJZeWxaWDkyc3JMbWZHenRHRUVuMWpZNWNocGFGTy9BMmtCUzJpbEpm?=
+ =?utf-8?B?Ulpsd1RzUjZkeVhQMkZOeU5JWHNtOTFEdVV4M0VmYUtOb2RvOGdRUldzeWEv?=
+ =?utf-8?Q?TB0a+XC82+LlxQb9wnAKJyArs?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 82c24ae3-99bf-4ea8-46e0-08db4291cee8
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2023 17:57:01.4336
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XXShI0UrDElfOn+nAsVouYXetELvspTnZrjhj+upvL0vhQIWjytfWE4JGnVLkPadMNoqxcn9sdB2BT4m6wg5oA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR10MB5205
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 21 Apr 2023 15:05:52 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11325
+ <cip-dev@lists.cip-project.org>; Fri, 21 Apr 2023 17:57:13 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11326
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+On 21.04.23 16:13, Quirin Gylstorff wrote:
+> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> 
+> To avoid package name conflicts between cip-core and Debian upstream
+> use the debian folder from upstream to build efibootguard.
+> 
+> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> ---
+> Changes v4:
+>  - readd patch 0002-d-control-remove-native-from-python3-shtab.patch to
+>    allow build for qemu-arm64 and qemu-arm. see https://gitlab.com/cip-project/cip-core/isar-cip-core/-/pipelines/844580247
 
-This fixes the boot of Debian buster(10) with secure boot enabled.
+Is that patch also upstream relevant? Or is that only needed for older
+bullseye/buster?
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- .../files/bookworm/PkKek-1-snakeoil.key       | 28 +++++++++++++++++++
- .../files/{ => bookworm}/PkKek-1-snakeoil.pem |  0
- .../files/{ => bullseye}/PkKek-1-snakeoil.key |  0
- .../files/bullseye/PkKek-1-snakeoil.pem       | 21 ++++++++++++++
- .../files/buster/PkKek-1-snakeoil.key         | 28 +++++++++++++++++++
- .../files/buster/PkKek-1-snakeoil.pem         | 19 +++++++++++++
- .../secure-boot-snakeoil_0.1.bb               |  4 +--
- 7 files changed, 98 insertions(+), 2 deletions(-)
- create mode 100644 recipes-devtools/secure-boot-secrets/files/bookworm/PkKek-1-snakeoil.key
- rename recipes-devtools/secure-boot-secrets/files/{ => bookworm}/PkKek-1-snakeoil.pem (100%)
- rename recipes-devtools/secure-boot-secrets/files/{ => bullseye}/PkKek-1-snakeoil.key (100%)
- create mode 100644 recipes-devtools/secure-boot-secrets/files/bullseye/PkKek-1-snakeoil.pem
- create mode 100644 recipes-devtools/secure-boot-secrets/files/buster/PkKek-1-snakeoil.key
- create mode 100644 recipes-devtools/secure-boot-secrets/files/buster/PkKek-1-snakeoil.pem
+Jan
 
-diff --git a/recipes-devtools/secure-boot-secrets/files/bookworm/PkKek-1-snakeoil.key b/recipes-devtools/secure-boot-secrets/files/bookworm/PkKek-1-snakeoil.key
-new file mode 100644
-index 0000000..24a5837
---- /dev/null
-+++ b/recipes-devtools/secure-boot-secrets/files/bookworm/PkKek-1-snakeoil.key
-@@ -0,0 +1,28 @@
-+-----BEGIN PRIVATE KEY-----
-+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDIi65d6LmojD5S
-+9q8vE/LI2HHQboiO5/1KrFVc6kpxD6XdkJwpBoItYIfSls9CPnzvNWOAxR3hIeBd
-+1U/prAPPxvQ1wuDLMXfWkcGaYHfPnme/YluAjnpuLH1MQcumgOzj5xYBvZZk+Rby
-+tX/phH7FW4Tx+L1oBYnsfh3BSE/NTtEEHV1nXAXpa/dvyefWMlrlbwjfM5362lZz
-+M6yrJGcOcWEyI66UYCIVO2Yhe/ZVF5B/tPGtd2oACz11xLeqLPM1WBjlekAG2Zi7
-+UCPIvDCpdn5uVna2ZRQmJyDDdh0Ja2VMC19dkMd/5nOAI21O+FvYPOkBWYX8f4Dz
-+DyVQlmIFAgMBAAECggEAERP8FFk2Pkk7IXuKbZroSPxNrO9Mx8avxkUou9Hj5v7r
-+JBQliETanxyiVGetXLnPj9tfDt86bSqiXbtFo+OXK4GI2G8xD3y19NrSvt/KNC8M
-+LLsmiasYd/tn7C+KNTKzebD7KcjIXu7ral3Ud8Flvk7N4oFJN+uI1E/lHsmWqigO
-+X470lWWe+UkhoV7WtfaxDFnsXyBUg0ogkO+ftlnSjfnW4gyMourCaWJQs9ONnZl5
-+4mqeQHSkVxZnMR/bACeuuCVhF2efXSg3OEHpxcwcl64Q551cQItm2bKdHDV1Zkr3
-+5eS7WMQCpNYCgjQ4iOt9hjOe3B7+RpvzD9FPuiMUYQKBgQD2saG2ZJCKKbaH7eIb
-+Jc1MRCIQ4UUvsTz/WJt9aLe/MOGgsBGucfWnjkM+CcvrrjEsdchSXr/C2jv0iP/a
-+oD2anTnidUnhfgBCCrfEJP/nucvRAd9AtppV3M0ijPiMlPdw7SBhwEArgGD50YZD
-+plStFG3pWQcb9bp9bQPV7s+cSQKBgQDQHGMmvhKE1dvsnhgNDbi5LCZzYTUiBfkW
-+Me78kwoKLIgNZCSvG1V0gv2/r6SZh5zLEUlLdDKvdmo4erA3Wy9i4H8IfIqDp0ev
-+MnJkVOPxyvyHRkosO7bFk0XF8EiOfm+K1Jdb2rfjvugUb/fQTDXZh57g2ENCRoS4
-+H8hz37K/3QKBgHbLTSsuvCe8NIi6deJKztTGDn2AbTetKslvmtjGP42S9WPSxYDy
-+obABIsJSJ1+jr0xQn5mCxOcI/kwgWMyn02KMCd7SSjSK34bt8FZE1vJ4lvxb4W0h
-+QarNO/9CUUIpTgqUNb68vGn2VTyXuAcFpsr+BnuTAohlSVuyzmELse/5AoGBAKxA
-+EsEqaWGRMSqz3+xOAyshI+Iz/ypeD0ETq19axOCO4z1SOhrFYQHCugxCcNayrFBX
-+ynatgpZASMLeqaPn0Vzhu8Nmca9ucaLM+mmY6eJjxIii4RmjgzAdKY8fxq5KcEBU
-+ncLlUXcruCPSWScLLTcTTamE1oawn4FWrS9bZDPxAoGAQHlEqLAmGAZADaj40kop
-+RQIMz2IGw7VjLdDC0NaKgopx0CTF1ODfFH5e0l1eroyQIxYzl6be/oYc9x57GfzU
-+VlPEYFsgwFg2nRKniqz/eUrriWfyblC23F7vQdW2un0eEbmgUnd9S4s9xikTYYyA
-+8z18hsBaH0ZngalMu49G1aA=
-+-----END PRIVATE KEY-----
-diff --git a/recipes-devtools/secure-boot-secrets/files/PkKek-1-snakeoil.pem b/recipes-devtools/secure-boot-secrets/files/bookworm/PkKek-1-snakeoil.pem
-similarity index 100%
-rename from recipes-devtools/secure-boot-secrets/files/PkKek-1-snakeoil.pem
-rename to recipes-devtools/secure-boot-secrets/files/bookworm/PkKek-1-snakeoil.pem
-diff --git a/recipes-devtools/secure-boot-secrets/files/PkKek-1-snakeoil.key b/recipes-devtools/secure-boot-secrets/files/bullseye/PkKek-1-snakeoil.key
-similarity index 100%
-rename from recipes-devtools/secure-boot-secrets/files/PkKek-1-snakeoil.key
-rename to recipes-devtools/secure-boot-secrets/files/bullseye/PkKek-1-snakeoil.key
-diff --git a/recipes-devtools/secure-boot-secrets/files/bullseye/PkKek-1-snakeoil.pem b/recipes-devtools/secure-boot-secrets/files/bullseye/PkKek-1-snakeoil.pem
-new file mode 100644
-index 0000000..dd02a82
---- /dev/null
-+++ b/recipes-devtools/secure-boot-secrets/files/bullseye/PkKek-1-snakeoil.pem
-@@ -0,0 +1,21 @@
-+-----BEGIN CERTIFICATE-----
-+MIIDdzCCAl+gAwIBAgIULTs+L+8XzClMGhAvyFIdsp/PYgUwDQYJKoZIhvcNAQEL
-+BQAwSjELMAkGA1UEBhMCVVMxETAPBgNVBAgMCENvbG9yYWRvMRUwEwYDVQQHDAxG
-+b3J0IENvbGxpbnMxETAPBgNVBAoMCFNuYWtlT2lsMCAXDTIwMDkwNzE4NDMyMloY
-+DzIxMjAwODE0MTg0MzIyWjBKMQswCQYDVQQGEwJVUzERMA8GA1UECAwIQ29sb3Jh
-+ZG8xFTATBgNVBAcMDEZvcnQgQ29sbGluczERMA8GA1UECgwIU25ha2VPaWwwggEi
-+MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDIi65d6LmojD5S9q8vE/LI2HHQ
-+boiO5/1KrFVc6kpxD6XdkJwpBoItYIfSls9CPnzvNWOAxR3hIeBd1U/prAPPxvQ1
-+wuDLMXfWkcGaYHfPnme/YluAjnpuLH1MQcumgOzj5xYBvZZk+RbytX/phH7FW4Tx
-++L1oBYnsfh3BSE/NTtEEHV1nXAXpa/dvyefWMlrlbwjfM5362lZzM6yrJGcOcWEy
-+I66UYCIVO2Yhe/ZVF5B/tPGtd2oACz11xLeqLPM1WBjlekAG2Zi7UCPIvDCpdn5u
-+Vna2ZRQmJyDDdh0Ja2VMC19dkMd/5nOAI21O+FvYPOkBWYX8f4DzDyVQlmIFAgMB
-+AAGjUzBRMB0GA1UdDgQWBBRjuNXuXfh7mi8I3eTboeYGyFTa2zAfBgNVHSMEGDAW
-+gBRjuNXuXfh7mi8I3eTboeYGyFTa2zAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3
-+DQEBCwUAA4IBAQBW2ckn0APqBnwSiOXCWkMCnvY7K7UOfxAlotEsMFSrkzdEa4IE
-+sn0+A3RV/r3HZGqIaE8GMsBqp8UiVIbL5H67dkqvJEke94/7wEUC16JSSOBc0Mac
-+HeArDWsL/WIbzKiVcRrmgX+XwJFlsUN5UtR/feTHR08yiy5srSCIJEqli/cTrOxS
-+JAgvWPLxcoFhOKf6Mi+nwWdrQEbpXvvv8Jv/qyyz5e/VmTRY0wIVmUjd+Yseu+5M
-+3+cpKtlYaawMxVni5RibA0A12fm+i60fGPrkCNhascUrNY+Oppaf/h+QmKOwEM7h
-+pqKXyGFQyU6dB6cFBQ/uD5IABUYuEOuL7VFY
-+-----END CERTIFICATE-----
-diff --git a/recipes-devtools/secure-boot-secrets/files/buster/PkKek-1-snakeoil.key b/recipes-devtools/secure-boot-secrets/files/buster/PkKek-1-snakeoil.key
-new file mode 100644
-index 0000000..b9e42c7
---- /dev/null
-+++ b/recipes-devtools/secure-boot-secrets/files/buster/PkKek-1-snakeoil.key
-@@ -0,0 +1,28 @@
-+-----BEGIN PRIVATE KEY-----
-+MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDNQOknAPMOkujb
-+K1VFKC39BZFiT9iNp7l9u6OK2rvddgu4Nn79Z/lTrOk5/J/Nf+XlHQoJX1dhQkXj
-+tASY0KehamDdxF1GvL7cUhi12c0rXnUBnYvvg4jiwxfVqRIT4x9kWB08Vyb6fS4m
-+BC69FgbJhpHo3XBuEn/aI45tr6xsrJxoqIvV9KOKnZyuIcD/TlxhKiZ1RP6tNRkA
-+sV0JC45T6BfxGqGZ9ujxUQTsykTeeu8ehxAAWmHJiAbyNp2OCDKYTuxARkasGo6v
-+AwMeK1umgY2U4jZV0WAvmNEoe4HrWIKSpOZJa5LiVs4QmaazqGFCdOe7/Irs7c0R
-+Z6AA8yu1AgMBAAECggEBAKUb9THx+pObrAM6TYKvOqdSBkxubIYvCPDSs1EseXlB
-+z1WlSOwx6ofcDVUfGbGmk9mFTaCSeGj9ddkg453GI0Ken0NmBZ60kFgNFmGazgd4
-+GWluQbYvOjsnsxGlyqwCxSrkEsiKVwmjDy93p91lTZppTRBkqV9yNDTW62jiqzJT
-+CzWimHWyPlK7MjfOyV/X/GD8rugr0F/ikugzVJXCIuhnO62ouU1Imo+Agb3jJM5h
-+26CWerha8Nd6z6lvHM0g014gzL40JrxehqOkYp/6VF6qX37sTHyAw9J4RUQROC/L
-+L+XYAAQZMv3GBJhkn6FOBlKuBmJLw01mTKXuNyGf1EECgYEA6cShh7uPJHeqqHpm
-+ddt0DBgwFueH3pXPv1a6sDBt8P3PJ376p8X1QpoL30sZYc+cEXJcicoaq5NqrkJA
-+NltHg00sHqyfEfaDS2sr38e5qWoD41BsFdbNmfe2SaunXmSZ7d/QD810l+UaRNCR
-+doZcmeCFpcXRs0N1nc2C0w+Ya/ECgYEA4MYPCZ43lB1qeShUcaY/WFiWnJrNdoJR
-+p9S7xhPAqpXmG19utc+geTvN+y8YqOVg1ICaXpfYV7BG7VdD3mLQTIxdai98Rl4r
-+EBKrSGV6cyXkghaGeZHL2M9/FLxCZrfEpbzl82kacCJHCaiQiu9IVTsOabwoW68x
-+Evfz1FHaEAUCgYAmPrc2n6bhjnprKetNaOPpfqOPe72s2tGsOiI85Q93l+6mRY34
-+mNhxVwaON5kleXPNHuqo2FnYrDuN2uTqf7CJeLy5IAC+TZhZZGU/LUvgval5LRUh
-+1Yy5nd9C2kR9mvPcCPvfOfvTRfYwP/csbvsDacozvtN6ApVhhdfbc/e54QKBgFZV
-+PGlhT8+gDMlEaErOo/326MJ14vzlyR9BYm4OIC5lLODOouNKQETQZ6lWyY31rF9y
-+ldhHUl0748I9hl/gbEk6kJa8bmtIuBmQUiGYeJPJth8RL8155mX8LL92H7r8Upem
-+GlyHvhPb1pUrHXl/trSl3j9WedndTGgQvKKMXclRAoGBAKCwevyJrlhnvbZQzjyV
-+zWPyy3028370nsTYnOBh2yVtPThcOCewp9THEy0FAVkMYqE1sdpAN51PdD5UPGFo
-+RkXd/5HQTSDkVGHhO7VohXM/H/nNQgtotoDRSMkxTymQTHad5LNesi3dCEqa1gTC
-+gyh89dCjF1p+mnLi0xITtkoA
-+-----END PRIVATE KEY-----
-diff --git a/recipes-devtools/secure-boot-secrets/files/buster/PkKek-1-snakeoil.pem b/recipes-devtools/secure-boot-secrets/files/buster/PkKek-1-snakeoil.pem
-new file mode 100644
-index 0000000..73936f7
---- /dev/null
-+++ b/recipes-devtools/secure-boot-secrets/files/buster/PkKek-1-snakeoil.pem
-@@ -0,0 +1,19 @@
-+-----BEGIN CERTIFICATE-----
-+MIIDCTCCAfGgAwIBAgIUSbJC1oRCJUbGkwfWHscBeZrRHZcwDQYJKoZIhvcNAQEL
-+BQAwFDESMBAGA1UECgwJU25ha2UgT2lsMB4XDTE5MTEwMTIyMDI1NVoXDTE5MTIw
-+MTIyMDI1NVowFDESMBAGA1UECgwJU25ha2UgT2lsMIIBIjANBgkqhkiG9w0BAQEF
-+AAOCAQ8AMIIBCgKCAQEAzUDpJwDzDpLo2ytVRSgt/QWRYk/Yjae5fbujitq73XYL
-+uDZ+/Wf5U6zpOfyfzX/l5R0KCV9XYUJF47QEmNCnoWpg3cRdRry+3FIYtdnNK151
-+AZ2L74OI4sMX1akSE+MfZFgdPFcm+n0uJgQuvRYGyYaR6N1wbhJ/2iOOba+sbKyc
-+aKiL1fSjip2criHA/05cYSomdUT+rTUZALFdCQuOU+gX8Rqhmfbo8VEE7MpE3nrv
-+HocQAFphyYgG8jadjggymE7sQEZGrBqOrwMDHitbpoGNlOI2VdFgL5jRKHuB61iC
-+kqTmSWuS4lbOEJmms6hhQnTnu/yK7O3NEWegAPMrtQIDAQABo1MwUTAdBgNVHQ4E
-+FgQUFD7OXb2T6sOysRo3hj2f15SX8I8wHwYDVR0jBBgwFoAUFD7OXb2T6sOysRo3
-+hj2f15SX8I8wDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEANZRB
-+NFVUVZVehpj3QGbbSjp77m0V6JrEYn6u/XjLRFsUNw5Hh35UCR0HkKZ0cLgrVKb/
-+8yL6LaYLOY6yDwEFWMtLXiF2S4noO8raEgW6A7DHawb2Y4ZNFRO4oBkyWbtd36Uu
-+UfSszs2av048wb5J/pNedRSx8I/FiCNWummzpkBHzx023TdLPd8fmkmG7ZBpStN0
-+Y//EE4DKTfHxAwt5w7WdZF5EY/KHPopnR+WSrdutRIK6zT+/+vKihtHYZbrv+7Ap
-+K7xOM/zJ6E9vUROmuOhL3YL3MuLn5qHEvhM0eMxEAlCnSJlFkQE4/RXhDpZJYbR7
-+x+PQllgoo4H6W30Dew==
-+-----END CERTIFICATE-----
-diff --git a/recipes-devtools/secure-boot-secrets/secure-boot-snakeoil_0.1.bb b/recipes-devtools/secure-boot-secrets/secure-boot-snakeoil_0.1.bb
-index 24a5352..a446987 100644
---- a/recipes-devtools/secure-boot-secrets/secure-boot-snakeoil_0.1.bb
-+++ b/recipes-devtools/secure-boot-secrets/secure-boot-snakeoil_0.1.bb
-@@ -11,7 +11,7 @@
- 
- require secure-boot-secrets.inc
- 
--SB_KEY = "PkKek-1-snakeoil.key"
--SB_CERT = "PkKek-1-snakeoil.pem"
-+SB_KEY = "${BASE_DISTRO_CODENAME}/PkKek-1-snakeoil.key"
-+SB_CERT = "${BASE_DISTRO_CODENAME}/PkKek-1-snakeoil.pem"
- 
- DEBIAN_CONFLICTS = "secure-boot-key"
 -- 
-2.39.2
+Siemens AG, Technology
+Competence Center Embedded Linux
 
 
