@@ -2,295 +2,246 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC570C77B76
-	for <webhook@archiver.kernel.org>; Fri, 21 Apr 2023 18:04:13 +0000 (UTC)
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (EUR02-VI1-obe.outbound.protection.outlook.com [40.107.241.71])
- by mx.groups.io with SMTP id smtpd.web10.19797.1682100248006391327
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C296AC7618E
+	for <webhook@archiver.kernel.org>; Fri, 21 Apr 2023 18:09:13 +0000 (UTC)
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (EUR02-VI1-obe.outbound.protection.outlook.com [40.107.241.62])
+ by mx.groups.io with SMTP id smtpd.web10.19922.1682100549156493737
  for <cip-dev@lists.cip-project.org>;
- Fri, 21 Apr 2023 11:04:08 -0700
+ Fri, 21 Apr 2023 11:09:09 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=j5thM18a;
- spf=pass (domain: siemens.com, ip: 40.107.241.71, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=wfCJ67Os;
+ spf=pass (domain: siemens.com, ip: 40.107.241.62, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NLy4YMq+UQtzpcQ/2sofydUNqQ7QSR6Y4Y+4OpW+iJPL8m9Tafi1N9r6gjvCee44lORGN0HY8qtkE92OMmeM1QxGuRfxO86W+uJT8cZ71U/hvzRPhW5DqTuR0C7nTd55P3x0ycWjWTNHujmK9azCX7ALARYbIsSsXvLxB9Tc2uSHX6NRZvj2PVFdryI08FMmDN/ZWs4R76o+ffPZmP75kfAlc2Aptiw2sHP4Rn0imwDOD8jFbLRs/t9g8pxmpz2r4qUHhX1Quxjr3iBoBGXsSkoODbZSpyRytNPZBkwHnJyyxSeuJupLuEeB+hTmnXB2NtoU54NRwlF4GOoMBpz07A==
+ b=F6fGhUpNo9q8PZiDgVBOyrKheY2BoOMSZRmpwh/g6K54bEKtmbyncxv8vYutJVJPVHcN3vs3U4/1BfrTHj5iq1B/gSq3bGvtYmwld6FsV5L1QWHtK2D4W4a8NchveywCptmADrQRQwh9SCjs0CvqZZ4tsKdmDm5sPpxI0fGkG8UjzGMsvu9icaCVlW8/r8520UHosFKNsCvOBF3TWoPVcZemls2sqGl1UlCNgeenpr4PLcqww5Tt7lRPVGte14nz4zre/V8sTEggympdmYpmO5c2xQz0gT+96tXVUPQLInRzSLn7kQzCa95FoLaGPIylnalUadpyhXDc/7/FltYEfw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UETk+sd0XsfSbPzzMqJXwgaGTEUeiLCVrTmiXoKaxOk=;
- b=dq7Pr3idULiSUye+CkOxs0ZZN7FOyz141WXEjqBAbR0ISWEiqlT7vf+NEYukB20madKeRDb362PWn7dOWcsbPq1GaU2C2ANjqrfRTkng9gTwJZnNCLns3VCTjUipgodHWVqujNFHY30zMSj8tDnhGLwX3edalFzB3ceBE1VgZAAPT+zSt9RGv3KRw7gzpG3vm/+Vkm7zFqriyfiIA7dJTP17ZXzCyPOo2rVC6QpJGyZmOE2bZnqjPXPOoafpUC1hVua6Za9mbH6Z9LqeSwCY3qZY+2IHCucCa6hUDbfYr7607B/hh0/jTwzFb+LKa0Wkl6wv7C/OkMb0Hgn8NA4K/g==
+ bh=T3iyWkOZzvhv7rBDylzCeUxUQ6SB2TK07zXzEFJamtA=;
+ b=V0JYf1sBK6oGqOwgkdaI3YW1EOfC5duB536flaxF87TWY777xSoPaCOuZB8UjxfRUi/ZU7N4FV6GEYe0egq808MmQ0k3/PUaq6o/a0aDltoPinoivfARzofLaTlogIbxnX6RgBLm/AyhN4/+hKMaQzzYSVIXGeRlYlR3ovXkTGrrph9h8JwvX0+Lm3rSjG9WCb+AYxdobhrLQWERPxfqBj6ijbGWiJjxf3lZQiDbhA0VqvLzeu+uMtd9waTcfVVPGerUxbYX/n3DI5tq9J26TpkVNzEmism9jz071ogdMZV3dJuKdcbuy7YCCcDviNAd1/eHuvc10K/hFRCyDg5onA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UETk+sd0XsfSbPzzMqJXwgaGTEUeiLCVrTmiXoKaxOk=;
- b=j5thM18amdHz5HLUnt4drGMzukjnH7dj3xqGf0p3ItDoP3priNJSqNW5bIed8KCwRbu0ZF6CVj6FkZJuQYfUZmAchG0MsetJcLyWmSNyg8k8TZNMYHjtA0GnPGSaB1uKmf/iBYhZB/dcvBV/L2H40wi2Dsb39VY9FGgCr/hR4dnDMbceEKzYDaXrVx8dCHWh+0K0yLVJ81W4Vb+XTHc+zga3ngozTLU1UHHez2yhFKP6l2ZvTWVMOCMEgBEDdCVgzhRoaJi3+vRIjfXLYzlVfn/n4+H6KtREDZpnOstDe3OrlTnJg//Ukbbsc0iDFmlvkGmnS/FlZDENXsQ6+OzcXw==
+ bh=T3iyWkOZzvhv7rBDylzCeUxUQ6SB2TK07zXzEFJamtA=;
+ b=wfCJ67OsqxaxwZuq6lGVMtePNoRxzSw2ByqCQKn2VUSN4IXKsE9y8iAk22sq5RkqTONKnG9aAhXZFaFX8HsBorznaEgkAV+SJo4QQooewCjNp0QI3uE3QWZxjloQx3cHqD1tReFi4pI3BAoM5QqgaDbcujJLfvezhiXhSYRvtH7R3qFDHpDxAIeyFQjA6Q7FkGSCX1g88WIBTVsEZUkYLFF1z9VaJdMctqRVg/yuql7O5Vz5dpfjvDNu6ABR4qyc9C5zjuNWVmwM67HaUfR+QBjzghfyFvTlGgKlmPccErEmwkXoR8vmzQeMfQisP4W6HfQWQt9UvJc7OmukVdRz6g==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by AS4PR10MB5546.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:4cc::9) with
+ by GV2PR10MB7055.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:d0::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6340.10; Fri, 21 Apr
- 2023 18:04:04 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6340.11; Fri, 21 Apr
+ 2023 18:09:06 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::f5ab:5f59:3b47:fc2e]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::f5ab:5f59:3b47:fc2e%5]) with mapi id 15.20.6319.021; Fri, 21 Apr 2023
- 18:04:04 +0000
-Message-ID: <583ea895-45ee-f430-f31a-b5865e815920@siemens.com>
-Date: Fri, 21 Apr 2023 20:03:58 +0200
+ 18:09:06 +0000
+Message-ID: <45232eef-46ca-c957-aa8c-47d25770ffd9@siemens.com>
+Date: Fri, 21 Apr 2023 20:09:02 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.1
-Subject: Re: [cip-dev][isar-cip-core][PATCH v2 1/4] secure-boot-secrets: Use
- distro specific snakeoil certs and keys
+Subject: Re: [cip-dev][isar-cip-core][PATCH v2 2/4] initramfs-crypt-hook: Add
+ support for buster
 Content-Language: en-US
 To: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>,
  cip-dev@lists.cip-project.org
 References: <20230421150545.4073324-1-Quirin.Gylstorff@siemens.com>
- <20230421150545.4073324-2-Quirin.Gylstorff@siemens.com>
+ <20230421150545.4073324-3-Quirin.Gylstorff@siemens.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20230421150545.4073324-2-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20230421150545.4073324-3-Quirin.Gylstorff@siemens.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM9P193CA0018.EURP193.PROD.OUTLOOK.COM
- (2603:10a6:20b:21e::23) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: AM8P190CA0009.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:20b:219::14) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS4PR10MB5546:EE_
-X-MS-Office365-Filtering-Correlation-Id: 18ff315f-236a-4cad-2110-08db4292cb0c
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GV2PR10MB7055:EE_
+X-MS-Office365-Filtering-Correlation-Id: 968d4342-ace8-4019-edb6-08db42937ece
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	OZNtEEQ1KtxMnWe9Sa4prk0jy0mmwBznc6xO6VS78X1tkxBQKAM2Sh3att8rlCHAiKJyLqzmfSVEIA/WWi6N/mFolqzQOv0+zElKtlnudYw43UDU4q9ZZ/qR4B03cXrwmDa+f6Oed9km8Pv3dG0QBKvAWzx2lpjsF0gpi5fpil1Edgr1uTyYr8bYLjXKDTp03Yz8Aig1LmTen0hoZj8KmRXJ1ZFyKQZkYWm8Qqr8/80xjY1A7O1IJxhSYg38gS4UhhwcT/NjGHbIRIhbXncfBTyBXxc59u07RIzlWXi5GZqQ+rDmRwDmlnZH71KCaqJFVnqfYD9MtBX6TXZZN7Z/m43xNjJw31hrivAl2Qu3EYN9qBIfGMFWPqT9YLDcmfidz6gNSU4V98O0AwZUoV1+DWfDCh2M15aUaygMQd9YivTHTcYhAlGzq0yOBk6WR8xwR5evmMRhAdx5k0FYYgXZJ2rZh0Fz9dprLjOmoF4pvo72sE9HIowCZOwJxxAedNLawmKwSTvfoCHVtRfTlITyru0nQ39gaeroaJHaDDw01V0Efqb/WJmLp/tilfobNIKBr2v7vz0kfsd0ru7PCEuxnwpVJvSg0aWS7SWpuur7bA81v4udL3sg/jqYANuHyRBJD+76UJMdZIur4dMOOpq7BQ==
+	ssTCEZxtA6ocTODM4g9CLvO5e8mf+Hh0GDJGk182GBuVU0PWduoKWYCm8LC3xte3KeGiyhE9/RwaHNeh5qVHYQGij8ViY/TMcCef1/SJ4XeuFf9EaQ1CDnfjO+WtDnI9h+vPg/PEbBnutKRK/Crj0dF7O29PUYwlMCOysLgrEpeofogt/F8rPNsUIVIl2LT6EEtHt+URi1ZptggF7NcfGRah3I9DSjtVg5jSjKwix0or/D5/0C2WYUcgAq5FFXP2rwt4AJum3x8zptSLAvLXe216aIdJ69UkfPqXTj+lnOt6voovEdA5njEaxhtH0hhZ9ELjLtq7l38Aeq2PTIu8hG69u35KY2Ic2noN15JZ8mLgp8uZugzFZoSeDqKolB+lHfWeUMVwUFBx7JVX+WEyyz+MxKXTnkxcMuyx7aXGDztnf5tOJoANjcKXMosTxtWJRXMqeG3az5qelmn0aJNO9c0f4Fxl1SHS06vqQ9kDuupyDvCTp69V7SU6WUE9QQ8fP5JYv9Lu8P/368+RO70PAMM8BuyOl/QCbbT5uYMeAgWTsEq0rHfwyWtPdK7DjWm1xm5qJfkYgBq0vchvonqPSbqs0yuyqG4F3fLF+NRAkETTxFmKMez3YpN33G1iSSH2wvmS2AJTIbbUNDm0EnfpgA==
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(366004)(39860400002)(396003)(346002)(376002)(451199021)(66476007)(19627235002)(66556008)(66946007)(478600001)(82960400001)(8676002)(5660300002)(44832011)(8936002)(41300700001)(316002)(38100700002)(53546011)(83380400001)(186003)(6486002)(2616005)(6666004)(26005)(6506007)(6512007)(30864003)(86362001)(36756003)(31696002)(2906002)(31686004)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(396003)(376002)(39860400002)(366004)(346002)(451199021)(36756003)(478600001)(38100700002)(44832011)(5660300002)(8676002)(8936002)(66556008)(66946007)(66476007)(2906002)(41300700001)(82960400001)(316002)(2616005)(6506007)(6512007)(26005)(31696002)(53546011)(86362001)(31686004)(186003)(6486002)(83380400001)(6666004)(43740500002)(45980500001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?V01jVnV1clIraWZPeW9KVHFYSGNadXpzbDJ5RlZhL3d2RUxsRlo0MGRnNGVj?=
- =?utf-8?B?OE9nT3k3SGNnNy8zakptMERwUzhkY0RBVXg5Sk5WZTQzWkN2d0V4czN3RDMy?=
- =?utf-8?B?a3dlR1hIQ2szRktTTXRES0puSTV3dHBaQjdWZUJqaXJVbU51R25KUUw3dkpv?=
- =?utf-8?B?ZXJNUUdDMjhQdThKRXNVaktSK2Zmd3pLVk5lTmdUWVZaU3phbGJydk5NeVM3?=
- =?utf-8?B?NWRqdGx2OFc5Z1ZBK0x2dU5RSDRoV0M0cEY4dERFL2lvQ1NqeUpuUm9WQ3ZQ?=
- =?utf-8?B?bC8yckg1TTRmdWtpQnE3ODVKY1dyUElabmVlN08xME1tNm0yclRMQndBcEpK?=
- =?utf-8?B?OSthZmtDVitXbDZyY2ZuYWdrWmZYQnRIMC94UWFyVWZsQ2JzdFlkRHdCQUlz?=
- =?utf-8?B?WXpnbEtFUzNqUWFrbkpsVEJqNEJlVEJLNmRKZEl6ZXRDWXZpdWVUUUZnemt5?=
- =?utf-8?B?MjNqV3VDNko4Nlh2OWJVS2QwNUFmZFBZck1hT0xFcDJZcTF6MGV1alRIbEtx?=
- =?utf-8?B?UUV6UXhCMEpxVFVHL1ZPTTcyMVh0SWN4d3pSOEV0U0dyU0xGUUdFMFRkamdq?=
- =?utf-8?B?YzFwejBLVlFMc1dWRG5qZlUySjdEQnN1a3Naa29KUG9WVkZDQzkvcnBOTVls?=
- =?utf-8?B?UXlwSGtZK05ubjVJQko4QVoxQXZuMHVRVzU5MFRoeWd6MUs2a1hFN2NTRVUy?=
- =?utf-8?B?Mk4xcnlPekRhY1gyY2ppL3V0UERlRlV2OWlscVlRc2FGbWRMUitSNkZFcWxj?=
- =?utf-8?B?VERGMTVXb0w3aFhNczFzanlNWXEySTZkMStreUxTQjNZVUx5Uk1kT1hpNW5P?=
- =?utf-8?B?SnhaTmZFa0dtU2NyRkY3RkErS2VjRkpOMjZSQXpjVDh4WGpmL2NRbXV4V2Zv?=
- =?utf-8?B?STF6eUdzUnhHRU1JQzU3MVlmMHlUNFppTmZDUEJpTzVMUVVsYzBuNmtKaGow?=
- =?utf-8?B?dnpSUm45cFdGM2NZdmh3RVBjcVl1Zm1TcEpsMThxbUhMYm1TZFlhU1RVM25C?=
- =?utf-8?B?emplWkxROW5CQUxyTDNic0ZCWHErMlkrYzB1Y25MVndKcEE2T3ZDb2JwVnVM?=
- =?utf-8?B?MkpJTHRuQ0VkYzRLRHpFaHlQZjltbjFMcUVyWFlPN2VxYzl1MjVTd3BzRFdu?=
- =?utf-8?B?dkRoYkpqWmlNMk5oMllHUktlNFM1OEF2VE51eXdzSFNUa1FicDNTQldLTy9M?=
- =?utf-8?B?QzNPTnUwZGFhcXBDUitNZFV0TE1VVmtDR2dhMUVSYUFHTTJtcEFNbGNtWDFL?=
- =?utf-8?B?WlJzNjNpN1lyMTBNVmtHemtIZlFCRDEyQXBVdU9ldFAyYW4wM2IzZzRnWmkv?=
- =?utf-8?B?akxIdTN1UVBxa3M0emxFK3owdGF4SHFjaGhkUDdFcDFBVXI3am5IWE1nTnZs?=
- =?utf-8?B?eVBIem1USUdiZ0F6bUZ2V3d2eExhUG5DUk1SVFJHakh2QkVLVWxxSUhUdEF3?=
- =?utf-8?B?YmVldXhLWjJ5Z3BCRWhVZ3RWWnpzMkZRMlp4YWZqSHcrTEc1aGFBNXpUTUFB?=
- =?utf-8?B?Z3FTOWRtSzNXTzNFeGNHd1FWcEFNMEJ1ZWpCajd5MWY2OFFtaDRYMmczSFZi?=
- =?utf-8?B?eGxRRTl3elBZNjNkckw4ZFludFhMaVhmanB4NmZmbHl3VU1CajJWYXhHRTFx?=
- =?utf-8?B?YklGMnRhWXRhV3pmRFVwVjJEMGZrTS9BYi9pYVJPZDdJZEtGZVZPMURkekM0?=
- =?utf-8?B?cDZSbVJib09UeGVBK25WRzMxb1hYNW13cnRQbmRTQ1V2YUplUk1uWlVPRUxo?=
- =?utf-8?B?UjBxTm11MHRKTHdRKzNNb1hTWHFRMndKdXAwRHhoc2JYcFpSN2p1a2hqcEFj?=
- =?utf-8?B?d2JrUnJPb0NheXZqT3NxN1RBTGE3anM0Z3ZnNDFzT0NKWXNzLzRSbUgrRzMv?=
- =?utf-8?B?Y0RLN0tXclA1SE03SmhIU1NPKzkzVkVzTGJYOUtYanFXSDFJTG82d213b1V1?=
- =?utf-8?B?Z0RnV1J5K1VkTjl2dlR1QjhoendDdmY1RDh1Uko3Q3JVU3FHbGhlWlM0eG1Q?=
- =?utf-8?B?TFJvYitSTmFJRm1IS1BMVmFmRDkvem9QQlBVOW4waDFYcVBUSXdwazB5UGtF?=
- =?utf-8?B?dGtWenJ3YmVRMnZnUGowL1IwN2xzcFVOeldlZFBWdjRsNzRZTEtXQ0dRbm1v?=
- =?utf-8?Q?WhUlon+U/esGJ+aHcdfto62X9?=
+	=?utf-8?B?NW5HaTRQS1RJQWx2SjFDTFVxY3NpU0FwTWNGQVVKZURrQWMwVzgvdmxzUTVT?=
+ =?utf-8?B?UHdBaDhuVVhFQnZFVDRFaTg0dFRxL2M4ZWhQTE15cHRNR0VxYkVzQ3FnMWNa?=
+ =?utf-8?B?Y0FReE0xeC94UkxHZ3QxR0pSK0pVZnQ1M0E4RmhiQlV2SUtiMm11cGNLRlQv?=
+ =?utf-8?B?ZE9hSFJsdmM2YytYNmVVUldON2lORHFsYTFMTWpZb2ZMcXFzdDUxb0h2Mjly?=
+ =?utf-8?B?Z0Z4VVBSUjhha202aXpIYmdnR3JDOG1Pd2YwcHpFekhTbzlscEp3b1RYVm5w?=
+ =?utf-8?B?VDVRaFJZT1h2M05RRFUveUo0ZUtyUnVhRTg1QnVUNnVuRHdBZ3d2WUluUEoz?=
+ =?utf-8?B?L1gzejZWWU0rNW1iSy9wKzdQS3lVb3NRTjl3Si91eGE4YVFBMXRMU1hJa1Fk?=
+ =?utf-8?B?d3dzeHZWRkJHa0ZmWnZCYlJHSGlLN0RkblE5TGVGSlhOOU8zWVFtU3ZBNWdM?=
+ =?utf-8?B?d0hDazlZRHhKWUFkNWVrY0NnOVMrMVZkMVJETDRBN0FGSHlPVXdyVVpHeVB3?=
+ =?utf-8?B?UDNlK1FKR1VUcnVOSUgwd2szVXo5ZS9ZVFEyY2FJbUpuVlY0bWhYSTF3ejFR?=
+ =?utf-8?B?WHN2WE1qcXpvaVUzQkt3YUNYdXlpQXFJelVyYkxCMlhCeE5NUHcxYks5MzAr?=
+ =?utf-8?B?ZmMrRGg1UzBPNm1hclNMZEpKK1NGWFIxOWdvemNXQUZMcnVSZldRQmo1U1h5?=
+ =?utf-8?B?Y0tBUlY4bjV5NFRtQzB5ZzVtV2ZwbDlNTmNtUldVL0tlM0xGRy9SdkJRQkJx?=
+ =?utf-8?B?QTRGMW5MUStsa3pMU1RZQ0lueGFIK0xaU0dvTWs5K0JtaTRRWHNldTFXV21t?=
+ =?utf-8?B?czdzeGRIOE1aRTQrL3FURFFYR05BMTFyOG1oRUhRTEdnSEF3ek54aC9adC90?=
+ =?utf-8?B?Z3R1NmlKSTdtNk80MWhQRUxod3dxNDJwTXNPd2U4UkJsb2d1ZE1jM1NUekdy?=
+ =?utf-8?B?MGFXUHpNeWlJTm8yd3dmS2FJREE2d1kxMnM1bkNxOWlBdDN2RUZ0V2gxbGt6?=
+ =?utf-8?B?WWxGelRlR1JSYWVObnk3VXQxN1IvbHNiYTFORUlqRnhLNFpvRXorT0FBM3Vn?=
+ =?utf-8?B?cXpPb2NDQy9HZUR4ZlBSVzBkOU9ReVprTnd1dUxtclQwd0hkL3NHbjFrTzMr?=
+ =?utf-8?B?NTJHZ0ozY2JtRUFwSW0zS3Ezb0VGNGYzcmdhSmN1TkM0Nm5kL2puZmxBMVJ4?=
+ =?utf-8?B?Rml6NG9uNE1SckliZUQ5RjJFMmY0bnhnRERJVVNmcWhtZkxkUjk5UFFrVkpy?=
+ =?utf-8?B?Z0EzOXVhcVNxU01ML2tRTzJuVXJZK21URlVZOHUwMjhvU2hxcmsvNFdYaG9y?=
+ =?utf-8?B?cU9YV1pnaVk2SHRiNDFoWUNnVWRvVVdBYUR4azZ0SkVIaFplZEw5cXdGM0dw?=
+ =?utf-8?B?R2RBa3pGR3JHMThpM3g4TFI1eUM2UFVNbGNrSDI5K0hGZHk4SWR4QVVYSnc5?=
+ =?utf-8?B?bFZqNzZmZXdqTGd3alZ2OEFlSGMwL3ZMUjNBeTY3dlpNTk5odGo1V1BRd29v?=
+ =?utf-8?B?cjlJUk9iTzdmSGVoSzMrdzVscHpUbi9ScDRiRDNlb0liYTlLL3FqcEhJNmNh?=
+ =?utf-8?B?YVNiTmp3eDUvUFFXKzJwcVgxK1FTMS9FNFpKQUducGFSTzBSZXJCbU03am0w?=
+ =?utf-8?B?ODN1enV0am5La2VOSEY1QnM1T2tSa25OREVxUVVPMlJmY0htcWhFYkg2b2RB?=
+ =?utf-8?B?NWl0YTJpOE1hdVlRSURKeHU0YmNPVTRaMlZWamJrcm43ZXc4MjRJdFA3M3ZC?=
+ =?utf-8?B?OHl2U0g2blVOUDEybDd1OWcvTlV0NGVSUkEzUDg5ODNOcStFOWtvK3hBMmh0?=
+ =?utf-8?B?WDZpbHJxYUsvL3dxYW1NS212bXJ5QURHSThMcVF4V1hsNW5XSnFia3B2Qldo?=
+ =?utf-8?B?Rnc1N0NUaDBScSt3ejZRUkQxV1pQeUhDV1p2TXZTZWJzd2x5Q0xmendjNmNm?=
+ =?utf-8?B?N1FqMXNCSFZUdkhycEozd3JiT0NXbUVxd0dpeG0vRUROeWM1dXJNR1RLa0Rs?=
+ =?utf-8?B?d3Rid3RYL04rdEdHNm01cmdXbTRhQ1dBZTkrbmJzeDJ1ZlZXblhZNGRxdmph?=
+ =?utf-8?B?RmZYMndadFJ3QzJ0K1JvZURWVjczaXpDQkc0MjBJZ1lLcE42YXhnTmtub3pp?=
+ =?utf-8?Q?msDf1zCsR7WqVH1OFxiCm+Xll?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 18ff315f-236a-4cad-2110-08db4292cb0c
+X-MS-Exchange-CrossTenant-Network-Message-Id: 968d4342-ace8-4019-edb6-08db42937ece
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2023 18:04:04.3348
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Apr 2023 18:09:05.9902
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9uzZVWjMS0pTX4zVxoKJt3Ypa4LT+83HrTDnvkWmujvBFhneErsoQ6MuJzOUCs/gev4PTvt4Pex08UiKymTpyw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR10MB5546
+X-MS-Exchange-CrossTenant-UserPrincipalName: H0LaU8TRUkU5WYKtZuLoqn0NP9Q5wNdpe6/FVbFwffSA7FtCiRtS+TLX9P/mFB9gwPGX+1ClZ4xlY/7o7TW4fg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR10MB7055
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 21 Apr 2023 18:04:13 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11327
+ <cip-dev@lists.cip-project.org>; Fri, 21 Apr 2023 18:09:13 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11328
 
 On 21.04.23 17:05, Quirin Gylstorff wrote:
 > From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 > 
-> This fixes the boot of Debian buster(10) with secure boot enabled.
+> This introduces the necessary changes for Debian buster(10) with
+> inplace encryption.
 > 
 > Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 > ---
->  .../files/bookworm/PkKek-1-snakeoil.key       | 28 +++++++++++++++++++
->  .../files/{ => bookworm}/PkKek-1-snakeoil.pem |  0
->  .../files/{ => bullseye}/PkKek-1-snakeoil.key |  0
->  .../files/bullseye/PkKek-1-snakeoil.pem       | 21 ++++++++++++++
->  .../files/buster/PkKek-1-snakeoil.key         | 28 +++++++++++++++++++
->  .../files/buster/PkKek-1-snakeoil.pem         | 19 +++++++++++++
->  .../secure-boot-snakeoil_0.1.bb               |  4 +--
->  7 files changed, 98 insertions(+), 2 deletions(-)
->  create mode 100644 recipes-devtools/secure-boot-secrets/files/bookworm/PkKek-1-snakeoil.key
->  rename recipes-devtools/secure-boot-secrets/files/{ => bookworm}/PkKek-1-snakeoil.pem (100%)
->  rename recipes-devtools/secure-boot-secrets/files/{ => bullseye}/PkKek-1-snakeoil.key (100%)
+>  .../files/encrypt_partition.clevis.hook       | 20 +++++++++++++++----
+>  .../files/encrypt_partition.clevis.script     |  3 ++-
+>  .../initramfs-crypt-hook_0.1.bb               |  5 +++--
+>  3 files changed, 21 insertions(+), 7 deletions(-)
+> 
+> diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook
+> index 5dbc5be..924ee7f 100755
+> --- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook
+> +++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook
+> @@ -9,7 +9,7 @@ prereqs()
+>  {
+>       echo "$PREREQ"
+>  }
+> -
 
-I'm a bit confused that the existing files are partially becoming
-bookworm, partially bullseye. Is that correct?
+That newline should stay.
+
+> +set -x
+>  case $1 in
+>  prereqs)
+>       prereqs
+> @@ -45,15 +45,26 @@ copy_exec /usr/bin/clevis-encrypt-tpm2 || hook_error "/usr/bin/clevis-encrypt-tp
+>  copy_exec /usr/bin/clevis-decrypt-tpm2 || hook_error "/usr/bin/clevis-decrypt-tpm2 not found"
+>  copy_exec /usr/bin/clevis-luks-bind || hook_error "/usr/bin/clevis-luks-bind not found"
+>  copy_exec /usr/bin/clevis-luks-unlock || hook_error "/usr/bin/clevis-luks-unlock not found"
+> +if [ -x /usr/bin/clevis-luks-list ]; then  
+
+Trailing whitespaces - could you enable related visualization in your
+editor?
+
+>  copy_exec /usr/bin/clevis-luks-list || hook_error "/usr/bin/clevis-luks-list not found"
+
+Pleas indent the body.
+
+> -copy_exec /usr/bin/clevis-luks-common-functions || hook_error "/usr/bin/clevis-luks-common-functions not found"
+> +fi
+> +if [ -x /usr/bin/clevis-luks-common-functions  ]; then  
+> +    copy_exec /usr/bin/clevis-luks-common-functions || hook_error "/usr/bin/clevis-luks-common-functions not found"
+> +fi
+>  copy_exec /usr/bin/tpm2_createprimary || hook_error "Unable to copy /usr/bin/tpm2_createprimary"
+>  copy_exec /usr/bin/tpm2_unseal || hook_error "Unable to copy /usr/bin/tpm2_unseal"
+>  copy_exec /usr/bin/tpm2_create || hook_error "Unable to copy /usr/bin/tpm2_create"
+>  copy_exec /usr/bin/tpm2_load || hook_error "Unable to copy /usr/bin/tpm2_load"
+> -copy_exec /usr/bin/tpm2_pcrread || hook_error "Unable to copy /usr/bin/tpm2_pcrread"
+> +if [ -x /usr/bin/tpm2_pcrread ]; then
+> +    copy_exec /usr/bin/tpm2_pcrread || hook_error "Unable to copy /usr/bin/tpm2_pcrread"
+> +fi
+> +if [ -x /usr/bin/tpm2_pcrlist ]; then
+> +    copy_exec /usr/bin/tpm2_pcrlist || hook_error "Unable to copy /usr/bin/tpm2_pcrread"
+> +fi
+>  copy_exec /usr/bin/tpm2_createpolicy || hook_error "Unable to copy /usr/bin/tpm2_createpolicy"
+> +if [ -x /usr/bin/tpm2_flushcontext ]; then 
+>  copy_exec /usr/bin/tpm2_flushcontext || hook_error "Unable to copy /usr/bin/tpm2_flushcontext"
+
+Indention.
+
+> +fi
+>  copy_exec /usr/bin/bash || hook_error "Unable to copy /usr/bin/bash"
+>  copy_exec /usr/bin/luksmeta || hook_error "Unable to copy /usr/bin/luksmeta"
+>  copy_exec /usr/bin/jose || hook_error "Unable to copy /usr/bin/jose"
+> @@ -66,8 +77,9 @@ copy_exec /usr/bin/basename || hook_error "Unable to copy /usr/bin/basename"
+>  copy_exec /usr/bin/seq || hook_error "Unable to copy /usr/bin/seq"
+>  copy_exec /usr/bin/pwmake || hook_error "Unable to copy /usr/bin/pwmake"
+>  copy_exec /usr/bin/file || hook_error "Unable to copy /usr/bin/file "
+> +copy_exec /usr/lib/gcc/*/*/libgcc_s.so.1 || hook_error "Unable to copy /usr/lib/gcc/*/*/libgcc_s.so.1 "
+>  
+> -if [ -x cryptsetup-reencrypt ]; then
+> +if [ -x /usr/sbin/cryptsetup-reencrypt ]; then
+>      copy_exec /usr/sbin/cryptsetup-reencrypt
+>  fi
+>  
+> diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script
+> index 37bb024..bcb5a04 100644
+> --- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script
+> +++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script
+> @@ -8,6 +8,7 @@
+>  #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>  #
+>  # SPDX-License-Identifier: MIT
+> +
+>  prereqs()
+>  {
+>  	# Make sure that this script is run last in local-top
+> @@ -67,7 +68,7 @@ reencrypt_existing_partition() {
+>  	reduced_size_in_byte="$(expr "$reduced_size" \* 512)"
+>  	reduced_size_in_kb="$(expr "$reduced_size_in_byte" / 1024)K"
+>  	resize2fs "$1" "${reduced_size_in_kb}"
+> -	if [ -x cryptsetup-reencrypt ]; then
+> +	if [ -x /usr/sbin/cryptsetup-reencrypt ]; then
+>  		/usr/sbin/cryptsetup-reencrypt --new --reduce-device-size "$reduce_device_size"k "$1" < "$2"
+>  	else
+>  		/usr/sbin/cryptsetup reencrypt --encrypt --reduce-device-size "$reduce_device_size"k "$1" < "$2"
+> diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb
+> index 1436b94..997f469 100644
+> --- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb
+> +++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb
+> @@ -10,11 +10,12 @@
+>  
+>  inherit dpkg-raw
+>  DEBIAN_DEPENDS = "initramfs-tools, cryptsetup, \
+> -    awk, openssl, libtss2-esys-3.0.2-0, libtss2-rc0, libtss2-mu0, e2fsprogs"
+> +    awk, openssl, libtss2-esys-3.0.2-0 | libtss2-esys0, \
+> +    libtss2-rc0 | libtss2-esys0, libtss2-mu0 | libtss2-esys0, e2fsprogs"
+>  
+>  CLEVIS_DEPEND = ", clevis-luks, jose, bash, luksmeta, file, libpwquality-tools"
+>  
+> -DEBIAN_DEPENDS:append:buster = "${CLEVIS_DEPEND}"
+> +DEBIAN_DEPENDS:append:buster = "${CLEVIS_DEPEND}, libgcc-7-dev"
+>  DEBIAN_DEPENDS:append:bullseye = "${CLEVIS_DEPEND}"
+>  DEBIAN_DEPENDS:append = ", systemd (>= 251) | clevis-tpm2"
+>  
 
 Jan
-
->  create mode 100644 recipes-devtools/secure-boot-secrets/files/bullseye/PkKek-1-snakeoil.pem
->  create mode 100644 recipes-devtools/secure-boot-secrets/files/buster/PkKek-1-snakeoil.key
->  create mode 100644 recipes-devtools/secure-boot-secrets/files/buster/PkKek-1-snakeoil.pem
-> 
-> diff --git a/recipes-devtools/secure-boot-secrets/files/bookworm/PkKek-1-snakeoil.key b/recipes-devtools/secure-boot-secrets/files/bookworm/PkKek-1-snakeoil.key
-> new file mode 100644
-> index 0000000..24a5837
-> --- /dev/null
-> +++ b/recipes-devtools/secure-boot-secrets/files/bookworm/PkKek-1-snakeoil.key
-> @@ -0,0 +1,28 @@
-> +-----BEGIN PRIVATE KEY-----
-> +MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDIi65d6LmojD5S
-> +9q8vE/LI2HHQboiO5/1KrFVc6kpxD6XdkJwpBoItYIfSls9CPnzvNWOAxR3hIeBd
-> +1U/prAPPxvQ1wuDLMXfWkcGaYHfPnme/YluAjnpuLH1MQcumgOzj5xYBvZZk+Rby
-> +tX/phH7FW4Tx+L1oBYnsfh3BSE/NTtEEHV1nXAXpa/dvyefWMlrlbwjfM5362lZz
-> +M6yrJGcOcWEyI66UYCIVO2Yhe/ZVF5B/tPGtd2oACz11xLeqLPM1WBjlekAG2Zi7
-> +UCPIvDCpdn5uVna2ZRQmJyDDdh0Ja2VMC19dkMd/5nOAI21O+FvYPOkBWYX8f4Dz
-> +DyVQlmIFAgMBAAECggEAERP8FFk2Pkk7IXuKbZroSPxNrO9Mx8avxkUou9Hj5v7r
-> +JBQliETanxyiVGetXLnPj9tfDt86bSqiXbtFo+OXK4GI2G8xD3y19NrSvt/KNC8M
-> +LLsmiasYd/tn7C+KNTKzebD7KcjIXu7ral3Ud8Flvk7N4oFJN+uI1E/lHsmWqigO
-> +X470lWWe+UkhoV7WtfaxDFnsXyBUg0ogkO+ftlnSjfnW4gyMourCaWJQs9ONnZl5
-> +4mqeQHSkVxZnMR/bACeuuCVhF2efXSg3OEHpxcwcl64Q551cQItm2bKdHDV1Zkr3
-> +5eS7WMQCpNYCgjQ4iOt9hjOe3B7+RpvzD9FPuiMUYQKBgQD2saG2ZJCKKbaH7eIb
-> +Jc1MRCIQ4UUvsTz/WJt9aLe/MOGgsBGucfWnjkM+CcvrrjEsdchSXr/C2jv0iP/a
-> +oD2anTnidUnhfgBCCrfEJP/nucvRAd9AtppV3M0ijPiMlPdw7SBhwEArgGD50YZD
-> +plStFG3pWQcb9bp9bQPV7s+cSQKBgQDQHGMmvhKE1dvsnhgNDbi5LCZzYTUiBfkW
-> +Me78kwoKLIgNZCSvG1V0gv2/r6SZh5zLEUlLdDKvdmo4erA3Wy9i4H8IfIqDp0ev
-> +MnJkVOPxyvyHRkosO7bFk0XF8EiOfm+K1Jdb2rfjvugUb/fQTDXZh57g2ENCRoS4
-> +H8hz37K/3QKBgHbLTSsuvCe8NIi6deJKztTGDn2AbTetKslvmtjGP42S9WPSxYDy
-> +obABIsJSJ1+jr0xQn5mCxOcI/kwgWMyn02KMCd7SSjSK34bt8FZE1vJ4lvxb4W0h
-> +QarNO/9CUUIpTgqUNb68vGn2VTyXuAcFpsr+BnuTAohlSVuyzmELse/5AoGBAKxA
-> +EsEqaWGRMSqz3+xOAyshI+Iz/ypeD0ETq19axOCO4z1SOhrFYQHCugxCcNayrFBX
-> +ynatgpZASMLeqaPn0Vzhu8Nmca9ucaLM+mmY6eJjxIii4RmjgzAdKY8fxq5KcEBU
-> +ncLlUXcruCPSWScLLTcTTamE1oawn4FWrS9bZDPxAoGAQHlEqLAmGAZADaj40kop
-> +RQIMz2IGw7VjLdDC0NaKgopx0CTF1ODfFH5e0l1eroyQIxYzl6be/oYc9x57GfzU
-> +VlPEYFsgwFg2nRKniqz/eUrriWfyblC23F7vQdW2un0eEbmgUnd9S4s9xikTYYyA
-> +8z18hsBaH0ZngalMu49G1aA=
-> +-----END PRIVATE KEY-----
-> diff --git a/recipes-devtools/secure-boot-secrets/files/PkKek-1-snakeoil.pem b/recipes-devtools/secure-boot-secrets/files/bookworm/PkKek-1-snakeoil.pem
-> similarity index 100%
-> rename from recipes-devtools/secure-boot-secrets/files/PkKek-1-snakeoil.pem
-> rename to recipes-devtools/secure-boot-secrets/files/bookworm/PkKek-1-snakeoil.pem
-> diff --git a/recipes-devtools/secure-boot-secrets/files/PkKek-1-snakeoil.key b/recipes-devtools/secure-boot-secrets/files/bullseye/PkKek-1-snakeoil.key
-> similarity index 100%
-> rename from recipes-devtools/secure-boot-secrets/files/PkKek-1-snakeoil.key
-> rename to recipes-devtools/secure-boot-secrets/files/bullseye/PkKek-1-snakeoil.key
-> diff --git a/recipes-devtools/secure-boot-secrets/files/bullseye/PkKek-1-snakeoil.pem b/recipes-devtools/secure-boot-secrets/files/bullseye/PkKek-1-snakeoil.pem
-> new file mode 100644
-> index 0000000..dd02a82
-> --- /dev/null
-> +++ b/recipes-devtools/secure-boot-secrets/files/bullseye/PkKek-1-snakeoil.pem
-> @@ -0,0 +1,21 @@
-> +-----BEGIN CERTIFICATE-----
-> +MIIDdzCCAl+gAwIBAgIULTs+L+8XzClMGhAvyFIdsp/PYgUwDQYJKoZIhvcNAQEL
-> +BQAwSjELMAkGA1UEBhMCVVMxETAPBgNVBAgMCENvbG9yYWRvMRUwEwYDVQQHDAxG
-> +b3J0IENvbGxpbnMxETAPBgNVBAoMCFNuYWtlT2lsMCAXDTIwMDkwNzE4NDMyMloY
-> +DzIxMjAwODE0MTg0MzIyWjBKMQswCQYDVQQGEwJVUzERMA8GA1UECAwIQ29sb3Jh
-> +ZG8xFTATBgNVBAcMDEZvcnQgQ29sbGluczERMA8GA1UECgwIU25ha2VPaWwwggEi
-> +MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDIi65d6LmojD5S9q8vE/LI2HHQ
-> +boiO5/1KrFVc6kpxD6XdkJwpBoItYIfSls9CPnzvNWOAxR3hIeBd1U/prAPPxvQ1
-> +wuDLMXfWkcGaYHfPnme/YluAjnpuLH1MQcumgOzj5xYBvZZk+RbytX/phH7FW4Tx
-> ++L1oBYnsfh3BSE/NTtEEHV1nXAXpa/dvyefWMlrlbwjfM5362lZzM6yrJGcOcWEy
-> +I66UYCIVO2Yhe/ZVF5B/tPGtd2oACz11xLeqLPM1WBjlekAG2Zi7UCPIvDCpdn5u
-> +Vna2ZRQmJyDDdh0Ja2VMC19dkMd/5nOAI21O+FvYPOkBWYX8f4DzDyVQlmIFAgMB
-> +AAGjUzBRMB0GA1UdDgQWBBRjuNXuXfh7mi8I3eTboeYGyFTa2zAfBgNVHSMEGDAW
-> +gBRjuNXuXfh7mi8I3eTboeYGyFTa2zAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3
-> +DQEBCwUAA4IBAQBW2ckn0APqBnwSiOXCWkMCnvY7K7UOfxAlotEsMFSrkzdEa4IE
-> +sn0+A3RV/r3HZGqIaE8GMsBqp8UiVIbL5H67dkqvJEke94/7wEUC16JSSOBc0Mac
-> +HeArDWsL/WIbzKiVcRrmgX+XwJFlsUN5UtR/feTHR08yiy5srSCIJEqli/cTrOxS
-> +JAgvWPLxcoFhOKf6Mi+nwWdrQEbpXvvv8Jv/qyyz5e/VmTRY0wIVmUjd+Yseu+5M
-> +3+cpKtlYaawMxVni5RibA0A12fm+i60fGPrkCNhascUrNY+Oppaf/h+QmKOwEM7h
-> +pqKXyGFQyU6dB6cFBQ/uD5IABUYuEOuL7VFY
-> +-----END CERTIFICATE-----
-> diff --git a/recipes-devtools/secure-boot-secrets/files/buster/PkKek-1-snakeoil.key b/recipes-devtools/secure-boot-secrets/files/buster/PkKek-1-snakeoil.key
-> new file mode 100644
-> index 0000000..b9e42c7
-> --- /dev/null
-> +++ b/recipes-devtools/secure-boot-secrets/files/buster/PkKek-1-snakeoil.key
-> @@ -0,0 +1,28 @@
-> +-----BEGIN PRIVATE KEY-----
-> +MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDNQOknAPMOkujb
-> +K1VFKC39BZFiT9iNp7l9u6OK2rvddgu4Nn79Z/lTrOk5/J/Nf+XlHQoJX1dhQkXj
-> +tASY0KehamDdxF1GvL7cUhi12c0rXnUBnYvvg4jiwxfVqRIT4x9kWB08Vyb6fS4m
-> +BC69FgbJhpHo3XBuEn/aI45tr6xsrJxoqIvV9KOKnZyuIcD/TlxhKiZ1RP6tNRkA
-> +sV0JC45T6BfxGqGZ9ujxUQTsykTeeu8ehxAAWmHJiAbyNp2OCDKYTuxARkasGo6v
-> +AwMeK1umgY2U4jZV0WAvmNEoe4HrWIKSpOZJa5LiVs4QmaazqGFCdOe7/Irs7c0R
-> +Z6AA8yu1AgMBAAECggEBAKUb9THx+pObrAM6TYKvOqdSBkxubIYvCPDSs1EseXlB
-> +z1WlSOwx6ofcDVUfGbGmk9mFTaCSeGj9ddkg453GI0Ken0NmBZ60kFgNFmGazgd4
-> +GWluQbYvOjsnsxGlyqwCxSrkEsiKVwmjDy93p91lTZppTRBkqV9yNDTW62jiqzJT
-> +CzWimHWyPlK7MjfOyV/X/GD8rugr0F/ikugzVJXCIuhnO62ouU1Imo+Agb3jJM5h
-> +26CWerha8Nd6z6lvHM0g014gzL40JrxehqOkYp/6VF6qX37sTHyAw9J4RUQROC/L
-> +L+XYAAQZMv3GBJhkn6FOBlKuBmJLw01mTKXuNyGf1EECgYEA6cShh7uPJHeqqHpm
-> +ddt0DBgwFueH3pXPv1a6sDBt8P3PJ376p8X1QpoL30sZYc+cEXJcicoaq5NqrkJA
-> +NltHg00sHqyfEfaDS2sr38e5qWoD41BsFdbNmfe2SaunXmSZ7d/QD810l+UaRNCR
-> +doZcmeCFpcXRs0N1nc2C0w+Ya/ECgYEA4MYPCZ43lB1qeShUcaY/WFiWnJrNdoJR
-> +p9S7xhPAqpXmG19utc+geTvN+y8YqOVg1ICaXpfYV7BG7VdD3mLQTIxdai98Rl4r
-> +EBKrSGV6cyXkghaGeZHL2M9/FLxCZrfEpbzl82kacCJHCaiQiu9IVTsOabwoW68x
-> +Evfz1FHaEAUCgYAmPrc2n6bhjnprKetNaOPpfqOPe72s2tGsOiI85Q93l+6mRY34
-> +mNhxVwaON5kleXPNHuqo2FnYrDuN2uTqf7CJeLy5IAC+TZhZZGU/LUvgval5LRUh
-> +1Yy5nd9C2kR9mvPcCPvfOfvTRfYwP/csbvsDacozvtN6ApVhhdfbc/e54QKBgFZV
-> +PGlhT8+gDMlEaErOo/326MJ14vzlyR9BYm4OIC5lLODOouNKQETQZ6lWyY31rF9y
-> +ldhHUl0748I9hl/gbEk6kJa8bmtIuBmQUiGYeJPJth8RL8155mX8LL92H7r8Upem
-> +GlyHvhPb1pUrHXl/trSl3j9WedndTGgQvKKMXclRAoGBAKCwevyJrlhnvbZQzjyV
-> +zWPyy3028370nsTYnOBh2yVtPThcOCewp9THEy0FAVkMYqE1sdpAN51PdD5UPGFo
-> +RkXd/5HQTSDkVGHhO7VohXM/H/nNQgtotoDRSMkxTymQTHad5LNesi3dCEqa1gTC
-> +gyh89dCjF1p+mnLi0xITtkoA
-> +-----END PRIVATE KEY-----
-> diff --git a/recipes-devtools/secure-boot-secrets/files/buster/PkKek-1-snakeoil.pem b/recipes-devtools/secure-boot-secrets/files/buster/PkKek-1-snakeoil.pem
-> new file mode 100644
-> index 0000000..73936f7
-> --- /dev/null
-> +++ b/recipes-devtools/secure-boot-secrets/files/buster/PkKek-1-snakeoil.pem
-> @@ -0,0 +1,19 @@
-> +-----BEGIN CERTIFICATE-----
-> +MIIDCTCCAfGgAwIBAgIUSbJC1oRCJUbGkwfWHscBeZrRHZcwDQYJKoZIhvcNAQEL
-> +BQAwFDESMBAGA1UECgwJU25ha2UgT2lsMB4XDTE5MTEwMTIyMDI1NVoXDTE5MTIw
-> +MTIyMDI1NVowFDESMBAGA1UECgwJU25ha2UgT2lsMIIBIjANBgkqhkiG9w0BAQEF
-> +AAOCAQ8AMIIBCgKCAQEAzUDpJwDzDpLo2ytVRSgt/QWRYk/Yjae5fbujitq73XYL
-> +uDZ+/Wf5U6zpOfyfzX/l5R0KCV9XYUJF47QEmNCnoWpg3cRdRry+3FIYtdnNK151
-> +AZ2L74OI4sMX1akSE+MfZFgdPFcm+n0uJgQuvRYGyYaR6N1wbhJ/2iOOba+sbKyc
-> +aKiL1fSjip2criHA/05cYSomdUT+rTUZALFdCQuOU+gX8Rqhmfbo8VEE7MpE3nrv
-> +HocQAFphyYgG8jadjggymE7sQEZGrBqOrwMDHitbpoGNlOI2VdFgL5jRKHuB61iC
-> +kqTmSWuS4lbOEJmms6hhQnTnu/yK7O3NEWegAPMrtQIDAQABo1MwUTAdBgNVHQ4E
-> +FgQUFD7OXb2T6sOysRo3hj2f15SX8I8wHwYDVR0jBBgwFoAUFD7OXb2T6sOysRo3
-> +hj2f15SX8I8wDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEANZRB
-> +NFVUVZVehpj3QGbbSjp77m0V6JrEYn6u/XjLRFsUNw5Hh35UCR0HkKZ0cLgrVKb/
-> +8yL6LaYLOY6yDwEFWMtLXiF2S4noO8raEgW6A7DHawb2Y4ZNFRO4oBkyWbtd36Uu
-> +UfSszs2av048wb5J/pNedRSx8I/FiCNWummzpkBHzx023TdLPd8fmkmG7ZBpStN0
-> +Y//EE4DKTfHxAwt5w7WdZF5EY/KHPopnR+WSrdutRIK6zT+/+vKihtHYZbrv+7Ap
-> +K7xOM/zJ6E9vUROmuOhL3YL3MuLn5qHEvhM0eMxEAlCnSJlFkQE4/RXhDpZJYbR7
-> +x+PQllgoo4H6W30Dew==
-> +-----END CERTIFICATE-----
-> diff --git a/recipes-devtools/secure-boot-secrets/secure-boot-snakeoil_0.1.bb b/recipes-devtools/secure-boot-secrets/secure-boot-snakeoil_0.1.bb
-> index 24a5352..a446987 100644
-> --- a/recipes-devtools/secure-boot-secrets/secure-boot-snakeoil_0.1.bb
-> +++ b/recipes-devtools/secure-boot-secrets/secure-boot-snakeoil_0.1.bb
-> @@ -11,7 +11,7 @@
->  
->  require secure-boot-secrets.inc
->  
-> -SB_KEY = "PkKek-1-snakeoil.key"
-> -SB_CERT = "PkKek-1-snakeoil.pem"
-> +SB_KEY = "${BASE_DISTRO_CODENAME}/PkKek-1-snakeoil.key"
-> +SB_CERT = "${BASE_DISTRO_CODENAME}/PkKek-1-snakeoil.pem"
->  
->  DEBIAN_CONFLICTS = "secure-boot-key"
 
 -- 
 Siemens AG, Technology
