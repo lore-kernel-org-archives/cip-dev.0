@@ -2,21 +2,21 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 690C3C77B7F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59B0FC77B78
 	for <webhook@archiver.kernel.org>; Fri, 21 Apr 2023 07:18:30 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web11.6173.1682061490711437733
  for <cip-dev@lists.cip-project.org>;
- Fri, 21 Apr 2023 00:18:23 -0700
+ Fri, 21 Apr 2023 00:18:20 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="5.99,214,1677510000"; 
-   d="scan'208";a="160252446"
+   d="scan'208";a="160252440"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 21 Apr 2023 16:18:22 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 21 Apr 2023 16:18:20 +0900
 Received: from localhost.localdomain (unknown [10.226.93.14])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id BE41541AA8A6;
-	Fri, 21 Apr 2023 16:18:20 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 46EAC41AA65A;
+	Fri, 21 Apr 2023 16:18:18 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -24,9 +24,9 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 5.10.y-cip 20/33] arm64: dts: renesas: Add initial DTSI for RZ/V2M SoC
-Date: Fri, 21 Apr 2023 08:17:16 +0100
-Message-Id: <20230421071729.130347-21-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 19/33] clk: renesas: r9a09g011: Add eth clock and reset entries
+Date: Fri, 21 Apr 2023 08:17:15 +0100
+Message-Id: <20230421071729.130347-20-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230421071729.130347-1-biju.das.jz@bp.renesas.com>
 References: <20230421071729.130347-1-biju.das.jz@bp.renesas.com>
@@ -36,124 +36,54 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 21 Apr 2023 07:18:30 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11293
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11292
 
 From: Phil Edworthy <phil.edworthy@renesas.com>
 
-commit fb1929b98f2e1c012b4df596b7b2c9f6f28fbe54 upstream.
+commit 23426d1be3c20907b4f3d72bf95234d4ee254393 upstream.
 
-Details of the SoC can be found here:
-https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-cortex-a-mpus/rzv2m-dual-cortex-a53-lpddr4x32bit-ai-accelerator-isp-4k-video-codec-4k-camera-input-fhd-display-output
+Add ethernet clock/reset entries to CPG driver.
+
+Note that the AXI and CHI clocks are both enabled and disabled using
+the same register bit.
 
 Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20220504094456.24386-3-phil.edworthy@renesas.com
+Link: https://lore.kernel.org/r/20220504145454.71287-2-phil.edworthy@renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g011.dtsi | 93 ++++++++++++++++++++++
- 1 file changed, 93 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r9a09g011.dtsi
+ drivers/clk/renesas/r9a09g011-cpg.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g011.dtsi b/arch/arm64/boot/dts/renesas/r9a09g011.dtsi
-new file mode 100644
-index 000000000000..27810f4ad4cb
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a09g011.dtsi
-@@ -0,0 +1,93 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Device Tree Source for the RZ/V2M SoC
-+ *
-+ * Copyright (C) 2022 Renesas Electronics Corp.
-+ */
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/r9a09g011-cpg.h>
-+
-+/ {
-+	compatible = "renesas,r9a09g011";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	/* clock can be either from exclk or crystal oscillator (XIN/XOUT) */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu-map {
-+			cluster0 {
-+				core0 {
-+					cpu = <&cpu0>;
-+				};
-+			};
-+		};
-+
-+		cpu0: cpu@0 {
-+			compatible = "arm,cortex-a53";
-+			reg = <0>;
-+			device_type = "cpu";
-+			clocks = <&cpg CPG_MOD R9A09G011_CA53_CLK>;
-+		};
-+	};
-+
-+	soc: soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		gic: interrupt-controller@82000000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0x0 0x82010000 0 0x1000>,
-+			      <0x0 0x82020000 0 0x20000>,
-+			      <0x0 0x82040000 0 0x20000>,
-+			      <0x0 0x82060000 0 0x20000>;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&cpg CPG_MOD R9A09G011_GIC_CLK>;
-+			clock-names = "clk";
-+		};
-+
-+		cpg: clock-controller@a3500000 {
-+			compatible = "renesas,r9a09g011-cpg";
-+			reg = <0 0xa3500000 0 0x1000>;
-+			clocks = <&extal_clk>;
-+			clock-names = "extal";
-+			#clock-cells = <2>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <0>;
-+		};
-+
-+		uart0: serial@a4040000 {
-+			compatible = "renesas,r9a09g011-uart", "renesas,em-uart";
-+			reg = <0 0xa4040000 0 0x80>;
-+			interrupts = <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD R9A09G011_URT0_CLK>,
-+				 <&cpg CPG_MOD R9A09G011_URT_PCLK>;
-+			clock-names = "sclk", "pclk";
-+			status = "disabled";
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
+diff --git a/drivers/clk/renesas/r9a09g011-cpg.c b/drivers/clk/renesas/r9a09g011-cpg.c
+index b9f80c531869..40693bb85b80 100644
+--- a/drivers/clk/renesas/r9a09g011-cpg.c
++++ b/drivers/clk/renesas/r9a09g011-cpg.c
+@@ -126,14 +126,18 @@ static const struct cpg_core_clk r9a09g011_core_clks[] __initconst = {
+ };
+ 
+ static const struct rzg2l_mod_clk r9a09g011_mod_clks[] __initconst = {
+-	DEF_MOD("gic",		R9A09G011_GIC_CLK,	CLK_SEL_B_D2, 0x400, 5),
+-	DEF_MOD("syc_cnt_clk",	R9A09G011_SYC_CNT_CLK,	CLK_MAIN_24,  0x41c, 12),
+-	DEF_MOD("urt_pclk",	R9A09G011_URT_PCLK,	CLK_SEL_E,    0x438, 4),
+-	DEF_MOD("urt0_clk",	R9A09G011_URT0_CLK,	CLK_SEL_W0,   0x438, 5),
+-	DEF_MOD("ca53",		R9A09G011_CA53_CLK,	CLK_DIV_A,    0x448, 0),
++	DEF_MOD("gic",		R9A09G011_GIC_CLK,	 CLK_SEL_B_D2, 0x400, 5),
++	DEF_COUPLED("eth_axi",	R9A09G011_ETH0_CLK_AXI,	 CLK_PLL2_200, 0x40c, 8),
++	DEF_COUPLED("eth_chi",	R9A09G011_ETH0_CLK_CHI,	 CLK_PLL2_100, 0x40c, 8),
++	DEF_MOD("eth_clk_gptp",	R9A09G011_ETH0_GPTP_EXT, CLK_PLL2_100, 0x40c, 9),
++	DEF_MOD("syc_cnt_clk",	R9A09G011_SYC_CNT_CLK,	 CLK_MAIN_24,  0x41c, 12),
++	DEF_MOD("urt_pclk",	R9A09G011_URT_PCLK,	 CLK_SEL_E,    0x438, 4),
++	DEF_MOD("urt0_clk",	R9A09G011_URT0_CLK,	 CLK_SEL_W0,   0x438, 5),
++	DEF_MOD("ca53",		R9A09G011_CA53_CLK,	 CLK_DIV_A,    0x448, 0),
+ };
+ 
+ static const struct rzg2l_reset r9a09g011_resets[] = {
++	DEF_RST_MON(R9A09G011_ETH0_RST_HW_N,	0x608, 11, 11),
+ 	DEF_RST_MON(R9A09G011_SYC_RST_N,	0x610, 9,  13),
+ };
+ 
 -- 
 2.25.1
 
