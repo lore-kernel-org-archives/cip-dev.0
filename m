@@ -1,349 +1,136 @@
-Return-Path: <srinuvasan_a@mentor.com>
+Return-Path: <ncaidin@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63282C7618E
-	for <webhook@archiver.kernel.org>; Mon, 24 Apr 2023 11:56:21 +0000 (UTC)
-Received: from esa3.mentor.iphmx.com (esa3.mentor.iphmx.com [68.232.137.180])
- by mx.groups.io with SMTP id smtpd.web11.48650.1682337373564321784
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D85FC7618E
+	for <webhook@archiver.kernel.org>; Mon, 24 Apr 2023 12:03:41 +0000 (UTC)
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (EUR05-DB8-obe.outbound.protection.outlook.com [40.107.20.59])
+ by mx.groups.io with SMTP id smtpd.web10.46529.1682326282597569072
  for <cip-dev@lists.cip-project.org>;
- Mon, 24 Apr 2023 04:56:13 -0700
+ Mon, 24 Apr 2023 01:51:23 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: mentor.com, ip: 68.232.137.180, mailfrom: srinuvasan_a@mentor.com)
-X-IronPort-AV: E=Sophos;i="5.99,222,1677571200"; 
-   d="scan'208";a="3328132"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa3.mentor.iphmx.com with ESMTP; 24 Apr 2023 03:56:09 -0800
-IronPort-SDR: o9InBut1pPdNUGhF/USebwekfzy1nvyNTJIzCKU9Slt53mIYtdrzqC6FpEcAH2Epdyb+/6ZJp0
- qp5Ka0MWqtLkkdU0fgyIebbH6euFOpTwUx8FCNEca58veI8YoK3mPnSlbcWO/W4t73VYLI+Z4d
- mOk+W2QFbJHUDJ4lihRBCP+xc9tmYJkadqy5byRxlv6JOyTXRWsTrFlriDzoc6oBicEpSDKGib
- aBBGc7OaV/H7H6/fqbusuYZxfSPKHMRsJQS3fcQcIYf+A7A+nxi/TFgBJDyFeoD0fQhDe6QPtF
- rsU=
-From: Srinuvasan Arjunan <srinuvasan_a@mentor.com>
-To: <cip-dev@lists.cip-project.org>
-CC: <jan.kiszka@siemens.com>, Srinuvasan A <srinuvasan.a@siemens.com>
-Subject: [PATCH] recipes-python/shtab: Update shelltab to latest one
-Date: Mon, 24 Apr 2023 17:25:51 +0530
-Message-ID: <20230424115551.2896898-1-srinuvasan_a@mentor.com>
-X-Mailer: git-send-email 2.34.1
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=AIcO2E4t;
+ spf=pass (domain: siemens.com, ip: 40.107.20.59, mailfrom: felix.moessbauer@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RGGJHV6AG1hNNpzf3I8g+D/LIaQf+tdYlLyOvHv/r1sg904Y1HBd8RzLME26GK4DmNj2BEH4avRY3aAs0TxLdjM2biGPpII12jIbZl/EBCQJfqy1kCeYKSYvZ0YdQ18bsyVQvhw1bmPKdrNppDo3ZlbMC7K82p/0hK0KcMdBah6N5C3qBMooHQcFvxE/PkVBN5oU5EgGgART48+ArYvE+VSXIJTH/+dqKol/e6yw0juoTcvAtetrpHtTuiA+1k4QXK4sBJu2WYZLZC9xgrT9vAT7IIa5m3VKRM1fgaEo6qM8X//hrJ10sxSELvXxp7HJ7pWtNxuSvM8WObYnUdzyZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=i0LGT9bIU2z7hT+7HpZaUIHmZNrJODKtNy0d1MJ4pXU=;
+ b=Q4ELaA9nBf5AC5fYunMnXi1kmm5G4OUa5jWanza8fLQoDWLFmJyL1MBekCk0DQdnqsrs8gD9HLjfQtW9lSrE0uQd0cqqAOjPTyS8qtOn22yv1680DeywkECZH8bUtikKGmq2HY4w+Sm3ogTRXQuIHZTuGNg5tEEpnG95d1DNHTTqx4/TYVWrRHCjv9Wfge8faJFYrdm5OYW47Bkt39b1iDvGn28WZjF0AqP1yufgU3etZYumrrAZ45ZVyYvAnlLQVZrl/PFaFFqh0zXhQ1tUup6pd9xLXQnaxyy/dvJ2RtRa87Fw2PSFgmMKYDeyeidp3UbSVP+WA7g3RW76z0l5Mw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 194.138.21.75) smtp.rcpttodomain=lists.cip-project.org
+ smtp.mailfrom=siemens.com; dmarc=pass (p=reject sp=reject pct=100)
+ action=none header.from=siemens.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=i0LGT9bIU2z7hT+7HpZaUIHmZNrJODKtNy0d1MJ4pXU=;
+ b=AIcO2E4t+lCysuovMM44Gb8KQxEVl5KRu4gJc8GGPGJcty9hcsncWpFW0jrDz536bQjfs983ZfxR78kQ9ljV39iZCMFpzpN7IkDDM7xCpfzfs9IfpbV/nLqVab892e/s/W2IQnSXJckrP68/IxvBWrlJnywsixD3e5GKO93JP2ML4HRtPn1x0hwl6sYvPXMi+2DE7F5WRBPN6Txxb6o3cuAhgPkIspeXQ9YRqcnCKhZKeq4TPQTQ3ADtRA+6Z/NFG4b80tX7DgrkMwkgMXWzXFbLmeDVlay8nNUU0bA3egIXrOa54se45f2ja53f4jbg5Ffglsg6+HOUNPLOo/9ItQ==
+Received: from ZRAP278CA0008.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:10::18)
+ by GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:76::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6340.19; Mon, 24 Apr
+ 2023 08:51:18 +0000
+Received: from VE1EUR01FT012.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:910:10:cafe::fe) by ZRAP278CA0008.outlook.office365.com
+ (2603:10a6:910:10::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6319.33 via Frontend
+ Transport; Mon, 24 Apr 2023 08:51:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.75)
+ smtp.mailfrom=siemens.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=siemens.com;
+Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
+ 194.138.21.75 as permitted sender) receiver=protection.outlook.com;
+ client-ip=194.138.21.75; helo=hybrid.siemens.com; pr=C
+Received: from hybrid.siemens.com (194.138.21.75) by
+ VE1EUR01FT012.mail.protection.outlook.com (10.152.2.210) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6340.19 via Frontend Transport; Mon, 24 Apr 2023 08:51:17 +0000
+Received: from CNPEK01M03MSX.ad011.siemens.net (139.24.237.220) by
+ DEMCHDC8VRA.ad011.siemens.net (194.138.21.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.25; Mon, 24 Apr 2023 10:51:16 +0200
+Received: from CNPEK01M01MSX.ad011.siemens.net (139.24.237.214) by
+ CNPEK01M03MSX.ad011.siemens.net (139.24.237.220) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.23; Mon, 24 Apr 2023 16:50:45 +0800
+Received: from CNPEK01M01MSX.ad011.siemens.net ([139.24.237.214]) by
+ CNPEK01M01MSX.ad011.siemens.net ([139.24.237.214]) with mapi id
+ 15.01.2507.023; Mon, 24 Apr 2023 16:50:45 +0800
+From: "Moessbauer, Felix" <felix.moessbauer@siemens.com>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"Gylstorff, Quirin" <quirin.gylstorff@siemens.com>, "Kiszka, Jan"
+	<jan.kiszka@siemens.com>
+Subject: Re: [cip-dev][isar-cip-core][PATCH v4] efibootguard: use debian folder from salsa
+Thread-Topic: [cip-dev][isar-cip-core][PATCH v4] efibootguard: use debian
+ folder from salsa
+Thread-Index: AQHZdFt3wFjGI+/ooUeCAxAOsD5CXq81hn8AgAQZIwCAAAUyAA==
+Date: Mon, 24 Apr 2023 08:50:45 +0000
+Message-ID: <f1175c11ad2e550f839ff60b955940be4b3fd369.camel@siemens.com>
+References: <20230421141330.3905234-1-Quirin.Gylstorff@siemens.com>
+	 <f4ec927f-5d19-48e3-84ec-b8dea9b5c13e@siemens.com>
+	 <cb6b51f2-be45-d758-e718-c18fdd37c4de@siemens.com>
+In-Reply-To: <cb6b51f2-be45-d758-e718-c18fdd37c4de@siemens.com>
+Accept-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.46.4-2 
+x-originating-ip: [139.24.247.25]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: svr-orw-mbx-14.mgc.mentorg.com (147.34.90.214) To
- svr-orw-mbx-13.mgc.mentorg.com (147.34.90.213)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: VE1EUR01FT012:EE_|GV2PR10MB6186:EE_
+X-MS-Office365-Filtering-Correlation-Id: 60eb874b-06a7-4ea9-6881-08db44a1119b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	lcD5BtiiMRaFR0KG5tVhyLQcIy32r4y55mImL+HDojBf1dZ47TjvShB6DflTt6f/cDrsxMnubXdKOchC9aZsjmHJ6y1DWuY3RFN9m6PlaKmOlkVYJ3oA6Kw12IOM+znK22ovSQPH2YEXi/wNOyUuX5E6BkOHvk8iJyH2/ukQMj0GMRA4YFBGtcYGMPyxExPHX0usHk9GQGlHrRUx9kqXcbaxN2NmNcvMfL04TlDJt56/vEJgKQGOL1ycldq0qSEPt28nGkmM84rylzchFBaSI/Vj6FtkqFCnUkNl0Jdayoi3q7V9mnpDJAs4AAYrTKq4eb/yvVOV/lr7+yg5ZPLM03VnQCYQ5WDCZC042p65prPArKbAmkLKW6QYngAzNePZf7NhHts+aJ33U8lPZI5NxSf92AWvKhrQDgPcSaslNSCINqFySJvIY1AyynKnU1IVSYnf6R/sT19plDaTiELQia2c+DSZsdwj32J02LMnMY9sfUvwDHprj+Up3toPE/1+VZ/Bo3lzEMHv/VZMJ2NZZko8REoTiaEIStRVCfVXZd2Qdi9xXG0GiJ/1UbSsyfSuVTt7Gd4/PC1u2Fk5inGwbD/Lrd1qX3SMXaY9UatcgFaolm6w7ZSIbjwXi77X/h02Jk8YDNOdSTZ98ljEwPX1I6I+Bfb7YEaJjunSAZNMevusuQQktkcBc3wkOqonRmdHq/3tXUQte0YXoELqAwaJmpfAFO4cwm7WAyzY+DWFejM=
+X-Forefront-Antispam-Report: 
+	CIP:194.138.21.75;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(346002)(376002)(136003)(396003)(451199021)(36840700001)(40470700004)(46966006)(82310400005)(41300700001)(5660300002)(8936002)(8676002)(47076005)(36860700001)(53546011)(186003)(26005)(2616005)(336012)(956004)(40460700003)(82740400003)(82960400001)(356005)(81166007)(86362001)(40480700001)(316002)(36756003)(966005)(478600001)(70206006)(70586007)(110136005)(6636002)(2906002)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2023 08:51:17.8253
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 60eb874b-06a7-4ea9-6881-08db44a1119b
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.75];Helo=[hybrid.siemens.com]
+X-MS-Exchange-CrossTenant-AuthSource: 
+	VE1EUR01FT012.eop-EUR01.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR10MB6186
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <048B518656AF0F498581AE91635F328F@siemens.com>
+Content-Transfer-Encoding: base64
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 24 Apr 2023 11:56:21 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11333
+ <cip-dev@lists.cip-project.org>; Mon, 24 Apr 2023 12:03:41 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11334
 
-From: Srinuvasan A <srinuvasan.a@siemens.com>
-
-Update shelltab to latest one.
-
-Signed-off-by: Srinuvasan A <srinuvasan.a@siemens.com>
----
- recipes-bsp/efibootguard/efibootguard_0.13.bb |  2 +-
- ...001-Lower-requirements-on-setuptools.patch | 28 ------------
- ...ix-cross-build-issue-for-bullseye-im.patch | 33 ++++++++++++++
- ...002-Lower-requirements-on-setuptools.patch | 36 ++++++++++++++++
- ...003-Lower-requirements-on-setuptools.patch | 43 +++++++++++++++++++
- recipes-python/shtab/files/rules              | 21 ---------
- recipes-python/shtab/python3-shtab_1.4.2.bb   | 36 ----------------
- recipes-python/shtab/python3-shtab_1.5.5-3.bb | 31 +++++++++++++
- 8 files changed, 144 insertions(+), 86 deletions(-)
- delete mode 100644 recipes-python/shtab/files/0001-Lower-requirements-on-setuptools.patch
- create mode 100644 recipes-python/shtab/files/0001-debian-control-Fix-cross-build-issue-for-bullseye-im.patch
- create mode 100644 recipes-python/shtab/files/0002-Lower-requirements-on-setuptools.patch
- create mode 100644 recipes-python/shtab/files/0003-Lower-requirements-on-setuptools.patch
- delete mode 100755 recipes-python/shtab/files/rules
- delete mode 100644 recipes-python/shtab/python3-shtab_1.4.2.bb
- create mode 100644 recipes-python/shtab/python3-shtab_1.5.5-3.bb
-
-diff --git a/recipes-bsp/efibootguard/efibootguard_0.13.bb b/recipes-bsp/efibootguard/efibootguard_0.13.bb
-index dd76198..313716a 100644
---- a/recipes-bsp/efibootguard/efibootguard_0.13.bb
-+++ b/recipes-bsp/efibootguard/efibootguard_0.13.bb
-@@ -29,7 +29,7 @@ PROVIDES = "${PN}"
- PROVIDES += "${PN}-dev"
- 
- DEPENDS = "python3-shtab"
--BUILD_DEB_DEPENDS = "debhelper,autoconf-archive,check,gnu-efi,libpci-dev,pkg-config,python3-shtab,zlib1g-dev"
-+BUILD_DEB_DEPENDS = "debhelper,autoconf-archive,check,gnu-efi,libpci-dev,pkg-config,python3-shtab:native,zlib1g-dev"
- BUILD_DEB_DEPENDS:append:amd64 = ",libc6-dev-i386"
- BUILD_DEB_DEPENDS:append:i386 = ",libc6-dev-i386"
- 
-diff --git a/recipes-python/shtab/files/0001-Lower-requirements-on-setuptools.patch b/recipes-python/shtab/files/0001-Lower-requirements-on-setuptools.patch
-deleted file mode 100644
-index dccc2dd..0000000
---- a/recipes-python/shtab/files/0001-Lower-requirements-on-setuptools.patch
-+++ /dev/null
-@@ -1,28 +0,0 @@
--From d347695c4b173c94c4d8a678a67947de3ee5f186 Mon Sep 17 00:00:00 2001
--From: Jan Kiszka <jan.kiszka@siemens.com>
--Date: Mon, 14 Mar 2022 08:17:00 +0100
--Subject: [PATCH] Lower requirements on setuptools
--
--Allows to build against Debian buster.
--
--Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-----
-- setup.cfg | 2 +-
-- 1 file changed, 1 insertion(+), 1 deletion(-)
--
--diff --git a/setup.cfg b/setup.cfg
--index 55eecd4..186aad6 100644
----- a/setup.cfg
--+++ b/setup.cfg
--@@ -66,7 +66,7 @@ classifiers=
--     Topic :: Terminals
--     Topic :: Utilities
-- [options]
---setup_requires=setuptools>=42; setuptools_scm[toml]>=3.4
--+setup_requires=setuptools>=40; setuptools_scm>=3.2
-- install_requires=
--     argparse; python_version < "2.7" or ("3.0" <= python_version and python_version < "3.2")
-- python_requires= >=2.7, !=3.0.*, !=3.1.*
---- 
--2.34.1
--
-diff --git a/recipes-python/shtab/files/0001-debian-control-Fix-cross-build-issue-for-bullseye-im.patch b/recipes-python/shtab/files/0001-debian-control-Fix-cross-build-issue-for-bullseye-im.patch
-new file mode 100644
-index 0000000..9fb17de
---- /dev/null
-+++ b/recipes-python/shtab/files/0001-debian-control-Fix-cross-build-issue-for-bullseye-im.patch
-@@ -0,0 +1,33 @@
-+From 661472b5fb651a140cd9852fef4b797b8535fedf Mon Sep 17 00:00:00 2001
-+From: Srinuvasan A <srinuvasan.a@siemens.com>
-+Date: Mon, 16 Jan 2023 13:55:23 +0530
-+Subject: [PATCH] debian/control: Fix cross build issue for bullseye images
-+
-+Fix cross build issues for bullseye images.
-+
-+Signed-off-by: Srinuvasan A <srinuvasan.a@siemens.com>
-+---
-+ debian/control | 8 +++++---
-+ 1 file changed, 5 insertions(+), 3 deletions(-)
-+
-+diff --git a/debian/control b/debian/control
-+index b30beb1..a63e366 100644
-+--- a/debian/control
-++++ b/debian/control
-+@@ -6,9 +6,11 @@ Uploaders: Felix Moessbauer <felix.moessbauer@siemens.com>
-+ Build-Depends: debhelper-compat (= 13),
-+  dh-python,
-+  python3-setuptools (>=42),
-+- python3-setuptools-scm (>=3.4),
-+- python3-all (>=3.2),
-+- python3-wheel,
-++ python3-setuptools-scm:native (>=3.4),
-++ libpython3-all-dev (>=3.2),
-++ python3-all-dev:any (>=3.2),
-++ python3-wheel:native,
-++ python3-toml:native,
-+  python3-pytest <!nocheck>,
-+  python3-pytest-cov <!nocheck>,
-+  python3-pytest-timeout <!nocheck>,
-+-- 
-+2.34.1
-diff --git a/recipes-python/shtab/files/0002-Lower-requirements-on-setuptools.patch b/recipes-python/shtab/files/0002-Lower-requirements-on-setuptools.patch
-new file mode 100644
-index 0000000..1db4fa8
---- /dev/null
-+++ b/recipes-python/shtab/files/0002-Lower-requirements-on-setuptools.patch
-@@ -0,0 +1,36 @@
-+From 1d2e28a3da03815d16e0fb6dc11428509f4ed366 Mon Sep 17 00:00:00 2001
-+From: Srinuvasan A <srinuvasan.a@siemens.com>
-+Date: Tue, 17 Jan 2023 18:54:33 +0530
-+Subject: [PATCH] Lower requirements on setuptools
-+
-+Allows to build against Debian buster and fix cross build issues.
-+
-+Signed-off-by: Srinuvasan A <srinuvasan.a@siemens.com>
-+---
-+ debian/control | 10 +++++-----
-+ 1 file changed, 5 insertions(+), 5 deletions(-)
-+
-+diff --git a/debian/control b/debian/control
-+index b30beb1..380b934 100644
-+--- a/debian/control
-++++ b/debian/control
-+@@ -3,12 +3,12 @@ Section: python
-+ Priority: optional
-+ Maintainer: Debian Python Team <team+python@tracker.debian.org>
-+ Uploaders: Felix Moessbauer <felix.moessbauer@siemens.com>
-+-Build-Depends: debhelper-compat (= 13),
-++Build-Depends: debhelper-compat (= 12),
-+  dh-python,
-+- python3-setuptools (>=42),
-+- python3-setuptools-scm (>=3.4),
-+- python3-all (>=3.2),
-+- python3-wheel,
-++ python3-setuptools (>=40),
-++ python3-setuptools-scm:native (>=3.2),
-++ libpython3-all-dev (>=3.2),
-++ python3-all-dev:any (>=3.2),
-+  python3-pytest <!nocheck>,
-+  python3-pytest-cov <!nocheck>,
-+  python3-pytest-timeout <!nocheck>,
-+-- 
-+2.34.1
-diff --git a/recipes-python/shtab/files/0003-Lower-requirements-on-setuptools.patch b/recipes-python/shtab/files/0003-Lower-requirements-on-setuptools.patch
-new file mode 100644
-index 0000000..9687222
---- /dev/null
-+++ b/recipes-python/shtab/files/0003-Lower-requirements-on-setuptools.patch
-@@ -0,0 +1,43 @@
-+From a4d6204b7fe5af89f7edfb9a6d8e58455ee73e46 Mon Sep 17 00:00:00 2001
-+From: Srinuvasan A <srinuvasan.a@siemens.com>
-+Date: Tue, 17 Jan 2023 19:06:50 +0530
-+Subject: [PATCH] Lower requirements on setuptools
-+
-+Allows to build against Debian buster.
-+
-+Signed-off-by: Srinuvasan A <srinuvasan.a@siemens.com>
-+---
-+ .../0001-Lower-requirements-on-setuptools.diff      | 13 +++++++++++++
-+ debian/patches/series                               |  1 +
-+ 2 files changed, 14 insertions(+)
-+ create mode 100644 debian/patches/0001-Lower-requirements-on-setuptools.diff
-+ create mode 100644 debian/patches/series
-+
-+diff --git a/debian/patches/0001-Lower-requirements-on-setuptools.diff b/debian/patches/0001-Lower-requirements-on-setuptools.diff
-+new file mode 100644
-+index 0000000..257c054
-+--- /dev/null
-++++ b/debian/patches/0001-Lower-requirements-on-setuptools.diff
-+@@ -0,0 +1,13 @@
-++diff --git a/setup.cfg b/setup.cfg
-++index 77976c4..8857d32 100644
-++--- a/setup.cfg
-+++++ b/setup.cfg
-++@@ -65,7 +65,7 @@ classifiers =
-++ 	Topic :: Utilities
-++ 
-++ [options]
-++-setup_requires = setuptools>=42; wheel; setuptools_scm[toml]>=3.4
-+++setup_requires = setuptools>=40; setuptools_scm>=3.2
-++ install_requires = 
-++ 	argparse; "3.0" <= python_version and python_version < "3.2"
-++ python_requires = >=3.2
-+diff --git a/debian/patches/series b/debian/patches/series
-+new file mode 100644
-+index 0000000..804951a
-+--- /dev/null
-++++ b/debian/patches/series
-+@@ -0,0 +1 @@
-++0001-Lower-requirements-on-setuptools.diff
-+-- 
-+2.34.1
-diff --git a/recipes-python/shtab/files/rules b/recipes-python/shtab/files/rules
-deleted file mode 100755
-index 2dd07b2..0000000
---- a/recipes-python/shtab/files/rules
-+++ /dev/null
-@@ -1,21 +0,0 @@
--#!/usr/bin/make -f
--#
--# Copyright (c) Siemens AG, 2022
--#
--# Authors:
--#  Felix Moessbauer <felix.moessbauer@siemens.com>
--#
--# This file is subject to the terms and conditions of the MIT License.
--# See COPYING.MIT file in the top-level directory.
--#
--
--export DH_VERBOSE=1
--export PYBUILD_VERBOSE=1
--export PYBUILD_NAME=shtab
--
--ifneq ($(filter nocheck,$(DEB_BUILD_PROFILES)),)
--export PYBUILD_DISABLE=test
--endif
--
--%:
--	dh $@ --with python3 --buildsystem=pybuild
-diff --git a/recipes-python/shtab/python3-shtab_1.4.2.bb b/recipes-python/shtab/python3-shtab_1.4.2.bb
-deleted file mode 100644
-index d03e694..0000000
---- a/recipes-python/shtab/python3-shtab_1.4.2.bb
-+++ /dev/null
-@@ -1,36 +0,0 @@
--#
--# CIP Core, generic profile
--#
--# Copyright (c) Siemens AG, 2022
--#
--# Authors:
--#  Jan Kiszka <jan.kiszka@siemens.com>
--#
--# SPDX-License-Identifier: MIT
--#
--
--inherit dpkg
--
--SRC_URI = " \
--    https://github.com/iterative/shtab/archive/refs/tags/v1.4.2.tar.gz;downloadfilename=${PN}-${PV}.tar.gz \
--    file://0001-Lower-requirements-on-setuptools.patch \
--    file://rules \
--    "
--SRC_URI[sha256sum] = "5e6ef745c223ef1a01a2db491a8ec5c02c8291067328b17695c9a44f5b7d6fe6"
--
--S = "${WORKDIR}/shtab-${PV}"
--
--DEBIAN_BUILD_DEPENDS = " \
--    dh-python, \
--    libpython3-all-dev, \
--    python3-all-dev:any, \
--    python3-setuptools, \
--    python3-setuptools-scm:native, \
--    "
--
--DEB_BUILD_PROFILES = "nocheck"
--
--do_prepare_build[cleandirs] += "${S}/debian"
--do_prepare_build() {
--    deb_debianize
--}
-diff --git a/recipes-python/shtab/python3-shtab_1.5.5-3.bb b/recipes-python/shtab/python3-shtab_1.5.5-3.bb
-new file mode 100644
-index 0000000..9d2b1f2
---- /dev/null
-+++ b/recipes-python/shtab/python3-shtab_1.5.5-3.bb
-@@ -0,0 +1,31 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2022-2023
-+#
-+# Authors:
-+#  Jan Kiszka <jan.kiszka@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+inherit dpkg-gbp
-+
-+SRC_URI += " \
-+    git://salsa.debian.org/python-team/packages/python-shtab.git;protocol=https;branch=main \
-+    "
-+# modify for debian bullseye build
-+SRC_URI:append:bullseye = " file://0001-debian-control-Fix-cross-build-issue-for-bullseye-im.patch"
-+
-+# modify for debian buster build
-+SRC_URI:append:buster = " \
-+                        file://0002-Lower-requirements-on-setuptools.patch \
-+                        file://0003-Lower-requirements-on-setuptools.patch"
-+
-+SRCREV ="5650535ae4a1d34a21b55dc61e3e891d87a9712f"
-+
-+# We don't have pristine-tar in this tree hence use this option
-+GBP_EXTRA_OPTIONS = "--git-no-pristine-tar"
-+
-+DEB_BUILD_PROFILES = "nocheck"
-+DEB_BUILD_OPTIONS = "nocheck"
--- 
-2.34.1
-
+T24gTW9uLCAyMDIzLTA0LTI0IGF0IDEwOjMxICswMjAwLCBHeWxzdG9yZmYgUXVpcmluIHdyb3Rl
+Og0KPiANCj4gDQo+IE9uIDQvMjEvMjMgMTk6NTYsIEphbiBLaXN6a2Egd3JvdGU6DQo+ID4gT24g
+MjEuMDQuMjMgMTY6MTMsIFF1aXJpbiBHeWxzdG9yZmYgd3JvdGU6DQo+ID4gPiBGcm9tOiBRdWly
+aW4gR3lsc3RvcmZmIDxxdWlyaW4uZ3lsc3RvcmZmQHNpZW1lbnMuY29tPg0KPiA+ID4gDQo+ID4g
+PiBUbyBhdm9pZCBwYWNrYWdlIG5hbWUgY29uZmxpY3RzIGJldHdlZW4gY2lwLWNvcmUgYW5kIERl
+Ymlhbg0KPiA+ID4gdXBzdHJlYW0NCj4gPiA+IHVzZSB0aGUgZGViaWFuIGZvbGRlciBmcm9tIHVw
+c3RyZWFtIHRvIGJ1aWxkIGVmaWJvb3RndWFyZC4NCj4gPiA+IA0KPiA+ID4gU2lnbmVkLW9mZi1i
+eTogUXVpcmluIEd5bHN0b3JmZiA8cXVpcmluLmd5bHN0b3JmZkBzaWVtZW5zLmNvbT4NCj4gPiA+
+IC0tLQ0KPiA+ID4gQ2hhbmdlcyB2NDoNCj4gPiA+IMKgIC0gcmVhZGQgcGF0Y2ggMDAwMi1kLWNv
+bnRyb2wtcmVtb3ZlLW5hdGl2ZS1mcm9tLXB5dGhvbjMtDQo+ID4gPiBzaHRhYi5wYXRjaCB0bw0K
+PiA+ID4gwqDCoMKgIGFsbG93IGJ1aWxkIGZvciBxZW11LWFybTY0IGFuZCBxZW11LWFybS4gc2Vl
+DQo+ID4gPiBodHRwczovL2dpdGxhYi5jb20vY2lwLXByb2plY3QvY2lwLWNvcmUvaXNhci1jaXAt
+Y29yZS8tL3BpcGVsaW5lcy84NDQ1ODAyNDcNCj4gPiANCj4gPiBJcyB0aGF0IHBhdGNoIGFsc28g
+dXBzdHJlYW0gcmVsZXZhbnQ/IE9yIGlzIHRoYXQgb25seSBuZWVkZWQgZm9yDQo+ID4gb2xkZXIN
+Cj4gDQo+IFRoaXMgbG9va3MgbGlrZSBhIGNvbmZsaWN0IHdpdGggY3Jvc3NidWlsZGluZyB0aGUg
+cGFja2FnZSBpbiBJU0FSLg0KPiBUaGUgDQo+IGVycm9yIGRvZXMgbm90IG9jY3VyIG9uIHVwc3Ry
+ZWFtIGFzIHVwc3RyZWFtIGJ1aWxkcyB0aGUgcGFja2FnZQ0KPiBuYXRpdmUuIA0KPiBJIG5lZWQg
+dG8gdGVzdCBpZiB0aGUgcGF0Y2ggaXMgbmVjZXNzYXJ5IGZvciBib29rd29ybS4NCg0KVGhhdCBt
+YWtlcyBzZW5zZS4gSSBhbHNvIG9ic2VydmVkIHRoaXMgaXNzdWUgaW4gYSBjcm9zcyBidWlsZA0K
+ZW52aXJvbm1lbnQgKGJ1dCBkaWQgbm90IHJlbGF0ZSBpdCB0byB0aGlzIHNjZW5hcmlvKS4gV2l0
+aCB0aGUgcGF0Y2gNCmFwcGxpZWQsIHRoZSBidWlsZCB3b3JrcyBhZ2Fpbi4NCg0KRmVsaXgNCg0K
+PiANCj4gUXVpcmluDQo+IA0KPiA+IGJ1bGxzZXllL2J1c3Rlcj8NCj4gPiANCj4gPiBKYW4NCj4g
+PiANCg0K
 
