@@ -1,79 +1,68 @@
-Return-Path: <srinuvasan_a@mentor.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D5AFC77B61
-	for <webhook@archiver.kernel.org>; Tue, 25 Apr 2023 09:43:27 +0000 (UTC)
-Received: from esa2.mentor.iphmx.com (esa2.mentor.iphmx.com [68.232.141.98])
- by mx.groups.io with SMTP id smtpd.web10.75463.1682415803252319042
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DDCAC6FD18
+	for <webhook@archiver.kernel.org>; Tue, 25 Apr 2023 10:48:47 +0000 (UTC)
+Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
+ by mx.groups.io with SMTP id smtpd.web10.76329.1682419720117713082
  for <cip-dev@lists.cip-project.org>;
- Tue, 25 Apr 2023 02:43:23 -0700
+ Tue, 25 Apr 2023 03:48:41 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: mentor.com, ip: 68.232.141.98, mailfrom: srinuvasan_a@mentor.com)
-X-IronPort-AV: E=Sophos;i="5.99,225,1677571200"; 
-   d="scan'208";a="3836316"
-Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
-  by esa2.mentor.iphmx.com with ESMTP; 25 Apr 2023 01:43:22 -0800
-IronPort-SDR: +I40i/1bwiipR6acEJHowvS7HcaHo/ueyhlZopBQQyzs+Cm+LlyVDHEkLrxyj3VD3pjkYxt1NI
- Wq4kU297gyyqZXqoqYNMLwfpiDAZLRCBCkAopGSYzVw/NyQw/fP8Qvdn6P6N0+9p7+lCH9ixUD
- oRNvf89vEEGVxsY9QmynK+llc/T4tIYPiCK1SRklrixPDe0SZwMHJwTAbhXMjsOeQslRIzGI5c
- ElTWzusAxdn9STQzfAJGsGcDt2kte9vo6klvDdIh/AHYrz/ZJNWMb0SSuBbcU8F9jM/a2iVTTO
- m2I=
-From: Srinuvasan Arjunan <srinuvasan_a@mentor.com>
-To: <cip-dev@lists.cip-project.org>
-CC: <jan.kiszka@siemens.com>, Srinuvasan A <srinuvasan.a@siemens.com>
-Subject: [PATCH] linux-cip: Update to latest releases
-Date: Tue, 25 Apr 2023 15:13:04 +0530
-Message-ID: <20230425094304.3212474-1-srinuvasan_a@mentor.com>
-X-Mailer: git-send-email 2.34.1
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=BkV9fSxc;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-51332-202304251048381011822534a9234017-wdujb8@rts-flowmailer.siemens.com)
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 202304251048381011822534a9234017
+        for <cip-dev@lists.cip-project.org>;
+        Tue, 25 Apr 2023 12:48:38 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
+ bh=uvP8jQTC2dAgxB+xy4LPqpMlNs8B8YSPKnqc3O6Iwe8=;
+ b=BkV9fSxc3nwsu+vh58ZYAmV51zXbwn846Ih3CCHSV5ElVZHmjiUnWWewhYEFbUgfcx+Of1
+ GrvA5ovo5iOeyfYbQ6X4n5yJyGPHzf+Hcydceo9g0N8rmXlwX21M7P6JFOmGp5kJD8gV7Q9O
+ SX0v2kdZ3jJLkFr+nv1NEMQXEwFlE=;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: cip-dev@lists.cip-project.org,
+	jan.kiszka@siemens.com
+Subject: [cip-dev][isar-cip-core][PATCH v3 4/6] initramfs-crypt-hook: Add libcryptsetup-token-systemd-tpm2.so
+Date: Tue, 25 Apr 2023 12:48:33 +0200
+Message-Id: <20230425104835.655946-5-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20230425104835.655946-1-Quirin.Gylstorff@siemens.com>
+References: <20230425104835.655946-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: svr-orw-mbx-15.mgc.mentorg.com (147.34.90.215) To
- svr-orw-mbx-13.mgc.mentorg.com (147.34.90.213)
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 25 Apr 2023 09:43:27 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11339
+ <cip-dev@lists.cip-project.org>; Tue, 25 Apr 2023 10:48:47 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11345
 
-From: Srinuvasan A <srinuvasan.a@siemens.com>
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Signed-off-by: Srinuvasan A <srinuvasan.a@siemens.com>
+This fixes the boot of bookworm with encrypted partitions.
+With systemd (251.5-2) the libcryptsetup library are used see
+https://salsa.debian.org/systemd-team/systemd/-/blob/debian/master/debian/changelog#L258
+
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- ...{linux-cip_4.19.279-cip95.bb => linux-cip_4.19.280-cip96.bb} | 2 +-
- ...{linux-cip_5.10.176-cip30.bb => linux-cip_5.10.177-cip31.bb} | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
- rename recipes-kernel/linux/{linux-cip_4.19.279-cip95.bb => linux-cip_4.19.280-cip96.bb} (72%)
- rename recipes-kernel/linux/{linux-cip_5.10.176-cip30.bb => linux-cip_5.10.177-cip31.bb} (72%)
+ .../initramfs-crypt-hook/files/encrypt_partition.systemd.hook    | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/recipes-kernel/linux/linux-cip_4.19.279-cip95.bb b/recipes-kernel/linux/linux-cip_4.19.280-cip96.bb
-similarity index 72%
-rename from recipes-kernel/linux/linux-cip_4.19.279-cip95.bb
-rename to recipes-kernel/linux/linux-cip_4.19.280-cip96.bb
-index 802a855..0a1af14 100644
---- a/recipes-kernel/linux/linux-cip_4.19.279-cip95.bb
-+++ b/recipes-kernel/linux/linux-cip_4.19.280-cip96.bb
-@@ -13,4 +13,4 @@ require linux-cip-common.inc
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.hook b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.hook
+index a535736..4f7263b 100755
+--- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.hook
++++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.hook
+@@ -42,6 +42,7 @@ copy_exec /usr/sbin/cryptsetup || hook_error "/usr/sbin/cryptsetup not found"
+ copy_exec /usr/bin/systemd-cryptenroll || hook_error "/usr/bin/systemd-cryptenroll not found"
+ copy_exec /usr/lib/systemd/systemd-cryptsetup || hook_error "/usr/lib/systemd/systemd-cryptsetup not found"
  
- KERNEL_DEFCONFIG_VERSION ?= "4.19.y-cip"
- 
--SRC_URI[sha256sum] = "fb5808626317e464408203562941d287fc49f747f3af1c1a34c125229a5efa43"
-+SRC_URI[sha256sum] = "30f092e20799b9797376ee40d14995fd31a68773dff0b4913d4bbe5848cab5f6"
-diff --git a/recipes-kernel/linux/linux-cip_5.10.176-cip30.bb b/recipes-kernel/linux/linux-cip_5.10.177-cip31.bb
-similarity index 72%
-rename from recipes-kernel/linux/linux-cip_5.10.176-cip30.bb
-rename to recipes-kernel/linux/linux-cip_5.10.177-cip31.bb
-index 6f740f5..08bc8ad 100644
---- a/recipes-kernel/linux/linux-cip_5.10.176-cip30.bb
-+++ b/recipes-kernel/linux/linux-cip_5.10.177-cip31.bb
-@@ -13,4 +13,4 @@ require linux-cip-common.inc
- 
- KERNEL_DEFCONFIG_VERSION ?= "5.10.y-cip"
- 
--SRC_URI[sha256sum] = "722931b6291d1c796d571ff2e1bf4393734928edb6af7df7138ca0379d9a27c9"
-+SRC_URI[sha256sum] = "7a53197c1bd26c3c2dbcea0d93d287900dc3e0d92199ef13702e5bf78ae97f56"
++copy_exec /usr/lib/*/cryptsetup/libcryptsetup-token-systemd-tpm2.so || hook_error "/usr/lib/*/cryptsetup/libcryptsetup-token-systemd-tpm2.so not found"
+ if [ -x cryptsetup-reencrypt ]; then
+     copy_exec /usr/sbin/cryptsetup-reencrypt
+ fi
 -- 
-2.34.1
+2.39.2
 
 
