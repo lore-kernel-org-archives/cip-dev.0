@@ -1,66 +1,75 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9456C77B76
-	for <webhook@archiver.kernel.org>; Tue, 25 Apr 2023 10:48:47 +0000 (UTC)
-Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
- by mx.groups.io with SMTP id smtpd.web11.75830.1682419721591155533
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83FBDC77B71
+	for <webhook@archiver.kernel.org>; Tue, 25 Apr 2023 12:48:18 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web11.77956.1682426892980016328
  for <cip-dev@lists.cip-project.org>;
- Tue, 25 Apr 2023 03:48:41 -0700
+ Tue, 25 Apr 2023 05:48:14 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=Cu7Wf55b;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228, mailfrom: fm-51332-2023042510483857af348406d77f487a-mqslsu@rts-flowmailer.siemens.com)
-Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 2023042510483857af348406d77f487a
-        for <cip-dev@lists.cip-project.org>;
-        Tue, 25 Apr 2023 12:48:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=W8Z+TQ3yOt87nb5sqlCgemWV3rHfIneQRsU0PhU1RNU=;
- b=Cu7Wf55bLzdJIO7ImmslO7el2o+PORANzKnY5WZ2ZdTJeqZQKBQgD9Wnb1+lzKcxpN4CWk
- YJoAo+F7Zei7SzWpPpxFEanEAiZYoxkGqXzx3ZZQscAvXSdHGO/YPe0PoTcIXtoejMEMDiGh
- qt6xeRGPs7OqOPdA4D/S2QqyKTA5g=;
-From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: cip-dev@lists.cip-project.org,
-	jan.kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH v3 6/6] .gitlabci: Enable encryption for on buster
-Date: Tue, 25 Apr 2023 12:48:35 +0200
-Message-Id: <20230425104835.655946-7-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20230425104835.655946-1-Quirin.Gylstorff@siemens.com>
-References: <20230425104835.655946-1-Quirin.Gylstorff@siemens.com>
+ dkim=missing; spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id CFC371C0ABB; Tue, 25 Apr 2023 14:48:09 +0200 (CEST)
+Date: Tue, 25 Apr 2023 14:48:09 +0200
+From: Pavel Machek <pavel@denx.de>
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Subject: Steps towards 6.1-cip branch
+Message-ID: <ZEfMCeBR3jIlEU/8@duo.ucw.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="OkgJP2fdTSJcmkE8"
+Content-Disposition: inline
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 25 Apr 2023 10:48:47 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11346
+ <cip-dev@lists.cip-project.org>; Tue, 25 Apr 2023 12:48:18 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11347
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Ensures the build of the buster encryption.
+--OkgJP2fdTSJcmkE8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- .gitlab-ci.yml | 1 +
- 1 file changed, 1 insertion(+)
+Hi!
 
-diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-index 09b6338..bd400cf 100644
---- a/.gitlab-ci.yml
-+++ b/.gitlab-ci.yml
-@@ -313,6 +313,7 @@ build:qemu-amd64-secure-boot-buster:
-     use_rt: disable
-     wic_targz: disable
-     deploy: disable
-+    encrypt: enable
- 
- # riscv64 (sid-ports)
- build:qemu-riscv64:
--- 
-2.39.2
+As discussed on the IRC meeting, we should be preparing 6.1-cip
+branch.
 
+AFAICT we do have some 6.1.y configs, but we lack 6.1.y-rt
+configs. Members should likely comment if all the configurations we
+have are relevant for 6.1 (and should continue to be supported), and
+if we need some new configurations for 6.1.
+
+Then we should start 6.1-cip branch. I propose we start it from 6.1.26
+when that one is released.
+
+=46rom that point on, we should start reviewing 6.1 patches, and start
+requiring patches for older kernels to be submitted for 6.1, too.
+
+We'll need adjustments to the testing, and to the review scripts. I'd
+postpone starting of 6.1-cip-rt branch for now, lets get 6.1-cip
+going, first.
+
+Comments welcome.
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--OkgJP2fdTSJcmkE8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZEfMCQAKCRAw5/Bqldv6
+8h+EAJwLZMqHxmrlQRh6TLbg2hSoJ/uBQwCglP5k6PZicL18Z29K8BCdE/cZeMU=
+=yXK9
+-----END PGP SIGNATURE-----
+
+--OkgJP2fdTSJcmkE8--
 
