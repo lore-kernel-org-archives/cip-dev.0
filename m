@@ -2,31 +2,31 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DED8C7EE25
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F13FC7EE29
 	for <webhook@archiver.kernel.org>; Tue,  2 May 2023 15:38:08 +0000 (UTC)
-Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
- by mx.groups.io with SMTP id smtpd.web11.1534.1683041884354577091
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+ by mx.groups.io with SMTP id smtpd.web10.1462.1683041883647172246
  for <cip-dev@lists.cip-project.org>;
  Tue, 02 May 2023 08:38:05 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=Z5J9XvwH;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-51332-2023050215380277c1d4ad8b8e5a845d-t0v_ph@rts-flowmailer.siemens.com)
-Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 2023050215380277c1d4ad8b8e5a845d
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=DI1haR7S;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-51332-20230502153801f367ff030a6687e832-zv7oa8@rts-flowmailer.siemens.com)
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20230502153801f367ff030a6687e832
         for <cip-dev@lists.cip-project.org>;
-        Tue, 02 May 2023 17:38:02 +0200
+        Tue, 02 May 2023 17:38:01 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=BCVYt7Q1qEXCsHADukbJVNNx9CdHu/kVpyjkaAqI9W4=;
- b=Z5J9XvwHYroSHiPjQD60agxY8yny4PWrSMI4Xo5Dh82awYIICnLy7bA3xuY46RA6lly3HY
- LP5la4s8AjQo1BHCNagZKqIQxD3FAoSHFrVObmBn0vUQ9Ik5LjhlOiUZgN8/W2sN01PoaHHI
- a148h2hLM2TS105hHOm6UVfeMkDKc=;
+ bh=mdVUQ7Uj6HXViHfr9vgw7BJfkJuKAqRCXrOlucLFx0M=;
+ b=DI1haR7SdAx9Ymv2Nn25kxYwogpIJQccWXVZ9OClNpBNL5QuWuZMKb7BDAxDclOte2iBdQ
+ QE3OSIUIMdi5SiTX1ySBLIpWxSGP74hCTlwhp6SP25zzBkTqW5Uw6IscvkdRZ9RFcAnKU7fw
+ /V73b15LH0MXU3M184tKA39avf7/c=;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org,
 	jan.kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH v4 5/7] initramfs-crypt-hook/systemd: Address shellcheck findings
-Date: Tue,  2 May 2023 17:37:57 +0200
-Message-Id: <20230502153759.1284906-6-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v4 2/7] initramfs-crypt-hook: Add support for buster
+Date: Tue,  2 May 2023 17:37:54 +0200
+Message-Id: <20230502153759.1284906-3-Quirin.Gylstorff@siemens.com>
 In-Reply-To: <20230502153759.1284906-1-Quirin.Gylstorff@siemens.com>
 References: <20230502153759.1284906-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
@@ -37,103 +37,118 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 02 May 2023 15:38:08 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11385
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11384
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Mostly quoting errors but also a non working assignment and
-missing paths to executables.
+This introduces the necessary changes for Debian buster(10) with
+inplace encryption.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- .../files/encrypt_partition.systemd.hook      |  2 +-
- .../files/encrypt_partition.systemd.script    | 28 +++++++++----------
- 2 files changed, 15 insertions(+), 15 deletions(-)
+ .../files/encrypt_partition.clevis.hook       | 28 +++++++++++++++----
+ .../files/encrypt_partition.clevis.script     |  3 +-
+ .../initramfs-crypt-hook_0.1.bb               |  5 ++--
+ 3 files changed, 27 insertions(+), 9 deletions(-)
 
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.hook b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.hook
-index 4f7263b..077f43a 100755
---- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.hook
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.hook
-@@ -43,7 +43,7 @@ copy_exec /usr/bin/systemd-cryptenroll || hook_error "/usr/bin/systemd-cryptenro
- copy_exec /usr/lib/systemd/systemd-cryptsetup || hook_error "/usr/lib/systemd/systemd-cryptsetup not found"
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook
+index 5dbc5be..a034d5d 100755
+--- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook
++++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook
+@@ -19,6 +19,9 @@ esac
  
- copy_exec /usr/lib/*/cryptsetup/libcryptsetup-token-systemd-tpm2.so || hook_error "/usr/lib/*/cryptsetup/libcryptsetup-token-systemd-tpm2.so not found"
+ . /usr/share/initramfs-tools/hook-functions
+ 
++if [ -f /etc/os-release ]; then
++    . /etc/os-release
++fi
+ hook_error() {
+     echo "(ERROR): $2" >&2
+     exit 1
+@@ -45,15 +48,26 @@ copy_exec /usr/bin/clevis-encrypt-tpm2 || hook_error "/usr/bin/clevis-encrypt-tp
+ copy_exec /usr/bin/clevis-decrypt-tpm2 || hook_error "/usr/bin/clevis-decrypt-tpm2 not found"
+ copy_exec /usr/bin/clevis-luks-bind || hook_error "/usr/bin/clevis-luks-bind not found"
+ copy_exec /usr/bin/clevis-luks-unlock || hook_error "/usr/bin/clevis-luks-unlock not found"
+-copy_exec /usr/bin/clevis-luks-list || hook_error "/usr/bin/clevis-luks-list not found"
+-copy_exec /usr/bin/clevis-luks-common-functions || hook_error "/usr/bin/clevis-luks-common-functions not found"
++if [ "$VERSION_CODENAME" != "buster" ] && [ -x /usr/bin/clevis-luks-list ]; then
++    copy_exec /usr/bin/clevis-luks-list || hook_error "/usr/bin/clevis-luks-list not found"
++fi
++if [ "$VERSION_CODENAME" != "buster" ] && [ -x /usr/bin/clevis-luks-common-functions  ]; then
++    copy_exec /usr/bin/clevis-luks-common-functions || hook_error "/usr/bin/clevis-luks-common-functions not found"
++fi
+ copy_exec /usr/bin/tpm2_createprimary || hook_error "Unable to copy /usr/bin/tpm2_createprimary"
+ copy_exec /usr/bin/tpm2_unseal || hook_error "Unable to copy /usr/bin/tpm2_unseal"
+ copy_exec /usr/bin/tpm2_create || hook_error "Unable to copy /usr/bin/tpm2_create"
+ copy_exec /usr/bin/tpm2_load || hook_error "Unable to copy /usr/bin/tpm2_load"
+-copy_exec /usr/bin/tpm2_pcrread || hook_error "Unable to copy /usr/bin/tpm2_pcrread"
++if [ "$VERSION_CODENAME" != "buster" ] && [ -x /usr/bin/tpm2_pcrread ]; then
++    copy_exec /usr/bin/tpm2_pcrread || hook_error "Unable to copy /usr/bin/tpm2_pcrread"
++fi
++if [ "$VERSION_CODENAME" = "buster" ] && [ -x /usr/bin/tpm2_pcrlist ]; then
++    copy_exec /usr/bin/tpm2_pcrlist || hook_error "Unable to copy /usr/bin/tpm2_pcrread"
++fi
+ copy_exec /usr/bin/tpm2_createpolicy || hook_error "Unable to copy /usr/bin/tpm2_createpolicy"
+-copy_exec /usr/bin/tpm2_flushcontext || hook_error "Unable to copy /usr/bin/tpm2_flushcontext"
++if [ "$VERSION_CODENAME" != "buster" ] && [ -x /usr/bin/tpm2_flushcontext ]; then
++    copy_exec /usr/bin/tpm2_flushcontext || hook_error "Unable to copy /usr/bin/tpm2_flushcontext"
++fi
+ copy_exec /usr/bin/bash || hook_error "Unable to copy /usr/bin/bash"
+ copy_exec /usr/bin/luksmeta || hook_error "Unable to copy /usr/bin/luksmeta"
+ copy_exec /usr/bin/jose || hook_error "Unable to copy /usr/bin/jose"
+@@ -66,8 +80,10 @@ copy_exec /usr/bin/basename || hook_error "Unable to copy /usr/bin/basename"
+ copy_exec /usr/bin/seq || hook_error "Unable to copy /usr/bin/seq"
+ copy_exec /usr/bin/pwmake || hook_error "Unable to copy /usr/bin/pwmake"
+ copy_exec /usr/bin/file || hook_error "Unable to copy /usr/bin/file "
+-
 -if [ -x cryptsetup-reencrypt ]; then
++if [ "$VERSION_CODENAME" = "buster" ]; then
++    copy_exec /usr/lib/*/libgcc_s.so.1 || hook_error "Unable to copy /usr/lib/*/libgcc_s.so.1 "
++fi
 +if [ -x /usr/sbin/cryptsetup-reencrypt ]; then
      copy_exec /usr/sbin/cryptsetup-reencrypt
  fi
  
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script
-index 468b308..927184c 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script
-@@ -41,7 +41,7 @@ partition_sets="$PARTITIONS"
- create_file_system_cmd="$CREATE_FILE_SYSTEM_CMD"
- 
- if [ -z "${create_file_system_cmd}" ]; then
--	create_file_system_cmd = "mke2fs -t ext4"
-+	create_file_system_cmd="mke2fs -t ext4"
- fi
- 
- open_tpm2_partition() {
-@@ -73,17 +73,17 @@ enroll_tpm2_token() {
- 
- reencrypt_existing_partition() {
- 	part_device=$(readlink -f "$partition")
--	part_size_blocks=$(cat /sys/class/block/"$(awk -v dev=$part_device 'BEGIN{split(dev,a,"/"); print a[3]}' )"/size)
-+	part_size_blocks=$(cat /sys/class/block/"$(awk -v dev="$part_device" 'BEGIN{split(dev,a,"/"); print a[3]}' )"/size)
- 	# reduce the filesystem and partition by 32M to fit the LUKS header
- 	reduce_device_size=32768
--	reduced_size=$(expr $part_size_blocks - 65536 )
--	reduced_size_in_byte=$(expr $reduced_size \* 512)
--	reduced_size_in_kb=$(expr $reduced_size_in_byte / 1024)K
-+	reduced_size=$(expr "$part_size_blocks" - 65536 )
-+	reduced_size_in_byte=$(expr "$reduced_size" \* 512)
-+	reduced_size_in_kb=$(expr "$reduced_size_in_byte" / 1024)K
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script
+index 37bb024..bcb5a04 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script
++++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script
+@@ -8,6 +8,7 @@
+ #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+ #
+ # SPDX-License-Identifier: MIT
++
+ prereqs()
+ {
+ 	# Make sure that this script is run last in local-top
+@@ -67,7 +68,7 @@ reencrypt_existing_partition() {
+ 	reduced_size_in_byte="$(expr "$reduced_size" \* 512)"
+ 	reduced_size_in_kb="$(expr "$reduced_size_in_byte" / 1024)K"
  	resize2fs "$1" "${reduced_size_in_kb}"
 -	if [ -x cryptsetup-reencrypt ]; then
--		/usr/sbin/cryptsetup-reencrypt --new --reduce-device-size "$reduce_device_size"k $1 < $2
 +	if [ -x /usr/sbin/cryptsetup-reencrypt ]; then
-+		/usr/sbin/cryptsetup-reencrypt --new --reduce-device-size "$reduce_device_size"k "$1" < "$2"
+ 		/usr/sbin/cryptsetup-reencrypt --new --reduce-device-size "$reduce_device_size"k "$1" < "$2"
  	else
--		/usr/sbin/cryptsetup reencrypt --encrypt --reduce-device-size "$reduce_device_size"k $1 < $2
-+		/usr/sbin/cryptsetup reencrypt --encrypt --reduce-device-size "$reduce_device_size"k "$1" < "$2"
- 	fi
+ 		/usr/sbin/cryptsetup reencrypt --encrypt --reduce-device-size "$reduce_device_size"k "$1" < "$2"
+diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb
+index 1436b94..997f469 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb
++++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb
+@@ -10,11 +10,12 @@
  
- }
-@@ -93,10 +93,10 @@ if [ ! -e "$tpm_device" ]; then
- fi
+ inherit dpkg-raw
+ DEBIAN_DEPENDS = "initramfs-tools, cryptsetup, \
+-    awk, openssl, libtss2-esys-3.0.2-0, libtss2-rc0, libtss2-mu0, e2fsprogs"
++    awk, openssl, libtss2-esys-3.0.2-0 | libtss2-esys0, \
++    libtss2-rc0 | libtss2-esys0, libtss2-mu0 | libtss2-esys0, e2fsprogs"
  
- for partition_set in $partition_sets; do
--	partition_label=$(awk -v var=$partition_set 'BEGIN{split(var,a,":"); print a[1]}')
--	partition_mountpoint=$(awk -v var=$partition_set 'BEGIN{split(var,a,":"); print a[2]}')
--	partition_format=$(awk -v var=$partition_set 'BEGIN{split(var,a,":"); print a[3]}')
--	partition=/dev/disk/by-partlabel/$partition_label
-+	partition_label=$(awk -v var="$partition_set" 'BEGIN{split(var,a,":"); print a[1]}')
-+	partition_mountpoint=$(awk -v var="$partition_set" 'BEGIN{split(var,a,":"); print a[2]}')
-+	partition_format=$(awk -v var="$partition_set" 'BEGIN{split(var,a,":"); print a[3]}')
-+	partition=/dev/disk/by-partlabel/"$partition_label"
- 	crypt_mount_name="encrypted_$partition_label"
- 	decrypted_part=/dev/mapper/"$crypt_mount_name"
+ CLEVIS_DEPEND = ", clevis-luks, jose, bash, luksmeta, file, libpwquality-tools"
  
-@@ -104,7 +104,7 @@ for partition_set in $partition_sets; do
- 	if /usr/sbin/cryptsetup luksDump --batch-mode "$partition" \
- 			| grep -q "systemd-tpm2"; then
- 		open_tpm2_partition "$partition"
--		if ! mount -t $(get_fstype "${decrypted_part}") "${decrypted_part}" \
-+		if ! mount -t "$(get_fstype "${decrypted_part}")" "${decrypted_part}" \
- 			 "${rootmnt}${partition_mountpoint}"; then
- 			panic "Can't mount encrypted partition '${decrypted_part}'!"
- 		fi
-@@ -134,7 +134,7 @@ for partition_set in $partition_sets; do
- 		 ;;
- 	esac
+-DEBIAN_DEPENDS:append:buster = "${CLEVIS_DEPEND}"
++DEBIAN_DEPENDS:append:buster = "${CLEVIS_DEPEND}, libgcc-7-dev"
+ DEBIAN_DEPENDS:append:bullseye = "${CLEVIS_DEPEND}"
+ DEBIAN_DEPENDS:append = ", systemd (>= 251) | clevis-tpm2"
  
--	if ! mount -t $(get_fstype "${decrypted_part}") "${decrypted_part}" \
-+	if ! mount -t "$(get_fstype "${decrypted_part}")" "${decrypted_part}" \
- 		 "${rootmnt}${partition_mountpoint}"; then
- 		panic "Can't mount encrypted partition '${decrypted_part}'!"
- 	fi
 -- 
 2.39.2
 
