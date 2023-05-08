@@ -1,65 +1,94 @@
-Return-Path: <venkata.pyla@toshiba-tsip.com>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D51DCC77B7F
-	for <webhook@archiver.kernel.org>; Mon,  8 May 2023 15:40:49 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.157])
- by mx.groups.io with SMTP id smtpd.web10.111086.1683560438952917111
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F72C77B75
+	for <webhook@archiver.kernel.org>; Mon,  8 May 2023 23:34:58 +0000 (UTC)
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+ by mx.groups.io with SMTP id smtpd.web11.867.1683588889825922006
  for <cip-dev@lists.cip-project.org>;
- Mon, 08 May 2023 08:40:39 -0700
+ Mon, 08 May 2023 16:34:50 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.157, mailfrom: venkata.pyla@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1115) id 348Fealj014315; Tue, 9 May 2023 00:40:37 +0900
-X-Iguazu-Qid: 2wHHaIQrAK6NM1U8iO
-X-Iguazu-QSIG: v=2; s=0; t=1683560436; q=2wHHaIQrAK6NM1U8iO; m=JFt2Wcb0ETo1kZPpB7sAxOyaHT4bDelh4hAU2ddpBp0=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1110) id 348FeZwH038896
-	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
-	Tue, 9 May 2023 00:40:36 +0900
-From: venkata.pyla@toshiba-tsip.com
-To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
-Cc: venkata pyla <venkata.pyla@toshiba-tsip.com>,
-        dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
-Subject: [isar-cip-core] image_uuid.bbclass: create /etc/osrelease file before do_rootfs_finalize
-Date: Mon,  8 May 2023 21:10:30 +0530
-X-TSB-HOP2: ON
-Message-Id: <20230508154031.26473-1-venkata.pyla@toshiba-tsip.com>
-X-Mailer: git-send-email 2.20.1
+ dkim=fail reason="signature has expired" header.i=@miraclelinux-com.20221208.gappssmtp.com header.s=20221208 header.b=VkhlhvOT;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.167.177, mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-393f3360b06so290241b6e.3
+        for <cip-dev@lists.cip-project.org>; Mon, 08 May 2023 16:34:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20221208.gappssmtp.com; s=20221208; t=1683588888; x=1686180888;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rg75KXfxVWY0Br5p4RgMsBNM9zloVwvXbPeQyP95lfs=;
+        b=VkhlhvOTG6Pm0j3SAYQ9qQFtaqd0OwkeVPcObhnmhl/85xwxb4ElTwD0baOsCN/0/3
+         VoihJpV/X7yIusgl8KY0c17u2A6nlZcynJc93IskmYQQdjvzVRPqTkEmoHCPMykqvRDf
+         qzndGWN+gB14ETpCufU48CEXiUkKVQ8vdxk5Q+dBdO/6Nx37xxhFtXrXUv/c4yVVjUds
+         xJKFbooW7wxLeUzAJ9G7VYaDw0tR4D+nFLPEc/34k8K8lpMw0hMR5+PewTJOfmeMRVhY
+         Bys0vz5SU3CQ6yDDImDDxqEqvEewzXdOLE+PzZ6cmS1GcbkZkgRjD/G6rJZ9VO102f45
+         97ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683588888; x=1686180888;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rg75KXfxVWY0Br5p4RgMsBNM9zloVwvXbPeQyP95lfs=;
+        b=h6Was4l5Gh2+NsEKlSliVd+xuSY1Bb9gZNbuXBFDtcgK+jP6VtzMwe504kGDijXEa+
+         Q4kkSdm29an4w2u85s+IfnZG7v1PJSj96OoYW8d9zdrgkBQsbhwlcwxxp6ysT2TBaKt8
+         awMjoHMrx0qVNchDg5TmLZeUwPjnmSgy5LiRLv+EVtI7xoW2+MVNz+m8Ghc78dpprIv2
+         ar/qRr9aRNNbytPq6QBuqAM+ZOKR8tgY+1YZWgnC0YSbpdo9zrN0sCM5HzR46K3qa65d
+         mGkRy2VYBGJs0Szr+K7v/6wHth7uBU3FWK5ud1ojWas+aeoDTQRHRBNU7qaTrWlnAsTi
+         WXjg==
+X-Gm-Message-State: AC+VfDwYobaQccMHM6xp/puHUe6yd7ROrIK2OGZiuaXh9ZPAm03KgXQb
+	1VtG1sSKnfbBzTApfs1wXEr48ZvNRhv61dSWuXP3DSktU/njlP9s0Mk=
+X-Google-Smtp-Source: ACHHUZ79ph/pTr0eWNK42JKSmoCdRDtQSIC85Vbre55YMN4LwVJZ8edftpsgfCV2LvTDInY8XPj9RTDKlrWdPt3MxeY=
+X-Received: by 2002:a05:6808:43:b0:38e:1558:852f with SMTP id
+ v3-20020a056808004300b0038e1558852fmr325095oic.32.1683588888340; Mon, 08 May
+ 2023 16:34:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 08 May 2023 15:40:33.0603 (UTC) FILETIME=[6D45B130:01D981C3]
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Tue, 9 May 2023 08:34:12 +0900
+Message-ID: <CAODzB9oaJ73uvgppYvcOBbM2xLNB1LQW34TZbjA3gd+bkAKaVg@mail.gmail.com>
+Subject: Size limit in the cip-kernel-sec repository?
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 08 May 2023 15:40:49 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11416
+ <cip-dev@lists.cip-project.org>; Mon, 08 May 2023 23:34:58 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11417
 
-From: venkata pyla <venkata.pyla@toshiba-tsip.com>
+Hi !
 
-reproducible build with swupdate target is getting failed due to the
-`/etc/osrelease` file timestamp is not constant across builds, it is due
-to the file is generated after `do_rootfs_finalize` task and the
-timestamps of the files are made constant in this task and so move the
-task `do_generate_image_uuid` prior to `do_rootfs_finalize`.
+When I push commits to the cip-kernel-sec repository
+(https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec), I get the
+following message.
 
-Signed-off-by: venkata pyla <venkata.pyla@toshiba-tsip.com>
----
- classes/image_uuid.bbclass | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+$ git push cip master
+Enumerating objects: 7, done.
+Counting objects: 100% (7/7), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (4/4), 457 bytes | 457.00 KiB/s, done.
+Total 4 (delta 3), reused 0 (delta 0)
+remote:
+remote: ========================================================================
+remote:
+remote:    Your push has been rejected, because this repository has exceeded
+remote:     its size limit of 0 Bytes by 400 MB. Please contact your GitLab
+remote:                   administrator for more information.
+remote:
+remote: ========================================================================
+remote:
+To gitlab.com:cip-project/cip-kernel/cip-kernel-sec.git
+   78850bfd..92d679f5  master -> master
 
-diff --git a/classes/image_uuid.bbclass b/classes/image_uuid.bbclass
-index 2bd530f..9ffe14d 100644
---- a/classes/image_uuid.bbclass
-+++ b/classes/image_uuid.bbclass
-@@ -54,4 +54,4 @@ do_generate_image_uuid() {
-     echo "TARGET_IMAGE_UUID=\"${IMAGE_UUID}\"" \
-         > "${DEPLOY_DIR_IMAGE}/${IMAGE_FULLNAME}.uuid.env"
- }
--addtask generate_image_uuid before do_image after do_rootfs
-+addtask generate_image_uuid before do_rootfs_finalize after do_rootfs_postprocess
+Even Though, I get the message, commits are pushed successfully.
+I can see commits in the gitlab's UI.
+
+Do we need something in the repository setting?
+
+Regards,
 -- 
-2.20.1
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
 
-
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
