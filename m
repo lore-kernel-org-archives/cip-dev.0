@@ -1,167 +1,235 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <chris.paterson2@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79055C77B7C
-	for <webhook@archiver.kernel.org>; Tue,  9 May 2023 08:42:01 +0000 (UTC)
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (EUR02-VI1-obe.outbound.protection.outlook.com [40.107.241.40])
- by mx.groups.io with SMTP id smtpd.web11.26932.1683621713730264299
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE2A1C77B75
+	for <webhook@archiver.kernel.org>; Tue,  9 May 2023 10:40:01 +0000 (UTC)
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (JPN01-OS0-obe.outbound.protection.outlook.com [40.107.113.120])
+ by mx.groups.io with SMTP id smtpd.web10.28565.1683628795007243468
  for <cip-dev@lists.cip-project.org>;
- Tue, 09 May 2023 01:41:54 -0700
+ Tue, 09 May 2023 03:39:55 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=uFfYrtB4;
- spf=pass (domain: siemens.com, ip: 40.107.241.40, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@renesas.com header.s=selector1 header.b=GbCoLv4H;
+ spf=pass (domain: renesas.com, ip: 40.107.113.120, mailfrom: chris.paterson2@renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ob0cabLz8v+FgN0Ywe2xYVX4fl7MxbSnSCYmVBW8vvpjZfGaKd7aGiChijqXdBqiWTXegbTKdQLME9uW5GbyPtPKCbSJcYU8gbAySHbfjB029oRL+PHaJaew/SLRIhSlfjSU9fCB6O6I22a2CN57HaMMjCeeF8HZr+HLrn0KEQIATrxIkZ1y0KvwFxtqpLF+iozu9hvu81yune6CSK5YZ99we1/YeqWBS1/OXm7gKywFcH1pSR7Mj8ENgnsr7gam/YjFU0+NMk2/BVjE4KyRS/9wCN31S7HA5tF7/khg4cfTNH+A9YPCDwHD/5+zoOcD/Y+oycaTucE/9Wu5PzBYbQ==
+ b=bQRdauQ67wDalf6Ng+nSrZ3hlt0PL+GM7csKuWnXYhkI92pR/zz20BkPrj/+6//tBUw4f0DLkahkdSuX1RDNq9Q5Lt2A47roahfVqjm/qDp0jVQLlEpYs3CKXJteRzorIKeYeB93CryOm9z4r8nnENZNClnywkOvYft9p7PAhQVdBz74VOQZZIb2n+UWnEvUKgMWq/19M9fCVXuL2QDDCpZG9v23EJv9duWwDGQHOTioSLKmChLB+m2t1PLcao66t+eOHyBAUhHufz7NSPUlGiWg0RXb58hvmTIKwj1O1igDG6Up8DjM4fJdXOL5304a3WYhzRXDAp8lZzqEYJb8UA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lpKXMmOONu+9jjPlmrUyt/G5ZVKhi7ZCFsrfW+HfGo8=;
- b=V4eoCNEuYPmGRhdjV3bOkbBZRMheuQoTTLAWE4D8eE/SOd5mgauT2/GN9AujhA13/pE8+2XAdzNYcfb0r1zzZ07+0auDlX8RKIBh0DWnb9Pl9ICZLPfXZbWsRa0jr+Vv3PHJQK7AiOmgoZA5khZ9FwdG2gRc01IF+C2hVbuwYI6T0saJqEt44tEuKRfgmOaaIIF/KPrg5RApn2WsDiS6SvxJGY3er9po9R2GlmxfE70wLR8JMxW+bHMF4XN7kiQAB3jJvHDWuhc22bcD+DbgZU44ETUFCGjsC4MnYVPQFwtM+Ge1OdX8671hJ1+wIY4iSAbPdUz7UEpuvMayZC8DSA==
+ bh=YVMMrd9fc1Ix/heY/4JXkCsIezbJrGWKPrIHG74ztLU=;
+ b=iPetcF36Z5t5AV+k1hLCzNYiMcUVTdfejq4M0TIVMGh/ANJtKHBx4Q8hx1WhwfJGCvfDZyuio1gaNHlSwjgUAlY819R7Oe+6xoWx/shyT5l1QZe2iOMjI2l2Hn/RBd/nU6vhS/UXRVDBljmP/b90kJC/0OpSH0KDGsRushlsDMqy4Ho1MRw0Vpz6WuMefmhhDGtwQYLQvHdwkiIorHkigLFOtkImhXCqDkKMWOOiKLs7JNWCpGE0UEhJYJ7HBo33Yo9DHm3LiYcp4/Y8Il0bf7EL0Eii6slHSghk8D0DxntMc3QEJnGnk20JE0jf54+HJt4oNtRPMM4xeadt7UWT8g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lpKXMmOONu+9jjPlmrUyt/G5ZVKhi7ZCFsrfW+HfGo8=;
- b=uFfYrtB48qJNaWb+58ozkL7Du7DWDX4pl99VjpCtlI14QXP/NqOmKVJWJ2qe5L8cO1o982YiKEqfeb7W7VRhwVEOz50rnhKoM+umAfOAKjsiEGnyr5PDsqAgEPwSc/bnD0O6wYP/fUwQFY5Lx70yeQMJWwFU9gnnXHcjlFy34mssCeDDqvds/8dZjSY9FY2cXfkYaBvUPlD+zCEecsbQfCbwLWPMS0NQtD2zqvu2WnXFM3CdtcFxVohYWy2vVRr3R6zxWGmIuZiK1JXmTvLYjgraiN6H/xIjlOpXPnjtRmzAmem3QUSPmKjbAVS0oasa1OWKPhn6EwpePv81e/r7xQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by DB9PR10MB7932.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:304::13) with
+ bh=YVMMrd9fc1Ix/heY/4JXkCsIezbJrGWKPrIHG74ztLU=;
+ b=GbCoLv4HvW60WNjCVVf+FdWcfXCblv41xZCKmtXWnOJhj/TfGDJ05KZTWlgy7Je7IfY3a4GCRePhwN1o58KGgSp5CD+eELhAcnv8BPhWG0jEclynttNw3VrelpQV8sgTmWmJjC4k8L4gymveqE5N7LuQtfIRXBDrRjVx3L4wV9Q=
+Received: from TY2PR01MB3788.jpnprd01.prod.outlook.com (2603:1096:404:dd::14)
+ by TYWPR01MB9676.jpnprd01.prod.outlook.com (2603:1096:400:232::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6363.33; Tue, 9 May
- 2023 08:41:50 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::b50a:c627:3d12:6f04]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::b50a:c627:3d12:6f04%5]) with mapi id 15.20.6363.033; Tue, 9 May 2023
- 08:41:50 +0000
-Message-ID: <0ff814b1-4238-17d3-6c86-fbcdf9378f81@siemens.com>
-Date: Tue, 9 May 2023 10:41:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [isar-cip-core] image_uuid.bbclass: create /etc/osrelease file
- before do_rootfs_finalize
+ 2023 10:39:50 +0000
+Received: from TY2PR01MB3788.jpnprd01.prod.outlook.com
+ ([fe80::8c55:9dbb:2418:df89]) by TY2PR01MB3788.jpnprd01.prod.outlook.com
+ ([fe80::8c55:9dbb:2418:df89%4]) with mapi id 15.20.6363.033; Tue, 9 May 2023
+ 10:39:50 +0000
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>, Masami Ichikawa
+	<masami.ichikawa@miraclelinux.com>, cip-dev <cip-dev@lists.cip-project.org>,
+	Pavel Machek <pavel@denx.de>, Nobuhiro Iwamatsu
+	<nobuhiro1.iwamatsu@toshiba.co.jp>, Ulrich Hecht <uli@fpond.eu>
+Subject: RE: Size limit in the cip-kernel-sec repository?
+Thread-Topic: Size limit in the cip-kernel-sec repository?
+Thread-Index: AQHZgkEC40jacwRpqkqontinFPUAda9RvUfQ
+Date: Tue, 9 May 2023 10:39:50 +0000
+Message-ID: 
+ <TY2PR01MB37880583E930BBEC98A5803EB7769@TY2PR01MB3788.jpnprd01.prod.outlook.com>
+References: 
+ <CAODzB9oaJ73uvgppYvcOBbM2xLNB1LQW34TZbjA3gd+bkAKaVg@mail.gmail.com>
+ <63fb0d57-3550-1188-8243-7ea8c8b5ab5b@siemens.com>
+In-Reply-To: <63fb0d57-3550-1188-8243-7ea8c8b5ab5b@siemens.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-To: Gylstorff Quirin <quirin.gylstorff@siemens.com>,
- venkata.pyla@toshiba-tsip.com, cip-dev@lists.cip-project.org
-CC: dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
-References: <20230508154031.26473-1-venkata.pyla@toshiba-tsip.com>
- <a030f206-30b6-b2b1-5e66-9dfd796e5d5f@siemens.com>
- <39bea4c9-53fc-4ba3-851b-37ff4798f21e@siemens.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <39bea4c9-53fc-4ba3-851b-37ff4798f21e@siemens.com>
-Content-Type: text/plain; charset=UTF-8
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY2PR01MB3788:EE_|TYWPR01MB9676:EE_
+x-ms-office365-filtering-correlation-id: 04b4eb71-0753-4bee-bb96-08db5079b799
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ xHQOryYnHd0M3EKZzJVxcCITTAO58pDCQWrIV1TuJQyANrwQTf5IU5MjVuT8ltRMrXeu2nyw1sKSaq52EKjKiiNr8J/qee2YhVMzFpzbg46sSRJjoqYuXRbnofvg4zFjZ6HQM8AbGuhaUHWyA6lEBS6vmOFJqPNYA6YkYC3fsIedtcQc9UHNlPjRSQyTWbzX2RTH4F9+2lvw3DmWx0MFqkMCxKW3+j4YDG/nEQT3T66jQ9NU7Dar8sRjK8D8x2ig2aN2LWF5cSZwDnZnke/n3gj1ihxl1QkLvWZow9VQtqhsMD+dp3YxvY8cVh/BJq1+tjwq4zb112O3XPB5fty4Riw8V1XmR0+RjvPFSGxKTIFeKlOhTv2HYCZzZwAgHXprpICDj7UaNOZttEkpkajbRP+s8RHHva/iTLuy2RleqxAhQN3g4StgaTMdB025xmxIaE4TfzJlWBAv+XzFv0pOKQO/oZrD/O0afSZ3czvbfm7Na8RgnEuNHoKWT5k1LF2Bb5FvOIjCGRL4xiphdjfLzZJxX5W0EVQhiGJR1HbroJ0e2qILg22DGPXXD4DLGtj/HakMd+oEiQgi+6qVnNFDhZUnZ6hqbtzOJgMveepiJg8=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR01MB3788.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(396003)(366004)(376002)(346002)(39860400002)(451199021)(45080400002)(86362001)(33656002)(316002)(110136005)(966005)(66476007)(478600001)(66946007)(76116006)(66556008)(66446008)(64756008)(7696005)(34290500002)(55016003)(52536014)(8676002)(2906002)(5660300002)(8936002)(41300700001)(38070700005)(38100700002)(122000001)(186003)(53546011)(26005)(6506007)(9686003)(83380400001)(71200400001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?Windows-1252?Q?PCcweD3tL9cWTeRJLuabA41UjKD6WmBkIhEcS8MZt8VQ7uMtyhis32Bb?=
+ =?Windows-1252?Q?DChHo1vSKLYw3XFcFB/U1xuu9GJY003dy6WFqlSMKhuWGblg2P9t9Gdg?=
+ =?Windows-1252?Q?FxFb559OCoPy+/n1RQ5JlJTUAiwtF1z5yguYeJI5AoySFMaP7egUuvgl?=
+ =?Windows-1252?Q?eSPQZJklGsF1pt3ZOnOSnMGTW6RmRxRxdCSx6yT+a5wsQJ6ky8hnvQ2i?=
+ =?Windows-1252?Q?EMESTlULbIZDUVM3dUROaU9GrFtho9qh/rzys8Lw1j0UIMmJo+00gBmP?=
+ =?Windows-1252?Q?MbPvUmxWHoY/R6kvVbkg6EFM1PDASW430muS6E5d5UmvujB/1VnT+qRK?=
+ =?Windows-1252?Q?Tfl2L0gMgmVxh5S+B0gcMPtNKrbF3LOPOmoEgzpTGBmO4e8E8sWLyKbx?=
+ =?Windows-1252?Q?nQ1pC0xFAEOUCjASxTzhc6Yp55uKgq8yG286PSAC1VAMXHhtfBrM9qSj?=
+ =?Windows-1252?Q?GWJ2zYA9Lk51itEc1a8wEDK4gRMI5FmfbupTP4m+8LEhskZ+sG13S30L?=
+ =?Windows-1252?Q?3ZEg45ORL/LC3+ymUwcUiU0jlKEB/BsKlQlnHCrdnTEKls5prHug9fkt?=
+ =?Windows-1252?Q?4XTuthtTQ2SGFdrU02nc2Kbu9elttVnrPmsCX+W0JvJjGRnxJ7yr0/Qh?=
+ =?Windows-1252?Q?BGOQKeZRs4MhjgqcluzTpr34ImuixuTSkN6M0C0PVAwXTyAazXQBrGJN?=
+ =?Windows-1252?Q?tXhmt5TL0D4VLa0e3cnK5bFV1o78Hzvnds46d1bPl8bUWC4mqaKjEda8?=
+ =?Windows-1252?Q?WYQ1R61Z3bVZSgOOThByXsXLPxSstHj45KAI7VyD8uSAcmGi49gxywkk?=
+ =?Windows-1252?Q?oazX1Lwjlkp+6WENFdWcrDc/YfJybVxO0gf3q9gfl9gMurbdeXiKua3q?=
+ =?Windows-1252?Q?zOhSHNoELFoY44S5sz2jrJ7YMIwBZNh9H16bS3pSU1xmSWb5Xvq8LKNe?=
+ =?Windows-1252?Q?GmMhJgzlxNdi2zFIeU551ibmLghSYUZ8iIQ3QJ5Efq9X37VjozjtL5me?=
+ =?Windows-1252?Q?AXuUYBXwPI3zqeo9HausziLOmt8jBhb4gpjZAtOvPTjJrJ4yan2s8sv6?=
+ =?Windows-1252?Q?zQGLr3vBs4JWI2FQsC5QccX2GlcHaTtctv7hY6MrPQq3bVLHfLyDTfTx?=
+ =?Windows-1252?Q?zmuR1yUuVx2G0TWcKS/PaMhOZxIhKmiPhdB7MGtk6XP9lVNVg6g7+/7c?=
+ =?Windows-1252?Q?O6SyLUwclrSucjW0m59StytO4+5uvDdYidWKzbVH81tuarhA36SiBeIr?=
+ =?Windows-1252?Q?ZVuQCkdKkSF0HZgNqMLOKbmCNqjj8Y0nL/hQpIr0JWldCngpT/8QvwYl?=
+ =?Windows-1252?Q?EtQVlFZkkFzNd+HeCJda396/ICp8nkwKrXLDX8w1bnLzJf35ftOJWMQS?=
+ =?Windows-1252?Q?/ditsqsflETmuzyB4f3hLOsinKJUkSVDhd/aDE2Fppu0OJj5ZT27uFiH?=
+ =?Windows-1252?Q?14echEqCOxCMkvU0cZRLEwbHro9yhxhBhttpaPos/msxKcXUkfu2oC0C?=
+ =?Windows-1252?Q?iJQ4vOnKA6pVznDBiBZffXOLVO2aLJh3X25XXdsuY4L5dGm6LA6DoclK?=
+ =?Windows-1252?Q?ufO17CttUUuColmubOfO2+gis3yZ03rsCckL8yrvdTdpev54zef0mhOv?=
+ =?Windows-1252?Q?30rlZ0/SHlJt4/HgIwfok4kGf0MBtqRvu1vuHl41/1iKktlpcvRSkw8N?=
+ =?Windows-1252?Q?LPkv8rG2d7BReuSXpnrF+ezpe4b0KmklJtl7q19JS9bW55CM8BarEQ?=
+ =?Windows-1252?Q?=3D=3D?=
+Content-Type: text/plain; charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: FR0P281CA0227.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:b2::7) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB9PR10MB7932:EE_
-X-MS-Office365-Filtering-Correlation-Id: 274755ec-80c5-43c0-ea43-08db50693b39
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	6AvkryS6PE+UZn0eiIIsl8ckv4sTZ8oy4N1hHMjFErc34bwCRuNBthFpjdkuYSZ7xeCDbWW+TB8aBTW4UjyOsV4+BOcGzJRzetDde4mmGFtRixAmqIsLVvRr5CI+mosBoUadM6C43qNYvL6b3X2B0+DwiIhXKJnCj4ewteuh7q+rUXMJsEXXck8zni4oZi+3W1Re1YoQL3KgZeR4bfCvhiuGG9XLwmTWZfVY2/dDeB859LqR5baFuelPtz4GPKN9pShzJayjCObxcpSbveVeU/YxvY1CC9FrjLB6vUTekCDT/5S9kdTXQD0Rkk++OnRUsbe+Fm5diEUUem++6bYIR7Cjzm+0inEd5/Djt7FrKod3snhst3xGjMSGGUDP007os7T7mEsutG1h0r4l+ZVThAOG7PrpIj91Th8gPkE4ZTpmXPmpzyXblVjQ7UwFwagekLlSgxFqY4UsF1rr93MVsUxNlwG3ANHJX87M0nwQB+tK/AJBt8JwLdrjfAoJAcKEWy2S8Mkmflaf3c6d92Xw5SPebt6RFKm4kNfF8AUs/NfzWOvQsfa4BeCrr2dafZOy2EpJSymqypGQP+FIoLJ4CUOv3NQ+JqUGKF07vyxkDAelyFYXYbBiOujwP9/QMFVl0AuP8AxCi7ycWhepOaijKjtDtEdAuEpX9dfH5//VaoSwjYESCqywNfWNfXJrjE+E
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(346002)(39860400002)(376002)(136003)(396003)(451199021)(83380400001)(4326008)(6486002)(478600001)(6666004)(2616005)(6506007)(53546011)(186003)(6512007)(26005)(8676002)(44832011)(2906002)(36756003)(38100700002)(66556008)(66476007)(66946007)(82960400001)(8936002)(41300700001)(5660300002)(316002)(86362001)(31696002)(31686004)(403724002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?kRs1MfSZ+UzpwGz8rTQ37lRGL2C+ewqH1KyJaHYU8cbrJHyTtrjLgJZA16df?=
- =?us-ascii?Q?0V+wO1Xw1EMiZ1bcOVnv50OzDfSkx7eXczO0MWEM3+Kfsu/K9/MtvRVK4h6r?=
- =?us-ascii?Q?zVGj56iz2JQkK1EFm3I1TUNJ3MqMSzmtsFxrKos0PL+PgwRlEYZDiX6DpIDW?=
- =?us-ascii?Q?kUgTcxnok+6ESr1HE7H3U/P3i5JbzHGSt7WxkeG2IwSJef63Ut7G6ixqRlgw?=
- =?us-ascii?Q?fPHEcis8VGmjTaYKfYzCUjuUQY0L+4jbBatwyN8OnBNxp9aX6TIikqdFEfBW?=
- =?us-ascii?Q?LCOLPbTevAYLNJu+YCaqHax/X5wpI3LcJYcaq4ojI7+FrAK7QlnGW6MNwvz9?=
- =?us-ascii?Q?xFrMYNKajpC1u9uR4SsQ4ChtfBvo+vwe3LndaXwBnyJaj4NnyUPraMN7/UcI?=
- =?us-ascii?Q?I5RbzdcaZIDOBj2e/Am2nTl6Sd5UFKN7QsjjHe/Nw8UDD9ez9ZtOrKVTi8oZ?=
- =?us-ascii?Q?bCSldQpeKB8QYKPz/9IPto+cnZGRoD29LszMb8g2cpu+HEG9i44GL2DAJwAf?=
- =?us-ascii?Q?Rs1elLyuPlQ6VGXrHJxiF0JMMj8M4kGDJ/uAs1PU20mNqDgP031ilFxywWyk?=
- =?us-ascii?Q?M6QLzddvyAtgs3W/L2oDcTMrwJCUKNOBa3Ioqvunj/uYHDDdmWQiG6icuIaR?=
- =?us-ascii?Q?ubWLLOPZwo1Y/KbiaJhy4CUmA95jcO/cOC9Gz6p5SO6uAF+YXx6LOkGb7vVz?=
- =?us-ascii?Q?KpgZ71K+FEu1IFe+/e+W7h70jCcrS+i5ZLEIPQGI8CbWGEDFo+YDDSTkY7M3?=
- =?us-ascii?Q?KjmbQCwQSbwy5Zg1+MdwBFH4zGM+QH/MBt5EwPPRTy8V6vISaHfeq2b5mZeO?=
- =?us-ascii?Q?zcE5Pj/ltZi/+l16yw3NpoCjVLxP1LZ3ayqAGEXr0fNbzV7g3xiof88iBGMS?=
- =?us-ascii?Q?rQqitRKFfULrITW1MVvb6L31DEMtwJ5ai/NzKFUxAbfcTR4hkgcqX/C5+Egi?=
- =?us-ascii?Q?T8kqykoEi4FJHitfOTrwPE9Hr9XTdRVSwUu53fB25clAX1zdL7jL0Gt5U8Z6?=
- =?us-ascii?Q?mwaDfzGQ0rz2YEulTQI1hLBT0Rd9n7sqQn7eOeH1zAbDS9tjrX3OAj4OoxXT?=
- =?us-ascii?Q?rJQEHrqSzFXZAay0d9qnWYA7BHEddsjDczYu/NX8Vlz8Hp3ZvFXMUCPfACli?=
- =?us-ascii?Q?krYd79IzQutIR4PnSRCHgBSFch0s6Lze05NTqHSYeOlb6ZPJ7M3JWZt9Zq4n?=
- =?us-ascii?Q?jsIvwcRwPnzX2UGJyY+F3gIhQS7Pkxl6TzoN5ghehYJFSG/bw0JsPOlHE0jQ?=
- =?us-ascii?Q?MoC+b/wX45TVwCLG+tTrbk0aRkMCkqZobVfKve0dqWss78Z8oTjkSWsPY3Sp?=
- =?us-ascii?Q?N0xozfBUPBER2IdB+hI9v2K2mKEmEk1pW5cLgqTWTD9cZQ6+h1PH8tIzWWIY?=
- =?us-ascii?Q?iqD95rvA73DZsAFjqgv7OlRsxIYkkZ5czuCR15YhYp5LuYQh3QWUnMOLWA7E?=
- =?us-ascii?Q?a+jsJzwBnnY9r4/iR8V73rK41gpAl02a3Nt1S2k+yJc7/dY9cwpFcEmzdo/m?=
- =?us-ascii?Q?gfIcxm6ZThfKmDZ0vxZO+4Nr6hD7LIVw5BCPs+3/Ns3/39vpsqS2GQHtW0ng?=
- =?us-ascii?Q?ddzAG4W+/ru+Cw/yberA4Xz1cztRNtgxh/EBsOLPmOr95gJiWRbWLLtftRjV?=
- =?us-ascii?Q?Vg=3D=3D?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 274755ec-80c5-43c0-ea43-08db50693b39
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-OriginatorOrg: renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2023 08:41:49.9783
+X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB3788.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 04b4eb71-0753-4bee-bb96-08db5079b799
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2023 10:39:50.4578
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3iMQRspxifM3Mi9JsLPGHdQ+XZOJfAeUpE7dMaEo7l8rNi9tcU3SXkKaKLYWyt9F5wss/nWIJXkIdI3NZq3hSw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB7932
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: llydHfZ37awGYXyKOBTlrvvycxlZlITSg9JA6qbG+UH+4e5J2gcPg8YsAySwwo4hET0HzoGQMs5YNVHnC1sishryrU4JT3SAj2jLPbs7rJ8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB9676
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 09 May 2023 08:42:01 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11424
+ <cip-dev@lists.cip-project.org>; Tue, 09 May 2023 10:40:01 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11425
 
-On 09.05.23 09:22, Gylstorff Quirin wrote:
->=20
->=20
-> On 5/9/23 08:21, Jan Kiszka wrote:
->> On 08.05.23 17:40, venkata.pyla@toshiba-tsip.com wrote:
->>> From: venkata pyla <venkata.pyla@toshiba-tsip.com>
->>>
->>> reproducible build with swupdate target is getting failed due to the
->>> `/etc/osrelease` file timestamp is not constant across builds, it is du=
-e
->>
->> os-release
->>
->>> to the file is generated after `do_rootfs_finalize` task and the
->>> timestamps of the files are made constant in this task and so move the
->>> task `do_generate_image_uuid` prior to `do_rootfs_finalize`.
->>>
->>> Signed-off-by: venkata pyla <venkata.pyla@toshiba-tsip.com>
->>> ---
->>> =C2=A0 classes/image_uuid.bbclass | 2 +-
->>> =C2=A0 1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/classes/image_uuid.bbclass b/classes/image_uuid.bbclass
->>> index 2bd530f..9ffe14d 100644
->>> --- a/classes/image_uuid.bbclass
->>> +++ b/classes/image_uuid.bbclass
->>> @@ -54,4 +54,4 @@ do_generate_image_uuid() {
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 echo "TARGET_IMAGE_UUID=3D\"${IMAGE_UUID=
-}\"" \
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 > "${DEPLOY_DIR_=
-IMAGE}/${IMAGE_FULLNAME}.uuid.env"
->>> =C2=A0 }
->>> -addtask generate_image_uuid before do_image after do_rootfs
->>> +addtask generate_image_uuid before do_rootfs_finalize after
->>> do_rootfs_postprocess
->>
->> Looks good to me - Quirin, any concerns?
->=20
-> No concerns looks good to me.
->=20
+Hello Jan,
 
-Thanks, patch applied to next.
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+> Sent: Tuesday, May 9, 2023 7:39 AM
+>=20
+> On 09.05.23 01:34, Masami Ichikawa wrote:
+> > Hi !
+> >
+> > When I push commits to the cip-kernel-sec repository
+> >
+> (https://jpn01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fgitl=
+a
+> b.com%2Fcip-project%2Fcip-kernel%2Fcip-kernel-
+> sec&data=3D05%7C01%7CChris.Paterson2%40renesas.com%7Ccf0d089f5f4f424
+> 1aa6f08db5058242b%7C53d82571da1947e49cb4625a166a4a2a%7C0%7C0%7C
+> 638192111707052389%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwM
+> DAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7
+> C&sdata=3DCjxru6HLSW5Kq%2BwYCwcuzgmvfKwr4G4x4V8jbdakiT8%3D&reser
+> ved=3D0), I get the
+> > following message.
+> >
+> > $ git push cip master
+> > Enumerating objects: 7, done.
+> > Counting objects: 100% (7/7), done.
+> > Delta compression using up to 4 threads
+> > Compressing objects: 100% (4/4), done.
+> > Writing objects: 100% (4/4), 457 bytes | 457.00 KiB/s, done.
+> > Total 4 (delta 3), reused 0 (delta 0)
+> > remote:
+> > remote:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > remote:
+> > remote:    Your push has been rejected, because this repository has
+> exceeded
+> > remote:     its size limit of 0 Bytes by 400 MB. Please contact your Gi=
+tLab
+> > remote:                   administrator for more information.
+> > remote:
+> > remote:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > remote:
+> > To gitlab.com:cip-project/cip-kernel/cip-kernel-sec.git
+> >    78850bfd..92d679f5  master -> master
+> >
+> > Even Though, I get the message, commits are pushed successfully.
+> > I can see commits in the gitlab's UI.
+> >
+> > Do we need something in the repository setting?
+> >
+>=20
+> This issue affects the complete cip-project. The reason is likely
+>=20
+> https://jpn01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fgitla=
+b
+> .com%2Fcip-project%2Fcip-testing%2Flinux-stable-
+> rc&data=3D05%7C01%7CChris.Paterson2%40renesas.com%7Ccf0d089f5f4f4241
+> aa6f08db5058242b%7C53d82571da1947e49cb4625a166a4a2a%7C0%7C0%7C6
+> 38192111707052389%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMD
+> AiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C
+> &sdata=3D8YzAuSt5tXmv6m61DlGl8KZCTfvNXGyD%2FrAfTs8bS1c%3D&reserve
+> d=3D0
+>=20
+> which hit the 10G limit, see
+>=20
+> https://jpn01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fgitla=
+b
+> .com%2Fgroups%2Fcip-project%2F-%2Fusage_quotas%23storage-quota-
+> tab&data=3D05%7C01%7CChris.Paterson2%40renesas.com%7Ccf0d089f5f4f424
+> 1aa6f08db5058242b%7C53d82571da1947e49cb4625a166a4a2a%7C0%7C0%7C
+> 638192111707052389%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwM
+> DAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7
+> C&sdata=3D6TajRY6KeI9VMENausm3UpzfY5EggnVtjKcHYvVaPXg%3D&reserved
+> =3D0
+>=20
+> Folks, can we avoid this?
+>=20
+> Chris, didn't we apply for an OSS project rank on gitlab.com?
 
-Jan
+We did!
+And according to the billings page [0] this isn't due to expire until 22/06=
+/23.
+[0] https://gitlab.com/groups/cip-project/-/billings
 
---=20
-Siemens AG, Technology
-Competence Center Embedded Linux
+I don't know if there is a storage limit even for GitLab ultimate users tho=
+ugh.
+
+Actually, according to [1] there is a 10GB limit for a git repository, but =
+it hints that this setup may be changing to "namespace" storage limits
+[1] https://about.gitlab.com/pricing/faq-paid-storage-transfer/#q-what-is-c=
+hanging-with-storage-and-transfer-limits
+
+I'll create a support ticket with GitLab and see if they can provide some c=
+larification.
+
+linux-stable-rc is a mirror of the kernel.org repo. There isn't much we can=
+ do to reduce the size.
+If we can't get the quota increased we'll have to go back to using kernel.o=
+rg directly again and remove our mirror.
+
+Regards, Chris
+
+>=20
+> Jan
+>=20
+> --
+> Siemens AG, Technology
+> Competence Center Embedded Linux
 
 
