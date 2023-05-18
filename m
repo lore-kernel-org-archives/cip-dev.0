@@ -1,202 +1,142 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <chris.paterson2@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E9BEC77B7A
-	for <webhook@archiver.kernel.org>; Wed, 17 May 2023 23:11:33 +0000 (UTC)
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
- by mx.groups.io with SMTP id smtpd.web11.2310.1684365086151403509
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4EFCC77B7D
+	for <webhook@archiver.kernel.org>; Thu, 18 May 2023 07:58:15 +0000 (UTC)
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (JPN01-OS0-obe.outbound.protection.outlook.com [40.107.113.104])
+ by mx.groups.io with SMTP id smtpd.web10.12021.1684396690037703261
  for <cip-dev@lists.cip-project.org>;
- Wed, 17 May 2023 16:11:26 -0700
+ Thu, 18 May 2023 00:58:11 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="signature has expired" header.i=@miraclelinux-com.20221208.gappssmtp.com header.s=20221208 header.b=ud4h13K4;
- spf=pass (domain: miraclelinux.com, ip: 209.85.160.49, mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-19a19778b09so590861fac.3
-        for <cip-dev@lists.cip-project.org>; Wed, 17 May 2023 16:11:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20221208.gappssmtp.com; s=20221208; t=1684365084; x=1686957084;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Peac+ZueI12uCGBrI2fdlUzr3ErYWX38gUoUrwwoYN0=;
-        b=ud4h13K4BUvRBXtEweQ0RThaGifEX0b++7hXM9AYfwM2HE2JX0RTZ8HnsYR0v5aCIz
-         1Siw6G0th4nBxEi3H3WGqpUzNEP2x6d7HEMxYF6c2j2w+IHC9HkebHbcmtCqALWmYyqZ
-         NPlbJnDU6t3URrKVa2X03w4X1b9JCCGC/1ydC2w01T5fEtniN/4h6Pc2ZCzGidxSD1Ak
-         uPCUz/LWZAiz5LyBlNcWpTSWMJPXEj7U4beD2odY+Cn2/Rxty1HbNJlMe6pvAF9zMcfj
-         tasSe3/QGjD+qEa4Q4dK6IIjNGO69EONsII+9Pw0qmis+hvbkcBl65c0tRoi/jjqJ+vm
-         w6LQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684365084; x=1686957084;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Peac+ZueI12uCGBrI2fdlUzr3ErYWX38gUoUrwwoYN0=;
-        b=eUImH1MI+I9Qs9DU7v9UJP/FOT22kN25fyxrXwCs14NQtmvRk9b2KrhAZU8yEpqgUq
-         F6EL1vp9mPX6ft1CG1IOtPtMDEWdmNrhiDkRWkOVCaF4WvJVVNq3wO3wWpt1Q2+svIZn
-         hi5rTiS/OtURKRcvK08TyFBHo85jPSv/6GSi8rFgFio1GBLfSmALxfl+ioJhNFiAFJZH
-         x82lDMo6vDqRD+4QUnpJjCp6sjX1tSLod8uZ9PiqI4JMxPcm3DeiYjQ/uE457Y+jUPc9
-         PO5pvo4nWtjKbBoMsG9azk8tP3n6p9YgLv/pRIcqlO0o9TqSiU99bZDI0wYJiqbknaMr
-         pI0g==
-X-Gm-Message-State: AC+VfDzRR7Ollqs4L7OTzgyqDyp1ZxE9mDzuC/lAWb+I32Zre5OgUVFR
-	1fOOzS9IUneGHvDr7wlBtNRlwJmwNLkfkU8Tt2sYX+jh69coFWg0QNY=
-X-Google-Smtp-Source: ACHHUZ7/2ClJqKLjstXXWWZSgi7n6/GISE4aR+X1LeMT1hjC56D/Wgnzb/h3+yYqaoffZeKRU1ej1cW7DfEHVwrkG60=
-X-Received: by 2002:a05:6808:34b:b0:394:39dc:a4b7 with SMTP id
- j11-20020a056808034b00b0039439dca4b7mr172774oie.59.1684365084218; Wed, 17 May
- 2023 16:11:24 -0700 (PDT)
+ dkim=pass header.i=@renesas.com header.s=selector1 header.b=mU5S9xCJ;
+ spf=pass (domain: renesas.com, ip: 40.107.113.104, mailfrom: chris.paterson2@renesas.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CumN2teWEJ59vSseMvggo5n7JbGkFm64mF6L5PbzZ89hxENs+sC6SaV47iPbKKi4HRD0LzcoTsCz89b50LTLGU6HWIji9eJsz4Er4PTV+Q7ksUPRNeh9qjqUQSXncpqk+Db0J8z/9mf0o+ddpI6+9st8vxk6ib4XIDnrPpJ3RsSNw6KMTqILoI9oJ0iUEoRsx0L7znV9Z26jswzbLNCYjUjr6kNQMipehrO3ELaCDXv7dusbGTBvi6OlIrmrkyWwVEQxpDTQDTNX+r6LB3IEql/J7nXRGynSiE6cyOfmrsw1oNgpvJCb0NQ+Us06mHt6ziDas36LC/r40LkdjebUdQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CYBj+suomVFYUDn+cmmKZg/lp3mlXNJ9YSBt6J8kwVU=;
+ b=BZrg8D85+lHkd9OCL9KQZeCnIY32sxqHLQF/Rchbvj/Ysspb7zUnPzUoKqEiaos48xERSkGR1a52y3sXlbc5mgeLtftjDGXcy7vC0qIWgNWB86fFBOI534YZtefLjMoluysaUYnAEmvCWJghSgpgy7ihHUysv0PkfFZtz0s/9bOHW/ldT0xfh9fqZx1z5/dBEYEhzrCzGEzYwn3mScImJvriU8akX+M6QAVdqsYhGW3CxqoMhjQOI2jSoLvN90RLgxL8bSbtjIz2AAA5Pe7USe2NNOufJo7e1oE9ea2S5JU2gQJUp9NrgjxYuY3DDbHtpm1sHMdKyYdZVvhEjzfmDA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CYBj+suomVFYUDn+cmmKZg/lp3mlXNJ9YSBt6J8kwVU=;
+ b=mU5S9xCJUHFVv/i9aqDpuT1Yv3KY0OdYv+F4iH7GQN303/s9O9311h24aPeH83pOhccDbAovMNE5x0ciSo8Ec8/rpdW7IuqgkJMcjK1+chXBGsSFWiEUCGEssH6szktxbLG1YU5EEdsQ1IcD4tGEsh5DdJW6LiRq2AxLiAKR1MY=
+Received: from TY2PR01MB3788.jpnprd01.prod.outlook.com (2603:1096:404:dd::14)
+ by TYWPR01MB12061.jpnprd01.prod.outlook.com (2603:1096:400:447::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6411.18; Thu, 18 May
+ 2023 07:58:06 +0000
+Received: from TY2PR01MB3788.jpnprd01.prod.outlook.com
+ ([fe80::a7d8:4c3a:9cfd:2e79]) by TY2PR01MB3788.jpnprd01.prod.outlook.com
+ ([fe80::a7d8:4c3a:9cfd:2e79%4]) with mapi id 15.20.6411.019; Thu, 18 May 2023
+ 07:58:05 +0000
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+CC: cip-dev <cip-dev@lists.cip-project.org>
+Subject: RE: gitlab oddities again
+Thread-Topic: gitlab oddities again
+Thread-Index: AQHZiOIZHXANjR5SaEuRxwPAhM5fB69fqafw
+Date: Thu, 18 May 2023 07:58:05 +0000
+Message-ID: 
+ <TY2PR01MB3788E34CCA47D8B89A993D23B77F9@TY2PR01MB3788.jpnprd01.prod.outlook.com>
+References: <08f9b5e5-e68d-7105-6e15-c742abb0c563@siemens.com>
+In-Reply-To: <08f9b5e5-e68d-7105-6e15-c742abb0c563@siemens.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY2PR01MB3788:EE_|TYWPR01MB12061:EE_
+x-ms-office365-filtering-correlation-id: 81b60082-8e43-47f9-9e2b-08db57759cdd
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ bNm+iHDNkQVjZztdb0+y3oMvIs6wjxN8NX2HfF1g4IK7+N6u6YhkyznU3lRUeTcW2g740MsZGs258BBrvW2cV8ngsSEUOARdXQ3HZMeTDGiUcF8XD3fVhqylK0OnC2UubBL9HfEpbC7JmOWxl/EX2FOY89+ZIxsmkenQc7/ffGHgEQzRStadZt/l8z+kg7x8pC5nePrYFffhPb3fEEl7TxBphgfSimJ4/GAhGHphHNNwwbXlTOiyq2iYvVfmkYjiRwCEl2tTUSDi+Om36U+ipUOKiOTaBDe2CPaWFjScM2Pr+MTupFSvlJnG9yLtspPPjMhD+vArQaTeoqeVuF0+480/iOaYlKMHEpNZBdma2a9JkEoEipBOO9q1Tef9w8NKcGitTK+SkDlwlHiCFGDnFqnD8oF5x/8uXZXLLwbyOvc6ISU2teADmmEp396Iz7TwQhzsvq5tusjXrk7D40YGr/SR6XkL0SN9gIDL6W9Fc5HunD+puP9gwPwTTcj/f7x/AVF6rsVYQo6xvWmHPEtO6KHqUzQ/bLJm7qT0WD2jvBG9yhCOEUz7VZedcHD/HReX1e0ouGpwDTMHEK55dNn6c7YYP0K2KbKFhojgwg5TK3g=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR01MB3788.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(396003)(376002)(366004)(346002)(39860400002)(451199021)(478600001)(186003)(8676002)(8936002)(2906002)(4744005)(316002)(41300700001)(6916009)(4326008)(33656002)(7116003)(86362001)(66476007)(76116006)(66556008)(55016003)(66946007)(64756008)(5660300002)(71200400001)(7696005)(66446008)(38070700005)(52536014)(9686003)(26005)(122000001)(6506007)(38100700002)(3480700007)(966005)(83380400001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?aXJuYjZidnVlamh2aWJUaXJ1NW9Rei8vaDlsWWk5UllUUTR2dzEvRTI3WFgr?=
+ =?utf-8?B?ZHh2M0ZKcEtiaDRhNnRUUzk1cFVRK3Bjb0tUUGxESU04WWxLMXA1SGs1TlVJ?=
+ =?utf-8?B?RWtrQ3dXN0xHQmg1dEZMN3o3ZEpPYm1nL29XNFR6L3J1Z0tnWjRrR0QzQ08x?=
+ =?utf-8?B?SW93MDRad01UVXJTWUIzK0hjbkxEV0NteSs4TzY5bklqS2lHVTFJa3lQdlZ0?=
+ =?utf-8?B?WmQ0SEFXeGJJTXZuc2R6bUtUbTBQVmIyYkJWczlqSmVuL2JaWDkzdTBDa3RT?=
+ =?utf-8?B?RXUxZDZScVV1TVc3YytybUpQcXVHK05VVnBtVFh4NkdaRG5TUVNjSWdOL1JV?=
+ =?utf-8?B?b0ZLcUY4cVdWSW40VkdZdFI4cnErbDV2QWdhcHljNEFVY1oybk5jMmV1bUtW?=
+ =?utf-8?B?aVlkM3Q3MUtkL1JiQm1nWWplMThWZmZtajNBS3BTUWpVNVJBaUtKRTVOOWVq?=
+ =?utf-8?B?bk9aNklxN0hwNWdKVzR1bUEzZ21JaFI1emdHNEcxenJkblBGV2pmZVp4RmVO?=
+ =?utf-8?B?T3hGcGxacU5Qd0tOb1Nua3BiMHI3a3JBMnM2SlJFUEU1OXBLVjhqUWNiNlVo?=
+ =?utf-8?B?aGhRdFU4K21naUNIUDk0NGJqbkFOakU5Zy8zVWdLejZQcWE1MDZMQVpFQk50?=
+ =?utf-8?B?SXk1Q3R4QXdydmdCaHJleUs1a0h3Q1FRMXdvTWhuajVjNHg3K0Rpam83elQ3?=
+ =?utf-8?B?WEJzQzVvMFd6cjlxd0xVUkd0Rm1MZU9OekRUdDkyRFBhZXBlZ0wwSHdLREhV?=
+ =?utf-8?B?TGpRVGd4c2lRMVBkUWlwRmFjRy8ydHY1T0lNdjRiS2J4VUhhdjNSUXVEVWlV?=
+ =?utf-8?B?aGhVWnQ0a3J5ZmM0WWZnQmlQc29OQmp3TFBBNExzMjg1RC8rQ0docERHT1Jz?=
+ =?utf-8?B?S3dTTWdFZWdubTBPY0VqUlIzd3hGL1MwN01STlBpWXdJbXROL1FSc0llazVh?=
+ =?utf-8?B?RDV2Mzl3dndKUnhyM2wrakN3dyszTzB2SzhhcENGdWU0U2JkWmhpeXViMG1E?=
+ =?utf-8?B?MEdUVCtETzVNZXVMemJucWR0NWU4Uml6aXBNaUE5MUJQZTBEblI5M1hsYXFn?=
+ =?utf-8?B?bFBLWEdNTk4rbkp6RC82VFFLMC9rbzNLWGpRV1V3TFIwMG9La3o5bTlYQ1Yw?=
+ =?utf-8?B?akYyR3Myc3NEZjJjaVBJSUNLZHhSSklrZmwwaVpYS1Bzem8xUEt5N1FDKzVW?=
+ =?utf-8?B?RjdNREl6ZWtQWWpVd00vcEpvRVZTZW5peExyWG0yNnVaNG1SbWE2TnBGYzhZ?=
+ =?utf-8?B?TzF0bEduZ1NSbStkSmU0TGZuS25IREN0eTcydjBGR2RvZlVNUE5ucitqQ1Vq?=
+ =?utf-8?B?U2hPQnVld05RMEdLdlkyOENGQTNMSWQwQTc4Y3JMcmhDSVJLU2V1eEVHYnhI?=
+ =?utf-8?B?YkhxYVpiQ3F3VWRnenE5ZnEvdHc3aXBXeUwxMVNnL0tGWUh2TG43M2NNYWQz?=
+ =?utf-8?B?WmpSS3hFUWJUUmFIRmNjditwUXM4clFPTVk4MCswODRwem9NRTVyUkNlMDA3?=
+ =?utf-8?B?VXBOYjhlam1YZzFXU3V4Z0xJbnh1dHhBb3puRWZSMGhETGxBU2k2WVdmRmFH?=
+ =?utf-8?B?SGJWNEpsZXhoNEJvNGFZbEo3dzNMd28rdjBiS2lLYXlCZXhDZGowM3RpR0VR?=
+ =?utf-8?B?b1dLRDZXVVAzUUdJazVVaDJ5dDhDRjA3VFBvRkw0ejA3YmZjV2dVYWgybWFB?=
+ =?utf-8?B?Q3RhS1ZSQXg2dDJyL3U4cDd6MlF2R3owb1hySjBxRS9UbHNTWUlJV0FEejkz?=
+ =?utf-8?B?TzRXRkYyVjhyYzJ3ZlJOSWtGa3VEdzV6TWhVSU9xN09GM29xZUsrSElOS0pC?=
+ =?utf-8?B?NzFiZGh6TlQySnh0VGxPZEI3WGhhMyt6alpLRG9kRjh1bGRJRnk0K1hQeXk1?=
+ =?utf-8?B?TXlza3lCZXhwc3psTXZYYzRKb1Z4dUJyRGl0SnNISGMxUlBRaVhpaWNpckpJ?=
+ =?utf-8?B?QVZ4emN5dDdZczZ5b2NBSmthT0V5TVlWNFI0WHBDbFQyWCswV3lLUW80TGtz?=
+ =?utf-8?B?YUtVU2UvTnFaYkVTQTEvZEN0ODJ1aDJ5Vk5TVlpKNHd3SlQ2bWk5L0ZyL2U0?=
+ =?utf-8?B?ZTZhQzR4eFNkYVN6OUNRcmtZVk10K2lCZ0RPMTZGWWgrRjBnaDZCekorUFlv?=
+ =?utf-8?B?bG9IdTJueGpZSzlhZ1BDR0Q2eUlYVUVBTEZ0R0xSTVAvYnd1bkdzcDJ0UlUr?=
+ =?utf-8?B?WHc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 18 May 2023 08:10:47 +0900
-Message-ID: <CAODzB9r3gM26gfJO_NB0xjbzjT6NCXMZgBCTM4g5wM=Y_uzQag@mail.gmail.com>
-Subject: New CVE entries this week
-To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB3788.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 81b60082-8e43-47f9-9e2b-08db57759cdd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 May 2023 07:58:05.7067
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ri0+HvEFFJgQrWz9bz/CidOmMfO0Hdi+tYLO9iqKg+D8TnpuQjrx2i9qwWqTTkhtq4JW5WHx+KVwNugzIb+X4CCR4F25gp7Bj5UlDI4MuJg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB12061
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 17 May 2023 23:11:33 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11510
+ <cip-dev@lists.cip-project.org>; Thu, 18 May 2023 07:58:15 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11511
 
-Hi !
-
-It's this week's CVE report.
-
-This week reported 0 new CVEs and 8 updated CVEs.
-
-* New CVEs
-
-There is no new CVE this week.
-
-Fixed status
-
-* Updated CVEs
-
-CVE-2023-2269: A possible deadlock in dm_get_inactive_table in dm-
-ioctl.c leads to dos
-
-stable 4.14, 4.19, 5.10, 5.4, 5.15, 6.1, 6.2, and 6.3 were fixed.
-
-Fixed status
-mainline: [3d32aaa7e66d5c1479a3c31d6c2c5d45dd0d3b89]
-stable/4.14: [c9dfa8ba3b181e67970f06d80de18aa257d1ecda]
-stable/4.19: [b4b94b25c78ed03be0e07fa4e76fe51e64dac533]
-stable/5.10: [ea827627a9249154b34b646b1e1007013402afea]
-stable/5.15: [e11765cea2050fa25fc3e03da858e83284c5ce79]
-stable/5.4: [29a1ef57c3be1d53ecadb749d45b0636e8245a89]
-stable/6.1: [9a94ebc74c3540aba5aa2c7b05032da4610a08c9]
-stable/6.2: [243093d536fe3cc78b450f1beb8d584505ea3193]
-stable/6.3: [a554e6ec3626d4c11f55d7eef8d6aa93fb211c24]
-
-CVE-2023-2598: An OOB access bug was found in the io_uring subsystem
-
-stable 6.3 was fixed.
-
-Fixed status
-mainline: [776617db78c6d208780e7c69d4d68d1fa82913de]
-stable/6.3: [3a0a9211d7d0138d55aecd209b05e6d4a9eec383]
-
-CVE-2023-32233: netfilter: nf_tables: deactivate anonymous set from
-preparation phase
-
-stable 4.19, 5.10, 5.4, 5.15, 6.1, 6.2, and 6.3 were fixed.
-
-Fixed status
-mainline: [c1592a89942e9678f7d9c8030efa777c0d57edab]
-stable/4.19: [c6989314fd809c5eaf4980d6fa474f19fc653d6c]
-stable/5.10: [e044a24447189419c3a7ccc5fa6da7516036dc55]
-stable/5.15: [21c2a454486d5e9c1517ecca19266b3be3df73ca]
-stable/5.4: [c8b6063f13add68f89540aa5030ceee875f48aa2]
-stable/6.1: [4507918cd1f8b80f21a396fa0531d53e372bed66]
-stable/6.2: [6b0801dcc1aa4373d28ac8ee396788d2e715c495]
-stable/6.3: [f8486683ffa30456e0be4290282a44c4459a3287]
-
-CVE-2023-28410: A potential security vulnerability in some Intel=C2=AE i915
-Graphics drivers for linux may allow escalation of privilege
-
-According to the SUSE bugzilla
-(https://bugzilla.suse.com/show_bug.cgi?id=3DCVE-2023-28410), commit
-661412e ("drm/i915/gem: add missing boundary check in vm_access") in
-5.19-rc1 is fixing this CVE.
-This bug was introduced by commit 9f909e2 ("drm/i915: Implement
-vm_ops->access for gdb access into mmaps") in 5.8-rc1.
-
-Linux 5.4, 4.19, 4.14, and 4.4 are not affected.
-
-Fixed status
-mainline: [661412e301e2ca86799aa4f400d1cf0bd38c57c6]
-stable/5.10: [89ddcc81914ab58cc203acc844f27d55ada8ec0e]
-stable/5.15: [312d3d4f49e12f97260bcf972c848c3562126a18]
-
-CVE-2022-39189: KVM instruction emulation doesn't clear
-KVM_VCPU_PREEMPTED, breaking guest's TLB flushing
-
-stable 5.10 was fixed.
-
-Fixed status
-mainline: [6cd88243c7e03845a450795e134b488fc2afb736]
-stable/5.10: [529f41f0eb1ef995bfa83c121c3cfe3a0720119a]
-stable/5.15: [92343314d34e04da0923cefd3be67521d706fa35]
-
-CVE-2023-1380: wifi: brcmfmac: slab-out-of-bounds read in brcmf_get_assoc_i=
-es()
-
-stable 4.14, 4.19, 5.10, and 5.4 were fixed.
-
-Fixed status
-mainline: [0da40e018fd034d87c9460123fa7f897b69fdee7]
-stable/4.14: [ac5305e5d227b9af3aae25fa83380d3ff0225b73]
-stable/4.19: [39f9bd880abac6068bedb24a4e16e7bd26bf92da]
-stable/5.10: [549825602e3e6449927ca1ea1a08fd89868439df]
-stable/5.15: [936a23293bbb3332bdf4cdb9c1496e80cb0bc2c8]
-stable/5.4: [425eea395f1f5ae349fb55f7fe51d833a5324bfe]
-stable/6.1: [e29661611e6e71027159a3140e818ef3b99f32dd]
-stable/6.2: [228186629ea970cc78b7d7d5f593f2d32fddf9f6]
-stable/6.3: [21bee3e649d87f78fe8aef6ae02edd3d6f310fd0]
-
-CVE-2023-2002: bluetooth: Perform careful capability checks in hci_sock_ioc=
-tl()
-
-stable 4.14, 4.19, 5.10, and 5.4 were fixed.
-
-Fixed status
-mainline: [25c150ac103a4ebeed0319994c742a90634ddf18]
-stable/4.14: [73ddc585228db650bd4ff10d5b59c831924fd9ba]
-stable/4.19: [8d59548bae309000442c297bff3e54ab535f0ab7]
-stable/5.10: [98cfbad52fc286c2a1a75e04bf47b98d6489db1f]
-stable/5.15: [f1e6a14d5ae879d6ab6d90c58d2fde1b5716b389]
-stable/5.4: [48cdcb40d589d990ccc1a99fb76843484ce732a0]
-stable/6.1: [47e6893a5b0ad14c0b1c25983a1facb1cf667b6e]
-stable/6.2: [727b3ea80f3fdda6c686806ce3579face0415c76]
-stable/6.3: [dd30f9da333748488d96b7cb3c5a17bbaf86b32d]
-
-Currently tracking CVEs
-
-CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
-Bluetooth Core Specifications 4.0 through 5.2
-
-There is no fix information.
-
-CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
-Provisioning Leads to MITM
-
-No fix information.
-
-CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
-
-No fix information.
-
-Regards,
---=20
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
-
-Email :masami.ichikawa@cybertrust.co.jp
-      :masami.ichikawa@miraclelinux.com
+SGVsbG8sDQoNCj4gRnJvbTogSmFuIEtpc3prYSA8amFuLmtpc3prYUBzaWVtZW5zLmNvbT4NCj4g
+U2VudDogV2VkbmVzZGF5LCBNYXkgMTcsIDIwMjMgNjowOCBQTQ0KPiANCj4gSGkgQ2hyaXMsDQo+
+IA0KPiByZW1vdGU6ICAgIFlvdXIgcHVzaCBoYXMgYmVlbiByZWplY3RlZCwgYmVjYXVzZSB0aGlz
+IHJlcG9zaXRvcnkgaGFzDQo+IGV4Y2VlZGVkDQo+IHJlbW90ZTogICAgIGl0cyBzaXplIGxpbWl0
+IG9mIDAgQnl0ZXMgYnkgMTQwIE1CLiBQbGVhc2UgY29udGFjdCB5b3VyIEdpdExhYg0KPiByZW1v
+dGU6ICAgICAgICAgICAgICAgICAgIGFkbWluaXN0cmF0b3IgZm9yIG1vcmUgaW5mb3JtYXRpb24u
+DQo+IA0KPiBBcmUgeW91IG91ciBhZG1pbj8gOkQgQnV0IHlvdSB0YWxrZWQgdG8gZ2l0bGFiIGxh
+c3QgdGltZSwgcmlnaHQ/DQoNCkhhLiBJJ20gYW4gIm93bmVyIiwgc2FtZSBhcyBvdGhlcnMgaW4g
+Q0lQIDopDQoNCkZvciBzb21lIHJlYXNvbiBHaXRMYWIgaGFzIG5vdyByZS1taXJyb3JlZCBhbGwg
+b2YgdGhlIHRhZ3MgaW4gbGludXgtc3RhYmxlLXJjLCBldmVuIHRob3VnaCBpdCdzIG9ubHkgbWVh
+bnQgdG8gYmUgcHVsbGluZyAicHJvdGVjdGVkIiBicmFuY2hlcy4NCkxvb2tzIGxpa2UgdGhpcyBp
+cyBhIGtub3duIGlzc3VlOiBodHRwczovL2dpdGxhYi5jb20vZ2l0bGFiLW9yZy9naXRsYWIvLS9p
+c3N1ZXMvMjQ4NzMNCg0KSSdsbCBleHBlcmltZW50IGFuZCBpZiBJIGNhbid0IGdldCBpdCBmaXhl
+ZCBJJ2xsIGp1c3QgcmVtb3ZlIHRoZSBtaXJyb3IgYW5kIGdvIGJhY2sgdG8gdXNpbmcga2VybmVs
+Lm9yZydzIHJlcG8uDQoNClJlZ2FyZHMsIENocmlzDQoNCj4gDQo+IElzIGFueW9uZSBlbHNlIHNl
+ZWluZyB0aGF0IG9uIHB1c2hlcz8gVGhlIGlzc3VlIGlzIGN1cnJlbnRseSBoYXJtbGVzcyBhcw0K
+PiBwdXNoaW5nIHN0aWxsIHdvcmtzLiBCdXQgdGhlcmUgbWlnaHQgYmUgbW9yZSBiZWhpbmQgaXQu
+DQo+IA0KPiBKYW4NCg==
 
