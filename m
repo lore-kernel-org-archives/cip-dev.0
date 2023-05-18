@@ -1,148 +1,338 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70765C77B7D
-	for <webhook@archiver.kernel.org>; Thu, 18 May 2023 11:18:36 +0000 (UTC)
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (EUR04-HE1-obe.outbound.protection.outlook.com [40.107.7.43])
- by mx.groups.io with SMTP id smtpd.web10.14515.1684408711376886404
- for <cip-dev@lists.cip-project.org>;
- Thu, 18 May 2023 04:18:32 -0700
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE182C7EE22
+	for <webhook@archiver.kernel.org>; Thu, 18 May 2023 11:46:36 +0000 (UTC)
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+ by mx.groups.io with SMTP id smtpd.web10.15003.1684410389870845977
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Thu, 18 May 2023 04:46:29 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=DZzK3veE;
- spf=pass (domain: siemens.com, ip: 40.107.7.43, mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UwP0tfWmYEjJPqU9QSbkUr7Fh/AtHs5aFpQI4HtDstOy/U3gFxFJD1GfhQU4/P7pTnDDBtiYrsNEy7wbriu9IHT75LKXRYegEmQaWma4DTK2/1uIce1sddoxM04jmwzwNR77ZOskIIG7cV2Vc7mIkccRNFOgRDM8SRg3gpb1EFuws0T6aGM8OcIHNxSbOVgStw20cgksj8LuSk4NCRBgyMTZtx/usRRlbtcCuCUGv0hN+X4ybVs9Gfpobmd3x7zLsgUBgg+hNBMdboUc85m6aa79tSMhfop2JKQNM0K5CuVNlFFm436KjLZFwops+3JZsEpineDumE43l5BAXGLoHg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uYPl2iHWFK6g05t4VDFXyeUcAIQCja78UHqDIbAJAWY=;
- b=fDvJu8vBf5/ytirzzCpIWsqi6WpJE0nL23fK1k703bFIRaQAR7ZDK1zZR9mdc2iw557FwuNp5L1WGowcDrMVB4sZqsJFQIvJ37omj2nJU97K+Gl4igH3KkLvhMYOvC6Knq0opyLawPueaXjaiUdOULhrOYaKRmLZRvTbR4RLp/kI3S+Vex+1KC0IxpbARB2ZUzQ081cHS6z8GN9oXAsYVW21HE3ptIu0jsxIyQyhsXpPSxFXjt9J2eCy53z6n9zgqRebyX9pCI8r1Da+zJ9glKl4U+wfAtwT5t9S9Kx9Ly/V/s9vDGPQPo3KosXoouk6JkH9qS6cddSP/mHN+4Rshw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uYPl2iHWFK6g05t4VDFXyeUcAIQCja78UHqDIbAJAWY=;
- b=DZzK3veEAxNngb7gA1i9zYjYePNLdfGxezuDG93nLBqnYfzosgXUwd15UkxNPKF9FfuIzE1cXKh1cCy79H64gZPLi19v3LOiMeD7/c6brnWqQMh6jIbVpfUYjYkZPR+CGYctMbct1oLOzOxhLY12/DMW+41oFBTjDhjAZ3FHbxMDS6/TSBDTq5moT/CQsa/BiN9gE2eL6eL+2tIKmD/AoNkfNG4167rA8E8apsVkbyHcdpSof64HJhv0/mV8q7Z+/mwZWflFGCp/X35WnrDbpgVAAbt9kI3LDA33Ni+woh0KgwEvwCqEaplWYQ99XcwSJ2vwVXoPT3/RnOUbNOT8jw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by DU0PR10MB5363.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:34e::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.34; Thu, 18 May
- 2023 11:18:28 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::d638:8333:21fb:5f18]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::d638:8333:21fb:5f18%7]) with mapi id 15.20.6411.018; Thu, 18 May 2023
- 11:18:28 +0000
-Message-ID: <54d7c225-2a38-257a-c68a-0a1fa20b26fc@siemens.com>
-Date: Thu, 18 May 2023 13:18:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: CIP IRC weekly meeting today on libera.chat
-To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR0P281CA0044.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:48::7) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+ dkim=pass header.i=@kernelci-org.20221208.gappssmtp.com header.s=20221208 header.b=DD+Cnb75;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.45, mailfrom: bot@kernelci.org)
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2532c2c419dso1492484a91.0
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Thu, 18 May 2023 04:46:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1684410389; x=1687002389;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=9vaSUGa7OMiRBKEVKIU2xVlvzdYb/+kCLCj8UN6oBbw=;
+        b=DD+Cnb75LGcW9NYD/gvVq5AyuLmwcMNSWPWEItChs5jAswVDn+7ahvaRLeoSvd5+aS
+         NrIn5luR77MWsBkFt8Fk7f2uNDhvm5iXOyf8TegRzCLfTNs+NMi3S22MNFNMysOze8vD
+         pJAQcENkUUFD0PiDZhgSKtlETvK/+dhbSdMVREF+lnR0i3el7COOlcHyQ9NQL37COLYB
+         odMLu0uqGGyJcj3N0hSTHan6AYi1QzhxjvmiVCFThdjuxKRO+y6G34K+t0UC7EDDzMJT
+         oAw6W4V4FuHWHe5usbuRJGEnVElZ7m4ovekAIz1cK3xtOHB8QX7NTFQKQtiRt5j/vQV0
+         rDyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684410389; x=1687002389;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9vaSUGa7OMiRBKEVKIU2xVlvzdYb/+kCLCj8UN6oBbw=;
+        b=TBw00/kV0kh3wKfi1TZVgl69ZKzF2FX8JinxagZpfwZFFexO31hj/ILINhXdOVtArw
+         w1RKcnanO8WxPV6dxYg5bvRpqbgvFl/jefJjm/lT7XdBKM6wN7uRI0wDmRzPo+tI53hW
+         ZpGhlzJBT5rQ42F51tACxr5eSdNJ//9lNiGb9o0cOHzFqZ9XeZlJy6mmGQHi5N6zJeL0
+         NSUqYNj78ffnZaU2kYxiRUTL90o3mTrpRruh336MNheCDXpqMC6zNYc5ftlf7JcIWKnu
+         ipyRwGCp0oLvHflZSYArOAe5Rse1r3Kkyjr/qxXIrhU2US9Fft24Ydyk+OtfE8p89Asy
+         tOLQ==
+X-Gm-Message-State: AC+VfDxYllevAnIwaAkdoiRGn5yO/3N/IOQvNnCJt8QS016mATmtYrme
+	N+/68F/TwaQvEwk1zM4BA+V6fYqqMuGaQ8n1WyVHVw==
+X-Google-Smtp-Source: ACHHUZ7m6oY1zrqMWHCgHKMpNzmJ0QjjrDV9Ctrl0KUwi0SDOBwxH2croQtl7koXOpsZsQqq2mS9YQ==
+X-Received: by 2002:a17:902:d50e:b0:1ab:1351:979e with SMTP id b14-20020a170902d50e00b001ab1351979emr2451086plg.10.1684410388602;
+        Thu, 18 May 2023 04:46:28 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id jj10-20020a170903048a00b001aad714400asm1205836plb.229.2023.05.18.04.46.27
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 May 2023 04:46:28 -0700 (PDT)
+Message-ID: <64661014.170a0220.e7a40.1a6c@mx.google.com>
+Date: Thu, 18 May 2023 04:46:28 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DU0PR10MB5363:EE_
-X-MS-Office365-Filtering-Correlation-Id: 426922d2-2631-4482-cd1f-08db57919a98
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	sOzh16HnJ+wjPA1l9UmOtYb5F27f+8ojc+5F1JQFiIodn6OPxFOraABWY/DTXhM7pGVMKXw6qM29i896i3XcCyVIenPlkzJgpn8Tvt8az2eqIRkhVvuxk0sqkMZTRCf5bX1eIU/nj8d5OUsPH5LDEyMjcqft6d/P0zQfJKI9/AZdIhGdZfNzomcYzw6RFOxaRBHOAwF/agDXfQQJAecHaD9As8zfVGoR/n4Me/QyHR+UX8OkFb3gu3fTNi6ePNX1gHJeMXUdX+Q96B5X9xSGsSTwLQfArzLk3SnnuAVEMRRORVlP4LU1r1bpog4FJABho8fAOPBTGUs+gd1giq8GX5htGCQuOXTn90+kjVJckd/5Q8yv08ZB13XLHYwYf/7XTRYXtnsnaWe6kz7bi15eVdKfHZxDWFwe3BNnb1mxaiggdAY/96fc7gQ5gLerpM3Q+ub8vOFjBygye4r6pbB+uCpTVrhFdodkmsaFRgeBKRXIaokKj2oDNYnukTo+MpsYdf6HdxgLeHKjischwE6uqMpU4t1NmZTmsGfssqxVOkhA25ZH0+V7SCUyrCslDYbrgLCwBrPiiWADlnaKrvSavMxXqDxMfD4L9/ZUizOuLkOTOorWfrOygYrG3aI00iwnnrwpeVR69BeCpoGLq5oWlQ==
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(376002)(39860400002)(396003)(346002)(136003)(451199021)(316002)(31686004)(8676002)(31696002)(86362001)(66556008)(66476007)(66946007)(44832011)(6916009)(8936002)(38100700002)(4744005)(2906002)(82960400001)(41300700001)(478600001)(5660300002)(6486002)(2616005)(966005)(36756003)(6512007)(26005)(6506007)(186003)(83380400001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?eFI3V01HTzRqck9aWTVZbGlJWW5TV2JxeEVuazZnMUpUcmdWRHYvMGZrVWVL?=
- =?utf-8?B?bTRjTlQvSGdIeWJHL01lSFdGL2lxMjRKUFRwbWsrcTVyOHhENnV3M0gwTnRn?=
- =?utf-8?B?YVZzRXRqaUI1WUZmMEpJUjNPSFZuakptN2hEZnVjSnN0UnhQdVhvdjMwcHd3?=
- =?utf-8?B?czRZQkYzOTZXWGMvcjhXWnBNRHpKTVA4UkpmV1lEV205SXZSV2hZRHhWeGI5?=
- =?utf-8?B?em1lcjBYNUZzSDZIQ2E2V3hhZ1BqSy9VN2xFclJ2QUxXTm96cWJEeW5mU2V3?=
- =?utf-8?B?RmIycUNUb3ZiVUxBVjZLbVJqM0Fra05KODJMKzlQOHB6amw1QllTSjNBT0h2?=
- =?utf-8?B?T0FyN2owc09oUEhxakY3UnRWOTVKVWJoUTVEYm9WKy9HcVZwM1phakhtaWV4?=
- =?utf-8?B?V0JwVndZQklCK1A4dnhiNEcxd0o5OTJZaHZHcWlmMEFuRGk3L0pxU1ZMdDU2?=
- =?utf-8?B?ZUhWRE9DcHpMS21PUCtCcXFXeEpTbW1tQlBjOWIzQWF6blg0UnN6c0F3SHZI?=
- =?utf-8?B?ZDVYNEJMYlBMVmJ6b0RUNEtrZG03NGl4SG5COVd4OWVpNWs4TW1jNFYwU25H?=
- =?utf-8?B?S0d0VFd1NUZjMGtWcFgwRHoyOEI0TkVFT28yWktnNDBwa01xN0c3djNLaUdX?=
- =?utf-8?B?TERZQWtmdVJEL3hwWWIwamVrQnF4VnE5NTZJb1ZJSURpbDNrNlFiQWwzVDFa?=
- =?utf-8?B?T3VQRWdSaEt1L0RuUDdqTVhVZURnUmN1Ry9VZTl2aTc5VjRsb2d3aVltU3hE?=
- =?utf-8?B?ZU91N2xwTE1SM0ZVNzVqNTFPTW5vQ1d6M0gwZndGazFTN0xZSTRtMnNhVHYr?=
- =?utf-8?B?Z2ovaWxkNWlRTEFXbmR2OGdodEphSHlZSHJzTUVHdHU3NUNubm1Pak1sV2x2?=
- =?utf-8?B?d0xRQ21wakJSclpyQXhxNTJLUW5hMkkyTFo2ZnlzR3N2UXlMYjM4WEN1eUx3?=
- =?utf-8?B?VkdZNGJXcHUzcTY0cFJxV21hZjBmUHYwQk1BL1l5SDhWREZCc0JxcEdscEZL?=
- =?utf-8?B?dUdhSFdxZHcyOGp2Wnd1VGdXc0hwUTgwV2krWFZadXlqSkVxMVJmVWpBMGdG?=
- =?utf-8?B?Z0JjbHdyalcwdzl2cTJ3VzRYNGFhdjNCa3ZIcmNVTVpYcndiSjkvVVdCWXZR?=
- =?utf-8?B?SDdyb3o2c05lZ2QwQWszNnBKQkZXQW94eTNNT2p5VjVJTVFyZHBIRnFOd1VY?=
- =?utf-8?B?VnRhUUNOaXFPeXVCY2dMR3lsQ2xWK3NpeVBsM210aS9WckJCaUhvY1ExZ0JT?=
- =?utf-8?B?UElyMXNreUhORlEzNHJpQjZvRkwyRXd4bi9Yb3Vlc3AyS0dYanVrZ05MWTRB?=
- =?utf-8?B?Qm9McXUzcGNoK1B1T3BQbU8wdlJYa2UvVTV3ZVRUZFNHRXM4L2tGWGJ3MjRF?=
- =?utf-8?B?Nitva0dlZXBPN1huTXI1ekNoaEZsK0s1TkQ0Z0NZc2RLVitjM2Q3clM3OVhV?=
- =?utf-8?B?V1ZEQ0V6dEdMdmszNlRJeTJpM2p2Y09COGp0WTVqM293MVZGaTRRc0Fjc1ZD?=
- =?utf-8?B?clk0MWhiUUtBMGZqeXVUUnhFK1ZFcnRnVEN6Wm91VFZUQ3FneHBvaEZHczN3?=
- =?utf-8?B?RWYyMjFoeGFYOW9LbWhwdUJMZDVvdkRCRTNZeENLbGs4ZUxKQlliU01Mczdx?=
- =?utf-8?B?RTJjRG9ZdmJUMUIxcnV6S2NpTWtTTkNwRWMvc0JpdG1Tb00xRWNOdldjeE5B?=
- =?utf-8?B?WVJWdmtrZjhIWWxISzQ5M08wZXo4VHVsaXNsdVpzWENsTXBrOENOQnJDL2ow?=
- =?utf-8?B?aFhRNW1yUUF2eDYxRW5WMVhlZ21LM0p4NXBrUjF2bUFBUExEYTAxSGxMYUNh?=
- =?utf-8?B?STNJKytaTER6Q3RGaHZSeGV4MFNXclNheFplb0JsSGE5UCtyNDUzL2NxSFJh?=
- =?utf-8?B?emVzMDhFLzdwUzcxZi9XaUJNY1FCMXZjOEszOTErbjFRZHVkRi9tWXp5VEcy?=
- =?utf-8?B?cEtMYzNVVXE5MmxjY3hVanZXSUdUNE1MdW5zMWlYL29oZlUwNEMramVCM3BE?=
- =?utf-8?B?SVN0Y3l1OVBwRldEa1k0MGk5aytxUE1JZlBhTitYcm9aK1pFV0lOVHN6UGRl?=
- =?utf-8?B?M2dZRTlMRUJkVUVEQUNWYzY4RFU3aHBKTUxUc3pmNEJMeHNkUUlQSlR1cmRu?=
- =?utf-8?B?VHhVa0ZFNGE0bFl2V3pxdHBONkhBSDZXUTZSc3BiamlxQldPN296dkxUOFRy?=
- =?utf-8?B?d2c9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 426922d2-2631-4482-cd1f-08db57919a98
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 May 2023 11:18:28.0262
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qzG1cwYBlKUdoyig9VNAERhGr4CYY4QR+r4c9xS6Y1c6BbWMnOgQlqRgq2VjJ/OV0q+BWjLcV+RHtUs84n3PpA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB5363
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: ci/pavel/linux-test
+X-Kernelci-Tree: cip-gitlab
+X-Kernelci-Kernel: v5.10.179-cip32-471-g18129e1b68691
+X-Kernelci-Report-Type: test
+Subject: cip-gitlab/ci/pavel/linux-test baseline-nfs: 36 runs,
+ 7 regressions (v5.10.179-cip32-471-g18129e1b68691)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
+From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 18 May 2023 11:18:36 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11514
+ <cip-dev@lists.cip-project.org>; Thu, 18 May 2023 11:46:36 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11516
 
-Hi all,
+cip-gitlab/ci/pavel/linux-test baseline-nfs: 36 runs, 7 regressions (v5.10.=
+179-cip32-471-g18129e1b68691)
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss
-technical topics with CIP kernel today. Our channel is the following:
+Regressions Summary
+-------------------
 
-    irc:irc.libera.chat:6667/cip
+platform                     | arch  | lab           | compiler | defconfig=
+                  | regressions
+-----------------------------+-------+---------------+----------+----------=
+------------------+------------
+beaglebone-black             | arm   | lab-broonie   | gcc-10   | multi_v7_=
+defconfig         | 1          =
 
-The IRC meeting is scheduled to UTC (GMT) 12:00:
+beaglebone-black             | arm   | lab-broonie   | gcc-10   | omap2plus=
+_defconfig        | 1          =
 
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2023&month=5&day=18&hour=12&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
+meson-gxl-s905x-libretech-cc | arm64 | lab-broonie   | gcc-10   | defconfig=
++arm64-chromebook | 1          =
 
-USWest    USEast    UK        DE        TW        JP
-05:00     08:00     13:00     14:00     20:00     21:00
+meson-gxl-s905x-libretech-cc | arm64 | lab-broonie   | gcc-10   | defconfig=
+                  | 1          =
 
-Last meeting minutes:
-https://ircbot.wl.linuxfoundation.org/meetings/cip/2023/05/cip.2023-05-11-12.03.log.html
+r8a774a1-hihope-rzg2m-ex     | arm64 | lab-cip       | gcc-10   | defconfig=
+                  | 1          =
 
-* Action items
-  1. create kernelci pipeline for buster images (arisut)
-* Kernel maintenance updates
-* Kernel release status
-  - 4.4
-  - 4.19
-  - 5.10
-* Kernel testing
-* AOB
+rk3399-gru-kevin             | arm64 | lab-collabora | gcc-10   | defconfig=
++arm64-chromebook | 2          =
 
-Jan
+
+  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fpavel%2Fli=
+nux-test/kernel/v5.10.179-cip32-471-g18129e1b68691/plan/baseline-nfs/
+
+  Test:     baseline-nfs
+  Tree:     cip-gitlab
+  Branch:   ci/pavel/linux-test
+  Describe: v5.10.179-cip32-471-g18129e1b68691
+  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
+  SHA:      18129e1b6869127ae39e5978bb2fe70ecd53f174 =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform                     | arch  | lab           | compiler | defconfig=
+                  | regressions
+-----------------------------+-------+---------------+----------+----------=
+------------------+------------
+beaglebone-black             | arm   | lab-broonie   | gcc-10   | multi_v7_=
+defconfig         | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/64660900f6d75df80d2e8603
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.179-cip32-471-g18129e1b68691/arm/multi_v7_defconfig/gcc-10/lab-broon=
+ie/baseline-nfs-beaglebone-black.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.179-cip32-471-g18129e1b68691/arm/multi_v7_defconfig/gcc-10/lab-broon=
+ie/baseline-nfs-beaglebone-black.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230512.0/armhf/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/64660900f6d75df80=
+d2e8604
+        new failure (last pass: v5.10.179-cip32-4-g580ea5dd85ae) =
+
+ =
+
+
+
+platform                     | arch  | lab           | compiler | defconfig=
+                  | regressions
+-----------------------------+-------+---------------+----------+----------=
+------------------+------------
+beaglebone-black             | arm   | lab-broonie   | gcc-10   | omap2plus=
+_defconfig        | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/646606a7b1e024f1dd2e85f8
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: omap2plus_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.179-cip32-471-g18129e1b68691/arm/omap2plus_defconfig/gcc-10/lab-broo=
+nie/baseline-nfs-beaglebone-black.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.179-cip32-471-g18129e1b68691/arm/omap2plus_defconfig/gcc-10/lab-broo=
+nie/baseline-nfs-beaglebone-black.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230512.0/armhf/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/646606a7b1e024f1d=
+d2e85f9
+        failing since 1 day (last pass: v5.10.177-cip31-33-gd59f246891e73, =
+first fail: v5.10.179-cip32-4-g580ea5dd85ae) =
+
+ =
+
+
+
+platform                     | arch  | lab           | compiler | defconfig=
+                  | regressions
+-----------------------------+-------+---------------+----------+----------=
+------------------+------------
+meson-gxl-s905x-libretech-cc | arm64 | lab-broonie   | gcc-10   | defconfig=
++arm64-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/646607e2b28561c9802e85f9
+
+  Results:     50 PASS, 4 FAIL, 1 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.179-cip32-471-g18129e1b68691/arm64/defconfig+arm64-chromebook/gcc-10=
+/lab-broonie/baseline-nfs-meson-gxl-s905x-libretech-cc.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.179-cip32-471-g18129e1b68691/arm64/defconfig+arm64-chromebook/gcc-10=
+/lab-broonie/baseline-nfs-meson-gxl-s905x-libretech-cc.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230512.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.bootrr.cpufreq-probed: https://kernelci.org/test/case/id/6=
+46607e2b28561c9802e861f
+        new failure (last pass: v5.10.179-cip32-4-g580ea5dd85ae)
+
+    2023-05-18T11:11:06.844971  /lava-480097/1/../bin/lava-test-case
+    2023-05-18T11:11:06.899585  <8>[   34.012255] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Dcpufreq-probed RESULT=3Dfail>
+    2023-05-18T11:11:06.899929  /lava-480097/1/../bin/lava-test-case   =
+
+ =
+
+
+
+platform                     | arch  | lab           | compiler | defconfig=
+                  | regressions
+-----------------------------+-------+---------------+----------+----------=
+------------------+------------
+meson-gxl-s905x-libretech-cc | arm64 | lab-broonie   | gcc-10   | defconfig=
+                  | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/64660b510ef1ebebf72e8609
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.179-cip32-471-g18129e1b68691/arm64/defconfig/gcc-10/lab-broonie/base=
+line-nfs-meson-gxl-s905x-libretech-cc.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.179-cip32-471-g18129e1b68691/arm64/defconfig/gcc-10/lab-broonie/base=
+line-nfs-meson-gxl-s905x-libretech-cc.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230512.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/64660b510ef1ebebf=
+72e860a
+        failing since 1 day (last pass: v5.10.177-cip31-33-gd59f246891e73, =
+first fail: v5.10.179-cip32-4-g580ea5dd85ae) =
+
+ =
+
+
+
+platform                     | arch  | lab           | compiler | defconfig=
+                  | regressions
+-----------------------------+-------+---------------+----------+----------=
+------------------+------------
+r8a774a1-hihope-rzg2m-ex     | arm64 | lab-cip       | gcc-10   | defconfig=
+                  | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/64660ec3786d5f35ba2e85ec
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.179-cip32-471-g18129e1b68691/arm64/defconfig/gcc-10/lab-cip/baseline=
+-nfs-r8a774a1-hihope-rzg2m-ex.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.179-cip32-471-g18129e1b68691/arm64/defconfig/gcc-10/lab-cip/baseline=
+-nfs-r8a774a1-hihope-rzg2m-ex.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230512.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/64660ec3786d5f35b=
+a2e85ed
+        new failure (last pass: v5.10.179-cip32-4-g580ea5dd85ae) =
+
+ =
+
+
+
+platform                     | arch  | lab           | compiler | defconfig=
+                  | regressions
+-----------------------------+-------+---------------+----------+----------=
+------------------+------------
+rk3399-gru-kevin             | arm64 | lab-collabora | gcc-10   | defconfig=
++arm64-chromebook | 2          =
+
+
+  Details:     https://kernelci.org/test/plan/id/646607ffb28561c9802e8673
+
+  Results:     84 PASS, 2 FAIL, 1 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.179-cip32-471-g18129e1b68691/arm64/defconfig+arm64-chromebook/gcc-10=
+/lab-collabora/baseline-nfs-rk3399-gru-kevin.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.179-cip32-471-g18129e1b68691/arm64/defconfig+arm64-chromebook/gcc-10=
+/lab-collabora/baseline-nfs-rk3399-gru-kevin.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230512.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.bootrr.rockchip-usb2phy1-probed: https://kernelci.org/test=
+/case/id/646607ffb28561c9802e86a6
+        failing since 57 days (last pass: v5.10.168-cip27-456-g42a59c4e5329=
+, first fail: v4.19.277-cip94-1098-g26d9f86d942d)
+
+    2023-05-18T11:11:36.181229  /lava-10371775/1/../bin/lava-test-case
+
+    2023-05-18T11:11:36.232074  <8>[  126.155286] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Drockchip-usb2phy1-probed RESULT=3Dfail>
+   =
+
+
+  * baseline-nfs.bootrr.rockchip-usb2phy0-probed: https://kernelci.org/test=
+/case/id/646607ffb28561c9802e86a7
+        failing since 57 days (last pass: v5.10.168-cip27-456-g42a59c4e5329=
+, first fail: v4.19.277-cip94-1098-g26d9f86d942d)
+
+    2023-05-18T11:11:33.295526  <8>[  123.218781] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Drockchip-usb2phy-driver-present RESULT=3Dpass>
+
+    2023-05-18T11:11:34.348226  /lava-10371775/1/../bin/lava-test-case
+
+    2023-05-18T11:11:35.151488  <8>[  125.074306] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Drockchip-usb2phy0-probed RESULT=3Dfail>
+   =
+
+ =20
 
