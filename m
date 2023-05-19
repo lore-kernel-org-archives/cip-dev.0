@@ -2,21 +2,21 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F20AC77B7F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36CB6C7EE26
 	for <webhook@archiver.kernel.org>; Fri, 19 May 2023 08:21:37 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.20937.1684484491304088301
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web11.20996.1684484487405793144
  for <cip-dev@lists.cip-project.org>;
- Fri, 19 May 2023 01:21:33 -0700
+ Fri, 19 May 2023 01:21:27 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.00,176,1681138800"; 
-   d="scan'208";a="159963188"
+   d="scan'208";a="163489785"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 19 May 2023 17:21:33 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 19 May 2023 17:21:26 +0900
 Received: from localhost.localdomain (unknown [10.226.93.34])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4C5D2419EC47;
-	Fri, 19 May 2023 17:21:31 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E7F4B419E25B;
+	Fri, 19 May 2023 17:21:24 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -24,9 +24,9 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 5.10.y-cip 12/23] driver core: add a helper to setup both the of_node and fwnode of a device
-Date: Fri, 19 May 2023 09:20:47 +0100
-Message-Id: <20230519082058.109760-13-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 10/23] arm64: dts: renesas: r9a09g011: Add watchdog node
+Date: Fri, 19 May 2023 09:20:45 +0100
+Message-Id: <20230519082058.109760-11-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230519082058.109760-1-biju.das.jz@bp.renesas.com>
 References: <20230519082058.109760-1-biju.das.jz@bp.renesas.com>
@@ -36,56 +36,50 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 19 May 2023 08:21:37 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11544
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11542
 
-From: Ioana Ciornei <ioana.ciornei@nxp.com>
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 
-commit 43e76d463c09a0272b84775bcc727c1eb8b384b2 upstream.
+commit 753a4ae153788225a30b0ee9dd18da83f1d94447 upstream.
 
-There are many places where both the fwnode_handle and the of_node of a
-device need to be populated. Add a function which does both so that we
-have consistency.
+The r9a09g011 (a.k.a. RZ/V2M) comes with two watchdog IPs,
+but Linux is only allowed one.
 
-Suggested-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Add a node for the watchdog allowed to Linux to the SoC
+specific dtsi.
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Link: https://lore.kernel.org/r/20221103223956.50575-3-fabrizio.castro.jz@renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/base/core.c    | 7 +++++++
- include/linux/device.h | 1 +
- 2 files changed, 8 insertions(+)
+ arch/arm64/boot/dts/renesas/r9a09g011.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 9a874a58d690..cb859febd03c 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -4352,6 +4352,13 @@ void device_set_of_node_from_dev(struct device *dev, const struct device *dev2)
- }
- EXPORT_SYMBOL_GPL(device_set_of_node_from_dev);
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g011.dtsi b/arch/arm64/boot/dts/renesas/r9a09g011.dtsi
+index 460d58a0c304..e037e08026b6 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g011.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a09g011.dtsi
+@@ -145,6 +145,19 @@ uart0: serial@a4040000 {
+ 			status = "disabled";
+ 		};
  
-+void device_set_node(struct device *dev, struct fwnode_handle *fwnode)
-+{
-+	dev->fwnode = fwnode;
-+	dev->of_node = to_of_node(fwnode);
-+}
-+EXPORT_SYMBOL_GPL(device_set_node);
++		wdt0: watchdog@a4050000 {
++			compatible = "renesas,r9a09g011-wdt",
++				     "renesas,rzv2m-wdt";
++			reg = <0 0xa4050000 0 0x80>;
++			clocks = <&cpg CPG_MOD R9A09G011_WDT0_PCLK>,
++				 <&cpg CPG_MOD R9A09G011_WDT0_CLK>;
++			clock-names = "pclk", "oscclk";
++			interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
++			resets = <&cpg R9A09G011_WDT0_PRESETN>;
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
 +
- int device_match_name(struct device *dev, const void *name)
- {
- 	return sysfs_streq(dev_name(dev), name);
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 5dc0f81e4f9d..4f7e0c85e11f 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -818,6 +818,7 @@ int device_online(struct device *dev);
- void set_primary_fwnode(struct device *dev, struct fwnode_handle *fwnode);
- void set_secondary_fwnode(struct device *dev, struct fwnode_handle *fwnode);
- void device_set_of_node_from_dev(struct device *dev, const struct device *dev2);
-+void device_set_node(struct device *dev, struct fwnode_handle *fwnode);
- 
- static inline int dev_num_vf(struct device *dev)
- {
+ 		pinctrl: pinctrl@b6250000 {
+ 			compatible = "renesas,r9a09g011-pinctrl";
+ 			reg = <0 0xb6250000 0 0x800>;
 -- 
 2.25.1
 
