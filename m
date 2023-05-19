@@ -2,21 +2,21 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE19C7EE2A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3609EC77B7F
 	for <webhook@archiver.kernel.org>; Fri, 19 May 2023 08:21:27 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web10.20929.1684484478558708880
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web10.20922.1684484462890095063
  for <cip-dev@lists.cip-project.org>;
- Fri, 19 May 2023 01:21:18 -0700
+ Fri, 19 May 2023 01:21:22 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.00,176,1681138800"; 
-   d="scan'208";a="163489757"
+   d="scan'208";a="159963159"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 19 May 2023 17:21:16 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 19 May 2023 17:21:21 +0900
 Received: from localhost.localdomain (unknown [10.226.93.34])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 92205419E629;
-	Fri, 19 May 2023 17:21:14 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E2B07419E62E;
+	Fri, 19 May 2023 17:21:19 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -24,9 +24,9 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 5.10.y-cip 06/23] clk: renesas: r9a09g011: Add WDT clock and reset entries
-Date: Fri, 19 May 2023 09:20:41 +0100
-Message-Id: <20230519082058.109760-7-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 08/23] watchdog: rzg2l_wdt: Add rzv2m support
+Date: Fri, 19 May 2023 09:20:43 +0100
+Message-Id: <20230519082058.109760-9-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230519082058.109760-1-biju.das.jz@bp.renesas.com>
 References: <20230519082058.109760-1-biju.das.jz@bp.renesas.com>
@@ -36,43 +36,115 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 19 May 2023 08:21:27 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11538
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11540
 
 From: Phil Edworthy <phil.edworthy@renesas.com>
 
-commit efded37b426f4e1b7b004b1e9924ff4bf16ec0fd upstream.
+commit ec122fd94eeb87b2e906360efe7447362f83e9ae upstream.
 
-Add WDT0 clock and reset entries to CPG driver.
+The WDT on RZ/V2M devices is basically the same as RZ/G2L, but without
+the parity error registers. This means the driver has to reset the
+hardware plus set the minimum timeout in order to do a restart and has
+a single interrupt.
 
 Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Link: https://lore.kernel.org/r/20220518150105.48167-1-phil.edworthy@renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20220823093233.8577-3-phil.edworthy@renesas.com
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a09g011-cpg.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/watchdog/rzg2l_wdt.c | 39 ++++++++++++++++++++++++++++++------
+ 1 file changed, 33 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/renesas/r9a09g011-cpg.c b/drivers/clk/renesas/r9a09g011-cpg.c
-index 0fae2cc8018f..7922d68a8c6e 100644
---- a/drivers/clk/renesas/r9a09g011-cpg.c
-+++ b/drivers/clk/renesas/r9a09g011-cpg.c
-@@ -150,6 +150,8 @@ static const struct rzg2l_mod_clk r9a09g011_mod_clks[] __initconst = {
- 	DEF_MOD("tim_clk_21",	R9A09G011_TIM21_CLK,	 CLK_MAIN_2,   0x428, 9),
- 	DEF_MOD("tim_clk_22",	R9A09G011_TIM22_CLK,	 CLK_MAIN_2,   0x428, 10),
- 	DEF_MOD("tim_clk_23",	R9A09G011_TIM23_CLK,	 CLK_MAIN_2,   0x428, 11),
-+	DEF_MOD("wdt0_pclk",	R9A09G011_WDT0_PCLK,	 CLK_SEL_E,    0x428, 12),
-+	DEF_MOD("wdt0_clk",	R9A09G011_WDT0_CLK,	 CLK_MAIN,     0x428, 13),
- 	DEF_MOD("urt_pclk",	R9A09G011_URT_PCLK,	 CLK_SEL_E,    0x438, 4),
- 	DEF_MOD("urt0_clk",	R9A09G011_URT0_CLK,	 CLK_SEL_W0,   0x438, 5),
- 	DEF_MOD("ca53",		R9A09G011_CA53_CLK,	 CLK_DIV_A,    0x448, 0),
-@@ -161,6 +163,7 @@ static const struct rzg2l_reset r9a09g011_resets[] = {
- 	DEF_RST_MON(R9A09G011_SYC_RST_N,	0x610, 9,  13),
- 	DEF_RST(R9A09G011_TIM_GPB_PRESETN,	0x614, 1),
- 	DEF_RST(R9A09G011_TIM_GPC_PRESETN,	0x614, 2),
-+	DEF_RST_MON(R9A09G011_WDT0_PRESETN,	0x614, 12, 19),
+diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
+index d217bc54b729..ceca42db0837 100644
+--- a/drivers/watchdog/rzg2l_wdt.c
++++ b/drivers/watchdog/rzg2l_wdt.c
+@@ -10,7 +10,7 @@
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/of.h>
++#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/reset.h>
+@@ -40,6 +40,11 @@ module_param(nowayout, bool, 0);
+ MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
+ 				__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
+ 
++enum rz_wdt_type {
++	WDT_RZG2L,
++	WDT_RZV2M,
++};
++
+ struct rzg2l_wdt_priv {
+ 	void __iomem *base;
+ 	struct watchdog_device wdev;
+@@ -48,6 +53,7 @@ struct rzg2l_wdt_priv {
+ 	unsigned long delay;
+ 	struct clk *pclk;
+ 	struct clk *osc_clk;
++	enum rz_wdt_type devtype;
  };
  
- static const unsigned int r9a09g011_crit_mod_clks[] __initconst = {
+ static void rzg2l_wdt_wait_delay(struct rzg2l_wdt_priv *priv)
+@@ -140,11 +146,29 @@ static int rzg2l_wdt_restart(struct watchdog_device *wdev,
+ 	clk_prepare_enable(priv->pclk);
+ 	clk_prepare_enable(priv->osc_clk);
+ 
+-	/* Generate Reset (WDTRSTB) Signal on parity error */
+-	rzg2l_wdt_write(priv, 0, PECR);
++	if (priv->devtype == WDT_RZG2L) {
++		/* Generate Reset (WDTRSTB) Signal on parity error */
++		rzg2l_wdt_write(priv, 0, PECR);
++
++		/* Force parity error */
++		rzg2l_wdt_write(priv, PEEN_FORCE, PEEN);
++	} else {
++		/* RZ/V2M doesn't have parity error registers */
++
++		wdev->timeout = 0;
++
++		/* Initialize time out */
++		rzg2l_wdt_init_timeout(wdev);
+ 
+-	/* Force parity error */
+-	rzg2l_wdt_write(priv, PEEN_FORCE, PEEN);
++		/* Initialize watchdog counter register */
++		rzg2l_wdt_write(priv, 0, WDTTIM);
++
++		/* Enable watchdog timer*/
++		rzg2l_wdt_write(priv, WDTCNT_WDTEN, WDTCNT);
++
++		/* Wait 2 consecutive overflow cycles for reset */
++		mdelay(DIV_ROUND_UP(2 * 0xFFFFF * 1000, priv->osc_clk_rate));
++	}
+ 
+ 	return 0;
+ }
+@@ -225,6 +249,8 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "failed to deassert");
+ 
++	priv->devtype = (uintptr_t)of_device_get_match_data(dev);
++
+ 	pm_runtime_enable(&pdev->dev);
+ 
+ 	priv->wdev.info = &rzg2l_wdt_ident;
+@@ -253,7 +279,8 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id rzg2l_wdt_ids[] = {
+-	{ .compatible = "renesas,rzg2l-wdt", },
++	{ .compatible = "renesas,rzg2l-wdt", .data = (void *)WDT_RZG2L },
++	{ .compatible = "renesas,rzv2m-wdt", .data = (void *)WDT_RZV2M },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, rzg2l_wdt_ids);
 -- 
 2.25.1
 
