@@ -2,50 +2,50 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53CC2C77B75
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53D32C7EE26
 	for <webhook@archiver.kernel.org>; Fri, 19 May 2023 15:14:49 +0000 (UTC)
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
- by mx.groups.io with SMTP id smtpd.web10.29042.1684509282717210539
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+ by mx.groups.io with SMTP id smtpd.web10.29043.1684509283119010885
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Fri, 19 May 2023 08:14:42 -0700
+ Fri, 19 May 2023 08:14:43 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="signature has expired" header.i=@kernelci-org.20221208.gappssmtp.com header.s=20221208 header.b=z2hrOlKR;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.42, mailfrom: bot@kernelci.org)
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2537a79b9acso776897a91.3
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Fri, 19 May 2023 08:14:42 -0700 (PDT)
+ dkim=fail reason="signature has expired" header.i=@kernelci-org.20221208.gappssmtp.com header.s=20221208 header.b=IzZLkOUN;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.170, mailfrom: bot@kernelci.org)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1ae52ce3205so23408965ad.3
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Fri, 19 May 2023 08:14:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1684509281; x=1687101281;
+        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1684509282; x=1687101282;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=QbCD8RDd8OELeiQPcbc3QSJPO4mzkPQcfWq6myhqn7I=;
-        b=z2hrOlKRQLJAAAwvbfgOrQq65CE5zDoMIuMlFNomY6fpC/8vhJwRJnTDRD53Fkva6G
-         aJ+MbxTDQf2PkAhGkNtkomynDk8hd/oR/RYowRNmym232/uTsEgBqLrxOXM4ueTJfKd4
-         g8rDOkRXtHF8zX0iA8NVgWZC/Myiasc67Sg3CEVGgP89q6+SZIjkf9vc0VEkdQF3mtt/
-         JfBDB1I6br6Alap/Srd/017MseYWwmLU9P/dt/ZlCuWAynv5cKd1FPgkaGjS5ZRCIX7k
-         7DnBB6LV0D68sKod4VWv3d+dq4kosWKOud63IE/jbyndjrQ6MrnYxQ9ZMRqxze4oJEnV
-         95rw==
+        bh=fDo5b7aRaqK03OcgAVge2UqsBd8uERH22arpw1G4esE=;
+        b=IzZLkOUNrVX2/FiIjyxZ9qW33ULFoLzibPJ80ZFfmlDyLjYXpDgA+sxB3gTNtiF1bg
+         B/7JWqH4Hz52QtTG6Jr0C3lwHuEbYnMHzBJ9PNZgIAGSP8F8jGSPZ/+L421MHLX+7WDN
+         NOMVohj8z6GqcNEwYZHKCNtMTy3JE9A9zYSzTrxExHCfC4NrZ3NojzoPcTwRRtT9kyO2
+         CCHp7t5gfNemDSVmWYuOT1Uvypq8dqYYw0EgWxXzRX4wGcBaOyXh0e7KLI2BsBGddYnU
+         3LVBzfcTC9ORwcUB9Vk9FCyQX/01sg9UfKqboSuxgyqZIPT2ko2GeK/tLJoMoYZT9vRx
+         RICw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684509281; x=1687101281;
+        d=1e100.net; s=20221208; t=1684509282; x=1687101282;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QbCD8RDd8OELeiQPcbc3QSJPO4mzkPQcfWq6myhqn7I=;
-        b=L2pb65IlWFcJiVDY64ELHOqNiJMWToKZeSRkGYXKiFG6xmz9Kb9AsGRNa8MyUXmyqN
-         yS6ByWSkVlar5WglK0oSBcOtd4+4Z5+tAOLuqyfKBKI+qfbe2xPQkvAy+U3KBurBBmki
-         1ZISvlIUBXwRZXQxmkkf6Ex9EuR6MrFzD0YF0PzHDZ2S4znHjC/zkAgMuStZzRrznjn1
-         CCli+dbJWMmjB9hOfELvHE9xrWaxFzAg38Zxt7jvnwiXiPxY9/3tRPHI3qnZJSWja6EZ
-         ZATD0McIYCL5tRa1sNid08sA7Hk5/mlkLDXVfE00HNEcwU6U0E3tI3BkFFvcaPfuUXKr
-         ZMyg==
-X-Gm-Message-State: AC+VfDxHmr52rDXFEN5O+mZEdPyb7qv+ICD7N8YQ1ezzlULqKVlSwIr5
-	85J74v3qkb8QuYBAnmuQ8tCtxbnnCvwTiu8IfvTxow==
-X-Google-Smtp-Source: ACHHUZ6InMS1/nuybuUELosWs1iqZDjpIUxsFcNUL/F/znlimGwH7V09aS8t6s7EZzkrXuRyiMXbDQ==
-X-Received: by 2002:a17:90a:cb92:b0:253:727d:aa5e with SMTP id a18-20020a17090acb9200b00253727daa5emr2604589pju.8.1684509281225;
-        Fri, 19 May 2023 08:14:41 -0700 (PDT)
+        bh=fDo5b7aRaqK03OcgAVge2UqsBd8uERH22arpw1G4esE=;
+        b=FuE3imyX7j9EDw6M2PKBUyIUpg4W+9p8YmJCZFUMMserocpwtcREC+86xBOBx/TI/h
+         zVViGr97y4/tJkixXnmihnbsZ9Ew1JVSXkwRa9m1lsR9M4ZW7f8UJD3bfFHoLwLZF8Qf
+         Lso2OHBjlNs2B/+pik1GqE9Tu/jsPRW6iNWJS/Kskbykqxz0uvKmnOG4VcIQOSZDeTds
+         jUV2Y+boNCX02VMgUvw+9hzrf6Soty+FI6ig1MEtv0lKRqp/obBFxvwk+QMVHaE38w1M
+         SmCDpjnO1askB6KXrafHECN7GRmW657hkeIfPnB002k3hn6MXMGF9Q27dNPu6mt8kY9w
+         pHRw==
+X-Gm-Message-State: AC+VfDwdo3tQP7qoCXGkQTh7UWSYhz+9enFsPw3u3SMsEgsu6m2NAvaX
+	EX+AzoNlCfZvheSeH9uXcnDJaNXyVXSfw7suMZf7jw==
+X-Google-Smtp-Source: ACHHUZ6cGErT71muEmDjOBH6CyUu5eCbR5R2Lo/RwQneJR2s0P4MqF1TSxDxvz9Jx3V9vZyp6+3HgA==
+X-Received: by 2002:a17:902:bf06:b0:1ae:2e0f:1cf6 with SMTP id bi6-20020a170902bf0600b001ae2e0f1cf6mr3120242plb.36.1684509282145;
+        Fri, 19 May 2023 08:14:42 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id ga2-20020a17090b038200b0025315f7fef7sm1598289pjb.33.2023.05.19.08.14.40
+        by smtp.gmail.com with ESMTPSA id v23-20020a17090331d700b001ac7af57fd4sm3591228ple.86.2023.05.19.08.14.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 19 May 2023 08:14:40 -0700 (PDT)
-Message-ID: <64679260.170a0220.b15eb.2c97@mx.google.com>
+Message-ID: <64679260.170a0220.5a499.6372@mx.google.com>
 Date: Fri, 19 May 2023 08:14:40 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
@@ -54,8 +54,7 @@ X-Kernelci-Branch: linux-4.19.y-cip
 X-Kernelci-Tree: cip
 X-Kernelci-Kernel: v4.19.283-cip98
 X-Kernelci-Report-Type: test
-Subject: cip/linux-4.19.y-cip ltp-timers: 11 runs,
- 2 regressions (v4.19.283-cip98)
+Subject: cip/linux-4.19.y-cip smc: 6 runs, 2 regressions (v4.19.283-cip98)
 To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
  kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
 From: "kernelci.org bot" <bot@kernelci.org>
@@ -63,36 +62,31 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 19 May 2023 15:14:49 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11569
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11570
 
-cip/linux-4.19.y-cip ltp-timers: 11 runs, 2 regressions (v4.19.283-cip98)
+cip/linux-4.19.y-cip smc: 6 runs, 2 regressions (v4.19.283-cip98)
 
 Regressions Summary
 -------------------
 
-platform           | arch   | lab           | compiler | defconfig         =
-           | regressions
--------------------+--------+---------------+----------+-------------------=
------------+------------
-hp-11A-G6-EE-grunt | x86_64 | lab-collabora | gcc-10   | x86_64_defcon...6-=
-chromebook | 2          =
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 2          =
 
 
   Details:  https://kernelci.org/test/job/cip/branch/linux-4.19.y-cip/kerne=
-l/v4.19.283-cip98/plan/ltp-timers/
+l/v4.19.283-cip98/plan/smc/
 
-  Test:     ltp-timers
+  Test:     smc
   Tree:     cip
   Branch:   linux-4.19.y-cip
   Describe: v4.19.283-cip98
   URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
 it
-  SHA:      31603fc59adb456f6eb0f58de8bb989b41572c2a
-
-  Test suite revisions:
-    ltp-tests
-      URL:  https://github.com/linux-test-project/ltp.git
-      SHA:  ce4802999f7ca6421643879ff08bbc1e18e7f8cc =
+  SHA:      31603fc59adb456f6eb0f58de8bb989b41572c2a =
 
 
 
@@ -101,40 +95,48 @@ Test Regressions
 
 
 
-platform           | arch   | lab           | compiler | defconfig         =
-           | regressions
--------------------+--------+---------------+----------+-------------------=
------------+------------
-hp-11A-G6-EE-grunt | x86_64 | lab-collabora | gcc-10   | x86_64_defcon...6-=
-chromebook | 2          =
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 2          =
 
 
-  Details:     https://kernelci.org/test/plan/id/64678867477f286f262e8698
+  Details:     https://kernelci.org/test/plan/id/64678bb4bb175a8c262e85f3
 
-  Results:     32 PASS, 4 FAIL, 0 SKIP
+  Results:     14 PASS, 2 FAIL, 0 SKIP
   Full config: x86_64_defconfig+x86-chromebook
   Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
   Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.283=
--cip98/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-collabora/ltp-time=
-rs-hp-11A-G6-EE-grunt.txt
+-cip98/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-collabora/smc-hp-x=
+360-12b-ca0010nr-n4020-octopus.txt
   HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.283=
--cip98/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-collabora/ltp-time=
-rs-hp-11A-G6-EE-grunt.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230512.0/amd64/initrd.cpio.gz =
+-cip98/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-collabora/smc-hp-x=
+360-12b-ca0010nr-n4020-octopus.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230512.0/x86/rootfs.cpio.gz =
 
 
 
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/64678867477=
-f286f262e869d
-        failing since 174 days (last pass: v4.19.259-cip82, first fail: v4.=
-19.266-cip86) =
+  * smc.CVE-2018-3639: https://kernelci.org/test/case/id/64678bb4bb175a8c26=
+2e85ff
+        failing since 314 days (last pass: v4.19.249-cip76, first fail: v4.=
+19.251-cip77)
+
+    2023-05-19T14:46:05.185241  <8>[   11.667355] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3DCVE-2018-3639 RESULT=3Dfail>
+   =
 
 
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/64678867477=
-f286f262e869d
-        failing since 174 days (last pass: v4.19.259-cip82, first fail: v4.=
-19.266-cip86) =
+  * smc.CVE-2018-3640: https://kernelci.org/test/case/id/64678bb4bb175a8c26=
+2e8600
+        failing since 314 days (last pass: v4.19.249-cip76, first fail: v4.=
+19.251-cip77)
+
+    2023-05-19T14:46:05.175272  <8>[   11.657417] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3DCVE-2018-3640 RESULT=3Dfail>
+   =
 
  =20
 
