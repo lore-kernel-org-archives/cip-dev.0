@@ -2,21 +2,21 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3609EC77B7F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43699C7EE26
 	for <webhook@archiver.kernel.org>; Fri, 19 May 2023 08:21:27 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web10.20922.1684484462890095063
  for <cip-dev@lists.cip-project.org>;
- Fri, 19 May 2023 01:21:22 -0700
+ Fri, 19 May 2023 01:21:19 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.00,176,1681138800"; 
-   d="scan'208";a="159963159"
+   d="scan'208";a="159963151"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 19 May 2023 17:21:21 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 19 May 2023 17:21:19 +0900
 Received: from localhost.localdomain (unknown [10.226.93.34])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E2B07419E62E;
-	Fri, 19 May 2023 17:21:19 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 68A05419E25B;
+	Fri, 19 May 2023 17:21:17 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -24,9 +24,9 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 5.10.y-cip 08/23] watchdog: rzg2l_wdt: Add rzv2m support
-Date: Fri, 19 May 2023 09:20:43 +0100
-Message-Id: <20230519082058.109760-9-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 07/23] dt-bindings: watchdog: renesas,wdt: Add r9a09g011 (RZ/V2M) support
+Date: Fri, 19 May 2023 09:20:42 +0100
+Message-Id: <20230519082058.109760-8-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230519082058.109760-1-biju.das.jz@bp.renesas.com>
 References: <20230519082058.109760-1-biju.das.jz@bp.renesas.com>
@@ -36,115 +36,157 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 19 May 2023 08:21:27 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11540
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11539
 
 From: Phil Edworthy <phil.edworthy@renesas.com>
 
-commit ec122fd94eeb87b2e906360efe7447362f83e9ae upstream.
+commit d59913b0a5b6b8c52c8fbceca910d4aedbbd4cf1 upstream.
 
-The WDT on RZ/V2M devices is basically the same as RZ/G2L, but without
-the parity error registers. This means the driver has to reset the
-hardware plus set the minimum timeout in order to do a restart and has
-a single interrupt.
+Add the documentation for the r9a09g011 SoC, but in doing so also
+reorganise the doc to make it easier to read.
+Additionally, make the binding require an interrupt to be specified.
+Whilst the driver does not need an interrupt, all of the SoCs that use
+this binding actually provide one.
 
 Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Link: https://lore.kernel.org/r/20220823093233.8577-3-phil.edworthy@renesas.com
+Link: https://lore.kernel.org/r/20220823093233.8577-2-phil.edworthy@renesas.com
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/watchdog/rzg2l_wdt.c | 39 ++++++++++++++++++++++++++++++------
- 1 file changed, 33 insertions(+), 6 deletions(-)
+ .../bindings/watchdog/renesas,wdt.yaml        | 73 +++++++++++++------
+ 1 file changed, 52 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
-index d217bc54b729..ceca42db0837 100644
---- a/drivers/watchdog/rzg2l_wdt.c
-+++ b/drivers/watchdog/rzg2l_wdt.c
-@@ -10,7 +10,7 @@
- #include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
--#include <linux/of.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
-@@ -40,6 +40,11 @@ module_param(nowayout, bool, 0);
- MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
- 				__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
+diff --git a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+index b06c4219b8b9..ba0769d8308d 100644
+--- a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+@@ -26,6 +26,11 @@ properties:
+               - renesas,r9a07g054-wdt    # RZ/V2L
+           - const: renesas,rzg2l-wdt
  
-+enum rz_wdt_type {
-+	WDT_RZG2L,
-+	WDT_RZV2M,
-+};
++      - items:
++          - enum:
++              - renesas,r9a09g011-wdt    # RZ/V2M
++          - const: renesas,rzv2m-wdt     # RZ/V2M
 +
- struct rzg2l_wdt_priv {
- 	void __iomem *base;
- 	struct watchdog_device wdev;
-@@ -48,6 +53,7 @@ struct rzg2l_wdt_priv {
- 	unsigned long delay;
- 	struct clk *pclk;
- 	struct clk *osc_clk;
-+	enum rz_wdt_type devtype;
- };
+       - items:
+           - enum:
+               - renesas,r8a7742-wdt      # RZ/G1H
+@@ -59,13 +64,29 @@ properties:
+   reg:
+     maxItems: 1
  
- static void rzg2l_wdt_wait_delay(struct rzg2l_wdt_priv *priv)
-@@ -140,11 +146,29 @@ static int rzg2l_wdt_restart(struct watchdog_device *wdev,
- 	clk_prepare_enable(priv->pclk);
- 	clk_prepare_enable(priv->osc_clk);
- 
--	/* Generate Reset (WDTRSTB) Signal on parity error */
--	rzg2l_wdt_write(priv, 0, PECR);
-+	if (priv->devtype == WDT_RZG2L) {
-+		/* Generate Reset (WDTRSTB) Signal on parity error */
-+		rzg2l_wdt_write(priv, 0, PECR);
+-  interrupts: true
+-
+-  interrupt-names: true
+-
+-  clocks: true
+-
+-  clock-names: true
++  interrupts:
++    minItems: 1
++    items:
++      - description: Timeout
++      - description: Parity error
 +
-+		/* Force parity error */
-+		rzg2l_wdt_write(priv, PEEN_FORCE, PEEN);
-+	} else {
-+		/* RZ/V2M doesn't have parity error registers */
++  interrupt-names:
++    minItems: 1
++    items:
++      - const: wdt
++      - const: perrout
 +
-+		wdev->timeout = 0;
++  clocks:
++    minItems: 1
++    items:
++      - description: Register access clock
++      - description: Main clock
 +
-+		/* Initialize time out */
-+		rzg2l_wdt_init_timeout(wdev);
++  clock-names:
++    minItems: 1
++    items:
++      - const: pclk
++      - const: oscclk
  
--	/* Force parity error */
--	rzg2l_wdt_write(priv, PEEN_FORCE, PEEN);
-+		/* Initialize watchdog counter register */
-+		rzg2l_wdt_write(priv, 0, WDTTIM);
+   power-domains:
+     maxItems: 1
+@@ -78,6 +99,7 @@ properties:
+ required:
+   - compatible
+   - reg
++  - interrupts
+   - clocks
+ 
+ allOf:
+@@ -101,31 +123,38 @@ allOf:
+           contains:
+             enum:
+               - renesas,rzg2l-wdt
++              - renesas,rzv2m-wdt
+     then:
+       properties:
+-        interrupts:
+-          maxItems: 2
+-        interrupt-names:
+-          items:
+-            - const: wdt
+-            - const: perrout
+         clocks:
+-          items:
+-            - description: Register access clock
+-            - description: Main clock
++          minItems: 2
+         clock-names:
+-          items:
+-            - const: pclk
+-            - const: oscclk
++          minItems: 2
+       required:
+         - clock-names
++    else:
++      properties:
++        clocks:
++          maxItems: 1
 +
-+		/* Enable watchdog timer*/
-+		rzg2l_wdt_write(priv, WDTCNT_WDTEN, WDTCNT);
-+
-+		/* Wait 2 consecutive overflow cycles for reset */
-+		mdelay(DIV_ROUND_UP(2 * 0xFFFFF * 1000, priv->osc_clk_rate));
-+	}
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - renesas,rzg2l-wdt
++    then:
++      properties:
++        interrupts:
++          minItems: 2
++        interrupt-names:
++          minItems: 2
++      required:
+         - interrupt-names
+     else:
+       properties:
+         interrupts:
+           maxItems: 1
+-        clocks:
+-          maxItems: 1
  
- 	return 0;
- }
-@@ -225,6 +249,8 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
- 	if (ret)
- 		return dev_err_probe(dev, ret, "failed to deassert");
+ additionalProperties: false
  
-+	priv->devtype = (uintptr_t)of_device_get_match_data(dev);
-+
- 	pm_runtime_enable(&pdev->dev);
- 
- 	priv->wdev.info = &rzg2l_wdt_ident;
-@@ -253,7 +279,8 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id rzg2l_wdt_ids[] = {
--	{ .compatible = "renesas,rzg2l-wdt", },
-+	{ .compatible = "renesas,rzg2l-wdt", .data = (void *)WDT_RZG2L },
-+	{ .compatible = "renesas,rzv2m-wdt", .data = (void *)WDT_RZV2M },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, rzg2l_wdt_ids);
+@@ -133,9 +162,11 @@ examples:
+   - |
+     #include <dt-bindings/clock/r8a7795-cpg-mssr.h>
+     #include <dt-bindings/power/r8a7795-sysc.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
+     wdt0: watchdog@e6020000 {
+             compatible = "renesas,r8a7795-wdt", "renesas,rcar-gen3-wdt";
+             reg = <0xe6020000 0x0c>;
++            interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
+             clocks = <&cpg CPG_MOD 402>;
+             power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+             resets = <&cpg 402>;
 -- 
 2.25.1
 
