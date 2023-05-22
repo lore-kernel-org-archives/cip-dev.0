@@ -1,69 +1,73 @@
-Return-Path: <srinuvasan_a@mentor.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 949A0C77B73
-	for <webhook@archiver.kernel.org>; Mon, 22 May 2023 10:17:58 +0000 (UTC)
-Received: from esa2.mentor.iphmx.com (esa2.mentor.iphmx.com [68.232.141.98])
- by mx.groups.io with SMTP id smtpd.web10.18638.1684750673820028882
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 467FEC7EE2A
+	for <webhook@archiver.kernel.org>; Mon, 22 May 2023 12:16:19 +0000 (UTC)
+Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
+ by mx.groups.io with SMTP id smtpd.web10.20424.1684757768300913266
  for <cip-dev@lists.cip-project.org>;
- Mon, 22 May 2023 03:17:53 -0700
+ Mon, 22 May 2023 05:16:09 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: mentor.com, ip: 68.232.141.98, mailfrom: srinuvasan_a@mentor.com)
-X-IronPort-AV: E=Sophos;i="6.00,184,1681200000"; 
-   d="scan'208";a="6810269"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa2.mentor.iphmx.com with ESMTP; 22 May 2023 02:17:53 -0800
-IronPort-SDR: KzDP9C1tlH16HmTXfv7zjMAPmtTAgxD0VKeMP7ceLL3etCZOsspkkoPVfD4WLr//vT7KUGbXDm
- 71cCGBYqz5FCvqLXW+RpzFpATwtjEL4r7Z3MkP23bo3wuToQYf5plkMKW/wsUi/ZnQeIV6zHg/
- xhUSCziTwXppuvDvaDnB9lbWVI74VgpkXDpdRDxpsRnNMoQMxSwr4ccvDX6sdkp3ZmEQGUB2rv
- 8vlajCF94HDDwhKn8ua/xSwRz+qp9y99VzI3asTFBHif+lKrLg9XyoMOXSRonCezm2Bki8TZtc
- pEI=
-From: Srinuvasan Arjunan <srinuvasan_a@mentor.com>
-To: <cip-dev@lists.cip-project.org>
-CC: <jan.kiszka@siemens.com>, Srinuvasan A <srinuvasan.a@siemens.com>
-Subject: [isar-cip-core][PATCH] classes/swupdate: remove image_do_mounts
-Date: Mon, 22 May 2023 15:47:34 +0530
-Message-ID: <20230522101734.1700221-1-srinuvasan_a@mentor.com>
-X-Mailer: git-send-email 2.34.1
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=RUwyGu1+;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.225, mailfrom: fm-51332-202305221216054af1840b1d0fbca6ca-wrfwyg@rts-flowmailer.siemens.com)
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 202305221216054af1840b1d0fbca6ca
+        for <cip-dev@lists.cip-project.org>;
+        Mon, 22 May 2023 14:16:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ bh=lFMPODVv50GS8daA4MngmkQImPzHpyonKLhz3eAXqPo=;
+ b=RUwyGu1+OlCAdDX7G6ka6ug2zXXqvUAnElq5REEaA1FdAGK4GoD9bEdUuzkxfmeZ/bvg8a
+ KDsmhnP3XMYILN3PLgBcWeYpgyAx0iu8CFdJufix6HtWJEFvdm4+NVy0s+04OH0772Zha4ii
+ qyiewxC9kMpysUOb/s6WeITt8yJBk=;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: jan.kiszka@siemens.com,
+	cip-dev@lists.cip-project.org
+Subject: [cip-dev][isar-cip-core][PATCH v2] classes/swupdate: Correct task_order
+Date: Mon, 22 May 2023 14:16:04 +0200
+Message-Id: <20230522121604.2175830-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: svr-orw-mbx-13.mgc.mentorg.com (147.34.90.213) To
- svr-orw-mbx-13.mgc.mentorg.com (147.34.90.213)
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 22 May 2023 10:17:58 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11584
+ <cip-dev@lists.cip-project.org>; Mon, 22 May 2023 12:16:19 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11585
 
-From: Srinuvasan A <srinuvasan.a@siemens.com>
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-When we hookup the IMAGE_CMD:* for image generation,
-image_do_mounts is inserted automatically, hence remove the duplication
-here.
+The file sw-description is generated from a template and requires
+the TARGET_IMAGE_UUID. Therefore the image_uuid needs to be generated
+before the template is evaluated.
 
-Ref: https://github.com/ilbers/isar/commit/f792fd0deed1ae1d9deb3ee28b1a1add96ecdf14
-
-Signed-off-by: Srinuvasan A <srinuvasan.a@siemens.com>
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- classes/swupdate.bbclass | 2 --
- 1 file changed, 2 deletions(-)
+
+Changes v2:
+ - move task order from image_uuid to swupdate.bbclass
+ - adapt commit message
+
+ classes/swupdate.bbclass | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/classes/swupdate.bbclass b/classes/swupdate.bbclass
-index 9a4d509..9f34760 100644
+index 9a4d509..af9d12a 100644
 --- a/classes/swupdate.bbclass
 +++ b/classes/swupdate.bbclass
-@@ -97,8 +97,6 @@ IMAGE_CMD:swu() {
-         fi
-     done
+@@ -46,6 +46,9 @@ IMAGE_TEMPLATE_VARS:swu = " \
+     SWU_VERSION \
+     SWU_NAME"
  
--    image_do_mounts
--
-     # Prepare for signing
-     export sign='${@'x' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}'
-     if [ -n "$sign" ]; then
++# TARGET_IMAGE_UUID needs to be generated before completing the template
++addtask do_transform_template after do_generate_image_uuid
++
+ python(){
+     # create SWU_HW_COMPAT_NODE based on list of supported hw
+     hw_compat = d.getVar('SWU_HW_COMPAT')
 -- 
-2.34.1
+2.39.2
 
 
