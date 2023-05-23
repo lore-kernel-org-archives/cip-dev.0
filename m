@@ -1,80 +1,104 @@
-Return-Path: <hung.tran.jy@renesas.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF1B5C77B75
-	for <webhook@archiver.kernel.org>; Tue, 23 May 2023 08:30:28 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.16610.1684830624614964297
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02ED4C77B75
+	for <webhook@archiver.kernel.org>; Tue, 23 May 2023 13:19:50 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web11.22085.1684847981410247792
  for <cip-dev@lists.cip-project.org>;
- Tue, 23 May 2023 01:30:24 -0700
+ Tue, 23 May 2023 06:19:42 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: hung.tran.jy@renesas.com)
-X-IronPort-AV: E=Sophos;i="6.00,185,1681138800"; 
-   d="scan'208";a="160423854"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 23 May 2023 17:30:23 +0900
-Received: from s-VirtualBox.rvc.renesas.com (unknown [172.29.171.145])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id BDCFD4007F2B;
-	Tue, 23 May 2023 17:30:22 +0900 (JST)
-From: Hung Tran <hung.tran.jy@renesas.com>
-To: cip-dev@lists.cip-project.org
-Cc: jan.kiszka@siemens.com,
-	Hung Tran <hung.tran.jy@renesas.com>
-Subject: [isar-cip-core][PATCH] swupdate: Enable SWUpdate for RZG2M
-Date: Tue, 23 May 2023 15:29:47 +0700
-Message-Id: <20230523082947.5774-1-hung.tran.jy@renesas.com>
-X-Mailer: git-send-email 2.17.1
+ dkim=missing; spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 3E6411C0AB3; Tue, 23 May 2023 15:19:38 +0200 (CEST)
+Date: Tue, 23 May 2023 15:19:37 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Pavel Machek <pavel@denx.de>,
+	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Subject: Re: [PATCH 5.10.y-cip 14/23] PM: core: Add new *_PM_OPS macros,
+ deprecate old ones
+Message-ID: <ZGy9adIV+qjSXZBg@duo.ucw.cz>
+References: <20230519082058.109760-1-biju.das.jz@bp.renesas.com>
+ <20230519082058.109760-15-biju.das.jz@bp.renesas.com>
+ <ZGf0bB94Ugj2sQ36@duo.ucw.cz>
+ <OS0PR01MB592279CFAE4F7FC03C7414E1867D9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="UGxf7EnRM+s8Oxu4"
+Content-Disposition: inline
+In-Reply-To: <OS0PR01MB592279CFAE4F7FC03C7414E1867D9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 23 May 2023 08:30:28 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11611
+ <cip-dev@lists.cip-project.org>; Tue, 23 May 2023 13:19:50 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11612
 
-SWUpdate will be available for target device HiHope RZ/G2M after
-this change.
 
-Signed-off-by: Hung Tran <hung.tran.jy@renesas.com>
----
- Kconfig                              |  2 +-
- wic/hihope-rzg2m-efibootguard.wks.in | 14 ++++++++++++++
- 2 files changed, 15 insertions(+), 1 deletion(-)
- create mode 100644 wic/hihope-rzg2m-efibootguard.wks.in
+--UGxf7EnRM+s8Oxu4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Kconfig b/Kconfig
-index e1e187f..74fbc76 100644
---- a/Kconfig
-+++ b/Kconfig
-@@ -181,7 +181,7 @@ if IMAGE_FLASH && !KERNEL_4_4 && !KERNEL_4_19
- 
- config IMAGE_SWUPDATE
- 	bool "SWUpdate support for root partition"
--	depends on TARGET_QEMU_AMD64 || TARGET_SIMATIC_IPC227E || TARGET_QEMU_ARM64 || TARGET_QEMU_ARM || TARGET_BBB || ( TARGET_QEMU_RISCV64 && KERNEL_6_1_MAINLINE )
-+	depends on TARGET_QEMU_AMD64 || TARGET_SIMATIC_IPC227E || TARGET_QEMU_ARM64 || TARGET_QEMU_ARM || TARGET_BBB || ( TARGET_QEMU_RISCV64 && KERNEL_6_1_MAINLINE ) || TARGET_HIHOPE_RZG2M
- 
- config IMAGE_SECURE_BOOT
- 	bool "Secure boot support"
-diff --git a/wic/hihope-rzg2m-efibootguard.wks.in b/wic/hihope-rzg2m-efibootguard.wks.in
-new file mode 100644
-index 0000000..dc32729
---- /dev/null
-+++ b/wic/hihope-rzg2m-efibootguard.wks.in
-@@ -0,0 +1,14 @@
-+# short-description: RZ/G2M image with EFI Boot Guard and SWUpdate
-+# long-description: Disk image for HiHope RZ/G2M board with EFI Boot Guard and SWUpdate
-+
-+include ebg-sysparts.inc
-+
-+part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}"
-+part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}"
-+
-+# home and var are extra partitions
-+
-+part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G --extra-space=100M
-+part /var --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var --fstype=ext4 --label var --align 1024  --size 2G --extra-space=100M
-+
-+bootloader --ptable gpt --append="console=tty0 console=ttySC0,115200 rootwait earlyprintk"
--- 
-2.17.1
+Hi!
 
+> > > The callbacks that are only useful with CONFIG_PM_SLEEP is enabled,
+> > > are now also wrapped with a new pm_sleep_ptr() macro, which is
+> > > inspired from pm_ptr(). This is needed for drivers that use different
+> > > callbacks for sleep and runtime PM, to handle the case where CONFIG_PM
+> > > is set and CONFIG_PM_SLEEP is not.
+> > >
+> > > This commit also deprecates the following macros:
+> > >
+> > > SIMPLE_DEV_PM_OPS()
+> > > UNIVERSAL_DEV_PM_OPS()
+> > >
+> > > And introduces the following macros:
+> > >
+> > > DEFINE_SIMPLE_DEV_PM_OPS()
+> > > DEFINE_UNIVERSAL_DEV_PM_OPS()
+> >=20
+> > Changing interfaces / deprecating macros is not good thing to do in -cip
+> > kernel. How sure are we this will not cause build failures or build
+> > warnings in unrelated piece of code?
+>=20
+> Please see the commit [1] carefully,
+>=20
+> Deprecated is just a comment and it is just single header file change and
+> There is no existing macros changed.
+
+I'll need to look at the commit more carefuly.
+
+However previous patch redefines pm_ptr macro, which may have
+implications elsewhere. And indeed
+
+commit 5ef11c56b2332613cacd5e7ac17cfb1a073b66ab
+    r8169: Avoid misuse of pm_ptr() macro
+
+is example of such effect, and we'd need to pick it up.
+
+I believe it would be less intrusive to make i2c driver work w/o core
+changes.
+
+Thanks and best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--UGxf7EnRM+s8Oxu4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZGy9aQAKCRAw5/Bqldv6
+8tMSAJ99+h6efVoweAkL0yoseUtQiTRudwCgg2PO2CdaHKnA6+wVPad/NmM9tjk=
+=k6RL
+-----END PGP SIGNATURE-----
+
+--UGxf7EnRM+s8Oxu4--
 
