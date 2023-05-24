@@ -2,21 +2,21 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48ADFC7EE2C
-	for <webhook@archiver.kernel.org>; Wed, 24 May 2023 12:49:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 247C0C7EE2C
+	for <webhook@archiver.kernel.org>; Wed, 24 May 2023 12:49:55 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web10.7861.1684932583108467280
  for <cip-dev@lists.cip-project.org>;
- Wed, 24 May 2023 05:49:44 -0700
+ Wed, 24 May 2023 05:49:49 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.00,189,1681138800"; 
-   d="scan'208";a="164171355"
+   d="scan'208";a="164171368"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 24 May 2023 21:49:43 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 24 May 2023 21:49:48 +0900
 Received: from localhost.localdomain (unknown [10.226.93.65])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0763E4000AA0;
-	Wed, 24 May 2023 21:49:41 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id F39DF4000AA0;
+	Wed, 24 May 2023 21:49:46 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -24,9 +24,9 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 5.10.y-cip v2 01/10] driver core: add a helper to setup both the of_node and fwnode of a device
-Date: Wed, 24 May 2023 13:49:28 +0100
-Message-Id: <20230524124937.160355-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip v2 03/10] dt-bindings: i2c: Document RZ/V2M I2C controller
+Date: Wed, 24 May 2023 13:49:30 +0100
+Message-Id: <20230524124937.160355-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230524124937.160355-1-biju.das.jz@bp.renesas.com>
 References: <20230524124937.160355-1-biju.das.jz@bp.renesas.com>
@@ -35,57 +35,111 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 24 May 2023 12:49:45 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11635
+ <cip-dev@lists.cip-project.org>; Wed, 24 May 2023 12:49:55 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11637
 
-From: Ioana Ciornei <ioana.ciornei@nxp.com>
+From: Phil Edworthy <phil.edworthy@renesas.com>
 
-commit 43e76d463c09a0272b84775bcc727c1eb8b384b2 upstream.
+commit ba7a4d15e2c40f8fa37b38e4379e70019227dba0 upstream.
 
-There are many places where both the fwnode_handle and the of_node of a
-device need to be populated. Add a function which does both so that we
-have consistency.
+Document Renesas RZ/V2M (r9a09g011) I2C controller bindings.
 
-Suggested-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Wolfram Sang <wsa@kernel.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/base/core.c    | 7 +++++++
- include/linux/device.h | 1 +
- 2 files changed, 8 insertions(+)
+ .../bindings/i2c/renesas,rzv2m.yaml           | 80 +++++++++++++++++++
+ 1 file changed, 80 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 9a874a58d690..cb859febd03c 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -4352,6 +4352,13 @@ void device_set_of_node_from_dev(struct device *dev, const struct device *dev2)
- }
- EXPORT_SYMBOL_GPL(device_set_of_node_from_dev);
- 
-+void device_set_node(struct device *dev, struct fwnode_handle *fwnode)
-+{
-+	dev->fwnode = fwnode;
-+	dev->of_node = to_of_node(fwnode);
-+}
-+EXPORT_SYMBOL_GPL(device_set_node);
+diff --git a/Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml b/Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml
+new file mode 100644
+index 000000000000..c46378efc123
+--- /dev/null
++++ b/Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml
+@@ -0,0 +1,80 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/i2c/renesas,rzv2m.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- int device_match_name(struct device *dev, const void *name)
- {
- 	return sysfs_streq(dev_name(dev), name);
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 5dc0f81e4f9d..4f7e0c85e11f 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -818,6 +818,7 @@ int device_online(struct device *dev);
- void set_primary_fwnode(struct device *dev, struct fwnode_handle *fwnode);
- void set_secondary_fwnode(struct device *dev, struct fwnode_handle *fwnode);
- void device_set_of_node_from_dev(struct device *dev, const struct device *dev2);
-+void device_set_node(struct device *dev, struct fwnode_handle *fwnode);
- 
- static inline int dev_num_vf(struct device *dev)
- {
++title: Renesas RZ/V2M I2C Bus Interface
++
++maintainers:
++  - Phil Edworthy <phil.edworthy@renesas.com>
++
++allOf:
++  - $ref: /schemas/i2c/i2c-controller.yaml#
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - renesas,i2c-r9a09g011  # RZ/V2M
++      - const: renesas,rzv2m-i2c
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    items:
++      - description: Data transmission/reception interrupt
++      - description: Status interrupt
++
++  interrupt-names:
++    items:
++      - const: tia
++      - const: tis
++
++  clock-frequency:
++    default: 100000
++    enum: [ 100000, 400000 ]
++    description:
++      Desired I2C bus clock frequency in Hz.
++
++  clocks:
++    maxItems: 1
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-names
++  - clocks
++  - power-domains
++  - resets
++  - '#address-cells'
++  - '#size-cells'
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r9a09g011-cpg.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    i2c0: i2c@a4030000 {
++        compatible = "renesas,i2c-r9a09g011", "renesas,rzv2m-i2c";
++        reg = <0xa4030000 0x80>;
++        interrupts = <GIC_SPI 232 IRQ_TYPE_EDGE_RISING>,
++                     <GIC_SPI 236 IRQ_TYPE_EDGE_RISING>;
++        interrupt-names = "tia", "tis";
++        clocks = <&cpg CPG_MOD R9A09G011_IIC_PCLK0>;
++        resets = <&cpg R9A09G011_IIC_GPA_PRESETN>;
++        power-domains = <&cpg>;
++        clock-frequency = <100000>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++    };
 -- 
 2.25.1
 
