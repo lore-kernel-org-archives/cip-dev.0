@@ -2,21 +2,21 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2545FC7EE2D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35DF1C7EE2E
 	for <webhook@archiver.kernel.org>; Wed, 24 May 2023 12:49:55 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web10.7861.1684932583108467280
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web10.7869.1684932594763331878
  for <cip-dev@lists.cip-project.org>;
- Wed, 24 May 2023 05:49:46 -0700
+ Wed, 24 May 2023 05:49:55 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.00,189,1681138800"; 
-   d="scan'208";a="164171360"
+   d="scan'208";a="160644153"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 24 May 2023 21:49:46 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 24 May 2023 21:49:54 +0900
 Received: from localhost.localdomain (unknown [10.226.93.65])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7D2FF40104E3;
-	Wed, 24 May 2023 21:49:44 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 050A74000AA0;
+	Wed, 24 May 2023 21:49:51 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -24,9 +24,9 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 5.10.y-cip v2 02/10] clk: renesas: r9a09g011: Add IIC clock and reset entries
-Date: Wed, 24 May 2023 13:49:29 +0100
-Message-Id: <20230524124937.160355-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip v2 05/10] dt-bindings: i2c: renesas,rzv2m: Change maintainer to Fabrizio Castro
+Date: Wed, 24 May 2023 13:49:32 +0100
+Message-Id: <20230524124937.160355-6-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230524124937.160355-1-biju.das.jz@bp.renesas.com>
 References: <20230524124937.160355-1-biju.das.jz@bp.renesas.com>
@@ -36,54 +36,36 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 24 May 2023 12:49:55 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11636
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11639
 
-From: Phil Edworthy <phil.edworthy@renesas.com>
+From: Chris Paterson <chris.paterson2@renesas.com>
 
-commit 425e9e04ae5d94fd140f48b1e1bd1c4e4de533e9 upstream.
+commit f30ec5df80a0a3328ad6b9c2434ccaa331505307 upstream.
 
-Add IIC groups clock and reset entries to CPG driver.
-IIC Group A consists of IIC0 and IIC1. IIC Group B consists of
-IIC2 and IIC3. To confuse things, IIC_PCLK0 is used by group A
-and IIC_PCLK1 is used by group B.
+Phil no longer works for Renesas.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Link: https://lore.kernel.org/r/20220819193944.337599-2-phil.edworthy@renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Acked-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Link: https://lore.kernel.org/r/20230426100736.11808-1-chris.paterson2@renesas.com
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a09g011-cpg.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/r9a09g011-cpg.c b/drivers/clk/renesas/r9a09g011-cpg.c
-index 7922d68a8c6e..4dfc4e10107a 100644
---- a/drivers/clk/renesas/r9a09g011-cpg.c
-+++ b/drivers/clk/renesas/r9a09g011-cpg.c
-@@ -132,6 +132,7 @@ static const struct rzg2l_mod_clk r9a09g011_mod_clks[] __initconst = {
- 	DEF_COUPLED("eth_chi",	R9A09G011_ETH0_CLK_CHI,	 CLK_PLL2_100, 0x40c, 8),
- 	DEF_MOD("eth_clk_gptp",	R9A09G011_ETH0_GPTP_EXT, CLK_PLL2_100, 0x40c, 9),
- 	DEF_MOD("syc_cnt_clk",	R9A09G011_SYC_CNT_CLK,	 CLK_MAIN_24,  0x41c, 12),
-+	DEF_MOD("iic_pclk0",	R9A09G011_IIC_PCLK0,	 CLK_SEL_E,    0x420, 12),
- 	DEF_MOD("cperi_grpb",	R9A09G011_CPERI_GRPB_PCLK, CLK_SEL_E,  0x424, 0),
- 	DEF_MOD("tim_clk_8",	R9A09G011_TIM8_CLK,	 CLK_MAIN_2,   0x424, 4),
- 	DEF_MOD("tim_clk_9",	R9A09G011_TIM9_CLK,	 CLK_MAIN_2,   0x424, 5),
-@@ -141,6 +142,7 @@ static const struct rzg2l_mod_clk r9a09g011_mod_clks[] __initconst = {
- 	DEF_MOD("tim_clk_13",	R9A09G011_TIM13_CLK,	 CLK_MAIN_2,   0x424, 9),
- 	DEF_MOD("tim_clk_14",	R9A09G011_TIM14_CLK,	 CLK_MAIN_2,   0x424, 10),
- 	DEF_MOD("tim_clk_15",	R9A09G011_TIM15_CLK,	 CLK_MAIN_2,   0x424, 11),
-+	DEF_MOD("iic_pclk1",	R9A09G011_IIC_PCLK1,	 CLK_SEL_E,    0x424, 12),
- 	DEF_MOD("cperi_grpc",	R9A09G011_CPERI_GRPC_PCLK, CLK_SEL_E,  0x428, 0),
- 	DEF_MOD("tim_clk_16",	R9A09G011_TIM16_CLK,	 CLK_MAIN_2,   0x428, 4),
- 	DEF_MOD("tim_clk_17",	R9A09G011_TIM17_CLK,	 CLK_MAIN_2,   0x428, 5),
-@@ -163,6 +165,8 @@ static const struct rzg2l_reset r9a09g011_resets[] = {
- 	DEF_RST_MON(R9A09G011_SYC_RST_N,	0x610, 9,  13),
- 	DEF_RST(R9A09G011_TIM_GPB_PRESETN,	0x614, 1),
- 	DEF_RST(R9A09G011_TIM_GPC_PRESETN,	0x614, 2),
-+	DEF_RST(R9A09G011_IIC_GPA_PRESETN,	0x614, 8),
-+	DEF_RST(R9A09G011_IIC_GPB_PRESETN,	0x614, 9),
- 	DEF_RST_MON(R9A09G011_WDT0_PRESETN,	0x614, 12, 19),
- };
+diff --git a/Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml b/Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml
+index 92e899905ef8..5d1e7885b64a 100644
+--- a/Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml
++++ b/Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Renesas RZ/V2M I2C Bus Interface
  
+ maintainers:
+-  - Phil Edworthy <phil.edworthy@renesas.com>
++  - Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+ 
+ allOf:
+   - $ref: /schemas/i2c/i2c-controller.yaml#
 -- 
 2.25.1
 
