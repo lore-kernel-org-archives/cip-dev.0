@@ -2,21 +2,21 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 206A8C77B7A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2545FC7EE2D
 	for <webhook@archiver.kernel.org>; Wed, 24 May 2023 12:49:55 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web10.7861.1684932583108467280
  for <cip-dev@lists.cip-project.org>;
- Wed, 24 May 2023 05:49:51 -0700
+ Wed, 24 May 2023 05:49:46 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.00,189,1681138800"; 
-   d="scan'208";a="164171375"
+   d="scan'208";a="164171360"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 24 May 2023 21:49:51 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 24 May 2023 21:49:46 +0900
 Received: from localhost.localdomain (unknown [10.226.93.65])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7C73F4000AA0;
-	Wed, 24 May 2023 21:49:49 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7D2FF40104E3;
+	Wed, 24 May 2023 21:49:44 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -24,9 +24,9 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 5.10.y-cip v2 04/10] dt-bindings: i2c: renesas,rzv2m: Fix SoC specific string
-Date: Wed, 24 May 2023 13:49:31 +0100
-Message-Id: <20230524124937.160355-5-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip v2 02/10] clk: renesas: r9a09g011: Add IIC clock and reset entries
+Date: Wed, 24 May 2023 13:49:29 +0100
+Message-Id: <20230524124937.160355-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230524124937.160355-1-biju.das.jz@bp.renesas.com>
 References: <20230524124937.160355-1-biju.das.jz@bp.renesas.com>
@@ -36,60 +36,54 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 24 May 2023 12:49:55 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11638
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11636
 
-From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+From: Phil Edworthy <phil.edworthy@renesas.com>
 
-commit 0a4eecf96c640886226f1ca7fdbb11bb20bc55b9 upstream.
+commit 425e9e04ae5d94fd140f48b1e1bd1c4e4de533e9 upstream.
 
-The preferred form for Renesas' compatible strings is:
-"<vendor>,<family>-<module>"
+Add IIC groups clock and reset entries to CPG driver.
+IIC Group A consists of IIC0 and IIC1. IIC Group B consists of
+IIC2 and IIC3. To confuse things, IIC_PCLK0 is used by group A
+and IIC_PCLK1 is used by group B.
 
-Somehow the compatible string for the r9a09g011 I2C IP was upstreamed
-as renesas,i2c-r9a09g011 instead of renesas,r9a09g011-i2c, which
-is really confusing, especially considering the generic fallback
-is renesas,rzv2m-i2c.
-
-The first user of renesas,i2c-r9a09g011 in the kernel is not yet in
-a kernel release, it will be in v6.1, therefore it can still be
-fixed in v6.1.
-Even if we don't fix it before v6.2, I don't think there is any
-harm in making such a change.
-
-s/renesas,i2c-r9a09g011/renesas,r9a09g011-i2c/g for consistency.
-
-Fixes: ba7a4d15e2c4 ("dt-bindings: i2c: Document RZ/V2M I2C controller")
-Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Wolfram Sang <wsa@kernel.org>
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Link: https://lore.kernel.org/r/20220819193944.337599-2-phil.edworthy@renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/renesas/r9a09g011-cpg.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml b/Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml
-index c46378efc123..92e899905ef8 100644
---- a/Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml
-+++ b/Documentation/devicetree/bindings/i2c/renesas,rzv2m.yaml
-@@ -16,7 +16,7 @@ properties:
-   compatible:
-     items:
-       - enum:
--          - renesas,i2c-r9a09g011  # RZ/V2M
-+          - renesas,r9a09g011-i2c  # RZ/V2M
-       - const: renesas,rzv2m-i2c
+diff --git a/drivers/clk/renesas/r9a09g011-cpg.c b/drivers/clk/renesas/r9a09g011-cpg.c
+index 7922d68a8c6e..4dfc4e10107a 100644
+--- a/drivers/clk/renesas/r9a09g011-cpg.c
++++ b/drivers/clk/renesas/r9a09g011-cpg.c
+@@ -132,6 +132,7 @@ static const struct rzg2l_mod_clk r9a09g011_mod_clks[] __initconst = {
+ 	DEF_COUPLED("eth_chi",	R9A09G011_ETH0_CLK_CHI,	 CLK_PLL2_100, 0x40c, 8),
+ 	DEF_MOD("eth_clk_gptp",	R9A09G011_ETH0_GPTP_EXT, CLK_PLL2_100, 0x40c, 9),
+ 	DEF_MOD("syc_cnt_clk",	R9A09G011_SYC_CNT_CLK,	 CLK_MAIN_24,  0x41c, 12),
++	DEF_MOD("iic_pclk0",	R9A09G011_IIC_PCLK0,	 CLK_SEL_E,    0x420, 12),
+ 	DEF_MOD("cperi_grpb",	R9A09G011_CPERI_GRPB_PCLK, CLK_SEL_E,  0x424, 0),
+ 	DEF_MOD("tim_clk_8",	R9A09G011_TIM8_CLK,	 CLK_MAIN_2,   0x424, 4),
+ 	DEF_MOD("tim_clk_9",	R9A09G011_TIM9_CLK,	 CLK_MAIN_2,   0x424, 5),
+@@ -141,6 +142,7 @@ static const struct rzg2l_mod_clk r9a09g011_mod_clks[] __initconst = {
+ 	DEF_MOD("tim_clk_13",	R9A09G011_TIM13_CLK,	 CLK_MAIN_2,   0x424, 9),
+ 	DEF_MOD("tim_clk_14",	R9A09G011_TIM14_CLK,	 CLK_MAIN_2,   0x424, 10),
+ 	DEF_MOD("tim_clk_15",	R9A09G011_TIM15_CLK,	 CLK_MAIN_2,   0x424, 11),
++	DEF_MOD("iic_pclk1",	R9A09G011_IIC_PCLK1,	 CLK_SEL_E,    0x424, 12),
+ 	DEF_MOD("cperi_grpc",	R9A09G011_CPERI_GRPC_PCLK, CLK_SEL_E,  0x428, 0),
+ 	DEF_MOD("tim_clk_16",	R9A09G011_TIM16_CLK,	 CLK_MAIN_2,   0x428, 4),
+ 	DEF_MOD("tim_clk_17",	R9A09G011_TIM17_CLK,	 CLK_MAIN_2,   0x428, 5),
+@@ -163,6 +165,8 @@ static const struct rzg2l_reset r9a09g011_resets[] = {
+ 	DEF_RST_MON(R9A09G011_SYC_RST_N,	0x610, 9,  13),
+ 	DEF_RST(R9A09G011_TIM_GPB_PRESETN,	0x614, 1),
+ 	DEF_RST(R9A09G011_TIM_GPC_PRESETN,	0x614, 2),
++	DEF_RST(R9A09G011_IIC_GPA_PRESETN,	0x614, 8),
++	DEF_RST(R9A09G011_IIC_GPB_PRESETN,	0x614, 9),
+ 	DEF_RST_MON(R9A09G011_WDT0_PRESETN,	0x614, 12, 19),
+ };
  
-   reg:
-@@ -66,7 +66,7 @@ examples:
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
-     i2c0: i2c@a4030000 {
--        compatible = "renesas,i2c-r9a09g011", "renesas,rzv2m-i2c";
-+        compatible = "renesas,r9a09g011-i2c", "renesas,rzv2m-i2c";
-         reg = <0xa4030000 0x80>;
-         interrupts = <GIC_SPI 232 IRQ_TYPE_EDGE_RISING>,
-                      <GIC_SPI 236 IRQ_TYPE_EDGE_RISING>;
 -- 
 2.25.1
 
