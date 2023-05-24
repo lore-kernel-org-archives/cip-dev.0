@@ -1,107 +1,74 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <ch@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8BFDC77B7A
-	for <webhook@archiver.kernel.org>; Wed, 24 May 2023 07:51:03 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web11.3542.1684914661629081319
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A5C3C77B73
+	for <webhook@archiver.kernel.org>; Wed, 24 May 2023 08:27:44 +0000 (UTC)
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+ by mx.groups.io with SMTP id smtpd.web10.4127.1684916859382239797
  for <cip-dev@lists.cip-project.org>;
- Wed, 24 May 2023 00:51:02 -0700
+ Wed, 24 May 2023 01:27:40 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 1EB6D1C0DFE; Wed, 24 May 2023 09:51:00 +0200 (CEST)
-Date: Wed, 24 May 2023 09:50:59 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@denx.de>,
-	Chris Paterson <chris.paterson2@renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: Re: [PATCH 5.10.y-cip 19/23] i2c: Add Renesas RZ/V2M controller
-Message-ID: <ZG3B469M6oPKqDIB@duo.ucw.cz>
-References: <20230519082058.109760-1-biju.das.jz@bp.renesas.com>
- <20230519082058.109760-20-biju.das.jz@bp.renesas.com>
+ dkim=fail reason="body hash did not verify" header.i=@denx.de header.s=phobos-20191101 header.b=F8XbpFoJ;
+ spf=pass (domain: denx.de, ip: 85.214.62.61, mailfrom: ch@denx.de)
+Received: from localhost (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: ch@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 03FD785F72;
+	Wed, 24 May 2023 10:27:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1684916857;
+	bh=hH8HzTSFW7+ce7OdJWIiCOHzcGdcyMOg71YnJKJ82Pw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=F8XbpFoJIVV+kZPmOe17mzi+achyDOphRpk7ceNMO+OpJKjD46e71FQLO+I7RzwqQ
+	 BkXgUIEzpm089uZxDFJt2ySPd59e9P0LiGXP8tERPo7FTCdyqqTgDe+cpklZW9W4TD
+	 ymN5JFXRT6eMf22unxE3YXYvMlY/dQU0D+IJsTR0OeRANz9IL4oklu6h8BhQ+Xb7lY
+	 +w+/bQIgN9uDNsv120XeeZbR02yHJhRLyrsGe88n3p7FzwVFqj5Ev/UdnHpLuskvk2
+	 meXWS6ipxJsmiLKrTYtIs8S07uT5Lf2oB1y+DTXeKuiVXFK1kaNVko6fo+gSdOgodh
+	 0AnJKMDY8Qw8Q==
+From: Claudius Heine <ch@denx.de>
+To: cip-dev@lists.cip-project.org
+Cc: Claudius Heine <ch@denx.de>
+Subject: [cip-kernel-config][PATCH 0/2] Siemens IPC127e - 4.19 and 6.1 cfg
+Date: Wed, 24 May 2023 10:27:23 +0200
+Message-Id: <20230524082725.41558-1-ch@denx.de>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/wU6kcRXRX17UdAA"
-Content-Disposition: inline
-In-Reply-To: <20230519082058.109760-20-biju.das.jz@bp.renesas.com>
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
+Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 24 May 2023 07:51:03 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11628
+ <cip-dev@lists.cip-project.org>; Wed, 24 May 2023 08:27:44 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11629
 
+Hi,
 
---/wU6kcRXRX17UdAA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+since the 5.10 Siemens IPC127e patch was merged as I submitted it, here
+are the configs for 4.19 and 6.1.
 
-Hi!
+They are the same as before, copies of the IPC227e with WDAT_WDT added.
 
-Minor details I noticed during review (they should not prevent merge):
+cheers,
+Claudius
 
-> commit e0ca796a151bd4de76efd71aade2b4805a95c93d upstream.
->=20
-> Yet another i2c controller from Renesas that is found on the RZ/V2M
-> (r9a09g011) SoC. It can support only 100kHz and 400KHz operation.
+Claudius Heine (2):
+  4.19.y-cip/x86: add Siemens IPC127e defconfig
+  6.1.y-cip/x86: add Siemens IPC127e defconfig
 
-KHz should be kHz.
+ 4.19.y-cip/x86/siemens_ipc127e.sources   |  9135 +++++++++++++++++
+ 4.19.y-cip/x86/siemens_ipc127e_defconfig |   456 +
+ 6.1.y-cip/x86/siemens_ipc127e.sources    | 10961 +++++++++++++++++++++
+ 6.1.y-cip/x86/siemens_ipc127e_defconfig  |   425 +
+ 4 files changed, 20977 insertions(+)
+ create mode 100644 4.19.y-cip/x86/siemens_ipc127e.sources
+ create mode 100644 4.19.y-cip/x86/siemens_ipc127e_defconfig
+ create mode 100644 6.1.y-cip/x86/siemens_ipc127e.sources
+ create mode 100644 6.1.y-cip/x86/siemens_ipc127e_defconfig
 
-> +++ b/drivers/i2c/busses/Kconfig
-> @@ -961,6 +961,16 @@ config HAVE_S3C2410_I2C
->  	  include I2C support for any machine, kindly select this in the
->  	  respective Kconfig file.
-> =20
-> +config I2C_RZV2M
-> +	tristate "Renesas RZ/V2M adapter"
-> +	depends on ARCH_RENESAS || COMPILE_TEST
-> +	help
-> +	  If you say yes to this option, support will be included for the
-> +	  Renesas RZ/V2M  I2C interface.
-
-Double space ("  ").
-
-> +#define bit_setl(addr, val)		writel(readl(addr) | (val), (addr))
-> +#define bit_clrl(addr, val)		writel(readl(addr) & ~(val), (addr))
-
-Normally we'd put macro names in all uppercase.
-
-> +static int rzv2m_i2c_probe(struct platform_device *pdev)
-> +{
-=2E..
-> +	pm_runtime_get_sync(dev);
-> +	rzv2m_i2c_init(priv);
-> +	pm_runtime_put(dev);
-> +
-> +	platform_set_drvdata(pdev, priv);
-> +
-> +	ret =3D i2c_add_numbered_adapter(adap);
-> +	if (ret < 0)
-> +		pm_runtime_disable(dev);
-
-Is it possible that bit_clrl(priv->base + IICB0CTL0, IICB0IICE); is
-missing before pm_runtime_disable?
-
-Best regards,
-								Pavel
 --=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+2.40.1
 
---/wU6kcRXRX17UdAA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZG3B4wAKCRAw5/Bqldv6
-8r54AJsERWwrirxAkKoQ5KAAh/jBLLpcZgCgmLlW2RNR7DbuAqVc1Q+bSY8weeA=
-=ehY6
------END PGP SIGNATURE-----
-
---/wU6kcRXRX17UdAA--
 
