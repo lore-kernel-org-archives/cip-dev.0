@@ -1,140 +1,223 @@
-Return-Path: <ncaidin@linuxfoundation.org>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B3FC7EE2E
-	for <webhook@archiver.kernel.org>; Mon, 29 May 2023 12:43:53 +0000 (UTC)
-Received: from EUR01-VE1-obe.outbound.protection.outlook.com (EUR01-VE1-obe.outbound.protection.outlook.com [40.107.14.89])
- by mx.groups.io with SMTP id smtpd.web10.46654.1685356089302700393
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 479CDC77B7A
+	for <webhook@archiver.kernel.org>; Tue, 30 May 2023 06:32:30 +0000 (UTC)
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (EUR04-HE1-obe.outbound.protection.outlook.com [40.107.7.55])
+ by mx.groups.io with SMTP id smtpd.web11.3979.1685428343246436291
  for <cip-dev@lists.cip-project.org>;
- Mon, 29 May 2023 03:28:09 -0700
+ Mon, 29 May 2023 23:32:23 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=J3vjh1pp;
- spf=pass (domain: siemens.com, ip: 40.107.14.89, mailfrom: felix.moessbauer@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=j60SzoVT;
+ spf=pass (domain: siemens.com, ip: 40.107.7.55, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=m/KxkENhMkSl/8ms0KFgyvsgj/2sYaxoijS1pJg9UBjY8OJm8xOmwXvgUsrIO1OoS3mxGZc4jWrz0uQ47YyZgqTm1y64t4zJJF3tEd7tKjmPZo+ndhCwoox2SyK/sBz6OERrCxlvtlPFLCwyLV5dYkTjTrTMkwMkTZChsa+GHy3kQjBdSHV2gFXpcPx8yslo1buaRGjXq8VMPiIzJ0aCa2seRuzM3j7viuEZC6DGZEMq+jBHSlxCllT5Lw+qlSuSann4HGX7vBN6WHu3/kZkjVZgscLuGl144o/Q0KdBkGYuwxo7FQnVBXmho97LLAh2f2sM6QZRTP2plPUMXRMXtA==
+ b=QIufnJS8jDMGq4NmjMk3wPZ3G/dWGS3klDeRex7xs4+68HdkOwknWpUJACnmtaZqKN7eWdH9IKvxKpWUlGONk2mQvK+7B9vqGbQ6CfOpwEexVaw85Aq54IDB4GXKDjMQx2MKeToSDNLhix+knIlO2r5VH1EuMMSsx8nR5TXO59EuaTXerLLffy8w7yaVtFmqgDMpl/hehxCaK7OPQr1ENXqr9C1wHc052hPj+d/05e2q/L0/ntfqGMK1WL7cG5tAx/ejvh/Eetc4DuVLft50xzLWgeHDeQusvES9zSO+7goYZerHx0uG8P14PNdnqXrAKiWyutr3WGLskERQvmHvvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3XHPSk+xC0rA3tjGWruPXxqO1SRkdcc4VeUSdsIGCbs=;
- b=U4CLB98Nxj3aAK94vAxNNXCtyV6JzD+uOiAlFlIoGkyszeJ8T/ISm32TS24jDnuiCrHG9UjjifwIppsLILPUbuVeQdzQ4fpfGiWrdz8HhzEY2jcOZ41IjhdG1K9+n3QzdTWfFScrqksKM8vAlgMJ0VVbFLoHSEYGrnvAeKraRvqccGiZBeu2a2M35z2RTVOJip0SKzxOmFyxogPuLruyE73huT+rLg71ZOYTKi4U+NLSIIpLXqrCm56nBc1WQvoHIKjK7ia1vnPYb7bkbB3a3CwkZynkvjTLE17jksTKIlpoBEn1EHvPT/yHpCGTx9/rRLIP1lRi7lPtZz2KQyisKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 194.138.21.76) smtp.rcpttodomain=lists.cip-project.org
- smtp.mailfrom=siemens.com; dmarc=pass (p=reject sp=reject pct=100)
- action=none header.from=siemens.com; dkim=none (message not signed); arc=none
+ bh=YA8gZpkpvfzBzYegviDOhj4Nh3wDh+HRtYCIpj/xr9c=;
+ b=k6oEx8AecDkwuC5on8P0NB4go2cZP7t3kpnanxrFFRJeTV79IXshTS9d6/m1iBnw2Xb/GKCyiQvbUA0vqf8KyUvkGmG+HtdHbGdk/S1TawVt5IGgYnZcHr3hSKA8ZIClrkSM6s3qR6SOYVURIUI1tmjmtDvt6DTJH9qrhkNeUPBo2fcnLwPRX0R6QtwAOHHnmd2yx2+RIGSmljXslr0shgUb75dR37YzA9lvjfljZ5Ag1xoiq4fwoJ87qhALnp6n9fX3Bbd0ECVlEdhfDSotyZAectrfxhjOA8lkOA5OpH3+vAYyj0xXh/BQb+zKVXJUPwBpB25ES1et1bzh9T5IRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3XHPSk+xC0rA3tjGWruPXxqO1SRkdcc4VeUSdsIGCbs=;
- b=J3vjh1pp38lQVNISk9gEbdeQ/x0Uvf5i4mbfspx2bT1ECLBXcApHOahX4FG7aUkws8Qy6/L8MvogR/2NF9WVkt0FJWtdyuQnRWUZdFFSHnRRJHXYtdTFjkyPOrGVjwSNw8gkrXAkPzS++YKZHDfMRpseCVU4oppcDgG6NkiULMaXFnCGApv9+NeZlVJ/74umFBEMKoLg6PA8xiShMI9ZJLo0JCtvrPVSbpY0JCM2Isv3Tvz6539CGzF9ZlGzKn4Tj3kjVCHbDShm5sNcJ3Flqc/v+2IFFUvJWPS4zn9iMa287sj3z0Heu2fepRqfMNGzD1rUhPMRsuA/Mzq5+oubzA==
-Received: from FR3P281CA0109.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:a3::9) by
- DU2PR10MB7884.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:49b::15) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6433.22; Mon, 29 May 2023 10:28:05 +0000
-Received: from VE1EUR01FT023.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:d10:a3:cafe::8a) by FR3P281CA0109.outlook.office365.com
- (2603:10a6:d10:a3::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.20 via Frontend
- Transport; Mon, 29 May 2023 10:28:03 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 194.138.21.76)
- smtp.mailfrom=siemens.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=siemens.com;
-Received-SPF: Pass (protection.outlook.com: domain of siemens.com designates
- 194.138.21.76 as permitted sender) receiver=protection.outlook.com;
- client-ip=194.138.21.76; helo=hybrid.siemens.com; pr=C
-Received: from hybrid.siemens.com (194.138.21.76) by
- VE1EUR01FT023.mail.protection.outlook.com (10.152.2.218) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6455.18 via Frontend Transport; Mon, 29 May 2023 10:28:01 +0000
-Received: from CNPEK01M10MSX.ad011.siemens.net (139.24.237.228) by
- DEMCHDC8VSA.ad011.siemens.net (194.138.21.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1118.25; Mon, 29 May 2023 12:28:00 +0200
-Received: from CNPEK01M01MSX.ad011.siemens.net (139.24.237.214) by
- CNPEK01M10MSX.ad011.siemens.net (139.24.237.228) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Mon, 29 May 2023 18:27:57 +0800
-Received: from CNPEK01M01MSX.ad011.siemens.net ([139.24.237.214]) by
- CNPEK01M01MSX.ad011.siemens.net ([139.24.237.214]) with mapi id
- 15.01.2507.023; Mon, 29 May 2023 18:27:57 +0800
-From: "MOESSBAUER, Felix" <felix.moessbauer@siemens.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, "Kiszka,
- Jan" <jan.kiszka@siemens.com>
-Subject: Re: [isar-cip-core][PATCH] squashfs: Calculate a smarter default SQUASHFS_MEMLIMIT
-Thread-Topic: [isar-cip-core][PATCH] squashfs: Calculate a smarter default
- SQUASHFS_MEMLIMIT
-Thread-Index: AQHZkLsXtklrDI4e1k2Pn9hwY6qRW69wiNyA
-Date: Mon, 29 May 2023 10:27:57 +0000
-Message-ID: <77f15adc8c93fcb3542abb215f00a7ec93f1bf17.camel@siemens.com>
-References: <46e8b3a2-128f-c63a-cbfc-6d38a1792a35@siemens.com>
-	 <5728b6ca-8c6a-9eb3-3926-e99cf7081414@siemens.com>
-In-Reply-To: <5728b6ca-8c6a-9eb3-3926-e99cf7081414@siemens.com>
-Accept-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.46.4-2 
-x-originating-ip: [139.24.247.57]
+ bh=YA8gZpkpvfzBzYegviDOhj4Nh3wDh+HRtYCIpj/xr9c=;
+ b=j60SzoVTOV4pryk7/hXbIUu2PZzkbGU391eT6+o79ijc+p/jtU5W4Jx8JpA5PKotUQPHWeyAygDin/CprDy+9AAXqDaGFjlLhNF8BQF28EJuF91N3dqDd1gqEnfbGm25VeY8Tneh4IiLTlCYVRup5+6YuZxYANeVpMQSVqclvvj0wWHAhiInUSQhS7Qk7fNl9VH5ZMOsgtxQdzObcQZA98t9WFUsS+AJ/GvvAYdYxZW+C198BgwMUYAy52pd8NV8Rgrv8cRQGIFFj5LshqpE5M4R5m1f386+ICOzoAhk7IkeJGXHCaHvx6FbGvCJEFCL9kLZak+YzMHCSDfp8cLi/Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by VI1PR10MB3151.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:803:135::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6433.23; Tue, 30 May
+ 2023 06:32:19 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::d638:8333:21fb:5f18]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::d638:8333:21fb:5f18%7]) with mapi id 15.20.6433.022; Tue, 30 May 2023
+ 06:32:19 +0000
+Message-ID: <b6f59587-21c1-bcdf-c657-dbf5f206cc27@siemens.com>
+Date: Tue, 30 May 2023 08:32:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [isar-cip-core][PATCH] kas-container: update kas to 3.2.3
+Content-Language: en-US
+To: Srinuvasan Arjunan <srinuvasan_a@mentor.com>,
+ cip-dev@lists.cip-project.org
+Cc: Srinuvasan A <srinuvasan.a@siemens.com>
+References: <20230529063356.2292070-1-srinuvasan_a@mentor.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+In-Reply-To: <20230529063356.2292070-1-srinuvasan_a@mentor.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR0P281CA0240.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:b2::15) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: VE1EUR01FT023:EE_|DU2PR10MB7884:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4a34b740-b3cb-479f-f267-08db602f6126
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|VI1PR10MB3151:EE_
+X-MS-Office365-Filtering-Correlation-Id: d63afffb-a507-4ac7-a830-08db60d79e4a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	xinpq1J3ddB9fx8Zsk860IGoJwoKvyv+n6W5GFYikhICQ+hCmrnWKa5DMj/NtrYt0Ijt5Fx4dzt++RQvfnzlcbVErUo96YccRNgJ20s5YnSyrZhQBDrQqeHyf8Bza9SxIgV4iAPVEtqRgCNOkqUd4ZmAprGDqU71ioTnEJtquJGNpgjbcnESxRtmB3rw5hu6qWQU9ZYAkctTzsH4agYmiFq9MIhqbE6CsxTP9RiT3eIzeU1GzZ3aujGeAigSo9apoffw3pryN2WZfpukXRXkDBYK5scQUnaDdoewJsavFJc8Bg5ikRA3HR7yoUKhDzDyT8eQd+Fmbo4JuxkxMhpn6dV5GWvSbWqXrDGBM16Ch6s5x8XHO5TUhW73+Z5sYflZfyIhX+YFRzrC2asG71c/i9A5AdF6oBb3SC2FEewJacNnyAbs++v8uux+b06x1EDcrn36CPmFIjexRqStKeUSRN/DlnQ/vqYxnbrZHzPE83mh4n4OsneQeDKmlkN4TFP3LYvPSg+fBR1EbbcnfyBPABHYtF38Id3O+8V6CqyBV/5egEVPcAERfo0mZ/sUpQUIXX5WxlpKL4s/c6Cc7cd4OZLB099rXBVAwjR4rzH7GUBsv5lZqQao2zhfdLKHXo1cxKuvwS+FjTlA06DsrgLbaWZvSGWWIVJecwhP5RwQsxPu8+O+FqAZQMq+t/ZYzPvc7WeqdJbUIS8BWN72hQL9D2cygZU6tPuqueQibdrochWieKiQhtGQVQgs7vZPwJTr9Tjtxo4fr/X7gZ3eRp1Guw==
+	kkbHwk4txxlcfKdOSqRJ63JvDx0eKjCynTfV+yqlI3xaV4bjJOgwwXSgooSFXpWngdrW/iSw9YZ/G18wlLaEHRJa/KP3jGFu0VeZzQms1S+iPxS2LSbVP4PUg2X/e/RZ0PRjaSeZty1o8rSZZhlaympRpY1jep57dzP7K6Iwd2ILq7r6jHPoYVfi0jEGuHduGoGbBgO+zSTWr183bTpIHKWHONhdwoiG8qmJNA3fX/muD4cXuKrTwb/oVXwu/J+eI3Dv0otRKZXvZPTfrsGxRI/BII9xgCVDu50Ibc1Ryinjytqcy5G2coVWhdVRdtxZuMkLRFUQcfy9eVeQJ8OWZWBVpoKU861TLtmMfS/NQBkN1VjJUW7jzgiLH6esWLpz0YY290K1pWrLTt9unxBuiTYEDkmJ02mCXjnpFXjiZVlNMrqSl4wuTnP1/JK+b4wtqTg4LrXTpRmuo25lsr9CXWi4uY4sVweAOfxcrJUVR0v4daxjlRAjdop1MF2ORjMqFzkG+MRp/B9SAdz10MC8Xs1YqOBiv6JbMimEtOcoriSSG4fC8cR6tqaQepfJxAUzFN04AbLRS3WUxR6BP3pkniK8f7r5djzpurMcg5EFi4lwjjxWPltVZRwePpBfOYuQBodBiadzzf0JdAiujq74/8LZnorhuaoevzw7hY9Ln9PAkIp2q0j9pyji6ZVey/nC
 X-Forefront-Antispam-Report: 
-	CIP:194.138.21.76;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:hybrid.siemens.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(396003)(39860400002)(376002)(136003)(346002)(451199021)(36840700001)(46966006)(40470700004)(47076005)(36860700001)(26005)(186003)(41300700001)(956004)(2616005)(83380400001)(336012)(478600001)(110136005)(40460700003)(70206006)(70586007)(82740400003)(356005)(6636002)(82310400005)(40480700001)(82960400001)(316002)(81166007)(5660300002)(8936002)(8676002)(86362001)(36756003)(2906002)(36900700001);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(39860400002)(346002)(366004)(136003)(396003)(451199021)(31686004)(84970400001)(478600001)(66946007)(66556008)(66476007)(4326008)(316002)(31696002)(36756003)(86362001)(83380400001)(53546011)(6512007)(6506007)(26005)(186003)(107886003)(5660300002)(41300700001)(8936002)(8676002)(44832011)(15650500001)(2906002)(6486002)(38100700002)(82960400001)(2616005)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?QnhVbllGeUlKRThsR1MxMVE0Q2JidFpDZXNqUFpNczZEU2V5eDkxbUsxTkcx?=
+ =?utf-8?B?NUJUTUcxNEJiUDhqaExGN2MrVzRFcTloMkcybEprMHlqMUxJK0Q3cm53SUxX?=
+ =?utf-8?B?L2NaZXdxVTFYYXpudkFqaTFKTEJjVERRelU0UHNRcmExd3U5SDJXTmZyUnpM?=
+ =?utf-8?B?VjBBT0dZSWpWQ0tORTZUMXFnS0wwaUNzOGl4QUJIY0NUemhhR0VjbHVteGR5?=
+ =?utf-8?B?bCtvL3pwRVp4dzVkYkJ3NmFhWXdpcDE3RmdoUVlWeWw4ZC9Wc0lrR0NSZU9y?=
+ =?utf-8?B?Mm03dkUxK2lPT1N0eDl3dXI0aVhvTTNWT2c0K0VBMkM4NXJyL0pGN1g4Q1pa?=
+ =?utf-8?B?cytmV2o2WkVyR0tFT3FMdVlwUitONGFuTGNkVXYyWmxZNWtQTUYweHVYYTVW?=
+ =?utf-8?B?bW12aUJqbGd6VGJWQkc1bVhOaFlwQUx4TzNoWUwrQklkZzFnNUhWeVN1Um1x?=
+ =?utf-8?B?Qkt2U0tiQmJrOHpGSTc2bDRJRU1ERmFnZ1ZjVjE4TVRaVnA0akoyTHlycDBs?=
+ =?utf-8?B?amJaRTRGUWZSaGdJUzBXbWJVVXlIUE9CR00rVHhKUDMvVGtjbjFWY3ArVG82?=
+ =?utf-8?B?N2l0YjBTb1ZlY3k0QXZ2UHhKVU1qdnlROWpCdTkvYTBTZTFHcVFHeklRenVK?=
+ =?utf-8?B?L1p2S2VocVdxLzhUank3M1I5cW56dWV4ZlliRU1lS2lhN1hMbDh4WXFFUVBB?=
+ =?utf-8?B?WlkzcVdCejhzS2dtSG12dFJNM0VXMVhHd205TVBMcGVTR3cybGlicTFORjNI?=
+ =?utf-8?B?RmhJYUxtRXFWamM5eWVZK3JJeVBUaktwWTJtM2ZTU1kxaFB1ZVp5cnl4ZWpC?=
+ =?utf-8?B?bkUwOTB4WDlwOUxZNXhPNXFQdGhJMytleFRia2tUa0J1RExqZUNmTU5nUnFw?=
+ =?utf-8?B?STEzODI3d0VwQ0RWZ0RtM0tsT3RYSUNpbjl1d2VRWlJodnpVMXYrVHh2WkxW?=
+ =?utf-8?B?dmZQUlUxWlpPUkNqZVlFMitCdGNTdzJKMnQxMmQvcy9oL2VXcnV1VWd6RXY1?=
+ =?utf-8?B?ak8yM0k0VStjVGEwK0hJbjJPTnB0dFlTaE4vUXdXUnA3TWNrd25PUUJNVDFm?=
+ =?utf-8?B?VGRUenlnSzNlMWgrTVh1cGcwemNKb3FwNFBya0lURmxFSGdaN0liOHNxME52?=
+ =?utf-8?B?N1cwSFViQ1FzTS9BSHlvZDVFRzJQVExHZUlWeEJ6azJkZjlDYlUyS2pmN01z?=
+ =?utf-8?B?SmZNTW9qSCs5RzBhZDQrSVJjRW9vQVVwVjZrRWJCQ05pMkZDbWZGZFoxUXRS?=
+ =?utf-8?B?Q0pIRk15eXM1RHNxdllia3A1b25rdStKNUM0WEVnMXZ0MzNaeHN5S2txUkdk?=
+ =?utf-8?B?SjVycVRVb2c1cGo4bENVM1kwSGxwVnVGNSs4cW52Lytpa3prKzVGQnV2Vm9R?=
+ =?utf-8?B?Y1QydUhYOS9sV2pyTDFrWEVJRGtXeXg1UkFtUFlJbHg2K2diYmRjNVRPSXA4?=
+ =?utf-8?B?M2hyTXhJcm0renJ0YW9sTXBjS0tLOWg0YUpNN25KbDM5bVJhenRtc3ZlT0dT?=
+ =?utf-8?B?citDUlAxZkFIcEk3WU52UjJoSk1IUUI5RjRFVGtuSVhTeVp0N3VLOGUzTG5Z?=
+ =?utf-8?B?YXVPbEpWV0krNFVuQzBTNXdQelVGeFVFT0hDdUtVWGJUSTZMVjlDNmpRVS9j?=
+ =?utf-8?B?eTZpaUxBN2wwektWNDVEUEdwUFhkUklWY1c4dU5sU0Z6a3ZvWDJrbytoV0p6?=
+ =?utf-8?B?MjJ5bzV2ZGp4WStxUG14VlUvREErWVFmaE1EWjdGc2I1dk9wUjJTNFlQTmk0?=
+ =?utf-8?B?WFdRT0pmQzkwVjFRQmw3NTNIQ0tLWkRMaTRpY3cvdkJVN0I0RmtVU1R6aFlH?=
+ =?utf-8?B?d1piYVY2V3NUQUxNdGlIUXhVdUx5YWFYUFNKd3A2NkpDQ0Vsa1U0d3UzSnZt?=
+ =?utf-8?B?dDZpdkpVZ1JvVmREVU15Q2N5Z3ZUQTVPd2RGVUpScVhhL3lkODhoQ293eWlu?=
+ =?utf-8?B?WEtVSjMrRDZ4bHFRaG1nYjB6ODlvSUxYcFluTmg2UzJZczhreVhWYVF2ajVz?=
+ =?utf-8?B?bkI5a1dYUjVxZGpoWkllQTU3c3ZmYzNicnNYZUlvV25WcmpRMkg0czgrRXdH?=
+ =?utf-8?B?Q3NVOXU2czdtcGRtZVZBUjFqSkU0MUhIOXNFYWFpYzJ2dEE5a2pHR2N1Y2RW?=
+ =?utf-8?B?bEkrV1lPM2dvY1VPSTMyZjgrL1hLSHFqWWtyVis0VEc0a2c2L2thdTd5YTZ1?=
+ =?utf-8?B?TEE9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2023 10:28:01.1947
+X-MS-Exchange-CrossTenant-Network-Message-Id: d63afffb-a507-4ac7-a830-08db60d79e4a
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2023 06:32:19.4593
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4a34b740-b3cb-479f-f267-08db602f6126
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;Ip=[194.138.21.76];Helo=[hybrid.siemens.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	VE1EUR01FT023.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR10MB7884
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <94EF12118F12124F8459446A2A4E28FC@siemens.com>
-Content-Transfer-Encoding: base64
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Lxc/M5kk66xSVrjjoTUtjEAByWS7EtLZuWDEAjpNiOB8JvCJCzCEB0sbtLTpNukyAkb96cquGHnXCDSTOPzlSA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB3151
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 29 May 2023 12:43:53 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11698
+ <cip-dev@lists.cip-project.org>; Tue, 30 May 2023 06:32:30 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11700
 
-T24gU2F0LCAyMDIzLTA1LTI3IGF0IDE4OjQ4ICswMjAwLCBKYW4gS2lzemthIHdyb3RlOg0KPiBG
-cm9tOiBKYW4gS2lzemthIDxqYW4ua2lzemthQHNpZW1lbnMuY29tPg0KPiANCj4gVGhpcyBzaG91
-bGQgb2Jzb2xldGUgbW9zdCAtIGlmIG5vdCBhbGwgLSBtYW51YWwgdHVuaW5nIGluIGNvbnN0cmFp
-bmVkDQo+IHNldHVwcy4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEphbiBLaXN6a2EgPGphbi5raXN6
-a2FAc2llbWVucy5jb20+DQo+IC0tLQ0KPiDCoGNsYXNzZXMvc3F1YXNoZnMuYmJjbGFzcyB8IDE0
-ICsrKysrKysrKysrKy0tDQo+IMKgMSBmaWxlIGNoYW5nZWQsIDEyIGluc2VydGlvbnMoKyksIDIg
-ZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvY2xhc3Nlcy9zcXVhc2hmcy5iYmNsYXNz
-IGIvY2xhc3Nlcy9zcXVhc2hmcy5iYmNsYXNzDQo+IGluZGV4IDFmMmE3NTk1Li5iMzliZTBjZCAx
-MDA2NDQNCj4gLS0tIGEvY2xhc3Nlcy9zcXVhc2hmcy5iYmNsYXNzDQo+ICsrKyBiL2NsYXNzZXMv
-c3F1YXNoZnMuYmJjbGFzcw0KPiBAQCAtOSw2ICs5LDE3IEBADQo+IMKgIyBTUERYLUxpY2Vuc2Ut
-SWRlbnRpZmllcjogTUlUDQo+IMKgIw0KPiDCoA0KPiArZGVmIGdldF9mcmVlX21lbSgpOg0KPiAr
-wqDCoMKgIHRyeToNCj4gK8KgwqDCoMKgwqDCoMKgIHdpdGggb3BlbignL3Byb2MvbWVtaW5mbycp
-IGFzIG1lbWluZm86DQo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGxpbmVzID0gbWVtaW5mby5y
-ZWFkbGluZXMoKQ0KPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBmb3IgbGluZSBpbiBsaW5lczoN
-Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpZiBsaW5lLnN0YXJ0c3dpdGgoJ01l
-bUF2YWlsYWJsZTonKToNCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-IHJldHVybiBpbnQobGluZS5zcGxpdCgpWzFdKSAqIDEwMjQNCj4gK8KgwqDCoCBleGNlcHQgRmls
-ZU5vdEZvdW5kRXJyb3I6DQo+ICvCoMKgwqDCoMKgwqDCoCBwYXNzDQo+ICvCoMKgwqAgcmV0dXJu
-IDQqMTAyNCoxMDI0KjEwMjTCoCAjIDRHDQo+ICsNCj4gwqBJTUFHRVJfSU5TVEFMTDpzcXVhc2hm
-cyArPSAic3F1YXNoZnMtdG9vbHMiDQo+IMKgDQo+IMKgU1FVQVNIRlNfRVhDTFVERV9ESVJTID89
-ICIiDQo+IEBAIC0xNiw4ICsyNyw3IEBAIFNRVUFTSEZTX0NPTlRFTlQgPz0gIiR7UFBfUk9PVEZT
-fSINCj4gwqBTUVVBU0hGU19DUkVBVElPTl9BUkdTID89ICIiDQo+IMKgDQo+IMKgU1FVQVNIRlNf
-VEhSRUFEUyA/PSAiJHtAb2UudXRpbHMuY3B1X2NvdW50KGF0X2xlYXN0PTIpfSINCj4gLSMgZGVm
-YXVsdCBhY2NvcmRpbmcgdG8gbWtzcXVhc2ZzIGRvY3MNCj4gLVNRVUFTSEZTX01FTUxJTUlUID89
-ICI3OTgyTSINCj4gK1NRVUFTSEZTX01FTUxJTUlUID89ICIke0BpbnQoZ2V0X2ZyZWVfbWVtKCkg
-KiAzLzQpfSINCg0KRGlkIHlvdSB0ZXN0IHRoaXMgcmVnYXJkaW5nIHJlcHJvZHVjaWJsZSBidWls
-ZHM/DQpJJ20gYWxtb3N0IGNlcnRhaW5seSBzdXJlIHRoYXQgdGhpcyB3aWxsIGJyZWFrIHJlcHJv
-ZHVjYWJpbGl0eS4NCg0KRmVsaXgNCg0KDQo+IMKgU1FVQVNIRlNfQ1JFQVRJT05fTElNSVRTID0g
-Ii1tZW0gJHtTUVVBU0hGU19NRU1MSU1JVH0gLXByb2Nlc3NvcnMNCj4gJHtTUVVBU0hGU19USFJF
-QURTfSINCj4gwqANCj4gwqBweXRob24gX19hbm9ueW1vdXMoKSB7DQoNCg==
+On 29.05.23 08:33, Srinuvasan Arjunan wrote:
+> From: Srinuvasan A <srinuvasan.a@siemens.com>
+> 
+> Update kas-container to latest one.
+> 
+> Signed-off-by: Srinuvasan A <srinuvasan.a@siemens.com>
+> ---
+>  .gitlab-ci.yml |  2 +-
+>  kas-container  | 20 ++++++++++----------
+>  2 files changed, 11 insertions(+), 11 deletions(-)
+> 
+> diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+> index 6c82bb7..892ba92 100644
+> --- a/.gitlab-ci.yml
+> +++ b/.gitlab-ci.yml
+> @@ -12,7 +12,7 @@
+>  # SPDX-License-Identifier: MIT
+>  #
+>  
+> -image: ghcr.io/siemens/kas/kas-isar:3.2.2
+> +image: ghcr.io/siemens/kas/kas-isar:3.2.3
+>  
+>  variables:
+>    GIT_STRATEGY: clone
+> diff --git a/kas-container b/kas-container
+> index cad4290..123198c 100755
+> --- a/kas-container
+> +++ b/kas-container
+> @@ -134,7 +134,7 @@ run_clean() {
+>  	fi
+>  }
+>  
+> -KAS_IMAGE_VERSION_DEFAULT="3.2.2"
+> +KAS_IMAGE_VERSION_DEFAULT="3.2.3"
+>  KAS_CONTAINER_IMAGE_PATH_DEFAULT="ghcr.io/siemens/kas"
+>  KAS_CONTAINER_IMAGE_NAME_DEFAULT="kas"
+>  
+> @@ -411,7 +411,7 @@ if [ -n "${KAS_SSH_DIR}" ] ; then
+>  		echo "Passed KAS_SSH_DIR '${KAS_SSH_DIR}' is not a directory"
+>  		exit 1
+>  	fi
+> -	set -- "$@" -v "$(readlink -f "${KAS_SSH_DIR}")":/etc/skel/.ssh:ro
+> +	set -- "$@" -v "$(readlink -f "${KAS_SSH_DIR}")":/var/kas/userdata/.ssh:ro
+>  fi
+>  
+>  if [ -n "${KAS_SSH_AUTH_SOCK}" ]; then
+> @@ -428,9 +428,9 @@ if [ -n "${KAS_AWS_DIR}" ] ; then
+>  		echo "Passed KAS_AWS_DIR '${KAS_AWS_DIR}' is not a directory"
+>  		exit 1
+>  	fi
+> -	set -- "$@" -v "$(readlink -f "${KAS_AWS_DIR}")":/etc/skel/.aws:ro \
+> -		-e AWS_CONFIG_FILE="${AWS_CONFIG_FILE:-/etc/skel/.aws/config}" \
+> -		-e AWS_SHARED_CREDENTIALS_FILE="${AWS_SHARED_CREDENTIALS_FILE:-/etc/skel/.aws/credentials}"
+> +	set -- "$@" -v "$(readlink -f "${KAS_AWS_DIR}")":/var/kas/userdata/.aws:ro \
+> +		-e AWS_CONFIG_FILE="${AWS_CONFIG_FILE:-/var/kas/userdata/.aws/config}" \
+> +		-e AWS_SHARED_CREDENTIALS_FILE="${AWS_SHARED_CREDENTIALS_FILE:-/var/kas/userdata/.aws/credentials}"
+>  fi
+>  
+>  KAS_GIT_CREDENTIAL_HELPER_DEFAULT=""
+> @@ -440,8 +440,8 @@ if [ -n "${KAS_GIT_CREDENTIAL_STORE}" ] ; then
+>  		echo "Passed KAS_GIT_CREDENTIAL_STORE '${KAS_GIT_CREDENTIAL_STORE}' is not a file"
+>  		exit 1
+>  	fi
+> -	KAS_GIT_CREDENTIAL_HELPER_DEFAULT="store --file=/etc/skel/.git-credentials"
+> -	set -- "$@" -v "$(readlink -f "${KAS_GIT_CREDENTIAL_STORE}")":/etc/skel/.git-credentials:ro
+> +	KAS_GIT_CREDENTIAL_HELPER_DEFAULT="store --file=/var/kas/userdata/.git-credentials"
+> +	set -- "$@" -v "$(readlink -f "${KAS_GIT_CREDENTIAL_STORE}")":/var/kas/userdata/.git-credentials:ro
+>  fi
+>  
+>  GIT_CREDENTIAL_HELPER="${GIT_CREDENTIAL_HELPER:-${KAS_GIT_CREDENTIAL_HELPER_DEFAULT}}"
+> @@ -451,8 +451,8 @@ if [ -n "${GIT_CREDENTIAL_HELPER}" ] ; then
+>  fi
+>  
+>  if [ -f "${NETRC_FILE}" ]; then
+> -	set -- "$@" -v "$(readlink -f "${NETRC_FILE}")":/etc/skel/.netrc:ro \
+> -		-e NETRC_FILE="/etc/skel/.netrc"
+> +	set -- "$@" -v "$(readlink -f "${NETRC_FILE}")":/var/kas/userdata/.netrc:ro \
+> +		-e NETRC_FILE="/var/kas/userdata/.netrc"
+>  fi
+>  
+>  if [ -t 1 ]; then
+> @@ -479,7 +479,7 @@ if [ -n "${KAS_REPO_REF_DIR}" ]; then
+>  		exit 1
+>  	fi
+>  	set -- "$@" \
+> -		-v "$(readlink -f "${KAS_REPO_REF_DIR}")":/repo-ref:ro \
+> +		-v "$(readlink -f "${KAS_REPO_REF_DIR}")":/repo-ref:rw \
+>  		-e KAS_REPO_REF_DIR=/repo-ref
+>  fi
+>  
+
+Thanks, applied.
+
+Jan
+
+-- 
+Siemens AG, Technology
+Competence Center Embedded Linux
+
 
