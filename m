@@ -1,223 +1,148 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D3B1C7EE23
-	for <webhook@archiver.kernel.org>; Wed, 31 May 2023 23:55:36 +0000 (UTC)
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
- by mx.groups.io with SMTP id smtpd.web10.1754.1685577331982740018
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFCE6C77B7A
+	for <webhook@archiver.kernel.org>; Thu,  1 Jun 2023 05:34:57 +0000 (UTC)
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.51])
+ by mx.groups.io with SMTP id smtpd.web11.24565.1685597691875566526
  for <cip-dev@lists.cip-project.org>;
- Wed, 31 May 2023 16:55:32 -0700
+ Wed, 31 May 2023 22:34:52 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="signature has expired" header.i=@miraclelinux-com.20221208.gappssmtp.com header.s=20221208 header.b=PptjX3u4;
- spf=pass (domain: miraclelinux.com, ip: 209.85.161.50, mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-55554c33bf3so209543eaf.2
-        for <cip-dev@lists.cip-project.org>; Wed, 31 May 2023 16:55:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20221208.gappssmtp.com; s=20221208; t=1685577330; x=1688169330;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XeKZzkd31o/eBzBkjGSi3m9WRDIu5TeB+5Baz6MLiNs=;
-        b=PptjX3u4OEr8GUOpgL/IL6QLydQG6ORnCZfDpmpkRD7t7VwQSmfJhzA5C6Nj4xx7EV
-         swadoDIsoGCP9hg/q6wc1EJ4g6P+xzj19rxcE9PNcGi7XLGddrOY2BnXiAQ7sIbgz9I7
-         ePZ6+DonfJC2fLvxYaxMyxXN/zMBHfWFjcFCcwvHIuXNUuIuKGMxxweRDx8i6bo646Jf
-         qoGHXGWofkg/5i3Imj7XsVFw8mDBRu/NJvZkt2iCKF2Gu/wGFVniJ9lqi6ZsF87cDu4W
-         41Djrh+tZhX3rxgv2YyH5rn6Au0gYwG91B2b51yI+AtVJU412T8farPmlYMonL0ajGrB
-         HF1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685577330; x=1688169330;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XeKZzkd31o/eBzBkjGSi3m9WRDIu5TeB+5Baz6MLiNs=;
-        b=aS6njQpDiSC4wgbLCJWZw/D8tX5iseyKE6LmXnjv+fnQtTLNYGl6v+fPrwQIAcGiY0
-         mRdQoQ3dZYtGL04GQ6dnBObnW1w8GacvTlXOjOZxe1FjjRBeSHRDc35UzNWvFP3GpGsI
-         sTYWaogjVFvycWD27a/XATU/qdy7T3NHyQ57eoszIKn4SOwXgfVRZk03NU/PGUNTT5nR
-         siBSj10NDp/7kcdT3OjK8fKkBJWMBarKPzmZtysvfxAfrKNx0//laevXny6KSWrOIyHm
-         xMaXTTObY8f4AOIJZZlCdWeTDloJ+bYJ+Y/tu1bprQqXadcPqnQW7oivBch16YnO8moQ
-         uCFg==
-X-Gm-Message-State: AC+VfDzO6zcOpSzvaE1C9IFM0FOP6QX+2WYKdWtP3rR0eFwk8pSGrEBn
-	F2j/sJVXk4hcnlMe8ylLvMX2OkeBvn5yS+7oRji9amWBgBeQm+wJqnw=
-X-Google-Smtp-Source: ACHHUZ4VsClLSZxHVJNBRvaxjJJ/pI+O/SzWG+KjEwus6VvjsfZnoFf8gNV9e8HzBeCejyCIStf233IH/31f+o+PfuE=
-X-Received: by 2002:a4a:45d2:0:b0:555:ccd3:6ea0 with SMTP id
- y201-20020a4a45d2000000b00555ccd36ea0mr3857245ooa.7.1685577330405; Wed, 31
- May 2023 16:55:30 -0700 (PDT)
-MIME-Version: 1.0
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 1 Jun 2023 08:54:54 +0900
-Message-ID: <CAODzB9pnPbijaBU_dS+mc5tSJsn=z_WkKXsuZf+mKr70mh0WXQ@mail.gmail.com>
-Subject: New CVE entries this week
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=W/kAkGh3;
+ spf=pass (domain: siemens.com, ip: 40.107.21.51, mailfrom: jan.kiszka@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PszJ1jlMgT4yJD5i/LxW5vO6xZVfe8ITEu07tuOoHi2KT/mBO+5Jk1R/0QwUwFZkj60o6lF5M9DfNSfzgTe9vn55+03UVKXpLFBcQ2mKCwXwRTnromigazQuPb7oYV3H9p5WenIzrvpazNL7HuzgUl7fSgamWI07sOlc0ZaQa1UIeZJfKEYrzhHjq3fQkDHQOiYalpmfZ1Wx2O3uCpxSNDzxBv9Age/i/FM9biYKt3DDcBQeRcA0YgzlvU2kV9vKyfpP+CYl8s95Fka0DGX0+dM4f57OxmOez0sVsXhymGNX0D8zYXao4pXQybcQpyBf5/i77RnUe0GAtxUismRf6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=S5XJlyr1xaqRVNOTWaTErHixDYR1HivCVVpqm7muTaI=;
+ b=WimNvegQZZ5v7wyxbijVViwFk6fk15Q/Jmgt9Bj9kwVRq6rBqXbC683jbyFxomjg2WgLlvpFZ5PA8+Gr+YtFirHaWoOjgcih8i4K53wCJ/iIzeOCcBiEI5TmxLQ9SZz2SlUSc2bIFKHAckhZxqr9tTGHY3InEHLR8FiwEEnadm0e97A1BwcKEQlKdT4+lpJcX/0fRbMpl0GZad74OS/gV/RYh2HBeIiydwCtu4MpuFZ8UsI+U0Dl7DhTFFdz3r6R/XWLFPitw/HeI8g6W1LpLg9lIhw/C0iZlHGMi78df/XFuWwt0WzQO0CLaFc6toT3ralISVAb03bFbb0j5C6t+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S5XJlyr1xaqRVNOTWaTErHixDYR1HivCVVpqm7muTaI=;
+ b=W/kAkGh3p5jhJF+H3PAEdm1tE0jjGenIqVy/c1iKmXGB480DnRVfyXp3DbqMRdu604H7Iq+m/51vW4DrnWsIKbApfrKSKnb70chy0H1zB9nJb2eTENUev8qymvmRhqpFXdGVu2I8LsHeY3eW/8FERNozPcO6xOvmOhOneRt/EYll3+jO/IKoespmv/mRcO8YfzgXGu/K5Sf/XfnNI73vYnRz765C50ssUunD0+s2Q3k3VpkcP9hh1b/zG4GFcELfq62MMUnRYOUlL2Qr5ionyEu2yIfKkFJfBc/zKvr8t19khj46pn2prKuXrD6S2NYR1rmkgtwh46k+jiioZAI/qg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by DB9PR10MB5761.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:2ec::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6433.24; Thu, 1 Jun
+ 2023 05:34:48 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::2ecd:9a8a:5601:47e4]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::2ecd:9a8a:5601:47e4%6]) with mapi id 15.20.6455.020; Thu, 1 Jun 2023
+ 05:34:48 +0000
+Message-ID: <01b02d0a-85e0-a18d-fab1-2a5fd7b80638@siemens.com>
+Date: Thu, 1 Jun 2023 07:34:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: CIP IRC weekly meeting today on libera.chat
 To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR3P281CA0037.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:4a::21) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB9PR10MB5761:EE_
+X-MS-Office365-Filtering-Correlation-Id: f1a8c4e1-14b9-41b8-5f9f-08db6261e9b4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	kfM9sJYcXDS31NrAsklz/sxLaU4+qM1FktYQpTMCHEE9xbKabV0hS16HU4c3cqBdOojuprC2YfRYjj+8cAmA55uddz72EfK8EG18BnYHwn+3V3LMp/IqCFmu0TZaqTL40ylj6EmC3xIdTLzNymIWpdEQTCQAqIvqySCuwazyPR8OWQVN7cHfLrEn/sK3MY+5bZibR46SKPd1cwCa86Q4Bfx8n3Sih7on8pnU3GgO/nA3DvpXLf0tCXQp2dQyWcZVHl6jLJn2jE0v/Yu9KakFJYAJAP2VEchxqgV3IQfCju1QAGySI4Q4hVXEdhC1LYuv0sXM9tlrtfL9i2RaJsFUZGzeXw53kNyIUnz8kiXaa/uDZF1CfdjFDFlV71XeS/eiYYUZfwG9DxRy5a3lIuoFds8/a+Nmkqty6ycFpOr2V0ix/67P3/30rKVJBEh+Uv1tG7VmlDnI5NU4yki4jperCIcSg8AV44MnrHlr6SbNxTgjzcIm4UADCk/Kd/SWEvfHQY38+JzSujCqkNbKfghpYtrrBnT54zVsYcfkuQiIyuqutZn7EJLFjM2kBFveHSkzJUMdG4qsFgynBclRJwaG2PcioKh6LaqILaDtQ2H3mSsHlFVStoWqD+T4baO3czcnfBaNw96LgUUhqT7lgtLrjg==
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(136003)(396003)(376002)(366004)(346002)(451199021)(82960400001)(478600001)(6666004)(38100700002)(26005)(83380400001)(2616005)(6506007)(6512007)(186003)(966005)(6486002)(36756003)(41300700001)(66476007)(66946007)(31696002)(44832011)(6916009)(66556008)(86362001)(8936002)(316002)(31686004)(2906002)(4744005)(5660300002)(8676002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?VDJpZGRJUmFOSENIeVpTREh5c1Y2dHZ6SXBvS3ZsdFU0alFqNUcvYmVocG9h?=
+ =?utf-8?B?Ty9FcUhDN2Y2dVNqY2lFUENacTNXVTl2WlVZVWNZT0ZQR1hLMHE3WEpHYU5k?=
+ =?utf-8?B?V0Flc2pONVl3YlA5aEdGR3JaSHlwd1c5RkZhWWx6Y0Y1R3BJZE1zNDc2M0xH?=
+ =?utf-8?B?T1pQOElMeGNvMkJYdFZveVd1L0V6b3hYa2h0dUNiN2tFYlQvZ2R1cG9KNmtH?=
+ =?utf-8?B?eEZ2SENVMEVJa3JoS2VaZzNBb0lsTk1aMFBJaFRRZ05yYzZYcUVXbUhuZC9X?=
+ =?utf-8?B?anJ0ZDhaQ1VHYnZSRDYzcVJSWHF6Z0MyRkZocmRFVG5ENHZlZ285Mkl2bVcy?=
+ =?utf-8?B?SjRZRUhwQ245NXVxQUxuTVZOVENMNXV4MzZ1YW9YNys4enh1WVFmeXdXc3lq?=
+ =?utf-8?B?L29jU0Fsa1FvTG56VEFSUGp3eE0rZGU4SExwdUczVzh0eXptdHZrWjYwN1o5?=
+ =?utf-8?B?N2ZRSlNFMXgvM0Z5NTF4anpHUEtYejByeUUvSU14VW5MQVdHa21MN0VBamtn?=
+ =?utf-8?B?Q0tETjdzWnc4OXFoVldSbUJXdlJsMnNRNjFiZUN3eHRVQ29CNUpFamY0aXJ4?=
+ =?utf-8?B?R0lKOGQxUmtDOEY0NmZKVzFqL215dEJNM05oNWxFZXJ1ZkNUSmNoaTlPNzFt?=
+ =?utf-8?B?Mm9ENjhWa2ZTM2g3dWJodmg3MHg5VzI5UHRxMU1lbGhENGdQc3AvVFBCWkt0?=
+ =?utf-8?B?aTVCQzZteTYyOUo3TlJBRnJvK3Bad09mMFpZTU9DV2hmTDB4WXZ4R1o1bm5N?=
+ =?utf-8?B?SEdlL1JkZWx0anVNanhrcFYrM25pc0RHMStjQ2xPZ0R4M0dSNFRDZi9mVjYr?=
+ =?utf-8?B?Uk43eGdUTEhMNC84eWc5MXIzeXVhcEFkNDBFSlZJcUh5NmRkVWpjMDNyOW1C?=
+ =?utf-8?B?R0Q4a1d2MmlsT3JqMFBSVDhEa2YxM1Zxa0U4TmY3c29kd0FsZmxOTmxaT0Fy?=
+ =?utf-8?B?aXlleUhSdHk5elhEVkZlWllBWURPRnN4L2lwK0R5cmw1N20vMjY2cGNvNGZ2?=
+ =?utf-8?B?VUdON3NLYWsyclZlVHV6SkZiWjFtZnIreDNNa0dydHhtczJjbEFQYUpTcTRQ?=
+ =?utf-8?B?RnZjc0VlTmE5aXNIVjl6ZkViR1p0TUdSeW1yS3BsUUR5UGs0ZHZybTY5QTdP?=
+ =?utf-8?B?OEozdnFaVG11NWp0TlFxQ25BK2ZaNlVxWUtKMXEwYTRqNnpiUWMzbm1IdHdv?=
+ =?utf-8?B?Tk52OHhvVnlHbG9ZeGN1OGE3TzZBQWpUMzhDNkF5eC9MV0RBenVFZ28rVDl6?=
+ =?utf-8?B?NENNV3kySmk0bTNyRFNISU9kU2tXRzcyVUtMWnpFWkdqMUNQbW9pTTBvZG1C?=
+ =?utf-8?B?WVkvQjdzS1lnUDhqWTN1WmJxTHR3dHBaWS9JTmlVQWNCaUhGVStYWDBRSEh6?=
+ =?utf-8?B?NUo5VnNIQ2xDNlFuVGlNdjhMV21vL3JlYXVza1A2dmFiWEF6L3BTdXhRT0RV?=
+ =?utf-8?B?MHV6NlFXa1h4QVJ4RTFQNzNyQjZGU1RnNHBMTGVVZVZwaEdpQ3ZxeFZ4bERr?=
+ =?utf-8?B?ZS95aHdCSE93Mi9GT0JsNnNCeE5XbmIxVFBFMDhSSWZheWM2QnM1REVOeTA4?=
+ =?utf-8?B?dmEyY1FDdmRBZ2hNSmZwcFozTFhlTUNOQmNXaWl3ci9pME1NZzgxa2VieXVW?=
+ =?utf-8?B?QjlHbm1mL0ZONXd0eXRpVlZIaXF0WlhWbldxOC9hcG5VSUpnWjd2RUVaUVlS?=
+ =?utf-8?B?SksrRHFsTlFYTlgzZW5PYzNSNnRmeFJIUStObDduQTg1cWQvbE9zQnNiY2I1?=
+ =?utf-8?B?dFphZU03ZTUzUlc1ZmJVRkxPQU5adlVnblVWNWpqUE9aOCtudU5mSTl2OTFM?=
+ =?utf-8?B?Q2c2Y2dDakgzdk1MdVJLaGhnMS9WeHdZVE5Ea0xkQXZqUG9RRmNMNFBERE12?=
+ =?utf-8?B?T1pzWml1VURiU0NsSS9YL291UWtqUklLZkM0Y1B0c0JsaDdNOURjTlRhdjJ5?=
+ =?utf-8?B?Zlc3L1FqOHh3S09YTUFqaitRZ3FubG9aMFoxL2U1ancwYlo4WHJ1cGdmdE9I?=
+ =?utf-8?B?eDZQR2RzcjczR2d5QzlTeFdYdzF2aWo1eGRRS09GTFcvcnZvcHBkUDB1bmhK?=
+ =?utf-8?B?WFdqa0NKRkZCbWhGUnp2VTNHeXUrNU9xYkZNaXFTTkdWbklCMGRQb1l4dXlD?=
+ =?utf-8?B?aEhFSHdodGJ5VGw4TmM1b2VuUTJmcnBBYmpSNUdhRktoV3phWW83MHJONWY4?=
+ =?utf-8?B?T2c9PQ==?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1a8c4e1-14b9-41b8-5f9f-08db6261e9b4
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jun 2023 05:34:48.0072
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zcvZVUpQubh92cm1LEbbzbn/wBVyu0zbrDf1+4gQ46HpYYJoTO24wz9sl8H0/9O/C62h3LAU9GkAp39vlc5wZw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB5761
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 31 May 2023 23:55:36 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11714
+ <cip-dev@lists.cip-project.org>; Thu, 01 Jun 2023 05:34:57 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11715
 
-Hi !
+Hi all,
 
-It's this week's CVE report.
+Kindly be reminded to attend the weekly meeting through IRC to discuss
+technical topics with CIP kernel today. Our channel is the following:
 
-This week reported 5 new CVEs and 3 updated CVEs.
+    irc:irc.libera.chat:6667/cip
 
-* New CVEs
+The IRC meeting is scheduled to UTC (GMT) 12:00:
 
-CVE-2023-2898: f2fs: fix to avoid NULL pointer dereference f2fs_write_end_io()
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2023&month=6&day=1&hour=12&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
 
-CVSS v3 score is not provided.
+USWest    USEast    UK        DE        TW        JP
+05:00     08:00     13:00     14:00     20:00     21:00
 
-There is a null-pointer-dereference flaw found in f2fs_write_end_io in
-fs/f2fs/data.c in the Linux kernel. This flaw allows a local
-privileged user to cause a denial of service problem.
+Last meeting minutes:
+https://ircbot.wl.linuxfoundation.org/meetings/cip/2023/05/cip.2023-05-25-12.02.log.html
 
-This bug was introduced by commit b4b10061ef98 ("f2fs: refactor
-resize_fs to avoid meta updates in progress") in 5.8-rc1.
-5.4, 4.19, 4.14, and 4.4 kernels are not affected by this issue.
+* Action items
+  1. create kernelci pipeline for buster images (arisut)
+* Kernel maintenance updates
+* Kernel release status
+  - 4.4
+  - 4.19
+  - 5.10
+* Kernel testing
+* AOB
 
-Fixed status
-Patch available on the f2fs-devel mailing list but it hasn't been merged yet.
-https://lore.kernel.org/linux-f2fs-devel/20230522124203.3838360-1-chao@kernel.org/
-
-CVE-2023-2612: A race condition bug was found in shiftfs file system
-
-CVSS v3 score is not provided (NIST).
-CVSS v3 score is 4.4 MEDIUM (CNA).
-
-Jean-Baptiste Cayrou discovered that the shiftfs file system in the
-Ubuntu Linux kernel contained a race condition when handling inode
-locking in some situations. A local attacker could use this to cause a
-denial of service (kernel deadlock).
-
-The shiftfs is out of tree kernel module so that mainline kernels are
-not affected.
-
-Fixed status
-Fixed in ubuntu kernels.
-
-CVE-2022-48502: fs/ntfs3: Check fields while reading
-
-CVSS v3 score is not provided.
-
-An issue was discovered in the Linux kernel before 6.2. The ntfs3
-subsystem does not properly check for correctness during disk reads,
-leading to an out-of-bounds read in ntfs_set_ea in fs/ntfs3/xattr.c.
-
-The NTFS3 file system was introduced in 5.15 so that before 5.15
-kernels aren't affected.
-
-Fixed status
-mainline: [0e8235d28f3a0e9eda9f02ff67ee566d5f42b66b]
-
-CVE-2023-34255: xfs: verify buffer contents when we skip log replay
-
-CVSS v3 score is not provided.
-
-An issue was discovered in the Linux kernel through 6.3.5. There is a
-use-after-free in xfs_btree_lookup_get_block in
-fs/xfs/libxfs/xfs_btree.c because fs/xfs/xfs_buf_item_recover.c does
-not perform buffer content verification when log replay is skipped.
-
-The xlog_recover_buf_commit_pass2() was introduced in 5.8-rc1 by
-commit 1094d3f1 ("xfs: refactor log recovery buffer item dispatch for
-pass2 commit functions"). This commit changed the function name
-xlog_recover_buffer_pass2() to xlog_recover_buf_commit_pass2().
-So, it looks like before 5.8 kernels need to be patched to the
-xlog_recover_buffer_pass2().
-
-Fixed status
-mainline: [22ed903eee23a5b174e240f1cdfa9acf393a5210]
-
-CVE-2023-34256: ext4: avoid a potential slab-out-of-bounds in
-ext4_group_desc_csum
-
-CVSS v3 score is not provided.
-
-An issue was discovered in the Linux kernel before 6.3.3. There is an
-out-of-bounds read in crc16 in lib/crc16.c when called from
-fs/ext4/super.c because ext4_group_desc_csum does not properly check
-an offset.
-
-This bug was introduced by commit 717d50e ("Ext4: Uninitialized Block
-Groups ") in 2.6.24-rc1.
-
-Fixed status
-mainline: [4f04351888a83e595571de672e0a4a8b74f4fb31]
-stable/4.14: [64b7487e3769e013fc7edb3804d1a769747f0228]
-stable/4.19: [a733c466cedd1013a41fd8908d5810f2c161072f]
-stable/5.10: [0dde3141c527b09b96bef1e7eeb18b8127810ce9]
-stable/5.15: [6d9a705a653eb146b4991dbd198b258f787c70b1]
-stable/5.4: [4f4fd982d972a55dee129f7da517b81fa16c408d]
-stable/6.1: [1fffe4750500148f3e744ed77cf233db8342603f]
-stable/6.3: [be7b6374a2ee8a59c1ff5addcbe25ebc1b4efd9f]
-
-* Updated CVEs
-
-CVE-2020-36694: A use-after-free bug was found in the netfilter
-
-Commit 7f5c6d4f ("netfilter: get rid of atomic ops in fast path") was
-merged in 5.12-rc5.
-This commit fixes commit 7f5c6d4 ("netfilter: get rid of atomic ops in
-fast path") in 3.0-rc in 3.0-rc1.
-
-Fixed status
-mainline: [175e476b8cdf2a4de7432583b49c871345e4f8a1]
-stable/4.14: [f1fd7a174018f1107881150c6c2ce00e49a1e643]
-stable/4.19: [81bc258370c6eeb1f41d350325e8a2c8e20fafad]
-stable/5.10: [3fdebc2d8e7965f946a3d716ffdd482e66c1f46c]
-stable/5.4: [19a5fb4ceada903e692de96b8aa8494179abbf0b]
-
-CVE-2022-39189: KVM instruction emulation doesn't clear
-KVM_VCPU_PREEMPTED, breaking guest's TLB flushing
-
-Kernel 5.4 was fixed.
-
-Fixed status
-mainline: [6cd88243c7e03845a450795e134b488fc2afb736]
-stable/5.10: [529f41f0eb1ef995bfa83c121c3cfe3a0720119a]
-stable/5.15: [92343314d34e04da0923cefd3be67521d706fa35]
-stable/5.4: [1eb3e32de7b1f6ed927dfff3ab3651ce25f3d516]
-
-CVE-2022-4269: kernel: net: CPU soft lockup in TC mirred
-egress-to-ingress action
-
-Kernel 5.10 was fixed.
-
-Fixed status
-mainline: [ca22da2fbd693b54dc8e3b7b54ccc9f7e9ba3640]
-stable/5.10: [53245103786312f21fb9785327a4367cf10f0dbb]
-stable/5.15: [169a41073993add6b0cfdc44e168e75f92f4834d]
-stable/6.1: [4c8fc3fe28e47e2a495444347375f7354c24b018]
-stable/6.2: [8c9e553c58a491ad328c622441e08178373442dc]
-
-Currently tracking CVEs
-
-CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
-Bluetooth Core Specifications 4.0 through 5.2
-
-There is no fix information.
-
-CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
-Provisioning Leads to MITM
-
-No fix information.
-
-CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
-
-No fix information.
-
-Regards,
--- 
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
-
-Email :masami.ichikawa@cybertrust.co.jp
-      :masami.ichikawa@miraclelinux.com
+Jan
 
