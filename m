@@ -1,154 +1,111 @@
-Return-Path: <biju.das.jz@bp.renesas.com>
+Return-Path: <srinuvasan_a@mentor.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B3DC7EE2A
-	for <webhook@archiver.kernel.org>; Thu,  1 Jun 2023 15:05:11 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.35010.1685631903445221753
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE15C77B7A
+	for <webhook@archiver.kernel.org>; Sat,  3 Jun 2023 08:10:13 +0000 (UTC)
+Received: from esa2.mentor.iphmx.com (esa2.mentor.iphmx.com [68.232.141.98])
+ by mx.groups.io with SMTP id smtpd.web11.8031.1685779804089862283
  for <cip-dev@lists.cip-project.org>;
- Thu, 01 Jun 2023 08:05:03 -0700
+ Sat, 03 Jun 2023 01:10:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
-X-IronPort-AV: E=Sophos;i="6.00,210,1681138800"; 
-   d="scan'208";a="161816513"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 02 Jun 2023 00:04:59 +0900
-Received: from localhost.localdomain (unknown [10.226.93.19])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id DFC224010DC0;
-	Fri,  2 Jun 2023 00:04:57 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@denx.de>
-Cc: Chris Paterson <chris.paterson2@renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 5.10.y-cip 18/19] arm64: dts: renesas: rzv2mevk2: Enable USB3 role switch
-Date: Thu,  1 Jun 2023 16:04:09 +0100
-Message-Id: <20230601150410.124773-19-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230601150410.124773-1-biju.das.jz@bp.renesas.com>
-References: <20230601150410.124773-1-biju.das.jz@bp.renesas.com>
+ dkim=missing; spf=pass (domain: mentor.com, ip: 68.232.141.98, mailfrom: srinuvasan_a@mentor.com)
+X-IronPort-AV: E=Sophos;i="6.00,215,1681200000"; 
+   d="scan'208";a="8403802"
+Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
+  by esa2.mentor.iphmx.com with ESMTP; 03 Jun 2023 00:10:03 -0800
+IronPort-SDR: uJeyzwr095e6T8bb5Wi4pv0h+oaXXpB9kBEBs4l5YqLbvC5fKpSmJUDa4Go5hi1AG7SuIpECQU
+ 4jXKaimgDHBdjW/cE9DHqI6LM6Q6TEnrsrVWgnNO8FkJdvzmv8+Ew7AG576prlKhpdJaXek5Z3
+ ZZ+LDUe2s3h2Szc6P8gboBvWd1tB9jou1WBG3U6sBZOF8u1905vV0EXfm02P/9MkEXnG+hbbcT
+ VHuvhFs+U5zK9xgLq3obCyZJxndHvu8UMeKhuo2EouBNJLNiLeqt+ZtT98saWGXyOQPJUdVlgW
+ 5bI=
+From: Srinuvasan Arjunan <srinuvasan_a@mentor.com>
+To: <cip-dev@lists.cip-project.org>
+CC: <jan.kiszka@siemens.com>, Srinuvasan A <srinuvasan.a@siemens.com>
+Subject: [isar-cip-core][PATCH] recipes-kernel/linux: update cip-kernels to latest one
+Date: Sat, 3 Jun 2023 13:39:41 +0530
+Message-ID: <20230603080941.454533-1-srinuvasan_a@mentor.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: svr-orw-mbx-11.mgc.mentorg.com (147.34.90.211) To
+ svr-orw-mbx-13.mgc.mentorg.com (147.34.90.213)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 01 Jun 2023 15:05:11 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11748
+ <cip-dev@lists.cip-project.org>; Sat, 03 Jun 2023 08:10:13 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11750
 
-commit a17039b630c59da98de153ef50cdf6a06393cfce upstream.
+From: Srinuvasan A <srinuvasan.a@siemens.com>
 
-Enable USB3 role switch on RZ/V2M EVK by linking USB3 peri node
-with hd3ss3220 controller node.
+Update cip-kernels to latest one.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20230121145853.4792-13-biju.das.jz@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Srinuvasan A <srinuvasan.a@siemens.com>
 ---
- .../boot/dts/renesas/r9a09g011-v2mevk2.dts    | 70 +++++++++++++++++++
- 1 file changed, 70 insertions(+)
+ ...19.277-cip94-rt29.bb => linux-cip-rt_4.19.280-cip95-rt30.bb} | 2 +-
+ ...10.175-cip29-rt12.bb => linux-cip-rt_5.10.179-cip32-rt13.bb} | 2 +-
+ ...{linux-cip_4.19.282-cip97.bb => linux-cip_4.19.283-cip98.bb} | 2 +-
+ ...{linux-cip_5.10.179-cip32.bb => linux-cip_5.10.180-cip34.bb} | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+ rename recipes-kernel/linux/{linux-cip-rt_4.19.277-cip94-rt29.bb => linux-cip-rt_4.19.280-cip95-rt30.bb} (72%)
+ rename recipes-kernel/linux/{linux-cip-rt_5.10.175-cip29-rt12.bb => linux-cip-rt_5.10.179-cip32-rt13.bb} (72%)
+ rename recipes-kernel/linux/{linux-cip_4.19.282-cip97.bb => linux-cip_4.19.283-cip98.bb} (72%)
+ rename recipes-kernel/linux/{linux-cip_5.10.179-cip32.bb => linux-cip_5.10.180-cip34.bb} (72%)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g011-v2mevk2.dts b/arch/arm64/boot/dts/renesas/r9a09g011-v2mevk2.dts
-index 2cd1c9f6dc6a..78f5af4646ce 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g011-v2mevk2.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g011-v2mevk2.dts
-@@ -22,6 +22,31 @@ chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
+diff --git a/recipes-kernel/linux/linux-cip-rt_4.19.277-cip94-rt29.bb b/recipes-kernel/linux/linux-cip-rt_4.19.280-cip95-rt30.bb
+similarity index 72%
+rename from recipes-kernel/linux/linux-cip-rt_4.19.277-cip94-rt29.bb
+rename to recipes-kernel/linux/linux-cip-rt_4.19.280-cip95-rt30.bb
+index 1a26973..d973b94 100644
+--- a/recipes-kernel/linux/linux-cip-rt_4.19.277-cip94-rt29.bb
++++ b/recipes-kernel/linux/linux-cip-rt_4.19.280-cip95-rt30.bb
+@@ -13,4 +13,4 @@ require linux-cip-rt-common.inc
  
-+	connector {
-+		compatible = "usb-c-connector";
-+		label = "USB-C";
-+		data-role = "dual";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				hs_ep: endpoint {
-+					remote-endpoint = <&usb3_hs_ep>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				ss_ep: endpoint {
-+					remote-endpoint = <&hd3ss3220_in_ep>;
-+				};
-+			};
-+		};
-+	};
-+
- 	memory@58000000 {
- 		device_type = "memory";
- 		/*
-@@ -59,6 +84,30 @@ &i2c0 {
- 	pinctrl-names = "default";
- 	clock-frequency = <400000>;
- 	status = "okay";
-+
-+	hd3ss3220@47 {
-+		compatible = "ti,hd3ss3220";
-+		reg = <0x47>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				hd3ss3220_in_ep: endpoint {
-+					remote-endpoint = <&ss_ep>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				hd3ss3220_out_ep: endpoint {
-+					remote-endpoint = <&usb3_role_switch>;
-+				};
-+			};
-+		};
-+	};
- };
+ KERNEL_DEFCONFIG_VERSION ?= "4.19.y-cip"
  
- &i2c2 {
-@@ -93,7 +142,28 @@ &usb3host {
- };
+-SRC_URI[sha256sum] = "1fa134ac4daa88ffb2c787d05358c1039df1f350b3953b879b6ffb207d3374ea"
++SRC_URI[sha256sum] = "dfe9992d937c47f2f5a79ddd2156fd4ab749c9d82ef04506dfa8da6cfbb594b0"
+diff --git a/recipes-kernel/linux/linux-cip-rt_5.10.175-cip29-rt12.bb b/recipes-kernel/linux/linux-cip-rt_5.10.179-cip32-rt13.bb
+similarity index 72%
+rename from recipes-kernel/linux/linux-cip-rt_5.10.175-cip29-rt12.bb
+rename to recipes-kernel/linux/linux-cip-rt_5.10.179-cip32-rt13.bb
+index c58e8b7..83f387e 100644
+--- a/recipes-kernel/linux/linux-cip-rt_5.10.175-cip29-rt12.bb
++++ b/recipes-kernel/linux/linux-cip-rt_5.10.179-cip32-rt13.bb
+@@ -13,4 +13,4 @@ require linux-cip-rt-common.inc
  
- &usb3peri {
-+	companion = <&usb3host>;
- 	status = "okay";
-+	usb-role-switch;
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			usb3_hs_ep: endpoint {
-+				remote-endpoint = <&hs_ep>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			usb3_role_switch: endpoint {
-+				remote-endpoint = <&hd3ss3220_out_ep>;
-+			};
-+		};
-+	};
- };
+ KERNEL_DEFCONFIG_VERSION ?= "5.10.y-cip"
  
- &wdt0 {
+-SRC_URI[sha256sum] = "60763c904a70b1596deb5d65a3260de2e8dbe0583b411b55a5b9a90edce16104"
++SRC_URI[sha256sum] = "2106be5c70ee7d0074fb6767265a3613ce593dc4a5a46dcc6bf98697f251ebfd"
+diff --git a/recipes-kernel/linux/linux-cip_4.19.282-cip97.bb b/recipes-kernel/linux/linux-cip_4.19.283-cip98.bb
+similarity index 72%
+rename from recipes-kernel/linux/linux-cip_4.19.282-cip97.bb
+rename to recipes-kernel/linux/linux-cip_4.19.283-cip98.bb
+index 6585a58..b12fb6b 100644
+--- a/recipes-kernel/linux/linux-cip_4.19.282-cip97.bb
++++ b/recipes-kernel/linux/linux-cip_4.19.283-cip98.bb
+@@ -13,4 +13,4 @@ require linux-cip-common.inc
+ 
+ KERNEL_DEFCONFIG_VERSION ?= "4.19.y-cip"
+ 
+-SRC_URI[sha256sum] = "823a355cf0d6bf39c5ad96cfd2a6dacf652ac445d61bf61b0dc3754e7a24dc05"
++SRC_URI[sha256sum] = "6d8474aad8621163f1478fcd110f391863ee2ed5180fccb4613c2e3eccc2e4e6"
+diff --git a/recipes-kernel/linux/linux-cip_5.10.179-cip32.bb b/recipes-kernel/linux/linux-cip_5.10.180-cip34.bb
+similarity index 72%
+rename from recipes-kernel/linux/linux-cip_5.10.179-cip32.bb
+rename to recipes-kernel/linux/linux-cip_5.10.180-cip34.bb
+index cc06549..9b812b7 100644
+--- a/recipes-kernel/linux/linux-cip_5.10.179-cip32.bb
++++ b/recipes-kernel/linux/linux-cip_5.10.180-cip34.bb
+@@ -13,4 +13,4 @@ require linux-cip-common.inc
+ 
+ KERNEL_DEFCONFIG_VERSION ?= "5.10.y-cip"
+ 
+-SRC_URI[sha256sum] = "526ce38dfee520233b9af1ff714ee69ad528c986c7d051aabe6b3726ea53832f"
++SRC_URI[sha256sum] = "6b715945aa287b93fa8e69086988a76b3d0f1e5da82caad47dd653baac3bfd55"
 -- 
-2.25.1
+2.34.1
 
 
