@@ -2,99 +2,95 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BF58C7EE32
-	for <webhook@archiver.kernel.org>; Tue,  6 Jun 2023 13:14:21 +0000 (UTC)
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
- by mx.groups.io with SMTP id smtpd.web11.8568.1686057257384241106
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B29FC7EE2F
+	for <webhook@archiver.kernel.org>; Tue,  6 Jun 2023 13:36:01 +0000 (UTC)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+ by mx.groups.io with SMTP id smtpd.web10.76.1686058554869384542
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Tue, 06 Jun 2023 06:14:17 -0700
+ Tue, 06 Jun 2023 06:35:54 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="signature has expired" header.i=@kernelci-org.20221208.gappssmtp.com header.s=20221208 header.b=Co0O2eIP;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.215.179, mailfrom: bot@kernelci.org)
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-53f8da65701so3152951a12.1
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Tue, 06 Jun 2023 06:14:17 -0700 (PDT)
+ dkim=pass header.i=@kernelci-org.20221208.gappssmtp.com header.s=20221208 header.b=JbtQslh2;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.178, mailfrom: bot@kernelci.org)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1b038064d97so54350775ad.0
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Tue, 06 Jun 2023 06:35:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1686057256; x=1688649256;
+        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1686058554; x=1688650554;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=EtOfT/nt/H2Ius+Lqg/6k//rhigzdhxVeItVMQn/738=;
-        b=Co0O2eIPf+Dp9qcitNCjqRSxE3ddZJ4vMOh+dD8glUD9BXTvFolJL293ia6JxmoAtx
-         7cFsgR4GUSyPTwcdNk/7g/Q5k5tgU6bAyBvcElB1SbR1Gk23Dk/zk95fbcsxjbNea6ot
-         Dw32TibRS7WpksYonITlo2WedKYotrTvoUoNSc+NOshFReyTMhCHkOapaL6BORvFsV1y
-         X1+zRvcMb6El5v9DdqG5mjiV+Mtig+H17EwbFhsFYhbLA/ynw78dtvd9nEIEF5MRAjGK
-         8gYqzG/UxXeOkPj+v3Og/DcKN8v+JLefy2l2O4iNpX0ywHcEQOIVM+SWJpuWEz7AsH/5
-         Gtmw==
+        bh=Eoig7DXZ1suw2g8HWRy7aW5k6TZB9Ea1xfDolLtgu54=;
+        b=JbtQslh2QWhj1DwrICUtlYizeB/Cb53K6lTtJX/4CcmGK43DJ9Rexr3BH2euoZdUr4
+         F1S+m2PndosliLbwDYsa+lDlrf47tit4pjjGQQnA6MKgknTuF9ojTtodpgGD7vxtorLZ
+         rOPTaWhguWtMy2wEqHZBd76e31lvOqnMohDUQX+f7xbl08nW5lzBFXn5A1ph8OcYAToE
+         nwc2CINkNOYLPWxg03uPYmt9VYOFS26TuFTPjjYmW3hgH56xjPA7dVocRcKQbpEzRtDs
+         Go/OdpmMzd4Mkhe5ZOoDpWHCUSRXRbVWde4KeSm0xV+/OWHF2E1P8WzI7rATzbkDFk3x
+         XRaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686057256; x=1688649256;
+        d=1e100.net; s=20221208; t=1686058554; x=1688650554;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EtOfT/nt/H2Ius+Lqg/6k//rhigzdhxVeItVMQn/738=;
-        b=BVcWP/A6gy5w/lU+Kev47Of+voc3cAkiwRH+nkBqI2ShdAXft0AMfoLgLjoT+7cj8k
-         w/DEigiVyvJA3PNUk6B/8nZOH228Kf4cbfGjiJ8JCVJ3hWXtToxmN7VAKDdaDquHiVo6
-         BhyZ8BDvc1ZNhs8ygDMD1GwHvQIf1ozQ27c8C7kZSNQeauYQ/ma0HQmnOQfnyHfaKbty
-         KzxpTuSLlvWo/2stn2jYKMf6AelwIFG40ue2HwJHkuptlZQipnqZWAq+293FtGadB0I2
-         +fd4kNPp5SA1COr+nNCSyKwwPGYMjYYO6GGPbfiPbhQzZQ5lfFWSEe1aCBYx8mat8aHy
-         0YjA==
-X-Gm-Message-State: AC+VfDynVFLQBNnItPgniUXSdIPPJvVLdHEhETgy1R1unK9uBckQoUVP
-	fE9hbkK/cophLDVzxUCvmcgLfbs6EMHKt4Z3xeytMQ==
-X-Google-Smtp-Source: ACHHUZ54IvmedC0MlS8dLoaZ8VlaWB2XrLYfmUQTM+UvuAfxKNu+9mZ1Bb4OVz1ZaJZvHpUssBEzUw==
-X-Received: by 2002:a17:902:ea11:b0:1b2:e0c:a408 with SMTP id s17-20020a170902ea1100b001b20e0ca408mr1284713plg.31.1686057256474;
-        Tue, 06 Jun 2023 06:14:16 -0700 (PDT)
+        bh=Eoig7DXZ1suw2g8HWRy7aW5k6TZB9Ea1xfDolLtgu54=;
+        b=MiYqvZdkQeYstZj6jFUjJ7V0sDmi+RX62OoxiP/bZgnncj6zoMH+lD74pQ78t6lSoF
+         vVgn6g314gaIVmhXEQhkK/Omekp6e463pt2a3xXKloiDVMlVqvYslnHCT/gtgdjcVb9l
+         QUPvHoly60i3uVgtWbjNDut2kxdkjK9tZSpRkF82CWqnS9NaNRWTP4t4E45V72GHLLXh
+         EApONBXbxBWYP3TKgsaHbm/W/X0japOoApOUuKD8YwdYY2vAcOGLfRaxA9SBE6Rl/7Dq
+         VuR8bWx+qmux2Se0/BToL7dnO13jh/drvQgrADADn/44fx1cwPoSQE/bYCQXBxmxsUIU
+         aPKA==
+X-Gm-Message-State: AC+VfDyHcX3krFH7nueUJVPu3PAHA1qqvJUWbtIMifhGhY3q5xo7UI8j
+	yl4g1g+Bopl3jOtd8dcAx1Cv22FhBHdHYWshpLC3/g==
+X-Google-Smtp-Source: ACHHUZ4s10kYGep0RkYV0qEke5M7MMhCBnngMIrfvlQDWM8SZXd0LJD82xBb0IJYrivWVfJiEiQgfw==
+X-Received: by 2002:a17:902:da88:b0:1b1:8ca9:10ca with SMTP id j8-20020a170902da8800b001b18ca910camr13258325plx.33.1686058553864;
+        Tue, 06 Jun 2023 06:35:53 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id z3-20020a170903018300b001b1a2bf5277sm8509561plg.39.2023.06.06.06.14.15
+        by smtp.gmail.com with ESMTPSA id p5-20020a170902780500b001ac444fd07fsm8627034pll.100.2023.06.06.06.35.53
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jun 2023 06:14:15 -0700 (PDT)
-Message-ID: <647f3127.170a0220.ed87d.f40a@mx.google.com>
-Date: Tue, 06 Jun 2023 06:14:15 -0700 (PDT)
+        Tue, 06 Jun 2023 06:35:53 -0700 (PDT)
+Message-ID: <647f3639.170a0220.d1fe4.f85f@mx.google.com>
+Date: Tue, 06 Jun 2023 06:35:53 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v6.1.26-1320-gc38e4a9845945
+X-Kernelci-Kernel: v6.1.26-1320-g1ddf4b637f785
 X-Kernelci-Report-Type: test
-X-Kernelci-Branch: linux-6.1.y-cip
-X-Kernelci-Tree: cip
-Subject: cip/linux-6.1.y-cip baseline-nfs: 58 runs,
- 3 regressions (v6.1.26-1320-gc38e4a9845945)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
- kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
+X-Kernelci-Branch: ci/pavel/linux-test
+X-Kernelci-Tree: cip-gitlab
+Subject: cip-gitlab/ci/pavel/linux-test kselftest-futex: 8 runs,
+ 2 regressions (v6.1.26-1320-g1ddf4b637f785)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
 From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 06 Jun 2023 13:14:21 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11884
+ <cip-dev@lists.cip-project.org>; Tue, 06 Jun 2023 13:36:01 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11886
 
-cip/linux-6.1.y-cip baseline-nfs: 58 runs, 3 regressions (v6.1.26-1320-gc38=
-e4a9845945)
+cip-gitlab/ci/pavel/linux-test kselftest-futex: 8 runs, 2 regressions (v6.1=
+.26-1320-g1ddf4b637f785)
 
 Regressions Summary
 -------------------
 
-platform         | arch  | lab           | compiler | defconfig            =
-      | regressions
------------------+-------+---------------+----------+----------------------=
-------+------------
-at91sam9g20ek    | arm   | lab-broonie   | gcc-10   | multi_v5_defconfig   =
-      | 1          =
+platform         | arch | lab         | compiler | defconfig          | reg=
+ressions
+-----------------+------+-------------+----------+--------------------+----=
+--------
+beaglebone-black | arm  | lab-broonie | gcc-10   | multi_v7_defconfig | 1  =
+        =
 
-beaglebone-black | arm   | lab-broonie   | gcc-10   | omap2plus_defconfig  =
-      | 1          =
-
-rk3399-gru-kevin | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrom=
-ebook | 1          =
+beaglebone-black | arm  | lab-cip     | gcc-10   | multi_v7_defconfig | 1  =
+        =
 
 
-  Details:  https://kernelci.org/test/job/cip/branch/linux-6.1.y-cip/kernel=
-/v6.1.26-1320-gc38e4a9845945/plan/baseline-nfs/
+  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fpavel%2Fli=
+nux-test/kernel/v6.1.26-1320-g1ddf4b637f785/plan/kselftest-futex/
 
-  Test:     baseline-nfs
-  Tree:     cip
-  Branch:   linux-6.1.y-cip
-  Describe: v6.1.26-1320-gc38e4a9845945
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
-it
-  SHA:      c38e4a98459459f32d3c7c627ff35defa2415935 =
+  Test:     kselftest-futex
+  Tree:     cip-gitlab
+  Branch:   ci/pavel/linux-test
+  Describe: v6.1.26-1320-g1ddf4b637f785
+  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
+  SHA:      1ddf4b637f7858373296265fe09135a077008de6 =
 
 
 
@@ -103,100 +99,69 @@ Test Regressions
 
 
 
-platform         | arch  | lab           | compiler | defconfig            =
-      | regressions
------------------+-------+---------------+----------+----------------------=
-------+------------
-at91sam9g20ek    | arm   | lab-broonie   | gcc-10   | multi_v5_defconfig   =
-      | 1          =
+platform         | arch | lab         | compiler | defconfig          | reg=
+ressions
+-----------------+------+-------------+----------+--------------------+----=
+--------
+beaglebone-black | arm  | lab-broonie | gcc-10   | multi_v7_defconfig | 1  =
+        =
 
 
-  Details:     https://kernelci.org/test/plan/id/647f28cc6b49e0daacf5de2e
+  Details:     https://kernelci.org/test/plan/id/647f2da0691ee615ecf5de3f
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v5_defconfig
+  Full config: multi_v7_defconfig
   Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
 10110)
-  Plain log:   https://storage.kernelci.org//cip/linux-6.1.y-cip/v6.1.26-13=
-20-gc38e4a9845945/arm/multi_v5_defconfig/gcc-10/lab-broonie/baseline-nfs-at=
-91sam9g20ek.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-6.1.y-cip/v6.1.26-13=
-20-gc38e4a9845945/arm/multi_v5_defconfig/gcc-10/lab-broonie/baseline-nfs-at=
-91sam9g20ek.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
-230527.0/armel/initrd.cpio.gz =
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v6.1.26-1320-g1ddf4b637f785/arm/multi_v7_defconfig/gcc-10/lab-broonie/ksel=
+ftest-futex-beaglebone-black.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v6.1.26-1320-g1ddf4b637f785/arm/multi_v7_defconfig/gcc-10/lab-broonie/ksel=
+ftest-futex-beaglebone-black.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
+elftest/20230527.0/armhf/initrd.cpio.gz =
 
 
 
-  * baseline-nfs.login: https://kernelci.org/test/case/id/647f28cc6b49e0daa=
-cf5de2f
-        new failure (last pass: v6.1.26-1314-g1ab0ac1d7e2e3) =
+  * kselftest-futex.login: https://kernelci.org/test/case/id/647f2da0691ee6=
+15ecf5de40
+        failing since 0 day (last pass: v5.10.180-cip34-26-gc198172c84b6a, =
+first fail: v6.1.26-1314-g1ab0ac1d7e2e3) =
 
  =
 
 
 
-platform         | arch  | lab           | compiler | defconfig            =
-      | regressions
------------------+-------+---------------+----------+----------------------=
-------+------------
-beaglebone-black | arm   | lab-broonie   | gcc-10   | omap2plus_defconfig  =
-      | 1          =
+platform         | arch | lab         | compiler | defconfig          | reg=
+ressions
+-----------------+------+-------------+----------+--------------------+----=
+--------
+beaglebone-black | arm  | lab-cip     | gcc-10   | multi_v7_defconfig | 1  =
+        =
 
 
-  Details:     https://kernelci.org/test/plan/id/647f2449b07631e9bcf5de25
+  Details:     https://kernelci.org/test/plan/id/647f2aaecb6848f2b3f5deb8
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: omap2plus_defconfig
+  Full config: multi_v7_defconfig
   Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
 10110)
-  Plain log:   https://storage.kernelci.org//cip/linux-6.1.y-cip/v6.1.26-13=
-20-gc38e4a9845945/arm/omap2plus_defconfig/gcc-10/lab-broonie/baseline-nfs-b=
-eaglebone-black.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-6.1.y-cip/v6.1.26-13=
-20-gc38e4a9845945/arm/omap2plus_defconfig/gcc-10/lab-broonie/baseline-nfs-b=
-eaglebone-black.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
-230527.0/armhf/initrd.cpio.gz =
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v6.1.26-1320-g1ddf4b637f785/arm/multi_v7_defconfig/gcc-10/lab-cip/kselftes=
+t-futex-beaglebone-black.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v6.1.26-1320-g1ddf4b637f785/arm/multi_v7_defconfig/gcc-10/lab-cip/kselftes=
+t-futex-beaglebone-black.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
+elftest/20230527.0/armhf/initrd.cpio.gz =
 
 
 
-  * baseline-nfs.login: https://kernelci.org/test/case/id/647f2449b07631e9b=
-cf5de26
-        new failure (last pass: v6.1.26-1314-g1ab0ac1d7e2e3) =
-
- =
-
-
-
-platform         | arch  | lab           | compiler | defconfig            =
-      | regressions
------------------+-------+---------------+----------+----------------------=
-------+------------
-rk3399-gru-kevin | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrom=
-ebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/647f27206c8c797ef5f5de9e
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-6.1.y-cip/v6.1.26-13=
-20-gc38e4a9845945/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/bas=
-eline-nfs-rk3399-gru-kevin.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-6.1.y-cip/v6.1.26-13=
-20-gc38e4a9845945/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/bas=
-eline-nfs-rk3399-gru-kevin.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
-230527.0/arm64/initrd.cpio.gz =
-
-
-
-  * baseline-nfs.login: https://kernelci.org/test/case/id/647f27206c8c797ef=
-5f5de9f
-        new failure (last pass: v6.1.26-1314-g1ab0ac1d7e2e3) =
+  * kselftest-futex.login: https://kernelci.org/test/case/id/647f2aaecb6848=
+f2b3f5deb9
+        failing since 0 day (last pass: v5.10.180-cip34-26-gc198172c84b6a, =
+first fail: v6.1.26-1314-g1ab0ac1d7e2e3) =
 
  =20
 
