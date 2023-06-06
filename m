@@ -2,21 +2,21 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B67D2C7EE2E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4CAFC77B7A
 	for <webhook@archiver.kernel.org>; Tue,  6 Jun 2023 07:52:49 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web10.3504.1686037963300736519
  for <cip-dev@lists.cip-project.org>;
- Tue, 06 Jun 2023 00:52:43 -0700
+ Tue, 06 Jun 2023 00:52:45 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.00,219,1681138800"; 
-   d="scan'208";a="165915324"
+   d="scan'208";a="165915330"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 06 Jun 2023 16:52:41 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 06 Jun 2023 16:52:44 +0900
 Received: from localhost.localdomain (unknown [10.226.92.247])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id DF84E4187F1A;
-	Tue,  6 Jun 2023 16:52:39 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6266B4187F12;
+	Tue,  6 Jun 2023 16:52:42 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -24,9 +24,9 @@ To: cip-dev@lists.cip-project.org,
 Cc: Chris Paterson <chris.paterson2@renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 1/8] clk: renesas: r9a07g044: Add MTU3a clock and reset entry
-Date: Tue,  6 Jun 2023 08:52:28 +0100
-Message-Id: <20230606075235.183132-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 2/8] dt-bindings: timer: Document RZ/G2L MTU3a bindings
+Date: Tue,  6 Jun 2023 08:52:29 +0100
+Message-Id: <20230606075235.183132-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230606075235.183132-1-biju.das.jz@bp.renesas.com>
 References: <20230606075235.183132-1-biju.das.jz@bp.renesas.com>
@@ -36,50 +36,337 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 06 Jun 2023 07:52:49 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11842
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11843
 
-commit 576d6b40dcceade7d77e88f63e621349c6937bc3 upstream.
+commit 0a9d6b54297e216199cbfd08c5e6a35cce152477 upstream.
 
-Add MTU3a clock and reset entry to CPG driver.
+The RZ/G2L multi-function timer pulse unit 3 (MTU3a) is embedded in
+the Renesas RZ/G2L family SoC's. It consists of eight 16-bit timer
+channels and one 32-bit timer channel. It supports the following
+functions
+ - Counter
+ - Timer
+ - PWM
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20221005111855.553436-1-biju.das.jz@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Lee Jones <lee@kernel.org>
+Link: https://lore.kernel.org/r/20230330111632.169434-2-biju.das.jz@bp.renesas.com
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a07g044-cpg.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ .../bindings/timer/renesas,rz-mtu3.yaml       | 302 ++++++++++++++++++
+ 1 file changed, 302 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml
 
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index 02a4fc41bb6e..12b1a83625cb 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -182,7 +182,7 @@ static const struct {
- };
- 
- static const struct {
--	struct rzg2l_mod_clk common[76];
-+	struct rzg2l_mod_clk common[77];
- #ifdef CONFIG_CLK_R9A07G054
- 	struct rzg2l_mod_clk drp[0];
- #endif
-@@ -204,6 +204,8 @@ static const struct {
- 					0x534, 1),
- 		DEF_MOD("ostm2_pclk",	R9A07G044_OSTM2_PCLK, R9A07G044_CLK_P0,
- 					0x534, 2),
-+		DEF_MOD("mtu_x_mck",	R9A07G044_MTU_X_MCK_MTU3, R9A07G044_CLK_P0,
-+					0x538, 0),
- 		DEF_MOD("gpt_pclk",	R9A07G044_GPT_PCLK, R9A07G044_CLK_P0,
- 					0x540, 0),
- 		DEF_MOD("poeg_a_clkp",	R9A07G044_POEG_A_CLKP, R9A07G044_CLK_P0,
-@@ -356,6 +358,7 @@ static struct rzg2l_reset r9a07g044_resets[] = {
- 	DEF_RST(R9A07G044_OSTM0_PRESETZ, 0x834, 0),
- 	DEF_RST(R9A07G044_OSTM1_PRESETZ, 0x834, 1),
- 	DEF_RST(R9A07G044_OSTM2_PRESETZ, 0x834, 2),
-+	DEF_RST(R9A07G044_MTU_X_PRESET_MTU3, 0x838, 0),
- 	DEF_RST(R9A07G044_GPT_RST_C, 0x840, 0),
- 	DEF_RST(R9A07G044_POEG_A_RST, 0x844, 0),
- 	DEF_RST(R9A07G044_POEG_B_RST, 0x844, 1),
+diff --git a/Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml b/Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml
+new file mode 100644
+index 000000000000..bffdab0b0185
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml
+@@ -0,0 +1,302 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/timer/renesas,rz-mtu3.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/G2L Multi-Function Timer Pulse Unit 3 (MTU3a)
++
++maintainers:
++  - Biju Das <biju.das.jz@bp.renesas.com>
++
++description: |
++  This hardware block consists of eight 16-bit timer channels and one
++  32- bit timer channel. It supports the following specifications:
++    - Pulse input/output: 28 lines max.
++    - Pulse input 3 lines
++    - Count clock 11 clocks for each channel (14 clocks for MTU0, 12 clocks
++      for MTU2, and 10 clocks for MTU5, four clocks for MTU1-MTU2 combination
++      (when LWA = 1))
++    - Operating frequency Up to 100 MHz
++    - Available operations [MTU0 to MTU4, MTU6, MTU7, and MTU8]
++        - Waveform output on compare match
++        - Input capture function (noise filter setting available)
++        - Counter-clearing operation
++        - Simultaneous writing to multiple timer counters (TCNT)
++          (excluding MTU8).
++        - Simultaneous clearing on compare match or input capture
++          (excluding MTU8).
++        - Simultaneous input and output to registers in synchronization with
++          counter operations           (excluding MTU8).
++        - Up to 12-phase PWM output in combination with synchronous operation
++          (excluding MTU8)
++    - [MTU0 MTU3, MTU4, MTU6, MTU7, and MTU8]
++        - Buffer operation specifiable
++    - [MTU1, MTU2]
++        - Phase counting mode can be specified independently
++        - 32-bit phase counting mode can be specified for interlocked operation
++          of MTU1 and MTU2 (when TMDR3.LWA = 1)
++        - Cascade connection operation available
++    - [MTU3, MTU4, MTU6, and MTU7]
++        - Through interlocked operation of MTU3/4 and MTU6/7, the positive and
++          negative signals in six phases (12 phases in total) can be output in
++          complementary PWM and reset-synchronized PWM operation.
++        - In complementary PWM mode, values can be transferred from buffer
++          registers to temporary registers at crests and troughs of the timer-
++          counter values or when the buffer registers (TGRD registers in MTU4
++          and MTU7) are written to.
++        - Double-buffering selectable in complementary PWM mode.
++    - [MTU3 and MTU4]
++        - Through interlocking with MTU0, a mode for driving AC synchronous
++          motors (brushless DC motors) by using complementary PWM output and
++          reset-synchronized PWM output is settable and allows the selection
++          of two types of waveform output (chopping or level).
++    - [MTU5]
++        - Capable of operation as a dead-time compensation counter.
++    - [MTU0/MTU5, MTU1, MTU2, and MTU8]
++        - 32-bit phase counting mode specifiable by combining MTU1 and MTU2 and
++          through interlocked operation with MTU0/MTU5 and MTU8.
++    - Interrupt-skipping function
++        - In complementary PWM mode, interrupts on crests and troughs of counter
++          values and triggers to start conversion by the A/D converter can be
++          skipped.
++    - Interrupt sources: 43 sources.
++    - Buffer operation:
++        - Automatic transfer of register data (transfer from the buffer
++          register to the timer register).
++    - Trigger generation
++        - A/D converter start triggers can be generated
++        - A/D converter start request delaying function enables A/D converter
++          to be started with any desired timing and to be synchronized with
++          PWM output.
++    - Low power consumption function
++        - The MTU3a can be placed in the module-stop state.
++
++    There are two phase counting modes. 16-bit phase counting mode in which
++    MTU1 and MTU2 operate independently, and cascade connection 32-bit phase
++    counting mode in which MTU1 and MTU2 are cascaded.
++
++    In phase counting mode, the phase difference between two external input
++    clocks is detected and the corresponding TCNT is incremented or
++    decremented.
++    The below counters are supported
++      count0 - MTU1 16-bit phase counting
++      count1 - MTU2 16-bit phase counting
++      count2 - MTU1+ MTU2 32-bit phase counting
++
++    The module supports PWM mode{1,2}, Reset-synchronized PWM mode and
++    complementary PWM mode{1,2,3}.
++
++    In complementary PWM mode, six positive-phase and six negative-phase PWM
++    waveforms (12 phases in total) with dead time can be output by
++    combining MTU{3,4} and MTU{6,7}.
++
++    The below pwm channels are supported in pwm mode 1.
++      pwm0  - MTU0.MTIOC0A PWM mode 1
++      pwm1  - MTU0.MTIOC0C PWM mode 1
++      pwm2  - MTU1.MTIOC1A PWM mode 1
++      pwm3  - MTU2.MTIOC2A PWM mode 1
++      pwm4  - MTU3.MTIOC3A PWM mode 1
++      pwm5  - MTU3.MTIOC3C PWM mode 1
++      pwm6  - MTU4.MTIOC4A PWM mode 1
++      pwm7  - MTU4.MTIOC4C PWM mode 1
++      pwm8  - MTU6.MTIOC6A PWM mode 1
++      pwm9  - MTU6.MTIOC6C PWM mode 1
++      pwm10 - MTU7.MTIOC7A PWM mode 1
++      pwm11 - MTU7.MTIOC7C PWM mode 1
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - renesas,r9a07g044-mtu3  # RZ/G2{L,LC}
++          - renesas,r9a07g054-mtu3  # RZ/V2L
++      - const: renesas,rz-mtu3
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    items:
++      - description: MTU0.TGRA input capture/compare match
++      - description: MTU0.TGRB input capture/compare match
++      - description: MTU0.TGRC input capture/compare match
++      - description: MTU0.TGRD input capture/compare match
++      - description: MTU0.TCNT overflow
++      - description: MTU0.TGRE compare match
++      - description: MTU0.TGRF compare match
++      - description: MTU1.TGRA input capture/compare match
++      - description: MTU1.TGRB input capture/compare match
++      - description: MTU1.TCNT overflow
++      - description: MTU1.TCNT underflow
++      - description: MTU2.TGRA input capture/compare match
++      - description: MTU2.TGRB input capture/compare match
++      - description: MTU2.TCNT overflow
++      - description: MTU2.TCNT underflow
++      - description: MTU3.TGRA input capture/compare match
++      - description: MTU3.TGRB input capture/compare match
++      - description: MTU3.TGRC input capture/compare match
++      - description: MTU3.TGRD input capture/compare match
++      - description: MTU3.TCNT overflow
++      - description: MTU4.TGRA input capture/compare match
++      - description: MTU4.TGRB input capture/compare match
++      - description: MTU4.TGRC input capture/compare match
++      - description: MTU4.TGRD input capture/compare match
++      - description: MTU4.TCNT overflow/underflow
++      - description: MTU5.TGRU input capture/compare match
++      - description: MTU5.TGRV input capture/compare match
++      - description: MTU5.TGRW input capture/compare match
++      - description: MTU6.TGRA input capture/compare match
++      - description: MTU6.TGRB input capture/compare match
++      - description: MTU6.TGRC input capture/compare match
++      - description: MTU6.TGRD input capture/compare match
++      - description: MTU6.TCNT overflow
++      - description: MTU7.TGRA input capture/compare match
++      - description: MTU7.TGRB input capture/compare match
++      - description: MTU7.TGRC input capture/compare match
++      - description: MTU7.TGRD input capture/compare match
++      - description: MTU7.TCNT overflow/underflow
++      - description: MTU8.TGRA input capture/compare match
++      - description: MTU8.TGRB input capture/compare match
++      - description: MTU8.TGRC input capture/compare match
++      - description: MTU8.TGRD input capture/compare match
++      - description: MTU8.TCNT overflow
++      - description: MTU8.TCNT underflow
++
++  interrupt-names:
++    items:
++      - const: tgia0
++      - const: tgib0
++      - const: tgic0
++      - const: tgid0
++      - const: tgiv0
++      - const: tgie0
++      - const: tgif0
++      - const: tgia1
++      - const: tgib1
++      - const: tgiv1
++      - const: tgiu1
++      - const: tgia2
++      - const: tgib2
++      - const: tgiv2
++      - const: tgiu2
++      - const: tgia3
++      - const: tgib3
++      - const: tgic3
++      - const: tgid3
++      - const: tgiv3
++      - const: tgia4
++      - const: tgib4
++      - const: tgic4
++      - const: tgid4
++      - const: tgiv4
++      - const: tgiu5
++      - const: tgiv5
++      - const: tgiw5
++      - const: tgia6
++      - const: tgib6
++      - const: tgic6
++      - const: tgid6
++      - const: tgiv6
++      - const: tgia7
++      - const: tgib7
++      - const: tgic7
++      - const: tgid7
++      - const: tgiv7
++      - const: tgia8
++      - const: tgib8
++      - const: tgic8
++      - const: tgid8
++      - const: tgiv8
++      - const: tgiu8
++
++  clocks:
++    maxItems: 1
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++  "#pwm-cells":
++    const: 2
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-names
++  - clocks
++  - power-domains
++  - resets
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r9a07g044-cpg.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    mtu3: timer@10001200 {
++      compatible = "renesas,r9a07g044-mtu3", "renesas,rz-mtu3";
++      reg = <0x10001200 0xb00>;
++      interrupts = <GIC_SPI 170 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 171 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 172 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 173 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 174 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 175 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 176 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 177 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 178 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 179 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 180 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 181 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 182 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 183 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 184 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 185 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 186 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 187 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 188 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 189 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 190 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 191 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 192 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 193 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 194 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 195 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 196 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 197 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 198 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 199 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 200 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 201 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 202 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 203 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 204 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 205 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 206 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 207 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 208 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 209 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 210 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 211 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 212 IRQ_TYPE_EDGE_RISING>,
++                   <GIC_SPI 213 IRQ_TYPE_EDGE_RISING>;
++      interrupt-names = "tgia0", "tgib0", "tgic0", "tgid0", "tgiv0", "tgie0",
++                        "tgif0",
++                        "tgia1", "tgib1", "tgiv1", "tgiu1",
++                        "tgia2", "tgib2", "tgiv2", "tgiu2",
++                        "tgia3", "tgib3", "tgic3", "tgid3", "tgiv3",
++                        "tgia4", "tgib4", "tgic4", "tgid4", "tgiv4",
++                        "tgiu5", "tgiv5", "tgiw5",
++                        "tgia6", "tgib6", "tgic6", "tgid6", "tgiv6",
++                        "tgia7", "tgib7", "tgic7", "tgid7", "tgiv7",
++                        "tgia8", "tgib8", "tgic8", "tgid8", "tgiv8", "tgiu8";
++      clocks = <&cpg CPG_MOD R9A07G044_MTU_X_MCK_MTU3>;
++      power-domains = <&cpg>;
++      resets = <&cpg R9A07G044_MTU_X_PRESET_MTU3>;
++      #pwm-cells = <2>;
++    };
 -- 
 2.25.1
 
