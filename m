@@ -1,170 +1,308 @@
-Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74637C7EE23
-	for <webhook@archiver.kernel.org>; Tue,  6 Jun 2023 01:31:28 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.153])
- by mx.groups.io with SMTP id smtpd.web10.970.1686015080361861547
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A592C77B7A
+	for <webhook@archiver.kernel.org>; Tue,  6 Jun 2023 05:37:19 +0000 (UTC)
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.47])
+ by mx.groups.io with SMTP id smtpd.web11.2315.1686029828794466459
  for <cip-dev@lists.cip-project.org>;
- Mon, 05 Jun 2023 18:31:21 -0700
+ Mon, 05 Jun 2023 22:37:09 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: toshiba.co.jp, ip: 210.130.202.153, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
-Received: by mo-csw.securemx.jp (mx-mo-csw1514) id 3561V16R017048; Tue, 6 Jun 2023 10:31:01 +0900
-X-Iguazu-Qid: 34trPsC3EEhD48uEmh
-X-Iguazu-QSIG: v=2; s=0; t=1686015061; q=34trPsC3EEhD48uEmh; m=/kO09fkPs0KeErjJLC4gdmb3mI1ogddFIlf0Bk2YYmY=
-Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1511) id 3561V0Ug002427
-	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
-	Tue, 6 Jun 2023 10:31:00 +0900
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=ok3g9WiV;
+ spf=pass (domain: siemens.com, ip: 40.107.6.47, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bxSUoAh3R9jT6/mSor0nRnrLpHkHACnRRiSl5MzFBKsGBSKern/fDOQaDEVmXS5C4jXACIo2jOh2VTnjfBn2/yMYetHSujUn720NbabNds25YSOuCSXBjDu9hLksG6pR+o8IK6Ebx//ElILFvRezGoPleXWYbWeA4GXhxFlQa4gUumQiNbrvadn88Rh8u0sWuDA9Q6CPtRIVsJWO67uvPAeg6jC2LJH78RpqYK6xCiUwSApB/LmYOqkiiY+6xDsHqmmLCcsyZHSsOszYWvqxBhtRC/8aen54XkxGuNyK2sX17h/K3uciZI/KXqXQJGjWxX/a+09lUEQ7vIaZAt7nlA==
+ b=g0QXmLNKpE5+4cpolloYG6HWI7ke6lCJcgEp/CVOREpsdj5u0+ZOmwtPLz3yvN9dGV0fIxaiIBjijQAdjc5POLTyf7Ie7CB40ga8Fw45WJb3pMOW2o61xIP1c0B0jKWKJFSljSDsOWBb1TvGacyW2/Ae0ytvMwcs0e5oNsYMVGrSWHaBjzKKWcD59pUgPtEq0e6sixvH7q+3YHudSG9uk1QdfGyojaGfdgjy8NQHViI3MlWLG4eMHLcqSEGYWye1mJ/yFJ2AGtNs99585+HTik7FFVq6Mf/Rg8GH3MSnCGAeXCDi4KsFcWpDXTdmI1foW1pweCs27rkkaFnnz92wxw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xQK01dcu5fXH+W1/OuLptZBW6P1gEwU9uptF3SAW7MY=;
- b=Yhhdc2ScdJXcOFaaIwrrgmlAnAWNVk9lgn3qjGAARRoPrAOMf7rdJUtMWlPp/Es7t1U0SVN5MgiC7YnB/K9vkG3G8GNhKVmrHhlpWXERYAJS5hog396vkYCVTllUWDy20chLrUa72YeMqhPyv11+6M6pSu5FD7jaTidpZ6pDpIJN8FM9abDnEvWSqhqhFQgxSHNb9Ug7aN9kFv2cDaUHaC2UakEhYkB4g96hlXVsoFuOaonvdXHQqMPpTtBo/hBwL4FCoJWFNkg4oaB6H/bIOc1/5JOc1wl9h0OngKGlUqAZZMa6vapznfr8M5IaxZNoiKouOn1bn+527v7GP5mckw==
+ bh=1EhuJPRPy628V49n7mQBx0AihDhCuIFs5GpNPDqixl0=;
+ b=Leo3weVBJljJZtt35AjAithrz7Z7zLA7Zuben4wNj/VlG56plKZwDEMxui9HqqcoHCSI0F+TQH0aD8Q1JXldTCRJrIQ9NDmNrdCYd8dXqO7S9twp/SmuFnGY8HyJ2SCDQI4eYFAMLoGlawqMH9AKjCKg3c4WHV7xTu6AyoT8Qgin4xNk67RUPXdDXK5q6IbqXQpoOR/IeS6jw2Pf/IgOwp7UxdqRx3LKHyU33PdcEW492jY+/CjUcTvMZhPzYjAiH8MnLEhh8+Omfzo0yrVa161yCtgG36fDMgxy/eQLxsY2R5AbV4T6XudB3T1a0A2I+SeJMBa786bcOmxBDxYFiw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From: <nobuhiro1.iwamatsu@toshiba.co.jp>
-To: <biju.das.jz@bp.renesas.com>, <cip-dev@lists.cip-project.org>,
-        <pavel@denx.de>
-CC: <chris.paterson2@renesas.com>, <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH 5.10.y-cip 0/7] Add SCI support for RZ/G2L alike SoCs
-Thread-Topic: [PATCH 5.10.y-cip 0/7] Add SCI support for RZ/G2L alike SoCs
-Thread-Index: AQHZl52g1VGdN0SxCUS4qvKA+2hijK98/SnA
-Date: Tue, 6 Jun 2023 01:30:57 +0000
-X-TSB-HOP2: ON
-Message-ID: 
- <TYWPR01MB942086A48D86FFF4117256C79252A@TYWPR01MB9420.jpnprd01.prod.outlook.com>
-References: <20230605110512.111017-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20230605110512.111017-1-biju.das.jz@bp.renesas.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYWPR01MB9420:EE_|OS0PR01MB5763:EE_
-x-ms-office365-filtering-correlation-id: ec9f0c1c-6dfa-4bb4-88f0-08db662dadfc
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- CXkYEQEdfrkD7b6txV40kC3WTvuN7L9oA9IFXADIoP/lYecIQf+Y1ylJyADOf2kEG9p+rtUTMosjlbGBOrRg7kHsxlaKvUk4tao92fDUfw9X0e3MlDMptOu6Lz72Sr7vDQskmIIQqTdDKIjAuURCDPO4TMCx88S++AROVvpaELxCWo/2uGIg7Fgc5iyPWoPQfJxEsBPDdPx8QUuZurubS5nz9eId1os2UrSRuJGA2+2zEX1vakE/U1vFE01yO0siQR1XZwMQ1MdBjhOLPOCR78aA6KAI8n94xYqIwwu9pDXtVTu9jfcu5IgDKYH9b/xesRZBnHD7Y6dftwTHFHfQ+udlIX+Pa4tPohKtHbuyDOS0Us7X/yOqSQVNeKn+RRYFgV4SN1OEbmCUXoOa9wY1x7hwwA4F6sXAVuGv0z8TZNSmvfsQIdknJYtAe2CX/2oiTiz4+EaeP1YGqoWtAP0AfD5KXSif1Krxyv09boUUEtvdDD+rt9CF9V3jgb0JnukrxAsTWn2vXFFK56g4wgH/gOcD2/tJTIsMfa8Zu4JWsaMEJnjk0wzbTAUFSYJwManOtUxLhNrMWnEyeFNLXhY1NysEAEhSDb7cwkaai3UUPBhBF1GIDYmfBLkE3605BX2hv9DPODg//wx9PM16bIbIEg==
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB9420.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(6029001)(4636009)(366004)(396003)(376002)(346002)(136003)(39860400002)(451199021)(83380400001)(110136005)(54906003)(55016003)(33656002)(478600001)(8936002)(8676002)(316002)(41300700001)(64756008)(66946007)(76116006)(66476007)(52536014)(66556008)(66446008)(122000001)(38100700002)(4326008)(5660300002)(38070700005)(86362001)(7696005)(2906002)(71200400001)(26005)(186003)(6506007)(9686003)(53546011)(95630200002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?Ykp2L2hKSnVXbEFXb1VtRTZES1MybDVwU3R6WWdhY2NVVFlCR21FWks4?=
- =?iso-2022-jp?B?aDJTZzQyczdXWHJIbEkxbWlFOHVBc3haeDhyalZrOU1qM2IzRmhRQWtQ?=
- =?iso-2022-jp?B?OXR1R0FVQUdYR2RsQTlXVXhTZEQ3SllSQWJzYjV2cVJ5MEVXYm43cVpI?=
- =?iso-2022-jp?B?bERJeVgyM3ZzUVVxaXhXRWlmY29YSFo0MzcrMU05bEVSN0Q2SmpObXdj?=
- =?iso-2022-jp?B?K0RxWnBIY3g2ejFiNUZaZTZvUW9MT3Y3TW4zVjZvWXRSdkk1SExTbFNl?=
- =?iso-2022-jp?B?a3Jtd0YxWVVTaGZQdHpaVm04T3pDRm02dE1MU2NJamRsZ3VmN0dBWW91?=
- =?iso-2022-jp?B?R0pySVN5NExtL0hRelpaa2FrSENTaDZpOFYxT1krd0JvRTVsNmhFdnNn?=
- =?iso-2022-jp?B?Q1NnMnk0MUhyNG9PWng1MXZpbUJBanpOSVpzNnRHQ0owQVNCZWg5S1lF?=
- =?iso-2022-jp?B?NFNaRlVHWDlhQTVlWnFVRFdudHFCM0VXUWtMdi8rMVNuZnNNVytaU3Ew?=
- =?iso-2022-jp?B?QzI2bmJFaXB0QzFia3dFZmZCWERQSFNtazFtRnVnekRmMXBVMDBXN3FO?=
- =?iso-2022-jp?B?bVZRc21XQm1wMkdJNzNKSXVoT0dON3NndEdyMUJpZEdVWjlDWWlQeStT?=
- =?iso-2022-jp?B?T1pxaks1ZFNVMlNtL1RmQm9EbG92dXpsOExYUHhzaHAxWFoyUFlWTlZp?=
- =?iso-2022-jp?B?d1Z5SDhyeitCbUhNcmg2S1VUSDNJeUgvcGxkR0JsYWhtV2RCdzVuOVZX?=
- =?iso-2022-jp?B?Q3VzelFpWnpvbm5aeHlVNUhHYWs5S0FSN1p2SmpDbVVwRkF5bzI0bDRB?=
- =?iso-2022-jp?B?NlhIQW5tWjVDZGptbDZNSlVXSjB2M3JJMkxzUGFMbnc2QW1UQTE1M01W?=
- =?iso-2022-jp?B?TzYwbkVGVW0xT3Y3WUtFV3JjWFFQVEkrY2s0dEVmbUtlWWFxWnhXbTlL?=
- =?iso-2022-jp?B?clZUekQ1N0JLV2d0b2sxVXFPc2pqTXAzWWNQenBhcG5wTUQzZHRFczgw?=
- =?iso-2022-jp?B?NWdqeHU0b3pSblEyRFNuMTV6cGFBczluUWltUTgraDhlU3dua3E0L0wx?=
- =?iso-2022-jp?B?enlCWnl1RFBTR0hMbHJkRW1lakhST2pTTlRtaXBVZDM1elBqZWwySnVw?=
- =?iso-2022-jp?B?ZlZRNXRUczBvSjYxclBmSzNYTG5GamUyL0NPTTdwRUdiYXdaL0RrMVlV?=
- =?iso-2022-jp?B?NVE3b3UxdjlQbU9NL2Y2SzR6TjgwaFNPL3o2Q0ZpRDEzblI1djFseDhL?=
- =?iso-2022-jp?B?VEV5NEFMTm1kZ3dJd29aS1dJd0g0NmY4cVNkcHNoNXdLL2Z0dDNZcE12?=
- =?iso-2022-jp?B?Y1BpVUtGQmE4aTZ0d0IwWFZvVkRQSkFTMnF6NHZ0aVhVNjVFWEM4Z3g5?=
- =?iso-2022-jp?B?QU1aZUFqOTNHNFIyWU5POTAvTnZPV2JQMnZwTTl0VGNubk5xQjFFMEhq?=
- =?iso-2022-jp?B?WHFIaDVESk15TXZsNmJVMWpRWmFtRUZvc2tZUnd3cWJLcEY2Z3o4aGg2?=
- =?iso-2022-jp?B?ejRHdE5lN3dJS2UwUUdSVGF0cXZsc3gyQTBRZ1NKMm9sYWQ5UGtFYmhx?=
- =?iso-2022-jp?B?VFltb2I2bmRnQ0RCL2x2T0RySGNPNHdLcWg5U3I1K1JGV0ZTRG1jRWw1?=
- =?iso-2022-jp?B?MG1TcmNVV3luRjJKWGJJWE45NlIvL3Q0WmFjMzVvOTRnaDQ4WVFkWGwr?=
- =?iso-2022-jp?B?SGJGQTlPTEhVclRybm5OanprdnNWQzNSS21ocUdIVmNuakI0THpxOTZu?=
- =?iso-2022-jp?B?TXZDY2laR29nTGNobmdORm51R0dBUXR2OWRRcmRFY3ZrOWdZVkFBZ2p2?=
- =?iso-2022-jp?B?dmlWZkdVcFVsN2JlWWpzQ2hTMVppMzNSRlBMeFdYbG1BRUpFQW5EQ3hY?=
- =?iso-2022-jp?B?RDFzL0hXSGlTVDNDYkZMWnd5VndTOWVWUFhVOTVrWjhxV2N5U1VtaW1X?=
- =?iso-2022-jp?B?SWtQQ3VzQksyeUhTWWhYU2ZIUTNua1dXYURTc1FYcWN3eVBWZURtSDR4?=
- =?iso-2022-jp?B?WTA0cHY3SEN3aDhoWkRMMlJVZHcrM1lpQ1o5UkN1TlVnZmxVS2pGUVcv?=
- =?iso-2022-jp?B?dDhYbDBxL0JSM3d6dkMxcGRiS2VDYTU3N2pzUUJ1S2lNeHlrdXYvc2dR?=
- =?iso-2022-jp?B?Nm9KTXg0Y3VlSmVKRWY1WHE0UGxiUnNyajRPdjZTUDloUi9VdmhEdyt1?=
- =?iso-2022-jp?B?RnRiaGxHSmE1MEVKaDdwRFJHUTh6b2FabkVGZG9FSCtxOEQyU0RVY2RD?=
- =?iso-2022-jp?B?dWxTNlFRMGR6UU5Ca29kbENpL2tlaXVpYmFUb01qVEtMM0Z3RXZDbVBQ?=
- =?iso-2022-jp?B?a1l0ZmgwRTNzem50V3NEdTRLUTBDUnh6YWc9PQ==?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1EhuJPRPy628V49n7mQBx0AihDhCuIFs5GpNPDqixl0=;
+ b=ok3g9WiVgTZXHJqaQPYWR5VhVhz57tp9ES7fQPu3qZiCZPYf1871m7I+tzdiVWgWgHb2sIZ4uL+bBfXVykRnOONxIqMum+3Ck0FfZ7mtG6pVDecyhKe9cZhiurp7vjdE2xoTfX0RysycWOhne//J0+gzK9I2vfFn8D7SC9JjMJ2nmzGpGYnp0QnWTAyZhJWEsqOKCGD2tNUQr5pm0Ii/7mHVZhJNrwDdmzBvTkaLJ2naN0yKxsocrT0n3GZ0LtJY2HuSWqjBbnmFMW7e3KboCfjWZpBUPepWwXGYGmWeWy98llPbyvUfXPFnyECP2tWuli2rkzJKfQsBoLfhuD8uQg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by DBAPR10MB4058.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:1c1::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.32; Tue, 6 Jun
+ 2023 05:37:05 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::2ecd:9a8a:5601:47e4]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::2ecd:9a8a:5601:47e4%6]) with mapi id 15.20.6455.030; Tue, 6 Jun 2023
+ 05:37:05 +0000
+Message-ID: <15c4bbac-145e-f826-9c48-778531a1a403@siemens.com>
+Date: Tue, 6 Jun 2023 07:37:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [isar-cip-core][PATCH v2 1/2] Add recipe for optee-client
+Content-Language: en-US
+To: baocheng_su@163.com, cip-dev@lists.cip-project.org,
+ felix.moessbauer@siemens.com
+Cc: christian.storm@siemens.com, quirin.gylstorff@siemens.com,
+ baocheng.su@siemens.com
+References: <20230606035506.10354-1-baocheng_su@163.com>
+ <20230606035506.10354-2-baocheng_su@163.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+In-Reply-To: <20230606035506.10354-2-baocheng_su@163.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR0P281CA0119.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a8::17) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	4tjDEM03wF0TuqA3klwU5D+eNRNSHR9qSQ6V8ietoHh0BvfKzdO1aRw87M/sz1CJ8AIurCGMeZ++aocw6y5UOG23DhMx9IdqJtVkyjbUKx2xg2WicQCyHrQkgwtZ7iRPEx0xHDI1POCD7DZ9hfUFnSjTwn3kcqFAoJMtDgTyxQmw6ERjZl4ghBoZrUrZlVlslOMvvC+E4MG4/M5HUrF/+uuNkZJgryHDxkvtXBD7hF6YYEZCfTAzjRkUnq7YleDS3/Uv3qiSwLC5PYF6w4Ha2p934M8A2s9f1xUkRqZaqEiVNWKIrID2tCm+ZQtlRXJoVegKHHzonoDeBdFU6L3Rpyr392+MVX6TYUzpC7PdCkk7htIAmzac7KCSzXPr6EJ7mJW+1sdWHqIcEhvMbW7DOkvWquMLIAH+M/bdb7nah69zpCkMqpvzWsLrIO+58jsdmhPsUVBcKp3nBvDbWmrMY6quVuqT640aaF/yO259XQV+Ny+CDfLBliNoOFlp7uv/TZiOhh0QWacqtGvExce/3QmKmEIZlm3rs/WpES+zQD2ePHaD0oib+BNaNEuI0mvtvw9TUrioDzYt/2XZ82TfhG4F99WAHu01yifDprVcUr+cUz39GIt80vMPp+nQOGRSeVEm938ZlMqODbMQNCkQQhOlguB9kR0L+AhqS+1SwjtVti9Sb9kpuQvdZYIP8WRs8rJKeqXF0gl3qfO3tFu8lVBsvTulqcq9WQspwv061834QLtnU/qMfSEvJ/rH59kr65peWyCOq/5NWgAmbtkXHwBiKvy/8CaaXRFmcUneN8oIGWUUmuXCNqly5PSUtRlS9sCDZ92XPz99bWMrAyx6Y4ZoU3xcbv4iT4eYeOsY2lPpAOmSL/+nx4MPfQUm0/utT09Gl6acbCvnkWXV/yN6ZQ==
-X-OriginatorOrg: toshiba.co.jp
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DBAPR10MB4058:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4165545a-244e-4709-dbe6-08db66500fee
+X-LD-Processed: 38ae3bcd-9579-4fd4-adda-b42e1495d55a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	Jv1vqJKV1HyUuaRF41Q9lR+1JQIa+iImpLLnXWAeTQQBW1rduMSzFAklrdc2dYu0LzKaZ8K/RKQJoMvNXgjeE87xY43gfUlnUu5wFFDErACBW8OZn3K0fJLILXeMF9mxWrLJJL7myrNgIjDrDbggfM5XH+6ECssz+mx/L4wpvV7Rqu3jZE1VhnFW1bpi4UiLo7DVCxIrdo0/5v6IVOl+te87LocBPf526t5845SgtxT5qm2BFC1Bu2CEHwpFrSk8LtzSeuRoYGe0zAyeyDTw8e8UlPIHY5BaIvXFEcGCiUk5E8JxQwJee6/QRJwLRRRFv6HpCo8AGz/kIOY4cQlq4dRR6w/Ez6Rkrxll47vEb4NgAbVSvHD1OckGvX/rSTNn6yKdN7HUXTmGFuXmTlogGX3KD4GHMidBmrQYPRpIyc07H9dzwaN17JymLS/ejZhBFkjevJRlU8Up2U3h43nCIs2f2dQJkyeChqchYgPNulpYg/YJU2ggZWNAs2Rc19dNUOxVvbqJoXaokHg3OPnR8Qjy0vt67/qrb+qghwU745EIgUv2ea8Frh7dCiVyLTR92lmrVgkug0YPgySVolj7agT+XbeVgvcVhbjZE2yp08Pyl0DvFquavqr5IQJHtxEL7WrEx3WZp1FZeEc8vISQZPNFrNk6kbETme2OBYjMtXzKj5FKoDxf9A6XCLBaXnEQ
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(396003)(39860400002)(136003)(346002)(366004)(451199021)(36756003)(2906002)(44832011)(31696002)(86362001)(5660300002)(31686004)(6486002)(966005)(186003)(83380400001)(53546011)(6506007)(6512007)(107886003)(26005)(82960400001)(478600001)(66556008)(2616005)(38100700002)(66946007)(4326008)(6636002)(66476007)(41300700001)(316002)(8936002)(8676002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?OE5uaWhENDFvQ2ZDajJXTUFPa2c2Tk5rczQrdWpGRStYUHc3ZjZJaEZHY0cw?=
+ =?utf-8?B?OE1ZczJVNW00c3kvY2drTndjVzNqQWUrTlpNYW5WQU5HYU5mdTVkV21UUXRa?=
+ =?utf-8?B?YnpqWDRqeHMxdGwybVRldkRRSmczcUI3d1EzSy9hMk9Hc3IvZFU2QmdvS3Nv?=
+ =?utf-8?B?ZzYrVy82YUdVTzFnbE10SEhsYXk1S1RPd0l4MU5pOUNnWC9ZbXFwR053UUNs?=
+ =?utf-8?B?MWlpb3N5S1FDZnYrNG9vOGFYZFVxL2lkU3JrREZtQmlqUG16V0F2UFJuUUlQ?=
+ =?utf-8?B?OGc4bHVTMDlNekxWb3JuMnVDeW90OHd4ZUo0RElYTVVicThDVEZZTWdGRkYv?=
+ =?utf-8?B?L3RuQ1JFMVl3ZUhTUzNBVFZCWFpKTjArb09wdXB6cjducm0rT3B1WWd4Ymd1?=
+ =?utf-8?B?SmcrTW43ZHJxdmxYcDk0cGpEK3hjMmdIejBrTTZ2aFBSS3d4OERGeEtpckg1?=
+ =?utf-8?B?NzNMSlBwL0taM3Q2S1RjbUwzTHFSVkJxM2FxalE0R2xaemZ1cHR2K0hQSDBW?=
+ =?utf-8?B?RTR2M2FJblZRMGk4WEdKL0l3TTUwS0lWMVhDRGxUWC9UdWRzTFZCa3BRaERE?=
+ =?utf-8?B?d2FXditOb0dVMFNoLzgvVTVpNTM0eEcxWDVGdFRRcnd5VFduWFNyN2FnRmNI?=
+ =?utf-8?B?OFBlTWdTWE5hUkR0bmdsYndVbzhZN2hlUVpQdmlhQVAvL1ZjY1ZXbGRSVVBR?=
+ =?utf-8?B?YTFUQmRJcEVhN2FXZnVKOEhhMFZUM3RaT1ZWOHlrN0JINGRFUi9tSG1QNHR0?=
+ =?utf-8?B?a0pIRnkvRlROSkhLbUVyTXZYZFNJUWNwQ0FERkFaMUFteTY3eTdwOTkrTGNM?=
+ =?utf-8?B?QnZOLy9sOGFwMHo4RlR4L0w2MGFnVWZyY1g4c1MxVTZIRFFOaFJoV1U1Y2ZZ?=
+ =?utf-8?B?ZG1JN2hjVEZnZGgvZ0pNdlVwcFRHOStZSWx2YlRkcVBpWjlBcVVudHNGeXlx?=
+ =?utf-8?B?bzhWS0lZS256Wktiby9FYVJReTUrMmJIZngyNzVna0JHNUJpaDhLM2huVWVB?=
+ =?utf-8?B?eUlHc09CaGxpbTNGNExKL2crblEzMGx2c1J6ZEdnRE1ycmRKUExUaFhub2Rj?=
+ =?utf-8?B?bWxJM1FST1YyRFFTcnNaQm54T1JxUWlPV2ZTQXJyN3lJV3ZYTExxUkEwSzYx?=
+ =?utf-8?B?cy9IQm53aGJxL1picU5GaGtkNTg2a0h4Z1dDNnpPaDNkaHgzMEtwbkFvQXdt?=
+ =?utf-8?B?Vk1oSEtBYW91V1h4RU1qa2s2RkJqRHROSEZhT2VRWE0xb3kzV1drM1pkZm82?=
+ =?utf-8?B?aDFnYXlRd1Zud3lZU3dIcTJMaXhQZnR6Mng3M0toaUdTY2dDRndreVMvMlVL?=
+ =?utf-8?B?dStDbEZWUzJwK3Y5TXdhWkJpU3RqK1BQYzNKOFF3MTN4UW1QaVVaN1cyRERJ?=
+ =?utf-8?B?VjY5VVd6eWFBWDVzTXhoQmF2R1RJOHh5aFZ2Zlo2dnBOSHAvRDZYaW5ndDg0?=
+ =?utf-8?B?cnZ3R0F6ZXd4YUdMd1lNUnJwaGhQbEliYythcVZQL1h5WGdFemdaZ1NwRVYz?=
+ =?utf-8?B?T3Y0eFZMRDM3azhlUVFnU1NEbEJNeXVVOVNxQ09TQ0didFNxeU5jcE04NTRB?=
+ =?utf-8?B?OEJZTEp4QjZaSmdmUHZITUEyd2YwQzZ6aUxnZFd6ZGlkbFJxN0tIbVc5bExP?=
+ =?utf-8?B?TnVsdkh3anIzeklXZDdEMm8wbnZOeEVZMy80d3RFejhYOUdFWk12d1Q5cFgv?=
+ =?utf-8?B?WDU0K2h5eVBkZSs1QlJpVmtUM25tZHYyY09PWjB2NUc5MkgzaGZOeUlaSnZD?=
+ =?utf-8?B?bHYrL094MHRac1hGa1NOS21nZmpUS29QYVBTVzZKeVFRWklhYll3VFk4VWFp?=
+ =?utf-8?B?U0RLdVFlUy9tOUFhOUZKNU02cXl4ekx4RGxuMjRuQUJ1VW1JMVdCNkE1Q0d0?=
+ =?utf-8?B?YVp0R2x6NFlUVm96aytmQ20raEp5Rnp4SXFXK0hubkQ1cU5iNEpUdmJaWDFs?=
+ =?utf-8?B?eGl1YjdQMzN6U1lreFRUUEl3QmczMjYxMWl5WENObS9CU2RXajBlSXY1VWxC?=
+ =?utf-8?B?Zlk1ZkNXRG9oSVNjU01XWHJXZXFqdlFqZkY5dk1MZWhSY3V1V1plRFk1elJz?=
+ =?utf-8?B?aEkzRkRESWtFYUV1b1IxQmY5MENyOXVnV21HU0dqZk13TWkzK1BCcFo0eW9T?=
+ =?utf-8?B?Njk1ZGFsKzdXeU01eFJLbFNIelpGTG1Nd0xYcjRvUzIvejBNaEJjS1BjMGdz?=
+ =?utf-8?B?WFE9PQ==?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4165545a-244e-4709-dbe6-08db66500fee
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB9420.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ec9f0c1c-6dfa-4bb4-88f0-08db662dadfc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2023 01:30:58.1281
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2023 05:37:05.5298
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: FC+fs4qEGqsmlqZqrOwTWcqTRhHhzo0De3div5yhn1fiPCDdxInRnjMGIRuuznIq0yPxN8Qw9O1xXM+JJhY0yioxW3GueWKqwGehx/9Kb8kTxoohG9pILvWJxFxdZgEK
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS0PR01MB5763
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ESuiCITwXeW2RZ68RoZK8Qz6wN5lqJfJ23omZz+s1FoeYmsrYgktWn/LxO3kOZxfv3xEj8VnFelL5Wy2djkLlA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR10MB4058
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 06 Jun 2023 01:31:28 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11836
+ <cip-dev@lists.cip-project.org>; Tue, 06 Jun 2023 05:37:19 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11837
 
-Hi all,
+On 06.06.23 05:55, baocheng_su@163.com wrote:
+> From: Baocheng Su <baocheng.su@siemens.com>
+> 
+> This brings the libteec1, optee-client-dev and most important,
+> tee-supplicant.
+> 
+> Signed-off-by: Baocheng Su <baocheng.su@siemens.com>
+> ---
+>  recipes-bsp/optee-client/files/control.tmpl   | 51 +++++++++++++++++++
+>  recipes-bsp/optee-client/files/rules.tmpl     | 20 ++++++++
+>  .../optee-client/files/tee-supplicant.service |  9 ++++
+>  .../optee-client/optee-client_3.20.0.bb       | 47 +++++++++++++++++
+>  4 files changed, 127 insertions(+)
+>  create mode 100644 recipes-bsp/optee-client/files/control.tmpl
+>  create mode 100755 recipes-bsp/optee-client/files/rules.tmpl
+>  create mode 100644 recipes-bsp/optee-client/files/tee-supplicant.service
+>  create mode 100644 recipes-bsp/optee-client/optee-client_3.20.0.bb
+> 
+> diff --git a/recipes-bsp/optee-client/files/control.tmpl b/recipes-bsp/optee-client/files/control.tmpl
+> new file mode 100644
+> index 0000000..b0c3756
+> --- /dev/null
+> +++ b/recipes-bsp/optee-client/files/control.tmpl
+> @@ -0,0 +1,51 @@
+> +Source: optee-client
+> +Priority: optional
+> +Maintainer: Unknown maintainer <unknown@example.com>
+> +Build-Depends: pkg-config, uuid-dev
+> +Standards-Version: 4.1.3
+> +Section: libs
+> +Homepage: https://github.com/OP-TEE/optee_client
+> +Rules-Requires-Root: no
+> +
+> +Package: optee-client-dev
+> +Section: libdevel
+> +Architecture: arm64
+> +Multi-Arch: same
+> +Depends: libteec1 (= ${binary:Version}),
+> +         ${misc:Depends}
+> +Description: normal world user space client APIs for OP-TEE (development)
+> + OP-TEE is a Trusted Execution Environment (TEE) designed as companion to a
+> + non-secure Linux kernel running on Arm; Cortex-A cores using the TrustZone
+> + technology. OP-TEE implements TEE Internal Core API v1.1.x which is the API
+> + exposed to Trusted Applications and the TEE Client API v1.0, which is the
+> + API describing how to communicate with a TEE. This package provides the TEE
+> + Client API library.
+> + .
+> + This package contains the development files OpTEE Client API
+> +
+> +Package: libteec1
+> +Architecture: arm64
+> +Multi-Arch: same
+> +Depends: ${misc:Depends}, ${shlibs:Depends}
+> +Description: normal world user space client APIs for OP-TEE
+> + OP-TEE is a Trusted Execution Environment (TEE) designed as companion to a
+> + non-secure Linux kernel running on Arm; Cortex-A cores using the TrustZone
+> + technology. OP-TEE implements TEE Internal Core API v1.1.x which is the API
+> + exposed to Trusted Applications and the TEE Client API v1.0, which is the
+> + API describing how to communicate with a TEE. This package provides the TEE
+> + Client API library.
+> + .
+> + This package contains libteec library.
+> +
+> +Package: tee-supplicant
+> +Architecture: arm64
+> +Depends: ${misc:Depends}, ${shlibs:Depends}
+> +Description: normal world user space client APIs for OP-TEE
+> + OP-TEE is a Trusted Execution Environment (TEE) designed as companion to a
+> + non-secure Linux kernel running on Arm; Cortex-A cores using the TrustZone
+> + technology. OP-TEE implements TEE Internal Core API v1.1.x which is the API
+> + exposed to Trusted Applications and the TEE Client API v1.0, which is the
+> + API describing how to communicate with a TEE. This package provides the TEE
+> + Client API library.
+> + .
+> + This package contains tee-supplicant executable.
+> diff --git a/recipes-bsp/optee-client/files/rules.tmpl b/recipes-bsp/optee-client/files/rules.tmpl
+> new file mode 100755
+> index 0000000..a8f2afd
+> --- /dev/null
+> +++ b/recipes-bsp/optee-client/files/rules.tmpl
+> @@ -0,0 +1,20 @@
+> +#!/usr/bin/make -f
+> +
+> +ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
+> +export CROSS_COMPILE=$(DEB_HOST_GNU_TYPE)-
+> +endif
+> +
+> +%:
+> +	dh $@ --exclude=.a
+> +
+> +override_dh_auto_build:
+> +	dh_auto_build -- LIBDIR=/usr/lib/$(DEB_HOST_MULTIARCH) \
+> +		CFG_TEE_FS_PARENT_PATH=${TEE_FS_PARENT_PATH} ${RPMB_EMU_BUILD_OPT}
+> +
+> +override_dh_auto_install:
+> +	dh_auto_install -- LIBDIR=/usr/lib/$(DEB_HOST_MULTIARCH) \
+> +		CFG_TEE_FS_PARENT_PATH=${TEE_FS_PARENT_PATH} ${RPMB_EMU_BUILD_OPT}
+> +
+> +override_dh_auto_clean:
+> +	dh_auto_clean
+> +	rm -rf $(CURDIR)/out
+> diff --git a/recipes-bsp/optee-client/files/tee-supplicant.service b/recipes-bsp/optee-client/files/tee-supplicant.service
+> new file mode 100644
+> index 0000000..7148515
+> --- /dev/null
+> +++ b/recipes-bsp/optee-client/files/tee-supplicant.service
+> @@ -0,0 +1,9 @@
+> +[Unit]
+> +Description=TEE Supplicant
+> +
+> +[Service]
+> +Type=simple
+> +ExecStart=/usr/sbin/tee-supplicant
+> +
+> +[Install]
+> +WantedBy=multi-user.target
+> diff --git a/recipes-bsp/optee-client/optee-client_3.20.0.bb b/recipes-bsp/optee-client/optee-client_3.20.0.bb
+> new file mode 100644
+> index 0000000..b760a2c
+> --- /dev/null
+> +++ b/recipes-bsp/optee-client/optee-client_3.20.0.bb
+> @@ -0,0 +1,47 @@
+> +#
+> +# CIP Core, generic profile
+> +#
+> +# Copyright (c) Siemens AG, 2023
+> +#
+> +# Authors:
+> +#  Su Bao Cheng <baocheng.su@siemens.com>
+> +#
+> +# SPDX-License-Identifier: MIT
+> +#
+> +
+> +inherit dpkg
+> +
+> +DESCRIPTION = "OPTee Client"
+> +
+> +PROVIDES = "libteec1 optee-client-dev tee-supplicant"
+> +
+> +SRC_URI += "https://github.com/OP-TEE/optee_client/archive/${PV}.tar.gz;downloadfilename=optee_client-${PV}.tar.gz \
+> +    file://control.tmpl \
+> +    file://rules.tmpl \
+> +    file://tee-supplicant.service"
+> +SRC_URI[sha256sum] = "69414c424b8dbed11ce1ae0d812817eda2ef4f42a1bef762e5ca3b6fed80764c"
+> +
+> +S = "${WORKDIR}/optee_client-${PV}"
+> +
+> +TEE_FS_PARENT_PATH ?= "/var/lib/optee-client/data/tee"
+> +# To use the builtin RPMB emulation, empty this
+> +RPMB_EMU_BUILD_OPT ?= "RPMB_EMU=0"
+> +
+> +TEMPLATE_FILES = "rules.tmpl control.tmpl"
+> +TEMPLATE_VARS += "TEE_FS_PARENT_PATH RPMB_EMU_BUILD_OPT"
+> +
+> +do_prepare_build[cleandirs] += "${S}/debian"
+> +do_prepare_build() {
+> +    deb_debianize
+> +
+> +    cp -f ${WORKDIR}/tee-supplicant.service \
+> +        ${S}/debian/tee-supplicant.service
+> +    echo "/usr/sbin/*" > ${S}/debian/tee-supplicant.install
+> +    echo "lib/optee_armtz/" > ${S}/debian/tee-supplicant.dirs
+> +    echo "usr/lib/tee-supplicant/plugins/" >> ${S}/debian/tee-supplicant.dirs
+> +
+> +    echo "usr/lib/*/libteec*.so.*" > ${S}/debian/libteec1.install
+> +
+> +    echo "usr/include/*" > ${S}/debian/optee-client-dev.install
+> +    echo "usr/lib/*/lib*.so" >> ${S}/debian/optee-client-dev.install
+> +}
 
-> -----Original Message-----
-> From: Biju Das <biju.das.jz@bp.renesas.com>
-> Sent: Monday, June 5, 2023 8:05 PM
-> To: cip-dev@lists.cip-project.org; iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B=
-?.MN=1B(B =1B$B!{#D#I#T#C""=1B(B
-> =1B$B#D#I#T!{#O#S#T=1B(B) <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Mache=
-k
-> <pavel@denx.de>
-> Cc: Chris Paterson <chris.paterson2@renesas.com>; Biju Das
-> <biju.das.jz@bp.renesas.com>; Lad Prabhakar
-> <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Subject: [PATCH 5.10.y-cip 0/7] Add SCI support for RZ/G2L alike SoCs
->=20
-> This patch series aims to add SCI support for RZ/G2L alike SoCs.
-> While at it, added DMA fixes for SCIF IP.
->=20
-> All these patches are cherry-picked from the mainline except patch#7 as w=
-e
-> don't have proper DT overlay support in 5.10.
->=20
-> Biju Das (7):
->   tty: serial: sh-sci: Fix TE setting on SCI IP
->   tty: serial: sh-sci: Add support for tx end interrupt handling
->   tty: serial: sh-sci: Fix end of transmission on SCI
->   tty: serial: sh-sci: Remove setting {src,dst}_{addr,addr_width} based
->     on DMA direction
->   tty: serial: sh-sci: Add RZ/G2L SCIFA DMA tx support
->   tty: serial: sh-sci: Add RZ/G2L SCIFA DMA rx support
->   arm64: dts: renesas: rzg2ul-smarc: Enable SCI0
->=20
->  arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi |  26 ++++
->  drivers/tty/serial/sh-sci.c                   | 111
-> ++++++++++++++----
->  drivers/tty/serial/sh-sci.h                   |   3 +
->  3 files changed, 117 insertions(+), 23 deletions(-)
->=20
+Looks like optee-client is part of bookworm, but version 3.19.0 only.
+Latest is 3.21.0. Please make sure we aren't colliding.
 
-I reviewed this series, there were no issues.
-I can apply, if there are no other comments and issues.
+And did you use the official debianization? If not, please do.
 
-Reviewed-by Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Jan
 
-Best regards,
-  Nobuhiro
+-- 
+Siemens AG, Technology
+Competence Center Embedded Linux
 
 
