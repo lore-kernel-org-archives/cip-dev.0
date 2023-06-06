@@ -1,134 +1,154 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89F4AC7EE24
-	for <webhook@archiver.kernel.org>; Tue,  6 Jun 2023 15:56:46 +0000 (UTC)
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
- by mx.groups.io with SMTP id smtpd.web11.192.1686067002251118167
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Tue, 06 Jun 2023 08:56:42 -0700
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E546FC7EE2F
+	for <webhook@archiver.kernel.org>; Tue,  6 Jun 2023 23:58:06 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.157])
+ by mx.groups.io with SMTP id smtpd.web10.2173.1686095879763449865
+ for <cip-dev@lists.cip-project.org>;
+ Tue, 06 Jun 2023 16:58:00 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="signature has expired" header.i=@kernelci-org.20221208.gappssmtp.com header.s=20221208 header.b=NJK36FoA;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.182, mailfrom: bot@kernelci.org)
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-650c8cb68aeso3602329b3a.3
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Tue, 06 Jun 2023 08:56:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1686067001; x=1688659001;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=UpSpIhyr3XhTFHXEQDnk7j0wwBpninpJlph+pA+uG98=;
-        b=NJK36FoAFJ5dDAeYdkuBFb1K612RxcF2irIkqG8vX/nttKhEYUp5ljvkcYKYCYJf2j
-         3vhQRo2/2pjxWhNH8AxjHJmLOx/ZDRcVEgmaG6tSC4P/qPk/cBDB6zPxyX+nGiTQgfAM
-         W8UM1ysBucXSY2NtNDHc4dSK1zyXIc5QZkBYboc6TvmrqzFW7ZqAQDDEp/ujkIqotTUN
-         KSLG096r1HNeBeoHa9DLQnm6Dai1zmn0d2QJV1qIRKNwvbTAIeIB0t+Xy6XsuKkM17Xo
-         mbvh6AZBlpmz28XUaPnnQmprhGgaEEGO3Eoa2dVqzen0ze7VC7KokEHnj9YIxp3fHDCF
-         2tyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686067001; x=1688659001;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UpSpIhyr3XhTFHXEQDnk7j0wwBpninpJlph+pA+uG98=;
-        b=cyk84EFLrQ8VKDXQYjBE6XTbhxd9e1FIVcCRBPciRLvDDO5X6rUsmbXigAzU7uvRIv
-         hY25IVTzzjgOpPj79fHGZfCpmpbOM3dbKLHSPSNys6HReCVhuDA0HOyTXKZAv10xuB2Q
-         jkBJxBfpBJD3gjNi7fYJV5F5JNJ8b85BY/WN2gPd7RIROVIIt8iJFtH7sy0fq7wc5Zss
-         rJ8+AonXRJ9eeArPnl0i04bzRXSVIcZJTGUYEPwvTIMqklYb29cAdhBX+Qg+88sx2bKq
-         KQJ2B1A0DUOVOrsB5l6Lpg4dYn+SQTdDHeZj+Bxj8q0/h1bOfvRsrbGtAQ0Lvh3NMRO8
-         Z34w==
-X-Gm-Message-State: AC+VfDxJ9/REYLxya+87v2FqWp/9o51d6FhMiNGMznXAF+xo0d6JAFk2
-	W/gqgeILxJChDc1L7CHr25mX5Tn4Lkva/VT5e9opxA==
-X-Google-Smtp-Source: ACHHUZ58viZnnR4Yvyw9aEWL2JqbkvNtDiXtOJVOPtGWJcby339TlOQOKq0SEn6WGO9e24QzSeOFRw==
-X-Received: by 2002:a05:6a00:3982:b0:650:6e3e:a8e3 with SMTP id fi2-20020a056a00398200b006506e3ea8e3mr1024363pfb.26.1686067001384;
-        Tue, 06 Jun 2023 08:56:41 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id h6-20020a62b406000000b00637b0c719c5sm6954572pfn.201.2023.06.06.08.56.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jun 2023 08:56:40 -0700 (PDT)
-Message-ID: <647f5738.620a0220.bf725.d486@mx.google.com>
-Date: Tue, 06 Jun 2023 08:56:40 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+ dkim=missing; spf=pass (domain: toshiba.co.jp, ip: 210.130.202.157, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
+Received: by mo-csw.securemx.jp (mx-mo-csw1115) id 356NvnZh030289; Wed, 7 Jun 2023 08:57:49 +0900
+X-Iguazu-Qid: 2wHHJG9eOQkwq41zOA
+X-Iguazu-QSIG: v=2; s=0; t=1686095868; q=2wHHJG9eOQkwq41zOA; m=CFdiwljNus4FUCCa4SEzZtuIojLEaC166IVqUXMeIQ4=
+Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
+	by relay.securemx.jp (mx-mr1112) id 356NvkWx015181
+	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 7 Jun 2023 08:57:46 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FOeN+pBOGNlkwOgKfaR7PPr4yn9YgdXomKLgZ3riA7THaHjet5TWSFeLOSDWZKbnWIEl0+hno4fNdXltRTA3pPUvtg2b7OWWzhhSLTkBlH4U+OXaveeO0uyCegPdlafcwbLe6IdCBncOrwCZj5xGRgwfm88mtYONdf1/rnWXN2GMjoozxZ1Z2DLAVpRw0Xr3ecVWg0NVffg2QQs3FVFkPKZTlZbC6O6BYw1BCCi3rQakn3x+CrxykuDoV3rc18GTeLzyxSqMLhtJbwBdLVvSlRlmy3pn+qHumoF2LnSkWzakhbkigOFwmNWSLQpMKyZuhJGEpXRUY6GqJC/768lDJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iFze8NjbIJ3xf8AC/vdoRtQLW8uSORzZEaKUlsITc9A=;
+ b=NGOrbFSPOiswD9iRAvdgqm1xfeZIt4mI2lRw3rHNYX+cNW/cJMWQ04povrfv2gJp5L4JChN0gfXd8tA9Ps4/ek9Uthj0gbHO8NryVpvyVW1Ic/Ueiusyd/cgYuTRJfa8WPWHZQNGYeznRFIv93rsWQoujWnzoQelNOSPyEhaFR7F3/VvjX1DsHIP61OTi7Y7b08mhdre7AmV3WSSWou35OezvQ9t7I/UCiUSwmd1x6ZuWSg0oO9YMAZcddKM9RLzW23420jMRb2wk2A81ZWw7W56lsV4yYCtBmJeVHPFiiEspkh1DwI6eeDDEvfM+8qkKQRYeg9feN+cWw3vhlm/YQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: <biju.das.jz@bp.renesas.com>, <cip-dev@lists.cip-project.org>,
+        <pavel@denx.de>
+CC: <Chris.Paterson2@renesas.com>
+Subject: RE: Additional configs for supporting RZ/V2M and RZ/G2UL
+Thread-Topic: Additional configs for supporting RZ/V2M and RZ/G2UL
+Thread-Index: AQHZmH1xq8zsPGJ1M0m62iFMvHvNS69+dERg
+Date: Tue, 6 Jun 2023 23:57:42 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <TYWPR01MB9420922AD21132E042D46CE59252A@TYWPR01MB9420.jpnprd01.prod.outlook.com>
+References: <1765D9D28CD911EB.3349@lists.cip-project.org>
+ <ZH5K91uDzLaJ1MMr@duo.ucw.cz>
+ <OS0PR01MB5922BAEED36FD47B0E4BC3DF8652A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+ <ZH8RSUqIcbd35Dmx@duo.ucw.cz> <17660D31D9770B92.16722@lists.cip-project.org>
+ <OS0PR01MB59227A222C00760C832B9B9D8652A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+In-Reply-To: 
+ <OS0PR01MB59227A222C00760C832B9B9D8652A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYWPR01MB9420:EE_|OSRPR01MB11726:EE_
+x-ms-office365-filtering-correlation-id: b03195b6-6b92-44d7-4f72-08db66e9d15f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ SMIHo9rtcAGPgcldQhvq8LrLzj8yzrSWsO3A+XXOy+sDwd0pWSzcnBYvTMgykoaxRlsPjpEzvAHFD/eGGsLBux0hDmrkk4Exd0YqG5QTpYlcdDAyu64XVOlKpjkL9LKJ0xw/RSLI1VbMCIyhHfYZCFbZtoo3Fxg+lvzs7Vbo7BB44CjxtTKE7MhQXahNxKpWmx0dXpfKhHyzyp8LzIun14jzSfzEIacDU9bLiuFkOUV5WUtizra8oSmq3pFE6enpoOT2MUtN/Msi+e3f62/NxA30v7AAOq1wNz6+Q5aNi+iZBe8esSzXiX+d1MZVaK18haGNUNFf/WuEPJdex8eImTyyekIqI+4ij+m3YxCoM07bl7LKQ/laECrHax4YSMYk0nx3LJ6XP0R2zn+Sohi3jIXGWTu/pvvjQD5lKvSkz0nFUJSLqUYxauQtamDq6UEaAAcbMdRtvh6BT15mOQW5N45uzqciJbWyDSEB0ytewdL8P2yv8FLVeFty5NXY3s+/9IhPKM35h3m7JJ8f7nG42WILqCjvCX44dE3KN3vFNn6g8cd6fgrydwfOg0BdFnvxEz2xT0GIgEG5iXHc/S1HWDwtk+ynYO+VPLDughkUNKZdm0BZfNaimbSSXz8Y4pDV
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB9420.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(346002)(136003)(366004)(39860400002)(376002)(451199021)(966005)(316002)(7696005)(41300700001)(83380400001)(86362001)(38070700005)(53546011)(6506007)(9686003)(26005)(186003)(2906002)(33656002)(4744005)(122000001)(38100700002)(55016003)(5660300002)(52536014)(8676002)(8936002)(66946007)(66556008)(66476007)(66446008)(64756008)(76116006)(110136005)(478600001)(71200400001)(4326008)(95630200002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?WGlVbEhPdjFCOG16NE9qVXY4UmNoa2lWdUp2dmhTb3RDN2E2YkUrcFIy?=
+ =?iso-2022-jp?B?MDhRVFM1UXE2VjBIdEgyZnNNTlh6aVd1amtJbkJlQ014OVRhM21ERHVt?=
+ =?iso-2022-jp?B?WmdrVG45WHF6MnE3WGZ5aGs4cHJzbjdxdGRiTndoVFZXRmlLZGdjWStl?=
+ =?iso-2022-jp?B?V3pVNTYweE1nSkZ2bnE4T0RjU0RjTkRjVHpyd1RGVThTZnh3aFZ6YURk?=
+ =?iso-2022-jp?B?YjVkQUgrbEJzWHRnQ2Q3MjdiQW4zY2MrNkpqN2crZXJlN2RiRk9vSDRr?=
+ =?iso-2022-jp?B?SkJwNHlqbUNva0RjaCtNelhxeUthVkowWjM5ZGY2emhwaTB2NHF5WGhm?=
+ =?iso-2022-jp?B?d09iSTJIc083QkJJUTM5emxzaS9HcU5QTEJtUGtZcm1haFRBcysweEFG?=
+ =?iso-2022-jp?B?VHQ4a3A0cmZUMW0rUC9aNmdCY0pCR3BJS1hiRUo5eUUyUzM4cWFNN1E0?=
+ =?iso-2022-jp?B?TEJkd3l4QTl2UXdxbDZlQlFsWEY4aWxiV1FkVHQrWDJ2a0lPV29UTmdF?=
+ =?iso-2022-jp?B?OTkvWkx5UkRnbENJaWZON0h6WGowYUN0ZVBxOXE3R2UySFBYWEFWWUk1?=
+ =?iso-2022-jp?B?c1lvM000NGZ4YkxLVVdxNTdMT1k1UnBUa0JxR2F5NC9KV0Q5Q29SUlNX?=
+ =?iso-2022-jp?B?WkRYNUNhNDBzWWJ6OHozREI3VEV2ZHRDZmlIKzB3TjNLZ2VKaHB6bGFN?=
+ =?iso-2022-jp?B?ajhtQnZsZDR3SXQ5UmNZVFdGODBpdFE5NjROclZoOWtwdlFsWUVZYllQ?=
+ =?iso-2022-jp?B?bE95Qy9JNmJ3dzdSdTNOLzBQcXdSZW9UYU4ydWtuSkk5VDR5TUt0U3d4?=
+ =?iso-2022-jp?B?L2h3VzFGU1VjUndkTmFIY21Eejc4WCtDNi82aGZWNFVEaENiczZaOWI0?=
+ =?iso-2022-jp?B?Zyt2UHZ2RTAxQ2pFcE9NM0x3RktKeTNFeGFaNlZVc0xybzhZUitPdjQ0?=
+ =?iso-2022-jp?B?Q3hGTjJ4dEMwWVZjdHBDUk5acDc1L2c3TUd3LzZxOEQrZUNCYmlsUFho?=
+ =?iso-2022-jp?B?UnJ1UHBoM2MwNk1SWGxCdVBTbHVRQkJMWkZQNjdxNExZMjlGYkw2aVZp?=
+ =?iso-2022-jp?B?eHVqQ0YxTUloZXptZWFiVzNNemxUVXRpcHQxVUZMK0pheWU5ODFjTEtF?=
+ =?iso-2022-jp?B?T084eWNicHltK2FZc3h5czlsUUhHVVNtT09zbTJtbXBybVNQeENWYzRl?=
+ =?iso-2022-jp?B?RE5OaHJWWEd4K05oRm5Tb0lTNDdieS9UL1JsNFdzYi9KTEs0SENOOXBH?=
+ =?iso-2022-jp?B?ZDRRQkVhWHNJbkhEdU9hTmN4WU1TSU9NcmF6ajY3aTJIa2NLYTJLNWc3?=
+ =?iso-2022-jp?B?Mk5UNWZwdjVxVFZqQ1pleXBiNnUyQUVCekJDU0FUSmw0ZnpySGlNSjMw?=
+ =?iso-2022-jp?B?RzRkQ21peUVjNm4zOVpVK1VhUlgxeG5FZWRNN001dE9IK0lPbUJ3akVu?=
+ =?iso-2022-jp?B?eTFNd1gwN0hTMHlIZ3g4VTFpMzlqR080ZzU5UW1LVDZTenNOajVTUUFQ?=
+ =?iso-2022-jp?B?RlgwSk1TalNDOEpFT3ZlalI0d2srNk11MTRHYWpwWDVUeHF3cUxGWUsr?=
+ =?iso-2022-jp?B?RGNpbmxLcFY4b1F0L05Yc1E2d0dFUGdIVnNRenNsaGIvUG5PRisvYm01?=
+ =?iso-2022-jp?B?Ky9BV2tuNFRTaXJ3N3FxMWgyd2RGRlB1RWliSHlmRldsU2o5dEdXS0lo?=
+ =?iso-2022-jp?B?eDF4bkoyVHBhNTZ5VTlHTEpvV1A4TnR1K1dtd1dhcm44cS9ZeHB4UzhW?=
+ =?iso-2022-jp?B?Q3UzaFlub2dYeklBeDh4UXBZbG02NTR1d1N0amgwSzhrMjVtZ3QyaFI2?=
+ =?iso-2022-jp?B?Q2FPcWF3a3AxQXUydTdkbDR3L1kvallRQ2REcHhxWVpMUVhmNTdtT3Rt?=
+ =?iso-2022-jp?B?eXFNZzJaZzRxTzdCYVUrVUtjSDd0RDdRQUlGbFEwNVZFNE1QMmI4RmJa?=
+ =?iso-2022-jp?B?REh2YjFRWVd2a1oxbDRiV0hyN00rRDFLTytnTHRONXBWODhGSStyNlQx?=
+ =?iso-2022-jp?B?SXQ0cXZqVlJRY1VRWGFDUTQ3T2Fma1RxcktuKzdLSEVxSTQxa1ZvdGdU?=
+ =?iso-2022-jp?B?Z3IxRFI4dVZjcUprTnJ5aUZQaEdIeVZ1R25yZVlLRHFOWGlzK3VGekJY?=
+ =?iso-2022-jp?B?RmkxMVB3RlVYL0VvUjZ1NFNNaHpwR3F1MUVmQVN0NWxQUmFSSnZzc2dD?=
+ =?iso-2022-jp?B?M0R2TGRBWjBjanRMbVpOeGRFR3RtQW5rRUUrVlN5dC94aFY3cWR6RWF4?=
+ =?iso-2022-jp?B?TVE0TkxMYTUzZTAvdzVBSmhhN2ZFTkJ1Y01lTCs0YTBJQlZXbjcvZGJ0?=
+ =?iso-2022-jp?B?TFlzNHpHZm4yUHM3QmExZXdPTjJSUmQrZlE9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v4.4-st20-1308-ge1d2f27f3d7b0
-X-Kernelci-Report-Type: test
-X-Kernelci-Branch: linux-4.4.y-st
-X-Kernelci-Tree: cip
-Subject: cip/linux-4.4.y-st ltp-timers: 6 runs,
- 1 regressions (v4.4-st20-1308-ge1d2f27f3d7b0)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
- kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
-From: "kernelci.org bot" <bot@kernelci.org>
+MIME-Version: 1.0
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	K+CYUMkqPpKvsAz73jOD8NoHH4nIGabuJXSoh1mx50AFlb/6OZvrdtCTonGDOHdvaaTjfTjgp+iUTDpgKbV2EJQOXqUx2nEonZjg0QhWX/gam3aUu7vw3Tq0ZIEEx+XO1rXF2/0jnAZ1iskK0Wt6xMbwgY1eWg3009bdXTMvcrtUMn/g8VlHE0etXgloyCHc6+ANkChmXlkdsuxVpa2cQvHpKIzFMejqDiuAl6XfEt0DZeBXOf+SpODKmrPlqfaGHTX2/1R5LJV7Uld9EhK7bikmm5deAMZ+hwmoZcZclu61/dhkofcz6rSNx5aMPU08VJdtFSnxgwp7bWi/+Te8qdmJmLB/y47Dt+Bx0U+7c31hy2/2+/D7KKAoUsgMGJkTVew0nmi8I+7V63UKHtg9+YSCGyhr45yiDDwzqWEuw5FjOjNmvekY+T8C+ucOJFKSAu5njFBJwT8wytqOlrF4TdaepMpTRUQLI2k0zfRBjkOBTGkYYmekLxiDNakH7j5irdTEBK7l+WPQOlT4QLV4QkHU+IkrDfl7S/HkNQMyrgki7F6WvNMpu7vjzu/8wOIFKwEAWLR57Li8IPM8FpEShdOGjuADwJ9nMqAQLi1vDJEivZkhm36sTOd4nKJcdgLrd0VAjEb+Wtvrjgp5Jqmr2UET4//s/xZa0/84CbUArqBH2SJdezYuifAyOUV5GPKyLW5/TXQTcysxo1R7K+ZstDshcAkXxy7ejckIm7JGqKImgvuCNICcsdkJKzh8mSywaJ6kKnP00aZR8ElXh1jj6R3MnwEqKhSIDqt33HebxJd3wPOdt9VPSuEEQ2LfZU0QWynOm+Z2qmvt4QlwUdhqSIjwvdlyHuKVPRBH7PPg1a0bXicIxbfVCIt8K+dQ6gdYvTeyMlhuCJsx/fchAy35hA==
+X-OriginatorOrg: toshiba.co.jp
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB9420.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b03195b6-6b92-44d7-4f72-08db66e9d15f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2023 23:57:42.8850
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jYfYZadNExNNDRh0AVvxswhjXSC3kd0bNYKudoaz006Bw7Csw8bIOrelo+vKU+l664ruKOByLrwXyLwKsQ4Al9lnlaVBoR6/Dbuo+kc8nfpDpiuWMwjJYMCO6sd3b+fK
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSRPR01MB11726
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 06 Jun 2023 15:56:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11900
+ <cip-dev@lists.cip-project.org>; Tue, 06 Jun 2023 23:58:06 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11901
 
-cip/linux-4.4.y-st ltp-timers: 6 runs, 1 regressions (v4.4-st20-1308-ge1d2f=
-27f3d7b0)
+Hi Biju,
 
-Regressions Summary
--------------------
+> -----Original Message-----
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+> Sent: Tuesday, June 6, 2023 10:47 PM
+> To: cip-dev@lists.cip-project.org; Pavel Machek <pavel@denx.de>; iwamatsu
+> nobuhiro(=1B$B4d>>=1B(B =1B$B?.MN=1B(B =1B$B!{#D#I#T#C""#D#I#T!{#O#S#T=1B=
+(B)
+> <nobuhiro1.iwamatsu@toshiba.co.jp>
+> Cc: Chris Paterson <Chris.Paterson2@renesas.com>
+> Subject: Additional configs for supporting RZ/V2M and RZ/G2UL
+>=20
+> Hi Pavel and Nobuhiro,
+>=20
+> I have created an MR for adding support for RZ/V2M and RZ/G2UL SoC for
+> {5.10,6.1}.y-cip*
+>=20
+> https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/-/merge_reque=
+s
+> ts/81/commits
 
-platform                 | arch   | lab           | compiler | defconfig   =
-                 | regressions
--------------------------+--------+---------------+----------+-------------=
------------------+------------
-asus-C523NA-A20057-coral | x86_64 | lab-collabora | gcc-10   | x86_64_defco=
-n...6-chromebook | 1          =
+Applied, thanks
 
+Best regards,
+  Nobuhiro
 
-  Details:  https://kernelci.org/test/job/cip/branch/linux-4.4.y-st/kernel/=
-v4.4-st20-1308-ge1d2f27f3d7b0/plan/ltp-timers/
-
-  Test:     ltp-timers
-  Tree:     cip
-  Branch:   linux-4.4.y-st
-  Describe: v4.4-st20-1308-ge1d2f27f3d7b0
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
-it
-  SHA:      e1d2f27f3d7b00de8c897e307a469e764166b3f0
-
-  Test suite revisions:
-    ltp-tests
-      URL:  https://github.com/linux-test-project/ltp.git
-      SHA:  604701dc19c5499403ae5afe48103b8e2872952b =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform                 | arch   | lab           | compiler | defconfig   =
-                 | regressions
--------------------------+--------+---------------+----------+-------------=
------------------+------------
-asus-C523NA-A20057-coral | x86_64 | lab-collabora | gcc-10   | x86_64_defco=
-n...6-chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/647f44bcfd430eb664f5de34
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: x86_64_defconfig+x86-chromebook
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
-  Plain log:   https://storage.kernelci.org//cip/linux-4.4.y-st/v4.4-st20-1=
-308-ge1d2f27f3d7b0/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-collab=
-ora/ltp-timers-asus-C523NA-A20057-coral.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-4.4.y-st/v4.4-st20-1=
-308-ge1d2f27f3d7b0/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-collab=
-ora/ltp-timers-asus-C523NA-A20057-coral.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230527.0/amd64/initrd.cpio.gz =
-
-
-
-  * ltp-timers.login: https://kernelci.org/test/case/id/647f44bcfd430eb664f=
-5de35
-        new failure (last pass: v4.4-st20-1187-g8497d3390dc2) =
-
- =20
 
