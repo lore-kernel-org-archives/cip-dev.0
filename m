@@ -2,20 +2,20 @@ Return-Path: <ubely@ilbers.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C3BC7EE23
-	for <webhook@archiver.kernel.org>; Wed,  7 Jun 2023 06:50:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C6FC7EE23
+	for <webhook@archiver.kernel.org>; Wed,  7 Jun 2023 09:03:46 +0000 (UTC)
 Received: from shymkent.ilbers.de (shymkent.ilbers.de [85.214.156.166])
- by mx.groups.io with SMTP id smtpd.web11.2625.1686120599360043952
+ by mx.groups.io with SMTP id smtpd.web11.3977.1686128620138735920
  for <cip-dev@lists.cip-project.org>;
- Tue, 06 Jun 2023 23:49:59 -0700
+ Wed, 07 Jun 2023 02:03:40 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing; spf=pass (domain: ilbers.de, ip: 85.214.156.166, mailfrom: ubely@ilbers.de)
 Received: from [127.0.0.1] (host-80-81-17-52.static.customer.m-online.net [80.81.17.52])
 	(authenticated bits=0)
-	by shymkent.ilbers.de (8.15.2/8.15.2/Debian-8+deb9u1) with ESMTPSA id 3576ntj2003322
+	by shymkent.ilbers.de (8.15.2/8.15.2/Debian-8+deb9u1) with ESMTPSA id 35793Z7p003702
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 7 Jun 2023 08:49:56 +0200
-Message-ID: <9a1e2e7f94dd896d5b358559405903f58e349de9.camel@ilbers.de>
+	Wed, 7 Jun 2023 11:03:36 +0200
+Message-ID: <1d6b07c98b52bfd54e2eb78b7087b0357d7c5024.camel@ilbers.de>
 Subject: Re: [isar-cip-core][PATCH] IMAGE_TYPEDEP:swu: Don't depend on wic
 From: Uladzimir Bely <ubely@ilbers.de>
 To: Jan Kiszka <jan.kiszka@siemens.com>,
@@ -25,7 +25,8 @@ To: Jan Kiszka <jan.kiszka@siemens.com>,
 	 <cip-dev@lists.cip-project.org>,
         "Gylstorff, Quirin"
 	 <quirin.gylstorff@siemens.com>
-Date: Wed, 07 Jun 2023 09:49:54 +0300
+Cc: ubely@ilbers.de
+Date: Wed, 07 Jun 2023 12:03:34 +0300
 In-Reply-To: <b7d6f5e4-7da1-bc89-4500-e51ead5f3b3a@siemens.com>
 References: <20230516085018.26436-1-ubely@ilbers.de>
 	 <cb62ac04-f64e-192e-7d00-e411f4422cea@siemens.com>
@@ -39,8 +40,8 @@ MIME-Version: 1.0
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 07 Jun 2023 06:50:05 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11904
+ <cip-dev@lists.cip-project.org>; Wed, 07 Jun 2023 09:03:46 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11905
 
 On Tue, 2023-06-06 at 09:57 +0200, Jan Kiszka wrote:
 > On 06.06.23 09:09, Jan Kiszka wrote:
@@ -110,7 +111,22 @@ On Tue, 2023-06-06 at 09:57 +0200, Jan Kiszka wrote:
 > Jan
 >=20
 
-Probably, for 'isar-cip-core' project itself, "wic" (or at least some
-"wic.xz") is needed and should be added to .yml. I tested the patch
-with a downstream that uses 'isar-cip-core'...
+Reproduced the issue locally, for one of failing targets, `kas-
+cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml`
+
+It seems the problem is not directly related to removing "wic" but to
+missing dependencies. Task `do_image_swu` finally failed with the
+following message:
+
+```
+sha256sum: /home/builder/cip-core-image-qemu-amd64/work/swu/linux.efi:
+No such file or directory
+```
+Default value of  SWU_ADDITIONAL_FILES is "linux.efi
+${SWU_ROOTFS_PARTITION_NAME}" but the recipe that provides "linux.efi"
+is built later due to some missing dependency.
+
+Without any changes in the code, build was OK on second (or third)
+attempt.
+
 
