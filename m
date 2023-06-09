@@ -1,107 +1,94 @@
-Return-Path: <uli@fpond.eu>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46711C7EE29
-	for <webhook@archiver.kernel.org>; Thu,  8 Jun 2023 08:58:28 +0000 (UTC)
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [85.215.255.24])
- by mx.groups.io with SMTP id smtpd.web11.4571.1686214704943650220
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34813C7EE29
+	for <webhook@archiver.kernel.org>; Fri,  9 Jun 2023 10:31:48 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web10.10001.1686306701681290161
  for <cip-dev@lists.cip-project.org>;
- Thu, 08 Jun 2023 01:58:26 -0700
+ Fri, 09 Jun 2023 03:31:42 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=JKchKsfR;
- spf=none, err=permanent DNS error (domain: fpond.eu, ip: 85.215.255.24, mailfrom: uli@fpond.eu)
-ARC-Seal: i=1; a=rsa-sha256; t=1686214701; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=sLXueyTjTaCn9LoQLqz9S2TGOIeVeg74t0UiRoksW0pJTY7EqtqDdRWSftiqomsoJG
-    U5iO0d+avfeu62+BRbzRpGD4X5si2SMJU/xs2jysW7JuchPTf6nIexlHx+I03ZgbbTMH
-    h13MX30bczO6QtLzfie82YOjLwl1SECrbIrCpk+gnlWk2fDzWzzSe0HLo8dky0iQ4ZX7
-    49xvmejJL9MquQcctXL+RuemI432+Csgahj4JprNzw4s6zakX7KFRxFbEHzPOO83N4Fc
-    +77D6fjcae1np4wk1DkjSkBG6YaBfoA/tFfDnZYz7NTgZJmnYApltUHufPYKtGJD99yY
-    mexA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1686214701;
-    s=strato-dkim-0002; d=strato.com;
-    h=Subject:References:In-Reply-To:Message-ID:To:From:Date:Cc:Date:From:
-    Subject:Sender;
-    bh=1lCYhk+GbF0nrhmUxZqbgUUItdU8BjJkFK2+smQhCNo=;
-    b=I4cybQE35G+MtV7Lv0hg2QBlivS6Qdyz7cWcmmFnAJ/TqEVyh4BXNdvnTY6qY/mWb/
-    PQnR/elXIjwUqNpAhI1DXxTQnTy6ahPX/Q2SRckpTjkyG8J9RA5RdU3NSO04atEk/UmD
-    CW/I+2De6QAua+j4g5yn8GjXJm/KSzIA7Cn2nkT1THun5qam00kj/QHRfb4EIZhWyRJp
-    pryTew4kIcO/LowSHDcBU7zPUuahVsbD2ayFJ4WT5W0CNHuV6SXuAH7vy+dsiaC+kc8r
-    ewRuHOoWcyzyVr9tUFFDvg6FI6QdpArwfI19HYFqrLjDN9g7tGyDlsO5KuHBbuD5zb5p
-    oRoA==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1686214701;
-    s=strato-dkim-0002; d=fpond.eu;
-    h=Subject:References:In-Reply-To:Message-ID:To:From:Date:Cc:Date:From:
-    Subject:Sender;
-    bh=1lCYhk+GbF0nrhmUxZqbgUUItdU8BjJkFK2+smQhCNo=;
-    b=JKchKsfRiLe1jOYXD/nkPcsupjRM9bURPe7S0TNd5IKLKn1w5uIWuV+OEllxpXD+nU
-    SbtyPKNTJSiKq81vvSFMQ9DvwTWhodumzxoW7rWoYAonOWHsBNzmDU1PD+fSG7smOoV4
-    EcxUKYEaSRP9qFkXp2xWq5CkDK1Yxw1aUgwAFKgHbmcnlbAqZfsT7vvy2H6XvwsElYoc
-    XkMNfICNlYIBqCs+2Vkos1s96DSuYKbEz05g4F3uUM+FFTXP/l2Imsuu32/3rnGKzrNC
-    ACunAkRglVRDuMlkKbop7AK8aDX907uj84PrleiRPjKCHrIWmOdCpP41MwhwWZh+jleN
-    RAvg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1686214701;
-    s=strato-dkim-0003; d=fpond.eu;
-    h=Subject:References:In-Reply-To:Message-ID:To:From:Date:Cc:Date:From:
-    Subject:Sender;
-    bh=1lCYhk+GbF0nrhmUxZqbgUUItdU8BjJkFK2+smQhCNo=;
-    b=eoTqwqMcwpS22AEP6tzieEbIvF29qhHarpY6St9OZ+FhvP3VydpHpxxn8x8pXx13oF
-    f0qoIUlbJY+MF9msu6DQ==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv3qxio1R8fCt/7N+Odk="
-Received: from ox-live-app402.back.ox.d0m.de
-    by smtp-ox.front (RZmta 49.5.3 AUTH)
-    with ESMTPSA id e63bb7z588wLNGR
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Thu, 8 Jun 2023 10:58:21 +0200 (CEST)
-Date: Thu, 8 Jun 2023 10:58:21 +0200 (CEST)
-From: Ulrich Hecht <uli@fpond.eu>
-To: cip-dev@lists.cip-project.org, "Jan Kiszka via lists.cip-project.org"
- <jan.kiszka=siemens.com@lists.cip-project.org>
-Message-ID: <2038026583.3099764.1686214701693@webmail.strato.com>
-In-Reply-To: <117e6320-f3b5-633c-98b1-f7f51e1333f3@siemens.com>
-References: <117e6320-f3b5-633c-98b1-f7f51e1333f3@siemens.com>
-Subject: Re: [cip-dev] CIP IRC weekly meeting today on libera.chat
+ dkim=missing; spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 94BCF1C0E4E; Fri,  9 Jun 2023 12:31:38 +0200 (CEST)
+Date: Fri, 9 Jun 2023 12:31:38 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Pavel Machek <pavel@denx.de>,
+	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 6.1.y-cip 3/8] mfd: Add Renesas RZ/G2L MTU3a core driver
+Message-ID: <ZIL/itcJvV5s3Bnf@duo.ucw.cz>
+References: <20230606075235.183132-1-biju.das.jz@bp.renesas.com>
+ <20230606075235.183132-4-biju.das.jz@bp.renesas.com>
+ <ZH8DnHZb8dDrq+Zm@duo.ucw.cz>
+ <OS0PR01MB592237E5932B612CC5D4B4EB8652A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.6-Rev43
-X-Originating-Client: open-xchange-appsuite
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="4EiYnZVD0F8Q+bcB"
+Content-Disposition: inline
+In-Reply-To: <OS0PR01MB592237E5932B612CC5D4B4EB8652A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 08 Jun 2023 08:58:28 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11930
+ <cip-dev@lists.cip-project.org>; Fri, 09 Jun 2023 10:31:48 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/11931
 
 
-> On 06/08/2023 8:08 AM CEST Jan Kiszka via lists.cip-project.org <jan.kiszka=siemens.com@lists.cip-project.org> wrote:
-> Kindly be reminded to attend the weekly meeting through IRC to discuss
-> technical topics with CIP kernel today. Our channel is the following:
-> 
->     irc:irc.libera.chat:6667/cip
-> 
-> The IRC meeting is scheduled to UTC (GMT) 12:00:
+--4EiYnZVD0F8Q+bcB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Unfortunately I won't be able to attend today.
-My updates:
+Hi!
 
-> * Kernel maintenance updates
+> > > The 8/16/32 bit registers are mixed in each channel.
+> > >
+> > > Add MTU3a core driver for RZ/G2L SoC. The core driver shares the clk
+> > > and channel register access for the other child devices like Counter,
+> > > PWM and Clock event.
+> >=20
+> > > +struct rz_mtu3_priv {
+> > > +	void __iomem *mmio;
+> > > +	struct reset_control *rstc;
+> > > +	raw_spinlock_t lock;
+> > > +};
+> >=20
+> > Why is raw_spinlock used here? This is not really a core code... this
+> > makes analysis for rt safety more interesting.
+>=20
+> I just used the spinlock variant used in regmap for concurrent access from
+> different drivers.
+>=20
+> Do you see any issues here?
 
-- finally finished 6.1.28 review
-- released 4.4
+I guess regmap has to use it due to something critical (timer?) using
+regmap.
 
-> * Kernel release status
->   - 4.4
+raw_spin_lock:
 
-4.4-st41 and 4.4.302-cip76 are out.
++ better performance if used correctly on -rt kernel
 
-CU
-Uli
+- harder to analyse
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--4EiYnZVD0F8Q+bcB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZIL/igAKCRAw5/Bqldv6
+8ikSAJ9WPpOzBmYdAR5zMWSX/lyypDKa+gCeLt/cK3eQBusjCVA8nAkb2mKmDeE=
+=RHmo
+-----END PGP SIGNATURE-----
+
+--4EiYnZVD0F8Q+bcB--
 
