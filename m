@@ -1,207 +1,122 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89179C001DC
-	for <webhook@archiver.kernel.org>; Thu, 15 Jun 2023 10:38:10 +0000 (UTC)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
- by mx.groups.io with SMTP id smtpd.web11.15036.1686825483197942447
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Thu, 15 Jun 2023 03:38:03 -0700
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF7ABEB64D9
+	for <webhook@archiver.kernel.org>; Thu, 15 Jun 2023 11:53:30 +0000 (UTC)
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+ by mx.groups.io with SMTP id smtpd.web11.16142.1686830002793190844
+ for <cip-dev@lists.cip-project.org>;
+ Thu, 15 Jun 2023 04:53:23 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="signature has expired" header.i=@kernelci-org.20221208.gappssmtp.com header.s=20221208 header.b=tBUDcdNe;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.175, mailfrom: bot@kernelci.org)
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1b3afd2f9bdso34546215ad.0
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Thu, 15 Jun 2023 03:38:03 -0700 (PDT)
+ dkim=fail reason="signature has expired" header.i=@miraclelinux-com.20221208.gappssmtp.com header.s=20221208 header.b=1FcMUhV4;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.161.44, mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-55b38fc0c70so1406126eaf.0
+        for <cip-dev@lists.cip-project.org>; Thu, 15 Jun 2023 04:53:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1686825482; x=1689417482;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=dt/IElcW/lluFzU+W/uvN5+UYfAtsazqXqrzm7PC1Ug=;
-        b=tBUDcdNelWcF+vjeot6o3SOFU6jlx6qZwVIeCBfaJUU7BYFyH6W2E80iVkGtC0gz+I
-         3WUL5G4DwFBVH+vgZBVNrepLjZUKe4Ggb022ugrBh6GCPg4TyRQHgYRXtYP5H/07PAT+
-         R+JbbH1om9xud6Ipi2Qjb5MYCJcHkpDQ/K5doaFMBk426wVpg+d5vlEkKl69C9w1UjZW
-         8JtXLoiEU6KNzPsc3HmH8vM0rbTQDp+dOADBgoUXeLCVWyMb50ZdEaW7QRpFhEwDn6qO
-         4iQ+Eh/VH9Hf1H6Z9PZG2UZlEURaeamdedeSYaVu1yZf6fPyNrBKyeMmIJcKnopimbgq
-         mPnA==
+        d=miraclelinux-com.20221208.gappssmtp.com; s=20221208; t=1686830001; x=1689422001;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PjL4TT6lduqrX4Ue5FDQzOGr/CQMwhpmR0YYHeEeNPA=;
+        b=1FcMUhV4yTfEkZCQjfpwXPnnsfr0MuzTBH0JurFGH3zCi7bOIBaIfq1V8GaRU+wbjv
+         k5DT523GIlGusm5pw8T5TUBPwtWF3iRp+ExwLJ/JrTESx9tFJU2l5p14cpyY8wmaeAYV
+         zoEw8y5rQ5ss4xJvuQLjz9PoWFfdWQVd41BPhehxcg3XW+dlPsOeEA+DUiRyG3D2FnUW
+         LK5AIh+EMaOkqFn/9TzwJpynP8Pzqc5tBzksLxscXFIy3bjRxi+g+eEumFhOe1QDoTi9
+         cjTtHakJN3m7H5dmAegnN6rLShHWjaYmBXT7r8k/ZJcjtPSgyAr8LRL1sndzB0oxtbeY
+         +P4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686825482; x=1689417482;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dt/IElcW/lluFzU+W/uvN5+UYfAtsazqXqrzm7PC1Ug=;
-        b=iyL7+NP88zPUwMZJ7j2tu7zpmt2WYwPJdea7Fhc1yilzQyKhCkvL693n6CAPY7LJqn
-         bxay6IscdDvxauI3oAg/zfLMRxroeG90MUD0h7+nhGnxAaVmPzGdeA1ryupoORrbcSGk
-         CIJik7hD8/y5DvPlIxvhQD3T3BkiEg3ink4lNn8eWUHfK9zkcnFsV7Eio+3baSD08HYu
-         +b3bmeEwrrz0ztNKpiYvf4Cbk6EwSQUIH6ppikdl3Jlx18thSuV+9QunL2Px5fDI4bsD
-         2Zpv5sdht1w5QRqxaHxNqmMDOSe0mfRv3BdsjPKmVuJ+kh9DvfqAQ6LY3/bLdwutZgjg
-         0h/A==
-X-Gm-Message-State: AC+VfDwu85VaX8/GEfMWgdc2PKt1IGO29ALessqeI6daINk1AvT2FuMO
-	2qAGA25HZ4GRbd1/ZCTOq0qp1jyNjnlvE8WCLbPUfQ==
-X-Google-Smtp-Source: ACHHUZ7/hk8+nREIJqbKB06hI0QwbFg39+1fW5JTyYGxeupsabPBPVYpxSYLAfCmohFj9QK+8EXNmA==
-X-Received: by 2002:a17:903:2289:b0:1b3:d646:291c with SMTP id b9-20020a170903228900b001b3d646291cmr10018416plh.14.1686825482072;
-        Thu, 15 Jun 2023 03:38:02 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id jj7-20020a170903048700b001b3fb2f0296sm3555497plb.120.2023.06.15.03.37.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jun 2023 03:37:59 -0700 (PDT)
-Message-ID: <648aea07.170a0220.715ee.8025@mx.google.com>
-Date: Thu, 15 Jun 2023 03:37:59 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        d=1e100.net; s=20221208; t=1686830001; x=1689422001;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PjL4TT6lduqrX4Ue5FDQzOGr/CQMwhpmR0YYHeEeNPA=;
+        b=TjcfPxpEeWnJMR/VJ06uWCbyaYpHHQz+g1mHY2a4sD0RhcogYYeHofFsEXBSrFfg/K
+         SRly+nZU8pRMJ9RuuGbw28a7O9OYdlvxt+KttuR75O+qCK5Gh+1oLLkQKpk0D0JJjN/0
+         0EbFjLW8lkBIpNdzJG6ykzHHCvbVLk+y/Z3YbpV+QC3aHqW1W3x7ksbLsxU8Fp/GwhgK
+         DWdsGmpdh7Pe55SIxEulI9u1Bo6CW/VHeY85IMXxV5vskIPViptIYSUwRMkJ8aUh8IDF
+         6YsfxQlaukQl6lQHDyFxRcVqRPSaJ4H8CYr+wQvKu5Nt1abF9mmV9VFFfPgWgwhdLgLM
+         71KA==
+X-Gm-Message-State: AC+VfDyaKfC6/JSGzPszGL62dzU0XASjT4sBg77QsGAa/dKiFD41fTNf
+	NzNsYhKBy891NfF1/xM2X7CwDttsghRqf3Nkt5juUK8PKMh8F5mpa4Q=
+X-Google-Smtp-Source: ACHHUZ4sEwS+qNNVYEMa/MsnBkRJwGBms+Ullxm1nICcZJWSQLtovjZcZS70xcpcML5xqIX9B78+aakb89w8oeQLg8E=
+X-Received: by 2002:a4a:a8cd:0:b0:558:a3c5:86cd with SMTP id
+ r13-20020a4aa8cd000000b00558a3c586cdmr11934095oom.6.1686830001303; Thu, 15
+ Jun 2023 04:53:21 -0700 (PDT)
 MIME-Version: 1.0
+References: <CAODzB9oUr_wN0h73C4aAQg6qk+awCv6QpxD11bME1K4GPJFsmg@mail.gmail.com>
+ <ZIrOzbbFV1zmYs61@duo.ucw.cz>
+In-Reply-To: <ZIrOzbbFV1zmYs61@duo.ucw.cz>
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 15 Jun 2023 20:52:44 +0900
+Message-ID: <CAODzB9qe0=gXvYXUQxLcjnvBCJUcRcers9TGNT9oKhKbf1M_Sw@mail.gmail.com>
+Subject: Re: [cip-dev] New CVE entries this week
+To: cip-dev@lists.cip-project.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-5.10.y-cip
-X-Kernelci-Tree: cip
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: v5.10.182-cip35-8-gdba81ae6f2be
-Subject: cip/linux-5.10.y-cip ltp-fcntl-locktests: 12 runs,
- 3 regressions (v5.10.182-cip35-8-gdba81ae6f2be)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
- kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
-From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 15 Jun 2023 10:38:10 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12050
+ <cip-dev@lists.cip-project.org>; Thu, 15 Jun 2023 11:53:30 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12056
 
-cip/linux-5.10.y-cip ltp-fcntl-locktests: 12 runs, 3 regressions (v5.10.182=
--cip35-8-gdba81ae6f2be)
+Hi.
 
-Regressions Summary
--------------------
+On Thu, Jun 15, 2023 at 5:41=E2=80=AFPM Pavel Machek <pavel@denx.de> wrote:
+>
+> Hi!
+>
+> > This week reported 4 new CVEs and 7 updated CVEs.
+> >
+> > * New CVEs
+> >
+> > CVE-2023-3141: memstick: r592: Fix UAF bug in r592_remove due to race c=
+ondition
+> >
+> > CVSS v3 score is 5.9 MEDIUM.
+> >
+> > The client side in OpenSSH 5.7 through 8.4 has an Observable
+> > Discrepancy leading to an information leak in the algorithm
+> > negotiation. This allows man-in-the-middle attackers to target initial
+> > connection attempts (where no host key for the server has been cached
+> > by the client).
+>
+> Description seems wrong here. Here's better one:
+>
+> https://nvd.nist.gov/vuln/detail/CVE-2023-3141
+>
+> A use-after-free flaw was found in r592_remove in
+> drivers/memstick/host/r592.c in media access in the Linux Kernel. This
+> flaw allows a local attacker to crash the system at device disconnect,
+> possibly leading to a kernel information leak.
+>
 
-platform                     | arch  | lab         | compiler | defconfig  =
-                | regressions
------------------------------+-------+-------------+----------+------------=
-----------------+------------
-meson-gxl-s905x-libretech-cc | arm64 | lab-broonie | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
+Thank you for correcting this one.
+CVE-2023-3141.yml in cip-kernel-sec contains the correct link to this CVE.
+I may paste the wrong description.
 
-r8a774a1-hihope-rzg2m-ex     | arm64 | lab-cip     | gcc-10   | defconfig  =
-                | 1          =
+> Best regards,
+>                                                         Pavel
+> --
+> DENX Software Engineering GmbH,        Managing Director: Erika Unter
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+>
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#12044): https://lists.cip-project.org/g/cip-dev/messa=
+ge/12044
+> Mute This Topic: https://lists.cip-project.org/mt/99538378/4520416
+> Group Owner: cip-dev+owner@lists.cip-project.org
+> Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129101/452041=
+6/1465703922/xyzzy [masami.ichikawa@miraclelinux.com]
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+>
 
-r8a774a1-hihope-rzg2m-ex     | arm64 | lab-cip     | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
+Regards,
+--=20
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
 
-
-  Details:  https://kernelci.org/test/job/cip/branch/linux-5.10.y-cip/kerne=
-l/v5.10.182-cip35-8-gdba81ae6f2be/plan/ltp-fcntl-locktests/
-
-  Test:     ltp-fcntl-locktests
-  Tree:     cip
-  Branch:   linux-5.10.y-cip
-  Describe: v5.10.182-cip35-8-gdba81ae6f2be
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
-it
-  SHA:      dba81ae6f2be7f7d87f3a29a8566758d2e0017ae
-
-  Test suite revisions:
-    ltp-tests
-      URL:  https://github.com/linux-test-project/ltp.git
-      SHA:  97c2fdb137a68e1eefed07c900db1a862edcdbf8 =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform                     | arch  | lab         | compiler | defconfig  =
-                | regressions
------------------------------+-------+-------------+----------+------------=
-----------------+------------
-meson-gxl-s905x-libretech-cc | arm64 | lab-broonie | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/648adf0ce99def898e306178
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.182=
--cip35-8-gdba81ae6f2be/arm64/defconfig+arm64-chromebook/gcc-10/lab-broonie/=
-ltp-fcntl-locktests-meson-gxl-s905x-libretech-cc.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.182=
--cip35-8-gdba81ae6f2be/arm64/defconfig+arm64-chromebook/gcc-10/lab-broonie/=
-ltp-fcntl-locktests-meson-gxl-s905x-libretech-cc.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230609.0/arm64/initrd.cpio.gz =
-
-
-
-  * ltp-fcntl-locktests.login: https://kernelci.org/test/case/id/648adf0ce9=
-9def898e306179
-        new failure (last pass: v5.10.182-cip35-1-g7cde3fba93966) =
-
- =
-
-
-
-platform                     | arch  | lab         | compiler | defconfig  =
-                | regressions
------------------------------+-------+-------------+----------+------------=
-----------------+------------
-r8a774a1-hihope-rzg2m-ex     | arm64 | lab-cip     | gcc-10   | defconfig  =
-                | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/648ad8a4ef8467125830614a
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.182=
--cip35-8-gdba81ae6f2be/arm64/defconfig/gcc-10/lab-cip/ltp-fcntl-locktests-r=
-8a774a1-hihope-rzg2m-ex.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.182=
--cip35-8-gdba81ae6f2be/arm64/defconfig/gcc-10/lab-cip/ltp-fcntl-locktests-r=
-8a774a1-hihope-rzg2m-ex.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230609.0/arm64/initrd.cpio.gz =
-
-
-
-  * ltp-fcntl-locktests.login: https://kernelci.org/test/case/id/648ad8a4ef=
-8467125830614b
-        new failure (last pass: v5.10.182-cip35-1-g7cde3fba93966) =
-
- =
-
-
-
-platform                     | arch  | lab         | compiler | defconfig  =
-                | regressions
------------------------------+-------+-------------+----------+------------=
-----------------+------------
-r8a774a1-hihope-rzg2m-ex     | arm64 | lab-cip     | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/648ae3b989a52c2eb5306136
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.182=
--cip35-8-gdba81ae6f2be/arm64/defconfig+arm64-chromebook/gcc-10/lab-cip/ltp-=
-fcntl-locktests-r8a774a1-hihope-rzg2m-ex.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.182=
--cip35-8-gdba81ae6f2be/arm64/defconfig+arm64-chromebook/gcc-10/lab-cip/ltp-=
-fcntl-locktests-r8a774a1-hihope-rzg2m-ex.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230609.0/arm64/initrd.cpio.gz =
-
-
-
-  * ltp-fcntl-locktests.login: https://kernelci.org/test/case/id/648ae3b989=
-a52c2eb5306137
-        new failure (last pass: v5.10.182-cip35-1-g7cde3fba93966) =
-
- =20
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
