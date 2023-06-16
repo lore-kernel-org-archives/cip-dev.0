@@ -1,194 +1,217 @@
-Return-Path: <biju.das.jz@bp.renesas.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCFECEB64DA
-	for <webhook@archiver.kernel.org>; Fri, 16 Jun 2023 08:53:11 +0000 (UTC)
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (JPN01-TYC-obe.outbound.protection.outlook.com [40.107.114.91])
- by mx.groups.io with SMTP id smtpd.web10.4159.1686905587913087236
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2C76EB64D8
+	for <webhook@archiver.kernel.org>; Fri, 16 Jun 2023 16:47:49 +0000 (UTC)
+Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
+ by mx.groups.io with SMTP id smtpd.web10.3696.1686934062858985096
  for <cip-dev@lists.cip-project.org>;
- Fri, 16 Jun 2023 01:53:08 -0700
+ Fri, 16 Jun 2023 09:47:43 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bp.renesas.com header.s=selector1 header.b=O/ayZkDA;
- spf=pass (domain: bp.renesas.com, ip: 40.107.114.91, mailfrom: biju.das.jz@bp.renesas.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IoHR0LLlf3LG48EYrMDwqO/niuzsTraQx3RR32Ed7AKD+sIpVKi1cx1AlGovtBKhhfbtgI73skoS7+1gjkRBpp2rYPMCQJdEi5to6w3EWXrNoCN7EWxtV5fIkx9mJilCZZTLJerIkPcTbmAuBrQsDF5fmRish4/DNQPPe2hoj3AZKDK7//le4t8rGKUYaFThvv9cipYZy1scqxAl0BLe2dDsvSwlVCntWZ84JDU5HCsTxxMMJoaC3/G9Cx1gsaNPrFKh6RJr6/v73c6kPgyGtq/KxHLERQya8rOIRc5VOcb2BbdKMQO8ecSyzRZnMIZsw1q4oLJBFe5ijl1LSAN7yA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lwlvSvs4onGn4oBPd2p/yY7kS16aOmxHSie305RdKUY=;
- b=Fssi41lXEowGpuu9gK6yTVvNtQa+2WFwGdEavgXATAr00ns0n+22WiTRH8IFSA4KFD4RsKr+zIcvmHfabZKfDmh5liljfkivzdWLFbZLVQ2Pa4fHQy0iPc2fnGaXSgn8FZsRnshT37NB3P9RYvZy1Ie879RbzT8zSYNTZeZXjuj7W9X1cgIypDVMdCdFvZa7UIkFq+cjrcdzgbWMMXST0eE27ML4921T2sR18ungK68680jYa0f8DXeF58g1h86Rhkxc6MOgxKLrtqM2n2H3UyTTzxu2uSvfR9ILiEnFGE9M2zmLCoTSKxjzVARYGmc2aEXfyNOLLeGkmpF7Xv8UdA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lwlvSvs4onGn4oBPd2p/yY7kS16aOmxHSie305RdKUY=;
- b=O/ayZkDAOy8vg+h0RL62oV5luhxVd1kFDRh4oK5porD9eblkNvQDn4VsjAHIMGf1F7HtSG4+I8/nz6/X/2hQEDgcn3lf/DywHTPqKXHftWq1rRI6A82GK0P4jlbrcbBCsdoR69CsshPTVvuFbmZZb8Z9yunOJNRpc1SoXYaCHcw=
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
- by OS3PR01MB7993.jpnprd01.prod.outlook.com (2603:1096:604:162::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6477.37; Fri, 16 Jun
- 2023 08:53:02 +0000
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::fc77:6148:d6a:c72b]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::fc77:6148:d6a:c72b%4]) with mapi id 15.20.6500.026; Fri, 16 Jun 2023
- 08:52:59 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, Nobuhiro
- Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Pavel Machek <pavel@denx.de>
-CC: Chris Paterson <Chris.Paterson2@renesas.com>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [cip-dev] [PATCH 6.1.y-cip 0/8] Add MTU3 core/counter driver
- support for RZ/G2L alike SoCs
-Thread-Topic: [cip-dev] [PATCH 6.1.y-cip 0/8] Add MTU3 core/counter driver
- support for RZ/G2L alike SoCs
-Thread-Index: AQHZmEvhmsXocB8bykyoeyB0DUt3lq+NLyqg
-Date: Fri, 16 Jun 2023 08:52:58 +0000
-Message-ID: 
- <OS0PR01MB5922722AFE1A3D5D270F45DD8658A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-References: <176602980452741A.14840@lists.cip-project.org>
-In-Reply-To: <176602980452741A.14840@lists.cip-project.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|OS3PR01MB7993:EE_
-x-ms-office365-filtering-correlation-id: ff1425cf-ada8-4bcc-dee6-08db6e4715cb
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- 2rg0bScEmYyu8q98qxSQaR701Ot40CckIG7HyJpoP+sX0O6beT//Ro+WVV+3AMjRmbrC5Pd9uUO8mIhg0HggOtGIjw/k8B57buM9TfpHNaPyZeGx0gkT9aTu7QtWcI6hzM/5Y6HsEapyCOh8+g7L9bZT4EU5wGyelg0ErVrC9y3wPeE3Er5pQaY258bNDsx6rw47ef/DlOVAXEQJ/i1qh6sOaTK2ELHyJ4k5sXwnHNQ04fk/UCOZEw21BrfVFdinHgBFliy4e4ySSpnauQ1ve5Zn9gx1Nl3syabAXwo7trhG1GvVGNL5hopYP5HPzGhKfswBBMeaqFT25Y3ATtGWj6fBXUOmdAMI8cX5JU9Ce6AJ3qrYMR5FIbk1yXNgdziICiK0vw6k9Nk++sh0Cy9N85hYbk6xX9LguHqjsmZi5UyeqeV25e0l3WsB26rsGkzPH7X2Is5k8BWI4MtiAr5DixKucAtp6iWDA5tbSqCF202d+9SOHVm+4alTxwPSayRVs2gbplhUq3jMW0Z9nKU1+il3QVvgfsWFI0qm4M6WzwtqiZrmNPu4TOkaZw2iYUcv4SMtNtHqFgIrmUyd/Cx7z6v3leijA7PuCh46Y+uNK1I=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(6029001)(4636009)(39860400002)(366004)(376002)(396003)(136003)(346002)(451199021)(55016003)(76116006)(110136005)(478600001)(54906003)(41300700001)(45080400002)(8936002)(38100700002)(122000001)(8676002)(66556008)(66446008)(66476007)(66946007)(64756008)(4326008)(316002)(7696005)(26005)(186003)(9686003)(966005)(83380400001)(71200400001)(53546011)(107886003)(6506007)(86362001)(33656002)(52536014)(38070700005)(5660300002)(2906002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?MfYfxdK4uXL1bQmP3Hi4BujsF4lKWw/YayyTTlhVm/msqRdlQ+QWvLPqcOfa?=
- =?us-ascii?Q?6DsMLeqqH/ctExCn7I+3rVaK+elUzNpwJunQStD8opXmUI1d7eiRxEnW3oLN?=
- =?us-ascii?Q?ilL/xAcmTFPNhiq/2K+cEZ8ai92EbsoGe9Pr7TT6L4GxCEiOL+1xCm8egg6n?=
- =?us-ascii?Q?qYsQ4dh3yrsXK3eZytL5Cy6EAeMPC2h05yFxLViotK0svqJATfbEEtbLsk/J?=
- =?us-ascii?Q?6+in1/WbdD7EMPyeWeiqHXtYDuZSHSQjrHc/zb3/+mXeXdR5zk0ZAY9lp4yd?=
- =?us-ascii?Q?/3yd271BAerHyJt4CZXmSIDazfsPsyxn8IaiE6cmtpby6U6Zx+A7l/0SXiGn?=
- =?us-ascii?Q?Jfjztpm6uYYBNqOOAXCflkeqnSX7yvP2PvNgftdcnMw6VKeA4IKRAsVp8egd?=
- =?us-ascii?Q?cPsS8Ri/jrxg06JdBbqE3DxdToHKv/JMopRaUYulqdzBB6BNbSxteLH4vKT6?=
- =?us-ascii?Q?ukvV1lpqJAHgisYYIWQr9IlR6NJvCO+zD+8Y/xiF7B8kTZUCJ9W1qGvOXlKC?=
- =?us-ascii?Q?FFz0ODSxYeujHRd3NTs25ldypweAoO9m6e0eQQ647a66e8IYKn/UhzqbLCpy?=
- =?us-ascii?Q?pgCNiwYX+ThCGxs1SnNEJxlthBGuNAdJC2NF0CoFp5SmEu2Yp857s5Tpt/3s?=
- =?us-ascii?Q?ETszvSL0+JMOwm5y6KFlgS4VTO9nujNbWsilQ9WoXlgvuBgyjGXh3ZJeufeV?=
- =?us-ascii?Q?8l8U1DXMIBi//LnUy8bbWSdRdhbkf5abl7wNv4CR3UCL+kzPUu/w6KWYDokb?=
- =?us-ascii?Q?QXPYgMtlnyBL2Vtroh1Mk3Q5FL5whXAS84kSX9gTQjhxYtqo94OYVEacUt75?=
- =?us-ascii?Q?JjAtE1+CVit6wOu1kX7pn4HGG6Lw+9Jd8puu59Qzsv/peB03Vnkqaj0UgHdq?=
- =?us-ascii?Q?Wz5dNBHidCzqERQWtVh9ljQ84e4yrQjkJaAFZy/UY48HKZ50NKekT9+hMEKa?=
- =?us-ascii?Q?l8TtPwBp/PH4/Lf0FDQJKZs0aE0oGnTW68D1tlBhmeNK5P6lXqkwVw459Fkh?=
- =?us-ascii?Q?K1ijkBfvKdI//IDN5cpUsvyyzNg8YfnXM/w1q5dWVesiSKdsy7WVgredMekM?=
- =?us-ascii?Q?hCmPxO86ftj8qWuZH3QzEYANbfnTDWBWsM9sdok03gMLxv9hkrnTqKyOtK7z?=
- =?us-ascii?Q?sl0Ybe61HweQuyKJYQNyz3LZ253RBCJ7zx48xmsDq/qOkM4GaD179S1a8JRB?=
- =?us-ascii?Q?lTDvu+Zy9+N0AqcpK8C73CfqfqBDNor/42ILTazX+TjnIGr11K6zrHTZ+NS4?=
- =?us-ascii?Q?sqN4FyQLiZ0yHkeVChLuRjWs1hRnVqhh/dB889YJw4zPeVT13OOvX2ob5BhL?=
- =?us-ascii?Q?4zSS2UJdp22qlC0Dq02OQo5pS61k6FoWim9IgkwuALmJM7YzD9k34YXuOkS7?=
- =?us-ascii?Q?/Qmb+UvixaeD20KkMcZl0devPGGzODJ4C2QKFo6XX6LcLFHRB1HQJEtNsOhE?=
- =?us-ascii?Q?Hw8uqrMMhZBxv8ZIFQqVjo+ONkoEn3naTyfvJtnzcKWU109bRVZtEBAfouqL?=
- =?us-ascii?Q?YZo9ovjletHozPBMU1YssRw39odLFYqEgiZwL6OcovYVBJ5oE1mo+ls37pHI?=
- =?us-ascii?Q?J+HktaLQgq68ffpUtuuQvyzfWnNBcciavdJODpXRNbWENPyWsXKWsOxc+YOK?=
- =?us-ascii?Q?7w=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=R71X2NQl;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-51332-20230616164739b7db66fe622b3de0eb-iecbqd@rts-flowmailer.siemens.com)
+Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 20230616164739b7db66fe622b3de0eb
+        for <cip-dev@lists.cip-project.org>;
+        Fri, 16 Jun 2023 18:47:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ bh=bLTHKEDF/low3rHNu0b2/Us9Rof+GHd6GC0NtwcIv3M=;
+ b=R71X2NQlwrjhzmZifpE6gV4jPV4OSqA1mhmOouLBJ6luLTCtTXRNr07AKF7f0NA8Nsbs1n
+ Fs+IhgjIh7HlhZGtZ88bG+KofgTbISbH8XvUg7nky/xrkBYoExqbTKbWSm8cuiCSFNYpTa3p
+ ojtOi7CYanmS3x18Ln/I3rV1gfmT8=;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: jan.kiszka@siemens.com,
+	christian.storm@siemens.com,
+	cip-dev@lists.cip-project.org
+Subject: [cip-dev][isar-cip-core][PATCH] swupdate: Update to 2023.06 for wfx support
+Date: Fri, 16 Jun 2023 18:47:38 +0200
+Message-Id: <20230616164738.3895223-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff1425cf-ada8-4bcc-dee6-08db6e4715cb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jun 2023 08:52:59.0394
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: N8yBxUCp906o10mlfSG8too7Tx7PgS1fogwOHk7yAoVPXJXOAwJLuxLFVpaZH9uZiszd8VzPSiRQRIjSxZFYAKBRIl/ZxyXb1UsBrzs+DJs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB7993
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 16 Jun 2023 08:53:11 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12066
+ <cip-dev@lists.cip-project.org>; Fri, 16 Jun 2023 16:47:49 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12067
 
-Hi Pavel,
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Gentle ping. What is happening with this series?
+This will update swupdate to c8ca55684c375937dbcdefb0563071a35137f4ba
+(tools/swupdate-progress: Adapt for wfx) to add the wfx bindings.
 
-Cheers,
-Biju
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ conf/distro/cip-core-bookworm.conf            |  2 +-
+ conf/distro/cip-core-bullseye.conf            |  2 +-
+ conf/distro/cip-core-sid-ports.conf           |  1 +
+ recipes-core/images/swupdate.inc              |  5 +-
+ ...rate-build_profile-option-for-delta-.patch | 47 +++++++++++++++++++
+ ...2.12+dfsg-4-gbp.bb => swupdate_2023.06.bb} | 21 +++++++--
+ 6 files changed, 67 insertions(+), 11 deletions(-)
+ create mode 100644 recipes-core/swupdate/files/0001-d-rules-Add-seperate-build_profile-option-for-delta-.patch
+ rename recipes-core/swupdate/{swupdate_2022.12+dfsg-4-gbp.bb => swupdate_2023.06.bb} (55%)
 
-> -----Original Message-----
-> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
-> Behalf Of Biju Das via lists.cip-project.org
-> Sent: Tuesday, June 6, 2023 8:52 AM
-> To: cip-dev@lists.cip-project.org; Nobuhiro Iwamatsu
-> <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Machek <pavel@denx.de>
-> Cc: Chris Paterson <Chris.Paterson2@renesas.com>; Biju Das
-> <biju.das.jz@bp.renesas.com>; Prabhakar Mahadev Lad <prabhakar.mahadev-
-> lad.rj@bp.renesas.com>
-> Subject: [cip-dev] [PATCH 6.1.y-cip 0/8] Add MTU3 core/counter driver
-> support for RZ/G2L alike SoCs
->
-> This patch series aims to add MTU3 core/counter driver support for RZ/G2L
-> alike SoCs.
->
-> All these patches are cherry-picked from the mainline.
->
-> It is tested with Rotary encoder[1]
-> [1]
-> https://www.mous/
-> er.co.uk%2FProductDetail%2FAlps-
-> Alpine%2FEC11E15244B2%3Fqs%3Dm0BA540hBPfDpUEkDmFV5A%253D%253D&data=3D05%7=
-C01
-> %7Cbiju.das.jz%40bp.renesas.com%7C3f20076914c54730e85108db66630357%7C53d8=
-2
-> 571da1947e49cb4625a166a4a2a%7C0%7C0%7C638216347664195285%7CUnknown%7CTWFp=
-b
-> GZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D=
-%
-> 7C3000%7C%7C%7C&sdata=3DpRx27j4b4tT4IRdGTaMDBLynFPCujwxAQnRnMNbYicU%3D&re=
-ser
-> ved=3D0
->
->
-> Biju Das (8):
->   clk: renesas: r9a07g044: Add MTU3a clock and reset entry
->   dt-bindings: timer: Document RZ/G2L MTU3a bindings
->   mfd: Add Renesas RZ/G2L MTU3a core driver
->   Documentation: ABI: sysfs-bus-counter: add cascade_counts_enable and
->     external_input_phase_clock_select
->   counter: Add Renesas RZ/G2L MTU3a counter driver
->   MAINTAINERS: Add entries for Renesas RZ/G2L MTU3a counter driver
->   arm64: dts: renesas: r9a07g044: Add MTU3a node
->   arm64: dts: renesas: r9a07g054: Add MTU3a node
->
->  Documentation/ABI/testing/sysfs-bus-counter   |  32 +
->  .../bindings/timer/renesas,rz-mtu3.yaml       | 302 ++++++
->  MAINTAINERS                                   |   8 +
->  arch/arm64/boot/dts/renesas/r9a07g044.dtsi    |  70 ++
->  arch/arm64/boot/dts/renesas/r9a07g054.dtsi    |  70 ++
->  drivers/clk/renesas/r9a07g044-cpg.c           |   5 +-
->  drivers/counter/Kconfig                       |  11 +
->  drivers/counter/Makefile                      |   1 +
->  drivers/counter/rz-mtu3-cnt.c                 | 902 ++++++++++++++++++
->  drivers/mfd/Kconfig                           |  10 +
->  drivers/mfd/Makefile                          |   1 +
->  drivers/mfd/rz-mtu3.c                         | 391 ++++++++
->  drivers/mfd/rz-mtu3.h                         | 147 +++
->  include/linux/mfd/rz-mtu3.h                   | 257 +++++
->  14 files changed, 2206 insertions(+), 1 deletion(-)  create mode 100644
-> Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml
->  create mode 100644 drivers/counter/rz-mtu3-cnt.c  create mode 100644
-> drivers/mfd/rz-mtu3.c  create mode 100644 drivers/mfd/rz-mtu3.h  create
-> mode 100644 include/linux/mfd/rz-mtu3.h
->
-> --
-> 2.25.1
+diff --git a/conf/distro/cip-core-bookworm.conf b/conf/distro/cip-core-bookworm.conf
+index f05d3d3..5563e49 100644
+--- a/conf/distro/cip-core-bookworm.conf
++++ b/conf/distro/cip-core-bookworm.conf
+@@ -12,6 +12,6 @@
+ require conf/distro/debian-bookworm.conf
+ require cip-core-common.inc
+ 
+-PREFERRED_VERSION_swupdate ?= "2022.12%"
++PREFERRED_VERSION_swupdate ?= "2023.06%"
+ PREFERRED_VERSION_linux-cip ?= "5.10.%"
+ PREFERRED_VERSION_linux-cip-rt ?= "5.10.%"
+diff --git a/conf/distro/cip-core-bullseye.conf b/conf/distro/cip-core-bullseye.conf
+index 9c83054..604280d 100644
+--- a/conf/distro/cip-core-bullseye.conf
++++ b/conf/distro/cip-core-bullseye.conf
+@@ -15,6 +15,6 @@ require cip-core-common.inc
+ DISTRO_APT_SOURCES:append:swupdate = " conf/distro/debian-bullseye-backports.list"
+ DISTRO_APT_PREFERENCES:append:swupdate = " conf/distro/preferences.swupdate-bullseye-backports.conf"
+ 
+-PREFERRED_VERSION_swupdate ?= "2022.12%"
++PREFERRED_VERSION_swupdate ?= "2023.06%"
+ PREFERRED_VERSION_linux-cip ?= "5.10.%"
+ PREFERRED_VERSION_linux-cip-rt ?= "5.10.%"
+diff --git a/conf/distro/cip-core-sid-ports.conf b/conf/distro/cip-core-sid-ports.conf
+index edd3c28..2f02367 100644
+--- a/conf/distro/cip-core-sid-ports.conf
++++ b/conf/distro/cip-core-sid-ports.conf
+@@ -14,6 +14,7 @@ require cip-core-common.inc
+ 
+ PREFERRED_VERSION_linux-cip ?= "5.10.%"
+ PREFERRED_VERSION_linux-cip-rt ?= "5.10.%"
++PREFERRED_VERSION_swupdate ?= "2023.06%"
+ 
+ DISTRO_APT_SOURCES = "conf/distro/cip-debian-sid-ports-snapshot.list"
+ HOST_DISTRO_APT_SOURCES = "conf/distro/cip-debian-sid-snapshot.list ${DISTRO_APT_SOURCES}"
+diff --git a/recipes-core/images/swupdate.inc b/recipes-core/images/swupdate.inc
+index ebc844a..6a01abb 100644
+--- a/recipes-core/images/swupdate.inc
++++ b/recipes-core/images/swupdate.inc
+@@ -12,9 +12,6 @@
+ inherit image_uuid
+ inherit read-only-rootfs
+ 
+-IMAGE_INSTALL:append:buster = " swupdate"
+-IMAGE_INSTALL:append:bullseye = " swupdate"
+-IMAGE_PREINSTALL:append:bookworm = " swupdate"
+-IMAGE_PREINSTALL:append:sid = " swupdate"
++IMAGE_INSTALL += " swupdate"
+ 
+ IMAGE_INSTALL += " swupdate-handler-roundrobin"
+diff --git a/recipes-core/swupdate/files/0001-d-rules-Add-seperate-build_profile-option-for-delta-.patch b/recipes-core/swupdate/files/0001-d-rules-Add-seperate-build_profile-option-for-delta-.patch
+new file mode 100644
+index 0000000..2a6f2e0
+--- /dev/null
++++ b/recipes-core/swupdate/files/0001-d-rules-Add-seperate-build_profile-option-for-delta-.patch
+@@ -0,0 +1,47 @@
++From 5e29e0929e37a6ab6aaad1b44280f1bb0d9a4fbe Mon Sep 17 00:00:00 2001
++From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
++Date: Thu, 15 Jun 2023 18:48:25 +0200
++Subject: [PATCH] d/rules: Add seperate build_profile option for delta update
++
++Delta update need zchunk 1.3 to work on memory restricted
++devices. zchunk 1.3 is is not available in bullseye-backports
++and Debian bookworm(12).
++
++To enable delta updates add 'pkg.swupdate.delta' to
++DEB_BUILD_PROFILES.
++
++Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
++---
++ debian/control | 2 +-
++ debian/rules   | 2 +-
++ 2 files changed, 2 insertions(+), 2 deletions(-)
++
++diff --git a/debian/control b/debian/control
++index e47c320c..d4b17972 100644
++--- a/debian/control
+++++ b/debian/control
++@@ -26,7 +26,7 @@ Build-Depends: debhelper-compat (= 13),
++                uuid-dev,
++                zlib1g-dev,
++                libzstd-dev,
++-               libzck-dev (>= 1.2) <!pkg.swupdate.bpo>,
+++               libzck-dev (>= 1.3) <pkg.swupdate.delta>,
++                libp11-kit-dev <pkg.swupdate.p11>,
++                libwolfssl-dev <pkg.swupdate.p11>,
++                libmtd-dev [linux-any],
++diff --git a/debian/rules b/debian/rules
++index 57da4ca7..1c8d12e4 100755
++--- a/debian/rules
+++++ b/debian/rules
++@@ -38,7 +38,7 @@ ifeq (linux,$(DEB_HOST_ARCH_OS))
++ else
++ 	echo "# CONFIG_MTD is not set"     >> configs/debian_defconfig
++ endif
++-ifeq (,$(filter pkg.swupdate.bpo,$(DEB_BUILD_PROFILES)))
+++ifneq (,$(filter pkg.swupdate.delta,$(DEB_BUILD_PROFILES)))
++ 	echo CONFIG_DELTA=y >> configs/debian_defconfig
++ endif
++ ifneq (,$(findstring $(DEB_HOST_ARCH),amd64 i386 arm64 armhf riscv64 ia64))
++-- 
++2.39.2
++
+diff --git a/recipes-core/swupdate/swupdate_2022.12+dfsg-4-gbp.bb b/recipes-core/swupdate/swupdate_2023.06.bb
+similarity index 55%
+rename from recipes-core/swupdate/swupdate_2022.12+dfsg-4-gbp.bb
+rename to recipes-core/swupdate/swupdate_2023.06.bb
+index da44ae5..26aced4 100644
+--- a/recipes-core/swupdate/swupdate_2022.12+dfsg-4-gbp.bb
++++ b/recipes-core/swupdate/swupdate_2023.06.bb
+@@ -8,7 +8,7 @@
+ #
+ # SPDX-License-Identifier: MIT
+ 
+-inherit dpkg-gbp
++inherit dpkg
+ 
+ require swupdate.inc
+ 
+@@ -17,16 +17,19 @@ DEPENDS += "libebgenv-dev"
+ DEB_BUILD_PROFILES += "nodoc"
+ DEB_BUILD_OPTIONS += "nodoc"
+ 
+-SRC_URI = "git://salsa.debian.org/debian/swupdate.git;protocol=https;branch=debian/master"
+-SRCREV ="aa9edf070567fa5b3e942c270633a8feef49dad8"
++SRC_URI += "git://github.com/sbabic/swupdate.git;protocol=https;branch=master;name=upstream;destsuffix=${P}"
++SRC_URI += "git://salsa.debian.org/debian/swupdate.git;protocol=https;branch=debian/master;name=debian;subpath=debian;destsuffix=${P}/debian"
++SRCREV_debian = "aa9edf070567fa5b3e942c270633a8feef49dad8"
++SRCREV_upstream = "c8ca55684c375937dbcdefb0563071a35137f4ba"
+ SRC_URI += "file://0001-d-rules-Add-option-for-suricatta_lua.patch"
++SRC_URI += "file://0001-d-rules-Add-seperate-build_profile-option-for-delta-.patch"
+ 
+ # deactivate signing and hardware compability for simple a/b rootfs update
+ DEB_BUILD_PROFILES += "pkg.swupdate.nosigning"
+ DEB_BUILD_PROFILES += "pkg.swupdate.nohwcompat"
+ 
+-# use suricatta-lua instead of suricatta-hawkbit
+-# DEB_BUILD_PROFILES = "pkg.swupdate.suricattalua"
++# Add suricattalua to support wfx
++DEB_BUILD_PROFILES += "pkg.swupdate.suricattalua"
+ 
+ # Disable cross for arm and arm64 on bullseye
+ # with cross compile we have a unsat-dependency to dh-nodejs on arm/arm64
+@@ -37,3 +40,11 @@ DEB_BUILD_PROFILES += "cross nocheck"
+ 
+ # use backport build profile for bullseye
+ DEB_BUILD_PROFILES:append:bullseye = " pkg.swupdate.bpo"
++
++CHANGELOG_V ?= "${PV}-1+cip"
++
++do_prepare_build() {
++    deb_add_changelog
++    cd ${WORKDIR}
++    tar cJf ${PN}_${PV}.orig.tar.xz --exclude=.git --exclude=debian ${P}
++}
+-- 
+2.39.2
 
 
