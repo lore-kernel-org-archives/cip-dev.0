@@ -1,167 +1,194 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABEBFEB64D9
-	for <webhook@archiver.kernel.org>; Thu, 15 Jun 2023 17:05:12 +0000 (UTC)
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (EUR03-DBA-obe.outbound.protection.outlook.com [40.107.104.83])
- by mx.groups.io with SMTP id smtpd.web10.24378.1686848708773762980
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCFECEB64DA
+	for <webhook@archiver.kernel.org>; Fri, 16 Jun 2023 08:53:11 +0000 (UTC)
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (JPN01-TYC-obe.outbound.protection.outlook.com [40.107.114.91])
+ by mx.groups.io with SMTP id smtpd.web10.4159.1686905587913087236
  for <cip-dev@lists.cip-project.org>;
- Thu, 15 Jun 2023 10:05:09 -0700
+ Fri, 16 Jun 2023 01:53:08 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=d5eDfAgd;
- spf=pass (domain: siemens.com, ip: 40.107.104.83, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@bp.renesas.com header.s=selector1 header.b=O/ayZkDA;
+ spf=pass (domain: bp.renesas.com, ip: 40.107.114.91, mailfrom: biju.das.jz@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=K5rUrHqCu05WldUB0EboCRJBmiTytMWcyNK0TX51uW79JmjWKmZb3xRzQnWS41psNcCbfDbZyK1qAROMUTp+4nX1cQqAp60etFP7y/G223z2XtBgcYU3wtxFu1ohLJsw2j2rQjj1mqSUzLffDg2hx0QLKBrYttRcxRVu6zZ3/yjU3DlfkQJr9hyCaYb5CiTixI8/aGU6N50JlY2CMqgqDAnIcnlUrqNAqBGqCe0gsUJIDZjq33nqhi+cbLi3muEs/sveN+s+5JgqkuoeEZjSpp8L7OqHvj4AzDUZRSNcqvT9wbWzHfKfUnO7y8728/qqizg9cR/wWC+2rhnOjw0L7A==
+ b=IoHR0LLlf3LG48EYrMDwqO/niuzsTraQx3RR32Ed7AKD+sIpVKi1cx1AlGovtBKhhfbtgI73skoS7+1gjkRBpp2rYPMCQJdEi5to6w3EWXrNoCN7EWxtV5fIkx9mJilCZZTLJerIkPcTbmAuBrQsDF5fmRish4/DNQPPe2hoj3AZKDK7//le4t8rGKUYaFThvv9cipYZy1scqxAl0BLe2dDsvSwlVCntWZ84JDU5HCsTxxMMJoaC3/G9Cx1gsaNPrFKh6RJr6/v73c6kPgyGtq/KxHLERQya8rOIRc5VOcb2BbdKMQO8ecSyzRZnMIZsw1q4oLJBFe5ijl1LSAN7yA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=McfOVRTO13e6hnMyvl+4JTnCNF8gl6mDquyF11nf4MQ=;
- b=OfNqXhggIxyLWr/R68VjU+6xWaEtb3l0mPaIBz9whl4pRiGAOoMQlxgovaqERDzoQabI1ROg9JoTsvv8OHXit/RLY7YE4w9ab3BXhbGn7kdU5OIrS7XL/7OJxvyLBhuHAMwqVPZ26fcegW2IBkwmCAJ43KbXXiWVLYmt3TZ7Nq5qmIFvhgrcO1KgSpRlpq/YiMnDu4BJGganJ0KeWhb4WyiI30/0uAqJAv7e7dku939nGlDWBYwrCyBoL40KOR+HnDUdVLo3zk1gMkwkD9hwACX0A/nXfErE1XSP/dg6XyB4Y+fwv9xldwTyJ6IIBKdSYBa6DouYUmPo+Xz22fiyhw==
+ bh=lwlvSvs4onGn4oBPd2p/yY7kS16aOmxHSie305RdKUY=;
+ b=Fssi41lXEowGpuu9gK6yTVvNtQa+2WFwGdEavgXATAr00ns0n+22WiTRH8IFSA4KFD4RsKr+zIcvmHfabZKfDmh5liljfkivzdWLFbZLVQ2Pa4fHQy0iPc2fnGaXSgn8FZsRnshT37NB3P9RYvZy1Ie879RbzT8zSYNTZeZXjuj7W9X1cgIypDVMdCdFvZa7UIkFq+cjrcdzgbWMMXST0eE27ML4921T2sR18ungK68680jYa0f8DXeF58g1h86Rhkxc6MOgxKLrtqM2n2H3UyTTzxu2uSvfR9ILiEnFGE9M2zmLCoTSKxjzVARYGmc2aEXfyNOLLeGkmpF7Xv8UdA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=McfOVRTO13e6hnMyvl+4JTnCNF8gl6mDquyF11nf4MQ=;
- b=d5eDfAgdLqcEZgZBt0D34GOKlSGXsapz7g8z5YDdPJ72dGQwWgYGfhw4JyLmc0owqD4Yv5A5UKufDmCyujPgj2s9bWofbG8ssFooVokYWcurnht4zsWUt4c/ydw+KaIZ6/lVtHYtZUUeUXw9U062/RZEaYBPoS6qVbfVhBgyQNf7ZHjrNW46fnz7btjaYWF5S3J5LkRr4k69QqYu3fdDCLeCnZyrmkFMDUNBltlqtsj9Qw+p3uedtmaj/MXr0v+eKS5iLqv6lAUPhSZ4Dct+A3dFKk6SQSvAwfWUTd6fpK2vdhsPZqavmNmGmMy+e0MMFg0+V8HaF/pGYlsyaPxoyg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by AM0PR10MB3283.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:208:17e::9) with
+ bh=lwlvSvs4onGn4oBPd2p/yY7kS16aOmxHSie305RdKUY=;
+ b=O/ayZkDAOy8vg+h0RL62oV5luhxVd1kFDRh4oK5porD9eblkNvQDn4VsjAHIMGf1F7HtSG4+I8/nz6/X/2hQEDgcn3lf/DywHTPqKXHftWq1rRI6A82GK0P4jlbrcbBCsdoR69CsshPTVvuFbmZZb8Z9yunOJNRpc1SoXYaCHcw=
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
+ by OS3PR01MB7993.jpnprd01.prod.outlook.com (2603:1096:604:162::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6500.25; Thu, 15 Jun
- 2023 17:05:04 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::53c2:174a:8b13:ce94]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::53c2:174a:8b13:ce94%3]) with mapi id 15.20.6477.037; Thu, 15 Jun 2023
- 17:05:04 +0000
-Message-ID: <b572071c-d05c-167b-6a3e-363272e7c88e@siemens.com>
-Date: Thu, 15 Jun 2023 19:05:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [isar-cip-core][PATCH] customizations: Select EFI Boot Guard as
- bootloader in swupdate.cfg
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6477.37; Fri, 16 Jun
+ 2023 08:53:02 +0000
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::fc77:6148:d6a:c72b]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::fc77:6148:d6a:c72b%4]) with mapi id 15.20.6500.026; Fri, 16 Jun 2023
+ 08:52:59 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, Nobuhiro
+ Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Pavel Machek <pavel@denx.de>
+CC: Chris Paterson <Chris.Paterson2@renesas.com>, Prabhakar Mahadev Lad
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: RE: [cip-dev] [PATCH 6.1.y-cip 0/8] Add MTU3 core/counter driver
+ support for RZ/G2L alike SoCs
+Thread-Topic: [cip-dev] [PATCH 6.1.y-cip 0/8] Add MTU3 core/counter driver
+ support for RZ/G2L alike SoCs
+Thread-Index: AQHZmEvhmsXocB8bykyoeyB0DUt3lq+NLyqg
+Date: Fri, 16 Jun 2023 08:52:58 +0000
+Message-ID: 
+ <OS0PR01MB5922722AFE1A3D5D270F45DD8658A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+References: <176602980452741A.14840@lists.cip-project.org>
+In-Reply-To: <176602980452741A.14840@lists.cip-project.org>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-To: cip-dev <cip-dev@lists.cip-project.org>
-Cc: Christian Storm <christian.storm@siemens.com>,
- Quirin Gylstorff <quirin.gylstorff@siemens.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR3P281CA0182.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a4::17) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|OS3PR01MB7993:EE_
+x-ms-office365-filtering-correlation-id: ff1425cf-ada8-4bcc-dee6-08db6e4715cb
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ 2rg0bScEmYyu8q98qxSQaR701Ot40CckIG7HyJpoP+sX0O6beT//Ro+WVV+3AMjRmbrC5Pd9uUO8mIhg0HggOtGIjw/k8B57buM9TfpHNaPyZeGx0gkT9aTu7QtWcI6hzM/5Y6HsEapyCOh8+g7L9bZT4EU5wGyelg0ErVrC9y3wPeE3Er5pQaY258bNDsx6rw47ef/DlOVAXEQJ/i1qh6sOaTK2ELHyJ4k5sXwnHNQ04fk/UCOZEw21BrfVFdinHgBFliy4e4ySSpnauQ1ve5Zn9gx1Nl3syabAXwo7trhG1GvVGNL5hopYP5HPzGhKfswBBMeaqFT25Y3ATtGWj6fBXUOmdAMI8cX5JU9Ce6AJ3qrYMR5FIbk1yXNgdziICiK0vw6k9Nk++sh0Cy9N85hYbk6xX9LguHqjsmZi5UyeqeV25e0l3WsB26rsGkzPH7X2Is5k8BWI4MtiAr5DixKucAtp6iWDA5tbSqCF202d+9SOHVm+4alTxwPSayRVs2gbplhUq3jMW0Z9nKU1+il3QVvgfsWFI0qm4M6WzwtqiZrmNPu4TOkaZw2iYUcv4SMtNtHqFgIrmUyd/Cx7z6v3leijA7PuCh46Y+uNK1I=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(6029001)(4636009)(39860400002)(366004)(376002)(396003)(136003)(346002)(451199021)(55016003)(76116006)(110136005)(478600001)(54906003)(41300700001)(45080400002)(8936002)(38100700002)(122000001)(8676002)(66556008)(66446008)(66476007)(66946007)(64756008)(4326008)(316002)(7696005)(26005)(186003)(9686003)(966005)(83380400001)(71200400001)(53546011)(107886003)(6506007)(86362001)(33656002)(52536014)(38070700005)(5660300002)(2906002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?us-ascii?Q?MfYfxdK4uXL1bQmP3Hi4BujsF4lKWw/YayyTTlhVm/msqRdlQ+QWvLPqcOfa?=
+ =?us-ascii?Q?6DsMLeqqH/ctExCn7I+3rVaK+elUzNpwJunQStD8opXmUI1d7eiRxEnW3oLN?=
+ =?us-ascii?Q?ilL/xAcmTFPNhiq/2K+cEZ8ai92EbsoGe9Pr7TT6L4GxCEiOL+1xCm8egg6n?=
+ =?us-ascii?Q?qYsQ4dh3yrsXK3eZytL5Cy6EAeMPC2h05yFxLViotK0svqJATfbEEtbLsk/J?=
+ =?us-ascii?Q?6+in1/WbdD7EMPyeWeiqHXtYDuZSHSQjrHc/zb3/+mXeXdR5zk0ZAY9lp4yd?=
+ =?us-ascii?Q?/3yd271BAerHyJt4CZXmSIDazfsPsyxn8IaiE6cmtpby6U6Zx+A7l/0SXiGn?=
+ =?us-ascii?Q?Jfjztpm6uYYBNqOOAXCflkeqnSX7yvP2PvNgftdcnMw6VKeA4IKRAsVp8egd?=
+ =?us-ascii?Q?cPsS8Ri/jrxg06JdBbqE3DxdToHKv/JMopRaUYulqdzBB6BNbSxteLH4vKT6?=
+ =?us-ascii?Q?ukvV1lpqJAHgisYYIWQr9IlR6NJvCO+zD+8Y/xiF7B8kTZUCJ9W1qGvOXlKC?=
+ =?us-ascii?Q?FFz0ODSxYeujHRd3NTs25ldypweAoO9m6e0eQQ647a66e8IYKn/UhzqbLCpy?=
+ =?us-ascii?Q?pgCNiwYX+ThCGxs1SnNEJxlthBGuNAdJC2NF0CoFp5SmEu2Yp857s5Tpt/3s?=
+ =?us-ascii?Q?ETszvSL0+JMOwm5y6KFlgS4VTO9nujNbWsilQ9WoXlgvuBgyjGXh3ZJeufeV?=
+ =?us-ascii?Q?8l8U1DXMIBi//LnUy8bbWSdRdhbkf5abl7wNv4CR3UCL+kzPUu/w6KWYDokb?=
+ =?us-ascii?Q?QXPYgMtlnyBL2Vtroh1Mk3Q5FL5whXAS84kSX9gTQjhxYtqo94OYVEacUt75?=
+ =?us-ascii?Q?JjAtE1+CVit6wOu1kX7pn4HGG6Lw+9Jd8puu59Qzsv/peB03Vnkqaj0UgHdq?=
+ =?us-ascii?Q?Wz5dNBHidCzqERQWtVh9ljQ84e4yrQjkJaAFZy/UY48HKZ50NKekT9+hMEKa?=
+ =?us-ascii?Q?l8TtPwBp/PH4/Lf0FDQJKZs0aE0oGnTW68D1tlBhmeNK5P6lXqkwVw459Fkh?=
+ =?us-ascii?Q?K1ijkBfvKdI//IDN5cpUsvyyzNg8YfnXM/w1q5dWVesiSKdsy7WVgredMekM?=
+ =?us-ascii?Q?hCmPxO86ftj8qWuZH3QzEYANbfnTDWBWsM9sdok03gMLxv9hkrnTqKyOtK7z?=
+ =?us-ascii?Q?sl0Ybe61HweQuyKJYQNyz3LZ253RBCJ7zx48xmsDq/qOkM4GaD179S1a8JRB?=
+ =?us-ascii?Q?lTDvu+Zy9+N0AqcpK8C73CfqfqBDNor/42ILTazX+TjnIGr11K6zrHTZ+NS4?=
+ =?us-ascii?Q?sqN4FyQLiZ0yHkeVChLuRjWs1hRnVqhh/dB889YJw4zPeVT13OOvX2ob5BhL?=
+ =?us-ascii?Q?4zSS2UJdp22qlC0Dq02OQo5pS61k6FoWim9IgkwuALmJM7YzD9k34YXuOkS7?=
+ =?us-ascii?Q?/Qmb+UvixaeD20KkMcZl0devPGGzODJ4C2QKFo6XX6LcLFHRB1HQJEtNsOhE?=
+ =?us-ascii?Q?Hw8uqrMMhZBxv8ZIFQqVjo+ONkoEn3naTyfvJtnzcKWU109bRVZtEBAfouqL?=
+ =?us-ascii?Q?YZo9ovjletHozPBMU1YssRw39odLFYqEgiZwL6OcovYVBJ5oE1mo+ls37pHI?=
+ =?us-ascii?Q?J+HktaLQgq68ffpUtuuQvyzfWnNBcciavdJODpXRNbWENPyWsXKWsOxc+YOK?=
+ =?us-ascii?Q?7w=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AM0PR10MB3283:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5eb236b9-c33a-4890-8139-08db6dc2a9a6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	JXsMCROrZ4mDPTqxY+t97AVboI14dHuWoOpOd49T4DBoML9zTuzv9jskUm8O5iR9TsbCDHR1fnHuzXDlEg8CxEQ/VZde3U0aK8unmmhQ8UGHNcvhi6n/reoH+kcIgo9TGI76nI0l59P23bBQ8e+j2J7QelggDJY0W3UHbGGKqUamKMidjlIlEI4x8qhQw6hm1bWacr+3S+i8ykT/EFoP3eLlosE2/f+XpQt4UkxFfTJq3kgbhyazCdvNeVwCcfWIRZJ8G33ziK8x+prrP4wlFZkbnv1QqTGpqnXyQQA+RFUVrdLnEdm3qJnX3l7woswAoHPa1/0Tvs65737eA3rLnq7fGEyQ9azqTn/5q199Z9YkImKUCjRRxE9BmNBzB5/DfYgqf39MYPeKYigZfzmwqByrpKeFkZikpjITyiRVjPvC57wnhbAWv4NUWd5tULv8g5/Gc+EBAhA7DZQ8yFKl9dVNvNsdp1ogh6DEHtT+oMnYWgKny5xgXhXwiYBxlOeJOAxtX5/lwk/Jyu6acnnGWWobvAJNx6OwtqxHKYdaaYw2gEcGscNYqSiw9hXU/iM0Q2X5BmR0yZKnpPhqHEmNvj9B6Jd+TJ8cLzKbCIzu7JgqOaij//HFf7cmTeK0+Pe646rQc3xT18vxzEEPguahwA==
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(346002)(136003)(366004)(376002)(396003)(451199021)(478600001)(82960400001)(6666004)(6486002)(38100700002)(107886003)(83380400001)(26005)(2616005)(186003)(36756003)(6512007)(6506007)(316002)(41300700001)(66946007)(6916009)(66556008)(66476007)(4326008)(44832011)(31696002)(86362001)(2906002)(31686004)(5660300002)(8676002)(8936002)(54906003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?MVc1QkpTSlFmTjIrcTkxdklLZE9PMmVDbmlXWmNvVmdFdE9ZZGYrQzRmREVJ?=
- =?utf-8?B?KzhSRHQ2N004MVhLM3NqZWlDbis4REhiRmVBMk93MitqU0N2aGlrRDRqVk1k?=
- =?utf-8?B?eDk2Mll0dXdzbFVHS3lGbzc3M3lXdjRCY2UzR0g1T2NoZUVSbm84SkZZU281?=
- =?utf-8?B?c0d1bFRuOC9iNUZGMFF6dVNnVFBSTSt4UmRlYThvMFJSR3ByWDFmVUlHYW5E?=
- =?utf-8?B?bXlCMWFnQzFscnd6M3crc2JBR2xoSjFIcSt0SzZEdXFGblVUMldMU0M4d2VR?=
- =?utf-8?B?OTlVTDZ6YWZuZlFGMitxckJSazV1cUM4ZGNmQ1FXNXBqQWdUdE5ZeGJHblNS?=
- =?utf-8?B?S3VON3dhZWhhVndiSWo3dUVYc2pscUVRNkNkVURxb3ZzMjFPc01jcCtrT0N0?=
- =?utf-8?B?anZQNFpraFF6NEF6MERQT3RXdGczbTNic1BPOW80VmlZZWdLL2lZV21MWGlV?=
- =?utf-8?B?OWx1L0R1WmFud3B1cVJHNGFyVmUvbHp1M3Qvb2J2NUpSVWYwY1ptdm9ZaDVR?=
- =?utf-8?B?Q3ozdFBMVjFpNjl3eXNUQzZUWXZaUWNMNVJ6OTd6SWhSa2dCWGFzNmw5RWUz?=
- =?utf-8?B?dDdTRGlxTk5MZ2dPcUoza1J5WVdZM0xOYTdld2U3LzRZN0JKTkVEWVJvRlBa?=
- =?utf-8?B?UUZkbDVRSkhoakltanRqNXpmbjBicnQ3dGN1WnRjZGhGRktzd0Ewa2VGY2RK?=
- =?utf-8?B?SmhabkFjb0VkdFNJLzluSzZyRzlCUnk3SXlETXNSMmw4Y1RkVnZRK0JybU1q?=
- =?utf-8?B?MG5obkgrK2Y4SDA4OTh4UTI3cTViUm9qWXR2cEkva2lDbUxQeUR0MlYwQXNB?=
- =?utf-8?B?ZE5IdjFsa0l4cFJ0T2RzTVRUVDZNL0hzbzhId2N1RDNOdlZlL0l2SHhFMWJO?=
- =?utf-8?B?c2JyV3dmM1lSYVBPNmlZelVoYkJ0SHlqTkV4NmR4a013U1g4MUoxR25oNksz?=
- =?utf-8?B?Tkc3dzJNNzdwSlQvS0NSbDZFS0Z6aXlCek5zbE90NjIvYTN4Y05CVjZqaG5m?=
- =?utf-8?B?VEVtOW95b1JBZlovNDZwdllDVVJpdFF2NWw3RXA0ajNUVGQ0aGJBcDdGUnlR?=
- =?utf-8?B?TWh6QmJNMFdpb3VxY3NKUVdLVmxMa1NXZWxMMzAvV2VockVYeVJpc1J0S2pJ?=
- =?utf-8?B?MWdiTzAyQ0xEenNSa3J4aG44R3VKd3ZXL0JSZG1aL0V3SkkxZlZ6a0NPTTJJ?=
- =?utf-8?B?Qm84aW12QXppUjByeWxxSS96UHZaODhFcTZrVEQ4S1lZTVNlQ3NsTTJsZWlM?=
- =?utf-8?B?eHFOQURpYzdSRm9pY25LQldTVzAxTWZ2andRbXVacUNVb29KNkxaZHIvcUFu?=
- =?utf-8?B?dTkybnN3dUMzV0FkYjhNS0JLWk0zd2l2N0ZwZlVrbmZSNFo1aEdoVGI0VE9L?=
- =?utf-8?B?QUhPSFVsK1BUMUpSMWxqQzZPeWVINGdRMDVBOERtUzcxWTVSbmpNNzlWRVps?=
- =?utf-8?B?YXFzV2FtL3hWbWxvelNOQy9TaDhPSzVrVlIxb3BHSENyM0dLa2tSbWd2bFMz?=
- =?utf-8?B?dkl0cmxJWk9iVUVpckl0TzA3WkIrNDNrUjBmZG9MWVFKQi84N29UVHEzRFhj?=
- =?utf-8?B?cGdyN3B6L2ZQQVhHUFl3dG1UcjYrU2ZDdzdwQy9NNU9qZWpNYTdrT3U1RHZX?=
- =?utf-8?B?TTMzRi9nSlVxWmRLcEJtVzh6VmlhVjcrZWRLNVNEdzZrNmhoR240b0Y2dHFy?=
- =?utf-8?B?ZVBDbzh6Q1pueVhTS2VLVUE5cXAyeXpUcjZBWU85RGsvNlhnUXBROS9VLyt5?=
- =?utf-8?B?V1NZYkhGUFYrWDZ3NlRvS0UvTEE1bHIyL3FERER0ajBoRmltYjNucE83NlBz?=
- =?utf-8?B?RkUyazhmOXhvMGgvbDVPY2tTN3dsSDBlcmpZOGJHaUJYYldwZi9pSFZMK3NE?=
- =?utf-8?B?VnNtWnUwd0IralhwMlhXb3ZldHN0TCt1bUNjVVBCRGtHcGFrSm4vNnY5WGt3?=
- =?utf-8?B?UFpENkE0QVVaczJkYUxUV295K2RNa0VtVDl1b0FIS3ZScE9ZMWN0bzhiTVpF?=
- =?utf-8?B?N2ZsR3VYN1hwdUFYL1J0dEtRWWVsRnJZTXRFdnA3TExVZWpJWEczbERmTktv?=
- =?utf-8?B?VFRhU2JqN2RSWmptazVJbU1BZlp2YjRQSE1YK1ZCM1NEK2RaWUtYRHBOeUxz?=
- =?utf-8?B?Z1VrcjB5Wm5SZ3NTV3laSkZFczhKUHc2Zmh5bFY1RkZoc1dkZEx3N0YzM1Q5?=
- =?utf-8?B?Y2c9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5eb236b9-c33a-4890-8139-08db6dc2a9a6
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-OriginatorOrg: bp.renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2023 17:05:04.4496
+X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ff1425cf-ada8-4bcc-dee6-08db6e4715cb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jun 2023 08:52:59.0394
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gFML5EJ+EUCv8871x3Mug6CXw+Kpob26DKuZtLosnKaoY5Aeei19qKGyAuqIVJ2m02xca9TezNYuanPjDDzr1w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR10MB3283
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: N8yBxUCp906o10mlfSG8too7Tx7PgS1fogwOHk7yAoVPXJXOAwJLuxLFVpaZH9uZiszd8VzPSiRQRIjSxZFYAKBRIl/ZxyXb1UsBrzs+DJs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB7993
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 15 Jun 2023 17:05:12 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12065
+ <cip-dev@lists.cip-project.org>; Fri, 16 Jun 2023 08:53:11 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12066
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+Hi Pavel,
 
-This is now a runtime choice for SWUpdate 2022.12 or later.
+Gentle ping. What is happening with this series?
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- recipes-core/customizations/common.inc         | 6 ++++++
- recipes-core/customizations/files/swupdate.cfg | 4 ++++
- 2 files changed, 10 insertions(+)
- create mode 100644 recipes-core/customizations/files/swupdate.cfg
+Cheers,
+Biju
 
-diff --git a/recipes-core/customizations/common.inc b/recipes-core/customizations/common.inc
-index 93f2fbe6..680a4d64 100644
---- a/recipes-core/customizations/common.inc
-+++ b/recipes-core/customizations/common.inc
-@@ -19,6 +19,8 @@ SRC_URI = " \
-     file://99-silent-printk.conf \
-     file://99-watchdog.conf"
- 
-+SRC_URI:append:swupdate = " file://swupdate.cfg"
-+
- WIRELESS_FIRMWARE_PACKAGE ?= ""
- INSTALL_WIRELESS_TOOLS ??= "0"
- 
-@@ -40,3 +42,7 @@ do_install() {
- 	install -v -d ${D}/etc/systemd/system.conf.d
- 	install -v -m 644 ${WORKDIR}/99-watchdog.conf ${D}/etc/systemd/system.conf.d/
- }
-+
-+do_install:append:swupdate() {
-+	install -v -m 644 ${WORKDIR}/swupdate.cfg ${D}/etc/
-+}
-diff --git a/recipes-core/customizations/files/swupdate.cfg b/recipes-core/customizations/files/swupdate.cfg
-new file mode 100644
-index 00000000..9ee47c73
---- /dev/null
-+++ b/recipes-core/customizations/files/swupdate.cfg
-@@ -0,0 +1,4 @@
-+globals :
-+{
-+    bootloader = "ebg";
-+};
--- 
-2.35.3
+> -----Original Message-----
+> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
+> Behalf Of Biju Das via lists.cip-project.org
+> Sent: Tuesday, June 6, 2023 8:52 AM
+> To: cip-dev@lists.cip-project.org; Nobuhiro Iwamatsu
+> <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Machek <pavel@denx.de>
+> Cc: Chris Paterson <Chris.Paterson2@renesas.com>; Biju Das
+> <biju.das.jz@bp.renesas.com>; Prabhakar Mahadev Lad <prabhakar.mahadev-
+> lad.rj@bp.renesas.com>
+> Subject: [cip-dev] [PATCH 6.1.y-cip 0/8] Add MTU3 core/counter driver
+> support for RZ/G2L alike SoCs
+>
+> This patch series aims to add MTU3 core/counter driver support for RZ/G2L
+> alike SoCs.
+>
+> All these patches are cherry-picked from the mainline.
+>
+> It is tested with Rotary encoder[1]
+> [1]
+> https://www.mous/
+> er.co.uk%2FProductDetail%2FAlps-
+> Alpine%2FEC11E15244B2%3Fqs%3Dm0BA540hBPfDpUEkDmFV5A%253D%253D&data=3D05%7=
+C01
+> %7Cbiju.das.jz%40bp.renesas.com%7C3f20076914c54730e85108db66630357%7C53d8=
+2
+> 571da1947e49cb4625a166a4a2a%7C0%7C0%7C638216347664195285%7CUnknown%7CTWFp=
+b
+> GZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D=
+%
+> 7C3000%7C%7C%7C&sdata=3DpRx27j4b4tT4IRdGTaMDBLynFPCujwxAQnRnMNbYicU%3D&re=
+ser
+> ved=3D0
+>
+>
+> Biju Das (8):
+>   clk: renesas: r9a07g044: Add MTU3a clock and reset entry
+>   dt-bindings: timer: Document RZ/G2L MTU3a bindings
+>   mfd: Add Renesas RZ/G2L MTU3a core driver
+>   Documentation: ABI: sysfs-bus-counter: add cascade_counts_enable and
+>     external_input_phase_clock_select
+>   counter: Add Renesas RZ/G2L MTU3a counter driver
+>   MAINTAINERS: Add entries for Renesas RZ/G2L MTU3a counter driver
+>   arm64: dts: renesas: r9a07g044: Add MTU3a node
+>   arm64: dts: renesas: r9a07g054: Add MTU3a node
+>
+>  Documentation/ABI/testing/sysfs-bus-counter   |  32 +
+>  .../bindings/timer/renesas,rz-mtu3.yaml       | 302 ++++++
+>  MAINTAINERS                                   |   8 +
+>  arch/arm64/boot/dts/renesas/r9a07g044.dtsi    |  70 ++
+>  arch/arm64/boot/dts/renesas/r9a07g054.dtsi    |  70 ++
+>  drivers/clk/renesas/r9a07g044-cpg.c           |   5 +-
+>  drivers/counter/Kconfig                       |  11 +
+>  drivers/counter/Makefile                      |   1 +
+>  drivers/counter/rz-mtu3-cnt.c                 | 902 ++++++++++++++++++
+>  drivers/mfd/Kconfig                           |  10 +
+>  drivers/mfd/Makefile                          |   1 +
+>  drivers/mfd/rz-mtu3.c                         | 391 ++++++++
+>  drivers/mfd/rz-mtu3.h                         | 147 +++
+>  include/linux/mfd/rz-mtu3.h                   | 257 +++++
+>  14 files changed, 2206 insertions(+), 1 deletion(-)  create mode 100644
+> Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml
+>  create mode 100644 drivers/counter/rz-mtu3-cnt.c  create mode 100644
+> drivers/mfd/rz-mtu3.c  create mode 100644 drivers/mfd/rz-mtu3.h  create
+> mode 100644 include/linux/mfd/rz-mtu3.h
+>
+> --
+> 2.25.1
+
 
