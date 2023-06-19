@@ -1,220 +1,598 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E45EB64D9
-	for <webhook@archiver.kernel.org>; Sat, 17 Jun 2023 13:09:54 +0000 (UTC)
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (EUR03-DBA-obe.outbound.protection.outlook.com [40.107.104.44])
- by mx.groups.io with SMTP id smtpd.web10.4764.1687007388776946041
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02409EB64D9
+	for <webhook@archiver.kernel.org>; Mon, 19 Jun 2023 10:50:23 +0000 (UTC)
+Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
+ by mx.groups.io with SMTP id smtpd.web10.4799.1687171820641484925
  for <cip-dev@lists.cip-project.org>;
- Sat, 17 Jun 2023 06:09:49 -0700
+ Mon, 19 Jun 2023 03:50:22 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=SGxS9pug;
- spf=pass (domain: siemens.com, ip: 40.107.104.44, mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=P9j64vZrQn3bKPa+9boPBpWdE5/E+gbibKX+o5ygOVO0q1npCoIqSC7PXnHwOCsKA9dDfH3VRJdaPglWMC6X8n6WOTdizlUJHFvpPRYajH9hBjFOwL4W6zIycu0lu/zWzyfE+TF90TH3X0dmBP07rS8S2rNyUUuya8eV8jm3jPQILDMqFCk8C+Nk041XINXPHOigfqSvQu9TLMBhR8IPTfH6TdyYkG98YIROSYFVeCJdFy3R5GJ6WZOwnqGEVrjrIG+4rabrVbJM0If051z5ezEr371wboPsbjoQ2Zkd61l+lT/7KkycJv0CD1VMwP/nBhtjdiUsRn7R7n1hQ7KLpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wIn+8DsdLZ6JY558bMHCL8aFvLqYFb7qE/8oKglI1n0=;
- b=LJLw50BJIxp6ddy2xuORA+UxT1pnSMhGe8MgiI8BowmB5aJFE8KZQXVlBGpYFFadCi5JYkM+Z8wf0l8L1JWrloQeOB3LjHyx85s9iS9wwFYjghpZBbgh/uLYrnCOS6+Ae57z+CgYLZr5j6DsEEjwK6hVxsR8WmlrNlVYvtF7y0fzB10N0wcsPOA7HGDBQndU9Zn/Xv6ibxqhN1oRIRpMs5xEIpB3iLNezPWmxUyfz6yiL0UT4AAQqDRk/rgYr7Uby+YUAzm+ydd0AmFWdy9coF0vhOgD9OKiyUK1ybvgvac9ksq7lfTR0DTfGsxx6XfNKa4yxqlx/0bSmTgdi0ZrxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wIn+8DsdLZ6JY558bMHCL8aFvLqYFb7qE/8oKglI1n0=;
- b=SGxS9pugMTI5w3ccJppAptwTSyFtoxqNJ+NJ/UyOJBOktCF0cPM4jB8SzNdokv2PVUPUmUgVHGVfOvYol6Da0VKB0g7cmrn7hlNYneLLN+6QinmVI9G0YiUcQiCcvMd7jVNwz1TI60g8/kHm1iLiGT2DK/TuAbvKBLb7TTvLoR2QfH+YRi+RMfu8XZzqGwFbK32F08JGnSGMKHkVM+r2OolRLisuS3I8fyJ79OFdM/3PND0pIdWYM1WaADernfUn/auN4LOjfokQD1gtcCmcjzEgvpJBZq+NAAiRP7QjBNP/rwFRdswBnEEiQh70Hg+A4ouedOkaBhy282gn6tet0A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by VI1PR10MB7735.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:1bf::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6500.29; Sat, 17 Jun
- 2023 13:09:45 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::53c2:174a:8b13:ce94]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::53c2:174a:8b13:ce94%3]) with mapi id 15.20.6500.029; Sat, 17 Jun 2023
- 13:09:45 +0000
-Message-ID: <795ab3b7-8aaf-3649-bc48-87bf780e11e4@siemens.com>
-Date: Sat, 17 Jun 2023 15:09:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [isar-cip-core][PATCH] efibootguard: Update to 0.14
-Content-Language: en-US
-To: cip-dev <cip-dev@lists.cip-project.org>
-Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>,
- "Moessbauer, Felix (T CED SES-DE)" <felix.moessbauer@siemens.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0165.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:99::7) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=hs2D9WE4;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-51332-20230619105016d682047bb5dd0a8712-0_f83t@rts-flowmailer.siemens.com)
+Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 20230619105016d682047bb5dd0a8712
+        for <cip-dev@lists.cip-project.org>;
+        Mon, 19 Jun 2023 12:50:17 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ bh=YMr55FSdX1WSfLd0/pleTfDSKdAlq44Pi1MAhNy8//U=;
+ b=hs2D9WE4RTNY22IjZi8gFSY1f72MtPT1QLWBX52QnZZ42JM8JF9Wu+Y/CZjsmmsdXsj1dY
+ IqYplWrz/r6oAjou4cA5UUsF2+bhr2jEvxPxmr8ryx49dQ7ehaBhbQi4DC0IHAwuM/6ebxHl
+ xZeiOTOM0ob6ereypBk4sifIzTm8Y=;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: jan.kiszka@siemens.com,
+	christian.storm@siemens.com,
+	cip-dev@lists.cip-project.org
+Subject: [cip-dev][isar-cip-core][PATCH v2] swupdate: Update to 2023.05 with wfx support
+Date: Mon, 19 Jun 2023 12:50:15 +0200
+Message-Id: <20230619105015.195380-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|VI1PR10MB7735:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1b79fb93-6608-4d9e-a298-08db6f341ec5
-X-LD-Processed: 38ae3bcd-9579-4fd4-adda-b42e1495d55a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	QFNb4745tSuGuR1TKDrDoR7mcsB1PsCTT96Dk3lO7brpej2F6QkrPwZDFbwVXNGnK1bd/Cp9Ci89s3sm4mWtksbqx4HYp/5f8+oYyumXj027aNh/yy7IvShcArPKYIy7I6RwAX08I15BnYbSFOd7qNw1PdsU+8IwY8R4julSCO1QTYepD2Wymt4HgukHeXnrPCY+8GDth5cs2Qzy2ZItONqki88i3AUsALFQN6r7Ip/5sHSnu6keYzZicqoo1xSONJUzaCybJatPrHOa6CA90ckGEvhrv/dVOvgbvTNUwjAGS0BK953f+S4JoQLGrv1m3i56i02eGuA7m77vHkJBG41vcZTfeEBz6iyY4SPdPf9oF2fD2HmkRmakxOtdhlyR78PXem/sS/y/ICGETCZcdL/p5eYKuKbHVnJSFroPQDa64hSKy52hitjITLf5768XK+QsCXHMpvoScHMFUEE2B0AQP9Hv4qGzm8ORcOfdtB5voZ73X22JZL6IolPqMLgF42jtXWECsUPKXi/QGDNR1G29JUIvC4/3FpRoms+VNGAobmO4bHOXrYDBzpWMCo/54QKX8VvzMvI4lUQrOdiwBsuRvVnA/ZRSxtqiPfIF9gs505LK8km2db/qKgq+3kflofizE1rRtZzhfLWn/OvSHG7YDfMt7+Amjto2yhPwm98=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(396003)(346002)(39860400002)(366004)(136003)(451199021)(54906003)(478600001)(966005)(6486002)(6666004)(44832011)(82960400001)(5660300002)(8936002)(41300700001)(2906002)(36756003)(86362001)(31696002)(8676002)(38100700002)(66476007)(316002)(66556008)(4326008)(6916009)(66946007)(2616005)(107886003)(6506007)(186003)(26005)(83380400001)(31686004)(6512007)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?Wm5wbFgyeDRGaUFya2dkelY2R2twYWI4WHhLZTJjbEM5NlFlem10M3BOZUJU?=
- =?utf-8?B?VUZIeXpETFh3SkJKMUF5Nmd6ajhxUExES1VCdE1Ic1R2K2FRVFplemxSWmp4?=
- =?utf-8?B?NnpYY24zS0V2OVdVQXZFRE5FdWk5b1BsQjBjQm9ZZ1dMYTAvdUFTY1FJOWJT?=
- =?utf-8?B?dnYxQS8yWHhqZWFFVkZVOWJBZjIvbjhIN3o5R1VmWCtwNFY0R3BvMEE5NGRm?=
- =?utf-8?B?SEU2eWwyMnkreTRpNVN6TWxqeFBwcFVhR2U0RHE1ZHZUR3lVRGxsUzgwZWM4?=
- =?utf-8?B?amhabGNrc0RVNDc3MTJFbjhGcnhRL2FweHZva1ZyRHJVRUMrb0p0Y1FOL2h1?=
- =?utf-8?B?d0xpODdpQkYralVyWUFzQ2ZuYW1CNUhFU1J6aFljbmtnQ21yZUd3VFlIalJr?=
- =?utf-8?B?VTNJdERibU9lWWFmdTJmWi9zWjMvSGo2bko0bHU0dXBUNys5TUJJdllwY1JO?=
- =?utf-8?B?RllsZTJlYkxYQ2hSUDF4VzdXMDNLUWZndHowWExQK0FQLzB3aDJmNkxVWTVk?=
- =?utf-8?B?RFNMZ0hSYWt3TEFhcWNQb1o2bXloVUFGVUtGc0JoaytDZDBRQlZDOUtieHIz?=
- =?utf-8?B?ckZYWVZwQUs4ZnBRTDJsczBScnI5UU12ZUo0RitaTEc2MVpTQ05KMW8yamhr?=
- =?utf-8?B?VVpsVkErcjF4cjFsOTNURG5HbzBWbkF6dDdvZDZzbStJQzBjdWYwV2U0Q2tv?=
- =?utf-8?B?SVJoMTF6eUduczUwWGI0Rnc4MmtvMWFHeUJEcUxmL3RRaGhKYzBZbW1ZZzY3?=
- =?utf-8?B?cDVRMGlvVW5ERUlKQ0prMVBCTzVsN2xzZVJKNzdzOGdUNThXMWtCTVNnU1Vm?=
- =?utf-8?B?bTVnMVJTd0phQVpIOG5hVE1OTVF0L1VBSGpSQnBEU3JWVWF1M3NqZ0I1Wmlx?=
- =?utf-8?B?cHBsQ1pCQ3dZT2F0UDRDcDhlNkl6VDl1WWM4dFU4WkQzZnVnYlZ2MUFabTk5?=
- =?utf-8?B?SktMcWVIcEdNdXZYMUlTRFllQ0t0b2ZFczNCTUtJcmVpZ05JZjZ4U2JZdmxn?=
- =?utf-8?B?ZEtFRFNnTGRhM1hOYmVmdDlHaitNL1B0NGRUUytjMUVSK0N6Qi9lZDRlTHZh?=
- =?utf-8?B?cmZ3OElXQWhFQVBkNDd0YXhEcjFZUXdjUEg2OFBpSWRtbEhkNEFERXdWSWov?=
- =?utf-8?B?Ui9ZWkRxdjNNclcxZ0xOWndqL0lWQlR4c0tXa3g0NGgvSy9kRDg5dTI0WWFp?=
- =?utf-8?B?ZVFadll2WkhnNGVidmtrUzFxbkYySXNkeGMxQUhob21oU0JHdG01YXlPK2gx?=
- =?utf-8?B?V0VmdWtoUDBwR2tla1E5REVjdTdTYnJuci93bDYzMW1HdWdkY2Z5ZGYvMDRt?=
- =?utf-8?B?cDJMRDRZem5jZStZd21IZU5aam5lbkhUSktkNzNnNWszZGFQMG45RFZKTlNv?=
- =?utf-8?B?R0pISldMeGljY1h0Wi81MzN0bzdTL0V0aUJYUWhLQWVnOXJEdXcrVm1qc1d1?=
- =?utf-8?B?NnUxTzN6azc2c3ZmUm0rdk1iclIzb1dwdytXRnZWRkdlWUZSNVBvejVzTC9s?=
- =?utf-8?B?bmxoaDZmc0psWDZRcHI5ajNjWlBrMjA2UUFiRm02eFRweVE2VkJRMDFWcGxh?=
- =?utf-8?B?VHcwUGFveEJxUU9Tc0RzQnp1OTZPRTRjQ0lwVXFXOGlXRldibGhwQzNneWxR?=
- =?utf-8?B?VVlCU29oNGNPcEpKcW0yUVpXZXFlNWowQlViMTJHYjVIMFl1VVQ5S21aRGQ1?=
- =?utf-8?B?ZUIya1Rtd0VHVU0za05YMEtRL3FUT05yMVdGMGFJQlAvNUdITDlTUkQ2N0VM?=
- =?utf-8?B?SFVnY1JuQWN1RWdaZWVQOHRtYlV6NW9PS0ZYeTQ0L3Y5Z3VhUGRScE04cmJ0?=
- =?utf-8?B?SjhjaEpTend6bjFSTHA0MmJNak1MR3Rzb2ZsVzVkeE1HenlKWTAyR0pKZ1p3?=
- =?utf-8?B?ejluMVdhZUNvaWVRUEtUSEk4U2Zzdjl6ZlBZanBKYlZRZVFRUEFBemF0RUdM?=
- =?utf-8?B?M2s3Yk1iRlZtUkNwQkxVTkl3SFdiOVEzeFNQQi9KR0V4UE54bmdrNWp3V1N3?=
- =?utf-8?B?U2Y2aHkyVnlGdEFzYmpWVi9JcWxKZkJNUXpLRDlBMWcrRjNqbExpdTNiOXoz?=
- =?utf-8?B?K0VmTjhIMnFLSVdsbGdxRGRpTmpiNnZqV0g1VFhxWjd2MEFaVlpLaVVLaWhm?=
- =?utf-8?Q?G3Ax02aOu+HpbL3aE1n1dV6YP?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b79fb93-6608-4d9e-a298-08db6f341ec5
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jun 2023 13:09:44.9994
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: T1Vcjf0grzGNbMUEycetSwnbJZ+55Q8axIjzi9SBW1q5esUmgJg+m5HHyIIDA6caSYdk6UNxNv04Zy9KuPY7kA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB7735
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Sat, 17 Jun 2023 13:09:54 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12070
+ <cip-dev@lists.cip-project.org>; Mon, 19 Jun 2023 10:50:23 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12071
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Allows to drop the RISC-V patch.
+This will update swupdate to c8ca55684c375937dbcdefb0563071a35137f4ba
+(tools/swupdate-progress: Adapt for wfx) to add the wfx bindings.
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+You can enable wfx by enabling during in the systemd service by writing
+to `/etc/swupdate/conf.d/suricatta.conf`:
+```
+SWUPDATE_SURICATTA_ARGS="-S lua <wfx arguments>"
+```
+For the <wfx arguments> see 'swupdate -h'.
+
+To switch between wfx and hawkbit exchange `lua` with `hawkbit`.
+
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- ...0.13+cip.bb => efibootguard_0.14-1+cip.bb} | 13 +------
- ...01-add-machine-type-name-for-riscv64.patch | 39 -------------------
- 2 files changed, 2 insertions(+), 50 deletions(-)
- rename recipes-bsp/efibootguard/{efibootguard_0.13+cip.bb => efibootguard_0.14-1+cip.bb} (78%)
- delete mode 100644 recipes-bsp/efibootguard/files/src-patches/0001-add-machine-type-name-for-riscv64.patch
+Changes v2:
+ - add patch to display swupdate version
+   - this Patch also sets the EXTRAVERSION with packageversion+git commit sha
+ - set CONFIG_SURICATTA_WFX to always enable wfx
+ - use version 2023.05 as it is the version stored in the swupdate
+   sources
+ - move patches to version specific folders for readability
+ - Add instructions to start swupdate service with wfx
 
-diff --git a/recipes-bsp/efibootguard/efibootguard_0.13+cip.bb b/recipes-bsp/efibootguard/efibootguard_0.14-1+cip.bb
-similarity index 78%
-rename from recipes-bsp/efibootguard/efibootguard_0.13+cip.bb
-rename to recipes-bsp/efibootguard/efibootguard_0.14-1+cip.bb
-index 9fc15a47..f58a3200 100644
---- a/recipes-bsp/efibootguard/efibootguard_0.13+cip.bb
-+++ b/recipes-bsp/efibootguard/efibootguard_0.14-1+cip.bb
-@@ -17,18 +17,13 @@ LIC_FILES_CHKSUM = "file://${LAYERDIR_isar}/licenses/COPYING.GPLv2;md5=751419260
- MAINTAINER = "Jan Kiszka <jan.kiszka@siemens.com>"
+ conf/distro/cip-core-bookworm.conf            |  2 +-
+ conf/distro/cip-core-bullseye.conf            |  2 +-
+ conf/distro/cip-core-sid-ports.conf           |  1 +
+ recipes-core/images/swupdate.inc              |  5 +-
+ recipes-core/persistent-fs/files/data.mount   | 13 +++
+ recipes-core/persistent-fs/files/postinst     |  3 +
+ .../persistent-fs/persistent-fs_0.1.bb        | 20 ++++
+ .../0002-debian-rules-Add-CONFIG_MTD.patch    | 27 ------
+ ...-SWUpdate-USB-service-and-Udev-rules.patch |  0
+ ...ules-Add-Embedded-Lua-handler-option.patch |  0
+ ...es-Add-option-to-disable-fs-creation.patch |  0
+ ...ules-Add-option-to-disable-webserver.patch |  0
+ ...ch-to-fix-bootloader_env_get-for-EBG.patch |  0
+ ...prepare-build-for-isar-debian-buster.patch |  0
+ ...d-rules-Add-option-for-suricatta_lua.patch |  4 +-
+ ...rate-build_profile-option-for-delta-.patch | 45 +++++++++
+ ...tch-to-add-the-build-version-to-swup.patch | 94 +++++++++++++++++++
+ ...s-Add-option-to-enable-suricatta_wfx.patch | 30 ++++++
+ .../swupdate/swupdate_2021.11-1+debian-gbp.bb |  2 +
+ .../swupdate/swupdate_2022.12+dfsg-4-gbp.bb   | 39 --------
+ recipes-core/swupdate/swupdate_2023.05.bb     | 60 ++++++++++++
+ 21 files changed, 273 insertions(+), 74 deletions(-)
+ create mode 100644 recipes-core/persistent-fs/files/data.mount
+ create mode 100755 recipes-core/persistent-fs/files/postinst
+ create mode 100644 recipes-core/persistent-fs/persistent-fs_0.1.bb
+ delete mode 100644 recipes-core/swupdate/files/0002-debian-rules-Add-CONFIG_MTD.patch
+ rename recipes-core/swupdate/files/{ => 2021.11}/0001-debian-Remove-SWUpdate-USB-service-and-Udev-rules.patch (100%)
+ rename recipes-core/swupdate/files/{ => 2021.11}/0002-debian-rules-Add-Embedded-Lua-handler-option.patch (100%)
+ rename recipes-core/swupdate/files/{ => 2021.11}/0003-debian-rules-Add-option-to-disable-fs-creation.patch (100%)
+ rename recipes-core/swupdate/files/{ => 2021.11}/0004-debian-rules-Add-option-to-disable-webserver.patch (100%)
+ rename recipes-core/swupdate/files/{ => 2021.11}/0005-debian-Add-patch-to-fix-bootloader_env_get-for-EBG.patch (100%)
+ rename recipes-core/swupdate/files/{ => 2021.11}/0006-debian-prepare-build-for-isar-debian-buster.patch (100%)
+ rename recipes-core/swupdate/files/{ => 2023.05}/0001-d-rules-Add-option-for-suricatta_lua.patch (87%)
+ create mode 100644 recipes-core/swupdate/files/2023.05/0002-d-rules-Add-seperate-build_profile-option-for-delta-.patch
+ create mode 100644 recipes-core/swupdate/files/2023.05/0003-d-patches-Add-patch-to-add-the-build-version-to-swup.patch
+ create mode 100644 recipes-core/swupdate/files/2023.05/0004-d-rules-Add-option-to-enable-suricatta_wfx.patch
+ delete mode 100644 recipes-core/swupdate/swupdate_2022.12+dfsg-4-gbp.bb
+ create mode 100644 recipes-core/swupdate/swupdate_2023.05.bb
+
+diff --git a/conf/distro/cip-core-bookworm.conf b/conf/distro/cip-core-bookworm.conf
+index f05d3d3..adafc92 100644
+--- a/conf/distro/cip-core-bookworm.conf
++++ b/conf/distro/cip-core-bookworm.conf
+@@ -12,6 +12,6 @@
+ require conf/distro/debian-bookworm.conf
+ require cip-core-common.inc
  
- SRC_URI = " \
--    https://github.com/siemens/efibootguard/archive/refs/tags/v0.13.tar.gz;downloadfilename=efibootguard_0.13.orig.tar.gz;unpack=0;name=tarball \
-+    https://github.com/siemens/efibootguard/archive/refs/tags/v0.14.tar.gz;downloadfilename=efibootguard_0.14.orig.tar.gz;unpack=0;name=tarball \
-     git://salsa.debian.org/debian/efibootguard.git;protocol=https;branch=master;name=debian \
-     file://debian-patches/0001-d-control-Make-compatible-with-debian-buster.patch \
-     "
--SRC_URI[tarball.sha256sum] = "639a6d8f687cb099b2e9b01eb08ad1494267fe26b5d903b4d405d0737feb989b"
-+SRC_URI[tarball.sha256sum] = "80452a9e37460708113292daf0050d3f4fa7d3d4b8b2308620701112cf18eaa1"
- SRCREV_debian = "e39728f63946d1af2d5edbecd89a30706dc31a9a"
+-PREFERRED_VERSION_swupdate ?= "2022.12%"
++PREFERRED_VERSION_swupdate ?= "2023.05%"
+ PREFERRED_VERSION_linux-cip ?= "5.10.%"
+ PREFERRED_VERSION_linux-cip-rt ?= "5.10.%"
+diff --git a/conf/distro/cip-core-bullseye.conf b/conf/distro/cip-core-bullseye.conf
+index 9c83054..4f26299 100644
+--- a/conf/distro/cip-core-bullseye.conf
++++ b/conf/distro/cip-core-bullseye.conf
+@@ -15,6 +15,6 @@ require cip-core-common.inc
+ DISTRO_APT_SOURCES:append:swupdate = " conf/distro/debian-bullseye-backports.list"
+ DISTRO_APT_PREFERENCES:append:swupdate = " conf/distro/preferences.swupdate-bullseye-backports.conf"
  
--# add riscv64 support
--SRC_URI += "file://src-patches"
--
--CHANGELOG_V = "${PV}+cip"
--
- PROVIDES = "libebgenv-dev libebgenv0 efibootguard"
+-PREFERRED_VERSION_swupdate ?= "2022.12%"
++PREFERRED_VERSION_swupdate ?= "2023.05%"
+ PREFERRED_VERSION_linux-cip ?= "5.10.%"
+ PREFERRED_VERSION_linux-cip-rt ?= "5.10.%"
+diff --git a/conf/distro/cip-core-sid-ports.conf b/conf/distro/cip-core-sid-ports.conf
+index edd3c28..2e74af7 100644
+--- a/conf/distro/cip-core-sid-ports.conf
++++ b/conf/distro/cip-core-sid-ports.conf
+@@ -14,6 +14,7 @@ require cip-core-common.inc
  
- S = "${WORKDIR}/git"
-@@ -46,10 +41,6 @@ python() {
-         d.setVar('DEB_HOST_MULTIARCH', proc.read())
- }
+ PREFERRED_VERSION_linux-cip ?= "5.10.%"
+ PREFERRED_VERSION_linux-cip-rt ?= "5.10.%"
++PREFERRED_VERSION_swupdate ?= "2023.05%"
  
--CHANGELOG_V = "<orig-version>+isar"
--
- do_prepare_build() {
-     deb_add_changelog
--    cd ${S}/debian
--    quilt import ${WORKDIR}/src-patches/*.patch
- }
-diff --git a/recipes-bsp/efibootguard/files/src-patches/0001-add-machine-type-name-for-riscv64.patch b/recipes-bsp/efibootguard/files/src-patches/0001-add-machine-type-name-for-riscv64.patch
+ DISTRO_APT_SOURCES = "conf/distro/cip-debian-sid-ports-snapshot.list"
+ HOST_DISTRO_APT_SOURCES = "conf/distro/cip-debian-sid-snapshot.list ${DISTRO_APT_SOURCES}"
+diff --git a/recipes-core/images/swupdate.inc b/recipes-core/images/swupdate.inc
+index ebc844a..6a01abb 100644
+--- a/recipes-core/images/swupdate.inc
++++ b/recipes-core/images/swupdate.inc
+@@ -12,9 +12,6 @@
+ inherit image_uuid
+ inherit read-only-rootfs
+ 
+-IMAGE_INSTALL:append:buster = " swupdate"
+-IMAGE_INSTALL:append:bullseye = " swupdate"
+-IMAGE_PREINSTALL:append:bookworm = " swupdate"
+-IMAGE_PREINSTALL:append:sid = " swupdate"
++IMAGE_INSTALL += " swupdate"
+ 
+ IMAGE_INSTALL += " swupdate-handler-roundrobin"
+diff --git a/recipes-core/persistent-fs/files/data.mount b/recipes-core/persistent-fs/files/data.mount
+new file mode 100644
+index 0000000..dc64a91
+--- /dev/null
++++ b/recipes-core/persistent-fs/files/data.mount
+@@ -0,0 +1,13 @@
++[Unit]
++Description=Mount /data partition
++Before=local-fs.target
++
++[Mount]
++What=${PERSISTENT_PARTITION}
++Where=/data
++Type=auto
++Options=defaults
++
++
++[Install]
++WantedBy=local-fs.target
+diff --git a/recipes-core/persistent-fs/files/postinst b/recipes-core/persistent-fs/files/postinst
+new file mode 100755
+index 0000000..8a13328
+--- /dev/null
++++ b/recipes-core/persistent-fs/files/postinst
+@@ -0,0 +1,3 @@
++#!/bin/sh
++
++#deb-systemd-helper enable data.mount  || true
+diff --git a/recipes-core/persistent-fs/persistent-fs_0.1.bb b/recipes-core/persistent-fs/persistent-fs_0.1.bb
+new file mode 100644
+index 0000000..c665b6c
+--- /dev/null
++++ b/recipes-core/persistent-fs/persistent-fs_0.1.bb
+@@ -0,0 +1,20 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2022
++#
++# Authors:
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++
++inherit dpkg-raw
++
++SRC_URI = "file://postinst \
++           file://data.mount"
++
++do_install[cleandirs]+="${D}/lib/systemd/system"
++do_install[cleandirs]+="${D}/data"
++do_install() {
++    install -m 0644 ${WORKDIR}/data.mount ${D}/lib/systemd/system/data.mount
++}
+diff --git a/recipes-core/swupdate/files/0002-debian-rules-Add-CONFIG_MTD.patch b/recipes-core/swupdate/files/0002-debian-rules-Add-CONFIG_MTD.patch
 deleted file mode 100644
-index adc7962c..00000000
---- a/recipes-bsp/efibootguard/files/src-patches/0001-add-machine-type-name-for-riscv64.patch
+index e62a4fc..0000000
+--- a/recipes-core/swupdate/files/0002-debian-rules-Add-CONFIG_MTD.patch
++++ /dev/null
+@@ -1,27 +0,0 @@
+-From c3adc5d2be41e151c811c96f2bed245778fec82c Mon Sep 17 00:00:00 2001
+-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+-Date: Wed, 29 Sep 2021 11:29:57 +0200
+-Subject: [PATCH 02/10] debian/rules: Add CONFIG_MTD
+-
+-if pkg.swupdate.bpo is set CONFIG_MTD is disable but not enabled.
+-
+-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+----
+- debian/rules | 1 +
+- 1 file changed, 1 insertion(+)
+-
+-diff --git a/debian/rules b/debian/rules
+-index 08b74a1..6705140 100755
+---- a/debian/rules
+-+++ b/debian/rules
+-@@ -20,6 +20,7 @@ endif
+- override_dh_auto_configure:
+- 	cp debian/configs/defconfig  configs/debian_defconfig
+- ifeq (,$(filter pkg.swupdate.bpo,$(DEB_BUILD_PROFILES)))
+-+	echo CONFIG_MTD=y                  >> configs/debian_defconfig
+- 	echo CONFIG_SWUFORWARDER_HANDLER=y >> configs/debian_defconfig
+- 	echo CONFIG_CFI=y                  >> configs/debian_defconfig
+- 	echo CONFIG_CFIHAMMING1=y          >> configs/debian_defconfig
+--- 
+-2.34.1
+-
+diff --git a/recipes-core/swupdate/files/0001-debian-Remove-SWUpdate-USB-service-and-Udev-rules.patch b/recipes-core/swupdate/files/2021.11/0001-debian-Remove-SWUpdate-USB-service-and-Udev-rules.patch
+similarity index 100%
+rename from recipes-core/swupdate/files/0001-debian-Remove-SWUpdate-USB-service-and-Udev-rules.patch
+rename to recipes-core/swupdate/files/2021.11/0001-debian-Remove-SWUpdate-USB-service-and-Udev-rules.patch
+diff --git a/recipes-core/swupdate/files/0002-debian-rules-Add-Embedded-Lua-handler-option.patch b/recipes-core/swupdate/files/2021.11/0002-debian-rules-Add-Embedded-Lua-handler-option.patch
+similarity index 100%
+rename from recipes-core/swupdate/files/0002-debian-rules-Add-Embedded-Lua-handler-option.patch
+rename to recipes-core/swupdate/files/2021.11/0002-debian-rules-Add-Embedded-Lua-handler-option.patch
+diff --git a/recipes-core/swupdate/files/0003-debian-rules-Add-option-to-disable-fs-creation.patch b/recipes-core/swupdate/files/2021.11/0003-debian-rules-Add-option-to-disable-fs-creation.patch
+similarity index 100%
+rename from recipes-core/swupdate/files/0003-debian-rules-Add-option-to-disable-fs-creation.patch
+rename to recipes-core/swupdate/files/2021.11/0003-debian-rules-Add-option-to-disable-fs-creation.patch
+diff --git a/recipes-core/swupdate/files/0004-debian-rules-Add-option-to-disable-webserver.patch b/recipes-core/swupdate/files/2021.11/0004-debian-rules-Add-option-to-disable-webserver.patch
+similarity index 100%
+rename from recipes-core/swupdate/files/0004-debian-rules-Add-option-to-disable-webserver.patch
+rename to recipes-core/swupdate/files/2021.11/0004-debian-rules-Add-option-to-disable-webserver.patch
+diff --git a/recipes-core/swupdate/files/0005-debian-Add-patch-to-fix-bootloader_env_get-for-EBG.patch b/recipes-core/swupdate/files/2021.11/0005-debian-Add-patch-to-fix-bootloader_env_get-for-EBG.patch
+similarity index 100%
+rename from recipes-core/swupdate/files/0005-debian-Add-patch-to-fix-bootloader_env_get-for-EBG.patch
+rename to recipes-core/swupdate/files/2021.11/0005-debian-Add-patch-to-fix-bootloader_env_get-for-EBG.patch
+diff --git a/recipes-core/swupdate/files/0006-debian-prepare-build-for-isar-debian-buster.patch b/recipes-core/swupdate/files/2021.11/0006-debian-prepare-build-for-isar-debian-buster.patch
+similarity index 100%
+rename from recipes-core/swupdate/files/0006-debian-prepare-build-for-isar-debian-buster.patch
+rename to recipes-core/swupdate/files/2021.11/0006-debian-prepare-build-for-isar-debian-buster.patch
+diff --git a/recipes-core/swupdate/files/0001-d-rules-Add-option-for-suricatta_lua.patch b/recipes-core/swupdate/files/2023.05/0001-d-rules-Add-option-for-suricatta_lua.patch
+similarity index 87%
+rename from recipes-core/swupdate/files/0001-d-rules-Add-option-for-suricatta_lua.patch
+rename to recipes-core/swupdate/files/2023.05/0001-d-rules-Add-option-for-suricatta_lua.patch
+index 0be5a71..5aeb605 100644
+--- a/recipes-core/swupdate/files/0001-d-rules-Add-option-for-suricatta_lua.patch
++++ b/recipes-core/swupdate/files/2023.05/0001-d-rules-Add-option-for-suricatta_lua.patch
+@@ -1,7 +1,7 @@
+-From 00fc691802e671594cea1d0a5e880d255e04b7f0 Mon Sep 17 00:00:00 2001
++From f94f8c2f62ade7568fe8fafa106488761fc55f91 Mon Sep 17 00:00:00 2001
+ From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+ Date: Wed, 3 May 2023 16:02:37 +0200
+-Subject: [PATCH] d/rules: Add option for suricatta_lua
++Subject: [PATCH 1/4] d/rules: Add option for suricatta_lua
+ 
+ This allows to use lua plugins as suricatta backends. It is optional
+ as it overrides the default HAWKBIT backend.
+diff --git a/recipes-core/swupdate/files/2023.05/0002-d-rules-Add-seperate-build_profile-option-for-delta-.patch b/recipes-core/swupdate/files/2023.05/0002-d-rules-Add-seperate-build_profile-option-for-delta-.patch
+new file mode 100644
+index 0000000..4203061
+--- /dev/null
++++ b/recipes-core/swupdate/files/2023.05/0002-d-rules-Add-seperate-build_profile-option-for-delta-.patch
+@@ -0,0 +1,45 @@
++From a5ab9aaa53acac4c4155b6c4cc8a86bc59278e53 Mon Sep 17 00:00:00 2001
++From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
++Date: Thu, 15 Jun 2023 18:48:25 +0200
++Subject: [PATCH 2/4] d/rules: Add seperate build_profile option for delta
++ update
++
++Delta update need zchunk 1.3 to work on memory restricted
++devices. zchunk 1.3 is is not available in bullseye-backports
++and Debian bookworm(12).
++
++Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
++---
++ debian/control | 2 +-
++ debian/rules   | 2 +-
++ 2 files changed, 2 insertions(+), 2 deletions(-)
++
++diff --git a/debian/control b/debian/control
++index e47c320c..d4b17972 100644
++--- a/debian/control
+++++ b/debian/control
++@@ -26,7 +26,7 @@ Build-Depends: debhelper-compat (= 13),
++                uuid-dev,
++                zlib1g-dev,
++                libzstd-dev,
++-               libzck-dev (>= 1.2) <!pkg.swupdate.bpo>,
+++               libzck-dev (>= 1.3) <pkg.swupdate.delta>,
++                libp11-kit-dev <pkg.swupdate.p11>,
++                libwolfssl-dev <pkg.swupdate.p11>,
++                libmtd-dev [linux-any],
++diff --git a/debian/rules b/debian/rules
++index 91106fbd..8cac6359 100755
++--- a/debian/rules
+++++ b/debian/rules
++@@ -38,7 +38,7 @@ ifeq (linux,$(DEB_HOST_ARCH_OS))
++ else
++ 	echo "# CONFIG_MTD is not set"     >> configs/debian_defconfig
++ endif
++-ifeq (,$(filter pkg.swupdate.bpo,$(DEB_BUILD_PROFILES)))
+++ifneq (,$(filter pkg.swupdate.delta,$(DEB_BUILD_PROFILES)))
++ 	echo CONFIG_DELTA=y >> configs/debian_defconfig
++ endif
++ ifneq (,$(findstring $(DEB_HOST_ARCH),amd64 i386 arm64 armhf riscv64 ia64))
++-- 
++2.39.2
++
+diff --git a/recipes-core/swupdate/files/2023.05/0003-d-patches-Add-patch-to-add-the-build-version-to-swup.patch b/recipes-core/swupdate/files/2023.05/0003-d-patches-Add-patch-to-add-the-build-version-to-swup.patch
+new file mode 100644
+index 0000000..857b4ab
+--- /dev/null
++++ b/recipes-core/swupdate/files/2023.05/0003-d-patches-Add-patch-to-add-the-build-version-to-swup.patch
+@@ -0,0 +1,94 @@
++From ed4e8b5d4ad6ffcddb755571303c077fff227ea3 Mon Sep 17 00:00:00 2001
++From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
++Date: Fri, 16 Jun 2023 19:43:38 +0200
++Subject: [PATCH 3/4] d/patches: Add patch to add the build version to swupdate
++
++The build version is only set if build in a git repository
++this patch allows to use the version information stored in
++the Makefile.
++
++Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
++---
++ ...Set-version-if-git-returns-no-informa.diff | 46 +++++++++++++++++++
++ debian/patches/series                         |  1 +
++ debian/rules                                  |  2 +
++ 3 files changed, 49 insertions(+)
++ create mode 100644 debian/patches/Makefile.flags-Set-version-if-git-returns-no-informa.diff
++
++diff --git a/debian/patches/Makefile.flags-Set-version-if-git-returns-no-informa.diff b/debian/patches/Makefile.flags-Set-version-if-git-returns-no-informa.diff
++new file mode 100644
++index 00000000..7f964fb7
++--- /dev/null
+++++ b/debian/patches/Makefile.flags-Set-version-if-git-returns-no-informa.diff
++@@ -0,0 +1,46 @@
+++From bc50744125e8686ec2eb7e5676522da98e51601f Mon Sep 17 00:00:00 2001
+++From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+++Date: Sat, 17 Jun 2023 17:56:18 +0200
+++Subject: [PATCH] Makefile.flags: Set version if git returns no information
+++
+++This set the swupdate version if build in a non git environment.
+++E.g. pristine-tar build or from a release tarball.
+++
+++Also allows to set the EXTRAVERSION from the command line.
+++
+++Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+++---
+++ Makefile       | 2 +-
+++ Makefile.flags | 3 +++
+++ 2 files changed, 4 insertions(+), 1 deletion(-)
+++
+++diff --git a/Makefile b/Makefile
+++index 09d03a34..1004945c 100644
+++--- a/Makefile
++++++ b/Makefile
+++@@ -5,7 +5,7 @@
+++ VERSION = 2023
+++ PATCHLEVEL = 05
+++ SUBLEVEL = 0
+++-EXTRAVERSION =
++++EXTRAVERSION ?=
+++ NAME =
+++ 
+++ IPCLIB_VERSION = 0.1
+++diff --git a/Makefile.flags b/Makefile.flags
+++index 2a021c89..8eada8fc 100644
+++--- a/Makefile.flags
++++++ b/Makefile.flags
+++@@ -7,6 +7,9 @@
+++ # ==========================================================================
+++ SWU_DIR = $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+++ SWU_VER = $(shell git -C $(SWU_DIR) describe --tags --always --dirty)
++++ifeq (,$(SWU_VER))
++++	SWU_VER = $(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRAVERSION)
++++endif
+++ export SWU_VER
+++ SKIP_STRIP ?= n
+++ 
+++-- 
+++2.39.2
+++
++diff --git a/debian/patches/series b/debian/patches/series
++index 5638bbf5..12324569 100644
++--- a/debian/patches/series
+++++ b/debian/patches/series
++@@ -1,3 +1,4 @@
++ Link-config-to-swupdate-www-path.diff
++ Replace-Font-Awesome-5-with-Fork-Awesome.diff
++ use-gcc-compiler.diff
+++Makefile.flags-Set-version-if-git-returns-no-informa.diff
++diff --git a/debian/rules b/debian/rules
++index 8cac6359..566a21bd 100755
++--- a/debian/rules
+++++ b/debian/rules
++@@ -17,6 +17,8 @@ export DH_WITH=--with lua
++ export HAVE_LUA=y
++ endif
++ 
+++DEB_CHANGELOG_VERSION := $(shell dpkg-parsechangelog | sed -n -e 's/^Version: //p' | cut -d + -f 2)
+++export EXTRAVERSION=($(DEB_CHANGELOG_VERSION))
++ BU_SWU=
++ ifeq (linux,$(DEB_HOST_ARCH_OS))
++ 	BU_SWU += -VBuilt-Using="$(shell dpkg-query -f '$${source:Package} (= $${source:Version}), ' -W libmtd-dev libubi-dev)"
++-- 
++2.39.2
++
+diff --git a/recipes-core/swupdate/files/2023.05/0004-d-rules-Add-option-to-enable-suricatta_wfx.patch b/recipes-core/swupdate/files/2023.05/0004-d-rules-Add-option-to-enable-suricatta_wfx.patch
+new file mode 100644
+index 0000000..9c5ebd3
+--- /dev/null
++++ b/recipes-core/swupdate/files/2023.05/0004-d-rules-Add-option-to-enable-suricatta_wfx.patch
+@@ -0,0 +1,30 @@
++From ee401ba4d0d81fc244288e7e59a7bc5cfe2d1bf4 Mon Sep 17 00:00:00 2001
++From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
++Date: Fri, 16 Jun 2023 20:32:38 +0200
++Subject: [PATCH 4/4] d/rules: Add option to enable suricatta_wfx
++
++Add the DEB_BUILD_PROFILE "pkg.swupdate.suricattawfx" to build with
++suricattawfx lua module.
++
++Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
++---
++ debian/rules | 3 +++
++ 1 file changed, 3 insertions(+)
++
++diff --git a/debian/rules b/debian/rules
++index 566a21bd..fc122d0d 100755
++--- a/debian/rules
+++++ b/debian/rules
++@@ -61,6 +61,9 @@ endif
++ ifneq (,$(filter pkg.swupdate.suricattalua,$(DEB_BUILD_PROFILES)))
++ 	echo CONFIG_SURICATTA_LUA=y >> configs/debian_defconfig
++ endif
+++ifneq (,$(filter pkg.swupdate.suricattawfx,$(DEB_BUILD_PROFILES)))
+++	echo CONFIG_SURICATTA_WFX=y >> configs/debian_defconfig
+++endif
++ ifneq (,$(LUA_VERSION))
++ 	echo CONFIG_LUAPKG=\"lua$(LUA_VERSION)\" >> configs/debian_defconfig
++ 	echo CONFIG_LUASCRIPTHANDLER=y           >> configs/debian_defconfig
++-- 
++2.39.2
++
+diff --git a/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb b/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
+index da1434e..2384f41 100644
+--- a/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
++++ b/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
+@@ -15,6 +15,8 @@ require swupdate.inc
+ DEB_BUILD_PROFILES += "nodoc"
+ DEB_BUILD_OPTIONS += "nodoc"
+ 
++FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files/2021.11:"
++
+ SRC_URI = "git://salsa.debian.org/debian/swupdate.git;protocol=https;branch=debian/master"
+ SRCREV ="344548c816b555c58ec199f31e45703897d23fb5"
+ 
+diff --git a/recipes-core/swupdate/swupdate_2022.12+dfsg-4-gbp.bb b/recipes-core/swupdate/swupdate_2022.12+dfsg-4-gbp.bb
+deleted file mode 100644
+index da44ae5..0000000
+--- a/recipes-core/swupdate/swupdate_2022.12+dfsg-4-gbp.bb
 +++ /dev/null
 @@ -1,39 +0,0 @@
--From 391dd5e04b17be6f5184afb2de4853795f1d5620 Mon Sep 17 00:00:00 2001
--From: Felix Moessbauer <felix.moessbauer@siemens.com>
--Date: Tue, 31 Jan 2023 09:27:31 +0100
--Subject: [PATCH 1/1] add machine type name for riscv64
+-#
+-# CIP Core, generic profile
+-#
+-# Copyright (c) Siemens AG, 2023
+-#
+-# Authors:
+-#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+-#
+-# SPDX-License-Identifier: MIT
 -
--By adding the machine type name, the generated efi binary for
--riscv64 is suffixed with the corresponding efi machine name.
+-inherit dpkg-gbp
 -
--Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
--Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-----
-- configure.ac | 4 ++++
-- 1 file changed, 4 insertions(+)
+-require swupdate.inc
 -
--diff --git a/configure.ac b/configure.ac
--index d8f9d3a..90d70b0 100644
----- a/configure.ac
--+++ b/configure.ac
--@@ -87,6 +87,7 @@ SET_ARCH(X86_64, x86_64*)
-- SET_ARCH(IA64, ia64*)
-- SET_ARCH(AARCH64, aarch64*)
-- SET_ARCH(ARM, arm*)
--+SET_ARCH(RISCV64, riscv64*)
-- 
-- ARCH=$(echo $host | sed "s/\(-\).*$//")
-- 
--@@ -103,6 +104,9 @@ AM_COND_IF(ARCH_AARCH64, [
-- AM_COND_IF(ARCH_ARM, [
-- 	   MACHINE_TYPE_NAME=arm])
-- 
--+AM_COND_IF(ARCH_RISCV64, [
--+	   MACHINE_TYPE_NAME=riscv64])
--+
-- AC_SUBST([ARCH])
-- AC_SUBST([MACHINE_TYPE_NAME])
-- AM_CONDITIONAL([ARCH_IS_X86], [test "$ARCH" = "ia32" -o "$ARCH" = "x86_64"])
---- 
--2.30.2
+-DEPENDS += "libebgenv-dev"
 -
+-DEB_BUILD_PROFILES += "nodoc"
+-DEB_BUILD_OPTIONS += "nodoc"
+-
+-SRC_URI = "git://salsa.debian.org/debian/swupdate.git;protocol=https;branch=debian/master"
+-SRCREV ="aa9edf070567fa5b3e942c270633a8feef49dad8"
+-SRC_URI += "file://0001-d-rules-Add-option-for-suricatta_lua.patch"
+-
+-# deactivate signing and hardware compability for simple a/b rootfs update
+-DEB_BUILD_PROFILES += "pkg.swupdate.nosigning"
+-DEB_BUILD_PROFILES += "pkg.swupdate.nohwcompat"
+-
+-# use suricatta-lua instead of suricatta-hawkbit
+-# DEB_BUILD_PROFILES = "pkg.swupdate.suricattalua"
+-
+-# Disable cross for arm and arm64 on bullseye
+-# with cross compile we have a unsat-dependency to dh-nodejs on arm/arm64
+-ISAR_CROSS_COMPILE:bullseye = "0"
+-
+-# add cross build and deactivate testing for arm based builds
+-DEB_BUILD_PROFILES += "cross nocheck"
+-
+-# use backport build profile for bullseye
+-DEB_BUILD_PROFILES:append:bullseye = " pkg.swupdate.bpo"
+diff --git a/recipes-core/swupdate/swupdate_2023.05.bb b/recipes-core/swupdate/swupdate_2023.05.bb
+new file mode 100644
+index 0000000..26c0e67
+--- /dev/null
++++ b/recipes-core/swupdate/swupdate_2023.05.bb
+@@ -0,0 +1,60 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2023
++#
++# Authors:
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++
++inherit dpkg
++
++require swupdate.inc
++
++DEPENDS += "libebgenv-dev"
++
++DEB_BUILD_PROFILES += "nodoc"
++DEB_BUILD_OPTIONS += "nodoc"
++
++FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files/${PV}:"
++
++SRC_URI += "git://github.com/sbabic/swupdate.git;protocol=https;branch=master;name=upstream;destsuffix=${P}"
++SRC_URI += "git://salsa.debian.org/debian/swupdate.git;protocol=https;branch=debian/master;name=debian;subpath=debian;destsuffix=${P}/debian"
++
++SRCREV_debian = "aa9edf070567fa5b3e942c270633a8feef49dad8"
++SRCREV_upstream = "c8ca55684c375937dbcdefb0563071a35137f4ba"
++
++# patches
++SRC_URI += "file://0001-d-rules-Add-option-for-suricatta_lua.patch \
++            file://0002-d-rules-Add-seperate-build_profile-option-for-delta-.patch \
++            file://0003-d-patches-Add-patch-to-add-the-build-version-to-swup.patch \
++            file://0004-d-rules-Add-option-to-enable-suricatta_wfx.patch"
++
++# deactivate signing and hardware compability for simple a/b rootfs update
++DEB_BUILD_PROFILES += "pkg.swupdate.nosigning"
++DEB_BUILD_PROFILES += "pkg.swupdate.nohwcompat"
++
++# suricatta wfx requires suricatta lua and the dependency
++# is not set automatically
++DEB_BUILD_PROFILES += "pkg.swupdate.suricattalua"
++# add suricatta wfx
++DEB_BUILD_PROFILES += "pkg.swupdate.suricattawfx"
++
++# Disable cross for arm and arm64 on bullseye
++# with cross compile we have a unsat-dependency to dh-nodejs on arm/arm64
++ISAR_CROSS_COMPILE:bullseye = "0"
++
++# add cross build and deactivate testing for arm based builds
++DEB_BUILD_PROFILES += "cross nocheck"
++
++# use backport build profile for bullseye
++DEB_BUILD_PROFILES:append:bullseye = " pkg.swupdate.bpo"
++
++CHANGELOG_V ?= "${PV}+cip-${SRCREV_upstream}"
++
++do_prepare_build() {
++    deb_add_changelog
++    cd ${WORKDIR}
++    tar cJf ${PN}_${PV}+cip.orig.tar.xz --exclude=.git --exclude=debian ${P}
++}
 -- 
-2.35.3
+2.39.2
+
 
