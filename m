@@ -1,126 +1,65 @@
-Return-Path: <srinuvasan_a@mentor.com>
+Return-Path: <venkata.pyla@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2B4AEB64D7
-	for <webhook@archiver.kernel.org>; Tue, 20 Jun 2023 07:09:34 +0000 (UTC)
-Received: from esa3.mentor.iphmx.com (esa3.mentor.iphmx.com [68.232.137.180])
- by mx.groups.io with SMTP id smtpd.web10.4859.1687244967914424716
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE0B7EB64DB
+	for <webhook@archiver.kernel.org>; Tue, 20 Jun 2023 13:57:16 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.157])
+ by mx.groups.io with SMTP id smtpd.web11.10924.1687269426044712120
  for <cip-dev@lists.cip-project.org>;
- Tue, 20 Jun 2023 00:09:28 -0700
+ Tue, 20 Jun 2023 06:57:06 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: mentor.com, ip: 68.232.137.180, mailfrom: srinuvasan_a@mentor.com)
-X-IronPort-AV: E=Sophos;i="6.00,256,1681200000"; 
-   d="scan'208";a="9263316"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa3.mentor.iphmx.com with ESMTP; 19 Jun 2023 23:09:22 -0800
-IronPort-SDR: 9z9CsnNTDd/ByhiWK+N8HXj+xIXWRAimP3p3MR1esRMIKbXgJJ6jIv4xrS9oKW+0vg4rCw4QMX
- fB+1jiDWUcBVXbXEH4sYXq4vzpMLH+eumw5oF2y1absc8XQoQ1RcJ57uCm7mw5n4mSfNZEwf0E
- P+Ue+khZLMxtpsJt1Bkz22KubHi6KpIheOOlmU3llraZLxLk1bzxn7exzTYxsjgpRyCJkIjbie
- a/Ep0llYmcJsNn711uCIsXWrHcaAU6e0xjRrFTIUeN1RlQiIkWFCA+jdzoyK/f6q0skC3aO/3V
- GiA=
-From: Srinuvasan Arjunan <srinuvasan_a@mentor.com>
-To: <cip-dev@lists.cip-project.org>
-CC: <jan.kiszka@siemens.com>, Srinuvasan A <srinuvasan.a@siemens.com>
-Subject: [isar-cip-core][PATCH] recipes-kernel/linux: update cip-kernels to latest one
-Date: Tue, 20 Jun 2023 12:38:57 +0530
-Message-ID: <20230620070857.885691-1-srinuvasan_a@mentor.com>
-X-Mailer: git-send-email 2.34.1
+ dkim=missing; spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.157, mailfrom: venkata.pyla@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1115) id 35KDv3Dx014522; Tue, 20 Jun 2023 22:57:03 +0900
+X-Iguazu-Qid: 2wHHJG9eOnqDYrQpFI
+X-Iguazu-QSIG: v=2; s=0; t=1687269423; q=2wHHJG9eOnqDYrQpFI; m=w9RePoh48+1mSxsLICYIt9rrEAkNG3HsPfyAe1PxIJo=
+Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
+	by relay.securemx.jp (mx-mr1113) id 35KDv2pj035061
+	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 20 Jun 2023 22:57:02 +0900
+From: venkata.pyla@toshiba-tsip.com
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Cc: venkata pyla <venkata.pyla@toshiba-tsip.com>,
+        dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
+Subject: [isar-cip-core] kas-cip.yml: Update isar reference
+Date: Tue, 20 Jun 2023 19:26:57 +0530
+X-TSB-HOP2: ON
+Message-Id: <20230620135657.4585-1-venkata.pyla@toshiba-tsip.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: svr-orw-mbx-13.mgc.mentorg.com (147.34.90.213) To
- svr-orw-mbx-13.mgc.mentorg.com (147.34.90.213)
+X-OriginalArrivalTime: 20 Jun 2023 13:57:00.0729 (UTC) FILETIME=[15DF9A90:01D9A37F]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 20 Jun 2023 07:09:34 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12084
+ <cip-dev@lists.cip-project.org>; Tue, 20 Jun 2023 13:57:16 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12085
 
-From: Srinuvasan A <srinuvasan.a@siemens.com>
+From: venkata pyla <venkata.pyla@toshiba-tsip.com>
 
-Update cip-kernels to latest one.
+To bring the reproducible build issue fixes from the upstream
+ e.g.: vmlinux files are not reproducible in case of arm architectures
 
-Signed-off-by: Srinuvasan A <srinuvasan.a@siemens.com>
+Signed-off-by: venkata pyla <venkata.pyla@toshiba-tsip.com>
 ---
- ...19.280-cip95-rt30.bb => linux-cip-rt_4.19.284-cip99-rt31.bb} | 2 +-
- ...4.4.302-cip74-rt43.bb => linux-cip-rt_4.4.302-cip76-rt44.bb} | 2 +-
- ...{linux-cip_4.19.283-cip98.bb => linux-cip_4.19.284-cip99.bb} | 2 +-
- .../{linux-cip_4.4.302-cip75.bb => linux-cip_4.4.302-cip76.bb}  | 2 +-
- ...{linux-cip_5.10.180-cip34.bb => linux-cip_5.10.182-cip35.bb} | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
- rename recipes-kernel/linux/{linux-cip-rt_4.19.280-cip95-rt30.bb => linux-cip-rt_4.19.284-cip99-rt31.bb} (72%)
- rename recipes-kernel/linux/{linux-cip-rt_4.4.302-cip74-rt43.bb => linux-cip-rt_4.4.302-cip76-rt44.bb} (72%)
- rename recipes-kernel/linux/{linux-cip_4.19.283-cip98.bb => linux-cip_4.19.284-cip99.bb} (72%)
- rename recipes-kernel/linux/{linux-cip_4.4.302-cip75.bb => linux-cip_4.4.302-cip76.bb} (72%)
- rename recipes-kernel/linux/{linux-cip_5.10.180-cip34.bb => linux-cip_5.10.182-cip35.bb} (72%)
+ kas-cip.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/recipes-kernel/linux/linux-cip-rt_4.19.280-cip95-rt30.bb b/recipes-kernel/linux/linux-cip-rt_4.19.284-cip99-rt31.bb
-similarity index 72%
-rename from recipes-kernel/linux/linux-cip-rt_4.19.280-cip95-rt30.bb
-rename to recipes-kernel/linux/linux-cip-rt_4.19.284-cip99-rt31.bb
-index d973b94..6a1ccea 100644
---- a/recipes-kernel/linux/linux-cip-rt_4.19.280-cip95-rt30.bb
-+++ b/recipes-kernel/linux/linux-cip-rt_4.19.284-cip99-rt31.bb
-@@ -13,4 +13,4 @@ require linux-cip-rt-common.inc
+diff --git a/kas-cip.yml b/kas-cip.yml
+index b6a3ded..454fe04 100644
+--- a/kas-cip.yml
++++ b/kas-cip.yml
+@@ -22,7 +22,7 @@ repos:
  
- KERNEL_DEFCONFIG_VERSION ?= "4.19.y-cip"
+   isar:
+     url: https://github.com/ilbers/isar.git
+-    refspec: f95f69d3b83cc28976ef81eeefb5ec5dd17e544f
++    refspec: d2b961746be788f0f35f8297ed3a8d2292704a4c
+     layers:
+       meta:
  
--SRC_URI[sha256sum] = "dfe9992d937c47f2f5a79ddd2156fd4ab749c9d82ef04506dfa8da6cfbb594b0"
-+SRC_URI[sha256sum] = "a4984846d2a239cfe9ab8546dd3a692d8fcf6da60228b54b51a8abc5b0ce2fed"
-diff --git a/recipes-kernel/linux/linux-cip-rt_4.4.302-cip74-rt43.bb b/recipes-kernel/linux/linux-cip-rt_4.4.302-cip76-rt44.bb
-similarity index 72%
-rename from recipes-kernel/linux/linux-cip-rt_4.4.302-cip74-rt43.bb
-rename to recipes-kernel/linux/linux-cip-rt_4.4.302-cip76-rt44.bb
-index 7380fb6..43488dd 100644
---- a/recipes-kernel/linux/linux-cip-rt_4.4.302-cip74-rt43.bb
-+++ b/recipes-kernel/linux/linux-cip-rt_4.4.302-cip76-rt44.bb
-@@ -13,4 +13,4 @@ require linux-cip-rt-common.inc
- 
- KERNEL_DEFCONFIG_VERSION ?= "4.4.y-cip"
- 
--SRC_URI[sha256sum] = "62b83cafae6009b407018178ce76ffe7d23be8b33b7cf1bb1af82eb7a323c02a"
-+SRC_URI[sha256sum] = "01260a42cf979e28e183bc2161a5885dfaae1628eefc1325438294f4def8adc5"
-diff --git a/recipes-kernel/linux/linux-cip_4.19.283-cip98.bb b/recipes-kernel/linux/linux-cip_4.19.284-cip99.bb
-similarity index 72%
-rename from recipes-kernel/linux/linux-cip_4.19.283-cip98.bb
-rename to recipes-kernel/linux/linux-cip_4.19.284-cip99.bb
-index b12fb6b..e223a1f 100644
---- a/recipes-kernel/linux/linux-cip_4.19.283-cip98.bb
-+++ b/recipes-kernel/linux/linux-cip_4.19.284-cip99.bb
-@@ -13,4 +13,4 @@ require linux-cip-common.inc
- 
- KERNEL_DEFCONFIG_VERSION ?= "4.19.y-cip"
- 
--SRC_URI[sha256sum] = "6d8474aad8621163f1478fcd110f391863ee2ed5180fccb4613c2e3eccc2e4e6"
-+SRC_URI[sha256sum] = "eb64e6f848e8c60e00b5234e7460cf4bfbdd138047bc31244f692c33b83226cc"
-diff --git a/recipes-kernel/linux/linux-cip_4.4.302-cip75.bb b/recipes-kernel/linux/linux-cip_4.4.302-cip76.bb
-similarity index 72%
-rename from recipes-kernel/linux/linux-cip_4.4.302-cip75.bb
-rename to recipes-kernel/linux/linux-cip_4.4.302-cip76.bb
-index fae6e12..6c45b5d 100644
---- a/recipes-kernel/linux/linux-cip_4.4.302-cip75.bb
-+++ b/recipes-kernel/linux/linux-cip_4.4.302-cip76.bb
-@@ -13,4 +13,4 @@ require linux-cip-common.inc
- 
- KERNEL_DEFCONFIG_VERSION ?= "4.4.y-cip"
- 
--SRC_URI[sha256sum] = "b7616ce99de5f9f29065c8adb4a9465d118b7f4c89276f95b9de755c99cb3f61"
-+SRC_URI[sha256sum] = "a3437df29f07a2dbfcc2dbee94fc0397b37b5eb63c6e4453fcb0bff694c0169f"
-diff --git a/recipes-kernel/linux/linux-cip_5.10.180-cip34.bb b/recipes-kernel/linux/linux-cip_5.10.182-cip35.bb
-similarity index 72%
-rename from recipes-kernel/linux/linux-cip_5.10.180-cip34.bb
-rename to recipes-kernel/linux/linux-cip_5.10.182-cip35.bb
-index 9b812b7..86020b6 100644
---- a/recipes-kernel/linux/linux-cip_5.10.180-cip34.bb
-+++ b/recipes-kernel/linux/linux-cip_5.10.182-cip35.bb
-@@ -13,4 +13,4 @@ require linux-cip-common.inc
- 
- KERNEL_DEFCONFIG_VERSION ?= "5.10.y-cip"
- 
--SRC_URI[sha256sum] = "6b715945aa287b93fa8e69086988a76b3d0f1e5da82caad47dd653baac3bfd55"
-+SRC_URI[sha256sum] = "cc25a9303eb46f39ae882df646ba3c544494ae136e05812b1d1e7ebf9e8db28a"
 -- 
-2.34.1
+2.20.1
+
 
 
