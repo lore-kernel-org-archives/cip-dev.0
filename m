@@ -1,153 +1,166 @@
-Return-Path: <venkata.pyla@toshiba-tsip.com>
+Return-Path: <chris.paterson2@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 996D3EB64D7
-	for <webhook@archiver.kernel.org>; Wed, 21 Jun 2023 04:38:24 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.133])
- by mx.groups.io with SMTP id smtpd.web11.4028.1687322301311293992
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 810E8EB64D7
+	for <webhook@archiver.kernel.org>; Wed, 21 Jun 2023 08:04:05 +0000 (UTC)
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (JPN01-OS0-obe.outbound.protection.outlook.com [40.107.113.111])
+ by mx.groups.io with SMTP id smtpd.web10.5926.1687334635101998376
  for <cip-dev@lists.cip-project.org>;
- Tue, 20 Jun 2023 21:38:22 -0700
+ Wed, 21 Jun 2023 01:03:56 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.133, mailfrom: venkata.pyla@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1116) id 35L4cHfT029487; Wed, 21 Jun 2023 13:38:18 +0900
-X-Iguazu-Qid: 2wHH8MjPbfosrD1sph
-X-Iguazu-QSIG: v=2; s=0; t=1687322297; q=2wHH8MjPbfosrD1sph; m=fweqtl+z/n39Jc1WLwDVvd0/YnhEYWG0RaVRpD5uCQE=
-Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1111) id 35L4cGr7018657
-	(version=TLSv1.2 cipher=AES128-GCM-SHA256 bits=128 verify=NOT);
-	Wed, 21 Jun 2023 13:38:17 +0900
+ dkim=pass header.i=@renesas.com header.s=selector1 header.b=HetzN7fp;
+ spf=pass (domain: renesas.com, ip: 40.107.113.111, mailfrom: chris.paterson2@renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NgCl2/cP7zkRIAXqZPjJMtuo9TsC9AOHfuzEeKhuMKwLorcGjTouDjVQvT6ofyziVeT9AoVXgn821ihCof+9W/7GR+74jBhQHm3pvCZlX0H/Y+DGnrG5rGV+XWNPjp5gnoB4KmZ1tE2L4Vv/XxmKL1quMQh9VFZog1mTCalQxVl/7tEOI/pSIwcfkgnpUHPhDXg0nv2YizD/k5LXEcGmn5SPpk6Fr4DtGeEHgouInFCQPMX4MFMJldUDijGrvSlBwiohmR9di/7DrnnshUQuvBo57HSwxctx4WiWrKF08yM1JYxidn4uK5IjJCfWOCXzfa0GoIbbP2xtFRHk9DbsYw==
+ b=R0xjSsBk1G0qiDQbkjyNKbYOW2g5XSHPzKE+uBLy4qJ/u7pk6/yumOrujoyiu/QazXmkG1KW3hqHWGd1r/qrViT8BeuaXy2LkzoNH9JjJ6u8r2ZP3sr9dbLcQRvN3WlldS7MWJCC32ZNUXMrLk9sntLQm66xS2T2RODVs9gwUMviu/IBlOkOwXfbh7X+8cZUACzZYQzYi2yQAC0KCcvtFJrlO8tIxlqI7vFEAXLHJD1qJ8CKoz+nOWyhuPY/WHd1gdM1IR/2rAghjQUsYFE0BeP5kAxbjqnAZuF176Uq35zU/Ers+K1D2zj5ULOoqfhlxRXfnl4SPlunn9e/L8xhkA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0dVDM60M/5bgFnHZvH3VKvp1FkbsFfDOlW+czHFeBeo=;
- b=cexictRH1iVtlyYNLOFe8AHkzv5y7ssOftlRgB8NlsgLUf0EocyLYa3lVrzi8BSpp3vYQmnymxuuEXOdBP2LXUa34z4fmVKoKUoKHgFXwTqmfgDm1SO9DZOZbUff0C6AFhYqcMRBOSMXTRwUWqrutAOUe00q8NTfICaXHfIic+7AoSKogEphtUqlnH0YqTi8FBm10Z5acbV4An11oe4kKgotEvW4F8GnGAEQEUcPDa6YNY+xkm5fQu0DgI5dJV8g5bH8F06fibu1qcTLupjmkLbqi0zLoTQ/LkeK1kDLN73XbCig02NUE2iyT+2F1Z1ZnKWyJjlsKjRkv3wb5Qb2zA==
+ bh=JoBlw98+h9EnlDhADrC6gmkhY9ve9PmQK6cieRuL4Io=;
+ b=CRF7d6lYpFZYSHwPqcP2MqY43EXDbVqUwJl/ZDKTIkiyweHriBM7iHxQdso5lQgQeIemrnwqeRFmqJ2zRHPV9E4SKCa4i39wwPmrVRKpDix4sJZPMGnnboPPM24oUQj+IoVEjdjIU+Kr/ec7M1nXvmlxbik+moyDAiZWfdvQ2+qI25NuyphhZi0+Giw4OMgopiaf/9h5dLp7bwz6o90J2ySB6bCVnWJAIiwJkFLeRDnGKhl+YxUdv14O/uFZgRCDi96jvsKn9OI7DKWD0ipnDB6hTLjiJ+LMqBC0Apy3cYj84Op9xMK95QMZQRT7AA2roGyDjt5sw5qcW6a1k/QnUw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
- header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
-From: <Venkata.Pyla@toshiba-tsip.com>
-To: <jan.kiszka@siemens.com>, <cip-dev@lists.cip-project.org>
-CC: <dinesh.kumar@toshiba-tsip.com>, <kazuhiro3.hayashi@toshiba.co.jp>
-Subject: RE: [isar-cip-core] kas-cip.yml: Update isar reference
-Thread-Topic: [isar-cip-core] kas-cip.yml: Update isar reference
-Thread-Index: AQHZo38XPHqaDc6vPE+PMcz3kwZRka+T61gAgADBaVA=
-Date: Wed, 21 Jun 2023 04:38:14 +0000
-X-TSB-HOP2: ON
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JoBlw98+h9EnlDhADrC6gmkhY9ve9PmQK6cieRuL4Io=;
+ b=HetzN7fp14BOlI9RtMm47yZsUIm9mjki/gjO2IihD8lKsfSol2hlCAXm8GLuANmRE5zjYg8V0HuwMUz4UB0SAJ/2GeZj1Tev+uA0H80hhxJgMKM8wTa+GxkdfOhIwfxy1CJ2hWk5rTwHxXWiqZ+o8NQ0gkEJYlEHUKbsjCT9O9o=
+Received: from TY2PR01MB3788.jpnprd01.prod.outlook.com (2603:1096:404:dd::14)
+ by TYCPR01MB9465.jpnprd01.prod.outlook.com (2603:1096:400:199::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.23; Wed, 21 Jun
+ 2023 08:03:50 +0000
+Received: from TY2PR01MB3788.jpnprd01.prod.outlook.com
+ ([fe80::a4f8:4204:cbe6:6cb3]) by TY2PR01MB3788.jpnprd01.prod.outlook.com
+ ([fe80::a4f8:4204:cbe6:6cb3%3]) with mapi id 15.20.6521.023; Wed, 21 Jun 2023
+ 08:03:48 +0000
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"cip-members@lists.cip-project.org" <cip-members@lists.cip-project.org>
+Subject: FW: [kernelci-members] Request for Proposals: UX Analysis 2023
+Thread-Topic: [kernelci-members] Request for Proposals: UX Analysis 2023
+Thread-Index: AQHZpBS6LljNijwyWEWrqTxIX+Vieq+U5UOA
+Date: Wed, 21 Jun 2023 08:03:48 +0000
 Message-ID: 
- <OSYPR01MB5542073E3F04E9344EBD420EA45DA@OSYPR01MB5542.jpnprd01.prod.outlook.com>
-References: <20230620135657.4585-1-venkata.pyla@toshiba-tsip.com>
- <ab761cf3-2792-b05d-635a-fd5ff5a7991c@siemens.com>
-In-Reply-To: <ab761cf3-2792-b05d-635a-fd5ff5a7991c@siemens.com>
-Accept-Language: en-IN, en-US
+ <TY2PR01MB3788130CAEB273100E48CC63B75DA@TY2PR01MB3788.jpnprd01.prod.outlook.com>
+References: <74ac6506-7171-5b78-52c5-d6a3095df9dd@collabora.com>
+In-Reply-To: <74ac6506-7171-5b78-52c5-d6a3095df9dd@collabora.com>
+Accept-Language: en-US, en-GB
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
+ header.d=none;dmarc=none action=none header.from=renesas.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OSYPR01MB5542:EE_|TYCPR01MB10760:EE_
-x-ms-office365-filtering-correlation-id: 32c4a305-9e11-4565-15c0-08db72115394
+x-ms-traffictypediagnostic: TY2PR01MB3788:EE_|TYCPR01MB9465:EE_
+x-ms-office365-filtering-correlation-id: dc912093-c65b-47c6-aa05-08db722e0b63
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
 x-microsoft-antispam-message-info: 
- /8tCezbvUwMgXgNToidvnOd3FL8mbPIDHUII/k/j9O42nTnIuFRS7mZTYc3wOlkB67m58bhNgxFLft0kq0c9qKjkPbDU6uoKBbUT+S+UY2+8m1XNYRJqA0cQdpqiEQiTYET5Pr3VpiujXH7noWV4mfTWxGZAXKzwA58drEOpGqGoHFVFlNl9JuNWMiMMwNK529vBqBOkOtS91FE905P/eusxORYr0VlmtoA7pvr7ohOdsrO68ttV6H3Khr1hJegin+MVxBSfz3xUi7PYB4yu0aMzIM2y/mwd1TMVycvHtcO6dLJ4MTGn3IQhbBOfSz3TU4rHg3tN6PkEzfocw52v0q/z+FnurKMb/RE7Zi9z1QRd2om6k0vOvZ6wZSw7dZs2X+1mj0LtN6tcKiP+1raH6d83uIHUQeOfNbTrFVGQKVFLBwenZXiFdU0mZSyV0aYQG/KGmSFRGOuKjFpCTAT8sDid3MivlLQmPLy1mpCAFizCsujLOM2gQolRBNZGQB9/qHh5D5K5KJzMILasEv/6dL4wpY58yRe5o57uJ0QBANcg5F6bk1Mfc9tQWlB/3lts3BPMakctAM7Ak9Dhe+zWFTi27Wjwy7NoLGRntmKyVJE=
+ t+X4hXKphGJNchGTYzVjkyZR0FMU2HE02CdD5pfk9e7azviOqGhPhXhctYIio04Qx5NytjrF8c9rH82O8f/v1n1WIszxJnfYdwxUv9DUWeBPS0/fUYSR9peWQ/8JBiZvDbO2Ed+yFlcQXc+YOY9jdX8aX+pMd4Vw/qj53OL2IK5gIoCtqnb35MoDKoBxbUM1UrZMXGh0+6ehS/r0O3ps/aAiBAVkKvcidKa3YZBsq5O32mosrDJcf6WvBiE++G3P6uQ6m+5Q6d/BbaQjl+voDCH/sjP/9ExFzeWGwDeMAjH7cUibwMgywXBmmxLXdtJLNOdhDIBP34haA1Fo7p5LhIOnI44DpJo6p+Qp85Y3pRPI5PHpbftE8B1qt5z6vTO32IvUrSc7iIqsHCfpqdurvxsi5I++7SLrWSPAV7oZ5wd2fjfv13OfQs+r/yltwkADPYamrNV21jBNPP5rpPaBYBwR68tREd3p7OVGcGNIa0aO1I+h05Vd1OCh4vBWXFZH48lPelqD5fqhjiKc+una/E4w/qOZ6OHaWXrtK7bKfnKYR33O71qG7io01Hey/V4OjuwutX3pjIoOuNVyo9KbO/ItydPrME6dKUAyP2CUpEE=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSYPR01MB5542.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(396003)(136003)(376002)(346002)(366004)(451199021)(33656002)(85182001)(52536014)(5660300002)(8936002)(66476007)(38100700002)(38070700005)(66446008)(41300700001)(8676002)(66556008)(4326008)(64756008)(122000001)(86362001)(316002)(66946007)(55016003)(76116006)(107886003)(966005)(9686003)(6506007)(26005)(186003)(15650500001)(2906002)(7696005)(478600001)(71200400001)(110136005)(54906003)(83380400001);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR01MB3788.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(396003)(136003)(366004)(376002)(346002)(451199021)(9686003)(186003)(38100700002)(122000001)(6506007)(55016003)(53546011)(26005)(66899021)(83380400001)(110136005)(76116006)(450100002)(66946007)(33656002)(478600001)(52536014)(66476007)(2906002)(5660300002)(86362001)(66556008)(316002)(66446008)(8676002)(64756008)(8936002)(41300700001)(966005)(7696005)(38070700005)(71200400001);DIR:OUT;SFP:1102;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?c1lxYmtyOTdBSThKNUdmQ0c1NEdmR200ZUNScXZEZ0FHTENaWmdMZk43UE9m?=
- =?utf-8?B?ZWRDM0R4NFViNG1WYWxpM0VEbitsckMzZHRPS2tLVDEwZmdOamYxVG9ubzhZ?=
- =?utf-8?B?dTRGSk1KLzV1cnBxWGFRcm9DUW1MZk9MK1FnY2dMQ25aQU50cUdkMzJhb2Ur?=
- =?utf-8?B?dzBrbWs3Z3Y3RmVuemdqQWZoaWVDL3N2TGc4aTdWb0l2SGNhanJhUGJ1eEQz?=
- =?utf-8?B?a0JvN04vSHRvMWc3MjUxVHRNUlArNmtwYldKMXBpeEl0a2s3dVY5MEw1TzRR?=
- =?utf-8?B?eFFGVnNscDZaV3IvdEZ0dmJsMnNlamZpZ0hzc1N5clRFVlV6QWN1Mlk5TXAr?=
- =?utf-8?B?cEVIc0p3UHBMRDU0b0VJS01aMDhoMGNaRHBzWUVoM3ZlTHNic0tPUUUrZlJR?=
- =?utf-8?B?V21aK1lnWTdMRlZ3R1RWVDBNcjQ5K3FDcmcxYnZ4cTdGWmJOc2tacmxoaXdy?=
- =?utf-8?B?SVB2U29mL0x1NW1CcEVZVDBJMzIyVlRnaUFhMlQzRVVnQ2pab01ES0ZvWE5M?=
- =?utf-8?B?QkgzSHdCc2x4ME5IMGgzZVdnOFFQR3VMb1ZQWmFGU3VobzVNYVdHNnlzYi9l?=
- =?utf-8?B?NnF4MzNPZ1lrSnJwak1qdWlzeGR5ajFNbnk1d1JwbHVmNFAxb3U4YlNaR3Iw?=
- =?utf-8?B?cjBVRTlmekloNVVyaUlJc3VMd2R3MXZrYW0wZkRidlZXOStLbDhzbHA3WU9s?=
- =?utf-8?B?Si9hV2pWYkp3M0NJQVhIeXlpcjEvVVpuNmNuTEpwWUdqS3JFVnIxMmZHcGRY?=
- =?utf-8?B?MFJhd1NsMmYwTlFmV2FuZ0JmaUpYZGZxemxSNHBZbWpwcStla2M4KzFXSTVH?=
- =?utf-8?B?YlVSVG1PS2V3MWFqRUhNWXpEVGJraElEcm1VQzdyc2ZrQkUxNFlBWGVKRnBC?=
- =?utf-8?B?SmtGT0RoclpJU0RIVTN6dzUwOGlKanRtbXJqRTh6aEY3UlJheVh5Z1pJMkR4?=
- =?utf-8?B?VjBiK0YvNGdKWEtHUWd0Z2FjK21SMTFwUFhMQzUvb3JHRXdwMTZJUFdocktv?=
- =?utf-8?B?R2d3RytoOGRaQ1JZN2Yyc3htSWllN2xyektwTWlWTWdpc0k0c0xvVCtnK2Jo?=
- =?utf-8?B?emtZV3JqV0RzN2syNGx6M0UxbnRGcktnV1JweTQvSllUQ0dISzAxelRRWVF1?=
- =?utf-8?B?RUowdVE2N1NENS9QazgzejRwdHgzUjBKZlVKOWRTaEZ0M0FIeTVEUUNDU1A0?=
- =?utf-8?B?UWJ4dWV4ZE14YkhtcVFxWkIwd1lQSG5EWGRZV2UybzIwTXZQU2s4anUwQUpa?=
- =?utf-8?B?NTNEbGFCSE5waVlUc2FrbkRNQjJuYUZFTWcxNVJNOU83MjNaUXNVOXBNUGl0?=
- =?utf-8?B?aHBEd2wyR21ZVzZkSVpJVjIyZWEyTnViTEJwdlArbllRbzV3ZGpOUDNYb2Ez?=
- =?utf-8?B?TFBETlBMekptN09WY0NYclVLRnYyaENnMlJ4VHYwNU94T2ZoSk13ZEhBazhQ?=
- =?utf-8?B?cmVQSDVpdWpiaDFHUDB0cStpSjlJclNQbXdvMTdDTXZRY3lQR1pORWMvVW14?=
- =?utf-8?B?RFVQeXpQQURTY2ZwLzMzdTFRTHZhSlNhMW8xRUpRRDU4a2JFWVdkc1JmeGp4?=
- =?utf-8?B?VDVsNEM1V0ZlbUh0RnJ0OUNGOFMrRVJSSkpINGlpSzJ1b3UreW1wVk9HTFpT?=
- =?utf-8?B?K2ZLaC9TQzBxQ3RtMHZ6aVByVS92ZHBCNkF1UENDTU92b3VGYkM0RWZzZHdK?=
- =?utf-8?B?U3gxS1g0WWNaZ2pxNUxVS3lFZzBrQkF6VncxT0ZXS2V2S3ArL0h4N0t3QzR2?=
- =?utf-8?B?UDZncXllN0xiU2RORStZOUw3OWttdFJzMVp2QUVMSkZZMkJkQTlrUk9acnpr?=
- =?utf-8?B?Zy9OOXk4R0Y3RmRKUFNNeXI5Y2pHcnJnZkNNV3ZYdFNLcGNYalZQdGZ5ZDZl?=
- =?utf-8?B?Uit5ZWV5ekxxY0pFdkwwRUk2R2lzMFIzMWVGSnBBTEZNc3IvZ2t0WVZpQUxB?=
- =?utf-8?B?aGxlSkRwMVlSTW5zNStXTmRFbmFxVEYvZDBIOXhnWDVIcytWMlRzV3MwdUFu?=
- =?utf-8?B?M3ZMU1U2TjBFNVk3cHJrUy90WDNuT0VmRFRGL29uUGpPckFtaUF2UThYL1JK?=
- =?utf-8?B?Mndoc08rTDVjZ3lPeTNTUzZNNTI1c25wQ3NjSG8yVkhwWURxd3BrNWYraEFT?=
- =?utf-8?B?U2p3MG8wVnlCNDg1aWFwYkhlaXFNWFE2UHRjQnB1QTZhWFAzV3pVL0w3OWNB?=
- =?utf-8?B?ekE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ =?Windows-1252?Q?1z2CdykMSlexChk8WzjBKfcwHuU5o4YdGoM+BHovC8O0FvwedTzll21m?=
+ =?Windows-1252?Q?qn4DcYOwlnhIJo1trOXi+L5KSyZqvFK1RelhmXVfr2WOw0hb1NGmLNdk?=
+ =?Windows-1252?Q?/texlFCNv9ayXxPWw5HTVARy5vyMqj1GM1DPjzky90XwnU9Sq37kpasg?=
+ =?Windows-1252?Q?3eEDJUdne20/kAB2+Sn7mbC17dXel83La7U4FYdnuya8+BcwnGoAa9bH?=
+ =?Windows-1252?Q?Ie0Vu0bYemp/ouUehw4qyYDjfCyMTtHAohtAf+9QLyf2q9f/L/CePq+5?=
+ =?Windows-1252?Q?7YyfKgpQ1I8umOxGxEEAuLh1aZ3yBX0lja7BBEHIy7k0wpq6pA91Fym4?=
+ =?Windows-1252?Q?nB5XC83diAbfRgMYiLJn7sEUhRRUqBO5GWNlCw9mbe6KwZlecoZ/uMRY?=
+ =?Windows-1252?Q?IYvFJF+BSRvmxmjfo0b/vyDdst+rVrs+U0PIfNxoem23nXg5hoRpOSsY?=
+ =?Windows-1252?Q?ttxBfApoopVCewCA1pmud+sk6WA2WAc/qzNLGQbM8PRVwFQI0sfpXdcA?=
+ =?Windows-1252?Q?SpJgUrRRNmN7ft8CjYdmNJ3XlwyGgPe7Ud37Wzkle18LEDbBw3cXmtBu?=
+ =?Windows-1252?Q?s8xFlnX6lDhCdqFdIf8v+xPZvQVujWIqxmtFfQs52BGG1lDyDzuK+hGz?=
+ =?Windows-1252?Q?K8oWZ4KDz3vWdITqlQnM4hR0z/++qO9tTK3sFyFV3hYoF9QFwrT1p8Jb?=
+ =?Windows-1252?Q?upL0FLxVCdphBkpPeQmtZl56wqsVfaUWwOHk+0xiNoU+ovj7oVZpvb6P?=
+ =?Windows-1252?Q?4RXk++UXQaB7P6sN8MVwIIZ/6LVtuUZNzYPsfJBbVE1NW8UsMkA7Q3g7?=
+ =?Windows-1252?Q?rCDjyMbI1Txc8+n+J/dzUjoAUHmAIOgxWWV+LrvmEgRi9HFYcq68kaje?=
+ =?Windows-1252?Q?Z3TrSjG7mnZJ3OT/puSHrdGS2y78taPmt56YBJ9SgtskwBUSYMalHlLC?=
+ =?Windows-1252?Q?bBwaZDS12h63SUgQtocIFA/T1XQjSeXS9wupIS1B5t3/Dbi8t2t6dwSh?=
+ =?Windows-1252?Q?2gGqcjC6HzT4ZXL5czZWKB/0M+21IjaVW/jGLihSPpc6OQM/M5WW1pUu?=
+ =?Windows-1252?Q?htAgtg6cPBwk/jhQDjglCwH7uOpaskaYQjFsvtU75FHNMZpytLkVTutS?=
+ =?Windows-1252?Q?0TrjzkakomZ/Yy72P9IiV++GfaV+zIvrZKcURja34KYzFoQqGvh+PomO?=
+ =?Windows-1252?Q?8Cdhso9SRHwzSbnhmmwZQmlPbJiDtvmiF0skBFVb+gRKgDtbi8S8mS7z?=
+ =?Windows-1252?Q?yQs5eu3AfVAOd5sq7WdRyDkVHWgl2pZfVKPVesXTWJjmQrHYx1fRRazh?=
+ =?Windows-1252?Q?HZr32X1yk0hHYYwmckZLvra2oS6DxCRkerObS+83f4X6/rKZRHbnl0tf?=
+ =?Windows-1252?Q?rImyOLmp6y+baya0Vn5XM/7g6YJS32EN3n8+bMjqN7w53d/EReJG9/TI?=
+ =?Windows-1252?Q?HGN4WFWrDbH/6Gc9oiUw/okv2it0aDuGdQogjTqJ96q7EJjA+NsdR+Kj?=
+ =?Windows-1252?Q?DzH5tfbTkyjFuBkOQqLZZ3nEsgyPGDy3aNA+KGFAXyeSr/BBJJHe4mAl?=
+ =?Windows-1252?Q?ISSjz7cwDNDM0O+aImoFMzSYFf9ggAPdG35wZihGUBVZXys9akqLlOP4?=
+ =?Windows-1252?Q?FtyEQ7B9DVLJGwnNB7Hye7KIjur3j+9/ByJdBo+LH6D/aa23bjIm2uiP?=
+ =?Windows-1252?Q?6a/jO9wvUcK+APTpiJRyjcj3GcT4dmmkboU65D7rBxOGf/qciZpuzg?=
+ =?Windows-1252?Q?=3D=3D?=
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	s2LyE+LJPRy6flYgcaChS8sc3x+hQ1+MfiwbNhLk2ePSi+8zTq7qmVurHjrRZn6Gt4opXlCUFsCtn6/E6YDqf79ct4hJ0/795mpDvE+wG8BwOVqSDrSjazvsIHEAaXnzAAo/xlora1AP+eCv5Efq1o8Ee4w1IfTSSSaj1WD9AH/9kbTsAeaH3fOj4+pm1OeIjTC1SOzwVp66dugOzq5TazuzWnGAS5FSW1CaFkryCJ+8VDVE1Ij0xA+1eP7RDfO2vSVhOEXh3IOg9dssPcBmjgd5Vd6Q6gDTkB5tO63UcfwEeTaBSUtInL1Zn3RNoLCdYbV+uzoxW1L8/PnFLlmzExCabflZ6Uy/qXteOlEEp/OQZ9QcND+wYkxSHQU8D7PQ8enA3pHMDL5ztTlmEi9aBGp/OaWV5gyniKtVttWI8AZzDm9h5o0bz806W1HYxG4lXddv80dSK7lMYcvVzL6F+U3TtrNCwYTh2D9j3KmSMqTlcRQiH5/vV8/hp0Ly9Bqx5uSDYkomAYl9p6zhwv093wyu77tI34AABo1eghWKN0faIYtZF6p06UtL6tIiT5iB8LpHe3D9ScRO+XADwnCDI63LILtxHNakJ8O9Oxce5nU74TUDwGkqvaDjBUuJHOgKmP46D5CQCpxop2uNFSY3Hh/lz04bEMp0DL5TobM48CSnu7OqmC64CZ+4d7mNjTMdg4OexZEUGFX+sXx8tgkwjKPySAmmqa11DQSW8QBvSbdlO3rdz4X0qvM0lD7e33DcWfhVs8g/NIG4ClMl70jDf7dlLIIiMOmxvJKxHKKGyq8ng1U+wd9cPSB80wUs0lfX6gflGBsEJvYTkpaIVFfeVA==
-X-OriginatorOrg: toshiba-tsip.com
+X-OriginatorOrg: renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSYPR01MB5542.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 32c4a305-9e11-4565-15c0-08db72115394
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jun 2023 04:38:14.5110
+X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB3788.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc912093-c65b-47c6-aa05-08db722e0b63
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jun 2023 08:03:48.7828
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pdiiXj/cJVnDPw1w0bntLx/PS6TF2aN279j80MtwiyMaD1YqGua3ReAVXyU2sNSiKBQzQ8u1hVX6vzSI0SnUPRU3OPD+I09D7bGj/8MLOCI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB10760
+X-MS-Exchange-CrossTenant-userprincipalname: xvRC2bQmW/jTc9Lq2rmJmPYE3TVDqrk7LzEjcX22I6fFbG8nT9BabJyihza/6VW/1wXHOZrl/d29y1TRRAiGtpbNbEvI+cDy6ctNotDb+rk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB9465
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 21 Jun 2023 04:38:24 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12090
+ <cip-dev@lists.cip-project.org>; Wed, 21 Jun 2023 08:04:05 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12091
 
-DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IEphbiBLaXN6a2EgPGphbi5r
-aXN6a2FAc2llbWVucy5jb20+DQo+U2VudDogVHVlc2RheSwgSnVuZSAyMCwgMjAyMyAxMDozNCBQ
-TQ0KPlRvOiBweWxhIHZlbmthdGEo77y077yz77yp77ywIFRNSUVDIE9ERyBQb3J0aW5nKSA8VmVu
-a2F0YS5QeWxhQHRvc2hpYmEtDQo+dHNpcC5jb20+OyBjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0
-Lm9yZw0KPkNjOiBkaW5lc2gga3VtYXIo77y077yz77yp77ywIFRNSUVDIE9ERyBQb3J0aW5nKSA8
-ZGluZXNoLmt1bWFyQHRvc2hpYmEtDQo+dHNpcC5jb20+OyBoYXlhc2hpIGthenVoaXJvKOaelyDl
-kozlro8g77yk77yt77ylIOKXi++8pO+8qe+8p+KWoe+8re+8sO+8s+KXi++8re+8sO+8lCkNCj48
-a2F6dWhpcm8zLmhheWFzaGlAdG9zaGliYS5jby5qcD4NCj5TdWJqZWN0OiBSZTogW2lzYXItY2lw
-LWNvcmVdIGthcy1jaXAueW1sOiBVcGRhdGUgaXNhciByZWZlcmVuY2UNCj4NCj5PbiAyMC4wNi4y
-MyAxNTo1NiwgdmVua2F0YS5weWxhQHRvc2hpYmEtdHNpcC5jb20gd3JvdGU6DQo+PiBGcm9tOiB2
-ZW5rYXRhIHB5bGEgPHZlbmthdGEucHlsYUB0b3NoaWJhLXRzaXAuY29tPg0KPj4NCj4+IFRvIGJy
-aW5nIHRoZSByZXByb2R1Y2libGUgYnVpbGQgaXNzdWUgZml4ZXMgZnJvbSB0aGUgdXBzdHJlYW0N
-Cj4+ICBlLmcuOiB2bWxpbnV4IGZpbGVzIGFyZSBub3QgcmVwcm9kdWNpYmxlIGluIGNhc2Ugb2Yg
-YXJtIGFyY2hpdGVjdHVyZXMNCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiB2ZW5rYXRhIHB5bGEgPHZl
-bmthdGEucHlsYUB0b3NoaWJhLXRzaXAuY29tPg0KPj4gLS0tDQo+PiAga2FzLWNpcC55bWwgfCAy
-ICstDQo+PiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+
-Pg0KPj4gZGlmZiAtLWdpdCBhL2thcy1jaXAueW1sIGIva2FzLWNpcC55bWwgaW5kZXggYjZhM2Rl
-ZC4uNDU0ZmUwNCAxMDA2NDQNCj4+IC0tLSBhL2thcy1jaXAueW1sDQo+PiArKysgYi9rYXMtY2lw
-LnltbA0KPj4gQEAgLTIyLDcgKzIyLDcgQEAgcmVwb3M6DQo+Pg0KPj4gICAgaXNhcjoNCj4+ICAg
-ICAgdXJsOiBodHRwczovL2dpdGh1Yi5jb20vaWxiZXJzL2lzYXIuZ2l0DQo+PiAtICAgIHJlZnNw
-ZWM6IGY5NWY2OWQzYjgzY2MyODk3NmVmODFlZWVmYjVlYzVkZDE3ZTU0NGYNCj4+ICsgICAgcmVm
-c3BlYzogZDJiOTYxNzQ2YmU3ODhmMGYzNWY4Mjk3ZWQzYThkMjI5MjcwNGE0Yw0KPj4gICAgICBs
-YXllcnM6DQo+PiAgICAgICAgbWV0YToNCj4+DQo+DQo+SXMgdGhpcyB1cmdlbnQgdG8gbW92ZSBv
-bj8gT3Igc2hvdWxkIHdlIHdhaXQgZm9yIHRoZSBJc2FyIGZpeCBbMV0gdG8gbW92ZSB0bw0KPm1h
-c3RlciBvciBldmVuIGJleW9uZCAodGhlcmUgYXJlIHNvbWUgY2hhbmdlcyBjb21pbmcgZm9yIE9Q
-LVRFRSAmIENvLik/DQpOb3QgdXJnZW50LCB3ZSBjYW4gd2FpdCBmb3IgaXQuDQoNCllvdSBjYW4g
-aWdub3JlIHRoZSBwYXRjaCBmcm9tIG1lLCB0aGFua3MgZm9yIHRoZSBpbmZvcm1hdGlvbi4NCg0K
-Pg0KPkphbg0KPg0KPlsxXQ0KPmh0dHBzOi8vZ3JvdXBzLmdvb2dsZS5jb20vZC9tc2dpZC9pc2Fy
-LXVzZXJzLzg5MmM2ZTM0LWJkODctMDRmYS0xMTU1LQ0KPmRhZDNmZDA2MGI5MyU0MHNpZW1lbnMu
-Y29tDQo+DQo+DQo+LS0NCj5TaWVtZW5zIEFHLCBUZWNobm9sb2d5DQo+Q29tcGV0ZW5jZSBDZW50
-ZXIgRW1iZWRkZWQgTGludXgNCg==
+FYI
 
+Kind regards, Chris
+
+-----Original Message-----
+From: kernelci-members@groups.io <kernelci-members@groups.io> On Behalf Of =
+Guillaume Tucker via groups.io
+Sent: Wednesday, June 21, 2023 8:49 AM
+To: kernelci@lists.linux.dev; automated-testing@lists.yoctoproject.org
+Cc: kernelci-members@groups.io
+Subject: [kernelci-members] Request for Proposals: UX Analysis 2023
+
+KernelCI is now looking for proposals to conduct an UX Analysis
+for a new web dashboard.
+
+Based on the Community Survey in 2020 and after gathering
+feedback and ideas from kernel developers, we now have a clearer
+idea of what would be expected from an ideal web dashboard for
+KernelCI.  The next steps are to start thinking about how that
+could be turned into reality, and for this we need some
+professional help from web designers and developers as we don't
+have such skills in-house.
+
+The goal of this RFP is to go through an initial UX Analysis
+phase which would then become the foundation for making
+specifications to implement a real web dashboard.  The full RFP
+document can be found here:
+
+https://kernelci.org/blog/posts/2023/rfp-ux-analysis/RFP-UX-Analysis-2023-v=
+2.pdf
+
+See also the blog post which can easily be shared:
+
+https://kernelci.org/blog/posts/2023/rfp-ux-analysis/
+
+
+Please send any proposals or inquiries to the KernelCI members:
+
+  kernelci-members@groups.io
+
+The deadline for submitting proposals is 10th July.  However, as
+we're already half-way through the initial 6-week period and we
+didn't send any email about the RFP earlier, we might choose to
+give it some extra time if the original deadline turns out to be
+too short notice.  Please let us know if that is the case.
+
+Best wishes,
+Guillaume,
+On behalf of the KernelCI board of members
 
