@@ -1,72 +1,124 @@
-Return-Path: <sai.sathujoda@toshiba-tsip.com>
+Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A37C0015E
-	for <webhook@archiver.kernel.org>; Fri, 30 Jun 2023 11:35:07 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
- by mx.groups.io with SMTP id smtpd.web11.9659.1688124904265152620
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5118EB64DA
+	for <webhook@archiver.kernel.org>; Fri, 30 Jun 2023 15:51:28 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web10.16097.1688140286836415918
  for <cip-dev@lists.cip-project.org>;
- Fri, 30 Jun 2023 04:35:05 -0700
+ Fri, 30 Jun 2023 08:51:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.152, mailfrom: sai.sathujoda@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 35UBZ2Hj224983; Fri, 30 Jun 2023 20:35:02 +0900
-X-Iguazu-Qid: 2yAb9zVTf4UN8Gfir4
-X-Iguazu-QSIG: v=2; s=0; t=1688124901; q=2yAb9zVTf4UN8Gfir4; m=cNNF34c2dly6oMq2350lGmtibLwXDYo5lANdOdwMrH8=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1800) id 35UBZ09j2733783
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 30 Jun 2023 20:35:01 +0900
-From: Sai.Sathujoda@toshiba-tsip.com
-To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
-Cc: Sai <Sai.Sathujoda@toshiba-tsip.com>, dinesh.kumar@toshiba-tsip.com,
-        kazuhiro3.hayashi@toshiba.co.jp
-Subject: [isar-cip-core] security-customizations: Fix broken sshd_config in bookworm
-Date: Fri, 30 Jun 2023 17:04:58 +0530
-X-TSB-HOP2: ON
-Message-Id: <20230630113458.8610-1-Sai.Sathujoda@toshiba-tsip.com>
-X-Mailer: git-send-email 2.20.1
+ dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+X-IronPort-AV: E=Sophos;i="6.01,171,1684767600"; 
+   d="scan'208";a="166244102"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 01 Jul 2023 00:51:28 +0900
+Received: from localhost.localdomain (unknown [10.226.93.15])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 767DA400CE6D;
+	Sat,  1 Jul 2023 00:51:26 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Pavel Machek <pavel@denx.de>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Subject: [PATCH 5.10.y-cip 3/3] i2c: rzv2m: Disable the operation of unit in case of error
+Date: Fri, 30 Jun 2023 16:51:18 +0100
+Message-Id: <20230630155118.584293-4-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230630155118.584293-1-biju.das.jz@bp.renesas.com>
+References: <20230630155118.584293-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 30 Jun 2023 11:34:59.0559 (UTC) FILETIME=[E6FDBF70:01D9AB46]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 30 Jun 2023 11:35:07 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12162
+ <cip-dev@lists.cip-project.org>; Fri, 30 Jun 2023 15:51:28 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12166
 
-From: Sai <Sai.Sathujoda@toshiba-tsip.com>
+commit c3cc5c59cb16dbf14d8c52ac4df6650438613b5b upstream.
 
-ChallengeResponseAuthentication configuration is sshd_config is deprecated from
-bookworm, so modify the configuration setting based on its availability.
+The remove and suspend callbacks disable the operation of the unit.
+Do the same in probe() in case of error.
 
-Signed-off-by: Sai <Sai.Sathujoda@toshiba-tsip.com>
+While at it, introduce a helper function rzv2m_i2c_disable() for
+disabling the operation of the unit and this function is shared
+between probe error path, remove and suspend callbacks.
+
+Reported-by: Pavel Machek <pavel@denx.de>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Wolfram Sang <wsa@kernel.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- recipes-core/security-customizations/files/postinst | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
- mode change 100644 => 100755 recipes-core/security-customizations/files/postinst
+ drivers/i2c/busses/i2c-rzv2m.c | 30 +++++++++++++++++++-----------
+ 1 file changed, 19 insertions(+), 11 deletions(-)
 
-diff --git a/recipes-core/security-customizations/files/postinst b/recipes-core/security-customizations/files/postinst
-old mode 100644
-new mode 100755
-index d370345..4438776
---- a/recipes-core/security-customizations/files/postinst
-+++ b/recipes-core/security-customizations/files/postinst
-@@ -82,5 +82,11 @@ if grep -c "pam_google_authenticator.so" "${SSHD_AUTH_CONFIG}";then
- fi
- echo "auth required pam_google_authenticator.so nullok" | tee -a "${SSHD_AUTH_CONFIG}"
- # Enable PAM configuration for Remote Session
--sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' "${SSHD_CONFIG}"
-+if grep -s -q "ChallengeResponseAuthentication" "${SSHD_CONFIG}";then
-+       sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' "${SSHD_CONFIG}"
-+fi
+diff --git a/drivers/i2c/busses/i2c-rzv2m.c b/drivers/i2c/busses/i2c-rzv2m.c
+index 9481cac85e2e..5de2bb184691 100644
+--- a/drivers/i2c/busses/i2c-rzv2m.c
++++ b/drivers/i2c/busses/i2c-rzv2m.c
+@@ -389,6 +389,20 @@ static u32 rzv2m_i2c_func(struct i2c_adapter *adap)
+ 	       I2C_FUNC_10BIT_ADDR;
+ }
+ 
++static int rzv2m_i2c_disable(struct device *dev, struct rzv2m_i2c_priv *priv)
++{
++	int ret;
 +
-+if grep -s -q "KbdInteractiveAuthentication" "${SSHD_CONFIG}";then
-+       sed -i 's/KbdInteractiveAuthentication no/KbdInteractiveAuthentication yes/g' "${SSHD_CONFIG}"
-+fi
- echo "AuthenticationMethods keyboard-interactive" | tee -a "${SSHD_CONFIG}"
++	ret = pm_runtime_resume_and_get(dev);
++	if (ret < 0)
++		return ret;
++
++	bit_clrl(priv->base + IICB0CTL0, IICB0IICE);
++	pm_runtime_put(dev);
++
++	return 0;
++}
++
+ static const struct i2c_adapter_quirks rzv2m_i2c_quirks = {
+ 	.flags = I2C_AQ_NO_ZERO_LEN,
+ };
+@@ -461,8 +475,10 @@ static int rzv2m_i2c_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, priv);
+ 
+ 	ret = i2c_add_numbered_adapter(adap);
+-	if (ret < 0)
++	if (ret < 0) {
++		rzv2m_i2c_disable(dev, priv);
+ 		pm_runtime_disable(dev);
++	}
+ 
+ 	return ret;
+ }
+@@ -473,7 +489,7 @@ static int rzv2m_i2c_remove(struct platform_device *pdev)
+ 	struct device *dev = priv->adap.dev.parent;
+ 
+ 	i2c_del_adapter(&priv->adap);
+-	bit_clrl(priv->base + IICB0CTL0, IICB0IICE);
++	rzv2m_i2c_disable(dev, priv);
+ 	pm_runtime_disable(dev);
+ 
+ 	return 0;
+@@ -489,16 +505,8 @@ MODULE_DEVICE_TABLE(of, rzv2m_i2c_ids);
+ static int rzv2m_i2c_suspend(struct device *dev)
+ {
+ 	struct rzv2m_i2c_priv *priv = dev_get_drvdata(dev);
+-	int ret;
+-
+-	ret = pm_runtime_resume_and_get(dev);
+-	if (ret < 0)
+-		return ret;
+-
+-	bit_clrl(priv->base + IICB0CTL0, IICB0IICE);
+-	pm_runtime_put(dev);
+ 
+-	return 0;
++	return rzv2m_i2c_disable(dev, priv);
+ }
+ 
+ static int rzv2m_i2c_resume(struct device *dev)
 -- 
-2.20.1
-
+2.25.1
 
 
