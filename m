@@ -1,82 +1,62 @@
-Return-Path: <biju.das.jz@bp.renesas.com>
+Return-Path: <fabrizio.castro.jz@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D5DEB64DC
-	for <webhook@archiver.kernel.org>; Mon,  3 Jul 2023 13:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 468D5C001B0
+	for <webhook@archiver.kernel.org>; Mon,  3 Jul 2023 17:02:23 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.32251.1688390479080035631
+ by mx.groups.io with SMTP id smtpd.web11.38620.1688403736033447206
  for <cip-dev@lists.cip-project.org>;
- Mon, 03 Jul 2023 06:21:19 -0700
+ Mon, 03 Jul 2023 10:02:16 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=missing; spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: fabrizio.castro.jz@renesas.com)
 X-IronPort-AV: E=Sophos;i="6.01,178,1684767600"; 
-   d="scan'208";a="170243077"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 03 Jul 2023 22:21:16 +0900
-Received: from localhost.localdomain (unknown [10.226.93.24])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5B2CC422107F;
-	Mon,  3 Jul 2023 22:21:15 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
+   d="scan'208";a="170259398"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 04 Jul 2023 02:02:13 +0900
+Received: from dev.ree.adwin.renesas.com (unknown [10.226.38.7])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7AA58400EF84;
+	Tue,  4 Jul 2023 02:02:12 +0900 (JST)
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 5.10.y-cip] usb: gadget: udc: renesas_usb3: Fix RZ/V2M {modprobe,bind} error
-Date: Mon,  3 Jul 2023 14:21:13 +0100
-Message-Id: <20230703132113.353419-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 0/4] Add Renesas RZ/V2M PWC support
+Date: Mon,  3 Jul 2023 18:02:07 +0100
+Message-Id: <20230703170211.15484-1-fabrizio.castro.jz@renesas.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 03 Jul 2023 13:21:22 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12184
+ <cip-dev@lists.cip-project.org>; Mon, 03 Jul 2023 17:02:23 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12185
 
-commit 3e6ac852fbc71a234de24b5455086f6b98d3d958 upstream.
+Dear All,
 
-Currently {modprobe, bind} after {rmmod, unbind} results in probe failure.
+this series adds support for the PWC IP found inside the Renesas
+RZ/V2M SoC.
 
-genirq: Flags mismatch irq 22. 00000004 (85070400.usb3drd) vs. 00000004 (85070400.usb3drd)
-renesas_usb3: probe of 85070000.usb3peri failed with error -16
+Thanks,
+Fab
 
-The reason is, it is trying to register an interrupt handler for the same
-IRQ twice. The devm_request_irq() was called with the parent device.
-So the interrupt handler won't be unregistered when the usb3-peri device
-is unbound.
+Fabrizio Castro (4):
+  dt-bindings: soc: renesas: Add RZ/V2M PWC
+  soc: renesas: Add PWC support for RZ/V2M
+  arm64: dts: renesas: r9a09g011: Add PWC support
+  arm64: dts: renesas: v2mevk2: Add PWC support
 
-Fix this issue by replacing "parent dev"->"dev" as the irq resource
-is managed by this driver.
+ .../soc/renesas/renesas,rzv2m-pwc.yaml        |  56 +++++++
+ .../boot/dts/renesas/r9a09g011-v2mevk2.dts    |   5 +
+ arch/arm64/boot/dts/renesas/r9a09g011.dtsi    |   8 +
+ drivers/soc/renesas/Kconfig                   |   4 +
+ drivers/soc/renesas/Makefile                  |   1 +
+ drivers/soc/renesas/pwc-rzv2m.c               | 150 ++++++++++++++++++
+ 6 files changed, 224 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/renesas/renesas,rzv2m-pwc.yaml
+ create mode 100644 drivers/soc/renesas/pwc-rzv2m.c
 
-Fixes: 9cad72dfc556 ("usb: gadget: Add support for RZ/V2M USB3DRD driver")
-Cc: stable <stable@kernel.org>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Message-ID: <20230530161720.179927-1-biju.das.jz@bp.renesas.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/usb/gadget/udc/renesas_usb3.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index a1e8669536d8..bcbdb6b2a8d4 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -2898,9 +2898,9 @@ static int renesas_usb3_probe(struct platform_device *pdev)
- 		struct rzv2m_usb3drd *ddata = dev_get_drvdata(pdev->dev.parent);
- 
- 		usb3->drd_reg = ddata->reg;
--		ret = devm_request_irq(ddata->dev, ddata->drd_irq,
-+		ret = devm_request_irq(&pdev->dev, ddata->drd_irq,
- 				       renesas_usb3_otg_irq, 0,
--				       dev_name(ddata->dev), usb3);
-+				       dev_name(&pdev->dev), usb3);
- 		if (ret < 0)
- 			return ret;
- 	}
 -- 
 2.25.1
 
