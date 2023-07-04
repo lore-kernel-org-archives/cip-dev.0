@@ -1,132 +1,75 @@
-Return-Path: <fabrizio.castro.jz@renesas.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E33EB64D9
-	for <webhook@archiver.kernel.org>; Tue,  4 Jul 2023 15:35:09 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.61534.1688484899641876616
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B38C0EB64D9
+	for <webhook@archiver.kernel.org>; Tue,  4 Jul 2023 20:07:11 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web11.2650.1688501226940453990
  for <cip-dev@lists.cip-project.org>;
- Tue, 04 Jul 2023 08:34:59 -0700
+ Tue, 04 Jul 2023 13:07:08 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: fabrizio.castro.jz@renesas.com)
-X-IronPort-AV: E=Sophos;i="6.01,180,1684767600"; 
-   d="scan'208";a="170448188"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 05 Jul 2023 00:34:58 +0900
-Received: from dev.ree.adwin.renesas.com (unknown [10.226.38.7])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id DC3F940062A9;
-	Wed,  5 Jul 2023 00:34:55 +0900 (JST)
-From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-To: cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@denx.de>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 5.10.y-cip v2 1/4] dt-bindings: soc: renesas: Add RZ/V2M PWC
-Date: Tue,  4 Jul 2023 16:34:49 +0100
-Message-Id: <20230704153452.11780-2-fabrizio.castro.jz@renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230704153452.11780-1-fabrizio.castro.jz@renesas.com>
-References: <20230704153452.11780-1-fabrizio.castro.jz@renesas.com>
+ dkim=missing; spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id DBFAD1C0DFD; Tue,  4 Jul 2023 22:07:02 +0200 (CEST)
+Date: Tue, 4 Jul 2023 22:07:02 +0200
+From: Pavel Machek <pavel@denx.de>
+To: nobuhiro1.iwamatsu@toshiba.co.jp
+Cc: biju.das.jz@bp.renesas.com, cip-dev@lists.cip-project.org,
+	pavel@denx.de, fabrizio.castro.jz@renesas.com
+Subject: Re: [PATCH 5.10.y-cip 0/3] RZ/V2M I2C driver improvements
+Message-ID: <ZKR75gaHVmf59H9/@duo.ucw.cz>
+References: <20230630155118.584293-1-biju.das.jz@bp.renesas.com>
+ <TYWPR01MB9420A3CB3F831F9DB6FE51CD922EA@TYWPR01MB9420.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="VkHF/+AsezNb5Gxm"
+Content-Disposition: inline
+In-Reply-To: <TYWPR01MB9420A3CB3F831F9DB6FE51CD922EA@TYWPR01MB9420.jpnprd01.prod.outlook.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 04 Jul 2023 15:35:09 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12214
+ <cip-dev@lists.cip-project.org>; Tue, 04 Jul 2023 20:07:11 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12218
 
-Commit 6e1456f9251966d8fbfde2ae4750ba540b588533 upstream.
 
-The Renesas RZ/V2M External Power Sequence Controller (PWC) IP
-is capable of:
-* external power supply on/off sequence generation
-* on/off signal generation for the LPDDR4 core power supply (LPVDD)
-* key input signals processing
-* general-purpose output pins
+--VkHF/+AsezNb5Gxm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Add the corresponding dt-bindings.
+Hi!
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20230106125816.10600-2-fabrizio.castro.jz@renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
----
+> > This patch series aims to improve RZ/V2M I2C driver, based on the feedb=
+ack
+> > from Pavel.
 
-v2: No changes
+> I reviewed this series. Looks fine to me.
+> I can apply, if there are no other comments and issues.
+>=20
+> Test: https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/919=
+943145
+> Reviewed-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 
- .../soc/renesas/renesas,rzv2m-pwc.yaml        | 56 +++++++++++++++++++
- 1 file changed, 56 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/renesas/renesas,rzv2m-pwc.yaml
+Looks good to me, too.
 
-diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas,rzv2m-pwc.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas,rzv2m-pwc.yaml
-new file mode 100644
-index 000000000000..12df33f58484
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/renesas/renesas,rzv2m-pwc.yaml
-@@ -0,0 +1,56 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/renesas/renesas,rzv2m-pwc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Renesas RZ/V2M External Power Sequence Controller (PWC)
-+
-+description: |+
-+  The PWC IP found in the RZ/V2M family of chips comes with the below
-+  capabilities
-+    - external power supply on/off sequence generation
-+    - on/off signal generation for the LPDDR4 core power supply (LPVDD)
-+    - key input signals processing
-+    - general-purpose output pins
-+
-+maintainers:
-+  - Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - renesas,r9a09g011-pwc # RZ/V2M
-+          - renesas,r9a09g055-pwc # RZ/V2MA
-+      - const: renesas,rzv2m-pwc
-+
-+  reg:
-+    maxItems: 1
-+
-+  gpio-controller: true
-+
-+  '#gpio-cells':
-+    const: 2
-+
-+  renesas,rzv2m-pwc-power:
-+    description: The PWC is used to control the system power supplies.
-+    type: boolean
-+
-+required:
-+  - compatible
-+  - reg
-+  - gpio-controller
-+  - '#gpio-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    pwc: pwc@a3700000 {
-+      compatible = "renesas,r9a09g011-pwc", "renesas,rzv2m-pwc";
-+      reg = <0xa3700000 0x800>;
-+      gpio-controller;
-+      #gpio-cells = <2>;
-+      renesas,rzv2m-pwc-power;
-+    };
--- 
-2.25.1
+Reviewed-by: Pavel Machek <pavel@denx.de>
 
+Thank you,
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--VkHF/+AsezNb5Gxm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZKR75gAKCRAw5/Bqldv6
+8ueoAJ91iVWUaSZFfCqSxAmgFAy6wsVq1ACeNHL7huXs9X/PRuKAGFnXjwh+W2M=
+=UGm6
+-----END PGP SIGNATURE-----
+
+--VkHF/+AsezNb5Gxm--
 
