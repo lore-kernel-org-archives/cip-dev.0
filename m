@@ -2,21 +2,21 @@ Return-Path: <fabrizio.castro.jz@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B00AFEB64D9
-	for <webhook@archiver.kernel.org>; Tue,  4 Jul 2023 15:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BE1AEB64DD
+	for <webhook@archiver.kernel.org>; Tue,  4 Jul 2023 15:35:09 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web10.61638.1688484896860911751
  for <cip-dev@lists.cip-project.org>;
- Tue, 04 Jul 2023 08:34:57 -0700
+ Tue, 04 Jul 2023 08:35:06 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing; spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: fabrizio.castro.jz@renesas.com)
 X-IronPort-AV: E=Sophos;i="6.01,181,1684767600"; 
-   d="scan'208";a="166817068"
+   d="scan'208";a="166817112"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 05 Jul 2023 00:34:55 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 05 Jul 2023 00:35:06 +0900
 Received: from dev.ree.adwin.renesas.com (unknown [10.226.38.7])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3458740062A9;
-	Wed,  5 Jul 2023 00:34:52 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 018FA400564A;
+	Wed,  5 Jul 2023 00:35:03 +0900 (JST)
 From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -25,42 +25,57 @@ Cc: Biju Das <biju.das@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Chris Paterson <Chris.Paterson2@renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 5.10.y-cip v2 0/4] Add Renesas RZ/V2M PWC support
-Date: Tue,  4 Jul 2023 16:34:48 +0100
-Message-Id: <20230704153452.11780-1-fabrizio.castro.jz@renesas.com>
+Subject: [PATCH 5.10.y-cip v2 4/4] arm64: dts: renesas: v2mevk2: Add PWC support
+Date: Tue,  4 Jul 2023 16:34:52 +0100
+Message-Id: <20230704153452.11780-5-fabrizio.castro.jz@renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230704153452.11780-1-fabrizio.castro.jz@renesas.com>
+References: <20230704153452.11780-1-fabrizio.castro.jz@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 04 Jul 2023 15:34:59 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12213
+ <cip-dev@lists.cip-project.org>; Tue, 04 Jul 2023 15:35:09 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12217
 
-Dear All,
+Commit 3d28ccb9b37db5f17ec1b41c31718cd9842d5dbf upstream.
 
-this series adds support for the PWC IP found inside the Renesas
-RZ/V2M SoC.
+The RZ/V2M EVK uses the PWC IP to control external power supplies
+and the I/O voltage for the uSD card.
 
-Thanks,
-Fab
+This patch enables the PWC node, and it also enables the poweroff
+features since PWC is actually used to control the board power
+rails.
 
-Fabrizio Castro (4):
-  dt-bindings: soc: renesas: Add RZ/V2M PWC
-  soc: renesas: Add PWC support for RZ/V2M
-  arm64: dts: renesas: r9a09g011: Add PWC support
-  arm64: dts: renesas: v2mevk2: Add PWC support
+Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20230118144747.24968-3-fabrizio.castro.jz@renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+---
 
- .../soc/renesas/renesas,rzv2m-pwc.yaml        |  56 +++++++
- .../boot/dts/renesas/r9a09g011-v2mevk2.dts    |   5 +
- arch/arm64/boot/dts/renesas/r9a09g011.dtsi    |   8 +
- drivers/soc/renesas/Kconfig                   |   4 +
- drivers/soc/renesas/Makefile                  |   1 +
- drivers/soc/renesas/pwc-rzv2m.c               | 151 ++++++++++++++++++
- 6 files changed, 225 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/renesas/renesas,rzv2m-pwc.yaml
- create mode 100644 drivers/soc/renesas/pwc-rzv2m.c
+v2: No changes
 
+ arch/arm64/boot/dts/renesas/r9a09g011-v2mevk2.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g011-v2mevk2.dts b/arch/arm64/boot/dts/renesas/r9a09g011-v2mevk2.dts
+index 0f170fd4227b..8b7f6da693a7 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g011-v2mevk2.dts
++++ b/arch/arm64/boot/dts/renesas/r9a09g011-v2mevk2.dts
+@@ -136,6 +136,11 @@ uart0_pins: uart0 {
+ 	};
+ };
+ 
++&pwc {
++	renesas,rzv2m-pwc-power;
++	status = "okay";
++};
++
+ &uart0 {
+ 	pinctrl-0 = <&uart0_pins>;
+ 	pinctrl-names = "default";
 -- 
 2.25.1
 
