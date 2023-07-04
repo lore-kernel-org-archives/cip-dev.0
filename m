@@ -2,46 +2,44 @@ Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8864DEB64D9
-	for <webhook@archiver.kernel.org>; Tue,  4 Jul 2023 04:34:56 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
- by mx.groups.io with SMTP id smtpd.web10.51717.1688445287911078657
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9986CEB64D9
+	for <webhook@archiver.kernel.org>; Tue,  4 Jul 2023 04:43:06 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.web11.51746.1688445782861423227
  for <cip-dev@lists.cip-project.org>;
- Mon, 03 Jul 2023 21:34:48 -0700
+ Mon, 03 Jul 2023 21:43:03 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: toshiba.co.jp, ip: 210.130.202.152, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
-Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 3644YeuM3337232; Tue, 4 Jul 2023 13:34:40 +0900
-X-Iguazu-Qid: 2yAbqIXzGGL5pSHaSU
-X-Iguazu-QSIG: v=2; s=0; t=1688445280; q=2yAbqIXzGGL5pSHaSU; m=qniFNOupnnGnCpAmbrb09p9jmctyfVnoBL+IJaR5D5o=
+ dkim=missing; spf=pass (domain: toshiba.co.jp, ip: 210.130.202.158, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
+Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 3644gtR12221425; Tue, 4 Jul 2023 13:42:55 +0900
+X-Iguazu-Qid: 2rWhJyZQY6F0i3OjWU
+X-Iguazu-QSIG: v=2; s=0; t=1688445775; q=2rWhJyZQY6F0i3OjWU; m=Zn4jFFnkZxuBJ/mfxVbDT3jYzFN0VofELP+RdUN9RUE=
 Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1802) id 3644Yd9g3052468
+	by relay.securemx.jp (mx-mr1120) id 3644gs0o3104741
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Tue, 4 Jul 2023 13:34:39 +0900
+	Tue, 4 Jul 2023 13:42:54 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UOJxnXAr0hxz1fq0vkZDZI86x6nhgomJYko9y4nb34RrQufxraRA9ZTjWcRJlgErEXV32eddQIEhE+2HSwckNd8rFwHWgPSSbCxu0gFrho2P99FZ/AaURoyqf9pSgKcYkJlvw1yePX8Dzkcq25xVFO13aKwrHnVnzRQ4w+1KE7CJ78H9W+wuiXgz8MyYqSG3/OXzh/rzCGqwNgKH9hdgYrmF3WGD9IOMoAJ95bRU5JQ1TBg6aDawg/+IsbQQ7VUdhSIIY4cdQZDDSkzu2VkijcDBCH1p8TchXepfHYRQhxyi6flkH2V8lmBzusOXpb3k/a7Qd2/cDMSy2ZpL5OvwmQ==
+ b=mOJQ9xJlHvaq2bO5c4T5uvaXRXbXzudHv8R0kuhKsJYuYG6Qxmuwa69asL4NKAxPQ7engkQv0JaBkRp2M65+4I3NfPBYzb2fOPVk0V+r8sj47va5PF4UkizX+fO11iLkx0HX/6Rvzk4GdL0E9pU2KBSqE23k1d1Kp9xvpjsfyXJ1V6XVGopjNZzSCcONix8H1kkKJ6P/rzAs2us5Vfj7uDB2inZ56FfaHuXANOSZrV24M+mCi5sz/FXYSXHHiWFG4cO6fIJePNVPTzy4jQwkKI5tx0EWBgdcltcp46LptDpurtEPi2FH+7qyIc+JQPtMiz1yjMe1L61p7Bl+IA5p8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SZd5FZausq1Kk4yqgNyzjxwP87zsGMG7pXU0GuKM9Po=;
- b=mVyS0ZoLk1iW6H/klEBxgcdLRPrN4Z+XbeV/HI+H0c5er6U8JWdqtIOTUwENv994eLa4L4Kx0nNRYNqBOLDA87v5tvzUcCr5FbwlPHalVrBWNQq5RSxRUnPgljPqsZ0OZOrXkMnR4SCxsODhL8buladPrGyhLvzzRdkwtI6NLELBMxRwhvhpsqV1c5MjmkKqhHUXKdqXV/+ZwQA+aN0N1ITX6d/3BIj21t6j9n+G2L0aHcaa1NV9fW9ALnwctCEa9FY5BAwTOvaZFCD5YkJ98GESoqmxnDLydtRyCgFZ0IsUQfUSSfYE48KkSYjQu78HrqHKNH62Q3D0jKx2I4oqOQ==
+ bh=2KknKuoJBx8qY+6q1ArxiwEpNEiMjXNwXv05C7v+TyU=;
+ b=ixbTdYuIF7smWAJFWBEuYEFcOeYlYcDxGUSxJUSn/505P7eAtr+iFVFIlyd6eYsqg7W/uzJwxaVoXBICoTsy6+v5aoifE5KFjHDL2fdXJ2xS00vQKDRMFC2Dzvdo2d0ynyARI1oCGYTvIT/rzMe0wLfZRT2rpFl971vw795hOZGZ2hEnZT6D8Cz9FTOWyVlPpgjvO2m3ePzJ1cAwOhzBkx8DGp5x3ELIP52oQ0xgB0RoLmV5+MJ/Qxloo+W+j3ttDtdfJyEWCjRvs7ETvgscmnUfQmKtazMa7tLIPfGHSBfB8KzUofmgTSXyeUxCvn98tIMoHnRnOFOichpXubfISA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
  header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
 From: <nobuhiro1.iwamatsu@toshiba.co.jp>
-To: <biju.das.jz@bp.renesas.com>, <cip-dev@lists.cip-project.org>,
+To: <fabrizio.castro.jz@renesas.com>, <cip-dev@lists.cip-project.org>,
         <pavel@denx.de>
-CC: <fabrizio.castro.jz@renesas.com>
-Subject: RE: [PATCH 5.10.y-cip] usb: gadget: udc: renesas_usb3: Fix RZ/V2M
- {modprobe,bind} error
-Thread-Topic: [PATCH 5.10.y-cip] usb: gadget: udc: renesas_usb3: Fix RZ/V2M
- {modprobe,bind} error
-Thread-Index: AQHZrbFF+m2QbdxmAkWLIT306ZCjZK+pBfdQ
-Date: Tue, 4 Jul 2023 04:34:37 +0000
+Subject: RE: [PATCH 5.10.y-cip 2/4] soc: renesas: Add PWC support for RZ/V2M
+Thread-Topic: [PATCH 5.10.y-cip 2/4] soc: renesas: Add PWC support for RZ/V2M
+Thread-Index: AQHZrdAmhEORTh9a+0me1+EhbGI3Ma+pBj0A
+Date: Tue, 4 Jul 2023 04:42:50 +0000
 X-TSB-HOP2: ON
 Message-ID: 
- <TYWPR01MB942045A67F1CF79293A5396E922EA@TYWPR01MB9420.jpnprd01.prod.outlook.com>
-References: <20230703132113.353419-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20230703132113.353419-1-biju.das.jz@bp.renesas.com>
+ <TYWPR01MB9420F2EADFD20272DE1E5588922EA@TYWPR01MB9420.jpnprd01.prod.outlook.com>
+References: <20230703170211.15484-1-fabrizio.castro.jz@renesas.com>
+ <20230703170211.15484-3-fabrizio.castro.jz@renesas.com>
+In-Reply-To: <20230703170211.15484-3-fabrizio.castro.jz@renesas.com>
 Accept-Language: ja-JP, en-US
 Content-Language: ja-JP
 X-MS-Has-Attach: 
@@ -49,154 +47,319 @@ X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYWPR01MB9420:EE_|TY3PR01MB9980:EE_
-x-ms-office365-filtering-correlation-id: 06c36efb-0f9e-4e3e-212b-08db7c47f96a
+x-ms-traffictypediagnostic: TYWPR01MB9420:EE_|OS7PR01MB12044:EE_
+x-ms-office365-filtering-correlation-id: 8febda87-1253-4890-8dac-08db7c491f8e
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
 x-microsoft-antispam-message-info: 
- OjAdPvrXJ/nLrZ/JLVJIsrXdCD15ZTbHM2gP0PVUSIge3rZ0yaayErUfuRz27kw/cGf1byM5wyUKmjIss9R075aHojOyTh96AyPUg5pOmE/nSap/JX0r9TqwshQrv3Dh4uTT28bT28baNJUNFtHeQdu98+hVpgiJdbZOlRmtOARrE0IdwGZRgY8dlwx3WSpuRH+L9n61ioaVJBe054FLsX4z4LrkDC8eDWwYloiZIJ1hbnm8n8Uihpo0pxtxje8LNl7yNYxCsNwEG+uFjm6v4dBg/5DJ73OUFkNG2Vba4gbTqHTgW2Ff6clD3O5gmGnM7it0EYFJWoBI4TWQwl2wkzXlzm72vyhnwNL5PrNIoz6N4vOsntzjYR7vFVxdaa7IFJND/f/JUqis2xC0ZTDrhhsxQkrWF02oA4xoq4l3Heh9RQz8lyKVdbjWAt1n3xlM/szDD4VZ/p6Kng2JTiY4ugiEw9sVC1i8JfRThotxDt1jchfh1FfKwmSttw2m0tpKkGHPPIbZvHz2vtTp0xCZnf/8oXPTqBJXWVI0S2nCbAcXMfI81cUrdigoM99UbSu4kTQhLfbBMttZinq0qhBW+AFHScDdDfwC+rIz3t7mzo5+ju/7+JfULVaGhfE3FPcvocTMLAkvDB2YXM17K3HCrA==
+ RIbndpaKH7cw1XG0cREAVCXrN9NqJX5jA/cYzNRFEL/XHAzVsJqTaY/Gzbl4gxHLL0vszj72ZXArBDKOw4tvTFuYRwnCyN/ci+xhuZtNY/WD6F/ygwkam9K8qna20A+yrosAbJJLLCVRDEbR2jHCZgrq6QFcT2/7MRGqD1Bcp+xEwdEvCqkNdUltJQ1tuJBDb9AD5bYzMw0zucAmlqPlL4xOoLIJth/9UaUgSmjadAwgcAyu0SrKzjNTq0dNc9n5++0w7AyvHD5IoOtiloz4/01g1N3SXH33/TAd99m4wrk17B+Z/noMv/MRuZ48YokngaICAzuq2TKD4Op7ZmePR9wd7YxCxtOd5mDhlNL5ihwHMxS6RmagmwbOp4aAUMu70aUgu7vi4Lz7hiDXpQb+Pa0oHH5oGMVO3Fp+0zED60R3ptCjhxICpNGpputhFT4YMnNS7Oru5KRtc8l+vlA3QkM7NtOLG4d0BIFh/P9Wv7qrZSalH/y0YxTKxACrzd7M9Fi0u2hAWtjqcjzVMygOPnoYeIVYwDwO86ED9c29kk1ydExzi1uFWoMlDlRbeY2TERZr6qxxbv3qMZNiSpC7Wi95Ojdc8j3GFIpaj+xgU+bcM9BPyjIJYbeZ+BfS4e/c
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB9420.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(39860400002)(396003)(376002)(366004)(346002)(451199021)(6506007)(53546011)(76116006)(66476007)(64756008)(316002)(38070700005)(66446008)(38100700002)(122000001)(55016003)(4326008)(66556008)(66946007)(83380400001)(186003)(26005)(9686003)(478600001)(110136005)(2906002)(8936002)(8676002)(52536014)(5660300002)(71200400001)(86362001)(7696005)(966005)(33656002)(41300700001)(95630200002);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB9420.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(39860400002)(366004)(376002)(396003)(136003)(451199021)(26005)(478600001)(966005)(9686003)(71200400001)(6506007)(86362001)(186003)(38100700002)(66476007)(64756008)(66556008)(66946007)(66446008)(83380400001)(110136005)(7696005)(53546011)(76116006)(316002)(122000001)(5660300002)(8676002)(8936002)(52536014)(38070700005)(41300700001)(2906002)(55016003)(33656002)(95630200002);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?RkJQbGdRdHE4V3FEeDBOTUlud0NSYUwyRDBGNHJ2K3pDYSt5YkJYYUNG?=
- =?iso-2022-jp?B?ZUQ3S1FZS0xjYmNjalI0TVZPYVljeVdzczQwVzFvWCtRVEMydDFhSERY?=
- =?iso-2022-jp?B?QU1nQ1A4UEFIMDdQL1g1QjNJWFRKUE0vbkF2dGF5RThYVTQycjU3RmxN?=
- =?iso-2022-jp?B?RTdXaDEyMzBNSER6MmoxR2ZxRHZGcitTbmN2TnFxYWpOR08yUHVLclRN?=
- =?iso-2022-jp?B?QW84UUx5aThIRmlZTFBNR0thWW1Bc3NuN2hzQWNyTnNqYXJMaTVQWGhC?=
- =?iso-2022-jp?B?NmJMeHNXdDJvcGF2LzNCYkk1czNIL2tadHQyMW9TNnRYK1l0VW8vcnBk?=
- =?iso-2022-jp?B?WSt1QVJ1SmJRREVXaDU2NS9ZbFFRNEhmNTMzQ3R6bFQvSXczU3F4eUM1?=
- =?iso-2022-jp?B?SzFFa3AzaVZORDcvU1EwRGdXU0VSdHR5OVlreVZYSXU0SUE1ZWI5YmxY?=
- =?iso-2022-jp?B?S0NQMGs5WTVLOXhrVG5FcTYzZzNXRzlIRFQrc08rY0hPM0NGdHA0MjAw?=
- =?iso-2022-jp?B?eU1LeUlUV1dUdFA0a1lOTWN4RU9TS3VRclcwd3VEbE45UXdHeDZINVNH?=
- =?iso-2022-jp?B?ZVpaN1RGVW9sS1JxQ0krVFplOWFzZVVnYjBnS01xMkduRko2T0JOSVp1?=
- =?iso-2022-jp?B?K2M1aU9YaWRldnNJZzQwWDZlYktsTlNNYlFvS3QyYVYrR3g4NEJ3NjJ0?=
- =?iso-2022-jp?B?b3YwSGo0NUp1TTRBUENsaGxBSUNiMThnZ1U1bTl2eVk4ekt0QUIza2xC?=
- =?iso-2022-jp?B?SHB1aGNGdEdJeHFCSlV3R0h3UzM5bko5aDZoQnVDdE9kOHFPVUt3enU1?=
- =?iso-2022-jp?B?Z0VTeUg5Y25wSXJ6MEcvN1JaYkgvdmRKZEFIVFExQW53UXViSU54aDQ0?=
- =?iso-2022-jp?B?TXM1ejVhOGRESS85bGF3TjBFczA2QVBjSk1sZGc3TjhwdTUyUkltRkVO?=
- =?iso-2022-jp?B?MWwxeHYyckgwVksrbUJiVkJ2bXlZSDYrSWwvNVhDOEFjNlRES1JyT3ov?=
- =?iso-2022-jp?B?a1pFOEtFd1FQRlJBOC94UlRmTWtsZnFqUmI1dkllTTBzR2hQTXRxNzd2?=
- =?iso-2022-jp?B?WG1MZjZpc3NkYy9ycllNMlZYNitMRHplSTBVYjBPdjBNWitvWFpzSzRl?=
- =?iso-2022-jp?B?bnZFVlVaeVBQdmh4aFVQZUFOS21CREtqMENrRkw1NjZ3Mi82Zi9tZWZG?=
- =?iso-2022-jp?B?ZWg2OE9DMy8rYkc4VUtMVnlyazd6TzJKZk9sZkM0WmQ3Mzh4YXFEbm5k?=
- =?iso-2022-jp?B?dUwwUlEwdXNodnovYnF6MUNhQzVtUTBaSHc1SXhzd05JQlUrYTVZZjI3?=
- =?iso-2022-jp?B?WXNUcVJQOUlORDlXNWE2OGJMM2dhOVM4TDJ1ZzBpSXlBUDF5T3JoeXR1?=
- =?iso-2022-jp?B?T3Z2aUgwekJTcXQ3TFpFNVVqakltNVNqR0pYSHNZNjlHZHloNVlzck9j?=
- =?iso-2022-jp?B?Q2NZL3orcUxDSU8rMmZ6SEJtejJXNzVvZVhDM3FTMGFwTHFzVUgxbmhv?=
- =?iso-2022-jp?B?aDl3M21jNkFLL2RpOVNKY2lzbTJ3L2hlNEo0dmNpVVBPdzhxbW9GdFJ4?=
- =?iso-2022-jp?B?SmE3LytMaUlsWHJRanBudC80am15cUhodG9lMVg3VGdNM0g3OUVWMXNx?=
- =?iso-2022-jp?B?bWNhdHZZckk0Q3luU0JPNlhWY1U4dGtpTGk5TjBBUGptOUl3bGxlMndV?=
- =?iso-2022-jp?B?Ymg5dVgxZ2EwUmd2Y2JKMXdhNUpUbnVKN0xyUnJwYlRqeGltaXFvZXFT?=
- =?iso-2022-jp?B?bTRKak0vcnAxTnlVRlY2M05wL045RXhIcHIxZHJTZEs1S3RiZkhMbVgr?=
- =?iso-2022-jp?B?L0I4R3ZZZ2hRc1ZnQldNSjh0cE1nRjhBUzQyeVhTalRESzk3SEJnd05u?=
- =?iso-2022-jp?B?T2VUalpNY1psYURTTFZ5eDArNUxoN3FObFNxdXpVcTh3SE4rYTZWNmR0?=
- =?iso-2022-jp?B?MG9STSt1RWsrYzd5c3UxcktzUWkvTXRBc3d3NDV2Zkg2TTAvbTErUXd6?=
- =?iso-2022-jp?B?UHFxaTFLbTRWcExyN2JmSHRWUlJ2U2VFNTdEUWtrNDN1ZnZVYTlGVXNq?=
- =?iso-2022-jp?B?aHN4VC9qaGZCWVdIQnJWRXN1L2xOVUNlRTcveFNxTmoxeDc3UldnVTB6?=
- =?iso-2022-jp?B?NlVmUWVuNVNlaHN1RWRDVTlLQlZ0bUcrVGFiVU1ZcnlreTdiMzhweThN?=
- =?iso-2022-jp?B?R2wxamI4K29TejJSZ1ZLQlRKS2tKRXBSZ2I3NnlHMmlVRWFVbGJtbnp0?=
- =?iso-2022-jp?B?ampIaHk3WCs3dDhmaHJHT01aZnJFSDJCVUNMOE9ybm8za2xLUXlCRFVi?=
- =?iso-2022-jp?B?NEJXSG1HU0hOQWtOM1k5Qy9NR0NaMldBdGc9PQ==?=
+ =?iso-2022-jp?B?NDVTNHh2eDYzRVg0ejRBNmd0cG1PUjRYV0gzL3BwT0g2Uk1YN2VyeWlv?=
+ =?iso-2022-jp?B?M1pmZnJ5bWdyTzRpdHF6akdGUXE0d0lwK3RZRkFqMzVhQm1FdGh5UTFq?=
+ =?iso-2022-jp?B?cTYwSFBZc2FxY2Y1eFZBWHNzditmV3JTNW5xYVdvOGxjRExYS2lJZmdr?=
+ =?iso-2022-jp?B?NXVNYkl0a3Y2UWRHaXBXVTVpczdDb2dMZWR2RFRic2M0ZlYzUjFoclNO?=
+ =?iso-2022-jp?B?TlJPQmtDYm9ET1BNWWVpQkVuOUQ1emFxWTMzZWNyL0k3cWlKbVpCb1Nk?=
+ =?iso-2022-jp?B?UXp2cjg2eDhXOWNlZlRhNHF4TXI0RjlNL0lwMTh3aDBoL0cweGRLVVc2?=
+ =?iso-2022-jp?B?SkxwaEpMV09yNnhLQndSZ09ZT1FOVy8rMEthMjdxQTFNVWpYaVBSdU9L?=
+ =?iso-2022-jp?B?ZTUvYmpSVHFPbFlhUlJqUWxQc3diSUZwNk9DM05xYklQWXdXYk8wbGNu?=
+ =?iso-2022-jp?B?OWVDYUNDOTcxT2R3NEk4K0wrRG11QnRZb2l6cFpGTW82ekkyRmJJZzN0?=
+ =?iso-2022-jp?B?aVNYK0JWSWNjaXkzclBESXZvRnNvTnY3Z1NxTWoxRzU5MXpTSnpKejFZ?=
+ =?iso-2022-jp?B?TDdTamk0eTAzRE43RVc2SFdYNFgzcjIydC93bldkdVB2YnExc3V1Sm1s?=
+ =?iso-2022-jp?B?aHZaZDllODRKSmd1ekVJaFFlY0o4cWhVZ3c1SjNZdjhjN0hROEpZVVNx?=
+ =?iso-2022-jp?B?Vlk2b0sycVI5WG1mdlFEa1QwSTNjT3NoQ1l2Q0xKb0JpZlh2T0RLY1FF?=
+ =?iso-2022-jp?B?NDRLVVpYQ1k1UUZVSFU0V0czaVJReG9WOHg3dk4yQWVRbVJXOGlBVHR0?=
+ =?iso-2022-jp?B?TFFXOTNvaDBNNHdobHNUcnFUbTVLR1VGRWlzTW1lSGdKY2xCakxzZDhB?=
+ =?iso-2022-jp?B?dzhpYUFsNFY3Vk1uWkp2VUlrdG9yeWpEbHNsMldkVEoxMFBrS2prK1Ni?=
+ =?iso-2022-jp?B?YStlakNyV3NZUy9RWDgwVzBkMmZBYS81cktkTXE4OXkxRmQ2QXJYdlNE?=
+ =?iso-2022-jp?B?NHEyVytyVDhGaUJBeU5QRWU3RlNGekpLaE1uU254SUo1UEpoODNPd1Y4?=
+ =?iso-2022-jp?B?TkZ5VjNLN0Q1SEFiR0lESXJuTWRCNUxTT0RWUnpDa2NGbjE3WS83Z2VQ?=
+ =?iso-2022-jp?B?cWY4aGRPZ2trVjdjNU1wRFF3c3UxSi9WVUVQaVdKOEZ2a08xamJzdzR5?=
+ =?iso-2022-jp?B?TW9odWdvYXo0QlVSN2hNaFZodVp0WWdXS09qS3hHWlliYjdCOG1UMXpL?=
+ =?iso-2022-jp?B?UkVpT2NuSDBZR1VpU0tKLzRwZDEyMG9pZFl1R0NRQ0piY0dVbG1DdktJ?=
+ =?iso-2022-jp?B?WXlQcFl5QXliRkk5MmtMYXdvdHRjVnVrRmtrek54a0VXNTlGQlNXeW9q?=
+ =?iso-2022-jp?B?YnFObzJlNzNnT2NjbVdrRTBDUEVsRXhZZFV3enJrU0NjSlR3YlJvdXVy?=
+ =?iso-2022-jp?B?QUVHRHdUaXlyNW81Z044SDE3UlY1N3NJdmdHbWpZcHNvT3BoWWViSkU0?=
+ =?iso-2022-jp?B?V21FSktiWFpzbFQ3dDBvcWhlcHZnK3BFT2Y5bXJJaXNhZWxLWkI1Znhq?=
+ =?iso-2022-jp?B?dHJVZkpEc1FSSk9VR1RLSnZONkh4RkxQbEwrdFZXa25iK29HbEVodkQ0?=
+ =?iso-2022-jp?B?SHZCdk5FWDJBSnhUYnVMQXc5cnhKSGhaakNlSHhpTCtRNEpNZUlwcWtC?=
+ =?iso-2022-jp?B?Y1ZPRjk5RlBpemVuR3ErSnFNQ2FGYWJJQXpWWlBRQnBhQWI0a1d3bkFw?=
+ =?iso-2022-jp?B?Yytra3V6cldXeTh4U3hQQ0VxRXJIWnNJUzF5WWJpbXhjOEJtakJkWmtN?=
+ =?iso-2022-jp?B?eFZBYjllaUVmVnplSDZKbjdkd1F1Q3FQMkdaQUJybzF5SjNIa1RhM2dO?=
+ =?iso-2022-jp?B?dU04MkZzdEJDNjllcjhJWlcxc2Jkdm4xRkRhR1QzaDVORzVienBxY1NC?=
+ =?iso-2022-jp?B?VDNHN0NtQ0pwbnFPSElRd1diNHhqb3lpdWFuZmc5bUhEL0VhaUFxOWdm?=
+ =?iso-2022-jp?B?SUVrb1RPeGk4SmJBNW5lNndlNFVHSFh2OHo2NHFDT3JWL0RZRXBCUllT?=
+ =?iso-2022-jp?B?MlNnR1dQUmdNOSt1VG1zREZlNXhTdGVteEVhcXROR1k0UkUxQ2puZU9V?=
+ =?iso-2022-jp?B?eFkxdDZ3Qjlkbjc1SGVTdlgzZE5vQXF3STJDdHBPcGp4WWxyVHZHa0pP?=
+ =?iso-2022-jp?B?RnRpcEdqLzN5TWRYY2piMGVjNlNmNlhCWXRsN05USHF6M2Z0dzVHOUZZ?=
+ =?iso-2022-jp?B?N2U4enZGa1YxUlZkOGNHTW1ONjZpRWtkWUtzMlpnUHNvLy80dlQ5aDlh?=
+ =?iso-2022-jp?B?Ly9kcG9jYUNRWldVdU5RYW9mU3ZWZXM5T2c9PQ==?=
 Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	p9bke0ccGSPpxVtifU3JN34e5KXNouD/xLOtFP29HBPfWY+ZvfEaz+FE7VHnLJkn/fYnSgxaSQrZHQDHVUvqJRGkBeE/d9ZwqA/l77KwXbwDBxurD1S6aFxmsOOTWlPXdo+DXMQbvbtQ9lj2ZEsTWJmtsodzwK2HB0SllU++oY4G3fo+nqwRFZHAVrjrMOgZgUsqGfp0ahtGNvpT//9ZEBg9g0+SBmVBOc7XLBB2mrmZ+bJBmFllSaWTq/Fv7Qy/v9BWVefCnYNxtonzUFWGx2jM9xk0BAnNgrzOl39GpcxvSTbB7ksJgW35etaigrSHNGw/gvRf7+Kg5fzU2UzP7LmMnJzfX1uU4KFpJ9P84fH62jyiaYx2btCF5RNKRXCJm5oQJ4jpeim2EOXErYiMdLIVzTd2jDoT5ANAuMd/qE6T0UeMtErp3actsAtet/o0GJdyf26aeF0/At9nNkV00jzqFLX53v82GWjparXoGMS9AfJkqCRpH6PFgzgKUMxDji5cCHls9pcK9GqrrnfQV/x0turBhBXytM8l9Vn0RqeqnDVPj+6GVDJYAiHbHkQuPT7JfAYVDgBi2ne7aIjJqSVFCOQRdgA2PmlX8x3ed+j0ofE8UMBxhRVc1k73KSZpYU2yl/b1ZCV9M7E/fC4Bpt95V6nKSw91HnTxASoba3G5BGZSbvv1v41HhNtXa69v0JOG0xYN+b6wm5P3OR6seHCDrzbRYt+7gAwYshQJdNXed8jICVgprT/nq2LPoLbAskeNyvwFwFhbyl4zPrgm7ckx/EW63Jv7jnHFtJs3rAYSYRMjI71WFzZ1RYvca0NSAvCq+4QWkw14uvxPiQk1m+FPs6+mRSQS8q9F++8b+NQFkfyAlBHzriGsDo9IigcgE+CE5Q+jHMt/dePl3J3ktQ==
+	AKJ68/pfr4bXfHKwiFcaK6YTUHJrT/3uhtP8+HWh+NWOlOlDlu/X4LW1AlnERi5Iysnsm3oY+q4g+dVNENp+Gx+SpgyVChn+z5B4cWWAPS7EouQrCVVuFDMfceMf+t6w5bi1qUMqFwJ/x/EBkMN/kzLXFbOtSJRBbJ8FX0DRUPlz9O5+2xcqTX6iJyzJngCL2RhpsFJM5HeFNxXFPJ/r1LCNEnANBLx8c/FVVByofpsrydjD3meip7/5+f2pk5rCUbVC79yLhOiCv8RX6Cbfuv5KmRek7PJpL1nyV5fBnH9nn8tzpKAkkeCb7VWCwbhnpSsuwklFMWD0XarKeJwIFC8j86cRGZ/fgblQbWOP/cHHdxgeQeTNZ6ziMVsTk10KasedM83maRJCcAkpp6cJ3aMs2RGLly460YqqtZoE1R2SatOoGtriyY9278W38dK/AVzUQUDWpOvMaAvfMnH4EiHYiZzm6d5CYjpJ2TsYtifMwj8FQLvF6GHOf+Xr93c7c8nBYcsb3yQTjkqNXF83y0J9wUcNqpriDbfOtJMF5vBxSAe7gbl2lTc6KdpRWYjYq6jeykf1koIuU8QDd6nisEDVnsqRkqNHhXEZYqZt8Jmw1ITBH5QLsE+rvdrOwUlLylp8Id8g7X/XS6ygFf7sBPvzWKjC0fwCi4Cpc8+00eE4E/VQX/nJH/AcEPRYNPYtZ9l1XNTEv390xQdD0ajQB+Omye6HSYn7t63Bdb/YFNUeY8DBfJVX1aiAQk65vaBh1ydMC8J85YaaAnpiPRv/QVURZbMjcoO1Bt6YiUOn8QacZwmNd7BaKVdikAh33bv630z7g8tumMGZ8Xv4tGkrknX8iXKdV3zt0SlNjtNbB6o=
 X-OriginatorOrg: toshiba.co.jp
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB9420.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 06c36efb-0f9e-4e3e-212b-08db7c47f96a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jul 2023 04:34:37.1815
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8febda87-1253-4890-8dac-08db7c491f8e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jul 2023 04:42:50.6741
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pKdJGLjQWOx46ssOuVa7h73YU8YZ1QezoREd4fJEWSrQ104TSHYP2gzY30Zu/3Tf2n1PeME0EmezxUNbC2pGGXNIHE4rvFXIMHPCcGm9sHvt6sqnSGoD+iR93sbgMoN0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB9980
+X-MS-Exchange-CrossTenant-userprincipalname: DaNKE2mhweCc4BZEE51NITTkhDjGnOvOUMJbEGqFu09X/dLWlf5/Kq6eTjjgbUx4tBObjxiXFRrrWDKiXrxc+t0AFC3eWSDXtj/EYMdIPJI3qfvSDvEEEPB7E+X+vNff
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS7PR01MB12044
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 04 Jul 2023 04:34:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12198
+ <cip-dev@lists.cip-project.org>; Tue, 04 Jul 2023 04:43:06 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12199
 
-Hi Biju,
+Hi Fabrizio,
 
 > -----Original Message-----
-> From: Biju Das <biju.das.jz@bp.renesas.com>
-> Sent: Monday, July 3, 2023 10:21 PM
+> From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Sent: Tuesday, July 4, 2023 2:02 AM
 > To: cip-dev@lists.cip-project.org; iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B=
 ?.MN=1B(B =1B$B!{#D#I#T#C""=1B(B
 > =1B$B#D#I#T!{#O#S#T=1B(B) <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Mache=
 k
 > <pavel@denx.de>
-> Cc: Biju Das <biju.das.jz@bp.renesas.com>; Fabrizio Castro
-> <fabrizio.castro.jz@renesas.com>
-> Subject: [PATCH 5.10.y-cip] usb: gadget: udc: renesas_usb3: Fix RZ/V2M
-> {modprobe,bind} error
+> Subject: [PATCH 5.10.y-cip 2/4] soc: renesas: Add PWC support for RZ/V2M
 >=20
-> commit 3e6ac852fbc71a234de24b5455086f6b98d3d958 upstream.
+> Commit 0c56f949f626e59ef7c5b18e2706fed2a6afc4a2 upstream.
 >=20
-> Currently {modprobe, bind} after {rmmod, unbind} results in probe failure=
-.
+> The Renesas RZ/V2M External Power Sequence Controller (PWC) IP is capable
+> of:
+> * external power supply on/off sequence generation
+> * on/off signal generation for the LPDDR4 core power supply (LPVDD)
+> * key input signals processing
+> * general-purpose output pins
 >=20
-> genirq: Flags mismatch irq 22. 00000004 (85070400.usb3drd) vs. 00000004
-> (85070400.usb3drd)
-> renesas_usb3: probe of 85070000.usb3peri failed with error -16
+> Add the corresponding device driver.
 >=20
-> The reason is, it is trying to register an interrupt handler for the same=
- IRQ twice.
-> The devm_request_irq() was called with the parent device.
-> So the interrupt handler won't be unregistered when the usb3-peri device =
-is
-> unbound.
->=20
-> Fix this issue by replacing "parent dev"->"dev" as the irq resource is ma=
-naged
-> by this driver.
->=20
-> Fixes: 9cad72dfc556 ("usb: gadget: Add support for RZ/V2M USB3DRD driver"=
-)
-> Cc: stable <stable@kernel.org>
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Message-ID: <20230530161720.179927-1-biju.das.jz@bp.renesas.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Link:
+> https://lore.kernel.org/r/20230106125816.10600-3-fabrizio.castro.jz@renes=
+as.
+> com
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> [Fabrizio: - Switched to using pm_power_off as devm_register
+> 	     power_off_handler is not availble in v5.10.y-cip
+> 	   - priv_pwc is now static to pwc-rzv2m.c as the
+> 	     pm_power_off callback cannot access private data ]
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 > ---
->  drivers/usb/gadget/udc/renesas_usb3.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/soc/renesas/Kconfig     |   4 +
+>  drivers/soc/renesas/Makefile    |   1 +
+>  drivers/soc/renesas/pwc-rzv2m.c | 150
+> ++++++++++++++++++++++++++++++++
+>  3 files changed, 155 insertions(+)
+>  create mode 100644 drivers/soc/renesas/pwc-rzv2m.c
 >=20
-> diff --git a/drivers/usb/gadget/udc/renesas_usb3.c
-> b/drivers/usb/gadget/udc/renesas_usb3.c
-> index a1e8669536d8..bcbdb6b2a8d4 100644
-> --- a/drivers/usb/gadget/udc/renesas_usb3.c
-> +++ b/drivers/usb/gadget/udc/renesas_usb3.c
-> @@ -2898,9 +2898,9 @@ static int renesas_usb3_probe(struct
-> platform_device *pdev)
->  		struct rzv2m_usb3drd *ddata =3D
-> dev_get_drvdata(pdev->dev.parent);
+> diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig in=
+dex
+> a2d37a682dfc..dcc0d2ae1b2c 100644
+> --- a/drivers/soc/renesas/Kconfig
+> +++ b/drivers/soc/renesas/Kconfig
+> @@ -306,11 +306,15 @@ config ARCH_R9A09G011
+>  	bool "ARM64 Platform support for RZ/V2M"
+>  	select PM
+>  	select PM_GENERIC_DOMAINS
+> +	select PWC_RZV2M
+>  	help
+>  	  This enables support for the Renesas RZ/V2M SoC.
 >=20
->  		usb3->drd_reg =3D ddata->reg;
-> -		ret =3D devm_request_irq(ddata->dev, ddata->drd_irq,
-> +		ret =3D devm_request_irq(&pdev->dev, ddata->drd_irq,
->  				       renesas_usb3_otg_irq, 0,
-> -				       dev_name(ddata->dev), usb3);
-> +				       dev_name(&pdev->dev), usb3);
->  		if (ret < 0)
->  			return ret;
->  	}
+>  endif # ARM64
+>=20
+> +config PWC_RZV2M
+> +	bool "Renesas RZ/V2M PWC support" if COMPILE_TEST
+> +
+>  config RST_RCAR
+>  	bool "Reset Controller support for R-Car" if COMPILE_TEST
+>=20
+> diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
+> index 9b29bed2a597..c571e8ef9192 100644
+> --- a/drivers/soc/renesas/Makefile
+> +++ b/drivers/soc/renesas/Makefile
+> @@ -30,6 +30,7 @@ obj-$(CONFIG_ARCH_R9A06G032)	+=3D
+> r9a06g032-smp.o
+>  endif
+>=20
+>  # Family
+> +obj-$(CONFIG_PWC_RZV2M)		+=3D pwc-rzv2m.o
+>  obj-$(CONFIG_RST_RCAR)		+=3D rcar-rst.o
+>  obj-$(CONFIG_SYSC_RCAR)		+=3D rcar-sysc.o
+>  obj-$(CONFIG_SYSC_RMOBILE)	+=3D rmobile-sysc.o
+> diff --git a/drivers/soc/renesas/pwc-rzv2m.c
+> b/drivers/soc/renesas/pwc-rzv2m.c new file mode 100644 index
+> 000000000000..5bbfc6fe7a57
+> --- /dev/null
+> +++ b/drivers/soc/renesas/pwc-rzv2m.c
+> @@ -0,0 +1,150 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2023 Renesas Electronics Corporation  */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/kallsyms.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reboot.h>
+> +
+> +#define PWC_PWCRST			0x00
+> +#define PWC_PWCCKEN			0x04
+> +#define PWC_PWCCTL			0x50
+> +#define PWC_GPIO			0x80
+> +
+> +#define PWC_PWCRST_RSTSOFTAX		0x1
+> +#define PWC_PWCCKEN_ENGCKMAIN		0x1
+> +#define PWC_PWCCTL_PWOFF		0x1
+> +
+> +struct rzv2m_pwc_priv {
+> +	void __iomem *base;
+> +	struct device *dev;
+> +	struct gpio_chip gp;
+> +	DECLARE_BITMAP(ch_en_bits, 2);
+> +};
+> +
+> +static struct rzv2m_pwc_priv *priv_pwc;
+> +
+> +static void rzv2m_pwc_gpio_set(struct gpio_chip *chip, unsigned int offs=
+et,
+> +			       int value)
+> +{
+> +	struct rzv2m_pwc_priv *priv =3D gpiochip_get_data(chip);
+> +	u32 reg;
+> +
+> +	/* BIT 16 enables write to BIT 0, and BIT 17 enables write to BIT 1 */
+> +	reg =3D BIT(offset + 16);
+> +	if (value)
+> +		reg |=3D BIT(offset);
+> +
+> +	writel(reg, priv->base + PWC_GPIO);
+> +
+> +	assign_bit(offset, priv->ch_en_bits, value); }
+> +
+> +static int rzv2m_pwc_gpio_get(struct gpio_chip *chip, unsigned int
+> +offset) {
+> +	struct rzv2m_pwc_priv *priv =3D gpiochip_get_data(chip);
+> +
+> +	return test_bit(offset, priv->ch_en_bits); }
+> +
+> +static int rzv2m_pwc_gpio_direction_output(struct gpio_chip *gc,
+> +					   unsigned int nr, int value)
+> +{
+> +	if (nr > 1)
+> +		return -EINVAL;
+> +
+> +	rzv2m_pwc_gpio_set(gc, nr, value);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct gpio_chip rzv2m_pwc_gc =3D {
+> +	.label =3D "gpio_rzv2m_pwc",
+> +	.owner =3D THIS_MODULE,
+> +	.get =3D rzv2m_pwc_gpio_get,
+> +	.set =3D rzv2m_pwc_gpio_set,
+> +	.direction_output =3D rzv2m_pwc_gpio_direction_output,
+> +	.can_sleep =3D false,
+> +	.ngpio =3D 2,
+> +	.base =3D -1,
+> +};
+> +
+> +static void rzv2m_pwc_poweroff(void)
+> +{
+> +	writel(PWC_PWCRST_RSTSOFTAX, priv_pwc->base +
+> PWC_PWCRST);
+> +	writel(PWC_PWCCKEN_ENGCKMAIN, priv_pwc->base +
+> PWC_PWCCKEN);
+> +	writel(PWC_PWCCTL_PWOFF, priv_pwc->base + PWC_PWCCTL);
+> +
+> +	mdelay(150);
+> +
+> +	dev_err(priv_pwc->dev, "Failed to power off the system"); }
+> +
+> +static int rzv2m_pwc_probe(struct platform_device *pdev) {
+> +	struct rzv2m_pwc_priv *priv;
+> +	char symname[KSYM_NAME_LEN];
+
+It=1B$B!G=1B(Bs not a big, but we can declare symname in ' if (pm_power_off=
+) {'.
+
+> +	int ret;
+> +
+> +	priv =3D devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	priv->base =3D devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(priv->base))
+> +		return PTR_ERR(priv->base);
+> +
+> +	/*
+> +	 * The register used by this driver cannot be read, therefore set the
+> +	 * outputs to their default values and initialize priv->ch_en_bits
+> +	 * accordingly. BIT 16 enables write to BIT 0, BIT 17 enables write to
+> +	 * BIT 1, and the default value of both BIT 0 and BIT 1 is 0.
+> +	 */
+> +	writel(BIT(17) | BIT(16), priv->base + PWC_GPIO);
+> +	bitmap_zero(priv->ch_en_bits, 2);
+> +
+> +	priv->gp =3D rzv2m_pwc_gc;
+> +	priv->gp.parent =3D pdev->dev.parent;
+> +	priv->gp.of_node =3D pdev->dev.of_node;
+> +
+> +	ret =3D devm_gpiochip_add_data(&pdev->dev, &priv->gp, priv);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (device_property_read_bool(&pdev->dev,
+> "renesas,rzv2m-pwc-power")) {
+> +		if (pm_power_off) {
+> +			lookup_symbol_name((ulong)pm_power_off,
+> symname);
+> +			dev_err(&pdev->dev, "pm_power_off already
+> claimed %p %s",
+> +				pm_power_off, symname);
+> +			return -EBUSY;
+> +
+> +		}
+> +		priv_pwc =3D priv;
+> +		pm_power_off =3D rzv2m_pwc_poweroff;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct of_device_id rzv2m_pwc_of_match[] =3D {
+> +	{ .compatible =3D "renesas,rzv2m-pwc" },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, rzv2m_pwc_of_match);
+> +
+> +static struct platform_driver rzv2m_pwc_driver =3D {
+> +	.probe =3D rzv2m_pwc_probe,
+> +	.driver =3D {
+> +		.name =3D "rzv2m_pwc",
+> +		.of_match_table =3D of_match_ptr(rzv2m_pwc_of_match),
+> +	},
+> +};
+> +module_platform_driver(rzv2m_pwc_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Fabrizio Castro <castro.fabrizio.jz@renesas.com>");
+> +MODULE_DESCRIPTION("Renesas RZ/V2M PWC driver");
 > --
 > 2.25.1
-
-I reviewed this series. Looks fine to me.
-I can apply, if there are no comments and issues.
-
-Test: https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/91994=
-6031
-Reviewed-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 
 Best regards,
   Nobuhiro
