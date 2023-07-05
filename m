@@ -2,69 +2,110 @@ Return-Path: <sai.sathujoda@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C1BC0015E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FCE7EB64DD
 	for <webhook@archiver.kernel.org>; Wed,  5 Jul 2023 06:16:24 +0000 (UTC)
 Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
- by mx.groups.io with SMTP id smtpd.web11.10970.1688537779711618345
+ by mx.groups.io with SMTP id smtpd.web11.10969.1688537779359521354
  for <cip-dev@lists.cip-project.org>;
  Tue, 04 Jul 2023 23:16:20 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing; spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.158, mailfrom: sai.sathujoda@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 3656GHVO1922199; Wed, 5 Jul 2023 15:16:17 +0900
-X-Iguazu-Qid: 2rWhc6jYw81G04Tzwh
-X-Iguazu-QSIG: v=2; s=0; t=1688537777; q=2rWhc6jYw81G04Tzwh; m=xQYc2/s1hgoM6vULbzADpK+UYHwomDZYYG1Ot371azY=
+Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 3656GG1n1922162; Wed, 5 Jul 2023 15:16:17 +0900
+X-Iguazu-Qid: 2rWhDvohsGSF7FhC9l
+X-Iguazu-QSIG: v=2; s=0; t=1688537776; q=2rWhDvohsGSF7FhC9l; m=M9VqVs6Svzb6hrAyZMLQ+qZIYdrvHYdDy2NKn8U7jvw=
 Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1121) id 3656GGbb817114
+	by relay.securemx.jp (mx-mr1123) id 3656GFPo824651
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
 	Wed, 5 Jul 2023 15:16:16 +0900
 From: Sai.Sathujoda@toshiba-tsip.com
 To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
 Cc: Sai <Sai.Sathujoda@toshiba-tsip.com>, dinesh.kumar@toshiba-tsip.com,
         kazuhiro3.hayashi@toshiba.co.jp
-Subject: [isar-cip-core 2/2] kas/opt/security.yml : Change password to fit pam_passwdqc policy
-Date: Wed,  5 Jul 2023 11:46:11 +0530
+Subject: [isar-cip-core 1/2] cip-core-image-security.bb : Add pam-passwdqc package for bookworm
+Date: Wed,  5 Jul 2023 11:46:10 +0530
 X-TSB-HOP2: ON
-Message-Id: <20230705061611.20080-2-Sai.Sathujoda@toshiba-tsip.com>
+Message-Id: <20230705061611.20080-1-Sai.Sathujoda@toshiba-tsip.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20230705061611.20080-1-Sai.Sathujoda@toshiba-tsip.com>
-References: <20230705061611.20080-1-Sai.Sathujoda@toshiba-tsip.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 05 Jul 2023 06:16:13.0995 (UTC) FILETIME=[335507B0:01D9AF08]
+X-OriginalArrivalTime: 05 Jul 2023 06:16:13.0870 (UTC) FILETIME=[3341F4E0:01D9AF08]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 05 Jul 2023 06:16:24 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12222
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12223
 
 From: Sai <Sai.Sathujoda@toshiba-tsip.com>
 
-Since we using pam_passwdqc from bookworm, our current security image login password
-does not meet the requirements based on the below given pam_passwdqc policy.
+libpam-cracklib is deprecated in Debian 12, so libpam-passwdqc package is used
+instead when bookworm is selected with security extensions.
 
-When calculating the number of character classes, upper-case letters used as the
-first character and digits used as the last character of a password are not counted.
-This makes our password to have only 3 character classes. Hence we are adding multiple
-capital characters to make the total number of character classes as 4.
+The configuration in the postinst file is also handled with a condition based
+on the respective "pam_(passwdqc | cracklib).so" file.
 
 Signed-off-by: Sai <Sai.Sathujoda@toshiba-tsip.com>
 ---
- kas/opt/security.yml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ recipes-core/images/cip-core-image-security.bb  |  9 ++++++---
+ .../security-customizations/files/postinst      | 17 ++++++++++++++---
+ 2 files changed, 20 insertions(+), 6 deletions(-)
 
-diff --git a/kas/opt/security.yml b/kas/opt/security.yml
-index 4d11905..1f3745b 100644
---- a/kas/opt/security.yml
-+++ b/kas/opt/security.yml
-@@ -16,7 +16,7 @@ target: cip-core-image-security
- local_conf_header:
-   root_password: |
-     USERS += "root"
--    USER_root[password] = "Cipsecurity@123"
-+    USER_root[password] = "CIPsecurity@123"
-     USER_root[flags] = "clear-text-password"
-   adjust-swupdate: |
-     ABROOTFS_IMAGE_RECIPE = "cip-core-image-security"
+diff --git a/recipes-core/images/cip-core-image-security.bb b/recipes-core/images/cip-core-image-security.bb
+index 563de89..3421ce5 100644
+--- a/recipes-core/images/cip-core-image-security.bb
++++ b/recipes-core/images/cip-core-image-security.bb
+@@ -27,7 +27,6 @@ IMAGE_PREINSTALL += " \
+ 	chrony \
+ 	tpm2-tools \
+ 	tpm2-abrmd \
+-	libpam-cracklib \
+ 	acl \
+ 	audispd-plugins auditd \
+ 	uuid-runtime \
+@@ -41,8 +40,12 @@ IMAGE_PREINSTALL += " \
+ "
+ 
+ # Package names based on the distro version
+-IMAGE_PREINSTALL:append:buster = " libtss2-esys0"
+-IMAGE_PREINSTALL:append:bullseye = " libtss2-esys-3.0.2-0"
++IMAGE_PREINSTALL:append:buster = " libtss2-esys0 \
++                                   libpam-cracklib"
++IMAGE_PREINSTALL:append:bullseye = " libtss2-esys-3.0.2-0 \
++                                     libpam-cracklib"
++IMAGE_PREINSTALL:append:bookworm = " libtss2-esys-3.0.2-0 \
++                                     libpam-passwdqc"
+ 
+ CIP_IMAGE_OPTIONS ?= ""
+ require ${CIP_IMAGE_OPTIONS}
+diff --git a/recipes-core/security-customizations/files/postinst b/recipes-core/security-customizations/files/postinst
+index 77a2713..4581457 100644
+--- a/recipes-core/security-customizations/files/postinst
++++ b/recipes-core/security-customizations/files/postinst
+@@ -15,11 +15,22 @@ echo "127.0.0.1 $HOSTNAME" >> /etc/hosts
+ # CR1.7: Strength of password-based authentication
+ # Pam configuration to  enforce password strength
+ PAM_PWD_FILE="/etc/pam.d/common-password"
+-pam_cracklib_config="password  requisite    pam_cracklib.so retry=3 minlen=8 maxrepeat=3 ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1  difok=3 gecoscheck=1 reject_username  enforce_for_root"
+-if grep -c "pam_cracklib.so" "${PAM_PWD_FILE}";then
++if grep -c "pam_passwdqc.so" "${PAM_PWD_FILE}";then
++	# Password strength is defined as it should have atleast 8 characters length and with 4 character classes (uppercase, lowercase, digit and other characters)
++	# Same is set in passwdqc configuration with `min=N0,N1,N2,N3,N4`
++	# N0, N1, N3  are disabled, to not to accept password with only one, two or three character classes
++	# N2 is disabled for passphrases since we have no restriction for the minimum length of passphrase.
++	# N4 is set to 8 to accept the passowrd length atleast 8 characters and with four character class combinations.
++        pam_passwdqc_config="password    requisite    pam_passwdqc.so min=disabled,disabled,disabled,disabled,8 similar=deny random=0 enforce=everyone retry=3"
++        sed -i '/pam_passwdqc.so/ s/^#*/#/'  "${PAM_PWD_FILE}"
++        sed -i "0,/^password.*/s/^password.*/${pam_passwdqc_config}\n&/" "${PAM_PWD_FILE}"
++elif grep -c "pam_cracklib.so" "${PAM_PWD_FILE}";then
++        pam_cracklib_config="password  requisite    pam_cracklib.so retry=3 minlen=8 maxrepeat=3 ucredit=-1 lcredit=-1 dcredit=-1 ocredit=-1  difok=3 gecoscheck=1 reject_username  enforce_for_root"
+         sed -i '/pam_cracklib.so/ s/^#*/#/'  "${PAM_PWD_FILE}"
++        sed -i "0,/^password.*/s/^password.*/${pam_cracklib_config}\n&/" "${PAM_PWD_FILE}"
++else
++        echo "No suitable pam module found to enforce password strength"
+ fi
+-sed -i "0,/^password.*/s/^password.*/${pam_cracklib_config}\n&/" "${PAM_PWD_FILE}"
+ 
+ # CR1.11: Unsuccessful login attempts
+ # Lock user account after unsuccessful login attempts
 -- 
 2.20.1
 
