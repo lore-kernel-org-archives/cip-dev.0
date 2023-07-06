@@ -1,412 +1,187 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E10AAEB64DA
-	for <webhook@archiver.kernel.org>; Thu,  6 Jul 2023 00:35:46 +0000 (UTC)
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
- by mx.groups.io with SMTP id smtpd.web11.10983.1688603739055845940
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CDDBEB64DA
+	for <webhook@archiver.kernel.org>; Thu,  6 Jul 2023 01:18:47 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.131])
+ by mx.groups.io with SMTP id smtpd.web11.11687.1688606320130162005
  for <cip-dev@lists.cip-project.org>;
- Wed, 05 Jul 2023 17:35:39 -0700
+ Wed, 05 Jul 2023 18:18:40 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="signature has expired" header.i=@miraclelinux-com.20221208.gappssmtp.com header.s=20221208 header.b=naimn2I6;
- spf=pass (domain: miraclelinux.com, ip: 209.85.161.42, mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5634db21a78so79196eaf.0
-        for <cip-dev@lists.cip-project.org>; Wed, 05 Jul 2023 17:35:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20221208.gappssmtp.com; s=20221208; t=1688603738; x=1691195738;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MZIZpa08ZHvJV0KSYbDah0aPU8K5Rl/fbzSj6SdOjso=;
-        b=naimn2I6u5vQm3hF3vFCzuU3dv2qmgc7+14DH7cAXf+IBfilMe7t47SqpzoFc9P3T/
-         DBNZv6O74HGhV+/DnSHrcRPHHFg1Sc5bSZVLx/9txPh6ndaYiD5FDI7A5eEbSiHZrVUe
-         cQSHROIZDaOsh5L8UkPiAABstEg40Y9Xt3syV5Ojm8sCAN2NCm5LWGIWBHf1WCDPQz2+
-         xEoVXWwsf1ljBVuQSnHVdp8Fgsa/07+ANhHWCBxjkd7dDpNFUjrgR5YT08hAPo0bUvHC
-         VppPwPeR9Dvb0eByhhBZnxH2PUZDXZoMd8fs3mB8IEOc/wLm7+XkA03a7thkTCFqwRIH
-         Ad4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688603738; x=1691195738;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MZIZpa08ZHvJV0KSYbDah0aPU8K5Rl/fbzSj6SdOjso=;
-        b=dZ5xqVW3v3r/wEHJMinZQ85GuyCBYxW+T0LIPtz2sEmZzYc2XgackeicDwAL2gWQ4N
-         tlllhg/6H6Dikbfp4si0pwBdNllSd1AWVgjrraWwzJKBw0YcoTYgsnD/+MVFYtv5qBjH
-         rveZdRlxWQRvclCxKU1zn3HGUMyhkBHfw3ugFmilMBtyaZ2mMpLSR1AEC+FMfnxNDWaB
-         spLcIfCrVNDrN8EAyBtiN2hZCGYXc1oIQunPDelx24APwE74EX3+vPDhNfrXj184Z0c7
-         9bmMggoA17LfsygEmc9AoWGWBJl2s3pAzcttzQQxDQCnwuopcrjqAJc9QQQvzMmScA6s
-         tUgg==
-X-Gm-Message-State: ABy/qLbOHvo9egATgyDHXFK19YJBb4ljrrnGGrLx78JKrTEOoiyKBQBL
-	+u2mmiPOY+j+1rcVwhcqGtSqW1CPhwFaW+X0zM8+A3BkoMLXeAVxT0w=
-X-Google-Smtp-Source: APBJJlErMl3dy9JzO24+dIA8TzFkxsybxzGO6pgDBz1eUuTtb63aKsJDPEP1ORqKZquo283oJaMPCkCot1w0oSy9nbU=
-X-Received: by 2002:a4a:41d0:0:b0:565:8b3c:32ee with SMTP id
- x199-20020a4a41d0000000b005658b3c32eemr430536ooa.1.1688603737557; Wed, 05 Jul
- 2023 17:35:37 -0700 (PDT)
+ dkim=missing; spf=pass (domain: toshiba.co.jp, ip: 210.130.202.131, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
+Received: by mo-csw.securemx.jp (mx-mo-csw1120) id 3661IT9H4088920; Thu, 6 Jul 2023 10:18:29 +0900
+X-Iguazu-Qid: 2rWhi9UHc0xoLVf0GO
+X-Iguazu-QSIG: v=2; s=0; t=1688606309; q=2rWhi9UHc0xoLVf0GO; m=pfYyhGzMlT4ofNSenODAzP0G5UNpPTiavOJk8PwLdaM=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1120) id 3661IRmK2518714
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 6 Jul 2023 10:18:28 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HbRQc1zfRVEEa1rWwvG6XGhFaJ7do4vSGqIX6Q02xuj+B4XY2RqogwVUxYU1NYPkTYxz48CGHuWeDsBWbUM/Y5Nmgg8wUQFo0jFaayPV8b5OcuJ8Hna9VU3FDoFLb1Ea9PV55yD3o8j7fCZw7+56l39NT4xX42ogqwXsx/kMn6qCJx9CZfTgeQN+Aq3AV1UF5yfAx3d/ZvTed2hrPt0P/YkCJWH+pzwm/6BKZNDTA1LxSQCe/z2j69frp+i6LaTRFXklyFh/hEaiv2Oeb7I4tOlUPOncNqwebGiKOEhSiSHmmd3MVGcg0Lq6CoxbjPnL5CWuXNSGHRwQawX5R6eoWQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=x88/oVI0ui03sQvAKxcvg4zrQq7gxzCnf3zUE/lbsLo=;
+ b=XXcE0VeWpySzy6aAuYoJv93YCWfsrB2QylMmjpq9yhbjb5E8A4gRGmglNf+u8gMiY5O85gkleSK3vLzZCMPRMWmuOUkgCfymHIzHxGqvLlBn7H+0SbnbKSw9xVhyI3L5PPj/8SwbcubMaGr6JFnaohXfZA8Lnrpsl4mZ+kdWfLfDKp73xwGgxTMRKxeO+kYQYTB7P7Q4JR3CwQXNpu118cnpX1IOq/7mTaaq0JxuEzdEMJu1OCbjY2raJdnsdg9RbiEG93AcgyFmdFcMiavcGcKT2QCoDgs0vv/NQoxV8Nh14GmApdv7fus7fUZREA1681DENSHxoi1YXEhhLX96Hw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: <fabrizio.castro.jz@renesas.com>, <cip-dev@lists.cip-project.org>,
+        <pavel@denx.de>
+CC: <biju.das@bp.renesas.com>, <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        <Chris.Paterson2@renesas.com>
+Subject: RE: [PATCH 5.10.y-cip 0/5] Add SDHI support to the Renesas RZ/V2M
+Thread-Topic: [PATCH 5.10.y-cip 0/5] Add SDHI support to the Renesas RZ/V2M
+Thread-Index: AQHZrdIvwzFkWROBpU6Hu8sA/RB8YK+r65ww
+Date: Thu, 6 Jul 2023 01:18:25 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <TYWPR01MB9420D58265BF325B0FB9F9A8922CA@TYWPR01MB9420.jpnprd01.prod.outlook.com>
+References: <20230703171649.15862-1-fabrizio.castro.jz@renesas.com>
+In-Reply-To: <20230703171649.15862-1-fabrizio.castro.jz@renesas.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYWPR01MB9420:EE_|OSRPR01MB11857:EE_
+x-ms-office365-filtering-correlation-id: f12602f8-1b6a-4813-ccf3-08db7dbee5d1
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ ms+syn7MhoEU5bJ797qSA3XTXz+5xr66dDU1UQNQFVuYO2+JvOonayFOopoOQhFDhimEk2subWFzoWPOim/tta9rteOIVcNC4rxEnPtxiMlcO8c4ecBI7YAc74EvbNCSrD/QL161UGQhtjwt3UM9xnsbprngODeQpgh2rbfI2nT79rOtT+LF6MWLy3vJEHR9gSgVOA9KweMW4Kcb6aV8NdShYiPceKTh8XyzkJ66ZibbJjCrzhXXuX5vyB9Kmd7ZRxvD++Lzzu1CMs2njHDhRzlH2KYzjrcKTA+cxokUlRk9KRplpjGEea61qzKf0BDyacozK6sPOLXLeOZqE9Uh4G3vJ350C7CgnLJKnnq9bGxjFLmeRgCvPLq47kCkYj/yrOi6ppVVxSZLU4bXiC/VqlhnAcdF4bW1FlRjFEwAZyNrTr/TU23f2VHdOijontBiuBZKBcGjD0xQeyctkdgK9cPDp4jTyhCHmjdykTEyiExxBVnJnADRqt0Xt7IutXtdzR7OCdp3gG8P8EJNOdV8xjPT45GJdm0BiwDqD2qatK6xX/kcMNvllIASMjJ5leb0pHoefRpvNWH/AwCTSYDZXPzL5cRuEAyM8FIc/IxJl0BxQT5LTgrIQTLy7K/gZ2dj
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB9420.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(376002)(396003)(366004)(39860400002)(346002)(451199021)(38070700005)(38100700002)(186003)(122000001)(53546011)(55016003)(83380400001)(6506007)(52536014)(41300700001)(33656002)(8676002)(5660300002)(8936002)(66476007)(2906002)(7696005)(86362001)(66556008)(66946007)(966005)(9686003)(76116006)(66446008)(478600001)(316002)(64756008)(4326008)(71200400001)(54906003)(26005)(110136005)(95630200002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?TGswSW9MenF4Q240c0RBbWFXeExWU09qeW9IUkFzWTFIRm1CeHljTURB?=
+ =?iso-2022-jp?B?dlVrUnFJckIycU12Q29Qd1RYOEtac3hkRTZUa2p0SkR5SHYyb1dEZ2tO?=
+ =?iso-2022-jp?B?ZzlGbFVqaWM3cTM0OG9HcEs0K01yaDAyd2pQQ3FVZ1p6QXY1aGNmRmVr?=
+ =?iso-2022-jp?B?ZjZxelN0cVJ6UFV2RTJJdVdTQkE3YjBrR2lLSTYrcmtLQmNMUWwzY0NM?=
+ =?iso-2022-jp?B?RHNUV0w2MU0yNUYwS2tmY2hsUThnbXQ1MHpTbVJQWUQzeEJDVDlJcXc3?=
+ =?iso-2022-jp?B?N01nYzRlU3FZTHY3MllDMXpaVHI1K250a0RKaEM3YUw4UWI5MHpSU1Zp?=
+ =?iso-2022-jp?B?RHU2cHVVUEtvbmxLWFgxVXIrNCs4Y1FCWFJjU21KV3QzSjc3VW9WcUpW?=
+ =?iso-2022-jp?B?bXFrRTNkQi9EYWFpYWxidEdNY1pqa3J4MXZpM2NpcHJPTENhWU9kWUFh?=
+ =?iso-2022-jp?B?VGZ6SUFaZ1BObUhoYnc3eTZ2RlB6T3V4dXArR0JRd1U4cUtjNU81UkIv?=
+ =?iso-2022-jp?B?a0I3TGVhODRjWWM2Z1EySkdwTE9ZSVFjU3VVU3BvT05UYWxQdXJ5MWE1?=
+ =?iso-2022-jp?B?RGFNeVVtQzlSTzhlVGFTK1VzdTREQ2hTTXdueGM0OGZVd3pXQUhyak9z?=
+ =?iso-2022-jp?B?NXRLS2FiTVVWYWVKM1pHeVVzSXh0TTZ6dVg1VTNVL3BKNmVrcVpHSGtU?=
+ =?iso-2022-jp?B?bnVoVHp4LzE2VVBtcmdZK292c2pCQlFDTEVjcUtmWGdCSUVaSGxweW80?=
+ =?iso-2022-jp?B?eld1dTlPcmVoeWFidGpkUysyckhqWFBlUmM4NllFZmVSa284bmt4TmV2?=
+ =?iso-2022-jp?B?a2F3LzZiblJYeStHYjduTWpTWkRMTkR3Qkkxelg3TGtXdHl1UEpQdDd0?=
+ =?iso-2022-jp?B?NzRpQXNicTJqb0VGTFcwY1p1RGJTZjc3WnA4elMrQ2lhY3pXaTlmKzh3?=
+ =?iso-2022-jp?B?dmRmS3czb0V5anpRb3BCOERzR21TQ2R6aUZNK2NWUlRGeTl6NkRnalhM?=
+ =?iso-2022-jp?B?OUdqZUpFb3dSWDhHTHY2TGUrQ1A2QmtCOVNtOGpHQVJXQ1hsSXE2M1Vj?=
+ =?iso-2022-jp?B?bkloUWQ3QngreksyR2Mxc29MdTMyb3d3czFad0xlM0tPa21RSm9PRVA4?=
+ =?iso-2022-jp?B?cU5yZXVjVmhhQk52aWgwaU8wQkF1cDYwVHJNRXhpMCsxWUdNTTgzQVJS?=
+ =?iso-2022-jp?B?QWQrd0ppc1prRjlkUFBjMXVmQ2FrWWxTU2x6RWNvQUZDdmVlMTB2S2JF?=
+ =?iso-2022-jp?B?TWRtUnZXSjE4cEhEOGpSRi9LdWFrZ2YwYW9HZmJybFI2WkZ5ZUo3azdm?=
+ =?iso-2022-jp?B?bTI2SHY5YktycDZGNGtlOG9sTW45TERJUGdjNWZlVDZ3aXdIT3NqVlJq?=
+ =?iso-2022-jp?B?RzZ5eGpuTzdpU01jeXJlMmVHWjlaTVplcDNaWmErTVRjR05Zdm5DSnpU?=
+ =?iso-2022-jp?B?VUZWUENpMTNiSjkzWlZ5K3dTWlFlbFJVLzRJVVo5dEdqNHlSYmZubGp1?=
+ =?iso-2022-jp?B?SU4zek0rMGsxRXBVWFlGZ1hKam9NM3pXQnRDM1pKOHRUdmppSElOSVp0?=
+ =?iso-2022-jp?B?UktxZkdGUFdNcVdpQ1AyUWwrU2VJbHJLTTJmSEkxalUwdHpzU1hSTWUr?=
+ =?iso-2022-jp?B?RDRDT0R0VDF5cVF5OUdXQjdwZ0VOeFQxWjJDREo0cVVReThHaHdIRk9w?=
+ =?iso-2022-jp?B?dVREdWZCWjlXc2I1V3hQcXhWZ252MnRqN3F2R2hhaEdDTjA2OGJCKzFM?=
+ =?iso-2022-jp?B?Y2toVStRbEJIbjF4UVdSY3kvYS82YzNNMzFUY01XcWJoQVlybTI2dlF3?=
+ =?iso-2022-jp?B?ZkU2M1MrNlVJcEZDcklONC9MYmYxSnhuYitIN2JpYWdtSUhaT05NSitz?=
+ =?iso-2022-jp?B?dzl5alUwaFIrZThoRmNSL055dWpqUWpRRi9DWnJ5T2V3NHp2Mzh4Z3g2?=
+ =?iso-2022-jp?B?MUNpOEowd3RJZ204NTR0cWZ0TFNadGNjUVBEaEZkaEhaeEJhZFpQM3N1?=
+ =?iso-2022-jp?B?c0prdHZFN1lZV1luVnlLQ3gxMS9NZ2c4bENndk52bHRxQ1ZSazdLQUZw?=
+ =?iso-2022-jp?B?LzZPTUQwOVU5aS83blY3ZnlnNUZYZHgvZlIrUDdEVlBRcjBlR0hnUjUy?=
+ =?iso-2022-jp?B?UHFYVFJnTW4vN01oc3hGaXpPOVhmN1AzQWJ4M3Y4VmVqTmVYeTdCdDhm?=
+ =?iso-2022-jp?B?WDB6aTI0Rnd5ZFV0amw3NTEyaS95dTlPQXUvQmdwbFhmamFGYkt0K1RH?=
+ =?iso-2022-jp?B?dUw4UVdnalFnTmtzcy9sSy90YTdnTTFZcDlIZ1FWRUJSSXRFUjJlM1c1?=
+ =?iso-2022-jp?B?TmcvYVhkakpFenBPWm9rVjVyUHJST0dFNnc9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 6 Jul 2023 09:35:00 +0900
-Message-ID: <CAODzB9ow5eZ7z9rfioi83xBh4e3r0DqeivR6wi1=o251Y59EmQ@mail.gmail.com>
-Subject: New CVE entries this week
-To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	sJNYs2CWEEFy/kaXJGhd3BjBc/Z2jdAxmfeOjZLBZBV9CoQguCY/KYfpgYdJ5D1FmOPcwJeAqm4aec5Lh+TvmcUH5Cekhni2Vlzkjg8c4owK6rmfWvew1gtCw8pET4lC7nHAO5n2ApWy71kHX6mR62AA9hPmvfuReOWKwq0t9TQfSpTqtgTpj1yB9m79GLcbU9UtZy727udChAVUitMZBHyxCMHUoRIBBHek/bF3HDGY7GTa47B+h8xMfjNWUPIwQL743kPli/ctpVLp93cGPTLYFMKlzCQoKWp23yrMTsj+wOLtHFqqHm7WJ4fAj3f2GBOsfWuumz4BiGXOhdEL7sTd2k+fQCH0mAie4lkb3bCrZ63T/hMyHNzNOCcuc1SUOO/EaBZ5J5RNlu23q+jS4wc3GAVPZdBumGIGkmxJrXmZ5x0stl0+nnvkoXcRmN8gFIPUjDvcg7II6rhkLfRLd2DatkS+LgrZKdUswQWbbt5MjLA+4IKgzwK8j/Xyr3CyPX50o5XwVX3TIha7vAQ7Gmzb+Vh/6jhclynI1Ws9+gGGUszECmDt0yzP5pY6HuaRmuI3qxCFIcpqD4SSTVk+9hGD+MG98TSnv4iHnFMk97uQGaIp6j+Rb3jivALIPqrrj2Q/OuPExJLSrnvSBTYU/3BUJNl+Cv5PiJ3yOO7hBmB5b1F28dgvkDbvZ1RYtbDTh04VI8wCkekRDjU+p2K3Jh+TfxECvqmkmqD0+TZ6jI7HLTmIzdfAexr4cW2L/OHMWByarkjipcc+gLQqLWIlMNLTajfpomRstgrrTdh3S2nnPa5ZU2En2qPOGI9UhNu+/V5xqP1ANTYPlXGBYHEZKJc3tAfEtlomRHmelOq4Q4SGAJha0a2IKltTuBH/tRS05ry1xeAiv0yS8Ee+AgcScg==
+X-OriginatorOrg: toshiba.co.jp
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB9420.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f12602f8-1b6a-4813-ccf3-08db7dbee5d1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jul 2023 01:18:25.5688
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: kdm/rn+YKTfFZV8Gp6SjlpnXcD7JhP47GVs7SpdoOgEVrFjuOg8qw76Xp1twXHphMvJ3x+rS4IeML5TtoLkXDQC+6L9vnCLv7dSHd3R3J7tDzFhV9GdFG+UlzTr3gkim
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSRPR01MB11857
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 06 Jul 2023 00:35:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12241
+ <cip-dev@lists.cip-project.org>; Thu, 06 Jul 2023 01:18:47 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12242
+
+Hi Fabrizio,
+
+> -----Original Message-----
+> From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Sent: Tuesday, July 4, 2023 2:17 AM
+> To: cip-dev@lists.cip-project.org; iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B=
+?.MN=1B(B =1B$B!{#D#I#T#C""=1B(B
+> =1B$B#D#I#T!{#O#S#T=1B(B) <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Mache=
+k
+> <pavel@denx.de>
+> Cc: Biju Das <biju.das@bp.renesas.com>; Lad Prabhakar
+> <prabhakar.mahadev-lad.rj@bp.renesas.com>; Chris Paterson
+> <Chris.Paterson2@renesas.com>; Fabrizio Castro
+> <fabrizio.castro.jz@renesas.com>
+> Subject: [PATCH 5.10.y-cip 0/5] Add SDHI support to the Renesas RZ/V2M
+>=20
+> Dear All,
+>=20
+> this series adds eMMC/SDHI support to the Renesas RZ/V2M SoC.
+>=20
+> I would like to highlight that the driver patch looks fairly different fr=
+om upstream,
+> and the reason for it is that the SDHI IP found inside the RZ/V2M require=
+s a
+> couple of quirks.
+> The SDHI quirks have been reworked quite a bit over time, and the
+> implementation the upstream driver patch relies on depends on changes
+> spanning the renesas sdhi core, the renesas internal DMAC implementation,
+> and the CPG implemenation.
+> Considering the amount of patches that would need backporting in order to=
+ get
+> a similar solution to the one found upstream, and considering that the ch=
+anges
+> would affect several platforms, I thought that adapting the solution for =
+the
+> quirks found upstream to the solution currently available in v5.10.y-cip =
+is the
+> best way to go, as it adds the required support without introducing
+> unnecessary risks.
+>=20
+> Cheers,
+> Fab
+>=20
+> Fabrizio Castro (4):
+>   dt-bindings: mmc: renesas,sdhi: Document RZ/V2M support
+>   mmc: renesas_sdhi: Add RZ/V2M compatible string
+>   arm64: dts: renesas: r9a09g011: Add eMMC and SDHI support
+>   arm64: dts: renesas: rzv2mevk2: Add uSD card and eMMC support
+>=20
+> Phil Edworthy (1):
+>   clk: renesas: r9a09g011: Add SDHI/eMMC clock and reset entries
+>=20
+
+I reviewed the patch and found no issues.
+I can apply, if there are no comments and issues.
+
+Test: https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/91994=
+5015
+Reviewed-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+
+Best regards,
+  Nobuhiro
 
-Hi !
-
-It's this week's CVE report.
-
-This week reported 14 new CVEs and 1 updated CVEs.
-
-* New CVEs
-
-CVE-2023-1295: A TOCTOU bug was found in io_uring subsystem.
-
-CVSS v3 score is not provided (NIST).
-CVSS v3 score is 7.8 (HIGH).
-
-A time-of-check to time-of-use issue exists in io_uring subsystem's
-IORING_OP_CLOSE operation in the Linux kernel's versions 5.6 - 5.11
-(inclusive), which allows a local user to elevate their privileges to
-root. Introduced in b5dba59e0cf7e2cc4d3b3b1ac5fe81ddf21959eb, patched
-in 9eac1904d3364254d622bf2c771c4f85cd435fc2, backported to stable in
-788d0824269bef539fe31a785b1517882eafed93.
-
-It was Introduced by commit b5dba59 (io_uring: add support for
-IORING_OP_CLOSE) in 5.6-rc1. So before 5.6 kernels are not affected.
-
-Fixed status
-mainline: [9eac1904d3364254d622bf2c771c4f85cd435fc2]
-
-CVE-2023-2163: bpf: Fix incorrect verifier pruning due to missing
-register precision taints
-
-CVSS v3 score is not provided.
-
-An OOB read/write access was found in the eBPF subsystem.
-This bug was introduced by commit b5dc0163d8fd ("bpf: precise
-scalar_value tracking") in 5.3-rc1.
-
-Fixed status
-mainline: [71b547f561247897a0a14f3082730156c0533fed]
-stable/5.10: [b1281d008845ae9a4de9ef7510dcc1667557a67a]
-stable/5.15: [e722ea6dae2cc042d1bb7090e2ef8456dd5a0e57]
-stable/5.4: [0f0a291cc5208dcc6436974246e8c18106e3c3d2]
-stable/6.1: [89603f4c9154e818b9ead1abe08545a053c66ded]
-
-CVE-2023-2860: ipv6: sr: fix out-of-bounds read when setting HMAC data.
-
-CVSS v3 score is not provided.
-
-An oob read bug was found in IPv6 subsystem.
-This bug was introduced by commit 4f4853d ("ipv6: sr: implement API to
-control SR HMAC structure") in 4.10-rc1.
-
-Fixed status
-mainline: [84a53580c5d2138c7361c7c3eea5b31827e63b35]
-stable/4.14: [dc9dbd65c803af1607484fed5da50d41dc8dd864]
-stable/4.19: [f684c16971ed5e77dfa25a9ad25b5297e1f58eab]
-stable/5.10: [076f2479fc5a15c4a970ca3b5e57d42ba09a31fa]
-stable/5.15: [55195563ec29f80f984237b743de0e2b6ba4d093]
-stable/5.4: [3df71e11a4773d775c3633c44319f7acdb89011c]
-
-CVE-2023-33951: Linux Kernel vmwgfx Driver Race Condition Information
-Disclosure Vulnerability
-
-CVSS v3 score is not provided.
-
-This vulnerability allows local attackers to disclose sensitive
-information on affected installations of Linux Kernel. An attacker
-must first obtain the ability to execute high-privileged code on the
-target system in order to exploit this vulnerability.
-The specific flaw exists within the handling of GEM objects. The issue
-results from the lack of proper locking when performing operations on
-an object. An attacker can leverage this vulnerability to disclose
-information in the context of the kernel.
-
-It was introduced by commit 8afa13a ("drm/vmwgfx: Implement
-DRIVER_GEM") in 5.17-rc1.
-
-Fixed status
-mainline: [9ef8d83e8e25d5f1811b3a38eb1484f85f64296c]
-stable/6.1: [0a127ac972404600c99eb141c8d5b5348e53ee4f]
-
-CVE-2023-33952: Linux Kernel vmwgfx Driver Double Free Local Privilege
-Escalation Vulnerability
-
-CVSS v3 score is not provided.
-
-This vulnerability allows local attackers to escalate privileges on
-affected installations of Linux Kernel. An attacker must first obtain
-the ability to execute high-privileged code on the target system in
-order to exploit this vulnerability.
-The specific flaw exists within the handling of vmw_buffer_object
-objects. The issue results from the lack of validating the existence
-of an object prior to performing further free operations on the
-object. An attacker can leverage this vulnerability to escalate
-privileges and execute code in the context of the kernel.
-
-It was introduced by commit 8afa13a ("drm/vmwgfx: Implement
-DRIVER_GEM") in 5.17-rc1.
-
-Fixed status
-mainline: [9ef8d83e8e25d5f1811b3a38eb1484f85f64296c]
-stable/6.1: [0a127ac972404600c99eb141c8d5b5348e53ee4f]
-
-CVE-2023-3439: A use-after-free bug was found in the MCTP subsystem
-
-CVSS v3 score is not provided.
-
-A flaw was found in the MCTP protocol in the Linux kernel. The
-function mctp_unregister() reclaims the device's relevant resource
-when a netcard detaches. However, a running routine may be unaware of
-this and cause the use-after-free of the mdev->addrs object,
-potentially leading to a denial of service.
-
-It was introduced by commit 583be98 (mctp: Add device handling and
-netlink interface) in 5.15-rc1.
-
-Fixed status
-mainline: [b561275d633bcd8e0e8055ab86f1a13df75a0269]
-
-CVE-2023-3117: A use-after-free flaw was found in the Netfilter subsystem
-
-CVSS v3 score is not provided.
-
-It is duplicate of CVE-2023-3390.
-
-CVE-2023-31248: nf_tables UAF when using nft_chain_lookup_byid
-
-CVSS v3 score is not provided (NIST).
-CVSS v3 score is not 7.8 HIGH (CNA).
-
-Linux Kernel nftables Use-After-Free Local Privilege Escalation
-Vulnerability; `nft_chain_lookup_byid()` failed to check whether a
-chain was active and CAP_NET_ADMIN is in any user or network namespace
-
-It was introduced by commit 837830a4b439 ("netfilter: nf_tables: add
-NFTA_RULE_CHAIN_ID attribute") in 5.9-rc1.
-That is not backported to stable kernels. So, 4.4, 4.14, 4.19, 5.4 are
-not affected.
-
-Fixed status
-Patch is reviewing on the netfilter-devel mailing list.
-
-CVE-2023-32247: Linux Kernel ksmbd Session Setup Memory Exhaustion
-Denial-of-Service Vulnerability
-
-CVSS v3 score is not provided.
-
-This vulnerability allows remote attackers to create a
-denial-of-service condition on affected installations of Linux Kernel.
-Authentication is not required to exploit this vulnerability, but only
-systems with ksmbd enabled are vulnerable.
-
-The specific flaw exists within the handling of SMB2_SESSION_SETUP
-commands. The issue results from the lack of control of resource
-consumption. An attacker can leverage this vulnerability to create a
-denial-of-service condition on the system.
-
-The ksmbd subsystem was introduced in 5.15 so before this versions are
-not affected.
-
-Fixed status
-mainline: [ea174a91893956450510945a0c5d1a10b5323656]
-stable/6.1: [1fc8a2b14ef5223f8e0b95faba2ee0a6e4d0f99d]
-stable/6.3: [6775ee7ef4b37c521aa4cf3730f54554c4875542]
-
-CVE-2023-32252: Linux Kernel ksmbd Session NULL Pointer Dereference
-Denial-of-Service Vulnerability
-
-CVSS v3 score is not provided.
-
-This vulnerability allows remote attackers to create a
-denial-of-service condition on affected installations of Linux Kernel.
-Authentication is not required to exploit this vulnerability, but only
-systems with ksmbd enabled are vulnerable.
-
-The specific flaw exists within the handling of SMB2_LOGOFF commands.
-The issue results from the lack of proper validation of a pointer
-prior to accessing it. An attacker can leverage this vulnerability to
-create a denial-of-service condition on the system.
-
-The ksmbd subsystem was introduced in 5.15 so before this versions are
-not affected.
-
-Fixed status
-mainline: [f5c779b7ddbda30866cf2a27c63e34158f858c73]
-stable/6.1: [f623f627ad2b1dc215ab3b0df53fb05cfd3a1c3b]
-stable/6.3: [02f41d88f15d6b7d523e52cc3f87488f57e9265b]
-
-CVE-2023-32257: Linux Kernel ksmbd Session Race Condition Remote Code
-Execution Vulnerability
-
-CVSS v3 score is not provided.
-
-This vulnerability allows remote attackers to execute arbitrary code
-on affected installations of Linux Kernel. Authentication is not
-required to exploit this vulnerability, but only systems with ksmbd
-enabled are vulnerable.
-
-The specific flaw exists within the processing of SMB2_SESSION_SETUP
-and SMB2_LOGOFF commands. The issue results from the lack of proper
-locking when performing operations on an object. An attacker can
-leverage this vulnerability to execute code in the context of the
-kernel.
-
-The ksmbd subsystem was introduced in 5.15 so before this versions are
-not affected.
-
-Fixed status
-mainline: [f5c779b7ddbda30866cf2a27c63e34158f858c73]
-stable/6.1: [f623f627ad2b1dc215ab3b0df53fb05cfd3a1c3b]
-stable/6.3: [02f41d88f15d6b7d523e52cc3f87488f57e9265b]
-
-CVE-2023-32258: Linux Kernel ksmbd Session Race Condition Remote Code
-Execution Vulnerability
-
-CVSS v3 score is not provided.
-
-This vulnerability allows remote attackers to execute arbitrary code
-on affected installations of Linux Kernel. Authentication is not
-required to exploit this vulnerability, but only systems with ksmbd
-enabled are vulnerable.
-
-The specific flaw exists within the processing of SMB2_LOGOFF and
-SMB2_CLOSE commands. The issue results from the lack of proper locking
-when performing operations on an object. An attacker can leverage this
-vulnerability to execute code in the context of the kernel.
-
-The ksmbd subsystem was introduced in 5.15 so before this versions are
-not affected.
-
-Fixed status
-mainline: [abcc506a9a71976a8b4c9bf3ee6efd13229c1e19]
-stable/6.1: [4aba9ab6a007e41182454f84f95c0bddf7d6d7e1]
-stable/6.3: [920d5dd2d041484bf001c9713c2e3bcc6de79726]
-
-CVE-2023-3269: StackRot: Linux kernel privilege escalation vulnerability
-
-CVSS v3 score is not provided.
-
-Since Linux 6.1 the VMA tree structure was changed fron red-black tree
-to maple tree(https://lwn.net/Articles/845507/). This vulnerability
-which called StackRot allows a user to gain their privilege by
-use-after-free-by-RCU(UAFBR) bug.
-
-You can read more detail on the github (https://github.com/lrh2000/StackRot).
-
-The maple tree was introduced in 6.1-rc1 and it is not backported to
-stable kernels. Therefore, 4.x and 5.x kernels aren't affected.
-
-Fixed status
-mainline: [c2508ec5a58db67093f4fb8bf89a9a7c53a109e9,
-eda0047296a16d65a7f2bc60a408f70d178b2014,
-  ae870a68b5d13d67cf4f18d47bb01ee3fee40acb,
-e6fe228c4ffafdfc970cf6d46883a1f481baf7ea,
-  4bce37a68ff884e821a02a731897a8119e0c37b7,
-7267ef7b0b77f4ed23b7b3c87d8eca7bd9c2d007,
-  8b35ca3e45e35a26a21427f35d4093606e93ad0a,
-a050ba1e7422f2cc60ff8bfde3f96d34d00cb585,
-  2cd76c50d0b41cec5c87abfcdf25b236a2793fb6,
-f440fa1ac955e2898893f9301568435eb5cdfc4b,
-  f313c51d26aa87e69633c9b46efb37a930faca71,
-8d7071af890768438c14db6172cc8f9f4d04e184,
-  a425ac5365f6cb3cc47bf83e6bff0213c10445f7]
-stable/6.1: [d6a5c7a1a6e52d4c46fe181237ca96cd46a42386,
-755aa1bc6aaf9961aa4bdb54f32faaba06c08792,
-  b92cd80e5f0b14760a49ff68da23959a38452cda,
-82972ea17b47e2f9b08a91d62e92731367475f11,
-  7227d70acc7813c77e797be00503177ce484228a,
-ac764deea709b4d13fa78265cb2ec463da05a5d6,
-  1f4197f050dec016783663682b9eccbb603befa7,
-21ee33d51bf9f9489c7e0eb8cb17c803e2d03bd0,
-  48c232819e77dcd7ff476e964bc671e0589daae6,
-6a6b5616c3d04eba12dd0abc0522e5bae5f1ee5a,
-  c4b31d1b694e101cae7469a20762647185e11721,
-e6bbad75712a97b9b16433563c1358652a33003e]
-stable/6.3: [bce721f87edd54379120ffb85111357923f4f326,
-88b1d56e3c81d88584d28592b7afe72099739e3d,
-  4f6263b1fb29302453b9806b435ddd588ee5fb71,
-337a7cb4a6c3c3c8a029b758f8b99435ac2c99a1,
-  4af485289adc3576bf0835e2f63604b268d63942,
-6fafcfb83bab112ac06ca793adf2a00fcdb10f0f,
-  97308720616ed56291b1d3d45a81617fe91e8794,
-7e697935bab3c6d7a6e8b8f0b6c2894509ea9bf8,
-  723b929cbc2a032f581e0b603ad040470ed883f8,
-0f1e856aba03d19490b9e5649f70438b9c98d27c,
-  011b261f0872e47d27c84172ad86a536d1cc5233,
-5f50096f0a7e2eb4f0ab3eff781e594308e89f80,
-  704a0c495572c6a8607fd2dd9f3518630906ef4b]
-stable/6.4: [b11fa3d22ac0fbc0bfaa740b3b3669d43ec48503,
-d939d8c154f1dcc8ff6818e564a518b382a32ef5,
-  7a1383601b7ced8976854706f22630f4bc3473bf,
-b6f36565369c66459dbdde7199e8fa89cbb5f54b,
-  929eb6b2a6901d5c7ef13a6aab0a07c31a603a05,
-7e99b9821acc954f407da09b31a4a95d35dd147d,
-  4e3fb74f605054555693031083248903dc2796d6,
-203cfe05efc84b6d888fdc37862c53c6ee64a006,
-  accf6d0c5832e3a880e6798fc4cc76d49573e7f4,
-b2d6752dbfe74d9eed81fe5cb608232e87c823f4,
-  af099fa739b8408ea3b3c854a3098a6fd94855cb,
-fb32951c89030c5f9944ca8aa10301d7eb733b49,
-  f450d0307644f0efd91ed99f613069302ff52e52]
-
-CVE-2023-35001: nf_tables nft_byteorder_eval OOB read/write
-
-CVSS v3 score is not provided (NIST).
-CVSS v3 score is not 7.8 HIGH (CNA).
-
-Linux Kernel nftables Out-Of-Bounds Read/Write Vulnerability;
-nft_byteorder poorly handled vm register contents when CAP_NET_ADMIN
-is in any user or network namespace
-
-Introduced by commit 96518518cc41 ("netfilter: add nftables") in 3.13-rc1.
-
-Fixed status
-Patch is reviewing on the netfilter-devel mailing list.
-
-* Updated CVEs
-
-CVE-2023-1295: A TOCTOU bug was found in io_uring subsystem
-
-The stable/5.10 was fixed.
-
-Fixed status
-mainline: [9eac1904d3364254d622bf2c771c4f85cd435fc2]
-stable/5.10: [788d0824269bef539fe31a785b1517882eafed93]
-
-Currently tracking CVEs
-
-CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
-Bluetooth Core Specifications 4.0 through 5.2
-
-There is no fix information.
-
-CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
-Provisioning Leads to MITM
-
-No fix information.
-
-CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
-
-No fix information.
-
-Regards,
--- 
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
-
-Email :masami.ichikawa@cybertrust.co.jp
-      :masami.ichikawa@miraclelinux.com
 
