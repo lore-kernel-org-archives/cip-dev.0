@@ -1,80 +1,340 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0974AEB64DC
-	for <webhook@archiver.kernel.org>; Sun,  9 Jul 2023 11:19:33 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web11.15271.1688901570985716115
- for <cip-dev@lists.cip-project.org>;
- Sun, 09 Jul 2023 04:19:32 -0700
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E64EB64DC
+	for <webhook@archiver.kernel.org>; Sun,  9 Jul 2023 12:18:43 +0000 (UTC)
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+ by mx.groups.io with SMTP id smtpd.web11.16028.1688905119099746646
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Sun, 09 Jul 2023 05:18:39 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 384B91C0AB3; Sun,  9 Jul 2023 13:19:27 +0200 (CEST)
-Date: Sun, 9 Jul 2023 13:19:26 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@denx.de>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: Re: [PATCH 6.1.y-cip] usb: gadget: udc: renesas_usb3: Fix RZ/V2M
- {modprobe,bind} error
-Message-ID: <ZKqXvkVO1zhYNIjH@duo.ucw.cz>
-References: <20230703131944.353224-1-biju.das.jz@bp.renesas.com>
+ dkim=fail reason="signature has expired" header.i=@kernelci-org.20221208.gappssmtp.com header.s=20221208 header.b=NSYk/5ey;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.176, mailfrom: bot@kernelci.org)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1b8b318c5a7so26489915ad.3
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Sun, 09 Jul 2023 05:18:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1688905118; x=1691497118;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=fzCxtbM8zvperFvL3YeX+z+CBhMeAFUemKXKxo3/kSY=;
+        b=NSYk/5eyPhY+z10Utt8ejjx0taXaVnLlesMt4sidTddj2LShBrXEEM0pJkoW4FC2hp
+         L873I5rmnHKXkwUH//9UNhhVVoGzPpTW1EgcaWxoXumdLaP0Denv/g55yfQ49621W0K8
+         Q6nfq0qSks1Y/VlSIKugrg5Gt2eRLjgRNdXZ16ZnotKTYGVnOwXb11CIzJRY0tJH/mQ/
+         jxBEX7toA4rIhq6UvHILpCS76gZrOBaH1wo5LGRqL5sgJb3GTTxz6MukJ3TJZDqAHP4x
+         Z5cWDNnM3QprqDjqby6OU4UevN0h8GjYgVMI50nXR3Dn6PROIrzBlfKKdZ46dqsdRkrn
+         PUVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688905118; x=1691497118;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fzCxtbM8zvperFvL3YeX+z+CBhMeAFUemKXKxo3/kSY=;
+        b=GkJL0OS1GKpg+sd3zL5uSh56n7AYal1ZhgWVPcjrFiNVv8LWTHy5dVqT/mRO9xytCu
+         xMJmlCNGRwczT7jO/OBPoB7YdZKiSn7DzBZiyNbjYKKZnCQC2zYb63naczNZJNRNQ9bG
+         ZRilRtEpukq3gTdLKc96nkOmQisVebsQdv9kQgtN3wUaXVHTmu62epqGBFlKzQACl0lm
+         hFzbQSZRA2XGeYrwg8c2CWOnV+ruEICkSajJBinsKtvy6MqnPooXPfjD77kMdUmBw9eD
+         qebKFz9cePBzp5E0R7EIF/hdRijvFgTw8vY39xvUQ96DobW1yipAIoa26/sUebqcv+Gh
+         HCfQ==
+X-Gm-Message-State: ABy/qLalRLtb8c27CcKLydVT5zta7luL7Uk+czL8JWIgL3lYcC2PVLBp
+	GamTz9er6AXQkVUmp/oT7PkaTntX9vNj8GQnYss=
+X-Google-Smtp-Source: APBJJlHdW8JcV+mkb+EbmuSEYOtqg/bYbv2Roc0ZdUq6PIthtgNM50y+a8QfNtpFJN7A29vcG6MXMw==
+X-Received: by 2002:a17:902:ce8d:b0:1b8:400a:48ea with SMTP id f13-20020a170902ce8d00b001b8400a48eamr12481105plg.63.1688905117980;
+        Sun, 09 Jul 2023 05:18:37 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
+        by smtp.gmail.com with ESMTPSA id o7-20020a170902778700b001b830d8bc40sm6235233pll.74.2023.07.09.05.18.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Jul 2023 05:18:37 -0700 (PDT)
+Message-ID: <64aaa59d.170a0220.55c2a.be4b@mx.google.com>
+Date: Sun, 09 Jul 2023 05:18:37 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tSMSU/+ciuxm+0Lg"
-Content-Disposition: inline
-In-Reply-To: <20230703131944.353224-1-biju.das.jz@bp.renesas.com>
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: v6.1.31-65-ge66be31505fa
+X-Kernelci-Tree: cip
+X-Kernelci-Report-Type: build
+X-Kernelci-Branch: linux-6.1.y-cip
+Subject: cip/linux-6.1.y-cip build: 50 builds: 0 failed,
+ 50 passed (v6.1.31-65-ge66be31505fa)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
+ kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
+From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Sun, 09 Jul 2023 11:19:33 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12277
+ <cip-dev@lists.cip-project.org>; Sun, 09 Jul 2023 12:18:43 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12278
 
+cip/linux-6.1.y-cip build: 50 builds: 0 failed, 50 passed (v6.1.31-65-ge66b=
+e31505fa)
 
---tSMSU/+ciuxm+0Lg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Full Build Summary: https://kernelci.org/build/cip/branch/linux-6.1.y-cip/k=
+ernel/v6.1.31-65-ge66be31505fa/
 
-Hi!
+Tree: cip
+Branch: linux-6.1.y-cip
+Git Describe: v6.1.31-65-ge66be31505fa
+Git Commit: e66be31505fad0a8b90cd493f9b42353590498f1
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+Built: 4 unique architectures
 
-> commit 3e6ac852fbc71a234de24b5455086f6b98d3d958 upstream.
->=20
-> Currently {modprobe, bind} after {rmmod, unbind} results in probe failure.
->=20
-> genirq: Flags mismatch irq 22. 00000004 (85070400.usb3drd) vs. 00000004 (=
-85070400.usb3drd)
-> renesas_usb3: probe of 85070000.usb3peri failed with error -16
->=20
-> The reason is, it is trying to register an interrupt handler for the same
-> IRQ twice. The devm_request_irq() was called with the parent device.
-> So the interrupt handler won't be unregistered when the usb3-peri device
-> is unbound.
->=20
-> Fix this issue by replacing "parent dev"->"dev" as the irq resource
-> is managed by this driver.
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
 
-Thank you, applied.
+Detailed per-defconfig build reports:
 
-Best regards,
-									Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+---------------------------------------------------------------------------=
+-----
+am200epdkit_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
 
---tSMSU/+ciuxm+0Lg
-Content-Type: application/pgp-signature; name="signature.asc"
+---------------------------------------------------------------------------=
+-----
+aspeed_g5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
 
------BEGIN PGP SIGNATURE-----
+---------------------------------------------------------------------------=
+-----
+axm55xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZKqXvgAKCRAw5/Bqldv6
-8ny3AJ9SxTUUg7ee8uWclQz3h/2DY4viXwCfap27LKWjxiFFQKfdfr66okYl83g=
-=68Aw
------END PGP SIGNATURE-----
+---------------------------------------------------------------------------=
+-----
+bcm2835_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
 
---tSMSU/+ciuxm+0Lg--
+---------------------------------------------------------------------------=
+-----
+cip://6.1.y-cip/arm64/qemu_arm64_defconfig (arm64, gcc-10) =E2=80=94 PASS, =
+0 errors, 0 warnings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+cip://6.1.y-cip/riscv/qemu_riscv64_defconfig (riscv, gcc-10) =E2=80=94 PASS=
+, 0 errors, 0 warnings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+cm_x300_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+colibri_pxa300_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings=
+, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+collie_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+corgi_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+davinci_all_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig (riscv, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
+eseries_pxa_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+ezx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+h3600_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+h5000_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+hackkit_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+imx_v6_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+ixp4xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+jornada720_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+keystone_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+lart_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+lubbock_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+magician_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+mini2440_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v4t_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+mvebu_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+mxs_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+neponset_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+netwinder_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+nommu_k210_sdcard_defconfig (riscv, gcc-10) =E2=80=94 PASS, 0 errors, 0 war=
+nings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+orion5x_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+pleb_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+pxa255-idp_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+pxa3xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+pxa910_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+realview_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+sama7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+shmobile_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+simpad_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+spear6xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+stm32_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+sunxi_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+tct_hammer_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+tegra_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+trizeps4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig+kselftest (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 war=
+nings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+xcep_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---
+For more info write to <info@kernelci.org>
 
