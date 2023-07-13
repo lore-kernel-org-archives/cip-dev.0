@@ -2,33 +2,33 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60292C001DC
-	for <webhook@archiver.kernel.org>; Thu, 13 Jul 2023 08:51:22 +0000 (UTC)
-Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
- by mx.groups.io with SMTP id smtpd.web11.4095.1689238271590396839
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B29C0015E
+	for <webhook@archiver.kernel.org>; Thu, 13 Jul 2023 16:41:01 +0000 (UTC)
+Received: from mta-65-228.siemens.flowmailer.net (mta-65-228.siemens.flowmailer.net [185.136.65.228])
+ by mx.groups.io with SMTP id smtpd.web11.1647.1689266459767671938
  for <cip-dev@lists.cip-project.org>;
- Thu, 13 Jul 2023 01:51:12 -0700
+ Thu, 13 Jul 2023 09:41:00 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=NMLBPYDj;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-51332-20230713085108317ffe37f24197f3a0-jkmbqx@rts-flowmailer.siemens.com)
-Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20230713085108317ffe37f24197f3a0
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=OFl18YaE;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.228, mailfrom: fm-51332-20230713164056e24837d9ad96ca1724-b_qskt@rts-flowmailer.siemens.com)
+Received: by mta-65-228.siemens.flowmailer.net with ESMTPSA id 20230713164056e24837d9ad96ca1724
         for <cip-dev@lists.cip-project.org>;
-        Thu, 13 Jul 2023 10:51:09 +0200
+        Thu, 13 Jul 2023 18:40:57 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
  bh=azqtoWj18hkNbQpPOf7KJu/ncS90mZzx/uUI8onVz34=;
- b=NMLBPYDjKM1nbT2Tv5LHiXGrHw5DeeXEWSOyIm9sLzmPaLMNa4xCucVnT37iHqG6zb++Pm
- GP5i8w14XUpXCWY/YgCpq1Eh2uQgcaSvtriEUlNjjsBkh2/Scg/LFk7Bgv48J0+ttNxv1zUy
- I5N0IpgNx1xAVAwSoCwURarpw+HJc=;
+ b=OFl18YaEhURgH4qGiUtelMsbjX4wnsYhtzQzpvc88g4Lw6hH2d5XHoL2iVxoVWjKmn9Qvq
+ B+tCizmWsZ2+h4QIWTeGVTuA5PAG/tv97BfyaYDvseX3ycuyAL//95PccpHOQO1Ec9HSzIMl
+ wAplAmBx3y5qvQNK5Atydh8z8mA7k=;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: jan.kiszka@siemens.com,
-	cip-dev@lists.cip-project.org
+To: cip-dev@lists.cip-project.org
+Cc: jan.kiszka@siemens.com
 Subject: [cip-dev][isar-cip-core][RFC 2/3] swupdate.bbclass: Use new swupdate-certificate
-Date: Thu, 13 Jul 2023 10:51:05 +0200
-Message-Id: <20230713085106.2062587-3-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20230713085106.2062587-1-Quirin.Gylstorff@siemens.com>
-References: <20230713085106.2062587-1-Quirin.Gylstorff@siemens.com>
+Date: Thu, 13 Jul 2023 18:40:54 +0200
+Message-Id: <20230713164055.2786350-3-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20230713164055.2786350-1-Quirin.Gylstorff@siemens.com>
+References: <20230713164055.2786350-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
@@ -36,8 +36,8 @@ Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 13 Jul 2023 08:51:22 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12331
+ <cip-dev@lists.cip-project.org>; Thu, 13 Jul 2023 16:41:01 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12337
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
