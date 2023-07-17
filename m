@@ -2,31 +2,31 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E9BC001E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 712B3EB64DC
 	for <webhook@archiver.kernel.org>; Mon, 17 Jul 2023 10:54:26 +0000 (UTC)
-Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
- by mx.groups.io with SMTP id smtpd.web11.5436.1689591261810284541
+Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
+ by mx.groups.io with SMTP id smtpd.web11.5437.1689591261839731870
  for <cip-dev@lists.cip-project.org>;
- Mon, 17 Jul 2023 03:54:23 -0700
+ Mon, 17 Jul 2023 03:54:22 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=h9ODb9Ae;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228, mailfrom: fm-51332-202307171054190d0137a4842e36f025-whmh_0@rts-flowmailer.siemens.com)
-Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 202307171054190d0137a4842e36f025
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=QM9tvlcL;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-51332-20230717105418d6d64f57e9505d54cd-yc2jsa@rts-flowmailer.siemens.com)
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20230717105418d6d64f57e9505d54cd
         for <cip-dev@lists.cip-project.org>;
-        Mon, 17 Jul 2023 12:54:19 +0200
+        Mon, 17 Jul 2023 12:54:18 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=IwVlV7k3RdFrJQS/Cst5e/if2rZDqfznrOoEGdM4Sco=;
- b=h9ODb9AeAe9XrJ0LIqb4d4jW/C40C3no8QHKzdLgCHHfIwT3uhFJY1/Bb31G3cyOEaPoSz
- xFCYFq0tDpdwyDRVjONd2urrQhtnd9EoLz95hLSJj2S2h+57JNHsbedwImzZDjCBxFVztVb6
- MRjpZoaHO4/Zua2hbyqEB6WWTICu0=;
+ bh=m8OBolpevL7PvW3Dq2QFx35sDEymra301zA6z9lMbVo=;
+ b=QM9tvlcLqPIK2JHu+gLJBDaCyQpJiLfyNEKTq49MHKqyyWvBSOh/mxxhXzlMNIrYRySMZR
+ cxRQge/0j/+a99uuiQLNgWrXNoRW+K0ZSv5kFRK34gcyhJl7pBA4I4KeBkASlbJ2duqw5YuP
+ fw0izINdHeWkv+LKI7c9IC3mGrPJo=;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org,
 	jan.kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][RFC v2 3/3] swupdate: Enable signed updates
-Date: Mon, 17 Jul 2023 12:54:17 +0200
-Message-Id: <20230717105417.27761-4-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][RFC v2 2/3] swupdate.bbclass: Use new swupdate-certificate
+Date: Mon, 17 Jul 2023 12:54:16 +0200
+Message-Id: <20230717105417.27761-3-Quirin.Gylstorff@siemens.com>
 In-Reply-To: <20230717105417.27761-1-Quirin.Gylstorff@siemens.com>
 References: <20230717105417.27761-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
@@ -37,111 +37,86 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 17 Jul 2023 10:54:26 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12369
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12368
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-With this change SWUpdate requires signed binaries to update
-the system. An update without the correct signature will lead to the
-following error message:
-```
-Error: SWUpdate is built for signed images, provide a public key file.
-```
+This also changes the signing type from
+RSA PKCS#1.5[1](SWUPDATE_SIGNATURE_TYPE="rsa") to
+certificates[2](SWUPDATE_SIGNATURE_TYPE="cms").
+certificates are the default of the debian SWUpdate package.
 
-If unsigned binaries are wanted readd the Build option
-```
-DEB_BUILD_PROFILES += "pkg.swupdate.nosigning"
-```
-to a swupdate_%.bbappend recipe
+[1]: https://sbabic.github.io/swupdate/signed_images.html?highlight=signing#usage-with-rsa-pkcs-1-5-or-rsa-pss
+[2]:https://sbabic.github.io/swupdate/signed_images.html?highlight=signing#usage-with-certificates-and-cms
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- kas/opt/swupdate.yml                                   | 2 ++
- recipes-core/customizations/files/swupdate.cfg         | 1 +
- recipes-core/images/swupdate.inc                       | 2 +-
- recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb | 9 ++++++---
- recipes-core/swupdate/swupdate_2023.05.bb              | 8 ++++++--
- 5 files changed, 16 insertions(+), 6 deletions(-)
+ classes/swupdate.bbclass | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-diff --git a/kas/opt/swupdate.yml b/kas/opt/swupdate.yml
-index b0293ce..0e30e89 100644
---- a/kas/opt/swupdate.yml
-+++ b/kas/opt/swupdate.yml
-@@ -28,3 +28,5 @@ local_conf_header:
-     INITRAMFS_INSTALL:append = " initramfs-squashfs-hook"
-     ABROOTFS_PART_UUID_A ?= "fedcba98-7654-3210-cafe-5e0710000001"
-     ABROOTFS_PART_UUID_B ?= "fedcba98-7654-3210-cafe-5e0710000002"
-+    PREFERRED_PROVIDER_swupdate-certificates-key ??= "swupdate-certificates-key-snakeoil"
-+    PREFERRED_PROVIDER_swupdate-certificates ??= "swupdate-certificates-snakeoil"
-diff --git a/recipes-core/customizations/files/swupdate.cfg b/recipes-core/customizations/files/swupdate.cfg
-index 9ee47c7..3e2b45c 100644
---- a/recipes-core/customizations/files/swupdate.cfg
-+++ b/recipes-core/customizations/files/swupdate.cfg
-@@ -1,4 +1,5 @@
- globals :
- {
-     bootloader = "ebg";
-+    public-key-file = "/usr/share/swupdate-signing/swupdate-sign.crt"
- };
-diff --git a/recipes-core/images/swupdate.inc b/recipes-core/images/swupdate.inc
-index 5d9cd58..4983f7c 100644
---- a/recipes-core/images/swupdate.inc
-+++ b/recipes-core/images/swupdate.inc
+diff --git a/classes/swupdate.bbclass b/classes/swupdate.bbclass
+index 3d2b5f0..aedaf02 100644
+--- a/classes/swupdate.bbclass
++++ b/classes/swupdate.bbclass
 @@ -1,7 +1,7 @@
  #
  # CIP Core, generic profile
  #
 -# Copyright (c) Siemens AG, 2020
-+# Copyright (c) Siemens AG, 2023
++# Copyright (c) Siemens AG, 2020-2023
  #
  # Authors:
- #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-diff --git a/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb b/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
-index 2384f41..8f7a97d 100644
---- a/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
-+++ b/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
-@@ -1,7 +1,7 @@
- #
- # CIP Core, generic profile
- #
--# Copyright (c) Siemens AG, 2021
-+# Copyright (c) Siemens AG, 2021-2023
- #
- # Authors:
- #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-@@ -29,8 +29,11 @@ SRC_URI += "file://0001-debian-Remove-SWUpdate-USB-service-and-Udev-rules.patch
+ #  Christian Storm <christian.storm@siemens.com>
+@@ -25,14 +25,17 @@ SWU_HW_COMPAT ?= ""
+ SWU_IMAGE_FILE ?= "${DEPLOY_DIR_IMAGE}/${IMAGE_FULLNAME}.swu"
+ SWU_DESCRIPTION_FILE ?= "sw-description"
+ SWU_ADDITIONAL_FILES ?= "linux.efi ${SWU_ROOTFS_PARTITION_NAME}"
+-SWU_SIGNED ?= ""
++SWU_SIGNED ??= ""
+ SWU_SIGNATURE_EXT ?= "sig"
+-SWU_SIGNATURE_TYPE ?= "rsa"
++SWU_SIGNATURE_TYPE ?= "cms"
  
- # end patching for dm-verity based images
+ SWU_BUILDCHROOT_IMAGE_FILE ?= "${PP_DEPLOY}/${@os.path.basename(d.getVar('SWU_IMAGE_FILE'))}"
  
--# deactivate signing and hardware compability for simple a/b rootfs update
--DEB_BUILD_PROFILES += "pkg.swupdate.nosigning"
-+# The option: "pkg.swupdate.nosigning" disables the required signing
-+# of update binaries
-+# DEB_BUILD_PROFILES += "pkg.swupdate.nosigning"
+ IMAGE_TYPEDEP:swu = "${SWU_ROOTFS_TYPE}${@get_swu_compression_type(d)}"
+-IMAGER_INSTALL:swu += "cpio ${@'openssl' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
++IMAGER_BUILD_DEPS:swu += "${@'swupdate-certificates-key' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
++IMAGER_INSTALL:swu += "cpio ${@'openssl swupdate-certificates-key' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
++IMAGE_INSTALL += "${@'swupdate-certificates' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
 +
-+# deactivate hardware compability for simple a/b rootfs update
- DEB_BUILD_PROFILES += "pkg.swupdate.nohwcompat"
  
- # add cross build and deactivate testing for arm based builds
-diff --git a/recipes-core/swupdate/swupdate_2023.05.bb b/recipes-core/swupdate/swupdate_2023.05.bb
-index 26c0e67..762fac2 100644
---- a/recipes-core/swupdate/swupdate_2023.05.bb
-+++ b/recipes-core/swupdate/swupdate_2023.05.bb
-@@ -31,8 +31,12 @@ SRC_URI += "file://0001-d-rules-Add-option-for-suricatta_lua.patch \
-             file://0003-d-patches-Add-patch-to-add-the-build-version-to-swup.patch \
-             file://0004-d-rules-Add-option-to-enable-suricatta_wfx.patch"
+ IMAGE_SRC_URI:swu = "file://${SWU_DESCRIPTION_FILE}.tmpl"
+ IMAGE_TEMPLATE_FILES:swu = "${SWU_DESCRIPTION_FILE}.tmpl"
+@@ -102,10 +105,6 @@ IMAGE_CMD:swu() {
  
--# deactivate signing and hardware compability for simple a/b rootfs update
--DEB_BUILD_PROFILES += "pkg.swupdate.nosigning"
-+
-+# The option: "pkg.swupdate.nosigning" disables the required signing
-+# of update binaries
-+# DEB_BUILD_PROFILES += "pkg.swupdate.nosigning"
-+
-+# deactivate hardware compability for simple a/b rootfs update
- DEB_BUILD_PROFILES += "pkg.swupdate.nohwcompat"
+     # Prepare for signing
+     export sign='${@'x' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}'
+-    if [ -n "$sign" ]; then
+-        cp -f '${SIGN_KEY}' '${WORKDIR}/dev.key'
+-        test -e '${SIGN_CRT}' && cp -f '${SIGN_CRT}' '${WORKDIR}/dev.crt'
+-    fi
  
- # suricatta wfx requires suricatta lua and the dependency
+     sudo -E chroot ${BUILDCHROOT_DIR} sh -c ' \
+         # Fill in file check sums
+@@ -123,14 +122,14 @@ IMAGE_CMD:swu() {
+             if [ -n "$sign" -a "${SWU_DESCRIPTION_FILE}" = "$file" ]; then
+                 if [ "${SWU_SIGNATURE_TYPE}" = "rsa" ]; then
+                     openssl dgst \
+-                        -sha256 -sign "${PP_WORK}/dev.key" "$file" \
++                        -sha256 -sign "/usr/share/swupdate-signing/swupdate-sign.key" "$file" \
+                         > "$file.${SWU_SIGNATURE_EXT}"
+                 elif [ "${SWU_SIGNATURE_TYPE}" = "cms" ]; then
+                     openssl cms \
+                         -sign -in "$file" \
+                         -out "$file"."${SWU_SIGNATURE_EXT}" \
+-                        -signer "${PP_WORK}/dev.crt" \
+-                        -inkey "${PP_WORK}/dev.key" \
++                        -signer "/usr/share/swupdate-signing/swupdate-sign.crt" \
++                        -inkey "/usr/share/swupdate-signing/swupdate-sign.key" \
+                         -outform DER -nosmimecap -binary
+                 fi
+                 # Set file timestamps for reproducible builds
 -- 
 2.40.1
 
