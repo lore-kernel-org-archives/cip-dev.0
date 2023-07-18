@@ -2,21 +2,21 @@ Return-Path: <fabrizio.castro.jz@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60945C00528
-	for <webhook@archiver.kernel.org>; Tue, 18 Jul 2023 15:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DD77C001DC
+	for <webhook@archiver.kernel.org>; Tue, 18 Jul 2023 15:32:30 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web11.10790.1689694336488386504
  for <cip-dev@lists.cip-project.org>;
- Tue, 18 Jul 2023 08:32:19 -0700
+ Tue, 18 Jul 2023 08:32:24 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing; spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: fabrizio.castro.jz@renesas.com)
 X-IronPort-AV: E=Sophos;i="6.01,214,1684767600"; 
-   d="scan'208";a="173423809"
+   d="scan'208";a="173423833"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 19 Jul 2023 00:32:18 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 19 Jul 2023 00:32:24 +0900
 Received: from mulinux.home (unknown [10.226.93.62])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 61356400563A;
-	Wed, 19 Jul 2023 00:32:16 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 08202400C9F4;
+	Wed, 19 Jul 2023 00:32:21 +0900 (JST)
 From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -25,9 +25,9 @@ Cc: Biju Das <biju.das@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Chris Paterson <Chris.Paterson2@renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 6.1.y-cip 1/6] pinctrl: renesas: rzv2m: Handle non-unique subnode names
-Date: Tue, 18 Jul 2023 16:32:07 +0100
-Message-Id: <20230718153212.327448-2-fabrizio.castro.jz@renesas.com>
+Subject: [PATCH 6.1.y-cip 3/6] clk: renesas: r9a09g011: Add SDHI/eMMC clock and reset entries
+Date: Tue, 18 Jul 2023 16:32:09 +0100
+Message-Id: <20230718153212.327448-4-fabrizio.castro.jz@renesas.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230718153212.327448-1-fabrizio.castro.jz@renesas.com>
 References: <20230718153212.327448-1-fabrizio.castro.jz@renesas.com>
@@ -36,120 +36,97 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 18 Jul 2023 15:32:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12404
+ <cip-dev@lists.cip-project.org>; Tue, 18 Jul 2023 15:32:30 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12406
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Phil Edworthy <phil.edworthy@renesas.com>
 
-Commit f46a0b47cc0829acd050213194c5a77351e619b2 upstream.
+Commit d969103ac89de797fda351aa984f69602b149a72 upstream.
 
-The eMMC and SDHI pin control configuration nodes in DT have subnodes
-with the same names ("data" and "ctrl").  As the RZ/V2M pin control
-driver considers only the names of the subnodes, this leads to
-conflicts:
+Add SDHI/eMMC clock/reset entries to CPG driver.
 
-    pinctrl-rzv2m b6250000.pinctrl: pin P8_2 already requested by 85000000.mmc; cannot claim for 85020000.mmc
-    pinctrl-rzv2m b6250000.pinctrl: pin-130 (85020000.mmc) status -22
-    renesas_sdhi_internal_dmac 85020000.mmc: Error applying setting, reverse things back
-
-Fix this by constructing unique names from the node names of both the
-pin control configuration node and its child node, where appropriate.
-
-Reported by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-
-Fixes: 92a9b825257614af ("pinctrl: renesas: Add RZ/V2M pin and gpio controller driver")
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20221213230129.549968-2-fabrizio.castro.jz@renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Link: https://lore.kernel.org/r/607bd6ab4905b0b1b119a06ef953fa1184505777.1688396717.git.geert+renesas@glider.be
 Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 ---
+ drivers/clk/renesas/r9a09g011-cpg.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-I'll try and backport this patch also to v5.10.y-cip.
-
- drivers/pinctrl/renesas/pinctrl-rzv2m.c | 28 ++++++++++++++++++-------
- 1 file changed, 20 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzv2m.c b/drivers/pinctrl/renesas/pinctrl-rzv2m.c
-index e8c18198bebd..35f382b055e8 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzv2m.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzv2m.c
-@@ -207,6 +207,7 @@ static int rzv2m_map_add_config(struct pinctrl_map *map,
+diff --git a/drivers/clk/renesas/r9a09g011-cpg.c b/drivers/clk/renesas/r9a09g011-cpg.c
+index 8ee4b5e27bdd..a3506abb990c 100644
+--- a/drivers/clk/renesas/r9a09g011-cpg.c
++++ b/drivers/clk/renesas/r9a09g011-cpg.c
+@@ -30,6 +30,7 @@
+ #define SEL_B		SEL_PLL_PACK(0x214, 0, 1)
+ #define SEL_D		SEL_PLL_PACK(0x214, 1, 1)
+ #define SEL_E		SEL_PLL_PACK(0x214, 2, 1)
++#define SEL_SDI		SEL_PLL_PACK(0x300, 0, 1)
+ #define SEL_W0		SEL_PLL_PACK(0x32C, 0, 1)
  
- static int rzv2m_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 				   struct device_node *np,
-+				   struct device_node *parent,
- 				   struct pinctrl_map **map,
- 				   unsigned int *num_maps,
- 				   unsigned int *index)
-@@ -224,6 +225,7 @@ static int rzv2m_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 	struct property *prop;
- 	int ret, gsel, fsel;
- 	const char **pin_fn;
-+	const char *name;
- 	const char *pin;
+ enum clk_ids {
+@@ -59,6 +60,7 @@ enum clk_ids {
+ 	CLK_SEL_B_D2,
+ 	CLK_SEL_D,
+ 	CLK_SEL_E,
++	CLK_SEL_SDI,
+ 	CLK_SEL_W0,
  
- 	pinmux = of_find_property(np, "pinmux", NULL);
-@@ -307,8 +309,19 @@ static int rzv2m_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 		psel_val[i] = MUX_FUNC(value);
- 	}
+ 	/* Module Clocks */
+@@ -92,6 +94,7 @@ static const struct clk_div_table dtable_divd[] = {
+ 	{0, 0},
+ };
  
-+	if (parent) {
-+		name = devm_kasprintf(pctrl->dev, GFP_KERNEL, "%pOFn.%pOFn",
-+				      parent, np);
-+		if (!name) {
-+			ret = -ENOMEM;
-+			goto done;
-+		}
-+	} else {
-+		name = np->name;
-+	}
 +
- 	/* Register a single pin group listing all the pins we read from DT */
--	gsel = pinctrl_generic_add_group(pctldev, np->name, pins, num_pinmux, NULL);
-+	gsel = pinctrl_generic_add_group(pctldev, name, pins, num_pinmux, NULL);
- 	if (gsel < 0) {
- 		ret = gsel;
- 		goto done;
-@@ -318,17 +331,16 @@ static int rzv2m_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 	 * Register a single group function where the 'data' is an array PSEL
- 	 * register values read from DT.
- 	 */
--	pin_fn[0] = np->name;
--	fsel = pinmux_generic_add_function(pctldev, np->name, pin_fn, 1,
--					   psel_val);
-+	pin_fn[0] = name;
-+	fsel = pinmux_generic_add_function(pctldev, name, pin_fn, 1, psel_val);
- 	if (fsel < 0) {
- 		ret = fsel;
- 		goto remove_group;
- 	}
+ static const struct clk_div_table dtable_divw[] = {
+ 	{0, 6},
+ 	{1, 7},
+@@ -108,6 +111,7 @@ static const char * const sel_b[] = { ".main", ".divb" };
+ static const char * const sel_d[] = { ".main", ".divd" };
+ static const char * const sel_e[] = { ".main", ".dive" };
+ static const char * const sel_w[] = { ".main", ".divw" };
++static const char * const sel_sdi[] = { ".main", ".pll2_200" };
  
- 	maps[idx].type = PIN_MAP_TYPE_MUX_GROUP;
--	maps[idx].data.mux.group = np->name;
--	maps[idx].data.mux.function = np->name;
-+	maps[idx].data.mux.group = name;
-+	maps[idx].data.mux.function = name;
- 	idx++;
+ static const struct cpg_core_clk r9a09g011_core_clks[] __initconst = {
+ 	/* External Clock Inputs */
+@@ -134,6 +138,7 @@ static const struct cpg_core_clk r9a09g011_core_clks[] __initconst = {
+ 	DEF_MUX_RO(".selb",	CLK_SEL_B,	SEL_B,		sel_b),
+ 	DEF_MUX_RO(".seld",	CLK_SEL_D,	SEL_D,		sel_d),
+ 	DEF_MUX_RO(".sele",	CLK_SEL_E,	SEL_E,		sel_e),
++	DEF_MUX(".selsdi",	CLK_SEL_SDI,	SEL_SDI,	sel_sdi),
+ 	DEF_MUX(".selw0",	CLK_SEL_W0,	SEL_W0,		sel_w),
  
- 	dev_dbg(pctrl->dev, "Parsed %pOF with %d pins\n", np, num_pinmux);
-@@ -375,7 +387,7 @@ static int rzv2m_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	index = 0;
+ 	DEF_FIXED(".selb_d2",	CLK_SEL_B_D2,	CLK_SEL_B,	1,	2),
+@@ -142,6 +147,18 @@ static const struct cpg_core_clk r9a09g011_core_clks[] __initconst = {
+ static const struct rzg2l_mod_clk r9a09g011_mod_clks[] __initconst = {
+ 	DEF_MOD("pfc",		R9A09G011_PFC_PCLK,	 CLK_MAIN,     0x400, 2),
+ 	DEF_MOD("gic",		R9A09G011_GIC_CLK,	 CLK_SEL_B_D2, 0x400, 5),
++	DEF_MOD("sdi0_aclk",	R9A09G011_SDI0_ACLK,	 CLK_SEL_D,    0x408, 0),
++	DEF_MOD("sdi0_imclk",	R9A09G011_SDI0_IMCLK,	 CLK_SEL_SDI,  0x408, 1),
++	DEF_MOD("sdi0_imclk2",	R9A09G011_SDI0_IMCLK2,	 CLK_SEL_SDI,  0x408, 2),
++	DEF_MOD("sdi0_clk_hs",	R9A09G011_SDI0_CLK_HS,	 CLK_PLL2_800, 0x408, 3),
++	DEF_MOD("sdi1_aclk",	R9A09G011_SDI1_ACLK,	 CLK_SEL_D,    0x408, 4),
++	DEF_MOD("sdi1_imclk",	R9A09G011_SDI1_IMCLK,	 CLK_SEL_SDI,  0x408, 5),
++	DEF_MOD("sdi1_imclk2",	R9A09G011_SDI1_IMCLK2,	 CLK_SEL_SDI,  0x408, 6),
++	DEF_MOD("sdi1_clk_hs",	R9A09G011_SDI1_CLK_HS,	 CLK_PLL2_800, 0x408, 7),
++	DEF_MOD("emm_aclk",	R9A09G011_EMM_ACLK,	 CLK_SEL_D,    0x408, 8),
++	DEF_MOD("emm_imclk",	R9A09G011_EMM_IMCLK,	 CLK_SEL_SDI,  0x408, 9),
++	DEF_MOD("emm_imclk2",	R9A09G011_EMM_IMCLK2,	 CLK_SEL_SDI,  0x408, 10),
++	DEF_MOD("emm_clk_hs",	R9A09G011_EMM_CLK_HS,	 CLK_PLL2_800, 0x408, 11),
+ 	DEF_COUPLED("eth_axi",	R9A09G011_ETH0_CLK_AXI,	 CLK_PLL2_200, 0x40c, 8),
+ 	DEF_COUPLED("eth_chi",	R9A09G011_ETH0_CLK_CHI,	 CLK_PLL2_100, 0x40c, 8),
+ 	DEF_MOD("eth_clk_gptp",	R9A09G011_ETH0_GPTP_EXT, CLK_PLL2_100, 0x40c, 9),
+@@ -178,6 +195,9 @@ static const struct rzg2l_mod_clk r9a09g011_mod_clks[] __initconst = {
  
- 	for_each_child_of_node(np, child) {
--		ret = rzv2m_dt_subnode_to_map(pctldev, child, map,
-+		ret = rzv2m_dt_subnode_to_map(pctldev, child, np, map,
- 					      num_maps, &index);
- 		if (ret < 0) {
- 			of_node_put(child);
-@@ -384,7 +396,7 @@ static int rzv2m_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	}
- 
- 	if (*num_maps == 0) {
--		ret = rzv2m_dt_subnode_to_map(pctldev, np, map,
-+		ret = rzv2m_dt_subnode_to_map(pctldev, np, NULL, map,
- 					      num_maps, &index);
- 		if (ret < 0)
- 			goto done;
+ static const struct rzg2l_reset r9a09g011_resets[] = {
+ 	DEF_RST(R9A09G011_PFC_PRESETN,		0x600, 2),
++	DEF_RST_MON(R9A09G011_SDI0_IXRST,	0x608, 0,  6),
++	DEF_RST_MON(R9A09G011_SDI1_IXRST,	0x608, 1,  7),
++	DEF_RST_MON(R9A09G011_EMM_IXRST,	0x608, 2,  8),
+ 	DEF_RST(R9A09G011_USB_PRESET_N,		0x608, 7),
+ 	DEF_RST(R9A09G011_USB_DRD_RESET,	0x608, 8),
+ 	DEF_RST(R9A09G011_USB_ARESETN_P,	0x608, 9),
 -- 
 2.34.1
 
