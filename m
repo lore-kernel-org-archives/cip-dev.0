@@ -1,150 +1,131 @@
-Return-Path: <fabrizio.castro.jz@renesas.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE17BEB64DC
-	for <webhook@archiver.kernel.org>; Tue, 18 Jul 2023 16:16:44 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.147.1689697003846014029
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27267EB64DD
+	for <webhook@archiver.kernel.org>; Tue, 18 Jul 2023 17:00:45 +0000 (UTC)
+Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
+ by mx.groups.io with SMTP id smtpd.web11.1260.1689699636280886731
  for <cip-dev@lists.cip-project.org>;
- Tue, 18 Jul 2023 09:16:44 -0700
+ Tue, 18 Jul 2023 10:00:37 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: fabrizio.castro.jz@renesas.com)
-X-IronPort-AV: E=Sophos;i="6.01,214,1684767600"; 
-   d="scan'208";a="173430107"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 19 Jul 2023 01:16:42 +0900
-Received: from mulinux.home (unknown [10.226.93.62])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 638A640146A2;
-	Wed, 19 Jul 2023 01:16:40 +0900 (JST)
-From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+ dkim=pass header.i=jan.kiszka@siemens.com header.s=fm1 header.b=X5MlmCtF;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228, mailfrom: fm-294854-202307181700334e9a59a2b124a90c06-_l_uaz@rts-flowmailer.siemens.com)
+Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 202307181700334e9a59a2b124a90c06
+        for <cip-dev@lists.cip-project.org>;
+        Tue, 18 Jul 2023 19:00:33 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=jan.kiszka@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
+ bh=qsZ+QPpQqoVZyANKgK92bhxq+9+pwXg3J/HGqG0TnME=;
+ b=X5MlmCtFFxOXAUPLs4pafszMBWluouHok5A0t0idqBCHTgWOVQeRbJ+z1O59A6Z4MkRi1q
+ lnad9yDyV6jzmRE3RXbqKVeIH9aq38vom1caAqwd2+p3Lq+tYAs4MM9FT8VQccOHV3eMsLRy
+ 0YNJRguWmo3PqMghIpsR9QVZVPuLU=;
+From: Jan Kiszka <jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 5.10.y-cip] pinctrl: renesas: rzv2m: Handle non-unique subnode names
-Date: Tue, 18 Jul 2023 17:16:39 +0100
-Message-Id: <20230718161639.431910-1-fabrizio.castro.jz@renesas.com>
-X-Mailer: git-send-email 2.34.1
+Subject: [PATCH 5.10.y-cip 2/2] watchdog: iTCO_wdt: Set NO_REBOOT if the watchdog is not already running
+Date: Tue, 18 Jul 2023 19:00:32 +0200
+Message-Id: <c2cea9e3a5f1558794c6093304e3c42557124257.1689699632.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1689699632.git.jan.kiszka@siemens.com>
+References: <cover.1689699632.git.jan.kiszka@siemens.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-294854:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 18 Jul 2023 16:16:44 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12410
+ <cip-dev@lists.cip-project.org>; Tue, 18 Jul 2023 17:00:45 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12411
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Commit f46a0b47cc0829acd050213194c5a77351e619b2 upstream.
+Commit ef9b7bf52c2f47f0a9bf988543c577b92c92d15e upstream.
 
-The eMMC and SDHI pin control configuration nodes in DT have subnodes
-with the same names ("data" and "ctrl").  As the RZ/V2M pin control
-driver considers only the names of the subnodes, this leads to
-conflicts:
+Daniel reported that the commit 1ae3e78c0820 ("watchdog: iTCO_wdt: No
+need to stop the timer in probe") makes QEMU implementation of the iTCO
+watchdog not to trigger reboot anymore when NO_REBOOT flag is initially
+cleared using this option (in QEMU command line):
 
-    pinctrl-rzv2m b6250000.pinctrl: pin P8_2 already requested by 85000000.mmc; cannot claim for 85020000.mmc
-    pinctrl-rzv2m b6250000.pinctrl: pin-130 (85020000.mmc) status -22
-    renesas_sdhi_internal_dmac 85020000.mmc: Error applying setting, reverse things back
+  -global ICH9-LPC.noreboot=false
 
-Fix this by constructing unique names from the node names of both the
-pin control configuration node and its child node, where appropriate.
+The problem with the commit is that it left the unconditional setting of
+NO_REBOOT that is not cleared anymore when the kernel keeps pinging the
+watchdog (as opposed to the previous code that called iTCO_wdt_stop()
+that cleared it).
 
-Reported by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Fix this so that we only set NO_REBOOT if the watchdog was not initially
+running.
 
-Fixes: 92a9b825257614af ("pinctrl: renesas: Add RZ/V2M pin and gpio controller driver")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Link: https://lore.kernel.org/r/607bd6ab4905b0b1b119a06ef953fa1184505777.1688396717.git.geert+renesas@glider.be
-Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Fixes: 1ae3e78c0820 ("watchdog: iTCO_wdt: No need to stop the timer in probe")
+Reported-by: Daniel P. Berrangé <berrange@redhat.com>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Tested-by: Daniel P. Berrangé <berrange@redhat.com>
+Reviewed-by: Daniel P. Berrangé <berrange@redhat.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lore.kernel.org/r/20221028062750.45451-1-mika.westerberg@linux.intel.com
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rzv2m.c | 28 ++++++++++++++++++-------
- 1 file changed, 20 insertions(+), 8 deletions(-)
+ drivers/watchdog/iTCO_wdt.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzv2m.c b/drivers/pinctrl/renesas/pinctrl-rzv2m.c
-index e8c18198bebd..35f382b055e8 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzv2m.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzv2m.c
-@@ -207,6 +207,7 @@ static int rzv2m_map_add_config(struct pinctrl_map *map,
+diff --git a/drivers/watchdog/iTCO_wdt.c b/drivers/watchdog/iTCO_wdt.c
+index 9048fa44897f..50c874d48860 100644
+--- a/drivers/watchdog/iTCO_wdt.c
++++ b/drivers/watchdog/iTCO_wdt.c
+@@ -426,14 +426,18 @@ static unsigned int iTCO_wdt_get_timeleft(struct watchdog_device *wd_dev)
+ 	return time_left;
+ }
  
- static int rzv2m_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 				   struct device_node *np,
-+				   struct device_node *parent,
- 				   struct pinctrl_map **map,
- 				   unsigned int *num_maps,
- 				   unsigned int *index)
-@@ -224,6 +225,7 @@ static int rzv2m_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 	struct property *prop;
- 	int ret, gsel, fsel;
- 	const char **pin_fn;
-+	const char *name;
- 	const char *pin;
+-static void iTCO_wdt_set_running(struct iTCO_wdt_private *p)
++/* Returns true if the watchdog was running */
++static bool iTCO_wdt_set_running(struct iTCO_wdt_private *p)
+ {
+ 	u16 val;
  
- 	pinmux = of_find_property(np, "pinmux", NULL);
-@@ -307,8 +309,19 @@ static int rzv2m_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 		psel_val[i] = MUX_FUNC(value);
- 	}
- 
-+	if (parent) {
-+		name = devm_kasprintf(pctrl->dev, GFP_KERNEL, "%pOFn.%pOFn",
-+				      parent, np);
-+		if (!name) {
-+			ret = -ENOMEM;
-+			goto done;
-+		}
-+	} else {
-+		name = np->name;
+-	/* Bit 11: TCO Timer Halt -> 0 = The TCO timer is * enabled */
++	/* Bit 11: TCO Timer Halt -> 0 = The TCO timer is enabled */
+ 	val = inw(TCO1_CNT(p));
+-	if (!(val & BIT(11)))
++	if (!(val & BIT(11))) {
+ 		set_bit(WDOG_HW_RUNNING, &p->wddev.status);
++		return true;
 +	}
-+
- 	/* Register a single pin group listing all the pins we read from DT */
--	gsel = pinctrl_generic_add_group(pctldev, np->name, pins, num_pinmux, NULL);
-+	gsel = pinctrl_generic_add_group(pctldev, name, pins, num_pinmux, NULL);
- 	if (gsel < 0) {
- 		ret = gsel;
- 		goto done;
-@@ -318,17 +331,16 @@ static int rzv2m_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 	 * Register a single group function where the 'data' is an array PSEL
- 	 * register values read from DT.
- 	 */
--	pin_fn[0] = np->name;
--	fsel = pinmux_generic_add_function(pctldev, np->name, pin_fn, 1,
--					   psel_val);
-+	pin_fn[0] = name;
-+	fsel = pinmux_generic_add_function(pctldev, name, pin_fn, 1, psel_val);
- 	if (fsel < 0) {
- 		ret = fsel;
- 		goto remove_group;
++	return false;
+ }
+ 
+ /*
+@@ -524,9 +528,6 @@ static int iTCO_wdt_probe(struct platform_device *pdev)
+ 		return -ENODEV;	/* Cannot reset NO_REBOOT bit */
  	}
  
- 	maps[idx].type = PIN_MAP_TYPE_MUX_GROUP;
--	maps[idx].data.mux.group = np->name;
--	maps[idx].data.mux.function = np->name;
-+	maps[idx].data.mux.group = name;
-+	maps[idx].data.mux.function = name;
- 	idx++;
+-	/* Set the NO_REBOOT bit to prevent later reboots, just for sure */
+-	p->update_no_reboot_bit(p->no_reboot_priv, true);
+-
+ 	if (turn_SMI_watchdog_clear_off >= p->iTCO_version) {
+ 		/*
+ 		 * Bit 13: TCO_EN -> 0
+@@ -578,7 +579,13 @@ static int iTCO_wdt_probe(struct platform_device *pdev)
+ 	watchdog_set_drvdata(&p->wddev, p);
+ 	platform_set_drvdata(pdev, p);
  
- 	dev_dbg(pctrl->dev, "Parsed %pOF with %d pins\n", np, num_pinmux);
-@@ -375,7 +387,7 @@ static int rzv2m_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	index = 0;
+-	iTCO_wdt_set_running(p);
++	if (!iTCO_wdt_set_running(p)) {
++		/*
++		 * If the watchdog was not running set NO_REBOOT now to
++		 * prevent later reboots.
++		 */
++		p->update_no_reboot_bit(p->no_reboot_priv, true);
++	}
  
- 	for_each_child_of_node(np, child) {
--		ret = rzv2m_dt_subnode_to_map(pctldev, child, map,
-+		ret = rzv2m_dt_subnode_to_map(pctldev, child, np, map,
- 					      num_maps, &index);
- 		if (ret < 0) {
- 			of_node_put(child);
-@@ -384,7 +396,7 @@ static int rzv2m_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	}
- 
- 	if (*num_maps == 0) {
--		ret = rzv2m_dt_subnode_to_map(pctldev, np, map,
-+		ret = rzv2m_dt_subnode_to_map(pctldev, np, NULL, map,
- 					      num_maps, &index);
- 		if (ret < 0)
- 			goto done;
+ 	/* Check that the heartbeat value is within it's range;
+ 	   if not reset to the default */
 -- 
-2.34.1
+2.35.3
 
 
