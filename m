@@ -2,127 +2,95 @@ Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E53BC001DC
-	for <webhook@archiver.kernel.org>; Wed, 19 Jul 2023 12:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81885EB64DA
+	for <webhook@archiver.kernel.org>; Wed, 19 Jul 2023 12:40:06 +0000 (UTC)
 Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web10.12605.1689770314188032783
+ by mx.groups.io with SMTP id smtpd.web11.12633.1689770398242214091
  for <cip-dev@lists.cip-project.org>;
- Wed, 19 Jul 2023 05:38:34 -0700
+ Wed, 19 Jul 2023 05:39:59 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing; spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 005B51C0A97; Wed, 19 Jul 2023 14:38:30 +0200 (CEST)
-Date: Wed, 19 Jul 2023 14:38:30 +0200
+	id BEE811C0A97; Wed, 19 Jul 2023 14:39:56 +0200 (CEST)
+Date: Wed, 19 Jul 2023 14:39:56 +0200
 From: Pavel Machek <pavel@denx.de>
 To: Biju Das <biju.das.jz@bp.renesas.com>
 Cc: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: Re: [PATCH 5.10.y-cip 08/13] pwm: Add Renesas RZ/G2L MTU3a PWM driver
-Message-ID: <ZLfZRrLwZmb7ZIf8@duo.ucw.cz>
+Subject: Re: [PATCH 5.10.y-cip 11/13] arm64: dts: renesas: rzg2l-smarc: Add
+ support for enabling MTU3
+Message-ID: <ZLfZnDPNEVejsj3/@duo.ucw.cz>
 References: <20230718140608.119449-1-biju.das.jz@bp.renesas.com>
- <20230718140608.119449-9-biju.das.jz@bp.renesas.com>
+ <20230718140608.119449-12-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7El7jwREiAxhjBhp"
+	protocol="application/pgp-signature"; boundary="gPNtsykODRVLGwr+"
 Content-Disposition: inline
-In-Reply-To: <20230718140608.119449-9-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20230718140608.119449-12-biju.das.jz@bp.renesas.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 19 Jul 2023 12:38:36 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12422
+ <cip-dev@lists.cip-project.org>; Wed, 19 Jul 2023 12:40:06 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12423
 
 
---7El7jwREiAxhjBhp
-Content-Type: text/plain; charset=iso-8859-1
+--gPNtsykODRVLGwr+
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> The RZ/G2L Multi-Function Timer Pulse Unit 3 (a.k.a MTU3a) uses
-> one counter and two match components to configure duty_cycle
-> and period to generate PWM output waveform.
+> commit fb9341ebc7df140813d4fbc4a29fddba55a90728 upstream.
 >=20
-> Add basic support for RZ/G2L MTU3a PWM driver by creating separate
-> PWM channels for each IOs.
+> Add support for PMOD_MTU3 macro to enable MTU3 node on RZ/{G2,V2}L SMARC
+> EVK.
 >=20
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-> Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
-> [biju: - Replaced return type of rz_mtu3_pwm_get_state() from
->          int->void.
->        - Replaced the macro DEFINE_RUNTIME_DEV_PM_OPS->SET_
->          SYSTEM_SLEEP_PM_OPS and dropped pm_ptr. ]
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> The MTU3a PWM pins are muxed with spi1 pins and counter external input
+> phase clock pins are muxed with scif2 pins. Disable these IPs when
+> PMOD_MTU3 macro is enabled.
+>=20
+> Apart from this, the counter Z phase clock signal is muxed with the
+> SDHI1 cd signal. So disable SDHI1 IP, when the counter Z phase signal
+> is enabled.
 
-> +++ b/drivers/pwm/pwm-rz-mtu3.c
-> @@ -0,0 +1,552 @@
-
-> +static void rz_mtu3_pwm_get_state(struct pwm_chip *chip, struct pwm_devi=
-ce *pwm,
-> +				 struct pwm_state *state)
-> +{
-> +	struct rz_mtu3_pwm_chip *rz_mtu3_pwm =3D to_rz_mtu3_pwm_chip(chip);
-> +	int rc;
+> +++ b/arch/arm64/boot/dts/renesas/r9a07g044l2-smarc.dts
+> @@ -6,6 +6,27 @@
 > +
-> +	rc =3D pm_runtime_resume_and_get(chip->dev);
-> +	if (rc)
-> +		return;
-
-Should this at least WARN_ON? Unlike mainline, we can't error here,
-but I doubt we should just ignore error silently.
-
-> +static int rz_mtu3_pwm_probe(struct platform_device *pdev)
-> +{
-=2E..
-> +	mutex_init(&rz_mtu3_pwm->lock);
-> +	platform_set_drvdata(pdev, rz_mtu3_pwm);
-> +	ret =3D clk_prepare_enable(rz_mtu3_pwm->clk);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Clock enable failed\n");
+> +#if (PMOD_MTU3 && PMOD1_SER0)
+> +#error "Cannot set as PMOD_MTU3 and PMOD1_SER0 are mutually exclusive "
+> +#endif
 > +
-> +	clk_rate_exclusive_get(rz_mtu3_pwm->clk);
+> +#define MTU3_COUNTER_Z_PHASE_SIGNAL	0
 > +
-> +	rz_mtu3_pwm->rate =3D clk_get_rate(rz_mtu3_pwm->clk);
-> +	/*
-> +	 * Refuse clk rates > 1 GHz to prevent overflow later for computing
-> +	 * period and duty cycle.
-> +	 */
-> +	if (rz_mtu3_pwm->rate > NSEC_PER_SEC) {
-> +		ret =3D -EINVAL;
-> +		clk_rate_exclusive_put(rz_mtu3_pwm->clk);
-> +		goto disable_clock;
-> +	}
+> +#if (!PMOD_MTU3 && MTU3_COUNTER_Z_PHASE_SIGNAL)
+> +#error "Cannot set 1 to MTU3_COUNTER_Z_PHASE_SIGNAL as PMOD_MTU3=3D0"
+> +#endif
 > +
-> +	pm_runtime_set_active(&pdev->dev);
-> +	pm_runtime_enable(&pdev->dev);
-> +	rz_mtu3_pwm->chip.dev =3D &pdev->dev;
-> +	ret =3D devm_add_action_or_reset(&pdev->dev, rz_mtu3_pwm_pm_disable,
-> +				       rz_mtu3_pwm);
-> +	if (ret < 0)
-> +		return ret;
-
-Should this goto disable_clock, too?
-
-> +	rz_mtu3_pwm->chip.ops =3D &rz_mtu3_pwm_ops;
-> +	rz_mtu3_pwm->chip.npwm =3D RZ_MTU3_MAX_PWM_CHANNELS;
-> +	ret =3D devm_pwmchip_add(&pdev->dev, &rz_mtu3_pwm->chip);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret, "failed to add PWM chip\n");
-
-And here?
-
-> +	pm_runtime_idle(&pdev->dev);
+>  #include "r9a07g044l2.dtsi"
+>  #include "rzg2l-smarc-som.dtsi"
+>  #include "rzg2l-smarc-pinfunction.dtsi"
+> diff --git a/arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts b/arch/arm=
+64/boot/dts/renesas/r9a07g054l2-smarc.dts
+> index 3d01a4cf0fbe..b3e6016880dd 100644
+> --- a/arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts
+> +++ b/arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts
+> @@ -6,6 +6,26 @@
 > +
-> +	return 0;
+> +#if (PMOD_MTU3 && PMOD1_SER0)
+> +#error "Cannot set as PMOD_MTU3 and PMOD1_SER0 are mutually exclusive "
+> +#endif
 > +
-> +disable_clock:
-> +	clk_disable_unprepare(rz_mtu3_pwm->clk);
-> +	return ret;
-> +}
+> +#define MTU3_COUNTER_Z_PHASE_SIGNAL	0
+> +#if (!PMOD_MTU3 && MTU3_COUNTER_Z_PHASE_SIGNAL)
+> +#error "Cannot set 1 to MTU3_COUNTER_Z_PHASE_SIGNAL as PMOD_MTU3=3D0"
+> +#endif
+> +
+
+These consistency checks are common, could they be done in a common
+place?
 
 Best regards,
 								Pavel
@@ -130,15 +98,15 @@ Best regards,
 DENX Software Engineering GmbH,        Managing Director: Erika Unter
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---7El7jwREiAxhjBhp
+--gPNtsykODRVLGwr+
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZLfZRgAKCRAw5/Bqldv6
-8m9HAJ90v8q5pqxHnOT3BfYyE1ZelIoIHwCeIT5rkhe20nmXFEKe0lPpy6buwjk=
-=FJxI
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZLfZnAAKCRAw5/Bqldv6
+8v1pAJ9+xUaK0zgMbvobjgbCWbTVyehgQgCgjea1PbCBP1HhLQF1xpA0hwQKVCU=
+=6JO2
 -----END PGP SIGNATURE-----
 
---7El7jwREiAxhjBhp--
+--gPNtsykODRVLGwr+--
 
