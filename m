@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 371CAEB64DC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5989EEB64DD
 	for <webhook@archiver.kernel.org>; Thu, 20 Jul 2023 10:04:05 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web11.9354.1689847436712834475
  for <cip-dev@lists.cip-project.org>;
- Thu, 20 Jul 2023 03:04:00 -0700
+ Thu, 20 Jul 2023 03:03:56 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.01,218,1684767600"; 
-   d="scan'208";a="170239685"
+   d="scan'208";a="170239670"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 20 Jul 2023 19:04:00 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 20 Jul 2023 19:03:55 +0900
 Received: from localhost.localdomain (unknown [10.226.92.157])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id A74EB401227C;
-	Thu, 20 Jul 2023 19:03:58 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 438BC401227D;
+	Thu, 20 Jul 2023 19:03:54 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 5.10.y-cip v2 03/13] clk: renesas: r9a07g044: Add MTU3a clock and reset entry
-Date: Thu, 20 Jul 2023 11:03:40 +0100
-Message-Id: <20230720100350.247386-4-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip v2 01/13] arm64: dts: renesas: rzg2l-smarc: Use proper bool operator
+Date: Thu, 20 Jul 2023 11:03:38 +0100
+Message-Id: <20230720100350.247386-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230720100350.247386-1-biju.das.jz@bp.renesas.com>
 References: <20230720100350.247386-1-biju.das.jz@bp.renesas.com>
@@ -35,50 +35,36 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 20 Jul 2023 10:04:05 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12448
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12446
 
-commit 576d6b40dcceade7d77e88f63e621349c6937bc3 upstream.
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Add MTU3a clock and reset entry to CPG driver.
+commit 290cedeca6fa315c54e056b7bdd3fdd99e5303eb upstream.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20221005111855.553436-1-biju.das.jz@bp.renesas.com
+When checking for defined macros, we want the boolean AND not the binary
+one.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Link: https://lore.kernel.org/r/20220603232940.21736-1-wsa+renesas@sang-engineering.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a07g044-cpg.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index b31201c7ca7b..29b2a69d58d2 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -151,7 +151,7 @@ static const struct {
- };
- 
- static const struct {
--	struct rzg2l_mod_clk common[62];
-+	struct rzg2l_mod_clk common[63];
- #ifdef CONFIG_CLK_R9A07G054
- 	struct rzg2l_mod_clk drp[0];
+diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
+index aa170492dd2b..6be25a8a28db 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
+@@ -29,7 +29,7 @@
+ #define SW_RSPI_CAN	1
  #endif
-@@ -173,6 +173,8 @@ static const struct {
- 					0x534, 1),
- 		DEF_MOD("ostm2_pclk",	R9A07G044_OSTM2_PCLK, R9A07G044_CLK_P0,
- 					0x534, 2),
-+		DEF_MOD("mtu_x_mck",	R9A07G044_MTU_X_MCK_MTU3, R9A07G044_CLK_P0,
-+					0x538, 0),
- 		DEF_MOD("wdt0_pclk",	R9A07G044_WDT0_PCLK, R9A07G044_CLK_P0,
- 					0x548, 0),
- 		DEF_MOD("wdt0_clk",	R9A07G044_WDT0_CLK, R9A07G044_OSCCLK,
-@@ -297,6 +299,7 @@ static struct rzg2l_reset r9a07g044_resets[] = {
- 	DEF_RST(R9A07G044_OSTM0_PRESETZ, 0x834, 0),
- 	DEF_RST(R9A07G044_OSTM1_PRESETZ, 0x834, 1),
- 	DEF_RST(R9A07G044_OSTM2_PRESETZ, 0x834, 2),
-+	DEF_RST(R9A07G044_MTU_X_PRESET_MTU3, 0x838, 0),
- 	DEF_RST(R9A07G044_WDT0_PRESETN, 0x848, 0),
- 	DEF_RST(R9A07G044_WDT1_PRESETN, 0x848, 1),
- 	DEF_RST(R9A07G044_WDT2_PRESETN, 0x848, 2),
+ 
+-#if (SW_SCIF_CAN & SW_RSPI_CAN)
++#if (SW_SCIF_CAN && SW_RSPI_CAN)
+ #error "Can not set 1 to both SW_SCIF_CAN and SW_RSPI_CAN due to HW routing"
+ #endif
+ 
 -- 
 2.25.1
 
