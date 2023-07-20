@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A449C0015E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19377EB64DA
 	for <webhook@archiver.kernel.org>; Thu, 20 Jul 2023 10:04:25 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web11.9365.1689847457444306493
  for <cip-dev@lists.cip-project.org>;
- Thu, 20 Jul 2023 03:04:17 -0700
+ Thu, 20 Jul 2023 03:04:20 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.01,218,1684767600"; 
-   d="scan'208";a="170239745"
+   d="scan'208";a="170239753"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 20 Jul 2023 19:04:15 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 20 Jul 2023 19:04:20 +0900
 Received: from localhost.localdomain (unknown [10.226.92.157])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2EAD94005B3B;
-	Thu, 20 Jul 2023 19:04:13 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id BA8BA401227C;
+	Thu, 20 Jul 2023 19:04:18 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 5.10.y-cip v2 10/13] arm64: dts: renesas: r9a07g054: Add MTU3a node
-Date: Thu, 20 Jul 2023 11:03:47 +0100
-Message-Id: <20230720100350.247386-11-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip v2 12/13] arm64: dts: renesas: rzg2lc-smarc: Add support for enabling MTU3
+Date: Thu, 20 Jul 2023 11:03:49 +0100
+Message-Id: <20230720100350.247386-13-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230720100350.247386-1-biju.das.jz@bp.renesas.com>
 References: <20230720100350.247386-1-biju.das.jz@bp.renesas.com>
@@ -35,102 +35,102 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 20 Jul 2023 10:04:25 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12455
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12457
 
-commit dd123dd01def6ad917703542cf7263865bed3239 upstream.
+commit 742ebf5d715a4d4b9b4800f5b9eb3a2fae9c9282 upstream.
 
-Add MTU3a node to R9A07G054 (RZ/V2L) SoC DTSI.
+Add support for PMOD_MTU3 macro to enable MTU3 node on RZ/G2LC SMARC
+EVK.
+
+The MTU3a PWM pins on PMOD0 are muxed with SPI1. Disable SPI1, when
+PMOD_MTU3 macro is enabled.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20230417090159.191346-2-biju.das.jz@bp.renesas.com
+Link: https://lore.kernel.org/r/20230707155849.86649-1-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a07g054.dtsi | 70 ++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+ arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts  | 12 ++++++++++++
+ .../boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi |  9 +++++++++
+ arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi      | 14 +++++++++++++-
+ 3 files changed, 34 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
-index d3c0d137ccae..acc2e52efb30 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
-@@ -124,6 +124,76 @@ soc: soc {
- 		#size-cells = <2>;
- 		ranges;
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
+index f67a6f125d9c..0b90367b6d1e 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
++++ b/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
+@@ -35,6 +35,18 @@
+ /* comment the #define statement to disable SCIF1 (SER0) on PMOD1 (CN7) */
+ #define PMOD1_SER0	1
  
-+		mtu3: timer@10001200 {
-+			compatible = "renesas,r9a07g054-mtu3",
-+				     "renesas,rz-mtu3";
-+			reg = <0 0x10001200 0 0xb00>;
-+			interrupts = <GIC_SPI 170 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 171 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 172 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 173 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 174 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 175 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 176 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 177 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 178 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 179 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 180 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 181 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 182 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 183 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 184 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 185 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 186 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 187 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 188 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 189 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 190 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 191 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 192 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 193 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 194 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 195 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 196 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 197 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 198 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 199 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 200 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 201 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 202 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 203 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 204 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 205 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 206 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 207 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 208 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 209 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 210 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 211 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 212 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 213 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "tgia0", "tgib0", "tgic0", "tgid0",
-+					  "tgiv0", "tgie0", "tgif0",
-+					  "tgia1", "tgib1", "tgiv1", "tgiu1",
-+					  "tgia2", "tgib2", "tgiv2", "tgiu2",
-+					  "tgia3", "tgib3", "tgic3", "tgid3",
-+					  "tgiv3",
-+					  "tgia4", "tgib4", "tgic4", "tgid4",
-+					  "tgiv4",
-+					  "tgiu5", "tgiv5", "tgiw5",
-+					  "tgia6", "tgib6", "tgic6", "tgid6",
-+					  "tgiv6",
-+					  "tgia7", "tgib7", "tgic7", "tgid7",
-+					  "tgiv7",
-+					  "tgia8", "tgib8", "tgic8", "tgid8",
-+					  "tgiv8", "tgiu8";
-+			clocks = <&cpg CPG_MOD R9A07G054_MTU_X_MCK_MTU3>;
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A07G054_MTU_X_PRESET_MTU3>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
++/*
++ * To enable MTU3a PWM on PMOD0,
++ *  - Set DIP-Switch SW1-4 to Off position.
++ *  - Set SW_RSPI_CAN macro to 0.
++ *  - Set PMOD_MTU3 macro to 1.
++ */
++#define PMOD_MTU3	0
 +
- 		ssi0: ssi@10049c00 {
- 			compatible = "renesas,r9a07g054-ssi",
- 				     "renesas,rz-ssi";
++#if (PMOD_MTU3 && SW_RSPI_CAN)
++#error "Cannot set as both PMOD_MTU3 and SW_RSPI_CAN are mutually exclusive"
++#endif
++
+ #include "r9a07g044c2.dtsi"
+ #include "rzg2lc-smarc-som.dtsi"
+ #include "rzg2lc-smarc.dtsi"
+diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi
+index a78a8def363e..92c64d58349f 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi
+@@ -50,6 +50,15 @@ i2c2_pins: i2c2 {
+ 			 <RZG2L_PORT_PINMUX(42, 4, 1)>; /* SCL */
+ 	};
+ 
++	mtu3_pins: mtu3 {
++		mtu3-pwm {
++			pinmux = <RZG2L_PORT_PINMUX(44, 0, 4)>, /* MTIOC3A */
++				 <RZG2L_PORT_PINMUX(44, 1, 4)>, /* MTIOC3B */
++				 <RZG2L_PORT_PINMUX(44, 2, 4)>, /* MTIOC3C */
++				 <RZG2L_PORT_PINMUX(44, 3, 4)>; /* MTIOC3D */
++		};
++	};
++
+ 	scif0_pins: scif0 {
+ 		pinmux = <RZG2L_PORT_PINMUX(38, 0, 1)>,	/* TxD */
+ 			 <RZG2L_PORT_PINMUX(38, 1, 1)>;	/* RxD */
+diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
+index b6bd27196d88..664318e3dfb6 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
+@@ -11,7 +11,6 @@
+ #include "rzg2lc-smarc-pinfunction.dtsi"
+ #include "rz-smarc-common.dtsi"
+ 
+-
+ / {
+ 	aliases {
+ 		serial1 = &scif1;
+@@ -50,6 +49,19 @@ wm8978: codec@1a {
+ 	};
+ };
+ 
++#if PMOD_MTU3
++&mtu3 {
++	pinctrl-0 = <&mtu3_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
++
++&spi1 {
++	status = "disabled";
++};
++#endif
++
+ /*
+  * To enable SCIF1 (SER0) on PMOD1 (CN7), On connector board
+  * SW1 should be at position 2->3 so that SER0_CTS# line is activated
 -- 
 2.25.1
 
