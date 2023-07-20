@@ -2,135 +2,100 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18CA5EB64DA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24FC5C0015E
 	for <webhook@archiver.kernel.org>; Thu, 20 Jul 2023 10:04:15 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web11.9353.1689847435190774745
  for <cip-dev@lists.cip-project.org>;
- Thu, 20 Jul 2023 03:04:14 -0700
+ Thu, 20 Jul 2023 03:04:09 -0700
 Authentication-Results: mx.groups.io;
  dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.01,218,1684767600"; 
-   d="scan'208";a="173888335"
+   d="scan'208";a="173888319"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 20 Jul 2023 19:04:13 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 20 Jul 2023 19:04:09 +0900
 Received: from localhost.localdomain (unknown [10.226.92.157])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id F1DAB401227C;
-	Thu, 20 Jul 2023 19:04:11 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 84DFD401227C;
+	Thu, 20 Jul 2023 19:04:07 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 5.10.y-cip v2 09/13] arm64: dts: renesas: r9a07g044: Add MTU3a node
-Date: Thu, 20 Jul 2023 11:03:46 +0100
-Message-Id: <20230720100350.247386-10-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip v2 07/13] pwm: Add a device-managed function to add PWM chips
+Date: Thu, 20 Jul 2023 11:03:44 +0100
+Message-Id: <20230720100350.247386-8-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230720100350.247386-1-biju.das.jz@bp.renesas.com>
 References: <20230720100350.247386-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 20 Jul 2023 10:04:15 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12454
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12452
 
-commit 26336d66d0216b7366f80ce9fca5f98d271d43ba upstream.
+From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Add MTU3a node to R9A07G044 (RZ/G2L) SoC DTSI.
+commit bcda91bf86c1ff7647df85029d69f2aed80f210e upstream.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20230417090159.191346-1-biju.das.jz@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This potentially simplifies low-level PWM drivers.
+
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 70 ++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+ drivers/pwm/core.c  | 19 +++++++++++++++++++
+ include/linux/pwm.h |  3 +++
+ 2 files changed, 22 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-index 28b8eae796fe..3447e3db9256 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-@@ -124,6 +124,76 @@ soc: soc {
- 		#size-cells = <2>;
- 		ranges;
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index 1f16f5365d3c..4817df38086b 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -383,6 +383,25 @@ int pwmchip_remove(struct pwm_chip *chip)
+ }
+ EXPORT_SYMBOL_GPL(pwmchip_remove);
  
-+		mtu3: timer@10001200 {
-+			compatible = "renesas,r9a07g044-mtu3",
-+				     "renesas,rz-mtu3";
-+			reg = <0 0x10001200 0 0xb00>;
-+			interrupts = <GIC_SPI 170 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 171 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 172 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 173 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 174 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 175 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 176 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 177 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 178 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 179 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 180 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 181 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 182 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 183 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 184 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 185 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 186 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 187 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 188 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 189 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 190 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 191 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 192 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 193 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 194 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 195 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 196 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 197 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 198 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 199 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 200 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 201 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 202 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 203 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 204 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 205 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 206 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 207 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 208 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 209 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 210 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 211 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 212 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 213 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "tgia0", "tgib0", "tgic0", "tgid0",
-+					  "tgiv0", "tgie0", "tgif0",
-+					  "tgia1", "tgib1", "tgiv1", "tgiu1",
-+					  "tgia2", "tgib2", "tgiv2", "tgiu2",
-+					  "tgia3", "tgib3", "tgic3", "tgid3",
-+					  "tgiv3",
-+					  "tgia4", "tgib4", "tgic4", "tgid4",
-+					  "tgiv4",
-+					  "tgiu5", "tgiv5", "tgiw5",
-+					  "tgia6", "tgib6", "tgic6", "tgid6",
-+					  "tgiv6",
-+					  "tgia7", "tgib7", "tgic7", "tgid7",
-+					  "tgiv7",
-+					  "tgia8", "tgib8", "tgic8", "tgid8",
-+					  "tgiv8", "tgiu8";
-+			clocks = <&cpg CPG_MOD R9A07G044_MTU_X_MCK_MTU3>;
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A07G044_MTU_X_PRESET_MTU3>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
++static void devm_pwmchip_remove(void *data)
++{
++	struct pwm_chip *chip = data;
 +
- 		ssi0: ssi@10049c00 {
- 			compatible = "renesas,r9a07g044-ssi",
- 				     "renesas,rz-ssi";
++	pwmchip_remove(chip);
++}
++
++int devm_pwmchip_add(struct device *dev, struct pwm_chip *chip)
++{
++	int ret;
++
++	ret = pwmchip_add(chip);
++	if (ret)
++		return ret;
++
++	return devm_add_action_or_reset(dev, devm_pwmchip_remove, chip);
++}
++EXPORT_SYMBOL_GPL(devm_pwmchip_add);
++
+ /**
+  * pwm_request() - request a PWM device
+  * @pwm: global PWM device index
+diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+index a13ff383fa1d..a28b3e1e50b9 100644
+--- a/include/linux/pwm.h
++++ b/include/linux/pwm.h
+@@ -396,6 +396,9 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
+ 			      enum pwm_polarity polarity);
+ int pwmchip_add(struct pwm_chip *chip);
+ int pwmchip_remove(struct pwm_chip *chip);
++
++int devm_pwmchip_add(struct device *dev, struct pwm_chip *chip);
++
+ struct pwm_device *pwm_request_from_chip(struct pwm_chip *chip,
+ 					 unsigned int index,
+ 					 const char *label);
 -- 
 2.25.1
 
