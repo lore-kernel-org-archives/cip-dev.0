@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 193B4EB64DC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A449C0015E
 	for <webhook@archiver.kernel.org>; Thu, 20 Jul 2023 10:04:25 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.9367.1689847463153450192
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web11.9365.1689847457444306493
  for <cip-dev@lists.cip-project.org>;
- Thu, 20 Jul 2023 03:04:23 -0700
+ Thu, 20 Jul 2023 03:04:17 -0700
 Authentication-Results: mx.groups.io;
- dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=missing; spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.01,218,1684767600"; 
-   d="scan'208";a="173888356"
+   d="scan'208";a="170239745"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 20 Jul 2023 19:04:22 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 20 Jul 2023 19:04:15 +0900
 Received: from localhost.localdomain (unknown [10.226.92.157])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id F143B401227D;
-	Thu, 20 Jul 2023 19:04:20 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2EAD94005B3B;
+	Thu, 20 Jul 2023 19:04:13 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 5.10.y-cip v2 13/13] arm64: defconfig: Enable Renesas MTU3a PWM config
-Date: Thu, 20 Jul 2023 11:03:50 +0100
-Message-Id: <20230720100350.247386-14-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip v2 10/13] arm64: dts: renesas: r9a07g054: Add MTU3a node
+Date: Thu, 20 Jul 2023 11:03:47 +0100
+Message-Id: <20230720100350.247386-11-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230720100350.247386-1-biju.das.jz@bp.renesas.com>
 References: <20230720100350.247386-1-biju.das.jz@bp.renesas.com>
@@ -35,34 +35,102 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 20 Jul 2023 10:04:25 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12458
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12455
 
-commit aaa08e28e0051e88c88cc14bfa0db968b977cc85 upstream.
+commit dd123dd01def6ad917703542cf7263865bed3239 upstream.
 
-Enable PWM config for Renesas MTU3a PWM as it is populated on
-RZ/{G2L, LC, UL} and RZ/V2L SMARC EVKs.
+Add MTU3a node to R9A07G054 (RZ/V2L) SoC DTSI.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20230703132706.355237-1-biju.das.jz@bp.renesas.com
+Link: https://lore.kernel.org/r/20230417090159.191346-2-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/r9a07g054.dtsi | 70 ++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 9ab49a79ce5d..0206a35fd9d1 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1001,6 +1001,7 @@ CONFIG_PWM_CROS_EC=m
- CONFIG_PWM_MESON=m
- CONFIG_PWM_RCAR=m
- CONFIG_PWM_ROCKCHIP=y
-+CONFIG_PWM_RZ_MTU3=m
- CONFIG_PWM_SAMSUNG=y
- CONFIG_PWM_SL28CPLD=m
- CONFIG_PWM_SUN4I=m
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
+index d3c0d137ccae..acc2e52efb30 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
+@@ -124,6 +124,76 @@ soc: soc {
+ 		#size-cells = <2>;
+ 		ranges;
+ 
++		mtu3: timer@10001200 {
++			compatible = "renesas,r9a07g054-mtu3",
++				     "renesas,rz-mtu3";
++			reg = <0 0x10001200 0 0xb00>;
++			interrupts = <GIC_SPI 170 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 171 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 172 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 173 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 174 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 175 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 176 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 177 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 178 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 179 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 180 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 181 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 182 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 183 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 184 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 185 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 186 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 187 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 188 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 189 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 190 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 191 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 192 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 193 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 194 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 195 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 196 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 197 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 198 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 199 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 200 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 201 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 202 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 203 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 204 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 205 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 206 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 207 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 208 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 209 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 210 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 211 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 212 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 213 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "tgia0", "tgib0", "tgic0", "tgid0",
++					  "tgiv0", "tgie0", "tgif0",
++					  "tgia1", "tgib1", "tgiv1", "tgiu1",
++					  "tgia2", "tgib2", "tgiv2", "tgiu2",
++					  "tgia3", "tgib3", "tgic3", "tgid3",
++					  "tgiv3",
++					  "tgia4", "tgib4", "tgic4", "tgid4",
++					  "tgiv4",
++					  "tgiu5", "tgiv5", "tgiw5",
++					  "tgia6", "tgib6", "tgic6", "tgid6",
++					  "tgiv6",
++					  "tgia7", "tgib7", "tgic7", "tgid7",
++					  "tgiv7",
++					  "tgia8", "tgib8", "tgic8", "tgid8",
++					  "tgiv8", "tgiu8";
++			clocks = <&cpg CPG_MOD R9A07G054_MTU_X_MCK_MTU3>;
++			power-domains = <&cpg>;
++			resets = <&cpg R9A07G054_MTU_X_PRESET_MTU3>;
++			#pwm-cells = <2>;
++			status = "disabled";
++		};
++
+ 		ssi0: ssi@10049c00 {
+ 			compatible = "renesas,r9a07g054-ssi",
+ 				     "renesas,rz-ssi";
 -- 
 2.25.1
 
