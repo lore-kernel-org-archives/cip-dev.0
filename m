@@ -1,189 +1,149 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C87B9EB64DD
-	for <webhook@archiver.kernel.org>; Fri, 21 Jul 2023 03:35:58 +0000 (UTC)
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
- by mx.groups.io with SMTP id smtpd.web10.241.1689910553573695169
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Thu, 20 Jul 2023 20:35:53 -0700
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B42CEB64DD
+	for <webhook@archiver.kernel.org>; Fri, 21 Jul 2023 09:59:09 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web10.3913.1689933545016842325
+ for <cip-dev@lists.cip-project.org>;
+ Fri, 21 Jul 2023 02:59:05 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20221208.gappssmtp.com header.s=20221208 header.b=XwzrXSng;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.170, mailfrom: bot@kernelci.org)
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-668704a5b5bso1325391b3a.0
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Thu, 20 Jul 2023 20:35:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1689910552; x=1690515352;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=rYAeOfxHdBCNcnMfPnzQsyVeY0su+Qv8zrZoTltfMWM=;
-        b=XwzrXSngLTzeuL+J85FdMnwX6bIdI5M7TkUQaJxN8TYRos+ZczKQhEUad7syhN8BnR
-         S0P6BldT/Ve0WeLUmiKCJvrxMbIuThbFOonxxTRJIRt3wmcOIlC9INHO8LGfi4vR5Ma6
-         LCYC4BtFQ6mjVP66TS6XePRDHWVBkiqqhWD/lD3RrB9U/2DeZNZ1uzEyS3nn/yLVJB+X
-         mUZxv+mLv+Goqw/i03rj8s8BMJsRn6ZktDzCmIEKzYQTubA40plW5u8tVA9tV5Yyu4xg
-         fx1xWiaiX0O1CpFhhMcUp4Eg5l6McWRnuqu9bswd0VlEwPRVPZk985iU+YmcOQwxbEV7
-         5dCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689910552; x=1690515352;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rYAeOfxHdBCNcnMfPnzQsyVeY0su+Qv8zrZoTltfMWM=;
-        b=GU+2zsUp1fcW0juyuhf+l2Fki6PKYMArwbVMlQ5OwVAlhClnrAIk87V+oeX3LEiCbL
-         dBMBTXgCi49C0m/2ceD5sntD3HYkFUDBI1Z0RoELx+ME92vobinZM8WGW8CrWV09X2vL
-         2X46Eg8xvRtNMN+b3EZTy87+gQkvANv1gUKQpSA7DYR7G1g/z7cg42pO78p/EhB82gC/
-         BBqUPjHZ5+MMgxJ/BKtmfg6o4w8oziNNkdHs1E+CHidIha8b++8ry7tJFKAoHf8CdC24
-         mr5oPMmHGHBcG4xZsFAh/1khtigvuUPoDr2Lv6nEsOePzq3YtgrBwIsvEw1EwdnRiItz
-         ib1w==
-X-Gm-Message-State: ABy/qLYhq8SKe6garzCuafojt8L6VXgFO4xJWzqc3zrantcGaVoAooEQ
-	jb71zAbeMvPyIKGTPojyy9RpX6IZ4Gvqq7ky6JsMEg==
-X-Google-Smtp-Source: APBJJlHnIhE51LlmfTty+sWw1cJVcvQjUe+wnsVrxGEFGHRIK4VxICgYUPGOjs9GfIJHbTVkbdx4Sg==
-X-Received: by 2002:a05:6a00:811:b0:67b:f249:35e2 with SMTP id m17-20020a056a00081100b0067bf24935e2mr998024pfk.21.1689910552307;
-        Thu, 20 Jul 2023 20:35:52 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id k9-20020a633d09000000b0054fd46531a1sm2065794pga.5.2023.07.20.20.35.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jul 2023 20:35:51 -0700 (PDT)
-Message-ID: <64b9fd17.630a0220.ec555.476c@mx.google.com>
-Date: Thu, 20 Jul 2023 20:35:51 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+X-IronPort-AV: E=Sophos;i="6.01,220,1684767600"; 
+   d="scan'208";a="170365641"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 21 Jul 2023 18:59:03 +0900
+Received: from localhost.localdomain (unknown [10.226.92.55])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 42A9340071F8;
+	Fri, 21 Jul 2023 18:59:00 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Pavel Machek <pavel@denx.de>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Subject: [PATCH 5.10.y-cip] pinctrl: renesas: rzg2l: Handle non-unique subnode names
+Date: Fri, 21 Jul 2023 10:58:59 +0100
+Message-Id: <20230721095859.280864-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Tree: cip
-X-Kernelci-Branch: linux-5.10.y-cip
-X-Kernelci-Kernel: v5.10.186-cip37-11-g2b3c22dc0633
-X-Kernelci-Report-Type: test
-Subject: cip/linux-5.10.y-cip ltp-timers: 4 runs,
- 4 regressions (v5.10.186-cip37-11-g2b3c22dc0633)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
- kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
-From: "kernelci.org bot" <bot@kernelci.org>
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 21 Jul 2023 03:35:58 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12492
+ <cip-dev@lists.cip-project.org>; Fri, 21 Jul 2023 09:59:09 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12493
 
-cip/linux-5.10.y-cip ltp-timers: 4 runs, 4 regressions (v5.10.186-cip37-11-=
-g2b3c22dc0633)
+commit bfc374a145ae133613e05b9b89be561f169cb58d upstream.
 
-Regressions Summary
--------------------
+Currently, sd1 and sd0 have unique subnode names 'sd1_mux' and 'sd0_mux'.
+If we change these to non-unique subnode names such as 'mux' this can
+lead to the below conflict as the RZ/G2L pin control driver considers
+only the names of the subnodes.
 
-platform          | arch  | lab           | compiler | defconfig | regressi=
-ons
-------------------+-------+---------------+----------+-----------+---------=
+   pinctrl-rzg2l 11030000.pinctrl: pin P47_0 already requested by 11c00000.mmc; cannot claim for 11c10000.mmc
+   pinctrl-rzg2l 11030000.pinctrl: pin-376 (11c10000.mmc) status -22
+   pinctrl-rzg2l 11030000.pinctrl: could not request pin 376 (P47_0) from group mux  on device pinctrl-rzg2l
+   renesas_sdhi_internal_dmac 11c10000.mmc: Error applying setting, reverse things back
+
+Fix this by constructing unique names from the node names of both the
+pin control configuration node and its child node, where appropriate.
+
+Based on the work done by Geert for the RZ/V2M pinctrl driver.
+
+Fixes: c4c4637eb57f ("pinctrl: renesas: Add RZ/G2L pin and gpio controller driver")
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20230704111858.215278-1-biju.das.jz@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
-qemu_smp8_riscv64 | riscv | lab-broonie   | gcc-10   | defconfig | 2       =
-   =
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 28 ++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 8 deletions(-)
 
-qemu_smp8_riscv64 | riscv | lab-collabora | gcc-10   | defconfig | 2       =
-   =
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index 6593e2172d0a..af53a816ef85 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -235,6 +235,7 @@ static int rzg2l_map_add_config(struct pinctrl_map *map,
+ 
+ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 				   struct device_node *np,
++				   struct device_node *parent,
+ 				   struct pinctrl_map **map,
+ 				   unsigned int *num_maps,
+ 				   unsigned int *index)
+@@ -252,6 +253,7 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 	struct property *prop;
+ 	int ret, gsel, fsel;
+ 	const char **pin_fn;
++	const char *name;
+ 	const char *pin;
+ 
+ 	pinmux = of_find_property(np, "pinmux", NULL);
+@@ -335,8 +337,19 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 		psel_val[i] = MUX_FUNC(value);
+ 	}
+ 
++	if (parent) {
++		name = devm_kasprintf(pctrl->dev, GFP_KERNEL, "%pOFn.%pOFn",
++				      parent, np);
++		if (!name) {
++			ret = -ENOMEM;
++			goto done;
++		}
++	} else {
++		name = np->name;
++	}
++
+ 	/* Register a single pin group listing all the pins we read from DT */
+-	gsel = pinctrl_generic_add_group(pctldev, np->name, pins, num_pinmux, NULL);
++	gsel = pinctrl_generic_add_group(pctldev, name, pins, num_pinmux, NULL);
+ 	if (gsel < 0) {
+ 		ret = gsel;
+ 		goto done;
+@@ -346,17 +359,16 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
+ 	 * Register a single group function where the 'data' is an array PSEL
+ 	 * register values read from DT.
+ 	 */
+-	pin_fn[0] = np->name;
+-	fsel = pinmux_generic_add_function(pctldev, np->name, pin_fn, 1,
+-					   psel_val);
++	pin_fn[0] = name;
++	fsel = pinmux_generic_add_function(pctldev, name, pin_fn, 1, psel_val);
+ 	if (fsel < 0) {
+ 		ret = fsel;
+ 		goto remove_group;
+ 	}
+ 
+ 	maps[idx].type = PIN_MAP_TYPE_MUX_GROUP;
+-	maps[idx].data.mux.group = np->name;
+-	maps[idx].data.mux.function = np->name;
++	maps[idx].data.mux.group = name;
++	maps[idx].data.mux.function = name;
+ 	idx++;
+ 
+ 	dev_dbg(pctrl->dev, "Parsed %pOF with %d pins\n", np, num_pinmux);
+@@ -403,7 +415,7 @@ static int rzg2l_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	index = 0;
+ 
+ 	for_each_child_of_node(np, child) {
+-		ret = rzg2l_dt_subnode_to_map(pctldev, child, map,
++		ret = rzg2l_dt_subnode_to_map(pctldev, child, np, map,
+ 					      num_maps, &index);
+ 		if (ret < 0) {
+ 			of_node_put(child);
+@@ -412,7 +424,7 @@ static int rzg2l_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	}
+ 
+ 	if (*num_maps == 0) {
+-		ret = rzg2l_dt_subnode_to_map(pctldev, np, map,
++		ret = rzg2l_dt_subnode_to_map(pctldev, np, NULL, map,
+ 					      num_maps, &index);
+ 		if (ret < 0)
+ 			goto done;
+-- 
+2.25.1
 
-
-  Details:  https://kernelci.org/test/job/cip/branch/linux-5.10.y-cip/kerne=
-l/v5.10.186-cip37-11-g2b3c22dc0633/plan/ltp-timers/
-
-  Test:     ltp-timers
-  Tree:     cip
-  Branch:   linux-5.10.y-cip
-  Describe: v5.10.186-cip37-11-g2b3c22dc0633
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
-it
-  SHA:      2b3c22dc06337fb4c486cdf00b4182c35f61bb58
-
-  Test suite revisions:
-    ltp-tests
-      URL:  https://github.com/linux-test-project/ltp.git
-      SHA:  3f0b2176930cf15a26597e28abf4356050136bbe =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform          | arch  | lab           | compiler | defconfig | regressi=
-ons
-------------------+-------+---------------+----------+-----------+---------=
----
-qemu_smp8_riscv64 | riscv | lab-broonie   | gcc-10   | defconfig | 2       =
-   =
-
-
-  Details:     https://kernelci.org/test/plan/id/64b9ebd63bceead4b28ace27
-
-  Results:     32 PASS, 4 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (riscv64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.186=
--cip37-11-g2b3c22dc0633/riscv/defconfig/gcc-10/lab-broonie/ltp-timers-qemu_=
-smp8_riscv64.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.186=
--cip37-11-g2b3c22dc0633/riscv/defconfig/gcc-10/lab-broonie/ltp-timers-qemu_=
-smp8_riscv64.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/sid-ltp/202=
-30623.0/riscv64/rootfs.cpio.gz =
-
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/64b9ebd63bc=
-eead4b28ace2c
-        new failure (last pass: v5.10.184-cip36-13-g8fae18103387) =
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/64b9ebd63bc=
-eead4b28ace2c
-        new failure (last pass: v5.10.184-cip36-13-g8fae18103387) =
-
- =
-
-
-
-platform          | arch  | lab           | compiler | defconfig | regressi=
-ons
-------------------+-------+---------------+----------+-----------+---------=
----
-qemu_smp8_riscv64 | riscv | lab-collabora | gcc-10   | defconfig | 2       =
-   =
-
-
-  Details:     https://kernelci.org/test/plan/id/64b9e9ea09a1b08f468ace36
-
-  Results:     32 PASS, 4 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (riscv64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.186=
--cip37-11-g2b3c22dc0633/riscv/defconfig/gcc-10/lab-collabora/ltp-timers-qem=
-u_smp8_riscv64.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.186=
--cip37-11-g2b3c22dc0633/riscv/defconfig/gcc-10/lab-collabora/ltp-timers-qem=
-u_smp8_riscv64.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/sid-ltp/202=
-30623.0/riscv64/rootfs.cpio.gz =
-
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/64b9e9ea09a=
-1b08f468ace3b
-        new failure (last pass: v5.10.184-cip36-13-g8fae18103387)
-
-    2023-07-21T02:13:50.165507  =
-
-   =
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/64b9e9ea09a=
-1b08f468ace3b
-        new failure (last pass: v5.10.184-cip36-13-g8fae18103387)
-
-    2023-07-21T02:13:50.165507  =
-
-   =
-
- =20
 
