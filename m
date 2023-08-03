@@ -1,75 +1,116 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 977A2C0015E
-	for <webhook@archiver.kernel.org>; Thu,  3 Aug 2023 10:24:17 +0000 (UTC)
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
- by mx.groups.io with SMTP id smtpd.web10.11068.1691058246405879033
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F1AC04A6A
+	for <webhook@archiver.kernel.org>; Thu,  3 Aug 2023 11:38:58 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web10.12424.1691062727074402572
  for <cip-dev@lists.cip-project.org>;
- Thu, 03 Aug 2023 03:24:08 -0700
+ Thu, 03 Aug 2023 04:38:48 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=XHRkxF63;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-51332-20230803102402686f19d2185e652e66-es7ifu@rts-flowmailer.siemens.com)
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20230803102402686f19d2185e652e66
-        for <cip-dev@lists.cip-project.org>;
-        Thu, 03 Aug 2023 12:24:03 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
- bh=ocEVLyVOQVmGey/F7LDpb1XpS7kkODys5030FahXly4=;
- b=XHRkxF63sBdMTDfWRcxj2z4JOyIqq+K/vuz5maNSEJKdOuDPk0+PANkJFjZoJAja4AptmI
- LkB/i2fNY5ngta2ZSKzgNwWPkxLv9NEkG+lPnyFH+ETWja9jE6gL+4qm2Ketnnalm23NWN/4
- GX03EGItHMY6/KXqm/PFXuEj3VXew=;
-From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][RFC] swupdate-handler: Add default config to fix u-boot build
-Date: Thu,  3 Aug 2023 12:24:01 +0200
-Message-Id: <20230803102401.564807-1-Quirin.Gylstorff@siemens.com>
+ dkim=none (message not signed); spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 0F9341C0A9A; Thu,  3 Aug 2023 13:38:43 +0200 (CEST)
+Date: Thu, 3 Aug 2023 13:38:42 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Ulrich Hecht <uli@fpond.eu>
+Cc: "pavel@denx.de" <pavel@denx.de>,
+	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+Subject: Re: Request for reviews for 4.4-st43, 4.4-cip78
+Message-ID: <ZMuRwsAhrpbgThbv@duo.ucw.cz>
+References: <536431671.1986977.1690984726917@webmail.strato.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7FT5xII0LRvLrGhu"
+Content-Disposition: inline
+In-Reply-To: <536431671.1986977.1690984726917@webmail.strato.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 03 Aug 2023 10:24:17 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12545
+ <cip-dev@lists.cip-project.org>; Thu, 03 Aug 2023 11:38:58 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12546
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-This adds the missing configuration file to allow to build with u-boot
-as the boot selector.
+--7FT5xII0LRvLrGhu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It uses the getroot mechanism from SWUpdate to select the update
-partition.
+Hi!
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
-CC: felix.moessbauer@siemens.com
-TO: jan.kiszka@siemens.com
+> Here are the manual backports for the upcoming 4.4-st43 and 4.4-cip78 rel=
+eases that should be reviewed, and that can currently be found in https://g=
+it.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=3Dlinux-4.4=
+=2Ey-st-rc
+>=20
+> Standard backports:
 
- .../files/swupdate.handler.u-boot.ini                  | 10 ++++++++++
- 1 file changed, 10 insertions(+)
- create mode 100644 recipes-core/swupdate-handler-roundrobin/files/swupdate.handler.u-boot.ini
+a | 9d7178c75 62fab3  + | IB/uverbs: Fix to consider event queue closing al=
+so upon non-blocking mode
+a | fb7bc3baa 8d8406 .+ | mmc: mvsdio: fix deferred probing
+a | bd9621108 2174a0 o+ | sch_netem: acquire qdisc lock in netem_change()
+>=20
+> Then there's the Zenbleed workaround:
 
-diff --git a/recipes-core/swupdate-handler-roundrobin/files/swupdate.handler.u-boot.ini b/recipes-core/swupdate-handler-roundrobin/files/swupdate.handler.u-boot.ini
-new file mode 100644
-index 0000000..0e6df08
---- /dev/null
-+++ b/recipes-core/swupdate-handler-roundrobin/files/swupdate.handler.u-boot.ini
-@@ -0,0 +1,10 @@
-+[image]
-+chainhandler=raw
-+
-+[image.selector]
-+method=getroot_rrmap
-+[kernel]
-+chainhandler=rawfile
-+
-+[kernel.selector]
-+method=getroot_rrmap
--- 
-2.40.1
+a | 17a67740c a32b0f o  | x86/microcode/AMD: Load late on both threads too
+a | 5bb1e29bf None o  | x86/cpu/amd: Move the errata checking functionality=
+ up
 
+| cfef7bbf0 None o  | x86/cpu/amd: Add a Zenbleed fix
+
+Return before break, non-english message. Nothing for you to fix, but
+this is not my favourite patch.
+
+> This stuff also has some dependencies that had to be picked up/backported:
+
+ | 3f1f576a1 | x86/microcode: Propagate return value from updating functions
+
+Misses upstream marking. Apparently
+3f1f576a195aa266813cbd4ca70291deb61e0129 is the upstream
+commit. Otherwise looks ok.
+
+ | 1008c52c0 | x86/CPU: Add a microcode loader callback
+
+Misses upstream marking, upstream is
+1008c52c09dcb23d93f8e0ea83a6246265d2cce0. Otherwise ok.
+
+a | 42ca8082e | x86/CPU: Check CPU feature bits after microcode upgrade
+
+Misses upstream marking. Otherwise ok.
+
+> It all looks relatively harmless to me, with the exception of "x86/microc=
+ode: Propagate return value from updating functions", in which something co=
+uld easily be missed.
+>
+
+Yep, looks good, with some missing upstream markings, as noted above.
+
+Then there is
+
+commit 679130ec67b34c822902926135425ce7f97f9960
+    x86/microcode/amd: fix/remove incorrect function declarations
+-extern int apply_microcode_amd(int cpu);
+
+In ideal world, this should be part of "x86/microcode: Propagate
+return value from updating functions" backport. Not sure if that's
+worth fixing.
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--7FT5xII0LRvLrGhu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZMuRwgAKCRAw5/Bqldv6
+8ivoAKDEed61lu/9r1LDJ3jAPqTF68uv2wCfREQYHyldDXgT80a4a9CrtFXfgOE=
+=gUKQ
+-----END PGP SIGNATURE-----
+
+--7FT5xII0LRvLrGhu--
 
