@@ -1,74 +1,75 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB66EC001DF
-	for <webhook@archiver.kernel.org>; Thu,  3 Aug 2023 08:12:46 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web11.9556.1691050365547452361
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 977A2C0015E
+	for <webhook@archiver.kernel.org>; Thu,  3 Aug 2023 10:24:17 +0000 (UTC)
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+ by mx.groups.io with SMTP id smtpd.web10.11068.1691058246405879033
  for <cip-dev@lists.cip-project.org>;
- Thu, 03 Aug 2023 01:12:46 -0700
+ Thu, 03 Aug 2023 03:24:08 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 16C311C0A9A; Thu,  3 Aug 2023 10:12:42 +0200 (CEST)
-Date: Thu, 3 Aug 2023 10:12:41 +0200
-From: Pavel Machek <pavel@denx.de>
-To: nobuhiro1.iwamatsu@toshiba.co.jp
-Cc: biju.das.jz@bp.renesas.com, cip-dev@lists.cip-project.org,
-	pavel@denx.de, prabhakar.mahadev-lad.rj@bp.renesas.com
-Subject: Re: [PATCH 6.1.y-cip] tty: serial: sh-sci: Fix sleeping in atomic
- context
-Message-ID: <ZMtheQLIQUHJwhS2@duo.ucw.cz>
-References: <20230802141919.474558-1-biju.das.jz@bp.renesas.com>
- <TYWPR01MB942035A7B11C466B09ADF4C99208A@TYWPR01MB9420.jpnprd01.prod.outlook.com>
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=XHRkxF63;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-51332-20230803102402686f19d2185e652e66-es7ifu@rts-flowmailer.siemens.com)
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20230803102402686f19d2185e652e66
+        for <cip-dev@lists.cip-project.org>;
+        Thu, 03 Aug 2023 12:24:03 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ bh=ocEVLyVOQVmGey/F7LDpb1XpS7kkODys5030FahXly4=;
+ b=XHRkxF63sBdMTDfWRcxj2z4JOyIqq+K/vuz5maNSEJKdOuDPk0+PANkJFjZoJAja4AptmI
+ LkB/i2fNY5ngta2ZSKzgNwWPkxLv9NEkG+lPnyFH+ETWja9jE6gL+4qm2Ketnnalm23NWN/4
+ GX03EGItHMY6/KXqm/PFXuEj3VXew=;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: cip-dev@lists.cip-project.org
+Subject: [cip-dev][isar-cip-core][RFC] swupdate-handler: Add default config to fix u-boot build
+Date: Thu,  3 Aug 2023 12:24:01 +0200
+Message-Id: <20230803102401.564807-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="caMZtou1BjquZJRH"
-Content-Disposition: inline
-In-Reply-To: <TYWPR01MB942035A7B11C466B09ADF4C99208A@TYWPR01MB9420.jpnprd01.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 03 Aug 2023 08:12:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12544
+ <cip-dev@lists.cip-project.org>; Thu, 03 Aug 2023 10:24:17 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12545
 
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
---caMZtou1BjquZJRH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This adds the missing configuration file to allow to build with u-boot
+as the boot selector.
 
-Hi!
+It uses the getroot mechanism from SWUpdate to select the update
+partition.
 
-> > Fix sleeping in atomic context warning as reported by the Smatch static
-> > checker tool by replacing disable_irq->disable_irq_nosync.
-> >=20
-> > Reported by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+CC: felix.moessbauer@siemens.com
+TO: jan.kiszka@siemens.com
 
-> LGTM. I can apply if there are no comments.
->=20
-> Reviewed-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+ .../files/swupdate.handler.u-boot.ini                  | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+ create mode 100644 recipes-core/swupdate-handler-roundrobin/files/swupdate.handler.u-boot.ini
 
-Looks good to me, too (both 5.10 and 6.1). Go ahead!
+diff --git a/recipes-core/swupdate-handler-roundrobin/files/swupdate.handler.u-boot.ini b/recipes-core/swupdate-handler-roundrobin/files/swupdate.handler.u-boot.ini
+new file mode 100644
+index 0000000..0e6df08
+--- /dev/null
++++ b/recipes-core/swupdate-handler-roundrobin/files/swupdate.handler.u-boot.ini
+@@ -0,0 +1,10 @@
++[image]
++chainhandler=raw
++
++[image.selector]
++method=getroot_rrmap
++[kernel]
++chainhandler=rawfile
++
++[kernel.selector]
++method=getroot_rrmap
+-- 
+2.40.1
 
-Reviewed-by: Pavel Machek <pavel@denx.de>
-
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---caMZtou1BjquZJRH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZMtheQAKCRAw5/Bqldv6
-8kNAAJwOo8qGP6DElGZKIK7xDIRl6y/lOwCfdpwJrGUmSGl2NQKP3B+S70EkPJE=
-=H/UY
------END PGP SIGNATURE-----
-
---caMZtou1BjquZJRH--
 
