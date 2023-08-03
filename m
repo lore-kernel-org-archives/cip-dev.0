@@ -2,135 +2,138 @@ Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA5CC001DB
-	for <webhook@archiver.kernel.org>; Thu,  3 Aug 2023 22:00:23 +0000 (UTC)
-Received: from EUR04-VI1-obe.outbound.protection.outlook.com (EUR04-VI1-obe.outbound.protection.outlook.com [40.107.8.42])
- by mx.groups.io with SMTP id smtpd.web11.11356.1690973878517304731
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61ECCC00528
+	for <webhook@archiver.kernel.org>; Thu,  3 Aug 2023 22:00:33 +0000 (UTC)
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.65])
+ by mx.groups.io with SMTP id smtpd.web11.14703.1691069001076158908
  for <cip-dev@lists.cip-project.org>;
- Wed, 02 Aug 2023 03:57:59 -0700
+ Thu, 03 Aug 2023 06:23:21 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=xgWo+Utd;
- spf=pass (domain: siemens.com, ip: 40.107.8.42, mailfrom: michael.adler@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=Q5HaU7K1;
+ spf=pass (domain: siemens.com, ip: 40.107.6.65, mailfrom: michael.adler@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Rt7oGNFlYGU5cxFCGkyzx3kAueLB8uVs4HA26s2vtQRKoQOOvQATK1Sr6tA/aOThvTetnAuwpIh6uBLEV2ZE6TV4RB3TUgDaYg705mvVHedlRXNEtNf9ZIhfMlC2oAmJJ99bTwNEVkb4WLjQFxCdCTG9mM49s9xUS9rqo1sT77E6BX9tLGV4xSOfim1Ua1UjQ7ixiGRvjeVR2xHWDeBi3tkyI55b+t3j4nQVUgBHYg9Muva+YvnnLBNoG33ULZZi3zDyZzG4o7/Ye66BUFlXblmO75eYNr3uDdzKXa3KbOftx99CCbW5u9m+/DZkC2hMuF4GVWx4r6Hc7oN4Li/w7Q==
+ b=HzzgKih60tB8BsqLcSgv3qzNOAm3Sf52c2JYlrTzJ4gMiyRf+uUslQoEhsNdQEEsEbFQY34KhrShssymyq7G0AMBcXhZQjOw+VOtfH4uHTwTKPAKSmc3VSEHy2EexgcF2wMEPxNEI0PfOWJA4xLS+qj0l0qmUC4a9ksukHR5YuLlLRS/EVkwSiFMYjFqPLkBtjEx+2N6MhMAxiyXx8oaQW/4ngUrlAf5vxbCtvZETdLbu76hvDCXtUGvez2/HEEfOz6GpqeX8hfwC0AYYQDVEbDMI05Fgxp72e0ApNiM4cxgGUn5XXoYw4xzQZsSBUvSuJhTsVF2TPn7bFi4X5ClSA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DHSwhdfvJcvTV+D6XAdhd8x6lWmJQJ/7InQyeNrj3YY=;
- b=g+B701rxPBiUsHxcdyfg5QkCg1vfPsXVlfN3WcZ6iI5PkaTWiwY4RUHyEnoAbU4QTvzVSlt+I10N4JxT2aelRq2amiRc6lJSfRY6SDSkvK5Vvv8b2T/h5czy/qR4sl8Gnv1rocloLscAVXW01WIJOk3cjvv7kZv9nssHOCu09RYUhBjJUOIoIVPaAYGYZz3qyBlA1doZ3QKh8Vh6AwnQR7NzLgkGHQVeAjkzSuiUBBd/VCo840xVFRDPwK1XncBAN/kwu2k5KrsavS8tOWaCdHxwtoinxTXxE6vLMip0lpz69GoQA8WlO/SXm4SxEpcYeUxPoe1sAEolWe7K7HcIVQ==
+ bh=GAJjPP+Z3lscfKvWDvGb8UCKtDgGuJ8h5J64jKugc8c=;
+ b=Aa39LhVbHDHpTCcLE++tZvMHKakMu9ELBNy0foXiHgSO3sf/BBQfjIE1bSWbRdGjC+P+NOIxoG80V9k9ohtjW631QIcxGewA5drWzDQtwpK2QGULKHfo2DceIw+rq7iZFo9ccBmVeYs7uHbJ6c9wmvWPyhqJpyvEvrtOyk+uw2KVcw2uf3Im5sdb5ne+5cLp/vKns7A4PtH0Yot6Pvo6LI149y3cdKEwqNm+WW6mM1GC7/Ev++OF8sT0fJQCnEn8oZMRKSWVfhiAIEGZtCdEetjXI9Kg8fl/pvr7rRZfTFYPvdNt+dX/KlHpg6FEN3v92zv+ZmT7SLmBkqkHJaaGNg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DHSwhdfvJcvTV+D6XAdhd8x6lWmJQJ/7InQyeNrj3YY=;
- b=xgWo+Utd21JG/a77/YW6Q16M9QVT1MRMFx/HwMY3ZsQCGn+W0UFxcoWBXGRF/OxyPpu+kcHHYM9hLkFHCWULs3ylFWZJNnkFnFs+Kjc5gAKoEuII53DuiouLOi0v32H7uzbPrnMKa1yOH/ePUVHlBVw2qGRCBWR9t98AVXPSvarSxQXW4woypbAZy8vqKMw6OaTtXHpIwjEWkfGV4niVA7HR8GFsazdTQCFA96eLBu0LXCXw0YEM+81jnJ/e/2v+1pi7aa9P5GwepAZ0ySPwB4XuzeX8d9F2ovLGnBh34IaUypcOM/kgziW8Z0abRZ0HheQXFjjFntSAZwio+UH+YA==
+ bh=GAJjPP+Z3lscfKvWDvGb8UCKtDgGuJ8h5J64jKugc8c=;
+ b=Q5HaU7K1UMhnuT33FCGCfiBa1g3lG50XmQdKS8Nhils87f7kvI45JLZCcoOwK3wATc6GbVxoAz7FK8JXgfPAdYoaUZg8d4GlVAJ8sS7w8xrCs2I9cvFKIQ57ufNRuhaw0yvKqbW511rVEye32l1a5yVRY25pNSCyF2PgmQJdGM/TWT1qiq3yTqAlESfENF6L7Si1Q/qzEThBb0AGpIt9uv2Tg+T7o+sbkMEv9fQg4a816gnkSfbps0lNd8qAhC5IP51MpV7TiTUId3UmzeyRmJjCotzgJPYjOzL0RDLe9z8diOywnlWswU92CceJ1az/EwDgm/kaMeuyMzbxPXwCvw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from PAXPR10MB4734.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:12e::15)
- by PRAPR10MB5155.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:27b::22) with
+ by DB9PR10MB6450.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:3d9::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.45; Wed, 2 Aug
- 2023 10:57:55 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.47; Thu, 3 Aug
+ 2023 13:23:18 +0000
 Received: from PAXPR10MB4734.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::9505:a6cb:9759:b1df]) by PAXPR10MB4734.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::9505:a6cb:9759:b1df%3]) with mapi id 15.20.6631.045; Wed, 2 Aug 2023
- 10:57:55 +0000
-Date: Wed, 2 Aug 2023 12:57:53 +0200
+ ([fe80::9505:a6cb:9759:b1df%3]) with mapi id 15.20.6631.046; Thu, 3 Aug 2023
+ 13:23:18 +0000
+Date: Thu, 3 Aug 2023 15:22:50 +0200
 From: Michael Adler <michael.adler@siemens.com>
 To: Chris Paterson <Chris.Paterson2@renesas.com>
-Cc: Pavel Machek <pavel@denx.de>, "cip-dev@lists.cip-project.org"
- <cip-dev@lists.cip-project.org>
+Cc: Pavel Machek <pavel@denx.de>, 
+	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
 Subject: Re: [cip-dev] stable-rc-ci tests failing
-Message-ID: <20230802125753.4d2e6225@backstein>
-In-Reply-To: <TY2PR01MB37881707081B7D70710B10BAB70BA@TY2PR01MB3788.jpnprd01.prod.outlook.com>
+Message-ID: <x6gtttscicyj2tuy4jbrdjk7s4c5idx52gjmf2ussf7bey4kcm@rqhxeuxkfk4j>
 References: <ZMoaWmwWiLQz+vNU@duo.ucw.cz>
-	<17778648DB0D91E2.2497@lists.cip-project.org>
-	<TY2PR01MB37881707081B7D70710B10BAB70BA@TY2PR01MB3788.jpnprd01.prod.outlook.com>
-X-ClientProxiedBy: FR0P281CA0176.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:b4::15) To PAXPR10MB4734.EURPRD10.PROD.OUTLOOK.COM
+ <17778648DB0D91E2.2497@lists.cip-project.org>
+ <TY2PR01MB37881707081B7D70710B10BAB70BA@TY2PR01MB3788.jpnprd01.prod.outlook.com>
+ <20230802125753.4d2e6225@backstein>
+ <TY2PR01MB3788D79592068F488400767EB70BA@TY2PR01MB3788.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY2PR01MB3788D79592068F488400767EB70BA@TY2PR01MB3788.jpnprd01.prod.outlook.com>
+X-ClientProxiedBy: FR3P281CA0028.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:1c::19) To PAXPR10MB4734.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:102:12e::15)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR10MB4734:EE_|PRAPR10MB5155:EE_
-X-MS-Office365-Filtering-Correlation-Id: c4ef7ebe-9169-4faf-bb7e-08db93475323
+X-MS-TrafficTypeDiagnostic: PAXPR10MB4734:EE_|DB9PR10MB6450:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6a1080e8-987c-42e9-88da-08db9424ccfe
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	r/yt47X6Dwz0id1lDPF14eaHNhLwgnspsEaqtZKEy5yVTPiWdcOR69uUMoMDJDQs0or6/ljU/eqc0ejK/fOOKtGzlIrzjZMv4s3sYJB15jvDeIQmE7hPVuPk6i8ahIeKpqHmamkkhS8TEPFpO5VL6wEn1cs22GFP2HT8giO7ZYdXR4pZ/Y1ovbmria0knPYy2dnbYeOJYHjz7aIIc28lp5WLZ30brVfgRZ5SpAU0P0fISrnDJXsK7XZAMUFaU6sLe6cnnq/Hw5lPm6oJTldZAL2luTP2gJCPoxFUdaMmb6U2HajYTOD0Jp/rRdewlMN4o3FSZchDJs65v+GLDErC7EBh/jQOxmnjPbv+Ziqw6bK6YeGplUV3I5i+Znj4t4xglRknkbMJvwdPaKHOwOSK3I+eALk781lEImqpFPeh5F7npRfQXftuisWQF31UxuRR+bnOI/WZuJWbNXBu6GHJ01FtMo1sT3Fnj/hsAiwuiD6lHQOpywiGKalUrvsL1LudYLH/wRD0BD25Uqp7C6M4jowoPrHbtu/07pt9yJItlsmoi7a/CcU8APiLAHlHB/ot
+	acbFMnBaiba3wAGCUOpqTpy0vsgdt4/iz75QekZGkBXNncxe+gSlIouFw3f6VTmrmwkEYeTAtKdX7u0Iy7JOD5b4V2tHp8GJ9dkXCKKncwJ7oOFkd5+A4QpZLDfW6093nito4vaR1jP+kV9kPvXKEdzWkmw78eOi9WRzQSK01K8jj5TILQxtAciP9VI7VsdvMMcH+lm13q7r8PaCtacgpKm89P94QWSxnLO4/mP5ablkPIJRwBUcqaXGSXrLvwzfrCHdhz8T65tG8MufUGtQ1JctnGFjC8EEfSFONK/yFQ3v+tbVRHIeTleFsZ39DivfZ1ekH5ZwE/F6F7k4IozstGsv/47Pb5cMDe0GJMQaw1U6oA5usVicICnivJFvTa5Tv8ABBiKFzzYDPrLoI22KF8sWnonC6QfLaNw+OYHfhe+HfILpuChg4xanU0s/VUwKvQGTyt2Gh1Q64XzsT5wgainVL8xThLhpWMF9rfArTMhOZi2xoF+lk8FOhljE5wTA+NkV6o6pZF0hDlhed8jeGYRy1MNKtPViLMgRcDCC0K1u2OA/GL7/IRvsBowe7z8E
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR10MB4734.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(4636009)(7916004)(346002)(39860400002)(366004)(136003)(396003)(376002)(451199021)(1076003)(6506007)(26005)(38100700002)(82960400001)(186003)(83380400001)(2906002)(5660300002)(44832011)(478600001)(8936002)(8676002)(54906003)(86362001)(6512007)(41300700001)(6486002)(316002)(33716001)(9686003)(6916009)(66476007)(4326008)(66946007)(66556008);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR10MB4734.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(4636009)(7916004)(376002)(366004)(39860400002)(346002)(396003)(136003)(451199021)(33716001)(86362001)(54906003)(478600001)(38100700002)(82960400001)(6506007)(186003)(26005)(83380400001)(8676002)(8936002)(6666004)(44832011)(41300700001)(9686003)(6512007)(6486002)(6916009)(316002)(66476007)(66556008)(5660300002)(4326008)(66946007)(2906002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?gupe+ugLP+FEpYAEery7aMzFY6gRARQn+UCx+L4HaP0cCHLepJM8rXI5Cab3?=
- =?us-ascii?Q?ZsUN+eo17hZON/bC/Md44zqSwKK13r1BHH+oR0IK+XWujKlb1lUKrU0//gcJ?=
- =?us-ascii?Q?t+W65H+m8OiNeC0gpXU2YV2q3wrBkWzBf5+D31N2fufFOPqzQg7HT9ZgJ5u9?=
- =?us-ascii?Q?SmLPmlN/WqJV5UZC6x2WPpoWAjVFZDYv+ZlgVjdu9dAf+jJgXRNW4si6xFIw?=
- =?us-ascii?Q?oN6DuHsQR//5YeUXToxxg8FdWzONGWj9ooBI/YTQK6uN+JBQ8tpWM9pUN39u?=
- =?us-ascii?Q?OsWqlIsdyd/3nZyle6yHl5gaeY5D4k1LQ+wY2VZNpH89w2xrZJhYFY8wdP9u?=
- =?us-ascii?Q?TjiaKPyf4PtCkEBf7bcRuDxdyUvrfcoM5M0op5Y3iLbMrzy+D/R9kDbL1VJF?=
- =?us-ascii?Q?lPzFF+EMOWvyb+DIbnDnW8KCQBZUq26SPY94bEy3tNtJ+JjQjyDRa0klvHOM?=
- =?us-ascii?Q?Q7SbBgy6J7hf+jY4vyIrfgf5cIpUytA0IDJi6Sg/OG2MPpGJ90ZrRrajJHXd?=
- =?us-ascii?Q?2GCXQ+RzY/FeeR9zCXqhEv+l6n9RzDyV1KGdyRTRMlGjo1eKuZxix7fAJoVX?=
- =?us-ascii?Q?KE5EkHftwAniiK7jKnje/jyRTZJsBY88QEcuQAaQ4t7cEUuZj14rsNT+Alul?=
- =?us-ascii?Q?1+UcZ/BypOAyxhm4jnOuXdHC+agYaWX5JJjqxK5q+tQKZ+rIyRBSnOSx9orF?=
- =?us-ascii?Q?5/hMhMDf1uwO9g6XdWfE1FYH0B/lfS5ATHfbLRp6AurGjOn1M6JnGiAaUkUc?=
- =?us-ascii?Q?07tZ+fhKsSdQiarSNx8X0Kdi/MVRZPFAywfoozb3KXZtcWLzCAIJsl0rUeW4?=
- =?us-ascii?Q?mo1u6rM6yTglv2roS4Hz7RDXuQz1ZotN6mYwblMOw5OMgVJ5V1gICjQPRxBT?=
- =?us-ascii?Q?fsJWdc2IwKNmwil9eIE9MHuTUK6BUvKscJo/vjNn76cp5lTr3KlrVzXesS+n?=
- =?us-ascii?Q?jR+C/kp7wxjG7rJvPXTxe1G16H9JFq92hoqO3v4cbwIDx1/5jeck03X/f3ET?=
- =?us-ascii?Q?/+akynP4KCxqbpR8e5CNZLbd3jS767nS4nIFM8B6ZIcrxZd/zX286i783Uhk?=
- =?us-ascii?Q?5aTkBhDI+ncdsZ0am8/P1p7/onps1YPkq4OiXyFkXFWK73oE9y2SdDv7IXf9?=
- =?us-ascii?Q?kOtUYrmR9npxTjDxgBL3DxbvEwIhBeAMGsZ4Y6s+oOQh3NOQTWtK+9+fMBfu?=
- =?us-ascii?Q?s5E7bf6SJbvJSNMYFoTOlvTQlX2UKB68Lmt+OfkxP50LqCYpDXT9uN5etNmH?=
- =?us-ascii?Q?fUwY2MX0sdkw53t3PseYfow+JDrXZLHGOt++celzF1BIPTkQttAhtAp9BBOR?=
- =?us-ascii?Q?EExvuQ/pu/hszAmd1CePQZAzkPoqiBdPTik6yxYtp6lbveClvZMDDKsisS8l?=
- =?us-ascii?Q?okTPmo+XelN7iirtax0c+aK3uj28WmTRHiW0r5TQmT7+VuIHPwg3C8uPvpsD?=
- =?us-ascii?Q?GbmMYr+SOiSHA1rrb05c9MD/FsPWQW9XkS9paDgGBp2O8085dkZi4VlX6BnG?=
- =?us-ascii?Q?vF+kYi0VUqKwpslRNJOKcVycHIGkRc11n86qj0jJRJ6i/9TAep/bgDaapNmq?=
- =?us-ascii?Q?lvGoIaDi6M5B3Xu6U5KeKxeQL1VAbr2btYdsSjpCVh1P16Y6gzbG6utv4p5v?=
- =?us-ascii?Q?EA=3D=3D?=
+	=?us-ascii?Q?QZK0B/MaKC6D1FFM4T57fVEvBZvq+zINtK3pbsS+jcRkoSIJrDS++Hj5XbF0?=
+ =?us-ascii?Q?vA124lJhjHAMmkPHCYXMq5kcsxpviEKvhPOfG+1BlN1+iPiWif2xZJ6VNhau?=
+ =?us-ascii?Q?GPgoDkCW6BuhpUlJMy741XKzEwFRlTuRGMGemYRRJu2Fw8e1vAeJYnxbFRVt?=
+ =?us-ascii?Q?zy+28VVA7IDhT0zyb9bDxwCspVACnYi8Izis4s0F5z1KvTn3ym+EITsv2xdl?=
+ =?us-ascii?Q?sD1BFFZrjT+MTCS7wXG2LrEMSOk5zmpIaTQ5j/XNoRFeY7SWlLPtC1WehYfs?=
+ =?us-ascii?Q?/ClovsEdaFuqT13vpddNry5X+/IiuBYjttWy4MQFK+f+idWXV8ry2D+PF8lJ?=
+ =?us-ascii?Q?J5QhHmN/wC1XiQbsqiIDDrh5GbMjKidma4j66YVsLUSUni3K3EOqTG0jAz2K?=
+ =?us-ascii?Q?iHU4eaEKLqbAmom+SYOsDixio484kNYYasz9zOt72KUm1PhE84DMd8zDgOoa?=
+ =?us-ascii?Q?+n9pMHoji12GevvYvleI/PoMtbCK1vwnund5QB59CrQJ+hB4T3Vfjt2EaG77?=
+ =?us-ascii?Q?q68G16dsXgSjcpij/YqPIZmjWNmuRjVQmr4FERUU2pHZTt34ANTomBBWuiJN?=
+ =?us-ascii?Q?8B8qQynZRB1vlumw/JJAgEer8JiGIlmmbwzo8vlNJwWYpiVNYTdfXiXtI9WZ?=
+ =?us-ascii?Q?XBmVWHI+3eMKtxbTWxsDRBvSA2R09utUKaJUa/AtOgmI+T7WmW2pWAFsUY/E?=
+ =?us-ascii?Q?Exl2ivMEfISkxQyTg3X0y0o/RZaZHoU0cGojsbiNhqUtYJr5ARw3UCG11QmU?=
+ =?us-ascii?Q?l42yVJ5x27UEeEGr05LwuHIqWKu0aSlB34aEfgiyj4M0ejScKyBeYtBWWDig?=
+ =?us-ascii?Q?X2d/KzBFO0Mxfw77QWY7kUs04Yr5X0RqzWiJWZiwBOuQdcdHONmmULYpYhg7?=
+ =?us-ascii?Q?5vTJ77HI0Ivz8Ftu4YPNGl7SLIt7iR3CJ479HXGoxMvwXVvAK0QlNqYYg9T2?=
+ =?us-ascii?Q?+O/mEW7DJHFdzTQawzxsHpv/eUqaAExKldeWS6JZ45/hTV3U/b5605RKjwIo?=
+ =?us-ascii?Q?ZtV1TKgfx36k6Xu2RNomgLx2I1jdJ+TlUMRrAILUsOtq9pc2fwew8NitpL2O?=
+ =?us-ascii?Q?yrbaKCLx3vGMzV5fT22ML83fEFswzRU5UtA+oUfIbFdvH0WnfZKB9jIFwxS3?=
+ =?us-ascii?Q?8R50jX1mbCw1hbSvZKiHDEq0rZ738inLEwdmfeDoIWwai790d206saIYiw/l?=
+ =?us-ascii?Q?K5f0yFMMZcx8nLzEHcvu1i5D5GzlHyioAvExUU/DWTWtz+2YAvUTqYgNb7pg?=
+ =?us-ascii?Q?LszUokCE0L5HJ7FosMdE39twA7iujzmbsaoxvpyEsHn2obW4lbWYxyeiCL0k?=
+ =?us-ascii?Q?ArG1d4ejQ6xj0hjAI1ExhrYesPH22CqIOb435GlLYs/osT8jQH/AgnFDXpkB?=
+ =?us-ascii?Q?ckeYqh0cCn5EQ5hldBwCQr0U4PGkM8wqY7h76SHhaEjRBBrzAOjhzU5A/hh3?=
+ =?us-ascii?Q?DwKLy8TAEjFimREli2JRtHkVMTlBIoLyPL5rS1eeDmq42yHWcRe1DTufjujP?=
+ =?us-ascii?Q?o1ebpiTY/2+UdSm/fwbOWtCovg+/o7sg+wX60GWy3SJYB2mylEiMX8fo4mkz?=
+ =?us-ascii?Q?zXcO/yfPbgJ9eRa69EMCMku0ddZpHo2fOSQRy1oJzaJcaDLikstyg9t+3E0E?=
+ =?us-ascii?Q?Gg=3D=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4ef7ebe-9169-4faf-bb7e-08db93475323
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a1080e8-987c-42e9-88da-08db9424ccfe
 X-MS-Exchange-CrossTenant-AuthSource: PAXPR10MB4734.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Aug 2023 10:57:55.0984
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2023 13:23:18.3664
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: o92FhxJIWTOTQoBqBjfAuf4y5Gtn8IQREhZjnKhhdqF/INVq7k7EUNqtqX2TU/OUh/yz+ps0Xwx0ezFd4B2Dv0bC+AMbOvZM5493AzL3yos=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PRAPR10MB5155
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-UserPrincipalName: lnXoONcGAboKH9c1wqH//bcvSMpHuyzhx+9VFu0HNAnkYQDWE5+Qp+mfxN60GzDZ+xVqMaOvVI9X125QdNQcUDLOhvmaHMHvqIKe8DLXgco=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB6450
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 03 Aug 2023 22:00:23 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12550
+ <cip-dev@lists.cip-project.org>; Thu, 03 Aug 2023 22:00:33 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12551
 
+Hi Chris,
 
-Hi,
+> Do we need to consider adding some sort of fallback support to
+> gitlab-cloud-ci so it'll try a different region if we get this kind of
+> failure?
 
-it looks like AWS has got some problems. From the logs:
+yes, I've just implemented this. The small cluster will now (hopefully) try to
+auto-scale across 3 different zones, thereby improving availability and
+robustness. Previously we had a max node count of 5, now it's 6 (3
+zones each having at most 2 nodes). Let's see how that works out in practice.
+In particular I'm curious if the auto-scaler will choose a different zone if
+it sees that a zone has reached its max count.
+If we don't face any issues with that new strategy, then I will upgrade the
+large cluster at some point in the future as well.
 
-"We currently do not have sufficient t3a.small capacity in the
-Availability Zone you requested (eu-central-1a). Our system will be
-working on provisioning additional capacity. You can currently get
-t3a.small capacity by not specifying an Availability Zone in your
-request or choosing eu-central-1b, eu-central-1c. Launching EC2
-instance failed."
-
-In general it seems like autoscaling has some issues in eu-central-1a
-since I can also see i/o timeouts. I'll try to spin up a new cluster in
-zone -1b.
-
-Kind regards,
-Michael
+Kind Regards,
+  Michael
 
 -- 
+Michael Adler
+
 Siemens AG
 Technology
 Connectivity & Edge
@@ -139,10 +142,9 @@ T CED SES-DE
 Otto-Hahn-Ring 6
 81739 Munich, Germany
 
-Siemens Aktiengesellschaft: Chairman of the Supervisory Board: Jim
-Hagemann Snabe; Managing Board: Roland Busch, Chairman, President and
-Chief Executive Officer; Cedrik Neike, Matthias Rebellius, Ralf P.
-Thomas, Judith Wiese; Registered offices: Berlin and Munich, Germany;
-Commercial registries: Berlin-Charlottenburg, HRB 12300, Munich, HRB
-6684; WEEE-Reg.-No. DE 23691322
+Siemens Aktiengesellschaft: Chairman of the Supervisory Board: Jim Hagemann
+Snabe; Managing Board: Roland Busch, Chairman, President and Chief Executive
+Officer; Cedrik Neike, Matthias Rebellius, Ralf P. Thomas, Judith Wiese;
+Registered offices: Berlin and Munich, Germany; Commercial registries:
+Berlin-Charlottenburg, HRB 12300, Munich, HRB 6684; WEEE-Reg.-No. DE 23691322
 
