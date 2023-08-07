@@ -1,139 +1,287 @@
-Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
+Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59A64C001DB
-	for <webhook@archiver.kernel.org>; Thu,  3 Aug 2023 22:00:43 +0000 (UTC)
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (EUR05-DB8-obe.outbound.protection.outlook.com [40.107.20.54])
- by mx.groups.io with SMTP id smtpd.web10.12852.1690977154473786790
- for <cip-dev@lists.cip-project.org>;
- Wed, 02 Aug 2023 04:52:34 -0700
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C96EB64DD
+	for <webhook@archiver.kernel.org>; Mon,  7 Aug 2023 08:48:41 +0000 (UTC)
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+ by mx.groups.io with SMTP id smtpd.web10.29968.1691398117532350582
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Mon, 07 Aug 2023 01:48:37 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=Dp/j0NsW;
- spf=pass (domain: siemens.com, ip: 40.107.20.54, mailfrom: michael.adler@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=i9evZ3cnkmW05m3TufxAQYWLEoD3tAGqyaBopgUv+iezg6btQ2iEP2BCsl+mFcP2mTiaNfKrfHjZeGfcs28GSKabhyoEldcfky3lNx3CEp8LfRNE+G2DbWsOIud59+mrixzKpOC/LNaGNt8qXvaYFrus8j12bHqJRfsTt+7aD77uYyIcL8BDmfEeG+4IPp8NA/vuXolr18EXNu8pi7D+SsTEUQjhT/tbwSPvxwZOup2vlnsat9IETC1WhhCKbFCchdCPIWWTSnn0rrpD8HuXJpc9Ln1pFOvrt5sd1/ziiYwHXHtfoxY5L9PGMr53XNMNsIDa0w42u4WAxNFTdj1WUg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EzU1rzSyC/IkZCkhkkPdN/X+g1fKmJAdaTuVlOXAR9s=;
- b=jQ4CMu4zjYRtoKs7BSLWSM6deZxsvtly1P/X4vQllzdPohFZN4wJWxSlSqaRa/nxQnU8PX7gu2FNRr1lVcpBOr8QQFsO93VO1SuzJ2UmqxvFVwWfi01xgjbZFsoVz4dsexCLUtDJG23CMd6Tb5GwEyNNMLnMUqaxQkbrNSnWn4QaVI4hJRid5kjupRqGos2+7lG31k9KhYK2OyR8NBxqQQZEzMmJh6mTbL6EpNVqHSgp04omvZMAigtws9vOtUDmJVdmhGzC3vPsZQSpJElLcJ9hOOIrWcucD+vAM7zgD82aQMMlwBPr5Md/XzVhhqCzEc+8cDpF/d3RKQwtwOoEFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EzU1rzSyC/IkZCkhkkPdN/X+g1fKmJAdaTuVlOXAR9s=;
- b=Dp/j0NsWzGGY5vueUhTHTeZVF3tAZq3SPRjtJVpSkL9TkPjIyvct7Q21sEd5AwBjBXrAqU+nFrjcy1htegXaB1FfmdjDtKY8CWCoJUapYXPiEYHr/wM4PeRxMunQJMsODkooX4CMzINvQoutLgW31MSD7waBsGLza8TZsEUWSzXSbILk0ajen7SX5NOvw94ReCbCJtUkhWy1D4qbqCFRqak/salLX+F+OuXv6ZdELpBiPYdB7ZihPgNEMICqoE9hL9jasz9E/Bd/1W+WPF2wfoEybnehqoBQKjwwt8XnxJzRfbF/MyYaZXq74kLSNsEu8znqRfLsszhLvR4j+Z2VkA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from PAXPR10MB4734.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:12e::15)
- by AS2PR10MB6799.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5f3::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.45; Wed, 2 Aug
- 2023 11:52:31 +0000
-Received: from PAXPR10MB4734.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::9505:a6cb:9759:b1df]) by PAXPR10MB4734.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::9505:a6cb:9759:b1df%3]) with mapi id 15.20.6631.045; Wed, 2 Aug 2023
- 11:52:31 +0000
-Date: Wed, 2 Aug 2023 13:52:04 +0200
-From: Michael Adler <michael.adler@siemens.com>
-To: Chris Paterson <Chris.Paterson2@renesas.com>
-Cc: Pavel Machek <pavel@denx.de>, "cip-dev@lists.cip-project.org"
- <cip-dev@lists.cip-project.org>
-Subject: Re: [cip-dev] stable-rc-ci tests failing
-Message-ID: <20230802135204.1e883f3c@backstein>
-In-Reply-To: <20230802125753.4d2e6225@backstein>
-References: <ZMoaWmwWiLQz+vNU@duo.ucw.cz>
-	<17778648DB0D91E2.2497@lists.cip-project.org>
-	<TY2PR01MB37881707081B7D70710B10BAB70BA@TY2PR01MB3788.jpnprd01.prod.outlook.com>
-	<20230802125753.4d2e6225@backstein>
-X-ClientProxiedBy: FR0P281CA0203.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:ad::9) To PAXPR10MB4734.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:102:12e::15)
+ dkim=pass header.i=@kernelci-org.20221208.gappssmtp.com header.s=20221208 header.b=ihqeUzWy;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.175, mailfrom: bot@kernelci.org)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1bc6bfc4b58so3565915ad.1
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Mon, 07 Aug 2023 01:48:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1691398116; x=1692002916;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=vbR+gtAooNHR2bscae0wvoKHIpHI73l50XAwBU5f5I4=;
+        b=ihqeUzWyyjrfAP9LgOHX+Thpc+n5PrheVH+IYgI57HgrgnBSXQwLoac5tPCM92qdF/
+         gNSOjr8Rnlxp1SL8uBTQDV0BI2B1fClbwjCOZ4K6RYfgC+HrAXCLgrT3YBT1+ODMz19e
+         fiKTvMls8DF7zPco98+hc7qXLHymSg9SSpLmYoHmcESgZOy8D5bygUQ7XTM9xwd/Nkyp
+         QlKM4Moz8SJEv/bORFDlsCJ4hyWGQr9bIAzcGTYJ5TWUA1KoYgbq2JY6FeTStup5vj9x
+         OfzS3KKgdhwUTPD4XZOQvhdnvuVAQ/KOe2SZpdIx2va8qVeTRRDmJeiGtl9vFR9vSU6y
+         4ySQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1691398116; x=1692002916;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vbR+gtAooNHR2bscae0wvoKHIpHI73l50XAwBU5f5I4=;
+        b=AGqWW277ETsY3KdZuYuhThAuun8ivwFwuKxoy4lfzhvsrm7I/tZCZmGgzekmRxgIlf
+         J6djExjLOXoPz7W2Ryg/wUk3oMBqn+7RPfjS8RPt0vygXaPbI1m76tdSI35K5/fWVDpm
+         FfFv4qkWE97HEj94wVqfaapE7SDcm68xEGyo0jdq6iTUXwV21NGGBXqfbKnizfkzpMMh
+         V9xvRbLQZGxWf64Ck4GmSdvHEEAYheH8ZbM0KOwz4/Vs6lbwvoOpw2fWY4f/e0VLS3lW
+         CJBylOJ6v6jtnA02igmainkRGaOB6QRvJtsi55CxhOqWfR0c1/KA9XpD+w5VAYo+s73+
+         bMsA==
+X-Gm-Message-State: AOJu0YzF/ChPVbjcK4bNwSRp5pC42lRx5ZlmVpdQ/greIoElPZwtY0Qp
+	scCMv6IR0gzXAl3utOcAnftBp7JixMfW8HTsrv0F8g==
+X-Google-Smtp-Source: AGHT+IERNtcS0YClw3i58talzPbwTZh21PwCOMNrZgRQwTjDxlPlSejlVTr20ht2x8XNwcYyM0SAZA==
+X-Received: by 2002:a17:903:2351:b0:1bb:d280:5e0b with SMTP id c17-20020a170903235100b001bbd2805e0bmr7737242plh.18.1691398116351;
+        Mon, 07 Aug 2023 01:48:36 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
+        by smtp.gmail.com with ESMTPSA id v24-20020a1709028d9800b001b8c6662094sm6267093plo.188.2023.08.07.01.48.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Aug 2023 01:48:35 -0700 (PDT)
+Message-ID: <64d0afe3.170a0220.4a1f4.b203@mx.google.com>
+Date: Mon, 07 Aug 2023 01:48:35 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR10MB4734:EE_|AS2PR10MB6799:EE_
-X-MS-Office365-Filtering-Correlation-Id: fb4b91ce-1230-43fb-20e8-08db934ef406
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	BXcVaMEAXIVsSCoB+xyzIDRFAzLKhQY3MWEeT/ovxqtDCRBH7A1tMUxThSPzB8qUuRDGJTZ030jFk/3wqRoosZVjeuWC1oEyzrvplNRk44sWxV86GtO3YrGoFMHZ1GUBb4iKTNVz52xgMX5r8O1e9T5L5Irm77Qrr8KamJTSV62OzSthPS/ZViduE6u5uUjdqvsi3YllQ0egpD5nA5DRN/rTRbxr9Z0i7kdJyuaMG/Qnwv/Y7Dg648wFz8aR4o19WEAb2StMtOq38u3mJnWOg6aZzjzx93IzHgJCU9P+kLJp6fhvY3PwqeUhKnsi4oyi6YZqP6ORVon13t18B8pdHi6gXhgR6jEsNfSNl0C5uCyUAclduT0G/HNW6MpblCN3vzqbt5SloCh/ME0cP9M5MhYI1i6jdhnYJfS6zJssyLcAjo/IEgC/xlSPxxK+aSqBCpE5zUIYGbXAv9IanRwHXLp+icKJsTduQp2KebNIxV3o7roW4jIQyCC6uLcdSHCIRJIIG4NKKPT3jjK8+7tBeF9JYBvIs2sE5wrvNaN/898WPL9Dx3bZv3ek9ws1DN7K
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR10MB4734.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(4636009)(7916004)(346002)(396003)(136003)(366004)(376002)(39860400002)(451199021)(5660300002)(6506007)(4744005)(8676002)(8936002)(44832011)(54906003)(38100700002)(9686003)(6512007)(2906002)(66476007)(66556008)(6666004)(66946007)(82960400001)(478600001)(4326008)(6916009)(6486002)(33716001)(86362001)(316002)(186003)(1076003)(26005)(41300700001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?nid3DmsTgO44Q2mylQdANYQi8/OXqkpoWXgle/wwz0lkMmbEisEMbAbx/L6r?=
- =?us-ascii?Q?zvy2kegcPCl4SzWtKx5o4VVw2f38EFltdoC/0xjtkE0fszz9SGUfayLph5Ru?=
- =?us-ascii?Q?Bc00eRZsVpKwkTR9sldyokX9BLBrOiA138imEIr9UwDnsb2sdfnJsm+HQj+g?=
- =?us-ascii?Q?l4DrfsCopWcsdSdvDvNDNRsmaUxPFRuZZGC5lxpC0KdIck2xGeZTW2qLOwZJ?=
- =?us-ascii?Q?vnuPiCB1YSyx8848lF23dV0Mduv+68ejTUeVIkvjlPNxWNWktATLSViK90rF?=
- =?us-ascii?Q?P3FQOaCShHROdezkHd2QPNYDZiv98cBUFEqYU+lIR4h/BI6hXsQdgLArKI1V?=
- =?us-ascii?Q?L5sTTiok2J2bEIia4JyHpMBWwcSkYgLvkL+I7g+1cf6gf/9uthde9BWbJJt5?=
- =?us-ascii?Q?vGkZG8fQvRiubnxdZ7diKGo6vjcKAHWZ4DjmMDOCkktb/bTEoR6qNBkr7rRX?=
- =?us-ascii?Q?zQ4jl+NDxTv3+NJWhDPnxPducwURhKpCrZ3bfPglJofZB7wlJajWAi30tbPz?=
- =?us-ascii?Q?KkdR2MlsJSD2jm9JZkxhmbVoagkM9WNRjuyxesNmb2TgbmwzyjxpiUXQUm5J?=
- =?us-ascii?Q?GbGkRRoy+MMSI0jtwYGACLMc7lXPDRiLvCnJKbEf8wSUis1e7EVAOckcK4Ct?=
- =?us-ascii?Q?zX8d+NPbaV4A9VyE9XmHRx42lCM3XMPvu8j1b/aTQu60z3IiSfpX2/jxjqF2?=
- =?us-ascii?Q?zMETIsaLGQOyLlTyAEt6n7IWb7NxWUPVZU+aI2ENiy7Yo/C7a4+OUMgFvmVg?=
- =?us-ascii?Q?0wvCPCpzv4/MXRiRHrPQpvmVgMRYqk9asizKZQO6qV1rJ+bTgxex44CzK20q?=
- =?us-ascii?Q?MQFt3pVdHH15KGTl3SpOzaa5yvyBhVZlhmfnJaTPF0PActIgCCl9eloG136P?=
- =?us-ascii?Q?87/yihvYnq21vU+EVcGt1hrGS8oZtP+WIw5JOzKL+UMcWgH3+PikdWCfr94t?=
- =?us-ascii?Q?FlahtQxW0C2o+vAdHeP4bYVt3RDrFB1ifBJN6ZdQKWhEx9e/oAuLPB4qnU6P?=
- =?us-ascii?Q?sLSeLM3asCAYBwTfJB/8ttrUcmhr0f3dDrrWYZOCiu/VKC2V053+Pub5Fur6?=
- =?us-ascii?Q?aaktCuwx1kw3lG1IOJImGsymYwL7mfujWv2IHx/pqhUu4iaCAA5TO3ANi4Io?=
- =?us-ascii?Q?mRrw91xTcDc8SAL2j5raz8oO0qw4cvz2wYsxbCMT5WIhQ6wMWH6W7OwUQJWQ?=
- =?us-ascii?Q?J8IRLFCdnlEJykczSvUcucfF2JmsN1GZ3TUFtMjiNS2xYLGbMhHt6VJK9q9+?=
- =?us-ascii?Q?ZXUHQVj6+XFb22RBnwrRgwNYem1Na3LWuQq07eU7zbPYdOvCKtgNkb7L70on?=
- =?us-ascii?Q?zsKZQmcwNGSXZpFy6CcA+ehHXgFvXq4QsBtN1rJnRyDpFuH2dDAa406+EVb5?=
- =?us-ascii?Q?5rs1RkyZyqTR8aXMEo3TWOTPD6oK/wL22duVR4Oid6O+GS1PzqAKBD5cnZMk?=
- =?us-ascii?Q?z7dhGSsYSW+JdLX7nTGtvwiTc+rRQfLDUbkykQGwZRJwE2xLTorjoqJBUHzJ?=
- =?us-ascii?Q?U9m7NoxABV/wogQAJ0shRfzZfKFey248InXWW5TN1R3GzTbrqhOaO1tWgIyW?=
- =?us-ascii?Q?diLwD/+pl9h9u+hEANZ/izZq5pTCruguoFzjRHZ0ODNL9cYDIN6XE7NPoBwD?=
- =?us-ascii?Q?Og=3D=3D?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fb4b91ce-1230-43fb-20e8-08db934ef406
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR10MB4734.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Aug 2023 11:52:31.5268
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SW6mW9aLkDG5Q8r0KkivQrg1sD+yvHhHhcB7AC8ltLDkZeE5gKvVDBvU12fhWbvxNTKAt0Ga+kxk83u/k7lpO6iPvLWEz8QPXiBAIlVEUxw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR10MB6799
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: build
+X-Kernelci-Kernel: v4.4-st20-1447-g64a295c810065
+X-Kernelci-Tree: cip
+X-Kernelci-Branch: linux-4.4.y-st-rc
+Subject: cip/linux-4.4.y-st-rc build: 14 builds: 0 failed, 14 passed,
+ 34 warnings (v4.4-st20-1447-g64a295c810065)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
+ kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
+From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 03 Aug 2023 22:00:43 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12552
+ <cip-dev@lists.cip-project.org>; Mon, 07 Aug 2023 08:48:41 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12553
 
-> In general it seems like autoscaling has some issues in eu-central-1a
-> since I can also see i/o timeouts. I'll try to spin up a new cluster
-> in zone -1b.
+cip/linux-4.4.y-st-rc build: 14 builds: 0 failed, 14 passed, 34 warnings (v=
+4.4-st20-1447-g64a295c810065)
 
-The new small cluster is up and running. Auto-scaling seems to work in
-this zone.
+Full Build Summary: https://kernelci.org/build/cip/branch/linux-4.4.y-st-rc=
+/kernel/v4.4-st20-1447-g64a295c810065/
 
--- 
-Michael Adler
+Tree: cip
+Branch: linux-4.4.y-st-rc
+Git Describe: v4.4-st20-1447-g64a295c810065
+Git Commit: 64a295c810065a25a02cc0e6ae5fcda96967143d
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+Built: 4 unique architectures
 
-Siemens AG
-Technology
-Connectivity & Edge
-Smart Embedded Systems
-T CED SES-DE
-Otto-Hahn-Ring 6
-81739 Munich, Germany
+Warnings Detected:
 
-Siemens Aktiengesellschaft: Chairman of the Supervisory Board: Jim
-Hagemann Snabe; Managing Board: Roland Busch, Chairman, President and
-Chief Executive Officer; Cedrik Neike, Matthias Rebellius, Ralf P.
-Thomas, Judith Wiese; Registered offices: Berlin and Munich, Germany;
-Commercial registries: Berlin-Charlottenburg, HRB 12300, Munich, HRB
-6684; WEEE-Reg.-No. DE 23691322
+arm64:
+    defconfig (gcc-10): 1 warning
+    defconfig+arm64-chromebook (gcc-10): 1 warning
+
+arm:
+    imx_v6_v7_defconfig (gcc-10): 1 warning
+    omap2plus_defconfig (gcc-10): 1 warning
+
+i386:
+    allnoconfig (gcc-10): 1 warning
+    i386_defconfig (gcc-10): 5 warnings
+    tinyconfig (gcc-10): 1 warning
+
+x86_64:
+    allnoconfig (gcc-10): 4 warnings
+    tinyconfig (gcc-10): 3 warnings
+    x86_64_defconfig (gcc-10): 8 warnings
+    x86_64_defconfig+x86-chromebook (gcc-10): 8 warnings
+
+
+Warnings summary:
+
+    7    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic su=
+ffix given and no register operands; using default for `btr'
+    7    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefin=
+ed
+    4    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic su=
+ffix given and no register operands; using default for `btr'
+    3    ld: warning: creating DT_TEXTREL in a PIE
+    3    WARNING: vmlinux.o (.discard.retpoline_safe): unexpected non-alloc=
+atable section.
+    3    WARNING: vmlinux.o (.discard.nospec): unexpected non-allocatable s=
+ection.
+    2    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in rea=
+d-only section `.head.text'
+    2    drivers/usb/gadget/function/f_ncm.c:1565:19: warning: assignment t=
+o =E2=80=98struct config_group *=E2=80=99 from =E2=80=98int=E2=80=99 makes =
+pointer from integer without a cast [-Wint-conversion]
+    2    drivers/net/ethernet/apm/xgene/xgene_enet_main.c:32:36: warning: a=
+rray =E2=80=98xgene_enet_acpi_match=E2=80=99 assumed to have one element
+    1    ld: arch/x86/boot/compressed/head_32.o: warning: relocation in rea=
+d-only section `.head.text'
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+
+Detailed per-defconfig build reports:
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 4 warnings, 0 sectio=
+n mismatches
+
+Warnings:
+    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefined
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section m=
+ismatches
+
+Warnings:
+    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefined
+
+---------------------------------------------------------------------------=
+-----
+defconfig (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section mi=
+smatches
+
+Warnings:
+    drivers/net/ethernet/apm/xgene/xgene_enet_main.c:32:36: warning: array =
+=E2=80=98xgene_enet_acpi_match=E2=80=99 assumed to have one element
+
+---------------------------------------------------------------------------=
+-----
+defconfig+arm64-chromebook (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 1 warn=
+ing, 0 section mismatches
+
+Warnings:
+    drivers/net/ethernet/apm/xgene/xgene_enet_main.c:32:36: warning: array =
+=E2=80=98xgene_enet_acpi_match=E2=80=99 assumed to have one element
+
+---------------------------------------------------------------------------=
+-----
+i386_defconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 5 warnings, 0 secti=
+on mismatches
+
+Warnings:
+    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefined
+    WARNING: vmlinux.o (.discard.nospec): unexpected non-allocatable sectio=
+n.
+    WARNING: vmlinux.o (.discard.retpoline_safe): unexpected non-allocatabl=
+e section.
+    ld: arch/x86/boot/compressed/head_32.o: warning: relocation in read-onl=
+y section `.head.text'
+    ld: warning: creating DT_TEXTREL in a PIE
+
+---------------------------------------------------------------------------=
+-----
+imx_v6_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
+ction mismatches
+
+Warnings:
+    drivers/usb/gadget/function/f_ncm.c:1565:19: warning: assignment to =E2=
+=80=98struct config_group *=E2=80=99 from =E2=80=98int=E2=80=99 makes point=
+er from integer without a cast [-Wint-conversion]
+
+---------------------------------------------------------------------------=
+-----
+multi_v5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+omap2plus_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
+ction mismatches
+
+Warnings:
+    drivers/usb/gadget/function/f_ncm.c:1565:19: warning: assignment to =E2=
+=80=98struct config_group *=E2=80=99 from =E2=80=98int=E2=80=99 makes point=
+er from integer without a cast [-Wint-conversion]
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section mi=
+smatches
+
+Warnings:
+    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefined
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 3 warnings, 0 section=
+ mismatches
+
+Warnings:
+    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefined
+
+---------------------------------------------------------------------------=
+-----
+vexpress_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 8 warnings, 0 s=
+ection mismatches
+
+Warnings:
+    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefined
+    WARNING: vmlinux.o (.discard.nospec): unexpected non-allocatable sectio=
+n.
+    WARNING: vmlinux.o (.discard.retpoline_safe): unexpected non-allocatabl=
+e section.
+    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in read-onl=
+y section `.head.text'
+    ld: warning: creating DT_TEXTREL in a PIE
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig+x86-chromebook (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, =
+8 warnings, 0 section mismatches
+
+Warnings:
+    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefined
+    WARNING: vmlinux.o (.discard.nospec): unexpected non-allocatable sectio=
+n.
+    WARNING: vmlinux.o (.discard.retpoline_safe): unexpected non-allocatabl=
+e section.
+    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in read-onl=
+y section `.head.text'
+    ld: warning: creating DT_TEXTREL in a PIE
+
+---
+For more info write to <info@kernelci.org>
 
