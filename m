@@ -2,286 +2,165 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C96EB64DD
-	for <webhook@archiver.kernel.org>; Mon,  7 Aug 2023 08:48:41 +0000 (UTC)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
- by mx.groups.io with SMTP id smtpd.web10.29968.1691398117532350582
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09026EB64DD
+	for <webhook@archiver.kernel.org>; Mon,  7 Aug 2023 09:17:02 +0000 (UTC)
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+ by mx.groups.io with SMTP id smtpd.web11.30153.1691399812580126206
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Mon, 07 Aug 2023 01:48:37 -0700
+ Mon, 07 Aug 2023 02:16:52 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20221208.gappssmtp.com header.s=20221208 header.b=ihqeUzWy;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.175, mailfrom: bot@kernelci.org)
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1bc6bfc4b58so3565915ad.1
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Mon, 07 Aug 2023 01:48:37 -0700 (PDT)
+ dkim=pass header.i=@kernelci-org.20221208.gappssmtp.com header.s=20221208 header.b=LFTs4KII;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.172, mailfrom: bot@kernelci.org)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-68706d67ed9so2901647b3a.2
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Mon, 07 Aug 2023 02:16:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1691398116; x=1692002916;
+        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1691399811; x=1692004611;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=vbR+gtAooNHR2bscae0wvoKHIpHI73l50XAwBU5f5I4=;
-        b=ihqeUzWyyjrfAP9LgOHX+Thpc+n5PrheVH+IYgI57HgrgnBSXQwLoac5tPCM92qdF/
-         gNSOjr8Rnlxp1SL8uBTQDV0BI2B1fClbwjCOZ4K6RYfgC+HrAXCLgrT3YBT1+ODMz19e
-         fiKTvMls8DF7zPco98+hc7qXLHymSg9SSpLmYoHmcESgZOy8D5bygUQ7XTM9xwd/Nkyp
-         QlKM4Moz8SJEv/bORFDlsCJ4hyWGQr9bIAzcGTYJ5TWUA1KoYgbq2JY6FeTStup5vj9x
-         OfzS3KKgdhwUTPD4XZOQvhdnvuVAQ/KOe2SZpdIx2va8qVeTRRDmJeiGtl9vFR9vSU6y
-         4ySQ==
+        bh=jDAHIQjap/jzAPNiTvMUwYftzahlDqwfMTk7JqUTmj0=;
+        b=LFTs4KIIuAijzbbXNwK4cM1AkADZyjTW11hzxUFcP/+QCa6DS6Mr3//uw5SfEbbcxz
+         iw+yQaaBKTgF4q8Ai0tzetSZt85nXljxASdpRSYgpv7y+JInQyKRAJvM6jXeKDK5Gz2x
+         xNp/SlmAcGVC3PaHPdxkKjD7bWCkxGrQvkYeR5dtkQHj0A8grDS2tq5tlMqKXkj3Ia9J
+         e25pYAjGji0hL5K8WGlL78F9HRT+xrQPuTuvvf3D+lRuZPc61vI9jmdb1KsX2o9M98+m
+         KeU9ZIQi16wakfxTEB0Ly71+LFIROKwFJxmqCJNjGAYMc5lizZIV+qMOjkYudGic/Va0
+         YFNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691398116; x=1692002916;
+        d=1e100.net; s=20221208; t=1691399811; x=1692004611;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=vbR+gtAooNHR2bscae0wvoKHIpHI73l50XAwBU5f5I4=;
-        b=AGqWW277ETsY3KdZuYuhThAuun8ivwFwuKxoy4lfzhvsrm7I/tZCZmGgzekmRxgIlf
-         J6djExjLOXoPz7W2Ryg/wUk3oMBqn+7RPfjS8RPt0vygXaPbI1m76tdSI35K5/fWVDpm
-         FfFv4qkWE97HEj94wVqfaapE7SDcm68xEGyo0jdq6iTUXwV21NGGBXqfbKnizfkzpMMh
-         V9xvRbLQZGxWf64Ck4GmSdvHEEAYheH8ZbM0KOwz4/Vs6lbwvoOpw2fWY4f/e0VLS3lW
-         CJBylOJ6v6jtnA02igmainkRGaOB6QRvJtsi55CxhOqWfR0c1/KA9XpD+w5VAYo+s73+
-         bMsA==
-X-Gm-Message-State: AOJu0YzF/ChPVbjcK4bNwSRp5pC42lRx5ZlmVpdQ/greIoElPZwtY0Qp
-	scCMv6IR0gzXAl3utOcAnftBp7JixMfW8HTsrv0F8g==
-X-Google-Smtp-Source: AGHT+IERNtcS0YClw3i58talzPbwTZh21PwCOMNrZgRQwTjDxlPlSejlVTr20ht2x8XNwcYyM0SAZA==
-X-Received: by 2002:a17:903:2351:b0:1bb:d280:5e0b with SMTP id c17-20020a170903235100b001bbd2805e0bmr7737242plh.18.1691398116351;
-        Mon, 07 Aug 2023 01:48:36 -0700 (PDT)
+        bh=jDAHIQjap/jzAPNiTvMUwYftzahlDqwfMTk7JqUTmj0=;
+        b=dFE6g4OvXeL+82vJVGuKNz/ZzkfdbFP7qXsb2/7FP3Id+nxZc0fBxAYzd7mdBdDJsM
+         Jb0Gj/uZKWijf4n7epDHqb8c4C9f/irw4A+qL1l79NaPHYwkPShDBaqI6zdjC4iQ+bEL
+         xlGPN2JsGsxeRzMFecdha3Vqlua/H/lam0ISFcrJMAjIifm//Hy51QsViCw20xxmRsEi
+         Ty80PFNrkW1T23mWjNWBVpNYNGcKJ4qkM/AyD7xL+ZV4LEaqazgF+e7YUmIORY6acfrh
+         L9h9Olzt929aadYq0Fe86ehWkEymcE4dqdugWaLnNzb3p5yJSBC1SNc52xPbzcKsL8IH
+         dhdg==
+X-Gm-Message-State: AOJu0Yx3tT8gwKM11QVvrQgTtOWNZYLrYBHxkC3jbiyLcdEb+vY50xlg
+	vdc2n6FMKgtevOnbPdGNsHxcatNtP8/alP0AEIG9Hw==
+X-Google-Smtp-Source: AGHT+IEDF5oBAB5PojMjtkXecnK+uiqjUTqZZdvJ5KgUpdddr1g/kSYD8M7j2NGfBnrqqEy6+TpgFA==
+X-Received: by 2002:a05:6a00:190e:b0:686:fb87:7f55 with SMTP id y14-20020a056a00190e00b00686fb877f55mr9170157pfi.15.1691399811494;
+        Mon, 07 Aug 2023 02:16:51 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id v24-20020a1709028d9800b001b8c6662094sm6267093plo.188.2023.08.07.01.48.34
+        by smtp.gmail.com with ESMTPSA id fe23-20020a056a002f1700b006875be41637sm5822781pfb.145.2023.08.07.02.16.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Aug 2023 01:48:35 -0700 (PDT)
-Message-ID: <64d0afe3.170a0220.4a1f4.b203@mx.google.com>
-Date: Mon, 07 Aug 2023 01:48:35 -0700 (PDT)
+        Mon, 07 Aug 2023 02:16:50 -0700 (PDT)
+Message-ID: <64d0b682.050a0220.3aeae.a458@mx.google.com>
+Date: Mon, 07 Aug 2023 02:16:50 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: build
+X-Kernelci-Report-Type: test
 X-Kernelci-Kernel: v4.4-st20-1447-g64a295c810065
 X-Kernelci-Tree: cip
 X-Kernelci-Branch: linux-4.4.y-st-rc
-Subject: cip/linux-4.4.y-st-rc build: 14 builds: 0 failed, 14 passed,
- 34 warnings (v4.4-st20-1447-g64a295c810065)
+Subject: cip/linux-4.4.y-st-rc baseline-nfs: 13 runs,
+ 2 regressions (v4.4-st20-1447-g64a295c810065)
 To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
  kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
 From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 07 Aug 2023 08:48:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12553
+ <cip-dev@lists.cip-project.org>; Mon, 07 Aug 2023 09:17:02 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12554
 
-cip/linux-4.4.y-st-rc build: 14 builds: 0 failed, 14 passed, 34 warnings (v=
-4.4-st20-1447-g64a295c810065)
+cip/linux-4.4.y-st-rc baseline-nfs: 13 runs, 2 regressions (v4.4-st20-1447-=
+g64a295c810065)
 
-Full Build Summary: https://kernelci.org/build/cip/branch/linux-4.4.y-st-rc=
-/kernel/v4.4-st20-1447-g64a295c810065/
+Regressions Summary
+-------------------
 
-Tree: cip
-Branch: linux-4.4.y-st-rc
-Git Describe: v4.4-st20-1447-g64a295c810065
-Git Commit: 64a295c810065a25a02cc0e6ae5fcda96967143d
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-Built: 4 unique architectures
+platform                 | arch   | lab           | compiler | defconfig   =
+                 | regressions
+-------------------------+--------+---------------+----------+-------------=
+-----------------+------------
+asus-C523NA-A20057-coral | x86_64 | lab-collabora | gcc-10   | x86_64_defco=
+n...6-chromebook | 1          =
 
-Warnings Detected:
-
-arm64:
-    defconfig (gcc-10): 1 warning
-    defconfig+arm64-chromebook (gcc-10): 1 warning
-
-arm:
-    imx_v6_v7_defconfig (gcc-10): 1 warning
-    omap2plus_defconfig (gcc-10): 1 warning
-
-i386:
-    allnoconfig (gcc-10): 1 warning
-    i386_defconfig (gcc-10): 5 warnings
-    tinyconfig (gcc-10): 1 warning
-
-x86_64:
-    allnoconfig (gcc-10): 4 warnings
-    tinyconfig (gcc-10): 3 warnings
-    x86_64_defconfig (gcc-10): 8 warnings
-    x86_64_defconfig+x86-chromebook (gcc-10): 8 warnings
+hp-x360-14-G1-sona       | x86_64 | lab-collabora | gcc-10   | x86_64_defco=
+n...6-chromebook | 1          =
 
 
-Warnings summary:
+  Details:  https://kernelci.org/test/job/cip/branch/linux-4.4.y-st-rc/kern=
+el/v4.4-st20-1447-g64a295c810065/plan/baseline-nfs/
 
-    7    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic su=
-ffix given and no register operands; using default for `btr'
-    7    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefin=
-ed
-    4    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic su=
-ffix given and no register operands; using default for `btr'
-    3    ld: warning: creating DT_TEXTREL in a PIE
-    3    WARNING: vmlinux.o (.discard.retpoline_safe): unexpected non-alloc=
-atable section.
-    3    WARNING: vmlinux.o (.discard.nospec): unexpected non-allocatable s=
-ection.
-    2    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in rea=
-d-only section `.head.text'
-    2    drivers/usb/gadget/function/f_ncm.c:1565:19: warning: assignment t=
-o =E2=80=98struct config_group *=E2=80=99 from =E2=80=98int=E2=80=99 makes =
-pointer from integer without a cast [-Wint-conversion]
-    2    drivers/net/ethernet/apm/xgene/xgene_enet_main.c:32:36: warning: a=
-rray =E2=80=98xgene_enet_acpi_match=E2=80=99 assumed to have one element
-    1    ld: arch/x86/boot/compressed/head_32.o: warning: relocation in rea=
-d-only section `.head.text'
+  Test:     baseline-nfs
+  Tree:     cip
+  Branch:   linux-4.4.y-st-rc
+  Describe: v4.4-st20-1447-g64a295c810065
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
+it
+  SHA:      64a295c810065a25a02cc0e6ae5fcda96967143d =
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
 
-Detailed per-defconfig build reports:
 
----------------------------------------------------------------------------=
------
-allnoconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 4 warnings, 0 sectio=
-n mismatches
+Test Regressions
+---------------- =
 
-Warnings:
-    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
-given and no register operands; using default for `btr'
-    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
-given and no register operands; using default for `btr'
-    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
-given and no register operands; using default for `btr'
-    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefined
 
----------------------------------------------------------------------------=
------
-allnoconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section m=
-ismatches
 
-Warnings:
-    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefined
+platform                 | arch   | lab           | compiler | defconfig   =
+                 | regressions
+-------------------------+--------+---------------+----------+-------------=
+-----------------+------------
+asus-C523NA-A20057-coral | x86_64 | lab-collabora | gcc-10   | x86_64_defco=
+n...6-chromebook | 1          =
 
----------------------------------------------------------------------------=
------
-defconfig (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section mi=
-smatches
 
-Warnings:
-    drivers/net/ethernet/apm/xgene/xgene_enet_main.c:32:36: warning: array =
-=E2=80=98xgene_enet_acpi_match=E2=80=99 assumed to have one element
+  Details:     https://kernelci.org/test/plan/id/64d0af1ef10a53f76935b2b4
 
----------------------------------------------------------------------------=
------
-defconfig+arm64-chromebook (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 1 warn=
-ing, 0 section mismatches
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip/linux-4.4.y-st-rc/v4.4-st2=
+0-1447-g64a295c810065/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-col=
+labora/baseline-nfs-asus-C523NA-A20057-coral.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-4.4.y-st-rc/v4.4-st2=
+0-1447-g64a295c810065/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-col=
+labora/baseline-nfs-asus-C523NA-A20057-coral.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/amd64/initrd.cpio.gz =
 
-Warnings:
-    drivers/net/ethernet/apm/xgene/xgene_enet_main.c:32:36: warning: array =
-=E2=80=98xgene_enet_acpi_match=E2=80=99 assumed to have one element
 
----------------------------------------------------------------------------=
------
-i386_defconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 5 warnings, 0 secti=
-on mismatches
 
-Warnings:
-    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefined
-    WARNING: vmlinux.o (.discard.nospec): unexpected non-allocatable sectio=
-n.
-    WARNING: vmlinux.o (.discard.retpoline_safe): unexpected non-allocatabl=
-e section.
-    ld: arch/x86/boot/compressed/head_32.o: warning: relocation in read-onl=
-y section `.head.text'
-    ld: warning: creating DT_TEXTREL in a PIE
+  * baseline-nfs.login: https://kernelci.org/test/case/id/64d0af1ef10a53f76=
+935b2b5
+        failing since 101 days (last pass: v4.4-st20-1097-g52d843097a439, f=
+irst fail: v4.4-st20-1186-g2516b357b2e3a) =
 
----------------------------------------------------------------------------=
------
-imx_v6_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
-ction mismatches
+ =
 
-Warnings:
-    drivers/usb/gadget/function/f_ncm.c:1565:19: warning: assignment to =E2=
-=80=98struct config_group *=E2=80=99 from =E2=80=98int=E2=80=99 makes point=
-er from integer without a cast [-Wint-conversion]
 
----------------------------------------------------------------------------=
------
-multi_v5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
 
----------------------------------------------------------------------------=
------
-multi_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
+platform                 | arch   | lab           | compiler | defconfig   =
+                 | regressions
+-------------------------+--------+---------------+----------+-------------=
+-----------------+------------
+hp-x360-14-G1-sona       | x86_64 | lab-collabora | gcc-10   | x86_64_defco=
+n...6-chromebook | 1          =
 
----------------------------------------------------------------------------=
------
-omap2plus_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
-ction mismatches
 
-Warnings:
-    drivers/usb/gadget/function/f_ncm.c:1565:19: warning: assignment to =E2=
-=80=98struct config_group *=E2=80=99 from =E2=80=98int=E2=80=99 makes point=
-er from integer without a cast [-Wint-conversion]
+  Details:     https://kernelci.org/test/plan/id/64d0b03dd494b2d7d835b1d9
 
----------------------------------------------------------------------------=
------
-tinyconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section mi=
-smatches
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip/linux-4.4.y-st-rc/v4.4-st2=
+0-1447-g64a295c810065/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-col=
+labora/baseline-nfs-hp-x360-14-G1-sona.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-4.4.y-st-rc/v4.4-st2=
+0-1447-g64a295c810065/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-col=
+labora/baseline-nfs-hp-x360-14-G1-sona.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/amd64/initrd.cpio.gz =
 
-Warnings:
-    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefined
 
----------------------------------------------------------------------------=
------
-tinyconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 3 warnings, 0 section=
- mismatches
 
-Warnings:
-    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
-given and no register operands; using default for `btr'
-    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
-given and no register operands; using default for `btr'
-    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefined
+  * baseline-nfs.login: https://kernelci.org/test/case/id/64d0b03dd494b2d7d=
+835b1da
+        failing since 209 days (last pass: v4.4-st20-234-g4e6ec7162c8e, fir=
+st fail: v4.4-st20-799-g1229c813bcd9) =
 
----------------------------------------------------------------------------=
------
-vexpress_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 8 warnings, 0 s=
-ection mismatches
-
-Warnings:
-    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
-given and no register operands; using default for `btr'
-    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
-given and no register operands; using default for `btr'
-    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
-given and no register operands; using default for `btr'
-    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefined
-    WARNING: vmlinux.o (.discard.nospec): unexpected non-allocatable sectio=
-n.
-    WARNING: vmlinux.o (.discard.retpoline_safe): unexpected non-allocatabl=
-e section.
-    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in read-onl=
-y section `.head.text'
-    ld: warning: creating DT_TEXTREL in a PIE
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig+x86-chromebook (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, =
-8 warnings, 0 section mismatches
-
-Warnings:
-    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
-given and no register operands; using default for `btr'
-    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
-given and no register operands; using default for `btr'
-    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
-given and no register operands; using default for `btr'
-    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefined
-    WARNING: vmlinux.o (.discard.nospec): unexpected non-allocatable sectio=
-n.
-    WARNING: vmlinux.o (.discard.retpoline_safe): unexpected non-allocatabl=
-e section.
-    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in read-onl=
-y section `.head.text'
-    ld: warning: creating DT_TEXTREL in a PIE
-
----
-For more info write to <info@kernelci.org>
+ =20
 
