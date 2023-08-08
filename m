@@ -2,38 +2,38 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15F06C001B0
-	for <webhook@archiver.kernel.org>; Tue,  8 Aug 2023 09:28:59 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.57495.1691486937870616383
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3800CC001DB
+	for <webhook@archiver.kernel.org>; Tue,  8 Aug 2023 09:58:39 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web10.58039.1691488710983222011
  for <cip-dev@lists.cip-project.org>;
- Tue, 08 Aug 2023 02:28:58 -0700
+ Tue, 08 Aug 2023 02:58:31 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.01,263,1684767600"; 
-   d="scan'208";a="172311606"
+   d="scan'208";a="175997382"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 08 Aug 2023 18:28:55 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 08 Aug 2023 18:58:28 +0900
 Received: from localhost.localdomain (unknown [10.226.93.91])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 63C4B41AC46D;
-	Tue,  8 Aug 2023 18:28:53 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id DD6B941B782F;
+	Tue,  8 Aug 2023 18:58:26 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip] arm64: dts: renesas: rzg2l: Update overfow/underflow IRQ names for MTU3 channels
-Date: Tue,  8 Aug 2023 10:28:49 +0100
-Message-Id: <20230808092849.32139-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip] arm64: dts: renesas: rzg2l: Update overfow/underflow IRQ names for MTU3 channels
+Date: Tue,  8 Aug 2023 10:58:25 +0100
+Message-Id: <20230808095825.136589-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 08 Aug 2023 09:28:59 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12561
+ <cip-dev@lists.cip-project.org>; Tue, 08 Aug 2023 09:58:39 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12562
 
 commit 4c188fa183ebb45238ef16504c4c7606955cf9d4 upstream.
 
@@ -66,10 +66,10 @@ Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
  2 files changed, 16 insertions(+), 16 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-index a386d434e53c..12dbe4cf51e7 100644
+index 3447e3db9256..5edc64f56a03 100644
 --- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-@@ -217,20 +217,20 @@ mtu3: timer@10001200 {
+@@ -173,20 +173,20 @@ mtu3: timer@10001200 {
  				     <GIC_SPI 212 IRQ_TYPE_EDGE_RISING>,
  				     <GIC_SPI 213 IRQ_TYPE_EDGE_RISING>;
  			interrupt-names = "tgia0", "tgib0", "tgic0", "tgid0",
@@ -99,10 +99,10 @@ index a386d434e53c..12dbe4cf51e7 100644
  			power-domains = <&cpg>;
  			resets = <&cpg R9A07G044_MTU_X_PRESET_MTU3>;
 diff --git a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
-index 9c046d4bd11d..7d924c1f61b7 100644
+index acc2e52efb30..32842babf41d 100644
 --- a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
-@@ -217,20 +217,20 @@ mtu3: timer@10001200 {
+@@ -173,20 +173,20 @@ mtu3: timer@10001200 {
  				     <GIC_SPI 212 IRQ_TYPE_EDGE_RISING>,
  				     <GIC_SPI 213 IRQ_TYPE_EDGE_RISING>;
  			interrupt-names = "tgia0", "tgib0", "tgic0", "tgid0",
