@@ -1,210 +1,164 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <stefan-koch@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59B2AC001B0
-	for <webhook@archiver.kernel.org>; Mon, 14 Aug 2023 12:04:23 +0000 (UTC)
-Received: from EUR04-VI1-obe.outbound.protection.outlook.com (EUR04-VI1-obe.outbound.protection.outlook.com [40.107.8.53])
- by mx.groups.io with SMTP id smtpd.web11.105652.1692014655317630309
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55BD6C001B0
+	for <webhook@archiver.kernel.org>; Mon, 14 Aug 2023 12:11:43 +0000 (UTC)
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (EUR04-HE1-obe.outbound.protection.outlook.com [40.107.7.42])
+ by mx.groups.io with SMTP id smtpd.web11.105784.1692015094837059667
  for <cip-dev@lists.cip-project.org>;
- Mon, 14 Aug 2023 05:04:16 -0700
+ Mon, 14 Aug 2023 05:11:35 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=IP1ThSrD;
- spf=pass (domain: siemens.com, ip: 40.107.8.53, mailfrom: quirin.gylstorff@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=zpS9nZuQ;
+ spf=pass (domain: siemens.com, ip: 40.107.7.42, mailfrom: stefan-koch@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iP4nJ7P/qVtdqqDMhWia5kQJGEXYofN67DHsoVOCWA68MfgjGsW/SP0oQDrrsY8TKyL3RWCUg4Dp8uy+pGHJn1EV/TqUsSWpUkVteBDFsy49kH9NvZNhl4BUqhNzvPebNSSZ44dbI0AUXX23kbIGjOEzuJX4cHBYxqwlOevUoQI/adbRSLD5j9rCrJyaibQeKeo1cixjHTjfXcjUTn+HUdMiHo3i28h7hnGOq++Z5wibDrq2ZxoZj56/hL3idMXSrGD1NTmuleNW4L0rNgFrSo0X1EO/Gq7Tg1gcI6QA9xKTcHtuu4iRkTqRyaYJkGU+SdPdxCVs77GC2pN7Ur8nwA==
+ b=JssX0y8X36pAvElSSFSkI0CY2tQyPrlE20q1KWcxpElCkW1QS7ON6w8x7VBMNIH1aPSVh8JC+ad1D6yWCCI/qHFluWlHZtmcD64C1LINc5SBeHSum7HmM5ZRWqwpMQC+E2jE2lQp30fsYwVxYtKBLjmVONdVtNTTaN7UZHqBYbooS+Ts/UMyxblRh5YPZyjhcU3aPjfL81wcgbzZ6Q5shHR1utRxB0zv53cBez+BOVRmkIZUD7QZylt27iIIzZfAXREgYLPB/WUyfuXG5mTpXpQfhPenQGiad/x35VANr8/OkK7KdzugIYcM6cosZZmIM98hF6vI0hM8hKa827PcEQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V7AG/PYEo/h/FqzliojK8W5o0g6RkTcgUnr1kR1Pip4=;
- b=kSnQr7PbJyL5zsnWRcHZYtvYCOe6bDpkts6zNmZG8ZJTVgF4O3TEJICk0nJiFjdQZE2E40uwMM+3U3dx8J80L8TiSP5SnXzkG9PdlN87m2xuArxx3+4fLYNMKaqgfXSSXR84Vy+sQmOuhxJ34xqjlC7PkEEJfMcCs7Y+6aP4t/NG5HbP9K7FRu7RXw0Gu8HJg7bT/ifXQqG+XKrAukUW1htxzo352xbMUojdzvT5a/31JEswB3zpAFNh458qqtPcZjG70uDYROScPAwSXB7f/ryy2zY7sekWLVuO85U5A5oZW1BmwAy15rFxBqwECbDIbhTF4MxLo/6Vs/b42hhQHA==
+ bh=JRcJgAl/3HJnrcfENkqHK3oc2r7wVKiXHTV4HO8BSEM=;
+ b=EFX1E/Gmd1AtJhXQ+K7VdbkLMIJbH+TZLKD2nI+HZc3a9G/B6QA75cnm4Wb2FfxYgmSy0yH3RoKtGmvYa3t7BuipMjOgVErxsBfHvltHzrkc+VnBfjBHXgN/H3Ohv5Tj8TNBCufnBZDodIgcu/F/opwTTqqGQzvYSYeDlvJXtuVDt6kJSb3sl1bgRQcyCUD4EGh13RIbHZ/0pEOfa53d/XVY9SXMFs6M0oAJAHgOjzMIIHVbWjLVGS8Hs41m0j7ADXFFdwaOxop/Vzbw/ggyELTVR1kGdYL9XjKUry3zdluSCuY5FU/n0LoN/kMk4oyRrRvV2NGqZi0tJTcnjMS5HA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V7AG/PYEo/h/FqzliojK8W5o0g6RkTcgUnr1kR1Pip4=;
- b=IP1ThSrDHcmkIB8Q0nkrzMIeayXMic0UN2nO0S7ceihZobjjNwofXjkdyRAKHa6zQSFmHEBHbXqen5wrhtWZTLMYh9lijeBQBdZur88JRDHNDh7SL7PbGABHk0xTJz4b10K48/pk4THnveXKlP+bNc1bVgqUt04WXPS2Eoc+9VstSRPA/IDq7IuGozExplz5wG8+WaA35arPryk+P5IS7hNsjJOwNzDpWsH0MP4DwoRnirbFR8P61m48tRH20w4owcLOJkkLrVjLzbMMWyD6+8s+SksQPFHeP+J/iJ1HCZZnc9PXgOo2SQFAxmwlwdKBdDpSE7Podl4cl2d4+eRw6A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1f9::22)
- by VI1PR10MB7809.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:1c9::16) with
+ bh=JRcJgAl/3HJnrcfENkqHK3oc2r7wVKiXHTV4HO8BSEM=;
+ b=zpS9nZuQij3zlQSgbRBKpMq9SeCl6U6eYZv0MK5U9OeIXCGZOdKnG9tCQcZKFS3VqMe/jU04yVIV0mhccCV68UT833Bh3d9GKTPf7+IPdUF4PwwGWgYLZ5npkBRTjBu2lEMdcUgfQ3rK6/lPvyLZIu1fNF1IJ+mCt7eThES6+aFoIcfOzsquvhyK7ac6m5XyDjwi+eaSHxDTcjjha75yAwCvOMj7q4H+ir/q0omkAOOWbXZO2kwmbdoKlHPN3GvlEYOctlzHA2QfVuoajMuDQdPbL8G+PP3BavNSqTqCComQzIOw6pcOAgH6Ac5mNLQKb/j92p6qyyK7SE70+OTi1g==
+Received: from AM9PR10MB4959.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:41e::11)
+ by AS1PR10MB5238.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:4a4::18) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6678.24; Mon, 14 Aug
- 2023 12:04:11 +0000
-Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::90a8:2018:8363:8691]) by AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::90a8:2018:8363:8691%7]) with mapi id 15.20.6678.022; Mon, 14 Aug 2023
- 12:04:11 +0000
-Message-ID: <cafaaf41-dce4-3da8-f14f-dc7ac4c20db8@siemens.com>
-Date: Mon, 14 Aug 2023 14:04:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.1
-Content-Language: en-US, de-DE
-To: Jan Kiszka <jan.kiszka@siemens.com>,
- "Koch, Stefan (DI PA DCP R&D 3)" <stefan-koch@siemens.com>,
- "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-CC: "Sudler, Simon (DI PA DCP TI)" <simon.sudler@siemens.com>,
- "Storm, Christian (T CED SES-DE)" <christian.storm@siemens.com>,
- "Adler, Michael (T CED SES-DE)" <michael.adler@siemens.com>
-References: <20230728143320.3891194-1-stefan-koch@siemens.com>
- <20230728143320.3891194-3-stefan-koch@siemens.com>
- <dada78d8-aa43-470c-bdb2-d55c7f90dbd1@siemens.com>
- <88fa04c6796b3b2c69adb7d507f9a6b54b531c96.camel@siemens.com>
- <5d54eeeb-cce3-451c-a28a-95eb669694d9@siemens.com>
-From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
-Subject: Re: [isar-cip-core][PATCH 2/4] initramfs-crypt-hook: Check and repair
- filesystem to prevent resize2fs failure
-In-Reply-To: <5d54eeeb-cce3-451c-a28a-95eb669694d9@siemens.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ 2023 12:11:31 +0000
+Received: from AM9PR10MB4959.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::c9da:178c:455b:211e]) by AM9PR10MB4959.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::c9da:178c:455b:211e%4]) with mapi id 15.20.6678.022; Mon, 14 Aug 2023
+ 12:11:31 +0000
+From: "Koch, Stefan" <stefan-koch@siemens.com>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+CC: "Kiszka, Jan" <jan.kiszka@siemens.com>, "Storm, Christian"
+	<christian.storm@siemens.com>, "Adler, Michael" <michael.adler@siemens.com>,
+	"Sudler, Simon" <simon.sudler@siemens.com>, "quirin.gylstorff@siemens.com"
+	<quirin.gylstorff@siemens.com>, "Koch, Stefan" <stefan-koch@siemens.com>
+Subject: [isar-cip-core][PATCH] initramfs-crypt-hook: Avoid calling of tiny
+ mke2fs from busybox
+Thread-Topic: [isar-cip-core][PATCH] initramfs-crypt-hook: Avoid calling of
+ tiny mke2fs from busybox
+Thread-Index: AQHZzqh1dqSBisHcLk6RoY75ipGBJA==
+Date: Mon, 14 Aug 2023 12:11:31 +0000
+Message-ID: <20230814121125.2949305-1-stefan-koch@siemens.com>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.39.2
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM9PR10MB4959:EE_|AS1PR10MB5238:EE_
+x-ms-office365-filtering-correlation-id: 5c5d9546-930e-4fe8-96c0-08db9cbf985f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ Ojxqn6Z4/jUCq7AU9AYOYKzh4oWmls8lxoJTr91lMTEfXjTHa4EwBi+HgOMXMIL4VnZdGtTL6ODT6S1DKtQMTPp4T2X1sC2BxjPaM/Ibmi1aKlL7hv6ufafamvfyezlLo8grYFL4yxwDMt6sMDsxSZC7WLEQiwzUE2Uy3x0q6lp/ltCZhm0ghGWoek6i1VJdbNwaLxY5V3jpg6elyax1DbLCqIWDsqUCzcS1KfEUzQfSlZtn+3Uq542wxAMxUaVIZae+o+8JZYSMQw1wn37uRuIbSVzE0y5oPm/yBYYajDwZj6WW8Cv+rp5cg7cRZM9imCnREdmrZ5kND6KeqDdvvBSFoyaS2VVIpydKrdzXVTqwu2OawK7Lq/KiL7G5mkzXdzcpCLvsC1t1cql1nEeXikZwDTFeRbUCwg7SM2+LP94+0ifily7t220y+oxE5xre1jNmnHYmceoZFet/3mj3zWrKEca83x9uYCW8XF/oNDuK1Qk0N4Fv9V9y56pdtHQYVVY4HfRXbLBPk6gaA5l39qbuFj46246qvjYNCAv3N1zX+YFeoENCTPdK1IU9cVzuveWsX7usI670L1fLUHuknHIH70/ihgG0Lp8mK0oEJ0ireiWS1Fy1CAWc0dCxrNXB
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4959.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(376002)(39860400002)(136003)(396003)(366004)(346002)(186006)(451199021)(1800799006)(66946007)(66556008)(64756008)(66476007)(6916009)(66446008)(76116006)(91956017)(316002)(41300700001)(54906003)(8936002)(8676002)(5660300002)(478600001)(71200400001)(2906002)(6486002)(6512007)(6506007)(1076003)(107886003)(83380400001)(2616005)(26005)(4326008)(82960400001)(38070700005)(122000001)(38100700002)(86362001)(36756003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-8859-1?Q?u4xQOuF+zJO+uKN2YKEmLh2ANd1Nd8Fh3F49/cfaDmN5Fy6lruCNtEOLnH?=
+ =?iso-8859-1?Q?SME/akejQZAvbtaZyWpOyHMpe3oNmJYtZbih+/+oVP8KVP52Y7UCUiqUFe?=
+ =?iso-8859-1?Q?LpqDkEK5LQGt/qW8iGHFmqe/cwPOjl6RLGL49Ty7kfT44VAFCO6D1AZcdS?=
+ =?iso-8859-1?Q?3U1dHjWU5WpUJBaLgW+4D8L0w2i5h7Lopow8LDcAMbLLCHYe+kBuE/8KqA?=
+ =?iso-8859-1?Q?bjAm8/em7QevzM140L6o9vQ4oSY82140E5oBM5onbUe3F0FreP4JSYhpbN?=
+ =?iso-8859-1?Q?zMrE1cABVrIhHb7PnzBh4V8pcU8SN5r/hmi8Y8F0EDPizAiz9/bRpTT1x/?=
+ =?iso-8859-1?Q?iyzt3pn+3/H+nnZ6b5eZBYZnVBV+GDD6GtFyqaPHoSnmKPu+l9HlS3xrjz?=
+ =?iso-8859-1?Q?Daa1KOAmk95kqqXm9S0kVBlaosdazH3FOT8jS3GgQKrVMmZnhKu9Ajso77?=
+ =?iso-8859-1?Q?SykieICntTJitEYPMgqb6Ow6bpZWz3IUk/FjDv7Lvjo5CEJUbXDAaxP4pV?=
+ =?iso-8859-1?Q?Q7p6CTPhwFeZwX1Zo8zBFFbtl+RHhxgFJ/6PCYKV5BUMTvvYV74HnCx1+A?=
+ =?iso-8859-1?Q?WlKm3e0YyzLDWy6YjWq8Nnn1XgeXpSOlVmDfZbBtZy/wX3YOy1Gh+5T4pF?=
+ =?iso-8859-1?Q?sK5Sho5krHdaQrTuYcCTKvA9Z3xipgAcUC3NSE2jm/RTdzGcazxxJZjzcV?=
+ =?iso-8859-1?Q?uFvEFt2KKOXZquYarFAorXZ0Mf7A9pE3pqbteJQuJrj6+Eq8QwR3AZDIJE?=
+ =?iso-8859-1?Q?5ZAfXd85NPpH7JPF8lI6FjkN8jjlLzfBC4+zpUZC0bM+s2Lsi4TnyRKwQv?=
+ =?iso-8859-1?Q?flvJR8ZKIOnXXTgLZtdna5KDZNiHbQkrnkE/PYy+VId43elo/w3vY2m9e0?=
+ =?iso-8859-1?Q?DhneUtvROrT7G8bUtVP+hJmM6cgQ2EV6hxW5LiHyW6vRYv4MYlyphiy99/?=
+ =?iso-8859-1?Q?73V24X5djkr6vKuPGSJiRsqV5Re4YN2hzlTIbra0vA4BCanby5gr9+6x17?=
+ =?iso-8859-1?Q?uTahW3pevwFHfpAb+jJ9CthLQeeC8xwAjF4HNdnnC/SgXM1u+ogoIZ4zPY?=
+ =?iso-8859-1?Q?C44CyD46TEiHNArVQa1JX5riuYFFxqwGVGq/s8xnxXCUZ2MAw5x/Lzmf35?=
+ =?iso-8859-1?Q?uoWaGormM0ujZoMJ2tek/RFLDYOKJMhX/H/zxG+kqsawd4fkzZmt9VCAZ/?=
+ =?iso-8859-1?Q?O/AIpgjC1KN1o6gOTxU4zMcmu3h9+FLbbwODT6S2Rsu/Fd7qPyQPHlaMzg?=
+ =?iso-8859-1?Q?FZ9/xP+rai70Fbiu0Vd/uz4jeg+mno562eUTGAZI4cGUBfL3s/jgnHBE2l?=
+ =?iso-8859-1?Q?CsLC6m3Vn7oc8wgCpwvHPs5S8z6T52Goyh6yxvkCGWSr/fWDd0QdONlu+U?=
+ =?iso-8859-1?Q?ZsEkEvOx6/FV0+2vcHr/o4cjwehcvDiKKzdAK/sNORiygLuIpBSARrjU11?=
+ =?iso-8859-1?Q?lSWi8ngN38PdmQ2+04orrZmnONnnCp73rDG0OyqJqdZFqac0Q/6rtzDnM4?=
+ =?iso-8859-1?Q?dnu4rDRWY08JGWCeIOk+vqN4hyEVfgMkM5mYj5G83dVo3KzvcIm+hudV0+?=
+ =?iso-8859-1?Q?M4i+uVId560BBWVUja2Re/0JLQbUEqsaUPWFoy0aQnD5XggdqHgLaWlxHO?=
+ =?iso-8859-1?Q?xSieOUVsgvz35IOIm4b5rsKIHynMfvv1f9brmykF2GxcBHA93h1httng?=
+ =?iso-8859-1?Q?=3D=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: CH0PR03CA0384.namprd03.prod.outlook.com
- (2603:10b6:610:119::26) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:1f9::22)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|VI1PR10MB7809:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3d530613-cb7a-424c-ef9e-08db9cbe922d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	HQ6pDHiyfIxjqvyFHehGBjCcLRDLIspv3v2LFfGM7KJi7I8IlxqgX/3T6FsaR1JmGs/qvg32ItAO1ZTvnVj5IhWbwG/dDfq4TCyYGuPLPpUusZcc++XdvC97h/8x0H+tFyDqdVe3wy+BsVHHEdwYfeSishZGPSMAKxPhLc49rcJYyrv3xci+WXaFnULBwl7DQPNTJhrvJr4gS38VgwSgvu3kPhxA7qrNOjcF2Xo3bQ1yjkIy/8GqcziLX52OeajbU5oa75rl9Dy//LG9kCw98cLw1ttu8hPgZSR6eOpckauhhX+tI2tSVXkde5R0YMLJmwlw9tPvv6znfsh+Wal3iZZTDWnFLAIrQVHBi7bmRbtbHYof8OHbDsXdcJOic5QE5UB+VXBooGyliaDlSeUVS4InKhqm8WcvIiDBUFqiX3ceRvBqQKzwVHZZMC7xzBIKbRCwk4FKQZTFCWi3TPtGmLERxhgEQeR0pqswY+S+yMqdgmbN3qsu2uNVIzjKehT+4BKfuJ6L24RlR2rPecPLUi2ZnLEZv7rzZ6/lYmC1bSu2LIfJr2jIr1+URbUMHrLgj84KCReNUAhXs4cKjzqkQ1erypEE4byPLOSCuyrqyPMrCUHEZr6PiVTkYpKcyo1/yO7jrLMotL2i9uikzKcJLQ==
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(376002)(396003)(346002)(366004)(136003)(39860400002)(186006)(1800799006)(451199021)(83380400001)(36756003)(31686004)(31696002)(86362001)(38100700002)(41300700001)(110136005)(478600001)(66946007)(6512007)(54906003)(66556008)(66476007)(316002)(8676002)(8936002)(966005)(5660300002)(4326008)(82960400001)(2616005)(107886003)(26005)(6506007)(6486002)(2906002)(6666004)(53546011)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?xjxHZyceKUXPLpflU1325cLHrdHG+Tyr2Ts4NKd22xNcNFC0oHAxsvbGa/xy?=
- =?us-ascii?Q?s4dwlfqoIi1Q1u4lb2WyT79Tfe4PfJZ8ocDoPcRQ41nmWXqDczZN7k8QytKp?=
- =?us-ascii?Q?61Id4WZZmbMYLOpebZqNPSqp97uJBmWNNi6ck6SIwPxatN8shIdZdLIZL7TF?=
- =?us-ascii?Q?2FHro9e8snese33PiAcHcUX5aKrscqyLwJZhp6gHgWLYsRPJUzgB63pKkRD0?=
- =?us-ascii?Q?puWlr5aCKLyE++ohDn6QtLRlC3QHZ0O538VapkiZ/TCX//TUKWgDWeFTABe8?=
- =?us-ascii?Q?TSYJ7p2FPW7JRZp63Lp6Q7oasu3PWqtxdVGbzkDbo8XCsqK4cyIBqE2+0k9L?=
- =?us-ascii?Q?o1G3BdVvDhTu+qFrqwRfjkjjmHoFFzIJCdEGJOuSn4gBTDKfuLwTnVAmIidR?=
- =?us-ascii?Q?QWCv7w4dlxqA4F52r4BvdBiIcazz9SfzP0BLzg/4c3ibTHeK9viSpfC0ATNp?=
- =?us-ascii?Q?7Iu4eW07ltfv4Mh9GThstIwg2RNYWYb5qTsvW5GtkFB++Brzm7n/bAMyfJF5?=
- =?us-ascii?Q?F2NXlNx2XdswivIA2gSf/xsQhTEs37zVhcCGuUV7v5MXSRLBERNfPXO2Agz/?=
- =?us-ascii?Q?HWicDb1VuELtfTLjxluKgQaXMtRfkOSBkndCUnepEHLElOCsjzKUTjfRqRF4?=
- =?us-ascii?Q?W9gD4L+vtDB3LWrFtOiFS2TmkqtRA+g/rWK7+p8mpjn5vhph8clChYHKhMMJ?=
- =?us-ascii?Q?qvk5CMFO7FS7fMVZJKLYPZoRZpQ1RKWT0q/YNl27FsMV/vFF+olGZ14lufa5?=
- =?us-ascii?Q?WkXfNCFRffwiQNBKBf2vJw9ldCqS9q2nUoR7hjcHsuIm7R0UyY0/ELLE4RaM?=
- =?us-ascii?Q?g+WlvyYjxJ36SVjBeBPHu2EZLhGmTuIioJg7J61OpsXUQyn0vQ3LgeilLrL6?=
- =?us-ascii?Q?LFp78eqLrpVJai6NVDDvM2yuZ015z61xRXL/Me6kCElpGnVdWqkdbAmOsq+d?=
- =?us-ascii?Q?F7GxBJpD/dE2NEOEGqwLwlfMyu1BRVyFBZ7T67meIlAHFFObOy8Aahhvkw3Z?=
- =?us-ascii?Q?oBxiLFsh6Ukp2XwokGvs5185qsvHLN6avxzZ+r/05wDCdDQMr1bZSK7g1Vpd?=
- =?us-ascii?Q?EjmBH5YLi7Lsnz6cQwK9X0fp/rHvfDefybBGa7V3iq3DepKv+1ue+/XQXFvP?=
- =?us-ascii?Q?XrZxXf8PrXhj+rKIR7uve+9wFrRGSdAfwDSmbKd3RZ0lTS783o4xSMxDdvop?=
- =?us-ascii?Q?E3aPyIMcYV8dNlxasqyDt7yGCQ6/uTYS0iICCUpmS7RPhgMJ5dieE2OwUexu?=
- =?us-ascii?Q?tMv2p7aef0ptjxPtcr4eu/vT3cGnopm2j6oeyKJGXowhKUKSXSstySAGvW2O?=
- =?us-ascii?Q?m0xNsKLXoQh73Pe4LwAbNeDuGWlH0hAuv8IXr2FIJyTLXTJ4PpSrtYKtrC4N?=
- =?us-ascii?Q?ymrKCkDZxYadoccmj+KIuDWBXIUHNiExd0/sxvLCCWv8EeYUO2U80Rkhb7Xs?=
- =?us-ascii?Q?0LF5vqb8lyB9I9dX0S5f3aUtxB0DA3TuNEvRXTTgq90dl2RoQf9gPduomIRL?=
- =?us-ascii?Q?+a7OsP7/HSC8EUjqzAhcxKgNngbMiysO/Xte9p/6UJ3LWzTu++qpaJjVcPUy?=
- =?us-ascii?Q?dZdP/K7SFkBVYGwnG3NEGHt8m/uM99C1g6tejVWEevGJWJFEFEHJhWs0Neyi?=
- =?us-ascii?Q?fg=3D=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d530613-cb7a-424c-ef9e-08db9cbe922d
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2023 12:04:11.5117
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4959.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c5d9546-930e-4fe8-96c0-08db9cbf985f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Aug 2023 12:11:31.1566
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OYbDgvgnwFsMxA9u3/lWu29CZ/Mo75SHGg111Y0URjgoDMXEXvKgqI+ibsyi46u5AxbSC+wifNPKFgYE5Y8x/5EFMXfGtl4/pnDulYGLhRM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB7809
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: dtXwa27sWbXtEvtXuEmrka243o//lH7C5qVtOk8rr3qxwvtqNnCFofv8hz6eq6uavr08pYbMzkKFRQZ9FHS+4w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR10MB5238
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 14 Aug 2023 12:04:23 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12647
+ <cip-dev@lists.cip-project.org>; Mon, 14 Aug 2023 12:11:43 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12648
 
+- The tiny mke2fs does not support the used -t option.
+- Remove unused script test since variable has default value
 
+Signed-off-by: Stefan Koch <stefan-koch@siemens.com>
+---
+ .../files/encrypt_partition.systemd.script                    | 4 ----
+ .../initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb          | 2 +-
+ 2 files changed, 1 insertion(+), 5 deletions(-)
 
-On 8/14/23 13:46, Jan Kiszka wrote:
-> On 14.08.23 13:36, Koch, Stefan (DI PA DCP R&D 3) wrote:
->> On Thu, 2023-08-10 at 12:34 +0200, Jan Kiszka wrote:
->>> On 28.07.23 16:33, Koch, Stefan (DI PA DCP R&D 3) wrote:
->>>> This checks and repairs the filesystem first to ensure that
->>>> resize2fs will succeed.
->>>>
->>>> Signed-off-by: Stefan Koch <stefan-koch@siemens.com>
->>>> ---
->>>>  =C2=A0.../initramfs-crypt-hook/files/encrypt_partition.systemd.script=
-=C2=A0 |
->>>> 1 +
->>>>  =C2=A01 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/recipes-initramfs/initramfs-crypt-
->>>> hook/files/encrypt_partition.systemd.script b/recipes-
->>>> initramfs/initramfs-crypt-
->>>> hook/files/encrypt_partition.systemd.script
->>>> index 83c3238..b32b2f2 100644
->>>> --- a/recipes-initramfs/initramfs-crypt-
->>>> hook/files/encrypt_partition.systemd.script
->>>> +++ b/recipes-initramfs/initramfs-crypt-
->>>> hook/files/encrypt_partition.systemd.script
->>>> @@ -87,6 +87,7 @@ reencrypt_existing_partition() {
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0reduced_size=3D"$(exp=
-r "$part_size_blocks" - 65536 )"
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0reduced_size_in_byte=
-=3D"$(expr "$reduced_size" \* 512)"
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0reduced_size_in_kb=3D=
-"$(expr "$reduced_size_in_byte" /
->>>> 1024)K"
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0e2fsck -y -f "$1"
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if ! resize2fs "$1" "=
-${reduced_size_in_kb}"; then
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0panic "reencryption of filesystem $1 cannot
->>>> continue!"
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0fi
->>>
->>> Why is that needed? Conceptually, we should start with a clean fs,
->>> fresh
->>> from the image build, resized on first boot.
->>
->> In our case the problem could be setting some modifications with
->> tune2fs at image generation.
->=20
-> Via wic or via custom post-processing?
->=20
->>
->> Additionally I have observed that resize2fs breaks without e2fsck
->> called before, when setting the break=3D kernel commandline argument, an=
-d
->> mounting and unmounting (without forcing, just standard umount, no new
->> data was copied) the partition before disk encryption scripts are
->> running.
->>
-Should the same behavior also occur with the expand partition on first=20
-boot?
-There is also no e2fsck after resize2fs.=20
-https://github.com/ilbers/isar/blob/d454381fa90874fb9a8496f9b5980ebda874794=
-5/meta/recipes-support/expand-on-first-boot/files/expand-last-partition.sh#=
-L79
-
->> What is for cases that are using the reencrypt mechanism? The
->> partitions should be in a modified-state by former device usage and
->> just installing a image upgrade that enables disk encryption.
->>
->=20
-> Re-encrypt is so far designed to only run on first boot against a clean
-> disk, not used before. I'm not sure if we have more corner cases lurking
-> behind the corner when we expand that. And we should have test cases for
-> that expansion in isar-cip-core. Quirin, what do you think?
-
-Re-encryption after modification was until now not in scope. I am sure=20
-that there a corner cases. expand on first boot with disk encryption is=20
-another issue.
-
-Test case are required.
-
-
-Quirin
-
->=20
-> Jan
->=20
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition=
+.systemd.script b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_part=
+ition.systemd.script
+index b32b2f2..5fe2e91 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.system=
+d.script
++++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.system=
+d.script
+@@ -41,10 +41,6 @@ tpm_device=3D/dev/tpmrm0
+ partition_sets=3D"$PARTITIONS"
+ create_file_system_cmd=3D"$CREATE_FILE_SYSTEM_CMD"
+=20
+-if [ -z "${create_file_system_cmd}" ]; then
+-	create_file_system_cmd=3D"mke2fs -t ext4"
+-fi
+-
+ service_watchdog() {
+ 	for n in $(seq $(($SETUP_TIMEOUT / 10)) ); do
+ 		printf '\0'
+diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.=
+1.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb
+index 1c1bf3d..3c3f6bb 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb
++++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb
+@@ -32,7 +32,7 @@ SRC_URI +=3D "file://encrypt_partition.env.tmpl \
+ CRYPT_PARTITIONS ??=3D "home:/home:reencrypt var:/var:reencrypt"
+ # CRYPT_CREATE_FILE_SYSTEM_CMD contains the shell command to create the fi=
+lesystem
+ # in a newly formatted LUKS Partition
+-CRYPT_CREATE_FILE_SYSTEM_CMD ??=3D "mke2fs -t ext4"
++CRYPT_CREATE_FILE_SYSTEM_CMD ??=3D "/usr/sbin/mke2fs -t ext4"
+ # Timeout for creating / re-encrypting partitions on first boot
+ CRYPT_SETUP_TIMEOUT ??=3D "600"
+ # Watchdog to service during the initial setup of the crypto partitions
+--=20
+2.39.2
 
