@@ -1,130 +1,84 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFD9C04A6A
-	for <webhook@archiver.kernel.org>; Wed, 16 Aug 2023 14:22:19 +0000 (UTC)
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
- by mx.groups.io with SMTP id smtpd.web10.162099.1692195736717754198
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Wed, 16 Aug 2023 07:22:16 -0700
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D863C04E69
+	for <webhook@archiver.kernel.org>; Wed, 16 Aug 2023 14:25:09 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web10.162189.1692195901931158900
+ for <cip-dev@lists.cip-project.org>;
+ Wed, 16 Aug 2023 07:25:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20221208.gappssmtp.com header.s=20221208 header.b=q1pSJ8f3;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.215.182, mailfrom: bot@kernelci.org)
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-5657add1073so3341070a12.0
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Wed, 16 Aug 2023 07:22:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1692195736; x=1692800536;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=p1rTiGn2N1wkwwa1xYPcvmbvEs86WhQR/+iiyUG2mzA=;
-        b=q1pSJ8f3mgQHNNrjWLRdnsDKLue6a1C6Vf/gZZLm5HqYD4CFiearmk9ktEA0xBh3Q8
-         MHJvAyV8Fe3Eq3pTc6FtFHRiEMOFfjl5Xgd3UPLkyMV+HixRj2x6s+tV7czS4C9S7rOL
-         mb75m1Hs1264V2nqvKumR+injCktBdxXE4FdC6j/8xHKD8v9DQcLcTE0a0jDrOp2mI8+
-         Hkl5nruk4vlha7rYX4wt7RcvIFYV0Tle3PmB2CjKiKnbPFCv5qDz4GTqTFbr/s3j7mye
-         6NS9j6P7noVFBfJTgkLtsGSVJi3aOl2r2CMQnR3G1rszb+SWtQbOrKN4dZ0PM4eqElBM
-         SSdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692195736; x=1692800536;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p1rTiGn2N1wkwwa1xYPcvmbvEs86WhQR/+iiyUG2mzA=;
-        b=MqH7L94kfsrFY7sLZZDjF8najz27szOtyd+PtoCzXKE84EjJdB3HMse50vt3u43vd9
-         X68WAi6MZtNbvjP+SfQjemunDquWYE7bd+wmXrxbjm5ZrZW90OS8F3/zQkJS3aZpC0pk
-         1Sj76WSWkfRugQOfgzn5yUrlHIAHhm+50fHoExBf08STOPU/95No1eHSdg+omm4x01br
-         GliW9ttkW9gxs8ljHUgRAi9lTJHnFmi9OMzCH5Xove8bF4kb9id6NvD2DA0aX5HxohwC
-         YKIipTspyhHD60LLi1NIL+gQjyfxulli5uyVuFWgGZQA6bSjlt4IDLoYj6NCCYHZA9Jk
-         6+nQ==
-X-Gm-Message-State: AOJu0YyQOqwNYzGsLUHlfylHexMKrMu7vMuomBA1yZbXTJkTMKaDuZIX
-	daoXje8/prVMlflim3qPRJzhoKjqqtIxvBHrmk5WVQ==
-X-Google-Smtp-Source: AGHT+IEjQuAwSi+kaYfykHnDcGJrH86U0VSWb38261Xg/XKUcOh+omfr82WzdlgRsVaWDHx9povFyQ==
-X-Received: by 2002:a17:90a:d252:b0:261:219b:13b3 with SMTP id o18-20020a17090ad25200b00261219b13b3mr2890226pjw.16.1692195735659;
-        Wed, 16 Aug 2023 07:22:15 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id c6-20020a17090a674600b0026b25c05495sm9492269pjm.20.2023.08.16.07.22.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Aug 2023 07:22:15 -0700 (PDT)
-Message-ID: <64dcdb97.170a0220.b712c.fde5@mx.google.com>
-Date: Wed, 16 Aug 2023 07:22:15 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
+X-IronPort-AV: E=Sophos;i="6.01,177,1684767600"; 
+   d="scan'208";a="176787854"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 16 Aug 2023 23:25:01 +0900
+Received: from localhost.localdomain (unknown [10.226.92.162])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id B0E6F4210E49;
+	Wed, 16 Aug 2023 23:24:59 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Pavel Machek <pavel@denx.de>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 00/13] Add Renesas PMIC RAA215300 driver and builtin RTC support
+Date: Wed, 16 Aug 2023 15:24:45 +0100
+Message-Id: <20230816142458.147476-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: v4.4-st20-2312-g74888f4b13f0
-X-Kernelci-Tree: cip
-X-Kernelci-Branch: linux-4.4.y-st-rt
-Subject: cip/linux-4.4.y-st-rt baseline-nfs: 13 runs,
- 1 regressions (v4.4-st20-2312-g74888f4b13f0)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
- kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
-From: "kernelci.org bot" <bot@kernelci.org>
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 16 Aug 2023 14:22:19 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12715
+ <cip-dev@lists.cip-project.org>; Wed, 16 Aug 2023 14:25:09 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12716
 
-cip/linux-4.4.y-st-rt baseline-nfs: 13 runs, 1 regressions (v4.4-st20-2312-=
-g74888f4b13f0)
+This patch series aims to add PMIC RAA215300 driver and builtin RTC support
+ 
+All the patches are cherry-picked from the mainline except the last
+3 patches.
 
-Regressions Summary
--------------------
+The last 3 patches are from next and just added here for testing.
 
-platform   | arch | lab         | compiler | defconfig           | regressi=
-ons
------------+------+-------------+----------+---------------------+---------=
----
-imx6q-udoo | arm  | lab-broonie | gcc-10   | imx_v6_v7_defconfig | 1       =
-   =
+Note:
+Some improvement patches to mainline after the internal review[1]
+[1] https://lore.kernel.org/linux-renesas-soc/20230816135550.146657-1-biju.das.jz@bp.renesas.com/T/#t
 
+Biju Das (13):
+  regulator: dt-bindings: Add Renesas RAA215300 PMIC bindings
+  regulator: Add Renesas PMIC RAA215300 driver
+  regulator: raa215300: Add build dependency with COMMON_CLK
+  dt-bindings: rtc: isl1208: Convert to json-schema
+  dt-bindings: rtc: isil,isl1208: Document clock and clock-names
+    properties
+  rtc: isl1208: Drop name variable
+  rtc: isl1208: Make similar I2C and DT-based matching table
+  rtc: isl1208: Drop enum isl1208_id and split isl1208_configs[]
+  rtc: isl1208: Add isl1208_set_xtoscb()
+  rtc: isl1208: Add support for the built-in RTC on the PMIC RAA215300
+  arm64: defconfig: Enable PMIC RAA215300 and RTC ISL 1208 configs
+  arm64: dts: renesas: rzg2l-smarc-som: Enable PMIC and built-in RTC
+  arm64: dts: renesas: rzg2lc-smarc-som: Enable PMIC and built-in RTC
 
-  Details:  https://kernelci.org/test/job/cip/branch/linux-4.4.y-st-rt/kern=
-el/v4.4-st20-2312-g74888f4b13f0/plan/baseline-nfs/
+ .../bindings/regulator/renesas,raa215300.yaml |  85 ++++++++
+ .../devicetree/bindings/rtc/isil,isl1208.txt  |  38 ----
+ .../devicetree/bindings/rtc/isil,isl1208.yaml | 100 +++++++++
+ .../boot/dts/renesas/rzg2l-smarc-som.dtsi     |  18 ++
+ .../boot/dts/renesas/rzg2lc-smarc-som.dtsi    |  18 ++
+ arch/arm64/configs/defconfig                  |   2 +
+ drivers/regulator/Kconfig                     |   8 +
+ drivers/regulator/Makefile                    |   1 +
+ drivers/regulator/raa215300.c                 | 190 ++++++++++++++++++
+ drivers/rtc/rtc-isl1208.c                     | 130 +++++++++---
+ 10 files changed, 520 insertions(+), 70 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/regulator/renesas,raa215300.yaml
+ delete mode 100644 Documentation/devicetree/bindings/rtc/isil,isl1208.txt
+ create mode 100644 Documentation/devicetree/bindings/rtc/isil,isl1208.yaml
+ create mode 100644 drivers/regulator/raa215300.c
 
-  Test:     baseline-nfs
-  Tree:     cip
-  Branch:   linux-4.4.y-st-rt
-  Describe: v4.4-st20-2312-g74888f4b13f0
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
-it
-  SHA:      74888f4b13f0cb22c1c00a5622e0cf2dbebe60ea =
+-- 
+2.25.1
 
-
-
-Test Regressions
----------------- =
-
-
-
-platform   | arch | lab         | compiler | defconfig           | regressi=
-ons
------------+------+-------------+----------+---------------------+---------=
----
-imx6q-udoo | arm  | lab-broonie | gcc-10   | imx_v6_v7_defconfig | 1       =
-   =
-
-
-  Details:     https://kernelci.org/test/plan/id/64dcd52c677e2d7a8735b2f9
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: imx_v6_v7_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip/linux-4.4.y-st-rt/v4.4-st2=
-0-2312-g74888f4b13f0/arm/imx_v6_v7_defconfig/gcc-10/lab-broonie/baseline-nf=
-s-imx6q-udoo.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-4.4.y-st-rt/v4.4-st2=
-0-2312-g74888f4b13f0/arm/imx_v6_v7_defconfig/gcc-10/lab-broonie/baseline-nf=
-s-imx6q-udoo.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
-230623.0/armhf/initrd.cpio.gz =
-
-
-
-  * baseline-nfs.login: https://kernelci.org/test/case/id/64dcd52c677e2d7a8=
-735b2fa
-        new failure (last pass: v4.4-st20-2172-gb3363b986efb) =
-
- =20
 
