@@ -2,58 +2,45 @@ Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11B13C001B0
-	for <webhook@archiver.kernel.org>; Wed, 16 Aug 2023 08:56:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 474C9C001DF
+	for <webhook@archiver.kernel.org>; Wed, 16 Aug 2023 09:38:38 +0000 (UTC)
 Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web10.156834.1692176195549409118
+ by mx.groups.io with SMTP id smtpd.web10.157268.1692178716708621325
  for <cip-dev@lists.cip-project.org>;
- Wed, 16 Aug 2023 01:56:36 -0700
+ Wed, 16 Aug 2023 02:38:37 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id B433C1C0006; Wed, 16 Aug 2023 10:56:32 +0200 (CEST)
-Date: Wed, 16 Aug 2023 10:56:32 +0200
+	id 0B1071C0006; Wed, 16 Aug 2023 11:38:34 +0200 (CEST)
+Date: Wed, 16 Aug 2023 11:38:33 +0200
 From: Pavel Machek <pavel@denx.de>
 To: nobuhiro1.iwamatsu@toshiba.co.jp
 Cc: biju.das.jz@bp.renesas.com, cip-dev@lists.cip-project.org,
 	pavel@denx.de, prabhakar.mahadev-lad.rj@bp.renesas.com
-Subject: Re: [PATCH 5.10.y-cip] arm64: dts: renesas: rzg2l: Update
+Subject: Re: [PATCH 6.1.y-cip] arm64: dts: renesas: rzg2l: Update
  overfow/underflow IRQ names for MTU3 channels
-Message-ID: <ZNyPQG/o1FrzledS@duo.ucw.cz>
-References: <20230808095825.136589-1-biju.das.jz@bp.renesas.com>
- <TYWPR01MB942094BDC5C8FBA0EC632B299212A@TYWPR01MB9420.jpnprd01.prod.outlook.com>
+Message-ID: <ZNyZGQ+dLPmO3Utl@duo.ucw.cz>
+References: <20230808092849.32139-1-biju.das.jz@bp.renesas.com>
+ <TYWPR01MB94205434034D19DD563A8A9B9212A@TYWPR01MB9420.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+zfFvq2bYmBW/nFi"
+	protocol="application/pgp-signature"; boundary="B5+IIYYS1HpO2OC8"
 Content-Disposition: inline
-In-Reply-To: <TYWPR01MB942094BDC5C8FBA0EC632B299212A@TYWPR01MB9420.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYWPR01MB94205434034D19DD563A8A9B9212A@TYWPR01MB9420.jpnprd01.prod.outlook.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 16 Aug 2023 08:56:38 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12662
+ <cip-dev@lists.cip-project.org>; Wed, 16 Aug 2023 09:38:38 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12663
 
 
---+zfFvq2bYmBW/nFi
+--B5+IIYYS1HpO2OC8
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> > Replace the below overflow/underflow interrupt names:
-> >  - tgiv0->tciv0
-> >  - tgiv1->tciv1
-> >  - tgiu1->tciu1
-> >  - tgiv2->tciv2
-> >  - tgiu2->tciu2
-> >  - tgiv3->tciv3
-> >  - tgiv4->tciv4
-> >  - tgiv6->tciv6
-> >  - tgiv7->tciv7
-> >  - tgiv8->tciv8
-> >  - tgiu8->tciu8
-> >=20
 > > Fixes: 26336d66d021 ("arm64: dts: renesas: r9a07g044: Add MTU3a node")
 > > Fixes: dd123dd01def ("arm64: dts: renesas: r9a07g054: Add MTU3a node")
 > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
@@ -71,7 +58,7 @@ s.c
 >=20
 > LGTM. I will apply if there are no comments.
 
-Looks good to me, too, and it passes testing, so I applied it.
+Thank you for the patches, I applied them.
 
 Best regards,
 								Pavel
@@ -79,15 +66,15 @@ Best regards,
 DENX Software Engineering GmbH,        Managing Director: Erika Unter
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---+zfFvq2bYmBW/nFi
+--B5+IIYYS1HpO2OC8
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZNyPQAAKCRAw5/Bqldv6
-8ppkAKCvMBLa7mFRY9T3j5UNbAjtvt7u+QCfUbABvyWzuWknLKjmLv5FSRWH7tY=
-=3lFg
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZNyZGQAKCRAw5/Bqldv6
+8hJqAKCBI/UQ7R9A5xvY7RQ6kX5eBp9u0QCcDcg/MiuRe/m37oYTGpHlZ96XL/4=
+=IU9V
 -----END PGP SIGNATURE-----
 
---+zfFvq2bYmBW/nFi--
+--B5+IIYYS1HpO2OC8--
 
