@@ -2,52 +2,53 @@ Return-Path: <arisu.tachibana@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A82C8C001B0
-	for <webhook@archiver.kernel.org>; Wed, 16 Aug 2023 14:41:29 +0000 (UTC)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
- by mx.groups.io with SMTP id smtpd.web11.162360.1692196882783860272
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97A67C04A6A
+	for <webhook@archiver.kernel.org>; Wed, 16 Aug 2023 14:45:29 +0000 (UTC)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+ by mx.groups.io with SMTP id smtpd.web11.162473.1692197123827636938
  for <cip-dev@lists.cip-project.org>;
- Wed, 16 Aug 2023 07:41:23 -0700
+ Wed, 16 Aug 2023 07:45:24 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20221208.gappssmtp.com header.s=20221208 header.b=tkjjJ90x;
- spf=pass (domain: miraclelinux.com, ip: 209.85.208.171, mailfrom: arisu.tachibana@miraclelinux.com)
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2b9d07a8d84so105579181fa.3
-        for <cip-dev@lists.cip-project.org>; Wed, 16 Aug 2023 07:41:22 -0700 (PDT)
+ dkim=pass header.i=@miraclelinux-com.20221208.gappssmtp.com header.s=20221208 header.b=t0VjF1LZ;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.208.177, mailfrom: arisu.tachibana@miraclelinux.com)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2b9dc1bff38so97988551fa.1
+        for <cip-dev@lists.cip-project.org>; Wed, 16 Aug 2023 07:45:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20221208.gappssmtp.com; s=20221208; t=1692196881; x=1692801681;
+        d=miraclelinux-com.20221208.gappssmtp.com; s=20221208; t=1692197122; x=1692801922;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=I2REtd7MvXwCGquT/4zncz5Av83gnL0oeOn2jitzzWI=;
-        b=tkjjJ90xboSe9ynqkjJ3mB22pvADFO2MqhIqukzcjqOzUD/f2RjYHhDGTivsAWJRrF
-         +y66EYVADHYlLHvsdpUx/11ei894ibCXLTiifAzBwsNkkp0B+LHDOfP7mYZ3K5pW1usO
-         rkVVI64x6D19Q8Ig0qfLgjk2RtIK/tJpV9wLHvlLn1oziYcQNdsPUN/RmShZ1c88hiZ3
-         D3autnlUNE3zA1L263z8/MW5etLz86gMxiNXGO5ERhWBCTB9ohPMUKh8JOfqHvlkjHr1
-         RAKdLAzixVDdiR20buwjQKuq9kVKV0tJdz0Z1HOETwUF47XzDrnIPh1B9Jwe75LqwmAy
-         GVCQ==
+        bh=RUm3GkhIKboJESBtLhHG6k9fqtIiBP7pvr9Oi1tq1Mc=;
+        b=t0VjF1LZPep0j/uhHj5rRXrXSBn8JF+oBRO8yPC16DpEz8PGCE3ai+QS826iN7Quvv
+         /7OWzTXufLHYVEqBt0CcroQGD4C9/zaQKJHiPRH5wMRCpGo/6X6gdlmXpKZuAe+mZLkm
+         aL/gwI3CyDChc/tq/ag5ixeSCe9RsMp2/v0dNLlN3wF4paW1yduUM3warEU+/XB/7ba1
+         5VBCyO+GzPbIOuGWwnFPRbZd4DfQfbaroi/rNdEJ5S0FLEgjRfky5p0HOUfkxywo7uPw
+         1OWUUVeG7dDp4A748W4/J9HUxeHlzeswk7ZUvqiKX6tVKAvkjadg5fi6O9cDnvdWjdW5
+         tmmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692196881; x=1692801681;
+        d=1e100.net; s=20221208; t=1692197122; x=1692801922;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=I2REtd7MvXwCGquT/4zncz5Av83gnL0oeOn2jitzzWI=;
-        b=E94P6Bmua6FuSFPSx64K5/5G38ySc6S9oLBhOO0ahW99dqSlOVJKfgMbQWRpwXCuPu
-         SOLI7GVxzMMxGDInXZ20hFV4dfx75XBooGx3P0TRXfBa2dbYpBppnPIXqhvTCWcOXS80
-         Pn9xuPb7pUcMBYBBCwpTWxksHPvgNAec/95NqfScHo/le8P7vndoWDXMttD+akgyU+GQ
-         O4k9BbUg2tfHZEAuMRNYrBg20nZHW40dCTM5MawLz8oUN2StPCASoTtjHOQZHFcUCibc
-         HYiL3Yxgoxixmw6uQ9FehIJEQjakgxtgA30AKvT7rGW405bn7P9zj0gjc36xaWNW4n/r
-         kdKw==
-X-Gm-Message-State: AOJu0YxwUXC5Gat1rqOufSYUCxmnS9leO9U7P9iOkzBBo4svwX2hlSTu
-	2Pw+lJRdrS/ccgJS7uqrMU2E+skFuLe7RcuSjOJ9
-X-Google-Smtp-Source: AGHT+IEHCW8H3Cbx8B1eWy4cUfPcVoh0Eg4Na8AJHVTuZqo3dNoUku9/JEVPlAxeMRO0qnaQwQ8GhfMAt4aexD6zKs4=
-X-Received: by 2002:a2e:9141:0:b0:2b8:4100:b565 with SMTP id
- q1-20020a2e9141000000b002b84100b565mr1927494ljg.15.1692196880786; Wed, 16 Aug
- 2023 07:41:20 -0700 (PDT)
+        bh=RUm3GkhIKboJESBtLhHG6k9fqtIiBP7pvr9Oi1tq1Mc=;
+        b=ffj8Ea1d0wN4Hk0/yeGG5aUHeTHuFWaSXYZukHq2cu1+HkacqB7QupR248q1hU32gv
+         ebWHF34AyNBElA2b5q7f1KNRpDD472HB7OR34hYRc5OcFwLJRkHMatCVV0IZ2EwM0ZTf
+         aXxw9MThbWixKWP9lm6HTenU/kFO6rbv5viIL6525kUCG1nMdx2HEHFlnCQfzsWhbBoh
+         8VAh689WMHBtxBi9savCIQweqBzLiQpwXFLJ3NQjILF/lnUdKMG6Mgsslu0cGka1pg4c
+         Ng6HGPfpNzzNAbNe/9zQpsUWZQZ+nAM6/MRZFOnbQQlGM1rtdqpkWauK+HoLC1YCYbLV
+         5dnQ==
+X-Gm-Message-State: AOJu0YydysfU4XXDUQotnlpch+Y/tf1xc+LKiZJkSljyna7oNqh4HgAF
+	Vt5QfxTMmuFGqNZxi3XGBHrCUR5JRQZEEZz2V5msK3UwuaXfgY4=
+X-Google-Smtp-Source: AGHT+IE++IkGGOeTpeFyJ/nrpFs593gQ2/oj+DDkmME33Tqr30KAEyzarU5RVXqn9aXlQIQ5n56osbD1VZwYaHqXa88=
+X-Received: by 2002:a2e:9b84:0:b0:2b9:cce3:a126 with SMTP id
+ z4-20020a2e9b84000000b002b9cce3a126mr1820799lji.21.1692197122022; Wed, 16 Aug
+ 2023 07:45:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230816080300.5559-1-arisu.tachibana@miraclelinux.com> <e4fb5477-18a7-4c65-9caa-4d647dae6a07@siemens.com>
-In-Reply-To: <e4fb5477-18a7-4c65-9caa-4d647dae6a07@siemens.com>
+References: <20230816080300.5559-1-arisu.tachibana@miraclelinux.com>
+ <e4fb5477-18a7-4c65-9caa-4d647dae6a07@siemens.com> <d9aa0410-78e0-4f60-b16a-ccaa3a8302e2@siemens.com>
+In-Reply-To: <d9aa0410-78e0-4f60-b16a-ccaa3a8302e2@siemens.com>
 From: Arisu Tachibana <arisu.tachibana@miraclelinux.com>
-Date: Wed, 16 Aug 2023 23:40:39 +0900
-Message-ID: <CANgtXuP_=UBMwaVu2UOwnzmJpQPJdsJh2tJKqDP3LCoWy_Hbkg@mail.gmail.com>
+Date: Wed, 16 Aug 2023 23:44:40 +0900
+Message-ID: <CANgtXuMPBG=yJ9P4oH1JPNWNdK4TqhL0kpmD=jbLGKgttT9V7g@mail.gmail.com>
 Subject: Re: [isar-cip-core][PATCH] .gitlab-ci: Create amd64 release
  variations for KernelCI
 To: Jan Kiszka <jan.kiszka@siemens.com>
@@ -56,14 +57,22 @@ Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 16 Aug 2023 14:41:29 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12731
+ <cip-dev@lists.cip-project.org>; Wed, 16 Aug 2023 14:45:29 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12732
 
-> Happy to add that - just wondering if adding those two targets may allow
-> dropping one or two others which are implicitly covered by this now. Did
-> you check that as well?
 >
+> Oh, and why only amd64? There is no need for other archs in that
+> combination? Not that I'm keen on exploding our matrix further...
 
-sorry, I'm not sure of the meaning of your question.
-could you explain it better? what are you willing to drop?
+Currently I thought to work one arch at time and at first doing amd64,
+in the future I could also work on other arches
+
+>
+> BTW, do we need the kernelci builds on every push, or should they be
+> updated at a different pace? When are they consumed?
+
+every push works ok for me
+
+thanks,
+Arisu
 
