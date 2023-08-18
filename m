@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62979C678DC
-	for <webhook@archiver.kernel.org>; Fri, 18 Aug 2023 09:28:31 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.7435.1692350893584802847
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60B46C71136
+	for <webhook@archiver.kernel.org>; Fri, 18 Aug 2023 09:28:41 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web11.7703.1692350911175202243
  for <cip-dev@lists.cip-project.org>;
- Fri, 18 Aug 2023 02:28:23 -0700
+ Fri, 18 Aug 2023 02:28:31 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.01,182,1684767600"; 
-   d="scan'208";a="173270397"
+   d="scan'208";a="176962520"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 18 Aug 2023 18:28:22 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 18 Aug 2023 18:28:30 +0900
 Received: from localhost.localdomain (unknown [10.226.93.81])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2EB1141DADA0;
-	Fri, 18 Aug 2023 18:28:20 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 67B8941DADA5;
+	Fri, 18 Aug 2023 18:28:28 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 05/14] dt-bindings: rtc: isl1208: Convert to json-schema
-Date: Fri, 18 Aug 2023 10:27:58 +0100
-Message-Id: <20230818092807.159112-6-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 08/14] rtc: isl1208: Make similar I2C and DT-based matching table
+Date: Fri, 18 Aug 2023 10:28:01 +0100
+Message-Id: <20230818092807.159112-9-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230818092807.159112-1-biju.das.jz@bp.renesas.com>
 References: <20230818092807.159112-1-biju.das.jz@bp.renesas.com>
@@ -34,166 +34,55 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 18 Aug 2023 09:28:31 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12777
+ <cip-dev@lists.cip-project.org>; Fri, 18 Aug 2023 09:28:41 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12780
 
-commit ac739bac5201d4308cba2525dacb5da654b3ff31 upstream.
+commit fbc06a53561c64ec6d7f9a1b3bc04597de4cbb2d upstream.
 
-Convert the isl1208 RTC device tree binding documentation to json-schema.
-
-Update the example to match reality.
+The isl1208_id[].driver_data could store a pointer to the config,
+like for DT-based matching, making I2C and DT-based matching
+more similar.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Link: https://lore.kernel.org/r/20230623140948.384762-5-biju.das.jz@bp.renesas.com
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20230623140948.384762-8-biju.das.jz@bp.renesas.com
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- .../devicetree/bindings/rtc/isil,isl1208.txt  | 38 --------
- .../devicetree/bindings/rtc/isil,isl1208.yaml | 89 +++++++++++++++++++
- 2 files changed, 89 insertions(+), 38 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/rtc/isil,isl1208.txt
- create mode 100644 Documentation/devicetree/bindings/rtc/isil,isl1208.yaml
+ drivers/rtc/rtc-isl1208.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/rtc/isil,isl1208.txt b/Documentation/devicetree/bindings/rtc/isil,isl1208.txt
-deleted file mode 100644
-index 51f003006f04..000000000000
---- a/Documentation/devicetree/bindings/rtc/isil,isl1208.txt
-+++ /dev/null
-@@ -1,38 +0,0 @@
--Intersil ISL1209/19 I2C RTC/Alarm chip with event in
--
--ISL12X9 have additional pins EVIN and #EVDET for tamper detection, while the
--ISL1208 and ISL1218 do not.  They are all use the same driver with the bindings
--described here, with chip specific properties as noted.
--
--Required properties supported by the device:
-- - "compatible": Should be one of the following:
--		- "isil,isl1208"
--		- "isil,isl1209"
--		- "isil,isl1218"
--		- "isil,isl1219"
-- - "reg": I2C bus address of the device
--
--Optional properties:
-- - "interrupt-names": list which may contains "irq" and "evdet"
--	evdet applies to isl1209 and isl1219 only
-- - "interrupts": list of interrupts for "irq" and "evdet"
--	evdet applies to isl1209 and isl1219 only
-- - "isil,ev-evienb": Enable or disable internal pull on EVIN pin
--	Applies to isl1209 and isl1219 only
--	Possible values are 0 and 1
--	Value 0 enables internal pull-up on evin pin, 1 disables it.
--	Default will leave the non-volatile configuration of the pullup
--	as is.
--
--Example isl1219 node with #IRQ pin connected to SoC gpio1 pin12 and #EVDET pin
--connected to SoC gpio2 pin 24 and internal pull-up enabled in EVIN pin.
--
--	isl1219: rtc@68 {
--		compatible = "isil,isl1219";
--		reg = <0x68>;
--		interrupt-names = "irq", "evdet";
--		interrupts-extended = <&gpio1 12 IRQ_TYPE_EDGE_FALLING>,
--			<&gpio2 24 IRQ_TYPE_EDGE_FALLING>;
--		isil,ev-evienb = <1>;
--	};
--
-diff --git a/Documentation/devicetree/bindings/rtc/isil,isl1208.yaml b/Documentation/devicetree/bindings/rtc/isil,isl1208.yaml
-new file mode 100644
-index 000000000000..565965147ce6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/rtc/isil,isl1208.yaml
-@@ -0,0 +1,89 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/rtc/isil,isl1208.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Intersil ISL1209/19 I2C RTC/Alarm chip with event in
-+
-+maintainers:
-+  - Biju Das <biju.das.jz@bp.renesas.com>
-+  - Trent Piepho <tpiepho@gmail.com>
-+
-+description:
-+  ISL12X9 have additional pins EVIN and EVDET for tamper detection, while the
-+  ISL1208 and ISL1218 do not.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - isil,isl1208
-+      - isil,isl1209
-+      - isil,isl1218
-+      - isil,isl1219
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    minItems: 1
-+    maxItems: 2
-+
-+  interrupt-names:
-+    minItems: 1
-+    items:
-+      - const: irq
-+      - const: evdet
-+
-+  isil,ev-evienb:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [ 0, 1 ]
-+    description: |
-+      Enable or disable internal pull on EVIN pin
-+      Default will leave the non-volatile configuration of the pullup
-+      as is.
-+        <0> : Enables internal pull-up on evin pin
-+        <1> : Disables internal pull-up on evin pin
-+
-+required:
-+  - compatible
-+  - reg
-+
-+allOf:
-+  - $ref: rtc.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - isil,isl1209
-+              - isil,isl1219
-+    then:
-+      properties:
-+        interrupts:
-+          maxItems: 2
-+        interrupt-names:
-+          items:
-+            - const: irq
-+            - const: evdet
-+    else:
-+      properties:
-+        interrupts:
-+          maxItems: 1
-+        interrupt-names:
-+          items:
-+            - const: irq
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        rtc_twi: rtc@6f {
-+            compatible = "isil,isl1208";
-+            reg = <0x6f>;
-+        };
-+    };
+diff --git a/drivers/rtc/rtc-isl1208.c b/drivers/rtc/rtc-isl1208.c
+index 503c1c1c519e..a945c880ed6d 100644
+--- a/drivers/rtc/rtc-isl1208.c
++++ b/drivers/rtc/rtc-isl1208.c
+@@ -90,10 +90,10 @@ static const struct isl1208_config {
+ };
+ 
+ static const struct i2c_device_id isl1208_id[] = {
+-	{ "isl1208", TYPE_ISL1208 },
+-	{ "isl1209", TYPE_ISL1209 },
+-	{ "isl1218", TYPE_ISL1218 },
+-	{ "isl1219", TYPE_ISL1219 },
++	{ "isl1208", .driver_data = (kernel_ulong_t)&isl1208_configs[TYPE_ISL1208] },
++	{ "isl1209", .driver_data = (kernel_ulong_t)&isl1208_configs[TYPE_ISL1209] },
++	{ "isl1218", .driver_data = (kernel_ulong_t)&isl1208_configs[TYPE_ISL1218] },
++	{ "isl1219", .driver_data = (kernel_ulong_t)&isl1208_configs[TYPE_ISL1219] },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, isl1208_id);
+@@ -820,9 +820,9 @@ isl1208_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 		if (!isl1208->config)
+ 			return -ENODEV;
+ 	} else {
+-		if (id->driver_data >= ISL_LAST_ID)
++		if (!id)
+ 			return -ENODEV;
+-		isl1208->config = &isl1208_configs[id->driver_data];
++		isl1208->config = (struct isl1208_config *)id->driver_data;
+ 	}
+ 
+ 	isl1208->rtc = devm_rtc_allocate_device(&client->dev);
 -- 
 2.25.1
 
