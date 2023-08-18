@@ -2,87 +2,158 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77AD2C678DC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87D3BC7112B
 	for <webhook@archiver.kernel.org>; Fri, 18 Aug 2023 09:28:21 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.7435.1692350893584802847
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web11.7699.1692350895177407142
  for <cip-dev@lists.cip-project.org>;
- Fri, 18 Aug 2023 02:28:13 -0700
+ Fri, 18 Aug 2023 02:28:15 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.01,182,1684767600"; 
-   d="scan'208";a="173270367"
+   d="scan'208";a="176962483"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 18 Aug 2023 18:28:11 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 18 Aug 2023 18:28:13 +0900
 Received: from localhost.localdomain (unknown [10.226.93.81])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id B252D41DADA0;
-	Fri, 18 Aug 2023 18:28:09 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 04AB741DADA5;
+	Fri, 18 Aug 2023 18:28:11 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 00/14] Add Renesas PMIC RAA215300 driver and builtin RTC support
-Date: Fri, 18 Aug 2023 10:27:53 +0100
-Message-Id: <20230818092807.159112-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 01/14] regulator: dt-bindings: Add Renesas RAA215300 PMIC bindings
+Date: Fri, 18 Aug 2023 10:27:54 +0100
+Message-Id: <20230818092807.159112-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230818092807.159112-1-biju.das.jz@bp.renesas.com>
+References: <20230818092807.159112-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 18 Aug 2023 09:28:21 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12772
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12773
 
-This patch series aims to add PMIC RAA215300 driver and builtin RTC support
+commit fff8f6b0723159f09eb2c067e626fb96402c0e53 upstream.
 
-All the patches are cherry-picked from the mainline except the last
-3 patches.
+Document Renesas RAA215300 PMIC bindings.
 
-The last 3 patches are from next and just added here for testing.
+The RAA215300 is a high Performance 9-Channel PMIC supporting DDR
+Memory, with Built-In Charger and RTC.
 
-Note:
-Some improvement patches send to mainline after the review[1]
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20230818&id=e21ac64e669e960688e79bf5babeed63132dac8a
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20230818&id=727d7c1c3695657873d62030b968ba97c8698c54
-[3] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20230817161038.407960-1-biju.das.jz@bp.renesas.com/
+It supports DDR3, DDR3L, DDR4, and LPDDR4 memory power requirements.
+The internally compensated regulators, built-in Real-Time Clock (RTC),
+32kHz crystal oscillator, and coin cell battery charger provide a
+highly integrated, small footprint power solution ideal for
+System-On-Module (SOM) applications. A spread spectrum feature
+provides an ease-of-use solution for noise-sensitive audio or RF
+applications.
 
-Alexandre Belloni (1):
-  rtc: isl1208: quiet maybe-unused variable warning
-
-Biju Das (13):
-  regulator: dt-bindings: Add Renesas RAA215300 PMIC bindings
-  regulator: Add Renesas PMIC RAA215300 driver
-  regulator: raa215300: Add build dependency with COMMON_CLK
-  dt-bindings: rtc: isl1208: Convert to json-schema
-  dt-bindings: rtc: isil,isl1208: Document clock and clock-names
-    properties
-  rtc: isl1208: Drop name variable
-  rtc: isl1208: Make similar I2C and DT-based matching table
-  rtc: isl1208: Drop enum isl1208_id and split isl1208_configs[]
-  rtc: isl1208: Add isl1208_set_xtoscb()
-  rtc: isl1208: Add support for the built-in RTC on the PMIC RAA215300
-  arm64: defconfig: Enable PMIC RAA215300 and RTC ISL 1208 configs
-  arm64: dts: renesas: rzg2l-smarc-som: Enable PMIC and built-in RTC
-  arm64: dts: renesas: rzg2lc-smarc-som: Enable PMIC and built-in RTC
-
- .../bindings/regulator/renesas,raa215300.yaml |  85 ++++++++
- .../devicetree/bindings/rtc/isil,isl1208.txt  |  38 ----
- .../devicetree/bindings/rtc/isil,isl1208.yaml | 100 +++++++++
- .../boot/dts/renesas/rzg2l-smarc-som.dtsi     |  18 ++
- .../boot/dts/renesas/rzg2lc-smarc-som.dtsi    |  18 ++
- arch/arm64/configs/defconfig                  |   2 +
- drivers/regulator/Kconfig                     |   8 +
- drivers/regulator/Makefile                    |   1 +
- drivers/regulator/raa215300.c                 | 190 ++++++++++++++++++
- drivers/rtc/rtc-isl1208.c                     | 132 +++++++++---
- 10 files changed, 521 insertions(+), 71 deletions(-)
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/Message-Id: <20230623140948.384762-2-biju.das.jz@bp.renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ .../bindings/regulator/renesas,raa215300.yaml | 85 +++++++++++++++++++
+ 1 file changed, 85 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/regulator/renesas,raa215300.yaml
- delete mode 100644 Documentation/devicetree/bindings/rtc/isil,isl1208.txt
- create mode 100644 Documentation/devicetree/bindings/rtc/isil,isl1208.yaml
- create mode 100644 drivers/regulator/raa215300.c
 
+diff --git a/Documentation/devicetree/bindings/regulator/renesas,raa215300.yaml b/Documentation/devicetree/bindings/regulator/renesas,raa215300.yaml
+new file mode 100644
+index 000000000000..97cff71d2967
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/renesas,raa215300.yaml
+@@ -0,0 +1,85 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/regulator/renesas,raa215300.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RAA215300 Power Management Integrated Circuit (PMIC)
++
++maintainers:
++  - Biju Das <biju.das.jz@bp.renesas.com>
++
++description: |
++  The RAA215300 is a high-performance, low-cost 9-channel PMIC designed for
++  32-bit and 64-bit MCU and MPU applications. It supports DDR3, DDR3L, DDR4,
++  and LPDDR4 memory power requirements. The internally compensated regulators,
++  built-in Real-Time Clock (RTC), 32kHz crystal oscillator, and coin cell
++  battery charger provide a highly integrated, small footprint power solution
++  ideal for System-On-Module (SOM) applications. A spread spectrum feature
++  provides an ease-of-use solution for noise-sensitive audio or RF applications.
++
++  This device exposes two devices via I2C. One for the integrated RTC IP, and
++  one for everything else.
++
++  Link to datasheet:
++  https://www.renesas.com/in/en/products/power-power-management/multi-channel-power-management-ics-pmics/ssdsoc-power-management-ics-pmic-and-pmus/raa215300-high-performance-9-channel-pmic-supporting-ddr-memory-built-charger-and-rtc
++
++properties:
++  compatible:
++    enum:
++      - renesas,raa215300
++
++  reg:
++    maxItems: 2
++
++  reg-names:
++    items:
++      - const: main
++      - const: rtc
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    description: |
++      The clocks are optional. The RTC is disabled, if no clocks are
++      provided(either xin or clkin).
++    maxItems: 1
++
++  clock-names:
++    description: |
++      Use xin, if connected to an external crystal.
++      Use clkin, if connected to an external clock signal.
++    enum:
++      - xin
++      - clkin
++
++required:
++  - compatible
++  - reg
++  - reg-names
++
++additionalProperties: false
++
++examples:
++  - |
++    /* 32.768kHz crystal */
++    x2: x2-clock {
++        compatible = "fixed-clock";
++        #clock-cells = <0>;
++        clock-frequency = <32768>;
++    };
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        raa215300: pmic@12 {
++            compatible = "renesas,raa215300";
++            reg = <0x12>, <0x6f>;
++            reg-names = "main", "rtc";
++
++            clocks = <&x2>;
++            clock-names = "xin";
++        };
++    };
 -- 
 2.25.1
 
