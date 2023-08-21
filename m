@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9940BEE49AE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E74EE49AB
 	for <webhook@archiver.kernel.org>; Mon, 21 Aug 2023 14:38:11 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web10.1000.1692628685025774887
  for <cip-dev@lists.cip-project.org>;
- Mon, 21 Aug 2023 07:38:06 -0700
+ Mon, 21 Aug 2023 07:38:10 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.01,190,1684767600"; 
-   d="scan'208";a="177171110"
+   d="scan'208";a="177171116"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 21 Aug 2023 23:38:05 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 21 Aug 2023 23:38:10 +0900
 Received: from localhost.localdomain (unknown [10.226.92.38])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id D52FE400754E;
-	Mon, 21 Aug 2023 23:38:03 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 53378400754E;
+	Mon, 21 Aug 2023 23:38:08 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 01/15] ASoC: sh: rz-ssi: Update interrupt handling for half duplex channels
-Date: Mon, 21 Aug 2023 15:37:45 +0100
-Message-Id: <20230821143759.227105-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 03/15] clk: renesas: r9a07g044: Drop WDT2 clock and reset entry
+Date: Mon, 21 Aug 2023 15:37:47 +0100
+Message-Id: <20230821143759.227105-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230821143759.227105-1-biju.das.jz@bp.renesas.com>
 References: <20230821143759.227105-1-biju.das.jz@bp.renesas.com>
@@ -35,118 +35,57 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 21 Aug 2023 14:38:11 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12795
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12797
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 38c042b59af0248a8b13f01b1a09d890997c9f6e upstream.
+commit 772563aef2b46da86120d4c0d6865149e957b02d upstream.
 
-For half duplex channels we dont have separate interrupts for Tx and Rx
-instead we have single interrupt Rt (where the signal for Rx and Tx is
-muxed). To handle such a case install a handler in case we have a dma_rt
-interrupt specified in the DT for the PIO mode.
-
-Note, for backward compatibility we check if the Rx and Tx interrupts
-are present first instead of checking Rt interrupt.
+WDT CH2 is specifically to check the operation of Cortex-M33 CPU and if
+used from CA55 CPU would result in an unexpected behaviour. Hence drop
+WDT2 clock and reset entries.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20230217185225.43310-3-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Link: https://lore.kernel.org/r/20221009231013.14791-1-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- sound/soc/sh/rz-ssi.c | 63 ++++++++++++++++++++++++++++++-------------
- 1 file changed, 44 insertions(+), 19 deletions(-)
+ drivers/clk/renesas/r9a07g044-cpg.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/sound/soc/sh/rz-ssi.c b/sound/soc/sh/rz-ssi.c
-index 5d6bae33ae34..d502aa55c5a8 100644
---- a/sound/soc/sh/rz-ssi.c
-+++ b/sound/soc/sh/rz-ssi.c
-@@ -109,6 +109,7 @@ struct rz_ssi_priv {
- 	int irq_int;
- 	int irq_tx;
- 	int irq_rx;
-+	int irq_rt;
+diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
+index 12b1a83625cb..f5550fccb029 100644
+--- a/drivers/clk/renesas/r9a07g044-cpg.c
++++ b/drivers/clk/renesas/r9a07g044-cpg.c
+@@ -182,7 +182,7 @@ static const struct {
+ };
  
- 	spinlock_t lock;
- 
-@@ -565,6 +566,17 @@ static irqreturn_t rz_ssi_interrupt(int irq, void *data)
- 		rz_ssi_reg_mask_setl(ssi, SSIFSR, SSIFSR_RDF, 0);
- 	}
- 
-+	if (irq == ssi->irq_rt) {
-+		struct snd_pcm_substream *substream = strm->substream;
-+
-+		if (rz_ssi_stream_is_play(ssi, substream)) {
-+			strm->transfer(ssi, &ssi->playback);
-+		} else {
-+			strm->transfer(ssi, &ssi->capture);
-+			rz_ssi_reg_mask_setl(ssi, SSIFSR, SSIFSR_RDF, 0);
-+		}
-+	}
-+
- 	return IRQ_HANDLED;
- }
- 
-@@ -993,26 +1005,39 @@ static int rz_ssi_probe(struct platform_device *pdev)
- 	if (!rz_ssi_is_dma_enabled(ssi)) {
- 		/* Tx and Rx interrupts (pio only) */
- 		ssi->irq_tx = platform_get_irq_byname(pdev, "dma_tx");
--		if (ssi->irq_tx < 0)
--			return ssi->irq_tx;
--
--		ret = devm_request_irq(&pdev->dev, ssi->irq_tx,
--				       &rz_ssi_interrupt, 0,
--				       dev_name(&pdev->dev), ssi);
--		if (ret < 0)
--			return dev_err_probe(&pdev->dev, ret,
--					     "irq request error (dma_tx)\n");
--
- 		ssi->irq_rx = platform_get_irq_byname(pdev, "dma_rx");
--		if (ssi->irq_rx < 0)
--			return ssi->irq_rx;
--
--		ret = devm_request_irq(&pdev->dev, ssi->irq_rx,
--				       &rz_ssi_interrupt, 0,
--				       dev_name(&pdev->dev), ssi);
--		if (ret < 0)
--			return dev_err_probe(&pdev->dev, ret,
--					     "irq request error (dma_rx)\n");
-+		if (ssi->irq_tx == -ENXIO && ssi->irq_rx == -ENXIO) {
-+			ssi->irq_rt = platform_get_irq_byname(pdev, "dma_rt");
-+			if (ssi->irq_rt < 0)
-+				return ssi->irq_rt;
-+
-+			ret = devm_request_irq(&pdev->dev, ssi->irq_rt,
-+					       &rz_ssi_interrupt, 0,
-+					       dev_name(&pdev->dev), ssi);
-+			if (ret < 0)
-+				return dev_err_probe(&pdev->dev, ret,
-+						"irq request error (dma_tx)\n");
-+		} else {
-+			if (ssi->irq_tx < 0)
-+				return ssi->irq_tx;
-+
-+			if (ssi->irq_rx < 0)
-+				return ssi->irq_rx;
-+
-+			ret = devm_request_irq(&pdev->dev, ssi->irq_tx,
-+					       &rz_ssi_interrupt, 0,
-+					       dev_name(&pdev->dev), ssi);
-+			if (ret < 0)
-+				return dev_err_probe(&pdev->dev, ret,
-+						"irq request error (dma_tx)\n");
-+
-+			ret = devm_request_irq(&pdev->dev, ssi->irq_rx,
-+					       &rz_ssi_interrupt, 0,
-+					       dev_name(&pdev->dev), ssi);
-+			if (ret < 0)
-+				return dev_err_probe(&pdev->dev, ret,
-+						"irq request error (dma_rx)\n");
-+		}
- 	}
- 
- 	ssi->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+ static const struct {
+-	struct rzg2l_mod_clk common[77];
++	struct rzg2l_mod_clk common[75];
+ #ifdef CONFIG_CLK_R9A07G054
+ 	struct rzg2l_mod_clk drp[0];
+ #endif
+@@ -224,10 +224,6 @@ static const struct {
+ 					0x548, 2),
+ 		DEF_MOD("wdt1_clk",	R9A07G044_WDT1_CLK, R9A07G044_OSCCLK,
+ 					0x548, 3),
+-		DEF_MOD("wdt2_pclk",	R9A07G044_WDT2_PCLK, R9A07G044_CLK_P0,
+-					0x548, 4),
+-		DEF_MOD("wdt2_clk",	R9A07G044_WDT2_CLK, R9A07G044_OSCCLK,
+-					0x548, 5),
+ 		DEF_MOD("spi_clk2",	R9A07G044_SPI_CLK2, R9A07G044_CLK_SPI1,
+ 					0x550, 0),
+ 		DEF_MOD("spi_clk",	R9A07G044_SPI_CLK, R9A07G044_CLK_SPI0,
+@@ -366,7 +362,6 @@ static struct rzg2l_reset r9a07g044_resets[] = {
+ 	DEF_RST(R9A07G044_POEG_D_RST, 0x844, 3),
+ 	DEF_RST(R9A07G044_WDT0_PRESETN, 0x848, 0),
+ 	DEF_RST(R9A07G044_WDT1_PRESETN, 0x848, 1),
+-	DEF_RST(R9A07G044_WDT2_PRESETN, 0x848, 2),
+ 	DEF_RST(R9A07G044_SPI_RST, 0x850, 0),
+ 	DEF_RST(R9A07G044_SDHI0_IXRST, 0x854, 0),
+ 	DEF_RST(R9A07G044_SDHI1_IXRST, 0x854, 1),
 -- 
 2.25.1
 
