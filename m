@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A513EE49AB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A4EEE49B0
 	for <webhook@archiver.kernel.org>; Mon, 21 Aug 2023 14:38:21 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web10.1008.1692628695125774967
  for <cip-dev@lists.cip-project.org>;
- Mon, 21 Aug 2023 07:38:19 -0700
+ Mon, 21 Aug 2023 07:38:15 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.01,190,1684767600"; 
-   d="scan'208";a="173473037"
+   d="scan'208";a="173473034"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 21 Aug 2023 23:38:19 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 21 Aug 2023 23:38:14 +0900
 Received: from localhost.localdomain (unknown [10.226.92.38])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 5118E4007552;
-	Mon, 21 Aug 2023 23:38:17 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id CD615400754E;
+	Mon, 21 Aug 2023 23:38:12 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 07/15] arm64: dts: renesas: r9a07g043: Split out RZ/G2UL SoC specific parts
-Date: Mon, 21 Aug 2023 15:37:51 +0100
-Message-Id: <20230821143759.227105-8-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 05/15] arm64: dts: renesas: rzg2l: Drop WDT2 nodes
+Date: Mon, 21 Aug 2023 15:37:49 +0100
+Message-Id: <20230821143759.227105-6-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230821143759.227105-1-biju.das.jz@bp.renesas.com>
 References: <20230821143759.227105-1-biju.das.jz@bp.renesas.com>
@@ -35,193 +35,134 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 21 Aug 2023 14:38:21 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12801
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12799
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit b9a0be2054964026aa58966ce9724b672f210835 upstream.
+commit c02734d6e4ceaf4cec3e5ec0aa17ca66e9bc280d upstream.
 
-Move RZ/G2UL SoC specific parts to r9a07g043u.dtsi so that
-r9a07g043.dtsi can be shared with RZ/Five (RISC-V SoC).
-
-Below are the changes due to which SoC specific parts are moved to
-r9a07g043u.dtsi:
-  - RZ/G2UL has Cortex-A55 (ARM64) whereas RZ/Five has AX45MP (RISC-V),
-  - RZ/G2UL has GICv3 as interrupt controller whereas RZ/Five has PLIC,
-  - RZ/G2UL has interrupts for SYSC block whereas interrupts are missing
-    for SYSC block on RZ/Five,
-  - RZ/G2UL has armv8-timer whereas RZ/Five has riscv-timer,
-  - RZ/G2UL has PSCI whereas RZ/Five have OpenSBI.
+On members of the RZ/G2L family, WDT CH2 is specifically meant to check
+the operation of the Cortex-M33 CPU.  Using it from a Cortex-A55 CPU
+would result in unexpected behaviour.  Hence drop all WDT2 nodes and
+their references from the affected SoC and SoM DTSI files.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20221025220629.79321-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Link: https://lore.kernel.org/r/20221009230044.10961-1-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a07g043.dtsi  | 54 +------------------
- arch/arm64/boot/dts/renesas/r9a07g043u.dtsi | 60 +++++++++++++++++++++
- 2 files changed, 61 insertions(+), 53 deletions(-)
+ arch/arm64/boot/dts/renesas/r9a07g043.dtsi        | 15 ---------------
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi        | 15 ---------------
+ arch/arm64/boot/dts/renesas/r9a07g054.dtsi        | 15 ---------------
+ arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi  |  5 -----
+ arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi |  5 -----
+ 5 files changed, 55 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
-index ca937f88406c..5f534db54d1c 100644
+index 2c5444cdbd9c..ca937f88406c 100644
 --- a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- /*
-- * Device Tree Source for the RZ/G2UL SoC
-+ * Device Tree Source for the RZ/Five and RZ/G2UL SoCs
-  *
-  * Copyright (C) 2022 Renesas Electronics Corp.
-  */
-@@ -68,36 +68,8 @@ opp-1000000000 {
- 		};
- 	};
- 
--	cpus {
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		cpu0: cpu@0 {
--			compatible = "arm,cortex-a55";
--			reg = <0>;
--			device_type = "cpu";
--			#cooling-cells = <2>;
--			next-level-cache = <&L3_CA55>;
--			enable-method = "psci";
--			clocks = <&cpg CPG_CORE R9A07G043_CLK_I>;
--			operating-points-v2 = <&cluster0_opp>;
--		};
--
--		L3_CA55: cache-controller-0 {
--			compatible = "cache";
--			cache-unified;
--			cache-size = <0x40000>;
--		};
--	};
--
--	psci {
--		compatible = "arm,psci-1.0", "arm,psci-0.2";
--		method = "smc";
--	};
--
- 	soc: soc {
- 		compatible = "simple-bus";
--		interrupt-parent = <&gic>;
- 		#address-cells = <2>;
- 		#size-cells = <2>;
- 		ranges;
-@@ -545,12 +517,6 @@ cpg: clock-controller@11010000 {
- 		sysc: system-controller@11020000 {
- 			compatible = "renesas,r9a07g043-sysc";
- 			reg = <0 0x11020000 0 0x10000>;
--			interrupts = <SOC_PERIPHERAL_IRQ(42) IRQ_TYPE_LEVEL_HIGH>,
--				     <SOC_PERIPHERAL_IRQ(43) IRQ_TYPE_LEVEL_HIGH>,
--				     <SOC_PERIPHERAL_IRQ(44) IRQ_TYPE_LEVEL_HIGH>,
--				     <SOC_PERIPHERAL_IRQ(45) IRQ_TYPE_LEVEL_HIGH>;
--			interrupt-names = "lpm_int", "ca55stbydone_int",
--					  "cm33stbyr_int", "ca55_deny";
+@@ -816,21 +816,6 @@ wdt0: watchdog@12800800 {
  			status = "disabled";
  		};
  
-@@ -605,16 +571,6 @@ dmac: dma-controller@11820000 {
- 			dma-channels = <16>;
- 		};
- 
--		gic: interrupt-controller@11900000 {
--			compatible = "arm,gic-v3";
--			#interrupt-cells = <3>;
--			#address-cells = <0>;
--			interrupt-controller;
--			reg = <0x0 0x11900000 0 0x40000>,
--			      <0x0 0x11940000 0 0x60000>;
--			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_LOW>;
+-		wdt2: watchdog@12800400 {
+-			compatible = "renesas,r9a07g043-wdt",
+-				     "renesas,rzg2l-wdt";
+-			reg = <0 0x12800400 0 0x400>;
+-			clocks = <&cpg CPG_MOD R9A07G043_WDT2_PCLK>,
+-				 <&cpg CPG_MOD R9A07G043_WDT2_CLK>;
+-			clock-names = "pclk", "oscclk";
+-			interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-names = "wdt", "perrout";
+-			resets = <&cpg R9A07G043_WDT2_PRESETN>;
+-			power-domains = <&cpg>;
+-			status = "disabled";
 -		};
 -
- 		sdhi0: mmc@11c00000 {
- 			compatible = "renesas,sdhi-r9a07g043",
- 				     "renesas,rcar-gen3-sdhi";
-@@ -880,12 +836,4 @@ target: trip-point {
- 			};
+ 		ostm0: timer@12801000 {
+ 			compatible = "renesas,r9a07g043-ostm",
+ 				     "renesas,ostm";
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+index 7a62e33eb821..2a613b514d02 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+@@ -1066,21 +1066,6 @@ wdt1: watchdog@12800c00 {
+ 			status = "disabled";
  		};
- 	};
--
--	timer {
--		compatible = "arm,armv8-timer";
--		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
--	};
- };
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi b/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi
-index 96f935bc2d4d..b8bf06b51235 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi
-@@ -10,3 +10,63 @@
- #define SOC_PERIPHERAL_IRQ(nr)		GIC_SPI nr
  
- #include "r9a07g043.dtsi"
-+
-+/ {
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			compatible = "arm,cortex-a55";
-+			reg = <0>;
-+			device_type = "cpu";
-+			#cooling-cells = <2>;
-+			next-level-cache = <&L3_CA55>;
-+			enable-method = "psci";
-+			clocks = <&cpg CPG_CORE R9A07G043_CLK_I>;
-+			operating-points-v2 = <&cluster0_opp>;
-+		};
-+
-+		L3_CA55: cache-controller-0 {
-+			compatible = "cache";
-+			cache-unified;
-+			cache-size = <0x40000>;
-+		};
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0", "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
-+
-+&soc {
-+	interrupt-parent = <&gic>;
-+
-+	gic: interrupt-controller@11900000 {
-+		compatible = "arm,gic-v3";
-+		#interrupt-cells = <3>;
-+		#address-cells = <0>;
-+		interrupt-controller;
-+		reg = <0x0 0x11900000 0 0x40000>,
-+		      <0x0 0x11940000 0 0x60000>;
-+		interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+};
-+
-+&sysc {
-+	interrupts = <SOC_PERIPHERAL_IRQ(42) IRQ_TYPE_LEVEL_HIGH>,
-+		     <SOC_PERIPHERAL_IRQ(43) IRQ_TYPE_LEVEL_HIGH>,
-+		     <SOC_PERIPHERAL_IRQ(44) IRQ_TYPE_LEVEL_HIGH>,
-+		     <SOC_PERIPHERAL_IRQ(45) IRQ_TYPE_LEVEL_HIGH>;
-+	interrupt-names = "lpm_int", "ca55stbydone_int",
-+			  "cm33stbyr_int", "ca55_deny";
-+};
+-		wdt2: watchdog@12800400 {
+-			compatible = "renesas,r9a07g044-wdt",
+-				     "renesas,rzg2l-wdt";
+-			reg = <0 0x12800400 0 0x400>;
+-			clocks = <&cpg CPG_MOD R9A07G044_WDT2_PCLK>,
+-				 <&cpg CPG_MOD R9A07G044_WDT2_CLK>;
+-			clock-names = "pclk", "oscclk";
+-			interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-names = "wdt", "perrout";
+-			resets = <&cpg R9A07G044_WDT2_PRESETN>;
+-			power-domains = <&cpg>;
+-			status = "disabled";
+-		};
+-
+ 		ostm0: timer@12801000 {
+ 			compatible = "renesas,r9a07g044-ostm",
+ 				     "renesas,ostm";
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
+index 3211a39e49a9..0f485ccf7fa0 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
+@@ -1072,21 +1072,6 @@ wdt1: watchdog@12800c00 {
+ 			status = "disabled";
+ 		};
+ 
+-		wdt2: watchdog@12800400 {
+-			compatible = "renesas,r9a07g054-wdt",
+-				     "renesas,rzg2l-wdt";
+-			reg = <0 0x12800400 0 0x400>;
+-			clocks = <&cpg CPG_MOD R9A07G054_WDT2_PCLK>,
+-				 <&cpg CPG_MOD R9A07G054_WDT2_CLK>;
+-			clock-names = "pclk", "oscclk";
+-			interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
+-				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
+-			interrupt-names = "wdt", "perrout";
+-			resets = <&cpg R9A07G054_WDT2_PRESETN>;
+-			power-domains = <&cpg>;
+-			status = "disabled";
+-		};
+-
+ 		ostm0: timer@12801000 {
+ 			compatible = "renesas,r9a07g054-ostm",
+ 				     "renesas,ostm";
+diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
+index c4faff092380..fbbb4f03440b 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
+@@ -351,8 +351,3 @@ &wdt1 {
+ 	status = "okay";
+ 	timeout-sec = <60>;
+ };
+-
+-&wdt2 {
+-	status = "okay";
+-	timeout-sec = <60>;
+-};
+diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi
+index 78e6e2376b01..8a0d56872de7 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi
+@@ -276,8 +276,3 @@ &wdt1 {
+ 	status = "okay";
+ 	timeout-sec = <60>;
+ };
+-
+-&wdt2 {
+-	status = "okay";
+-	timeout-sec = <60>;
+-};
 -- 
 2.25.1
 
