@@ -2,87 +2,151 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 754D4EE49A6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9940BEE49AE
 	for <webhook@archiver.kernel.org>; Mon, 21 Aug 2023 14:38:11 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web10.1000.1692628685025774887
  for <cip-dev@lists.cip-project.org>;
- Mon, 21 Aug 2023 07:38:05 -0700
+ Mon, 21 Aug 2023 07:38:06 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.01,190,1684767600"; 
-   d="scan'208";a="177171105"
+   d="scan'208";a="177171110"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 21 Aug 2023 23:38:03 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 21 Aug 2023 23:38:05 +0900
 Received: from localhost.localdomain (unknown [10.226.92.38])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 99D6C4002C1F;
-	Mon, 21 Aug 2023 23:38:01 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id D52FE400754E;
+	Mon, 21 Aug 2023 23:38:03 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 00/15] RZ/G2{L,UL} Improvements
-Date: Mon, 21 Aug 2023 15:37:44 +0100
-Message-Id: <20230821143759.227105-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 01/15] ASoC: sh: rz-ssi: Update interrupt handling for half duplex channels
+Date: Mon, 21 Aug 2023 15:37:45 +0100
+Message-Id: <20230821143759.227105-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230821143759.227105-1-biju.das.jz@bp.renesas.com>
+References: <20230821143759.227105-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 21 Aug 2023 14:38:11 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12794
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12795
 
-This patch series add improvements to RZ/G2{L,UL} SMARC EVKs.
-All the patches are cherry-picked from mainline.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Andy Shevchenko (1):
-  pinctrl: renesas: Add missing header(s)
+commit 38c042b59af0248a8b13f01b1a09d890997c9f6e upstream.
 
-Lad Prabhakar (13):
-  ASoC: sh: rz-ssi: Update interrupt handling for half duplex channels
-  arm64: dts: renesas: rzg2ul-smarc: Move spi1 pinmux to carrier board
-    DTSI
-  clk: renesas: r9a07g044: Drop WDT2 clock and reset entry
-  clk: renesas: r9a07g043: Drop WDT2 clock and reset entry
-  arm64: dts: renesas: rzg2l: Drop WDT2 nodes
-  arm64: dts: renesas: rzg2l: Drop #address-cells from pinctrl nodes
-  arm64: dts: renesas: r9a07g043: Split out RZ/G2UL SoC specific parts
-  pinctrl: renesas: rzg2l: Add BUILD_BUG_ON() checks
-  arm64: dts: renesas: r9a07g043u: Add IRQC node
-  arm64: dts: renesas: r9a07g043u: Update pinctrl node to handle GPIO
-    interrupts
-  arm64: dts: renesas: rzg2ul-smarc-som: Add PHY interrupt support for
-    ETH{0/1}
-  arm64: dts: renesas: r9a07g043u: Add Cortex-A55 PMU node
-  arm64: dts: renesas: Drop specifying the GIC_CPU_MASK_SIMPLE() for
-    GICv3 systems
+For half duplex channels we dont have separate interrupts for Tx and Rx
+instead we have single interrupt Rt (where the signal for Rx and Tx is
+muxed). To handle such a case install a handler in case we have a dma_rt
+interrupt specified in the DT for the PIO mode.
 
-Pierre Gondois (1):
-  arm64: dts: renesas: rzg2l: Add missing cache-level properties
+Note, for backward compatibility we check if the Rx and Tx interrupts
+are present first instead of checking Rt interrupt.
 
- arch/arm64/boot/dts/renesas/r9a07g043.dtsi    |  71 +--------
- arch/arm64/boot/dts/renesas/r9a07g043u.dtsi   | 138 ++++++++++++++++++
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi    |  25 +---
- arch/arm64/boot/dts/renesas/r9a07g044c1.dtsi  |   7 -
- arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi  |   7 -
- arch/arm64/boot/dts/renesas/r9a07g054.dtsi    |  25 +---
- arch/arm64/boot/dts/renesas/r9a07g054l1.dtsi  |   7 -
- .../boot/dts/renesas/rzg2l-smarc-som.dtsi     |   5 -
- .../boot/dts/renesas/rzg2lc-smarc-som.dtsi    |   5 -
- .../dts/renesas/rzg2ul-smarc-pinfunction.dtsi |   7 +
- .../boot/dts/renesas/rzg2ul-smarc-som.dtsi    |  18 +--
- drivers/clk/renesas/r9a07g043-cpg.c           |   5 -
- drivers/clk/renesas/r9a07g044-cpg.c           |   7 +-
- drivers/pinctrl/renesas/pinctrl-rzg2l.c       |  15 +-
- drivers/pinctrl/renesas/pinctrl-rzn1.c        |   8 +-
- drivers/pinctrl/renesas/pinctrl-rzv2m.c       |   4 +-
- drivers/pinctrl/renesas/pinctrl.c             |   8 +-
- sound/soc/sh/rz-ssi.c                         |  63 +++++---
- 18 files changed, 238 insertions(+), 187 deletions(-)
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Link: https://lore.kernel.org/r/20230217185225.43310-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ sound/soc/sh/rz-ssi.c | 63 ++++++++++++++++++++++++++++++-------------
+ 1 file changed, 44 insertions(+), 19 deletions(-)
 
+diff --git a/sound/soc/sh/rz-ssi.c b/sound/soc/sh/rz-ssi.c
+index 5d6bae33ae34..d502aa55c5a8 100644
+--- a/sound/soc/sh/rz-ssi.c
++++ b/sound/soc/sh/rz-ssi.c
+@@ -109,6 +109,7 @@ struct rz_ssi_priv {
+ 	int irq_int;
+ 	int irq_tx;
+ 	int irq_rx;
++	int irq_rt;
+ 
+ 	spinlock_t lock;
+ 
+@@ -565,6 +566,17 @@ static irqreturn_t rz_ssi_interrupt(int irq, void *data)
+ 		rz_ssi_reg_mask_setl(ssi, SSIFSR, SSIFSR_RDF, 0);
+ 	}
+ 
++	if (irq == ssi->irq_rt) {
++		struct snd_pcm_substream *substream = strm->substream;
++
++		if (rz_ssi_stream_is_play(ssi, substream)) {
++			strm->transfer(ssi, &ssi->playback);
++		} else {
++			strm->transfer(ssi, &ssi->capture);
++			rz_ssi_reg_mask_setl(ssi, SSIFSR, SSIFSR_RDF, 0);
++		}
++	}
++
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -993,26 +1005,39 @@ static int rz_ssi_probe(struct platform_device *pdev)
+ 	if (!rz_ssi_is_dma_enabled(ssi)) {
+ 		/* Tx and Rx interrupts (pio only) */
+ 		ssi->irq_tx = platform_get_irq_byname(pdev, "dma_tx");
+-		if (ssi->irq_tx < 0)
+-			return ssi->irq_tx;
+-
+-		ret = devm_request_irq(&pdev->dev, ssi->irq_tx,
+-				       &rz_ssi_interrupt, 0,
+-				       dev_name(&pdev->dev), ssi);
+-		if (ret < 0)
+-			return dev_err_probe(&pdev->dev, ret,
+-					     "irq request error (dma_tx)\n");
+-
+ 		ssi->irq_rx = platform_get_irq_byname(pdev, "dma_rx");
+-		if (ssi->irq_rx < 0)
+-			return ssi->irq_rx;
+-
+-		ret = devm_request_irq(&pdev->dev, ssi->irq_rx,
+-				       &rz_ssi_interrupt, 0,
+-				       dev_name(&pdev->dev), ssi);
+-		if (ret < 0)
+-			return dev_err_probe(&pdev->dev, ret,
+-					     "irq request error (dma_rx)\n");
++		if (ssi->irq_tx == -ENXIO && ssi->irq_rx == -ENXIO) {
++			ssi->irq_rt = platform_get_irq_byname(pdev, "dma_rt");
++			if (ssi->irq_rt < 0)
++				return ssi->irq_rt;
++
++			ret = devm_request_irq(&pdev->dev, ssi->irq_rt,
++					       &rz_ssi_interrupt, 0,
++					       dev_name(&pdev->dev), ssi);
++			if (ret < 0)
++				return dev_err_probe(&pdev->dev, ret,
++						"irq request error (dma_tx)\n");
++		} else {
++			if (ssi->irq_tx < 0)
++				return ssi->irq_tx;
++
++			if (ssi->irq_rx < 0)
++				return ssi->irq_rx;
++
++			ret = devm_request_irq(&pdev->dev, ssi->irq_tx,
++					       &rz_ssi_interrupt, 0,
++					       dev_name(&pdev->dev), ssi);
++			if (ret < 0)
++				return dev_err_probe(&pdev->dev, ret,
++						"irq request error (dma_tx)\n");
++
++			ret = devm_request_irq(&pdev->dev, ssi->irq_rx,
++					       &rz_ssi_interrupt, 0,
++					       dev_name(&pdev->dev), ssi);
++			if (ret < 0)
++				return dev_err_probe(&pdev->dev, ret,
++						"irq request error (dma_rx)\n");
++		}
+ 	}
+ 
+ 	ssi->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
 -- 
 2.25.1
 
