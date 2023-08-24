@@ -1,115 +1,83 @@
-Return-Path: <venkata.pyla@toshiba-tsip.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28837C7113B
-	for <webhook@archiver.kernel.org>; Thu, 24 Aug 2023 10:41:35 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.132])
- by mx.groups.io with SMTP id smtpd.web10.7989.1692873689647231368
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D47C3DA6F
+	for <webhook@archiver.kernel.org>; Thu, 24 Aug 2023 11:03:05 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web11.8105.1692874983758960367
  for <cip-dev@lists.cip-project.org>;
- Thu, 24 Aug 2023 03:41:30 -0700
+ Thu, 24 Aug 2023 04:03:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.132, mailfrom: venkata.pyla@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1121) id 37OAfO3G808194; Thu, 24 Aug 2023 19:41:24 +0900
-X-Iguazu-Qid: 2rWgqlGKyH0WfEubtS
-X-Iguazu-QSIG: v=2; s=0; t=1692873684; q=2rWgqlGKyH0WfEubtS; m=3WgJpI70WBwSc5ade4NsxSD4QLeUtDbiZuk8Qezo4kQ=
-Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1123) id 37OAfM8S364727
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Thu, 24 Aug 2023 19:41:23 +0900
-From: venkata.pyla@toshiba-tsip.com
-To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
-Cc: venkata pyla <venkata.pyla@toshiba-tsip.com>,
-        dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
-Subject: [isar-cip-core v2 2/2] qemu*.wks.in: Add filessystem UUID to home and var partitions
-Date: Thu, 24 Aug 2023 16:11:19 +0530
-X-TSB-HOP2: ON
-Message-Id: <20230824104119.5464-3-venkata.pyla@toshiba-tsip.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <177DF6549CC2A4D6.6662@lists.cip-project.org>
-References: <177DF6549CC2A4D6.6662@lists.cip-project.org>
+ dkim=none (message not signed); spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id C67551C0006; Thu, 24 Aug 2023 13:02:59 +0200 (CEST)
+Date: Thu, 24 Aug 2023 13:02:59 +0200
+From: Pavel Machek <pavel@denx.de>
+To: cip-dev@lists.cip-project.org
+Subject: CVE-2022-40307 was Re: [cip-dev] New CVE entries this week
+Message-ID: <ZOc448J0V1kIRFzl@duo.ucw.cz>
+References: <CAODzB9orgFUeGCfjL4BeDmEazgTDSJg_SNrtCxbvOSDcoFiviw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 24 Aug 2023 10:41:19.0648 (UTC) FILETIME=[847E9200:01D9D677]
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="/XgZwn3WDnSEpN/r"
+Content-Disposition: inline
+In-Reply-To: <CAODzB9orgFUeGCfjL4BeDmEazgTDSJg_SNrtCxbvOSDcoFiviw@mail.gmail.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 24 Aug 2023 10:41:35 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12845
-
-From: venkata pyla <venkata.pyla@toshiba-tsip.com>
-
-The filesystem images are not reproducible without constant UUID's, so
-assigned UUID's for home and var partition.
-
-Fixes: #74
-
-Signed-off-by: venkata pyla <venkata.pyla@toshiba-tsip.com>
----
- wic/qemu-amd64-efibootguard-secureboot.wks.in | 4 ++--
- wic/qemu-arm64-efibootguard-secureboot.wks.in | 4 ++--
- wic/qemu-arm64-efibootguard.wks.in            | 4 ++--
- wic/x86-efibootguard.wks.in                   | 4 ++--
- 4 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/wic/qemu-amd64-efibootguard-secureboot.wks.in b/wic/qemu-amd64-efibootguard-secureboot.wks.in
-index 12fa45f..4a21fa7 100644
---- a/wic/qemu-amd64-efibootguard-secureboot.wks.in
-+++ b/wic/qemu-amd64-efibootguard-secureboot.wks.in
-@@ -4,7 +4,7 @@ part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 102
- part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}"
- 
- # home and var are extra partitions
--part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024 --size 1G
--part /var  --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var  --fstype=ext4 --label var  --align 1024 --size 2G
-+part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024 --size 1G --fsuuid "1f55d66a-40d8-11ee-be56-0242ac120002"
-+part /var  --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var  --fstype=ext4 --label var  --align 1024 --size 2G --fsuuid "96be3374-4258-11ee-be56-0242ac120002"
- 
- bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait earlyprintk watchdog.handle_boot_enabled=0 iTCO_wdt.nowayout=1 panic=5"
-diff --git a/wic/qemu-arm64-efibootguard-secureboot.wks.in b/wic/qemu-arm64-efibootguard-secureboot.wks.in
-index a58928a..9145379 100644
---- a/wic/qemu-arm64-efibootguard-secureboot.wks.in
-+++ b/wic/qemu-arm64-efibootguard-secureboot.wks.in
-@@ -4,7 +4,7 @@ part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 102
- part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}"
- 
- # home and var are extra partitions
--part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024 --size 1G
--part /var  --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var  --fstype=ext4 --label var  --align 1024 --size 2G
-+part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024 --size 1G --fsuuid "1f55d66a-40d8-11ee-be56-0242ac120002"
-+part /var  --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var  --fstype=ext4 --label var  --align 1024 --size 2G --fsuuid "96be3374-4258-11ee-be56-0242ac120002"
- 
- bootloader --ptable gpt --append="panic=5"
-diff --git a/wic/qemu-arm64-efibootguard.wks.in b/wic/qemu-arm64-efibootguard.wks.in
-index bcd736e..9e9567b 100644
---- a/wic/qemu-arm64-efibootguard.wks.in
-+++ b/wic/qemu-arm64-efibootguard.wks.in
-@@ -7,7 +7,7 @@ part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1
- part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}"
- 
- # home and var are extra partitions
--part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G
--part /var --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var --fstype=ext4 --label var --align 1024  --size 2G
-+part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid "1f55d66a-40d8-11ee-be56-0242ac120002"
-+part /var --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var --fstype=ext4 --label var --align 1024  --size 2G --fsuuid "96be3374-4258-11ee-be56-0242ac120002"
- 
- bootloader --ptable gpt
-diff --git a/wic/x86-efibootguard.wks.in b/wic/x86-efibootguard.wks.in
-index 38ad411..d39f92d 100644
---- a/wic/x86-efibootguard.wks.in
-+++ b/wic/x86-efibootguard.wks.in
-@@ -8,7 +8,7 @@ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}
- 
- # home and var are extra partitions
- 
--part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G --extra-space=100M 
--part /var --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var --fstype=ext4 --label var --align 1024  --size 2G --extra-space=100M
-+part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G --extra-space=100M --fsuuid "1f55d66a-40d8-11ee-be56-0242ac120002"
-+part /var --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var --fstype=ext4 --label var --align 1024  --size 2G --extra-space=100M --fsuuid "96be3374-4258-11ee-be56-0242ac120002"
- 
- bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait earlyprintk watchdog.handle_boot_enabled=0 iTCO_wdt.nowayout=1 "
--- 
-2.20.1
+ <cip-dev@lists.cip-project.org>; Thu, 24 Aug 2023 11:03:05 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12846
 
 
+--/XgZwn3WDnSEpN/r
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> When I was reviewing CVE-2022-40307, I found commit
+> 7f7838c92740fa423a5a3f12c00ed02d92851254
+> ("efi: capsule-loader: Fix use-after-free in efi_capsule_write") is
+> not in the cip/4.4-st.
+> However, this commit exists in both cip/4.4 and cip/4.4-rt.
+
+Let me investigate. 7f7838c92740fa423a5a3f12c00ed02d92851254 is
+signed-off by me.
+
+It is in v4.14 as:
+
+commit 233d5c4d18971feee5fc2f33f00b63d8205cfc67
+    efi: capsule-loader: Fix use-after-free in efi_capsule_write
+    commit 9cb636b5f6a8cc6d1b50809ec8f8d33ae0c84c95 upstream.
+
+According to our scripts, our configurations do not compile this, at
+least in 5.10.
+
+It is in linux-4.4.y-cip: 7f7838c92740fa423a5a3f12c00ed02d92851254
+(not having "upstream) marking. My fault, I guess.
+
+It is not in linux-4.4.y-st, but we should have it in our -cip trees
+and it is not that important, anyway.
+
+I propose we leave it as it is.
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--/XgZwn3WDnSEpN/r
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZOc44wAKCRAw5/Bqldv6
+8sDdAKCPDFV7fHWSeMowMK0g1HNUqSCAeQCgo5hPvIrGr7d5Z97jS/+qI3uZEgw=
+=g2TJ
+-----END PGP SIGNATURE-----
+
+--/XgZwn3WDnSEpN/r--
 
