@@ -2,133 +2,310 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A052EC6FA8F
-	for <webhook@archiver.kernel.org>; Wed, 30 Aug 2023 09:01:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BCB2C6FA8F
+	for <webhook@archiver.kernel.org>; Wed, 30 Aug 2023 11:07:22 +0000 (UTC)
 Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
- by mx.groups.io with SMTP id smtpd.web11.9664.1693386091819399203
+ by mx.groups.io with SMTP id smtpd.web10.11260.1693393635749562029
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Wed, 30 Aug 2023 02:01:31 -0700
+ Wed, 30 Aug 2023 04:07:15 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20221208.gappssmtp.com header.s=20221208 header.b=yOYj3mT2;
+ dkim=pass header.i=@kernelci-org.20221208.gappssmtp.com header.s=20221208 header.b=jREzACnQ;
  spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.175, mailfrom: bot@kernelci.org)
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1c1f7f7151fso16264305ad.1
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Wed, 30 Aug 2023 02:01:31 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1bf7423ef3eso33596615ad.3
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Wed, 30 Aug 2023 04:07:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1693386091; x=1693990891; darn=lists.cip-project.org;
+        d=kernelci-org.20221208.gappssmtp.com; s=20221208; t=1693393634; x=1693998434; darn=lists.cip-project.org;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=9c4Gw4JQVD5yUAMMpZDWiZEGsZO1MGRKAZ3u/KKTpiI=;
-        b=yOYj3mT26WWvnV+Axn5qJgDS7taYsrphnJTNet5qBgrBEZTCy3KzcafJFV624aJFP4
-         xI6msNNektuZY0KDbf1TxS6ayBs9R7o6ZzwKCNUra8fSctaIFNnsJuROszcKF0lp9znE
-         09HdD1EsBEgCDfHrRwpcf+z/LH2lgNlSevfzRcEiaLMOWPtkastTHn0atzAkNO4oOaH0
-         Ux07+sJGpiGGCXWpUICtCw0cckbv0M8sta1HrSOQusIPi0bcw12GDmKs9ROITYXqzaB8
-         llIbDjZhKAQWGJp58p7wGiEsxRvSbpg1+T0BzopSQuSNrmMwxVSHOMsTL1aH3wFf1j1L
-         /2vQ==
+        bh=EGHkPxOKvpxMl/UvHtg1XTb0i9PiBYejpWmspf2WGVU=;
+        b=jREzACnQW+eiluClIQeGgd7bIBysHT5eBGFes2j9NqIYu8s8e+wImrtXIvGTTxmE+N
+         79+s+NI+VBnRvNtYWNaUA5Ioq3S8MBBoHtT6IwgUyNUqO7g3jYGTPRwZ0+mc8y4lQa3M
+         jAjqh3T1KF8l9qNfrfgT9y++rl8muy00Bd8GIBSGgQ7QbuTaWEhXcvf6J18bcdqTkh4q
+         wscpe4pOx4lMnAobye9Aq/ti6ia8JSTTpe2ktDh4MKGW+3Gif46TgdFem/E79D42/LgJ
+         ON0kb36I269VWPs7GdP2XjOCrVMREIUGNTNDx5nXwsDb8e4I0T+lgksQ9tTPBBlgY3w0
+         dXRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693386091; x=1693990891;
+        d=1e100.net; s=20221208; t=1693393634; x=1693998434;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9c4Gw4JQVD5yUAMMpZDWiZEGsZO1MGRKAZ3u/KKTpiI=;
-        b=dco9yRzRRqPw4S4ogju5ps8whVij8jcS25Z7C11xwi+Jukv1jMRI3wTZupEIXBtYF1
-         cyICwq2IgVJffMpFvEAMiU0Ar9f7M0QMc1EAIsT5m0tvurzsrXttoNP6yMajYH7ez5dG
-         GTk99gSq9iMRl050/48Os7AwEiWUeLz3Ixo1c1cTDV+qW2RgXU3NvvAjC7xE8/5xAXP3
-         E7ebqSyv/4X3vWyTFe5KjvRWwUwMjrOSUghZh3B1XWnHu2xIpYpseur+WwPv6qlBJsdy
-         RdVvr8iIJp4JbJrdHnSSn8eM1yuqnaWG1tbR/oG3fGKY25w6qSzNUWKmnBoK+WRVBtCt
-         DcFQ==
-X-Gm-Message-State: AOJu0YweNSxtVscHcPuGICwjg2fRteYeEEcKOGGOqDnj//3l000+Ym9U
-	Vha+p4PX87iEPet48TlDMq1irtPbeZ7SZHZkFLA=
-X-Google-Smtp-Source: AGHT+IG2x0axALIngAgYm7o6u5QYGGG8Ra/pGX4hz9NjrxMlwnwXt+doyItY+DXWwjpXu8iqRP+61Q==
-X-Received: by 2002:a17:902:ec84:b0:1b9:de3e:7a59 with SMTP id x4-20020a170902ec8400b001b9de3e7a59mr1724390plg.10.1693386090682;
-        Wed, 30 Aug 2023 02:01:30 -0700 (PDT)
+        bh=EGHkPxOKvpxMl/UvHtg1XTb0i9PiBYejpWmspf2WGVU=;
+        b=J5h+qs69ZFLuFQ33oTFIk6y+89DHYqneKVSEqOIU1Q1J6uCSK8MTTMdIW2JxY6T37V
+         7L+ApyfPO+nZvdjaighz7j8VvNQHTcOf6AuuZscmPvgZ/yqdrUwJLTzuWgA2QjAaNFfg
+         OiOaflaQ8V9ZinwO911xgjKAhc5hXDvcNNPl380uZxS0XfR7F3UvazZBQcyYY/9CC5hG
+         x12+DruQeYJU8ijYnDA8gCP+1UznCXLdEmzACPYp3s9pW5FqpWFqAVOZBFpdsRn6hiuY
+         8fuM/Uhjbx+bn6w0HFoeLcL8RupM32c7DxiNwmfQS86f+b6ESA/M9ZyPpZyeodNH+y6e
+         BBRw==
+X-Gm-Message-State: AOJu0Yz1g0pTSI54JVS6Gv+86QoNepjAUqzwuQWn0EBAy7n3QskH6J9P
+	J5BPXIkPLD6ndpMihU73CUopbW3yMdP41K1/sIM=
+X-Google-Smtp-Source: AGHT+IHBf/d+YbRXYQvGwf2avBCWtoBGaGN+YhtXjyCt6jbrEsEw2gE/ypoyBNZoDALrSYJMWbLUrw==
+X-Received: by 2002:a17:902:d345:b0:1bc:7a4b:5c68 with SMTP id l5-20020a170902d34500b001bc7a4b5c68mr1803827plk.39.1693393634438;
+        Wed, 30 Aug 2023 04:07:14 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id e19-20020a170902f1d300b001a5260a6e6csm10705859plc.206.2023.08.30.02.01.29
+        by smtp.gmail.com with ESMTPSA id v11-20020a170902d68b00b001bdc2d10753sm10802846ply.215.2023.08.30.04.07.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Aug 2023 02:01:30 -0700 (PDT)
-Message-ID: <64ef056a.170a0220.2930e.30e4@mx.google.com>
-Date: Wed, 30 Aug 2023 02:01:30 -0700 (PDT)
+        Wed, 30 Aug 2023 04:07:13 -0700 (PDT)
+Message-ID: <64ef22e1.170a0220.ab4cc.275e@mx.google.com>
+Date: Wed, 30 Aug 2023 04:07:13 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-5.10.y-cip
+X-Kernelci-Branch: linux-4.4.y-st-rc
 X-Kernelci-Tree: cip
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: v5.10.191-cip38-2-g09e5ecd8645b
-Subject: cip/linux-5.10.y-cip ltp-timers: 8 runs,
- 2 regressions (v5.10.191-cip38-2-g09e5ecd8645b)
+X-Kernelci-Report-Type: build
+X-Kernelci-Kernel: v4.4-st20-1637-g14a3f1aaa7ff
+Subject: cip/linux-4.4.y-st-rc build: 14 builds: 4 failed, 10 passed, 8 errors,
+ 25 warnings (v4.4-st20-1637-g14a3f1aaa7ff)
 To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
  kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
 From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 30 Aug 2023 09:01:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12912
+ <cip-dev@lists.cip-project.org>; Wed, 30 Aug 2023 11:07:22 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12913
 
-cip/linux-5.10.y-cip ltp-timers: 8 runs, 2 regressions (v5.10.191-cip38-2-g=
-09e5ecd8645b)
+cip/linux-4.4.y-st-rc build: 14 builds: 4 failed, 10 passed, 8 errors, 25 w=
+arnings (v4.4-st20-1637-g14a3f1aaa7ff)
 
-Regressions Summary
--------------------
+Full Build Summary: https://kernelci.org/build/cip/branch/linux-4.4.y-st-rc=
+/kernel/v4.4-st20-1637-g14a3f1aaa7ff/
 
-platform     | arch  | lab         | compiler | defconfig | regressions
--------------+-------+-------------+----------+-----------+------------
-qemu_riscv64 | riscv | lab-broonie | gcc-10   | defconfig | 2          =
+Tree: cip
+Branch: linux-4.4.y-st-rc
+Git Describe: v4.4-st20-1637-g14a3f1aaa7ff
+Git Commit: 14a3f1aaa7ffa564efe6fc57b356c803aa88cd81
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+Built: 4 unique architectures
 
+Build Failures Detected:
 
-  Details:  https://kernelci.org/test/job/cip/branch/linux-5.10.y-cip/kerne=
-l/v5.10.191-cip38-2-g09e5ecd8645b/plan/ltp-timers/
+arm:
+    omap2plus_defconfig: (gcc-10) FAIL
 
-  Test:     ltp-timers
-  Tree:     cip
-  Branch:   linux-5.10.y-cip
-  Describe: v5.10.191-cip38-2-g09e5ecd8645b
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
-it
-  SHA:      09e5ecd8645b66c95202559dbcf24b99bdfa5a85
+i386:
+    i386_defconfig: (gcc-10) FAIL
 
-  Test suite revisions:
-    ltp-tests
-      URL:  https://github.com/linux-test-project/ltp.git
-      SHA:  3f0b2176930cf15a26597e28abf4356050136bbe =
+x86_64:
+    x86_64_defconfig: (gcc-10) FAIL
+    x86_64_defconfig+x86-chromebook: (gcc-10) FAIL
 
+Errors and Warnings Detected:
 
+arm64:
+    defconfig (gcc-10): 1 warning
+    defconfig+arm64-chromebook (gcc-10): 1 warning
 
-Test Regressions
----------------- =
+arm:
+    imx_v6_v7_defconfig (gcc-10): 1 warning
+    omap2plus_defconfig (gcc-10): 2 errors, 1 warning
 
+i386:
+    allnoconfig (gcc-10): 1 warning
+    i386_defconfig (gcc-10): 2 errors, 2 warnings
+    tinyconfig (gcc-10): 1 warning
 
+x86_64:
+    allnoconfig (gcc-10): 4 warnings
+    tinyconfig (gcc-10): 3 warnings
+    x86_64_defconfig (gcc-10): 2 errors, 5 warnings
+    x86_64_defconfig+x86-chromebook (gcc-10): 2 errors, 5 warnings
 
-platform     | arch  | lab         | compiler | defconfig | regressions
--------------+-------+-------------+----------+-----------+------------
-qemu_riscv64 | riscv | lab-broonie | gcc-10   | defconfig | 2          =
+Errors summary:
 
+    4    kernel/trace/trace_events.c:424:4: error: implicit declaration of =
+function =E2=80=98trace_buffered_event_enable=E2=80=99 [-Werror=3Dimplicit-=
+function-declaration]
+    4    kernel/trace/trace_events.c:390:4: error: implicit declaration of =
+function =E2=80=98trace_buffered_event_disable=E2=80=99 [-Werror=3Dimplicit=
+-function-declaration]
 
-  Details:     https://kernelci.org/test/plan/id/64eef02d9c67145c47286d6c
+Warnings summary:
 
-  Results:     32 PASS, 4 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (riscv64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.191=
--cip38-2-g09e5ecd8645b/riscv/defconfig/gcc-10/lab-broonie/ltp-timers-qemu_r=
-iscv64.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.191=
--cip38-2-g09e5ecd8645b/riscv/defconfig/gcc-10/lab-broonie/ltp-timers-qemu_r=
-iscv64.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/sid-ltp/202=
-30623.0/riscv64/rootfs.cpio.gz =
+    7    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic su=
+ffix given and no register operands; using default for `btr'
+    7    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefin=
+ed
+    4    cc1: some warnings being treated as errors
+    4    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic su=
+ffix given and no register operands; using default for `btr'
+    2    drivers/net/ethernet/apm/xgene/xgene_enet_main.c:32:36: warning: a=
+rray =E2=80=98xgene_enet_acpi_match=E2=80=99 assumed to have one element
+    1    drivers/usb/gadget/function/f_ncm.c:1565:19: warning: assignment t=
+o =E2=80=98struct config_group *=E2=80=99 from =E2=80=98int=E2=80=99 makes =
+pointer from integer without a cast [-Wint-conversion]
 
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
 
+Detailed per-defconfig build reports:
 
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/64eef02d9c6=
-7145c47286d71
-        new failure (last pass: v5.10.191-cip38) =
+---------------------------------------------------------------------------=
+-----
+allnoconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section m=
+ismatches
 
+Warnings:
+    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefined
 
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/64eef02d9c6=
-7145c47286d71
-        new failure (last pass: v5.10.191-cip38) =
+---------------------------------------------------------------------------=
+-----
+allnoconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 4 warnings, 0 sectio=
+n mismatches
 
- =20
+Warnings:
+    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefined
+
+---------------------------------------------------------------------------=
+-----
+defconfig (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section mi=
+smatches
+
+Warnings:
+    drivers/net/ethernet/apm/xgene/xgene_enet_main.c:32:36: warning: array =
+=E2=80=98xgene_enet_acpi_match=E2=80=99 assumed to have one element
+
+---------------------------------------------------------------------------=
+-----
+defconfig+arm64-chromebook (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 1 warn=
+ing, 0 section mismatches
+
+Warnings:
+    drivers/net/ethernet/apm/xgene/xgene_enet_main.c:32:36: warning: array =
+=E2=80=98xgene_enet_acpi_match=E2=80=99 assumed to have one element
+
+---------------------------------------------------------------------------=
+-----
+i386_defconfig (i386, gcc-10) =E2=80=94 FAIL, 2 errors, 2 warnings, 0 secti=
+on mismatches
+
+Errors:
+    kernel/trace/trace_events.c:390:4: error: implicit declaration of funct=
+ion =E2=80=98trace_buffered_event_disable=E2=80=99 [-Werror=3Dimplicit-func=
+tion-declaration]
+    kernel/trace/trace_events.c:424:4: error: implicit declaration of funct=
+ion =E2=80=98trace_buffered_event_enable=E2=80=99 [-Werror=3Dimplicit-funct=
+ion-declaration]
+
+Warnings:
+    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefined
+    cc1: some warnings being treated as errors
+
+---------------------------------------------------------------------------=
+-----
+imx_v6_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
+ction mismatches
+
+Warnings:
+    drivers/usb/gadget/function/f_ncm.c:1565:19: warning: assignment to =E2=
+=80=98struct config_group *=E2=80=99 from =E2=80=98int=E2=80=99 makes point=
+er from integer without a cast [-Wint-conversion]
+
+---------------------------------------------------------------------------=
+-----
+multi_v5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+omap2plus_defconfig (arm, gcc-10) =E2=80=94 FAIL, 2 errors, 1 warning, 0 se=
+ction mismatches
+
+Errors:
+    kernel/trace/trace_events.c:390:4: error: implicit declaration of funct=
+ion =E2=80=98trace_buffered_event_disable=E2=80=99 [-Werror=3Dimplicit-func=
+tion-declaration]
+    kernel/trace/trace_events.c:424:4: error: implicit declaration of funct=
+ion =E2=80=98trace_buffered_event_enable=E2=80=99 [-Werror=3Dimplicit-funct=
+ion-declaration]
+
+Warnings:
+    cc1: some warnings being treated as errors
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section mi=
+smatches
+
+Warnings:
+    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefined
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 3 warnings, 0 section=
+ mismatches
+
+Warnings:
+    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefined
+
+---------------------------------------------------------------------------=
+-----
+vexpress_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig (x86_64, gcc-10) =E2=80=94 FAIL, 2 errors, 5 warnings, 0 s=
+ection mismatches
+
+Errors:
+    kernel/trace/trace_events.c:390:4: error: implicit declaration of funct=
+ion =E2=80=98trace_buffered_event_disable=E2=80=99 [-Werror=3Dimplicit-func=
+tion-declaration]
+    kernel/trace/trace_events.c:424:4: error: implicit declaration of funct=
+ion =E2=80=98trace_buffered_event_enable=E2=80=99 [-Werror=3Dimplicit-funct=
+ion-declaration]
+
+Warnings:
+    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefined
+    cc1: some warnings being treated as errors
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig+x86-chromebook (x86_64, gcc-10) =E2=80=94 FAIL, 2 errors, =
+5 warnings, 0 section mismatches
+
+Errors:
+    kernel/trace/trace_events.c:390:4: error: implicit declaration of funct=
+ion =E2=80=98trace_buffered_event_disable=E2=80=99 [-Werror=3Dimplicit-func=
+tion-declaration]
+    kernel/trace/trace_events.c:424:4: error: implicit declaration of funct=
+ion =E2=80=98trace_buffered_event_enable=E2=80=99 [-Werror=3Dimplicit-funct=
+ion-declaration]
+
+Warnings:
+    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/cpu/amd.c:753: warning: "MSR_AMD64_DE_CFG" redefined
+    cc1: some warnings being treated as errors
+
+---
+For more info write to <info@kernelci.org>
 
