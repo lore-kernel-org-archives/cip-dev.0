@@ -2,56 +2,54 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CB3EB8FA5
-	for <webhook@archiver.kernel.org>; Wed,  6 Sep 2023 09:07:20 +0000 (UTC)
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (JPN01-OS0-obe.outbound.protection.outlook.com [40.107.113.108])
- by mx.groups.io with SMTP id smtpd.web11.4271.1693991234471679590
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC15EB8FAD
+	for <webhook@archiver.kernel.org>; Wed,  6 Sep 2023 09:22:41 +0000 (UTC)
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (JPN01-OS0-obe.outbound.protection.outlook.com [40.107.113.131])
+ by mx.groups.io with SMTP id smtpd.web11.4459.1693992153598933716
  for <cip-dev@lists.cip-project.org>;
- Wed, 06 Sep 2023 02:07:15 -0700
+ Wed, 06 Sep 2023 02:22:34 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bp.renesas.com header.s=selector1 header.b=OiMgXgJd;
- spf=pass (domain: bp.renesas.com, ip: 40.107.113.108, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=pass header.i=@bp.renesas.com header.s=selector1 header.b=BAEYztOU;
+ spf=pass (domain: bp.renesas.com, ip: 40.107.113.131, mailfrom: biju.das.jz@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=T6xyrm2ncE8B1fJpRhj0ILag2NimUxMwb6xk0+O4exYHWpMMYuDgvpi8rNqGAHefRgWJiElxwc/USEwitxYoUXkYJzICCOtANs3O7TvziW/mUDSfVhCD2EAzT3qVQQuJH2/07rgkO3uF5bqf2oSrKVLasfaqZ4cC3V0I79QvFbo/uPA/W5HW5LSBO+LITs7n0ajnapHnUVT4jOtZpNDbLtzfAUTbfLvDib5oYjpmPfIy8xcCSxiSBOk8F6MkrlKQeMSE9YV2PppqQIYdOKKXQjkbf9UYm7COZJANC4O866A39lzWl/c9eqRT1y6drxiRORf+gAPu9Gn/s4wsHlK1Cw==
+ b=NCXmb/wAOa6c14r82uz276CsEWyVdVrAJz1spZX7gzn6LNmGrwxN40lKw7P9F84Ax2fUjn6/XMaS4lToZ11sy8MzIOY4oh7yOWYuIv5A+hS+TWmmdLnkHmnzWV0WxXDxZx8BzlRZ1BoC5vWOYpEo0N1s8UZQpkPI13ROLSZxpxweWtQwxncmmt1jh3cYLkOaCgomEzaO9VEZYFP1nar6od6NDk/S3Rc4/L8IWPT1vnw9kCv+qEagrqIab0IQMrSMYHUGACIt/j0VjgJ/LWkh5Sv9Qzw0hV/b/64P/U7H1F+GcwuRnVUy80V/DmGjI8wnUqO9Uls2j03cyi9aBS5hsA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Xp0JHEpst4M0a0t8ovvir3v3Vk4wdE+k1Sf1xlQiPl8=;
- b=J36uyDPjPGvWg1OvZyDTZ++Piui6jp4Wq2x0cLFV4I6BkLyHMJBjCu4K1yryzVITOJ0WFZAnADHtv7gdS+SPtnMFGi4JTfsAlvEYapdQUCPItyFLTeiolhyIEV/jaJl9UXMMyxkL3QqKpHj2qs5lB2goAuFj/GtsK2D3WhTWjVhfC9krhjlWFsP+BKmZNgCJpaPpl5986TfzUNRCtQ93PBdBNxsLJ9W1+3zZrvcf7WH2W5wirUx456t+qSI7UPIX6V/tlWEsET2ZN5XgpRV0a9Ti7Gu9VluqlOFdYbM0i76zt8LPbxLDzfxZbRHtwvaPmXHHokl6rsOLiLYBzO2GQg==
+ bh=WX2qiRI4D/V43itcDNGUhdTWgkQ+WrnvaW/3x4kJs9U=;
+ b=baDV6i2pX1AczZuwuSaaWrRPs1nwSODwakz2C1hvcjIXXW1gog0g4FIDgufi3a92nPRQvIX53JpiX5koFb7m0XFG0AiszPAzk3TK3YVBdbpuJvzcN+5hEigOaXMPKTNm964VVNF16dEauSfrfsFYS5+wOOHz/EDxKuJj14jd9LTkJTlpmmW/Z1Td5mXwAp/dN97WPmAJjtgj494orX6Azbpwi61smUYjRfZ342aUtdNrHtkXUxXmg0HVfowmOxeRaU72tRrATWvot6sbVuybqdkDmpufaa6VpUlsLt0UUYzB39dc64ou/PRzvcKaO0B31kEjuhl52MLLjtsIvlWpWg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Xp0JHEpst4M0a0t8ovvir3v3Vk4wdE+k1Sf1xlQiPl8=;
- b=OiMgXgJd27ghg2vS+fFUeLydVNE9KoZhu9v/elB6QcHhEKN6qKFawHbUaKUiElQC4CcafJi6ophEU32zcTlyVdzUXYHm8ciqmJOLAzMbLaEuMJN+pBn6wkmsD+DkFrRph0MCmP/QDWtf/m2NoVJyy3qONvj0xilg3IknmPPSZ1I=
+ bh=WX2qiRI4D/V43itcDNGUhdTWgkQ+WrnvaW/3x4kJs9U=;
+ b=BAEYztOUpboWR5A2sd95tqCfcWHnr20zLKDubXqC9yHxMCHotoS1AEk/OSRrKf+TAaMQ/InyOT8YWNLwMawyzqudgvl8M4XiBoeDClfGdGBgEmH1XV0yPE+lXuQ0eX7dIOhiswnJ1VykEL/GKR+ywSeh9Xnw7CqDEHhDdGe8GwM=
 Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
- by TYCPR01MB6014.jpnprd01.prod.outlook.com (2603:1096:400:4f::9) with
+ by TYCPR01MB9734.jpnprd01.prod.outlook.com (2603:1096:400:20c::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.34; Wed, 6 Sep
- 2023 09:07:09 +0000
+ 2023 09:22:29 +0000
 Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
  ([fe80::9d23:32f5:9325:3706]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
  ([fe80::9d23:32f5:9325:3706%5]) with mapi id 15.20.6745.034; Wed, 6 Sep 2023
- 09:07:09 +0000
+ 09:22:29 +0000
 From: Biju Das <biju.das.jz@bp.renesas.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-CC: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Pavel Machek
-	<pavel@denx.de>, Prabhakar Mahadev Lad
+To: Pavel Machek <pavel@denx.de>
+CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, Nobuhiro
+ Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Prabhakar Mahadev Lad
 	<prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [cip-dev] [PATCH 6.1.y-cip 05/20] drm: rcar-du: rzg2l_mipi_dsi:
- Enhance device lanes check
-Thread-Topic: [cip-dev] [PATCH 6.1.y-cip 05/20] drm: rcar-du: rzg2l_mipi_dsi:
- Enhance device lanes check
-Thread-Index: AQHZ4BMhoVcQeu59P0q0jeATtVSbGrANfPmAgAAEbaA=
-Date: Wed, 6 Sep 2023 09:07:09 +0000
+Subject: RE: [PATCH 6.1.y-cip 03/20] drm: rcar-du: Add RZ/G2L DSI driver
+Thread-Topic: [PATCH 6.1.y-cip 03/20] drm: rcar-du: Add RZ/G2L DSI driver
+Thread-Index: AQHZ4BMfrJtnGY/shEWrE6zQEx6t67ANe8iAgAAKoxA=
+Date: Wed, 6 Sep 2023 09:22:29 +0000
 Message-ID: 
- <OS0PR01MB5922FA219F61FC154B3FB0F486EFA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+ <OS0PR01MB5922F2136892D76640822D4186EFA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
 References: <20230905160737.167877-1-biju.das.jz@bp.renesas.com>
- <20230905160737.167877-6-biju.das.jz@bp.renesas.com>
- <ZPg8SUiVWyqxw9O4@duo.ucw.cz>
-In-Reply-To: <ZPg8SUiVWyqxw9O4@duo.ucw.cz>
+ <20230905160737.167877-4-biju.das.jz@bp.renesas.com>
+ <ZPg7STHDn4LbLy7f@duo.ucw.cz>
+In-Reply-To: <ZPg7STHDn4LbLy7f@duo.ucw.cz>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -59,168 +57,122 @@ X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|TYCPR01MB6014:EE_
-x-ms-office365-filtering-correlation-id: ef162e89-99c4-4e5f-3304-08dbaeb8a677
+x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|TYCPR01MB9734:EE_
+x-ms-office365-filtering-correlation-id: b88066a0-a9f5-4dc6-733e-08dbaebacac4
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
 x-microsoft-antispam-message-info: 
- 6rKl524lqZIF/BrxUUq//0XBu4VxPYUL5+e+3heeCMmH+U6p08hck2TTdQzYdOb1OccOW+SogdIpZWmo0DX/i82akbmYVB0LMGE5CnQ2iAwsGeo1u56kaDHDKTJtsYWAby/rHtkxegwR2E/5A3s75Rn+uVIQAoEsTKggjS3Vig0i4qL68WvYCMjfJBmt5w6FZa8ZnDrakOzAPFW1RkSrE8CzWlX5yCvGHjARdRKT8bT7AMkxGhdcfwwpV/9ZzfhDX6+iMH92Z7PXXBncCnKePGDyluVJGeoiLpMH2nWCTimn3g4qh8HA59M63V/4l9IMlewwtzbUdwmc82TZc6ci81lF8JdZsXJfeA+TxsRFXNOLzILVrnCL83PeGy6lQ9wSm2jm6MVuhAn/yhBwfuDo223DQjs0Ez498Fo80K4Mukp8iaEGo7etKXH42ipWA5tkXFRx+a9WP8zHEBtE0/W8inZWn47uB7wFlbftA+EepVHJ4vnt3ezu4wc6E1q1bgnEOr79ZZKjnx0OOfZlIgz3GYCexIv7ubc+stdreSHeqwWrnEFei5P+HY/set+V4fFMY4waJS6hhuV9gE8RCQDaOpTonFGACkgygqqccmqtDPM=
+ 3YurhRYXj6dY7/docYsoCuWcMLn39mhsT7H1ujMvh/W/piEXDyy7o+Y++TmyxR4GppTm3iIzUgsccKahdzFMGl1fnt1G+LvxXgjXr04KoG9Bl0AF3eaw/wDF3AZV88UAY1eD5lopvgfJ/Rp+W1hZVgIuaWYVQfthVol+6hDms5d2Kur9ofUi7kLhk/vH+esaicdkF6ce3uw2dQ6NddHmHx6lL+tY6APywMC5fZfyRBWt6Xxu7TTYKLGMe0GFcbKjLxmuCMpOTCiz0ZUeDCDPTLoPkJTQ+AYk8G2El0XW8Le3db3lmJ9z/8EkxvSbf8T9IbYtLWiVmQwOiYBstR7tC7UGvS2PvjX/tdlg7q7zeUlqOZyrx3YbjfFtqEN0N0kA/59lkXYhJCDcNHajijVZl5Z2kIBjMBg9q1fih9XXsUp2ZNYucx/qiYjweuUAY7DsjAIlt33gp0L8HasaohqXT/dEno4g7m9eA/UaqERohjSWFcf1Rbin/aCgm1Jl91ZYG9HWCYR8Kq6ywN0KJSfBzR6aWuSKiSIgqXJs0HQtOMqJM42dJM7zycpY3zdFw50jJD8Ffu9RHwicyIdqdoRY2JVPRwpNxBEBSfg05sZ34XI=
 x-forefront-antispam-report: 
  CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(366004)(136003)(346002)(376002)(39860400002)(451199024)(186009)(1800799009)(122000001)(9686003)(6506007)(7696005)(71200400001)(52536014)(33656002)(38100700002)(86362001)(55016003)(38070700005)(107886003)(2906002)(26005)(478600001)(966005)(83380400001)(66946007)(76116006)(8936002)(8676002)(5660300002)(4326008)(41300700001)(66476007)(6916009)(66556008)(64756008)(54906003)(66446008)(316002);DIR:OUT;SFP:1102;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?iAB7XfYv+6LcYihEtQQ8uK3s2wul9rQxiH2640TUPHQIYTT82+zlW2UeYbFc?=
- =?us-ascii?Q?m9kVqzP8NssAlsiucE/mbBoFXVSrGxC3VBRWwIVhb5dDbw0YnZZQzEa1Vwrm?=
- =?us-ascii?Q?M9KSmiyJrD6THk/BndKoiFxpEdAaBA9wK9UChIYIKkKga0Rddm0r4pdNeyct?=
- =?us-ascii?Q?uQY73OFrf04zzwL9b1H1/jwNImUY7+KxjqxczP9RzrTelFWRXSAOr8L1R2GK?=
- =?us-ascii?Q?QPgxrrgsvXxzjXfxXow1KkHaG3m+gjL9tCtzidgazuvNsHpU4kSy8rMIBi/Q?=
- =?us-ascii?Q?+d/L6OolcmKh+qhGr3pIi6nCmjRkJYO+/hDaWiDkPemnLyATuKYYQDV431m1?=
- =?us-ascii?Q?WrrwxNkv8T4utOUsUBAncz1ycsRDL0BTOdG6WJ9s/M4inSfMHX/PPM88aWy0?=
- =?us-ascii?Q?qP13GPHl9qQu0sPmXghJfF8twzcJf4GRwNnFiK2a9Yb1a1gfhUrxgSMMxKTN?=
- =?us-ascii?Q?I5Tez6b+ACKVdJNHcVyMwve16bYt4p8R7ioLNVXMZhxIgezyv7hSHAmRkvuC?=
- =?us-ascii?Q?NduR0CHACszkTEARc7SDN9cEn1ke0gFScFzRA+2ltBCY64axBmKawPPmVd91?=
- =?us-ascii?Q?9dK0GJCy+gc92m8Y8gv1XgpkMufxfzzBMuIH5y6BJ1ekOu7gdo1F3ZhMELbn?=
- =?us-ascii?Q?zutDubT8NFgNjzu0RZMlHy2rv/VtctzLztq7qXxwg/sgDyZNA/NrL6uqg0y3?=
- =?us-ascii?Q?HrDygwiZbNN9mEDQD05dhlmM5Nn8BQDL4sdPzYW5AdFjL4vtJwqrm8qYEYm0?=
- =?us-ascii?Q?3ou0/iGykaOB1RdKl+3FoPXX/4Ui0MLFicsm3k0nqTthIVXmhOXGqhIzJxW1?=
- =?us-ascii?Q?TKfSvs1cIbTUsoJWF/5y+Dc3mGRIt6390FmrZ2TJAhHQ6onstRTMB1zdlorm?=
- =?us-ascii?Q?bYkHYqW369vxo429knu8DLnL7fHkxqDV2tLQB37jn35YjhfukyATK8Rr+0Xj?=
- =?us-ascii?Q?ug28cpn6xtRDxOeq/il2qfyEbOxgfInPSy/a/VGEUXbyP2G5Z5wsxBwf+FQY?=
- =?us-ascii?Q?JbCZbLU/L1V8LOL3Zf5eA0Ka0Ro1Fl6NdXX614wxENF51o+1X6so1ybpDFQp?=
- =?us-ascii?Q?Am0QaXFU96JaZLFIqIFENeUPcks/D9sSrW/aTgHfBuQDCn9DCV3n/KNL6nu3?=
- =?us-ascii?Q?leIdKTMM/Y/xBASDsT7F/zlC7svLrWP9Pel/3j6Jf3RGbDuO5/I3tzsmpqAq?=
- =?us-ascii?Q?VHYdovfRUoysSPz51zquFcXRAwUj6JLyQ6MMikPQIrGRLWLPRyOpk0LERx4I?=
- =?us-ascii?Q?nuCc+fflMqTOotilANhlURjqQ4u/n33xQjuGXzXNc4d8Ln2JomsrdwOeqcmj?=
- =?us-ascii?Q?HAIh6GzZmfBV5zrN822I6RcNha8YlIy5kCp1TR+Q057LPVxK60fIJsz2qUuI?=
- =?us-ascii?Q?c+Lh7+scznhQJLeJ9daLU31QyI8X+n6NHevS5UUyR4+RXugJursBasnsia5T?=
- =?us-ascii?Q?xboRW9p44RXkFnwhd16aDeaRcZI07Tg6eSBxYpth+WN4mIDF8cBmk49tq9FF?=
- =?us-ascii?Q?ud17EL4qY9G605Aq/W6B32fUp+JOJnEm/Cvj8qCM1RTY9lEMmF5GtdrmHY1Z?=
- =?us-ascii?Q?2Yb6stYnAdvV/UlPxI1nrpITplv67Gk2p7QBOIrHlCnpIRWxJNu8NMmP385D?=
- =?us-ascii?Q?lQ=3D=3D?=
+ =?us-ascii?Q?eiDCsVuUjw7OTyjV8OsrmROOXfv4y22bq2VijfaZsqLabxF5qRTfJRAjB8xf?=
+ =?us-ascii?Q?vUxx01/mivvaTHSaqLqlsuhb45rt/3Z6bEJePRCIchg5o38BnRiiumjzdmg3?=
+ =?us-ascii?Q?z9L1hdWzXYE0IipLmKrTFmR0W2GJKkyZOd8wQWhikOqqXabg2YvDQ7Ra/vQ0?=
+ =?us-ascii?Q?yCtAIg79vcbSjqcD9j0Ikn4HTyYHT+LJq/r+WYUvVlG6jyANip3ilrX1bThU?=
+ =?us-ascii?Q?zsVNm32nuakdukcfShOXqENbXTjzS4yIyAnKXKamOQz7PwGQezXtOZkRQNnV?=
+ =?us-ascii?Q?rZ5GVWp3UCKurXUBxzHRDnqMgJxYqOL3morXp8XcOXXaLDFRTeSKWrt/gWKb?=
+ =?us-ascii?Q?gTbq9dD9/bvIqrP1xq3n59jK1XgI98qowz3NgItNYviHTl7ZxgjR2cKAbYDa?=
+ =?us-ascii?Q?9P4VB7lR5KHb+v/CELsOi52FTJi/IiES3dThv6TBfkbnfnwYuBBc1b0BLHsD?=
+ =?us-ascii?Q?pOd6Lx00mnemOiUMHUKza9r6TGZX3Y60bco3RoiNQPwO6Z3MH+RMdPMThVEW?=
+ =?us-ascii?Q?hvRqHZG4iJLVilmvCwfJg3h1zSbOxn8Ytc6RDoUCZwMM12MPLvzxZrdWcV3d?=
+ =?us-ascii?Q?AWYMKaTth1hCQDHYGQ2vxgG1D0M6131ak/Da/1f1uVniMBKNCj5S1EZDusx8?=
+ =?us-ascii?Q?vVdoYGAHuk8hU32orx8yQZAQz0H37OpKysc9ih6Nz7zSQ+9ZXLd1ljY9jGP2?=
+ =?us-ascii?Q?skMntkodBziG8XtzilTFLpPAPlpM8/h9mGk2F4wQrYBwnOoIJAGZmnBIpTo1?=
+ =?us-ascii?Q?7j2+nnLoqs9w+XHgWuVnPyWEwRyeLmFCQ4zwHLX3peniQ8o1qlY+RVdjQMFl?=
+ =?us-ascii?Q?fzW/ubakWGKaXii6FafTyyX7qNsWjr8I53/D/eHYtjb7gl7VsmvIvTs/+pru?=
+ =?us-ascii?Q?tqD+KJVm+mcEmcRMZ6pPr9BQy2FMUbosRczkuTY9D2AHkFcmmAfSjro6r9cw?=
+ =?us-ascii?Q?VnNjnMqyf7JYfBjMVLQYxUJGHUbV7y6ZlwhaylXPTaInlpogyIlr2CQSkxT1?=
+ =?us-ascii?Q?5DGGrJExjk/CvVuWiFH1JW2UgvECZSceCg0OgYR9MW92NnPGZsyfesTFz5IS?=
+ =?us-ascii?Q?/Qi8XkpwTse+3NGD4q91KJa29H7omipMpFWVimAgxyiLyfP39rALl2NlPWZC?=
+ =?us-ascii?Q?FioyFPGlNfoEFQYNRjV2v2yzMsrV5OD24tafd+ohJAjbHVbRyC7h342JYiZT?=
+ =?us-ascii?Q?EoJa1nzsL2lBi8YeKkKIwk6mmpd4CKq8euUBjXcdX8zaYuD5VK5C+TjOkOj0?=
+ =?us-ascii?Q?MrbS5O/EvB7I/TCS9ITHDfWq3cf4LHZo8g/WwnysVJZ2aJ+sMDVCNlWiQi7v?=
+ =?us-ascii?Q?rd2NeG9+XesocxihvHPp6K2cr0LpHR+SQkr2CWfetk85LVCDWQt5fScbkMB5?=
+ =?us-ascii?Q?PHl8BUi4REi9eMGLaMvPz4tCoWoUobjiW0Gp6Ge3iFNJuM6dP2T55WzSGiK1?=
+ =?us-ascii?Q?TShTn3BStIkG0MV2CTU//7U5+2vYTncDA4C/TmBQP1751Pm/naHofgaEZCfp?=
+ =?us-ascii?Q?D16W0fX2OyQboAtdTTSNkT96SIOjviTf7B5a59gkFnVrDocjY5101qOOMzdS?=
+ =?us-ascii?Q?NrS0PWnhZ596MWeK5adbLdmzvGLBZdl2KYmFap0JNrexnnqj+stgcErqN/pV?=
+ =?us-ascii?Q?fw=3D=3D?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: bp.renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ef162e89-99c4-4e5f-3304-08dbaeb8a677
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Sep 2023 09:07:09.2874
+X-MS-Exchange-CrossTenant-Network-Message-Id: b88066a0-a9f5-4dc6-733e-08dbaebacac4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Sep 2023 09:22:29.1588
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: NIq/i1Q2y7Wuald6WCuIC8cKk4QsJUGHLoBWUPl3RVv2FIctetFZolnl68ssB6EXyNQkXZ8heSMDUBvc6XOw+kz045B0k/R9Cjfxsi+EOmQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB6014
+X-MS-Exchange-CrossTenant-userprincipalname: 70TZqc00GFRNUIsyOCZULmJVBGGYpCJsIhEAYb7B3nXudX/stj7T/oDnLtPiR2ZMVoSV3mVYPNFxPA9S+mUXq76I6OeHoojyTwRq0OKKRdw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB9734
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 06 Sep 2023 09:07:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12983
+ <cip-dev@lists.cip-project.org>; Wed, 06 Sep 2023 09:22:41 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12984
 
 Hi Pavel,
 
-> Subject: Re: [cip-dev] [PATCH 6.1.y-cip 05/20] drm: rcar-du:
-> rzg2l_mipi_dsi: Enhance device lanes check
+> Subject: Re: [PATCH 6.1.y-cip 03/20] drm: rcar-du: Add RZ/G2L DSI driver
 >=20
 > Hi!
 >=20
-> > commit 418bb3a69e1355c8977c528f8f3896a0aaaecb80 upstream.
+> > commit 7a043f978ed1433bddb088a732e9bb91501ebd76 upstream.
 > >
-> > Enhance device lanes check by reading TXSETR register at probe(), and
-> > enforced in rzg2l_mipi_dsi_host_attach().
-> >
-> > As per HW manual, we can read TXSETR register only after DPHY
-> > initialization.
+> > This driver supports the MIPI DSI encoder found in the RZ/G2L SoC. It
+> > currently supports DSI video mode only.
 >=20
-> So this is kind of strange:
-
-OK.
-
+> Tiny nits:
 >=20
 >=20
+> > --- /dev/null
 > > +++ b/drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi.c
-> > @@ -220,12 +204,6 @@ static int rzg2l_mipi_dsi_startup(struct
-> rzg2l_mipi_dsi *dsi,
-> >  			break;
-> >  	}
-> >
-> > -	ret =3D pm_runtime_resume_and_get(dsi->dev);
-> > -	if (ret < 0)
-> > -		return ret;
-> > -
-> > -	clk_set_rate(dsi->vclk, mode->clock * 1000);
-> > -
-> >  	/* Initializing DPHY before accessing LINK */
-> >  	dphyctrl0 =3D DSIDPHYCTRL0_CAL_EN_HSRX_OFS | DSIDPHYCTRL0_CMN_MASTER_=
-EN
-> |
-> >  		    DSIDPHYCTRL0_RE_VDD_DETVCCQLV18 | DSIDPHYCTRL0_EN_BGR; @@
-> > -259,10 +237,62 @@ static int rzg2l_mipi_dsi_startup(struct
-> > rzg2l_mipi_dsi *dsi,
-> >
-> >  	ret =3D reset_control_deassert(dsi->rstc);
-> >  	if (ret < 0)
-> > -		goto err_pm_put;
-> > +		return ret;
-> >
-> >  	udelay(1);
-> >
-> > +	return 0;
-> > +}
->=20
-> If dsi_startup fails, it does not undo the hw register writes.
-
-We don't need to undo all the hw register writes. The
-one on the rzg2l_mipi_dsi_dphy_exit() is sufficient.
-
->=20
-> > +static void rzg2l_mipi_dsi_dphy_exit(struct rzg2l_mipi_dsi *dsi) {
-> > +	u32 dphyctrl0;
+> ...
+> > +static int rzg2l_mipi_dsi_start_video(struct rzg2l_mipi_dsi *dsi) {
+> > +	u32 vich1set0r;
+> > +	u32 status;
+> > +	int ret;
 > > +
-> > +	dphyctrl0 =3D rzg2l_mipi_dsi_phy_read(dsi, DSIDPHYCTRL0);
-> > +
-> > +	dphyctrl0 &=3D ~(DSIDPHYCTRL0_EN_LDO1200 | DSIDPHYCTRL0_EN_BGR);
-> > +	rzg2l_mipi_dsi_phy_write(dsi, DSIDPHYCTRL0, dphyctrl0);
-> > +
-> > +	reset_control_assert(dsi->rstc);
-> > +}
+> > +	/* Configuration for Blanking sequence and start video input*/
 >=20
-> If dsi_startup fails, this undoes the register writes, but
-> reset_control_assert is now redundant.
+> " */".
 
-Since we are using exclusive reset controller guarantees that the reset wil=
-l be asserted[1].
-
-https://elixir.bootlin.com/linux/latest/source/drivers/reset/core.c#L430
+Agreed, Will fix this.
 
 >=20
-> > +	ret =3D rzg2l_mipi_dsi_dphy_init(dsi, hsfreq);
-> > +	if (ret < 0)
-> > +		goto err_phy;
-> > +
-> >  	/* Enable Data lanes and Clock lanes */
-> >  	txsetr =3D TXSETR_DLEN | TXSETR_NUMLANEUSE(dsi->lanes - 1) |
-> TXSETR_CLEN;
-> >  	rzg2l_mipi_dsi_link_write(dsi, TXSETR, txsetr); @@ -301,7 +331,8 @@
-> > static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
-> >
-> >  	return 0;
-> >
-> > -err_pm_put:
-> > +err_phy:
-> > +	rzg2l_mipi_dsi_dphy_exit(dsi);
-> >  	pm_runtime_put(dsi->dev);
-> >
+> > +++ b/drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi_regs.h
+> > @@ -0,0 +1,151 @@
+> > +/* DPHY Registers */
+> > +#define DSIDPHYCTRL0			0x00
+> > +#define DSIDPHYCTRL0_CAL_EN_HSRX_OFS	BIT(16)
+> > +#define DSIDPHYCTRL0_CMN_MASTER_EN	BIT(8)
+> > +#define DSIDPHYCTRL0_RE_VDD_DETVCCQLV18	BIT(2)
+> > +#define DSIDPHYCTRL0_EN_LDO1200		BIT(1)
+> > +#define DSIDPHYCTRL0_EN_BGR		BIT(0)
+> ...
 >=20
-> So this looks strange.
+> > +/* HS Clock Set Register */
+> > +#define HSCLKSETR			0x104
+> > +#define HSCLKSETR_HSCLKMODE_CONT	(1 << 1)
+> > +#define HSCLKSETR_HSCLKMODE_NON_CONT	(0 << 1)
+> > +#define HSCLKSETR_HSCLKRUN_HS		(1 << 0)
+> > +#define HSCLKSETR_HSCLKRUN_LP		(0 << 0)
 >=20
-> My suggestion would be "rzg2l_mipi_dsi_dphy_init() cleans for itself in
-> case of errors" (as we usually do), so there's no need to do
-> rzg2l_mipi_dsi_dphy_exit() in casa of failure.
+> Mixing of BIT() and << looks kind of strange. Plus (0 << 0) is kind of
+> strange way to say 0. Not sure if this is worth fixing, but usually peopl=
+e
+> would not do special define for "NON_CONT" when it is 0 and they already
+> have "CONT" defined.
 
-If I correctly remember, the R-Car DU maintainer wants
-balanced API's.
+It is based on Renesas R-Car maintainer's suggestion[1].
+
+[1] https://lore.kernel.org/all/YllPoxf6tAh%2FW+7e@pendragon.ideasonboard.c=
+om/
 
 Cheers,
 Biju
