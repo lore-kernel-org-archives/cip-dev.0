@@ -1,179 +1,257 @@
-Return-Path: <biju.das.jz@bp.renesas.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC15EB8FAD
-	for <webhook@archiver.kernel.org>; Wed,  6 Sep 2023 09:22:41 +0000 (UTC)
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (JPN01-OS0-obe.outbound.protection.outlook.com [40.107.113.131])
- by mx.groups.io with SMTP id smtpd.web11.4459.1693992153598933716
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E64BEB8FB4
+	for <webhook@archiver.kernel.org>; Wed,  6 Sep 2023 09:30:51 +0000 (UTC)
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.62])
+ by mx.groups.io with SMTP id smtpd.web10.4649.1693992644511675984
  for <cip-dev@lists.cip-project.org>;
- Wed, 06 Sep 2023 02:22:34 -0700
+ Wed, 06 Sep 2023 02:30:45 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bp.renesas.com header.s=selector1 header.b=BAEYztOU;
- spf=pass (domain: bp.renesas.com, ip: 40.107.113.131, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=cwP65car;
+ spf=pass (domain: siemens.com, ip: 40.107.6.62, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NCXmb/wAOa6c14r82uz276CsEWyVdVrAJz1spZX7gzn6LNmGrwxN40lKw7P9F84Ax2fUjn6/XMaS4lToZ11sy8MzIOY4oh7yOWYuIv5A+hS+TWmmdLnkHmnzWV0WxXDxZx8BzlRZ1BoC5vWOYpEo0N1s8UZQpkPI13ROLSZxpxweWtQwxncmmt1jh3cYLkOaCgomEzaO9VEZYFP1nar6od6NDk/S3Rc4/L8IWPT1vnw9kCv+qEagrqIab0IQMrSMYHUGACIt/j0VjgJ/LWkh5Sv9Qzw0hV/b/64P/U7H1F+GcwuRnVUy80V/DmGjI8wnUqO9Uls2j03cyi9aBS5hsA==
+ b=OHFLJdzK3q9nnfC3YiqHd34oy70XAH7yUrk1hs/EGJHcojkaUA23VtzFQQS8oRKVIJj9/RCACP08Le9cYmFvmSc0h/gyrZbD0RUaKKBW7/KnWhOpeuiLhI7V3ZMAJlngbuLka+OSwQqFqKvZ8bqGMcInijk7WXEKZgCa+6E5lbGDb5ejIjQ0q08VnKD/MGA+XkexJyTKZfZZo/a6G7veAGbXroVZgVCI9LJqbij7cLnbFC051tgMBiX4mK1RZVCL1TViVYhYUh3Q0jkS8bRj4xJELMToOGHbUqSltXLm7k2ybH5SkeiZw76Uon+zpbUtnsVwWBgQqZ3AFVX9iVwD+w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WX2qiRI4D/V43itcDNGUhdTWgkQ+WrnvaW/3x4kJs9U=;
- b=baDV6i2pX1AczZuwuSaaWrRPs1nwSODwakz2C1hvcjIXXW1gog0g4FIDgufi3a92nPRQvIX53JpiX5koFb7m0XFG0AiszPAzk3TK3YVBdbpuJvzcN+5hEigOaXMPKTNm964VVNF16dEauSfrfsFYS5+wOOHz/EDxKuJj14jd9LTkJTlpmmW/Z1Td5mXwAp/dN97WPmAJjtgj494orX6Azbpwi61smUYjRfZ342aUtdNrHtkXUxXmg0HVfowmOxeRaU72tRrATWvot6sbVuybqdkDmpufaa6VpUlsLt0UUYzB39dc64ou/PRzvcKaO0B31kEjuhl52MLLjtsIvlWpWg==
+ bh=ujiIzhVmw6xl3RsBNUA9Nh5iKkrBlTrTENV2cQiw8FY=;
+ b=T2w/xE4BsY/e+D1p2c30ps6wXwwROOjSo7Sln3Av8uk4JBy2KKLQ7pKe+iEbT9Dqq5OOKaPLnKctNQM302w/xzFacXIzEhavc4rZw3KGhj/wyEGVag5rzRHEcOOxqy3+jMN82L7yZpv3tc+VuGVb09+v/+NwZnOS0DuduDulkM1Op5n2I59gI84WCnMSM0exzZDVNyGw5PhS+DeSK0VgPTJ9oJLbP6QxtUPopfQg2nZqs7WoR0m6NXE3EAM6UodkNfjxKOC4R/AHaFQ1j7jkCHp8MqBb95+jDN0kO8nhbhMzJMuJSU4cnfJHfcrWgR8S84VjqYu1pS8vJdmDUwagSg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WX2qiRI4D/V43itcDNGUhdTWgkQ+WrnvaW/3x4kJs9U=;
- b=BAEYztOUpboWR5A2sd95tqCfcWHnr20zLKDubXqC9yHxMCHotoS1AEk/OSRrKf+TAaMQ/InyOT8YWNLwMawyzqudgvl8M4XiBoeDClfGdGBgEmH1XV0yPE+lXuQ0eX7dIOhiswnJ1VykEL/GKR+ywSeh9Xnw7CqDEHhDdGe8GwM=
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
- by TYCPR01MB9734.jpnprd01.prod.outlook.com (2603:1096:400:20c::6) with
+ bh=ujiIzhVmw6xl3RsBNUA9Nh5iKkrBlTrTENV2cQiw8FY=;
+ b=cwP65carmzuwt66IsWB9O0Dj54vNVUMCgCFf3BPtUHz+bEl6svW7Pp1gYXb/fTnPWupRTezpJHzoROkw6LUomuDzSrxmDUbGmJmP89A6ZkJRJfoeBfmcVmRYSIuPtMAk8dZGe3IEF0MtYTxCK6uempDS+cIom9qO4VEsM4t22D/2XcPlSdsfnwy4nMB0GL3cNtLZWgLyi6U1V4PPGooIT5XNzKEDedbCRuQecHEYfGv6VXueK6jugRCwHGHK+K8lV9dCuMTDwITnvNk9jQSeMgW6cjKrh6CVZquXPmxAkFAdDvLLFMOOUaxITNBYUZyRMmxjVWGPRofbxZuiPdK7cA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by DB4PR10MB6166.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:389::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6745.34; Wed, 6 Sep
- 2023 09:22:29 +0000
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::9d23:32f5:9325:3706]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::9d23:32f5:9325:3706%5]) with mapi id 15.20.6745.034; Wed, 6 Sep 2023
- 09:22:29 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Pavel Machek <pavel@denx.de>
-CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, Nobuhiro
- Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH 6.1.y-cip 03/20] drm: rcar-du: Add RZ/G2L DSI driver
-Thread-Topic: [PATCH 6.1.y-cip 03/20] drm: rcar-du: Add RZ/G2L DSI driver
-Thread-Index: AQHZ4BMfrJtnGY/shEWrE6zQEx6t67ANe8iAgAAKoxA=
-Date: Wed, 6 Sep 2023 09:22:29 +0000
-Message-ID: 
- <OS0PR01MB5922F2136892D76640822D4186EFA@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-References: <20230905160737.167877-1-biju.das.jz@bp.renesas.com>
- <20230905160737.167877-4-biju.das.jz@bp.renesas.com>
- <ZPg7STHDn4LbLy7f@duo.ucw.cz>
-In-Reply-To: <ZPg7STHDn4LbLy7f@duo.ucw.cz>
-Accept-Language: en-GB, en-US
+ 2023 09:30:39 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::7f20:d403:b43d:12e2]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::7f20:d403:b43d:12e2%3]) with mapi id 15.20.6745.034; Wed, 6 Sep 2023
+ 09:30:39 +0000
+Message-ID: <de753e79-fa78-44d8-a07f-cc297408e467@siemens.com>
+Date: Wed, 6 Sep 2023 11:30:37 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [isar-cip-core 2/3] .gitlab-ci.yml: Added a new variable to
+ control deployment
 Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|TYCPR01MB9734:EE_
-x-ms-office365-filtering-correlation-id: b88066a0-a9f5-4dc6-733e-08dbaebacac4
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- 3YurhRYXj6dY7/docYsoCuWcMLn39mhsT7H1ujMvh/W/piEXDyy7o+Y++TmyxR4GppTm3iIzUgsccKahdzFMGl1fnt1G+LvxXgjXr04KoG9Bl0AF3eaw/wDF3AZV88UAY1eD5lopvgfJ/Rp+W1hZVgIuaWYVQfthVol+6hDms5d2Kur9ofUi7kLhk/vH+esaicdkF6ce3uw2dQ6NddHmHx6lL+tY6APywMC5fZfyRBWt6Xxu7TTYKLGMe0GFcbKjLxmuCMpOTCiz0ZUeDCDPTLoPkJTQ+AYk8G2El0XW8Le3db3lmJ9z/8EkxvSbf8T9IbYtLWiVmQwOiYBstR7tC7UGvS2PvjX/tdlg7q7zeUlqOZyrx3YbjfFtqEN0N0kA/59lkXYhJCDcNHajijVZl5Z2kIBjMBg9q1fih9XXsUp2ZNYucx/qiYjweuUAY7DsjAIlt33gp0L8HasaohqXT/dEno4g7m9eA/UaqERohjSWFcf1Rbin/aCgm1Jl91ZYG9HWCYR8Kq6ywN0KJSfBzR6aWuSKiSIgqXJs0HQtOMqJM42dJM7zycpY3zdFw50jJD8Ffu9RHwicyIdqdoRY2JVPRwpNxBEBSfg05sZ34XI=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(366004)(136003)(346002)(376002)(39860400002)(451199024)(186009)(1800799009)(122000001)(9686003)(6506007)(7696005)(71200400001)(52536014)(33656002)(38100700002)(86362001)(55016003)(38070700005)(107886003)(2906002)(26005)(478600001)(966005)(83380400001)(66946007)(76116006)(8936002)(8676002)(5660300002)(4326008)(41300700001)(66476007)(6916009)(66556008)(64756008)(54906003)(66446008)(316002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?eiDCsVuUjw7OTyjV8OsrmROOXfv4y22bq2VijfaZsqLabxF5qRTfJRAjB8xf?=
- =?us-ascii?Q?vUxx01/mivvaTHSaqLqlsuhb45rt/3Z6bEJePRCIchg5o38BnRiiumjzdmg3?=
- =?us-ascii?Q?z9L1hdWzXYE0IipLmKrTFmR0W2GJKkyZOd8wQWhikOqqXabg2YvDQ7Ra/vQ0?=
- =?us-ascii?Q?yCtAIg79vcbSjqcD9j0Ikn4HTyYHT+LJq/r+WYUvVlG6jyANip3ilrX1bThU?=
- =?us-ascii?Q?zsVNm32nuakdukcfShOXqENbXTjzS4yIyAnKXKamOQz7PwGQezXtOZkRQNnV?=
- =?us-ascii?Q?rZ5GVWp3UCKurXUBxzHRDnqMgJxYqOL3morXp8XcOXXaLDFRTeSKWrt/gWKb?=
- =?us-ascii?Q?gTbq9dD9/bvIqrP1xq3n59jK1XgI98qowz3NgItNYviHTl7ZxgjR2cKAbYDa?=
- =?us-ascii?Q?9P4VB7lR5KHb+v/CELsOi52FTJi/IiES3dThv6TBfkbnfnwYuBBc1b0BLHsD?=
- =?us-ascii?Q?pOd6Lx00mnemOiUMHUKza9r6TGZX3Y60bco3RoiNQPwO6Z3MH+RMdPMThVEW?=
- =?us-ascii?Q?hvRqHZG4iJLVilmvCwfJg3h1zSbOxn8Ytc6RDoUCZwMM12MPLvzxZrdWcV3d?=
- =?us-ascii?Q?AWYMKaTth1hCQDHYGQ2vxgG1D0M6131ak/Da/1f1uVniMBKNCj5S1EZDusx8?=
- =?us-ascii?Q?vVdoYGAHuk8hU32orx8yQZAQz0H37OpKysc9ih6Nz7zSQ+9ZXLd1ljY9jGP2?=
- =?us-ascii?Q?skMntkodBziG8XtzilTFLpPAPlpM8/h9mGk2F4wQrYBwnOoIJAGZmnBIpTo1?=
- =?us-ascii?Q?7j2+nnLoqs9w+XHgWuVnPyWEwRyeLmFCQ4zwHLX3peniQ8o1qlY+RVdjQMFl?=
- =?us-ascii?Q?fzW/ubakWGKaXii6FafTyyX7qNsWjr8I53/D/eHYtjb7gl7VsmvIvTs/+pru?=
- =?us-ascii?Q?tqD+KJVm+mcEmcRMZ6pPr9BQy2FMUbosRczkuTY9D2AHkFcmmAfSjro6r9cw?=
- =?us-ascii?Q?VnNjnMqyf7JYfBjMVLQYxUJGHUbV7y6ZlwhaylXPTaInlpogyIlr2CQSkxT1?=
- =?us-ascii?Q?5DGGrJExjk/CvVuWiFH1JW2UgvECZSceCg0OgYR9MW92NnPGZsyfesTFz5IS?=
- =?us-ascii?Q?/Qi8XkpwTse+3NGD4q91KJa29H7omipMpFWVimAgxyiLyfP39rALl2NlPWZC?=
- =?us-ascii?Q?FioyFPGlNfoEFQYNRjV2v2yzMsrV5OD24tafd+ohJAjbHVbRyC7h342JYiZT?=
- =?us-ascii?Q?EoJa1nzsL2lBi8YeKkKIwk6mmpd4CKq8euUBjXcdX8zaYuD5VK5C+TjOkOj0?=
- =?us-ascii?Q?MrbS5O/EvB7I/TCS9ITHDfWq3cf4LHZo8g/WwnysVJZ2aJ+sMDVCNlWiQi7v?=
- =?us-ascii?Q?rd2NeG9+XesocxihvHPp6K2cr0LpHR+SQkr2CWfetk85LVCDWQt5fScbkMB5?=
- =?us-ascii?Q?PHl8BUi4REi9eMGLaMvPz4tCoWoUobjiW0Gp6Ge3iFNJuM6dP2T55WzSGiK1?=
- =?us-ascii?Q?TShTn3BStIkG0MV2CTU//7U5+2vYTncDA4C/TmBQP1751Pm/naHofgaEZCfp?=
- =?us-ascii?Q?D16W0fX2OyQboAtdTTSNkT96SIOjviTf7B5a59gkFnVrDocjY5101qOOMzdS?=
- =?us-ascii?Q?NrS0PWnhZ596MWeK5adbLdmzvGLBZdl2KYmFap0JNrexnnqj+stgcErqN/pV?=
- =?us-ascii?Q?fw=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+To: Sai.Sathujoda@toshiba-tsip.com, cip-dev@lists.cip-project.org
+Cc: dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
+References: <20230906045643.2640096-1-Sai.Sathujoda@toshiba-tsip.com>
+ <20230906045643.2640096-3-Sai.Sathujoda@toshiba-tsip.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+In-Reply-To: <20230906045643.2640096-3-Sai.Sathujoda@toshiba-tsip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR0P281CA0153.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:b3::12) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB4PR10MB6166:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5036b095-6acd-4fa0-e62a-08dbaebbeee8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	S7YtGCao7LxyilxrPqQqt/tJhOWIJqf7s529cZp58xCmvayjfpz13uNBpzzPKov1IQ5cU1yd7jYu4FX9BYBdLDnYZAAagouk+k3AqDZZTsf5m1WMs3nmUS2IeMKR9G52tyB5Ddjd/saA5a7z2xszi56dVfiipdMRYRxl7iMq3OHfoOIgjv99QXEgH4UcuqtzYD1HOUq+6qMFB3atsFH4r/+QGWp/o+bIpQIUopamWSTiZ/ap+pcVF7ZB88tnGIDVvfv402rEUifm/YoL1gegT5IFwollMXi5c8hn89zDDgJivwKuK/6cGRBKIG8ACi8TAiuNlijlcyOmG+EbQoiJSutmDJP8XKKnJH1Y+puqcHC5JC3xtngz2JMM8VlfY/kMMaAPiwfmX27/lBXGVfwxYPWztxX7M1HH9cVsMkSUu16YE00JqtzkgpvVFEfYIslErZ7bkdEgxpNm8QgMaYXqAjnkW9aLuGNBnfUfVubHsRUY3MxJvCgKT/ZOU33/zL0JKKWl/GrB5gtpcnvf3jx1XlSTnydXHswP/XYqLQUwsnjf2RYTk61xuUJFhMamq++ViFt0bNJ7F3DB3EqK+mccde40b7ObVnsi4jDfuzUN7FESI47/CfG8PwARXf3+ICjC7fPlB91x9lSieO4270rBaQ==
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(396003)(346002)(376002)(39860400002)(136003)(366004)(451199024)(186009)(1800799009)(31686004)(53546011)(6506007)(6486002)(82960400001)(31696002)(38100700002)(86362001)(2616005)(2906002)(26005)(6512007)(83380400001)(478600001)(41300700001)(8936002)(8676002)(5660300002)(4326008)(36756003)(66476007)(44832011)(66556008)(66946007)(316002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?RkNXRlB5ZDNDT29lU3MwQ1ZUcERCcmMyQWNPaTJydXNzZFg0L1A5VStIV0JF?=
+ =?utf-8?B?TDMzN2w4T0ljWWxLVzRKN0Y3K05vc1BiSU45UlVLM2RFYklBRUs5d0FzbHdQ?=
+ =?utf-8?B?MVR4N0V1UjNFejQvT0FFM0ZwQlBPeVVxbFFCdXA4Y0dxcnorcUVqOFBzUCtv?=
+ =?utf-8?B?cUIxeDkwcVROQlRkSUFzS1A0czVkSGFjbUc2czdQY3Fud3NMRTRxYkl4b2lY?=
+ =?utf-8?B?a2tELzNNdFBOMlhRM0phTDZleVU4akRFY3Y4dnJjUVMydkpERVJzODRNVUVC?=
+ =?utf-8?B?SmVOeUVUV05HdjcxY3BEOHNKUGlieEFXUUlhc3VEUzRhYTFrM1hnNjBFSHRB?=
+ =?utf-8?B?NnMxdG1NQWhlcjErRktwb2Fua2ZVd2U2TFZQR050RjlxT2Yzcmk2dTBCcE4y?=
+ =?utf-8?B?Z2JLN3hIM1YzNEhDVjJ2WkdMbXYvVlJYU3l1OGxJaU93WEJKaWQvTXJHNTVx?=
+ =?utf-8?B?KzFxQWpDK05ySlIyQjRZcloyYnpnZzJZSWVvb0hNQ1g1ZGIxemtadk5RaTY4?=
+ =?utf-8?B?bVkwd2FnazJoaWwxTXI2T3AzVUZFYnRubnMzQWhkdmJMSDBqdEJ1emdJN0li?=
+ =?utf-8?B?RUNPU09OVzFmek0zQmtBMkYxSXdMeC9TR3lxZ0ZmYStzcGpHcldqaE80Skdu?=
+ =?utf-8?B?YkNNem1EdzAzRVRGWFM0LzN0VUZreHBseXNiL0NQR0NlZHJUUkxZUlN5d0c0?=
+ =?utf-8?B?UHc3YUM5WWlDZ0dVRVluSEE0Tkh3bEpTNFEyOXhxWkJzWnFEZ2dzYzVOb1hx?=
+ =?utf-8?B?TGdUT25MZE5RVGhCUUdhWnlscjc1SEN4UDFnRUl1YlQyNVRkN29mS1dPK3N1?=
+ =?utf-8?B?Qjd5YkhVdktYR2lKNWE4bjcyK1QrNXl4b0dQOEJaVWcxNTJQQ0wyWVVKRzRw?=
+ =?utf-8?B?Q2xRYVVhbGljWDEwRjQzVS9Yb1NpK1p1SHBtOVFHTFlTNCszVys0RXhEa0x0?=
+ =?utf-8?B?WVBuZUNEck5wWjk4b1A3bm9mR0ZIeSsybFQweUZWZW1qWlZwOHhzWWR6WUhp?=
+ =?utf-8?B?Qmpkb2VzU2dhd2dRb0JwVlE1RHV5KzQrUnIvRVJvbkZ4TERqZ3VCdXBoWUQ2?=
+ =?utf-8?B?VDZFam43SThRVDV4aGx5dURmNjZ2Z1dMTER3cUZMbXRkLzMyOE1VOWZLOXMx?=
+ =?utf-8?B?ZlhRYUs5cjA5alFtWDRjMUZJcHcwQ1QyNE5QcTZ1M2JnUkN0OXN3TXFweSt5?=
+ =?utf-8?B?bXFDWjdLL2xPbVVxTzZhOHNhMGJ5dVlRc3ZRTGhrR3loM3c1L01HTzRlNnFu?=
+ =?utf-8?B?ZlN6WDNteVZrOUlKeFNZQVR4Yk9lSzV2QUhCWWJjRlVVa1FJL2pmNEY0ODls?=
+ =?utf-8?B?RTRPUHcwaFRHOG02dCtYbzdXdGdWMTEweWVTUXBRZEhiNFI4RVhoU3Fib2JX?=
+ =?utf-8?B?MDNwM3lyMEt6VCtSQUt1YlpYbmsrZDFaWjBBM3hpM09JMjNJSUVSMUVZbGtM?=
+ =?utf-8?B?Z0FRc2dYN3hGNXJodGY4clRtNTFCTHg4dlBUZ1BWMVcrOE43bHVIU293UjBh?=
+ =?utf-8?B?NWwvWTcrbHpudEYyUlNFYlAwbWxqdUJFWERTZGMvT0JYMWVITlhYWXpoMVpV?=
+ =?utf-8?B?V3ZIRWR2TGRrZXZZbVdjVW9zQ3p6Z2FIS1F1Mk5OdWZhRTRZUTR0dmN3YmxN?=
+ =?utf-8?B?a21MZjZPYWJmNFJNeTRIeks0elY5UTRFMUxxZkZZVTlOUWVFc1QweFFNYlJ0?=
+ =?utf-8?B?VG9hNEk5aW9qeHo2YUtuclArMFJmeXBWTjR6aWFGZy80NloraFRHVjBwbk9Z?=
+ =?utf-8?B?a0V2dHdON2t6OTBkVTZaRzFTdUtaRUo1RG1CdnVoejZmVy9OR1l3bmd4NVFu?=
+ =?utf-8?B?UUFObG5kZ0s1eEtlUjE5MjdFMDBFOTBhNTM4RFpUR0xmK0hubXZ1Q0RoN21o?=
+ =?utf-8?B?VGZYOWZIRTNmdmZlOEpoa3BheXB0dmVNSzhDYnZZdFdrS2RQdjNRUzZyRUdr?=
+ =?utf-8?B?VnlhOElUbkgvNys2OFN2QS9HM2ZqREtBTDJKb25RanZvRE9WNmp1NkE1bU1B?=
+ =?utf-8?B?RjROa2txUUxYRWFZZUhTUUZaMk85eXJHRjQyQnJpV0c3M2FaVjFEK3JibDBQ?=
+ =?utf-8?B?UTIvVU91V1F6VlBVNTlQdi9EaGFMNUxzLzQrb3F5RTdiNDRuNHpmL1RYZWhE?=
+ =?utf-8?B?OERaWVhwRmNQT29yMFQ5N1VtL2wzRWJYN1phbWtEaExxVXA1MGJBWHJjaXdN?=
+ =?utf-8?B?cWc9PQ==?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5036b095-6acd-4fa0-e62a-08dbaebbeee8
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b88066a0-a9f5-4dc6-733e-08dbaebacac4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Sep 2023 09:22:29.1588
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2023 09:30:39.4885
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 70TZqc00GFRNUIsyOCZULmJVBGGYpCJsIhEAYb7B3nXudX/stj7T/oDnLtPiR2ZMVoSV3mVYPNFxPA9S+mUXq76I6OeHoojyTwRq0OKKRdw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB9734
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8VTENfv+IRyQvQe0VAUmSM8yJMWUbWsqN6Rjjr+gzsvklDTQ4GFgpD3Dw3xcJ55HBO65G/ZijrpPUwuXjCYD6w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB4PR10MB6166
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 06 Sep 2023 09:22:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12984
+ <cip-dev@lists.cip-project.org>; Wed, 06 Sep 2023 09:30:51 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/12985
 
-Hi Pavel,
+On 06.09.23 06:56, Sai.Sathujoda@toshiba-tsip.com wrote:
+> From: Sai <Sai.Sathujoda@toshiba-tsip.com>
+> 
+> This "EXTRA_ARTIFACT" variable is enabled by default so that it can be
+> disabled for targets where the uploading of only disk image is
+> necessary.
+> 
+> As per the requirement, only disk image upload is sufficient for security
+> image. So the EXTRA_ARTIFACT is disabled for the targets involving
+> security extension.
+> 
+> Signed-off-by: Sai <Sai.Sathujoda@toshiba-tsip.com>
+> ---
+>  .gitlab-ci.yml             |  6 +++++-
+>  scripts/deploy-cip-core.sh | 31 +++++++++++++++++--------------
+>  2 files changed, 22 insertions(+), 15 deletions(-)
+> 
+> diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+> index 8ccd617..f1308ee 100644
+> --- a/.gitlab-ci.yml
+> +++ b/.gitlab-ci.yml
+> @@ -25,6 +25,7 @@ variables:
+>    dtb: none
+>    deploy: enable
+>    deploy_kernelci: disable
+> +  extra_artifact: enable
+>  
+>  stages:
+>    - build
+> @@ -60,7 +61,7 @@ default:
+>      - if [ "${encrypt}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/encrypt-partitions.yml"; fi
+>      - echo "Building ${base_yaml}"
+>      - kas build ${base_yaml}
+> -    - if [ "${deploy}" = "enable" ]; then scripts/deploy-cip-core.sh ${release} ${target} ${extension} ${dtb} ${CI_COMMIT_REF_SLUG}; fi
+> +    - if [ "${deploy}" = "enable" ]; then scripts/deploy-cip-core.sh ${release} ${target} ${extension} ${dtb} ${CI_COMMIT_REF_SLUG} ${extra_artifact}; fi
+>      - if [ "${deploy_kernelci}" = "enable" ]; then scripts/deploy-kernelci.py ${release} ${target} ${extension} ${dtb}; fi
+>  
+>  # base image
+> @@ -100,6 +101,7 @@ build:qemu-amd64-base:
+>      use_rt: disable
+>      wic_targz: disable
+>      targz: enable
+> +    extra_artifact: disable
+>  
+>  build:qemu-amd64-base-kernelci:
+>    extends:
+> @@ -122,6 +124,7 @@ build:qemu-arm64-base:
+>      use_rt: disable
+>      wic_targz: disable
+>      targz: enable
+> +    extra_artifact: disable
+>  
+>  build:qemu-arm64-base-kernelci:
+>    extends:
+> @@ -144,6 +147,7 @@ build:qemu-arm-base:
+>      use_rt: disable
+>      wic_targz: disable
+>      targz: enable
+> +    extra_artifact: disable
+>  
+>  build:qemu-arm-base-kernelci:
+>    extends:
+> diff --git a/scripts/deploy-cip-core.sh b/scripts/deploy-cip-core.sh
+> index eaa8974..76e80ce 100755
+> --- a/scripts/deploy-cip-core.sh
+> +++ b/scripts/deploy-cip-core.sh
+> @@ -15,6 +15,7 @@ TARGET=$2
+>  EXTENSION=$3
+>  DTB=$4
+>  REF=$5
+> +EXTRA_ARTIFACT=$6
+>  
+>  BASE_FILENAME=cip-core-image-cip-core-$RELEASE-$TARGET
+>  if [ "${EXTENSION}" != "none" ]; then
+> @@ -36,20 +37,22 @@ if [ -f "${BASE_PATH}.wic" ]; then
+>  	aws s3 cp --no-progress --acl public-read "${BASE_PATH}.wic.xz" "${S3_TARGET}"
+>  fi
+>  
+> -if [ -f "${BASE_PATH}.tar.gz" ]; then
+> -	echo "Uploading artifacts..."
+> -	aws s3 cp --no-progress --acl public-read "${BASE_PATH}.tar.gz" "${S3_TARGET}"
+> -fi
+> +if [ ${EXTRA_ARTIFACT} == "enable" ]; then
 
-> Subject: Re: [PATCH 6.1.y-cip 03/20] drm: rcar-du: Add RZ/G2L DSI driver
->=20
-> Hi!
->=20
-> > commit 7a043f978ed1433bddb088a732e9bb91501ebd76 upstream.
-> >
-> > This driver supports the MIPI DSI encoder found in the RZ/G2L SoC. It
-> > currently supports DSI video mode only.
->=20
-> Tiny nits:
->=20
->=20
-> > --- /dev/null
-> > +++ b/drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi.c
-> ...
-> > +static int rzg2l_mipi_dsi_start_video(struct rzg2l_mipi_dsi *dsi) {
-> > +	u32 vich1set0r;
-> > +	u32 status;
-> > +	int ret;
-> > +
-> > +	/* Configuration for Blanking sequence and start video input*/
->=20
-> " */".
+So, the logic is now:
+ - deploy wic image if it exists
+ - deploy rootfs tarball, kernel, etc. if EXTRA_ARTIFACT is enabled
 
-Agreed, Will fix this.
+I'm wondering if we have a case were both are true or if we could simply do
 
->=20
-> > +++ b/drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi_regs.h
-> > @@ -0,0 +1,151 @@
-> > +/* DPHY Registers */
-> > +#define DSIDPHYCTRL0			0x00
-> > +#define DSIDPHYCTRL0_CAL_EN_HSRX_OFS	BIT(16)
-> > +#define DSIDPHYCTRL0_CMN_MASTER_EN	BIT(8)
-> > +#define DSIDPHYCTRL0_RE_VDD_DETVCCQLV18	BIT(2)
-> > +#define DSIDPHYCTRL0_EN_LDO1200		BIT(1)
-> > +#define DSIDPHYCTRL0_EN_BGR		BIT(0)
-> ...
->=20
-> > +/* HS Clock Set Register */
-> > +#define HSCLKSETR			0x104
-> > +#define HSCLKSETR_HSCLKMODE_CONT	(1 << 1)
-> > +#define HSCLKSETR_HSCLKMODE_NON_CONT	(0 << 1)
-> > +#define HSCLKSETR_HSCLKRUN_HS		(1 << 0)
-> > +#define HSCLKSETR_HSCLKRUN_LP		(0 << 0)
->=20
-> Mixing of BIT() and << looks kind of strange. Plus (0 << 0) is kind of
-> strange way to say 0. Not sure if this is worth fixing, but usually peopl=
-e
-> would not do special define for "NON_CONT" when it is 0 and they already
-> have "CONT" defined.
+if exists wic
+   deploy wic
+else
+   deploy tarball, kernel, etc.
+endif
 
-It is based on Renesas R-Car maintainer's suggestion[1].
+Would simplify the configuration back in .gitlab-ci.yaml
 
-[1] https://lore.kernel.org/all/YllPoxf6tAh%2FW+7e@pendragon.ideasonboard.c=
-om/
+Jan
 
-Cheers,
-Biju
+> +	if [ -f "${BASE_PATH}.tar.gz" ]; then
+> +		echo "Uploading artifacts..."
+> +		aws s3 cp --no-progress --acl public-read "${BASE_PATH}.tar.gz" "${S3_TARGET}"
+> +	fi
+>  
+> -KERNEL_IMAGE="$BASE_PATH-vmlinu[xz]"
+> -# iwg20m workaround
+> -if [ -f "build/tmp/deploy/images/$TARGET/zImage" ]; then
+> -	KERNEL_IMAGE=build/tmp/deploy/images/$TARGET/zImage
+> -fi
+> -# shellcheck disable=SC2086
+> -aws s3 cp --no-progress --acl public-read $KERNEL_IMAGE "${S3_TARGET}"
+> -aws s3 cp --no-progress --acl public-read "${BASE_PATH}-initrd.img" "${S3_TARGET}"
+> +	KERNEL_IMAGE="$BASE_PATH-vmlinu[xz]"
+> +	# iwg20m workaround
+> +	if [ -f "build/tmp/deploy/images/$TARGET/zImage" ]; then
+> +		KERNEL_IMAGE=build/tmp/deploy/images/$TARGET/zImage
+> +	fi
+> +	# shellcheck disable=SC2086
+> +	aws s3 cp --no-progress --acl public-read $KERNEL_IMAGE "${S3_TARGET}"
+> +	aws s3 cp --no-progress --acl public-read "${BASE_PATH}-initrd.img" "${S3_TARGET}"
+>  
+> -if [ "$DTB" != "none" ]; then
+> -	aws s3 cp --no-progress --acl public-read build/tmp/deploy/images/*/"$DTB" "${S3_TARGET}"
+> +	if [ "$DTB" != "none" ]; then
+> +		aws s3 cp --no-progress --acl public-read build/tmp/deploy/images/*/"$DTB" "${S3_TARGET}"
+> +	fi
+>  fi
+
+-- 
+Siemens AG, Technology
+Linux Expert Center
+
 
