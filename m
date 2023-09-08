@@ -2,65 +2,94 @@ Return-Path: <sai.sathujoda@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C39BBEE7FEB
-	for <webhook@archiver.kernel.org>; Fri,  8 Sep 2023 12:42:46 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.135])
- by mx.groups.io with SMTP id smtpd.web10.37803.1694176963300200050
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA723EE7FEB
+	for <webhook@archiver.kernel.org>; Fri,  8 Sep 2023 12:42:56 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.131])
+ by mx.groups.io with SMTP id smtpd.web11.38006.1694176966429744861
  for <cip-dev@lists.cip-project.org>;
- Fri, 08 Sep 2023 05:42:44 -0700
+ Fri, 08 Sep 2023 05:42:47 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.135, mailfrom: sai.sathujoda@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1801) id 388CgeeG2977150; Fri, 8 Sep 2023 21:42:41 +0900
-X-Iguazu-Qid: 2yAaEO0URXvSYDiD0S
-X-Iguazu-QSIG: v=2; s=0; t=1694176959; q=2yAaEO0URXvSYDiD0S; m=h93LUNx7ZZeC1/FOk9kxwL+dkXFQ9IkmPkgpdSfZ/rQ=
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.131, mailfrom: sai.sathujoda@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1120) id 388Cggca2121131; Fri, 8 Sep 2023 21:42:43 +0900
+X-Iguazu-Qid: 2rWgyA9ool9xfV7xTt
+X-Iguazu-QSIG: v=2; s=0; t=1694176961; q=2rWgyA9ool9xfV7xTt; m=nrN1Sl7jy1HERNtKIGZkperA6augSJ7OrEofxn4gbmk=
 Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1802) id 388Cgdh93215802
+	by relay.securemx.jp (mx-mr1121) id 388Cgemt227502
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 8 Sep 2023 21:42:39 +0900
+	Fri, 8 Sep 2023 21:42:41 +0900
 From: Sai.Sathujoda@toshiba-tsip.com
 To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
 Cc: Sai Sathujoda <Sai.Sathujoda@toshiba-tsip.com>,
         dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
-Subject: [isar-cip-core 1/3][v2] Kconfig: Opt additional IEC 62443-4-2 features when security option is selected
-Date: Fri,  8 Sep 2023 18:12:35 +0530
+Subject: [isar-cip-core 2/3][v2] deploy-cip-core.sh: Deploy only the .wic image if it is present
+Date: Fri,  8 Sep 2023 18:12:36 +0530
 X-TSB-HOP2: ON
-Message-Id: <20230908124237.508469-2-Sai.Sathujoda@toshiba-tsip.com>
+Message-Id: <20230908124237.508469-3-Sai.Sathujoda@toshiba-tsip.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20230908124237.508469-1-Sai.Sathujoda@toshiba-tsip.com>
 References: <20230908124237.508469-1-Sai.Sathujoda@toshiba-tsip.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 08 Sep 2023 12:42:38.0095 (UTC) FILETIME=[F2FBB1F0:01D9E251]
+X-OriginalArrivalTime: 08 Sep 2023 12:42:38.0110 (UTC) FILETIME=[F2FDFBE0:01D9E251]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 08 Sep 2023 12:42:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13009
+ <cip-dev@lists.cip-project.org>; Fri, 08 Sep 2023 12:42:56 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13010
 
 From: Sai Sathujoda <Sai.Sathujoda@toshiba-tsip.com>
 
-Data encryption, Secureboot and Swupdate options will be automatically
-selected when security extensions is selected.
+Deploy seperate artifacts like tar.gz, kernel and initrd image only
+if .wic image is not present.
 
 Signed-off-by: Sai Sathujoda <Sai.Sathujoda@toshiba-tsip.com>
 ---
- Kconfig | 3 +++
- 1 file changed, 3 insertions(+)
+ scripts/deploy-cip-core.sh | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/Kconfig b/Kconfig
-index ec49631..dca137d 100644
---- a/Kconfig
-+++ b/Kconfig
-@@ -170,6 +170,9 @@ config KAS_INCLUDE_IMAGE_FORMAT
+diff --git a/scripts/deploy-cip-core.sh b/scripts/deploy-cip-core.sh
+index eaa8974..5855acb 100755
+--- a/scripts/deploy-cip-core.sh
++++ b/scripts/deploy-cip-core.sh
+@@ -34,22 +34,22 @@ if [ -f "${BASE_PATH}.wic" ]; then
  
- config IMAGE_SECURITY
- 	bool "Security extensions"
-+	select IMAGE_DATA_ENCRYPTION
-+        help
-+          This enables security, encryption, secureboot and swupdate for IEC 62443-4-2.
+ 	echo "Uploading artifacts..."
+ 	aws s3 cp --no-progress --acl public-read "${BASE_PATH}.wic.xz" "${S3_TARGET}"
+-fi
+-
+-if [ -f "${BASE_PATH}.tar.gz" ]; then
+-	echo "Uploading artifacts..."
+-	aws s3 cp --no-progress --acl public-read "${BASE_PATH}.tar.gz" "${S3_TARGET}"
+-fi
++else
++	if [ -f "${BASE_PATH}.tar.gz" ]; then
++		echo "Uploading artifacts..."
++		aws s3 cp --no-progress --acl public-read "${BASE_PATH}.tar.gz" "${S3_TARGET}"
++	fi
  
- config KAS_INCLUDE_SECURITY
- 	string
+-KERNEL_IMAGE="$BASE_PATH-vmlinu[xz]"
+-# iwg20m workaround
+-if [ -f "build/tmp/deploy/images/$TARGET/zImage" ]; then
+-	KERNEL_IMAGE=build/tmp/deploy/images/$TARGET/zImage
+-fi
+-# shellcheck disable=SC2086
+-aws s3 cp --no-progress --acl public-read $KERNEL_IMAGE "${S3_TARGET}"
+-aws s3 cp --no-progress --acl public-read "${BASE_PATH}-initrd.img" "${S3_TARGET}"
++	KERNEL_IMAGE="$BASE_PATH-vmlinu[xz]"
++	# iwg20m workaround
++	if [ -f "build/tmp/deploy/images/$TARGET/zImage" ]; then
++		KERNEL_IMAGE=build/tmp/deploy/images/$TARGET/zImage
++	fi
++	# shellcheck disable=SC2086
++	aws s3 cp --no-progress --acl public-read $KERNEL_IMAGE "${S3_TARGET}"
++	aws s3 cp --no-progress --acl public-read "${BASE_PATH}-initrd.img" "${S3_TARGET}"
+ 
+-if [ "$DTB" != "none" ]; then
+-	aws s3 cp --no-progress --acl public-read build/tmp/deploy/images/*/"$DTB" "${S3_TARGET}"
++	if [ "$DTB" != "none" ]; then
++		aws s3 cp --no-progress --acl public-read build/tmp/deploy/images/*/"$DTB" "${S3_TARGET}"
++	fi
+ fi
 -- 
 2.30.2
 
