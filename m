@@ -1,87 +1,61 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <venkata.pyla@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4975EE7FF4
-	for <webhook@archiver.kernel.org>; Mon, 11 Sep 2023 08:27:38 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web10.53919.1694420853385779122
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 506CEEEB57D
+	for <webhook@archiver.kernel.org>; Mon, 11 Sep 2023 13:32:01 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.web11.58498.1694439112349762767
  for <cip-dev@lists.cip-project.org>;
- Mon, 11 Sep 2023 01:27:34 -0700
+ Mon, 11 Sep 2023 06:31:53 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id CC8061C0004; Mon, 11 Sep 2023 10:27:30 +0200 (CEST)
-Date: Mon, 11 Sep 2023 10:27:30 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Ulrich Hecht <uli@fpond.eu>
-Cc: cip-dev@lists.cip-project.org, Pavel Machek <pavel@denx.de>
-Subject: Re: [cip-dev] Request for reviews for 4.4-st44 4.4-cip79
-Message-ID: <ZP7PcjqsgXlrMHj7@duo.ucw.cz>
-References: <1583308606.3395319.1693820637255@webmail.strato.com>
- <ZPXC40QtoXU/EYpO@duo.ucw.cz>
- <342239032.350330.1693989175762@webmail.strato.com>
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.158, mailfrom: venkata.pyla@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 38BDVn814008036; Mon, 11 Sep 2023 22:31:50 +0900
+X-Iguazu-Qid: 2rWgyA9ooqJg4PHcae
+X-Iguazu-QSIG: v=2; s=0; t=1694439109; q=2rWgyA9ooqJg4PHcae; m=tXyqDy4g8phqo2m0Oj/HGx/kqh9HaW6kxEj3dNoYdyo=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1123) id 38BDVm6p3612965
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Mon, 11 Sep 2023 22:31:48 +0900
+From: venkata.pyla@toshiba-tsip.com
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Cc: venkata pyla <venkata.pyla@toshiba-tsip.com>,
+        dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
+Subject: [isar-cip-core 0/5] Add security and BBB targets in
+Date: Mon, 11 Sep 2023 19:01:42 +0530
+X-TSB-HOP2: ON
+Message-Id: <20230911133147.3164-1-venkata.pyla@toshiba-tsip.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jV5Z/a8xgvN2L6kt"
-Content-Disposition: inline
-In-Reply-To: <342239032.350330.1693989175762@webmail.strato.com>
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 11 Sep 2023 13:31:46.0754 (UTC) FILETIME=[4FC29A20:01D9E4B4]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 11 Sep 2023 08:27:38 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13017
+ <cip-dev@lists.cip-project.org>; Mon, 11 Sep 2023 13:32:01 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13018
+
+From: venkata pyla <venkata.pyla@toshiba-tsip.com>
+
+Hi,
+
+This series patch enables the security extensions and BBB target to the
+reproducible check CI.
 
 
---jV5Z/a8xgvN2L6kt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+venkata pyla (5):
+  .reproducible-check-ci.yml: Set default values in base job
+  .reproducible-check-ci.yml: Enable security target
+  reproducible-check: Add option to pass extensions of the image
+  .reproducible-check-ci.yml: Add BBB target
+  scripts/repro-tests.sh: Add *wic.p0 image into reproducible tests
 
-Hi!
+ .reproducible-check-ci.yml | 31 ++++++++++++++++++++++---------
+ scripts/repro-tests.sh     | 14 ++++++++++++--
+ 2 files changed, 34 insertions(+), 11 deletions(-)
 
-> Thanks for the reviews!
->=20
-> > On 09/04/2023 1:43 PM CEST Pavel Machek <pavel@denx.de> wrote:
-> > Most look okay to me. I'd not put too much work with READ_ONCE
-> > annotations or qla2xxx warning tweaks, they don't really fix any real
-> > bugs. "ext2: Drop fragment support" probably does not hurt, but surely
-> > does not fix anything. I guess we can keep it when -stable took it,
-> > but...
->=20
-> I'm inclined to include such things if they are trivial to adjust because=
- I think it will save time fixing up future patches.
->=20
-> > "usb: ohci-at91: Fix the unhandle interrupt when resume" is wrong, it
-> > should do ohci_resume() once, not twice.
->=20
-> Correct, I'll fix that up.
->=20
-> > "netfilter: conntrack: Avoid nf_ct_helper_hash uses after free" is at
-> > least incomplete -- nf_conntrack_helper_init() does not set the hash
-> > to NULL in the error path. (Mainline does not have that bug, and code
-> > change a lot there).
->=20
-> Seems like that applies to all backports between 4.14 and 5.10, at least.=
- I'll leave that out for now and ask stable about it.
+-- 
+2.20.1
 
-Thank you!
 
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---jV5Z/a8xgvN2L6kt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZP7PcgAKCRAw5/Bqldv6
-8vk8AKDDMZyaXTztS5CDyq7gzVPVRZ+rygCfbtNUysnjsAfAhQX0Hn93EdLlE30=
-=Mz2U
------END PGP SIGNATURE-----
-
---jV5Z/a8xgvN2L6kt--
 
