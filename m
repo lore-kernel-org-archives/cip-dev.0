@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A009EEB57D
-	for <webhook@archiver.kernel.org>; Mon, 11 Sep 2023 14:47:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 968FFEE57DF
+	for <webhook@archiver.kernel.org>; Mon, 11 Sep 2023 14:47:32 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web10.60527.1694443636159672754
  for <cip-dev@lists.cip-project.org>;
- Mon, 11 Sep 2023 07:47:16 -0700
+ Mon, 11 Sep 2023 07:47:25 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.02,244,1688396400"; 
-   d="scan'208";a="175705247"
+   d="scan'208";a="175705266"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 11 Sep 2023 23:47:15 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 11 Sep 2023 23:47:24 +0900
 Received: from localhost.localdomain (unknown [10.226.92.180])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id D9D1B40029C1;
-	Mon, 11 Sep 2023 23:47:13 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 22FAD4003FDD;
+	Mon, 11 Sep 2023 23:47:22 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 04/15] i2c: Add i2c_get_match_data()
-Date: Mon, 11 Sep 2023 15:46:51 +0100
-Message-Id: <20230911144702.948246-5-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 08/15] regulator: raa215300: Add const definition
+Date: Mon, 11 Sep 2023 15:46:55 +0100
+Message-Id: <20230911144702.948246-9-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230911144702.948246-1-biju.das.jz@bp.renesas.com>
 References: <20230911144702.948246-1-biju.das.jz@bp.renesas.com>
@@ -34,67 +34,36 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 11 Sep 2023 14:47:22 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13028
+ <cip-dev@lists.cip-project.org>; Mon, 11 Sep 2023 14:47:32 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13032
 
-commit 564d73c4d9201526bd976b9379d2aaf1a7133e84 upstream.
+commit 727d7c1c3695657873d62030b968ba97c8698c54 upstream.
 
-Add i2c_get_match_data() to get match data for I2C, ACPI and
-DT-based matching, so that we can optimize the driver code.
+Add const definition to the initialized local variable name to avoid
+overriding. Also the second parameter in strscpy is const char * instead of
+char *.
 
-Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-[wsa: simplified var initialization]
-Signed-off-by: Wolfram Sang <wsa@kernel.org>
+Link: https://lore.kernel.org/r/20230816135550.146657-3-biju.das.jz@bp.renesas.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/i2c/i2c-core-base.c | 19 +++++++++++++++++++
- include/linux/i2c.h         |  2 ++
- 2 files changed, 21 insertions(+)
+ drivers/regulator/raa215300.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 34fecf97a355..09f9193eee43 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -92,6 +92,25 @@ const struct i2c_device_id *i2c_match_id(const struct i2c_device_id *id,
- }
- EXPORT_SYMBOL_GPL(i2c_match_id);
+diff --git a/drivers/regulator/raa215300.c b/drivers/regulator/raa215300.c
+index 253645696d0b..c8ab33b9c3f5 100644
+--- a/drivers/regulator/raa215300.c
++++ b/drivers/regulator/raa215300.c
+@@ -119,7 +119,7 @@ static int raa215300_i2c_probe(struct i2c_client *client)
+ 	}
  
-+const void *i2c_get_match_data(const struct i2c_client *client)
-+{
-+	struct i2c_driver *driver = to_i2c_driver(client->dev.driver);
-+	const struct i2c_device_id *match;
-+	const void *data;
-+
-+	data = device_get_match_data(&client->dev);
-+	if (!data) {
-+		match = i2c_match_id(driver->id_table, client);
-+		if (!match)
-+			return NULL;
-+
-+		data = (const void *)match->driver_data;
-+	}
-+
-+	return data;
-+}
-+EXPORT_SYMBOL(i2c_get_match_data);
-+
- static int i2c_device_match(struct device *dev, struct device_driver *drv)
- {
- 	struct i2c_client	*client = i2c_verify_client(dev);
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index a670ae129f4b..7523ebad9151 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -342,6 +342,8 @@ struct i2c_adapter *i2c_verify_adapter(struct device *dev);
- const struct i2c_device_id *i2c_match_id(const struct i2c_device_id *id,
- 					 const struct i2c_client *client);
- 
-+const void *i2c_get_match_data(const struct i2c_client *client);
-+
- static inline struct i2c_client *kobj_to_i2c_client(struct kobject *kobj)
- {
- 	struct device * const dev = kobj_to_dev(kobj);
+ 	if (clk_name) {
+-		char *name = pmic_version >= 0x12 ? "isl1208" : "raa215300_a0";
++		const char *name = pmic_version >= 0x12 ? "isl1208" : "raa215300_a0";
+ 		struct device_node *np = client->dev.of_node;
+ 		u32 addr = RAA215300_RTC_DEFAULT_ADDR;
+ 		struct i2c_board_info info = {};
 -- 
 2.25.1
 
