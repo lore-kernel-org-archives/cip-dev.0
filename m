@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 993ABEEB580
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD6DEE7FF4
 	for <webhook@archiver.kernel.org>; Mon, 11 Sep 2023 14:47:22 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.60527.1694443636159672754
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web10.60522.1694443629451194136
  for <cip-dev@lists.cip-project.org>;
- Mon, 11 Sep 2023 07:47:20 -0700
+ Mon, 11 Sep 2023 07:47:14 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.02,244,1688396400"; 
-   d="scan'208";a="175705253"
+   d="scan'208";a="179428507"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 11 Sep 2023 23:47:20 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 11 Sep 2023 23:47:13 +0900
 Received: from localhost.localdomain (unknown [10.226.92.180])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 5F70940029C1;
-	Mon, 11 Sep 2023 23:47:18 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 976CF4004940;
+	Mon, 11 Sep 2023 23:47:11 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 06/15] regulator: raa215300: Change the scope of the variables {clkin_name, xin_name}
-Date: Mon, 11 Sep 2023 15:46:53 +0100
-Message-Id: <20230911144702.948246-7-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 03/15] clk: fixed-rate: add devm_clk_hw_register_fixed_rate
+Date: Mon, 11 Sep 2023 15:46:50 +0100
+Message-Id: <20230911144702.948246-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230911144702.948246-1-biju.das.jz@bp.renesas.com>
 References: <20230911144702.948246-1-biju.das.jz@bp.renesas.com>
@@ -35,74 +35,177 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 11 Sep 2023 14:47:22 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13030
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13027
 
-commit 42a95739c5bc4d7a6e93a43117e9283598ba2287 upstream.
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Change the scope of the variables {clkin_name, xin_name} from global->local
-to fix the below warning.
+commit 1d7d20658534c7d36fe6f4252f6f1a27d9631a99 upstream.
 
-drivers/regulator/raa215300.c:42:12: sparse: sparse: symbol 'xin_name' was
-not declared. Should it be static?
+Add devm_clk_hw_register_fixed_rate(), devres-managed helper to register
+fixed-rate clock.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202306250552.Fan9WTiN-lkp@intel.com/
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20230629104200.102663-1-biju.das.jz@bp.renesas.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Link: https://lore.kernel.org/r/20220916061740.87167-3-dmitry.baryshkov@linaro.org
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/regulator/raa215300.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ drivers/clk/clk-fixed-rate.c | 28 ++++++++++++++++++++----
+ include/linux/clk-provider.h | 41 ++++++++++++++++++++++++++++++------
+ 2 files changed, 58 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/regulator/raa215300.c b/drivers/regulator/raa215300.c
-index 24a1c89f5dbc..8e1a4c86b978 100644
---- a/drivers/regulator/raa215300.c
-+++ b/drivers/regulator/raa215300.c
-@@ -38,8 +38,6 @@
- #define RAA215300_REG_BLOCK_EN_RTC_EN	BIT(6)
- #define RAA215300_RTC_DEFAULT_ADDR	0x6f
+diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
+index 45501637705c..62e994d18fe2 100644
+--- a/drivers/clk/clk-fixed-rate.c
++++ b/drivers/clk/clk-fixed-rate.c
+@@ -49,12 +49,24 @@ const struct clk_ops clk_fixed_rate_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_fixed_rate_ops);
  
--const char *clkin_name = "clkin";
--const char *xin_name = "xin";
- static struct clk *clk;
- 
- static const struct regmap_config raa215300_regmap_config = {
-@@ -71,8 +69,10 @@ static int raa215300_clk_present(struct i2c_client *client, const char *name)
- static int raa215300_i2c_probe(struct i2c_client *client)
++static void devm_clk_hw_register_fixed_rate_release(struct device *dev, void *res)
++{
++	struct clk_fixed_rate *fix = res;
++
++	/*
++	 * We can not use clk_hw_unregister_fixed_rate, since it will kfree()
++	 * the hw, resulting in double free. Just unregister the hw and let
++	 * devres code kfree() it.
++	 */
++	clk_hw_unregister(&fix->hw);
++}
++
+ struct clk_hw *__clk_hw_register_fixed_rate(struct device *dev,
+ 		struct device_node *np, const char *name,
+ 		const char *parent_name, const struct clk_hw *parent_hw,
+ 		const struct clk_parent_data *parent_data, unsigned long flags,
+ 		unsigned long fixed_rate, unsigned long fixed_accuracy,
+-		unsigned long clk_fixed_flags)
++		unsigned long clk_fixed_flags, bool devm)
  {
- 	struct device *dev = &client->dev;
--	const char *clk_name = xin_name;
-+	const char *clkin_name = "clkin";
- 	unsigned int pmic_version, val;
-+	const char *xin_name = "xin";
-+	const char *clk_name = NULL;
- 	struct regmap *regmap;
- 	int ret;
+ 	struct clk_fixed_rate *fixed;
+ 	struct clk_hw *hw;
+@@ -62,7 +74,11 @@ struct clk_hw *__clk_hw_register_fixed_rate(struct device *dev,
+ 	int ret = -EINVAL;
  
-@@ -114,15 +114,17 @@ static int raa215300_i2c_probe(struct i2c_client *client)
- 	ret = raa215300_clk_present(client, xin_name);
- 	if (ret < 0) {
- 		return ret;
--	} else if (!ret) {
-+	} else if (ret) {
-+		clk_name = xin_name;
-+	} else {
- 		ret = raa215300_clk_present(client, clkin_name);
- 		if (ret < 0)
- 			return ret;
--
--		clk_name = clkin_name;
-+		if (ret)
-+			clk_name = clkin_name;
- 	}
+ 	/* allocate fixed-rate clock */
+-	fixed = kzalloc(sizeof(*fixed), GFP_KERNEL);
++	if (devm)
++		fixed = devres_alloc(devm_clk_hw_register_fixed_rate_release,
++				     sizeof(*fixed), GFP_KERNEL);
++	else
++		fixed = kzalloc(sizeof(*fixed), GFP_KERNEL);
+ 	if (!fixed)
+ 		return ERR_PTR(-ENOMEM);
  
--	if (ret) {
-+	if (clk_name) {
- 		char *name = pmic_version >= 0x12 ? "isl1208" : "raa215300_a0";
- 		struct device_node *np = client->dev.of_node;
- 		u32 addr = RAA215300_RTC_DEFAULT_ADDR;
+@@ -90,9 +106,13 @@ struct clk_hw *__clk_hw_register_fixed_rate(struct device *dev,
+ 	else if (np)
+ 		ret = of_clk_hw_register(np, hw);
+ 	if (ret) {
+-		kfree(fixed);
++		if (devm)
++			devres_free(fixed);
++		else
++			kfree(fixed);
+ 		hw = ERR_PTR(ret);
+-	}
++	} else if (devm)
++		devres_add(dev, fixed);
+ 
+ 	return hw;
+ }
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index dab50fbca954..311d343d2358 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -350,7 +350,7 @@ struct clk_hw *__clk_hw_register_fixed_rate(struct device *dev,
+ 		const char *parent_name, const struct clk_hw *parent_hw,
+ 		const struct clk_parent_data *parent_data, unsigned long flags,
+ 		unsigned long fixed_rate, unsigned long fixed_accuracy,
+-		unsigned long clk_fixed_flags);
++		unsigned long clk_fixed_flags, bool devm);
+ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		unsigned long fixed_rate);
+@@ -365,7 +365,20 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
+  */
+ #define clk_hw_register_fixed_rate(dev, name, parent_name, flags, fixed_rate)  \
+ 	__clk_hw_register_fixed_rate((dev), NULL, (name), (parent_name), NULL, \
+-				     NULL, (flags), (fixed_rate), 0, 0)
++				     NULL, (flags), (fixed_rate), 0, 0, false)
++
++/**
++ * devm_clk_hw_register_fixed_rate - register fixed-rate clock with the clock
++ * framework
++ * @dev: device that is registering this clock
++ * @name: name of this clock
++ * @parent_name: name of clock's parent
++ * @flags: framework-specific flags
++ * @fixed_rate: non-adjustable clock rate
++ */
++#define devm_clk_hw_register_fixed_rate(dev, name, parent_name, flags, fixed_rate)  \
++	__clk_hw_register_fixed_rate((dev), NULL, (name), (parent_name), NULL, \
++				     NULL, (flags), (fixed_rate), 0, 0, true)
+ /**
+  * clk_hw_register_fixed_rate_parent_hw - register fixed-rate clock with
+  * the clock framework
+@@ -378,7 +391,7 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
+ #define clk_hw_register_fixed_rate_parent_hw(dev, name, parent_hw, flags,     \
+ 					     fixed_rate)		      \
+ 	__clk_hw_register_fixed_rate((dev), NULL, (name), NULL, (parent_hw),  \
+-				     NULL, (flags), (fixed_rate), 0, 0)
++				     NULL, (flags), (fixed_rate), 0, 0, false)
+ /**
+  * clk_hw_register_fixed_rate_parent_data - register fixed-rate clock with
+  * the clock framework
+@@ -392,7 +405,7 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
+ 					     fixed_rate)		      \
+ 	__clk_hw_register_fixed_rate((dev), NULL, (name), NULL, NULL,	      \
+ 				     (parent_data), (flags), (fixed_rate), 0, \
+-				     0)
++				     0, false)
+ /**
+  * clk_hw_register_fixed_rate_with_accuracy - register fixed-rate clock with
+  * the clock framework
+@@ -408,7 +421,7 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
+ 						 fixed_accuracy)	      \
+ 	__clk_hw_register_fixed_rate((dev), NULL, (name), (parent_name),      \
+ 				     NULL, NULL, (flags), (fixed_rate),       \
+-				     (fixed_accuracy), 0)
++				     (fixed_accuracy), 0, false)
+ /**
+  * clk_hw_register_fixed_rate_with_accuracy_parent_hw - register fixed-rate
+  * clock with the clock framework
+@@ -423,7 +436,7 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
+ 		parent_hw, flags, fixed_rate, fixed_accuracy)		      \
+ 	__clk_hw_register_fixed_rate((dev), NULL, (name), NULL, (parent_hw)   \
+ 				     NULL, NULL, (flags), (fixed_rate),	      \
+-				     (fixed_accuracy), 0)
++				     (fixed_accuracy), 0, false)
+ /**
+  * clk_hw_register_fixed_rate_with_accuracy_parent_data - register fixed-rate
+  * clock with the clock framework
+@@ -438,7 +451,21 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
+ 		parent_data, flags, fixed_rate, fixed_accuracy)		      \
+ 	__clk_hw_register_fixed_rate((dev), NULL, (name), NULL, NULL,	      \
+ 				     (parent_data), NULL, (flags),	      \
+-				     (fixed_rate), (fixed_accuracy), 0)
++				     (fixed_rate), (fixed_accuracy), 0, false)
++/**
++ * clk_hw_register_fixed_rate_parent_accuracy - register fixed-rate clock with
++ * the clock framework
++ * @dev: device that is registering this clock
++ * @name: name of this clock
++ * @parent_name: name of clock's parent
++ * @flags: framework-specific flags
++ * @fixed_rate: non-adjustable clock rate
++ */
++#define clk_hw_register_fixed_rate_parent_accuracy(dev, name, parent_data,    \
++						   flags, fixed_rate)	      \
++	__clk_hw_register_fixed_rate((dev), NULL, (name), NULL, NULL,      \
++				     (parent_data), (flags), (fixed_rate), 0,    \
++				     CLK_FIXED_RATE_PARENT_ACCURACY, false)
+ 
+ void clk_unregister_fixed_rate(struct clk *clk);
+ void clk_hw_unregister_fixed_rate(struct clk_hw *hw);
 -- 
 2.25.1
 
