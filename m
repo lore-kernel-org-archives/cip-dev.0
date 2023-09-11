@@ -2,79 +2,108 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF596EEB581
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E50EE7FF4
 	for <webhook@archiver.kernel.org>; Mon, 11 Sep 2023 14:47:32 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.60527.1694443636159672754
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web11.60680.1694443643219017181
  for <cip-dev@lists.cip-project.org>;
- Mon, 11 Sep 2023 07:47:32 -0700
+ Mon, 11 Sep 2023 07:47:23 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.02,244,1688396400"; 
-   d="scan'208";a="175705274"
+   d="scan'208";a="179428525"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 11 Sep 2023 23:47:31 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 11 Sep 2023 23:47:22 +0900
 Received: from localhost.localdomain (unknown [10.226.92.180])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id D22A14004940;
-	Mon, 11 Sep 2023 23:47:29 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 964784003FDD;
+	Mon, 11 Sep 2023 23:47:20 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 11/15] rtc: isl1208: Simplify probe()
-Date: Mon, 11 Sep 2023 15:46:58 +0100
-Message-Id: <20230911144702.948246-12-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 07/15] regulator: raa215300: Fix resource leak in case of error
+Date: Mon, 11 Sep 2023 15:46:54 +0100
+Message-Id: <20230911144702.948246-8-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230911144702.948246-1-biju.das.jz@bp.renesas.com>
 References: <20230911144702.948246-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 11 Sep 2023 14:47:32 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13035
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13031
 
-commit b7f73b6e921b457a222e86cf53fe3950c6b5aed5 upstream.
+commit e21ac64e669e960688e79bf5babeed63132dac8a upstream.
 
-Simplify the probe() by replacing of_device_get_match_data() and
-i2c_match_id() by i2c_get_match_data() as we have similar I2C
-and DT-based matching table.
+The clk_register_clkdev() allocates memory by calling vclkdev_alloc() and
+this memory is not freed in the error path. Similarly, resources allocated
+by clk_register_fixed_rate() are not freed in the error path.
 
+Fix these issues by using devm_clk_hw_register_fixed_rate() and
+devm_clk_hw_register_clkdev().
+
+After this, the static variable clk is not needed. Replace it with 
+local variable hw in probe() and drop calling clk_unregister_fixed_rate()
+from raa215300_rtc_unregister_device().
+
+Fixes: 7bce16630837 ("regulator: Add Renesas PMIC RAA215300 driver")
+Cc: stable@kernel.org
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20230710114747.106496-1-biju.das.jz@bp.renesas.com
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Link: https://lore.kernel.org/r/20230816135550.146657-2-biju.das.jz@bp.renesas.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/rtc/rtc-isl1208.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+ drivers/regulator/raa215300.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/rtc/rtc-isl1208.c b/drivers/rtc/rtc-isl1208.c
-index a6f74cbc8c0a..92ee75fbf4b7 100644
---- a/drivers/rtc/rtc-isl1208.c
-+++ b/drivers/rtc/rtc-isl1208.c
-@@ -862,15 +862,9 @@ isl1208_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 	i2c_set_clientdata(client, isl1208);
+diff --git a/drivers/regulator/raa215300.c b/drivers/regulator/raa215300.c
+index 8e1a4c86b978..253645696d0b 100644
+--- a/drivers/regulator/raa215300.c
++++ b/drivers/regulator/raa215300.c
+@@ -38,8 +38,6 @@
+ #define RAA215300_REG_BLOCK_EN_RTC_EN	BIT(6)
+ #define RAA215300_RTC_DEFAULT_ADDR	0x6f
  
- 	/* Determine which chip we have */
--	if (client->dev.of_node) {
--		isl1208->config = of_device_get_match_data(&client->dev);
--		if (!isl1208->config)
--			return -ENODEV;
--	} else {
--		if (!id)
--			return -ENODEV;
--		isl1208->config = (struct isl1208_config *)id->driver_data;
+-static struct clk *clk;
+-
+ static const struct regmap_config raa215300_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+@@ -49,10 +47,6 @@ static const struct regmap_config raa215300_regmap_config = {
+ static void raa215300_rtc_unregister_device(void *data)
+ {
+ 	i2c_unregister_device(data);
+-	if (!clk) {
+-		clk_unregister_fixed_rate(clk);
+-		clk = NULL;
 -	}
-+	isl1208->config = i2c_get_match_data(client);
-+	if (!isl1208->config)
-+		return -ENODEV;
+ }
  
- 	rc = isl1208_clk_present(client, "xin");
- 	if (rc < 0)
+ static int raa215300_clk_present(struct i2c_client *client, const char *name)
+@@ -130,10 +124,16 @@ static int raa215300_i2c_probe(struct i2c_client *client)
+ 		u32 addr = RAA215300_RTC_DEFAULT_ADDR;
+ 		struct i2c_board_info info = {};
+ 		struct i2c_client *rtc_client;
++		struct clk_hw *hw;
+ 		ssize_t size;
+ 
+-		clk = clk_register_fixed_rate(NULL, clk_name, NULL, 0, 32000);
+-		clk_register_clkdev(clk, clk_name, NULL);
++		hw = devm_clk_hw_register_fixed_rate(dev, clk_name, NULL, 0, 32000);
++		if (IS_ERR(hw))
++			return PTR_ERR(hw);
++
++		ret = devm_clk_hw_register_clkdev(dev, hw, clk_name, NULL);
++		if (ret)
++			return dev_err_probe(dev, ret, "Failed to initialize clkdev\n");
+ 
+ 		if (np) {
+ 			int i;
 -- 
 2.25.1
 
