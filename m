@@ -2,72 +2,174 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B78CA0ED4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94319CA0ED7
 	for <webhook@archiver.kernel.org>; Tue, 12 Sep 2023 13:51:58 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web10.25384.1694526707105340650
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web11.25605.1694526715089259621
  for <cip-dev@lists.cip-project.org>;
- Tue, 12 Sep 2023 06:51:52 -0700
+ Tue, 12 Sep 2023 06:51:55 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.02,139,1688396400"; 
-   d="scan'208";a="179548611"
+   d="scan'208";a="175825314"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 12 Sep 2023 22:51:52 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 12 Sep 2023 22:51:54 +0900
 Received: from localhost.localdomain (unknown [10.226.93.97])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 5EAE7400B9C7;
-	Tue, 12 Sep 2023 22:51:50 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id C6CD4400B9CD;
+	Tue, 12 Sep 2023 22:51:52 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 06/12] mfd: rz-mtu3: Fix COMPILE_TEST build error
-Date: Tue, 12 Sep 2023 14:51:28 +0100
-Message-Id: <20230912135134.299576-7-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 07/12] mfd: rz-mtu3: Link time dependencies
+Date: Tue, 12 Sep 2023 14:51:29 +0100
+Message-Id: <20230912135134.299576-8-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230912135134.299576-1-biju.das.jz@bp.renesas.com>
 References: <20230912135134.299576-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 12 Sep 2023 13:51:58 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13067
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13068
 
-commit 94f34d99401c23247f940e9d1b6408236a3a3769 upstream.
+From: Arnd Bergmann <arnd@arndb.de>
 
-When (MFD) RZ_MTU3=m and PWM_RZ_MTU3=y, It hits the below error
-aarch64-linux-gnu-ld: rz-mtu3.c:(.text+0x544): undefined reference to `mfd_remove_devices'
+commit 10d3340441bd0db857fc7fcb1733a800acf47a3d upstream.
 
-Fix this issue by selecting MFD_CORE.
+The new set of drivers for RZ/G2L MTU3a tries to enable compile-testing the
+individual client drivers even when the MFD portion is disabled but gets it
+wrong, causing a link failure when the core is in a loadable module but the
+other drivers are built-in:
 
-Reported-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Closes: https://lore.kernel.org/linux-pwm/20230718090023.wo6m6ffzaifgctkj@pengutronix.de/
-Suggested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20230718134314.118333-1-biju.das.jz@bp.renesas.com
+x86_64-linux-ld: drivers/pwm/pwm-rz-mtu3.o: in function `rz_mtu3_pwm_apply':
+pwm-rz-mtu3.c:(.text+0x4bf): undefined reference to `rz_mtu3_8bit_ch_write'
+x86_64-linux-ld: pwm-rz-mtu3.c:(.text+0x509): undefined reference to `rz_mtu3_disable'
+
+arm-linux-gnueabi-ld: drivers/counter/rz-mtu3-cnt.o: in function `rz_mtu3_cascade_counts_enable_get':
+rz-mtu3-cnt.c:(.text+0xbec): undefined reference to `rz_mtu3_shared_reg_read'
+
+It seems better not to add the extra complexity here but instead just use
+a normal hard dependency, so remove the #else portion in the header along
+with the "|| COMPILE_TEST". This could also be fixed by having slightly more
+elaborate Kconfig dependencies or using the cursed 'IS_REACHABLE()' helper,
+but in practice it's already possible to compile-test all these drivers
+by enabling the mtd portion.
+
+Fixes: 254d3a727421c ("pwm: Add Renesas RZ/G2L MTU3a PWM driver")
+Fixes: 0be8907359df4 ("counter: Add Renesas RZ/G2L MTU3a counter driver")
+Fixes: 654c293e1687b ("mfd: Add Renesas RZ/G2L MTU3a core driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Thierry Reding <thierry.reding@gmail.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Link: https://lore.kernel.org/r/20230719090430.1925182-1-arnd@kernel.org
 Signed-off-by: Lee Jones <lee@kernel.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/mfd/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pwm/Kconfig         |  2 +-
+ include/linux/mfd/rz-mtu3.h | 66 -------------------------------------
+ 2 files changed, 1 insertion(+), 67 deletions(-)
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index dacac8c076e6..49d57d5d625a 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -1249,6 +1249,7 @@ config MFD_SC27XX_PMIC
- config RZ_MTU3
- 	tristate "Renesas RZ/G2L MTU3a core driver"
- 	depends on (ARCH_RZG2L && OF) || COMPILE_TEST
-+	select MFD_CORE
+diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+index 629c55e28cd2..f2df67d3ce47 100644
+--- a/drivers/pwm/Kconfig
++++ b/drivers/pwm/Kconfig
+@@ -410,7 +410,7 @@ config PWM_ROCKCHIP
+ 
+ config PWM_RZ_MTU3
+ 	tristate "Renesas RZ/G2L MTU3a PWM Timer support"
+-	depends on RZ_MTU3 || COMPILE_TEST
++	depends on RZ_MTU3
+ 	depends on HAS_IOMEM
  	help
- 	  Select this option to enable Renesas RZ/G2L MTU3a core driver for
- 	  the Multi-Function Timer Pulse Unit 3 (MTU3a) hardware available
+ 	  This driver exposes the MTU3a PWM Timer controller found in Renesas
+diff --git a/include/linux/mfd/rz-mtu3.h b/include/linux/mfd/rz-mtu3.h
+index c5173bc06270..8421d49500bf 100644
+--- a/include/linux/mfd/rz-mtu3.h
++++ b/include/linux/mfd/rz-mtu3.h
+@@ -151,7 +151,6 @@ struct rz_mtu3 {
+ 	void *priv_data;
+ };
+ 
+-#if IS_ENABLED(CONFIG_RZ_MTU3)
+ static inline bool rz_mtu3_request_channel(struct rz_mtu3_channel *ch)
+ {
+ 	mutex_lock(&ch->lock);
+@@ -188,70 +187,5 @@ void rz_mtu3_32bit_ch_write(struct rz_mtu3_channel *ch, u16 off, u32 val);
+ void rz_mtu3_shared_reg_write(struct rz_mtu3_channel *ch, u16 off, u16 val);
+ void rz_mtu3_shared_reg_update_bit(struct rz_mtu3_channel *ch, u16 off,
+ 				   u16 pos, u8 val);
+-#else
+-static inline bool rz_mtu3_request_channel(struct rz_mtu3_channel *ch)
+-{
+-	return false;
+-}
+-
+-static inline void rz_mtu3_release_channel(struct rz_mtu3_channel *ch)
+-{
+-}
+-
+-static inline bool rz_mtu3_is_enabled(struct rz_mtu3_channel *ch)
+-{
+-	return false;
+-}
+-
+-static inline void rz_mtu3_disable(struct rz_mtu3_channel *ch)
+-{
+-}
+-
+-static inline int rz_mtu3_enable(struct rz_mtu3_channel *ch)
+-{
+-	return 0;
+-}
+-
+-static inline u8 rz_mtu3_8bit_ch_read(struct rz_mtu3_channel *ch, u16 off)
+-{
+-	return 0;
+-}
+-
+-static inline u16 rz_mtu3_16bit_ch_read(struct rz_mtu3_channel *ch, u16 off)
+-{
+-	return 0;
+-}
+-
+-static inline u32 rz_mtu3_32bit_ch_read(struct rz_mtu3_channel *ch, u16 off)
+-{
+-	return 0;
+-}
+-
+-static inline u16 rz_mtu3_shared_reg_read(struct rz_mtu3_channel *ch, u16 off)
+-{
+-	return 0;
+-}
+-
+-static inline void rz_mtu3_8bit_ch_write(struct rz_mtu3_channel *ch, u16 off, u8 val)
+-{
+-}
+-
+-static inline void rz_mtu3_16bit_ch_write(struct rz_mtu3_channel *ch, u16 off, u16 val)
+-{
+-}
+-
+-static inline void rz_mtu3_32bit_ch_write(struct rz_mtu3_channel *ch, u16 off, u32 val)
+-{
+-}
+-
+-static inline void rz_mtu3_shared_reg_write(struct rz_mtu3_channel *ch, u16 off, u16 val)
+-{
+-}
+-
+-static inline void rz_mtu3_shared_reg_update_bit(struct rz_mtu3_channel *ch,
+-						 u16 off, u16 pos, u8 val)
+-{
+-}
+-#endif
+ 
+ #endif /* __MFD_RZ_MTU3_H__ */
 -- 
 2.25.1
 
