@@ -2,82 +2,102 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77861CA0ED4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73D27CA0EC3
 	for <webhook@archiver.kernel.org>; Tue, 12 Sep 2023 13:51:48 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.25596.1694526701025490175
+ by mx.groups.io with SMTP id smtpd.web10.25382.1694526703595697249
  for <cip-dev@lists.cip-project.org>;
- Tue, 12 Sep 2023 06:51:41 -0700
+ Tue, 12 Sep 2023 06:51:43 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.02,139,1688396400"; 
-   d="scan'208";a="175825291"
+   d="scan'208";a="175825300"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 12 Sep 2023 22:51:38 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 12 Sep 2023 22:51:43 +0900
 Received: from localhost.localdomain (unknown [10.226.93.97])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B79A04006DFE;
-	Tue, 12 Sep 2023 22:51:36 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 34EFA4006DFE;
+	Tue, 12 Sep 2023 22:51:40 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 00/12] Enable MTU3 PWM support on RZ/G2L SMARC
-Date: Tue, 12 Sep 2023 14:51:22 +0100
-Message-Id: <20230912135134.299576-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 02/12] dmaengine: sh: rz-dmac: Fix destination and source data size setting
+Date: Tue, 12 Sep 2023 14:51:24 +0100
+Message-Id: <20230912135134.299576-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230912135134.299576-1-biju.das.jz@bp.renesas.com>
+References: <20230912135134.299576-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 12 Sep 2023 13:51:48 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13061
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13063
 
-This patch series aims to enable MTU3 PWM support on RZ/G2L SMARC EVK.
+From: Hien Huynh <hien.huynh.px@renesas.com>
+
+commit c6ec8c83a29fb3aec3efa6fabbf5344498f57c7f upstream.
+
+Before setting DDS and SDS values, we need to clear its value first
+otherwise, we get incorrect results when we change/update the DMA bus
+width several times due to the 'OR' expression.
+
+Fixes: 5000d37042a6 ("dmaengine: sh: Add DMAC driver for RZ/G2L SoC")
+Cc: stable@kernel.org
+Signed-off-by: Hien Huynh <hien.huynh.px@renesas.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20230706112150.198941-3-biju.das.jz@bp.renesas.com
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/dma/sh/rz-dmac.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/dma/sh/rz-dmac.c b/drivers/dma/sh/rz-dmac.c
+index 229f642fde6b..f777addda8ba 100644
+--- a/drivers/dma/sh/rz-dmac.c
++++ b/drivers/dma/sh/rz-dmac.c
+@@ -9,6 +9,7 @@
+  * Copyright 2012 Javier Martin, Vista Silicon <javier.martin@vista-silicon.com>
+  */
  
-All the patches are cherry-picked from the mainline.
-
-This patch series depend upon [1]
-[1] https://lore.kernel.org/cip-dev/20230911144702.948246-1-biju.das.jz@bp.renesas.com/T/#t
-
-Arnd Bergmann (1):
-  mfd: rz-mtu3: Link time dependencies
-
-Biju Das (10):
-  dmaengine: sh: rz-dmac: Improve cleanup order in probe()/remove()
-  clk: Fix undefined reference to `clk_rate_exclusive_{get,put}'
-  clk: renesas: r9a07g043: Add MTU3a clock and reset entry
-  pwm: rz-mtu3: Fix build warning 'num_channel_ios' not described
-  mfd: rz-mtu3: Fix COMPILE_TEST build error
-  mfd: rz-mtu3: Reduce critical sections
-  mfd: rz-mtu3: Replace raw_spin_lock->spin_lock()
-  arm64: defconfig: Enable Renesas MTU3a PWM config
-  arm64: dts: renesas: rzg2l-smarc: Add support for enabling MTU3
-  arm64: dts: renesas: rzg2lc-smarc: Add support for enabling MTU3
-
-Hien Huynh (1):
-  dmaengine: sh: rz-dmac: Fix destination and source data size setting
-
- .../boot/dts/renesas/r9a07g044c2-smarc.dts    | 12 +++
- .../boot/dts/renesas/r9a07g044l2-smarc.dts    | 21 +++++
- .../boot/dts/renesas/r9a07g054l2-smarc.dts    | 20 +++++
- .../dts/renesas/rzg2l-smarc-pinfunction.dtsi  | 20 +++++
- arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi  | 23 +++++-
- .../dts/renesas/rzg2lc-smarc-pinfunction.dtsi |  9 +++
- arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi | 14 +++-
- arch/arm64/configs/defconfig                  |  1 +
- drivers/clk/renesas/r9a07g043-cpg.c           |  3 +
- drivers/dma/sh/rz-dmac.c                      | 17 ++--
- drivers/mfd/Kconfig                           |  1 +
- drivers/mfd/rz-mtu3.c                         | 30 ++++---
- drivers/pwm/Kconfig                           |  2 +-
- drivers/pwm/pwm-rz-mtu3.c                     |  2 +-
- include/linux/clk.h                           | 80 +++++++++----------
- include/linux/mfd/rz-mtu3.h                   | 66 ---------------
- 16 files changed, 186 insertions(+), 135 deletions(-)
-
++#include <linux/bitfield.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/dmaengine.h>
+ #include <linux/interrupt.h>
+@@ -145,8 +146,8 @@ struct rz_dmac {
+ #define CHCFG_REQD			BIT(3)
+ #define CHCFG_SEL(bits)			((bits) & 0x07)
+ #define CHCFG_MEM_COPY			(0x80400008)
+-#define CHCFG_FILL_DDS(a)		(((a) << 16) & GENMASK(19, 16))
+-#define CHCFG_FILL_SDS(a)		(((a) << 12) & GENMASK(15, 12))
++#define CHCFG_FILL_DDS_MASK		GENMASK(19, 16)
++#define CHCFG_FILL_SDS_MASK		GENMASK(15, 12)
+ #define CHCFG_FILL_TM(a)		(((a) & BIT(5)) << 22)
+ #define CHCFG_FILL_AM(a)		(((a) & GENMASK(4, 2)) << 6)
+ #define CHCFG_FILL_LVL(a)		(((a) & BIT(1)) << 5)
+@@ -607,13 +608,15 @@ static int rz_dmac_config(struct dma_chan *chan,
+ 	if (val == CHCFG_DS_INVALID)
+ 		return -EINVAL;
+ 
+-	channel->chcfg |= CHCFG_FILL_DDS(val);
++	channel->chcfg &= ~CHCFG_FILL_DDS_MASK;
++	channel->chcfg |= FIELD_PREP(CHCFG_FILL_DDS_MASK, val);
+ 
+ 	val = rz_dmac_ds_to_val_mapping(config->src_addr_width);
+ 	if (val == CHCFG_DS_INVALID)
+ 		return -EINVAL;
+ 
+-	channel->chcfg |= CHCFG_FILL_SDS(val);
++	channel->chcfg &= ~CHCFG_FILL_SDS_MASK;
++	channel->chcfg |= FIELD_PREP(CHCFG_FILL_SDS_MASK, val);
+ 
+ 	return 0;
+ }
 -- 
 2.25.1
 
