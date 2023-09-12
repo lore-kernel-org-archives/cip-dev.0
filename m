@@ -2,135 +2,93 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A96F5CA0EDB
-	for <webhook@archiver.kernel.org>; Tue, 12 Sep 2023 13:52:18 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.25614.1694526728495435376
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 604FEEE3F15
+	for <webhook@archiver.kernel.org>; Tue, 12 Sep 2023 19:59:25 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web11.448.1694548760878224845
  for <cip-dev@lists.cip-project.org>;
- Tue, 12 Sep 2023 06:52:08 -0700
+ Tue, 12 Sep 2023 12:59:21 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
-X-IronPort-AV: E=Sophos;i="6.02,139,1688396400"; 
-   d="scan'208";a="179548637"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 12 Sep 2023 22:52:07 +0900
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+X-IronPort-AV: E=Sophos;i="6.02,141,1688396400"; 
+   d="scan'208";a="175845684"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 13 Sep 2023 04:59:19 +0900
 Received: from localhost.localdomain (unknown [10.226.93.97])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2E25A4006DFE;
-	Tue, 12 Sep 2023 22:52:05 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9EA7940A488A;
+	Wed, 13 Sep 2023 04:59:17 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 12/12] arm64: dts: renesas: rzg2lc-smarc: Add support for enabling MTU3
-Date: Tue, 12 Sep 2023 14:51:34 +0100
-Message-Id: <20230912135134.299576-13-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 00/15] Enable MTU3 PWM/Counter support on RZ/G2L SMARC
+Date: Tue, 12 Sep 2023 20:59:00 +0100
+Message-Id: <20230912195915.607664-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230912135134.299576-1-biju.das.jz@bp.renesas.com>
-References: <20230912135134.299576-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 12 Sep 2023 13:52:18 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13073
+ <cip-dev@lists.cip-project.org>; Tue, 12 Sep 2023 19:59:25 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13074
 
-commit 5d7de61ff17f152fb34db1347f53a80d41f511de upstream.
+This patch series aims to enable MTU3 PWM/Counter support on RZ/G2L SMARC EVK.
 
-Add support for PMOD_MTU3 macro to enable MTU3 node on RZ/G2LC SMARC
-EVK.
-
-The MTU3a PWM pins on PMOD0 are muxed with SPI1. Disable SPI1, when
-PMOD_MTU3 macro is enabled.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20230707155849.86649-1-biju.das.jz@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts  | 12 ++++++++++++
- .../boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi |  9 +++++++++
- arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi      | 14 +++++++++++++-
- 3 files changed, 34 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
-index f67a6f125d9c..0b90367b6d1e 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044c2-smarc.dts
-@@ -35,6 +35,18 @@
- /* comment the #define statement to disable SCIF1 (SER0) on PMOD1 (CN7) */
- #define PMOD1_SER0	1
+The first 2 patches are dma fixes.
  
-+/*
-+ * To enable MTU3a PWM on PMOD0,
-+ *  - Set DIP-Switch SW1-4 to Off position.
-+ *  - Set SW_RSPI_CAN macro to 0.
-+ *  - Set PMOD_MTU3 macro to 1.
-+ */
-+#define PMOD_MTU3	0
-+
-+#if (PMOD_MTU3 && SW_RSPI_CAN)
-+#error "Cannot set as both PMOD_MTU3 and SW_RSPI_CAN are mutually exclusive"
-+#endif
-+
- #include "r9a07g044c2.dtsi"
- #include "rzg2lc-smarc-som.dtsi"
- #include "rzg2lc-smarc.dtsi"
-diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi
-index a78a8def363e..92c64d58349f 100644
---- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-pinfunction.dtsi
-@@ -50,6 +50,15 @@ i2c2_pins: i2c2 {
- 			 <RZG2L_PORT_PINMUX(42, 4, 1)>; /* SCL */
- 	};
- 
-+	mtu3_pins: mtu3 {
-+		mtu3-pwm {
-+			pinmux = <RZG2L_PORT_PINMUX(44, 0, 4)>, /* MTIOC3A */
-+				 <RZG2L_PORT_PINMUX(44, 1, 4)>, /* MTIOC3B */
-+				 <RZG2L_PORT_PINMUX(44, 2, 4)>, /* MTIOC3C */
-+				 <RZG2L_PORT_PINMUX(44, 3, 4)>; /* MTIOC3D */
-+		};
-+	};
-+
- 	scif0_pins: scif0 {
- 		pinmux = <RZG2L_PORT_PINMUX(38, 0, 1)>,	/* TxD */
- 			 <RZG2L_PORT_PINMUX(38, 1, 1)>;	/* RxD */
-diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
-index b6bd27196d88..664318e3dfb6 100644
---- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
-@@ -11,7 +11,6 @@
- #include "rzg2lc-smarc-pinfunction.dtsi"
- #include "rz-smarc-common.dtsi"
- 
--
- / {
- 	aliases {
- 		serial1 = &scif1;
-@@ -50,6 +49,19 @@ wm8978: codec@1a {
- 	};
- };
- 
-+#if PMOD_MTU3
-+&mtu3 {
-+	pinctrl-0 = <&mtu3_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&spi1 {
-+	status = "disabled";
-+};
-+#endif
-+
- /*
-  * To enable SCIF1 (SER0) on PMOD1 (CN7), On connector board
-  * SW1 should be at position 2->3 so that SER0_CTS# line is activated
+All the patches are cherry-picked from the mainline.
+
+This patch series depend upon [1]
+[1]
+https://lore.kernel.org/cip-dev/20230911162840.1115401-1-biju.das.jz@bp.renesas.com/T/#t
+
+Arnd Bergmann (1):
+  mfd: rz-mtu3: Link time dependencies
+
+Biju Das (13):
+  dmaengine: sh: rz-dmac: Improve cleanup order in probe()/remove()
+  clk: renesas: r9a07g043: Add MTU3a clock and reset entry
+  mfd: rz-mtu3: Fix COMPILE_TEST build error
+  mfd: rz-mtu3: Reduce critical sections
+  mfd: rz-mtu3: Replace raw_spin_lock->spin_lock()
+  Documentation: ABI: sysfs-bus-counter: Fix indentation
+  counter: rz-mtu3-cnt: Reorder locking sequence for consistency
+  pwm: rz-mtu3: Fix build warning 'num_channel_ios' not described
+  arm64: defconfig: Enable Renesas MTU3a PWM config
+  arm64: dts: renesas: rzg2l-smarc: Add support for enabling MTU3
+  arm64: dts: renesas: rzg2lc-smarc: Add support for enabling MTU3
+  arm64: dts: renesas: r9a07g043: Add MTU3a node
+  arm64: dts: renesas: rzg2ul-smarc: Add support for enabling MTU3
+
+Hien Huynh (1):
+  dmaengine: sh: rz-dmac: Fix destination and source data size setting
+
+ Documentation/ABI/testing/sysfs-bus-counter   |  8 +--
+ arch/arm64/boot/dts/renesas/r9a07g043.dtsi    | 70 +++++++++++++++++++
+ .../boot/dts/renesas/r9a07g043u11-smarc.dts   | 11 +++
+ .../boot/dts/renesas/r9a07g044c2-smarc.dts    | 12 ++++
+ .../boot/dts/renesas/r9a07g044l2-smarc.dts    | 21 ++++++
+ .../boot/dts/renesas/r9a07g054l2-smarc.dts    | 20 ++++++
+ .../dts/renesas/rzg2l-smarc-pinfunction.dtsi  | 20 ++++++
+ arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi  | 23 +++++-
+ .../dts/renesas/rzg2lc-smarc-pinfunction.dtsi |  9 +++
+ arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi | 14 +++-
+ .../dts/renesas/rzg2ul-smarc-pinfunction.dtsi |  6 ++
+ arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi | 13 ++++
+ arch/arm64/configs/defconfig                  |  1 +
+ drivers/clk/renesas/r9a07g043-cpg.c           |  3 +
+ drivers/counter/rz-mtu3-cnt.c                 |  4 +-
+ drivers/dma/sh/rz-dmac.c                      | 17 +++--
+ drivers/mfd/Kconfig                           |  1 +
+ drivers/mfd/rz-mtu3.c                         | 30 ++++----
+ drivers/pwm/Kconfig                           |  2 +-
+ drivers/pwm/pwm-rz-mtu3.c                     |  2 +-
+ include/linux/mfd/rz-mtu3.h                   | 66 -----------------
+ 21 files changed, 252 insertions(+), 101 deletions(-)
+
 -- 
 2.25.1
 
