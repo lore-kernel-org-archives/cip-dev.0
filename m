@@ -1,147 +1,227 @@
-Return-Path: <biju.das.jz@bp.renesas.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF640EEB597
-	for <webhook@archiver.kernel.org>; Wed, 13 Sep 2023 06:01:51 +0000 (UTC)
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (JPN01-TYC-obe.outbound.protection.outlook.com [40.107.114.96])
- by mx.groups.io with SMTP id smtpd.web11.5550.1694584907488439857
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBEE0EDEC4E
+	for <webhook@archiver.kernel.org>; Wed, 13 Sep 2023 12:52:25 +0000 (UTC)
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.89])
+ by mx.groups.io with SMTP id smtpd.web10.11014.1694609536245534448
  for <cip-dev@lists.cip-project.org>;
- Tue, 12 Sep 2023 23:01:48 -0700
+ Wed, 13 Sep 2023 05:52:16 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bp.renesas.com header.s=selector1 header.b=ip+Xy09k;
- spf=pass (domain: bp.renesas.com, ip: 40.107.114.96, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=ievKPOSo;
+ spf=pass (domain: siemens.com, ip: 40.107.6.89, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fHGTUTRgiaQ0PmR1sjmIECVLfq+ppS4S/CopmFzrs1pRxoyF3dWug9+zIk5EWRd9KMSyJZqFmyRCHttCVVo0cYp/g24T0Pf8ridcgYw/HxqnVPKoMWvloGkDsujwZl6uZ0WmWZe3+fQQV7zqVLEdUgh8BHE+XI53fBHfEIpRl7W2gCjl3zgZOk6InOb47Bb33HIp4wzzmWIqgTPANnuje0EAx1t/HLTwcPV26TjVU0SUTarsKgfZq/Ihhy0KD/Xmis008Gu8VWVBi7XjnrWpHef454gF6Tv9TMIud+wO72klgpjxYDOw4vHy6ekRvZDu4sd6qljPo+JXKqxH/gkouQ==
+ b=ImKLrRRQtUxmz89bEywDTZVtxGbzrl6TnkrQo48OFGoxL2YB1/RnJUJdGfg59aMXNceLh9XEYI/G2yjCYyJOoxItpEOUjJ1c69Vkc76MV5sccgJ4hEML1eflCT3Bbs9caHEKdIeRy5gzCq7tOrKv5GA5IUMEpqVk+ZK8DprGX1DHiVpoxKiqBED70hMEpgwuXICQx/2KGWEMHLKmi1g111y9d8V6zl8owm5SJ0Kflp7+MUkYJSnJUWKcJo55JqsvGTmsm2jIImQcUkJ9hDYvbP35MQZPfNtx225wzHDFQUyad6bHGC9cm8u05dm7Ofb49KdnuqcWov94dZ/obHa4Og==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Wr81RfJ/Js9R+5TYkwFn/2ZVx+1j8KnDTSHYCkeqsKA=;
- b=jErV6MjS4Fu3GipAOZW6zaANFsp3o7hoQsAPv1MmHtwEhVZkOxePqQzyAc1tusoWGKwUjxsHC8ST7QYt2MPYJD2/+ZWrDLt8y+0TF9Scfk2SigLMR/aVzpY7nWk7TSzc/4iFvS0K9V3u4WbQbwkR8OUsX5lkiMTG8pb/h6vElDUlG19ZPqNjqS1mufjJ6S77uqPhObZxMzJLrqa53J6a0tTfiJGtbLCdgaizLAgj9Ot3sKGivz6lK3Ww5gildxPk8gBtTMA7wgVAB0nenfNeEqmoIdLzaKixOVH5mD3ph4MNLizM0vfPuBM/COgH7OEB0a2F38RdOKR/svDIwi46Ow==
+ bh=xmIMXOBF59nNv1GjRn03qhok/3xb738LQZ0or0AGpWQ=;
+ b=AgHkFhLSnm1+jXHtwBB+TGAEgktY56RSJAypexLbmXQQYWQ+E9UUCo9uMGJNPaKvJ9iodosA4RtI8yv3+nh2T3VpHlwTcm5G6dDgRRJeVkwQLv37FA1YPViIszrXm8FobbeushVLusqFwHsHz1Md47kV2VsasBhxOXrAmC8URI4TNfcCk8EnM/Gjz2+8CLYCtKwVP8AKSjuhPILk2djKKwsfETk0BlWB4GVBCdFcfaD8vyfkR282tnmKmmQMfqD/zEZf4oJmy4jo03cdXtS+qqNMUUHvkImPiVLv4jL/HbGEyr0eBCjgR7E9A7bUdG8Kr7yZdtAKJDSzXbm/je1vuw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Wr81RfJ/Js9R+5TYkwFn/2ZVx+1j8KnDTSHYCkeqsKA=;
- b=ip+Xy09k1iuccQYpdQQjXzQJVLLpbcPmio3b1d+Hh41pTJuwyYraRbq8KtAG++UJzpagasJ8thb990Ncr/V19a56q7QXVNnxQ693znnXkinxvF+ta6HR3VlDReWWXz+7cIPtXuUExw2fUYnbsQXG4hGVa+vchmh0MwExvN3eukc=
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
- by OS3PR01MB6150.jpnprd01.prod.outlook.com (2603:1096:604:d4::14) with
+ bh=xmIMXOBF59nNv1GjRn03qhok/3xb738LQZ0or0AGpWQ=;
+ b=ievKPOSoEqSSy1himqawAr+gulhMexWpyLXsPth91lkxqBB8nhjolSmctFpJMkYOqAceSP8WMeSOHErPASG1b9mBSbF66/lQSRkEXtcQf2fznUYXbuDeFEWu14MJMJIEplhAz4IkvWwfoBXUzT6mVzsgoVRnv9je5q1p46o0NHKmGOP/3x+/lpvEULaf97lOf2GtPK1DnBXzngFSkYHx/dME+W5gCVErcSXFyTY6Ah59rG5N1OZSHxkpZF3ZliH6qyu980DEsYvBE2G/4BWzs1pG4YZzYs1gdgwIk1lW5ly7fmdKvxXeZYQ58JIGzRunbcphWbQnHsk8/CvwLBVEQw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1f9::22)
+ by DB8PR10MB3196.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:fa::7) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.19; Wed, 13 Sep
- 2023 06:01:43 +0000
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::9d23:32f5:9325:3706]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::9d23:32f5:9325:3706%5]) with mapi id 15.20.6792.019; Wed, 13 Sep 2023
- 06:01:40 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Pavel Machek <pavel@denx.de>
-CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, Nobuhiro
- Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Claudiu Beznea
-	<claudiu.beznea.uj@bp.renesas.com>
-Subject: RE: [PATCH 6.1.y-cip 00/14] Enable Renesas PMIC RAA215300 and RTC
- builtin support
-Thread-Topic: [PATCH 6.1.y-cip 00/14] Enable Renesas PMIC RAA215300 and RTC
- builtin support
-Thread-Index: AQHZ5M0JBE/CcNwYj0eMnWrAEtZ6r7AXsr8AgACS3zA=
-Date: Wed, 13 Sep 2023 06:01:40 +0000
-Message-ID: 
- <OS0PR01MB59222D5B824F1694EDDA906486F0A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-References: <20230911162840.1115401-1-biju.das.jz@bp.renesas.com>
- <ZQDUzmyf4zQGd4fB@duo.ucw.cz>
-In-Reply-To: <ZQDUzmyf4zQGd4fB@duo.ucw.cz>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|OS3PR01MB6150:EE_
-x-ms-office365-filtering-correlation-id: cd3d46d6-f122-4035-6ff8-08dbb41ee5f8
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- /te9TYvNDkkXZlW8hVhRZMmhkXmVT7fUBNgeZsfSWwMusPaUHm8YZrD2LkVnPO0TgaMUMmowSg/C4sE9MVKQxUDB58tOdpv8pjyxdBCGPVCr/N6f5kYNGyhsXv7BB+G3jxfjb9o/6nGzq6mq4Wr9jHW4P3bmHsBdJmeztqnYBKcXUPHMMPhx3/IIVSSaC9F6zEzxWvwJLppY5J7uZTJrjKKrKq4zIGYk1E+/fXpGOKJc2bM5njYRKahMUJqLfHJOJEG4l1uAmTuYf2ryrxKiCugnnJaX3S82W4HHZDbNCgoD3PMGoDQ9MQNuutXsURRHJ80BKa233iKujKeYek+Y2IztWZ0GbWR0C8cshVLSaj2Zs+YkhyOZShz45HRDqrKkJqBytn7BKDk5XdeEqVgdNtAHm+hlDiezzRGFbeN1Gp/kWGR5MpM6GQfEAIgpt99ZS+76jr4ZfXAHkyUPFbopwdFX1SGADYab7tKW0K9z2+pi4UDkfh7u/Q4MsGjygVvOgeE8kokr36Ifvs7kZOX/bvtMWDkJv99b8ZeusIzj4gPLQTprvsl8WdeJsBRr2wIysP8Vq82TTAMVRZh/NcmsQH/TyiYqZlBSAfLZK7yx8a3foQayiJi6FU+CcHMxAsVD
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(346002)(396003)(39860400002)(366004)(136003)(186009)(1800799009)(451199024)(7696005)(6506007)(71200400001)(9686003)(478600001)(107886003)(26005)(2906002)(4744005)(66446008)(66476007)(64756008)(54906003)(66556008)(66946007)(5660300002)(76116006)(6916009)(316002)(52536014)(4326008)(8676002)(8936002)(41300700001)(33656002)(38070700005)(122000001)(86362001)(38100700002)(55016003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?7b+tBeWiHb1vjv+5JLql6o+7YF+A75Cj5VD9rHlhup5+8obaJo5RjJSTn7vU?=
- =?us-ascii?Q?DNuw/YN074VUyFISGieZ0TjRmn8/4ca/rNNAVkPcBJsl8tRdtrK9/1WAL9Y4?=
- =?us-ascii?Q?tUVqvUsm6EVAQltwtjA7KBYJ9MdS+d24BVkQDixmfgaBIgFFZDgkQE/RJE+A?=
- =?us-ascii?Q?UU4V+DWlx4LosfdnjuGjmH+KIxczPmKeIWVYkWYbayY66BgVAdh5uZskdCbJ?=
- =?us-ascii?Q?aEJKhTzOYb4tX5+ZVKGD6bwHdxoGPYlPrF26mDMACw3mlwChYWFox+zzo2qu?=
- =?us-ascii?Q?YMFUhDazZ3lAOhQfxczNq2KK6wFnPCGdaHzVVbSAuZxIuYMQ4v+acP4S7D4l?=
- =?us-ascii?Q?cqauVikH2TAeYTqqtVP+eyw/ib560UbRSN9v7ae7JqkuAzDtyM7jg+hM3V5p?=
- =?us-ascii?Q?sgbFbmR28VyvBRyiss3VeUBC7YiryWh2Ts7yNLoWibaH550NohFp8K7KnKLG?=
- =?us-ascii?Q?K2aqqxGPUAC87VGO5mIVnkf0qQT+XjUhBJeIG23UEvy9YQdJeu3PmiaP5vKX?=
- =?us-ascii?Q?FbQz6HX5LCVBcomhbhywCCbRA/mhNBzRLb31Ekx3N/CjiDEmRT7liKrjGwIt?=
- =?us-ascii?Q?lfM+LaJ7Z+YbH6E+BCv+P26JVJUEVLwlRpuBKMIj+CtPwmIiWW/pkFuBgHU5?=
- =?us-ascii?Q?pSzYdxxktKRagV/zxrLTbs3HzeITZI8llSFri4OVOwF/Mphm+bWCSlDiETTZ?=
- =?us-ascii?Q?yxJOP+OxouKmTSt+4FAXwt7t37kbBCIIBHi4eT/dS1/Lc9YKkvGLTvpNd4Ej?=
- =?us-ascii?Q?ud0Tc5SAL6XFzZuIgu+jdxnBnZWdKEQvLlHz1qkut8d7pZpMaclcRP/sxklA?=
- =?us-ascii?Q?jKrxXIykxS0gNBanwdcapidhTTETWLJwgrqcbeRuXQlkvO44HSFBi+rBwXd2?=
- =?us-ascii?Q?l4zmoQRLAts8bdl2CC9fQW8vDO/wkKHMWOGpJt5rwt07azphd5Thv+z9lDXm?=
- =?us-ascii?Q?u0QMg0eglsYjNfWzGXqSTbvYVhwl9JDd+3Eg2pklnLzTG3ARhTnzWPzAD/5F?=
- =?us-ascii?Q?JyxYYmv++1bTf9vGuCNzkYjexi1ENYLgmTUYvKr0ojpXwATYQ/0N9oJYbJLJ?=
- =?us-ascii?Q?8yDqhRu1567aIOjUemMJxMnOla56dvRhVuRrFhu0+d63472MK2HgnoguvjZn?=
- =?us-ascii?Q?Y1ql1CiDgy3HVs4uzOh+7A1Deoid7CjMak1FwNfMVNCJsAxGh2EMOhOIvX0Z?=
- =?us-ascii?Q?kAsl1kMwJOhtbPBnSxpzjAD5URWniHzDB8hzZGuE3WRO1oM9EZDHiWowNvqy?=
- =?us-ascii?Q?eLSb+Ada4WxHWtKekl9JZAesMFU+Lud7N+xulc7sJ0xCVGyxF0DLXBBiTGVq?=
- =?us-ascii?Q?JFY1iP4Z4ygff+ifd7idnulhFOnpnCl0MyXSzJ0yX3OaHl/DwOPSPlHKuOsw?=
- =?us-ascii?Q?q9RGUOL5PnQQe0RwULUqUp2cyiFHq8BIxKTZdDQUyi2eduyTnMtZ2+CW7bsQ?=
- =?us-ascii?Q?WIC2JTZtoaq4zjECMxL5iFCr1gMoIFuo/KZ1+KXxL8s2InVUEWkZlMc7HgDu?=
- =?us-ascii?Q?jcEtyiW9q5kGBBfeXfZzTPBToAVdLNK8b8AnX+enrT8DlsgQQcw9w2CoC8HO?=
- =?us-ascii?Q?RDMUXj0Q4waog8NBe1yCtM27R2n4V9qVvZAftVJYxkoUsRJ045lq7ud67UuE?=
- =?us-ascii?Q?Xw=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ 2023 12:52:13 +0000
+Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::a940:1b51:4279:2219]) by AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::a940:1b51:4279:2219%6]) with mapi id 15.20.6792.019; Wed, 13 Sep 2023
+ 12:52:13 +0000
+Message-ID: <595d5791-a08d-f08f-5dee-6f9ed5d472e0@siemens.com>
+Date: Wed, 13 Sep 2023 14:51:53 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.1
+Subject: Re: [cip-dev][isar-cip-core][PATCH] initramfs-verity-hook: Ensure
+ sync on rebuild
+Content-Language: en-US, de-DE
+To: "MOESSBAUER, Felix (T CED INW-CN)" <felix.moessbauer@siemens.com>,
+ "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+ "Kiszka, Jan (T CED)" <jan.kiszka@siemens.com>
+Cc: "Schmidt, Adriaan (T CED SES-DE)" <adriaan.schmidt@siemens.com>
+References: <20230823132816.1011054-1-Quirin.Gylstorff@siemens.com>
+ <5a4f1ebe-305d-409d-b142-49626877455a@siemens.com>
+ <94deff88-b5ff-16e1-89cb-d5337b788b50@siemens.com>
+ <c90ebb07-260e-496b-9280-c340ae41c26b@siemens.com>
+ <cfe1f5d1076d50f409e6f2f6aea7728ca8f06695.camel@siemens.com>
+From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
+In-Reply-To: <cfe1f5d1076d50f409e6f2f6aea7728ca8f06695.camel@siemens.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: CH2PR19CA0008.namprd19.prod.outlook.com
+ (2603:10b6:610:4d::18) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:1f9::22)
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|DB8PR10MB3196:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8eed1849-aa5a-4dbb-9883-08dbb4583fe1
+X-LD-Processed: 38ae3bcd-9579-4fd4-adda-b42e1495d55a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	lOb0zmnxPgEkvEGjaAFlyOtU3o9qzKUJULsxFQn6H+pMJ5zCXS7gUWvMrgQxpwRfO73M5P1V34xhX6QCk5wx5yTTTpuQBBDakAakMF5JlanRarwS3fxsYFFWqgFRHM/VRJqcStMILKWFFHwIFgScLCbw6eahlL+RKSo4Y67hYrk/wdYS64vXCeAmJ0eQONPpjZgHnBE82Kwyj6U4B6ayqqizIHC8iCQsojxu/kCT9dJt9SKpjgbUPh7cx852N7JqTVn5JqiRGUy6eIcOhjFEZR/tXINFZyg8jNeLEn3AsCPalYhxzRWfkuoFenGQClbNNnA/WwthiylYf6wYSzy+ROo58BQUok/7yriED17KMuHEtYrWxRoHRmvDQSwMxTPGTzcejwHAoUBEZx7JPo7Q8VnmR8mUgkfgYABA77/wh5+0ty4UQjBH6pNcRzKyC23+RmjwL8uc3W3P9KP68oCiGeOMAFcrgyY1C2UUPKep9bv1V72XT1fMMvRkltWtSB81rY1xJnoX9T05dCcvlo58kdiFgktt82kt9msCU5+e36Krb6ym72eQac0M52i0cP7iHmKDNV7n/ItzQObdAjaG6zr3YLpjoFh62mZ15OVlOXmc8Woe2etsWGh0vUaYo2Uaxl41yu/uF/zetbhO58VZ1Q==
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(396003)(376002)(136003)(39860400002)(366004)(346002)(1800799009)(451199024)(186009)(53546011)(6506007)(6486002)(6512007)(6666004)(82960400001)(107886003)(2616005)(478600001)(26005)(66946007)(66556008)(316002)(6636002)(41300700001)(966005)(38100700002)(66476007)(110136005)(31686004)(83380400001)(2906002)(31696002)(86362001)(36756003)(5660300002)(4326008)(8936002)(8676002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?QTFibkFKUXJ5a1lNQzhtd3hQam9UdnlmSDRSU0s2U1I4UCtvTDdiVmU1Sk1i?=
+ =?utf-8?B?VGM1TzNaODdreUNnN0VMTDVTb3lISnVCQ1ROMDF1OUE1aWJISHl3M1hxY0dF?=
+ =?utf-8?B?cENNWmhNd2hCTTRmb3JNZTJKOFBjTm9GL09uRmRlVnY1YWZUWEI2aUlwYzV0?=
+ =?utf-8?B?NzZKQTRVQllJWlp1YlhhbVhMM1BsVU1KOUxmTTBkczZ6bG5XN2xaekxUNUJ5?=
+ =?utf-8?B?cHQzTjBRa2hHNmEwSVJrVDJRVzBXZXdiN1JjWWU4dFpjZGNnRDFvYlU1NEk1?=
+ =?utf-8?B?QVo3VzdZY2VSSE82byt4Z0xHYlAzbzNVYjVmZ1VFc0lkNXFYTysxdVV0V2Fq?=
+ =?utf-8?B?V1hHcXp3ejY4a1NRL2N0V3BxSitvM0xkU2l6cElVRy9lWnFkcEpwYnBOMUpB?=
+ =?utf-8?B?UGtNYXNIOGdMbFE0SitoV1ZndXdHMzBvODhYb0c0YlliQ3V0TE8weENncTh4?=
+ =?utf-8?B?bzBUWGNQc0RqQjMxVVVHZFR4aW1zRVR4VDQrZURtUFZoMVgzYlZxUjBJNm0r?=
+ =?utf-8?B?RHRNbTZ2ajZCYXEwdVlTZ295bmQ0bkh2VjVBUTZHaW5mNmdEblZoaGdOQ3dz?=
+ =?utf-8?B?V1hTUmZjUllMM1Z2WE0vQnZjZUlDTWw2SzNqT2huSklmQ0hPa0p6bWt3anVD?=
+ =?utf-8?B?OUVnOGZZMVhuK2lXN2czVy9uWDhjdzcvRFFUNUFJeVFVMTNJMzd3WlZGTi9J?=
+ =?utf-8?B?VVY4L0hIaTZMMmNWRDIyaHhYTFQrWWpPNlA4TFlMa0Z0dzZOUzJlS3ZJNkVG?=
+ =?utf-8?B?UDltc3NtVDhJS0RFaER1OVVDbFhCZkpGZFFiT1hBWjNobVJPNFZwdHFnYkFY?=
+ =?utf-8?B?UUxpNU5JOFNQNU40NGZMSTNVZTErQ2xFb0xidFZDcVFYUHlST1JkSzFWd2JD?=
+ =?utf-8?B?SVZFRFNaUTI3bDFjS3RtZXRXdmVjMFN1bk42ZVptMFJFeTZpOHA2NWFsRThx?=
+ =?utf-8?B?ZmplMW84Q1EwbGc4Zzh1T2srdVlEYlhOOFNVMktnNHUzWm14a0tCV1NTMG1m?=
+ =?utf-8?B?MkdzUkhNVTljY3FIczB1RHJKNDlNN1ZKekUzNlU0Tk84WEhwOWFGcFVuR0N3?=
+ =?utf-8?B?V1ZaN2RwRmxxZHB4M1QzMTZubkdqUTBFVFlJVnpYWUNRcXVlY1RZWVErNFlw?=
+ =?utf-8?B?ZHppaTZXMTdSMk03Qm5xeXdIRmViUE9vTTlqUmt2Tmg5SnpTTkJoZTRuV012?=
+ =?utf-8?B?ZW9Hbi9EWkluYm0vK1djQnpmTncveW83ZWJzVXg5bFpFd2lnMlBSWnhjb1JH?=
+ =?utf-8?B?OVcxQ2xxZ3dTeFRWQ1gwZTBBL2w0b3FYUUZhaXZmTTJXNHVwYStXbUpZWmpK?=
+ =?utf-8?B?dUZ0MDNzemsyK0lNekU3Ry9aZUUzSjgwVzNHRnVMdFBwYWRIMnlPYTRoVmZL?=
+ =?utf-8?B?QXJUZTJVZ3F5UVlwYWo0Q0JtSFhUcElaNHdkTFNIMlJXdUpzVDU5cUxWbm45?=
+ =?utf-8?B?STdxajRFK0JsSnQ2aWlhVGl0TjVVNEs4ZHRJczI3NXB6RzhUeE1ieTJjOVlB?=
+ =?utf-8?B?ZDd2T1YrV2Mwa0hOc3psYVZDN1JFd24zSnYvL1hteGI1WGRHeVI0YnNRV3hk?=
+ =?utf-8?B?WE9YMVZtWWdIbUowNDE5OWhIcnhOSC9YUkE4QmEwdnJTMEpRdk94akMyQmtj?=
+ =?utf-8?B?OVpJRHJwN2V5TThQelJmY0lzNkRMb3Q5eFI3NDdPNXZoM1J2NjF6Q1c4U3JQ?=
+ =?utf-8?B?NENxamd6UHVaa1lTRTFoZ3dnTlBVN1dpZm95QkNwYlhSUzF3aVdMbVE0UEpT?=
+ =?utf-8?B?L3pGNWE3cXNPM3Vub1ZYUUN0WXNqR0EwdWVIUGJTb3FDS0VpaHJvUFdoMDhF?=
+ =?utf-8?B?OCtFajJoNzNqSk1aUWNWMFZvOUtGbmhLWm0xR1d0SFh2WXVMZXdOVWNUTUx3?=
+ =?utf-8?B?eElDeXh6R3V3cnUrMkNQYXJMQW1CQ3FrMUxnT3NYQktaZ3lkbUdzTnJRNDJH?=
+ =?utf-8?B?SVZsSEJkNVBQK3I3andtOCtBYmY0bGlNdWFremU2cDdDTjlYZUN4VWFJWkcw?=
+ =?utf-8?B?eldCN3ZJbml5RzhZK3BONW5PQ3NrVGpuUFdOd25sQ3Y5bXdNdkU2ZWlCa2li?=
+ =?utf-8?B?K2VORHlsM2pGdEwrWnRQT3lNN3IrWkxlN2lGZmV3YWJyUjRZSk1zd3lQMUU1?=
+ =?utf-8?B?b0hKbSt1cCtYNTNXSFllVFVtNERrU3lRUk5vN1NWTzBZZ0FNNFRxMzhGN3FH?=
+ =?utf-8?B?WXc9PQ==?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8eed1849-aa5a-4dbb-9883-08dbb4583fe1
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cd3d46d6-f122-4035-6ff8-08dbb41ee5f8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Sep 2023 06:01:40.2978
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2023 12:52:13.0772
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Rpn+uJxmSAFNkUs3xKRihkr9ZhohWRcvx/2A3Isj2QA59lKVGcEpbJ0Suz8u22Fj3X5ETkcSe1gIGxPLGm6vybVrspN+OY6JO6XX5xveGx0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB6150
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /K2TvyBd2OnZipmwunOaDGt/t6I3UPjxxeqoKw12kPVYAnH2VbLxXRldahYlZ+J03cSWs758Vj+Q1E5Amyp4jw4htJtyKjrYjH4LtzyjVLE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR10MB3196
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 13 Sep 2023 06:01:51 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13096
+ <cip-dev@lists.cip-project.org>; Wed, 13 Sep 2023 12:52:25 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13097
 
-Hi Pavel,
 
-> Subject: Re: [PATCH 6.1.y-cip 00/14] Enable Renesas PMIC RAA215300 and RT=
-C
-> builtin support
->=20
-> Hi!
->=20
-> > This patch series aims to enable PMIC RAA215300 and builtin RTC
-> > support on RZ/G2L SMARC EVK platform.
-> >
-> > All the patches are cherry-picked from the mainline.
->=20
-> This is a bit strange; these two look quite unrelated.
->=20
-> >   arm64: dts: renesas: rzg2lc-smarc-som: Add PHY interrupt support for
-> >     ETH0
-> >   arm64: dts: renesas: rzg2l: Fix txdv-skew-psec typos
->=20
-> I'm happy to apply the rest (unless testing fails or someone objects). I
-> can take these two, too, if you tell me this is intentional.
 
-I missed to add this in cover letter. Sorry for that.
-Please take these patches as well.
+On 9/13/23 03:26, MOESSBAUER, Felix (T CED INW-CN) wrote:
+> On Tue, 2023-09-12 at 15:55 +0530, Jan Kiszka wrote:
+>> On 12.09.23 15:37, Gylstorff Quirin wrote:
+>>>
+>>>
+>>> On 8/28/23 08:47, Jan Kiszka wrote:
+>>>> On 23.08.23 15:28, Quirin Gylstorff wrote:
+>>>>> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>>>>>
+>>>>> Disable the timestamp of the do_install() task to
+>>>>> re-execute when ever a dependency on do_install
+>>>>> is executed.
+>>>>>
+>>>>> Without this change the sstate needs to be clean for
+>>>>> every rebuild.
+>>>>>
+>>>>> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>>>>> ---
+>>>>>    .../initramfs-verity-hook/initramfs-verity-
+>>>>> hook_0.1.bb         | 3 +++
+>>>>>    1 file changed, 3 insertions(+)
+>>>>>
+>>>>> diff --git
+>>>>> a/recipes-initramfs/initramfs-verity-hook/initramfs-verity-
+>>>>> hook_0.1.bb b/recipes-initramfs/initramfs-verity-
+>>>>> hook/initramfs-verity-hook_0.1.bb
+>>>>> index 3fc63ed..7435649 100644
+>>>>> ---
+>>>>> a/recipes-initramfs/initramfs-verity-hook/initramfs-verity-
+>>>>> hook_0.1.bb
+>>>>> +++
+>>>>> b/recipes-initramfs/initramfs-verity-hook/initramfs-verity-
+>>>>> hook_0.1.bb
+>>>>> @@ -40,6 +40,9 @@ do_install[cleandirs] += " \
+>>>>>        ${D}/usr/share/initramfs-tools/scripts/local-top \
+>>>>>        ${D}/usr/share/initramfs-tools/conf-hooks.d"
+>>>>>    +# Ensure VERITY_ENV_FILE is updated also when rebuilding
+>>>>> initramfs-verity-hook
+>>>>> +do_install[nostamp] = "1"
+>>>>> +
+>>>>>    do_install() {
+>>>>>        # Insert the veritysetup commandline into the script
+>>>>>        if [ -f "${VERITY_ENV_FILE}" ]; then
+>>>>
+>>>> No other dpkg-raw packages require this, do they? What makes
+>>>> initramfs
+>>>> packages special here? And what about those in isar upstream?
+>>>>
+>>>
+>>> This is necessary for the initramfs package which contain the
+>>> checksum/uuid from the root file system build.
+>>> This ensure that the checksum/uuid is refreshed.
+>>>
+>>> It fixes the problem that an rebuild of a verity image leads to a
+>>> broken
+>>> boot after the build.
+>>
+>> And what will happen when the user decides to pin the UUID to fix
+>> value
+>> in order to have reproducibility? Won't that cause a needless re-run?
+>> Shouldn't this recipe rather make sure to depend on the UUID value?
+>
+Even with pinning and same salt and uuid veritysetup will generate a new 
+roothash during the build.
 
-Cheers,
-Biju
+Quirin
+
+
+> This is a general reproducibility topic: The task checksums are
+> computed at parsing time and by that the tasks that need to be re-run
+> are selected. However, this is based on the assumption that tasks are
+> deterministic, i.e. same input data also generates same output data.
+> 
+> Unfortunately we are still not 100% reproducible. By that this pre-
+> condition is not met. For normal packages this does not really matter,
+> but for the dm-verity checksum this very well matters.
+> 
+
+> I'm just wondering if we could work around that by making this
+> component non-cacheable. Putting Adriaan in CC for the sstate part.
+
+The same  solution as is used by meta-security for Yocto[1].
+
+[1]: https://lists.yoctoproject.org/g/yocto/message/50624
+
+Quirin
+
+> 
+> Felix
+> 
+>>
+>> Jan
+>>
+> 
 
