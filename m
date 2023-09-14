@@ -2,182 +2,222 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E63EAEDE983
-	for <webhook@archiver.kernel.org>; Thu, 14 Sep 2023 05:53:18 +0000 (UTC)
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (EUR02-AM0-obe.outbound.protection.outlook.com [40.107.247.63])
- by mx.groups.io with SMTP id smtpd.web11.5551.1694670788172756966
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6746EDE984
+	for <webhook@archiver.kernel.org>; Thu, 14 Sep 2023 05:56:18 +0000 (UTC)
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (EUR03-AM7-obe.outbound.protection.outlook.com [40.107.105.53])
+ by mx.groups.io with SMTP id smtpd.web11.5582.1694670969616434705
  for <cip-dev@lists.cip-project.org>;
- Wed, 13 Sep 2023 22:53:08 -0700
+ Wed, 13 Sep 2023 22:56:10 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=p2yAqD2o;
- spf=pass (domain: siemens.com, ip: 40.107.247.63, mailfrom: jan.kiszka@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=GyMPaUUA;
+ spf=pass (domain: siemens.com, ip: 40.107.105.53, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fkfBnj+Aa39iDyCXjdcA7Mup+P8BIYtQbHk52xSsd0hVzVu58qdzyn0nR/u1vwQ7SfuTyyV3Lw8x2oaqTXlHxvd25pdo22F2bDiTAm+tgcyme7e8f0U/WiwDCUFRfkj/TUNlmQJmB4uRIESKYJMTKw01ClsqDYLC6G/qkkzW2bIlE3mlD3EHxFiQL+CWaP4L23Hq17UE4BbTGoJoqJ/hgPxrFOXF8Op0TKD0bIVOsbIjhkNzpx9IDCQ7xvt1DHuEloF3eC5va7omULwnT74JbxwiOMEq4ubb4jsjGtqKjs5Cxl7QF8hNwo+LM0g/qLeCqWl+vF96fIatSiGDA/y96A==
+ b=gw/qPpMUlhdwNaG1R7GXUUNVNCyBSB2ZrBVbI1qLoRyGWVSw8xijcgJcw8/BOaXHO3ls1MEIWJ2U3UG/gxwLJhUQPxZGhbjQdBeeUi6ASLoamhvT76e8avDe2Rf8t0HhBWSchJMJ8P6HCCt29F1tUy3SRnZpFvPmtEcwBc5l1rNQKXYrUEKHuhjA60l/IGHWdhHZDXG171BjxogEMXXZN5gDUrwHp2ucszyd8nkFQXJcigJyZthc4sli3OLfYDSfIGkL4bYJ7wqnWxmTByH/80J/Jcp/mNVzYw6wu957F3WXzCz5LT1Ok6+BX0tpQqqQwwQrw9BVvANrL5PFH/85fQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xruRPgvT1sdKk7WH0XQxaZLvzifxAT6Q0bYVbvOTuGI=;
- b=QoLg4U/SScPPyu8LsHr/5lgKEDCRM+LSeun7cTZBjkm7HX9pnlTd4uJP3Nso2di6lY1wMRbTwWqtyfhF61RkGntYPyEVmlW4h03idQHvdwaORFMTrcbwiJdWrA8PHuZZ8usk9x2SEvOMc0ontpOnyhsXMXfZ9Yse1JQUvBFCo4hS9QoxPqJbLfmfAMSeAEX1GHmsNyZuCTHPvlUCDh84zFSz5i/0NSZIHc3h58sx0R4XAkMA6i23ZRaFpQmYZl+IId4fsXQESjmLDgaoOFbNIU497OwgHF9F08SB/TEiOqqkKzShXc2/Lt2ppnPUMxJ4dopN09uI0AjowDXKooeiXQ==
+ bh=AfacV8Oscr7dbTDt/yq/oJd2CPR/ldt4jh8ILlgow+I=;
+ b=PJV6uOizdkWRCHZZkGW5sBHNuNxzXBrU7+v/Okqe5iS8YIzY07KFhdzI7jHYGlY/SM4MVfUgAVnRJeVUjSazBfMuRsdB7ayRqFY0J1YqSw/aDCneUtZeBOnsjSzSiMaJuDDwPschmBYwPnuNP68got+zw7Y5dBZymj6B1hLZFT5MCWjkGVQabYKg7qpDUPE6lf1acqSrPOsR1YAYc6nfP6oF3WInNq0Yiv1h7Sy4QDXgPrHkYeFIURVelTZiHUaRC5dQjexcgLdqy9WQWUPcS2HZNId14QfmeX3zTPgT9BXSPzvvPmd/4C0/8yMISu3rhzVF4+bHBbdWkp6P5CvOBw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xruRPgvT1sdKk7WH0XQxaZLvzifxAT6Q0bYVbvOTuGI=;
- b=p2yAqD2obLaqkSiZhVIdjdogBmSFOw1cEzg4KwymmiwUqwOpFGEvHuLin4QB/nBc1Mbm4qAx/ssO2QU4yLfDjss1SadWXvBDCPjZWv3bWkrpg4u6S9yV0QF7B4Px6zRmJpumTDYEz9TgCifKLtemazbB6/yONiAFCOP9N/9jG4khzqhF+BAMzfpXGk+vx64QQUd6Nlq8LvZ2kkKqJM2aM+MbjES2NZ01s288lEYIh8XJzbVEPzD17nPZcu9lHPvA8S8aBcHkBrbhSekzk6dLqPK8ArhqMP4qINDrv4xqgn+tBVTZcEswe/VyERfVxuYH8bFEqFEC+HMQYsi99cmxIA==
+ bh=AfacV8Oscr7dbTDt/yq/oJd2CPR/ldt4jh8ILlgow+I=;
+ b=GyMPaUUAcVpLi1FbDlR4mW4gNzWf4ME8I1QVxtW5H2ERROm4go7fFmHOY/gjid5G+KMttcaiHt4suMDD+3EOKs07G6Bhxcod7BWU3rrn+xiDWM4XiWY8NG8QfXl/X9IfA4UXpRvfR0Ojy1OMjKq8ZTqxiKNYpC4wrzm57c3ewdSufh9aDLX8elUYGDGvOV1ocBLISNp2G8LydAzrCOC25yVx3VwUeFTFzC638pK9sKg2wC+0hM3X4gOK7SIUNn6IDX+2W6aMu7rvUAsjZ2h3/xSK3wFRSi3HS/fKHYYBZmeUOwYlLItw0S2JYN7lnJii901i72fsFApA+HJzgNCytg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by PAVPR10MB7468.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:2f7::10) with
+ by GV1PR10MB6148.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:97::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6768.35; Thu, 14 Sep
- 2023 05:53:05 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6768.31; Thu, 14 Sep
+ 2023 05:56:06 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::7f20:d403:b43d:12e2]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::7f20:d403:b43d:12e2%3]) with mapi id 15.20.6768.029; Thu, 14 Sep 2023
- 05:53:05 +0000
-Message-ID: <4062dd3b-77c3-4ff5-a7ff-a195f35b9e12@siemens.com>
-Date: Thu, 14 Sep 2023 11:22:55 +0530
+ 05:56:06 +0000
+Message-ID: <e25473b5-670b-457d-a017-200663b93e7c@siemens.com>
+Date: Thu, 14 Sep 2023 11:25:57 +0530
 User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core 4/5] .reproducible-check-ci.yml: Add BBB target
+Subject: Re: [cip-dev][isar-cip-core][PATCH] initramfs-verity-hook: Ensure
+ sync on rebuild
 Content-Language: en-US
-To: Venkata.Pyla@toshiba-tsip.com, cip-dev@lists.cip-project.org
-CC: dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
-References: <20230911133147.3164-1-venkata.pyla@toshiba-tsip.com>
- <20230911133147.3164-5-venkata.pyla@toshiba-tsip.com>
- <0d30d88f-ee82-4b56-9453-85a7e1832242@siemens.com>
- <OSYPR01MB55422F888CB0CFC373E89496A4F1A@OSYPR01MB5542.jpnprd01.prod.outlook.com>
- <1729ac64-b891-4dae-b723-1e009c92d66f@siemens.com>
- <OSYPR01MB5542F9FA4966AA0F34736826A4F0A@OSYPR01MB5542.jpnprd01.prod.outlook.com>
+To: Gylstorff Quirin <quirin.gylstorff@siemens.com>,
+ "MOESSBAUER, Felix (T CED INW-CN)" <felix.moessbauer@siemens.com>,
+ "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+CC: "Schmidt, Adriaan (T CED SES-DE)" <adriaan.schmidt@siemens.com>
+References: <20230823132816.1011054-1-Quirin.Gylstorff@siemens.com>
+ <5a4f1ebe-305d-409d-b142-49626877455a@siemens.com>
+ <94deff88-b5ff-16e1-89cb-d5337b788b50@siemens.com>
+ <c90ebb07-260e-496b-9280-c340ae41c26b@siemens.com>
+ <cfe1f5d1076d50f409e6f2f6aea7728ca8f06695.camel@siemens.com>
+ <595d5791-a08d-f08f-5dee-6f9ed5d472e0@siemens.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <OSYPR01MB5542F9FA4966AA0F34736826A4F0A@OSYPR01MB5542.jpnprd01.prod.outlook.com>
+In-Reply-To: <595d5791-a08d-f08f-5dee-6f9ed5d472e0@siemens.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: MA0PR01CA0053.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:ac::8) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: MA0PR01CA0021.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:b8::9) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PAVPR10MB7468:EE_
-X-MS-Office365-Filtering-Correlation-Id: e498a829-03fe-4a2d-642c-08dbb4e6dd14
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GV1PR10MB6148:EE_
+X-MS-Office365-Filtering-Correlation-Id: 71f9d871-06c0-4f52-35d9-08dbb4e74918
+X-LD-Processed: 38ae3bcd-9579-4fd4-adda-b42e1495d55a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	IgO9wGDFjAJQwEZM1DUWT2v97l3jO19kaN9qec8d9Zgfz5VzyFG1R8Od0KKMdfC5NrNxi5EE2z2iv1kCOYgbadNe/piByoKWw5Ct8duxAr576JCJvcoj1wnCERkBggt5rjnMmkvuBFdJ2mdtfpCHhAteAWZjV89g78cMfwzTMDAFN/aG7f+RvcqjLCj8aTqFgkpG+S97U5eNkA9bjCg92nsmtvwESXXgZ3EY6bS/EVjxtkiCC/c18sNFdBvx91pJxrl5nFJj2yzDWbQp65P8ZnPZRGn9EFkOkn0rB6+kXYIAb839Q/+I/lzV2vjN3uz8OJmLWBIzrFfaApvR+Ubb+4szfb6amkx2g49YNTiF5lZewG0jx1gh7F/mc7NsEMJxOnptYOU22CBHQEAFsKDonbsn3AMK1BHtaTou3xNCPetS8XBLnPo3kRFaIF0cA2nKfXIXaqzy4IPviN2sHf5BMhFfs8LCTeq8qrfEPlwtkcqeD/XfC9xRdXB/93POegM2aUqkI4Zbt91jeGUtK0X4lyuYKYS0KBShqu02qd6//odYU1eKnVc6oX1u9jxOTo2w/qmpu54hqJycfA3p9AUYkkhO30uNvQdC6D1+Q74lYmMCuxlF+TmDjl+GqZyGULNSsaemvhjN0nVJ3bMrSVnoeA==
+	fZmxytAgAjkzCOCZ0w4fwwvkFc5bTOMfFKiNoPzVOPDddf6JqoX3MBGVyA8lN161O1JsVw2ultpwCRmb7WHceENO0Flt9bHHrGy+NVIHv9144pyVEhnjtJ+PIPu2xISqCjQqU1VnEc1myUSExkFKkz6G6Llyw7gyMQRWl9tG9XNF4wUvzYOPAaueXjRoQzw/hW0p6UkgPRrF8Kz6GnL/HFNuL1orS6sD6LqmXgaY/b2PYaQ6V0yHNyOTYR3AjVodqJkr8zEcatGCWnvfRd9akVVdrl7UBIo0OfbYTIiDGTkWpDfiyRydLb6i7enFmfi4+xsIgQqE0U+XXgV19BNbzwH2rDbtR3Ox6PPTKOcFyLcJngnhnCLkK3oc+eUnvsEPN3Xl9N7zRYY6hUMmQ5I5abVWxrbvzfhGIufHrzLllSxl9LA04C+9lraQMnC7/pfEFWX6+ZA1FIHVMVoE8SXa+LoGNXd8OFv/Bmz7Dl1jBtD+o/phjKkQgbFhCF69agOr30Hf2wnK9LpAVOLxMZj+/LOxYx+6U4f6cKTQ1I3sK/xas40l9sUtcZw4E+hpG4Uml1P+rhr4chNYmH1f63FwZj/2RfsDP5wtjR7cHBA50b3hkUvKLpzqGWP+Ctc3zoQ2sshBjPYfH8FTvyFNETMNaA==
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(346002)(376002)(366004)(136003)(396003)(186009)(451199024)(1800799009)(82960400001)(2906002)(83380400001)(6512007)(6666004)(53546011)(2616005)(26005)(86362001)(6506007)(6486002)(38100700002)(36756003)(31696002)(478600001)(5660300002)(31686004)(4326008)(8936002)(8676002)(44832011)(66476007)(316002)(66946007)(41300700001)(66556008)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(396003)(39860400002)(366004)(136003)(376002)(346002)(186009)(1800799009)(451199024)(83380400001)(478600001)(966005)(31686004)(2616005)(107886003)(26005)(53546011)(31696002)(6512007)(6506007)(6486002)(86362001)(6666004)(66946007)(2906002)(8936002)(66476007)(4326008)(41300700001)(44832011)(5660300002)(38100700002)(66556008)(316002)(110136005)(36756003)(82960400001)(8676002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?zeG3DDupIH/PCVTdSOJp8saBh/MnIvhsnyZBP4g0xKXFzLMQY4lNpqUAeyzT?=
- =?us-ascii?Q?QFPn+bbn54SyWS6jssETpkrI19erhHWtUvab19ebbv07YnZDukMFMrReca2q?=
- =?us-ascii?Q?K2m3nQvPMMSOyZahhK/0aMnbl5JIOHHrlDm1dWeaUaTP8DW1ynxOOqENMWpT?=
- =?us-ascii?Q?5bGrzjOyxY7iX+Ug0GssxECRAFFT4uRLtd+WBmM+daWvHmu4xU4uNmx1ZiY5?=
- =?us-ascii?Q?3IHwAW/EY9xDms5N5tkA291SJQCOd1byRwoekmG5ZEJwVBihW+dCfCD4d7q8?=
- =?us-ascii?Q?VkGIBQiuYLctbLaF4XYieUY6vh+NUpNQbOZBs7M1SyMFKp/5E/nQlEjIJtIz?=
- =?us-ascii?Q?8YmMNARBTPnq1rrQYn+Na3qQQ1SK512hFPUZLDX2/jikGUinwaquMtvq04u7?=
- =?us-ascii?Q?H43RNmf33THDLBoea1cbKuWauGvgzOOiAlpr3uwqQrfmp5evOfLJeKF81rgs?=
- =?us-ascii?Q?vZAVl4HfSGJw25xsVOiYjyhBYim/HEyb2+QO37cBSFwdMQgy8yJq/a5WPWkS?=
- =?us-ascii?Q?6+YwsoVfjLxZuTMyjNeyf/lc9v/ltoc4PbSy+d47gvp5P8/Se5EQCXt/gfAJ?=
- =?us-ascii?Q?5NwHi+E7IEL8X40rkGyi+SaJOwpVBYVGAwBp/cRaXYIFQ50Tn26SLmD5NqYO?=
- =?us-ascii?Q?9lTL14fcp6DNDV5KuRCa+IaWgT9VGFKNGfJqm4x9+cI70mg5Xx2KTx6wDQe7?=
- =?us-ascii?Q?TZXjhWaauTQDE58Fx6juP0PSu7e868xwE6C+R6PromuRU8MuVJNtYOeksGat?=
- =?us-ascii?Q?Aj6Zs0G2FXCmHZCAoRmuJO8n3qXvAxcYUITEyzfP3HKLWFEolmrVUyJbTjTw?=
- =?us-ascii?Q?oLS3syrW2RSdAYoKzgbpMnC20BiPI9bwGtaDDcZLFJ46IiYlcCCE4JLIiTaK?=
- =?us-ascii?Q?Fd5skPFuPb52mU9qePb8kFtQLAV0QRLp7zRtp4T0kv11uz9iJ+RV2qGpLfGC?=
- =?us-ascii?Q?YiuwxYRm7iGx7rFmOhCtkVZtWZCzh3vCZClDRGKsYmXXfMPHy+sH+ydsWymW?=
- =?us-ascii?Q?GaAvV0izjc84IHlJLu++FjlhXKoPeRHHdFj++5qPzUrqBEFWyAjOaRDsgHCu?=
- =?us-ascii?Q?L7DuywNC5Z/UiLzjYqaA6prB9/1ugaKq4z38Eo7p/0SH3gfP49CfATEy3Zcz?=
- =?us-ascii?Q?GvwX6I2dy/J3cO4lkXy7fTPDLLG/TuggCJYCJHXWCGodKipz9vheMpKKQexa?=
- =?us-ascii?Q?BQs2P/GcvaPyLydAWo7Dpocd6UW4dhnTlBmrnLk0IMRlVjhgL8vDDEY2AvmC?=
- =?us-ascii?Q?jaj9dfDAi4x/zuq7nh0O/IkQHcXOAXgyBc2SsFNWuW0Zdetqe/LaY05SbTBi?=
- =?us-ascii?Q?id9WOUQ769UdEdD5mQAAmT/Jwb4PvfYp+GxTlCL+PxWFk8uQVqbeSI+SOgFt?=
- =?us-ascii?Q?HGCyCt9nvy+63A8djE1VnyAY8WxbPxQyGLZYcuD6BkYdUr3oIC+8E76Afso1?=
- =?us-ascii?Q?aaF+89ciGE68N/pIK/dRwQl26T0aQV1l8803Z3SN+yKTh4WjtIYKrXv03zUO?=
- =?us-ascii?Q?4VD5KjN7idbzAh10SCSNoU1j9toDPzdYrCe+aFrH2pQGahmRno49W1rNRrAi?=
- =?us-ascii?Q?2HaakGYZW3cyxLF5yoHOkOItkWXnGCOMp2LsMqAAUGDEC5f+erbr4Mad0lMR?=
- =?us-ascii?Q?wg=3D=3D?=
+	=?us-ascii?Q?JQk3fdDv44UA6xujo5X6l4qsEdkuZN+xt7NC2RQrQh3l8DWnQeMmFbABammq?=
+ =?us-ascii?Q?ZhgmYQvqEzLKqZwZTl0hYYtdaXukTzZR7sBy06tcCX5i5FRBjAlzv6zJ9t6i?=
+ =?us-ascii?Q?UEOeT/R40V6He32Fd0TuGbKH/sAEFcovbMT9CcLLkyfVt6R2ABWp++IpZayP?=
+ =?us-ascii?Q?acxMjnRQgFTkQikHTGCnCKiu2HbV+hGeKWpZUnyZE6fIyP3MMSQjww3zNV0k?=
+ =?us-ascii?Q?UNy0fS6WIEf+2H8z94Ejy8RPnZmBwpd6FTe4Fn5883YJuAEc3/KWRQONh09a?=
+ =?us-ascii?Q?Sj4QQe994+050Qf0nkCg6Z6McHnqC02s4Zle7vMCER3kG7euGglL1HP4HTTr?=
+ =?us-ascii?Q?F+KnXcn4H9nN8nuMFjn7PnQYoIeb5pv6huz21z2+Bw5xZsfuHD1OC2EpMIQh?=
+ =?us-ascii?Q?cPZH4vuTk+jLmyP7g/AwtAYGBxftm0sEhfLrsho3TKxYdtwzjjttc3cKZNJ0?=
+ =?us-ascii?Q?DtBQif1wlEAtF/ORji4mMxnWJXPusm1Je4OJXwME0b0ri/MGtKQDxJrbF/nU?=
+ =?us-ascii?Q?RudUkSK5crY/k1OhjNRP5bgXLd9V2v/IFjbkUT1Os2mWT5Su/rs9fuNsALaw?=
+ =?us-ascii?Q?NUHZzaVem3ODXDxZkq2krqkQJDhL2XWuKrevw9viaemP5OBWY4eY79AZ8U8R?=
+ =?us-ascii?Q?CN/gqFdwCtHr8Q/U5tc0FxaE+6fGCgkIXgfSmRx/qFom1CYiK8Aktl9Mbz0Q?=
+ =?us-ascii?Q?/nyFOONL3nPoaqslZ6K73qj//frEx9TqgUEQu2mVOrB2LY+Z2nA31BBoasBJ?=
+ =?us-ascii?Q?SPqnNm38qqeBWk3p1gvOvWs96D4FTsnj2+kmzO30fEuwbgD3pvHCwspZgcAz?=
+ =?us-ascii?Q?2K3YOXdsI4JkU5D3j57LHk1E+k5tye+d4aSwVcyaUYEQoCDEmnPYRS292Gtn?=
+ =?us-ascii?Q?htbWwhKhcbGHY3SwwWs+6VDy6yDJDHiqfIjwkcS5PXveGmjzkQedMY9fsqbL?=
+ =?us-ascii?Q?K6UMzmCxIx6uk8Ll1AFO4STtVe5pGV/IX7DvYX+L+YV+LtihyLs4ZuLniz7I?=
+ =?us-ascii?Q?qXeZIYiYC9InzUV28B4zYBqkqFZw+S/hqq8KSO/e2MzOddaEqcgxieG3x2CL?=
+ =?us-ascii?Q?yshgNDa4lBluP/Lrl20z5Bfi5s6/YYVh574SMiDlhd0guaVIO1hVVW6jqr/2?=
+ =?us-ascii?Q?pyilED7zyWWveGYxhGgMdAAEUCWUT6LliBjVBcHLRqaNoaAL7y04aDjAWw6S?=
+ =?us-ascii?Q?o0t0SA09XzlOP58j3L/XUuRwZ2xl5qcOdXNP6qapBsE5bEtv+C5kDrWhRLS7?=
+ =?us-ascii?Q?kdZepeaYIRaBPLEHNyt4UIqDvB4VXpyPq/ZQduQ20vAamxZ8WTNMKLMkn8Lz?=
+ =?us-ascii?Q?EE8IVPOAi/vNoEiPL75Z1PHNTx7+WswDBPtgP0CVB9n9rYpEMni5bsCJSFQ3?=
+ =?us-ascii?Q?7MQkPzqlFFI5+z7MvdiFvS/LVsF+tUfdIWuOlPy7thpOLPPsgR+PAk0KkxJe?=
+ =?us-ascii?Q?CuZFpdcW7PWbVKnizROJYMPdLw8lG794E85lStr5tPkFfkXjkT3UcKUmMpKJ?=
+ =?us-ascii?Q?lxh5r0jFGvaMKVwT4DJ/cmH+senZLSFzypdzNleXDZChq4dSTLYMUI399TUq?=
+ =?us-ascii?Q?KOLgnBW2jdhKYfONW1F3DoluqpljQDLtdAxW/utu9hrF2duDoaOcHQSymAoJ?=
+ =?us-ascii?Q?Ag=3D=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e498a829-03fe-4a2d-642c-08dbb4e6dd14
+X-MS-Exchange-CrossTenant-Network-Message-Id: 71f9d871-06c0-4f52-35d9-08dbb4e74918
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2023 05:53:05.0500
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2023 05:56:06.1427
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: o1ldAbsIfkpmxkQgCT7IVxdT5Nl6Uch2FUMQwJb4zg7dIhECV+J1CRBYAbP+x6S1Ln2SgbRQNU4UhNyKwfbKsg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAVPR10MB7468
+X-MS-Exchange-CrossTenant-UserPrincipalName: bHb+dubLlu+w9aEA/R9D0eQeJszAp/QKpIjaflX9U0hkyTxk9Jt+44S0y3nHi/R5sGLrgfyHBO1Fjt0xB/fGgA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB6148
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 14 Sep 2023 05:53:18 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13127
+ <cip-dev@lists.cip-project.org>; Thu, 14 Sep 2023 05:56:18 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13128
 
-On 13.09.23 09:37, Venkata.Pyla@toshiba-tsip.com wrote:
+On 13.09.23 18:21, Gylstorff Quirin wrote:
 >=20
 >=20
->> -----Original Message-----
->> From: Jan Kiszka <jan.kiszka@siemens.com>
->> Sent: Tuesday, September 12, 2023 1:20 PM
->> To: pyla venkata(=EF=BC=B4=EF=BC=B3=EF=BC=A9=EF=BC=B0 TMIEC ODG Porting)=
- <Venkata.Pyla@toshiba-
->> tsip.com>; cip-dev@lists.cip-project.org
->> Cc: dinesh kumar(=EF=BC=B4=EF=BC=B3=EF=BC=A9=EF=BC=B0 TMIEC ODG Porting)=
- <dinesh.kumar@toshiba-
->> tsip.com>; hayashi kazuhiro(=E6=9E=97 =E5=92=8C=E5=AE=8F =EF=BC=A4=EF=BC=
-=AD=EF=BC=A5 =E2=97=8B=EF=BC=A4=EF=BC=A9=EF=BC=A7=E2=96=A1=EF=BC=AD=EF=BC=
-=B0=EF=BC=B3=E2=97=8B=EF=BC=AD=EF=BC=B0=EF=BC=94)
->> <kazuhiro3.hayashi@toshiba.co.jp>
->> Subject: Re: [isar-cip-core 4/5] .reproducible-check-ci.yml: Add BBB tar=
-get
->>
->> On 12.09.23 12:22, Venkata.Pyla@toshiba-tsip.com wrote:
->>>
->>>
->>>> -----Original Message-----
->>>> From: Jan Kiszka <jan.kiszka@siemens.com>
->>>> Sent: Tuesday, September 12, 2023 8:39 AM
->>>> To: pyla venkata(=EF=BC=B4=EF=BC=B3=EF=BC=A9=EF=BC=B0 TMIEC ODG Portin=
-g) <Venkata.Pyla@toshiba-
->>>> tsip.com>; cip-dev@lists.cip-project.org
->>>> Cc: dinesh kumar(=EF=BC=B4=EF=BC=B3=EF=BC=A9=EF=BC=B0 TMIEC ODG Portin=
-g) <dinesh.kumar@toshiba-
->>>> tsip.com>; hayashi kazuhiro(=E6=9E=97 =E5=92=8C=E5=AE=8F =EF=BC=A4=EF=
-=BC=AD=EF=BC=A5 =E2=97=8B=EF=BC=A4=EF=BC=A9=EF=BC=A7=E2=96=A1=EF=BC=AD=EF=
-=BC=B0=EF=BC=B3=E2=97=8B=EF=BC=AD=EF=BC=B0=EF=BC=94)
->>>> <kazuhiro3.hayashi@toshiba.co.jp>
->>>> Subject: Re: [isar-cip-core 4/5] .reproducible-check-ci.yml: Add BBB
->>>> target
+> On 9/13/23 03:26, MOESSBAUER, Felix (T CED INW-CN) wrote:
+>> On Tue, 2023-09-12 at 15:55 +0530, Jan Kiszka wrote:
+>>> On 12.09.23 15:37, Gylstorff Quirin wrote:
 >>>>
->>>> On 11.09.23 19:01, venkata.pyla@toshiba-tsip.com wrote:
->>>>> From: venkata pyla <venkata.pyla@toshiba-tsip.com>
+>>>>
+>>>> On 8/28/23 08:47, Jan Kiszka wrote:
+>>>>> On 23.08.23 15:28, Quirin Gylstorff wrote:
+>>>>>> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>>>>>>
+>>>>>> Disable the timestamp of the do_install() task to
+>>>>>> re-execute when ever a dependency on do_install
+>>>>>> is executed.
+>>>>>>
+>>>>>> Without this change the sstate needs to be clean for
+>>>>>> every rebuild.
+>>>>>>
+>>>>>> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>>>>>> ---
+>>>>>> =C2=A0=C2=A0 .../initramfs-verity-hook/initramfs-verity-
+>>>>>> hook_0.1.bb=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 3 +++
+>>>>>> =C2=A0=C2=A0 1 file changed, 3 insertions(+)
+>>>>>>
+>>>>>> diff --git
+>>>>>> a/recipes-initramfs/initramfs-verity-hook/initramfs-verity-
+>>>>>> hook_0.1.bb b/recipes-initramfs/initramfs-verity-
+>>>>>> hook/initramfs-verity-hook_0.1.bb
+>>>>>> index 3fc63ed..7435649 100644
+>>>>>> ---
+>>>>>> a/recipes-initramfs/initramfs-verity-hook/initramfs-verity-
+>>>>>> hook_0.1.bb
+>>>>>> +++
+>>>>>> b/recipes-initramfs/initramfs-verity-hook/initramfs-verity-
+>>>>>> hook_0.1.bb
+>>>>>> @@ -40,6 +40,9 @@ do_install[cleandirs] +=3D " \
+>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ${D}/usr/share/initramfs-tools/=
+scripts/local-top \
+>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ${D}/usr/share/initramfs-tools/=
+conf-hooks.d"
+>>>>>> =C2=A0=C2=A0 +# Ensure VERITY_ENV_FILE is updated also when rebuildi=
+ng
+>>>>>> initramfs-verity-hook
+>>>>>> +do_install[nostamp] =3D "1"
+>>>>>> +
+>>>>>> =C2=A0=C2=A0 do_install() {
+>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 # Insert the veritysetup comman=
+dline into the script
+>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if [ -f "${VERITY_ENV_FILE}" ];=
+ then
+>>>>>
+>>>>> No other dpkg-raw packages require this, do they? What makes
+>>>>> initramfs
+>>>>> packages special here? And what about those in isar upstream?
 >>>>>
 >>>>
->>>> Which additional aspects of reproducibility does this target test?
+>>>> This is necessary for the initramfs package which contain the
+>>>> checksum/uuid from the root file system build.
+>>>> This ensure that the checksum/uuid is refreshed.
+>>>>
+>>>> It fixes the problem that an rebuild of a verity image leads to a
+>>>> broken
+>>>> boot after the build.
 >>>
->>> It will try to verify additionally beagle bone specific files like MLO,=
- u-boot and
->> dtb files.
->>>
+>>> And what will happen when the user decides to pin the UUID to fix
+>>> value
+>>> in order to have reproducibility? Won't that cause a needless re-run?
+>>> Shouldn't this recipe rather make sure to depend on the UUID value?
 >>
->> OK, so this includes firmware generation, understood. Does it also inclu=
-de
->> something that is now checked twice by other targets? I.e. can this supe=
-rsede
->> some other target?
+> Even with pinning and same salt and uuid veritysetup will generate a new
+> roothash during the build.
 >=20
-> No, the kernel is different because it uses different configs, rootfs con=
-tents also different as it installs additional packages like u-boot-script =
-and u-boot-tools.
-> So the bbb target image contents are not verified in previous targets.
 
-So far, we are not looking for testing each artifact we could produce
-for reproducibility, just like we do not check each configuration
-combination a user can select. Instead, we are testing representative
-combinations. So my question would be if the BBB can be sufficiently
-representative for qemu-arm specifically.
+That sounds like other reproducibility issues we have, eg. with mkfs.*
+Can't that be fixed? I think it has to, otherwise dm-verity images will
+never be fully reproducible.
+
+> Quirin
+>=20
+>=20
+>> This is a general reproducibility topic: The task checksums are
+>> computed at parsing time and by that the tasks that need to be re-run
+>> are selected. However, this is based on the assumption that tasks are
+>> deterministic, i.e. same input data also generates same output data.
+>>
+>> Unfortunately we are still not 100% reproducible. By that this pre-
+>> condition is not met. For normal packages this does not really matter,
+>> but for the dm-verity checksum this very well matters.
+>>
+>=20
+>> I'm just wondering if we could work around that by making this
+>> component non-cacheable. Putting Adriaan in CC for the sstate part.
+>=20
+> The same=C2=A0 solution as is used by meta-security for Yocto[1].
+>=20
+> [1]: https://lists.yoctoproject.org/g/yocto/message/50624
+
+Interesting - Yocto is NOT reproducible when it comes to verity...
 
 Jan
 
