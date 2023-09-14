@@ -1,160 +1,134 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25FDAEDE995
-	for <webhook@archiver.kernel.org>; Thu, 14 Sep 2023 08:35:46 +0000 (UTC)
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.77])
- by mx.groups.io with SMTP id smtpd.web11.7103.1694680537229088673
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79FEBEEAA63
+	for <webhook@archiver.kernel.org>; Thu, 14 Sep 2023 18:51:12 +0000 (UTC)
+Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
+ by mx.groups.io with SMTP id smtpd.web11.2750.1694717467820873865
  for <cip-dev@lists.cip-project.org>;
- Thu, 14 Sep 2023 01:35:37 -0700
+ Thu, 14 Sep 2023 11:51:09 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=mrBqGAHW;
- spf=pass (domain: siemens.com, ip: 40.107.22.77, mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Knojs8qgTsKuWXzaPgIQ0e8YiiqGPbXGUTo1j2JsHeF1Xpnr1q+TlK7bn1yv1CxZKIlOvUDgIIL0nAAqHqyBuxT91LLSqzWh/Fplr4QbP8aJkFM1sqc8eXXyVnke6CXcG/yUKjwsdaRxq++vaVfZvrNaJmBxpQ6FPvuwiLVH4OtATV5PfqYYBkKOylzgfH8V0utGLhZnQuGRnmwfPVGAmdzHkrU/evQvTAIS2OjzDUw0Nr4bctvIvrPl6tEfxMGrll0r+qIgZ9oCzv6xFvQhx/1Zw6r2qjRkLuT9h0L9498KoSG/x325iascQbsKlaVeqGfRY03dzFjpUkR9FdtrHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+bVZse1pUy3XZtbCbHMOO6atpOCISXADKn+N6bWMQtk=;
- b=iwO3ywrWTSuIjg4Td3SFeZq90LnPaIzemp532fnUKeUFGUS7iXL8tXnsNAIFfiCYrnWzm/gyae05a4hVKaiASyQ+ZNepdGfUwu0X43Ruod6Wtj42ZvfaLkLjSaP3bXoYQTF1tDz4EYaQxTgoQU1J78aRF4po/Nful+oAf0K2gVrH2LZ+fhEzmf1ZQNyxbcko9VZJeg7+TPyjnLAb5eQc86/JzfKHz9ONNfWPtzjPoWUUp6FEglwlpA8Jefed98eqkSU/rdJMpokmWQI8Yw6pBIfIvvYj7D2nDb96/nCnCzkZNxl41fEQKU66yeAJ/CjA1B2d8XgXMTqqSM21ctDHaw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+bVZse1pUy3XZtbCbHMOO6atpOCISXADKn+N6bWMQtk=;
- b=mrBqGAHW+VNkbOTDwI2Ro6gZ6ZxG7ovsArPH5czYjrM0oyfsUgw+43joeZFgbbRFJuvO1X3maQqrdV90RCigTIrum0bLJtmhWdGRJ0PU8R7p0jjJQKnNaWmjW0AnKOQAo4CUWTItGcVvbNrwxt4MjsmNaOdk9SwmyMWOtaavJgZoURuxyAPApW2mWQKeU6n4WLfkVHS8AhdjLGVcIuZbFDPeltsO+NwdKIE0JD6CqtAGe/MSAgg8vEJLcu0IzOGPCEKwpmACw9z4Sz/gxVT/o+7bf0w2waq+G9tqP6/0Hi8BP69FXmFxbbQvVAt5sSNAl+zINKETppJC+9BPqxAURA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by AM0PR10MB3668.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:15c::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6792.20; Thu, 14 Sep
- 2023 08:35:34 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::7f20:d403:b43d:12e2]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::7f20:d403:b43d:12e2%3]) with mapi id 15.20.6768.029; Thu, 14 Sep 2023
- 08:35:34 +0000
-Message-ID: <230df1b6-0189-4f47-8edf-d30cfd82d4b4@siemens.com>
-Date: Thu, 14 Sep 2023 14:05:19 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: CIP IRC weekly meeting today on libera.chat
-Content-Language: en-US
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: cip-dev <cip-dev@lists.cip-project.org>
-References: <b0a75a9c-727a-4af0-b3df-d28dda57515e@siemens.com>
-In-Reply-To: <b0a75a9c-727a-4af0-b3df-d28dda57515e@siemens.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CH2PR07CA0040.namprd07.prod.outlook.com
- (2603:10b6:610:5b::14) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=B51wTd1v;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228, mailfrom: fm-51332-2023091418510324e3457bb7f2c71e0b-be_9rs@rts-flowmailer.siemens.com)
+Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 2023091418510324e3457bb7f2c71e0b
+        for <cip-dev@lists.cip-project.org>;
+        Thu, 14 Sep 2023 20:51:04 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ bh=GGuga2VdOyJHOgEa3eiowO5/Y/yhwpXq4CFCE9fzcCw=;
+ b=B51wTd1vs+3sakdCp4a4+I5i7Wq/A2mO6YUZP9QuzGiiSgrJBcpE0LZJXwpVYEyrLrwXR7
+ Dzo+ylv8q9TnbtjIILEd+w8vOjDE7E7vgUKio8ciTf1XO+SUUNTAWtcgANHDFYPiJMSrlYnu
+ WBxqrsNZl/tAX3G6K5L2c7iq2ZpPE=;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: cip-dev@lists.cip-project.org,
+	felix.moessbauer@siemens.com,
+	jan.kiszka@siemens.com,
+	adriaan.schmidt@siemens.com
+Subject: [cip-dev][isar-cip-core][RFC 1/1] classes/verity: Set salt and uuid for reproducible builds
+Date: Thu, 14 Sep 2023 20:51:02 +0200
+Message-Id: <20230914185102.1451907-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AM0PR10MB3668:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8dcbf05b-ce1c-47e8-9c59-08dbb4fd9043
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	KvuWDYFkpp3sTYEHUmWwuYUlia556BzQZb7NS9/qgWRkb3oGwwher884PPmXUBwzBLl2y/4ovDywq24tRbGEC4PBkuGtaYekx5NPSZYScbA8H6/B4p/8frtYf/u4iE6IP2LYm8MRgwvIAU4AM9KWNTceBnauYMMauEnzTNuT9VeqjrPOFNg6e6sSsKgZJ5Q8G9yFrNr2W+EXvceQmFhOZxM1M+izYI6khQh3/MrtxEGMPm49Do7+Br4f6dJu25V/OYfImblKSQL2HPlJ0IHq7iqYn9Tf36UbRkzKmPEt5hLcS3Qxk6uYrSmiw4kFnbf2JmsE0+cmoQzrC+JhBzc/dno+F0g25Q/aARymL94GreSUQwvdDA2CfiKJCCsHFgdCRy3CMO0oVPT6sTLyU4bRH2lg2JmHG8VWL4KCQNC6moTXnJi8qYTk1IRv9/BV3RGZ1ArD9lFH5VkGRXkFalTfAK6gi475Xws3V6NPG7GwJXObi8Qy5lO7He4zEksoAvYqdcrrEhxoIbYS2SvdEVN/lhb2erv1WME+UGw3qYKd7gH9EPWMithIPfQI+5NCGb+nSXeigKrEsDsMP9LP2NHR/hVztIYQKsmle3i23nfg8mAUCUFU7x+EIAQgHsHFBKooesBfFyF3T666BNsPIb1Gew==
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(346002)(376002)(396003)(39860400002)(366004)(136003)(186009)(451199024)(1800799009)(31696002)(86362001)(8936002)(8676002)(5660300002)(2906002)(4744005)(44832011)(36756003)(6506007)(53546011)(6666004)(6486002)(82960400001)(2616005)(38100700002)(966005)(478600001)(26005)(6512007)(83380400001)(31686004)(66476007)(41300700001)(6916009)(316002)(66946007)(66556008)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?WHpCdU1tc3FxazgxN1NMU0RvKzVzM1RkY1dVZ0ZqSnlXY2VIMWhFcmM4MitQ?=
- =?utf-8?B?NWM4QVpYQ0k5YWhybk50UjJOYjZHWDlvbW5hUU5ja3J6L3BPM0w3a1R1N2lD?=
- =?utf-8?B?SldITkpVSEwrRHdURHI0TDZGN3hpTDc4aWxUSVhzaGxZaWRtYzJnRURVdWcr?=
- =?utf-8?B?UHFiWHhCUUhCUHZ6bVZHVTcraWhOeC84TXVEcWdUM21yalJDUm82cVYrd0FK?=
- =?utf-8?B?Uk1DcHRIMG5vRzNKbDV3czVsbGlwWC9HTXpTNHhVajBTaHp0R3I3a0IwdkFS?=
- =?utf-8?B?TVFyYVVWbzRZem4wN1IzSjhoQnNNZVlmMzJ3MVpWSVF1TUpWc2RoeEdKMWll?=
- =?utf-8?B?RUs0VWQ3RGpoWjYrTGg0cFl0WkR0OVlGKzYrSGhsSUdlemVkT3A1Tmt0ZVlQ?=
- =?utf-8?B?TGM2bmJkWEh3WjNJNHZKRTM5MDlPdnhZWklqS25ncEFqRDRZUVI1V1ZMZmc2?=
- =?utf-8?B?QVZWbkhUZk9pTmh4VlVBbVlLSUVTd3VYeFF1OWNxeXEyTk8zNm9yYUdXN1hn?=
- =?utf-8?B?Ujh5RUN1WkFuZExtZUxHOWwxZy85enk5aVhtV290aHY3cmF6VmxYbmFRM1pM?=
- =?utf-8?B?YjB2ZVdHcU12dUdVdWxqUldoZWhzckl6R2dZZVNleHFXclZIY0lXZEpmRHpH?=
- =?utf-8?B?L3NWSThzMVlUbk5WS1AzNUxYT2ZWYURuUFVpMVJqY0VqT1ZmdS90RnFYMitu?=
- =?utf-8?B?aE9kalh5VEpzc0RMMm9PTUd3VWhHUGtvOHNmRThSMFZRQW9SVFZ3eVFxVXoy?=
- =?utf-8?B?MlJ0SnYyc1lEaVNDL2JqVUthM3RiRmVGWjczQjdNK1VxbjVPNEgxYmV1b0x6?=
- =?utf-8?B?ZHBtTHc3R3lGNnJvcFNJVkFvTW9UVllYWkZ6OU5LMGVZT3NiZXh6dHV1TVJt?=
- =?utf-8?B?L2FNQlJNSXg4NXkvRjVBNng3d1lUV2FjWHBXMkc3dDdaNmlNTkhnaVEwOENn?=
- =?utf-8?B?eWNEMlNZcmVMdm9tbjFrb2FPMHB1UWdFQ3J2RFZQem55Y2dQZVNHVDZJcDJq?=
- =?utf-8?B?RjZaciszeWpoRjBITDZzcEZYVDk1dXh0UlJsOU01OWpZMWdtYTdnTk1MMXl2?=
- =?utf-8?B?N0hVZHhJNExWZERnVlpOeWZQMFFnOHc0aEk3QUJBVUhCUExoR1ZUKzRZaWZI?=
- =?utf-8?B?bWw1OWgzVGZYbFVlb3o0dTlEWWw2RFZSNHU5cGhhbUswencrSFo1eTE5ZkV4?=
- =?utf-8?B?aUR6TkErTWRTZGV1c1AySkRmMlFCdlc0bXd2TVdTR0hhOEN3S0JHenUxSEhU?=
- =?utf-8?B?OW90L1R2aFQ0bHVNbm45a2hZY3RVcm1sZDNRWENQUnBjZFpKUU9yTVppTUNm?=
- =?utf-8?B?N2VWQXBJRWcvWjJ0QzVRRjFUVkVzcWV4SjFGR1d4a282NHk2K0llMmlwL1po?=
- =?utf-8?B?QVc1R0dUOVRoNytFdmJmTHlXbnM0cHYxUllacU1weThTUFNNT1crWllpclYr?=
- =?utf-8?B?QVZKOHhnYzd1TW1qNXVSZmNFcVFCL05FVWVkWTVqWkxDZkJ3RGV5MEZqb2Fq?=
- =?utf-8?B?bk92STM3SWgzVWpCNnBDQUNjK2o4WVNzQlhRdFBWb0k3NG11eUJ3Mm5mOXA1?=
- =?utf-8?B?Z0U5UHZaU0dUNHVBTmhXYkR3eTFjUlFQTlU4ay9ka2J4dDJZQ3g4Q2Vxall6?=
- =?utf-8?B?d2JVL3F0RWFOc3ZxenJBV1krMmhER1dKZnh6Nk15WVdQNzdKbHRTZ2g5dEpy?=
- =?utf-8?B?Z1hHNTIreUd2ajJieEF6R3ZXaU9TQXhkRGRqeHlYcFB5Mlh2a1VQdjZlaWwy?=
- =?utf-8?B?aVRYMGI4a1A5Uk0ya3Q1N0c1ZVd2YU1uWjhaVnRacGx4T25RM1pXYjlkdVlQ?=
- =?utf-8?B?ZDRjWW1TUCtGdDdUUHo1U1FKTlhyRm9WOXNEemgzdEprQSt0clhtVTZ0bzdH?=
- =?utf-8?B?QnQ2R2t1dnF5ZW41TmtJeGpaMUVsdWcwcFNuc0g2QmVYbm5FN1NCTG53Tnk2?=
- =?utf-8?B?d0xZTEFLRXNTZzd3MVpTT241Uk4yS2RKMG9mLzF2ZWlxSUpuVTl1OE5mTURJ?=
- =?utf-8?B?Mm0xcUk0Tk4xai9ySDFMZXhDdUU3UThUYjRiQmo1Y3ZVMVlxQnE5Zm1yOE85?=
- =?utf-8?B?eEhLb0V4SEljSUNCY09sOVNMY1JZMlQycGR4L2loV2NOQ2F3RFVRTkdhZDJN?=
- =?utf-8?B?YVp6Vzk0Um1vTmxWRTUzMnd4R08zblNzSlZNZTcyUmRjMzZhc2FONGhQTWRR?=
- =?utf-8?B?U2c9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8dcbf05b-ce1c-47e8-9c59-08dbb4fd9043
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2023 08:35:34.5139
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tkUaKXR2r/BqlVkZNfgF95gmLXbYKp5dXgLkEf8EgZzx9MqbNQ86mIgqliIIADXbPZMm8kixZuvsMbYtbYJvGA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR10MB3668
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 14 Sep 2023 08:35:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13132
+ <cip-dev@lists.cip-project.org>; Thu, 14 Sep 2023 18:51:12 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13133
 
-On 14.09.23 11:56, Jan Kiszka wrote:
-> Hi all,
-> 
-> Kindly be reminded to attend the weekly meeting through IRC to discuss
-> technical topics with CIP kernel today. Our channel is the following:
-> 
->     irc:irc.libera.chat:6667/cip
-> 
-> The IRC meeting is scheduled to UTC (GMT) 12:00:
-> 
-> https://www.timeanddate.com/worldclock/meetingdetails.html?year=2023&month=9&day=14&hour=12&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
-> 
-> USWest    USEast    UK        DE        TW        JP
-> 05:00     08:00     13:00     14:00     20:00     21:00
-> 
-> Last meeting minutes:
-> https://ircbot.wl.linuxfoundation.org/meetings/cip/2023/09/cip.2023-09-07-12.02.log.html
-> 
-> * Action items
->   1. create kernelci pipeline for buster images (arisut)
-> * Kernel maintenance updates
-> * Kernel release status
->   - 4.4
->   - 4.19
->   - 5.10
->   - 6.1
-> * Kernel testing
-> * AOB
->   - kernel.org tarball uploads
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-- Request from security WG to tag CVE emails with something like
-  "kernel-cve-report"
+Currently veritysetup generates a random salt and uuid for the
+verity file system. This leads to a changed root hash which makes
+the verity image no longer reproducible and bootable.
 
-Jan
+This also fixes together with the option `kas/opt/reproducible.yml`
+the issue that after a sstate build the image can no longer be
+booted.
 
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+Can we set the option in `kas/opt/reproducible.yml` as default or are
+there still issues open?
+
+This patch superseeds `[cip-dev][isar-cip-core][PATCH] initramfs-verity-hook:
+Ensure sync on rebuild`[1].
+
+[1]: https://lore.kernel.org/all/595d5791-a08d-f08f-5dee-6f9ed5d472e0@siemens.com/T/
+
+
+
+ classes/verity.bbclass | 34 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 33 insertions(+), 1 deletion(-)
+
+diff --git a/classes/verity.bbclass b/classes/verity.bbclass
+index 747a7ae..2cfeb28 100644
+--- a/classes/verity.bbclass
++++ b/classes/verity.bbclass
+@@ -18,6 +18,34 @@ VERITY_OUTPUT_IMAGE ?= "${IMAGE_FULLNAME}.verity"
+ VERITY_IMAGE_METADATA = "${VERITY_OUTPUT_IMAGE}.metadata"
+ VERITY_HASH_BLOCK_SIZE ?= "1024"
+ VERITY_DATA_BLOCK_SIZE ?= "1024"
++VERITY_IMAGE_SALT ?= ""
++VERITY_IMAGE_UUID ?= ""
++VERITY_IMAGE_SEED ?= ""
++# TODO split if working
++python derive_verity_salt_and_uuid() {
++    import hashlib
++    seed = d.getVar("VERITY_IMAGE_SEED")
++    verity_salt = d.getVar("VERITY_IMAGE_SALT")
++    verity_uuid = d.getVar("VERITY_IMAGE_UUID")
++    target_uuid = d.getVar("TARGET_IMAGE_UUID")
++
++    if not verity_salt:
++        if seed:
++            verity_salt = hashlib.sha256(seed.encode()).hexdigest()
++        elif target_uuid:
++            verity_salt = hashlib.sha256(target_uuid.encode()).hexdigest()
++        else:
++            bb.error("TARGET_IMAGE_UUID and VERITY_IMAGE_SEED are empty. Could not derive verity_salt.")
++
++    if not verity_uuid:
++        if target_uuid:
++            verity_uuid = target_uuid
++        else:
++            bb.error("TARGET_IMAGE_UUID and VERITY_IMAGE_UUID are empty. Could not set VERITY_UUID.")
++
++    d.setVar("VERITY_IMAGE_SALT_OPTION", "--salt=" + str(verity_salt))
++    d.setVar("VERITY_IMAGE_UUID_OPTION", "--uuid=" + str(verity_uuid))
++}
+ 
+ create_verity_env_file() {
+ 
+@@ -49,8 +77,9 @@ python calculate_verity_data_blocks() {
+     d.setVar("VERITY_DATA_BLOCKS", str(size // data_block_size))
+ }
+ 
++do_image_verity[vardeps] += "VERITY_IMAGE_UUID VERITY_IMAGE_SALT"
+ do_image_verity[cleandirs] = "${WORKDIR}/verity"
+-do_image_verity[prefuncs] = "calculate_verity_data_blocks"
++do_image_verity[prefuncs] = "calculate_verity_data_blocks derive_verity_salt_and_uuid"
+ IMAGE_CMD:verity() {
+     rm -f ${DEPLOY_DIR_IMAGE}/${VERITY_OUTPUT_IMAGE}
+     rm -f ${WORKDIR}/${VERITY_IMAGE_METADATA}
+@@ -62,6 +91,8 @@ IMAGE_CMD:verity() {
+         --data-block-size "${VERITY_DATA_BLOCK_SIZE}"  \
+         --data-blocks "${VERITY_DATA_BLOCKS}" \
+         --hash-offset "${VERITY_INPUT_IMAGE_SIZE}" \
++        "${VERITY_IMAGE_SALT_OPTION}" \
++        "${VERITY_IMAGE_UUID_OPTION}" \
+         "${PP_DEPLOY}/${VERITY_OUTPUT_IMAGE}" \
+         "${PP_DEPLOY}/${VERITY_OUTPUT_IMAGE}" \
+         >"${WORKDIR}/${VERITY_IMAGE_METADATA}"
+@@ -70,3 +101,4 @@ IMAGE_CMD:verity() {
+         >>"${WORKDIR}/${VERITY_IMAGE_METADATA}"
+     create_verity_env_file
+ }
++addtask do_image_verity after do_generate_image_uuid
 -- 
-Siemens AG, Technology
-Linux Expert Center
+2.40.1
 
 
