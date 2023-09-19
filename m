@@ -1,215 +1,446 @@
-Return-Path: <venkata.pyla@toshiba-tsip.com>
+Return-Path: <srinuvasan_a@mentor.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 253C5CD3443
-	for <webhook@archiver.kernel.org>; Tue, 19 Sep 2023 06:54:29 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.135])
- by mx.groups.io with SMTP id smtpd.web11.1865.1695106462599432737
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB92DCD54AC
+	for <webhook@archiver.kernel.org>; Tue, 19 Sep 2023 10:08:00 +0000 (UTC)
+Received: from esa1.mentor.iphmx.com (esa1.mentor.iphmx.com [68.232.129.153])
+ by mx.groups.io with SMTP id smtpd.web10.4856.1695118076242067318
  for <cip-dev@lists.cip-project.org>;
- Mon, 18 Sep 2023 23:54:23 -0700
+ Tue, 19 Sep 2023 03:07:56 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.135, mailfrom: venkata.pyla@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1801) id 38J6sKni1389797; Tue, 19 Sep 2023 15:54:20 +0900
-X-Iguazu-Qid: 2yAaansOwjeZVXRQdL
-X-Iguazu-QSIG: v=2; s=0; t=1695106458; q=2yAaansOwjeZVXRQdL; m=OUj4VkLk/C3Icolq715chhSrg5vhVzAuPN4Z44xZWnc=
-Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1801) id 38J6sHQQ1213867
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Tue, 19 Sep 2023 15:54:17 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CX1TopO1ZOq+OxOuig7Re/OKWsWN+iXka7ECh0kZhdgnr4HTl+CG+1ueo1zw2I0djAg72FpXuW6FL5NjBu4g18ZMonuVmsZngJLm2wsob+tIaGSWfxWFpgFy7fXoSN4eGtz3P+y3XiuucfFD3v6nFT9odIuxzmio7zV+5dmHaSaaTovTPWk9plU4Ee/MRfaQZTnyvXpbOdXAul+r3IoI1z2MB48d62K6Q5YvCgULO3qfbKuUyuj/KkjGCQPnAoYdVgHrmTToeEBsTc5SIiNmQLd6M/TkNIKlEqNyLAnORTaYCjoCw+LROM4+YAQwQ43AxCK38tsvnHt1cRncFWXiKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z+wWu0+OETu2ZfwDyPmqUNd/83pUdTgsZ699pS1qXPI=;
- b=K0MAqA57FCSYCfWsUbJunZyqAyrsizP7xifpPf+o7DVHWkCOGlOep6sKbqXO1/0gEktQnSzDWlkjR1vLmCXSl817wLIFmnznJKUF+mJQAT6ZxxbPfJgSPqwcZqMayxthXZgY5YRv7PIr39fLtNZBNtDnT9eW7S8Fd/RV9k2Z8ju8doJ0vFVngopO9PiPFPel1uY8ZO2AexKVwEP7AWRW2r42j4vHKUqKWhuzhoUqOoj943YR4xVXOEJGyy7O1tFsiYBBfe5vY6xjYckKv9EiBdgBSslLBX7PXCZpKQwIrri97OGQNjMrs4tHK0BUzLOITVIpmKUHCpg3iSdaXuzfXA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
- header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
-From: <Venkata.Pyla@toshiba-tsip.com>
-To: <jan.kiszka@siemens.com>, <Quirin.Gylstorff@siemens.com>,
-        <cip-dev@lists.cip-project.org>, <felix.moessbauer@siemens.com>,
-        <adriaan.schmidt@siemens.com>
-Subject: RE: [cip-dev][isar-cip-core][RFC v2] classes/verity: Set salt and
- uuid for reproducible builds
-Thread-Topic: [cip-dev][isar-cip-core][RFC v2] classes/verity: Set salt and
- uuid for reproducible builds
-Thread-Index: AQHZ56cZDj84outquku+YKcs/fJBOLAgN+QAgAGDl0A=
-Date: Tue, 19 Sep 2023 06:54:14 +0000
-X-TSB-HOP2: ON
-Message-ID: 
- <OSYPR01MB5542227096C5C28A0167D386A4FAA@OSYPR01MB5542.jpnprd01.prod.outlook.com>
-References: <7fce798e-8ac1-40f4-83c6-4fc4ccb9b304@siemens.com>
- <20230915073426.1558460-1-Quirin.Gylstorff@siemens.com>
- <ac53654c-c18d-43f7-a052-419e074b06aa@siemens.com>
-In-Reply-To: <ac53654c-c18d-43f7-a052-419e074b06aa@siemens.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OSYPR01MB5542:EE_|OS0PR01MB5860:EE_
-x-ms-office365-filtering-correlation-id: 0ba4abdc-9dcd-458c-b715-08dbb8dd3c43
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- rEPTmkSUTo/sSxqJtapV5+tq3qJPw6PycJeWJzmYlfZIcVRNCmG14PnIJ/Gnt+CxuqjfAisevUESdcBCDE4lsM1rQb6gC8ezZq7B9ZygMADyNxiNbKbK1EEZDLczXi/GQ6NLrFw92h8Aiz4KlTOqTK/hrhp5e+Wi1f9tZPmxl9HHMKIyWLctwubmdj3EJGQsHLCL01X3Kzkg84ONZVq+f2H/qilLVkfuB/GfdHu1y+zgDCK/X31ZY90Rcm19FZviN3T1LhX1YUpPn6Psv997ojgxGdA7z7spLAiDJ7cJnRtYWppYoN5nVym92PzOjU750oMkhXkLLmgbAXgaWR6jh2NKFbFOI+wR8hiBYLSHggJ29JnL+I6AI2r6aJ3Af9vhl9sF1i9hWzQO5yWwrnRFHYjVB1jYTPPwrVcj/zdfjACEsfMIER12TJeH2WxjsIm3+7aOfyf+crWXQ5FSGsQKnzk+KDQuqoXLW4xz2W/S2WHtC9dsoWkaRZvy7PQAZZ2pui1Tx5+291H9ZdYhbQEVLQopfmivSNL//wuwTLR9ccee9JvjmZT/uCYTdFJ7hXibBO/KI6qN4Uic2nUIzEIiUuDMU97SLi4VhMU2lI27eyPVDaqpYkzPnYAgH2wCQ40r
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSYPR01MB5542.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(396003)(376002)(136003)(39860400002)(366004)(451199024)(1800799009)(186009)(84970400001)(6506007)(85182001)(478600001)(966005)(71200400001)(55016003)(26005)(86362001)(316002)(2906002)(83380400001)(52536014)(7696005)(38100700002)(64756008)(110136005)(53546011)(9686003)(76116006)(55236004)(66446008)(41300700001)(66476007)(66556008)(66946007)(5660300002)(8936002)(38070700005)(8676002)(33656002)(122000001)(403724002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?ckh4QmdEcDUrZUdaZ1FMcTNDTC9NeE1QZjJQMGdIMXNlZW1nM1d5L3BoblNT?=
- =?utf-8?B?VVVxL1MzaHM2UmNIdGxwZWlYU011b2Q0R0g3SDZ6UUdXLzIrN3I1WGMveHBJ?=
- =?utf-8?B?Lyt5NWoxTWFyb1FEcmNIU2lneVhPemMvNnpGdVJaTE9zS3NvVitDMTRnbUI3?=
- =?utf-8?B?emJMeExQVlhBLzZ2dEUrcGJtUXJvSFU5L3FQTGJZeWcxSWlvSnc0UXlBUnpL?=
- =?utf-8?B?dFk4Y1ZSZC93bU1rU2JoaTY5ci9OSHZmYWpkTlNtTWJmcW5FSHFtRDhDMmda?=
- =?utf-8?B?OG5BYnRxMFk5bHhMRGp2WnBtbE1oSlVtMVZlb0ZHTllxbHl4cTd4VnNYUld3?=
- =?utf-8?B?SFpoWVpVNWhINUo2YjVNeGx4SEpqbGpZYkZFVUJXKzRzSHgyb0NGL2RhSG1M?=
- =?utf-8?B?VVRPWWo2Yk83Rk05ZSt0K3p4dHo0VmpRRzhaY2J3ZjNiTXpRNVRZc2F6NG95?=
- =?utf-8?B?MWhzUmVLMFNKOVVnSWtXRFRDWlFBM1NrcWlyeFUyZnNBYlhvcDh2ZmIxYmUw?=
- =?utf-8?B?d1lJVzVIdm9hTnE3UlpXZWk5R05JZkI2UHZnQnlxN3JuZEFRY0JzTWUrNUs3?=
- =?utf-8?B?a2thQ1dLMXhVeG8zQnpUaDAvZkx3aDVMUXlEb0ZzRUdXVDgxYVcyOHlveGhO?=
- =?utf-8?B?dGtkZ2VTeTlTRDJXVnlCbHA2ZjBGOE5jWDg1UHM2UDA3Vm9TYmlCakY2Visx?=
- =?utf-8?B?bUphK0hQTWk0dzRCR0dPaVlrUTlIOThwT1hpSEY2dFkyRnFhd0FhSFF1MnVX?=
- =?utf-8?B?Qzl4ZFdJdEpsZVJyWC9rTDlvSnZuUFVnN1lzNHdQZVV5VjFZaEZ0dkdBUXVY?=
- =?utf-8?B?SHRPakdCc1l2QXN2OHlVT3hHRm5CYzVRalZKRXVadjhMSGlmUUgraWZnWUFj?=
- =?utf-8?B?T3ZrMmxjSVQ5eVpKWnVHNXVQWm1FT3RNYmwyY0cxSlBvWXBCNmFVelBKVHNN?=
- =?utf-8?B?SFBVR3BrVGJrMisxZHg3aGU2eGxYQUdGK3lMUlQ5Wm5DaTVsTDN2MEt3cVVQ?=
- =?utf-8?B?SFgrKzFCWUJYT2FmNkRxaWFvTVV2YVF5K2NabmJmQ09xc24yWjFUN0NxTXNh?=
- =?utf-8?B?KzEyOG9vWTVwOTFNMDFoampoSWx2N1plUERRck9IUlViYXlQbXhLY0pCNlpo?=
- =?utf-8?B?U0ZSa0dpcEtPSXBxTXNRUlNyOUZCcW8xc1owZVVESHJvQ3QybFg1UFp1R2Nh?=
- =?utf-8?B?cURuTTlEankyQjFIRWN0M2VldnBkdXdObUtwSFBHUWdoK1l1Q0p2VTc4V2NY?=
- =?utf-8?B?Yk56M0NkMnFtSThDZWxJSlF6NzY2K1FsdWlOZmVsM0RwNWZkQmtKK242MkdO?=
- =?utf-8?B?aVA4VzhJN3FsMGszTExUeDN0QzdCNzdoTlJSdVcwYkRBMlcwVkIrTWh0bUxO?=
- =?utf-8?B?Z0ZIMytHOUNpZGlYRmlDVHNiRDVFS09TdU5oaVF5bXd3TVU1OHVmMFF0WGVv?=
- =?utf-8?B?cExYTGg5d3hpUVdZMXNkNDVLM2s5dHMraVBYck5sTTlzNEd6dGNKTzhUQnAv?=
- =?utf-8?B?c3JiWlpsQjlpWS93Q2hJd1k5eURQVDQ3dktLVGlCZGJGMXM2VkEzaTljK1hR?=
- =?utf-8?B?MG5jN3padHJReVZ6SEYvRGw3TEZ2UmpVMjFBdHNrS2IzZ1UyODJuNXhmVk1T?=
- =?utf-8?B?T2NoZkdpR3diZnFOcERLNTV6Y1l5d3NMTGhkYXRNeVZOK3VSc0NwellLa3o2?=
- =?utf-8?B?ME9jVVpNWm9rL3NSNDhSN0ZWOFU4aktIYmIvYXczaUZMRDNYWW5aWXNYTWY2?=
- =?utf-8?B?VFJUSkZwSDUyTlYxTnQvZFpaQTkveE1icUpaWXovYldRRFJuVFF5MnMyZ0hP?=
- =?utf-8?B?aCtySXZMeG5Hck1HT25NOUlGUWJTU21hZHg1cTFvSFpsdmM2Sy9pRHd2WFJS?=
- =?utf-8?B?VlJWUXFtdmJUem1WeTlDUGZBVGYvUE9PZnpMdHhoNlJtTWUzMmlWNG8zb3Rl?=
- =?utf-8?B?bEF5cXJLZXBtdmRkcDhyZjROaFlkZ1JWaWRrYnNrNWJhR1ZxRmc2VzdUVC82?=
- =?utf-8?B?c1JxVGFjN01jQk9YRGpNVTNyL3A5RUo5OFhCRHl5emVkZVBTSm1NODZUWmRE?=
- =?utf-8?B?MzZ3VDVETHk4NzBJM1ZPMXhLNnRBbmJLWWZ0dDExQ3lCaFhySC8xNDlQWTE2?=
- =?utf-8?B?ekF6NmZjeEp5R0VReUVnaFNOUkg1akhIN0E5RWp6bk9ub1pLLzFnWStWRCtD?=
- =?utf-8?B?Z0E9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ dkim=none (message not signed); spf=pass (domain: mentor.com, ip: 68.232.129.153, mailfrom: srinuvasan_a@mentor.com)
+X-CSE-ConnectionGUID: FgE4ujU7QtSjAQGfCLsVSg==
+X-CSE-MsgGUID: XxcetHUITHmdzEiKkN3vBA==
+X-IronPort-AV: E=Sophos;i="6.02,159,1688457600"; 
+   d="scan'208";a="19517010"
+Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
+  by esa1.mentor.iphmx.com with ESMTP; 19 Sep 2023 02:07:54 -0800
+IronPort-SDR: gX1Vzgku3uW3AcNhvpAZDsrmqa1C9D1BjKJmpQJgi/0NWN6L3PsYHJ51EtqQhqxPP+tNtYpIAq
+ KMf+aeW/63wZRurVl5wrCslKrMsndo1Tde+mDaS2klb5hf7447cAXn/sI6YTl37c8uNJavaIXs
+ cSUB7p2q88A3j2ECf72Tp4UBgDlDw7Oe+9h8PDS8NxtdED3VHDeqjARbuYoOWF6WkGMU470xgN
+ rTmRuL2PC1RbcXDWZMMqS9/GnuQCy3CWyJgX/FjjkjLPFDmD1YDvLzWcFKRiT5SpKLNYgpN1RF
+ kZM=
+From: Srinuvasan Arjunan <srinuvasan_a@mentor.com>
+To: <cip-dev@lists.cip-project.org>
+CC: <jan.kiszka@siemens.com>, Srinuvasan A <srinuvasan.a@siemens.com>
+Subject: [PATCH][isar-cip-core] Update kas config file version
+Date: Tue, 19 Sep 2023 15:37:32 +0530
+Message-ID: <20230919100732.67656-1-srinuvasan_a@mentor.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-OriginatorOrg: toshiba-tsip.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSYPR01MB5542.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0ba4abdc-9dcd-458c-b715-08dbb8dd3c43
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Sep 2023 06:54:14.1292
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: oPnkZDTUtl3H8jk/wTTvqIlrtQXFuXzQMJqNX2i2ahlJMFD3o+p2GUdlDXlezPwjtXrVFI/WoUd4BxYz9J6hFgBAktSpTnomEVRVy/c+NQ4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS0PR01MB5860
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: svr-orw-mbx-11.mgc.mentorg.com (147.34.90.211) To
+ svr-orw-mbx-13.mgc.mentorg.com (147.34.90.213)
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 19 Sep 2023 06:54:29 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13140
+ <cip-dev@lists.cip-project.org>; Tue, 19 Sep 2023 10:08:00 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13141
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSmFuIEtpc3prYSA8amFu
-Lmtpc3prYUBzaWVtZW5zLmNvbT4NCj4gU2VudDogTW9uZGF5LCBTZXB0ZW1iZXIgMTgsIDIwMjMg
-MToxMiBQTQ0KPiBUbzogUXVpcmluIEd5bHN0b3JmZiA8UXVpcmluLkd5bHN0b3JmZkBzaWVtZW5z
-LmNvbT47IGNpcC1kZXZAbGlzdHMuY2lwLQ0KPiBwcm9qZWN0Lm9yZzsgZmVsaXgubW9lc3NiYXVl
-ckBzaWVtZW5zLmNvbTsNCj4gYWRyaWFhbi5zY2htaWR0QHNpZW1lbnMuY29tOyBweWxhIHZlbmth
-dGEo77y077yz77yp77ywIFRNSUVDIE9ERyBQb3J0aW5nKQ0KPiA8VmVua2F0YS5QeWxhQHRvc2hp
-YmEtdHNpcC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbY2lwLWRldl1baXNhci1jaXAtY29yZV1bUkZD
-IHYyXSBjbGFzc2VzL3Zlcml0eTogU2V0IHNhbHQgYW5kIHV1aWQNCj4gZm9yIHJlcHJvZHVjaWJs
-ZSBidWlsZHMNCj4gDQo+IE9uIDE1LjA5LjIzIDA5OjM0LCBRdWlyaW4gR3lsc3RvcmZmIHdyb3Rl
-Og0KPiA+IEZyb206IFF1aXJpbiBHeWxzdG9yZmYgPHF1aXJpbi5neWxzdG9yZmZAc2llbWVucy5j
-b20+DQo+ID4NCj4gPiBDdXJyZW50bHkgdmVyaXR5c2V0dXAgZ2VuZXJhdGVzIGEgcmFuZG9tIHNh
-bHQgYW5kIHV1aWQgZm9yIHRoZSB2ZXJpdHkNCj4gPiBmaWxlIHN5c3RlbS4gVGhpcyBsZWFkcyB0
-byBhIGNoYW5nZWQgcm9vdCBoYXNoIHdoaWNoIG1ha2VzIHRoZSB2ZXJpdHkNCj4gPiBpbWFnZSBu
-byBsb25nZXIgcmVwcm9kdWNpYmxlIGFuZCBib290YWJsZS4NCj4gPg0KPiA+IFRoaXMgYWxzbyBm
-aXhlcyB0b2dldGhlciB3aXRoIHRoZSBvcHRpb24gYGthcy9vcHQvcmVwcm9kdWNpYmxlLnltbGAN
-Cj4gPiB0aGUgaXNzdWUgdGhhdCBhZnRlciBhIHNzdGF0ZSBidWlsZCB0aGUgaW1hZ2UgY2FuIG5v
-IGxvbmdlciBiZSBib290ZWQuDQo+ID4NCj4gPiBUaGlzIGludHJvZHVjZXMgdGhlIGZvbGxvd2lu
-ZyB2YXJpYWJsZXM6DQo+ID4gIC0gVkVSSVRZX0lNQUdFX1NBTFQ6IHNldCB0aGUgdmVyaXR5IHNh
-bHQgdGhlIHZhbHVlIG9mIHZhcmlhYmxlLiBJZg0KPiA+ICAgIFZFUklUWV9JTUFHRV9TQUxUIGlz
-IG5vdCBzZXQgdGhlIHNhbHQgaXMgZGVyaXZlZCBmcm9tIElNQUdFX1VVSUQNCj4gPiAgLSBWRVJJ
-VFlfSU1BR0VfVVVJRDogc2V0IHRoZSB2ZXJpdHkgVVVJRCB0byB0aGUgdmFsdWUgb2YgdGhlIHZh
-cmlhYmxlLg0KPiA+ICAgIElmIFZFUklUWV9JTUFHRV9VVUlEIGlzIG5vdCBzZXQgdGhlIFVVSUQg
-aXMgc2V0IHRvIHRoZSBJTUFHRV9VVUlEDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBRdWlyaW4g
-R3lsc3RvcmZmIDxxdWlyaW4uZ3lsc3RvcmZmQHNpZW1lbnMuY29tPg0KPiA+IC0tLQ0KPiA+IENh
-biB3ZSBzZXQgdGhlIG9wdGlvbiBpbiBga2FzL29wdC9yZXByb2R1Y2libGUueW1sYCBhcyBkZWZh
-dWx0IG9yIGFyZQ0KPiA+IHRoZXJlIHN0aWxsIGlzc3VlcyBvcGVuPw0KPiANCj4gVmVua2F0YSwg
-ZXZlbiBpZiB0aGVyZSBhcmUgb3RoZXIgaXNzdWVzLCBJIHRoaW5rIHRoZSByb290ZnMgc2hvdWxk
-IGJlIGZpbmUNCj4gYWxyZWFkeSwgdGh1cyBhbHNvIGEgZG0tdmVyaXR5IHZlcnNpb24gb2YgaXRz
-IHNxdWFzaGZzLCBubz8gVGhlbiB3ZSBzaG91bGQgc2V0DQo+IHN0YXRpYyBzYWx0IGFuZCBVVUlE
-LCBJIHdvdWxkIHNheS4NClllcyB0aGUgcm9vdGZzIGlzIHJlcHJvZHVjaWJsZSBhbHJlYWR5IChp
-bmNsdWRpbmcgc3F1YXNoZnMpLCB0aGUgY3VycmVudCByZXByb2R1Y2libGUgYnVpbGQgaXNzdWVz
-IGFyZSBpbiBmaWxlIHN5c3RlbSBoZWFkZXJzLg0KDQo+IA0KPiA+DQo+ID4gVGhpcyBwYXRjaCBz
-dXBlcnNlZWRzIGBbY2lwLWRldl1baXNhci1jaXAtY29yZV1bUEFUQ0hdIGluaXRyYW1mcy12ZXJp
-dHktaG9vazoNCj4gPiBFbnN1cmUgc3luYyBvbiByZWJ1aWxkYFsxXS4NCj4gPg0KPiA+IFsxXToN
-Cj4gPiBodHRwczovL2xvcmUua2VybmVsLm9yZy9hbGwvNTk1ZDU3OTEtYTA4ZC1mMDhmLTVkZWUt
-NmY5ZWQ1ZDQ3MmUwQHNpZW1lDQo+ID4gbnMuY29tL1QvDQo+ID4NCj4gPiAgY2xhc3Nlcy92ZXJp
-dHkuYmJjbGFzcyB8IDM3ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0NCj4g
-PiAgMSBmaWxlIGNoYW5nZWQsIDM2IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gPg0K
-PiA+IGRpZmYgLS1naXQgYS9jbGFzc2VzL3Zlcml0eS5iYmNsYXNzIGIvY2xhc3Nlcy92ZXJpdHku
-YmJjbGFzcyBpbmRleA0KPiA+IDc0N2E3YWUuLmJhY2Y1OTIgMTAwNjQ0DQo+ID4gLS0tIGEvY2xh
-c3Nlcy92ZXJpdHkuYmJjbGFzcw0KPiA+ICsrKyBiL2NsYXNzZXMvdmVyaXR5LmJiY2xhc3MNCj4g
-PiBAQCAtMTksNiArMTksMzcgQEAgVkVSSVRZX0lNQUdFX01FVEFEQVRBID0NCj4gIiR7VkVSSVRZ
-X09VVFBVVF9JTUFHRX0ubWV0YWRhdGEiDQo+ID4gIFZFUklUWV9IQVNIX0JMT0NLX1NJWkUgPz0g
-IjEwMjQiDQo+ID4gIFZFUklUWV9EQVRBX0JMT0NLX1NJWkUgPz0gIjEwMjQiDQo+ID4NCj4gPiAr
-IyBTZXQgdGhlIHNhbHQgdXNlZCB0byBnZW5lcmF0ZSBhIHZlcml0eSBpbWFnZSB0byBhIGZpeGVk
-IHZhbHVlICMgaWYNCj4gPiArbm90IHNldCBpdCBpcyBkZXJpdmVkIGZyb20gVEFSR0VUX0lNQUdF
-X1VVSUQgVkVSSVRZX0lNQUdFX1NBTFQgPz0gIiINCj4gPiArDQo+ID4gKyMgU2V0IHRoZSBVVUlE
-IHVzZWQgdG8gZ2VuZXJhdGUgYSB2ZXJpdHkgaW1hZ2UgdG8gYSBmaXhlZCB2YWx1ZSAjIGlmDQo+
-ID4gK25vdCBzZXQgaXQgaXMgc2V0IHRvIFRBUkdFVF9JTUFHRV9VVUlEIFZFUklUWV9JTUFHRV9V
-VUlEID89ICIiDQo+ID4gKw0KPiA+ICtweXRob24gZGVyaXZlX3Zlcml0eV9zYWx0X2FuZF91dWlk
-KCkgew0KPiA+ICsgICAgaW1wb3J0IGhhc2hsaWINCj4gPiArDQo+ID4gKyAgICB2ZXJpdHlfc2Fs
-dCA9IGQuZ2V0VmFyKCJWRVJJVFlfSU1BR0VfU0FMVCIpDQo+ID4gKyAgICB2ZXJpdHlfdXVpZCA9
-IGQuZ2V0VmFyKCJWRVJJVFlfSU1BR0VfVVVJRCIpDQo+ID4gKyAgICB0YXJnZXRfdXVpZCA9IGQu
-Z2V0VmFyKCJUQVJHRVRfSU1BR0VfVVVJRCIpDQo+ID4gKw0KPiA+ICsgICAgaWYgbm90IHZlcml0
-eV9zYWx0Og0KPiA+ICsgICAgICAgIGlmIHRhcmdldF91dWlkOg0KPiA+ICsgICAgICAgICAgICB2
-ZXJpdHlfc2FsdCA9IGhhc2hsaWIuc2hhMjU2KHRhcmdldF91dWlkLmVuY29kZSgpKS5oZXhkaWdl
-c3QoKQ0KPiA+ICsgICAgICAgIGVsc2U6DQo+ID4gKyAgICAgICAgICAgIGJiLmVycm9yKCJUQVJH
-RVRfSU1BR0VfVVVJRCBhbmQgVkVSSVRZX0lNQUdFX1NBTFQgYXJlDQo+ID4gKyBlbXB0eS4gQ291
-bGQgbm90IHNldCBWRVJJVFlfU0FMVC4iKQ0KPiA+ICsNCj4gPiArICAgIGlmIG5vdCB2ZXJpdHlf
-dXVpZDoNCj4gPiArICAgICAgICBpZiB0YXJnZXRfdXVpZDoNCj4gPiArICAgICAgICAgICAgdmVy
-aXR5X3V1aWQgPSB0YXJnZXRfdXVpZA0KPiA+ICsgICAgICAgIGVsc2U6DQo+ID4gKyAgICAgICAg
-ICAgIGJiLmVycm9yKCJUQVJHRVRfSU1BR0VfVVVJRCBhbmQgVkVSSVRZX0lNQUdFX1VVSUQgYXJl
-DQo+ID4gKyBlbXB0eS4gQ291bGQgbm90IHNldCBWRVJJVFlfVVVJRC4iKQ0KPiA+ICsNCj4gPiAr
-ICAgIGQuc2V0VmFyKCJWRVJJVFlfSU1BR0VfU0FMVF9PUFRJT04iLCAiLS1zYWx0PSIgKyBzdHIo
-dmVyaXR5X3NhbHQpKQ0KPiA+ICsgICAgZC5zZXRWYXIoIlZFUklUWV9JTUFHRV9VVUlEX09QVElP
-TiIsICItLXV1aWQ9IiArDQo+ID4gK3N0cih2ZXJpdHlfdXVpZCkpIH0NCj4gPiArDQo+ID4gIGNy
-ZWF0ZV92ZXJpdHlfZW52X2ZpbGUoKSB7DQo+ID4NCj4gPiAgICAgIGxvY2FsIEVOVj0iJHtERVBM
-T1lfRElSX0lNQUdFfS8ke0lNQUdFX0ZVTExOQU1FfS52ZXJpdHkuZW52Ig0KPiA+IEBAIC00OSw4
-ICs4MCw5IEBAIHB5dGhvbiBjYWxjdWxhdGVfdmVyaXR5X2RhdGFfYmxvY2tzKCkgew0KPiA+ICAg
-ICAgZC5zZXRWYXIoIlZFUklUWV9EQVRBX0JMT0NLUyIsIHN0cihzaXplIC8vIGRhdGFfYmxvY2tf
-c2l6ZSkpICB9DQo+ID4NCj4gPiArZG9faW1hZ2VfdmVyaXR5W3ZhcmRlcHNdICs9ICJWRVJJVFlf
-SU1BR0VfVVVJRCBWRVJJVFlfSU1BR0VfU0FMVCINCj4gPiAgZG9faW1hZ2VfdmVyaXR5W2NsZWFu
-ZGlyc10gPSAiJHtXT1JLRElSfS92ZXJpdHkiDQo+ID4gLWRvX2ltYWdlX3Zlcml0eVtwcmVmdW5j
-c10gPSAiY2FsY3VsYXRlX3Zlcml0eV9kYXRhX2Jsb2NrcyINCj4gPiArZG9faW1hZ2VfdmVyaXR5
-W3ByZWZ1bmNzXSA9ICJjYWxjdWxhdGVfdmVyaXR5X2RhdGFfYmxvY2tzDQo+IGRlcml2ZV92ZXJp
-dHlfc2FsdF9hbmRfdXVpZCINCj4gPiAgSU1BR0VfQ01EOnZlcml0eSgpIHsNCj4gPiAgICAgIHJt
-IC1mICR7REVQTE9ZX0RJUl9JTUFHRX0vJHtWRVJJVFlfT1VUUFVUX0lNQUdFfQ0KPiA+ICAgICAg
-cm0gLWYgJHtXT1JLRElSfS8ke1ZFUklUWV9JTUFHRV9NRVRBREFUQX0NCj4gPiBAQCAtNjIsNiAr
-OTQsOCBAQCBJTUFHRV9DTUQ6dmVyaXR5KCkgew0KPiA+ICAgICAgICAgIC0tZGF0YS1ibG9jay1z
-aXplICIke1ZFUklUWV9EQVRBX0JMT0NLX1NJWkV9IiAgXA0KPiA+ICAgICAgICAgIC0tZGF0YS1i
-bG9ja3MgIiR7VkVSSVRZX0RBVEFfQkxPQ0tTfSIgXA0KPiA+ICAgICAgICAgIC0taGFzaC1vZmZz
-ZXQgIiR7VkVSSVRZX0lOUFVUX0lNQUdFX1NJWkV9IiBcDQo+ID4gKyAgICAgICAgIiR7VkVSSVRZ
-X0lNQUdFX1NBTFRfT1BUSU9OfSIgXA0KPiA+ICsgICAgICAgICIke1ZFUklUWV9JTUFHRV9VVUlE
-X09QVElPTn0iIFwNCj4gPiAgICAgICAgICAiJHtQUF9ERVBMT1l9LyR7VkVSSVRZX09VVFBVVF9J
-TUFHRX0iIFwNCj4gPiAgICAgICAgICAiJHtQUF9ERVBMT1l9LyR7VkVSSVRZX09VVFBVVF9JTUFH
-RX0iIFwNCj4gPiAgICAgICAgICA+IiR7V09SS0RJUn0vJHtWRVJJVFlfSU1BR0VfTUVUQURBVEF9
-Ig0KPiA+IEBAIC03MCwzICsxMDQsNCBAQCBJTUFHRV9DTUQ6dmVyaXR5KCkgew0KPiA+ICAgICAg
-ICAgID4+IiR7V09SS0RJUn0vJHtWRVJJVFlfSU1BR0VfTUVUQURBVEF9Ig0KPiA+ICAgICAgY3Jl
-YXRlX3Zlcml0eV9lbnZfZmlsZQ0KPiA+ICB9DQo+ID4gK2FkZHRhc2sgZG9faW1hZ2VfdmVyaXR5
-IGFmdGVyIGRvX2dlbmVyYXRlX2ltYWdlX3V1aWQNCj4gDQo+IExvb2tzIGdvb2QgdG8gbWUuIEFu
-eW9uZSBhbnkgb3RoZXIgY29tbWVudHMgb24gdGhpcz8NCj4gDQo+IEphbg0KPiANCj4gLS0NCj4g
-U2llbWVucyBBRywgVGVjaG5vbG9neQ0KPiBMaW51eCBFeHBlcnQgQ2VudGVyDQo=
+From: Srinuvasan A <srinuvasan.a@siemens.com>
+
+We need 14 since we switched to 'commit'.
+
+Signed-off-by: Srinuvasan A <srinuvasan.a@siemens.com>
+---
+ doc/README.secureboot.md             | 2 +-
+ kas/board/bbb.yml                    | 2 +-
+ kas/board/hihope-rzg2m.yml           | 2 +-
+ kas/board/iwg20m.yml                 | 2 +-
+ kas/board/qemu-amd64.yml             | 2 +-
+ kas/board/qemu-arm.yml               | 2 +-
+ kas/board/qemu-arm64.yml             | 2 +-
+ kas/board/qemu-riscv64.yml           | 2 +-
+ kas/board/simatic-ipc227e.yml        | 2 +-
+ kas/opt/4.19.yml                     | 2 +-
+ kas/opt/4.4.yml                      | 2 +-
+ kas/opt/5.10.yml                     | 2 +-
+ kas/opt/6.1.yml                      | 2 +-
+ kas/opt/bookworm.yml                 | 2 +-
+ kas/opt/bullseye.yml                 | 2 +-
+ kas/opt/buster.yml                   | 2 +-
+ kas/opt/ebg-secure-boot-snakeoil.yml | 2 +-
+ kas/opt/ebg-swu.yml                  | 2 +-
+ kas/opt/encrypt-partitions.yml       | 2 +-
+ kas/opt/kernel-panic.yml             | 2 +-
+ kas/opt/kernelci.yml                 | 2 +-
+ kas/opt/reproducible.yml             | 2 +-
+ kas/opt/rt.yml                       | 2 +-
+ kas/opt/security.yml                 | 2 +-
+ kas/opt/sid-ports.yml                | 2 +-
+ kas/opt/swupdate.yml                 | 2 +-
+ kas/opt/targz-img.yml                | 2 +-
+ kas/opt/test.yml                     | 2 +-
+ kas/opt/wic-targz-img.yml            | 2 +-
+ 29 files changed, 29 insertions(+), 29 deletions(-)
+
+diff --git a/doc/README.secureboot.md b/doc/README.secureboot.md
+index 6546095..2b73d10 100644
+--- a/doc/README.secureboot.md
++++ b/doc/README.secureboot.md
+@@ -151,7 +151,7 @@ For user-generated keys, create a new option file in the repository. This option
+ 
+ ```yaml
+ header:
+-  version: 12
++  version: 14
+   includes:
+    - kas/opt/ebg-swu.yml
+ 
+diff --git a/kas/board/bbb.yml b/kas/board/bbb.yml
+index c99d9bd..f2e701c 100644
+--- a/kas/board/bbb.yml
++++ b/kas/board/bbb.yml
+@@ -10,6 +10,6 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ machine: bbb
+diff --git a/kas/board/hihope-rzg2m.yml b/kas/board/hihope-rzg2m.yml
+index 7b80de7..8d0136b 100644
+--- a/kas/board/hihope-rzg2m.yml
++++ b/kas/board/hihope-rzg2m.yml
+@@ -10,6 +10,6 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ machine: hihope-rzg2m
+diff --git a/kas/board/iwg20m.yml b/kas/board/iwg20m.yml
+index c873b98..9c9ef4b 100644
+--- a/kas/board/iwg20m.yml
++++ b/kas/board/iwg20m.yml
+@@ -10,6 +10,6 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ machine: iwg20m
+diff --git a/kas/board/qemu-amd64.yml b/kas/board/qemu-amd64.yml
+index f9f57be..c27ed8e 100644
+--- a/kas/board/qemu-amd64.yml
++++ b/kas/board/qemu-amd64.yml
+@@ -10,6 +10,6 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ machine: qemu-amd64
+diff --git a/kas/board/qemu-arm.yml b/kas/board/qemu-arm.yml
+index fe03028..969fd5a 100644
+--- a/kas/board/qemu-arm.yml
++++ b/kas/board/qemu-arm.yml
+@@ -11,6 +11,6 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ machine: qemu-arm
+diff --git a/kas/board/qemu-arm64.yml b/kas/board/qemu-arm64.yml
+index 55690b3..1a1eb0d 100644
+--- a/kas/board/qemu-arm64.yml
++++ b/kas/board/qemu-arm64.yml
+@@ -11,6 +11,6 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ machine: qemu-arm64
+diff --git a/kas/board/qemu-riscv64.yml b/kas/board/qemu-riscv64.yml
+index 0de158a..e8272b0 100644
+--- a/kas/board/qemu-riscv64.yml
++++ b/kas/board/qemu-riscv64.yml
+@@ -7,6 +7,6 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ machine: qemu-riscv64
+diff --git a/kas/board/simatic-ipc227e.yml b/kas/board/simatic-ipc227e.yml
+index 82b0ff7..cf27058 100644
+--- a/kas/board/simatic-ipc227e.yml
++++ b/kas/board/simatic-ipc227e.yml
+@@ -10,6 +10,6 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ machine: simatic-ipc227e
+diff --git a/kas/opt/4.19.yml b/kas/opt/4.19.yml
+index 5e79223..bad4293 100644
+--- a/kas/opt/4.19.yml
++++ b/kas/opt/4.19.yml
+@@ -10,7 +10,7 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ local_conf_header:
+   kernel-version: |
+diff --git a/kas/opt/4.4.yml b/kas/opt/4.4.yml
+index 970351a..c0c5c05 100644
+--- a/kas/opt/4.4.yml
++++ b/kas/opt/4.4.yml
+@@ -10,7 +10,7 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ local_conf_header:
+   kernel-version: |
+diff --git a/kas/opt/5.10.yml b/kas/opt/5.10.yml
+index 2258575..f3a6d86 100644
+--- a/kas/opt/5.10.yml
++++ b/kas/opt/5.10.yml
+@@ -10,7 +10,7 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ local_conf_header:
+   kernel-version: |
+diff --git a/kas/opt/6.1.yml b/kas/opt/6.1.yml
+index ac12adf..7ac2735 100644
+--- a/kas/opt/6.1.yml
++++ b/kas/opt/6.1.yml
+@@ -10,7 +10,7 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ local_conf_header:
+   kernel-version: |
+diff --git a/kas/opt/bookworm.yml b/kas/opt/bookworm.yml
+index 8b4431b..dc0e0a2 100644
+--- a/kas/opt/bookworm.yml
++++ b/kas/opt/bookworm.yml
+@@ -10,6 +10,6 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ distro: cip-core-bookworm
+diff --git a/kas/opt/bullseye.yml b/kas/opt/bullseye.yml
+index b08e0e4..0614c92 100644
+--- a/kas/opt/bullseye.yml
++++ b/kas/opt/bullseye.yml
+@@ -10,6 +10,6 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ distro: cip-core-bullseye
+diff --git a/kas/opt/buster.yml b/kas/opt/buster.yml
+index 9b0b530..3f19310 100644
+--- a/kas/opt/buster.yml
++++ b/kas/opt/buster.yml
+@@ -10,6 +10,6 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ distro: cip-core-buster
+diff --git a/kas/opt/ebg-secure-boot-snakeoil.yml b/kas/opt/ebg-secure-boot-snakeoil.yml
+index f787c82..e083304 100644
+--- a/kas/opt/ebg-secure-boot-snakeoil.yml
++++ b/kas/opt/ebg-secure-boot-snakeoil.yml
+@@ -10,7 +10,7 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+   includes:
+     - kas/opt/ebg-swu.yml
+ 
+diff --git a/kas/opt/ebg-swu.yml b/kas/opt/ebg-swu.yml
+index c90142b..61a8eee 100644
+--- a/kas/opt/ebg-swu.yml
++++ b/kas/opt/ebg-swu.yml
+@@ -10,7 +10,7 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+   includes:
+    - kas/opt/swupdate.yml
+ 
+diff --git a/kas/opt/encrypt-partitions.yml b/kas/opt/encrypt-partitions.yml
+index 2fe38f8..3de76ab 100644
+--- a/kas/opt/encrypt-partitions.yml
++++ b/kas/opt/encrypt-partitions.yml
+@@ -10,7 +10,7 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ local_conf_header:
+   initramfs-option-encrypt-partitions: |
+diff --git a/kas/opt/kernel-panic.yml b/kas/opt/kernel-panic.yml
+index fe17982..f966779 100644
+--- a/kas/opt/kernel-panic.yml
++++ b/kas/opt/kernel-panic.yml
+@@ -11,7 +11,7 @@
+ # This kas file adds systemd service file to cause kernel panic during system boot.
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ local_conf_header:
+   kernel-panic: |
+diff --git a/kas/opt/kernelci.yml b/kas/opt/kernelci.yml
+index b5fadcb..ec90792 100644
+--- a/kas/opt/kernelci.yml
++++ b/kas/opt/kernelci.yml
+@@ -11,6 +11,6 @@
+ # SPDX-License-Identifier: MIT
+ #
+ header:
+-  version: 12
++  version: 14
+ 
+ target: cip-core-image-kernelci
+diff --git a/kas/opt/reproducible.yml b/kas/opt/reproducible.yml
+index 9b56b28..5d6a896 100644
+--- a/kas/opt/reproducible.yml
++++ b/kas/opt/reproducible.yml
+@@ -9,7 +9,7 @@
+ # SPDX-License-Identifier: MIT
+ #
+ header:
+-  version: 12
++  version: 14
+ 
+ local_conf_header:
+   reproducible-builds: |
+diff --git a/kas/opt/rt.yml b/kas/opt/rt.yml
+index 4b2519f..ab43a84 100644
+--- a/kas/opt/rt.yml
++++ b/kas/opt/rt.yml
+@@ -10,7 +10,7 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ local_conf_header:
+   preempt-rt: |
+diff --git a/kas/opt/security.yml b/kas/opt/security.yml
+index 67bf4ff..d87235a 100644
+--- a/kas/opt/security.yml
++++ b/kas/opt/security.yml
+@@ -9,7 +9,7 @@
+ # SPDX-License-Identifier: MIT
+ #
+ header:
+-  version: 12
++  version: 14
+   includes:
+    - kas/opt/encrypt-partitions.yml
+    - kas/opt/ebg-secure-boot-snakeoil.yml
+diff --git a/kas/opt/sid-ports.yml b/kas/opt/sid-ports.yml
+index 2e89f2b..b11a1c2 100644
+--- a/kas/opt/sid-ports.yml
++++ b/kas/opt/sid-ports.yml
+@@ -10,6 +10,6 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ distro: cip-core-sid-ports
+diff --git a/kas/opt/swupdate.yml b/kas/opt/swupdate.yml
+index 0e30e89..ef61e4e 100644
+--- a/kas/opt/swupdate.yml
++++ b/kas/opt/swupdate.yml
+@@ -12,7 +12,7 @@
+ # from the first wic partition
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ local_conf_header:
+   image-option-swupdate: |
+diff --git a/kas/opt/targz-img.yml b/kas/opt/targz-img.yml
+index 8283ef8..fd8303e 100644
+--- a/kas/opt/targz-img.yml
++++ b/kas/opt/targz-img.yml
+@@ -10,7 +10,7 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ local_conf_header:
+   image-type: |
+diff --git a/kas/opt/test.yml b/kas/opt/test.yml
+index 7dd5536..4a60ad4 100644
+--- a/kas/opt/test.yml
++++ b/kas/opt/test.yml
+@@ -9,7 +9,7 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ local_conf_header:
+   testing: |
+diff --git a/kas/opt/wic-targz-img.yml b/kas/opt/wic-targz-img.yml
+index 3d908de..74053f5 100644
+--- a/kas/opt/wic-targz-img.yml
++++ b/kas/opt/wic-targz-img.yml
+@@ -10,7 +10,7 @@
+ #
+ 
+ header:
+-  version: 12
++  version: 14
+ 
+ # lava uses nfs to deploy the image. For this we need a tarball instead of
+ # full image
+-- 
+2.34.1
 
 
