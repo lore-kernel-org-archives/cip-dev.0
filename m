@@ -2,1794 +2,603 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 225EFCD5BC5
-	for <webhook@archiver.kernel.org>; Tue, 19 Sep 2023 13:33:16 +0000 (UTC)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
- by mx.groups.io with SMTP id smtpd.web11.8698.1695130389140426960
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F2B2CD5BC4
+	for <webhook@archiver.kernel.org>; Tue, 19 Sep 2023 14:01:06 +0000 (UTC)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+ by mx.groups.io with SMTP id smtpd.web11.9416.1695132065079128107
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Tue, 19 Sep 2023 06:33:09 -0700
+ Tue, 19 Sep 2023 07:01:05 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=OlLB7e9e;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.182, mailfrom: bot@kernelci.org)
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1c465d59719so20188625ad.1
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Tue, 19 Sep 2023 06:33:09 -0700 (PDT)
+ dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=LmAm4NIP;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.178, mailfrom: bot@kernelci.org)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1c572c9c852so15972155ad.2
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Tue, 19 Sep 2023 07:01:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1695130388; x=1695735188; darn=lists.cip-project.org;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1695132064; x=1695736864; darn=lists.cip-project.org;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=4yuXjIp1jGFD5ahPZ32/qflqI27ix8DlzQQYtucGPn0=;
-        b=OlLB7e9eHzTpLSe9aKYalBBqDPzxMJ+36XMFifXjJ+WJe9lufxtrVfK9pNUbijrm3f
-         Yd0DzqjIQWX+S7PjdJdWGcFlCXPtcOfK+4mLzFEnTHcJ67r0TPOs/rXaH2VfPuWtBlvI
-         rmQ2w/Pojx5XpHK8S2JPUMbyPiqjfDztRJsO1bxyKni3+T3LHzp2OTIGrQqM2ob3Xxrc
-         9urGwZYclsPEcRzl4EOtoi35CmlNSGDiafY+iA8YdKwzrMdCh/6A8vC0O/tGhXUmBC1S
-         D2ixLUWT+i11FHd5j+Q8RfuZlcTT5PyWjt3PcM6hBMYL6pTxh/mH4RhTDYRrjaL7JOuA
-         qmiw==
+        bh=9dV8kCR+raRLs9Lbijs6VVskkb1XdY+a7+YVMhGXx/A=;
+        b=LmAm4NIPnoMs99RKmA0PcV11pBKxwb9D+9kFQe6MHUIG3k7wZ/OQ/VHN1lMKIrduVq
+         kuCl25lyHnQTYH/VOC7+Z9duwDMO9uRIeOaWrcAux6E674aHsKGVLwmNM4gJLISPpWMA
+         IEoa/SjD5S8oe1hszobzowCCqO6Ieo+6AxEb+qJdnwiKP/HYnfZD0hxvXSgovtRsEM8+
+         ZbzStlf7yL7bhM91pgfTAgDjigmHfiSxlEzHy+SiibM3x/6IEVQdzyt1AiKJtI5HPYOr
+         2qnEE4azjcTgJbiISpGJ6WOaY4ITunSZR/Hev/ErdnsxXznxBWLyRPPe8Uzu+cKTBpEw
+         2UqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695130388; x=1695735188;
+        d=1e100.net; s=20230601; t=1695132064; x=1695736864;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4yuXjIp1jGFD5ahPZ32/qflqI27ix8DlzQQYtucGPn0=;
-        b=K9VkAEPDtI+qMFsYW8832/VozTaQbIbZ9WPP78wnmd6EHarpH1E3zGYvyMT4vkHOVt
-         umx7MJRtPBPC0vOIz1+QtW15JL4prbdJJdgW84I395A8qxOpNxcF4bWla4KZ9baTOp5f
-         nqAZzg/uomcaxatix+t/5ML+B7kUqTibl1YB6i+UOHxB5eEN9U87ghZHqdYyg5vWUY6g
-         yreLzIjE6/djLPwb6QCmvlCY4cUvQZ242DQi7Kt10DBjcv/zxQZVXtKvk9jVyR9sNLR4
-         vhZgRJrWR7XV07en8VIqekGNYwPkJ23dCzyPHGuhFkJLUkVBnGHeUVKIk5lxDKBt9za0
-         81Ug==
-X-Gm-Message-State: AOJu0Yw7xMr15vIpVHRgm8NWX6pYgzVCH/AMyZUs7dhYgn47uryH5mhd
-	yf8L5fNfRDj23gxd5lOKnZYWjMm0DVjAD2QXe7hNgA==
-X-Google-Smtp-Source: AGHT+IEYrVnOn3FkU9zCqaHcX7EzXOhcyTQH/HR0vkKI5Hx9tAyut1aPDp4ZhtV2wFOE4hfM9VG2ww==
-X-Received: by 2002:a17:903:32c2:b0:1c3:c758:4311 with SMTP id i2-20020a17090332c200b001c3c7584311mr12544564plr.58.1695130387064;
-        Tue, 19 Sep 2023 06:33:07 -0700 (PDT)
+        bh=9dV8kCR+raRLs9Lbijs6VVskkb1XdY+a7+YVMhGXx/A=;
+        b=R3/Usaym48vFarvo2/AXOUGWz0wXjOKltljnWq3GjHmlqUHWSvqhLFzRP8yDE7CT12
+         aWj+cj/2aZYlxQJz5feqq4ZJ3o5daMET3JYidm/ytb6G07UbhT/yjBa6rnomgMP9nPRg
+         OidS/LULd4FseVNTEgmYd3C7hBYn0E5sG4rIwE1JlQJGc4uD3FtOh3d0xs1njRjGK77z
+         8WbXs23mIDRgKGTwXPEvQM/Ddma2LezyJNoVLBYgxMJm13PX4/pgN1U5qnUs7lD05+re
+         S1dV8K9JepHp8eX0ByJoZ5wwLo0xv30h7uMixBwr6oIM/u6xvaxvfaJk+/rppKEJYTMd
+         gieg==
+X-Gm-Message-State: AOJu0YyKjbFRjtSKVfaSyp/kTSOeNzqfC7kahM3E7agH7XZiKetMqWBa
+	c+zrYIKxDYclbI6ydV1iez8xSvZJeoYqotnV2NYuxA==
+X-Google-Smtp-Source: AGHT+IGn/rxogmLm+61gUsCWANz93ZnnJSN1i1mo2k8xlSIejTU14Ijq4xduKxgL6m1nVfpzRbcxPg==
+X-Received: by 2002:a17:902:c10d:b0:1b8:7fd7:e022 with SMTP id 13-20020a170902c10d00b001b87fd7e022mr9603498pli.28.1695132063595;
+        Tue, 19 Sep 2023 07:01:03 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id h12-20020a170902748c00b001b246dcffb7sm10002557pll.300.2023.09.19.06.33.06
+        by smtp.gmail.com with ESMTPSA id x1-20020a170902ec8100b001b9de2b905asm8326267plg.231.2023.09.19.07.01.02
         for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Sep 2023 06:33:06 -0700 (PDT)
-Message-ID: <6509a312.170a0220.13a07.2dfc@mx.google.com>
-Date: Tue, 19 Sep 2023 06:33:06 -0700 (PDT)
+        Tue, 19 Sep 2023 07:01:03 -0700 (PDT)
+Message-ID: <6509a99f.170a0220.718f4.d452@mx.google.com>
+Date: Tue, 19 Sep 2023 07:01:03 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-Kernelci-Branch: ci/iwamatsu/linux-5.10.y-cip-rc
 X-Kernelci-Tree: cip-gitlab
 X-Kernelci-Kernel: v5.10.191-cip38-661-g112a3073ff26
-X-Kernelci-Report-Type: build
-Subject: cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc build: 190 builds: 3
- failed, 187 passed, 4 errors, 118 warnings (v5.10.191-cip38-661-g112a3073ff26)
+X-Kernelci-Report-Type: test
+Subject: cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc baseline-nfs: 38 runs,
+ 12 regressions (v5.10.191-cip38-661-g112a3073ff26)
 To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
 From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 19 Sep 2023 13:33:16 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13149
-
-cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc build: 190 builds: 3 failed, 187=
- passed, 4 errors, 118 warnings (v5.10.191-cip38-661-g112a3073ff26)
-
-Full Build Summary: https://kernelci.org/build/cip-gitlab/branch/ci%2Fiwama=
-tsu%2Flinux-5.10.y-cip-rc/kernel/v5.10.191-cip38-661-g112a3073ff26/
-
-Tree: cip-gitlab
-Branch: ci/iwamatsu/linux-5.10.y-cip-rc
-Git Describe: v5.10.191-cip38-661-g112a3073ff26
-Git Commit: 112a3073ff2650cf1c0684ba93fb4a7284304812
-Git URL: https://gitlab.com/cip-project/cip-kernel/linux-cip.git
-Built: 7 unique architectures
-
-Build Failures Detected:
-
-arm:
-    rpc_defconfig: (gcc-10) FAIL
-
-mips:
-    ip27_defconfig: (gcc-10) FAIL
-    ip28_defconfig: (gcc-10) FAIL
-
-Errors and Warnings Detected:
-
-arc:
-    axs103_defconfig (gcc-10): 1 warning
-    axs103_smp_defconfig (gcc-10): 1 warning
-    hsdk_defconfig (gcc-10): 1 warning
-    nsimosci_hs_defconfig (gcc-10): 1 warning
-    nsimosci_hs_smp_defconfig (gcc-10): 1 warning
-    vdk_hs38_smp_defconfig (gcc-10): 1 warning
-
-arm64:
-    defconfig (gcc-10): 1 warning
-    defconfig+arm64-chromebook (gcc-10): 2 warnings
-    defconfig+arm64-chromebook+kselftest (gcc-10): 2 warnings
-    defconfig+kselftest (gcc-10): 1 warning
-
-arm:
-    aspeed_g4_defconfig (gcc-10): 1 warning
-    aspeed_g5_defconfig (gcc-10): 1 warning
-    at91_dt_defconfig (gcc-10): 1 warning
-    axm55xx_defconfig (gcc-10): 1 warning
-    badge4_defconfig (gcc-10): 1 warning
-    bcm2835_defconfig (gcc-10): 1 warning
-    cm_x300_defconfig (gcc-10): 1 warning
-    colibri_pxa270_defconfig (gcc-10): 1 warning
-    corgi_defconfig (gcc-10): 1 warning
-    davinci_all_defconfig (gcc-10): 1 warning
-    dove_defconfig (gcc-10): 1 warning
-    efm32_defconfig (gcc-10): 1 warning
-    ep93xx_defconfig (gcc-10): 1 warning
-    exynos_defconfig (gcc-10): 1 warning
-    ezx_defconfig (gcc-10): 1 warning
-    footbridge_defconfig (gcc-10): 1 warning
-    gemini_defconfig (gcc-10): 1 warning
-    hisi_defconfig (gcc-10): 1 warning
-    imote2_defconfig (gcc-10): 1 warning
-    imx_v6_v7_defconfig (gcc-10): 1 warning
-    integrator_defconfig (gcc-10): 1 warning
-    iop32x_defconfig (gcc-10): 1 warning
-    ixp4xx_defconfig (gcc-10): 1 warning
-    keystone_defconfig (gcc-10): 1 warning
-    lpc18xx_defconfig (gcc-10): 1 warning
-    lpc32xx_defconfig (gcc-10): 1 warning
-    magician_defconfig (gcc-10): 1 warning
-    mini2440_defconfig (gcc-10): 1 warning
-    mmp2_defconfig (gcc-10): 1 warning
-    multi_v4t_defconfig (gcc-10): 1 warning
-    multi_v5_defconfig (gcc-10): 1 warning
-    multi_v7_defconfig (gcc-10): 1 warning
-    multi_v7_defconfig+kselftest (gcc-10): 1 warning
-    mvebu_v5_defconfig (gcc-10): 1 warning
-    mvebu_v7_defconfig (gcc-10): 1 warning
-    mxs_defconfig (gcc-10): 1 warning
-    neponset_defconfig (gcc-10): 1 warning
-    netwinder_defconfig (gcc-10): 1 warning
-    nhk8815_defconfig (gcc-10): 1 warning
-    omap1_defconfig (gcc-10): 1 warning
-    omap2plus_defconfig (gcc-10): 1 warning
-    orion5x_defconfig (gcc-10): 1 warning
-    palmz72_defconfig (gcc-10): 1 warning
-    pcm027_defconfig (gcc-10): 1 warning
-    prima2_defconfig (gcc-10): 1 warning
-    pxa3xx_defconfig (gcc-10): 1 warning
-    pxa_defconfig (gcc-10): 1 warning
-    qcom_defconfig (gcc-10): 1 warning
-    realview_defconfig (gcc-10): 1 warning
-    rpc_defconfig (gcc-10): 4 errors
-    s3c2410_defconfig (gcc-10): 1 warning
-    s3c6400_defconfig (gcc-10): 1 warning
-    s5pv210_defconfig (gcc-10): 1 warning
-    sama5_defconfig (gcc-10): 1 warning
-    shmobile_defconfig (gcc-10): 1 warning
-    socfpga_defconfig (gcc-10): 1 warning
-    spear13xx_defconfig (gcc-10): 1 warning
-    spear3xx_defconfig (gcc-10): 1 warning
-    spear6xx_defconfig (gcc-10): 1 warning
-    spitz_defconfig (gcc-10): 1 warning
-    stm32_defconfig (gcc-10): 1 warning
-    sunxi_defconfig (gcc-10): 1 warning
-    tango4_defconfig (gcc-10): 1 warning
-    tegra_defconfig (gcc-10): 1 warning
-    trizeps4_defconfig (gcc-10): 1 warning
-    u300_defconfig (gcc-10): 1 warning
-    u8500_defconfig (gcc-10): 1 warning
-    versatile_defconfig (gcc-10): 1 warning
-    vexpress_defconfig (gcc-10): 1 warning
-    viper_defconfig (gcc-10): 1 warning
-    vt8500_v6_v7_defconfig (gcc-10): 1 warning
-    xcep_defconfig (gcc-10): 1 warning
-    zeus_defconfig (gcc-10): 1 warning
-
-i386:
-    i386_defconfig (gcc-10): 1 warning
-
-mips:
-    32r2el_defconfig (gcc-10): 2 warnings
-    ath79_defconfig (gcc-10): 1 warning
-    bigsur_defconfig (gcc-10): 1 warning
-    cavium_octeon_defconfig (gcc-10): 1 warning
-    ci20_defconfig (gcc-10): 1 warning
-    cu1000-neo_defconfig (gcc-10): 1 warning
-    cu1830-neo_defconfig (gcc-10): 1 warning
-    db1xxx_defconfig (gcc-10): 1 warning
-    decstation_64_defconfig (gcc-10): 1 warning
-    decstation_defconfig (gcc-10): 1 warning
-    decstation_r4k_defconfig (gcc-10): 1 warning
-    fuloong2e_defconfig (gcc-10): 1 warning
-    gcw0_defconfig (gcc-10): 1 warning
-    gpr_defconfig (gcc-10): 1 warning
-    loongson3_defconfig (gcc-10): 1 warning
-    mtx1_defconfig (gcc-10): 1 warning
-    nlm_xlp_defconfig (gcc-10): 1 warning
-    nlm_xlr_defconfig (gcc-10): 1 warning
-    pistachio_defconfig (gcc-10): 1 warning
-    qi_lb60_defconfig (gcc-10): 1 warning
-    rm200_defconfig (gcc-10): 1 warning
-    rs90_defconfig (gcc-10): 1 warning
-
-riscv:
-    defconfig (gcc-10): 1 warning
-    rv32_defconfig (gcc-10): 5 warnings
-
-x86_64:
-    x86_64_defconfig (gcc-10): 1 warning
-    x86_64_defconfig+kselftest (gcc-10): 1 warning
-    x86_64_defconfig+x86-chromebook (gcc-10): 1 warning
-    x86_64_defconfig+x86-chromebook+kselftest (gcc-10): 1 warning
-
-Errors summary:
-
-    2    arm-linux-gnueabihf-gcc: error: unrecognized -march target: armv3m
-    2    arm-linux-gnueabihf-gcc: error: missing argument to =E2=80=98-marc=
-h=3D=E2=80=99
-
-Warnings summary:
-
-    101  drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of=
- =E2=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 q=
-ualifier from pointer target type [-Wdiscarded-qualifiers]
-    6    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of=
- 'device_get_match_data' discards 'const' qualifier from pointer target typ=
-e [-Wdiscarded-qualifiers]
-    3    kernel/rcu/tasks.h:736:13: warning: =E2=80=98show_rcu_tasks_rude_g=
-p_kthread=E2=80=99 defined but not used [-Wunused-function]
-    2    drivers/gpu/drm/mediatek/mtk_drm_gem.c:255:10: warning: returning =
-=E2=80=98int=E2=80=99 from a function with return type =E2=80=98void *=E2=
-=80=99 makes pointer from integer without a cast [-Wint-conversion]
-    2    <stdin>:830:2: warning: #warning syscall fstat64 not implemented [=
--Wcpp]
-    2    <stdin>:1127:2: warning: #warning syscall fstatat64 not implemente=
-d [-Wcpp]
-    1    drivers/block/paride/bpck.c:32: warning: "PC" redefined
-    1    WARNING: modpost: Symbol info of vmlinux is missing. Unresolved sy=
-mbol check will be entirely skipped.
-
-Section mismatches summary:
-
-    1    WARNING: modpost: vmlinux.o(___ksymtab_gpl+ixp4xx_irq_init+0x0): S=
-ection mismatch in reference from the variable __ksymtab_ixp4xx_irq_init to=
- the function .init.text:ixp4xx_irq_init()
-    1    WARNING: modpost: vmlinux.o(___ksymtab+prom_init_numa_memory+0x0):=
- Section mismatch in reference from the variable __ksymtab_prom_init_numa_m=
-emory to the function .init.text:prom_init_numa_memory()
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-
-Detailed per-defconfig build reports:
-
----------------------------------------------------------------------------=
------
-32r2el_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 2 warnings, 0 sec=
-tion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-    WARNING: modpost: Symbol info of vmlinux is missing. Unresolved symbol =
-check will be entirely skipped.
-
----------------------------------------------------------------------------=
------
-allnoconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-allnoconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
-
----------------------------------------------------------------------------=
------
-allnoconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
-am200epdkit_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
- section mismatches
-
----------------------------------------------------------------------------=
------
-ar7_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-aspeed_g4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
-ction mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-aspeed_g5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
-ction mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-assabet_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-at91_dt_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
-ion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-ath25_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-ath79_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
-on mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-axm55xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
-ion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-axs103_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
-on mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of 'dev=
-ice_get_match_data' discards 'const' qualifier from pointer target type [-W=
-discarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-axs103_smp_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 s=
-ection mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of 'dev=
-ice_get_match_data' discards 'const' qualifier from pointer target type [-W=
-discarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-badge4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
-on mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-bcm2835_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
-ion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-bcm47xx_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-bcm63xx_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-bigsur_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
-ion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-bmips_be_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-bmips_stb_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-capcella_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-cavium_octeon_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning,=
- 0 section mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-cerfcube_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-ci20_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
-n mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-cm_x300_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
-ion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-cobalt_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-colibri_pxa270_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning,=
- 0 section mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-colibri_pxa300_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings=
-, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-collie_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-corgi_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
-n mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-cu1000-neo_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 =
-section mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-cu1830-neo_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 =
-section mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-davinci_all_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 =
-section mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-db1xxx_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
-ion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-decstation_64_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning,=
- 0 section mismatches
-
-Warnings:
-    kernel/rcu/tasks.h:736:13: warning: =E2=80=98show_rcu_tasks_rude_gp_kth=
-read=E2=80=99 defined but not used [-Wunused-function]
-
----------------------------------------------------------------------------=
------
-decstation_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 =
-section mismatches
-
-Warnings:
-    kernel/rcu/tasks.h:736:13: warning: =E2=80=98show_rcu_tasks_rude_gp_kth=
-read=E2=80=99 defined but not used [-Wunused-function]
-
----------------------------------------------------------------------------=
------
-decstation_r4k_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning=
-, 0 section mismatches
-
-Warnings:
-    kernel/rcu/tasks.h:736:13: warning: =E2=80=98show_rcu_tasks_rude_gp_kth=
-read=E2=80=99 defined but not used [-Wunused-function]
-
----------------------------------------------------------------------------=
------
-defconfig (riscv, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section mi=
-smatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-defconfig (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section mi=
-smatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-defconfig+arm64-chromebook (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 2 warn=
-ings, 0 section mismatches
-
-Warnings:
-    drivers/gpu/drm/mediatek/mtk_drm_gem.c:255:10: warning: returning =E2=
-=80=98int=E2=80=99 from a function with return type =E2=80=98void *=E2=80=
-=99 makes pointer from integer without a cast [-Wint-conversion]
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-defconfig+arm64-chromebook+kselftest (arm64, gcc-10) =E2=80=94 PASS, 0 erro=
-rs, 2 warnings, 0 section mismatches
-
-Warnings:
-    drivers/gpu/drm/mediatek/mtk_drm_gem.c:255:10: warning: returning =E2=
-=80=98int=E2=80=99 from a function with return type =E2=80=98void *=E2=80=
-=99 makes pointer from integer without a cast [-Wint-conversion]
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-defconfig+kselftest (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 =
-section mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-dove_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
- mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-e55_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-ebsa110_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-efm32_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
-n mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-ep93xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
-on mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-eseries_pxa_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
- section mismatches
-
----------------------------------------------------------------------------=
------
-exynos_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
-on mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-ezx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section =
-mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-footbridge_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 s=
-ection mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-fuloong2e_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 s=
-ection mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-gcw0_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
-n mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-gemini_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
-on mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-gpr_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
- mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-h3600_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-h5000_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-hackkit_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-haps_hs_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-haps_hs_smp_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
- section mismatches
-
----------------------------------------------------------------------------=
------
-hisi_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
- mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-hsdk_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
- mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of 'dev=
-ice_get_match_data' discards 'const' qualifier from pointer target type [-W=
-discarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-i386_defconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
-n mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-imote2_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
-on mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-imx_v4_v5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-imx_v6_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
-ction mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-integrator_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 s=
-ection mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-iop32x_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
-on mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-ip22_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-ip27_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-ip28_defconfig (mips, gcc-10) =E2=80=94 FAIL, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-ip32_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-ixp4xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
-on mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
-Section mismatches:
-    WARNING: modpost: vmlinux.o(___ksymtab_gpl+ixp4xx_irq_init+0x0): Sectio=
-n mismatch in reference from the variable __ksymtab_ixp4xx_irq_init to the =
-function .init.text:ixp4xx_irq_init()
-
----------------------------------------------------------------------------=
------
-jazz_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-jmr3927_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-jornada720_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-keystone_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
-tion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-lart_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-lemote2f_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-loongson1b_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
- section mismatches
-
----------------------------------------------------------------------------=
------
-loongson1c_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
- section mismatches
-
----------------------------------------------------------------------------=
------
-loongson3_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 s=
-ection mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
-Section mismatches:
-    WARNING: modpost: vmlinux.o(___ksymtab+prom_init_numa_memory+0x0): Sect=
-ion mismatch in reference from the variable __ksymtab_prom_init_numa_memory=
- to the function .init.text:prom_init_numa_memory()
-
----------------------------------------------------------------------------=
------
-lpc18xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
-ion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-lpc32xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
-ion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-lpd270_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-lubbock_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-magician_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
-tion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-mainstone_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-malta_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-malta_kvm_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-malta_kvm_guest_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnin=
-gs, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-malta_qemu_32r6_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnin=
-gs, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-maltaaprp_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-maltasmvp_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-maltasmvp_eva_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings=
-, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-maltaup_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-maltaup_xpa_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, =
-0 section mismatches
-
----------------------------------------------------------------------------=
------
-milbeaut_m10v_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings,=
- 0 section mismatches
-
----------------------------------------------------------------------------=
------
-mini2440_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
-tion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-mmp2_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
- mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-moxart_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-mpc30x_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-mps2_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-mtx1_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
-n mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-multi_v4t_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
-ction mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-multi_v5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
-tion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-multi_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
-tion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-multi_v7_defconfig+kselftest (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warn=
-ing, 0 section mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-mvebu_v5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
-tion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-mvebu_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
-tion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-mxs_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section =
-mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-neponset_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
-tion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-netwinder_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
-ction mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-nhk8815_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
-ion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-nlm_xlp_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
-tion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-nlm_xlr_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
-tion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-nommu_k210_defconfig (riscv, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, =
-0 section mismatches
-
----------------------------------------------------------------------------=
------
-nsimosci_hs_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 =
-section mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of 'dev=
-ice_get_match_data' discards 'const' qualifier from pointer target type [-W=
-discarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-nsimosci_hs_smp_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning=
-, 0 section mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of 'dev=
-ice_get_match_data' discards 'const' qualifier from pointer target type [-W=
-discarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-omap1_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
-n mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-omap2plus_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
-ction mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-omega2p_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-orion5x_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
-ion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-oxnas_v6_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-palmz72_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
-ion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-pcm027_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
-on mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-pic32mzda_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-pistachio_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 s=
-ection mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-pleb_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-prima2_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
-on mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-pxa168_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-pxa255-idp_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-pxa3xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
-on mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-pxa910_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-pxa_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section =
-mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-qcom_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
- mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-qi_lb60_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
-tion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-rb532_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-rbtx49xx_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-realview_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
-tion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-rm200_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
-on mismatches
-
-Warnings:
-    drivers/block/paride/bpck.c:32: warning: "PC" redefined
-
----------------------------------------------------------------------------=
------
-rpc_defconfig (arm, gcc-10) =E2=80=94 FAIL, 4 errors, 0 warnings, 0 section=
- mismatches
-
-Errors:
-    arm-linux-gnueabihf-gcc: error: unrecognized -march target: armv3m
-    arm-linux-gnueabihf-gcc: error: missing argument to =E2=80=98-march=3D=
-=E2=80=99
-    arm-linux-gnueabihf-gcc: error: unrecognized -march target: armv3m
-    arm-linux-gnueabihf-gcc: error: missing argument to =E2=80=98-march=3D=
-=E2=80=99
-
----------------------------------------------------------------------------=
------
-rs90_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
-n mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-rt305x_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-rv32_defconfig (riscv, gcc-10) =E2=80=94 PASS, 0 errors, 5 warnings, 0 sect=
-ion mismatches
-
-Warnings:
-    <stdin>:830:2: warning: #warning syscall fstat64 not implemented [-Wcpp]
-    <stdin>:1127:2: warning: #warning syscall fstatat64 not implemented [-W=
-cpp]
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-    <stdin>:830:2: warning: #warning syscall fstat64 not implemented [-Wcpp]
-    <stdin>:1127:2: warning: #warning syscall fstatat64 not implemented [-W=
-cpp]
-
----------------------------------------------------------------------------=
------
-s3c2410_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
-ion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-s3c6400_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
-ion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-s5pv210_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
-ion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-sama5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
-n mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-sb1250_swarm_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings,=
- 0 section mismatches
-
----------------------------------------------------------------------------=
------
-shannon_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-shmobile_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
-tion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-simpad_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-socfpga_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
-ion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-spear13xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
-ction mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-spear3xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
-tion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-spear6xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
-tion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-spitz_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
-n mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-stm32_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
-n mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-sunxi_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
-n mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-tango4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 secti=
-on mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-tb0219_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-tb0226_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-tb0287_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-tct_hammer_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-tegra_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
-n mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-tinyconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
-tinyconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
-smatches
-
----------------------------------------------------------------------------=
------
-tinyconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
-
----------------------------------------------------------------------------=
------
-trizeps4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
-tion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-u300_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
- mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-u8500_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
-n mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-vdk_hs38_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-vdk_hs38_smp_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0=
- section mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of 'dev=
-ice_get_match_data' discards 'const' qualifier from pointer target type [-W=
-discarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-versatile_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
-ction mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-vexpress_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sec=
-tion mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-vf610m4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-viper_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sectio=
-n mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-vocore2_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-vt8500_v6_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0=
- section mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-workpad_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
-ction mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig+kselftest (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 1 war=
-ning, 0 section mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig+x86-chromebook (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, =
-1 warning, 0 section mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig+x86-chromebook+kselftest (x86_64, gcc-10) =E2=80=94 PASS, =
-0 errors, 1 warning, 0 section mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-xcep_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
- mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-zeus_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section=
- mismatches
-
-Warnings:
-    drivers/i2c/i2c-core-base.c:101:31: warning: passing argument 1 of =E2=
-=80=98device_get_match_data=E2=80=99 discards =E2=80=98const=E2=80=99 quali=
-fier from pointer target type [-Wdiscarded-qualifiers]
-
----------------------------------------------------------------------------=
------
-zx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
-
----
-For more info write to <info@kernelci.org>
+ <cip-dev@lists.cip-project.org>; Tue, 19 Sep 2023 14:01:06 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13150
+
+cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc baseline-nfs: 38 runs, 12 regres=
+sions (v5.10.191-cip38-661-g112a3073ff26)
+
+Regressions Summary
+-------------------
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+bcm2711-rpi-4-b              | arm64  | lab-collabora | gcc-10   | defconfi=
+g+kselftest          | 1          =
+
+hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
+
+hp-x360-14-G1-sona           | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
+
+hp-x360-14-G1-sona           | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...ok+kselftest | 1          =
+
+meson-gxl-s905x-libretech-cc | arm64  | lab-broonie   | gcc-10   | defconfi=
+g+arm64-chromebook   | 1          =
+
+meson-gxl-s905x-libretech-cc | arm64  | lab-broonie   | gcc-10   | defconfi=
+g+kselftest          | 1          =
+
+meson-gxl-s905x-libretech-cc | arm64  | lab-broonie   | gcc-10   | defconfi=
+g+arm...ok+kselftest | 1          =
+
+meson-gxl-s905x-libretech-cc | arm64  | lab-broonie   | gcc-10   | defconfi=
+g                    | 1          =
+
+r8a774a1-hihope-rzg2m-ex     | arm64  | lab-cip       | gcc-10   | defconfi=
+g+arm64-chromebook   | 1          =
+
+r8a774a1-hihope-rzg2m-ex     | arm64  | lab-cip       | gcc-10   | defconfi=
+g+kselftest          | 1          =
+
+rk3399-gru-kevin             | arm64  | lab-collabora | gcc-10   | defconfi=
+g+arm64-chromebook   | 2          =
+
+
+  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fiwamatsu%2=
+Flinux-5.10.y-cip-rc/kernel/v5.10.191-cip38-661-g112a3073ff26/plan/baseline=
+-nfs/
+
+  Test:     baseline-nfs
+  Tree:     cip-gitlab
+  Branch:   ci/iwamatsu/linux-5.10.y-cip-rc
+  Describe: v5.10.191-cip38-661-g112a3073ff26
+  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
+  SHA:      112a3073ff2650cf1c0684ba93fb4a7284304812 =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+bcm2711-rpi-4-b              | arm64  | lab-collabora | gcc-10   | defconfi=
+g+kselftest          | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65099f9bc2c33094aa8a0a42
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+kselftest
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.191-cip38-661-g112a3073ff26/arm64/defconfig+kselftest/gc=
+c-10/lab-collabora/baseline-nfs-bcm2711-rpi-4-b.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.191-cip38-661-g112a3073ff26/arm64/defconfig+kselftest/gc=
+c-10/lab-collabora/baseline-nfs-bcm2711-rpi-4-b.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/65099f9bc2c33094a=
+a8a0a43
+        new failure (last pass: v5.10.186-cip37-982-g80a0585c0aa62) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6509995c9102aba99c8a0a78
+
+  Results:     5 PASS, 1 FAIL, 1 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.191-cip38-661-g112a3073ff26/x86_64/x86_64_defconfig+x86-=
+chromebook/gcc-10/lab-collabora/baseline-nfs-hp-x360-12b-ca0010nr-n4020-oct=
+opus.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.191-cip38-661-g112a3073ff26/x86_64/x86_64_defconfig+x86-=
+chromebook/gcc-10/lab-collabora/baseline-nfs-hp-x360-12b-ca0010nr-n4020-oct=
+opus.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.bootrr.deferred-probe-empty: https://kernelci.org/test/cas=
+e/id/6509995c9102aba99c8a0a81
+        failing since 151 days (last pass: v5.10.168-cip27-638-g0d599cd2b66=
+95, first fail: v5.10.177-cip31-122-gfb6ca504156b4)
+
+    2023-09-19T12:51:40.940631  + set<8>[   15.781354] <LAVA_SIGNAL_ENDRUN =
+0_dmesg 11570980_1.5.2.3.1>
+
+    2023-09-19T12:51:40.940718   +x
+
+    2023-09-19T12:51:41.045046  / # #
+
+    2023-09-19T12:51:41.145606  export SHELL=3D/bin/sh
+
+    2023-09-19T12:51:41.145773  #
+
+    2023-09-19T12:51:41.246269  / # export SHELL=3D/bin/sh. /lava-11570980/=
+environment
+
+    2023-09-19T12:51:41.246446  =
+
+
+    2023-09-19T12:51:41.346931  / # . /lava-11570980/environment/lava-11570=
+980/bin/lava-test-runner /lava-11570980/1
+
+    2023-09-19T12:51:41.347180  =
+
+
+    2023-09-19T12:51:41.351611  / # /lava-11570980/bin/lava-test-runner /la=
+va-11570980/1
+ =
+
+    ... (12 line(s) more)  =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+hp-x360-14-G1-sona           | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...6-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/650999670751b3b3178a0a4f
+
+  Results:     5 PASS, 1 FAIL, 1 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.191-cip38-661-g112a3073ff26/x86_64/x86_64_defconfig+x86-=
+chromebook/gcc-10/lab-collabora/baseline-nfs-hp-x360-14-G1-sona.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.191-cip38-661-g112a3073ff26/x86_64/x86_64_defconfig+x86-=
+chromebook/gcc-10/lab-collabora/baseline-nfs-hp-x360-14-G1-sona.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.bootrr.deferred-probe-empty: https://kernelci.org/test/cas=
+e/id/650999670751b3b3178a0a58
+        failing since 151 days (last pass: v5.10.168-cip27-109-g23841ec76be=
+c, first fail: v5.10.177-cip31-122-gfb6ca504156b4)
+
+    2023-09-19T12:51:33.089658  + set +x
+
+    2023-09-19T12:51:33.096100  <8>[   20.094362] <LAVA_SIGNAL_ENDRUN 0_dme=
+sg 11570973_1.5.2.3.1>
+
+    2023-09-19T12:51:33.200244  / # #
+
+    2023-09-19T12:51:33.300786  export SHELL=3D/bin/sh
+
+    2023-09-19T12:51:33.300958  #
+
+    2023-09-19T12:51:33.401419  / # export SHELL=3D/bin/sh. /lava-11570973/=
+environment
+
+    2023-09-19T12:51:33.401585  =
+
+
+    2023-09-19T12:51:33.502060  / # . /lava-11570973/environment/lava-11570=
+973/bin/lava-test-runner /lava-11570973/1
+
+    2023-09-19T12:51:33.502370  =
+
+
+    2023-09-19T12:51:33.507386  / # /lava-11570973/bin/lava-test-runner /la=
+va-11570973/1
+ =
+
+    ... (12 line(s) more)  =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+hp-x360-14-G1-sona           | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efcon...ok+kselftest | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65099b70a64be6256a8a0aae
+
+  Results:     5 PASS, 1 FAIL, 1 SKIP
+  Full config: x86_64_defconfig+x86-chromebook+kselftest
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.191-cip38-661-g112a3073ff26/x86_64/x86_64_defconfig+x86-=
+chromebook+kselftest/gcc-10/lab-collabora/baseline-nfs-hp-x360-14-G1-sona.t=
+xt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.191-cip38-661-g112a3073ff26/x86_64/x86_64_defconfig+x86-=
+chromebook+kselftest/gcc-10/lab-collabora/baseline-nfs-hp-x360-14-G1-sona.h=
+tml
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.bootrr.deferred-probe-empty: https://kernelci.org/test/cas=
+e/id/65099b70a64be6256a8a0ab7
+        failing since 151 days (last pass: v5.10.168-cip27-638-g0d599cd2b66=
+95, first fail: v5.10.177-cip31-122-gfb6ca504156b4)
+
+    2023-09-19T13:00:21.411030  + set +x
+
+    2023-09-19T13:00:21.417387  <8>[   22.491445] <LAVA_SIGNAL_ENDRUN 0_dme=
+sg 11571011_1.5.2.3.1>
+
+    2023-09-19T13:00:21.527027  / # #
+
+    2023-09-19T13:00:21.629500  export SHELL=3D/bin/sh
+
+    2023-09-19T13:00:21.630341  #
+
+    2023-09-19T13:00:21.732064  / # export SHELL=3D/bin/sh. /lava-11571011/=
+environment
+
+    2023-09-19T13:00:21.732859  =
+
+
+    2023-09-19T13:00:21.834649  / # . /lava-11571011/environment/lava-11571=
+011/bin/lava-test-runner /lava-11571011/1
+
+    2023-09-19T13:00:21.835967  =
+
+
+    2023-09-19T13:00:21.841238  / # /lava-11571011/bin/lava-test-runner /la=
+va-11571011/1
+ =
+
+    ... (12 line(s) more)  =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+meson-gxl-s905x-libretech-cc | arm64  | lab-broonie   | gcc-10   | defconfi=
+g+arm64-chromebook   | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65099d94bf5c6dc8468a0a51
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.191-cip38-661-g112a3073ff26/arm64/defconfig+arm64-chrome=
+book/gcc-10/lab-broonie/baseline-nfs-meson-gxl-s905x-libretech-cc.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.191-cip38-661-g112a3073ff26/arm64/defconfig+arm64-chrome=
+book/gcc-10/lab-broonie/baseline-nfs-meson-gxl-s905x-libretech-cc.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/65099d94bf5c6dc84=
+68a0a52
+        new failure (last pass: v5.10.186-cip37-982-g80a0585c0aa62) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+meson-gxl-s905x-libretech-cc | arm64  | lab-broonie   | gcc-10   | defconfi=
+g+kselftest          | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65099f916dcc1cd4f18a0a58
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+kselftest
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.191-cip38-661-g112a3073ff26/arm64/defconfig+kselftest/gc=
+c-10/lab-broonie/baseline-nfs-meson-gxl-s905x-libretech-cc.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.191-cip38-661-g112a3073ff26/arm64/defconfig+kselftest/gc=
+c-10/lab-broonie/baseline-nfs-meson-gxl-s905x-libretech-cc.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/65099f916dcc1cd4f=
+18a0a59
+        new failure (last pass: v5.10.186-cip37-982-g80a0585c0aa62) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+meson-gxl-s905x-libretech-cc | arm64  | lab-broonie   | gcc-10   | defconfi=
+g+arm...ok+kselftest | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6509a015d38310ab068a0a42
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+arm64-chromebook+kselftest
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.191-cip38-661-g112a3073ff26/arm64/defconfig+arm64-chrome=
+book+kselftest/gcc-10/lab-broonie/baseline-nfs-meson-gxl-s905x-libretech-cc=
+.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.191-cip38-661-g112a3073ff26/arm64/defconfig+arm64-chrome=
+book+kselftest/gcc-10/lab-broonie/baseline-nfs-meson-gxl-s905x-libretech-cc=
+.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/6509a015d38310ab0=
+68a0a43
+        new failure (last pass: v5.10.186-cip37-982-g80a0585c0aa62) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+meson-gxl-s905x-libretech-cc | arm64  | lab-broonie   | gcc-10   | defconfi=
+g                    | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6509a4087f2d2acf278a0a61
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.191-cip38-661-g112a3073ff26/arm64/defconfig/gcc-10/lab-b=
+roonie/baseline-nfs-meson-gxl-s905x-libretech-cc.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.191-cip38-661-g112a3073ff26/arm64/defconfig/gcc-10/lab-b=
+roonie/baseline-nfs-meson-gxl-s905x-libretech-cc.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/6509a4087f2d2acf2=
+78a0a62
+        new failure (last pass: v5.10.191-cip38-218-g9947ff6f0dba7) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+r8a774a1-hihope-rzg2m-ex     | arm64  | lab-cip       | gcc-10   | defconfi=
+g+arm64-chromebook   | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6509a6cdd2489938a38a0a51
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.191-cip38-661-g112a3073ff26/arm64/defconfig+arm64-chrome=
+book/gcc-10/lab-cip/baseline-nfs-r8a774a1-hihope-rzg2m-ex.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.191-cip38-661-g112a3073ff26/arm64/defconfig+arm64-chrome=
+book/gcc-10/lab-cip/baseline-nfs-r8a774a1-hihope-rzg2m-ex.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/6509a6cdd2489938a=
+38a0a52
+        failing since 38 days (last pass: v5.10.186-cip37-566-g36076316ef04=
+9, first fail: v5.10.186-cip37-770-gddd36cfc4c4c8) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+r8a774a1-hihope-rzg2m-ex     | arm64  | lab-cip       | gcc-10   | defconfi=
+g+kselftest          | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6509a7f9d6448fccfd8a0a47
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+kselftest
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.191-cip38-661-g112a3073ff26/arm64/defconfig+kselftest/gc=
+c-10/lab-cip/baseline-nfs-r8a774a1-hihope-rzg2m-ex.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.191-cip38-661-g112a3073ff26/arm64/defconfig+kselftest/gc=
+c-10/lab-cip/baseline-nfs-r8a774a1-hihope-rzg2m-ex.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/6509a7f9d6448fccf=
+d8a0a48
+        failing since 53 days (last pass: v5.10.184-cip36-10-ga711f789c23e1=
+, first fail: v5.10.186-cip37-526-g7640d76efb649) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                    | regressions
+-----------------------------+--------+---------------+----------+---------=
+---------------------+------------
+rk3399-gru-kevin             | arm64  | lab-collabora | gcc-10   | defconfi=
+g+arm64-chromebook   | 2          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65099cf2f64688c68b8a0b8f
+
+  Results:     84 PASS, 2 FAIL, 1 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.191-cip38-661-g112a3073ff26/arm64/defconfig+arm64-chrome=
+book/gcc-10/lab-collabora/baseline-nfs-rk3399-gru-kevin.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
+.10.y-cip-rc/v5.10.191-cip38-661-g112a3073ff26/arm64/defconfig+arm64-chrome=
+book/gcc-10/lab-collabora/baseline-nfs-rk3399-gru-kevin.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.bootrr.rockchip-usb2phy1-probed: https://kernelci.org/test=
+/case/id/65099cf2f64688c68b8a0b99
+        failing since 151 days (last pass: v5.10.168-cip27-638-g0d599cd2b66=
+95, first fail: v5.10.177-cip31-122-gfb6ca504156b4)
+
+    2023-09-19T13:06:39.208829  /lava-11571043/1/../bin/lava-test-case
+   =
+
+
+  * baseline-nfs.bootrr.rockchip-usb2phy0-probed: https://kernelci.org/test=
+/case/id/65099cf2f64688c68b8a0b9a
+        failing since 151 days (last pass: v5.10.168-cip27-638-g0d599cd2b66=
+95, first fail: v5.10.177-cip31-122-gfb6ca504156b4)
+
+    2023-09-19T13:06:37.051821  <8>[   95.621039] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Drockchip-usb2phy-driver-present RESULT=3Dpass>
+
+    2023-09-19T13:06:38.112425  /lava-11571043/1/../bin/lava-test-case
+
+    2023-09-19T13:06:38.148911  <8>[   96.719783] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Drockchip-usb2phy0-probed RESULT=3Dfail>
+   =
+
+ =20
 
