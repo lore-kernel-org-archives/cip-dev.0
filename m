@@ -2,51 +2,51 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D513E6FE3A
-	for <webhook@archiver.kernel.org>; Fri, 22 Sep 2023 14:26:57 +0000 (UTC)
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (EUR02-AM0-obe.outbound.protection.outlook.com [40.107.247.52])
- by mx.groups.io with SMTP id smtpd.web10.22612.1695392810415706119
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D138E6FE3B
+	for <webhook@archiver.kernel.org>; Fri, 22 Sep 2023 14:27:07 +0000 (UTC)
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (EUR02-AM0-obe.outbound.protection.outlook.com [40.107.247.50])
+ by mx.groups.io with SMTP id smtpd.web10.22620.1695392821091706653
  for <cip-dev@lists.cip-project.org>;
- Fri, 22 Sep 2023 07:26:51 -0700
+ Fri, 22 Sep 2023 07:27:01 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=W3S85uFc;
- spf=pass (domain: siemens.com, ip: 40.107.247.52, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=Jq9VTpRn;
+ spf=pass (domain: siemens.com, ip: 40.107.247.50, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZMs5mZInUcHH3R/xRY8aEzDrha8zfDhORfoM2rAt5cQBqLD3uBzkRDSIRHr8/LrQUxcwCYDmlJPhLVpFck7ingdCfDXL6eciQsb94JZ0ZFNq9CO7qC1MtSKoAAV5yGEc4wUvIzTGqPD2LTMP7iLOWSGKLdCCrPCAsWYfloOpXtMba4wTxJxEj6oYJ262t05HgayBWOoxN0vX8859DAnYsMqjMWhKJVlAsCBMaXip7wNp02mcQ2ZNSo+N8VxH2CMnUSJZfUU9M+s3oKbjC000POxmTvNMsm+U6fht+TQP0KIjabWZsCdYiXo8bb4nLQ3jOWagfwhWdXu1NqGuiHtWbA==
+ b=gvkE368lIRTaIn4nUK6i+u57wqIuzZVvhs27RR56cVZcESojjJnF8cakve9sxvCQ7J1oXppmelGMECwpODTsRYOzvkL6YNsGyONmG5k4jutkuxBO9RE/0clNf1R5OxgI749+ue32x353R2i2BZIFY1C6VtxGAaiWdmMiynloZgH1CNrYQoCeTUC9nGabSIfnG1gxipHWRIvU8JqIdvUGnyIntZ5pwe8rKN7Wnd8l8NQ9ZwaEZL5rpN8NmY7W+coDTq6q1ty07CJbD6IMPlIxJoowDfmq4En36lGwjtrFweeb4hfVG2GvL6lWTS3re4sazCZg+rsIh1PUCnFSW4zh4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=W+xCdFsZA2QIEiMHlSZl2FLwBVbJ0RGgkEsaGPJONn4=;
- b=OW+J7gOzQcxfUMeiYvhMsGWucyrqfLsHEkdhUhW1FUZfDe4ucOb8iCiG2JEltvOi9VhzOEMTLGZbIddBMKEvs1QsoegARlC/mN1QrqtIotAXtnp0CM1qC9ihg5KzCfLZIYRFjyFCYIOmOVYZeexKKy7SE5d4ZN5+6D1DviVJjwDEpj7NMMsWxpys15t6gkJ/XznVhbnNUYGeJAjqI45JGa2t13TMizUVTnte0OSZFog1TpeFzDb5ZyHogBkqLURwJ7S2L3PAL+p+9WBP7Vd1U9upO3rsHxSYyIToFxI+ChJKkmMIrYeuNf2X2Ew/El+mHoCEygJ8bOX/cV5Ft8P6Hg==
+ bh=jwC8852g1JgBPE36ZaP5dLIFc8PSErKbYygM9scWdwQ=;
+ b=cas264RvSzI2RChy5CYKhw6MqwF+eu8R08vx/X1ZtBf0ai1SmAU4phT4vFKsI3UTaitqtHdjFa0pHHZAqLUD6rbwMlNFt5hhp0y/RwcqnfU5JjKyQuWUvfH7uZQoxBKBjoFnj3P0fwHRkCvlohWItB96tFwOifl/CI/Ov1zfAStV43UX4erNViSc31mPsVuGj0seu3irZsTU8ZKjpF7U9wyDlAEpEU7mrOVJgajiYUmx67GEIFxno/mGMcogwBYAavktwG/+kJQPVbHawkZNLShjjGLK4EDWoU1xNOWV9LCpCqfE0MK5kwYWOKiYLekcnrRxRzjxpv4TglwSWfU/VA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W+xCdFsZA2QIEiMHlSZl2FLwBVbJ0RGgkEsaGPJONn4=;
- b=W3S85uFcGgqbY25IrXHfZZN3dyU3NyucXLJaNvCVlBo1jT8Tg1LOHnLljLNySQrSu6fj3RSJm4BtzPgyqSlAzvJVt14ikW/wIHmfleqY5O65d+7UIFCCYsi8KdRjl47zBIOytYJfaPPTusl8V6/yGhXMdSLauuTt2nyWzQ0+s+egGtCAXrdyHsyKmjUTc0yoI9YW7EjNKFYOreLLlB+teFCNaamaULkdsYzhvXdfxIGZLGYwwNXpEHfTvKVcz4/hW9rhPZgzmP+wQ9Xp/lcU9c0gBD5Qus7jfSw16UQxJm8FSxMd2zaBSye/5vB4Xb8D7YlyqGJCA5AB+ubB+ZpxPQ==
+ bh=jwC8852g1JgBPE36ZaP5dLIFc8PSErKbYygM9scWdwQ=;
+ b=Jq9VTpRnX8dIvRgOA0WArAMZPnqxhsMuUBWJpJAVSRlM3sCVeoKgGQKvANbFHtyZHWzTJtjFnQaCtv6Ld3nBfffSmF50l31cj582IC4I7auVekoVMGd2QPgPurly5R9L9eHQWaey73PZNzE1s7jM0gAzjq5gCUe6UtJPV5sZOhhxVpuris/7F4DUI5iOFwTkTJwgRELvAmaRlnTi0Jrga1PPe8Gq0QPWtvTi4fC6IpdD5gGZ3IsgsGw+vtyuf/zeCkfcUHgRYpAG5tCtxM+6eXy/36fV3qjf6OgaJ+t+h6rmoKGsU6paOgiNRlms2gsNaRj3Z9GrEo0NaU4bxIhn/Q==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
  by DU0PR10MB6179.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:3ea::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6813.23; Fri, 22 Sep
- 2023 14:26:47 +0000
+ 2023 14:26:58 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::7f20:d403:b43d:12e2]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::7f20:d403:b43d:12e2%3]) with mapi id 15.20.6813.017; Fri, 22 Sep 2023
- 14:26:47 +0000
-Message-ID: <68c3812c-9c75-47dd-b197-761e018ddfde@siemens.com>
-Date: Fri, 22 Sep 2023 16:26:45 +0200
+ 14:26:58 +0000
+Message-ID: <d2a3eade-bf08-4a7c-9d61-797c8946e46c@siemens.com>
+Date: Fri, 22 Sep 2023 16:26:56 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core] wic: Use fixed UUID values for the partitions
+Subject: Re: [isar-cip-core] kas-cip.yml: Update Isar revision
 Content-Language: en-US
 To: venkata.pyla@toshiba-tsip.com, cip-dev@lists.cip-project.org
 Cc: dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
-References: <20230922064904.11232-1-venkata.pyla@toshiba-tsip.com>
+References: <20230922122322.3657-1-venkata.pyla@toshiba-tsip.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20230922064904.11232-1-venkata.pyla@toshiba-tsip.com>
+In-Reply-To: <20230922122322.3657-1-venkata.pyla@toshiba-tsip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: CH2PR18CA0018.namprd18.prod.outlook.com
@@ -55,148 +55,101 @@ X-ClientProxiedBy: CH2PR18CA0018.namprd18.prod.outlook.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DU0PR10MB6179:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3d49e7fe-9810-4ac9-349f-08dbbb77f3db
+X-MS-Office365-Filtering-Correlation-Id: 3d4f51bd-576d-4992-234a-08dbbb77fa8d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	24Negj3w9OEEAa0293DW16/DdOOlt9ayOyXlrpVMMekXDIdefcxt1BK5whHSgr+hAAPY8CUmOLRFJUYTEbJqVbe6Wd7+8Y1iMbZLfzakKRcMX3dq0f0Z5NDnpuHRYDXH7MPjnZWZCW4ZWqTH3TN7kmgAUS16pQusZVcxsw0iJ9swuexVnnYI5KQM4HIiKwJuJyv8BUi93fl7UGBivLbIw5P63qbGie6DBfW1RZ1QBeX3OhUegKnfbPWA3maVy8KhHfGouL/DdrsS2MA59i+ghTTS09/Vxq0DbVSnD+OieqgrOh4+PegLNuc8sxLohru8g1sw4TwLEOMM3xXrX+gqG1NbsWevh/SpdPQjohofY0opzoYiRi0Ogz9lwXsA+xn3cfSnk59Wyytj528BFxibBL0W3QHeK5TK1zCQrd8q5YSb3cge9j7dbaQKX/FqNJ6OweM18Gzxpuj+jwdTaRukemtynQpeVEYP9Pzfh30PBABOmZlF9zSFFGMa8nJ/SwUOVqlSc0+I4Lkb0kK9s6Z/ukuax7Bm6J2aKsqS8AfX++g1AiFWcmbCiuwgY+HjIWR0utZqN6vjz2EZean48EpD+Fo0HydWvhPjngsSWDnNn+rtd66MtNSzRQ64nFijL+kJPDYaKNc0KrAgB2OfAB9yAopWUp7JNHJ/WylgK89uLrPyvye3pym3lpYuY9s1FRf3
+	B7e4V5QRw7LU69Hcp9TSCNAQ5DpLChHe2KzROUqfuLKgAdl9H8vWY1pWCANVQlB7GTWPR2Tw7cg+BxsuqAUt+zOCQ4P145pWDumMr8GS5fEsq9d527u5wV7qt2hXwODWxBiYpoE3XVtqFgmXRZHV0JuaPz89KUSNQ/dKr40eHR/SJe6Ip406OO7HZ5fg4cP91SplgQmuMcC/NX1VU79aDtBstLtU3oiFx0/dpEOeEFpAqg6wUjunVhuJkmGvCAdIlwvCTVT0mPtagRVbOyq7xe4i2ATxGpojf+TiPbvwZaGspGosRs5c/BiwcQ8+lU3bgR78URZHBlbxcY13KhCdJaUdI5vm33CoG+3RfYJSG7NrZBd1FjI3fsbIcSoEBIwt5kJL9z3YYlFbokbKGu7opPnqLQiLHq9Ico82WCt7zqZl4y4FBc9KgzurKOh3Pa4smQ39plgE7sPYTinF4tf1sEeHrfl45Btv2OoHFDP51fYkOH7m7maP+LtVtRQnd7tMLfRgtsLv5QcUG9Ra1IIptv8x7ULjfrLGvWkKClhp0AbtyUX9psv3WUblAQr5Tafdru1Gfm3m6n+GDwRnDfLKKyvE7YEcpYEVIlMaqwQhLYIJEb7CMuWXijKknqWlygvMSYLWE7Bq8DPQtm4+FgRZQYAMcAeM7R3AVvxsTlB/Jd1DDWWgf0WVwX/d2XRBe/oT
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(136003)(39860400002)(366004)(396003)(376002)(346002)(451199024)(186009)(1800799009)(31686004)(6506007)(6486002)(53546011)(38100700002)(36756003)(86362001)(31696002)(82960400001)(26005)(2906002)(8676002)(478600001)(6512007)(83380400001)(2616005)(8936002)(5660300002)(41300700001)(44832011)(66556008)(4326008)(66476007)(66946007)(316002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(136003)(39860400002)(366004)(396003)(376002)(346002)(451199024)(186009)(1800799009)(31686004)(6506007)(6486002)(53546011)(38100700002)(36756003)(86362001)(31696002)(82960400001)(26005)(2906002)(4744005)(8676002)(478600001)(6512007)(966005)(83380400001)(2616005)(8936002)(5660300002)(41300700001)(44832011)(66556008)(4326008)(66476007)(66946007)(316002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?NXpmNkFwdnhmNTBXTmY4VDFXWEoxeGU4OUl2VEp3aFErWkNncFpVYlhHbm8w?=
- =?utf-8?B?cm50aEwvck1yNWFaSG5MTE41QUdkbTlHcWJFYUtpY1crTWcvRzZ2Ym9uVC9h?=
- =?utf-8?B?TEJkS1Fjd250clFHVlgvOHJnd09jRlJqRUp0MkhkZVhFbnZIbFR6QjJPMXVm?=
- =?utf-8?B?QzRtdkhUSlliNWtnckRTb3pIcWl2SXE5d3kwSnQ5Um9jbXZUQVRUL2xBdUtl?=
- =?utf-8?B?VWdKRTlmNTBPd0VYWGQ4Q2FyS1FNUUc4K3RjdlY4R1lMYTdBblJHeWoyV001?=
- =?utf-8?B?YitIaGpCTmxuSzRtQ2FvZ1FlZXhzMVdLeCtaUzA3aU5COEFUUEZYc0Uwak1s?=
- =?utf-8?B?cXFMdVRFcDdvZFdjc29PYm9KMFJTUU1Xdm40OEZaakxjYWUrTzIzOVRWckwr?=
- =?utf-8?B?Wk1pQnBVSFYvZytwazJZZE15SlFDa0tOL3BkTDRUMFVGN3haREJRUm1yWlJa?=
- =?utf-8?B?QVkvaG16ZHB2djltUnhzaTZDbzBHaXprVThCVlF2MldGUmhuZjNFSk9ycVBz?=
- =?utf-8?B?eDVGQlpOM0RpVEpmWW1BSkFjMDVsSTRXMTZsUlN0UTBSR0E3Y2tqRmw2elZv?=
- =?utf-8?B?cWErTHI5N21iZkx1THJjYUU4Z2tEUFNOQkIzTFpNRHp6bmZXdTFwamxwbGpC?=
- =?utf-8?B?eTR1ejkva1IwcWE3bHZ2QTdtOGxxcHhhTm5hUkk5ZjEwYm1tbVo5MWtPczlj?=
- =?utf-8?B?STh4TVRLNTQyNzhvWjFZVkFReHNlU2tDdTFPTFprT3V2eHJHQkRQeTRuNjZB?=
- =?utf-8?B?bkNJMWRwM0RId056WTJHYklHTzdCVjhGMkNTV2NZOXFjTUtTSTdnU0xYNmhO?=
- =?utf-8?B?WERqelIzOTc0ZVBHYnZZZFhVSE5XN0NUWGEzMzdab2p5UTJhTGlROGhnbXJT?=
- =?utf-8?B?Q0Y4YkJaVVBzVGpzWWZBUjhnS2tELzFxMzFNZ1p3T2syRldlZ2FUdnRicnJv?=
- =?utf-8?B?L2VFRWpLS1FNbzNZYllqZU8za2J2eitOejlSNXp4VnQ0VXJYZHNoRXFHTGFC?=
- =?utf-8?B?ZG5XTGtNVTQ2Tmo3dXl0Qm1CREFlczFvUHpvUnFpWGF4SGNPcm55WGdhaWxm?=
- =?utf-8?B?ekpZZ1o3OGo1QmQ4clBNRUEwL21MLzdGUnNkMitVUVJqZUxkbDBLUUs2aXhM?=
- =?utf-8?B?UjFIM2dQaTduMW81SzdwOUQzb3hvM0lYaFRZY1JDa0xhOFFsa3dNZHRUaWlN?=
- =?utf-8?B?QzFKUjExaGNBL2FKc1FnNEgvcldQVUhkMDFiZ0VCaERCQTJBRHRmVlpzMUJV?=
- =?utf-8?B?em9JOGdDSGk4Vmx1NG1KU0Q2UG1nTlFUNHcwNVNhTkNzbVVZdU5NSmtQeVdr?=
- =?utf-8?B?YVZWTVNoeGpEaGhYczV2S1dyT1A2aWRJMXZESUthZUxlVlcvWjhCMXZvNUo2?=
- =?utf-8?B?c05oTVdBKzZXam5USEFsM2lNRHUxN2hPZzdvUEp6WDNjMzN6ZU5uNm1EQkZl?=
- =?utf-8?B?WDFCdEVwZ1gvQjAwWjhvZFZoakZ0dHZaQkkrSEdDSTJndHRYSStyUEpaWnQ5?=
- =?utf-8?B?STBpY214Yy8wUUpwUGtmdk5SQWtvT3F5RVpiZDZxWCsyUjBITTlRNEhhUmti?=
- =?utf-8?B?QndxQU5NQkJtcXcwSDErak9Ebk54RGVwT2lqNXFaSDI5ZWUrWlc3cVZyd3NJ?=
- =?utf-8?B?ODdYZ0tlMCtvd2tLK2p4YXZzcGM0eDB4MHpGWGxDc2dvTkc0cGZVaFJKbGJT?=
- =?utf-8?B?NWVSbkJKV3huSjFVR0szZUVXdTlGaVJhdmU5RkV3UEhVWE9VS0oxNFEzT2cv?=
- =?utf-8?B?MTJDSnJSMmJqSUNJTHdXbE1jSElMb0l3WDFFMWFMNTJsQnVPS25jV2ZqVW9i?=
- =?utf-8?B?RnlxYklmVUNuNStvOWl1VzM1TDhqYy9KWTlyMEtSS0xyVWZtUGJhSGoyakV1?=
- =?utf-8?B?ZTdDVW02cjBwUUJKSkdZWjdJbXRCM1NSaENiVHRmRmVqZTIxTzhaL0ZQcDhU?=
- =?utf-8?B?L3dUOUdaK2FmbXBtZVF3V2FzbUNOaTRDZXFQVC9WYUtXY0RRMGJQVFRUM2VE?=
- =?utf-8?B?UGlmT01FNnhWR2xNWSttYzVqZnRFWmdaVUJzS1lUazhZTUd5Y0RrQTdYeUVh?=
- =?utf-8?B?MjRzUjJGRDFLNFpFb0E4bjZvUkE4ZEphTFVhbXJUNHBlRVpvM29iODR0d2dq?=
- =?utf-8?B?NGlRVkc3UVl0cXNFZno1cE0yS09wTHN1VytLdkkxZ1lrYmV6WlhvV2kyL2Rp?=
- =?utf-8?B?b3c9PQ==?=
+	=?utf-8?B?VG1HZngvbXBxNEd3eXpjR1ZBTkFMN28zMiswYjJTRERjKy9hdXFwVVpjbnNX?=
+ =?utf-8?B?MjQwbWVWbzQ0SkVnazlBckhacWRQa0xRWk5hcmltOW4wb0h1TktqZFV1QU4r?=
+ =?utf-8?B?M2lZQTc4eDEvUFN6OGYvNFZNZllUa2FvakI5N1lBUjZoQnB4UnJkcCtKcW9G?=
+ =?utf-8?B?UnhZenI2WTlybExGS3RMVWZwM24xZDQzeTUzcFRpS1pjd0QrN1N5SlBuNlhi?=
+ =?utf-8?B?WlpPNGFnRjFtRzZxaHAxdzl5K243VEc0RWNlYm01TFN2TTAzRzZqOHoybkxZ?=
+ =?utf-8?B?L1VzZnp5UTgvN2pIK05IQ29jQnl1TCt4NFdHR3lSL0Z2Nm45U0Z2bVliRmt0?=
+ =?utf-8?B?MnlNNXZPc1UvVVJlVk1TalV4ZWZjeWJLeW5pRFhuSnpqTVFrK1FQU2dwaHA0?=
+ =?utf-8?B?Y1F2bC9hQWhIQ3l2cmdUdGtBVi9wbTdJZHIrSzVUZXFYa2NRc1Bxb3BLcXcr?=
+ =?utf-8?B?S2k1ZnJFU3IxZ3cwQU44WGo4SFR1QVdKSEZZRVdLeEZNaVprZzFCeFJZMHAv?=
+ =?utf-8?B?ZzkzTDlacDFKMVNLTzUya0JOVituUDRNRzA0WjI4bk1scUxyYUEzN1pIamdW?=
+ =?utf-8?B?bFhkZEZXS3I4S0V4SGFWcFJGM21HaVhQMTliQm42WWN4TWxJbnFSM1hIdnNw?=
+ =?utf-8?B?eHhrcjI1aEJ6VkFpWUJnMGkxYUlJMk5NV3Jsb04xNzV6WFIwR1pXZGhkU0dk?=
+ =?utf-8?B?ZEZ4emFOSHp3RDBqaU1mZC9PT20xY3dGdHFPTElQcGl3V051OXRtbmRGT2lS?=
+ =?utf-8?B?M0dFR1dXYTdpZmtVOVpadmxJZGlKWExzVlYyZG5KdVhqY1g1dTJOYlA1ODhE?=
+ =?utf-8?B?U1JGcUVmWlAxSWw3U0IzQ1pZREhOLzgxd0p5R3JrYVlWdXdOcE45a0t6QXVr?=
+ =?utf-8?B?bGM5ZVBscU5QRmRaeENtVFBwcHVVRjFVR1NLSW9qc2k1ekNMRjg0L29CYU5l?=
+ =?utf-8?B?aHBlWHlCMEg0UDNhM21IejQ2aUEyd3N2bm5PMXJtTUx1MFpNcWlpTmRlSVNv?=
+ =?utf-8?B?Rzk1TkhuRHBaaUtvZWI5QWZUS2ExbDBQZlByVmRQREZ3OFA3eFUreTE2MUFn?=
+ =?utf-8?B?NnVjU1lJZWQ3S2VkMmZqdnA2U1BZZTJCem9XQmtSM2Y3blU3UXd3SXY0L2F5?=
+ =?utf-8?B?Slg5R3NSRnRPNlVqV3lPSzFMSzdiN1BxVlVEb2ZORjl3c3BVUUpuanRpbURx?=
+ =?utf-8?B?NDFMd3VRcVpKV0NLSEZ4cTF5VU1wMkJUbXYwWHZGZ09MMzQ5UkQvYzJsc2Zt?=
+ =?utf-8?B?RlBzUWZMVU50MXd6N3ZiMU1QaE96dzB5ZlM0ZkVzUHBDSFlkRUY2SmJkbmtK?=
+ =?utf-8?B?emRScGFSR2JBY0hGMFk5N3AyZlpVdVBGZ3pQa0tmRHg2TUcweXFoSGU4Y21Y?=
+ =?utf-8?B?MHRZR1Z2NWdaWU5rZzBsUkczOSt3Z1VyVFgrUUVmcVU2RkwxTGFia29YSU8w?=
+ =?utf-8?B?em1IandKb2tLUGtTdDZ1WTVheUJpQk1vQ2t2N2dTdzFDemp5MnZyTkEvRThv?=
+ =?utf-8?B?SVZzbFhWRnJqL2o4bXZIeWQ1dXVqRWVYSWgvcVVWdm9oSnlhbjg5czFTZ051?=
+ =?utf-8?B?UU0yR0NJVk8vYVN4c3J2UzNucXVJaXZSdUh3aGFHcUprcWhUZkhlVG1LcTZj?=
+ =?utf-8?B?VEwwWXFWanA5eHVJa2x0L1VQYmJIaUhuc2MrVm0vYWtPcjJVUDB0eW1GNjNt?=
+ =?utf-8?B?SlhTRWRGVUx4NDNDelNEZXZPOUhRTkx1a1d0ZnBhcE9rK04xaVFDdWFId0pa?=
+ =?utf-8?B?OHZvaEZKc24rM245ckV6bUk2RC9RV1BQNmVaQXpMVVNDU3p6RzN1Mnd3MFhh?=
+ =?utf-8?B?b2xLME1EYVNWa0o4cDVPam9yTUk4dlg0YkhWa3BIUGlyOG1RbTZDRWFWeEE0?=
+ =?utf-8?B?NjBGSDJWRVI1RVJFa3p6NXUrLzRWK1dwUkZaK29JZlZ2VEVpZm9hMVAwbWhn?=
+ =?utf-8?B?dEZMNzlhczBudGQzN3JKYWpMOG93dlg5Y1lMUEJsNUVzWjRKRE55TnU5ejlO?=
+ =?utf-8?B?UGlEZjVVMDJoT1o0aTl6VVpXbFhYbGxtODkzbUxBRG9RMHdheDBFNTBQSVdK?=
+ =?utf-8?B?REU4K1RTUlVGTCtFejBlMVRsaGFob1FBNWVpRDl4Z3diSmNnMnljZDdwZG5s?=
+ =?utf-8?B?QTRGNW9kRjNJRTZQTnVaQjdyWENSRlRKK2VWV0tnMUxpamhtSnBmelpuNDhv?=
+ =?utf-8?B?M2c9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d49e7fe-9810-4ac9-349f-08dbbb77f3db
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3d4f51bd-576d-4992-234a-08dbbb77fa8d
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2023 14:26:47.2122
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2023 14:26:58.4192
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1ML/3FsAjzH0rNG5RwtnEivW0JsVYKxsFO4UdNjBE9Sb4aA8oZXONa69AcY+iR8+GsYQII6DD6SUhc/hwtgqPQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: b+vEocHDlRaDK2owfNearWsGOH1yPPe6HHU9YDXeD/mhT/UhycJB2C5Tj5ZQC6SmxJg6ToAoS/Vk2Om3XD+vuA==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB6179
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 22 Sep 2023 14:26:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13211
+ <cip-dev@lists.cip-project.org>; Fri, 22 Sep 2023 14:27:07 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13212
 
-On 22.09.23 08:49, venkata.pyla@toshiba-tsip.com wrote:
+On 22.09.23 14:23, venkata.pyla@toshiba-tsip.com wrote:
 > From: venkata pyla <venkata.pyla@toshiba-tsip.com>
 > 
-> To generated images reproducibly it should assign with fixed UUID
-> values.
+> Brings following reproducible fixes
+>  - Remove core files generated in rootfs
+>  - clean blkid cache files
+> 
+> and some minor fixes.
 > 
 > Signed-off-by: venkata pyla <venkata.pyla@toshiba-tsip.com>
 > ---
->  wic/ebg-signed-sysparts.inc | 6 +++---
->  wic/hihope-rzg2m.wks        | 4 ++--
->  wic/iwg20m.wks              | 4 ++--
->  wic/simatic-ipc227e.wks     | 4 ++--
->  4 files changed, 9 insertions(+), 9 deletions(-)
+>  kas-cip.yml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/wic/ebg-signed-sysparts.inc b/wic/ebg-signed-sysparts.inc
-> index 2d4d0e3..b2340e2 100644
-> --- a/wic/ebg-signed-sysparts.inc
-> +++ b/wic/ebg-signed-sysparts.inc
-> @@ -1,8 +1,8 @@
->  # default partition layout EFI Boot Guard usage, signed version
+> diff --git a/kas-cip.yml b/kas-cip.yml
+> index 59d7ac2..a9f3897 100644
+> --- a/kas-cip.yml
+> +++ b/kas-cip.yml
+> @@ -22,7 +22,7 @@ repos:
 >  
->  # EFI partition containing efibootguard bootloader binary
-> -part --source efibootguard-efi  --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active --sourceparams "signwith=/usr/bin/sign_secure_image.sh"
-> +part --source efibootguard-efi  --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active --sourceparams "signwith=/usr/bin/sign_secure_image.sh" --fsuuid 0x4321dcba
+>    isar:
+>      url: https://github.com/ilbers/isar.git
+> -    commit: 478f3c324f50eca0d082cd1c8f23ef50e28071fb
+> +    commit: bf9c9fdd99bf26dca25fdf9e63b7eb5b053d962f
+>      layers:
+>        meta:
 >  
->  # EFI Boot Guard environment/config partitions plus Kernel files
-> -part --source efibootguard-boot --size 32M --extra-space 0 --overhead-factor 1 --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2,signwith=/usr/bin/sign_secure_image.sh"
-> -part --source efibootguard-boot --size 32M --extra-space 0 --overhead-factor 1 --label BOOT1 --align 1024 --part-type=0700 --sourceparams "revision=1,signwith=/usr/bin/sign_secure_image.sh"
-> +part --source efibootguard-boot --size 32M --extra-space 0 --overhead-factor 1 --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2,signwith=/usr/bin/sign_secure_image.sh" --fsuuid 0x4321dcbb
-> +part --source efibootguard-boot --size 32M --extra-space 0 --overhead-factor 1 --label BOOT1 --align 1024 --part-type=0700 --sourceparams "revision=1,signwith=/usr/bin/sign_secure_image.sh" --fsuuid 0x4321dcbc
-> diff --git a/wic/hihope-rzg2m.wks b/wic/hihope-rzg2m.wks
-> index c0a9f77..fd3a338 100644
-> --- a/wic/hihope-rzg2m.wks
-> +++ b/wic/hihope-rzg2m.wks
-> @@ -9,7 +9,7 @@
->  # SPDX-License-Identifier: MIT
->  #
->  
-> -part /boot --source bootimg-partition --ondisk mmcblk0 --fstype vfat --label boot --align 1 --size 32M --extra-space 0
-> +part /boot --source bootimg-partition --ondisk mmcblk0 --fstype vfat --label boot --align 1 --size 32M --extra-space 0 --fsuuid 0x4321dcba
->  
->  # Rootfs partition
-> -part / --source rootfs --ondisk mmcblk0 --fstype ext4 --label root --align 1024 --size 2G --active
-> +part / --source rootfs --ondisk mmcblk0 --fstype ext4 --label root --align 1024 --size 2G --active --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
-> diff --git a/wic/iwg20m.wks b/wic/iwg20m.wks
-> index 14bf8b0..85765f0 100644
-> --- a/wic/iwg20m.wks
-> +++ b/wic/iwg20m.wks
-> @@ -12,7 +12,7 @@
->  # [Note] u-boot runs from an SPI memory device
->  
->  # SDCard Boot partition (copies files in IMAGE_BOOT_FILES: zImage and device tree)
-> -part /boot --source bootimg-partition --ondisk mmcblk0 --fstype vfat --label boot --align 1 --size 32M --extra-space 0
-> +part /boot --source bootimg-partition --ondisk mmcblk0 --fstype vfat --label boot --align 1 --size 32M --extra-space 0 --fsuuid 0x4321dcba
->  
->  # Rootfs partition
-> -part / --source rootfs --ondisk mmcblk0 --fstype ext4 --label root --align 1024 --size 2G --active
-> +part / --source rootfs --ondisk mmcblk0 --fstype ext4 --label root --align 1024 --size 2G --active --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
-> diff --git a/wic/simatic-ipc227e.wks b/wic/simatic-ipc227e.wks
-> index 9044e0f..1a44e26 100644
-> --- a/wic/simatic-ipc227e.wks
-> +++ b/wic/simatic-ipc227e.wks
-> @@ -6,8 +6,8 @@
->  # SPDX-License-Identifier: MIT
->  #
->  
-> -part /boot --source bootimg-efi-isar --sourceparams "loader=grub-efi" --label efi --part-type EF00 --align 1024
-> +part /boot --source bootimg-efi-isar --sourceparams "loader=grub-efi" --label efi --part-type EF00 --align 1024 --fsuuid 0x4321dcba
->  
-> -part / --source rootfs --fstype ext4 --mkfs-extraopts "-T default" --label platform --align 1024 --use-uuid
-> +part / --source rootfs --fstype ext4 --mkfs-extraopts "-T default" --label platform --align 1024 --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
->  
->  bootloader --ptable gpt --timeout 2 --append "console=ttyS0,115200"
 
 Thanks, applied.
 
 Jan
-
 -- 
 Siemens AG, Technology
 Linux Expert Center
