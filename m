@@ -1,141 +1,278 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <venkata.pyla@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 399BCCE7A81
-	for <webhook@archiver.kernel.org>; Mon, 25 Sep 2023 11:39:51 +0000 (UTC)
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (EUR03-AM7-obe.outbound.protection.outlook.com [40.107.105.56])
- by mx.groups.io with SMTP id smtpd.web10.58621.1695641984655346942
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E949CE7AA9
+	for <webhook@archiver.kernel.org>; Mon, 25 Sep 2023 16:58:44 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.132])
+ by mx.groups.io with SMTP id smtpd.web11.66607.1695661118645604481
  for <cip-dev@lists.cip-project.org>;
- Mon, 25 Sep 2023 04:39:45 -0700
+ Mon, 25 Sep 2023 09:58:39 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=0AJvxJ/H;
- spf=pass (domain: siemens.com, ip: 40.107.105.56, mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UEasIj0bym4L+EWSYueN82FVR6/rttqjAdOP+J8F3Iv0VGe+dfGn0+R85KhTfJOneMd6Fs2EQRERdlkS+BGuaswCeFy5quB3lLrSKven1k60vF5MHRoplrbSxPsZp+qkegzBlpyob+FntYujBfxxZcmahgHFXCdJQdnqyC+sfjdi1I0WjYAFx4BT0mYZqpJQpFCNaGrOoV5Wswcv5lPjE9n+QNF9H5Vghg5sS9i7JfA9/o+x//tHpwGigBdBcrAqTAGhcWsElt7FPbFtIxKlxF3CuVcdn/0efXAFHHUBaOWIiRG3R8yoG/ylZWHEypF1GosCoZnsbLHJ4uTZ+sd3dA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1rjgyAq3iR5U8DF5FiVVq3Dhw3r0+RBqXstux0wSQkU=;
- b=dllQVJ6h3g26D7rk3XCB5SHr6cokCH98qARX/22v8zphQDyELfbrGQMlu8wL1ZZvRJkDMIw8GdlrrBfaiBnZYkd8i7VxhERAPGGlWhF9h7IMAav2R5Jw0iObKSIXXKtfTPqysqNFb9hftqUEsxJK05BlQHw+qOKHyE/9+r8V+kWyWOuGhTgZfc33U2FpHTGikQdRwxAxSJeouTzxiuCbo5nrs347WV99KnKoe4STBO2j8nBX/3aq+8ksHiORv9oNJzdkZBaY4Nph5cS6eLllkHg7T8T71k2I1LiJ26EZOo6RZc4UI6ir1Ci1F7/hpJ8xMoZ9wdi87prrl+Zz5KIOMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1rjgyAq3iR5U8DF5FiVVq3Dhw3r0+RBqXstux0wSQkU=;
- b=0AJvxJ/HC6oOdU3eT92opbPAn11a3BqC2IQ0a9t9f3AzbN7IZXbq7jmrVmIdlIYrYnSqRntOgDTClMNUwdYoLtNM+HAND3eClKdtVxv61RqV/Ycvt2wu/DylGFc838s/FAM5iRgpl5UMsXwxe4JDpyKmkxmssCjEQqfm8U3rlRb1iBRuRpgedAqGOOi3nlkfgvvQf6qn4hiXNCSENkiH+ZAu8NDQL9VbSHePh/zDarH4HyD9j8VzJvXscQU0o9mlnYme+z/hhKvh/k1YGZkKsg1ly6TxxN3qxJIq/7YdPunhaAa02l0KeGket4ZsWbBSGAnJMLPF+wtn5IBwsSGkyg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by DB9PR10MB7932.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:304::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6813.23; Mon, 25 Sep
- 2023 11:39:41 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::7f20:d403:b43d:12e2]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::7f20:d403:b43d:12e2%3]) with mapi id 15.20.6813.027; Mon, 25 Sep 2023
- 11:39:41 +0000
-Message-ID: <32f8de55-544b-4ec2-b10f-48effdab052f@siemens.com>
-Date: Mon, 25 Sep 2023 13:39:33 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [ANNOUNCE] 6.1.54-cip6-rt3
-Content-Language: en-US
-To: Pavel Machek <pavel@denx.de>, cip-dev@lists.cip-project.org,
- Chris.Paterson2@renesas.com
-References: <ZQyEf0znmxMBLsoY@duo.ucw.cz>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <ZQyEf0znmxMBLsoY@duo.ucw.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CH2PR07CA0021.namprd07.prod.outlook.com
- (2603:10b6:610:20::34) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.132, mailfrom: venkata.pyla@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1121) id 38PGwaOn4000755; Tue, 26 Sep 2023 01:58:36 +0900
+X-Iguazu-Qid: 2rWgSWj5NamL9vn03U
+X-Iguazu-QSIG: v=2; s=0; t=1695661115; q=2rWgSWj5NamL9vn03U; m=/6Mjk93QZOTqBd12s/oOPEX6axzsU47u9h1lQqTs9qs=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1123) id 38PGwYTv3965549
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 26 Sep 2023 01:58:35 +0900
+From: venkata.pyla@toshiba-tsip.com
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Cc: venkata pyla <venkata.pyla@toshiba-tsip.com>,
+        dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
+Subject: [isar-cip-core v2 1/2] dosfstools: Add recipe to build it locally
+Date: Mon, 25 Sep 2023 22:28:32 +0530
+X-TSB-HOP2: ON
+Message-Id: <20230925165833.2696-2-venkata.pyla@toshiba-tsip.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <51a07da1-b0a1-4a3b-b463-739e3ea208f2@siemens.com>
+References: <51a07da1-b0a1-4a3b-b463-739e3ea208f2@siemens.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB9PR10MB7932:EE_
-X-MS-Office365-Filtering-Correlation-Id: 915fea5c-d7bc-49b7-de38-08dbbdbc1b26
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	pBzRoKtKv9hhYUxW8LDYursh9w8Qb0/e/XExSOa2Rxq3t8+1IjYSuTHy8fc1NTXLfMmz2ZdFLxRQSTHHbFKW096iAwjXx8CHxaWuhG4Zwzlae9lYGTBEOqnrgHnaYV/FMasoGB64wSYHVA9PV0Cx1d6S95kDzerdhkCh7GdMgP5mV2SIK6q8xk9rzTls8w8M/G311xx3rnyFi5Z1S7pbiQ0pqE80xk0ju8zSDlvO2aqcStMS5qIoDFk7k5Rn2bNNG1IWGFcY5Afg4bN71Ovgk7G7rlEczcGfX2MCMXabExXYs5zFh2n32CGQhnyNvjTUk0x1ZHX7X1BX3DkIJum7Cl8hLMkRnwk15MFeA7eKsvd56QOqDkZKplhDwT/EhmT0YCe0Ov208/CR+jbiPPgLWYnXVEmcgkcdO38VQ1qeh0eGQ8LkERrJkGLnywhvZYEsOlceKn1qJSNEhriiHuI13RdSpshW9O/JEr14VXQORhC7jbV8tA0d2/ca1odpVj7zqCMsh+1EUn0/0W9etMEyxd+nnLPxbX4OhgIkTft/3+8ISlkxGVTWS1hJ543t4WKcU6S4vlYf6eQYRtePBxSMu87g/SEh8RMgXfPgiFBqccJbvdUsbWhQez72MCT8lwza8OPCf6C0JJgWQyVSvyOX9Q==
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(366004)(346002)(396003)(136003)(376002)(39860400002)(230922051799003)(451199024)(186009)(1800799009)(8676002)(8936002)(31686004)(44832011)(5660300002)(53546011)(316002)(6506007)(66476007)(6512007)(66556008)(66946007)(26005)(83380400001)(38100700002)(6666004)(82960400001)(31696002)(41300700001)(2616005)(966005)(86362001)(6486002)(2906002)(4744005)(478600001)(36756003)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?eGtrUExSNzhTWE1ta2JTN2doaDZLc1RGT0JFOURWZFBodHdua29CeVQxL3RS?=
- =?utf-8?B?OVNvVjNLOHVubE1IalhYN3RCY2dXSHI2Smo4YWpheDIxb3IwdmNzT1Z2S0JC?=
- =?utf-8?B?eWtkd0xKVUxucU1tU21CU05uMno4MjAvMVFpUWNRa2NESjBMRDNLYk5BZzVO?=
- =?utf-8?B?UlB6L1NjbEFRT3IvZ1dHNU9OdHpjUmxwQVBjVHVOcHB0RUtPOE5IMHQ3R3J0?=
- =?utf-8?B?eHZTSy8wYzF3dzdGdTliMXl4a2hEY1BYRVlkcUpIaUM2WFkweHQrUnZMb1JN?=
- =?utf-8?B?VnlpcWt0R0ExcDhGMWtjVU44SmQvamFoSWxlU0ZzQ0tYWDJGamY3N3QwWDJV?=
- =?utf-8?B?SVoraVk3RTFxWGYrZEhoSXUxdTBiL241TkxFUzZDNi9nbit6MkpQRFlrV0dJ?=
- =?utf-8?B?K1BrclI4UHF4bTU3VDI0OFpsMVlFSFpRSW5oSllIQjcrVTZHbTdMZjRWUWhY?=
- =?utf-8?B?aERENzBvRjBTT25GWTl2eW01L1BPMllJZk53ZVpjM0pENE1Lc1pQclplMjMr?=
- =?utf-8?B?NkhIQUZDVE1obG0vcmpJNWgveS9RdUp5UHhwSnRkenlRTzFKemM4NllRUDlN?=
- =?utf-8?B?OGRvZXpyYmlqVVNwTzhtRDFIU3UyTzRha25VQ0pNZnNPeC85ei93eW82UExJ?=
- =?utf-8?B?dnBBR1VyaTl4MFFiT09rcjJaSUFEOGpvNlRueUd1S29DcjA3TVV6YU5XeHZj?=
- =?utf-8?B?VSt4NlYwZ0lrTVNycWI2MVhnbWpiTTZteUFUR09qUmlFZ25yTHVQT1d2Y3d2?=
- =?utf-8?B?d05uaUc0RW1xcDY2WjFWZ0RuZGs0N1V3QmlpUkFVNy9QS2RjTGtZVTcvQTlw?=
- =?utf-8?B?UkU1SFdxV3RyVVQxemlsUG4reWNsaUJ5T0I4T00xOXVLVDJFcE5RMERSN1FG?=
- =?utf-8?B?ME9IT2tUd3NhTysyVG0xaHo3L1VHQ2VySTllOXcyT0hQMmFmU1plY0hYT2N1?=
- =?utf-8?B?eUhEbGtXclVpc3NvZTFlWUFsdFY2bkNDM1NKdTFLTUFna01rWWcxK3JLUG5n?=
- =?utf-8?B?VmduZkczcjk0U3k3STVYY1Brd05xSVpXdU9qOEkrMjJOZFprZ0N2VjVwaXB4?=
- =?utf-8?B?Y0dhUVJrVlhMRnBkcXVCOHRPUnFPaFhabVZGTzQ1NVNhSmV6RFNtQlRoVFVU?=
- =?utf-8?B?SnhDM2dJNXEwT1Z3SC9jWFRrL3IyWlBadFBYeEMrZnFzMEN1Zi9nbkUxTzZJ?=
- =?utf-8?B?V0lXVEk2dTg3Rmtab1hLUGNJVnkwM3ZSeFNQQStqdlNVK1dTNG8xTFZqeEZl?=
- =?utf-8?B?OHZKcnhCODVJQ09WWlhEMllGWmQxcFJhd05QamxVeWFNemIwV3J5ZkFiZWIr?=
- =?utf-8?B?R0lKSUVjc1lTcW8zZ0xtNC9Vb0xjaTdFNVhqTTlYaTFqZkdzT1R0d2p5eEFt?=
- =?utf-8?B?MzExVmNJdzhYUGNNUzNwekU5bUNjczVkUnh1RUFRK3ZOUUtLTW1VeUlTbE1D?=
- =?utf-8?B?TUw5YzFHNHM2d3VubXhra1BTbjFZOXlqb0NPanE4WTFpdE1ibWFxUXV2QWQw?=
- =?utf-8?B?Njk1RzNXc0ZkTTFCeWt1OEZEdUhmZWRMcGE1Q0w1b3ZUTzd4N2pCNGVBY0xX?=
- =?utf-8?B?UW13WlRVT0pvZUg3Y2p5d2FNQjlST1BnbXVuU25DQlhndjdLbzNyYTZrVUFm?=
- =?utf-8?B?UFM0MUFOZmVMdzBYZDlSbEZTNkN6QVQ1UE5TZWlOYUt6alJVSXpnL3VFbDU0?=
- =?utf-8?B?TWVUUHJlU2tSRWRjUTJYT1Y4N2RuOWdjRXlSbThSREttWmdXeEpLbWlQOHpl?=
- =?utf-8?B?bkg0WjdNOVlRalVmdzlETEIyTkI4cFlmM1Y3MTJ4eW5xSGZzNGtaVVNtWE1q?=
- =?utf-8?B?RWg0ZDBjbFdCNVk0dG9MVmdRR09sd1VTbEthdHhQUmRsdElzUWZDMndPT3lt?=
- =?utf-8?B?ZmxyaGdDZkVhL2tpcG8zeVNoNHB4eGVmdjQ0UGdqZVZDTU43ZFRoSG5pK3JM?=
- =?utf-8?B?aDJvbjlHdm9sb1JNcjI1bkdTYmZVZFNrLzlnam9JVDN3aUJwS3BtR3dJMzRU?=
- =?utf-8?B?L1VPYXVjVVV2eStZSFNvczB2WWZSRUk5c2h5eGJscWlBSTFucW1qZjJGN1pD?=
- =?utf-8?B?Z2xOTEVpbHQ3WHNPRVpOdnVCblh5bW02QWFLYU9WYmpUaXNuT0Z4cS9XZHVa?=
- =?utf-8?B?Z1p0STF1YjlhVzNaenBDOERLNFdmK0p0bUY0TkVpK2UxNVVvRHVheTl5czd1?=
- =?utf-8?B?REE9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 915fea5c-d7bc-49b7-de38-08dbbdbc1b26
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2023 11:39:41.2723
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ma85lZRaq3OZknN+MZf99TF0cJIrECabVDST424148A9v16ABsjgZOlaeV0KqxLOK2axBw9wgDe+h+4gntWiYg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB7932
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 25 Sep 2023 16:58:32.0529 (UTC) FILETIME=[83F62410:01D9EFD1]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 25 Sep 2023 11:39:51 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13218
+ <cip-dev@lists.cip-project.org>; Mon, 25 Sep 2023 16:58:44 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13220
 
-On 21.09.23 19:59, Pavel Machek wrote:
-> Hi!
-> 
-> New realtime trees should be available at kernel.org.
-> 
-> Trees are available at
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-6.1.y-cip-rt
-> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=linux-6.1.y-cip-rt-rebase
-> 
+From: venkata pyla <venkata.pyla@toshiba-tsip.com>
 
-Please don't forget to upload the tarball. We can't update our CI otherwise.
+mkdosfs doesn't generate fat file-systems reproducibly, due to the
+reason that the utility mkfs.fat is not honoring the variable
+SOURCE_DATE_EPOCH and including build time stamps in the file system
+headers, this issue has been fixed in upstream master branch but not
+release yet, so building it locally with the patch.
 
-Jan
+This local build can be dropped when this patch[1] is available in
+Debian releases, issue[2] is already available to make release with
+this patch.
 
+[1] https://github.com/dosfstools/dosfstools/commit/8da7bc93315cb0c32ad868f17808468b81fa76ec
+[2] https://github.com/dosfstools/dosfstools/issues/179
+
+Signed-off-by: venkata pyla <venkata.pyla@toshiba-tsip.com>
+---
+ kas/opt/reproducible.yml                      |   1 +
+ .../dosfstools/dosfstools_latest.bb           |  28 +++
+ ...Honor-the-SOURCE_DATE_EPOCH-variable.patch | 160 ++++++++++++++++++
+ 3 files changed, 189 insertions(+)
+ create mode 100644 recipes-devtools/dosfstools/dosfstools_latest.bb
+ create mode 100644 recipes-devtools/dosfstools/files/0001-Honor-the-SOURCE_DATE_EPOCH-variable.patch
+
+diff --git a/kas/opt/reproducible.yml b/kas/opt/reproducible.yml
+index 9b56b28..fada232 100644
+--- a/kas/opt/reproducible.yml
++++ b/kas/opt/reproducible.yml
+@@ -15,3 +15,4 @@ local_conf_header:
+   reproducible-builds: |
+     SOURCE_DATE_EPOCH := "${@bb.process.run("git -C ${LAYERDIR_cip-core} log -1 --pretty=%ct | tr -d '\n'")[0]}"
+     WIC_DEPLOY_PARTITIONS = "1"
++    IMAGER_BUILD_DEPS += "dosfstools"
+diff --git a/recipes-devtools/dosfstools/dosfstools_latest.bb b/recipes-devtools/dosfstools/dosfstools_latest.bb
+new file mode 100644
+index 0000000..ebdf983
+--- /dev/null
++++ b/recipes-devtools/dosfstools/dosfstools_latest.bb
+@@ -0,0 +1,28 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Toshiba Corporation 2023
++#
++# Authors:
++#  Venkata Pyla <venkata.pyla@toshiba-tsip.com>
++#
++# SPDX-License-Identifier: MIT
++#
++
++inherit dpkg
++
++CHANGELOG_V="<orig-version>+cip"
++
++SRC_URI = "apt://${PN}"
++SRC_URI += "file://0001-Honor-the-SOURCE_DATE_EPOCH-variable.patch;apply=no"
++
++# this is a host tool
++PACKAGE_ARCH = "${HOST_ARCH}"
++
++do_prepare_build() {
++	deb_add_changelog
++
++	cd ${S}
++	quilt import ${WORKDIR}/*.patch
++	quilt push -a
++}
+diff --git a/recipes-devtools/dosfstools/files/0001-Honor-the-SOURCE_DATE_EPOCH-variable.patch b/recipes-devtools/dosfstools/files/0001-Honor-the-SOURCE_DATE_EPOCH-variable.patch
+new file mode 100644
+index 0000000..30c2132
+--- /dev/null
++++ b/recipes-devtools/dosfstools/files/0001-Honor-the-SOURCE_DATE_EPOCH-variable.patch
+@@ -0,0 +1,160 @@
++From 8da7bc93315cb0c32ad868f17808468b81fa76ec Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Bj=C3=B8rn=20Forsman?= <bjorn.forsman@gmail.com>
++Date: Wed, 5 Dec 2018 19:52:51 +0100
++Subject: [PATCH] Honor the SOURCE_DATE_EPOCH variable
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++Implement the SOURCE_DATE_EPOCH specification[1] for reproducible
++builds. If SOURCE_DATE_EPOCH is set, use it as timestamp instead of the
++current time.
++
++[1] https://reproducible-builds.org/specs/source-date-epoch/
++
++Signed-off-by: Bjørn Forsman <bjorn.forsman@gmail.com>
++---
++ src/boot.c     | 23 +++++++++++++++++++++--
++ src/common.c   | 18 ++++++++++++++++--
++ src/mkfs.fat.c | 19 ++++++++++++++++---
++ 3 files changed, 53 insertions(+), 7 deletions(-)
++
++diff --git a/src/boot.c b/src/boot.c
++index 4de450d..8f78e1c 100644
++--- a/src/boot.c
+++++ b/src/boot.c
++@@ -33,6 +33,8 @@
++ #include <stdlib.h>
++ #include <sys/types.h>
++ #include <time.h>
+++#include <errno.h>
+++#include <ctype.h>
++ 
++ #include "common.h"
++ #include "fsck.fat.h"
++@@ -672,6 +674,7 @@ void write_volume_label(DOS_FS * fs, char *label)
++ {
++     time_t now;
++     struct tm *mtime;
+++    char *source_date_epoch = NULL;
++     off_t offset;
++     int created;
++     DIR_ENT de;
++@@ -687,8 +690,24 @@ void write_volume_label(DOS_FS * fs, char *label)
++     if (de.name[0] == 0xe5)
++ 	de.name[0] = 0x05;
++ 
++-    now = time(NULL);
++-    mtime = (now != (time_t)-1) ? localtime(&now) : NULL;
+++    source_date_epoch = getenv("SOURCE_DATE_EPOCH");
+++    if (source_date_epoch) {
+++        char *tmp = NULL;
+++        long long conversion = 0;
+++        errno = 0;
+++        conversion = strtoll(source_date_epoch, &tmp, 10);
+++        now = conversion;
+++        if (!isdigit((unsigned char)*source_date_epoch) || *tmp != '\0'
+++                || errno != 0 || (long long)now != conversion) {
+++            die("SOURCE_DATE_EPOCH is too big or contains non-digits: \"%s\"",
+++                source_date_epoch);
+++        }
+++        mtime = gmtime(&now);
+++    } else {
+++        now = time(NULL);
+++        mtime = (now != (time_t)-1) ? localtime(&now) : NULL;
+++    }
+++
++     if (mtime && mtime->tm_year >= 80 && mtime->tm_year <= 207) {
++ 	de.time = htole16((unsigned short)((mtime->tm_sec >> 1) +
++ 					   (mtime->tm_min << 5) +
++diff --git a/src/common.c b/src/common.c
++index 6a2e396..4f1afcb 100644
++--- a/src/common.c
+++++ b/src/common.c
++@@ -30,6 +30,7 @@
++ #include <string.h>
++ #include <stdarg.h>
++ #include <errno.h>
+++#include <ctype.h>
++ #include <wctype.h>
++ #include <termios.h>
++ #include <sys/time.h>
++@@ -298,8 +299,21 @@ void check_atari(void)
++ uint32_t generate_volume_id(void)
++ {
++     struct timeval now;
++-
++-    if (gettimeofday(&now, NULL) != 0 || now.tv_sec == (time_t)-1 || now.tv_sec < 0) {
+++    char *source_date_epoch = NULL;
+++
+++    source_date_epoch = getenv("SOURCE_DATE_EPOCH");
+++    if (source_date_epoch) {
+++        char *tmp = NULL;
+++        long long conversion = 0;
+++        errno = 0;
+++        conversion = strtoll(source_date_epoch, &tmp, 10);
+++        if (!isdigit((unsigned char)*source_date_epoch) || *tmp != '\0'
+++                || errno != 0) {
+++            die("SOURCE_DATE_EPOCH is too big or contains non-digits: \"%s\"",
+++                source_date_epoch);
+++        }
+++        return (uint32_t)conversion;
+++    } else if (gettimeofday(&now, NULL) != 0 || now.tv_sec == (time_t)-1 || now.tv_sec < 0) {
++         srand(getpid());
++         /* rand() returns int from [0,RAND_MAX], therefore only 31 bits */
++         return (((uint32_t)(rand() & 0xFFFF)) << 16) | ((uint32_t)(rand() & 0xFFFF));
++diff --git a/src/mkfs.fat.c b/src/mkfs.fat.c
++index 37fc8ff..1948635 100644
++--- a/src/mkfs.fat.c
+++++ b/src/mkfs.fat.c
++@@ -1074,7 +1074,7 @@ static void setup_tables(void)
++         }
++ 
++         /* If is not available then generate random 32 bit disk signature */
++-        if (invariant)
+++        if (invariant || getenv("SOURCE_DATE_EPOCH"))
++             disk_sig = volume_id;
++         else if (!disk_sig)
++             disk_sig = generate_volume_id();
++@@ -1287,7 +1287,7 @@ static void setup_tables(void)
++ 	    de->name[0] = 0x05;
++ 	de->attr = ATTR_VOLUME;
++ 	if (create_time != (time_t)-1) {
++-	    if (!invariant)
+++	    if (!invariant && !getenv("SOURCE_DATE_EPOCH"))
++ 		ctime = localtime(&create_time);
++ 	    else
++ 		ctime = gmtime(&create_time);
++@@ -1477,6 +1477,7 @@ int main(int argc, char **argv)
++     int blocks_specified = 0;
++     struct timeval create_timeval;
++     long long conversion;
+++    char *source_date_epoch = NULL;
++ 
++     enum {OPT_HELP=1000, OPT_INVARIANT, OPT_MBR, OPT_VARIANT, OPT_CODEPAGE, OPT_OFFSET};
++     const struct option long_options[] = {
++@@ -1497,8 +1498,20 @@ int main(int argc, char **argv)
++ 	    program_name = p + 1;
++     }
++ 
++-    if (gettimeofday(&create_timeval, NULL) == 0 && create_timeval.tv_sec != (time_t)-1)
+++    source_date_epoch = getenv("SOURCE_DATE_EPOCH");
+++    if (source_date_epoch) {
+++        errno = 0;
+++        conversion = strtoll(source_date_epoch, &tmp, 10);
+++        create_time = conversion;
+++        if (!isdigit((unsigned char)*source_date_epoch) || *tmp != '\0'
+++                || errno != 0 || (long long)create_time != conversion) {
+++            die("SOURCE_DATE_EPOCH is too big or contains non-digits: \"%s\"",
+++                source_date_epoch);
+++        }
+++    } else if (gettimeofday(&create_timeval, NULL) == 0 && create_timeval.tv_sec != (time_t)-1) {
++         create_time = create_timeval.tv_sec;
+++    }
+++
++     volume_id = generate_volume_id();
++     check_atari();
++ 
++-- 
++2.39.2
++
 -- 
-Siemens AG, Technology
-Linux Expert Center
+2.20.1
+
 
 
