@@ -1,121 +1,272 @@
-Return-Path: <chris.paterson2@renesas.com>
+Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D28C4E784BB
-	for <webhook@archiver.kernel.org>; Mon,  2 Oct 2023 14:57:13 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web10.84124.1696258630033744256
- for <cip-dev@lists.cip-project.org>;
- Mon, 02 Oct 2023 07:57:10 -0700
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F3E3E748FC
+	for <webhook@archiver.kernel.org>; Mon,  2 Oct 2023 17:19:36 +0000 (UTC)
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+ by mx.groups.io with SMTP id smtpd.web11.88224.1696267165943221168
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Mon, 02 Oct 2023 10:19:26 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: chris.paterson2@renesas.com)
-X-IronPort-AV: E=Sophos;i="6.03,194,1694703600"; 
-   d="scan'208";a="181671931"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 02 Oct 2023 23:57:08 +0900
-Received: from renesas-ubuntu18.ree.adwin.renesas.com (unknown [10.226.92.24])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id B9F7442BC27A
-	for <cip-dev@lists.cip-project.org>; Mon,  2 Oct 2023 23:57:07 +0900 (JST)
-From: Chris Paterson <chris.paterson2@renesas.com>
-To: cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip] arm64: dts: renesas: rzg2l: Fix txdv-skew-psec typos
-Date: Mon,  2 Oct 2023 15:56:44 +0100
-Message-ID: <20231002145644.5771-1-chris.paterson2@renesas.com>
-X-Mailer: git-send-email 2.42.0
+ dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=OqGwjuZQ;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.215.176, mailfrom: bot@kernelci.org)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-578d791dd91so2311666a12.0
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Mon, 02 Oct 2023 10:19:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1696267164; x=1696871964; darn=lists.cip-project.org;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=aHnsp3u+K9fCjjNSLbSjNHIrXfsKHsvSYmq/9t5SwFQ=;
+        b=OqGwjuZQWO7WC6ukDpmk5BpGkMmBmZ2OrW55fJHDMQM3zhTVkqz38J1Lui4546w7Ni
+         y94ijVoN4gD3nmn7HDz00hzAbKazmfaZ89w1ZjBae/S91ttnvL4x2vffro8lMWEfVvBF
+         7x4uQd6zBEGNZKqbFfxieFpb+jlrDTex26ftCqxo5WWufhGFcuQZQ13RbQQ4sviHf6H1
+         8dopcVlS8GVNOBI9LThiaPqBQ4MEqnr6sHyZClz4/XELthfb9+trCjdRnjBgk/6l0Z6m
+         LlV6lqVVtlBivnsZvSQlxBLbk0clnOb39UWG6JRNqDxNbVvLhE/KZPuA0CXYdb1Z1IHp
+         VW1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696267164; x=1696871964;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aHnsp3u+K9fCjjNSLbSjNHIrXfsKHsvSYmq/9t5SwFQ=;
+        b=DrHpUM+ElkdVR+ZcMMq1edvfnM9WDYT00EZV4KGswOKgTpd9Tv83ZAIWczy1xUixAx
+         f8ULCDld6vEyIvpsJ7ocbxP9z5FZwYZNm9IKO1Wftmm0NWRG5CGhA0db+HP07yLSiaVZ
+         oQ2ZIqSLX1sDTEIuSodB2Ag1yqR4wjJy7H/fwAKQWefvYEvizcglflyWhprcOotaxqu9
+         U7BYqk2H2sjEk9p4rknMflxKYVzM3sU/FrjQRuc9SBodl8Pt0PoJ+o4yvw5tKEwBm1jG
+         M53dZeuwL4Z50fwu69RA0AtsfaVcLPJofRSmO5Mx4W8aYtJxgPtdxq8XL2En8fDL4L9s
+         5qxA==
+X-Gm-Message-State: AOJu0Yx/0pcY9Z9V7ocnhyzU56luUWD3dTpvmosFukBVjqn9p/D6XzTk
+	ALqmhRe3fD+l1EYy1+XBxgTw8sLP1USIcmT8nUCd+w==
+X-Google-Smtp-Source: AGHT+IHLdfa/QzPxkvUrLJzz9d8fsAwiIzHK4NV596ClSQfgAAl4wQXFJoDeyRhHi3BsfsofKndd9g==
+X-Received: by 2002:a05:6a20:5488:b0:134:73f6:5832 with SMTP id i8-20020a056a20548800b0013473f65832mr377920pzk.16.1696267164265;
+        Mon, 02 Oct 2023 10:19:24 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
+        by smtp.gmail.com with ESMTPSA id p4-20020a62ab04000000b006887be16675sm4156903pff.205.2023.10.02.10.19.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Oct 2023 10:19:23 -0700 (PDT)
+Message-ID: <651afb9b.620a0220.74a8a.8492@mx.google.com>
+Date: Mon, 02 Oct 2023 10:19:23 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: linux-4.4.y-st-rc
+X-Kernelci-Tree: cip
+X-Kernelci-Kernel: v4.4-st20-1779-g48d33e0df7175
+X-Kernelci-Report-Type: build
+Subject: cip/linux-4.4.y-st-rc build: 14 builds: 0 failed, 14 passed,
+ 27 warnings (v4.4-st20-1779-g48d33e0df7175)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
+ kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
+From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 02 Oct 2023 14:57:13 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13259
+ <cip-dev@lists.cip-project.org>; Mon, 02 Oct 2023 17:19:36 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13260
 
-commit db67345716a52abb750ec8f76d6a5675218715f9 upstream.
+cip/linux-4.4.y-st-rc build: 14 builds: 0 failed, 14 passed, 27 warnings (v=
+4.4-st20-1779-g48d33e0df7175)
 
-It looks like txdv-skew-psec is a typo from a copy+paste. txdv-skew-psec
-is not present in the PHY bindings nor is it in the driver.
+Full Build Summary: https://kernelci.org/build/cip/branch/linux-4.4.y-st-rc=
+/kernel/v4.4-st20-1779-g48d33e0df7175/
 
-Correct to txen-skew-psec which is clearly what it was meant to be.
+Tree: cip
+Branch: linux-4.4.y-st-rc
+Git Describe: v4.4-st20-1779-g48d33e0df7175
+Git Commit: 48d33e0df7175b69a683cece4408dc61d3daf8dc
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+Built: 4 unique architectures
 
-Given that the default for txen-skew-psec is 0, and the device tree is
-only trying to set it to 0 anyway, there should not be any functional
-change from this fix.
+Warnings Detected:
 
-Fixes: 361b0dcbd7f9 ("arm64: dts: renesas: rzg2l-smarc-som: Enable Ethernet")
-Fixes: 6494e4f90503 ("arm64: dts: renesas: rzg2ul-smarc-som: Enable Ethernet on SMARC platform")
-Fixes: ce0c63b6a5ef ("arm64: dts: renesas: Add initial device tree for RZ/G2LC SMARC EVK")
-Cc: stable@vger.kernel.org # 6.1.y
-Reported-by: Tomohiro Komagata <tomohiro.komagata.aj@renesas.com>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20230609221136.7431-1-chris.paterson2@renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+arm64:
+    defconfig (gcc-10): 1 warning
+    defconfig+arm64-chromebook (gcc-10): 1 warning
+
+arm:
+    imx_v6_v7_defconfig (gcc-10): 1 warning
+    omap2plus_defconfig (gcc-10): 1 warning
+
+i386:
+    i386_defconfig (gcc-10): 4 warnings
+
+x86_64:
+    allnoconfig (gcc-10): 3 warnings
+    tinyconfig (gcc-10): 2 warnings
+    x86_64_defconfig (gcc-10): 7 warnings
+    x86_64_defconfig+x86-chromebook (gcc-10): 7 warnings
+
+
+Warnings summary:
+
+    7    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic su=
+ffix given and no register operands; using default for `btr'
+    4    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic su=
+ffix given and no register operands; using default for `btr'
+    3    ld: warning: creating DT_TEXTREL in a PIE
+    3    WARNING: vmlinux.o (.discard.retpoline_safe): unexpected non-alloc=
+atable section.
+    3    WARNING: vmlinux.o (.discard.nospec): unexpected non-allocatable s=
+ection.
+    2    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in rea=
+d-only section `.head.text'
+    2    drivers/usb/gadget/function/f_ncm.c:1565:19: warning: assignment t=
+o =E2=80=98struct config_group *=E2=80=99 from =E2=80=98int=E2=80=99 makes =
+pointer from integer without a cast [-Wint-conversion]
+    2    drivers/net/ethernet/apm/xgene/xgene_enet_main.c:32:36: warning: a=
+rray =E2=80=98xgene_enet_acpi_match=E2=80=99 assumed to have one element
+    1    ld: arch/x86/boot/compressed/head_32.o: warning: relocation in rea=
+d-only section `.head.text'
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+
+Detailed per-defconfig build reports:
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 3 warnings, 0 sectio=
+n mismatches
+
+Warnings:
+    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section mi=
+smatches
+
+Warnings:
+    drivers/net/ethernet/apm/xgene/xgene_enet_main.c:32:36: warning: array =
+=E2=80=98xgene_enet_acpi_match=E2=80=99 assumed to have one element
+
+---------------------------------------------------------------------------=
+-----
+defconfig+arm64-chromebook (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 1 warn=
+ing, 0 section mismatches
+
+Warnings:
+    drivers/net/ethernet/apm/xgene/xgene_enet_main.c:32:36: warning: array =
+=E2=80=98xgene_enet_acpi_match=E2=80=99 assumed to have one element
+
+---------------------------------------------------------------------------=
+-----
+i386_defconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 4 warnings, 0 secti=
+on mismatches
+
+Warnings:
+    WARNING: vmlinux.o (.discard.nospec): unexpected non-allocatable sectio=
+n.
+    WARNING: vmlinux.o (.discard.retpoline_safe): unexpected non-allocatabl=
+e section.
+    ld: arch/x86/boot/compressed/head_32.o: warning: relocation in read-onl=
+y section `.head.text'
+    ld: warning: creating DT_TEXTREL in a PIE
+
+---------------------------------------------------------------------------=
+-----
+imx_v6_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
+ction mismatches
+
+Warnings:
+    drivers/usb/gadget/function/f_ncm.c:1565:19: warning: assignment to =E2=
+=80=98struct config_group *=E2=80=99 from =E2=80=98int=E2=80=99 makes point=
+er from integer without a cast [-Wint-conversion]
+
+---------------------------------------------------------------------------=
+-----
+multi_v5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+omap2plus_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
+ction mismatches
+
+Warnings:
+    drivers/usb/gadget/function/f_ncm.c:1565:19: warning: assignment to =E2=
+=80=98struct config_group *=E2=80=99 from =E2=80=98int=E2=80=99 makes point=
+er from integer without a cast [-Wint-conversion]
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 2 warnings, 0 section=
+ mismatches
+
+Warnings:
+    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+
+---------------------------------------------------------------------------=
+-----
+vexpress_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 7 warnings, 0 s=
+ection mismatches
+
+Warnings:
+    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    WARNING: vmlinux.o (.discard.nospec): unexpected non-allocatable sectio=
+n.
+    WARNING: vmlinux.o (.discard.retpoline_safe): unexpected non-allocatabl=
+e section.
+    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in read-onl=
+y section `.head.text'
+    ld: warning: creating DT_TEXTREL in a PIE
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig+x86-chromebook (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, =
+7 warnings, 0 section mismatches
+
+Warnings:
+    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    WARNING: vmlinux.o (.discard.nospec): unexpected non-allocatable sectio=
+n.
+    WARNING: vmlinux.o (.discard.retpoline_safe): unexpected non-allocatabl=
+e section.
+    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in read-onl=
+y section `.head.text'
+    ld: warning: creating DT_TEXTREL in a PIE
+
 ---
- arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi  | 4 ++--
- arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi | 2 +-
- arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi | 4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
-index 8d5e67c05c9f..bee71f852d01 100644
---- a/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
-@@ -95,7 +95,7 @@ phy0: ethernet-phy@7 {
- 		rxc-skew-psec = <2400>;
- 		txc-skew-psec = <2400>;
- 		rxdv-skew-psec = <0>;
--		txdv-skew-psec = <0>;
-+		txen-skew-psec = <0>;
- 		rxd0-skew-psec = <0>;
- 		rxd1-skew-psec = <0>;
- 		rxd2-skew-psec = <0>;
-@@ -121,7 +121,7 @@ phy1: ethernet-phy@7 {
- 		rxc-skew-psec = <2400>;
- 		txc-skew-psec = <2400>;
- 		rxdv-skew-psec = <0>;
--		txdv-skew-psec = <0>;
-+		txen-skew-psec = <0>;
- 		rxd0-skew-psec = <0>;
- 		rxd1-skew-psec = <0>;
- 		rxd2-skew-psec = <0>;
-diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi
-index d853648825e7..5653aa53494d 100644
---- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc-som.dtsi
-@@ -75,7 +75,7 @@ phy0: ethernet-phy@7 {
- 		rxc-skew-psec = <2400>;
- 		txc-skew-psec = <2400>;
- 		rxdv-skew-psec = <0>;
--		txdv-skew-psec = <0>;
-+		txen-skew-psec = <0>;
- 		rxd0-skew-psec = <0>;
- 		rxd1-skew-psec = <0>;
- 		rxd2-skew-psec = <0>;
-diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
-index b291d26e6d2f..be29e446e60f 100644
---- a/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
-@@ -80,7 +80,7 @@ phy0: ethernet-phy@7 {
- 		rxc-skew-psec = <2400>;
- 		txc-skew-psec = <2400>;
- 		rxdv-skew-psec = <0>;
--		txdv-skew-psec = <0>;
-+		txen-skew-psec = <0>;
- 		rxd0-skew-psec = <0>;
- 		rxd1-skew-psec = <0>;
- 		rxd2-skew-psec = <0>;
-@@ -107,7 +107,7 @@ phy1: ethernet-phy@7 {
- 		rxc-skew-psec = <2400>;
- 		txc-skew-psec = <2400>;
- 		rxdv-skew-psec = <0>;
--		txdv-skew-psec = <0>;
-+		txen-skew-psec = <0>;
- 		rxd0-skew-psec = <0>;
- 		rxd1-skew-psec = <0>;
- 		rxd2-skew-psec = <0>;
--- 
-2.42.0
-
+For more info write to <info@kernelci.org>
 
