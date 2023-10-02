@@ -1,86 +1,52 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <michael.kadel@karlstorz.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE2EFE7849A
-	for <webhook@archiver.kernel.org>; Mon,  2 Oct 2023 11:21:10 +0000 (UTC)
-Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
- by mx.groups.io with SMTP id smtpd.web10.79167.1696245668953155160
- for <cip-dev@lists.cip-project.org>;
- Mon, 02 Oct 2023 04:21:10 -0700
-Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=FiM2+5Re;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-51332-20231002112105168ba4acae976f40f7-t4ptlb@rts-flowmailer.siemens.com)
-Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20231002112105168ba4acae976f40f7
-        for <cip-dev@lists.cip-project.org>;
-        Mon, 02 Oct 2023 13:21:06 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
- bh=IbdkuPAX4/+N3h1kGd1iZGSPSZBOOqY4J54Tc9O3LkE=;
- b=FiM2+5ReOh8NzpblwMbQ+UX0Vsm5b+Qf/iM+BCWV74okPR0kzE1FH590GufcbRFjVpgvAg
- wwOyer5AagzwzVxt2e72UBBvBwsPIagqy9Ild7FleeBtMltJwKn6GxqYEkfiFBrbaFUEqrSn
- TvvaN7e4hA6rMcxtOMk7MPTGXx1H4=;
-From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: cip-dev@lists.cip-project.org,
-	jan.kiszka@siemens.com
-Subject: [PATCH] initramfs-crypt-hook: Load necessary crypto modules for intel platforms
-Date: Mon,  2 Oct 2023 13:21:05 +0200
-Message-Id: <20231002112105.2929311-1-Quirin.Gylstorff@siemens.com>
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CE85E7849A
+	for <webhook@archiver.kernel.org>; Mon,  2 Oct 2023 12:00:01 +0000 (UTC)
+Subject: Re: projected EOL v4.4 SLTS
+To: cip-dev@lists.cip-project.org
+From: "Kadel, Michael" <michael.kadel@karlstorz.com>
+X-Originating-Location: CH (147.161.234.183)
+X-Originating-Platform: Windows Chrome 117
+User-Agent: GROUPS.IO Web Poster
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+Date: Mon, 02 Oct 2023 04:59:57 -0700
+References: <4785f4d6-3bd4-4f98-92b9-77e705f4bd95@siemens.com>
+In-Reply-To: <4785f4d6-3bd4-4f98-92b9-77e705f4bd95@siemens.com>
+Message-ID: <27529.1696247997132604008@lists.cip-project.org>
+Content-Type: multipart/alternative; boundary="FoyyaVwaVMGAn5yENayV"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 02 Oct 2023 11:21:10 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13256
+ <cip-dev@lists.cip-project.org>; Mon, 02 Oct 2023 12:00:01 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13257
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+--FoyyaVwaVMGAn5yENayV
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-To support the encryption on intel platforms with add the crypto module
-'aesni-intel' to the hooks of clevis and systemd.
+Hi Jan,
 
-If the modules are not available(not build or compiled in) the build
-will succeed.
+what is necessary in terms of resources and budget for us as a company
 
-Reported-by: Sari Sercan <sari.sercan@siemens.com>
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- .../initramfs-crypt-hook/files/encrypt_partition.clevis.hook   | 3 +++
- .../initramfs-crypt-hook/files/encrypt_partition.systemd.hook  | 3 +++
- 2 files changed, 6 insertions(+)
+to extend the Linux Kernel v4.4 i.e. for further 5 years (EOL 2032)?
 
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook
-index 23dce93..37b373c 100755
---- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook
-@@ -34,6 +34,9 @@ manual_add_modules tpm_crb
- manual_add_modules dm_mod
- manual_add_modules dm_crypt
- 
-+# add crypto modules for debian upstream kernel
-+manual_add_modules aesni-intel
-+
- copy_exec /usr/bin/openssl || hook_error "/usr/bin/openssl not found"
- copy_exec /usr/sbin/mke2fs || hook_error "/usr/sbin/mke2fs not found"
- copy_exec /usr/bin/grep || hook_error "/usr/bin/grep not found"
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.hook b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.hook
-index 08ea631..0a39da6 100755
---- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.hook
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.hook
-@@ -31,6 +31,9 @@ manual_add_modules tpm_crb
- manual_add_modules dm_mod
- manual_add_modules dm_crypt
- 
-+# add crypto modules for debian upstream kernel
-+manual_add_modules aesni-intel
-+
- copy_exec /usr/bin/openssl || hook_error "/usr/bin/openssl not found"
- copy_exec /usr/sbin/mke2fs || hook_error "/usr/sbin/mke2fs not found"
- copy_exec /usr/bin/grep || hook_error "/usr/bin/grep not found"
--- 
-2.40.1
+More precise, how many FTEs should work on this kernel extension
 
+and is it also possible to purchase such a service by the CIP?
+
+Michael
+
+--FoyyaVwaVMGAn5yENayV
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi Jan,<br /><br />what is necessary in terms of resources and budget for u=
+s as a company<br /><br />to extend the Linux Kernel v4.4 i.e. for further =
+5 years (EOL 2032)?<br /><br />More precise, how many FTEs should work on t=
+his kernel extension<br /><br />and is it also possible to purchase such a =
+service by the CIP?<br /><br />Michael
+
+--FoyyaVwaVMGAn5yENayV--
 
