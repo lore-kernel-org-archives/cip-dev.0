@@ -2,102 +2,65 @@ Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B238E93703
-	for <webhook@archiver.kernel.org>; Thu,  5 Oct 2023 10:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE54E9370C
+	for <webhook@archiver.kernel.org>; Thu,  5 Oct 2023 11:41:57 +0000 (UTC)
 Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web11.12437.1696503031524110879
+ by mx.groups.io with SMTP id smtpd.web10.13100.1696506111067978472
  for <cip-dev@lists.cip-project.org>;
- Thu, 05 Oct 2023 03:50:32 -0700
+ Thu, 05 Oct 2023 04:41:52 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 253681C004C; Thu,  5 Oct 2023 12:50:29 +0200 (CEST)
-Date: Thu, 5 Oct 2023 12:50:28 +0200
+	id A9E511C004C; Thu,  5 Oct 2023 13:41:47 +0200 (CEST)
+Date: Thu, 5 Oct 2023 13:41:47 +0200
 From: Pavel Machek <pavel@denx.de>
-To: Ulrich Hecht <uli@fpond.eu>
-Cc: "pavel@denx.de" <pavel@denx.de>,
-	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Subject: Re: Request for reviews for 4.4-st45, 4.4-cip80
-Message-ID: <ZR6U9Hx0wHasJ1Y7@duo.ucw.cz>
-References: <809419142.671756.1696317771828@webmail.strato.com>
+To: cip-dev@lists.cip-project.org
+Subject: Re: [cip-dev] [kernel-cve-report] New CVE entries this week
+Message-ID: <ZR6g+1Qpz/QyVY9R@duo.ucw.cz>
+References: <CAODzB9qGjXFSyuKbeNNWKLarGQkWMsWj1q1bO0n53P9dwK4J+g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="1T0/fVRk6AdMt+qB"
+	protocol="application/pgp-signature"; boundary="d1kzEMH75XLeTxhz"
 Content-Disposition: inline
-In-Reply-To: <809419142.671756.1696317771828@webmail.strato.com>
+In-Reply-To: <CAODzB9qGjXFSyuKbeNNWKLarGQkWMsWj1q1bO0n53P9dwK4J+g@mail.gmail.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 05 Oct 2023 10:50:37 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13294
+ <cip-dev@lists.cip-project.org>; Thu, 05 Oct 2023 11:41:57 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13295
 
 
---1T0/fVRk6AdMt+qB
+--d1kzEMH75XLeTxhz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-There's additional patch, 67c786df30255e5d38e62852bcfd434168ed1e6e
-"udf: merge bh free", 02d4ca49fa222021988b2791c8efefd70d3228ac
-upstream, but does not seem to have upstream marking.
-
-> Here are the manual backports for the upcoming 4.4-st45 and 4.4-cip80 rel=
-eases that should be reviewed and that can currently be found in
-> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=
-=3Dlinux-4.4.y-st-rc
+> CVE-2023-4732: mm/userfaultfd: fix uffd-wp special cases for fork()
 >=20
-> As usual, most are trivial or near-trivial:
+> CVSS v3 score is not provided (NIST).
+> CVSS v3 score is 4.7 MEDIUM (CNA).
 >=20
-> ** m-| dbcfa782d 1b90af o+ | ipvs: Improve robustness to the ipvs sysctl
+> A flaw was found in the Linux Kernel's memory management subsystem. A
+> task exits and releases a 2MB page in a vma (vm_area_struct) and hits
+> the BUG statement in pfn_swap_entry_to_page() referencing pmd_t x.
+>=20
+> This bug was introduced by commit b569a17 ("userfaultfd: wp: drop
+> _PAGE_UFFD_WP properly when fork") in 5.7-rc1.
+> The commit b569a17 is not backported to older stable kernels.
+>=20
+> Fixed status
+> mainline: [8f34f1eac3820fc2722e5159acceb22545b30b0d]
+> stable/5.10: [9e1cf2d1ed37c934c9935f2c0b2f8b15d9355654]
 
-I don't see this patch when going from 48d33e0df7175b69a683cece4408dc61d3da=
-f8dc.
+So fix is
 
--- ** m-| 69197b2b2 30188b o+ | rtnetlink: Reject negative ifindexes
-      in RTM_NEWLINK
+commit 8f34f1eac3820fc2722e5159acceb22545b30b0d -- mm/userfaultfd: fix
+uffd-wp special cases for fork()
 
-It should do "goto errout" for consistency with rest of the
-code... but it will not cause any problem as errout: simply returns.
-
-But... it looks like wrong function is patched..? I see a place in
-rtnl_newlink() where I'd expect the patch to go?
-
-a just a robustness > ** m-| a345df7a7 19fd80 o  | udf: Handle error when a=
-dding extent to a file
-a-| dd59a78d3 0c8b0b o+ | regmap: rbtree: Use alloc_flags for memory alloca=
-tions
-a-| 76b08ed96 a1db7b .+ | media: dib7000p: Fix potential division by zero
-a-| 4573b3a8b c05ce6 .+ | dmaengine: ste_dma40: Add missing IRQ check in d4=
-0_probe
-a-| 2f2a59053 3a21ff o  | ACPICA: Add AML_NO_OPERAND_RESOLVE flag to Timer
-
-!! |
-   b2f54ed77 7bf744 .  | media: dvb-usb-v2: af9035: Fix null-ptr-deref
-   in af9035_i2c_master_xfer
-
-This patch is wrong for two reasons:
-
-1) it puts if () statement before declarations, that's not valid C89.
-
-2) it returns with a lock held. It needs to drop the log before
-returning.
-
-Both problems exist upstream.
-  =20
-a-| 50abe4b37 e110f8 o  | btrfs: fix lockdep splat and potential deadlock a=
-fter failure running delayed item
-a| 58a3d1d4b 531076 o+ | ipvs: fix racy memcpy in proc_do_sync_threshold
-a| 29410001f 9baeea .+ | serial: sc16is7xx: fix bug when first setting GPIO=
- direction
-a| 82e36f0c2 6372e2 f+ | NFSD: da_addr_body field missing in some GETDEVICE=
-INFO replies
-
-> On the surface, this one is trivial as well, but I can't shake the feelin=
-g that I may have missed something here:
-
-a| 72a1ad58c b888c5 o+ | igb: Avoid starting unnecessary workqueues
+Aha, and 6.1 already contains mainline version of a fix, so we are
+okay there.
 
 Best regards,
 								Pavel
@@ -105,15 +68,15 @@ Best regards,
 DENX Software Engineering GmbH,        Managing Director: Erika Unter
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---1T0/fVRk6AdMt+qB
+--d1kzEMH75XLeTxhz
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZR6U9AAKCRAw5/Bqldv6
-8otEAJ0TvlsoQw3XfDnsQY+3Qk/6ml2fJgCfTG87XgT5iie+aWzaRA2P0amkTJU=
-=H17T
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZR6g+wAKCRAw5/Bqldv6
+8qFQAJ4saRP2qW/+J1wSj4ZnQvV3KphN6wCfXkYCT/jXoPiYNJbEYetCZfhB2YI=
+=M4Pb
 -----END PGP SIGNATURE-----
 
---1T0/fVRk6AdMt+qB--
+--d1kzEMH75XLeTxhz--
 
