@@ -1,82 +1,76 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <venkata.pyla@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE54E9370C
-	for <webhook@archiver.kernel.org>; Thu,  5 Oct 2023 11:41:57 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web10.13100.1696506111067978472
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9B7EE81DF5
+	for <webhook@archiver.kernel.org>; Fri,  6 Oct 2023 12:58:59 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.web11.11985.1696597130749619777
  for <cip-dev@lists.cip-project.org>;
- Thu, 05 Oct 2023 04:41:52 -0700
+ Fri, 06 Oct 2023 05:58:51 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id A9E511C004C; Thu,  5 Oct 2023 13:41:47 +0200 (CEST)
-Date: Thu, 5 Oct 2023 13:41:47 +0200
-From: Pavel Machek <pavel@denx.de>
-To: cip-dev@lists.cip-project.org
-Subject: Re: [cip-dev] [kernel-cve-report] New CVE entries this week
-Message-ID: <ZR6g+1Qpz/QyVY9R@duo.ucw.cz>
-References: <CAODzB9qGjXFSyuKbeNNWKLarGQkWMsWj1q1bO0n53P9dwK4J+g@mail.gmail.com>
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.158, mailfrom: venkata.pyla@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 396CwmMw3857395; Fri, 6 Oct 2023 21:58:48 +0900
+X-Iguazu-Qid: 2rWhdxlJJ1Hcz6OmkU
+X-Iguazu-QSIG: v=2; s=0; t=1696597127; q=2rWhdxlJJ1Hcz6OmkU; m=Nmw0yXQrZcVQUbfl+8fCiqW3e8Aekw/gPkIVkxNXNBU=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1123) id 396CwkeR2362549
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Fri, 6 Oct 2023 21:58:47 +0900
+From: venkata.pyla@toshiba-tsip.com
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Cc: venkata pyla <venkata.pyla@toshiba-tsip.com>,
+        dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
+Subject: [isar-cip-core 1/2] reproducible-check-ci: Include swu files in reproducible tests
+Date: Fri,  6 Oct 2023 18:28:44 +0530
+X-TSB-HOP2: ON
+Message-Id: <20231006125845.2661-2-venkata.pyla@toshiba-tsip.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20231006125845.2661-1-venkata.pyla@toshiba-tsip.com>
+References: <20231006125845.2661-1-venkata.pyla@toshiba-tsip.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="d1kzEMH75XLeTxhz"
-Content-Disposition: inline
-In-Reply-To: <CAODzB9qGjXFSyuKbeNNWKLarGQkWMsWj1q1bO0n53P9dwK4J+g@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 06 Oct 2023 12:58:44.0103 (UTC) FILETIME=[D655D170:01D9F854]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 05 Oct 2023 11:41:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13295
+ <cip-dev@lists.cip-project.org>; Fri, 06 Oct 2023 12:58:59 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13296
+
+From: venkata pyla <venkata.pyla@toshiba-tsip.com>
+
+Signed-off-by: venkata pyla <venkata.pyla@toshiba-tsip.com>
+---
+ .reproducible-check-ci.yml | 1 +
+ scripts/repro-tests.sh     | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/.reproducible-check-ci.yml b/.reproducible-check-ci.yml
+index 6bcc215..03b4c00 100644
+--- a/.reproducible-check-ci.yml
++++ b/.reproducible-check-ci.yml
+@@ -43,6 +43,7 @@
+     paths:
+       - scripts/repro-tests.sh
+       - image*/*.wic.p*
++      - image*/*.swu
+ 
+ .repro-test:
+   image:
+diff --git a/scripts/repro-tests.sh b/scripts/repro-tests.sh
+index 127484f..8bdb34b 100755
+--- a/scripts/repro-tests.sh
++++ b/scripts/repro-tests.sh
+@@ -74,6 +74,7 @@ fi
+ 
+ # Define files in the artifacts for checking the reproducibility
+ set -- \
++	"${IMAGE_BASE}-${RELEASE}-${TARGET}.swu" \
+ 	"${IMAGE_BASE}-${RELEASE}-${TARGET}.wic.p0" \
+ 	"${IMAGE_BASE}-${RELEASE}-${TARGET}.wic.p1" \
+ 	"${IMAGE_BASE}-${RELEASE}-${TARGET}.wic.p2" \
+-- 
+2.20.1
 
 
---d1kzEMH75XLeTxhz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> CVE-2023-4732: mm/userfaultfd: fix uffd-wp special cases for fork()
->=20
-> CVSS v3 score is not provided (NIST).
-> CVSS v3 score is 4.7 MEDIUM (CNA).
->=20
-> A flaw was found in the Linux Kernel's memory management subsystem. A
-> task exits and releases a 2MB page in a vma (vm_area_struct) and hits
-> the BUG statement in pfn_swap_entry_to_page() referencing pmd_t x.
->=20
-> This bug was introduced by commit b569a17 ("userfaultfd: wp: drop
-> _PAGE_UFFD_WP properly when fork") in 5.7-rc1.
-> The commit b569a17 is not backported to older stable kernels.
->=20
-> Fixed status
-> mainline: [8f34f1eac3820fc2722e5159acceb22545b30b0d]
-> stable/5.10: [9e1cf2d1ed37c934c9935f2c0b2f8b15d9355654]
-
-So fix is
-
-commit 8f34f1eac3820fc2722e5159acceb22545b30b0d -- mm/userfaultfd: fix
-uffd-wp special cases for fork()
-
-Aha, and 6.1 already contains mainline version of a fix, so we are
-okay there.
-
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---d1kzEMH75XLeTxhz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZR6g+wAKCRAw5/Bqldv6
-8qFQAJ4saRP2qW/+J1wSj4ZnQvV3KphN6wCfXkYCT/jXoPiYNJbEYetCZfhB2YI=
-=M4Pb
------END PGP SIGNATURE-----
-
---d1kzEMH75XLeTxhz--
 
