@@ -2,50 +2,50 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1141ACD6120
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26220CD6123
 	for <webhook@archiver.kernel.org>; Mon,  9 Oct 2023 18:47:02 +0000 (UTC)
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
- by mx.groups.io with SMTP id smtpd.web11.71064.1696877219877973969
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+ by mx.groups.io with SMTP id smtpd.web11.71066.1696877221260791058
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Mon, 09 Oct 2023 11:46:59 -0700
+ Mon, 09 Oct 2023 11:47:01 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=ELXsf0uA;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.172, mailfrom: bot@kernelci.org)
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-690ba63891dso3533391b3a.2
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Mon, 09 Oct 2023 11:46:59 -0700 (PDT)
+ dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=euifOYmz;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.167.176, mailfrom: bot@kernelci.org)
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3af609c3e74so3539072b6e.2
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Mon, 09 Oct 2023 11:47:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1696877218; x=1697482018; darn=lists.cip-project.org;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1696877220; x=1697482020; darn=lists.cip-project.org;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=zo3ts+bT5K59MtIYqigf+m1bblveQJ/CXgWqpQ6CUEA=;
-        b=ELXsf0uAvQ6MgJZLN0RHy9pH3FprdSyWJrra2tWdLz7aasZIg1mIGu+QI2iVmObWU2
-         RbRPnC39ZrV4GPMW35tkVjwGSHMl/Ep9lj8FrjM/iahp2bPx8KqA1pssrTwJNuhFT/iv
-         nadAEw6te0EQ90k2p/8p3q5dSsIyfQ425Qxbz9jsNmqNcfEcXza2zbAEMG5aLotiM6sU
-         1baSi07yWaRyYNyxQMeVTa3eZ9K8jGXKc7uehBWQiybsH5ZnKrO0fdFmYrSvnQNy6iZ1
-         f6pWhayEcHd37k01JBM2ErUNm+7ywJbb1100WJFteIx9bbqe+xmSxoPykWNcasIBaXq1
-         DIqQ==
+        bh=AFsTo4LPmayaWZ8l9En/oahBnuLjFNz1kAZWG644Tps=;
+        b=euifOYmzWP1C/zfDbIYMbZJ3W6m2NKAM2glbZEHg5R7Umep6ZkD+QGEsf+S+pIK2yo
+         1gZV56yLE8vBsJQE9Px8NKvSIqfMjMeKWdbzhhCMFB0EFbEThU99bYxbNaF7tTGDMbrq
+         iObj/q2mhtHtII5cskvEot/+fUvBRKEF7JeXObY1nSI8kHwV/5SS+BJu8vd5GPzXGWYP
+         hWNLBmPpaiq9d/gydm2IMEsm0/IW5SmfptLXiaOxQ6qklORdSdgB8SGTBdWzsvyt3vSJ
+         IFGMDan0mYHJQUGxJWKzLhabS2fM7TUCgBvI4D+DLJ8Q57OfLH2SdfHbZ66B7iqHidUz
+         CrPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696877218; x=1697482018;
+        d=1e100.net; s=20230601; t=1696877220; x=1697482020;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zo3ts+bT5K59MtIYqigf+m1bblveQJ/CXgWqpQ6CUEA=;
-        b=w8nFqUVs8YfHW5/c98EK3Z9YD+7tApQBMJidmappAd46Xetw+Dm9E6HzUMO40sXt9A
-         tKG6VjKPIdWdICbekMgoyYtWHbKm2O8rJ5gE8W2HQIzyMwzQuSdTZBYwYeyyqueOdTFG
-         KbaYQ4RfU0/2KawAqLFy/FWGWMAJaDQOLqS1N0GOXlnntxWs7TuCF7+Y272TC4GdLdvg
-         xEj+sGRSkw9xxXk5ltSCO9OyP36U/LaJee1R9bXwgP+gctIFwOMsvayTOb8mBVYG9w1+
-         8xb+b1uIn2WThLOa8TkpQux9kc/e+aC8a+watHEEKEgqvXhesBKG/WjhKkDvZPErFzQh
-         ZP2g==
-X-Gm-Message-State: AOJu0Ywx7C92b83mQqZKOXID1w/REskSDtJeMrdaeNfIYl3gWRLMSVS5
-	YOLzqoWVdv5vRZjWa/uds6TVAWXL6TbeTJsPc4YDzQ==
-X-Google-Smtp-Source: AGHT+IFYmfDHC2PpQjv7KqKDTKr3cbuYxHdTR3w/wC7Z4DLp7QSAyzxPLPFo4hK99LVPQcbosQTYTQ==
-X-Received: by 2002:a05:6a21:3294:b0:16b:8572:5a4a with SMTP id yt20-20020a056a21329400b0016b85725a4amr9197085pzb.61.1696877218488;
-        Mon, 09 Oct 2023 11:46:58 -0700 (PDT)
+        bh=AFsTo4LPmayaWZ8l9En/oahBnuLjFNz1kAZWG644Tps=;
+        b=C0nzyt5wtMbVdK0ro3J4OC4Cv/KwUvM2PJz3FhdCb/MEZtM6MRadTvk0K4XaGVo0MF
+         nnx+CLc02uAh72OPI07cDiOpx9PSFRbgoiSzOL/msKkh74x4L1VBjbeEPrk0iAHLmEGO
+         2i8ue5f1F15yDqz5mJ7I752iF+U/jXEkHo/CPgxJTRlLVr4uN2iGuGjy3NQIl9+elQFM
+         8+eEefMIcVmoLi3Jkb8k0yb5knq1txuZSh5Tr9HeuKcw3ZD/PdRD9bviQGCLVgauuVNo
+         j02Rqe44+m606tOc49jV/GQFhCJ5pxEdUUQLQ7IkMk78CF3wo8KSHpenCEc3BPj2CztO
+         au8w==
+X-Gm-Message-State: AOJu0Yyaob2mq+blf3jGRYidxJTOubZLsYRHC0hVcbUMF5jy0FO3Bn+v
+	ozjPQRMBvGKAJ/nsjsf/0y5NPiGZ/PJCm0lNYUQrFg==
+X-Google-Smtp-Source: AGHT+IEypiPVDDucsToyTYrb4z3Irt5GTRyadaAfDVR7mcTI3PzuLWA9I+ggGwlTzJgIebnp9tY7LQ==
+X-Received: by 2002:a05:6808:1829:b0:3ab:84f0:b49d with SMTP id bh41-20020a056808182900b003ab84f0b49dmr23976585oib.3.1696877220147;
+        Mon, 09 Oct 2023 11:47:00 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id c26-20020aa781da000000b0068be3489b0dsm6950005pfn.172.2023.10.09.11.46.56
+        by smtp.gmail.com with ESMTPSA id z24-20020a637e18000000b0057411f9a516sm8837028pgc.7.2023.10.09.11.46.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Mon, 09 Oct 2023 11:46:56 -0700 (PDT)
-Message-ID: <65244aa0.a70a0220.80e9a.fbdf@mx.google.com>
+Message-ID: <65244aa0.630a0220.eb7fb.673f@mx.google.com>
 Date: Mon, 09 Oct 2023 11:46:56 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
@@ -54,7 +54,7 @@ X-Kernelci-Kernel: v4.4-st20-1778-gc774a35d86d2
 X-Kernelci-Report-Type: test
 X-Kernelci-Branch: linux-4.4.y-st-rc
 X-Kernelci-Tree: cip
-Subject: cip/linux-4.4.y-st-rc ltp-fcntl-locktests: 3 runs,
+Subject: cip/linux-4.4.y-st-rc ltp-pty: 3 runs,
  1 regressions (v4.4-st20-1778-gc774a35d86d2)
 To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
  kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
@@ -63,10 +63,10 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 09 Oct 2023 18:47:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13329
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13330
 
-cip/linux-4.4.y-st-rc ltp-fcntl-locktests: 3 runs, 1 regressions (v4.4-st20=
--1778-gc774a35d86d2)
+cip/linux-4.4.y-st-rc ltp-pty: 3 runs, 1 regressions (v4.4-st20-1778-gc774a=
+35d86d2)
 
 Regressions Summary
 -------------------
@@ -80,9 +80,9 @@ n...6-chromebook | 1          =
 
 
   Details:  https://kernelci.org/test/job/cip/branch/linux-4.4.y-st-rc/kern=
-el/v4.4-st20-1778-gc774a35d86d2/plan/ltp-fcntl-locktests/
+el/v4.4-st20-1778-gc774a35d86d2/plan/ltp-pty/
 
-  Test:     ltp-fcntl-locktests
+  Test:     ltp-pty
   Tree:     cip
   Branch:   linux-4.4.y-st-rc
   Describe: v4.4-st20-1778-gc774a35d86d2
@@ -110,26 +110,26 @@ asus-C523NA-A20057-coral | x86_64 | lab-collabora | gcc-10   | x86_64_defco=
 n...6-chromebook | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/652441ff360693f9e4efcf08
+  Details:     https://kernelci.org/test/plan/id/6524426fa1a53b4c8cefcefe
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
   Full config: x86_64_defconfig+x86-chromebook
   Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
   Plain log:   https://storage.kernelci.org//cip/linux-4.4.y-st-rc/v4.4-st2=
 0-1778-gc774a35d86d2/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-coll=
-abora/ltp-fcntl-locktests-asus-C523NA-A20057-coral.txt
+abora/ltp-pty-asus-C523NA-A20057-coral.txt
   HTML log:    https://storage.kernelci.org//cip/linux-4.4.y-st-rc/v4.4-st2=
 0-1778-gc774a35d86d2/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-coll=
-abora/ltp-fcntl-locktests-asus-C523NA-A20057-coral.html
+abora/ltp-pty-asus-C523NA-A20057-coral.html
   Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
 p/20230623.0/amd64/initrd.cpio.gz =
 
 
 
-  * ltp-fcntl-locktests.login: https://kernelci.org/test/case/id/652441ff36=
-0693f9e4efcf09
-        failing since 6 days (last pass: v4.4-st20-1430-g2fe294a51ca0, firs=
-t fail: v4.4-st20-1779-g48d33e0df7175) =
+  * ltp-pty.login: https://kernelci.org/test/case/id/6524426fa1a53b4c8cefce=
+ff
+        failing since 165 days (last pass: v4.4-st20-1097-g52d843097a439, f=
+irst fail: v4.4-st20-1186-g2516b357b2e3a) =
 
  =20
 
