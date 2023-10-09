@@ -2,79 +2,79 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B0ECD6117
-	for <webhook@archiver.kernel.org>; Mon,  9 Oct 2023 17:48:51 +0000 (UTC)
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
- by mx.groups.io with SMTP id smtpd.web10.70017.1696873721888159260
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8512FCD6119
+	for <webhook@archiver.kernel.org>; Mon,  9 Oct 2023 17:49:01 +0000 (UTC)
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+ by mx.groups.io with SMTP id smtpd.web11.69482.1696873731767333037
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Mon, 09 Oct 2023 10:48:41 -0700
+ Mon, 09 Oct 2023 10:48:51 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=wAdXtHFB;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.172, mailfrom: bot@kernelci.org)
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-69101022969so4245525b3a.3
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Mon, 09 Oct 2023 10:48:41 -0700 (PDT)
+ dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=tGKslnrx;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.42, mailfrom: bot@kernelci.org)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2773523b2b6so2792087a91.2
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Mon, 09 Oct 2023 10:48:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1696873721; x=1697478521; darn=lists.cip-project.org;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1696873731; x=1697478531; darn=lists.cip-project.org;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=fatz33RQstzUSk5NcSDGBDKRMu/EaCcYs3iuavxqq7A=;
-        b=wAdXtHFBUh75L5+yAzCNbdMUDumBCNvRRojw0UR5mGcXWc3i9baLu7Irh9ApN4Qvtz
-         iWFC47yh3NzdWLNtknDin7cvsR+p2CG2tC9gayjzZOJhYxEY8MUWwTDxLcYMm5njqPbV
-         yR9vKkDTypatzvT2vfVmA54dqGKY/p+kw2RQOlDqoOFA6IvdrPRTBe4aDLOF+o9daJ+X
-         PlnyvbptVG//tasGlymzWNcr+wS48cold6HIWUQn/ujGqJAttPpquJ2G41VYLcf3q7zk
-         L5pzBAq2eWFaaoA9GKzl/7V2ENed8iCecwYdNw2feRadW0gwOhYpg9B0N9VOzA9NarWG
-         bgjQ==
+        bh=Ywg7cyiNYZgy4Y3jCSxu5D0gZEz26QMiiIv7y3kPy4o=;
+        b=tGKslnrxSkOTldJY32XTcM9mDi8KKKbw56sIGS2WYRzBRjT6lnPIvLrbHkWQhUfyU9
+         pIB4x1O+rT3l1IUUBNH0SbR2C0KEuOEk56CvebEwiEd+KuQHW4vfrYEqq0oUxUCdAozq
+         vFGw6j4TVjhapzQsfiRJzbHdqKMzceeNxjElM9cW1UUJEzEReUGveBqtJWg6yQ0XyXwJ
+         6zCtmnwfgt1ji9A6BW3tcizxsmAnhZOnU05jy+hVr5yevSgq93su1F4bfgaUsZ8oMyir
+         OrpwdZbUFfl2xsr8AcnRT5bRhQFC7WIS/HDFsg/B5INxnSpk/V8bpa7edG3eHWyL/pnf
+         6h2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696873721; x=1697478521;
+        d=1e100.net; s=20230601; t=1696873731; x=1697478531;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fatz33RQstzUSk5NcSDGBDKRMu/EaCcYs3iuavxqq7A=;
-        b=kzpkO6xJO4jswccTXGt4cTgqdM1aGy256FOajmsd3o1HXoXmImz76ky42CKkmIt4d7
-         KG8u/QXd6ItCpWimP/x6+dqO2crvyWdnMA2RgaR0GwMsEwME8ZvMKBvtBri9nCiwHFdS
-         4I4clL9tX3pCPzkr3ly3L1YnOwkIwHwIbvUg0tmSwX5N/qMpVi7Bd2TntRxPrHq4k77P
-         dSW4MpmDL7Ui0WQmYhpn89nK2+qk7sbit2wtzoYQ1l+MQH1n42rRikCExeWPsoUdcBXi
-         k3G8xW/YQaYL6wY8o9sGx7lq5i1KiGPHopfFcFQjMof0deAiexqjlHRj0kGYg/lKOOC9
-         aTbQ==
-X-Gm-Message-State: AOJu0YxjPS8b3qbYuGWcn5rVItr4DhiU/IDnIC/6+GxUT9KwNAqZtpFE
-	Lb1wW0x7ZvSnymZTSj+O9KXqKkhT2BhCJws2QCzVcQ==
-X-Google-Smtp-Source: AGHT+IEa+1X62P7RE8bFwArkrdSrTXuKVWZLoNJDM61cJ7QOhWcFOh7Fj+s5GqoTUEwkeur9lv1F5Q==
-X-Received: by 2002:a05:6a00:39a6:b0:690:fa09:61d3 with SMTP id fi38-20020a056a0039a600b00690fa0961d3mr19941307pfb.15.1696873720616;
-        Mon, 09 Oct 2023 10:48:40 -0700 (PDT)
+        bh=Ywg7cyiNYZgy4Y3jCSxu5D0gZEz26QMiiIv7y3kPy4o=;
+        b=ju/DtsxeTRd94QUAqUjXd/+Gy8SXGpzPx6H2aaR+6Ld6sFSMjen+QdvqvW3AkQ5lK5
+         RDrDfWM31LKgQe9gj2M3KBFZ6kInhftvqoujMGdbyW0puLFwA1kkrsG7+XFDd9yENZgV
+         P/taIhKO4/+WQyOzS9RwN8447CH9YV5Of6dTjFVptET6RJnfa+9d3Hy6hH/4cGehwiD+
+         HOzjfWp23J6koLKAieE1ra+NPCKfT8qb4iS7VsLkocKYOwqOJx7nYp88idPAj2JmTpE/
+         l/2CK/somC81a8kzSIvMA14xg53uJSQ8NtEHYmcGodFXxFMAWb/dRwLwDoVaK3G8iYg6
+         cf1w==
+X-Gm-Message-State: AOJu0YyoXTrDqfXj+GG4Ji0tcPmMbwCOXkEZL8JMkc/+7AuhXXew6MBI
+	7Kf7Kk8PVU1xNKlnEw5EfRla5SLIBHygm4VrItIHSw==
+X-Google-Smtp-Source: AGHT+IEzmp8jJW1WgrnWIux0vmXDxGQtoNUJzeqU0/XCkfzyJCZAhTctgRV4UogiLJVKV5AoTyMwHQ==
+X-Received: by 2002:a17:90b:2252:b0:276:a310:2be3 with SMTP id hk18-20020a17090b225200b00276a3102be3mr12859250pjb.19.1696873730536;
+        Mon, 09 Oct 2023 10:48:50 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id y4-20020aa78544000000b006878cc942f1sm6674853pfn.54.2023.10.09.10.48.39
+        by smtp.gmail.com with ESMTPSA id d6-20020a17090ad3c600b00256799877ffsm8621208pjw.47.2023.10.09.10.48.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Oct 2023 10:48:39 -0700 (PDT)
-Message-ID: <65243cf7.a70a0220.a59fb.f13d@mx.google.com>
-Date: Mon, 09 Oct 2023 10:48:39 -0700 (PDT)
+        Mon, 09 Oct 2023 10:48:49 -0700 (PDT)
+Message-ID: <65243d01.170a0220.a4820.5f07@mx.google.com>
+Date: Mon, 09 Oct 2023 10:48:49 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v4.4-st20-1778-gc774a35d86d2
+X-Kernelci-Kernel: v4.4-st20-1778-g3b01feff09495
 X-Kernelci-Report-Type: build
-X-Kernelci-Branch: linux-4.4.y-st-rc
+X-Kernelci-Branch: linux-4.4.y-st
 X-Kernelci-Tree: cip
-Subject: cip/linux-4.4.y-st-rc build: 14 builds: 0 failed, 14 passed,
- 27 warnings (v4.4-st20-1778-gc774a35d86d2)
+Subject: cip/linux-4.4.y-st build: 14 builds: 0 failed, 14 passed,
+ 27 warnings (v4.4-st20-1778-g3b01feff09495)
 To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
  kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
 From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 09 Oct 2023 17:48:51 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13323
+ <cip-dev@lists.cip-project.org>; Mon, 09 Oct 2023 17:49:01 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13324
 
-cip/linux-4.4.y-st-rc build: 14 builds: 0 failed, 14 passed, 27 warnings (v=
-4.4-st20-1778-gc774a35d86d2)
+cip/linux-4.4.y-st build: 14 builds: 0 failed, 14 passed, 27 warnings (v4.4=
+-st20-1778-g3b01feff09495)
 
-Full Build Summary: https://kernelci.org/build/cip/branch/linux-4.4.y-st-rc=
-/kernel/v4.4-st20-1778-gc774a35d86d2/
+Full Build Summary: https://kernelci.org/build/cip/branch/linux-4.4.y-st/ke=
+rnel/v4.4-st20-1778-g3b01feff09495/
 
 Tree: cip
-Branch: linux-4.4.y-st-rc
-Git Describe: v4.4-st20-1778-gc774a35d86d2
-Git Commit: c774a35d86d261f0d49d25d9a02dbaf95cfd288c
+Branch: linux-4.4.y-st
+Git Describe: v4.4-st20-1778-g3b01feff09495
+Git Commit: 3b01feff09495bfdcf43283997a6ea6c6bf6c649
 Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
 Built: 4 unique architectures
 
@@ -128,11 +128,6 @@ Detailed per-defconfig build reports:
 
 ---------------------------------------------------------------------------=
 -----
-allnoconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
-
----------------------------------------------------------------------------=
------
 allnoconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 3 warnings, 0 sectio=
 n mismatches
 
@@ -143,6 +138,11 @@ given and no register operands; using default for `btr'
 given and no register operands; using default for `btr'
     arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
 given and no register operands; using default for `btr'
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
 
 ---------------------------------------------------------------------------=
 -----
