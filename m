@@ -1,128 +1,272 @@
-Return-Path: <uli@fpond.eu>
+Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E23E95A9E
-	for <webhook@archiver.kernel.org>; Mon,  9 Oct 2023 15:44:00 +0000 (UTC)
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [85.215.255.22])
- by mx.groups.io with SMTP id smtpd.web11.65711.1696866231446375096
- for <cip-dev@lists.cip-project.org>;
- Mon, 09 Oct 2023 08:43:51 -0700
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B0ECD6117
+	for <webhook@archiver.kernel.org>; Mon,  9 Oct 2023 17:48:51 +0000 (UTC)
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+ by mx.groups.io with SMTP id smtpd.web10.70017.1696873721888159260
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Mon, 09 Oct 2023 10:48:41 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=huX/d4bg;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=yeaiMl0j;
- spf=none, err=permanent DNS error (domain: fpond.eu, ip: 85.215.255.22, mailfrom: uli@fpond.eu)
-ARC-Seal: i=1; a=rsa-sha256; t=1696866228; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=BOjn0Sk1i8lE0BWCjrH94R2l3D4cD7Spnk20YRpu+z1iLmhhO536wX/gy+jmC3YWYx
-    sgZR/O0Y5mB/CBO8RyWQy5eq8S9deeC7Mk5W64x1XXVPYplv3vywL1fahLG/M1Vi6wG/
-    jyKPzPcGUqDgXrZ9xSWEVptl+6SDoORYFtqMY2vdx2VcykoJie8SndO316fkHWlfp69Y
-    3CLq6jCZ/ITM4i/LhdM23KQ4kVDSQ72ilinlje8ZmaoBbtj6pJEJr0TKecIwalPYRsXJ
-    ZzLbRbP7h9kiz4a2S61TehaDTi7XPmtQAfiXsImGc+eK9GBgztc5QPOvYPFb/6ef9rp+
-    jRPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1696866228;
-    s=strato-dkim-0002; d=strato.com;
-    h=Subject:References:In-Reply-To:Message-ID:To:From:Date:Cc:Date:From:
-    Subject:Sender;
-    bh=m/opiCqBjfyv0kk7TcR8HqKbaSSDSd4WjfwOJj1mAaY=;
-    b=eYs/R6uuBMZUMPw9T0UQu/ptjRzzSOWayzY+eIdXVUvfIvy/VzIk+/mi3JeVeKeEx3
-    Uik0f/8EWldke+66pnIuoTsVh66tcup3GaV1PHQfQWKpviA6qr8UTErb0NOHaUXIkBLc
-    Twl7wQxfXOqJkMi0Vwgi3Ds8GJf0v6+PVKKTZuZa74o+/hwdMLt7C4BLjV8Jza+pUTY1
-    +ltx+CbycPILXJ0I7ok3JvcnsNNbd8ln45z7joBoFpdZGUYDqOqtUVEtbEjH/0amoUBg
-    Z9e1lEq6MmeT7ZhFVz6ZEUSRDZqg+txXEKLrxdrhX+P0oX9mYrAhRE03/w7bRX3/Cga3
-    weyA==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1696866228;
-    s=strato-dkim-0002; d=fpond.eu;
-    h=Subject:References:In-Reply-To:Message-ID:To:From:Date:Cc:Date:From:
-    Subject:Sender;
-    bh=m/opiCqBjfyv0kk7TcR8HqKbaSSDSd4WjfwOJj1mAaY=;
-    b=huX/d4bg6o4fZh5JvgNwcGYW0wCU0uOX3/qoshHyD6Vc2RECV4hnkDMUH1bN6L3u+j
-    qN5rB6FCcqT+ilFY8WHaNNIzwKps2kmeZ1rNcQqhQZ4NBtYGX1q+0Ikxdwt2SzcT+RNU
-    PLDiKA4b80ndApELVlMa8YGfGf1vr5EJQeBPX4QEAcM6Gd9+K9h2MrS5siK+9yBTcKXR
-    uCsGYXuD6GG58XhGZDVUp0dhS/P6IwfZRHEs1LNTHvby2CcMztJC6MZzeNcWVhzdpmNm
-    EtuqpGJwRmiIy5NC0R8+9SYrXKvjz4GMcu/0F/39RW0DvvxyGZkt6eU5MlOBQXyebdb4
-    dBIA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1696866228;
-    s=strato-dkim-0003; d=fpond.eu;
-    h=Subject:References:In-Reply-To:Message-ID:To:From:Date:Cc:Date:From:
-    Subject:Sender;
-    bh=m/opiCqBjfyv0kk7TcR8HqKbaSSDSd4WjfwOJj1mAaY=;
-    b=yeaiMl0jgWW97tgRqlmjV66lZh3/k6cY5Qp52bY3dpVgTrM+LSJFpvQG1pRv933G/2
-    nzvcuLKnXON9aikfQGAA==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv3qxio1R8fGl/w2B/oo="
-Received: from ox-live-app204.back.ox.d0m.de
-    by smtp-ox.front (RZmta 49.8.2 AUTH)
-    with ESMTPSA id L04889z99Fhmsl0
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Mon, 9 Oct 2023 17:43:48 +0200 (CEST)
-Date: Mon, 9 Oct 2023 17:43:48 +0200 (CEST)
-From: Ulrich Hecht <uli@fpond.eu>
-To: cip-dev@lists.cip-project.org, Pavel Machek <pavel@denx.de>
-Message-ID: <465211865.1460951.1696866228455@webmail.strato.com>
-In-Reply-To: <ZR6U9Hx0wHasJ1Y7@duo.ucw.cz>
-References: <809419142.671756.1696317771828@webmail.strato.com>
- <ZR6U9Hx0wHasJ1Y7@duo.ucw.cz>
-Subject: Re: [cip-dev] Request for reviews for 4.4-st45, 4.4-cip80
+ dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=wAdXtHFB;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.172, mailfrom: bot@kernelci.org)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-69101022969so4245525b3a.3
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Mon, 09 Oct 2023 10:48:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1696873721; x=1697478521; darn=lists.cip-project.org;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=fatz33RQstzUSk5NcSDGBDKRMu/EaCcYs3iuavxqq7A=;
+        b=wAdXtHFBUh75L5+yAzCNbdMUDumBCNvRRojw0UR5mGcXWc3i9baLu7Irh9ApN4Qvtz
+         iWFC47yh3NzdWLNtknDin7cvsR+p2CG2tC9gayjzZOJhYxEY8MUWwTDxLcYMm5njqPbV
+         yR9vKkDTypatzvT2vfVmA54dqGKY/p+kw2RQOlDqoOFA6IvdrPRTBe4aDLOF+o9daJ+X
+         PlnyvbptVG//tasGlymzWNcr+wS48cold6HIWUQn/ujGqJAttPpquJ2G41VYLcf3q7zk
+         L5pzBAq2eWFaaoA9GKzl/7V2ENed8iCecwYdNw2feRadW0gwOhYpg9B0N9VOzA9NarWG
+         bgjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696873721; x=1697478521;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fatz33RQstzUSk5NcSDGBDKRMu/EaCcYs3iuavxqq7A=;
+        b=kzpkO6xJO4jswccTXGt4cTgqdM1aGy256FOajmsd3o1HXoXmImz76ky42CKkmIt4d7
+         KG8u/QXd6ItCpWimP/x6+dqO2crvyWdnMA2RgaR0GwMsEwME8ZvMKBvtBri9nCiwHFdS
+         4I4clL9tX3pCPzkr3ly3L1YnOwkIwHwIbvUg0tmSwX5N/qMpVi7Bd2TntRxPrHq4k77P
+         dSW4MpmDL7Ui0WQmYhpn89nK2+qk7sbit2wtzoYQ1l+MQH1n42rRikCExeWPsoUdcBXi
+         k3G8xW/YQaYL6wY8o9sGx7lq5i1KiGPHopfFcFQjMof0deAiexqjlHRj0kGYg/lKOOC9
+         aTbQ==
+X-Gm-Message-State: AOJu0YxjPS8b3qbYuGWcn5rVItr4DhiU/IDnIC/6+GxUT9KwNAqZtpFE
+	Lb1wW0x7ZvSnymZTSj+O9KXqKkhT2BhCJws2QCzVcQ==
+X-Google-Smtp-Source: AGHT+IEa+1X62P7RE8bFwArkrdSrTXuKVWZLoNJDM61cJ7QOhWcFOh7Fj+s5GqoTUEwkeur9lv1F5Q==
+X-Received: by 2002:a05:6a00:39a6:b0:690:fa09:61d3 with SMTP id fi38-20020a056a0039a600b00690fa0961d3mr19941307pfb.15.1696873720616;
+        Mon, 09 Oct 2023 10:48:40 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
+        by smtp.gmail.com with ESMTPSA id y4-20020aa78544000000b006878cc942f1sm6674853pfn.54.2023.10.09.10.48.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Oct 2023 10:48:39 -0700 (PDT)
+Message-ID: <65243cf7.a70a0220.a59fb.f13d@mx.google.com>
+Date: Mon, 09 Oct 2023 10:48:39 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.6-Rev52
-X-Originating-Client: open-xchange-appsuite
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: v4.4-st20-1778-gc774a35d86d2
+X-Kernelci-Report-Type: build
+X-Kernelci-Branch: linux-4.4.y-st-rc
+X-Kernelci-Tree: cip
+Subject: cip/linux-4.4.y-st-rc build: 14 builds: 0 failed, 14 passed,
+ 27 warnings (v4.4-st20-1778-gc774a35d86d2)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
+ kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
+From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 09 Oct 2023 15:44:00 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13322
+ <cip-dev@lists.cip-project.org>; Mon, 09 Oct 2023 17:48:51 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13323
 
-Thank you for the reviews!
+cip/linux-4.4.y-st-rc build: 14 builds: 0 failed, 14 passed, 27 warnings (v=
+4.4-st20-1778-gc774a35d86d2)
 
-> On 10/05/2023 12:50 PM CEST Pavel Machek <pavel@denx.de> wrote:
-> There's additional patch, 67c786df30255e5d38e62852bcfd434168ed1e6e
-> "udf: merge bh free", 02d4ca49fa222021988b2791c8efefd70d3228ac
-> upstream, but does not seem to have upstream marking.
+Full Build Summary: https://kernelci.org/build/cip/branch/linux-4.4.y-st-rc=
+/kernel/v4.4-st20-1778-gc774a35d86d2/
 
-Fixed.
+Tree: cip
+Branch: linux-4.4.y-st-rc
+Git Describe: v4.4-st20-1778-gc774a35d86d2
+Git Commit: c774a35d86d261f0d49d25d9a02dbaf95cfd288c
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+Built: 4 unique architectures
 
-> > ** m-| dbcfa782d 1b90af o+ | ipvs: Improve robustness to the ipvs sysctl
-> 
-> I don't see this patch when going from 48d33e0df7175b69a683cece4408dc61d3daf8dc.
+Warnings Detected:
 
-I guess I forgot to delete this from my list when I dropped it.
+arm64:
+    defconfig (gcc-10): 1 warning
+    defconfig+arm64-chromebook (gcc-10): 1 warning
 
-> -- ** m-| 69197b2b2 30188b o+ | rtnetlink: Reject negative ifindexes
->       in RTM_NEWLINK
-> 
-> It should do "goto errout" for consistency with rest of the
-> code... but it will not cause any problem as errout: simply returns.
-> 
-> But... it looks like wrong function is patched..? I see a place in
-> rtnl_newlink() where I'd expect the patch to go?
+arm:
+    imx_v6_v7_defconfig (gcc-10): 1 warning
+    omap2plus_defconfig (gcc-10): 1 warning
 
-Yeah, that's what it looks like in 6.1. Perhaps the 4.14 patch has been backported incorrectly?
-I'll leave that one out for now.
+i386:
+    i386_defconfig (gcc-10): 4 warnings
 
-> !! |
->    b2f54ed77 7bf744 .  | media: dvb-usb-v2: af9035: Fix null-ptr-deref
->    in af9035_i2c_master_xfer
-> 
-> This patch is wrong for two reasons:
-> 
-> 1) it puts if () statement before declarations, that's not valid C89.
-> 
-> 2) it returns with a lock held. It needs to drop the log before
-> returning.
-> 
-> Both problems exist upstream.
+x86_64:
+    allnoconfig (gcc-10): 3 warnings
+    tinyconfig (gcc-10): 2 warnings
+    x86_64_defconfig (gcc-10): 7 warnings
+    x86_64_defconfig+x86-chromebook (gcc-10): 7 warnings
 
-Dropped.
 
-CU
-Uli
+Warnings summary:
+
+    7    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic su=
+ffix given and no register operands; using default for `btr'
+    4    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic su=
+ffix given and no register operands; using default for `btr'
+    3    ld: warning: creating DT_TEXTREL in a PIE
+    3    WARNING: vmlinux.o (.discard.retpoline_safe): unexpected non-alloc=
+atable section.
+    3    WARNING: vmlinux.o (.discard.nospec): unexpected non-allocatable s=
+ection.
+    2    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in rea=
+d-only section `.head.text'
+    2    drivers/usb/gadget/function/f_ncm.c:1565:19: warning: assignment t=
+o =E2=80=98struct config_group *=E2=80=99 from =E2=80=98int=E2=80=99 makes =
+pointer from integer without a cast [-Wint-conversion]
+    2    drivers/net/ethernet/apm/xgene/xgene_enet_main.c:32:36: warning: a=
+rray =E2=80=98xgene_enet_acpi_match=E2=80=99 assumed to have one element
+    1    ld: arch/x86/boot/compressed/head_32.o: warning: relocation in rea=
+d-only section `.head.text'
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+
+Detailed per-defconfig build reports:
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 3 warnings, 0 sectio=
+n mismatches
+
+Warnings:
+    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+
+---------------------------------------------------------------------------=
+-----
+defconfig (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section mi=
+smatches
+
+Warnings:
+    drivers/net/ethernet/apm/xgene/xgene_enet_main.c:32:36: warning: array =
+=E2=80=98xgene_enet_acpi_match=E2=80=99 assumed to have one element
+
+---------------------------------------------------------------------------=
+-----
+defconfig+arm64-chromebook (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 1 warn=
+ing, 0 section mismatches
+
+Warnings:
+    drivers/net/ethernet/apm/xgene/xgene_enet_main.c:32:36: warning: array =
+=E2=80=98xgene_enet_acpi_match=E2=80=99 assumed to have one element
+
+---------------------------------------------------------------------------=
+-----
+i386_defconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 4 warnings, 0 secti=
+on mismatches
+
+Warnings:
+    WARNING: vmlinux.o (.discard.nospec): unexpected non-allocatable sectio=
+n.
+    WARNING: vmlinux.o (.discard.retpoline_safe): unexpected non-allocatabl=
+e section.
+    ld: arch/x86/boot/compressed/head_32.o: warning: relocation in read-onl=
+y section `.head.text'
+    ld: warning: creating DT_TEXTREL in a PIE
+
+---------------------------------------------------------------------------=
+-----
+imx_v6_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
+ction mismatches
+
+Warnings:
+    drivers/usb/gadget/function/f_ncm.c:1565:19: warning: assignment to =E2=
+=80=98struct config_group *=E2=80=99 from =E2=80=98int=E2=80=99 makes point=
+er from integer without a cast [-Wint-conversion]
+
+---------------------------------------------------------------------------=
+-----
+multi_v5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+omap2plus_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 se=
+ction mismatches
+
+Warnings:
+    drivers/usb/gadget/function/f_ncm.c:1565:19: warning: assignment to =E2=
+=80=98struct config_group *=E2=80=99 from =E2=80=98int=E2=80=99 makes point=
+er from integer without a cast [-Wint-conversion]
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 2 warnings, 0 section=
+ mismatches
+
+Warnings:
+    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
+vexpress_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 7 warnings, 0 s=
+ection mismatches
+
+Warnings:
+    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    WARNING: vmlinux.o (.discard.nospec): unexpected non-allocatable sectio=
+n.
+    WARNING: vmlinux.o (.discard.retpoline_safe): unexpected non-allocatabl=
+e section.
+    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in read-onl=
+y section `.head.text'
+    ld: warning: creating DT_TEXTREL in a PIE
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig+x86-chromebook (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, =
+7 warnings, 0 section mismatches
+
+Warnings:
+    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
+given and no register operands; using default for `btr'
+    WARNING: vmlinux.o (.discard.nospec): unexpected non-allocatable sectio=
+n.
+    WARNING: vmlinux.o (.discard.retpoline_safe): unexpected non-allocatabl=
+e section.
+    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in read-onl=
+y section `.head.text'
+    ld: warning: creating DT_TEXTREL in a PIE
+
+---
+For more info write to <info@kernelci.org>
 
