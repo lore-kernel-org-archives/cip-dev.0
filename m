@@ -2,68 +2,120 @@ Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C23CD68FB
-	for <webhook@archiver.kernel.org>; Tue, 10 Oct 2023 08:03:26 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
- by mx.groups.io with SMTP id smtpd.web10.86103.1696925001874644718
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88DFECD6901
+	for <webhook@archiver.kernel.org>; Tue, 10 Oct 2023 08:11:26 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.web11.85917.1696925476074595806
  for <cip-dev@lists.cip-project.org>;
- Tue, 10 Oct 2023 01:03:22 -0700
+ Tue, 10 Oct 2023 01:11:17 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba.co.jp, ip: 210.130.202.152, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
-Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 39A83J8D2897960; Tue, 10 Oct 2023 17:03:20 +0900
-X-Iguazu-Qid: 2yAbIh4tarBshZ7TOc
-X-Iguazu-QSIG: v=2; s=0; t=1696924999; q=2yAbIh4tarBshZ7TOc; m=Sir5Gp5TPZaaUTdbx9q2OXH0LRqNWAa5xQz+fd+iyzA=
+ dkim=none (message not signed); spf=pass (domain: toshiba.co.jp, ip: 210.130.202.158, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
+Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 39A8BDNv2468029; Tue, 10 Oct 2023 17:11:14 +0900
+X-Iguazu-Qid: 2rWhPRBjcSWLt8kjrB
+X-Iguazu-QSIG: v=2; s=0; t=1696925473; q=2rWhPRBjcSWLt8kjrB; m=G7iHDieXMRiU2Oi7rNGosWLDBQozVHvsQxC7SrsJVZY=
 Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1803) id 39A83IoB2077692
+	by relay.securemx.jp (mx-mr1121) id 39A8BBtl1978960
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Tue, 10 Oct 2023 17:03:18 +0900
+	Tue, 10 Oct 2023 17:11:12 +0900
 From: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 To: jan.kiszka@siemens.com
-Cc: cip-dev@lists.cip-project.org,
+Cc: cip-dev@lists.cip-project.org, minmin@plathome.co.jp,
         Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: [isar-cip-core][PATCH v2] wic: Rename wic/simatic-ipc227e.wks to wic/x86_64-generic.wks
-Date: Tue, 10 Oct 2023 17:03:05 +0900
+Subject: [isar-cip-core][PATCH v2] Add support Plat'Home OpenBlocks IoT VX2
+Date: Tue, 10 Oct 2023 17:10:34 +0900
 X-TSB-HOP2: ON
-Message-Id: <20231010080305.3762206-1-nobuhiro1.iwamatsu@toshiba.co.jp>
+Message-Id: <20231010081034.3762306-1-nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 10 Oct 2023 08:03:26 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13343
+ <cip-dev@lists.cip-project.org>; Tue, 10 Oct 2023 08:11:26 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13344
 
-Currently wic/simatic-ipc227e.wks has generic settings for x86_64. It is
-also available for other x86_64 reference HWs.
-Therefore, change this to wic/x86_64-generic.wks as the generic file name.
+This adds configuration files to support Plat'Home OpenBlocks IoT VX2.
 
 Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 ---
-v2: Merge patch:'simatic-ipc227e: conf: Add WKS_FILE as x86_64-generic.wks'
+
+Note: This commit depends 'https://lore.kernel.org/cip-dev/20231010080305.3762206-1-nobuhiro1.iwamatsu@toshiba.co.jp/T/#u'
+v2: Drop patch for wic/openblocks-iot-vx2.wks and use x86_64-generic.wks with WKS_FILE.
 
 ---
- conf/machine/simatic-ipc227e.conf               | 1 +
- wic/{simatic-ipc227e.wks => x86_64-generic.wks} | 0
- 2 files changed, 1 insertion(+)
- rename wic/{simatic-ipc227e.wks => x86_64-generic.wks} (100%)
 
-diff --git a/conf/machine/simatic-ipc227e.conf b/conf/machine/simatic-ipc227e.conf
-index a624fcd..8bb3e80 100644
---- a/conf/machine/simatic-ipc227e.conf
-+++ b/conf/machine/simatic-ipc227e.conf
-@@ -9,6 +9,7 @@
- DISTRO_ARCH = "amd64"
+ Kconfig                              |  4 ++++
+ conf/machine/openblocks-iot-vx2.conf | 16 ++++++++++++++++
+ kas/board/openblocks-iot-vx2.yml     | 15 +++++++++++++++
+ 3 files changed, 35 insertions(+)
+ create mode 100644 conf/machine/openblocks-iot-vx2.conf
+ create mode 100644 kas/board/openblocks-iot-vx2.yml
+
+diff --git a/Kconfig b/Kconfig
+index f5ea5af..be8bbc2 100644
+--- a/Kconfig
++++ b/Kconfig
+@@ -67,6 +67,9 @@ config TARGET_QEMU_RISCV64
+ 	bool "QEMU RISC-V 64-bit (riscv64)"
+ 	select ARCH_RISCV64
  
- IMAGE_FSTYPES ?= "wic"
++config TARGET_OBS_IOT_VX2
++	bool "Plat'Home OpenBlocks IoT VX2"
++	select ARCH_AMD64
+ endchoice
+ 
+ config KAS_INCLUDE_BOARD
+@@ -79,6 +82,7 @@ config KAS_INCLUDE_BOARD
+ 	default "kas/board/bbb.yml" if TARGET_BBB
+ 	default "kas/board/iwg20m.yml" if TARGET_IWG20D
+ 	default "kas/board/qemu-riscv64.yml" if TARGET_QEMU_RISCV64
++	default "kas/board/openblocks-iot-vx2.yml" if TARGET_OBS_IOT_VX2
+ 
+ comment "Kernel options"
+ 
+diff --git a/conf/machine/openblocks-iot-vx2.conf b/conf/machine/openblocks-iot-vx2.conf
+new file mode 100644
+index 0000000..5c144a3
+--- /dev/null
++++ b/conf/machine/openblocks-iot-vx2.conf
+@@ -0,0 +1,16 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2019
++# Copyright (c) TOSHIBA CORPORATION, 2023
++#
++# SPDX-License-Identifier: MIT
++#
++
++DISTRO_ARCH = "amd64"
++
++IMAGE_FSTYPES ?= "wic"
 +WKS_FILE ?= "x86_64-generic.wks"
- IMAGER_INSTALL += "${GRUB_BOOTLOADER_INSTALL}"
- USE_CIP_KERNEL_CONFIG = "1"
- KERNEL_DEFCONFIG = "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/x86/siemens_ipc227e_defconfig"
-diff --git a/wic/simatic-ipc227e.wks b/wic/x86_64-generic.wks
-similarity index 100%
-rename from wic/simatic-ipc227e.wks
-rename to wic/x86_64-generic.wks
++IMAGER_INSTALL += "${GRUB_BOOTLOADER_INSTALL}"
++USE_CIP_KERNEL_CONFIG = "1"
++KERNEL_DEFCONFIG = "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/x86/plathome_obsvx2_defconfig"
+diff --git a/kas/board/openblocks-iot-vx2.yml b/kas/board/openblocks-iot-vx2.yml
+new file mode 100644
+index 0000000..6951e2e
+--- /dev/null
++++ b/kas/board/openblocks-iot-vx2.yml
+@@ -0,0 +1,15 @@
++#
++# CIP Core, generic profile
++#
++# TOSHIBA CORPORATION, 2023
++#
++# Authors:
++#  Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
++#
++# SPDX-License-Identifier: MIT
++#
++
++header:
++  version: 12
++
++machine: openblocks-iot-vx2
 -- 
 2.42.0
 
