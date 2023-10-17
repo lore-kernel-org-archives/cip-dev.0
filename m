@@ -1,87 +1,86 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <ncaidin@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6975BC41513
-	for <webhook@archiver.kernel.org>; Tue, 17 Oct 2023 05:59:26 +0000 (UTC)
-Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
- by mx.groups.io with SMTP id smtpd.web10.201450.1697522359846320912
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9FC9CDB474
+	for <webhook@archiver.kernel.org>; Wed, 18 Oct 2023 00:22:12 +0000 (UTC)
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+ by mx.groups.io with SMTP id smtpd.web11.269839.1697583660443876819
  for <cip-dev@lists.cip-project.org>;
- Mon, 16 Oct 2023 22:59:21 -0700
+ Tue, 17 Oct 2023 16:01:00 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=jan.kiszka@siemens.com header.s=fm1 header.b=hfotEzux;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-294854-20231017055916330ef110b26a2f18e4-fvzybj@rts-flowmailer.siemens.com)
-Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 20231017055916330ef110b26a2f18e4
-        for <cip-dev@lists.cip-project.org>;
-        Tue, 17 Oct 2023 07:59:17 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=jan.kiszka@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=Ms0DXcwNQS+3sZWZZmXk9SDiswrd2wdcFWdC6Jj1cXQ=;
- b=hfotEzuxX56rY3zbR6CW+ZI04CKKXvoUF/X4qtEYSw3DIczMsCDn8hSf3eChveb1LwClQ3
- QNiXdqGgw2vS8epCWZnepfSFVlICrpotGwTX5wOXSI8krqAjQdkxTag7xK+9xLOyRxWE/boQ
- fha+tBaqcgDL5QZ8/mhRrMWFPe9LE=;
-From: Jan Kiszka <jan.kiszka@siemens.com>
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=dVMsHg7U;
+ spf=pass (domain: gmail.com, ip: 209.85.221.173, mailfrom: djkirsch326@gmail.com)
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-49d39f07066so2627005e0c.0
+        for <cip-dev@lists.cip-project.org>; Tue, 17 Oct 2023 16:01:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1697583659; x=1698188459; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+aOij4Rn5ozAYC/xaktJnewmfwxtNFuLqbYYOx4qcnY=;
+        b=dVMsHg7U0obEmuHJzs2cABGiBCwHiwbX+N3IKaT5JOWqic+YxcrHbeXUxoPyhJjwUw
+         a2Giw48nnTwEHaybyE+3xIWKIWvAKLhCknyaSf3Yx44ZRJr96tK3rhSoDxdeM3e7isLc
+         HgbEnXRDjUnY5+22LAERQkN/u/Bigs5w3/rnjsNodRodnVBpBg/tP9+QcMkXCCbKrZ/J
+         xeaxi38BdxlO8PvCww1lkZ/2oMmkQvzBULh4HT1VYaw05Oyf4BuuOUCafn5cr67DD/Xq
+         wpzFVWqbFieIJrq/mt/JuM6XEgZpFUK/FxHnds2Kvo7A/sdlv2CN4i+iiLv3sWfu4W+I
+         sxQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697583659; x=1698188459;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+aOij4Rn5ozAYC/xaktJnewmfwxtNFuLqbYYOx4qcnY=;
+        b=O1FXsAyzTASHjoO7Yl/Tl5V6d6tJwa90g6gOxbFw964QeP3lH1hlIT6dLkJveOSQX4
+         9zoydRO/gsjP/OV7Y4ArucJSuS2fksAD3bCzXjva0aFoq74f59DExjNZsve5Swqmxw/b
+         27ZunECDWTIbxfzX/kevhoy2+9yZl1DIlFq2aelwGa0ugIMhi/Osz5OPyF/zPl2A4qft
+         tSqEjFjhvtwmqD9NM1CcRKjNobbqKUynOsw9ssilv2hILcAqtXaTiTKxKEekWGwWT4Ln
+         PiTH7eovMwZI7mbrPDEyAOmCcaEnDjV2kibw1KZ0+aJUwtfdMcQPkKc6h3HdpUqZukNa
+         J/Yw==
+X-Gm-Message-State: AOJu0YzoHdrJsXBhvH2UYRGSqsz4q0vuP/VLc5cvsLMzRfsJmr2sW8FR
+	llo9msLBaJtyTQktLTE7af111/oKZyKzBw==
+X-Google-Smtp-Source: AGHT+IEhU1vD8v1m+ekF+ucRRBJmFG7TIm5dIPxv294gQblXA7bAn4MVUEtsbs+xYURNwuIgPPStnA==
+X-Received: by 2002:a1f:a658:0:b0:49a:bff1:23 with SMTP id p85-20020a1fa658000000b0049abff10023mr3686790vke.5.1697583658923;
+        Tue, 17 Oct 2023 16:00:58 -0700 (PDT)
+Received: from localhost.localdomain (ool-4573ff95.dyn.optonline.net. [69.115.255.149])
+        by smtp.googlemail.com with ESMTPSA id fv21-20020a05622a4a1500b004197079f2f8sm963664qtb.64.2023.10.17.16.00.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Oct 2023 16:00:58 -0700 (PDT)
+From: Daniel Kirsch <djkirsch326@gmail.com>
 To: cip-dev@lists.cip-project.org
-Subject: [isar-cip-core][PATCH 1/2] Update Isar revision
-Date: Tue, 17 Oct 2023 07:59:14 +0200
-Message-Id: <d6ebec910bd65b18d0a33abbcf7b57e1ffb8454d.1697522355.git.jan.kiszka@siemens.com>
-In-Reply-To: <cover.1697522355.git.jan.kiszka@siemens.com>
-References: <cover.1697522355.git.jan.kiszka@siemens.com>
+Cc: Daniel Kirsch <djkirsch326@gmail.com>
+Subject: [4.4.y-cip, PATCH] powerpc/prom: fix build
+Date: Tue, 17 Oct 2023 18:59:15 -0400
+Message-Id: <20231017225915.45448-1-djkirsch326@gmail.com>
+X-Mailer: git-send-email 2.39.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-294854:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 17 Oct 2023 05:59:26 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13399
+ <cip-dev@lists.cip-project.org>; Wed, 18 Oct 2023 00:22:12 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13401
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+A missing include generated a implicit function declaration error
+when compiling for PowerPC. This patch fixes the build.
 
-This brings a couple of fixes some downstream users are interesting it.
-Therefore, make sure isar-cip-core itself is ready for it.
-
-One adaption is needed because of the factored-out and modified
-dpkg-source job. It now filters out binaries from the source package by
-default, but we have some in edk2-standalonemm-rpmb. So, drop that
-default filter in that package.
-
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Signed-off-by: Daniel Kirsch <djkirsch326@gmail.com>
 ---
- kas-cip.yml                                       | 2 +-
- recipes-bsp/edk2/edk2-standalonemm-rpmb_202305.bb | 3 +++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ arch/powerpc/kernel/prom.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kas-cip.yml b/kas-cip.yml
-index 84b74414..b255c977 100644
---- a/kas-cip.yml
-+++ b/kas-cip.yml
-@@ -22,7 +22,7 @@ repos:
+diff --git a/arch/powerpc/kernel/prom.c b/arch/powerpc/kernel/prom.c
+index d040662e4c16..cc03dab1eb64 100644
+--- a/arch/powerpc/kernel/prom.c
++++ b/arch/powerpc/kernel/prom.c
+@@ -34,6 +34,7 @@
+ #include <linux/of.h>
+ #include <linux/of_fdt.h>
+ #include <linux/libfdt.h>
++#include <linux/jump_label.h>
  
-   isar:
-     url: https://github.com/ilbers/isar.git
--    commit: dff8ad504b54a4e292a1b986cdc74ebc9e6e177a
-+    commit: 30471bb3f787fb0aa822d15e141ecce2f3b99860
-     layers:
-       meta:
- 
-diff --git a/recipes-bsp/edk2/edk2-standalonemm-rpmb_202305.bb b/recipes-bsp/edk2/edk2-standalonemm-rpmb_202305.bb
-index 1a589184..01dcbf99 100644
---- a/recipes-bsp/edk2/edk2-standalonemm-rpmb_202305.bb
-+++ b/recipes-bsp/edk2/edk2-standalonemm-rpmb_202305.bb
-@@ -40,6 +40,9 @@ PV-openssl = "OpenSSL_1_1_1t"
- 
- DEBIAN_BUILD_DEPENDS = "bash, python3:native, dh-python, uuid-dev:native"
- 
-+# edk2-edk2-stable comes with two pre-built .a files that need to be preserved
-+DPKG_SOURCE_EXTRA_ARGS = ""
-+
- do_prepare_build() {
-     deb_debianize
- 
+ #include <asm/prom.h>
+ #include <asm/rtas.h>
 -- 
-2.35.3
+2.39.3
 
 
