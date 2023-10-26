@@ -1,231 +1,1317 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C86DDC25B6B
-	for <webhook@archiver.kernel.org>; Thu, 26 Oct 2023 10:17:25 +0000 (UTC)
-Received: from EUR01-DB5-obe.outbound.protection.outlook.com (EUR01-DB5-obe.outbound.protection.outlook.com [40.107.15.82])
- by mx.groups.io with SMTP id smtpd.web11.67279.1698315442908130415
- for <cip-dev@lists.cip-project.org>;
- Thu, 26 Oct 2023 03:17:23 -0700
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B0F2C25B48
+	for <webhook@archiver.kernel.org>; Thu, 26 Oct 2023 14:12:47 +0000 (UTC)
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+ by mx.groups.io with SMTP id smtpd.web11.71683.1698329565072456230
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Thu, 26 Oct 2023 07:12:45 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=aL9BCMdL;
- spf=pass (domain: siemens.com, ip: 40.107.15.82, mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LgLye06IBq4rzvTF9g8+YiA+tXkb0Q8VZ4phqg9/FwxLWhiHDZaYmTdlw/IkNvmDJcTNePnMtRUI528+B0KrwUSB6TlIflQpcyZFQXv/FwmUaG+TU/FweF9ZfvrO1xkTpxKXmwsPK0NIXCmil9LA+CdOVejj5H+uDM8sOPjRlqrEwvMrRuZU+WW7Oewg5RzsEWsSErzEyUEO2zPYQd10yKZGcgNXldJFGOYrQROqw2xsK8IsCWQ3klC03JpGuGbCqgiMQmfFIOza7gfb+0LEW94RrQvK0L/7kjc3EmOgghAcXZhaZWJ150ZpswCl/+3QOyta3Rr8kyk9YT+wiH/TQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=k4YBSDcqcffR6XhhhmFvXTgKPCVBBefIlqPEiII0z3c=;
- b=ItvhBJpVX4rgXU2ZcLlOyKs7rjnqt81AV5xDT1l6g547CWob0eZorQu3LRnYM5PrAmKuQGTm/1b3kMm1WJPtXZv1/qQf+b45XlNZX+m71zuu51c4Ho7TMtA//+fcBJvUyREQ7JCvn7zKEPojAWod79ub3nT9mDaGM0v3UJa7hBhSGtjWUu5/xLdOfMA27Y9TYFek4Cge2EJxiOtt+4w1SokfFt/pIHXhePm64C+66WmoamAhgHmzdIT4Ghnhk+zI3fJtbzByKhL+uMdDzQLOT4TaFe/6I3LVOeIf6QVb4crnj5G1mI38IdK7hdtA+AK9SFZD0upTR2djGfc/6C+j9Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k4YBSDcqcffR6XhhhmFvXTgKPCVBBefIlqPEiII0z3c=;
- b=aL9BCMdLCiWbXX1N6tGYp6oWjSPFJ4GRsjpirzYqUghTrIQAqt76lgMcyeT906PCC7NgKOyCXvtbjYEKa0xHbg4ij9bjJcbrPjAkxdo2ocP2prHVcJT1ClfvtS6p3KPVbICdH/0YcNMRwS9wVmA42kKTgpPvnQPua3QN6EHhGLmN3YZGME4Kmsj6GnaVfV2NLs8x9GIwk6VEHe1uhPSQZTsg7N93SxUVlU45hwhZBDIO0Tai9x93sWulZD0Vj9rwxn2zUfcNw99aa2O50vSt6fUkHDUksYU6kLFUw/28rEZ1FgJfGW8FLO8RX2gctuMNtGyXXsK6fGQa2I7hn3gSWg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by GV2PR10MB7558.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:dc::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6907.32; Thu, 26 Oct
- 2023 10:17:19 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::ce06:5d24:9896:669c]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::ce06:5d24:9896:669c%6]) with mapi id 15.20.6907.032; Thu, 26 Oct 2023
- 10:17:18 +0000
-Message-ID: <b75e66fc-ed3b-4890-8f8b-bca92c1be296@siemens.com>
-Date: Thu, 26 Oct 2023 12:17:14 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core 2/2] README_version-release-policy.md: Add product
- description details
-Content-Language: en-US
-To: Sai.Sathujoda@toshiba-tsip.com, cip-dev@lists.cip-project.org
-CC: dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
-References: <20230901081943.1816811-1-Sai.Sathujoda@toshiba-tsip.com>
- <20230901081943.1816811-2-Sai.Sathujoda@toshiba-tsip.com>
- <03e48c84-2497-49fe-a61e-2e1fe6b95251@siemens.com>
- <OSAPR01MB49456019A81DE8EA4D79E820C2DDA@OSAPR01MB4945.jpnprd01.prod.outlook.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <OSAPR01MB49456019A81DE8EA4D79E820C2DDA@OSAPR01MB4945.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: CH2PR15CA0016.namprd15.prod.outlook.com
- (2603:10b6:610:51::26) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+ dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=kzwimyBd;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.182, mailfrom: bot@kernelci.org)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1c9daca2b85so6815585ad.1
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Thu, 26 Oct 2023 07:12:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1698329564; x=1698934364; darn=lists.cip-project.org;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=dS0NVG/bbEYXy3Go0U1Z/xpNrGH4xrInF+O8P2hO5oM=;
+        b=kzwimyBdTPJeRBDvBaO545+m2Sct1nQIKp3XX3OJQirsX/MXUU17QbMH0ThiUajvtx
+         RzM0eLcHHAdcGSIc0NrTC05kFMLtbBawkFbtgeEuWwVofBPLWex6Hf/A6ZU8TUY3NEvh
+         hf7KcMJFi506zw2H7aNfCOKgeIXYz1ZxyGAeUhydDe7jmKAWLJWUCiziacAg1CCUxzO4
+         2CJsLC7lSaxyj4eKMS1yoV3VQ3hSvBvSlNMFHhm7ZR3JkyVxJOdFL24PoKFa5+cQCAgf
+         Q/ytikKNE5omKgXOGVFVaAJULEkOLpQ9BGrm8AasecxITS25dE1OGOR+XfNmSkGpF9By
+         DvzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698329564; x=1698934364;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dS0NVG/bbEYXy3Go0U1Z/xpNrGH4xrInF+O8P2hO5oM=;
+        b=AV/VBjnrhmljbQBOnX7MPvY0IaN7I6/8ThVmZF/LLKYhagqBRXeuAIhoVWnqcUa7Sm
+         VoTZPGIpbju6ffFEAMuwAi21CjVvj2kImEQlnNLDfPzf+HYSeFNKy8vD4dO+ZG9fPo3W
+         nbRk+J1pdVoco9Z+GQOErLfKKH3CJpW1kZlbJGGiEdfRCqhkAjkjXOowlqdb948oT2JM
+         D1gZqN6ONKAOMug80/VknSrTmg+ofxWcKmkY3Sq5Iwf4l9iWnrrl3VyoDiCKSv0PKus6
+         JkCOKMprUHGhA8MQfZzeQL2GyaYiAsfOs1IzwFwvlzZn3evYWaZMPKcdDccr24GChYkS
+         vDog==
+X-Gm-Message-State: AOJu0YyNeBOlBXmDizHDJay0FUWr3tNF4E14WTY8viX2Y9a0ak5diJxJ
+	QZlS1auWDFqdozonJ0PZWz0bUB43ezKIOqrw6Ww=
+X-Google-Smtp-Source: AGHT+IHjd7h/LY7Qdk1RWxdVU3sIwMg+r21cNhnQnGb3gH6i4RTzDpzKGOvXgN9bllWUm5EcBUeZNA==
+X-Received: by 2002:a17:902:e887:b0:1c5:cf7c:4d50 with SMTP id w7-20020a170902e88700b001c5cf7c4d50mr3991058plg.18.1698329563188;
+        Thu, 26 Oct 2023 07:12:43 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
+        by smtp.gmail.com with ESMTPSA id h7-20020a170902ac8700b001caa0ee76b1sm867644plr.211.2023.10.26.07.12.41
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Oct 2023 07:12:41 -0700 (PDT)
+Message-ID: <653a73d9.170a0220.76784.21e4@mx.google.com>
+Date: Thu, 26 Oct 2023 07:12:41 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GV2PR10MB7558:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1b41ec24-7f4c-46d0-e153-08dbd60cbc20
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	PDL6PTTyBLj3fk0yMq81GkV91jOTZFVsG/eqgIp3g5mhBqvxSF4Cqh4PVVHm2Svo7CSx7MFzuEyA0CVMLq/RLI8inaQpr0tVWesWSZ5Ki94fHppkG4pKvQY3AbdV22Sp4c7hARrXvYdV0v3hYsGApev2UKXmSpYP/gL2Q7iMw3vJs7zcg5ccixQgcGNeoqjq5rIwKCluyeUFvYxKHQX0/rhHkToUPszQnH988aLSnH7iI1OBexXp+S4qoSqMTAov09FJqwczaZil1W4awcUoc9WhT7xcPDccJslqOcrs3S7tfsrszAJlypNJ03Ahf7v61rP8ULE7xch2JgsLsy5Hhl3Taf4tfumz6MQWTxVQaW3n4n2tJJt0PAdef8p04BMEro9f1NXdynWHiwORSnlJqSITv4YglSHfrQbp6hEk9ql5O5vdDfmrtK0D/8L1T9g/rRNbihsfnUmMMgS014NHcOVUflERu8BFJwbKUQ5LAHgpxF8fbig/UGpHg9/mxDbaTuh34KPS1PojK1c8t0RnftJumGy6RfG8PMZhMhePEiRtmxxoQGqtgW1ZFjE8lHJ+M99t/Z8BRECEs3zlO0ds3tTY7Z4W+AFE5v6bBGSlMfPXY5mvBmTfFfsfihza04f28Nwl2L17sEoL15VMspEHOuveiwc7sKH1HQqykGkCKxY=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(396003)(39860400002)(366004)(376002)(346002)(136003)(230922051799003)(451199024)(1800799009)(186009)(64100799003)(66946007)(36756003)(2906002)(38100700002)(6506007)(478600001)(316002)(82960400001)(2616005)(66556008)(6666004)(966005)(6486002)(53546011)(6512007)(83380400001)(44832011)(86362001)(31696002)(5660300002)(4326008)(8676002)(41300700001)(8936002)(66476007)(26005)(31686004)(319154004)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?DTmrZ0O6W24lPtdOAmLmif5Q12fTcSNEc6CROaudYA7K+1uaXbjEXSDpRIwp?=
- =?us-ascii?Q?K19KK6h3k9kvBvx44+G9hj8OqrQ2SiCAcVx/m//08dzl0ni1n7b+XNMrhA9K?=
- =?us-ascii?Q?RK7X5qya3+TKww6ZYG8q8+T3Reg5nDRCBPQWabpQqrL4jwtFQE7MIUMjtP3R?=
- =?us-ascii?Q?c8f/NKZ27oBDWWV7uFZ4l/L/E05e/PXrPPZvrR0jc1c4VYjiBctG5485K0l3?=
- =?us-ascii?Q?HrZ3wcN4XeJj335Nk8PtotiJl2sjc7Qso9eRVx9CMAox3O8QBTw6MOyidKU5?=
- =?us-ascii?Q?QFoT8w1GUGnVfqZ4FXaYULMX+4/nQ6Ic4JBMmHIQ2V54/MPmeR+/PNttStqX?=
- =?us-ascii?Q?+GSlX9AlWGXj73m2BjCaaoSaBvH2xapbIu6rNdFIKFgKvhWD26unWPftIt12?=
- =?us-ascii?Q?MPO18FFfRnCDsXSjUFd28C+Gn8kVUBk7u4gOqZrBOe1hN/AF9Ofk0lokCXa8?=
- =?us-ascii?Q?O8ns7ztTAKeb+4/q6YhihGsiD9IXwdUH3bGUbl2uezveITqNpAPit3BtYGxk?=
- =?us-ascii?Q?KUAeEG3zyX7eV5yjhxMmD5H8agqRrrCDlgQOJXWqqHcy+O3cemIA61A/Q75f?=
- =?us-ascii?Q?ne+uJH+8YzGHz/XW/B5zkRKnVQRF5ukFDr9jbg3WO/Dt6DbVTJRojEVcOFVm?=
- =?us-ascii?Q?Jgl+5cnoWV47zLYcrysGoLr4WZFuH6IdgziS4Brr5JDiPpXc6OVuHZe+tzWI?=
- =?us-ascii?Q?YABFCRNdyTtGPsBfjNN3uCHcyIib5JtQKwdDnVvstH18Ga+fo3s8HORU7/KT?=
- =?us-ascii?Q?DIxno1NCzMVVWyGyviP1aqzcf3qGWzGDXprGR2pIjN1Fxh+cdIsym724Dzi/?=
- =?us-ascii?Q?jXH2Z4e5HY6hyOzj12YGkIMN0XkahCeDGGxuv7mj5tyXI9ibWY0UaazAJ9Wn?=
- =?us-ascii?Q?q+U2oG/7NISeS4RZKGZT3NOgfuUMjdMXZA4AZ38EgO9LbgqqumYajyqeQi7m?=
- =?us-ascii?Q?svXZfD9ozPfySedYXRzLs5oksQD9adH2itJfrimp4Qsrj6aqJJ5ZZtocxfu2?=
- =?us-ascii?Q?kk+/KbpkEtyJDNSJk1ljwLOerulp1EO6cYf+6Ow9s1riiO+0QgCZvyyTNRxF?=
- =?us-ascii?Q?w9vSoLahV2zab10mNs+V/bgWVXFGOORkGnci6cvDMUCij1rsIkf4QGpReE9u?=
- =?us-ascii?Q?kfRMp82VYeq99FK+zxdN7Z3AJkmE0JuxqbBxgjXQg0WTyc/2RhNdMGPd6cWK?=
- =?us-ascii?Q?hmSwPpR1672dos+Q0VfNeICHQ4yUshOoCDPTE0D+UhAZlsb/DhdwS0gctm92?=
- =?us-ascii?Q?gKEaPTBjkdc5DX/GnDMTzBU4EDjO8e+8xz8FNjrYSt5cE6pOQxFb6HAXlUT5?=
- =?us-ascii?Q?VHEyUqBPJkAfN74Cz2xMTp6r/9Yfyyl1+AjtLaX1SOI7PMuMb8WFLhcZMGF5?=
- =?us-ascii?Q?yfLYAWi5pJqrKM8ItAZKjr+BqSxM1nEfPimpHjzDf7DLeLU9KKRqo5J4cm6q?=
- =?us-ascii?Q?otTBq+ukCUDYMgXVOdKKNK+zzUQjD7uFCD+jMfPXSdSukDE8sDsFjqOoHeed?=
- =?us-ascii?Q?2bso76wT6XTlid3AjN3Fah9j8ZYFdr/apymQQa5kkV3MaQdwfeKu+40OFJrR?=
- =?us-ascii?Q?4cAVyutTDibc9WQmBJuZ+6fpYcBJw0bvOI4Q+z9v?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b41ec24-7f4c-46d0-e153-08dbd60cbc20
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Oct 2023 10:17:18.8675
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9T0ozqbGuEuhfoBgu9LlIfSdAmmzb7jmK6pQ3vfRG+axwY4F7ZXyq1G3OI4wTIkgEOr9RgW5MtjhoYg/aftwqQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR10MB7558
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: v4.4-st20-3596-g73e7f2b880d98
+X-Kernelci-Report-Type: test
+X-Kernelci-Branch: ci/pavel/linux-test
+X-Kernelci-Tree: cip-gitlab
+Subject: cip-gitlab/ci/pavel/linux-test baseline-nfs: 34 runs,
+ 62 regressions (v4.4-st20-3596-g73e7f2b880d98)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
+From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 26 Oct 2023 10:17:25 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13463
+ <cip-dev@lists.cip-project.org>; Thu, 26 Oct 2023 14:12:47 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13465
 
-On 26.10.23 10:56, Sai.Sathujoda@toshiba-tsip.com wrote:
-> Hi Jan,
->=20
-> We are thinking that this description table will help in Configuration ma=
-nagement as well as in future where one can refer this to know the features=
- for specific release. This will help to create images of their choice.
->=20
-> E.g. version v1.1 meta-data is used to create evaluation images with some=
- specific features which might have been deprecated in future point of time=
-. Later when someone in future wants to generate an image with those specif=
-ic features, then the information in this table will help.
->=20
-> Please provide your opinion, Jan.
+cip-gitlab/ci/pavel/linux-test baseline-nfs: 34 runs, 62 regressions (v4.4-=
+st20-3596-g73e7f2b880d98)
 
-All fine, but please don't duplicate existing efforts (git history +
-announcement emails, existing descriptions), augment them.
+Regressions Summary
+-------------------
 
-If we want something similar to [1], let's propose / discuss that. But
-recording the obvious information that buster-bookworm and 4.4-6.1 are
-supported (kas-container menu...) in another document is not improving
-the situation a lot, rather creates the risk to leave that document
-out-of-sync behind after a while. In fact, it even fells short on
-describing the actually supported combinations (KERNEL_4_4 depends on
-!ARCH_ARM64 && !ARCH_RISCV64).
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+acer-cb317-1h-c3z6-dedede    | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
 
-Jan
+acer-chromebox-cxi4-puff     | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
 
-[1] https://github.com/ilbers/isar/blob/master/RECIPE-API-CHANGELOG.md
+acer-cp514-3wh-r0qs-guybrush | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
 
->=20
-> Thanks and Regards,
-> Sai Ashrith.
->=20
-> -----Original Message-----
-> From: Jan Kiszka <jan.kiszka@siemens.com>=20
-> Sent: Friday, September 1, 2023 4:10 PM
-> To: ashrith sai(=EF=BC=B4=EF=BC=B3=EF=BC=A9=EF=BC=B0) <Sai.Sathujoda@tosh=
-iba-tsip.com>; cip-dev@lists.cip-project.org
-> Cc: dinesh kumar(=EF=BC=B4=EF=BC=B3=EF=BC=A9=EF=BC=B0 TMIEC ODG Porting) =
-<dinesh.kumar@toshiba-tsip.com>; hayashi kazuhiro(=E6=9E=97 =E5=92=8C=E5=AE=
-=8F =EF=BC=A4=EF=BC=AD=EF=BC=A5 =E2=97=8B=EF=BC=A4=EF=BC=A9=EF=BC=A7=E2=96=
-=A1=EF=BC=AD=EF=BC=B0=EF=BC=B3=E2=97=8B=EF=BC=AD=EF=BC=B0=EF=BC=94) <kazuhi=
-ro3.hayashi@toshiba.co.jp>
-> Subject: Re: [isar-cip-core 2/2] README_version-release-policy.md: Add pr=
-oduct description details
->=20
-> On 01.09.23 10:19, Sai.Sathujoda@toshiba-tsip.com wrote:
->> From: Sai <Sai.Sathujoda@toshiba-tsip.com>
->>
->> The Debian releases, Kernel versions and image features supported for=20
->> repsective isar-cip-core release information is added.
->=20
-> respective
->=20
->>
->> Signed-off-by: Sai <Sai.Sathujoda@toshiba-tsip.com>
->> ---
->>  doc/README_version-release-policy.md | 8 ++++++++
->>  1 file changed, 8 insertions(+)
->>
->> diff --git a/doc/README_version-release-policy.md=20
->> b/doc/README_version-release-policy.md
->> index 918e77a..f8dde38 100644
->> --- a/doc/README_version-release-policy.md
->> +++ b/doc/README_version-release-policy.md
->> @@ -4,6 +4,7 @@
->>  1. [Objective](#objective)
->>  2. [Versioning system](#versioningsystem)  3. [Release=20
->> policy](#releasepolicy)
->> +4. [Product Description for metadata release](#productdescription)
->=20
-> We are not building products in the CIP project.
->=20
->> =20
->>  ## Objective <a name=3D"objective"></a>
->> =20
->> @@ -28,3 +29,10 @@ The isar-cip-core metadata follows semantic=20
->> versioning system i.e **x.y.z** form  An approximate time gap of 3 month=
-s is taken between consecutive regular releases. During every release, CIP-=
-Core plans to give out recipes (isar-cip-core metadata) using which the use=
-r can build the flavor of their choice.
->> =20
->>  All the releases can be found [here](https://gitlab.com/cip-project/cip=
--core/isar-cip-core/-/tags).
->> +
->> +## Product Description for metadata release <a name=3D"productdescripti=
-on></a>"
->> +
->> +| **Metadata version** | **Supported Debian versions**   | **Supported =
-Kernel versions**                | **Features**                      |
->> +| -------------------- | --------------------------------| ------------=
----------------------------------| --------------------------------- |
->> +| v1.0                 |  Buster <br> Bullseye               |   4.4.x-=
-cip <br> 4.19.x-cip <br> 5.10.x-cip <br> 6.1.x-mainline  | Flashable image =
-<br> Security extensions <br> Testing extensions <br> SWupdate support for =
-root partition <br> Secure boot <br> Encryption of data partitions  |
->> +| v1.1                 |  Buster <br> Bullseye <br> Bookworm | 4.4.x-ci=
-p <br> 4.19.x-cip <br> 5.10.x-cip <br> 6.1.x-cip | Flashable image <br> Sec=
-urity extensions <br> Testing extensions <br> SWupdate support for root par=
-tition <br> Secure boot <br> Encryption of data partitions  |
->=20
-> This is like a mini changelog, in addition to the full changelog (git
-> history) and the release summaries. What is the purpose if this table, wh=
-o is expected to read that?
->=20
-> Jan
->=20
-> --
-> Siemens AG, Technology
-> Linux Expert Center
+asus-C433TA-AJ0005-rammus    | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
 
---=20
-Siemens AG, Technology
-Linux Expert Center
+asus-C436FA-Flip-hatch       | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
 
+asus-C523NA-A20057-coral     | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+asus-CM1400CXA-dalboz        | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+asus-cx9400-volteer          | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+beaglebone-black             | arm    | lab-broonie   | gcc-10   | multi_v7=
+_defconfig         | 8          =
+
+beaglebone-black             | arm    | lab-cip       | gcc-10   | multi_v7=
+_defconfig         | 8          =
+
+beaglebone-black             | arm    | lab-broonie   | gcc-10   | omap2plu=
+s_defconfig        | 15         =
+
+beaglebone-black             | arm    | lab-cip       | gcc-10   | omap2plu=
+s_defconfig        | 15         =
+
+dell-latitude...4305U-sarien | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+dell-latitude...8665U-sarien | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+hp-11A-G6-EE-grunt           | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+hp-14-db0003na-grunt         | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+hp-x360-14-G1-sona           | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+hp-x360-14a-cb0001xx-zork    | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+lenovo-TPad-C13-Yoga-zork    | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+
+  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fpavel%2Fli=
+nux-test/kernel/v4.4-st20-3596-g73e7f2b880d98/plan/baseline-nfs/
+
+  Test:     baseline-nfs
+  Tree:     cip-gitlab
+  Branch:   ci/pavel/linux-test
+  Describe: v4.4-st20-3596-g73e7f2b880d98
+  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
+  SHA:      73e7f2b880d98bcbacb997959b6c7b220f7fe382 =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+acer-cb317-1h-c3z6-dedede    | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/653a6e1fd9d28a2d1cefcf49
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-acer-cb317-1h-c3z6-dedede.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-acer-cb317-1h-c3z6-dedede.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/653a6e1fd9d28a2d1=
+cefcf4a
+        new failure (last pass: v5.10.194-915-g33f52aa14b957) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+acer-chromebox-cxi4-puff     | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/653a6e21d9d28a2d1cefcf4c
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-acer-chromebox-cxi4-puff.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-acer-chromebox-cxi4-puff.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/653a6e21d9d28a2d1=
+cefcf4d
+        new failure (last pass: v5.10.194-915-g33f52aa14b957) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+acer-cp514-3wh-r0qs-guybrush | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/653a6e06c31ec3ad78efcf04
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-acer-cp514-3wh-r0qs-guybrush.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-acer-cp514-3wh-r0qs-guybrush.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/653a6e06c31ec3ad7=
+8efcf05
+        new failure (last pass: v5.10.194-915-g33f52aa14b957) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+asus-C433TA-AJ0005-rammus    | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/653a6d3d047e46396eefcef4
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-asus-C433TA-AJ0005-rammus.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-asus-C433TA-AJ0005-rammus.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/653a6d3d047e46396=
+eefcef5
+        new failure (last pass: v5.10.194-915-g33f52aa14b957) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+asus-C436FA-Flip-hatch       | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/653a6f7fd3b8f1c7e3efcf2b
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-asus-C436FA-Flip-hatch.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-asus-C436FA-Flip-hatch.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/653a6f7fd3b8f1c7e=
+3efcf2c
+        new failure (last pass: v5.10.194-915-g33f52aa14b957) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+asus-C523NA-A20057-coral     | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/653a6db9467cfcda03efcefb
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-asus-C523NA-A20057-coral.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-asus-C523NA-A20057-coral.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/653a6db9467cfcda0=
+3efcefc
+        new failure (last pass: v5.10.194-915-g33f52aa14b957) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+asus-CM1400CXA-dalboz        | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/653a6e192f7837aeecefcf34
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-asus-CM1400CXA-dalboz.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-asus-CM1400CXA-dalboz.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/653a6e192f7837aee=
+cefcf35
+        new failure (last pass: v5.10.194-915-g33f52aa14b957) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+asus-cx9400-volteer          | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/653a6e2a2f7837aeecefcf4c
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-asus-cx9400-volteer.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-asus-cx9400-volteer.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/653a6e2a2f7837aee=
+cefcf4d
+        new failure (last pass: v5.10.194-915-g33f52aa14b957) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+beaglebone-black             | arm    | lab-broonie   | gcc-10   | multi_v7=
+_defconfig         | 8          =
+
+
+  Details:     https://kernelci.org/test/plan/id/653a6de1467cfcda03efcf2e
+
+  Results:     15 PASS, 21 FAIL, 2 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-10
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/arm/multi_v7_defconfig/gcc-10/lab-broonie/ba=
+seline-nfs-beaglebone-black.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/arm/multi_v7_defconfig/gcc-10/lab-broonie/ba=
+seline-nfs-beaglebone-black.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/armhf/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.dmesg.crit: https://kernelci.org/test/case/id/653a6de1467c=
+fcda03efcf33
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+        1 lines
+
+    2023-10-26T13:46:07.918662  / # =
+
+    2023-10-26T13:46:07.925092  =
+
+    2023-10-26T13:46:12.943090  / # export NFS_ROOTFS=3D'/var/lib/lava/disp=
+atcher/tmp/199986/extract-nfsrootfs-kr_56l6h'
+    2023-10-26T13:46:12.953737  export NFS_ROOTFS=3D'/var/lib/lava/dispatch=
+er/tmp/199986/extract-nfsrootfs-kr_56l6h'
+    2023-10-26T13:46:15.248553  / # export NFS_SERVER_IP=3D'192.168.56.193'
+    2023-10-26T13:46:15.259199  export NFS_SERVER_IP=3D'192.168.56.193'
+    2023-10-26T13:46:15.362283  / # #
+    2023-10-26T13:46:15.368828  #
+    2023-10-26T13:46:15.470752  / # export SHELL=3D/bin/sh
+    2023-10-26T13:46:15.477276  export SHELL=3D/bin/sh =
+
+    ... (13 line(s) more)  =
+
+
+  * baseline-nfs.bootrr.simple-audio-driver-present: https://kernelci.org/t=
+est/case/id/653a6de1467cfcda03efcf36
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:46:53.681716  /opt/bootrr/libexec/bootrr/boards/ti,am335x=
+-bone-black: 84: assert_device-present: not found
+    2023-10-26T13:46:54.711119  /lava-199986/1/../bin/lava-test-case
+    2023-10-26T13:46:54.757453  [   81.032852] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dsimple-audio-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.phy-gmii-sel-driver-present: https://kernelci.org/t=
+est/case/id/653a6de1467cfcda03efcf43
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:46:34.943524  /lava-199986/1/../bin/lava-test-case
+    2023-10-26T13:46:34.984425  [   61.259751] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dcpsw-switch-probed RESULT=3Dblocked>
+    2023-10-26T13:46:36.024504  /lava-199986/1/../bin/lava-test-case
+    2023-10-26T13:46:36.065755  [   62.340799] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dphy-gmii-sel-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.am335x-phy-driver-present: https://kernelci.org/tes=
+t/case/id/653a6de1467cfcda03efcf47
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:46:29.403706  /lava-199986/1/../bin/lava-test-case
+    2023-10-26T13:46:29.449826  [   55.724905] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dusb0-musb-dsps-probed RESULT=3Dblocked>
+    2023-10-26T13:46:30.488396  /lava-199986/1/../bin/lava-test-case
+    2023-10-26T13:46:30.533324  [   56.808724] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dusb1-musb-dsps-probed RESULT=3Dblocked>
+    2023-10-26T13:46:31.572085  /lava-199986/1/../bin/lava-test-case
+    2023-10-26T13:46:31.608312  [   57.883542] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dam335x-phy-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.musb-dsps-driver-present: https://kernelci.org/test=
+/case/id/653a6de1467cfcda03efcf48
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:46:26.171869  /lava-199986/1/../bin/lava-test-case
+    2023-10-26T13:46:26.209194  [   52.485971] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dmmc0-probed RESULT=3Dblocked>
+    2023-10-26T13:46:27.247340  /lava-199986/1/../bin/lava-test-case
+    2023-10-26T13:46:27.283397  [   53.559238] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dmmc1-probed RESULT=3Dblocked>
+    2023-10-26T13:46:28.321372  /lava-199986/1/../bin/lava-test-case
+    2023-10-26T13:46:28.365498  [   54.640859] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dmusb-dsps-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.sdhci-omap-driver-present: https://kernelci.org/tes=
+t/case/id/653a6de1467cfcda03efcf49
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:46:25.086968  /lava-199986/1/../bin/lava-test-case
+    2023-10-26T13:46:25.133037  [   51.408107] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dsdhci-omap-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.tps65217-driver-present: https://kernelci.org/test/=
+case/id/653a6de1467cfcda03efcf4f
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:46:20.524571  /lava-199986/1/../bin/lava-test-case
+    2023-10-26T13:46:20.571910  [   46.847229] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dtps65217-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.omap8240-driver-present: https://kernelci.org/test/=
+case/id/653a6de1467cfcda03efcf53
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:46:18.164990  /lava-199986/1/../bin/lava-test-case
+    2023-10-26T13:46:18.200137  [   44.476360] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Domap8240-driver-present RESULT=3Dfail>   =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+beaglebone-black             | arm    | lab-cip       | gcc-10   | multi_v7=
+_defconfig         | 8          =
+
+
+  Details:     https://kernelci.org/test/plan/id/653a70915f879b2196efcf00
+
+  Results:     15 PASS, 21 FAIL, 2 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-10
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/arm/multi_v7_defconfig/gcc-10/lab-cip/baseli=
+ne-nfs-beaglebone-black.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/arm/multi_v7_defconfig/gcc-10/lab-cip/baseli=
+ne-nfs-beaglebone-black.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/armhf/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.dmesg.crit: https://kernelci.org/test/case/id/653a70915f87=
+9b2196efcf05
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+        1 lines
+
+    2023-10-26T13:57:28.535790  / # =
+
+    2023-10-26T13:57:28.544045  =
+
+    2023-10-26T13:57:33.587787  / # export NFS_ROOTFS=3D'/var/lib/lava/disp=
+atcher/tmp/1027205/extract-nfsrootfs-ejd7baq1'
+    2023-10-26T13:57:33.598274  export NFS_ROOTFS=3D'/var/lib/lava/dispatch=
+er/tmp/1027205/extract-nfsrootfs-ejd7baq1'
+    2023-10-26T13:57:35.633982  / # export NFS_SERVER_IP=3D'172.16.3.3'
+    2023-10-26T13:57:35.644476  export NFS_SERVER_IP=3D'172.16.3.3'
+    2023-10-26T13:57:35.746747  / # #
+    2023-10-26T13:57:35.755022  #
+    2023-10-26T13:57:35.855965  / # export SHELL=3D/bin/sh
+    2023-10-26T13:57:35.863712  export SHELL=3D/bin/sh =
+
+    ... (13 line(s) more)  =
+
+
+  * baseline-nfs.bootrr.simple-audio-driver-present: https://kernelci.org/t=
+est/case/id/653a70915f879b2196efcf08
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:58:26.428197  /opt/bootrr/libexec/bootrr/boards/ti,am335x=
+-bone-black: 84: assert_device-present: not found
+    2023-10-26T13:58:27.457271  /lava-1027205/1/../bin/lava-test-case
+    2023-10-26T13:58:27.576860  [   92.634107] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dsimple-audio-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.phy-gmii-sel-driver-present: https://kernelci.org/t=
+est/case/id/653a70915f879b2196efcf15
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:58:00.403268  /lava-1027205/1/../bin/lava-test-case
+    2023-10-26T13:58:00.595582  [   65.651887] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dcpsw-switch-probed RESULT=3Dblocked>
+    2023-10-26T13:58:01.633847  /lava-1027205/1/../bin/lava-test-case
+    2023-10-26T13:58:06.284666  [   71.341396] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dphy-gmii-sel-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.am335x-phy-driver-present: https://kernelci.org/tes=
+t/case/id/653a70915f879b2196efcf19
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:57:52.815892  /lava-1027205/1/../bin/lava-test-case
+    2023-10-26T13:57:52.943786  [   58.000806] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dusb0-musb-dsps-probed RESULT=3Dblocked>
+    2023-10-26T13:57:53.986799  /lava-1027205/1/../bin/lava-test-case
+    2023-10-26T13:57:54.133664  [   59.190804] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dusb1-musb-dsps-probed RESULT=3Dblocked>
+    2023-10-26T13:57:55.174658  /lava-1027205/1/../bin/lava-test-case
+    2023-10-26T13:57:56.651587  [   61.707616] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dam335x-phy-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.musb-dsps-driver-present: https://kernelci.org/test=
+/case/id/653a70915f879b2196efcf1a
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:57:49.320961  /lava-1027205/1/../bin/lava-test-case
+    2023-10-26T13:57:49.466830  [   54.523911] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dmmc0-probed RESULT=3Dblocked>
+    2023-10-26T13:57:50.509554  /lava-1027205/1/../bin/lava-test-case
+    2023-10-26T13:57:50.624803  [   55.680847] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dmmc1-probed RESULT=3Dblocked>
+    2023-10-26T13:57:51.665500  /lava-1027205/1/../bin/lava-test-case
+    2023-10-26T13:57:51.773692  [   56.830894] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dmusb-dsps-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.sdhci-omap-driver-present: https://kernelci.org/tes=
+t/case/id/653a70915f879b2196efcf1b
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:57:48.121971  /lava-1027205/1/../bin/lava-test-case
+    2023-10-26T13:57:48.282575  [   53.338083] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dsdhci-omap-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.tps65217-driver-present: https://kernelci.org/test/=
+case/id/653a70915f879b2196efcf21
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:57:42.837229  /lava-1027205/1/../bin/lava-test-case
+    2023-10-26T13:57:42.967178  [   48.023289] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dtps65217-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.omap8240-driver-present: https://kernelci.org/test/=
+case/id/653a70915f879b2196efcf25
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:57:40.058938  /lava-1027205/1/../bin/lava-test-case
+    2023-10-26T13:57:40.191081  [   45.247577] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Domap8240-driver-present RESULT=3Dfail>   =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+beaglebone-black             | arm    | lab-broonie   | gcc-10   | omap2plu=
+s_defconfig        | 15         =
+
+
+  Details:     https://kernelci.org/test/plan/id/653a6cfd07b5b99bc1efcef5
+
+  Results:     24 PASS, 17 FAIL, 2 SKIP
+  Full config: omap2plus_defconfig
+  Compiler:    gcc-10
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/arm/omap2plus_defconfig/gcc-10/lab-broonie/b=
+aseline-nfs-beaglebone-black.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/arm/omap2plus_defconfig/gcc-10/lab-broonie/b=
+aseline-nfs-beaglebone-black.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/armhf/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.dmesg.crit: https://kernelci.org/test/case/id/653a6cfd07b5=
+b99bc1efcef9
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+        1 lines
+
+    2023-10-26T13:42:15.548352  / # =
+
+    2023-10-26T13:42:15.553304  =
+
+    2023-10-26T13:42:20.574740  / # export NFS_ROOTFS=3D'/var/lib/lava/disp=
+atcher/tmp/199947/extract-nfsrootfs-wsvdlkzk'
+    2023-10-26T13:42:20.586050  export NFS_ROOTFS=3D'/var/lib/lava/dispatch=
+er/tmp/199947/extract-nfsrootfs-wsvdlkzk'
+    2023-10-26T13:42:22.879626  / # export NFS_SERVER_IP=3D'192.168.56.123'
+    2023-10-26T13:42:22.890612  export NFS_SERVER_IP=3D'192.168.56.123'
+    2023-10-26T13:42:22.997187  / # #
+    2023-10-26T13:42:23.002495  #
+    2023-10-26T13:42:23.112009  / # export SHELL=3D/bin/sh
+    2023-10-26T13:42:23.117489  export SHELL=3D/bin/sh =
+
+    ... (13 line(s) more)  =
+
+
+  * baseline-nfs.bootrr.hdmi-audio: https://kernelci.org/test/case/id/653a6=
+cfd07b5b99bc1efcefc
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:43:05.738153  /lava-199947/1/../bin/lava-test-case
+    2023-10-26T13:43:05.885863  [  102.760721] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dhdmi-audio-probed RESULT=3Dblocked>
+    2023-10-26T13:43:07.005651  /lava-199947/1/../bin/lava-test-case
+    2023-10-26T13:43:07.302898  [  104.178083] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dhdmi-audio RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.simple-audio-driver-present: https://kernelci.org/t=
+est/case/id/653a6cfd07b5b99bc1efcefd
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:43:03.384415  /opt/bootrr/libexec/bootrr/boards/ti,am335x=
+-bone-black: 84: assert_device-present: not found
+    2023-10-26T13:43:04.495969  /lava-199947/1/../bin/lava-test-case
+    2023-10-26T13:43:04.630609  [  101.503505] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dsimple-audio-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.hdmi-codec-driver-present: https://kernelci.org/tes=
+t/case/id/653a6cfd07b5b99bc1efcefe
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:43:01.976464  /lava-199947/1/../bin/lava-test-case
+    2023-10-26T13:43:02.094549  [   98.968282] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dmcasp0-probed RESULT=3Dblocked>
+    2023-10-26T13:43:03.230054  /lava-199947/1/../bin/lava-test-case
+    2023-10-26T13:43:03.356892  [  100.229951] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dhdmi-codec-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.mcasp-driver-loaded: https://kernelci.org/test/case=
+/id/653a6cfd07b5b99bc1efceff
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:42:59.471330  /lava-199947/1/../bin/lava-test-case
+    2023-10-26T13:42:59.590220  [   96.463699] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dtda19988-probed RESULT=3Dblocked>
+    2023-10-26T13:43:00.722020  /lava-199947/1/../bin/lava-test-case
+    2023-10-26T13:43:00.840373  [   97.713836] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dmcasp-driver-loaded RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.tda19988-driver-present: https://kernelci.org/test/=
+case/id/653a6cfd07b5b99bc1efcf00
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:42:56.998030  /lava-199947/1/../bin/lava-test-case
+    2023-10-26T13:42:57.130975  [   94.004395] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dlcdc-probed RESULT=3Dblocked>
+    2023-10-26T13:42:58.264802  /lava-199947/1/../bin/lava-test-case
+    2023-10-26T13:42:58.376979  [   95.250348] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dtda19988-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.tilcdc-driver-probed: https://kernelci.org/test/cas=
+e/id/653a6cfd07b5b99bc1efcf01
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:42:55.723414  /lava-199947/1/../bin/lava-test-case
+    2023-10-26T13:42:55.910131  [   92.783324] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dtilcdc-driver-probed RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.omap-sham-driver-present: https://kernelci.org/test=
+/case/id/653a6cfd07b5b99bc1efcf06
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:42:52.474695  /lava-199947/1/../bin/lava-test-case
+    2023-10-26T13:42:52.592951  [   89.465819] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Domap-sham-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.omap-aes-driver-present: https://kernelci.org/test/=
+case/id/653a6cfd07b5b99bc1efcf09
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:42:49.657876  /lava-199947/1/../bin/lava-test-case
+    2023-10-26T13:42:49.767690  [   86.641539] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Domap-aes-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.phy-gmii-sel-driver-present: https://kernelci.org/t=
+est/case/id/653a6cfd07b5b99bc1efcf0c
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:42:45.425719  /lava-199947/1/../bin/lava-test-case
+    2023-10-26T13:42:45.592383  [   82.465371] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dcpsw-switch-probed RESULT=3Dblocked>
+    2023-10-26T13:42:46.905559  /lava-199947/1/../bin/lava-test-case
+    2023-10-26T13:42:47.021018  [   83.893768] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dphy-gmii-sel-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.cpsw-switch-driver-present: https://kernelci.org/te=
+st/case/id/653a6cfd07b5b99bc1efcf0d
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:42:44.263209  /lava-199947/1/../bin/lava-test-case
+    2023-10-26T13:42:44.341254  [   81.213387] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dcpsw-switch-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.sdhci-omap-driver-present: https://kernelci.org/tes=
+t/case/id/653a6cfd07b5b99bc1efcf15
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:42:35.431587  /lava-199947/1/../bin/lava-test-case
+    2023-10-26T13:42:36.765157  [   73.636694] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dbaseboard-eeprom-probed RESULT=3Dblocked>
+    2023-10-26T13:42:37.896653  /lava-199947/1/../bin/lava-test-case
+    2023-10-26T13:42:39.695424  [   76.568355] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dsdhci-omap-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.at24-driver-present: https://kernelci.org/test/case=
+/id/653a6cfd07b5b99bc1efcf16
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:42:34.178317  /lava-199947/1/../bin/lava-test-case
+    2023-10-26T13:42:34.303617  [   71.175885] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dat24-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.pwrbutton-driver-present: https://kernelci.org/test=
+/case/id/653a6cfd07b5b99bc1efcf19
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:42:31.452238  /lava-199947/1/../bin/lava-test-case
+    2023-10-26T13:42:31.579822  [   68.451232] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dpwrbutton-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.omap8240-driver-present: https://kernelci.org/test/=
+case/id/653a6cfd07b5b99bc1efcf1f
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:42:28.154175  /lava-199947/1/../bin/lava-test-case
+    2023-10-26T13:42:28.281170  [   65.153299] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Domap8240-driver-present RESULT=3Dfail>   =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+beaglebone-black             | arm    | lab-cip       | gcc-10   | omap2plu=
+s_defconfig        | 15         =
+
+
+  Details:     https://kernelci.org/test/plan/id/653a6d634da6d1f731efcf06
+
+  Results:     24 PASS, 17 FAIL, 2 SKIP
+  Full config: omap2plus_defconfig
+  Compiler:    gcc-10
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/arm/omap2plus_defconfig/gcc-10/lab-cip/basel=
+ine-nfs-beaglebone-black.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/arm/omap2plus_defconfig/gcc-10/lab-cip/basel=
+ine-nfs-beaglebone-black.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/armhf/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.dmesg.crit: https://kernelci.org/test/case/id/653a6d634da6=
+d1f731efcf0b
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+        1 lines
+
+    2023-10-26T13:44:13.324867  / # =
+
+    2023-10-26T13:44:13.336408  =
+
+    2023-10-26T13:44:18.384864  / # export NFS_ROOTFS=3D'/var/lib/lava/disp=
+atcher/tmp/1027193/extract-nfsrootfs-gz7053lu'
+    2023-10-26T13:44:18.405111  export NFS_ROOTFS=3D'/var/lib/lava/dispatch=
+er/tmp/1027193/extract-nfsrootfs-gz7053lu'
+    2023-10-26T13:44:20.502679  / # export NFS_SERVER_IP=3D'192.168.1.1'
+    2023-10-26T13:44:20.515746  export NFS_SERVER_IP=3D'192.168.1.1'
+    2023-10-26T13:44:20.618254  / # #
+    2023-10-26T13:44:20.627674  #
+    2023-10-26T13:44:20.744469  / # export SHELL=3D/bin/sh
+    2023-10-26T13:44:20.755589  export SHELL=3D/bin/sh =
+
+    ... (13 line(s) more)  =
+
+
+  * baseline-nfs.bootrr.hdmi-audio: https://kernelci.org/test/case/id/653a6=
+d634da6d1f731efcf0d
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:44:57.302818  /lava-1027193/1/../bin/lava-test-case
+    2023-10-26T13:44:57.366816  [   78.873961] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dhdmi-audio-probed RESULT=3Dblocked>
+    2023-10-26T13:44:58.438105  /lava-1027193/1/../bin/lava-test-case
+    2023-10-26T13:44:58.539982  [   80.044463] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dhdmi-audio RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.simple-audio-driver-present: https://kernelci.org/t=
+est/case/id/653a6d634da6d1f731efcf0e
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:44:54.975450  /opt/bootrr/libexec/bootrr/boards/ti,am335x=
+-bone-black: 84: assert_device-present: not found
+    2023-10-26T13:44:56.078638  /lava-1027193/1/../bin/lava-test-case
+    2023-10-26T13:44:56.183617  [   77.687938] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dsimple-audio-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.tda19988-driver-present: https://kernelci.org/test/=
+case/id/653a6d634da6d1f731efcf0f
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:44:48.728398  /lava-1027193/1/../bin/lava-test-case
+    2023-10-26T13:44:48.833335  [   70.337254] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dlcdc-probed RESULT=3Dblocked>
+    2023-10-26T13:44:49.920628  /lava-1027193/1/../bin/lava-test-case
+    2023-10-26T13:44:50.021656  [   71.524374] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dtda19988-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.tilcdc-driver-probed: https://kernelci.org/test/cas=
+e/id/653a6d634da6d1f731efcf10
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:44:47.502244  /lava-1027193/1/../bin/lava-test-case
+    2023-10-26T13:44:47.609082  [   69.113469] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dtilcdc-driver-probed RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.omap-sham-driver-present: https://kernelci.org/test=
+/case/id/653a6d634da6d1f731efcf15
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:44:44.595046  /lava-1027193/1/../bin/lava-test-case
+    2023-10-26T13:44:44.696248  [   66.200198] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Domap-sham-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.omap-aes-driver-present: https://kernelci.org/test/=
+case/id/653a6d634da6d1f731efcf18
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:44:41.883987  /lava-1027193/1/../bin/lava-test-case
+    2023-10-26T13:44:41.994947  [   63.498276] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Domap-aes-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.phy-gmii-sel-driver-present: https://kernelci.org/t=
+est/case/id/653a6d634da6d1f731efcf1b
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:44:38.045451  /lava-1027193/1/../bin/lava-test-case
+    2023-10-26T13:44:38.166388  [   59.669635] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dcpsw-switch-probed RESULT=3Dblocked>
+    2023-10-26T13:44:39.285579  /lava-1027193/1/../bin/lava-test-case
+    2023-10-26T13:44:39.348620  [   60.852054] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dphy-gmii-sel-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.cpsw-switch-driver-present: https://kernelci.org/te=
+st/case/id/653a6d634da6d1f731efcf1c
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:44:36.823215  /lava-1027193/1/../bin/lava-test-case
+    2023-10-26T13:44:36.926190  [   58.429655] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dcpsw-switch-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.sdhci-omap-driver-present: https://kernelci.org/tes=
+t/case/id/653a6d634da6d1f731efcf24
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:44:31.137881  /lava-1027193/1/../bin/lava-test-case
+    2023-10-26T13:44:31.242815  [   52.745485] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dbaseboard-eeprom-probed RESULT=3Dblocked>
+    2023-10-26T13:44:32.362099  /lava-1027193/1/../bin/lava-test-case
+    2023-10-26T13:44:32.467015  [   53.970158] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dsdhci-omap-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.at24-driver-present: https://kernelci.org/test/case=
+/id/653a6d634da6d1f731efcf25
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:44:29.909598  /lava-1027193/1/../bin/lava-test-case
+    2023-10-26T13:44:30.018626  [   51.521990] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dat24-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.pwrbutton-driver-present: https://kernelci.org/test=
+/case/id/653a6d634da6d1f731efcf28
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:44:27.325373  /lava-1027193/1/../bin/lava-test-case
+    2023-10-26T13:44:27.399278  [   48.902388] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dpwrbutton-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.omap8240-driver-present: https://kernelci.org/test/=
+case/id/653a6d634da6d1f731efcf2e
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:44:24.323334  /lava-1027193/1/../bin/lava-test-case
+    2023-10-26T13:44:24.440190  [   45.942289] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Domap8240-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.hdmi-codec-driver-present: https://kernelci.org/tes=
+t/case/id/653a6d634da6d1f731efcf32
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:44:53.616275  /lava-1027193/1/../bin/lava-test-case
+    2023-10-26T13:44:53.726283  [   75.230302] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dmcasp0-probed RESULT=3Dblocked>
+    2023-10-26T13:44:54.845443  /lava-1027193/1/../bin/lava-test-case
+    2023-10-26T13:44:54.950422  [   76.454898] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dhdmi-codec-driver-present RESULT=3Dfail>   =
+
+
+  * baseline-nfs.bootrr.mcasp-driver-loaded: https://kernelci.org/test/case=
+/id/653a6d634da6d1f731efcf33
+        new failure (last pass: v5.10.194-915-g33f52aa14b957)
+
+    2023-10-26T13:44:51.156914  /lava-1027193/1/../bin/lava-test-case
+    2023-10-26T13:44:51.258957  [   72.762822] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dtda19988-probed RESULT=3Dblocked>
+    2023-10-26T13:44:52.378157  /lava-1027193/1/../bin/lava-test-case
+    2023-10-26T13:44:52.481032  [   73.985451] <LAVA_SIGNAL_TESTCASE TEST_C=
+ASE_ID=3Dmcasp-driver-loaded RESULT=3Dfail>   =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+dell-latitude...4305U-sarien | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/653a6e2b8e6852739cefcf03
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-dell-latitude-5400-4305U-sarien.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-dell-latitude-5400-4305U-sarien.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/653a6e2b8e6852739=
+cefcf04
+        new failure (last pass: v5.10.194-915-g33f52aa14b957) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+dell-latitude...8665U-sarien | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/653a6e18ec94d7af6befcef3
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-dell-latitude-5400-8665U-sarien.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-dell-latitude-5400-8665U-sarien.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/653a6e18ec94d7af6=
+befcef4
+        new failure (last pass: v5.10.194-915-g33f52aa14b957) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+hp-11A-G6-EE-grunt           | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/653a6db5047e46396eefcf18
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-hp-11A-G6-EE-grunt.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-hp-11A-G6-EE-grunt.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/653a6db5047e46396=
+eefcf19
+        new failure (last pass: v5.10.194-915-g33f52aa14b957) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+hp-14-db0003na-grunt         | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/653a6d626fbf1499e5efcf01
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-hp-14-db0003na-grunt.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-hp-14-db0003na-grunt.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/653a6d626fbf1499e=
+5efcf02
+        new failure (last pass: v5.10.194-915-g33f52aa14b957) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/653a6e3f5cce3b6c0fefcef8
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-hp-x360-12b-ca0010nr-n4020-octopus.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-hp-x360-12b-ca0010nr-n4020-octopus.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/653a6e3f5cce3b6c0=
+fefcef9
+        new failure (last pass: v5.10.194-915-g33f52aa14b957) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+hp-x360-14-G1-sona           | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/653a6e64bc7956decfefcf00
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-hp-x360-14-G1-sona.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-hp-x360-14-G1-sona.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/653a6e64bc7956dec=
+fefcf01
+        new failure (last pass: v5.10.194-915-g33f52aa14b957) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+hp-x360-14a-cb0001xx-zork    | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/653a6e0bd9d28a2d1cefcf0d
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-hp-x360-14a-cb0001xx-zork.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-hp-x360-14a-cb0001xx-zork.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/653a6e0bd9d28a2d1=
+cefcf0e
+        new failure (last pass: v5.10.194-915-g33f52aa14b957) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+lenovo-TPad-C13-Yoga-zork    | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/653a6d636b3ca0b672efcef8
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-lenovo-TPad-C13-Yoga-zork.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/baseline-nfs-lenovo-TPad-C13-Yoga-zork.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/amd64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/653a6d636b3ca0b67=
+2efcef9
+        new failure (last pass: v5.10.194-915-g33f52aa14b957) =
+
+ =20
 
