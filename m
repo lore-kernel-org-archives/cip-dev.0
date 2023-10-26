@@ -2,51 +2,51 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CF77C25B48
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86540C25B67
 	for <webhook@archiver.kernel.org>; Thu, 26 Oct 2023 14:42:47 +0000 (UTC)
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
- by mx.groups.io with SMTP id smtpd.web10.202189.1698331364167311416
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+ by mx.groups.io with SMTP id smtpd.web11.72565.1698331363744625914
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Thu, 26 Oct 2023 07:42:44 -0700
+ Thu, 26 Oct 2023 07:42:43 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=HP1pjgw9;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.182, mailfrom: bot@kernelci.org)
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6b89ab5ddb7so983514b3a.0
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Thu, 26 Oct 2023 07:42:44 -0700 (PDT)
+ dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=XCuh45JK;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.175, mailfrom: bot@kernelci.org)
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-6b9af7d41d2so929734b3a.0
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Thu, 26 Oct 2023 07:42:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1698331363; x=1698936163; darn=lists.cip-project.org;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1698331362; x=1698936162; darn=lists.cip-project.org;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=G5nxpfp7B1iBHnMddrEYMMrbEVxfXrShoanDg58ErQM=;
-        b=HP1pjgw94LUWib0Vj+u+OYLNRdUZ9mycJKgxJC8Rdui7bTvo7z45nX9EmJXKq0mcNW
-         ApsYJg76kdBptduGATumSseSV7dR1+CJw+cg1w1Pw9tco48yOHKqyi3B7MnUgVtVOLuV
-         zKc3cOupcilyGYfquWxKAqUfwsA0TGZrwxuRO91oGl2zm8djdFop3WVVQwnG10EdHatJ
-         +nuCJ6xXwoYNiSzdJ8M4Ezd5NPhSjQ/YjVSRtsU2hX5/fmYW2VVNnsasPzIc9M33IIos
-         +yfylSlQVOxFpkz24mL7PgQZr+ecPpRVStPGLDdVkQV8cl3rF9adS6xxY3OKtB4q4gWB
-         flIA==
+        bh=VUn2AC+w4ya4bjz8Un791SHNeVbN+Ez6fp82RwP/h0s=;
+        b=XCuh45JK10Cr1jKZFgwzy5Y9FvxZ9y6UaD0egDeWFsBi7bggB/WhxN52IPxXPUmHU2
+         G6IzMXgPORB/TLaqu+IsEDUc1c+NjMS95MXFzMPWmHCtqhH+3nIILA4yzdwBisBtDyxA
+         6aNXITVmjPjc2HQ5XOyO0fvh6n4IT6SYi/Q6W+ybZp076dpQyHjB+6HKFJCDGJ1zNgU3
+         JTbgQZW+pBNpwK3x+jdVgmmOHJE4Tq8LsTODAbf7wN45iRjR0TgVg3BzjMhZ0g5qKWTG
+         1XGz08S8l1+i7XQMPUrr1V63l05/wAXmNX76ZZCdJ2GpNOeT7XkxyPBK4bDUw7gl3nGW
+         cgQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698331363; x=1698936163;
+        d=1e100.net; s=20230601; t=1698331362; x=1698936162;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=G5nxpfp7B1iBHnMddrEYMMrbEVxfXrShoanDg58ErQM=;
-        b=jL9Kkb6cXyvKIGY6Uh3HFdfpqGgMspxScjX1hcZhqwziU9h2V3y4afSRcjbJ+J7c9h
-         zLou+VyS5X+xi51RYkqFrn79T8j5pM4FQ0V93PnA/LLqHrthyoibrPXWl0oslxefdHyM
-         o+ZHiWnnsriN5FJ7g/L/2JhRm+8mTSoSt0liv2mEbgVqmqHKgehMrLDFMFHu2VPn8i+O
-         8QczvXCNz2uTVbIwLKEgqCPLy2zdzkln0NmFKgI/NbLcqDd3UHLMUaPwdb21Lfhc8RMv
-         j+ab41C7cRt3z3nMZEZd5jov6KHsbqkPh/JEB1RcEfrFXlhdM0ZDshqsDet7xppricSd
-         nhPQ==
-X-Gm-Message-State: AOJu0Yyo1onj/eD64tU9Tg+3L4eWe5RJruEqXr1G8xEFdExxf1Xv9zoi
-	8W2Lh/1RwRZhHoF1lZltBCGfUlJyT0ZpJqI5gEw=
-X-Google-Smtp-Source: AGHT+IHXAvbI+1yIR6kSVyy+HpFIvxRhgE0+UZz+oh0qTSNSt6kBLlVVjxPncWUhQDRxbi3fl579Xw==
-X-Received: by 2002:a05:6a00:194a:b0:690:1857:3349 with SMTP id s10-20020a056a00194a00b0069018573349mr21258056pfk.25.1698331362847;
+        bh=VUn2AC+w4ya4bjz8Un791SHNeVbN+Ez6fp82RwP/h0s=;
+        b=U66YdkEy/R5CSWdRfnKtx6Twf9MIVf1Q/yHCAFkrVpEs2eLWcRhNr3feTYO4J+LWbo
+         rRaJ8747E0tmZLe3+XR72QzKoRKJ41BT460TJgJABUeXGgk7+YGHzenSscpKtjOksVzI
+         wyKSBUNTd+Ds7uFNTSnX3ITXGOge+CZ3Vvvn6sj4bvN8SJZytUu0sMyzlnvPmkAdok14
+         wMMCXz6RSNOVwZDTWu3LCtgKtwCi2QV/gTo6Bd+HfMCDBNU3t194IipftD/9OFHrEZNP
+         PLJ62WXfKITpiNFY7Mw1mbIob3gkqVsAA5FAUlNWe2brqJ+D9O5dOajaUX+goa7BWXkK
+         MB+Q==
+X-Gm-Message-State: AOJu0YwalQGLW/QjWpADlUwNPZJXle7BIcOVgHxOEx2zY+kYjWhchfNo
+	Z6jkCdBXMbbv42qiSWur1AVuyr9qZxbU67FJFl0=
+X-Google-Smtp-Source: AGHT+IHIxJDdQCr6slyQxEHKK0YJT7b0y9bURklEQ8jA3tk8/AS/T8k5644IrtqA4bMuVC8rE4060w==
+X-Received: by 2002:aa7:8f33:0:b0:6b1:704f:2078 with SMTP id y19-20020aa78f33000000b006b1704f2078mr16357728pfr.33.1698331362428;
         Thu, 26 Oct 2023 07:42:42 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id x21-20020a63cc15000000b005b9288d51f0sm1474395pgf.48.2023.10.26.07.42.41
+        by smtp.gmail.com with ESMTPSA id w7-20020a63f507000000b005b92ba3938dsm1330521pgh.77.2023.10.26.07.42.41
         for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 26 Oct 2023 07:42:41 -0700 (PDT)
-Message-ID: <653a7ae1.630a0220.751be.4c83@mx.google.com>
+Message-ID: <653a7ae1.630a0220.61e7b.3aa8@mx.google.com>
 Date: Thu, 26 Oct 2023 07:42:41 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
@@ -55,50 +55,48 @@ X-Kernelci-Kernel: v4.4-st20-3596-g73e7f2b880d98
 X-Kernelci-Report-Type: test
 X-Kernelci-Branch: ci/pavel/linux-test
 X-Kernelci-Tree: cip-gitlab
-Subject: cip-gitlab/ci/pavel/linux-test ltp-fcntl-locktests: 3 runs,
- 3 regressions (v4.4-st20-3596-g73e7f2b880d98)
+Subject: cip-gitlab/ci/pavel/linux-test kselftest-filesystems: 7 runs,
+ 4 regressions (v4.4-st20-3596-g73e7f2b880d98)
 To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
 From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 26 Oct 2023 14:42:47 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13468
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13467
 
-cip-gitlab/ci/pavel/linux-test ltp-fcntl-locktests: 3 runs, 3 regressions (=
-v4.4-st20-3596-g73e7f2b880d98)
+cip-gitlab/ci/pavel/linux-test kselftest-filesystems: 7 runs, 4 regressions=
+ (v4.4-st20-3596-g73e7f2b880d98)
 
 Regressions Summary
 -------------------
 
-platform                  | arch   | lab           | compiler | defconfig  =
-                | regressions
---------------------------+--------+---------------+----------+------------=
-----------------+------------
-asus-C433TA-AJ0005-rammus | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-onfig+x86-board | 1          =
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+asus-C436FA-Flip-hatch       | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
 
-asus-C523NA-A20057-coral  | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-onfig+x86-board | 1          =
+asus-C523NA-A20057-coral     | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
 
-hp-11A-G6-EE-grunt        | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-onfig+x86-board | 1          =
+hp-11A-G6-EE-grunt           | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
 
 
   Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fpavel%2Fli=
-nux-test/kernel/v4.4-st20-3596-g73e7f2b880d98/plan/ltp-fcntl-locktests/
+nux-test/kernel/v4.4-st20-3596-g73e7f2b880d98/plan/kselftest-filesystems/
 
-  Test:     ltp-fcntl-locktests
+  Test:     kselftest-filesystems
   Tree:     cip-gitlab
   Branch:   ci/pavel/linux-test
   Describe: v4.4-st20-3596-g73e7f2b880d98
   URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
-  SHA:      73e7f2b880d98bcbacb997959b6c7b220f7fe382
-
-  Test suite revisions:
-    ltp-tests
-      URL:  https://github.com/linux-test-project/ltp.git
-      SHA:  3f0b2176930cf15a26597e28abf4356050136bbe =
+  SHA:      73e7f2b880d98bcbacb997959b6c7b220f7fe382 =
 
 
 
@@ -107,96 +105,128 @@ Test Regressions
 
 
 
-platform                  | arch   | lab           | compiler | defconfig  =
-                | regressions
---------------------------+--------+---------------+----------+------------=
-----------------+------------
-asus-C433TA-AJ0005-rammus | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-onfig+x86-board | 1          =
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+asus-C436FA-Flip-hatch       | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/653a6da5ba13f7038befcef3
+  Details:     https://kernelci.org/test/plan/id/653a6e262f7837aeecefcf48
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
   Full config: x86_64_defconfig+x86-board
   Compiler:    gcc-10
   Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
 /v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
--collabora/ltp-fcntl-locktests-asus-C433TA-AJ0005-rammus.txt
+-collabora/kselftest-filesystems-asus-C436FA-Flip-hatch.txt
   HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
 /v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
--collabora/ltp-fcntl-locktests-asus-C433TA-AJ0005-rammus.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230623.0/amd64/initrd.cpio.gz =
+-collabora/kselftest-filesystems-asus-C436FA-Flip-hatch.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
+elftest/20230623.0/amd64/initrd.cpio.gz =
 
 
 
-  * ltp-fcntl-locktests.login: https://kernelci.org/test/case/id/653a6da5ba=
-13f7038befcef4
+  * kselftest-filesystems.login: https://kernelci.org/test/case/id/653a6e26=
+2f7837aeecefcf49
         new failure (last pass: v5.10.194-915-g33f52aa14b957) =
 
  =
 
 
 
-platform                  | arch   | lab           | compiler | defconfig  =
-                | regressions
---------------------------+--------+---------------+----------+------------=
-----------------+------------
-asus-C523NA-A20057-coral  | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-onfig+x86-board | 1          =
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+asus-C523NA-A20057-coral     | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/653a6dee868d7366aeefcf0e
+  Details:     https://kernelci.org/test/plan/id/653a6de3868d7366aeefcf04
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
   Full config: x86_64_defconfig+x86-board
   Compiler:    gcc-10
   Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
 /v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
--collabora/ltp-fcntl-locktests-asus-C523NA-A20057-coral.txt
+-collabora/kselftest-filesystems-asus-C523NA-A20057-coral.txt
   HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
 /v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
--collabora/ltp-fcntl-locktests-asus-C523NA-A20057-coral.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230623.0/amd64/initrd.cpio.gz =
+-collabora/kselftest-filesystems-asus-C523NA-A20057-coral.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
+elftest/20230623.0/amd64/initrd.cpio.gz =
 
 
 
-  * ltp-fcntl-locktests.login: https://kernelci.org/test/case/id/653a6dee86=
-8d7366aeefcf0f
+  * kselftest-filesystems.login: https://kernelci.org/test/case/id/653a6de3=
+868d7366aeefcf05
         new failure (last pass: v5.10.194-915-g33f52aa14b957) =
 
  =
 
 
 
-platform                  | arch   | lab           | compiler | defconfig  =
-                | regressions
---------------------------+--------+---------------+----------+------------=
-----------------+------------
-hp-11A-G6-EE-grunt        | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-onfig+x86-board | 1          =
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+hp-11A-G6-EE-grunt           | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/653a6ebfef17398d59efcef5
+  Details:     https://kernelci.org/test/plan/id/653a6e6744cb5ba705efcfc7
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
   Full config: x86_64_defconfig+x86-board
   Compiler:    gcc-10
   Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
 /v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
--collabora/ltp-fcntl-locktests-hp-11A-G6-EE-grunt.txt
+-collabora/kselftest-filesystems-hp-11A-G6-EE-grunt.txt
   HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
 /v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
--collabora/ltp-fcntl-locktests-hp-11A-G6-EE-grunt.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230623.0/amd64/initrd.cpio.gz =
+-collabora/kselftest-filesystems-hp-11A-G6-EE-grunt.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
+elftest/20230623.0/amd64/initrd.cpio.gz =
 
 
 
-  * ltp-fcntl-locktests.login: https://kernelci.org/test/case/id/653a6ebfef=
-17398d59efcef6
+  * kselftest-filesystems.login: https://kernelci.org/test/case/id/653a6e67=
+44cb5ba705efcfc8
+        new failure (last pass: v5.10.194-915-g33f52aa14b957) =
+
+ =
+
+
+
+platform                     | arch   | lab           | compiler | defconfi=
+g                  | regressions
+-----------------------------+--------+---------------+----------+---------=
+-------------------+------------
+hp-x360-12b-c...4020-octopus | x86_64 | lab-collabora | gcc-10   | x86_64_d=
+efconfig+x86-board | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/653a6f962178e26e67efcf05
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/kselftest-filesystems-hp-x360-12b-ca0010nr-n4020-octopus.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v4.4-st20-3596-g73e7f2b880d98/x86_64/x86_64_defconfig+x86-board/gcc-10/lab=
+-collabora/kselftest-filesystems-hp-x360-12b-ca0010nr-n4020-octopus.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
+elftest/20230623.0/amd64/initrd.cpio.gz =
+
+
+
+  * kselftest-filesystems.login: https://kernelci.org/test/case/id/653a6f96=
+2178e26e67efcf06
         new failure (last pass: v5.10.194-915-g33f52aa14b957) =
 
  =20
