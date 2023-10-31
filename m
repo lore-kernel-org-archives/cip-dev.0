@@ -1,259 +1,139 @@
-Return-Path: <venkata.pyla@toshiba-tsip.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C5C6C4332F
-	for <webhook@archiver.kernel.org>; Mon, 30 Oct 2023 09:51:01 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
- by mx.groups.io with SMTP id smtpd.web10.144949.1698659451037053991
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F704C4167B
+	for <webhook@archiver.kernel.org>; Tue, 31 Oct 2023 08:49:49 +0000 (UTC)
+Received: from mta-65-228.siemens.flowmailer.net (mta-65-228.siemens.flowmailer.net [185.136.65.228])
+ by mx.groups.io with SMTP id smtpd.web10.181753.1698742188353021032
  for <cip-dev@lists.cip-project.org>;
- Mon, 30 Oct 2023 02:50:52 -0700
+ Tue, 31 Oct 2023 01:49:49 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.134, mailfrom: venkata.pyla@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 39U9olM12110810; Mon, 30 Oct 2023 18:50:48 +0900
-X-Iguazu-Qid: 2yAaQ5iWIF6Pw2ZCJz
-X-Iguazu-QSIG: v=2; s=0; t=1698659447; q=2yAaQ5iWIF6Pw2ZCJz; m=nt/TwwVUlKegfl7N7A8wNtj84VIRtgpMOPvGIazj2Qg=
-Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1803) id 39U9ojUM1343290
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 30 Oct 2023 18:50:46 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=R7Nw1LAcFISOTDT4NFxuIHJNgmQDiKYFsWEyEYkEY5Ruu5y2jAnDOUXxSHLKcWtjbmGpl/EJpgg4Vt0FuUJf7wlFK7bOznGQxPv1eqI54ThMSboGYcnph+1VyYOvHLkthslRZ7QzuZLm9WEKp/djPsSyyDN5P0kNHfWWVatgXV9NMx048UhaM56AvoBseZ8ZdVO8Fcv5irUyG6dBZDFXf/y3xBoYYP+Jar5JHkDGXhaKaAUzzUFKiFn2ccLS3hzc/2EYAxhHmW0Apq0aw4PUHqF6bgz7OLLP9X868qW50V2dCEKrkFjo/uVUNzbfOC92otjSWgbB6aOV+i4CW/aI8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dL9are5+xWzjDJ9AGaNIoqo2ekwJQu7lYlqvXx09CtY=;
- b=Wr8NxhewtwKGZ3xESuSkVUoFfx/rPs9ex/gQPQgBPKrAwrZRich1s5VNAgYPX0Ly5eG+XTZoT3DGic7sVuRBYxgZeJ9GRgwaaqBmwoq159Rcl/C/+AIvAt4t4AYTUaquzZjJJJXYj1Zr16DOnHcj0U7VgYmrgS2CVwyviOhYC/vcuRNH58aNt6K+El90xCMkskC+1RxoIryVzmHkDyHis3AN3adFc7lSRju6H9U1B64dlaLaCETfVHSCKlfF/SYffuQAaRzk8+8g4oLd04wZ96CR460kywZiD11ab/mzXbZCuY2+dHdkKC62ReOLClrtwAzgk9cTJiCV5w8x7H519g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
- header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
-From: <Venkata.Pyla@toshiba-tsip.com>
-To: <cip-dev@lists.cip-project.org>, <jan.kiszka@siemens.com>,
-        <dinesh.kumar@toshiba-tsip.com>, <kazuhiro3.hayashi@toshiba.co.jp>
-Subject: RE: [cip-dev][isar-cip-core][RFC 7/9] cip-core-image-security: Move
- packages to security-customization
-Thread-Topic: [cip-dev][isar-cip-core][RFC 7/9] cip-core-image-security: Move
- packages to security-customization
-Thread-Index: AQHaBcIELJTbwFkaOkGXJqq0MorzmbBbeRrAgAJFnwCAASkQwIADHQiAgAAQiwA=
-Date: Mon, 30 Oct 2023 09:50:42 +0000
-X-TSB-HOP2: ON
-Message-ID: 
- <OS3PR01MB68563A2F339249B89E207336A4A1A@OS3PR01MB6856.jpnprd01.prod.outlook.com>
-References: <20231023150243.3990309-1-Quirin.Gylstorff@siemens.com>
- <20231023150243.3990309-8-Quirin.Gylstorff@siemens.com>
- <OS3PR01MB68561590E077CB11799AA56FA4DDA@OS3PR01MB6856.jpnprd01.prod.outlook.com>
- <97ee33c6-7bcc-4a76-ae24-40dcda09cdab@siemens.com>
- <OS3PR01MB68567E027D32D81D48281B86A4A3A@OS3PR01MB6856.jpnprd01.prod.outlook.com>
- <14d150b4-1faf-4691-a051-4eed1ae6ea85@siemens.com>
-In-Reply-To: <14d150b4-1faf-4691-a051-4eed1ae6ea85@siemens.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS3PR01MB6856:EE_|OSZPR01MB6232:EE_
-x-ms-office365-filtering-correlation-id: f83a83e1-d2c0-44f9-6b22-08dbd92dae7d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- Brtsb2/ZmOYSTwwy/ANOje1G5b/7rS00AjnRWRMCH61rnUkaJV/Kv4L3v9yvXdIthRNF0zY1Cn15TH7m7Hkmw68uecs/2doBrapTZ8pq1akSl8zCd080rTSvKy3dUcWLt0BGlEY7tgc986kXx6sOsmXlbr+5DndGtRpR3+ADWvRBGhCY0aOTwEB+7CUyy5hTa7CArNSyOSCvp81g2OfyBXo6cGX5I1zgqEp0VlsYmzLqOit+gG30ythbkMc55aCcFW9Ebcu0ji88VnfL24NYloMPggUV5pGDKeIAxgF2N1L6tfkSxXmhyoM1yL+UfAgL2qmbmGhSjb9J6IRO9npIKQYRlE44J4R3GZu1ngQ8jD94PPTjgzXtqbo7+yqWXYDAM0ljzeH+5AuHV8sPYVdBfYS3kRcUE43CuZTJxf9X8pHQ2I/ehwqCQTEgASPlsyEHoUYwfz8T5C6e8SjZ5RbaLZbe0LNrrvAoTJqIyEU/7SOhwZBCnxF7TC1aFnWHvOuKxD7or+rkMdLPOqIxAJ039a/tgy6vGcXibl20KR0mLSltiVTJAW1iI7ekZdibSncRPaadJLmWgTpiJeDJ2sRNyXmKWgrGV+aAPR6/qWiplF+YDd5j7dFcEsPglyX9O35i
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB6856.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(376002)(136003)(346002)(366004)(396003)(230922051799003)(1800799009)(186009)(451199024)(64100799003)(316002)(85182001)(2906002)(15650500001)(66476007)(5660300002)(41300700001)(52536014)(55016003)(8936002)(8676002)(83380400001)(122000001)(76116006)(6506007)(7696005)(38070700009)(66446008)(66946007)(478600001)(64756008)(66556008)(26005)(86362001)(33656002)(71200400001)(9686003)(53546011)(110136005)(38100700002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?bnRRNzFMRXdBRVJJZVYzd1IzTWdGTUx1RHBSTnh2bGpnNktxbnBLYk5zTzg1?=
- =?utf-8?B?UzVwT0ZPcnNlaHUxQkFEK3pSK3hxcGF3Z0puYmg5Mll0cWg0NCtXaitDV0pn?=
- =?utf-8?B?LzJ0UGFYM2k0aHNsRWpxOFltcXAraW5CM0tVOTNNMlVyMThydmoxOHdnRytE?=
- =?utf-8?B?WnlLS3VETCtRUHlGZjBpbEZqN2Qra2k0UTVscFVxTndFenZ1ajhJS3ArMmJQ?=
- =?utf-8?B?OXEvVXBmSnlMNjRYKzAxVE5LTXp3bHBjZnlIU2NXQnYyaU45N0RaZEFHSitn?=
- =?utf-8?B?VGxDWTVMYmFNSUlTNjBZcG42WXlodTF1QjlsV3JhUFRLTHp0Y2JpTG82cG1N?=
- =?utf-8?B?N2d4c2hMY0lJcFNlMEJtL1dqTVRyTExPYUYvUHBCenNkV3Zwc1VUdGdqQlFQ?=
- =?utf-8?B?Y0dHTnJwTEJzMFBhL1ZJVW8zMVBoVHBLTStjSWZLUmE3M3ZUM1hZSUM4dk1y?=
- =?utf-8?B?blpUQzQ3K3dUOU9WL3RrVDVHVEVvMWhPeG5QWFlrNU55ZGpjMG5BNzVCNjJE?=
- =?utf-8?B?UFVkc3lxUFFCalV5bXJJSTVPSkpsZXJqczdFaW8yMzFIU0JDSDUxVEhodDV6?=
- =?utf-8?B?TTN6VnYyTmQ3WmpVREp1bE1WcWJHVzFQSW1uNTlnZmp3VDY1OU50THVKSXBz?=
- =?utf-8?B?MVE3NVFnOXBIOTBXbzc3VGpXRXR6bWk4cFluRGJFdE05QWNDRXQ2R2pJTVJC?=
- =?utf-8?B?R1BWR0lKQ0Q2VmVUc2M5bHk1NnFKSVNYZXR5R1RPZFhGRmZBNFVwdXRvU0Vq?=
- =?utf-8?B?V2lnLzNoeVBULzlaL2dJRXY3NVdyYURVK3dDK1RERzdEWjVwZXg3VXFmSGRI?=
- =?utf-8?B?Qm1RM21mRDY1cEZSZVZHOCtWZkpmVzZXZyt1WUZPb1lVK3ZOU3duWmZFUEZU?=
- =?utf-8?B?Ymt4QVNxVzM2ajZ6cnVraG4rRGJTRTBEc0xrVGJNWVltSFFPeEFvTElRN0p4?=
- =?utf-8?B?T0xHcVFvaVpEV0o5N1JmUHlRUDdWYmN6aEZDc3RBekIvZmRwMzlvZlJWWjV1?=
- =?utf-8?B?VHNmbVZleGVSRkY5ZTZYdURtRFExYVpETXZSaXlxSkV1WG8yR2NjWXZLTDRC?=
- =?utf-8?B?aTAvM1dMNTV4TXZ3eTVlVm5mbEdpdVpvbzFadzdWWkZydUl5K1hHdGVhTlJh?=
- =?utf-8?B?QzJxNDI4cTBXYzB3QkE0SjI2cWptenowd1Nmd0haOHNReGl0azd6eDZPRjYv?=
- =?utf-8?B?Y2RWRVFLb1lmdjdJYXhwL3Vxdi9lNnU0NEh4ZjZ1K1ZzbEdvS095Y1ovbDVj?=
- =?utf-8?B?ZUZmMzcvdTFLSGRsZ2VzbWwrSzVlU3dOMG1acjlmcitid2ZDdlFyZUxjdmcr?=
- =?utf-8?B?eUxNTG0xQ2pKWENTdXU0UHlvWFY4L3BGUDZlSFRyYndTTjNYUEowL0xleWt6?=
- =?utf-8?B?NUJFN1QwMU5Mc0V4ZGpJT1dQVHZxeEVnMkhOU1I4MFVwZCtIaEJjQ25TWmR0?=
- =?utf-8?B?RXoyODhBZmp6TEVuVGxFc3MrVkxnZUV3Tzk5RzZmSnk3Y0hCd1RSWFBRMXB1?=
- =?utf-8?B?aWMwRCs5ZDUyemRkdk94NUJrT2QxM08yZTZEYlRZdWI4VlFiQTN1emU2bjdE?=
- =?utf-8?B?Z041NG95STNqRFhSbzgwKzhRRnQ2MnFoZHZRSzZnMkZVQVRtSi9UVk0xdjRW?=
- =?utf-8?B?dEVvSnQybUVTbjlmRlNlVjlIbzJ0enJrN2FINGU1WWVORDR6SEhvQ29LRlJJ?=
- =?utf-8?B?dTc1S0RjRFozcXpGREFhbjlTZkd3NC9SR0ZqT0lmWmZ5Q09kK0hJY3NQL2Nh?=
- =?utf-8?B?ckhFYjJ0RGlmUytydnI0K1Jhb1ArcnM1QUZtTG9lL09LbE9xWG5DcWVtbnJO?=
- =?utf-8?B?R0xaR0dsY3JxcnJMS3NjNmR3dm1mNS9PK2VDUExkMktac3VWNXAzTW8vMldU?=
- =?utf-8?B?RmZRY3FyZktkY0kzQjVyVk50NUpQVWU2MEV1aDNHQWFaUldvWlJGMzhtMGdk?=
- =?utf-8?B?dTc3NzIvYllnYVU2WmhYaUxxT29MZUtrYVhGeDBZWHNXNHhLUFZLZVUrQWly?=
- =?utf-8?B?ampjdXhWWExZbU5zWVpna2RiQlF6KzIwR2VoSkx3WXZKVmNrVHZQOHp6ZGo2?=
- =?utf-8?B?QU9nSnRjVDk5YkNnbkpLcVB2enRWRXA2UmFjajlsOENoRGhEaFZSUGJmK01v?=
- =?utf-8?B?ZEpiaG9hUDhRYUlBSW1rQnBuVDBTNXlZejFDRXlobEU3cC9KdzNkRUdJck1R?=
- =?utf-8?B?OUE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=l9Y6/D2j;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.228, mailfrom: fm-51332-202310310849461b6d53d0769d8704b4-yemcva@rts-flowmailer.siemens.com)
+Received: by mta-65-228.siemens.flowmailer.net with ESMTPSA id 202310310849461b6d53d0769d8704b4
+        for <cip-dev@lists.cip-project.org>;
+        Tue, 31 Oct 2023 09:49:46 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
+ bh=4yMJjJ/SF4ixxHUG4EcI/irLionAYK3VquIQ/8Nx4yk=;
+ b=l9Y6/D2jOUIHs6DVTmqWGaleMrXZ/Fo+vxyewYyWlaFARoVZubb4b+CKqwGkmb0IiJlun8
+ oGWKMMt8lXAnhCphs3/rr0MAyCrp6NhEFPEymgZbCR/NxKHdNC4bDQXbKgRsn8L9MDMShvZB
+ u28rc6YNTm+GHcl+7OI5+oEEbA5Bc=;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: jan.kiszka@siemens.com,
+	cip-dev@lists.cip-project.org,
+	venkata.pyla@toshiba-tsip.com,
+	dinesh.kumar@toshiba-tsip.com,
+	kazuhiro3.hayashi@toshiba.co.jp
+Subject: [cip-dev][isar-cip-core][RFC v2 8/9] customization-kernelci: Add dependency to customizations
+Date: Tue, 31 Oct 2023 09:37:42 +0100
+Message-ID: <20231031084943.3105056-9-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20231031084943.3105056-1-Quirin.Gylstorff@siemens.com>
+References: <20231031084943.3105056-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
-X-OriginatorOrg: toshiba-tsip.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB6856.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f83a83e1-d2c0-44f9-6b22-08dbd92dae7d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2023 09:50:42.7033
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ZBLfMhApBbq613XRrrHYlCElAzBtCaqNon34X2KfnVNkI30oOmEt0clnfRG2BcrFrpKgaaSdBuGE7onQJcQvIVaR3TH5ImcV64JtE/bB4bA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB6232
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 30 Oct 2023 09:51:01 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13496
+ <cip-dev@lists.cip-project.org>; Tue, 31 Oct 2023 08:49:49 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13506
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogY2lwLWRldkBsaXN0cy5j
-aXAtcHJvamVjdC5vcmcgPGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPiBPbiBCZWhhbGYN
-Cj4gT2YgUXVpcmluIEd5bHN0b3JmZiB2aWEgbGlzdHMuY2lwLXByb2plY3Qub3JnDQo+IFNlbnQ6
-IE1vbmRheSwgT2N0b2JlciAzMCwgMjAyMyAxOjM4IFBNDQo+IFRvOiBjaXAtZGV2QGxpc3RzLmNp
-cC1wcm9qZWN0Lm9yZzsgamFuLmtpc3prYUBzaWVtZW5zLmNvbTsgZGluZXNoDQo+IGt1bWFyKO+8
-tO+8s++8qe+8sCBUTUlFQyBPREcgUG9ydGluZykgPGRpbmVzaC5rdW1hckB0b3NoaWJhLXRzaXAu
-Y29tPjsNCj4gaGF5YXNoaSBrYXp1aGlybyjmnpcg5ZKM5a6PIO+8pO+8re+8pSDil4vvvKTvvKnv
-vKfilqHvvK3vvLDvvLPil4vvvK3vvLDvvJQpDQo+IDxrYXp1aGlybzMuaGF5YXNoaUB0b3NoaWJh
-LmNvLmpwPg0KPiBTdWJqZWN0OiBSZTogW2NpcC1kZXZdW2lzYXItY2lwLWNvcmVdW1JGQyA3Lzld
-IGNpcC1jb3JlLWltYWdlLXNlY3VyaXR5OiBNb3ZlDQo+IHBhY2thZ2VzIHRvIHNlY3VyaXR5LWN1
-c3RvbWl6YXRpb24NCj4gDQo+IA0KPiANCj4gT24gMTAvMjgvMjMgMTE6MDQsIFZlbmthdGEgUHls
-YSB2aWEgbGlzdHMuY2lwLXByb2plY3Qub3JnIHdyb3RlOg0KPiA+DQo+ID4NCj4gPj4gLS0tLS1P
-cmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPj4gRnJvbTogY2lwLWRldkBsaXN0cy5jaXAtcHJvamVj
-dC5vcmcgPGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPg0KPiA+PiBPbiBCZWhhbGYgT2Yg
-UXVpcmluIEd5bHN0b3JmZiB2aWEgbGlzdHMuY2lwLXByb2plY3Qub3JnDQo+ID4+IFNlbnQ6IEZy
-aWRheSwgT2N0b2JlciAyNywgMjAyMyA4OjIyIFBNDQo+ID4+IFRvOiBweWxhIHZlbmthdGEo77y0
-77yz77yp77ywIFRNSUVDIE9ERyBQb3J0aW5nKSA8VmVua2F0YS5QeWxhQHRvc2hpYmEtDQo+ID4+
-IHRzaXAuY29tPjsgamFuLmtpc3prYUBzaWVtZW5zLmNvbTsgY2lwLWRldkBsaXN0cy5jaXAtcHJv
-amVjdC5vcmc7DQo+ID4+IGRpbmVzaA0KPiA+PiBrdW1hcijvvLTvvLPvvKnvvLAgVE1JRUMgT0RH
-IFBvcnRpbmcpIDxkaW5lc2gua3VtYXJAdG9zaGliYS10c2lwLmNvbT47DQo+ID4+IGhheWFzaGkg
-a2F6dWhpcm8o5p6XIOWSjOWujyDvvKTvvK3vvKUg4peL77yk77yp77yn4pah77yt77yw77yz4peL
-77yt77yw77yUKQ0KPiA+PiA8a2F6dWhpcm8zLmhheWFzaGlAdG9zaGliYS5jby5qcD4NCj4gPj4g
-U3ViamVjdDogUmU6IFtjaXAtZGV2XVtpc2FyLWNpcC1jb3JlXVtSRkMgNy85XQ0KPiA+PiBjaXAt
-Y29yZS1pbWFnZS1zZWN1cml0eTogTW92ZSBwYWNrYWdlcyB0byBzZWN1cml0eS1jdXN0b21pemF0
-aW9uDQo+ID4+DQo+ID4+DQo+ID4+DQo+ID4+IE9uIDEwLzI2LzIzIDA2OjMzLCBWZW5rYXRhLlB5
-bGFAdG9zaGliYS10c2lwLmNvbSB3cm90ZToNCj4gPj4+DQo+ID4+Pg0KPiA+Pj4+IC0tLS0tT3Jp
-Z2luYWwgTWVzc2FnZS0tLS0tDQo+ID4+Pj4gRnJvbTogUXVpcmluIEd5bHN0b3JmZiA8UXVpcmlu
-Lkd5bHN0b3JmZkBzaWVtZW5zLmNvbT4NCj4gPj4+PiBTZW50OiBNb25kYXksIE9jdG9iZXIgMjMs
-IDIwMjMgODozMCBQTQ0KPiA+Pj4+IFRvOiBqYW4ua2lzemthQHNpZW1lbnMuY29tOyBjaXAtZGV2
-QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZzsgcHlsYQ0KPiA+Pj4+IHZlbmthdGEo77y077yz77yp77yw
-IFRNSUVDIE9ERyBQb3J0aW5nKSA8VmVua2F0YS5QeWxhQHRvc2hpYmEtDQo+IHRzaXAuY29tPjsN
-Cj4gPj4+PiBkaW5lc2gga3VtYXIo77y077yz77yp77ywIFRNSUVDIE9ERyBQb3J0aW5nKSA8ZGlu
-ZXNoLmt1bWFyQHRvc2hpYmEtDQo+ID4+Pj4gdHNpcC5jb20+OyBoYXlhc2hpIGthenVoaXJvKOae
-lyDlkozlro8g77yk77yt77ylIOKXi++8pO+8qe+8p+KWoe+8re+8sO+8s+KXi++8re+8sO+8lCkN
-Cj4gPj4+PiA8a2F6dWhpcm8zLmhheWFzaGlAdG9zaGliYS5jby5qcD4NCj4gPj4+PiBTdWJqZWN0
-OiBbY2lwLWRldl1baXNhci1jaXAtY29yZV1bUkZDIDcvOV0gY2lwLWNvcmUtaW1hZ2Utc2VjdXJp
-dHk6DQo+ID4+Pj4gTW92ZSBwYWNrYWdlcyB0byBzZWN1cml0eS1jdXN0b21pemF0aW9uDQo+ID4+
-Pj4NCj4gPj4+PiBGcm9tOiBRdWlyaW4gR3lsc3RvcmZmIDxxdWlyaW4uZ3lsc3RvcmZmQHNpZW1l
-bnMuY29tPg0KPiA+Pj4+DQo+ID4+Pj4gVG8gZW5zdXJlIHRoYXQgdGhlIHBhY2thZ2Ugc2VjdXJp
-dHktY3VzdG9taXphdGlvbnMgaXMgaW5zdGFsbGFibGUNCj4gPj4+PiBtb3ZlIHBhY2thZ2VzIGZy
-b20gY2lwLWNvcmUtaW1hZ2Utc2VjdXJpdHkgYXMgZGVwZW5kZW5jaWVzIHRvDQo+ID4+Pj4gc2Vj
-dXJpdHktDQo+ID4+IHBhYWNrZ2VzLg0KPiA+PiBBaCB0eXBvIGluIHRoZSBjb21taXQgbWVzc2Fn
-ZS4NCj4gPj4+DQo+ID4+PiBUaGFua3MgZm9yIGltcHJvdmluZyB0aGlzLCBlYXJsaWVyIHRoZSBz
-ZWN1cml0eSBwYWNrYWdlcyBhcmUNCj4gPj4+IGluc3RhbGxlZCBhdCBvbmUNCj4gPj4gcGxhY2Ug
-dG8gbWFrZSBzdXJlIGFsbCBzZWN1cml0eSBwYWNrYWdlcyBhcmUgaW5zdGFsbGVkLCBsYXRlciB3
-aGVuDQo+ID4+IHRoZSBzZWN1cml0eSBjb25maWd1cmF0aW9ucyBhcmUgYWRkZWQsIHRoZSBkZXBl
-bmRlbmNpZXMgYXJlIG5vdCBhZGRlZC4NCj4gPj4+ICAgPiBXaXRoIHRoaXMgcGF0Y2ggdGhlIGRl
-cGVuZGVuY2llcyBhcmUgd2VsbCBjcmVhdGVkLCB0aGUgc2VjdXJpdHkNCj4gPj4gY3VzdG9taXph
-dGlvbnMgZm9yIHdoaWNoIHRoZSBwYWNrYWdlcyBhcmUgcmVxdWlyZWQgYXJlIGFkZGVkIHRvDQo+
-ID4+IERFQklBTl9ERVBFTkRTLg0KPiA+Pj4gYnV0IGZldyBwYWNrYWdlcyAobGlidHNzMiopIHdo
-aWNoIGRvbid0IGhhdmUgYW55IHNlY3VyaXR5DQo+ID4+PiBjdXN0b21pemF0aW9uIGFyZQ0KPiA+
-PiBhbHNvIGFkZGVkIHRvIHNlY3VyaXR5LWN1c3RvbWl6YXRpb25zIGRlcGVuZGVuY2llcywgZG8g
-eW91IHdhbnQgdG8NCj4gPj4ga2VlcCB0aGlzIGluIHNlY3VyaXR5LWN1c3RvbWl6YXRpb25zIGl0
-c2VsZiA/DQo+ID4+DQo+ID4+IFRoZSBtb3ZlIG9mIGxpYnRzczIqIHdhcyBkdWUgdG8gY29weS1w
-YXN0ZS4NCj4gPj4NCj4gPj4NCj4gPj4gSSBjYW4gbW92ZSBpdCBiYWNrLiBCdXQgdGhlIHF1ZXN0
-aW9ucyB0aGVuIGlzIHdoeSBkbyB3ZSBpbnN0YWxsDQo+ID4+IHVudXNlZCBsaWJyYXJ5Pw0KPiA+
-DQo+ID4gV2UgZGlkbid0IHByb3ZpZGUgdGhlIGltcGxlbWVudGF0aW9uIGZvciBtYW55IElFQyBy
-ZXF1aXJlbWVudHMgKGJlY2F1c2UNCj4gb2YgdGhlIHJlYXNvbiBDSVAgaXMgYSBwbGF0Zm9ybSkg
-YnV0IHByb3ZpZGVkIHRoZSBwYWNrYWdlcyB0aGF0IGNhbiBiZSB1c2VkIGluDQo+IHRoZSBmaW5h
-bCBwcm9kdWN0IGRldmVsb3BtZW50IGJ5IENJUCB1c2Vycy4NCj4gDQo+IElmIHRoZSB1c2VyIHJl
-cXVpcmVzIHRoaXMgbGliLCBoZSBzaG91bGQgZGVwZW5kIG9uIHRoZXNlIHBhY2thZ2VzIGUuZy4N
-Cj4gdHBtMi10b29scy4NCj4gDQo+IEkgd291bGQgcmVtb3ZlIHRoZW0uDQo+IA0KPiBMaWJyYXJp
-ZXMgc2hvdWxkIG9ubHkgYmUgaW5zdGFsbGVkIGlmIHRoZXJlIGFyZSBjb25zdW1lcnMuDQpJIGFn
-cmVlIHdpdGggeW91LCBJSVJDIHRoZXNlIHBhY2thZ2VzIGFyZSBhZGRlZCBhcyBhIHN1cHBvcnQg
-dG8gSUVDIHJlcXVpcmVtZW50cyBhbmQgQ0lQIHdpbGwgbWFpbnRhaW5zIHRoZW0sIHdoZXJlYXMg
-dGhlIENJUCBjdXN0b21lciB3aWxsIGltcGxlbWVudCBsYXRlciB3aXRoIGZ1bGwgZnVuY3Rpb25h
-bGl0eSB3aXRoIGl0Lg0KDQoNCj4gDQo+IFF1aXJpbg0KPiANCj4gPg0KPiA+Pg0KPiA+Pj4NCj4g
-Pj4+IFRoaXMgaXMgdG8gaGF2ZSB1bmRlcnN0YW5kaW5nIHRoYXQgYWxsIHRoZSBzZWN1cml0eSBw
-YWNrYWdlcyB0aGF0DQo+ID4+PiBoYXZlDQo+ID4+IGN1c3RvbWl6YXRpb25zIGFyZSBhZGRlZCB3
-aXRoIERFQklBTl9ERVBFTkRTIGluDQo+ID4+IHNlY3VyaXR5LWN1c3RvbWl6YXRpb25zLmJiLCBh
-bmQgYWxsIG90aGVyIHNlY3VyaXR5IHBhY2thZ2VzIHdpdGggbm8NCj4gPj4gY3VzdG9taXphdGlv
-bnMgYXJlIGFkZGVkIHdpdGggSU1BR0VfUFJFSU5TVEFMTCBpbg0KPiA+PiBjaXAtY29yZS1pbWFn
-ZS1zZWN1cml0eS5iYiwNCj4gPj4NCj4gPj4gWWVzIGFsbCBwYWNrYWdlIHdoaWNoIGFyZSBtb2Rp
-ZmllZCBieSBzZWN1cml0eS1jdXN0b21pemF0aW9ucyBzaG91bGQNCj4gPj4gYmUgYWRkZWQgdG8g
-REVCSUFOX0RFUEVORFMgdG8gZW5zdXJlIHRoZSBpbnN0YWxsYXRpb24gb3JkZXIuDQo+ID4NCj4g
-PiBJIGFncmVlIHdpdGggeW91Lg0KPiA+DQo+ID4+DQo+ID4+DQo+ID4+IEJlc3QgcmVnYXJkcywN
-Cj4gPj4gUXVpcmluDQo+ID4+DQo+ID4+Pg0KPiA+Pj4+DQo+ID4+Pj4gU2lnbmVkLW9mZi1ieTog
-UXVpcmluIEd5bHN0b3JmZiA8cXVpcmluLmd5bHN0b3JmZkBzaWVtZW5zLmNvbT4NCj4gPj4+PiAt
-LS0NCj4gPj4+PiAgICByZWNpcGVzLWNvcmUvaW1hZ2VzL2NpcC1jb3JlLWltYWdlLXNlY3VyaXR5
-LmJiICAgICB8IDEyICstLS0tLS0tLS0tLQ0KPiA+Pj4+ICAgIC4uLi9zZWN1cml0eS1jdXN0b21p
-emF0aW9ucy5iYiAgICAgICAgICAgICAgICAgICAgIHwgMTQgKysrKysrKysrKystLS0NCj4gPj4+
-PiAgICAyIGZpbGVzIGNoYW5nZWQsIDEyIGluc2VydGlvbnMoKyksIDE0IGRlbGV0aW9ucygtKQ0K
-PiA+Pj4+DQo+ID4+Pj4gZGlmZiAtLWdpdCBhL3JlY2lwZXMtY29yZS9pbWFnZXMvY2lwLWNvcmUt
-aW1hZ2Utc2VjdXJpdHkuYmINCj4gPj4+PiBiL3JlY2lwZXMtIGNvcmUvaW1hZ2VzL2NpcC1jb3Jl
-LWltYWdlLXNlY3VyaXR5LmJiDQo+ID4+Pj4gaW5kZXggMzQyMWNlNS4uNTI1YTM0NiAxMDA2NDQN
-Cj4gPj4+PiAtLS0gYS9yZWNpcGVzLWNvcmUvaW1hZ2VzL2NpcC1jb3JlLWltYWdlLXNlY3VyaXR5
-LmJiDQo+ID4+Pj4gKysrIGIvcmVjaXBlcy1jb3JlL2ltYWdlcy9jaXAtY29yZS1pbWFnZS1zZWN1
-cml0eS5iYg0KPiA+Pj4+IEBAIC0yOCwyNCArMjgsMTQgQEAgSU1BR0VfUFJFSU5TVEFMTCArPSAi
-IFwNCj4gPj4+PiAgICAJdHBtMi10b29scyBcDQo+ID4+Pj4gICAgCXRwbTItYWJybWQgXA0KPiA+
-Pj4+ICAgIAlhY2wgXA0KPiA+Pj4+IC0JYXVkaXNwZC1wbHVnaW5zIGF1ZGl0ZCBcDQo+ID4+Pj4g
-KwlhdWRpc3BkLXBsdWdpbnMgXA0KPiA+Pj4+ICAgIAl1dWlkLXJ1bnRpbWUgXA0KPiA+Pj4+ICAg
-IAlzdWRvIFwNCj4gPj4+PiAgICAJYWlkZS1jb21tb24gXA0KPiA+Pj4+IC0JbGlicGFtLWdvb2ds
-ZS1hdXRoZW50aWNhdG9yIFwNCj4gPj4+PiAgICAJcGFzc3dkIFwNCj4gPj4+PiAgICAJbG9naW4g
-XA0KPiA+Pj4+IC0JbGlicGFtLXJ1bnRpbWUgXA0KPiA+Pj4+ICAgIAl1dGlsLWxpbnV4IFwNCj4g
-Pj4+PiAgICAiDQo+ID4+Pj4NCj4gPj4+PiAtIyBQYWNrYWdlIG5hbWVzIGJhc2VkIG9uIHRoZSBk
-aXN0cm8gdmVyc2lvbiAtDQo+ID4+Pj4gSU1BR0VfUFJFSU5TVEFMTDphcHBlbmQ6YnVzdGVyID0g
-IiBsaWJ0c3MyLWVzeXMwIFwNCj4gPj4+PiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICBsaWJwYW0tY3JhY2tsaWIiDQo+ID4+Pj4gLUlNQUdFX1BSRUlOU1RBTEw6YXBwZW5kOmJ1
-bGxzZXllID0gIiBsaWJ0c3MyLWVzeXMtMy4wLjItMCBcDQo+ID4+Pj4gLSAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICBsaWJwYW0tY3JhY2tsaWIiDQo+ID4+Pj4gLUlNQUdFX1BS
-RUlOU1RBTEw6YXBwZW5kOmJvb2t3b3JtID0gIiBsaWJ0c3MyLWVzeXMtMy4wLjItMCBcDQo+ID4+
-Pj4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsaWJwYW0tcGFzc3dkcWMi
-DQo+ID4+Pj4gLQ0KPiA+Pj4+ICAgIENJUF9JTUFHRV9PUFRJT05TID89ICIiDQo+ID4+Pj4gICAg
-cmVxdWlyZSAke0NJUF9JTUFHRV9PUFRJT05TfQ0KPiA+Pj4+IGRpZmYgLS1naXQNCj4gPj4+PiBh
-L3JlY2lwZXMtY29yZS9zZWN1cml0eS1jdXN0b21pemF0aW9ucy9zZWN1cml0eS1jdXN0b21pemF0
-aW9ucy5iYg0KPiA+Pj4+IGIvcmVjaXBlcy1jb3JlL3NlY3VyaXR5LWN1c3RvbWl6YXRpb25zL3Nl
-Y3VyaXR5LWN1c3RvbWl6YXRpb25zLmJiDQo+ID4+Pj4gaW5kZXggZDNjZWRlOC4uMTYyZDJmNiAx
-MDA2NDQNCj4gPj4+PiAtLS0NCj4gPj4+PiBhL3JlY2lwZXMtY29yZS9zZWN1cml0eS1jdXN0b21p
-emF0aW9ucy9zZWN1cml0eS1jdXN0b21pemF0aW9ucy5iYg0KPiA+Pj4+ICsrKyBiL3JlY2lwZXMt
-Y29yZS9zZWN1cml0eS1jdXN0b21pemF0aW9ucy9zZWN1cml0eS1jdXN0b21pemF0aW9ucy4NCj4g
-Pj4+PiArKysgYmINCj4gPj4+PiBAQCAtMTEsMTQgKzExLDIyIEBADQo+ID4+Pj4NCj4gPj4+PiAg
-ICBpbmhlcml0IGRwa2ctcmF3DQo+ID4+Pj4NCj4gPj4+PiAtREVTQ1JJUFRJT04gPSAiQ0lQIFNl
-Y3VyaXR5IGltYWdlIGZvciBJRUM2MjQ0My00LTIgZXZhbHVhdGlvbiINCj4gPj4+PiArREVTQ1JJ
-UFRJT04gPSAiQ0lQIFNlY3VyaXR5IGNvbmZpZ3VyYXRpb24gZm9yIElFQzYyNDQzLTQtMg0KPiBl
-dmFsdWF0aW9uIg0KPiA+Pj4+DQo+ID4+Pj4gICAgU1JDX1VSSSA9ICJmaWxlOi8vcG9zdGluc3Qg
-XA0KPiA+Pj4+ICAgICAgICAgICAgICAgZmlsZTovL3NzaC1yZW1vdGUtc2Vzc2lvbi10ZXJtLmNv
-bmYgXA0KPiA+Pj4+ICAgICAgICAgICAgICAgZmlsZTovL3NzaC1wYW0tcmVtb3RlLmNvbmYiDQo+
-ID4+Pj4NCj4gPj4+PiAtREVQRU5EUyA9ICJjdXN0b21pemF0aW9ucywgc3NoZC1yZWdlbi1rZXlz
-Ig0KPiA+Pj4+IC1ERUJJQU5fREVQRU5EUyA9ICJjdXN0b21pemF0aW9ucyAsIHNzaGQtcmVnZW4t
-a2V5cywgbGlicGFtLWdvb2dsZS0NCj4gPj4+PiBhdXRoZW50aWNhdG9yIg0KPiA+Pj4+ICtERVBF
-TkRTID0gImN1c3RvbWl6YXRpb25zIHNzaGQtcmVnZW4ta2V5cyINCj4gPj4+PiArREVCSUFOX0RF
-UEVORFMgPSAiY3VzdG9taXphdGlvbnMsIHNzaGQtcmVnZW4ta2V5cywgbGlicGFtLWdvb2dsZS0N
-Cj4gPj4+PiBhdXRoZW50aWNhdG9yLCBsaWJwYW0tbW9kdWxlcywgbGlicGFtLXJ1bnRpbWUsIGF1
-ZGl0ZCINCj4gPj4+PiArDQo+ID4+Pj4gKyMgUGFja2FnZSBuYW1lcyBiYXNlZCBvbiB0aGUgZGlz
-dHJvIHZlcnNpb24NCj4gPj4+PiArREVCSUFOX0RFUEVORFM6YXBwZW5kOmJ1c3RlciA9ICIsIGxp
-YnRzczItZXN5czAsIFwNCj4gPj4+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICBsaWJwYW0tY3JhY2tsaWIiDQo+ID4+Pj4gK0RFQklBTl9ERVBFTkRTOmFwcGVuZDpidWxsc2V5
-ZSA9ICIsIGxpYnRzczItZXN5cy0zLjAuMi0wLCBcDQo+ID4+Pj4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICBsaWJwYW0tY3JhY2tsaWIiDQo+ID4+Pj4gK0RFQklBTl9ERVBF
-TkRTOmFwcGVuZDpib29rd29ybSA9ICIsIGxpYnRzczItZXN5cy0zLjAuMi0wLCBcDQo+ID4+Pj4g
-K2xpYnBhbS1wYXNzd2RxYyINCj4gPj4+Pg0KPiA+Pj4+ICAgIGRvX2luc3RhbGxbY2xlYW5kaXJz
-XSArPSAiJHtEfS9ldGMvc3NoL3NzaGRfY29uZmlnLmQvIg0KPiA+Pj4+ICAgIGRvX2luc3RhbGwg
-KCkgew0KPiA+Pj4+IC0tDQo+ID4+Pj4gMi40Mi4wDQo+ID4+Pg0KPiA+Pj4NCj4gPj4+DQo+ID4+
-Pg0KPiA+Pj4NCg==
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+
+This is to simplify maintenance.
+
+Also extract serial getty override and sshd_config
+changes from postinstall to seperate files.
+
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ .../kernelci-customizations/files/postinst     | 11 -----------
+ .../files/serial-getty-kernelci-override.conf  |  3 +++
+ .../files/ssh-permit-empty-passwords.conf      |  2 ++
+ .../kernelci-customizations.bb                 | 18 ++++++++++++++----
+ 4 files changed, 19 insertions(+), 15 deletions(-)
+ create mode 100644 recipes-core/kernelci-customizations/files/serial-getty-kernelci-override.conf
+ create mode 100644 recipes-core/kernelci-customizations/files/ssh-permit-empty-passwords.conf
+
+diff --git a/recipes-core/kernelci-customizations/files/postinst b/recipes-core/kernelci-customizations/files/postinst
+index 7ae30e8..08544a4 100644
+--- a/recipes-core/kernelci-customizations/files/postinst
++++ b/recipes-core/kernelci-customizations/files/postinst
+@@ -15,20 +15,9 @@
+ echo "CIP Core Demo & Test Image" > /etc/issue
+ 
+ # permit root login without password
+-echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+-echo "PermitEmptyPasswords yes" >> /etc/ssh/sshd_config
+ passwd root -d
+ 
+-# serial getty service for autologin
+-mkdir -p /etc/systemd/system/serial-getty@.service.d/
+-echo "[Service]" > /etc/systemd/system/serial-getty@.service.d/override.conf
+-echo "ExecStart=" >> /etc/systemd/system/serial-getty@.service.d/override.conf
+-echo "ExecStart=-/sbin/agetty --autologin root --keep-baud 115200,38400,9600 %I $TERM" >> /etc/systemd/system/serial-getty@.service.d/override.conf
+-
+ # set the profile for KernelCI
+ echo "PS1='\$(pwd) # '" > /root/.profile
+ echo "cd /" >> /root/.profile
+ 
+-HOSTNAME=demo
+-echo "$HOSTNAME" > /etc/hostname
+-echo "127.0.0.1 $HOSTNAME" >> /etc/hosts
+diff --git a/recipes-core/kernelci-customizations/files/serial-getty-kernelci-override.conf b/recipes-core/kernelci-customizations/files/serial-getty-kernelci-override.conf
+new file mode 100644
+index 0000000..a1472c5
+--- /dev/null
++++ b/recipes-core/kernelci-customizations/files/serial-getty-kernelci-override.conf
+@@ -0,0 +1,3 @@
++[Service]
++ExecStart=
++ExecStart=-/sbin/agetty --autologin root --keep-baud 115200,38400,9600 %I $TERM
+diff --git a/recipes-core/kernelci-customizations/files/ssh-permit-empty-passwords.conf b/recipes-core/kernelci-customizations/files/ssh-permit-empty-passwords.conf
+new file mode 100644
+index 0000000..b958fec
+--- /dev/null
++++ b/recipes-core/kernelci-customizations/files/ssh-permit-empty-passwords.conf
+@@ -0,0 +1,2 @@
++PermitEmptyPasswords yes
++
+diff --git a/recipes-core/kernelci-customizations/kernelci-customizations.bb b/recipes-core/kernelci-customizations/kernelci-customizations.bb
+index f972be5..3a99884 100644
+--- a/recipes-core/kernelci-customizations/kernelci-customizations.bb
++++ b/recipes-core/kernelci-customizations/kernelci-customizations.bb
+@@ -11,13 +11,23 @@
+ # SPDX-License-Identifier: MIT
+ #
+ 
+-require recipes-core/customizations/common.inc
++inherit dpkg-raw
+ 
+ DESCRIPTION = "CIP Core KernelCI image customizations"
+ 
+-SRC_URI += "file://dmesg.sh"
++DEPENDS += "customizations"
++DEBIAN_DEPENDS += "customizations"
+ 
+-do_install:append() {
+-  install -v -d ${D}/opt/kernelci
++SRC_URI = "file://postinst \
++           file://dmesg.sh \
++           file://serial-getty-kernelci-override.conf \
++           file://ssh-permit-empty-passwords.conf"
++
++do_install[cleandirs] = "${D}/opt/kernelci/ \
++                         ${D}/etc/systemd/system/serial-getty@.service.d/ \
++                         ${D}/etc/ssh/sshd_config.d/"
++do_install() {
+   install -v -m 744 ${WORKDIR}/dmesg.sh ${D}/opt/kernelci/
++  install -v -m 644 ${WORKDIR}/serial-getty-kernelci-override.conf ${D}/etc/systemd/system/serial-getty@.service.d/serial-getty-kernelci-override.conf
++  install -v -m 600 ${WORKDIR}/ssh-permit-empty-passwords.conf ${D}/etc/ssh/sshd_config.d/ssh-permit-empty-passwords.conf
+ }
+-- 
+2.42.0
 
 
