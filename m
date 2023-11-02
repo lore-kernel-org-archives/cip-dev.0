@@ -1,178 +1,156 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E42C4332F
-	for <webhook@archiver.kernel.org>; Wed,  1 Nov 2023 22:43:23 +0000 (UTC)
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
- by mx.groups.io with SMTP id smtpd.web11.1975.1698878592828475725
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFDC0C4332F
+	for <webhook@archiver.kernel.org>; Thu,  2 Nov 2023 06:10:35 +0000 (UTC)
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.51])
+ by mx.groups.io with SMTP id smtpd.web10.25124.1698905431275242795
  for <cip-dev@lists.cip-project.org>;
- Wed, 01 Nov 2023 15:43:13 -0700
+ Wed, 01 Nov 2023 23:10:31 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=aWyLMZiY;
- spf=pass (domain: miraclelinux.com, ip: 209.85.160.49, mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-1efb9571b13so200952fac.2
-        for <cip-dev@lists.cip-project.org>; Wed, 01 Nov 2023 15:43:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1698878592; x=1699483392; darn=lists.cip-project.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=qHKoHnyMRRrikVdPRlahQzlZiKkDJ+QTgkB5y5YyoDk=;
-        b=aWyLMZiYwOjg2ZAmCPM4DRSH+MmVKQEIlrmi+ItjQ9wLkYTdxOMoPNTzdCYt5AKB2D
-         zo0DunoJg0fdzSU1Jbt7rHvrNBs4gnmwspl86Sq63IvxRHG2kYSsEzuq/Kmahzlzs1gG
-         VGdjs2lqsQNj56P8QMBBkWWnY5unsy6/DHBQHb0pwJq0FaxwvZvnEm3sWDpUSKidMOuP
-         /UHl14XbZJ9Fu2sgzZfAbCPCdw3Sws/f3S/RKXH1YLJv5mf42zvtqVh4V5iPqC0HECNg
-         l6NpCC+9u5ULSvYoUsG0jp7L5I0lol9sVPRrx9dfxNqZu9dgEXFp+3t1ikE+DrLO1j41
-         xq4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698878592; x=1699483392;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qHKoHnyMRRrikVdPRlahQzlZiKkDJ+QTgkB5y5YyoDk=;
-        b=MmMQWP4nVXLxqI3ys2o2lBk64quqIiqLlUdUSqfKkLNOWTJFLTt7blORzSNnp74jkF
-         pkXCJ7lLt4x+2gZ3N9e24EVTL0YTYwvyc/SHs95T0GquqOXxAhWC0TgnACzWk+dLeR+V
-         0KqTfBBKpLKArJtcuHMfbG3rhylLoecfMO7daMA8bIZ0mPZ8KrRMFICtABZ/lcBG2k82
-         x8FK1f8AftpE8WAYrIwlcP0vBAlHWwhZx/T27sPpr09RowdGR2OQOi698CxdnWkZ9n4i
-         iS4mM73XWXHWoairiJnntbG/s1wffbKmIgBDE4c+Gqf7/TQVvT8cZ1S5a+K0yaHfondL
-         wxdw==
-X-Gm-Message-State: AOJu0Yy4k40wjwH7cP2Qry2byX8tr9llDCZC1233bGnWaHbDPUrFdKYP
-	UpeDx3LJVS21JX2pTDu5M0JQvbczUBbUzxGqxRR1UnaSAPNbX/dpBBI=
-X-Google-Smtp-Source: AGHT+IFtNLl2kb9kK6vb6mATvCEyHxUisNvGxmc7QhKpq+7B5rmS7mteBRdoRUuKH/8/O4zM7C0slVqBW1cABzSGyBg=
-X-Received: by 2002:a05:6870:af8a:b0:1ea:c8a9:fce5 with SMTP id
- uz10-20020a056870af8a00b001eac8a9fce5mr19831467oab.38.1698878591770; Wed, 01
- Nov 2023 15:43:11 -0700 (PDT)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=adDOdqmJ;
+ spf=pass (domain: siemens.com, ip: 40.107.21.51, mailfrom: jan.kiszka@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ALpHbszztvz5btdjg3130zA/YFzOzFFOctYvVK/ha+qwLLIZqiMpGKznF91l/f3pBy1esFhC7/dTLUFF7ZEyjI9Jo7quU6u6/pkg10JscQYoP2zXU39OhpdFdccBUvS3GWlDPjWO2TBPfj0g+Xw7tRZvUrMtvdITjPvt+Bf3oPYLjsdpvOuuWoDjUdBFwe1mCvKqcYmZW8TlRvaI/cOqcbwbsnUgrC1uITAmVjEXKZegevF5YOyrjFEuGOC2Iga2FB9eK+6N6Pr25bfv93QMaRHX+WNFe96vevdd8ECwHhSPVmviDr1/KAZvK9yFp/scmsEERf+ibxZXkxmlaBgKFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=euMdMOXYvPeRIpLyCja2ObGZwPUF23AD7HerZZgUM28=;
+ b=QljXml8QuqFvQ8fktNvPpgaDRjcXw+z+vBDAwvnsFWaiVrW+X3LVKc32h27NLQmDcriHZvYi47FLnyqX/AoKcKSbfFSM5qbOtOEZ6/lAun1RJ2fPprNMObzAWeHbHBvlJOw/coX6P1UbjXWlRH3XTQm8wTSUFdlqXtMnp982YLAKtFlh/TnHr6qs7XX+McyYeqFNG7tVamUUKrg3hNkqQXhVrwhIoOPPjF/h4NSnQyKiwnduBpWQKPdsGAxGDweMLazabuEAlak3B49bJRKA/VWRxrB2J0bEKcaP0erYGmYPHG+e0yxigNOoqKXU46ynfY4xYNB+8VcWtc3sPFDQ+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=euMdMOXYvPeRIpLyCja2ObGZwPUF23AD7HerZZgUM28=;
+ b=adDOdqmJUgCSDWdO9grXqNYuZIXdJDiTtPZbPk90KRjpmk7wfWAjc1P72aCtGSiydw6ul0Hm+Py1P1CzeCrlZ2Bwo4/QNLDg5g68Q0OGf3I6qggHa560wNNpMt8Qm649I7T7AcaGVxpert1aGHWNCbtIWYDd9g9WPoglazQFZDQ32leHudTLGOnqiNRuVkKFHKpzjAFyZ9TbPMHU62mF7MykeGYgKIRjvJujmsw6nzIvF9/tO1h2QQ4sxDFRGRCPoXO7fjoyomKHMudUUb0Kx4MTIiXgtYSwzxhS7ILgAa6JZHcIafvkuYL9GBBdRpiwl8YUtOsMfUDpNcZuINCb0w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by PAVPR10MB7489.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:2f4::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6933.29; Thu, 2 Nov
+ 2023 06:10:28 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8496:a3a3:d7a8:b24d]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8496:a3a3:d7a8:b24d%4]) with mapi id 15.20.6954.020; Thu, 2 Nov 2023
+ 06:10:28 +0000
+Message-ID: <f1a52e61-3404-41df-85fc-7453be0d4be7@siemens.com>
+Date: Thu, 2 Nov 2023 07:10:25 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [isar-cip-core][PATCH] added pcr_bank for clevis
+Content-Language: en-US
+To: "Sari, Sercan (ADV D EU TR C&E)" <sari.sercan@siemens.com>,
+ "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+ Quirin Gylstorff <quirin.gylstorff@siemens.com>
+References: <DU0PR10MB6898A9738AF1110D653D5DE5F0A7A@DU0PR10MB6898.EURPRD10.PROD.OUTLOOK.COM>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+In-Reply-To: <DU0PR10MB6898A9738AF1110D653D5DE5F0A7A@DU0PR10MB6898.EURPRD10.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR3P281CA0177.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a0::14) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 2 Nov 2023 07:42:35 +0900
-Message-ID: <CAODzB9qXfWykaoX8ei-g4_=7OhfOz5f+u=v4jOTRN0RirioRwg@mail.gmail.com>
-Subject: [kernel-cve-report] New CVE entries this week
-To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PAVPR10MB7489:EE_
+X-MS-Office365-Filtering-Correlation-Id: 827bddf5-bad6-41df-3d1c-08dbdb6a6902
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	TozZkFhTTHUkBpaq7iHx40dIOoG0FsD44e2U+pE0BilIBIQ0nzs8PXf4DHpW2Xyc5NRhaf9yuQI4ebMUcj94VOx8y6okNZQomczZ5IrPevZOrkf2eP4ed+AjMjM24gvlQ1waH/RNgKgYf8Njh8bu0Rpx9PfcpzOoJnIH0uzLHkEQqafTB69zkk3EPNA2Q04limQ/7WKf+Wu+oyazVPKGyDtswhgYcmi1EYN152VwzB2gmiFCFF97dzXExH3v2CMmO/WAh4bOwy8a+Ct5794uzM010ACRJx7ZULlgwlGXcJ4GiITq/dS6jrzuP0S0HaQGkkeTFCUnIjd+VvFBh39Jtu7AYa70dQa4fkqlujmZ2ocmj4JWQEy82m/iEmr3ORkG6wOK54FoEx2QVkL/Z57bXvOMEn+CqWDehjLlTLD6/Mrk8yV8HcmW7j4HW3pqOxsT7hr79gsf+yLjfARB+UbDV6+a2e+1paCPs7jJTJW1cxH0ctGXmMKdXYiQ+bmSP7Zgt6fc5c6z7b83PcyIjKVe9ve8KD21LdTMS8chD7L39l/FHSaiCsRloZ2fWlL76yq/DPTCWLGv+xTILsQGLzAYP9aIM3FpSgDyRBiPdyz0BIEY9xeyBoc7bB5sVN1nLh/FelFzYVr0TeaxC2gBIjeTgg==
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(366004)(376002)(396003)(136003)(346002)(39860400002)(230922051799003)(1800799009)(186009)(64100799003)(451199024)(6486002)(6506007)(478600001)(53546011)(6512007)(31686004)(6666004)(2616005)(26005)(316002)(6636002)(66946007)(66556008)(110136005)(66476007)(82960400001)(86362001)(38100700002)(83380400001)(8676002)(31696002)(8936002)(41300700001)(44832011)(36756003)(2906002)(5660300002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?VmRVY0laSVFsZHBmeWRPNEViMzFEOURQb2xkRGd1cUFQdDU4Vjh1ejZwVnVh?=
+ =?utf-8?B?SFBpcW1jb2NBYmswZzJLbitGbFp6VHd0UUxZaTFKU25GVFdBV213bGtWRUhK?=
+ =?utf-8?B?MU5VYm5LOE90aHVRVC8wWDlxMnJLWThPMGttSjdOdDZRT25tVW1BZllPR1Mz?=
+ =?utf-8?B?NGVRTjlzeTVKTFRESW56ZHhiUUdNNkI0bm51UlNYaVdHbzczbk9EbmZ5c0pn?=
+ =?utf-8?B?ZHJCcjI1cm56c1hzU1g4YzVMMDNKTFNHcE9OTFh0Vy9ieHpJb0RNQVIwMUU5?=
+ =?utf-8?B?ZlBkVXVhMmxLRXhadVZJQTRzNkduMmRWb0dsbUFyVDJ3THZhbUxTQkJWcHpz?=
+ =?utf-8?B?aGFCb25PdGlrdUlheTdVOTRFNWpyL3JzT24xNFd6S1k2aVBtZzl2SmJwek9M?=
+ =?utf-8?B?UkhPZEZnT1JtbVNLL0JDUkpSTTNNQzlDOHN6azlVU3RVVzhpa0NEV2RWRUgy?=
+ =?utf-8?B?U3BPY0hvdGpUZzFxWUcvUlpob1ZXbS92QytZRDMvRFk0NytmRnhkZEhvNkZo?=
+ =?utf-8?B?dkJaVW1sK1gxY0RrbTVCa0xVT2psVUdETWdySmNhUmlDNEthTjhKQkk2QXQ1?=
+ =?utf-8?B?dXFxajNsS0MvcjBZMWlDWThuaGN2UlQ3WE0reHZTdXNpdjZVV0NlUXRrTG9k?=
+ =?utf-8?B?UDdwNUVlZ3ZtajQzdk11aEl5bm9RN3c3MUZOVkZFdXdEVXA1S0lVcnViUUdC?=
+ =?utf-8?B?elhUdmtKcDlQZGlxOVRYZmlMcWJJKzNjbTFzazdvTHFIMWVyRG1YQTZ3Tklz?=
+ =?utf-8?B?dEl4cVc3Tm9ya1IrOTNNMmVRMzcySmEwQ3JHaXUzTWd5QjBCM3NxTUY1bE1W?=
+ =?utf-8?B?OThkMC9mSGR4RmhDQWErZXZjaGZOUVhXYVhneXhsMkRieGdaaUkwMHd5Q25r?=
+ =?utf-8?B?RUw0UlFXYnZNSGkyYTRsS0lZbW82QnUwS01ESXZzaG1VdXpqZmx5RXlIdnJJ?=
+ =?utf-8?B?VG9NQkpaZ1c3Y1NqUnpWcFlnMndHc3JFZTlDeFFyaGFHV0RQVVVGd25CN3px?=
+ =?utf-8?B?aU5MK2I3dlJTUDIySWFyc3dvbGxnL2hlVzFSaHAyYldHTEJZWmY1WmpkWG5m?=
+ =?utf-8?B?aVJ1VTk5Mjdkb0tjaTlUaUx3aWV3VGtZdnlCNG82TnYyeGZsMmc2dng5SlhU?=
+ =?utf-8?B?UUZ2Mk15a0hoNGRack9SNTNHcUNBNUJMakxBY2FHMkl6QUc4R2xqdmFrbFJN?=
+ =?utf-8?B?NUQyUjhiR2JWbUxvaXFVRUw5cWNOL2FGWjBMVFJOTUdwVUR1USthSmI4VDVT?=
+ =?utf-8?B?Rkw2c0FHbGlkUG9kZkRPS0xydnJJZExDN0xueU5HQzE0SHhIbWJMWERsNzhk?=
+ =?utf-8?B?Q1V2S2FocGpOL3M4QndBMFEyK28yNkh1bXdoSVB4eFdkMU91cnpnR2NSTHZi?=
+ =?utf-8?B?T3dSZVJCbjZQa1hEdEVtT2tFMU5TK3VnNksyRWc5eGU2cElhc3lCY0c0WDht?=
+ =?utf-8?B?SFV1dy9QRlhoT29tZkk5MVV2TEFnbFJIUG5Wd2M2QTBHTTJCZFlTbnBIVGkr?=
+ =?utf-8?B?dU5oSHFjbHR3MzBBUTc1NFc0OGJ6SEJ6SDlMWDZmVi9rS2xpaHN1UzlUTTJT?=
+ =?utf-8?B?S1NaMSt0Rm5HUUlIMDJqK1RzMFZubkE4b1F0YWhrYjZCa09zTDFKZ3dKM0Mv?=
+ =?utf-8?B?dXpLS2hlT0R6TGNPVXB0ZGJKWHU5cCsxRi9URFkwNDI2Y3BkWnh1WTZET2t5?=
+ =?utf-8?B?MXJsbW83OFJPVkxGUVNPSTAyVTc2cjV4cmpvY2FnUFBlTmplaEVGbTVvcnQ5?=
+ =?utf-8?B?cWsrUU5qTU1nbjNKZUxxM202bjBUK09EdnQzZmdpVitQTitlM09XUDhONkly?=
+ =?utf-8?B?Vm1DNGVSOExpZTI0MXRNSFZnM1YrOVBaTnZVNm9jeHUra1UycndocXFBeFVC?=
+ =?utf-8?B?SGMySnNCc0NTVTRjNXhJeG9tM29RZHZDcllZMndSS3V5VXYxdzZ5UUppMEdm?=
+ =?utf-8?B?Z0ZmdENBNGZFV1M0aXc5OXNBdEYyZzlsTUJvcmhFRnJUMnZwU0pUQkdBZnZW?=
+ =?utf-8?B?T1BlWGt4SndPODRXOHJaU3FVZzFJVkpPbWx4dHZkTzhpNDErYkN0L1kwbC9r?=
+ =?utf-8?B?bC9zRHQwK0cvcjl3dWZySkZsdytxUXR2cEVBMVBSNXVUQ1BVWWJSa3BaSHVa?=
+ =?utf-8?Q?I2XDJ7zeMoGYEqw2LMhUUnIrF?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 827bddf5-bad6-41df-3d1c-08dbdb6a6902
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2023 06:10:27.9264
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JXMFZQiRyZ9lJA4L0m3jVSmwzyYy2RkWB2VTfkfrnHH8HFQDgjd+O+UMCs++W0qeNwyqrjadUIiYx1TuzavdIw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAVPR10MB7489
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 01 Nov 2023 22:43:23 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13508
+ <cip-dev@lists.cip-project.org>; Thu, 02 Nov 2023 06:10:35 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13509
 
-Hi!
+On 01.11.23 18:17, Sari, Sercan (ADV D EU TR C&E) wrote:
+> 
+> clevis will fail to encrypt data when the TPM has multiple banks, such as SHA1 and SHA256, adding the pcr_bank information resolves this issue.
+> 
+> Signed-off-by: Sercan Sari <sari.sercan@siemens.com>
+> ---
+>  .../initramfs-crypt-hook/files/encrypt_partition.clevis.script  | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script
+> index 899f20e..957a3fd 100644
+> --- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script
+> +++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script
+> @@ -61,7 +61,7 @@ open_tpm2_partition() {
+>  
+>  enroll_tpm2_token() {
+>  	if [ -x /usr/bin/clevis ]; then
+> -		 clevis luks bind -d "$1" tpm2 '{"pcr_ids":"7"}' < "$2"
+> +		clevis luks bind -d "$1" tpm2 '{"pcr_bank":"sha256", "pcr_ids":"7"}' < "$2"
+>  	else
+>  		panic "clevis not available cannot enroll tpm2 key!"
+>  	fi
 
-It's this week's CVE report.
+Is sha265 the only reasonable setting here? Just asking as we are
+hard-coding.
 
-This week reported 2 new CVEs and 3 updated CVEs.
+Quirin, any remarks?
 
-* New CVEs
+Jan
 
-CVE-2023-46813: SEV-ES local priv escalation for userspace that have
-access to MMIO regions
-
-CVSS v3(NIST): N/A
-
-An issue was discovered in the Linux kernel before 6.5.9, exploitable
-by local users with userspace access to MMIO registers. Incorrect
-access checking in the #VC handler and instruction emulation of the
-SEV-ES emulation of MMIO accesses could lead to arbitrary write access
-to kernel memory (and thus privilege escalation). This depends on a
-race condition through which userspace can replace an instruction
-before the #VC handler reads it.
-
-This feature has been introduced since 5.10 so before 5.10 kernels are
-not affected.
-It was fixed in 6.6-rc7.
-
-Fixed status
-mainline: [63e44bc52047f182601e7817da969a105aa1f721,
-b9cb9c45583b911e0db71d09caa6b56469eb2bdf,
-  a37cd2a59d0cb270b1bba568fd3a3b8668b9d3ba]
-stable/5.10: [6550cbe25de182f6c0176909a90b324cb375133f,
-5bb9ba7dafbe18e027e335f74372ca65f07f7edd,
-  d78c5d8c23c3f0e24168ea98760016665bf92a79]
-stable/6.1: [57d0639f60f1ff04cbe7fd52823b94b894d7f812,
-def94eb9a804acdcdba5b959ad72cf9119f03f3b,
-  95ff590b802757f8b6bd32e7e5b21ef9b91e2583]
-
-CVE-2023-46862: io_uring/fdinfo: lock SQ thread while retrieving thread cpu/pid
-
-CVSS v3(NIST): N/A
-
-An issue was discovered in the Linux kernel through 6.5.9. During a
-race with SQ thread exit, an io_uring/fdinfo.c io_uring_show_fdinfo
-NULL pointer dereference can occur.
-
-It looks like commit dbbe9c6 (" io_uring: show sqthread pid and cpu in
-fdinfo") introduced this issue since 5.10-rc1.
-
-Fixed status
-mainline: [7644b1a1c9a7ae8ab99175989bfc8676055edb46]
-
-* Updated CVEs
-
-CVE-2023-1193: use-after-free in setup_async_work()
-
-The mainline was fixed.
-
-Fixed status
-mainline: [3a9b557f44ea8f216aab515a7db20e23f0eb51b9]
-
-CVE-2023-35827: net: ravb: Fix possible UAF bug in ravb_remove
-
-The mainline, 5.10, 5.15, 5.4, 6.1, and 6.5 were fixed.
-
-Fixed status
-mainline: [3971442870713de527684398416970cf025b4f89]
-stable/5.10: [db9aafa19547833240f58c2998aed7baf414dc82]
-stable/5.15: [616761cf9df9af838c0a1a1232a69322a9eb67e6]
-stable/5.4: [65d34cfd4e347054eb4193bc95d9da7eaa72dee5]
-stable/6.1: [6f6fa8061f756aedb93af12a8a5d3cf659127965]
-stable/6.5: [105abd68ad8f781985113aee2e92e0702b133705]
-
-CVE-2023-4610: slab-use-after-free Read in radix_tree_lookup while
-fuzzing Linux kernel 6.4-rc6 with syzkaller
-
-The mainline was fixed. This fix reverts commit f95bdb7 ("mm: vmscan:
-make global slab shrink lockless") that was merged in 6.4-rc1.
-
-Fixed status
-mainline: [71c3ad65fabec9620d3f548b2da948c79c7ad9d5]
-
-CVE-2023-5158: vringh: don''t use vringh_kiov_advance() in vringh_iov_xfer()
-
-Fixed in mainline, 5.15, 6.1, and 6.5.
-
-Fixed status
-mainline: [7aed44babc7f97e82b38e9a68515e699692cc100]
-stable/5.15: [1e69422efcc60571cc04f6c1940da848a8c2f21b]
-stable/6.1: [3a72decd6b49ff11a894aabd4d9b3025f046fe61]
-stable/6.5: [0bf2b9c2f3545ffce5720de61c33fc171c0e480a]
-
-Currently tracking CVEs
-
-CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
-Bluetooth Core Specifications 4.0 through 5.2
-
-There is no fix information.
-
-CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
-Provisioning Leads to MITM
-
-No fix information.
-
-CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
-
-No fix information.
-
-Regards,
 -- 
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
+Siemens AG, Technology
+Linux Expert Center
 
-Email :masami.ichikawa@cybertrust.co.jp
-      :masami.ichikawa@miraclelinux.com
 
