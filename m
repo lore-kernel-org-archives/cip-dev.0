@@ -1,257 +1,147 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8541BC4332F
-	for <webhook@archiver.kernel.org>; Sun,  5 Nov 2023 05:31:10 +0000 (UTC)
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
- by mx.groups.io with SMTP id smtpd.web11.25354.1699162268935312793
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Sat, 04 Nov 2023 22:31:09 -0700
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8C18C4332F
+	for <webhook@archiver.kernel.org>; Mon,  6 Nov 2023 05:38:37 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.131])
+ by mx.groups.io with SMTP id smtpd.web11.47843.1699249113413156491
+ for <cip-dev@lists.cip-project.org>;
+ Sun, 05 Nov 2023 21:38:34 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=ofvSCpi9;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.44, mailfrom: bot@kernelci.org)
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-6ce2c5b2154so2209243a34.3
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Sat, 04 Nov 2023 22:31:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1699162268; x=1699767068; darn=lists.cip-project.org;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=sj/NNCokgniUKfNMYdhlAc2plTvczbrN7KCGjA+Gq8g=;
-        b=ofvSCpi9fbfJHKIVL1JUGkGA9mzoYzNwWqxKN2SNlWVagahk40lNISAVq3PIaLr/iM
-         pnNApLKvmUOZeEnXdPT2rYd6v4zbzgBSImzFGdSuGjxCGJGsvYF3DL+LnaHh39fFFsyg
-         RQWJVY299HrsLZnzO4xqOVrMj8qCF6tfMAP7kUiNRL+jRhJ8Oav9rttCdLGjgLp2Ty6J
-         dzX9gLyihEpTUpxZPhdcD/ZnSbssKokKdZG1Nhj+MsOBfZgB7pW0zwqCAOZYn0/hukLP
-         zKGvXnwss2lvCNOXLbeOUzihNfKDwZLqUp9RhHx7FP+dTfPxf78TDiyQFC87mLnqbrep
-         07Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699162268; x=1699767068;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sj/NNCokgniUKfNMYdhlAc2plTvczbrN7KCGjA+Gq8g=;
-        b=EstIESOJwGQMSCm6z8qn3GMq4epmybLIsk4Q7YpwZSYeaxcHUMVYjGUv+28tHMiGOU
-         Xc5ZTqj2W/nEqhKGNscldiKgosH5ukwqag+54PfmqN6ijtyivDrbYXqwpsYoARiQfQAE
-         x7/bB3P14S/bdH7qlfZcQao1+gLCaljTejkfFf5u13ym+UuOix7hjgl86yECCWAElDQt
-         DDJT597+wULS3PTCcCkilE8xOswVjATEJZkdO9oSBeurjgCjiJYgSZ24MW2lsn1QJZNU
-         lBq7JZgnOFY7TKEkjAwXdnQ/0VnLCMLG/Iw88muJ8lkddAjfWMnLeHA/BF/+r2pCc0ol
-         oYlQ==
-X-Gm-Message-State: AOJu0YxbS1tvAFSqcMVUWsLb7eHPaiqpQZYiUy/YqruUvdyEEvpKB1JN
-	CIcgDoFGIrd0N6nj5seLBgbvI3Qcni13ZeD3bHI9Kg==
-X-Google-Smtp-Source: AGHT+IGI9p8kwEStBV/WxPpclTQNZcswbAL9AkEsUdqF4AfE006KEOtac1yN2BAAsb/7T62rxIfzFw==
-X-Received: by 2002:a05:6830:7181:b0:6b9:a926:4a12 with SMTP id el1-20020a056830718100b006b9a9264a12mr34214132otb.28.1699162267804;
-        Sat, 04 Nov 2023 22:31:07 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id ca1-20020a17090af30100b002635db431a0sm3466837pjb.45.2023.11.04.22.31.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Nov 2023 22:31:07 -0700 (PDT)
-Message-ID: <6547289b.170a0220.ffbee.8077@mx.google.com>
-Date: Sat, 04 Nov 2023 22:31:07 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+ dkim=none (message not signed); spf=pass (domain: toshiba.co.jp, ip: 210.130.202.131, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
+Received: by mo-csw.securemx.jp (mx-mo-csw1120) id 3A65c4ZT4137645; Mon, 6 Nov 2023 14:38:05 +0900
+X-Iguazu-Qid: 2rWgHjD2e5DW4ONQv3
+X-Iguazu-QSIG: v=2; s=0; t=1699249084; q=2rWgHjD2e5DW4ONQv3; m=3SM2hpSLh8rKF1C4B/j4TpkFYvyoEHGvQfQXvkSGTGA=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1121) id 3A65c1TN2110711
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Mon, 6 Nov 2023 14:38:01 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VwuPGSXs8NatcEDXHhJsNSYdoTKLEYsVuLkC2Eptp9jiwXmWwtl9jn14hhfVuI4Jq54NkK7H0+L2eNmhDftUTDoRTJZD63r1qQkuvbiczWUOzWqa10we8kji2n3eTJhXZJ7lImX2jeKFA2N5yBjR/GLKoRTUb25sB4Z2AMJxdEN6zUuUP92nHdKGxkJ06+A0BuqruLh+EKcKKumcvXZIfZ4+fAWeMAndQz2F5CTIIYvCfS0yGQe6KCSrZKy7ANw8eFRU/0B7gzkErE6QNUrtE7gAgjflAx8bfM1ImR+nanzLsEINIXXgpsy6lBJkvAXvH+8MP6bYyhaqAqhtcftg1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ArNRe6HHc/fBN24waxi/JmWtedzAL3gdWj6yvvpJBE4=;
+ b=TrQTpFU1XbA5DKX7U9VN3e95ctI14iN9wVPWPr0Kjt8leD/tb0KQ93F34GyhmbiDofHoxNjcb8l0kRt/BY1Z/i09aFVNa7QiUhcWyj6AE7GBlJgbFADJkiJy7HxMuyL4HENNFcrvATp1/hykKW7fR3iRjnS9QGMN1IxHdi00qBALsIRmDU0RML0p9jtOSBrc3eMlWMMywqGnoe7Is2iHqq60JWEeCyoKLchpIr3qKACBitE+ww6HLhgFLQjsDL++lZlfrkUssJq6rWnQiYI6i2J4pnKoBC5JS6stkzrqd2qTK0YzHXTmtktf/WNS06HufCANxgMXRrK/z5DVdiMX6Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: <cip-dev@lists.cip-project.org>
+CC: <jan.kiszka@siemens.com>, <pavel@denx.de>, <uli@fpond.eu>,
+        <Chris.Paterson2@renesas.com>, <masami.ichikawa@cybertrust.co.jp>
+Subject: [ANNOUNCE] Release v4.19.297-cip104
+Thread-Topic: [ANNOUNCE] Release v4.19.297-cip104
+Thread-Index: AQHaEHNRMuqeOosFH02nUNv2L+H64g==
+Date: Mon, 6 Nov 2023 05:37:59 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <TYVPR01MB11245551A6D8EB5251DADC3AD92AAA@TYVPR01MB11245.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYVPR01MB11245:EE_|TYCPR01MB12120:EE_
+x-ms-office365-filtering-correlation-id: fe1595c0-d497-4899-e1bd-08dbde8a8943
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ iH5LFAQWKkxSlPfThGW7Aq6dUBbrO4tmrOwobPX+PsojtxtgZUE5927os1NcoI/aY4FmhuoY8ZqNCQdpoOeeMG/EGOi0cf+YWbbIeDdrzRlPPj01D8txB0rig0F3hPdL1wUjYti+UFsFjuvqz1Qt4frV5+wP9m0HerDY6auY4op9BStrY3biFz3uiS22wo0QpEobsZWBFHwdgsknmAGNkv7S/gX5lrVUcW9S5iF2QT750ggHgI1hoS/oHaOLy2u1zijmB/WA/EeTjdgHa3Mqo0EMmLJBhEUuthfSsG17kCgWu4sgIqPy0nhqjVxC4jTaolKo4aLOyu392vrT+ZJU8vDiuw/fctKP7Cvc4tddS5A5J4bU9tEhDUKSv34RFtuS4xJTXiTwMIzbTynvz6933PP0UI22WLwrToiESH/mu6Ei+dzNVZ2+LPjQy8DAbQcIF3OmwlBSYv/sh+yM0IQafoji3/lDaktSaAgNG0FA9x230ZHPG0/qpsm6vXKpKGMZA1KjfkJxHoXoa+bs2C4v42bwum+QpUVonzvqpY644O0a2T65chuucREGjl6uBSQhswObl8+9hG0ew7FFM9fOrsApWfsRijLCtsoVgwm+Uqswb7pEOh8fyoqpDxVh8zt7
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYVPR01MB11245.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(346002)(39860400002)(376002)(396003)(136003)(230922051799003)(451199024)(64100799003)(186009)(1800799009)(2906002)(4744005)(33656002)(41300700001)(4326008)(8676002)(8936002)(52536014)(86362001)(38070700009)(5660300002)(38100700002)(55016003)(478600001)(966005)(71200400001)(9686003)(6506007)(7696005)(76116006)(83380400001)(91956017)(66556008)(66446008)(66476007)(66946007)(26005)(122000001)(6916009)(54906003)(64756008)(316002)(95630200002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?bjFka0ZuM3R3UXk2RHpsWFdLM1BVL3FuMjZXbk1yT1d5U1ZlazNOOXNh?=
+ =?iso-2022-jp?B?T25pWi9XVmpnY2lRYmdKSENYNnF6MjVCN0VBN1pXRVpLK0NzNWpLc0RX?=
+ =?iso-2022-jp?B?WHpmVDFqaFd4OTM3SDh5UnhUUVhNQit3YTFhYzgwdmFUTHYwZ1RQNkd4?=
+ =?iso-2022-jp?B?alVYS1dkNUlpazJhY01WYldLaFFnYXprbHVxMWVBRHFBNHJzdnpEQXpU?=
+ =?iso-2022-jp?B?OC9pakR0N3ViVWVMUFJWYUpQc1ZSQmh0c0FZK2hGajBReFFWRVMvUFVH?=
+ =?iso-2022-jp?B?QkNHTmM5TFFFRi94NG5YUTU5Y3dzL2paT0ZLRUdzeXl5THVJS0ZFeGty?=
+ =?iso-2022-jp?B?Y0VBSFdwV3plMWhESXlsamVZZXBjYlFxOVB6ekJOM1lvQzlvWmkxdEpY?=
+ =?iso-2022-jp?B?RUhYUFVGQXZibExyUlVaOFNqN3lXVDVIb3RXRUgvcVZablo3UVdDSFlM?=
+ =?iso-2022-jp?B?cXNNbXl4d2kwSFZvUHY0WXZ2RTAxNDB0YTRPZE1ibFB2cHVhZlRRa3pF?=
+ =?iso-2022-jp?B?NzRvaUFlQVBvWDAyVzhENDVtM1ZXZlBuWHNlaXovWjB6K1RHOG1RbkM4?=
+ =?iso-2022-jp?B?MitrYmpiUjBWNFB5SXdWTlM3dzlwNnVoa1hsU0l0bHNXZExwdU5OM2hV?=
+ =?iso-2022-jp?B?RnlLZUhSWkF6ZC9NemtMTEczZnUrRVpzemplbFVjVjZSUWFnNzZGVmxD?=
+ =?iso-2022-jp?B?bTJwOC9DTWdGMHYxSndHbm5XTStCY3hKdm9ITzcxS29Tc2ltWFRsTDhJ?=
+ =?iso-2022-jp?B?VzZNbkp4SmtGUVhac3dIRkRkOUFPQjJQYTBaZDZuRGtuYnRRcms1NU01?=
+ =?iso-2022-jp?B?SStYaGxrQUZFcUdEU3pxQ29aYnZrMTFWeitIK2F5WTFna0JJdUZzeHVy?=
+ =?iso-2022-jp?B?eW1wNEFYVjZ6MXNJZEpNZXZ4SzVBdmpqeWRHU0hQb2NadlRtOXVmd0Vv?=
+ =?iso-2022-jp?B?cXQwSGl0NFViNGZDMkk5UGxnTVp4SWFPZU90YmhLWlVzcWFjZHErek1r?=
+ =?iso-2022-jp?B?a3pxTzVhUEVDTkVwRVN1Rk5XdERjYndTRVNmMUExYWx5NWpnNmFJdEtM?=
+ =?iso-2022-jp?B?ekt0a2FxVC9RWDcyRU1lczlmTCtodWV5VXc1d3FsSkdQbCswSkJERGlU?=
+ =?iso-2022-jp?B?UVl2UTFHVTZ4SUFVU3YzZWFQK0wraHhQenA4Z1I5NUNRM0RHZ0thTEJD?=
+ =?iso-2022-jp?B?UDFPRTQwc3BSMjJJUkoyRUtEWUFBMkVOOGw1V2N3RThoWisxNjFmc3Z4?=
+ =?iso-2022-jp?B?N0lyN3ZsMFZRdm1GNUJsTXhndlIzRzRNUU5zazkwN05vZ01VSVpaOGx3?=
+ =?iso-2022-jp?B?c3JheTlZR1VJNW1hcm1wOXRHbWtFY0tWQUhQdEZtTDhzQnVtNFBVSHF6?=
+ =?iso-2022-jp?B?RWJrZldRQSt4OWNic3lKMWNsUVFLQ2xVc1p3YTRsc3ZtYnVYUXRwRFF2?=
+ =?iso-2022-jp?B?am4wT3h4dWtJUGJHa1RHZ0xpRCtDaXJaM0g0Ym1BeU56eXNFdHU5VVU2?=
+ =?iso-2022-jp?B?QlYrMFg4bEw1dU5GeXpKYTZYWE9Xc29PSmd2ZWFrOEhmQWVhODVueEtN?=
+ =?iso-2022-jp?B?blpwaVpLdzZWL292QjlmYlQzcUhuN3Q2djhRZDdMTk12YzVUSWQ0RzJ1?=
+ =?iso-2022-jp?B?WG4vVHNvbzEvQWtiQzdUSTdlazFXZ3FqTVRMM01UblAvWFZhSkVSR0R2?=
+ =?iso-2022-jp?B?M2Vod2xBaW5DazRHNW1lVHl2dEVGcEkzaXlKSnJnUlZsTzhrbGFPVUx2?=
+ =?iso-2022-jp?B?b0VQeTZaY2lQSmNmd09iL0t4clE2SDM4MTRkYmJyQnE4L1VUOFJkT2dD?=
+ =?iso-2022-jp?B?Y25tYis0eTJ3N2tqUzFoZnMwR3V0R0VoTXR4VVFPRGNrQWU3NDRaeDRV?=
+ =?iso-2022-jp?B?N2M5cXBYWCtpaWdZa2xiR3V4dEtCY1FJdVg4SkZQV1UzZEVZY05vQzZJ?=
+ =?iso-2022-jp?B?L1FpTElaMEZqUkRjSDhjSGhVZEpEdjZQbytvTzFLaEQ2cHhMcFB3K0Nv?=
+ =?iso-2022-jp?B?UWl2SHVub0VlZkJtWTd5SVZ1YTRMQ2VPVkRtV1RTODF6em5ZUklhWFAx?=
+ =?iso-2022-jp?B?OVhyTDBicUlLVStONFl5MVZrVHFlMERVYjFaOEpqYXEvZFV5bjJxY25C?=
+ =?iso-2022-jp?B?Y1dQMDB0WkZSeWl1bkY5bHRvNUptMGF5RUdnZ2NGRnkxS3BYc3E4cERr?=
+ =?iso-2022-jp?B?RDBwd243VFlFNEVYbzV2b3JnMi8rVDJERHA3V0dMUnNHZVkxTlVuZm5W?=
+ =?iso-2022-jp?B?b3lxTGFsS2dIbWh2MnJUZlMycDBiVjFNVXF1SXZiTjgrZXByemtvOGF5?=
+ =?iso-2022-jp?B?Z2pPc21Ydldvb21EVFc4ZHhWcU1GbXV6T0E9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v4.4-st20-1872-g0dd3085de20bc
-X-Kernelci-Report-Type: build
-X-Kernelci-Branch: linux-4.4.y-st-rc
-X-Kernelci-Tree: cip
-Subject: cip/linux-4.4.y-st-rc build: 14 builds: 0 failed, 14 passed,
- 25 warnings (v4.4-st20-1872-g0dd3085de20bc)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
- kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
-From: "kernelci.org bot" <bot@kernelci.org>
+MIME-Version: 1.0
+X-OriginatorOrg: toshiba.co.jp
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYVPR01MB11245.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe1595c0-d497-4899-e1bd-08dbde8a8943
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2023 05:37:59.2242
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: UkuexuLn4EZ23VrcXi+wZgx8qyFHVQo2F44zmS5TPDC+PXt/8X1NAN2wYhI+FBconABF6ML8xYRYK3nDsROIJHKnsOc4A+RthwJr3MPPjfk59xmaq9ANpIfyMgZ8UpBw
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB12120
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Sun, 05 Nov 2023 05:31:10 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13534
+ <cip-dev@lists.cip-project.org>; Mon, 06 Nov 2023 05:38:37 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13535
 
-cip/linux-4.4.y-st-rc build: 14 builds: 0 failed, 14 passed, 25 warnings (v=
-4.4-st20-1872-g0dd3085de20bc)
+Hi all,=0A=
+=0A=
+CIP kernel team has released Linux kernel v4.19.297-cip104.=0A=
+The linux-4.19.y-cip tree has been updated base version from v4.19.295 to=
+=0A=
+v4.19.297,=0A=
+=0A=
+You can get this release via the git tree at:=0A=
+=0A=
+  v4.19.297-cip104:=0A=
+    repository:=0A=
+      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git=0A=
+    branch:=0A=
+      linux-4.19.y-cip=0A=
+    commit hash:=0A=
+      1de13c21df07c83dd4c4d46225a226e5cd9b1a13=0A=
+    Fixed CVEs:=0A=
+      CVE-2023-31085: BUG: divide error in ubi_attach_mtd_dev=0A=
+      CVE-2023-34324: xen/events: replace evtchn_rwlock with RCU=0A=
+      CVE-2023-42754: null pointer dereference in Linux kernel ipv4 stack=
+=0A=
+      CVE-2023-5717: perf: Disallow mis-matched inherited group reads=0A=
+    added commits:=0A=
+      CIP: Bump version suffix to -cip104 after merge from stable=0A=
+=0A=
+Best regards,=0A=
+   Nobuhiro=0A=
 
-Full Build Summary: https://kernelci.org/build/cip/branch/linux-4.4.y-st-rc=
-/kernel/v4.4-st20-1872-g0dd3085de20bc/
-
-Tree: cip
-Branch: linux-4.4.y-st-rc
-Git Describe: v4.4-st20-1872-g0dd3085de20bc
-Git Commit: 0dd3085de20bc92f93036e6ba5d78e8c1491bef7
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-Built: 4 unique architectures
-
-Warnings Detected:
-
-arm64:
-    defconfig (gcc-10): 1 warning
-    defconfig+arm64-chromebook (gcc-10): 1 warning
-
-arm:
-
-i386:
-    i386_defconfig (gcc-10): 4 warnings
-
-x86_64:
-    allnoconfig (gcc-10): 3 warnings
-    tinyconfig (gcc-10): 2 warnings
-    x86_64_defconfig (gcc-10): 7 warnings
-    x86_64_defconfig+x86-board (gcc-10): 7 warnings
-
-
-Warnings summary:
-
-    7    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic su=
-ffix given and no register operands; using default for `btr'
-    4    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic su=
-ffix given and no register operands; using default for `btr'
-    3    ld: warning: creating DT_TEXTREL in a PIE
-    3    WARNING: vmlinux.o (.discard.retpoline_safe): unexpected non-alloc=
-atable section.
-    3    WARNING: vmlinux.o (.discard.nospec): unexpected non-allocatable s=
-ection.
-    2    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in rea=
-d-only section `.head.text'
-    2    drivers/net/ethernet/apm/xgene/xgene_enet_main.c:32:36: warning: a=
-rray =E2=80=98xgene_enet_acpi_match=E2=80=99 assumed to have one element
-    1    ld: arch/x86/boot/compressed/head_32.o: warning: relocation in rea=
-d-only section `.head.text'
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-
-Detailed per-defconfig build reports:
-
----------------------------------------------------------------------------=
------
-allnoconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 3 warnings, 0 sectio=
-n mismatches
-
-Warnings:
-    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
-given and no register operands; using default for `btr'
-    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
-given and no register operands; using default for `btr'
-    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
-given and no register operands; using default for `btr'
-
----------------------------------------------------------------------------=
------
-allnoconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
-
----------------------------------------------------------------------------=
------
-defconfig (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 section mi=
-smatches
-
-Warnings:
-    drivers/net/ethernet/apm/xgene/xgene_enet_main.c:32:36: warning: array =
-=E2=80=98xgene_enet_acpi_match=E2=80=99 assumed to have one element
-
----------------------------------------------------------------------------=
------
-defconfig+arm64-chromebook (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 1 warn=
-ing, 0 section mismatches
-
-Warnings:
-    drivers/net/ethernet/apm/xgene/xgene_enet_main.c:32:36: warning: array =
-=E2=80=98xgene_enet_acpi_match=E2=80=99 assumed to have one element
-
----------------------------------------------------------------------------=
------
-i386_defconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 4 warnings, 0 secti=
-on mismatches
-
-Warnings:
-    WARNING: vmlinux.o (.discard.nospec): unexpected non-allocatable sectio=
-n.
-    WARNING: vmlinux.o (.discard.retpoline_safe): unexpected non-allocatabl=
-e section.
-    ld: arch/x86/boot/compressed/head_32.o: warning: relocation in read-onl=
-y section `.head.text'
-    ld: warning: creating DT_TEXTREL in a PIE
-
----------------------------------------------------------------------------=
------
-imx_v6_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-multi_v5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-multi_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-omap2plus_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-tinyconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 2 warnings, 0 section=
- mismatches
-
-Warnings:
-    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
-given and no register operands; using default for `btr'
-    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
-given and no register operands; using default for `btr'
-
----------------------------------------------------------------------------=
------
-tinyconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
-vexpress_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 7 warnings, 0 s=
-ection mismatches
-
-Warnings:
-    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
-given and no register operands; using default for `btr'
-    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
-given and no register operands; using default for `btr'
-    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
-given and no register operands; using default for `btr'
-    WARNING: vmlinux.o (.discard.nospec): unexpected non-allocatable sectio=
-n.
-    WARNING: vmlinux.o (.discard.retpoline_safe): unexpected non-allocatabl=
-e section.
-    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in read-onl=
-y section `.head.text'
-    ld: warning: creating DT_TEXTREL in a PIE
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig+x86-board (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 7 war=
-nings, 0 section mismatches
-
-Warnings:
-    arch/x86/entry/entry_64.S:487: Warning: no instruction mnemonic suffix =
-given and no register operands; using default for `btr'
-    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
-given and no register operands; using default for `btr'
-    arch/x86/kernel/process.c:456: Warning: no instruction mnemonic suffix =
-given and no register operands; using default for `btr'
-    WARNING: vmlinux.o (.discard.nospec): unexpected non-allocatable sectio=
-n.
-    WARNING: vmlinux.o (.discard.retpoline_safe): unexpected non-allocatabl=
-e section.
-    ld: arch/x86/boot/compressed/head_64.o: warning: relocation in read-onl=
-y section `.head.text'
-    ld: warning: creating DT_TEXTREL in a PIE
-
----
-For more info write to <info@kernelci.org>
 
