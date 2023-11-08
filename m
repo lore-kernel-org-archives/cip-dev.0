@@ -1,134 +1,194 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3904C4332F
-	for <webhook@archiver.kernel.org>; Wed,  8 Nov 2023 13:30:56 +0000 (UTC)
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
- by mx.groups.io with SMTP id smtpd.web10.13463.1699450247734705362
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Wed, 08 Nov 2023 05:30:47 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2EB7C4332F
+	for <webhook@archiver.kernel.org>; Wed,  8 Nov 2023 22:56:40 +0000 (UTC)
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+ by mx.groups.io with SMTP id smtpd.web10.107183.1699484191770223255
+ for <cip-dev@lists.cip-project.org>;
+ Wed, 08 Nov 2023 14:56:32 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=S/Zdy6ZU;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.215.175, mailfrom: bot@kernelci.org)
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-5bde80aad05so242859a12.2
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Wed, 08 Nov 2023 05:30:47 -0800 (PST)
+ dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=Qa09/FhI;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.160.44, mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-1f066fc2a28so118593fac.0
+        for <cip-dev@lists.cip-project.org>; Wed, 08 Nov 2023 14:56:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1699450246; x=1700055046; darn=lists.cip-project.org;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=flcC6c0KaqnNOLsIEP1Z7T/iRgNC3QCl6C0y2rSlnpY=;
-        b=S/Zdy6ZUkfTEgjHBP7sJlm+q2+njAQP58b+W1bno72Q5uE/trMrz9IhXQXN5IxXXTR
-         wqdao+QqC8kncKEusuVeQ185RHHtY1eS/UXFrJS8wVwYierL4+99XoPld4cC4BErCT/b
-         fW2hDNz0POWXQ8tOlo1RPXhF9byxW0CoYWWcA+D+QT5r0lJRFYc+1nbg11gVNrlbX4VU
-         3kWvxVkkjKaJWhqql3rTHPczkZo1+UbK3eyf0g4Udh+HQMnUsVew0p5GHNU/AdCl0tpu
-         IbrtN8Ml8uMIx9kD6lKlQnnuO8il7tYEj0LIU2QnwL7vMNBew3bqafTlYuVsMH9Mva/w
-         N00g==
+        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1699484191; x=1700088991; darn=lists.cip-project.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gPUrXBGCJ23vfjx9Grh1LeajzB8uWWVpmAo1YOlUPxo=;
+        b=Qa09/FhIHSmIvxlvXjk2+AkMbjdXwjhcYbsrtg9dkwVYNVQSlft9Sc+HdpczM+0wGc
+         nrSFHRty3dFUF+wAt0F8oQREZ2FlGsmNVXXATGwxd70f8R9H3qpuj+sXbPLh9EiWgXUC
+         0wjl7o8j1p9AsMwVInB78+Bk9ZKUMcv3m5qB45VT8KqB1F+L9tPrDRZbV1D79N6D8E8l
+         6Ek28BY4ZD/ITqMsjKA8KMEw/yQEicIfRsKFPWyWhk2GYGgU4UBMXVqhPO/SFYcEJdR+
+         7GkQOP1LUXiGDHnRZA0Es57+061aqzgV/lqhrB7tfgTG9UO6gLVY2kIy/Kr0GHZPYm6Y
+         59rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699450246; x=1700055046;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=flcC6c0KaqnNOLsIEP1Z7T/iRgNC3QCl6C0y2rSlnpY=;
-        b=jrX1SVO25PJPldYWCRMFQsq+hcTgsKMqnwOeeVXIB3XZLY1KIP5wI8r2KC2APVnieg
-         HU391oQI7Z4nRspjqqSnu/LpN6ZsTE4B4SVS6ineNcdEsUdRSxHD/Ek9UrpXnKkUhLfU
-         D/XlK/Bsxg0YpwQJ+CJfEmi62IN5yNGM2VwKrSN7R6nYF2aoLa5d1tpj+JY9H05y/OCI
-         D79N2COqBfpVktqmuS8exzPaocw0u2lS+X9yiaD8hMHSyXvYao+urBBQKaYyCmSKnCBf
-         0dr6FPEIwTT3JdOKmf3BYTL0fiIqW2BHJN733wODSe7BJ6b9kVM1yCTeeYZryFANekJJ
-         2gMA==
-X-Gm-Message-State: AOJu0YzA7ulUQ9nJFKFuElHZR43WCjCUV8GnZwx7xOHlbgQGP1ebjFXW
-	xXwDySaOgnHYaVdBaJDuAmujx/JgR6TfqdUyC8XtQA==
-X-Google-Smtp-Source: AGHT+IGVw3I9uk5Gvr4gn1p+HPH4XQFISwtEKNEyOhpIWpu53NbpOfc4dg0F3HsxqmOSVWU+Dxhmvw==
-X-Received: by 2002:a17:90b:1a8b:b0:280:18bd:ffe7 with SMTP id ng11-20020a17090b1a8b00b0028018bdffe7mr1514957pjb.48.1699450246202;
-        Wed, 08 Nov 2023 05:30:46 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id d6-20020a17090ac24600b0028018af8dc2sm1582897pjx.23.2023.11.08.05.30.45
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Nov 2023 05:30:45 -0800 (PST)
-Message-ID: <654b8d85.170a0220.719e2.45d5@mx.google.com>
-Date: Wed, 08 Nov 2023 05:30:45 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        d=1e100.net; s=20230601; t=1699484191; x=1700088991;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gPUrXBGCJ23vfjx9Grh1LeajzB8uWWVpmAo1YOlUPxo=;
+        b=Dz9FRiJvX//z7q70mz5ngPWt3DmMHNudfgM4fTBSvGLodaEyk10G/Qd0r/7NqQQ28I
+         3oMEXdatUexfmdrSdmUrL/qep07c6CK9VpJ/TedVC/d1vzvg9/uG6j211xdFkish9XgU
+         a3uX5kB4e6lmeSLucGETSVf9escfm5nA2z2Bc2Zw5+AL7sSzpmrunIVpqjv6BFlqVPok
+         l881yW8iElwyLXmildEmeRjWVMsrk10Cv0PfpK1BraK1gHhcT1Sis1E0JxtZMJFdm9eS
+         WNtnsHGm39GJKztxl7WHfYctzTfwzaWS1vdEnfts4CiAnjcePzjY24AkAiFSnpLW+HFj
+         aE0Q==
+X-Gm-Message-State: AOJu0YyPyD18HqqlouDkRhr4IzamoX+GB53c6XMH9iN5qOr3Iu2nb73m
+	k9eT5x2qNiQcY+NNMsKl5u00lPkcIWGZuPFkaqSJO16EG3+3JPE08AI=
+X-Google-Smtp-Source: AGHT+IHL2s8NK5wridi7jLWD6N+93EdBM8C+bp5p4Hh8RZQC9m8euAmvoi2DQJKTmNx6t/8y575axQRahZl7c8mAZGk=
+X-Received: by 2002:a05:6870:1145:b0:1d5:f070:d518 with SMTP id
+ 5-20020a056870114500b001d5f070d518mr3011206oag.52.1699484190694; Wed, 08 Nov
+ 2023 14:56:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v4.19.297-cip104-63-ge7301d2e196ae
-X-Kernelci-Report-Type: test
-X-Kernelci-Branch: ci/iwamatsu/linux-4.19.y-cip-rc
-X-Kernelci-Tree: cip-gitlab
-Subject: cip-gitlab/ci/iwamatsu/linux-4.19.y-cip-rc ltp-timers: 11 runs,
- 1 regressions (v4.19.297-cip104-63-ge7301d2e196ae)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
-From: "kernelci.org bot" <bot@kernelci.org>
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 9 Nov 2023 07:55:54 +0900
+Message-ID: <CAODzB9q1AOFqyaKhEpdFmFzpXj6vu8Ve4FhT3Q7Ra4VPJ=9JWw@mail.gmail.com>
+Subject: [kernel-cve-report] New CVE entries this week
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 08 Nov 2023 13:30:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13542
+ <cip-dev@lists.cip-project.org>; Wed, 08 Nov 2023 22:56:40 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13543
 
-cip-gitlab/ci/iwamatsu/linux-4.19.y-cip-rc ltp-timers: 11 runs, 1 regressio=
-ns (v4.19.297-cip104-63-ge7301d2e196ae)
+Hi!
 
-Regressions Summary
--------------------
+It's this week's CVE report.
 
-platform           | arch   | lab           | compiler | defconfig         =
-         | regressions
--------------------+--------+---------------+----------+-------------------=
----------+------------
-hp-11A-G6-EE-grunt | x86_64 | lab-collabora | gcc-10   | x86_64_defconfig+x=
-86-board | 1          =
+This week reported 1 new CVEs and 7 updated CVEs.
 
+* New CVEs
 
-  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fiwamatsu%2=
-Flinux-4.19.y-cip-rc/kernel/v4.19.297-cip104-63-ge7301d2e196ae/plan/ltp-tim=
-ers/
+CVE-2023-47233: Use after Free bug in brcmf_cfg80211_detach
 
-  Test:     ltp-timers
-  Tree:     cip-gitlab
-  Branch:   ci/iwamatsu/linux-4.19.y-cip-rc
-  Describe: v4.19.297-cip104-63-ge7301d2e196ae
-  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
-  SHA:      e7301d2e196ae60b103ce909a0740547e15c30ea
+CVSS v3(NIST): N/A
 
-  Test suite revisions:
-    ltp-tests
-      URL:  https://github.com/linux-test-project/ltp.git
-      SHA:  3f0b2176930cf15a26597e28abf4356050136bbe =
+The brcm80211 component in the Linux kernel through 6.5.10 has a
+brcmf_cfg80211_detach use-after-free in the device unplugging
+(disconnect the USB by hotplug) code. For physically proximate
+attackers with local access, this "could be exploited in a real world
+scenario." This is related to brcmf_cfg80211_escan_timeout_worker in
+drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c.
 
+Introduced by commit e756af5 ("brcmfmac: add e-scan support.") in 3.7-rc1.
 
+Fixed status
+Not fixed yet
 
-Test Regressions
----------------- =
+* Updated CVEs
 
+CVE-2023-46862: io_uring/fdinfo: lock SQ thread while retrieving thread cpu/pid
 
+Stable 6.1 and 6.5 were fixed.
 
-platform           | arch   | lab           | compiler | defconfig         =
-         | regressions
--------------------+--------+---------------+----------+-------------------=
----------+------------
-hp-11A-G6-EE-grunt | x86_64 | lab-collabora | gcc-10   | x86_64_defconfig+x=
-86-board | 1          =
+Fixed status
+mainline: [7644b1a1c9a7ae8ab99175989bfc8676055edb46]
+stable/6.1: [9236d2ea6465b37c0a73d994c1ad31753d31e5f5]
+stable/6.5: [56e08ccc969796168f0e6adf6642f8546f54ba6f]
 
+CVE-2023-5158: vringh: don''t use vringh_kiov_advance() in vringh_iov_xfer()
 
-  Details:     https://kernelci.org/test/plan/id/654b871ca248acb4c5efcef3
+Fixed in mainline, 5.15, 6.1, and 6.5.
 
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: x86_64_defconfig+x86-board
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
-.19.y-cip-rc/v4.19.297-cip104-63-ge7301d2e196ae/x86_64/x86_64_defconfig+x86=
--board/gcc-10/lab-collabora/ltp-timers-hp-11A-G6-EE-grunt.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
-.19.y-cip-rc/v4.19.297-cip104-63-ge7301d2e196ae/x86_64/x86_64_defconfig+x86=
--board/gcc-10/lab-collabora/ltp-timers-hp-11A-G6-EE-grunt.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230623.0/amd64/initrd.cpio.gz =
+Fixed status
+mainline: [7aed44babc7f97e82b38e9a68515e699692cc100]
+stable/5.15: [1e69422efcc60571cc04f6c1940da848a8c2f21b]
+stable/6.1: [3a72decd6b49ff11a894aabd4d9b3025f046fe61]
+stable/6.5: [0bf2b9c2f3545ffce5720de61c33fc171c0e480a]
 
+CVE-2021-44879: f2fs: fix to do sanity check on inode type during
+garbage collection
 
+Stable 4.14, 4.19, 5.10, and 5.4 were fixed.
 
-  * ltp-timers.login: https://kernelci.org/test/case/id/654b871ca248acb4c5e=
-fcef4
-        new failure (last pass: v4.19.295-cip103-193-g33550555e507c) =
+Fixed status
+mainline: [9056d6489f5a41cfbb67f719d2c0ce61ead72d9f]
+stable/4.14: [a481db81e7ead1369acca8e13b6939778cb7d2c5]
+stable/4.19: [45c9da086dded78a12bc580f5bb012545a910803]
+stable/5.10: [571ce7d944cdd204da163cb5d5cc75bb38090246]
+stable/5.15: [0ddbdc0b7f0cec3815ac05a30b2c2f6457be3050]
+stable/5.16: [d667b9f61df7bdfcb59dd1406fd2392c358f0008]
+stable/5.4: [e9a988cd4c8baac7550aa0c2f1efc9533ed9da36]
 
- =20
+CVE-2023-3567: use-after-free in vcs_read in drivers/tty/vt/vc_screen.c
+
+Stable 4.14 was fixed.
+
+Fixed status
+mainline: [226fae124b2dac217ea5436060d623ff3385bc34]
+stable/4.14: [af79ea9a2443016f64d8fd8d72020cc874f0e066]
+stable/4.19: [6332f52f44b9776568bf3c0b714ddfb0bb175e78]
+stable/5.10: [55515d7d8743b71b80bfe68e89eb9d92630626ab]
+stable/5.15: [fc9e27f3ba083534b8bbf72ab0f5c810ffdc7d18]
+stable/5.4: [d0332cbf53dad06a22189cc341391237f4ea6d9f]
+stable/6.1: [8506f16aae9daf354e3732bcfd447e2a97f023df]
+
+CVE-2023-45863: kobject: Fix slab-out-of-bounds in fill_kobj_path()
+
+Stable 4.14, 4.19, 5.10, and 5.4 were fixed.
+
+Fixed status
+mainline: [3bb2a01caa813d3a1845d378bbe4169ef280d394]
+stable/4.14: [b43cf5ad5241d6f33a02c93271a282d5ed6c4cce]
+stable/4.19: [0af6c6c15681cf80aeb85fcb3a1928c63aa89deb]
+stable/5.10: [b2e62728b106fe54f8618c21a252df7d4a4cc775]
+stable/5.15: [89a0079049f5568268d75c8cdf28bec0e2553e23]
+stable/5.4: [5776aeee2a604ccc03e8269713624f9c8fd318e0]
+stable/6.1: [fe4dd80d58ec5633daf5d50671d1341f738508bf]
+
+CVE-2023-5090: x86: KVM: SVM: always update the x2avic msr interception
+
+Stable 6.1 was fixed.
+
+Fixed status
+mainline: [b65235f6e102354ccafda601eaa1c5bef5284d21]
+stable/6.1: [7ab62e3415fb59289ab6dea31f0cc0237b949200]
+stable/6.5: [94805f9d3a3fb1f091bcc08b9c4846c4346706eb]
+
+CVE-2023-5178: nvmet-tcp: Fix a possible UAF in queue intialization setup
+
+Stable 5.4 was fixed.
+
+Fixed status
+mainline: [d920abd1e7c4884f9ecd0749d1921b7ab19ddfbd]
+stable/5.10: [e985d78bdcf37f7ef73666a43b0d2407715f00d3]
+stable/5.15: [34f62612be2a7f90ab68a14154db6664a32f8db0]
+stable/5.4: [4e53bab11f01a401a5acd3bc94335b27ec79106b]
+stable/6.1: [f691ec5a548257edb3aacd952e2a574e4e57b2c4]
+stable/6.5: [675f0e9bb716fa3252979145b9b1a950140e94e9]
+
+Currently tracking CVEs
+
+CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
+Bluetooth Core Specifications 4.0 through 5.2
+
+There is no fix information.
+
+CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
+Provisioning Leads to MITM
+
+No fix information.
+
+CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
+
+No fix information.
+
+Regards,
+-- 
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
+
+Email :masami.ichikawa@cybertrust.co.jp
+      :masami.ichikawa@miraclelinux.com
 
