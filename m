@@ -1,1218 +1,178 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A51C41535
-	for <webhook@archiver.kernel.org>; Fri, 10 Nov 2023 06:46:42 +0000 (UTC)
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
- by mx.groups.io with SMTP id smtpd.web11.22878.1699598797263887530
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Thu, 09 Nov 2023 22:46:37 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B80C4332F
+	for <webhook@archiver.kernel.org>; Fri, 10 Nov 2023 07:12:03 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.web11.23045.1699600320748384830
+ for <cip-dev@lists.cip-project.org>;
+ Thu, 09 Nov 2023 23:12:01 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=TDF4WePg;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.161.50, mailfrom: bot@kernelci.org)
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-586ad15f9aaso855048eaf.2
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Thu, 09 Nov 2023 22:46:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1699598796; x=1700203596; darn=lists.cip-project.org;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=6WmQ98XCDYDFuHgf54hBCusd2ddcjoR9+9U6EDZBit8=;
-        b=TDF4WePgeAry2vbX2gNQZhmVBUYTGl53EI4eNNO4EkSmnubZ53rHoQuo99w3JTDGbh
-         0aJ/RHBU+4blp9gqycswZIbTT+iCOqfdYymcT6icgQASt1J7S2HI/oh56iCd40lyYBRd
-         GIpgVxUhNMdNfr2TmXlW4KNbgqCvaIdWqXLjM9igZckJtWmx1x2LB1HEHOcgf2if5P1g
-         TD/dUub0WkwdrO70WRoJKRinL9qhN1AHskecIJ4plJlE/q2aL5x8dzaT7NDjbW2f3HYt
-         2nAeLcUwRO7pr1Wkk0eqFULGP0xyAGpxxEdRoH2+J3YbGp1HoiSecVw9J7b39pmkSRRo
-         +Pqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699598796; x=1700203596;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6WmQ98XCDYDFuHgf54hBCusd2ddcjoR9+9U6EDZBit8=;
-        b=ry4HMJioFtttRiVx9RErrjEQEIwsK1iccsP/hk1l+hEUg1Hcfzc4WX09bI3DoVq1un
-         mv7vc5GC8c21kBaRTbt574SQbkGAvZ8gV6c7ZmkoTH3lOr4Q4MC+ogXcamQa28fIzltr
-         apidqJbeqh9Rv46bv1zsx17/SGFFKdtsAX9vFWymBxSeu+3EOdnuPNxgf3kSf9Uaelh0
-         4zwL3PSkiYud1S8T5Rb4Eo8AJDW6xoehPQ8cYoXwQAjBfTA/Pizk+tR/AqU7KkcYWQwY
-         Fh2XHBHvsxQMrgmaHYxgJJ6o8EyErU1lhMrNLQETYua1owVQZD535YCvWV64JL9i+P9Q
-         kh6Q==
-X-Gm-Message-State: AOJu0YzyFnS4ZG6s8O+v/Im8gV6v63RG0icLlEStB+tmr6RqbHzD0Swu
-	iaFwbMAO+yP2lgRnekPPX4u0ufUwLydYd2mSWnPOUw==
-X-Google-Smtp-Source: AGHT+IEU5hSEEZ6UBDJEtn19adDGlF4yGERPISes2J09T5YoRFG7sMcxn8Wp11FBpqQcRranu5GRuA==
-X-Received: by 2002:a05:6358:785:b0:168:e8a8:6760 with SMTP id n5-20020a056358078500b00168e8a86760mr6499768rwj.6.1699598795446;
-        Thu, 09 Nov 2023 22:46:35 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id b7-20020a63cf47000000b00588e8421fa8sm5848510pgj.84.2023.11.09.22.46.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Nov 2023 22:46:34 -0800 (PST)
-Message-ID: <654dd1ca.630a0220.1c196.2111@mx.google.com>
-Date: Thu, 09 Nov 2023 22:46:34 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+ dkim=none (message not signed); spf=pass (domain: toshiba.co.jp, ip: 210.130.202.158, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
+Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 3AA7Bbj21447947; Fri, 10 Nov 2023 16:11:37 +0900
+X-Iguazu-Qid: 2rWgs5nq7eqdZSIaC3
+X-Iguazu-QSIG: v=2; s=0; t=1699600296; q=2rWgs5nq7eqdZSIaC3; m=rOYykX8EXjjjCwMTTm1LpaqeIL4+mKVodbPJyBS/kag=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1120) id 3AA7BXp02478264
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Fri, 10 Nov 2023 16:11:33 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ezaVGnUMWglu2ouIRXMrDE8dUfa/idwiakMXKfu8uQOkrK5sXNIvuTC8YCmtQPIPV6EKSKSveFXvt9+5lt3vQJFRIzHqJlDsvEoTzOIE10T2h4XKAgW7/oCN53BnXHJ9z7gaa8jyPd6ebaWkvVrLmEy+vajwFHOr+SwReIN1PB+7hseL7mWNvYgeC1Ibo1nZnKjArky+r6BUQhETTbfp3x7I1CjFxVbDZnZ1Q6mNOxsCu3savLO+nfPRmGwH/Sn7Zmp8OyO7/XEgzgprvvqw0glf03u0W+OmrMyDsOtut0k9dEm+ZZ+f86v5fwSBooNe6fTgbesirWk6kvj9PnE5JA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0vS0oUqoeaLV8J9ytAsjwP0uU05w0UC0SPEp1Q40N3c=;
+ b=RtuIXiLfjxuUEZnwshn14yWm1wxQcWzAxr4WP5uoqJibJWQMOQLN7TajpDWK/5XP0EpT77jy1SEmuNQH95wSsIzMxBZFemU0SuqF71gmfBm1CJAZqjf5rEsCtWrCr5nBGgD/6/wqwGcd2YOJgrHuG5Zu8SpFpP1zDjq65nqC4+1G8by1VK7UAaFB+ce3MgSL3PcTRgcgauXpFa4S3BjGo7uTsxQcnE4gorzz52TDgvslZmKVmDm8M2P0jT3kdfn4rs7lOCtp6YqyZk4e935goaUg5/a+CHfCsKyNQlKbZjwjAl0GgO870mRTfKUyZQJ3YuRCnAKYs9nMZLSPVjjFSA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: <cip-dev@lists.cip-project.org>
+CC: <jan.kiszka@siemens.com>, <pavel@denx.de>, <Chris.Paterson2@renesas.com>,
+        <masami.ichikawa@cybertrust.co.jp>, <uli@fpond.eu>
+Subject: [ANNOUNCE] v5.10.200-cip40
+Thread-Topic: [ANNOUNCE] v5.10.200-cip40
+Thread-Index: AdoTpPzQRnRcVkfkS/COJjRm6eEbmQ==
+Date: Fri, 10 Nov 2023 07:11:29 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <TYVPR01MB11245BE3411A7BBE511E17F7E92AEA@TYVPR01MB11245.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYVPR01MB11245:EE_|TY3PR01MB11280:EE_
+x-ms-office365-filtering-correlation-id: 412863ac-7147-40dd-76fc-08dbe1bc42bf
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ cFvu2XTLy4Pzj1XUXHGLEFEHQYOAmnG9YXV85I+ZYgxRoAJwooOsRhAxLqV5GxOtt05IhUG1KHvsI5mbnRigigbXu5dNhN693H4CR8L4Y8yc3BOm5qaqsE4AizbyefUEYeov4isthoPhp+enwtFtrbfgMeNAPyWfC+Vo0HWOYsnlitky27KP2R/6Dz9a3JLHjKaTgpalMgzMscVmUu+nPyCJfXvrzpBjqoEFdxUAEcuMRZAg0Yk1oJzJz/t4QwZEDUNZGL4jliLA3O2sTyiOpSdJwcg4JqpzgImLAkHCwIswc38xCAstMGcmNIF3eYzS9vCtB0/BPeZENYmKsJ4+cyOd1WvwQpj2P3GP8CWq7uYvmWOaZVzp4fwzsGBdA3zhyV4CGMWf/rijZLLG5EOYyT6t368EBrgTlzMwba6vRh28hdLWulrMgmbtXe915QZzNa129DCsVx/0p8mD1mncpaLWZNhw7MhxajcM+51qUOUmneixIYasidAWc38fbEgOx47acGrlsH0jDx+Qm/m4oFzaRgQzRkT6Ld15pU8Hl3H1r/vDJjZNrTMPwjgwmWmqNMBdiZS7Ax03dDw75RSH4W4r+TM9kMBSv6Xo2a1henw1gpTVuW5+Djuq7jE/i0Yw
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYVPR01MB11245.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(366004)(396003)(39860400002)(136003)(346002)(230922051799003)(186009)(451199024)(64100799003)(1800799009)(9686003)(5660300002)(41300700001)(6506007)(7696005)(26005)(83380400001)(2906002)(55016003)(66946007)(66476007)(64756008)(66446008)(66556008)(54906003)(6916009)(71200400001)(316002)(52536014)(4326008)(8676002)(966005)(8936002)(478600001)(76116006)(33656002)(38070700009)(122000001)(38100700002)(86362001)(95630200002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?Q3piYWNBck5RMjNocW9oZWNBUjN3QW5aYndnNzZmS2ZyVU15dmM5U21M?=
+ =?iso-2022-jp?B?bEJJbld2MnpyaEc4a3F2MGxkT3o3WWJGc3M5MElDaUtDQWZ4ekMzS2Nk?=
+ =?iso-2022-jp?B?K0xUaGJOd3R3OStDQUg2WElnTVNwem1mdytWeXJCSFhCWE1RWVNTa0s0?=
+ =?iso-2022-jp?B?ZjRzRytrUmdLMWxQTHB6VzZQaEUxV0Q1dHB1RHAwa0ZwVDIycTAxSlRP?=
+ =?iso-2022-jp?B?cE1La28wUUw0ek0rRVN4WURUQzZpU09UVUpWQXBHaU9OdjhOcExIQy9i?=
+ =?iso-2022-jp?B?YmF5bytpQVJXb3NHQmhDTTY5U3RsdmtpKzZiNC9iTUlPalNFamx1b01n?=
+ =?iso-2022-jp?B?NnJnSEJBcWdiVFJ0clN3WnpHVDJ3YUNWcWxqWUdlLys5TCtOQ0FkWUkr?=
+ =?iso-2022-jp?B?WlhOSzFNMHY3cXdMRVdjM1Qxc3RhVUVuck1ObHdyOGZrS1hmUC96UlR1?=
+ =?iso-2022-jp?B?NC96cnl3ZjhoUkxlcE1xY2IxSVFSdVJyS2Z2VkdKOUdNZ2xuNUR5VXVC?=
+ =?iso-2022-jp?B?VUJ6YXVueVFYUkUweFZqd0tyVGRHK0ZGM0crRTBCZ25JODRzNEFUVEpZ?=
+ =?iso-2022-jp?B?Ris3d0wxNzVqdm1WOVQxUm84Q2I3SDhlQjBtV0NVVnIvalc2YjdsVnhs?=
+ =?iso-2022-jp?B?NUpvKytVd3R0MnM3Ykl6WDBKYjdHbHlqY1NscmFFUFY1Qk1DMjIwOEhB?=
+ =?iso-2022-jp?B?VWhXL1Z6SnN5aXk0QlJmWEF5b0ZBYkxwNjRjUmVNOE5PYzVvQkpqWDRv?=
+ =?iso-2022-jp?B?ODJDUTR6MlRlVWVmS2N5TTY1SmE3dGRlb01RYVVIbXpwdzkrc25IZFdI?=
+ =?iso-2022-jp?B?Y3VuMk9QdjVTKzBzVEFXNGMzK2loRU1BTkdGdHRaRmtHZk1HbjduOUI3?=
+ =?iso-2022-jp?B?Y2pFWkFwWW1iZlZkL3JPaEZjL05qRVJndnlJUksxRm10Q05CWVVQbDNP?=
+ =?iso-2022-jp?B?RWxxS2FTdWV5OVJjR0VQQjQ2d256ckFGb29JeUtHUGxadnAvOW1abVZW?=
+ =?iso-2022-jp?B?d05vQnd3bnNlREIwRlBUYUxtSHZwc2FQL1JOcno5TVBmUWNZL2s3b05C?=
+ =?iso-2022-jp?B?ZkZtT0lueGMrT1QxbVZJU2ZqeG9uNDNnOXhtMGNoSFZ4bTRGcVo5eEVM?=
+ =?iso-2022-jp?B?dHFZR1NHcEljOCtraTNIZ1ZYbG02aUtlN3ROTklWT0h4cGJpeGJJT2xG?=
+ =?iso-2022-jp?B?Qk53V2RNY05pMFlFMTRySGVyS3g1VHUzYVpGdkwrSlR2VkRWVDBQQ1Mz?=
+ =?iso-2022-jp?B?OHRqeTZzdkt1K1ZnVlBKQlZoMTFhdkJPUzBvMnVoNWhBcE5RbnJEem5y?=
+ =?iso-2022-jp?B?VXZ6TDVLbFE2SWZya2NXL3pHVStCUTJxOEdEOVE3QUhlSXI1YlBtTHQ2?=
+ =?iso-2022-jp?B?eHYxdmZWaE0yV0V2S01TOTFiNTkzTDlQWEJZOHdRSitOVEltL3ZyN0oy?=
+ =?iso-2022-jp?B?enF0aVNZWGVNSFF6dDBvS2JvOFl0cDdoeENhTldXWUZsYmlkUFZpVzVk?=
+ =?iso-2022-jp?B?QnFLNUg4cVNuTStHRkJXSWY0QzJtUWREc1l4RTF0QlJIMFVBbXpZUWxp?=
+ =?iso-2022-jp?B?cHVNUkdPRDFtWTlVUjA1VDJBcjNVOEkzNlIrWGg0NkcwZHQ4dWhRYzBk?=
+ =?iso-2022-jp?B?VDkvZks5U3l0emJIZEtIaTY1V01hNUFDaGZEKzhBZXhNNW1xSWZnOFZQ?=
+ =?iso-2022-jp?B?MDZEYUw2azhMTmo1ZkI0RmRMbURSdjBvS3FyWmk2U0NDZS91YmdTbVRI?=
+ =?iso-2022-jp?B?aGhFMi9md2hSTmJka0hGeFZKOGJvVDFIZG1tUkswYlNJOUdBamx5aUhF?=
+ =?iso-2022-jp?B?MkYvdThYSWg4Q0NxY3hGcGZLMHFEMnByd1gzbUFlTDRGMklBZzA1cDY5?=
+ =?iso-2022-jp?B?U0haNDBUSFlHRDhPanpNNytyWUFyTUx5YTRkYk45VHYrQUp2Q0ZkcHVL?=
+ =?iso-2022-jp?B?TGZCQ2NOdUFySHZ6QzQ1cnNjejgzNlh6cDVoRXN0ckRVQU43dHhrUFBo?=
+ =?iso-2022-jp?B?WWlXSU0vQUhueEhnVGsveHc1Y3RBRUFZamhMVm0rdmwycDdyQXk5Ty9H?=
+ =?iso-2022-jp?B?RWNaZUFQMEo3SitqMVdadGRydFZBbFpYb3pILzBlUVVzVlo0ZGMweE1K?=
+ =?iso-2022-jp?B?SnkvS3Rvc3cwMnlKZXhVTkNoa1kwYlkyRXBGYjFHS0w2cDhORmE2T1pu?=
+ =?iso-2022-jp?B?dDV5TU9wdG5DNkF5cjh2N0FhNjZKRzRQb3dhYWRYNkd6eDNkUnlBbWdv?=
+ =?iso-2022-jp?B?L1E5T3J5b3VqMnRFL1pkUDRML3ROTDd3RTgwbXRIbzJDbkx3L2VHL0dU?=
+ =?iso-2022-jp?B?RCt0ejFCMmVsR2s5cmhOV0I3YmVoa25tSVE9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v5.10.200-cip40
-X-Kernelci-Report-Type: test
-X-Kernelci-Branch: linux-5.10.y-cip
-X-Kernelci-Tree: cip
-Subject: cip/linux-5.10.y-cip baseline: 98 runs,
- 22 regressions (v5.10.200-cip40)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
- kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
-From: "kernelci.org bot" <bot@kernelci.org>
+MIME-Version: 1.0
+X-OriginatorOrg: toshiba.co.jp
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYVPR01MB11245.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 412863ac-7147-40dd-76fc-08dbe1bc42bf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Nov 2023 07:11:29.2475
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: nOzQ7K5UzC2Dz4rCkM9B4MlyJmvYDeyInxJUf0DoXrH3nXarVxRkYDWGacD8TUGfjdY+ep5Z0tH4CjoFHNGRpU+5/dS7PqUn0LAI8fnhe3+Plu6xCZkOVs+bYcT5eXor
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB11280
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 10 Nov 2023 06:46:42 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13553
+ <cip-dev@lists.cip-project.org>; Fri, 10 Nov 2023 07:12:03 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13555
+
+Hi all,
+
+CIP kernel team has released Linux kernel v5.10.200-cip40.
+The linux-5.10.y-cip tree has been updated base version from v5.10.194 to v=
+5.10.200.
+
+You can get this release via the git tree at:
+
+  v5.10.200-cip40:
+    repository:
+      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+    branch:
+      linux-5.10.y-cip
+    commit hash:
+      166400a23a22e665f5d880a99149b73abede402d
+    Fixed CVEs:
+      CVE-2023-42752: integer overflows in kmalloc_reserve()
+      CVE-2023-37453: i out-of-bounds in read_descriptors in drivers/usb/co=
+re/sysfs
+      CVE-2023-4623: net/sched: sch_hfsc: Ensure inner classes have fsc cur=
+ve
+      CVE-2023-39192: netfilter: xt_u32: validate user space input
+      CVE-2023-45871: igb: set max size RX buffer when store bad packet is =
+enabled
+      CVE-2023-4921: net: sched: sch_qfq: Fix UAF in qfq_dequeue()
+      CVE-2023-42753: netfilter: ipset: add the missing IP_SET_HASH_WITH_NE=
+T0 macro for ip_set_hash_netportnet.c
+      CVE-2023-39193: netfilter: xt_sctp: validate the flag_info count
+      CVE-2023-39189: netfilter: nfnetlink_osf: avoid OOB read
+      CVE-2023-42755: wild pointer access in rsvp classifer in the Linux ke=
+rnel
+      CVE-2023-4563: Use-after-free in nft_verdict_dump due to a race betwe=
+en set GC and transaction
+      CVE-2023-31085: BUG: divide error in ubi_attach_mtd_dev
+      CVE-2023-4244: A use-after-free vulnerability in the Linux kernel's n=
+etfilter
+      CVE-2023-42756: netfilter: ipset: Fix race between IPSET_CMD_CREATE a=
+nd IPSET_CMD_SWAP
+      CVE-2023-34324: xen/events: replace evtchn_rwlock with RCU
+      CVE-2023-42754: null pointer dereference in Linux kernel ipv4 stack
+      CVE-2023-5197: netfilter: nf_tables: disallow rule removal from chain=
+ binding
+      CVE-2023-4881: netfilter: nftables: exthdr: fix 4-byte stack OOB writ=
+e
+      CVE-2023-46813: SEV-ES local priv escalation for userspace that have =
+access to MMIO regions
+      CVE-2023-35827: net: ravb: Fix possible UAF bug in ravb_remove
+      CVE-2023-5717: perf: Disallow mis-matched inherited group reads
+      CVE-2023-5178: nvmet-tcp: Fix a possible UAF in queue intialization s=
+etup
+      CVE-2023-45863: kobject: Fix slab-out-of-bounds in fill_kobj_path()
+      CVE-2021-44879: f2fs: fix to do sanity check on inode type during gar=
+bage collection
+    added commits:
+      CIP: Bump version suffix to -cip40 after merge from stable
+      arm64: dts: renesas: rzg2l: Fix txdv-skew-psec typos
+
+Best regards,
+   Nobuhiro
 
-cip/linux-5.10.y-cip baseline: 98 runs, 22 regressions (v5.10.200-cip40)
-
-Regressions Summary
--------------------
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-at91sam9g20ek            | arm   | lab-broonie     | gcc-10   | multi_v5_de=
-fconfig           | 1          =
-
-bcm2836-rpi-2-b          | arm   | lab-collabora   | gcc-10   | bcm2835_def=
-config            | 1          =
-
-beaglebone-black         | arm   | lab-broonie     | gcc-10   | multi_v7_de=
-fconfig           | 1          =
-
-beaglebone-black         | arm   | lab-broonie     | gcc-10   | omap2plus_d=
-efconfig          | 1          =
-
-fsl-ls1028a-rdb          | arm64 | lab-nxp         | gcc-10   | defconfig  =
-                  | 1          =
-
-imx6q-sabrelite          | arm   | lab-collabora   | gcc-10   | multi_v7_de=
-fconfig           | 1          =
-
-imx6qp-wandboard-revd1   | arm   | lab-pengutronix | gcc-10   | imx_v6_v7_d=
-efconfig          | 1          =
-
-imx6qp-wandboard-revd1   | arm   | lab-pengutronix | gcc-10   | multi_v7_de=
-fconfig           | 1          =
-
-imx6ul-14x14-evk         | arm   | lab-nxp         | gcc-10   | multi_v7_de=
-fconfig           | 1          =
-
-imx7d-sdb                | arm   | lab-nxp         | gcc-10   | multi_v7_de=
-fconfig           | 1          =
-
-juno-uboot               | arm64 | lab-broonie     | gcc-10   | cip://5.10.=
-y-...64_defconfig | 1          =
-
-juno-uboot               | arm64 | lab-broonie     | gcc-10   | defconfig+k=
-selftest          | 1          =
-
-r8a7743-iwg20d-q7        | arm   | lab-cip         | gcc-10   | shmobile_de=
-fconfig           | 1          =
-
-r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip         | gcc-10   | defconfig+k=
-selftest          | 1          =
-
-r8a774c0-ek874           | arm64 | lab-cip         | gcc-10   | defconfig  =
-                  | 1          =
-
-rk3288-veyron-jaq        | arm   | lab-collabora   | gcc-10   | multi_v7_de=
-fconfig           | 4          =
-
-rk3399-rock-pi-4b        | arm64 | lab-collabora   | gcc-10   | defconfig  =
-                  | 1          =
-
-sun50i-a64-pine64-plus   | arm64 | lab-broonie     | gcc-10   | defconfig  =
-                  | 1          =
-
-sun50i-h6-pine-h64       | arm64 | lab-collabora   | gcc-10   | defconfig  =
-                  | 1          =
-
-
-  Details:  https://kernelci.org/test/job/cip/branch/linux-5.10.y-cip/kerne=
-l/v5.10.200-cip40/plan/baseline/
-
-  Test:     baseline
-  Tree:     cip
-  Branch:   linux-5.10.y-cip
-  Describe: v5.10.200-cip40
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
-it
-  SHA:      166400a23a22e665f5d880a99149b73abede402d =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-at91sam9g20ek            | arm   | lab-broonie     | gcc-10   | multi_v5_de=
-fconfig           | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/654dc75c01236a676defcf1a
-
-  Results:     47 PASS, 7 FAIL, 1 SKIP
-  Full config: multi_v5_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm/multi_v5_defconfig/gcc-10/lab-broonie/baseline-at91sam9g20ek.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm/multi_v5_defconfig/gcc-10/lab-broonie/baseline-at91sam9g20ek.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/654dc75d01236a676defcf52
-        failing since 300 days (last pass: v5.10.158-cip22-7-g92462fd9830b,=
- first fail: v5.10.162-cip24)
-
-    2023-11-10T06:01:41.791623  + set +x
-    2023-11-10T06:01:41.792103  <8><LAVA_SIGNAL_ENDRUN 0_dmesg 230845_1.5.2=
-.4.1>
-    2023-11-10T06:01:41.906059  / # #
-    2023-11-10T06:01:42.009140  export SHELL=3D/bin/sh
-    2023-11-10T06:01:42.009952  #
-    2023-11-10T06:01:42.112027  / # export SHELL=3D/bin/sh. /lava-230845/en=
-vironment
-    2023-11-10T06:01:42.112812  =
-
-    2023-11-10T06:01:42.214904  / # . /lava-230845/environment/lava-230845/=
-bin/lava-test-runner /lava-230845/1
-    2023-11-10T06:01:42.216321  =
-
-    2023-11-10T06:01:42.219846  / # /lava-230845/bin/lava-test-runner /lava=
--230845/1 =
-
-    ... (12 line(s) more)  =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-bcm2836-rpi-2-b          | arm   | lab-collabora   | gcc-10   | bcm2835_def=
-config            | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/654dc58d32bc5b34b1efcefe
-
-  Results:     5 PASS, 1 FAIL, 1 SKIP
-  Full config: bcm2835_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm/bcm2835_defconfig/gcc-10/lab-collabora/baseline-bcm2836-rpi-2-b.=
-txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm/bcm2835_defconfig/gcc-10/lab-collabora/baseline-bcm2836-rpi-2-b.=
-html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/654dc58d32bc5b34b1efcf07
-        failing since 107 days (last pass: v5.10.184-cip36-13-g8fae18103387=
-, first fail: v5.10.186-cip37-12-g2710acbceb751)
-
-    2023-11-10T06:00:34.914544  / # #
-
-    2023-11-10T06:00:35.016688  export SHELL=3D/bin/sh
-
-    2023-11-10T06:00:35.017441  #
-
-    2023-11-10T06:00:35.118845  / # export SHELL=3D/bin/sh. /lava-11982328/=
-environment
-
-    2023-11-10T06:00:35.119557  =
-
-
-    2023-11-10T06:00:35.221000  / # . /lava-11982328/environment/lava-11982=
-328/bin/lava-test-runner /lava-11982328/1
-
-    2023-11-10T06:00:35.222144  =
-
-
-    2023-11-10T06:00:35.238528  / # /lava-11982328/bin/lava-test-runner /la=
-va-11982328/1
-
-    2023-11-10T06:00:35.346685  + export 'TESTRUN_ID=3D1_bootrr'
-
-    2023-11-10T06:00:35.347199  + cd /lava-11982328/1/tests/1_bootrr
- =
-
-    ... (12 line(s) more)  =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-beaglebone-black         | arm   | lab-broonie     | gcc-10   | multi_v7_de=
-fconfig           | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/654dc66ebcfe75d3ccefcf30
-
-  Results:     31 PASS, 15 FAIL, 1 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm/multi_v7_defconfig/gcc-10/lab-broonie/baseline-beaglebone-black.=
-txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm/multi_v7_defconfig/gcc-10/lab-broonie/baseline-beaglebone-black.=
-html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/654dc66ebcfe75d3ccefcf61
-        failing since 300 days (last pass: v5.10.158-cip22-7-g92462fd9830b,=
- first fail: v5.10.162-cip24)
-
-    2023-11-10T05:57:19.824896  <8>[   23.093912] <LAVA_SIGNAL_ENDRUN 0_dme=
-sg 230839_1.5.2.4.1>
-    2023-11-10T05:57:19.932573  / # #
-    2023-11-10T05:57:20.035041  export SHELL=3D/bin/sh
-    2023-11-10T05:57:20.035702  #
-    2023-11-10T05:57:20.137585  / # export SHELL=3D/bin/sh. /lava-230839/en=
-vironment
-    2023-11-10T05:57:20.138236  =
-
-    2023-11-10T05:57:20.240164  / # . /lava-230839/environment/lava-230839/=
-bin/lava-test-runner /lava-230839/1
-    2023-11-10T05:57:20.241052  =
-
-    2023-11-10T05:57:20.246008  / # /lava-230839/bin/lava-test-runner /lava=
--230839/1
-    2023-11-10T05:57:20.335364  + export 'TESTRUN_ID=3D1_bootrr' =
-
-    ... (11 line(s) more)  =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-beaglebone-black         | arm   | lab-broonie     | gcc-10   | omap2plus_d=
-efconfig          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/654dc7ea51e84649bfefcf10
-
-  Results:     51 PASS, 4 FAIL, 1 SKIP
-  Full config: omap2plus_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm/omap2plus_defconfig/gcc-10/lab-broonie/baseline-beaglebone-black=
-.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm/omap2plus_defconfig/gcc-10/lab-broonie/baseline-beaglebone-black=
-.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/654dc7ea51e84649bfefcf47
-        failing since 300 days (last pass: v5.10.158-cip22-7-g92462fd9830b,=
- first fail: v5.10.162-cip24)
-
-    2023-11-10T06:04:07.661862  <8>[   16.183936] <LAVA_SIGNAL_ENDRUN 0_dme=
-sg 230860_1.5.2.4.1>
-    2023-11-10T06:04:07.770347  / # #
-    2023-11-10T06:04:07.872371  export SHELL=3D/bin/sh
-    2023-11-10T06:04:07.872895  #
-    2023-11-10T06:04:07.974267  / # export SHELL=3D/bin/sh. /lava-230860/en=
-vironment
-    2023-11-10T06:04:07.975029  =
-
-    2023-11-10T06:04:08.076604  / # . /lava-230860/environment/lava-230860/=
-bin/lava-test-runner /lava-230860/1
-    2023-11-10T06:04:08.077337  =
-
-    2023-11-10T06:04:08.080793  / # /lava-230860/bin/lava-test-runner /lava=
--230860/1
-    2023-11-10T06:04:08.189726  + export 'TESTRUN_ID=3D1_bootrr' =
-
-    ... (11 line(s) more)  =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-fsl-ls1028a-rdb          | arm64 | lab-nxp         | gcc-10   | defconfig  =
-                  | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/654dcad09f896464b0efcf20
-
-  Results:     5 PASS, 1 FAIL, 1 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm64/defconfig/gcc-10/lab-nxp/baseline-fsl-ls1028a-rdb.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm64/defconfig/gcc-10/lab-nxp/baseline-fsl-ls1028a-rdb.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/654dcad09f896464b0efcf27
-        failing since 241 days (last pass: v5.10.155-cip21, first fail: v5.=
-10.173-cip28)
-
-    2023-11-10T06:16:22.999896  [   23.725567] <LAVA_SIGNAL_ENDRUN 0_dmesg =
-1258019_1.5.2.4.1>
-    2023-11-10T06:16:23.105553  =
-
-    2023-11-10T06:16:23.206846  / # #export SHELL=3D/bin/sh
-    2023-11-10T06:16:23.207471  =
-
-    2023-11-10T06:16:23.308564  / # export SHELL=3D/bin/sh. /lava-1258019/e=
-nvironment
-    2023-11-10T06:16:23.308925  =
-
-    2023-11-10T06:16:23.409772  / # . /lava-1258019/environment/lava-125801=
-9/bin/lava-test-runner /lava-1258019/1
-    2023-11-10T06:16:23.410572  =
-
-    2023-11-10T06:16:23.414638  / # /lava-1258019/bin/lava-test-runner /lav=
-a-1258019/1
-    2023-11-10T06:16:23.433403  + export 'TESTRUN_ID=3D1_bootrr' =
-
-    ... (11 line(s) more)  =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-imx6q-sabrelite          | arm   | lab-collabora   | gcc-10   | multi_v7_de=
-fconfig           | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/654dc63f8969ad15e2efcf6c
-
-  Results:     5 PASS, 1 FAIL, 1 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm/multi_v7_defconfig/gcc-10/lab-collabora/baseline-imx6q-sabrelite=
-.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm/multi_v7_defconfig/gcc-10/lab-collabora/baseline-imx6q-sabrelite=
-.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/654dc63f8969ad15e2efcf75
-        failing since 300 days (last pass: v5.10.158-cip22-7-g92462fd9830b,=
- first fail: v5.10.162-cip24)
-
-    2023-11-10T05:57:17.230561  / # #
-
-    2023-11-10T05:57:17.332579  export SHELL=3D/bin/sh
-
-    2023-11-10T05:57:17.333266  #
-
-    2023-11-10T05:57:17.434729  / # export SHELL=3D/bin/sh. /lava-11982365/=
-environment
-
-    2023-11-10T05:57:17.435407  =
-
-
-    2023-11-10T05:57:17.536838  / # . /lava-11982365/environment/lava-11982=
-365/bin/lava-test-runner /lava-11982365/1
-
-    2023-11-10T05:57:17.537885  =
-
-
-    2023-11-10T05:57:17.539418  / # /lava-11982365/bin/lava-test-runner /la=
-va-11982365/1
-
-    2023-11-10T05:57:17.603525  + export 'TESTRUN_ID=3D1_bootrr'
-
-    2023-11-10T05:57:17.645532  + cd /lava-11982365/1/tests/1_bootrr
- =
-
-    ... (14 line(s) more)  =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-imx6qp-wandboard-revd1   | arm   | lab-pengutronix | gcc-10   | imx_v6_v7_d=
-efconfig          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/654dc7324e64d4d1f3efcf30
-
-  Results:     5 PASS, 1 FAIL, 1 SKIP
-  Full config: imx_v6_v7_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm/imx_v6_v7_defconfig/gcc-10/lab-pengutronix/baseline-imx6qp-wandb=
-oard-revd1.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm/imx_v6_v7_defconfig/gcc-10/lab-pengutronix/baseline-imx6qp-wandb=
-oard-revd1.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/654dc7324e64d4d1f3efcf39
-        failing since 300 days (last pass: v5.10.158-cip22-7-g92462fd9830b,=
- first fail: v5.10.162-cip24)
-
-    2023-11-10T06:00:57.218537  + set +x
-    2023-11-10T06:00:57.218963  [   10.307462] <LAVA_SIGNAL_ENDRUN 0_dmesg =
-1008081_1.5.2.3.1>
-    2023-11-10T06:00:57.326969  / # #
-    2023-11-10T06:00:57.429119  export SHELL=3D/bin/sh
-    2023-11-10T06:00:57.429754  #
-    2023-11-10T06:00:57.531333  / # export SHELL=3D/bin/sh. /lava-1008081/e=
-nvironment
-    2023-11-10T06:00:57.531908  =
-
-    2023-11-10T06:00:57.633422  / # . /lava-1008081/environment/lava-100808=
-1/bin/lava-test-runner /lava-1008081/1
-    2023-11-10T06:00:57.634271  =
-
-    2023-11-10T06:00:57.637261  / # /lava-1008081/bin/lava-test-runner /lav=
-a-1008081/1 =
-
-    ... (12 line(s) more)  =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-imx6qp-wandboard-revd1   | arm   | lab-pengutronix | gcc-10   | multi_v7_de=
-fconfig           | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/654dc607cce6da1b90efcf09
-
-  Results:     5 PASS, 1 FAIL, 1 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm/multi_v7_defconfig/gcc-10/lab-pengutronix/baseline-imx6qp-wandbo=
-ard-revd1.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm/multi_v7_defconfig/gcc-10/lab-pengutronix/baseline-imx6qp-wandbo=
-ard-revd1.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/654dc607cce6da1b90efcf12
-        failing since 300 days (last pass: v5.10.158-cip22-7-g92462fd9830b,=
- first fail: v5.10.162-cip24)
-
-    2023-11-10T05:56:15.602667  + set[    7.324807] <LAVA_SIGNAL_ENDRUN 0_d=
-mesg 1008077_1.5.2.3.1>
-    2023-11-10T05:56:15.602851   +x
-    2023-11-10T05:56:15.708135  / # #
-    2023-11-10T05:56:15.809733  export SHELL=3D/bin/sh
-    2023-11-10T05:56:15.810248  #
-    2023-11-10T05:56:15.911699  / # export SHELL=3D/bin/sh. /lava-1008077/e=
-nvironment
-    2023-11-10T05:56:15.912205  =
-
-    2023-11-10T05:56:16.013473  / # . /lava-1008077/environment/lava-100807=
-7/bin/lava-test-runner /lava-1008077/1
-    2023-11-10T05:56:16.014117  =
-
-    2023-11-10T05:56:16.016546  / # /lava-1008077/bin/lava-test-runner /lav=
-a-1008077/1 =
-
-    ... (12 line(s) more)  =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-imx6ul-14x14-evk         | arm   | lab-nxp         | gcc-10   | multi_v7_de=
-fconfig           | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/654dc6488969ad15e2efcf7a
-
-  Results:     5 PASS, 1 FAIL, 1 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm/multi_v7_defconfig/gcc-10/lab-nxp/baseline-imx6ul-14x14-evk.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm/multi_v7_defconfig/gcc-10/lab-nxp/baseline-imx6ul-14x14-evk.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/654dc6488969ad15e2efcf81
-        failing since 232 days (last pass: v5.10.145-cip17, first fail: v5.=
-10.175-cip29)
-
-    2023-11-10T05:57:01.780580  + set +x
-    2023-11-10T05:57:01.783706  <8>[   29.685459] <LAVA_SIGNAL_ENDRUN 0_dme=
-sg 1258012_1.5.2.4.1>
-    2023-11-10T05:57:01.891724  / # #
-    2023-11-10T05:57:03.048701  export SHELL=3D/bin/sh
-    2023-11-10T05:57:03.054416  #
-    2023-11-10T05:57:04.596189  / # export SHELL=3D/bin/sh. /lava-1258012/e=
-nvironment
-    2023-11-10T05:57:04.601699  =
-
-    2023-11-10T05:57:07.413833  / # . /lava-1258012/environment/lava-125801=
-2/bin/lava-test-runner /lava-1258012/1
-    2023-11-10T05:57:07.420109  =
-
-    2023-11-10T05:57:07.421616  / # /lava-1258012/bin/lava-test-runner /lav=
-a-1258012/1 =
-
-    ... (18 line(s) more)  =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-imx7d-sdb                | arm   | lab-nxp         | gcc-10   | multi_v7_de=
-fconfig           | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/654dc65abcfe75d3ccefcf02
-
-  Results:     4 PASS, 2 FAIL, 1 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm/multi_v7_defconfig/gcc-10/lab-nxp/baseline-imx7d-sdb.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm/multi_v7_defconfig/gcc-10/lab-nxp/baseline-imx7d-sdb.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/654dc65abcfe75d3ccefcf09
-        failing since 300 days (last pass: v5.10.155-cip21, first fail: v5.=
-10.162-cip24)
-
-    2023-11-10T05:57:18.743222  / # #
-    2023-11-10T05:57:19.899591  export SHELL=3D/bin/sh
-    2023-11-10T05:57:19.905317  #
-    2023-11-10T05:57:21.447639  / # export SHELL=3D/bin/sh. /lava-1258014/e=
-nvironment
-    2023-11-10T05:57:21.453349  =
-
-    2023-11-10T05:57:21.453672  / # . /lava-1258014/environment
-    2023-11-10T05:57:24.265763  / # /lava-1258014/bin/lava-test-runner /lav=
-a-1258014/1
-    2023-11-10T05:57:24.282466  /lava-1258014/bin/lava-test-runner /lava-12=
-58014/1
-    2023-11-10T05:57:24.369228  + export 'TESTRUN_ID=3D1_bootrr'
-    2023-11-10T05:57:24.369622  + cd /lava-1258014/1/tests/1_bootrr =
-
-    ... (19 line(s) more)  =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-juno-uboot               | arm64 | lab-broonie     | gcc-10   | cip://5.10.=
-y-...64_defconfig | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/654dc861f705ebfd1eefcef3
-
-  Results:     47 PASS, 13 FAIL, 1 SKIP
-  Full config: cip://5.10.y-cip/arm64/qemu_arm64_defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm64/cip---5.10.y-cip-arm64-qemu_arm64_defconfig/gcc-10/lab-broonie=
-/baseline-juno-uboot.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm64/cip---5.10.y-cip-arm64-qemu_arm64_defconfig/gcc-10/lab-broonie=
-/baseline-juno-uboot.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/654dc861f705ebfd1eefcf30
-        failing since 74 days (last pass: v5.10.186-cip37-27-gd6d928db0a620=
-, first fail: v5.10.191-cip38)
-
-    2023-11-10T06:05:49.463738  <8>[   15.613803] <LAVA_SIGNAL_ENDRUN 0_dme=
-sg 230859_1.5.2.4.1>
-    2023-11-10T06:05:49.573246  / # #
-    2023-11-10T06:05:49.676306  export SHELL=3D/bin/sh
-    2023-11-10T06:05:49.677087  #
-    2023-11-10T06:05:49.779059  / # export SHELL=3D/bin/sh. /lava-230859/en=
-vironment
-    2023-11-10T06:05:49.779836  =
-
-    2023-11-10T06:05:49.881843  / # . /lava-230859/environment/lava-230859/=
-bin/lava-test-runner /lava-230859/1
-    2023-11-10T06:05:49.883217  =
-
-    2023-11-10T06:05:49.896026  / # /lava-230859/bin/lava-test-runner /lava=
--230859/1
-    2023-11-10T06:05:49.952803  + export 'TESTRUN_ID=3D1_bootrr' =
-
-    ... (11 line(s) more)  =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-juno-uboot               | arm64 | lab-broonie     | gcc-10   | defconfig+k=
-selftest          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/654dcc2165f9456fa7efcf72
-
-  Results:     50 PASS, 11 FAIL, 1 SKIP
-  Full config: defconfig+kselftest
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm64/defconfig+kselftest/gcc-10/lab-broonie/baseline-juno-uboot.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm64/defconfig+kselftest/gcc-10/lab-broonie/baseline-juno-uboot.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/654dcc2165f9456fa7efcfb2
-        failing since 107 days (last pass: v5.10.184-cip36-13-g8fae18103387=
-, first fail: v5.10.186-cip37-12-g2710acbceb751)
-
-    2023-11-10T06:21:55.900416  <8>[   19.388758] <LAVA_SIGNAL_ENDRUN 0_dme=
-sg 230919_1.5.2.4.1>
-    2023-11-10T06:21:56.008316  / # #
-    2023-11-10T06:21:56.111171  export SHELL=3D/bin/sh
-    2023-11-10T06:21:56.111953  #
-    2023-11-10T06:21:56.213786  / # export SHELL=3D/bin/sh. /lava-230919/en=
-vironment
-    2023-11-10T06:21:56.214578  =
-
-    2023-11-10T06:21:56.316507  / # . /lava-230919/environment/lava-230919/=
-bin/lava-test-runner /lava-230919/1
-    2023-11-10T06:21:56.317738  =
-
-    2023-11-10T06:21:56.331736  / # /lava-230919/bin/lava-test-runner /lava=
--230919/1
-    2023-11-10T06:21:56.507340  + export 'TESTRUN_ID=3D1_bootrr' =
-
-    ... (13 line(s) more)  =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-r8a7743-iwg20d-q7        | arm   | lab-cip         | gcc-10   | shmobile_de=
-fconfig           | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/654dc6308969ad15e2efcf5d
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: shmobile_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm/shmobile_defconfig/gcc-10/lab-cip/baseline-r8a7743-iwg20d-q7.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm/shmobile_defconfig/gcc-10/lab-cip/baseline-r8a7743-iwg20d-q7.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/654dc6308969ad15e2efc=
-f5e
-        failing since 57 days (last pass: v5.10.191-cip38-2-g09e5ecd8645b, =
-first fail: v5.10.191-cip38-17-g8dad6b499cfe5) =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip         | gcc-10   | defconfig+k=
-selftest          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/654dcd89ce4335ea76efcf01
-
-  Results:     5 PASS, 1 FAIL, 1 SKIP
-  Full config: defconfig+kselftest
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm64/defconfig+kselftest/gcc-10/lab-cip/baseline-r8a774a1-hihope-rz=
-g2m-ex.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm64/defconfig+kselftest/gcc-10/lab-cip/baseline-r8a774a1-hihope-rz=
-g2m-ex.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/654dcd89ce4335ea76efcf0a
-        failing since 93 days (last pass: v5.10.182-cip35, first fail: v5.1=
-0.186-cip37-13-g260094841fe1a)
-
-    2023-11-10T06:27:55.895381  + set +x
-    2023-11-10T06:27:55.898622  <8>[   87.662320] <LAVA_SIGNAL_ENDRUN 0_dme=
-sg 1036409_1.5.2.4.1>
-    2023-11-10T06:27:56.011298  / # #
-    2023-11-10T06:27:57.469929  export SHELL=3D/bin/sh
-    2023-11-10T06:27:57.490707  #
-    2023-11-10T06:27:57.491119  / # export SHELL=3D/bin/sh
-    2023-11-10T06:27:59.441009  / # . /lava-1036409/environment
-    2023-11-10T06:28:03.028492  /lava-1036409/bin/lava-test-runner /lava-10=
-36409/1
-    2023-11-10T06:28:03.049752  . /lava-1036409/environment
-    2023-11-10T06:28:03.050115  / # /lava-1036409/bin/lava-test-runner /lav=
-a-1036409/1 =
-
-    ... (27 line(s) more)  =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-r8a774c0-ek874           | arm64 | lab-cip         | gcc-10   | defconfig  =
-                  | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/654dcb30bee6a812b4efcf68
-
-  Results:     5 PASS, 1 FAIL, 1 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm64/defconfig/gcc-10/lab-cip/baseline-r8a774c0-ek874.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm64/defconfig/gcc-10/lab-cip/baseline-r8a774c0-ek874.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/654dcb30bee6a812b4efcf71
-        failing since 107 days (last pass: v5.10.184-cip36-13-g8fae18103387=
-, first fail: v5.10.186-cip37-12-g2710acbceb751)
-
-    2023-11-10T06:18:07.139443  / # #
-    2023-11-10T06:18:08.596616  export SHELL=3D/bin/sh
-    2023-11-10T06:18:08.617567  #
-    2023-11-10T06:18:08.618149  / # export SHELL=3D/bin/sh
-    2023-11-10T06:18:10.567288  / # . /lava-1036399/environment
-    2023-11-10T06:18:14.153836  /lava-1036399/bin/lava-test-runner /lava-10=
-36399/1
-    2023-11-10T06:18:14.175433  . /lava-1036399/environment
-    2023-11-10T06:18:14.175796  / # /lava-1036399/bin/lava-test-runner /lav=
-a-1036399/1
-    2023-11-10T06:18:14.254335  + export 'TESTRUN_ID=3D1_bootrr'
-    2023-11-10T06:18:14.254872  + cd /lava-1036399/1/tests/1_bootrr =
-
-    ... (25 line(s) more)  =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-rk3288-veyron-jaq        | arm   | lab-collabora   | gcc-10   | multi_v7_de=
-fconfig           | 4          =
-
-
-  Details:     https://kernelci.org/test/plan/id/654dc61a8969ad15e2efcf00
-
-  Results:     63 PASS, 7 FAIL, 1 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm/multi_v7_defconfig/gcc-10/lab-collabora/baseline-rk3288-veyron-j=
-aq.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm/multi_v7_defconfig/gcc-10/lab-collabora/baseline-rk3288-veyron-j=
-aq.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/654dc61a8969ad15e2efcf08
-        failing since 298 days (last pass: v5.10.158-cip22-7-g92462fd9830b,=
- first fail: v5.10.162-cip24)
-
-    2023-11-10T06:02:50.811479  <8>[    8.528261] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Demerg RESULT=3Dpass UNITS=3Dlines MEASUREMENT=3D0>
-
-    2023-11-10T06:02:50.820457  + <8>[    8.540693] <LAVA_SIGNAL_ENDRUN 0_d=
-mesg 11982370_1.5.2.3.1>
-
-    2023-11-10T06:02:50.821690  set +x
-
-    2023-11-10T06:02:50.927026  =
-
-
-    2023-11-10T06:02:51.027686  / # #export SHELL=3D/bin/sh
-
-    2023-11-10T06:02:51.027897  =
-
-
-    2023-11-10T06:02:51.027966  / # <6>[    8.675522] sbs-battery 20-000b: =
-Disabling PEC because of broken Cros-EC implementation
-
-    2023-11-10T06:02:51.028017  export SHELL=3D/bin/sh<4>[    8.712436] sbs=
--battery 20-000b: Unknown chemistry: POLY
-
-    2023-11-10T06:02:51.128497  . /lava-11982370/environment
-
-    2023-11-10T06:02:51.128713  =
-
- =
-
-    ... (26 line(s) more)  =
-
-
-  * baseline.bootrr.dwhdmi-rockchip-driver-i2c-present: https://kernelci.or=
-g/test/case/id/654dc61a8969ad15e2efcf35
-        failing since 298 days (last pass: v5.10.158-cip22-7-g92462fd9830b,=
- first fail: v5.10.162-cip24)
-
-    2023-11-10T06:03:02.913535  FIRST,<8>[   20.626041] <LAVA_SIGNAL_TESTCA=
-SE TEST_CASE_ID=3Ddwhdmi-rockchip-driver-cec-present RESULT=3Dfail>
-
-    2023-11-10T06:03:02.915370   INC default to 1.
-
-    2023-11-10T06:03:02.915426  =
-
-
-    2023-11-10T06:03:02.918979  	-w	Pad to last with leading zeros
-
-    2023-11-10T06:03:02.921378  	-s SEP	String separator
-
-    2023-11-10T06:03:02.925484  /lava-11982370/1/../bin/lava-test-case
-
-    2023-11-10T06:03:02.931409  BusyBox v1.31.1 (2023-06-23 08:10:20 UTC) m=
-ulti-call binary.
-
-    2023-11-10T06:03:02.931673  =
-
-
-    2023-11-10T06:03:02.941741  Usag<8>[   20.655100] <LAVA_SIGNAL_TESTCASE=
- TEST_CASE_ID=3Ddwhdmi-rockchip-driver-i2c-present RESULT=3Dfail>
-   =
-
-
-  * baseline.bootrr.dwhdmi-rockchip-driver-cec-present: https://kernelci.or=
-g/test/case/id/654dc61a8969ad15e2efcf36
-        failing since 298 days (last pass: v5.10.158-cip22-7-g92462fd9830b,=
- first fail: v5.10.162-cip24)
-
-    2023-11-10T06:03:02.890971  BusyBox v1.31.1 (2023-06-23 08:10:20 UTC)<8=
->[   20.606992] <LAVA_SIGNAL_TESTCASE TEST_CASE_ID=3Ddwhdmi-rockchip-driver=
--audio-present RESULT=3Dfail>
-
-    2023-11-10T06:03:02.893064   multi-call binary.
-
-    2023-11-10T06:03:02.893299  =
-
-
-    2023-11-10T06:03:02.897414  Usage: seq [-w] [-s SEP] [FIRST [INC]] LAST
-
-    2023-11-10T06:03:02.897635  =
-
-
-    2023-11-10T06:03:02.902828  Print numbers from FIRST to LAST, in steps =
-of INC.
-   =
-
-
-  * baseline.bootrr.dwhdmi-rockchip-driver-audio-present: https://kernelci.=
-org/test/case/id/654dc61a8969ad15e2efcf37
-        failing since 298 days (last pass: v5.10.158-cip22-7-g92462fd9830b,=
- first fail: v5.10.162-cip24) =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-rk3399-rock-pi-4b        | arm64 | lab-collabora   | gcc-10   | defconfig  =
-                  | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/654dca8f7208dc65efefcf66
-
-  Results:     5 PASS, 1 FAIL, 1 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm64/defconfig/gcc-10/lab-collabora/baseline-rk3399-rock-pi-4b.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm64/defconfig/gcc-10/lab-collabora/baseline-rk3399-rock-pi-4b.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/654dca8f7208dc65efefcf6f
-        failing since 51 days (last pass: v5.10.191-cip38-29-g9e1aa2001db8,=
- first fail: v5.10.194-cip39)
-
-    2023-11-10T06:15:32.694199  / # #
-
-    2023-11-10T06:15:33.954921  export SHELL=3D/bin/sh
-
-    2023-11-10T06:15:33.965837  #
-
-    2023-11-10T06:15:33.966300  / # export SHELL=3D/bin/sh
-
-    2023-11-10T06:15:35.710163  / # . /lava-11982462/environment
-
-    2023-11-10T06:15:38.915006  /lava-11982462/bin/lava-test-runner /lava-1=
-1982462/1
-
-    2023-11-10T06:15:38.926410  . /lava-11982462/environment
-
-    2023-11-10T06:15:38.926775  / # /lava-11982462/bin/lava-test-runner /la=
-va-11982462/1
-
-    2023-11-10T06:15:38.980675  + export 'TESTRUN_ID=3D1_bootrr'
-
-    2023-11-10T06:15:38.981103  + cd /lava-11982462/1/tests/1_bootrr
- =
-
-    ... (12 line(s) more)  =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-sun50i-a64-pine64-plus   | arm64 | lab-broonie     | gcc-10   | defconfig  =
-                  | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/654dcab4d8fbd2486cefcf30
-
-  Results:     36 PASS, 9 FAIL, 1 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm64/defconfig/gcc-10/lab-broonie/baseline-sun50i-a64-pine64-plus.t=
-xt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm64/defconfig/gcc-10/lab-broonie/baseline-sun50i-a64-pine64-plus.h=
-tml
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/654dcab4d8fbd2486cefcf60
-        failing since 300 days (last pass: v5.10.158-cip22-7-g92462fd9830b,=
- first fail: v5.10.162-cip24)
-
-    2023-11-10T06:15:52.872079  + set +x
-    2023-11-10T06:15:52.876102  <8>[   17.008269] <LAVA_SIGNAL_ENDRUN 0_dme=
-sg 230874_1.5.2.4.1>
-    2023-11-10T06:15:52.985109  / # #
-    2023-11-10T06:15:53.086286  export SHELL=3D/bin/sh
-    2023-11-10T06:15:53.086698  #
-    2023-11-10T06:15:53.187878  / # export SHELL=3D/bin/sh. /lava-230874/en=
-vironment
-    2023-11-10T06:15:53.188244  =
-
-    2023-11-10T06:15:53.289296  / # . /lava-230874/environment/lava-230874/=
-bin/lava-test-runner /lava-230874/1
-    2023-11-10T06:15:53.290043  =
-
-    2023-11-10T06:15:53.293869  / # /lava-230874/bin/lava-test-runner /lava=
--230874/1 =
-
-    ... (12 line(s) more)  =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-sun50i-h6-pine-h64       | arm64 | lab-collabora   | gcc-10   | defconfig  =
-                  | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/654dca79dccfa486dfefcf6c
-
-  Results:     5 PASS, 1 FAIL, 1 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm64/defconfig/gcc-10/lab-collabora/baseline-sun50i-h6-pine-h64.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.200=
--cip40/arm64/defconfig/gcc-10/lab-collabora/baseline-sun50i-h6-pine-h64.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/654dca79dccfa486dfefcf75
-        failing since 107 days (last pass: v5.10.184-cip36-13-g8fae18103387=
-, first fail: v5.10.186-cip37-12-g2710acbceb751)
-
-    2023-11-10T06:21:38.353398  / # #
-
-    2023-11-10T06:21:38.454302  export SHELL=3D/bin/sh
-
-    2023-11-10T06:21:38.455006  #
-
-    2023-11-10T06:21:38.556218  / # export SHELL=3D/bin/sh. /lava-11982447/=
-environment
-
-    2023-11-10T06:21:38.556910  =
-
-
-    2023-11-10T06:21:38.658119  / # . /lava-11982447/environment/lava-11982=
-447/bin/lava-test-runner /lava-11982447/1
-
-    2023-11-10T06:21:38.658340  =
-
-
-    2023-11-10T06:21:38.701338  / # /lava-11982447/bin/lava-test-runner /la=
-va-11982447/1
-
-    2023-11-10T06:21:38.730443  + export 'TESTRUN_ID=3D1_bootrr'
-
-    2023-11-10T06:21:38.730558  + cd /lava-1198244<8>[   18.212866] <LAVA_S=
-IGNAL_STARTRUN 1_bootrr 11982447_1.5.2.4.5>
- =
-
-    ... (10 line(s) more)  =
-
- =20
 
