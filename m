@@ -2,201 +2,199 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E7DC4167D
-	for <webhook@archiver.kernel.org>; Fri, 10 Nov 2023 18:10:27 +0000 (UTC)
-Received: from EUR01-DB5-obe.outbound.protection.outlook.com (EUR01-DB5-obe.outbound.protection.outlook.com [40.107.15.77])
- by mx.groups.io with SMTP id smtpd.web11.34787.1699639818147432109
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1329C4332F
+	for <webhook@archiver.kernel.org>; Sat, 11 Nov 2023 06:35:51 +0000 (UTC)
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.54])
+ by mx.groups.io with SMTP id smtpd.web10.47964.1699684546757637079
  for <cip-dev@lists.cip-project.org>;
- Fri, 10 Nov 2023 10:10:18 -0800
+ Fri, 10 Nov 2023 22:35:47 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=lbEja8zR;
- spf=pass (domain: siemens.com, ip: 40.107.15.77, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=g7ag2NYl;
+ spf=pass (domain: siemens.com, ip: 40.107.6.54, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UyBDacz3IB0DooP+usNrl8TwG6QfOi/HVXfNUIvEssbko/Ryz1M+t3lnDf00eAGYRunLEjsAUXTKE0gOaZW0qD9eLYaW3mJYyNaEbSo/YtZMBhV0prWmkoy7l41xc/ZOOTiuoRSSDVr9elW0lG/ZIwSIkFZeVOTZ/5qHehZ9IrHKZDBukx751o17dnj9RgzHx8+0bByvqBhKtcyuYX5+pHsKpt/t0MoHxAT+U1nBe1sVSY8X9/GPd+4zDCdKjPwjHq8HSXIWEAqaCRSZHNR+qrGh7xiO/Adexi6K3eLeSXVfbeAG2bHu2i6e6/Cl3WbnFZzJcEoiRo/clh39dLYIYg==
+ b=NoTntuQCXPXbNIMLB6/jL35TFa646SJyjfhwpeoBf98nl0FOYsWupWbueo077rSY/Wov9HgXf+hSrQ/4GCy6Se/RD34CU+6Xz5EhXuouOH+Lc2I8Nvj0sZFoX6gp7hehA4TGoH/IdOzNW7fi0uqUJNpT/8Ncnb0qBSrBoSOqFDSUGpynwNuUTfY986wul+2ASV7liHG4o0r0SIu73CzB5hrPeASgv1YTQxiLGZgWj6kaLw38TSD2FfnjcLsrUkkaCO+fdheJtPYbecQUx923S5o2h+4mLlHCRALCyvmex2ahyGAbTzgUwut4ApI3b2OrW5eElTaPoxFteehT8tMrjw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/WtooWXRptMVIgmJlvrPuTVsKIRxIn0y4aqFoASIge0=;
- b=W+3Un59NNi2U7n0udekFHUgLN8orCATKOJaKcoMN9U0MhN7Got1uZA5FLNKJr9R7MvITZGePZO1hQ5RJCxcfZW5m5UOkC4Gv7ksIS7aI/dric57z6Kz/eaCQECqBxO9Ny+lsGqOgcQFiS5AH2FoCaILCheJsDiTP89L8XYoldDavoDqqVqIFNgNv45IxxpJFcgtpsS7mroiV6LhrWr0Wn+QNQZ32BS0ZPgpzmUv4lQZw3mh0lKKY7+MmF3Om3jpLNNqfL6IhA5AfPCU8GzzgtCFB++TJrfPNFjoimFDkQX3WJLodcIJnkFXKQISCjcvVmokyvz/424rCxzzKdAszQg==
+ bh=xuUDq3Q4HBly2rWLmh94howRfTSwAayncQ14UgwPIw8=;
+ b=T7XeZ3myeGwi3SAwFbct8jM4mxoLeUuHvCz3Wakl4hrvg8S7CT0ABRDNedfhr3qFRLUVvKIOYyyZp8l1TZ4x67As54rVa2SCs/a23WujzeTlFg6mHhi5bvCb29OHtNkup+B8wj8h1EmQD6qXogl9WlAYa3I+yyqj4rmpY4o4MxEbZ3KkHHsVfQKOULHijpiyGipQkMI9GCI6NMx/LX1eLWqfBnocSFe6Ddl8IFlIrQzqx1t7AHeXs83J8H37XBuCg4IrehXsyU/9qVIvVGZ2KLbtTG0nZ1E2Q9gokRf+Bs+Oz1WTeRbbiRey8LcjDIjZDJAp2YQhjdx45e4CyT3qWw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/WtooWXRptMVIgmJlvrPuTVsKIRxIn0y4aqFoASIge0=;
- b=lbEja8zRtVSyaNDzYYJenPKej+KojTe87byGKu4rB4krqBpt2iJ4LEydFuIfQ8kOcjqVXzsDZwJEr7yI3+5TxnlpgNvpy8zMdnl+coYnmMgXdd2diWZFek6gQ4jPtDA2khSnObqlkvt6eB0QmhYoR5c0VsC+LxR/zfzZDag3j1rQKfA7/dcCHvvlx30WSo0rXdqs6/h7burULXyupZwUrjXXdqyApDs5zYcIncg3UwfCU4GK7iNY1Sljdz52V4Owa0fQIXhRb83mGfYSEaoq6M/5wcDbN2ZrwVWtBvRJoLib4Xx85HM77ezU9b/8TJ4XoCXwj5/PVpMw8cjcY3jctQ==
+ bh=xuUDq3Q4HBly2rWLmh94howRfTSwAayncQ14UgwPIw8=;
+ b=g7ag2NYlxaGyNrlZPTCsHkLMdKfIEP0lZ4Xr5r2v2Tk3icQEdaLHV7HsdXG9IdQLyjD1e0O8GsML6OxAaYOSHWIWd5GC2l+R6aSJwEEpi7KyaCxCZIHqr6rejub6I0d/6MgnVV72f+kDHBq7txcP7Jda0Yo/+zx8YTQ1iSAyYdhjylCgdr82hSFDG5/3NGu6/bEV1mbBdRxPjokdabk/qNbHPd/Pr1GypbuUbnOvUoZ+SiarToSrgfET7dQTJm1dRjjYPyzBczDaNnq5pc9meFie+jzcCL9rdQnKz8RNDJ70bT2QyNQ4OufuibELkhHdxovdKe7UNodCjpf+Dov3Dg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by GV2PR10MB6091.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:af::11) with
+ by GV1PR10MB6658.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:83::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6977.18; Fri, 10 Nov
- 2023 18:10:15 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6977.22; Sat, 11 Nov
+ 2023 06:35:43 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::96c7:d239:1723:8761]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::96c7:d239:1723:8761%4]) with mapi id 15.20.6977.018; Fri, 10 Nov 2023
- 18:10:13 +0000
-Message-ID: <ff38d8da-c721-4e5f-9dc0-35cfcba542a4@siemens.com>
-Date: Fri, 10 Nov 2023 19:10:11 +0100
+ ([fe80::96c7:d239:1723:8761%4]) with mapi id 15.20.6977.018; Sat, 11 Nov 2023
+ 06:35:43 +0000
+Message-ID: <5a2fe06d-f39b-479a-b845-8f3273d39922@siemens.com>
+Date: Sat, 11 Nov 2023 07:35:39 +0100
 User-Agent: Mozilla Thunderbird
 From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [isar-cip-core][PATCH] linux-cip: Update to latest versions
+Subject: [isar-cip-core][PATCH] Confine wic-related imager installations to
+ that image type consistently
 Content-Language: en-US
 To: cip-dev <cip-dev@lists.cip-project.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR0P281CA0183.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:ab::12) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR4P281CA0449.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:c6::9) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GV2PR10MB6091:EE_
-X-MS-Office365-Filtering-Correlation-Id: 16a4ed06-c663-4922-6023-08dbe2184921
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GV1PR10MB6658:EE_
+X-MS-Office365-Filtering-Correlation-Id: d1e60060-0f3c-4bf8-333e-08dbe2806d7f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	2aGQT4N7oXwc7B4HEG+ZrmfIYB95JirwlfbTTinN4zTFRIo663xnPbSqAClHPZ5qLAG4uViqpV7IKjAKGT0hAY/YkSwYqcV7OFcULHx458BB76DjYP3zGdkX0UMP0be8oGkeQ3+0po4YlUtUUYsY5ygW+KwnMjbPf/YWpv4WDOvfK70g3ssa09Ry+pCHEBZDfWCWWuhrUsKMKyYWqWO1Ljm10h+uimNgyygdPdeggK+k+hNwRkLe9b8M7oSSK0A/cPcPZGiyS6R39/aRGsuBSd8Tfp3eicYTa82f6g5TOkIydKgQBGSn6bRez33MXx2Tgz06QIOnquuVTcZIqzHKGeanL46AvkOTKA+pigR+4GERdkHxPNAhcJz4H9zDP2+B2V0gUJH1Yso8JTwJ2icynFe8bVjqngD6h+a/+wYfzZeC8t1vXcAEqU3y0LT+BIrDq+R6bXk0Z2eGQ5TtxwhtqBGwJ8fqG5Sxq3JedAfVNBIpDcPa1Rkcu4eKcWYG7vwckZY5MhvxmpxHaP/52b3yJp2cMi/BeolAMRxQ1wWBJMhEqRQrYNtw7+f1kO1R3oak3U/aiOA52kfyx7K1zK4oSDAzeg50pZgtvOgQJRInOdVE1fQ2ZqZSl10P0TZLGoJjbFm/SQOm91mu0Au3BSQUEA==
+	uyJJmscRBHuxBOw1ZaMt94kk+Xcp6blr8z9h1VTxmCGbuzAhxgbgnwPXlKNOXIXeKf+jDHHbWskR8HHZHCIz6VhsTz9nY8PC+/Ol9EJuL50romAgrLOMXoUAZdW7r2LvG37bB6XUj4SP4O31r4DWiX1wtRN32n1fysgxdl8ig82cIMiuGsNzDHdykRX3jWq/iBtSUKDx0REQu+Z1XvDMybhbGjuTiWe0U6dciGoTKAQ6fJ1+/6zEJcmJGPuLULDyf+NqaPcb4q5TIV9ewOQzly+Ldr9+HX16ookaZ3mG4EYKpbTAMKaMxRXaZl7yAPc5BOvg8N7Dn8tzAKXuckb5u7xzTIKtGTktm8zXs5d1m4Ku6iGTADn1xYf7xqpjZvJIPM142pAKTsAetbeOz8uMdg3uLeMtIUlEd+gZbtHvBkpU246RI8xpMPTpKZsFiPu/j3aTM8iXeeJO85YLU/wK+wPhwMbA6G0wqjpIibYrnFstc/ASsYdn3EOr4OVYEK61xeeOhk03nbv+CQH68fkxWoHg2ImT5OvHKp64WmqzRe9TdbbYllfofl6Sk2xQaHxSjtSIOTuX7DiWjnJz0pkpvNH3zYT654wmeTxts1tkMHBcURHfZQm3Bd2UFrkKllSkC5guYjJbhE9z1Z26dVX25Q==
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(346002)(376002)(136003)(39860400002)(366004)(396003)(230922051799003)(64100799003)(186009)(451199024)(1800799009)(82960400001)(38100700002)(26005)(66476007)(41300700001)(478600001)(6916009)(66556008)(66946007)(316002)(83380400001)(31686004)(6486002)(8676002)(31696002)(8936002)(44832011)(2906002)(2616005)(86362001)(36756003)(5660300002)(6512007)(6506007)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(136003)(346002)(39860400002)(396003)(366004)(376002)(230922051799003)(451199024)(1800799009)(64100799003)(186009)(2616005)(41300700001)(26005)(6506007)(478600001)(2906002)(6486002)(82960400001)(31696002)(86362001)(6666004)(6512007)(36756003)(5660300002)(38100700002)(83380400001)(8936002)(8676002)(31686004)(66946007)(316002)(66476007)(66556008)(6916009)(44832011)(45980500001)(43740500002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?QmlvN1dOOXIrR3ltMmRYZEx0M2JKMHRMYVd6a01US1JDVTZ4cjZSOFVTVjRv?=
- =?utf-8?B?OUF5WEhhYk5pM2lYN1pWTTJ2akpZRHdaWVRHZis1TGdJd2FSeG1pNGRBOXlV?=
- =?utf-8?B?RHJLRGthd0hvVEdTNjhwWW5jdUMvdU9nSU43TERPSDJ2eU9lUVVHQVFMemZu?=
- =?utf-8?B?cUxja1Fad1UxUE1MbjVxN2htQlU1ZW5WL0tBNnNLN1hiV1dBNnlLUTB2QVMv?=
- =?utf-8?B?WjJ0cXJOUkRCMDVIVTZYQjR4Si8xQXFsS2Q4M1RvSFlwRXViYVN4S1U4QzhK?=
- =?utf-8?B?TE4rZnd2MnNpNkZJQmM4ZEVWZzZYRERIeER4RnE5akNKdlJLdW5va212Uy91?=
- =?utf-8?B?clhEN1ZLOFNPaENBZGNHd3pyZExjaW5JejJ0RytTYy9NNWpaUEsyZGRpclNz?=
- =?utf-8?B?VlZab2xpeHF6YVlmdUpiR1N0dmlPZFVnci95eUdsdFJpczl1T1ljd2xoYUJj?=
- =?utf-8?B?dHFsSmx5UEZ3N2hiMGFXZFlMSDVLM1RSb1BTbDM1SGtNUWZnOVg4NjZ1aU4z?=
- =?utf-8?B?RUxzYjcxMHNneUU0VXR2VTIxdWN5WXY0N2NSVHdDQVZUSGZueXpwY3FESURt?=
- =?utf-8?B?STBXT2NnZ3RHOTdjdG1RYVcrV3pTQVFJeUVDeEhpUmhqcjQ5N2VZbmt0TEc2?=
- =?utf-8?B?UFlOd2IzN05tRVdxSkptVkRpRFNWTndXWm1KZmoyUVJkMGNZRGNIWnNPVENB?=
- =?utf-8?B?cFlNdFJUQWVTbjRmSVo1Q0srYmN2U1ZXVThCU2lHL0k2NDB0OFp5UWRsbDJk?=
- =?utf-8?B?Y1VIeEhsQXYzZDFaRUxzcUFPWEFlY2pybVJGRjFXOFU4RlpjR01Vd0tmZlBz?=
- =?utf-8?B?ZEJTR2IzUmo2V05HOXhmdzBnRERsbWI3TDFHQkxUUXpqc0R0eFNVMXlITXlN?=
- =?utf-8?B?cFBRYUFsRmdxb1ZDRURzcERDOXczSkxWWVovZWw0WDRaSk92ZUk4UDByeUxt?=
- =?utf-8?B?cnBMN3M1cnppUCtIenlzYUd3VGY2bDVSK085Q25VbCtRV3pMLzYwL3cwSTlH?=
- =?utf-8?B?VjNQR2poN3Rjd2RhQXBiTnVtY1A5UHF2bWZTVjV2VzhyVkMxMDZZUzRQSDQ2?=
- =?utf-8?B?Wno4N2lncFdJeTJ6NlJaK0VUcDlFSllBODZQWmNHTEtPSjBjSTFWUk1zQml0?=
- =?utf-8?B?cUV3ZUljc1QvcHl6TGx0bjJFY2wwVjN2TkxUcFBxeGlPSm5veGpFaEhHZ0lq?=
- =?utf-8?B?N0kzSUVkaDBQbG1aY3FhSVdMUWNoaUpYZGhBL1RPZXdpSVQycit1NW5VTDVl?=
- =?utf-8?B?V3MzelBoSUliNUU4cXFNUi81QlkwM05oYmtRWEd4QlEreUtxeFRuVXZmS09C?=
- =?utf-8?B?MEgwMHhNTm1QZzlhcU84cmJPNk91TUhSeDNTVTZvcFFaM1dTdHhMYi9rTjRM?=
- =?utf-8?B?cEJ6U051b3hldlBnTEV4VmdIS1hxOGlzNGNPVklyZUdzYTNSVTBya3A2Qms2?=
- =?utf-8?B?OWtCS1VRdU9TRE94OFlTUkk1TzhLQ0krd1R2SVJsNjVZTk5LSVd1anFuMmhI?=
- =?utf-8?B?YUpCTjNBSVozdXRtUWJDTDJ4dGh1ZW1MY1VWdVpOdXR2Z1dNQ2dpbEdmZGRp?=
- =?utf-8?B?K0RhY1pNSDV6S0J6YnFTSHhIVnNXRmhlMFpwSjArbGhFY0RVWTZPK0NVV0dx?=
- =?utf-8?B?d1B4dG15SVdFSjRQc1F3OHFDRVUvQlY0MzF3TW1QYXEzMk9zTFUvczdaQWc3?=
- =?utf-8?B?M3I5MVV0VitkZ0FUVkNuM3JaWGpyWXp3UkFTOWUxQkdhWkN1V2M3dmlFaU9Y?=
- =?utf-8?B?QkdreWlCWDNPWDJCd1BGeXZ2NW9pTktYV3ZTVnFzTUcrVDdIRjVSaXpNU1Nr?=
- =?utf-8?B?cVdqU3hhVktjdVNFQUZBeWxjYmxVWFBWYktrT1R4R1FPNUY3eDdURHV1bEV6?=
- =?utf-8?B?YW85U2RzTWJPZlU3R1orVkF0b0FhQXpOTm04TVFQV1FQUmUxNEV6cU5GZE1T?=
- =?utf-8?B?bUJmVlpUYWFkajFCaUJEelprTkVFamVVd0hyeXhGTjhSTFJKZll0MmpvTEtp?=
- =?utf-8?B?bUt6U2sraHBHOCswOTFtZDFCeXB1V1RTallvQXdPYm5ETkM3azIxdlJyZWdw?=
- =?utf-8?B?a2xQNU5EZllZMWtqMFRiVFh4aC9JNGhSdENYemlFZ2ZvTndNYkUrV3RiZHNH?=
- =?utf-8?B?ZVFrTnllRWhERDRzT09Da0RVTUY0cGZ6MnhCeU1TRDlsYnc1VlJVY3RtSHZl?=
- =?utf-8?B?TEE9PQ==?=
+	=?utf-8?B?ZnNwN0VHK0JXdGZLUittd0ZzeHM5MWlRMzZPSVgxOFpoaDRiMWZqYkRGdDF4?=
+ =?utf-8?B?QVQwMmVpUjZUelJpOE5NcE5QWHFLRTNIcmM4Qzk3UlVpeTBRYUZsT0hTWmxq?=
+ =?utf-8?B?c3pPbTE0VUx3ekVJa3lkTm55K2ZlOGk3SFlFMHgyWEdHVTF2eHliUEtlUklE?=
+ =?utf-8?B?UDErUFU0bCt0eUI5N1IrczgxeXdqdktaajVSaFA3ODZsaWpIbU4wcHJES0V1?=
+ =?utf-8?B?SnIrWWNzRlIxZnFVSVZqMDlDSXhjME5JRHpNa0p0SXR5NzNLdG9KbnlTT3FO?=
+ =?utf-8?B?SlFBN3ViOERnUkR3WEthTnI5RmRVY3F2Y0I2M1lXckhYN0IxMDNUYVV5WGNq?=
+ =?utf-8?B?ODMxWnVBQnZ4QWlWd1A2eEM0VVNYR0t1WUlDNWtENm9lTDVmY21RcVN3OEJ5?=
+ =?utf-8?B?THRheHFycHZBRzdaSnV4aHAwYjdtWTBybXF1MGQ5ekJUQ1gxM3I3Vmk1NWVG?=
+ =?utf-8?B?ZDdBNWJuU2d5NGh6VlBSTDJwZUthSHdEL1FuTWxUYnpQKzJNYzJsRDFiNGtt?=
+ =?utf-8?B?Qk9RdG9rS0xGVTBUNmNqYXZ2RVpRZXdhRnRxQnh3T2F0WjhDOXBwaHU4UDd1?=
+ =?utf-8?B?UEI4WUNGa1gzQzlwMWd2Q09DMHRnRDFqbTdjaldvZlNpTHJwODFPWHl1Qlor?=
+ =?utf-8?B?Y3RlVGVGeGpadUpzcFBnUWdoVzlkT0ZPVnV0QTZmczFnWktLNGRoWWZDMWxP?=
+ =?utf-8?B?RHNTR0FiNGVTOGZUamNwV2RYUUluTysveWN0ZWNLVVpsaDhwVThCZWc3bU81?=
+ =?utf-8?B?MSsxM1VHclU1alY0d0kzcUY0bCt6Q1NQT1owU21jZlFzMGlCM1BCazlWNU1j?=
+ =?utf-8?B?bnI2SFR5b2YySW42SW45OXBkVGp6YTJaelQrT3IvTTZ2S0pGQlMxanhwbjhD?=
+ =?utf-8?B?a2Y0SFA1VGJQM1d3MGM3b3ZHelUwcDg3VUhFbHNIZXFGMVJkL0Jzd3U2SDl0?=
+ =?utf-8?B?bWNTQWR6TTFlY0ZBR1FpSm5IUkhuZThncDZRK1hleVFWbUw4QmZZNzF1MWV6?=
+ =?utf-8?B?Q1QxVlNHdnhyU2pkNDh1NWQwcFRtc2hDbE9DWWg4blRueTlUOTc0U1dvV3Bm?=
+ =?utf-8?B?cFU5RjJCYmtLdjBwc0c1VVkrR0h3bU5YQ1Z1VitHVTRqNDNMak5mejU2bFhS?=
+ =?utf-8?B?SjFzbUtqRW1ieTJGcGZ2MEJ0UGVIL2RpMFZ3VnpMUUQvcHVCRmNQdklyYnRX?=
+ =?utf-8?B?V0xlY0dGK296dmpRSHVheTd1L1R4QzZaZnd4MjdNdlp0dzlMRU1uYnZEaTU0?=
+ =?utf-8?B?amdTWklJY0IxMmFnSEg5R0NxZzBlUkpzZVZmNVdkZmplNmlFRnpwdW1iTytp?=
+ =?utf-8?B?dm1mOGNvS1l0K2lpRytHQjFQU3gvSDAxeUtHRGNzZks3eWNPLzNwbEJOc2lB?=
+ =?utf-8?B?U3dBbkJ2UWhMWmFCSkN3VmVQQWgxaWFpWFBMK2ZrME9xVk43T1dvUFV3Tjdo?=
+ =?utf-8?B?TzBXMDJ0dzVBa2RxaUxKSkhHU3dBUTBVOHhZbW52VHR5LzVJK1ljbEg1bC9p?=
+ =?utf-8?B?THEzQjI4dlNiMThDcVhObHN3Zk44Qk4zRjZaUS90VVplL2pKMTRXdmxyS25w?=
+ =?utf-8?B?MmlCMTA3WjB5UHJiWW9XOTFLTGEwdDhUMVpLQlJMdU9lUkdZdFdMRkE3eWV2?=
+ =?utf-8?B?bTVyNy9sR2hFWnorUytEY3E1ZXFFbVZoYS9DakZqUDZpQ2Q5T3VITnFNVS8r?=
+ =?utf-8?B?eXZyNDFNRkNMaU9XQk9OMEtjTTdnY2RtZ1doYkYrZjU4bU1WZHFFcjRrOGR4?=
+ =?utf-8?B?bFlOTEViSk52Q0Y1ek93NXc5TnNTR0FNUXd1Q2FxeHFpWlM2TmZ3ZGRDVFlO?=
+ =?utf-8?B?eU5KTmlHRXlvZWY1eGkxR1BRYkNuRTFQMHVzVnkzQXRBcHJoNktWNHVGbnpZ?=
+ =?utf-8?B?OUh4RVgxUVp3NS82cFVvVFRVM3lxZGRXZkVDMnVIWDZrdDNRSHNXRkpBbDRt?=
+ =?utf-8?B?ZGh3Q1NvOFErU2c2cUEwdkx6bWNDK1VISFU0YW5lZ2RxZXBJYUJ4Sm14dzd4?=
+ =?utf-8?B?WHVHUVR1WkR2RTIyU2J1QnhCUWgxVExhVGhjSHpka3JSaWlObzN1QUkzbnN2?=
+ =?utf-8?B?Z090cUtsdzFjU3RhcFFUMzRHUEpCS1daRzMrWXFrYlhVck1TcWg1RWRvWXZW?=
+ =?utf-8?B?NTZDcFNYeEFkZkY3anlEdDBpK0lGazMrRW5kRjBXOE42UzBVOTI3UXZrT2ZG?=
+ =?utf-8?B?dlE9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 16a4ed06-c663-4922-6023-08dbe2184921
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1e60060-0f3c-4bf8-333e-08dbe2806d7f
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2023 18:10:13.8272
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2023 06:35:42.5356
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3kj2kIbSXAKqp81emAiEAtpqusm93pjvr7Tcs/MARL5a/mIVQ3XjfATix8h8pDzK8nOTIqWruHiyabp3HZ8riA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR10MB6091
+X-MS-Exchange-CrossTenant-UserPrincipalName: PxBSbl+hwSmSXVjc32NMKaB6VbtNoevB8BUOcHSNBO7u51pcT9T9eewUqN7llmCn25f1ugGfqahvAqzDNeSItA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB6658
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 10 Nov 2023 18:10:27 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13568
+ <cip-dev@lists.cip-project.org>; Sat, 11 Nov 2023 06:35:51 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13569
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
+Consistently also means to avoid WIC_IMAGER_INSTALL which will soon be
+deprecated in Isar.
+
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- ...ip-rt_6.1.54-cip6-rt3.bb => linux-cip-rt_6.1.59-cip8-rt4.bb} | 2 +-
- ...inux-cip_4.19.295-cip103.bb => linux-cip_4.19.297-cip104.bb} | 2 +-
- .../{linux-cip_4.4.302-cip80.bb => linux-cip_4.4.302-cip81.bb}  | 2 +-
- ...{linux-cip_5.10.194-cip39.bb => linux-cip_5.10.200-cip40.bb} | 2 +-
- .../{linux-cip_6.1.58-cip7.bb => linux-cip_6.1.59-cip8.bb}      | 2 +-
+ conf/machine/bbb.conf                | 2 +-
+ conf/machine/simatic-ipc227e.conf    | 2 +-
+ doc/README.secureboot.md             | 2 +-
+ kas/opt/ebg-secure-boot-snakeoil.yml | 2 +-
+ recipes-core/images/efibootguard.inc | 2 +-
  5 files changed, 5 insertions(+), 5 deletions(-)
- rename recipes-kernel/linux/{linux-cip-rt_6.1.54-cip6-rt3.bb => linux-cip-rt_6.1.59-cip8-rt4.bb} (59%)
- rename recipes-kernel/linux/{linux-cip_4.19.295-cip103.bb => linux-cip_4.19.297-cip104.bb} (68%)
- rename recipes-kernel/linux/{linux-cip_4.4.302-cip80.bb => linux-cip_4.4.302-cip81.bb} (68%)
- rename recipes-kernel/linux/{linux-cip_5.10.194-cip39.bb => linux-cip_5.10.200-cip40.bb} (68%)
- rename recipes-kernel/linux/{linux-cip_6.1.58-cip7.bb => linux-cip_6.1.59-cip8.bb} (59%)
 
-diff --git a/recipes-kernel/linux/linux-cip-rt_6.1.54-cip6-rt3.bb b/recipes-kernel/linux/linux-cip-rt_6.1.59-cip8-rt4.bb
-similarity index 59%
-rename from recipes-kernel/linux/linux-cip-rt_6.1.54-cip6-rt3.bb
-rename to recipes-kernel/linux/linux-cip-rt_6.1.59-cip8-rt4.bb
-index 0738ba00..6385b023 100644
---- a/recipes-kernel/linux/linux-cip-rt_6.1.54-cip6-rt3.bb
-+++ b/recipes-kernel/linux/linux-cip-rt_6.1.59-cip8-rt4.bb
-@@ -7,4 +7,4 @@
+diff --git a/conf/machine/bbb.conf b/conf/machine/bbb.conf
+index c8b4aaad..5cf3a0fd 100644
+--- a/conf/machine/bbb.conf
++++ b/conf/machine/bbb.conf
+@@ -10,7 +10,7 @@ DISTRO_ARCH = "armhf"
+ DTB_FILES = "am335x-boneblack.dtb"
  
- require linux-cip-common.inc
+ IMAGE_FSTYPES ?= "wic"
+-IMAGER_INSTALL += "u-boot-bbb"
++IMAGER_INSTALL:wic += "u-boot-bbb"
+ IMAGER_BUILD_DEPS += "u-boot-bbb"
  
--SRC_URI[sha256sum] = "8b578b83e7cd18c4649162d0c734e6af5c080f429f8636817ee402e195a4bdfb"
-+SRC_URI[sha256sum] = "8c8a68cf3bcbd6fcb126fbf9ec2c70dc125cbde9de5d864c0c36195449354f59"
-diff --git a/recipes-kernel/linux/linux-cip_4.19.295-cip103.bb b/recipes-kernel/linux/linux-cip_4.19.297-cip104.bb
-similarity index 68%
-rename from recipes-kernel/linux/linux-cip_4.19.295-cip103.bb
-rename to recipes-kernel/linux/linux-cip_4.19.297-cip104.bb
-index 366d301b..fafffe21 100644
---- a/recipes-kernel/linux/linux-cip_4.19.295-cip103.bb
-+++ b/recipes-kernel/linux/linux-cip_4.19.297-cip104.bb
-@@ -11,4 +11,4 @@
+ IMAGE_INSTALL += "u-boot-script"
+diff --git a/conf/machine/simatic-ipc227e.conf b/conf/machine/simatic-ipc227e.conf
+index 8bb3e808..95e2c9a9 100644
+--- a/conf/machine/simatic-ipc227e.conf
++++ b/conf/machine/simatic-ipc227e.conf
+@@ -10,6 +10,6 @@ DISTRO_ARCH = "amd64"
  
- require linux-cip-common.inc
+ IMAGE_FSTYPES ?= "wic"
+ WKS_FILE ?= "x86_64-generic.wks"
+-IMAGER_INSTALL += "${GRUB_BOOTLOADER_INSTALL}"
++IMAGER_INSTALL:wic += "${GRUB_BOOTLOADER_INSTALL}"
+ USE_CIP_KERNEL_CONFIG = "1"
+ KERNEL_DEFCONFIG = "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/x86/siemens_ipc227e_defconfig"
+diff --git a/doc/README.secureboot.md b/doc/README.secureboot.md
+index 2b73d10a..e93266d1 100644
+--- a/doc/README.secureboot.md
++++ b/doc/README.secureboot.md
+@@ -167,7 +167,7 @@ local_conf_header:
  
--SRC_URI[sha256sum] = "5b746623483df76fbe83800a3854631d2311cf5679f2207b1999fdc0e73c34f6"
-+SRC_URI[sha256sum] = "264b20398fcd0f65ea27f16a7625314de1ec790904626a4cdc2dc44dbdeb973a"
-diff --git a/recipes-kernel/linux/linux-cip_4.4.302-cip80.bb b/recipes-kernel/linux/linux-cip_4.4.302-cip81.bb
-similarity index 68%
-rename from recipes-kernel/linux/linux-cip_4.4.302-cip80.bb
-rename to recipes-kernel/linux/linux-cip_4.4.302-cip81.bb
-index 7ceb68d4..cf538e99 100644
---- a/recipes-kernel/linux/linux-cip_4.4.302-cip80.bb
-+++ b/recipes-kernel/linux/linux-cip_4.4.302-cip81.bb
-@@ -11,4 +11,4 @@
+   secure-boot: |
+     IMAGER_BUILD_DEPS += "ebg-secure-boot-signer"
+-    IMAGER_INSTALL += "ebg-secure-boot-signer"
++    IMAGER_INSTALL:wic += "ebg-secure-boot-signer"
  
- require linux-cip-common.inc
+     # Use user-generated keys
+     PREFERRED_PROVIDER_secure-boot-secrets = "secure-boot-key"
+diff --git a/kas/opt/ebg-secure-boot-snakeoil.yml b/kas/opt/ebg-secure-boot-snakeoil.yml
+index e0833044..7d8ce65f 100644
+--- a/kas/opt/ebg-secure-boot-snakeoil.yml
++++ b/kas/opt/ebg-secure-boot-snakeoil.yml
+@@ -26,7 +26,7 @@ local_conf_header:
  
--SRC_URI[sha256sum] = "f0276dee4e4154003cf73bd9c515e437d1d5f79d6517d54689ad997d7c10ccb9"
-+SRC_URI[sha256sum] = "bf7dd204035e2924f877c879683605e00d31ec2f38a0ef03d764d05263404c34"
-diff --git a/recipes-kernel/linux/linux-cip_5.10.194-cip39.bb b/recipes-kernel/linux/linux-cip_5.10.200-cip40.bb
-similarity index 68%
-rename from recipes-kernel/linux/linux-cip_5.10.194-cip39.bb
-rename to recipes-kernel/linux/linux-cip_5.10.200-cip40.bb
-index 82f7e15c..20c1d178 100644
---- a/recipes-kernel/linux/linux-cip_5.10.194-cip39.bb
-+++ b/recipes-kernel/linux/linux-cip_5.10.200-cip40.bb
-@@ -11,4 +11,4 @@
+   secure-boot: |
+     IMAGER_BUILD_DEPS += "ebg-secure-boot-signer"
+-    IMAGER_INSTALL += "ebg-secure-boot-signer"
++    IMAGER_INSTALL:wic += "ebg-secure-boot-signer"
+     # Use snakeoil keys
+     PREFERRED_PROVIDER_secure-boot-secrets = "secure-boot-snakeoil"
  
- require linux-cip-common.inc
+diff --git a/recipes-core/images/efibootguard.inc b/recipes-core/images/efibootguard.inc
+index c66ab701..0f26b7df 100644
+--- a/recipes-core/images/efibootguard.inc
++++ b/recipes-core/images/efibootguard.inc
+@@ -10,7 +10,7 @@
+ #
  
--SRC_URI[sha256sum] = "39fa92032d1c5abfd6cc2a04d3dd4a5ab52df7b92a18bb63a3f4424e3c2d9c8b"
-+SRC_URI[sha256sum] = "bf0d4f4a745fedde8797c4c5803a23d07fd6142b515f9b15486838d3431a0849"
-diff --git a/recipes-kernel/linux/linux-cip_6.1.58-cip7.bb b/recipes-kernel/linux/linux-cip_6.1.59-cip8.bb
-similarity index 59%
-rename from recipes-kernel/linux/linux-cip_6.1.58-cip7.bb
-rename to recipes-kernel/linux/linux-cip_6.1.59-cip8.bb
-index 823ebab9..b8396d8d 100644
---- a/recipes-kernel/linux/linux-cip_6.1.58-cip7.bb
-+++ b/recipes-kernel/linux/linux-cip_6.1.59-cip8.bb
-@@ -7,4 +7,4 @@
- 
- require linux-cip-common.inc
- 
--SRC_URI[sha256sum] = "a83dcfe35b65485f9f433e0259dc3863ee5948ee425f15268069a60472d3c53d"
-+SRC_URI[sha256sum] = "bb6e346dfd61f2ad36fbbcc3401cb5da6519ca1c9e0222096e86fab7c203bbb9"
+ IMAGE_INSTALL:append = " efibootguard libebgenv0"
+-WIC_IMAGER_INSTALL:append = " efibootguard:${DISTRO_ARCH}"
++IMAGER_INSTALL:wic:append = " efibootguard:${DISTRO_ARCH}"
+ WDOG_TIMEOUT ?= "60"
+ WICVARS += "WDOG_TIMEOUT KERNEL_IMAGE INITRD_DEPLOY_FILE DTB_FILES"
+ IMAGE_FSTYPES:append = " wic"
 -- 
 2.35.3
 
