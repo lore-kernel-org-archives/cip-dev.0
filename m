@@ -1,214 +1,351 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C4EFC07548
-	for <webhook@archiver.kernel.org>; Wed, 15 Nov 2023 11:33:39 +0000 (UTC)
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.77])
- by mx.groups.io with SMTP id smtpd.web10.11023.1700048017096578910
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0078C54F8E
+	for <webhook@archiver.kernel.org>; Wed, 15 Nov 2023 14:41:06 +0000 (UTC)
+Received: from EUR01-VE1-obe.outbound.protection.outlook.com (EUR01-VE1-obe.outbound.protection.outlook.com [40.107.14.88])
+ by mx.groups.io with SMTP id smtpd.web10.14739.1700059259987630924
  for <cip-dev@lists.cip-project.org>;
- Wed, 15 Nov 2023 03:33:37 -0800
+ Wed, 15 Nov 2023 06:41:00 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=Nh1DeLOf;
- spf=pass (domain: siemens.com, ip: 40.107.21.77, mailfrom: quirin.gylstorff@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=NZfYLe8P;
+ spf=pass (domain: siemens.com, ip: 40.107.14.88, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=enFIlolf3kXzuI6wrXP4jpBznVYkzvGuwUUuvsumaGIxi7Psue1iWFcPSrmixTRZKVpocf7FKGOuYwba+6SSJ1Jfhbg5/PvZ9rXCD5KdcN2xrVIfKapmGBNrnCJKXsmpU1eMF9hdLmY9fr+asXEcEURWdBUlaz1SocJJGRcx1eQl2DfFOC89sLFrfbdBDkC276mmOeJD556jIs4dLFoBiemQcpwlxUrFf82ABxReib7nJ6q93nHwxLZpGUaW7mMFga4qXbCRpB/BiFMqjC/S+4k/yhvuBWYG0h8AcnACPMhJrdS4QpjSSEJxJ9jFDX7wI/cfs9uxtd/Qv7nGr86R6w==
+ b=n96G/I9PjEfdD2h/LGOPB1BvWhi9AvrnKyZ574qZGcs2zFsVIKeodSJG2bgJXpVQ+xKnUnZh49fN15H/yYBjGCULk9HM1/7iQiu1lgstwq/9Iv8Fz2ALycaL2Gs4UOtgdOPxENSfii1UAABljMsTAIfFzldXSt9V+TfxetLYVmeFlv8OAF+MuH4PLUUVI2aeihZeR83e+hi78FHa9VWuhOeOk/Zk/nFAErC00i+2tYtotBT4NPNbHKuHHLxNvQvoRn8eXf3B3oa7QtaN1q1RuJyE1j8maKc1LKGpUb56YIGf0gGvKeeLuZvIuZ5mU8NLqNl1Agynu4kqFKHv4rCIOg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4TS8ccL2C5UBLE3/a/JzGXtkE7JvlqH7y7F+SKub+sE=;
- b=ZgxH903VGLFQQssOHYI0tfVhiEysdR3IR5dIt0diJHI8CPzp2grw1xtiI9F/OweN4cW+stbkKpHegDHPmvjSH8AU7cmJlNhOnZLB3uafgqG0YHIzm7kuG3DKskDCDNtHrCPgVni+SiDFHhq1eIP0oVq7zhpxfgMpcC494CJn5Ry3xtE8lYGCvwAY0m7BEs732GwF1g9yenTKe+Na5TSE7GL1eBkjB4jef7LimKM3+9S3puPWdA46dxeXUHlF12Zt2qNAPU2Efr578+FXxkpJF/9AP3DjMnPduRP375IEJKpPyaSO6a4/sjnELhyv2KTURaL+1ABHFrCnG2p7WwDEFg==
+ bh=r018cB3Z0UW7AIiorkoSWAjQvs34h8Osy9F/bT4VuPg=;
+ b=gD80YDSt2+TjQV8Pnpc20NjNHw7ycp0kJ18Zr1Honrwprls6hZdNkghRwAQFusfEjtYvRgsK5ZMfqbWoRuMgZaJFuIDY6TEp+h4gu178/IkyFAoZW/WH15jYKRMC5bmSoY2ENR6WI46B9QQqLjXjc4K6XT1ZkDdy5cMpEjTRq+7GVWZ/dY0G0RYWlxnck5zB8TlrgF6BDZRV92L0FAiw218lTpDkYt93sLxjKwPg/2HDh8i2upPQhj050f2UMEeaXbuKxCY4rz/BwWYoMyqnSJKp9ADTe0ZislgtFSMrS2czLDrnLfXEklg3nFI/6iquEvXiczX8TFeM40NRZYRa0Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4TS8ccL2C5UBLE3/a/JzGXtkE7JvlqH7y7F+SKub+sE=;
- b=Nh1DeLOfDvEaJLZW86Qoxf0VArfhJi+PRDVnHys8LTs1MdD/K2DiIOihTFWD5dTeDhuB0eB2PU/g8GXd8NJSAybATHRgblrJTz/vZ3wmhGzrgEJOwOPWwanzqNyVpjwWcFE5getrNzIFn9n7OcQXTtxg7WouYlnER1hkTaeuCiTwjzeEpsRw514PkUs/23DT5kk1jBMHsBcDiGfHZvK1QeKQ95FzZ+h5vgl7dorYCAuRDojiJUXXunkoNxoiwQzW/DO0uxWAh7r9jtEdjVwV9JiVVpK9CHMUtOMAx9HiCa9YfpHRTpL4BUb67ciGO3BDWmM3yYDL5plDTR5ao1Z5EA==
+ bh=r018cB3Z0UW7AIiorkoSWAjQvs34h8Osy9F/bT4VuPg=;
+ b=NZfYLe8PmJkH67DC9L8xOxCREScXjZ5clHgyedqaT4S+4y//Movyq6dkD+EiMSmNNkuOSZIiicweMJcBSaeXElsUw98ZZyxeBVI0lXu3fTT62E+WnytacXbIghHG6XgVjwZwUUPM26GcnDqqaTtn1LpGDiyJPtdIuhlwo3fW2JyDgFIcHcdbKmi376XdB+7pI6jG7HWIoNl9WW/ljApgT4t4djJujyqq0VGgjNf3KYsEOSMDcjYY9zdAk9v/HCJuVrk1w687qdovb/nx5E5p3drx1aS+8COLzLSeOtMVC7St7uNd5QhCnz7OMPEnUZ7sCBYrfteFuk2kdIxuw446cA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1f9::22)
- by DU0PR10MB6367.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:40d::14) with
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by AS8PR10MB7564.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:562::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6977.29; Wed, 15 Nov
- 2023 11:33:33 +0000
-Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::573:677e:776d:63d8]) by AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::573:677e:776d:63d8%4]) with mapi id 15.20.7002.019; Wed, 15 Nov 2023
- 11:33:33 +0000
-Message-ID: <a5218aa7-3791-4aa7-a6ed-97fdbf8f2b9e@siemens.com>
-Date: Wed, 15 Nov 2023 12:33:20 +0100
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7002.18; Wed, 15 Nov
+ 2023 14:40:56 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::96c7:d239:1723:8761]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::96c7:d239:1723:8761%5]) with mapi id 15.20.7002.018; Wed, 15 Nov 2023
+ 14:40:56 +0000
+Message-ID: <eb98a52d-9bd0-4583-a148-81ef1253c6ab@siemens.com>
+Date: Wed, 15 Nov 2023 15:40:53 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core] ebg-secure-boot-signer: sign artifiacts
- reproducibly
-Content-Language: en-US, de-DE
-To: Jan Kiszka <jan.kiszka@siemens.com>, venkata.pyla@toshiba-tsip.com,
- cip-dev@lists.cip-project.org
-Cc: dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
-References: <20231110080508.20807-1-venkata.pyla@toshiba-tsip.com>
- <e2bc7abe-2a5a-4293-84ae-4ddc40fa457c@siemens.com>
-From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
-Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
- 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
- XSdq0hnpafc1V+voPJq3LMxUvLNrwg==
-In-Reply-To: <e2bc7abe-2a5a-4293-84ae-4ddc40fa457c@siemens.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [cip-dev][isar-cip-core][PATCH] swupdate: Update debian folder to
+ 2023.05+dfsg-4
+Content-Language: en-US
+To: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>,
+ felix.moessbauer@siemens.com, cip-dev@lists.cip-project.org
+References: <20231114163751.1199552-1-Quirin.Gylstorff@siemens.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+In-Reply-To: <20231114163751.1199552-1-Quirin.Gylstorff@siemens.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CH0P221CA0009.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:610:11c::11) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:1f9::22)
+X-ClientProxiedBy: FR2P281CA0061.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:93::18) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|DU0PR10MB6367:EE_
-X-MS-Office365-Filtering-Correlation-Id: e3265edb-7b81-495d-f8a4-08dbe5ceb2bd
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS8PR10MB7564:EE_
+X-MS-Office365-Filtering-Correlation-Id: fdf596a7-9cea-480e-d8c9-08dbe5e8e064
+X-LD-Processed: 38ae3bcd-9579-4fd4-adda-b42e1495d55a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	Z3bB/C41YdSfk61663wcSzWSsJu6bqp3O3N8+U3sSwIcNK0gGYq5TdtpF/1ckn/iFakk3NttAkHGzTjw3GOXRt+Kj2J9DR/+5G/M6Nrp/5Cr3nG1RUbkgJ2cAu/kvEeVBegsKavvorSVCBFmZ0FfVRly1+ocLasQntRMEKo1Xxv3G0GW2W26PRXzcoSEO8ESbBwBa9WO4j6Q5nX1cXxLwgR1Q3hTvNs0/mJrlKOXcwF9xOIbj1LRJ2pTNcleYDQntHiB3TyY+UrvqxCF6qinTAyzG1kHGUjf0hXagAFQw2EIRWcJudn1y2lVNyIGwVOCCniswF7aE8deDHQUpI9v2TpmZZBPzBsWgPS2JkLSp2cx6/2c66QBO6xLsUtYwm4DE7qR4hbE1vBJXXjmOcn/P80rZ73f6VU6Av3MPCZy+bHqYmLNfwkIz6B/IdI0iqpjzJXY/Vh12w/5x+/X5pyhv1fzGlezkOlI3HDqyB+EVb2W+bIAn9W2qYKIafePWR7SAV6T/uVWXxi8OHu68CW68kA7fjxO4EZIa6oYwzhluNXfGe5R6cCiWe8cMHtI5G3BNO49Obv4F/EaTumVKxxpA/8lOMYsjORjjgJl+zzMAskCpHq+Guet1sV/W9e1EEu/o/WGw48YV5jihC7zmtCYHg==
+	LMoffZgt0ceeptBsrfub9d/wurHg83ELpWtLApIJPufLWv5ctiB/CF8TsIqmoLeVEUGIism/JWvefj0OKd50FiRImyPaD3JNSMmYprlKGjueiBjLIMMG3EoC9xnp6Qv8veuRT3CPnhcy+/XqJkTzglKHbyBRAHtAwIfPluwFcFnOAZ+Owy/27E8KfHtkKa5u5yslJLmWrgPKfRwKxmamZMh1v/jL3DObP8Udr/VsD59mkDTd75WtBOZiLcck/41wZQDKlg/pS70q7tavEFFZ+5b7laAYfeiPIfoS1ykulBS4ruI8/w1/qldaV9tyFsQATQNS8WhJeN2ZCJkuIJb84TL1owaSPbM6LBSgg38ZIMORul0xY76LTDj6StZEzk4XLisXSIVcBE6WTPAxSGiDaTZDXcJ0I/jpgQ8oHey6O1887saMiogPcmet5sT4MhN33xR6aN5zE7ayPGaPKXJey4S/56yP6WCQoVQHcpSoPdBjbk9ZPzxItM9gH+b9iO+fBNhSukMHn903QMbzbIvk+eaT5T2Q0YEmMq/vsJcz/tup1mCX61myCQmp57j9+fSrNc8PaercOEQ3lUnING+Pgppl5D+kThQtds8kwJKSujmb0oW3lkdhK3GNZYYHnJ2U9kf96dmXTDfDTyYRjQgCDw==
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376002)(136003)(396003)(366004)(346002)(39860400002)(230922051799003)(451199024)(1800799009)(186009)(64100799003)(2906002)(31696002)(2616005)(86362001)(5660300002)(41300700001)(26005)(82960400001)(6512007)(66946007)(316002)(66476007)(66556008)(38100700002)(83380400001)(31686004)(36756003)(478600001)(6486002)(53546011)(6666004)(6506007)(8676002)(4326008)(8936002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376002)(366004)(136003)(346002)(396003)(39860400002)(230922051799003)(451199024)(186009)(1800799009)(64100799003)(38100700002)(53546011)(82960400001)(41300700001)(6512007)(6666004)(6506007)(83380400001)(26005)(2616005)(44832011)(8676002)(8936002)(2906002)(36756003)(86362001)(31696002)(30864003)(5660300002)(316002)(66946007)(15650500001)(66476007)(66556008)(31686004)(6486002)(478600001)(45980500001)(43740500002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?UWoyT0VCeUFCbGR2eXBWZnRZQ0hrQXdUM2JxSlYvNVhrZGJENURLNWUyT3pN?=
- =?utf-8?B?dUVuRXFPbXhjeHdOU3N0TnV6VXUrWEh1OW14YmQyM05sTWRKSG55dVhldnd2?=
- =?utf-8?B?VzBsL0VnUkFxOGsrODR5eDBBaW5wUG54aUdDMVpkTHY2amI3Nk1JYjQxUGxz?=
- =?utf-8?B?Z0lFNXcxSjBqNlZOa2t5Q3VJc29RWHF2bWxnNTBEb25NbERsVmNnaEVCeGRO?=
- =?utf-8?B?QlI2TzBlZXdzYXhxL2MwdWR5NjhWbEdDdWwraTBLN0tGZjd4Y3BnMWhtOEVV?=
- =?utf-8?B?RSt5OGJRNURHam1MUVlyUzk5TlFqUWo4dCtsYU95V0wreTVQNnNEVHRoK1NG?=
- =?utf-8?B?RjYxQ2dGNHd5MnYxbnBiZmpxQlRlL3ZoSVlDL1cxaVpLVVF2UGRnYW1weDZP?=
- =?utf-8?B?Yjl4bk41emlPMnVRVG5XY3lzOFFPaVFLQnEzZ1Nud1V1bm5DMUVtalp1RUNy?=
- =?utf-8?B?NGRVRkppaHY1WE43NFU3Z21xREZuQ2tKRGJWQ3krNk04YlNrL2JQdk1pTEdh?=
- =?utf-8?B?ektMa2ZZRzBtamo2UldldEk0MTMyUUtxQWc1OWtkMmdFenVSLzVxN0tMSjhm?=
- =?utf-8?B?dFVyNC9LTGtKcU1vS0hTV1hhMGw5R0NpSmN1QWJMWDBCdk84S1BzTllDOWV6?=
- =?utf-8?B?OU1EZFowRTdjZU43TnRUQVVoYXlKK2l3R0RicUxYUnBUVlhLbHNhTkNmUmpL?=
- =?utf-8?B?T0JEbDFjYkI3Zk1pS0U2ckZ0MFo0M0NNSmhJZlpkbFBRVVdFTmtsTy9CZTIr?=
- =?utf-8?B?R0xsZjJhUTBaZnpvVWJnbTlOQVQ2azErU3h1Sm9rZ0xSNmU5UlNoL3FFRHVG?=
- =?utf-8?B?WU9IWXplNytlblpzeE5aOUhIaVVJRVFoT083bG9NaThXRDNJQ3pLdWVKcmFt?=
- =?utf-8?B?TW5BUFBsbkIrVXVxM0hqeHh1VWlVVGhRb3drTnVXTzlZeTdzWVFxcGg0aWpF?=
- =?utf-8?B?czdIQU9CQ2gxSHZwYWJBcVBvaStkSldhNy9Mb2hVN0x1S2gvYzN1QUJJcWd5?=
- =?utf-8?B?aW9iajJWV2RXQWErNjJVeG05U0NiZnExK2pSYTREdmprMVdPTzRLemVoL1h3?=
- =?utf-8?B?QlJrZjZyaXRtY2NsN21nS3NuczF6enp2UGlOYmJ5Yi9obFc3UU91WDhHNzN4?=
- =?utf-8?B?VHAvSjRMTXFLUXo4NmUvRkZRRDFKZDdQbnJZNG9CbFNRbDh2MUw1TG0xcHBB?=
- =?utf-8?B?WkdIUEp6cm9XeWpEdXVXcmZ5K0xQTW00NkNhV1crWmp1Y2poVXh5SnVITUMy?=
- =?utf-8?B?ZUlTYzNmUnRhZ3pjdUNvcDN4eHpkb2FoZHZETFhXZTdITWxIdHpKUjBWSjJw?=
- =?utf-8?B?N1BFWmVVVXRyb0t3b1E3K2EvcGhHaTRhRnEwTjc3TFAwTGhoTXp5TlNoK2dn?=
- =?utf-8?B?bWZBMUNKci9IQmIxTUczRFpYVHFVRmNaREU0VjRNeCtLc0FiblJwTmlzZlJO?=
- =?utf-8?B?NkdENzhXdzM4TTFYVmVuMVRnSXZpYzZXN212R3kxdndOUkFLblp0b2wrTUJ0?=
- =?utf-8?B?VnJnUkdiSkY5T2VzTXlmTS9Lb0NSMEp2TnZZTW9KWTY4ckUxMzlVUHFEb2JM?=
- =?utf-8?B?bWRwQXBYSFpXNW9uT1ZyZks3TFF3dkdFRUFsZnBrR0NZUjhhbFlIazhzQy9K?=
- =?utf-8?B?WGJLdUVIYXdOSW1tTm1RanE0enpDZ1NPL3YrM09DSko4MUlMRy81Mk1JOFZU?=
- =?utf-8?B?YTBYVG9Sd3pNM2l2cjRsLzloZElPUVZybDFLUkY5SFlTb2QxM3BwQlpxSC9H?=
- =?utf-8?B?ZnFEMVJRNGNoT1A0MG52S2Zta1FmUGNqS2orSFVqZzZjV0o1ZWlNcGFpSkYw?=
- =?utf-8?B?TXJWQWtWWHhIU3FmTFliU3VhSzJFc001MkFuUnpKSFFZbWlGNVhIV0YzNStt?=
- =?utf-8?B?VlNDSW84anhXVDQ5NForZ2tPTmlzTm42SGdnUGpldHVLeEZ2ekhhM21VaWFT?=
- =?utf-8?B?aXpyeExkV2xnREo0OStDeHJHYVJXQ05uRStEU3hId2VFSnZDSjhGcmlTdjd3?=
- =?utf-8?B?aTVzczI0M0pCa1JTMmdxZEd5NCtuU1lVSXRzWUtEMWlTb1BIMEhtVTFuckIz?=
- =?utf-8?B?YVBsRll2ZUdWaU9WVDZYM091cTdGMlhaTXNzNlhrTFJDejc1MVVMNzFldUQw?=
- =?utf-8?B?cUN0T1hMMDh1SjJQRHVuM2VGRVhvT1haTDZHclJzNWp1bG4ralp4WElsejhV?=
- =?utf-8?B?aGc9PQ==?=
+	=?utf-8?B?a3FtdThQSFMzb3lyWms5SXp6SENsYWpuUTI4d2xuY3NpWDZJZmhBZlQ1enJy?=
+ =?utf-8?B?ZUV6UGJvWERPY1FtblFkM0VlT2d2Wk9BVXhKdThxek9yZ2NkVDhXQUt3Y3dt?=
+ =?utf-8?B?M0o0YmxJZ3I0MmFuaU9vWUlYWFE1b2RZdDl6MmNvTVMwT2pxNVErWCtXdU1y?=
+ =?utf-8?B?aUREOVNlQXJPWURuSzhyaUw5MUlISzlMQnJyRzREYkk5RmQzZy9rb2tOa0Zk?=
+ =?utf-8?B?aG9SOXZMUm8weDhoYjJka1E5NVAvakREd0wya2NJS1cyWHlZaEF1aTRhUEJM?=
+ =?utf-8?B?bnpUaVZoa0lhSmdiNmhHSDB5cktmMytRY1VPZ2JRS0tvZy80cVVreVZVQnMy?=
+ =?utf-8?B?blpVUERwQVRZV3NEVklrOEFLRXB2bjVxWjk1SUxtaXRremx3UTBOdlQ3N1pV?=
+ =?utf-8?B?bWdsRGFlSGFXV3IrMk45b0ZBclh5Tm5BbUFUcFdBY0RReU1BWGpYRGp3Q0Q5?=
+ =?utf-8?B?Z2RML2hIN3pUVEFxN3lNamt5aDFRK0h1SGlGNUlEa2NER21wbEVPalRzY0Ny?=
+ =?utf-8?B?eGFudFFKMDFDVmE3ZDV1V3Urbkx4NjNZa1Jna1BRVmlOT285QU9ZWmViQjcy?=
+ =?utf-8?B?SlZuQUpWVTNaY0p0eDBWYklGRTRCYkwwcFRZYkh6STNpVlByNTVWTXdYd2Vi?=
+ =?utf-8?B?ZkVIblVyVDJiMCsvSVFtUHVpZzlxcXFRTG1ER0tOS2NsczJyVE04K05uMDVF?=
+ =?utf-8?B?em1qQUp4L3B6VHVTcGxxL0RUcmRpM3huVU4yemdtR1hpQkNuSWtZL3ExRmtu?=
+ =?utf-8?B?L2VDZ1prcTZGQy96OUVlOFpOb291djZpdXcvQ0U3N0Z4N3pqRlVSNy9iQ3ZT?=
+ =?utf-8?B?cUZBeE54N0ZPOEJTeHlOeDFKMFJ2bTF1dFlaVVZsSk9JU0FZdm1jb2xpVVM2?=
+ =?utf-8?B?aG9LWXhWUHZpUVZjMGVUNFlUbTQvVllZenVQSjBkSWFpLzJPQ2h1RUc5Z3U1?=
+ =?utf-8?B?U0FnNzEvelZIQUtUMEU3ejNiVy9mc1VCejJhcUZ4TUtCOFZkTlNqVkpiNG1S?=
+ =?utf-8?B?OTVNckxPdW1raUVoaWhVdDU3cVZPV3VtT21vTDVtYjYzbmVZU3F3TUFOK2hB?=
+ =?utf-8?B?cXlsUDZ5dVh0ZXVBVGowUFJzOW91cEZ2NWgvS0kxTno3R3QxbVg5bkJZK0ZZ?=
+ =?utf-8?B?cmg5aGc5c21LeDg4aXV5SEVoWFVaWjRjdUQ5bWErbC8vUmovRENUbnBhY2lv?=
+ =?utf-8?B?R3I4MGozZ2pCV01LQnRod2FJNlhISnkxS0YySUQrUFJQUTdUVHpjVjFCQXNx?=
+ =?utf-8?B?TnpMbjBtdm1GaXZzenFYOWhiMHdUam5TclhoK2NpaUt1dzkrek1lbVFMd0sv?=
+ =?utf-8?B?cGVhbTFNYmVaazgxMlF6cDhuYkNadjQ4V2JiNUc1TUdCNHQ2Mml6MHNFeEZ6?=
+ =?utf-8?B?MjVmc01RSHZhUC9jVUlVTXFLMWxjZ3hTN0o3Mk9SdUVhV1Excmtsc2hhRkp1?=
+ =?utf-8?B?NE1IZ2dsK3ltRmtXcG1vVHB5aFpmYjA5N0dNaVFaK2VYQ3VtRERkcDRhbVA2?=
+ =?utf-8?B?S0RLc1pkbUdBN3RUbkNBcW5vc1N5RGsvc09JU3BDOERPVVo3L2FkVVFONlZT?=
+ =?utf-8?B?SG5oK3FzQVhDMXljSm9Ka0h1SGxVUko5RFVnRTNEVVlrY01nR094ZEhCT3Nh?=
+ =?utf-8?B?Rk1uSUpqR0p4ZWVYZEswMENVRVM4dWlBcFAwZWU1c2NwcE04cUQyM1ZJb3lK?=
+ =?utf-8?B?cXBUVlR1MXRaVWdrYTFnZ2lQRFBVemZlM2E4UXlDZUk4U1hPMG9Ic1pWejBh?=
+ =?utf-8?B?cG1sd0REZVJFSUZQbzZpSFQ1VXBFRUtFelhiQU52eG16REY0b2ZSMkk3K3JY?=
+ =?utf-8?B?MTVBbjJYMkcwWTFvVjF3ZlFTMVVCYncveG00ZnR0UlNvSmFlTk13VlB5bWE0?=
+ =?utf-8?B?eVo5NDUzZHpsWWY2b0NhNzVMSkF5T0Z3OHJkZDg4aE4wSDVKSmc2RTBLMml0?=
+ =?utf-8?B?K0wzUmZYbnF5SDlIbkFWSllwN0pCSkhWMm5qUGtBY3ljUkV6MktOV2ozbFF1?=
+ =?utf-8?B?WHZwZHh4Mk1BUVlNbkFrdTJEWnpCQThNcEExY3dQN1F3b3ZyaTBDRGtmaE1i?=
+ =?utf-8?B?WElTYWRBaU85dFBmczdaeGFjUHJHNEVpU3VZQzhkVUZlVjE1NGVDc1VqajAx?=
+ =?utf-8?Q?06MVFfiHIz6fiWI33JF+tBtgG?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e3265edb-7b81-495d-f8a4-08dbe5ceb2bd
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: fdf596a7-9cea-480e-d8c9-08dbe5e8e064
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2023 11:33:33.0763
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2023 14:40:56.4046
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mg10obH0ttd153OnyM9e4FNn5oxCiIF2iFbNgtvChxYhFYJth8elm+YtEHp/6Ey3RRlMha2+wYYJISGd6VEyPkzQels/PTRzu4w4iUDPVzw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB6367
+X-MS-Exchange-CrossTenant-UserPrincipalName: EcOpm/G5edRvWhpPKuQlkW8ybGXuBRWxQgpz4lAHaZo1NTjoBNSq4BXTvGAIYlJw17AKmJwWglkTnx5+2NRvaQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB7564
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 15 Nov 2023 11:33:39 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13582
+ <cip-dev@lists.cip-project.org>; Wed, 15 Nov 2023 14:41:06 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13583
 
+On 14.11.23 17:37, Quirin Gylstorff wrote:
+> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> 
+> This adds the system user swupdate and changes the permission
+> of the sockets to 0660 instead of world writable.
+> 
 
+Stefano had some concerns about the best aproach. Is this Debian
+revision already reflecting those?
 
-On 11/10/23 11:39, Jan Kiszka wrote:
-> On 10.11.23 09:05, venkata.pyla@toshiba-tsip.com wrote:
->> From: venkata pyla <venkata.pyla@toshiba-tsip.com>
->>
->> When artifacts are signed with sbsign the images are not reproducible
->> because the signatures includes build time-stamps.
->>
->> This can be avoided by creating the signatures on fixed time-stamp
->> (SOURCE_DATE_EPOCH) using faketime.
->>
->> Fixes: #83
->>
->> Signed-off-by: venkata pyla <venkata.pyla@toshiba-tsip.com>
->> ---
->>   .../ebg-secure-boot-signer/ebg-secure-boot-signer_0.1.bb   | 2 +-
->>   .../ebg-secure-boot-signer/files/sign_secure_image.sh      | 7 ++++++-
->>   2 files changed, 7 insertions(+), 2 deletions(-)
->>
->> diff --git a/recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.1.bb b/recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.1.bb
->> index 546fded..57ad1be 100644
->> --- a/recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.1.bb
->> +++ b/recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.1.bb
->> @@ -15,7 +15,7 @@ inherit dpkg-raw
->>   DESCRIPTION = "Signing script for EFI Boot Guard setups"
->>   
->>   DEPENDS = "secure-boot-secrets"
->> -DEBIAN_DEPENDS = "sbsigntool, secure-boot-secrets"
->> +DEBIAN_DEPENDS = "sbsigntool, secure-boot-secrets, faketime"
->>   
->>   SRC_URI = "file://sign_secure_image.sh"
->>   
->> diff --git a/recipes-devtools/ebg-secure-boot-signer/files/sign_secure_image.sh b/recipes-devtools/ebg-secure-boot-signer/files/sign_secure_image.sh
->> index 0c9b898..213cf8a 100644
->> --- a/recipes-devtools/ebg-secure-boot-signer/files/sign_secure_image.sh
->> +++ b/recipes-devtools/ebg-secure-boot-signer/files/sign_secure_image.sh
->> @@ -30,4 +30,9 @@ fi
->>   
->>   keydir=/usr/share/secure-boot-secrets
->>   
->> -sbsign --key ${keydir}/secure-boot.key --cert ${keydir}/secure-boot.pem --output $signed $signee
->> +faketime_cmd=""
->> +if [ -n "$SOURCE_DATE_EPOCH" ]; then
->> +    faketime_cmd="faketime -f \"$(TZ=UTC date -d @$SOURCE_DATE_EPOCH +'%Y-%m-%d %H:%M:%S')\""
->> +fi
->> +
->> +eval $faketime_cmd sbsign --key ${keydir}/secure-boot.key --cert ${keydir}/secure-boot.pem --output $signed $signee
+Jan
+
+> Also suricatta lua is now set automatically.
 > 
-> Looks good to me. Quirin, any remarks?
+> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> ---
+>  ...d-rules-Add-option-for-suricatta_lua.patch | 30 -------------------
+>  ...ate-build_profile-option-for-delta-.patch} | 16 +++++-----
+>  ...ch-to-add-the-build-version-to-swup.patch} |  8 ++---
+>  ...-Add-option-to-enable-suricatta_wfx.patch} | 14 ++++-----
+>  recipes-core/swupdate/swupdate_2023.05.bb     | 15 ++++------
+>  5 files changed, 24 insertions(+), 59 deletions(-)
+>  delete mode 100644 recipes-core/swupdate/files/2023.05/0001-d-rules-Add-option-for-suricatta_lua.patch
+>  rename recipes-core/swupdate/files/2023.05/{0002-d-rules-Add-seperate-build_profile-option-for-delta-.patch => 0001-d-rules-Add-seperate-build_profile-option-for-delta-.patch} (76%)
+>  rename recipes-core/swupdate/files/2023.05/{0003-d-patches-Add-patch-to-add-the-build-version-to-swup.patch => 0002-d-patches-Add-patch-to-add-the-build-version-to-swup.patch} (94%)
+>  rename recipes-core/swupdate/files/2023.05/{0004-d-rules-Add-option-to-enable-suricatta_wfx.patch => 0003-d-rules-Add-option-to-enable-suricatta_wfx.patch} (69%)
 > 
-> Jan
-> 
-Looks good to me.
-Quirin
+> diff --git a/recipes-core/swupdate/files/2023.05/0001-d-rules-Add-option-for-suricatta_lua.patch b/recipes-core/swupdate/files/2023.05/0001-d-rules-Add-option-for-suricatta_lua.patch
+> deleted file mode 100644
+> index 5aeb605..0000000
+> --- a/recipes-core/swupdate/files/2023.05/0001-d-rules-Add-option-for-suricatta_lua.patch
+> +++ /dev/null
+> @@ -1,30 +0,0 @@
+> -From f94f8c2f62ade7568fe8fafa106488761fc55f91 Mon Sep 17 00:00:00 2001
+> -From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> -Date: Wed, 3 May 2023 16:02:37 +0200
+> -Subject: [PATCH 1/4] d/rules: Add option for suricatta_lua
+> -
+> -This allows to use lua plugins as suricatta backends. It is optional
+> -as it overrides the default HAWKBIT backend.
+> -
+> -Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> ----
+> - debian/rules | 3 +++
+> - 1 file changed, 3 insertions(+)
+> -
+> -diff --git a/debian/rules b/debian/rules
+> -index 57da4ca7..91106fbd 100755
+> ---- a/debian/rules
+> -+++ b/debian/rules
+> -@@ -56,6 +56,9 @@ endif
+> - ifneq (,$(filter pkg.swupdate.p11,$(DEB_BUILD_PROFILES)))
+> - 	echo CONFIG_PKCS11=y >> configs/debian_defconfig
+> - endif
+> -+ifneq (,$(filter pkg.swupdate.suricattalua,$(DEB_BUILD_PROFILES)))
+> -+	echo CONFIG_SURICATTA_LUA=y >> configs/debian_defconfig
+> -+endif
+> - ifneq (,$(LUA_VERSION))
+> - 	echo CONFIG_LUAPKG=\"lua$(LUA_VERSION)\" >> configs/debian_defconfig
+> - 	echo CONFIG_LUASCRIPTHANDLER=y           >> configs/debian_defconfig
+> --- 
+> -2.39.2
+> -
+> diff --git a/recipes-core/swupdate/files/2023.05/0002-d-rules-Add-seperate-build_profile-option-for-delta-.patch b/recipes-core/swupdate/files/2023.05/0001-d-rules-Add-seperate-build_profile-option-for-delta-.patch
+> similarity index 76%
+> rename from recipes-core/swupdate/files/2023.05/0002-d-rules-Add-seperate-build_profile-option-for-delta-.patch
+> rename to recipes-core/swupdate/files/2023.05/0001-d-rules-Add-seperate-build_profile-option-for-delta-.patch
+> index 4203061..d92860e 100644
+> --- a/recipes-core/swupdate/files/2023.05/0002-d-rules-Add-seperate-build_profile-option-for-delta-.patch
+> +++ b/recipes-core/swupdate/files/2023.05/0001-d-rules-Add-seperate-build_profile-option-for-delta-.patch
+> @@ -1,7 +1,7 @@
+> -From a5ab9aaa53acac4c4155b6c4cc8a86bc59278e53 Mon Sep 17 00:00:00 2001
+> +From 8d9d7b561f311b2bd2757ee3f14ca51b22563118 Mon Sep 17 00:00:00 2001
+>  From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>  Date: Thu, 15 Jun 2023 18:48:25 +0200
+> -Subject: [PATCH 2/4] d/rules: Add seperate build_profile option for delta
+> +Subject: [PATCH 1/4] d/rules: Add seperate build_profile option for delta
+>   update
+>  
+>  Delta update need zchunk 1.3 to work on memory restricted
+> @@ -15,20 +15,20 @@ Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+>  
+>  diff --git a/debian/control b/debian/control
+> -index e47c320c..d4b17972 100644
+> +index a389b2a9..2f0c0053 100644
+>  --- a/debian/control
+>  +++ b/debian/control
+> -@@ -26,7 +26,7 @@ Build-Depends: debhelper-compat (= 13),
+> +@@ -28,7 +28,7 @@ Build-Depends: debhelper-compat (= 13),
+>                  uuid-dev,
+>                  zlib1g-dev,
+>                  libzstd-dev,
+> --               libzck-dev (>= 1.2) <!pkg.swupdate.bpo>,
+> +-               libzck-dev (>= 1.3) <!pkg.swupdate.bpo>,
+>  +               libzck-dev (>= 1.3) <pkg.swupdate.delta>,
+>                  libp11-kit-dev <pkg.swupdate.p11>,
+> -                libwolfssl-dev <pkg.swupdate.p11>,
+> +                libwolfssl-dev (>= 5),
+>                  libmtd-dev [linux-any],
+>  diff --git a/debian/rules b/debian/rules
+> -index 91106fbd..8cac6359 100755
+> +index 05422d68..97afc92b 100755
+>  --- a/debian/rules
+>  +++ b/debian/rules
+>  @@ -38,7 +38,7 @@ ifeq (linux,$(DEB_HOST_ARCH_OS))
+> @@ -41,5 +41,5 @@ index 91106fbd..8cac6359 100755
+>   endif
+>   ifneq (,$(findstring $(DEB_HOST_ARCH),amd64 i386 arm64 armhf riscv64 ia64))
+>  -- 
+> -2.39.2
+> +2.42.0
+>  
+> diff --git a/recipes-core/swupdate/files/2023.05/0003-d-patches-Add-patch-to-add-the-build-version-to-swup.patch b/recipes-core/swupdate/files/2023.05/0002-d-patches-Add-patch-to-add-the-build-version-to-swup.patch
+> similarity index 94%
+> rename from recipes-core/swupdate/files/2023.05/0003-d-patches-Add-patch-to-add-the-build-version-to-swup.patch
+> rename to recipes-core/swupdate/files/2023.05/0002-d-patches-Add-patch-to-add-the-build-version-to-swup.patch
+> index 857b4ab..f6092af 100644
+> --- a/recipes-core/swupdate/files/2023.05/0003-d-patches-Add-patch-to-add-the-build-version-to-swup.patch
+> +++ b/recipes-core/swupdate/files/2023.05/0002-d-patches-Add-patch-to-add-the-build-version-to-swup.patch
+> @@ -1,7 +1,7 @@
+> -From ed4e8b5d4ad6ffcddb755571303c077fff227ea3 Mon Sep 17 00:00:00 2001
+> +From 81e9c0d781314bfff479bd5cb6a778f5d4e08ac3 Mon Sep 17 00:00:00 2001
+>  From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>  Date: Fri, 16 Jun 2023 19:43:38 +0200
+> -Subject: [PATCH 3/4] d/patches: Add patch to add the build version to swupdate
+> +Subject: [PATCH 2/4] d/patches: Add patch to add the build version to swupdate
+>  
+>  The build version is only set if build in a git repository
+>  this patch allows to use the version information stored in
+> @@ -77,7 +77,7 @@ index 5638bbf5..12324569 100644
+>   use-gcc-compiler.diff
+>  +Makefile.flags-Set-version-if-git-returns-no-informa.diff
+>  diff --git a/debian/rules b/debian/rules
+> -index 8cac6359..566a21bd 100755
+> +index 97afc92b..18cd7643 100755
+>  --- a/debian/rules
+>  +++ b/debian/rules
+>  @@ -17,6 +17,8 @@ export DH_WITH=--with lua
+> @@ -90,5 +90,5 @@ index 8cac6359..566a21bd 100755
+>   ifeq (linux,$(DEB_HOST_ARCH_OS))
+>   	BU_SWU += -VBuilt-Using="$(shell dpkg-query -f '$${source:Package} (= $${source:Version}), ' -W libmtd-dev libubi-dev)"
+>  -- 
+> -2.39.2
+> +2.42.0
+>  
+> diff --git a/recipes-core/swupdate/files/2023.05/0004-d-rules-Add-option-to-enable-suricatta_wfx.patch b/recipes-core/swupdate/files/2023.05/0003-d-rules-Add-option-to-enable-suricatta_wfx.patch
+> similarity index 69%
+> rename from recipes-core/swupdate/files/2023.05/0004-d-rules-Add-option-to-enable-suricatta_wfx.patch
+> rename to recipes-core/swupdate/files/2023.05/0003-d-rules-Add-option-to-enable-suricatta_wfx.patch
+> index 9c5ebd3..8a5bd82 100644
+> --- a/recipes-core/swupdate/files/2023.05/0004-d-rules-Add-option-to-enable-suricatta_wfx.patch
+> +++ b/recipes-core/swupdate/files/2023.05/0003-d-rules-Add-option-to-enable-suricatta_wfx.patch
+> @@ -1,7 +1,7 @@
+> -From ee401ba4d0d81fc244288e7e59a7bc5cfe2d1bf4 Mon Sep 17 00:00:00 2001
+> +From 319f0d2f54781ef207bf16a4c85dc8de20796ed4 Mon Sep 17 00:00:00 2001
+>  From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>  Date: Fri, 16 Jun 2023 20:32:38 +0200
+> -Subject: [PATCH 4/4] d/rules: Add option to enable suricatta_wfx
+> +Subject: [PATCH 3/4] d/rules: Add option to enable suricatta_wfx
+>  
+>  Add the DEB_BUILD_PROFILE "pkg.swupdate.suricattawfx" to build with
+>  suricattawfx lua module.
+> @@ -12,12 +12,12 @@ Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>   1 file changed, 3 insertions(+)
+>  
+>  diff --git a/debian/rules b/debian/rules
+> -index 566a21bd..fc122d0d 100755
+> +index 18cd7643..9635adb1 100755
+>  --- a/debian/rules
+>  +++ b/debian/rules
+> -@@ -61,6 +61,9 @@ endif
+> - ifneq (,$(filter pkg.swupdate.suricattalua,$(DEB_BUILD_PROFILES)))
+> - 	echo CONFIG_SURICATTA_LUA=y >> configs/debian_defconfig
+> +@@ -58,6 +58,9 @@ endif
+> + ifneq (,$(filter pkg.swupdate.p11,$(DEB_BUILD_PROFILES)))
+> + 	echo CONFIG_PKCS11=y >> configs/debian_defconfig
+>   endif
+>  +ifneq (,$(filter pkg.swupdate.suricattawfx,$(DEB_BUILD_PROFILES)))
+>  +	echo CONFIG_SURICATTA_WFX=y >> configs/debian_defconfig
+> @@ -26,5 +26,5 @@ index 566a21bd..fc122d0d 100755
+>   	echo CONFIG_LUAPKG=\"lua$(LUA_VERSION)\" >> configs/debian_defconfig
+>   	echo CONFIG_LUASCRIPTHANDLER=y           >> configs/debian_defconfig
+>  -- 
+> -2.39.2
+> +2.42.0
+>  
+> diff --git a/recipes-core/swupdate/swupdate_2023.05.bb b/recipes-core/swupdate/swupdate_2023.05.bb
+> index 762fac2..8d50ec3 100644
+> --- a/recipes-core/swupdate/swupdate_2023.05.bb
+> +++ b/recipes-core/swupdate/swupdate_2023.05.bb
+> @@ -22,16 +22,14 @@ FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files/${PV}:"
+>  SRC_URI += "git://github.com/sbabic/swupdate.git;protocol=https;branch=master;name=upstream;destsuffix=${P}"
+>  SRC_URI += "git://salsa.debian.org/debian/swupdate.git;protocol=https;branch=debian/master;name=debian;subpath=debian;destsuffix=${P}/debian"
+>  
+> -SRCREV_debian = "aa9edf070567fa5b3e942c270633a8feef49dad8"
+> +SRCREV_debian = "78cb6f20319d2b911e170eea5305f2cf0bd33030"
+>  SRCREV_upstream = "c8ca55684c375937dbcdefb0563071a35137f4ba"
+>  
+>  # patches
+> -SRC_URI += "file://0001-d-rules-Add-option-for-suricatta_lua.patch \
+> -            file://0002-d-rules-Add-seperate-build_profile-option-for-delta-.patch \
+> -            file://0003-d-patches-Add-patch-to-add-the-build-version-to-swup.patch \
+> -            file://0004-d-rules-Add-option-to-enable-suricatta_wfx.patch"
+> -
+> -
+> +SRC_URI += " file://0001-d-rules-Add-seperate-build_profile-option-for-delta-.patch \
+> +            file://0002-d-patches-Add-patch-to-add-the-build-version-to-swup.patch \
+> +            file://0003-d-rules-Add-option-to-enable-suricatta_wfx.patch \
+> +            "
+>  # The option: "pkg.swupdate.nosigning" disables the required signing
+>  # of update binaries
+>  # DEB_BUILD_PROFILES += "pkg.swupdate.nosigning"
+> @@ -39,9 +37,6 @@ SRC_URI += "file://0001-d-rules-Add-option-for-suricatta_lua.patch \
+>  # deactivate hardware compability for simple a/b rootfs update
+>  DEB_BUILD_PROFILES += "pkg.swupdate.nohwcompat"
+>  
+> -# suricatta wfx requires suricatta lua and the dependency
+> -# is not set automatically
+> -DEB_BUILD_PROFILES += "pkg.swupdate.suricattalua"
+>  # add suricatta wfx
+>  DEB_BUILD_PROFILES += "pkg.swupdate.suricattawfx"
+>  
+
+-- 
+Siemens AG, Technology
+Linux Expert Center
+
 
