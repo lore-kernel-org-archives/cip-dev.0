@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7EB1C61D9D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA237C61D9B
 	for <webhook@archiver.kernel.org>; Wed, 22 Nov 2023 16:51:20 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web10.24748.1700671872199188480
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web11.24593.1700671876361325693
  for <cip-dev@lists.cip-project.org>;
- Wed, 22 Nov 2023 08:51:13 -0800
+ Wed, 22 Nov 2023 08:51:16 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.04,219,1695654000"; 
-   d="scan'208";a="187751698"
+   d="scan'208";a="183895830"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 23 Nov 2023 01:51:12 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 23 Nov 2023 01:51:14 +0900
 Received: from localhost.localdomain (unknown [10.226.92.150])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id D63DF402D12C;
-	Thu, 23 Nov 2023 01:51:10 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1C21E402D12C;
+	Thu, 23 Nov 2023 01:51:12 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 1/3] dt-bindings: timer: renesas,rz-mtu3: Fix overflow/underflow interrupt names
-Date: Wed, 22 Nov 2023 16:51:04 +0000
-Message-Id: <20231122165106.235838-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 2/3] dt-bindings: timer: renesas,rz-mtu3: Improve documentation
+Date: Wed, 22 Nov 2023 16:51:05 +0000
+Message-Id: <20231122165106.235838-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231122165106.235838-1-biju.das.jz@bp.renesas.com>
 References: <20231122165106.235838-1-biju.das.jz@bp.renesas.com>
@@ -35,126 +35,103 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 22 Nov 2023 16:51:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13636
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13637
 
-commit b7a8f1f7a8a25e09aaefebb6251a77f44cda638b upstream.
+commit b121e7881b8975cf8dc24d9bd71a5af81ed8a6b1 upstream.
 
-As per R01UH0914EJ0130 Rev.1.30 HW manual the MTU3 overflow/underflow
-interrupt names starts with 'tci' instead of 'tgi'.
+Fix the documentation issues pointed by Pavel while backporting
+it to 6.1.y-cip.
+ - Replace '32- bit'->'32-bit'
+ - Consistently remove '.' at the end of line for the specifications
+ - Replace '          (excluding MTU8)'-> '(excluding MTU8)'
 
-Fix this documentation issue by replacing below overflow/underflow
-interrupt names:
- - tgiv0->tciv0
- - tgiv1->tciv1
- - tgiu1->tciu1
- - tgiv2->tciv2
- - tgiu2->tciu2
- - tgiv3->tciv3
- - tgiv4->tciv4
- - tgiv6->tciv6
- - tgiv7->tciv7
- - tgiv8->tciv8
- - tgiu8->tciu8
-
-Fixes: 0a9d6b54297e ("dt-bindings: timer: Document RZ/G2L MTU3a bindings")
-Cc: stable@kernel.org
+Reported-by: Pavel Machek <pavel@denx.de>
+Closes: https://lore.kernel.org/all/ZH79%2FUjgYg+0Ruiu@duo.ucw.cz
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/20230727081848.100834-2-biju.das.jz@bp.renesas.com
+Link: https://lore.kernel.org/r/20230727081848.100834-3-biju.das.jz@bp.renesas.com
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- .../bindings/timer/renesas,rz-mtu3.yaml       | 38 +++++++++----------
- 1 file changed, 19 insertions(+), 19 deletions(-)
+ .../bindings/timer/renesas,rz-mtu3.yaml       | 28 +++++++++----------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml b/Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml
-index bffdab0b0185..fbac40b958dd 100644
+index fbac40b958dd..670a2ebaacdb 100644
 --- a/Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml
 +++ b/Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml
-@@ -169,27 +169,27 @@ properties:
-       - const: tgib0
-       - const: tgic0
-       - const: tgid0
--      - const: tgiv0
-+      - const: tciv0
-       - const: tgie0
-       - const: tgif0
-       - const: tgia1
-       - const: tgib1
--      - const: tgiv1
--      - const: tgiu1
-+      - const: tciv1
-+      - const: tciu1
-       - const: tgia2
-       - const: tgib2
--      - const: tgiv2
--      - const: tgiu2
-+      - const: tciv2
-+      - const: tciu2
-       - const: tgia3
-       - const: tgib3
-       - const: tgic3
-       - const: tgid3
--      - const: tgiv3
-+      - const: tciv3
-       - const: tgia4
-       - const: tgib4
-       - const: tgic4
-       - const: tgid4
--      - const: tgiv4
-+      - const: tciv4
-       - const: tgiu5
-       - const: tgiv5
-       - const: tgiw5
-@@ -197,18 +197,18 @@ properties:
-       - const: tgib6
-       - const: tgic6
-       - const: tgid6
--      - const: tgiv6
-+      - const: tciv6
-       - const: tgia7
-       - const: tgib7
-       - const: tgic7
-       - const: tgid7
--      - const: tgiv7
-+      - const: tciv7
-       - const: tgia8
-       - const: tgib8
-       - const: tgic8
-       - const: tgid8
--      - const: tgiv8
--      - const: tgiu8
-+      - const: tciv8
-+      - const: tciu8
+@@ -11,8 +11,8 @@ maintainers:
  
-   clocks:
-     maxItems: 1
-@@ -285,16 +285,16 @@ examples:
-                    <GIC_SPI 211 IRQ_TYPE_EDGE_RISING>,
-                    <GIC_SPI 212 IRQ_TYPE_EDGE_RISING>,
-                    <GIC_SPI 213 IRQ_TYPE_EDGE_RISING>;
--      interrupt-names = "tgia0", "tgib0", "tgic0", "tgid0", "tgiv0", "tgie0",
-+      interrupt-names = "tgia0", "tgib0", "tgic0", "tgid0", "tciv0", "tgie0",
-                         "tgif0",
--                        "tgia1", "tgib1", "tgiv1", "tgiu1",
--                        "tgia2", "tgib2", "tgiv2", "tgiu2",
--                        "tgia3", "tgib3", "tgic3", "tgid3", "tgiv3",
--                        "tgia4", "tgib4", "tgic4", "tgid4", "tgiv4",
-+                        "tgia1", "tgib1", "tciv1", "tciu1",
-+                        "tgia2", "tgib2", "tciv2", "tciu2",
-+                        "tgia3", "tgib3", "tgic3", "tgid3", "tciv3",
-+                        "tgia4", "tgib4", "tgic4", "tgid4", "tciv4",
-                         "tgiu5", "tgiv5", "tgiw5",
--                        "tgia6", "tgib6", "tgic6", "tgid6", "tgiv6",
--                        "tgia7", "tgib7", "tgic7", "tgid7", "tgiv7",
--                        "tgia8", "tgib8", "tgic8", "tgid8", "tgiv8", "tgiu8";
-+                        "tgia6", "tgib6", "tgic6", "tgid6", "tciv6",
-+                        "tgia7", "tgib7", "tgic7", "tgid7", "tciv7",
-+                        "tgia8", "tgib8", "tgic8", "tgid8", "tciv8", "tciu8";
-       clocks = <&cpg CPG_MOD R9A07G044_MTU_X_MCK_MTU3>;
-       power-domains = <&cpg>;
-       resets = <&cpg R9A07G044_MTU_X_PRESET_MTU3>;
+ description: |
+   This hardware block consists of eight 16-bit timer channels and one
+-  32- bit timer channel. It supports the following specifications:
+-    - Pulse input/output: 28 lines max.
++  32-bit timer channel. It supports the following specifications:
++    - Pulse input/output: 28 lines max
+     - Pulse input 3 lines
+     - Count clock 11 clocks for each channel (14 clocks for MTU0, 12 clocks
+       for MTU2, and 10 clocks for MTU5, four clocks for MTU1-MTU2 combination
+@@ -23,11 +23,11 @@ description: |
+         - Input capture function (noise filter setting available)
+         - Counter-clearing operation
+         - Simultaneous writing to multiple timer counters (TCNT)
+-          (excluding MTU8).
++          (excluding MTU8)
+         - Simultaneous clearing on compare match or input capture
+-          (excluding MTU8).
++          (excluding MTU8)
+         - Simultaneous input and output to registers in synchronization with
+-          counter operations           (excluding MTU8).
++          counter operations (excluding MTU8)
+         - Up to 12-phase PWM output in combination with synchronous operation
+           (excluding MTU8)
+     - [MTU0 MTU3, MTU4, MTU6, MTU7, and MTU8]
+@@ -40,26 +40,26 @@ description: |
+     - [MTU3, MTU4, MTU6, and MTU7]
+         - Through interlocked operation of MTU3/4 and MTU6/7, the positive and
+           negative signals in six phases (12 phases in total) can be output in
+-          complementary PWM and reset-synchronized PWM operation.
++          complementary PWM and reset-synchronized PWM operation
+         - In complementary PWM mode, values can be transferred from buffer
+           registers to temporary registers at crests and troughs of the timer-
+           counter values or when the buffer registers (TGRD registers in MTU4
+-          and MTU7) are written to.
+-        - Double-buffering selectable in complementary PWM mode.
++          and MTU7) are written to
++        - Double-buffering selectable in complementary PWM mode
+     - [MTU3 and MTU4]
+         - Through interlocking with MTU0, a mode for driving AC synchronous
+           motors (brushless DC motors) by using complementary PWM output and
+           reset-synchronized PWM output is settable and allows the selection
+-          of two types of waveform output (chopping or level).
++          of two types of waveform output (chopping or level)
+     - [MTU5]
+-        - Capable of operation as a dead-time compensation counter.
++        - Capable of operation as a dead-time compensation counter
+     - [MTU0/MTU5, MTU1, MTU2, and MTU8]
+         - 32-bit phase counting mode specifiable by combining MTU1 and MTU2 and
+-          through interlocked operation with MTU0/MTU5 and MTU8.
++          through interlocked operation with MTU0/MTU5 and MTU8
+     - Interrupt-skipping function
+         - In complementary PWM mode, interrupts on crests and troughs of counter
+           values and triggers to start conversion by the A/D converter can be
+-          skipped.
++          skipped
+     - Interrupt sources: 43 sources.
+     - Buffer operation:
+         - Automatic transfer of register data (transfer from the buffer
+@@ -68,9 +68,9 @@ description: |
+         - A/D converter start triggers can be generated
+         - A/D converter start request delaying function enables A/D converter
+           to be started with any desired timing and to be synchronized with
+-          PWM output.
++          PWM output
+     - Low power consumption function
+-        - The MTU3a can be placed in the module-stop state.
++        - The MTU3a can be placed in the module-stop state
+ 
+     There are two phase counting modes. 16-bit phase counting mode in which
+     MTU1 and MTU2 operate independently, and cascade connection 32-bit phase
 -- 
 2.25.1
 
