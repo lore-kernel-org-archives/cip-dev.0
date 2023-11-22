@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0490CC61DA7
-	for <webhook@archiver.kernel.org>; Wed, 22 Nov 2023 16:51:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7EB1C61D9D
+	for <webhook@archiver.kernel.org>; Wed, 22 Nov 2023 16:51:20 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web10.24750.1700671877795139316
+ by mx.groups.io with SMTP id smtpd.web10.24748.1700671872199188480
  for <cip-dev@lists.cip-project.org>;
- Wed, 22 Nov 2023 08:51:18 -0800
+ Wed, 22 Nov 2023 08:51:13 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.04,219,1695654000"; 
-   d="scan'208";a="187751706"
+   d="scan'208";a="187751698"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 23 Nov 2023 01:51:17 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 23 Nov 2023 01:51:12 +0900
 Received: from localhost.localdomain (unknown [10.226.92.150])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6E30D402D12A;
-	Thu, 23 Nov 2023 01:51:15 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id D63DF402D12C;
+	Thu, 23 Nov 2023 01:51:10 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 3/3] dt-bindings: timer: renesas,rz-mtu3: Document RZ/{G2UL,Five} SoCs
-Date: Wed, 22 Nov 2023 16:51:06 +0000
-Message-Id: <20231122165106.235838-4-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 1/3] dt-bindings: timer: renesas,rz-mtu3: Fix overflow/underflow interrupt names
+Date: Wed, 22 Nov 2023 16:51:04 +0000
+Message-Id: <20231122165106.235838-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231122165106.235838-1-biju.das.jz@bp.renesas.com>
 References: <20231122165106.235838-1-biju.das.jz@bp.renesas.com>
@@ -34,39 +34,127 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 22 Nov 2023 16:51:21 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13638
+ <cip-dev@lists.cip-project.org>; Wed, 22 Nov 2023 16:51:20 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13636
 
-commit 078a5babf2bc92eba04b8f9162e5fea7afc2749e upstream.
+commit b7a8f1f7a8a25e09aaefebb6251a77f44cda638b upstream.
 
-Add MTU3a binding documentation for Renesas RZ/{G2UL,Five} SoCs.
+As per R01UH0914EJ0130 Rev.1.30 HW manual the MTU3 overflow/underflow
+interrupt names starts with 'tci' instead of 'tgi'.
 
-MTU3a block is identical to one found on RZ/G2L, so no driver changes are
-required. The fallback compatible string "renesas,rz-mtu3" will be used
-on RZ/{G2UL,Five}.
+Fix this documentation issue by replacing below overflow/underflow
+interrupt names:
+ - tgiv0->tciv0
+ - tgiv1->tciv1
+ - tgiu1->tciu1
+ - tgiv2->tciv2
+ - tgiu2->tciu2
+ - tgiv3->tciv3
+ - tgiv4->tciv4
+ - tgiv6->tciv6
+ - tgiv7->tciv7
+ - tgiv8->tciv8
+ - tgiu8->tciu8
 
+Fixes: 0a9d6b54297e ("dt-bindings: timer: Document RZ/G2L MTU3a bindings")
+Cc: stable@kernel.org
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/20230727081848.100834-4-biju.das.jz@bp.renesas.com
+Link: https://lore.kernel.org/r/20230727081848.100834-2-biju.das.jz@bp.renesas.com
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ .../bindings/timer/renesas,rz-mtu3.yaml       | 38 +++++++++----------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml b/Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml
-index 670a2ebaacdb..3931054b42fb 100644
+index bffdab0b0185..fbac40b958dd 100644
 --- a/Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml
 +++ b/Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml
-@@ -109,6 +109,7 @@ properties:
-   compatible:
-     items:
-       - enum:
-+          - renesas,r9a07g043-mtu3  # RZ/{G2UL,Five}
-           - renesas,r9a07g044-mtu3  # RZ/G2{L,LC}
-           - renesas,r9a07g054-mtu3  # RZ/V2L
-       - const: renesas,rz-mtu3
+@@ -169,27 +169,27 @@ properties:
+       - const: tgib0
+       - const: tgic0
+       - const: tgid0
+-      - const: tgiv0
++      - const: tciv0
+       - const: tgie0
+       - const: tgif0
+       - const: tgia1
+       - const: tgib1
+-      - const: tgiv1
+-      - const: tgiu1
++      - const: tciv1
++      - const: tciu1
+       - const: tgia2
+       - const: tgib2
+-      - const: tgiv2
+-      - const: tgiu2
++      - const: tciv2
++      - const: tciu2
+       - const: tgia3
+       - const: tgib3
+       - const: tgic3
+       - const: tgid3
+-      - const: tgiv3
++      - const: tciv3
+       - const: tgia4
+       - const: tgib4
+       - const: tgic4
+       - const: tgid4
+-      - const: tgiv4
++      - const: tciv4
+       - const: tgiu5
+       - const: tgiv5
+       - const: tgiw5
+@@ -197,18 +197,18 @@ properties:
+       - const: tgib6
+       - const: tgic6
+       - const: tgid6
+-      - const: tgiv6
++      - const: tciv6
+       - const: tgia7
+       - const: tgib7
+       - const: tgic7
+       - const: tgid7
+-      - const: tgiv7
++      - const: tciv7
+       - const: tgia8
+       - const: tgib8
+       - const: tgic8
+       - const: tgid8
+-      - const: tgiv8
+-      - const: tgiu8
++      - const: tciv8
++      - const: tciu8
+ 
+   clocks:
+     maxItems: 1
+@@ -285,16 +285,16 @@ examples:
+                    <GIC_SPI 211 IRQ_TYPE_EDGE_RISING>,
+                    <GIC_SPI 212 IRQ_TYPE_EDGE_RISING>,
+                    <GIC_SPI 213 IRQ_TYPE_EDGE_RISING>;
+-      interrupt-names = "tgia0", "tgib0", "tgic0", "tgid0", "tgiv0", "tgie0",
++      interrupt-names = "tgia0", "tgib0", "tgic0", "tgid0", "tciv0", "tgie0",
+                         "tgif0",
+-                        "tgia1", "tgib1", "tgiv1", "tgiu1",
+-                        "tgia2", "tgib2", "tgiv2", "tgiu2",
+-                        "tgia3", "tgib3", "tgic3", "tgid3", "tgiv3",
+-                        "tgia4", "tgib4", "tgic4", "tgid4", "tgiv4",
++                        "tgia1", "tgib1", "tciv1", "tciu1",
++                        "tgia2", "tgib2", "tciv2", "tciu2",
++                        "tgia3", "tgib3", "tgic3", "tgid3", "tciv3",
++                        "tgia4", "tgib4", "tgic4", "tgid4", "tciv4",
+                         "tgiu5", "tgiv5", "tgiw5",
+-                        "tgia6", "tgib6", "tgic6", "tgid6", "tgiv6",
+-                        "tgia7", "tgib7", "tgic7", "tgid7", "tgiv7",
+-                        "tgia8", "tgib8", "tgic8", "tgid8", "tgiv8", "tgiu8";
++                        "tgia6", "tgib6", "tgic6", "tgid6", "tciv6",
++                        "tgia7", "tgib7", "tgic7", "tgid7", "tciv7",
++                        "tgia8", "tgib8", "tgic8", "tgid8", "tciv8", "tciu8";
+       clocks = <&cpg CPG_MOD R9A07G044_MTU_X_MCK_MTU3>;
+       power-domains = <&cpg>;
+       resets = <&cpg R9A07G044_MTU_X_PRESET_MTU3>;
 -- 
 2.25.1
 
