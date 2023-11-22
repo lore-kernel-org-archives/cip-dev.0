@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13573C61D97
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EBA7C61D9D
 	for <webhook@archiver.kernel.org>; Wed, 22 Nov 2023 14:32:20 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web10.20869.1700663534417739938
  for <cip-dev@lists.cip-project.org>;
- Wed, 22 Nov 2023 06:32:16 -0800
+ Wed, 22 Nov 2023 06:32:18 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.04,219,1695654000"; 
-   d="scan'208";a="187743319"
+   d="scan'208";a="187743322"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 22 Nov 2023 23:32:16 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 22 Nov 2023 23:32:18 +0900
 Received: from localhost.localdomain (unknown [10.226.92.150])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 57C1E40071EF;
-	Wed, 22 Nov 2023 23:32:14 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 99210400720A;
+	Wed, 22 Nov 2023 23:32:16 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 07/10] clk: vc3: Fix 64 by 64 division
-Date: Wed, 22 Nov 2023 14:31:53 +0000
-Message-Id: <20231122143156.204055-8-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 08/10] clk: vc3: Fix output clock mapping
+Date: Wed, 22 Nov 2023 14:31:54 +0000
+Message-Id: <20231122143156.204055-9-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231122143156.204055-1-biju.das.jz@bp.renesas.com>
 References: <20231122143156.204055-1-biju.das.jz@bp.renesas.com>
@@ -35,46 +35,161 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 22 Nov 2023 14:32:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13631
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13632
 
-commit 576418e3417267e93ffee09c46f56434108c4548 upstream.
+commit 6dcf03bcac31dec528867180f96580652fc3ac5b upstream.
 
-Fix the below cocci warnings by replacing do_div()->div64_ul() and
-bound the result with a max value of U16_MAX.
+According to Table 3. ("Output Source") in the 5P35023 datasheet,
+the output clock mapping should be 0=REF, 1=SE1, 2=SE2, 3=SE3,
+4=DIFF1, 5=DIFF2. But the code uses inverse. Fix this mapping issue.
 
-cocci warnings:
-	drivers/clk/clk-versaclock3.c:404:2-8: WARNING: do_div() does a
-	64-by-32 division, please consider using div64_ul instead.
-
-Reported-by: Julia Lawall <julia.lawall@inria.fr>
-Closes: https://lore.kernel.org/r/202307270841.yr5HxYIl-lkp@intel.com/
+Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Closes: https://lore.kernel.org/all/CAMuHMdUHD+bEco=WYTYWsTAyRt3dTQQt4Xpaejss0Y2ZpLCMNg@mail.gmail.com/
 Fixes: 6e9aff555db7 ("clk: Add support for versa3 clock driver")
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20230824104812.147775-3-biju.das.jz@bp.renesas.com
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20230824104812.147775-4-biju.das.jz@bp.renesas.com
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/clk-versaclock3.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/clk/clk-versaclock3.c | 68 +++++++++++++++++------------------
+ 1 file changed, 34 insertions(+), 34 deletions(-)
 
 diff --git a/drivers/clk/clk-versaclock3.c b/drivers/clk/clk-versaclock3.c
-index 4ceb7fcf7fcb..c8f9b784ee3f 100644
+index c8f9b784ee3f..11170ad40f46 100644
 --- a/drivers/clk/clk-versaclock3.c
 +++ b/drivers/clk/clk-versaclock3.c
-@@ -401,11 +401,10 @@ static long vc3_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 		/* Determine best fractional part, which is 16 bit wide */
- 		div_frc = rate % *parent_rate;
- 		div_frc *= BIT(16) - 1;
--		do_div(div_frc, *parent_rate);
+@@ -119,20 +119,20 @@ enum vc3_div {
+ };
  
--		vc3->div_frc = (u32)div_frc;
-+		vc3->div_frc = min_t(u64, div64_ul(div_frc, *parent_rate), U16_MAX);
- 		rate = (*parent_rate *
--			(vc3->div_int * VC3_2_POW_16 + div_frc) / VC3_2_POW_16);
-+			(vc3->div_int * VC3_2_POW_16 + vc3->div_frc) / VC3_2_POW_16);
- 	} else {
- 		rate = *parent_rate * vc3->div_int;
- 	}
+ enum vc3_clk_mux {
+-	VC3_DIFF2_MUX,
+-	VC3_DIFF1_MUX,
+-	VC3_SE3_MUX,
+-	VC3_SE2_MUX,
+ 	VC3_SE1_MUX,
++	VC3_SE2_MUX,
++	VC3_SE3_MUX,
++	VC3_DIFF1_MUX,
++	VC3_DIFF2_MUX,
+ };
+ 
+ enum vc3_clk {
+-	VC3_DIFF2,
+-	VC3_DIFF1,
+-	VC3_SE3,
+-	VC3_SE2,
+-	VC3_SE1,
+ 	VC3_REF,
++	VC3_SE1,
++	VC3_SE2,
++	VC3_SE3,
++	VC3_DIFF1,
++	VC3_DIFF2,
+ };
+ 
+ struct vc3_clk_data {
+@@ -896,33 +896,33 @@ static struct vc3_hw_data clk_div[] = {
+ };
+ 
+ static struct vc3_hw_data clk_mux[] = {
+-	[VC3_DIFF2_MUX] = {
++	[VC3_SE1_MUX] = {
+ 		.data = &(struct vc3_clk_data) {
+-			.offs = VC3_DIFF2_CTRL_REG,
+-			.bitmsk = VC3_DIFF2_CTRL_REG_DIFF2_CLK_SEL
++			.offs = VC3_SE1_DIV4_CTRL,
++			.bitmsk = VC3_SE1_DIV4_CTRL_SE1_CLK_SEL
+ 		},
+ 		.hw.init = &(struct clk_init_data){
+-			.name = "diff2_mux",
++			.name = "se1_mux",
+ 			.ops = &vc3_clk_mux_ops,
+ 			.parent_hws = (const struct clk_hw *[]) {
+-				&clk_div[VC3_DIV1].hw,
+-				&clk_div[VC3_DIV3].hw
++				&clk_div[VC3_DIV5].hw,
++				&clk_div[VC3_DIV4].hw
+ 			},
+ 			.num_parents = 2,
+ 			.flags = CLK_SET_RATE_PARENT
+ 		}
+ 	},
+-	[VC3_DIFF1_MUX] = {
++	[VC3_SE2_MUX] = {
+ 		.data = &(struct vc3_clk_data) {
+-			.offs = VC3_DIFF1_CTRL_REG,
+-			.bitmsk = VC3_DIFF1_CTRL_REG_DIFF1_CLK_SEL
++			.offs = VC3_SE2_CTRL_REG0,
++			.bitmsk = VC3_SE2_CTRL_REG0_SE2_CLK_SEL
+ 		},
+ 		.hw.init = &(struct clk_init_data){
+-			.name = "diff1_mux",
++			.name = "se2_mux",
+ 			.ops = &vc3_clk_mux_ops,
+ 			.parent_hws = (const struct clk_hw *[]) {
+-				&clk_div[VC3_DIV1].hw,
+-				&clk_div[VC3_DIV3].hw
++				&clk_div[VC3_DIV5].hw,
++				&clk_div[VC3_DIV4].hw
+ 			},
+ 			.num_parents = 2,
+ 			.flags = CLK_SET_RATE_PARENT
+@@ -944,33 +944,33 @@ static struct vc3_hw_data clk_mux[] = {
+ 			.flags = CLK_SET_RATE_PARENT
+ 		}
+ 	},
+-	[VC3_SE2_MUX] = {
++	[VC3_DIFF1_MUX] = {
+ 		.data = &(struct vc3_clk_data) {
+-			.offs = VC3_SE2_CTRL_REG0,
+-			.bitmsk = VC3_SE2_CTRL_REG0_SE2_CLK_SEL
++			.offs = VC3_DIFF1_CTRL_REG,
++			.bitmsk = VC3_DIFF1_CTRL_REG_DIFF1_CLK_SEL
+ 		},
+ 		.hw.init = &(struct clk_init_data){
+-			.name = "se2_mux",
++			.name = "diff1_mux",
+ 			.ops = &vc3_clk_mux_ops,
+ 			.parent_hws = (const struct clk_hw *[]) {
+-				&clk_div[VC3_DIV5].hw,
+-				&clk_div[VC3_DIV4].hw
++				&clk_div[VC3_DIV1].hw,
++				&clk_div[VC3_DIV3].hw
+ 			},
+ 			.num_parents = 2,
+ 			.flags = CLK_SET_RATE_PARENT
+ 		}
+ 	},
+-	[VC3_SE1_MUX] = {
++	[VC3_DIFF2_MUX] = {
+ 		.data = &(struct vc3_clk_data) {
+-			.offs = VC3_SE1_DIV4_CTRL,
+-			.bitmsk = VC3_SE1_DIV4_CTRL_SE1_CLK_SEL
++			.offs = VC3_DIFF2_CTRL_REG,
++			.bitmsk = VC3_DIFF2_CTRL_REG_DIFF2_CLK_SEL
+ 		},
+ 		.hw.init = &(struct clk_init_data){
+-			.name = "se1_mux",
++			.name = "diff2_mux",
+ 			.ops = &vc3_clk_mux_ops,
+ 			.parent_hws = (const struct clk_hw *[]) {
+-				&clk_div[VC3_DIV5].hw,
+-				&clk_div[VC3_DIV4].hw
++				&clk_div[VC3_DIV1].hw,
++				&clk_div[VC3_DIV3].hw
+ 			},
+ 			.num_parents = 2,
+ 			.flags = CLK_SET_RATE_PARENT
+@@ -1109,7 +1109,7 @@ static int vc3_probe(struct i2c_client *client)
+ 				name, 0, CLK_SET_RATE_PARENT, 1, 1);
+ 		else
+ 			clk_out[i] = devm_clk_hw_register_fixed_factor_parent_hw(dev,
+-				name, &clk_mux[i].hw, CLK_SET_RATE_PARENT, 1, 1);
++				name, &clk_mux[i - 1].hw, CLK_SET_RATE_PARENT, 1, 1);
+ 
+ 		if (IS_ERR(clk_out[i]))
+ 			return PTR_ERR(clk_out[i]);
 -- 
 2.25.1
 
