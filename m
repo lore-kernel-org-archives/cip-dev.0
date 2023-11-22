@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9384BC61D97
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D74CC61D9D
 	for <webhook@archiver.kernel.org>; Wed, 22 Nov 2023 14:28:39 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.20658.1700663304421656546
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web10.20716.1700663316842413541
  for <cip-dev@lists.cip-project.org>;
- Wed, 22 Nov 2023 06:28:34 -0800
+ Wed, 22 Nov 2023 06:28:37 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.04,219,1695654000"; 
-   d="scan'208";a="187743096"
+   d="scan'208";a="183887320"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 22 Nov 2023 23:28:34 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 22 Nov 2023 23:28:36 +0900
 Received: from localhost.localdomain (unknown [10.226.92.150])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 5D0D84010DEB;
-	Wed, 22 Nov 2023 23:28:32 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 931254010DF3;
+	Wed, 22 Nov 2023 23:28:34 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 05/11] clk: fixed: Remove Allwinner A10 special-case logic
-Date: Wed, 22 Nov 2023 14:28:13 +0000
-Message-Id: <20231122142819.203737-6-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 06/11] clk: fixed-factor: Introduce *clk_hw_register_fixed_factor_parent_hw()
+Date: Wed, 22 Nov 2023 14:28:14 +0000
+Message-Id: <20231122142819.203737-7-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231122142819.203737-1-biju.das.jz@bp.renesas.com>
 References: <20231122142819.203737-1-biju.das.jz@bp.renesas.com>
@@ -35,59 +35,136 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 22 Nov 2023 14:28:39 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13617
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13618
 
-From: Samuel Holland <samuel@sholland.org>
+From: Marijn Suijten <marijn.suijten@somainline.org>
 
-commit c33ed61249dc54e7cf2137c04462883560375b77 upstream.
+commit 6ebd5247ad2aa210b3ff4481c6ed8aa32a032b12 upstream.
 
-This compatible is part of the legacy sunxi clock support, and has not
-been used since commit 6b48644b1d29 ("ARM: gr8: Convert to CCU") in
-October 2016. Since supporting this compatible adds some overhead to
-generic clock code, let's clean it up.
+Add the devres and non-devres variant of
+clk_hw_register_fixed_factor_parent_hw() for registering a fixed factor
+clock with clk_hw parent pointer instead of parent name.
 
-Signed-off-by: Samuel Holland <samuel@sholland.org>
-Link: https://lore.kernel.org/r/20220531051742.43273-1-samuel@sholland.org
+Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+Link: https://lore.kernel.org/r/20220629225331.357308-4-marijn.suijten@somainline.org
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/clk-fixed-factor.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+ drivers/clk/clk-fixed-factor.c | 45 ++++++++++++++++++++++++++++++----
+ include/linux/clk-provider.h   |  8 ++++++
+ 2 files changed, 48 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index b65f027dd40c..67229bfec4c0 100644
+index 67229bfec4c0..bf55b9b71c6a 100644
 --- a/drivers/clk/clk-fixed-factor.c
 +++ b/drivers/clk/clk-fixed-factor.c
-@@ -203,16 +203,10 @@ struct clk_hw *devm_clk_hw_register_fixed_factor(struct device *dev,
- EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor);
+@@ -71,7 +71,8 @@ static void devm_clk_hw_register_fixed_factor_release(struct device *dev, void *
  
- #ifdef CONFIG_OF
--static const struct of_device_id set_rate_parent_matches[] = {
--	{ .compatible = "allwinner,sun4i-a10-pll3-2x-clk" },
--	{ /* Sentinel */ },
--};
--
- static struct clk_hw *_of_fixed_factor_clk_setup(struct device_node *node)
+ static struct clk_hw *
+ __clk_hw_register_fixed_factor(struct device *dev, struct device_node *np,
+-		const char *name, const char *parent_name, int index,
++		const char *name, const char *parent_name,
++		const struct clk_hw *parent_hw, int index,
+ 		unsigned long flags, unsigned int mult, unsigned int div,
+ 		bool devm)
  {
- 	struct clk_hw *hw;
- 	const char *clk_name = node->name;
--	unsigned long flags = 0;
- 	u32 div, mult;
- 	int ret;
+@@ -103,6 +104,8 @@ __clk_hw_register_fixed_factor(struct device *dev, struct device_node *np,
+ 	init.flags = flags;
+ 	if (parent_name)
+ 		init.parent_names = &parent_name;
++	else if (parent_hw)
++		init.parent_hws = &parent_hw;
+ 	else
+ 		init.parent_data = &pdata;
+ 	init.num_parents = 1;
+@@ -141,16 +144,48 @@ struct clk_hw *devm_clk_hw_register_fixed_factor_index(struct device *dev,
+ 		const char *name, unsigned int index, unsigned long flags,
+ 		unsigned int mult, unsigned int div)
+ {
+-	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL, index,
++	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL, NULL, index,
+ 					      flags, mult, div, true);
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor_index);
  
-@@ -230,11 +224,8 @@ static struct clk_hw *_of_fixed_factor_clk_setup(struct device_node *node)
++/**
++ * devm_clk_hw_register_fixed_factor_parent_hw - Register a fixed factor clock with
++ * pointer to parent clock
++ * @dev: device that is registering this clock
++ * @name: name of this clock
++ * @parent_hw: pointer to parent clk
++ * @flags: fixed factor flags
++ * @mult: multiplier
++ * @div: divider
++ *
++ * Return: Pointer to fixed factor clk_hw structure that was registered or
++ * an error pointer.
++ */
++struct clk_hw *devm_clk_hw_register_fixed_factor_parent_hw(struct device *dev,
++		const char *name, const struct clk_hw *parent_hw,
++		unsigned long flags, unsigned int mult, unsigned int div)
++{
++	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL, parent_hw,
++					      -1, flags, mult, div, true);
++}
++EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor_parent_hw);
++
++struct clk_hw *clk_hw_register_fixed_factor_parent_hw(struct device *dev,
++		const char *name, const struct clk_hw *parent_hw,
++		unsigned long flags, unsigned int mult, unsigned int div)
++{
++	return __clk_hw_register_fixed_factor(dev, NULL, name, NULL,
++					      parent_hw, -1, flags, mult, div,
++					      false);
++}
++EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor_parent_hw);
++
+ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		unsigned int mult, unsigned int div)
+ {
+-	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, -1,
++	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, NULL, -1,
+ 					      flags, mult, div, false);
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register_fixed_factor);
+@@ -197,7 +232,7 @@ struct clk_hw *devm_clk_hw_register_fixed_factor(struct device *dev,
+ 		const char *name, const char *parent_name, unsigned long flags,
+ 		unsigned int mult, unsigned int div)
+ {
+-	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, -1,
++	return __clk_hw_register_fixed_factor(dev, NULL, name, parent_name, NULL, -1,
+ 			flags, mult, div, true);
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_hw_register_fixed_factor);
+@@ -224,7 +259,7 @@ static struct clk_hw *_of_fixed_factor_clk_setup(struct device_node *node)
  
  	of_property_read_string(node, "clock-output-names", &clk_name);
  
--	if (of_match_node(set_rate_parent_matches, node))
--		flags |= CLK_SET_RATE_PARENT;
--
- 	hw = __clk_hw_register_fixed_factor(NULL, node, clk_name, NULL, 0,
--					    flags, mult, div, false);
-+					    0, mult, div, false);
+-	hw = __clk_hw_register_fixed_factor(NULL, node, clk_name, NULL, 0,
++	hw = __clk_hw_register_fixed_factor(NULL, node, clk_name, NULL, NULL, 0,
+ 					    0, mult, div, false);
  	if (IS_ERR(hw)) {
  		/*
- 		 * Clear OF_POPULATED flag so that clock registration can be
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 0b0055359bbb..c002f80e885a 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -960,6 +960,14 @@ struct clk_hw *devm_clk_hw_register_fixed_factor(struct device *dev,
+ struct clk_hw *devm_clk_hw_register_fixed_factor_index(struct device *dev,
+ 		const char *name, unsigned int index, unsigned long flags,
+ 		unsigned int mult, unsigned int div);
++
++struct clk_hw *devm_clk_hw_register_fixed_factor_parent_hw(struct device *dev,
++		const char *name, const struct clk_hw *parent_hw,
++		unsigned long flags, unsigned int mult, unsigned int div);
++
++struct clk_hw *clk_hw_register_fixed_factor_parent_hw(struct device *dev,
++		const char *name, const struct clk_hw *parent_hw,
++		unsigned long flags, unsigned int mult, unsigned int div);
+ /**
+  * struct clk_fractional_divider - adjustable fractional divider clock
+  *
 -- 
 2.25.1
 
