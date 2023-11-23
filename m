@@ -2,209 +2,98 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8AAEC624B4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD915C636BD
 	for <webhook@archiver.kernel.org>; Thu, 23 Nov 2023 18:29:09 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web11.101850.1700764145543002900
  for <cip-dev@lists.cip-project.org>;
- Thu, 23 Nov 2023 10:29:07 -0800
+ Thu, 23 Nov 2023 10:29:05 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.04,222,1695654000"; 
-   d="scan'208";a="187858434"
+   d="scan'208";a="187858430"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 24 Nov 2023 03:29:06 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 24 Nov 2023 03:29:03 +0900
 Received: from localhost.localdomain (unknown [10.226.92.37])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6E5284055795;
-	Fri, 24 Nov 2023 03:29:04 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2C5114055796;
+	Fri, 24 Nov 2023 03:29:01 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip v2 03/12] clk: Move no reparent case into a separate function
-Date: Thu, 23 Nov 2023 18:28:45 +0000
-Message-Id: <20231123182854.422379-4-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip v2 02/12] dt-bindings: clock: versaclock3: Add description for #clock-cells property
+Date: Thu, 23 Nov 2023 18:28:44 +0000
+Message-Id: <20231123182854.422379-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231123182854.422379-1-biju.das.jz@bp.renesas.com>
 References: <20231123182854.422379-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 23 Nov 2023 18:29:09 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13676
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13675
 
-From: Stephen Boyd <sboyd@kernel.org>
+commit 1aa2a9f27627447da247997c34c71af9402fa237 upstream.
 
-commit 1b4e99fda73fd030635f378ee059257f6ad0f780 upseam.
+Add description for "#clock-cells" property to map indexes to the clock
+output in the Table 3. ("Output Source") in the 5P35023 datasheet
+(ie: {REF,SE1,SE2,SE3,DIFF1,DIFF2}. Also update the "assigned-clock-rates"
+in the example.
 
-We'll need to turn the code in clk_mux_determine_rate_flags() to deal
-with CLK_SET_RATE_NO_REPARENT into a helper clock drivers will be able
-to use if they don't want to allow reparenting.
+While at it, replace clocks phandle in the example from x1_x2->x1 as
+X2 is a different 32768 kHz crystal.
 
-Cc: Abel Vesa <abelvesa@kernel.org>
-Cc: Alessandro Zummo <a.zummo@towertech.it>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: "Andreas Färber" <afaerber@suse.de>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Cc: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: David Airlie <airlied@gmail.com>
-Cc: David Lechner <david@lechnology.com>
-Cc: Dinh Nguyen <dinguyen@kernel.org>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Markus Schneider-Pargmann <msp@baylibre.com>
-Cc: Max Filippov <jcmvbkbc@gmail.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Miles Chen <miles.chen@mediatek.com>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Orson Zhai <orsonzhai@gmail.com>
-Cc: Paul Cercueil <paul@crapouillou.net>
-Cc: Peng Fan <peng.fan@nxp.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: Samuel Holland <samuel@sholland.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Sekhar Nori <nsekhar@ti.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Takashi Iwai <tiwai@suse.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-actions@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-phy@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-rtc@vger.kernel.org
-Cc: linux-stm32@st-md-mailman.stormreply.com
-Cc: linux-sunxi@lists.linux.dev
-Cc: linux-tegra@vger.kernel.org
-Cc: NXP Linux Team <linux-imx@nxp.com>
-Cc: patches@opensource.cirrus.com
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Link: https://lore.kernel.org/r/20230824104812.147775-2-biju.das.jz@bp.renesas.com
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-Link: https://lore.kernel.org/r/20221018-clk-range-checks-fixes-v4-3-971d5077e7d2@cerno.tech
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/clk.c | 66 ++++++++++++++++++++++++++++-------------------
- 1 file changed, 39 insertions(+), 27 deletions(-)
+ .../devicetree/bindings/clock/renesas,5p35023.yaml    | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 33fedbd096f3..b86bcb3fcf85 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -583,6 +583,42 @@ clk_core_forward_rate_req(struct clk_core *core,
- 		req->max_rate = old_req->max_rate;
- }
+diff --git a/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml b/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
+index 839648e753d4..42b6f80613f3 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
+@@ -37,6 +37,9 @@ properties:
+     maxItems: 1
  
-+static int
-+clk_core_determine_rate_no_reparent(struct clk_hw *hw,
-+				    struct clk_rate_request *req)
-+{
-+	struct clk_core *core = hw->core;
-+	struct clk_core *parent = core->parent;
-+	unsigned long best;
-+	int ret;
-+
-+	if (core->flags & CLK_SET_RATE_PARENT) {
-+		struct clk_rate_request parent_req;
-+
-+		if (!parent) {
-+			req->rate = 0;
-+			return 0;
-+		}
-+
-+		clk_core_forward_rate_req(core, req, parent, &parent_req,
-+					  req->rate);
-+
-+		ret = clk_core_round_rate_nolock(parent, &parent_req);
-+		if (ret)
-+			return ret;
-+
-+		best = parent_req.rate;
-+	} else if (parent) {
-+		best = clk_core_get_rate_nolock(parent);
-+	} else {
-+		best = clk_core_get_rate_nolock(core);
-+	}
-+
-+	req->rate = best;
-+
-+	return 0;
-+}
-+
- int clk_mux_determine_rate_flags(struct clk_hw *hw,
- 				 struct clk_rate_request *req,
- 				 unsigned long flags)
-@@ -592,30 +628,8 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
- 	unsigned long best = 0;
+   '#clock-cells':
++    description:
++      The index in the assigned-clocks is mapped to the output clock as below
++      0 - REF, 1 - SE1, 2 - SE2, 3 - SE3, 4 - DIFF1, 5 - DIFF2.
+     const: 1
  
- 	/* if NO_REPARENT flag set, pass through to current parent */
--	if (core->flags & CLK_SET_RATE_NO_REPARENT) {
--		parent = core->parent;
--		if (core->flags & CLK_SET_RATE_PARENT) {
--			struct clk_rate_request parent_req;
--
--			if (!parent) {
--				req->rate = 0;
--				return 0;
--			}
--
--			clk_core_forward_rate_req(core, req, parent, &parent_req, req->rate);
--			ret = clk_core_round_rate_nolock(parent, &parent_req);
--			if (ret)
--				return ret;
--
--			best = parent_req.rate;
--		} else if (parent) {
--			best = clk_core_get_rate_nolock(parent);
--		} else {
--			best = clk_core_get_rate_nolock(core);
--		}
--
--		goto out;
--	}
-+	if (core->flags & CLK_SET_RATE_NO_REPARENT)
-+		return clk_core_determine_rate_no_reparent(hw, req);
+   clocks:
+@@ -68,7 +71,7 @@ examples:
+             reg = <0x68>;
+             #clock-cells = <1>;
  
- 	/* find the parent that can provide the fastest rate <= rate */
- 	num_parents = core->num_parents;
-@@ -649,9 +663,7 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
- 	if (!best_parent)
- 		return -EINVAL;
+-            clocks = <&x1_x2>;
++            clocks = <&x1>;
  
--out:
--	if (best_parent)
--		req->best_parent_hw = best_parent->hw;
-+	req->best_parent_hw = best_parent->hw;
- 	req->best_parent_rate = best;
- 	req->rate = best;
- 
+             renesas,settings = [
+                 80 00 11 19 4c 02 23 7f 83 19 08 a9 5f 25 24 bf
+@@ -79,8 +82,8 @@ examples:
+             assigned-clocks = <&versa3 0>, <&versa3 1>,
+                               <&versa3 2>, <&versa3 3>,
+                               <&versa3 4>, <&versa3 5>;
+-            assigned-clock-rates = <12288000>, <25000000>,
+-                                   <12000000>, <11289600>,
+-                                   <11289600>, <24000000>;
++            assigned-clock-rates = <24000000>, <11289600>,
++                                   <11289600>, <12000000>,
++                                   <25000000>, <12288000>;
+         };
+     };
 -- 
 2.25.1
 
