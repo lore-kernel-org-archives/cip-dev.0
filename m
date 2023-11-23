@@ -1,239 +1,2008 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF39C5AD4C
-	for <webhook@archiver.kernel.org>; Thu, 23 Nov 2023 10:29:36 +0000 (UTC)
-Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
- by mx.groups.io with SMTP id smtpd.web11.88322.1700735369858814031
- for <cip-dev@lists.cip-project.org>;
- Thu, 23 Nov 2023 02:29:31 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31550C624B4
+	for <webhook@archiver.kernel.org>; Thu, 23 Nov 2023 11:52:37 +0000 (UTC)
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+ by mx.groups.io with SMTP id smtpd.web10.89026.1700740351235904964
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Thu, 23 Nov 2023 03:52:31 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=GJhK3Q3p;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-51332-20231123102927d16289eacfe2d4dcaf-lhisgl@rts-flowmailer.siemens.com)
-Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20231123102927d16289eacfe2d4dcaf
-        for <cip-dev@lists.cip-project.org>;
-        Thu, 23 Nov 2023 11:29:27 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
- bh=BgMCR2yA1DR+cpA2pWGqlzABlEpl0De5kVPeKm2zzt8=;
- b=GJhK3Q3pQImcAeNnDMwq5Wh874onIjyu73lbVUV0LDCkmiDOm25baowO+uOLHPXSeX82D6
- 78Hi6BHP1Hn5rfJw1looruVuh6NS48YIfJRWeO0aMteODydBWXXr9wgAfpWzaq0dT0IjV0/R
- krnGQlIOv4snUSovYutIGGu7bzSu0=;
-From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: cip-dev@lists.cip-project.org,
-	jan.kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][RFC] swupdate: Add symmetric encryption
-Date: Thu, 23 Nov 2023 11:18:21 +0100
-Message-ID: <20231123102923.1405219-1-Quirin.Gylstorff@siemens.com>
+ dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=bDjmMWgj;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.176, mailfrom: bot@kernelci.org)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6cb749044a2so796018b3a.0
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Thu, 23 Nov 2023 03:52:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1700740350; x=1701345150; darn=lists.cip-project.org;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=H+Y2taAmvIhj8SGNy/udxtGIoPhT4pKeaUBDFV/C3UY=;
+        b=bDjmMWgjqnNfH1XsjsCwfOsgPLODwWvXWUVwDcLBi6b1WGfhfrNZU2jG0b4qOdoB9e
+         9YPYa4FNw+yhDGiic9KfIwdnXk1dLfoJ5AmC9JZvE85q63RJKqwHqpBKcEDcjQtsw97c
+         7sPzOvZXEUQPN7ZtKCdgLvvQ3lqB49JvVfrzeNKGsByJdQNJDEAMYYtlaHwN5kZ6HdV2
+         NKGTnxIyVijK5iUaID7uGSRxj7TS2wC3KpuhtGiFNkmTv8y37XrRy2Y1NUM2hvK0GwdW
+         OusIRb/Q9XazjnovbwkhAbzgn0nXhn8JLVqqreU+aCtqAO0V57tPMNhoww5nJC0sk08b
+         rL8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700740350; x=1701345150;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=H+Y2taAmvIhj8SGNy/udxtGIoPhT4pKeaUBDFV/C3UY=;
+        b=RO8TqEZfAFUGIp2ampTZcKMs7l2IpicT/RWrvB9glrkPCtqncd3F6J4Bjo8bbQREdW
+         pm3X1NCmWL+ccedqP8YKAMTjt9Oq79JF8er1OlbScqpzYEP+FJ9WBR16mubaf5OoBt/6
+         F7EhHNyk239LhXVQFBl9wWGSJrTbUPbN2wzN5T3M0qIJDDnxRN1X8a2SqUnuZCSJgnGt
+         88KVHg8vZwYekRE4Mti02vRqXpCpIoGFB/ahp0gCBT1SJv9kLZgSKr3ydGjg6sMIlssP
+         1DIS7Zq6F1zwEc9a3kkN4IlXd4yjJz/8JOCKSh8gy8xUsXyq8vUArYBLXIRG7/2CCSut
+         LeBA==
+X-Gm-Message-State: AOJu0Yx1meGvpaFKcNnMTH0182UWi+M4ZXnu68md4uVXNLe504uWTEgI
+	Gl4x2aPiZS5H8f51bnFfz7V0u4Dv1c7aSy7E83o=
+X-Google-Smtp-Source: AGHT+IHCLXF5CduvjoNHO/rommROSESSXl2DX3H+k7KWWG2ScZG6m6plnFNIK19PBG8y3YTqAiZrnA==
+X-Received: by 2002:a05:6a20:9d8e:b0:18b:4dc2:a4cd with SMTP id mu14-20020a056a209d8e00b0018b4dc2a4cdmr4722378pzb.33.1700740348738;
+        Thu, 23 Nov 2023 03:52:28 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
+        by smtp.gmail.com with ESMTPSA id ci8-20020a17090afc8800b0027d0adf653bsm1141412pjb.7.2023.11.23.03.52.27
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Nov 2023 03:52:28 -0800 (PST)
+Message-ID: <655f3cfc.170a0220.ae4b3.228f@mx.google.com>
+Date: Thu, 23 Nov 2023 03:52:28 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: build
+X-Kernelci-Branch: ci/pavel/linux-test
+X-Kernelci-Tree: cip-gitlab
+X-Kernelci-Kernel: v6.1.62-cip9-13-g34c303883a305
+Subject: cip-gitlab/ci/pavel/linux-test build: 169 builds: 34 failed,
+ 135 passed, 404 errors, 17 warnings (v6.1.62-cip9-13-g34c303883a305)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
+From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 23 Nov 2023 10:29:36 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13661
+ <cip-dev@lists.cip-project.org>; Thu, 23 Nov 2023 11:52:37 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13662
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+cip-gitlab/ci/pavel/linux-test build: 169 builds: 34 failed, 135 passed, 40=
+4 errors, 17 warnings (v6.1.62-cip9-13-g34c303883a305)
 
-by setting the variable `SWU_ENCRYPTED = "1"` all files will be
-encrypted with the symmetric key SWU_ENCRYPTED_KEY and
-SWUPDATE_ENCRYPTED_IV.
-This key will be stored on the device to decrypt a received *.swu.
-The default location of the key is in /etc/swupdate as it can be
-encrypted.
+Full Build Summary: https://kernelci.org/build/cip-gitlab/branch/ci%2Fpavel=
+%2Flinux-test/kernel/v6.1.62-cip9-13-g34c303883a305/
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+Tree: cip-gitlab
+Branch: ci/pavel/linux-test
+Git Describe: v6.1.62-cip9-13-g34c303883a305
+Git Commit: 34c303883a305f474c4a18745cf56101db5e9b39
+Git URL: https://gitlab.com/cip-project/cip-kernel/linux-cip.git
+Built: 7 unique architectures
+
+Build Failures Detected:
+
+arc:
+    haps_hs_smp_defconfig: (gcc-10) FAIL
+    nsimosci_hs_defconfig: (gcc-10) FAIL
+    nsimosci_hs_smp_defconfig: (gcc-10) FAIL
+
+arm:
+    aspeed_g4_defconfig: (gcc-10) FAIL
+    aspeed_g5_defconfig: (gcc-10) FAIL
+    bcm2835_defconfig: (gcc-10) FAIL
+    exynos_defconfig: (gcc-10) FAIL
+    ezx_defconfig: (gcc-10) FAIL
+    imx_v4_v5_defconfig: (gcc-10) FAIL
+    imx_v6_v7_defconfig: (gcc-10) FAIL
+    keystone_defconfig: (gcc-10) FAIL
+    milbeaut_m10v_defconfig: (gcc-10) FAIL
+    moxart_defconfig: (gcc-10) FAIL
+    multi_v7_defconfig: (gcc-10) FAIL
+    mv78xx0_defconfig: (gcc-10) FAIL
+    mvebu_v7_defconfig: (gcc-10) FAIL
+    mxs_defconfig: (gcc-10) FAIL
+    omap1_defconfig: (gcc-10) FAIL
+    omap2plus_defconfig: (gcc-10) FAIL
+    oxnas_v6_defconfig: (gcc-10) FAIL
+    pxa_defconfig: (gcc-10) FAIL
+    qcom_defconfig: (gcc-10) FAIL
+    rpc_defconfig: (gcc-10) FAIL
+    shmobile_defconfig: (gcc-10) FAIL
+    socfpga_defconfig: (gcc-10) FAIL
+    tegra_defconfig: (gcc-10) FAIL
+    vexpress_defconfig: (gcc-10) FAIL
+
+mips:
+    bmips_stb_defconfig: (gcc-10) FAIL
+    gcw0_defconfig: (gcc-10) FAIL
+    gpr_defconfig: (gcc-10) FAIL
+    loongson3_defconfig: (gcc-10) FAIL
+    malta_kvm_defconfig: (gcc-10) FAIL
+    mtx1_defconfig: (gcc-10) FAIL
+
+x86_64:
+    x86_64_defconfig+x86-board: (gcc-10) FAIL
+
+Errors and Warnings Detected:
+
+arc:
+    haps_hs_smp_defconfig (gcc-10): 12 errors
+    nsimosci_hs_defconfig (gcc-10): 12 errors
+    nsimosci_hs_smp_defconfig (gcc-10): 12 errors
+
+arm64:
+
+arm:
+    aspeed_g4_defconfig (gcc-10): 21 errors
+    aspeed_g5_defconfig (gcc-10): 21 errors
+    bcm2835_defconfig (gcc-10): 12 errors
+    exynos_defconfig (gcc-10): 12 errors
+    ezx_defconfig (gcc-10): 8 errors
+    imx_v4_v5_defconfig (gcc-10): 12 errors
+    imx_v6_v7_defconfig (gcc-10): 12 errors
+    keystone_defconfig (gcc-10): 12 errors
+    milbeaut_m10v_defconfig (gcc-10): 12 errors
+    moxart_defconfig (gcc-10): 8 errors
+    multi_v7_defconfig (gcc-10): 12 errors
+    mv78xx0_defconfig (gcc-10): 12 errors
+    mvebu_v7_defconfig (gcc-10): 12 errors
+    mxs_defconfig (gcc-10): 12 errors
+    omap1_defconfig (gcc-10): 12 errors
+    omap2plus_defconfig (gcc-10): 12 errors
+    oxnas_v6_defconfig (gcc-10): 12 errors
+    pxa_defconfig (gcc-10): 12 errors
+    qcom_defconfig (gcc-10): 12 errors
+    rpc_defconfig (gcc-10): 2 errors
+    shmobile_defconfig (gcc-10): 12 errors
+    socfpga_defconfig (gcc-10): 12 errors
+    tegra_defconfig (gcc-10): 12 errors
+    vexpress_defconfig (gcc-10): 12 errors
+
+i386:
+
+mips:
+    32r2el_defconfig (gcc-10): 1 warning
+    bmips_be_defconfig (gcc-10): 8 warnings
+    bmips_stb_defconfig (gcc-10): 8 errors, 8 warnings
+    gcw0_defconfig (gcc-10): 12 errors
+    gpr_defconfig (gcc-10): 12 errors
+    loongson3_defconfig (gcc-10): 12 errors
+    malta_kvm_defconfig (gcc-10): 12 errors
+    mtx1_defconfig (gcc-10): 12 errors
+
+riscv:
+
+x86_64:
+    x86_64_defconfig+x86-board (gcc-10): 12 errors
+
+Errors summary:
+
+    114  include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate=
+_request=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    114  include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate=
+_request=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    68   include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate=
+_request=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    68   include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate=
+_request=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    12   include/trace/events/clk.h:282:37: error: 'struct clk_rate_request=
+' has no member named 'core'
+    12   include/trace/events/clk.h:282:25: error: 'struct clk_rate_request=
+' has no member named 'core'
+    6    include/trace/events/clk.h:274:41: error: 'struct clk_rate_request=
+' has no member named 'core'
+    6    include/trace/events/clk.h:274:29: error: 'struct clk_rate_request=
+' has no member named 'core'
+    2    include/linux/fortify-string.h:186:2: error: first argument to =E2=
+=80=98__builtin_choose_expr=E2=80=99 not a constant
+    1    arch/arm/kernel/head.S:319: Error: missing expression -- `ldr r7,=
+=3D0x'
+    1    arch/arm/kernel/head.S:319: Error: missing expression -- `ldr r3,=
+=3D0x'
+
+Warnings summary:
+
+    2    arch/mips/boot/dts/brcm/bcm63268.dtsi:115.5-22: Warning (reg_forma=
+t): /ubus/timer-mfd@10000080/watchdog@1c:reg: property has invalid length (=
+8 bytes) (#address-cells =3D=3D 2, #size-cells =3D=3D 1)
+    2    arch/mips/boot/dts/brcm/bcm63268.dtsi:113.21-121.6: Warning (avoid=
+_default_addr_size): /ubus/timer-mfd@10000080/watchdog@1c: Relying on defau=
+lt #size-cells value
+    2    arch/mips/boot/dts/brcm/bcm63268.dtsi:113.21-121.6: Warning (avoid=
+_default_addr_size): /ubus/timer-mfd@10000080/watchdog@1c: Relying on defau=
+lt #address-cells value
+    2    arch/mips/boot/dts/brcm/bcm63268.dtsi:111.4-35: Warning (ranges_fo=
+rmat): /ubus/timer-mfd@10000080:ranges: "ranges" property has invalid lengt=
+h (12 bytes) (parent #address-cells =3D=3D 1, child #address-cells =3D=3D 2=
+, #size-cells =3D=3D 1)
+    2    arch/mips/boot/dts/brcm/bcm63268-comtrend-vr-3032u.dtb: Warning (s=
+pi_bus_reg): Failed prerequisite 'reg_format'
+    2    arch/mips/boot/dts/brcm/bcm63268-comtrend-vr-3032u.dtb: Warning (p=
+ci_device_reg): Failed prerequisite 'reg_format'
+    2    arch/mips/boot/dts/brcm/bcm63268-comtrend-vr-3032u.dtb: Warning (p=
+ci_device_bus_num): Failed prerequisite 'reg_format'
+    2    arch/mips/boot/dts/brcm/bcm63268-comtrend-vr-3032u.dtb: Warning (i=
+2c_bus_reg): Failed prerequisite 'reg_format'
+    1    arch/mips/boot/dts/img/boston.dts:128.19-178.5: Warning (pci_devic=
+e_reg): /pci@14000000/pci2_root@0,0,0: PCI unit address format error, expec=
+ted "0,0"
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+
+Detailed per-defconfig build reports:
+
+---------------------------------------------------------------------------=
+-----
+32r2el_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 1 warning, 0 sect=
+ion mismatches
+
+Warnings:
+    arch/mips/boot/dts/img/boston.dts:128.19-178.5: Warning (pci_device_reg=
+): /pci@14000000/pci2_root@0,0,0: PCI unit address format error, expected "=
+0,0"
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
+mismatches
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+allnoconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
+am200epdkit_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+ar7_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+aspeed_g4_defconfig (arm, gcc-10) =E2=80=94 FAIL, 21 errors, 0 warnings, 0 =
+section mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/linux/fortify-string.h:186:2: error: first argument to =E2=80=
+=98__builtin_choose_expr=E2=80=99 not a constant
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+aspeed_g5_defconfig (arm, gcc-10) =E2=80=94 FAIL, 21 errors, 0 warnings, 0 =
+section mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/linux/fortify-string.h:186:2: error: first argument to =E2=80=
+=98__builtin_choose_expr=E2=80=99 not a constant
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+assabet_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+at91_dt_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+ath25_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+ath79_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+axm55xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+axs103_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+axs103_smp_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+badge4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+bcm2835_defconfig (arm, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0 se=
+ction mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+bcm47xx_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+bcm63xx_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+bigsur_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+bmips_be_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 8 warnings, 0 s=
+ection mismatches
+
+Warnings:
+    arch/mips/boot/dts/brcm/bcm63268.dtsi:115.5-22: Warning (reg_format): /=
+ubus/timer-mfd@10000080/watchdog@1c:reg: property has invalid length (8 byt=
+es) (#address-cells =3D=3D 2, #size-cells =3D=3D 1)
+    arch/mips/boot/dts/brcm/bcm63268.dtsi:111.4-35: Warning (ranges_format)=
+: /ubus/timer-mfd@10000080:ranges: "ranges" property has invalid length (12=
+ bytes) (parent #address-cells =3D=3D 1, child #address-cells =3D=3D 2, #si=
+ze-cells =3D=3D 1)
+    arch/mips/boot/dts/brcm/bcm63268-comtrend-vr-3032u.dtb: Warning (pci_de=
+vice_reg): Failed prerequisite 'reg_format'
+    arch/mips/boot/dts/brcm/bcm63268-comtrend-vr-3032u.dtb: Warning (pci_de=
+vice_bus_num): Failed prerequisite 'reg_format'
+    arch/mips/boot/dts/brcm/bcm63268-comtrend-vr-3032u.dtb: Warning (i2c_bu=
+s_reg): Failed prerequisite 'reg_format'
+    arch/mips/boot/dts/brcm/bcm63268-comtrend-vr-3032u.dtb: Warning (spi_bu=
+s_reg): Failed prerequisite 'reg_format'
+    arch/mips/boot/dts/brcm/bcm63268.dtsi:113.21-121.6: Warning (avoid_defa=
+ult_addr_size): /ubus/timer-mfd@10000080/watchdog@1c: Relying on default #a=
+ddress-cells value
+    arch/mips/boot/dts/brcm/bcm63268.dtsi:113.21-121.6: Warning (avoid_defa=
+ult_addr_size): /ubus/timer-mfd@10000080/watchdog@1c: Relying on default #s=
+ize-cells value
+
+---------------------------------------------------------------------------=
+-----
+bmips_stb_defconfig (mips, gcc-10) =E2=80=94 FAIL, 8 errors, 8 warnings, 0 =
+section mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+Warnings:
+    arch/mips/boot/dts/brcm/bcm63268.dtsi:115.5-22: Warning (reg_format): /=
+ubus/timer-mfd@10000080/watchdog@1c:reg: property has invalid length (8 byt=
+es) (#address-cells =3D=3D 2, #size-cells =3D=3D 1)
+    arch/mips/boot/dts/brcm/bcm63268.dtsi:111.4-35: Warning (ranges_format)=
+: /ubus/timer-mfd@10000080:ranges: "ranges" property has invalid length (12=
+ bytes) (parent #address-cells =3D=3D 1, child #address-cells =3D=3D 2, #si=
+ze-cells =3D=3D 1)
+    arch/mips/boot/dts/brcm/bcm63268-comtrend-vr-3032u.dtb: Warning (pci_de=
+vice_reg): Failed prerequisite 'reg_format'
+    arch/mips/boot/dts/brcm/bcm63268-comtrend-vr-3032u.dtb: Warning (pci_de=
+vice_bus_num): Failed prerequisite 'reg_format'
+    arch/mips/boot/dts/brcm/bcm63268-comtrend-vr-3032u.dtb: Warning (i2c_bu=
+s_reg): Failed prerequisite 'reg_format'
+    arch/mips/boot/dts/brcm/bcm63268-comtrend-vr-3032u.dtb: Warning (spi_bu=
+s_reg): Failed prerequisite 'reg_format'
+    arch/mips/boot/dts/brcm/bcm63268.dtsi:113.21-121.6: Warning (avoid_defa=
+ult_addr_size): /ubus/timer-mfd@10000080/watchdog@1c: Relying on default #a=
+ddress-cells value
+    arch/mips/boot/dts/brcm/bcm63268.dtsi:113.21-121.6: Warning (avoid_defa=
+ult_addr_size): /ubus/timer-mfd@10000080/watchdog@1c: Relying on default #s=
+ize-cells value
+
+---------------------------------------------------------------------------=
+-----
+cavium_octeon_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings=
+, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+cerfcube_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+ci20_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+cm_x300_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+cobalt_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+colibri_pxa270_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings=
+, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+colibri_pxa300_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings=
+, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+collie_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+corgi_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+cu1000-neo_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+cu1830-neo_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+davinci_all_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+db1xxx_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+decstation_64_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings=
+, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+decstation_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+decstation_r4k_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warning=
+s, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig (riscv, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
+defconfig+arm64-chromebook (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warn=
+ings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+eseries_pxa_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+exynos_defconfig (arm, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0 sec=
+tion mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+ezx_defconfig (arm, gcc-10) =E2=80=94 FAIL, 8 errors, 0 warnings, 0 section=
+ mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+footbridge_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+fuloong2e_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+gcw0_defconfig (mips, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+gemini_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+gpr_defconfig (mips, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0 secti=
+on mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+h3600_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+h5000_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+hackkit_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+haps_hs_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+haps_hs_smp_defconfig (arc, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, =
+0 section mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:274:41: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:274:29: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:274:41: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:25: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:37: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:25: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:37: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:25: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:37: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:25: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:37: error: 'struct clk_rate_request' has=
+ no member named 'core'
+
+---------------------------------------------------------------------------=
+-----
+hisi_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+hsdk_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+i386_defconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+imx_v4_v5_defconfig (arm, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0 =
+section mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+imx_v6_v7_defconfig (arm, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0 =
+section mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+imxrt_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+integrator_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+ip22_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+ip27_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+ip28_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+ip32_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+ixp4xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+jazz_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+jornada720_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+keystone_defconfig (arm, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0 s=
+ection mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+lart_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+lemote2f_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+loongson1b_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+loongson1c_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+loongson2k_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
+ section mismatches
+
+---------------------------------------------------------------------------=
+-----
+loongson3_defconfig (mips, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0=
+ section mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+lpc18xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+lpc32xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+lpd270_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+lubbock_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+magician_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+mainstone_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+malta_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+malta_kvm_defconfig (mips, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0=
+ section mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+malta_qemu_32r6_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnin=
+gs, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+maltaaprp_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+maltasmvp_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+maltasmvp_eva_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings=
+, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+maltaup_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+maltaup_xpa_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, =
+0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+milbeaut_m10v_defconfig (arm, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings=
+, 0 section mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+mini2440_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+mmp2_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+moxart_defconfig (arm, gcc-10) =E2=80=94 FAIL, 8 errors, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+mps2_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+mtx1_defconfig (mips, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+multi_v4t_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+multi_v7_defconfig (arm, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0 s=
+ection mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+mv78xx0_defconfig (arm, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0 se=
+ction mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+mvebu_v5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+mvebu_v7_defconfig (arm, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0 s=
+ection mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+mxs_defconfig (arm, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0 sectio=
+n mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+neponset_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+netwinder_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+nhk8815_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+nommu_k210_defconfig (riscv, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, =
+0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+nommu_k210_sdcard_defconfig (riscv, gcc-10) =E2=80=94 PASS, 0 errors, 0 war=
+nings, 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+nsimosci_hs_defconfig (arc, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, =
+0 section mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:274:41: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:274:29: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:274:41: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:25: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:37: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:25: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:37: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:25: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:37: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:25: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:37: error: 'struct clk_rate_request' has=
+ no member named 'core'
+
+---------------------------------------------------------------------------=
+-----
+nsimosci_hs_smp_defconfig (arc, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnin=
+gs, 0 section mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:274:41: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:274:29: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:274:41: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:25: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:37: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:25: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:37: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:25: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:37: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:25: error: 'struct clk_rate_request' has=
+ no member named 'core'
+    include/trace/events/clk.h:282:37: error: 'struct clk_rate_request' has=
+ no member named 'core'
+
+---------------------------------------------------------------------------=
+-----
+omap1_defconfig (arm, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+omap2plus_defconfig (arm, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0 =
+section mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+omega2p_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+orion5x_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+oxnas_v6_defconfig (arm, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0 s=
+ection mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+palmz72_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+pcm027_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+pic32mzda_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+pleb_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+pxa168_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+pxa255-idp_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+pxa3xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+pxa910_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+pxa_defconfig (arm, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0 sectio=
+n mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+qcom_defconfig (arm, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0 secti=
+on mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+qi_lb60_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+rb532_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+rbtx49xx_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+realview_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+rm200_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+rpc_defconfig (arm, gcc-10) =E2=80=94 FAIL, 2 errors, 0 warnings, 0 section=
+ mismatches
+
+Errors:
+    arch/arm/kernel/head.S:319: Error: missing expression -- `ldr r7,=3D0x'
+    arch/arm/kernel/head.S:319: Error: missing expression -- `ldr r3,=3D0x'
+
+---------------------------------------------------------------------------=
+-----
+rs90_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+rt305x_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+rv32_defconfig (riscv, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+s3c2410_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+s3c6400_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+s5pv210_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+sama5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+sama7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+sb1250_swarm_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings,=
+ 0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+shannon_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+shmobile_defconfig (arm, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0 s=
+ection mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+simpad_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+socfpga_defconfig (arm, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0 se=
+ction mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+sp7021_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
+ion mismatches
+
+---------------------------------------------------------------------------=
+-----
+spear13xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+spear3xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+spear6xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+spitz_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+stm32_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+sunxi_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+tct_hammer_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
+section mismatches
+
+---------------------------------------------------------------------------=
+-----
+tegra_defconfig (arm, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0 sect=
+ion mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section mi=
+smatches
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
+ mismatches
+
+---------------------------------------------------------------------------=
+-----
+tinyconfig (i386, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
+ismatches
+
+---------------------------------------------------------------------------=
+-----
+trizeps4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+u8500_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+vdk_hs38_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+vdk_hs38_smp_defconfig (arc, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, =
+0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+versatile_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+vexpress_defconfig (arm, gcc-10) =E2=80=94 FAIL, 12 errors, 0 warnings, 0 s=
+ection mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+vf610m4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
+tion mismatches
+
+---------------------------------------------------------------------------=
+-----
+viper_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
+on mismatches
+
+---------------------------------------------------------------------------=
+-----
+vocore2_defconfig (mips, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
+ction mismatches
+
+---------------------------------------------------------------------------=
+-----
+vt8500_v6_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, =
+0 section mismatches
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
+ection mismatches
+
+---------------------------------------------------------------------------=
+-----
+x86_64_defconfig+x86-board (x86_64, gcc-10) =E2=80=94 FAIL, 12 errors, 0 wa=
+rnings, 0 section mismatches
+
+Errors:
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:29: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:274:41: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:25: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+    include/trace/events/clk.h:282:37: error: =E2=80=98struct clk_rate_requ=
+est=E2=80=99 has no member named =E2=80=98core=E2=80=99
+
+---------------------------------------------------------------------------=
+-----
+xcep_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
+---------------------------------------------------------------------------=
+-----
+zeus_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
+n mismatches
+
 ---
- classes/swupdate.bbclass                      | 26 +++++++++++++++++--
- recipes-core/customizations/common.inc        | 12 ++++++---
- .../files/{swupdate.cfg => swupdate.cfg.tmpl} |  3 ++-
- recipes-core/images/swu/sw-description.tmpl   |  2 ++
- recipes-core/swupdate-key/swupdate-key_0.1.bb | 22 ++++++++++++++++
- 5 files changed, 58 insertions(+), 7 deletions(-)
- rename recipes-core/customizations/files/{swupdate.cfg => swupdate.cfg.tmpl} (76%)
- create mode 100644 recipes-core/swupdate-key/swupdate-key_0.1.bb
-
-diff --git a/classes/swupdate.bbclass b/classes/swupdate.bbclass
-index 38c2e0a..3f396a1 100644
---- a/classes/swupdate.bbclass
-+++ b/classes/swupdate.bbclass
-@@ -25,6 +25,9 @@ SWU_HW_COMPAT ?= ""
- SWU_IMAGE_FILE ?= "${DEPLOY_DIR_IMAGE}/${IMAGE_FULLNAME}.swu"
- SWU_DESCRIPTION_FILE ?= "sw-description"
- SWU_ADDITIONAL_FILES ?= "linux.efi ${SWU_ROOTFS_PARTITION_NAME}"
-+SWU_ENCRYPTED ??= ""
-+SWU_ENCRYPTED_KEY ?= ""
-+SWU_ENCRYPTED_IV ?= ""
- SWU_SIGNED ??= ""
- SWU_SIGNATURE_EXT ?= "sig"
- SWU_SIGNATURE_TYPE ?= "cms"
-@@ -35,6 +38,7 @@ IMAGE_TYPEDEP:swu = "${SWU_ROOTFS_TYPE}${@get_swu_compression_type(d)}"
- IMAGER_BUILD_DEPS:swu += "${@'swupdate-certificates-key' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
- IMAGER_INSTALL:swu += "cpio ${@'openssl swupdate-certificates-key' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
- IMAGE_INSTALL += "${@'swupdate-certificates' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
-+IMAGE_INSTALL += "${@'swupdate-key' if bb.utils.to_boolean(d.getVar('SWU_ENCRYPTED')) else ''}"
- 
- 
- IMAGE_SRC_URI:swu = "file://${SWU_DESCRIPTION_FILE}.tmpl"
-@@ -46,6 +50,7 @@ IMAGE_TEMPLATE_VARS:swu = " \
-     ABROOTFS_PART_UUID_B \
-     SWU_HW_COMPAT_NODE \
-     SWU_COMPRESSION_NODE \
-+    SWU_ENCRYPTION_NODE \
-     SWU_VERSION \
-     SWU_NAME"
- 
-@@ -68,6 +73,15 @@ python(){
-         d.setVar('SWU_COMPRESSION_NODE', 'compressed = "' + calgo + '";')
-     else:
-         d.setVar('SWU_COMPRESSION_NODE', '')
-+    # create SWU_ENCRYPTION_NODE node if encryption is enabled
-+    encrypted = d.getVar('SWU_ENCRYPTED')
-+    if encrypted:
-+        encrypted_iv = d.getVar('SWU_ENCRYPTED_IV')
-+        if not encrypted_iv:
-+            bb.fatal('SWU_ENCRYPTED_IV is not set!')
-+        d.setVar('SWU_ENCRYPTION_NODE', 'encrypted = true;\n\tivt = "' + encrypted_iv + '";')
-+    else:
-+        d.setVar('SWU_ENCRYPTION_NODE', '')
- }
- 
- 
-@@ -94,21 +108,29 @@ IMAGE_CMD:swu() {
-     rm -f '${SWU_IMAGE_FILE}'
-     cp '${WORKDIR}/${SWU_DESCRIPTION_FILE}' '${WORKDIR}/swu/${SWU_DESCRIPTION_FILE}'
- 
-+    export encrypted='${@'x' if bb.utils.to_boolean(d.getVar('SWU_ENCRYPTED')) else ''}'
-     # Create symlinks for files used in the update image
-     for file in ${SWU_ADDITIONAL_FILES}; do
-         if [ -e "${WORKDIR}/$file" ]; then
-             ln -s "${PP_WORK}/$file" "${WORKDIR}/swu/$file"
-         else
--            ln -s "${PP_DEPLOY}/$file" "${WORKDIR}/swu/$file"
-+            if [ -n "$encrypted" ]; then
-+                cp "${DEPLOY_DIR_IMAGE}/$file" "${WORKDIR}/swu/$file"
-+            else
-+                ln -s "${PP_DEPLOY}/$file" "${WORKDIR}/swu/$file"
-+            fi
-         fi
-     done
--
-     # Prepare for signing
-     export sign='${@'x' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}'
- 
-     imager_run -p -d ${PP_WORK} -u root <<'EOIMAGER'
-         # Fill in file check sums
-         for file in ${SWU_ADDITIONAL_FILES}; do
-+            if [ -n "$encrypted" ] ; then
-+                openssl enc -aes-256-cbc -in "${PP_WORK}/swu/$file" -out "${PP_WORK}/swu/$file.enc" -K ${SWU_ENCRYPTED_KEY} -iv ${SWU_ENCRYPTED_IV}
-+                mv "${PP_WORK}/swu/$file.enc" "${PP_WORK}/swu/$file"
-+            fi
-             sed -i "s:$file-sha256:$(sha256sum "${PP_WORK}/swu/"$file | cut -f 1 -d " "):g" \
-                 "${PP_WORK}/swu/${SWU_DESCRIPTION_FILE}"
-         done
-diff --git a/recipes-core/customizations/common.inc b/recipes-core/customizations/common.inc
-index 79bf80d..d1f1330 100644
---- a/recipes-core/customizations/common.inc
-+++ b/recipes-core/customizations/common.inc
-@@ -19,22 +19,26 @@ SRC_URI = " \
-     file://99-silent-printk.conf \
-     file://99-watchdog.conf"
- 
--SRC_URI:append:swupdate = " file://swupdate.cfg"
-+SRC_URI:append:swupdate = " file://swupdate.cfg.tmpl"
- 
- CUSTOM_HOSTNAME ??= "demo"
- WIRELESS_FIRMWARE_PACKAGE ?= ""
- INSTALL_WIRELESS_TOOLS ??= "0"
- 
--TEMPLATE_FILES += "postinst.tmpl"
--TEMPLATE_VARS += "CUSTOM_HOSTNAME"
-+TEMPLATE_FILES += "postinst.tmpl swupdate.cfg.tmpl"
-+TEMPLATE_VARS += "CUSTOM_HOSTNAME SWU_KEY_LOCATION"
- 
- DEPENDS += "sshd-regen-keys change-root-homedir"
-+DEPENDS += "${@'swupdate-key' if bb.utils.to_boolean(d.getVar('SWU_ENCRYPTED')) else ''}"
-+SWU_KEY_LOCATION = "${@'/etc/swupdate/swupdate.key' if bb.utils.to_boolean(d.getVar('SWU_ENCRYPTED')) else ''}"
- 
- DEBIAN_DEPENDS = " \
-     ifupdown, isc-dhcp-client, net-tools, iputils-ping, ssh, sshd-regen-keys, \
-     change-root-homedir \
-     ${@(', iw, wireless-regdb, ' + d.getVar('WIRELESS_FIRMWARE_PACKAGE')) \
--	if d.getVar('INSTALL_WIRELESS_TOOLS') == '1' else ''}"
-+	if d.getVar('INSTALL_WIRELESS_TOOLS') == '1' else ''} \
-+    ${@'swupdate-key' if bb.utils.to_boolean(d.getVar('SWU_ENCRYPTED')) else ''} \
-+    "
- 
- do_install() {
- 	install -v -d ${D}/etc/network/interfaces.d
-diff --git a/recipes-core/customizations/files/swupdate.cfg b/recipes-core/customizations/files/swupdate.cfg.tmpl
-similarity index 76%
-rename from recipes-core/customizations/files/swupdate.cfg
-rename to recipes-core/customizations/files/swupdate.cfg.tmpl
-index 3e2b45c..a985a40 100644
---- a/recipes-core/customizations/files/swupdate.cfg
-+++ b/recipes-core/customizations/files/swupdate.cfg.tmpl
-@@ -1,5 +1,6 @@
- globals :
- {
-     bootloader = "ebg";
--    public-key-file = "/usr/share/swupdate-signing/swupdate-sign.crt"
-+    public-key-file = "/usr/share/swupdate-signing/swupdate-sign.crt";
-+    ${SWU_KEY_LOCATION}
- };
-diff --git a/recipes-core/images/swu/sw-description.tmpl b/recipes-core/images/swu/sw-description.tmpl
-index 6b53a3c..75bedc0 100644
---- a/recipes-core/images/swu/sw-description.tmpl
-+++ b/recipes-core/images/swu/sw-description.tmpl
-@@ -17,6 +17,7 @@ software =
-             filename = "${SWU_ROOTFS_PARTITION_NAME}";
-             device = "C:BOOT0:linux.efi->${ABROOTFS_PART_UUID_A},C:BOOT1:linux.efi->${ABROOTFS_PART_UUID_B}";
-             type = "roundrobin";
-+            ${SWU_ENCRYPTION_NODE}
-             ${SWU_COMPRESSION_NODE}
-             properties: {
-                         subtype = "image";
-@@ -30,6 +31,7 @@ software =
-             type = "roundrobin";
-             device = "C:BOOT0:linux.efi->BOOT0,C:BOOT1:linux.efi->BOOT1";
-             filesystem = "vfat";
-+            ${SWU_ENCRYPTION_NODE}
-             properties: {
-                         subtype = "kernel";
-             };
-diff --git a/recipes-core/swupdate-key/swupdate-key_0.1.bb b/recipes-core/swupdate-key/swupdate-key_0.1.bb
-new file mode 100644
-index 0000000..ce75f26
---- /dev/null
-+++ b/recipes-core/swupdate-key/swupdate-key_0.1.bb
-@@ -0,0 +1,22 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2023
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+
-+inherit dpkg-raw
-+DESCRIPTION = "Add symmetric key for swupdate "
-+
-+SWU_ENCRYPTED_KEY ?= ""
-+SWU_ENCRYPTED_IV ?= ""
-+
-+do_install[cleandirs] = "${D}/etc/swupdate/"
-+do_install () {
-+    if [ -n ${SWU_ENCRYPTED_KEY} ] && [ -n ${SWU_ENCRYPTED_IV} ] ; then
-+        echo "${SWU_ENCRYPTED_KEY} ${SWU_ENCRYPTED_IV}" > ${D}/etc/swupdate/swupdate.key
-+    fi
-+}
--- 
-2.42.0
-
+For more info write to <info@kernelci.org>
 
