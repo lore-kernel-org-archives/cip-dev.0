@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5EF9C624B4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E97C5AD4C
 	for <webhook@archiver.kernel.org>; Thu, 23 Nov 2023 18:29:29 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.101862.1700764164791607983
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web11.101858.1700764157744615379
  for <cip-dev@lists.cip-project.org>;
- Thu, 23 Nov 2023 10:29:25 -0800
+ Thu, 23 Nov 2023 10:29:21 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.04,222,1695654000"; 
-   d="scan'208";a="187858472"
+   d="scan'208";a="184002477"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 24 Nov 2023 03:29:24 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 24 Nov 2023 03:29:20 +0900
 Received: from localhost.localdomain (unknown [10.226.92.37])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 210734055795;
-	Fri, 24 Nov 2023 03:29:20 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id D15234055796;
+	Fri, 24 Nov 2023 03:29:18 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip v2 10/12] dt-bindings: timer: renesas,rz-mtu3: Fix overflow/underflow interrupt names
-Date: Thu, 23 Nov 2023 18:28:52 +0000
-Message-Id: <20231123182854.422379-11-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip v2 09/12] arm64: dts: renesas: rz-smarc: Use versa3 clk for audio mclk
+Date: Thu, 23 Nov 2023 18:28:51 +0000
+Message-Id: <20231123182854.422379-10-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231123182854.422379-1-biju.das.jz@bp.renesas.com>
 References: <20231123182854.422379-1-biju.das.jz@bp.renesas.com>
@@ -35,126 +35,164 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 23 Nov 2023 18:29:29 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13683
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13682
 
-commit b7a8f1f7a8a25e09aaefebb6251a77f44cda638b upstream.
+commit feab6a13ae63101e62a9f3b0e552f13067218e6f upstream.
 
-As per R01UH0914EJ0130 Rev.1.30 HW manual the MTU3 overflow/underflow
-interrupt names starts with 'tci' instead of 'tgi'.
+Currently audio mclk uses a fixed clk of 11.2896MHz (multiple of 44.1kHz).
+Replace this fixed clk with the programmable versa3 clk that can provide
+the clocking to support both 44.1kHz (with a clock of 11.2896MHz) and
+48kHz (with a clock of 12.2880MHz), based on audio sampling rate for
+playback and record.
 
-Fix this documentation issue by replacing below overflow/underflow
-interrupt names:
- - tgiv0->tciv0
- - tgiv1->tciv1
- - tgiu1->tciu1
- - tgiv2->tciv2
- - tgiu2->tciu2
- - tgiv3->tciv3
- - tgiv4->tciv4
- - tgiv6->tciv6
- - tgiv7->tciv7
- - tgiv8->tciv8
- - tgiu8->tciu8
-
-Fixes: 0a9d6b54297e ("dt-bindings: timer: Document RZ/G2L MTU3a bindings")
-Cc: stable@kernel.org
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/20230727081848.100834-2-biju.das.jz@bp.renesas.com
+Link: https://lore.kernel.org/r/20230825090518.87394-1-biju.das.jz@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- .../bindings/timer/renesas,rz-mtu3.yaml       | 38 +++++++++----------
- 1 file changed, 19 insertions(+), 19 deletions(-)
+ .../boot/dts/renesas/rz-smarc-common.dtsi     | 14 +++++------
+ arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi  | 20 ++++++++++++++++
+ arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi | 20 ++++++++++++++++
+ arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi | 24 +++++++++++++++++++
+ 4 files changed, 71 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml b/Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml
-index bffdab0b0185..fbac40b958dd 100644
---- a/Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml
-+++ b/Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml
-@@ -169,27 +169,27 @@ properties:
-       - const: tgib0
-       - const: tgic0
-       - const: tgid0
--      - const: tgiv0
-+      - const: tciv0
-       - const: tgie0
-       - const: tgif0
-       - const: tgia1
-       - const: tgib1
--      - const: tgiv1
--      - const: tgiu1
-+      - const: tciv1
-+      - const: tciu1
-       - const: tgia2
-       - const: tgib2
--      - const: tgiv2
--      - const: tgiu2
-+      - const: tciv2
-+      - const: tciu2
-       - const: tgia3
-       - const: tgib3
-       - const: tgic3
-       - const: tgid3
--      - const: tgiv3
-+      - const: tciv3
-       - const: tgia4
-       - const: tgib4
-       - const: tgic4
-       - const: tgid4
--      - const: tgiv4
-+      - const: tciv4
-       - const: tgiu5
-       - const: tgiv5
-       - const: tgiw5
-@@ -197,18 +197,18 @@ properties:
-       - const: tgib6
-       - const: tgic6
-       - const: tgid6
--      - const: tgiv6
-+      - const: tciv6
-       - const: tgia7
-       - const: tgib7
-       - const: tgic7
-       - const: tgid7
--      - const: tgiv7
-+      - const: tciv7
-       - const: tgia8
-       - const: tgib8
-       - const: tgic8
-       - const: tgid8
--      - const: tgiv8
--      - const: tgiu8
-+      - const: tciv8
-+      - const: tciu8
+diff --git a/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi b/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi
+index 3962d47b3e59..48b839a6eae4 100644
+--- a/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi
+@@ -32,12 +32,6 @@ chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
  
-   clocks:
-     maxItems: 1
-@@ -285,16 +285,16 @@ examples:
-                    <GIC_SPI 211 IRQ_TYPE_EDGE_RISING>,
-                    <GIC_SPI 212 IRQ_TYPE_EDGE_RISING>,
-                    <GIC_SPI 213 IRQ_TYPE_EDGE_RISING>;
--      interrupt-names = "tgia0", "tgib0", "tgic0", "tgid0", "tgiv0", "tgie0",
-+      interrupt-names = "tgia0", "tgib0", "tgic0", "tgid0", "tciv0", "tgie0",
-                         "tgif0",
--                        "tgia1", "tgib1", "tgiv1", "tgiu1",
--                        "tgia2", "tgib2", "tgiv2", "tgiu2",
--                        "tgia3", "tgib3", "tgic3", "tgid3", "tgiv3",
--                        "tgia4", "tgib4", "tgic4", "tgid4", "tgiv4",
-+                        "tgia1", "tgib1", "tciv1", "tciu1",
-+                        "tgia2", "tgib2", "tciv2", "tciu2",
-+                        "tgia3", "tgib3", "tgic3", "tgid3", "tciv3",
-+                        "tgia4", "tgib4", "tgic4", "tgid4", "tciv4",
-                         "tgiu5", "tgiv5", "tgiw5",
--                        "tgia6", "tgib6", "tgic6", "tgid6", "tgiv6",
--                        "tgia7", "tgib7", "tgic7", "tgid7", "tgiv7",
--                        "tgia8", "tgib8", "tgic8", "tgid8", "tgiv8", "tgiu8";
-+                        "tgia6", "tgib6", "tgic6", "tgid6", "tciv6",
-+                        "tgia7", "tgib7", "tgic7", "tgid7", "tciv7",
-+                        "tgia8", "tgib8", "tgic8", "tgid8", "tciv8", "tciu8";
-       clocks = <&cpg CPG_MOD R9A07G044_MTU_X_MCK_MTU3>;
-       power-domains = <&cpg>;
-       resets = <&cpg R9A07G044_MTU_X_PRESET_MTU3>;
+-	audio_mclock: audio_mclock {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <11289600>;
+-	};
+-
+ 	snd_rzg2l: sound {
+ 		compatible = "simple-audio-card";
+ 		simple-audio-card,format = "i2s";
+@@ -55,7 +49,7 @@ cpu_dai: simple-audio-card,cpu {
+ 		};
+ 
+ 		codec_dai: simple-audio-card,codec {
+-			clocks = <&audio_mclock>;
++			clocks = <&versa3 2>;
+ 			sound-dai = <&wm8978>;
+ 		};
+ 	};
+@@ -76,6 +70,12 @@ vccq_sdhi1: regulator-vccq-sdhi1 {
+ 		gpios-states = <1>;
+ 		states = <3300000 1>, <1800000 0>;
+ 	};
++
++	x1: x1-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <24000000>;
++	};
+ };
+ 
+ &audio_clk1{
+diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+index 68eab8e26bf2..37807f1bda4d 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+@@ -110,6 +110,26 @@ wm8978: codec@1a {
+ 		#sound-dai-cells = <0>;
+ 		reg = <0x1a>;
+ 	};
++
++	versa3: clock-generator@68 {
++		compatible = "renesas,5p35023";
++		reg = <0x68>;
++		#clock-cells = <1>;
++		clocks = <&x1>;
++
++		renesas,settings = [
++			80 00 11 19 4c 02 23 7f 83 19 08 a9 5f 25 24 bf
++			00 14 7a e1 00 00 00 00 01 55 59 bb 3f 30 90 b6
++			80 b0 45 c4 95
++		];
++
++		assigned-clocks = <&versa3 0>, <&versa3 1>,
++				  <&versa3 2>, <&versa3 3>,
++				  <&versa3 4>, <&versa3 5>;
++		assigned-clock-rates = <24000000>, <11289600>,
++				       <11289600>, <12000000>,
++				       <25000000>, <12288000>;
++	};
+ };
+ 
+ #if PMOD_MTU3
+diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
+index 83fce96a2575..859bc8745e66 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
+@@ -126,6 +126,26 @@ wm8978: codec@1a {
+ 		#sound-dai-cells = <0>;
+ 		reg = <0x1a>;
+ 	};
++
++	versa3: clock-generator@68 {
++		compatible = "renesas,5p35023";
++		reg = <0x68>;
++		#clock-cells = <1>;
++		clocks = <&x1>;
++
++		renesas,settings = [
++			80 00 11 19 4c 02 23 7f 83 19 08 a9 5f 25 24 bf
++			00 14 7a e1 00 00 00 00 01 55 59 bb 3f 30 90 b6
++			80 b0 45 c4 95
++		];
++
++		assigned-clocks = <&versa3 0>, <&versa3 1>,
++				  <&versa3 2>, <&versa3 3>,
++				  <&versa3 4>, <&versa3 5>;
++		assigned-clock-rates = <24000000>, <11289600>,
++				       <11289600>, <12000000>,
++				       <25000000>, <12288000>;
++	};
+ };
+ 
+ #if PMOD_MTU3
+diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
+index 2b2e73bf6c24..669703b0c7cb 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
+@@ -24,6 +24,30 @@ &cpu_dai {
+ 	sound-dai = <&ssi1>;
+ };
+ 
++&i2c0 {
++	clock-frequency = <400000>;
++
++	versa3: clock-generator@68 {
++		compatible = "renesas,5p35023";
++		reg = <0x68>;
++		#clock-cells = <1>;
++		clocks = <&x1>;
++
++		renesas,settings = [
++			80 00 11 19 4c 02 23 7f 83 19 08 a9 5f 25 24 bf
++			00 14 7a e1 00 00 00 00 01 55 59 bb 3f 30 90 b6
++			80 b0 45 c4 95
++		];
++
++		assigned-clocks = <&versa3 0>, <&versa3 1>,
++				  <&versa3 2>, <&versa3 3>,
++				  <&versa3 4>, <&versa3 5>;
++		assigned-clock-rates = <24000000>, <11289600>,
++				       <11289600>, <12000000>,
++				       <25000000>, <12288000>;
++	};
++};
++
+ &i2c1 {
+ 	wm8978: codec@1a {
+ 		compatible = "wlf,wm8978";
 -- 
 2.25.1
 
