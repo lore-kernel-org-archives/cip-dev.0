@@ -2,350 +2,79 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BACCBC61D85
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D68DBC636D0
 	for <webhook@archiver.kernel.org>; Thu, 23 Nov 2023 18:29:19 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.101414.1700764149841044951
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web11.101850.1700764145543002900
  for <cip-dev@lists.cip-project.org>;
- Thu, 23 Nov 2023 10:29:10 -0800
+ Thu, 23 Nov 2023 10:29:14 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.04,222,1695654000"; 
-   d="scan'208";a="184002456"
+   d="scan'208";a="187858447"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 24 Nov 2023 03:29:09 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 24 Nov 2023 03:29:13 +0900
 Received: from localhost.localdomain (unknown [10.226.92.37])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 56AED4055796;
-	Fri, 24 Nov 2023 03:29:07 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E82DF4055795;
+	Fri, 24 Nov 2023 03:29:11 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip v2 04/12] clk: Introduce clk_hw_determine_rate_no_reparent()
-Date: Thu, 23 Nov 2023 18:28:46 +0000
-Message-Id: <20231123182854.422379-5-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip v2 06/12] clk: vc3: Fix 64 by 64 division
+Date: Thu, 23 Nov 2023 18:28:48 +0000
+Message-Id: <20231123182854.422379-7-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231123182854.422379-1-biju.das.jz@bp.renesas.com>
 References: <20231123182854.422379-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 23 Nov 2023 18:29:19 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13677
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13679
 
-From: Stephen Boyd <sboyd@kernel.org>
+commit 576418e3417267e93ffee09c46f56434108c4548 upstream.
 
-commit 33b70fbc4f815f0acb327fa506c988ef25cd943d upstream.
+Fix the below cocci warnings by replacing do_div()->div64_ul() and
+bound the result with a max value of U16_MAX.
 
-Some clock drivers do not want to allow any reparenting on a given
-clock, but usually do so by not providing any determine_rate
-implementation.
+cocci warnings:
+	drivers/clk/clk-versaclock3.c:404:2-8: WARNING: do_div() does a
+	64-by-32 division, please consider using div64_ul instead.
 
-Whenever we call clk_round_rate() or clk_set_rate(), this leads to
-clk_core_can_round() returning false and thus the rest of the function
-either forwarding the rate request to its current parent if
-CLK_SET_RATE_PARENT is set, or just returning the current clock rate.
-
-This behaviour happens implicitly, and as we move forward to making a
-determine_rate implementation required for muxes, we need some way to
-explicitly opt-in for that behaviour.
-
-Fortunately, this is exactly what the clk_core_determine_rate_no_reparent()
-function is doing, so we can simply make it available to drivers.
-
-Cc: Abel Vesa <abelvesa@kernel.org>
-Cc: Alessandro Zummo <a.zummo@towertech.it>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: "Andreas Färber" <afaerber@suse.de>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Cc: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: David Airlie <airlied@gmail.com>
-Cc: David Lechner <david@lechnology.com>
-Cc: Dinh Nguyen <dinguyen@kernel.org>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Markus Schneider-Pargmann <msp@baylibre.com>
-Cc: Max Filippov <jcmvbkbc@gmail.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Miles Chen <miles.chen@mediatek.com>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Orson Zhai <orsonzhai@gmail.com>
-Cc: Paul Cercueil <paul@crapouillou.net>
-Cc: Peng Fan <peng.fan@nxp.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: Samuel Holland <samuel@sholland.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Sekhar Nori <nsekhar@ti.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Takashi Iwai <tiwai@suse.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-actions@lists.infradead.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-phy@lists.infradead.org
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-rtc@vger.kernel.org
-Cc: linux-stm32@st-md-mailman.stormreply.com
-Cc: linux-sunxi@lists.linux.dev
-Cc: linux-tegra@vger.kernel.org
-Cc: NXP Linux Team <linux-imx@nxp.com>
-Cc: patches@opensource.cirrus.com
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Reported-by: Julia Lawall <julia.lawall@inria.fr>
+Closes: https://lore.kernel.org/r/202307270841.yr5HxYIl-lkp@intel.com/
+Fixes: 6e9aff555db7 ("clk: Add support for versa3 clock driver")
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Link: https://lore.kernel.org/r/20230824104812.147775-3-biju.das.jz@bp.renesas.com
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-Link: https://lore.kernel.org/r/20221018-clk-range-checks-fixes-v4-4-971d5077e7d2@cerno.tech
-| Reported-by: kernel test robot <lkp@intel.com>:
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/clk.c            |  19 +++++
- drivers/clk/clk_test.c       | 152 +++++++++++++++++++++++++++++++++++
- include/linux/clk-provider.h |   2 +
- 3 files changed, 173 insertions(+)
+ drivers/clk/clk-versaclock3.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index b86bcb3fcf85..fe61fdc7c025 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -763,6 +763,25 @@ int __clk_mux_determine_rate_closest(struct clk_hw *hw,
- }
- EXPORT_SYMBOL_GPL(__clk_mux_determine_rate_closest);
+diff --git a/drivers/clk/clk-versaclock3.c b/drivers/clk/clk-versaclock3.c
+index 4ceb7fcf7fcb..c8f9b784ee3f 100644
+--- a/drivers/clk/clk-versaclock3.c
++++ b/drivers/clk/clk-versaclock3.c
+@@ -401,11 +401,10 @@ static long vc3_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 		/* Determine best fractional part, which is 16 bit wide */
+ 		div_frc = rate % *parent_rate;
+ 		div_frc *= BIT(16) - 1;
+-		do_div(div_frc, *parent_rate);
  
-+/*
-+ * clk_hw_determine_rate_no_reparent - clk_ops::determine_rate implementation for a clk that doesn't reparent
-+ * @hw: mux type clk to determine rate on
-+ * @req: rate request, also used to return preferred frequency
-+ *
-+ * Helper for finding best parent rate to provide a given frequency.
-+ * This can be used directly as a determine_rate callback (e.g. for a
-+ * mux), or from a more complex clock that may combine a mux with other
-+ * operations.
-+ *
-+ * Returns: 0 on success, -EERROR value on error
-+ */
-+int clk_hw_determine_rate_no_reparent(struct clk_hw *hw,
-+				      struct clk_rate_request *req)
-+{
-+	return clk_core_determine_rate_no_reparent(hw, req);
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_determine_rate_no_reparent);
-+
- /***        clk api        ***/
- 
- static void clk_core_rate_unprotect(struct clk_core *core)
-diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-index f9a5c2964c65..93f15cf9db34 100644
---- a/drivers/clk/clk_test.c
-+++ b/drivers/clk/clk_test.c
-@@ -141,6 +141,12 @@ static const struct clk_ops clk_multiple_parents_mux_ops = {
- 	.determine_rate = __clk_mux_determine_rate_closest,
- };
- 
-+static const struct clk_ops clk_multiple_parents_no_reparent_mux_ops = {
-+	.determine_rate = clk_hw_determine_rate_no_reparent,
-+	.get_parent = clk_multiple_parents_mux_get_parent,
-+	.set_parent = clk_multiple_parents_mux_set_parent,
-+};
-+
- static int clk_test_init_with_ops(struct kunit *test, const struct clk_ops *ops)
- {
- 	struct clk_dummy_context *ctx;
-@@ -2394,10 +2400,156 @@ static struct kunit_suite clk_mux_notifier_test_suite = {
- 	.test_cases = clk_mux_notifier_test_cases,
- };
- 
-+static int
-+clk_mux_no_reparent_test_init(struct kunit *test)
-+{
-+	struct clk_multiple_parent_ctx *ctx;
-+	const char *parents[2] = { "parent-0", "parent-1"};
-+	int ret;
-+
-+	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+	test->priv = ctx;
-+
-+	ctx->parents_ctx[0].hw.init = CLK_HW_INIT_NO_PARENT("parent-0",
-+							    &clk_dummy_rate_ops,
-+							    0);
-+	ctx->parents_ctx[0].rate = DUMMY_CLOCK_RATE_1;
-+	ret = clk_hw_register(NULL, &ctx->parents_ctx[0].hw);
-+	if (ret)
-+		return ret;
-+
-+	ctx->parents_ctx[1].hw.init = CLK_HW_INIT_NO_PARENT("parent-1",
-+							    &clk_dummy_rate_ops,
-+							    0);
-+	ctx->parents_ctx[1].rate = DUMMY_CLOCK_RATE_2;
-+	ret = clk_hw_register(NULL, &ctx->parents_ctx[1].hw);
-+	if (ret)
-+		return ret;
-+
-+	ctx->current_parent = 0;
-+	ctx->hw.init = CLK_HW_INIT_PARENTS("test-mux", parents,
-+					   &clk_multiple_parents_no_reparent_mux_ops,
-+					   0);
-+	ret = clk_hw_register(NULL, &ctx->hw);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static void
-+clk_mux_no_reparent_test_exit(struct kunit *test)
-+{
-+	struct clk_multiple_parent_ctx *ctx = test->priv;
-+
-+	clk_hw_unregister(&ctx->hw);
-+	clk_hw_unregister(&ctx->parents_ctx[0].hw);
-+	clk_hw_unregister(&ctx->parents_ctx[1].hw);
-+}
-+
-+/*
-+ * Test that if the we have a mux that cannot change parent and we call
-+ * clk_round_rate() on it with a rate that should cause it to change
-+ * parent, it won't.
-+ */
-+static void clk_mux_no_reparent_round_rate(struct kunit *test)
-+{
-+	struct clk_multiple_parent_ctx *ctx = test->priv;
-+	struct clk_hw *hw = &ctx->hw;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
-+	struct clk *other_parent, *parent;
-+	unsigned long other_parent_rate;
-+	unsigned long parent_rate;
-+	long rounded_rate;
-+
-+	parent = clk_get_parent(clk);
-+	KUNIT_ASSERT_PTR_NE(test, parent, NULL);
-+
-+	parent_rate = clk_get_rate(parent);
-+	KUNIT_ASSERT_GT(test, parent_rate, 0);
-+
-+	other_parent = clk_hw_get_clk(&ctx->parents_ctx[1].hw, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, other_parent);
-+	KUNIT_ASSERT_FALSE(test, clk_is_match(parent, other_parent));
-+
-+	other_parent_rate = clk_get_rate(other_parent);
-+	KUNIT_ASSERT_GT(test, other_parent_rate, 0);
-+	clk_put(other_parent);
-+
-+	rounded_rate = clk_round_rate(clk, other_parent_rate);
-+	KUNIT_ASSERT_GT(test, rounded_rate, 0);
-+	KUNIT_EXPECT_EQ(test, rounded_rate, parent_rate);
-+
-+	clk_put(clk);
-+}
-+
-+/*
-+ * Test that if the we have a mux that cannot change parent and we call
-+ * clk_set_rate() on it with a rate that should cause it to change
-+ * parent, it won't.
-+ */
-+static void clk_mux_no_reparent_set_rate(struct kunit *test)
-+{
-+	struct clk_multiple_parent_ctx *ctx = test->priv;
-+	struct clk_hw *hw = &ctx->hw;
-+	struct clk *clk = clk_hw_get_clk(hw, NULL);
-+	struct clk *other_parent, *parent;
-+	unsigned long other_parent_rate;
-+	unsigned long parent_rate;
-+	unsigned long rate;
-+	int ret;
-+
-+	parent = clk_get_parent(clk);
-+	KUNIT_ASSERT_PTR_NE(test, parent, NULL);
-+
-+	parent_rate = clk_get_rate(parent);
-+	KUNIT_ASSERT_GT(test, parent_rate, 0);
-+
-+	other_parent = clk_hw_get_clk(&ctx->parents_ctx[1].hw, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, other_parent);
-+	KUNIT_ASSERT_FALSE(test, clk_is_match(parent, other_parent));
-+
-+	other_parent_rate = clk_get_rate(other_parent);
-+	KUNIT_ASSERT_GT(test, other_parent_rate, 0);
-+	clk_put(other_parent);
-+
-+	ret = clk_set_rate(clk, other_parent_rate);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+
-+	rate = clk_get_rate(clk);
-+	KUNIT_ASSERT_GT(test, rate, 0);
-+	KUNIT_EXPECT_EQ(test, rate, parent_rate);
-+
-+	clk_put(clk);
-+}
-+
-+static struct kunit_case clk_mux_no_reparent_test_cases[] = {
-+	KUNIT_CASE(clk_mux_no_reparent_round_rate),
-+	KUNIT_CASE(clk_mux_no_reparent_set_rate),
-+	{}
-+};
-+
-+/*
-+ * Test suite for a clock mux that isn't allowed to change parent, using
-+ * the clk_hw_determine_rate_no_reparent() helper.
-+ *
-+ * These tests exercise that helper, and the proper selection of
-+ * rates and parents.
-+ */
-+static struct kunit_suite clk_mux_no_reparent_test_suite = {
-+	.name = "clk-mux-no-reparent",
-+	.init = clk_mux_no_reparent_test_init,
-+	.exit = clk_mux_no_reparent_test_exit,
-+	.test_cases = clk_mux_no_reparent_test_cases,
-+};
-+
- kunit_test_suites(
- 	&clk_leaf_mux_set_rate_parent_test_suite,
- 	&clk_test_suite,
- 	&clk_multiple_parents_mux_test_suite,
-+	&clk_mux_no_reparent_test_suite,
- 	&clk_mux_notifier_test_suite,
- 	&clk_orphan_transparent_multiple_parent_mux_test_suite,
- 	&clk_orphan_transparent_single_parent_test_suite,
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index aefb06373720..73298958bf10 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -1314,6 +1314,8 @@ int __clk_mux_determine_rate_closest(struct clk_hw *hw,
- int clk_mux_determine_rate_flags(struct clk_hw *hw,
- 				 struct clk_rate_request *req,
- 				 unsigned long flags);
-+int clk_hw_determine_rate_no_reparent(struct clk_hw *hw,
-+				      struct clk_rate_request *req);
- void clk_hw_reparent(struct clk_hw *hw, struct clk_hw *new_parent);
- void clk_hw_get_rate_range(struct clk_hw *hw, unsigned long *min_rate,
- 			   unsigned long *max_rate);
+-		vc3->div_frc = (u32)div_frc;
++		vc3->div_frc = min_t(u64, div64_ul(div_frc, *parent_rate), U16_MAX);
+ 		rate = (*parent_rate *
+-			(vc3->div_int * VC3_2_POW_16 + div_frc) / VC3_2_POW_16);
++			(vc3->div_int * VC3_2_POW_16 + vc3->div_frc) / VC3_2_POW_16);
+ 	} else {
+ 		rate = *parent_rate * vc3->div_int;
+ 	}
 -- 
 2.25.1
 
