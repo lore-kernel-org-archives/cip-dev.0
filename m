@@ -1,319 +1,476 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E874FC61D97
-	for <webhook@archiver.kernel.org>; Fri, 24 Nov 2023 12:14:46 +0000 (UTC)
-Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
- by mx.groups.io with SMTP id smtpd.web10.133960.1700828078211967680
- for <cip-dev@lists.cip-project.org>;
- Fri, 24 Nov 2023 04:14:39 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28995C61DF4
+	for <webhook@archiver.kernel.org>; Fri, 24 Nov 2023 12:29:47 +0000 (UTC)
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+ by mx.groups.io with SMTP id smtpd.web10.134205.1700828983211759775
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Fri, 24 Nov 2023 04:29:43 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=DwGdCfOn;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-51332-2023112412143441800c75e17f604842-t17enn@rts-flowmailer.siemens.com)
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 2023112412143441800c75e17f604842
-        for <cip-dev@lists.cip-project.org>;
-        Fri, 24 Nov 2023 13:14:35 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
- bh=x2AzBams56uqBRMEUo5pvLO9JhKjHcufMZLmGqcBUrw=;
- b=DwGdCfOn/xjy5iqjATzOMBIhJ72Gpqrq7na8pgTk0h/ko5FroWqW5CKpYqR/W2QbYB2Cyw
- dxzqohgC1dFscSTJymIsVCE846r3Fg7JvzyCqOyhOEKtUMpc6LkBXXhofqUYoguqc0VMD0H5
- 9MUj6YNro1mdgQz0mm8RFNdSzk1Ak=;
-From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: felix.moessbauer@siemens.com,
-	jan.kiszka@siemens.com,
-	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH v3] swupdate: Update debian folder to 2023.05+dfsg-4
-Date: Fri, 24 Nov 2023 13:13:49 +0100
-Message-ID: <20231124121433.2174817-1-Quirin.Gylstorff@siemens.com>
+ dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=wHdEE2wn;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.173, mailfrom: bot@kernelci.org)
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6c33ab26dddso1503537b3a.0
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Fri, 24 Nov 2023 04:29:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1700828982; x=1701433782; darn=lists.cip-project.org;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=u3NhOBB2l3opjBzPEoRbXR5iUJSCjrGo4HZi/UZpG2Q=;
+        b=wHdEE2wnkb7VT2QZit+I+HtT3uZBXvenMbjNt8acQfQk2RCP0d6U/KhsIAzaEsvuYV
+         kYQsihxvOPSHqTMy1Htpv+TkptG9bZhqEmUyeFXzcXAS/UAMhlt4u4vZgkWYZkQrKYUR
+         19K0qqWnTyfiZ+Z+HmdNRoRK5Y2toNxjlwADTxHj5bUb1f8tg1c4jWbpi0b2kNf+Ft29
+         21pibkuP+cnCOlj4V/u6pK46EpQXaY1fhhIc3fTbgewVWVyRBxgPgwykNRrAQ66+8Ldo
+         uVP06Npq3S+TVv3x8BI0GlZZdlhlLO4MdCLh4cs00/oCS9o28OL2ZDxviRTgtorys76J
+         ALCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700828982; x=1701433782;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u3NhOBB2l3opjBzPEoRbXR5iUJSCjrGo4HZi/UZpG2Q=;
+        b=rCdZa3dvUqLlSIoYLAv2lVikR84oeHGqRbO1DSNZ/9DDuzNw0sL33gBigLlTzhe+Tq
+         tgQivq3vISZberrsgIe/J3gULtEvnbHJoZItu1cK7kAj+V92LUZyAI/lxAGAKpiyVR+H
+         WUUj0GmeBmxUecDi7qh/xqPKFwyKuQRon8KV9p64DCkqjUP1hggzBmRj8ub0pi0Gmptd
+         aCWvU9VtGlQX4wUGCTxr6w+xPYzdZF8A1nsJVUmEYgVYE/gPBWXWrr2ejXplnlcJzn1M
+         CC2tB38qITeqLqhtpJmoD2jASB95hgUbD3ZlggN3qsJlx+7Uhe8U7T0lcUqcYolUnXpx
+         uRRg==
+X-Gm-Message-State: AOJu0Yx+fUVqp7IzJeiolwzW9eOu8qZgDUb/l7htM6iktn3OlBROUrXr
+	FaPdB9Rn6tKbDlc2KWMcOsl4+woIrKKCzvIcyvM=
+X-Google-Smtp-Source: AGHT+IF6ZgJs4OqSQTwKEACQeK1/XlbdnKUi3bnw2znQdYVPFdiQ4tTXFrEhePfkhaU9KfRrr4dH9Q==
+X-Received: by 2002:a05:6a20:12d3:b0:154:b4cb:2e8c with SMTP id v19-20020a056a2012d300b00154b4cb2e8cmr3087642pzg.24.1700828981671;
+        Fri, 24 Nov 2023 04:29:41 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
+        by smtp.gmail.com with ESMTPSA id 21-20020a17090a195500b00285861b3bffsm1512292pjh.37.2023.11.24.04.29.40
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Nov 2023 04:29:40 -0800 (PST)
+Message-ID: <65609734.170a0220.d54bc.3a12@mx.google.com>
+Date: Fri, 24 Nov 2023 04:29:40 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: test
+X-Kernelci-Branch: ci/pavel/linux-test
+X-Kernelci-Tree: cip-gitlab
+X-Kernelci-Kernel: v6.1.62-cip9-12-g3a5321f469b07
+Subject: cip-gitlab/ci/pavel/linux-test baseline: 121 runs,
+ 7 regressions (v6.1.62-cip9-12-g3a5321f469b07)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
+From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 24 Nov 2023 12:14:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13738
+ <cip-dev@lists.cip-project.org>; Fri, 24 Nov 2023 12:29:47 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13741
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+cip-gitlab/ci/pavel/linux-test baseline: 121 runs, 7 regressions (v6.1.62-c=
+ip9-12-g3a5321f469b07)
 
-This adds the system user swupdate and changes the permission
-of the sockets to 0660 instead of world writable.
+Regressions Summary
+-------------------
 
-Also suricatta lua is now set automatically.
+platform                  | arch   | lab           | compiler | defconfig  =
+                | regressions
+--------------------------+--------+---------------+----------+------------=
+----------------+------------
+asus-C436FA-Flip-hatch    | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
+onfig+x86-board | 1          =
 
-swupdate uses  wolfssl (=< 5) instead of openssl for
-certificate management. wolfssl(=< 5) is only available as backport
-in debian bullseye.
+asus-CM1400CXA-dalboz     | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
+onfig+x86-board | 1          =
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
-SWUpdate in cip-core uses the debian folder from salsa with swupdate commit
-c8ca55684c375937dbcdefb0563071a35137f4ba as decribed in a2aa61b swupdate: Update to 2023.05 with wfx support. This allows to select hawkbit or wfx as backend during runtime.
+at91sam9g20ek             | arm    | lab-broonie   | gcc-10   | multi_v5_de=
+fconfig         | 1          =
+
+beaglebone-black          | arm    | lab-cip       | gcc-10   | omap2plus_d=
+efconfig        | 1          =
+
+hp-x360-14a-cb0001xx-zork | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
+onfig+x86-board | 1          =
+
+imx6ul-14x14-evk          | arm    | lab-nxp       | gcc-10   | imx_v6_v7_d=
+efconfig        | 1          =
+
+lenovo-TPad-C13-Yoga-zork | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
+onfig+x86-board | 1          =
 
 
-Changes v3:
- - Cleanup of bullseye backport preference
- - change subject to clarify patch
-Changes v2:
- - Fix for bullseye
+  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fpavel%2Fli=
+nux-test/kernel/v6.1.62-cip9-12-g3a5321f469b07/plan/baseline/
 
- ...eferences.swupdate-bullseye-backports.conf |  7 +++++
- ...d-rules-Add-option-for-suricatta_lua.patch | 30 -------------------
- ...ate-build_profile-option-for-delta-.patch} | 16 +++++-----
- ...ch-to-add-the-build-version-to-swup.patch} | 10 +++----
- ...-Add-option-to-enable-suricatta_wfx.patch} | 14 ++++-----
- ...install-Fix-path-for-debian-bullseye.patch | 24 +++++++++++++++
- recipes-core/swupdate/swupdate_2023.05.bb     | 10 +++----
- 7 files changed, 56 insertions(+), 55 deletions(-)
- delete mode 100644 recipes-core/swupdate/files/2023.05/0001-d-rules-Add-option-for-suricatta_lua.patch
- rename recipes-core/swupdate/files/2023.05/{0002-d-rules-Add-seperate-build_profile-option-for-delta-.patch => 0001-d-rules-Add-seperate-build_profile-option-for-delta-.patch} (76%)
- rename recipes-core/swupdate/files/2023.05/{0003-d-patches-Add-patch-to-add-the-build-version-to-swup.patch => 0002-d-patches-Add-patch-to-add-the-build-version-to-swup.patch} (93%)
- rename recipes-core/swupdate/files/2023.05/{0004-d-rules-Add-option-to-enable-suricatta_wfx.patch => 0003-d-rules-Add-option-to-enable-suricatta_wfx.patch} (69%)
- create mode 100644 recipes-core/swupdate/files/2023.05/0004-d-swupdate-www.install-Fix-path-for-debian-bullseye.patch
+  Test:     baseline
+  Tree:     cip-gitlab
+  Branch:   ci/pavel/linux-test
+  Describe: v6.1.62-cip9-12-g3a5321f469b07
+  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
+  SHA:      3a5321f469b07e6124d325d7faaa2f8f1993f67c =
 
-diff --git a/conf/distro/preferences.swupdate-bullseye-backports.conf b/conf/distro/preferences.swupdate-bullseye-backports.conf
-index a2377bb..70d0494 100644
---- a/conf/distro/preferences.swupdate-bullseye-backports.conf
-+++ b/conf/distro/preferences.swupdate-bullseye-backports.conf
-@@ -1,3 +1,10 @@
- Package: dh-nodejs
- Pin: release n=bullseye-backports
- Pin-Priority: 801
-+Package: libwolfssl-dev, libwolfssl35
-+Pin: release n=bullseye-backports
-+Pin-Priority: 801
-+Package: libwolfssl-dev
-+Pin: release n=bullseye
-+Pin-Priority: -1
-+
-diff --git a/recipes-core/swupdate/files/2023.05/0001-d-rules-Add-option-for-suricatta_lua.patch b/recipes-core/swupdate/files/2023.05/0001-d-rules-Add-option-for-suricatta_lua.patch
-deleted file mode 100644
-index 5aeb605..0000000
---- a/recipes-core/swupdate/files/2023.05/0001-d-rules-Add-option-for-suricatta_lua.patch
-+++ /dev/null
-@@ -1,30 +0,0 @@
--From f94f8c2f62ade7568fe8fafa106488761fc55f91 Mon Sep 17 00:00:00 2001
--From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
--Date: Wed, 3 May 2023 16:02:37 +0200
--Subject: [PATCH 1/4] d/rules: Add option for suricatta_lua
--
--This allows to use lua plugins as suricatta backends. It is optional
--as it overrides the default HAWKBIT backend.
--
--Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-----
-- debian/rules | 3 +++
-- 1 file changed, 3 insertions(+)
--
--diff --git a/debian/rules b/debian/rules
--index 57da4ca7..91106fbd 100755
----- a/debian/rules
--+++ b/debian/rules
--@@ -56,6 +56,9 @@ endif
-- ifneq (,$(filter pkg.swupdate.p11,$(DEB_BUILD_PROFILES)))
-- 	echo CONFIG_PKCS11=y >> configs/debian_defconfig
-- endif
--+ifneq (,$(filter pkg.swupdate.suricattalua,$(DEB_BUILD_PROFILES)))
--+	echo CONFIG_SURICATTA_LUA=y >> configs/debian_defconfig
--+endif
-- ifneq (,$(LUA_VERSION))
-- 	echo CONFIG_LUAPKG=\"lua$(LUA_VERSION)\" >> configs/debian_defconfig
-- 	echo CONFIG_LUASCRIPTHANDLER=y           >> configs/debian_defconfig
---- 
--2.39.2
--
-diff --git a/recipes-core/swupdate/files/2023.05/0002-d-rules-Add-seperate-build_profile-option-for-delta-.patch b/recipes-core/swupdate/files/2023.05/0001-d-rules-Add-seperate-build_profile-option-for-delta-.patch
-similarity index 76%
-rename from recipes-core/swupdate/files/2023.05/0002-d-rules-Add-seperate-build_profile-option-for-delta-.patch
-rename to recipes-core/swupdate/files/2023.05/0001-d-rules-Add-seperate-build_profile-option-for-delta-.patch
-index 4203061..0d0fc0a 100644
---- a/recipes-core/swupdate/files/2023.05/0002-d-rules-Add-seperate-build_profile-option-for-delta-.patch
-+++ b/recipes-core/swupdate/files/2023.05/0001-d-rules-Add-seperate-build_profile-option-for-delta-.patch
-@@ -1,7 +1,7 @@
--From a5ab9aaa53acac4c4155b6c4cc8a86bc59278e53 Mon Sep 17 00:00:00 2001
-+From 03d455be74d439c7e2eb849e5acdfb494afb3d7c Mon Sep 17 00:00:00 2001
- From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
- Date: Thu, 15 Jun 2023 18:48:25 +0200
--Subject: [PATCH 2/4] d/rules: Add seperate build_profile option for delta
-+Subject: [PATCH 1/4] d/rules: Add seperate build_profile option for delta
-  update
- 
- Delta update need zchunk 1.3 to work on memory restricted
-@@ -15,20 +15,20 @@ Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-  2 files changed, 2 insertions(+), 2 deletions(-)
- 
- diff --git a/debian/control b/debian/control
--index e47c320c..d4b17972 100644
-+index a389b2a9..2f0c0053 100644
- --- a/debian/control
- +++ b/debian/control
--@@ -26,7 +26,7 @@ Build-Depends: debhelper-compat (= 13),
-+@@ -28,7 +28,7 @@ Build-Depends: debhelper-compat (= 13),
-                 uuid-dev,
-                 zlib1g-dev,
-                 libzstd-dev,
---               libzck-dev (>= 1.2) <!pkg.swupdate.bpo>,
-+-               libzck-dev (>= 1.3) <!pkg.swupdate.bpo>,
- +               libzck-dev (>= 1.3) <pkg.swupdate.delta>,
-                 libp11-kit-dev <pkg.swupdate.p11>,
--                libwolfssl-dev <pkg.swupdate.p11>,
-+                libwolfssl-dev (>= 5),
-                 libmtd-dev [linux-any],
- diff --git a/debian/rules b/debian/rules
--index 91106fbd..8cac6359 100755
-+index 3b1cc0f6..2c91677c 100755
- --- a/debian/rules
- +++ b/debian/rules
- @@ -38,7 +38,7 @@ ifeq (linux,$(DEB_HOST_ARCH_OS))
-@@ -41,5 +41,5 @@ index 91106fbd..8cac6359 100755
-  endif
-  ifneq (,$(findstring $(DEB_HOST_ARCH),amd64 i386 arm64 armhf riscv64 ia64))
- -- 
--2.39.2
-+2.42.0
- 
-diff --git a/recipes-core/swupdate/files/2023.05/0003-d-patches-Add-patch-to-add-the-build-version-to-swup.patch b/recipes-core/swupdate/files/2023.05/0002-d-patches-Add-patch-to-add-the-build-version-to-swup.patch
-similarity index 93%
-rename from recipes-core/swupdate/files/2023.05/0003-d-patches-Add-patch-to-add-the-build-version-to-swup.patch
-rename to recipes-core/swupdate/files/2023.05/0002-d-patches-Add-patch-to-add-the-build-version-to-swup.patch
-index 857b4ab..8056818 100644
---- a/recipes-core/swupdate/files/2023.05/0003-d-patches-Add-patch-to-add-the-build-version-to-swup.patch
-+++ b/recipes-core/swupdate/files/2023.05/0002-d-patches-Add-patch-to-add-the-build-version-to-swup.patch
-@@ -1,7 +1,7 @@
--From ed4e8b5d4ad6ffcddb755571303c077fff227ea3 Mon Sep 17 00:00:00 2001
-+From ad714bc12b03c148aadb3523f87cc14d42a477b0 Mon Sep 17 00:00:00 2001
- From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
- Date: Fri, 16 Jun 2023 19:43:38 +0200
--Subject: [PATCH 3/4] d/patches: Add patch to add the build version to swupdate
-+Subject: [PATCH 2/4] d/patches: Add patch to add the build version to swupdate
- 
- The build version is only set if build in a git repository
- this patch allows to use the version information stored in
-@@ -77,10 +77,10 @@ index 5638bbf5..12324569 100644
-  use-gcc-compiler.diff
- +Makefile.flags-Set-version-if-git-returns-no-informa.diff
- diff --git a/debian/rules b/debian/rules
--index 8cac6359..566a21bd 100755
-+index 2c91677c..5d72987c 100755
- --- a/debian/rules
- +++ b/debian/rules
--@@ -17,6 +17,8 @@ export DH_WITH=--with lua
-+@@ -17,6 +17,8 @@ export DH_WITH=,lua
-  export HAVE_LUA=y
-  endif
-  
-@@ -90,5 +90,5 @@ index 8cac6359..566a21bd 100755
-  ifeq (linux,$(DEB_HOST_ARCH_OS))
-  	BU_SWU += -VBuilt-Using="$(shell dpkg-query -f '$${source:Package} (= $${source:Version}), ' -W libmtd-dev libubi-dev)"
- -- 
--2.39.2
-+2.42.0
- 
-diff --git a/recipes-core/swupdate/files/2023.05/0004-d-rules-Add-option-to-enable-suricatta_wfx.patch b/recipes-core/swupdate/files/2023.05/0003-d-rules-Add-option-to-enable-suricatta_wfx.patch
-similarity index 69%
-rename from recipes-core/swupdate/files/2023.05/0004-d-rules-Add-option-to-enable-suricatta_wfx.patch
-rename to recipes-core/swupdate/files/2023.05/0003-d-rules-Add-option-to-enable-suricatta_wfx.patch
-index 9c5ebd3..87c60d7 100644
---- a/recipes-core/swupdate/files/2023.05/0004-d-rules-Add-option-to-enable-suricatta_wfx.patch
-+++ b/recipes-core/swupdate/files/2023.05/0003-d-rules-Add-option-to-enable-suricatta_wfx.patch
-@@ -1,7 +1,7 @@
--From ee401ba4d0d81fc244288e7e59a7bc5cfe2d1bf4 Mon Sep 17 00:00:00 2001
-+From fae97f0e23f945c1ab6e767451cda1d2798aa348 Mon Sep 17 00:00:00 2001
- From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
- Date: Fri, 16 Jun 2023 20:32:38 +0200
--Subject: [PATCH 4/4] d/rules: Add option to enable suricatta_wfx
-+Subject: [PATCH 3/4] d/rules: Add option to enable suricatta_wfx
- 
- Add the DEB_BUILD_PROFILE "pkg.swupdate.suricattawfx" to build with
- suricattawfx lua module.
-@@ -12,12 +12,12 @@ Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-  1 file changed, 3 insertions(+)
- 
- diff --git a/debian/rules b/debian/rules
--index 566a21bd..fc122d0d 100755
-+index 5d72987c..d7ff5510 100755
- --- a/debian/rules
- +++ b/debian/rules
--@@ -61,6 +61,9 @@ endif
-- ifneq (,$(filter pkg.swupdate.suricattalua,$(DEB_BUILD_PROFILES)))
-- 	echo CONFIG_SURICATTA_LUA=y >> configs/debian_defconfig
-+@@ -58,6 +58,9 @@ endif
-+ ifneq (,$(filter pkg.swupdate.p11,$(DEB_BUILD_PROFILES)))
-+ 	echo CONFIG_PKCS11=y >> configs/debian_defconfig
-  endif
- +ifneq (,$(filter pkg.swupdate.suricattawfx,$(DEB_BUILD_PROFILES)))
- +	echo CONFIG_SURICATTA_WFX=y >> configs/debian_defconfig
-@@ -26,5 +26,5 @@ index 566a21bd..fc122d0d 100755
-  	echo CONFIG_LUAPKG=\"lua$(LUA_VERSION)\" >> configs/debian_defconfig
-  	echo CONFIG_LUASCRIPTHANDLER=y           >> configs/debian_defconfig
- -- 
--2.39.2
-+2.42.0
- 
-diff --git a/recipes-core/swupdate/files/2023.05/0004-d-swupdate-www.install-Fix-path-for-debian-bullseye.patch b/recipes-core/swupdate/files/2023.05/0004-d-swupdate-www.install-Fix-path-for-debian-bullseye.patch
-new file mode 100644
-index 0000000..b2d831d
---- /dev/null
-+++ b/recipes-core/swupdate/files/2023.05/0004-d-swupdate-www.install-Fix-path-for-debian-bullseye.patch
-@@ -0,0 +1,24 @@
-+From f2184e7573e705bad408cf1422599b967773d48e Mon Sep 17 00:00:00 2001
-+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+Date: Thu, 16 Nov 2023 16:40:19 +0100
-+Subject: [PATCH 4/4] d/swupdate-www.install: Fix path for debian-bullseye
-+
-+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+---
-+ debian/swupdate-www.install | 2 +-
-+ 1 file changed, 1 insertion(+), 1 deletion(-)
-+
-+diff --git a/debian/swupdate-www.install b/debian/swupdate-www.install
-+index 7e3d95c6..9c6113cc 100644
-+--- a/debian/swupdate-www.install
-++++ b/debian/swupdate-www.install
-+@@ -1,5 +1,5 @@
-+ web-app/css          /usr/share/swupdate/www
-+ web-app/images       /usr/share/swupdate/www
-+-index.html           /usr/share/swupdate/www
-++web-app/index.html   /usr/share/swupdate/www
-+ web-app/js           /usr/share/swupdate/www
-+ web-app/node_modules /usr/share/swupdate/www
-+-- 
-+2.42.0
-+
-diff --git a/recipes-core/swupdate/swupdate_2023.05.bb b/recipes-core/swupdate/swupdate_2023.05.bb
-index 762fac2..5ead66e 100644
---- a/recipes-core/swupdate/swupdate_2023.05.bb
-+++ b/recipes-core/swupdate/swupdate_2023.05.bb
-@@ -22,19 +22,19 @@ FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files/${PV}:"
- SRC_URI += "git://github.com/sbabic/swupdate.git;protocol=https;branch=master;name=upstream;destsuffix=${P}"
- SRC_URI += "git://salsa.debian.org/debian/swupdate.git;protocol=https;branch=debian/master;name=debian;subpath=debian;destsuffix=${P}/debian"
- 
--SRCREV_debian = "aa9edf070567fa5b3e942c270633a8feef49dad8"
-+SRCREV_debian = "78cb6f20319d2b911e170eea5305f2cf0bd33030"
- SRCREV_upstream = "c8ca55684c375937dbcdefb0563071a35137f4ba"
- 
- # patches
--SRC_URI += "file://0001-d-rules-Add-option-for-suricatta_lua.patch \
--            file://0002-d-rules-Add-seperate-build_profile-option-for-delta-.patch \
--            file://0003-d-patches-Add-patch-to-add-the-build-version-to-swup.patch \
--            file://0004-d-rules-Add-option-to-enable-suricatta_wfx.patch"
-+SRC_URI += "file://0001-d-rules-Add-seperate-build_profile-option-for-delta-.patch \
-+            file://0002-d-patches-Add-patch-to-add-the-build-version-to-swup.patch \
-+            file://0003-d-rules-Add-option-to-enable-suricatta_wfx.patch"
- 
- 
- # The option: "pkg.swupdate.nosigning" disables the required signing
- # of update binaries
- # DEB_BUILD_PROFILES += "pkg.swupdate.nosigning"
-+SRC_URI:append:bullseye = " file://0004-d-swupdate-www.install-Fix-path-for-debian-bullseye.patch"
- 
- # deactivate hardware compability for simple a/b rootfs update
- DEB_BUILD_PROFILES += "pkg.swupdate.nohwcompat"
--- 
-2.42.0
 
+
+Test Regressions
+---------------- =
+
+
+
+platform                  | arch   | lab           | compiler | defconfig  =
+                | regressions
+--------------------------+--------+---------------+----------+------------=
+----------------+------------
+asus-C436FA-Flip-hatch    | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
+onfig+x86-board | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65608c4f1e9026f1487e4a95
+
+  Results:     6 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v6.1.62-cip9-12-g3a5321f469b07/x86_64/x86_64_defconfig+x86-board/gcc-10/la=
+b-collabora/baseline-asus-C436FA-Flip-hatch.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v6.1.62-cip9-12-g3a5321f469b07/x86_64/x86_64_defconfig+x86-board/gcc-10/la=
+b-collabora/baseline-asus-C436FA-Flip-hatch.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/x86/rootfs.cpio.gz =
+
+
+
+  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
+/65608c4f1e9026f1487e4a9e
+        new failure (last pass: v5.10.201-rt98-828-g27523c64bc5dd)
+
+    2023-11-24T11:45:16.853945  <8>[    7.786852] <LAVA_SIGNAL_ENDRUN 0_dme=
+sg 12073942_1.4.2.3.1>
+
+    2023-11-24T11:45:16.857160  + set +x
+
+    2023-11-24T11:45:16.961722  / # #
+
+    2023-11-24T11:45:17.062296  export SHELL=3D/bin/sh
+
+    2023-11-24T11:45:17.062502  #
+
+    2023-11-24T11:45:17.163059  / # export SHELL=3D/bin/sh. /lava-12073942/=
+environment
+
+    2023-11-24T11:45:17.163284  =
+
+
+    2023-11-24T11:45:17.263812  / # . /lava-12073942/environment/lava-12073=
+942/bin/lava-test-runner /lava-12073942/1
+
+    2023-11-24T11:45:17.264135  =
+
+
+    2023-11-24T11:45:17.270053  / # /lava-12073942/bin/lava-test-runner /la=
+va-12073942/1
+ =
+
+    ... (12 line(s) more)  =
+
+ =
+
+
+
+platform                  | arch   | lab           | compiler | defconfig  =
+                | regressions
+--------------------------+--------+---------------+----------+------------=
+----------------+------------
+asus-CM1400CXA-dalboz     | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
+onfig+x86-board | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65608c73fec7873f857e4a6d
+
+  Results:     6 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v6.1.62-cip9-12-g3a5321f469b07/x86_64/x86_64_defconfig+x86-board/gcc-10/la=
+b-collabora/baseline-asus-CM1400CXA-dalboz.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v6.1.62-cip9-12-g3a5321f469b07/x86_64/x86_64_defconfig+x86-board/gcc-10/la=
+b-collabora/baseline-asus-CM1400CXA-dalboz.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/x86/rootfs.cpio.gz =
+
+
+
+  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
+/65608c73fec7873f857e4a76
+        new failure (last pass: v5.10.201-rt98-828-g27523c64bc5dd)
+
+    2023-11-24T11:43:31.717027  + set<8>[   10.820434] <LAVA_SIGNAL_ENDRUN =
+0_dmesg 12073924_1.4.2.3.1>
+
+    2023-11-24T11:43:31.717112   +x
+
+    2023-11-24T11:43:31.821203  / # #
+
+    2023-11-24T11:43:31.921847  export SHELL=3D/bin/sh
+
+    2023-11-24T11:43:31.922044  #
+
+    2023-11-24T11:43:32.022598  / # export SHELL=3D/bin/sh. /lava-12073924/=
+environment
+
+    2023-11-24T11:43:32.022817  =
+
+
+    2023-11-24T11:43:32.123337  / # . /lava-12073924/environment/lava-12073=
+924/bin/lava-test-runner /lava-12073924/1
+
+    2023-11-24T11:43:32.123631  =
+
+
+    2023-11-24T11:43:32.128099  / # /lava-12073924/bin/lava-test-runner /la=
+va-12073924/1
+ =
+
+    ... (12 line(s) more)  =
+
+ =
+
+
+
+platform                  | arch   | lab           | compiler | defconfig  =
+                | regressions
+--------------------------+--------+---------------+----------+------------=
+----------------+------------
+at91sam9g20ek             | arm    | lab-broonie   | gcc-10   | multi_v5_de=
+fconfig         | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65608cf59d33f809e37e4a8a
+
+  Results:     48 PASS, 6 FAIL, 1 SKIP
+  Full config: multi_v5_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v6.1.62-cip9-12-g3a5321f469b07/arm/multi_v5_defconfig/gcc-10/lab-broonie/b=
+aseline-at91sam9g20ek.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v6.1.62-cip9-12-g3a5321f469b07/arm/multi_v5_defconfig/gcc-10/lab-broonie/b=
+aseline-at91sam9g20ek.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/armel/rootfs.cpio.gz =
+
+
+
+  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
+/65608cf59d33f809e37e4ac3
+        new failure (last pass: v5.10.201-rt98-828-g27523c64bc5dd)
+
+    2023-11-24T11:45:23.925823  + set +x
+    2023-11-24T11:45:23.926246  <8><LAVA_SIGNAL_ENDRUN 0_dmesg 269412_1.5.2=
+.4.1>
+    2023-11-24T11:45:24.041358  / # #
+    2023-11-24T11:45:24.144436  export SHELL=3D/bin/sh
+    2023-11-24T11:45:24.144833  #
+    2023-11-24T11:45:24.245984  / # export SHELL=3D/bin/sh. /lava-269412/en=
+vironment
+    2023-11-24T11:45:24.246440  =
+
+    2023-11-24T11:45:24.347721  / # . /lava-269412/environment/lava-269412/=
+bin/lava-test-runner /lava-269412/1
+    2023-11-24T11:45:24.348502  =
+
+    2023-11-24T11:45:24.352207  / # /lava-269412/bin/lava-test-runner /lava=
+-269412/1 =
+
+    ... (11 line(s) more)  =
+
+ =
+
+
+
+platform                  | arch   | lab           | compiler | defconfig  =
+                | regressions
+--------------------------+--------+---------------+----------+------------=
+----------------+------------
+beaglebone-black          | arm    | lab-cip       | gcc-10   | omap2plus_d=
+efconfig        | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6560912cb3354a80ca7e4ab4
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: omap2plus_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v6.1.62-cip9-12-g3a5321f469b07/arm/omap2plus_defconfig/gcc-10/lab-cip/base=
+line-beaglebone-black.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v6.1.62-cip9-12-g3a5321f469b07/arm/omap2plus_defconfig/gcc-10/lab-cip/base=
+line-beaglebone-black.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/armel/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/6560912cb3354a80ca7e4=
+ab5
+        new failure (last pass: v5.10.201-rt98-828-g27523c64bc5dd) =
+
+ =
+
+
+
+platform                  | arch   | lab           | compiler | defconfig  =
+                | regressions
+--------------------------+--------+---------------+----------+------------=
+----------------+------------
+hp-x360-14a-cb0001xx-zork | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
+onfig+x86-board | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65608c5c4c28b8210e7e4ab1
+
+  Results:     6 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v6.1.62-cip9-12-g3a5321f469b07/x86_64/x86_64_defconfig+x86-board/gcc-10/la=
+b-collabora/baseline-hp-x360-14a-cb0001xx-zork.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v6.1.62-cip9-12-g3a5321f469b07/x86_64/x86_64_defconfig+x86-board/gcc-10/la=
+b-collabora/baseline-hp-x360-14a-cb0001xx-zork.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/x86/rootfs.cpio.gz =
+
+
+
+  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
+/65608c5c4c28b8210e7e4aba
+        new failure (last pass: v5.10.201-rt98-828-g27523c64bc5dd)
+
+    2023-11-24T11:42:59.836504  + <8>[   11.552751] <LAVA_SIGNAL_ENDRUN 0_d=
+mesg 12073944_1.4.2.3.1>
+
+    2023-11-24T11:42:59.836956  set +x
+
+    2023-11-24T11:42:59.944345  / # #
+
+    2023-11-24T11:43:00.046878  export SHELL=3D/bin/sh
+
+    2023-11-24T11:43:00.047584  #
+
+    2023-11-24T11:43:00.149213  / # export SHELL=3D/bin/sh. /lava-12073944/=
+environment
+
+    2023-11-24T11:43:00.149926  =
+
+
+    2023-11-24T11:43:00.251446  / # . /lava-12073944/environment/lava-12073=
+944/bin/lava-test-runner /lava-12073944/1
+
+    2023-11-24T11:43:00.253052  =
+
+
+    2023-11-24T11:43:00.257433  / # /lava-12073944/bin/lava-test-runner /la=
+va-12073944/1
+ =
+
+    ... (12 line(s) more)  =
+
+ =
+
+
+
+platform                  | arch   | lab           | compiler | defconfig  =
+                | regressions
+--------------------------+--------+---------------+----------+------------=
+----------------+------------
+imx6ul-14x14-evk          | arm    | lab-nxp       | gcc-10   | imx_v6_v7_d=
+efconfig        | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65608e8af01d64305e7e4a6d
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: imx_v6_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v6.1.62-cip9-12-g3a5321f469b07/arm/imx_v6_v7_defconfig/gcc-10/lab-nxp/base=
+line-imx6ul-14x14-evk.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v6.1.62-cip9-12-g3a5321f469b07/arm/imx_v6_v7_defconfig/gcc-10/lab-nxp/base=
+line-imx6ul-14x14-evk.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/armel/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/65608e8af01d64305e7e4=
+a6e
+        new failure (last pass: v5.10.201-rt98-828-g27523c64bc5dd) =
+
+ =
+
+
+
+platform                  | arch   | lab           | compiler | defconfig  =
+                | regressions
+--------------------------+--------+---------------+----------+------------=
+----------------+------------
+lenovo-TPad-C13-Yoga-zork | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
+onfig+x86-board | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65608c38b149b94e5b7e4a78
+
+  Results:     6 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v6.1.62-cip9-12-g3a5321f469b07/x86_64/x86_64_defconfig+x86-board/gcc-10/la=
+b-collabora/baseline-lenovo-TPad-C13-Yoga-zork.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v6.1.62-cip9-12-g3a5321f469b07/x86_64/x86_64_defconfig+x86-board/gcc-10/la=
+b-collabora/baseline-lenovo-TPad-C13-Yoga-zork.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/x86/rootfs.cpio.gz =
+
+
+
+  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
+/65608c38b149b94e5b7e4a81
+        new failure (last pass: v5.10.201-rt98-828-g27523c64bc5dd)
+
+    2023-11-24T11:42:33.783007  + set<8>[   11.528160] <LAVA_SIGNAL_ENDRUN =
+0_dmesg 12073909_1.4.2.3.1>
+
+    2023-11-24T11:42:33.783113   +x
+
+    2023-11-24T11:42:33.887670  / # #
+
+    2023-11-24T11:42:33.988257  export SHELL=3D/bin/sh
+
+    2023-11-24T11:42:33.988441  #
+
+    2023-11-24T11:42:34.089008  / # export SHELL=3D/bin/sh. /lava-12073909/=
+environment
+
+    2023-11-24T11:42:34.089188  =
+
+
+    2023-11-24T11:42:34.189669  / # . /lava-12073909/environment/lava-12073=
+909/bin/lava-test-runner /lava-12073909/1
+
+    2023-11-24T11:42:34.189934  =
+
+
+    2023-11-24T11:42:34.194426  / # /lava-12073909/bin/lava-test-runner /la=
+va-12073909/1
+ =
+
+    ... (12 line(s) more)  =
+
+ =20
 
