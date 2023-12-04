@@ -1,142 +1,135 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE20C4167B
-	for <webhook@archiver.kernel.org>; Mon,  4 Dec 2023 00:14:57 +0000 (UTC)
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (EUR03-AM7-obe.outbound.protection.outlook.com [40.107.105.48])
- by mx.groups.io with SMTP id smtpd.web10.52693.1701648888048518344
- for <cip-dev@lists.cip-project.org>;
- Sun, 03 Dec 2023 16:14:48 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E58BCC10DC3
+	for <webhook@archiver.kernel.org>; Mon,  4 Dec 2023 00:34:37 +0000 (UTC)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+ by mx.groups.io with SMTP id smtpd.web11.53223.1701650071894823528
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Sun, 03 Dec 2023 16:34:31 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=FAR1qs7W;
- spf=pass (domain: siemens.com, ip: 40.107.105.48, mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EIZs6VOAb+tSQ63qnVDcephWvhdqOAWDhwr7tIL/LGRBp9a5Zo+XG+mcP9frzC6nI99WZhv7vBs82kmkh/rATVlZMCG/KnpO3AVghzGQNVjrrdshDPOEj3pDlTYlt2+wbBzEuqZaHbVhIznTWG2cqWo6XnIqJBRnppqUaMfDcGiJGex0bF3KMmsE+REyia2Dh/QUCurEnaAt26KvlqbDp0yACQSDF/JhIM/pMeBmyf/Kdu3EpMITW9QnrwJvBBKEiX3UtznZi+D5MtqLLzGZoZXiGtR4Jn14GvZp62StjtbwVoGhYrUnbU1fR1mkglsNqNNq952xiBm5SOxlyyGbxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BR3PSPfsMsMkuLuz8y8+3mWjLK8mh3KtFmJu5PS5+RQ=;
- b=XJDhnunoJbe+bi4o8mP4pD2nSi8dUm91ZwdCI6pGOvEaaT5uaZCOUfVdOaGvzXvsvWBckIVhyxiuD/3fJtHEYzuytWFOY9utLPZT0WRccj1sXCGaFXQMUWK6ggw5fUEHPJCyc53derRZsyWAUeMxLe82qmJ4jHDgaEZt3B3PM2NVw7w6cpcDHme3/exh8zqV43eWlPzF1/PF4C4fi435OV5K0rwMiX10ENJpkN8ke+2S1x9ZyH7/KOQra7c1ycAH/JEagL5RDjaMSXIHHw7QWHYn7pf0XzJDfJIUjGunldQwxctcIrebFxsFiB6UnkuabeiJ7nMWDjSKVRVWlQrqNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BR3PSPfsMsMkuLuz8y8+3mWjLK8mh3KtFmJu5PS5+RQ=;
- b=FAR1qs7WyI7ewrQRkxiwqhtE4XTV8Ny64v2w5jroxWOa9SZnfIw7qn7PbMIgc60WvrFQu4sgo7G4vEDXNHQ2jnK0gMdy08qa3+UvaAwzZM4fBox3fiz4DP1ThOnMP9T0jjLMadZtSt2jaHZ6q7EfvsqDGFbUiWM8gzqvc7yr5DK4b1rYvssy02Scl6jlKKVAzm+lrS6wqUQPZ0Qp3ZiH8k02t0yKFPXralXE+4E4hDFZj8/Q7aol/TG7Gu1T1yi7ATO8vUyc7v7Q0RT85/QgXJlaRxBN7KNc/w2uluKLfQFiqEDyM/6jtkbVf5Nk5sDijyOz26cucQe1qt06LfFJoQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by PRAPR10MB5321.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:296::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7046.33; Mon, 4 Dec
- 2023 00:14:44 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::96c7:d239:1723:8761]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::96c7:d239:1723:8761%5]) with mapi id 15.20.7046.033; Mon, 4 Dec 2023
- 00:14:44 +0000
-Message-ID: <b1fdcfae-b4b8-476f-ae24-fdfffb291bee@siemens.com>
-Date: Mon, 4 Dec 2023 09:14:37 +0900
-User-Agent: Mozilla Thunderbird
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [isar-cip-core][PATCH] linux-cip: Update to 6.1.64-cip10-rt5
-Content-Language: en-US
-To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: KL1PR0401CA0028.apcprd04.prod.outlook.com
- (2603:1096:820:e::15) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+ dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=hSitk3ro;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.178, mailfrom: bot@kernelci.org)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1cfc9c4acb6so13034565ad.0
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Sun, 03 Dec 2023 16:34:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1701650070; x=1702254870; darn=lists.cip-project.org;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=/+7sC00pjyDiJVAm6vZMngw7cofgbiWJSA3jRYbBL78=;
+        b=hSitk3roW26Seu65xbRMGLYAZR7u+cXXpXVtCH1CnOurwIucF0DC3PmE5F7FP2HPcI
+         iJvZSnRS4fJqM7n4ipyhJTd9JwIx5ywhfO9I/H+9WfW7gs9BFJqBFB2CuIpKNRshl8x9
+         ZOM7HbNMYoHfAkNxws4LEuFSJ5J7F+CtnKz1+KyQEWHqDrTR/NrktW6gl0bdkonY+CG4
+         EoRFjdU42a13TRO/AOTuljsQBhHBlUQiKbQMGTo/cgX3FqSIZ9EKj3LAE4GG4ygiBPX1
+         24jGJ4UFtYpEOl8neGN5R9X4pnr1AKsdgFuthJ/jZTSWcRx5BJc71y5fUWWQZmGAMXsC
+         Aihw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701650070; x=1702254870;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/+7sC00pjyDiJVAm6vZMngw7cofgbiWJSA3jRYbBL78=;
+        b=DvtHSAaOEuUF9e8N30QGqhTBoGbX0tmNv4qtvvuo5p0AYTkRqS7R6GlWoysS+2XRLq
+         aDs8yPM0QPVrLjVPDtgGVF5aIgaXNeHS5Xynp2PKDQ+LnoyVru+1eNXrDnVTJQN5cgtS
+         8vqg9JxbGsS4tyNWElUoPmgBbheMc8QbqXi9Qs2E7gn9eb0sM7i7a53xaWYcHuuFcHYI
+         ptJSyEVXkCDd9ZYrKjvqBVyi6VC60VbhSiHoN8K1NsRxMKgO30Ab5YLZlfVJp9fJHrZq
+         EY3G5X6R/mCKS1wW84rDQMfmdykQihj29zgJKpYazDV+rae8xwGEWLhanaZk+0uZurgQ
+         dX9A==
+X-Gm-Message-State: AOJu0YykeUWeabcCvlARSW5ckAr1Dsf8/YJF3XOVfML4JisueEeTQSWJ
+	rwso9fhi6IXHVQc5jEGeprKgPFtRK6O8UljmQdRrcw==
+X-Google-Smtp-Source: AGHT+IHXuFcfBXit6WVGN+NPEzMOuQN2xf/nBTfnhqOGDxsXjDfu8tSrRudJZCKRLicLcnbJ/a0sqg==
+X-Received: by 2002:a17:902:e5cb:b0:1d0:6ffd:6e7c with SMTP id u11-20020a170902e5cb00b001d06ffd6e7cmr1191965plf.116.1701650070463;
+        Sun, 03 Dec 2023 16:34:30 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
+        by smtp.gmail.com with ESMTPSA id ay8-20020a1709028b8800b001cfc44aac0fsm7163765plb.111.2023.12.03.16.34.29
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Dec 2023 16:34:30 -0800 (PST)
+Message-ID: <656d1e96.170a0220.539ae.3eb1@mx.google.com>
+Date: Sun, 03 Dec 2023 16:34:30 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PRAPR10MB5321:EE_
-X-MS-Office365-Filtering-Correlation-Id: 80ea6324-66cf-4966-0ac1-08dbf45e03fe
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	8Tl2tFQxZ5oZthKnR7k8i51OUnpjQPe7YZC1GNLP1D2RPZMEt6+G4BK944Bfdx4rR0CtDnscMICP2S0EgBFAg/cr3EjitNxztxfegjLNbX+b+awxMKLZjsydLgSvRMst8/CYiWoSfVts72GWEfeFCjvyAASFr+JUL7quL3wCPPPBfN3Rr6OMK9nLBZ/5NRSCxlaWCDd6e7SC9uvjMShAJz8G6ScisGpBVNW7fk42J0uAliQkbRpfCgHpekQBMjWT0t2ec1LBV7AaWSjEW9+ZDxaMzYuqfVGmJAJLPlcexwd8nj4LAYxiJVgrGB2EepZTizoPaW/c6ftDADtEM9jb3gecbv2avzteAIvx69eBAFbWz1X9U3SML4MKqJMzik/lf+jznwuW+1MWd0Q1LNR7jJ+QwVsZFMEu8VD5wWz7c0j1hLzm+3NA97UIyHNuwd8K0CdWKnKVKSdhA3BehEOK3qrf+8qOOFwdF2IotAqTuIOIIl5GwyxPb+EVlNfa4bn4vrMLsiI9CJnfFEFvweY7yPX52PdV2wdAcnFZVZ1Q6N7IjHvnzFkmtbH0UM806Z+fdaHiBBMbpcRcbn5hgICbpihpXI2vO4Uf9JJcuCQdUZcRu0NGsr0eJ5LPzNbA+cBB9k84bYebxBoscMJ8UOASKg==
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(346002)(376002)(396003)(366004)(136003)(39860400002)(230922051799003)(451199024)(1800799012)(186009)(64100799003)(82960400001)(83380400001)(26005)(2616005)(6506007)(31686004)(6512007)(38100700002)(6666004)(478600001)(6486002)(66946007)(66556008)(66476007)(6916009)(316002)(8936002)(8676002)(2906002)(41300700001)(36756003)(44832011)(31696002)(86362001)(5660300002)(4744005)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?Tk1Td3lGYXJ4ZmRxemFhcTVWRjk0UUQ2aGRxK0VSM3lMRHE4dVhvTU15bkZD?=
- =?utf-8?B?MnUxT055MTROZjJiczNxaXZGM0hEZmJ4SFg1c1hNWU9rTER2NnpLNW5JcVU2?=
- =?utf-8?B?eEkvL2o0ck1xUlJ2c2FDQXVUTnhvVnhqeUZ4ZmNWL0FFU1pmcDVONGlSMTZ1?=
- =?utf-8?B?WHFleFV2WGxpcG10TnhiQnFhYUNDdW9XTGc5aU9HQk1BN0JnSUo0WlFlL1p4?=
- =?utf-8?B?UUlCb204V2xma0M0Wmx4ZmFHNzBNWTZCbitXUXNkVU9Vb29vMlo2TTlCajJj?=
- =?utf-8?B?ZFVpTi9ibnUrM0tVQ0NaTmM5MVJtc1hTSTA5aEVKZFNpcGJTZmxJaUo0TEcw?=
- =?utf-8?B?MVp2ZGRNY2liSVd4SGxqYWFiN0ZyaVhKNkdUZ2JOekgzblEySXBxOXNuS1dl?=
- =?utf-8?B?TUFqcjdUaUVidThIanVtY1NzRXh0VGVnV0NxUkJDcU9PUnV5QmpSUG14L3dG?=
- =?utf-8?B?dW9ETFEwRi9EVHdyVHlmRkQyY1VRaDZuSG93MUVCQzc4eEFwbGRSZmF1UDZZ?=
- =?utf-8?B?bDU5NWx5QnFsVXJzTFlhT2NTQkdic1Y5MlA4VWxGdUhNR21RdzM2dm9OaXlE?=
- =?utf-8?B?NXlVZXZlN2luZDdVamMwbkJvb2NwY1hFMDR3NVVncEYzTVBNQ3MyMzhITnQ2?=
- =?utf-8?B?OTZxY2l4S3VSYVMxelNDSzFBVXF3SGVpNWdVdG9xZ1VZTWJZelpnYWtjaGx0?=
- =?utf-8?B?NjVGbS8yU1BMNXJPUmlSOUlTV1gyT1lCc2hOb1pkZ2NyTHEwM1dhQTlrSjRV?=
- =?utf-8?B?RnorYTBLZUM0YUNwWWQyQW96WUpUY2tUVTY3QlZXSlhBTmZGdFJyMFR6cGZp?=
- =?utf-8?B?eTZaT0M5RjRtaFlnVGRLRzF6djlCSlFnSTcyNzAwbFBzdUhiYmhBUzBQOGNH?=
- =?utf-8?B?K1dlNkhQWGcxZ25XOHNOVzVTSWY1NjgzbFJvdTJoUEF6RFlWL2tMWkZydnNr?=
- =?utf-8?B?SVpFSXgzYWtWZXIzZDh6bzRObWpvTmh0d1IvYWdMUlBEVGpzbVZReTZKNkJ4?=
- =?utf-8?B?WlIvd1JHV2JubVlER1pIR3lWNGV3SVdjZ2NMS0UyTjJ4NDh3dW9KM3hBK2xn?=
- =?utf-8?B?dlFERHVNa0p5UmlHcjBXbnh2anZ3elAxS21vOG5mTXVIWkU1NW04akxpVkk4?=
- =?utf-8?B?V2JOTThOTUlNVC84UDY1Nmp4aTRwSlhFSTZWcmZuQ2V2TnVoNHg0NlRGZ3Yz?=
- =?utf-8?B?UnBvM2V4bHJ3MkJDUXN3MGFoM1BuZkVHL0tTNlBtWDVoRlZCQVVqZTRkaTVF?=
- =?utf-8?B?TDM1STRMQ3MzaElWaEJEUlJpbUlxMm5NUndHVW9qK0drYjdBOXVFSTZPTkxz?=
- =?utf-8?B?TFBnWjcrZ0dlMWFmdU5taGpkdGhYWHZBZG1LT1l0M0QzZHlNbkMrSUFjSmtR?=
- =?utf-8?B?Nndaa1VnTXMrR1lJeGxnNzFDcTlvQXEvYWhEUll3ZUorNEhNNkprK3k4UmFM?=
- =?utf-8?B?MEU0dGQ1dXZLMklPMnk5TlkvQ0N0QTdnTytNV0F6Q1FyV2l2b0U0OEwwWW53?=
- =?utf-8?B?K0VvRnc0TW4va0psZjgwUUJsczlwWWRZSHpWdmF3dmg1Sno1U3Q3OExzMVhB?=
- =?utf-8?B?elBkMnZURkVlM3poWlJoT0ZhaGd3UUU5RG9XZkdhQzVoU0RpU1d0TVJzMlNN?=
- =?utf-8?B?VjRUaFZYcmdrT0xMR3B3a1NLb2FwZmpjWVk2RGg3QkRlNmxaQXFIY1VSUEIx?=
- =?utf-8?B?RjhEb1d1YVVXZTNRRThqNU5RUW92RGtHR2VrcGlob2w2b1p0anAxY2N6REpa?=
- =?utf-8?B?REpFWkJVbnFqb2VpSjN2QmZjZytSbk9BdDY4c0RXVjVhVFI1eGtsa3BPN1Qr?=
- =?utf-8?B?UGpuNTlmM0JUTWt2SnBrTUM0cExFRWlEM0lBQVdybXo1QUZ1ZnRVb0YvbzNK?=
- =?utf-8?B?aDlXTnQyZkpTc2FuMUErTXFHbnJITVRTUGlRa1RsRnpTZ3JKNGozS2JTWTM2?=
- =?utf-8?B?YmN2ZENKWnR2TWlMQ3dwSlBqSVdJY09IU0hlQUNORE1nQ3pHSkZIdFJObDhH?=
- =?utf-8?B?WDdsS0dRMXk4alpsYktHaEY0bzhTYk5wN3d3YkEwVjREWWRxd25FUG9vOVpE?=
- =?utf-8?B?dnVNZGhIYmI4S1c4Z2R1bkI1NlgvSFVIY3VvVzJvOVIyK3plRDZ5TFJoYnpW?=
- =?utf-8?B?N2hVMEx5bjhiOVpBTmlyWVhFWmtMNUh0Mi9rMlFCdGZtYVUrOFFOYXFQV0du?=
- =?utf-8?B?Nmc9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 80ea6324-66cf-4966-0ac1-08dbf45e03fe
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2023 00:14:43.6980
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wlnPUdWaErnB2Pgsbn3L/MKdWjAKfYOPbji4MvcnyoMh1uOi07Afd1s8Cqfw7qhwazYOpqjCpmID07Eq3gdgYA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PRAPR10MB5321
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: ci/pavel/linux-test
+X-Kernelci-Tree: cip-gitlab
+X-Kernelci-Report-Type: test
+X-Kernelci-Kernel: v6.1.64-cip10-rt5
+Subject: cip-gitlab/ci/pavel/linux-test ltp-timers: 15 runs,
+ 2 regressions (v6.1.64-cip10-rt5)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
+From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 04 Dec 2023 00:14:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13782
+ <cip-dev@lists.cip-project.org>; Mon, 04 Dec 2023 00:34:37 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13784
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+cip-gitlab/ci/pavel/linux-test ltp-timers: 15 runs, 2 regressions (v6.1.64-=
+cip10-rt5)
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- ...p-rt_6.1.59-cip8-rt4.bb => linux-cip-rt_6.1.64-cip10-rt5.bb} | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
- rename recipes-kernel/linux/{linux-cip-rt_6.1.59-cip8-rt4.bb => linux-cip-rt_6.1.64-cip10-rt5.bb} (59%)
+Regressions Summary
+-------------------
 
-diff --git a/recipes-kernel/linux/linux-cip-rt_6.1.59-cip8-rt4.bb b/recipes-kernel/linux/linux-cip-rt_6.1.64-cip10-rt5.bb
-similarity index 59%
-rename from recipes-kernel/linux/linux-cip-rt_6.1.59-cip8-rt4.bb
-rename to recipes-kernel/linux/linux-cip-rt_6.1.64-cip10-rt5.bb
-index 6385b023..d5285c27 100644
---- a/recipes-kernel/linux/linux-cip-rt_6.1.59-cip8-rt4.bb
-+++ b/recipes-kernel/linux/linux-cip-rt_6.1.64-cip10-rt5.bb
-@@ -7,4 +7,4 @@
- 
- require linux-cip-common.inc
- 
--SRC_URI[sha256sum] = "8c8a68cf3bcbd6fcb126fbf9ec2c70dc125cbde9de5d864c0c36195449354f59"
-+SRC_URI[sha256sum] = "9dfe41c5975565094399798d715bf0c246b318348b600c480eaeb87f0668cc39"
--- 
-2.35.3
+platform     | arch  | lab         | compiler | defconfig | regressions
+-------------+-------+-------------+----------+-----------+------------
+qemu_riscv64 | riscv | lab-broonie | gcc-10   | defconfig | 2          =
+
+
+  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fpavel%2Fli=
+nux-test/kernel/v6.1.64-cip10-rt5/plan/ltp-timers/
+
+  Test:     ltp-timers
+  Tree:     cip-gitlab
+  Branch:   ci/pavel/linux-test
+  Describe: v6.1.64-cip10-rt5
+  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
+  SHA:      b0295fc12bdaf65b61b93e18a316c8e20c1f2507
+
+  Test suite revisions:
+    ltp-tests
+      URL:  https://github.com/linux-test-project/ltp.git
+      SHA:  3f0b2176930cf15a26597e28abf4356050136bbe =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform     | arch  | lab         | compiler | defconfig | regressions
+-------------+-------+-------------+----------+-----------+------------
+qemu_riscv64 | riscv | lab-broonie | gcc-10   | defconfig | 2          =
+
+
+  Details:     https://kernelci.org/test/plan/id/656d0a5cbe808597cce134aa
+
+  Results:     32 PASS, 4 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (riscv64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v6.1.64-cip10-rt5/riscv/defconfig/gcc-10/lab-broonie/ltp-timers-qemu_riscv=
+64.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v6.1.64-cip10-rt5/riscv/defconfig/gcc-10/lab-broonie/ltp-timers-qemu_riscv=
+64.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/sid-ltp/202=
+30623.0/riscv64/rootfs.cpio.gz =
+
+
+
+  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/656d0a5cbe8=
+08597cce134af
+        failing since 9 days (last pass: v6.1.62-cip9-13-g34c303883a305, fi=
+rst fail: v5.10.201-rt98-828-g27523c64bc5dd) =
+
+
+  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/656d0a5cbe8=
+08597cce134af
+        failing since 9 days (last pass: v6.1.62-cip9-13-g34c303883a305, fi=
+rst fail: v5.10.201-rt98-828-g27523c64bc5dd) =
+
+ =20
 
