@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D75C46CA3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CDACC10F07
 	for <webhook@archiver.kernel.org>; Thu,  7 Dec 2023 14:25:58 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.85072.1701959152047851596
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web10.85441.1701959156426594786
  for <cip-dev@lists.cip-project.org>;
- Thu, 07 Dec 2023 06:25:54 -0800
+ Thu, 07 Dec 2023 06:25:56 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.04,256,1695654000"; 
-   d="scan'208";a="185673043"
+   d="scan'208";a="189546071"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 07 Dec 2023 23:25:53 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 07 Dec 2023 23:25:55 +0900
 Received: from localhost.localdomain (unknown [10.226.93.153])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 143184004BC9;
-	Thu,  7 Dec 2023 23:25:51 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 434A44004BC9;
+	Thu,  7 Dec 2023 23:25:54 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 22/25] drm: [HACK DO NOT APPLY] add drmm_encoder_alloc()
-Date: Thu,  7 Dec 2023 14:24:59 +0000
-Message-Id: <20231207142502.401651-23-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 23/25] drm: [HACK DO NOT APPLY] Allow const struct drm_driver
+Date: Thu,  7 Dec 2023 14:25:00 +0000
+Message-Id: <20231207142502.401651-24-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231207142502.401651-1-biju.das.jz@bp.renesas.com>
 References: <20231207142502.401651-1-biju.das.jz@bp.renesas.com>
@@ -35,215 +35,151 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 07 Dec 2023 14:25:58 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13895
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13896
 
-From: Philipp Zabel <p.zabel@pengutronix.de>
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-commit ca5092d04d86986c03b6e0042e2f1cd119c50f5d upstream.
+commit 8f5c7aa078cf6f81ef5afc3f0516b4049decb4eb upstream.
 
-Add an alternative to drm_encoder_init() that allocates and initializes
-an encoder and registers drm_encoder_cleanup() with
-drmm_add_action_or_reset().
+It's nice if a big function/ioctl table like this is const. Only
+downside here is that we need a few more #ifdef to paper over the
+differences when CONFIG_DRM_LEGACY is enabled. Maybe provides more
+motivation to sunset that horror show :-)
 
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+v2:
+- Fix super important checkpatch warning (Sam)
+- Update the kerneldoc example too (Sam)
+
+Acked-by: Maxime Ripard <mripard@kernel.org>
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Cc: Sam Ravnborg <sam@ravnborg.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20201104100425.1922351-4-daniel.vetter@ffwll.ch
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/gpu/drm/drm_encoder.c | 109 +++++++++++++++++++++++++++-------
- include/drm/drm_encoder.h     |  30 ++++++++++
- 2 files changed, 116 insertions(+), 23 deletions(-)
+ drivers/gpu/drm/drm_drv.c | 17 +++++++++++------
+ include/drm/drm_device.h  |  4 ++++
+ include/drm/drm_drv.h     |  5 +++--
+ 3 files changed, 18 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_encoder.c b/drivers/gpu/drm/drm_encoder.c
-index e555281f43d4..24ac9a2350ea 100644
---- a/drivers/gpu/drm/drm_encoder.c
-+++ b/drivers/gpu/drm/drm_encoder.c
-@@ -26,6 +26,7 @@
- #include <drm/drm_device.h>
- #include <drm/drm_drv.h>
- #include <drm/drm_encoder.h>
-+#include <drm/drm_managed.h>
- 
- #include "drm_crtc_internal.h"
- 
-@@ -91,25 +92,11 @@ void drm_encoder_unregister_all(struct drm_device *dev)
- 	}
+diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
+index 4ca995ce19af..b0cd67cedf47 100644
+--- a/drivers/gpu/drm/drm_drv.c
++++ b/drivers/gpu/drm/drm_drv.c
+@@ -284,7 +284,7 @@ void drm_minor_release(struct drm_minor *minor)
+  *		struct clk *pclk;
+  *	};
+  *
+- *	static struct drm_driver driver_drm_driver = {
++ *	static const struct drm_driver driver_drm_driver = {
+  *		[...]
+  *	};
+  *
+@@ -574,7 +574,7 @@ static void drm_dev_init_release(struct drm_device *dev, void *res)
  }
  
--/**
-- * drm_encoder_init - Init a preallocated encoder
-- * @dev: drm device
-- * @encoder: the encoder to init
-- * @funcs: callbacks for this encoder
-- * @encoder_type: user visible type of the encoder
-- * @name: printf style format string for the encoder name, or NULL for default name
-- *
-- * Initialises a preallocated encoder. Encoder should be subclassed as part of
-- * driver encoder objects. At driver unload time drm_encoder_cleanup() should be
-- * called from the driver's &drm_encoder_funcs.destroy hook.
-- *
-- * Returns:
-- * Zero on success, error code on failure.
-- */
--int drm_encoder_init(struct drm_device *dev,
--		     struct drm_encoder *encoder,
--		     const struct drm_encoder_funcs *funcs,
--		     int encoder_type, const char *name, ...)
-+__printf(5, 0)
-+static int __drm_encoder_init(struct drm_device *dev,
-+			      struct drm_encoder *encoder,
-+			      const struct drm_encoder_funcs *funcs,
-+			      int encoder_type, const char *name, va_list ap)
+ static int drm_dev_init(struct drm_device *dev,
+-			struct drm_driver *driver,
++			const struct drm_driver *driver,
+ 			struct device *parent)
+ {
+ 	struct inode *inode;
+@@ -590,7 +590,11 @@ static int drm_dev_init(struct drm_device *dev,
+ 
+ 	kref_init(&dev->ref);
+ 	dev->dev = get_device(parent);
++#ifdef CONFIG_DRM_LEGACY
++	dev->driver = (struct drm_driver *)driver;
++#else
+ 	dev->driver = driver;
++#endif
+ 
+ 	INIT_LIST_HEAD(&dev->managed.resources);
+ 	spin_lock_init(&dev->managed.lock);
+@@ -666,7 +670,7 @@ static void devm_drm_dev_init_release(void *data)
+ 
+ static int devm_drm_dev_init(struct device *parent,
+ 			     struct drm_device *dev,
+-			     struct drm_driver *driver)
++			     const struct drm_driver *driver)
  {
  	int ret;
  
-@@ -125,11 +112,7 @@ int drm_encoder_init(struct drm_device *dev,
- 	encoder->encoder_type = encoder_type;
- 	encoder->funcs = funcs;
- 	if (name) {
--		va_list ap;
--
--		va_start(ap, name);
- 		encoder->name = kvasprintf(GFP_KERNEL, name, ap);
--		va_end(ap);
- 	} else {
- 		encoder->name = kasprintf(GFP_KERNEL, "%s-%d",
- 					  drm_encoder_enum_list[encoder_type].name,
-@@ -150,6 +133,44 @@ int drm_encoder_init(struct drm_device *dev,
- 
+@@ -681,7 +685,8 @@ static int devm_drm_dev_init(struct device *parent,
  	return ret;
  }
-+
-+/**
-+ * drm_encoder_init - Init a preallocated encoder
-+ * @dev: drm device
-+ * @encoder: the encoder to init
-+ * @funcs: callbacks for this encoder
-+ * @encoder_type: user visible type of the encoder
-+ * @name: printf style format string for the encoder name, or NULL for default name
-+ *
-+ * Initializes a preallocated encoder. Encoder should be subclassed as part of
-+ * driver encoder objects. At driver unload time the driver's
-+ * &drm_encoder_funcs.destroy hook should call drm_encoder_cleanup() and kfree()
-+ * the encoder structure. The encoder structure should not be allocated with
-+ * devm_kzalloc().
-+ *
-+ * Note: consider using drmm_encoder_alloc() instead of drm_encoder_init() to
-+ * let the DRM managed resource infrastructure take care of cleanup and
-+ * deallocation.
-+ *
-+ * Returns:
-+ * Zero on success, error code on failure.
-+ */
-+int drm_encoder_init(struct drm_device *dev,
-+		     struct drm_encoder *encoder,
-+		     const struct drm_encoder_funcs *funcs,
-+		     int encoder_type, const char *name, ...)
-+{
-+	va_list ap;
-+	int ret;
-+
-+	WARN_ON(!funcs->destroy);
-+
-+	va_start(ap, name);
-+	ret = __drm_encoder_init(dev, encoder, funcs, encoder_type, name, ap);
-+	va_end(ap);
-+
-+	return ret;
-+}
- EXPORT_SYMBOL(drm_encoder_init);
  
- /**
-@@ -181,6 +202,48 @@ void drm_encoder_cleanup(struct drm_encoder *encoder)
- }
- EXPORT_SYMBOL(drm_encoder_cleanup);
- 
-+static void drmm_encoder_alloc_release(struct drm_device *dev, void *ptr)
-+{
-+	struct drm_encoder *encoder = ptr;
-+
-+	if (WARN_ON(!encoder->dev))
-+		return;
-+
-+	drm_encoder_cleanup(encoder);
-+}
-+
-+void *__drmm_encoder_alloc(struct drm_device *dev, size_t size, size_t offset,
-+			   const struct drm_encoder_funcs *funcs,
-+			   int encoder_type, const char *name, ...)
-+{
-+	void *container;
-+	struct drm_encoder *encoder;
-+	va_list ap;
-+	int ret;
-+
-+	if (WARN_ON(funcs && funcs->destroy))
-+		return ERR_PTR(-EINVAL);
-+
-+	container = drmm_kzalloc(dev, size, GFP_KERNEL);
-+	if (!container)
-+		return ERR_PTR(-EINVAL);
-+
-+	encoder = container + offset;
-+
-+	va_start(ap, name);
-+	ret = __drm_encoder_init(dev, encoder, funcs, encoder_type, name, ap);
-+	va_end(ap);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	ret = drmm_add_action_or_reset(dev, drmm_encoder_alloc_release, encoder);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return container;
-+}
-+EXPORT_SYMBOL(__drmm_encoder_alloc);
-+
- static struct drm_crtc *drm_encoder_get_crtc(struct drm_encoder *encoder)
+-void *__devm_drm_dev_alloc(struct device *parent, struct drm_driver *driver,
++void *__devm_drm_dev_alloc(struct device *parent,
++			   const struct drm_driver *driver,
+ 			   size_t size, size_t offset)
  {
- 	struct drm_connector *connector;
-diff --git a/include/drm/drm_encoder.h b/include/drm/drm_encoder.h
-index a60f5f1555ac..8e1316caba28 100644
---- a/include/drm/drm_encoder.h
-+++ b/include/drm/drm_encoder.h
-@@ -195,6 +195,36 @@ int drm_encoder_init(struct drm_device *dev,
- 		     const struct drm_encoder_funcs *funcs,
- 		     int encoder_type, const char *name, ...);
+ 	void *container;
+@@ -716,7 +721,7 @@ EXPORT_SYMBOL(__devm_drm_dev_alloc);
+  * RETURNS:
+  * Pointer to new DRM device, or ERR_PTR on failure.
+  */
+-struct drm_device *drm_dev_alloc(struct drm_driver *driver,
++struct drm_device *drm_dev_alloc(const struct drm_driver *driver,
+ 				 struct device *parent)
+ {
+ 	struct drm_device *dev;
+@@ -861,7 +866,7 @@ static void remove_compat_control_link(struct drm_device *dev)
+  */
+ int drm_dev_register(struct drm_device *dev, unsigned long flags)
+ {
+-	struct drm_driver *driver = dev->driver;
++	const struct drm_driver *driver = dev->driver;
+ 	int ret;
  
-+__printf(6, 7)
-+void *__drmm_encoder_alloc(struct drm_device *dev,
-+			   size_t size, size_t offset,
-+			   const struct drm_encoder_funcs *funcs,
-+			   int encoder_type,
-+			   const char *name, ...);
-+
-+/**
-+ * drmm_encoder_alloc - Allocate and initialize an encoder
-+ * @dev: drm device
-+ * @type: the type of the struct which contains struct &drm_encoder
-+ * @member: the name of the &drm_encoder within @type
-+ * @funcs: callbacks for this encoder (optional)
-+ * @encoder_type: user visible type of the encoder
-+ * @name: printf style format string for the encoder name, or NULL for default name
-+ *
-+ * Allocates and initializes an encoder. Encoder should be subclassed as part of
-+ * driver encoder objects. Cleanup is automatically handled through registering
-+ * drm_encoder_cleanup() with drmm_add_action().
-+ *
-+ * The @drm_encoder_funcs.destroy hook must be NULL.
-+ *
-+ * Returns:
-+ * Pointer to new encoder, or ERR_PTR on failure.
-+ */
-+#define drmm_encoder_alloc(dev, type, member, funcs, encoder_type, name, ...) \
-+	((type *)__drmm_encoder_alloc(dev, sizeof(type), \
-+				      offsetof(type, member), funcs, \
-+				      encoder_type, name, ##__VA_ARGS__))
-+
+ 	if (!driver->load)
+diff --git a/include/drm/drm_device.h b/include/drm/drm_device.h
+index f4f68e7a9149..2c361964aee7 100644
+--- a/include/drm/drm_device.h
++++ b/include/drm/drm_device.h
+@@ -83,7 +83,11 @@ struct drm_device {
+ 	} managed;
+ 
+ 	/** @driver: DRM driver managing the device */
++#ifdef CONFIG_DRM_LEGACY
+ 	struct drm_driver *driver;
++#else
++	const struct drm_driver *driver;
++#endif
+ 
+ 	/**
+ 	 * @dev_private:
+diff --git a/include/drm/drm_drv.h b/include/drm/drm_drv.h
+index e57d0440f00f..8324b65b4dae 100644
+--- a/include/drm/drm_drv.h
++++ b/include/drm/drm_drv.h
+@@ -588,7 +588,8 @@ struct drm_driver {
+ 	int dev_priv_size;
+ };
+ 
+-void *__devm_drm_dev_alloc(struct device *parent, struct drm_driver *driver,
++void *__devm_drm_dev_alloc(struct device *parent,
++			   const struct drm_driver *driver,
+ 			   size_t size, size_t offset);
+ 
  /**
-  * drm_encoder_index - find the index of a registered encoder
-  * @encoder: encoder to find index for
+@@ -621,7 +622,7 @@ void *__devm_drm_dev_alloc(struct device *parent, struct drm_driver *driver,
+ 	((type *) __devm_drm_dev_alloc(parent, driver, sizeof(type), \
+ 				       offsetof(type, member)))
+ 
+-struct drm_device *drm_dev_alloc(struct drm_driver *driver,
++struct drm_device *drm_dev_alloc(const struct drm_driver *driver,
+ 				 struct device *parent);
+ int drm_dev_register(struct drm_device *dev, unsigned long flags);
+ void drm_dev_unregister(struct drm_device *dev);
 -- 
 2.25.1
 
