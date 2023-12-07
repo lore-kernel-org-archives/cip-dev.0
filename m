@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1895C10F09
-	for <webhook@archiver.kernel.org>; Thu,  7 Dec 2023 10:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC6E5C46CA3
+	for <webhook@archiver.kernel.org>; Thu,  7 Dec 2023 10:55:45 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web10.81315.1701946517933410769
  for <cip-dev@lists.cip-project.org>;
- Thu, 07 Dec 2023 02:55:32 -0800
+ Thu, 07 Dec 2023 02:55:38 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.04,256,1695654000"; 
-   d="scan'208";a="185659848"
+   d="scan'208";a="185659857"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 07 Dec 2023 19:55:31 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 07 Dec 2023 19:55:38 +0900
 Received: from localhost.localdomain (unknown [10.226.93.153])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id EC5BA420A72E;
-	Thu,  7 Dec 2023 19:55:29 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6DD07420DBD6;
+	Thu,  7 Dec 2023 19:55:36 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 09/12] clk: renesas: r9a07g044: Add DSI clock and reset entries
-Date: Thu,  7 Dec 2023 10:55:05 +0000
-Message-Id: <20231207105508.171162-10-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 12/12] clk: renesas: rzg2l: Fix CPG_SIPLL5_CLK1 register write
+Date: Thu,  7 Dec 2023 10:55:08 +0000
+Message-Id: <20231207105508.171162-13-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231207105508.171162-1-biju.das.jz@bp.renesas.com>
 References: <20231207105508.171162-1-biju.das.jz@bp.renesas.com>
@@ -34,63 +34,58 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 07 Dec 2023 10:55:35 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13821
+ <cip-dev@lists.cip-project.org>; Thu, 07 Dec 2023 10:55:45 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13824
 
-commit 67f80edf8390fd8201bb285fe2b55df9e2e5edbe upstream.
+commit d1c20885d3b01e6a62e920af4b227abd294d22f3 upstream.
 
-Add DSI clock and reset entries to CPG driver.
+As per the RZ/G2L HW(Rev.1.30 May2023) manual, there are no "write enable"
+bits in the CPG_SIPLL5_CLK1 register.  So fix the CPG_SIPLL5_CLK register
+write by removing the "write enable" bits.
 
+Fixes: 1561380ee72f ("clk: renesas: rzg2l: Add FOUTPOSTDIV clk support")
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20220430114156.6260-10-biju.das.jz@bp.renesas.com
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20230518152334.514922-1-biju.das.jz@bp.renesas.com
+[geert: Remove CPG_SIPLL5_CLK1_*_WEN bit definitions]
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a07g044-cpg.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ drivers/clk/renesas/rzg2l-cpg.c | 6 ++----
+ drivers/clk/renesas/rzg2l-cpg.h | 3 ---
+ 2 files changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index e27a8e50fac1..ab546d57cb60 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -182,7 +182,7 @@ static const struct {
- };
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index 5dfe3624f681..77513ceaaf2d 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -600,10 +600,8 @@ static int rzg2l_cpg_sipll5_set_rate(struct clk_hw *hw,
+ 	}
  
- static const struct {
--	struct rzg2l_mod_clk common[64];
-+	struct rzg2l_mod_clk common[70];
- #ifdef CONFIG_CLK_R9A07G054
- 	struct rzg2l_mod_clk drp[0];
- #endif
-@@ -240,6 +240,18 @@ static const struct {
- 					0x558, 1),
- 		DEF_MOD("gpu_ace_clk",	R9A07G044_GPU_ACE_CLK, R9A07G044_CLK_P1,
- 					0x558, 2),
-+		DEF_MOD("dsi_pll_clk",	R9A07G044_MIPI_DSI_PLLCLK, R9A07G044_CLK_M1,
-+					0x568, 0),
-+		DEF_MOD("dsi_sys_clk",	R9A07G044_MIPI_DSI_SYSCLK, CLK_M2_DIV2,
-+					0x568, 1),
-+		DEF_MOD("dsi_aclk",	R9A07G044_MIPI_DSI_ACLK, R9A07G044_CLK_P1,
-+					0x568, 2),
-+		DEF_MOD("dsi_pclk",	R9A07G044_MIPI_DSI_PCLK, R9A07G044_CLK_P2,
-+					0x568, 3),
-+		DEF_MOD("dsi_vclk",	R9A07G044_MIPI_DSI_VCLK, R9A07G044_CLK_M3,
-+					0x568, 4),
-+		DEF_MOD("dsi_lpclk",	R9A07G044_MIPI_DSI_LPCLK, R9A07G044_CLK_M4,
-+					0x568, 5),
- 		DEF_COUPLED("lcdc_a",	R9A07G044_LCDC_CLK_A, R9A07G044_CLK_M0,
- 					0x56c, 0),
- 		DEF_COUPLED("lcdc_p",	R9A07G044_LCDC_CLK_P, R9A07G044_CLK_ZT,
-@@ -341,6 +353,9 @@ static struct rzg2l_reset r9a07g044_resets[] = {
- 	DEF_RST(R9A07G044_GPU_RESETN, 0x858, 0),
- 	DEF_RST(R9A07G044_GPU_AXI_RESETN, 0x858, 1),
- 	DEF_RST(R9A07G044_GPU_ACE_RESETN, 0x858, 2),
-+	DEF_RST(R9A07G044_MIPI_DSI_CMN_RSTB, 0x868, 0),
-+	DEF_RST(R9A07G044_MIPI_DSI_ARESET_N, 0x868, 1),
-+	DEF_RST(R9A07G044_MIPI_DSI_PRESET_N, 0x868, 2),
- 	DEF_RST(R9A07G044_LCDC_RESET_N, 0x86c, 0),
- 	DEF_RST(R9A07G044_SSI0_RST_M2_REG, 0x870, 0),
- 	DEF_RST(R9A07G044_SSI1_RST_M2_REG, 0x870, 1),
+ 	/* Output clock setting 1 */
+-	writel(CPG_SIPLL5_CLK1_POSTDIV1_WEN | CPG_SIPLL5_CLK1_POSTDIV2_WEN |
+-	       CPG_SIPLL5_CLK1_REFDIV_WEN  | (params.pl5_postdiv1 << 0) |
+-	       (params.pl5_postdiv2 << 4) | (params.pl5_refdiv << 8),
+-	       priv->base + CPG_SIPLL5_CLK1);
++	writel((params.pl5_postdiv1 << 0) | (params.pl5_postdiv2 << 4) |
++	       (params.pl5_refdiv << 8), priv->base + CPG_SIPLL5_CLK1);
+ 
+ 	/* Output clock setting, SSCG modulation value setting 3 */
+ 	writel((params.pl5_fracin << 8), priv->base + CPG_SIPLL5_CLK3);
+diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
+index cecbdf5e4f93..b33a3e79161b 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.h
++++ b/drivers/clk/renesas/rzg2l-cpg.h
+@@ -32,9 +32,6 @@
+ #define CPG_SIPLL5_STBY_RESETB_WEN	BIT(16)
+ #define CPG_SIPLL5_STBY_SSCG_EN_WEN	BIT(18)
+ #define CPG_SIPLL5_STBY_DOWNSPREAD_WEN	BIT(20)
+-#define CPG_SIPLL5_CLK1_POSTDIV1_WEN	BIT(16)
+-#define CPG_SIPLL5_CLK1_POSTDIV2_WEN	BIT(20)
+-#define CPG_SIPLL5_CLK1_REFDIV_WEN	BIT(24)
+ #define CPG_SIPLL5_CLK4_RESV_LSB	(0xFF)
+ #define CPG_SIPLL5_MON_PLL5_LOCK	BIT(4)
+ 
 -- 
 2.25.1
 
