@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCCDFC46CA0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C26FDC10F05
 	for <webhook@archiver.kernel.org>; Thu,  7 Dec 2023 14:25:17 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.85040.1701959111442352943
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web11.85038.1701959107174448747
  for <cip-dev@lists.cip-project.org>;
- Thu, 07 Dec 2023 06:25:14 -0800
+ Thu, 07 Dec 2023 06:25:08 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.04,256,1695654000"; 
-   d="scan'208";a="185672994"
+   d="scan'208";a="189546014"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 07 Dec 2023 23:25:14 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 07 Dec 2023 23:25:07 +0900
 Received: from localhost.localdomain (unknown [10.226.93.153])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 922EF40104D1;
-	Thu,  7 Dec 2023 23:25:12 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 141174004BC9;
+	Thu,  7 Dec 2023 23:25:05 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 04/25] drm: of: Add drm_of_get_data_lanes_count and drm_of_get_data_lanes_ep
-Date: Thu,  7 Dec 2023 14:24:41 +0000
-Message-Id: <20231207142502.401651-5-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 01/25] drm/bridge: Add a function to abstract away panels
+Date: Thu,  7 Dec 2023 14:24:38 +0000
+Message-Id: <20231207142502.401651-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231207142502.401651-1-biju.das.jz@bp.renesas.com>
 References: <20231207142502.401651-1-biju.das.jz@bp.renesas.com>
@@ -35,142 +35,125 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 07 Dec 2023 14:25:17 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13877
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13874
 
-From: Marek Vasut <marex@denx.de>
+From: Maxime Ripard <maxime@cerno.tech>
 
-commit fc801750b197d0f00c09e01e59a7dcd240fddcb5 upstream.
+commit 87ea95808d53e56b03e620e8f8f3add48899a88d upstream.
 
-Add helper function to count and sanitize DT "data-lanes" property
-and return either error or the data-lanes count. This is useful for
-both DSI and (e)DP "data-lanes" property. The later version of the
-function is an extra wrapper which handles the endpoint look up by
-regs, that's what majority of the drivers duplicate too, but not all
-of them.
+Display drivers so far need to have a lot of boilerplate to first
+retrieve either the panel or bridge that they are connected to using
+drm_of_find_panel_or_bridge(), and then either deal with each with ad-hoc
+functions or create a drm panel bridge through drm_panel_bridge_add.
 
-Reviewed-by: Andrzej Hajda <andrzej.hajda@intel.com>
-Signed-off-by: Marek Vasut <marex@denx.de>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Maxime Ripard <maxime@cerno.tech>
-Cc: Robert Foss <robert.foss@linaro.org>
-Cc: Sam Ravnborg <sam@ravnborg.org>
-To: dri-devel@lists.freedesktop.org
-Link: https://patchwork.freedesktop.org/patch/msgid/20220524010522.528569-1-marex@denx.de
+In order to reduce the boilerplate and hopefully create a path of least
+resistance towards using the DRM panel bridge layer, let's create the
+function devm_drm_of_get_bridge() to reduce that boilerplate.
+
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20210910130941.1740182-2-maxime@cerno.tech
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/gpu/drm/drm_of.c | 61 ++++++++++++++++++++++++++++++++++++++++
- include/drm/drm_of.h     | 20 +++++++++++++
- 2 files changed, 81 insertions(+)
+ drivers/gpu/drm/drm_bridge.c | 42 ++++++++++++++++++++++++++++++++----
+ drivers/gpu/drm/drm_of.c     |  3 +++
+ include/drm/drm_bridge.h     |  2 ++
+ 3 files changed, 43 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
-index 37c34146eea8..041af8d30857 100644
---- a/drivers/gpu/drm/drm_of.c
-+++ b/drivers/gpu/drm/drm_of.c
-@@ -402,3 +402,64 @@ int drm_of_lvds_get_dual_link_pixel_order(const struct device_node *port1,
- 		DRM_LVDS_DUAL_LINK_ODD_EVEN_PIXELS;
+diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+index d799ec14fd7f..f0f0a4efd200 100644
+--- a/drivers/gpu/drm/drm_bridge.c
++++ b/drivers/gpu/drm/drm_bridge.c
+@@ -28,6 +28,8 @@
+ #include <drm/drm_atomic_state_helper.h>
+ #include <drm/drm_bridge.h>
+ #include <drm/drm_encoder.h>
++#include <drm/drm_of.h>
++#include <drm/drm_print.h>
+ 
+ #include "drm_crtc_internal.h"
+ 
+@@ -50,10 +52,8 @@
+  *
+  * Display drivers are responsible for linking encoders with the first bridge
+  * in the chains. This is done by acquiring the appropriate bridge with
+- * of_drm_find_bridge() or drm_of_find_panel_or_bridge(), or creating it for a
+- * panel with drm_panel_bridge_add_typed() (or the managed version
+- * devm_drm_panel_bridge_add_typed()). Once acquired, the bridge shall be
+- * attached to the encoder with a call to drm_bridge_attach().
++ * devm_drm_of_get_bridge(). Once acquired, the bridge shall be attached to the
++ * encoder with a call to drm_bridge_attach().
+  *
+  * Bridges are responsible for linking themselves with the next bridge in the
+  * chain, if any. This is done the same way as for encoders, with the call to
+@@ -1223,6 +1223,40 @@ struct drm_bridge *of_drm_find_bridge(struct device_node *np)
+ 	return NULL;
  }
- EXPORT_SYMBOL_GPL(drm_of_lvds_get_dual_link_pixel_order);
+ EXPORT_SYMBOL(of_drm_find_bridge);
 +
 +/**
-+ * drm_of_get_data_lanes_count - Get DSI/(e)DP data lane count
-+ * @endpoint: DT endpoint node of the DSI/(e)DP source or sink
-+ * @min: minimum supported number of data lanes
-+ * @max: maximum supported number of data lanes
++ * devm_drm_of_get_bridge - Return next bridge in the chain
++ * @dev: device to tie the bridge lifetime to
++ * @np: device tree node containing encoder output ports
++ * @port: port in the device tree node
++ * @endpoint: endpoint in the device tree node
 + *
-+ * Count DT "data-lanes" property elements and check for validity.
++ * Given a DT node's port and endpoint number, finds the connected node
++ * and returns the associated bridge if any, or creates and returns a
++ * drm panel bridge instance if a panel is connected.
 + *
-+ * Return:
-+ * * min..max - positive integer count of "data-lanes" elements
-+ * * -ve - the "data-lanes" property is missing or invalid
-+ * * -EINVAL - the "data-lanes" property is unsupported
++ * Returns a pointer to the bridge if successful, or an error pointer
++ * otherwise.
 + */
-+int drm_of_get_data_lanes_count(const struct device_node *endpoint,
-+				const unsigned int min, const unsigned int max)
++struct drm_bridge *devm_drm_of_get_bridge(struct device *dev,
++					  struct device_node *np,
++					  u32 port, u32 endpoint)
 +{
++	struct drm_bridge *bridge;
++	struct drm_panel *panel;
 +	int ret;
 +
-+	ret = of_property_count_u32_elems(endpoint, "data-lanes");
-+	if (ret < 0)
-+		return ret;
++	ret = drm_of_find_panel_or_bridge(np, port, endpoint,
++					  &panel, &bridge);
++	if (ret)
++		return ERR_PTR(ret);
 +
-+	if (ret < min || ret > max)
-+		return -EINVAL;
++	if (panel)
++		bridge = devm_drm_panel_bridge_add(dev, panel);
 +
-+	return ret;
++	return bridge;
 +}
-+EXPORT_SYMBOL_GPL(drm_of_get_data_lanes_count);
-+
-+/**
-+ * drm_of_get_data_lanes_count_ep - Get DSI/(e)DP data lane count by endpoint
-+ * @port: DT port node of the DSI/(e)DP source or sink
-+ * @port_reg: identifier (value of reg property) of the parent port node
-+ * @reg: identifier (value of reg property) of the endpoint node
-+ * @min: minimum supported number of data lanes
-+ * @max: maximum supported number of data lanes
-+ *
-+ * Count DT "data-lanes" property elements and check for validity.
-+ * This variant uses endpoint specifier.
-+ *
-+ * Return:
-+ * * min..max - positive integer count of "data-lanes" elements
-+ * * -EINVAL - the "data-mapping" property is unsupported
-+ * * -ENODEV - the "data-mapping" property is missing
-+ */
-+int drm_of_get_data_lanes_count_ep(const struct device_node *port,
-+				   int port_reg, int reg,
-+				   const unsigned int min,
-+				   const unsigned int max)
-+{
-+	struct device_node *endpoint;
-+	int ret;
-+
-+	endpoint = of_graph_get_endpoint_by_regs(port, port_reg, reg);
-+	ret = drm_of_get_data_lanes_count(endpoint, min, max);
-+	of_node_put(endpoint);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(drm_of_get_data_lanes_count_ep);
-diff --git a/include/drm/drm_of.h b/include/drm/drm_of.h
-index b9b093add92e..5a6bf7146028 100644
---- a/include/drm/drm_of.h
-+++ b/include/drm/drm_of.h
-@@ -49,6 +49,12 @@ int drm_of_find_panel_or_bridge(const struct device_node *np,
- 				struct drm_bridge **bridge);
- int drm_of_lvds_get_dual_link_pixel_order(const struct device_node *port1,
- 					  const struct device_node *port2);
-+int drm_of_get_data_lanes_count(const struct device_node *endpoint,
-+				const unsigned int min, const unsigned int max);
-+int drm_of_get_data_lanes_count_ep(const struct device_node *port,
-+				   int port_reg, int reg,
-+				   const unsigned int min,
-+				   const unsigned int max);
- #else
- static inline uint32_t drm_of_crtc_port_mask(struct drm_device *dev,
- 					  struct device_node *port)
-@@ -98,6 +104,20 @@ drm_of_lvds_get_dual_link_pixel_order(const struct device_node *port1,
- {
- 	return -EINVAL;
- }
-+
-+int drm_of_get_data_lanes_count(const struct device_node *endpoint,
-+				const unsigned int min, const unsigned int max)
-+{
-+	return -EINVAL;
-+}
-+
-+int drm_of_get_data_lanes_count_ep(const struct device_node *port,
-+				   int port_reg, int reg
-+				   const unsigned int min,
-+				   const unsigned int max)
-+{
-+	return -EINVAL;
-+}
++EXPORT_SYMBOL(devm_drm_of_get_bridge);
  #endif
  
- /*
+ MODULE_AUTHOR("Ajay Kumar <ajaykumar.rs@samsung.com>");
+diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
+index 997b8827fed2..37c34146eea8 100644
+--- a/drivers/gpu/drm/drm_of.c
++++ b/drivers/gpu/drm/drm_of.c
+@@ -231,6 +231,9 @@ EXPORT_SYMBOL_GPL(drm_of_encoder_active_endpoint);
+  * return either the associated struct drm_panel or drm_bridge device. Either
+  * @panel or @bridge must not be NULL.
+  *
++ * This function is deprecated and should not be used in new drivers. Use
++ * devm_drm_of_get_bridge() instead.
++ *
+  * Returns zero if successful, or one of the standard error codes if it fails.
+  */
+ int drm_of_find_panel_or_bridge(const struct device_node *np,
+diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+index 055486e35e68..3c640e704186 100644
+--- a/include/drm/drm_bridge.h
++++ b/include/drm/drm_bridge.h
+@@ -891,6 +891,8 @@ struct drm_bridge *devm_drm_panel_bridge_add(struct device *dev,
+ struct drm_bridge *devm_drm_panel_bridge_add_typed(struct device *dev,
+ 						   struct drm_panel *panel,
+ 						   u32 connector_type);
++struct drm_bridge *devm_drm_of_get_bridge(struct device *dev, struct device_node *node,
++					  u32 port, u32 endpoint);
+ struct drm_connector *drm_panel_bridge_connector(struct drm_bridge *bridge);
+ #endif
+ 
 -- 
 2.25.1
 
