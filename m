@@ -1,173 +1,152 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF78DC46CA7
-	for <webhook@archiver.kernel.org>; Thu,  7 Dec 2023 14:02:07 +0000 (UTC)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
- by mx.groups.io with SMTP id smtpd.web10.84744.1701957723866499016
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Thu, 07 Dec 2023 06:02:03 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1CD3C10DC3
+	for <webhook@archiver.kernel.org>; Thu,  7 Dec 2023 14:25:07 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web11.85038.1701959107174448747
+ for <cip-dev@lists.cip-project.org>;
+ Thu, 07 Dec 2023 06:25:07 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=PELrygrm;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.175, mailfrom: bot@kernelci.org)
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1d098b87eeeso8151045ad.0
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Thu, 07 Dec 2023 06:02:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1701957723; x=1702562523; darn=lists.cip-project.org;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=a4Q6Y/a87unz+n4Xkg5rmncKFFdnys9MV4Hv1gCAJeo=;
-        b=PELrygrm1My2XCArQXjSaMocjvZmA7Pc84cB6Etgcwt+2iGN0FyaTxGiNG8Wu1tgNk
-         d7hkiFaCHdLS1hOlN2vIUQgebofCuJh+qiEO0YX7haw168WILpnrmhsBfi8pETPlURap
-         UT0809o9VIg290ToNOHJCGJTmPSDNgHHQAaRT1csmWcuAJ8TSGqh3uk9n1eSuDGNfqur
-         DHV2oMysWd8g4C1t2pLB26Yy5Muf64vRicKgkpAURHSfIfpsLBtQNnVNQLtKTY3aTPsH
-         q8pOVk6BQUF2TCY30rI8jq3g5WX+UAMV82OL4i8fg8uotyq9ffH0PWDqq1zjdERARylS
-         HmDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701957723; x=1702562523;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=a4Q6Y/a87unz+n4Xkg5rmncKFFdnys9MV4Hv1gCAJeo=;
-        b=sLIx4YihKISgqYFdTPeqO6Lp5wyG4F1G48wkJInubUzvBG6F3btY1r/SiyaVHvyVVv
-         Kok0tmM9GcYpXTfoPt2snE4ugroq/5Pjtkr4BhQ25N16LaPHrfLr2Rz4pzCzlP9h0jZ9
-         2BkbfNdizQY0SyHRHcpU0trxif2sGir2bZhEadU+3jEEiItkvsNIbvbiUlFkV4L+NMgs
-         Ahvq4KBCdToq8C1dzZjysJknlXig7XmumPzdrhLkcTcWRbV90IDany3nj1zA/uCR9jCa
-         Lu1OkiCOfBZheLSdardJTdbG1pX7eWX20PMOsGfwKN38T7GW8C+KxDj7+CcLth7moz7Z
-         LGFQ==
-X-Gm-Message-State: AOJu0Yzh3rMzEjUP/tHAQeVE8I63YUGvo8QM3ML4ilJgPRTrGRPZ8TgU
-	7o4+FoDh+xvoPyospaKDKfp/W1Fu9+oxrVcz74fyfw==
-X-Google-Smtp-Source: AGHT+IExqF89HA0Q+MZ/VGkavhPVqGsR2wth6KEfYC1IB80nNKKBgzUq052xp/P0hnCP58p1Mui2zg==
-X-Received: by 2002:a17:90b:1298:b0:286:6cc0:cac2 with SMTP id fw24-20020a17090b129800b002866cc0cac2mr2286915pjb.57.1701957722733;
-        Thu, 07 Dec 2023 06:02:02 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id ev4-20020a17090aeac400b0028a01156d24sm1363571pjb.49.2023.12.07.06.01.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Dec 2023 06:01:58 -0800 (PST)
-Message-ID: <6571d056.170a0220.ab72f.3196@mx.google.com>
-Date: Thu, 07 Dec 2023 06:01:58 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
+X-IronPort-AV: E=Sophos;i="6.04,256,1695654000"; 
+   d="scan'208";a="189546010"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 07 Dec 2023 23:25:05 +0900
+Received: from localhost.localdomain (unknown [10.226.93.153])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id DF7084004BC9;
+	Thu,  7 Dec 2023 23:25:03 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Pavel Machek <pavel@denx.de>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 00/25] Add RZ/G2L DSI support
+Date: Thu,  7 Dec 2023 14:24:37 +0000
+Message-Id: <20231207142502.401651-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-5.10.y-cip
-X-Kernelci-Tree: cip
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: v5.10.201-cip41-16-g3c85fba3b6e5d
-Subject: cip/linux-5.10.y-cip ltp-ipc: 15 runs,
- 2 regressions (v5.10.201-cip41-16-g3c85fba3b6e5d)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
- kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
-From: "kernelci.org bot" <bot@kernelci.org>
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 07 Dec 2023 14:02:07 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13871
+ <cip-dev@lists.cip-project.org>; Thu, 07 Dec 2023 14:25:07 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13873
 
-cip/linux-5.10.y-cip ltp-ipc: 15 runs, 2 regressions (v5.10.201-cip41-16-g3=
-c85fba3b6e5d)
+This patch series aims to add RZ/G2L DSI support on
+RZ/{G2L,GLC,V2L} SMARC EVKs.
+ 
+All the patches are cherry-picked from the mainline, except [1] and [2]
 
-Regressions Summary
--------------------
+Without [1] DU is giving probe failure as the encoder is not
+able to find all the connected bridges due to the framework changes
+between mainline and 5.10 kernel. So just restructured the bridge handling.
 
-platform                     | arch  | lab         | compiler | defconfig |=
- regressions
------------------------------+-------+-------------+----------+-----------+=
-------------
-meson-gxl-s905x-libretech-cc | arm64 | lab-broonie | gcc-10   | defconfig |=
- 1          =
+IA55 IRQ driver is not backported to 5.10, so defining it in dts is
+giving warnings, so drop IRQs in patch[2].
 
-r8a774a1-hihope-rzg2m-ex     | arm64 | lab-cip     | gcc-10   | defconfig |=
- 1          =
+Please don't apply patch#18 to patch#25 as it is added for testing purpose.
 
+[1]
+0011-drm-rcar-du-rzg2l_mipi_dsi-Reorder-bridge-attach.patch
+[2]
+0017-arm64-dts-renesas-Drop-ADV7535-IRQ.patch
 
-  Details:  https://kernelci.org/test/job/cip/branch/linux-5.10.y-cip/kerne=
-l/v5.10.201-cip41-16-g3c85fba3b6e5d/plan/ltp-ipc/
+Biju Das (18):
+  dt-bindings: display: bridge: Document RZ/G2L MIPI DSI TX bindings
+  dt-bindings: display: bridge: renesas,rzg2l-mipi-dsi: Document RZ/V2L
+    support
+  drm: rcar-du: Add RZ/G2L DSI driver
+  drm: rcar-du: Fix Kconfig dependency between DRM and RZG2L_MIPI_DSI
+  drm: rcar-du: rzg2l_mipi_dsi: Enhance device lanes check
+  drm: rcar-du: rzg2l_mipi_dsi: Reorder bridge attach
+  arm64: defconfig: Enable Renesas RZ/G2L MIPI DSI driver
+  arm64: dts: renesas: r9a07g044: Add DSI node
+  arm64: dts: renesas: r9a07g054: Add DSI node
+  arm64: dts: renesas: rzg2l-smarc: Link DSI with ADV7535
+  arm64: dts: renesas: rzg2lc-smarc: Link DSI with ADV7535
+  arm64: dts: renesas: Drop ADV7535 IRQ
+  arm64: dts: renesas: r9a07g044: [HACK DO NOT APPLY] Add DU node
+  arm64: dts: renesas: r9a07g054: [HACK DO NOT APPLY] Add DU node
+  arm64: dts: renesas: rzg2l-smarc: [HACK DO NOT APPLY] Enable DU and
+    link with DSI
+  arm64: dts: renesas: rzg2lc-smarc: [HACK DO NOT APPLY] Enable DU and
+    link with DSI
+  drm: [HACK DO NOT APPLY] Add RZ/G2L DU Support
+  defconfig: [HACK DO NOT APPLY] Enable display on RZ/G2L SMARC EVK.
 
-  Test:     ltp-ipc
-  Tree:     cip
-  Branch:   linux-5.10.y-cip
-  Describe: v5.10.201-cip41-16-g3c85fba3b6e5d
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
-it
-  SHA:      3c85fba3b6e5da8b112e7ecd142649674648028f
+Daniel Vetter (1):
+  drm: [HACK DO NOT APPLY] Allow const struct drm_driver
 
-  Test suite revisions:
-    ltp-tests
-      URL:  https://github.com/linux-test-project/ltp.git
-      SHA:  3f0b2176930cf15a26597e28abf4356050136bbe =
+Marek Vasut (2):
+  drm: of: Add drm_of_get_data_lanes_count and drm_of_get_data_lanes_ep
+  drm: of: Mark empty drm_of_get_data_lanes_count and
+    drm_of_get_data_lanes_ep static
 
+Maxime Ripard (3):
+  drm/bridge: Add a function to abstract away panels
+  drm/bridge: Add stubs for devm_drm_of_get_bridge when OF is disabled
+  drm/bridge: Move devm_drm_of_get_bridge to bridge/panel.c
 
+Philipp Zabel (1):
+  drm: [HACK DO NOT APPLY] add drmm_encoder_alloc()
 
-Test Regressions
----------------- =
+ .../bindings/display/bridge/renesas,dsi.yaml  | 183 ++++
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi    |  42 +
+ arch/arm64/boot/dts/renesas/r9a07g054.dtsi    |  43 +
+ arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi  |  98 +++
+ arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi |  98 +++
+ arch/arm64/configs/defconfig                  |   2 +
+ drivers/gpu/drm/Kconfig                       |   2 +
+ drivers/gpu/drm/Makefile                      |   1 +
+ drivers/gpu/drm/bridge/panel.c                |  37 +
+ drivers/gpu/drm/drm_bridge.c                  |   8 +-
+ drivers/gpu/drm/drm_drv.c                     |  17 +-
+ drivers/gpu/drm/drm_encoder.c                 | 109 ++-
+ drivers/gpu/drm/drm_of.c                      |  64 ++
+ drivers/gpu/drm/rcar-du/Kconfig               |   8 +
+ drivers/gpu/drm/rcar-du/Makefile              |   2 +
+ drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi.c      | 816 ++++++++++++++++++
+ drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi_regs.h | 151 ++++
+ drivers/gpu/drm/rz-du/Kconfig                 |  22 +
+ drivers/gpu/drm/rz-du/Makefile                |   8 +
+ drivers/gpu/drm/rz-du/rzg2l_du_crtc.c         | 432 ++++++++++
+ drivers/gpu/drm/rz-du/rzg2l_du_crtc.h         |  91 ++
+ drivers/gpu/drm/rz-du/rzg2l_du_drv.c          | 187 ++++
+ drivers/gpu/drm/rz-du/rzg2l_du_drv.h          |  85 ++
+ drivers/gpu/drm/rz-du/rzg2l_du_encoder.c      | 121 +++
+ drivers/gpu/drm/rz-du/rzg2l_du_encoder.h      |  33 +
+ drivers/gpu/drm/rz-du/rzg2l_du_kms.c          | 389 +++++++++
+ drivers/gpu/drm/rz-du/rzg2l_du_kms.h          |  43 +
+ drivers/gpu/drm/rz-du/rzg2l_du_regs.h         |  67 ++
+ drivers/gpu/drm/rz-du/rzg2l_du_vsp.c          | 428 +++++++++
+ drivers/gpu/drm/rz-du/rzg2l_du_vsp.h          |  96 +++
+ include/drm/drm_bridge.h                      |  15 +
+ include/drm/drm_device.h                      |   4 +
+ include/drm/drm_drv.h                         |   5 +-
+ include/drm/drm_encoder.h                     |  30 +
+ include/drm/drm_of.h                          |  22 +
+ 35 files changed, 3724 insertions(+), 35 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
+ create mode 100644 drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi.c
+ create mode 100644 drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi_regs.h
+ create mode 100644 drivers/gpu/drm/rz-du/Kconfig
+ create mode 100644 drivers/gpu/drm/rz-du/Makefile
+ create mode 100644 drivers/gpu/drm/rz-du/rzg2l_du_crtc.c
+ create mode 100644 drivers/gpu/drm/rz-du/rzg2l_du_crtc.h
+ create mode 100644 drivers/gpu/drm/rz-du/rzg2l_du_drv.c
+ create mode 100644 drivers/gpu/drm/rz-du/rzg2l_du_drv.h
+ create mode 100644 drivers/gpu/drm/rz-du/rzg2l_du_encoder.c
+ create mode 100644 drivers/gpu/drm/rz-du/rzg2l_du_encoder.h
+ create mode 100644 drivers/gpu/drm/rz-du/rzg2l_du_kms.c
+ create mode 100644 drivers/gpu/drm/rz-du/rzg2l_du_kms.h
+ create mode 100644 drivers/gpu/drm/rz-du/rzg2l_du_regs.h
+ create mode 100644 drivers/gpu/drm/rz-du/rzg2l_du_vsp.c
+ create mode 100644 drivers/gpu/drm/rz-du/rzg2l_du_vsp.h
 
+-- 
+2.25.1
 
-
-platform                     | arch  | lab         | compiler | defconfig |=
- regressions
------------------------------+-------+-------------+----------+-----------+=
-------------
-meson-gxl-s905x-libretech-cc | arm64 | lab-broonie | gcc-10   | defconfig |=
- 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6571bb3383d8a1d41de13478
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.201=
--cip41-16-g3c85fba3b6e5d/arm64/defconfig/gcc-10/lab-broonie/ltp-ipc-meson-g=
-xl-s905x-libretech-cc.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.201=
--cip41-16-g3c85fba3b6e5d/arm64/defconfig/gcc-10/lab-broonie/ltp-ipc-meson-g=
-xl-s905x-libretech-cc.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230623.0/arm64/initrd.cpio.gz =
-
-
-
-  * ltp-ipc.login: https://kernelci.org/test/case/id/6571bb3383d8a1d41de134=
-79
-        failing since 13 days (last pass: v5.10.200-cip40, first fail: v5.1=
-0.201-cip41-11-ga539098fe70dd) =
-
- =
-
-
-
-platform                     | arch  | lab         | compiler | defconfig |=
- regressions
------------------------------+-------+-------------+----------+-----------+=
-------------
-r8a774a1-hihope-rzg2m-ex     | arm64 | lab-cip     | gcc-10   | defconfig |=
- 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6571b9726cb1d87f63e13479
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.201=
--cip41-16-g3c85fba3b6e5d/arm64/defconfig/gcc-10/lab-cip/ltp-ipc-r8a774a1-hi=
-hope-rzg2m-ex.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.201=
--cip41-16-g3c85fba3b6e5d/arm64/defconfig/gcc-10/lab-cip/ltp-ipc-r8a774a1-hi=
-hope-rzg2m-ex.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230623.0/arm64/initrd.cpio.gz =
-
-
-
-  * ltp-ipc.login: https://kernelci.org/test/case/id/6571b9726cb1d87f63e134=
-7a
-        failing since 64 days (last pass: v5.10.184-cip36, first fail: v5.1=
-0.194-cip39-1-g53e59f50ca3ff) =
-
- =20
 
