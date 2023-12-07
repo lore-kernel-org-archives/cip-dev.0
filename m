@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F11B9C10F05
-	for <webhook@archiver.kernel.org>; Thu,  7 Dec 2023 14:25:27 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.85040.1701959111442352943
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D40BC10DC3
+	for <webhook@archiver.kernel.org>; Thu,  7 Dec 2023 14:25:28 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web11.85049.1701959121278922354
  for <cip-dev@lists.cip-project.org>;
- Thu, 07 Dec 2023 06:25:25 -0800
+ Thu, 07 Dec 2023 06:25:21 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.04,256,1695654000"; 
-   d="scan'208";a="185673009"
+   d="scan'208";a="189546038"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 07 Dec 2023 23:25:25 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 07 Dec 2023 23:25:20 +0900
 Received: from localhost.localdomain (unknown [10.226.93.153])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9516440104D1;
-	Thu,  7 Dec 2023 23:25:23 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 19A4140104D1;
+	Thu,  7 Dec 2023 23:25:18 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 09/25] drm: rcar-du: Fix Kconfig dependency between DRM and RZG2L_MIPI_DSI
-Date: Thu,  7 Dec 2023 14:24:46 +0000
-Message-Id: <20231207142502.401651-10-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 07/25] dt-bindings: display: bridge: renesas,rzg2l-mipi-dsi: Document RZ/V2L support
+Date: Thu,  7 Dec 2023 14:24:44 +0000
+Message-Id: <20231207142502.401651-8-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231207142502.401651-1-biju.das.jz@bp.renesas.com>
 References: <20231207142502.401651-1-biju.das.jz@bp.renesas.com>
@@ -34,38 +34,37 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 07 Dec 2023 14:25:27 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13882
+ <cip-dev@lists.cip-project.org>; Thu, 07 Dec 2023 14:25:28 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13880
 
-commit ff6d979454ee21bf2d21040c8f2996b8f66726f2 upstream.
+commit ae5a8dce3c86c1ea8e17910c3836b92a406f9ad8 upstream.
 
-When CONFIG_DRM=m and CONFIG_DRM_RZG2L_MIPI_DSI=y, it results in a
-build failure. This patch fixes the build issue by adding dependency
-to DRM.
+Document RZ/V2L DSI bindings. RZ/V2L MIPI DSI is identical to one found on
+the RZ/G2L SoC. No driver changes are required as generic compatible
+string "renesas,rzg2l-mipi-dsi" will be used as a fallback.
 
-Fixes: 7a043f978ed1 ("drm: rcar-du: Add RZ/G2L DSI driver")
-Reported-by: kernel test robot <lkp@intel.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20221122195413.1882486-1-biju.das.jz@bp.renesas.com
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/gpu/drm/rcar-du/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../devicetree/bindings/display/bridge/renesas,dsi.yaml          | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/rcar-du/Kconfig
-index 5ea436e43c69..929930b4b516 100644
---- a/drivers/gpu/drm/rcar-du/Kconfig
-+++ b/drivers/gpu/drm/rcar-du/Kconfig
-@@ -47,7 +47,7 @@ config DRM_RCAR_LVDS
+diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
+index 131d5b63ec4f..e08c24633926 100644
+--- a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
+@@ -22,6 +22,7 @@ properties:
+     items:
+       - enum:
+           - renesas,r9a07g044-mipi-dsi # RZ/G2{L,LC}
++          - renesas,r9a07g054-mipi-dsi # RZ/V2L
+       - const: renesas,rzg2l-mipi-dsi
  
- config DRM_RZG2L_MIPI_DSI
- 	tristate "RZ/G2L MIPI DSI Encoder Support"
--	depends on DRM_BRIDGE && OF
-+	depends on DRM && DRM_BRIDGE && OF
- 	depends on ARCH_RENESAS || COMPILE_TEST
- 	select DRM_MIPI_DSI
- 	help
+   reg:
 -- 
 2.25.1
 
