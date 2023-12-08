@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3D80C10DC1
-	for <webhook@archiver.kernel.org>; Fri,  8 Dec 2023 13:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7406C10DCE
+	for <webhook@archiver.kernel.org>; Fri,  8 Dec 2023 13:20:43 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web10.35262.1702041614073951457
  for <cip-dev@lists.cip-project.org>;
- Fri, 08 Dec 2023 05:20:26 -0800
+ Fri, 08 Dec 2023 05:20:37 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.04,260,1695654000"; 
-   d="scan'208";a="185800348"
+   d="scan'208";a="185800363"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 08 Dec 2023 22:20:25 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 08 Dec 2023 22:20:37 +0900
 Received: from localhost.localdomain (unknown [10.226.92.254])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4C7F940065A7;
-	Fri,  8 Dec 2023 22:20:24 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id CC1E0400297E;
+	Fri,  8 Dec 2023 22:20:35 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip v2 07/25] dt-bindings: display: bridge: renesas,rzg2l-mipi-dsi: Document RZ/V2L support
-Date: Fri,  8 Dec 2023 13:19:49 +0000
-Message-Id: <20231208132007.108762-8-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip v2 12/25] arm64: defconfig: Enable Renesas RZ/G2L MIPI DSI driver
+Date: Fri,  8 Dec 2023 13:19:54 +0000
+Message-Id: <20231208132007.108762-13-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231208132007.108762-1-biju.das.jz@bp.renesas.com>
 References: <20231208132007.108762-1-biju.das.jz@bp.renesas.com>
@@ -34,37 +34,34 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 08 Dec 2023 13:20:33 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13950
+ <cip-dev@lists.cip-project.org>; Fri, 08 Dec 2023 13:20:43 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13955
 
-commit ae5a8dce3c86c1ea8e17910c3836b92a406f9ad8 upstream.
+commit 7d106cb32a498fb40d1362b959638f2b3d413b7f upstream.
 
-Document RZ/V2L DSI bindings. RZ/V2L MIPI DSI is identical to one found on
-the RZ/G2L SoC. No driver changes are required as generic compatible
-string "renesas,rzg2l-mipi-dsi" will be used as a fallback.
+Enable MIPI DSI driver support for Renesas RZ/G2L based platforms.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20221122195413.1882486-1-biju.das.jz@bp.renesas.com
+Link: https://lore.kernel.org/r/20221122184854.1820126-1-biju.das.jz@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- .../devicetree/bindings/display/bridge/renesas,dsi.yaml          | 1 +
+ arch/arm64/configs/defconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-index 131d5b63ec4f..e08c24633926 100644
---- a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-+++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-@@ -22,6 +22,7 @@ properties:
-     items:
-       - enum:
-           - renesas,r9a07g044-mipi-dsi # RZ/G2{L,LC}
-+          - renesas,r9a07g054-mipi-dsi # RZ/V2L
-       - const: renesas,rzg2l-mipi-dsi
- 
-   reg:
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 7a849156a74c..82c34c3b57f2 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -656,6 +656,7 @@ CONFIG_ROCKCHIP_DW_MIPI_DSI=y
+ CONFIG_ROCKCHIP_INNO_HDMI=y
+ CONFIG_DRM_RCAR_DU=m
+ CONFIG_DRM_RCAR_DW_HDMI=m
++CONFIG_DRM_RZG2L_MIPI_DSI=m
+ CONFIG_DRM_SUN4I=m
+ CONFIG_DRM_SUN6I_DSI=m
+ CONFIG_DRM_SUN8I_DW_HDMI=m
 -- 
 2.25.1
 
