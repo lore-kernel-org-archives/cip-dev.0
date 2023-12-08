@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9575BC46CA3
-	for <webhook@archiver.kernel.org>; Fri,  8 Dec 2023 13:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE517C46CC5
+	for <webhook@archiver.kernel.org>; Fri,  8 Dec 2023 13:20:33 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web10.35262.1702041614073951457
  for <cip-dev@lists.cip-project.org>;
- Fri, 08 Dec 2023 05:20:14 -0800
+ Fri, 08 Dec 2023 05:20:24 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.04,260,1695654000"; 
-   d="scan'208";a="185800317"
+   d="scan'208";a="185800345"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 08 Dec 2023 22:20:12 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 08 Dec 2023 22:20:23 +0900
 Received: from localhost.localdomain (unknown [10.226.92.254])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3A7D640065A7;
-	Fri,  8 Dec 2023 22:20:10 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2016340116D2;
+	Fri,  8 Dec 2023 22:20:21 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip v2 01/25] drm/bridge: Add a function to abstract away panels
-Date: Fri,  8 Dec 2023 13:19:43 +0000
-Message-Id: <20231208132007.108762-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip v2 06/25] dt-bindings: display: bridge: Document RZ/G2L MIPI DSI TX bindings
+Date: Fri,  8 Dec 2023 13:19:48 +0000
+Message-Id: <20231208132007.108762-7-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231208132007.108762-1-biju.das.jz@bp.renesas.com>
 References: <20231208132007.108762-1-biju.das.jz@bp.renesas.com>
@@ -34,126 +34,213 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 08 Dec 2023 13:20:23 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13944
+ <cip-dev@lists.cip-project.org>; Fri, 08 Dec 2023 13:20:33 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13949
 
-From: Maxime Ripard <maxime@cerno.tech>
+commit b1a90f510230afa9483e38fccbf9e4274c92aa8c upstream.
 
-commit 87ea95808d53e56b03e620e8f8f3add48899a88d upstream.
+The RZ/G2L MIPI DSI TX is embedded in the Renesas RZ/G2L family SoC's. It
+can operate in DSI mode, with up to four data lanes.
 
-Display drivers so far need to have a lot of boilerplate to first
-retrieve either the panel or bridge that they are connected to using
-drm_of_find_panel_or_bridge(), and then either deal with each with ad-hoc
-functions or create a drm panel bridge through drm_panel_bridge_add.
-
-In order to reduce the boilerplate and hopefully create a path of least
-resistance towards using the DRM panel bridge layer, let's create the
-function devm_drm_of_get_bridge() to reduce that boilerplate.
-
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20210910130941.1740182-2-maxime@cerno.tech
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/gpu/drm/drm_bridge.c | 42 ++++++++++++++++++++++++++++++++----
- drivers/gpu/drm/drm_of.c     |  3 +++
- include/drm/drm_bridge.h     |  2 ++
- 3 files changed, 43 insertions(+), 4 deletions(-)
+ .../bindings/display/bridge/renesas,dsi.yaml  | 182 ++++++++++++++++++
+ 1 file changed, 182 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
 
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index d799ec14fd7f..f0f0a4efd200 100644
---- a/drivers/gpu/drm/drm_bridge.c
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -28,6 +28,8 @@
- #include <drm/drm_atomic_state_helper.h>
- #include <drm/drm_bridge.h>
- #include <drm/drm_encoder.h>
-+#include <drm/drm_of.h>
-+#include <drm/drm_print.h>
- 
- #include "drm_crtc_internal.h"
- 
-@@ -50,10 +52,8 @@
-  *
-  * Display drivers are responsible for linking encoders with the first bridge
-  * in the chains. This is done by acquiring the appropriate bridge with
-- * of_drm_find_bridge() or drm_of_find_panel_or_bridge(), or creating it for a
-- * panel with drm_panel_bridge_add_typed() (or the managed version
-- * devm_drm_panel_bridge_add_typed()). Once acquired, the bridge shall be
-- * attached to the encoder with a call to drm_bridge_attach().
-+ * devm_drm_of_get_bridge(). Once acquired, the bridge shall be attached to the
-+ * encoder with a call to drm_bridge_attach().
-  *
-  * Bridges are responsible for linking themselves with the next bridge in the
-  * chain, if any. This is done the same way as for encoders, with the call to
-@@ -1223,6 +1223,40 @@ struct drm_bridge *of_drm_find_bridge(struct device_node *np)
- 	return NULL;
- }
- EXPORT_SYMBOL(of_drm_find_bridge);
+diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
+new file mode 100644
+index 000000000000..131d5b63ec4f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
+@@ -0,0 +1,182 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/bridge/renesas,dsi.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+/**
-+ * devm_drm_of_get_bridge - Return next bridge in the chain
-+ * @dev: device to tie the bridge lifetime to
-+ * @np: device tree node containing encoder output ports
-+ * @port: port in the device tree node
-+ * @endpoint: endpoint in the device tree node
-+ *
-+ * Given a DT node's port and endpoint number, finds the connected node
-+ * and returns the associated bridge if any, or creates and returns a
-+ * drm panel bridge instance if a panel is connected.
-+ *
-+ * Returns a pointer to the bridge if successful, or an error pointer
-+ * otherwise.
-+ */
-+struct drm_bridge *devm_drm_of_get_bridge(struct device *dev,
-+					  struct device_node *np,
-+					  u32 port, u32 endpoint)
-+{
-+	struct drm_bridge *bridge;
-+	struct drm_panel *panel;
-+	int ret;
++title: Renesas RZ/G2L MIPI DSI Encoder
 +
-+	ret = drm_of_find_panel_or_bridge(np, port, endpoint,
-+					  &panel, &bridge);
-+	if (ret)
-+		return ERR_PTR(ret);
++maintainers:
++  - Biju Das <biju.das.jz@bp.renesas.com>
 +
-+	if (panel)
-+		bridge = devm_drm_panel_bridge_add(dev, panel);
++description: |
++  This binding describes the MIPI DSI encoder embedded in the Renesas
++  RZ/G2L alike family of SoC's. The encoder can operate in DSI mode, with
++  up to four data lanes.
 +
-+	return bridge;
-+}
-+EXPORT_SYMBOL(devm_drm_of_get_bridge);
- #endif
- 
- MODULE_AUTHOR("Ajay Kumar <ajaykumar.rs@samsung.com>");
-diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
-index 997b8827fed2..37c34146eea8 100644
---- a/drivers/gpu/drm/drm_of.c
-+++ b/drivers/gpu/drm/drm_of.c
-@@ -231,6 +231,9 @@ EXPORT_SYMBOL_GPL(drm_of_encoder_active_endpoint);
-  * return either the associated struct drm_panel or drm_bridge device. Either
-  * @panel or @bridge must not be NULL.
-  *
-+ * This function is deprecated and should not be used in new drivers. Use
-+ * devm_drm_of_get_bridge() instead.
-+ *
-  * Returns zero if successful, or one of the standard error codes if it fails.
-  */
- int drm_of_find_panel_or_bridge(const struct device_node *np,
-diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-index 055486e35e68..3c640e704186 100644
---- a/include/drm/drm_bridge.h
-+++ b/include/drm/drm_bridge.h
-@@ -891,6 +891,8 @@ struct drm_bridge *devm_drm_panel_bridge_add(struct device *dev,
- struct drm_bridge *devm_drm_panel_bridge_add_typed(struct device *dev,
- 						   struct drm_panel *panel,
- 						   u32 connector_type);
-+struct drm_bridge *devm_drm_of_get_bridge(struct device *dev, struct device_node *node,
-+					  u32 port, u32 endpoint);
- struct drm_connector *drm_panel_bridge_connector(struct drm_bridge *bridge);
- #endif
- 
++allOf:
++  - $ref: /schemas/display/dsi-controller.yaml#
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - renesas,r9a07g044-mipi-dsi # RZ/G2{L,LC}
++      - const: renesas,rzg2l-mipi-dsi
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    items:
++      - description: Sequence operation channel 0 interrupt
++      - description: Sequence operation channel 1 interrupt
++      - description: Video-Input operation channel 1 interrupt
++      - description: DSI Packet Receive interrupt
++      - description: DSI Fatal Error interrupt
++      - description: DSI D-PHY PPI interrupt
++      - description: Debug interrupt
++
++  interrupt-names:
++    items:
++      - const: seq0
++      - const: seq1
++      - const: vin1
++      - const: rcv
++      - const: ferr
++      - const: ppi
++      - const: debug
++
++  clocks:
++    items:
++      - description: DSI D-PHY PLL multiplied clock
++      - description: DSI D-PHY system clock
++      - description: DSI AXI bus clock
++      - description: DSI Register access clock
++      - description: DSI Video clock
++      - description: DSI D-PHY Escape mode transmit clock
++
++  clock-names:
++    items:
++      - const: pllclk
++      - const: sysclk
++      - const: aclk
++      - const: pclk
++      - const: vclk
++      - const: lpclk
++
++  resets:
++    items:
++      - description: MIPI_DSI_CMN_RSTB
++      - description: MIPI_DSI_ARESET_N
++      - description: MIPI_DSI_PRESET_N
++
++  reset-names:
++    items:
++      - const: rst
++      - const: arst
++      - const: prst
++
++  power-domains:
++    maxItems: 1
++
++  ports:
++    $ref: /schemas/graph.yaml#/properties/ports
++
++    properties:
++      port@0:
++        $ref: /schemas/graph.yaml#/properties/port
++        description: Parallel input port
++
++      port@1:
++        $ref: /schemas/graph.yaml#/$defs/port-base
++        unevaluatedProperties: false
++        description: DSI output port
++
++        properties:
++          endpoint:
++            $ref: /schemas/media/video-interfaces.yaml#
++            unevaluatedProperties: false
++
++            properties:
++              data-lanes:
++                description: array of physical DSI data lane indexes.
++                minItems: 1
++                items:
++                  - const: 1
++                  - const: 2
++                  - const: 3
++                  - const: 4
++
++            required:
++              - data-lanes
++
++    required:
++      - port@0
++      - port@1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-names
++  - clocks
++  - clock-names
++  - resets
++  - reset-names
++  - power-domains
++  - ports
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r9a07g044-cpg.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    dsi0: dsi@10850000 {
++        compatible = "renesas,r9a07g044-mipi-dsi", "renesas,rzg2l-mipi-dsi";
++        reg = <0x10850000 0x20000>;
++        interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
++        interrupt-names = "seq0", "seq1", "vin1", "rcv",
++                          "ferr", "ppi", "debug";
++        clocks = <&cpg CPG_MOD R9A07G044_MIPI_DSI_PLLCLK>,
++                 <&cpg CPG_MOD R9A07G044_MIPI_DSI_SYSCLK>,
++                 <&cpg CPG_MOD R9A07G044_MIPI_DSI_ACLK>,
++                 <&cpg CPG_MOD R9A07G044_MIPI_DSI_PCLK>,
++                 <&cpg CPG_MOD R9A07G044_MIPI_DSI_VCLK>,
++                 <&cpg CPG_MOD R9A07G044_MIPI_DSI_LPCLK>;
++        clock-names = "pllclk", "sysclk", "aclk", "pclk", "vclk", "lpclk";
++        resets = <&cpg R9A07G044_MIPI_DSI_CMN_RSTB>,
++                 <&cpg R9A07G044_MIPI_DSI_ARESET_N>,
++                 <&cpg R9A07G044_MIPI_DSI_PRESET_N>;
++        reset-names = "rst", "arst", "prst";
++        power-domains = <&cpg>;
++
++        ports {
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            port@0 {
++                reg = <0>;
++                dsi0_in: endpoint {
++                    remote-endpoint = <&du_out_dsi0>;
++                };
++            };
++
++            port@1 {
++                reg = <1>;
++                dsi0_out: endpoint {
++                    data-lanes = <1 2 3 4>;
++                    remote-endpoint = <&adv7535_in>;
++                };
++            };
++        };
++    };
++...
 -- 
 2.25.1
 
