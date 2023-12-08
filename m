@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3FA8C10DC1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE93CC46CC5
 	for <webhook@archiver.kernel.org>; Fri,  8 Dec 2023 13:20:43 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web10.35262.1702041614073951457
  for <cip-dev@lists.cip-project.org>;
- Fri, 08 Dec 2023 05:20:40 -0800
+ Fri, 08 Dec 2023 05:20:35 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.04,260,1695654000"; 
-   d="scan'208";a="185800366"
+   d="scan'208";a="185800360"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 08 Dec 2023 22:20:39 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 08 Dec 2023 22:20:35 +0900
 Received: from localhost.localdomain (unknown [10.226.92.254])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0093540065A7;
-	Fri,  8 Dec 2023 22:20:37 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 95C0340065A7;
+	Fri,  8 Dec 2023 22:20:33 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip v2 13/25] arm64: dts: renesas: r9a07g044: Add DSI node
-Date: Fri,  8 Dec 2023 13:19:55 +0000
-Message-Id: <20231208132007.108762-14-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip v2 11/25] drm: rcar-du: rzg2l_mipi_dsi: Reorder bridge attach
+Date: Fri,  8 Dec 2023 13:19:53 +0000
+Message-Id: <20231208132007.108762-12-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231208132007.108762-1-biju.das.jz@bp.renesas.com>
 References: <20231208132007.108762-1-biju.das.jz@bp.renesas.com>
@@ -35,60 +35,71 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 08 Dec 2023 13:20:43 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13956
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/13954
 
-commit 862b676c3cadc8a1b1600f08408cdc5e030036e6 upstream.
+Add the drm_bridge_add() in probe and update rzg2l_mipi_dsi_attach()
+to find the next bridge and attach the bridge. This allows DU to probe
+with all the connected devices on 5.10 cip kernel.
 
-Add DSI node to RZ/G2L SoC DTSI.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20230411100346.299768-6-biju.das.jz@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 28 ++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-index ae45a070044b..491fdec2bc35 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-@@ -648,6 +648,34 @@ sbc: spi@10060000 {
- 			status = "disabled";
- 		};
- 
-+		dsi: dsi@10850000 {
-+			compatible = "renesas,r9a07g044-mipi-dsi",
-+				     "renesas,rzg2l-mipi-dsi";
-+			reg = <0 0x10850000 0 0x20000>;
-+			interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "seq0", "seq1", "vin1", "rcv",
-+					  "ferr", "ppi", "debug";
-+			clocks = <&cpg CPG_MOD R9A07G044_MIPI_DSI_PLLCLK>,
-+				 <&cpg CPG_MOD R9A07G044_MIPI_DSI_SYSCLK>,
-+				 <&cpg CPG_MOD R9A07G044_MIPI_DSI_ACLK>,
-+				 <&cpg CPG_MOD R9A07G044_MIPI_DSI_PCLK>,
-+				 <&cpg CPG_MOD R9A07G044_MIPI_DSI_VCLK>,
-+				 <&cpg CPG_MOD R9A07G044_MIPI_DSI_LPCLK>;
-+			clock-names = "pllclk", "sysclk", "aclk", "pclk", "vclk", "lpclk";
-+			resets = <&cpg R9A07G044_MIPI_DSI_CMN_RSTB>,
-+				 <&cpg R9A07G044_MIPI_DSI_ARESET_N>,
-+				 <&cpg R9A07G044_MIPI_DSI_PRESET_N>;
-+			reset-names = "rst", "arst", "prst";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
+diff --git a/drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi.c
+index aa95b85a2964..50777ed767a7 100644
+--- a/drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi.c
++++ b/drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi.c
+@@ -527,6 +527,15 @@ static int rzg2l_mipi_dsi_attach(struct drm_bridge *bridge,
+ 				 enum drm_bridge_attach_flags flags)
+ {
+ 	struct rzg2l_mipi_dsi *dsi = bridge_to_rzg2l_mipi_dsi(bridge);
++	int ret;
 +
- 		vspd: vsp@10870000 {
- 			compatible = "renesas,r9a07g044-vsp2";
- 			reg = <0 0x10870000 0 0x10000>;
++	dsi->next_bridge = devm_drm_of_get_bridge(dsi->dev, dsi->dev->of_node,
++						  1, 0);
++	if (IS_ERR(dsi->next_bridge)) {
++		ret = PTR_ERR(dsi->next_bridge);
++		dev_err(dsi->dev, "failed to get next bridge: %d\n", ret);
++		return ret;
++	}
+ 
+ 	return drm_bridge_attach(bridge->encoder, dsi->next_bridge, bridge,
+ 				 flags);
+@@ -607,7 +616,6 @@ static int rzg2l_mipi_dsi_host_attach(struct mipi_dsi_host *host,
+ 				      struct mipi_dsi_device *device)
+ {
+ 	struct rzg2l_mipi_dsi *dsi = host_to_rzg2l_mipi_dsi(host);
+-	int ret;
+ 
+ 	if (device->lanes > dsi->num_data_lanes) {
+ 		dev_err(dsi->dev,
+@@ -629,16 +637,6 @@ static int rzg2l_mipi_dsi_host_attach(struct mipi_dsi_host *host,
+ 	dsi->format = device->format;
+ 	dsi->mode_flags = device->mode_flags;
+ 
+-	dsi->next_bridge = devm_drm_of_get_bridge(dsi->dev, dsi->dev->of_node,
+-						  1, 0);
+-	if (IS_ERR(dsi->next_bridge)) {
+-		ret = PTR_ERR(dsi->next_bridge);
+-		dev_err(dsi->dev, "failed to get next bridge: %d\n", ret);
+-		return ret;
+-	}
+-
+-	drm_bridge_add(&dsi->bridge);
+-
+ 	return 0;
+ }
+ 
+@@ -772,6 +770,8 @@ static int rzg2l_mipi_dsi_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		goto err_pm_disable;
+ 
++	drm_bridge_add(&dsi->bridge);
++
+ 	return 0;
+ 
+ err_phy:
 -- 
 2.25.1
 
