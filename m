@@ -1,179 +1,242 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FFC0C4167B
-	for <webhook@archiver.kernel.org>; Mon, 11 Dec 2023 09:58:32 +0000 (UTC)
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (EUR02-DB5-obe.outbound.protection.outlook.com [40.107.249.69])
- by mx.groups.io with SMTP id smtpd.web10.5068.1702288710427954938
- for <cip-dev@lists.cip-project.org>;
- Mon, 11 Dec 2023 01:58:31 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F5DC4167B
+	for <webhook@archiver.kernel.org>; Mon, 11 Dec 2023 10:22:52 +0000 (UTC)
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+ by mx.groups.io with SMTP id smtpd.web11.5367.1702290164293658555
+ for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
+ Mon, 11 Dec 2023 02:22:44 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=ehGI1Wdp;
- spf=pass (domain: siemens.com, ip: 40.107.249.69, mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dXStpPjjxgHBh8BOG+CmtrZbSmHo/hp4O7qcWszxlZbbLlYtJUT84mv4I6MKJdehuH61x4PCGA7Svi9hY5DJ0uvE6nnRYVQWcMimLlVN98/taRI4pmLRDuIjmcN896/C+aYdlTdUxUSN/mab5ozk1XF7I1muLZoyGjk2Tp5heBU+XD75Pdt+yZ2ripxG06y+Raxfd2bMPTPD889XWfZHTleO6DKPrjxyjfCSO8BbjEmA+LrHbMQlUubRaKpBNfpQu00Y2nYEoe/02U9+7jmKEjWoecebRZSSWvfgROrHaqYSUN052xpOTkl5YKljNydGpqKavBX76Hca9fGmLxwrHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZQWJw1GK99HGOc53Ec85WAcvU5A5ATaNuBo6A01BI/U=;
- b=mB+CX24pZjJFUG4inbNkPGuBUVieysLX4FvwmaefA4N4D8bQ6lz6fuLzGbzoyfPauqrTm7fIW1R9+OMr8k6bI14aezY/45hqyRDuXKg5eOdRJzsLjIEB5NHSXveR5ud4QkSNnKDGDEY0Y+9PDzRDq2c+/NMhag0aAQXUFJhbN2Iu0Qh+8f5tIiQqoMvJbY0PUD4uNAtaEX1qycR7eSCQFIDYFdL1w+xPKB7GIv91deLLih4M6sbv8mqs2as1iOQtuKDWRYvtlJ+2X5MCyGW9j1oDIZvpxzEzCDlSCbIBV/wJlSmjP314sSYhVKSsmisb9YiNpNKUZH3cZbxKEhbHpg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZQWJw1GK99HGOc53Ec85WAcvU5A5ATaNuBo6A01BI/U=;
- b=ehGI1WdpCeQ4vWqRClKyEIXQPdu6O9Qf3ZMdXyyvysz5pkgI70t8MtS0Xcx6k6ptDcNUWvOSAITyWJGMwIjBrrvwlG9Mzyw5eLLzfM/Ws3Sd2iWeXlAv2oBEropRp8DpbjH3607ipv4MW0TSh5RwKtDOHVU/G/M8pL9Aa8JWS4MN+Ag3K2aLySDrz6HCNoNIGfvsPvzCBnUt8hRu8hOQQ0l+iY9DiSnpY49yxpAJYMa3U/ALfTvUhQXZ+R3hoUil/1V05ylZ1Io0QrT/F2A6XtNo49WYOmuDyHAAeSgAQZofVoNfiPPsf3403SamgYPqasAeFlkksIMRc3zZOkiXLQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by AS8PR10MB6818.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5b8::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.25; Mon, 11 Dec
- 2023 09:58:27 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::96c7:d239:1723:8761]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::96c7:d239:1723:8761%5]) with mapi id 15.20.7068.031; Mon, 11 Dec 2023
- 09:58:27 +0000
-Message-ID: <df30a458-00c9-4b64-8963-27c556603981@siemens.com>
-Date: Mon, 11 Dec 2023 10:58:25 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: Potential ext4 corruption in 6.1.64-cip10
-Content-Language: en-US
-To: Pavel Machek <pavel@denx.de>
-Cc: cip-dev <cip-dev@lists.cip-project.org>,
- Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-References: <7c9ee21e-7e50-4c3d-9d09-2368315abd16@siemens.com>
- <ZXbYD5WHuRCKNGO3@duo.ucw.cz>
- <d3b38c88-34db-42cc-8f56-7fc8b4696fd0@siemens.com>
- <ZXbb/i1HuG0yPHXi@duo.ucw.cz>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <ZXbb/i1HuG0yPHXi@duo.ucw.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0364.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f8::12) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+ dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=VX+NdFMs;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.177, mailfrom: bot@kernelci.org)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1d0897e99e0so23578585ad.3
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Mon, 11 Dec 2023 02:22:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1702290163; x=1702894963; darn=lists.cip-project.org;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=8MUvEgLRA/R9ON2ARWV67JsxRzKrCiSVYrfX2MC6fr8=;
+        b=VX+NdFMs8TGvH6X+XdTconw84EepvS5uHesph1Y4XwqGy1S0/2j2XwDHBlZXBHU7E2
+         mVQC62ZgDCRAgupIoCvzAJceYoqzKPFqd1n3WM30KJ1m0QSaGw9yJQJgj9nN8kxyxR0n
+         OZ3qsWUbZQ53JUHHV0Wv1eAG8sxGZoD8FZxgDsNKj+OpKPHnxp/cf/bEsjNh4o541Z/f
+         zDMZK/WiyGVeyAnlrVJtzskIkV3zJkXWS4xFTFGLalRrEf4PiPVx8juSjiDSVBs9eIlu
+         7/6hahmfnq4pTTUS0a10E6BQ44Od1MO5igsFrXDFXGOFTw4PI8jo8+iht1hun0r5ko/R
+         YQJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702290163; x=1702894963;
+        h=from:to:subject:content-transfer-encoding:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8MUvEgLRA/R9ON2ARWV67JsxRzKrCiSVYrfX2MC6fr8=;
+        b=NCO+XOUdrc1YE1p4K+vVqD9nNngjcJuQ96Pk9VkPHauqJqyi/WhOPo4zyB/wUDNt6z
+         CItJI/evwtLUYWh1uyh0vBC3XfCMSa+VR8Gs5biwHou7lOWxfO6omXCZaOwMHxza7hRq
+         6b6phXKRn9Ix/hMr91n4mYXBGtFpG18IF0ClO6YFWcJCWL9gNXSbYN/81dg/JcSTADs5
+         5obqMGO1pmR3CDHN2tMN80SUzotIqrx4RFVVSaxwkZ1OOiZB5sQKSixtX2yQkTdNpsqm
+         /KdPHBh213GswWUdf1lW0FeFGzqbNxlgQgQO8ntuPQgSKiJXyIBcBUGhy4hRS/2VEGW+
+         TKHQ==
+X-Gm-Message-State: AOJu0YysfdHuM13pJ0NbV1j28hFLU0SqRmIu2Nt4tpas+AaYw/TnCDmJ
+	FFN84Mh4RtKZV6Beq9pHN4non0JPfINnDkNl3pidNw==
+X-Google-Smtp-Source: AGHT+IEg4CxWHdow5T25X1yKtstKWLQ5xZ3BXm6DYp6hDK34NUmp2JiRM60+mxz8TAnpxMGVDuIC5A==
+X-Received: by 2002:a17:902:d58e:b0:1d3:141:cb0f with SMTP id k14-20020a170902d58e00b001d30141cb0fmr676262plh.28.1702290163309;
+        Mon, 11 Dec 2023 02:22:43 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
+        by smtp.gmail.com with ESMTPSA id bi1-20020a170902bf0100b001cf594f71f3sm6233974plb.157.2023.12.11.02.22.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Dec 2023 02:22:42 -0800 (PST)
+Message-ID: <6576e2f2.170a0220.b00c0.0b09@mx.google.com>
+Date: Mon, 11 Dec 2023 02:22:42 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS8PR10MB6818:EE_
-X-MS-Office365-Filtering-Correlation-Id: c991fe99-8a34-44c0-d148-08dbfa2fb8df
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	8KesaqWqy7+LQ7JT5rAejr6PiNpbzCcgAGunJquV4qU3/ZwqgaCYabX5T9SsK2MPYpNNdUzkNZy5LvQXfcl5EiWXFpr/4sQy63hSBnsgV1pHGugaUZT8g9mMXGZjTAst4q5r9hiAomzYxNvyXaGOfjS8kny/UwyWbfD+ZAYwn1VmDhl+s7QFkrPEPsSb6+Tn+b/wlj4MpN7dXGm5+8+CASd4bUaWyTcN+vXBfSeuohHFykBneuTVJreNoq7NYxDEVJfqAKzMtEOd93iEk6+V9rnKdO9sPxHrYnv4H6Y5RCxshB2P+LWbPr8UTOHRuDqHYqjh9lp+4FaCILZXbxRcSAluWLZtw5lRmC7xJcidiydRu8yh0FT6HUMNlfRTjB7XjsDKfWuQPWMLf+aPnHwxawUQjTYoNwcKB0jPMnt2+INPyxSsLIROhLniGP0/UkanMMTo6TD7ebFp1u01CoPbMPFNGaCZz81LUoqaiH6/4Oy/6mZ9BxA1Hx73OgeheyvQx/zC3dWKZMPb7zWIEl5wvKc+6dEjWpNINT82h6ga6c/4Z1zcs//WJ27dBggzi37V2CQybFvaBLzrUgkJKjqIaqyNILERPokdKNLtyMM9kWf8PkUtffOCtj8ihE3/1S9GoTZCpO6V5yurcbD/H9eXwQ==
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(396003)(346002)(366004)(136003)(39860400002)(376002)(230922051799003)(186009)(1800799012)(451199024)(64100799003)(41300700001)(5660300002)(2906002)(36756003)(44832011)(2616005)(6512007)(53546011)(6506007)(26005)(6486002)(83380400001)(966005)(4326008)(8936002)(8676002)(86362001)(478600001)(82960400001)(31696002)(31686004)(6916009)(54906003)(66556008)(66946007)(66476007)(38100700002)(316002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?aEduUk5YSEgrclllbk1DTUVvdU51VmdIVXNZYjhORVA1SUttbHdRd0pxQmtu?=
- =?utf-8?B?cHg2UEhqdnIyRUhVZEZNVmRoZC94ZFdsSFAwSXE1WjJGOWhFajVVc0NMb3J1?=
- =?utf-8?B?bVhhMTFKNHdJTUF6eG5xVmRoODZ5T1JqWjJyWFBuRm1iZjlwKzNZam4vREhG?=
- =?utf-8?B?WEl5QUxoNTZXT1F5ZXpFUUdGZVl4NGp4dUNONlN1NkxGUXZ4UHZYVXFkWENs?=
- =?utf-8?B?Z2ZZSDNjak9DZDlvYmh6RHN5TjAwWFQ0VkY5WkFqRWpKWC94eGZUQ0ZDdEdS?=
- =?utf-8?B?UlVyZll6N05BR2FCUjlHVHVsSE9USThNYW84bnBpZFgzaSttWXZxeXdQZlNY?=
- =?utf-8?B?Z1FjTzVWMnJWdFdvRkg1Yk5aamcvQmxITGRKZC9sYmVIKzlQNEtPdExpZFhV?=
- =?utf-8?B?dktwQzFCMHhQQXZGZm5rekIwYXlSNVhEQUFxdGNGYTFkZ0N6V3FBWlJDYUcv?=
- =?utf-8?B?VTFTeTY0Q1pLWko0Sk9Zb3R5c21telFucnRRR2FzR0ZKekpWQnlFMUh0SzZ4?=
- =?utf-8?B?NWI2bU0wdWk3YkRldXNJTXZNOFJDT05NZHhmcWt2VmFqRkVEcDBKTUhCVllp?=
- =?utf-8?B?UDg2T2xtVUduNGNaTXVaZCtVNkQ4QkVZSk80RERYZ1pFbW1LVHo5OFVhM0hF?=
- =?utf-8?B?Rll5cDVvUkR3Y0c2K1BzZm5jK1lOdDR2bnBmWTJ3Z3l3L2ZSMHVSd01HcGJs?=
- =?utf-8?B?b2pMSFNKZWFKMG81dlNiZFkzbUJTRy9pQ1BaQm40NG9GL0ZPeFY0VnhCNFJz?=
- =?utf-8?B?a3hIQ0FMWlZZNnRWNGZtMmNNTGNyRlk2NktVTUNxeEIrWGdsNkZTbGcxMm1L?=
- =?utf-8?B?ZzlsSTVMcWdzZFNEdWJUY29nZCtLbzdSZ1VHSFAyZzF6SXIvQ1JiYWpicFVQ?=
- =?utf-8?B?NlpqNEo1ZXg4TEdmVmRaWXRxQUNodU1YMmpIQk54YTBpaGtuSmE1VG5ielFG?=
- =?utf-8?B?Y0JvbUdUODhjSng5U3lWM2dRcThhUHRBbW0zZjNOTmRheC9mWXNmMnFTWHF4?=
- =?utf-8?B?YzFka3Q5VXVwTlRHTjR0c3h4MEtDOG9VY296TUxla1Z3UFVlWkZNWmhseFlO?=
- =?utf-8?B?a3kydnM2V0IrSlZFNFBWNU1KeEdreXR0TXlZV0xEZXVHS1p0ZkNGMXV4TDJz?=
- =?utf-8?B?Sm1xOWVWWGd0K0xuZmNJOExhTHVtSVl5dVQvd3hJSG54N2RHWGtiZ3FXUjlh?=
- =?utf-8?B?TlJyVFhMQ1F6ajZDNnhDaHNmQlFoSWt6T0xTRmVhblp3MXhnSm85cDNqUkdD?=
- =?utf-8?B?RWRrZWpxQjRXcUFkSnVmdE9xaWJjdythTVVNcVFBRWtwK2JEb1FFOFphYXRX?=
- =?utf-8?B?eGVQcnBWVlhxaDJCQVpDczRIdGQ2dnpUak94b2JNZE5NZk0wUWdoSmI4T0xF?=
- =?utf-8?B?Qk9zTzFJeEh0anZNNFJxQWFCd3E4MlkwWWhHa0pCSE9QNEo3d1M2M1haa2p2?=
- =?utf-8?B?Z1RaOXU4T0ZlRWR1RC9wcDBVUDI5V3RoSFRoSklTVkIyV1dNVlc2eFJJdFRG?=
- =?utf-8?B?dDlmRUZYRUFxdDRrYnNaeVoxWGVuN0FVNytBSmp4UFM1TDMxVWFnVWZmcFAy?=
- =?utf-8?B?bC9sdXBlc2NQM3JUOTN3Z29CUmdxK2VBV2VIUEpOYTVXaDhJK2VhK2xNQTB1?=
- =?utf-8?B?cHpWaUd2ZHlmRGhYNGxqMXd2bW9tYTRaZE1DTDl1dGlKTXFjazY3Q2ZUZFdY?=
- =?utf-8?B?ZUFKYlFmaXJWUERqY0NDaU5CZlNGUjIyZjZ5RVNZOVhMYzlwK04yeE9Sa0VU?=
- =?utf-8?B?SHA5MlIxUTJyYUR2RUtveUhlODVkS2M4bEtpdDZHK1dsYzg4T0l6NlJJTWFa?=
- =?utf-8?B?OVpxZ0ZSeHRyZmlhT3liblR3VVlOVlpYeGZKbTBUZHpvd3FxK2NNZ0ZRdU1m?=
- =?utf-8?B?RUh6NVFIb3NTcnFCdE9YcEROQXljT0JId2lWcGZWeDhPRWpQVVU3TTY3YkxU?=
- =?utf-8?B?REtpajZaVXRYZGQvWnB6YkFYT0JuS1hwRlFEZWg0SU05MUpkOWtiOHV0K1Q3?=
- =?utf-8?B?amtlQU56R2hwWUV2ejdwbXhRdHpQVk8vaW95dlVRTCtydXlCRno3ajUrNGVI?=
- =?utf-8?B?SUZDM1FGcmpZZVB0cDdSbkE5VjlMYXdOTmNYZXFDekdLN1VaZVhqQ0JLNk1V?=
- =?utf-8?B?R2V3NWJhdFROdWFJY1pXUUhJUlRpTkRkR29CK3BLRmI1dTVXSE1IUzJwY1pi?=
- =?utf-8?B?K0E9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c991fe99-8a34-44c0-d148-08dbfa2fb8df
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2023 09:58:27.6319
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5TBonKbCpNI9BYJETm6AZvE5HiRj6dwvBPaBt5bejjYSaPht5//TwuLJscZge62ddjBNQ9VSQ5IgeEA+cABueg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB6818
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: linux-5.10.y-cip
+X-Kernelci-Tree: cip
+X-Kernelci-Report-Type: test
+X-Kernelci-Kernel: v5.10.201-cip41-63-gfdfe1fbf93bc6
+Subject: cip/linux-5.10.y-cip baseline-cip-nfs: 6 runs,
+ 4 regressions (v5.10.201-cip41-63-gfdfe1fbf93bc6)
+To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
+ kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
+From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 11 Dec 2023 09:58:32 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14004
+ <cip-dev@lists.cip-project.org>; Mon, 11 Dec 2023 10:22:52 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14005
 
-On 11.12.23 10:53, Pavel Machek wrote:
-> Hi!
-> 
->>>> seems also our 6.1 CIP kernel is affected by [1]. Please do not use in
->>>> production if you have an ext4 filesystem!
->>>
->>> This seems to affect O_SYNC / O_DIRECT users, so I'm not sure how
->>> common problem that is.
->>
->> Well, Debian considered it grave:
->> https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1057843
-> 
-> Aha, thanks for a hint, there are good pointers in that.
-> 
->>> 6.1.66 is out, and there's matching 6.1.66-rt. I can release one or
->>> both, but I don't see any confirmation that it is fixed in .66 or how.
->>>
->>
->> I would expect some reference to this commit in 6.1.y as well, but there
->> is nothing yet, no commit after dc4542861ec8dde92c3c8a5139bc412860aebe60
->> touching that file.
-> 
-> So this should be fixed in
-> 
-> commit ea574927fc0bc343016ea3337fcfc0b3fb26fe08
-> Author: Christoph Hellwig <hch@lst.de>
-> Date:   Thu Jun 1 16:58:54 2023 +0200
-> 
->     iomap: update ki_pos a little later in iomap_dio_complete
->     
->     commit 936e114a245b6e38e0dbf706a67e7611fc993da1 upstream.
->     
->     Move the ki_pos update down a bit to prepare for a better common helper
->     that invalidates pages based of an iocb.
->     
->     Link: https://lkml.kernel.org/r/20230601145904.1385409-3-hch@lst.de
-> 
-> ...and that's indeed in 6.1.66, and looks like it fixes relevant area.
-> 
+cip/linux-5.10.y-cip baseline-cip-nfs: 6 runs, 4 regressions (v5.10.201-cip=
+41-63-gfdfe1fbf93bc6)
 
-Ah, that missing dependency of the patch - subtle as it was written.
+Regressions Summary
+-------------------
 
-> I'll just do 6.1.66 based -cip and -cip-rt releases, unless someone
-> stops me.
+platform                 | arch  | lab         | compiler | defconfig      =
+     | regressions
+-------------------------+-------+-------------+----------+----------------=
+-----+------------
+beaglebone-black         | arm   | lab-broonie | gcc-10   | multi_v7_defcon=
+fig  | 1          =
 
-That sounds good.
+beaglebone-black         | arm   | lab-broonie | gcc-10   | omap2plus_defco=
+nfig | 1          =
 
-Jan
+beaglebone-black         | arm   | lab-cip     | gcc-10   | omap2plus_defco=
+nfig | 1          =
 
--- 
-Siemens AG, Technology
-Linux Expert Center
+r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip     | gcc-10   | defconfig      =
+     | 1          =
 
+
+  Details:  https://kernelci.org/test/job/cip/branch/linux-5.10.y-cip/kerne=
+l/v5.10.201-cip41-63-gfdfe1fbf93bc6/plan/baseline-cip-nfs/
+
+  Test:     baseline-cip-nfs
+  Tree:     cip
+  Branch:   linux-5.10.y-cip
+  Describe: v5.10.201-cip41-63-gfdfe1fbf93bc6
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
+it
+  SHA:      fdfe1fbf93bc6fe6ed2708f11c2613bef556fdeb =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform                 | arch  | lab         | compiler | defconfig      =
+     | regressions
+-------------------------+-------+-------------+----------+----------------=
+-----+------------
+beaglebone-black         | arm   | lab-broonie | gcc-10   | multi_v7_defcon=
+fig  | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6576dc83a63f106809e134b1
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.201=
+-cip41-63-gfdfe1fbf93bc6/arm/multi_v7_defconfig/gcc-10/lab-broonie/baseline=
+-cip-nfs-beaglebone-black.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.201=
+-cip41-63-gfdfe1fbf93bc6/arm/multi_v7_defconfig/gcc-10/lab-broonie/baseline=
+-cip-nfs-beaglebone-black.html
+  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
+-arm/cip-core-image-kernelci-cip-core-bookworm-qemu-arm-initrd.img.gz =
+
+
+
+  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/6576dc83a63f1=
+06809e134b2
+        failing since 31 days (last pass: v5.10.131-cip13-37-ge3a52725ce96,=
+ first fail: v5.10.200-cip40) =
+
+ =
+
+
+
+platform                 | arch  | lab         | compiler | defconfig      =
+     | regressions
+-------------------------+-------+-------------+----------+----------------=
+-----+------------
+beaglebone-black         | arm   | lab-broonie | gcc-10   | omap2plus_defco=
+nfig | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6576dc13d57e4f9b95e13476
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: omap2plus_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.201=
+-cip41-63-gfdfe1fbf93bc6/arm/omap2plus_defconfig/gcc-10/lab-broonie/baselin=
+e-cip-nfs-beaglebone-black.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.201=
+-cip41-63-gfdfe1fbf93bc6/arm/omap2plus_defconfig/gcc-10/lab-broonie/baselin=
+e-cip-nfs-beaglebone-black.html
+  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
+-arm/cip-core-image-kernelci-cip-core-bookworm-qemu-arm-initrd.img.gz =
+
+
+
+  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/6576dc13d57e4=
+f9b95e13477
+        failing since 31 days (last pass: v5.10.131-cip13-38-ga8671b4cc3c74=
+, first fail: v5.10.200-cip40) =
+
+ =
+
+
+
+platform                 | arch  | lab         | compiler | defconfig      =
+     | regressions
+-------------------------+-------+-------------+----------+----------------=
+-----+------------
+beaglebone-black         | arm   | lab-cip     | gcc-10   | omap2plus_defco=
+nfig | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6576dfc1584c0dc745e1347b
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: omap2plus_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.201=
+-cip41-63-gfdfe1fbf93bc6/arm/omap2plus_defconfig/gcc-10/lab-cip/baseline-ci=
+p-nfs-beaglebone-black.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.201=
+-cip41-63-gfdfe1fbf93bc6/arm/omap2plus_defconfig/gcc-10/lab-cip/baseline-ci=
+p-nfs-beaglebone-black.html
+  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
+-arm/cip-core-image-kernelci-cip-core-bookworm-qemu-arm-initrd.img.gz =
+
+
+
+  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/6576dfc1584c0=
+dc745e1347c
+        failing since 31 days (last pass: v5.10.131-cip13-38-ga8671b4cc3c74=
+, first fail: v5.10.200-cip40) =
+
+ =
+
+
+
+platform                 | arch  | lab         | compiler | defconfig      =
+     | regressions
+-------------------------+-------+-------------+----------+----------------=
+-----+------------
+r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip     | gcc-10   | defconfig      =
+     | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6576dc2c9861e6aa2ce13475
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.201=
+-cip41-63-gfdfe1fbf93bc6/arm64/defconfig/gcc-10/lab-cip/baseline-cip-nfs-r8=
+a774a1-hihope-rzg2m-ex.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.201=
+-cip41-63-gfdfe1fbf93bc6/arm64/defconfig/gcc-10/lab-cip/baseline-cip-nfs-r8=
+a774a1-hihope-rzg2m-ex.html
+  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
+-arm64/cip-core-image-kernelci-cip-core-bookworm-qemu-arm64-initrd.img.gz =
+
+
+
+  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/6576dc2c9861e=
+6aa2ce13476
+        failing since 31 days (last pass: v5.10.138-cip15, first fail: v5.1=
+0.200-cip40) =
+
+ =20
 
