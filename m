@@ -1,77 +1,90 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF7CC4332F
-	for <webhook@archiver.kernel.org>; Mon, 11 Dec 2023 20:27:56 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web11.1925.1702326468738332269
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0744C4332F
+	for <webhook@archiver.kernel.org>; Mon, 11 Dec 2023 20:34:46 +0000 (UTC)
+Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
+ by mx.groups.io with SMTP id smtpd.web11.2111.1702326876957884977
  for <cip-dev@lists.cip-project.org>;
- Mon, 11 Dec 2023 12:27:49 -0800
+ Mon, 11 Dec 2023 12:34:38 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 49F1C1C0050; Mon, 11 Dec 2023 21:27:46 +0100 (CET)
-Date: Mon, 11 Dec 2023 21:27:45 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Pavel Machek <pavel@denx.de>, cip-dev <cip-dev@lists.cip-project.org>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: WIFI in 6.1.X was Re: Potential ext4 corruption in 6.1.64-cip10
-Message-ID: <ZXdwwdiA6lh3VcYR@duo.ucw.cz>
-References: <7c9ee21e-7e50-4c3d-9d09-2368315abd16@siemens.com>
- <ZXbYD5WHuRCKNGO3@duo.ucw.cz>
- <d3b38c88-34db-42cc-8f56-7fc8b4696fd0@siemens.com>
- <ZXbb/i1HuG0yPHXi@duo.ucw.cz>
- <df30a458-00c9-4b64-8963-27c556603981@siemens.com>
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=aQFLrf/9;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.225, mailfrom: fm-51332-20231211203433d681e6e435b90da508-lutyi7@rts-flowmailer.siemens.com)
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 20231211203433d681e6e435b90da508
+        for <cip-dev@lists.cip-project.org>;
+        Mon, 11 Dec 2023 21:34:34 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ bh=XTpycov7aBE7St7ama9JLNPAbWkwz6rRmsqhWSMlIMk=;
+ b=aQFLrf/9CNHhAGnxSc4rCAyC1fljuWVdryuie2abAphBXmJdYjDQ71A+CtIRomp6ovmPZK
+ N2OlZ5WVw9ltnJj5106eDPBwxuNJkQx7qBXwy1NCK6RZMxXlZDIQlY/k8hus9ZhQGz5iVIe/
+ wc9PRJaDuklCFqoYq7MWqdndAl+Ko=;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: Quirin.Gylstorff@siemens.com,
+	cip-dev@lists.cip-project.org
+Subject: [cip-dev][isar-cip-core][PATCH v2] swupdate-certificates: Fix shell error
+Date: Mon, 11 Dec 2023 21:34:18 +0100
+Message-ID: <20231211203432.846459-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="p/iLUZf528bXnB5q"
-Content-Disposition: inline
-In-Reply-To: <df30a458-00c9-4b64-8963-27c556603981@siemens.com>
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 11 Dec 2023 20:27:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14038
+ <cip-dev@lists.cip-project.org>; Mon, 11 Dec 2023 20:34:46 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14039
+
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
 
---p/iLUZf528bXnB5q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+An Additional bracket was added to all if cases, which leads to build
+errors if the variable SWU_SIGN_CERT,SWU_SIGN_SCRIPT and/or SWU_SIGN_KEY
+are not set.
 
-Hi!
+Introduced with daa9e6738d1763a953fadc4de6010fe8dfddf27a for SWU_SIGN_CERT and SW_SIGN_KEY. 3a4b25d introduces it for SWU_SIGN_SCRIPT.
 
-> Ah, that missing dependency of the patch - subtle as it was written.
->=20
-> > I'll just do 6.1.66 based -cip and -cip-rt releases, unless someone
-> > stops me.
 
-Ok, this is not good week for 6.1.X.
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ .../swupdate-certificates/swupdate-certificates-key.inc       | 4 ++--
+ .../swupdate-certificates/swupdate-certificates.inc           | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-https://www.phoronix.com/news/Linux-6.6.6-Released
+diff --git a/recipes-devtools/swupdate-certificates/swupdate-certificates-key.inc b/recipes-devtools/swupdate-certificates/swupdate-certificates-key.inc
+index 0b3e045..d3d2e16 100644
+--- a/recipes-devtools/swupdate-certificates/swupdate-certificates-key.inc
++++ b/recipes-devtools/swupdate-certificates/swupdate-certificates-key.inc
+@@ -21,11 +21,11 @@ SRC_URI:append = " ${@ "file://"+d.getVar('SWU_SIGN_SCRIPT') if d.getVar('SWU_SI
+ do_install[cleandirs] = "${D}/usr/share/swupdate-signing/ \
+                          ${D}/usr/bin/"
+ do_install() {
+-    if [ ! -f ${WORKDIR}/${SWU_SIGN_SCRIPT} ] ]; then
++    if [ ! -f ${WORKDIR}/${SWU_SIGN_SCRIPT} ]; then
+         bbfatal "You must add a '${SWU_SIGN_SCRIPT}' to execute the signing process"
+     fi
+     install -m 0700 ${WORKDIR}/${SWU_SIGN_SCRIPT} ${D}/usr/bin/sign-swu
+-    if [ -z ${SWU_SIGN_KEY} ] ]; then
++    if [ -z ${SWU_SIGN_KEY} ]; then
+         bbfatal "You must set SWU_SIGN_KEY and provide the required file as artifacts to this recipe"
+     fi
+     TARGET=${D}/usr/share/swupdate-signing/
+diff --git a/recipes-devtools/swupdate-certificates/swupdate-certificates.inc b/recipes-devtools/swupdate-certificates/swupdate-certificates.inc
+index 0553c25..6673383 100644
+--- a/recipes-devtools/swupdate-certificates/swupdate-certificates.inc
++++ b/recipes-devtools/swupdate-certificates/swupdate-certificates.inc
+@@ -18,7 +18,7 @@ SWU_SIGN_CERT ??= ""
+ SRC_URI:append = " ${@ "file://"+d.getVar('SWU_SIGN_CERT') if d.getVar('SWU_SIGN_CERT') else '' }"
+ 
+ do_install() {
+-    if [ -z ${SWU_SIGN_CERT} ] ]; then
++    if [ -z ${SWU_SIGN_CERT} ]; then
+         bbfatal "You must set SWU_SIGN_CERT and provide the required file as artifacts to this recipe"
+     fi
+     TARGET=${D}/usr/share/swupdate-signing/
+-- 
+2.42.0
 
-There's wifi regression in 6.1.66. I guess that's better than ext4
-regression, and 6.1.67 is not nice round number, so I guess we do not
-need to do anything just now... but if someone is affected by the
-problem let me know.
-
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---p/iLUZf528bXnB5q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZXdwwQAKCRAw5/Bqldv6
-8iKuAKCj6QLDsC9UIUEnMRzD6FsttAxuyACgiBNjwm+vjjC4V7olGf8Y39iksls=
-=jsyf
------END PGP SIGNATURE-----
-
---p/iLUZf528bXnB5q--
 
