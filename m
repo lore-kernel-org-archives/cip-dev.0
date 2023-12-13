@@ -2,51 +2,51 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C78C4167B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA6E0C4332F
 	for <webhook@archiver.kernel.org>; Wed, 13 Dec 2023 10:22:51 +0000 (UTC)
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
- by mx.groups.io with SMTP id smtpd.web11.32788.1702462965693229736
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+ by mx.groups.io with SMTP id smtpd.web10.33169.1702462965601245213
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
  Wed, 13 Dec 2023 02:22:45 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=Ja4Qomys;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.167.174, mailfrom: bot@kernelci.org)
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3b9e2a014e8so4698255b6e.2
+ dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=Hyw6+PK3;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.161.53, mailfrom: bot@kernelci.org)
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-590711b416fso3825476eaf.2
         for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Wed, 13 Dec 2023 02:22:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1702462964; x=1703067764; darn=lists.cip-project.org;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=/SuLjMMB7hM38EaGW05hBh6PAMxjDM+R+rmLT0VmYpA=;
-        b=Ja4QomysgSFWznciJzNuJVm2hiugM3yVu95rigDOEGGN1vtF6TCJxDrK9NcH89h4md
-         rRlNJVVqdGV35zjYP/e3dYlw3nKWEIL+UwtxddQMajCDg/kc8fJxKL7nPVBh1BQnsbHn
-         SJYijuQAUfxuVaisOs9BkL623fmRdtqeGLQLkK/OKMfIFGY0xwe+C8QaPyTTaMSOKxZE
-         0J/dqMS3nMe4VAM2N5UVpo2JJaru4iTtDZGagkhPEY0WNVuSDoSUs8g/OhEoktUJZfdN
-         bC5+nPRuN921z4Zf2f19xjYDy8wt/T2ghbx5DWuz7sxuPaPr2DgRP3Z3CThFcQ2YVI2Z
-         ZuJg==
+        bh=mj6DMCMr9rZ50Mm5UBD3B6nOVJCrLyoOBo+CnZUKCvQ=;
+        b=Hyw6+PK3orAM+qqrryBLhDDORz3E94tVTbG68NpPOvkg3MdHtm6ZwDQ++OjQIZeCz3
+         SuwdyeArJeYBPbe3pLtUwyeYS5Q3U/m3i0R9jHrxxFuRZoU0YkGB8TDkj5QVjaG72Dhe
+         Gx8r/9TVcunWUky2zW8+Q/gY8PN2cBtfQ8Qn9s/ctkWJ33ZGucO6aNnc5dWJKhtKDvWx
+         X7LN9HMyCehTbfh7Pn2HRWpESljYm2d22U6X43QamhnfaPaaJ9yfqIXADVJ3vO3Wx873
+         C9rCrxQ1LkfGrQkx9txnp7/f9RYnBESPLsgZPoc+T1s85g8zv2bU0zegSBz+jCDZaRqS
+         8m2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1702462964; x=1703067764;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/SuLjMMB7hM38EaGW05hBh6PAMxjDM+R+rmLT0VmYpA=;
-        b=UJGhyI76WYOUgOG/5lDwZn7rtlsrviifb3xedjlyIuNmmpNkRmn/4JFpKw7eGG8gf+
-         lBdMj1kxZhJo0zOH+b9njm4dhd3X86gwK3SqdMaDSX7nhpqGN7c2voposeCimjOvpbLD
-         XyWatLLbnSn/+E6OuU9DIvMpnLra8TzNKGQd6NbVAfLqwhHaps9mnenU9fhMcsOdPc4p
-         aq3pAttsNvVBNnW06jmFgFTK7PB/pK0lH0QAq6UXohXPOZ0NZVQPQMWDFlBcn4gEV8dE
-         pK2YKfOybXVczkGS03cV67ZY26sSPbFg7VsHpe8dj7WSPIQ5ER2NzIUHqWLm+RbHZr0a
-         weYQ==
-X-Gm-Message-State: AOJu0YwiXuVn3HYGHWfeR1VTik0hXJBsBzhd8pjWm9rtXZnTEiUK3hUi
-	YkxLbANhiHaXQv42MJfShaHRHsJFWzyD6uKyBVzuuA==
-X-Google-Smtp-Source: AGHT+IEjblDj0P+W7zbbAhFvPGeinGGVRMm91KlVO/f5DZjq+mXhoi1WwlzBPxxci1Aiwu39lg8dMw==
-X-Received: by 2002:a05:6808:23d4:b0:3b9:dcf0:63b9 with SMTP id bq20-20020a05680823d400b003b9dcf063b9mr10847688oib.23.1702462964469;
+        bh=mj6DMCMr9rZ50Mm5UBD3B6nOVJCrLyoOBo+CnZUKCvQ=;
+        b=LXHc1eWF0v/5I4Egd3ChxVRg58RtOgt2jjRFSrQxNsMiy8A6tuzQyWS+lwd7CuWDWy
+         GtZIr1/kGuSti9JI1XaLenLEfYEtgiseiMSHAhpFHJ6icea+ZvwXk53CM1S0Zdin+xLT
+         kmIqwuRvoYjmLUnR9tke+tP4/JWmbXjWkAw++Sa3T8VqcrL3rDLduwakcOuSCTmkE9ky
+         H1qRJs/E0u6fq9IsXWQkwVbknR28nQcQyPalRnA9sKzxBfpLTM+9yvZ9KkNeUGp9JPdF
+         u/oMSbB5DQpb3QRsdazJSmHS9KoTAGzDlOyHd7uzC4e+Ns19amW+LVJu09LyJ7uxZrEx
+         aqdg==
+X-Gm-Message-State: AOJu0Yy4HQ5BDQQ8Tbiw8hjIYYxo7XM/0lj099CGNccRTdWsc+xURdG/
+	0w/oqsEYjKjK9YTXlptdMDFxpgeGM/YEszTSOXPVzA==
+X-Google-Smtp-Source: AGHT+IHN1A9NGh+uDZPdnf5WZ3GA7XdpoEBPbS0K6mmaxfEq6jLj2y/mB6kVFdgCFz0+/RrhX81Ckg==
+X-Received: by 2002:a05:6358:88c:b0:16d:fb29:d78 with SMTP id m12-20020a056358088c00b0016dfb290d78mr10305949rwj.2.1702462964160;
         Wed, 13 Dec 2023 02:22:44 -0800 (PST)
 Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id l9-20020a170902d34900b001cc131c65besm10263264plk.168.2023.12.13.02.22.43
+        by smtp.gmail.com with ESMTPSA id j20-20020a635954000000b005c200b11b77sm9682669pgm.86.2023.12.13.02.22.43
         for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 13 Dec 2023 02:22:43 -0800 (PST)
-Message-ID: <657985f3.170a0220.2c317.e927@mx.google.com>
+Message-ID: <657985f3.630a0220.974d.d165@mx.google.com>
 Date: Wed, 13 Dec 2023 02:22:43 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
@@ -55,33 +55,34 @@ X-Kernelci-Branch: ci/pavel/linux-test
 X-Kernelci-Tree: cip-gitlab
 X-Kernelci-Report-Type: test
 X-Kernelci-Kernel: v5.10.201-cip41-77-g545d45774209f
-Subject: cip-gitlab/ci/pavel/linux-test ltp-timers: 7 runs,
- 3 regressions (v5.10.201-cip41-77-g545d45774209f)
+Subject: cip-gitlab/ci/pavel/linux-test ltp-fcntl-locktests: 6 runs,
+ 1 regressions (v5.10.201-cip41-77-g545d45774209f)
 To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
 From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 13 Dec 2023 10:22:51 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14066
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14065
 
-cip-gitlab/ci/pavel/linux-test ltp-timers: 7 runs, 3 regressions (v5.10.201=
--cip41-77-g545d45774209f)
+cip-gitlab/ci/pavel/linux-test ltp-fcntl-locktests: 6 runs, 1 regressions (=
+v5.10.201-cip41-77-g545d45774209f)
 
 Regressions Summary
 -------------------
 
-platform          | arch  | lab         | compiler | defconfig | regressions
-------------------+-------+-------------+----------+-----------+------------
-qemu_riscv64      | riscv | lab-broonie | gcc-10   | defconfig | 2          =
-
-qemu_smp8_riscv64 | riscv | lab-broonie | gcc-10   | defconfig | 1          =
+platform                     | arch  | lab         | compiler | defconfig |=
+ regressions
+-----------------------------+-------+-------------+----------+-----------+=
+------------
+meson-gxl-s905x-libretech-cc | arm64 | lab-broonie | gcc-10   | defconfig |=
+ 1          =
 
 
   Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fpavel%2Fli=
-nux-test/kernel/v5.10.201-cip41-77-g545d45774209f/plan/ltp-timers/
+nux-test/kernel/v5.10.201-cip41-77-g545d45774209f/plan/ltp-fcntl-locktests/
 
-  Test:     ltp-timers
+  Test:     ltp-fcntl-locktests
   Tree:     cip-gitlab
   Branch:   ci/pavel/linux-test
   Describe: v5.10.201-cip41-77-g545d45774209f
@@ -100,66 +101,35 @@ Test Regressions
 
 
 
-platform          | arch  | lab         | compiler | defconfig | regressions
-------------------+-------+-------------+----------+-----------+------------
-qemu_riscv64      | riscv | lab-broonie | gcc-10   | defconfig | 2          =
+platform                     | arch  | lab         | compiler | defconfig |=
+ regressions
+-----------------------------+-------+-------------+----------+-----------+=
+------------
+meson-gxl-s905x-libretech-cc | arm64 | lab-broonie | gcc-10   | defconfig |=
+ 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/657979cdfee212ee90e13476
-
-  Results:     32 PASS, 4 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (riscv64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.201-cip41-77-g545d45774209f/riscv/defconfig/gcc-10/lab-broonie/ltp-t=
-imers-qemu_riscv64.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.201-cip41-77-g545d45774209f/riscv/defconfig/gcc-10/lab-broonie/ltp-t=
-imers-qemu_riscv64.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/sid-ltp/202=
-30623.0/riscv64/rootfs.cpio.gz =
-
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/657979cdfee=
-212ee90e1347b
-        new failure (last pass: v5.10.201-cip41-63-gfdfe1fbf93bc6) =
-
-
-  * ltp-timers.clock_settime: https://kernelci.org/test/case/id/657979cdfee=
-212ee90e1347b
-        new failure (last pass: v5.10.201-cip41-63-gfdfe1fbf93bc6) =
-
- =
-
-
-
-platform          | arch  | lab         | compiler | defconfig | regressions
-------------------+-------+-------------+----------+-----------+------------
-qemu_smp8_riscv64 | riscv | lab-broonie | gcc-10   | defconfig | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/65797cd2a786295849e13484
+  Details:     https://kernelci.org/test/plan/id/65797817efba1d8521e134a1
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
   Full config: defconfig
-  Compiler:    gcc-10 (riscv64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
 110)
   Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.201-cip41-77-g545d45774209f/riscv/defconfig/gcc-10/lab-broonie/ltp-t=
-imers-qemu_smp8_riscv64.txt
+/v5.10.201-cip41-77-g545d45774209f/arm64/defconfig/gcc-10/lab-broonie/ltp-f=
+cntl-locktests-meson-gxl-s905x-libretech-cc.txt
   HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.201-cip41-77-g545d45774209f/riscv/defconfig/gcc-10/lab-broonie/ltp-t=
-imers-qemu_smp8_riscv64.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/sid-ltp/202=
-30623.0/riscv64/rootfs.cpio.gz =
+/v5.10.201-cip41-77-g545d45774209f/arm64/defconfig/gcc-10/lab-broonie/ltp-f=
+cntl-locktests-meson-gxl-s905x-libretech-cc.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
+p/20230623.0/arm64/initrd.cpio.gz =
 
 
 
-  * ltp-timers.login: https://kernelci.org/test/case/id/65797cd2a786295849e=
-13485
-        new failure (last pass: v5.10.201-cip41-63-gfdfe1fbf93bc6) =
+  * ltp-fcntl-locktests.login: https://kernelci.org/test/case/id/65797817ef=
+ba1d8521e134a2
+        failing since 3 days (last pass: v5.10.201-cip41-63-g2bc5a8583f4a8,=
+ first fail: v5.10.201-cip41-63-gfdfe1fbf93bc6) =
 
  =20
 
