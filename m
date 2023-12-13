@@ -1,132 +1,112 @@
-Return-Path: <ncaidin@linuxfoundation.org>
+Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B86D0C4167D
-	for <webhook@archiver.kernel.org>; Wed, 13 Dec 2023 13:54:32 +0000 (UTC)
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
- by mx.groups.io with SMTP id smtpd.web10.34579.1702468970369071805
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ADA0C4332F
+	for <webhook@archiver.kernel.org>; Wed, 13 Dec 2023 16:53:04 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web11.40932.1702486373796692929
  for <cip-dev@lists.cip-project.org>;
- Wed, 13 Dec 2023 04:02:51 -0800
+ Wed, 13 Dec 2023 08:52:54 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=felix.moessbauer@siemens.com header.s=fm1 header.b=pQWBgrQu;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-1321639-20231213120247af30686742cdeeaf40-_1rp4x@rts-flowmailer.siemens.com)
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20231213120247af30686742cdeeaf40
-        for <cip-dev@lists.cip-project.org>;
-        Wed, 13 Dec 2023 13:02:47 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=felix.moessbauer@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=WGO69o8igJGWufeWGBjbmBw2WrGUJKGjmCZmUB7z3oU=;
- b=pQWBgrQutkbkBPlEbkiD/QugPI7xcuEGkZn8VC7sayqENsy+VeWin5Fl+sTeDs0p8N4NKI
- eNCtAea2NZavjQYvDzNJw3rEVNsCObXZAKaaqYbMZsfj1oT8KnBwfxY8dhpwKsCMO343JMvW
- 7uwJ8/ZWlox7fe0Ac21L0P1MtZL5w=;
-Message-ID: <b95374d4eb3344bfd135ec5605d6f6b395578418.camel@siemens.com>
-Subject: Re: [cip-dev][isar-cip-core][PATCH] swupdate-certificates*.inc: Add missing FILESEXTRAPATHS
-From: Moessbauer Felix <felix.moessbauer@siemens.com>
-To: Gylstorff Quirin <quirin.gylstorff@siemens.com>, 
-	cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
-Date: Wed, 13 Dec 2023 20:02:43 +0800
-In-Reply-To: <1bd6fc08-38cc-4bdf-83d8-96f56cfdbce7@siemens.com>
-References: <20231212141556.1616031-1-Quirin.Gylstorff@siemens.com>
-	 <9b8314f6059fca9fb270921b8ce53e2149ec40f6.camel@siemens.com>
-	 <1bd6fc08-38cc-4bdf-83d8-96f56cfdbce7@siemens.com>
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+X-IronPort-AV: E=Sophos;i="6.04,273,1695654000"; 
+   d="scan'208";a="186369279"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 14 Dec 2023 01:52:51 +0900
+Received: from Ubuntu-22.. (unknown [10.226.93.80])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 065074021F9B;
+	Thu, 14 Dec 2023 01:52:49 +0900 (JST)
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Pavel Machek <pavel@denx.de>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip] ASoC: dt-bindings: renesas,rz-ssi: Update interrupts and interrupt-names properties
+Date: Wed, 13 Dec 2023 16:52:48 +0000
+Message-Id: <20231213165248.975443-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1321639:519-21489:flowmailer
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 13 Dec 2023 13:54:32 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14068
+ <cip-dev@lists.cip-project.org>; Wed, 13 Dec 2023 16:53:04 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14070
 
-On Wed, 2023-12-13 at 12:45 +0100, Gylstorff Quirin wrote:
->=20
->=20
-> On 12/13/23 04:27, Moessbauer Felix wrote:
-> > On Tue, 2023-12-12 at 15:12 +0100, Quirin Gylstorff wrote:
-> > > From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> > >=20
-> > > This allows to include the files in downstream layers.
-> > >=20
-> > > Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> > > ---
-> > > =C2=A0=C2=A0.../swupdate-certificates/swupdate-certificates-key.inc=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
-> > > | 2
-> > > ++
-> > > =C2=A0=C2=A0.../swupdate-certificates/swupdate-certificates.inc=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
-> > > | 2
-> > > ++
-> > > =C2=A0=C2=A02 files changed, 4 insertions(+)
-> > >=20
-> > > diff --git a/recipes-devtools/swupdate-certificates/swupdate-
-> > > certificates-key.inc b/recipes-devtools/swupdate-
-> > > certificates/swupdate-certificates-key.inc
-> > > index d3d2e16..2c67e89 100644
-> > > --- a/recipes-devtools/swupdate-certificates/swupdate-
-> > > certificates-
-> > > key.inc
-> > > +++ b/recipes-devtools/swupdate-certificates/swupdate-
-> > > certificates-
-> > > key.inc
-> > > @@ -11,6 +11,8 @@
-> > > =C2=A0=20
-> > > =C2=A0=C2=A0inherit dpkg-raw
-> > > =C2=A0=20
-> > > +FILESEXTRAPATHS:prepend :=3D "${FILE_DIRNAME}/files:"
-> > > +
-> > > =C2=A0=C2=A0PROVIDES +=3D "swupdate-certificates-key"
-> > > =C2=A0=20
-> > > =C2=A0=C2=A0SWU_SIGN_KEY ??=3D ""
-> > > diff --git a/recipes-devtools/swupdate-certificates/swupdate-
-> > > certificates.inc b/recipes-devtools/swupdate-
-> > > certificates/swupdate-
-> > > certificates.inc
-> > > index 6673383..564dda4 100644
-> > > --- a/recipes-devtools/swupdate-certificates/swupdate-
-> > > certificates.inc
-> > > +++ b/recipes-devtools/swupdate-certificates/swupdate-
-> > > certificates.inc
-> > > @@ -11,6 +11,8 @@
-> > > =C2=A0=20
-> > > =C2=A0=C2=A0inherit dpkg-raw
-> > > =C2=A0=20
-> > > +FILESEXTRAPATHS:prepend :=3D "${FILE_DIRNAME}/files:"
-> >=20
-> > Hi, did you check if this is compatible with sstate caching? We
-> > must
-> > avoid adding absolute paths to the signatures, as otherwise this
-> > breaks
-> > caching on the gitlab-cloud-ci runners.
->=20
-> This should not be the case as it is added=20
-> recipes-devtools/swupdate-certificates/files/swu-sign-cms scripts.
->=20
-> I checked it with sstate-lint and it didn;t find any problems in=20
-> isar-cip-core.
+commit 56a3840486ae22c42176828e25d4073712837bfd upstream.
 
-Ok, thanks for the clarification.
+From R01UH0914EJ0120 Rev.1.20 HW manual, for full duplex channels
+(SSI0/1/3) dma_rt interrupt has now being marked as reserved and similarly
+for half duplex channel (SSI2) dma_rx and dma_tx interrupts have now being
+marked as reserved (this applies to RZ/G2L and alike SoC's). This patch
+updates the binding doc to match the same.
 
-Felix
+While at it also updated the example node.
 
->=20
-> Best regards,
-> Quirin
->=20
-> >=20
-> > You can check that with the isar-sstate lint script.
-> >=20
-> > Best regards,
-> > Felix
-> >=20
-> > > +
-> > > =C2=A0=C2=A0PROVIDES +=3D "swupdate-certificates"
-> > > =C2=A0=20
-> > > =C2=A0=C2=A0SWU_SIGN_CERT ??=3D ""
-> >=20
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Link: https://lore.kernel.org/r/20230217185225.43310-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+Hi All,
+
+All the relevant driver patches and DT changes are already present v6.1-cip, just
+the binding patch was missing.
+- f3f3218a63af ("ASoC: sh: rz-ssi: Update interrupt handling for half duplex channels")
+- e83e635becb9 ("arm64: dts: renesas: r9a07g054: Update IRQ numbers for SSI channels")
+- 684fecd4f332 ("arm64: dts: renesas: r9a07g044: Update IRQ numbers for SSI channel")
+
+Cheers,
+Prabhakar
+---
+ .../bindings/sound/renesas,rz-ssi.yaml        | 21 +++++++++++--------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml b/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
+index 0d9840375132..5bd86a685cf7 100644
+--- a/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
++++ b/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
+@@ -22,14 +22,18 @@ properties:
+     maxItems: 1
+ 
+   interrupts:
+-    maxItems: 4
++    minItems: 2
++    maxItems: 3
+ 
+   interrupt-names:
+-    items:
+-      - const: int_req
+-      - const: dma_rx
+-      - const: dma_tx
+-      - const: dma_rt
++    oneOf:
++      - items:
++          - const: int_req
++          - const: dma_rx
++          - const: dma_tx
++      - items:
++          - const: int_req
++          - const: dma_rt
+ 
+   clocks:
+     maxItems: 4
+@@ -103,9 +107,8 @@ examples:
+             reg = <0x10049c00 0x400>;
+             interrupts = <GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH>,
+                          <GIC_SPI 327 IRQ_TYPE_EDGE_RISING>,
+-                         <GIC_SPI 328 IRQ_TYPE_EDGE_RISING>,
+-                         <GIC_SPI 329 IRQ_TYPE_EDGE_RISING>;
+-            interrupt-names = "int_req", "dma_rx", "dma_tx", "dma_rt";
++                         <GIC_SPI 328 IRQ_TYPE_EDGE_RISING>;
++            interrupt-names = "int_req", "dma_rx", "dma_tx";
+             clocks = <&cpg CPG_MOD R9A07G044_SSI0_PCLK2>,
+                      <&cpg CPG_MOD R9A07G044_SSI0_PCLK_SFR>,
+                      <&audio_clk1>,
+-- 
+2.34.1
 
 
