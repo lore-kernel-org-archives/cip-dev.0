@@ -1,209 +1,155 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3394DC41535
-	for <webhook@archiver.kernel.org>; Thu, 14 Dec 2023 01:41:54 +0000 (UTC)
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
- by mx.groups.io with SMTP id smtpd.web11.12283.1702518108081957426
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Wed, 13 Dec 2023 17:41:48 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B77C8C4332F
+	for <webhook@archiver.kernel.org>; Thu, 14 Dec 2023 03:19:54 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.web10.14002.1702523988457237701
+ for <cip-dev@lists.cip-project.org>;
+ Wed, 13 Dec 2023 19:19:49 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=lGYihltj;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.161.42, mailfrom: bot@kernelci.org)
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-58d08497aa1so4875611eaf.0
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Wed, 13 Dec 2023 17:41:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1702518107; x=1703122907; darn=lists.cip-project.org;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=DdwmbUJ6Jc09mCEXrsMbr577arqd0ZOIAUZImUaLLPs=;
-        b=lGYihltj9uYIfbVTCks3t1vM8t6OnaMOd17qGZj5meZC5fkD9RAz8B/2MSpi+3snTB
-         aUYp+hh6i9JZlC4tvm4irJFsgv1k0i8iazhSpteG9/Dqvs1OAkV0Ljuw8uKofJsS5qWS
-         Vby3BajN6+uNN5rNLm0nAmTF2gYzdjgWv9g2+X7CqWIUzCmGyDrFJqoOKWyyIHAgzQQb
-         g3VYSgZbdCnnjwCiVCVYhA5jhQ1fnSRm0MQkEMe7Mo61c5kX8yumbaVy+EVIcrjxeloN
-         R/yYQaonxI5qEC6/upvO8xpUvCcxvz5aNy2KsQdeLAWqcqrEPhpogSkT9IALvJvwXv3Q
-         NZWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702518107; x=1703122907;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DdwmbUJ6Jc09mCEXrsMbr577arqd0ZOIAUZImUaLLPs=;
-        b=K+EexcPoVO5QQp6RJQ7KpGzeStLO23RP3kBfTZH4dryFT0tYMAIoTXrmbsNfmGls8g
-         kMK8n+ezVJluA20b9uSb6Uh/1OPOLC3+XM5LMbVdiibKHRUnsFDLFJ9RFTpHUyHfoNqV
-         LSmncXAFT6effSwbJ5DZHyreYM7HiHITXUZ5g4HRpuzsIjzhl9PXTRZcWYOJkHLGVL1+
-         MhvYD9w/k7FQid8dXGTmvFKSVb0Uqtes4qv0gm16frQAlmwIGhf90iS7S5GrbPmeCuA6
-         h/kXNKTha5ST1OzEIbMNWT/FVg1U8KMMl3yM8QG0HHxqz7lf8+AIMEBSJYxByeOVsSCj
-         sO0w==
-X-Gm-Message-State: AOJu0Yy/0TdKq1kurtu04X4HKzXzREoy7JtAqHczSMBumMZfRA0F5X3l
-	9+/AqTjuq22Cb7t9FbYs5ZlGD7bRxWftfXHrl1jQ4A==
-X-Google-Smtp-Source: AGHT+IGNelLgP5vEiKFISk4QDwpA4HTIqAmIOv4MLHDvbVK00OCPYd3CeRUY4JyFoLTo2uUaMR78Nw==
-X-Received: by 2002:a05:6358:9047:b0:172:98ae:cd35 with SMTP id f7-20020a056358904700b0017298aecd35mr964301rwf.29.1702518106847;
-        Wed, 13 Dec 2023 17:41:46 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id d14-20020a170902cece00b001d0c37a9ccdsm11231702plg.10.2023.12.13.17.41.41
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Dec 2023 17:41:42 -0800 (PST)
-Message-ID: <657a5d56.170a0220.f69bd.31d5@mx.google.com>
-Date: Wed, 13 Dec 2023 17:41:42 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+ dkim=none (message not signed); spf=pass (domain: toshiba.co.jp, ip: 210.130.202.158, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
+Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 3BE3JcB8531243; Thu, 14 Dec 2023 12:19:38 +0900
+X-Iguazu-Qid: 2rWgTXl343mU4Rz6bk
+X-Iguazu-QSIG: v=2; s=0; t=1702523977; q=2rWgTXl343mU4Rz6bk; m=q1yrQKStC2+zuy463qV9RaHJf0ujFNUlmBZMZiwowxs=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1121) id 3BE3JaPm4123438
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 14 Dec 2023 12:19:37 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bkt+ntFvTW0AYgnF1plc8J+CL2Yik5bufLnpWPFD7ZCZn04PAoHWhEOq9rCsjUz3wotMpy8wzNt5TxS2oI3UTR+tpYblmF01q3xe3FEULWANW4iXwB59R4kzlW+IQkOm+LAge3H4uwcGrcL2/fHWoV6meFykEoNOf/xatCBwwfHKjicTx//mPqg8ahk5i8DxDrprAs36kyZCzBP0ZAK6ranUH7ft75VIrk+9NxoLcNzs1ctFOkdU4aIC+jZqxSCdlmrnJEBFAsXc4H2gZSNmvJBa/sc3oL+fk/BUPLHmkt7l2zI3KJ4JrGolmr+Do2Au8xxfu7pC/XgcFVfwOyAYvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CsCVWTC0DgPNV1Pg2E/7JZNT3k10qGn+exTinYfn5eQ=;
+ b=hSoXbMFLHwOx6ggg2OjxT7rxXa/xmUxjkXjK/jJwdcP6LXQCF6ifpGw+KhktnZud3kQiWjH64oeG19mu5aPVL+4HhoRWDl4rVs1LeJeRb7WrhnILs1aSuBvLEtGAwe0dN9ztlOsgoaiPUXlBLNzBttUYNZohaxpw1R13yWLIMcpuc+jubASfl+37TPEu2oIEf5Y9O/8NBbGdoihXB4nJcXkcEGuC1K2CVc6xQ5cjFr7g2E2kxlJYJBmKyUtF+aeOc+sySStt0BAkMHwyM4fphdL2cYJKEP5e6he8Lrc/rwOtXVe1MpCsWWbQBE4C+QCgSpjhKWgsZe0tu924+Cj+dA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: <pavel@denx.de>, <biju.das.jz@bp.renesas.com>
+CC: <cip-dev@lists.cip-project.org>, <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: RE: [PATCH 00/14] Add Mali-G31 GPU support for RZ/G2L SoC
+Thread-Topic: [PATCH 00/14] Add Mali-G31 GPU support for RZ/G2L SoC
+Thread-Index: AQHaLPhuPCHJZWta2Eux0/w1k6DzYrCm4GuAgAE8NKA=
+Date: Thu, 14 Dec 2023 03:19:34 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <TYVPR01MB11245F51F54A2EE4E6505040C928CA@TYVPR01MB11245.jpnprd01.prod.outlook.com>
+References: <20231212124035.151367-1-biju.das.jz@bp.renesas.com>
+ <ZXlpN+5ODcVIfZj3@duo.ucw.cz>
+In-Reply-To: <ZXlpN+5ODcVIfZj3@duo.ucw.cz>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYVPR01MB11245:EE_|TYCPR01MB9749:EE_
+x-ms-office365-filtering-correlation-id: e0278e59-0b5f-42c5-6a0b-08dbfc537f21
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ I07vFbBdm5zk0nHSJtmW1yuS05gDeLFf1IKKNmgHpaFgGoP4XVBXu8P+9lysAU6UobPDDEn42RNC7EuRu88uIZEvbH7WUq1MwDFIpsjHRyN9F0UNEYEdc09kCfb42coZtraKQMkn9WPUXweOsJVyPB85kN/GXTuGw+5wVsvCuW0BQOH6uMTV3vyYcJ5FPX/tqawJLy/gyYBIUKvKh6PZOoIAEC71VoJ9GUdnnSo55w96R/jNDBgWQYOSm3bpNBcOHtg3YQoc/CSAKFQCCJWtUxsnMRheOw3YfYeHpJGD8ujqUZymVQAMhdItO6Ih+fYQLcLjc5AGY4L0Pnm8liQMoaov5GQLK5boNgvBd6mDg0uNMHulGuFEkdnOZpNINMGZFSLFpwijnGyQD0K22QTsyElAAknmuJpqQoa/gBm4qLy5jUB94W8KMs3hPpMLNNw5PwGkerVeK9pqZrKatB6D5+G6yWKsO6Tl218ZEckSu+5tw8yXMEo/O9d7AYgLshL75t/9IAh5oDXLYO14/e3ivjwStKINXoB5Xl6HsWCljBue7cmQphWapwHEovKydA9qcy2fl0/tZiQIrjR/kIDFRwzw7dsnKQM87j3Xre9zW+wqksNW4mr4ODTewVTHsNFcTNCVuT3jSz/sgxgQzWZzXg==
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYVPR01MB11245.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(366004)(376002)(136003)(396003)(39860400002)(230922051799003)(451199024)(64100799003)(1800799012)(186009)(83380400001)(53546011)(7696005)(71200400001)(6506007)(316002)(4326008)(8676002)(8936002)(52536014)(86362001)(38100700002)(64756008)(110136005)(54906003)(66446008)(66556008)(66946007)(76116006)(66476007)(55016003)(478600001)(9686003)(26005)(5660300002)(4744005)(33656002)(38070700009)(41300700001)(122000001)(2906002)(95630200002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?clhvRVMwQk9MeHhHZXF1NDVvLzkrckNmT2JPeWNGb2RpTEtDNmtWVUtO?=
+ =?iso-2022-jp?B?b01qVWJROUc1V0xtK093NlM4RWtyU2lvRGhsZEo4bmdpTTFVUHA4UnRK?=
+ =?iso-2022-jp?B?alo5ZCt4QVBzaERldC8yUHVRSXpCc1IyaDRMNVVvSEhSMVBvLzV5MkRk?=
+ =?iso-2022-jp?B?VXducXR3bVc1cXdIMXRwclBoUWRCSVNzMlhuMlBqdWF5aVFQT0dPU2Zt?=
+ =?iso-2022-jp?B?RENRN0xpMmV2YjBsOU1WOW8xYm9RU1dzUmpoVjk4ZUhPbWFlL1lqSUxt?=
+ =?iso-2022-jp?B?NDJmTlU5UWNjUGx4eDdKZFk0UHovT3pQSG9YVnQwUHQwNGF1R0wvYklj?=
+ =?iso-2022-jp?B?ZVM2MVNZaXVBb3cySjRuUDlJSWtmcjhrdUdQMnFISXpLS29URkNUd0Nk?=
+ =?iso-2022-jp?B?cy9NMVEvbGhnMEFTbm5PL1hVeG1obWR5NVhRSmNVTkorOGsrWE1qMUJa?=
+ =?iso-2022-jp?B?VUxyKzA4MTR1RUxlblpienRRSFo0bUVScnR2RVd0TnZrRnVjemV0TE9M?=
+ =?iso-2022-jp?B?ZGx3cHQ4bEpwTWE5UlUvMzFhT0RjckFTUURZUllOMHVLdzMwNGUvdXZr?=
+ =?iso-2022-jp?B?aG40V2tpOG53d0puYW1lSWFmM01xSFBwMlBHaGREZk5zSnZyREU5UzhS?=
+ =?iso-2022-jp?B?QWJGUXdmTjNteHJ2ME9oYnBxRWR3MWlTaUpIT3BqZU1NV1p4SzJDMmUr?=
+ =?iso-2022-jp?B?aXhpb1NVL2ZKSGlnSy9hcjBmbzBxdFNQQUE0S21IYzVRbCs3cGhHMnJW?=
+ =?iso-2022-jp?B?TmdtOUVnejR1eit5VnlnSTNhUHpoSCszREdNOU9qQURjN0Vvb2dzSUhn?=
+ =?iso-2022-jp?B?Yk5ReTZSNTZWL08xZGtHMTcvdmRocGVaSmRIVlJvUnZVSFFGUUZEbnN1?=
+ =?iso-2022-jp?B?NTlSeFJvWnpwY1M4UHE1d0liTlNDRWpBWUFVWHlzRUxpVGQweW9pbEJj?=
+ =?iso-2022-jp?B?YXBRZWRTRXJBRjFjQmJlZFNVVzg4blE4K0t0WHNuUkJkL0w5OUVOUG5i?=
+ =?iso-2022-jp?B?ZmlqZXZNMWdQRFFiWnJKSVF4dVdqTk1vRlgrZHZJWHo4a1ZpYUNsZlZp?=
+ =?iso-2022-jp?B?eXd6VC85aTVKWDVvTWpDSUk2ckdSU3lLZXdianRhWWRvdDZyT3FIclZy?=
+ =?iso-2022-jp?B?cENEKytsNFpHTnZDZStEc2NhUkJ3S0RLbWZqQ05tRThkZi96bnZWK2hl?=
+ =?iso-2022-jp?B?R1kzTWZsU3BDUmZoNGpETDd2NjFSV3pScHY2SnY1VzRhUll2NWdVemdX?=
+ =?iso-2022-jp?B?bmZWb1NkTm9sUmRLMHBsdjFOSU1LUHlLZS9oanhLU1VxQWxkRm1xMzZq?=
+ =?iso-2022-jp?B?VVBxWllzRXYzYjZUd1dxNHpmeWQxZDloN3RnU0ZaVFAvYnpTTzZ5UkVD?=
+ =?iso-2022-jp?B?N3piK0ZPM1B4VklkN0tFdG1SYlBGWE10K1dVMW5neEZ3WHFBK3cveGZY?=
+ =?iso-2022-jp?B?MEtyKzNLT0JXNWRub09BbC85dFZuQmNsVERiaVdzR2NleGZXM0RNbHlP?=
+ =?iso-2022-jp?B?cjIwQXQvRVNBQ1VIaWdoY2xtL1dxb2owT0lpM25PUTBlQ2l6bXQ5QkJC?=
+ =?iso-2022-jp?B?RzY3RDhoV25MZmZ2Sm9kOTRURWhzVVhoQmNqQ2lHSmxzSmxzVDBoenVC?=
+ =?iso-2022-jp?B?TXlXWE9NRUFrMzNVWW5CbGJqUkFkYU83VjdCN3pBMitKU1JMTktmTVQ3?=
+ =?iso-2022-jp?B?RktuZlhFVXRKYmJZWnhaZlRLM010RUlLSjcvQ3owbEUzRE5vZTZNbnl4?=
+ =?iso-2022-jp?B?V1RBUHNJMTZuOU5LV2VHcVhhWmlwa2xhOEpXUE4yV1N2U0p4SDhVQ0I2?=
+ =?iso-2022-jp?B?SDFSMC9uK2l3YlpwbzlYKzZjOXZzQmNyblY4VGpvK3kxd0dxQ2h4MkMv?=
+ =?iso-2022-jp?B?T2Y3TkNsRTRXRVgyd2dHek0rQ1pDQndlYklMeTJkMUNJcmJBdnIvTzRs?=
+ =?iso-2022-jp?B?aFFhbHl6V3JxczlHT0dwQWRrNTZUcE5nWFZtc3BJL1F0NnNEMXNMZitX?=
+ =?iso-2022-jp?B?Q2kxdmZtUTVoNW9QR0E0bGFxRXVlTjh4RXNtMW5GaWlrdnVzalp6LzFy?=
+ =?iso-2022-jp?B?V2MrMHl5NlZuNmZ3VkZ5aTBLUTdqRHpKVjI4SkVvekRFMFM1NDdCancz?=
+ =?iso-2022-jp?B?YVVRR0NDRmFDVUltbFc4dUVRd3c3Ny8wd25GWDhzLzhUTzNyUDhQQlZu?=
+ =?iso-2022-jp?B?YXpSQUVqTURWMGc2djZIT0llazRjMEZETkpZZmh6TTViOXhMVmtVTjBK?=
+ =?iso-2022-jp?B?NlJxSjh3NE1UZTRsQ2dQbngvelBnWm5rQlJPbmtEcXl5Qy9vZTlERFVm?=
+ =?iso-2022-jp?B?V1J1ZU50RDNmK09ldjFFdEhCSVhCQXRsVmc9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: ci/iwamatsu/linux-5.10.y-cip-rc
-X-Kernelci-Tree: cip-gitlab
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: v5.10.201-cip41-473-gc43d7b7bbe83a
-Subject: cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc kselftest-seccomp: 11 runs,
- 3 regressions (v5.10.201-cip41-473-gc43d7b7bbe83a)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
-From: "kernelci.org bot" <bot@kernelci.org>
+MIME-Version: 1.0
+X-OriginatorOrg: toshiba.co.jp
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYVPR01MB11245.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e0278e59-0b5f-42c5-6a0b-08dbfc537f21
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2023 03:19:34.8153
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: xwZyL615SZOWtXfMw5FqZZi6qrgh4dKBABXLfTr4StCfYJ+zd1IFtqGP97gCWueTCBQRsNUlo9kC6tN4klpFnFTfPJRBoTyJXwfskZjitZgDH1A8VNQith+Nj7SNrxTT
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB9749
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 14 Dec 2023 01:41:54 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14083
+ <cip-dev@lists.cip-project.org>; Thu, 14 Dec 2023 03:19:54 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14085
 
-cip-gitlab/ci/iwamatsu/linux-5.10.y-cip-rc kselftest-seccomp: 11 runs, 3 re=
-gressions (v5.10.201-cip41-473-gc43d7b7bbe83a)
+Hi,
 
-Regressions Summary
--------------------
+> -----Original Message-----
+> From: Pavel Machek <pavel@denx.de>
+> Sent: Wednesday, December 13, 2023 5:20 PM
+> To: Biju Das <biju.das.jz@bp.renesas.com>
+> Cc: cip-dev@lists.cip-project.org; iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B=
+?.MN=1B(B =1B$B!{#D#I#T#C""=1B(B
+> =1B$B#D#I#T!{#O#S#T=1B(B) <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Mache=
+k
+> <pavel@denx.de>; Lad Prabhakar
+> <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Subject: Re: [PATCH 00/14] Add Mali-G31 GPU support for RZ/G2L SoC
+>=20
+> Hi!
+>=20
+> > RZ/G2L SoC embeds Mali-G31 bifrost GPU.
+> > This patch series aims to add support for the same.
+> >
+> > Please don't apply patch#7 to patch#14as it is added for testing purpos=
+e.
+> >
+> > It is tested with 5.10.y-cip + out of tree patch for (DU) + [1]
+>=20
+> I reviewed series, and the parts you want applied are really quite simple=
+. I can
+> apply them if there are no other comments (and provided tests pass).
+>=20
 
-platform                     | arch  | lab         | compiler | defconfig  =
-                  | regressions
------------------------------+-------+-------------+----------+------------=
-------------------+------------
-meson-gxl-s905x-libretech-cc | arm64 | lab-broonie | gcc-10   | defconfig+a=
-rm...ok+kselftest | 1          =
+I reviewed this series. There doesn't seem to be any comments.
+I will apply and push.
 
-r8a774a1-hihope-rzg2m-ex     | arm64 | lab-cip     | gcc-10   | defconfig+k=
-selftest          | 1          =
+Best regards,
+  Nobuhiro
 
-r8a774a1-hihope-rzg2m-ex     | arm64 | lab-cip     | gcc-10   | defconfig+a=
-rm...ok+kselftest | 1          =
-
-
-  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fiwamatsu%2=
-Flinux-5.10.y-cip-rc/kernel/v5.10.201-cip41-473-gc43d7b7bbe83a/plan/kselfte=
-st-seccomp/
-
-  Test:     kselftest-seccomp
-  Tree:     cip-gitlab
-  Branch:   ci/iwamatsu/linux-5.10.y-cip-rc
-  Describe: v5.10.201-cip41-473-gc43d7b7bbe83a
-  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
-  SHA:      c43d7b7bbe83ae0f7e001ac115b838d7cd1afe79 =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform                     | arch  | lab         | compiler | defconfig  =
-                  | regressions
------------------------------+-------+-------------+----------+------------=
-------------------+------------
-meson-gxl-s905x-libretech-cc | arm64 | lab-broonie | gcc-10   | defconfig+a=
-rm...ok+kselftest | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/657a5386370e72becbe13494
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook+kselftest
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.201-cip41-473-gc43d7b7bbe83a/arm64/defconfig+arm64-chrom=
-ebook+kselftest/gcc-10/lab-broonie/kselftest-seccomp-meson-gxl-s905x-libret=
-ech-cc.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.201-cip41-473-gc43d7b7bbe83a/arm64/defconfig+arm64-chrom=
-ebook+kselftest/gcc-10/lab-broonie/kselftest-seccomp-meson-gxl-s905x-libret=
-ech-cc.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
-elftest/20230623.0/arm64/initrd.cpio.gz =
-
-
-
-  * kselftest-seccomp.login: https://kernelci.org/test/case/id/657a5386370e=
-72becbe13495
-        failing since 15 days (last pass: v5.10.194-cip39-915-g96fa7f16cf02=
-, first fail: v5.10.201-cip41-197-g2d08925b44e52) =
-
- =
-
-
-
-platform                     | arch  | lab         | compiler | defconfig  =
-                  | regressions
------------------------------+-------+-------------+----------+------------=
-------------------+------------
-r8a774a1-hihope-rzg2m-ex     | arm64 | lab-cip     | gcc-10   | defconfig+k=
-selftest          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/657a4e421077010219e13495
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+kselftest
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.201-cip41-473-gc43d7b7bbe83a/arm64/defconfig+kselftest/g=
-cc-10/lab-cip/kselftest-seccomp-r8a774a1-hihope-rzg2m-ex.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.201-cip41-473-gc43d7b7bbe83a/arm64/defconfig+kselftest/g=
-cc-10/lab-cip/kselftest-seccomp-r8a774a1-hihope-rzg2m-ex.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
-elftest/20230623.0/arm64/initrd.cpio.gz =
-
-
-
-  * kselftest-seccomp.login: https://kernelci.org/test/case/id/657a4e421077=
-010219e13496
-        failing since 41 days (last pass: v5.10.184-cip36-10-ga711f789c23e1=
-, first fail: v5.10.194-cip39-915-g96fa7f16cf02) =
-
- =
-
-
-
-platform                     | arch  | lab         | compiler | defconfig  =
-                  | regressions
------------------------------+-------+-------------+----------+------------=
-------------------+------------
-r8a774a1-hihope-rzg2m-ex     | arm64 | lab-cip     | gcc-10   | defconfig+a=
-rm...ok+kselftest | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/657a4f0629e447062ce1347e
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook+kselftest
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.201-cip41-473-gc43d7b7bbe83a/arm64/defconfig+arm64-chrom=
-ebook+kselftest/gcc-10/lab-cip/kselftest-seccomp-r8a774a1-hihope-rzg2m-ex.t=
-xt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-5=
-.10.y-cip-rc/v5.10.201-cip41-473-gc43d7b7bbe83a/arm64/defconfig+arm64-chrom=
-ebook+kselftest/gcc-10/lab-cip/kselftest-seccomp-r8a774a1-hihope-rzg2m-ex.h=
-tml
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
-elftest/20230623.0/arm64/initrd.cpio.gz =
-
-
-
-  * kselftest-seccomp.login: https://kernelci.org/test/case/id/657a4f0629e4=
-47062ce1347f
-        failing since 41 days (last pass: v5.10.184-cip36-10-ga711f789c23e1=
-, first fail: v5.10.194-cip39-915-g96fa7f16cf02) =
-
- =20
 
