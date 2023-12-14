@@ -1,119 +1,85 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1761C4332F
-	for <webhook@archiver.kernel.org>; Thu, 14 Dec 2023 08:45:46 +0000 (UTC)
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
- by mx.groups.io with SMTP id smtpd.web11.17682.1702543536764179613
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27932C4332F
+	for <webhook@archiver.kernel.org>; Thu, 14 Dec 2023 09:52:27 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web11.18616.1702547544752309976
  for <cip-dev@lists.cip-project.org>;
- Thu, 14 Dec 2023 00:45:37 -0800
+ Thu, 14 Dec 2023 01:52:25 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=jKRhoYCB;
- spf=pass (domain: miraclelinux.com, ip: 209.85.160.48, mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-20292b5ca69so3814300fac.1
-        for <cip-dev@lists.cip-project.org>; Thu, 14 Dec 2023 00:45:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1702543535; x=1703148335; darn=lists.cip-project.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bt7O+MQ6/4HvOEWT/PJG+LDghoHZazQKuwXzTUdHg7k=;
-        b=jKRhoYCBRMbnuKqUmaOoaCkjWsOYLsfnCQ7st6gfHibRETowvR13Gc4X0FcPsbsyvW
-         s8nmVQuW+txPMRuJvUxBC4vgoLj5fR9H5bJfiCobPnXIY/AWeOKpRzZJhSjHVkw4iW0e
-         0j0FjWDPaZw54E96FhabitOdNeZu0PQs6KBLA1vuDWs7+epVk8gPQ2DHB1EwNF5t99LD
-         TaRygZ6pILLM+Cer4BgPd5aRFPJGVrrJ1fdoupddwt7p9TbCOQasEU2bGa0x/OF5nCNd
-         RHxDpN1lJKgoTkUXfB9b0myvdsOtdS48KSX9Pupv5I6QIjJYiNPWwh1k+f+1yLysntOC
-         cqYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702543535; x=1703148335;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Bt7O+MQ6/4HvOEWT/PJG+LDghoHZazQKuwXzTUdHg7k=;
-        b=cQiqbBQtbzbnwUUbmqy/TGTjPOTsrKjsilMzpUeJ7IkLqDAiDg6Lp/MYGpil8ZrMos
-         T0fW1LUEvvbnlNiRbPY4pxtPKEGqq3NuonnEigfAOEoMYg6Op6gj73Cf7VXa1NlVN+SU
-         cwF7gPE/VI/4tQogwuaqE0fD2LGWznn1/axWdSeReTRgbV9QZ7TiwZ8lTM0JhY/FuP/I
-         pwvTt8CONIZTTX2L1QXc+ctuoD0YO13srS3is0qf6xvGF1B3sq5OFB2B9anW6W1zV8v7
-         z9iFkFiwIBWANyXBInIiigG+aXMEFOpMlWDU6sA6DNEcH6GTMtk4hMrQZUKtA50bFYNd
-         5vYw==
-X-Gm-Message-State: AOJu0YwRxI8J4OFenF3u3XpOirTNXGx1SvjjIr9hyJMuSNhzEiRKMy9F
-	LPne9jw50KBv5kOPOH51wN3j7SXRxOWldHPfBVhpJAPVcO4xp7zB
-X-Google-Smtp-Source: AGHT+IFc6HZVMZD4PMCLUtnUr4Q87Bz0bSe3f4GmC4SVNvMjK93pe8AsokCPayGk5wynjn706tHlYFq5iERKOdu5gBY=
-X-Received: by 2002:a05:6870:2305:b0:1fb:75a:de4f with SMTP id
- w5-20020a056870230500b001fb075ade4fmr11802250oao.61.1702543535585; Thu, 14
- Dec 2023 00:45:35 -0800 (PST)
+ dkim=none (message not signed); spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id C3A4B1C006F; Thu, 14 Dec 2023 10:52:21 +0100 (CET)
+Date: Thu, 14 Dec 2023 10:52:21 +0100
+From: Pavel Machek <pavel@denx.de>
+To: nobuhiro1.iwamatsu@toshiba.co.jp
+Cc: pavel@denx.de, biju.das.jz@bp.renesas.com,
+	cip-dev@lists.cip-project.org,
+	prabhakar.mahadev-lad.rj@bp.renesas.com
+Subject: Re: [PATCH 00/14] Add Mali-G31 GPU support for RZ/G2L SoC
+Message-ID: <ZXrQVTubjAWNv36H@duo.ucw.cz>
+References: <20231212124035.151367-1-biju.das.jz@bp.renesas.com>
+ <ZXlpN+5ODcVIfZj3@duo.ucw.cz>
+ <TYVPR01MB11245F51F54A2EE4E6505040C928CA@TYVPR01MB11245.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-References: <d1055a42-e31e-436a-ae87-8b253a55ecee@siemens.com>
-In-Reply-To: <d1055a42-e31e-436a-ae87-8b253a55ecee@siemens.com>
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 14 Dec 2023 17:45:00 +0900
-Message-ID: <CAODzB9o-Tp_UoqTuhArUbZvuOqGYZYrxFFOc1ktKamphwUM8-A@mail.gmail.com>
-Subject: Re: [cip-dev] CIP IRC weekly meeting today on libera.chat
-To: cip-dev@lists.cip-project.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="INDRH40Y3w16sb2T"
+Content-Disposition: inline
+In-Reply-To: <TYVPR01MB11245F51F54A2EE4E6505040C928CA@TYVPR01MB11245.jpnprd01.prod.outlook.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 14 Dec 2023 08:45:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14092
+ <cip-dev@lists.cip-project.org>; Thu, 14 Dec 2023 09:52:27 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14093
 
-Hello,
 
-I'll be absent today.
+--INDRH40Y3w16sb2T
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 14, 2023 at 5:13=E2=80=AFPM Jan Kiszka via lists.cip-project.or=
-g
-<jan.kiszka=3Dsiemens.com@lists.cip-project.org> wrote:
->
-> Hi all,
->
-> Kindly be reminded to attend the weekly meeting through IRC to discuss
-> technical topics with CIP kernel today. Our channel is the following:
->
->     irc:irc.libera.chat:6667/cip
->
-> The IRC meeting is scheduled to UTC (GMT) 13:00:
->
-> https://www.timeanddate.com/worldclock/meetingdetails.html?year=3D2023&mo=
-nth=3D12&day=3D14&hour=3D13&min=3D0&sec=3D0&p1=3D224&p2=3D179&p3=3D136&p4=
-=3D37&p5=3D241&p6=3D248
->
-> USWest    USEast    UK        DE        TW        JP
-> 05:00     08:00     13:00     14:00     21:00     22:00
->
-> Last meeting minutes:
-> https://ircbot.wl.linuxfoundation.org/meetings/cip/2023/12/cip.2023-12-07=
--13.01.log.html
->
-> * Action items
->   - prepare blog entry on SLTS kernel state and challenges [Jan]
-> * Kernel maintenance updates
-> * Kernel release status
->   - 4.4
->   - 4.19
->   - 5.10
->   - 6.1
-> * Kernel testing
-> * AOB
->
-> Jan
->
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#14091): https://lists.cip-project.org/g/cip-dev/messa=
-ge/14091
-> Mute This Topic: https://lists.cip-project.org/mt/103166574/4520416
-> Group Owner: cip-dev+owner@lists.cip-project.org
-> Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129101/452041=
-6/1465703922/xyzzy [masami.ichikawa@miraclelinux.com]
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
->
+Hi!
+
+> > > RZ/G2L SoC embeds Mali-G31 bifrost GPU.
+> > > This patch series aims to add support for the same.
+> > >
+> > > Please don't apply patch#7 to patch#14as it is added for testing purp=
+ose.
+> > >
+> > > It is tested with 5.10.y-cip + out of tree patch for (DU) + [1]
+> >=20
+> > I reviewed series, and the parts you want applied are really quite simp=
+le. I can
+> > apply them if there are no other comments (and provided tests pass).
+> >=20
+>=20
+> I reviewed this series. There doesn't seem to be any comments.
+> I will apply and push.
+
+In simple testing including the "do not apply" revealed no problems,
+https://gitlab.com/cip-project/cip-kernel/linux-cip/tree/ci/pavel/linux-tes=
+t,
+and patches look ok to me.
+
+Reviewed-by: Pavel Machek <pavel@denx.de>
+
+Best regards,
+								Pavel
 --=20
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
-Email :masami.ichikawa@cybertrust.co.jp
-          :masami.ichikawa@miraclelinux.com
+--INDRH40Y3w16sb2T
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZXrQVQAKCRAw5/Bqldv6
+8ighAJ9JKimufDpUogI7RbuU4P3BsFFKZACeIAqKpIpQ43v4mhI5CAnT8KEU8EM=
+=PB6F
+-----END PGP SIGNATURE-----
+
+--INDRH40Y3w16sb2T--
 
