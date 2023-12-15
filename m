@@ -1,130 +1,84 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C12FC4332F
-	for <webhook@archiver.kernel.org>; Thu, 14 Dec 2023 17:22:40 +0000 (UTC)
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
- by mx.groups.io with SMTP id smtpd.web11.28663.1702574552155016118
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Thu, 14 Dec 2023 09:22:32 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D804C4167B
+	for <webhook@archiver.kernel.org>; Fri, 15 Dec 2023 19:55:36 +0000 (UTC)
+Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
+ by mx.groups.io with SMTP id smtpd.web11.73994.1702670130680750415
+ for <cip-dev@lists.cip-project.org>;
+ Fri, 15 Dec 2023 11:55:32 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=buf4y2PJ;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.174, mailfrom: bot@kernelci.org)
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1d367494c96so4348345ad.1
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Thu, 14 Dec 2023 09:22:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1702574551; x=1703179351; darn=lists.cip-project.org;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=YRdFzefi78xfvWNuk2fLyQ2PCtMbQLdJrF3jt+G6fNQ=;
-        b=buf4y2PJcnp98Zc9Tcp29oCl62zq2x9NXUfbrHJRXRNvfMxTjpBz7IFAjsl1pWVaeD
-         rCi4uzAsrOb6wg9a2FCjPbKVCNus6WhK8nGJ+0UcJbQwJxHURgjFg9XCeOK7g5g78n7I
-         FbKKRrVHPsHwkXxGvsjO6cFjdiZZlSA+tcaXn7mQpdqzf+EXKOwh7HocYvkW3ds2eI1m
-         5xFbABLMavt3SBtSwkJxnjo7wlGUalgNBj+9G6/LgGlIP+W+HX1/yviLorfL5jlmvWPT
-         QMtRC3MCy/xXJTWv60/nMIb+uY/3HRCdZNOWw4fy2bOvwpSXFw8ti+Q009TPzg4G9lD5
-         aqiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702574551; x=1703179351;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YRdFzefi78xfvWNuk2fLyQ2PCtMbQLdJrF3jt+G6fNQ=;
-        b=CEcA6X87OJ1g8oSfCDYaPW6hTUUoklu7dPa3WvosOMll6cRXQ66hMf6OADz62jke0p
-         DvPiBqIcWth0Nq4vZQZFTQCSPxJ2RarAW0GiDft+33kRe6irS7JHB4twYkaNcREiMUcY
-         8ZeRAZ76UW1OajNRgItUE8FxgHcKp4rfXecVndf2kN7kUhU99BMD7+WBPSENZcM/MTe2
-         0L0y8pjN+OJvQY49BS2oYREjUm6nk6DW7CcuLkUbLo1IPJjjm39CLMqij9ifXBToika9
-         5wHwitS6FF6+S2yhELYk6P+DWpi15Sj1aMCzbg7j0d7LbEyW5FEM8TfINHmsfI4Sgzqm
-         Fvdg==
-X-Gm-Message-State: AOJu0YxwF7oRjxgRKl7uaMcqso/7GOTHzwmWpFq6uYbvneJaRmf4QcYB
-	S8iqQHwGTv6lD1POOacHFzsHO3yf0qFUuy6rXOU=
-X-Google-Smtp-Source: AGHT+IGpP1hSqiUWP/io2ohrpLFDn2md9JMMOirb7ybt4EfA3OsCKtKtMPNCRMK1kpN1QaqeijClMQ==
-X-Received: by 2002:a17:903:645:b0:1d3:7757:b5bc with SMTP id kh5-20020a170903064500b001d37757b5bcmr426649plb.73.1702574551175;
-        Thu, 14 Dec 2023 09:22:31 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id f17-20020a170902ce9100b001cfb99d8b82sm12692511plg.136.2023.12.14.09.22.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Dec 2023 09:22:30 -0800 (PST)
-Message-ID: <657b39d6.170a0220.cc057.73e4@mx.google.com>
-Date: Thu, 14 Dec 2023 09:22:30 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=We65utnM;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.225, mailfrom: fm-51332-2023121519552713103db1299ec92b85-k8qlvz@rts-flowmailer.siemens.com)
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 2023121519552713103db1299ec92b85
+        for <cip-dev@lists.cip-project.org>;
+        Fri, 15 Dec 2023 20:55:28 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ bh=7kMFFav7ak93IeQux2NDi2rxXwOyxRL+4jrHrIPPE54=;
+ b=We65utnM8ns5aN4z2QWIlILBmh3myL3b+R5JlIAlbYa17AU87OeraAPKafZgCtXettgCSS
+ mz8iPRjl+jac1Owno+tt2z1POKm6p/uZiKw0KWslJbjRnsKRmW4RS2b8zmgABKMYfYyGb7XP
+ 5Go9jlZ0WJqNMJpleoYEQlEhMsrLU=;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: jan.kiszka@siemens.com,
+	cip-dev@lists.cip-project.org,
+	felix.moessbauer@siemens.com
+Subject: [cip-dev][isar-cip-core][PATCH] initramfs-overlay-hook: Get Storage mount point from INITRAMFS_OVERLAY_STORAGE_PATH
+Date: Fri, 15 Dec 2023 20:54:50 +0100
+Message-ID: <20231215195526.1117565-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-6.1.y-cip
-X-Kernelci-Tree: cip
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: v6.1.66-cip11-1-g2d3d776d703d7
-Subject: cip/linux-6.1.y-cip kselftest-futex: 6 runs,
- 1 regressions (v6.1.66-cip11-1-g2d3d776d703d7)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
- kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
-From: "kernelci.org bot" <bot@kernelci.org>
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 14 Dec 2023 17:22:40 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14126
+ <cip-dev@lists.cip-project.org>; Fri, 15 Dec 2023 19:55:36 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14128
 
-cip/linux-6.1.y-cip kselftest-futex: 6 runs, 1 regressions (v6.1.66-cip11-1=
--g2d3d776d703d7)
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Regressions Summary
--------------------
+This allows to set the overlay storage to another root directory for
+example to store the overlay is /overlays.
 
-platform                     | arch  | lab         | compiler | defconfig |=
- regressions
------------------------------+-------+-------------+----------+-----------+=
-------------
-meson-gxl-s905x-libretech-cc | arm64 | lab-broonie | gcc-10   | defconfig |=
- 1          =
+This restores a similar behaviour as from before: 725dbc99cf9c4956fe7eb04d3932423782b7ce57.
 
 
-  Details:  https://kernelci.org/test/job/cip/branch/linux-6.1.y-cip/kernel=
-/v6.1.66-cip11-1-g2d3d776d703d7/plan/kselftest-futex/
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ .../initramfs-overlay-hook/files/overlay.script.tmpl      | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-  Test:     kselftest-futex
-  Tree:     cip
-  Branch:   linux-6.1.y-cip
-  Describe: v6.1.66-cip11-1-g2d3d776d703d7
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
-it
-  SHA:      2d3d776d703d7a5abcbbebb5ff00910d7e1102ac =
+diff --git a/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl b/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
+index d7da6fb..e9a5e40 100644
+--- a/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
++++ b/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
+@@ -1,4 +1,5 @@
+ #!/bin/sh
++# vim: ft=sh
+ #
+ # CIP Core, generic profile
+ #
+@@ -32,12 +33,13 @@ ovl_storage_path="${INITRAMFS_OVERLAY_STORAGE_PATH}"
+ ovl_lower_dirs="${INITRAMFS_OVERLAY_PATHS}"
+ 
+ root_mount_storage=${rootmnt}${ovl_storage_path}
++storage_mount_point="$(echo "${ovl_storage_path}" | awk -F/ '{print FS$2}' )"
+ 
+-if ! mountpoint -q "${rootmnt}/var"; then
++if ! mountpoint -q "${rootmnt}${storage_mount_point}"; then
+ 	if ! mount -t $(get_fstype ${ovl_partition_device}) \
+ 		 ${ovl_partition_device} \
+-		 ${rootmnt}/var; then
+-		panic "Can't mount /var partition - overlay will not work!"
++		 ${rootmnt}${storage_mount_point}; then
++		panic "Can't mount ${storage_mount_point} partition - overlay will not work!"
+ 	fi
+ fi
+ 
+-- 
+2.43.0
 
-
-
-Test Regressions
----------------- =
-
-
-
-platform                     | arch  | lab         | compiler | defconfig |=
- regressions
------------------------------+-------+-------------+----------+-----------+=
-------------
-meson-gxl-s905x-libretech-cc | arm64 | lab-broonie | gcc-10   | defconfig |=
- 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/657b2a01c4000d5a53e13481
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-6.1.y-cip/v6.1.66-ci=
-p11-1-g2d3d776d703d7/arm64/defconfig/gcc-10/lab-broonie/kselftest-futex-mes=
-on-gxl-s905x-libretech-cc.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-6.1.y-cip/v6.1.66-ci=
-p11-1-g2d3d776d703d7/arm64/defconfig/gcc-10/lab-broonie/kselftest-futex-mes=
-on-gxl-s905x-libretech-cc.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ks=
-elftest/20230623.0/arm64/initrd.cpio.gz =
-
-
-
-  * kselftest-futex.login: https://kernelci.org/test/case/id/657b2a01c4000d=
-5a53e13482
-        new failure (last pass: v6.1.64-cip10) =
-
- =20
 
