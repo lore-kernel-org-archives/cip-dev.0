@@ -2,32 +2,32 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA369C35274
-	for <webhook@archiver.kernel.org>; Mon, 18 Dec 2023 14:29:15 +0000 (UTC)
-Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
- by mx.groups.io with SMTP id smtpd.web11.45100.1702909751576819729
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E3FC35274
+	for <webhook@archiver.kernel.org>; Mon, 18 Dec 2023 14:30:35 +0000 (UTC)
+Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
+ by mx.groups.io with SMTP id smtpd.web10.44721.1702909827898195528
  for <cip-dev@lists.cip-project.org>;
- Mon, 18 Dec 2023 06:29:12 -0800
+ Mon, 18 Dec 2023 06:30:29 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=qPaIhMS2;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228, mailfrom: fm-51332-2023121814290894e653e4849231ad7b-4apew5@rts-flowmailer.siemens.com)
-Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 2023121814290894e653e4849231ad7b
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=ALoq9mii;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.225, mailfrom: fm-51332-20231218143024eb3f3c17c3b86293e3-eozpui@rts-flowmailer.siemens.com)
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 20231218143024eb3f3c17c3b86293e3
         for <cip-dev@lists.cip-project.org>;
-        Mon, 18 Dec 2023 15:29:08 +0100
+        Mon, 18 Dec 2023 15:30:24 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
- bh=IHP8scI6e9dI+kYU2s4IqP7IcysVie6kDzQGmxKqpoQ=;
- b=qPaIhMS2ga1X9AXFNopVbLbWQB09GmKl1yWvhvhkok7gxCfDdxzyE7CAlcV7508NooS0Jd
- lV9FutuUCj0+XxpRcpi+hF8geAYn36JlRnOoInc5k3wif6IUvTOQqp2cQ5L0X72frHv557Cj
- keqdUdIlHlT424g2b7LDSw0Aj3BpE=;
+ bh=OtGb6kZXTFUAA/1OObgsSVrzhIaviG+GAGsogJJdo7w=;
+ b=ALoq9miiQhXt0ummyIWBO68rg1ip0jYcFXYgaDCefhAMbgjnxFjmdwzRUmcT5nL0CH6RPY
+ VzmZE+LzLtD9Akmy3TNPPm++aTHTG37jTZc5gUkDGliWR8FEwMK+RbSUqLCbDtlZ4Y4iJHmG
+ ZkbLXUlUFIre2pLlZBeZXGY74/qYw=;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: felix.moessbauer@siemens.com,
+To: cip-dev@lists.cip-project.org,
 	jan.kiszka@siemens.com,
-	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH v2] initramfs-overlay-hook: Get Storage mount point from INITRAMFS_OVERLAY_STORAGE_PATH
-Date: Mon, 18 Dec 2023 15:28:48 +0100
-Message-ID: <20231218142906.1507050-1-Quirin.Gylstorff@siemens.com>
+	felix.moessbauer@siemens.com
+Subject: [cip-dev][isar-cip-core][PATCH] recipes-core/swupdate: Cleanup swupdate.inc
+Date: Mon, 18 Dec 2023 15:30:02 +0100
+Message-ID: <20231218143023.1507226-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
@@ -35,69 +35,102 @@ Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 18 Dec 2023 14:29:15 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14131
+ <cip-dev@lists.cip-project.org>; Mon, 18 Dec 2023 14:30:35 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14132
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-This allows to set the overlay storage  to another root directory. For example
-to `/overlays` instead of `/var`.
+As software loads the bootloader libraries dynamically it is no longer
+necessary to set the build loader with BUILD_PROFILES.
 
-This restores a similar behaviour as from before:
-725dbc99cf9c4956fe7eb04d3932423782b7ce57.
+Also add PROVIDES for the additional packages swupdate provides.
+
+The profile 'pkg.swupdate.nosigning' is automatically set if signing is
+not set to `1`.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
-Changes v2:
- - Change wording in commit message
- - Add comments to the recipe variables
+ recipes-core/swupdate/swupdate.inc        | 25 ++++++++++++++---------
+ recipes-core/swupdate/swupdate_2023.05.bb |  9 --------
+ 2 files changed, 15 insertions(+), 19 deletions(-)
 
- .../initramfs-overlay-hook/files/overlay.script.tmpl      | 7 ++++---
- .../initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb  | 8 ++++++++
- 2 files changed, 12 insertions(+), 3 deletions(-)
-
-diff --git a/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl b/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
-index d7da6fb..a321490 100644
---- a/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
-+++ b/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
-@@ -32,12 +32,13 @@ ovl_storage_path="${INITRAMFS_OVERLAY_STORAGE_PATH}"
- ovl_lower_dirs="${INITRAMFS_OVERLAY_PATHS}"
+diff --git a/recipes-core/swupdate/swupdate.inc b/recipes-core/swupdate/swupdate.inc
+index e5e7282..4442ca5 100644
+--- a/recipes-core/swupdate/swupdate.inc
++++ b/recipes-core/swupdate/swupdate.inc
+@@ -1,7 +1,7 @@
+ #
+ # CIP Core, generic profile
+ #
+-# Copyright (c) Siemens AG, 2021-2022
++# Copyright (c) Siemens AG, 2021-2023
+ #
+ # Authors:
+ #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+@@ -13,15 +13,11 @@ HOMEPAGE= "https://github.com/sbabic/swupdate"
+ LICENSE = "GPL-2.0"
+ LIC_FILES_CHKSUM = "file://${LAYERDIR_isar}/licenses/COPYING.GPLv2;md5=751419260aa954499f7abaabaa882bbe"
  
- root_mount_storage=${rootmnt}${ovl_storage_path}
-+storage_mount_point="$(echo "${ovl_storage_path}" | awk -F/ '{print FS$2}' )"
+-def get_bootloader_build_profile(d):
+-    bootloader = d.getVar("SWUPDATE_BOOTLOADER") or ""
+-    if bootloader == "efibootguard":
+-        return "pkg.swupdate.efibootguard"
+-    if bootloader == "u-boot":
+-        return "pkg.swupdate.uboot"
+-    return ""
++PROVIDES += "libswupdate-dev"
++PROVIDES += "libswupdate0.1"
++PROVIDES += "lua-swupdate"
  
--if ! mountpoint -q "${rootmnt}/var"; then
-+if ! mountpoint -q "${rootmnt}${storage_mount_point}"; then
- 	if ! mount -t $(get_fstype ${ovl_partition_device}) \
- 		 ${ovl_partition_device} \
--		 ${rootmnt}/var; then
--		panic "Can't mount /var partition - overlay will not work!"
-+		 ${rootmnt}${storage_mount_point}; then
-+		panic "Can't mount ${storage_mount_point} partition - overlay will not work!"
- 	fi
- fi
+-DEB_BUILD_PROFILES += "${@get_bootloader_build_profile(d)}"
++DEB_BUILD_PROFILES += "${@'pkg.swupdate.nosigning' if not d.getVar('SWU_SIGNED') == '1' else ''}"
  
-diff --git a/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb b/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb
-index 9e78dc8..e8651af 100644
---- a/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb
-+++ b/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb
-@@ -17,8 +17,16 @@ SRC_URI += " \
-     file://overlay.script.tmpl \
-     "
+ def get_bootloader_dependencies(d):
+     bootloader = d.getVar("SWUPDATE_BOOTLOADER") or ""
+@@ -33,13 +29,22 @@ def get_bootloader_dependencies(d):
+         else:
+             return "libubootenv"
+     return ""
+-
+ DEPENDS += "${@get_bootloader_dependencies(d)}"
+ DEPENDS += "${@bb.utils.contains('DEB_BUILD_PROFILES', 'mtd', 'mtd-utils', '', d)}"
  
-+# The variable INITRAMFS_OVERLAY_PATHS contains the directories which are
-+# overlayed(lower dir).
- INITRAMFS_OVERLAY_PATHS ??= "/etc"
++# deactivate hardware compability for simple a/b rootfs update
++DEB_BUILD_PROFILES += "pkg.swupdate.nohwcompat"
 +
-+# The variable INITRAMFS_OVERLAY_STORAGE_PATH designates the path were the
-+# changes to the overlayed directory are stored(upper dir).  The initramfs
-+# also mounts the first directory after root to the
-+# INITRAMFS_OVERLAY_STORAGE_DEVICE.
- INITRAMFS_OVERLAY_STORAGE_PATH ??= "/var/local"
++# suricatta wfx requires suricatta lua and the dependency
++# is not set automatically
++DEB_BUILD_PROFILES += "pkg.swupdate.suricattalua"
++# add suricatta wfx
++DEB_BUILD_PROFILES += "pkg.swupdate.suricattawfx"
 +
- # override this to switch to UUID or PARTUUID based mounts
- INITRAMFS_OVERLAY_STORAGE_DEVICE ??= "/dev/disk/by-label/var"
+ python do_check_bootloader () {
+     bootloader = d.getVar("SWUPDATE_BOOTLOADER") or "None"
+     if not bootloader in ["efibootguard", "u-boot"]:
+         bb.warn("swupdate: SWUPDATE_BOOTLOADER set to incompatible value: " + bootloader)
+ }
+ addtask check_bootloader before do_fetch
++
+diff --git a/recipes-core/swupdate/swupdate_2023.05.bb b/recipes-core/swupdate/swupdate_2023.05.bb
+index 77b7431..e52a329 100644
+--- a/recipes-core/swupdate/swupdate_2023.05.bb
++++ b/recipes-core/swupdate/swupdate_2023.05.bb
+@@ -35,15 +35,6 @@ SRC_URI:append:bullseye = " file://0004-d-swupdate-www.install-Fix-path-for-debi
+ # of update binaries
+ # DEB_BUILD_PROFILES += "pkg.swupdate.nosigning"
  
+-# deactivate hardware compability for simple a/b rootfs update
+-DEB_BUILD_PROFILES += "pkg.swupdate.nohwcompat"
+-
+-# suricatta wfx requires suricatta lua and the dependency
+-# is not set automatically
+-DEB_BUILD_PROFILES += "pkg.swupdate.suricattalua"
+-# add suricatta wfx
+-DEB_BUILD_PROFILES += "pkg.swupdate.suricattawfx"
+-
+ # Disable cross for arm and arm64 on bullseye
+ # with cross compile we have a unsat-dependency to dh-nodejs on arm/arm64
+ ISAR_CROSS_COMPILE:bullseye = "0"
 -- 
 2.43.0
 
