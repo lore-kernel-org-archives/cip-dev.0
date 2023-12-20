@@ -1,164 +1,82 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7261C41535
-	for <webhook@archiver.kernel.org>; Tue, 19 Dec 2023 10:09:08 +0000 (UTC)
-Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
- by mx.groups.io with SMTP id smtpd.web11.9093.1702980542829299463
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A7C1C3DA6E
+	for <webhook@archiver.kernel.org>; Wed, 20 Dec 2023 23:06:54 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web11.34645.1703113611129381758
  for <cip-dev@lists.cip-project.org>;
- Tue, 19 Dec 2023 02:09:03 -0800
+ Wed, 20 Dec 2023 15:06:52 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=c/wIhM6S;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-51332-2023121910085981b5c330972284e38e-oqa6xl@rts-flowmailer.siemens.com)
-Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 2023121910085981b5c330972284e38e
-        for <cip-dev@lists.cip-project.org>;
-        Tue, 19 Dec 2023 11:09:00 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
- bh=A+i0jscrSUdwpFDigtldeieLUCinpLVgiBLxuMrrx+w=;
- b=c/wIhM6SVlNZP9UQaUCYK62HWtBIX5a7aSj8VF1mLlyyGbWsHjUIOyHdGzxgP392BSDi1W
- d+eIRnH/oY6HCJKYXn4N9HN6D2Nvt8IEgZh+9ibWIMkCm51JCAiIbK4ZoFqzhseWOhcAdNKy
- JuzT+7g991ws43Ul2BeMbtXsxTM4k=;
-From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: jan.kiszka@siemens.com,
-	cip-dev@lists.cip-project.org,
-	felix.moessbauer@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH v2] recipes-core/swupdate: Cleanup swupdate.inc
-Date: Tue, 19 Dec 2023 11:08:39 +0100
-Message-ID: <20231219100858.1853427-1-Quirin.Gylstorff@siemens.com>
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+X-IronPort-AV: E=Sophos;i="6.04,292,1695654000"; 
+   d="scan'208";a="187185231"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 21 Dec 2023 08:06:51 +0900
+Received: from Ubuntu-22.. (unknown [10.226.93.50])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 23E3E40BF9C6;
+	Thu, 21 Dec 2023 08:06:49 +0900 (JST)
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Pavel Machek <pavel@denx.de>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH RFC 01/30] arm64: dts: renesas: rzg2ul-smarc: Drop including RZ/G2UL SoM DTSI
+Date: Wed, 20 Dec 2023 23:06:17 +0000
+Message-Id: <20231220230646.219816-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20231220230646.219816-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20231220230646.219816-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 19 Dec 2023 10:09:08 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14135
+ <cip-dev@lists.cip-project.org>; Wed, 20 Dec 2023 23:06:54 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14137
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+Drop including RZ/G2UL SoM DTSI in carrier board DTSI as the top level
+board DTS file r9a07g043u11-smarc.dts includes both of them. Upstream
+commit 53072ba67e534ddd208697d3465004738f1d4d61 ("arm64: dts: renesas:
+rzg2ul-smarc: Include SoM DTSI into board DTS") already did this change
+but it was re-introduced in below commit (for v6.1-cip):
 
-As software loads the bootloader libraries dynamically it is no longer
-necessary to set the build loader with BUILD_PROFILES.
+ce658d9231044 ("arm64: dts: renesas: rzg2ul-smarc: Enable SCI0")
 
-Also add PROVIDES for the additional packages swupdate provides.
+This change is in preparation for adding the Renesas RZ/Five RISC-V SoC.
+Without this patch when re-using the RZ/G2UL DTS/I for the SMARC RZ/Five
+board we see below build issues:
 
-The profile 'pkg.swupdate.nosigning' is automatically set if signing is
-not set to `1`.
+  DTC     arch/riscv/boot/dts/renesas/r9a07g043f01-smarc.dtb
+./scripts/dtc/include-prefixes/arm64/renesas/rzg2ul-smarc-som.dtsi:106.23-124.4:
+ERROR (phandle_references): /soc/ethernet@11c30000/ethernet-phy@7: Reference to non-existent node or label "irqc"
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+  also defined at arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi:20.23-23.4
+  also defined at ./scripts/dtc/include-prefixes/arm64/renesas/rzg2ul-smarc-som.dtsi:106.23-124.4
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[2]: *** [scripts/Makefile.lib:406: arch/riscv/boot/dts/renesas/r9a07g043f01-smarc.dtb] Error 2
+make[1]: *** [scripts/Makefile.build:500: arch/riscv/boot/dts/renesas] Error
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
-Changes v2:
- - cleanup 2021.12 for debian buster
- - move cross and nocheck to swupdate.inc
- - move DEB_BUILD_PROFILES pkg.swupdate.suricatta* back to swupdate_2023.05
-   as the apply only to this version
+ arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
- recipes-core/swupdate/swupdate.inc            | 21 +++++++++++--------
- .../swupdate/swupdate_2021.11-1+debian-gbp.bb | 11 ----------
- recipes-core/swupdate/swupdate_2023.05.bb     | 10 ---------
- 3 files changed, 12 insertions(+), 30 deletions(-)
-
-diff --git a/recipes-core/swupdate/swupdate.inc b/recipes-core/swupdate/swupdate.inc
-index e5e7282..cb1716b 100644
---- a/recipes-core/swupdate/swupdate.inc
-+++ b/recipes-core/swupdate/swupdate.inc
-@@ -1,7 +1,7 @@
- #
- # CIP Core, generic profile
- #
--# Copyright (c) Siemens AG, 2021-2022
-+# Copyright (c) Siemens AG, 2021-2023
- #
- # Authors:
- #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-@@ -13,15 +13,10 @@ HOMEPAGE= "https://github.com/sbabic/swupdate"
- LICENSE = "GPL-2.0"
- LIC_FILES_CHKSUM = "file://${LAYERDIR_isar}/licenses/COPYING.GPLv2;md5=751419260aa954499f7abaabaa882bbe"
+diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
+index 669703b0c7cb..019bab4ce8e4 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
+@@ -8,7 +8,6 @@
+ /* Please set this macro to 1 for enabling SCI0 on PMOD1 */
+ #define PMOD_SCI0_EN	0
  
--def get_bootloader_build_profile(d):
--    bootloader = d.getVar("SWUPDATE_BOOTLOADER") or ""
--    if bootloader == "efibootguard":
--        return "pkg.swupdate.efibootguard"
--    if bootloader == "u-boot":
--        return "pkg.swupdate.uboot"
--    return ""
-+PROVIDES += "libswupdate-dev"
-+PROVIDES += "libswupdate0.1"
-+PROVIDES += "lua-swupdate"
- 
--DEB_BUILD_PROFILES += "${@get_bootloader_build_profile(d)}"
- 
- def get_bootloader_dependencies(d):
-     bootloader = d.getVar("SWUPDATE_BOOTLOADER") or ""
-@@ -37,6 +32,14 @@ def get_bootloader_dependencies(d):
- DEPENDS += "${@get_bootloader_dependencies(d)}"
- DEPENDS += "${@bb.utils.contains('DEB_BUILD_PROFILES', 'mtd', 'mtd-utils', '', d)}"
- 
-+DEB_BUILD_PROFILES += "${@'pkg.swupdate.nosigning' if not d.getVar('SWU_SIGNED') == '1' else ''}"
-+
-+# deactivate hardware compability for simple a/b rootfs update
-+DEB_BUILD_PROFILES += "pkg.swupdate.nohwcompat"
-+
-+# add cross build and deactivate testing for arm based builds
-+DEB_BUILD_PROFILES += "cross nocheck"
-+
- python do_check_bootloader () {
-     bootloader = d.getVar("SWUPDATE_BOOTLOADER") or "None"
-     if not bootloader in ["efibootguard", "u-boot"]:
-diff --git a/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb b/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
-index 8f7a97d..0f91d5e 100644
---- a/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
-+++ b/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
-@@ -27,17 +27,6 @@ SRC_URI += "file://0001-debian-Remove-SWUpdate-USB-service-and-Udev-rules.patch
-             file://0004-debian-rules-Add-option-to-disable-webserver.patch \
-             file://0005-debian-Add-patch-to-fix-bootloader_env_get-for-EBG.patch"
- 
--# end patching for dm-verity based images
--
--# The option: "pkg.swupdate.nosigning" disables the required signing
--# of update binaries
--# DEB_BUILD_PROFILES += "pkg.swupdate.nosigning"
--
--# deactivate hardware compability for simple a/b rootfs update
--DEB_BUILD_PROFILES += "pkg.swupdate.nohwcompat"
--
--# add cross build and deactivate testing for arm based builds
--DEB_BUILD_PROFILES += "cross nocheck"
- # If the luahandler shall be embedded into the swupdate binary
- # include the following lines.
- # DEPENDS += "swupdate-handlers"
-diff --git a/recipes-core/swupdate/swupdate_2023.05.bb b/recipes-core/swupdate/swupdate_2023.05.bb
-index 77b7431..d1fe1fa 100644
---- a/recipes-core/swupdate/swupdate_2023.05.bb
-+++ b/recipes-core/swupdate/swupdate_2023.05.bb
-@@ -31,13 +31,6 @@ SRC_URI += "file://0001-d-rules-Add-seperate-build_profile-option-for-delta-.pat
-             file://0003-d-rules-Add-option-to-enable-suricatta_wfx.patch"
- SRC_URI:append:bullseye = " file://0004-d-swupdate-www.install-Fix-path-for-debian-bullseye.patch"
- 
--# The option: "pkg.swupdate.nosigning" disables the required signing
--# of update binaries
--# DEB_BUILD_PROFILES += "pkg.swupdate.nosigning"
--
--# deactivate hardware compability for simple a/b rootfs update
--DEB_BUILD_PROFILES += "pkg.swupdate.nohwcompat"
--
- # suricatta wfx requires suricatta lua and the dependency
- # is not set automatically
- DEB_BUILD_PROFILES += "pkg.swupdate.suricattalua"
-@@ -48,9 +41,6 @@ DEB_BUILD_PROFILES += "pkg.swupdate.suricattawfx"
- # with cross compile we have a unsat-dependency to dh-nodejs on arm/arm64
- ISAR_CROSS_COMPILE:bullseye = "0"
- 
--# add cross build and deactivate testing for arm based builds
--DEB_BUILD_PROFILES += "cross nocheck"
--
- # use backport build profile for bullseye
- DEB_BUILD_PROFILES:append:bullseye = " pkg.swupdate.bpo"
+-#include "rzg2ul-smarc-som.dtsi"
+ #include "rzg2ul-smarc-pinfunction.dtsi"
+ #include "rz-smarc-common.dtsi"
  
 -- 
-2.43.0
+2.34.1
 
 
