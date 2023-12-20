@@ -2,30 +2,30 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8887BC46CCD
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 886BEC3DA6E
 	for <webhook@archiver.kernel.org>; Wed, 20 Dec 2023 23:07:44 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web10.35075.1703113642283345487
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web11.34662.1703113653753344819
  for <cip-dev@lists.cip-project.org>;
- Wed, 20 Dec 2023 15:07:36 -0800
+ Wed, 20 Dec 2023 15:07:38 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.04,292,1695654000"; 
-   d="scan'208";a="191072745"
+   d="scan'208";a="187185297"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 21 Dec 2023 08:07:35 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 21 Dec 2023 08:07:38 +0900
 Received: from Ubuntu-22.. (unknown [10.226.93.50])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id CDA1040BF9EC;
-	Thu, 21 Dec 2023 08:07:33 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 61FF240BF9EC;
+	Thu, 21 Dec 2023 08:07:36 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH RFC 20/30] riscv: dts: renesas: Add initial devicetree for Renesas RZ/Five SoC
-Date: Wed, 20 Dec 2023 23:06:36 +0000
-Message-Id: <20231220230646.219816-21-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH RFC 21/30] riscv: dts: renesas: Add minimal DTS for Renesas RZ/Five SMARC EVK
+Date: Wed, 20 Dec 2023 23:06:37 +0000
+Message-Id: <20231220230646.219816-22-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231220230646.219816-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20231220230646.219816-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -35,97 +35,261 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 20 Dec 2023 23:07:44 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14156
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14157
 
-commit b3e77da00f1b7b670983c69d0295f4ce132bf87c upstream.
+commit 4adb690aa1b41c1e52af579574d1d6aa58da1187 upstream.
 
-Add initial device tree for Renesas RZ/Five RISC-V CPU Core (AX45MP
-Single).
+Enable the minimal blocks required for booting the Renesas RZ/Five
+SMARC EVK with initramfs.
 
-RZ/Five SoC is almost identical to RZ/G2UL Type-1 SoC (ARM64) hence we
-will be reusing r9a07g043.dtsi [0] as a base DTSI for both the SoC's.
-r9a07g043f.dtsi includes RZ/Five SoC specific blocks.
-
-Below are the RZ/Five SoC specific blocks added in the initial DTSI which
-can be used to boot via initramfs on RZ/Five SMARC EVK:
-- AX45MP CPU
+Below are the blocks which are enabled:
+- CPG
+- CPU0
+- DDR (memory regions)
+- PINCTRL
 - PLIC
+- SCIF0
+
+As we are reusing the RZ/G2UL SoC base DTSI [0], RZ/G2UL SMARC SoM [1] and
+carrier [2] board DTSIs which enables almost all the blocks supported
+by the RZ/G2UL SMARC EVK and whereas on RZ/Five SoC we will be gradually
+enabling the blocks hence the aliases for ETH/I2C are deleted and rest
+of the IP blocks are marked as disabled/deleted.
 
 [0] arch/arm64/boot/dts/renesas/r9a07g043.dtsi
+[1] arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
+[2] arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
-Link: https://lore.kernel.org/r/20221028165921.94487-5-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/r/20221028165921.94487-6-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/riscv/boot/dts/renesas/r9a07g043f.dtsi | 57 +++++++++++++++++++++
- 1 file changed, 57 insertions(+)
- create mode 100644 arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
+ arch/riscv/boot/dts/Makefile                  |  1 +
+ arch/riscv/boot/dts/renesas/Makefile          |  2 +
+ .../boot/dts/renesas/r9a07g043f01-smarc.dts   | 27 ++++++
+ .../boot/dts/renesas/rzfive-smarc-som.dtsi    | 58 ++++++++++++
+ arch/riscv/boot/dts/renesas/rzfive-smarc.dtsi | 91 +++++++++++++++++++
+ 5 files changed, 179 insertions(+)
+ create mode 100644 arch/riscv/boot/dts/renesas/Makefile
+ create mode 100644 arch/riscv/boot/dts/renesas/r9a07g043f01-smarc.dts
+ create mode 100644 arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi
+ create mode 100644 arch/riscv/boot/dts/renesas/rzfive-smarc.dtsi
 
-diff --git a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
+diff --git a/arch/riscv/boot/dts/Makefile b/arch/riscv/boot/dts/Makefile
+index ff174996cdfd..b0ff5fbabb0c 100644
+--- a/arch/riscv/boot/dts/Makefile
++++ b/arch/riscv/boot/dts/Makefile
+@@ -3,5 +3,6 @@ subdir-y += sifive
+ subdir-y += starfive
+ subdir-$(CONFIG_SOC_CANAAN_K210_DTB_BUILTIN) += canaan
+ subdir-y += microchip
++subdir-y += renesas
+ 
+ obj-$(CONFIG_BUILTIN_DTB) := $(addsuffix /, $(subdir-y))
+diff --git a/arch/riscv/boot/dts/renesas/Makefile b/arch/riscv/boot/dts/renesas/Makefile
 new file mode 100644
-index 000000000000..50134be548f5
+index 000000000000..2d3f5751a649
 --- /dev/null
-+++ b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-@@ -0,0 +1,57 @@
++++ b/arch/riscv/boot/dts/renesas/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0
++dtb-$(CONFIG_ARCH_R9A07G043) += r9a07g043f01-smarc.dtb
+diff --git a/arch/riscv/boot/dts/renesas/r9a07g043f01-smarc.dts b/arch/riscv/boot/dts/renesas/r9a07g043f01-smarc.dts
+new file mode 100644
+index 000000000000..2aa8515451d3
+--- /dev/null
++++ b/arch/riscv/boot/dts/renesas/r9a07g043f01-smarc.dts
+@@ -0,0 +1,27 @@
 +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +/*
-+ * Device Tree Source for the RZ/Five SoC
++ * Device Tree Source for the RZ/Five SMARC EVK
 + *
 + * Copyright (C) 2022 Renesas Electronics Corp.
 + */
 +
-+#include <dt-bindings/interrupt-controller/irq.h>
++/dts-v1/;
 +
-+#define SOC_PERIPHERAL_IRQ(nr)	(nr + 32)
++/*
++ * DIP-Switch SW1 setting
++ * 1 : High; 0: Low
++ * SW1-2 : SW_SD0_DEV_SEL	(0: uSD; 1: eMMC)
++ * SW1-3 : SW_ET0_EN_N		(0: ETHER0; 1: CAN0, CAN1, SSI1, RSPI1)
++ * Please change below macros according to SW1 setting on the SoM
++ */
++#define SW_SW0_DEV_SEL	1
++#define SW_ET0_EN_N	1
 +
-+#include <arm64/renesas/r9a07g043.dtsi>
++#include "r9a07g043f.dtsi"
++#include "rzfive-smarc-som.dtsi"
++#include "rzfive-smarc.dtsi"
 +
 +/ {
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		timebase-frequency = <12000000>;
++	model = "Renesas SMARC EVK based on r9a07g043f01";
++	compatible = "renesas,smarc-evk", "renesas,r9a07g043f01", "renesas,r9a07g043";
++};
+diff --git a/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi b/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi
+new file mode 100644
+index 000000000000..45a182fa3b4b
+--- /dev/null
++++ b/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi
+@@ -0,0 +1,58 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * Device Tree Source for the RZ/Five SMARC EVK SOM
++ *
++ * Copyright (C) 2022 Renesas Electronics Corp.
++ */
 +
-+		cpu0: cpu@0 {
-+			compatible = "andestech,ax45mp", "riscv";
-+			device_type = "cpu";
-+			reg = <0x0>;
-+			status = "okay";
-+			riscv,isa = "rv64imafdc";
-+			mmu-type = "riscv,sv39";
-+			i-cache-size = <0x8000>;
-+			i-cache-line-size = <0x40>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <0x40>;
-+			clocks = <&cpg CPG_CORE R9A07G043_CLK_I>;
++#include <arm64/renesas/rzg2ul-smarc-som.dtsi>
 +
-+			cpu0_intc: interrupt-controller {
-+				#interrupt-cells = <1>;
-+				compatible = "riscv,cpu-intc";
-+				interrupt-controller;
-+			};
-+		};
++/ {
++	aliases {
++		/delete-property/ ethernet0;
++		/delete-property/ ethernet1;
++	};
++
++	chosen {
++		bootargs = "ignore_loglevel";
++	};
++
++	/delete-node/opp-table-0;
++	/delete-node/thermal-zones;
++};
++
++&adc {
++	status = "disabled";
++};
++
++&dmac {
++	status = "disabled";
++};
++
++&eth0 {
++	status = "disabled";
++};
++
++&eth1 {
++	status = "disabled";
++};
++
++&ostm1 {
++	status = "disabled";
++};
++
++&ostm2 {
++	status = "disabled";
++};
++
++&sdhi0 {
++	status = "disabled";
++};
++
++&tsu {
++	status = "disabled";
++};
++
++&wdt0 {
++	status = "disabled";
++};
+diff --git a/arch/riscv/boot/dts/renesas/rzfive-smarc.dtsi b/arch/riscv/boot/dts/renesas/rzfive-smarc.dtsi
+new file mode 100644
+index 000000000000..e64f0e5f8e30
+--- /dev/null
++++ b/arch/riscv/boot/dts/renesas/rzfive-smarc.dtsi
+@@ -0,0 +1,91 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * Device Tree Source for the RZ/Five SMARC EVK carrier board
++ *
++ * Copyright (C) 2022 Renesas Electronics Corp.
++ */
++
++#include <arm64/renesas/rzg2ul-smarc.dtsi>
++
++/ {
++	aliases {
++		/delete-property/ i2c0;
++		/delete-property/ i2c1;
 +	};
 +};
 +
-+&soc {
-+	interrupt-parent = <&plic>;
++&canfd {
++	status = "disabled";
 +
-+	plic: interrupt-controller@12c00000 {
-+		compatible = "renesas,r9a07g043-plic", "andestech,nceplic100";
-+		#interrupt-cells = <2>;
-+		#address-cells = <0>;
-+		riscv,ndev = <511>;
-+		interrupt-controller;
-+		reg = <0x0 0x12c00000 0 0x400000>;
-+		clocks = <&cpg CPG_MOD R9A07G043_NCEPLIC_ACLK>;
-+		power-domains = <&cpg>;
-+		resets = <&cpg R9A07G043_NCEPLIC_ARESETN>;
-+		interrupts-extended = <&cpu0_intc 11 &cpu0_intc 9>;
++	channel0 {
++		status = "disabled";
 +	};
++
++	channel1 {
++		status = "disabled";
++	};
++};
++
++&ehci0 {
++	status = "disabled";
++};
++
++&ehci1 {
++	status = "disabled";
++};
++
++&hsusb {
++	status = "disabled";
++};
++
++&i2c0 {
++	status = "disabled";
++};
++
++&i2c1 {
++	status = "disabled";
++};
++
++&ohci0 {
++	status = "disabled";
++};
++
++&ohci1 {
++	status = "disabled";
++};
++
++&phyrst {
++	status = "disabled";
++};
++
++&sdhi1 {
++	status = "disabled";
++};
++
++&snd_rzg2l {
++	status = "disabled";
++};
++
++&spi1 {
++	status = "disabled";
++};
++
++&ssi1 {
++	status = "disabled";
++};
++
++&usb0_vbus_otg {
++	status = "disabled";
++};
++
++&usb2_phy0 {
++	status = "disabled";
++};
++
++&usb2_phy1 {
++	status = "disabled";
++};
++
++&vccq_sdhi1 {
++	status = "disabled";
 +};
 -- 
 2.34.1
