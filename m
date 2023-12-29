@@ -2,34 +2,32 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8833DC4706F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 935E8C47077
 	for <webhook@archiver.kernel.org>; Fri, 29 Dec 2023 12:31:26 +0000 (UTC)
-Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
- by mx.groups.io with SMTP id smtpd.web10.145898.1703853077093461463
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+ by mx.groups.io with SMTP id smtpd.web10.145899.1703853077130185611
  for <cip-dev@lists.cip-project.org>;
  Fri, 29 Dec 2023 04:31:18 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=n2q00QfM;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-51332-20231229123114a97976f4c570fcf3a0-ivoq25@rts-flowmailer.siemens.com)
-Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20231229123114a97976f4c570fcf3a0
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=DgnpaC1h;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-51332-20231229123113a0e7f23f038d4ee227-jbpro3@rts-flowmailer.siemens.com)
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20231229123113a0e7f23f038d4ee227
         for <cip-dev@lists.cip-project.org>;
         Fri, 29 Dec 2023 13:31:14 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=jhHsiL5Guja4r0mVF0qMGAYx2iqpSAoeGtDQ7B1yTvY=;
- b=n2q00QfM/TIufXulb8RF0l/KYdyKJoGTR3Nbho11ptkTTi3F1WwCAwdfyuSL7weMbqZo/n
- uBMLT//uexziEfQTEzshXMgLBx6k1GO+1jmlSuMabXuqQHDRWURh4jqSALCwr16TU5TI7TPD
- tiDpmI2TXhGq2+rZt/qu3nLTouwJ4=;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ bh=xu1KVWXGzJZKWUv5S+nqt45X2yxP3kII5YeANQQvI7c=;
+ b=DgnpaC1h6Gf2RnEMQ1MfAx2R5k5erdnOZJBEUqCnYGHoqhdh3AFiEvr1dpDZQFZgfH5RUX
+ 7y8YUuUuuwmv7RctyZVdPiANcC8bDCwc9Z1Zevz2+fKGD4Lkze1z/rCZnDU0ve6ahbajNTdb
+ bEJToj/+9UHgrQtK0eRaZbVJA2jAg=;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: felix.moessbauer@siemens.com,
 	jan.kiszka@siemens.com,
 	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][RFC v3 1/5] efibootguard-efi.py: copy signed ebg binary to DEPLOY_DIR
-Date: Fri, 29 Dec 2023 13:30:39 +0100
-Message-ID: <20231229123111.400555-2-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20231229123111.400555-1-Quirin.Gylstorff@siemens.com>
-References: <20231229123111.400555-1-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][RFC v3 0/5] Add Bootloader to sw-description
+Date: Fri, 29 Dec 2023 13:30:38 +0100
+Message-ID: <20231229123111.400555-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
@@ -38,49 +36,64 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 29 Dec 2023 12:31:26 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14217
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14218
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-This allows to add the signed ebg binary to a swu file for
-updating the bootloader.
+This series adds the, possible signed, efibootguard binaries to the deploy dir
+and adds them to swu file and sw-description to update the bootloader.
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- scripts/lib/wic/plugins/source/efibootguard-efi.py | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+The new entry contains following information:
+{
+           filename = "{efi_boot_loader_file}";
+           path = "EFI/BOOT/{efi_boot_loader_file}";
+           device = "{efi_boot_device}";
+           filesystem = "vfat";
+           sha256 = "{efi_boot_loader_file}-sha256";
+           properties: {
+                atomic-install = true;
+           };
+}
 
-diff --git a/scripts/lib/wic/plugins/source/efibootguard-efi.py b/scripts/lib/wic/plugins/source/efibootguard-efi.py
-index 86a22e0..f40b706 100644
---- a/scripts/lib/wic/plugins/source/efibootguard-efi.py
-+++ b/scripts/lib/wic/plugins/source/efibootguard-efi.py
-@@ -68,6 +68,12 @@ class EfibootguardEFIPlugin(SourcePlugin):
-             "riscv64": "riscv64-linux-gnu",
-         }
- 
-+        deploy_dir = get_bitbake_var("DEPLOY_DIR_IMAGE")
-+        if not deploy_dir:
-+            msger.error("DEPLOY_DIR_IMAGE not set, exiting\n")
-+            exit(1)
-+        creator.deploy_dir = deploy_dir
-+
-         distro_arch = get_bitbake_var("DISTRO_ARCH")
-         bootloader = "/usr/lib/{libpath}/efibootguard/efibootguard{efiarch}.efi".format(
-             libpath=distro_to_lib_arch[distro_arch],
-@@ -90,6 +96,13 @@ class EfibootguardEFIPlugin(SourcePlugin):
-                                               part_rootfs_dir,
-                                               name)
-         exec_cmd(cp_cmd, True)
-+        msger.debug("copy {signed_bootloader} to deploy")
-+        cp_to_deploy_cmd = "cp %s/%s %s/%s" % (cr_workdir,
-+                                               signed_bootloader,
-+                                               deploy_dir,
-+                                               name)
-+        exec_cmd(cp_to_deploy_cmd, True)
-+
-         du_cmd = "du --apparent-size -ks %s" % part_rootfs_dir
-         blocks = int(exec_cmd(du_cmd).split()[0])
- 
+Changes v3:
+ - Add Generator for sw-description instead of using a template for
+   Debian 11+.
+
+Changes v2:
+ - The efibootguard file is only added if the new variable `SWU_EBG_UPDATE` equals `1`
+ - Add the variable `SWU_EFI_BOOT_DEVICE` to set the device containing
+   the efibootguard binary
+ - Add the variable `SWU_EXTEND_SW_DESCRIPTION` to all extension of the
+   sw-description file
+ - use atomic-install to update the binary atomically
+
+
+Quirin Gylstorff (5):
+  efibootguard-efi.py: copy signed ebg binary to DEPLOY_DIR
+  swupdate.bbclass: Add SWU_EXTEND_SW_DESCRIPTION
+  swupdate: Extend sw-description to update efibootguard
+  classes: Generate sw-description from bitbake variables
+  images/swupdate.inc: Add variables to generate the sw-description
+
+Quirin Gylstorff (5):
+  efibootguard-efi.py: copy signed ebg binary to DEPLOY_DIR
+  swupdate.bbclass: Add SWU_EXTEND_SW_DESCRIPTION
+  swupdate: Extend sw-description to update efibootguard
+  classes: Generate sw-description from bitbake variables
+  images/swupdate.inc: Add variables to generate the sw-description
+
+ classes/sw-description-generator.bbclass      | 200 ++++++++++++++++++
+ classes/swupdate.bbclass                      |  52 ++++-
+ recipes-core/images/swu/sw-description.tmpl   |   2 +-
+ recipes-core/images/swupdate.inc              |  27 +++
+ .../jsontolibconf/files/jsontolibconf         |  54 +++++
+ .../jsontolibconf/jsontolibconf_0.1.bb        |  22 ++
+ .../wic/plugins/source/efibootguard-efi.py    |  13 ++
+ 7 files changed, 368 insertions(+), 2 deletions(-)
+ create mode 100644 classes/sw-description-generator.bbclass
+ create mode 100644 recipes-devtools/jsontolibconf/files/jsontolibconf
+ create mode 100644 recipes-devtools/jsontolibconf/jsontolibconf_0.1.bb
+
 -- 
 2.43.0
 
