@@ -2,238 +2,210 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 640C7C46CD2
-	for <webhook@archiver.kernel.org>; Tue,  2 Jan 2024 15:20:48 +0000 (UTC)
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.46])
- by mx.groups.io with SMTP id smtpd.web10.31102.1704208843707895958
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D30EAC46CD2
+	for <webhook@archiver.kernel.org>; Tue,  2 Jan 2024 16:40:18 +0000 (UTC)
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (EUR02-AM0-obe.outbound.protection.outlook.com [40.107.247.55])
+ by mx.groups.io with SMTP id smtpd.web11.33034.1704213611818837002
  for <cip-dev@lists.cip-project.org>;
- Tue, 02 Jan 2024 07:20:44 -0800
+ Tue, 02 Jan 2024 08:40:12 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=mdP3sOI1;
- spf=pass (domain: siemens.com, ip: 40.107.21.46, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=VQE16nmR;
+ spf=pass (domain: siemens.com, ip: 40.107.247.55, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=f+GlP7NdAj9FnQhRQK+r++uUJt5JmE6UuhNXjqtBz4XAN/uaFiQRMgHF5DSDfdrZHXi95ACrtvpJhm5Sl1nf82ihg/yOXmWO6t9nZ6l9+3FNei1LW20fU+UFMqSyN7KKHlpayOp8rVMC8yEX8EnHgdrY7sKJvk/LRoKlFGgBz5MKkQPB0EJl9a8W6LhglW/Ma82SjiVHbV1+l9DfJzQxbVR1Ab+MhxFNpix3frjYHYFf/G9in97t/+C4XDGptcY52xpS9tEfbgvz7ohjWihqAlCbTPpXY0bDvsiCiGp767aNXHJrWuGrOqrAxBY8Nm/HkDeq9Eo7RQTvwta22vlKyg==
+ b=NjOtUVCzyftk9ob+GiJw0aLnHZxL5ZpH7NCgPTfUwQJyWXhMTnWDdXGEUZT2YRWxGVWLWXGNVXD/yBBQBmoPFUGw5e6fs+GTbrAdcMiK/OOLBxGyjt1k0EYGogrjgliZ3P9ggKCYs4Tv7de5AFxOy3akLz0+BrZzZzEPLOQhiePbOvEJrBgWak0KNpJzzOP1Diqnl8uLxUP93w7dQh5OFW1agcRNLfKZ4VB6GRPvLMmhanN0m+R5vZpsKiiXKg488FOOLKjqGyIyRcPqPXxK3CDTj4QnKKIlWmfRm2TgxH8M92Mwm5RDFoG89LWCPEaeeEeKYlrUvpNSwbOdAmOqcA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6/dRD2sXKNISDcHeDjc1u/haZWukZ/f3JEBQh2juN98=;
- b=lz8dlZ+dnVhVMkxFB3FfwAtgcXwSTjxC+WueHiRkvooieYeE82jQykK5GGA76zJFrh8TkGHOohrN5jMqEeU8B709r6ROuTzqkIkI1FhWc8QprRtIQwLYBzUghVEWj4VtCVqEIe0kbeelTOmnkGm1cfnEwNVkiGxgBjPS5agbfcbNo+IJuSJO5F8Em6vYZL11S+Kd/BtUcylYypLpVkFcGR2JD1RERT2noOVwkLC8x4Aw3tc288BQN9p2JFx4lQ9IiO4YzY2dYz8QR4h1ag6WxLTGwRLSorpiFbmW4iyKfDU2Etn4B/DYH2YIIzlgJYSTJfcsPfI3e1qzK8+bFL/IeA==
+ bh=ycxLj3S8hi6TIKNfuu3wQAGeauoKtEGbCa1tUhxG8ME=;
+ b=C621C42zkMGl+Je80tgjhZNLAly/6T4WinzJl/yDObEDqvr3u/yhl3AuloNb0Lqh2kcklHdxbLye0HKWNbUvii9A7pIpOfTHuNiS9/YbNqvV7fKZXxtRGkaOyzCYF+aKmBZRF7oLcBwb9HKjrguOmCzViELfpzbXJQlOWBAmpamQ/UZzaEIAPnsiYZtBrIHvOUSmOD3LxID5V5ykzZ9QP+61+xociLxuvohbmKGS+ZibTRTgfSTVISwSVJKR+630yhp09vm9U7kmLdZuDTMt91ZSDxcSV8tECcl9M0gxH8s0Kq7iKLfUEST9/CaLu8kVRHzgcJl0n0luNWHdVFhXog==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6/dRD2sXKNISDcHeDjc1u/haZWukZ/f3JEBQh2juN98=;
- b=mdP3sOI1EkNsZDbTiWUjRoYaHoTDgmJbcdqEPMJ4LP5mtlqjdQ5k6/vUaxqcyQJALPBwP+ECZLsvxvPrZvzvy731bR9o7Lm3pxQzrNAphVht8ALh0K5B6Svqz/BFzJV41gRZLhNW5NS/iDXnR/e5+rmzx8hm1jQjIzLBjbeh9H8Y+trIqeKCFJljvhjJFZsYdbdZzWO0TzLKAySaf7BsPEbsBh+280rbJT3Vos2ofOCHOAMkB0H/Xy4bbuemb1i+KXEz70O84yhc3Btvwf7DNDy6EuQfh2eM8n6C9YEQo/O9FdJb6sQhi8sv7R1RQdaWCQWWIMSa0eMKgwtVdU0M0g==
+ bh=ycxLj3S8hi6TIKNfuu3wQAGeauoKtEGbCa1tUhxG8ME=;
+ b=VQE16nmRF6j+i1GMcqw9mSbTW9fNoLXkW2g0NFDnoJ7lcIHauWN/oRdISnH978w2qPNh8Yi5LMiHeGBFigtaPmzWxBuDStglGYo7rTpFHI2ttpSOZl4cMK+2hFh1seANHwzBaiAPy+NNbIIShahPMlKKXeDcbPRC8di2FLC/j7Mc3oSxxCIjdELdW1L/+lL5Uqv7SpkSl4Jm8kqZijQsMMyJ7wZ4p5UBGAvrRcY8tKauAnwW45uMnDCpyjw1pVaK7i6MjAKheJKdKaXYJm2J6pPpywwXZP8dYwZD4AngqaSgkK2tOrc2nHOp30N0DIGoyxVHKOYpaUc4gbTuQ8i0ig==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by PAVPR10MB6986.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:305::7) with
+ by DB8PR10MB3750.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:16f::23) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7135.25; Tue, 2 Jan
- 2024 15:20:40 +0000
+ 2024 16:40:08 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::96c7:d239:1723:8761]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::96c7:d239:1723:8761%5]) with mapi id 15.20.7135.023; Tue, 2 Jan 2024
- 15:20:40 +0000
-Message-ID: <77cc26df-0e6d-4415-9f06-6916643ed05a@siemens.com>
-Date: Tue, 2 Jan 2024 16:20:38 +0100
+ 16:40:08 +0000
+Message-ID: <6f1c5d79-a5a0-4bac-8df7-5c6d08f98644@siemens.com>
+Date: Tue, 2 Jan 2024 17:40:06 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [ANNOUNCE] Release v5.10.205-cip42 and v6.1.67-cip12
+Subject: Re: [cip-dev] [PATCH RFC 00/30] Add support for Renesas RZ/Five
+ RISC-V SoC
 Content-Language: en-US
-To: nobuhiro1.iwamatsu@toshiba.co.jp, cip-dev@lists.cip-project.org
-Cc: pavel@denx.de, masami.ichikawa@cybertrust.co.jp,
- Chris.Paterson2@renesas.com, uli@fpond.eu
-References: <TYVPR01MB1124522792658D6523F2C04C39299A@TYVPR01MB11245.jpnprd01.prod.outlook.com>
+To: Chris Paterson <Chris.Paterson2@renesas.com>,
+ "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+ Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Pavel Machek <pavel@denx.de>
+Cc: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+ Biju Das <biju.das.jz@bp.renesas.com>
+References: <20231220230646.219816-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <ZYsdtS4UkTS/TUsH@duo.ucw.cz>
+ <OSZPR01MB70190DB7501F1983008CD843AA9FA@OSZPR01MB7019.jpnprd01.prod.outlook.com>
+ <61b3ccc2-84c6-40cf-b1ae-fe2966c04a93@siemens.com>
+ <OSZPR01MB6816A87ADFCB148C8F45958FB761A@OSZPR01MB6816.jpnprd01.prod.outlook.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <TYVPR01MB1124522792658D6523F2C04C39299A@TYVPR01MB11245.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSZPR01MB6816A87ADFCB148C8F45958FB761A@OSZPR01MB6816.jpnprd01.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR0P281CA0176.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:b4::15) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR0P281CA0221.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:ac::17) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PAVPR10MB6986:EE_
-X-MS-Office365-Filtering-Correlation-Id: d81191a2-5cc2-477b-6018-08dc0ba660fd
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB8PR10MB3750:EE_
+X-MS-Office365-Filtering-Correlation-Id: a01550eb-bdf4-4ed4-b24a-08dc0bb17af3
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	UP/s3ceR86TY9XKUp4sSG+tLuXGiVISYv3s3mazYKneCClTDymoyDdzbV86QNA7nT98PFm7XFWoZuVXg9m9IhMM6z+QCZE33RS5Ll7fBIHctgOKLI4N+r+5H2Lx8lMNVikHftr8UoMO8ANbTum5E+FhEL0aEH3wtihhbi+6gPOk+osqZQQdb8uYdsj+vdQ5yC/4tIvQL2LFkWd6hxIBQTkGk/geu8hcreZwLUgis7Ion6IdN33CQ9vrXaSvfw/8yxn1IWigypVqeK0rmqTn2MlkxJHyHmlNPMa4ZlsKJLO1Fh8wWIFbqfLs3B/eHwqf3fN6mejmmw7vYhPcNAk8WyGO5aABCJyGgN4np/8FOgvoVqekjZjbaUQ5uoVFyrylPil2QC26GBfdp6vmXOkIATr90LfFy4CGZUF701NWkdq8rCTX0DM94l/QohBciK3oboPP81NXGGOIQlVr0817hmhegYU9z8oxjtdrqqG1l1gqvr/zgy19WIOgA5z1Cw25TSeU6MorZ4Vtnjc/03d8NUshT2Z/1b1Cvn+WYg9Cng0H3E4I3zsrJ9DaOYfnvIEQbCyS9qGd/R5sG9VgsKFU5Hr+xoiZaEVE5NqdZKcij/l2pagtSJ43Ws7wXBG+pPx/7NVH4wu23AnNwCQ4N5NuXyjrXZ3KsjKCXdcN11QSrCgLRSbDRqT0UwziEH+khj6xq
+	itTANCWPaaw+ULHrhOXPME6gJJn9jHwCRmC++DT65lXwc5+OZ2NQMUooa49B8eqRZ+PH27tIBnjlm4sCFagG17/AdVRBlbkhUW6ah7abVMrSSgJFlZ7bytgo25cQtFry3S1sc+9V8OKlBbn332ByIpXITmE1Xm+Sa0d/VWizq0SuldKRaiA/jHs+QUgTNLwwfZ9ITT1OXCR3DORAGM8uJZNQfeHhnbZRTnz8nD/4EtjQaaUxbR4FLuOh7zDdM0akuTZn0ygIl/3UXOLrh1+XRwbGP/IUiBT75FFvXG3s8nYYaBs+War1pckZmSjTxy7d8JtI5lU1LSwMKhgWsCQhuONbTePv7FyY5sJL+Pdm1USDY++0XcTaTSP44AnGLRGKbnsV8pfKLURIbEtz97Jda9IS1asa53Co7c+2/ce7kc0pmqvnD/coQFDwEHR345wjrmcLPCwP5GVALdkEwaw976k7Pe0eq6cRhlG1X37r+AtnHX5CD3Prl7KoKGlzHbPFcrdrxNjFux8I6w1KQgvgoGW9pamvbC7ZqbFtUtzJOkh9pd1AIIgIwVJfi6W/E12PrNLDjzD90t52nloUZ8SmEO+tuJgMXF16XlaEqqkwHadBtgEjtlz9L3wnO4x03xcuskZad6zM6yuGBRSYybBxAQ==
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(366004)(136003)(396003)(346002)(39860400002)(376002)(230922051799003)(64100799003)(451199024)(1800799012)(186009)(83380400001)(38100700002)(316002)(66556008)(966005)(6486002)(66946007)(478600001)(66476007)(5660300002)(2906002)(44832011)(4326008)(8936002)(8676002)(26005)(2616005)(41300700001)(53546011)(31696002)(6506007)(86362001)(6512007)(82960400001)(36756003)(31686004)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(346002)(376002)(366004)(396003)(136003)(230922051799003)(1800799012)(64100799003)(451199024)(186009)(26005)(2616005)(82960400001)(83380400001)(38100700002)(66946007)(110136005)(66556008)(36756003)(66476007)(54906003)(316002)(478600001)(6486002)(966005)(31696002)(86362001)(5660300002)(2906002)(31686004)(44832011)(8676002)(8936002)(4326008)(6512007)(6506007)(41300700001)(53546011)(45980500001)(43740500002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?UkY5ejlMb1labU0vakJWd05uUldMRkdPRnZoWXBuR09DZ2JtRTJDWFVOanZ6?=
- =?utf-8?B?VWx4ZUE5ZGJMcHNZUFhiSDY0aVQ5VDdkZFNLQ1FvZ2srRDVRZkIwSy84bEdz?=
- =?utf-8?B?ZGtKSk1KbnpUcTZja29WNmZqalRWS1BiS0RKTTJyNStyb3o4MitmTW9CZFFj?=
- =?utf-8?B?ckhOR1JQSTI5TGdmVXdXa0ZyMUgweUlTVm5VdU1ZejI2S3psNTV1eXpVekNu?=
- =?utf-8?B?RFdtVml2VUErbnB6bTRnWFZ6T2cyUHdvaldPYXRKTWNBT2M3OWYzRWFZVXlx?=
- =?utf-8?B?RXNDRktzc1EwQkhtRnZ4M0k2T3VqUmNsdi9zOWdUQ0VvQ2JsTWNpYWV1eDN0?=
- =?utf-8?B?eWJncXp0SnF0UldOK1dGUm15bW5UalJQTHJac2t3SU9IZktGdUNQcmRwbkxp?=
- =?utf-8?B?QTdSNEJ6c0xIZTlmSFdDK0kvT1JsUHhXTCtTVFdYUUxlM2h4aTRhdUc4T3Fi?=
- =?utf-8?B?WUg3SHpWcmtGVytONWhObndveU5zMUZZcDJiWDIxRS9yTFZqT29zZWg5S1Ri?=
- =?utf-8?B?dVFEaFM2YnRqU1BpU0hhN0hrS3ExQngrcnVlYzExd2dmeWJaOFVFVG9pOVBo?=
- =?utf-8?B?OUw0aDl5SlJPVHZWTHhRMmtnUzVTR3JlOEVSOTVBZFNkMGNXMjJHd0w5S2g0?=
- =?utf-8?B?YzF3cy9nbjRUVU9KMThPa1k1WWFjd3E5YVNpaWR2UW9pRkFUdy9QaDBrRUF6?=
- =?utf-8?B?TGNXMWdzWFh1c1A3ZEhTZi9xUkJmQ1FRS0ZqcE9LQnpGL2RaVWlHT3I0amFO?=
- =?utf-8?B?TDU3V2pJODBXT1c3aG5IK3VTMFppZUVkWDRwa01YS1BaSWltMjFIT3lXOHNo?=
- =?utf-8?B?dHV6emJkRTYwdDdERG0xOWlJRmJVMTl2WFpwNmFTMGNOdDdnQUp2WDk1Sklk?=
- =?utf-8?B?bHAxQ1FvdjhOajhmUnZWdkVrWmVwTjRnOTE4ZjA3K0x3MncwVzJpZUk3V2k1?=
- =?utf-8?B?bHAvZ1ZyUUxkZ3dKczUwTm5YSlpjSkJpSWVzVVRWaWVaUEphVVFiQUl6bEZW?=
- =?utf-8?B?L09UODNFbVNROGhSSzZLQ3JLL2tSN3VlT0tkQ3luVVdTaENqMTFOQWlZMVcz?=
- =?utf-8?B?TWk3c0VpQ09FTmxJN1FmSE5yckJVS2lyNUd5bmNHajY5STk3YkNZQVp4eVhn?=
- =?utf-8?B?YXhmVzBsNlhFQXBZMmNhTlIvU1ppL0dlRVBpOU9vZHlxMnhUMjhucmIvaHVo?=
- =?utf-8?B?Rm9YdUFPaUNSRFpieWt1U3RYZ25jamdWaUxXVnlWNDg5QWdGY2xGZEJXNEh0?=
- =?utf-8?B?OVRGOUpadmJvdCtLNlllc3dvbTUydlZsYy9GaVZnY1o0NS93RldldXJtSGw1?=
- =?utf-8?B?ZVRkZTBaanFQaEIwSmhzNzFQc3NFR2U1bVFrUFpyeklaTmtSbG1od0IydDRt?=
- =?utf-8?B?V2V2Yy83MUF1czFsNnZXZC9DRjk1SmUrODZScmFnOWVuTzNub1d4ZmZEb3dT?=
- =?utf-8?B?aFI2QTdDTmNURUo5UWJIK3pjb2ZGTFhpQUtZWVpHVkFvTUlBak1OSStHZlVz?=
- =?utf-8?B?OUl3Z24waHVoQUFPZEtlcHlaZVBOYUZySEVVQ1FVOWRrWUQrVW9YMmZ0Y29l?=
- =?utf-8?B?Ylk2WFBsVDFlTFlxVmpHMFFoaXFENVNQQWRZeEpYTVI5SjZyR0pES1YvRWRN?=
- =?utf-8?B?dG8rckJ5angxTDZuM2psRlVEcU8zTEdmYnk1QWRBQm5ZdTVLd0YyMmU3N0No?=
- =?utf-8?B?Yms3ZFJlMGNPK1pSbnladHJ1Nmxtd29lYTZTZHJDV3pDYUFJc1ViaUQxd21O?=
- =?utf-8?B?WXR1QmV4cGhBOHE3QlhOc05wbmJnd1hBN1pkem81Vkp1N3FOWWZMV1dGMks5?=
- =?utf-8?B?ei9CcTBydTBsMSszUkc3Zk8xMGFHdzJBYmFpa2lhYVJyZjhBQWpGL0NmR3hP?=
- =?utf-8?B?YkVkeVo0aktPNzNEOFJMK1MrYk16cXA4MERFUEo2b1VOUERYSGVsSHF5NVpI?=
- =?utf-8?B?cWJnQ3NWQ2ZDaG9ZVHFyYmJDSjVDSlUxSHY3dWkvZU1TWC9XaFdueVV3UEFl?=
- =?utf-8?B?ZGViNFo0VmZiMWluUkVHSk5HOW1HU0g5T3VYUGR5L1QySDZPZ1ZDSldOZlgv?=
- =?utf-8?B?c1JvQ2p4RTVWTDlMZ1FYRStIdStjbFc4eXBJOWJzZ1ZraStOZytzeXZQZ2lM?=
- =?utf-8?B?MFlVdVRFMnRHOVZSUytYKzJFOGEzR0FvOXFxRGlBUGxZMjMzVE9zSzFSdUdT?=
- =?utf-8?B?N3c9PQ==?=
+	=?utf-8?B?Wmw5dzZuTk9mek4wRHNwdTFQUmVER2hlL0M0TkJUQkJNQ0ROT01wWEFCdk8y?=
+ =?utf-8?B?NzVlUXE0OU5lNUNQTkdEcmxjMy9VUndlKzJWZDNsNi9NUzFpWlBuOSs2OE9M?=
+ =?utf-8?B?MVJ6STNSS2ZKWFB0QzJnWHcvM0NFN25BUm1Zc3dGbFlTelFCeUhhcnZIU2xz?=
+ =?utf-8?B?SUFTWjZqTk51N3BKSEo4aXNNWSs2MjZkQWcxbmdWQ2dFcW9xdjErclRKYWJL?=
+ =?utf-8?B?SXNZWERWWWxhcE80ZG4reVFQTW04alJUeTUvNFlNWkttREZoYWdpSFBnZ1Z4?=
+ =?utf-8?B?OXF4dkZ3WTVSOHZwQWJKclR4TTd2TVdua1RiNjFOcENyd3MvN3E2djNTdGhX?=
+ =?utf-8?B?SkVWeEhQM3EwN2dpVEtLd3ZJbEhjSCtRY2lGSjU0R0U1SjdnSXRXcnQ2MFVY?=
+ =?utf-8?B?d2NQY3drUzFsbGZDK21mK25TR0dONDRvaEV5SnRLOGU5SmxXcjcwaEdlTWty?=
+ =?utf-8?B?LzVtUlJUZ1o1cGRJbGVJMlc3eVdDaHJhVFRBRG1jYVRlWGxhOFJYSGdPaFpK?=
+ =?utf-8?B?MHpRZWxoQW1ST0tlSk10Q2M4N1VNaTdnZ2RwKy8yK1BPa3l5dHk5cURGdzF5?=
+ =?utf-8?B?alQ5SkdxK1RKOGN2dklWVFRwL21KaXBGME5lOWJqUE9iQjRubERCaURHRlVp?=
+ =?utf-8?B?OU9WTTVYTDhzaVYvZUxOVTYyQ3kvWjNvWE9aejlBay9XUC94Y056c2dMWDI4?=
+ =?utf-8?B?dk1va1graHZ3akNSeDlJcllMUVBCejVpQlEvU2txN2M5UWluQm1UMkhtOXMx?=
+ =?utf-8?B?d1FKTS8wOWg3enl4dGtQcCs2VzVxTzBoTFFNYkRsRmd2eEw3RVNJclU3U213?=
+ =?utf-8?B?Vlh4dVV4N0dCK2JRSjlrdCt1ZG9RWEJKazg3aUc3NW9GQkFWQjVOUkR2Zmpj?=
+ =?utf-8?B?Yk9kd3NtMUhBNm9hbjVvVXdQbUY3UGt0WTVybC9tdExNbGhSMmN1cUNzL0wy?=
+ =?utf-8?B?OVRKNWhNQW1SaGtWN3V6TVJwZThCenlNenl6WHRZNFJZMXppRExkdkZyVEZR?=
+ =?utf-8?B?WUh0YXhYL3hCUkF5dzBnREEvd0pJOHB1TWN2Q0V0eUFZcldPdElaV1BjWUpj?=
+ =?utf-8?B?Rzh1THZaZ2t3SWYrNkJUdDBWSlZ2MSt1YU9XUmF2bGVGRHpUelNhRjBXTlZJ?=
+ =?utf-8?B?ZzJZTW1iNlF3N2RRd05HekljQSt6Q1RqNWtDVUtLR1RGT1ovUFo0TnJ4N2dp?=
+ =?utf-8?B?QytrMjNOMEdONzk1Vlk0LytMcVFFeEI5bGxpOEhTSDM0WmNXaytPaU1TblRx?=
+ =?utf-8?B?U0kyeU9Ia091bU5xR2NCU1cvLzFwYVAwSFBOcE1CbUJwdzB4eWxJRExnQ0Ri?=
+ =?utf-8?B?dzNHOC9QZURDK2JTazUvY25TNVl2SHVDd0JFakFjTG5lT1VEMnF5b25HWm5j?=
+ =?utf-8?B?dTNPMk5rYUg5ZlFZc3VqdStJZFdWUHdUYW55cGZIemN5ZWFrTlAyN1lWOEU1?=
+ =?utf-8?B?QWViSlNON0YvYk9kZkUxQXMyeDlFc0pEWU5QWHdLT0tBandOeEw0S2xKYm1a?=
+ =?utf-8?B?bCt3U1ZzTzlzV0xFQlFmVlJnRTYrTXFDMlN1RDNzRDMraW4wTXJYaGdGeUE3?=
+ =?utf-8?B?YnM4UjFsSDlWcDJjbW05cWhIT3JFRzVPbExURHJQRmJuOGRvQjErVnZGYXJY?=
+ =?utf-8?B?QlJEY0IwSitSMGNSZkRvY1N3b1U5Z0FETnZzY005bGxLNmFHS1JrT2JGRXRM?=
+ =?utf-8?B?R2V6TlR1Sk5McWlIK2t0NFdjcXJPbVV2S29TZnUvRVVwb1ZGZG9RYzdZWVRn?=
+ =?utf-8?B?MzduTmM4SzlEbFZid2Mwb1FHVno1S3pXZXk5dmc0ZkZmQkhXeG45dzREKzk0?=
+ =?utf-8?B?VmVaYW5LalN4bGFWKzFycmlGcU00SEYvTm1scmo3WVFTdFBOLzVwT0Z3c1VP?=
+ =?utf-8?B?dEgyVUFVMWJRV3ZOY2lpWTkyQkpzcGdISnVXS3B6MkM5Y0I2TGdzRzJTVkJl?=
+ =?utf-8?B?bWhpaTVhTm1wVVhPblRpUVZMTEprdVZmY1FVR2k2NytZakU2MUw4cTI3QzFP?=
+ =?utf-8?B?YmhCOHZOTmxYdXc4blR4Y0VkMmJyblhZVW5iTDQyKzUrdTNWcUZiSmZNZ2RO?=
+ =?utf-8?B?ckdDUHVpWVNNWFVaVXI5QkU0VmI2OFVrU3pkdkdqT0VFakxXOWVncXJneElZ?=
+ =?utf-8?B?Ui9CNjBkenRJUWRTUkZNMXJveWFQMHk1TTIxMEJxdmZDbWdPcTF5UUtCNFJl?=
+ =?utf-8?B?cmc9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d81191a2-5cc2-477b-6018-08dc0ba660fd
+X-MS-Exchange-CrossTenant-Network-Message-Id: a01550eb-bdf4-4ed4-b24a-08dc0bb17af3
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jan 2024 15:20:40.0628
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jan 2024 16:40:08.1145
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8+NH5nDiTiCDXGp8SLL0c0VmUk2BQalIZloU0+2DmFxDoGsfgMZ/2hSC4StQgbDyrq6VqnJsXDPCepOAnLDuAw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAVPR10MB6986
+X-MS-Exchange-CrossTenant-UserPrincipalName: ohU2g0/sVYkVyt99cQVLM8sp/aExNFKdVN913tjiKs18UB87hElkx5E+RSh6feDaQXSUSWBrM3PbbIyQvEpoOg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR10MB3750
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 02 Jan 2024 15:20:48 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14231
+ <cip-dev@lists.cip-project.org>; Tue, 02 Jan 2024 16:40:18 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14232
 
-On 25.12.23 07:08, nobuhiro1.iwamatsu@toshiba.co.jp wrote:
-> Hi all,
+On 02.01.24 15:14, Chris Paterson wrote:
+> Hello Jan,
 > 
-> CIP kernel team has released Linux kernel v5.10.205-cip42 and v6.1.67-cip12.
-> The linux-5.10.y-cip tree has been updated base version from v5.10.201 to v5.10.205,
-> and The linux-6.1.y-cip tree has been updated base version from v6.1.66 to v6.1.67.
-> The linux-5.10.y-cip tree adds graphics, multimedia and clock drivier patches for Renesas
-> ARM64 SoCs.
+>> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
+>> Behalf Of Jan Kiszka via lists.cip-project.org
+>> Sent: Tuesday, January 2, 2024 8:09 AM
+>>
+>> On 27.12.23 17:18, Prabhakar Mahadev Lad wrote:
+>>> Hi,
+>>>
+>>>> Hi!
+>>>>
+>>>>> Sending this series as an RFC mainly beacuse, as the kernel image is
+>>>>> not generic to all RISC-V platforms as the HW is noncoherent.
+>>>>
+>>>> Does the hardware also have the "low memory does not work in
+>> userspace" problem? How is that handled?
+>>>>
+>>> For the local memory issues (ILM/DLM (Instruction/Data local memory)) we
+>> will need a similar patch [0] to cip-isar-core. Note the cip-isar-core image built
+>> with this change [0] can be used on other RISC-V platforms.
+>>>
+>>>
+>> https://githu
+>> b.com%2Fprabhakarlad%2Fmeta-
+>> riscv%2Fcommit%2Fda749379155980d1f906d8632432f35a01a9c9a1&data=05
+>> %7C02%7Cchris.paterson2%40renesas.com%7Ca5d360a701164419501808dc0
+>> b6a1e2b%7C53d82571da1947e49cb4625a166a4a2a%7C0%7C0%7C6383977975
+>> 99811411%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoi
+>> V2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=dY
+>> DnQGyt5JgcvbN2tCqYh7Ba6Tt8vEKooUjU0qBJ2do%3D&reserved=0
+>>>
+>>
+>> Just to emphasize this (again):
+>>
+>> Debian is not Yocto, buildroot or Gentoo, and we are not done by
+>> patching and rebuilding the toolchain. Unless you can also provide a
+>> reasonably short list of packages that require rebuilding after that
+>> patch is applied to binutils, it will not be practically feasible to
+>> address this hardware design issue via something like isar-cip-core.
 > 
-> You can get this release via the git tree at:
-> 
->   v5.10.205-cip42:
->     repository:
->       https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
->     branch:
->       linux-5.10.y-cip
->     commit hash:
->       3ce67a889168be63cffd93c9aa7cf26532711f7b
->     Fixed CVEs:
->       CVE-2023-46862: io_uring/fdinfo: lock SQ thread while retrieving thread cpu/pid
->     added commits:
->       CIP: Bump version suffix to -cip42 after merge from stable
->       arm64: dts: renesas: rzg2lc-smarc-som: Add vdd core regulator
->       arm64: dts: renesas: rzg2l-smarc-som: Add vdd core regulator
->       arm64: dts: renesas: r9a07g054: Fillup the GPU node
->       arm64: dts: renesas: r9a07g044: Add Mali-G31 GPU node
->       dt-bindings: gpu: mali-bifrost: Document RZ/V2L SoC
->       dt-bindings: gpu: mali-bifrost: Document RZ/G2L support
->       arm64: dts: renesas: Drop ADV7535 IRQ
->       arm64: dts: renesas: rzg2lc-smarc: Link DSI with ADV7535
->       arm64: dts: renesas: rzg2l-smarc: Link DSI with ADV7535
->       arm64: dts: renesas: r9a07g054: Add DSI node
->       arm64: dts: renesas: r9a07g044: Add DSI node
->       arm64: defconfig: Enable Renesas RZ/G2L MIPI DSI driver
->       drm: rcar-du: rzg2l_mipi_dsi: Reorder bridge attach
->       drm: rcar-du: rzg2l_mipi_dsi: Enhance device lanes check
->       drm: rcar-du: Fix Kconfig dependency between DRM and RZG2L_MIPI_DSI
->       drm: rcar-du: Add RZ/G2L DSI driver
->       dt-bindings: display: bridge: renesas,rzg2l-mipi-dsi: Document RZ/V2L support
->       dt-bindings: display: bridge: Document RZ/G2L MIPI DSI TX bindings
->       drm: of: Mark empty drm_of_get_data_lanes_count and drm_of_get_data_lanes_ep static
->       drm: of: Add drm_of_get_data_lanes_count and drm_of_get_data_lanes_ep
->       drm/bridge: Move devm_drm_of_get_bridge to bridge/panel.c
->       drm/bridge: Add stubs for devm_drm_of_get_bridge when OF is disabled
->       drm/bridge: Add a function to abstract away panels
->       arm64: dts: renesas: r9a07g054: Add vspd node
->       arm64: dts: renesas: r9a07g054: Add fcpvd node
->       arm64: dts: renesas: r9a07g044: Add vspd node
->       arm64: dts: renesas: r9a07g044: Add fcpvd node
->       media: renesas: vsp1: Add support for RZ/G2L VSPD
->       media: dt-bindings: media: renesas,vsp1: Document RZ/V2L VSPD bindings
->       media: dt-bindings: media: renesas,vsp1: Document RZ/G2L VSPD bindings
->       media: renesas: vsp1: Add VSP1_HAS_NON_ZERO_LBA feature bit
->       media: vsp1: Use BIT macro for feature identification
->       media: renesas: vsp1: Add support for VSP software version
->       media: renesas: vsp1: Add support to deassert/assert reset line
->       media: vsp1: mask interrupts before enabling
->       media: vsp1: Use platform_get_irq() to get the interrupt
->       media: vsp1: Simplify DRM UIF handling
->       media: vsp1: Fix WPF macro names
->       media: vsp1: Make use of the helper function
-> devm_platform_ioremap_resource()
->       media: vsp1: use pm_runtime_resume_and_get()
->       device property: Add const qualifier to device_get_match_data() parameter
->       clk: renesas: rzg2l: Fix CPG_SIPLL5_CLK1 register write
->       clk: renesas: r9a07g044: Add POEG clock and reset entries
->       clk: renesas: r9a07g044: Add GPT clock and reset entry
->       clk: renesas: r9a07g044: Add DSI clock and reset entries
->       clk: renesas: r9a07g044: Add LCDC clock and reset entries
->       clk: renesas: r9a07g044: Add M4 Clock support
->       clk: renesas: r9a07g044: Add M3 Clock support
->       clk: renesas: r9a07g044: Add {M2, M2_DIV2} Clocks support
->       clk: renesas: r9a07g044: Add M1 clock support
->       clk: renesas: rzg2l: Add DSI divider clk support
->       clk: renesas: rzg2l: Add PLL5_4 clk mux support
->       clk: renesas: rzg2l: Add FOUTPOSTDIV clk support
->       clk: renesas: r9a07g043: Drop WDT2 clock and reset entry
->       clk: renesas: r9a07g044: Drop WDT2 clock and reset entry
->       arm64: dts: renesas: rzg2ul-smarc: Move spi1 pinmux to carrier board DTSI
->       arm64: dts: renesas: rzg2l: Drop WDT2 nodes
->       arm64: dts: renesas: rzg2ul-smarc-som: Drop enabling wdt2
->       arm64: dts: renesas: rz-smarc: Use versa3 clk for audio mclk
->       clk: vc3: Make vc3_clk_mux enum values based on vc3_clk enum
->       clk: vc3: Fix output clock mapping
->       clk: vc3: Fix 64 by 64 division
->       clk: Add support for versa3 clock driver
->       clk: fixed-factor: Introduce *clk_hw_register_fixed_factor_parent_hw()
->       clk: fixed: Remove Allwinner A10 special-case logic
->       clk: fixed-factor: Introduce devm_clk_hw_register_fixed_factor_index()
->       clk: fixed: add devm helper for clk_hw_register_fixed_factor()
->       dt-bindings: clock: versaclock3: Add description for #clock-cells property
->       dt-bindings: clock: Add Renesas versa3 clock generator bindings
-> 
->   v6.1.67-cip12:
->     repository:
->       https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
->     branch:
->       linux-6.1.y-cip
->     commit hash:
->       33a81955d654c80f6f9626f5bd3def02b8e85b3a
->     Fixed CVEs:
->       None
->     added commits:
->       CIP: Bump version suffix to -cip12 after merge from stable
->       ASoC: dt-bindings: renesas,rz-ssi: Update interrupts and interrupt-names properties
-> 
-> Best regards,
->    Nobuhiro
+> Perhaps we can come up with a small list of packages, at least to get CIP core working.
+> If this is the case, would CIP want to compile these packages separately as part of isar-cip-core builds?
+> Or would we (Renesas) need to compile them separately and pull them in during a normal isar-cip-core build?
 > 
 
-Seems v6.1.67-cip12 was not pushed as tarball. I only find the
-corresponding -rt release there:
+Depends on the length of the list and size (build-time) of the packages.
 
-https://cdn.kernel.org/pub/linux/kernel/projects/cip/6.1/
+> I seem to remember you saying that RISC-V cross-compilation for Debian is broken. Do you know if this is still the case? 
+
+I worked around the issue for now, waiting for review:
+https://groups.google.com/g/isar-users/c/0QBjhzcs3ac
+
+Once isar accepted it, isar-cip-core will pick it up quickly.
+
+> 
+> So perhaps some options for now, in order:
+> 1) Add support for RZ/Five to linux-cip and don't test at all 
+> 2) Add support for RZ/Five to linux-cip and rely on Renesas' internal CI to test (similar to other non-official CIP reference platforms from Renesas)
+> 3) Add support for RZ/Five to linux-cip and run limited testing with Renesas' Poky BSP
+> 4a) Add support for RZ/Five to linux-cip, Renesas compiles binutils etc. specifically for RZ/Five, isar-cip-core pulls in the Renesas packages specifically for RZ/Five, or
+> 4b) Add support for RZ/Five to linux-cip, patch isar-cip-core to compile binutils etc. specifically for RZ/Five
+> 
+> Options 1-3 would mean RZ/Five would _not_ become an official CIP reference platform.
+> Option 4 _may_ open up the possibility for RZ/Five to become an official reference platform.
+> 
+> I'd at least like to get 1-2, perhaps 3 working in the short term based on this RFC series, if there are no objections from the CIP maintainers.
+> 
+>>
+>> It would be better - not only having Debian but also other distros in
+>> mind - to look for a kernel/firmware-based workaround, even if ugly and
+>> potentially slower.
+> 
+> It probably would be better, however sadly we haven't been able to come up with such a workaround.
+
+Is there information missing when an access to the invalid virtual
+address happens, or is the implementation of a complete instruction
+emulator not realistic?
 
 Jan
 
