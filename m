@@ -1,234 +1,211 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9CDFC3DA6E
-	for <webhook@archiver.kernel.org>; Wed,  3 Jan 2024 19:06:46 +0000 (UTC)
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (EUR02-VI1-obe.outbound.protection.outlook.com [40.107.241.50])
- by mx.groups.io with SMTP id smtpd.web10.25916.1704308799504238703
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28203C47073
+	for <webhook@archiver.kernel.org>; Wed,  3 Jan 2024 23:09:48 +0000 (UTC)
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+ by mx.groups.io with SMTP id smtpd.web10.41889.1704323380643668355
  for <cip-dev@lists.cip-project.org>;
- Wed, 03 Jan 2024 11:06:39 -0800
+ Wed, 03 Jan 2024 15:09:41 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=i0OXA2dk;
- spf=pass (domain: siemens.com, ip: 40.107.241.50, mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VIivJVbu+QkHf1JLeTjtrjFj9gg+dcJZuSYV8z8jWCJQEhvebnr3nX8sU3h9AKWVHTmvehmySsFPsP5e/czja5BzTH7bZIYwhy7yXutFiJuHohIIW30SIhmQZWZ6rx35j/b+djYTcwL4TY6rUh2rfKD+Ux4lngqQQsqmvvMQnI9P3G6183svmm0x43lVNx5fr6C+pnXMwiUSPkODWSQwI1wR0mlJndg3Tj12q1aM4VVrjHhVQEYOD6NdXTf4LdLShyYiev8UOBQxfrzYIZPa+b0iZF+Ahs4SMc3sYx4h+GoX5yB4ZTVDwVzuFcm3oXw8MzkdwJhkv7J1suq/3RJ4EA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p14N0OZbgo3SUjZ5RD2cwtr5oDwCFONHddEhqnM5zjU=;
- b=afgPDshV0am5XYDLFFr68Pq/tQaqXUFMTzImCCBkY3hYepFEx+IqkA8Wr2JPnXEZJmwW8ci8qxu+H4WLZpZ9BAn0NxdzsqRscXvbABYwWkjm0KnQcXI5MeIl71mQ1fw9zsBqvqDMJztk6I1NU2/yvIop7q76Y4l4RjfWRogmGgHL0/Lni5FX7EyliWb6j/waUjpEsWo5i6ABnDHo1qnFLxDurh5L/F87wgjiHsIIgO2+82eBYfqUH/DTsPhtioTCr03xkRahq/14Cuhl0NesfTaZL5vomUysW1wESx2YwSiHtKJQX1lpStBJPplhyDeMErrzko+9Zeq5DXSblMT4wA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p14N0OZbgo3SUjZ5RD2cwtr5oDwCFONHddEhqnM5zjU=;
- b=i0OXA2dk6Ozdf8mLlVXlhz1aHVQCqE+p9JO/utdeVwEJ36ugK5GBkBqfK2DIKAcMyUucUFD7MYcgqMypsMzPzBP6Pfa0pmIsAaiWP2DAXHWcaR/h0bCbgIOUUjxjnZ8D9GiqF5BBRxKnPN6gz44dRHo7SUToe1PVqg8Fqs/hjzbbypl/7H14cOw1oMYvqpg3pA2zQP9xmiw1D3BUk5eoTH3juZpQueujF4axsL56DCt80e1Y/kO76zMi1vBo28+MR6ihcjtUgY6dgUAqFYIFK2GNpkWHvsKwP4lP7PlWXY7nkrBXD/ELO/hxNDlT021JkM+G37WuLbtKu2Tzpazo3w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by AS8PR10MB6389.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:536::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7135.25; Wed, 3 Jan
- 2024 19:06:35 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::96c7:d239:1723:8761]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::96c7:d239:1723:8761%5]) with mapi id 15.20.7159.013; Wed, 3 Jan 2024
- 19:06:35 +0000
-Message-ID: <2e111618-1de2-4728-8031-e77c4a2c4ec3@siemens.com>
-Date: Wed, 3 Jan 2024 20:06:33 +0100
-User-Agent: Mozilla Thunderbird
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [isar-cip-core][PATCH] linux-cip: Update to latest releases
-Content-Language: en-US
-To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR5P281CA0048.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f0::16) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+ dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=aVvV6Sqx;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.160.48, mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-204fdd685fdso4249253fac.2
+        for <cip-dev@lists.cip-project.org>; Wed, 03 Jan 2024 15:09:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1704323379; x=1704928179; darn=lists.cip-project.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=43SbFGuy0+Ewdtih1Q6+J2St3mNmF2SrLqorBOTaRkA=;
+        b=aVvV6Sqx4BjQ/mFvL2jSzdTiK/9//TfQFj6UIcO8wkarSJRoSmMjsP8t3BRb3uc7vF
+         9qVKp5rFPf/4GVTT6OWb75N/n8l3NB5kLEXzs4uo7N/grB5sxqJGJ2HK6VBZoLOMhKlS
+         48hQo4kY/LMKs++iC450zO0nqAgPNdOoj73SFUHCB07/HUFQkVLW8EbmOWxV7a3dyqos
+         jJGmH0jZ1c6NDR++/+KIgdTn11i52bi/6Ai+bR2DCvajgME/FQKctMqrpYJLDlamYJmM
+         nGO0qL7KxFC3hyEzLwmqPau0Z619cNjiMZhdf0Ka198Zjf0sD8dnNZ+hlULlF0bBHWoJ
+         Nt6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704323379; x=1704928179;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=43SbFGuy0+Ewdtih1Q6+J2St3mNmF2SrLqorBOTaRkA=;
+        b=DhE0a4/tLggoZMOLEusrE++avFwv9x491IisNb7ao+YjNRQF7xKD3Zeeh7q0Tmo2gr
+         X/6tPm8UmgVQrejgQeNZ9w3LmHXvo8MQtQkRhpmpal23EOxQo1nDweBclsyrq69B4yiC
+         /eQCcUXzms/PnX1x5E/fr9te/SWj6Gkw0lBQw0yzqwC9I+09Haiy+T0iVMmOTrmWKX0w
+         eHdwZFLIwD0O9md8nOYHpcs7p3SpNo3xDPkDLDx/0SDCuXAgOJaD4GE7psGtrisVltJJ
+         hDUszBoc3nKw0qxZv0RUt+EMnnIsnDTflLCPD1dk2+d/4KpGy5Eb1jW8CkZZk6ueAdvl
+         GlSw==
+X-Gm-Message-State: AOJu0YzefwpsRSQSOMkAJ3GWLNMExGq977b+0xok1houYQxjgDmaIQn1
+	Sf9R2RdtbE34XAkGWnfeXPAkrXbHlVOfkAW0gSSGfm9CoAMA+ida+e6k2Rjiovw=
+X-Google-Smtp-Source: AGHT+IEXy3viZSggEciAbeNq32E+3PvOoP33A6Jv6AcN7MNUWV9Bj+GShJPuAgdcm6ujRu8WIy1Sri/bkl0Zy8tlAV0=
+X-Received: by 2002:a05:6870:b69c:b0:203:a983:c7b with SMTP id
+ cy28-20020a056870b69c00b00203a9830c7bmr26925985oab.60.1704323379577; Wed, 03
+ Jan 2024 15:09:39 -0800 (PST)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS8PR10MB6389:EE_
-X-MS-Office365-Filtering-Correlation-Id: bfaf649d-1788-4c8e-32f6-08dc0c8f1b3d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	b04ae1OIOALOGN3Czaeasd80cjYs68rnC8Qy/BWTHKuI43uRXb4fUtIyD6K7rLFTvz6halXAMopvUp6Be6XTAUu5GSo539W012YW7tzKny9S1OJ2Fz/wZQ6iq1nHKPCmSUnGI17hOMY218szlPDpRDERfex4AX8i765twjJAIGlBLGuKyq5YFF0yeUcDVA40rrQbJQ3ZSpRecs9oMXpsCxOOkFBXqGmmjfZmsL/9WNbFj0gymb0VrSWVrWyxjWrW56V+VViY1t4HeltUrQ0FL0OK4Opi8Q6zE9kqv6RU/sSU5s6BJayG1vU9RHQVpJKYzqF/14zBilz9fm1MI/HIn4O0M+nw94kZm8IbXknE+cZTxHz/jUf26WchkXddcUo+wIoi/aXTiPZKrGCOvVs2+pE/atDBycnpeuQc+ZabHNliIkecUMmF/v8hQeGaY07JQO9ESMw80tc2OS8iaoI8mKqGc1zBMDYKDJYhe3wnGRlNgHByrSQKsKlp7lnODYpq6S4t5Jzcyo5PJQvgcBqJuLKI3L8iVMdx+GEr2SP00gyOUynnIu/RLGh7lLtx/Je+m9T7HLz6KYEUGig6l2Og38hjXDPNtIkj1eCwYVBlMIJL8u8wEx99Mo1WDIMP1TP8DVpGlHwWzTFF5+5Eu/zfcQ==
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(136003)(366004)(396003)(39860400002)(376002)(346002)(230922051799003)(1800799012)(186009)(451199024)(64100799003)(26005)(38100700002)(2616005)(83380400001)(82960400001)(8936002)(8676002)(15650500001)(316002)(41300700001)(5660300002)(2906002)(44832011)(478600001)(6916009)(66556008)(6486002)(6506007)(6512007)(66946007)(66476007)(31696002)(86362001)(36756003)(31686004)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?NDQ5bTBxOE9hU1lYU2dvNThWWkIzLzN6bjFmbld4bjNXWWZ6TEpUWmM3azlZ?=
- =?utf-8?B?cDFEZTRXd0VBSWVkc2xuNWcvYStWOHZIRkl2cTlOMUhZaXJYVHJjbWNQazBW?=
- =?utf-8?B?YmY2SlpPdHRPWEM1L0VDcFd5VVVrRUh3elpnbWlNRXI0SERUOEpkNWpGR1hh?=
- =?utf-8?B?VThpQTlXd2xkNklGSHZ1MmRXeXlCLzFlcG1Wa2JjL0JERnFvUERhQnpvOXVU?=
- =?utf-8?B?YlR2UWhPclBPdVk0ZGlpN2NKcC9kVkoySXdEQ2NiUExGZWZtR0VUcWFaVm02?=
- =?utf-8?B?QUhvYkgzTloyU0o0SHZwckVjVXY0VnNuZWhVM1Rla3l2eUlYWS9NVWYrUUYy?=
- =?utf-8?B?ZnFqWDA0UFdKWU1hM1hPa2NFUFFCY3pzQ3NacjdpRlF5cnBpSi90REVjSEtn?=
- =?utf-8?B?ZDJrL1d6Mm1oUDFRczRVcHlNMUxIOHpvNU0rem9zWXJNcmpxbXBkU2RFQ3Uw?=
- =?utf-8?B?cHlHQlp5dnI0Q2p2dUV2WVFaRlVKaE5uRlIxSGhVYm00MlB2TThGb29Zdm43?=
- =?utf-8?B?MUhSWjQ2VmNvS3gvWmpRaWlZVXFuY01RUWRIb0I4L25pRUJLWG96b0hxdnFl?=
- =?utf-8?B?WThaVzBUY3RaSngrMFl5UGRxbkoxQ1V3QlV1Q2Fza1huZFBGRHY3L1l1QzNv?=
- =?utf-8?B?cWptaXRrUHVlbWlIdzJzVHZNTDdEa2VoZnM4RmV6SVZmOXJzbVA3VDdKMURu?=
- =?utf-8?B?OSt1bDI3Z2g0eXVaUkZOMkNad3h3czMxUFlhcCtjWVhtTkxObWI2RHJDT2tr?=
- =?utf-8?B?K3RIaGw4V0ViR0FqSWNlOU05eTFFSy9BSVlhTWxGTXdhSjlsaGZVVVAwZ0M4?=
- =?utf-8?B?Y2QwRUdoeEtCR1FUdytPSlVHbC94R09ia2dFNk00NHJJcGZONVViczhYNXUx?=
- =?utf-8?B?RXRtcktqTmIrRVNjUTlIYTY2Y2dWOVRsa2xaZlZqY0k2QU4vckU3Z1p6UWdr?=
- =?utf-8?B?dmFsRDdybFZyWENhcm45VzJzNmo3QnhXQUdjRHdZRCt4OXl6RThpcXd0eWd2?=
- =?utf-8?B?ZHpIbms1aExyeDNhVkVxM1E3L0R1d2NzckNSV0hwNFJxVTVrd3BNc1NpREhF?=
- =?utf-8?B?SVlkVUVIWFNrYnc2ck1pWVBoa1pwK085UzRyVUNqUlplZXNhbHA5QTQ5U09a?=
- =?utf-8?B?UFRRekJnSWlsMnF6WkdhSGJOWDBuaHVPbmo5NjNUT3Bsbksvejhydk5xc2dM?=
- =?utf-8?B?M3VuZ0ovRmE5bDNvT1VtRXc1K2JpZXNYeW5md0d0S2tMYXBSZEwrcXR6MndH?=
- =?utf-8?B?Y1lPTDJIclJDVG1KUy96dTVTM0s2WitoNExWRVBwcVV6bnVOcnoxYkhNVXJY?=
- =?utf-8?B?Rk03ei9OTy8xVmRLb29IMVgrL3ZhUzVVdG5WNTNkVkluOEpLQzd0RnJ0NlNl?=
- =?utf-8?B?OUI2eHlhVm5MOTdneUlXSm9KUU5rbHEyR0plcisrUjV3bjVUZmxHRzVyYXdF?=
- =?utf-8?B?Wmc4TmgvTWR4ZmVpSWUwbXYydUxibU1ZaWZacEtPQ1dxYmNOM1lLZDdKcHdm?=
- =?utf-8?B?TCs2R0ZMdlcxY1R3L21RYm1vTC9OekFpU0kxUzYvUm9MRG5DVm9xdFJCRXFz?=
- =?utf-8?B?OG9IRGNiNzJ4TDdzNm1Va1QydDVxcTNPQ09PMk1YZ1FQVWtaTUF5aHIyOUhz?=
- =?utf-8?B?ekY2RDRmSUxFdmlTbDdLWndPWEhqRDVvSWhFZTNWcExWQnRtVk9mbDZ2WUl1?=
- =?utf-8?B?TVJ0c1dFVlpVcnBWaEJyT2tHY3B3SjlnRGVNWUVaZ0tyRHR5TjlUK2hIZ2VY?=
- =?utf-8?B?bWIycUJMZWhBMFFOMUlVZE8yVy9tMk0rOXUyYUVWd3lnL0Z1N0UxMVRuKzVW?=
- =?utf-8?B?SmhndGh3bzZveHBDSFFSUVRCQlpMU2FJSnZzUk5CbFU1OC9DTmNxa2NXOFN6?=
- =?utf-8?B?dHU5ZVE4dml0WWhFaDNVeFNyTW01eCszU0l2S2o2WEN2aHZ0ZVNQenRZRjlY?=
- =?utf-8?B?Um9IanVVVGRHbHYrRzdSZm0vdVhzNVU4RGNwZmlONDBnb0xwZlBmTHZIOElL?=
- =?utf-8?B?dXpEOHd3QmlvZnpxRU1vUWdFMGFHdlY4eHJPVWM1dDduV3FUck1SWUpoOXBP?=
- =?utf-8?B?R0J4eDNEL2E5eUVjUXF0WWdrTUpSUnFGYXoxVFFubGFsT3diYmJsQzJ1QVhV?=
- =?utf-8?B?di9oK2dKQVNsSTQyWXQxUUlwU2cvR0U1VUlMcDRUMkRjUXBUanJwd3c2em5L?=
- =?utf-8?B?WXc9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bfaf649d-1788-4c8e-32f6-08dc0c8f1b3d
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jan 2024 19:06:35.7477
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Q+UNjkTqWAyYkywE+Qc9CSnACLFykKUUGwe0zd+avvcHPC/JosKS2RjBvsfHqj4eDWVRzNpQ7ZpOm9BC1emshA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB6389
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 4 Jan 2024 08:09:03 +0900
+Message-ID: <CAODzB9rxqmUTuB6yJbqw2h0rzcZSUqhP=HY0ErDd2eCER6e2dw@mail.gmail.com>
+Subject: [kernel-cve-report] New CVE entries this week
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 03 Jan 2024 19:06:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14251
+ <cip-dev@lists.cip-project.org>; Wed, 03 Jan 2024 23:09:48 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14252
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+Hi!
 
-Generated by the new update script.
+It's this week's CVE report.
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- ....295-cip103-rt33.bb => linux-cip-rt_4.19.299-cip105-rt34.bb} | 2 +-
- ...4.4.302-cip80-rt46.bb => linux-cip-rt_4.4.302-cip83-rt47.bb} | 2 +-
- ...nux-cip_6.1.66-cip11.bb => linux-cip-rt_6.1.67-cip12-rt7.bb} | 2 +-
- ...inux-cip_4.19.297-cip104.bb => linux-cip_4.19.299-cip105.bb} | 2 +-
- .../{linux-cip_4.4.302-cip81.bb => linux-cip_4.4.302-cip83.bb}  | 2 +-
- ...{linux-cip_5.10.201-cip41.bb => linux-cip_5.10.205-cip42.bb} | 2 +-
- ...nux-cip-rt_6.1.66-cip11-rt6.bb => linux-cip_6.1.67-cip12.bb} | 2 +-
- 7 files changed, 7 insertions(+), 7 deletions(-)
- rename recipes-kernel/linux/{linux-cip-rt_4.19.295-cip103-rt33.bb => linux-cip-rt_4.19.299-cip105-rt34.bb} (68%)
- rename recipes-kernel/linux/{linux-cip-rt_4.4.302-cip80-rt46.bb => linux-cip-rt_4.4.302-cip83-rt47.bb} (68%)
- rename recipes-kernel/linux/{linux-cip_6.1.66-cip11.bb => linux-cip-rt_6.1.67-cip12-rt7.bb} (59%)
- rename recipes-kernel/linux/{linux-cip_4.19.297-cip104.bb => linux-cip_4.19.299-cip105.bb} (68%)
- rename recipes-kernel/linux/{linux-cip_4.4.302-cip81.bb => linux-cip_4.4.302-cip83.bb} (68%)
- rename recipes-kernel/linux/{linux-cip_5.10.201-cip41.bb => linux-cip_5.10.205-cip42.bb} (68%)
- rename recipes-kernel/linux/{linux-cip-rt_6.1.66-cip11-rt6.bb => linux-cip_6.1.67-cip12.bb} (59%)
+This week reported 4 new CVEs and 2 updated CVEs.
 
-diff --git a/recipes-kernel/linux/linux-cip-rt_4.19.295-cip103-rt33.bb b/recipes-kernel/linux/linux-cip-rt_4.19.299-cip105-rt34.bb
-similarity index 68%
-rename from recipes-kernel/linux/linux-cip-rt_4.19.295-cip103-rt33.bb
-rename to recipes-kernel/linux/linux-cip-rt_4.19.299-cip105-rt34.bb
-index 407bbcb6..b5924013 100644
---- a/recipes-kernel/linux/linux-cip-rt_4.19.295-cip103-rt33.bb
-+++ b/recipes-kernel/linux/linux-cip-rt_4.19.299-cip105-rt34.bb
-@@ -11,4 +11,4 @@
- 
- require linux-cip-rt-common.inc
- 
--SRC_URI[sha256sum] = "96ee568d51fc662ead73d0851fb0fcec043317d11c3f00835fdb09c7740e3131"
-+SRC_URI[sha256sum] = "cbbaf945457a045fa5adafcc9206ffab26139d5ea9f21fb2f57f33923aaa24e1"
-diff --git a/recipes-kernel/linux/linux-cip-rt_4.4.302-cip80-rt46.bb b/recipes-kernel/linux/linux-cip-rt_4.4.302-cip83-rt47.bb
-similarity index 68%
-rename from recipes-kernel/linux/linux-cip-rt_4.4.302-cip80-rt46.bb
-rename to recipes-kernel/linux/linux-cip-rt_4.4.302-cip83-rt47.bb
-index 678a8027..6bc62752 100644
---- a/recipes-kernel/linux/linux-cip-rt_4.4.302-cip80-rt46.bb
-+++ b/recipes-kernel/linux/linux-cip-rt_4.4.302-cip83-rt47.bb
-@@ -11,4 +11,4 @@
- 
- require linux-cip-rt-common.inc
- 
--SRC_URI[sha256sum] = "2195422a0d154d8191e6c974a9946b3c91187dde891c52ae971e39ccacf9556e"
-+SRC_URI[sha256sum] = "cb1bdb0aafea82824d084cf3790267369d0b4bbfabed142594f15370f0538aef"
-diff --git a/recipes-kernel/linux/linux-cip_6.1.66-cip11.bb b/recipes-kernel/linux/linux-cip-rt_6.1.67-cip12-rt7.bb
-similarity index 59%
-rename from recipes-kernel/linux/linux-cip_6.1.66-cip11.bb
-rename to recipes-kernel/linux/linux-cip-rt_6.1.67-cip12-rt7.bb
-index 7989e6d8..2e54a3d2 100644
---- a/recipes-kernel/linux/linux-cip_6.1.66-cip11.bb
-+++ b/recipes-kernel/linux/linux-cip-rt_6.1.67-cip12-rt7.bb
-@@ -7,4 +7,4 @@
- 
- require linux-cip-common.inc
- 
--SRC_URI[sha256sum] = "6ad2551a89b955c6c78145295675418f384136fe6e6e6ad07373af6209261af1"
-+SRC_URI[sha256sum] = "5b2affdeca3822cdad6fb8a236cdad07ca14f15d6e3e9b263dc1916667586751"
-diff --git a/recipes-kernel/linux/linux-cip_4.19.297-cip104.bb b/recipes-kernel/linux/linux-cip_4.19.299-cip105.bb
-similarity index 68%
-rename from recipes-kernel/linux/linux-cip_4.19.297-cip104.bb
-rename to recipes-kernel/linux/linux-cip_4.19.299-cip105.bb
-index fafffe21..cf22c131 100644
---- a/recipes-kernel/linux/linux-cip_4.19.297-cip104.bb
-+++ b/recipes-kernel/linux/linux-cip_4.19.299-cip105.bb
-@@ -11,4 +11,4 @@
- 
- require linux-cip-common.inc
- 
--SRC_URI[sha256sum] = "264b20398fcd0f65ea27f16a7625314de1ec790904626a4cdc2dc44dbdeb973a"
-+SRC_URI[sha256sum] = "60e1d7426821c47a84ee4de53e9be3d23e09cd493390fa29b3d2f38e5d0639dd"
-diff --git a/recipes-kernel/linux/linux-cip_4.4.302-cip81.bb b/recipes-kernel/linux/linux-cip_4.4.302-cip83.bb
-similarity index 68%
-rename from recipes-kernel/linux/linux-cip_4.4.302-cip81.bb
-rename to recipes-kernel/linux/linux-cip_4.4.302-cip83.bb
-index cf538e99..051eaa19 100644
---- a/recipes-kernel/linux/linux-cip_4.4.302-cip81.bb
-+++ b/recipes-kernel/linux/linux-cip_4.4.302-cip83.bb
-@@ -11,4 +11,4 @@
- 
- require linux-cip-common.inc
- 
--SRC_URI[sha256sum] = "bf7dd204035e2924f877c879683605e00d31ec2f38a0ef03d764d05263404c34"
-+SRC_URI[sha256sum] = "6cc43814b53964dd5d18a0d5e33da014773c54313ce25c57d8504a1e24fb96c3"
-diff --git a/recipes-kernel/linux/linux-cip_5.10.201-cip41.bb b/recipes-kernel/linux/linux-cip_5.10.205-cip42.bb
-similarity index 68%
-rename from recipes-kernel/linux/linux-cip_5.10.201-cip41.bb
-rename to recipes-kernel/linux/linux-cip_5.10.205-cip42.bb
-index 0868ee58..707be1fe 100644
---- a/recipes-kernel/linux/linux-cip_5.10.201-cip41.bb
-+++ b/recipes-kernel/linux/linux-cip_5.10.205-cip42.bb
-@@ -11,4 +11,4 @@
- 
- require linux-cip-common.inc
- 
--SRC_URI[sha256sum] = "40e976196aa52c07a9bd39e9d7d320919aac8978a518de83680223aa04f0d11f"
-+SRC_URI[sha256sum] = "b4734a7a22a30f3c20f9437c366bde0dd584bebe836d1ef622d4c1d7205e6f54"
-diff --git a/recipes-kernel/linux/linux-cip-rt_6.1.66-cip11-rt6.bb b/recipes-kernel/linux/linux-cip_6.1.67-cip12.bb
-similarity index 59%
-rename from recipes-kernel/linux/linux-cip-rt_6.1.66-cip11-rt6.bb
-rename to recipes-kernel/linux/linux-cip_6.1.67-cip12.bb
-index f9a43458..daaa7703 100644
---- a/recipes-kernel/linux/linux-cip-rt_6.1.66-cip11-rt6.bb
-+++ b/recipes-kernel/linux/linux-cip_6.1.67-cip12.bb
-@@ -7,4 +7,4 @@
- 
- require linux-cip-common.inc
- 
--SRC_URI[sha256sum] = "83c8303cafe867cbebe770e542bdcacc6d60bb6fae93de665a8cf13742349722"
-+SRC_URI[sha256sum] = "5d72be655a9c31ae298ae79184750d5c76f82bacf568a3b8dfea2aa717c496de"
+* New CVEs
+
+CVE-2023-6531: io_uring/af_unix: disable sending io_uring over sockets
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): N/A
+
+A use-after-free bug was found in the io_uring subsystem for
+supporting af_unix socket. There was a race condition bug that causes
+use-after-free.
+
+This bug was introduced by commit 0091bfc ("io_uring/af_unix: defer
+registered files gc to io_uring release") in 6.1-rc1. It has been
+backported to 5.4, 5.10, and 5.15.
+
+Fixed status
+mainline: [705318a99a138c29a512a72c3e0043b3cd7f55f4,
+69db702c83874fbaa2a51af761e35a8e5a593b95]
+stable/5.10: [3fe1ea5f921bf5b71cbfdc4469fb96c05936610e]
+stable/6.1: [5a33d385eb36991a91e3dddb189d8679e2aac2be]
+
+CVE-2023-6546: A use-after-free bug was found in the gsm_cleanup_mux()
+
+CVSS v3(NIST): 7.0 (HIGH)
+CVSS v3(CNA): 7.8 (HIGH)
+
+A race condition was found in the GSM 0710 tty multiplexor in the
+Linux kernel. This issue occurs when two threads execute the
+GSMIOC_SETCONF ioctl on the same tty file descriptor with the gsm line
+discipline enabled, and can lead to a use-after-free problem on a
+struct gsm_dlci while restarting the gsm mux. This could allow a local
+unprivileged user to escalate their privileges on the system.
+
+In commit 9b9c819 ("tty: n_gsm: fix UAF in gsm_cleanup_mux") tried to
+fix a use-after-free bug but introduced a race condition which causes
+this use-after-free bug.
+
+The commit 9b9c819 was introduced in 6.5.-rc4. This CVE was fixed in 6.5-rc7.
+
+Fixed status
+mainline: [3c4f8333b582487a2d1e02171f1465531cde53e3]
+stable/5.10: [869ce5e5984595bd2c62b598d977debc218b6f4d]
+stable/5.15: [2a523446438376bb7c224f3169ae9b98ce0fb893]
+stable/6.1: [31311a9a4baae0ad47c85e448af21b2120344ff0]
+
+CVE-2023-7192: A memory leak problem was found in
+ctnetlink_create_conntrack() in the netfilter subsystem
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): 6.1 (MEDIUM)
+
+A memory leak problem was found in ctnetlink_create_conntrack in
+net/netfilter/nf_conntrack_netlink.c in the Linux Kernel. This issue
+may allow a local attacker with CAP_NET_ADMIN privileges to cause a
+denial of service (DoS) attack due to a refcount overflow.
+
+This bug was introduced by commit 7d367e0 ("netfilter: ctnetlink: fix
+soft lockup when netlink adds new entries (v2)") in 3.3-rc6.
+The commit 7d367e0 fixes a race condition bug which was introduced by
+commit cfed7e1 ("netfilter: nf_tables: add set garbage collection
+helpers") in 4.1-rc1.
+
+This CVE was fixed in 6.3-rc1.
+
+Fixed status
+cip/4.4: [a3f90f806278532e352739f354ace32e69e96da4]
+cip/4.4-rt: [a3f90f806278532e352739f354ace32e69e96da4]
+cip/4.4-st: [a3f90f806278532e352739f354ace32e69e96da4]
+mainline: [ac4893980bbe79ce383daf9a0885666a30fe4c83]
+stable/4.14: [8df5f3b50d9ce523251edf9cd0470963be20004b]
+stable/4.19: [43b9a9c78e37a5532c2a9260dff9d9989f2bbb23]
+stable/5.10: [1ff0b87df98b93e10ced45773aa7d35377355421]
+stable/5.15: [af41b3cd9a9245f482b8855bd3c62c6f04ae68ab]
+stable/5.4: [5d0d38805d3234ca2cd6fbeb74d706348f4bbc43]
+stable/6.1: [4f25d1dff80535f088b8f8568dd731fb098e29b4]
+
+CVE-2024-0193: netfilter: nf_tables: skip set commit for deleted/destroyed sets
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): 7.8 (HIGH)
+
+A use-after-free flaw was found in the netfilter subsystem of the
+Linux kernel. If the catchall element is garbage-collected when the
+pipapo set is removed, the element can be deactivated twice. This can
+cause a use-after-free issue on an NFT_CHAIN object or NFT_OBJECT
+object, allowing a local unprivileged user to escalate their
+privileges on the system.
+
+This bug was introduced by commit 5f68718b34a5 ("netfilter: nf_tables:
+GC transaction API to avoid race with control plane") in 6.5-rc6.
+The commit 5f68718b34a5 was backported to 5.10, 5.15, 5.4, and 6.4.
+
+Fixed status
+Patch is merged into netfilter tree
+(https://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf.git/commit/?id=7315dc1e122c85ffdfc8defffbb8f8b616c2eb1a)
+but it hasn't been merged into the mainline yet.
+
+* Updated CVEs
+
+CVE-2023-51779: Bluetooth: af_bluetooth: Fix Use-After-Free in bt_sock_recvmsg
+
+Stable 6.1 and 6.6 were fixed.
+
+Fixed status
+mainline: [2e07e8348ea454615e268222ae3fc240421be768]
+stable/6.1: [37f71e2c9f515834841826f4eb68ec33cfb2a1ff]
+stable/6.6: [1d576c3a5af850bf11fbd103f9ba11aa6d6061fb]
+
+CVE-2023-6606: Out-Of-Bounds Read vulnerability in smbCalcSize
+
+Stable 6.1 and 6.6 were fixed.
+
+Fixed status
+mainline: [b35858b3786ddbb56e1c35138ba25d6adf8d0bef]
+stable/6.1: [c60e10d1549f8748a68ec13dcd177c62843985ff]
+stable/6.6: [ac48fcef5ec2e9ac85c0b39045d874e60eac75d7]
+
+Currently tracking CVEs
+
+CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
+Bluetooth Core Specifications 4.0 through 5.2
+
+There is no fix information.
+
+CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
+Provisioning Leads to MITM
+
+No fix information.
+
+CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
+
+No fix information.
+
+Regards,
 -- 
-2.35.3
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
+
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
