@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6568C4707C
-	for <webhook@archiver.kernel.org>; Mon,  8 Jan 2024 18:16:28 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.4558.1704737781236857891
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED3CAC4707C
+	for <webhook@archiver.kernel.org>; Mon,  8 Jan 2024 18:16:38 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web10.4650.1704737779601560182
  for <cip-dev@lists.cip-project.org>;
- Mon, 08 Jan 2024 10:16:21 -0800
+ Mon, 08 Jan 2024 10:16:34 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.04,180,1695654000"; 
-   d="scan'208";a="193590190"
+   d="scan'208";a="189691404"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 09 Jan 2024 03:16:20 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 09 Jan 2024 03:16:34 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.235])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4E91440469DF;
-	Tue,  9 Jan 2024 03:16:19 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 189B44046F50;
+	Tue,  9 Jan 2024 03:16:32 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 03/30] mmc: host: Kconfig: Make MMC_SDHI_INTERNAL_DMAC config option dependant on ARCH_RENESAS
-Date: Mon,  8 Jan 2024 18:15:45 +0000
-Message-Id: <20240108181612.5651-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 10/30] riscv: dma-mapping: only invalidate after DMA, not flush
+Date: Mon,  8 Jan 2024 18:15:52 +0000
+Message-Id: <20240108181612.5651-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240108181612.5651-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20240108181612.5651-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -33,46 +33,44 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 08 Jan 2024 18:16:28 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14291
+ <cip-dev@lists.cip-project.org>; Mon, 08 Jan 2024 18:16:38 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14298
 
-commit bbe6dc429bf52b0062c2a9b39f850cfd317289a7 upstream.
+From: Arnd Bergmann <arnd@arndb.de>
 
-MMC_SDHI_INTERNAL_DMAC config option has dependency on ARM64 and
-R7S9210/R8A77470 this dependency will keep growing for future SoCs for
-varying architectures. So to simplify this configuration make
-MMC_SDHI_INTERNAL_DMAC solely depend on ARCH_RENESAS, as all Renesas
-SoCs inherently depend on the ARCH_RENESAS config option.
+commit eb746180132a555da8cfb02d98cb6d0a9d58e870 upstream.
 
-This allows selecting MMC_SDHI_INTERNAL_DMAC config option for RZ/Five SoC
-which is based on RISC-V architecture.
+No other architecture intentionally writes back dirty cache lines into
+a buffer that a device has just finished writing into. If the cache is
+clean, this has no effect at all, but if a cacheline in the buffer has
+actually been written by the CPU,  there is a driver bug that is likely
+made worse by overwriting that buffer.
 
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Link: https://lore.kernel.org/r/20230901122701.318082-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Link: https://lore.kernel.org/r/20230816232336.164413-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/mmc/host/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/riscv/mm/dma-noncoherent.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 9b5a2cb110b3..f057ca43840a 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -730,9 +730,9 @@ config MMC_SDHI_SYS_DMAC
- 
- config MMC_SDHI_INTERNAL_DMAC
- 	tristate "DMA for SDHI SD/SDIO controllers using on-chip bus mastering"
--	depends on ARM64 || ARCH_R7S9210 || ARCH_R8A77470 || COMPILE_TEST
-+	depends on ARCH_RENESAS || COMPILE_TEST
- 	depends on MMC_SDHI
--	default MMC_SDHI if (ARM64 || ARCH_R7S9210 || ARCH_R8A77470)
-+	default MMC_SDHI if ARCH_RENESAS
- 	help
- 	  This provides DMA support for SDHI SD/SDIO controllers
- 	  using on-chip bus mastering. This supports the controllers
+diff --git a/arch/riscv/mm/dma-noncoherent.c b/arch/riscv/mm/dma-noncoherent.c
+index d51a75864e53..94614cf61cdd 100644
+--- a/arch/riscv/mm/dma-noncoherent.c
++++ b/arch/riscv/mm/dma-noncoherent.c
+@@ -42,7 +42,7 @@ void arch_sync_dma_for_cpu(phys_addr_t paddr, size_t size,
+ 		break;
+ 	case DMA_FROM_DEVICE:
+ 	case DMA_BIDIRECTIONAL:
+-		ALT_CMO_OP(flush, vaddr, size, riscv_cbom_block_size);
++		ALT_CMO_OP(inval, vaddr, size, riscv_cbom_block_size);
+ 		break;
+ 	default:
+ 		break;
 -- 
 2.34.1
 
