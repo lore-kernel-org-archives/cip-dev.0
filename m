@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3041C3DA6E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA6DBC47079
 	for <webhook@archiver.kernel.org>; Mon,  8 Jan 2024 18:16:28 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web10.4650.1704737779601560182
  for <cip-dev@lists.cip-project.org>;
- Mon, 08 Jan 2024 10:16:19 -0800
+ Mon, 08 Jan 2024 10:16:27 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.04,180,1695654000"; 
-   d="scan'208";a="189691383"
+   d="scan'208";a="189691393"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 09 Jan 2024 03:16:18 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 09 Jan 2024 03:16:26 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.235])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4DEF84046F50;
-	Tue,  9 Jan 2024 03:16:17 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 37DD440469DF;
+	Tue,  9 Jan 2024 03:16:24 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 02/30] arm64: dts: renesas: rzg2ul: Move PMOD_SCI0_EN macro to board DTS
-Date: Mon,  8 Jan 2024 18:15:44 +0000
-Message-Id: <20240108181612.5651-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 06/30] riscv: Kconfig: Enable cpufreq kconfig menu
+Date: Mon,  8 Jan 2024 18:15:48 +0000
+Message-Id: <20240108181612.5651-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240108181612.5651-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20240108181612.5651-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -34,49 +34,35 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 08 Jan 2024 18:16:28 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14290
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14294
 
-It makes more sense to have all the configurable options in top level
-board DTS as we already have the configurable macros in there. This makes
-it easier for platforms who want to share the the DTS/I with other
-platforms/architectures.
+commit effae0e3d9e1139d583e9b5d050f4f948825b8a3 upstream.
 
-This change is in preparation for adding the Renesas RZ/Five RISC-V SoC.
+Enable cpufreq kconfig menu for RISC-V.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Link: https://lore.kernel.org/r/20221115105135.1180490-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts | 3 +++
- arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi      | 3 ---
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ arch/riscv/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts
-index 8e0107df2d46..ddb193d007ac 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts
-@@ -28,6 +28,9 @@
- #error "Cannot set as both PMOD_MTU3 and !SW_ET0_EN_N are mutually exclusive"
- #endif
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 8e4338a21674..c4f576571671 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -720,6 +720,8 @@ menu "CPU Power Management"
  
-+/* Please set this macro to 1 for enabling SCI0 on PMOD1 */
-+#define PMOD_SCI0_EN	0
+ source "drivers/cpuidle/Kconfig"
+ 
++source "drivers/cpufreq/Kconfig"
 +
- #include "r9a07g043u.dtsi"
- #include "rzg2ul-smarc-som.dtsi"
- #include "rzg2ul-smarc.dtsi"
-diff --git a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
-index 019bab4ce8e4..727e3268a15b 100644
---- a/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi
-@@ -5,9 +5,6 @@
-  * Copyright (C) 2022 Renesas Electronics Corp.
-  */
+ endmenu # "CPU Power Management"
  
--/* Please set this macro to 1 for enabling SCI0 on PMOD1 */
--#define PMOD_SCI0_EN	0
--
- #include "rzg2ul-smarc-pinfunction.dtsi"
- #include "rz-smarc-common.dtsi"
- 
+ source "arch/riscv/kvm/Kconfig"
 -- 
 2.34.1
 
