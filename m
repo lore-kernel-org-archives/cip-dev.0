@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C0DC47073
-	for <webhook@archiver.kernel.org>; Mon,  8 Jan 2024 18:16:38 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.4650.1704737779601560182
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04086C3DA6E
+	for <webhook@archiver.kernel.org>; Mon,  8 Jan 2024 18:16:49 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web11.4569.1704737799802637884
  for <cip-dev@lists.cip-project.org>;
- Mon, 08 Jan 2024 10:16:29 -0800
+ Mon, 08 Jan 2024 10:16:40 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.04,180,1695654000"; 
-   d="scan'208";a="189691397"
+   d="scan'208";a="193590209"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 09 Jan 2024 03:16:28 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 09 Jan 2024 03:16:38 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.235])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 302C84046F54;
-	Tue,  9 Jan 2024 03:16:26 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0D43C4046F54;
+	Tue,  9 Jan 2024 03:16:36 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 07/30] dt-bindings: riscv: Sort the CPU core list alphabetically
-Date: Mon,  8 Jan 2024 18:15:49 +0000
-Message-Id: <20240108181612.5651-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 12/30] riscv: dma-mapping: switch over to generic implementation
+Date: Mon,  8 Jan 2024 18:15:54 +0000
+Message-Id: <20240108181612.5651-13-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240108181612.5651-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20240108181612.5651-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -33,53 +33,123 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 08 Jan 2024 18:16:38 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14295
+ <cip-dev@lists.cip-project.org>; Mon, 08 Jan 2024 18:16:49 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14300
 
-commit 57e1b873c2f54253f4c81bddb782e183ee6544ae upstream.
+commit 935730160738a478dbf4b61cf0cfc29c1442fb4e upstream.
 
-Sort the CPU cores list alphabetically for maintenance.
+Add helper functions for cache wback/inval/clean and use them
+arch_sync_dma_for_device()/arch_sync_dma_for_cpu() functions. The proposed
+changes are in preparation for switching over to generic implementation.
 
+Reorganization of the code is based on the patch (Link[0]) from Arnd.
+For now I have dropped CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU check as this
+will be enabled by default upon selection of RISCV_DMA_NONCOHERENT
+and also dropped arch_dma_mark_dcache_clean().
+
+Link[0]: https://lore.kernel.org/all/20230327121317.4081816-22-arnd@kernel.org/
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-Reviewed-by: Guo Ren <guoren@kernel.org>
-Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
-Link: https://lore.kernel.org/r/20221028165921.94487-2-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20230816232336.164413-4-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/riscv/cpus.yaml | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/riscv/mm/dma-noncoherent.c | 60 ++++++++++++++++++++++++++++-----
+ 1 file changed, 51 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/riscv/cpus.yaml b/Documentation/devicetree/bindings/riscv/cpus.yaml
-index d4148418350c..329798cb4433 100644
---- a/Documentation/devicetree/bindings/riscv/cpus.yaml
-+++ b/Documentation/devicetree/bindings/riscv/cpus.yaml
-@@ -28,17 +28,17 @@ properties:
-     oneOf:
-       - items:
-           - enum:
--              - sifive,rocket0
-+              - canaan,k210
-               - sifive,bullet0
-               - sifive,e5
-               - sifive,e7
-               - sifive,e71
--              - sifive,u74-mc
--              - sifive,u54
--              - sifive,u74
-+              - sifive,rocket0
-               - sifive,u5
-+              - sifive,u54
-               - sifive,u7
--              - canaan,k210
-+              - sifive,u74
-+              - sifive,u74-mc
-           - const: riscv
-       - items:
-           - enum:
+diff --git a/arch/riscv/mm/dma-noncoherent.c b/arch/riscv/mm/dma-noncoherent.c
+index fc6377a64c8d..06b8fea58e20 100644
+--- a/arch/riscv/mm/dma-noncoherent.c
++++ b/arch/riscv/mm/dma-noncoherent.c
+@@ -12,21 +12,61 @@
+ 
+ static bool noncoherent_supported __ro_after_init;
+ 
+-void arch_sync_dma_for_device(phys_addr_t paddr, size_t size,
+-			      enum dma_data_direction dir)
++static inline void arch_dma_cache_wback(phys_addr_t paddr, size_t size)
++{
++	void *vaddr = phys_to_virt(paddr);
++
++	ALT_CMO_OP(clean, vaddr, size, riscv_cbom_block_size);
++}
++
++static inline void arch_dma_cache_inv(phys_addr_t paddr, size_t size)
++{
++	void *vaddr = phys_to_virt(paddr);
++
++	ALT_CMO_OP(inval, vaddr, size, riscv_cbom_block_size);
++}
++
++static inline void arch_dma_cache_wback_inv(phys_addr_t paddr, size_t size)
+ {
+ 	void *vaddr = phys_to_virt(paddr);
+ 
++	ALT_CMO_OP(flush, vaddr, size, riscv_cbom_block_size);
++}
++
++static inline bool arch_sync_dma_clean_before_fromdevice(void)
++{
++	return true;
++}
++
++static inline bool arch_sync_dma_cpu_needs_post_dma_flush(void)
++{
++	return true;
++}
++
++void arch_sync_dma_for_device(phys_addr_t paddr, size_t size,
++			      enum dma_data_direction dir)
++{
+ 	switch (dir) {
+ 	case DMA_TO_DEVICE:
+-		ALT_CMO_OP(clean, vaddr, size, riscv_cbom_block_size);
++		arch_dma_cache_wback(paddr, size);
+ 		break;
++
+ 	case DMA_FROM_DEVICE:
+-		ALT_CMO_OP(clean, vaddr, size, riscv_cbom_block_size);
+-		break;
++		if (!arch_sync_dma_clean_before_fromdevice()) {
++			arch_dma_cache_inv(paddr, size);
++			break;
++		}
++		fallthrough;
++
+ 	case DMA_BIDIRECTIONAL:
+-		ALT_CMO_OP(clean, vaddr, size, riscv_cbom_block_size);
++		/* Skip the invalidate here if it's done later */
++		if (IS_ENABLED(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU) &&
++		    arch_sync_dma_cpu_needs_post_dma_flush())
++			arch_dma_cache_wback(paddr, size);
++		else
++			arch_dma_cache_wback_inv(paddr, size);
+ 		break;
++
+ 	default:
+ 		break;
+ 	}
+@@ -35,15 +75,17 @@ void arch_sync_dma_for_device(phys_addr_t paddr, size_t size,
+ void arch_sync_dma_for_cpu(phys_addr_t paddr, size_t size,
+ 			   enum dma_data_direction dir)
+ {
+-	void *vaddr = phys_to_virt(paddr);
+-
+ 	switch (dir) {
+ 	case DMA_TO_DEVICE:
+ 		break;
++
+ 	case DMA_FROM_DEVICE:
+ 	case DMA_BIDIRECTIONAL:
+-		ALT_CMO_OP(inval, vaddr, size, riscv_cbom_block_size);
++		/* FROM_DEVICE invalidate needed if speculative CPU prefetch only */
++		if (arch_sync_dma_cpu_needs_post_dma_flush())
++			arch_dma_cache_inv(paddr, size);
+ 		break;
++
+ 	default:
+ 		break;
+ 	}
 -- 
 2.34.1
 
