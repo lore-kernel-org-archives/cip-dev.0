@@ -1,127 +1,88 @@
-Return-Path: <theflamefire89@gmail.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57921C47DA2
-	for <webhook@archiver.kernel.org>; Thu, 11 Jan 2024 19:08:16 +0000 (UTC)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
- by mx.groups.io with SMTP id smtpd.web10.1134.1705000087999103128
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6784C47077
+	for <webhook@archiver.kernel.org>; Thu, 11 Jan 2024 20:00:26 +0000 (UTC)
+Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
+ by mx.groups.io with SMTP id smtpd.web11.2397.1705003220086386955
  for <cip-dev@lists.cip-project.org>;
- Thu, 11 Jan 2024 11:08:08 -0800
+ Thu, 11 Jan 2024 12:00:21 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=GKAoOqb6;
- spf=pass (domain: gmail.com, ip: 209.85.128.46, mailfrom: theflamefire89@gmail.com)
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-40e63cceae2so346575e9.2
-        for <cip-dev@lists.cip-project.org>; Thu, 11 Jan 2024 11:08:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705000086; x=1705604886; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ScMmApvS/yrYOTNF+jY/GL9uefdDXA5zKkImVV3nLLc=;
-        b=GKAoOqb6vDtvwHwT6LJSeKOTubAaRvlhyqcFsdDZueVqHmW8f673l7QLVaCVWF5Cr9
-         0bgxSTPl/r/0hXUdqS0l4SX6aoOg1Z1zjLmHWe/3T7d25dSy3LwMGkLtQHpN/pEAQxEy
-         AKCzc4tO4DCbIIqy0V5HLMQx86RDBcrEhnzi+zKL9iaQGQ19dT1XQNTDnIh/7ZfsFPen
-         z4CLMnxZpwYzlM+QFR89bZXsmSr2R910WoXhDuQXKD3FuqfsJub0+9uTctXF1dd1l3op
-         mmcb8x6ufiHt7E5xvsyYcIpeybt4rlcTJtfYf5Fw3q/9dHrZQ71dB/nSN1vzZJC8pR8H
-         2Ryg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705000086; x=1705604886;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ScMmApvS/yrYOTNF+jY/GL9uefdDXA5zKkImVV3nLLc=;
-        b=jJXJtkhsEItc8yiAh6l6tfW/meAxf85hfEruCBilUiBDHZN70o+qhIu//0vBZmjQMV
-         ZUFbMdZ/hn2tIYiU7L3JoHI1ZkDv5wJGe/cIGBuMYex4VAlQYz34JUlRlxR1PmQzkhQh
-         itjqbGm/59/B4zGhrEzegn3k49RmcWN+AemYVLwHzMSRnJBADQUPi79W5IgYIsFlg955
-         KmulPhSONVhXKmmn65UUTi7Y2new6KnDlQEkc1740c0bIGb3xc6/kmCeCE96Ksg25cWU
-         X5U1vHQQab2FgJHixUpuAKGol7FMfzMojz7Ti53KqETAnIWisNHoyuptG2ZPRqwDWVsR
-         yu8g==
-X-Gm-Message-State: AOJu0YyPGqJPqZ6CzfYJuzmR01CgUVvDJVXM1QUivVvmpHmFmwkkwMno
-	xy8SDXiV0Pyvd37LMqmkEP+jqPHtUZQ=
-X-Google-Smtp-Source: AGHT+IG4OArpd5Hh24q8d61fiut+ymgu/FH/Bu4dUJd5pfJ0DmqZPtPnJ7XQvhp1Y5Wk+3saoVSeCg==
-X-Received: by 2002:a05:600c:1e0b:b0:40e:629a:b7d2 with SMTP id ay11-20020a05600c1e0b00b0040e629ab7d2mr158405wmb.0.1705000086345;
-        Thu, 11 Jan 2024 11:08:06 -0800 (PST)
-Received: from alex-Mint.fritz.box (p200300f6af47620043a7429456d42e7a.dip0.t-ipconnect.de. [2003:f6:af47:6200:43a7:4294:56d4:2e7a])
-        by smtp.googlemail.com with ESMTPSA id p12-20020a05600c468c00b0040e56830a35sm2964641wmo.18.2024.01.11.11.08.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jan 2024 11:08:05 -0800 (PST)
-From: Alexander Grund <theflamefire89@gmail.com>
-To: cip-dev@lists.cip-project.org
-Cc: uli+cip@fpond.eu
-Subject: [PATCH 4.4 1/4] string.h: add memcpy_and_pad()
-Date: Thu, 11 Jan 2024 20:06:55 +0100
-Message-Id: <20240111190658.153488-2-theflamefire89@gmail.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240111190658.153488-1-theflamefire89@gmail.com>
-References: <20240111190658.153488-1-theflamefire89@gmail.com>
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=UMZC8/RH;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.225, mailfrom: fm-51332-2024011120001755f811117a0f5a980f-mtzne0@rts-flowmailer.siemens.com)
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 2024011120001755f811117a0f5a980f
+        for <cip-dev@lists.cip-project.org>;
+        Thu, 11 Jan 2024 21:00:17 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
+ bh=Q0uHH1rsokRJfkAP1QPz52XMfDYa8++Dsa4HU+HLW08=;
+ b=UMZC8/RH1Slquhv0AJNXuftSXSUGqrM8N6RS8gcsMkwFev2l8Bf/jyZe7UKeUPqZpAUdbj
+ koDEYwzSGIEToIME7VF1f/5/YxAM2khghCtJju7XPVETfh5pArPJESjcI7vYMImWM2N3rrlT
+ Qb1w082tBHEHc3z5rTh96MvAo5k2w=;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: felix.moessbauer@siemens.com,
+	cip-dev@lists.cip-project.org,
+	jan.kiszka@siemens.com
+Subject: [cip-dev][isar-cip-core][PATCH v5 3/7] efibootguard-efi.py: copy signed ebg binary to DEPLOY_DIR
+Date: Thu, 11 Jan 2024 20:59:47 +0100
+Message-ID: <20240111200015.190376-4-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20240111200015.190376-1-Quirin.Gylstorff@siemens.com>
+References: <20240111200015.190376-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 11 Jan 2024 19:08:16 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14334
+ <cip-dev@lists.cip-project.org>; Thu, 11 Jan 2024 20:00:26 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14345
 
-From: Martin Wilck <mwilck@suse.com>
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-commit 01f33c336e2d298ea5d4ce5d6e5bcd12865cc30f upstream.
+This allows to add the signed ebg binary to a swu file for
+updating the bootloader.
 
-This helper function is useful for the nvme subsystem, and maybe
-others.
-
-Note: the warnings reported by the kbuild test robot for this patch
-are actually generated by the use of CONFIG_PROFILE_ALL_BRANCHES
-together with __FORTIFY_INLINE.
-
-Signed-off-by: Martin Wilck <mwilck@suse.com>
-Reviewed-by: Sagi Grimberg <sagi@grimbeg.me>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-[AG: Backported to 4.4]
-Signed-off-by: Alexander Grund <theflamefire89@gmail.com>
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- include/linux/string.h | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ scripts/lib/wic/plugins/source/efibootguard-efi.py | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/include/linux/string.h b/include/linux/string.h
-index 1a9589a5ace62..84af888924e11 100644
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -204,4 +204,33 @@ static inline const char *kbasename(const char *path)
- 	return tail ? tail + 1 : path;
- }
+diff --git a/scripts/lib/wic/plugins/source/efibootguard-efi.py b/scripts/lib/wic/plugins/source/efibootguard-efi.py
+index 9bb6347..e82e990 100644
+--- a/scripts/lib/wic/plugins/source/efibootguard-efi.py
++++ b/scripts/lib/wic/plugins/source/efibootguard-efi.py
+@@ -66,6 +66,13 @@ class EfibootguardEFIPlugin(SourcePlugin):
+             exit(1)
+         creator.deploy_dir = deploy_dir
  
-+/**
-+ * memcpy_and_pad - Copy one buffer to another with padding
-+ * @dest: Where to copy to
-+ * @dest_len: The destination buffer size
-+ * @src: Where to copy from
-+ * @count: The number of bytes to copy
-+ * @pad: Character to use for padding if space is left in destination.
-+ */
-+__FORTIFY_INLINE void memcpy_and_pad(void *dest, size_t dest_len,
-+				     const void *src, size_t count, int pad)
-+{
-+	size_t dest_size = __builtin_object_size(dest, 0);
-+	size_t src_size = __builtin_object_size(src, 0);
++        deploy_dir = get_bitbake_var("DEPLOY_DIR_IMAGE")
++        if not deploy_dir:
++            msger.error("DEPLOY_DIR_IMAGE not set, exiting\n")
++            exit(1)
++        creator.deploy_dir = deploy_dir
 +
-+	if (__builtin_constant_p(dest_len) && __builtin_constant_p(count)) {
-+		if (dest_size < dest_len && dest_size < count)
-+			__write_overflow();
-+		else if (src_size < dest_len && src_size < count)
-+			__read_overflow3();
-+	}
-+	if (dest_size < dest_len)
-+		fortify_panic(__func__);
-+	if (dest_len > count) {
-+		memcpy(dest, src, count);
-+		memset(dest + count, pad,  dest_len - count);
-+	} else
-+		memcpy(dest, src, dest_len);
-+}
++        distro_arch = get_bitbake_var("DISTRO_ARCH")
+         bootloader = "/usr/lib/{libpath}/efibootguard/efibootguard{efiarch}.efi".format(
+                         libpath=libarch,
+                         efiarch=efiarch)
+@@ -86,6 +93,13 @@ class EfibootguardEFIPlugin(SourcePlugin):
+                                               part_rootfs_dir,
+                                               name)
+         exec_cmd(cp_cmd, True)
 +
- #endif /* _LINUX_STRING_H_ */
++        cp_to_deploy_cmd = "cp %s/%s %s/%s" % (cr_workdir,
++                                               signed_bootloader,
++                                               deploy_dir,
++                                               name)
++        exec_cmd(cp_to_deploy_cmd, True)
++
+         du_cmd = "du --apparent-size -ks %s" % part_rootfs_dir
+         blocks = int(exec_cmd(du_cmd).split()[0])
+ 
 -- 
-2.40.1
+2.43.0
 
 
