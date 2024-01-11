@@ -2,363 +2,175 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82CEBC47077
-	for <webhook@archiver.kernel.org>; Thu, 11 Jan 2024 14:47:41 +0000 (UTC)
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (EUR03-AM7-obe.outbound.protection.outlook.com [40.107.105.72])
- by mx.groups.io with SMTP id smtpd.web11.12992.1704984453975646038
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD366C47077
+	for <webhook@archiver.kernel.org>; Thu, 11 Jan 2024 16:29:22 +0000 (UTC)
+Received: from EUR01-VE1-obe.outbound.protection.outlook.com (EUR01-VE1-obe.outbound.protection.outlook.com [40.107.14.89])
+ by mx.groups.io with SMTP id smtpd.web11.15617.1704990557966604969
  for <cip-dev@lists.cip-project.org>;
- Thu, 11 Jan 2024 06:47:34 -0800
+ Thu, 11 Jan 2024 08:29:18 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=CmKNULmB;
- spf=pass (domain: siemens.com, ip: 40.107.105.72, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=hEApBcbP;
+ spf=pass (domain: siemens.com, ip: 40.107.14.89, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OvlDlC5xLNwdVN0VdwkgDzxbR4eczMGvneq1LjYAtp8f8E+n4igQkeZoWho1w99H6PNqNfX4YGHGUAhYxFp2Eukv9KNT94YzobY0BP8MYX8tY5eE6JbUdQm6S7Mj431vuAzFWF840E5e0P6d/z4VJW2tMN+DQ6xdKuxK0RyA0CbzHirbMVQkppTDIdK3BMO5WX2MaISPBS5hxyQg2tZkx2QNYyX32YMNuvefCQKQ+XwGOB9IrWDzbggS3jLZnnu8VA9kHcg206xIxilJI8UFDiYLi9OKnZazU62/Y8wZDUXc/rUqMkLvNux9GLyZYtjM/YSpMBVSzuyFdwVSGULI+Q==
+ b=hAFG7bJlbszmbwzXpSOzlHg5/9hRYhESPvtYNQiKBKjWGygQ9Bgyim697L7w7BhSa7+cD3iT58ERBMzua4opioXrJUgoVKSp/uExcrv0XZP6NjRvqg77Hm232IxReQgPufxvi8bppbKdOaINh5Jz2RHcyfz1YvwT+KjSPcj5ZSYxhhNgFvZfH7qpp/eIlRshDQhd/6xXjw6FblULb5HRE3NGryYH3Si63SktZO10Bf8BVrvk7ysHjzc2Rq1VGMZSaNfQSyqiwzLLHu9L9eUKX+7tJMd7krmSaBwMYypoWMdNzjD9YxxMsfbtJMRr/d4zRC2+VOt7IYyMxV7SFmKWdw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1AzxFZ3zgNGimBjCLluAJGjbb4vrha8P9+BxF7yhIe0=;
- b=S5yd+sCOUeYFmocFh1NpeteIKM7iiJSFfa7mYOyVEJACOFB3zWUL334KmRpcwLkfEdhgPyKXSdXVRBGLveRtwlRDjVm8uZBDA8/EAedi40tVV68suZ1RQ/sIKFGrQ+g8LMNJvHmos6+cV50ComQgC0GkrrXyyuQbs7fFDI512LaK6c/FBYcvwRC9hSGWiyMOcyT6iA6k045FZGk+qJbBLjkFYpq5jPmj2MKRdlqA+W6jif5JdmZGa7aZMNbEhYHq3LIMxZlu5Jo+r42V5JmpjXmGlLPPAtHMiEOWsRPd/c45/eVeGv/ZRf98/kCWqUtJp1BJsefCwRF1oUZv1ildwA==
+ bh=QlsQFFs9ZMxy7bS0RHvMQQXU+eM84mRtCPncKpi6m0s=;
+ b=TKcSjeJfFAGGGM5mFTJdtcvsAWCcpaDAexy9XVKAVifTxD3WQtwrhfQpq99/weBmB9LbJ/uGuyuT9pqAFFqMtGtbZUebAEZ5EgU/xm0AiY4DGiTglcgQNMqci9gLzRNuyPue6QNVUCLztxIh6LwR19E1ERyJzshv+4NvP6l+R/r7m+qVvBmXHHq74kX1c8aRMzDyI1ucfTfeBhFYtbiJrnrlq/qro49iiv2A/BoWiGw/rfXfrFn9d2GwdIc4Gk8Pq6iPLFQt0KIJOTYotIqkDP1iUZ/M5cT2q+OpMhjoTf2dLeVVSQqGE944wZO2tqLKVe6wnAyxfNQuP9Jqk8NzJA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1AzxFZ3zgNGimBjCLluAJGjbb4vrha8P9+BxF7yhIe0=;
- b=CmKNULmBqRihTxp6ZklO5AVYlzXxugACH+Qnm5rvqR+tHCFvszMIHicgz2s8DXthNJGBVlG4eWXie3YUhIcUJVskGLr4KFKxAi9ogYS3XxiaAtkWHJ90MJjWFF89HdqIyvh4PF7t5/OWm72u2g6ckB/TCTXDjqxGISZkj3OpnAvmo66yFnQOzaM/uvDm+2bh4yXhiecCTwrWrVIkXfbNmGAxZZir51icQsGZQlu8v8tGK8StNrKW+T/K5ErcEc2jEfPaBMBNa2GFPngsa5WhzflBKGullf9uDtTMtcBiBlrdb6TXRUZGUWFutsQidKHfljbY0b3GNV/JyIyC64L9Vg==
+ bh=QlsQFFs9ZMxy7bS0RHvMQQXU+eM84mRtCPncKpi6m0s=;
+ b=hEApBcbPTtEFt4coSFRlLr6hIL9Hg3ZrnvXAXfCa1sSYKXGZuDztrlMycAFVLisyiljAqVYg59hdVH1/yPHDUR3EVWUcF2YMc3iUNkDeNYpLEPh5L0P841GwTze7ysBWGW8arICokuxCvavSAyBn3jl+Ym91Lp2nnF97hbP+sEwOfsz9Jen0Ap2ANPMg7cx8KNdBhtI0QDFHMW2R/gCNZOIFifhK/HaNHcbvm7/g2GEUJ2oymWsP1f2goyDBvaf4cc0NdO4uvdMPTqGnG90K370QQYCTPCBBsesQmjKw8+8UKW37yUwPf/vietgB6ELdp0BJHsIPQLHVBaxZB9SDog==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by AS8PR10MB7545.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5a0::9) with
+ by AS1PR10MB5214.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:4a8::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7159.23; Thu, 11 Jan
- 2024 14:47:30 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7181.19; Thu, 11 Jan
+ 2024 16:29:13 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8d16:7fbb:4964:94fe]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8d16:7fbb:4964:94fe%3]) with mapi id 15.20.7181.018; Thu, 11 Jan 2024
- 14:47:30 +0000
-Message-ID: <6cee5609-9b96-416a-b477-e54f29d13287@siemens.com>
-Date: Thu, 11 Jan 2024 15:47:24 +0100
+ 16:29:12 +0000
+Message-ID: <32db6678-7a05-4b0d-a251-61799bf2bc40@siemens.com>
+Date: Thu, 11 Jan 2024 17:28:58 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core][PATCH] Migrate RISC-V support to Debian sid
+Subject: Re: [isar-cip-core][PATCH v2] initramfs-crypt-hook: Add required
+ kernel modules for upstream kernel
 Content-Language: en-US
+To: "Cetin, Gokhan (ADV D EU TR C&E)" <gokhan.cetin@siemens.com>,
+ "Gylstorff, Quirin (T CED OES-DE)" <quirin.gylstorff@siemens.com>,
+ "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+References: <PRAPR10MB542260589618B60AAA1B6B1E80692@PRAPR10MB5422.EURPRD10.PROD.OUTLOOK.COM>
+ <2d27dee9-fd70-44a6-a8ad-bd31c0f2f735@siemens.com>
+ <PRAPR10MB54221B45AFE5B9B87A21314B80692@PRAPR10MB5422.EURPRD10.PROD.OUTLOOK.COM>
 From: Jan Kiszka <jan.kiszka@siemens.com>
-To: cip-dev <cip-dev@lists.cip-project.org>,
- Quirin Gylstorff <quirin.gylstorff@siemens.com>
-References: <1cd81bc4-a52e-4dcb-9ff6-48b163bd6edd@siemens.com>
-Cc: "Moessbauer, Felix (T CED SES-DE)" <felix.moessbauer@siemens.com>
-In-Reply-To: <1cd81bc4-a52e-4dcb-9ff6-48b163bd6edd@siemens.com>
+In-Reply-To: <PRAPR10MB54221B45AFE5B9B87A21314B80692@PRAPR10MB5422.EURPRD10.PROD.OUTLOOK.COM>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YT3PR01CA0135.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:83::32) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR0P281CA0125.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:97::20) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS8PR10MB7545:EE_
-X-MS-Office365-Filtering-Correlation-Id: 78028bb6-ba44-41df-46ba-08dc12b43c9f
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS1PR10MB5214:EE_
+X-MS-Office365-Filtering-Correlation-Id: 65e84c67-766e-41fe-1319-08dc12c271d7
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	i3rXOLvqlDI5T2455wfDswzFZ9JNrpA2HOqIx42QBXvmFJgA35cd4VhJWj4mDmZp6HZq23ZV1F/o1m3NMbfNqqS0gDg8mhY6qK6qrT/HPaAu5KL/c4NYKvUTOfizrg1eIYLO9y0fD/b6J/tvxbQFCNgq9DuqLMESnX3lEcC9+Go5Y413/TS3d7Xe/R3YJou737PgtJ3WFbPBioyCHKjWNZUgHSuC8OjYTCd6Aw0g2Bi052wozGqN2YhdP8KnS5+E+2WACLI3YTjWAEOXZc/4OCRRMBZ0AfyHhzrDNLRJu8sLqO1K32hs5M5tELtILk15+PBGa/7IVsMAsxzxWBgyEC87rZPUJa6xrX1XQH7zWAzXjJ1FuRQZyfPmkkYbALaH5fJqoCnlVw0gyAw9OGzMIGlIK61YMB+/sw+weplfj65Zl7rXS9VWqSY3CYuA7P50QsW7uynz9uHCYxhksLCoFbEKi47nVICs9zn96SGlTeVAB3QKeOhD5M0Nol5/Ggo5lkQEHzTFRxi+AaD2SURKhjW+xYTHWbeLgJw2TY45ddXbv5OV7T7AqRV1HNhnuDrP/82VgvbPwANuAP+BouQiUU87H7YyBmlyXl9RD6rj4pydbmtT772VgabyVfkjqa5ASurDXZIfMvVI8gzdAQiihg==
+	xfWqq7WKkZKXU7TKg1/fq/3Y/H6kmvapwxsnxar/+YFUgjPw7ZbR63nwYsQ3i5kqb2yP1Z6Qprs2dcnsAp9G/spaREy3Bkd9IoYQU0Y/DQqxseLsUG/Thc1g/UbixE2VLf18Ta5dBVSaMQ3R1Kdj/JQJdg7r/6ew1gU9DXHTba6HklGx7V7C/AfA5KBIErPCvp62HlN3G/e9SsEfnhfP0jcWpsVhm5332P9p5WKGVcQiYgpRua/Q2MrAd94i2623l7569OYSjOJvBQ0Kc/a52O2jNjRGAsL90PRG2ypkssJKf/zqABNV5SFFGFSDILwewItOF38m9gxKcshmpAmetFurcGROspOG8tf955esm877jBRoIGZ/lBsHihTu27mbIzdczMX3YVrJKNpSeRGcDSBqMQO20NQbOj7eMn9ZaHf2qoAFTOWLU/ckR6NHGqYgW5FGv2qWbxR3kQpn5//8XVyojVreVKwVtNSzaSxXd+6Ip0h1ZTNthGuV6KdtKL1iRQi4BtkMlbiEqPEi1pJmzBejlqhsiAR/rfAg+3tL3fj3NHqVddao4GJIrlQfHGPXnmT+O5/rqJOFi9NU/9mZGcxV23YBsVloPzI1KccNJKIyGQmgKr2bXSaZBZtxZF1q2BsSWq/YNLQvjreQRGHaxw==
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376002)(396003)(39860400002)(136003)(346002)(366004)(230922051799003)(186009)(1800799012)(451199024)(64100799003)(31686004)(2906002)(966005)(6666004)(5660300002)(478600001)(6512007)(4326008)(44832011)(41300700001)(8936002)(66556008)(66476007)(316002)(66946007)(6636002)(36756003)(110136005)(107886003)(82960400001)(6486002)(31696002)(8676002)(6506007)(53546011)(2616005)(86362001)(26005)(83380400001)(38100700002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(346002)(396003)(366004)(376002)(136003)(230922051799003)(1800799012)(451199024)(64100799003)(186009)(83380400001)(82960400001)(86362001)(31696002)(41300700001)(36756003)(38100700002)(44832011)(478600001)(8676002)(66476007)(66556008)(316002)(110136005)(8936002)(66946007)(26005)(6666004)(2906002)(2616005)(6506007)(53546011)(6512007)(5660300002)(6486002)(31686004)(43740500002)(45980500001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?OFhicHI4bUF2NS9EUWY5NG9PTHkyR0REbEUxVnRjN3pRS2ZBdlBUTzFUU2ZF?=
- =?utf-8?B?R280cmk1YTdoeWZvdHpIV25HM0FMMU5SWUlSSzFKbHdHMXRSRE1YNzRLMWtT?=
- =?utf-8?B?bWxxbURNeVFjTXk2ZkFyM3ZVUE9uQmo1ZkQzQytNMEJWTitmOTBmQVBuQ0lP?=
- =?utf-8?B?WGV5YU9sQUY3NGpJZ0c2aGg0T0NVZUtFRzRJZHhSc1d5S0dudFVPSTJhVnJm?=
- =?utf-8?B?UFhJTDlTd2Y1QmR6T3RjMktvZHBua2gwUWNNR253akw3blM3dGpRcGlmZ0t6?=
- =?utf-8?B?UFBTOTJDZGJWRHVzSncwaHo3Slgxejg4VXBablBQRWRuTTBMR1BhQ2s1b3lY?=
- =?utf-8?B?NE5zTlp3UHBqb3NQUU9MNy8rTU1YTEVRc0NIS0RFLzdFZkVHLzlrdVFwUFc2?=
- =?utf-8?B?WmEyOTk0ckpDY0pKckJEYm5FaHZrNnBlZkh0Ujh6T3JIdFR5RHZ3Q095TS9s?=
- =?utf-8?B?VVVXcW9oQlVxNGFEYUJ3SXQyZS83V2N6bDcyQm9jUEZvUC94T3ptNzNkQ2NE?=
- =?utf-8?B?alBFOUFiOUpuN0RJV2tXaGJ1d29nWUUrdkNFKzBFN0p6OG9Zb1Y1QXBndmNE?=
- =?utf-8?B?b0tNZUZZNFNVRFpVTVR6NHMvS1JlNUFRcUI5L280YWFiaHVIbDRVaHNBN2Fq?=
- =?utf-8?B?K0FTdVJPK1FZVWlDcmlGVmJwQjdta0x2QnFkY2Z0alN3UjVWRmVySEZORkZM?=
- =?utf-8?B?RVpQd2JFS05mMWRVTEpQRzJMZXNUYUVOMzBKVW1ZN0NYUXB1ZjV1bEhIOWU2?=
- =?utf-8?B?RU5vS3YrcXlYek5NZG5McEpEb0RrbTBEVHBFdkZwc3RYUFBINGRLNGs0RVVZ?=
- =?utf-8?B?SGhKQVJWakNEMXBGQ2pvU3V0ekhJSktxVmRzRlh5eTR4ODNTWUtXUkVqN1R4?=
- =?utf-8?B?TFVIL2RsckNYUDJ1QkhRbm5wcFJySlRrUHFPeVZ2NXRJYjJ2RU5NSlppZUFZ?=
- =?utf-8?B?cm11WVNFRnRCdk5FSkc5STdwVEtUY2FTUnU0N1dHeVhIcEc1SXJpWEFFMEN6?=
- =?utf-8?B?UmNwRWpWNGNXQ09iQmdKaXNKbDJxMWFVTXJQb3RTZi9iV2xTY3FreUdBUGlw?=
- =?utf-8?B?cnRvWFZBMkQ5MWxjVzQ3ejZvZTkvZ1lhTWJQcE5NNkRIbzNBR255OTNqa0NS?=
- =?utf-8?B?V2JSWnBkK2ZDTUZncTF4UlVKMm10Y2lLNGdUWDJVU1V2SHZDVTVHc2paV1dU?=
- =?utf-8?B?UjRFeUJTY1plYVcyZUcxTFEvRU5IK21iVE56dVZ1aTl0NTlQbEt0dTZ6U2M5?=
- =?utf-8?B?aExpa3UvdUFDKzhyWWU5UU54Q2ZPZGozWFdJNkxqRkFpZDlpc3huV3R0WWdU?=
- =?utf-8?B?MHl1SEFlZEJzU09YU0tnZlR0VkZEMlVRcjZwTXFzQUF2Wm9UVzM3OVN5aldC?=
- =?utf-8?B?VmQvU2FvMGk3SVI3TlJXM1c4VzRKN1JtZE5mTi85UVh2TTJmTVByd0szU0dX?=
- =?utf-8?B?eURIYTErcFJJZldXdlNhKzlxdzdNVUlyd3hWQWNSV0cyVW1YY3Y5UmEzRElr?=
- =?utf-8?B?T09SUm9aQmtOdnkvZGVDenp4MmJnQ3puTDFIVkMxTzVPTkJBbXRiRUFLTmQ4?=
- =?utf-8?B?RUNVcXBOL1BDUHZwdmk2UzYzdEVaWTN1YTRNbUwvMTBCTlp1elVUTGo1NjVv?=
- =?utf-8?B?YjJ1bVJKNWNaNVRHUnhGSGtzeGpnaHVsdkR0UFFvWWpJQ1R0YU9adWlYYXlM?=
- =?utf-8?B?QTRoSXFiYVVZQXNXK1Q3UjJnVUZUZDdaTjFWVk1OWVJoMTNuOGplbFhaaGE4?=
- =?utf-8?B?MFU5TTM4SmgrMEpCeHEvZDNPWDVVa1NSbHNsb05FM3V1OVJ5M0NjYlAvMXlo?=
- =?utf-8?B?dHRhaUxlMGNremlOSGpvd0MxNGI2cnR5Mkw3ZGRUNmF4eUM0SG1Vd1lrU3BX?=
- =?utf-8?B?ZWV2Umd4VEoxVGR0SjdMaGgrWUFySmczNXlhZDVuMmZFbXJTSEpoWEg2K0gy?=
- =?utf-8?B?L3JITHdrcTJJaTRuQm45UE55OWU4dTM2enpKRlkvT2hyVVAxN2tLbURNSnA2?=
- =?utf-8?B?UDlhQjh1S3hqYnZiK1BJUUtwMURkaTlEMjkzQkROaXdGTXJ2aXNjV3BFTTha?=
- =?utf-8?B?YlpnV09pVGI5eFEwMWpXVm10NWVuZERjdlliQ3pDVDRUNjk0ZlJZUVJ1d3Rs?=
- =?utf-8?B?T3FCaU1IdUVqZExsUURsRTJMaXVDM1Q1aGlJYnRjUlMrN3pqby9WMUd6ZXhD?=
- =?utf-8?B?OUE9PQ==?=
+	=?utf-8?B?ZVp1dFhnY0ZrVXlRYWc4aFRZWjJWV1d5aW5nZHZzOGFlTFA3eDZGUDl1ZGV6?=
+ =?utf-8?B?Q05mNTZqRzNJQWxvMDdhVm5ZWjI3VmsySjdlUVp5OG40Z3lQdUY1bko3ZmR3?=
+ =?utf-8?B?c0ZQaXlOWlpPYmRNZGNRSzJLQlp3Q01EU3U4bEFvWmk0YW9YNkxkYVhBbFhm?=
+ =?utf-8?B?QlRNMXErNXAzQlZYNmpMN3RReXgzclNuNm9PZXUxZjAwMWhWTjhlODdtOFZi?=
+ =?utf-8?B?cXNUdXdEOEU2MUozdlg2cWp4Wld3ZFI2a3dhcXVFMTZENENDSjVhSnV5NU9a?=
+ =?utf-8?B?VFJoTm5lZmFkUWE4WHR1aG9CODNkaDhIdzlnQXJ0WFpCQ1hQQnhVSEFBZlBR?=
+ =?utf-8?B?UnR1cCtxbHZaaUpESStFREJ3TkozRkc3aEh4MitVSGRpbzJIbnN4Qkc1TjM0?=
+ =?utf-8?B?WVNMSHl6a3BHWTBkbjBJVGtiTjhoRmhmWU9xakY3a2x4ZG1SdXlSb2Z2Z3dP?=
+ =?utf-8?B?bzhVOENTWlphekg3cSs3RUwzYnVmR0xXcnhucTN5WXBGcEpJbk5XdTNnakNY?=
+ =?utf-8?B?cDdISnJpQ0RWSEdpYVFpRDZaWEpYNmwza3I4YWRJRGxtckY3c0RuLzFoemhK?=
+ =?utf-8?B?bW5ER1hxak5PVmY3L3lDOForMnVQQ0pyc3FSdU9JaHZTaTg4blQ3UlNNUFF4?=
+ =?utf-8?B?SUpvcDk5dUErSzVpVWRPMGxQUUZJUXVpdTJ0MktXOVFnN04xZjlEOSs2VnFZ?=
+ =?utf-8?B?RkFMdkd2M1hYSXRMRi9Bd1E5dVVMOFcrTlRwWkNFRHZnYksyajMzOEJlVWRF?=
+ =?utf-8?B?RW4wZTJvSXhvU0o1dHI2MUI3QU9ZVWxjZ2JKM3YrU0hhZXlIRUh1NkZ1NCtZ?=
+ =?utf-8?B?bWVySk5xUnlUZ3pteEllTlA1QjltRUtDcW02cmtpTjJxYzdjcVV3Nll1TFdj?=
+ =?utf-8?B?eGlaS1BnVXpSWXB5a0UwR2QzNGhKWlRDR3ZrTGZIalJtZ3o5N1B5bUdCYXds?=
+ =?utf-8?B?c0kvSGdFSTZaRnNiQWh3WG9PVExRQ1BTR2hFR2VYeWNpUE44UHNyd3o5V2FJ?=
+ =?utf-8?B?SjB5emk5MzFpMFQ4L3d3UEhCV254d0UydEhxSUtCdFZIeTVwdWsrY0lZcHpY?=
+ =?utf-8?B?OEloTzhEV3ZVQWdzbFR1am1FWGxUZXptRE9wMVg1M2hWMFBVUUdmV3J6Ritm?=
+ =?utf-8?B?c3BZc3RwQ04vSVg3cUVIWDR0SWRPM3ZvZjZOcVkxYlBrNUg0UlVzSzdVVXBu?=
+ =?utf-8?B?R3BzeFQxNkxSMzBoK21OQ3pOREZyZ3Z2VGp3ZTMyTVBXaDdkekpDRWVOU2lh?=
+ =?utf-8?B?bS9DUUI5eUxTRXU0eFBucEx1K0JWbys5UlZMMi9WNEV3VVJhRzhleUZGeTJq?=
+ =?utf-8?B?NHFUNkRBS2YyQ0ZSd3NHMlphY0RBV1IyVkRodlB1MzlnS1IzcTBCT2NOeWZR?=
+ =?utf-8?B?MUNpNVVYUkVCUGw4UWFtQk51QTMzVDVxOGFIMUZlc0I3d2RLWjBvMVhuRXZ1?=
+ =?utf-8?B?VUZyOW5qL2FJL1lkb00yUnhDbnpyUU1Udm8rY0FTMSt0cjNlaFg3eHBJNTVS?=
+ =?utf-8?B?Ujk2Z2xLRDJBT3NJdmFWb25NbHo3SlVsemIwMXdsSng5UEMrSkRUYjJZZ3Zp?=
+ =?utf-8?B?V292MDB6ZkI0Q3l1T1RON3F3TFFuemRTTFVBVVRuQlV4ZW1Wa0I2aURlMVlh?=
+ =?utf-8?B?VnY2Z0QzOFhSalZQSGpHTEcvVXhEdUNjRHlhMWd5TW1BUkx4Q0FWMGh0dnph?=
+ =?utf-8?B?Y0JsZ3Fsb3MwTG4zMzJMdXpxUFZvSW5LWHVFZVA5UWFHWVVuNVFkbzJmZnBS?=
+ =?utf-8?B?eVNHWVE2VmlScDEvQmxkSERacVhhaVkwS1Z4WFpSOVp2d3F6L2dDWURhL3Jp?=
+ =?utf-8?B?Z2xRbkowV0tjaUZncFB5OStJbFc5b2dHMmJZSTZTQXJyY280MFd3WCtpMFJX?=
+ =?utf-8?B?Ym5vOG5jZFNRbDl0OTNCYlVpOU1LODEwU3E2UENzWkN6L3BUdUdQelJJbDBJ?=
+ =?utf-8?B?MjE1Nk00TlBzcmk1Wm1qTHBLK3hFekJGR3hSeEpqcTdodDh3ZmVqNUl3a0Ux?=
+ =?utf-8?B?dFZnSUUyeU9qTWFCMWVBK1BTMTRXNkdOdEdoaDJyNmpaU3pXOHhubERuaUZI?=
+ =?utf-8?B?aGttMVRsbnZkZTJmS3VJK0FKUGJ4YjdraDByaXFJM2x4WHhXR1lNc09UMklK?=
+ =?utf-8?B?WWZpaEtEb28xYkFoYmxLM1N2MXMvbzd3TUZxUDRMY1NLNjVkZ2JINExVMTNw?=
+ =?utf-8?B?MlE9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 78028bb6-ba44-41df-46ba-08dc12b43c9f
+X-MS-Exchange-CrossTenant-Network-Message-Id: 65e84c67-766e-41fe-1319-08dc12c271d7
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jan 2024 14:47:30.2464
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jan 2024 16:29:12.3710
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tfpxv1fExVU/rIuk1VqvZbNfosdSaQoTrw6FqQbF+2I7qIm/ej7tOciOaLiY9zvziC6z9RgtzHo4UQi+qRVYSQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB7545
+X-MS-Exchange-CrossTenant-UserPrincipalName: Jc3/mN+UOvIkA+emc9mYa40a6OEtFCVz/gXpFeix+lmgznzb7QnvZOMb9hxYFt+upw+LD1GbmBVGVKjts9SLUA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR10MB5214
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 11 Jan 2024 14:47:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14331
+ <cip-dev@lists.cip-project.org>; Thu, 11 Jan 2024 16:29:22 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14332
 
-On 11.01.24 14:51, Jan Kiszka wrote:
-> From: Jan Kiszka <jan.kiszka@siemens.com>
+On 10.01.24 20:58, Cetin, Gokhan (ADV D EU TR C&E) wrote:
+>> On 1/10/24 16:13, Cetin, Gokhan (ADV D EU TR C&E) wrote:
+>>>
+>>> This adds necessary crypt modules and loop device in case they are not
+>>> loaded at early boot as default.
+>>>
+>>> Signed-off-by: Gokhan Cetin <gokhan.cetin@siemens.com>
+>>> ---
+>>>   .../files/encrypt_partition.clevis.hook                    | 5 +++--
+>>>   .../files/encrypt_partition.clevis.script                  | 7 +++++++
+>>>   .../files/encrypt_partition.systemd.hook                   | 7 +++++--
+>>>   .../files/encrypt_partition.systemd.script                 | 7 +++++++
+>>>   4 files changed, 22 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git
+>>> a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevi
+>>> s.hook
+>>> b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevi
+>>> s.hook
+>>> index 37b373c..bcfe885 100755
+>>> ---
+>>> a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevi
+>>> s.hook
+>>> +++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.c
+>>> +++ levis.hook
+>>> @@ -34,8 +34,9 @@ manual_add_modules tpm_crb
+>>>   manual_add_modules dm_mod
+>>>   manual_add_modules dm_crypt
+>>>
+>>> -# add crypto modules for debian upstream kernel -manual_add_modules
+>>> aesni-intel
+>>
+>> On which Hardware did you test? If i remember correctly asni-intel was
+>> necessary for the ipc227e.
+>>
+>> Reqards
+>> Quirin
 > 
-> With the promotion of riscv64 to an official port, building from
-> sid+sid-ports became broken long ago. Then cross-building from sid was
-> broken, but this has been fixed recently, and the release team is also
-> trying to keep it working. So it's time for us to migrate our
-> qemu-riscv64 to this new configuration.
+> Hi Quirin,
 > 
-> We keep the "allow_failure" in CI as we are still building against
-> unstable, though. That may change once things move on into trixie.
+> The initial findings were like this, but we realized that instead of aesni-intel, these 3 crypto modules were sufficient and more generic.
+> We tested it on several different (non-Siemens-IPC yet) x86 based devices. Also qemu and virsh also confirm this behavior.
 > 
 
-To set expectations: SWUpdate does not build for sid right now, thus the
-related image variante does not work again. That likely also means that
-even the Debian version of SWUpdate in sid will likely not install due
-to version mismatches. Would that version otherwise work, Quirin?
+Mind to enhance the commit message with a sentence that explains why
+dropping that module is fine?
 
 Jan
-
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> ---
->  .gitlab-ci.yml                                |  8 ++++----
->  Kconfig                                       |  8 ++++----
->  conf/distro/cip-core-sid-ports.conf           | 20 -------------------
->  conf/distro/cip-core-sid.conf                 | 17 ++++++++++++++++
->  .../distro/cip-debian-sid-ports-snapshot.list |  2 --
->  conf/distro/cip-debian-sid-snapshot.list      |  2 --
->  kas/opt/{sid-ports.yml => sid.yml}            |  4 ++--
->  .../secure-boot-secrets/files/sid-ports       |  1 -
->  .../swupdate-certificates/files/sid-ports     |  1 -
->  start-qemu.sh                                 |  6 +++---
->  10 files changed, 30 insertions(+), 39 deletions(-)
->  delete mode 100644 conf/distro/cip-core-sid-ports.conf
->  create mode 100644 conf/distro/cip-core-sid.conf
->  delete mode 100644 conf/distro/cip-debian-sid-ports-snapshot.list
->  delete mode 100644 conf/distro/cip-debian-sid-snapshot.list
->  rename kas/opt/{sid-ports.yml => sid.yml} (70%)
->  delete mode 120000 recipes-devtools/secure-boot-secrets/files/sid-ports
->  delete mode 120000 recipes-devtools/swupdate-certificates/files/sid-ports
-> 
-> diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-> index 1de6570b..81a31c5e 100644
-> --- a/.gitlab-ci.yml
-> +++ b/.gitlab-ci.yml
-> @@ -1,7 +1,7 @@
->  #
->  # CIP Core, generic profile
->  #
-> -# Copyright (c) Siemens AG, 2019-2023
-> +# Copyright (c) Siemens AG, 2019-2024
->  # Copyright (c) Toshiba Corporation, 2020
->  #
->  # Authors:
-> @@ -56,7 +56,7 @@ default:
->      - if [ "${release}" = "buster" ]; then base_yaml="${base_yaml}:kas/opt/buster.yml"; fi
->      - if [ "${release}" = "bullseye" ]; then base_yaml="${base_yaml}:kas/opt/bullseye.yml"; fi
->      - if [ "${release}" = "bookworm" ]; then base_yaml="${base_yaml}:kas/opt/bookworm.yml"; fi
-> -    - if [ "${release}" = "sid-ports" ]; then base_yaml="${base_yaml}:kas/opt/sid-ports.yml"; fi
-> +    - if [ "${release}" = "sid" ]; then base_yaml="${base_yaml}:kas/opt/sid.yml"; fi
->      - if [ "${encrypt}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/encrypt-partitions.yml"; fi
->      - echo "Building ${base_yaml}"
->      - kas build ${base_yaml}
-> @@ -329,13 +329,13 @@ build:qemu-amd64-secure-boot-buster:
->      deploy: disable
->      encrypt: enable
->  
-> -# riscv64 (sid-ports)
-> +# riscv64 (sid)
->  build:qemu-riscv64:
->    extends:
->      - .build_base
->    variables:
->      target: qemu-riscv64
-> -    release: sid-ports
-> +    release: sid
->      use_rt: disable
->      wic_targz: disable
->      deploy: disable
-> diff --git a/Kconfig b/Kconfig
-> index f5ea5aff..d0dc13b1 100644
-> --- a/Kconfig
-> +++ b/Kconfig
-> @@ -1,7 +1,7 @@
->  #
->  # CIP Core, generic profile
->  #
-> -# Copyright (c) Siemens AG, 2021-2022
-> +# Copyright (c) Siemens AG, 2021-2024
->  #
->  # Authors:
->  #  Jan Kiszka <jan.kiszka@siemens.com>
-> @@ -136,8 +136,8 @@ config DEBIAN_BOOKWORM
->  	bool "bookworm (12)"
->  	depends on !ARCH_RISCV64
->  
-> -config DEBIAN_SID_PORTS
-> -	bool "sid (unstable) with unofficial ports"
-> +config DEBIAN_SID
-> +	bool "sid (unstable)"
->  	depends on ARCH_RISCV64
->  
->  endchoice
-> @@ -147,7 +147,7 @@ config KAS_INCLUDE_DEBIAN
->  	default "kas/opt/buster.yml" if DEBIAN_BUSTER
->  	default "kas/opt/bullseye.yml" if DEBIAN_BULLSEYE
->  	default "kas/opt/bookworm.yml" if DEBIAN_BOOKWORM
-> -	default "kas/opt/sid-ports.yml" if DEBIAN_SID_PORTS
-> +	default "kas/opt/sid.yml" if DEBIAN_SID
->  
->  comment "Image features"
->  
-> diff --git a/conf/distro/cip-core-sid-ports.conf b/conf/distro/cip-core-sid-ports.conf
-> deleted file mode 100644
-> index 2e74af73..00000000
-> --- a/conf/distro/cip-core-sid-ports.conf
-> +++ /dev/null
-> @@ -1,20 +0,0 @@
-> -#
-> -# CIP Core, generic profile
-> -#
-> -# Copyright (c) Siemens AG, 2022-2023
-> -#
-> -# Authors:
-> -#  Jan Kiszka <jan.kiszka@siemens.com>
-> -#
-> -# SPDX-License-Identifier: MIT
-> -#
-> -
-> -require conf/distro/debian-sid-ports.conf
-> -require cip-core-common.inc
-> -
-> -PREFERRED_VERSION_linux-cip ?= "5.10.%"
-> -PREFERRED_VERSION_linux-cip-rt ?= "5.10.%"
-> -PREFERRED_VERSION_swupdate ?= "2023.05%"
-> -
-> -DISTRO_APT_SOURCES = "conf/distro/cip-debian-sid-ports-snapshot.list"
-> -HOST_DISTRO_APT_SOURCES = "conf/distro/cip-debian-sid-snapshot.list ${DISTRO_APT_SOURCES}"
-> diff --git a/conf/distro/cip-core-sid.conf b/conf/distro/cip-core-sid.conf
-> new file mode 100644
-> index 00000000..028b6c00
-> --- /dev/null
-> +++ b/conf/distro/cip-core-sid.conf
-> @@ -0,0 +1,17 @@
-> +#
-> +# CIP Core, generic profile
-> +#
-> +# Copyright (c) Siemens AG, 2022-2024
-> +#
-> +# Authors:
-> +#  Jan Kiszka <jan.kiszka@siemens.com>
-> +#
-> +# SPDX-License-Identifier: MIT
-> +#
-> +
-> +require conf/distro/debian-sid.conf
-> +require cip-core-common.inc
-> +
-> +PREFERRED_VERSION_swupdate ?= "2023.05%"
-> +PREFERRED_VERSION_linux-cip ?= "6.1.%"
-> +PREFERRED_VERSION_linux-cip-rt ?= "6.1.%"
-> diff --git a/conf/distro/cip-debian-sid-ports-snapshot.list b/conf/distro/cip-debian-sid-ports-snapshot.list
-> deleted file mode 100644
-> index bd08a742..00000000
-> --- a/conf/distro/cip-debian-sid-ports-snapshot.list
-> +++ /dev/null
-> @@ -1,2 +0,0 @@
-> -deb	[check-valid-until=no trusted=yes] https://snapshot.debian.org/archive/debian-ports/20230430T091331Z sid main
-> -deb-src	[check-valid-until=no trusted=yes] https://snapshot.debian.org/archive/debian/20230430T091331Z sid main
-> diff --git a/conf/distro/cip-debian-sid-snapshot.list b/conf/distro/cip-debian-sid-snapshot.list
-> deleted file mode 100644
-> index 87e0b95b..00000000
-> --- a/conf/distro/cip-debian-sid-snapshot.list
-> +++ /dev/null
-> @@ -1,2 +0,0 @@
-> -deb	[check-valid-until=no trusted=yes] https://snapshot.debian.org/archive/debian/20230430T091331Z sid main
-> -deb-src	[check-valid-until=no trusted=yes] https://snapshot.debian.org/archive/debian/20230430T091331Z sid main
-> diff --git a/kas/opt/sid-ports.yml b/kas/opt/sid.yml
-> similarity index 70%
-> rename from kas/opt/sid-ports.yml
-> rename to kas/opt/sid.yml
-> index b11a1c2b..be2eeb47 100644
-> --- a/kas/opt/sid-ports.yml
-> +++ b/kas/opt/sid.yml
-> @@ -1,7 +1,7 @@
->  #
->  # CIP Core, generic profile
->  #
-> -# Copyright (c) Siemens AG, 2022
-> +# Copyright (c) Siemens AG, 2022-2024
->  #
->  # Authors:
->  #  Jan Kiszka <jan.kiszka@siemens.com>
-> @@ -12,4 +12,4 @@
->  header:
->    version: 14
->  
-> -distro: cip-core-sid-ports
-> +distro: cip-core-sid
-> diff --git a/recipes-devtools/secure-boot-secrets/files/sid-ports b/recipes-devtools/secure-boot-secrets/files/sid-ports
-> deleted file mode 120000
-> index 91bf492f..00000000
-> --- a/recipes-devtools/secure-boot-secrets/files/sid-ports
-> +++ /dev/null
-> @@ -1 +0,0 @@
-> -bullseye
-> \ No newline at end of file
-> diff --git a/recipes-devtools/swupdate-certificates/files/sid-ports b/recipes-devtools/swupdate-certificates/files/sid-ports
-> deleted file mode 120000
-> index 7d00e075..00000000
-> --- a/recipes-devtools/swupdate-certificates/files/sid-ports
-> +++ /dev/null
-> @@ -1 +0,0 @@
-> -../../secure-boot-secrets/files/sid-ports
-> \ No newline at end of file
-> diff --git a/start-qemu.sh b/start-qemu.sh
-> index b6f9d012..080f939c 100755
-> --- a/start-qemu.sh
-> +++ b/start-qemu.sh
-> @@ -2,7 +2,7 @@
->  #
->  # CIP Core, generic profile
->  #
-> -# Copyright (c) Siemens AG, 2019
-> +# Copyright (c) Siemens AG, 2019-2024
->  #
->  # Authors:
->  #  Jan Kiszka <jan.kiszka@siemens.com>
-> @@ -40,8 +40,8 @@ if [ -n "${QEMU_PATH}" ]; then
->  fi
->  
->  if [ -z "${DISTRO_RELEASE}" ]; then
-> -	if grep -s -q "DEBIAN_SID_PORTS: true" .config.yaml; then
-> -		DISTRO_RELEASE="sid-ports"
-> +	if grep -s -q "DEBIAN_SID: true" .config.yaml; then
-> +		DISTRO_RELEASE="sid"
->  	elif grep -s -q "DEBIAN_BUSTER: true" .config.yaml; then
->  		DISTRO_RELEASE="buster"
->  	elif grep -s -q "DEBIAN_BOOKWORM: true" .config.yaml; then
 
 -- 
 Siemens AG, Technology
