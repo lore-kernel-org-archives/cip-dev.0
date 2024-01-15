@@ -2,246 +2,193 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB554C3DA79
-	for <webhook@archiver.kernel.org>; Mon, 15 Jan 2024 08:23:34 +0000 (UTC)
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.52])
- by mx.groups.io with SMTP id smtpd.web10.73141.1705307008034912594
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C08A6C3DA79
+	for <webhook@archiver.kernel.org>; Mon, 15 Jan 2024 08:24:04 +0000 (UTC)
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.86])
+ by mx.groups.io with SMTP id smtpd.web11.72625.1705307040177983555
  for <cip-dev@lists.cip-project.org>;
- Mon, 15 Jan 2024 00:23:28 -0800
+ Mon, 15 Jan 2024 00:24:00 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=pCssBk8O;
- spf=pass (domain: siemens.com, ip: 40.107.21.52, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=M3fsUaru;
+ spf=pass (domain: siemens.com, ip: 40.107.22.86, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LfFwhqNHIUvZuA9aHIDpycnFaqFmPfjMATIQEezLGUSRWWulxW12tauVEefGfV2i7DkCh76/lM75fWmh2Ey8UwP360qrKuQIAIfDv2civZ+7h0u9uSlKuj+2l+wfZRMIsQR2VSHyy1KSoEGQi4p9v9KJRJJqwCjcEnBZ42brgov+z3M5APBrcSftm8+8VAGf3yKh7oPlKnquobNg4lea7P7jk2VD2cWIYh1fU1O6nRpQQD/1GYUaMlbfdXGXasO4NIcIzJ2TfQbgC8mdSmZTXNi6UT2ohNSluoR2UfQKnJGcT6msX5UZCm+7RKV4TAnWPZpLflNIP9dMgZbNWMu8bQ==
+ b=IBdqwjbzJ2fTkUPuBjn389AzPKwLaON7IFVo/4zlz34whVtS7hmo1QGgH80723AVRDyfQUf3qeHRD7ZwDoQr9hqWGWuLl+3AZUXjoelys4dVJZi/Mz1XaRfv68TcmlLFOZNMmavUrKSTO7h92BTfd1eVtthdSomYBVuWMNLyYBG29hPuqg9Nv/1tQykS0J7tRLMG2RGmSnKfxITdlkXCcYBgOLbqnbOy3fClYXZPI4dQscbKylhBSjrYPkzu3vCtQ/6qK9S4WwThfPZqb1LQk4viZlsc5FCOe5zOcHrUqwzmKB7/9+MR2aIZp+7ghXSosy/FrqvDjJQ3GUzDynj6RQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KjEljcVcG2NtnWo7fV0y5q7meau6+3hBUBAdL2kZkrY=;
- b=aPbOBRXUBgKVDU/YR+QVjyGf6vwz7dgMPrlRZJpgPWSKxqkJWr2kI43//h0HDxTHsjHMTb1pYHQiRddLt/CpNumI2vZWVyzcYfNsWoMEFFbh2O1yj6N4LIlk18O2h6VPSVu5aPOrUo/6yxRpjAxsDPtEPwwvdYEooxRhdfS1kGiRQTUljMLkCfNIggqJlHxy3ypeA9XHZuHCY8Cb6/bruujx85q3KlAmlXnmw3JK1KHICa7JUmrTP74G7ci5y7rn0pcPZT2uxe3J/C2M7uJGUsxwZg8P6QHLq0oI8sRN8epgJ3Kl7dMQqazgmJm+uC4cUUAt+Jd8R/suh8ScarEs9Q==
+ bh=hRYvAiyCo//aDkgRav9iH0ABxMf/idxOIyv8t2kXmLM=;
+ b=iJ179JNk1izxikw5luq7damyhqeG+0twwHFMu/nxiyBDW1WeOfN9bWmMYG9Z3lOV4P6aD8sHqWu1v2SPfeNnT7U47w9Mhc7K1IRWq35Kbg57i46aOloq1xxP3PXMfAlQ0dkv+86Z4gqMe4FQ8fc/Jw3/w1462oo3l3vheGVUSS5FiY90zND1nWA6F+G23fZ7/qILb85OJJN8E1W69qMg+mj0lKsXUkL5Rwl5Ne+1XjgaZ4ORKaQmshzHgY9bRDVUczjOyyrIReF4zzdLET+Msn0bHRkxIDQp5ulwgNzo2aN72fNgc+F17SJAy4NGIop7v7a/Lf7PwnNapa5+JUqquQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KjEljcVcG2NtnWo7fV0y5q7meau6+3hBUBAdL2kZkrY=;
- b=pCssBk8Odzg5Cj4KBQighFToPULerPQOd/oVvkwpoxPeEeZIshnaYjLiKYF/saH6zl8KiHlO0XBahWmGyGDEf4Ij3hztQpibblFp2DsVemqhurG4b6tRHE3pTL8GTwtfF6Tl3KR8lV3rv4RF/UQZ61kdpLpQo5e7Uw6xu6Ww9pYMd0NLbsFQKYlxvba/Uej+ynSwdT/y3R+ivksKF/sXap0ipBLQa+U+A2wzdkQgCecEfezEirAleJ7ke5kFdLrrv3TCtuwGSX6BVq9meoy/IuMIS1YRnLFs2PvyZms0dPZFO0+bMU5D2WJr6OVXKQzemEKn3MkdOTFClMlV95EDxA==
+ bh=hRYvAiyCo//aDkgRav9iH0ABxMf/idxOIyv8t2kXmLM=;
+ b=M3fsUarufpz8rr07SN7a+6OrBZMHCC9rSitmRA9plvToxSqME0cUKL0y9AKHrOaKI/oDgKakpF8UvR81HyONf230lrKjGsk/PMmNt4p6KZ04ikjwB8B/j7z7Hplz85maTchHNkaVLU15FenIKO03YumTJwE0io2LEfF4VsP6P7T74ARFXN4GZawBAKCeJ+5wkW7jjfEuIQztFJdSXD+qii25hbcr75Y97aqvZFBiCb6wLgLkqvwrWIeDWv2m5N5bQ/SplutcyHGLp5nCqACwaxs3OWC2VsCn/1M8Kwmz50JXOW8PrMu+8woK76HxJZIB4ARL9TU2Jcn5w3hM3D8dew==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by VI1PR10MB3502.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:13c::10) with
+ by DU0PR10MB6386.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:40d::7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7181.26; Mon, 15 Jan
- 2024 08:23:24 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7181.23; Mon, 15 Jan
+ 2024 08:23:56 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8d16:7fbb:4964:94fe]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8d16:7fbb:4964:94fe%3]) with mapi id 15.20.7181.026; Mon, 15 Jan 2024
- 08:23:24 +0000
-Message-ID: <7fcc6849-ed46-4f45-b0b1-c1953c125bb2@siemens.com>
-Date: Mon, 15 Jan 2024 09:23:20 +0100
+ 08:23:56 +0000
+Message-ID: <6e91adf7-64f1-4819-bed6-667962d1666c@siemens.com>
+Date: Mon, 15 Jan 2024 09:23:56 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev][isar-cip-core][PATCH v2] recipes-core/swupdate: Cleanup
- swupdate.inc
+Subject: Re: [cip-dev][isar-cip-core][PATCH v5 0/7] Add Bootloader to
+ sw-description
 Content-Language: en-US
 To: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>,
- cip-dev@lists.cip-project.org, felix.moessbauer@siemens.com
-References: <20231219100858.1853427-1-Quirin.Gylstorff@siemens.com>
+ felix.moessbauer@siemens.com, cip-dev@lists.cip-project.org
+References: <20240111200015.190376-1-Quirin.Gylstorff@siemens.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20231219100858.1853427-1-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20240111200015.190376-1-Quirin.Gylstorff@siemens.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR0P281CA0249.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:af::15) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR0P281CA0245.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:af::6) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|VI1PR10MB3502:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4b99c406-75ed-4aea-3ec4-08dc15a33dbd
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DU0PR10MB6386:EE_
+X-MS-Office365-Filtering-Correlation-Id: c2a6499c-48f1-4bdb-4182-08dc15a35140
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	QWkWJuUy8SvBDR4A961BB4DhXBQD3y8eZKnYptU+STlmsKqjzu8rrodCwNewebaE9i7i441/b2mLTZHLt22cs19VvKqZZUe1feDUQK99ik7jbt8TErILNUGAZL3tJAcoZhGSb6rcJSDjg0USWQEzYs0U5GYZBMcnz/ob8b7rffJurYQkFLJfzI43+f2IxIpCKM5TYNsV8pFgkvZ4Pk65YNhgNbKNQg1sD5gq51cKVz2Bq9ZbT/pLUYBYhzrowWxfFpDbOGbIJruOLk8pLgRnZmv0k6ExbYhSu3+Gar7U12J4bruiJMGudCFVeCRWaAehHGI8CuioRYsHXU35o4Yabka5wgBDIpr1eMvUUSIAwOWpKEvjgUckmKCA7PpOChQQz4vlNMH2brGD2MXfR1jtwHzfeyh/CSkd5/kOUNYPh/fqHv5U8cQjSpxn/tlwW+dThJjkHsiIFY8oPMepICUz+EjSA27KnzpRU47k7OCAKkvYypxgzB5zGwi+dAV7F8asFAc7oT2s8OmfeBWNq3fUAR4w7wTTUxu6FMlN3towEdNrXMVTcFPBX7IOpAPT6+SGTOMuHiAu+Osc1neV1TTu4aE4BybURjVp2zQzioM+4MFfhh+ZNhMam74QCoeNKIp4qDaT3yEMJRHBgD/bLLCzog==
+	lGhETSiq4mIXU9O/i10GC5CwCytUDrrNFuldLkM6cnVyvz6XeGJkvDyrY44uF4V1tJi9GHrTWR58cNh/q9tKFX0qjlHF650/0D14djIuDUaEdFPjva5xMTYfLfSpqZR38vk0XBSHHcctA0JnD3X34gy9uF7B1h7iE23Ux+pjAvTppjpMAETmMm5Cib1/PgqyGNdEkyv057IvcHLU/vdSg7/CHRSv3t4dfcay4CeVlN21nE8NI/FzCzMiXwskCUlVse5cn6koeBS5zse97ZehR5Dsy79NV/tKGFFKkBAucASZwCRpQrDnJJ8gvdBddbHiIFcUq5JYwAfBP0b1NSPWitmEw/eszDQbztI/315AdYhXWsfhY8y1P3shC6wxwHhQa5S3ysmboa37TKNLdjZHHTz/GSpCxeY+zxzACXzG4prwpIoa96Sp8B5evLNxXXm+Qm2zjZE2Ty5t82mbG5WK93egVDETQM9MAmjf1wNZrSQjHAk3FkdeJsIeQJlVKX71dRfSGfs4OH3D7oyLSZA/zOFRiHvBxhhysD9aKBF/wYBBLcn2TmX/YSNlYQjte+QDHnO0f73+tzPKBkwCT6JerHD7xyb3F52x5uEpNElBbhRlRPGF/jLaGzkuSJFFn1FuyGjXcjPN3Wj1NQ6xHbcKrA==
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(396003)(346002)(376002)(39860400002)(136003)(366004)(230922051799003)(186009)(1800799012)(64100799003)(451199024)(31686004)(2616005)(26005)(53546011)(6666004)(6512007)(478600001)(38100700002)(36756003)(31696002)(82960400001)(86362001)(5660300002)(2906002)(41300700001)(6506007)(83380400001)(66556008)(66946007)(316002)(66476007)(44832011)(6486002)(6636002)(8936002)(8676002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(366004)(136003)(396003)(346002)(376002)(230922051799003)(451199024)(186009)(1800799012)(64100799003)(38100700002)(83380400001)(86362001)(31696002)(31686004)(82960400001)(2616005)(36756003)(26005)(6486002)(53546011)(6512007)(6506007)(316002)(44832011)(8936002)(8676002)(66946007)(66476007)(66556008)(2906002)(5660300002)(41300700001)(478600001)(45980500001)(43740500002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?ODRZN3ZNZkxubVBWVXdHSENZanE1cTdieTNaK2tLc0ZibjhtckFTNE9DSDdZ?=
- =?utf-8?B?N0FrSTl1WGQ5NmtSV3lvZHJPQ3dJWCt6NGMxQ2xTcFBxUXdNYXRzdXh5QVl1?=
- =?utf-8?B?TFRiUVVVOVVqU1Q1ZSt4eU4zdFR3VE4vQ2IweVJTVlRhS2YxWDF5ekJiQjdW?=
- =?utf-8?B?Y1VLOGJjY3VGUGFCanAwYURETElaNnEweVBiUXh5RXdEczRwRWxBSFZJSENm?=
- =?utf-8?B?bGl5ZjR5NlZLOXIwdkt3OVBwMlM5Mmp5OXpJOVhzNWJvTTh2bzVZUUozaUdY?=
- =?utf-8?B?R3VzUkozRHNZYktidnJOUEx3Z2pMRG5iVC80c2ZIY2VwNUN2TEJ4ZCsyTXNC?=
- =?utf-8?B?cks0M0F3MlR2Q0FaellMN3I0QVJqdzcrMVRMaHhYMmNicDltNzRHNE83THQw?=
- =?utf-8?B?T21sR1o5K2RHaGxQL2NuYmVTNGJlV2JSMXlZQ0V6U1N3TkJUOVY3NzlVOU02?=
- =?utf-8?B?NEovdytDSkRhNno0V1hUcnRtdythM2MvZCtuY3pPSXQ4NjNORWFVYVZJTEJo?=
- =?utf-8?B?WmFiTE5wYzNNRWJwVEFpUTVvV3I5WkJ4K2lEZHorMjdRbmpHcmpGKzE4cjJu?=
- =?utf-8?B?bnJ6bjYxTVZwR1ZTdzI5eTNUMFFhTElJK3NLWDBLOUFBa3dpMDhIanJlM3R4?=
- =?utf-8?B?UDNqdWZ1MHFTcUNBY1diU0hIOFVmQWJnZG5wMXM4RWJ1NFY5dzJyb1J1cmg2?=
- =?utf-8?B?YUV2TDZhYjJ0UWY5ZVppNjNBRWhyRGd5RC94M1FVL0xIeXVxZFN0a3plRWdk?=
- =?utf-8?B?bGwxMzcwbWhrRWY2L2dWZWlGbXBhM2p2cmVGRmhLUWwyb3RNWDBNWStVV3lQ?=
- =?utf-8?B?SW1QcmJTVGJpTlRZdHFUUDBQRW0zOWFGSitkbnU3WjYzUy9VNGhrL3g3Y29x?=
- =?utf-8?B?ZUVpOGxoUlNiOS8wcXhUcUZYTU02ZEFLc0FLSlNEaFpzK1hvbVNQZ0pjQUhm?=
- =?utf-8?B?RytUN2Vwd2FVRVNOeXU3VGtDT2ZMRExHQngrZGZXS0JtYi9XUzFrNmdyZWsz?=
- =?utf-8?B?V0VIWTI1Umpjam5nL2xOQnpzbkVoTitsTWlQYzZBUlF4SzVEeE9QM1FOQWwv?=
- =?utf-8?B?UXMrTFJQcWpSejdPb0lYOVdyejQwNEpiTnJCbGEyeXJPUm5vb3pjNFkzT1lW?=
- =?utf-8?B?OUJPWGdjZk5CNXN4ZjBzbmptd3QySktDUlVmNDFNTnUyZUFJak1zdXpwNXBs?=
- =?utf-8?B?NHNFd2xsZUc2S2RZVmUxUHdVdHB0TGc3bTZ4QmZDb1RDZkJ3OHdvT2lyeUZY?=
- =?utf-8?B?NEVEd3RCbE0yMisvM0ZWeS9WVFRpNmM5K0hrZ05VSzJQQ0hpUDBmSkRVdGxW?=
- =?utf-8?B?OTdWSkVkUlIxSlN2WjZDL3BpVFZ0aXd3M1l0RVJ6WElETjJGMEtQQmxNWHpK?=
- =?utf-8?B?dkJUL3paZTBFR0VZNUZjSVgzT3huajZnWS9YYTNWc293cGp3enUxcDhpQ2JH?=
- =?utf-8?B?WnVjVXRlaTExUkdVcnhCTE1iUTBLYkxacGlGR2JxSGFEbWwvRXdHdjRlSlUv?=
- =?utf-8?B?ODZkU2YxcDI0V1RqVkYvOUs5UmJta2t6eHluWm9JUFBVREpPRkd1L0lRWkp6?=
- =?utf-8?B?ZzNHSWlZWXMxSnZ3aTVmK2hENDh0K3YybTQzMHJTcVZybytYODFXOWNwaU9M?=
- =?utf-8?B?eEM0eTVXaWovSmYycDJBRVMwOSt3aDZVemtSYngxNG9FN3RiVUhxam5MdkRE?=
- =?utf-8?B?RDg3ZFlSVjA1WWhXSDJONjNWNjVuM1JqSTdXQ1JBdzlzRHZoTVh1eEt6MlNy?=
- =?utf-8?B?OXNLSFI5cS9Id3A0Z09zNXlLMnJlKzZKWXhFWUo0elNTa1pSM1QvTWprR2J0?=
- =?utf-8?B?anpVUnY1TUZPUGdOeWpZcGtWRGhOMGlNaHlXb1AxU0xDTzh6NERpYnJpWnVV?=
- =?utf-8?B?T0gxTUhSYys4dHRnNmdjaWlZMmR2cjlvQS9LTWRrYnR5YkdKUXJsNXk5WjZX?=
- =?utf-8?B?Y3dkbjNGUFJjSGE4ZnZldllZaGxQZkk3Qm1LdllkNjhCR0lOSHNRYksrc3NM?=
- =?utf-8?B?SWx0Z203bmRRS0xja1lrLzhCUk5jRTM0Vjc3OWlVcExsZVFGYWFORFR2SlU4?=
- =?utf-8?B?MlFRb0ZMU3h4RXlaYUpIZWRRZjAyTUpxWlRDdzU3NnEzOERJQ2Z5cDFYdVgy?=
- =?utf-8?Q?gxqlndkHDiL4+vs/KQZujcMIE?=
+	=?utf-8?B?NzEwSmVzeVVwYU54WHNaTGlheVBaNURQM1BvUVlEYUJKMmVsRWREMGx5RWNF?=
+ =?utf-8?B?ZmlhOWpRMnFsbVhQektCZTBYM21yNGFmcW81MHhURi94ZmxKSnBLbmltTjYx?=
+ =?utf-8?B?RDJTQnEvNHRKVTFSSlBhZnJUNEFzbVRYV3V2TUV6SHNhbytqQ3Vla2hsVTBa?=
+ =?utf-8?B?eU5rQ25DSWpESFZtWWRJdWdrbEY4bFdVaHhGbWlOKzUwRy8yb2RrdXltMi9u?=
+ =?utf-8?B?UDRGeHlzNjEwVncrMHl4NTN0NXIrTWhvd3dUdXlzWnJKR1VmeUtHWVNicnZM?=
+ =?utf-8?B?cFRZdFZUdGsyT3liYnJ0d2ZaYkVRZW93aFB6UXh6NER0UGFSekJHYzFjSk1m?=
+ =?utf-8?B?VU5XQTg4MFNKU1NqUVAzcFBkUTh1aFBrNmQzMzZHVFZlUndEZ2lpWTcwbjYy?=
+ =?utf-8?B?R0xKUU0xL0RCSklmRitXMzdEa0ZvM0ZWV2hiTUU5ajAyZmh1NjJ2YThJSFpj?=
+ =?utf-8?B?QjBxci9TSysxY3hkbEg4V2V0R2Qzb0Vzd1V6NjY1NEgyNVFnc3RXVWp5emo5?=
+ =?utf-8?B?VkIzem1HOU01djVmbXc0NDkyd05XZVVWdE9pcUVsaHp0eFh0enhNbVdPeW1o?=
+ =?utf-8?B?ZjdwMFRZWVdZMmVqOUEwbTE3b0t4VklXbDkvSDhKVW9MRmQwbzBaekx5d3Qz?=
+ =?utf-8?B?cnB1K0svakxOVFRsOW4rZTYyZFdydDlRd2YwNnRabkEzNktOY2J5SUxKSHln?=
+ =?utf-8?B?RVF3U2N5azJXTnhMelh2NEQ5R3Jubnk4WFlWaDBEZnJ2Y25sOWxDRDNQZFAr?=
+ =?utf-8?B?SW1YMFhqRjB0SWhScHQ2ekNMN3pPNFd5UFFNWVpleW54OWwxNnBkcnVjODl2?=
+ =?utf-8?B?cGQxV0FpOTV0RFc4SUFNWkNnUERteFhuYSs1eHVTTUROZGptU1ErajlDa0Jk?=
+ =?utf-8?B?dVhqUFVjSmN0QUErSVIxVkFHdVlSUzBjaUlXeFo3a0FueE5QQlpoZ0RYV2tI?=
+ =?utf-8?B?RTM2UWN4eU00WjAzditrbjBXRmlkelRNQVRscFJFUHM2eG9FbERLY3BHQ2ZZ?=
+ =?utf-8?B?R2JPbHorOXhVQm9aZEJsNjBOOWNYakphenovNkhiWTk2SnJtdmFidjVuaE9Z?=
+ =?utf-8?B?blpmTFNKRTZyNytKMVJuekx1WTFYQ09PdWtNMmRFR2NHcHYxbTlZYjVnMDVJ?=
+ =?utf-8?B?K3N6NS9jb0JtWTM0SWxpTUN3OVZxNzM3OFlPaVBTVm9ici9tSlVwYXB3TEsz?=
+ =?utf-8?B?a0N6NWNpdmRRTERNUVhKTkxhVmt3VzhXd3VydFV5clAzM3lWaTZ3dW9QOVU0?=
+ =?utf-8?B?Qk4zM2M2V0lUZG5MS2QzZG9tZzN1NHJBd0ZGYjYwN0ZTem5EaUZFMkxmeGJW?=
+ =?utf-8?B?ZW5oc1NVYVNhVm1JNzNjZERaTWhxc254SG9saUpIckRDRXdHUlMzSE9NWDF1?=
+ =?utf-8?B?WmR5bGVWdS9HMytndG1lRit4SU0zQmNZdm9uRzFOVEFja2VyRStINHBSRXNx?=
+ =?utf-8?B?d3dzcEFVb0g2UmY4SU5Id0hwcDBYcFBRTWE1OGw4ZHphUGlTbE05eEh3b2hl?=
+ =?utf-8?B?Z0JZTHN3cWJ6bWt4RDNMRDRLb2FwR3NtU28xeDFkWUdsbWtqL1Zya05lajE2?=
+ =?utf-8?B?ekttQThEaU9XaG9CTHFzbWtTb29vOVM5bW9hLzRVZ1N6TFpYSCtCd2NKT0tx?=
+ =?utf-8?B?c3Fhb2NuNEdNQVp6cXZsOHFqUm45K2U4TVZETFBJRVFBQVc4eHdVcmswWWZM?=
+ =?utf-8?B?ZFM1dVU3MHVTNWNJdi9qSTFXWjdKREdnaUJCMUREYk5YU3kzZUt2RzEzQ0JW?=
+ =?utf-8?B?bVVzM00zUkpUVnpJQ0ViRG9EUXBnTlNnbENEbTZlMm5mUkhoUGp0TFNkc1ZP?=
+ =?utf-8?B?Vno3TUQzYm1wOHgzcG1EM29wZEtBeERyaXZEYmt5Y1FrOXBtNUtwSUV5eTEr?=
+ =?utf-8?B?MWV0TG8yRUk0T00vcnlXZ3dWRjM0YVBqK1JNbm1MTjNGYkVSNUpLeGpQWW5R?=
+ =?utf-8?B?Mm9aQVN2WkxnSy9Ja3Bpc3k5NGZ3VFoxYlgyMzV2MXFhRHVUeXUwMHAyRUR5?=
+ =?utf-8?B?eXZtYWN0ZWM5Sk84c0lXMGxZa3p5SnlyUUZFWjZRMHJKcmR2VU9pT3BpcVVD?=
+ =?utf-8?B?OHF4Nk4xd3AwbzVmN09sTlYwYTdUMjcrS0R4YVVZZkNsNURvMDJrbXRxRDVV?=
+ =?utf-8?B?UTV3OXlxQ1Rna0MxMkFIdW80N0Z3c2FEa05YWDlmczY2UjF2WnFUYkE0ZEFk?=
+ =?utf-8?B?Snc9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b99c406-75ed-4aea-3ec4-08dc15a33dbd
+X-MS-Exchange-CrossTenant-Network-Message-Id: c2a6499c-48f1-4bdb-4182-08dc15a35140
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jan 2024 08:23:24.0597
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jan 2024 08:23:56.7848
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: L0sVX6iZLlbWmon52FTNy4eQzJ5+EG7QAZLP05L6N82RTJp87nI6JpmdWEJUv2PFe6TZpMJSfNkXQhZIQHGhUg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB3502
+X-MS-Exchange-CrossTenant-UserPrincipalName: NNBqquFEx8mtgYjWIUJIskRzUeXrG4hUsOQP+oQWb85eqF+wfIVebbFLpYA0VWKHmeVBH2Q4aJwFPLEYhfM7BQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB6386
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 15 Jan 2024 08:23:34 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14379
+ <cip-dev@lists.cip-project.org>; Mon, 15 Jan 2024 08:24:04 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14381
 
-On 19.12.23 11:08, Quirin Gylstorff wrote:
+On 11.01.24 20:59, Quirin Gylstorff wrote:
 > From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 > 
-> As software loads the bootloader libraries dynamically it is no longer
-> necessary to set the build loader with BUILD_PROFILES.
+> This series adds the, possible signed, efibootguard binaries to the deploy dir
+> and adds them to swu file and sw-description to update the bootloader.
 > 
-> Also add PROVIDES for the additional packages swupdate provides.
+> The new entry contains following information:
+> {
+>            filename = "{efi_boot_loader_file}";
+>            path = "EFI/BOOT/{efi_boot_loader_file}";
+>            device = "{efi_boot_device}";
+>            filesystem = "vfat";
+>            sha256 = "{efi_boot_loader_file}-sha256";
+>            properties: {
+>                 atomic-install = "true";
+>            };
+> }
+> Changes v5:
+>  - Add efibootguard section to README.swupdate.md
+>  - remove whitespace
+>  - Move variable EFI_ARCH and EFI_LIB_ARCH to correct patch
 > 
-> The profile 'pkg.swupdate.nosigning' is automatically set if signing is
-> not set to `1`.
+> Changes v4:
+>   - Rebase to latest next
+>   - Remove the generator for sw-description -> if requested this can be
+>     added as a new patchset
+>   - Add new class containing the efibootguard specific settings
+>   - Add variable EFI_ARCH and EFI_LIB_ARCH to reduces dupilicated code
+>   - Generate a additional swu only for the bootloader. This will be
+>     always generated. If the bootloader should be added to the
+>     <rootfs>.swu the variable SWU_EBG_UPDATE needs to be set.
 > 
-> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> ---
+> Changes v3:
+>  - Add Generator for sw-description instead of using a template for
+>    Debian 11+.
+> 
 > Changes v2:
->  - cleanup 2021.12 for debian buster
->  - move cross and nocheck to swupdate.inc
->  - move DEB_BUILD_PROFILES pkg.swupdate.suricatta* back to swupdate_2023.05
->    as the apply only to this version
+>  - The efibootguard file is only added if the new variable `SWU_EBG_UPDATE` equals `1`
+>  - Add the variable `SWU_EFI_BOOT_DEVICE` to set the device containing
+>    the efibootguard binary
+>  - Add the variable `SWU_EXTEND_SW_DESCRIPTION` to all extension of the
+>    sw-description file
+>  - use atomic-install to update the binary atomically
 > 
->  recipes-core/swupdate/swupdate.inc            | 21 +++++++++++--------
->  .../swupdate/swupdate_2021.11-1+debian-gbp.bb | 11 ----------
->  recipes-core/swupdate/swupdate_2023.05.bb     | 10 ---------
->  3 files changed, 12 insertions(+), 30 deletions(-)
 > 
-> diff --git a/recipes-core/swupdate/swupdate.inc b/recipes-core/swupdate/swupdate.inc
-> index e5e7282..cb1716b 100644
-> --- a/recipes-core/swupdate/swupdate.inc
-> +++ b/recipes-core/swupdate/swupdate.inc
-> @@ -1,7 +1,7 @@
->  #
->  # CIP Core, generic profile
->  #
-> -# Copyright (c) Siemens AG, 2021-2022
-> +# Copyright (c) Siemens AG, 2021-2023
->  #
->  # Authors:
->  #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> @@ -13,15 +13,10 @@ HOMEPAGE= "https://github.com/sbabic/swupdate"
->  LICENSE = "GPL-2.0"
->  LIC_FILES_CHKSUM = "file://${LAYERDIR_isar}/licenses/COPYING.GPLv2;md5=751419260aa954499f7abaabaa882bbe"
->  
-> -def get_bootloader_build_profile(d):
-> -    bootloader = d.getVar("SWUPDATE_BOOTLOADER") or ""
-> -    if bootloader == "efibootguard":
-> -        return "pkg.swupdate.efibootguard"
-> -    if bootloader == "u-boot":
-> -        return "pkg.swupdate.uboot"
-> -    return ""
-> +PROVIDES += "libswupdate-dev"
-> +PROVIDES += "libswupdate0.1"
-> +PROVIDES += "lua-swupdate"
->  
-> -DEB_BUILD_PROFILES += "${@get_bootloader_build_profile(d)}"
->  
->  def get_bootloader_dependencies(d):
->      bootloader = d.getVar("SWUPDATE_BOOTLOADER") or ""
-> @@ -37,6 +32,14 @@ def get_bootloader_dependencies(d):
->  DEPENDS += "${@get_bootloader_dependencies(d)}"
->  DEPENDS += "${@bb.utils.contains('DEB_BUILD_PROFILES', 'mtd', 'mtd-utils', '', d)}"
->  
-> +DEB_BUILD_PROFILES += "${@'pkg.swupdate.nosigning' if not d.getVar('SWU_SIGNED') == '1' else ''}"
-> +
-> +# deactivate hardware compability for simple a/b rootfs update
-> +DEB_BUILD_PROFILES += "pkg.swupdate.nohwcompat"
-> +
-> +# add cross build and deactivate testing for arm based builds
-> +DEB_BUILD_PROFILES += "cross nocheck"
-> +
->  python do_check_bootloader () {
->      bootloader = d.getVar("SWUPDATE_BOOTLOADER") or "None"
->      if not bootloader in ["efibootguard", "u-boot"]:
-> diff --git a/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb b/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
-> index 8f7a97d..0f91d5e 100644
-> --- a/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
-> +++ b/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
-> @@ -27,17 +27,6 @@ SRC_URI += "file://0001-debian-Remove-SWUpdate-USB-service-and-Udev-rules.patch
->              file://0004-debian-rules-Add-option-to-disable-webserver.patch \
->              file://0005-debian-Add-patch-to-fix-bootloader_env_get-for-EBG.patch"
->  
-> -# end patching for dm-verity based images
-> -
-> -# The option: "pkg.swupdate.nosigning" disables the required signing
-> -# of update binaries
-> -# DEB_BUILD_PROFILES += "pkg.swupdate.nosigning"
-> -
-> -# deactivate hardware compability for simple a/b rootfs update
-> -DEB_BUILD_PROFILES += "pkg.swupdate.nohwcompat"
-> -
-> -# add cross build and deactivate testing for arm based builds
-> -DEB_BUILD_PROFILES += "cross nocheck"
->  # If the luahandler shall be embedded into the swupdate binary
->  # include the following lines.
->  # DEPENDS += "swupdate-handlers"
-> diff --git a/recipes-core/swupdate/swupdate_2023.05.bb b/recipes-core/swupdate/swupdate_2023.05.bb
-> index 77b7431..d1fe1fa 100644
-> --- a/recipes-core/swupdate/swupdate_2023.05.bb
-> +++ b/recipes-core/swupdate/swupdate_2023.05.bb
-> @@ -31,13 +31,6 @@ SRC_URI += "file://0001-d-rules-Add-seperate-build_profile-option-for-delta-.pat
->              file://0003-d-rules-Add-option-to-enable-suricatta_wfx.patch"
->  SRC_URI:append:bullseye = " file://0004-d-swupdate-www.install-Fix-path-for-debian-bullseye.patch"
->  
-> -# The option: "pkg.swupdate.nosigning" disables the required signing
-> -# of update binaries
-> -# DEB_BUILD_PROFILES += "pkg.swupdate.nosigning"
-> -
-> -# deactivate hardware compability for simple a/b rootfs update
-> -DEB_BUILD_PROFILES += "pkg.swupdate.nohwcompat"
-> -
->  # suricatta wfx requires suricatta lua and the dependency
->  # is not set automatically
->  DEB_BUILD_PROFILES += "pkg.swupdate.suricattalua"
-> @@ -48,9 +41,6 @@ DEB_BUILD_PROFILES += "pkg.swupdate.suricattawfx"
->  # with cross compile we have a unsat-dependency to dh-nodejs on arm/arm64
->  ISAR_CROSS_COMPILE:bullseye = "0"
->  
-> -# add cross build and deactivate testing for arm based builds
-> -DEB_BUILD_PROFILES += "cross nocheck"
-> -
->  # use backport build profile for bullseye
->  DEB_BUILD_PROFILES:append:bullseye = " pkg.swupdate.bpo"
->  
+> Quirin Gylstorff (7):
+>   Move efibootguard specific settings from include to class file
+>   efibootguard.bbclass: Add functions to generate the EFI_ARCH and
+>     EFI_LIB_ARCH
+>   efibootguard-efi.py: copy signed ebg binary to DEPLOY_DIR
+>   swupdate.bbclass: Add SWU_EXTEND_SW_DESCRIPTION
+>   swupdate: Extend sw-description to update efibootguard
+>   classes/swupdate: Generate swu containing only efibootguard
+>   doc/README.swupdate.md: add new section for bootloader updates
+> 
+>  classes/efibootguard.bbclass                  |  42 +++++
+>  classes/swupdate.bbclass                      | 143 +++++++++++++-----
+>  doc/README.swupdate.md                        |  13 ++
+>  recipes-core/images/efibootguard.inc          |   9 +-
+>  .../images/swu/sw-description-ebg.tmpl        |  17 +++
+>  recipes-core/images/swu/sw-description.tmpl   |   2 +-
+>  .../wic/plugins/source/efibootguard-boot.py   |  29 ++--
+>  .../wic/plugins/source/efibootguard-efi.py    |  50 +++---
+>  8 files changed, 222 insertions(+), 83 deletions(-)
+>  create mode 100644 classes/efibootguard.bbclass
+>  create mode 100644 recipes-core/images/swu/sw-description-ebg.tmpl
+> 
 
-Thanks, applied.
+Thanks, applied. I will send another small cleanup on top in a minute.
 
 Jan
 
