@@ -1,201 +1,176 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB407C4707B
-	for <webhook@archiver.kernel.org>; Sat, 13 Jan 2024 11:13:00 +0000 (UTC)
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
- by mx.groups.io with SMTP id smtpd.web10.17130.1705144376280683574
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Sat, 13 Jan 2024 03:12:56 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF70C3DA79
+	for <webhook@archiver.kernel.org>; Mon, 15 Jan 2024 07:47:14 +0000 (UTC)
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (EUR05-DB8-obe.outbound.protection.outlook.com [40.107.20.59])
+ by mx.groups.io with SMTP id smtpd.web10.72368.1705304830875156263
+ for <cip-dev@lists.cip-project.org>;
+ Sun, 14 Jan 2024 23:47:11 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=cyFQT7W3;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.161.50, mailfrom: bot@kernelci.org)
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-598dfed6535so147435eaf.0
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Sat, 13 Jan 2024 03:12:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1705144375; x=1705749175; darn=lists.cip-project.org;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=CK5vNNMrnoLEQlK35xEWLmeIiwoM3Z6aH2cJwwGKNow=;
-        b=cyFQT7W3QBkxwT4PsqN+xRSyt0s6n9Qzvigm49DrqimjMyLZIInlBg8aJfGia/ShSj
-         /qiTfbsT0Dh63C41QW1nAvvudNuG8nentafJBwvXHNzHp9O6J+7r3u95mb8zxW4d/E/0
-         SZM104O9LvIaONdc1Ky+PcCwqgWaxCVEiQVaV2zZtV0Sc3mBGg6LmX10qhgqo8pdiuHl
-         TDTVcecEOi9w1+Hw6/t0YroQEXX/WxYlnEkugT8Wn5+4L7Q1dI7pPbQJkq/fK6nKjBwn
-         unsHASbgWRstor0NsNl5fANBu9tQK8l57yXOlRgACToRj1ywltYmCkyDtLlveXQ9vOKO
-         WoqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705144375; x=1705749175;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CK5vNNMrnoLEQlK35xEWLmeIiwoM3Z6aH2cJwwGKNow=;
-        b=lK+glLfIHhxOYPJWsNyH8wfxHgsXufS5/mRv0pc0sq8f99d25VUngQI+PJ0+dEYvDe
-         JyI2UJZ30JqXlHLb2DVNsC3Dt6dFMvcy4LqBjZwNF8WfQIffuSgZKsD7JeY3OamdaMkm
-         vyupHj80MA0X/A/s/3ZIVI7AoBZxyjAH1zMJ6DKWy3bj15nZbyHFUu4PFhI3a29tjXyq
-         Thf4PLFwrQQLs5+lNIWyElBuPijd7JntxJE1juMpo2PMLPz3Is3xm01bJ6C7JHwro6B9
-         /LCiuUfENfmJZrjTd5SHEBjXTGv+cuGFM/6Y1O7LNQE/PvSfCnsejc9qQog7lqX0ZXzT
-         97Mw==
-X-Gm-Message-State: AOJu0Yz0H1kedMuCCduF6ocoGkR2uaMV/2WyPVGdBIBsT3eUZ+hFh8Yp
-	CGjAeSTqOC/XhB+P+xbFhNmwx1a+/Lq390cVlGh+BTyAc2c=
-X-Google-Smtp-Source: AGHT+IEdcaVSPx3xYl3SsATDPSBvk5OGXUCBOf5fK3rUk6lPpDW+sp9j33kB4HPN4qfSZ08sgWwkdg==
-X-Received: by 2002:a05:6358:b107:b0:175:55e2:c8f6 with SMTP id a7-20020a056358b10700b0017555e2c8f6mr3320601rwo.31.1705144374896;
-        Sat, 13 Jan 2024 03:12:54 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id qi17-20020a17090b275100b0028df00a44casm5189125pjb.23.2024.01.13.03.12.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Jan 2024 03:12:53 -0800 (PST)
-Message-ID: <65a27035.170a0220.bb621.2886@mx.google.com>
-Date: Sat, 13 Jan 2024 03:12:53 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=YVxbvWeN;
+ spf=pass (domain: siemens.com, ip: 40.107.20.59, mailfrom: jan.kiszka@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IvQdxeFjn9L+DR/5EHMziAv1jBP9FBf1jm7udVOqDBooCNNjmIjj3aMEiEKbZxsuxpO1sMLrQP77lPbYOH5/szWGoFsCBcF6dCBpQQNxehheJraQCuOs36pcE4nIcDN66ZjBRf8ndvNetnS2984A6SE9qomwlYIrhgZDQJzrVTT0xZlrKhE7oFMI8/b+4lvwrIFHKq2yOlb7w4m8d9IbDsD+bXk/7d0hec0tkEww99Zk2iXK784FN3jWI/N665ScsEZIk9OfLmlNCIrWvzcKu2vUW78QaQB3J46xKTlPSVZJU5egYoiGh1B9QRoBDsuCyrZa9ljBH3aTH9knSYLN6Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4DVaDTlWrJzA0usYekWcgyZu5ZE75xVSoeqtGQUOwBQ=;
+ b=ehmPeZcXc85KuI07aOdj4tgPkUwWo+mC4CifMrVV2SRk2GZoQpUstWbvPZ9sgSyLBIX7w22ZCiNWIptVxS6d6eCljjm7pPemFiec50LiA1M1n1XFelLlzNIX7xdALcGwAlMURNrq15Y3sfUtvdfI3yJTKb5OA+o/Pi2GEj9yIAdKlf2fwKTYgK6GxSnzYLJhK+mRun9UfupjRgvlaApun2X8FuKjfDTBX/11ZHGTJGRzhDzkoTZWQ35C+8w+nVW9pG3i4s7UDtKIIf/Zdtw9COhlYB+F7/KAZLTaeLs4Yfbb4jvKFh3dfgnO3S/JdrbrzoK1T6xbnBub7CGFOYbSoA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4DVaDTlWrJzA0usYekWcgyZu5ZE75xVSoeqtGQUOwBQ=;
+ b=YVxbvWeNYw8hEZoRcv23t+kHhS7gnK4wtn4WLbmINUJLpB1m86gswqLN0I5iDo/vE1CKJU6nHjsU3D6fTrErtXd/eY82biJdBn0Nj0fwFDjJiOicGIrNYGAPwlWn2nZk66UuDEfwRdUntDc15v5Ni/QYkNbTtnh0VTEhkbNdgXcKsB5HzXruuhq7TJVaIzn429qsgLT3//i87U9aE/2N9+xOxLV7DeIrby9VbTfyI7XdUpipAeug3UgaKsEAZKyI18KjjUhx3mNJ+5t2mY6CKZ7OAjBFobxB3QvVQyDKaFFjeXZwEHuL3WF/YAmDl6t7laiC19B1NWU9d/SIMHQ5TA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by AS1PR10MB5261.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:4a5::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7181.23; Mon, 15 Jan
+ 2024 07:47:07 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8d16:7fbb:4964:94fe]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8d16:7fbb:4964:94fe%3]) with mapi id 15.20.7181.026; Mon, 15 Jan 2024
+ 07:47:07 +0000
+Message-ID: <891fa572-6c47-4ad1-8e48-1cb62b4751c7@siemens.com>
+Date: Mon, 15 Jan 2024 08:47:05 +0100
+User-Agent: Mozilla Thunderbird
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: [isar-cip-core][PATCH] start-qemu: Fix inclusion of QEMU_EXTRA_ARGS
+Content-Language: en-US
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0057.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:cc::6) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.19.y-cip
-X-Kernelci-Tree: cip
-X-Kernelci-Kernel: v4.19.304-cip106
-X-Kernelci-Report-Type: test
-Subject: cip/linux-4.19.y-cip ltp-mm: 6 runs, 3 regressions (v4.19.304-cip106)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
- kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
-From: "kernelci.org bot" <bot@kernelci.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS1PR10MB5261:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6d226c6e-c4e5-4f60-3e72-08dc159e2c53
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	URnX4G4nlN41IXE+SFL8QagUfsP4pEfojCnHHFexmnZaN8pjwK+Rc/lXlD72Xm3wux6BNz93AU/BMpwBO7aQ+e9GvIpn/RHFcDHegL0EHBZQ5t1cX8h9g12enDWlG5Grs6GGAkzR9lnygrNyC7vYfEqQdMj8wSex39/rjDxaPC7Du792NMZVK35dZvwu/JSSFWEuOgMYIsoQijqgqI7prcpWB7VEcn41hIoK267wOl5ulC4jyJKQX5Zr+XsVXawpvdvnaY78A5CL+weoxDA+Epo5zwHP2+ktRYGzm+8kDjRnM+Ld2OhD/iSGCPJWLxz1UyYlZ9vcMuzZcjORhJbxLe3mUS5XSVu5i+0t3BJyn2UsYRijPQ1kJp6d1jg7ZNBPNBdMLgte5lxsE3aX3TzDC59bG0ZZh4zjfCFBplS9dP5SrwmWBGUvI5IjgYNRYyHsea2lWmjhaMi7fVaxcw7S5YK1rdQaHaTzSsNZZqC1d/FlU4+acowBTnEZ7UvgJAWyDF+QoMENL9Ofj4uleTnWrbgFycGuo/Y682+xQmvWch9P7INjBbxS0Ribm1sphh9mdMSnNuEfQrtPId9XnKX2lRRkq+KOToWCjWYFQQAc3iZ3zQVMcRYkoIZ/o4ws7nlYBRxQ4Rj2qmN0b6NzqgsZDA==
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(366004)(39860400002)(136003)(346002)(396003)(376002)(230922051799003)(1800799012)(451199024)(186009)(64100799003)(31686004)(83380400001)(41300700001)(36756003)(82960400001)(86362001)(31696002)(38100700002)(26005)(2616005)(6512007)(478600001)(66556008)(6486002)(8936002)(6916009)(2906002)(316002)(6506007)(66946007)(66476007)(44832011)(8676002)(5660300002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?VThQQTcraWFRdFZKWWtySHNsWVVYaVkrR0Rvdk53UiswdnVxR3lMaERybnpM?=
+ =?utf-8?B?UWVUN0ZuaUZBYzBHcUtSK2pkUVNoRjc5WFl1dWJJaTJCQUw3YWZIdkFpeUQ3?=
+ =?utf-8?B?Rk5QdWtTV3NtRU9wTHYyYWtvbzhJM0o0bG9PU0IyUUZ6NFEvOUdIR25mN0Nu?=
+ =?utf-8?B?UzM0RTVsei8ydW9lcUVTaFpMS2hZanRaLzFYZy9wbGVEa0tLNU5oSWtqNm5h?=
+ =?utf-8?B?UGhQd0JGWWt6Sm1QMHVKUGtvalBDMkpwSTkzSkJnWHVHdnhyT1V3cGVZOXV0?=
+ =?utf-8?B?c3ZRSkxBQTRIeUMwWFlxYktObUd4WUpnUVNkNnpLdVlkaDBjUjlKNG1wa01i?=
+ =?utf-8?B?ektGVEFJV01MeTZVS2ZQVUVOeG9EaFowT2FBVVZCZE1kWEVYRGtkODl6RlJB?=
+ =?utf-8?B?VER3OEw3dTRsOFI4aFg0UFJZa08wd3BYcUtXMGVqRzduMnlHZFF1cGN4aEts?=
+ =?utf-8?B?K1ZBMkhvck9XQ1I0R0xyWk0vY1JaV1hLeUZVWGZsTE56M3hwSllrdEF1SU0w?=
+ =?utf-8?B?QWdaWUc0TnAvdk1zUEZ4THlEalJzbEhiRzBSM2FYRlFQQ0FvVWlkZHE5ckFH?=
+ =?utf-8?B?bW1UblhnTkhIN245VFZZN1RCenlzNmxTdTFPTkFVK1RoVW9lSU9ieUEvNmdK?=
+ =?utf-8?B?SkVqWTd3RTJhaDFnRU52LzZiNnZPWVhaV1hRaVdsQnEyKzVubGgvWEp2clkx?=
+ =?utf-8?B?YmZHOE5kM3k5SXZ3endKSUVvNHhhQUZ1dThSNjgxU1VRam93Z1c2NEZObkVx?=
+ =?utf-8?B?Z09OQXljaEdmK3RnaldUQ3MyMVVWRjBtR0VCQXJDNEdXSFR0Wk4xMGFVTnhP?=
+ =?utf-8?B?Z3lpdUowNXBTSm9Tc2EzYUtSSW1rMk9walAreFNmOVlQVy8wbDE0eWExeHpB?=
+ =?utf-8?B?ekpaQXV4VlQrbVA2MnhTMTNzUHRrL21HU3dnekpmN3NnWGpXUERPd0RZblpJ?=
+ =?utf-8?B?cCtMd0RHMFh4cDhrTElzbTBZejdUUStDVTBHUTVzSC9ScDRLSnRLYjRXZ3hr?=
+ =?utf-8?B?Qk5NQ29FTG5LaFl3NVRNQ2JOOFZRdlBEaFhXTy9GSzlSeU5wckVCVFhFR0tx?=
+ =?utf-8?B?YitxNldGTjRpclNqZWpTRWc2M21Uc2ZNbnVBSUwzVUZpZHVGZEZLWnpGWCsw?=
+ =?utf-8?B?QTdqYnNkYmVvc3pXSXVlRTdtdUJ5dVBFNTFKR3hrSVNMRFgvS083U2RmNkdR?=
+ =?utf-8?B?QkpHMnRiZE5uRnlaVDVkWjgwRWtma3BNTWViZWVDVzFLQkNRSmRwYmFmY2I2?=
+ =?utf-8?B?cG1iVUt0a0FnMGJFaVlWUXk3K0xVRElUMHlTZndOa2pzdU10YVhmOXVSdmlO?=
+ =?utf-8?B?T2tLU2w4ditjdS9sVkIxYjJ5TjArODJuTmtaMVZ1TENZclMrdkxMbTJ6cFpB?=
+ =?utf-8?B?SVVycG1tdEVxSnVGM3crK2s5WjVqU1lUbWtFZndzdHY3WnF2SHN4V3lrN29h?=
+ =?utf-8?B?bVNPblpyckhjR0lzeHJFWnI4M21RNHFKMC9NUE1PelRqVWQyQzRQRU0xUTR2?=
+ =?utf-8?B?ZEtQc3RkV0lIZWJJT1BLdFNTdUdCemZLVldBQXBjU2hDUE9aN0hYZGhzMXk1?=
+ =?utf-8?B?dERXeE5YMHNkMURFVFo4eFNXSkdSM3p4azRxZ0JQWW9uZGhYejl3N2g0TmdZ?=
+ =?utf-8?B?U1ViOEdJSU1tb0FHaXoyQk01VWJmMVNLQkFZQ2NkOTlPb213MGFVQm1YdFJp?=
+ =?utf-8?B?a3dhU1RlelVsVUFwN3ZJMmYwVEtPWThycXYvV3NlOXgxbTVmL3ptckVaZUIr?=
+ =?utf-8?B?U3ltY25tRk5RTFF1cHdkTm5Pc2NGNHN2N2NuZVMzamwyV0hWWFZTd01Va2pu?=
+ =?utf-8?B?RW1SVldwYXRTYzJaUDRodGlURDhLV3QwaTYwT2ExSWgzQkx1VXg0bmQ0RE1s?=
+ =?utf-8?B?OUxmNDRWZFJFN3FUZmZiK05NZGJRemhyY1ZYRXp3bjZXWVRTZWNYWVRQL0du?=
+ =?utf-8?B?dG9LM1pua1hNY3lUeW16REVodG5BaE1sb1NqMmpaVkk2SXlDcGk5bjAyYWhZ?=
+ =?utf-8?B?ODhCODdjNkJuMU0wbkdJMm55UFJHa0NqQ2lGT2ZqK0w0d1doZnloUDFBLzRD?=
+ =?utf-8?B?c0xJczlOdzJkMXIvNlNSd1lPbll6bWhpVVR1OUpYQ2dlckFzVTVYS3ZFa3d6?=
+ =?utf-8?B?U1hEUUFGazJjRnhHNDQyam9hVG95S2ZUcWhpUGhXN0d6K0pwRWpaem9MMXgy?=
+ =?utf-8?B?UVE9PQ==?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d226c6e-c4e5-4f60-3e72-08dc159e2c53
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jan 2024 07:47:07.3272
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bi7oJ/Dt2ieD5BNhtiZ3iM/8tZjndU5vngQD6p4u/2THfk5HeAmgCNeu61G0G15VJMtCeZpziBAw6gjgwQOZNw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR10MB5261
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Sat, 13 Jan 2024 11:13:00 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14375
+ <cip-dev@lists.cip-project.org>; Mon, 15 Jan 2024 07:47:14 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14376
 
-cip/linux-4.19.y-cip ltp-mm: 6 runs, 3 regressions (v4.19.304-cip106)
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Regressions Summary
--------------------
+This was forgotten for the riscv swupdate case, but it is actually
+better done via QEMU_COMMON_OPTIONS in the first place.
 
-platform                 | arch   | lab           | compiler | defconfig   =
-               | regressions
--------------------------+--------+---------------+----------+-------------=
----------------+------------
-asus-C523NA-A20057-coral | x86_64 | lab-collabora | gcc-10   | x86_64_defco=
-nfig+x86-board | 1          =
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ start-qemu.sh | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-r8a774a1-hihope-rzg2m-ex | arm64  | lab-cip       | gcc-10   | defconfig   =
-               | 1          =
-
-r8a774a1-hihope-rzg2m-ex | arm64  | lab-cip       | gcc-10   | defconfig+ar=
-m64-chromebook | 1          =
-
-
-  Details:  https://kernelci.org/test/job/cip/branch/linux-4.19.y-cip/kerne=
-l/v4.19.304-cip106/plan/ltp-mm/
-
-  Test:     ltp-mm
-  Tree:     cip
-  Branch:   linux-4.19.y-cip
-  Describe: v4.19.304-cip106
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
-it
-  SHA:      6617f4528449a329abd3b2dab36052b341610d99
-
-  Test suite revisions:
-    ltp-tests
-      URL:  https://github.com/linux-test-project/ltp.git
-      SHA:  3f0b2176930cf15a26597e28abf4356050136bbe =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform                 | arch   | lab           | compiler | defconfig   =
-               | regressions
--------------------------+--------+---------------+----------+-------------=
----------------+------------
-asus-C523NA-A20057-coral | x86_64 | lab-collabora | gcc-10   | x86_64_defco=
-nfig+x86-board | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/65a267018b67407d6f52a3f9
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: x86_64_defconfig+x86-board
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
-  Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106/x86_64/x86_64_defconfig+x86-board/gcc-10/lab-collabora/ltp-mm-asus-=
-C523NA-A20057-coral.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106/x86_64/x86_64_defconfig+x86-board/gcc-10/lab-collabora/ltp-mm-asus-=
-C523NA-A20057-coral.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230623.0/amd64/initrd.cpio.gz =
-
-
-
-  * ltp-mm.login: https://kernelci.org/test/case/id/65a267018b67407d6f52a3fa
-        new failure (last pass: v4.19.299-cip105) =
-
- =
-
-
-
-platform                 | arch   | lab           | compiler | defconfig   =
-               | regressions
--------------------------+--------+---------------+----------+-------------=
----------------+------------
-r8a774a1-hihope-rzg2m-ex | arm64  | lab-cip       | gcc-10   | defconfig   =
-               | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/65a267ae74e09c5fbb52a3fd
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106/arm64/defconfig/gcc-10/lab-cip/ltp-mm-r8a774a1-hihope-rzg2m-ex.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106/arm64/defconfig/gcc-10/lab-cip/ltp-mm-r8a774a1-hihope-rzg2m-ex.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230623.0/arm64/initrd.cpio.gz =
-
-
-
-  * ltp-mm.login: https://kernelci.org/test/case/id/65a267ae74e09c5fbb52a3fe
-        failing since 728 days (last pass: v4.19.222-cip64, first fail: v4.=
-19.225-cip65) =
-
- =
-
-
-
-platform                 | arch   | lab           | compiler | defconfig   =
-               | regressions
--------------------------+--------+---------------+----------+-------------=
----------------+------------
-r8a774a1-hihope-rzg2m-ex | arm64  | lab-cip       | gcc-10   | defconfig+ar=
-m64-chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/65a269879799e505b052a3fc
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106/arm64/defconfig+arm64-chromebook/gcc-10/lab-cip/ltp-mm-r8a774a1-hih=
-ope-rzg2m-ex.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106/arm64/defconfig+arm64-chromebook/gcc-10/lab-cip/ltp-mm-r8a774a1-hih=
-ope-rzg2m-ex.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230623.0/arm64/initrd.cpio.gz =
-
-
-
-  * ltp-mm.login: https://kernelci.org/test/case/id/65a269879799e505b052a3fd
-        failing since 728 days (last pass: v4.19.222-cip64, first fail: v4.=
-19.225-cip65) =
-
- =20
+diff --git a/start-qemu.sh b/start-qemu.sh
+index 080f939c..98af9717 100755
+--- a/start-qemu.sh
++++ b/start-qemu.sh
+@@ -165,6 +165,7 @@ QEMU_COMMON_OPTIONS=" \
+ 	-m 1G \
+ 	-serial mon:stdio \
+ 	-netdev user,id=net,hostfwd=tcp:127.0.0.1:22222-:22 \
++	${QEMU_EXTRA_ARGS} \
+ 	"
+ 
+ if [ "$TPM2_ENCRYPTION" = "true" ] && [ -x /usr/bin/swtpm ]; then
+@@ -199,14 +200,14 @@ if [ -n "${SECURE_BOOT}${SWUPDATE_BOOT}" ]; then
+ 					-drive if=pflash,format=raw,unit=0,readonly=on,file=${ovmf_code} \
+ 					-drive if=pflash,format=raw,file=${ovmf_vars} \
+ 					-drive file=${IMAGE_PREFIX}.wic,discard=unmap,if=none,id=disk,format=raw \
+-					${QEMU_COMMON_OPTIONS} ${QEMU_EXTRA_ARGS} "$@"
++					${QEMU_COMMON_OPTIONS} "$@"
+ 			else
+ 				ovmf_code=${OVMF_CODE:-./build/tmp/deploy/images/qemu-amd64/OVMF/OVMF_CODE_4M.fd}
+ 
+ 				${QEMU_PATH}${QEMU} \
+ 					-drive file=${IMAGE_PREFIX}.wic,discard=unmap,if=none,id=disk,format=raw \
+ 					-drive if=pflash,format=raw,unit=0,readonly=on,file=${ovmf_code} \
+-					${QEMU_COMMON_OPTIONS} ${QEMU_EXTRA_ARGS} "$@"
++					${QEMU_COMMON_OPTIONS} "$@"
+ 			fi
+ 			;;
+ 		arm64|aarch64|arm|armhf)
+@@ -215,7 +216,7 @@ if [ -n "${SECURE_BOOT}${SWUPDATE_BOOT}" ]; then
+ 			${QEMU_PATH}${QEMU} \
+ 				-drive file=${IMAGE_PREFIX}.wic,discard=unmap,if=none,id=disk,format=raw \
+ 				-bios ${u_boot_bin} \
+-				${QEMU_COMMON_OPTIONS} ${QEMU_EXTRA_ARGS} "$@"
++				${QEMU_COMMON_OPTIONS} "$@"
+ 			;;
+ 		rv64|riscv64)
+ 			opensbi_bin=${FIRMWARE_BIN:-./build/tmp/deploy/images/qemu-${QEMU_ARCH}/fw_payload.bin}
+@@ -240,5 +241,5 @@ else
+ 			-drive file=${IMAGE_FILE},discard=unmap,if=none,id=disk,format=raw \
+ 			-kernel ${KERNEL_FILE} -append "${KERNEL_CMDLINE}" \
+ 			-initrd ${INITRD_FILE} \
+-			${QEMU_COMMON_OPTIONS} ${QEMU_EXTRA_ARGS} "$@"
++			${QEMU_COMMON_OPTIONS} "$@"
+ fi
+-- 
+2.35.3
 
