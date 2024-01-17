@@ -1,176 +1,311 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9971C47077
-	for <webhook@archiver.kernel.org>; Tue, 16 Jan 2024 16:24:35 +0000 (UTC)
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.58])
- by mx.groups.io with SMTP id smtpd.web11.20224.1705422266778549954
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FAECC47258
+	for <webhook@archiver.kernel.org>; Wed, 17 Jan 2024 23:22:54 +0000 (UTC)
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+ by mx.groups.io with SMTP id smtpd.web10.2382.1705533763062301371
  for <cip-dev@lists.cip-project.org>;
- Tue, 16 Jan 2024 08:24:27 -0800
+ Wed, 17 Jan 2024 15:22:43 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=jRXvMWba;
- spf=pass (domain: siemens.com, ip: 40.107.6.58, mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DrPkcNh3quqlnIlib5jt4M9aFowwov/IOJseeCbGP4wuzCVP1dvArrRlYm8g1wNmr2PX0nJmRmBmn+NldcjZNZm0mYs1pgCQhKPGoGUICxvUn7eWb+f9QVKktR/5ee9PyTRJ/9Ui40s7ukOkXCYBNWY0I5g/6XvrIQESO2uARrHXovgCX1NNVb3mQNfHm6OZmnvQJOPt2rws8B2I+fNGHKSLMRtjjYJlI+eRHsvGscKhec14vRLw0cyw/AJDzZqCVwFvG/a74yozv+eNu0tn1643qM4vJ/soaeNSbOKrKuA0lzWOztF5DM2ZgUX+orme+M9EgdguA5Qrf8jqFX3U7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9Ej5pIRqjB5J5gYRjAvfHEOadd4tr2FPXjhtgaXvGf4=;
- b=RVwPuxcYFnErdw2unhcFSObevBtnXgfFcVE/i9JwctixfcNyUVJ0Odl81JSbsrH9nI8F/9dYaiwJiDG48tXKwnSKlbDrYnkooL9IMR6cxaO3c0zcyHLYbZzPqwyqf17FO6wtrWqS0y6CP4wQ8wtIxJ35mz9/HIKPsqav4V2s2GvQ8UvereB9hw+22QeQEHRWijFuUb0HKt+WdPkfNBUsV/2wu8yXrFGfX29RJ9FSeCVWkcYMukuGoo8rA1gq6MZ3Bo0Nu/D1FHZaEBekIK/7TYeCKMlM8TEiB8WpltmL6/QYnAmwFsCPn3ydU/JexRnrecbyVJ1MUc13v/ioJWI02Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9Ej5pIRqjB5J5gYRjAvfHEOadd4tr2FPXjhtgaXvGf4=;
- b=jRXvMWba9vrMPUZJ6y+qb0zWyDRghRrY7DJZDroc/inbWgNHFAR/NHftz7Be4XSvg/9Fb36dUMkMeG89agm4uKQ13Cb6MLanBrBXoEwp044G+UExQXy+ntTad/i9L9vfHw9w61zYzdL3jy2vvjIfhsd5WbhO9tLRcToiNeoehYx4bl1gXUb5ze8HhN19E3IT4mQhmXIQbAG55MgRha8pUu0e1Lns8YGGrwKJIi9sIbKSSb7urGQyW8y2vGXqqlGk6LEztsCBs3zuGtSlgplBF52ddAM8dCAldlNk8JZyPa6zYjwDdWlvlvqk/F/z8Dsw8W/19q3yctuhqFLSI5qOMQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by PAWPR10MB7293.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:2f2::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7181.26; Tue, 16 Jan
- 2024 16:24:23 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8d16:7fbb:4964:94fe]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8d16:7fbb:4964:94fe%3]) with mapi id 15.20.7181.026; Tue, 16 Jan 2024
- 16:24:23 +0000
-Message-ID: <0e2458f1-e3d5-45cc-a37e-5c6b87c858f3@siemens.com>
-Date: Tue, 16 Jan 2024 17:24:18 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core][PATCH] efibootguard: Update to latest
- debianization
-Content-Language: en-US
-To: Gylstorff Quirin <quirin.gylstorff@siemens.com>,
- cip-dev <cip-dev@lists.cip-project.org>
-References: <2bb4e18b-20bd-4dd0-9301-fb08aea7a730@siemens.com>
- <c3dc60a8-ff32-4e16-a1af-9087b4e84193@siemens.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <c3dc60a8-ff32-4e16-a1af-9087b4e84193@siemens.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: CH5PR04CA0024.namprd04.prod.outlook.com
- (2603:10b6:610:1f4::9) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+ dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=Q0/KVxx/;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.160.53, mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-20757468411so3079639fac.3
+        for <cip-dev@lists.cip-project.org>; Wed, 17 Jan 2024 15:22:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1705533762; x=1706138562; darn=lists.cip-project.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=W7TvHsLofO/o/H7hidOIaq3JjGiDYndj98sSIxTMVqA=;
+        b=Q0/KVxx/INzxaQVkQjvodiH8TQT/elnnkJrUhCE16pMN9qeqeQK7sue+vpPEvA6nYa
+         eT5gfLIUCE5wzNohl3GQ0FqdIZ0Ifc3T03bddx0JnXhJXgeBA73DlAzZwF/QtW6GBrU9
+         ul0jXEH0C4UZ92wyJKU52mng3lOPvQAaQn3+e06f7bKGikUqEtQJOdMg+g6VQg5pwfj+
+         l+VHQtddxotpCuRZi8XEYhIAQO2xHH8+7tBueApxkBWfi3fyf2aoC7bUO1qmMtlwKC4V
+         43kee1pA3fE9X42pQl638DUPL5NeEZjt445FhMEhhSCcEpcKSmT2Xy/ApbkpLNNlXNOE
+         45RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705533762; x=1706138562;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W7TvHsLofO/o/H7hidOIaq3JjGiDYndj98sSIxTMVqA=;
+        b=vZ43obhGGQ8Drnq40QGzBOVMflsso6TsRBxaZpEQYMSHQJO0vOT7mR/YqmGfKZIic8
+         UDt8tx7GRN/0IgDTSGanyOAcSUkFPX6c2zIZTPrkONf2uX6bKjP8NDjTKGrikETOxAjm
+         QIZkhd2SMyFGaDIKPpzjuM8LLrOoDPIO/G3stsXiyyPk0//ETweoFrhPQhUS4MP9RsG+
+         k93N7Z+Wcg3p2GVPka+sKjOhB/brXylGgmQTu87IfnhJXbFeLIjXtMmu+2ze4gLWQp1e
+         +XUjOyFiqVxzUZuQkVl6Cr/YNYHb2/G/xcSGzX6UmM8G9T/trbOfFzv9/iQCnagmnVnC
+         BQWQ==
+X-Gm-Message-State: AOJu0YweTPmA0iquPukYkIok3N7JiSMSuACGx4czJm//voNpezyUy6Ie
+	1dklzRMEsfjHO9cVnUuGTvBz/ywk4RitihU9Q8w7Cd3BvqkmFmuEHI1oGiN+wkI=
+X-Google-Smtp-Source: AGHT+IFhKO1pJLlcPkxfeTONx/1CJhB9G82Z93bGyyrElV6L5OcJF1lPDQ4mdcOXc+bKbfvRJJw91TggkC/d34rTaSM=
+X-Received: by 2002:a05:6870:23a4:b0:206:7ef1:2e6a with SMTP id
+ e36-20020a05687023a400b002067ef12e6amr13244643oap.97.1705533761907; Wed, 17
+ Jan 2024 15:22:41 -0800 (PST)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PAWPR10MB7293:EE_
-X-MS-Office365-Filtering-Correlation-Id: c320e3e3-be46-4db4-a05b-08dc16af9983
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	5VXhDr1OiNvbkF0TZ/sVXKd9OFJxQXbGefOjpy0IrLC1w1lJhvcLupuYlXx2rRpbHhXDqpNDd5RcNgs3dq484GyJBVZvUiLMQFAPrRLqM7n7oIFjo4/gwIkF4X/+Fw6dSkeyzHmv9bK45xhO7+cu+s0HF4FfjaWLyFuHS8lvq55xayewg/R179blrqs/KjP5tf7N8lRmFC/aJbXok/X9fdMR+1s+XKrePbmf3sKmcSly1QMusMuhUxaW5HWSw885JdmEw8KEjG4bKSbbR7NjT9AflJpMX9nvWCmu6Nhpwkoitqxqmi64yPDCBK5UJebqJ8XNekyMLAqK0Ih2q5xB7WSCNQOh7sxPE/Tw/lBczruykR2xnxerUBKKw12twySplx+5rUs7uUpbKg57SUty1ACCM1d1qIc80JXaXvSC2GKDHzIyboNvq/y1EuEuc1SH2NzkPFx/wagAEZz7wv7w7rbqHWZLUveuq43cYrKvyL5L6YeKUHoJOJAAz5l2QBGGeoFjrvzqVMvrcpD5LZibZAn2eFvP77GkOGqWUl0hWay08rqyrkV7Ua95yjqB2KbRVggeQYbHUAwkh6qYwg7qz4QpwgU0zJ/AprjEpkm2tTL6agNm2/1CJpXMbJumU8HqG2ak2uA3tz0TCWKU/AlMiw==
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(136003)(366004)(396003)(39860400002)(376002)(346002)(230922051799003)(64100799003)(186009)(451199024)(1800799012)(31686004)(83380400001)(53546011)(31696002)(86362001)(36756003)(82960400001)(6666004)(44832011)(8936002)(8676002)(5660300002)(66946007)(26005)(2616005)(38100700002)(66476007)(66556008)(110136005)(2906002)(41300700001)(316002)(6506007)(6486002)(6512007)(478600001)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?GtTHvbL4+ePVjRYW+nflrD2do9PrY0HkhltccOYpKdGg8JcwUKT+O7QR5GVm?=
- =?us-ascii?Q?XGo4hzFQaQBZ65enIVZX4/3paBfVIGN9XivYw2hkz6jHL5tzPr6ik+OJQ9YH?=
- =?us-ascii?Q?6rbsOmKKCBLgEZTnRwNX8GDlPxJ9b0BbDg0/Cb0HOfYA28bOlFxbEaaFcg5b?=
- =?us-ascii?Q?FyL3qGWh8xEMPjT1W0AZbFWOqChk1YuWFpw3xD5lmwn6RqhwZg3GofWfg4nU?=
- =?us-ascii?Q?zH1maUXYUZSTjH/oBXkJfHke+9Xt+ukQL5XJuFWCXH1IeRHBiqnzLxzTQU56?=
- =?us-ascii?Q?I2wMLIwkGq21RdDrt1fUTO6QrDBmjRYYJBX9ZH4aD9z9X1VQHogYHoz40Mtf?=
- =?us-ascii?Q?c9IE2HSXOCTdwgAqKWhwO9iIDxQNNTrPp8pHT6lvXXbGv925Sl+uqLwBvDSC?=
- =?us-ascii?Q?cFUJbt6u0Gsy9MChqNfrFSbss026TKiOgZcXZgtA3JD1enQTCsPJSIHAztBC?=
- =?us-ascii?Q?/Kea00djTwKvAjT7ot57Y4Fqy6H3CikVbnFG1JHZYJZdpV6mMJDYQk+mYdtm?=
- =?us-ascii?Q?XD8faAyZmYLpx521EQfH/S4MynqS3Rfo6OyihBbR9AE615jdhZLKKL1kRHc5?=
- =?us-ascii?Q?9kVERCOf6FzZ1XVhD1u3j0Qoe/q7KKP9mj5xeujWvJ9fMFLe89a2eBHe/LFD?=
- =?us-ascii?Q?KnIxufnwKXgfalR4/hbVyf8GF7bp8gT3Cx5a2q77f0lHrhOXiA5PVosG3bBb?=
- =?us-ascii?Q?Ya7wWDqmG8R8TBYAi+OW7oKZYT2TAxwuZoj1kNa5M8UE/56kmyT5Zigrd8W8?=
- =?us-ascii?Q?YhOWT5xHpmXIdtMo28vkLtB5PHAuM7yWHCECCvzRVX5dfBe9Kkqyek8a0W/d?=
- =?us-ascii?Q?d4Xqz9DK45CSyi3QritwM8bJjPiVV903MYyLD3s8SP1Rs3ZMTjxQt3ywniY+?=
- =?us-ascii?Q?bSa/RL3I/eLNL6D8X0mvgcoWV4XGKPtFrEueJbcd/L2L2eXDzPalkEeonted?=
- =?us-ascii?Q?WysjIBTXT4mL2V21eUckXljeYEr4Zs8DX6yeGJ1rWeFg/6/as3plp2BewSbZ?=
- =?us-ascii?Q?m9JLu+i18Vp7bNkWRwq2iAIUVOpyN9juBGAIybu73+yAgfHa6BaDi+pNmwM8?=
- =?us-ascii?Q?GC0at8DQeSm8n2rBGOnu4Ziv6A2ErVEcnOTf1G0zXDM2LOVMrZoW5tH0w0lH?=
- =?us-ascii?Q?nXNmsfwm1/RE9cL6X/86uQ4C0zCqCbA1LUt6edyuaaV8QhTRDj4t2TwqeUnx?=
- =?us-ascii?Q?RIbJqiQ7Izg0Ls4WlnB8ywDw1wNhKo7wY+kXjLDKh3kydPYzkje9ne+JTTgW?=
- =?us-ascii?Q?gqfseuNriODXwOenjD6+K+te28PNjmyle/fcP0au5xpgyg0Jdbb2JymKTi7P?=
- =?us-ascii?Q?dnKOyw9bbGBvKyRwUR8jzmEsjcTXhBU54yDnnFhqk3VhGpWoN44SL01fvOMO?=
- =?us-ascii?Q?b1gAn2mB/Q1sKV6vsyvuqtZ04MWy/uL8CtE4oJxyAb8Izg6a7bNPOmMKT37h?=
- =?us-ascii?Q?sVhsAuLkrGguYxAFGchXOAP8jEVwT7KbPbJryRZmpQmnGLYjffSiqsO7Wcyp?=
- =?us-ascii?Q?WFsZ8ZUA6R3KoMj3QXEKKAcXQl+EdBD9hAZ+lP/T6pqP2ITri+z7pROMSNJB?=
- =?us-ascii?Q?RLUO+sKXjO7phgKRGswnrODWIEXz0ji8LwM3sgD4hiZoorLHfbSmNBfXp1EG?=
- =?us-ascii?Q?wQ=3D=3D?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c320e3e3-be46-4db4-a05b-08dc16af9983
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jan 2024 16:24:23.2463
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AQb/WmpXj9xTWoCOe5YgHuwoZiJFZRgQCiXpkMy+uAjgRghoIQFBmv2yW3cieVwZ1bFdAVZgYOmVCkBGxWLQkg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR10MB7293
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 18 Jan 2024 08:22:06 +0900
+Message-ID: <CAODzB9ppVQbOoRXOiJ6LSYYQYGuvaqzCHEge3YxND2wStzumYA@mail.gmail.com>
+Subject: subject: [kernel-cve-report] New CVE entries this week
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 16 Jan 2024 16:24:35 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14397
+ <cip-dev@lists.cip-project.org>; Wed, 17 Jan 2024 23:22:54 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14398
 
-On 16.01.24 16:17, Gylstorff Quirin wrote:
->=20
->=20
-> On 1/16/24 14:32, Jan Kiszka wrote:
->> From: Jan Kiszka <jan.kiszka@siemens.com>
->>
->> This fixes cross-building and allows to use python3-shtab in bookworm
->> and newer from Debian directly.
->>
->> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
->> ---
->> =C2=A0 ...bootguard_0.16-1+cip.bb =3D> efibootguard_0.16-3+cip.bb} | 8 +=
-++++---
->> =C2=A0 1 file changed, 5 insertions(+), 3 deletions(-)
->> =C2=A0 rename recipes-bsp/efibootguard/{efibootguard_0.16-1+cip.bb =3D>
->> efibootguard_0.16-3+cip.bb} (89%)
->>
->> diff --git a/recipes-bsp/efibootguard/efibootguard_0.16-1+cip.bb
->> b/recipes-bsp/efibootguard/efibootguard_0.16-3+cip.bb
->> similarity index 89%
->> rename from recipes-bsp/efibootguard/efibootguard_0.16-1+cip.bb
->> rename to recipes-bsp/efibootguard/efibootguard_0.16-3+cip.bb
->> index a7ffb00b..83be2a4d 100644
->> --- a/recipes-bsp/efibootguard/efibootguard_0.16-1+cip.bb
->> +++ b/recipes-bsp/efibootguard/efibootguard_0.16-3+cip.bb
->> @@ -1,7 +1,7 @@
->> =C2=A0 #
->> =C2=A0 # CIP Core, generic profile
->> =C2=A0 #
->> -# Copyright (c) Siemens AG, 2020-2023
->> +# Copyright (c) Siemens AG, 2020-2024
->> =C2=A0 #
->> =C2=A0 # Authors:
->> =C2=A0 #=C2=A0 Quirin Gylstorff <quirin.gylstorff@siemens.com>
->> @@ -24,7 +24,7 @@ SRC_URI =3D " \
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
->> file://debian-patches/0001-d-control-Make-compatible-with-debian-buster.=
-patch \
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "
->> =C2=A0 SRC_URI[tarball.sha256sum] =3D
->> "d6d37c59aed17489d02b4f0b63db16994dfb8f9f70f54be4d65c366f58c6be9d"
->> -SRCREV_debian =3D "2e80fafa87f8f6fd093f49ff33ad7cac61592871"
->> +SRCREV_debian =3D "22b173a3293c976c9dff2ae92085d7ed995f6768"
->> =C2=A0 =C2=A0 PROVIDES =3D "libebgenv-dev libebgenv0 efibootguard"
->> =C2=A0 @@ -34,7 +34,9 @@ PATCHTOOL =3D "git"
->> =C2=A0 =C2=A0 inherit dpkg
->> =C2=A0 -DEPENDS =3D "python3-shtab"
->> +DEPENDS:buster =3D "python3-shtab"
->> +DEPENDS:bullseye =3D "python3-shtab"
-> I think :native will fail for buster.
->=20
+Hi!
 
-Yes, and that even for bullseye. I'm not yet understanding why that
-breaks - limitation of those apt/dpkg versions?
+It's this week's CVE report.
 
-Jan
+This week reported 10 new CVEs and 1 updated CVEs.
 
+* New CVEs
+
+CVE-2023-6040: An out-of-bounds access vulnerability in the netfilter
+in the nf_tables
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): 7.8 (HIGH)
+
+An out-of-bounds access vulnerability involving netfilter was reported
+and fixed as: f1082dd31fe4 (netfilter: nf_tables: Reject tables of
+unsupported family); While creating a new netfilter table, lack of a
+safeguard against invalid nf_tables family (pf) values within
+`nf_tables_newtable` function enables an attacker to achieve
+out-of-bounds access.
+
+This bug was fixed by commit f1082dd (" netfilter: nf_tables: Reject
+tables of unsupported family") in 5.18-rc1.
+
+Fixed status
+mainline: [f1082dd31fe461d482d69da2a8eccfeb7bf07ac2]
+stable/4.19: [087d38ae0fd5a9a41b949e97601b4b0d09336f19]
+stable/5.10: [25d1e7be85cf0a5afca5555f90e4609c40480ece]
+stable/5.15: [ab3a3aadb373b47a1f401c7626608b1b214cec9e]
+stable/5.4: [8711fa0c06d49ad3a45b60cc10ae72980df89b00]
+
+CVE-2024-0443: blk-cgroup: Flush stats at blkgs destruction path
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): 5.5 (MEDIUM)
+
+A flaw was found in the blkgs destruction path in block/blk-cgroup.c
+in the Linux kernel, leading to a cgroup blkio memory leakage problem.
+When a cgroup is being destroyed, cgroup_rstat_flush() is only called
+at css_release_work_fn(), which is called when the blkcg reference
+count reaches 0. This circular dependency will prevent blkcg and some
+blkgs from being freed after they are made offline. This issue may
+allow an attacker with a local access to cause system instability,
+such as an out of memory error.
+
+This bug was introduced by commit 3b8cc62 ("blk-cgroup: Optimize
+blkcg_rstat_flush()") in 6.2-rc1 ant fixed in 6.4-rc7.
+
+Fixed status
+mainline: [20cb1c2fb7568a6054c55defe044311397e01ddb]
+
+CVE-2022-48619: Input: add bounds checking to input_set_capability()
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): N/A
+
+An issue was discovered in drivers/input/input.c in the Linux kernel
+before 5.17.10. An attacker can cause a denial of service (panic)
+because input_set_capability mishandles the situation in which an
+event code falls outside of a bitmap.
+
+This bug was fixed in 5.18-rc1.
+
+Fixed status
+cip/4.4-st: [41f0ae4fd900e90ebf7257cbe04edffc4aeb8ab5]
+mainline: [409353cbe9fe48f6bc196114c442b1cff05a39bc]
+stable/4.19: [01d41d7e7fc7eef99ae5b1065d9186f91ff099e7]
+stable/5.10: [d5e88c2d76efa9d7bb7ceffaec60fe6c76c748d7]
+stable/5.15: [0211383109832103cfddfd5c5cc99b29d40bb749]
+stable/5.4: [bb83a744bc671804016e23861a892e9db2aee73f]
+
+CVE-2023-6915: ida: Fix crash in ida_free when the bitmap is empty
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): 6.5 (MEDIUM)
+
+A Null pointer dereference problem was found in ida_free in lib/idr.c
+in the Linux Kernel. This issue may allow an attacker using this
+library to cause a denial of service problem due to a missing check at
+a function return.
+
+It was fixed in 6.7-rc7.
+
+Fixed status
+mainline: [af73483f4e8b6f5c68c9aa63257bdd929a9c194a]
+
+CVE-2024-0565: smb: client: fix OOB in receive_encrypted_standard()
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): 7.1 (HIGH)
+
+An out-of-bounds memory read flaw was found in
+receive_encrypted_standard in fs/smb/client/smb2ops.c in the SMB
+Client sub-component in the Linux Kernel. This issue occurs due to
+integer underflow on the memcpy length, leading to a denial of
+service.
+
+It was introduced by commit b24df3e ("cifs: update
+receive_encrypted_standard to handle compounded responses") in
+4.19-rc1, then fixed in 6.7-rc6.
+
+Fixed status
+mainline: [eec04ea119691e65227a97ce53c0da6b9b74b0b7]
+stable/6.1: [9f528a8e68327117837b5e28b096f52af4c26a05]
+stable/6.6: [534733397da26de0303057ce0b93a22bda150365]
+
+CVE-2024-0562: A use-after-free was found when disk is removed
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): 7.8 (HIGH)
+
+A use-after-free flaw was found in the Linux Kernel. When a disk is
+removed, bdi_unregister is called to stop further write-back and waits
+for associated delayed work to complete. However,
+wb_inode_writeback_end() may schedule bandwidth estimation work after
+this has completed, which can result in the timer attempting to access
+the recently freed bdi_writeback.
+
+Introduced by commit 45a2966 ("writeback: fix bandwidth estimate for
+spiky workload") in 5.15-rc1 then fixed in 6.0-rc3.
+Prior to 5.15 kernels aren't affected by this issue.
+
+Fixed status
+mainline: [f87904c075515f3e1d8f4a7115869d3b914674fd]
+stable/5.15: [f96b9f7c1676923bce871e728bb49c0dfa5013cc]
+
+CVE-2024-0582: io_uring/kbuf: defer release of mapped buffer rings
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): 7.8 (HIGH)
+
+A memory leak flaw was found in the Linux kernel=E2=80=99s io_uring
+functionality in how a user registers a buffer ring with
+IORING_REGISTER_PBUF_RING, mmap() it, and then frees it. This flaw
+allows a local user to crash or potentially escalate their privileges
+on the system.
+
+It was introduced by commit c56e022 ("io_uring: add support for user
+mapped provided buffer ring") in 6.4-rc1 then fixed in 6.7-rc4.
+Prior to 6.4 kernels aren't affected by this issue.
+
+Fixed status
+mainline: [c392cbecd8eca4c53f2bf508731257d9d0a21c2d]
+stable/6.6: [7138ebbe65caf65f52b923d4ef819c77d04ea671]
+
+CVE-2024-0584: ipv4: igmp: fix refcnt uaf issue when receiving igmp query p=
+acket
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): 6.3 (MEDIUM)
+
+A use-after-free issue was found in igmp_start_timer in
+net/ipv4/igmp.c in the network sub-component in the Linux Kernel. This
+flaw allows a local user to observe a refcnt use-after-free issue when
+receiving an igmp query packet, leading to a kernel information leak.
+
+This bug was introduced in 2.6.12 or prior, so all stable kernels are affec=
+ted.
+
+Fixed status
+mainline: [e2b706c691905fe78468c361aaabc719d0a496f1]
+stable/4.19: [6b6f5c6671fdfde9c94efe6409fa9f39436017e7]
+stable/5.10: [772fe1da9a8d4dcd8993abaecbde04789c52a4c2]
+stable/5.15: [c4a00c47a140c39a0497a40b0f54cf4586a2b1d7]
+stable/5.4: [7ccf772a8bad7962d12d48723447c3605a6e23c1]
+stable/6.1: [94445d9583079e0ccc5dde1370076ff24800d86e]
+stable/6.6: [bf8601dabed0c134a7d58085824e3e466840c5d1]
+
+CVE-2024-0607: netfilter: nf_tables: fix pointer math issue in
+nft_byteorder_eval()
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): N/A
+
+In the nft_byteorder_eval(), there is a loop and writing to an array
+of dst to 8 bytes data but dst's type is u32. So that an oob write bug
+occurs.
+This bug was introduced by commit ce1e798 ("netfilter: nft_byteorder:
+provide 64bit le/be conversion") in 4.5-rc1. Fixed in 6.7-rc2.
+4.4-st, 4.4-cip, and 4.4-cip-rt are not affected.
+
+Fixed status
+mainline: [c301f0981fdd3fd1ffac6836b423c4d7a8e0eb63]
+stable/5.15: [b8b514b2a6cdfac24911e4910461bcb9db15ca8d]
+stable/6.1: [18a169810cff769a7a697b35058c756805f589e0]
+stable/6.6: [013deed31ab15ef287b0045e4e7bd8f250e75b94]
+
+CVE-2024-0646: net: tls, update curr on splice as well
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): 7.0 (HIGH)
+
+An out-of-bounds memory write flaw was found in the Linux kernel=E2=80=99s
+Transport Layer Security functionality in how a user calls a function
+splice with a ktls socket as the destination. This flaw allows a local
+user to crash or potentially escalate their privileges on the system.
+
+This bug was introduced by commit d829e9c ("tls: convert to generic
+sk_msg interface") in 4.20-rc1. Fixed in 6.7-rc5.
+Kernel 4.19 and 4.4 are not affected.
+
+Fixed status
+mainline: [c5a595000e2677e865a39f249c056bc05d6e55fd]
+stable/5.10: [c6b2a6b827d4b2d0f36b520e54e083df9b330a7b]
+stable/5.15: [ba5efd8544fa62ae85daeb36077468bf2ce974ab]
+stable/5.4: [c67bf30baf261b467988fd40668bc893b71586b9]
+stable/6.1: [9b3d3a7f3c4d710c1dd3f723851c3eeaf42642bc]
+stable/6.6: [eb30a025982f61910f32e99778db3c0ceceaff5c]
+
+* Updated CVEs
+
+CVE-2023-39198: drm/qxl: fix UAF on handle creation
+
+stable 5.10 was fixed.
+
+Fixed status
+mainline: [c611589b4259ed63b9b77be6872b1ce07ec0ac16]
+stable/5.10: [03585b18b715621a64ced023ca8c1fc36b6b2119]
+stable/5.15: [d578c919deb786b4d6ba8c7639255cb658731671]
+stable/6.1: [a1fa8f0fc58e0ec972f718030710efc442d7304b]
+
+Currently tracking CVEs
+
+CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
+Bluetooth Core Specifications 4.0 through 5.2
+
+There is no fix information.
+
+CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
+Provisioning Leads to MITM
+
+No fix information.
+
+CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
+
+No fix information.
+
+Regards,
 --=20
-Siemens AG, Technology
-Linux Expert Center
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
 
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
