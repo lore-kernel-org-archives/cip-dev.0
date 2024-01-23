@@ -2,53 +2,52 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 747DEC47258
-	for <webhook@archiver.kernel.org>; Tue, 23 Jan 2024 09:26:57 +0000 (UTC)
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (EUR03-VI1-obe.outbound.protection.outlook.com [40.107.103.63])
- by mx.groups.io with SMTP id smtpd.web11.8237.1706002007014434220
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 730BCC47DDB
+	for <webhook@archiver.kernel.org>; Tue, 23 Jan 2024 09:28:17 +0000 (UTC)
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (EUR02-AM0-obe.outbound.protection.outlook.com [40.107.247.42])
+ by mx.groups.io with SMTP id smtpd.web11.8274.1706002095900924204
  for <cip-dev@lists.cip-project.org>;
- Tue, 23 Jan 2024 01:26:47 -0800
+ Tue, 23 Jan 2024 01:28:16 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=TCXoCMiT;
- spf=pass (domain: siemens.com, ip: 40.107.103.63, mailfrom: quirin.gylstorff@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=FPRZDL4m;
+ spf=pass (domain: siemens.com, ip: 40.107.247.42, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LRm9YxmMfTstYk0qcw9u4z8yf2za28SSxlxQj45g4xnQ76aJC4krZqdnXEo9cp+ypjOZq/nPRyd2qWTJz7/oBwLGmN5kVUvQFMCXYV+RpTERniwhjfy79vcvKm5hN5XZX34jC9uM+dvKiu3okrgXuiHG42cKiJCv/hxYXNRQxZhSnLzoR3H54kyFuhEqhQe1bt/jzKG/cJfwCul5g+kxINXFKAlvQ0GCXvrhZ4fbLqO7FNFnTSQ0TNffZjIIyBuHHpChvoN1rNgEvesCNCdE0F5my6265T7ZFPltS+mHzKV93Rtw8yDdBtcwWWfQGJHCoS56EkgjVvPb2M74/WORzA==
+ b=dhrt4fh4xnKQ76hS5DOb//JNhSxlbbCFIlsYsHiLwGZ3m9kiHROu4AItVW0UtjEXv0Ge8DVMvgrQPzbEgXXb/bkeJxMzU+ayatKLgKtuCm0iyXnUkSvbS00bgl4fW9AkR4NXMfFz14WecshR+y5j3dK+W2P2qIarml/DLOr2ddbsBn8y553uTawOaZlRTG8tZkHrQyeWKisatc3cmZkxARn67+5rlH+Rlk1ieuf39Sw4jfwDBGc6qaSMruKXgdmXA2B7XPr/u/VSU8RSuJ57fDXHF5UemQL4CqZDDletnrTyK4d+/AbjpPXga48Os+WTQa6LwIJjKU0b6O7Om5Tmxg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ag9EU0Oct0e1lMz5JRtn4/yQk4jRLcFnfjcRXtqkyH8=;
- b=kG+QkOtMfoZTKfUOA2ZZ+tQe35Q7nFKqhJXGL2g51nVuMMoMXYoSB3fe9qqMmqpSclSslHjqqtu2LEKs1AMlfjVpy2dnsMC1HsuxG1qVa43bLSonWHw9zONmEXVXeScgzkaBwCK3GEEG559K8tax38r20rWSOYpEUSRvAtx8uuQdBHRVFWNVL457tuHzztwD1xk0k7DvL5D8xA+NgOo1DFJ/nKMbOEeXyF3qMacCtZrGdTskuU3NrS76aziqNq645RqbYIhbh0BgYLIavt9f2rfnTiskgDMGqqRWd0iTm5ZZ83DOPvrvhBM7BzECeZuJKIa+DAYqVCMeqnmzEGEMYA==
+ bh=fkeVJMqMgd4894kgcdvvMrWi2thcVInI5bclU9xWHpA=;
+ b=Q9LtAS5hErObyvwLjVtN6CKR+gw/vxVlEsR/GMZAw53k7Pwvg4N3b8yFzUghNstbIfH50+LSihQyEaB2XykvZmB2kqi7ojHX2xMHO6VxaNjUY1TL7wZcXjWnH88ULI0HTlxTPaaXTv3S0JZJhSLiQ8le0fJGcntlkVz0fJDzNpqnaHfaAE7JOGZgV3ADuvn+0qPceJ9urzXeuMwl6t8BxDjJJxp6g+AypXk2HCD6RtHCXraZ3l3fcR8rL/l/KVFApNf1y9inJIaRipiukyRjCMS4Hh83jAMbEyqbKRBmMZhV/gX/yCtnCOqVT27018I7uUUkhLPBXjpCzL9DcjSkPQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ag9EU0Oct0e1lMz5JRtn4/yQk4jRLcFnfjcRXtqkyH8=;
- b=TCXoCMiTaH65fUoMyM4OY6kvd6j4N6sy2/Sw6Qtzk7IyftIfF2hgEPSjicZ9YNhGeJysPb+CzEpkcK7LrHX5mz7ZmcvV264ewEHgjXJAZVoFZ0TvivN+49sfrpJrgHyLQXJbcntcyC3fPk6iPZaeN2Ref6XEQU/ywzMBZtq+iQIBNS5YU6+tougPDe5/AnuPPIzkXB8e6UCJhMn4YYJmckvC55J6oZjNZa1waBvFisnfMYTUisBz34l1lgJQma7rcl6jRliB0GrU2Yblig3MfNoLnr6FJyMJqn9ZoK+Li3+I5Zp2ZsTm2QJfkC+EfyM7gDO0oWE2GQDb9K8jMDGi/Q==
+ bh=fkeVJMqMgd4894kgcdvvMrWi2thcVInI5bclU9xWHpA=;
+ b=FPRZDL4mC/SvlUAHc/9ScJPxAUS/XP0tb43g0fGzqATDPofpFDzSmRqaLl+jwTlZEHVx29kxLGSVACRJ3ybNIBQ3GPRoT9X6BIgNm1XNE7Ws46LMf8tl6wp8E39GwKNqsyDtAbSue+aBbf3WtnITkNbN0zzv4k4ywOK2thJ3NN+stbog4/sbz2py5Szc0IbGkQCLDfibx89KVc3nScNN4BcToYTa96Rw3aFN/ZoyZlz62gWktAEkkUZT5LX7SDVwl5Bwkieb/g0xbttC1w9pJKbXX2mYoaLxIXl6dBJAHXV5PnSvCMk0JnlrflBAthDU1J3uaYp4B1ntSfvZtUhSMA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1f9::22)
- by PAVPR10MB7057.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:302::15) with
+ by DB8PR10MB3845.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:16f::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7202.36; Tue, 23 Jan
- 2024 09:26:43 +0000
+ 2024 09:28:12 +0000
 Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::5c76:8089:1f9b:63d9]) by AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::5c76:8089:1f9b:63d9%4]) with mapi id 15.20.7202.031; Tue, 23 Jan 2024
- 09:26:43 +0000
-Message-ID: <9c94546d-58ef-4fde-9aa0-3d162e750e4c@siemens.com>
-Date: Tue, 23 Jan 2024 10:26:41 +0100
+ 09:28:10 +0000
+Message-ID: <0c38e88e-aa93-494c-b8bb-5e258a4dbc20@siemens.com>
+Date: Tue, 23 Jan 2024 10:28:09 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev][isar-cip-core][RFC 4/4] swupdate: Add patch to copy the
- server_wfx.lua to /usr/share
+Subject: Re: [cip-dev][isar-cip-core][RFC 2/4] swupdate: set SWU_HW_COMPAT
 Content-Language: en-US, de-DE
 To: "Moessbauer, Felix (T CED OES-DE)" <felix.moessbauer@siemens.com>,
  "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
  "Kiszka, Jan (T CED)" <jan.kiszka@siemens.com>
 References: <20240122123751.83696-1-Quirin.Gylstorff@siemens.com>
- <20240122123751.83696-5-Quirin.Gylstorff@siemens.com>
- <41ad218f6a47d143c90e5a657f2c611fb1704df2.camel@siemens.com>
+ <20240122123751.83696-3-Quirin.Gylstorff@siemens.com>
+ <e3e6215aa9e705dffa9e38178dd8c5435ba41b4f.camel@siemens.com>
 From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
 Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
  xsDNBGE5tqgBDACpa0M7NVvWkE84XaWEmmQT0REu4Ad8DGRzxlQdLHn4PwakShu46Kl9Rrwm
@@ -84,7 +83,7 @@ Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
  Xe/DyZ2leVdCQVbhsUb4z1b1nAYAxVB+4yIqi5uc1cQYFzb1LPeMcQ0YVv9UAjqaYzP4vh6e
  2zRoeyL3H2PAQbodkBam6WiNHFG0HezOnSTxOHcpqx8s8bzgrJHGj6eUbQjxG27SGvTcy6Gs
  XSdq0hnpafc1V+voPJq3LMxUvLNrwg==
-In-Reply-To: <41ad218f6a47d143c90e5a657f2c611fb1704df2.camel@siemens.com>
+In-Reply-To: <e3e6215aa9e705dffa9e38178dd8c5435ba41b4f.camel@siemens.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
 X-ClientProxiedBy: FR5P281CA0032.DEUP281.PROD.OUTLOOK.COM
@@ -92,337 +91,146 @@ X-ClientProxiedBy: FR5P281CA0032.DEUP281.PROD.OUTLOOK.COM
  (2603:10a6:20b:1f9::22)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|PAVPR10MB7057:EE_
-X-MS-Office365-Filtering-Correlation-Id: f75e8e92-e653-4922-14de-08dc1bf56992
+X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|DB8PR10MB3845:EE_
+X-MS-Office365-Filtering-Correlation-Id: c3f5032d-e21c-4c13-f94e-08dc1bf59d6d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	e5CM8nQbMkZ81ljI9l2viJkkftdaYQG3JBnPG7ntCRhIn52oMGjeuJalJ2y7YWrlTFYpfxU7he5cp0aGGz9Jiuo6mMmt++cPHr/dNZ14s3B5OccMbAbt459hYG/KezfHt3cv+1ovxZUzdeD5MwVZbMhV19P6xTlxyUEtkvXRgGdeLg3ok51waClp/PaCXSjgogIG5Y8hI3m4BCmP51RiKkJ+k1j/wrrVVHkKZRc2JxbKD4FUNruoez09GpeK7oQbxZdPXIWG1PhwvRnavHNYGg9dmQVmJQediY4LMV6OQeelicTc04wu2U62soOradZKAC1NiJc0Bn4y8011fS27Yvq8p7Gbc4ruNvSDKDIlzc6Xx3vUHXXs2TdGiHEq9zb6YJn/THTZl7VGLZbY6Y4K/7PkqIgy2LfUc9zJz0l0WwzBXH5VehFgJR9VG08yGyXpbP6FHZBB4kq27feT94iOtuhNXVNuAMB171WTFgQ3UcHbW4a2tnMqIPScJZHm7ARLcxHRvYYPioRvCFP3W7bVdhvVHYyDHZ6aajzA1WEkwxprCvDdm6XhAPlUOl9lZ1Z2Bzu7wyQPb0IPsnDX4moNFUa0Hm5ZNZMxrZhJv3SfBDueXUph4+5ZjjSz6NMHuy8e
+	u83lDOKr2H9WSCG5cQR7oS/eE7oplewWkvre8NMc3MOWUS/weMgI8L+a0Ho+DJsGT2TE8g9RbMyVeXCp96LPcIxZj038qOLbmebjpk43E0FJlhoBeoJ5fEt/Qe5UnTayYjkbkEQTfbTRI3yTKLK7y+eUVbJgL2gSJ9O6yDt6peVGBdbhLE8ws2Q+qUO/zrHIKCooCi10tbsfefialEU+g8MI/yz4tY72abJzh44rC+DF5q/5+1wlVyqYrsRXSdj6Et5+w3TAERly+XUPv8EMp8BQazKYIvnv65KmgQijRQjP+IwmVWoqjLzj/Z6AMk+HNxtZ+BGmdl8SLjnf+OHmUx8fSk7/e+Ztgv6DYrfPce7a4RHXsswqJx/RLxCGjuS67Lp3BZ8NSPOt1Xq0b/arlw86LKAow6X2jfNye5geFXPAYtI6i2mB479IdDuI2/+FLC2vGeE2LRlAh7bcHfs20qKWnnFJzjzeHYTxhUoGMHzA3XWy+2Ytxvc+hu4mWMTIbGvPM/MuXLWFD7TqmXtMllMLBOtzT1m0UBqOAT8kyehMj5Vnu62r5wjf5D4M5LVLGa2ccjK+uuAa/Cj3/eYI3nIr9bN6zOI3PdT3iX6uGB+nArLAot6F7wv0BPLbBjZWGL7oG/X3YgHOVqnTBK9Ghw==
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(366004)(376002)(346002)(136003)(39860400002)(396003)(230922051799003)(1800799012)(186009)(451199024)(64100799003)(26005)(2616005)(53546011)(36756003)(6512007)(15974865002)(6486002)(966005)(478600001)(6506007)(41300700001)(66476007)(110136005)(66946007)(66556008)(316002)(31686004)(86362001)(38100700002)(83380400001)(31696002)(6636002)(82960400001)(8936002)(8676002)(5660300002)(2906002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376002)(136003)(366004)(346002)(396003)(39860400002)(230922051799003)(64100799003)(186009)(1800799012)(451199024)(2616005)(6636002)(31686004)(5660300002)(66946007)(66476007)(66556008)(110136005)(316002)(26005)(6486002)(6506007)(6512007)(53546011)(478600001)(83380400001)(2906002)(36756003)(86362001)(31696002)(38100700002)(82960400001)(41300700001)(8936002)(8676002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?fuhYmgl+czs6lV28jM9X3164HgHDZOA/p5hnD7SjHVZwZxiYZCAtA5WnPgQ/?=
- =?us-ascii?Q?9qJNnp8OWJN0dPiAwJLTJlrh6UrPqKojrZiToBfnBOOTFVCBqUUj15vM/8Oo?=
- =?us-ascii?Q?M76zHn+dCeLLDnjP4MarEwArkLkWxEX8Y9fmog9dkl9K6sMnYLRfdj0ib2+s?=
- =?us-ascii?Q?A2hv3KQBBTyMqt8fiCP/79gRw2zIbXWyRfkW0EV21SxzAG2UoGt1XZwSMA2I?=
- =?us-ascii?Q?kizxYAN5MMZkb/vNiQooVCu+h9700Grcn1mZz6L4dVkSDEPVDeYkSEoCTqyl?=
- =?us-ascii?Q?yDxG18+MTkHlipWpKrQMOOA5Yj/3rxh5641q9bwuOQpEc6pLyoG65+5Z92Rc?=
- =?us-ascii?Q?MDdGgB9ocA9OFtx+faKeoEPxDObeIprwLKkbnYnEPpo11+7kAkMnwNYTVf+J?=
- =?us-ascii?Q?OyPJ7eI7Pt3aLER9lv2QcqgJ9vkWvmvgU0LpXYcRfpeDNYvQVlGASR0bBUF9?=
- =?us-ascii?Q?+Gz89DrZisob2C3+ont1FWH+j27b0lHjjiQnn9LZspf94eJj1Tssu8SkhJf9?=
- =?us-ascii?Q?fhTPPFYtK04pwERnKTR8WpZY41+C3RF1UA/zOrTpot5aazucAN0zroTL5VxV?=
- =?us-ascii?Q?3fsIL+p21QmTt1MQkO9JxJ8ruC7KcxkI63ErNhSv1RtrKgDrwQG70YAX3d5b?=
- =?us-ascii?Q?1I/X6JIMQ1Ni15tclrAyIFxV5y1AlCCeakKOOnoSzM10Fj4np6I1qmRORs/e?=
- =?us-ascii?Q?DhseLC8PNw7n3gCG3WmqWizy5vzxmOXwLGX4uu9AHV8q04ZlTyJJJ5VQ6Jvm?=
- =?us-ascii?Q?rJV1QhGMSubZJYyWCpER4LZC9/TPLvO6GbuDb907qF6aIgyNV7hwvbwyF5+z?=
- =?us-ascii?Q?lB79yy/ZT75gEH3cQLi350qCkCEz4DfhRFPTNQGv/gtwnIR4W/zMvSgzVlx/?=
- =?us-ascii?Q?djTHo1tISBHoojM+72hL0v2Kh6bJ3gWwQRE7Br3YhMS/5Vktnm39PA0V1F1k?=
- =?us-ascii?Q?PTbH0wCx4KhPwZ2oyZZcqLrVP5pYfa8bhyPJ5WqYEnV1u88Fjdx7qdYJDtoo?=
- =?us-ascii?Q?NR7oxjKU8EGPJ/+vmcXUcDdVFMMxBzn2xjSOWTazNuqKcyMFyHDsggS1KMAW?=
- =?us-ascii?Q?wXvxnZlV7mvU4nRqa3hWZvDm6WXhhYIkiEsgxUHEWpfHfLZP5W7Of7mB7sSD?=
- =?us-ascii?Q?1d3EqqAnNuVWAirK4qrzFl7LWyQwFJ/aPUgF895xWw8aY1V7Z95DoKf5txw+?=
- =?us-ascii?Q?IWQUSnSYS6Hwh4DC5pvt9f/URChn9yhlteL2PdxCzgXhshQicAT974A5jUMC?=
- =?us-ascii?Q?r/R9QDwHcAwiJnYiwBow200fU4S95iZUn64BV/nFHwv7dUz/W05WdPje3yiN?=
- =?us-ascii?Q?Dof+a0Y880SJj7HgCOQwVG+GaV3igLgUmiOe6nxfqVVic9Jg6dLCd6IbQml1?=
- =?us-ascii?Q?D1Zzj15O/bwAMRzncvlisJ9xD+1tQ3eB7mZx8E1mkW9q9WoRNKTUXqDrQ+Rb?=
- =?us-ascii?Q?JVO+0liF/B4jk50wWgRnNwkQuYpHNwvKb7E/S4Egg8vtzbsVnE5JTmmSaBf5?=
- =?us-ascii?Q?PayV7d16CifwGKqbIlHT1tdgMeumjV8p3sSf0Bc2bnu0WwTs9WeThC0sPoRs?=
- =?us-ascii?Q?qRn4iF28YDbK8vQJeLC750ybZV3UzaD6A6+yIIqSFVIL/rYBEv0Xq1A7BEMb?=
- =?us-ascii?Q?HA=3D=3D?=
+	=?us-ascii?Q?Ft6tFHo6WFpPpgZWr+CgSDOK8u3o3bfs3EO2p5tUQyOxJzLm1NICVwx7J26q?=
+ =?us-ascii?Q?+kuwrNRqvlGY8m3MVqkhlmGHVWoTQKvhsnJYyoBZbn0g503eKYN+9NbMWx34?=
+ =?us-ascii?Q?ZpdjQfizcGvCN9XnLwOnCzE0QIfceopsRNSomp+uIc7qJfJZf3qxzSj4CCM8?=
+ =?us-ascii?Q?VrZcOtoVksWCHSisJGdbxDaLRQHYWDRbxOHOdzxp0h7z8fajEjYFP5Sih+wa?=
+ =?us-ascii?Q?UGwX0OgY9PI872dZTSMEmHPtwm8N6DmdlFJ1eVXf7Q7vDSf0gCLQJSMLgUDW?=
+ =?us-ascii?Q?zXK9aWYKE+jaMMV0+HxsD2isJ0l/rEc5lQwPMUGEjkZqIgFNBtpaNJiOE8V1?=
+ =?us-ascii?Q?suwlPc1ypcIFRMxARLP66ZWJW1dmGVUaAoEmZFDaBkdXq9kBM3l03XrTrsiZ?=
+ =?us-ascii?Q?I4XeFdohnBxrkjQNOlpwIK4qt5skkB2qL2SCeA4ydIKvy3iN3zIJli8yW9T6?=
+ =?us-ascii?Q?L6JYxiJyVjPcOGaKKyte4tNKPEcF4WqJ6d+GRSvkWSwrYWhjN/2MGdYWd15i?=
+ =?us-ascii?Q?ie1xp3mWyesPdybsDpffr8CHwaGHi7MF2X040z6EkGkMruIHDGrSNUDldz66?=
+ =?us-ascii?Q?sydjSpVTumd8aFXMPEJgW54jZRcwEplA8AXCeWd6lJmDM0Y0sdFWcRihwr2A?=
+ =?us-ascii?Q?RJa/FvS3T4oJPWAP13nf9iO/MImOm8/EaIImaJ7L32IO3vzg3/DWncKExeHF?=
+ =?us-ascii?Q?fdgkGlkheyyA6jH3Ml0fMzU8z3FZ+eH3pF4eifCw/p48E7/fZk/RSS7zeZdu?=
+ =?us-ascii?Q?3uEfoa/x+NKFiz2hQG5tBIgO9qz+oqB7elBJ3FbtqNifHl7ks5/36uRQ1UOP?=
+ =?us-ascii?Q?xFxOXgx4E9Mz+3zlnGM6f3qaP1HtzL7qu6GaYRAN/CkLkSMJXrdNCYCZ8iGG?=
+ =?us-ascii?Q?j2t730ojcJlkTC1J7SKHdTe4NszP0aGSpeF0IyE8wHcxei7ENcIhRUxmQfoT?=
+ =?us-ascii?Q?mvAz9gWd6sQzhpfx4lisbc5nsdvB5PLHt/K7CLTw+n/VPIrQtGUNDHmQz3yZ?=
+ =?us-ascii?Q?Q3wdPV4w6Jf9kelAYZRdlqsCBwrIDBF2bNhtnA5Wjee9qmtSbRLsaVn+i+Kz?=
+ =?us-ascii?Q?Kwsu0zigSMeUVmovM1ZBQy/tSB4J1LwmgK7rEeqVRXz+djnZARCxSW8wZXOZ?=
+ =?us-ascii?Q?hNA90Hgel2+ehpMxAA7vMn4gWQnBAW4sujo03gmN3H3o23mampGFRSllqo7N?=
+ =?us-ascii?Q?TdmULUa4Pba/q1dys/woikAFpuAam23uL7AtAcvUZvoLUQGyy8+UvbngaQgC?=
+ =?us-ascii?Q?SBQClZNm21u6A9qvYGoP0UpwSCDbL+6lI+Gdp1AcfY+UlMKOqmTZbeEQ7+Xg?=
+ =?us-ascii?Q?lLe9VrNgWWlyC18KyhDDWJZk6fhJgLmmtsSY6fh4qKngBgQYQ/ousfOR4n0u?=
+ =?us-ascii?Q?QMTBB/0gm8rgDbazSQdpFewqN1b2MhHpejwxnI410nYKJYMAwk9D6gRg2kyQ?=
+ =?us-ascii?Q?q8ONKWEcZ4hTISiVk76FJZ3XA1C4Ql81cpP7Ugmpje25Yi5VUpUlDaUYbIG6?=
+ =?us-ascii?Q?cmJRDhkTlXMYL9S0iRAnWECTWRtKwphVL2SHAbqUCFLlyRIuPUxXRU8AQgUI?=
+ =?us-ascii?Q?dnC1qAUhJKgxthx7SY7WI7Ru2gXH3eEZyHXCAvansK2ujIvswcGsJOOS1DI7?=
+ =?us-ascii?Q?pw=3D=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f75e8e92-e653-4922-14de-08dc1bf56992
+X-MS-Exchange-CrossTenant-Network-Message-Id: c3f5032d-e21c-4c13-f94e-08dc1bf59d6d
 X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jan 2024 09:26:43.2767
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jan 2024 09:28:10.3019
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /dnhHRLZeFIPEeX+mdZTiFGkTS56KPcy1iTyzVrYZnLRUauPGPFaz9jP4zgWlqwRThrLFauFGgPHklMkjuNgqBvCVIW/ASQOCYFrOv43yvc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAVPR10MB7057
+X-MS-Exchange-CrossTenant-UserPrincipalName: P32AP0N/gdk4DqJyqIWWY/bO80BiUmeCXIakMZltu6i7O4zK5nnmqrc1QLfYfiDvj2UVW/c7HhYUrgT0dbruGAYwg9jPdaQ9SNVtMxlPksE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR10MB3845
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 23 Jan 2024 09:26:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14444
+ <cip-dev@lists.cip-project.org>; Tue, 23 Jan 2024 09:28:17 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14445
 
 
 
-On 1/23/24 10:22, Moessbauer, Felix (T CED OES-DE) wrote:
+On 1/23/24 10:16, Moessbauer, Felix (T CED OES-DE) wrote:
 > On Mon, 2024-01-22 at 13:37 +0100, Quirin Gylstorff wrote:
 >> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 >>
->> This allows to use wfx together with swupdate with out embedding
->> server_wfx.lua.
+>> With this item SWUpdate from Debian can be used in place of a
+>> build from isar-cip-core.
 >>
 >> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 >> ---
->>  =C2=A0...rate-build_profile-option-for-delta-.patch |=C2=A0 8 ++--
->>  =C2=A0...tch-to-add-the-build-version-to-swup.patch |=C2=A0 6 +--
->>  =C2=A0...s-Add-option-to-enable-suricatta_wfx.patch |=C2=A0 6 +--
->>  =C2=A0...install-Fix-path-for-debian-bullseye.patch |=C2=A0 6 +--
->>  =C2=A0...tall-server_wfx.lua-to-usr-share-lua.patch | 44
->> +++++++++++++++++++
->>  =C2=A0recipes-core/swupdate/swupdate_2023.05.bb=C2=A0=C2=A0=C2=A0=C2=A0=
- |=C2=A0 8 +---
->>  =C2=A06 files changed, 58 insertions(+), 20 deletions(-)
->>  =C2=A0create mode 100644 recipes-core/swupdate/files/2023.05/0005-d-rul=
-es-
->> install-server_wfx.lua-to-usr-share-lua.patch
+>>  =C2=A0recipes-core/images/swupdate.inc=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 | 2 +-
+>>  =C2=A0recipes-core/swupdate-config/files/hwrevision.tmpl=C2=A0 | 2 +-
+>>  =C2=A0recipes-core/swupdate-config/swupdate-config_0.1.bb | 2 +-
+>>  =C2=A0recipes-core/swupdate/swupdate.inc=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | =
+3 ---
+>>  =C2=A04 files changed, 3 insertions(+), 6 deletions(-)
 >>
->> diff --git a/recipes-core/swupdate/files/2023.05/0001-d-rules-Add-
->> seperate-build_profile-option-for-delta-.patch b/recipes-
->> core/swupdate/files/2023.05/0001-d-rules-Add-seperate-build_profile-
->> option-for-delta-.patch
->> index 0d0fc0a..4a63dfd 100644
->> --- a/recipes-core/swupdate/files/2023.05/0001-d-rules-Add-seperate-
->> build_profile-option-for-delta-.patch
->> +++ b/recipes-core/swupdate/files/2023.05/0001-d-rules-Add-seperate-
->> build_profile-option-for-delta-.patch
->> @@ -1,7 +1,7 @@
->> -From 03d455be74d439c7e2eb849e5acdfb494afb3d7c Mon Sep 17 00:00:00
->> 2001
->> +From ce4e66c37fd6f2cb147fd0e75cfcabebdef3abd5 Mon Sep 17 00:00:00
->> 2001
->>  =C2=A0From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
->>  =C2=A0Date: Thu, 15 Jun 2023 18:48:25 +0200
->> -Subject: [PATCH 1/4] d/rules: Add seperate build_profile option for
->> delta
->> +Subject: [PATCH 1/6] d/rules: Add seperate build_profile option for
->> delta
->>  =C2=A0 update
+>> diff --git a/recipes-core/images/swupdate.inc b/recipes-
+>> core/images/swupdate.inc
+>> index 4983f7c..183503b 100644
+>> --- a/recipes-core/images/swupdate.inc
+>> +++ b/recipes-core/images/swupdate.inc
+>> @@ -13,7 +13,7 @@ inherit image_uuid
+>>  =C2=A0inherit read-only-rootfs
 >>  =20
->>  =C2=A0Delta update need zchunk 1.3 to work on memory restricted
->> @@ -15,7 +15,7 @@ Signed-off-by: Quirin Gylstorff
->> <quirin.gylstorff@siemens.com>
->>  =C2=A0 2 files changed, 2 insertions(+), 2 deletions(-)
+>>  =C2=A0SWU_SIGNED ?=3D "1"
+>> -
+>> +SWU_HW_COMPAT ?=3D "cip-core-1.0"
+>>  =C2=A0IMAGE_INSTALL +=3D " swupdate"
 >>  =20
->>  =C2=A0diff --git a/debian/control b/debian/control
->> -index a389b2a9..2f0c0053 100644
->> +index acbecd47..a0d4edcc 100644
->>  =C2=A0--- a/debian/control
->>  =C2=A0+++ b/debian/control
->>  =C2=A0@@ -28,7 +28,7 @@ Build-Depends: debhelper-compat (=3D 13),
->> @@ -41,5 +41,5 @@ index 3b1cc0f6..2c91677c 100755
->>  =C2=A0 endif
->>  =C2=A0 ifneq (,$(findstring $(DEB_HOST_ARCH),amd64 i386 arm64 armhf
->> riscv64 ia64))
->>  =C2=A0--
->> -2.42.0
->> +2.43.0
+>>  =C2=A0IMAGE_INSTALL +=3D " swupdate-handler-roundrobin"
+>> diff --git a/recipes-core/swupdate-config/files/hwrevision.tmpl
+>> b/recipes-core/swupdate-config/files/hwrevision.tmpl
+>> index ec1d667..1eb0996 100644
+>> --- a/recipes-core/swupdate-config/files/hwrevision.tmpl
+>> +++ b/recipes-core/swupdate-config/files/hwrevision.tmpl
+>> @@ -1 +1 @@
+>> -cip-${MACHINE} ${IMAGE_HW_VERSION}
+>> +cip-${MACHINE} ${MACHINE_HW_VERSION}
+>> diff --git a/recipes-core/swupdate-config/swupdate-config_0.1.bb
+>> b/recipes-core/swupdate-config/swupdate-config_0.1.bb
+>> index 6991321..260c0f1 100644
+>> --- a/recipes-core/swupdate-config/swupdate-config_0.1.bb
+>> +++ b/recipes-core/swupdate-config/swupdate-config_0.1.bb
+>> @@ -14,7 +14,7 @@ inherit dpkg-raw
+>>  =C2=A0SRC_URI =3D "file://swupdate.cfg=C2=A0\
+>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 file=
+://hwrevision.tmpl"
 >>  =20
->> diff --git a/recipes-core/swupdate/files/2023.05/0002-d-patches-Add-
->> patch-to-add-the-build-version-to-swup.patch b/recipes-
->> core/swupdate/files/2023.05/0002-d-patches-Add-patch-to-add-the-
->> build-version-to-swup.patch
->> index 8056818..65c3cb6 100644
->> --- a/recipes-core/swupdate/files/2023.05/0002-d-patches-Add-patch-
->> to-add-the-build-version-to-swup.patch
->> +++ b/recipes-core/swupdate/files/2023.05/0002-d-patches-Add-patch-
->> to-add-the-build-version-to-swup.patch
->> @@ -1,7 +1,7 @@
->> -From ad714bc12b03c148aadb3523f87cc14d42a477b0 Mon Sep 17 00:00:00
->> 2001
->> +From 384613cc6d0b87e58cf8ca9636f65730b0790061 Mon Sep 17 00:00:00
->> 2001
->>  =C2=A0From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
->>  =C2=A0Date: Fri, 16 Jun 2023 19:43:38 +0200
->> -Subject: [PATCH 2/4] d/patches: Add patch to add the build version
->> to swupdate
->> +Subject: [PATCH 2/6] d/patches: Add patch to add the build version
->> to swupdate
+>> -MACHINE_HW_VERSION ??=3D ""
+>> +MACHINE_HW_VERSION ??=3D "cip-core-1.0"
+>>  =C2=A0TEMPLATE_FILES +=3D "hwrevision.tmpl"
+>>  =C2=A0TEMPLATE_VARS +=3D "MACHINE MACHINE_HW_VERSION"
 >>  =20
->>  =C2=A0The build version is only set if build in a git repository
->>  =C2=A0this patch allows to use the version information stored in
->> @@ -90,5 +90,5 @@ index 2c91677c..5d72987c 100755
->>  =C2=A0 ifeq (linux,$(DEB_HOST_ARCH_OS))
->>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0BU_SWU +=3D -VBuilt-Usi=
-ng=3D"$(shell dpkg-query -f
->> '$${source:Package} (=3D $${source:Version}), ' -W libmtd-dev libubi-
->> dev)"
->>  =C2=A0--
->> -2.42.0
->> +2.43.0
+>> diff --git a/recipes-core/swupdate/swupdate.inc b/recipes-
+>> core/swupdate/swupdate.inc
+>> index cb1716b..818b431 100644
+>> --- a/recipes-core/swupdate/swupdate.inc
+>> +++ b/recipes-core/swupdate/swupdate.inc
+>> @@ -34,9 +34,6 @@ DEPENDS +=3D
+>> "${@bb.utils.contains('DEB_BUILD_PROFILES', 'mtd', 'mtd-utils', '', d
 >>  =20
->> diff --git a/recipes-core/swupdate/files/2023.05/0003-d-rules-Add-
->> option-to-enable-suricatta_wfx.patch b/recipes-
->> core/swupdate/files/2023.05/0003-d-rules-Add-option-to-enable-
->> suricatta_wfx.patch
->> index 87c60d7..e320665 100644
->> --- a/recipes-core/swupdate/files/2023.05/0003-d-rules-Add-option-to-
->> enable-suricatta_wfx.patch
->> +++ b/recipes-core/swupdate/files/2023.05/0003-d-rules-Add-option-to-
->> enable-suricatta_wfx.patch
->> @@ -1,7 +1,7 @@
->> -From fae97f0e23f945c1ab6e767451cda1d2798aa348 Mon Sep 17 00:00:00
->> 2001
->> +From 2be6e19412eb44c55b648bb8f34acf4e87bb0d3a Mon Sep 17 00:00:00
->> 2001
->>  =C2=A0From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
->>  =C2=A0Date: Fri, 16 Jun 2023 20:32:38 +0200
->> -Subject: [PATCH 3/4] d/rules: Add option to enable suricatta_wfx
->> +Subject: [PATCH 3/6] d/rules: Add option to enable suricatta_wfx
+>>  =C2=A0DEB_BUILD_PROFILES +=3D "${@'pkg.swupdate.nosigning' if not
+>> d.getVar('SWU_SIGNED') =3D=3D '1' else ''}"
 >>  =20
->>  =C2=A0Add the DEB_BUILD_PROFILE "pkg.swupdate.suricattawfx" to build wi=
-th
->>  =C2=A0suricattawfx lua module.
->> @@ -26,5 +26,5 @@ index 5d72987c..d7ff5510 100755
->>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0echo CONFIG_LUAPKG=3D\"=
-lua$(LUA_VERSION)\" >>
->> configs/debian_defconfig
->>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0echo CONFIG_LUASCRIPTHA=
-NDLER=3Dy=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 >>
->> configs/debian_defconfig
->>  =C2=A0--
->> -2.42.0
->> +2.43.0
->>  =20
->> diff --git a/recipes-core/swupdate/files/2023.05/0004-d-swupdate-
->> www.install-Fix-path-for-debian-bullseye.patch b/recipes-
->> core/swupdate/files/2023.05/0004-d-swupdate-www.install-Fix-path-for-
->> debian-bullseye.patch
->> index b2d831d..a1e8bc7 100644
->> --- a/recipes-core/swupdate/files/2023.05/0004-d-swupdate-
->> www.install-Fix-path-for-debian-bullseye.patch
->> +++ b/recipes-core/swupdate/files/2023.05/0004-d-swupdate-
->> www.install-Fix-path-for-debian-bullseye.patch
->> @@ -1,7 +1,7 @@
->> -From f2184e7573e705bad408cf1422599b967773d48e Mon Sep 17 00:00:00
->> 2001
->> +From 4ee463885ce2532b5bdf8beb6106e357670a737a Mon Sep 17 00:00:00
->> 2001
->>  =C2=A0From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
->>  =C2=A0Date: Thu, 16 Nov 2023 16:40:19 +0100
->> -Subject: [PATCH 4/4] d/swupdate-www.install: Fix path for debian-
->> bullseye
->> +Subject: [PATCH 4/6] d/swupdate-www.install: Fix path for debian-
->> bullseye
->>  =20
->>  =C2=A0Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
->>  =C2=A0---
->> @@ -20,5 +20,5 @@ index 7e3d95c6..9c6113cc 100644
->>  =C2=A0 web-app/js=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 /usr/share/swupdate/www
->>  =C2=A0 web-app/node_modules /usr/share/swupdate/www
->>  =C2=A0--
->> -2.42.0
->> +2.43.0
->>  =20
->> diff --git a/recipes-core/swupdate/files/2023.05/0005-d-rules-
->> install-server_wfx.lua-to-usr-share-lua.patch b/recipes-
->> core/swupdate/files/2023.05/0005-d-rules-install-server_wfx.lua-to-
->> usr-share-lua.patch
->> new file mode 100644
->> index 0000000..a4c960a
->> --- /dev/null
->> +++ b/recipes-core/swupdate/files/2023.05/0005-d-rules-install-
->> server_wfx.lua-to-usr-share-lua.patch
->> @@ -0,0 +1,44 @@
->> +From c34282446c928d7a1603b7dd825de7e1ddede829 Mon Sep 17 00:00:00
->> 2001
->> +From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
->> +Date: Mon, 15 Jan 2024 13:28:42 +0100
->> +Subject: [PATCH 5/6] d/rules: install server_wfx.lua to
->> /usr/share/lua
->> +
->> +Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
->> +---
->> + debian/lua-swupdate.install | 1 +
->> + debian/rules=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 5 +++++
->> + 2 files changed, 6 insertions(+)
->> +
->> +diff --git a/debian/lua-swupdate.install b/debian/lua-
->> swupdate.install
->> +index afde2a68..6cd5436c 100644
->> +--- a/debian/lua-swupdate.install
->> ++++ b/debian/lua-swupdate.install
->> +@@ -1 +1,2 @@
->> ++examples/suricatta/swupdate_suricatta.lua usr/share/lua/5.3/
->> + usr/lib/*/lua/*/lua_swupdate*.so*
->> +diff --git a/debian/rules b/debian/rules
->> +index d7ff5510..8be9221f 100755
->> +--- a/debian/rules
->> ++++ b/debian/rules
->> +@@ -71,6 +71,10 @@ endif
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0echo CONFIG_EXTRA_LDFLAGS=3D\=
-"$(LDFLAGS)\"=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 >=
->
->> configs/debian_defconfig
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0echo CONFIG_EXTRA_LDLIBS=3D\"=
-$(LDLIBS)\"=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 >>
->> configs/debian_defconfig
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0$(MAKE) debian_defconfig
->> ++ifneq (,$(LUA_VERSION))
->> ++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0mv suricatta/server_wfx.lua surica=
-tta/swupdate_suricatta.lua
->> ++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0echo "suricatta/swupdate_suricatta=
-.lua
->> /usr/share/lua/$(LUA_VERSION)" >> debian/swupdate.install
->> ++endif
->> +
->> + override_dh_auto_build:
->> + ifeq (,$(filter nodoc,$(DEB_BUILD_OPTIONS) $(DEB_BUILD_PROFILES)))
-> ----------------------------------^
-> ------------------------------------------------------^
+>> -# deactivate hardware compability for simple a/b rootfs update
+>> -DEB_BUILD_PROFILES +=3D "pkg.swupdate.nohwcompat"
 >=20
-> The nodoc option / profile MUST be added to both variables anyways,
-> according to Build Profile Spec [1]. Just evaluate the
-> DEB_BUILD_PROFILES variable.
->=20
-> [1] https://wiki.debian.org/BuildProfileSpec#Registered_profile_names
+> This is a breaking change, which should be added to the changelog (do
+> we even have one?).
 
-I will propose that change upstream but it is not include in this patch.
+As far as i known we don't have one till now.
 
 Quirin
 >=20
 > Felix
 >=20
->> +@@ -97,6 +101,7 @@ endif
->> + endif
->> +
->> + override_dh_auto_install:
->> ++
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0dh_auto_install -- V=3D1
->> +
->> + override_dh_installsystemd:
->> +--
->> +2.43.0
->> +
->> diff --git a/recipes-core/swupdate/swupdate_2023.05.bb b/recipes-
->> core/swupdate/swupdate_2023.05.bb
->> index d1fe1fa..7533bfa 100644
->> --- a/recipes-core/swupdate/swupdate_2023.05.bb
->> +++ b/recipes-core/swupdate/swupdate_2023.05.bb
->> @@ -28,15 +28,9 @@ SRCREV_upstream =3D
->> "c8ca55684c375937dbcdefb0563071a35137f4ba"
->>  =C2=A0# patches
->>  =C2=A0SRC_URI +=3D
->> "file://0001-d-rules-Add-seperate-build_profile-option-for-delta-.pat
->> ch=C2=A0\
->>             =20
->> file://0002-d-patches-Add-patch-to-add-the-build-version-to-swup.patch
->>  =C2=A0\
 >> -
->> file://0003-d-rules-Add-option-to-enable-suricatta_wfx.patch"
->> +
->> file://0005-d-rules-install-server_wfx.lua-to-usr-share-lua.patch"
->>  =C2=A0SRC_URI:append:bullseye =3D "
->> file://0004-d-swupdate-www.install-Fix-path-for-debian-bullseye.patch
->> "
+>>  =C2=A0# add cross build and deactivate testing for arm based builds
+>>  =C2=A0DEB_BUILD_PROFILES +=3D "cross nocheck"
 >>  =20
->> -# suricatta wfx requires suricatta lua and the dependency
->> -# is not set automatically
->> -DEB_BUILD_PROFILES +=3D "pkg.swupdate.suricattalua"
->> -# add suricatta wfx
->> -DEB_BUILD_PROFILES +=3D "pkg.swupdate.suricattawfx"
->> -
->>  =C2=A0# Disable cross for arm and arm64 on bullseye
->>  =C2=A0# with cross compile we have a unsat-dependency to dh-nodejs on
->> arm/arm64
->>  =C2=A0ISAR_CROSS_COMPILE:bullseye =3D "0"
 >=20
 
