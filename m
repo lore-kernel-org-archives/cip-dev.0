@@ -1,380 +1,384 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19F47C46CD2
-	for <webhook@archiver.kernel.org>; Wed, 24 Jan 2024 23:18:31 +0000 (UTC)
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
- by mx.groups.io with SMTP id smtpd.web11.2545.1706138301354011545
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAA12C47422
+	for <webhook@archiver.kernel.org>; Thu, 25 Jan 2024 09:07:23 +0000 (UTC)
+Received: from EUR01-HE1-obe.outbound.protection.outlook.com (EUR01-HE1-obe.outbound.protection.outlook.com [40.107.13.83])
+ by mx.groups.io with SMTP id smtpd.web11.13168.1706173635697590651
  for <cip-dev@lists.cip-project.org>;
- Wed, 24 Jan 2024 15:18:22 -0800
+ Thu, 25 Jan 2024 01:07:16 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=xELWVAYD;
- spf=pass (domain: miraclelinux.com, ip: 209.85.160.51, mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-20451ecbb80so3108106fac.2
-        for <cip-dev@lists.cip-project.org>; Wed, 24 Jan 2024 15:18:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1706138300; x=1706743100; darn=lists.cip-project.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=LGTCUd4K4UtD/3Y4s7mA9kQZIMWXVj+nnBbXQRZMPW8=;
-        b=xELWVAYDU99BzUP6MugZfuyPUFPUiSrdoerobsOTfWQH0Y0aqB2V4SXQZ9NEOJ82Vn
-         bfu2jfTtvJ8yo0iWxa5HH8rJnKMNsQ7lHCaNO13M2T57/ltTmakDF+EIfIFKaDp1bntK
-         Ws7nO0vndXxpTP/a4Pb+uOpYROgCkHsylfphjfVuNRolrurQOL2AhxwpGUvJOR7CZew7
-         RZLnqe6tP3qYv7adwB/KjXUUbHpZO75IBeybIoSNqaVi2MdNIMifdbdWpp568yD7Lcd0
-         bGdbUyBS7Uw95IAN/L93j/ya937Yek+M50L6AJJpUkImCYHgT949WzKjtMfirfqXTiTe
-         R7Tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706138300; x=1706743100;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LGTCUd4K4UtD/3Y4s7mA9kQZIMWXVj+nnBbXQRZMPW8=;
-        b=b3jCSkK0EAXKTkaXGl2/0iQW7RpgKyr44uj+hf6nMTuB8niz3r7zuJ8581WGPUF+ij
-         V8UOFCwfN+czyjvmF3BI/dVicmxtedV41jrL3sB1x+waaO2TFVLJPBiuJOwGo6mvXMYs
-         CAx1FzxUsTXJz3jR4MGsZj2399syfJ7qoPHuWuQz1ysC2YZZCAmJpjJTx0SR1MqpZPe6
-         c3UO6vGK4j1scgWjnwDzrCZ0TbgaueD/0LVuLsObu57JzxwKdUtDxvpSOIQUw56k5x52
-         /WUP7I55fE4hmm8ravB9hYx+FKhWx1LtRJGpFuSBUlRNNoFxhkGojObhDB97LDBi06Km
-         xV9A==
-X-Gm-Message-State: AOJu0Yx+9zdgaN+46idu9WJiplJvtOjJcP2SseGlZ4uTFHTUm1hg6xVr
-	mdxdKN3FDdkVKhDJvJ17hBVN2j061e1mcCNJPsvNkfdToQx9aSgRaI2gMFBuXr5PqEfTlxMO+Ea
-	FbjulX/PdWgAvubRWaJq14P0SpIneamv8toc413BND4yDbNn0j6s=
-X-Google-Smtp-Source: AGHT+IEN6CMvvh1EJuejAWZx5mFlHtz42IBgipIhDUq0sTlwQEko1d27VjOTkrNLvn0PCNgJXaRZMvL3MnbMHrVNJy4=
-X-Received: by 2002:a05:6870:f818:b0:213:aee1:6e67 with SMTP id
- fr24-20020a056870f81800b00213aee16e67mr25861oab.99.1706138300097; Wed, 24 Jan
- 2024 15:18:20 -0800 (PST)
-MIME-Version: 1.0
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 25 Jan 2024 08:17:43 +0900
-Message-ID: <CAODzB9rvbGVREi_HHLU4Ynd3+khL-vGWG3Ek=NtOrNt5dZDWXg@mail.gmail.com>
-Subject: [kernel-cve-report] New CVE entries this week
-To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset="UTF-8"
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=S13XCV13;
+ spf=pass (domain: siemens.com, ip: 40.107.13.83, mailfrom: quirin.gylstorff@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CtMQOUMIWLUNL7xImtO8WjGAuF0jjhNm8+xjAJPY47Bqebu1zn36/W1k4W51rVIAGewZFZsIZZNcnsmJyUWjJ3QmmdNhG9B4rz3ZJdReOPRTXPv+eoSZo/7rf3sFH8EBdQUhHa9gulwvngDtlcRxQQ+hZr4Or2ybARGgVemD9sR+P0C1xfu1xxkEUtjTUgVbsZ5QTNd775DgZqTf3w+d/okM/J6OeMp1huMLvHBcDe60kgWhUJjGfta2aZmwRja+zdJyXhTyaserGAUgN1YsNDjpUSZsoJKp4X/9KrV6yoNIdw9SNdn6scJCYGNLJgLYOV/ZsCbnudeKkkS0eS+Kcg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=E2dZPrwsx6HaaSoT3Y1Ufwb1SHJacFGRvNLf9zgJctQ=;
+ b=fcBVrN7GpCbfsTlGOYHxqbaMfjqk9i45ezHeh3qgjhqfzN/vOdUCW4Rg2STIlLEFZjCDCSvkH47fMhiqT8sxq3P3e1rKEQSJ1Ma3h43e+dirQHBSNRxu2sg8ktPrfr3Tdbw4H1zShgm1SivMXrQ07ooYRLrs01kndreqCE4qoRliSi1zLaKZTROSwgMKakERW+D6cv4glxOt6pe8oI3fVkC87LiS6mHrvHy4TkIYjNvpR7CDhfXATM61gYfCU8UFAXqS3BqKper4kN/VKxtc3ev3alKhQKMUl+EnGGRsNH7nrXso8z+YmxR7xfq3BVaq/LjLW8GPD9kkgI1RWm1GZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=E2dZPrwsx6HaaSoT3Y1Ufwb1SHJacFGRvNLf9zgJctQ=;
+ b=S13XCV13mfFFPaWR/gOP9xjMEpRuhxZRJyUFn7UURwmxeA7OvGSbInQfgVrgXqcdkTU9tYQWjDRByTPOqxBhwWIIijrVE4MkXAvz0g2kRFzpAE6lPfJtUHfueK2iSpJ8mXo2wEK3P/SpwrpFJI9FihuKUbWUIVogU2tThtPGIu+61aqHjoMZPPssczvPYNHJwhXkC4C7hZPMw7ftfzo3+v8cAXpW3NdPibQ1ZaghrAp+tr/Z4szrvNXmZdziBL2R4dkCW21D5LVDhZUFrkZAcrzK+JN8X7JszCQCjooQn58LQtStdwq7LhnKtnjAkEBMdh+2whRSYzd1yRWewdJlWQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1f9::22)
+ by PAXPR10MB5639.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:245::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7228.22; Thu, 25 Jan
+ 2024 09:07:08 +0000
+Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::5c76:8089:1f9b:63d9]) by AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::5c76:8089:1f9b:63d9%4]) with mapi id 15.20.7202.031; Thu, 25 Jan 2024
+ 09:07:08 +0000
+Message-ID: <627eb1ef-efb7-4709-b8cc-5e2f0f255fa2@siemens.com>
+Date: Thu, 25 Jan 2024 10:07:02 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cip-dev][isar-cip-core][RFC v2] swupdate.bbclass: add script
+ section to the swu file
+Content-Language: en-US, de-DE
+To: "Moessbauer, Felix (T CED OES-DE)" <felix.moessbauer@siemens.com>,
+ "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+ "Kiszka, Jan (T CED)" <jan.kiszka@siemens.com>
+References: <20240124094502.293170-1-Quirin.Gylstorff@siemens.com>
+ <5a8c9bfd1b5e2707e7ae9e290a7b28761ca15ea2.camel@siemens.com>
+From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
+Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
+ 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
+ XSdq0hnpafc1V+voPJq3LMxUvLNrwg==
+In-Reply-To: <5a8c9bfd1b5e2707e7ae9e290a7b28761ca15ea2.camel@siemens.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: FR3P281CA0184.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a4::19) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:1f9::22)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|PAXPR10MB5639:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4f3d8979-5ae9-4a2d-e23a-08dc1d8501ba
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	MbEGMbVi18zyQxy0h8XGsjzEHvoqo6VdICktZtY2zbDJSesj4HpY9ctYluoQAbYx2ImeR9/+7h+HjqjlqahFvVyoJmsvqQTGP6a6rFFjNyGwlPdJpo5oSuUV/aOEjIpPK9D8JiZ9vRZgmK+y8QGMRJH8pVIKqig467o214zdSg5VBlaHpTh25B95tbnSGaAV0S5yZnq/7Ry3YSfHPk2RcY8WKFj5siQDWoNxfY3ilD/mJ9KcEKtRczc7DnGQ0A7gLwALnBRfjhFfAQYQ92xZzXuzp7lyqZ0Q9Pub5Ax8kWH1h45pGK2o1wns8I1HxkHoRdjD2LzfEWVEsXsx0mX23CbLqxAYlQbCwisJguDMfiBZw1iTYQMLHiue4zFzd+rbugf0g6SneSvtQNEYLGVlzaFobt8cGXa46p0UviYrxvc4Tdit7bYBT/2aySAkNbmIaqRtc6/PQX0ofUTZzMShNXHJ3MXEIHKfzjDmnR8O6yXN2PB4wiBy1fch+ZPt7cKR0MVJQxB4LEqky2epXQEDJawdjEUjvijLqzeBlb31LFFOxonCkC4wsnFi1IvQlWGv147fchM//arRgzRNbdS0MD6GAcmXqVZOnJ+iALmWgJkW027KC6P2zo3gNkRfj+LKWtrgW2hs0vqQTyOOqxYEOxZ/7MGvAwsMiuH6jzzMBm4=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(396003)(39860400002)(376002)(366004)(136003)(346002)(230273577357003)(230173577357003)(230922051799003)(186009)(451199024)(64100799003)(1800799012)(31686004)(26005)(83380400001)(41300700001)(8936002)(8676002)(6486002)(478600001)(966005)(86362001)(110136005)(66556008)(66476007)(31696002)(66946007)(6636002)(316002)(5660300002)(6512007)(2616005)(36756003)(2906002)(53546011)(6506007)(6666004)(82960400001)(38100700002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?3BASjv66+z7Jq4v78/WSHMY/W7LL4y2y+UoPSs/BipcQLaKEjG8S3PDmZrZF?=
+ =?us-ascii?Q?aTXuHYm0DwT6U1Z7OtSmbftZLwlb+gDVqgF1PBy0phAjB+La/vmTmGU6X5fS?=
+ =?us-ascii?Q?+aYhT6wmozgBD+23lQk/JTueFIm86a6RK6XpMLIMN5pP3/rQYNOHN5Ve9GLc?=
+ =?us-ascii?Q?Drmm2uVJ++i3rZ/vZsNX+yY9YMeEZOu+Z5xhrvtSJun01PtPURO/NrAL4DQ9?=
+ =?us-ascii?Q?JlVMRlBh84wVvYlme0uvk+4As0cdu/TjL9Gix14J5SWYKaEb8xS5O6CRr3hO?=
+ =?us-ascii?Q?YzmtH+Jh21WPag5E+vY0RGoCLb+7ZjFjMxfF5NxqTRKKM1E32crc1Y3xVqqm?=
+ =?us-ascii?Q?aR92ksuvQ2eD2SpoDPETGZov79e2+wVzA5ekcffYiMQ0B80zd9QJRNKyG9/C?=
+ =?us-ascii?Q?fcp/82dzeF421xh/UTT3yHWLPyxkHMGnOBk18Ur6u8S1+Ebk9wNJ0RzPKxhN?=
+ =?us-ascii?Q?8SjJ0ElQAALF5e8dNXU70ufYteXaf4l14qk7h/tKb+YSOT3pqgkVG9+wE2Li?=
+ =?us-ascii?Q?ngGwZWHp0eIYJSWFMmXJC14DUCFKaF4hZe4gBGv8y7W4fWxnQxrVDgPxR3Ut?=
+ =?us-ascii?Q?NANU8QoykZN+MjeLUR4cqJQViNs7cNlBSkd/cFONeUKQ260V8tk5tmMi7Jl3?=
+ =?us-ascii?Q?CiOvqzwsxSbv6IJW3U4mIOr/0NXnYMHUf0ItgAAX0Og3YOtp24k7clFFF6Jk?=
+ =?us-ascii?Q?h2HLSVXPuEluWP49+EAcIPh82PCYDhzDnusVJ+7X6rB5XtDhRz+/pRiI1wvN?=
+ =?us-ascii?Q?qxtEqGnsTRWG7xPB2CHNHIFIqioDwZu5tdz74GtlaOJu9Kb9n9Jqz0U6RrTH?=
+ =?us-ascii?Q?joIpRdWMJwQ2zl//NIDbcLdoTabpqS59etPO8E6DzxxW+pyYw4IlsvGofMi3?=
+ =?us-ascii?Q?DjBlFvwwOhCQs/A/DEq5I26xcpbvga/X40xokUh4jcYJFnPjfyw78kOfqItO?=
+ =?us-ascii?Q?9KBEJRaVVlQENFl8MOnQ/elBQyLrN0LfdWSMba2LYo/taltNaZjc3H49SwzY?=
+ =?us-ascii?Q?WJTBH3LFlDOHvUylfIx+Db9yH5GgiLb3j957nmOqWuOx5DhTZyw2J3DIqDGZ?=
+ =?us-ascii?Q?d7GU+Ak4zsvSs8/HPZPyatyD7Bii1n7r37fKuld1ArPYtTPzdDzxQD2Kr3pX?=
+ =?us-ascii?Q?UQV+WGNaaZD8II0zNGo7LZH61ngwC/odFJdVW/B9Z5gB24j+C06yvCEIvJ3x?=
+ =?us-ascii?Q?HuMWe4j8QE3gAfeaKEIbC/d5NnnMkr2sVE8cwPWMeBrtwipbLOGkJxeOCM1R?=
+ =?us-ascii?Q?Zc3RHiuvKi9AtWb0S2PCM4S7DiV4lR6S6iAxNonflTnJCgwrP3AwV+ixHuaJ?=
+ =?us-ascii?Q?etR8U9zgA++fCwwpH85gCDA2He4IpH8KOpq2DxL0x2VEtbnI/0nEJVgLhxp+?=
+ =?us-ascii?Q?DxJ9YaG2QwtwEs1wd+8YLhl3eDtCltvZxWcO671Jtm+nxshz7qNAFVMCeNLE?=
+ =?us-ascii?Q?wloZVQIvfKRRs0UOon+6MNCR5LWC7mIlsRaIaVPn15XTLZIxcTIzXsFwcl9f?=
+ =?us-ascii?Q?mBCjduqR2RRAHdpzdDot6xLCBwho8NgKVT680tQJf7d4vTSQEZdzvPurfwGj?=
+ =?us-ascii?Q?Qt+8iwAe5PdLGwPGVLobcjfWNBssJSUwEhU3EZZctm+zQuPJLJ6oYMqIdsJt?=
+ =?us-ascii?Q?5w=3D=3D?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f3d8979-5ae9-4a2d-e23a-08dc1d8501ba
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jan 2024 09:07:08.0332
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZcJlm2Mz8FuUvv+FN869gOboimxQVwEuvHd3bh5+av/ysXdLU5R3OuAr1Sg5zVu0n7kApa2EGyo/FsDdAvDV0x0w32ZtlYcBelRwBJ1dPB8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR10MB5639
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 24 Jan 2024 23:18:31 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14455
-
-Hi!
-
-It's this week's CVE report.
-
-This week reported 12 new CVEs and 4 updated CVEs.
-
-* New CVEs
-
-CVE-2024-0639: A deadlock bug causes DoS in the SCTP subsystem
-
-CVSS v3(NIST): 5.5 (MEDIUM)
-CVSS v3(CNA): 4.7 (MEDIUM)
-
-A denial of service vulnerability due to a deadlock was found in
-sctp_auto_asconf_init in net/sctp/socket.c in the Linux kernel=E2=80=99s SC=
-TP
-subsystem.
-This flaw allows guests with local user privileges to trigger a
-deadlock and potentially crash the system.
-
-Introduced by commit 34e5b01 ("sctp: delay auto_asconf init until
-binding the first addr") in 5.13-rc1. Fixed in 6.5-rc1.
-The commit 34e5b01 is not backported to 4.19 and 4.4 so these kernels
-are not affected.
-
-Fixed status
-cip/4.4-st: [bda06654a7e8d5d572c4df906e888a00d5d9c8a1]
-mainline: [6feb37b3b06e9049e20dcf7e23998f92c9c5be9a]
-stable/4.19: [0ad0e8b0cb0e28626ab6dffe3da883941b9cbc4b]
-stable/5.10: [6d2243ab783bf79d1d674ff0ca26229233c56508]
-stable/5.15: [1fba2510b52f0bb9f408700e78db6d8d0ed6bcd5]
-stable/5.4: [4d8fc6137749471ba0f64c9bc64e98113c015ed7]
-stable/6.1: [1aa5a6a6d28c77e364feaba35ff7f12d2d74fec1]
-
-CVE-2024-0641: A DoS vulnerability was found in the TIPC subsystem
-
-CVSS v3(NIST): 5.5 (MEDIUM)
-CVSS v3(CNA): 4.7 (MEDIUM)
-
-A denial of service vulnerability was found in tipc_crypto_key_revoke
-in net/tipc/crypto.c in the Linux kernel=E2=80=99s TIPC subsystem.
-This flaw allows guests with local user privileges to trigger a
-deadlock and potentially crash the system.
-
-Introduced by commit fc1b6d6 ("tipc: introduce TIPC encryption &
-authentication") in 5.5-rc1. Fixed in 6.6-rc5.
-
-Fixed status
-mainline: [08e50cf071847323414df0835109b6f3560d44f5]
-stable/5.10: [6a24d0661fa389c241d935da38e0f6a5ee8eb1ae]
-stable/5.15: [24fb22bddb71c6bfbe0fe25e1b7f793c5b580918]
-stable/6.1: [143e72757a902abcecd5f487553f44dc19a56cfc]
-
-CVE-2023-46838: Linux: netback processing of zero-length transmit fragment
-
-CVSS v3(NIST): N/A
-CVSS v3(CNA): N/A
-
-Transmit requests in Xen's virtual network protocol can consist of
-multiple parts.
-While not really useful, except for the initial part any of them may
-be of zero length,
-i.e. carry no data at all.  Besides a certain initial portion of the
-to be transferred data, these parts are
-directly translated into what Linux calls SKB fragments.  Such
-converted request parts can,
-when for a particular SKB they are all of length zero, lead to a
-de-reference of NULL in core networking code.
-
-According to the commit log c7ec4f2d ("xen-netback: don't produce
-zero-size SKB frags") it said that
-
-"""
-While frontends may submit zero-size requests (wasting a precious
-slot), core networking code as of at least 3ece782
-("sock: skb_copy_ubufs support for compound pages") can't deal with
-SKBs when they have all zero-size fragments.
-"""
-
-the commit 3ece782 ("sock: skb_copy_ubufs support for compound pages")
-is not back ported to Linux 4.4.
-
-Fixed status
-mainline: [c7ec4f2d684e17d69bbdd7c4324db0ef5daac26a]
-
-CVE-2024-0775: A use-after-free bug was found in the ext4 file system
-
-CVSS v3(NIST): N/A
-CVSS v3(CNA): 6.7 (MEDIUM)
-
-A use-after-free flaw was found in the __ext4_remount in
-fs/ext4/super.c in ext4 in the Linux kernel. This flaw allows a local
-user to cause
-an information leak problem while freeing the old quota file names
-before a potential failure, leading to a use-after-free.
-
-It was fixed in 6.4-rc2.
-
-Fixed status
-cip/4.4-rt: [801ba552e9546571d60c628f98cd2db2301fca49]
-mainline: [4c0b4818b1f636bc96359f7817a2d8bab6370162]
-stable/4.19: [37302d4c2724dc92be5f90a3718eafa29834d586]
-stable/5.10: [37c69da3adc45fc34df0b8d07a158a6fa5b2a3f7]
-stable/5.15: [b2f1314e6e36e2322554e5e6e9598eedd349d942]
-stable/5.4: [2dda2029067106f0835655a0417f1a5eaf3ba0b0]
-stable/6.1: [25c9fca7b71c5045d6dc537430af5b2e79598fa1]
-
-CVE-2023-46343: NULL pointer dereference bug was found in net/nfc/nci/spi.c
-
-CVSS v3(NIST): N/A
-CVSS v3(CNA): N/A
-
-In the Linux kernel before 6.5.9, there is a NULL pointer dereference
-in send_acknowledge in net/nfc/nci/spi.c.
-
-Introduced by commit 391d8a2 ("NFC: Add NCI over SPI receive") in
-3.11-rc1. Fixed in 6.6-rc7.
-
-Fixed status
-cip/4.4-st: [bee47349504c09414e9602292a87af6fadc1a583]
-mainline: [7937609cd387246aed994e81aa4fa951358fba41]
-stable/4.19: [5622592f8f74ae3e594379af02e64ea84772d0dd]
-stable/5.10: [c95fa5b20fe03609e0894656fa43c18045b5097e]
-stable/5.15: [ffdc881f68073ff86bf21afb9bb954812e8278be]
-stable/5.4: [76050b0cc5a72e0c7493287b7e18e1cb9e3c4612]
-stable/6.1: [d7dbdbe3800a908eecd4975c31be47dd45e2104a]
-
-CVE-2023-51042: A use-after-free bug was found in
-drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-
-CVSS v3(NIST): N/A
-CVSS v3(CNA): N/A
-
-In the Linux kernel before 6.4.12, amdgpu_cs_wait_all_fences in
-drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c has a fence use-after-free.
-It was fixed in 6.5-rc1.
-
-Fixed status
-mainline: [2e54154b9f27262efd0cb4f903cc7d5ad1fe9628]
-stable/4.19: [f9da11d96bde3db277f061ac5a665c234d505787]
-stable/5.10: [b870b9a47fdba29bd6828f690e4817c950fa3430]
-stable/5.15: [ef568da1fd843581e855c79a368209b752dea2c1]
-stable/5.4: [c6059af6bf5ed436b4aa5229e8113bd2546322d4]
-stable/6.1: [dd0b3b367c3839e439f36af908b39c98929a5e54]
-
-CVE-2023-51043: A use-after-free bug was found in drivers/gpu/drm/drm_atomi=
-c.c
-
-CVSS v3(NIST): N/A
-CVSS v3(CNA): N/A
-
-In the Linux kernel before 6.4.5, drivers/gpu/drm/drm_atomic.c has a
-use-after-free during a race condition between a nonblocking atomic
-commit and a driver unload.
-It seems as if it would be nice to call drm_dev_ref() in
-drm_atomic_state_init() and call drm_dev_unref() in
-drm_atomic_state_free() to put/get instance of dev in Linux 4.4.
-
-It fixed in 6.5-rc3.
-
-Fixed status
-mainline: [4e076c73e4f6e90816b30fcd4a0d7ab365087255]
-stable/4.19: [73a82b22963defa87204f0f9f44a534adf7f831a]
-stable/5.10: [f09c0ac142c59495262dd80545f261b2aeeba538]
-stable/5.15: [30580f3a3301173b1413a7b6d6ea100ec8c75da0]
-stable/5.4: [380c7ceabdde0ea5b4e709620f299bcd5c1c8abc]
-stable/6.1: [e4a0e09b79bd2c0895c508cdc5e0265a083cc05d]
-
-CVE-2024-22705: ksmbd: fix slab-out-of-bounds in smb_strndup_from_utf16()
-
-CVSS v3(NIST): N/A
-CVSS v3(CNA): N/A
-
-An issue was discovered in ksmbd in the Linux kernel before 6.6.10.
-smb2_get_data_area_len in fs/smb/server/smb2misc.c can cause an
-smb_strndup_from_utf16 out-of-bounds access because the relationship
-between Name data and CreateContexts data is mishandled.
-It was fixed in 6.7-rc8.
-
-Fixed status
-mainline: [d10c77873ba1e9e6b91905018e29e196fd5f863d]
-stable/5.15: [d739f2b6d8f57aa9377362cd8c0b1152a4dd6bd5]
-stable/6.1: [7a3bbbadac4be9d30b45e9f1134e94294f79ce77]
-stable/6.6: [7d5f219f1ef69f27eb8cbfb794d634fc9c4d24ac]
-
-CVE-2024-23848: A use-after-free bug was found in
-drivers/media/cec/core/cec-adap.c
-
-CVSS v3(NIST): N/A
-CVSS v3(CNA): N/A
-
-In the Linux kernel through 6.7.1, there is a use-after-free in
-cec_queue_msg_fh, related to drivers/media/cec/core/cec-adap.c and
-drivers/media/cec/core/cec-api.c.
-
-Fixed status
-Not fixed yet.
-
-CVE-2024-23849: An oob access bug was found in net/rds/af_rds.c
-
-CVSS v3(NIST): N/A
-CVSS v3(CNA): N/A
-
-In rds_recv_track_latency in net/rds/af_rds.c in the Linux kernel
-through 6.7.1, there is an off-by-one error for an
-RDS_MSG_RX_DGRAM_TRACE_MAX comparison,
-resulting in out-of-bounds access.
-
-It was introduced by commit 3289025aedc0 ("RDS: add receive message
-trace used by application") in 4.11-rc1.
-
-Fixed status
-Patch is in the netdev tre.
-
-CVE-2024-23850: btrfs: do not ASSERT() if the newly created subvolume
-already got read
-
-CVSS v3(NIST): N/A
-CVSS v3(CNA): N/A
-
-In btrfs_get_root_ref in fs/btrfs/disk-io.c in the Linux kernel
-through 6.7.1, there can be an assertion failure and crash because a
-subvolume can be read out too
-soon after its root item is inserted upon subvolume creation.
-
-It was introduced by commit 2dfb1e43f57d ("btrfs: preallocate anon
-block device at first phase of snapshot creation") in 5.9-rc1.
-
-Fixed status
-Patch is available
-(https://lore.kernel.org/all/6a80cb4b32af89787dadee728310e5e2ca85343f.17057=
-41883.git.wqu%40suse.com/)
-but it hasn't been merged yet.
-
-CVE-2024-23851: Kernel crash in drivers/md/dm-ioctl.c when allocate
-memory more than INT_MAX bytes
-
-CVSS v3(NIST): N/A
-CVSS v3(CNA): N/A
-
-copy_params in drivers/md/dm-ioctl.c in the Linux kernel through 6.7.1
-can attempt to allocate more than INT_MAX bytes, and crash, because of
-a missing
-param_kernel->data_size check. This is related to ctl_ioctl.
-
-Fixed status
-Not fixed yet.
-
-* Updated CVEs
-
-CVE-2023-50431: habanalabs: fix information leak in sec_attest_info()
-
-The mainline was fixed.
-
-Fixed status
-mainline: [a9f07790a4b2250f0140e9a61c7f842fd9b618c7]
-
-CVE-2023-6915: ida: Fix crash in ida_free when the bitmap is empty
-
-stable 6.1 and 6.6 are fixed.
-
-Fixed status
-mainline: [af73483f4e8b6f5c68c9aa63257bdd929a9c194a]
-stable/6.1: [9efdc0081ccae62c44a929e21d32bacc5f2e113f]
-stable/6.6: [ffcaafdb8be64555e9928d943a3655c755dba92b]
-
-CVE-2023-6610: OOB Access in smb2_dump_detail
-
-stable 6.1 and 6.6 are fixed.
-
-Fixed status
-mainline: [567320c46a60a3c39b69aa1df802d753817a3f86]
-stable/6.1: [5411e3292792be7dafd1fe948a87e3ca29c1f550]
-stable/6.6: [c5e0ed716c52fddea5e625668e75658c3b81d3fc]
-
-CVE-2022-36402: An integer overflow vulnerability was found in vmwgfx drive=
-r
-
-The mainline, 5.10, 5.15, and 6.1 are fixed.
-This vulnerability was introduced by commit d80efd5 ("drm/vmwgfx:
-Initial DX support") in 4.3-rc1.
-It was fixed in 6.5.
-
-Fixed status
-mainline: [14abdfae508228a7307f7491b5c4215ae70c6542]
-stable/5.10: [8735d1c66c7cf54e7b265a2911891f75674db342]
-stable/5.15: [c8aab333d41a4ed6c5e7987c6cc5505ab86b5652]
-stable/6.1: [115f2ccd3a998fe7247f59f8fb5feffc878bcbb7]
-
-Currently tracking CVEs
-
-CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
-Bluetooth Core Specifications 4.0 through 5.2
-
-There is no fix information.
-
-CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
-Provisioning Leads to MITM
-
-No fix information.
-
-CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
-
-No fix information.
-
-Regards,
---=20
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
-
-Email :masami.ichikawa@cybertrust.co.jp
-          :masami.ichikawa@miraclelinux.com
+ <cip-dev@lists.cip-project.org>; Thu, 25 Jan 2024 09:07:23 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14456
+
+
+
+On 1/25/24 09:43, Moessbauer, Felix (T CED OES-DE) wrote:
+> On Wed, 2024-01-24 at 10:44 +0100, Quirin Gylstorff wrote:
+>> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>>
+>> This allows the user to add scripts[1] to the swu file by
+>> setting the variable `SWU_SCRIPTS`. Scripts can be used to
+>> prepare the system for an update.
+>>
+>> ```
+>> SWU_SCRIPTS =3D "<script_file_name>@<script_type>@<optional_data>"
+>> ```
+>> This will add=C2=A0 `file://<script_file_name>` to the variable `SRC_URI=
+`
+>> and
+>> `<script_file_name>` to `SWU_ADDTIONAL_FILES`. The sw-description
+>> will contain
+>> the following section:
+>> ```
+>>  =C2=A0=C2=A0=C2=A0 scripts: (
+>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 {
+>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 filename =3D "<s=
+cript_file_name>";
+>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 type =3D "<scrip=
+t_type>";
+>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data =3D "<optio=
+nal_data>";
+>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sha256 =3D "<sha=
+256 of postinstall.sh>";
+>=20
+> ---------------------------------^
+> shouldn't that be sha256 of <script_file_name> ?
+
+copy paste from the readme.
+>=20
+>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 },):
+>> ```
+>>
+>> [1]: https://sbabic.github.io/swupdate/sw-description.html?#scripts
+>>
+>> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>> ---
+>>
+>> Changes v2:
+>>  =C2=A0- change seperator from `:` to `@` as it already used for the
+>>  =C2=A0=C2=A0 configfilecheck
+>>  =C2=A0- add optional data entry
+>>  =C2=A0- add warning if less then 2 parameters are given for entry
+>>
+>>  =C2=A0classes/swupdate.bbclass=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ | 37
+>> +++++++++++++++++++++
+>>  =C2=A0doc/README.swupdate.md=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 | 30 +++++++++++++++++
+>>  =C2=A0recipes-core/images/swu/sw-description.tmpl |=C2=A0 1 +
+>>  =C2=A03 files changed, 68 insertions(+)
+>>
+>> diff --git a/classes/swupdate.bbclass b/classes/swupdate.bbclass
+>> index 8f1215d..256a60f 100644
+>> --- a/classes/swupdate.bbclass
+>> +++ b/classes/swupdate.bbclass
+>> @@ -58,6 +58,7 @@ IMAGE_TEMPLATE_VARS:swu =3D " \
+>>  =C2=A0=C2=A0=C2=A0=C2=A0 SWU_NAME \
+>>  =C2=A0=C2=A0=C2=A0=C2=A0 SWU_FILE_NODES \
+>>  =C2=A0=C2=A0=C2=A0=C2=A0 SWU_BOOTLOADER_FILE_NODE \
+>> +=C2=A0=C2=A0=C2=A0 SWU_SCRIPTS_NODE \
+>>  =C2=A0=C2=A0=C2=A0=C2=A0 "
+>>  =20
+>>  =C2=A0# Add the bootloader file
+>> @@ -123,6 +124,42 @@ python add_ebg_update(){
+>>  =C2=A0=C2=A0=C2=A0 d.appendVar('SWU_ADDITIONAL_FILES', " " + efi_boot_l=
+oader_file)
+>>  =C2=A0}
+>>  =20
+>> +SWU_EXTEND_SW_DESCRIPTION +=3D "add_scripts"
+>> +python add_scripts(){
+>> +=C2=A0=C2=A0=C2=A0 swu_scripts =3D d.getVar('SWU_SCRIPTS')
+>> +=C2=A0=C2=A0=C2=A0 if not swu_scripts:
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return
+>> +=C2=A0=C2=A0=C2=A0 swu_script_entries =3D [ s for s in swu_scripts.spli=
+t() ]
+>> +=C2=A0=C2=A0=C2=A0 script_node_list =3D []
+>> +=C2=A0=C2=A0=C2=A0 for entry in swu_script_entries:
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 script_elems =3D entry.split=
+('@')
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if len(script_elems) < 2:
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bb.w=
+arn(f"SWU_SCRIPTS entry:'{entry}' is missing
+>> elements.")
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cont=
+inue
+>> +
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 script_file =3D script_elems=
+[0]
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 script_type =3D script_elems=
+[1]
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 script_data =3D None
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if len(script_elems) > 2:
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 scri=
+pt_data =3D script_elems[2]
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 node =3D f"""
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 {{
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 filename =3D "{s=
+cript_file}";
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 type =3D "{scrip=
+t_type}";
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 """
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if script_data:
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 node=
+ +=3D f"""=C2=A0 data =3D "{script_data}";"""
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 node +=3D f"""
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sha256 =3D "{scr=
+ipt_file}-sha256";
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }}"""
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 script_node_list.append(node=
+)
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 d.appendVar('SWU_ADDITIONAL_=
+FILES', " " + script_file)
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 d.appendVar('SRC_URI', f" fi=
+le://{script_file}")
+>> +
+>> +=C2=A0=C2=A0=C2=A0 swu_scripts_node =3D "scripts: (" + ','.join([n for =
+n in
+>> script_node_list]) + ");"
+>> +=C2=A0=C2=A0=C2=A0 d.appendVar('SWU_SCRIPTS_NODE', swu_scripts_node)
+>> +}
+>> +
+>>  =C2=A0# convert between swupdate compressor name and imagetype extensio=
+n
+>>  =C2=A0def get_swu_compression_type(d):
+>>  =C2=A0=C2=A0=C2=A0=C2=A0 swu_ct =3D d.getVar('SWU_COMPRESSION_TYPE')
+>> diff --git a/doc/README.swupdate.md b/doc/README.swupdate.md
+>> index 1c94699..b393caa 100644
+>> --- a/doc/README.swupdate.md
+>> +++ b/doc/README.swupdate.md
+>> @@ -21,6 +21,36 @@ window is still possible.
+>>  =C2=A0If the variable `SWU_EBG_UPDATE` is set to `"1"` the update is al=
+so
+>> stored in
+>>  =C2=A0the `*.swu` file.
+>>  =20
+>> +## SWUpdate scripts
+>> +
+>> +It is possible to add
+>> [scripts](https://sbabic.github.io/swupdate/sw-description.html?#scri
+>> pts) to a swu file.
+>> +
+>> +To add a script entry in isar-cip-core set the variable
+>> `SWU_SCRIPTS`.
+>> +The content of the variable has the following pattern:
+>> +`<script_file_name>@<script_type>@<optional_data>`
+>> +
+>> +The file referenced by `<script_file_name>` is added to the
+>> variables `SRC_URI`
+>> +and `SWU_ADDITIONAL_FILES`. Therefore, it needs to be safed in a
+>> `FILESPATH`
+>> +location.
+>> +
+>> +Example:
+>> +
+>> +```
+>> +SWU_SCRIPTS =3D "postinstall.sh@postinstall@some_data"
+>> +```
+>> +This will add=C2=A0 `file://postinstall.sh`=C2=A0to the variable `SRC_U=
+RI` and
+>> +`postinstall.sh` to `SWU_ADDTIONAL_FILES`. The sw-description will
+>> contain
+>=20
+> How about the lua scripts, where the preinst / postinst are just
+> functions within a single script? Could you please also give an example
+> regarding how to specify that.
+>
+
+This would be
+
+```
+SWU_SCRIPTS =3D "installscript.lua@lua@some_data"
+```
+
+and the installscript contains:
+
+```
+function preinst()
+
+end
+
+function postinst()
+
+end
+```=09
+
+I can add the script to `recipes-core/images/swu/` if this helps, but=20
+currently we have no functionality in cip-core.
+
+Quirin
+
+> Felix
+>=20
+>> +the following section:
+>> +```
+>> +=C2=A0=C2=A0=C2=A0 scripts: (
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 {
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 filename =3D "po=
+stinstall.sh";
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 type =3D "postin=
+stall";
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data =3D "some_d=
+ata"
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sha256 =3D "<sha=
+256 of postinstall.sh>";
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 },):
+>> +```
+>> +
+>>  =C2=A0# Building and testing the CIP Core image
+>>  =20
+>>  =C2=A0Set up `kas-container` as described in the [top-level
+>> README](../README.md).
+>> diff --git a/recipes-core/images/swu/sw-description.tmpl b/recipes-
+>> core/images/swu/sw-description.tmpl
+>> index c52372c..88cb475 100644
+>> --- a/recipes-core/images/swu/sw-description.tmpl
+>> +++ b/recipes-core/images/swu/sw-description.tmpl
+>> @@ -35,4 +35,5 @@ software =3D
+>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 };
+>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 sha256 =3D "linux.efi-sha256";
+>>  =C2=A0=C2=A0=C2=A0=C2=A0 }${SWU_FILE_NODES});
+>> +=C2=A0=C2=A0=C2=A0 ${SWU_SCRIPTS_NODE}
+>>  =C2=A0}
+>=20
 
