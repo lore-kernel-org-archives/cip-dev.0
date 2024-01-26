@@ -2,32 +2,32 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F737C47422
-	for <webhook@archiver.kernel.org>; Fri, 26 Jan 2024 17:20:18 +0000 (UTC)
-Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
- by mx.groups.io with SMTP id smtpd.web11.3922.1706289616402584250
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9DEBC47DDF
+	for <webhook@archiver.kernel.org>; Fri, 26 Jan 2024 17:31:46 +0000 (UTC)
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+ by mx.groups.io with SMTP id smtpd.web10.89.1706290302486182350
  for <cip-dev@lists.cip-project.org>;
- Fri, 26 Jan 2024 09:20:17 -0800
+ Fri, 26 Jan 2024 09:31:43 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=MyvblHch;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228, mailfrom: fm-51332-202401261720125664f2887afe75c444-gt_da1@rts-flowmailer.siemens.com)
-Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 202401261720125664f2887afe75c444
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=Nx6uRIqQ;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-51332-20240126173139fbe4d1bcc1a0917e5a-smmvjc@rts-flowmailer.siemens.com)
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20240126173139fbe4d1bcc1a0917e5a
         for <cip-dev@lists.cip-project.org>;
-        Fri, 26 Jan 2024 18:20:13 +0100
+        Fri, 26 Jan 2024 18:31:40 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
- bh=UK24oaf3TmaTaLK2GsAgT+RLxpRNQAFTDmOD7xAV+Rc=;
- b=MyvblHchvAQXqorUSTzOsXt/2d2i6wUvxWg628XKRDqxB/OvbC1YZ+0k5zJyMm9VNegWG0
- uPQd3sXwYF1ewd2ACeIKST0aE1tlyxG+sSj1K+WrhaNxbgyH5B8q+OXYNKNehaqrJPh0z3sh
- lVHVQSkyNKAS3jGi/Ak6Ew3u4VGZs=;
+ bh=rAL8J6sEupgalpdm0FqKnQo7QbZFTSj5g6wTDH6fmBY=;
+ b=Nx6uRIqQ0wOwrq40hT5mBLQFcDnVVUMTvv5nmEBdRGk7RkR9GPdPw7lL6mFZakMOyKbdk+
+ 0vOn0WcUcRSt+PCEhVp6UD7wLYMNVvCA8+eDzmXPpdDZEjiBv0CgNvEhVgfnRYNpqr19qC0d
+ BV4Xd0iXRImLjwYLa/BQ0G3eUTqmc=;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: felix.moessbauer@siemens.com,
+To: jan.kiszka@siemens.com,
 	cip-dev@lists.cip-project.org,
-	jan.kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH v2] swupdate.bbclass: Move ebg_update to efibootguard.bbclass
-Date: Fri, 26 Jan 2024 18:19:53 +0100
-Message-ID: <20240126172011.1590119-1-Quirin.Gylstorff@siemens.com>
+	felix.moessbauer@siemens.com
+Subject: [cip-dev][isar-cip-core][PATCH v3] swupdate.bbclass: add scripts section to the swu file
+Date: Fri, 26 Jan 2024 18:31:19 +0100
+Message-ID: <20240126173138.1591803-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
@@ -35,118 +35,199 @@ Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 26 Jan 2024 17:20:18 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14470
+ <cip-dev@lists.cip-project.org>; Fri, 26 Jan 2024 17:31:46 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14471
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-This avoids a transient inclusion of efibootguard to all images due
-to `swupdate` added as a FSTYPE in the layer.conf.
+This allows the user to add scripts[1] to the swu file by
+setting the variable `SWU_SCRIPTS`. Scripts can be used to
+prepare the system for an update.
 
-Reported-by: Felix Moessbauer <felix.moessbauer@siemens.com>
-Tested-by: Felix Moessbauer <felix.moessbauer@siemens.com>
+```
+SWU_SCRIPTS = "<script_file_name>@<script_type>@<optional_data>"
+```
+This will add  `file://<script_file_name>` to the variable `SRC_URI` and
+`<script_file_name>` to `SWU_ADDTIONAL_FILES`. The sw-description will contain
+the following section:
+```
+    scripts: (
+        {
+          filename = "<script_file_name>";
+          type = "<script_type>";
+          data = "<optional_data>";
+          sha256 = "<automatically added sha256 of script_file_name>";
+        },):
+```
+
+[1]: https://sbabic.github.io/swupdate/sw-description.html?#scripts
+
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
+Changes v3:
+ - fix message
+ - add luascript example to README
+
 Changes v2:
-  - Fix subject
-  - add Reported and Tested-by
+ - change seperator from `:` to `@` as it already used for the
+   configfilecheck
+ - add optional data entry
+ - add warning if less then 2 parameters are given for entry
 
- classes/efibootguard.bbclass | 29 +++++++++++++++++++++++++++++
- classes/swupdate.bbclass     | 30 ------------------------------
- 2 files changed, 29 insertions(+), 30 deletions(-)
 
-diff --git a/classes/efibootguard.bbclass b/classes/efibootguard.bbclass
-index 26291b7..31fcdcc 100644
---- a/classes/efibootguard.bbclass
-+++ b/classes/efibootguard.bbclass
-@@ -40,3 +40,32 @@ def distro_to_lib_arch(d):
-     return DISTRO_TO_LIB_ARCH[distro_arch]
- 
- EFI_LIB_ARCH := "${@distro_to_lib_arch(d)}"
-+
-+# Add the bootloader file
-+def efi_bootloader_name(d):
-+    efi_arch = distro_to_efi_arch(d)
-+    return "boot{}.efi".format(efi_arch)
-+
-+SWU_EXTEND_SW_DESCRIPTION += "add_ebg_update"
-+python add_ebg_update(){
-+   efi_boot_loader_file = efi_bootloader_name(d)
-+   efi_boot_device = d.getVar('SWU_EFI_BOOT_DEVICE')
-+   swu_ebg_update_node = f"""
-+   {{
-+          filename = "{efi_boot_loader_file}";
-+          path = "EFI/BOOT/{efi_boot_loader_file}";
-+          device = "{efi_boot_device}";
-+          filesystem = "vfat";
-+          sha256 = "{efi_boot_loader_file}-sha256";
-+          properties: {{
-+               atomic-install = "true";
-+          }};
-+   }}
-+   """
-+
-+   d.setVar('SWU_BOOTLOADER_FILE_NODE', swu_ebg_update_node)
-+   ebg_update = d.getVar('SWU_EBG_UPDATE') or ""
-+   if ebg_update:
-+     d.appendVar('SWU_FILE_NODES', "," + swu_ebg_update_node)
-+   d.appendVar('SWU_ADDITIONAL_FILES', " " + efi_boot_loader_file)
-+}
+
+ classes/swupdate.bbclass                    | 37 +++++++++++
+ doc/README.swupdate.md                      | 71 +++++++++++++++++++++
+ recipes-core/images/swu/sw-description.tmpl |  1 +
+ 3 files changed, 109 insertions(+)
+
 diff --git a/classes/swupdate.bbclass b/classes/swupdate.bbclass
-index 8f1215d..403bdef 100644
+index 8f1215d..256a60f 100644
 --- a/classes/swupdate.bbclass
 +++ b/classes/swupdate.bbclass
-@@ -11,7 +11,6 @@
- # SPDX-License-Identifier: MIT
- 
- inherit template
--inherit efibootguard
- 
- SWU_ROOTFS_TYPE ?= "squashfs"
- SWU_ROOTFS_NAME ?= "${IMAGE_FULLNAME}"
-@@ -60,11 +59,6 @@ IMAGE_TEMPLATE_VARS:swu = " \
+@@ -58,6 +58,7 @@ IMAGE_TEMPLATE_VARS:swu = " \
+     SWU_NAME \
+     SWU_FILE_NODES \
      SWU_BOOTLOADER_FILE_NODE \
++    SWU_SCRIPTS_NODE \
      "
  
--# Add the bootloader file
--def efi_bootloader_name(d):
--    efi_arch = distro_to_efi_arch(d)
--    return "boot{}.efi".format(efi_arch)
--
- # TARGET_IMAGE_UUID needs to be generated before completing the template
- addtask do_transform_template after do_generate_image_uuid
- 
-@@ -99,30 +93,6 @@ python add_swu_compression(){
-         d.setVar('SWU_COMPRESSION_NODE', '')
+ # Add the bootloader file
+@@ -123,6 +124,42 @@ python add_ebg_update(){
+    d.appendVar('SWU_ADDITIONAL_FILES', " " + efi_boot_loader_file)
  }
  
--SWU_EXTEND_SW_DESCRIPTION += "add_ebg_update"
--python add_ebg_update(){
--   efi_boot_loader_file = efi_bootloader_name(d)
--   efi_boot_device = d.getVar('SWU_EFI_BOOT_DEVICE')
--   swu_ebg_update_node = f"""
--   {{
--          filename = "{efi_boot_loader_file}";
--          path = "EFI/BOOT/{efi_boot_loader_file}";
--          device = "{efi_boot_device}";
--          filesystem = "vfat";
--          sha256 = "{efi_boot_loader_file}-sha256";
--          properties: {{
--               atomic-install = "true";
--          }};
--   }}
--   """
--
--   d.setVar('SWU_BOOTLOADER_FILE_NODE', swu_ebg_update_node)
--   ebg_update = d.getVar('SWU_EBG_UPDATE') or ""
--   if ebg_update:
--     d.appendVar('SWU_FILE_NODES', "," + swu_ebg_update_node)
--   d.appendVar('SWU_ADDITIONAL_FILES', " " + efi_boot_loader_file)
--}
--
++SWU_EXTEND_SW_DESCRIPTION += "add_scripts"
++python add_scripts(){
++    swu_scripts = d.getVar('SWU_SCRIPTS')
++    if not swu_scripts:
++        return
++    swu_script_entries = [ s for s in swu_scripts.split() ]
++    script_node_list = []
++    for entry in swu_script_entries:
++        script_elems = entry.split('@')
++        if len(script_elems) < 2:
++            bb.warn(f"SWU_SCRIPTS entry:'{entry}' is missing elements.")
++            continue
++
++        script_file = script_elems[0]
++        script_type = script_elems[1]
++        script_data = None
++        if len(script_elems) > 2:
++            script_data = script_elems[2]
++        node = f"""
++        {{
++          filename = "{script_file}";
++          type = "{script_type}";
++        """
++        if script_data:
++            node += f"""  data = "{script_data}";"""
++        node += f"""
++          sha256 = "{script_file}-sha256";
++        }}"""
++        script_node_list.append(node)
++        d.appendVar('SWU_ADDITIONAL_FILES', " " + script_file)
++        d.appendVar('SRC_URI', f" file://{script_file}")
++
++    swu_scripts_node = "scripts: (" + ','.join([n for n in script_node_list]) + ");"
++    d.appendVar('SWU_SCRIPTS_NODE', swu_scripts_node)
++}
++
  # convert between swupdate compressor name and imagetype extension
  def get_swu_compression_type(d):
      swu_ct = d.getVar('SWU_COMPRESSION_TYPE')
+diff --git a/doc/README.swupdate.md b/doc/README.swupdate.md
+index 1c94699..1a7fa0f 100644
+--- a/doc/README.swupdate.md
++++ b/doc/README.swupdate.md
+@@ -21,6 +21,77 @@ window is still possible.
+ If the variable `SWU_EBG_UPDATE` is set to `"1"` the update is also stored in
+ the `*.swu` file.
+ 
++## SWUpdate scripts
++
++It is possible to add [scripts](https://sbabic.github.io/swupdate/sw-description.html?#scripts) to a swu file.
++
++To add a script entry in isar-cip-core set the variable `SWU_SCRIPTS`.
++The content of the variable has the following pattern:
++`<script_file_name>@<script_type>@<optional_data>`
++
++The file referenced by `<script_file_name>` is added to the variables `SRC_URI`
++and `SWU_ADDITIONAL_FILES`. Therefore, it needs to be safed in a `FILESPATH`
++location.
++
++The mandatory element `script_type` can have the following values:
++- [lua](https://sbabic.github.io/swupdate/sw-description.html#lua)
++- [shellscript](https://sbabic.github.io/swupdate/sw-description.html#shellscript)
++- [preinstall](https://sbabic.github.io/swupdate/sw-description.html#preinstall)
++- [postinstall](https://sbabic.github.io/swupdate/sw-description.html#postinstall)
++
++### Example: postinstall.sh
++
++```
++SWU_SCRIPTS = "postinstall"
++SWU_SCRIPT_postinstall[file] = "postinstall.sh"
++SWU_SCRIPT_postinstall[type] = "postinstall"
++SWU_SCRIPT_postinstall[data] = "some_data"
++```
++
++This will add  `file://postinstall.sh` to the variable `SRC_URI` and
++`postinstall.sh` to `SWU_ADDTIONAL_FILES`. The sw-description will contain
++the following section:
++```
++    scripts: (
++        {
++          filename = "postinstall.sh";
++          type = "postinstall";
++          data = "some_data"
++          sha256 = "<sha256 of postinstall.sh>";
++        },):
++```
++### Example: Luascript
++The simplest lua script has the following content:
++```lua
++function preinst()
++	local message = "preinst called\n"
++	local success = true
++	return success, message
++end
++function postinst()
++	local message = "postinst called\n"
++	local success = true
++	return success, message
++end
++```
++and is added:
++
++```
++SWU_SCRIPTS = "luascript.lua@lua@some_data"
++
++```
++
++The sw-description will contain the following section:
++```
++    scripts: (
++        {
++          filename = "luascript.lua";
++          type = "lua";
++          data = "some_data"
++          sha256 = "<sha256 of luascript.lua>";
++        },):
++```
++
+ # Building and testing the CIP Core image
+ 
+ Set up `kas-container` as described in the [top-level README](../README.md).
+diff --git a/recipes-core/images/swu/sw-description.tmpl b/recipes-core/images/swu/sw-description.tmpl
+index c52372c..88cb475 100644
+--- a/recipes-core/images/swu/sw-description.tmpl
++++ b/recipes-core/images/swu/sw-description.tmpl
+@@ -35,4 +35,5 @@ software =
+             };
+             sha256 = "linux.efi-sha256";
+     }${SWU_FILE_NODES});
++    ${SWU_SCRIPTS_NODE}
+ }
 -- 
 2.43.0
 
