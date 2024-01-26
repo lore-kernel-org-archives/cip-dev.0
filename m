@@ -1,136 +1,147 @@
-Return-Path: <webhook@kernel.org>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD03C47422
-	for <webhook@archiver.kernel.org>; Fri, 26 Jan 2024 06:48:40 +0000 (UTC)
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
- by mx.groups.io with SMTP id smtpd.web11.10190.1706251711285967056
- for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Thu, 25 Jan 2024 22:48:31 -0800
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A08C8C47422
+	for <webhook@archiver.kernel.org>; Fri, 26 Jan 2024 09:07:30 +0000 (UTC)
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
+ by mx.groups.io with SMTP id smtpd.web10.11829.1706260043222202379
+ for <cip-dev@lists.cip-project.org>;
+ Fri, 26 Jan 2024 01:07:24 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=Zy5TdIbX;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.215.181, mailfrom: bot@kernelci.org)
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-5d3907ff128so30686a12.3
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Thu, 25 Jan 2024 22:48:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1706251710; x=1706856510; darn=lists.cip-project.org;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=JNHD+3z25x3Yy/MYa/15U00Na0XAPZfDaLJkbBIFeyU=;
-        b=Zy5TdIbXPWRY66QQbrHEZBNXvQof26KYWZnDwNIVImBR9wun5i27nSPKh0ZhrONcz/
-         eYtRZP1DVKfWS2L6L4eg77GHoJERoT7Tz1KJRiVzsZ4d/iUSglNIU7yYYXtjFqPTMATm
-         4rjS//PXNSriOqDPqS1Cr7sILspvr2z9oSKsiJlN0eNHKPW775txE2wj8FA/7QcCQU0v
-         GNle1miPm8Vfnh4QqLWbcSoTy7tlvTRegcELjAyhj6saqncOWwz8EaLT4Vu/wh6HSfT7
-         VPcUdS+D2subG/RWWIPA2SlvvOAwF6/0qKDg6vpJm0sFAvkSq+KrwmaDFbQvJ5chDwut
-         MURg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706251710; x=1706856510;
-        h=from:to:subject:content-transfer-encoding:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JNHD+3z25x3Yy/MYa/15U00Na0XAPZfDaLJkbBIFeyU=;
-        b=g8jlnWMUTnWXlfxkAwSj9e2axnMopk/aRRG6g6jpXqDGZx3lHSfcWjJamC4VK31aMC
-         rX2lBXlGHXf7bKkA25EPqKF9jXl+8eeThzoJ4uZCDr/5R64Tl2MB156nysKH3p8keYAQ
-         0wh4woWy5mccddqERUUmIdO9HrOgXLrzfrA6/maKnFqjx7pL+Tv3HABIUJUGBR5S0HfR
-         Tf9NejkQxJzcrTb7S+3xSo0nNPI5el/SCNVTb+EbH4VhZ5CwZZqBkC/XipyBgz5aNDFW
-         ji7AynDvqw6D4c9kMYMpgSmqL9KIpd+YvdrcspX2RLdK/qKQTgBV5HS7gE0zzJAX9xou
-         Hj3w==
-X-Gm-Message-State: AOJu0YyNtzhnEOgYqCQklRoCwjVNwR8+a679B81g7Lx4qQeNj+qJdDZU
-	Un4qnXvuDrx7cIQCTrvakLIilc8fjAjGCe5KPZ+j+UBsx0BogUxJgE6vXeUiPK9MoO7zj+knTuR
-	Ux2o=
-X-Google-Smtp-Source: AGHT+IGNyiIZtaMC2KI5gk/r5NPy3pAtcvL8J7mVW6OPQeJqCuki1KUNCak+JIVT3FTVjtj7sInhWQ==
-X-Received: by 2002:a05:6a20:2593:b0:19a:49fc:5d98 with SMTP id k19-20020a056a20259300b0019a49fc5d98mr1064776pzd.68.1706251710057;
-        Thu, 25 Jan 2024 22:48:30 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id b11-20020a056a000ccb00b006daca8ecb85sm511034pfv.139.2024.01.25.22.48.29
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jan 2024 22:48:29 -0800 (PST)
-Message-ID: <65b355bd.050a0220.35abf.152e@mx.google.com>
-Date: Thu, 25 Jan 2024 22:48:29 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=ilGwWpCh;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-51332-20240126090720313c86753b2a102caa-yum96j@rts-flowmailer.siemens.com)
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 20240126090720313c86753b2a102caa
+        for <cip-dev@lists.cip-project.org>;
+        Fri, 26 Jan 2024 10:07:20 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ bh=gEEuRKkUDSS0SdJcQFSA9lPJbrj85kr8mmRvu3V6Bj4=;
+ b=ilGwWpChKUNPsQUvIQwr/lWRYKp2huYpmaz0LhtHYrX3tVB8f+GcLxFFjOQajqQBeTCLVh
+ cJy9I8hfKI2ibvPDawex8/0JF0uuFKp9pfwYbItiq8Q3YX9U0eJfS1cGJnSbieJ1H/H/a3BS
+ TCy3L4vnOtv5961WRAVblGjFOOEw4=;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: cip-dev@lists.cip-project.org,
+	jan.kiszka@siemens.com,
+	felix.moessbauer@siemens.com
+Subject: [cip-dev][isar-cip-core][PATCH] swupdate.bbclass: Remove
+Date: Fri, 26 Jan 2024 10:06:42 +0100
+Message-ID: <20240126090719.634980-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: ci/iwamatsu/linux-4.19.y-cip-rc
-X-Kernelci-Tree: cip-gitlab
-X-Kernelci-Kernel: v4.19.304-cip106-176-g770d0422c72e9
-X-Kernelci-Report-Type: test
-Subject: cip-gitlab/ci/iwamatsu/linux-4.19.y-cip-rc ltp-timers: 11 runs,
- 1 regressions (v4.19.304-cip106-176-g770d0422c72e9)
-To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
-From: "kernelci.org bot" <bot@kernelci.org>
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 26 Jan 2024 06:48:40 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14466
+ <cip-dev@lists.cip-project.org>; Fri, 26 Jan 2024 09:07:30 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14468
 
-cip-gitlab/ci/iwamatsu/linux-4.19.y-cip-rc ltp-timers: 11 runs, 1 regressio=
-ns (v4.19.304-cip106-176-g770d0422c72e9)
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Regressions Summary
--------------------
+This avoids a transient inclusion of efibootguard to all images due
+to `swupdate` added as a FSTYPE in the layer.conf.
 
-platform                 | arch   | lab           | compiler | defconfig   =
-               | regressions
--------------------------+--------+---------------+----------+-------------=
----------------+------------
-asus-C523NA-A20057-coral | x86_64 | lab-collabora | gcc-10   | x86_64_defco=
-nfig+x86-board | 1          =
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ classes/efibootguard.bbclass | 29 +++++++++++++++++++++++++++++
+ classes/swupdate.bbclass     | 30 ------------------------------
+ 2 files changed, 29 insertions(+), 30 deletions(-)
 
+diff --git a/classes/efibootguard.bbclass b/classes/efibootguard.bbclass
+index 26291b7..31fcdcc 100644
+--- a/classes/efibootguard.bbclass
++++ b/classes/efibootguard.bbclass
+@@ -40,3 +40,32 @@ def distro_to_lib_arch(d):
+     return DISTRO_TO_LIB_ARCH[distro_arch]
+ 
+ EFI_LIB_ARCH := "${@distro_to_lib_arch(d)}"
++
++# Add the bootloader file
++def efi_bootloader_name(d):
++    efi_arch = distro_to_efi_arch(d)
++    return "boot{}.efi".format(efi_arch)
++
++SWU_EXTEND_SW_DESCRIPTION += "add_ebg_update"
++python add_ebg_update(){
++   efi_boot_loader_file = efi_bootloader_name(d)
++   efi_boot_device = d.getVar('SWU_EFI_BOOT_DEVICE')
++   swu_ebg_update_node = f"""
++   {{
++          filename = "{efi_boot_loader_file}";
++          path = "EFI/BOOT/{efi_boot_loader_file}";
++          device = "{efi_boot_device}";
++          filesystem = "vfat";
++          sha256 = "{efi_boot_loader_file}-sha256";
++          properties: {{
++               atomic-install = "true";
++          }};
++   }}
++   """
++
++   d.setVar('SWU_BOOTLOADER_FILE_NODE', swu_ebg_update_node)
++   ebg_update = d.getVar('SWU_EBG_UPDATE') or ""
++   if ebg_update:
++     d.appendVar('SWU_FILE_NODES', "," + swu_ebg_update_node)
++   d.appendVar('SWU_ADDITIONAL_FILES', " " + efi_boot_loader_file)
++}
+diff --git a/classes/swupdate.bbclass b/classes/swupdate.bbclass
+index 8f1215d..403bdef 100644
+--- a/classes/swupdate.bbclass
++++ b/classes/swupdate.bbclass
+@@ -11,7 +11,6 @@
+ # SPDX-License-Identifier: MIT
+ 
+ inherit template
+-inherit efibootguard
+ 
+ SWU_ROOTFS_TYPE ?= "squashfs"
+ SWU_ROOTFS_NAME ?= "${IMAGE_FULLNAME}"
+@@ -60,11 +59,6 @@ IMAGE_TEMPLATE_VARS:swu = " \
+     SWU_BOOTLOADER_FILE_NODE \
+     "
+ 
+-# Add the bootloader file
+-def efi_bootloader_name(d):
+-    efi_arch = distro_to_efi_arch(d)
+-    return "boot{}.efi".format(efi_arch)
+-
+ # TARGET_IMAGE_UUID needs to be generated before completing the template
+ addtask do_transform_template after do_generate_image_uuid
+ 
+@@ -99,30 +93,6 @@ python add_swu_compression(){
+         d.setVar('SWU_COMPRESSION_NODE', '')
+ }
+ 
+-SWU_EXTEND_SW_DESCRIPTION += "add_ebg_update"
+-python add_ebg_update(){
+-   efi_boot_loader_file = efi_bootloader_name(d)
+-   efi_boot_device = d.getVar('SWU_EFI_BOOT_DEVICE')
+-   swu_ebg_update_node = f"""
+-   {{
+-          filename = "{efi_boot_loader_file}";
+-          path = "EFI/BOOT/{efi_boot_loader_file}";
+-          device = "{efi_boot_device}";
+-          filesystem = "vfat";
+-          sha256 = "{efi_boot_loader_file}-sha256";
+-          properties: {{
+-               atomic-install = "true";
+-          }};
+-   }}
+-   """
+-
+-   d.setVar('SWU_BOOTLOADER_FILE_NODE', swu_ebg_update_node)
+-   ebg_update = d.getVar('SWU_EBG_UPDATE') or ""
+-   if ebg_update:
+-     d.appendVar('SWU_FILE_NODES', "," + swu_ebg_update_node)
+-   d.appendVar('SWU_ADDITIONAL_FILES', " " + efi_boot_loader_file)
+-}
+-
+ # convert between swupdate compressor name and imagetype extension
+ def get_swu_compression_type(d):
+     swu_ct = d.getVar('SWU_COMPRESSION_TYPE')
+-- 
+2.43.0
 
-  Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fiwamatsu%2=
-Flinux-4.19.y-cip-rc/kernel/v4.19.304-cip106-176-g770d0422c72e9/plan/ltp-ti=
-mers/
-
-  Test:     ltp-timers
-  Tree:     cip-gitlab
-  Branch:   ci/iwamatsu/linux-4.19.y-cip-rc
-  Describe: v4.19.304-cip106-176-g770d0422c72e9
-  URL:      https://gitlab.com/cip-project/cip-kernel/linux-cip.git
-  SHA:      770d0422c72e9acab17684ec2bbff7bc9a09b1a4
-
-  Test suite revisions:
-    ltp-tests
-      URL:  https://github.com/linux-test-project/ltp.git
-      SHA:  3f0b2176930cf15a26597e28abf4356050136bbe =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform                 | arch   | lab           | compiler | defconfig   =
-               | regressions
--------------------------+--------+---------------+----------+-------------=
----------------+------------
-asus-C523NA-A20057-coral | x86_64 | lab-collabora | gcc-10   | x86_64_defco=
-nfig+x86-board | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/65b3487ff438009aec52a40c
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: x86_64_defconfig+x86-board
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
-.19.y-cip-rc/v4.19.304-cip106-176-g770d0422c72e9/x86_64/x86_64_defconfig+x8=
-6-board/gcc-10/lab-collabora/ltp-timers-asus-C523NA-A20057-coral.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-iwamatsu-linux-4=
-.19.y-cip-rc/v4.19.304-cip106-176-g770d0422c72e9/x86_64/x86_64_defconfig+x8=
-6-board/gcc-10/lab-collabora/ltp-timers-asus-C523NA-A20057-coral.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-lt=
-p/20230623.0/amd64/initrd.cpio.gz =
-
-
-
-  * ltp-timers.login: https://kernelci.org/test/case/id/65b3487ff438009aec5=
-2a40d
-        failing since 17 days (last pass: v4.19.299-cip105-158-g856c181dce3=
-42, first fail: v4.19.299-cip105-289-gad0914f265af) =
-
- =20
 
