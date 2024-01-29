@@ -2,195 +2,602 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61242C47422
-	for <webhook@archiver.kernel.org>; Mon, 29 Jan 2024 12:22:26 +0000 (UTC)
-Received: from EUR04-VI1-obe.outbound.protection.outlook.com (EUR04-VI1-obe.outbound.protection.outlook.com [40.107.8.70])
- by mx.groups.io with SMTP id smtpd.web10.13455.1706530940790108711
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B6FC47422
+	for <webhook@archiver.kernel.org>; Mon, 29 Jan 2024 12:30:16 +0000 (UTC)
+Received: from EUR03-DBA-obe.outbound.protection.outlook.com (EUR03-DBA-obe.outbound.protection.outlook.com [40.107.104.46])
+ by mx.groups.io with SMTP id smtpd.web10.13572.1706531415206073456
  for <cip-dev@lists.cip-project.org>;
- Mon, 29 Jan 2024 04:22:21 -0800
+ Mon, 29 Jan 2024 04:30:16 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=ixLPKtKk;
- spf=pass (domain: siemens.com, ip: 40.107.8.70, mailfrom: jan.kiszka@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=pZSCQ9ud;
+ spf=pass (domain: siemens.com, ip: 40.107.104.46, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WeUx7mX6EFUwzidYgwcMr+jkyCT/j6Wc10qhwQYmLMw8KYy0nRrmcn1qAWt119gHm/xP89eY6zvvizyGFE1XLafSFJewa0Us6lbOV49G5n61khA5D601Ju2DSYcHFPqsVZsbhYfMJ1xremMAeNWhrNeCRldE8Y311cRdX7+nZKEmtk5n9WLSD+cBo82h9pPh1aaCUcTLHPwtUXECwo4mn9Zumw2ARnTbFhgfIHq4axX7+odqLRDmry/jwjgBwXLfE+eULRLKOLV1kgdNKoDGpvK13ip5qyZWjOMkuGegSbylXSeCMs4CACEK4T8dTMz75iR6LkxAub9xETfuwucv0w==
+ b=nZEG02rbOJLz/uXW8tZX5zukZcZP05uyNALCnQou3S3Ti/vb/2GRuLzJYd+jJo4wNO4BOOFJ/zIGpixYB/VxibsDK0sr8xJAkABD0lHMSDlkvZNCGYY/Vh52Ix/cPhkXrdCf01d7qZiNFTdfvFOZYyU77DwLssCsyejgx/oiF/ZNFdztEl3IbngKSF5CrNVcKTnv/fO51UzXwXO1hua5dq96o/fH8vJt7F84ZAk/+1omjT1hD+xwW4cjcsTAC29xWuh89WwDNNEKSnR6IoTB1ZqM0S3h2a+J5hRb++g75/HkPsAT4EoKC8dWw6WRUF08HgJxxRu+wjkQBVDuOlVevg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=v3MjmuiECz3Ae6tqMI2IX78fdk55LBm3iepsvPULTLM=;
- b=oE3QAqkpMiYgd+k/Fi1ZNAQWdhCH+Og1XGc7KlE91gN+ahex5KtzxS67Xlji9x2xof46JthsR2KtBwofBLs9C7ydwL1/S0Y+w9KYafo6ZZyhV3wNEiRggFFU+89MGidYl8+/57FvvIj2Yj7HSbFWFsF3mWVlpTZY1zfhrSPQ9nD3/PZlvyVE4UVaRT3V/3KpQKA1BNWjUUZm2FiI7AYe30fNPBEduQRiaLhwH/XaTMLRKszgmyUZPIurj7We1SePbG9wGa4/jeruz+tTOznSIqD/SflZYVo53K9JSI0JJRUxdvpggzscttS/vVBncmUhDIQRtddS9YYfIq0TZOjC7g==
+ bh=PcZJZBIN6ae6CzZA/3Rzj5laNxBLAK81XNDP/90l5KY=;
+ b=LsT1V9KRUvRAJ9yXeM69o7Npqz/vuz5/TRZ664+OgTL+wULed7LpB841oIlPQkiO05hUlwfRFw43MsYFeXElcanu+Yj/ujABlN+Mvxe7SslMVA7Y6x69gp+V2pIj+1gCUZErZBaO6ygK+840Y/FRthIk7fRh2kgAI9oqFCulzqdocdBc9b0LMhheQzBHgdSjbw4WtVl9fFi0dCapNyTfw5eN3ozgB1AOXnBe7bb3oAgZTZJTMYEibLmRjA2BcqAaOa+1F2eV52AIODLbdE8cAAk6ecc59ySsvLDRP7YbPqO4Dd4K5LEvGImnwKl3HQVPW0Gx+QSSznichlGaH5+3Rw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v3MjmuiECz3Ae6tqMI2IX78fdk55LBm3iepsvPULTLM=;
- b=ixLPKtKkfQ5+o5cFcDgko/xRT8GzFt5sLQAzNx6i3779MRdnO+o0F2FpkIe5EhMsdcni7ufZ+x2B9YYys80ZjJAbCETzkqILBrhO9ZFrk1oOoRK0bTmHh+UghlEDm5ghjVFgH2eYtTkF5+OrzFBgbW4WTCqUy3Go7L0w36l9KXWT3zLLERkD/E7xRwLswotUrrI6+VJiefbsOdYHX9YxyZzU8SRuSmalzYTkZsCf253SekCkeKRIutSOIw8F7ydxzoH785/FhCRM6/8MiXzGQsO1I7vt3kgmxoFwc28cANcIAI7OMaqSOVD4KCkQ9lNzbk8jHJKR6E4cF8JI2SpMHA==
+ bh=PcZJZBIN6ae6CzZA/3Rzj5laNxBLAK81XNDP/90l5KY=;
+ b=pZSCQ9uddsTcLApQ+A8UQnnHyUkRLW6/JZ7YGRPzR2uQi8LVCDmHgbo5mRvrBakNpAmmBLpBMr4tchRCdG9+uo0EOwRmQRuY08d9xuiCnqf8hnGO1h1QzQA1cvpmXdlbCMW3DuBM2dCl6JLd7JlHRlCghIlY59yjvyRJ5vnkBEvl25HL11JsbuNDJwTRW2v9jWp73s4Xk8RkReTYAhGUGLUhUx/WdL1z3tcGoXsKNjFIOfOAtusOI0hulVYzsKfWqw6RuLoZdIUXXbV6tq42r6GFAiKt2+Dnj2xCQroHzrU+flIt/HohwyUMLN5DHH5n/j3MbHciXkvFlITrygqh3g==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by GV1PR10MB6170.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:96::11) with
+ by DU0PR10MB7358.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:446::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7228.32; Mon, 29 Jan
- 2024 12:22:17 +0000
+ 2024 12:30:09 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8d16:7fbb:4964:94fe]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8d16:7fbb:4964:94fe%3]) with mapi id 15.20.7228.029; Mon, 29 Jan 2024
- 12:22:17 +0000
-Message-ID: <5866a5a9-c2a3-4930-9362-a3893ad309bb@siemens.com>
-Date: Mon, 29 Jan 2024 13:22:15 +0100
+ 12:30:08 +0000
+Message-ID: <ef5c8484-26fc-48c7-919c-318cca4ab4c3@siemens.com>
+Date: Mon, 29 Jan 2024 13:30:02 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev][isar-cip-core][PATCH v3] efibootguard: Update to 0.16-2
+Subject: Re: [isar-cip-core][PATCH v1] wic: Set fixed partition UUID values
 Content-Language: en-US
-To: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>,
- felix.moessbauer@siemens.com, cip-dev@lists.cip-project.org
-References: <20240123211406.2154661-1-Quirin.Gylstorff@siemens.com>
+To: Adithya.Balakumar@toshiba-tsip.com, felix.moessbauer@siemens.com,
+ cip-dev@lists.cip-project.org
+CC: Shivanand.Kunijadar@toshiba-tsip.com, Sai.Sathujoda@toshiba-tsip.com,
+ dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
+References: <20240122121502.2605116-1-Adithya.Balakumar@toshiba-tsip.com>
+ <9e37cacb919c267894dc25a3cf99026b48fd7886.camel@siemens.com>
+ <TYCPR01MB966912B6A25CDDAEEBE16DE0C47B2@TYCPR01MB9669.jpnprd01.prod.outlook.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20240123211406.2154661-1-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <TYCPR01MB966912B6A25CDDAEEBE16DE0C47B2@TYCPR01MB9669.jpnprd01.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0155.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:98::15) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: CH2PR14CA0026.namprd14.prod.outlook.com
+ (2603:10b6:610:60::36) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GV1PR10MB6170:EE_
-X-MS-Office365-Filtering-Correlation-Id: e63d5f3e-eea8-4f48-38a4-08dc20c4eecf
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DU0PR10MB7358:EE_
+X-MS-Office365-Filtering-Correlation-Id: da71ef38-1e16-4261-870a-08dc20c60781
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	7fqziidpluBIUwb1EyEbKxbehNZR0vNep+AozfBL/tfj89mtKDBOP8rv1OpVzcytzhSR+mdlSpVS126DVqftIdmjdrXuHjJnG0Q4F+QdTZpSMwGYtesLFa1Rci+HjrFa404ZM68xQTUkvV726QBdh22YizumFcldJ54lozaaUFCIErYpBhdI+CfWvgkEHnRuAZywd7RFtaht6YT9yxKeXlBoq2+2xx+ABUh2+CkkyrqiA8Im1e5jmSiH6FdYQ4bwGIvFTp3bBYodaCKV3PQnKuSyi1Wazd7/+Of0z3oSKtXmuRMqSVzm9JgEEJLa9f9ne7Q9filxoK92iz4oojk1p0oy4Zz+KvrU7Ykt8F7j+jeF4uzqIB8DrUDyOmyVmvRSEHIEPdTi1C8dRilQfD3Sqi6CI0hTOBRjyjhP5dhjNakJyEwJn/nNXEgK7yal9p5uqatdZnRS8PHhWbXdGjwBoai2j6p1eLdQPfclhmLqxEqN+ao8WkmAmc0t5camuOA1E1wBC1/x+G1Us1i1YdBq8X/WPUk3MAfe+vxX36tLnZxt424yDbt1L7YagTFiO7B6xe6kwAt4b+q4nfTVoJN9Zdh+k9PdAFW17SSxLWdAt54+g9VChnPRo1BuxyT4WJKUumTSTU88ZJB+HbXJAyg6Xg==
+	SZ5kWuDAtUsekWq2BL0gtSDMXwm+g401ER32FLYlXgHazZTlQHL0yIWXF0JL04GY0F9NKzy1TPRTsnxr0QpzDM8Jvhdhd5I9TtJWuH4TVPA1T7zz3Ytn649uHUN1HN1FExF4hINQ7Ls4PKLtNOj5kohbzTf3Ws5uySUwMDjASza6AseCw+XA9OxQG4aef9dRgVygl17sE9OuCi2bM5aSf5eAbqIoGK4iB+qeepmxSToQo6tyu+BsVfhSBb2WpBOCjBWty/cJDgLHwOnXBztw/VksWNeRW+hbdOJ2+0kmFW9HmaYT/U1EQof8T0MKXO9lW1VO3CVOp/f3lefH9Mi0ZJZKhkBg2fvfT0SKbVCAUQOMeZDBQ69F56ArGG/7561lUxJSFzNSImKjH3tltziFrNgo5kS/P8vhWMgM9DCJ1R/ysixfJsw5MJ/7J4/J4qnXD2khEgBpmJ4mC5bsgd1qpFi3m6KXzaM4Bga0R3kTf+X2D40zJIsT5gb2gIN8CJkzDgJLVIMFN6uzxG/fsYRLJrQ1CuE2IS4VJs9Cg2/uUI092iuWR9OvlyLxEZNfvPbMt+Kwjt6ahbVakskEQGi8JP2v06Xlu5vVcttDynP0qz35tztVbnGvZIWb8OUgGhYAg4s9+g/vNT/BQVmEmSypPU6MRLGj5u0ECp0rzphcTz8PLQisXg+jJal5Ip1EpIor
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(136003)(396003)(346002)(366004)(376002)(230922051799003)(451199024)(64100799003)(1800799012)(186009)(41300700001)(2616005)(26005)(31686004)(66476007)(316002)(36756003)(6512007)(478600001)(966005)(53546011)(6506007)(83380400001)(6486002)(38100700002)(66556008)(82960400001)(66946007)(2906002)(31696002)(86362001)(5660300002)(8676002)(8936002)(44832011)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(366004)(346002)(136003)(376002)(396003)(230922051799003)(451199024)(1800799012)(64100799003)(186009)(8676002)(66476007)(66946007)(66556008)(4326008)(8936002)(316002)(26005)(83380400001)(31686004)(478600001)(82960400001)(6666004)(31696002)(38100700002)(6486002)(86362001)(30864003)(2906002)(5660300002)(44832011)(6512007)(2616005)(6506007)(53546011)(36756003)(41300700001)(403724002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?WFNoRDBvY2NxNXl4L3M0d3RiSFFxWVpVWjc1QW5lQ0FGU3ZPWTZZdUpvem9D?=
- =?utf-8?B?NTljZjBIYlkwVllMdksvOUNqVXYxRDlFVTVPLzRKUFhMRkVOQVdGL2FGSS8y?=
- =?utf-8?B?dENWdU5FajhFWWw2UGg1LzcwdkpkZjhlRFhxQTNZRUFOYnFya2dndEl1SW5D?=
- =?utf-8?B?NHRCWHVkWnY2ZXZBbXoxVlpZYkhjY1NPYWlsaWF0S2ZnVXMwR1ltWHc1azAr?=
- =?utf-8?B?STVnQVNXb3Ntc3p3cjVDbEQyaktRL0lwYnNyT3VSR2JwMVpGU1hwS1R6RDNM?=
- =?utf-8?B?eTcwdkxCcldYamxSTDJxU0sxclFiVHZncEhPRk9QSXMrSmsrS3Z0MW9Gd0FF?=
- =?utf-8?B?cklraG5RbTVLUHZ2cnd0R002OS91djNHRUNjZGhxTzY0Y1dZb3JQcTB2SUtD?=
- =?utf-8?B?dlNZQjNtZjA5NEU5TGlIcmNvaEpxQVg0czVlR3ZuYmZsYzBmeXpFZTc4MmJI?=
- =?utf-8?B?V0RlZFdGb0dmZWRzblBuL01HYWIzZkFUSjFUbTRHRmp5UlloWDBmL1QvV3Jq?=
- =?utf-8?B?U3BNVU9wYnpaUUIzbHVPWnFOWlI3TWR1Y2hBMnI3UEljOExNT0xDRjFRU2tG?=
- =?utf-8?B?RStHSm9FV2d2SFBEMFdka1gyVStGL3Yzc3M5YTV4UmdBcmw5MjJjaUlQZGp6?=
- =?utf-8?B?eENTb0xJd1RqN2ZGaCtrQUk2dldKOERnVDJxOGZxYlRORXNmbE55RHVtb3Nj?=
- =?utf-8?B?ZEJwSENiWTRRT1NwaW92M0MxVjZERk9rZDIzRlRadWlQekgzTWRVSngzQ0ZB?=
- =?utf-8?B?Vk1XaElsQXlQblA1REZITjQvbWtmQnJiK3c3TGUxaHFtYW1FSVFkMk1KZ1Jx?=
- =?utf-8?B?WWZoUlIzU3lSWTA0d091d0tCOTdRMDRpQlVVNzlNWWI1WC9FOW5kZVp3YnJH?=
- =?utf-8?B?UzlSR1NoTlJpaHVUYTY3UEdUa3RRS3dvYzRBUjIvOTZDOVNmaXNMQVdSMWU1?=
- =?utf-8?B?L1pvT0hCSzR3NVNDK3d2RmFGMHRrQS9xYWV6d3VINnJTeHhISDUwTlhhSzJo?=
- =?utf-8?B?U1J3WWg5NXZyNHhsblVCdFpHVzRlbFprd1NCeWF1WkN5enRPc05Sd25mbnpG?=
- =?utf-8?B?MFVYUllxQmFFRmphNEF3VVBydUZzaHNOayt0MVNpZ2JMOVRpTjJlTk5LM3pQ?=
- =?utf-8?B?Vy9lOE1EVkZtUFdzaGpHa2JsTnRrT0FNU1BLK2loYWlENU9pOE80Ly9xYVNx?=
- =?utf-8?B?dG4xQXUwMTlUWDZjTWh0TDhrZWpmbXpMVHdmdFhvcTRzQmdvZGtPSXl5Nzgy?=
- =?utf-8?B?UEpYT2dRa01Id1d5dUZZdlB2b2hTa2hCckxSVjBvejU3RCtHM0ZvTGxNZzN6?=
- =?utf-8?B?SlV2c1IzV2l1VERGcVJmWTU3VXVOd1FLUG9OWlJFZ3FRRTAvRzFEeDMzOUU0?=
- =?utf-8?B?ZmtmK2EvSTEybzVhM2FJL1hvdVVTY3lxMERqNmYydlVxcmRZRlZyNFcxQXdk?=
- =?utf-8?B?bXJhaER3cWxReDV2WTFYQ1pXNjFCRUtsNWhzN3FabTFJOGZpK0FYSms0czk2?=
- =?utf-8?B?TlpWUDdQUkEwZTNzMHg2djlpbU9Ec0k3NDhkaE9vY1hqRk9VVnUvVDZGenNF?=
- =?utf-8?B?SHM5MDFmd2ViTi9nVGlCTEJXams3b2F0Yjd6cEdJTWJDT1FHb2N2VXJqc1dz?=
- =?utf-8?B?d1g2cE9PZENYbXQyZy9JdFFYVitsNXpEN01BT2JhSTY1VC9WRndoUEsveDhV?=
- =?utf-8?B?VUpzN0IvaW10THhzdGgreW9iUytESGdDdXVvaklTc2IxK1p4ZUNZWGJ4dFRv?=
- =?utf-8?B?cnZGaVJaSUx3N2FMUWdQY1pEM3k5NW9FTHBsRFA2MXBlSklUbGN3ZnBXb3Jq?=
- =?utf-8?B?S0lOWkdTK2VmMi83WUJ4R3ZDQmJKd29UZVptT00xa2t5ditKbERseTlzdXZu?=
- =?utf-8?B?YjJqZUhiNjc4Tm54b2lrS3lFajgrd29qOTNXMUU1YTlKUW9NSGdJc2F3NnpH?=
- =?utf-8?B?VjQrZlBiTE1hS0tzM1NSUGFNemd2WTFaaU4raTdHeitmUjRtb0NQT2ZhVDVh?=
- =?utf-8?B?L1Fabmp6dXF0YVIyUm1FRWNzQnZXeHVUbzZoYXZtdzBadU1oNEdWb09kSE5J?=
- =?utf-8?B?RGVKYzZuYjliZEFNdjdZUFRHczNxc2JkRUF6V0RhS09KK1dBelduaXU4U0lF?=
- =?utf-8?B?MWRCZ1NyNE1ZUTN3U2FDUmkvMEZsR2FHU0lTakNtRWpEL3JYd21URy9yUERa?=
- =?utf-8?B?bmc9PQ==?=
+	=?us-ascii?Q?8hBglC0GU79KaetFBF69evfuD/xl/XTgokPFnAMlCddK8JB+HJsVoYEjKDNE?=
+ =?us-ascii?Q?I1MKU9iBDuYYaUEkD3xCZsKzXEUr1uM1IVtCiGtv+9x4CHkrCEWiBENnwuGA?=
+ =?us-ascii?Q?p9tDwmwuQjVebL7l7zB0XBRfnSWCmlbIjUe8MUikydBKaiNBncfaSP+1eR5/?=
+ =?us-ascii?Q?oTYPnAZN9qxR2v5uUmGAR1o+/QTDa4SYvrju/HUmImUztfWFr2p8SJCsk0Hf?=
+ =?us-ascii?Q?Yb06s0W0SoU1CjCijlEo523JZaxwOArK8nRi9g8VNYe41pRC74ZYPD5vkdNH?=
+ =?us-ascii?Q?ySgecEEmSdP94F/D7EtnD8BQ2hoCFRxb25LpGURqQEoy1q0Yjr/p03Zqppa+?=
+ =?us-ascii?Q?VKYcLVkOxHQ+EB2AZvZnPD4fRkn396dQ22hpsXoiek7ahPErrEIqFZyuMVX4?=
+ =?us-ascii?Q?fxkgg7MWwhLbIWVBw5+ym1yL4ZhEHuK3Y+Ul46/wyxt4UbDOoCLgrVWgycw9?=
+ =?us-ascii?Q?s0w5jL/cyhdAwZu/5Q2jR8BAbGjoasAl39ifL30q4uZ8UmT6EtaAOo30Lr1w?=
+ =?us-ascii?Q?pYmqXAs29jukwoBZwLxsEEWqFcG+TxGsO3bDuKX8OFz+YMU8oFOyB3lFbic9?=
+ =?us-ascii?Q?UI2nNdsQWCwUm6A0YjtimQwK7On1KDKSPIXydxvFaQrZT7cFEX5wbtVhZQWC?=
+ =?us-ascii?Q?3hhgKA7jZiPurIJLoEUpb9b2vPhNrIv3VfjCUciRpfHWZCZJABVuwNzPYIsF?=
+ =?us-ascii?Q?3jDOgt9o2x81R9LXc0ztl38SvRDwWB2GCrZjkv6mLLt4gQ+VHhj+pH9dLB27?=
+ =?us-ascii?Q?GCybQxmcyI5/GrDmbnSEH6jRz7jNHFd9IeBFID+rMnPpjVhr9m8XpC36+mWM?=
+ =?us-ascii?Q?p3uLCSOguYwXdBH4X4z9Noq6mhtqT7ERslqhSLEN4znk4uv2qH9OxNC9dLWI?=
+ =?us-ascii?Q?nY6YDPIwg3M1AuE2NaPhJlXxccdw2uJRQlebGBVZ6Wr74Iy1/ZHVSPAlOzTG?=
+ =?us-ascii?Q?TKBTQfNihfZDX8cGNiZd279iESQyjkPIU+jb6/8/puDrrZieVCvGC8QuBObU?=
+ =?us-ascii?Q?X8BRGbHhPYGxXuhxSOV1ICK+0kFqHLxbgds3emhlJJOeXqTdOe0kxglVaMdr?=
+ =?us-ascii?Q?U8p8IMoznbNrBqk84ekHAKxx+0E/9KuFo4FedQ2Ak8MO65z/opU5yy+suEKP?=
+ =?us-ascii?Q?f7Oi8xEvUPjfUnFrhsSBkoLmSl9UVc7gKf+8ycC2JO1vuGyAPQYHGYZu9Uzc?=
+ =?us-ascii?Q?f72txWTkfUq81SjkIou1oajaVyhOftNcnX1m7xtcIGUmk05YtGbAnmB5cHc9?=
+ =?us-ascii?Q?nujmbf36HzFIYYVNngmqXcRlFBaQ2r2mzS0UALW3nSk11R15Yl+v7REfXkG+?=
+ =?us-ascii?Q?NO3uceBOLh02wr9vJ6pPZ3CebNKelXwsiR7b4Uj+HWxLXCVvDPInTdfow4ED?=
+ =?us-ascii?Q?hcT1jp/NqvnT4xEkn8ARhEXh8m9sCl04T9itL4RxXEHW6q99PIHtzvQriclY?=
+ =?us-ascii?Q?mAel01/AzAp0LWpzcOgtPtZ/HGX9hVkjDLaLHDlfvGew+QLCfD52q2zL5qRa?=
+ =?us-ascii?Q?7Bk/UIT0wuPzgFjp7BOpDCB2KJCvPdZ/UQ78Pjeoh6Qfs4sBC7PgTwv8nu6X?=
+ =?us-ascii?Q?abU1zKfFY3AuJSxw78c8Qkul3m/FFhrTZKg9oenqsLpmFsfE0RfW3FA8SJIJ?=
+ =?us-ascii?Q?Xw=3D=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e63d5f3e-eea8-4f48-38a4-08dc20c4eecf
+X-MS-Exchange-CrossTenant-Network-Message-Id: da71ef38-1e16-4261-870a-08dc20c60781
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jan 2024 12:22:17.2989
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jan 2024 12:30:08.3303
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dFV66N4OQTi2YLJptfmGd2qrpC9V3JCze1ZWFB0Ma68dWxwzirBar7OrRzWkanm2DC9/g4JiPvz6iamoPxFmTQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB6170
+X-MS-Exchange-CrossTenant-UserPrincipalName: /wnlWiVdxl1FRlnU8MzPP3R+oThUw75XcrYtQrXajwN7p4S7StMOCAOmlQ3Z151ljT/j+7SCOYYhwPznLXdVSw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB7358
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 29 Jan 2024 12:22:26 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14477
+ <cip-dev@lists.cip-project.org>; Mon, 29 Jan 2024 12:30:16 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14479
 
-On 23.01.24 22:12, Quirin Gylstorff wrote:
-> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> 
-> This is the official tag version from debian which removes the
-> native flag from the python3-shtab dependency.
-> 
-> Also remove the patch debian-patches/0002-d-control-remove-native-from-python3-shtab.patch
-> 
-> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> ---
->  ...16-1+cip.bb => efibootguard_0.16-2+cip.bb} |  2 +-
->  ...rol-remove-native-from-python3-shtab.patch | 28 -------------------
->  2 files changed, 1 insertion(+), 29 deletions(-)
->  rename recipes-bsp/efibootguard/{efibootguard_0.16-1+cip.bb => efibootguard_0.16-2+cip.bb} (96%)
->  delete mode 100644 recipes-bsp/efibootguard/files/debian-patches/0002-d-control-remove-native-from-python3-shtab.patch
-> 
-> diff --git a/recipes-bsp/efibootguard/efibootguard_0.16-1+cip.bb b/recipes-bsp/efibootguard/efibootguard_0.16-2+cip.bb
-> similarity index 96%
-> rename from recipes-bsp/efibootguard/efibootguard_0.16-1+cip.bb
-> rename to recipes-bsp/efibootguard/efibootguard_0.16-2+cip.bb
-> index 93114c3..b6bb2bd 100644
-> --- a/recipes-bsp/efibootguard/efibootguard_0.16-1+cip.bb
-> +++ b/recipes-bsp/efibootguard/efibootguard_0.16-2+cip.bb
-> @@ -24,7 +24,7 @@ SRC_URI = " \
->      file://debian-patches/0001-d-control-Make-compatible-with-debian-buster.patch \
->      "
->  SRC_URI[tarball.sha256sum] = "d6d37c59aed17489d02b4f0b63db16994dfb8f9f70f54be4d65c366f58c6be9d"
-> -SRCREV_debian = "eacf94e767136a0257850ea0c888d234cb8cace4"
-> +SRCREV_debian = "74b34b5a3bbdedb628bd75422d6a8bfef70ab58a"
->  
->  PROVIDES = "libebgenv-dev libebgenv0 efibootguard"
->  
-> diff --git a/recipes-bsp/efibootguard/files/debian-patches/0002-d-control-remove-native-from-python3-shtab.patch b/recipes-bsp/efibootguard/files/debian-patches/0002-d-control-remove-native-from-python3-shtab.patch
-> deleted file mode 100644
-> index 42204a5..0000000
-> --- a/recipes-bsp/efibootguard/files/debian-patches/0002-d-control-remove-native-from-python3-shtab.patch
-> +++ /dev/null
-> @@ -1,28 +0,0 @@
-> -From c599480bdec0ed57922d100dceb5c94d04755694 Mon Sep 17 00:00:00 2001
-> -From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> -Date: Wed, 15 Feb 2023 10:47:38 +0100
-> -Subject: [PATCH 2/2] d/control: remove :native from python3-shtab
-> -
-> -This fixes the cross build for qemu-arm and qemu-arm64.
-> -
-> -Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> ----
-> - debian/control | 2 +-
-> - 1 file changed, 1 insertion(+), 1 deletion(-)
-> -
-> -diff --git a/debian/control b/debian/control
-> -index 8b92019..53e2b66 100644
-> ---- a/debian/control
-> -+++ b/debian/control
-> -@@ -9,7 +9,7 @@ Build-Depends: debhelper,
-> -  help2man,
-> -  libpci-dev,
-> -  pkg-config,
-> -- python3-shtab:native,
-> -+ python3-shtab,
-> -  zlib1g-dev
-> - Standards-Version: 4.6.1
-> - Homepage: https://github.com/siemens/efibootguard
-> --- 
-> -2.39.2
-> -
+On 24.01.24 07:03, Adithya.Balakumar@toshiba-tsip.com wrote:
+> Hi Felix,
+>=20
+> Thanks for your comment. Will send out a v2 of the patch. I would like to=
+ ask a small clarification about your comments?=20
+>=20
 
-Thanks, applied.
+If v2 should still be part of the 1.3 release (I would consider this as
+fix, not as feature), please send it soon.
 
 Jan
 
--- 
+> As for the part "Can we please use unique UUIDs across all devices (not a=
+lways the same).", I understand this. Will set unique UUIDs across all devi=
+ces.
+>=20
+> However, could you please elaborate on the second part of your comment:=20
+> "Also it would be nice to add a note somewhere that these UUIDs should be=
+ changed in case the user creates an image for flashing and one for the tar=
+get (which is quite common). Here, the UUIDs would collide."
+>=20
+> Thanks and Regards,
+> Adithya Balakumar
+>=20
+> -----Original Message-----
+> From: MOESSBAUER, Felix <felix.moessbauer@siemens.com>=20
+> Sent: Tuesday, January 23, 2024 3:02 PM
+> To: cip-dev@lists.cip-project.org; balakumar adithya(=EF=BC=B4=EF=BC=B3=
+=EF=BC=A9=EF=BC=B0 TEUR) <Adithya.Balakumar@toshiba-tsip.com>; Kiszka, Jan =
+<jan.kiszka@siemens.com>
+> Cc: kunijadar shivanand(=EF=BC=B4=EF=BC=B3=EF=BC=A9=EF=BC=B0 TMIEC ODG Po=
+rting) <Shivanand.Kunijadar@toshiba-tsip.com>; ashrith sai(=EF=BC=B4=EF=BC=
+=B3=EF=BC=A9=EF=BC=B0) <Sai.Sathujoda@toshiba-tsip.com>; dinesh kumar(=EF=
+=BC=B4=EF=BC=B3=EF=BC=A9=EF=BC=B0 TMIEC ODG Porting) <dinesh.kumar@toshiba-=
+tsip.com>; hayashi kazuhiro(=E6=9E=97 =E5=92=8C=E5=AE=8F =EF=BC=A4=EF=BC=AD=
+=EF=BC=A5 =E2=97=8B=EF=BC=A4=EF=BC=A9=EF=BC=A7=E2=96=A1=EF=BC=AD=EF=BC=B0=
+=EF=BC=B3=E2=97=8B=EF=BC=AD=EF=BC=B0=EF=BC=94) <kazuhiro3.hayashi@toshiba.c=
+o.jp>
+> Subject: Re: [isar-cip-core][PATCH v1] wic: Set fixed partition UUID valu=
+es
+>=20
+> On Mon, 2024-01-22 at 17:45 +0530, Adithya Balakumar wrote:
+>> From: Adithya Balakumar <adithya.balakumar@toshiba-tsip.com>
+>>
+>> This commit sets fixed partition uuid for partitions. The --uuid=20
+>> option in wic allows to set fixed uuid for a partition. This is=20
+>> required for generating reproducible images.
+>=20
+> Thanks for this patch. Just a minor note:
+>=20
+> Can we please use unique UUIDs across all devices (not always the same). =
+Also it would be nice to add a note somewhere that these UUIDs should be ch=
+anged in case the user creates an image for flashing and one for the target=
+ (which is quite common). Here, the UUIDs would collide.
+>=20
+> Felix
+>=20
+>>
+>> Signed-off-by: Adithya Balakumar <adithya.balakumar@toshiba-tsip.com>
+>> ---
+>> =C2=A0wic/bbb-efibootguard.wks.in=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 +=
++--
+>> =C2=A0wic/bbb.wks=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ | 2 +-
+>> =C2=A0wic/ebg-signed-sysparts.inc=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 6 +=
+++---
+>> =C2=A0wic/ebg-sysparts.inc=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 6 +++---
+>> =C2=A0wic/hihope-rzg2m-efibootguard.wks.in=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
+>> =C2=A0wic/hihope-rzg2m.wks=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
+>> =C2=A0wic/iwg20m.wks=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
+>> =C2=A0wic/qemu-amd64-efibootguard-secureboot.wks.in | 4 ++--
+>> =C2=A0wic/qemu-arm64-efibootguard-secureboot.wks.in | 4 ++--
+>> =C2=A0wic/qemu-arm64-efibootguard.wks.in=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
+>> =C2=A0wic/qemu-riscv64-efibootguard.wks.in=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
+>> =C2=A0wic/x86-efibootguard.wks.in=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 +=
++--
+>> =C2=A0wic/x86_64-generic.wks=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 | 4 ++--
+>> =C2=A013 files changed, 27 insertions(+), 27 deletions(-)
+>>
+>> diff --git a/wic/bbb-efibootguard.wks.in b/wic/bbb-=20
+>> efibootguard.wks.in index 48789c7..123f86b 100644
+>> --- a/wic/bbb-efibootguard.wks.in
+>> +++ b/wic/bbb-efibootguard.wks.in
+>> @@ -15,7 +15,7 @@ part --source rawcopy --sourceparams=20
+>> "file=3D${IMAGE_FULLNAME}.squashfs" --align 1
+>> =C2=A0part --source empty --align 1024 --fixed-size 1G --uuid=20
+>> "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-
+>> 3D69D8477DE4
+>> =C2=A0
+>> =C2=A0# home and var are extra partitions
+>> -part /home --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/home --
+>> fstype=3Dext4 --label home --align 1024=C2=A0 --size 1G --fsuuid 1f55d66=
+a-
+>> 40d8-11ee-be56-0242ac120002
+>> -part /var --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/var --
+>> fstype=3Dext4 --label var --align 1024=C2=A0 --size 2G --fsuuid 96be3374=
+-
+>> 4258-11ee-be56-0242ac120002
+>> +part /home --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/home --
+>> fstype=3Dext4 --label home --align 1024=C2=A0 --size 1G --fsuuid 1f55d66=
+a-
+>> 40d8-11ee-be56-0242ac120002 --uuid abcdd66a-40d8-11ee-be56-
+>> 0242ac120002
+>> +part /var --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/var --
+>> fstype=3Dext4 --label var --align 1024=C2=A0 --size 2G --fsuuid 96be3374=
+-
+>> 4258-11ee-be56-0242ac120002 --uuid 12343374-4258-11ee-be56-
+>> 0242ac120002
+>> =C2=A0
+>> =C2=A0bootloader --ptable gpt --append=3D"rootwait console=3DttyO0,11520=
+0
+>> omap_wdt.early_enable=3D1 omap_wdt.nowayout=3D1=20
+>> watchdog.handle_boot_enabled=3D0"
+>> diff --git a/wic/bbb.wks b/wic/bbb.wks index a797e95..03939b4 100644
+>> --- a/wic/bbb.wks
+>> +++ b/wic/bbb.wks
+>> @@ -9,6 +9,6 @@
+>> =C2=A0part --source rawcopy --sourceparams "file=3D/usr/lib/u-boot/bbb/M=
+LO"
+>> --no-table --align 128
+>> =C2=A0part --source rawcopy --sourceparams "file=3D/usr/lib/u-boot/bbb/u=
+-=20
+>> boot.img" --no-table --align 384
+>> =C2=A0
+>> -part / --source rootfs-u-boot --ondisk mmcblk0 --fstype ext4 --mkfs-=20
+>> extraopts "-T default" --label platform --align 1024 --active --=20
+>> fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
+>> +part / --source rootfs-u-boot --ondisk mmcblk0 --fstype ext4 --mkfs-
+>> extraopts "-T default" --label platform --align 1024 --active --=20
+>> fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid abcdd66a-40d8-
+>> 11ee-be56-0242ac120002
+>> =C2=A0
+>> =C2=A0bootloader --append "rootwait console=3DttyO0,115200"
+>> diff --git a/wic/ebg-signed-sysparts.inc b/wic/ebg-signed-=20
+>> sysparts.inc index b2340e2..0c339fc 100644
+>> --- a/wic/ebg-signed-sysparts.inc
+>> +++ b/wic/ebg-signed-sysparts.inc
+>> @@ -1,8 +1,8 @@
+>> =C2=A0# default partition layout EFI Boot Guard usage, signed version
+>> =C2=A0
+>> =C2=A0# EFI partition containing efibootguard bootloader binary -part=20
+>> --source efibootguard-efi=C2=A0 --size 16M --extra-space 0 --=20
+>> overhead-factor 1 --label efi=C2=A0=C2=A0 --align 1024 --part-type=3DEF0=
+0 --=20
+>> active --sourceparams "signwith=3D/usr/bin/sign_secure_image.sh" --=20
+>> fsuuid 0x4321dcba
+>> +part --source efibootguard-efi=C2=A0 --size 16M --extra-space 0 --
+>> overhead-factor 1 --label efi=C2=A0=C2=A0 --align 1024 --part-type=3DEF0=
+0 --=20
+>> active --sourceparams "signwith=3D/usr/bin/sign_secure_image.sh" --=20
+>> fsuuid 0x4321dcba --uuid 0x5678dcba
+>> =C2=A0
+>> =C2=A0# EFI Boot Guard environment/config partitions plus Kernel files=20
+>> -part --source efibootguard-boot --size 32M --extra-space 0 --=20
+>> overhead-factor 1 --label BOOT0 --align 1024 --part-type=3D0700 --=20
+>> sourceparams "revision=3D2,signwith=3D/usr/bin/sign_secure_image.sh" --=
+=20
+>> fsuuid 0x4321dcbb -part --source efibootguard-boot --size 32M=20
+>> --extra-space 0 -- overhead-factor 1 --label BOOT1 --align 1024=20
+>> --part-type=3D0700 -- sourceparams=20
+>> "revision=3D1,signwith=3D/usr/bin/sign_secure_image.sh" -- fsuuid=20
+>> 0x4321dcbc
+>> +part --source efibootguard-boot --size 32M --extra-space 0 --
+>> overhead-factor 1 --label BOOT0 --align 1024 --part-type=3D0700 --=20
+>> sourceparams "revision=3D2,signwith=3D/usr/bin/sign_secure_image.sh" --=
+=20
+>> fsuuid 0x4321dcbb --uuid 0x5678dcbb
+>> +part --source efibootguard-boot --size 32M --extra-space 0 --
+>> overhead-factor 1 --label BOOT1 --align 1024 --part-type=3D0700 --=20
+>> sourceparams "revision=3D1,signwith=3D/usr/bin/sign_secure_image.sh" --=
+=20
+>> fsuuid 0x4321dcbc --uuid 0x5678dcbc diff --git a/wic/ebg-sysparts.inc=20
+>> b/wic/ebg-sysparts.inc index 300c36f..beb0903 100644
+>> --- a/wic/ebg-sysparts.inc
+>> +++ b/wic/ebg-sysparts.inc
+>> @@ -1,8 +1,8 @@
+>> =C2=A0# default partition layout EFI Boot Guard usage
+>> =C2=A0
+>> =C2=A0# EFI partition containing efibootguard bootloader binary -part=20
+>> --source efibootguard-efi=C2=A0 --size 16M --extra-space 0 --=20
+>> overhead-factor 1 --label efi=C2=A0=C2=A0 --align 1024 --part-type=3DEF0=
+0 --=20
+>> active --fsuuid 0x4321dcba
+>> +part --source efibootguard-efi=C2=A0 --size 16M --extra-space 0 --
+>> overhead-factor 1 --label efi=C2=A0=C2=A0 --align 1024 --part-type=3DEF0=
+0 --=20
+>> active --fsuuid 0x4321dcba --uuid 0x5678dcba
+>> =C2=A0
+>> =C2=A0# EFI Boot Guard environment/config partitions plus Kernel files=20
+>> -part --source efibootguard-boot --size 32M --extra-space 0 --=20
+>> overhead-factor 1 --label BOOT0 --align 1024 --part-type=3D0700 --=20
+>> sourceparams "revision=3D2" --fsuuid 0x4321dcbb -part --source=20
+>> efibootguard-boot --size 32M --extra-space 0 -- overhead-factor 1=20
+>> --label BOOT1 --align 1024 --part-type=3D0700 -- sourceparams=20
+>> "revision=3D1" --fsuuid 0x4321dcbc
+>> +part --source efibootguard-boot --size 32M --extra-space 0 --
+>> overhead-factor 1 --label BOOT0 --align 1024 --part-type=3D0700 --=20
+>> sourceparams "revision=3D2" --fsuuid 0x4321dcbb --uuid 0x5678dcbb
+>> +part --source efibootguard-boot --size 32M --extra-space 0 --
+>> overhead-factor 1 --label BOOT1 --align 1024 --part-type=3D0700 --=20
+>> sourceparams "revision=3D1" --fsuuid 0x4321dcbc --uuid 0x5678dcbc diff=20
+>> --git a/wic/hihope-rzg2m-efibootguard.wks.in b/wic/hihope-rzg2m-=20
+>> efibootguard.wks.in index 2ac8850..38581dd 100644
+>> --- a/wic/hihope-rzg2m-efibootguard.wks.in
+>> +++ b/wic/hihope-rzg2m-efibootguard.wks.in
+>> @@ -8,7 +8,7 @@ part --source empty --align 1024 --fixed-size 1G --=20
+>> uuid "${ABROOTFS_PART_UUID_B}
+>> =C2=A0
+>> =C2=A0# home and var are extra partitions
+>> =C2=A0
+>> -part /home --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/home --
+>> fstype=3Dext4 --label home --align 1024=C2=A0 --size 1G --extra-space=3D=
+100M -=20
+>> -fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
+>> -part /var --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/var --
+>> fstype=3Dext4 --label var --align 1024=C2=A0 --size 2G --extra-space=3D1=
+00M --=20
+>> fsuuid 96be3374-4258-11ee-be56-0242ac120002
+>> +part /home --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/home --
+>> fstype=3Dext4 --label home --align 1024=C2=A0 --size 1G --extra-space=3D=
+100M -=20
+>> -fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid abcdd66a-40d8-
+>> 11ee-be56-0242ac120002
+>> +part /var --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/var --
+>> fstype=3Dext4 --label var --align 1024=C2=A0 --size 2G --extra-space=3D1=
+00M --=20
+>> fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 12343374-4258-
+>> 11ee-be56-0242ac120002
+>> =C2=A0
+>> =C2=A0bootloader --ptable gpt --append=3D"console=3Dtty0 console=3DttySC=
+0,115200=20
+>> rootwait earlyprintk"
+>> diff --git a/wic/hihope-rzg2m.wks b/wic/hihope-rzg2m.wks index=20
+>> fd3a338..1bb8ced 100644
+>> --- a/wic/hihope-rzg2m.wks
+>> +++ b/wic/hihope-rzg2m.wks
+>> @@ -9,7 +9,7 @@
+>> =C2=A0# SPDX-License-Identifier: MIT
+>> =C2=A0#
+>> =C2=A0
+>> -part /boot --source bootimg-partition --ondisk mmcblk0 --fstype vfat=20
+>> --label boot --align 1 --size 32M --extra-space 0 --fsuuid 0x4321dcba
+>> +part /boot --source bootimg-partition --ondisk mmcblk0 --fstype vfat
+>> --label boot --align 1 --size 32M --extra-space 0 --fsuuid 0x4321dcba=20
+>> --uuid 0x5678dcba
+>> =C2=A0
+>> =C2=A0# Rootfs partition
+>> -part / --source rootfs --ondisk mmcblk0 --fstype ext4 --label root -=20
+>> -align 1024 --size 2G --active --fsuuid 1f55d66a-40d8-11ee-be56-
+>> 0242ac120002
+>> +part / --source rootfs --ondisk mmcblk0 --fstype ext4 --label root -
+>> -align 1024 --size 2G --active --fsuuid 1f55d66a-40d8-11ee-be56-
+>> 0242ac120002 --uuid abcdd66a-40d8-11ee-be56-0242ac120002
+>> diff --git a/wic/iwg20m.wks b/wic/iwg20m.wks index 85765f0..feea21e=20
+>> 100644
+>> --- a/wic/iwg20m.wks
+>> +++ b/wic/iwg20m.wks
+>> @@ -12,7 +12,7 @@
+>> =C2=A0# [Note] u-boot runs from an SPI memory device
+>> =C2=A0
+>> =C2=A0# SDCard Boot partition (copies files in IMAGE_BOOT_FILES: zImage =
+and=20
+>> device tree) -part /boot --source bootimg-partition --ondisk mmcblk0=20
+>> --fstype vfat --label boot --align 1 --size 32M --extra-space 0=20
+>> --fsuuid 0x4321dcba
+>> +part /boot --source bootimg-partition --ondisk mmcblk0 --fstype vfat
+>> --label boot --align 1 --size 32M --extra-space 0 --fsuuid 0x4321dcba=20
+>> --uuid 0x5678dcba
+>> =C2=A0
+>> =C2=A0# Rootfs partition
+>> -part / --source rootfs --ondisk mmcblk0 --fstype ext4 --label root -=20
+>> -align 1024 --size 2G --active --fsuuid 1f55d66a-40d8-11ee-be56-
+>> 0242ac120002
+>> +part / --source rootfs --ondisk mmcblk0 --fstype ext4 --label root -
+>> -align 1024 --size 2G --active --fsuuid 1f55d66a-40d8-11ee-be56-
+>> 0242ac120002 --uuid abcdd66a-40d8-11ee-be56-0242ac120002
+>> diff --git a/wic/qemu-amd64-efibootguard-secureboot.wks.in
+>> b/wic/qemu-amd64-efibootguard-secureboot.wks.in
+>> index 2e5cb39..03c715b 100644
+>> --- a/wic/qemu-amd64-efibootguard-secureboot.wks.in
+>> +++ b/wic/qemu-amd64-efibootguard-secureboot.wks.in
+>> @@ -4,7 +4,7 @@ part --source rawcopy --sourceparams=20
+>> "file=3D${IMAGE_FULLNAME}.verity" --align 102
+>> =C2=A0part --source empty --align 1024 --fixed-size 1G --uuid=20
+>> "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-
+>> 3D69D8477DE4
+>> =C2=A0
+>> =C2=A0# home and var are extra partitions
+>> -part /home --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/home --
+>> fstype=3Dext4 --label home --align 1024 --size 1G --fsuuid 1f55d66a-
+>> 40d8-11ee-be56-0242ac120002
+>> -part /var=C2=A0 --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/var=C2=
+=A0 --
+>> fstype=3Dext4 --label var=C2=A0 --align 1024 --size 2G --fsuuid 96be3374=
+-
+>> 4258-11ee-be56-0242ac120002
+>> +part /home --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/home --
+>> fstype=3Dext4 --label home --align 1024 --size 1G --fsuuid 1f55d66a-
+>> 40d8-11ee-be56-0242ac120002 --uuid abcdd66a-40d8-11ee-be56-
+>> 0242ac120002
+>> +part /var=C2=A0 --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/var=C2=
+=A0 --
+>> fstype=3Dext4 --label var=C2=A0 --align 1024 --size 2G --fsuuid 96be3374=
+-
+>> 4258-11ee-be56-0242ac120002 --uuid 12343374-4258-11ee-be56-
+>> 0242ac120002
+>> =C2=A0
+>> =C2=A0bootloader --ptable gpt --append=3D"console=3Dtty0 console=3DttyS0=
+,115200=20
+>> rootwait earlyprintk watchdog.handle_boot_enabled=3D0
+>> iTCO_wdt.nowayout=3D1 panic=3D5"
+>> diff --git a/wic/qemu-arm64-efibootguard-secureboot.wks.in
+>> b/wic/qemu-arm64-efibootguard-secureboot.wks.in
+>> index 2fc389c..ede1fd5 100644
+>> --- a/wic/qemu-arm64-efibootguard-secureboot.wks.in
+>> +++ b/wic/qemu-arm64-efibootguard-secureboot.wks.in
+>> @@ -4,7 +4,7 @@ part --source rawcopy --sourceparams=20
+>> "file=3D${IMAGE_FULLNAME}.verity" --align 102
+>> =C2=A0part --source empty --align 1024 --fixed-size 1G --uuid=20
+>> "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-
+>> 3D69D8477DE4
+>> =C2=A0
+>> =C2=A0# home and var are extra partitions
+>> -part /home --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/home --
+>> fstype=3Dext4 --label home --align 1024 --size 1G --fsuuid 1f55d66a-
+>> 40d8-11ee-be56-0242ac120002
+>> -part /var=C2=A0 --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/var=C2=
+=A0 --
+>> fstype=3Dext4 --label var=C2=A0 --align 1024 --size 2G --fsuuid 96be3374=
+-
+>> 4258-11ee-be56-0242ac120002
+>> +part /home --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/home --
+>> fstype=3Dext4 --label home --align 1024 --size 1G --fsuuid 1f55d66a-
+>> 40d8-11ee-be56-0242ac120002 --uuid abcdd66a-40d8-11ee-be56-
+>> 0242ac120002
+>> +part /var=C2=A0 --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/var=C2=
+=A0 --
+>> fstype=3Dext4 --label var=C2=A0 --align 1024 --size 2G --fsuuid 96be3374=
+-
+>> 4258-11ee-be56-0242ac120002 --uuid 12343374-4258-11ee-be56-
+>> 0242ac120002
+>> =C2=A0
+>> =C2=A0bootloader --ptable gpt --append=3D"panic=3D5"
+>> diff --git a/wic/qemu-arm64-efibootguard.wks.in b/wic/qemu-arm64-=20
+>> efibootguard.wks.in index 1f50ba3..bf58e1c 100644
+>> --- a/wic/qemu-arm64-efibootguard.wks.in
+>> +++ b/wic/qemu-arm64-efibootguard.wks.in
+>> @@ -7,7 +7,7 @@ part --source rawcopy --sourceparams=20
+>> "file=3D${IMAGE_FULLNAME}.squashfs" --align 1
+>> =C2=A0part --source empty --align 1024 --fixed-size 1G --uuid=20
+>> "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-
+>> 3D69D8477DE4
+>> =C2=A0
+>> =C2=A0# home and var are extra partitions
+>> -part /home --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/home --
+>> fstype=3Dext4 --label home --align 1024=C2=A0 --size 1G --fsuuid 1f55d66=
+a-
+>> 40d8-11ee-be56-0242ac120002
+>> -part /var --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/var --
+>> fstype=3Dext4 --label var --align 1024=C2=A0 --size 2G --fsuuid 96be3374=
+-
+>> 4258-11ee-be56-0242ac120002
+>> +part /home --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/home --
+>> fstype=3Dext4 --label home --align 1024=C2=A0 --size 1G --fsuuid 1f55d66=
+a-
+>> 40d8-11ee-be56-0242ac120002 --uuid abcdd66a-40d8-11ee-be56-
+>> 0242ac120002
+>> +part /var --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/var --
+>> fstype=3Dext4 --label var --align 1024=C2=A0 --size 2G --fsuuid 96be3374=
+-
+>> 4258-11ee-be56-0242ac120002 --uuid 12343374-4258-11ee-be56-
+>> 0242ac120002
+>> =C2=A0
+>> =C2=A0bootloader --ptable gpt
+>> diff --git a/wic/qemu-riscv64-efibootguard.wks.in b/wic/qemu-riscv64-=20
+>> efibootguard.wks.in index 9158aa4..b37c971 100644
+>> --- a/wic/qemu-riscv64-efibootguard.wks.in
+>> +++ b/wic/qemu-riscv64-efibootguard.wks.in
+>> @@ -7,7 +7,7 @@ part --source rawcopy --sourceparams=20
+>> "file=3D${IMAGE_FULLNAME}.squashfs" --align 1
+>> =C2=A0part --source empty --align 1024 --fixed-size 1G --uuid=20
+>> "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-
+>> 3D69D8477DE4
+>> =C2=A0
+>> =C2=A0# home and var are extra partitions
+>> -part /home --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/home --
+>> fstype=3Dext4 --label home --align 1024=C2=A0 --size 1G --fsuuid 1f55d66=
+a-
+>> 40d8-11ee-be56-0242ac120002
+>> -part /var --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/var --
+>> fstype=3Dext4 --label var --align 1024=C2=A0 --size 2G --fsuuid 96be3374=
+-
+>> 4258-11ee-be56-0242ac120002
+>> +part /home --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/home --
+>> fstype=3Dext4 --label home --align 1024=C2=A0 --size 1G --fsuuid 1f55d66=
+a-
+>> 40d8-11ee-be56-0242ac120002 --uuid abcdd66a-40d8-11ee-be56-
+>> 0242ac120002
+>> +part /var --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/var --
+>> fstype=3Dext4 --label var --align 1024=C2=A0 --size 2G --fsuuid 96be3374=
+-
+>> 4258-11ee-be56-0242ac120002 --uuid 12343374-4258-11ee-be56-
+>> 0242ac120002
+>> =C2=A0
+>> =C2=A0bootloader --ptable gpt
+>> diff --git a/wic/x86-efibootguard.wks.in b/wic/x86-=20
+>> efibootguard.wks.in index 98e8da5..b002ea5 100644
+>> --- a/wic/x86-efibootguard.wks.in
+>> +++ b/wic/x86-efibootguard.wks.in
+>> @@ -8,7 +8,7 @@ part --source empty --align 1024 --fixed-size 1G --=20
+>> uuid "${ABROOTFS_PART_UUID_B}
+>> =C2=A0
+>> =C2=A0# home and var are extra partitions
+>> =C2=A0
+>> -part /home --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/home --
+>> fstype=3Dext4 --label home --align 1024=C2=A0 --size 1G --extra-space=3D=
+100M -=20
+>> -fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
+>> -part /var --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/var --
+>> fstype=3Dext4 --label var --align 1024=C2=A0 --size 2G --extra-space=3D1=
+00M --=20
+>> fsuuid 96be3374-4258-11ee-be56-0242ac120002
+>> +part /home --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/home --
+>> fstype=3Dext4 --label home --align 1024=C2=A0 --size 1G --extra-space=3D=
+100M -=20
+>> -fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid abcdd66a-40d8-
+>> 11ee-be56-0242ac120002
+>> +part /var --source rootfs --rootfs-dir=3D${IMAGE_ROOTFS}/var --
+>> fstype=3Dext4 --label var --align 1024=C2=A0 --size 2G --extra-space=3D1=
+00M --=20
+>> fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 12343374-4258-
+>> 11ee-be56-0242ac120002
+>> =C2=A0
+>> =C2=A0bootloader --ptable gpt --append=3D"console=3Dtty0 console=3DttyS0=
+,115200=20
+>> rootwait earlyprintk watchdog.handle_boot_enabled=3D0
+>> iTCO_wdt.nowayout=3D1 "
+>> diff --git a/wic/x86_64-generic.wks b/wic/x86_64-generic.wks index=20
+>> 1a44e26..a63f7f3 100644
+>> --- a/wic/x86_64-generic.wks
+>> +++ b/wic/x86_64-generic.wks
+>> @@ -6,8 +6,8 @@
+>> =C2=A0# SPDX-License-Identifier: MIT
+>> =C2=A0#
+>> =C2=A0
+>> -part /boot --source bootimg-efi-isar --sourceparams "loader=3Dgrub-=20
+>> efi" --label efi --part-type EF00 --align 1024 --fsuuid 0x4321dcba
+>> +part /boot --source bootimg-efi-isar --sourceparams "loader=3Dgrub-
+>> efi" --label efi --part-type EF00 --align 1024 --fsuuid 0x4321dcba --=20
+>> uuid 0x5678dcba
+>> =C2=A0
+>> -part / --source rootfs --fstype ext4 --mkfs-extraopts "-T default" -=20
+>> -label platform --align 1024 --fsuuid 1f55d66a-40d8-11ee-be56-
+>> 0242ac120002
+>> +part / --source rootfs --fstype ext4 --mkfs-extraopts "-T default" -
+>> -label platform --align 1024 --fsuuid 1f55d66a-40d8-11ee-be56-
+>> 0242ac120002 --uuid abcdd66a-40d8-11ee-be56-0242ac120002
+>> =C2=A0
+>> =C2=A0bootloader --ptable gpt --timeout 2 --append "console=3DttyS0,1152=
+00"
+>=20
+> --
+> Siemens AG, Technology
+> Linux Expert Center
+>=20
+>=20
+
+--=20
 Siemens AG, Technology
 Linux Expert Center
 
