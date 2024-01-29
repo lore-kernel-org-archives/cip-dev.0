@@ -2,28 +2,28 @@ Return-Path: <sai.sathujoda@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A107C47422
-	for <webhook@archiver.kernel.org>; Mon, 29 Jan 2024 05:23:14 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
- by mx.groups.io with SMTP id smtpd.web11.7860.1706505790176194622
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD640C47422
+	for <webhook@archiver.kernel.org>; Mon, 29 Jan 2024 05:29:04 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
+ by mx.groups.io with SMTP id smtpd.web10.8190.1706506141248389444
  for <cip-dev@lists.cip-project.org>;
- Sun, 28 Jan 2024 21:23:11 -0800
+ Sun, 28 Jan 2024 21:29:02 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.134, mailfrom: sai.sathujoda@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 40T5N7fg353038; Mon, 29 Jan 2024 14:23:08 +0900
-X-Iguazu-Qid: 2yAbI6ncWeRcQ29M8d
-X-Iguazu-QSIG: v=2; s=0; t=1706505787; q=2yAbI6ncWeRcQ29M8d; m=tXjXPlm0309upRmMrQ35zL/mL0ybAz0a84tVXwdbNeE=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1800) id 40T5N66Z2554355
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.152, mailfrom: sai.sathujoda@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 40T5SxAA3507828; Mon, 29 Jan 2024 14:28:59 +0900
+X-Iguazu-Qid: 2yAbno87TPPwOs1EtU
+X-Iguazu-QSIG: v=2; s=0; t=1706506139; q=2yAbno87TPPwOs1EtU; m=GFp9oKUAtUbVRKCCuoT8IwArzgstroql4gqeoXshggc=
+Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
+	by relay.securemx.jp (mx-mr1800) id 40T5Swat2568043
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 29 Jan 2024 14:23:07 +0900
+	Mon, 29 Jan 2024 14:28:58 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jUuMl2zdTOr/NU4qjoUQkD7luhtp7dKIXIBGfbmUVJbvVOVVZDlvFoFjhJ3FNce6GYwTn39PBhkfSWKPWzoCghPkTdJL+ia4bEywjtT/nDgpw/otH+ntKvwbqysYnt8wsWDS4av+GKSYlInyFzLjeetCQ5ex1wCd6XSQ+0IhEsjSnP3JEK2DmNED7cJ8oDvKrlkwSm+KtwdfoQ8LXYEMXH8nrZkZrfTnaweBXc+Cf0rBWrWic8Kz9s5yWf8kgj5/r9VbP0VRHCR/7bHTP/ubyhH8lhFyUXmvU2Cas1dqTKE2lkSIS5f44hxoVoA1PsvWkncOJr04w79xTbPkXSvM6A==
+ b=Ecbz4dm1h8ckybS788c8tAnsflp/mqg7+s0DzUobw8QuL6qFkTIMSCNdSPT+w1gRgv/zQVpiJIM4baM7APgdlMz6sbFU+qgmzmeOv1nw4mpDg2y1EEjVxT0i4DwOVAuW8qzSHTYsbSQ7VKtjEKESbcuhuY69sKLpO7iPsk2GsKGL19W2ePUOU0hGkmZ92cz6LCMWSNYPtXxitjT1DckBooAvbNXMMN90Oymuu5JX5/w2roJQW0Us05BEoq7+XEGP/zZuTzAZjRTf3YktDDb8S0IiVCyXac1HjQd5fN69ZKZ/QBaJrlNG4nU+TmXbncFtP3YRAMtv4NwmixN4vGWIFQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1JJ6vAqTp5HNaZ2rJVv18MpNlp3dMDfem6/mMzWxoB4=;
- b=fH4kacHkWmd25lsNGizce+p9tEjMrO37Aj67hbrKJqGmuSSnVp2jTr/er7RBIPRxezTJSyo6OUfxHeswMly/T7QWPlAxkXbAFl/5a0uow+xohF7JJ0Quf7hwkWsCM2EVNyWr5XVxxBL37jC+ra33/8HkZADsMW6g93ouGMkSfowuBvd/zl2zOdAcRgDk65y1MHbOVTJcMaKrVVApHOdHOTcQvYZvlhCVtfvP7V3B5ajSgMGKiSrN8vl/AqORFHkDl/0JVz4qYxePsbV/uh0/XfJYiHvf2upXfe6d70WgzIYV39Bo0qVQczsgBekWV2Rjymn3ZkIHxWt1j+1k0oxiyQ==
+ bh=Nh7sf8sIZcGIuV0hBNMl/qX/xUfw05Ue/IBlDe8lQtE=;
+ b=fdmKAjX0WQBsIEYf0w+KR7v/uzOh69aRk/VRiL8DY4KSC1UDCzpkLaJ/UAl8tMecRGuYhZ9m1SIVgCIrISVnh5z/UdJOed3rKv3FK2oePFpx14r/C1biNRNFJo5F3ZyZLANnF4U53yjYHcPLN8Wl2/Hp/VHD5SXNtXbXuOMtD4x+LGlaPnElx4FoKFRMQ9wWuS1nDzj/NWC0lVUaJba+ff70FR+MqLmlEpMxs2seWMdLQK+HDizmKGVjE91ds9AGBuE+maMopzss7pPiujOHWjXypFljVkSnvd1Chb/5t6DsYAHqY1CAZFWA9lMG5vM+yZRNAxCxRaQ7ChO/i9koKQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
  header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
@@ -39,11 +39,11 @@ Subject: RE: Query - ( Running Linux commands in LAVA host before booting the
 Thread-Topic: Query - ( Running Linux commands in LAVA host before booting the
  image )
 Thread-Index: 
- AdozwvV9UNGTGxZYRGqGmeIZ2P0TlwJpyH3gAACV+xAAAiUg0AAAckCwACcWkkAAPCHDMAJbyUuwADZLu0AAEFBIYAAqverQAOAY0AAAeDM7MAC1qp8Q
-Date: Mon, 29 Jan 2024 05:23:02 +0000
+ AdozwvV9UNGTGxZYRGqGmeIZ2P0TlwJpyH3gAACV+xAAAiUg0AAAckCwACcWkkAAPCHDMAJbyUuwADZLu0AAEFBIYAAqverQAOAY0AAAeDM7MAC1qp8QAADiP3A=
+Date: Mon, 29 Jan 2024 05:28:54 +0000
 X-TSB-HOP2: ON
 Message-ID: 
- <OS3PR01MB6103EA4145114BA537F0CFDBC27E2@OS3PR01MB6103.jpnprd01.prod.outlook.com>
+ <OS3PR01MB6103ACBF54C0EB68AA65F93DC27E2@OS3PR01MB6103.jpnprd01.prod.outlook.com>
 References: 
  <TY2PR01MB4954D32835FCAF8245111E1DC295A@TY2PR01MB4954.jpnprd01.prod.outlook.com>
  <TYYPR01MB6809B0815132278008135537B761A@TYYPR01MB6809.jpnprd01.prod.outlook.com>
@@ -58,8 +58,9 @@ References:
  <TY1PR01MB10707149C393DDC7056AE6EE0C2712@TY1PR01MB10707.jpnprd01.prod.outlook.com>
  <TY1PR01MB10707EF759D0ED715812A9565C2742@TY1PR01MB10707.jpnprd01.prod.outlook.com>
  <TY2PR01MB320921DA55982D635943FA8FB77A2@TY2PR01MB3209.jpnprd01.prod.outlook.com>
+ <OS3PR01MB6103EA4145114BA537F0CFDBC27E2@OS3PR01MB6103.jpnprd01.prod.outlook.com>
 In-Reply-To: 
- <TY2PR01MB320921DA55982D635943FA8FB77A2@TY2PR01MB3209.jpnprd01.prod.outlook.com>
+ <OS3PR01MB6103EA4145114BA537F0CFDBC27E2@OS3PR01MB6103.jpnprd01.prod.outlook.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: yes
@@ -67,83 +68,106 @@ X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS3PR01MB6103:EE_|OS0PR01MB6082:EE_
-x-ms-office365-filtering-correlation-id: 66cf3be2-0791-48ef-331b-08dc208a5d6f
+x-ms-traffictypediagnostic: OS3PR01MB6103:EE_|TYYPR01MB8247:EE_
+x-ms-office365-filtering-correlation-id: fb4c8c62-bb47-435d-1ea5-08dc208b2f19
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
 x-microsoft-antispam-message-info: 
- Jn4OvIYOkUNjhevAkShKTeWB/KXaenOWAysA5tus1y2DJ5u/Nfj2SoHWAnc17byy5q2ZaYMFIk07hwswxXgI77nr7su2d/KbEP6PGmGH6rqSYkYLYXeSysSAlyTZKwWjUaw1Te/xvnfpR6K+PwwxkLP2A0RARi3eNl10BOnrPcc4Hl5J1hIV/DhjfSiJR5QTSv7Edg4nPgrFGKqYCJOeV2jMcmnt7Z62m0vXksFJcb7HQUG5Uy3y3EkA1XJZD/BgGkU7liD8jNWKxOfZj2tZzXaIkRHfqyeEg2d9jTswU7swV+dUR1bWzwSqBPgYYqJbczJ6BopUz86yFO7s9yORn4r48BtLQMy4WDQ/ctasaq/kSYRWohKzYIDCVWRKKhZ0/3cW/jJLRhvJOLqsc9c3KOBu1gPRMrg2uJgg4BnUNZqFu0qhntycOj6kw5SHkTwxKN93RE3FZ7Q3490ZWsPAqtUA3zXesxeTi5To0RBoTfqFhKVsuo9pvR2t+zW2Puq6ovEbt3/lYfFGNYD1Gq5U/z+gS6B58oJOLki8BN5ZnkFpPweBILVnBtM52/BDJ+ITiBEHVrzlRyEVpPLnqnA593gLG2CCda6QgYZOHmSfItU=
+ tZVR05wIvGMEz0K3FwCEBpBmXvfNNYeZDfeDJ3vlyqECV2ybKssSkbPfaq54tsw3DGDQqUvqJlOc+QFPG0ledvAh/NRG/63OW8HBzybN+pwRXQQ6vYK0Qb4XvoyjNFjJha4cE5WWDnBAaP1uRrSr6nMzcqpRZnIW76ct20JIM9pGtKTSNxihxbc+sk1gxy1LnSnlcHyl5uinKia1Z8FhDxltjECA2ubFuL6J7HISJnapu7LDALKLOMAPSaMWEcOE/ffOT7U+X2jTco6lsZUNWlwOnm1uhNwXn/fcbuMuGgozQX+qmmeBbtDe/uaoEt40JlGW4d2m7Yi1D9ESBKslfgqJ7BoI+ciOldCkny5h6AhavfdVIOsVq5rJwfGDK7rg6Wa2KufaO8hfgenqAD1/mLN27s9A4xbSRlVoWYvinMSCNUG0mc249rsqyg7a0GTqRzYo6ZDPWM+Db4d5WUfynEZ9C903yLUCQ8F+JqnUj80sR/UHPA25pxkX/++5wHDh0Hlc7J6LcVItFe8mkCm/wACYWAZy1G1V11mCvu4kKuy46B8rkLhaGaM7DaXnN9JtRiCnEt3V5KwnCIWhQQ1pWHhFtp8IbXPqEMoR7ePDm8M=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB6103.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(396003)(346002)(376002)(136003)(366004)(230922051799003)(1800799012)(64100799003)(186009)(451199024)(66899024)(166002)(8936002)(4326008)(8676002)(9326002)(99936003)(52536014)(38100700002)(122000001)(66556008)(54906003)(64756008)(66446008)(66476007)(76116006)(6916009)(316002)(66946007)(86362001)(33656002)(85182001)(41300700001)(30864003)(38070700009)(2906002)(5660300002)(966005)(83380400001)(9686003)(7696005)(71200400001)(478600001)(53546011)(6506007)(26005)(107886003)(55016003)(579004)(559001);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB6103.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(136003)(376002)(346002)(39860400002)(366004)(230922051799003)(186009)(451199024)(1800799012)(64100799003)(966005)(478600001)(55016003)(99936003)(86362001)(7696005)(122000001)(166002)(38100700002)(83380400001)(6506007)(9686003)(2940100002)(66899024)(53546011)(6916009)(52536014)(4326008)(9326002)(2906002)(316002)(5660300002)(8936002)(30864003)(8676002)(33656002)(76116006)(66946007)(66556008)(66476007)(66446008)(64756008)(71200400001)(54906003)(85182001)(38070700009)(26005)(107886003)(41300700001)(579004)(559001);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?QTJZN2c0bDJwbDRpUWJCMW55OGlVa1hTWnFGcjNxSzRUY0VIbTBYcXNW?=
- =?iso-2022-jp?B?RktzUmxHUWtLTTkzUXAzUzRubGtmYlQwa3ZWeW1IV29wbCtPcHNCWklO?=
- =?iso-2022-jp?B?WDVyYSt3b0VQZGxJZm91TkJuL2RjRzBDV2lKSXNUYnptcGdsQ3NUdEFJ?=
- =?iso-2022-jp?B?WS96eUMrRHEza21IWlFrWm5zMmxUUG96dXNYdEtrdWlWY0p0aHRLVEEx?=
- =?iso-2022-jp?B?ZVV1azlEVDNqdEErR2JBakZsWHExS296c0x5MWZ6RktMUDZGeHh0b1Bu?=
- =?iso-2022-jp?B?bmE5bm5Wd0dFS2tCOHJvTDFIcElQdm1SZGdkTkVab2tZam9GZjBWeUtv?=
- =?iso-2022-jp?B?NEt0YkRnc0dva1hUYTBOSGhUWGgvdkFsRjFZY1ZKbWZTUy9BZWtFR0p4?=
- =?iso-2022-jp?B?a2hRTEp1bUpPYXNzNkdmb3BBSGNhUjBHTjNtd1liZjBvaTNNMzRmQVlO?=
- =?iso-2022-jp?B?RDRhSVZCQWtJVXoyS2t6VC9WZ2VubDRabjh6Rkk0RU55V1NEaittaUxR?=
- =?iso-2022-jp?B?TTJoV3VEMWUrTVFZSzdLaXlVdm9hbXJNU2xpSmxlakNMNzNBKzdqMHV1?=
- =?iso-2022-jp?B?akdYSjFKWU80dDJJOStRTjQwZWorNWJFZFVPeEl5SmhtQ0wyZkxrOEJl?=
- =?iso-2022-jp?B?UGl6dDNBNVUwOWYxZG1YM0szMjRiQjhrb2NPMEhiOG83eThoQWVoVWc1?=
- =?iso-2022-jp?B?S1N5MHBlenNKdURFMjVTdnVhNW1nUzlXZHlGUGpUeTZ0clVtUnVPLzJ4?=
- =?iso-2022-jp?B?RDBocGl0aVFaR09VVm42eTJVeWJtY2NDb0ZaVmpPTS8rZEkzTG8wc3Bj?=
- =?iso-2022-jp?B?VG4vWWFOd2dVeElJNGh2YUM0Tm10L3c1bnd6UTJ1WTB5OE9KeldhazU4?=
- =?iso-2022-jp?B?SDRFRisyWjQ2RnZWYmdRdWJ0ZmU0OTNCNzNRZUlvL1NKdXRpcWNzZ2Y0?=
- =?iso-2022-jp?B?Z3ZOY0Eya21PU093OFVGSFJES0htaUNCaWpiSWhLbGd6QWUwekFiZ2ZL?=
- =?iso-2022-jp?B?d3FNVFhwVUxiOXVlY2xjRXFDUnUvdDZLb3I2eGJvcEh6M1l2cCt0YW4r?=
- =?iso-2022-jp?B?azlhcXdDL2l2R0tlMHhOcjU0dHlHZ25LSjZ4T01Sc1VTNXY4NVpFSkNi?=
- =?iso-2022-jp?B?UHVJVUFhS1UwanFNa1ovRnprSE91QjBXNGRvK3BGTEYyZjN2N0pKZ1Mr?=
- =?iso-2022-jp?B?WDNMdzVBRXBtVlNrd01zVitKNFUwcHJHZVlEaG9wN0dzZWxGcFZMeXNW?=
- =?iso-2022-jp?B?QUJ6NXZZb3ZsTUFQZ05keHlHa2l1b3FxbC9kZ1NDV0xPVDRrOGlaSzVV?=
- =?iso-2022-jp?B?SnRNL2k0S1ZaOTdJK3g1bzVQSXdZeVVESWdBMTF1dnFQY2hRbkZiTHhQ?=
- =?iso-2022-jp?B?c3ViZS9BNkhvSDZsVnI1UjFpQnk5RTNraGF5RXZxUFdaRjFPUVIwdnJ2?=
- =?iso-2022-jp?B?YjRPY21QU24xa0pSdzNFckxnNUxWUUZBcHA2TFEzMWZnVktWc2lWUDdB?=
- =?iso-2022-jp?B?YkxHeHJUcHdRRVFhdTJwbzBHbG1remxYdEZiamgzWkI0WWExVk5HRkRY?=
- =?iso-2022-jp?B?VllMSEJlZjlzWHVmVm5lSVJsSGhTTE5PNUUvNDRkSGNqRlRQVlk1SDFn?=
- =?iso-2022-jp?B?VkZzN2M0dVRlbGFVTUtHMFExSFVKRUZKcnRGWENVOWtOalViT0hrTzB5?=
- =?iso-2022-jp?B?Y2I3akVUY05kUThNa0lrZ2svTFREU1hJd1pvNFl4VUNsRmhkdTJDcVBs?=
- =?iso-2022-jp?B?MGp1N0xZUE95a0F4cVlUMGVBVHVXSkwvTUlObmV4KzJReXNMV2NScjhm?=
- =?iso-2022-jp?B?b0Z6eDJTQXN3Y2ZxcmR6dGhsMDRXV3g3L3BURG1TVjlqcG1PR2k0M1h0?=
- =?iso-2022-jp?B?b0ZCWG9jK3dMV2ZPRUl3M1Z5K3hsRmZJdytWRzhRNDhSTXlCSjNYeHJD?=
- =?iso-2022-jp?B?VHdOWGE0Wm9iL29tL0grY2FuWjlLaXRVMzJ6bWdIbFZiNUlEa1hYS08r?=
- =?iso-2022-jp?B?R3dackRDRWtyUXJQdjZXd3haeW1paFZjRkUxSGtuVDRKRXo3ZEpGc2l4?=
- =?iso-2022-jp?B?cG1peWpjYTduWDVWeEIrTjE5dW5rMmxVMmV6VHByYlFGT1AyMUtkeEJm?=
- =?iso-2022-jp?B?U0NDbkpWMnJIS1VsZ2VzeUE2NTZSUUY4b2pZRTgyZWJvWUQ0K2NqTWll?=
- =?iso-2022-jp?B?cS8rT2N5eFl4ZTFINW1KakN2UTYrdVA1dUZnSjZaYk1RcTFkWDJzMFda?=
- =?iso-2022-jp?B?QTZhZEhmd24xWGRzZ05VYkxmNGhKVmNYZ01sQVFsamQ4SkJoN2hDaVBY?=
- =?iso-2022-jp?B?UHlReHNLLzQwSXErQWhIRzN5Wm1xTlZCaHc9PQ==?=
+ =?iso-2022-jp?B?Tjg1alY2TDYyWm03U2NZN3JXUHBnejhmWHZSTG0wcWF4RXUwZ2VrNmZU?=
+ =?iso-2022-jp?B?c0NUVkNVWTVGdzhtR1RQY01TSHFjUnByY29ScDNnSFA2Rk9JcEErODdC?=
+ =?iso-2022-jp?B?U3JOa25PMi83b3M2RzN6K3dCelZvUXB3OG92bFVhYVE2K2VubmxMb09n?=
+ =?iso-2022-jp?B?VFpabnNkRyt4K1NleW5mbHQzL0hsVDJ3VHRKaE9ZZXNUYjlNYlY3UnFJ?=
+ =?iso-2022-jp?B?S1U5STBzWCtKZ2IyL2FQaFRIL0ZDbnNnYmRleXN5d2trNUJoVVZKbGFS?=
+ =?iso-2022-jp?B?aTZhQks4VGFQWjFxY1Y0Y3VOYkJaRmpDOGZuQUVTWkdPb2t6M0ZSL1Ew?=
+ =?iso-2022-jp?B?MEJzNHhFc0dsZWp3ZVVQdDhJQm0vU1JxZWd4RGFHZkxIcU5GeGQxYVI4?=
+ =?iso-2022-jp?B?dG01TFJJbTdudlhoSG1jOTczMndjN29MbFJhczdqQityNEV6eDIvWTlW?=
+ =?iso-2022-jp?B?L0Y5aFk5L3lCRjE0M0t0cE5vaHNBVTJYc0lRN1VDMmZwWGIyQnlWWTZm?=
+ =?iso-2022-jp?B?VHgzdzk2ZjZnVGpyZUIySzdOdWpzSm9WNzg0UVVwS3RteG55VTR5TUlC?=
+ =?iso-2022-jp?B?NG5QYmNwb3EvMCsrMW5XVCsyb0NQWHprc0d4QlhLa21YUzNuS1BpY2Q1?=
+ =?iso-2022-jp?B?TU13OGQwMTNtcTN3VEJvREozaUlBaytMcFFSay9WR1ZLUzZuTUl0dWZQ?=
+ =?iso-2022-jp?B?MXF5ZVBxbTNKdnRFaitzNGo2NXNUdFBTb0VNeXVMTGg1eXI0QnFkZG80?=
+ =?iso-2022-jp?B?aGxKckJtMVVScUMzWTZMUSt6aXBnYWgrY0Jsb2NJRHJQaWNrRE4rUlhI?=
+ =?iso-2022-jp?B?ZnRFQmM1Q09RWlJlWC9UZHV1TEVWVjcxbDFCd1pYYU1tck93NDZFeFNC?=
+ =?iso-2022-jp?B?VW44UVU4YzFlanNWNkNBMHZzQTU0R2JUVmxES3F4QnVsa2t0VkxaRXZZ?=
+ =?iso-2022-jp?B?UnlyUmdNRUVDUWRvS1NLZFdFM0FPaTgxWVJzTW53bW53NWtDa0Y5QjUx?=
+ =?iso-2022-jp?B?VHNaMktwSGdTSE9ZUHVNYnZJSXNxb0xKRjR0amJwZVZlSHpPdURlaTVz?=
+ =?iso-2022-jp?B?ZzdtZmFHRTRudkNkc2Nya3pHYVgwRnhUVXg1UHJFQ1NoMzZVTCtVWTV4?=
+ =?iso-2022-jp?B?UEFyYnYybTZIVWNnOVU5TktjbHRoR0ZYN1MvSFlEVVJQVjdEdVQ2TG0v?=
+ =?iso-2022-jp?B?ci82NDMxaVJKUEorcklYQWJFMkI2c25FYll4eCtDb3pCdFhOS1p3ci9D?=
+ =?iso-2022-jp?B?Y0o3aDFWSFhMR1VjRFo1R085VTdXalBqb1h3VVcrRTY3TElyVEw0dVRI?=
+ =?iso-2022-jp?B?V1hyTzZ1ZmdvdHdFUEh6WGVlN1gwU0ltSC9TalZEOWx4Unl2UHZmalJP?=
+ =?iso-2022-jp?B?V3hLU1d0dHdhWUJIYVAzTjBGYzBjb0h5SnFMMmdvdHJPWWNVVUZNc3l5?=
+ =?iso-2022-jp?B?aFh2dE1aUlp4RmZyNytZMGtuYTd3eDQ0d1g3VStLWE03VTY3WFQvNmRC?=
+ =?iso-2022-jp?B?ejRRZkNHN1JyQUZHbFNId2FrUDhpd1p3dFovZ0Vuc1JBVXJ6dHFLQmxQ?=
+ =?iso-2022-jp?B?RUFsNWhLUzRoa3ppOEkrYldDVWgwZFE0TDY0QUJoZ3RRYzNPdUNtQ05M?=
+ =?iso-2022-jp?B?ODVaR3ZsWWM4Q3h1S2NPMUhTTmJTUGk3UXplMXBhVmVoWTdoK3psNW1x?=
+ =?iso-2022-jp?B?cUpMc1A0NW5zWEJIby9kbzNUZzdKbUFVWHB0bWRXYnlNUDBGdG9BQlhv?=
+ =?iso-2022-jp?B?NGIxNC9zcWd5cUhWOElldHBTdFVoTFhhZnhGclliOXpGWVVDWWtyanlz?=
+ =?iso-2022-jp?B?Nkt6UjJIT2F4RjVUdlY0aThlMFJmaVdVREVLUWNoQTBkS0tFa3dUbklH?=
+ =?iso-2022-jp?B?Ynh2dG8zZVh1TmphSTJBZXA4eWpJZUlyYThFelFBZVg2S0dVQmg4ZjVM?=
+ =?iso-2022-jp?B?d3o4VWhXcFg3ZWZyQUt3bjFWVE1rT3JwREJHVGZVVHh3Q1ljUnNJZWVs?=
+ =?iso-2022-jp?B?K09oZHVkSThER0l0QVpjenk5RXJxdFhaZ2NKZmpkZ3YzRkdNVHhCMDk3?=
+ =?iso-2022-jp?B?aURROVB5bzZYbjJ0MFRMWVZidm9zMFd3eUNnWWt4VElrd3JhVnRGd3ZQ?=
+ =?iso-2022-jp?B?R05IWkZoY240NU9VZFZDZTVFKzlZL0FlQ0Vmb3BQWU5Fdnp4SGg3ek9W?=
+ =?iso-2022-jp?B?Z3VzczR5TVpSeXY0U2ZtTmIzZjNncEwyWndIbWRIaHI2ZUpwSG5QYlZw?=
+ =?iso-2022-jp?B?VnVrVGE3bkQ1VkY1Zk5sdTdBSEpPbG9sWFI3cjRLUTZ5M2IvRWRHVno0?=
+ =?iso-2022-jp?B?alhqd3M2RjYydnNOTG5zcU9aT3NxMHNId3c9PQ==?=
 Content-Type: multipart/mixed;
-	boundary="_006_OS3PR01MB6103EA4145114BA537F0CFDBC27E2OS3PR01MB6103jpnp_"
+	boundary="_004_OS3PR01MB6103ACBF54C0EB68AA65F93DC27E2OS3PR01MB6103jpnp_"
 MIME-Version: 1.0
 X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB6103.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66cf3be2-0791-48ef-331b-08dc208a5d6f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2024 05:23:02.4778
+X-MS-Exchange-CrossTenant-Network-Message-Id: fb4c8c62-bb47-435d-1ea5-08dc208b2f19
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2024 05:28:54.2381
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: TmEyjqoHn0IU2R+S31SApek3sNNWKFSZxeb/mnfH4/bFYfzcOJxqkZmqyfyoY8go8Rx9NEZKvHhO6CmaKMTKdamV+wDnvcuZ0jnhbPYoJI0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS0PR01MB6082
+X-MS-Exchange-CrossTenant-userprincipalname: Smn33ITACO5y6/AxfzQwcnS8PceNvZVWjTR7agtQfOcvWoxqfFG16xX/ArBGPymPeJKkyF6ep9YfUsudnse2OFWNR3JVy9ABhb8BojZfA9E=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB8247
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 29 Jan 2024 05:23:14 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14474
+ <cip-dev@lists.cip-project.org>; Mon, 29 Jan 2024 05:29:04 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14475
 
---_006_OS3PR01MB6103EA4145114BA537F0CFDBC27E2OS3PR01MB6103jpnp_
+--_004_OS3PR01MB6103ACBF54C0EB68AA65F93DC27E2OS3PR01MB6103jpnp_
 Content-Type: multipart/alternative;
-	boundary="_000_OS3PR01MB6103EA4145114BA537F0CFDBC27E2OS3PR01MB6103jpnp_"
+	boundary="_000_OS3PR01MB6103ACBF54C0EB68AA65F93DC27E2OS3PR01MB6103jpnp_"
 
---_000_OS3PR01MB6103EA4145114BA537F0CFDBC27E2OS3PR01MB6103jpnp_
+--_000_OS3PR01MB6103ACBF54C0EB68AA65F93DC27E2OS3PR01MB6103jpnp_
 Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
+
+Hello Chris,
+
+Sorry I forgot to attach the job definition using which you can understand =
+where I am using those commands sent in the previous mail. Please have a lo=
+ok and let me know your thoughts.
+
+Thanks and regards,
+Sai Ashrith ( T S I P )
+
+From: ashrith sai(=1B$B#T#S#I#P=1B(B)
+Sent: Monday, January 29, 2024 10:53 AM
+To: 'Chris Paterson' <Chris.Paterson2@renesas.com>
+Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshib=
+a-tsip.com>; venkata1.pyla <venkata1.pyla@toshibaap.onmicrosoft.com>; kunij=
+adar shivanand(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <Shivanand.Kunijadar@t=
+oshiba-tsip.com>; balakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) <Adithya.Balak=
+umar@toshiba-tsip.com>; sanglikar zaiba(=1B$B#T#S#I#P=1B(B TEUR) <Zaiba.San=
+glikar@toshiba-tsip.com>; cip-dev@lists.cip-project.org; hayashi kazuhiro(=
+=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D#I#G""#M#P#S!{#M#P#4=
+=1B(B) <kazuhiro3.hayashi@toshiba.co.jp>
+Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
+he image )
 
 Hello Chris,
 
@@ -169,17 +193,23 @@ definition in which we can use them. Please have a look at them.
 Thanks and Regards,
 Sai Ashrith ( T S I P )
 
-From: Chris Paterson <Chris.Paterson2@renesas.com>
+From: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@re=
+nesas.com>>
 Sent: Thursday, January 25, 2024 7:53 PM
-To: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com>
+To: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com<mailto:=
+Sai.Sathujoda@toshiba-tsip.com>>
 Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshib=
-a-tsip.com>; venkata1.pyla <venkata1.pyla@toshibaap.onmicrosoft.com>; kunij=
-adar shivanand(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <Shivanand.Kunijadar@t=
-oshiba-tsip.com>; balakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) <Adithya.Balak=
-umar@toshiba-tsip.com>; sanglikar zaiba(=1B$B#T#S#I#P=1B(B TEUR) <Zaiba.San=
-glikar@toshiba-tsip.com>; cip-dev@lists.cip-project.org; hayashi kazuhiro(=
-=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D#I#G""#M#P#S!{#M#P#4=
-=1B(B) <kazuhiro3.hayashi@toshiba.co.jp>
+a-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>>; venkata1.pyla <venkata1.=
+pyla@toshibaap.onmicrosoft.com<mailto:venkata1.pyla@toshibaap.onmicrosoft.c=
+om>>; kunijadar shivanand(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <Shivanand.=
+Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijadar@toshiba-tsip.com>>; b=
+alakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) <Adithya.Balakumar@toshiba-tsip.c=
+om<mailto:Adithya.Balakumar@toshiba-tsip.com>>; sanglikar zaiba(=1B$B#T#S#I=
+#P=1B(B TEUR) <Zaiba.Sanglikar@toshiba-tsip.com<mailto:Zaiba.Sanglikar@tosh=
+iba-tsip.com>>; cip-dev@lists.cip-project.org<mailto:cip-dev@lists.cip-proj=
+ect.org>; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B=
+$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp<mailto:ka=
+zuhiro3.hayashi@toshiba.co.jp>>
 Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
 he image )
 
@@ -722,7 +752,7 @@ Thanks and Regards,
 Sai Ashrith
 
 
---_000_OS3PR01MB6103EA4145114BA537F0CFDBC27E2OS3PR01MB6103jpnp_
+--_000_OS3PR01MB6103ACBF54C0EB68AA65F93DC27E2OS3PR01MB6103jpnp_
 Content-Type: text/html; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
 
@@ -743,6 +773,9 @@ jp">
 	{font-family:SimSun;
 	panose-1:2 1 6 0 3 1 1 1 1 1;}
 @font-face
+	{font-family:"MS Gothic";
+	panose-1:2 11 6 9 7 2 5 8 2 4;}
+@font-face
 	{font-family:"Cambria Math";
 	panose-1:2 4 5 3 5 4 6 3 2 4;}
 @font-face
@@ -761,6 +794,9 @@ jp">
 @font-face
 	{font-family:"\@SimSun";
 	panose-1:2 1 6 0 3 1 1 1 1 1;}
+@font-face
+	{font-family:"\@MS Gothic";
+	panose-1:2 11 6 9 7 2 5 8 2 4;}
 /* Style Definitions */
 p.MsoNormal, li.MsoNormal, div.MsoNormal
 	{margin:0in;
@@ -983,6 +1019,78 @@ break-word">
 is,<o:p></o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
 p;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Sorry I f=
+orgot to attach the job definition using which you can understand where I a=
+m using those commands sent in the previous mail. Please have a look and le=
+t me know your thoughts.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Thanks an=
+d regards,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Sai Ashri=
+th ( T S I P )<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
+0in 0in">
+<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none;mso-fareast-lan=
+guage:JA">From:</span></b><span style=3D"mso-ligatures:none;mso-fareast-lan=
+guage:JA"> ashrith sai(</span><span lang=3D"JA" style=3D"font-family:&quot;=
+MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B=
+$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-languag=
+e:JA">)
+<br>
+<b>Sent:</b> Monday, January 29, 2024 10:53 AM<br>
+<b>To:</b> 'Chris Paterson' &lt;Chris.Paterson2@renesas.com&gt;<br>
+<b>Cc:</b> dinesh kumar(</span><span lang=3D"JA" style=3D"font-family:&quot=
+;MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=
+=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-lang=
+uage:JA"> TMIEC ODG Porting) &lt;dinesh.kumar@toshiba-tsip.com&gt;; venkata=
+1.pyla
+ &lt;venkata1.pyla@toshibaap.onmicrosoft.com&gt;; kunijadar shivanand(</spa=
+n><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;=
+mso-ligatures:none;mso-fareast-language:JA">=1B$B#T#S#I#P=1B(B</span><span =
+style=3D"mso-ligatures:none;mso-fareast-language:JA"> TMIEC ODG Porting)
+ &lt;Shivanand.Kunijadar@toshiba-tsip.com&gt;; balakumar adithya(</span><sp=
+an lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-l=
+igatures:none;mso-fareast-language:JA">=1B$B#T#S#I#P=1B(B</span><span style=
+=3D"mso-ligatures:none;mso-fareast-language:JA"> TEUR) &lt;Adithya.Balakuma=
+r@toshiba-tsip.com&gt;;
+ sanglikar zaiba(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGo=
+thic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#T#S=
+#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-language:JA">=
+ TEUR) &lt;Zaiba.Sanglikar@toshiba-tsip.com&gt;; cip-dev@lists.cip-project.=
+org;
+ hayashi kazuhiro(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PG=
+othic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$BNS=
+=1B(B</span><span lang=3D"JA" style=3D"mso-ligatures:none;mso-fareast-langu=
+age:JA">
+</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
+erif;mso-ligatures:none;mso-fareast-language:JA">=1B$BOB9(=1B(B</span><span=
+ lang=3D"JA" style=3D"mso-ligatures:none;mso-fareast-language:JA">
+</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
+erif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#D#M#E=1B(B</span><sp=
+an style=3D"mso-ligatures:none;mso-fareast-language:JA"> =1B$B!{=1B(B</span=
+><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;m=
+so-ligatures:none;mso-fareast-language:JA">=1B$B#D#I#G=1B(B</span><span sty=
+le=3D"mso-ligatures:none;mso-fareast-language:JA">=1B$B""=1B(B</span><span =
+lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-liga=
+tures:none;mso-fareast-language:JA">=1B$B#M#P#S=1B(B</span><span style=3D"m=
+so-ligatures:none;mso-fareast-language:JA">=1B$B!{=1B(B</span><span lang=3D=
+"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:n=
+one;mso-fareast-language:JA">=1B$B#M#P#4=1B(B</span><span style=3D"mso-liga=
+tures:none;mso-fareast-language:JA">)
+ &lt;kazuhiro3.hayashi@toshiba.co.jp&gt;<br>
+<b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
+oting the image )<o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hello Chr=
+is,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Thank you=
  for suggesting this scenario.<o:p></o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
@@ -1022,29 +1130,35 @@ p;</o:p></span></p>
 <div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
 0in 0in">
 <p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none">From:</span></=
-b><span style=3D"mso-ligatures:none"> Chris Paterson &lt;Chris.Paterson2@re=
-nesas.com&gt;
+b><span style=3D"mso-ligatures:none"> Chris Paterson &lt;<a href=3D"mailto:=
+Chris.Paterson2@renesas.com">Chris.Paterson2@renesas.com</a>&gt;
 <br>
 <b>Sent:</b> Thursday, January 25, 2024 7:53 PM<br>
 <b>To:</b> ashrith sai(</span><span lang=3D"ZH-CN" style=3D"font-family:Sim=
 Sun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatur=
-es:none">) &lt;Sai.Sathujoda@toshiba-tsip.com&gt;<br>
+es:none">) &lt;<a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com">Sai.Sathuj=
+oda@toshiba-tsip.com</a>&gt;<br>
 <b>Cc:</b> dinesh kumar(</span><span lang=3D"ZH-CN" style=3D"font-family:Si=
 mSun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatu=
-res:none"> TMIEC ODG Porting) &lt;dinesh.kumar@toshiba-tsip.com&gt;; venkat=
-a1.pyla &lt;venkata1.pyla@toshibaap.onmicrosoft.com&gt;; kunijadar
- shivanand(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-liga=
-tures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none"> TM=
-IEC ODG Porting) &lt;Shivanand.Kunijadar@toshiba-tsip.com&gt;; balakumar ad=
-ithya(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures=
-:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none">
- TEUR) &lt;Adithya.Balakumar@toshiba-tsip.com&gt;; sanglikar zaiba(</span><=
-span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#T=
-#S#I#P=1B(B</span><span style=3D"mso-ligatures:none"> TEUR) &lt;Zaiba.Sangl=
-ikar@toshiba-tsip.com&gt;; cip-dev@lists.cip-project.org; hayashi
- kazuhiro(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligat=
-ures:none">=1B$BNS=1B(B</span><span lang=3D"ZH-CN" style=3D"mso-ligatures:n=
-one">
+res:none"> TMIEC ODG Porting) &lt;<a href=3D"mailto:dinesh.kumar@toshiba-ts=
+ip.com">dinesh.kumar@toshiba-tsip.com</a>&gt;; venkata1.pyla
+ &lt;<a href=3D"mailto:venkata1.pyla@toshibaap.onmicrosoft.com">venkata1.py=
+la@toshibaap.onmicrosoft.com</a>&gt;; kunijadar shivanand(</span><span lang=
+=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#T#S#I#P=1B=
+(B</span><span style=3D"mso-ligatures:none"> TMIEC ODG Porting)
+ &lt;<a href=3D"mailto:Shivanand.Kunijadar@toshiba-tsip.com">Shivanand.Kuni=
+jadar@toshiba-tsip.com</a>&gt;; balakumar adithya(</span><span lang=3D"ZH-C=
+N" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span=
+><span style=3D"mso-ligatures:none"> TEUR) &lt;<a href=3D"mailto:Adithya.Ba=
+lakumar@toshiba-tsip.com">Adithya.Balakumar@toshiba-tsip.com</a>&gt;;
+ sanglikar zaiba(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;ms=
+o-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:non=
+e"> TEUR) &lt;<a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com">Zaiba.San=
+glikar@toshiba-tsip.com</a>&gt;;
+<a href=3D"mailto:cip-dev@lists.cip-project.org">cip-dev@lists.cip-project.=
+org</a>; hayashi kazuhiro(</span><span lang=3D"ZH-CN" style=3D"font-family:=
+SimSun;mso-ligatures:none">=1B$BNS=1B(B</span><span lang=3D"ZH-CN" style=3D=
+"mso-ligatures:none">
 </span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none"=
 >=1B$BOB9(=1B(B</span><span lang=3D"ZH-CN" style=3D"mso-ligatures:none">
 </span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none"=
@@ -1055,7 +1169,8 @@ n><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=1B$=
 B#M#P#S=1B(B</span><span style=3D"mso-ligatures:none">=1B$B!{=1B(B</span><s=
 pan lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#M#=
 P#4=1B(B</span><span style=3D"mso-ligatures:none">)
- &lt;kazuhiro3.hayashi@toshiba.co.jp&gt;<br>
+ &lt;<a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.jp">kazuhiro3.hayashi@t=
+oshiba.co.jp</a>&gt;<br>
 <b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
 oting the image )<o:p></o:p></span></p>
 </div>
@@ -2240,58 +2355,72 @@ efinition.<o:p></o:p></p>
 </body>
 </html>
 
---_000_OS3PR01MB6103EA4145114BA537F0CFDBC27E2OS3PR01MB6103jpnp_--
+--_000_OS3PR01MB6103ACBF54C0EB68AA65F93DC27E2OS3PR01MB6103jpnp_--
 
---_006_OS3PR01MB6103EA4145114BA537F0CFDBC27E2OS3PR01MB6103jpnp_
-Content-Type: text/plain; name="latest_device_dict.txt"
-Content-Description: latest_device_dict.txt
-Content-Disposition: attachment; filename="latest_device_dict.txt"; size=452;
-	creation-date="Mon, 29 Jan 2024 05:12:36 GMT";
-	modification-date="Mon, 29 Jan 2024 05:23:00 GMT"
+--_004_OS3PR01MB6103ACBF54C0EB68AA65F93DC27E2OS3PR01MB6103jpnp_
+Content-Type: text/plain; name="rebootjobdefinition_swtpm.txt"
+Content-Description: rebootjobdefinition_swtpm.txt
+Content-Disposition: attachment; filename="rebootjobdefinition_swtpm.txt";
+	size=3088; creation-date="Mon, 29 Jan 2024 05:26:52 GMT";
+	modification-date="Mon, 29 Jan 2024 05:28:52 GMT"
 Content-Transfer-Encoding: base64
 
-eyUgZXh0ZW5kcyAncWVtdS5qaW5qYTInICV9DQp7JSBzZXQgbm9fa3ZtID0gVHJ1ZSAlfQ0KDQp7
-JSBzZXQgdXNlcl9jb21tYW5kcyA9IHsncm1fdHBtZGlyJzogeydkbyc6ICdybSAtcmYgL3Zhci9s
-aWIvbGF2YS9kaXNwYXRjaGVyL3RtcC9jaXAtY29yZS1zZWN1cml0eS5zd3RwbSd9LA0KICAgICAg
-ICAgICAgICAgICAgICAgICAgJ3N0YXJ0X3RwbSc6IHsnZG8nOiAnc2ggL2hvbWUvc3d0cG1fc3Rh
-cnQuc2gnfSwNCiAgICAgICAgICAgICAgICAgICAgICAgICdzdXJlX2tpbGwnOiB7J2RvJzogJ2Vj
-aG8gIkluaXRpYXRpbmcgVFBNIicsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICd1bmRvJzogJ3NoIC9ob21lL3N3dHBtX2ZpbmlzaC5zaCd9LA0KICAgICAgICAgICAgICAg
-ICAgICAgICAgJ21hbnVhbF9raWxsJzogeydkbyc6ICdwa2lsbCAtMTUgc3d0cG0nfX0gJX0=
+ZGV2aWNlX3R5cGU6IHFlbXUNCmpvYl9uYW1lOiBxZW11IHg4Nl82NCByZWJvb3QgdGVzdGluZyAo
+Q0lQIHNlY3VyaXR5IGltYWdlKQ0KdGltZW91dHM6DQogIGpvYjoNCiAgICBtaW51dGVzOiAyMA0K
+ICBhY3Rpb246DQogICBtaW51dGVzOiAxMA0KICBhY3Rpb25zOg0KICAgIHBvd2VyLW9mZjoNCiAg
+ICAgIHNlY29uZHM6IDYwDQpwcmlvcml0eTogaGlnaA0KdmlzaWJpbGl0eTogcGVyc29uYWwNCm5v
+dGlmeToNCiAgY3JpdGVyaWE6DQogICAgc3RhdHVzOiBmaW5pc2hlZA0KICByZWNpcGllbnRzOg0K
+ICAtIHRvOg0KICAgICBtZXRob2Q6IGVtYWlsDQogICAgIGVtYWlsOiBzYWkuc2F0aHVqb2RhQHRv
+c2hpYmEtdHNpcC5jb20NCmNvbnRleHQ6DQogIGFyY2g6IHg4Nl82NA0KICBsYXZhX3Rlc3RfZGly
+OiAnL2hvbWUvbGF2YS0lcycNCiANCiMgQk9PVCBCTE9DSw0KDQojIEFDVElPTiBCTE9DSw0KYWN0
+aW9uczoNCg0KIC0gY29tbWFuZDoNCiAgICBuYW1lOiBzdXJlX2tpbGwNCiAgICB0aW1lb3V0Og0K
+ICAgICAgICAgIG1pbnV0ZXM6IDEgDQoNCi0gY29tbWFuZDoNCiAgICBuYW1lOiBzdGFydF90cG0N
+CiAgICB0aW1lb3V0Og0KICAgICAgICAgIG1pbnV0ZXM6IDIwDQoNCi0gZGVwbG95Og0KICAgIHRp
+bWVvdXQ6DQogICAgICBtaW51dGVzOiAxNQ0KICAgIHRvOiB0bXBmcw0KICAgIGltYWdlczoNCiAg
+ICAgIHN5c3RlbToNCiAgICAgICAgaW1hZ2VfYXJnOiAnLWRyaXZlIGZpbGU9e3N5c3RlbX0sZGlz
+Y2FyZD11bm1hcCxpZj1ub25lLGlkPWRpc2ssZm9ybWF0PXJhdyAtbSAxRyAtc2VyaWFsIG1vbjpz
+dGRpbyAtY3B1IHFlbXU2NCAgLXNtcCA0IC1tYWNoaW5lIHEzNSxhY2NlbD10Y2cgIC1nbG9iYWwg
+SUNIOS1MUEMubm9yZWJvb3Q9b2ZmIC1kZXZpY2UgaWRlLWhkLGRyaXZlPWRpc2sgLWRyaXZlIGlm
+PXBmbGFzaCxmb3JtYXQ9cmF3LHVuaXQ9MCxyZWFkb25seT1vbixmaWxlPS91c3Ivc2hhcmUvT1ZN
+Ri9PVk1GX0NPREVfNE0uc2VjYm9vdC5mZCAtZHJpdmUgaWY9cGZsYXNoLGZvcm1hdD1yYXcscmVh
+ZG9ubHk9b24sZmlsZT0vdXNyL3NoYXJlL09WTUYvT1ZNRl9WQVJTXzRNLnNuYWtlb2lsLmZkICAt
+Z2xvYmFsIElDSDktTFBDLmRpc2FibGVfczM9MSAtZ2xvYmFsIGlzYS1mZGMuZHJpdmVBPSAtbm9n
+cmFwaGljIC1jaGFyZGV2IHNvY2tldCxpZD1jaHJ0cG0scGF0aD0vdG1wL3FlbXUtc3d0cG0uc29j
+ayAtdHBtZGV2IGVtdWxhdG9yLGlkPXRwbTAsY2hhcmRldj1jaHJ0cG0gLWRldmljZSB0cG0tdGlz
+LHRwbWRldj10cG0wJw0KICAgICAgICB1cmw6IGh0dHBzOi8vczMuZXUtY2VudHJhbC0xLmFtYXpv
+bmF3cy5jb20vZG93bmxvYWQyLmNpcC1wcm9qZWN0Lm9yZy9jaXAtY29yZS9zYWktbGF2YS1pZWMt
+dGVzdGluZy9xZW11LWFtZDY0L2NpcC1jb3JlLWltYWdlLXNlY3VyaXR5LWNpcC1jb3JlLWJvb2t3
+b3JtLXFlbXUtYW1kNjQud2ljLnh6DQogICAgICAgIGNvbXByZXNzaW9uOiB4eg0KDQotIGJvb3Q6
+DQogICAgdGltZW91dDoNCiAgICAgIG1pbnV0ZXM6IDEwDQogICAgbWV0aG9kOiBxZW11DQogICAg
+bWVkaWE6IHRtcGZzDQogICAgcHJvbXB0czogWyJyb290QGRlbW86fiMiXQ0KICAgIGF1dG9fbG9n
+aW46DQogICAgICBsb2dpbl9wcm9tcHQ6ICJkZW1vIGxvZ2luOiINCiAgICAgIHVzZXJuYW1lOiAi
+cm9vdCINCiAgICAgIHBhc3N3b3JkX3Byb21wdDogIlBhc3N3b3JkOiINCiAgICAgIHBhc3N3b3Jk
+OiAiQ0lQc2VjdXJpdHlAMTIzIg0KDQojIFRFU1RfQkxPQ0sNCi0gdGVzdDoNCiAgICAgdGltZW91
+dDoNCiAgICAgICBtaW51dGVzOiA1DQogICAgIGRlZmluaXRpb25zOg0KICAgICAtIHJlcG9zaXRv
+cnk6DQogICAgICAgICBtZXRhZGF0YToNCiAgICAgICAgICAgZm9ybWF0OiBMYXZhLVRlc3QgVGVz
+dCBEZWZpbml0aW9uIDEuMA0KICAgICAgICAgICBuYW1lOiBzYW1wbGUtdGVzdC0xDQogICAgICAg
+ICAgIGRlc2NyaXB0aW9uOiAiY2hlY2sgcmVib290IHZlcnNpb24iDQogICAgICAgICBydW46DQog
+ICAgICAgICAgIHN0ZXBzOg0KICAgICAgICAgICAgIC0gbGF2YS10ZXN0LWNhc2UgdW5hbWUgLS1z
+aGVsbCB1bmFtZSAtYQ0KICAgICAgICAgICAgIC0gbHNibGsNCiAgICAgICBmcm9tOiBpbmxpbmUN
+CiAgICAgICBuYW1lOiBzYW1wbGUtdGVzdC0xDQogICAgICAgcGF0aDogaW5saW5lL3NhbXBsZS10
+ZXN0LnlhbWwNCg0KLSBjb21tYW5kOg0KICAgIG5hbWU6IGtpbGxfdHBtDQogICAgdGltZW91dDoN
+CiAgICAgICAgICBtaW51dGVzOiAyDQoNCi0gY29tbWFuZDoNCiAgICBuYW1lOiBzdGFydF90cG0N
+CiAgICB0aW1lb3V0Og0KICAgICAgICAgIG1pbnV0ZXM6IDINCg0KLSBib290Og0KICAgIHRpbWVv
+dXQ6DQogICAgICBtaW51dGVzOiAxMA0KICAgIG1ldGhvZDogcWVtdQ0KICAgIG1lZGlhOiB0bXBm
+cw0KICAgIHByb21wdHM6IFsicm9vdEBkZW1vOn4jIl0NCiAgICBhdXRvX2xvZ2luOg0KICAgICAg
+bG9naW5fcHJvbXB0OiAiZGVtbyBsb2dpbjoiDQogICAgICB1c2VybmFtZTogInJvb3QiDQogICAg
+ICBwYXNzd29yZF9wcm9tcHQ6ICJQYXNzd29yZDoiDQogICAgICBwYXNzd29yZDogIkNJUHNlY3Vy
+aXR5QDEyMyINCg0KIyBURVNUX0JMT0NLDQotIHRlc3Q6DQogICAgIHRpbWVvdXQ6DQogICAgICAg
+bWludXRlczogNQ0KICAgICBkZWZpbml0aW9uczoNCiAgICAgLSByZXBvc2l0b3J5Og0KICAgICAg
+ICAgbWV0YWRhdGE6DQogICAgICAgICAgIGZvcm1hdDogTGF2YS1UZXN0IFRlc3QgRGVmaW5pdGlv
+biAxLjANCiAgICAgICAgICAgbmFtZTogc2FtcGxlLXRlc3QtMg0KICAgICAgICAgICBkZXNjcmlw
+dGlvbjogImNoZWNrIHJlYm9vdCB2ZXJzaW9uIg0KICAgICAgICAgcnVuOg0KICAgICAgICAgICBz
+dGVwczoNCiAgICAgICAgICAgICAtIGxhdmEtdGVzdC1jYXNlIHVuYW1lIC0tc2hlbGwgdW5hbWUg
+LWENCiAgICAgICAgICAgICAtIGxzYmxrDQogICAgICAgZnJvbTogaW5saW5lDQogICAgICAgbmFt
+ZTogc2FtcGxlLXRlc3QtMg0KICAgICAgIHBhdGg6IGlubGluZS9zYW1wbGUtdGVzdC55YW1sDQoN
+CmNvbnRleHQ6DQogIGFyY2g6IHg4Nl82NA0KICBsYXZhX3Rlc3RfcmVzdWx0c19kaXI6ICcvaG9t
+ZS9sYXZhLSVzJw==
 
---_006_OS3PR01MB6103EA4145114BA537F0CFDBC27E2OS3PR01MB6103jpnp_
-Content-Type: text/plain; name="swtpm_finish.sh.txt"
-Content-Description: swtpm_finish.sh.txt
-Content-Disposition: attachment; filename="swtpm_finish.sh.txt"; size=308;
-	creation-date="Mon, 29 Jan 2024 05:12:38 GMT";
-	modification-date="Mon, 29 Jan 2024 05:23:00 GMT"
-Content-Transfer-Encoding: base64
-
-IyEvYmluL3NoDQoNCiMgU2luY2Ugd2UgYXJlIG5vdCBzdXJlIHdoZXRoZXIgdGhlIGpvYiB3aWxs
-IGJlIHN0b3BwZWQgb3IgaXQgd2lsbCBiZSBmaW5pc2hlZCB3aXRoIHFlbXUgcG93ZW9yZmYNCiMg
-V2Ugd2lsbCBraWxsIGl0IGZvciBzdXJlIGlmIGVpdGhlciBvZiB0aGUgY2FzZSBhcnJpdmVzDQoN
-CmlmIFsgJChwc3RyZWUgLXAgfCBncmVwIHN3dHBtKSA9IDEgXTsgdGhlbg0KICAgICAgICBwa2ls
-bCAtMTUgc3d0cG0NCmZpDQoNCnJtIC1yZiAvdmFyL2xpYi9sYXZhL2Rpc3BhdGNoZXIvdG1wL2Np
-cC1jb3JlLXNlY3VyaXR5LnN3dHBtDQo=
-
---_006_OS3PR01MB6103EA4145114BA537F0CFDBC27E2OS3PR01MB6103jpnp_
-Content-Type: text/plain; name="swtpm_start.sh.txt"
-Content-Description: swtpm_start.sh.txt
-Content-Disposition: attachment; filename="swtpm_start.sh.txt"; size=489;
-	creation-date="Mon, 29 Jan 2024 05:12:40 GMT";
-	modification-date="Mon, 29 Jan 2024 05:23:01 GMT"
-Content-Transfer-Encoding: base64
-
-IyBUaGlzIGlzIHRoZSBzY3JpcHQgd2hpY2ggaGFuZGxlcyB0aGUgbG9ja2luZyBtZWNoYW5pc20N
-Cg0KIyEvYmluL3NoDQoNCndoaWxlIFsgJChwc3RyZWUgLXAgfCBncmVwIHN3dHBtKSBdOyBkbw0K
-ICAgIHNsZWVwIDMwcw0KICAgIGVjaG8gIlRQTSBzb2NrZXQgYWNxdWlyZWQgYnkgYW5vdGhlciBq
-b2IsIHBsenogd2FpdC4uIg0KDQpkb25lDQoNCm1rZGlyIC1wIC92YXIvbGliL2xhdmEvZGlzcGF0
-Y2hlci90bXAvY2lwLWNvcmUtc2VjdXJpdHkuc3d0cG0NCg0KaWYgc3d0cG0gc29ja2V0IC10IC1k
-IC0tdHBtc3RhdGUgZGlyPS92YXIvbGliL2xhdmEvZGlzcGF0Y2hlci90bXAvY2lwLWNvcmUtc2Vj
-dXJpdHkuc3d0cG0gXA0KICAgICAgICAgICAgICAgICAgICAgICAgIC0tY3RybCB0eXBlPXVuaXhp
-byxwYXRoPS90bXAvcWVtdS1zd3RwbS5zb2NrIFwNCiAgICAgICAgICAgICAgICAgICAgICAgICAt
-LXRwbTI7IHRoZW4NCiAgICAgICAgZWNobyAkPw0KZmkg
-
---_006_OS3PR01MB6103EA4145114BA537F0CFDBC27E2OS3PR01MB6103jpnp_--
+--_004_OS3PR01MB6103ACBF54C0EB68AA65F93DC27E2OS3PR01MB6103jpnp_--
 
 
