@@ -1,234 +1,97 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <uli@fpond.eu>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9DEBC47DDF
-	for <webhook@archiver.kernel.org>; Fri, 26 Jan 2024 17:31:46 +0000 (UTC)
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
- by mx.groups.io with SMTP id smtpd.web10.89.1706290302486182350
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E51BC47258
+	for <webhook@archiver.kernel.org>; Mon, 29 Jan 2024 02:04:53 +0000 (UTC)
+Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [85.215.255.23])
+ by mx.groups.io with SMTP id smtpd.web10.5348.1706493889558103208
  for <cip-dev@lists.cip-project.org>;
- Fri, 26 Jan 2024 09:31:43 -0800
+ Sun, 28 Jan 2024 18:04:50 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=Nx6uRIqQ;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-51332-20240126173139fbe4d1bcc1a0917e5a-smmvjc@rts-flowmailer.siemens.com)
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20240126173139fbe4d1bcc1a0917e5a
-        for <cip-dev@lists.cip-project.org>;
-        Fri, 26 Jan 2024 18:31:40 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
- bh=rAL8J6sEupgalpdm0FqKnQo7QbZFTSj5g6wTDH6fmBY=;
- b=Nx6uRIqQ0wOwrq40hT5mBLQFcDnVVUMTvv5nmEBdRGk7RkR9GPdPw7lL6mFZakMOyKbdk+
- 0vOn0WcUcRSt+PCEhVp6UD7wLYMNVvCA8+eDzmXPpdDZEjiBv0CgNvEhVgfnRYNpqr19qC0d
- BV4Xd0iXRImLjwYLa/BQ0G3eUTqmc=;
-From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: jan.kiszka@siemens.com,
-	cip-dev@lists.cip-project.org,
-	felix.moessbauer@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH v3] swupdate.bbclass: add scripts section to the swu file
-Date: Fri, 26 Jan 2024 18:31:19 +0100
-Message-ID: <20240126173138.1591803-1-Quirin.Gylstorff@siemens.com>
+ dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=o65oyFM2;
+ dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=ZfEH0A0d;
+ spf=none, err=permanent DNS error (domain: fpond.eu, ip: 85.215.255.23, mailfrom: uli@fpond.eu)
+ARC-Seal: i=1; a=rsa-sha256; t=1706493887; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=HuZp+gJIJDCweTkQONSN0ZukeQb/Lpp1kRNzWPtSamxVZvW29OhBLxFvsFoqwtT5go
+    QmtqiOCSXlib1LqOXdxkRLxPf8GmzvhPqrbUnGK6ibH5LLnWWUZBB9ttXPFt4KF4IMYa
+    Au64qE0D3f0LdW9h9gX1BsoZHykkAhc1W05zze1Hc2l/vSnwLSrg3sBDwHOxm7wpSNQu
+    ftgFL9fYoSiMAA+f5xxMgTaOAtgLOaBLpj44VEgbjj3u/llIcFqPfxVfZk41OP3vXLeA
+    OkI5VI1nsnNjJ0CzVmWQoaNAy1mOiSTJB7Bdsj2XvOgdGYpUrh+Ta/iNup1A3tsGdQ+P
+    rMwQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1706493887;
+    s=strato-dkim-0002; d=strato.com;
+    h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=Zfvf/ioI78oKp+tze10LNXiGdvsZKMeL/2LwpWx+H0Y=;
+    b=OtkB0FqLVPE26I7pNLiV2fr9Pu8/W1Go6bVNTJuBIdExTtc/Somooni96rshC2Wpam
+    wW+d5G17hqsLB8bjPqQ4axcD38DaiW3YJSHuvG+nPafdUhiGS2ZESBOPrZfGaTpymuV8
+    uRPK/OectlrWBiJdrJpePBwCqiAcGVbJjuRVFof2cSz1frXMcHThkXRyrSVwPqy0bTKz
+    n8SM+3GmF/Z+O8N8EiEIbFlkzxKRoNzXlVmt790QGWelGmaen6qb4+EdSC8JLQVu3T2m
+    wmbZDpAwT2tPg8js0a1NtPVEnXQg4gPpXTA1pHO8Z525HGgosv1AQwGw1zUvwENjy3FB
+    3D0w==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo00
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1706493887;
+    s=strato-dkim-0002; d=fpond.eu;
+    h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=Zfvf/ioI78oKp+tze10LNXiGdvsZKMeL/2LwpWx+H0Y=;
+    b=o65oyFM2nz8o2fH4vWkYTJiPRalezf9hLJUqlPICzLiI9WBizR/+oHhVmYnX8kPn4e
+    oJDaB0wkhJsjyeUYjz20L/D7XuCnSpE5/A452Wh0Mop5qUQKkISyvqr4D+hEH8nMUp8a
+    TmbGlB8zU2W5qlhaS6u+s3dyd485LRyCwMr18+Ii132yLd5NEQKZQPOgAW5AZdZdrwua
+    LQXJaHV0gq7fca6zNJPiWsfBOTqTOdG9Q2xCxlGxikYw36eDHqF2BJ9jAew1jfAg+QSe
+    GJaO3pGHy4af5xdf5ELlkqvyqawTIPWm+OfgM9H6EYBOm6XrcrodFjHiMD+BqdE4Uaks
+    IsWQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1706493887;
+    s=strato-dkim-0003; d=fpond.eu;
+    h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=Zfvf/ioI78oKp+tze10LNXiGdvsZKMeL/2LwpWx+H0Y=;
+    b=ZfEH0A0dTuDeTXcx6yCGcHQ1ifp6Yd7p+abtbVDTRZpascjdeMidJaWT6xVybhH6ph
+    Oawp4aB7BH0DSdYfLLAw==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv3qxio1R8fGl/wuMlg=="
+Received: from ox-live-app101.back.ox.d0m.de
+    by smtp-ox.front (RZmta 49.11.2 AUTH)
+    with ESMTPSA id Z7ddde00T24lEob
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+	(Client did not present a certificate);
+    Mon, 29 Jan 2024 03:04:47 +0100 (CET)
+Date: Mon, 29 Jan 2024 03:04:47 +0100 (CET)
+From: Ulrich Hecht <uli@fpond.eu>
+To: Alexander Grund <theflamefire89@gmail.com>,
+	cip-dev@lists.cip-project.org
+Cc: uli+cip@fpond.eu
+Message-ID: <1862675745.2863908.1706493887652@webmail.strato.com>
+In-Reply-To: <20240111190658.153488-1-theflamefire89@gmail.com>
+References: <20240111190658.153488-1-theflamefire89@gmail.com>
+Subject: Re: [PATCH 4.4 0/4] Bluetooth: hci_sock: Fix possible OOB write in
+ create_monitor_event
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.6-Rev57
+X-Originating-Client: open-xchange-appsuite
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 26 Jan 2024 17:31:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14471
-
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-
-This allows the user to add scripts[1] to the swu file by
-setting the variable `SWU_SCRIPTS`. Scripts can be used to
-prepare the system for an update.
-
-```
-SWU_SCRIPTS = "<script_file_name>@<script_type>@<optional_data>"
-```
-This will add  `file://<script_file_name>` to the variable `SRC_URI` and
-`<script_file_name>` to `SWU_ADDTIONAL_FILES`. The sw-description will contain
-the following section:
-```
-    scripts: (
-        {
-          filename = "<script_file_name>";
-          type = "<script_type>";
-          data = "<optional_data>";
-          sha256 = "<automatically added sha256 of script_file_name>";
-        },):
-```
-
-[1]: https://sbabic.github.io/swupdate/sw-description.html?#scripts
-
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
-Changes v3:
- - fix message
- - add luascript example to README
-
-Changes v2:
- - change seperator from `:` to `@` as it already used for the
-   configfilecheck
- - add optional data entry
- - add warning if less then 2 parameters are given for entry
+ <cip-dev@lists.cip-project.org>; Mon, 29 Jan 2024 02:04:53 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14472
 
 
+> On 01/11/2024 8:06 PM CET Alexander Grund <theflamefire89@gmail.com> wrote:
+> From: Alexander Grund <flamefire89@gmail.com>
+> 
+> This basically fixes the `memcpy(dst, src, strlen(src))`
+> where dst is a fixed size array and hence the copy can overflow it.
 
- classes/swupdate.bbclass                    | 37 +++++++++++
- doc/README.swupdate.md                      | 71 +++++++++++++++++++++
- recipes-core/images/swu/sw-description.tmpl |  1 +
- 3 files changed, 109 insertions(+)
+Thank you, applied.
 
-diff --git a/classes/swupdate.bbclass b/classes/swupdate.bbclass
-index 8f1215d..256a60f 100644
---- a/classes/swupdate.bbclass
-+++ b/classes/swupdate.bbclass
-@@ -58,6 +58,7 @@ IMAGE_TEMPLATE_VARS:swu = " \
-     SWU_NAME \
-     SWU_FILE_NODES \
-     SWU_BOOTLOADER_FILE_NODE \
-+    SWU_SCRIPTS_NODE \
-     "
- 
- # Add the bootloader file
-@@ -123,6 +124,42 @@ python add_ebg_update(){
-    d.appendVar('SWU_ADDITIONAL_FILES', " " + efi_boot_loader_file)
- }
- 
-+SWU_EXTEND_SW_DESCRIPTION += "add_scripts"
-+python add_scripts(){
-+    swu_scripts = d.getVar('SWU_SCRIPTS')
-+    if not swu_scripts:
-+        return
-+    swu_script_entries = [ s for s in swu_scripts.split() ]
-+    script_node_list = []
-+    for entry in swu_script_entries:
-+        script_elems = entry.split('@')
-+        if len(script_elems) < 2:
-+            bb.warn(f"SWU_SCRIPTS entry:'{entry}' is missing elements.")
-+            continue
-+
-+        script_file = script_elems[0]
-+        script_type = script_elems[1]
-+        script_data = None
-+        if len(script_elems) > 2:
-+            script_data = script_elems[2]
-+        node = f"""
-+        {{
-+          filename = "{script_file}";
-+          type = "{script_type}";
-+        """
-+        if script_data:
-+            node += f"""  data = "{script_data}";"""
-+        node += f"""
-+          sha256 = "{script_file}-sha256";
-+        }}"""
-+        script_node_list.append(node)
-+        d.appendVar('SWU_ADDITIONAL_FILES', " " + script_file)
-+        d.appendVar('SRC_URI', f" file://{script_file}")
-+
-+    swu_scripts_node = "scripts: (" + ','.join([n for n in script_node_list]) + ");"
-+    d.appendVar('SWU_SCRIPTS_NODE', swu_scripts_node)
-+}
-+
- # convert between swupdate compressor name and imagetype extension
- def get_swu_compression_type(d):
-     swu_ct = d.getVar('SWU_COMPRESSION_TYPE')
-diff --git a/doc/README.swupdate.md b/doc/README.swupdate.md
-index 1c94699..1a7fa0f 100644
---- a/doc/README.swupdate.md
-+++ b/doc/README.swupdate.md
-@@ -21,6 +21,77 @@ window is still possible.
- If the variable `SWU_EBG_UPDATE` is set to `"1"` the update is also stored in
- the `*.swu` file.
- 
-+## SWUpdate scripts
-+
-+It is possible to add [scripts](https://sbabic.github.io/swupdate/sw-description.html?#scripts) to a swu file.
-+
-+To add a script entry in isar-cip-core set the variable `SWU_SCRIPTS`.
-+The content of the variable has the following pattern:
-+`<script_file_name>@<script_type>@<optional_data>`
-+
-+The file referenced by `<script_file_name>` is added to the variables `SRC_URI`
-+and `SWU_ADDITIONAL_FILES`. Therefore, it needs to be safed in a `FILESPATH`
-+location.
-+
-+The mandatory element `script_type` can have the following values:
-+- [lua](https://sbabic.github.io/swupdate/sw-description.html#lua)
-+- [shellscript](https://sbabic.github.io/swupdate/sw-description.html#shellscript)
-+- [preinstall](https://sbabic.github.io/swupdate/sw-description.html#preinstall)
-+- [postinstall](https://sbabic.github.io/swupdate/sw-description.html#postinstall)
-+
-+### Example: postinstall.sh
-+
-+```
-+SWU_SCRIPTS = "postinstall"
-+SWU_SCRIPT_postinstall[file] = "postinstall.sh"
-+SWU_SCRIPT_postinstall[type] = "postinstall"
-+SWU_SCRIPT_postinstall[data] = "some_data"
-+```
-+
-+This will add  `file://postinstall.sh` to the variable `SRC_URI` and
-+`postinstall.sh` to `SWU_ADDTIONAL_FILES`. The sw-description will contain
-+the following section:
-+```
-+    scripts: (
-+        {
-+          filename = "postinstall.sh";
-+          type = "postinstall";
-+          data = "some_data"
-+          sha256 = "<sha256 of postinstall.sh>";
-+        },):
-+```
-+### Example: Luascript
-+The simplest lua script has the following content:
-+```lua
-+function preinst()
-+	local message = "preinst called\n"
-+	local success = true
-+	return success, message
-+end
-+function postinst()
-+	local message = "postinst called\n"
-+	local success = true
-+	return success, message
-+end
-+```
-+and is added:
-+
-+```
-+SWU_SCRIPTS = "luascript.lua@lua@some_data"
-+
-+```
-+
-+The sw-description will contain the following section:
-+```
-+    scripts: (
-+        {
-+          filename = "luascript.lua";
-+          type = "lua";
-+          data = "some_data"
-+          sha256 = "<sha256 of luascript.lua>";
-+        },):
-+```
-+
- # Building and testing the CIP Core image
- 
- Set up `kas-container` as described in the [top-level README](../README.md).
-diff --git a/recipes-core/images/swu/sw-description.tmpl b/recipes-core/images/swu/sw-description.tmpl
-index c52372c..88cb475 100644
---- a/recipes-core/images/swu/sw-description.tmpl
-+++ b/recipes-core/images/swu/sw-description.tmpl
-@@ -35,4 +35,5 @@ software =
-             };
-             sha256 = "linux.efi-sha256";
-     }${SWU_FILE_NODES});
-+    ${SWU_SCRIPTS_NODE}
- }
--- 
-2.43.0
-
+CU
+Uli
 
