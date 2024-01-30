@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5F1C47DDF
-	for <webhook@archiver.kernel.org>; Tue, 30 Jan 2024 20:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B451C48285
+	for <webhook@archiver.kernel.org>; Tue, 30 Jan 2024 20:34:18 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web10.7251.1706646835418574585
  for <cip-dev@lists.cip-project.org>;
- Tue, 30 Jan 2024 12:34:16 -0800
+ Tue, 30 Jan 2024 12:34:10 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.05,230,1701097200"; 
-   d="scan'208";a="192272215"
+   d="scan'208";a="192272209"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 31 Jan 2024 05:34:15 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 31 Jan 2024 05:34:09 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.7])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8EA7440A3D21;
-	Wed, 31 Jan 2024 05:34:14 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8D67E40A3D21;
+	Wed, 31 Jan 2024 05:34:08 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [RFC PATCH 5.10.y-cip 13/39] irqchip/sifive-plic: Make better use of the effective affinity mask
-Date: Tue, 30 Jan 2024 20:33:20 +0000
-Message-Id: <20240130203346.94488-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RFC PATCH 5.10.y-cip 10/39] irqchip/sifive-plic: Improve naming scheme for per context offsets
+Date: Tue, 30 Jan 2024 20:33:17 +0000
+Message-Id: <20240130203346.94488-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240130203346.94488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20240130203346.94488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -33,120 +33,89 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 30 Jan 2024 20:34:17 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14525
+ <cip-dev@lists.cip-project.org>; Tue, 30 Jan 2024 20:34:18 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14522
 
-From: Samuel Holland <samuel@sholland.org>
+From: Niklas Cassel <niklas.cassel@wdc.com>
 
-commit de078949218242d57f791b63fac87cdb09cb0424 upstream.
+commit 0d3616bbd03cdfaa8a5fdf38e0fec2b1ef6ec0a0 upstream.
 
-The PLIC driver already updates the effective affinity mask in its
-.irq_set_affinity callback. Take advantage of that information to only
-touch bits (and take spinlocks) for the specific relevant hart contexts.
+The PLIC supports a fixed number of contexts (15872).
+Each context has fixed register offsets in PLIC.
 
-First, make sure the effective affinity mask is set before IRQ startup.
+The number of contexts that we need to initialize depends on the privilege
+modes supported by each hart. Therefore, this mapping between PLIC context
+registers to hart privilege modes is platform specific, and is currently
+supplied via device tree.
 
-Then, since this mask already takes priv->lmask into account, checking
-that mask later is no longer needed (and handler->present is equivalent
-to the bit being set in priv->lmask).
+For example, canaan,k210 has the following mapping:
+Context0: hart0 M-mode
+Context1: hart0 S-mode
+Context2: hart1 M-mode
+Context3: hart1 S-mode
 
-Finally, when (un)masking or changing affinity, only clear/set the
-enable bits in the specific old/new context(s). The cpumask operations
-in plic_irq_unmask() are not needed because they duplicate the code in
-plic_set_affinity().
+While sifive,fu540 has the following mapping:
+Context0: hart0 M-mode
+Context1: hart1 M-mode
+Context2: hart1 S-mode
 
-Signed-off-by: Samuel Holland <samuel@sholland.org>
+Because the number of contexts per hart is not fixed, the names
+ENABLE_PER_HART and CONTEXT_PER_HART for the register offsets are quite
+confusing and might mislead the reader to think that these are fixed
+register offsets per hart.
+
+Rename the offsets to more clearly highlight that these are per PLIC
+context and not per hart.
+
+Signed-off-by: Niklas Cassel <niklas.cassel@wdc.com>
+Reviewed-by: Anup Patel <anup@brainfault.org>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/20220701202440.59059-2-samuel@sholland.org
+Link: https://lore.kernel.org/r/20220302131544.3166154-2-Niklas.Cassel@wdc.com
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/irqchip/Kconfig           |  1 +
- drivers/irqchip/irq-sifive-plic.c | 27 +++++++++------------------
- 2 files changed, 10 insertions(+), 18 deletions(-)
+ drivers/irqchip/irq-sifive-plic.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 3c24bf45263ce..63c65deb67374 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -529,6 +529,7 @@ config SIFIVE_PLIC
- 	bool "SiFive Platform-Level Interrupt Controller"
- 	depends on RISCV
- 	select IRQ_DOMAIN_HIERARCHY
-+	select GENERIC_IRQ_EFFECTIVE_AFF_MASK if SMP
- 	help
- 	   This enables support for the PLIC chip found in SiFive (and
- 	   potentially other) RISC-V systems.  The PLIC controls devices
 diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index c42d90543a018..364023c776d43 100644
+index bd99ee0ae433d..5b25e275fa6fa 100644
 --- a/drivers/irqchip/irq-sifive-plic.c
 +++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -114,31 +114,18 @@ static inline void plic_irq_toggle(const struct cpumask *mask,
- 	for_each_cpu(cpu, mask) {
- 		struct plic_handler *handler = per_cpu_ptr(&plic_handlers, cpu);
+@@ -44,8 +44,8 @@
+  * Each hart context has a vector of interrupt enable bits associated with it.
+  * There's one bit for each interrupt source.
+  */
+-#define ENABLE_BASE			0x2000
+-#define     ENABLE_PER_HART		0x80
++#define CONTEXT_ENABLE_BASE		0x2000
++#define     CONTEXT_ENABLE_SIZE		0x80
  
--		if (handler->present &&
--		    cpumask_test_cpu(cpu, &handler->priv->lmask))
--			plic_toggle(handler, d->hwirq, enable);
-+		plic_toggle(handler, d->hwirq, enable);
- 	}
- }
+ /*
+  * Each hart context has a set of control registers associated with it.  Right
+@@ -53,7 +53,7 @@
+  * take an interrupt, and a register to claim interrupts.
+  */
+ #define CONTEXT_BASE			0x200000
+-#define     CONTEXT_PER_HART		0x1000
++#define     CONTEXT_SIZE		0x1000
+ #define     CONTEXT_THRESHOLD		0x00
+ #define     CONTEXT_CLAIM		0x04
  
- static void plic_irq_unmask(struct irq_data *d)
- {
--	struct cpumask amask;
--	unsigned int cpu;
--	struct plic_priv *priv = irq_data_get_irq_chip_data(d);
--
--	cpumask_and(&amask, &priv->lmask, cpu_online_mask);
--	cpu = cpumask_any_and(irq_data_get_affinity_mask(d),
--					   &amask);
--	if (WARN_ON_ONCE(cpu >= nr_cpu_ids))
--		return;
--	plic_irq_toggle(cpumask_of(cpu), d, 1);
-+	plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 1);
- }
+@@ -363,11 +363,11 @@ static int __init plic_init(struct device_node *node,
  
- static void plic_irq_mask(struct irq_data *d)
- {
--	struct plic_priv *priv = irq_data_get_irq_chip_data(d);
--
--	plic_irq_toggle(&priv->lmask, d, 0);
-+	plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 0);
- }
- 
- #ifdef CONFIG_SMP
-@@ -159,11 +146,13 @@ static int plic_set_affinity(struct irq_data *d,
- 	if (cpu >= nr_cpu_ids)
- 		return -EINVAL;
- 
--	plic_irq_toggle(&priv->lmask, d, 0);
--	plic_irq_toggle(cpumask_of(cpu), d, !irqd_irq_masked(d));
-+	plic_irq_mask(d);
- 
- 	irq_data_update_effective_affinity(d, cpumask_of(cpu));
- 
-+	if (!irqd_irq_masked(d))
-+		plic_irq_unmask(d);
-+
- 	return IRQ_SET_MASK_OK_DONE;
- }
- #endif
-@@ -190,6 +179,7 @@ static struct irq_chip plic_edge_chip = {
- 	.irq_set_affinity = plic_set_affinity,
- #endif
- 	.irq_set_type	= plic_irq_set_type,
-+	.flags		= IRQCHIP_AFFINITY_PRE_STARTUP,
- };
- 
- static struct irq_chip plic_chip = {
-@@ -201,6 +191,7 @@ static struct irq_chip plic_chip = {
- 	.irq_set_affinity = plic_set_affinity,
- #endif
- 	.irq_set_type	= plic_irq_set_type,
-+	.flags		= IRQCHIP_AFFINITY_PRE_STARTUP,
- };
- 
- static int plic_irq_set_type(struct irq_data *d, unsigned int type)
+ 		cpumask_set_cpu(cpu, &priv->lmask);
+ 		handler->present = true;
+-		handler->hart_base =
+-			priv->regs + CONTEXT_BASE + i * CONTEXT_PER_HART;
++		handler->hart_base = priv->regs + CONTEXT_BASE +
++			i * CONTEXT_SIZE;
+ 		raw_spin_lock_init(&handler->enable_lock);
+-		handler->enable_base =
+-			priv->regs + ENABLE_BASE + i * ENABLE_PER_HART;
++		handler->enable_base = priv->regs + CONTEXT_ENABLE_BASE +
++			i * CONTEXT_ENABLE_SIZE;
+ 		handler->priv = priv;
+ done:
+ 		for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
 -- 
 2.34.1
 
