@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA2BC47DDF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D2C5C48286
 	for <webhook@archiver.kernel.org>; Tue, 30 Jan 2024 20:35:08 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web10.7285.1706646887873225275
  for <cip-dev@lists.cip-project.org>;
- Tue, 30 Jan 2024 12:35:01 -0800
+ Tue, 30 Jan 2024 12:35:05 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.05,230,1701097200"; 
-   d="scan'208";a="192272267"
+   d="scan'208";a="192272271"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 31 Jan 2024 05:35:00 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 31 Jan 2024 05:35:04 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.7])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8323A40A3F70;
-	Wed, 31 Jan 2024 05:34:59 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 77E3B40A3D3B;
+	Wed, 31 Jan 2024 05:35:03 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [RFC PATCH 5.10.y-cip 35/39] riscv: dts: renesas: rzfive-smarc-som: Drop PHY interrupt support for ETH{0,1}
-Date: Tue, 30 Jan 2024 20:33:42 +0000
-Message-Id: <20240130203346.94488-36-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RFC PATCH 5.10.y-cip 37/39] riscv: dts: renesas: r9a07g043f: Add L2 cache node
+Date: Tue, 30 Jan 2024 20:33:44 +0000
+Message-Id: <20240130203346.94488-38-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240130203346.94488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20240130203346.94488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -34,47 +34,49 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 30 Jan 2024 20:35:08 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14547
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14549
 
-commit 7dd48e96d0cda9af79a2fee85e9135b4781f9ee1 upstream.
+commit a38b1061d327c120844e5dc0217191b06ce3b25f upstream.
 
-IRQC support for RZ/Five is still missing so drop the interrupts and
-interrupt-parent properties from the PHY nodes of ETH{0,1}.
+Add L2 cache node for RZ/Five SoC.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20230102222708.274369-1-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/r/20230929000704.53217-2-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/riscv/boot/dts/renesas/r9a07g043f.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi b/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi
-index 73941a5f844d9..d6f18754eb5d7 100644
---- a/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi
-+++ b/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi
-@@ -24,10 +24,20 @@ &dmac {
+diff --git a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
+index 6ec1c6f9a4032..c8d63a8f7d866 100644
+--- a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
++++ b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
+@@ -29,6 +29,7 @@ cpu0: cpu@0 {
+ 			i-cache-line-size = <0x40>;
+ 			d-cache-size = <0x8000>;
+ 			d-cache-line-size = <0x40>;
++			next-level-cache = <&l2cache>;
+ 			clocks = <&cpg CPG_CORE R9A07G043_CLK_I>;
+ 			operating-points-v2 = <&cluster0_opp>;
  
- &eth0 {
- 	status = "disabled";
+@@ -56,4 +57,15 @@ plic: interrupt-controller@12c00000 {
+ 		resets = <&cpg R9A07G043_NCEPLIC_ARESETN>;
+ 		interrupts-extended = <&cpu0_intc 11 &cpu0_intc 9>;
+ 	};
 +
-+	phy0: ethernet-phy@7 {
-+		/delete-property/ interrupt-parent;
-+		/delete-property/ interrupts;
++	l2cache: cache-controller@13400000 {
++		compatible = "andestech,ax45mp-cache", "cache";
++		reg = <0x0 0x13400000 0x0 0x100000>;
++		interrupts = <SOC_PERIPHERAL_IRQ(476) IRQ_TYPE_LEVEL_HIGH>;
++		cache-size = <0x40000>;
++		cache-line-size = <64>;
++		cache-sets = <1024>;
++		cache-unified;
++		cache-level = <2>;
 +	};
  };
- 
- &eth1 {
- 	status = "disabled";
-+
-+	phy1: ethernet-phy@7 {
-+		/delete-property/ interrupt-parent;
-+		/delete-property/ interrupts;
-+	};
- };
- 
- &sdhi0 {
 -- 
 2.34.1
 
