@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9286EC4828C
-	for <webhook@archiver.kernel.org>; Tue, 30 Jan 2024 20:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9416BC46CD2
+	for <webhook@archiver.kernel.org>; Tue, 30 Jan 2024 20:35:18 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web10.7291.1706646895538772428
+ by mx.groups.io with SMTP id smtpd.web11.7380.1706646909460368828
  for <cip-dev@lists.cip-project.org>;
- Tue, 30 Jan 2024 12:35:03 -0800
+ Tue, 30 Jan 2024 12:35:09 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.05,230,1701097200"; 
-   d="scan'208";a="196182883"
+   d="scan'208";a="196182887"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 31 Jan 2024 05:35:02 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 31 Jan 2024 05:35:08 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.7])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 7D42A40A3D3B;
-	Wed, 31 Jan 2024 05:35:01 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 72B2940A3D3B;
+	Wed, 31 Jan 2024 05:35:07 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [RFC PATCH 5.10.y-cip 36/39] riscv: dts: renesas: Clean up dtbs_check W=1 warning due to empty phy node
-Date: Tue, 30 Jan 2024 20:33:43 +0000
-Message-Id: <20240130203346.94488-37-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RFC PATCH 5.10.y-cip 39/39] riscv: dts: renesas: rzfive-smarc: Enable the blocks which were explicitly disabled
+Date: Tue, 30 Jan 2024 20:33:46 +0000
+Message-Id: <20240130203346.94488-40-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240130203346.94488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20240130203346.94488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -33,78 +33,140 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 30 Jan 2024 20:35:08 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14548
+ <cip-dev@lists.cip-project.org>; Tue, 30 Jan 2024 20:35:18 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14551
 
-From: Conor Dooley <conor.dooley@microchip.com>
+commit bfef0760d247550318a4a4a71ae472875caf711c upstream.
 
-commit 7a98d75c4a63a90e81178170b748512e7a23417d upstream.
+Now that noncoherent dma support for the RZ/Five SoC has been added, enable
+the IP blocks which were disabled on the RZ/Five SMARC.  This adds
+support for the below peripherals:
+  * Ethernet
+  * DMAC
+  * SDHI
+  * USB
+  * RSPI
+  * SSI
 
-dtbs_check w/ W=1 complains:
-
-    Warning (unit_address_vs_reg): /soc/ethernet@11c20000/ethernet-phy@7: node has a unit name, but no reg or ranges property
-    Warning (avoid_unnecessary_addr_size): /soc/ethernet@11c20000: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
-
-The ethernet@11c20000 node is guarded by an `#if (!SW_ET0_EN_N)` in
-rzg2ul-smarc-som.dtsi, where the phy child node is added. In
-rzfive-smarc-som.dtsi, the ethernet node is marked disabled & the
-interrupt properties are deleted from the phy child node. As a result,
-the produced dts looks like:
-
-    ethernet@11c20000 {
-	    compatible = "renesas,r9a07g043-gbeth",
-	    		 "renesas,rzg2l-gbeth";
-	    /* snip */
-	    #address-cells = <1>;
-	    #size-cells = <0>;
-	    status = "disabled";
-
-	    ethernet-phy@7 {
-	    };
-    };
-
-Adding a corresponding `#if (!SW_ET0_EN_N)` around the node in
-rzfive-smarc-som.dtsi avoids the complaint, as the empty child node is
-not added:
-
-    ethernet@11c20000 {
-	    compatible = "renesas,r9a07g043-gbeth",
-	    		 "renesas,rzg2l-gbeth";
-	    /* snip */
-	    #address-cells = <1>;
-	    #size-cells = <0>;
-	    status = "disabled";
-    };
-
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20230712-squealer-walmart-9587342ddec1@wendy
+Link: https://lore.kernel.org/r/20230929000704.53217-4-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ .../boot/dts/renesas/rzfive-smarc-som.dtsi    | 23 --------
+ arch/riscv/boot/dts/renesas/rzfive-smarc.dtsi | 56 -------------------
+ 2 files changed, 79 deletions(-)
 
 diff --git a/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi b/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi
-index d6f18754eb5d7..c62debc7ca7e4 100644
+index c62debc7ca7e4..433ab5c6a626c 100644
 --- a/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi
 +++ b/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi
-@@ -22,6 +22,7 @@ &dmac {
- 	status = "disabled";
- };
+@@ -7,25 +7,8 @@
  
-+#if (!SW_ET0_EN_N)
+ #include <arm64/renesas/rzg2ul-smarc-som.dtsi>
+ 
+-/ {
+-	aliases {
+-		/delete-property/ ethernet0;
+-		/delete-property/ ethernet1;
+-	};
+-
+-	chosen {
+-		bootargs = "ignore_loglevel";
+-	};
+-};
+-
+-&dmac {
+-	status = "disabled";
+-};
+-
+ #if (!SW_ET0_EN_N)
  &eth0 {
- 	status = "disabled";
+-	status = "disabled";
+-
+ 	phy0: ethernet-phy@7 {
+ 		/delete-property/ interrupt-parent;
+ 		/delete-property/ interrupts;
+@@ -34,14 +17,8 @@ phy0: ethernet-phy@7 {
+ #endif
  
-@@ -30,6 +31,7 @@ phy0: ethernet-phy@7 {
+ &eth1 {
+-	status = "disabled";
+-
+ 	phy1: ethernet-phy@7 {
+ 		/delete-property/ interrupt-parent;
  		/delete-property/ interrupts;
  	};
  };
-+#endif
+-
+-&sdhi0 {
+-	status = "disabled";
+-};
+diff --git a/arch/riscv/boot/dts/renesas/rzfive-smarc.dtsi b/arch/riscv/boot/dts/renesas/rzfive-smarc.dtsi
+index c07a487c4e5ad..a8573fdfd8b12 100644
+--- a/arch/riscv/boot/dts/renesas/rzfive-smarc.dtsi
++++ b/arch/riscv/boot/dts/renesas/rzfive-smarc.dtsi
+@@ -6,59 +6,3 @@
+  */
  
- &eth1 {
- 	status = "disabled";
+ #include <arm64/renesas/rzg2ul-smarc.dtsi>
+-
+-&ehci0 {
+-	status = "disabled";
+-};
+-
+-&ehci1 {
+-	status = "disabled";
+-};
+-
+-&hsusb {
+-	status = "disabled";
+-};
+-
+-&ohci0 {
+-	status = "disabled";
+-};
+-
+-&ohci1 {
+-	status = "disabled";
+-};
+-
+-&phyrst {
+-	status = "disabled";
+-};
+-
+-&sdhi1 {
+-	status = "disabled";
+-};
+-
+-&snd_rzg2l {
+-	status = "disabled";
+-};
+-
+-&spi1 {
+-	status = "disabled";
+-};
+-
+-&ssi1 {
+-	status = "disabled";
+-};
+-
+-&usb0_vbus_otg {
+-	status = "disabled";
+-};
+-
+-&usb2_phy0 {
+-	status = "disabled";
+-};
+-
+-&usb2_phy1 {
+-	status = "disabled";
+-};
+-
+-&vccq_sdhi1 {
+-	status = "disabled";
+-};
 -- 
 2.34.1
 
