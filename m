@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38DE2C4828C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A9BAC46CD2
 	for <webhook@archiver.kernel.org>; Tue, 30 Jan 2024 20:34:28 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.7251.1706646835418574585
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web11.7357.1706646856010792564
  for <cip-dev@lists.cip-project.org>;
- Tue, 30 Jan 2024 12:34:22 -0800
+ Tue, 30 Jan 2024 12:34:26 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.05,230,1701097200"; 
-   d="scan'208";a="192272225"
+   d="scan'208";a="196182847"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 31 Jan 2024 05:34:22 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 31 Jan 2024 05:34:26 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.7])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8CA9A40A3F70;
-	Wed, 31 Jan 2024 05:34:20 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9A25C40A3D21;
+	Wed, 31 Jan 2024 05:34:24 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [RFC PATCH 5.10.y-cip 16/39] clocksource/drivers/riscv: Increase the clock source rating
-Date: Tue, 30 Jan 2024 20:33:23 +0000
-Message-Id: <20240130203346.94488-17-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RFC PATCH 5.10.y-cip 18/39] mmc: host: Kconfig: Make MMC_SDHI_INTERNAL_DMAC config option dependant on ARCH_RENESAS
+Date: Tue, 30 Jan 2024 20:33:25 +0000
+Message-Id: <20240130203346.94488-19-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240130203346.94488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20240130203346.94488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -34,47 +34,45 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 30 Jan 2024 20:34:28 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14528
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14530
 
-From: Samuel Holland <samuel@sholland.org>
+commit bbe6dc429bf52b0062c2a9b39f850cfd317289a7 upstream.
 
-commit 674402b0098b66b8ba91fe93c0d27af703256098 upstream.
+MMC_SDHI_INTERNAL_DMAC config option has dependency on ARM64 and
+R7S9210/R8A77470 this dependency will keep growing for future SoCs for
+varying architectures. So to simplify this configuration make
+MMC_SDHI_INTERNAL_DMAC solely depend on ARCH_RENESAS, as all Renesas
+SoCs inherently depend on the ARCH_RENESAS config option.
 
-RISC-V provides an architectural clock source via the time CSR. This
-clock source exposes a 64-bit counter synchronized across all CPUs.
-Because it is accessed using a CSR, it is much more efficient to read
-than MMIO clock sources. For example, on the Allwinner D1, reading the
-sun4i timer in a loop takes 131 cycles/iteration, while reading the
-RISC-V time CSR takes only 5 cycles/iteration.
+This allows selecting MMC_SDHI_INTERNAL_DMAC config option for RZ/Five SoC
+which is based on RISC-V architecture.
 
-Adjust the RISC-V clock source rating so it is preferred over the
-various platform-specific MMIO clock sources.
-
-Signed-off-by: Samuel Holland <samuel@sholland.org>
-Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
-Reviewed-by: Palmer Dabbelt <palmer@rivosinc.com>
-Reviewed-by: Anup Patel <anup@brainfault.org>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20221228004444.61568-1-samuel@sholland.org
-Signed-off-by: Daniel Lezcano <daniel.lezcano@kernel.org>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Link: https://lore.kernel.org/r/20230901122701.318082-1-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/clocksource/timer-riscv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/host/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clocksource/timer-riscv.c b/drivers/clocksource/timer-riscv.c
-index c51c5ed15aa75..a035bdf6fc580 100644
---- a/drivers/clocksource/timer-riscv.c
-+++ b/drivers/clocksource/timer-riscv.c
-@@ -54,7 +54,7 @@ static u64 notrace riscv_sched_clock(void)
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 6844d2880ba34..5ce9efe93d654 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -728,9 +728,9 @@ config MMC_SDHI_SYS_DMAC
  
- static struct clocksource riscv_clocksource = {
- 	.name		= "riscv_clocksource",
--	.rating		= 300,
-+	.rating		= 400,
- 	.mask		= CLOCKSOURCE_MASK(64),
- 	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
- 	.read		= riscv_clocksource_rdtime,
+ config MMC_SDHI_INTERNAL_DMAC
+ 	tristate "DMA for SDHI SD/SDIO controllers using on-chip bus mastering"
+-	depends on ARM64 || ARCH_R7S9210 || ARCH_R8A77470 || COMPILE_TEST
++	depends on ARCH_RENESAS || COMPILE_TEST
+ 	depends on MMC_SDHI
+-	default MMC_SDHI if (ARM64 || ARCH_R7S9210 || ARCH_R8A77470)
++	default MMC_SDHI if ARCH_RENESAS
+ 	help
+ 	  This provides DMA support for SDHI SD/SDIO controllers
+ 	  using on-chip bus mastering. This supports the controllers
 -- 
 2.34.1
 
