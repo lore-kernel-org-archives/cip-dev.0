@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16EE1C47DDF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D5A1C48285
 	for <webhook@archiver.kernel.org>; Tue, 30 Jan 2024 20:34:28 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.7251.1706646835418574585
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web11.7357.1706646856010792564
  for <cip-dev@lists.cip-project.org>;
- Tue, 30 Jan 2024 12:34:18 -0800
+ Tue, 30 Jan 2024 12:34:24 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.05,230,1701097200"; 
-   d="scan'208";a="192272218"
+   d="scan'208";a="196182844"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 31 Jan 2024 05:34:17 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 31 Jan 2024 05:34:24 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.7])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8DC5C40A3D3B;
-	Wed, 31 Jan 2024 05:34:16 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 95C6840A3D3B;
+	Wed, 31 Jan 2024 05:34:22 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [RFC PATCH 5.10.y-cip 14/39] irqchip/sifive-plic: Separate the enable and mask operations
-Date: Tue, 30 Jan 2024 20:33:21 +0000
-Message-Id: <20240130203346.94488-15-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RFC PATCH 5.10.y-cip 17/39] clocksource/drivers/riscv: Get rid of clocksource_arch_init() callback
+Date: Tue, 30 Jan 2024 20:33:24 +0000
+Message-Id: <20240130203346.94488-18-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240130203346.94488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20240130203346.94488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -34,156 +34,84 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 30 Jan 2024 20:34:28 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14526
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14529
 
-From: Samuel Holland <samuel@sholland.org>
+commit 3aff0403f814df6ce2377a6ecf61dd7750a3925f upstream.
 
-commit a1706a1c5062e0908528170f853601ed53f428c8 upstream.
+Having a clocksource_arch_init() callback always sets vdso_clock_mode to
+VDSO_CLOCKMODE_ARCHTIMER if GENERIC_GETTIMEOFDAY is enabled, this is
+required for the riscv-timer.
 
-The PLIC has two per-IRQ checks before sending an IRQ to a hart context.
-First, it checks that the IRQ's priority is nonzero. Then, it checks
-that the enable bit is set for that combination of IRQ and context.
+This works for platforms where just riscv-timer clocksource is present.
+On platforms where other clock sources are available we want them to
+register with vdso_clock_mode set to VDSO_CLOCKMODE_NONE.
 
-Currently, the PLIC driver sets both the priority value and the enable
-bit in its (un)mask operations. However, modifying the enable bit is
-problematic for two reasons:
-  1) The enable bits are packed, so changes are not atomic and require
-     taking a spinlock.
-  2) The following requirement from the PLIC spec, which explains the
-     racy (un)mask operations in plic_irq_eoi():
+On the Renesas RZ/Five SoC OSTM block can be used as clocksource [0], to
+avoid multiple clock sources being registered as VDSO_CLOCKMODE_ARCHTIMER
+move setting of vdso_clock_mode in the riscv-timer driver instead of doing
+this in clocksource_arch_init() callback as done similarly for ARM/64
+architecture.
 
-       If the completion ID does not match an interrupt source
-       that is currently enabled for the target, the completion
-       is silently ignored.
+[0] drivers/clocksource/renesas-ostm.c
 
-Both of these problems are solved by using the priority value to mask
-IRQs. Each IRQ has a separate priority register, so writing the priority
-value is atomic. And since the enable bit remains set while an IRQ is
-masked, the EOI operation works normally. The enable bits are still used
-to control the IRQ's affinity.
-
-Signed-off-by: Samuel Holland <samuel@sholland.org>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/20220701202440.59059-3-samuel@sholland.org
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Tested-by: Samuel Holland <samuel@sholland.org>
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Samuel Holland <samuel@sholland.org>
+Link: https://lore.kernel.org/r/20221229224601.103851-1-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/irqchip/irq-sifive-plic.c | 55 +++++++++++++++++++------------
- 1 file changed, 34 insertions(+), 21 deletions(-)
+ arch/riscv/Kconfig                | 1 -
+ arch/riscv/kernel/time.c          | 9 ---------
+ drivers/clocksource/timer-riscv.c | 5 +++++
+ 3 files changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index 364023c776d43..2673f726f85d8 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -108,9 +108,7 @@ static inline void plic_irq_toggle(const struct cpumask *mask,
- 				   struct irq_data *d, int enable)
- {
- 	int cpu;
--	struct plic_priv *priv = irq_data_get_irq_chip_data(d);
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 6cdfb41a91813..6b28e663fbed6 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -12,7 +12,6 @@ config 32BIT
  
--	writel(enable, priv->regs + PRIORITY_BASE + d->hwirq * PRIORITY_PER_ID);
- 	for_each_cpu(cpu, mask) {
- 		struct plic_handler *handler = per_cpu_ptr(&plic_handlers, cpu);
+ config RISCV
+ 	def_bool y
+-	select ARCH_CLOCKSOURCE_INIT
+ 	select ARCH_SUPPORTS_ATOMIC_RMW
+ 	select ARCH_HAS_BINFMT_FLAT
+ 	select ARCH_HAS_DEBUG_VM_PGTABLE
+diff --git a/arch/riscv/kernel/time.c b/arch/riscv/kernel/time.c
+index 303ae47dfb4d6..726860a490f36 100644
+--- a/arch/riscv/kernel/time.c
++++ b/arch/riscv/kernel/time.c
+@@ -32,12 +32,3 @@ void __init time_init(void)
  
-@@ -118,16 +116,37 @@ static inline void plic_irq_toggle(const struct cpumask *mask,
- 	}
+ 	tick_setup_hrtimer_broadcast();
  }
- 
--static void plic_irq_unmask(struct irq_data *d)
-+static void plic_irq_enable(struct irq_data *d)
- {
- 	plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 1);
- }
- 
--static void plic_irq_mask(struct irq_data *d)
-+static void plic_irq_disable(struct irq_data *d)
- {
- 	plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 0);
- }
- 
-+static void plic_irq_unmask(struct irq_data *d)
-+{
-+	struct plic_priv *priv = irq_data_get_irq_chip_data(d);
-+
-+	writel(1, priv->regs + PRIORITY_BASE + d->hwirq * PRIORITY_PER_ID);
-+}
-+
-+static void plic_irq_mask(struct irq_data *d)
-+{
-+	struct plic_priv *priv = irq_data_get_irq_chip_data(d);
-+
-+	writel(0, priv->regs + PRIORITY_BASE + d->hwirq * PRIORITY_PER_ID);
-+}
-+
-+static void plic_irq_eoi(struct irq_data *d)
-+{
-+	struct plic_handler *handler = this_cpu_ptr(&plic_handlers);
-+
-+	writel(d->hwirq, handler->hart_base + CONTEXT_CLAIM);
-+}
-+
- #ifdef CONFIG_SMP
- static int plic_set_affinity(struct irq_data *d,
- 			     const struct cpumask *mask_val, bool force)
-@@ -146,32 +165,21 @@ static int plic_set_affinity(struct irq_data *d,
- 	if (cpu >= nr_cpu_ids)
- 		return -EINVAL;
- 
--	plic_irq_mask(d);
-+	plic_irq_disable(d);
- 
- 	irq_data_update_effective_affinity(d, cpumask_of(cpu));
- 
--	if (!irqd_irq_masked(d))
--		plic_irq_unmask(d);
-+	if (!irqd_irq_disabled(d))
-+		plic_irq_enable(d);
- 
- 	return IRQ_SET_MASK_OK_DONE;
- }
- #endif
- 
--static void plic_irq_eoi(struct irq_data *d)
+-
+-void clocksource_arch_init(struct clocksource *cs)
 -{
--	struct plic_handler *handler = this_cpu_ptr(&plic_handlers);
--
--	if (irqd_irq_masked(d)) {
--		plic_irq_unmask(d);
--		writel(d->hwirq, handler->hart_base + CONTEXT_CLAIM);
--		plic_irq_mask(d);
--	} else {
--		writel(d->hwirq, handler->hart_base + CONTEXT_CLAIM);
--	}
+-#ifdef CONFIG_GENERIC_GETTIMEOFDAY
+-	cs->vdso_clock_mode = VDSO_CLOCKMODE_ARCHTIMER;
+-#else
+-	cs->vdso_clock_mode = VDSO_CLOCKMODE_NONE;
+-#endif
 -}
--
- static struct irq_chip plic_edge_chip = {
- 	.name		= "SiFive PLIC",
-+	.irq_enable	= plic_irq_enable,
-+	.irq_disable	= plic_irq_disable,
- 	.irq_ack	= plic_irq_eoi,
- 	.irq_mask	= plic_irq_mask,
- 	.irq_unmask	= plic_irq_unmask,
-@@ -184,6 +192,8 @@ static struct irq_chip plic_edge_chip = {
+diff --git a/drivers/clocksource/timer-riscv.c b/drivers/clocksource/timer-riscv.c
+index a035bdf6fc580..a8210493cc21f 100644
+--- a/drivers/clocksource/timer-riscv.c
++++ b/drivers/clocksource/timer-riscv.c
+@@ -58,6 +58,11 @@ static struct clocksource riscv_clocksource = {
+ 	.mask		= CLOCKSOURCE_MASK(64),
+ 	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
+ 	.read		= riscv_clocksource_rdtime,
++#if IS_ENABLED(CONFIG_GENERIC_GETTIMEOFDAY)
++	.vdso_clock_mode = VDSO_CLOCKMODE_ARCHTIMER,
++#else
++	.vdso_clock_mode = VDSO_CLOCKMODE_NONE,
++#endif
+ };
  
- static struct irq_chip plic_chip = {
- 	.name		= "SiFive PLIC",
-+	.irq_enable	= plic_irq_enable,
-+	.irq_disable	= plic_irq_disable,
- 	.irq_mask	= plic_irq_mask,
- 	.irq_unmask	= plic_irq_unmask,
- 	.irq_eoi	= plic_irq_eoi,
-@@ -431,8 +441,11 @@ static int __init __plic_init(struct device_node *node,
- 			i * CONTEXT_ENABLE_SIZE;
- 		handler->priv = priv;
- done:
--		for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
-+		for (hwirq = 1; hwirq <= nr_irqs; hwirq++) {
- 			plic_toggle(handler, hwirq, 0);
-+			writel(1, priv->regs + PRIORITY_BASE +
-+				  hwirq * PRIORITY_PER_ID);
-+		}
- 		nr_handlers++;
- 	}
- 
+ static int riscv_timer_starting_cpu(unsigned int cpu)
 -- 
 2.34.1
 
