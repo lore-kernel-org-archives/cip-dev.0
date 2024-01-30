@@ -2,34 +2,36 @@ Return-Path: <ncaidin@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B39C46CD2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E47C47DDF
 	for <webhook@archiver.kernel.org>; Tue, 30 Jan 2024 13:15:46 +0000 (UTC)
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
- by mx.groups.io with SMTP id smtpd.web10.16631.1706615835342378714
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
+ by mx.groups.io with SMTP id smtpd.web10.16634.1706615835591534326
  for <cip-dev@lists.cip-project.org>;
- Tue, 30 Jan 2024 03:57:16 -0800
+ Tue, 30 Jan 2024 03:57:17 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=felix.moessbauer@siemens.com header.s=fm1 header.b=Yoibo9Co;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-1321639-20240130115712234792cdb52ee9538a-jy9yup@rts-flowmailer.siemens.com)
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20240130115712234792cdb52ee9538a
+ dkim=pass header.i=felix.moessbauer@siemens.com header.s=fm1 header.b=Pp6sF3R9;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-1321639-20240130115713a912580a496df7102b-lix8jq@rts-flowmailer.siemens.com)
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20240130115713a912580a496df7102b
         for <cip-dev@lists.cip-project.org>;
-        Tue, 30 Jan 2024 12:57:12 +0100
+        Tue, 30 Jan 2024 12:57:13 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=felix.moessbauer@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=Dad1M6XeQZK/SdqtXV/nLDGGSLg5y/sJ7LTRgJ9TH4E=;
- b=Yoibo9CohlNPwTW1AhtRBQWu9hNLlhQDdZQSvRYOr8XtO4GbMdteKuOWrOsVRry1WfpOyz
- WoCuwBb/xmNHELt7RB9WdhZWt1s6cz2sPH6IK5zD8iZrZUUD78NqFuX+XjN9IwZGAx0tgNek
- hoRzlP/2gJDfAcJEh8I7jDCyhunyU=;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=9J7z+PeGMQsgZhgGanY+EEtbsD4fFPed9o6Ro3EiNd8=;
+ b=Pp6sF3R9lCm0zH5ReOHxgCVmNLHDJNcS54RCzZ5F57tLSe1yN8fE3CkYLknlWS1kV7Sp1+
+ xUiiEFrRbXY7zputlvMcinF7O+OKDkgTW2KVbTTCvKv+jQlukE9CULvR5Vmm5AsmAOLBYvLE
+ C+TsaUHM4OLHSSoWunornZvZQONb8=;
 From: Felix Moessbauer <felix.moessbauer@siemens.com>
 To: cip-dev@lists.cip-project.org
 Cc: jan.kiszka@siemens.com,
 	quirin.gylstorff@siemens.com,
 	shivanand.kunijadar@toshiba-tsip.com,
 	Felix Moessbauer <felix.moessbauer@siemens.com>
-Subject: [isar-cip-core][RFC 0/2] Deploy swupdate images with empty var partition
-Date: Tue, 30 Jan 2024 12:56:46 +0100
-Message-Id: <20240130115648.311177-1-felix.moessbauer@siemens.com>
+Subject: [isar-cip-core][RFC 2/2] swupdate images: initially deploy empty var part
+Date: Tue, 30 Jan 2024 12:56:48 +0100
+Message-Id: <20240130115648.311177-3-felix.moessbauer@siemens.com>
+In-Reply-To: <20240130115648.311177-1-felix.moessbauer@siemens.com>
+References: <20240130115648.311177-1-felix.moessbauer@siemens.com>
 MIME-Version: 1.0
 X-Flowmailer-Platform: Siemens
 Feedback-ID: 519:519-1321639:519-21489:flowmailer
@@ -38,60 +40,113 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 30 Jan 2024 13:15:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14497
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14498
 
-This patch series prepares and switches the rootfs configuration to be
-deployed with an empty /var partition. For now, I send this as an RFC,
-as this needs to be tested by a broader audience.
+Previously to this patch, the /var partition is only populated on the
+initial image deployment. Further updates via swupdate do not update the
+data on the partition. This is problematic, as issues w.r.t. missing
+directories or packages that do not support this scheme are only
+detected in the field or during update testing.
 
-A couple notes about the implementation:
+To avoid these late failures, we now always deploy an empty /var
+partition. By that, potential issues can be spotted without the need to
+run an update.
 
-- the /var partition is deployed as empty file system
-  (and not included in the squashfs)
-- no warnings are issued on files / dirs that are pre-populated in /var.
-  It has been tested if this is possible, but unfortunately many packages
-  use both tmpdirs.d as well as postinstall scripts to create the files.
-  This might be the result of a transition phase, but makes it impossible
-  to detect potential issues. Also the tmpdirs.d configuration does not
-  necessarily come from the same package as the dir creation in postinst.
-- The dpkg database is copied to /usr/share/cip/var/lib/dpkg and a symlink
-  is created on /var/lib/dpkg (using tmpdirs.d). By that, dpkg -l can still
-  be used to query the installed packages and their versions. This feature
-  is bookworm only due to the required debhelper-compat 13.
+Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
+---
+ wic/bbb-efibootguard.wks.in                   | 2 +-
+ wic/hihope-rzg2m-efibootguard.wks.in          | 2 +-
+ wic/qemu-amd64-efibootguard-secureboot.wks.in | 2 +-
+ wic/qemu-arm64-efibootguard-secureboot.wks.in | 2 +-
+ wic/qemu-arm64-efibootguard.wks.in            | 2 +-
+ wic/qemu-riscv64-efibootguard.wks.in          | 2 +-
+ wic/x86-efibootguard.wks.in                   | 2 +-
+ 7 files changed, 7 insertions(+), 7 deletions(-)
 
-Note: This series needs to be applied on top of "refactor: use change-dir
-to split rootfs parts"
-
-References:
-
-- https://lists.debian.org/debian-policy/2023/06/msg00016.html
-- https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1039979
-- https://gitlab.com/cip-project/cip-core/isar-cip-core/-/issues/75
-- https://gitlab.com/cip-project/cip-core/isar-cip-core/-/issues/50
-
-Best regards,
-Felix
-
-Felix Moessbauer (2):
-  copy and symlink dpkg db to ro-rootfs
-  swupdate images: initially deploy empty var part
-
- classes/read-only-rootfs.bbclass              | 10 +++++++
- .../cip-read-only-rootfs_0.1.bb               | 26 +++++++++++++++++++
- .../files/cip-read-only-rootfs.tmpfiles       |  1 +
- .../cip-read-only-rootfs/files/control        | 11 ++++++++
- wic/bbb-efibootguard.wks.in                   |  2 +-
- wic/hihope-rzg2m-efibootguard.wks.in          |  2 +-
- wic/qemu-amd64-efibootguard-secureboot.wks.in |  2 +-
- wic/qemu-arm64-efibootguard-secureboot.wks.in |  2 +-
- wic/qemu-arm64-efibootguard.wks.in            |  2 +-
- wic/qemu-riscv64-efibootguard.wks.in          |  2 +-
- wic/x86-efibootguard.wks.in                   |  2 +-
- 11 files changed, 55 insertions(+), 7 deletions(-)
- create mode 100644 recipes-core/cip-read-only-rootfs/cip-read-only-rootfs_0.1.bb
- create mode 100644 recipes-core/cip-read-only-rootfs/files/cip-read-only-rootfs.tmpfiles
- create mode 100644 recipes-core/cip-read-only-rootfs/files/control
-
+diff --git a/wic/bbb-efibootguard.wks.in b/wic/bbb-efibootguard.wks.in
+index 6c62846..e9c04b9 100644
+--- a/wic/bbb-efibootguard.wks.in
++++ b/wic/bbb-efibootguard.wks.in
+@@ -16,6 +16,6 @@ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}
+ 
+ # home and var are extra partitions
+ part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
+-part /var --source rootfs --change-directory=var --fstype=ext4 --label var --align 1024  --size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
++part /var --fstype=ext4 --label var --align 1024  --size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
+ 
+ bootloader --ptable gpt --append="rootwait console=ttyO0,115200 omap_wdt.early_enable=1 omap_wdt.nowayout=1 watchdog.handle_boot_enabled=0"
+diff --git a/wic/hihope-rzg2m-efibootguard.wks.in b/wic/hihope-rzg2m-efibootguard.wks.in
+index a9742cc..9227a71 100644
+--- a/wic/hihope-rzg2m-efibootguard.wks.in
++++ b/wic/hihope-rzg2m-efibootguard.wks.in
+@@ -9,6 +9,6 @@ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}
+ # home and var are extra partitions
+ 
+ part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --extra-space=100M --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
+-part /var --source rootfs --change-directory=var --fstype=ext4 --label var --align 1024  --size 2G --extra-space=100M --fsuuid 96be3374-4258-11ee-be56-0242ac120002
++part /var --fstype=ext4 --label var --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
+ 
+ bootloader --ptable gpt --append="console=tty0 console=ttySC0,115200 rootwait earlyprintk"
+diff --git a/wic/qemu-amd64-efibootguard-secureboot.wks.in b/wic/qemu-amd64-efibootguard-secureboot.wks.in
+index f6d3243..ef40d70 100644
+--- a/wic/qemu-amd64-efibootguard-secureboot.wks.in
++++ b/wic/qemu-amd64-efibootguard-secureboot.wks.in
+@@ -5,6 +5,6 @@ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}
+ 
+ # home and var are extra partitions
+ part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024 --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
+-part /var  --source rootfs --change-directory=var  --fstype=ext4 --label var  --align 1024 --size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
++part /var  --fstype=ext4 --label var  --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
+ 
+ bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait earlyprintk watchdog.handle_boot_enabled=0 iTCO_wdt.nowayout=1 panic=5"
+diff --git a/wic/qemu-arm64-efibootguard-secureboot.wks.in b/wic/qemu-arm64-efibootguard-secureboot.wks.in
+index 9baaa47..01f395d 100644
+--- a/wic/qemu-arm64-efibootguard-secureboot.wks.in
++++ b/wic/qemu-arm64-efibootguard-secureboot.wks.in
+@@ -5,6 +5,6 @@ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}
+ 
+ # home and var are extra partitions
+ part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024 --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
+-part /var  --source rootfs --change-directory=var  --fstype=ext4 --label var  --align 1024 --size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
++part /var  --fstype=ext4 --label var  --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
+ 
+ bootloader --ptable gpt --append="panic=5"
+diff --git a/wic/qemu-arm64-efibootguard.wks.in b/wic/qemu-arm64-efibootguard.wks.in
+index e96853e..942c3e1 100644
+--- a/wic/qemu-arm64-efibootguard.wks.in
++++ b/wic/qemu-arm64-efibootguard.wks.in
+@@ -8,6 +8,6 @@ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}
+ 
+ # home and var are extra partitions
+ part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
+-part /var --source rootfs --change-directory=var --fstype=ext4 --label var --align 1024  --size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
++part /var --fstype=ext4 --label var --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
+ 
+ bootloader --ptable gpt
+diff --git a/wic/qemu-riscv64-efibootguard.wks.in b/wic/qemu-riscv64-efibootguard.wks.in
+index 24e9acd..6934977 100644
+--- a/wic/qemu-riscv64-efibootguard.wks.in
++++ b/wic/qemu-riscv64-efibootguard.wks.in
+@@ -8,6 +8,6 @@ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}
+ 
+ # home and var are extra partitions
+ part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
+-part /var --source rootfs --change-directory=var --fstype=ext4 --label var --align 1024  --size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
++part /var --fstype=ext4 --label var --align 1024  --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
+ 
+ bootloader --ptable gpt
+diff --git a/wic/x86-efibootguard.wks.in b/wic/x86-efibootguard.wks.in
+index 60897be..6382ff7 100644
+--- a/wic/x86-efibootguard.wks.in
++++ b/wic/x86-efibootguard.wks.in
+@@ -9,6 +9,6 @@ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}
+ # home and var are extra partitions
+ 
+ part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --extra-space=100M --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
+-part /var --source rootfs --change-directory=var --fstype=ext4 --label var --align 1024  --size 2G --extra-space=100M --fsuuid 96be3374-4258-11ee-be56-0242ac120002
++part /var --fstype=ext4 --label var --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
+ 
+ bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait earlyprintk watchdog.handle_boot_enabled=0 iTCO_wdt.nowayout=1 "
 -- 
 2.39.2
 
