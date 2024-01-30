@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22F41C48286
-	for <webhook@archiver.kernel.org>; Tue, 30 Jan 2024 20:33:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2E58C47DDF
+	for <webhook@archiver.kernel.org>; Tue, 30 Jan 2024 20:34:07 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web11.7342.1706646832721062867
  for <cip-dev@lists.cip-project.org>;
- Tue, 30 Jan 2024 12:33:55 -0800
+ Tue, 30 Jan 2024 12:34:00 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.05,230,1701097200"; 
-   d="scan'208";a="196182811"
+   d="scan'208";a="196182815"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 31 Jan 2024 05:33:55 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 31 Jan 2024 05:33:57 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.7])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9F83240A3D1D;
-	Wed, 31 Jan 2024 05:33:53 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9AF9440A3D21;
+	Wed, 31 Jan 2024 05:33:55 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [RFC PATCH 5.10.y-cip 03/39] dma-direct: add support for dma_coherent_default_memory
-Date: Tue, 30 Jan 2024 20:33:10 +0000
-Message-Id: <20240130203346.94488-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RFC PATCH 5.10.y-cip 04/39] dma-mapping: allow using the global coherent pool for !ARM
+Date: Tue, 30 Jan 2024 20:33:11 +0000
+Message-Id: <20240130203346.94488-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240130203346.94488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20240130203346.94488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -33,97 +33,38 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 30 Jan 2024 20:33:58 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14514
+ <cip-dev@lists.cip-project.org>; Tue, 30 Jan 2024 20:34:07 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14517
 
 From: Christoph Hellwig <hch@lst.de>
 
-commit faf4ef823ac5f3b6a34a73b76c52895dee3dce55 upstream.
+commit 70d6aa0ecfed253a2b14659a6c77359af6d9b3ee upstream.
 
-Add an option to allocate uncached memory for dma_alloc_coherent from
-the global dma_coherent_default_memory.  This will allow to move
-arm-nommu (and eventually other platforms) to use generic code for
-allocating uncached memory from a pre-populated pool.
-
-Note that this is a different pool from the one that platforms that
-can remap at runtime use for GFP_ATOMIC allocations for now, although
-there might be opportunities to eventually end up with a common codebase
-for the two use cases.
+Switch an ifdef so that the global coherent pool is initialized for
+any architecture that selects the DMA_GLOBAL_POOL symbol insted of
+hardcoding ARM.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Tested-by: Dillon Min <dillon.minfei@gmail.com>
-[PL: define page_order variable used by dma_release_from_global_coherent()]
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- kernel/dma/Kconfig  |  4 ++++
- kernel/dma/direct.c | 17 +++++++++++++++++
- 2 files changed, 21 insertions(+)
+ kernel/dma/coherent.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/dma/Kconfig b/kernel/dma/Kconfig
-index c99de4a214588..87883d4e1ce3e 100644
---- a/kernel/dma/Kconfig
-+++ b/kernel/dma/Kconfig
-@@ -97,6 +97,10 @@ config DMA_COHERENT_POOL
- 	select GENERIC_ALLOCATOR
- 	bool
- 
-+config DMA_GLOBAL_POOL
-+	select DMA_DECLARE_COHERENT
-+	bool
-+
- config DMA_REMAP
- 	bool
- 	depends on MMU
-diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-index 2922250f93b44..34ac5a2c7efc2 100644
---- a/kernel/dma/direct.c
-+++ b/kernel/dma/direct.c
-@@ -156,9 +156,14 @@ void *dma_direct_alloc(struct device *dev, size_t size,
- 
- 	if (!IS_ENABLED(CONFIG_ARCH_HAS_DMA_SET_UNCACHED) &&
- 	    !IS_ENABLED(CONFIG_DMA_DIRECT_REMAP) &&
-+	    !IS_ENABLED(CONFIG_DMA_GLOBAL_POOL) &&
- 	    !dev_is_dma_coherent(dev))
- 		return arch_dma_alloc(dev, size, dma_handle, gfp, attrs);
- 
-+	if (IS_ENABLED(CONFIG_DMA_GLOBAL_POOL) &&
-+	    !dev_is_dma_coherent(dev))
-+		return dma_alloc_from_global_coherent(dev, size, dma_handle);
-+
- 	/*
- 	 * Remapping or decrypting memory may block. If either is required and
- 	 * we can't block, allocate the memory from the atomic pools.
-@@ -253,11 +258,21 @@ void dma_direct_free(struct device *dev, size_t size,
- 
- 	if (!IS_ENABLED(CONFIG_ARCH_HAS_DMA_SET_UNCACHED) &&
- 	    !IS_ENABLED(CONFIG_DMA_DIRECT_REMAP) &&
-+	    !IS_ENABLED(CONFIG_DMA_GLOBAL_POOL) &&
- 	    !dev_is_dma_coherent(dev)) {
- 		arch_dma_free(dev, size, cpu_addr, dma_addr, attrs);
- 		return;
+diff --git a/kernel/dma/coherent.c b/kernel/dma/coherent.c
+index 5b5b6c7ec7f28..d97edd70d353c 100644
+--- a/kernel/dma/coherent.c
++++ b/kernel/dma/coherent.c
+@@ -361,7 +361,9 @@ static int __init rmem_dma_setup(struct reserved_mem *rmem)
+ 		pr_err("Reserved memory: regions without no-map are not yet supported\n");
+ 		return -EINVAL;
  	}
++#endif
  
-+	if (IS_ENABLED(CONFIG_DMA_GLOBAL_POOL) &&
-+	    !dev_is_dma_coherent(dev)) {
-+		unsigned int page_order = get_order(size);
-+
-+		if (!dma_release_from_global_coherent(page_order, cpu_addr))
-+			WARN_ON_ONCE(1);
-+		return;
-+	}
-+
- 	/* If cpu_addr is not from an atomic pool, dma_free_from_pool() fails */
- 	if (IS_ENABLED(CONFIG_DMA_COHERENT_POOL) &&
- 	    dma_free_from_pool(dev, cpu_addr, PAGE_ALIGN(size)))
-@@ -458,6 +473,8 @@ int dma_direct_mmap(struct device *dev, struct vm_area_struct *vma,
- 
- 	if (dma_mmap_from_dev_coherent(dev, vma, cpu_addr, size, &ret))
- 		return ret;
-+	if (dma_mmap_from_global_coherent(vma, cpu_addr, size, &ret))
-+		return ret;
- 
- 	if (vma->vm_pgoff >= count || user_count > count - vma->vm_pgoff)
- 		return -ENXIO;
++#ifdef CONFIG_DMA_GLOBAL_POOL
+ 	if (of_get_flat_dt_prop(node, "linux,dma-default", NULL)) {
+ 		WARN(dma_reserved_default_memory,
+ 		     "Reserved memory: region for default DMA coherent area is redefined\n");
 -- 
 2.34.1
 
