@@ -1,364 +1,495 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <ncaidin@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE19C46CD2
-	for <webhook@archiver.kernel.org>; Tue, 30 Jan 2024 11:37:26 +0000 (UTC)
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (EUR04-HE1-obe.outbound.protection.outlook.com [40.107.7.48])
- by mx.groups.io with SMTP id smtpd.web11.16084.1706614640545550875
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E407C46CD2
+	for <webhook@archiver.kernel.org>; Tue, 30 Jan 2024 11:41:56 +0000 (UTC)
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (EUR03-AM7-obe.outbound.protection.outlook.com [40.107.105.65])
+ by mx.groups.io with SMTP id smtpd.web11.16144.1706614872799894870
  for <cip-dev@lists.cip-project.org>;
- Tue, 30 Jan 2024 03:37:21 -0800
+ Tue, 30 Jan 2024 03:41:13 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=sqYiOFKs;
- spf=pass (domain: siemens.com, ip: 40.107.7.48, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=pc1BLjXe;
+ spf=pass (domain: siemens.com, ip: 40.107.105.65, mailfrom: felix.moessbauer@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bclg3GkonMwBRmcr86l7pooSj0AjZYyXhMcc3XwTJGPVIsUGGfJov2t8r6srMrXRmjGXDuoC4Ss83U9tVKIzUw8KYXBCNaUFeF3bdbT+689WO5HuKimHqfbRPMH59E+CaNnR3eSJfjUsP/p9iEReKdXRNQsq7zmqFMmAyoUSKrL8Y5VA3qcmkylM/bTWK0oHij3fy2CqwtqIZUK7esVJejqtCMNY+nphw1auk2gWXFa51Yk3YV/4oRbnygjIewpAkwqDqcUOW0Tq1M8IK2QZ4PZSV+++iqQ9UVTyO4qQ0F8dK26QbJkgDrXD2tJeGCTqaoRHz0qdG74FKPxyUG+kPA==
+ b=NCYJdzdwjZgLvS5KpdOebbq8MBiVLfR3fBmn+QOBCJm07b8BKHykMu/VS2VT4VMAwHLZWWIqHENPbfNQzSHEUg0g3OBR2qootRPmBJIz75U+XQ8xUUw8X+mIRfE3B22XYCmGQoUjiktZKw8n7Aryycy3tq0pAFk5ZBbBFQRsWHSPQdy3ZE1zsJWxOHOlp8tGtMDQkuyYWtfb1EyWGlp/aNorf24gPD7/LhxczwGhGEL7sqcH6rvnHeou1P3rICngeVWxAR1EPCe9Ry5AFPkhF5NiMu8E6t2N4RqIDBrJRPC2mLQtBl8x77sB9oU40PzFDMK/NjQYf5rC5QgW0X0RBg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xsKXqDont9qFKyWfufG4/v2cDMm6Mi9f5KpGSPtoV8Q=;
- b=Wi+BDe3FsX+P79VEssRmY64DAciq6aEEkyp4/TPl4ocLAiFEEe3XkGGzT0px8e6mZj7CD8076TS7kkK9goESFjODiIbBkuxhPy8jAgV6mCmBDanZLP0E9Wu49oXV4nmTot8BUc1bY4ynG8W4sdCYxHQ5cxGmNHw5NwfObbSc4cDW+TcWHm6uUlLnPUBuZjjdJk/5jUC1NzSP4pQr0y4ecZmyWVlG2zjV4KF0k63EnDQaTc035z0OTCOjFN79tcJiyLXtucYz4bUsFilh/QdbfLNBKEF2iehEthzswEMYRrs0nFedjFpgFMl5Dw1XbRkvP+ckg7ncWZVjIa72dpsHVg==
+ bh=Y1hFafbk93nNQ9iLEe/eQtOCTZIaCs47MLNBNiHfmmU=;
+ b=HyMPqI1nlNCZf6wtZfDc+HhaoCeTA0kAEhU8iUgkhtHpA7TQXzup306WDdn8tU5XxDokrIh2osdzitvmQpUqSlVt4a/nmW01HSnlRTRek0xUBhI8lKrhYSUALQgXvKji1KsyibK6LxU6WoD1lLe1HxJU30JGxYnw7fnWEB+L64e8BxDaNWYaWHEw3HU45Mb2hFkP80AUYaVD97niiyMy+FD0+YiaHeBfUNmP1QsEioHrTjMptSGLTRxIFRq3p7PSUF4+NclP6XqCdWaPU2VVD/rZqlMLSIHFW3JBK5Q8MBUQg6YU7t20PEiS1LC8LVhvLbQpBBCC72/EzmvBCNSvlA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xsKXqDont9qFKyWfufG4/v2cDMm6Mi9f5KpGSPtoV8Q=;
- b=sqYiOFKsHjw3iDZDokgLyv7AIFQwTLgzX0A38/LhUWhEkTnsX/e2aYXw3V6i1Qpd6mw5fq394sTNz/TbOgUtoonAY/6a8kAS3v6AttFl52Dw2j+cPD4yjCCsv8iyhvBVwaPkyObsl4ItYXbf5cTKrLjtUfYz6/zEQejUd29erap7VEjqfJ8Kt1alAOchFTRcVJJQdp3Ouz8edHwb7Xty2VhaHSa+KjsmSi4izmClXBv7udxrU95xvTGGUkEomM7xtjIij8fTNB2G9yM15uJZexG2vJCwy2mcoujTDokAVhHxR+zu1AqjNif4suihc/HIj52OVdj+3rQa8v+yu3yBtA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by DU0PR10MB7484.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:427::14) with
+ bh=Y1hFafbk93nNQ9iLEe/eQtOCTZIaCs47MLNBNiHfmmU=;
+ b=pc1BLjXeWmh1uyk6R6xQZ3waeERajt6H7+nqFvarxHUDhWOL9z03+sYshSwun5ok0FUejWUbSaAF+TFaYtMwaa4gSXrvLjxMYsoDPSRFEQdRLD9iiH/mEd8yZnuYKp/7DJOeMHqlm4zMcG0yVH3Ve9LcHgbJH9SDienn6Zh0IIYJBzi+TDet7rO3RLDvAu7aJ5ESdW5VItVG8vquRAds1bjjX9WuetOSBuKn1V8Pczz8KFJvbKeNdZMn4g3MrpNPb/HYvZRfkmIh/oyjSqX+mMyqR0TWPMFFElI34Q4SIghmgpkgLUWhHIo/U8WqOnPl6TgcDf1BTPpfUlCnWlIrHQ==
+Received: from DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:47f::13)
+ by DU0PR10MB6388.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:40b::5) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7228.32; Tue, 30 Jan
- 2024 11:37:16 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8d16:7fbb:4964:94fe]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8d16:7fbb:4964:94fe%3]) with mapi id 15.20.7228.029; Tue, 30 Jan 2024
- 11:37:15 +0000
-Message-ID: <5dcad42f-4759-4a46-8120-b87f862407f4@siemens.com>
-Date: Tue, 30 Jan 2024 12:37:13 +0100
-User-Agent: Mozilla Thunderbird
+ 2024 11:41:08 +0000
+Received: from DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::c123:2b7e:a12a:d53c]) by DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::c123:2b7e:a12a:d53c%7]) with mapi id 15.20.7228.029; Tue, 30 Jan 2024
+ 11:41:08 +0000
+From: "MOESSBAUER, Felix" <felix.moessbauer@siemens.com>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"Adithya.Balakumar@toshiba-tsip.com" <Adithya.Balakumar@toshiba-tsip.com>,
+	"Kiszka, Jan" <jan.kiszka@siemens.com>
+CC: "shivanand.kunijadar@toshiba-tsip.com"
+	<shivanand.kunijadar@toshiba-tsip.com>, "sai.sathujoda@toshiba-tsip.com"
+	<sai.sathujoda@toshiba-tsip.com>, "dinesh.kumar@toshiba-tsip.com"
+	<dinesh.kumar@toshiba-tsip.com>, "kazuhiro3.hayashi@toshiba.co.jp"
+	<kazuhiro3.hayashi@toshiba.co.jp>
 Subject: Re: [isar-cip-core][PATCH v2] wic: Set fixed partition UUID values
-To: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>,
- cip-dev@lists.cip-project.org,
- "Moessbauer, Felix (T CED SES-DE)" <felix.moessbauer@siemens.com>
-Cc: shivanand.kunijadar@toshiba-tsip.com, sai.sathujoda@toshiba-tsip.com,
- dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
+Thread-Topic: [isar-cip-core][PATCH v2] wic: Set fixed partition UUID values
+Thread-Index: AQHaU3Ct9ZNqr/z0REmR6nuGZ6Ds1rDyO4aA
+Date: Tue, 30 Jan 2024 11:41:08 +0000
+Message-ID: <6415465c22451a7df07efc90dad341ab5ea5d13c.camel@siemens.com>
 References: <8ee6a477e885307b180d216fd83ec4475247ac0a.camel@siemens.com>
- <20240130111722.1463101-1-Adithya.Balakumar@toshiba-tsip.com>
-Content-Language: en-US
-From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20240130111722.1463101-1-Adithya.Balakumar@toshiba-tsip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR3P281CA0175.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a0::12) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+	 <20240130111722.1463101-1-Adithya.Balakumar@toshiba-tsip.com>
+	 <5dcad42f-4759-4a46-8120-b87f862407f4@siemens.com>
+In-Reply-To: <5dcad42f-4759-4a46-8120-b87f862407f4@siemens.com>
+Accept-Language: de-DE, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.46.4-2 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DU0PR10MB6828:EE_|DU0PR10MB6388:EE_
+x-ms-office365-filtering-correlation-id: 31aea860-a7b7-4467-5ea3-08dc2188598d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ StcdNxdRLkQFsdT+O8sE637xw1PqoHmT7dYcCfnQu2kvX4NYVAgYRY2z0RO/iqmXBuqFdUdLHLuRQVn3yBVP0ajSEq3+nycdSjNVKdDuG5E+nh5QqrfMUFC1qTIU9ryGbaobsOfqVMT/XAbFP0NWhlVVAl99bzA7TfYJBgEccd9JWb8lMY8B3kpZRE2OY/5Fn84/TRKGi9erZ0bTxyrZJZrSEfZkw7Tgbg1hQ1lk3nXxoOFvtR8Jc15m9RcywY07a3ilHB9b+9OkINhqVr4DXK9lW0HXLsyfKFbvNI1dwNJfRIYzpflTJ9tSU9vFCY3kb6qD0jSjimlJBVLVF0gpFZfkvo2vj619B3yJIdCEdBB14ftHCiWDHbmxz+8qFi2ESiXrz2edjQOaSjN86TinRnY7ajqmFsYm24olb71IVSiKDHuEj+wxU0rvKe0B8BH3iHtkf8nOQsF1U0oUxtp1NQGv46BKAIiz8iaGgWDaEEseXmG4siTXmAebxF6W1RqPDPkxAjg4lF9ljSv4tEs41peakhK/nC5/eVeuLFxA/uYPjsalLaEJN6v4GPR253Jv/8MgGuSMGyejcGFPwefzhw21G2z+5zNSF4AGjqyySB24jhYTCtdKy9GBvVohb7ypr0DK242SlivbfvwHdLjNQw==
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376002)(39860400002)(396003)(136003)(346002)(366004)(230922051799003)(186009)(451199024)(1800799012)(64100799003)(66446008)(110136005)(316002)(66556008)(38070700009)(83380400001)(36756003)(64756008)(76116006)(6636002)(54906003)(53546011)(66946007)(6506007)(86362001)(8936002)(66476007)(6486002)(8676002)(478600001)(2906002)(30864003)(71200400001)(4326008)(6512007)(5660300002)(91956017)(2616005)(41300700001)(82960400001)(122000001)(38100700002)(403724002)(579004);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?WjM0cVlXNS9BSHhyck1WTzkydE11UDB0Q04vK2o2Qm9QMzJZdEpxQkNicUpa?=
+ =?utf-8?B?d0VOanBVcTFJYW1uWWJTTEtPQXZjZk5NbURxaFZWblVyeVYvS2Rra05uNkk2?=
+ =?utf-8?B?KzBTcjJneUVLQ0JBUWhoZXgwZGxhWlJKSjJEVnROYko3UTZZb2VTMnc5Vmxh?=
+ =?utf-8?B?TUN1alR2TVZhTG5BWGlMVjlqbC9tVjFSbUdEcW1jR2g1ZWQxV2Y2UTZoem1I?=
+ =?utf-8?B?U245TlViSE1JYXErQ293SlR6WXQvaXFDNjB5b0s2M3crelRqenQ1MVFyV3gv?=
+ =?utf-8?B?WkhOOFd5QkNscERQNjVXTGd1YVZhaXcwT0M1RTNsbHd0eDI5Q1pvc3FqU3Bl?=
+ =?utf-8?B?KzFNdStzV2xwa3Nsd2xZZ2wxMVVWcVlEY0hzYVZxNzA3eEIwaEE3RHJoM0ZT?=
+ =?utf-8?B?U1VnSWd1WFMvWVVyUmowNmpzY0dDRUIzNkVpTmY3WmgrVWdRa3ZaU0hzaVd6?=
+ =?utf-8?B?UWtqVENoU0swZE9RWmNTaXNVL1M3b2dRN2QzdXhqeDNxcG43OVk5QUZjNG90?=
+ =?utf-8?B?bE5rNkkvTmxXalY2NUNlMDdGNmszdlNlTzlHd3E2a2RCTkhXVTRQMUVVRVU0?=
+ =?utf-8?B?alpxSGNOUGxvT09mV0RvOEN3YzJpdGhtRTFxaUczZVR3dldxM1hoZlZMZ1Ez?=
+ =?utf-8?B?eGVNM1BnanB2VVJzSmhmWXNlYll5TGhrM0Q0LzNZeVBQM0xVY1V3L2NRbkt2?=
+ =?utf-8?B?aW5rK1ZVUGxDVzQ3K05vL2llcTNOODl0M3JUemJ0c2FSeHVaM2hmbzB4dHcy?=
+ =?utf-8?B?T0p0N1doOUpXQ09wVXl6bnZSLzZBY2Z4RnhkTjBRQ0xFeTY5TG5WQUtoTGlJ?=
+ =?utf-8?B?ZGwzVWE2UmhTbGYxbGM4MzZZOXdwVHQrYksyMlhWeEZjMW04K1ZFd3ZCMHF1?=
+ =?utf-8?B?YTgyQjF1TCs2MmxoYTFyTitOTEttR0pGbERtUi9RdXFVYW1KY2Iyemo3OTRl?=
+ =?utf-8?B?UGhxTUhCZ3o0bUxkcGUzdjRLMEViKzNmbERJc0RKOVdIbWpBenZhUlpkbGpY?=
+ =?utf-8?B?dzA5d3RJMXZUa0UrWjRNZkxPdnd2ZjQxcmVWazJJSHBGZkRmTmdYVWxMV1Jn?=
+ =?utf-8?B?Zkwvd000WEdvN3FPSzlObk42ZVFyd3F3Rk5YU1EvNm5ia21xbXMxRWdGZ3Va?=
+ =?utf-8?B?WGszRlZVV05IZ09LVWZxWmNjYjNVVXYzRjhDUVpDU3JSWlJ1dTVKWXZZUG9E?=
+ =?utf-8?B?MWtZcis1UWZ3NkdpNVptMlRud3NaUnZFUDJyeUxhcUpqZlo5YVJMdkV3SE56?=
+ =?utf-8?B?V3JucnRwNTU5TnQxUWppaFFsM3VMVUNxSk5tT09ZaG92QzdmdTROUVhZc1Yz?=
+ =?utf-8?B?bmFBdlpCS0FrZmxFOC8rVms0RFFodWxIQUtzVjdQQ3ZCbE1mZnJDWHZqL0FL?=
+ =?utf-8?B?OGZ4NG1QRWUwU3FBcTlROEloTTZmZC9kNjZsSjhRWjdMNncwOG9laUhnZmRN?=
+ =?utf-8?B?RG1ROVc4Wi9wZGkxY0ExYzRBMlZoVWhyOWE5bWtzazZzY0lSV01rQ2E3UG1a?=
+ =?utf-8?B?bmxpU0dqQmREYWNFQktpNmdKWjFMTEFYR3BMVjlWOWw3d28zNTMxekViOU90?=
+ =?utf-8?B?SlNYeFJCY0tUdzNXWVAzb0tib1FVREFaMDVHNGxwNVBjZE56Z1owNTBGKytm?=
+ =?utf-8?B?OCtSR3gvNWxLSFdOWlNvdHdERUZiTzdyQkVEY1pRM2pKYUVMMXJDamhpNG5V?=
+ =?utf-8?B?ZFYrVnVMc01LRmlCbTc0d0w5a1J0SFBFNGZ5Tk9TR2dqUzkxaHZpMGtLeXA5?=
+ =?utf-8?B?R2Q0NDI0V2tFczJ3K281d09TZFdrUmwzMkxuNTlCMlA3Z0ZKK3pDdDY4b2F4?=
+ =?utf-8?B?QytaL09nR09BTldCRWVLVFhET2ZWd2RPSDhZSlNkVjkvQ0RockxMeUlRS3Bq?=
+ =?utf-8?B?WktvZ2tLd1lWeHFaUGVIcE5WTjQwSnN2VW5DTGljeHFHZHBTNEJZaTV4anlt?=
+ =?utf-8?B?cEJjU1gybS9tbktHU0pFSlBCbFJXSGhmZEVSdlE0Smp4L1dLQzlhM1MxaXNU?=
+ =?utf-8?B?OXVNT0Y1RVdGeEVBcW96TEYwQTUreWRJYUVQSnQ5YXdYL3BpMDVieWc2YjhK?=
+ =?utf-8?B?SkxlR2tRQkdSdTJiUDdBTUdFUzN3MWdaZFp0SGwralZmamNuOXZkRW8rK1RL?=
+ =?utf-8?B?cVozdk5yOU01eEEzYjd5U0lnckFPcC9ONks5djJMZXpMREhEVWZKbjFXeG9E?=
+ =?utf-8?B?SXRYWFVCOE43KzFLU0JUSjFnY29UOXN4cmtyOEJRK29GbllMMWlmRFRrUzFW?=
+ =?utf-8?B?UGtUeDZ2alV6SkxyNEM1SWpYMFpBPT0=?=
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DU0PR10MB7484:EE_
-X-MS-Office365-Filtering-Correlation-Id: add0e4c4-f115-4847-c7d9-08dc2187cf10
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	D12ZEOrBfilu+RIC5BDCwx3Ad4FCd4TSZ/uWTxOumubnvGQu0op16nnMTLvY4pyz0jN8nsY4FpvIaDCkdWewm0UM79ODtXLW32s/DiQQ6f7RePrpx5EXL/rwcEktaACVwq0sryY1LST4jGdkmjFIqWYVfryfl0lXLRZTlPYxc9DAf8LqzeTEzRhrHAlrieVpeL4V81DQM6oImlJW9yHSfOKRXfMEA2/wNZtn27XWajJN6YJ5DrNYdGtUEkwlHgcEY7mEadV8tvBYDw5Odqmw8RqXUelDTVsc/J5EvFTdus+4cHvQhSI+O1hto8Pojs2LwRu5EdVCgxAjVCEbPKaRaBy1HO/wn9+QpvDOoDcMi6AMe4aWdGaf7jn0ra1JwSvppV8NVPilYyZaQLuYKj+KkvVG2Yr45scqd5ASr+RbdLDbgcaQ9K4JqM8Ku+Vd2bCFqxZRKaIOvk5P2DHg6JEpGH/mgjjCKA3Ac4n865WCJ65RNdq8h6rV7C7NfIrkphaDCa0z2sSOn4VijxOBMSFVQiKt8O8rsU1ZOcKtheK4ezOnkmqP29UnjiMzFBZqv3DAF2DHKvR4oIpljUlM84eYi/AOjEJCR8HL4FHJvSclnuzE/2/h5Dx1KneIkurZeyI0dtN5JZkzTEEFEO/JVedrvvYpcCSg3h/9ydMPy7B/94nG2BtbkgReJuTfgBVpYrsz
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(396003)(136003)(346002)(366004)(376002)(230922051799003)(451199024)(1800799012)(186009)(64100799003)(83380400001)(6512007)(53546011)(6506007)(38100700002)(66946007)(478600001)(316002)(2616005)(8936002)(44832011)(41300700001)(30864003)(5660300002)(4326008)(2906002)(8676002)(6636002)(66476007)(6486002)(110136005)(66556008)(36756003)(86362001)(31696002)(82960400001)(26005)(31686004)(403724002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?T0w4T3RpaWFtYWxLSTA5ZndST0pWNTA3YlZVWDNXRHhWSGpLdFkyT1J5bDND?=
- =?utf-8?B?VWRJbDhLdTc1bXNLS0tkMnZ5aEtMbWcvODhPUFVyZXVVK0Z1czN1YlRURHFn?=
- =?utf-8?B?WHRWQWU4UUY1ZXpwbWF6cEdnbVVCNVRSdmo5RVVTMm00U3VNQTBFZVpiMzQv?=
- =?utf-8?B?NmxDUERybFZCOTNuQlRTRTlpN2xqQlRSM1dRMjcrS3VOTkhQRjRrNXBua3hZ?=
- =?utf-8?B?U2dYenhXRzdaMVp5WHBmNVJvVWdQamRVa21iQXhBL25iSGNPOURTNFVlbGxs?=
- =?utf-8?B?dTZqVTJoRlNjMWw3THNEQ0MzVG1rL1c2d3hZMjduVWpXcGFRZ1h6QnFrMDZE?=
- =?utf-8?B?S2pkV1BEditNckUxNVkvTE1FaGxJVFFHKytBd0IyZzI4RnRSZDNVdVVBUFJ1?=
- =?utf-8?B?aFNkeEZqRFJ4YWRQUEYrSDYyLzNHL09nQ0lGVXRIQURndlEydkFIdktZdTZR?=
- =?utf-8?B?cElWM3BNL2FLYnRrdkgrYm9JNnBXT2FrMVp0SjJQRG0wK3U5U2Nwa1lqSSt0?=
- =?utf-8?B?SXd4STRyb1htaS9BOHdYMENzSGZRQkpsSUFsYUlsR0NPbkxaOGFGZk9sUFdi?=
- =?utf-8?B?L1ZES3hzN0V0aGpldktRTXN5Tlh2eXl1d0Z6MHVlUkIrQUoyeFN5cU1RVWtl?=
- =?utf-8?B?UGtWNmJIY0R4bGk4blF1VGQ4Tkh6MzNOemRUVk83cFU4WDJFNWRPb056bG9p?=
- =?utf-8?B?VEtjaEtIdEV3c2E0UGlWbXNzc3Z5ZzhiZjdWbXh1Y0JrQmxBeHVXM2dyU2xq?=
- =?utf-8?B?ZWFnUUdGRVR2dmFpUWF2U0dVaW9oMEJXMjN1KzBaYitQdXlIVTVhaEo4WktX?=
- =?utf-8?B?ajJzMXNDUGtsb0lkVi9oSEJYbndnbDI3NXRVc3lwamRxTVIzaDNCNzcvUjhI?=
- =?utf-8?B?cyt0M3BHRVA3clFsWWw5cnJJVTdDeDFuc3laekpZM3N1QWhBL25GbW9teHdn?=
- =?utf-8?B?UitkbHI4aWh3a0hPYW81b29Bc0lzd2M0cmJFZnZZcml4TE1lcVdrVytYblFh?=
- =?utf-8?B?d0NGSGl2OVIyby9ZbmIrY2hydCtlUXRpcWNNeGRwSjF3ZndTU3MwNHdKaWhh?=
- =?utf-8?B?Yy96MG5WQjNGVU1hMmR2Q1hObGVsQVozODlvZGdmSFpxOENGekVYdGhrS25Z?=
- =?utf-8?B?cnBscndoL1RadjBhNU8vSlNpdUVRYU1KK0xjRG5XTlJPSUdvdjRvZWVOeXFo?=
- =?utf-8?B?SjlFYXRvWmUvZmYwVFpwTFZMdXZkSnQzN0V6aUtZdTlTdm90TkNUNmFPUnBI?=
- =?utf-8?B?c09GMjNBc21VdzJzRWdRVUJpOFRqTkszQzFqNCsyWnN0UWRic3M0WWFEZDFB?=
- =?utf-8?B?NmxkNHpKSEZEbEdOYUdobGI0bHRvQzErTEkxUEZMcmZvVkxES2U0K2RpU3hM?=
- =?utf-8?B?b3dTd05veWExVkN6S2dqUzBWUTc3OC9qNjl2UnhrbVVCT3FCUzNsTklyVDhN?=
- =?utf-8?B?V1pJSWV5aG5VZnA0eFY4WWIvTnlOdlkxbU5vUk5FMW5kdU9PeXBWbFVrbzdx?=
- =?utf-8?B?SC9CY2RCTHBGYTVsOGxhNG02bFlzeVZXUU9QMkdxd1ppRmpUd1diMWtFWSti?=
- =?utf-8?B?anM5UkdnV0VZaTdUZ2h6eTJDK0k5U2IxcVJ5TzAyN0tuYWdaYjUweHBDZ3lJ?=
- =?utf-8?B?L0h5U1hTTVpYV0dyemdXZHdNaUNSQ0tObGxaUXhBT0pRUjVSTTlRVC9LZXQ4?=
- =?utf-8?B?TUMwSHlFZENacG5wRmJ5OUUwbGlRNlZqRTMwVklONXhoRWVjbFA3aEF5WlFu?=
- =?utf-8?B?ajkvc1hCSW13aUtYNmN0Z3FRR0lhcVNUV1dkWVhBWjI2b1dMaDh3eFBKZndN?=
- =?utf-8?B?WkZyQmVYWklCamQ5V2dPS1o1ekZWMHB4TVlkSkFERE5aOE05Q1Q2WkpqMURm?=
- =?utf-8?B?dXZiUHZraVJOS3JuTXVhT0s1bTBmb045Slg5N2ZIcDJkRytSUkhZNmJLNTRE?=
- =?utf-8?B?VUUvNThkQmJkZFRZL0tJa3B6YnZYNmdrZE9ZbTdPWm14dDVwU29JVXp3b1B0?=
- =?utf-8?B?ajlISmpBbCsva0l0K2Nlb2JYdTM2U0RDYUVYUVVkd3pDTkZteFc2VkRKNVdN?=
- =?utf-8?B?UEJUai9YK3p6MmlPcFI3NXJiZzU5QjNTYXdhckdsUEdndUZSYmEya0xSNFRp?=
- =?utf-8?B?QU4wTE5SUkpuSm43aFdWamtZWkx1a2JaUHlQNEVQdHpKRk43QndLbkJkK1V5?=
- =?utf-8?B?Z0E9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: add0e4c4-f115-4847-c7d9-08dc2187cf10
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jan 2024 11:37:15.9121
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31aea860-a7b7-4467-5ea3-08dc2188598d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2024 11:41:08.1189
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hEzQhVnek+oGc2g/9oskpIIuW8ivhmVfd58yU89Be5vK6Qga79xeURjH6vSCxVUW2873Q1njbPwOsMZQsnFejQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB7484
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zq2wL3ZhDb2LVUkXnltAvgDKgwALfFens+SifbkIWVtqUwVoZtmWmIDUcXrGfHMN+4xH9Ype8vvezngiBzitQ8beDNGR3OOFCM4/56b0m6c=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB6388
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <208DC1516FB50A4696228AF669C4D6A6@EURPRD10.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 30 Jan 2024 11:37:26 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14492
+ <cip-dev@lists.cip-project.org>; Tue, 30 Jan 2024 11:41:56 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14493
 
-On 30.01.24 12:17, Adithya Balakumar wrote:
-> This commit sets fixed partition uuid for partitions. The --uuid
-> option in wic allows to set fixed uuid for a partition. This is
-> required for generating reproducible images
-> 
-> Signed-off-by: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
-> ---
->  README.md                                     | 1 +
->  wic/bbb-efibootguard.wks.in                   | 4 ++--
->  wic/bbb.wks                                   | 2 +-
->  wic/ebg-signed-sysparts.inc                   | 6 +++---
->  wic/ebg-sysparts.inc                          | 6 +++---
->  wic/hihope-rzg2m-efibootguard.wks.in          | 4 ++--
->  wic/hihope-rzg2m.wks                          | 4 ++--
->  wic/iwg20m.wks                                | 4 ++--
->  wic/qemu-amd64-efibootguard-secureboot.wks.in | 4 ++--
->  wic/qemu-arm64-efibootguard-secureboot.wks.in | 4 ++--
->  wic/qemu-arm64-efibootguard.wks.in            | 4 ++--
->  wic/qemu-riscv64-efibootguard.wks.in          | 4 ++--
->  wic/x86-efibootguard.wks.in                   | 4 ++--
->  wic/x86_64-generic.wks                        | 4 ++--
->  14 files changed, 28 insertions(+), 27 deletions(-)
-> 
-> diff --git a/README.md b/README.md
-> index 4ded924..62f72e5 100644
-> --- a/README.md
-> +++ b/README.md
-> @@ -27,6 +27,7 @@ the BeagleBone Black target image with real-time kernel, e.g.:
->  
->      ./kas-container build kas-cip.yml:kas/board/bbb.yml:kas/opt/rt.yml
->  
-> +**NOTE**: For Production images, it is recommended to use fresh UUID's (Partition UUID) and not default ones.
->  
-
-Looking at this from a different angle, this recommendation basically
-ruins reuse of ebg-*.inc files in own images because wic does not
-support variables in include files IIRC - while we should better make
-those UUIDs variables, rather than hardcode them.
-
-Looks like this needs a second thought. I'm dropping this note for now
-while merging, specifically as the need to customize variables only
-comes with combined with having multiple images visible to a device
-which is not totally unlikely but also not really commodity.
-
-Jan
-
->  ## Running Target Images
->  
-> diff --git a/wic/bbb-efibootguard.wks.in b/wic/bbb-efibootguard.wks.in
-> index 48789c7..b9c8f3f 100644
-> --- a/wic/bbb-efibootguard.wks.in
-> +++ b/wic/bbb-efibootguard.wks.in
-> @@ -15,7 +15,7 @@ part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1
->  part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4
->  
->  # home and var are extra partitions
-> -part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
-> -part /var --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var --fstype=ext4 --label var --align 1024  --size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
-> +part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid c07d5e8f-3448-46dc-9c0f-58904f369524
-> +part /var --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var --fstype=ext4 --label var --align 1024  --size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 9947ed57-102f-4038-880c-9cf5cacaf153
->  
->  bootloader --ptable gpt --append="rootwait console=ttyO0,115200 omap_wdt.early_enable=1 omap_wdt.nowayout=1 watchdog.handle_boot_enabled=0"
-> diff --git a/wic/bbb.wks b/wic/bbb.wks
-> index a797e95..b46282d 100644
-> --- a/wic/bbb.wks
-> +++ b/wic/bbb.wks
-> @@ -9,6 +9,6 @@
->  part --source rawcopy --sourceparams "file=/usr/lib/u-boot/bbb/MLO" --no-table --align 128
->  part --source rawcopy --sourceparams "file=/usr/lib/u-boot/bbb/u-boot.img" --no-table --align 384
->  
-> -part / --source rootfs-u-boot --ondisk mmcblk0 --fstype ext4 --mkfs-extraopts "-T default" --label platform --align 1024 --active --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
-> +part / --source rootfs-u-boot --ondisk mmcblk0 --fstype ext4 --mkfs-extraopts "-T default" --label platform --align 1024 --active --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid 25d57b24-f34d-412e-8c88-28629f23aa0d
->  
->  bootloader --append "rootwait console=ttyO0,115200"
-> diff --git a/wic/ebg-signed-sysparts.inc b/wic/ebg-signed-sysparts.inc
-> index b2340e2..be63cd7 100644
-> --- a/wic/ebg-signed-sysparts.inc
-> +++ b/wic/ebg-signed-sysparts.inc
-> @@ -1,8 +1,8 @@
->  # default partition layout EFI Boot Guard usage, signed version
->  
->  # EFI partition containing efibootguard bootloader binary
-> -part --source efibootguard-efi  --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active --sourceparams "signwith=/usr/bin/sign_secure_image.sh" --fsuuid 0x4321dcba
-> +part --source efibootguard-efi  --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active --sourceparams "signwith=/usr/bin/sign_secure_image.sh" --fsuuid 0x4321dcba --uuid d1360f76-b09a-4bcc-b923-8195088cbe02
->  
->  # EFI Boot Guard environment/config partitions plus Kernel files
-> -part --source efibootguard-boot --size 32M --extra-space 0 --overhead-factor 1 --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2,signwith=/usr/bin/sign_secure_image.sh" --fsuuid 0x4321dcbb
-> -part --source efibootguard-boot --size 32M --extra-space 0 --overhead-factor 1 --label BOOT1 --align 1024 --part-type=0700 --sourceparams "revision=1,signwith=/usr/bin/sign_secure_image.sh" --fsuuid 0x4321dcbc
-> +part --source efibootguard-boot --size 32M --extra-space 0 --overhead-factor 1 --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2,signwith=/usr/bin/sign_secure_image.sh" --fsuuid 0x4321dcbb --uuid f870258b-706f-4a66-8d58-b5a75ce61b8b
-> +part --source efibootguard-boot --size 32M --extra-space 0 --overhead-factor 1 --label BOOT1 --align 1024 --part-type=0700 --sourceparams "revision=1,signwith=/usr/bin/sign_secure_image.sh" --fsuuid 0x4321dcbc --uuid 6e41f2a7-e3eb-403f-8637-b111e4482ee9
-> diff --git a/wic/ebg-sysparts.inc b/wic/ebg-sysparts.inc
-> index 300c36f..121dc73 100644
-> --- a/wic/ebg-sysparts.inc
-> +++ b/wic/ebg-sysparts.inc
-> @@ -1,8 +1,8 @@
->  # default partition layout EFI Boot Guard usage
->  
->  # EFI partition containing efibootguard bootloader binary
-> -part --source efibootguard-efi  --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active --fsuuid 0x4321dcba
-> +part --source efibootguard-efi  --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active --fsuuid 0x4321dcba --uuid c19e7e9f-bacf-49a6-b43d-2fc18d2a8d03
->  
->  # EFI Boot Guard environment/config partitions plus Kernel files
-> -part --source efibootguard-boot --size 32M --extra-space 0 --overhead-factor 1 --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2" --fsuuid 0x4321dcbb
-> -part --source efibootguard-boot --size 32M --extra-space 0 --overhead-factor 1 --label BOOT1 --align 1024 --part-type=0700 --sourceparams "revision=1" --fsuuid 0x4321dcbc
-> +part --source efibootguard-boot --size 32M --extra-space 0 --overhead-factor 1 --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2" --fsuuid 0x4321dcbb --uuid e8567692-2dfa-459a-be15-f6e5ddcc8f49
-> +part --source efibootguard-boot --size 32M --extra-space 0 --overhead-factor 1 --label BOOT1 --align 1024 --part-type=0700 --sourceparams "revision=1" --fsuuid 0x4321dcbc --uuid 94b2174d-c792-4e8e-8a34-b506e2927937
-> diff --git a/wic/hihope-rzg2m-efibootguard.wks.in b/wic/hihope-rzg2m-efibootguard.wks.in
-> index 2ac8850..aa704f5 100644
-> --- a/wic/hihope-rzg2m-efibootguard.wks.in
-> +++ b/wic/hihope-rzg2m-efibootguard.wks.in
-> @@ -8,7 +8,7 @@ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}
->  
->  # home and var are extra partitions
->  
-> -part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G --extra-space=100M --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
-> -part /var --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var --fstype=ext4 --label var --align 1024  --size 2G --extra-space=100M --fsuuid 96be3374-4258-11ee-be56-0242ac120002
-> +part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G --extra-space=100M --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid 43a29d19-005f-49d9-9108-51ad0861d724
-> +part /var --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var --fstype=ext4 --label var --align 1024  --size 2G --extra-space=100M --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 7e20a7d5-5578-4ced-a7f1-5ee494dbaf72
->  
->  bootloader --ptable gpt --append="console=tty0 console=ttySC0,115200 rootwait earlyprintk"
-> diff --git a/wic/hihope-rzg2m.wks b/wic/hihope-rzg2m.wks
-> index fd3a338..f5b850d 100644
-> --- a/wic/hihope-rzg2m.wks
-> +++ b/wic/hihope-rzg2m.wks
-> @@ -9,7 +9,7 @@
->  # SPDX-License-Identifier: MIT
->  #
->  
-> -part /boot --source bootimg-partition --ondisk mmcblk0 --fstype vfat --label boot --align 1 --size 32M --extra-space 0 --fsuuid 0x4321dcba
-> +part /boot --source bootimg-partition --ondisk mmcblk0 --fstype vfat --label boot --align 1 --size 32M --extra-space 0 --fsuuid 0x4321dcba --uuid d122d639-1d92-4b41-bf7b-4b2bdf8dd899
->  
->  # Rootfs partition
-> -part / --source rootfs --ondisk mmcblk0 --fstype ext4 --label root --align 1024 --size 2G --active --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
-> +part / --source rootfs --ondisk mmcblk0 --fstype ext4 --label root --align 1024 --size 2G --active --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid b8bbba3f-3ba6-4b2b-8d69-4a95fd4f34ed
-> diff --git a/wic/iwg20m.wks b/wic/iwg20m.wks
-> index 85765f0..21fc419 100644
-> --- a/wic/iwg20m.wks
-> +++ b/wic/iwg20m.wks
-> @@ -12,7 +12,7 @@
->  # [Note] u-boot runs from an SPI memory device
->  
->  # SDCard Boot partition (copies files in IMAGE_BOOT_FILES: zImage and device tree)
-> -part /boot --source bootimg-partition --ondisk mmcblk0 --fstype vfat --label boot --align 1 --size 32M --extra-space 0 --fsuuid 0x4321dcba
-> +part /boot --source bootimg-partition --ondisk mmcblk0 --fstype vfat --label boot --align 1 --size 32M --extra-space 0 --fsuuid 0x4321dcba --uuid 28a58348-5270-44d3-bea4-b1c492a81b7f
->  
->  # Rootfs partition
-> -part / --source rootfs --ondisk mmcblk0 --fstype ext4 --label root --align 1024 --size 2G --active --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
-> +part / --source rootfs --ondisk mmcblk0 --fstype ext4 --label root --align 1024 --size 2G --active --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid d0fa8361-7deb-43df-acee-1725d40d403e
-> diff --git a/wic/qemu-amd64-efibootguard-secureboot.wks.in b/wic/qemu-amd64-efibootguard-secureboot.wks.in
-> index 2e5cb39..b16da0b 100644
-> --- a/wic/qemu-amd64-efibootguard-secureboot.wks.in
-> +++ b/wic/qemu-amd64-efibootguard-secureboot.wks.in
-> @@ -4,7 +4,7 @@ part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 102
->  part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4
->  
->  # home and var are extra partitions
-> -part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024 --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
-> -part /var  --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var  --fstype=ext4 --label var  --align 1024 --size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
-> +part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024 --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid 94593121-6f5f-4b04-98db-39aace692682
-> +part /var  --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var  --fstype=ext4 --label var  --align 1024 --size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 686a2e06-7f96-495b-beac-1731cb98eb0e
->  
->  bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait earlyprintk watchdog.handle_boot_enabled=0 iTCO_wdt.nowayout=1 panic=5"
-> diff --git a/wic/qemu-arm64-efibootguard-secureboot.wks.in b/wic/qemu-arm64-efibootguard-secureboot.wks.in
-> index 2fc389c..22e23b4 100644
-> --- a/wic/qemu-arm64-efibootguard-secureboot.wks.in
-> +++ b/wic/qemu-arm64-efibootguard-secureboot.wks.in
-> @@ -4,7 +4,7 @@ part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 102
->  part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4
->  
->  # home and var are extra partitions
-> -part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024 --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
-> -part /var  --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var  --fstype=ext4 --label var  --align 1024 --size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
-> +part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024 --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid e869413d-dc84-4822-b50d-00c5aab7d6fc
-> +part /var  --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var  --fstype=ext4 --label var  --align 1024 --size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 815406da-387f-4e89-a0fb-6e617605c8c3
->  
->  bootloader --ptable gpt --append="panic=5"
-> diff --git a/wic/qemu-arm64-efibootguard.wks.in b/wic/qemu-arm64-efibootguard.wks.in
-> index 1f50ba3..7fe68d9 100644
-> --- a/wic/qemu-arm64-efibootguard.wks.in
-> +++ b/wic/qemu-arm64-efibootguard.wks.in
-> @@ -7,7 +7,7 @@ part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1
->  part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4
->  
->  # home and var are extra partitions
-> -part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
-> -part /var --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var --fstype=ext4 --label var --align 1024  --size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
-> +part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid 7346faa7-d6d4-49fa-a03e-82ee469cb1e5
-> +part /var --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var --fstype=ext4 --label var --align 1024  --size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 423f0a2e-b9b3-4615-85be-2a4261fa32d9
->  
->  bootloader --ptable gpt
-> diff --git a/wic/qemu-riscv64-efibootguard.wks.in b/wic/qemu-riscv64-efibootguard.wks.in
-> index 9158aa4..19ca1e0 100644
-> --- a/wic/qemu-riscv64-efibootguard.wks.in
-> +++ b/wic/qemu-riscv64-efibootguard.wks.in
-> @@ -7,7 +7,7 @@ part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1
->  part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4
->  
->  # home and var are extra partitions
-> -part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
-> -part /var --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var --fstype=ext4 --label var --align 1024  --size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
-> +part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid e578254c-bd99-4442-bc51-4935cd0ef522
-> +part /var --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var --fstype=ext4 --label var --align 1024  --size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 0209689d-672f-4254-8b92-566d6d9fd1ae
->  
->  bootloader --ptable gpt
-> diff --git a/wic/x86-efibootguard.wks.in b/wic/x86-efibootguard.wks.in
-> index 98e8da5..43bb782 100644
-> --- a/wic/x86-efibootguard.wks.in
-> +++ b/wic/x86-efibootguard.wks.in
-> @@ -8,7 +8,7 @@ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}
->  
->  # home and var are extra partitions
->  
-> -part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G --extra-space=100M --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
-> -part /var --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var --fstype=ext4 --label var --align 1024  --size 2G --extra-space=100M --fsuuid 96be3374-4258-11ee-be56-0242ac120002
-> +part /home --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/home --fstype=ext4 --label home --align 1024  --size 1G --extra-space=100M --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid f12faa7c-a9ef-4b3f-b63d-1c74bd5c2b1c
-> +part /var --source rootfs --rootfs-dir=${IMAGE_ROOTFS}/var --fstype=ext4 --label var --align 1024  --size 2G --extra-space=100M --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid be5ae5e0-91d3-46ec-a7f7-c1ebfc0a7c28
->  
->  bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait earlyprintk watchdog.handle_boot_enabled=0 iTCO_wdt.nowayout=1 "
-> diff --git a/wic/x86_64-generic.wks b/wic/x86_64-generic.wks
-> index 1a44e26..a2b9c21 100644
-> --- a/wic/x86_64-generic.wks
-> +++ b/wic/x86_64-generic.wks
-> @@ -6,8 +6,8 @@
->  # SPDX-License-Identifier: MIT
->  #
->  
-> -part /boot --source bootimg-efi-isar --sourceparams "loader=grub-efi" --label efi --part-type EF00 --align 1024 --fsuuid 0x4321dcba
-> +part /boot --source bootimg-efi-isar --sourceparams "loader=grub-efi" --label efi --part-type EF00 --align 1024 --fsuuid 0x4321dcba --uuid cf142945-6fa1-4945-b0f2-b8d6226298c0
->  
-> -part / --source rootfs --fstype ext4 --mkfs-extraopts "-T default" --label platform --align 1024 --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
-> +part / --source rootfs --fstype ext4 --mkfs-extraopts "-T default" --label platform --align 1024 --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid f225331b-2d9c-45a2-bcfe-4a6e86287dfb
->  
->  bootloader --ptable gpt --timeout 2 --append "console=ttyS0,115200"
-
--- 
-Siemens AG, Technology
-Linux Expert Center
-
+T24gVHVlLCAyMDI0LTAxLTMwIGF0IDEyOjM3ICswMTAwLCBKYW4gS2lzemthIHdyb3RlOg0KPiBP
+biAzMC4wMS4yNCAxMjoxNywgQWRpdGh5YSBCYWxha3VtYXIgd3JvdGU6DQo+ID4gVGhpcyBjb21t
+aXQgc2V0cyBmaXhlZCBwYXJ0aXRpb24gdXVpZCBmb3IgcGFydGl0aW9ucy4gVGhlIC0tdXVpZA0K
+PiA+IG9wdGlvbiBpbiB3aWMgYWxsb3dzIHRvIHNldCBmaXhlZCB1dWlkIGZvciBhIHBhcnRpdGlv
+bi4gVGhpcyBpcw0KPiA+IHJlcXVpcmVkIGZvciBnZW5lcmF0aW5nIHJlcHJvZHVjaWJsZSBpbWFn
+ZXMNCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBBZGl0aHlhIEJhbGFrdW1hcg0KPiA+IDxBZGl0
+aHlhLkJhbGFrdW1hckB0b3NoaWJhLXRzaXAuY29tPg0KPiA+IC0tLQ0KPiA+IMKgUkVBRE1FLm1k
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIHwgMSArDQo+ID4gwqB3aWMvYmJiLWVmaWJvb3RndWFyZC53a3MuaW7C
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCA0ICsrLS0NCj4gPiDCoHdpYy9i
+YmIud2tzwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgfCAyICstDQo+ID4gwqB3aWMvZWJnLXNpZ25lZC1zeXNwYXJ0cy5p
+bmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCA2ICsrKy0tLQ0KPiA+IMKg
+d2ljL2ViZy1zeXNwYXJ0cy5pbmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCB8IDYgKysrLS0tDQo+ID4gwqB3aWMvaGlob3BlLXJ6ZzJtLWVmaWJvb3Rn
+dWFyZC53a3MuaW7CoMKgwqDCoMKgwqDCoMKgwqAgfCA0ICsrLS0NCj4gPiDCoHdpYy9oaWhvcGUt
+cnpnMm0ud2tzwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgfCA0ICsrLS0NCj4gPiDCoHdpYy9pd2cyMG0ud2tzwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCA0ICsrLS0NCj4gPiDCoHdp
+Yy9xZW11LWFtZDY0LWVmaWJvb3RndWFyZC1zZWN1cmVib290Lndrcy5pbiB8IDQgKystLQ0KPiA+
+IMKgd2ljL3FlbXUtYXJtNjQtZWZpYm9vdGd1YXJkLXNlY3VyZWJvb3Qud2tzLmluIHwgNCArKy0t
+DQo+ID4gwqB3aWMvcWVtdS1hcm02NC1lZmlib290Z3VhcmQud2tzLmluwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCB8IDQgKystLQ0KPiA+IMKgd2ljL3FlbXUtcmlzY3Y2NC1lZmlib290Z3VhcmQud2tz
+LmluwqDCoMKgwqDCoMKgwqDCoMKgIHwgNCArKy0tDQo+ID4gwqB3aWMveDg2LWVmaWJvb3RndWFy
+ZC53a3MuaW7CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCA0ICsrLS0NCj4g
+PiDCoHdpYy94ODZfNjQtZ2VuZXJpYy53a3PCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIHwgNCArKy0tDQo+ID4gwqAxNCBmaWxlcyBjaGFuZ2VkLCAyOCBpbnNl
+cnRpb25zKCspLCAyNyBkZWxldGlvbnMoLSkNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvUkVBRE1F
+Lm1kIGIvUkVBRE1FLm1kDQo+ID4gaW5kZXggNGRlZDkyNC4uNjJmNzJlNSAxMDA2NDQNCj4gPiAt
+LS0gYS9SRUFETUUubWQNCj4gPiArKysgYi9SRUFETUUubWQNCj4gPiBAQCAtMjcsNiArMjcsNyBA
+QCB0aGUgQmVhZ2xlQm9uZSBCbGFjayB0YXJnZXQgaW1hZ2Ugd2l0aCByZWFsLXRpbWUNCj4gPiBr
+ZXJuZWwsIGUuZy46DQo+ID4gwqANCj4gPiDCoMKgwqDCoCAuL2thcy1jb250YWluZXIgYnVpbGQg
+a2FzLQ0KPiA+IGNpcC55bWw6a2FzL2JvYXJkL2JiYi55bWw6a2FzL29wdC9ydC55bWwNCj4gPiDC
+oA0KPiA+ICsqKk5PVEUqKjogRm9yIFByb2R1Y3Rpb24gaW1hZ2VzLCBpdCBpcyByZWNvbW1lbmRl
+ZCB0byB1c2UgZnJlc2gNCj4gPiBVVUlEJ3MgKFBhcnRpdGlvbiBVVUlEKSBhbmQgbm90IGRlZmF1
+bHQgb25lcy4NCj4gPiDCoA0KPiANCj4gTG9va2luZyBhdCB0aGlzIGZyb20gYSBkaWZmZXJlbnQg
+YW5nbGUsIHRoaXMgcmVjb21tZW5kYXRpb24gYmFzaWNhbGx5DQo+IHJ1aW5zIHJldXNlIG9mIGVi
+Zy0qLmluYyBmaWxlcyBpbiBvd24gaW1hZ2VzIGJlY2F1c2Ugd2ljIGRvZXMgbm90DQo+IHN1cHBv
+cnQgdmFyaWFibGVzIGluIGluY2x1ZGUgZmlsZXMgSUlSQyAtIHdoaWxlIHdlIHNob3VsZCBiZXR0
+ZXIgbWFrZQ0KPiB0aG9zZSBVVUlEcyB2YXJpYWJsZXMsIHJhdGhlciB0aGFuIGhhcmRjb2RlIHRo
+ZW0uDQoNCldlbGwuLi4gYWxsIHByb2R1Y3RzIEkga25vdyBvZiB1c2UgdGhlaXIgb3duIFdLUyBm
+aWxlcyBhbnl3YXlzLCBiZWNhdXNlDQp0aGV5IHdhbnQgdG8gY2hhbmdlIHRoZSBwYXJ0aXRpb24g
+c2l6ZXMuDQo+IA0KPiBMb29rcyBsaWtlIHRoaXMgbmVlZHMgYSBzZWNvbmQgdGhvdWdodC4gSSdt
+IGRyb3BwaW5nIHRoaXMgbm90ZSBmb3INCj4gbm93DQo+IHdoaWxlIG1lcmdpbmcsIHNwZWNpZmlj
+YWxseSBhcyB0aGUgbmVlZCB0byBjdXN0b21pemUgdmFyaWFibGVzIG9ubHkNCj4gY29tZXMgd2l0
+aCBjb21iaW5lZCB3aXRoIGhhdmluZyBtdWx0aXBsZSBpbWFnZXMgdmlzaWJsZSB0byBhIGRldmlj
+ZQ0KPiB3aGljaCBpcyBub3QgdG90YWxseSB1bmxpa2VseSBidXQgYWxzbyBub3QgcmVhbGx5IGNv
+bW1vZGl0eS4NCg0KQSByaXNreSB0aGluZy4gV2UgYWxyZWFkeSBoYWQgaXQgaW4gdHdvIHByb2R1
+Y3RzIHRoYXQgdGhlIFVVSUQgY2xhc2hlZA0KYmVjYXVzZSB0aGUgaW5zdGFsbGVyIGltYWdlIHVz
+ZWQgdGhlIHNhbWUgV0tTIGZpbGUgYXMgdGhlIHByb2R1Y3QNCml0c2VsZi4NCg0KRmVsaXgNCg0K
+PiANCj4gSmFuDQo+IA0KPiA+IMKgIyMgUnVubmluZyBUYXJnZXQgSW1hZ2VzDQo+ID4gwqANCj4g
+PiBkaWZmIC0tZ2l0IGEvd2ljL2JiYi1lZmlib290Z3VhcmQud2tzLmluIGIvd2ljL2JiYi0NCj4g
+PiBlZmlib290Z3VhcmQud2tzLmluDQo+ID4gaW5kZXggNDg3ODljNy4uYjljOGYzZiAxMDA2NDQN
+Cj4gPiAtLS0gYS93aWMvYmJiLWVmaWJvb3RndWFyZC53a3MuaW4NCj4gPiArKysgYi93aWMvYmJi
+LWVmaWJvb3RndWFyZC53a3MuaW4NCj4gPiBAQCAtMTUsNyArMTUsNyBAQCBwYXJ0IC0tc291cmNl
+IHJhd2NvcHkgLS1zb3VyY2VwYXJhbXMNCj4gPiAiZmlsZT0ke0lNQUdFX0ZVTExOQU1FfS5zcXVh
+c2hmcyIgLS1hbGlnbiAxDQo+ID4gwqBwYXJ0IC0tc291cmNlIGVtcHR5IC0tYWxpZ24gMTAyNCAt
+LWZpeGVkLXNpemUgMUcgLS11dWlkDQo+ID4gIiR7QUJST09URlNfUEFSVF9VVUlEX0J9IiAtLXBh
+cnQtdHlwZSAwRkM2M0RBRi04NDgzLTQ3NzItOEU3OS0NCj4gPiAzRDY5RDg0NzdERTQNCj4gPiDC
+oA0KPiA+IMKgIyBob21lIGFuZCB2YXIgYXJlIGV4dHJhIHBhcnRpdGlvbnMNCj4gPiAtcGFydCAv
+aG9tZSAtLXNvdXJjZSByb290ZnMgLS1yb290ZnMtZGlyPSR7SU1BR0VfUk9PVEZTfS9ob21lIC0t
+DQo+ID4gZnN0eXBlPWV4dDQgLS1sYWJlbCBob21lIC0tYWxpZ24gMTAyNMKgIC0tc2l6ZSAxRyAt
+LWZzdXVpZCAxZjU1ZDY2YS0NCj4gPiA0MGQ4LTExZWUtYmU1Ni0wMjQyYWMxMjAwMDINCj4gPiAt
+cGFydCAvdmFyIC0tc291cmNlIHJvb3RmcyAtLXJvb3Rmcy1kaXI9JHtJTUFHRV9ST09URlN9L3Zh
+ciAtLQ0KPiA+IGZzdHlwZT1leHQ0IC0tbGFiZWwgdmFyIC0tYWxpZ24gMTAyNMKgIC0tc2l6ZSAy
+RyAtLWZzdXVpZCA5NmJlMzM3NC0NCj4gPiA0MjU4LTExZWUtYmU1Ni0wMjQyYWMxMjAwMDINCj4g
+PiArcGFydCAvaG9tZSAtLXNvdXJjZSByb290ZnMgLS1yb290ZnMtZGlyPSR7SU1BR0VfUk9PVEZT
+fS9ob21lIC0tDQo+ID4gZnN0eXBlPWV4dDQgLS1sYWJlbCBob21lIC0tYWxpZ24gMTAyNMKgIC0t
+c2l6ZSAxRyAtLWZzdXVpZCAxZjU1ZDY2YS0NCj4gPiA0MGQ4LTExZWUtYmU1Ni0wMjQyYWMxMjAw
+MDIgLS11dWlkIGMwN2Q1ZThmLTM0NDgtNDZkYy05YzBmLQ0KPiA+IDU4OTA0ZjM2OTUyNA0KPiA+
+ICtwYXJ0IC92YXIgLS1zb3VyY2Ugcm9vdGZzIC0tcm9vdGZzLWRpcj0ke0lNQUdFX1JPT1RGU30v
+dmFyIC0tDQo+ID4gZnN0eXBlPWV4dDQgLS1sYWJlbCB2YXIgLS1hbGlnbiAxMDI0wqAgLS1zaXpl
+IDJHIC0tZnN1dWlkIDk2YmUzMzc0LQ0KPiA+IDQyNTgtMTFlZS1iZTU2LTAyNDJhYzEyMDAwMiAt
+LXV1aWQgOTk0N2VkNTctMTAyZi00MDM4LTg4MGMtDQo+ID4gOWNmNWNhY2FmMTUzDQo+ID4gwqAN
+Cj4gPiDCoGJvb3Rsb2FkZXIgLS1wdGFibGUgZ3B0IC0tYXBwZW5kPSJyb290d2FpdCBjb25zb2xl
+PXR0eU8wLDExNTIwMA0KPiA+IG9tYXBfd2R0LmVhcmx5X2VuYWJsZT0xIG9tYXBfd2R0Lm5vd2F5
+b3V0PTENCj4gPiB3YXRjaGRvZy5oYW5kbGVfYm9vdF9lbmFibGVkPTAiDQo+ID4gZGlmZiAtLWdp
+dCBhL3dpYy9iYmIud2tzIGIvd2ljL2JiYi53a3MNCj4gPiBpbmRleCBhNzk3ZTk1Li5iNDYyODJk
+IDEwMDY0NA0KPiA+IC0tLSBhL3dpYy9iYmIud2tzDQo+ID4gKysrIGIvd2ljL2JiYi53a3MNCj4g
+PiBAQCAtOSw2ICs5LDYgQEANCj4gPiDCoHBhcnQgLS1zb3VyY2UgcmF3Y29weSAtLXNvdXJjZXBh
+cmFtcyAiZmlsZT0vdXNyL2xpYi91LQ0KPiA+IGJvb3QvYmJiL01MTyIgLS1uby10YWJsZSAtLWFs
+aWduIDEyOA0KPiA+IMKgcGFydCAtLXNvdXJjZSByYXdjb3B5IC0tc291cmNlcGFyYW1zICJmaWxl
+PS91c3IvbGliL3UtYm9vdC9iYmIvdS0NCj4gPiBib290LmltZyIgLS1uby10YWJsZSAtLWFsaWdu
+IDM4NA0KPiA+IMKgDQo+ID4gLXBhcnQgLyAtLXNvdXJjZSByb290ZnMtdS1ib290IC0tb25kaXNr
+IG1tY2JsazAgLS1mc3R5cGUgZXh0NCAtLQ0KPiA+IG1rZnMtZXh0cmFvcHRzICItVCBkZWZhdWx0
+IiAtLWxhYmVsIHBsYXRmb3JtIC0tYWxpZ24gMTAyNCAtLWFjdGl2ZQ0KPiA+IC0tZnN1dWlkIDFm
+NTVkNjZhLTQwZDgtMTFlZS1iZTU2LTAyNDJhYzEyMDAwMg0KPiA+ICtwYXJ0IC8gLS1zb3VyY2Ug
+cm9vdGZzLXUtYm9vdCAtLW9uZGlzayBtbWNibGswIC0tZnN0eXBlIGV4dDQgLS0NCj4gPiBta2Zz
+LWV4dHJhb3B0cyAiLVQgZGVmYXVsdCIgLS1sYWJlbCBwbGF0Zm9ybSAtLWFsaWduIDEwMjQgLS1h
+Y3RpdmUNCj4gPiAtLWZzdXVpZCAxZjU1ZDY2YS00MGQ4LTExZWUtYmU1Ni0wMjQyYWMxMjAwMDIg
+LS11dWlkIDI1ZDU3YjI0LWYzNGQtDQo+ID4gNDEyZS04Yzg4LTI4NjI5ZjIzYWEwZA0KPiA+IMKg
+DQo+ID4gwqBib290bG9hZGVyIC0tYXBwZW5kICJyb290d2FpdCBjb25zb2xlPXR0eU8wLDExNTIw
+MCINCj4gPiBkaWZmIC0tZ2l0IGEvd2ljL2ViZy1zaWduZWQtc3lzcGFydHMuaW5jIGIvd2ljL2Vi
+Zy1zaWduZWQtDQo+ID4gc3lzcGFydHMuaW5jDQo+ID4gaW5kZXggYjIzNDBlMi4uYmU2M2NkNyAx
+MDA2NDQNCj4gPiAtLS0gYS93aWMvZWJnLXNpZ25lZC1zeXNwYXJ0cy5pbmMNCj4gPiArKysgYi93
+aWMvZWJnLXNpZ25lZC1zeXNwYXJ0cy5pbmMNCj4gPiBAQCAtMSw4ICsxLDggQEANCj4gPiDCoCMg
+ZGVmYXVsdCBwYXJ0aXRpb24gbGF5b3V0IEVGSSBCb290IEd1YXJkIHVzYWdlLCBzaWduZWQgdmVy
+c2lvbg0KPiA+IMKgDQo+ID4gwqAjIEVGSSBwYXJ0aXRpb24gY29udGFpbmluZyBlZmlib290Z3Vh
+cmQgYm9vdGxvYWRlciBiaW5hcnkNCj4gPiAtcGFydCAtLXNvdXJjZSBlZmlib290Z3VhcmQtZWZp
+wqAgLS1zaXplIDE2TSAtLWV4dHJhLXNwYWNlIDAgLS0NCj4gPiBvdmVyaGVhZC1mYWN0b3IgMSAt
+LWxhYmVsIGVmacKgwqAgLS1hbGlnbiAxMDI0IC0tcGFydC10eXBlPUVGMDAgLS0NCj4gPiBhY3Rp
+dmUgLS1zb3VyY2VwYXJhbXMgInNpZ253aXRoPS91c3IvYmluL3NpZ25fc2VjdXJlX2ltYWdlLnNo
+IiAtLQ0KPiA+IGZzdXVpZCAweDQzMjFkY2JhDQo+ID4gK3BhcnQgLS1zb3VyY2UgZWZpYm9vdGd1
+YXJkLWVmacKgIC0tc2l6ZSAxNk0gLS1leHRyYS1zcGFjZSAwIC0tDQo+ID4gb3ZlcmhlYWQtZmFj
+dG9yIDEgLS1sYWJlbCBlZmnCoMKgIC0tYWxpZ24gMTAyNCAtLXBhcnQtdHlwZT1FRjAwIC0tDQo+
+ID4gYWN0aXZlIC0tc291cmNlcGFyYW1zICJzaWdud2l0aD0vdXNyL2Jpbi9zaWduX3NlY3VyZV9p
+bWFnZS5zaCIgLS0NCj4gPiBmc3V1aWQgMHg0MzIxZGNiYSAtLXV1aWQgZDEzNjBmNzYtYjA5YS00
+YmNjLWI5MjMtODE5NTA4OGNiZTAyDQo+ID4gwqANCj4gPiDCoCMgRUZJIEJvb3QgR3VhcmQgZW52
+aXJvbm1lbnQvY29uZmlnIHBhcnRpdGlvbnMgcGx1cyBLZXJuZWwgZmlsZXMNCj4gPiAtcGFydCAt
+LXNvdXJjZSBlZmlib290Z3VhcmQtYm9vdCAtLXNpemUgMzJNIC0tZXh0cmEtc3BhY2UgMCAtLQ0K
+PiA+IG92ZXJoZWFkLWZhY3RvciAxIC0tbGFiZWwgQk9PVDAgLS1hbGlnbiAxMDI0IC0tcGFydC10
+eXBlPTA3MDAgLS0NCj4gPiBzb3VyY2VwYXJhbXMgInJldmlzaW9uPTIsc2lnbndpdGg9L3Vzci9i
+aW4vc2lnbl9zZWN1cmVfaW1hZ2Uuc2giIC0tDQo+ID4gZnN1dWlkIDB4NDMyMWRjYmINCj4gPiAt
+cGFydCAtLXNvdXJjZSBlZmlib290Z3VhcmQtYm9vdCAtLXNpemUgMzJNIC0tZXh0cmEtc3BhY2Ug
+MCAtLQ0KPiA+IG92ZXJoZWFkLWZhY3RvciAxIC0tbGFiZWwgQk9PVDEgLS1hbGlnbiAxMDI0IC0t
+cGFydC10eXBlPTA3MDAgLS0NCj4gPiBzb3VyY2VwYXJhbXMgInJldmlzaW9uPTEsc2lnbndpdGg9
+L3Vzci9iaW4vc2lnbl9zZWN1cmVfaW1hZ2Uuc2giIC0tDQo+ID4gZnN1dWlkIDB4NDMyMWRjYmMN
+Cj4gPiArcGFydCAtLXNvdXJjZSBlZmlib290Z3VhcmQtYm9vdCAtLXNpemUgMzJNIC0tZXh0cmEt
+c3BhY2UgMCAtLQ0KPiA+IG92ZXJoZWFkLWZhY3RvciAxIC0tbGFiZWwgQk9PVDAgLS1hbGlnbiAx
+MDI0IC0tcGFydC10eXBlPTA3MDAgLS0NCj4gPiBzb3VyY2VwYXJhbXMgInJldmlzaW9uPTIsc2ln
+bndpdGg9L3Vzci9iaW4vc2lnbl9zZWN1cmVfaW1hZ2Uuc2giIC0tDQo+ID4gZnN1dWlkIDB4NDMy
+MWRjYmIgLS11dWlkIGY4NzAyNThiLTcwNmYtNGE2Ni04ZDU4LWI1YTc1Y2U2MWI4Yg0KPiA+ICtw
+YXJ0IC0tc291cmNlIGVmaWJvb3RndWFyZC1ib290IC0tc2l6ZSAzMk0gLS1leHRyYS1zcGFjZSAw
+IC0tDQo+ID4gb3ZlcmhlYWQtZmFjdG9yIDEgLS1sYWJlbCBCT09UMSAtLWFsaWduIDEwMjQgLS1w
+YXJ0LXR5cGU9MDcwMCAtLQ0KPiA+IHNvdXJjZXBhcmFtcyAicmV2aXNpb249MSxzaWdud2l0aD0v
+dXNyL2Jpbi9zaWduX3NlY3VyZV9pbWFnZS5zaCIgLS0NCj4gPiBmc3V1aWQgMHg0MzIxZGNiYyAt
+LXV1aWQgNmU0MWYyYTctZTNlYi00MDNmLTg2MzctYjExMWU0NDgyZWU5DQo+ID4gZGlmZiAtLWdp
+dCBhL3dpYy9lYmctc3lzcGFydHMuaW5jIGIvd2ljL2ViZy1zeXNwYXJ0cy5pbmMNCj4gPiBpbmRl
+eCAzMDBjMzZmLi4xMjFkYzczIDEwMDY0NA0KPiA+IC0tLSBhL3dpYy9lYmctc3lzcGFydHMuaW5j
+DQo+ID4gKysrIGIvd2ljL2ViZy1zeXNwYXJ0cy5pbmMNCj4gPiBAQCAtMSw4ICsxLDggQEANCj4g
+PiDCoCMgZGVmYXVsdCBwYXJ0aXRpb24gbGF5b3V0IEVGSSBCb290IEd1YXJkIHVzYWdlDQo+ID4g
+wqANCj4gPiDCoCMgRUZJIHBhcnRpdGlvbiBjb250YWluaW5nIGVmaWJvb3RndWFyZCBib290bG9h
+ZGVyIGJpbmFyeQ0KPiA+IC1wYXJ0IC0tc291cmNlIGVmaWJvb3RndWFyZC1lZmnCoCAtLXNpemUg
+MTZNIC0tZXh0cmEtc3BhY2UgMCAtLQ0KPiA+IG92ZXJoZWFkLWZhY3RvciAxIC0tbGFiZWwgZWZp
+wqDCoCAtLWFsaWduIDEwMjQgLS1wYXJ0LXR5cGU9RUYwMCAtLQ0KPiA+IGFjdGl2ZSAtLWZzdXVp
+ZCAweDQzMjFkY2JhDQo+ID4gK3BhcnQgLS1zb3VyY2UgZWZpYm9vdGd1YXJkLWVmacKgIC0tc2l6
+ZSAxNk0gLS1leHRyYS1zcGFjZSAwIC0tDQo+ID4gb3ZlcmhlYWQtZmFjdG9yIDEgLS1sYWJlbCBl
+ZmnCoMKgIC0tYWxpZ24gMTAyNCAtLXBhcnQtdHlwZT1FRjAwIC0tDQo+ID4gYWN0aXZlIC0tZnN1
+dWlkIDB4NDMyMWRjYmEgLS11dWlkIGMxOWU3ZTlmLWJhY2YtNDlhNi1iNDNkLQ0KPiA+IDJmYzE4
+ZDJhOGQwMw0KPiA+IMKgDQo+ID4gwqAjIEVGSSBCb290IEd1YXJkIGVudmlyb25tZW50L2NvbmZp
+ZyBwYXJ0aXRpb25zIHBsdXMgS2VybmVsIGZpbGVzDQo+ID4gLXBhcnQgLS1zb3VyY2UgZWZpYm9v
+dGd1YXJkLWJvb3QgLS1zaXplIDMyTSAtLWV4dHJhLXNwYWNlIDAgLS0NCj4gPiBvdmVyaGVhZC1m
+YWN0b3IgMSAtLWxhYmVsIEJPT1QwIC0tYWxpZ24gMTAyNCAtLXBhcnQtdHlwZT0wNzAwIC0tDQo+
+ID4gc291cmNlcGFyYW1zICJyZXZpc2lvbj0yIiAtLWZzdXVpZCAweDQzMjFkY2JiDQo+ID4gLXBh
+cnQgLS1zb3VyY2UgZWZpYm9vdGd1YXJkLWJvb3QgLS1zaXplIDMyTSAtLWV4dHJhLXNwYWNlIDAg
+LS0NCj4gPiBvdmVyaGVhZC1mYWN0b3IgMSAtLWxhYmVsIEJPT1QxIC0tYWxpZ24gMTAyNCAtLXBh
+cnQtdHlwZT0wNzAwIC0tDQo+ID4gc291cmNlcGFyYW1zICJyZXZpc2lvbj0xIiAtLWZzdXVpZCAw
+eDQzMjFkY2JjDQo+ID4gK3BhcnQgLS1zb3VyY2UgZWZpYm9vdGd1YXJkLWJvb3QgLS1zaXplIDMy
+TSAtLWV4dHJhLXNwYWNlIDAgLS0NCj4gPiBvdmVyaGVhZC1mYWN0b3IgMSAtLWxhYmVsIEJPT1Qw
+IC0tYWxpZ24gMTAyNCAtLXBhcnQtdHlwZT0wNzAwIC0tDQo+ID4gc291cmNlcGFyYW1zICJyZXZp
+c2lvbj0yIiAtLWZzdXVpZCAweDQzMjFkY2JiIC0tdXVpZCBlODU2NzY5Mi0yZGZhLQ0KPiA+IDQ1
+OWEtYmUxNS1mNmU1ZGRjYzhmNDkNCj4gPiArcGFydCAtLXNvdXJjZSBlZmlib290Z3VhcmQtYm9v
+dCAtLXNpemUgMzJNIC0tZXh0cmEtc3BhY2UgMCAtLQ0KPiA+IG92ZXJoZWFkLWZhY3RvciAxIC0t
+bGFiZWwgQk9PVDEgLS1hbGlnbiAxMDI0IC0tcGFydC10eXBlPTA3MDAgLS0NCj4gPiBzb3VyY2Vw
+YXJhbXMgInJldmlzaW9uPTEiIC0tZnN1dWlkIDB4NDMyMWRjYmMgLS11dWlkIDk0YjIxNzRkLWM3
+OTItDQo+ID4gNGU4ZS04YTM0LWI1MDZlMjkyNzkzNw0KPiA+IGRpZmYgLS1naXQgYS93aWMvaGlo
+b3BlLXJ6ZzJtLWVmaWJvb3RndWFyZC53a3MuaW4gYi93aWMvaGlob3BlLQ0KPiA+IHJ6ZzJtLWVm
+aWJvb3RndWFyZC53a3MuaW4NCj4gPiBpbmRleCAyYWM4ODUwLi5hYTcwNGY1IDEwMDY0NA0KPiA+
+IC0tLSBhL3dpYy9oaWhvcGUtcnpnMm0tZWZpYm9vdGd1YXJkLndrcy5pbg0KPiA+ICsrKyBiL3dp
+Yy9oaWhvcGUtcnpnMm0tZWZpYm9vdGd1YXJkLndrcy5pbg0KPiA+IEBAIC04LDcgKzgsNyBAQCBw
+YXJ0IC0tc291cmNlIGVtcHR5IC0tYWxpZ24gMTAyNCAtLWZpeGVkLXNpemUgMUcgLS0NCj4gPiB1
+dWlkICIke0FCUk9PVEZTX1BBUlRfVVVJRF9CfQ0KPiA+IMKgDQo+ID4gwqAjIGhvbWUgYW5kIHZh
+ciBhcmUgZXh0cmEgcGFydGl0aW9ucw0KPiA+IMKgDQo+ID4gLXBhcnQgL2hvbWUgLS1zb3VyY2Ug
+cm9vdGZzIC0tcm9vdGZzLWRpcj0ke0lNQUdFX1JPT1RGU30vaG9tZSAtLQ0KPiA+IGZzdHlwZT1l
+eHQ0IC0tbGFiZWwgaG9tZSAtLWFsaWduIDEwMjTCoCAtLXNpemUgMUcgLS1leHRyYS1zcGFjZT0x
+MDBNDQo+ID4gLS1mc3V1aWQgMWY1NWQ2NmEtNDBkOC0xMWVlLWJlNTYtMDI0MmFjMTIwMDAyDQo+
+ID4gLXBhcnQgL3ZhciAtLXNvdXJjZSByb290ZnMgLS1yb290ZnMtZGlyPSR7SU1BR0VfUk9PVEZT
+fS92YXIgLS0NCj4gPiBmc3R5cGU9ZXh0NCAtLWxhYmVsIHZhciAtLWFsaWduIDEwMjTCoCAtLXNp
+emUgMkcgLS1leHRyYS1zcGFjZT0xMDBNDQo+ID4gLS1mc3V1aWQgOTZiZTMzNzQtNDI1OC0xMWVl
+LWJlNTYtMDI0MmFjMTIwMDAyDQo+ID4gK3BhcnQgL2hvbWUgLS1zb3VyY2Ugcm9vdGZzIC0tcm9v
+dGZzLWRpcj0ke0lNQUdFX1JPT1RGU30vaG9tZSAtLQ0KPiA+IGZzdHlwZT1leHQ0IC0tbGFiZWwg
+aG9tZSAtLWFsaWduIDEwMjTCoCAtLXNpemUgMUcgLS1leHRyYS1zcGFjZT0xMDBNDQo+ID4gLS1m
+c3V1aWQgMWY1NWQ2NmEtNDBkOC0xMWVlLWJlNTYtMDI0MmFjMTIwMDAyIC0tdXVpZCA0M2EyOWQx
+OS0wMDVmLQ0KPiA+IDQ5ZDktOTEwOC01MWFkMDg2MWQ3MjQNCj4gPiArcGFydCAvdmFyIC0tc291
+cmNlIHJvb3RmcyAtLXJvb3Rmcy1kaXI9JHtJTUFHRV9ST09URlN9L3ZhciAtLQ0KPiA+IGZzdHlw
+ZT1leHQ0IC0tbGFiZWwgdmFyIC0tYWxpZ24gMTAyNMKgIC0tc2l6ZSAyRyAtLWV4dHJhLXNwYWNl
+PTEwME0NCj4gPiAtLWZzdXVpZCA5NmJlMzM3NC00MjU4LTExZWUtYmU1Ni0wMjQyYWMxMjAwMDIg
+LS11dWlkIDdlMjBhN2Q1LTU1NzgtDQo+ID4gNGNlZC1hN2YxLTVlZTQ5NGRiYWY3Mg0KPiA+IMKg
+DQo+ID4gwqBib290bG9hZGVyIC0tcHRhYmxlIGdwdCAtLWFwcGVuZD0iY29uc29sZT10dHkwDQo+
+ID4gY29uc29sZT10dHlTQzAsMTE1MjAwIHJvb3R3YWl0IGVhcmx5cHJpbnRrIg0KPiA+IGRpZmYg
+LS1naXQgYS93aWMvaGlob3BlLXJ6ZzJtLndrcyBiL3dpYy9oaWhvcGUtcnpnMm0ud2tzDQo+ID4g
+aW5kZXggZmQzYTMzOC4uZjViODUwZCAxMDA2NDQNCj4gPiAtLS0gYS93aWMvaGlob3BlLXJ6ZzJt
+Lndrcw0KPiA+ICsrKyBiL3dpYy9oaWhvcGUtcnpnMm0ud2tzDQo+ID4gQEAgLTksNyArOSw3IEBA
+DQo+ID4gwqAjIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBNSVQNCj4gPiDCoCMNCj4gPiDCoA0K
+PiA+IC1wYXJ0IC9ib290IC0tc291cmNlIGJvb3RpbWctcGFydGl0aW9uIC0tb25kaXNrIG1tY2Js
+azAgLS1mc3R5cGUNCj4gPiB2ZmF0IC0tbGFiZWwgYm9vdCAtLWFsaWduIDEgLS1zaXplIDMyTSAt
+LWV4dHJhLXNwYWNlIDAgLS1mc3V1aWQNCj4gPiAweDQzMjFkY2JhDQo+ID4gK3BhcnQgL2Jvb3Qg
+LS1zb3VyY2UgYm9vdGltZy1wYXJ0aXRpb24gLS1vbmRpc2sgbW1jYmxrMCAtLWZzdHlwZQ0KPiA+
+IHZmYXQgLS1sYWJlbCBib290IC0tYWxpZ24gMSAtLXNpemUgMzJNIC0tZXh0cmEtc3BhY2UgMCAt
+LWZzdXVpZA0KPiA+IDB4NDMyMWRjYmEgLS11dWlkIGQxMjJkNjM5LTFkOTItNGI0MS1iZjdiLTRi
+MmJkZjhkZDg5OQ0KPiA+IMKgDQo+ID4gwqAjIFJvb3RmcyBwYXJ0aXRpb24NCj4gPiAtcGFydCAv
+IC0tc291cmNlIHJvb3RmcyAtLW9uZGlzayBtbWNibGswIC0tZnN0eXBlIGV4dDQgLS1sYWJlbCBy
+b290DQo+ID4gLS1hbGlnbiAxMDI0IC0tc2l6ZSAyRyAtLWFjdGl2ZSAtLWZzdXVpZCAxZjU1ZDY2
+YS00MGQ4LTExZWUtYmU1Ni0NCj4gPiAwMjQyYWMxMjAwMDINCj4gPiArcGFydCAvIC0tc291cmNl
+IHJvb3RmcyAtLW9uZGlzayBtbWNibGswIC0tZnN0eXBlIGV4dDQgLS1sYWJlbCByb290DQo+ID4g
+LS1hbGlnbiAxMDI0IC0tc2l6ZSAyRyAtLWFjdGl2ZSAtLWZzdXVpZCAxZjU1ZDY2YS00MGQ4LTEx
+ZWUtYmU1Ni0NCj4gPiAwMjQyYWMxMjAwMDIgLS11dWlkIGI4YmJiYTNmLTNiYTYtNGIyYi04ZDY5
+LTRhOTVmZDRmMzRlZA0KPiA+IGRpZmYgLS1naXQgYS93aWMvaXdnMjBtLndrcyBiL3dpYy9pd2cy
+MG0ud2tzDQo+ID4gaW5kZXggODU3NjVmMC4uMjFmYzQxOSAxMDA2NDQNCj4gPiAtLS0gYS93aWMv
+aXdnMjBtLndrcw0KPiA+ICsrKyBiL3dpYy9pd2cyMG0ud2tzDQo+ID4gQEAgLTEyLDcgKzEyLDcg
+QEANCj4gPiDCoCMgW05vdGVdIHUtYm9vdCBydW5zIGZyb20gYW4gU1BJIG1lbW9yeSBkZXZpY2UN
+Cj4gPiDCoA0KPiA+IMKgIyBTRENhcmQgQm9vdCBwYXJ0aXRpb24gKGNvcGllcyBmaWxlcyBpbiBJ
+TUFHRV9CT09UX0ZJTEVTOiB6SW1hZ2UNCj4gPiBhbmQgZGV2aWNlIHRyZWUpDQo+ID4gLXBhcnQg
+L2Jvb3QgLS1zb3VyY2UgYm9vdGltZy1wYXJ0aXRpb24gLS1vbmRpc2sgbW1jYmxrMCAtLWZzdHlw
+ZQ0KPiA+IHZmYXQgLS1sYWJlbCBib290IC0tYWxpZ24gMSAtLXNpemUgMzJNIC0tZXh0cmEtc3Bh
+Y2UgMCAtLWZzdXVpZA0KPiA+IDB4NDMyMWRjYmENCj4gPiArcGFydCAvYm9vdCAtLXNvdXJjZSBi
+b290aW1nLXBhcnRpdGlvbiAtLW9uZGlzayBtbWNibGswIC0tZnN0eXBlDQo+ID4gdmZhdCAtLWxh
+YmVsIGJvb3QgLS1hbGlnbiAxIC0tc2l6ZSAzMk0gLS1leHRyYS1zcGFjZSAwIC0tZnN1dWlkDQo+
+ID4gMHg0MzIxZGNiYSAtLXV1aWQgMjhhNTgzNDgtNTI3MC00NGQzLWJlYTQtYjFjNDkyYTgxYjdm
+DQo+ID4gwqANCj4gPiDCoCMgUm9vdGZzIHBhcnRpdGlvbg0KPiA+IC1wYXJ0IC8gLS1zb3VyY2Ug
+cm9vdGZzIC0tb25kaXNrIG1tY2JsazAgLS1mc3R5cGUgZXh0NCAtLWxhYmVsIHJvb3QNCj4gPiAt
+LWFsaWduIDEwMjQgLS1zaXplIDJHIC0tYWN0aXZlIC0tZnN1dWlkIDFmNTVkNjZhLTQwZDgtMTFl
+ZS1iZTU2LQ0KPiA+IDAyNDJhYzEyMDAwMg0KPiA+ICtwYXJ0IC8gLS1zb3VyY2Ugcm9vdGZzIC0t
+b25kaXNrIG1tY2JsazAgLS1mc3R5cGUgZXh0NCAtLWxhYmVsIHJvb3QNCj4gPiAtLWFsaWduIDEw
+MjQgLS1zaXplIDJHIC0tYWN0aXZlIC0tZnN1dWlkIDFmNTVkNjZhLTQwZDgtMTFlZS1iZTU2LQ0K
+PiA+IDAyNDJhYzEyMDAwMiAtLXV1aWQgZDBmYTgzNjEtN2RlYi00M2RmLWFjZWUtMTcyNWQ0MGQ0
+MDNlDQo+ID4gZGlmZiAtLWdpdCBhL3dpYy9xZW11LWFtZDY0LWVmaWJvb3RndWFyZC1zZWN1cmVi
+b290Lndrcy5pbg0KPiA+IGIvd2ljL3FlbXUtYW1kNjQtZWZpYm9vdGd1YXJkLXNlY3VyZWJvb3Qu
+d2tzLmluDQo+ID4gaW5kZXggMmU1Y2IzOS4uYjE2ZGEwYiAxMDA2NDQNCj4gPiAtLS0gYS93aWMv
+cWVtdS1hbWQ2NC1lZmlib290Z3VhcmQtc2VjdXJlYm9vdC53a3MuaW4NCj4gPiArKysgYi93aWMv
+cWVtdS1hbWQ2NC1lZmlib290Z3VhcmQtc2VjdXJlYm9vdC53a3MuaW4NCj4gPiBAQCAtNCw3ICs0
+LDcgQEAgcGFydCAtLXNvdXJjZSByYXdjb3B5IC0tc291cmNlcGFyYW1zDQo+ID4gImZpbGU9JHtJ
+TUFHRV9GVUxMTkFNRX0udmVyaXR5IiAtLWFsaWduIDEwMg0KPiA+IMKgcGFydCAtLXNvdXJjZSBl
+bXB0eSAtLWFsaWduIDEwMjQgLS1maXhlZC1zaXplIDFHIC0tdXVpZA0KPiA+ICIke0FCUk9PVEZT
+X1BBUlRfVVVJRF9CfSIgLS1wYXJ0LXR5cGUgMEZDNjNEQUYtODQ4My00NzcyLThFNzktDQo+ID4g
+M0Q2OUQ4NDc3REU0DQo+ID4gwqANCj4gPiDCoCMgaG9tZSBhbmQgdmFyIGFyZSBleHRyYSBwYXJ0
+aXRpb25zDQo+ID4gLXBhcnQgL2hvbWUgLS1zb3VyY2Ugcm9vdGZzIC0tcm9vdGZzLWRpcj0ke0lN
+QUdFX1JPT1RGU30vaG9tZSAtLQ0KPiA+IGZzdHlwZT1leHQ0IC0tbGFiZWwgaG9tZSAtLWFsaWdu
+IDEwMjQgLS1zaXplIDFHIC0tZnN1dWlkIDFmNTVkNjZhLQ0KPiA+IDQwZDgtMTFlZS1iZTU2LTAy
+NDJhYzEyMDAwMg0KPiA+IC1wYXJ0IC92YXLCoCAtLXNvdXJjZSByb290ZnMgLS1yb290ZnMtZGly
+PSR7SU1BR0VfUk9PVEZTfS92YXLCoCAtLQ0KPiA+IGZzdHlwZT1leHQ0IC0tbGFiZWwgdmFywqAg
+LS1hbGlnbiAxMDI0IC0tc2l6ZSAyRyAtLWZzdXVpZCA5NmJlMzM3NC0NCj4gPiA0MjU4LTExZWUt
+YmU1Ni0wMjQyYWMxMjAwMDINCj4gPiArcGFydCAvaG9tZSAtLXNvdXJjZSByb290ZnMgLS1yb290
+ZnMtZGlyPSR7SU1BR0VfUk9PVEZTfS9ob21lIC0tDQo+ID4gZnN0eXBlPWV4dDQgLS1sYWJlbCBo
+b21lIC0tYWxpZ24gMTAyNCAtLXNpemUgMUcgLS1mc3V1aWQgMWY1NWQ2NmEtDQo+ID4gNDBkOC0x
+MWVlLWJlNTYtMDI0MmFjMTIwMDAyIC0tdXVpZCA5NDU5MzEyMS02ZjVmLTRiMDQtOThkYi0NCj4g
+PiAzOWFhY2U2OTI2ODINCj4gPiArcGFydCAvdmFywqAgLS1zb3VyY2Ugcm9vdGZzIC0tcm9vdGZz
+LWRpcj0ke0lNQUdFX1JPT1RGU30vdmFywqAgLS0NCj4gPiBmc3R5cGU9ZXh0NCAtLWxhYmVsIHZh
+csKgIC0tYWxpZ24gMTAyNCAtLXNpemUgMkcgLS1mc3V1aWQgOTZiZTMzNzQtDQo+ID4gNDI1OC0x
+MWVlLWJlNTYtMDI0MmFjMTIwMDAyIC0tdXVpZCA2ODZhMmUwNi03Zjk2LTQ5NWItYmVhYy0NCj4g
+PiAxNzMxY2I5OGViMGUNCj4gPiDCoA0KPiA+IMKgYm9vdGxvYWRlciAtLXB0YWJsZSBncHQgLS1h
+cHBlbmQ9ImNvbnNvbGU9dHR5MA0KPiA+IGNvbnNvbGU9dHR5UzAsMTE1MjAwIHJvb3R3YWl0IGVh
+cmx5cHJpbnRrDQo+ID4gd2F0Y2hkb2cuaGFuZGxlX2Jvb3RfZW5hYmxlZD0wIGlUQ09fd2R0Lm5v
+d2F5b3V0PTEgcGFuaWM9NSINCj4gPiBkaWZmIC0tZ2l0IGEvd2ljL3FlbXUtYXJtNjQtZWZpYm9v
+dGd1YXJkLXNlY3VyZWJvb3Qud2tzLmluDQo+ID4gYi93aWMvcWVtdS1hcm02NC1lZmlib290Z3Vh
+cmQtc2VjdXJlYm9vdC53a3MuaW4NCj4gPiBpbmRleCAyZmMzODljLi4yMmUyM2I0IDEwMDY0NA0K
+PiA+IC0tLSBhL3dpYy9xZW11LWFybTY0LWVmaWJvb3RndWFyZC1zZWN1cmVib290Lndrcy5pbg0K
+PiA+ICsrKyBiL3dpYy9xZW11LWFybTY0LWVmaWJvb3RndWFyZC1zZWN1cmVib290Lndrcy5pbg0K
+PiA+IEBAIC00LDcgKzQsNyBAQCBwYXJ0IC0tc291cmNlIHJhd2NvcHkgLS1zb3VyY2VwYXJhbXMN
+Cj4gPiAiZmlsZT0ke0lNQUdFX0ZVTExOQU1FfS52ZXJpdHkiIC0tYWxpZ24gMTAyDQo+ID4gwqBw
+YXJ0IC0tc291cmNlIGVtcHR5IC0tYWxpZ24gMTAyNCAtLWZpeGVkLXNpemUgMUcgLS11dWlkDQo+
+ID4gIiR7QUJST09URlNfUEFSVF9VVUlEX0J9IiAtLXBhcnQtdHlwZSAwRkM2M0RBRi04NDgzLTQ3
+NzItOEU3OS0NCj4gPiAzRDY5RDg0NzdERTQNCj4gPiDCoA0KPiA+IMKgIyBob21lIGFuZCB2YXIg
+YXJlIGV4dHJhIHBhcnRpdGlvbnMNCj4gPiAtcGFydCAvaG9tZSAtLXNvdXJjZSByb290ZnMgLS1y
+b290ZnMtZGlyPSR7SU1BR0VfUk9PVEZTfS9ob21lIC0tDQo+ID4gZnN0eXBlPWV4dDQgLS1sYWJl
+bCBob21lIC0tYWxpZ24gMTAyNCAtLXNpemUgMUcgLS1mc3V1aWQgMWY1NWQ2NmEtDQo+ID4gNDBk
+OC0xMWVlLWJlNTYtMDI0MmFjMTIwMDAyDQo+ID4gLXBhcnQgL3ZhcsKgIC0tc291cmNlIHJvb3Rm
+cyAtLXJvb3Rmcy1kaXI9JHtJTUFHRV9ST09URlN9L3ZhcsKgIC0tDQo+ID4gZnN0eXBlPWV4dDQg
+LS1sYWJlbCB2YXLCoCAtLWFsaWduIDEwMjQgLS1zaXplIDJHIC0tZnN1dWlkIDk2YmUzMzc0LQ0K
+PiA+IDQyNTgtMTFlZS1iZTU2LTAyNDJhYzEyMDAwMg0KPiA+ICtwYXJ0IC9ob21lIC0tc291cmNl
+IHJvb3RmcyAtLXJvb3Rmcy1kaXI9JHtJTUFHRV9ST09URlN9L2hvbWUgLS0NCj4gPiBmc3R5cGU9
+ZXh0NCAtLWxhYmVsIGhvbWUgLS1hbGlnbiAxMDI0IC0tc2l6ZSAxRyAtLWZzdXVpZCAxZjU1ZDY2
+YS0NCj4gPiA0MGQ4LTExZWUtYmU1Ni0wMjQyYWMxMjAwMDIgLS11dWlkIGU4Njk0MTNkLWRjODQt
+NDgyMi1iNTBkLQ0KPiA+IDAwYzVhYWI3ZDZmYw0KPiA+ICtwYXJ0IC92YXLCoCAtLXNvdXJjZSBy
+b290ZnMgLS1yb290ZnMtZGlyPSR7SU1BR0VfUk9PVEZTfS92YXLCoCAtLQ0KPiA+IGZzdHlwZT1l
+eHQ0IC0tbGFiZWwgdmFywqAgLS1hbGlnbiAxMDI0IC0tc2l6ZSAyRyAtLWZzdXVpZCA5NmJlMzM3
+NC0NCj4gPiA0MjU4LTExZWUtYmU1Ni0wMjQyYWMxMjAwMDIgLS11dWlkIDgxNTQwNmRhLTM4N2Yt
+NGU4OS1hMGZiLQ0KPiA+IDZlNjE3NjA1YzhjMw0KPiA+IMKgDQo+ID4gwqBib290bG9hZGVyIC0t
+cHRhYmxlIGdwdCAtLWFwcGVuZD0icGFuaWM9NSINCj4gPiBkaWZmIC0tZ2l0IGEvd2ljL3FlbXUt
+YXJtNjQtZWZpYm9vdGd1YXJkLndrcy5pbiBiL3dpYy9xZW11LWFybTY0LQ0KPiA+IGVmaWJvb3Rn
+dWFyZC53a3MuaW4NCj4gPiBpbmRleCAxZjUwYmEzLi43ZmU2OGQ5IDEwMDY0NA0KPiA+IC0tLSBh
+L3dpYy9xZW11LWFybTY0LWVmaWJvb3RndWFyZC53a3MuaW4NCj4gPiArKysgYi93aWMvcWVtdS1h
+cm02NC1lZmlib290Z3VhcmQud2tzLmluDQo+ID4gQEAgLTcsNyArNyw3IEBAIHBhcnQgLS1zb3Vy
+Y2UgcmF3Y29weSAtLXNvdXJjZXBhcmFtcw0KPiA+ICJmaWxlPSR7SU1BR0VfRlVMTE5BTUV9LnNx
+dWFzaGZzIiAtLWFsaWduIDENCj4gPiDCoHBhcnQgLS1zb3VyY2UgZW1wdHkgLS1hbGlnbiAxMDI0
+IC0tZml4ZWQtc2l6ZSAxRyAtLXV1aWQNCj4gPiAiJHtBQlJPT1RGU19QQVJUX1VVSURfQn0iIC0t
+cGFydC10eXBlIDBGQzYzREFGLTg0ODMtNDc3Mi04RTc5LQ0KPiA+IDNENjlEODQ3N0RFNA0KPiA+
+IMKgDQo+ID4gwqAjIGhvbWUgYW5kIHZhciBhcmUgZXh0cmEgcGFydGl0aW9ucw0KPiA+IC1wYXJ0
+IC9ob21lIC0tc291cmNlIHJvb3RmcyAtLXJvb3Rmcy1kaXI9JHtJTUFHRV9ST09URlN9L2hvbWUg
+LS0NCj4gPiBmc3R5cGU9ZXh0NCAtLWxhYmVsIGhvbWUgLS1hbGlnbiAxMDI0wqAgLS1zaXplIDFH
+IC0tZnN1dWlkIDFmNTVkNjZhLQ0KPiA+IDQwZDgtMTFlZS1iZTU2LTAyNDJhYzEyMDAwMg0KPiA+
+IC1wYXJ0IC92YXIgLS1zb3VyY2Ugcm9vdGZzIC0tcm9vdGZzLWRpcj0ke0lNQUdFX1JPT1RGU30v
+dmFyIC0tDQo+ID4gZnN0eXBlPWV4dDQgLS1sYWJlbCB2YXIgLS1hbGlnbiAxMDI0wqAgLS1zaXpl
+IDJHIC0tZnN1dWlkIDk2YmUzMzc0LQ0KPiA+IDQyNTgtMTFlZS1iZTU2LTAyNDJhYzEyMDAwMg0K
+PiA+ICtwYXJ0IC9ob21lIC0tc291cmNlIHJvb3RmcyAtLXJvb3Rmcy1kaXI9JHtJTUFHRV9ST09U
+RlN9L2hvbWUgLS0NCj4gPiBmc3R5cGU9ZXh0NCAtLWxhYmVsIGhvbWUgLS1hbGlnbiAxMDI0wqAg
+LS1zaXplIDFHIC0tZnN1dWlkIDFmNTVkNjZhLQ0KPiA+IDQwZDgtMTFlZS1iZTU2LTAyNDJhYzEy
+MDAwMiAtLXV1aWQgNzM0NmZhYTctZDZkNC00OWZhLWEwM2UtDQo+ID4gODJlZTQ2OWNiMWU1DQo+
+ID4gK3BhcnQgL3ZhciAtLXNvdXJjZSByb290ZnMgLS1yb290ZnMtZGlyPSR7SU1BR0VfUk9PVEZT
+fS92YXIgLS0NCj4gPiBmc3R5cGU9ZXh0NCAtLWxhYmVsIHZhciAtLWFsaWduIDEwMjTCoCAtLXNp
+emUgMkcgLS1mc3V1aWQgOTZiZTMzNzQtDQo+ID4gNDI1OC0xMWVlLWJlNTYtMDI0MmFjMTIwMDAy
+IC0tdXVpZCA0MjNmMGEyZS1iOWIzLTQ2MTUtODViZS0NCj4gPiAyYTQyNjFmYTMyZDkNCj4gPiDC
+oA0KPiA+IMKgYm9vdGxvYWRlciAtLXB0YWJsZSBncHQNCj4gPiBkaWZmIC0tZ2l0IGEvd2ljL3Fl
+bXUtcmlzY3Y2NC1lZmlib290Z3VhcmQud2tzLmluIGIvd2ljL3FlbXUtDQo+ID4gcmlzY3Y2NC1l
+Zmlib290Z3VhcmQud2tzLmluDQo+ID4gaW5kZXggOTE1OGFhNC4uMTljYTFlMCAxMDA2NDQNCj4g
+PiAtLS0gYS93aWMvcWVtdS1yaXNjdjY0LWVmaWJvb3RndWFyZC53a3MuaW4NCj4gPiArKysgYi93
+aWMvcWVtdS1yaXNjdjY0LWVmaWJvb3RndWFyZC53a3MuaW4NCj4gPiBAQCAtNyw3ICs3LDcgQEAg
+cGFydCAtLXNvdXJjZSByYXdjb3B5IC0tc291cmNlcGFyYW1zDQo+ID4gImZpbGU9JHtJTUFHRV9G
+VUxMTkFNRX0uc3F1YXNoZnMiIC0tYWxpZ24gMQ0KPiA+IMKgcGFydCAtLXNvdXJjZSBlbXB0eSAt
+LWFsaWduIDEwMjQgLS1maXhlZC1zaXplIDFHIC0tdXVpZA0KPiA+ICIke0FCUk9PVEZTX1BBUlRf
+VVVJRF9CfSIgLS1wYXJ0LXR5cGUgMEZDNjNEQUYtODQ4My00NzcyLThFNzktDQo+ID4gM0Q2OUQ4
+NDc3REU0DQo+ID4gwqANCj4gPiDCoCMgaG9tZSBhbmQgdmFyIGFyZSBleHRyYSBwYXJ0aXRpb25z
+DQo+ID4gLXBhcnQgL2hvbWUgLS1zb3VyY2Ugcm9vdGZzIC0tcm9vdGZzLWRpcj0ke0lNQUdFX1JP
+T1RGU30vaG9tZSAtLQ0KPiA+IGZzdHlwZT1leHQ0IC0tbGFiZWwgaG9tZSAtLWFsaWduIDEwMjTC
+oCAtLXNpemUgMUcgLS1mc3V1aWQgMWY1NWQ2NmEtDQo+ID4gNDBkOC0xMWVlLWJlNTYtMDI0MmFj
+MTIwMDAyDQo+ID4gLXBhcnQgL3ZhciAtLXNvdXJjZSByb290ZnMgLS1yb290ZnMtZGlyPSR7SU1B
+R0VfUk9PVEZTfS92YXIgLS0NCj4gPiBmc3R5cGU9ZXh0NCAtLWxhYmVsIHZhciAtLWFsaWduIDEw
+MjTCoCAtLXNpemUgMkcgLS1mc3V1aWQgOTZiZTMzNzQtDQo+ID4gNDI1OC0xMWVlLWJlNTYtMDI0
+MmFjMTIwMDAyDQo+ID4gK3BhcnQgL2hvbWUgLS1zb3VyY2Ugcm9vdGZzIC0tcm9vdGZzLWRpcj0k
+e0lNQUdFX1JPT1RGU30vaG9tZSAtLQ0KPiA+IGZzdHlwZT1leHQ0IC0tbGFiZWwgaG9tZSAtLWFs
+aWduIDEwMjTCoCAtLXNpemUgMUcgLS1mc3V1aWQgMWY1NWQ2NmEtDQo+ID4gNDBkOC0xMWVlLWJl
+NTYtMDI0MmFjMTIwMDAyIC0tdXVpZCBlNTc4MjU0Yy1iZDk5LTQ0NDItYmM1MS0NCj4gPiA0OTM1
+Y2QwZWY1MjINCj4gPiArcGFydCAvdmFyIC0tc291cmNlIHJvb3RmcyAtLXJvb3Rmcy1kaXI9JHtJ
+TUFHRV9ST09URlN9L3ZhciAtLQ0KPiA+IGZzdHlwZT1leHQ0IC0tbGFiZWwgdmFyIC0tYWxpZ24g
+MTAyNMKgIC0tc2l6ZSAyRyAtLWZzdXVpZCA5NmJlMzM3NC0NCj4gPiA0MjU4LTExZWUtYmU1Ni0w
+MjQyYWMxMjAwMDIgLS11dWlkIDAyMDk2ODlkLTY3MmYtNDI1NC04YjkyLQ0KPiA+IDU2NmQ2ZDlm
+ZDFhZQ0KPiA+IMKgDQo+ID4gwqBib290bG9hZGVyIC0tcHRhYmxlIGdwdA0KPiA+IGRpZmYgLS1n
+aXQgYS93aWMveDg2LWVmaWJvb3RndWFyZC53a3MuaW4gYi93aWMveDg2LQ0KPiA+IGVmaWJvb3Rn
+dWFyZC53a3MuaW4NCj4gPiBpbmRleCA5OGU4ZGE1Li40M2JiNzgyIDEwMDY0NA0KPiA+IC0tLSBh
+L3dpYy94ODYtZWZpYm9vdGd1YXJkLndrcy5pbg0KPiA+ICsrKyBiL3dpYy94ODYtZWZpYm9vdGd1
+YXJkLndrcy5pbg0KPiA+IEBAIC04LDcgKzgsNyBAQCBwYXJ0IC0tc291cmNlIGVtcHR5IC0tYWxp
+Z24gMTAyNCAtLWZpeGVkLXNpemUgMUcgLS0NCj4gPiB1dWlkICIke0FCUk9PVEZTX1BBUlRfVVVJ
+RF9CfQ0KPiA+IMKgDQo+ID4gwqAjIGhvbWUgYW5kIHZhciBhcmUgZXh0cmEgcGFydGl0aW9ucw0K
+PiA+IMKgDQo+ID4gLXBhcnQgL2hvbWUgLS1zb3VyY2Ugcm9vdGZzIC0tcm9vdGZzLWRpcj0ke0lN
+QUdFX1JPT1RGU30vaG9tZSAtLQ0KPiA+IGZzdHlwZT1leHQ0IC0tbGFiZWwgaG9tZSAtLWFsaWdu
+IDEwMjTCoCAtLXNpemUgMUcgLS1leHRyYS1zcGFjZT0xMDBNDQo+ID4gLS1mc3V1aWQgMWY1NWQ2
+NmEtNDBkOC0xMWVlLWJlNTYtMDI0MmFjMTIwMDAyDQo+ID4gLXBhcnQgL3ZhciAtLXNvdXJjZSBy
+b290ZnMgLS1yb290ZnMtZGlyPSR7SU1BR0VfUk9PVEZTfS92YXIgLS0NCj4gPiBmc3R5cGU9ZXh0
+NCAtLWxhYmVsIHZhciAtLWFsaWduIDEwMjTCoCAtLXNpemUgMkcgLS1leHRyYS1zcGFjZT0xMDBN
+DQo+ID4gLS1mc3V1aWQgOTZiZTMzNzQtNDI1OC0xMWVlLWJlNTYtMDI0MmFjMTIwMDAyDQo+ID4g
+K3BhcnQgL2hvbWUgLS1zb3VyY2Ugcm9vdGZzIC0tcm9vdGZzLWRpcj0ke0lNQUdFX1JPT1RGU30v
+aG9tZSAtLQ0KPiA+IGZzdHlwZT1leHQ0IC0tbGFiZWwgaG9tZSAtLWFsaWduIDEwMjTCoCAtLXNp
+emUgMUcgLS1leHRyYS1zcGFjZT0xMDBNDQo+ID4gLS1mc3V1aWQgMWY1NWQ2NmEtNDBkOC0xMWVl
+LWJlNTYtMDI0MmFjMTIwMDAyIC0tdXVpZCBmMTJmYWE3Yy1hOWVmLQ0KPiA+IDRiM2YtYjYzZC0x
+Yzc0YmQ1YzJiMWMNCj4gPiArcGFydCAvdmFyIC0tc291cmNlIHJvb3RmcyAtLXJvb3Rmcy1kaXI9
+JHtJTUFHRV9ST09URlN9L3ZhciAtLQ0KPiA+IGZzdHlwZT1leHQ0IC0tbGFiZWwgdmFyIC0tYWxp
+Z24gMTAyNMKgIC0tc2l6ZSAyRyAtLWV4dHJhLXNwYWNlPTEwME0NCj4gPiAtLWZzdXVpZCA5NmJl
+MzM3NC00MjU4LTExZWUtYmU1Ni0wMjQyYWMxMjAwMDIgLS11dWlkIGJlNWFlNWUwLTkxZDMtDQo+
+ID4gNDZlYy1hN2Y3LWMxZWJmYzBhN2MyOA0KPiA+IMKgDQo+ID4gwqBib290bG9hZGVyIC0tcHRh
+YmxlIGdwdCAtLWFwcGVuZD0iY29uc29sZT10dHkwDQo+ID4gY29uc29sZT10dHlTMCwxMTUyMDAg
+cm9vdHdhaXQgZWFybHlwcmludGsNCj4gPiB3YXRjaGRvZy5oYW5kbGVfYm9vdF9lbmFibGVkPTAg
+aVRDT193ZHQubm93YXlvdXQ9MSAiDQo+ID4gZGlmZiAtLWdpdCBhL3dpYy94ODZfNjQtZ2VuZXJp
+Yy53a3MgYi93aWMveDg2XzY0LWdlbmVyaWMud2tzDQo+ID4gaW5kZXggMWE0NGUyNi4uYTJiOWMy
+MSAxMDA2NDQNCj4gPiAtLS0gYS93aWMveDg2XzY0LWdlbmVyaWMud2tzDQo+ID4gKysrIGIvd2lj
+L3g4Nl82NC1nZW5lcmljLndrcw0KPiA+IEBAIC02LDggKzYsOCBAQA0KPiA+IMKgIyBTUERYLUxp
+Y2Vuc2UtSWRlbnRpZmllcjogTUlUDQo+ID4gwqAjDQo+ID4gwqANCj4gPiAtcGFydCAvYm9vdCAt
+LXNvdXJjZSBib290aW1nLWVmaS1pc2FyIC0tc291cmNlcGFyYW1zICJsb2FkZXI9Z3J1Yi0NCj4g
+PiBlZmkiIC0tbGFiZWwgZWZpIC0tcGFydC10eXBlIEVGMDAgLS1hbGlnbiAxMDI0IC0tZnN1dWlk
+IDB4NDMyMWRjYmENCj4gPiArcGFydCAvYm9vdCAtLXNvdXJjZSBib290aW1nLWVmaS1pc2FyIC0t
+c291cmNlcGFyYW1zICJsb2FkZXI9Z3J1Yi0NCj4gPiBlZmkiIC0tbGFiZWwgZWZpIC0tcGFydC10
+eXBlIEVGMDAgLS1hbGlnbiAxMDI0IC0tZnN1dWlkIDB4NDMyMWRjYmENCj4gPiAtLXV1aWQgY2Yx
+NDI5NDUtNmZhMS00OTQ1LWIwZjItYjhkNjIyNjI5OGMwDQo+ID4gwqANCj4gPiAtcGFydCAvIC0t
+c291cmNlIHJvb3RmcyAtLWZzdHlwZSBleHQ0IC0tbWtmcy1leHRyYW9wdHMgIi1UIGRlZmF1bHQi
+DQo+ID4gLS1sYWJlbCBwbGF0Zm9ybSAtLWFsaWduIDEwMjQgLS1mc3V1aWQgMWY1NWQ2NmEtNDBk
+OC0xMWVlLWJlNTYtDQo+ID4gMDI0MmFjMTIwMDAyDQo+ID4gK3BhcnQgLyAtLXNvdXJjZSByb290
+ZnMgLS1mc3R5cGUgZXh0NCAtLW1rZnMtZXh0cmFvcHRzICItVCBkZWZhdWx0Ig0KPiA+IC0tbGFi
+ZWwgcGxhdGZvcm0gLS1hbGlnbiAxMDI0IC0tZnN1dWlkIDFmNTVkNjZhLTQwZDgtMTFlZS1iZTU2
+LQ0KPiA+IDAyNDJhYzEyMDAwMiAtLXV1aWQgZjIyNTMzMWItMmQ5Yy00NWEyLWJjZmUtNGE2ZTg2
+Mjg3ZGZiDQo+ID4gwqANCj4gPiDCoGJvb3Rsb2FkZXIgLS1wdGFibGUgZ3B0IC0tdGltZW91dCAy
+IC0tYXBwZW5kDQo+ID4gImNvbnNvbGU9dHR5UzAsMTE1MjAwIg0KPiANCg0KLS0gDQpTaWVtZW5z
+IEFHLCBUZWNobm9sb2d5DQpMaW51eCBFeHBlcnQgQ2VudGVyDQoNCg0K
 
