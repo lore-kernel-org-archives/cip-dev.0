@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3809EC47DDF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5074CC48285
 	for <webhook@archiver.kernel.org>; Tue, 30 Jan 2024 20:34:38 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web10.7270.1706646868602559981
  for <cip-dev@lists.cip-project.org>;
- Tue, 30 Jan 2024 12:34:37 -0800
+ Tue, 30 Jan 2024 12:34:33 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.05,230,1701097200"; 
-   d="scan'208";a="192272240"
+   d="scan'208";a="192272235"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 31 Jan 2024 05:34:37 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 31 Jan 2024 05:34:33 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.7])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id C455A40A3D21;
-	Wed, 31 Jan 2024 05:34:35 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id B13B640A3D3B;
+	Wed, 31 Jan 2024 05:34:30 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [RFC PATCH 5.10.y-cip 23/39] soc: renesas: Identify RZ/Five SoC
-Date: Tue, 30 Jan 2024 20:33:30 +0000
-Message-Id: <20240130203346.94488-24-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RFC PATCH 5.10.y-cip 21/39] dt-bindings: clock: r9a07g043-cpg: Add Renesas RZ/Five CPG Clock and Reset Definitions
+Date: Tue, 30 Jan 2024 20:33:28 +0000
+Message-Id: <20240130203346.94488-22-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240130203346.94488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20240130203346.94488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -34,83 +34,60 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 30 Jan 2024 20:34:38 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14535
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14533
 
-commit ebd0e06f3063cc2e3a689112904b29720579c6d2 upstream.
+commit 668d361c9d893be3cbd4f3650e1934a62b204def upstream.
 
-Add support for identifying the (R9A07G043) RZ/Five SoC.
+Renesas RZ/Five SoC has almost the same clock structure compared to the
+Renesas RZ/G2UL SoC, re-use the r9a07g043-cpg.h header file and just
+amend the RZ/Five CPG clock and reset definitions.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20220722141506.20171-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Link: https://lore.kernel.org/r/20220622181723.13033-2-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[PL: manually applied changes for Kconfig]
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/soc/renesas/Kconfig       | 10 ++++++++++
- drivers/soc/renesas/renesas-soc.c | 13 +++++++++++++
- 2 files changed, 23 insertions(+)
+ include/dt-bindings/clock/r9a07g043-cpg.h | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index dcc0d2ae1b2c1..69f123f1b5f95 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -315,6 +315,16 @@ endif # ARM64
- config PWC_RZV2M
- 	bool "Renesas RZ/V2M PWC support" if COMPILE_TEST
+diff --git a/include/dt-bindings/clock/r9a07g043-cpg.h b/include/dt-bindings/clock/r9a07g043-cpg.h
+index 27e2327330967..77cde8effdc73 100644
+--- a/include/dt-bindings/clock/r9a07g043-cpg.h
++++ b/include/dt-bindings/clock/r9a07g043-cpg.h
+@@ -108,6 +108,15 @@
+ #define R9A07G043_ADC_ADCLK		76
+ #define R9A07G043_ADC_PCLK		77
+ #define R9A07G043_TSU_PCLK		78
++#define R9A07G043_NCEPLDM_DM_CLK	79	/* RZ/Five Only */
++#define R9A07G043_NCEPLDM_ACLK		80	/* RZ/Five Only */
++#define R9A07G043_NCEPLDM_TCK		81	/* RZ/Five Only */
++#define R9A07G043_NCEPLMT_ACLK		82	/* RZ/Five Only */
++#define R9A07G043_NCEPLIC_ACLK		83	/* RZ/Five Only */
++#define R9A07G043_AX45MP_CORE0_CLK	84	/* RZ/Five Only */
++#define R9A07G043_AX45MP_ACLK		85	/* RZ/Five Only */
++#define R9A07G043_IAX45_CLK		86	/* RZ/Five Only */
++#define R9A07G043_IAX45_PCLK		87	/* RZ/Five Only */
  
-+if RISCV
+ /* R9A07G043 Resets */
+ #define R9A07G043_CA55_RST_1_0		0	/* RZ/G2UL Only */
+@@ -180,5 +189,16 @@
+ #define R9A07G043_ADC_PRESETN		67
+ #define R9A07G043_ADC_ADRST_N		68
+ #define R9A07G043_TSU_PRESETN		69
++#define R9A07G043_NCEPLDM_DTM_PWR_RST_N	70	/* RZ/Five Only */
++#define R9A07G043_NCEPLDM_ARESETN	71	/* RZ/Five Only */
++#define R9A07G043_NCEPLMT_POR_RSTN	72	/* RZ/Five Only */
++#define R9A07G043_NCEPLMT_ARESETN	73	/* RZ/Five Only */
++#define R9A07G043_NCEPLIC_ARESETN	74	/* RZ/Five Only */
++#define R9A07G043_AX45MP_ARESETNM	75	/* RZ/Five Only */
++#define R9A07G043_AX45MP_ARESETNS	76	/* RZ/Five Only */
++#define R9A07G043_AX45MP_L2_RESETN	77	/* RZ/Five Only */
++#define R9A07G043_AX45MP_CORE0_RESETN	78	/* RZ/Five Only */
++#define R9A07G043_IAX45_RESETN		79	/* RZ/Five Only */
 +
-+config ARCH_R9A07G043
-+	bool "RISC-V Platform support for RZ/Five"
-+	select ARCH_RZG2L
-+	help
-+	  This enables support for the Renesas RZ/Five SoC.
-+
-+endif # RISCV
-+
- config RST_RCAR
- 	bool "Reset Controller support for R-Car" if COMPILE_TEST
  
-diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
-index aa5e1b9c4da89..92584f5ab9678 100644
---- a/drivers/soc/renesas/renesas-soc.c
-+++ b/drivers/soc/renesas/renesas-soc.c
-@@ -46,6 +46,10 @@ static const struct renesas_family fam_rza2 __initconst __maybe_unused = {
- 	.name	= "RZ/A2",
- };
- 
-+static const struct renesas_family fam_rzfive __initconst __maybe_unused = {
-+	.name	= "RZ/Five",
-+};
-+
- static const struct renesas_family fam_rzg1 __initconst __maybe_unused = {
- 	.name	= "RZ/G1",
- 	.reg	= 0xff000044,		/* PRR (Product Register) */
-@@ -102,6 +106,11 @@ static const struct renesas_soc soc_rmobile_a1 __initconst __maybe_unused = {
- 	.id	= 0x40,
- };
- 
-+static const struct renesas_soc soc_rz_five __initconst __maybe_unused = {
-+	.family = &fam_rzfive,
-+	.id     = 0x847c447,
-+};
-+
- static const struct renesas_soc soc_rz_g1h __initconst __maybe_unused = {
- 	.family	= &fam_rzg1,
- 	.id	= 0x45,
-@@ -335,8 +344,12 @@ static const struct of_device_id renesas_socs[] __initconst = {
- 	{ .compatible = "renesas,r8a779a0",	.data = &soc_rcar_v3u },
- #endif
- #if defined(CONFIG_ARCH_R9A07G043)
-+#ifdef CONFIG_RISCV
-+	{ .compatible = "renesas,r9a07g043",	.data = &soc_rz_five },
-+#else
- 	{ .compatible = "renesas,r9a07g043",	.data = &soc_rz_g2ul },
- #endif
-+#endif
- #if defined(CONFIG_ARCH_R9A07G044)
- 	{ .compatible = "renesas,r9a07g044",	.data = &soc_rz_g2l },
- #endif
+ #endif /* __DT_BINDINGS_CLOCK_R9A07G043_CPG_H__ */
 -- 
 2.34.1
 
