@@ -2,75 +2,60 @@ Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA585C47DB3
-	for <webhook@archiver.kernel.org>; Wed, 31 Jan 2024 11:01:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7DA6C47258
+	for <webhook@archiver.kernel.org>; Wed, 31 Jan 2024 11:12:46 +0000 (UTC)
 Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web10.11498.1706698906099432783
+ by mx.groups.io with SMTP id smtpd.web11.11569.1706699557873062878
  for <cip-dev@lists.cip-project.org>;
- Wed, 31 Jan 2024 03:01:46 -0800
+ Wed, 31 Jan 2024 03:12:38 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id AF01A1C0079; Wed, 31 Jan 2024 12:01:43 +0100 (CET)
-Date: Wed, 31 Jan 2024 12:01:43 +0100
+	id 84EEC1C007F; Wed, 31 Jan 2024 12:12:35 +0100 (CET)
+Date: Wed, 31 Jan 2024 12:12:35 +0100
 From: Pavel Machek <pavel@denx.de>
-To: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc: Pavel Machek <pavel@denx.de>,
-	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Biju Das <biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH 5.10.y-cip 0/9] Update SSI interrupts for RZ/G2L family
- and Split out RZ/G2UL DTS/I
-Message-ID: <Zbool5lQpvLbXPhh@duo.ucw.cz>
-References: <20240130161555.85042-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <ZboZqpdu5x6aEohp@duo.ucw.cz>
- <OSZPR01MB70192961567BB010EF309A57AA7C2@OSZPR01MB7019.jpnprd01.prod.outlook.com>
+To: Kazuhiro Hayashi <kazuhiro3.hayashi@toshiba.co.jp>
+Cc: cip-dev@lists.cip-project.org, nobuhiro1.iwamatsu@toshiba.co.jp,
+	pavel@denx.de, biju.das.jz@bp.renesas.com, yuki.saito@toshiba.co.jp
+Subject: Re: [PATCH 0/1] clk: Fix for restructuring for no reparent case
+Message-ID: <ZborIz5UgFSvjKRf@duo.ucw.cz>
+References: <20240131135604.1488157-1-kazuhiro3.hayashi@toshiba.co.jp>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qOgjsLdlvgIw304a"
+	protocol="application/pgp-signature"; boundary="G0iNx14kQp+oHTvQ"
 Content-Disposition: inline
-In-Reply-To: <OSZPR01MB70192961567BB010EF309A57AA7C2@OSZPR01MB7019.jpnprd01.prod.outlook.com>
+In-Reply-To: <20240131135604.1488157-1-kazuhiro3.hayashi@toshiba.co.jp>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 31 Jan 2024 11:01:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14555
+ <cip-dev@lists.cip-project.org>; Wed, 31 Jan 2024 11:12:46 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14556
 
 
---qOgjsLdlvgIw304a
+--G0iNx14kQp+oHTvQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> > > This patch series does the below,
-> > > - Updates SSI interrupts for RZ/G2L family
-> > > - Splits up RZ/G2UL DTS/I for re-using for RZ/Five SoC
-> > >
-> > > Note, patch #5 has been newly added and rest of the patches have been
-> > > cherry-picked from upstream kernel.
-> >=20
-> > I'll take more detailed look but just to be sure: do you plan to backpo=
-rt RISC-V changes to 5.10? If
-> > so, do you have some kind of WIP series, just to get an idea how big ch=
-anges that means?
-> >=20
-> I've already posted out an RFC series [0] adding support for RZ/Five RISC=
--V SoC to 5.10-cip.
+> With v6.1.72-cip13 + Zynq UltraScale+ MPSoC ZCU102, we observed that
+> Ethernet does not work when it's speed is 100Mbps.
+> This issue happens after d94c14f6fa34f2b8b33e5957f5b8dfb5aaf56b1e is
+> backported to the clk framework, which is not a part of linux-6.1.y
+> and probably is one of the dependencies of versa3 clk generator support
+> for Renesas SoCs. See the patch series "Add versa3 clk generator support".
 >=20
-> [0] https://patchwork.kernel.org/project/cip-dev/cover/20240130203346.944=
-88-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+> In mainline, a fix for the backport commit above is provided:
+> be8fa5fd0a48fd2decc4de81ffe72bb3ceacecd9.
+> This should be applied to linux-6.1.y-cip as well.
+> With v6.1.72-cip13 + this patch, we confirmed the ZCU102 Ethernet
+> works at 100Mbps.
 
-Yep, sorry, I seen it shortly after sending the email, sorry for
-confusion.
+Thanks a lot for investigation and sorry for the trouble.
 
-I went through the series. I'm okay with taking 1-4 (provided they
-pass testing and there are no other comments).
-
-I'd propose taking 5-9 after we decide to take the [0]. I'll take a
-short look at the series, but ultimately I believe we should talk
-about 5.10 RISC-V at the IRC meeting.
+The fix is simple enough, I am currently running tests, and can take
+it if they pass and there are no other comments.
 
 Best regards,
 								Pavel
@@ -78,15 +63,15 @@ Best regards,
 DENX Software Engineering GmbH,        Managing Director: Erika Unter
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---qOgjsLdlvgIw304a
+--G0iNx14kQp+oHTvQ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZboolwAKCRAw5/Bqldv6
-8mpKAJ4s0yPE3nI0WlNOQfAayuYW7nZv8ACfYiU7N1MdsUvZU9fVZOhcd+NQ9co=
-=mN4J
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZborIwAKCRAw5/Bqldv6
+8r6bAKCPJFva7FV83ovSOXkMbp4shIiGVQCfWRHRtA2DgCZdE49DSshlHQ0VTmo=
+=1NxB
 -----END PGP SIGNATURE-----
 
---qOgjsLdlvgIw304a--
+--G0iNx14kQp+oHTvQ--
 
