@@ -1,354 +1,172 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8117CC47258
-	for <webhook@archiver.kernel.org>; Wed, 31 Jan 2024 23:19:07 +0000 (UTC)
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
- by mx.groups.io with SMTP id smtpd.web11.2659.1706743137280018302
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2C19C47258
+	for <webhook@archiver.kernel.org>; Thu,  1 Feb 2024 02:56:18 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.131])
+ by mx.groups.io with SMTP id smtpd.web10.7107.1706756175382167011
  for <cip-dev@lists.cip-project.org>;
- Wed, 31 Jan 2024 15:18:57 -0800
+ Wed, 31 Jan 2024 18:56:16 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=mfsux9lb;
- spf=pass (domain: miraclelinux.com, ip: 209.85.167.173, mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3becd4658e1so188093b6e.1
-        for <cip-dev@lists.cip-project.org>; Wed, 31 Jan 2024 15:18:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1706743136; x=1707347936; darn=lists.cip-project.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iENW8fn2WADtvhZoZTAst122oc8YoYT7puanBt0usI8=;
-        b=mfsux9lbeqAxEBa7dMhzOl/nGkJkywbkj12OuRFNdmeCM2kKMyC3BvWHB/YluCPuhS
-         XKy9FXC5BWmRdHBnitfilpZjpOjm2PZT20euXVEJC7u3XMQS8VSp+y8p4uaBBgIM+C0o
-         5XzIc/dt7WE1zqGnUZaynvb2Gp6K4cCCmP+hmoMstV/TolP/5OYDLvbTPL0D2bGt4mkj
-         FeW48EtGOBKRhZBUEZ8shrBVbd3TtvJrYZnW3Q0GdfjXlDs23ccuqQyhPO5VvMov8QXX
-         HM4UZ0c16kwaKxY5WwRJqy49YXy5DXPpVHFSyzvH2vkRhJ0YBnsJ9x2F7WkZDBqXigwZ
-         Nikg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706743136; x=1707347936;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iENW8fn2WADtvhZoZTAst122oc8YoYT7puanBt0usI8=;
-        b=Nz4KAje9vcqDusZjuZ8Qck9WqOyctcTV7gt/ix9hAlF/JECRSkhud6b9LjCrC22wvY
-         xPaigjCn1E9jHdPhxVqU1vfTykuIOrxkozxjdCyMsehw8FFCPEtHTHU/p0y69+BNYohO
-         PMOEyanxd7Cco2Rr7FQIWhFgjObqOL4U+QKQTcTrEM+SnuWHTlisKE0sjSlWPY5Z55tG
-         5DXW0fGUi3Og9kUBZVpWj5N4x/+Y52+pMl8BsBpEkh68it5sgULq4yFG2zfQjSJDRqIo
-         X/ShBxvButawEoP7B8lyDhsn6VRzO3Tq3Eau15T8aA2ewIPsEz+gg5Mw+fU2fdLmAieV
-         JTXw==
-X-Gm-Message-State: AOJu0Yz+NHa+vg5etNQVCllbrymfoOAAocLdWIOYgLq1e445t1huOPlI
-	OxC3jzqH3DeXezAI2nB4SJIhyZKqOK9tuvvw7hPgYuVBg/c4uqtNqtcblUXgWcFV8Kr4WftP168
-	0Kdxe8RrZb5ea/4FsLx89joF45Dpl57eG/u28xtUDGrN2vjl44eI=
-X-Google-Smtp-Source: AGHT+IGEPOu6OsB+VxdfR3K2NW6lceGsX/GJKg83JEn/6WbdLJ4g5CbR81q9HSxz1UOaUU3IMZtI+JXNPsAe7uahAPY=
-X-Received: by 2002:a05:6870:9111:b0:218:d17c:3435 with SMTP id
- o17-20020a056870911100b00218d17c3435mr2711309oae.44.1706743135937; Wed, 31
- Jan 2024 15:18:55 -0800 (PST)
+ dkim=none (message not signed); spf=pass (domain: toshiba.co.jp, ip: 210.130.202.131, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
+Received: by mo-csw.securemx.jp (mx-mo-csw1120) id 4112u40F1689144; Thu, 1 Feb 2024 11:56:04 +0900
+X-Iguazu-Qid: 2rWhQ9h8CD9qeFQLw5
+X-Iguazu-QSIG: v=2; s=0; t=1706756164; q=2rWhQ9h8CD9qeFQLw5; m=9GDdfrDHsZHUrmgSG08qxCp3z1rcy20nEc4eRGJ6aCQ=
+Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
+	by relay.securemx.jp (mx-mr1122) id 4112u3E4662806
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 1 Feb 2024 11:56:03 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HKm8POgdCS8VAenbjoZZfPxh4ey/VZT3Grqpk40ZMq7y4kjZPnrcBYPZtTtfHgyD8JC+8+cCHN5XisnbhSa/AHcKaTcziFiBcB2O9nZpeYFxQHPfVkrqPHPuVErqk3wHwN2ecvyEcUdFFAW2NlB+ag9567WeIbh7pniA8+1Bupi8aLs/6EoU5mJD/WBypDRTsd4kwCPFQ98z6vBNRWvx3sckhxNkdCBxRqtWvIAk5cbey+1JjISp69UAU0sw8utynavzTL46cV18nEkbT+CkkzqTy1MJTVrZEoLMAPuyT504nrQ2jkOq3jHBBp8/eb+0Ao6AdThdhLyVS7M98WU+GA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=a78tihzGeFZSNzpSF8eioYMg+zdTXqFcUCEbcMGkqq0=;
+ b=O2cQHQFahOJcdgPE2xz23xPXBoiOia0J2En5oCyiBL4+0DS5jSFeYrTxhoHw8s/8zNUrmRdXjjLymgywsblt/+ku/acdm8mmnU2glZiB+Tq2/NsnPX0w35RZ6K16huivNpSHcKVwBSEwOkjEWTDRqIsWrT5MaJI0JcR6Uo3El8S3fpQWY3uhgg67FGiuA87TScIvWOWPAAzL9iQPKWg49dXX1qUEToB53aDj9H/AP5RNsJo7rVBkMQzCqL8s63GZ6ZDE46A5LMtdVDRNHuq+k06SkPMFn4PLW6GrKRDBGW9DSj9u5lgwTjZdHkkmaIjRm6/sKjkKhLrjvr2D4gfhSQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: <pavel@denx.de>, <Chris.Paterson2@renesas.com>
+CC: <prabhakar.mahadev-lad.rj@bp.renesas.com>, <cip-dev@lists.cip-project.org>,
+        <biju.das.jz@bp.renesas.com>
+Subject: RE: [PATCH 6.1.y-cip 0/2] Add IRQ affinity support for IRQC
+Thread-Topic: [PATCH 6.1.y-cip 0/2] Add IRQ affinity support for IRQC
+Thread-Index: AQHaVCsZMMChrZBSzkCxhj3S6yaH8rD0yyMg
+Date: Thu, 1 Feb 2024 02:55:59 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <OS0PR01MB6388E2365F4D1D98F4A21C3F92432@OS0PR01MB6388.jpnprd01.prod.outlook.com>
+References: <20240129191829.45687-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <OS0PR01MB6388181EE39FC04C88103D58927D2@OS0PR01MB6388.jpnprd01.prod.outlook.com>
+ <Zbi9j7QrnxocN+af@duo.ucw.cz>
+ <TY2PR01MB3209DAF580A7B848FF2D9F7CB77D2@TY2PR01MB3209.jpnprd01.prod.outlook.com>
+ <ZboYHqLJhaD3JnOA@duo.ucw.cz>
+In-Reply-To: <ZboYHqLJhaD3JnOA@duo.ucw.cz>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS0PR01MB6388:EE_|OSZPR01MB8465:EE_
+x-ms-office365-filtering-correlation-id: 4b838597-3a21-4d0c-e1eb-08dc22d151ef
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ qd7g0widczwxvG+0PaAxt4XhJk9HM6LDRHALxYtoPYWa0aBWitserFwajKA3fDFbWdAslPx61zRdu3emgR3lAXv83eka28TXzvcQPk8eGfmI9qJbXAzGbbmU+nfN+Moqvi7mlwiInSo/wYqUyK4ayjPAA5jtnQO3MqHM2dRNvJU7ow/DJjFJwywxM+VKoYMFbEi1e8seY6oUpW6EIkOEHIHvWRuSJxNguo5HlTk6Jtn0Jof1poVjqqiRvUse627mSfqZxES/cmODIgvKvZ9XXKgERuP5Tr7AhV+efcUIhh554lsx9h0qou0ZuL0kpiO8GasiMraCkZPSWzzBEY1B9q39IrpITe0npqVaqjhdrZTrligNs8iPP8+m14ia88hRhOUZBroo4BuKnOp2otjQsH3zM9e2ZD/MwEY3DEHZFjnCsUFmr41Jmj0KU1qVK2ICRWxNugZytZyZjy4nAHKoCtnfr8f4rM8LNCMdAAmqoItSUZ1IKqIDLpfGkn+5natpTJxJ1GA24Wrwph0bSuMth9PKhfPD0Dzcy+4aj2/a8/DF4JMO7Qj0FNx1bzwAemzcwGLUfHO3eIu61xW6gitmcx8g6J+qd822BiHxePss296iR663Lw8g8thIK29VBfD7MVshq6qP6+YQ/NIFUnZatg==
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB6388.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(396003)(366004)(376002)(346002)(136003)(230922051799003)(451199024)(186009)(64100799003)(1800799012)(478600001)(53546011)(122000001)(38100700002)(66446008)(2906002)(86362001)(41300700001)(33656002)(316002)(66476007)(64756008)(66556008)(52536014)(966005)(54906003)(9686003)(110136005)(7696005)(5660300002)(8676002)(6506007)(26005)(83380400001)(66946007)(8936002)(4326008)(76116006)(71200400001)(38070700009)(55016003)(95630200002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?OTl4Uk1Qdll1UUhoTy9PYVpHWGdIckVDUGE5ZENXTzBteWV1OGxXMk5m?=
+ =?iso-2022-jp?B?b2toMVFQZ0hlRGVvUlJlZ3JnczBFWTVjcEx1ZHVtenJqc0liU3NIaG0x?=
+ =?iso-2022-jp?B?c0d2cmRXMkkwV2Y4aFl1a3VKaDBjUXJVZU96dnVhWkJCYkJ4dXVnV3pq?=
+ =?iso-2022-jp?B?MHd2OGsreDNSb1NGZTk4Zk9sMEV2SlFGNUJTZ21YcDZMNE1pZHcxQXBF?=
+ =?iso-2022-jp?B?NEU3YzhrSytBNUNzZGh6blFVRmVkUlRMZnpuSkhKMFo5MW8rMmREZ3N1?=
+ =?iso-2022-jp?B?YlhjYjlwdThyWVQ1eXpVckE2cGI2NFMycjYrbmJKbWZ1WldXUnVTM04w?=
+ =?iso-2022-jp?B?OHQ5b2dZR1RpR0g3NXpuUW0vd2x2TjZaOWZpNWZlbHVaVzJOUWhJRC91?=
+ =?iso-2022-jp?B?cXIvUG5tQkd1NXJTbVgyeC9SS29mand4RVpob3RXcm5YRTdlbHJlVGUy?=
+ =?iso-2022-jp?B?a1d2RWY3Z3kyR0xydWdJQnRGNjNXdFZ3emcyQjVIUDBQaUczVTV4NVFO?=
+ =?iso-2022-jp?B?Z3M5MTdPdDBtdkowR3A3eWJiQ0w4Y1BHRW1RRjhsWWZPdnBlMHd5Q2E1?=
+ =?iso-2022-jp?B?dVFGTFErTzY1NHhPUHZ2T0krdFpkR29qYm9uMzQvaFdOTVR5WTl1SkZi?=
+ =?iso-2022-jp?B?cUxrUEIrY1lnNFVydWdudUJ3R2xYTEc2cTFjMTg0bk5OMG1uREl0VERh?=
+ =?iso-2022-jp?B?bE1qOXBBU0wvVUpUeVdzVU5hZUE3Mi82MXBMdmRwNURZdEN6RERoN3JY?=
+ =?iso-2022-jp?B?V2tBTG9DYXNKeTZwTkxXcVQxY0xLWEJkaS9yanNqNVN0b2VXelFMUk4v?=
+ =?iso-2022-jp?B?eVRnY3poN3A3ckNUQnBtNTNHbnZYRDlDQ0RmVTFQYXdjWHJrR2lmZElN?=
+ =?iso-2022-jp?B?NFRyRDNhR3R4ZFowbHZmTFhEaHgxSkFRckZNaGtuTkZYSWZQd0xoUDdp?=
+ =?iso-2022-jp?B?cUttUllmeElXZmJuK1kzcVJlMXlWY3BpWU5kVUJCc1IwRnNqdVFkQmdG?=
+ =?iso-2022-jp?B?M2oyWFdFRC9XUlJCa05BVkRranpCeFdHQjRrdmlUTnJ0aE1BT3E4aUlt?=
+ =?iso-2022-jp?B?ZkttdjhJOVZXN3FjcVZHMTlBWmdreSt5R25BK0lxelJ3dUdRWmZSRDVO?=
+ =?iso-2022-jp?B?WUNYQVcyQ0RNMmxnUTM3enpZSWdaeHlCang3WHBSeDZyZGoybFVsU3o2?=
+ =?iso-2022-jp?B?VU9SS1pmeUU5a1BNWEhuSFpDNW4zSTFwemxJRFpYSy9BNzI4WWl2NERP?=
+ =?iso-2022-jp?B?MGtqN0lKTktJTUYrdlBNQnBwdWlVL2dOOWhMTzhMVkJFNHRiSnhUM0xP?=
+ =?iso-2022-jp?B?bC9lclVzUVpVZDFFSVFwZEgrU253andoMjhYVUZHWHNXU1BLSXVJT3NC?=
+ =?iso-2022-jp?B?Z0dLdTFLNTQ4V0ZSNnhCVXIxWTlzcjE4YXNyNTlxdENoTW1XTG0rUTJB?=
+ =?iso-2022-jp?B?Ynp3RktwLzM5ZXNrOFFYWXFTK3Y1UldraE40TkhOUXA4OFI2N0xlSXBL?=
+ =?iso-2022-jp?B?TXYwZlkxYjkrSTczS3N2bDlOdVpaeEY3Q1NLZUdieXdITnRDWFIzWlRY?=
+ =?iso-2022-jp?B?Zk92cXpqblZtb0JSL21JcGs5ZE8wN0VMbUFUaURjZTcrdVFLU0sxb3d1?=
+ =?iso-2022-jp?B?ank0aVlka3RsMWlkdTMvRzd2OHRMYjBQcmU2TTRnVUJPQU4zZjBLTk5o?=
+ =?iso-2022-jp?B?SjdiTDZGUmNKY1YycWFOVk16aHJpNyttYlh0TGJHVTA5anJ3Sm1LU1Y4?=
+ =?iso-2022-jp?B?Qk0rY21qREE3aFdqdlhWa2hJNUQ4WWR0d0NEL0g0Qi8renJSOERqZ1hS?=
+ =?iso-2022-jp?B?VzltdXpBeFkxbTZMMWxrNkR3d1RyaCtudzc4SnRnbXZYQjQ5RjVMdzRE?=
+ =?iso-2022-jp?B?U0dMRkVkZjc3Q1djaFA2ZS9kdE5xckFjNVNBMk9VVGdtWktPWHFtTEYy?=
+ =?iso-2022-jp?B?TE5tUUk4ZFg5Sm9aTk8xekRxYnNNNExYMlJhR0ZEWmIwai9CbGE5SEd3?=
+ =?iso-2022-jp?B?SWJlcW5jTGlsUWJjZmppR2hRNHlWM1NvK3pjMkVrS2pHaUZHMndlbFVh?=
+ =?iso-2022-jp?B?VzYxOFFUNTZrOXIvdVBnRm5DY0pjVC9zQUQ2YU9YOFdhZTRyYVNLSlpj?=
+ =?iso-2022-jp?B?RzVVVHkrRUFZeStaSnNITkhJTU5sM3haMWhGdDdrM1V1SGJTVndTQjA4?=
+ =?iso-2022-jp?B?MXN5cXZndkRFR3VYODUzQjNEZlhpSjE4WXNHaS84cGE3UWRTOHRNb3dw?=
+ =?iso-2022-jp?B?UGIzWWRPeWVlb2Y5d0FXc1ZoUUdURVZDcnpLSHFMNlZTdDd0aWU0OHFi?=
+ =?iso-2022-jp?B?Ynpqclc1amZ1WG1QSFlhMHEyeXdXQlpIcWc9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 1 Feb 2024 08:18:20 +0900
-Message-ID: <CAODzB9obeotwQ55tcyzBvqztxh_7JRi-a9smktOgHHiUYcK6yQ@mail.gmail.com>
-Subject: [kernel-cve-report] New CVE entries this week
-To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: toshiba.co.jp
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB6388.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b838597-3a21-4d0c-e1eb-08dc22d151ef
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Feb 2024 02:55:59.7496
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: GGgNfTz32Jpnle38RZNf/aGIQ9LmBGlbDDBgw3M6NmocDPi2eYObdXfAkiEPVKW/kusWmej9Za9Ex9a39tO4k7/hGgFyaHpnW09T2K44hWLzar8pWAIVUKWZwiewoWeX
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB8465
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 31 Jan 2024 23:19:07 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14570
+ <cip-dev@lists.cip-project.org>; Thu, 01 Feb 2024 02:56:18 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14571
+
+Hi all,
+
+> -----Original Message-----
+> From: Pavel Machek <pavel@denx.de>
+> Sent: Wednesday, January 31, 2024 6:51 PM
+> To: Chris Paterson <Chris.Paterson2@renesas.com>
+> Cc: Pavel Machek <pavel@denx.de>; iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B?=
+.MN=1B(B =1B$B!{#D#I#T=1B(B
+> =1B$B#C""#D#I#T!{#O#S#T=1B(B) <nobuhiro1.iwamatsu@toshiba.co.jp>; Prabhak=
+ar
+> Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>;
+> cip-dev@lists.cip-project.org; Biju Das <biju.das.jz@bp.renesas.com>
+> Subject: Re: [PATCH 6.1.y-cip 0/2] Add IRQ affinity support for IRQC
+>=20
+> Hi!
+>=20
+> > > It seems to be testing problem, but it would be nice to get the
+> > > testing fixed.
+> >
+> > The job that failed was an arm64 defconfig boot test on hihope-rzg2m, d=
+ue to
+> missing files in AWS S3.
+> > It turns out that this was because the actual build failed, but GitLab =
+CI didn't
+> realise.
+> > I've found the issue and fixed it.
+>=20
+> Thank you, -stable-rc testing seems to be fixed now.
+>=20
+> Could you take a look at Iwamatsu-san's tests of this series?
+
+Sure.
+
+>=20
+> # I can apply this series, If we have no other opinion.
+> # Test:
+> #
+> https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/115700019=
+4
+>=20
+> That may be similar problem, but I don't see where the compile fails.
+
+The test failure seems to be caused by something like fetching data.
+If we retry, the problem will be resolved.
+
+Best regards,
+  Nobuhiro
 
-Hi!
-
-It's this week's CVE report.
-
-This week reported 10 new CVEs and 3 updated CVEs.
-
-* New CVEs
-
-CVE-2021-33630: net/sched: cbs: Fix not adding cbs instance to list
-
-CVSS v3(NIST): N/A
-CVSS v3(CNA): 5.5 (MEDIUM)
-
-NULL Pointer Dereference vulnerability in openEuler kernel on Linux
-(network modules) allows Pointer Manipulation. This vulnerability is
-associated with program files net/sched/sch_cbs.C. This issue affects
-openEuler kernel: from 4.19.90 before 4.19.90-2401.3.
-
-It was introduced by commit e0a7683 ("net/sched: cbs: fix port_rate
-miscalculation") in 5.2-rc1. This commit was backported to 4.19 so
-that 4.19 is affected too.
-This bug was fixed in 5.4-rc1.
-
-Fixed status
-mainline: [3e8b9bfa110896f95d602d8c98d5f9d67e41d78c]
-
-CVE-2024-22099: NULL pointer dereference bug and buffer overflow
-vulnerabilities was found in the bluetooth subsystem
-
-CVSS v3(NIST): 5.5 (MEDIUM)
-CVSS v3(CNA): 6.3 (MEDIUM)
-
-NULL Pointer Dereference vulnerability in Linux Linux kernel kernel on
-Linux, x86, ARM (net, bluetooth modules) allows Overflow Buffers. This
-vulnerability is associated with program files
-/net/bluetooth/rfcomm/core.C. This issue affects Linux kernel:
-v2.6.12-rc2.
-
-Fixed status
-Not fixed yet
-
-CVE-2024-23307: Integer Overflow bug was found md/raid/raid5 modules
-
-CVSS v3(NIST): 7.8 (HIGH)
-CVSS v3(CNA): 4.4 (MEDIUM)
-
-Integer Overflow or Wraparound vulnerability in Linux Linux kernel
-kernel on Linux, x86, ARM (md, raid, raid5 modules) allows Forced
-Integer Overflow.
-
-Fixed status
-Not fixed yet
-
-CVE-2024-0841: hugetlbfs: Null pointer dereference in
-hugetlbfs_fill_super function
-
-CVSS v3(NIST): N/A
-CVSS v3(CNA): 6.6 (MEDIUM)
-
-A null pointer dereference flaw was found in the hugetlbfs_fill_super
-function in the Linux kernel hugetlbfs (HugeTLB pages) functionality.
-This issue may allow a local user to crash the system or potentially
-escalate their privileges on the system.
-
-It seems as if all stable kernels are affected.
-
-Fixed status
-Not fixed yet
-
-CVE-2023-52340: ipv6: remove max_size check inline with ipv4
-
-CVSS v3(NIST): N/A
-CVSS v3(CNA): N/A
-
-According to the Amazon Linux Security Center
-(https://alas.aws.amazon.com/cve/html/CVE-2023-52340.html), it
-describes following that.
-
-When a router encounters an IPv6 packet too big to transmit to the
-next-hop, it returns an ICMP6 "Packet Too Big" (PTB) message to the
-sender. The sender caches this updated Maximum Transmission Unit (MTU)
-so it knows not to exceed this value when subsequently routing to the
-same host.
-In Linux kernels prior to 6.3, garbage collection is run on the IPv6
-Destination Route Cache if the number of entries exceeds a threshold
-when adding the destination to the cache. This garbage collection
-examines every entry in the cache while holding a lock. In these
-affected kernel versions, a flood of the IPv6 ICMP6 PTB messages could
-cause high lock contention and increased CPU usage, leading to a
-Denial-of-Service.
-The fix backports the garbage collection improvements from Linux
-kernel 6.3 by bringing the IPv6 code closer to the IPv4 code, which
-does not have this issue.
-
-This bug was fixed by commit af6d103 ("ipv6: remove max_size check
-inline with ipv4") in 6.3-rc1. The patch doesn't have a fixed-by tag
-however, it looks as if 4.4 might be affected too.
-
-Fixed status
-mainline: [af6d10345ca76670c1b7c37799f0d5576ccef277]
-stable/4.19: [95372b040ae689293c6863b90049f1af68410c8b]
-stable/5.10: [dd56c5790dc3484f3c89fd4e21735c796a82b40d]
-stable/5.15: [b8a5308feedda10d4875a912e2e1f6be215a4ead]
-stable/5.4: [584756c3d75a1722a868a1d22602251385bee798]
-stable/6.1: [0f22c8a6efe63c16d1abf1e6c0317abbf121f883]
-
-CVE-2023-6200: A use-after-free bug causes arbitrary code execution
-when processing ICMPv6 router advertisement packet
-
-CVSS v3(NIST): N/A
-CVSS v3(CNA): 7.5 (HIGH)
-
-A race condition was found in the Linux Kernel. Under certain
-conditions, an unauthenticated attacker from an adjacent network could
-send an ICMPv6 router advertisement packet, causing arbitrary code
-execution.
-
-This bug was introduced by commit 3dec89b ("net/ipv6: Remove expired
-routes with a separated list of routes") in 6.6-rc1. This commit is
-not backported to older stable kernels.
-It is fixed in 6.7-rc1.
-
-Fixed status
-mainline: [dade3f6a1e4e35a5ae916d5e78b3229ec34c78ec]
-stable/6.6: [b577b9aa1340ee7f36441b0740691550abaad5f2]
-
-CVE-2024-21803: A use-after-free bug was found in the bluetooth subsystem
-
-CVSS v3(NIST): N/A
-CVSS v3(CNA): 3.5 (LOW)
-
-Use After Free vulnerability in Linux Linux kernel kernel on Linux,
-x86, ARM (bluetooth modules) allows Local Execution of Code. This
-vulnerability is associated with program files
-https://gitee.Com/anolis/cloud-kernel/blob/devel-5.10/net/bluetooth/af_bluetooth.C.
-This issue affects Linux kernel: from v2.6.12-rc2 before v6.8-rc1.
-
-According to the CVE description, it was fixed in 6.8-rc1 but there is
-no information about this fix.
-
-Fixed status
-No information
-
-CVE-2024-0564: Kernel information leak bug was found in the KSM feature
-
-CVSS v3(NIST): N/A
-CVSS v3(CNA): 4.7 (MEDIUM)
-
-A flaw was found in the Linux kernel's memory deduplication mechanism.
-The max page sharing of Kernel Samepage Merging (KSM), added in Linux
-kernel version 4.4.0-96.119, can create a side channel. When the
-attacker and the victim share the same host and the default setting of
-KSM is "max page sharing=256", it is possible for the attacker to time
-the unmap to merge with the victim's page. The unmapping time depends
-on whether it merges with the victim's page and additional physical
-pages are created beyond the KSM's "max page share". Through these
-operations, the attacker can leak the victim's page.
-
-This bug was fixed by commit 2c653d0e ("ksm: introduce
-ksm_max_page_sharing per page deduplication limit") in 4.13-rc1.
-
-Ubuntu applied the following patch for xenial Linux 4.4.0-96.119 package.
-
-ksm: introduce ksm_max_page_sharing per page deduplication limit:
-https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/xenial/commit/?h=Ubuntu-4.4.0-96.119&id=731b565d8abadebb649c78fbb45983ecae7b1463
-
-
-Fixed status
-mainline: [2c653d0ee2ae78ff3a174cc877a057c8afac7069]
-
-CVE-2024-1085: netfilter: nf_tables: check if catch-all set element is
-active in next generation
-
-CVSS v3(NIST): N/A
-CVSS v3(CNA): 7.8 (HIGH)
-
-A use-after-free vulnerability in the Linux kernel's netfilter:
-nf_tables component can be exploited to achieve local privilege
-escalation. The nft_setelem_catchall_deactivate() function checks
-whether the catch-all set element is active in the current generation
-instead of the next generation before freeing it, but only flags it
-inactive in the next generation, making it possible to free the
-element multiple times, leading to a double free vulnerability. We
-recommend upgrading past commit
-b1db244ffd041a49ecc9618e8feb6b5c1afcdaa7.
-
-This bug was introduced by commit aaa3104 ("netfilter: nftables: add
-catch-all set element support") in 5.13-rc1.
-The commit aaa3104 is not backported to before 5.13 so that 5.10, 5.4,
-and 4.x are not affected.
-Fixed in 6.8-rc1.
-
-Fixed status
-mainline: [b1db244ffd041a49ecc9618e8feb6b5c1afcdaa7]
-stable/5.15: [c9ed30eea4f7bfa2441235ce23abd339ee671f50]
-stable/6.1: [a372f1d01bc11aa85773a02353cd01aaf16dc18e]
-stable/6.6: [7baa33837ee2473eb0afd9755e29a25cd3771eac]
-stable/6.7: [7e0f5f8ae3e5f17e367f7040ade7a467f1f0e3b9]
-
-CVE-2024-1086: netfilter: nf_tables: reject QUEUE/DROP verdict parameters
-
-CVSS v3(NIST): N/A
-CVSS v3(CNA): 7.8 (HIGH)
-
-A use-after-free vulnerability in the Linux kernel's netfilter:
-nf_tables component can be exploited to achieve local privilege
-escalation. The nft_verdict_init() function allows positive values as
-drop error within the hook verdict, and hence the nf_hook_slow()
-function can cause a double free vulnerability when NF_DROP is issued
-with a drop error which resembles NF_ACCEPT. We recommend upgrading
-past commit f342de4e2f33e0e39165d8639387aa6c19dff660.
-
-This bug was introduced by commit e0abdad ("netfilter: nf_tables:
-accept QUEUE/DROP verdict parameters") in 3.15-rc1. Fixed in 6.8r-c2.
-
-Fixed status
-mainline: [f342de4e2f33e0e39165d8639387aa6c19dff660]
-
-* Updated CVEs
-
-CVE-2023-46838: xen-netback: don''t produce zero-size SKB frags
-
-All stable kernels were fixed.
-
-Fixed status
-stable/4.19: [5bb8270789c88c0e4ad78c0de2f274f2275c7f6c]
-stable/5.10: [cce8ba6fa4ec43ad778d64823a2f8ca120d362c1]
-stable/5.15: [e03023fcdb5e959d4252b3a38e1b27afb6c1c23c]
-stable/5.4: [4404c2b832cf0a842b6e3c63fb5749e97dc618ea]
-stable/6.1: [437360133cbd1e9fb88b122e84fff0df08f18e23]
-stable/6.6: [78376d4415602d97773f20b49f4aa5fc8666f7a9]
-stable/6.7: [0179c6b07f7ed2f3ea7309596169e15a59e7ee0e]
-
-
-CVE-2023-6915: ida: Fix crash in ida_free when the bitmap is empty
-
-stable 5.10, 5.15, and 5.4 were fixed.
-
-Fixed status
-mainline: [af73483f4e8b6f5c68c9aa63257bdd929a9c194a]
-stable/5.10: [dbf8b0d9387fa02de0aa047ce23eb3a7bd134e03]
-stable/5.15: [5dbcdaf4dbfe074e9142991c5c28eef789c1f6c6]
-stable/5.4: [ef7152f8705fed11796641d7644acc3c950b5967]
-stable/6.1: [9efdc0081ccae62c44a929e21d32bacc5f2e113f]
-stable/6.6: [ffcaafdb8be64555e9928d943a3655c755dba92b]
-
-CVE-2023-50431: habanalabs: fix information leak in sec_attest_info()
-
-stable 6.1, 6.6, and 6.7 were fixed.
-
-Fixed status
-mainline: [a9f07790a4b2250f0140e9a61c7f842fd9b618c7]
-stable/6.1: [6d98d249175e568f72ca94cbd6f959bc4476414e]
-stable/6.6: [975aaaddc226303d382baa0d0ece84e8bec1fcf5]
-stable/6.7: [db43f2eabdceedc41b8c3e0621ac42ca19b13b7d]
-
-CVE-2023-5633: drm/vmwgfx: Keep a gem reference to user bos in surfaces
-
-stable 6.1 was fixed.
-
-Fixed status
-mainline: [91398b413d03660fd5828f7b4abc64e884b98069]
-stable/6.1: [104f95698cad038caa8f7496be67f738d8ace9cb]
-stable/6.5: [1474b39f961703d0bb33833a6d6b112826839781]
-
-Currently tracking CVEs
-
-CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
-Bluetooth Core Specifications 4.0 through 5.2
-
-There is no fix information.
-
-CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
-Provisioning Leads to MITM
-
-No fix information.
-
-CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
-
-No fix information.
-
-CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
-
-No fix information.
-
-Regards,
--- 
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
-
-Email :masami.ichikawa@cybertrust.co.jp
-          :masami.ichikawa@miraclelinux.com
 
