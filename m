@@ -2,699 +2,463 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77FC9C4828D
-	for <webhook@archiver.kernel.org>; Mon,  5 Feb 2024 17:23:08 +0000 (UTC)
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
- by mx.groups.io with SMTP id smtpd.web10.69054.1707153781642010842
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C436C48298
+	for <webhook@archiver.kernel.org>; Mon,  5 Feb 2024 17:51:28 +0000 (UTC)
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+ by mx.groups.io with SMTP id smtpd.web11.501.1707155479274085446
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Mon, 05 Feb 2024 09:23:02 -0800
+ Mon, 05 Feb 2024 09:51:19 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=o3rZ9qEz;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.215.172, mailfrom: bot@kernelci.org)
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-5d8b276979aso3616330a12.2
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Mon, 05 Feb 2024 09:23:01 -0800 (PST)
+ dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=hL7WLUM6;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.175, mailfrom: bot@kernelci.org)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1d8ef977f1eso35306605ad.0
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Mon, 05 Feb 2024 09:51:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1707153780; x=1707758580; darn=lists.cip-project.org;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1707155478; x=1707760278; darn=lists.cip-project.org;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=pvYSFx+Bhl4N5EZ0fLSL/jc8aBeH6I5fVcB3O4zBHQQ=;
-        b=o3rZ9qEz5wfoIJXA8NerTdUghn5QEdIhoTbPPVwCES6ZgAKHbqkWtzMnFnZIRrNOZ7
-         4vXNw+YSBBlrOdHlU3iTFIoMDV8mrXNi7SR+uz7aLT3QQwevaoi4hpN1lUrClu1JS6Mw
-         HTYHfDrysNbK6TgqUCYfUvEmNTS5a8M2AD2J2gsTac9+lHGrs9/cyly9HQfqT7xc6tvo
-         APasrsKlIufrVMwOc1ySGqwhm2QgXfIT5mB6zncnLRJq1FJ4TslNI1zdn3RL7+mqpMA1
-         0CUh4H0auV5TSjsMxh3TZpEvaA8elnfuCwJHXZYSpJaoss4m2Y6t3aIXm3Z30KxSDhf6
-         Ogww==
+        bh=K1Yo6jq7kD7I5BXin+oMDKZ+UsP/EoPKXwOVWGUHe4k=;
+        b=hL7WLUM62nxa/CO7CbUTi2cIM7DHbbHPGZE3IUsrPMXrkGKUNH0D/ptcB5gAzTAYU4
+         bcyBhDP3NuvEr9T6B9H9trtf/VJ+7MUC5ORPsH8g6KTMKMS3hhn5YzdWINRdRUUPaXq7
+         bNGsQWRsFfomSGOMe38jJMo8mSF13relycwjC6JwJqimTRu/mKrMCMPTf0UKhSCHPAMF
+         01y5DOAgVebf+YYQO+CvpbrTaHIr7+ebeEg32l3fD4zF3JGVh+kKtSWLFEqLgz1s2DpE
+         V8iqddErKvUvaOeMb/rt5lEhn5POxoS6juunqwXJDlNWnawBecRgIvyj2smFUE89/I/k
+         jKLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707153781; x=1707758581;
+        d=1e100.net; s=20230601; t=1707155478; x=1707760278;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=pvYSFx+Bhl4N5EZ0fLSL/jc8aBeH6I5fVcB3O4zBHQQ=;
-        b=bFgB+Ey8ti5dnNcikoTbeiIN0bo78uQ/aJlWA6+M2xCmrprShhYmPaJ/mgC9zPCI7x
-         /+jzn2wJzK7XlM5LoBneN8Xv8L2xIZ2nbjBu6Ln5S0nmxrz2GSUtEbPzwn9T+ekaYiOB
-         efeKyyADO/NaUBEkp8O3LHmnuuPu3hQnHiaRM5LM7Y3BT48g6WEw8QDcYD3sqSkV97Q7
-         HirUoCs5d2HAutLrUDpTeIIArEdHN06jJAkqfKb+AqcsTyNW3qWK1+KQ3AbQSZUSm4ER
-         1KtF71RdG9OvLm0TaeES8Lm4xLTYuJYZSHXn29psfUKalHIrdfmL+YWdaPdO7abew9oE
-         PeIQ==
-X-Gm-Message-State: AOJu0YxzIcZU6EM4X39WBVENJhuFU40unDFwQ0BbrHusH5nnWqFXVTQG
-	9ZlIG5Vz8ghOddqw1vmgpQV4P/78Dh6wiPVgYf8UfxgS6TepctvpYxMiLurbly4IzxDCKcMfwir
-	l
-X-Google-Smtp-Source: AGHT+IGFNcm0CRHYBPGsl5MeQ72Ewc7q5vVD/aM3/6b1nTON7a/NHGD4yGleH5VFugIBAq9bnV4dgQ==
-X-Received: by 2002:a05:6a20:d394:b0:19c:9b48:6982 with SMTP id iq20-20020a056a20d39400b0019c9b486982mr172467pzb.46.1707153780151;
-        Mon, 05 Feb 2024 09:23:00 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCXys4PT2LxaHTnLyJ4zrO5Y0+n0MCIOIOQo5sl50fjrl5o2MoLCeQstP0jvzNL7lQ9uyWrR0Csxm5VNf5c7p2rieU+FLA50FnDMeBA8zU6+HhiGLXyXxpQWmQXXfQlm9E4l5/986pbr9AmCY/kgjU6NDA==
+        bh=K1Yo6jq7kD7I5BXin+oMDKZ+UsP/EoPKXwOVWGUHe4k=;
+        b=K9NkszNljixHidY6U2sjTGG7ZQ3mZvJA8fRzi+r/5IhkCDaml4ldDV6w4tvybNM6XA
+         7aOnkG21Ma8H9WjjoyzVtdL0yO9+WnvNXup8lOn1DX4CX3Er8fr782l/7ffFLZ5uMjjf
+         XpgLOTk9hhbFftAaELyeslTPhDVmWFemm011MXuQTI7wcVGzAuVuzmwtKKpAW8j/qaEE
+         0OLHSbEldzDnADeJdoFDOr9dSBTCXCqcsfoFpoNjRNL3rDYKDtl0ZQeZaS4X3gxwhX+9
+         bZrhYdFvXImTYzo1vf/tbyJiQMIimu3M/UB5dAf5me4JSjJ7aLvKlW6uXI/TBLcRqxJw
+         BfAQ==
+X-Gm-Message-State: AOJu0Ywvvz0rAt3YxiBEtef7EgwwiLJ4mF3eFkpWPlDFmZhC9710sRwB
+	dVxd5amk19291JGEBBo5+Ub+a8u804mMVEF42IWa39EHawE4H98Kw1HIO4q8h3zBP1cFrzc9VsZ
+	c
+X-Google-Smtp-Source: AGHT+IHUe8HOqenOnm+NJip1cv2rGT/XOmD6icDTISftmVYwfjLBeyGhyqJnAFjmlxvmxBNC6K7nRw==
+X-Received: by 2002:a17:902:fc46:b0:1d9:542c:ec01 with SMTP id me6-20020a170902fc4600b001d9542cec01mr351550plb.12.1707155477728;
+        Mon, 05 Feb 2024 09:51:17 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCVGzfLuzp6vSHk08QS2R9r/G11retslCm2k0b6pJ/bfB2wr7GMSx5QfvqwA2ifF0jFPCNoSiEHSfw7ZadmB2y30S4rlFz/UoGAL6VKg/QiE9f2guLC6vMLFZnjjhCjB8Y5lwWh18hHazb6cecQQSPaNWQ==
 Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id fa38-20020a056a002d2600b006e04c3b3b58sm83334pfb.179.2024.02.05.09.22.59
+        by smtp.gmail.com with ESMTPSA id lo6-20020a170903434600b001d8f6ae5199sm145743plb.89.2024.02.05.09.51.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Feb 2024 09:22:59 -0800 (PST)
-Message-ID: <65c11973.050a0220.7127c.0966@mx.google.com>
-Date: Mon, 05 Feb 2024 09:22:59 -0800 (PST)
+        Mon, 05 Feb 2024 09:51:17 -0800 (PST)
+Message-ID: <65c12015.170a0220.5e240.0e38@mx.google.com>
+Date: Mon, 05 Feb 2024 09:51:17 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-Kernelci-Tree: cip
 X-Kernelci-Branch: linux-5.10.y-cip
 X-Kernelci-Kernel: v5.10.209-cip44
-X-Kernelci-Report-Type: build
-Subject: cip/linux-5.10.y-cip build: 114 builds: 0 failed, 114 passed,
- 4 warnings (v5.10.209-cip44)
+X-Kernelci-Report-Type: test
+Subject: cip/linux-5.10.y-cip baseline-cip-nfs: 13 runs,
+ 10 regressions (v5.10.209-cip44)
 To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
  kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
 From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 05 Feb 2024 17:23:08 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14740
+ <cip-dev@lists.cip-project.org>; Mon, 05 Feb 2024 17:51:28 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14741
 
-cip/linux-5.10.y-cip build: 114 builds: 0 failed, 114 passed, 4 warnings (v=
-5.10.209-cip44)
+cip/linux-5.10.y-cip baseline-cip-nfs: 13 runs, 10 regressions (v5.10.209-c=
+ip44)
 
-Full Build Summary: https://kernelci.org/build/cip/branch/linux-5.10.y-cip/=
-kernel/v5.10.209-cip44/
+Regressions Summary
+-------------------
 
-Tree: cip
-Branch: linux-5.10.y-cip
-Git Describe: v5.10.209-cip44
-Git Commit: 2fa4c25ee66abaa707e8d165c790bb96e883cca4
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-Built: 4 unique architectures
+platform                 | arch  | lab         | compiler | defconfig      =
+            | regressions
+-------------------------+-------+-------------+----------+----------------=
+------------+------------
+beaglebone-black         | arm   | lab-broonie | gcc-10   | multi_v7_defcon=
+fig         | 1          =
 
-Warnings Detected:
-
-arm64:
+beaglebone-black         | arm   | lab-cip     | gcc-10   | multi_v7_defcon=
+fig         | 1          =
 
-arm:
-
-riscv:
-    rv32_defconfig (gcc-10): 4 warnings
+beaglebone-black         | arm   | lab-broonie | gcc-10   | omap2plus_defco=
+nfig        | 1          =
 
-x86_64:
-
-
-Warnings summary:
-
-    2    <stdin>:830:2: warning: #warning syscall fstat64 not implemented [=
--Wcpp]
-    2    <stdin>:1127:2: warning: #warning syscall fstatat64 not implemente=
-d [-Wcpp]
-
-Section mismatches summary:
-
-    1    WARNING: modpost: vmlinux.o(___ksymtab_gpl+ixp4xx_irq_init+0x0): S=
-ection mismatch in reference from the variable __ksymtab_ixp4xx_irq_init to=
- the function .init.text:ixp4xx_irq_init()
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-
-Detailed per-defconfig build reports:
-
----------------------------------------------------------------------------=
------
-allnoconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-am200epdkit_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
- section mismatches
-
----------------------------------------------------------------------------=
------
-aspeed_g4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-aspeed_g5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-assabet_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-at91_dt_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-axm55xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-badge4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-bcm2835_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-cerfcube_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-cip://5.10.y-cip/arm/qemu_arm_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 err=
-ors, 0 warnings, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-cip://5.10.y-cip/arm64/qemu_arm64_defconfig (arm64, gcc-10) =E2=80=94 PASS,=
- 0 errors, 0 warnings, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-cip://5.10.y-cip/riscv/qemu_riscv64_defconfig (riscv, gcc-10) =E2=80=94 PAS=
-S, 0 errors, 0 warnings, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-cip://5.10.y-cip/x86/cip_qemu_defconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 =
-errors, 0 warnings, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-cm_x300_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-colibri_pxa270_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings=
-, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-colibri_pxa300_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings=
-, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-collie_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-corgi_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-davinci_all_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
- section mismatches
-
----------------------------------------------------------------------------=
------
-defconfig (riscv, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
-defconfig (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section m=
-ismatches
-
----------------------------------------------------------------------------=
------
-defconfig+arm64-chromebook (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warn=
-ings, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-defconfig+kselftest (arm64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
- section mismatches
-
----------------------------------------------------------------------------=
------
-dove_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-ebsa110_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-efm32_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-ep93xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-eseries_pxa_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0=
- section mismatches
-
----------------------------------------------------------------------------=
------
-exynos_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-ezx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
-
----------------------------------------------------------------------------=
------
-footbridge_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-gemini_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-h3600_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-h5000_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-hackkit_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-hisi_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-imote2_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-imx_v4_v5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-imx_v6_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-integrator_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-iop32x_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-ixp4xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
-Section mismatches:
-    WARNING: modpost: vmlinux.o(___ksymtab_gpl+ixp4xx_irq_init+0x0): Sectio=
-n mismatch in reference from the variable __ksymtab_ixp4xx_irq_init to the =
-function .init.text:ixp4xx_irq_init()
-
----------------------------------------------------------------------------=
------
-jornada720_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-keystone_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-lart_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-lpc18xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-lpc32xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-lpd270_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-lubbock_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-magician_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-mainstone_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-milbeaut_m10v_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings,=
- 0 section mismatches
-
----------------------------------------------------------------------------=
------
-mini2440_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-mmp2_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-moxart_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-mps2_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-multi_v4t_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-multi_v5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-multi_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-mvebu_v5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-mvebu_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-mxs_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
-
----------------------------------------------------------------------------=
------
-neponset_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-netwinder_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-nhk8815_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-nommu_k210_defconfig (riscv, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, =
-0 section mismatches
-
----------------------------------------------------------------------------=
------
-omap1_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-omap2plus_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-orion5x_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-oxnas_v6_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-palmz72_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-pcm027_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-pleb_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-prima2_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-pxa168_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-pxa255-idp_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-pxa3xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-pxa910_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-pxa_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section=
- mismatches
-
----------------------------------------------------------------------------=
------
-qcom_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-realview_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-rv32_defconfig (riscv, gcc-10) =E2=80=94 PASS, 0 errors, 4 warnings, 0 sect=
-ion mismatches
-
-Warnings:
-    <stdin>:830:2: warning: #warning syscall fstat64 not implemented [-Wcpp]
-    <stdin>:1127:2: warning: #warning syscall fstatat64 not implemented [-W=
-cpp]
-    <stdin>:830:2: warning: #warning syscall fstat64 not implemented [-Wcpp]
-    <stdin>:1127:2: warning: #warning syscall fstatat64 not implemented [-W=
-cpp]
-
----------------------------------------------------------------------------=
------
-s3c2410_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-s3c6400_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-s5pv210_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-sama5_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-shannon_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-shmobile_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-simpad_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-socfpga_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-spear13xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-spear3xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-spear6xx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-spitz_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-stm32_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-sunxi_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-tango4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sect=
-ion mismatches
-
----------------------------------------------------------------------------=
------
-tct_hammer_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 =
-section mismatches
-
----------------------------------------------------------------------------=
------
-tegra_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-trizeps4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-u300_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-u8500_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-versatile_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-vexpress_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 se=
-ction mismatches
-
----------------------------------------------------------------------------=
------
-vf610m4_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sec=
-tion mismatches
-
----------------------------------------------------------------------------=
------
-viper_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 secti=
-on mismatches
-
----------------------------------------------------------------------------=
------
-vt8500_v6_v7_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, =
-0 section mismatches
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 s=
-ection mismatches
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig+kselftest (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 war=
-nings, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-x86_64_defconfig+x86-board (x86_64, gcc-10) =E2=80=94 PASS, 0 errors, 0 war=
-nings, 0 section mismatches
-
----------------------------------------------------------------------------=
------
-xcep_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-zeus_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 sectio=
-n mismatches
-
----------------------------------------------------------------------------=
------
-zx_defconfig (arm, gcc-10) =E2=80=94 PASS, 0 errors, 0 warnings, 0 section =
-mismatches
-
----
-For more info write to <info@kernelci.org>
+beaglebone-black         | arm   | lab-cip     | gcc-10   | omap2plus_defco=
+nfig        | 1          =
+
+r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip     | gcc-10   | defconfig+arm64=
+-chromebook | 1          =
+
+r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip     | gcc-10   | defconfig      =
+            | 1          =
+
+r8a774b1-hihope-rzg2n-ex | arm64 | lab-cip     | gcc-10   | defconfig+arm64=
+-chromebook | 1          =
+
+r8a774b1-hihope-rzg2n-ex | arm64 | lab-cip     | gcc-10   | defconfig      =
+            | 1          =
+
+r8a774c0-ek874           | arm64 | lab-cip     | gcc-10   | defconfig+arm64=
+-chromebook | 1          =
+
+r8a774c0-ek874           | arm64 | lab-cip     | gcc-10   | defconfig      =
+            | 1          =
+
+
+  Details:  https://kernelci.org/test/job/cip/branch/linux-5.10.y-cip/kerne=
+l/v5.10.209-cip44/plan/baseline-cip-nfs/
+
+  Test:     baseline-cip-nfs
+  Tree:     cip
+  Branch:   linux-5.10.y-cip
+  Describe: v5.10.209-cip44
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.g=
+it
+  SHA:      2fa4c25ee66abaa707e8d165c790bb96e883cca4 =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform                 | arch  | lab         | compiler | defconfig      =
+            | regressions
+-------------------------+-------+-------------+----------+----------------=
+------------+------------
+beaglebone-black         | arm   | lab-broonie | gcc-10   | multi_v7_defcon=
+fig         | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65c115dce5882a551000a07f
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.209=
+-cip44/arm/multi_v7_defconfig/gcc-10/lab-broonie/baseline-cip-nfs-beaglebon=
+e-black.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.209=
+-cip44/arm/multi_v7_defconfig/gcc-10/lab-broonie/baseline-cip-nfs-beaglebon=
+e-black.html
+  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
+-arm/cip-core-image-kernelci-cip-core-bookworm-qemu-arm-initrd.img.gz =
+
+
+
+  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/65c115dce5882=
+a551000a080
+        failing since 87 days (last pass: v5.10.131-cip13-37-ge3a52725ce96,=
+ first fail: v5.10.200-cip40) =
+
+ =
+
+
+
+platform                 | arch  | lab         | compiler | defconfig      =
+            | regressions
+-------------------------+-------+-------------+----------+----------------=
+------------+------------
+beaglebone-black         | arm   | lab-cip     | gcc-10   | multi_v7_defcon=
+fig         | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65c1185783a9ef2c5c00a04a
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.209=
+-cip44/arm/multi_v7_defconfig/gcc-10/lab-cip/baseline-cip-nfs-beaglebone-bl=
+ack.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.209=
+-cip44/arm/multi_v7_defconfig/gcc-10/lab-cip/baseline-cip-nfs-beaglebone-bl=
+ack.html
+  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
+-arm/cip-core-image-kernelci-cip-core-bookworm-qemu-arm-initrd.img.gz =
+
+
+
+  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/65c1185783a9e=
+f2c5c00a04b
+        failing since 87 days (last pass: v5.10.131-cip13-37-ge3a52725ce96,=
+ first fail: v5.10.200-cip40) =
+
+ =
+
+
+
+platform                 | arch  | lab         | compiler | defconfig      =
+            | regressions
+-------------------------+-------+-------------+----------+----------------=
+------------+------------
+beaglebone-black         | arm   | lab-broonie | gcc-10   | omap2plus_defco=
+nfig        | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65c11a588c24e2cb3400a03a
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: omap2plus_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.209=
+-cip44/arm/omap2plus_defconfig/gcc-10/lab-broonie/baseline-cip-nfs-beaglebo=
+ne-black.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.209=
+-cip44/arm/omap2plus_defconfig/gcc-10/lab-broonie/baseline-cip-nfs-beaglebo=
+ne-black.html
+  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
+-arm/cip-core-image-kernelci-cip-core-bookworm-qemu-arm-initrd.img.gz =
+
+
+
+  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/65c11a588c24e=
+2cb3400a03b
+        failing since 87 days (last pass: v5.10.131-cip13-38-ga8671b4cc3c74=
+, first fail: v5.10.200-cip40) =
+
+ =
+
+
+
+platform                 | arch  | lab         | compiler | defconfig      =
+            | regressions
+-------------------------+-------+-------------+----------+----------------=
+------------+------------
+beaglebone-black         | arm   | lab-cip     | gcc-10   | omap2plus_defco=
+nfig        | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65c11c0aab0e2dae3c00a07e
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: omap2plus_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.209=
+-cip44/arm/omap2plus_defconfig/gcc-10/lab-cip/baseline-cip-nfs-beaglebone-b=
+lack.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.209=
+-cip44/arm/omap2plus_defconfig/gcc-10/lab-cip/baseline-cip-nfs-beaglebone-b=
+lack.html
+  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
+-arm/cip-core-image-kernelci-cip-core-bookworm-qemu-arm-initrd.img.gz =
+
+
+
+  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/65c11c0aab0e2=
+dae3c00a07f
+        failing since 87 days (last pass: v5.10.131-cip13-38-ga8671b4cc3c74=
+, first fail: v5.10.200-cip40) =
+
+ =
+
+
+
+platform                 | arch  | lab         | compiler | defconfig      =
+            | regressions
+-------------------------+-------+-------------+----------+----------------=
+------------+------------
+r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip     | gcc-10   | defconfig+arm64=
+-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65c117cbac2880178300a08e
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.209=
+-cip44/arm64/defconfig+arm64-chromebook/gcc-10/lab-cip/baseline-cip-nfs-r8a=
+774a1-hihope-rzg2m-ex.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.209=
+-cip44/arm64/defconfig+arm64-chromebook/gcc-10/lab-cip/baseline-cip-nfs-r8a=
+774a1-hihope-rzg2m-ex.html
+  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
+-arm64/cip-core-image-kernelci-cip-core-bookworm-qemu-arm64-initrd.img.gz =
+
+
+
+  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/65c117cbac288=
+0178300a08f
+        failing since 3 days (last pass: v5.10.138-cip15, first fail: v5.10=
+.208-cip43-4-g1c63c70fb18b8) =
+
+ =
+
+
+
+platform                 | arch  | lab         | compiler | defconfig      =
+            | regressions
+-------------------------+-------+-------------+----------+----------------=
+------------+------------
+r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip     | gcc-10   | defconfig      =
+            | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65c119c629d33f537a00a039
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.209=
+-cip44/arm64/defconfig/gcc-10/lab-cip/baseline-cip-nfs-r8a774a1-hihope-rzg2=
+m-ex.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.209=
+-cip44/arm64/defconfig/gcc-10/lab-cip/baseline-cip-nfs-r8a774a1-hihope-rzg2=
+m-ex.html
+  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
+-arm64/cip-core-image-kernelci-cip-core-bookworm-qemu-arm64-initrd.img.gz =
+
+
+
+  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/65c119c629d33=
+f537a00a03a
+        failing since 87 days (last pass: v5.10.138-cip15, first fail: v5.1=
+0.200-cip40) =
+
+ =
+
+
+
+platform                 | arch  | lab         | compiler | defconfig      =
+            | regressions
+-------------------------+-------+-------------+----------+----------------=
+------------+------------
+r8a774b1-hihope-rzg2n-ex | arm64 | lab-cip     | gcc-10   | defconfig+arm64=
+-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65c117cafc69b046d500a091
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.209=
+-cip44/arm64/defconfig+arm64-chromebook/gcc-10/lab-cip/baseline-cip-nfs-r8a=
+774b1-hihope-rzg2n-ex.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.209=
+-cip44/arm64/defconfig+arm64-chromebook/gcc-10/lab-cip/baseline-cip-nfs-r8a=
+774b1-hihope-rzg2n-ex.html
+  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
+-arm64/cip-core-image-kernelci-cip-core-bookworm-qemu-arm64-initrd.img.gz =
+
+
+
+  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/65c117cafc69b=
+046d500a092
+        failing since 3 days (last pass: v5.10.138-cip15, first fail: v5.10=
+.208-cip43-4-g1c63c70fb18b8) =
+
+ =
+
+
+
+platform                 | arch  | lab         | compiler | defconfig      =
+            | regressions
+-------------------------+-------+-------------+----------+----------------=
+------------+------------
+r8a774b1-hihope-rzg2n-ex | arm64 | lab-cip     | gcc-10   | defconfig      =
+            | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65c11bda5b26a32b3100a040
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.209=
+-cip44/arm64/defconfig/gcc-10/lab-cip/baseline-cip-nfs-r8a774b1-hihope-rzg2=
+n-ex.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.209=
+-cip44/arm64/defconfig/gcc-10/lab-cip/baseline-cip-nfs-r8a774b1-hihope-rzg2=
+n-ex.html
+  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
+-arm64/cip-core-image-kernelci-cip-core-bookworm-qemu-arm64-initrd.img.gz =
+
+
+
+  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/65c11bda5b26a=
+32b3100a041
+        failing since 87 days (last pass: v5.10.138-cip15, first fail: v5.1=
+0.200-cip40) =
+
+ =
+
+
+
+platform                 | arch  | lab         | compiler | defconfig      =
+            | regressions
+-------------------------+-------+-------------+----------+----------------=
+------------+------------
+r8a774c0-ek874           | arm64 | lab-cip     | gcc-10   | defconfig+arm64=
+-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65c1186b83a9ef2c5c00a055
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.209=
+-cip44/arm64/defconfig+arm64-chromebook/gcc-10/lab-cip/baseline-cip-nfs-r8a=
+774c0-ek874.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.209=
+-cip44/arm64/defconfig+arm64-chromebook/gcc-10/lab-cip/baseline-cip-nfs-r8a=
+774c0-ek874.html
+  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
+-arm64/cip-core-image-kernelci-cip-core-bookworm-qemu-arm64-initrd.img.gz =
+
+
+
+  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/65c1186b83a9e=
+f2c5c00a056
+        failing since 3 days (last pass: v5.10.138-cip15, first fail: v5.10=
+.208-cip43-4-g1c63c70fb18b8) =
+
+ =
+
+
+
+platform                 | arch  | lab         | compiler | defconfig      =
+            | regressions
+-------------------------+-------+-------------+----------+----------------=
+------------+------------
+r8a774c0-ek874           | arm64 | lab-cip     | gcc-10   | defconfig      =
+            | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65c11b12b046eaec1b00a03e
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.209=
+-cip44/arm64/defconfig/gcc-10/lab-cip/baseline-cip-nfs-r8a774c0-ek874.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-5.10.y-cip/v5.10.209=
+-cip44/arm64/defconfig/gcc-10/lab-cip/baseline-cip-nfs-r8a774c0-ek874.html
+  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
+-arm64/cip-core-image-kernelci-cip-core-bookworm-qemu-arm64-initrd.img.gz =
+
+
+
+  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/65c11b12b046e=
+aec1b00a03f
+        failing since 87 days (last pass: v5.10.138-cip15, first fail: v5.1=
+0.200-cip40) =
+
+ =20
 
