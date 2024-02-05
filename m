@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 876D8C48298
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98E89C48299
 	for <webhook@archiver.kernel.org>; Mon,  5 Feb 2024 12:43:06 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web11.61492.1707136962714935870
  for <cip-dev@lists.cip-project.org>;
- Mon, 05 Feb 2024 04:42:56 -0800
+ Mon, 05 Feb 2024 04:43:01 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.05,245,1701097200"; 
-   d="scan'208";a="196827766"
+   d="scan'208";a="196827772"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 05 Feb 2024 21:42:56 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 05 Feb 2024 21:43:00 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.8])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id E095D40065B6;
-	Mon,  5 Feb 2024 21:42:54 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id EE57C40065B6;
+	Mon,  5 Feb 2024 21:42:58 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 38/48] riscv: dts: renesas: Add initial devicetree for Renesas RZ/Five SoC
-Date: Mon,  5 Feb 2024 12:41:25 +0000
-Message-Id: <20240205124135.14779-39-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 40/48] riscv: dts: renesas: r9a07g043f/rzfive-smarc-som: Enable ADC/OPP/Thermal Zones/TSU
+Date: Mon,  5 Feb 2024 12:41:27 +0000
+Message-Id: <20240205124135.14779-41-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240205124135.14779-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20240205124135.14779-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -34,98 +34,81 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 05 Feb 2024 12:43:06 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14707
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14709
 
-commit b3e77da00f1b7b670983c69d0295f4ce132bf87c upstream.
+commit 42d3345eb3466587798c25a7e5704e15b738263e upstream.
 
-Add initial device tree for Renesas RZ/Five RISC-V CPU Core (AX45MP
-Single).
+Enable support for below blocks found on RZ/Five SMARC EVK SoC/SoM:
+- ADC
+- OPP
+- Thermal Zones
+- TSU
 
-RZ/Five SoC is almost identical to RZ/G2UL Type-1 SoC (ARM64) hence we
-will be reusing r9a07g043.dtsi [0] as a base DTSI for both the SoC's.
-r9a07g043f.dtsi includes RZ/Five SoC specific blocks.
+Note, these blocks are enabled in RZ/G2UL SMARC SoM DTSI [0] hence
+deleting these disabled nodes from RZ/Five SMARC SoM DTSI enables them
+here too as we include [0] in RZ/Five SMARC SoM DTSI.
 
-Below are the RZ/Five SoC specific blocks added in the initial DTSI which
-can be used to boot via initramfs on RZ/Five SMARC EVK:
-- AX45MP CPU
-- PLIC
-
-[0] arch/arm64/boot/dts/renesas/r9a07g043.dtsi
+[0] arch/arm64/boot/dts/renesas/rzg2ul-smarc-som.dtsi
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
-Link: https://lore.kernel.org/r/20221028165921.94487-5-prabhakar.mahadev-lad.rj@bp.renesas.com
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Link: https://lore.kernel.org/r/20221115105135.1180490-3-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/riscv/boot/dts/renesas/r9a07g043f.dtsi | 57 +++++++++++++++++++++
- 1 file changed, 57 insertions(+)
- create mode 100644 arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
+ arch/riscv/boot/dts/renesas/r9a07g043f.dtsi       |  2 ++
+ arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi | 11 -----------
+ 2 files changed, 2 insertions(+), 11 deletions(-)
 
 diff --git a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-new file mode 100644
-index 000000000000..50134be548f5
---- /dev/null
+index 50134be548f5..6ec1c6f9a403 100644
+--- a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
 +++ b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-@@ -0,0 +1,57 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Device Tree Source for the RZ/Five SoC
-+ *
-+ * Copyright (C) 2022 Renesas Electronics Corp.
-+ */
-+
-+#include <dt-bindings/interrupt-controller/irq.h>
-+
-+#define SOC_PERIPHERAL_IRQ(nr)	(nr + 32)
-+
-+#include <arm64/renesas/r9a07g043.dtsi>
-+
-+/ {
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		timebase-frequency = <12000000>;
-+
-+		cpu0: cpu@0 {
-+			compatible = "andestech,ax45mp", "riscv";
-+			device_type = "cpu";
-+			reg = <0x0>;
-+			status = "okay";
-+			riscv,isa = "rv64imafdc";
-+			mmu-type = "riscv,sv39";
-+			i-cache-size = <0x8000>;
-+			i-cache-line-size = <0x40>;
-+			d-cache-size = <0x8000>;
-+			d-cache-line-size = <0x40>;
-+			clocks = <&cpg CPG_CORE R9A07G043_CLK_I>;
-+
-+			cpu0_intc: interrupt-controller {
-+				#interrupt-cells = <1>;
-+				compatible = "riscv,cpu-intc";
-+				interrupt-controller;
-+			};
-+		};
-+	};
-+};
-+
-+&soc {
-+	interrupt-parent = <&plic>;
-+
-+	plic: interrupt-controller@12c00000 {
-+		compatible = "renesas,r9a07g043-plic", "andestech,nceplic100";
-+		#interrupt-cells = <2>;
-+		#address-cells = <0>;
-+		riscv,ndev = <511>;
-+		interrupt-controller;
-+		reg = <0x0 0x12c00000 0 0x400000>;
-+		clocks = <&cpg CPG_MOD R9A07G043_NCEPLIC_ACLK>;
-+		power-domains = <&cpg>;
-+		resets = <&cpg R9A07G043_NCEPLIC_ARESETN>;
-+		interrupts-extended = <&cpu0_intc 11 &cpu0_intc 9>;
-+	};
-+};
+@@ -20,6 +20,7 @@ cpus {
+ 		cpu0: cpu@0 {
+ 			compatible = "andestech,ax45mp", "riscv";
+ 			device_type = "cpu";
++			#cooling-cells = <2>;
+ 			reg = <0x0>;
+ 			status = "okay";
+ 			riscv,isa = "rv64imafdc";
+@@ -29,6 +30,7 @@ cpu0: cpu@0 {
+ 			d-cache-size = <0x8000>;
+ 			d-cache-line-size = <0x40>;
+ 			clocks = <&cpg CPG_CORE R9A07G043_CLK_I>;
++			operating-points-v2 = <&cluster0_opp>;
+ 
+ 			cpu0_intc: interrupt-controller {
+ 				#interrupt-cells = <1>;
+diff --git a/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi b/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi
+index 45a182fa3b4b..2b7672bc4b52 100644
+--- a/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi
++++ b/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi
+@@ -16,13 +16,6 @@ aliases {
+ 	chosen {
+ 		bootargs = "ignore_loglevel";
+ 	};
+-
+-	/delete-node/opp-table-0;
+-	/delete-node/thermal-zones;
+-};
+-
+-&adc {
+-	status = "disabled";
+ };
+ 
+ &dmac {
+@@ -49,10 +42,6 @@ &sdhi0 {
+ 	status = "disabled";
+ };
+ 
+-&tsu {
+-	status = "disabled";
+-};
+-
+ &wdt0 {
+ 	status = "disabled";
+ };
 -- 
 2.34.1
 
