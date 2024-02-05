@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D4E6C48299
-	for <webhook@archiver.kernel.org>; Mon,  5 Feb 2024 12:42:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D627C48295
+	for <webhook@archiver.kernel.org>; Mon,  5 Feb 2024 12:42:36 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web11.61484.1707136940412229412
  for <cip-dev@lists.cip-project.org>;
- Mon, 05 Feb 2024 04:42:20 -0800
+ Mon, 05 Feb 2024 04:42:34 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.05,245,1701097200"; 
-   d="scan'208";a="196827705"
+   d="scan'208";a="196827726"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 05 Feb 2024 21:42:19 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 05 Feb 2024 21:42:34 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.8])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 612E840065B6;
-	Mon,  5 Feb 2024 21:42:18 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id BCC424001DDB;
+	Mon,  5 Feb 2024 21:42:32 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 20/48] irqchip/sifive-plic: Disable S-mode IRQs if running in M-mode
-Date: Mon,  5 Feb 2024 12:41:07 +0000
-Message-Id: <20240205124135.14779-21-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 27/48] mmc: host: Kconfig: Make MMC_SDHI_INTERNAL_DMAC config option dependant on ARCH_RENESAS
+Date: Mon,  5 Feb 2024 12:41:14 +0000
+Message-Id: <20240205124135.14779-28-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240205124135.14779-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20240205124135.14779-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -33,90 +33,46 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 05 Feb 2024 12:42:26 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14689
+ <cip-dev@lists.cip-project.org>; Mon, 05 Feb 2024 12:42:36 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14696
 
-From: Niklas Cassel <niklas.cassel@wdc.com>
+commit bbe6dc429bf52b0062c2a9b39f850cfd317289a7 upstream.
 
-commit 098fdbc3531f06aae2426b3a6f9bd730e7691258 upstream.
+MMC_SDHI_INTERNAL_DMAC config option has dependency on ARM64 and
+R7S9210/R8A77470 this dependency will keep growing for future SoCs for
+varying architectures. So to simplify this configuration make
+MMC_SDHI_INTERNAL_DMAC solely depend on ARCH_RENESAS, as all Renesas
+SoCs inherently depend on the ARCH_RENESAS config option.
 
-When detecting a context for a privilege mode different from the current
-running privilege mode, we simply skip to the next context register.
+This allows selecting MMC_SDHI_INTERNAL_DMAC config option for RZ/Five SoC
+which is based on RISC-V architecture.
 
-This means that we never clear the S-mode enable bits when running in
-M-mode.
-
-On canaan k210, a bunch of S-mode interrupts are enabled by the bootrom.
-These S-mode specific interrupts should never trigger, since we never set
-the mie.SEIE bit in the parent interrupt controller (riscv-intc).
-
-However, we will be able to see the mip.SEIE bit set as pending.
-
-This isn't a good default when CONFIG_RISCV_M_MODE is set, since in that
-case we will never enter a lower privilege mode (e.g. S-mode).
-
-Let's clear the S-mode enable bits when running the kernel in M-mode, such
-that we won't have a interrupt pending bit set, which we will never clear.
-
-Signed-off-by: Niklas Cassel <niklas.cassel@wdc.com>
-Reviewed-by: Anup Patel <anup@brainfault.org>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/20220302131544.3166154-3-Niklas.Cassel@wdc.com
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Link: https://lore.kernel.org/r/20230901122701.318082-1-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/irqchip/irq-sifive-plic.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ drivers/mmc/host/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index 5b25e275fa6f..3a8a795000bf 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -81,17 +81,21 @@ static int plic_parent_irq;
- static bool plic_cpuhp_setup_done;
- static DEFINE_PER_CPU(struct plic_handler, plic_handlers);
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 6844d2880ba3..5ce9efe93d65 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -728,9 +728,9 @@ config MMC_SDHI_SYS_DMAC
  
--static inline void plic_toggle(struct plic_handler *handler,
--				int hwirq, int enable)
-+static void __plic_toggle(void __iomem *enable_base, int hwirq, int enable)
- {
--	u32 __iomem *reg = handler->enable_base + (hwirq / 32) * sizeof(u32);
-+	u32 __iomem *reg = enable_base + (hwirq / 32) * sizeof(u32);
- 	u32 hwirq_mask = 1 << (hwirq % 32);
- 
--	raw_spin_lock(&handler->enable_lock);
- 	if (enable)
- 		writel(readl(reg) | hwirq_mask, reg);
- 	else
- 		writel(readl(reg) & ~hwirq_mask, reg);
-+}
-+
-+static void plic_toggle(struct plic_handler *handler, int hwirq, int enable)
-+{
-+	raw_spin_lock(&handler->enable_lock);
-+	__plic_toggle(handler->enable_base, hwirq, enable);
- 	raw_spin_unlock(&handler->enable_lock);
- }
- 
-@@ -326,8 +330,18 @@ static int __init plic_init(struct device_node *node,
- 		 * Skip contexts other than external interrupts for our
- 		 * privilege level.
- 		 */
--		if (parent.args[0] != RV_IRQ_EXT)
-+		if (parent.args[0] != RV_IRQ_EXT) {
-+			/* Disable S-mode enable bits if running in M-mode. */
-+			if (IS_ENABLED(CONFIG_RISCV_M_MODE)) {
-+				void __iomem *enable_base = priv->regs +
-+					CONTEXT_ENABLE_BASE +
-+					i * CONTEXT_ENABLE_SIZE;
-+
-+				for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
-+					__plic_toggle(enable_base, hwirq, 0);
-+			}
- 			continue;
-+		}
- 
- 		hartid = riscv_of_parent_hartid(parent.np);
- 		if (hartid < 0) {
+ config MMC_SDHI_INTERNAL_DMAC
+ 	tristate "DMA for SDHI SD/SDIO controllers using on-chip bus mastering"
+-	depends on ARM64 || ARCH_R7S9210 || ARCH_R8A77470 || COMPILE_TEST
++	depends on ARCH_RENESAS || COMPILE_TEST
+ 	depends on MMC_SDHI
+-	default MMC_SDHI if (ARM64 || ARCH_R7S9210 || ARCH_R8A77470)
++	default MMC_SDHI if ARCH_RENESAS
+ 	help
+ 	  This provides DMA support for SDHI SD/SDIO controllers
+ 	  using on-chip bus mastering. This supports the controllers
 -- 
 2.34.1
 
