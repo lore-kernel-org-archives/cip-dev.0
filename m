@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 155A8C4828D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A90C48299
 	for <webhook@archiver.kernel.org>; Mon,  5 Feb 2024 12:42:16 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web10.61921.1707136925597951761
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web10.61925.1707136928406421430
  for <cip-dev@lists.cip-project.org>;
- Mon, 05 Feb 2024 04:42:05 -0800
+ Mon, 05 Feb 2024 04:42:12 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.05,245,1701097200"; 
-   d="scan'208";a="196827685"
+   d="scan'208";a="192915838"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 05 Feb 2024 21:42:03 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 05 Feb 2024 21:42:11 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.8])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 5D0F640065B6;
-	Mon,  5 Feb 2024 21:42:02 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6A77140065B6;
+	Mon,  5 Feb 2024 21:42:10 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 12/48] dma-direct: add support for dma_coherent_default_memory
-Date: Mon,  5 Feb 2024 12:40:59 +0000
-Message-Id: <20240205124135.14779-13-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 16/48] dma-mapping: make the global coherent pool conditional
+Date: Mon,  5 Feb 2024 12:41:03 +0000
+Message-Id: <20240205124135.14779-17-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240205124135.14779-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20240205124135.14779-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -34,96 +34,178 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 05 Feb 2024 12:42:16 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14681
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14685
 
 From: Christoph Hellwig <hch@lst.de>
 
-commit faf4ef823ac5f3b6a34a73b76c52895dee3dce55 upstream.
+commit 22f9feb49950885cdb6e37513f134d154175e743 upstream.
 
-Add an option to allocate uncached memory for dma_alloc_coherent from
-the global dma_coherent_default_memory.  This will allow to move
-arm-nommu (and eventually other platforms) to use generic code for
-allocating uncached memory from a pre-populated pool.
-
-Note that this is a different pool from the one that platforms that
-can remap at runtime use for GFP_ATOMIC allocations for now, although
-there might be opportunities to eventually end up with a common codebase
-for the two use cases.
+Only build the code to support the global coherent pool if support for
+it is enabled.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Tested-by: Dillon Min <dillon.minfei@gmail.com>
-[PL: define page_order variable used by dma_release_from_global_coherent()]
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- kernel/dma/Kconfig  |  4 ++++
- kernel/dma/direct.c | 17 +++++++++++++++++
- 2 files changed, 21 insertions(+)
+ include/linux/dma-map-ops.h | 18 ++++++++------
+ kernel/dma/coherent.c       | 49 ++++++++++++++++++++-----------------
+ 2 files changed, 37 insertions(+), 30 deletions(-)
 
-diff --git a/kernel/dma/Kconfig b/kernel/dma/Kconfig
-index c99de4a21458..87883d4e1ce3 100644
---- a/kernel/dma/Kconfig
-+++ b/kernel/dma/Kconfig
-@@ -97,6 +97,10 @@ config DMA_COHERENT_POOL
- 	select GENERIC_ALLOCATOR
- 	bool
+diff --git a/include/linux/dma-map-ops.h b/include/linux/dma-map-ops.h
+index ac3c9f2bc975..b8ea283a60e0 100644
+--- a/include/linux/dma-map-ops.h
++++ b/include/linux/dma-map-ops.h
+@@ -170,13 +170,6 @@ int dma_alloc_from_dev_coherent(struct device *dev, ssize_t size,
+ int dma_release_from_dev_coherent(struct device *dev, int order, void *vaddr);
+ int dma_mmap_from_dev_coherent(struct device *dev, struct vm_area_struct *vma,
+ 		void *cpu_addr, size_t size, int *ret);
+-
+-void *dma_alloc_from_global_coherent(struct device *dev, ssize_t size,
+-		dma_addr_t *dma_handle);
+-int dma_release_from_global_coherent(int order, void *vaddr);
+-int dma_mmap_from_global_coherent(struct vm_area_struct *vma, void *cpu_addr,
+-		size_t size, int *ret);
+-int dma_init_global_coherent(phys_addr_t phys_addr, size_t size);
+ #else
+ static inline int dma_declare_coherent_memory(struct device *dev,
+ 		phys_addr_t phys_addr, dma_addr_t device_addr, size_t size)
+@@ -186,7 +179,16 @@ static inline int dma_declare_coherent_memory(struct device *dev,
+ #define dma_alloc_from_dev_coherent(dev, size, handle, ret) (0)
+ #define dma_release_from_dev_coherent(dev, order, vaddr) (0)
+ #define dma_mmap_from_dev_coherent(dev, vma, vaddr, order, ret) (0)
++#endif /* CONFIG_DMA_DECLARE_COHERENT */
  
-+config DMA_GLOBAL_POOL
-+	select DMA_DECLARE_COHERENT
-+	bool
++#ifdef CONFIG_DMA_GLOBAL_POOL
++void *dma_alloc_from_global_coherent(struct device *dev, ssize_t size,
++		dma_addr_t *dma_handle);
++int dma_release_from_global_coherent(int order, void *vaddr);
++int dma_mmap_from_global_coherent(struct vm_area_struct *vma, void *cpu_addr,
++		size_t size, int *ret);
++int dma_init_global_coherent(phys_addr_t phys_addr, size_t size);
++#else
+ static inline void *dma_alloc_from_global_coherent(struct device *dev,
+ 		ssize_t size, dma_addr_t *dma_handle)
+ {
+@@ -201,7 +203,7 @@ static inline int dma_mmap_from_global_coherent(struct vm_area_struct *vma,
+ {
+ 	return 0;
+ }
+-#endif /* CONFIG_DMA_DECLARE_COHERENT */
++#endif /* CONFIG_DMA_GLOBAL_POOL */
+ 
+ int dma_common_get_sgtable(struct device *dev, struct sg_table *sgt,
+ 		void *cpu_addr, dma_addr_t dma_addr, size_t size,
+diff --git a/kernel/dma/coherent.c b/kernel/dma/coherent.c
+index 78a951f6e2c7..6243b4d34087 100644
+--- a/kernel/dma/coherent.c
++++ b/kernel/dma/coherent.c
+@@ -20,8 +20,6 @@ struct dma_coherent_mem {
+ 	bool		use_dev_dma_pfn_offset;
+ };
+ 
+-static struct dma_coherent_mem *dma_coherent_default_memory __ro_after_init;
+-
+ static inline struct dma_coherent_mem *dev_get_coherent_memory(struct device *dev)
+ {
+ 	if (dev && dev->dma_mem)
+@@ -191,16 +189,6 @@ int dma_alloc_from_dev_coherent(struct device *dev, ssize_t size,
+ 	return 1;
+ }
+ 
+-void *dma_alloc_from_global_coherent(struct device *dev, ssize_t size,
+-				     dma_addr_t *dma_handle)
+-{
+-	if (!dma_coherent_default_memory)
+-		return NULL;
+-
+-	return __dma_alloc_from_coherent(dev, dma_coherent_default_memory, size,
+-					 dma_handle);
+-}
+-
+ static int __dma_release_from_coherent(struct dma_coherent_mem *mem,
+ 				       int order, void *vaddr)
+ {
+@@ -236,15 +224,6 @@ int dma_release_from_dev_coherent(struct device *dev, int order, void *vaddr)
+ 	return __dma_release_from_coherent(mem, order, vaddr);
+ }
+ 
+-int dma_release_from_global_coherent(int order, void *vaddr)
+-{
+-	if (!dma_coherent_default_memory)
+-		return 0;
+-
+-	return __dma_release_from_coherent(dma_coherent_default_memory, order,
+-			vaddr);
+-}
+-
+ static int __dma_mmap_from_coherent(struct dma_coherent_mem *mem,
+ 		struct vm_area_struct *vma, void *vaddr, size_t size, int *ret)
+ {
+@@ -290,6 +269,28 @@ int dma_mmap_from_dev_coherent(struct device *dev, struct vm_area_struct *vma,
+ 	return __dma_mmap_from_coherent(mem, vma, vaddr, size, ret);
+ }
+ 
++#ifdef CONFIG_DMA_GLOBAL_POOL
++static struct dma_coherent_mem *dma_coherent_default_memory __ro_after_init;
 +
- config DMA_REMAP
- 	bool
- 	depends on MMU
-diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-index 2922250f93b4..34ac5a2c7efc 100644
---- a/kernel/dma/direct.c
-+++ b/kernel/dma/direct.c
-@@ -156,9 +156,14 @@ void *dma_direct_alloc(struct device *dev, size_t size,
- 
- 	if (!IS_ENABLED(CONFIG_ARCH_HAS_DMA_SET_UNCACHED) &&
- 	    !IS_ENABLED(CONFIG_DMA_DIRECT_REMAP) &&
-+	    !IS_ENABLED(CONFIG_DMA_GLOBAL_POOL) &&
- 	    !dev_is_dma_coherent(dev))
- 		return arch_dma_alloc(dev, size, dma_handle, gfp, attrs);
- 
-+	if (IS_ENABLED(CONFIG_DMA_GLOBAL_POOL) &&
-+	    !dev_is_dma_coherent(dev))
-+		return dma_alloc_from_global_coherent(dev, size, dma_handle);
++void *dma_alloc_from_global_coherent(struct device *dev, ssize_t size,
++				     dma_addr_t *dma_handle)
++{
++	if (!dma_coherent_default_memory)
++		return NULL;
 +
- 	/*
- 	 * Remapping or decrypting memory may block. If either is required and
- 	 * we can't block, allocate the memory from the atomic pools.
-@@ -253,11 +258,21 @@ void dma_direct_free(struct device *dev, size_t size,
- 
- 	if (!IS_ENABLED(CONFIG_ARCH_HAS_DMA_SET_UNCACHED) &&
- 	    !IS_ENABLED(CONFIG_DMA_DIRECT_REMAP) &&
-+	    !IS_ENABLED(CONFIG_DMA_GLOBAL_POOL) &&
- 	    !dev_is_dma_coherent(dev)) {
- 		arch_dma_free(dev, size, cpu_addr, dma_addr, attrs);
- 		return;
- 	}
- 
-+	if (IS_ENABLED(CONFIG_DMA_GLOBAL_POOL) &&
-+	    !dev_is_dma_coherent(dev)) {
-+		unsigned int page_order = get_order(size);
++	return __dma_alloc_from_coherent(dev, dma_coherent_default_memory, size,
++					 dma_handle);
++}
 +
-+		if (!dma_release_from_global_coherent(page_order, cpu_addr))
-+			WARN_ON_ONCE(1);
-+		return;
-+	}
++int dma_release_from_global_coherent(int order, void *vaddr)
++{
++	if (!dma_coherent_default_memory)
++		return 0;
 +
- 	/* If cpu_addr is not from an atomic pool, dma_free_from_pool() fails */
- 	if (IS_ENABLED(CONFIG_DMA_COHERENT_POOL) &&
- 	    dma_free_from_pool(dev, cpu_addr, PAGE_ALIGN(size)))
-@@ -458,6 +473,8 @@ int dma_direct_mmap(struct device *dev, struct vm_area_struct *vma,
++	return __dma_release_from_coherent(dma_coherent_default_memory, order,
++			vaddr);
++}
++
+ int dma_mmap_from_global_coherent(struct vm_area_struct *vma, void *vaddr,
+ 				   size_t size, int *ret)
+ {
+@@ -311,6 +312,7 @@ int dma_init_global_coherent(phys_addr_t phys_addr, size_t size)
+ 	pr_info("DMA: default coherent area is set\n");
+ 	return 0;
+ }
++#endif /* CONFIG_DMA_GLOBAL_POOL */
  
- 	if (dma_mmap_from_dev_coherent(dev, vma, cpu_addr, size, &ret))
- 		return ret;
-+	if (dma_mmap_from_global_coherent(vma, cpu_addr, size, &ret))
-+		return ret;
+ /*
+  * Support for reserved memory regions defined in device tree
+@@ -320,7 +322,9 @@ int dma_init_global_coherent(phys_addr_t phys_addr, size_t size)
+ #include <linux/of_fdt.h>
+ #include <linux/of_reserved_mem.h>
  
- 	if (vma->vm_pgoff >= count || user_count > count - vma->vm_pgoff)
- 		return -ENXIO;
++#ifdef CONFIG_DMA_GLOBAL_POOL
+ static struct reserved_mem *dma_reserved_default_memory __initdata;
++#endif
+ 
+ static int rmem_dma_device_init(struct reserved_mem *rmem, struct device *dev)
+ {
+@@ -377,6 +381,7 @@ static int __init rmem_dma_setup(struct reserved_mem *rmem)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_DMA_GLOBAL_POOL
+ static int __init dma_init_reserved_memory(void)
+ {
+ 	if (!dma_reserved_default_memory)
+@@ -384,8 +389,8 @@ static int __init dma_init_reserved_memory(void)
+ 	return dma_init_global_coherent(dma_reserved_default_memory->base,
+ 					dma_reserved_default_memory->size);
+ }
+-
+ core_initcall(dma_init_reserved_memory);
++#endif /* CONFIG_DMA_GLOBAL_POOL */
+ 
+ RESERVEDMEM_OF_DECLARE(dma, "shared-dma-pool", rmem_dma_setup);
+ #endif
 -- 
 2.34.1
 
