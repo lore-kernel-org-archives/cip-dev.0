@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 921A3C4829A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90E6EC4828D
 	for <webhook@archiver.kernel.org>; Tue,  6 Feb 2024 12:27:55 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.20154.1707222461820333746
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web11.20157.1707222466534019812
  for <cip-dev@lists.cip-project.org>;
- Tue, 06 Feb 2024 04:27:47 -0800
+ Tue, 06 Feb 2024 04:27:46 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.05,247,1701097200"; 
-   d="scan'208";a="196960586"
+   d="scan'208";a="193048681"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 06 Feb 2024 21:27:47 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 06 Feb 2024 21:27:45 +0900
 Received: from Ubuntu-22.. (unknown [10.226.93.78])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id C55C64005E16;
-	Tue,  6 Feb 2024 21:27:45 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id C1F974005E16;
+	Tue,  6 Feb 2024 21:27:43 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH v2 5.10.y-cip 05/44] arm64: dts: renesas: r9a07g043: Split out RZ/G2UL SoC specific parts
-Date: Tue,  6 Feb 2024 12:26:55 +0000
-Message-Id: <20240206122734.13477-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 5.10.y-cip 04/44] arm64: dts: renesas: r9a07g043: Update IRQ numbers for SSI channels
+Date: Tue,  6 Feb 2024 12:26:54 +0000
+Message-Id: <20240206122734.13477-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240206122734.13477-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20240206122734.13477-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -34,192 +34,85 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 06 Feb 2024 12:27:55 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14789
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14788
 
-commit b9a0be2054964026aa58966ce9724b672f210835 upstream.
+commit 2a5c9891392dca47f6865a2add1986876e40849c upstream.
 
-Move RZ/G2UL SoC specific parts to r9a07g043u.dtsi so that
-r9a07g043.dtsi can be shared with RZ/Five (RISC-V SoC).
+From R01UH0968EJ0100 Rev.1.00 HW manual the interrupt numbers for SSI
+channels have been updated,
 
-Below are the changes due to which SoC specific parts are moved to
-r9a07g043u.dtsi:
-  - RZ/G2UL has Cortex-A55 (ARM64) whereas RZ/Five has AX45MP (RISC-V),
-  - RZ/G2UL has GICv3 as interrupt controller whereas RZ/Five has PLIC,
-  - RZ/G2UL has interrupts for SYSC block whereas interrupts are missing
-    for SYSC block on RZ/Five,
-  - RZ/G2UL has armv8-timer whereas RZ/Five has riscv-timer,
-  - RZ/G2UL has PSCI whereas RZ/Five have OpenSBI.
+SPI 329 - SSIF0 is now marked as reserved
+SPI 333 - SSIF1 is now marked as reserved
+SPI 335 - SSIF2 is now marked as reserved
+SPI 336 - SSIF2 is now marked as reserved
+SPI 341 - SSIF3 is now marked as reserved
 
+This patch drops the above IRQs from SoC DTSI.
+
+Fixes: 559f2b0708c70 ("arm64: dts: renesas: r9a07g043: Add SSI{1,2,3} nodes and fillup the SSI0 stub node")
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20221025220629.79321-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20230217185225.43310-5-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 ---
- arch/arm64/boot/dts/renesas/r9a07g043.dtsi  | 54 +------------------
- arch/arm64/boot/dts/renesas/r9a07g043u.dtsi | 60 +++++++++++++++++++++
- 2 files changed, 61 insertions(+), 53 deletions(-)
+ arch/arm64/boot/dts/renesas/r9a07g043.dtsi | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
-index ca937f88406c2..5f534db54d1c5 100644
+index 1422760a090bc..ca937f88406c2 100644
 --- a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- /*
-- * Device Tree Source for the RZ/G2UL SoC
-+ * Device Tree Source for the RZ/Five and RZ/G2UL SoCs
-  *
-  * Copyright (C) 2022 Renesas Electronics Corp.
-  */
-@@ -68,36 +68,8 @@ opp-1000000000 {
- 		};
- 	};
- 
--	cpus {
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		cpu0: cpu@0 {
--			compatible = "arm,cortex-a55";
--			reg = <0>;
--			device_type = "cpu";
--			#cooling-cells = <2>;
--			next-level-cache = <&L3_CA55>;
--			enable-method = "psci";
--			clocks = <&cpg CPG_CORE R9A07G043_CLK_I>;
--			operating-points-v2 = <&cluster0_opp>;
--		};
--
--		L3_CA55: cache-controller-0 {
--			compatible = "cache";
--			cache-unified;
--			cache-size = <0x40000>;
--		};
--	};
--
--	psci {
--		compatible = "arm,psci-1.0", "arm,psci-0.2";
--		method = "smc";
--	};
--
- 	soc: soc {
- 		compatible = "simple-bus";
--		interrupt-parent = <&gic>;
- 		#address-cells = <2>;
- 		#size-cells = <2>;
- 		ranges;
-@@ -545,12 +517,6 @@ cpg: clock-controller@11010000 {
- 		sysc: system-controller@11020000 {
- 			compatible = "renesas,r9a07g043-sysc";
- 			reg = <0 0x11020000 0 0x10000>;
--			interrupts = <SOC_PERIPHERAL_IRQ(42) IRQ_TYPE_LEVEL_HIGH>,
--				     <SOC_PERIPHERAL_IRQ(43) IRQ_TYPE_LEVEL_HIGH>,
--				     <SOC_PERIPHERAL_IRQ(44) IRQ_TYPE_LEVEL_HIGH>,
--				     <SOC_PERIPHERAL_IRQ(45) IRQ_TYPE_LEVEL_HIGH>;
--			interrupt-names = "lpm_int", "ca55stbydone_int",
--					  "cm33stbyr_int", "ca55_deny";
- 			status = "disabled";
- 		};
- 
-@@ -605,16 +571,6 @@ dmac: dma-controller@11820000 {
- 			dma-channels = <16>;
- 		};
- 
--		gic: interrupt-controller@11900000 {
--			compatible = "arm,gic-v3";
--			#interrupt-cells = <3>;
--			#address-cells = <0>;
--			interrupt-controller;
--			reg = <0x0 0x11900000 0 0x40000>,
--			      <0x0 0x11940000 0 0x60000>;
--			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_LOW>;
--		};
--
- 		sdhi0: mmc@11c00000 {
- 			compatible = "renesas,sdhi-r9a07g043",
- 				     "renesas,rcar-gen3-sdhi";
-@@ -880,12 +836,4 @@ target: trip-point {
- 			};
- 		};
- 	};
--
--	timer {
--		compatible = "arm,armv8-timer";
--		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
--				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
--	};
- };
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi b/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi
-index 96f935bc2d4d1..b8bf06b512351 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi
-@@ -10,3 +10,63 @@
- #define SOC_PERIPHERAL_IRQ(nr)		GIC_SPI nr
- 
- #include "r9a07g043.dtsi"
-+
-+/ {
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			compatible = "arm,cortex-a55";
-+			reg = <0>;
-+			device_type = "cpu";
-+			#cooling-cells = <2>;
-+			next-level-cache = <&L3_CA55>;
-+			enable-method = "psci";
-+			clocks = <&cpg CPG_CORE R9A07G043_CLK_I>;
-+			operating-points-v2 = <&cluster0_opp>;
-+		};
-+
-+		L3_CA55: cache-controller-0 {
-+			compatible = "cache";
-+			cache-unified;
-+			cache-size = <0x40000>;
-+		};
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0", "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
-+
-+&soc {
-+	interrupt-parent = <&gic>;
-+
-+	gic: interrupt-controller@11900000 {
-+		compatible = "arm,gic-v3";
-+		#interrupt-cells = <3>;
-+		#address-cells = <0>;
-+		interrupt-controller;
-+		reg = <0x0 0x11900000 0 0x40000>,
-+		      <0x0 0x11940000 0 0x60000>;
-+		interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+};
-+
-+&sysc {
-+	interrupts = <SOC_PERIPHERAL_IRQ(42) IRQ_TYPE_LEVEL_HIGH>,
-+		     <SOC_PERIPHERAL_IRQ(43) IRQ_TYPE_LEVEL_HIGH>,
-+		     <SOC_PERIPHERAL_IRQ(44) IRQ_TYPE_LEVEL_HIGH>,
-+		     <SOC_PERIPHERAL_IRQ(45) IRQ_TYPE_LEVEL_HIGH>;
-+	interrupt-names = "lpm_int", "ca55stbydone_int",
-+			  "cm33stbyr_int", "ca55_deny";
-+};
+@@ -108,9 +108,8 @@ ssi0: ssi@10049c00 {
+ 			reg = <0 0x10049c00 0 0x400>;
+ 			interrupts = <SOC_PERIPHERAL_IRQ(326) IRQ_TYPE_LEVEL_HIGH>,
+ 				     <SOC_PERIPHERAL_IRQ(327) IRQ_TYPE_EDGE_RISING>,
+-				     <SOC_PERIPHERAL_IRQ(328) IRQ_TYPE_EDGE_RISING>,
+-				     <SOC_PERIPHERAL_IRQ(329) IRQ_TYPE_EDGE_RISING>;
+-			interrupt-names = "int_req", "dma_rx", "dma_tx", "dma_rt";
++				     <SOC_PERIPHERAL_IRQ(328) IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "int_req", "dma_rx", "dma_tx";
+ 			clocks = <&cpg CPG_MOD R9A07G043_SSI0_PCLK2>,
+ 				 <&cpg CPG_MOD R9A07G043_SSI0_PCLK_SFR>,
+ 				 <&audio_clk1>, <&audio_clk2>;
+@@ -129,9 +128,8 @@ ssi1: ssi@1004a000 {
+ 			reg = <0 0x1004a000 0 0x400>;
+ 			interrupts = <SOC_PERIPHERAL_IRQ(330) IRQ_TYPE_LEVEL_HIGH>,
+ 				     <SOC_PERIPHERAL_IRQ(331) IRQ_TYPE_EDGE_RISING>,
+-				     <SOC_PERIPHERAL_IRQ(332) IRQ_TYPE_EDGE_RISING>,
+-				     <SOC_PERIPHERAL_IRQ(333) IRQ_TYPE_EDGE_RISING>;
+-			interrupt-names = "int_req", "dma_rx", "dma_tx", "dma_rt";
++				     <SOC_PERIPHERAL_IRQ(332) IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "int_req", "dma_rx", "dma_tx";
+ 			clocks = <&cpg CPG_MOD R9A07G043_SSI1_PCLK2>,
+ 				 <&cpg CPG_MOD R9A07G043_SSI1_PCLK_SFR>,
+ 				 <&audio_clk1>, <&audio_clk2>;
+@@ -149,10 +147,8 @@ ssi2: ssi@1004a400 {
+ 				     "renesas,rz-ssi";
+ 			reg = <0 0x1004a400 0 0x400>;
+ 			interrupts = <SOC_PERIPHERAL_IRQ(334) IRQ_TYPE_LEVEL_HIGH>,
+-				     <SOC_PERIPHERAL_IRQ(335) IRQ_TYPE_EDGE_RISING>,
+-				     <SOC_PERIPHERAL_IRQ(336) IRQ_TYPE_EDGE_RISING>,
+ 				     <SOC_PERIPHERAL_IRQ(337) IRQ_TYPE_EDGE_RISING>;
+-			interrupt-names = "int_req", "dma_rx", "dma_tx", "dma_rt";
++			interrupt-names = "int_req", "dma_rt";
+ 			clocks = <&cpg CPG_MOD R9A07G043_SSI2_PCLK2>,
+ 				 <&cpg CPG_MOD R9A07G043_SSI2_PCLK_SFR>,
+ 				 <&audio_clk1>, <&audio_clk2>;
+@@ -171,9 +167,8 @@ ssi3: ssi@1004a800 {
+ 			reg = <0 0x1004a800 0 0x400>;
+ 			interrupts = <SOC_PERIPHERAL_IRQ(338) IRQ_TYPE_LEVEL_HIGH>,
+ 				     <SOC_PERIPHERAL_IRQ(339) IRQ_TYPE_EDGE_RISING>,
+-				     <SOC_PERIPHERAL_IRQ(340) IRQ_TYPE_EDGE_RISING>,
+-				     <SOC_PERIPHERAL_IRQ(341) IRQ_TYPE_EDGE_RISING>;
+-			interrupt-names = "int_req", "dma_rx", "dma_tx", "dma_rt";
++				     <SOC_PERIPHERAL_IRQ(340) IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "int_req", "dma_rx", "dma_tx";
+ 			clocks = <&cpg CPG_MOD R9A07G043_SSI3_PCLK2>,
+ 				 <&cpg CPG_MOD R9A07G043_SSI3_PCLK_SFR>,
+ 				 <&audio_clk1>, <&audio_clk2>;
 -- 
 2.34.1
 
