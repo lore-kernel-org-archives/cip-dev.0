@@ -1,49 +1,58 @@
-Return-Path: <sai.sathujoda@toshiba-tsip.com>
+Return-Path: <chris.paterson2@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3528C4828F
-	for <webhook@archiver.kernel.org>; Wed,  7 Feb 2024 11:52:51 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
- by mx.groups.io with SMTP id smtpd.web10.18693.1707306769167233430
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8704C4828F
+	for <webhook@archiver.kernel.org>; Wed,  7 Feb 2024 12:22:41 +0000 (UTC)
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (JPN01-TYC-obe.outbound.protection.outlook.com [40.107.114.57])
+ by mx.groups.io with SMTP id smtpd.web11.18918.1707308557274048129
  for <cip-dev@lists.cip-project.org>;
- Wed, 07 Feb 2024 03:52:50 -0800
+ Wed, 07 Feb 2024 04:22:39 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.152, mailfrom: sai.sathujoda@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 417BqkEv3055761; Wed, 7 Feb 2024 20:52:46 +0900
-X-Iguazu-Qid: 2yAbno87TfANyuxrsn
-X-Iguazu-QSIG: v=2; s=0; t=1707306766; q=2yAbno87TfANyuxrsn; m=NW68ktjjOKIHctTTx4Ifxm9X640Qmj8ZK056AP92XUU=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1800) id 417BqiCX1841563
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Wed, 7 Feb 2024 20:52:45 +0900
+ dkim=pass header.i=@renesas.com header.s=selector1 header.b=Nhz8DUQ/;
+ spf=pass (domain: renesas.com, ip: 40.107.114.57, mailfrom: chris.paterson2@renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SQBw8kW4HaRMPXjGvkMoDW6QWY9LApgldgCgBslV/F+2TaGSK+iFYyS12vFUGjjzFPa6HPErxL8nxWlR+idrio8Wq7cVxFqH0hd7uALYGUaBFI1QcuqYXdfIP4+ShAsN88Pqh9w/6hQkOK2E3Kseyb4AnnA+OaVuEAoFHi5QxCgFbkO1keXOTkItyuIRMfvv1EKKltXWmAi11A56tslDJYfUciu1rg3M/lPm23yxL9yJlGS0I9X6bGX4mXuIL4KO7WG8tbfmRbID1WG8dtur8sCTWPl7paaOadTERXwFk5I5f4hXYbNzumdCJi6u7Si7u342AU4XdmXrSN0JMuf47w==
+ b=GCbTgn6D4amLfNWrdwRfcsGG8MszfBA7XVwtQh19f06yQQE0hXMhFk0QzhHz9cwRaLoAiWTodGiYo4kIVRRrnl4p553CQkRa6Ox+3vj+kBgTcmB8f5nzkTh9tPbla+o0vxYvbzL7riJTwugobjWd6ai7y9l/twX7Cli77lnzrfky5jgFLTQNQ9nITOodVblaJMXIBQnVDM8o8Bq8y+2nRnrpJkkiw54jqJO8WGYBZnSEicc1MIwhPwGqQruKb6PEsr9jm6AT7eELW65HBcsQz9Boh3Sx849mUGlaEAT5xd480dtMhAm6tkX3OeBGPpeevT26Sh4kua2I63g2ZdNpYw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CowaiskeLH6YB7NpsguhPaWD6aSdrj5cCAT7VAORWEU=;
- b=MY03S1xBnG2NmW1TCetMHfk8A+xdqkWZlUcnk7c2AI5fPdy0T2BqsFsmg03KykJehWMWbXPbxj+hUHb8QB9fVs+I3coXUYPEauVcUgHbsizm7CzTtboNmTHZAEfE6Ebo8li3Rw1qxQUPZPcCLGZdzBh1PfwGip0cR8x8guilIRxDrx+M8P68aO6t1qu2/3QxeG1WxsiFnQVzQl7X1e2Y1PSYlM7XRmT3o+O52slXFcrkAxx/xMjfwBoNwSgovbFW4n+1ba/qufTBBxaU/V1amkf9U2D+IR+OoSmP7FcgFOL5B+N0GLyogxPxRET7D3U71vn0yyhFKsLKzVGcnBY2yg==
+ bh=BskMvLN6pgSOvsfcZ8CD/1yMSBVyzwgx4EVjhVUL7XM=;
+ b=DSUNTMuUgvDv4cYB4GGTjIUkD6WaQ0VxVxJMyS4b+N2pE5IHrZ66cSyVVI8wK3OX0yt/Fm183nykBP8LtQNxMrF3PYn/F6TiGe+Ts63qtFFH3ZbK3Msyzgt72ip8saHimmRAnGbl+I0/zksml9k1HVtMVlMuNR4mgf3mKUh7P65BVM4YjcZ3Qwqq7GpMVp/+JvjARLeQFoIgWqqErpxWT4xdJDMALuOx/oMmOteGms0ovuHlyJPtuftLmp4R69kaKKtgn6HeWLUGST8odicIvGzDkwZrSfwvY9l5gdMsHeaj4pihyUTgME+LkxsThVcqwYnHv8DV7DRevqflzx1xtQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
- header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
-From: <Sai.Sathujoda@toshiba-tsip.com>
-To: <Chris.Paterson2@renesas.com>
-CC: <dinesh.kumar@toshiba-tsip.com>, <venkata1.pyla@toshibaap.onmicrosoft.com>,
-        <Shivanand.Kunijadar@toshiba-tsip.com>,
-        <Adithya.Balakumar@toshiba-tsip.com>,
-        <Zaiba.Sanglikar@toshiba-tsip.com>, <cip-dev@lists.cip-project.org>,
-        <kazuhiro3.hayashi@toshiba.co.jp>
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BskMvLN6pgSOvsfcZ8CD/1yMSBVyzwgx4EVjhVUL7XM=;
+ b=Nhz8DUQ/jNGJMCEns5qjgfWE3uu/AjXK1YsslI48IV22TYaWOy+YXwSUBavsm6rCqMs82zF31INQOEjW8HboVM8P2aL0mCHtowxIlwKFb1f/qmS14l6aSJaoCfGTgvIfoTRuotItK+nY2nm+ZjP8DqtJsi6No/h3W+F2mjeJPLg=
+Received: from TYWPR01MB11862.jpnprd01.prod.outlook.com (2603:1096:400:3fc::6)
+ by TY3PR01MB11987.jpnprd01.prod.outlook.com (2603:1096:400:40b::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7249.36; Wed, 7 Feb
+ 2024 12:22:31 +0000
+Received: from TYWPR01MB11862.jpnprd01.prod.outlook.com
+ ([fe80::d543:aeea:6f7b:2a47]) by TYWPR01MB11862.jpnprd01.prod.outlook.com
+ ([fe80::d543:aeea:6f7b:2a47%5]) with mapi id 15.20.7249.035; Wed, 7 Feb 2024
+ 12:22:31 +0000
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: "Sai.Sathujoda@toshiba-tsip.com" <Sai.Sathujoda@toshiba-tsip.com>
+CC: "dinesh.kumar@toshiba-tsip.com" <dinesh.kumar@toshiba-tsip.com>,
+	"Shivanand.Kunijadar@toshiba-tsip.com"
+	<Shivanand.Kunijadar@toshiba-tsip.com>, "Adithya.Balakumar@toshiba-tsip.com"
+	<Adithya.Balakumar@toshiba-tsip.com>, "Zaiba.Sanglikar@toshiba-tsip.com"
+	<Zaiba.Sanglikar@toshiba-tsip.com>, "cip-dev@lists.cip-project.org"
+	<cip-dev@lists.cip-project.org>, "kazuhiro3.hayashi@toshiba.co.jp"
+	<kazuhiro3.hayashi@toshiba.co.jp>
 Subject: RE: Query - ( Running Linux commands in LAVA host before booting the
  image )
 Thread-Topic: Query - ( Running Linux commands in LAVA host before booting the
  image )
 Thread-Index: 
- AdozwvV9UNGTGxZYRGqGmeIZ2P0TlwJpyH3gAACV+xAAAiUg0AAAckCwACcWkkAAPCHDMAJbyUuwADZLu0AAEFBIYAAqverQAOAY0AAAeDM7MAC1qp8QAADiP3AAElkEwAAIKc+gALj1AzAA+YOqgAADw2CwAAB+4oAAAJtgwA==
-Date: Wed, 7 Feb 2024 11:52:40 +0000
-X-TSB-HOP2: ON
+ AdozwvV9UNGTGxZYRGqGmeIZ2P0TlwJpyH3gAACV+xAAAiUg0AAAckCwACcWkkAAPCHDMAJbyUuwADZLu0AAEFBIYAAqverQAOAY0AAAeDM7MAC1qp8QAADiP3AAElkEwAAIKc+gALj1AzAA+YOqgAADw2CwAAB+4oAAAJtgwAAAlVFA
+Date: Wed, 7 Feb 2024 12:22:31 +0000
 Message-ID: 
- <OS3PR01MB6103B3C3E79AB76D6008C7D3C2452@OS3PR01MB6103.jpnprd01.prod.outlook.com>
+ <TYWPR01MB1186210D2225AADE6438DCDADB7452@TYWPR01MB11862.jpnprd01.prod.outlook.com>
 References: 
  <TY2PR01MB4954D32835FCAF8245111E1DC295A@TY2PR01MB4954.jpnprd01.prod.outlook.com>
  <TYYPR01MB6809B0815132278008135537B761A@TYYPR01MB6809.jpnprd01.prod.outlook.com>
@@ -66,980 +75,814 @@ References:
  <OS3PR01MB61033CE311E22152AF467E07C2452@OS3PR01MB6103.jpnprd01.prod.outlook.com>
  <TYWPR01MB118628433A0B23D25E7F8E6D5B7452@TYWPR01MB11862.jpnprd01.prod.outlook.com>
  <OS3PR01MB61036685298B1AEF896EFF0FC2452@OS3PR01MB6103.jpnprd01.prod.outlook.com>
+ <OS3PR01MB6103B3C3E79AB76D6008C7D3C2452@OS3PR01MB6103.jpnprd01.prod.outlook.com>
 In-Reply-To: 
- <OS3PR01MB61036685298B1AEF896EFF0FC2452@OS3PR01MB6103.jpnprd01.prod.outlook.com>
-Accept-Language: en-US
+ <OS3PR01MB6103B3C3E79AB76D6008C7D3C2452@OS3PR01MB6103.jpnprd01.prod.outlook.com>
+Accept-Language: en-US, en-GB
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
+ header.d=none;dmarc=none action=none header.from=renesas.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS3PR01MB6103:EE_|TY3PR01MB11798:EE_
-x-ms-office365-filtering-correlation-id: aa30b832-37d3-4fc3-6d00-08dc27d349ca
+x-ms-traffictypediagnostic: TYWPR01MB11862:EE_|TY3PR01MB11987:EE_
+x-ms-office365-filtering-correlation-id: ad90417b-0594-4212-3d1d-08dc27d774f7
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
 x-microsoft-antispam-message-info: 
- YqFKbARajH2AtfpYRyo3vq5wqdg9gT+eTU0DCiHOk3RTMfnYk+XPQkknGaBERLig8geyq3/jNg5y/yF4SSvfgR43lGc3mlgYinf27baM7HVaNKTHPDAmTn/yNq9Jti9sODgs4dMBw2lB4V5AAv6AB2Q8kWMn+OvKQMBKadnhBb+RH2sqo34QSN+y0rqDzdbuZqLxxP/teGBHBh5Fi+nNlwORyWJQqFW2jWNGvSG1Ewfpf6//PtsEBaQOn2uf5YaddR4Imw50lvztwGmvRBT7pciajubyeAGgfyp5OzhodvjUuKNRq+mbLvpb+g3CbNXmpuHHQXLPuo9Dztfxd0aU0XPTIyznTTjewcXv8RfWpq1TKnDerWbbMo5HvcGylgoxN93uFWn9xWw9/nqIHtnIVSAC0Hv9dNvRSdw6dhLewp3lAhKBANFxpq4nrL3dIJ4LDULGYtcRfaevbvI81Cgm+sEoYcGa7SttiUfmnNAcZw8AlWG6y6myK4xFOHsqrk55v6pAg/mSkl3wsVr8zqet+VJ0Y9JTjtqGoNrvz6aPYSEaKn1OpPWlAQSQPSPaBkwaEitHi9uRNcG9utL0PWz/pzD0iP1kJJk00QO1BnvpYLSGRh4y3uNEMKkUNl4svnZgVz3X+wI/dYMRj0TbUlhxJg==
+ LCGmcg6LRKEFNZa4qssESlAon+MOa3M9AbXvkuJHmGQO+eL8TdVRouLaklYfR48rjOc3AMtx9yFlI0Jgzk6r3Ia8k/LpfpPe6eAsa4f+1okuJCtYTe/O5sE57uHo24BISgo6TtAz51B+ofyBXGSi6Tgoiqi/0V9WQonlLQAwsZdPqn4iL/O672tQP7Js4xbpvaWG0dqM7dNRZyfluNYGP/Mb+9xab2gtzb0YATisJbXVRBVqBK3HddI+vpAPS+dCOUyfSkUC7LhdZ9/6+unwVayAV7PNTjbo7OT0inPVzVEIC/qGkV/wz++Jpd9BsOZIEHV7K0izXFtzmJ4IRIthQHbgP5lmcoKANPODmYFimYvNaeGcFiWAMCOQonLlna5mhOdbnfJMOqs+ylJRAVwILs5FvRU6PtaBdsSspgf2WCHb6sm4flRQlYOSiCoSRa43xPfvnod4OY7x47zJfJjA9JOVXNuz0MXcu+EK6qrhBqS47EzqwHl7SUvh0zKtslfOTAQJS6o7WIjXXLFE6uwEZcO203xyqKlgytFMx/qnWlj3oM5bYUOpzPzigH4uxiLQKGirW4c+31CEMRSQ13ymqCPNP6JzALWPntwMNHbfT80=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB6103.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(376002)(366004)(346002)(396003)(136003)(230922051799003)(64100799003)(1800799012)(451199024)(186009)(55016003)(5660300002)(2906002)(30864003)(41300700001)(66899024)(83380400001)(26005)(122000001)(86362001)(2940100002)(107886003)(9686003)(6506007)(66476007)(33656002)(966005)(478600001)(38070700009)(53546011)(85182001)(71200400001)(54906003)(7696005)(4326008)(66556008)(66946007)(6916009)(64756008)(76116006)(66446008)(8936002)(166002)(52536014)(38100700002)(8676002)(316002)(9326002)(559001)(579004);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB11862.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(346002)(376002)(366004)(39860400002)(136003)(230922051799003)(1800799012)(451199024)(64100799003)(186009)(64756008)(76116006)(66899024)(41300700001)(9686003)(9326002)(52536014)(4326008)(8936002)(8676002)(86362001)(30864003)(6506007)(478600001)(966005)(5660300002)(33656002)(7696005)(71200400001)(53546011)(38070700009)(6916009)(66556008)(26005)(66946007)(66446008)(316002)(66476007)(54906003)(83380400001)(122000001)(2906002)(166002)(38100700002)(55016003)(559001)(579004);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?WnpGN0ZvTXIrRVZ1dVloQ0ovTUNTcVNEdlF0RXBNTUVIYnFzcks0d1pP?=
- =?iso-2022-jp?B?Y0hBU3lTRThEZDV5WmZuMHpDSkR3N2F4Mkc0SG9iUDFFODVwYWRyV21j?=
- =?iso-2022-jp?B?QnpJZ1RZL3pwanN6Z0lVazlxWm8yRVUva2lsUk5SMkovM245REZXZjdk?=
- =?iso-2022-jp?B?bHNlTXEyTFN1OEVRdzhaZTF0dVk4UmpReU8yRlB5bDNuUWVsYlArb2pa?=
- =?iso-2022-jp?B?RmhqY0xMdm8rNzB0UU1kUnJnSFdyTUtVYUw4UmRqRjgrNVZzdTIzdFQy?=
- =?iso-2022-jp?B?K1NlaVhCejFjNVp2WEZ2NXRZR2VrVmJsRVlNZklNUks1YlJvaGRWU3My?=
- =?iso-2022-jp?B?YmtzaVEzdTM5K0I2cy95SlF5Z2swVW82ZElicUxCSUlPVkZlZ1JpQWJE?=
- =?iso-2022-jp?B?cjVBd0toSndMbkRkaU50aHZPLytRQ0NaN3NnczJmMEFIY0FGV2xuRlNJ?=
- =?iso-2022-jp?B?UEtIeUJYNE00UDh6TE80eElBOUVLZFJYTFNqZXVzTzJzaHgrbzVqdGVZ?=
- =?iso-2022-jp?B?UGRpMkVCNERSa0l1QWxrYkMwVi9iNU1YTC9jY1QwYk5rZUs3bDNoOHB6?=
- =?iso-2022-jp?B?NGRQMVFNbHhOODNBMnlLN1hvS0F6WkdOcUtkVmtZWHMwSE1QUC9QdlZ0?=
- =?iso-2022-jp?B?MlNiSlZNcGJxNXdlZmhEK3Vhb1VHVWpFeXcxak9mdXNJZHJIMnBoRjVE?=
- =?iso-2022-jp?B?VCswTEVXNGlPaHpVZ1o4dmw5L0c4T2xjV2NRVTNnMUdSaEhRWGZ4L3pJ?=
- =?iso-2022-jp?B?YUd4cmdmSFB2dGNlSTBDOGQyOEpCdGpsaHVMNHZCNU0vaU1xYUJ3Q0Fm?=
- =?iso-2022-jp?B?dVVZL3JwNkR0WWxKc0tmMDBtR3lLTm5KL3lLVzc3ck9QRGplMVllSFJy?=
- =?iso-2022-jp?B?YWJ1VGtCKytENTlxWHA3WU5NL1VNN081Mmw3SkE2b3padG43Ky9jaWZE?=
- =?iso-2022-jp?B?VWRjNjFJby95VWc5MXVPSDVmY0ZEWTZYaTlaSVJYRkdvMUloaE9rY3Jw?=
- =?iso-2022-jp?B?SzdsSnRvQXVzZktGQ1Z4SDVoRmdiTHVkcjBSOTdxN2JSWmJ3QkN1TzhD?=
- =?iso-2022-jp?B?UEE1K0RVOUYxZk8xMDN0Szd4R3pZVEx1MllPemJIWFcvNlpYZ2owR0J4?=
- =?iso-2022-jp?B?ajNSMEg4cExFRjNWWWFVUXJveS9WQThIOWFCZXBoZWNnRmMwcUh0ODNG?=
- =?iso-2022-jp?B?MWhXTVFxSWVHN08zeUkwS1k4RWlRYzI0S3FxdzFIU2FJWTlkYW5SRkhN?=
- =?iso-2022-jp?B?VFNZTjZ5WUlPQXRTRXR3b3JCTWZNUUVNZHJNTGxFZ3BVN0lGb3NWY0Vy?=
- =?iso-2022-jp?B?K2prT2xLWGJkbmJrYVZmYVdmRTg4MFNRZzNlbytNaFJFM05GSlhnSFVn?=
- =?iso-2022-jp?B?NHV0OS9zU2w1ZmZUNFFncWNralk4c2c2dUpFazQyQ1N6Tm9rY3FCbmNu?=
- =?iso-2022-jp?B?cGxoUzR0U0pDSm5kWjU1d29ZNVdhWktRSUZoK1ptNzIxd09hVnFMdHJl?=
- =?iso-2022-jp?B?Tnk5aTRJU1JaSmxkVC9kNitmYjVBaCs4TEQxYTdqOGVGWHhSUDRERTY3?=
- =?iso-2022-jp?B?UG9DSVNJeklsTXZiQlk5SVVlam1wQTNiR2I2ekUxRDZmbGhTbFNvSStx?=
- =?iso-2022-jp?B?ckF3TEo2TmdjdFFHVGZkMGxNSi9FUFMwTkZPVmhIYi9zcjN5NDBvTm9i?=
- =?iso-2022-jp?B?bEtuem9QYUI0dDRFNml0eGRqcDZURjhPWjV1R3FXUWJxTk93bTZsanRk?=
- =?iso-2022-jp?B?amlGQ0hmb0VzOEg0WmtuNkRRdjZYSnAwSUFmZkZBODNMZ3gyQTFIYTJM?=
- =?iso-2022-jp?B?N21BLys4dlFPdFBNNGM3aEIyTndxbk5ZTDkrTVg3bHE5RmpiWER1aFoy?=
- =?iso-2022-jp?B?SHd6bUVZTE5YQWlmbllxT3VmTmErSHRBQlY0aTdMYVdDaE1sUS9JcGk4?=
- =?iso-2022-jp?B?aUJkd09XM0xyOC9pUENCN2tiem5aQnhNQWlJSHdRa0FCTmJlSS8vMFdk?=
- =?iso-2022-jp?B?SlFDZlBPZUFKVjBmUTZ2Q3JIazAzMWVNclVlWitWZ3JMek9hSktWM0JP?=
- =?iso-2022-jp?B?TXFIWGxVakZxWWFyRnVSUC81Y2tlSXFsR0hrL05UQXovVEMrTTZMN2Vn?=
- =?iso-2022-jp?B?NVhHcnd2Uzc5VXdXVm1zVXl1UXpHbmlxejh3WVpISGFWczNQUEpxQ2N4?=
- =?iso-2022-jp?B?cTFNOXN6ZTBOVnIzTElZamRqZ2FJTHdxMHRpakZGbm9VQ1NWTWJad2NX?=
- =?iso-2022-jp?B?T0pSM09DZGxHMFVKVUNDa1BiS0laVTF0V2RoaXpOWGhJamlvTlZDQmdy?=
- =?iso-2022-jp?B?KzNTUHUyR1ZZTXp4RTlMTTM4WmdsQ25Pbmc9PQ==?=
+ =?gb2312?B?RzRZSXZibk83bURXQzVrb0V2NFlJVGc5c3BlcVdSMCt0U3FHQ1BlUytPLzY3?=
+ =?gb2312?B?QmJSUlJ0VVc2bjhZblcyd3pQcS9PS0pwWjVCOFd5bDcwOWprb1drd3Y1SDZj?=
+ =?gb2312?B?Z1kzVnBJTzFOYjFMeUw5bzlXSjVFeE00cHRnMkxzamdWbHBzMHhnWTRuWnl3?=
+ =?gb2312?B?RFc5VTgzdDUzR052Ymw4QU9mQThyUVI1UnYvWkRBWmZMZmpRMStPZ05UWERo?=
+ =?gb2312?B?VjJpcVpXVlhRL0VXTnVnZTFLZ0VFTEJUblJGN3A4OWhsZm81cDZpQTNCaC9Z?=
+ =?gb2312?B?RjRGV3NvLzVTVG5lb3VtcEVMQWNoTTRMWTJ6NklUaU9SbXJrMER3SmJ5Zkd3?=
+ =?gb2312?B?dDhkN29iWERiRDZueWpKdVN0cTlYQlZQRlBFRnBiTVdES2NaZVZSNGNlM1A1?=
+ =?gb2312?B?T1UxZHN4c2VIOVBxVHd6UktXL3o0YXVwM3BoS0c3UnpmM1U3RXVHRitJMUpq?=
+ =?gb2312?B?V1RwRDBSMEJ2S2UrZUs0dDA3WUM3T0ZNUU5SV294WU4vYUd5SVRpUG95L3hO?=
+ =?gb2312?B?NnhueDNKcUxBT3NndlFDRjRyc0s3ajFHUVJJdkN5Uk9rS0dVcHlYUzMybzhx?=
+ =?gb2312?B?dVlkL3pwd0NPaXg3enNWOFpYWE1Wb1pJd3lVVzhWWmowKytJUml4aXo3UDJ3?=
+ =?gb2312?B?VFpFeUJOcDlrRnN6N2t2SnFTMVMyRktMTXZZWEJFNWdndU9XWDJiaXN5Ty9q?=
+ =?gb2312?B?N0QzTzV0WTdlangvSFZpMzhqUm5WQmJDTUtFRk42d0trek5OcUR3TkNIbGU1?=
+ =?gb2312?B?bDBWV05xa2JOOFQzdDk5ZDFNcG5iZGR4cWRST203WEtXL2NJWEhKcTRBRkE1?=
+ =?gb2312?B?czluYUx6cUpXVE5LQ3JZNkZ5WGNGQVdHa0pLZlJJeEFDUTJoL05MQmZiQXRz?=
+ =?gb2312?B?R2p1SDhtdnpZQTMzcG53bDR4MVltT2RCd0xhZzJCc2J5R0xzaVpaVW9NVnI1?=
+ =?gb2312?B?T2ZjMnlwSmpPOEpySGFESXJZNDlBRDZPdjNSNmVsQlh0TC9VWXFadUFNMDhx?=
+ =?gb2312?B?cHRLVUN2TlY0RU5LdThoc1p3b0Q0dEJyRDJsdWg1ZTZjQ1F5dWY0ZVJZaVBm?=
+ =?gb2312?B?UzA5ZnZhOEVDbTVMemQ5TVFSMTE3UWptaS9NeUtBOEZuKzgwYm9LVld1RFRE?=
+ =?gb2312?B?ZjhjSmFTMzh3a0hCcnc1YlVsQjJuTWRpbjl3NFlGQUFDS3V3UGIwcEpDQ0I1?=
+ =?gb2312?B?NFdpSWpiSU5nWkNOT0l0SllLMnRKQWxlREtUVVJNbDk1TWY0ZFRESWdTcWRx?=
+ =?gb2312?B?OUlhRFB4VmZDSVVDbmhIcHJIMHd0aGMxMVBsSjVZRW9ITFpxMmVsQ3ZHMUV5?=
+ =?gb2312?B?ZEhkK1lZSHJLdThicnA1c2ptSUx1WEZKZ3JmWS9YNFJocnNFVHhSVUo1TFhL?=
+ =?gb2312?B?d1Y5NG5GSGNSNHBiMzlSanB6SUp1MzJwWlQ3OFJnMVAra240Y2szUjlVeVFL?=
+ =?gb2312?B?ekpKYUdCTlFnMkNodmsyRkNiZHNVajkzZXBHRkVDVEdNMVJJdStFUWg3UnNK?=
+ =?gb2312?B?L3FhT3ltZGE5ZlBLdDBKQ2cra3U1ckRrRThRRTRVOGV5M3prNHB0aElRQnAv?=
+ =?gb2312?B?Ri9VbndTNnNLVHNUWWMzRWk2RDhQU1h4Yk1xMjhoTndpR2Q4TzVsOFVaUk9m?=
+ =?gb2312?B?ck5QY081TWNWV21ESzU5b0ROUE5CZU9sRDFjZEUyOGc4MjBrVkxGOWFZR2dS?=
+ =?gb2312?B?Q3VBMzRLLzZNc3hxRitVd3c0ZzZvZU12TGRGZWN6MllCcGk0dWlQdko3L0pK?=
+ =?gb2312?B?TTE4RzZLd25MTUZwRXc0U2FDS3R4Qm5tbkYrbmRXTmFJSlNiTGM4bFNrNU96?=
+ =?gb2312?B?bFdkUG51RS93S24wWndtZUo3czh0SUxiL2ZKc01pY2dyTnI3WHVPMG1BL1M3?=
+ =?gb2312?B?UUNpc2tZYUFtSEVaRTQ1UzM4SjIxZnJMZlQycFladzFHUXZTMjRrcWx6Si9I?=
+ =?gb2312?B?L3pFMS9YV0l5QXh1WlZ3Zis4N1JPODQ4bWZUWUw1WVZhVU9aamZYbGdqbG9O?=
+ =?gb2312?B?ZjZpck82NmRPNGgxYkdXZUtDRFFuOHNvd2k2TWRzRndQeGdjQTgwQzIwajBD?=
+ =?gb2312?B?TGJveXVBTGd0dG1rK0NLZ0NOam5QdEZ2c1lXSFRiV0o2RTRibXpaL0RTMTJU?=
+ =?gb2312?B?aWxmaHRmd0JCTEYrYzRtODVqbG83YWxwUUc5ZVNSQ29ycUFwYldoM20xUGI3?=
+ =?gb2312?B?U1E9PQ==?=
 Content-Type: multipart/alternative;
-	boundary="_000_OS3PR01MB6103B3C3E79AB76D6008C7D3C2452OS3PR01MB6103jpnp_"
+	boundary="_000_TYWPR01MB1186210D2225AADE6438DCDADB7452TYWPR01MB11862jp_"
 MIME-Version: 1.0
-X-OriginatorOrg: toshiba-tsip.com
+X-OriginatorOrg: renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB6103.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aa30b832-37d3-4fc3-6d00-08dc27d349ca
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Feb 2024 11:52:40.9057
+X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB11862.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ad90417b-0594-4212-3d1d-08dc27d774f7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Feb 2024 12:22:31.3395
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 9+am6uOmKFAc7jzPlz9qjr9oR2gaM8oP8ksje1+GQsIiqTWIQ6yJEquxJbf0LVt+kxLCyQfK6dehJMeZ2N2x2BJEln3xzspuu61/yfhmODI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB11798
+X-MS-Exchange-CrossTenant-userprincipalname: F9RhutA9wF14F8igNF8wu9U+qexBdUUGjDuY/hPLnA3gHSjm83l6gmmqwW+ZjcdtsQ93kT0fVNa2/MqRKpK3F7tc0ApFHCIy84hnm/WgMso=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB11987
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 07 Feb 2024 11:52:51 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14878
-
---_000_OS3PR01MB6103B3C3E79AB76D6008C7D3C2452OS3PR01MB6103jpnp_
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
-
-Hello Chris,
-
-Another observation which can give you better idea about the issue I am fac=
-ing is, just now I tried to run this job ( has a minimal boot action & does=
- not need swtpm socket changes ) which ran successfully LAVA | Scheduler | =
-Jobs | 1089979 (ciplatform.org)<https://lava.ciplatform.org/scheduler/job/1=
-089979> today some hours ago. After you made changes in your lava slave, no=
-w if I run the same job now LAVA | Scheduler | Jobs | 1090009 (ciplatform.o=
-rg)<https://lava.ciplatform.org/scheduler/job/1090009>, it is giving Cannot=
- find command '' in $PATH, Please report this to LAVA admins, so do you thi=
-nk the script additions and changes to device dictionaries we made can be c=
-onflicting the minimal boot action and giving infrastructure error ? Whenev=
-er I change method:minimal to method:qemu and media:tmpfs, it is not throwi=
-ng this error.
-
-Can you please help me with this Chris ?
-
-Thanks and regards,
-Sai Ashrith (T S I P)
-
-
-From: ashrith sai(=1B$B#T#S#I#P=1B(B)
-Sent: Wednesday, February 7, 2024 5:09 PM
-To: Chris Paterson <Chris.Paterson2@renesas.com>
-Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshib=
-a-tsip.com>; venkata1.pyla <venkata1.pyla@toshibaap.onmicrosoft.com>; kunij=
-adar shivanand(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <Shivanand.Kunijadar@t=
-oshiba-tsip.com>; balakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) <Adithya.Balak=
-umar@toshiba-tsip.com>; sanglikar zaiba(=1B$B#T#S#I#P=1B(B TEUR) <Zaiba.San=
-glikar@toshiba-tsip.com>; cip-dev@lists.cip-project.org; hayashi kazuhiro(=
-=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D#I#G""#M#P#S!{#M#P#4=
-=1B(B) <kazuhiro3.hayashi@toshiba.co.jp>
-Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
-he image )
-
-Hello Chris,
-
-Thanks a lot for your great support.
-
-Yes, I am able to run my jobs in lab-cip-renesas now. But I am facing this =
-issue , =1B$B!H=1B(BCannot find command '' in $PATH, Please report this to =
-LAVA admins=1B$B!I=1B(B now in CIP LAVA Lab as well. This is happening when=
-ever to try a minimal boot for a swtpm related CIP security image. Previous=
-ly I faced this issue in my own setup and suspected something is wrong with=
- my setup, but now after seeing the same thing in CIP LAVA lab,
-
-
-  1.  Do you think minimal boot will not work if there is some communicatio=
-n through a socket from the dispatcher to the DUT ? I am not sure of this, =
-but this validation error is coming only when I use minimal boot with these=
- swtpm security image related jobs.
-
-For jobs which do not use swtpm, the minimal boot is working fine. The reas=
-on I am particular about this minimal boot is because I want to capture a c=
-ertain shutdown down message after a soft reboot which can help job to comp=
-lete if it captures that message. If you can surely say [1] is the reason, =
-then do you have any idea how to use shutdown-message along with something =
-other than minimal boot ?
-
-Please provide your opinion on this Chris.
-
-Thanks and regards,
-Sai Ashrith (T S I P)
-
-From: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@re=
-nesas.com>>
-Sent: Wednesday, February 7, 2024 4:45 PM
-To: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com<mailto:=
-Sai.Sathujoda@toshiba-tsip.com>>
-Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshib=
-a-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>>; venkata1.pyla <venkata1.=
-pyla@toshibaap.onmicrosoft.com<mailto:venkata1.pyla@toshibaap.onmicrosoft.c=
-om>>; kunijadar shivanand(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <Shivanand.=
-Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijadar@toshiba-tsip.com>>; b=
-alakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) <Adithya.Balakumar@toshiba-tsip.c=
-om<mailto:Adithya.Balakumar@toshiba-tsip.com>>; sanglikar zaiba(=1B$B#T#S#I=
-#P=1B(B TEUR) <Zaiba.Sanglikar@toshiba-tsip.com<mailto:Zaiba.Sanglikar@tosh=
-iba-tsip.com>>; cip-dev@lists.cip-project.org<mailto:cip-dev@lists.cip-proj=
-ect.org>; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B=
-$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp<mailto:ka=
-zuhiro3.hayashi@toshiba.co.jp>>
-Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
-he image )
-
-Hello Sai,
-
-I=1B$B!G=1B(Bve added the scripts to lab-cip-renesas and added the user-com=
-mands to the qemu device-type templates.
-You can use the =1B$B!H=1B(Bsw-update-testing=1B$B!I=1B(B tag in your job d=
-efinition to force LAVA to use the correct devices.
-
-Let me know how it goes.
-
-Thanks, Chris
-
-From: Sai.Sathujoda@toshiba-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>=
- <Sai.Sathujoda@toshiba-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>>
-Sent: Wednesday, February 7, 2024 9:37 AM
-To: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@rene=
-sas.com>>
-Cc: dinesh.kumar@toshiba-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>; ve=
-nkata1.pyla@toshibaap.onmicrosoft.com<mailto:venkata1.pyla@toshibaap.onmicr=
-osoft.com>; Shivanand.Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijadar=
-@toshiba-tsip.com>; Adithya.Balakumar@toshiba-tsip.com<mailto:Adithya.Balak=
-umar@toshiba-tsip.com>; Zaiba.Sanglikar@toshiba-tsip.com<mailto:Zaiba.Sangl=
-ikar@toshiba-tsip.com>; cip-dev@lists.cip-project.org<mailto:cip-dev@lists.=
-cip-project.org>; kazuhiro3.hayashi@toshiba.co.jp<mailto:kazuhiro3.hayashi@=
-toshiba.co.jp>
-Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
-he image )
-
-Hello Chris,
-
-While verifying few scenarios in my job definitions in my Local LAVA Lab, I=
- observed some issues. I found the minimal boot is not working in my local =
-setup. It is failing at the first validation stage with this message, =1B$B=
-!H=1B(BCannot find command '' in $PATH, Please report this to LAVA admins=
-=1B$B!I=1B(B. When I try to run this job with minimal boot in CIP LAVA lab,=
- it is running successfully.
-
-Currently I am not sure why the same job is failing to start in my lab but =
-is running fine in CIP LAVA lab. But since you asked previously if you need=
- to make any changes to lab-cip-renesas, it will be very helpful if you pla=
-ce the scripts I have added in this MR lava-slave/scripts: Add scripts need=
-ed to run for booting CIP QEMU security target (!35) * Merge requests * cip=
--project / cip-testing / lava-docker * GitLab<https://gitlab.com/cip-projec=
-t/cip-testing/lava-docker/-/merge_requests/35/diffs>, and update the qemu j=
-inja2 template with the user commands I mentioned in lava-server qemu.jina2=
- template
-
-Then it will be helpful for me to quickly debug my job definitions in CIP l=
-ava lab. I also request you to review the MR I mentioned above and provide =
-your review comments.
-
-Thanks for your constant support, Chris.
-
-Regards,
-Sai Ashrith ( T S I P )
-From: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@re=
-nesas.com>>
-Sent: Friday, February 2, 2024 4:05 PM
-To: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com<mailto:=
-Sai.Sathujoda@toshiba-tsip.com>>
-Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshib=
-a-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>>; venkata1.pyla <venkata1.=
-pyla@toshibaap.onmicrosoft.com<mailto:venkata1.pyla@toshibaap.onmicrosoft.c=
-om>>; kunijadar shivanand(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <Shivanand.=
-Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijadar@toshiba-tsip.com>>; b=
-alakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) <Adithya.Balakumar@toshiba-tsip.c=
-om<mailto:Adithya.Balakumar@toshiba-tsip.com>>; sanglikar zaiba(=1B$B#T#S#I=
-#P=1B(B TEUR) <Zaiba.Sanglikar@toshiba-tsip.com<mailto:Zaiba.Sanglikar@tosh=
-iba-tsip.com>>; cip-dev@lists.cip-project.org<mailto:cip-dev@lists.cip-proj=
-ect.org>; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B=
-$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp<mailto:ka=
-zuhiro3.hayashi@toshiba.co.jp>>
-Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
-he image )
-
-Hello Sai,
-
-I think we=1B$B!G=1B(Bre at the point now where we can get some merge reque=
-sts created.
-Please could you create an MR for the CIP lava-docker<https://gitlab.com/ci=
-p-project/cip-testing/lava-docker> repository?
-
-I suggest that we put your scripts in lava-slave/scripts. They will then en=
-d up being copied into the /usr/local/bin/ directory on the lava-dispatcher=
-s.
-
-For the device templates, perhaps we should create a common cip.jinja2 temp=
-late which we can use to include the user_commands.
-We could then patch the device-type templates to extend cip.jinja2 and ther=
-efore have access to start_tpm etc.
-
->So, I feel it would be good if we can add a tag name related to QEMU swtpm=
- to avoid confusion after seeing the job definition head. Please provide yo=
-ur opinion Chris.
-Yes we could add a tag like this until all of the CIP LAVA labs are updated=
- based on the merged MR from above.
-Do you need me to make any changes to lab-cip-renesas now?
-
-Kind regards, Chris
-
-From: Sai.Sathujoda@toshiba-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>=
- <Sai.Sathujoda@toshiba-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>>
-Sent: Monday, January 29, 2024 6:30 PM
-To: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@rene=
-sas.com>>
-Cc: dinesh.kumar@toshiba-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>; ve=
-nkata1.pyla@toshibaap.onmicrosoft.com<mailto:venkata1.pyla@toshibaap.onmicr=
-osoft.com>; Shivanand.Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijadar=
-@toshiba-tsip.com>; Adithya.Balakumar@toshiba-tsip.com<mailto:Adithya.Balak=
-umar@toshiba-tsip.com>; Zaiba.Sanglikar@toshiba-tsip.com<mailto:Zaiba.Sangl=
-ikar@toshiba-tsip.com>; cip-dev@lists.cip-project.org<mailto:cip-dev@lists.=
-cip-project.org>; kazuhiro3.hayashi@toshiba.co.jp<mailto:kazuhiro3.hayashi@=
-toshiba.co.jp>
-Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
-he image )
-
-Hello Chris,
-
-I removed the sure_kill and rm_tmpdir commands from the device dictionary. =
-I updated the swtpm_finish.sh script. As you mentioned swtpm_finish.sh stan=
-ds okay even if it runs twice as undo action in software update test cases.=
- Please have a look at the updated scripts and device dictionaries.
-
-Note: I am running the scripts from /home right, if you think it is not the=
- right place to place the scripts then I request you to change the path in =
-the device dictionaries as well when calling those scripts from the job def=
-inition.
-
-According to my understanding all these changes in only lab-cip-renesas , r=
-ight Chris?  Currently all my job definitions of software update testing, s=
-ecure boot testing and IEC Layer tests are only QEMU swtpm based since I am=
- using security image for all the cases.
-
-So, I feel it would be good if we can add a tag name related to QEMU swtpm =
-to avoid confusion after seeing the job definition head. Please provide you=
-r opinion Chris.
-
-
-Thanks and Regards,
-Sai Ashrith ( T S I P )
-
-From: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@re=
-nesas.com>>
-Sent: Monday, January 29, 2024 7:48 PM
-To: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com<mailto:=
-Sai.Sathujoda@toshiba-tsip.com>>
-Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshib=
-a-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>>; venkata1.pyla <venkata1.=
-pyla@toshibaap.onmicrosoft.com<mailto:venkata1.pyla@toshibaap.onmicrosoft.c=
-om>>; kunijadar shivanand(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <Shivanand.=
-Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijadar@toshiba-tsip.com>>; b=
-alakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) <Adithya.Balakumar@toshiba-tsip.c=
-om<mailto:Adithya.Balakumar@toshiba-tsip.com>>; sanglikar zaiba(=1B$B#T#S#I=
-#P=1B(B TEUR) <Zaiba.Sanglikar@toshiba-tsip.com<mailto:Zaiba.Sanglikar@tosh=
-iba-tsip.com>>; cip-dev@lists.cip-project.org<mailto:cip-dev@lists.cip-proj=
-ect.org>; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B=
-$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp<mailto:ka=
-zuhiro3.hayashi@toshiba.co.jp>>
-Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
-he image )
-
-Hello Sai,
-
-Thank you for the updates.
-
-Rather than have a separate sure_kill command which is run at the start, co=
-uldn=1B$B!G=1B(Bt we just add an undo to the start_tpm task that runs the s=
-wtpm_finish.sh script?
-My understanding is that the undo action would only be run at the end of th=
-e job, which is what we want.
-If we have multiple calls of the start_tpm task then we=1B$B!G=1B(Bll get m=
-ultiple calls of the undo action, but with the swtpm_finish.sh script as it=
- stands I think that should be okay?
-
-Let me know if it works, or if you need me to implement anything my end to =
-help with testing.
-
-Thanks, Chris
-
-From: Sai.Sathujoda@toshiba-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>=
- <Sai.Sathujoda@toshiba-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>>
-Sent: Monday, January 29, 2024 5:29 AM
-To: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@rene=
-sas.com>>
-Cc: dinesh.kumar@toshiba-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>; ve=
-nkata1.pyla@toshibaap.onmicrosoft.com<mailto:venkata1.pyla@toshibaap.onmicr=
-osoft.com>; Shivanand.Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijadar=
-@toshiba-tsip.com>; Adithya.Balakumar@toshiba-tsip.com<mailto:Adithya.Balak=
-umar@toshiba-tsip.com>; Zaiba.Sanglikar@toshiba-tsip.com<mailto:Zaiba.Sangl=
-ikar@toshiba-tsip.com>; cip-dev@lists.cip-project.org<mailto:cip-dev@lists.=
-cip-project.org>; kazuhiro3.hayashi@toshiba.co.jp<mailto:kazuhiro3.hayashi@=
-toshiba.co.jp>
-Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
-he image )
-
-Hello Chris,
-
-Sorry I forgot to attach the job definition using which you can understand =
-where I am using those commands sent in the previous mail. Please have a lo=
-ok and let me know your thoughts.
-
-Thanks and regards,
-Sai Ashrith ( T S I P )
-
-From: ashrith sai(=1B$B#T#S#I#P=1B(B)
-Sent: Monday, January 29, 2024 10:53 AM
-To: 'Chris Paterson' <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@re=
-nesas.com>>
-Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshib=
-a-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>>; venkata1.pyla <venkata1.=
-pyla@toshibaap.onmicrosoft.com<mailto:venkata1.pyla@toshibaap.onmicrosoft.c=
-om>>; kunijadar shivanand(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <Shivanand.=
-Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijadar@toshiba-tsip.com>>; b=
-alakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) <Adithya.Balakumar@toshiba-tsip.c=
-om<mailto:Adithya.Balakumar@toshiba-tsip.com>>; sanglikar zaiba(=1B$B#T#S#I=
-#P=1B(B TEUR) <Zaiba.Sanglikar@toshiba-tsip.com<mailto:Zaiba.Sanglikar@tosh=
-iba-tsip.com>>; cip-dev@lists.cip-project.org<mailto:cip-dev@lists.cip-proj=
-ect.org>; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B=
-$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp<mailto:ka=
-zuhiro3.hayashi@toshiba.co.jp>>
-Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
-he image )
-
-Hello Chris,
-
-Thank you for suggesting this scenario.
-
-Yes, if we cancel the job in between, then both the swtpm process as well a=
-s the .swtpm directory which we created in the beginning will remain causin=
-g the later jobs to fail. So, we need to add killing the process as well as=
- removing the directory as part of undo action to some command which we wil=
-l run at the beginning of the job. I don=1B$B!G=1B(Bt think it is possible =
-to add more than one command as undo action to a command in LAVA. So, to ke=
-ep it simple, let us include two small scripts in any directory you prefer =
-in the slave machine. One script will start the tpm after checking if any s=
-wtpm process is not running already and the other will make sure that whate=
-ver the case, there should be no presence of swtpm process running as well =
-as the temporary directory we created to store TPM state files. I did not a=
-dd the swtpm_finish.sh as part of undo action of start_tpm because we need =
-to use start_tpm twice in Swupdate related job definitions.
-
-I am attaching the scripts, updated device dictionaries as well as the job =
-definition in which we can use them. Please have a look at them.
-
-Thanks and Regards,
-Sai Ashrith ( T S I P )
-
-From: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@re=
-nesas.com>>
-Sent: Thursday, January 25, 2024 7:53 PM
-To: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com<mailto:=
-Sai.Sathujoda@toshiba-tsip.com>>
-Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshib=
-a-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>>; venkata1.pyla <venkata1.=
-pyla@toshibaap.onmicrosoft.com<mailto:venkata1.pyla@toshibaap.onmicrosoft.c=
-om>>; kunijadar shivanand(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <Shivanand.=
-Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijadar@toshiba-tsip.com>>; b=
-alakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) <Adithya.Balakumar@toshiba-tsip.c=
-om<mailto:Adithya.Balakumar@toshiba-tsip.com>>; sanglikar zaiba(=1B$B#T#S#I=
-#P=1B(B TEUR) <Zaiba.Sanglikar@toshiba-tsip.com<mailto:Zaiba.Sanglikar@tosh=
-iba-tsip.com>>; cip-dev@lists.cip-project.org<mailto:cip-dev@lists.cip-proj=
-ect.org>; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B=
-$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp<mailto:ka=
-zuhiro3.hayashi@toshiba.co.jp>>
-Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
-he image )
-
-Hello Sai,
-
-Thank you for the information. It looks like you=1B$B!G=1B(Bre making good =
-progress.
-
-Your new approach seems pretty good to me, although one though=1B$B!D=1B(B
-What happens if a job fails or is cancelled before reaching the end =1B$B!H=
-=1B(Brm_tpmdir=1B$B!I=1B(B and =1B$B!H=1B(Bkill_tpm=1B$B!I=1B(B commands?
-Wouldn=1B$B!G=1B(Bt the original swtpm instance set up by =1B$B!H=1B(Bstart=
-_tpm=1B$B!I=1B(B keep running? And any subsequent jobs would end up in the =
-infinite while loop in your script.
-Is there a way to make it so that a command action is _always_ run at the e=
-nd of a job?
-
-Kind regards, Chris
-
-From: Sai.Sathujoda@toshiba-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>=
- <Sai.Sathujoda@toshiba-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>>
-Sent: Tuesday, January 23, 2024 5:04 AM
-To: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@rene=
-sas.com>>
-Cc: dinesh.kumar@toshiba-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>; ve=
-nkata1.pyla@toshibaap.onmicrosoft.com<mailto:venkata1.pyla@toshibaap.onmicr=
-osoft.com>; Shivanand.Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijadar=
-@toshiba-tsip.com>; Adithya.Balakumar@toshiba-tsip.com<mailto:Adithya.Balak=
-umar@toshiba-tsip.com>; Zaiba.Sanglikar@toshiba-tsip.com<mailto:Zaiba.Sangl=
-ikar@toshiba-tsip.com>; cip-dev@lists.cip-project.org<mailto:cip-dev@lists.=
-cip-project.org>; kazuhiro3.hayashi@toshiba.co.jp<mailto:kazuhiro3.hayashi@=
-toshiba.co.jp>
-Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
-he image )
-
-Hello Chris,
-
-Please provide your opinion regarding the changes proposed in the below mai=
-l.
-
-Thanks and Regards,
-Sai Ashrith (T S I P)
-
-From: ashrith sai(=1B$B#T#S#I#P=1B(B)
-Sent: Friday, January 19, 2024 12:46 AM
-To: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@rene=
-sas.com>>
-Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshib=
-a-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>>; 'venkata1.pyla' <venkata=
-1.pyla@toshibaap.onmicrosoft.com<mailto:venkata1.pyla@toshibaap.onmicrosoft=
-.com>>; kunijadar shivanand(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <Shivanan=
-d.Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijadar@toshiba-tsip.com>>;=
- balakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) <Adithya.Balakumar@toshiba-tsip=
-.com<mailto:Adithya.Balakumar@toshiba-tsip.com>>; sanglikar zaiba(=1B$B#T#S=
-#I#P=1B(B TEUR) <Zaiba.Sanglikar@toshiba-tsip.com<mailto:Zaiba.Sanglikar@to=
-shiba-tsip.com>>
-Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
-he image )
-
-Hello Chris,
-
-We investigated further more about this issue you pointed out where two job=
-s using swtpm run at a similar time on the same dispatcher. I agree with yo=
-ur opinion that it is not ideal and maintainable if we try to use different=
- variables for each qemu device template. So we came up with another approa=
-ch.
-
-As per my understanding, swtpm package is installed in lab-cip-renesas slav=
-e right, so for now let us consider just using the qemu-01-renesas and qemu=
--02-renesas  devices to run the jobs which use swtpm related job definition=
-s. Since there are only 2 qemu devices currently, we can use locking mechan=
-ism to force the second job ( the one which was started later ) to wait unt=
-il the first one is completely done with removal of .swtpm  directory as we=
-ll killing that process. Once we confirm this in the script, only then the =
-second job will start swtpm socket.
-
-We measured the approximate time a full software update testing job can tak=
-e and I will take care of that with the command action timeout considering =
-the worst case wait time. I revised the user-commands in the device diction=
-aries considering how the software update scenario can be tested successful=
-ly using the security image. So I removed adding killing and removing swtpm=
- as undo actions and instead added them as do action. To give you a better =
-understanding for why I did this, please have a look at the job definition =
-I have attached in which I  demonstrated how multiple reboots can be handle=
-d with this kind of image running with a swtpm socket.
-
-I also attached another file where I put the script to be present in LAVA d=
-ispatcher and the QEMU device dictionaries (same for both qemu-01-renesas a=
-nd qemu-02-renesas).
-
-Please provide your feedback on the above mentioned approach Chris.
-
-Thanks and Regards,
-Sai Ashrith (T S I P)
-
-From: ashrith sai(=1B$B#T#S#I#P=1B(B)
-Sent: Thursday, January 18, 2024 3:34 AM
-To: 'Chris Paterson' <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@re=
-nesas.com>>
-Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshib=
-a-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>>; venkata1.pyla <venkata1.=
-pyla@toshibaap.onmicrosoft.com<mailto:venkata1.pyla@toshibaap.onmicrosoft.c=
-om>>; kunijadar shivanand(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <Shivanand.=
-Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijadar@toshiba-tsip.com>>; b=
-alakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) <Adithya.Balakumar@toshiba-tsip.c=
-om<mailto:Adithya.Balakumar@toshiba-tsip.com>>; sanglikar zaiba(=1B$B#T#S#I=
-#P=1B(B TEUR) <Zaiba.Sanglikar@toshiba-tsip.com<mailto:Zaiba.Sanglikar@tosh=
-iba-tsip.com>>
-Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
-he image )
-
-Hello Chris,
-
-Thank you for identifying this scenario.
-
-Yes, if two swupdate jobs runs on two devices on the same dispatcher, the l=
-atter will fail if needs to reboot again after the first job is done. The r=
-eason is the UNIXIO socket will be gone after the client closed the connect=
-ion.
-Here there are two problems,
-
-
-  1.  The .swtpm file names should be different or else there will be TPM f=
-ailures. I tried to resolve this ways which does not have us hardcoding the=
- directory paths in each device template. For example, I tried to generate =
-random strings using $RANDOM in the script, so that they don=1B$B!G=1B(Bt h=
-ave to hardcoded in the templates. But then the problem will be, ------  Ho=
-w will we delete the directory after the job if cant send the name back to =
-the template.
-
-So after some trials, I made the following changes to the device templates =
-and the script to handle the naming problem of .swtpm file. I am attaching =
-the new changes to this mail. Please have a look at those changes.
-
-
-  1.  Since the /tmp/qemu-swtpm.sock UNIXIO socket is gone after one of the=
- jobs is done, we can try to make this individual for each device just like=
- how we did for .swtpm directory. But now the problem will be, ---------- H=
-ow will use the correct path for the character device in the boot arguments=
- if it depends on the QEMU device. I tried to add a condition in the device=
- template specific to the jobs which include security targets as mentioned =
-below.
-
-
-
-{% if =1B$B!F=1B(Blava_test_results_dir=1B$B!G=1B(B =3D=3D =1B$B!F=1B(B/hom=
-e/lava-%s %}
-
-          - -chardev socket,id=3Dchrtpm,path=3D/tmp/qemu-01.sock
-
-{% endif %}
-
-
-
-  1.  I used it like above because I was not able to find any context which=
- narrow down to our jobs where we are using a read-only file system (That i=
-s why I changed the directory into /home). But still the character device b=
-oot arguments are not updated while running the test job. Please correct me=
- if I was wrong.
-
-
-  1.  Based on my investigation today, I think handling the test jobs using=
- these TPM based images simultaneously shall require independent variables =
-for each device. But as you said before, it might not be ideal to setup and=
- maintain.
-
-
-Please provide your opinion on this and please suggest anything that I can =
-try which can resolve the issue in point 2 mentioned above.
-
-Thanks and Regards,
-Sai Ashrith ( T S I P )
-
-From: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@re=
-nesas.com>>
-Sent: Wednesday, January 17, 2024 7:26 PM
-To: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com<mailto:=
-Sai.Sathujoda@toshiba-tsip.com>>
-Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshib=
-a-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>>; venkata1.pyla <venkata1.=
-pyla@toshibaap.onmicrosoft.com<mailto:venkata1.pyla@toshibaap.onmicrosoft.c=
-om>>; kunijadar shivanand(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <Shivanand.=
-Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijadar@toshiba-tsip.com>>; b=
-alakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) <Adithya.Balakumar@toshiba-tsip.c=
-om<mailto:Adithya.Balakumar@toshiba-tsip.com>>; sanglikar zaiba(=1B$B#T#S#I=
-#P=1B(B TEUR) <Zaiba.Sanglikar@toshiba-tsip.com<mailto:Zaiba.Sanglikar@tosh=
-iba-tsip.com>>
-Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
-he image )
-
-Hello Sai,
-
-Thank you for the update.
-
-If I understand it correctly, when you run swtpm_start.sh, the /var/lib/lav=
-a/dispatcher/tmp/cip-core-security.swtpm file will be created.
-And then when the job is finished, the undo command will be run and this fi=
-le will be removed.
-Sounds good.
-
-However, this location is generic to ALL jobs run on that LAVA dispatcher.
-So, if you had a SW Update test job running on two boards connected to the =
-same LAVA dispatcher at the same time, we could have a case where the cip-c=
-ore-security.swtpm file either gets corrupted by a second LAVA job trying t=
-o use it at the same time, or we could face an issue where the first job de=
-letes the file before the second has finished with it.
-
-Is it possible to use the swtpm socket with multiple devices at the same ti=
-me?
-Or is it a 1to1 relationship?
-If the latter, then we can keep the current approach, but we need to someho=
-w use a different cip-core-security.swtpm file for each running job.
-
-Are you planning to add the create_swtpm_tmpdir to the device template for =
-each individual device? Or only to the device-type definitions? Are there a=
-ny other places this can be defined?
-If we are planning to add it to each individual device template, we could j=
-ust use a different filename for each of them. Not ideal to setup & maintai=
-n though.
-
-Kind regards, Chris
-
-From: Sai.Sathujoda@toshiba-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>=
- <Sai.Sathujoda@toshiba-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>>
-Sent: Tuesday, January 16, 2024 12:40 PM
-To: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@rene=
-sas.com>>
-Cc: dinesh.kumar@toshiba-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>; ve=
-nkata1.pyla@toshibaap.onmicrosoft.com<mailto:venkata1.pyla@toshibaap.onmicr=
-osoft.com>; Shivanand.Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijadar=
-@toshiba-tsip.com>; Adithya.Balakumar@toshiba-tsip.com<mailto:Adithya.Balak=
-umar@toshiba-tsip.com>; Zaiba.Sanglikar@toshiba-tsip.com<mailto:Zaiba.Sangl=
-ikar@toshiba-tsip.com>
-Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
-he image )
-
-Hello Chris,
-
-Hope you are doing well.
-I locally tested some configurations required to start the swtpm before boo=
-ting the CIP security image and I am able to boot the image.
-
-
-When we include swtpm socket -t -d --tpmstate dir=3D"${SWTPM_DIR}" --ctrl t=
-ype=3Dunixio,path=3D/tmp/qemu-swtpm.sock --tpm2, it does not return value 0=
-. And until the command run in the LAVA dispatcher does not return a value,=
- the job will stuck leading to a timeout. So to handle this we can do it ju=
-st like how it is implemented in isar-cip-core i.e by putting it in an if-c=
-ondition. Please have a look at this code snippet.
-https://gitlab.com/cip-project/cip-core/isar-cip-core/-/blob/master/start-q=
-emu.sh?ref_type=3Dheads#L173
-
-But we cannot define a script inside {% set user_commands =3D %}, qemu-**.j=
-inja2 template. So instead we can create a swtpm_start.sh script with a+x p=
-ermissions in LAVA slave container and append the below configurations in t=
-he qemu jinja2 device templates in the LAVA server.
-
-{% set user_commands =3D {'create_swtpm_tmpdir': {'do': 'sh /home/swtpm_sta=
-rt.sh',
-                                             'undo': 'rm -rf /var/lib/lava/=
-dispatcher/tmp/cip-core-security.swtpm'}} %}
-
-We can add the below bash script in swtpm_start.sh
-
-#!/bin/sh
-
-mkdir -p /var/lib/lava/dispatcher/tmp/cip-core-security.swtpm
-
-if swtpm socket -d --tpmstate dir=3D"/var/lib/lava/dispatcher/tmp/cip-core-=
-security.swtpm" \
-                         --ctrl type=3Dunixio,path=3D/tmp/qemu-swtpm.sock \
-                         --tpm2; then
-        echo $?
-fi
-
-
-Please provide your feedback on the above approach Chris.
-
-Thanks and regards,
-Sai Ashrith
-
-From: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@re=
-nesas.com>>
-Sent: Thursday, January 4, 2024 5:58 PM
-To: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com<mailto:=
-Sai.Sathujoda@toshiba-tsip.com>>
-Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshib=
-a-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>>; venkata1.pyla <venkata1.=
-pyla@toshibaap.onmicrosoft.com<mailto:venkata1.pyla@toshibaap.onmicrosoft.c=
-om>>; kunijadar shivanand(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <Shivanand.=
-Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijadar@toshiba-tsip.com>>; b=
-alakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) <Adithya.Balakumar@toshiba-tsip.c=
-om<mailto:Adithya.Balakumar@toshiba-tsip.com>>; sanglikar zaiba(=1B$B#T#S#I=
-#P=1B(B TEUR) <Zaiba.Sanglikar@toshiba-tsip.com<mailto:Zaiba.Sanglikar@tosh=
-iba-tsip.com>>
-Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
-he image )
-
-Hello Sai,
-
-I=1B$B!G=1B(Bve had a look.
-
-For option 1), we could have done it if we had a way of knowing the LAVA Jo=
-b number when we run the command, however from what I=1B$B!G=1B(Bve experim=
-ented with we don=1B$B!G=1B(Bt.
-We could create a directory with =1B$B!F=1B(Bdo=1B$B!G=1B(B and remove it w=
-ith =1B$B!F=1B(Bundo=1B$B!G=1B(B, however the directory would need to be un=
-ique to avoid clashes.
-If we were to add our custom command individually to every device dictionar=
-y we could do this, but it would be easier to maintain if we only added the=
- commend to the device type dictionaries.
-
-For option 2), wouldn=1B$B!G=1B(Bt we face a similar issue? The TPM_PATH va=
-riable would need to be set with a unique value for each test run before th=
-e job starts.
-
-Wouldn=1B$B!G=1B(Bt we need to stop the TPM emulator once a job has complet=
-ed?
-
-Kind regards, Chris
-
-From: Sai.Sathujoda@toshiba-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>=
- <Sai.Sathujoda@toshiba-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>>
-Sent: Wednesday, January 3, 2024 7:25 AM
-To: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@rene=
-sas.com>>
-Cc: dinesh.kumar@toshiba-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>; ve=
-nkata1.pyla@toshibaap.onmicrosoft.com<mailto:venkata1.pyla@toshibaap.onmicr=
-osoft.com>; Shivanand.Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijadar=
-@toshiba-tsip.com>; Adithya.Balakumar@toshiba-tsip.com<mailto:Adithya.Balak=
-umar@toshiba-tsip.com>; Zaiba.Sanglikar@toshiba-tsip.com<mailto:Zaiba.Sangl=
-ikar@toshiba-tsip.com>
-Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
-he image )
-
-Hi Chris,
-
-I was able to access OVMF related files in my job definitions in qemu-devic=
-es in =1B$B!H=1B(Blab-renesas-cip=1B$B!I=1B(B. Now let me explain the curre=
-nt situation while starting the tpm emulator using swtpm.
-
-We need to run this command right before we boot the image to start the TPM=
- emulator --> swtpm socket -d --tpmstate dir=3D"${SWTPM_DIR}" --ctrl type=
-=3Dunixio,path=3D/tmp/qemu-swtpm.sock --tpm2
-
-
-  1.  A directory must be created to store the TPM state files before we ru=
-n this command. I doubt if there is a way to create a temporary directory i=
-n this path /var/lib/lava/dispatcher/tmp/<job_id>/, so that it can be clear=
-ed automatically when the entire test job is done.
-
-(OR)
-
-
-  1.  An environment variable named TPM_PATH must be updated with the direc=
-tory path to store the TPM state files.
-
-If you think that method 2 is favorable, then I request you to add swtpm so=
-cket -d  --ctrl type=3Dunixio,path=3D/tmp/qemu-swtpm.sock --tpm2 in the =1B=
-$B!H=1B(Bdo=1B$B!I=1B(B section in the device dictionary. I don=1B$B!G=1B(B=
-t think anything needs to be added in the =1B$B!H=1B(Bundo
-section Chris.
-
-I apologize for asking many questions Chris. Please provide your opinion on=
- the above query.
-
-Thanks and Regards,
-Sai Ashrith (T S I P)
-
-From: ashrith sai(=1B$B#T#S#I#P=1B(B)
-Sent: Tuesday, January 2, 2024 6:03 PM
-To: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@rene=
-sas.com>>
-Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshib=
-a-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>>; Venkata.Pyla@toshiba-tsi=
-p.com<mailto:Venkata.Pyla@toshiba-tsip.com>; kunijadar shivanand(=1B$B#T#S#=
-I#P=1B(B TMIEC ODG Porting) <Shivanand.Kunijadar@toshiba-tsip.com<mailto:Sh=
-ivanand.Kunijadar@toshiba-tsip.com>>; balakumar adithya(=1B$B#T#S#I#P=1B(B =
-TEUR) <Adithya.Balakumar@toshiba-tsip.com<mailto:Adithya.Balakumar@toshiba-=
-tsip.com>>; sanglikar zaiba(=1B$B#T#S#I#P=1B(B TEUR) <Zaiba.Sanglikar@toshi=
-ba-tsip.com<mailto:Zaiba.Sanglikar@toshiba-tsip.com>>
-Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
-he image )
-
-Hi Chris,
-
-Thanks for your support.
-
-I will try and let you know if I face any issues and about updating the dev=
-ice dictionary as well as soon as possible Chris. Before that I will do som=
-e sample testing to confirm some things.
-
-Thanks and Regards,
-Sai Ashrith
-
-From: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@re=
-nesas.com>>
-Sent: Tuesday, January 2, 2024 5:47 PM
-To: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com<mailto:=
-Sai.Sathujoda@toshiba-tsip.com>>
-Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshib=
-a-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>>; Venkata.Pyla@toshiba-tsi=
-p.com<mailto:Venkata.Pyla@toshiba-tsip.com>; kunijadar shivanand(=1B$B#T#S#=
-I#P=1B(B TMIEC ODG Porting) <Shivanand.Kunijadar@toshiba-tsip.com<mailto:Sh=
-ivanand.Kunijadar@toshiba-tsip.com>>; balakumar adithya(=1B$B#T#S#I#P=1B(B =
-TEUR) <Adithya.Balakumar@toshiba-tsip.com<mailto:Adithya.Balakumar@toshiba-=
-tsip.com>>; sanglikar zaiba(=1B$B#T#S#I#P=1B(B TEUR) <Zaiba.Sanglikar@toshi=
-ba-tsip.com<mailto:Zaiba.Sanglikar@toshiba-tsip.com>>
-Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
-he image )
-
-Hello Sai,
-
-As I=1B$B!G=1B(Bm in the office today, I can=1B$B!G=1B(Bt update my lab at =
-home.
-Instead I=1B$B!G=1B(Bve installed the swtpm and ovmf packages into lab-rene=
-sas-cip.
-
-I=1B$B!G=1B(Bve marked the qemu devices in lab-renesas-cip with the =1B$B!H=
-=1B(Bsw-update-testing=1B$B!I=1B(B tag.
-So if you add the below to your job definition, the job will only run on on=
-e of the qemu devices in the Renesas lab:
-
-tags:
-
-- sw-update-testing
-
-Please give it a try and let me know if you have any issues.
-
-Let me know if you need me to update the device dictionary as well.
-
-Kind regards, Chris
-
-From: Sai.Sathujoda@toshiba-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>=
- <Sai.Sathujoda@toshiba-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>>
-Sent: Tuesday, January 2, 2024 11:25 AM
-To: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@rene=
-sas.com>>
-Cc: dinesh.kumar@toshiba-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>; Ve=
-nkata.Pyla@toshiba-tsip.com<mailto:Venkata.Pyla@toshiba-tsip.com>; Shivanan=
-d.Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijadar@toshiba-tsip.com>; =
-Adithya.Balakumar@toshiba-tsip.com<mailto:Adithya.Balakumar@toshiba-tsip.co=
-m>; Zaiba.Sanglikar@toshiba-tsip.com<mailto:Zaiba.Sanglikar@toshiba-tsip.co=
-m>
-Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
-he image )
-
-Hello Chris,
-
-Thanks for your reply.
-
-Including swtpm and ovmf packages is necessary for test cases related to se=
-cure boot, software update and IEC layer testing. Please let me finalize th=
-e linux command I have mentioned in this mailing thread.
-It will be very helpful if this command is available for qemu device in you=
-r LAVA lab. Please tell me how I can access your LAVA lab in which I can ru=
-n my sample test jobs.
-
-Thanks and Regards,
-Sai Ashrith
-
-
-From: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@re=
-nesas.com>>
-Sent: Tuesday, January 2, 2024 4:29 PM
-To: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com<mailto:=
-Sai.Sathujoda@toshiba-tsip.com>>
-Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshib=
-a-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>>; Venkata.Pyla@toshiba-tsi=
-p.com<mailto:Venkata.Pyla@toshiba-tsip.com>; kunijadar shivanand(=1B$B#T#S#=
-I#P=1B(B TMIEC ODG Porting) <Shivanand.Kunijadar@toshiba-tsip.com<mailto:Sh=
-ivanand.Kunijadar@toshiba-tsip.com>>; balakumar adithya(=1B$B#T#S#I#P=1B(B =
-TEUR) <Adithya.Balakumar@toshiba-tsip.com<mailto:Adithya.Balakumar@toshiba-=
-tsip.com>>; sanglikar zaiba(=1B$B#T#S#I#P=1B(B TEUR) <Zaiba.Sanglikar@toshi=
-ba-tsip.com<mailto:Zaiba.Sanglikar@toshiba-tsip.com>>
-Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
-he image )
-
-Hello Sai,
-
-I think using the =1B$B!H=1B(Bcommand=1B$B!I=1B(B action is probably the be=
-st approach.
-Does the command you want to run ever change? Or is it the same for every t=
-est job and for every platform?
-
-We=1B$B!G=1B(Bll have to make sure that the lava-docker container we use in=
-cludes the swtpm and ovmf packages, then get all of the labs updated.
-We can get a quick(er) test run using my lab though if it helps you.
-
-Kind regards, Chris
-
-From: Sai.Sathujoda@toshiba-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>=
- <Sai.Sathujoda@toshiba-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>>
-Sent: Thursday, December 21, 2023 4:19 AM
-To: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@rene=
-sas.com>>
-Cc: dinesh.kumar@toshiba-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>; Ve=
-nkata.Pyla@toshiba-tsip.com<mailto:Venkata.Pyla@toshiba-tsip.com>; Shivanan=
-d.Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijadar@toshiba-tsip.com>; =
-Adithya.Balakumar@toshiba-tsip.com<mailto:Adithya.Balakumar@toshiba-tsip.co=
-m>; Zaiba.Sanglikar@toshiba-tsip.com<mailto:Zaiba.Sanglikar@toshiba-tsip.co=
-m>
-Subject: Query - ( Running Linux commands in LAVA host before booting the i=
-mage )
-
-Dear Chris,
-
-Currently we are working on running IEC layer tests present in https://gitl=
-ab.com/cip-project/cip-testing/cip-security-tests on CIP security image. As=
- you might be aware, current security image has secure boot, swupdate and D=
-ata encryption features also enabled along with security layer.
-So to boot this image, we need to run the below command just before booting=
- the image to start TPM emulator.
-
-swtpm socket -d --tpmstate dir=3D"${SWTPM_DIR}"  --ctrl type=3Dunixio,path=
-=3D/tmp/qemu-swtpm.sock  --tpm2
-
-Our current requirements:
-
-
-  1.  Presence of these packages in LAVA host environment --> swtpm, ovmf
-  2.  Ability to run the above mentioned in the LAVA host before the first =
-boot action.
-
-After going through the LAVA documentation, I found an action named command=
- where we can run commands on the dispatcher itself. --> https://lava.readt=
-hedocs.io/en/latest/technical-references/job-definition/actions/command/#:~=
-:text=3DThe%20command%20action%20is%20used,board%20by%20controlling%20a%20r=
-elay.
-
-But they are suggesting that these commands need to be added in the device =
-dictionary in CIP LAVA server so that users can just use the name of the co=
-mmand ( key ) in their job definition. Please correct me if my understandin=
-g is wrong. And also can you please suggest if there is any other way to ru=
-n Linux commands in the LAVA host environment.
-
-Note: We are using qemu device for this job definition.
-
-Thanks and Regards,
-Sai Ashrith
-
-
---_000_OS3PR01MB6103B3C3E79AB76D6008C7D3C2452OS3PR01MB6103jpnp_
-Content-Type: text/html; charset="iso-2022-jp"
+ <cip-dev@lists.cip-project.org>; Wed, 07 Feb 2024 12:22:41 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14879
+
+--_000_TYWPR01MB1186210D2225AADE6438DCDADB7452TYWPR01MB11862jp_
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+
+SGVsbG8gU2FpLA0KDQpJoa92ZSBzZWVuIHlvdXIgdGVzdHMgYW5kIGRvbmUgc29tZSBvZiBteSBv
+d24uDQpJbmRlZWQgaXQgbG9va3MgbGlrZSBhZGRpbmcgWzBdIHRvIHFlbXUuamluamEyIE9SIHRv
+IHRoZSBxZW11LXJlbmVzYXMtMDEgZGV2aWNlIGRpY3Rpb25hcnkgZGlyZWN0bHkgc2VlbXMgdG8g
+YnJlYWsgdGhlIHRlc3Qgam9icywgcmVnYXJkbGVzcyBvZiB3aGV0aGVyIHRoZSB1c2VyX2NvbW1h
+bmRzIGFyZSBiZWluZyB1c2VkIG9yIG5vdC4NCkludGVyZXN0aW5nbHkgdGhlIGhlYWx0aGNoZWNr
+cyBhcmUgc3RpbGwgd29ya2luZyB0aG91Z2guDQpBbHNvLCBvdGhlciBqb2JzIChlLmcuIFsxXSkg
+d29yayB3aXRoIHRoZSBkZXZpY2UgZGljdCBjaGFuZ2VzIHdlIGhhdmUuDQoNCj5XaGVuZXZlciBJ
+IGNoYW5nZSBtZXRob2Q6bWluaW1hbCB0byBtZXRob2Q6cWVtdSBhbmQgbWVkaWE6dG1wZnMsIGl0
+IGlzIG5vdCB0aHJvd2luZyB0aGlzIGVycm9yDQpJbnRlcmVzdGluZy4gSaGvbSBub3Qgc3VyZSB3
+aHkgYWRkaW5nIHRoZSB1c2VyX2NvbW1hbmRzIHdvdWxkIGFmZmVjdCB0aGlzPw0KDQpbMF0gaHR0
+cHM6Ly9naXRsYWIuY29tL2NpcC1wcm9qZWN0L2NpcC10ZXN0aW5nL2xhdmEtZG9ja2VyLy0vYmxv
+Yi8xMTRhMjY4NGUwZjQ0NTc3ZThmMjU5ZWFjNDM0YWQzOWM5MzU2OGMwL2xhdmEtbWFzdGVyL2Rl
+dmljZS10eXBlcy9jaXAtcWVtdS5qaW5qYTINClsxXSBodHRwczovL2xhdmEuY2lwbGF0Zm9ybS5v
+cmcvc2NoZWR1bGVyL2pvYi8xMDkwMDI2DQoNCktpbmQgcmVnYXJkcywgQ2hyaXMNCg0KRnJvbTog
+U2FpLlNhdGh1am9kYUB0b3NoaWJhLXRzaXAuY29tIDxTYWkuU2F0aHVqb2RhQHRvc2hpYmEtdHNp
+cC5jb20+DQpTZW50OiBXZWRuZXNkYXksIEZlYnJ1YXJ5IDcsIDIwMjQgMTE6NTMgQU0NClRvOiBD
+aHJpcyBQYXRlcnNvbiA8Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tPg0KQ2M6IGRpbmVzaC5r
+dW1hckB0b3NoaWJhLXRzaXAuY29tOyB2ZW5rYXRhMS5weWxhQHRvc2hpYmFhcC5vbm1pY3Jvc29m
+dC5jb207IFNoaXZhbmFuZC5LdW5pamFkYXJAdG9zaGliYS10c2lwLmNvbTsgQWRpdGh5YS5CYWxh
+a3VtYXJAdG9zaGliYS10c2lwLmNvbTsgWmFpYmEuU2FuZ2xpa2FyQHRvc2hpYmEtdHNpcC5jb207
+IGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnOyBrYXp1aGlybzMuaGF5YXNoaUB0b3NoaWJh
+LmNvLmpwDQpTdWJqZWN0OiBSRTogUXVlcnkgLSAoIFJ1bm5pbmcgTGludXggY29tbWFuZHMgaW4g
+TEFWQSBob3N0IGJlZm9yZSBib290aW5nIHRoZSBpbWFnZSApDQoNCkhlbGxvIENocmlzLA0KDQpB
+bm90aGVyIG9ic2VydmF0aW9uIHdoaWNoIGNhbiBnaXZlIHlvdSBiZXR0ZXIgaWRlYSBhYm91dCB0
+aGUgaXNzdWUgSSBhbSBmYWNpbmcgaXMsIGp1c3Qgbm93IEkgdHJpZWQgdG8gcnVuIHRoaXMgam9i
+ICggaGFzIGEgbWluaW1hbCBib290IGFjdGlvbiAmIGRvZXMgbm90IG5lZWQgc3d0cG0gc29ja2V0
+IGNoYW5nZXMgKSB3aGljaCByYW4gc3VjY2Vzc2Z1bGx5IExBVkEgfCBTY2hlZHVsZXIgfCBKb2Jz
+IHwgMTA4OTk3OSAoY2lwbGF0Zm9ybS5vcmcpPGh0dHBzOi8vbGF2YS5jaXBsYXRmb3JtLm9yZy9z
+Y2hlZHVsZXIvam9iLzEwODk5Nzk+IHRvZGF5IHNvbWUgaG91cnMgYWdvLiBBZnRlciB5b3UgbWFk
+ZSBjaGFuZ2VzIGluIHlvdXIgbGF2YSBzbGF2ZSwgbm93IGlmIEkgcnVuIHRoZSBzYW1lIGpvYiBu
+b3cgTEFWQSB8IFNjaGVkdWxlciB8IEpvYnMgfCAxMDkwMDA5IChjaXBsYXRmb3JtLm9yZyk8aHR0
+cHM6Ly9sYXZhLmNpcGxhdGZvcm0ub3JnL3NjaGVkdWxlci9qb2IvMTA5MDAwOT4sIGl0IGlzIGdp
+dmluZyBDYW5ub3QgZmluZCBjb21tYW5kICcnIGluICRQQVRILCBQbGVhc2UgcmVwb3J0IHRoaXMg
+dG8gTEFWQSBhZG1pbnMsIHNvIGRvIHlvdSB0aGluayB0aGUgc2NyaXB0IGFkZGl0aW9ucyBhbmQg
+Y2hhbmdlcyB0byBkZXZpY2UgZGljdGlvbmFyaWVzIHdlIG1hZGUgY2FuIGJlIGNvbmZsaWN0aW5n
+IHRoZSBtaW5pbWFsIGJvb3QgYWN0aW9uIGFuZCBnaXZpbmcgaW5mcmFzdHJ1Y3R1cmUgZXJyb3Ig
+PyBXaGVuZXZlciBJIGNoYW5nZSBtZXRob2Q6bWluaW1hbCB0byBtZXRob2Q6cWVtdSBhbmQgbWVk
+aWE6dG1wZnMsIGl0IGlzIG5vdCB0aHJvd2luZyB0aGlzIGVycm9yLg0KDQpDYW4geW91IHBsZWFz
+ZSBoZWxwIG1lIHdpdGggdGhpcyBDaHJpcyA/DQoNClRoYW5rcyBhbmQgcmVnYXJkcywNClNhaSBB
+c2hyaXRoIChUIFMgSSBQKQ0KDQoNCkZyb206IGFzaHJpdGggc2FpKKPUo9OjyaPQKQ0KU2VudDog
+V2VkbmVzZGF5LCBGZWJydWFyeSA3LCAyMDI0IDU6MDkgUE0NClRvOiBDaHJpcyBQYXRlcnNvbiA8
+Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tPG1haWx0bzpDaHJpcy5QYXRlcnNvbjJAcmVuZXNh
+cy5jb20+Pg0KQ2M6IGRpbmVzaCBrdW1hciij1KPTo8mj0CBUTUlFQyBPREcgUG9ydGluZykgPGRp
+bmVzaC5rdW1hckB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpkaW5lc2gua3VtYXJAdG9zaGliYS10
+c2lwLmNvbT4+OyB2ZW5rYXRhMS5weWxhIDx2ZW5rYXRhMS5weWxhQHRvc2hpYmFhcC5vbm1pY3Jv
+c29mdC5jb208bWFpbHRvOnZlbmthdGExLnB5bGFAdG9zaGliYWFwLm9ubWljcm9zb2Z0LmNvbT4+
+OyBrdW5pamFkYXIgc2hpdmFuYW5kKKPUo9OjyaPQIFRNSUVDIE9ERyBQb3J0aW5nKSA8U2hpdmFu
+YW5kLkt1bmlqYWRhckB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpTaGl2YW5hbmQuS3VuaWphZGFy
+QHRvc2hpYmEtdHNpcC5jb20+PjsgYmFsYWt1bWFyIGFkaXRoeWEoo9Sj06PJo9AgVEVVUikgPEFk
+aXRoeWEuQmFsYWt1bWFyQHRvc2hpYmEtdHNpcC5jb208bWFpbHRvOkFkaXRoeWEuQmFsYWt1bWFy
+QHRvc2hpYmEtdHNpcC5jb20+Pjsgc2FuZ2xpa2FyIHphaWJhKKPUo9OjyaPQIFRFVVIpIDxaYWli
+YS5TYW5nbGlrYXJAdG9zaGliYS10c2lwLmNvbTxtYWlsdG86WmFpYmEuU2FuZ2xpa2FyQHRvc2hp
+YmEtdHNpcC5jb20+PjsgY2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmc8bWFpbHRvOmNpcC1k
+ZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPjsgaGF5YXNoaSBrYXp1aGlybyjB1iC6zbrqIKPEo82j
+xSCh8KPEo8mjx6H1o82j0KPTofCjzaPQo7QpIDxrYXp1aGlybzMuaGF5YXNoaUB0b3NoaWJhLmNv
+LmpwPG1haWx0bzprYXp1aGlybzMuaGF5YXNoaUB0b3NoaWJhLmNvLmpwPj4NClN1YmplY3Q6IFJF
+OiBRdWVyeSAtICggUnVubmluZyBMaW51eCBjb21tYW5kcyBpbiBMQVZBIGhvc3QgYmVmb3JlIGJv
+b3RpbmcgdGhlIGltYWdlICkNCg0KSGVsbG8gQ2hyaXMsDQoNClRoYW5rcyBhIGxvdCBmb3IgeW91
+ciBncmVhdCBzdXBwb3J0Lg0KDQpZZXMsIEkgYW0gYWJsZSB0byBydW4gbXkgam9icyBpbiBsYWIt
+Y2lwLXJlbmVzYXMgbm93LiBCdXQgSSBhbSBmYWNpbmcgdGhpcyBpc3N1ZSAsIKGwQ2Fubm90IGZp
+bmQgY29tbWFuZCAnJyBpbiAkUEFUSCwgUGxlYXNlIHJlcG9ydCB0aGlzIHRvIExBVkEgYWRtaW5z
+obEgbm93IGluIENJUCBMQVZBIExhYiBhcyB3ZWxsLiBUaGlzIGlzIGhhcHBlbmluZyB3aGVuZXZl
+ciB0byB0cnkgYSBtaW5pbWFsIGJvb3QgZm9yIGEgc3d0cG0gcmVsYXRlZCBDSVAgc2VjdXJpdHkg
+aW1hZ2UuIFByZXZpb3VzbHkgSSBmYWNlZCB0aGlzIGlzc3VlIGluIG15IG93biBzZXR1cCBhbmQg
+c3VzcGVjdGVkIHNvbWV0aGluZyBpcyB3cm9uZyB3aXRoIG15IHNldHVwLCBidXQgbm93IGFmdGVy
+IHNlZWluZyB0aGUgc2FtZSB0aGluZyBpbiBDSVAgTEFWQSBsYWIsDQoNCg0KICAxLiAgRG8geW91
+IHRoaW5rIG1pbmltYWwgYm9vdCB3aWxsIG5vdCB3b3JrIGlmIHRoZXJlIGlzIHNvbWUgY29tbXVu
+aWNhdGlvbiB0aHJvdWdoIGEgc29ja2V0IGZyb20gdGhlIGRpc3BhdGNoZXIgdG8gdGhlIERVVCA/
+IEkgYW0gbm90IHN1cmUgb2YgdGhpcywgYnV0IHRoaXMgdmFsaWRhdGlvbiBlcnJvciBpcyBjb21p
+bmcgb25seSB3aGVuIEkgdXNlIG1pbmltYWwgYm9vdCB3aXRoIHRoZXNlIHN3dHBtIHNlY3VyaXR5
+IGltYWdlIHJlbGF0ZWQgam9icy4NCg0KRm9yIGpvYnMgd2hpY2ggZG8gbm90IHVzZSBzd3RwbSwg
+dGhlIG1pbmltYWwgYm9vdCBpcyB3b3JraW5nIGZpbmUuIFRoZSByZWFzb24gSSBhbSBwYXJ0aWN1
+bGFyIGFib3V0IHRoaXMgbWluaW1hbCBib290IGlzIGJlY2F1c2UgSSB3YW50IHRvIGNhcHR1cmUg
+YSBjZXJ0YWluIHNodXRkb3duIGRvd24gbWVzc2FnZSBhZnRlciBhIHNvZnQgcmVib290IHdoaWNo
+IGNhbiBoZWxwIGpvYiB0byBjb21wbGV0ZSBpZiBpdCBjYXB0dXJlcyB0aGF0IG1lc3NhZ2UuIElm
+IHlvdSBjYW4gc3VyZWx5IHNheSBbMV0gaXMgdGhlIHJlYXNvbiwgdGhlbiBkbyB5b3UgaGF2ZSBh
+bnkgaWRlYSBob3cgdG8gdXNlIHNodXRkb3duLW1lc3NhZ2UgYWxvbmcgd2l0aCBzb21ldGhpbmcg
+b3RoZXIgdGhhbiBtaW5pbWFsIGJvb3QgPw0KDQpQbGVhc2UgcHJvdmlkZSB5b3VyIG9waW5pb24g
+b24gdGhpcyBDaHJpcy4NCg0KVGhhbmtzIGFuZCByZWdhcmRzLA0KU2FpIEFzaHJpdGggKFQgUyBJ
+IFApDQoNCkZyb206IENocmlzIFBhdGVyc29uIDxDaHJpcy5QYXRlcnNvbjJAcmVuZXNhcy5jb208
+bWFpbHRvOkNocmlzLlBhdGVyc29uMkByZW5lc2FzLmNvbT4+DQpTZW50OiBXZWRuZXNkYXksIEZl
+YnJ1YXJ5IDcsIDIwMjQgNDo0NSBQTQ0KVG86IGFzaHJpdGggc2FpKKPUo9OjyaPQKSA8U2FpLlNh
+dGh1am9kYUB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpTYWkuU2F0aHVqb2RhQHRvc2hpYmEtdHNp
+cC5jb20+Pg0KQ2M6IGRpbmVzaCBrdW1hciij1KPTo8mj0CBUTUlFQyBPREcgUG9ydGluZykgPGRp
+bmVzaC5rdW1hckB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpkaW5lc2gua3VtYXJAdG9zaGliYS10
+c2lwLmNvbT4+OyB2ZW5rYXRhMS5weWxhIDx2ZW5rYXRhMS5weWxhQHRvc2hpYmFhcC5vbm1pY3Jv
+c29mdC5jb208bWFpbHRvOnZlbmthdGExLnB5bGFAdG9zaGliYWFwLm9ubWljcm9zb2Z0LmNvbT4+
+OyBrdW5pamFkYXIgc2hpdmFuYW5kKKPUo9OjyaPQIFRNSUVDIE9ERyBQb3J0aW5nKSA8U2hpdmFu
+YW5kLkt1bmlqYWRhckB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpTaGl2YW5hbmQuS3VuaWphZGFy
+QHRvc2hpYmEtdHNpcC5jb20+PjsgYmFsYWt1bWFyIGFkaXRoeWEoo9Sj06PJo9AgVEVVUikgPEFk
+aXRoeWEuQmFsYWt1bWFyQHRvc2hpYmEtdHNpcC5jb208bWFpbHRvOkFkaXRoeWEuQmFsYWt1bWFy
+QHRvc2hpYmEtdHNpcC5jb20+Pjsgc2FuZ2xpa2FyIHphaWJhKKPUo9OjyaPQIFRFVVIpIDxaYWli
+YS5TYW5nbGlrYXJAdG9zaGliYS10c2lwLmNvbTxtYWlsdG86WmFpYmEuU2FuZ2xpa2FyQHRvc2hp
+YmEtdHNpcC5jb20+PjsgY2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmc8bWFpbHRvOmNpcC1k
+ZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPjsgaGF5YXNoaSBrYXp1aGlybyjB1iC6zbrqIKPEo82j
+xSCh8KPEo8mjx6H1o82j0KPTofCjzaPQo7QpIDxrYXp1aGlybzMuaGF5YXNoaUB0b3NoaWJhLmNv
+LmpwPG1haWx0bzprYXp1aGlybzMuaGF5YXNoaUB0b3NoaWJhLmNvLmpwPj4NClN1YmplY3Q6IFJF
+OiBRdWVyeSAtICggUnVubmluZyBMaW51eCBjb21tYW5kcyBpbiBMQVZBIGhvc3QgYmVmb3JlIGJv
+b3RpbmcgdGhlIGltYWdlICkNCg0KSGVsbG8gU2FpLA0KDQpJoa92ZSBhZGRlZCB0aGUgc2NyaXB0
+cyB0byBsYWItY2lwLXJlbmVzYXMgYW5kIGFkZGVkIHRoZSB1c2VyLWNvbW1hbmRzIHRvIHRoZSBx
+ZW11IGRldmljZS10eXBlIHRlbXBsYXRlcy4NCllvdSBjYW4gdXNlIHRoZSChsHN3LXVwZGF0ZS10
+ZXN0aW5nobEgdGFnIGluIHlvdXIgam9iIGRlZmluaXRpb24gdG8gZm9yY2UgTEFWQSB0byB1c2Ug
+dGhlIGNvcnJlY3QgZGV2aWNlcy4NCg0KTGV0IG1lIGtub3cgaG93IGl0IGdvZXMuDQoNClRoYW5r
+cywgQ2hyaXMNCg0KRnJvbTogU2FpLlNhdGh1am9kYUB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpT
+YWkuU2F0aHVqb2RhQHRvc2hpYmEtdHNpcC5jb20+IDxTYWkuU2F0aHVqb2RhQHRvc2hpYmEtdHNp
+cC5jb208bWFpbHRvOlNhaS5TYXRodWpvZGFAdG9zaGliYS10c2lwLmNvbT4+DQpTZW50OiBXZWRu
+ZXNkYXksIEZlYnJ1YXJ5IDcsIDIwMjQgOTozNyBBTQ0KVG86IENocmlzIFBhdGVyc29uIDxDaHJp
+cy5QYXRlcnNvbjJAcmVuZXNhcy5jb208bWFpbHRvOkNocmlzLlBhdGVyc29uMkByZW5lc2FzLmNv
+bT4+DQpDYzogZGluZXNoLmt1bWFyQHRvc2hpYmEtdHNpcC5jb208bWFpbHRvOmRpbmVzaC5rdW1h
+ckB0b3NoaWJhLXRzaXAuY29tPjsgdmVua2F0YTEucHlsYUB0b3NoaWJhYXAub25taWNyb3NvZnQu
+Y29tPG1haWx0bzp2ZW5rYXRhMS5weWxhQHRvc2hpYmFhcC5vbm1pY3Jvc29mdC5jb20+OyBTaGl2
+YW5hbmQuS3VuaWphZGFyQHRvc2hpYmEtdHNpcC5jb208bWFpbHRvOlNoaXZhbmFuZC5LdW5pamFk
+YXJAdG9zaGliYS10c2lwLmNvbT47IEFkaXRoeWEuQmFsYWt1bWFyQHRvc2hpYmEtdHNpcC5jb208
+bWFpbHRvOkFkaXRoeWEuQmFsYWt1bWFyQHRvc2hpYmEtdHNpcC5jb20+OyBaYWliYS5TYW5nbGlr
+YXJAdG9zaGliYS10c2lwLmNvbTxtYWlsdG86WmFpYmEuU2FuZ2xpa2FyQHRvc2hpYmEtdHNpcC5j
+b20+OyBjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZzxtYWlsdG86Y2lwLWRldkBsaXN0cy5j
+aXAtcHJvamVjdC5vcmc+OyBrYXp1aGlybzMuaGF5YXNoaUB0b3NoaWJhLmNvLmpwPG1haWx0bzpr
+YXp1aGlybzMuaGF5YXNoaUB0b3NoaWJhLmNvLmpwPg0KU3ViamVjdDogUkU6IFF1ZXJ5IC0gKCBS
+dW5uaW5nIExpbnV4IGNvbW1hbmRzIGluIExBVkEgaG9zdCBiZWZvcmUgYm9vdGluZyB0aGUgaW1h
+Z2UgKQ0KDQpIZWxsbyBDaHJpcywNCg0KV2hpbGUgdmVyaWZ5aW5nIGZldyBzY2VuYXJpb3MgaW4g
+bXkgam9iIGRlZmluaXRpb25zIGluIG15IExvY2FsIExBVkEgTGFiLCBJIG9ic2VydmVkIHNvbWUg
+aXNzdWVzLiBJIGZvdW5kIHRoZSBtaW5pbWFsIGJvb3QgaXMgbm90IHdvcmtpbmcgaW4gbXkgbG9j
+YWwgc2V0dXAuIEl0IGlzIGZhaWxpbmcgYXQgdGhlIGZpcnN0IHZhbGlkYXRpb24gc3RhZ2Ugd2l0
+aCB0aGlzIG1lc3NhZ2UsIKGwQ2Fubm90IGZpbmQgY29tbWFuZCAnJyBpbiAkUEFUSCwgUGxlYXNl
+IHJlcG9ydCB0aGlzIHRvIExBVkEgYWRtaW5zobEuIFdoZW4gSSB0cnkgdG8gcnVuIHRoaXMgam9i
+IHdpdGggbWluaW1hbCBib290IGluIENJUCBMQVZBIGxhYiwgaXQgaXMgcnVubmluZyBzdWNjZXNz
+ZnVsbHkuDQoNCkN1cnJlbnRseSBJIGFtIG5vdCBzdXJlIHdoeSB0aGUgc2FtZSBqb2IgaXMgZmFp
+bGluZyB0byBzdGFydCBpbiBteSBsYWIgYnV0IGlzIHJ1bm5pbmcgZmluZSBpbiBDSVAgTEFWQSBs
+YWIuIEJ1dCBzaW5jZSB5b3UgYXNrZWQgcHJldmlvdXNseSBpZiB5b3UgbmVlZCB0byBtYWtlIGFu
+eSBjaGFuZ2VzIHRvIGxhYi1jaXAtcmVuZXNhcywgaXQgd2lsbCBiZSB2ZXJ5IGhlbHBmdWwgaWYg
+eW91IHBsYWNlIHRoZSBzY3JpcHRzIEkgaGF2ZSBhZGRlZCBpbiB0aGlzIE1SIGxhdmEtc2xhdmUv
+c2NyaXB0czogQWRkIHNjcmlwdHMgbmVlZGVkIHRvIHJ1biBmb3IgYm9vdGluZyBDSVAgUUVNVSBz
+ZWN1cml0eSB0YXJnZXQgKCEzNSkgoaQgTWVyZ2UgcmVxdWVzdHMgoaQgY2lwLXByb2plY3QgLyBj
+aXAtdGVzdGluZyAvIGxhdmEtZG9ja2VyIKGkIEdpdExhYjxodHRwczovL2dpdGxhYi5jb20vY2lw
+LXByb2plY3QvY2lwLXRlc3RpbmcvbGF2YS1kb2NrZXIvLS9tZXJnZV9yZXF1ZXN0cy8zNS9kaWZm
+cz4sIGFuZCB1cGRhdGUgdGhlIHFlbXUgamluamEyIHRlbXBsYXRlIHdpdGggdGhlIHVzZXIgY29t
+bWFuZHMgSSBtZW50aW9uZWQgaW4gbGF2YS1zZXJ2ZXIgcWVtdS5qaW5hMiB0ZW1wbGF0ZQ0KDQpU
+aGVuIGl0IHdpbGwgYmUgaGVscGZ1bCBmb3IgbWUgdG8gcXVpY2tseSBkZWJ1ZyBteSBqb2IgZGVm
+aW5pdGlvbnMgaW4gQ0lQIGxhdmEgbGFiLiBJIGFsc28gcmVxdWVzdCB5b3UgdG8gcmV2aWV3IHRo
+ZSBNUiBJIG1lbnRpb25lZCBhYm92ZSBhbmQgcHJvdmlkZSB5b3VyIHJldmlldyBjb21tZW50cy4N
+Cg0KVGhhbmtzIGZvciB5b3VyIGNvbnN0YW50IHN1cHBvcnQsIENocmlzLg0KDQpSZWdhcmRzLA0K
+U2FpIEFzaHJpdGggKCBUIFMgSSBQICkNCkZyb206IENocmlzIFBhdGVyc29uIDxDaHJpcy5QYXRl
+cnNvbjJAcmVuZXNhcy5jb208bWFpbHRvOkNocmlzLlBhdGVyc29uMkByZW5lc2FzLmNvbT4+DQpT
+ZW50OiBGcmlkYXksIEZlYnJ1YXJ5IDIsIDIwMjQgNDowNSBQTQ0KVG86IGFzaHJpdGggc2FpKKPU
+o9OjyaPQKSA8U2FpLlNhdGh1am9kYUB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpTYWkuU2F0aHVq
+b2RhQHRvc2hpYmEtdHNpcC5jb20+Pg0KQ2M6IGRpbmVzaCBrdW1hciij1KPTo8mj0CBUTUlFQyBP
+REcgUG9ydGluZykgPGRpbmVzaC5rdW1hckB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpkaW5lc2gu
+a3VtYXJAdG9zaGliYS10c2lwLmNvbT4+OyB2ZW5rYXRhMS5weWxhIDx2ZW5rYXRhMS5weWxhQHRv
+c2hpYmFhcC5vbm1pY3Jvc29mdC5jb208bWFpbHRvOnZlbmthdGExLnB5bGFAdG9zaGliYWFwLm9u
+bWljcm9zb2Z0LmNvbT4+OyBrdW5pamFkYXIgc2hpdmFuYW5kKKPUo9OjyaPQIFRNSUVDIE9ERyBQ
+b3J0aW5nKSA8U2hpdmFuYW5kLkt1bmlqYWRhckB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpTaGl2
+YW5hbmQuS3VuaWphZGFyQHRvc2hpYmEtdHNpcC5jb20+PjsgYmFsYWt1bWFyIGFkaXRoeWEoo9Sj
+06PJo9AgVEVVUikgPEFkaXRoeWEuQmFsYWt1bWFyQHRvc2hpYmEtdHNpcC5jb208bWFpbHRvOkFk
+aXRoeWEuQmFsYWt1bWFyQHRvc2hpYmEtdHNpcC5jb20+Pjsgc2FuZ2xpa2FyIHphaWJhKKPUo9Oj
+yaPQIFRFVVIpIDxaYWliYS5TYW5nbGlrYXJAdG9zaGliYS10c2lwLmNvbTxtYWlsdG86WmFpYmEu
+U2FuZ2xpa2FyQHRvc2hpYmEtdHNpcC5jb20+PjsgY2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5v
+cmc8bWFpbHRvOmNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPjsgaGF5YXNoaSBrYXp1aGly
+byjB1iC6zbrqIKPEo82jxSCh8KPEo8mjx6H1o82j0KPTofCjzaPQo7QpIDxrYXp1aGlybzMuaGF5
+YXNoaUB0b3NoaWJhLmNvLmpwPG1haWx0bzprYXp1aGlybzMuaGF5YXNoaUB0b3NoaWJhLmNvLmpw
+Pj4NClN1YmplY3Q6IFJFOiBRdWVyeSAtICggUnVubmluZyBMaW51eCBjb21tYW5kcyBpbiBMQVZB
+IGhvc3QgYmVmb3JlIGJvb3RpbmcgdGhlIGltYWdlICkNCg0KSGVsbG8gU2FpLA0KDQpJIHRoaW5r
+IHdloa9yZSBhdCB0aGUgcG9pbnQgbm93IHdoZXJlIHdlIGNhbiBnZXQgc29tZSBtZXJnZSByZXF1
+ZXN0cyBjcmVhdGVkLg0KUGxlYXNlIGNvdWxkIHlvdSBjcmVhdGUgYW4gTVIgZm9yIHRoZSBDSVAg
+bGF2YS1kb2NrZXI8aHR0cHM6Ly9naXRsYWIuY29tL2NpcC1wcm9qZWN0L2NpcC10ZXN0aW5nL2xh
+dmEtZG9ja2VyPiByZXBvc2l0b3J5Pw0KDQpJIHN1Z2dlc3QgdGhhdCB3ZSBwdXQgeW91ciBzY3Jp
+cHRzIGluIGxhdmEtc2xhdmUvc2NyaXB0cy4gVGhleSB3aWxsIHRoZW4gZW5kIHVwIGJlaW5nIGNv
+cGllZCBpbnRvIHRoZSAvdXNyL2xvY2FsL2Jpbi8gZGlyZWN0b3J5IG9uIHRoZSBsYXZhLWRpc3Bh
+dGNoZXJzLg0KDQpGb3IgdGhlIGRldmljZSB0ZW1wbGF0ZXMsIHBlcmhhcHMgd2Ugc2hvdWxkIGNy
+ZWF0ZSBhIGNvbW1vbiBjaXAuamluamEyIHRlbXBsYXRlIHdoaWNoIHdlIGNhbiB1c2UgdG8gaW5j
+bHVkZSB0aGUgdXNlcl9jb21tYW5kcy4NCldlIGNvdWxkIHRoZW4gcGF0Y2ggdGhlIGRldmljZS10
+eXBlIHRlbXBsYXRlcyB0byBleHRlbmQgY2lwLmppbmphMiBhbmQgdGhlcmVmb3JlIGhhdmUgYWNj
+ZXNzIHRvIHN0YXJ0X3RwbSBldGMuDQoNCj5TbywgSSBmZWVsIGl0IHdvdWxkIGJlIGdvb2QgaWYg
+d2UgY2FuIGFkZCBhIHRhZyBuYW1lIHJlbGF0ZWQgdG8gUUVNVSBzd3RwbSB0byBhdm9pZCBjb25m
+dXNpb24gYWZ0ZXIgc2VlaW5nIHRoZSBqb2IgZGVmaW5pdGlvbiBoZWFkLiBQbGVhc2UgcHJvdmlk
+ZSB5b3VyIG9waW5pb24gQ2hyaXMuDQpZZXMgd2UgY291bGQgYWRkIGEgdGFnIGxpa2UgdGhpcyB1
+bnRpbCBhbGwgb2YgdGhlIENJUCBMQVZBIGxhYnMgYXJlIHVwZGF0ZWQgYmFzZWQgb24gdGhlIG1l
+cmdlZCBNUiBmcm9tIGFib3ZlLg0KRG8geW91IG5lZWQgbWUgdG8gbWFrZSBhbnkgY2hhbmdlcyB0
+byBsYWItY2lwLXJlbmVzYXMgbm93Pw0KDQpLaW5kIHJlZ2FyZHMsIENocmlzDQoNCkZyb206IFNh
+aS5TYXRodWpvZGFAdG9zaGliYS10c2lwLmNvbTxtYWlsdG86U2FpLlNhdGh1am9kYUB0b3NoaWJh
+LXRzaXAuY29tPiA8U2FpLlNhdGh1am9kYUB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpTYWkuU2F0
+aHVqb2RhQHRvc2hpYmEtdHNpcC5jb20+Pg0KU2VudDogTW9uZGF5LCBKYW51YXJ5IDI5LCAyMDI0
+IDY6MzAgUE0NClRvOiBDaHJpcyBQYXRlcnNvbiA8Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29t
+PG1haWx0bzpDaHJpcy5QYXRlcnNvbjJAcmVuZXNhcy5jb20+Pg0KQ2M6IGRpbmVzaC5rdW1hckB0
+b3NoaWJhLXRzaXAuY29tPG1haWx0bzpkaW5lc2gua3VtYXJAdG9zaGliYS10c2lwLmNvbT47IHZl
+bmthdGExLnB5bGFAdG9zaGliYWFwLm9ubWljcm9zb2Z0LmNvbTxtYWlsdG86dmVua2F0YTEucHls
+YUB0b3NoaWJhYXAub25taWNyb3NvZnQuY29tPjsgU2hpdmFuYW5kLkt1bmlqYWRhckB0b3NoaWJh
+LXRzaXAuY29tPG1haWx0bzpTaGl2YW5hbmQuS3VuaWphZGFyQHRvc2hpYmEtdHNpcC5jb20+OyBB
+ZGl0aHlhLkJhbGFrdW1hckB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpBZGl0aHlhLkJhbGFrdW1h
+ckB0b3NoaWJhLXRzaXAuY29tPjsgWmFpYmEuU2FuZ2xpa2FyQHRvc2hpYmEtdHNpcC5jb208bWFp
+bHRvOlphaWJhLlNhbmdsaWthckB0b3NoaWJhLXRzaXAuY29tPjsgY2lwLWRldkBsaXN0cy5jaXAt
+cHJvamVjdC5vcmc8bWFpbHRvOmNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPjsga2F6dWhp
+cm8zLmhheWFzaGlAdG9zaGliYS5jby5qcDxtYWlsdG86a2F6dWhpcm8zLmhheWFzaGlAdG9zaGli
+YS5jby5qcD4NClN1YmplY3Q6IFJFOiBRdWVyeSAtICggUnVubmluZyBMaW51eCBjb21tYW5kcyBp
+biBMQVZBIGhvc3QgYmVmb3JlIGJvb3RpbmcgdGhlIGltYWdlICkNCg0KSGVsbG8gQ2hyaXMsDQoN
+CkkgcmVtb3ZlZCB0aGUgc3VyZV9raWxsIGFuZCBybV90bXBkaXIgY29tbWFuZHMgZnJvbSB0aGUg
+ZGV2aWNlIGRpY3Rpb25hcnkuIEkgdXBkYXRlZCB0aGUgc3d0cG1fZmluaXNoLnNoIHNjcmlwdC4g
+QXMgeW91IG1lbnRpb25lZCBzd3RwbV9maW5pc2guc2ggc3RhbmRzIG9rYXkgZXZlbiBpZiBpdCBy
+dW5zIHR3aWNlIGFzIHVuZG8gYWN0aW9uIGluIHNvZnR3YXJlIHVwZGF0ZSB0ZXN0IGNhc2VzLiBQ
+bGVhc2UgaGF2ZSBhIGxvb2sgYXQgdGhlIHVwZGF0ZWQgc2NyaXB0cyBhbmQgZGV2aWNlIGRpY3Rp
+b25hcmllcy4NCg0KTm90ZTogSSBhbSBydW5uaW5nIHRoZSBzY3JpcHRzIGZyb20gL2hvbWUgcmln
+aHQsIGlmIHlvdSB0aGluayBpdCBpcyBub3QgdGhlIHJpZ2h0IHBsYWNlIHRvIHBsYWNlIHRoZSBz
+Y3JpcHRzIHRoZW4gSSByZXF1ZXN0IHlvdSB0byBjaGFuZ2UgdGhlIHBhdGggaW4gdGhlIGRldmlj
+ZSBkaWN0aW9uYXJpZXMgYXMgd2VsbCB3aGVuIGNhbGxpbmcgdGhvc2Ugc2NyaXB0cyBmcm9tIHRo
+ZSBqb2IgZGVmaW5pdGlvbi4NCg0KQWNjb3JkaW5nIHRvIG15IHVuZGVyc3RhbmRpbmcgYWxsIHRo
+ZXNlIGNoYW5nZXMgaW4gb25seSBsYWItY2lwLXJlbmVzYXMgLCByaWdodCBDaHJpcz8gIEN1cnJl
+bnRseSBhbGwgbXkgam9iIGRlZmluaXRpb25zIG9mIHNvZnR3YXJlIHVwZGF0ZSB0ZXN0aW5nLCBz
+ZWN1cmUgYm9vdCB0ZXN0aW5nIGFuZCBJRUMgTGF5ZXIgdGVzdHMgYXJlIG9ubHkgUUVNVSBzd3Rw
+bSBiYXNlZCBzaW5jZSBJIGFtIHVzaW5nIHNlY3VyaXR5IGltYWdlIGZvciBhbGwgdGhlIGNhc2Vz
+Lg0KDQpTbywgSSBmZWVsIGl0IHdvdWxkIGJlIGdvb2QgaWYgd2UgY2FuIGFkZCBhIHRhZyBuYW1l
+IHJlbGF0ZWQgdG8gUUVNVSBzd3RwbSB0byBhdm9pZCBjb25mdXNpb24gYWZ0ZXIgc2VlaW5nIHRo
+ZSBqb2IgZGVmaW5pdGlvbiBoZWFkLiBQbGVhc2UgcHJvdmlkZSB5b3VyIG9waW5pb24gQ2hyaXMu
+DQoNCg0KVGhhbmtzIGFuZCBSZWdhcmRzLA0KU2FpIEFzaHJpdGggKCBUIFMgSSBQICkNCg0KRnJv
+bTogQ2hyaXMgUGF0ZXJzb24gPENocmlzLlBhdGVyc29uMkByZW5lc2FzLmNvbTxtYWlsdG86Q2hy
+aXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tPj4NClNlbnQ6IE1vbmRheSwgSmFudWFyeSAyOSwgMjAy
+NCA3OjQ4IFBNDQpUbzogYXNocml0aCBzYWkoo9Sj06PJo9ApIDxTYWkuU2F0aHVqb2RhQHRvc2hp
+YmEtdHNpcC5jb208bWFpbHRvOlNhaS5TYXRodWpvZGFAdG9zaGliYS10c2lwLmNvbT4+DQpDYzog
+ZGluZXNoIGt1bWFyKKPUo9OjyaPQIFRNSUVDIE9ERyBQb3J0aW5nKSA8ZGluZXNoLmt1bWFyQHRv
+c2hpYmEtdHNpcC5jb208bWFpbHRvOmRpbmVzaC5rdW1hckB0b3NoaWJhLXRzaXAuY29tPj47IHZl
+bmthdGExLnB5bGEgPHZlbmthdGExLnB5bGFAdG9zaGliYWFwLm9ubWljcm9zb2Z0LmNvbTxtYWls
+dG86dmVua2F0YTEucHlsYUB0b3NoaWJhYXAub25taWNyb3NvZnQuY29tPj47IGt1bmlqYWRhciBz
+aGl2YW5hbmQoo9Sj06PJo9AgVE1JRUMgT0RHIFBvcnRpbmcpIDxTaGl2YW5hbmQuS3VuaWphZGFy
+QHRvc2hpYmEtdHNpcC5jb208bWFpbHRvOlNoaXZhbmFuZC5LdW5pamFkYXJAdG9zaGliYS10c2lw
+LmNvbT4+OyBiYWxha3VtYXIgYWRpdGh5YSij1KPTo8mj0CBURVVSKSA8QWRpdGh5YS5CYWxha3Vt
+YXJAdG9zaGliYS10c2lwLmNvbTxtYWlsdG86QWRpdGh5YS5CYWxha3VtYXJAdG9zaGliYS10c2lw
+LmNvbT4+OyBzYW5nbGlrYXIgemFpYmEoo9Sj06PJo9AgVEVVUikgPFphaWJhLlNhbmdsaWthckB0
+b3NoaWJhLXRzaXAuY29tPG1haWx0bzpaYWliYS5TYW5nbGlrYXJAdG9zaGliYS10c2lwLmNvbT4+
+OyBjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZzxtYWlsdG86Y2lwLWRldkBsaXN0cy5jaXAt
+cHJvamVjdC5vcmc+OyBoYXlhc2hpIGthenVoaXJvKMHWILrNuuogo8SjzaPFIKHwo8SjyaPHofWj
+zaPQo9Oh8KPNo9CjtCkgPGthenVoaXJvMy5oYXlhc2hpQHRvc2hpYmEuY28uanA8bWFpbHRvOmth
+enVoaXJvMy5oYXlhc2hpQHRvc2hpYmEuY28uanA+Pg0KU3ViamVjdDogUkU6IFF1ZXJ5IC0gKCBS
+dW5uaW5nIExpbnV4IGNvbW1hbmRzIGluIExBVkEgaG9zdCBiZWZvcmUgYm9vdGluZyB0aGUgaW1h
+Z2UgKQ0KDQpIZWxsbyBTYWksDQoNClRoYW5rIHlvdSBmb3IgdGhlIHVwZGF0ZXMuDQoNClJhdGhl
+ciB0aGFuIGhhdmUgYSBzZXBhcmF0ZSBzdXJlX2tpbGwgY29tbWFuZCB3aGljaCBpcyBydW4gYXQg
+dGhlIHN0YXJ0LCBjb3VsZG6hr3Qgd2UganVzdCBhZGQgYW4gdW5kbyB0byB0aGUgc3RhcnRfdHBt
+IHRhc2sgdGhhdCBydW5zIHRoZSBzd3RwbV9maW5pc2guc2ggc2NyaXB0Pw0KTXkgdW5kZXJzdGFu
+ZGluZyBpcyB0aGF0IHRoZSB1bmRvIGFjdGlvbiB3b3VsZCBvbmx5IGJlIHJ1biBhdCB0aGUgZW5k
+IG9mIHRoZSBqb2IsIHdoaWNoIGlzIHdoYXQgd2Ugd2FudC4NCklmIHdlIGhhdmUgbXVsdGlwbGUg
+Y2FsbHMgb2YgdGhlIHN0YXJ0X3RwbSB0YXNrIHRoZW4gd2Whr2xsIGdldCBtdWx0aXBsZSBjYWxs
+cyBvZiB0aGUgdW5kbyBhY3Rpb24sIGJ1dCB3aXRoIHRoZSBzd3RwbV9maW5pc2guc2ggc2NyaXB0
+IGFzIGl0IHN0YW5kcyBJIHRoaW5rIHRoYXQgc2hvdWxkIGJlIG9rYXk/DQoNCkxldCBtZSBrbm93
+IGlmIGl0IHdvcmtzLCBvciBpZiB5b3UgbmVlZCBtZSB0byBpbXBsZW1lbnQgYW55dGhpbmcgbXkg
+ZW5kIHRvIGhlbHAgd2l0aCB0ZXN0aW5nLg0KDQpUaGFua3MsIENocmlzDQoNCkZyb206IFNhaS5T
+YXRodWpvZGFAdG9zaGliYS10c2lwLmNvbTxtYWlsdG86U2FpLlNhdGh1am9kYUB0b3NoaWJhLXRz
+aXAuY29tPiA8U2FpLlNhdGh1am9kYUB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpTYWkuU2F0aHVq
+b2RhQHRvc2hpYmEtdHNpcC5jb20+Pg0KU2VudDogTW9uZGF5LCBKYW51YXJ5IDI5LCAyMDI0IDU6
+MjkgQU0NClRvOiBDaHJpcyBQYXRlcnNvbiA8Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tPG1h
+aWx0bzpDaHJpcy5QYXRlcnNvbjJAcmVuZXNhcy5jb20+Pg0KQ2M6IGRpbmVzaC5rdW1hckB0b3No
+aWJhLXRzaXAuY29tPG1haWx0bzpkaW5lc2gua3VtYXJAdG9zaGliYS10c2lwLmNvbT47IHZlbmth
+dGExLnB5bGFAdG9zaGliYWFwLm9ubWljcm9zb2Z0LmNvbTxtYWlsdG86dmVua2F0YTEucHlsYUB0
+b3NoaWJhYXAub25taWNyb3NvZnQuY29tPjsgU2hpdmFuYW5kLkt1bmlqYWRhckB0b3NoaWJhLXRz
+aXAuY29tPG1haWx0bzpTaGl2YW5hbmQuS3VuaWphZGFyQHRvc2hpYmEtdHNpcC5jb20+OyBBZGl0
+aHlhLkJhbGFrdW1hckB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpBZGl0aHlhLkJhbGFrdW1hckB0
+b3NoaWJhLXRzaXAuY29tPjsgWmFpYmEuU2FuZ2xpa2FyQHRvc2hpYmEtdHNpcC5jb208bWFpbHRv
+OlphaWJhLlNhbmdsaWthckB0b3NoaWJhLXRzaXAuY29tPjsgY2lwLWRldkBsaXN0cy5jaXAtcHJv
+amVjdC5vcmc8bWFpbHRvOmNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPjsga2F6dWhpcm8z
+LmhheWFzaGlAdG9zaGliYS5jby5qcDxtYWlsdG86a2F6dWhpcm8zLmhheWFzaGlAdG9zaGliYS5j
+by5qcD4NClN1YmplY3Q6IFJFOiBRdWVyeSAtICggUnVubmluZyBMaW51eCBjb21tYW5kcyBpbiBM
+QVZBIGhvc3QgYmVmb3JlIGJvb3RpbmcgdGhlIGltYWdlICkNCg0KSGVsbG8gQ2hyaXMsDQoNClNv
+cnJ5IEkgZm9yZ290IHRvIGF0dGFjaCB0aGUgam9iIGRlZmluaXRpb24gdXNpbmcgd2hpY2ggeW91
+IGNhbiB1bmRlcnN0YW5kIHdoZXJlIEkgYW0gdXNpbmcgdGhvc2UgY29tbWFuZHMgc2VudCBpbiB0
+aGUgcHJldmlvdXMgbWFpbC4gUGxlYXNlIGhhdmUgYSBsb29rIGFuZCBsZXQgbWUga25vdyB5b3Vy
+IHRob3VnaHRzLg0KDQpUaGFua3MgYW5kIHJlZ2FyZHMsDQpTYWkgQXNocml0aCAoIFQgUyBJIFAg
+KQ0KDQpGcm9tOiBhc2hyaXRoIHNhaSij1KPTo8mj0CkNClNlbnQ6IE1vbmRheSwgSmFudWFyeSAy
+OSwgMjAyNCAxMDo1MyBBTQ0KVG86ICdDaHJpcyBQYXRlcnNvbicgPENocmlzLlBhdGVyc29uMkBy
+ZW5lc2FzLmNvbTxtYWlsdG86Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tPj4NCkNjOiBkaW5l
+c2gga3VtYXIoo9Sj06PJo9AgVE1JRUMgT0RHIFBvcnRpbmcpIDxkaW5lc2gua3VtYXJAdG9zaGli
+YS10c2lwLmNvbTxtYWlsdG86ZGluZXNoLmt1bWFyQHRvc2hpYmEtdHNpcC5jb20+PjsgdmVua2F0
+YTEucHlsYSA8dmVua2F0YTEucHlsYUB0b3NoaWJhYXAub25taWNyb3NvZnQuY29tPG1haWx0bzp2
+ZW5rYXRhMS5weWxhQHRvc2hpYmFhcC5vbm1pY3Jvc29mdC5jb20+Pjsga3VuaWphZGFyIHNoaXZh
+bmFuZCij1KPTo8mj0CBUTUlFQyBPREcgUG9ydGluZykgPFNoaXZhbmFuZC5LdW5pamFkYXJAdG9z
+aGliYS10c2lwLmNvbTxtYWlsdG86U2hpdmFuYW5kLkt1bmlqYWRhckB0b3NoaWJhLXRzaXAuY29t
+Pj47IGJhbGFrdW1hciBhZGl0aHlhKKPUo9OjyaPQIFRFVVIpIDxBZGl0aHlhLkJhbGFrdW1hckB0
+b3NoaWJhLXRzaXAuY29tPG1haWx0bzpBZGl0aHlhLkJhbGFrdW1hckB0b3NoaWJhLXRzaXAuY29t
+Pj47IHNhbmdsaWthciB6YWliYSij1KPTo8mj0CBURVVSKSA8WmFpYmEuU2FuZ2xpa2FyQHRvc2hp
+YmEtdHNpcC5jb208bWFpbHRvOlphaWJhLlNhbmdsaWthckB0b3NoaWJhLXRzaXAuY29tPj47IGNp
+cC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnPG1haWx0bzpjaXAtZGV2QGxpc3RzLmNpcC1wcm9q
+ZWN0Lm9yZz47IGhheWFzaGkga2F6dWhpcm8owdYgus266iCjxKPNo8UgofCjxKPJo8eh9aPNo9Cj
+06Hwo82j0KO0KSA8a2F6dWhpcm8zLmhheWFzaGlAdG9zaGliYS5jby5qcDxtYWlsdG86a2F6dWhp
+cm8zLmhheWFzaGlAdG9zaGliYS5jby5qcD4+DQpTdWJqZWN0OiBSRTogUXVlcnkgLSAoIFJ1bm5p
+bmcgTGludXggY29tbWFuZHMgaW4gTEFWQSBob3N0IGJlZm9yZSBib290aW5nIHRoZSBpbWFnZSAp
+DQoNCkhlbGxvIENocmlzLA0KDQpUaGFuayB5b3UgZm9yIHN1Z2dlc3RpbmcgdGhpcyBzY2VuYXJp
+by4NCg0KWWVzLCBpZiB3ZSBjYW5jZWwgdGhlIGpvYiBpbiBiZXR3ZWVuLCB0aGVuIGJvdGggdGhl
+IHN3dHBtIHByb2Nlc3MgYXMgd2VsbCBhcyB0aGUgLnN3dHBtIGRpcmVjdG9yeSB3aGljaCB3ZSBj
+cmVhdGVkIGluIHRoZSBiZWdpbm5pbmcgd2lsbCByZW1haW4gY2F1c2luZyB0aGUgbGF0ZXIgam9i
+cyB0byBmYWlsLiBTbywgd2UgbmVlZCB0byBhZGQga2lsbGluZyB0aGUgcHJvY2VzcyBhcyB3ZWxs
+IGFzIHJlbW92aW5nIHRoZSBkaXJlY3RvcnkgYXMgcGFydCBvZiB1bmRvIGFjdGlvbiB0byBzb21l
+IGNvbW1hbmQgd2hpY2ggd2Ugd2lsbCBydW4gYXQgdGhlIGJlZ2lubmluZyBvZiB0aGUgam9iLiBJ
+IGRvbqGvdCB0aGluayBpdCBpcyBwb3NzaWJsZSB0byBhZGQgbW9yZSB0aGFuIG9uZSBjb21tYW5k
+IGFzIHVuZG8gYWN0aW9uIHRvIGEgY29tbWFuZCBpbiBMQVZBLiBTbywgdG8ga2VlcCBpdCBzaW1w
+bGUsIGxldCB1cyBpbmNsdWRlIHR3byBzbWFsbCBzY3JpcHRzIGluIGFueSBkaXJlY3RvcnkgeW91
+IHByZWZlciBpbiB0aGUgc2xhdmUgbWFjaGluZS4gT25lIHNjcmlwdCB3aWxsIHN0YXJ0IHRoZSB0
+cG0gYWZ0ZXIgY2hlY2tpbmcgaWYgYW55IHN3dHBtIHByb2Nlc3MgaXMgbm90IHJ1bm5pbmcgYWxy
+ZWFkeSBhbmQgdGhlIG90aGVyIHdpbGwgbWFrZSBzdXJlIHRoYXQgd2hhdGV2ZXIgdGhlIGNhc2Us
+IHRoZXJlIHNob3VsZCBiZSBubyBwcmVzZW5jZSBvZiBzd3RwbSBwcm9jZXNzIHJ1bm5pbmcgYXMg
+d2VsbCBhcyB0aGUgdGVtcG9yYXJ5IGRpcmVjdG9yeSB3ZSBjcmVhdGVkIHRvIHN0b3JlIFRQTSBz
+dGF0ZSBmaWxlcy4gSSBkaWQgbm90IGFkZCB0aGUgc3d0cG1fZmluaXNoLnNoIGFzIHBhcnQgb2Yg
+dW5kbyBhY3Rpb24gb2Ygc3RhcnRfdHBtIGJlY2F1c2Ugd2UgbmVlZCB0byB1c2Ugc3RhcnRfdHBt
+IHR3aWNlIGluIFN3dXBkYXRlIHJlbGF0ZWQgam9iIGRlZmluaXRpb25zLg0KDQpJIGFtIGF0dGFj
+aGluZyB0aGUgc2NyaXB0cywgdXBkYXRlZCBkZXZpY2UgZGljdGlvbmFyaWVzIGFzIHdlbGwgYXMg
+dGhlIGpvYiBkZWZpbml0aW9uIGluIHdoaWNoIHdlIGNhbiB1c2UgdGhlbS4gUGxlYXNlIGhhdmUg
+YSBsb29rIGF0IHRoZW0uDQoNClRoYW5rcyBhbmQgUmVnYXJkcywNClNhaSBBc2hyaXRoICggVCBT
+IEkgUCApDQoNCkZyb206IENocmlzIFBhdGVyc29uIDxDaHJpcy5QYXRlcnNvbjJAcmVuZXNhcy5j
+b208bWFpbHRvOkNocmlzLlBhdGVyc29uMkByZW5lc2FzLmNvbT4+DQpTZW50OiBUaHVyc2RheSwg
+SmFudWFyeSAyNSwgMjAyNCA3OjUzIFBNDQpUbzogYXNocml0aCBzYWkoo9Sj06PJo9ApIDxTYWku
+U2F0aHVqb2RhQHRvc2hpYmEtdHNpcC5jb208bWFpbHRvOlNhaS5TYXRodWpvZGFAdG9zaGliYS10
+c2lwLmNvbT4+DQpDYzogZGluZXNoIGt1bWFyKKPUo9OjyaPQIFRNSUVDIE9ERyBQb3J0aW5nKSA8
+ZGluZXNoLmt1bWFyQHRvc2hpYmEtdHNpcC5jb208bWFpbHRvOmRpbmVzaC5rdW1hckB0b3NoaWJh
+LXRzaXAuY29tPj47IHZlbmthdGExLnB5bGEgPHZlbmthdGExLnB5bGFAdG9zaGliYWFwLm9ubWlj
+cm9zb2Z0LmNvbTxtYWlsdG86dmVua2F0YTEucHlsYUB0b3NoaWJhYXAub25taWNyb3NvZnQuY29t
+Pj47IGt1bmlqYWRhciBzaGl2YW5hbmQoo9Sj06PJo9AgVE1JRUMgT0RHIFBvcnRpbmcpIDxTaGl2
+YW5hbmQuS3VuaWphZGFyQHRvc2hpYmEtdHNpcC5jb208bWFpbHRvOlNoaXZhbmFuZC5LdW5pamFk
+YXJAdG9zaGliYS10c2lwLmNvbT4+OyBiYWxha3VtYXIgYWRpdGh5YSij1KPTo8mj0CBURVVSKSA8
+QWRpdGh5YS5CYWxha3VtYXJAdG9zaGliYS10c2lwLmNvbTxtYWlsdG86QWRpdGh5YS5CYWxha3Vt
+YXJAdG9zaGliYS10c2lwLmNvbT4+OyBzYW5nbGlrYXIgemFpYmEoo9Sj06PJo9AgVEVVUikgPFph
+aWJhLlNhbmdsaWthckB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpaYWliYS5TYW5nbGlrYXJAdG9z
+aGliYS10c2lwLmNvbT4+OyBjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZzxtYWlsdG86Y2lw
+LWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmc+OyBoYXlhc2hpIGthenVoaXJvKMHWILrNuuogo8Sj
+zaPFIKHwo8SjyaPHofWjzaPQo9Oh8KPNo9CjtCkgPGthenVoaXJvMy5oYXlhc2hpQHRvc2hpYmEu
+Y28uanA8bWFpbHRvOmthenVoaXJvMy5oYXlhc2hpQHRvc2hpYmEuY28uanA+Pg0KU3ViamVjdDog
+UkU6IFF1ZXJ5IC0gKCBSdW5uaW5nIExpbnV4IGNvbW1hbmRzIGluIExBVkEgaG9zdCBiZWZvcmUg
+Ym9vdGluZyB0aGUgaW1hZ2UgKQ0KDQpIZWxsbyBTYWksDQoNClRoYW5rIHlvdSBmb3IgdGhlIGlu
+Zm9ybWF0aW9uLiBJdCBsb29rcyBsaWtlIHlvdaGvcmUgbWFraW5nIGdvb2QgcHJvZ3Jlc3MuDQoN
+CllvdXIgbmV3IGFwcHJvYWNoIHNlZW1zIHByZXR0eSBnb29kIHRvIG1lLCBhbHRob3VnaCBvbmUg
+dGhvdWdooa0NCldoYXQgaGFwcGVucyBpZiBhIGpvYiBmYWlscyBvciBpcyBjYW5jZWxsZWQgYmVm
+b3JlIHJlYWNoaW5nIHRoZSBlbmQgobBybV90cG1kaXKhsSBhbmQgobBraWxsX3RwbaGxIGNvbW1h
+bmRzPw0KV291bGRuoa90IHRoZSBvcmlnaW5hbCBzd3RwbSBpbnN0YW5jZSBzZXQgdXAgYnkgobBz
+dGFydF90cG2hsSBrZWVwIHJ1bm5pbmc/IEFuZCBhbnkgc3Vic2VxdWVudCBqb2JzIHdvdWxkIGVu
+ZCB1cCBpbiB0aGUgaW5maW5pdGUgd2hpbGUgbG9vcCBpbiB5b3VyIHNjcmlwdC4NCklzIHRoZXJl
+IGEgd2F5IHRvIG1ha2UgaXQgc28gdGhhdCBhIGNvbW1hbmQgYWN0aW9uIGlzIF9hbHdheXNfIHJ1
+biBhdCB0aGUgZW5kIG9mIGEgam9iPw0KDQpLaW5kIHJlZ2FyZHMsIENocmlzDQoNCkZyb206IFNh
+aS5TYXRodWpvZGFAdG9zaGliYS10c2lwLmNvbTxtYWlsdG86U2FpLlNhdGh1am9kYUB0b3NoaWJh
+LXRzaXAuY29tPiA8U2FpLlNhdGh1am9kYUB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpTYWkuU2F0
+aHVqb2RhQHRvc2hpYmEtdHNpcC5jb20+Pg0KU2VudDogVHVlc2RheSwgSmFudWFyeSAyMywgMjAy
+NCA1OjA0IEFNDQpUbzogQ2hyaXMgUGF0ZXJzb24gPENocmlzLlBhdGVyc29uMkByZW5lc2FzLmNv
+bTxtYWlsdG86Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tPj4NCkNjOiBkaW5lc2gua3VtYXJA
+dG9zaGliYS10c2lwLmNvbTxtYWlsdG86ZGluZXNoLmt1bWFyQHRvc2hpYmEtdHNpcC5jb20+OyB2
+ZW5rYXRhMS5weWxhQHRvc2hpYmFhcC5vbm1pY3Jvc29mdC5jb208bWFpbHRvOnZlbmthdGExLnB5
+bGFAdG9zaGliYWFwLm9ubWljcm9zb2Z0LmNvbT47IFNoaXZhbmFuZC5LdW5pamFkYXJAdG9zaGli
+YS10c2lwLmNvbTxtYWlsdG86U2hpdmFuYW5kLkt1bmlqYWRhckB0b3NoaWJhLXRzaXAuY29tPjsg
+QWRpdGh5YS5CYWxha3VtYXJAdG9zaGliYS10c2lwLmNvbTxtYWlsdG86QWRpdGh5YS5CYWxha3Vt
+YXJAdG9zaGliYS10c2lwLmNvbT47IFphaWJhLlNhbmdsaWthckB0b3NoaWJhLXRzaXAuY29tPG1h
+aWx0bzpaYWliYS5TYW5nbGlrYXJAdG9zaGliYS10c2lwLmNvbT47IGNpcC1kZXZAbGlzdHMuY2lw
+LXByb2plY3Qub3JnPG1haWx0bzpjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZz47IGthenVo
+aXJvMy5oYXlhc2hpQHRvc2hpYmEuY28uanA8bWFpbHRvOmthenVoaXJvMy5oYXlhc2hpQHRvc2hp
+YmEuY28uanA+DQpTdWJqZWN0OiBSRTogUXVlcnkgLSAoIFJ1bm5pbmcgTGludXggY29tbWFuZHMg
+aW4gTEFWQSBob3N0IGJlZm9yZSBib290aW5nIHRoZSBpbWFnZSApDQoNCkhlbGxvIENocmlzLA0K
+DQpQbGVhc2UgcHJvdmlkZSB5b3VyIG9waW5pb24gcmVnYXJkaW5nIHRoZSBjaGFuZ2VzIHByb3Bv
+c2VkIGluIHRoZSBiZWxvdyBtYWlsLg0KDQpUaGFua3MgYW5kIFJlZ2FyZHMsDQpTYWkgQXNocml0
+aCAoVCBTIEkgUCkNCg0KRnJvbTogYXNocml0aCBzYWkoo9Sj06PJo9ApDQpTZW50OiBGcmlkYXks
+IEphbnVhcnkgMTksIDIwMjQgMTI6NDYgQU0NClRvOiBDaHJpcyBQYXRlcnNvbiA8Q2hyaXMuUGF0
+ZXJzb24yQHJlbmVzYXMuY29tPG1haWx0bzpDaHJpcy5QYXRlcnNvbjJAcmVuZXNhcy5jb20+Pg0K
+Q2M6IGRpbmVzaCBrdW1hciij1KPTo8mj0CBUTUlFQyBPREcgUG9ydGluZykgPGRpbmVzaC5rdW1h
+ckB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpkaW5lc2gua3VtYXJAdG9zaGliYS10c2lwLmNvbT4+
+OyAndmVua2F0YTEucHlsYScgPHZlbmthdGExLnB5bGFAdG9zaGliYWFwLm9ubWljcm9zb2Z0LmNv
+bTxtYWlsdG86dmVua2F0YTEucHlsYUB0b3NoaWJhYXAub25taWNyb3NvZnQuY29tPj47IGt1bmlq
+YWRhciBzaGl2YW5hbmQoo9Sj06PJo9AgVE1JRUMgT0RHIFBvcnRpbmcpIDxTaGl2YW5hbmQuS3Vu
+aWphZGFyQHRvc2hpYmEtdHNpcC5jb208bWFpbHRvOlNoaXZhbmFuZC5LdW5pamFkYXJAdG9zaGli
+YS10c2lwLmNvbT4+OyBiYWxha3VtYXIgYWRpdGh5YSij1KPTo8mj0CBURVVSKSA8QWRpdGh5YS5C
+YWxha3VtYXJAdG9zaGliYS10c2lwLmNvbTxtYWlsdG86QWRpdGh5YS5CYWxha3VtYXJAdG9zaGli
+YS10c2lwLmNvbT4+OyBzYW5nbGlrYXIgemFpYmEoo9Sj06PJo9AgVEVVUikgPFphaWJhLlNhbmds
+aWthckB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpaYWliYS5TYW5nbGlrYXJAdG9zaGliYS10c2lw
+LmNvbT4+DQpTdWJqZWN0OiBSRTogUXVlcnkgLSAoIFJ1bm5pbmcgTGludXggY29tbWFuZHMgaW4g
+TEFWQSBob3N0IGJlZm9yZSBib290aW5nIHRoZSBpbWFnZSApDQoNCkhlbGxvIENocmlzLA0KDQpX
+ZSBpbnZlc3RpZ2F0ZWQgZnVydGhlciBtb3JlIGFib3V0IHRoaXMgaXNzdWUgeW91IHBvaW50ZWQg
+b3V0IHdoZXJlIHR3byBqb2JzIHVzaW5nIHN3dHBtIHJ1biBhdCBhIHNpbWlsYXIgdGltZSBvbiB0
+aGUgc2FtZSBkaXNwYXRjaGVyLiBJIGFncmVlIHdpdGggeW91ciBvcGluaW9uIHRoYXQgaXQgaXMg
+bm90IGlkZWFsIGFuZCBtYWludGFpbmFibGUgaWYgd2UgdHJ5IHRvIHVzZSBkaWZmZXJlbnQgdmFy
+aWFibGVzIGZvciBlYWNoIHFlbXUgZGV2aWNlIHRlbXBsYXRlLiBTbyB3ZSBjYW1lIHVwIHdpdGgg
+YW5vdGhlciBhcHByb2FjaC4NCg0KQXMgcGVyIG15IHVuZGVyc3RhbmRpbmcsIHN3dHBtIHBhY2th
+Z2UgaXMgaW5zdGFsbGVkIGluIGxhYi1jaXAtcmVuZXNhcyBzbGF2ZSByaWdodCwgc28gZm9yIG5v
+dyBsZXQgdXMgY29uc2lkZXIganVzdCB1c2luZyB0aGUgcWVtdS0wMS1yZW5lc2FzIGFuZCBxZW11
+LTAyLXJlbmVzYXMgIGRldmljZXMgdG8gcnVuIHRoZSBqb2JzIHdoaWNoIHVzZSBzd3RwbSByZWxh
+dGVkIGpvYiBkZWZpbml0aW9ucy4gU2luY2UgdGhlcmUgYXJlIG9ubHkgMiBxZW11IGRldmljZXMg
+Y3VycmVudGx5LCB3ZSBjYW4gdXNlIGxvY2tpbmcgbWVjaGFuaXNtIHRvIGZvcmNlIHRoZSBzZWNv
+bmQgam9iICggdGhlIG9uZSB3aGljaCB3YXMgc3RhcnRlZCBsYXRlciApIHRvIHdhaXQgdW50aWwg
+dGhlIGZpcnN0IG9uZSBpcyBjb21wbGV0ZWx5IGRvbmUgd2l0aCByZW1vdmFsIG9mIC5zd3RwbSAg
+ZGlyZWN0b3J5IGFzIHdlbGwga2lsbGluZyB0aGF0IHByb2Nlc3MuIE9uY2Ugd2UgY29uZmlybSB0
+aGlzIGluIHRoZSBzY3JpcHQsIG9ubHkgdGhlbiB0aGUgc2Vjb25kIGpvYiB3aWxsIHN0YXJ0IHN3
+dHBtIHNvY2tldC4NCg0KV2UgbWVhc3VyZWQgdGhlIGFwcHJveGltYXRlIHRpbWUgYSBmdWxsIHNv
+ZnR3YXJlIHVwZGF0ZSB0ZXN0aW5nIGpvYiBjYW4gdGFrZSBhbmQgSSB3aWxsIHRha2UgY2FyZSBv
+ZiB0aGF0IHdpdGggdGhlIGNvbW1hbmQgYWN0aW9uIHRpbWVvdXQgY29uc2lkZXJpbmcgdGhlIHdv
+cnN0IGNhc2Ugd2FpdCB0aW1lLiBJIHJldmlzZWQgdGhlIHVzZXItY29tbWFuZHMgaW4gdGhlIGRl
+dmljZSBkaWN0aW9uYXJpZXMgY29uc2lkZXJpbmcgaG93IHRoZSBzb2Z0d2FyZSB1cGRhdGUgc2Nl
+bmFyaW8gY2FuIGJlIHRlc3RlZCBzdWNjZXNzZnVsbHkgdXNpbmcgdGhlIHNlY3VyaXR5IGltYWdl
+LiBTbyBJIHJlbW92ZWQgYWRkaW5nIGtpbGxpbmcgYW5kIHJlbW92aW5nIHN3dHBtIGFzIHVuZG8g
+YWN0aW9ucyBhbmQgaW5zdGVhZCBhZGRlZCB0aGVtIGFzIGRvIGFjdGlvbi4gVG8gZ2l2ZSB5b3Ug
+YSBiZXR0ZXIgdW5kZXJzdGFuZGluZyBmb3Igd2h5IEkgZGlkIHRoaXMsIHBsZWFzZSBoYXZlIGEg
+bG9vayBhdCB0aGUgam9iIGRlZmluaXRpb24gSSBoYXZlIGF0dGFjaGVkIGluIHdoaWNoIEkgIGRl
+bW9uc3RyYXRlZCBob3cgbXVsdGlwbGUgcmVib290cyBjYW4gYmUgaGFuZGxlZCB3aXRoIHRoaXMg
+a2luZCBvZiBpbWFnZSBydW5uaW5nIHdpdGggYSBzd3RwbSBzb2NrZXQuDQoNCkkgYWxzbyBhdHRh
+Y2hlZCBhbm90aGVyIGZpbGUgd2hlcmUgSSBwdXQgdGhlIHNjcmlwdCB0byBiZSBwcmVzZW50IGlu
+IExBVkEgZGlzcGF0Y2hlciBhbmQgdGhlIFFFTVUgZGV2aWNlIGRpY3Rpb25hcmllcyAoc2FtZSBm
+b3IgYm90aCBxZW11LTAxLXJlbmVzYXMgYW5kIHFlbXUtMDItcmVuZXNhcykuDQoNClBsZWFzZSBw
+cm92aWRlIHlvdXIgZmVlZGJhY2sgb24gdGhlIGFib3ZlIG1lbnRpb25lZCBhcHByb2FjaCBDaHJp
+cy4NCg0KVGhhbmtzIGFuZCBSZWdhcmRzLA0KU2FpIEFzaHJpdGggKFQgUyBJIFApDQoNCkZyb206
+IGFzaHJpdGggc2FpKKPUo9OjyaPQKQ0KU2VudDogVGh1cnNkYXksIEphbnVhcnkgMTgsIDIwMjQg
+MzozNCBBTQ0KVG86ICdDaHJpcyBQYXRlcnNvbicgPENocmlzLlBhdGVyc29uMkByZW5lc2FzLmNv
+bTxtYWlsdG86Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tPj4NCkNjOiBkaW5lc2gga3VtYXIo
+o9Sj06PJo9AgVE1JRUMgT0RHIFBvcnRpbmcpIDxkaW5lc2gua3VtYXJAdG9zaGliYS10c2lwLmNv
+bTxtYWlsdG86ZGluZXNoLmt1bWFyQHRvc2hpYmEtdHNpcC5jb20+PjsgdmVua2F0YTEucHlsYSA8
+dmVua2F0YTEucHlsYUB0b3NoaWJhYXAub25taWNyb3NvZnQuY29tPG1haWx0bzp2ZW5rYXRhMS5w
+eWxhQHRvc2hpYmFhcC5vbm1pY3Jvc29mdC5jb20+Pjsga3VuaWphZGFyIHNoaXZhbmFuZCij1KPT
+o8mj0CBUTUlFQyBPREcgUG9ydGluZykgPFNoaXZhbmFuZC5LdW5pamFkYXJAdG9zaGliYS10c2lw
+LmNvbTxtYWlsdG86U2hpdmFuYW5kLkt1bmlqYWRhckB0b3NoaWJhLXRzaXAuY29tPj47IGJhbGFr
+dW1hciBhZGl0aHlhKKPUo9OjyaPQIFRFVVIpIDxBZGl0aHlhLkJhbGFrdW1hckB0b3NoaWJhLXRz
+aXAuY29tPG1haWx0bzpBZGl0aHlhLkJhbGFrdW1hckB0b3NoaWJhLXRzaXAuY29tPj47IHNhbmds
+aWthciB6YWliYSij1KPTo8mj0CBURVVSKSA8WmFpYmEuU2FuZ2xpa2FyQHRvc2hpYmEtdHNpcC5j
+b208bWFpbHRvOlphaWJhLlNhbmdsaWthckB0b3NoaWJhLXRzaXAuY29tPj4NClN1YmplY3Q6IFJF
+OiBRdWVyeSAtICggUnVubmluZyBMaW51eCBjb21tYW5kcyBpbiBMQVZBIGhvc3QgYmVmb3JlIGJv
+b3RpbmcgdGhlIGltYWdlICkNCg0KSGVsbG8gQ2hyaXMsDQoNClRoYW5rIHlvdSBmb3IgaWRlbnRp
+ZnlpbmcgdGhpcyBzY2VuYXJpby4NCg0KWWVzLCBpZiB0d28gc3d1cGRhdGUgam9icyBydW5zIG9u
+IHR3byBkZXZpY2VzIG9uIHRoZSBzYW1lIGRpc3BhdGNoZXIsIHRoZSBsYXR0ZXIgd2lsbCBmYWls
+IGlmIG5lZWRzIHRvIHJlYm9vdCBhZ2FpbiBhZnRlciB0aGUgZmlyc3Qgam9iIGlzIGRvbmUuIFRo
+ZSByZWFzb24gaXMgdGhlIFVOSVhJTyBzb2NrZXQgd2lsbCBiZSBnb25lIGFmdGVyIHRoZSBjbGll
+bnQgY2xvc2VkIHRoZSBjb25uZWN0aW9uLg0KSGVyZSB0aGVyZSBhcmUgdHdvIHByb2JsZW1zLA0K
+DQoNCiAgMS4gIFRoZSAuc3d0cG0gZmlsZSBuYW1lcyBzaG91bGQgYmUgZGlmZmVyZW50IG9yIGVs
+c2UgdGhlcmUgd2lsbCBiZSBUUE0gZmFpbHVyZXMuIEkgdHJpZWQgdG8gcmVzb2x2ZSB0aGlzIHdh
+eXMgd2hpY2ggZG9lcyBub3QgaGF2ZSB1cyBoYXJkY29kaW5nIHRoZSBkaXJlY3RvcnkgcGF0aHMg
+aW4gZWFjaCBkZXZpY2UgdGVtcGxhdGUuIEZvciBleGFtcGxlLCBJIHRyaWVkIHRvIGdlbmVyYXRl
+IHJhbmRvbSBzdHJpbmdzIHVzaW5nICRSQU5ET00gaW4gdGhlIHNjcmlwdCwgc28gdGhhdCB0aGV5
+IGRvbqGvdCBoYXZlIHRvIGhhcmRjb2RlZCBpbiB0aGUgdGVtcGxhdGVzLiBCdXQgdGhlbiB0aGUg
+cHJvYmxlbSB3aWxsIGJlLCAtLS0tLS0gIEhvdyB3aWxsIHdlIGRlbGV0ZSB0aGUgZGlyZWN0b3J5
+IGFmdGVyIHRoZSBqb2IgaWYgY2FudCBzZW5kIHRoZSBuYW1lIGJhY2sgdG8gdGhlIHRlbXBsYXRl
+Lg0KDQpTbyBhZnRlciBzb21lIHRyaWFscywgSSBtYWRlIHRoZSBmb2xsb3dpbmcgY2hhbmdlcyB0
+byB0aGUgZGV2aWNlIHRlbXBsYXRlcyBhbmQgdGhlIHNjcmlwdCB0byBoYW5kbGUgdGhlIG5hbWlu
+ZyBwcm9ibGVtIG9mIC5zd3RwbSBmaWxlLiBJIGFtIGF0dGFjaGluZyB0aGUgbmV3IGNoYW5nZXMg
+dG8gdGhpcyBtYWlsLiBQbGVhc2UgaGF2ZSBhIGxvb2sgYXQgdGhvc2UgY2hhbmdlcy4NCg0KDQog
+IDEuICBTaW5jZSB0aGUgL3RtcC9xZW11LXN3dHBtLnNvY2sgVU5JWElPIHNvY2tldCBpcyBnb25l
+IGFmdGVyIG9uZSBvZiB0aGUgam9icyBpcyBkb25lLCB3ZSBjYW4gdHJ5IHRvIG1ha2UgdGhpcyBp
+bmRpdmlkdWFsIGZvciBlYWNoIGRldmljZSBqdXN0IGxpa2UgaG93IHdlIGRpZCBmb3IgLnN3dHBt
+IGRpcmVjdG9yeS4gQnV0IG5vdyB0aGUgcHJvYmxlbSB3aWxsIGJlLCAtLS0tLS0tLS0tIEhvdyB3
+aWxsIHVzZSB0aGUgY29ycmVjdCBwYXRoIGZvciB0aGUgY2hhcmFjdGVyIGRldmljZSBpbiB0aGUg
+Ym9vdCBhcmd1bWVudHMgaWYgaXQgZGVwZW5kcyBvbiB0aGUgUUVNVSBkZXZpY2UuIEkgdHJpZWQg
+dG8gYWRkIGEgY29uZGl0aW9uIGluIHRoZSBkZXZpY2UgdGVtcGxhdGUgc3BlY2lmaWMgdG8gdGhl
+IGpvYnMgd2hpY2ggaW5jbHVkZSBzZWN1cml0eSB0YXJnZXRzIGFzIG1lbnRpb25lZCBiZWxvdy4N
+Cg0KDQoNCnslIGlmIKGubGF2YV90ZXN0X3Jlc3VsdHNfZGlyoa8gPT0goa4vaG9tZS9sYXZhLSVz
+ICV9DQoNCiAgICAgICAgICAtIC1jaGFyZGV2IHNvY2tldCxpZD1jaHJ0cG0scGF0aD0vdG1wL3Fl
+bXUtMDEuc29jaw0KDQp7JSBlbmRpZiAlfQ0KDQoNCg0KICAxLiAgSSB1c2VkIGl0IGxpa2UgYWJv
+dmUgYmVjYXVzZSBJIHdhcyBub3QgYWJsZSB0byBmaW5kIGFueSBjb250ZXh0IHdoaWNoIG5hcnJv
+dyBkb3duIHRvIG91ciBqb2JzIHdoZXJlIHdlIGFyZSB1c2luZyBhIHJlYWQtb25seSBmaWxlIHN5
+c3RlbSAoVGhhdCBpcyB3aHkgSSBjaGFuZ2VkIHRoZSBkaXJlY3RvcnkgaW50byAvaG9tZSkuIEJ1
+dCBzdGlsbCB0aGUgY2hhcmFjdGVyIGRldmljZSBib290IGFyZ3VtZW50cyBhcmUgbm90IHVwZGF0
+ZWQgd2hpbGUgcnVubmluZyB0aGUgdGVzdCBqb2IuIFBsZWFzZSBjb3JyZWN0IG1lIGlmIEkgd2Fz
+IHdyb25nLg0KDQoNCiAgMS4gIEJhc2VkIG9uIG15IGludmVzdGlnYXRpb24gdG9kYXksIEkgdGhp
+bmsgaGFuZGxpbmcgdGhlIHRlc3Qgam9icyB1c2luZyB0aGVzZSBUUE0gYmFzZWQgaW1hZ2VzIHNp
+bXVsdGFuZW91c2x5IHNoYWxsIHJlcXVpcmUgaW5kZXBlbmRlbnQgdmFyaWFibGVzIGZvciBlYWNo
+IGRldmljZS4gQnV0IGFzIHlvdSBzYWlkIGJlZm9yZSwgaXQgbWlnaHQgbm90IGJlIGlkZWFsIHRv
+IHNldHVwIGFuZCBtYWludGFpbi4NCg0KDQpQbGVhc2UgcHJvdmlkZSB5b3VyIG9waW5pb24gb24g
+dGhpcyBhbmQgcGxlYXNlIHN1Z2dlc3QgYW55dGhpbmcgdGhhdCBJIGNhbiB0cnkgd2hpY2ggY2Fu
+IHJlc29sdmUgdGhlIGlzc3VlIGluIHBvaW50IDIgbWVudGlvbmVkIGFib3ZlLg0KDQpUaGFua3Mg
+YW5kIFJlZ2FyZHMsDQpTYWkgQXNocml0aCAoIFQgUyBJIFAgKQ0KDQpGcm9tOiBDaHJpcyBQYXRl
+cnNvbiA8Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tPG1haWx0bzpDaHJpcy5QYXRlcnNvbjJA
+cmVuZXNhcy5jb20+Pg0KU2VudDogV2VkbmVzZGF5LCBKYW51YXJ5IDE3LCAyMDI0IDc6MjYgUE0N
+ClRvOiBhc2hyaXRoIHNhaSij1KPTo8mj0CkgPFNhaS5TYXRodWpvZGFAdG9zaGliYS10c2lwLmNv
+bTxtYWlsdG86U2FpLlNhdGh1am9kYUB0b3NoaWJhLXRzaXAuY29tPj4NCkNjOiBkaW5lc2gga3Vt
+YXIoo9Sj06PJo9AgVE1JRUMgT0RHIFBvcnRpbmcpIDxkaW5lc2gua3VtYXJAdG9zaGliYS10c2lw
+LmNvbTxtYWlsdG86ZGluZXNoLmt1bWFyQHRvc2hpYmEtdHNpcC5jb20+PjsgdmVua2F0YTEucHls
+YSA8dmVua2F0YTEucHlsYUB0b3NoaWJhYXAub25taWNyb3NvZnQuY29tPG1haWx0bzp2ZW5rYXRh
+MS5weWxhQHRvc2hpYmFhcC5vbm1pY3Jvc29mdC5jb20+Pjsga3VuaWphZGFyIHNoaXZhbmFuZCij
+1KPTo8mj0CBUTUlFQyBPREcgUG9ydGluZykgPFNoaXZhbmFuZC5LdW5pamFkYXJAdG9zaGliYS10
+c2lwLmNvbTxtYWlsdG86U2hpdmFuYW5kLkt1bmlqYWRhckB0b3NoaWJhLXRzaXAuY29tPj47IGJh
+bGFrdW1hciBhZGl0aHlhKKPUo9OjyaPQIFRFVVIpIDxBZGl0aHlhLkJhbGFrdW1hckB0b3NoaWJh
+LXRzaXAuY29tPG1haWx0bzpBZGl0aHlhLkJhbGFrdW1hckB0b3NoaWJhLXRzaXAuY29tPj47IHNh
+bmdsaWthciB6YWliYSij1KPTo8mj0CBURVVSKSA8WmFpYmEuU2FuZ2xpa2FyQHRvc2hpYmEtdHNp
+cC5jb208bWFpbHRvOlphaWJhLlNhbmdsaWthckB0b3NoaWJhLXRzaXAuY29tPj4NClN1YmplY3Q6
+IFJFOiBRdWVyeSAtICggUnVubmluZyBMaW51eCBjb21tYW5kcyBpbiBMQVZBIGhvc3QgYmVmb3Jl
+IGJvb3RpbmcgdGhlIGltYWdlICkNCg0KSGVsbG8gU2FpLA0KDQpUaGFuayB5b3UgZm9yIHRoZSB1
+cGRhdGUuDQoNCklmIEkgdW5kZXJzdGFuZCBpdCBjb3JyZWN0bHksIHdoZW4geW91IHJ1biBzd3Rw
+bV9zdGFydC5zaCwgdGhlIC92YXIvbGliL2xhdmEvZGlzcGF0Y2hlci90bXAvY2lwLWNvcmUtc2Vj
+dXJpdHkuc3d0cG0gZmlsZSB3aWxsIGJlIGNyZWF0ZWQuDQpBbmQgdGhlbiB3aGVuIHRoZSBqb2Ig
+aXMgZmluaXNoZWQsIHRoZSB1bmRvIGNvbW1hbmQgd2lsbCBiZSBydW4gYW5kIHRoaXMgZmlsZSB3
+aWxsIGJlIHJlbW92ZWQuDQpTb3VuZHMgZ29vZC4NCg0KSG93ZXZlciwgdGhpcyBsb2NhdGlvbiBp
+cyBnZW5lcmljIHRvIEFMTCBqb2JzIHJ1biBvbiB0aGF0IExBVkEgZGlzcGF0Y2hlci4NClNvLCBp
+ZiB5b3UgaGFkIGEgU1cgVXBkYXRlIHRlc3Qgam9iIHJ1bm5pbmcgb24gdHdvIGJvYXJkcyBjb25u
+ZWN0ZWQgdG8gdGhlIHNhbWUgTEFWQSBkaXNwYXRjaGVyIGF0IHRoZSBzYW1lIHRpbWUsIHdlIGNv
+dWxkIGhhdmUgYSBjYXNlIHdoZXJlIHRoZSBjaXAtY29yZS1zZWN1cml0eS5zd3RwbSBmaWxlIGVp
+dGhlciBnZXRzIGNvcnJ1cHRlZCBieSBhIHNlY29uZCBMQVZBIGpvYiB0cnlpbmcgdG8gdXNlIGl0
+IGF0IHRoZSBzYW1lIHRpbWUsIG9yIHdlIGNvdWxkIGZhY2UgYW4gaXNzdWUgd2hlcmUgdGhlIGZp
+cnN0IGpvYiBkZWxldGVzIHRoZSBmaWxlIGJlZm9yZSB0aGUgc2Vjb25kIGhhcyBmaW5pc2hlZCB3
+aXRoIGl0Lg0KDQpJcyBpdCBwb3NzaWJsZSB0byB1c2UgdGhlIHN3dHBtIHNvY2tldCB3aXRoIG11
+bHRpcGxlIGRldmljZXMgYXQgdGhlIHNhbWUgdGltZT8NCk9yIGlzIGl0IGEgMXRvMSByZWxhdGlv
+bnNoaXA/DQpJZiB0aGUgbGF0dGVyLCB0aGVuIHdlIGNhbiBrZWVwIHRoZSBjdXJyZW50IGFwcHJv
+YWNoLCBidXQgd2UgbmVlZCB0byBzb21laG93IHVzZSBhIGRpZmZlcmVudCBjaXAtY29yZS1zZWN1
+cml0eS5zd3RwbSBmaWxlIGZvciBlYWNoIHJ1bm5pbmcgam9iLg0KDQpBcmUgeW91IHBsYW5uaW5n
+IHRvIGFkZCB0aGUgY3JlYXRlX3N3dHBtX3RtcGRpciB0byB0aGUgZGV2aWNlIHRlbXBsYXRlIGZv
+ciBlYWNoIGluZGl2aWR1YWwgZGV2aWNlPyBPciBvbmx5IHRvIHRoZSBkZXZpY2UtdHlwZSBkZWZp
+bml0aW9ucz8gQXJlIHRoZXJlIGFueSBvdGhlciBwbGFjZXMgdGhpcyBjYW4gYmUgZGVmaW5lZD8N
+CklmIHdlIGFyZSBwbGFubmluZyB0byBhZGQgaXQgdG8gZWFjaCBpbmRpdmlkdWFsIGRldmljZSB0
+ZW1wbGF0ZSwgd2UgY291bGQganVzdCB1c2UgYSBkaWZmZXJlbnQgZmlsZW5hbWUgZm9yIGVhY2gg
+b2YgdGhlbS4gTm90IGlkZWFsIHRvIHNldHVwICYgbWFpbnRhaW4gdGhvdWdoLg0KDQpLaW5kIHJl
+Z2FyZHMsIENocmlzDQoNCkZyb206IFNhaS5TYXRodWpvZGFAdG9zaGliYS10c2lwLmNvbTxtYWls
+dG86U2FpLlNhdGh1am9kYUB0b3NoaWJhLXRzaXAuY29tPiA8U2FpLlNhdGh1am9kYUB0b3NoaWJh
+LXRzaXAuY29tPG1haWx0bzpTYWkuU2F0aHVqb2RhQHRvc2hpYmEtdHNpcC5jb20+Pg0KU2VudDog
+VHVlc2RheSwgSmFudWFyeSAxNiwgMjAyNCAxMjo0MCBQTQ0KVG86IENocmlzIFBhdGVyc29uIDxD
+aHJpcy5QYXRlcnNvbjJAcmVuZXNhcy5jb208bWFpbHRvOkNocmlzLlBhdGVyc29uMkByZW5lc2Fz
+LmNvbT4+DQpDYzogZGluZXNoLmt1bWFyQHRvc2hpYmEtdHNpcC5jb208bWFpbHRvOmRpbmVzaC5r
+dW1hckB0b3NoaWJhLXRzaXAuY29tPjsgdmVua2F0YTEucHlsYUB0b3NoaWJhYXAub25taWNyb3Nv
+ZnQuY29tPG1haWx0bzp2ZW5rYXRhMS5weWxhQHRvc2hpYmFhcC5vbm1pY3Jvc29mdC5jb20+OyBT
+aGl2YW5hbmQuS3VuaWphZGFyQHRvc2hpYmEtdHNpcC5jb208bWFpbHRvOlNoaXZhbmFuZC5LdW5p
+amFkYXJAdG9zaGliYS10c2lwLmNvbT47IEFkaXRoeWEuQmFsYWt1bWFyQHRvc2hpYmEtdHNpcC5j
+b208bWFpbHRvOkFkaXRoeWEuQmFsYWt1bWFyQHRvc2hpYmEtdHNpcC5jb20+OyBaYWliYS5TYW5n
+bGlrYXJAdG9zaGliYS10c2lwLmNvbTxtYWlsdG86WmFpYmEuU2FuZ2xpa2FyQHRvc2hpYmEtdHNp
+cC5jb20+DQpTdWJqZWN0OiBSRTogUXVlcnkgLSAoIFJ1bm5pbmcgTGludXggY29tbWFuZHMgaW4g
+TEFWQSBob3N0IGJlZm9yZSBib290aW5nIHRoZSBpbWFnZSApDQoNCkhlbGxvIENocmlzLA0KDQpI
+b3BlIHlvdSBhcmUgZG9pbmcgd2VsbC4NCkkgbG9jYWxseSB0ZXN0ZWQgc29tZSBjb25maWd1cmF0
+aW9ucyByZXF1aXJlZCB0byBzdGFydCB0aGUgc3d0cG0gYmVmb3JlIGJvb3RpbmcgdGhlIENJUCBz
+ZWN1cml0eSBpbWFnZSBhbmQgSSBhbSBhYmxlIHRvIGJvb3QgdGhlIGltYWdlLg0KDQoNCldoZW4g
+d2UgaW5jbHVkZSBzd3RwbSBzb2NrZXQgLXQgLWQgLS10cG1zdGF0ZSBkaXI9IiR7U1dUUE1fRElS
+fSIgLS1jdHJsIHR5cGU9dW5peGlvLHBhdGg9L3RtcC9xZW11LXN3dHBtLnNvY2sgLS10cG0yLCBp
+dCBkb2VzIG5vdCByZXR1cm4gdmFsdWUgMC4gQW5kIHVudGlsIHRoZSBjb21tYW5kIHJ1biBpbiB0
+aGUgTEFWQSBkaXNwYXRjaGVyIGRvZXMgbm90IHJldHVybiBhIHZhbHVlLCB0aGUgam9iIHdpbGwg
+c3R1Y2sgbGVhZGluZyB0byBhIHRpbWVvdXQuIFNvIHRvIGhhbmRsZSB0aGlzIHdlIGNhbiBkbyBp
+dCBqdXN0IGxpa2UgaG93IGl0IGlzIGltcGxlbWVudGVkIGluIGlzYXItY2lwLWNvcmUgaS5lIGJ5
+IHB1dHRpbmcgaXQgaW4gYW4gaWYtY29uZGl0aW9uLiBQbGVhc2UgaGF2ZSBhIGxvb2sgYXQgdGhp
+cyBjb2RlIHNuaXBwZXQuDQpodHRwczovL2dpdGxhYi5jb20vY2lwLXByb2plY3QvY2lwLWNvcmUv
+aXNhci1jaXAtY29yZS8tL2Jsb2IvbWFzdGVyL3N0YXJ0LXFlbXUuc2g/cmVmX3R5cGU9aGVhZHMj
+TDE3Mw0KDQpCdXQgd2UgY2Fubm90IGRlZmluZSBhIHNjcmlwdCBpbnNpZGUgeyUgc2V0IHVzZXJf
+Y29tbWFuZHMgPSAlfSwgcWVtdS0qKi5qaW5qYTIgdGVtcGxhdGUuIFNvIGluc3RlYWQgd2UgY2Fu
+IGNyZWF0ZSBhIHN3dHBtX3N0YXJ0LnNoIHNjcmlwdCB3aXRoIGEreCBwZXJtaXNzaW9ucyBpbiBM
+QVZBIHNsYXZlIGNvbnRhaW5lciBhbmQgYXBwZW5kIHRoZSBiZWxvdyBjb25maWd1cmF0aW9ucyBp
+biB0aGUgcWVtdSBqaW5qYTIgZGV2aWNlIHRlbXBsYXRlcyBpbiB0aGUgTEFWQSBzZXJ2ZXIuDQoN
+CnslIHNldCB1c2VyX2NvbW1hbmRzID0geydjcmVhdGVfc3d0cG1fdG1wZGlyJzogeydkbyc6ICdz
+aCAvaG9tZS9zd3RwbV9zdGFydC5zaCcsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAndW5kbyc6ICdybSAtcmYgL3Zhci9saWIvbGF2YS9kaXNwYXRjaGVyL3Rt
+cC9jaXAtY29yZS1zZWN1cml0eS5zd3RwbSd9fSAlfQ0KDQpXZSBjYW4gYWRkIHRoZSBiZWxvdyBi
+YXNoIHNjcmlwdCBpbiBzd3RwbV9zdGFydC5zaA0KDQojIS9iaW4vc2gNCg0KbWtkaXIgLXAgL3Zh
+ci9saWIvbGF2YS9kaXNwYXRjaGVyL3RtcC9jaXAtY29yZS1zZWN1cml0eS5zd3RwbQ0KDQppZiBz
+d3RwbSBzb2NrZXQgLWQgLS10cG1zdGF0ZSBkaXI9Ii92YXIvbGliL2xhdmEvZGlzcGF0Y2hlci90
+bXAvY2lwLWNvcmUtc2VjdXJpdHkuc3d0cG0iIFwNCiAgICAgICAgICAgICAgICAgICAgICAgICAt
+LWN0cmwgdHlwZT11bml4aW8scGF0aD0vdG1wL3FlbXUtc3d0cG0uc29jayBcDQogICAgICAgICAg
+ICAgICAgICAgICAgICAgLS10cG0yOyB0aGVuDQogICAgICAgIGVjaG8gJD8NCmZpDQoNCg0KUGxl
+YXNlIHByb3ZpZGUgeW91ciBmZWVkYmFjayBvbiB0aGUgYWJvdmUgYXBwcm9hY2ggQ2hyaXMuDQoN
+ClRoYW5rcyBhbmQgcmVnYXJkcywNClNhaSBBc2hyaXRoDQoNCkZyb206IENocmlzIFBhdGVyc29u
+IDxDaHJpcy5QYXRlcnNvbjJAcmVuZXNhcy5jb208bWFpbHRvOkNocmlzLlBhdGVyc29uMkByZW5l
+c2FzLmNvbT4+DQpTZW50OiBUaHVyc2RheSwgSmFudWFyeSA0LCAyMDI0IDU6NTggUE0NClRvOiBh
+c2hyaXRoIHNhaSij1KPTo8mj0CkgPFNhaS5TYXRodWpvZGFAdG9zaGliYS10c2lwLmNvbTxtYWls
+dG86U2FpLlNhdGh1am9kYUB0b3NoaWJhLXRzaXAuY29tPj4NCkNjOiBkaW5lc2gga3VtYXIoo9Sj
+06PJo9AgVE1JRUMgT0RHIFBvcnRpbmcpIDxkaW5lc2gua3VtYXJAdG9zaGliYS10c2lwLmNvbTxt
+YWlsdG86ZGluZXNoLmt1bWFyQHRvc2hpYmEtdHNpcC5jb20+PjsgdmVua2F0YTEucHlsYSA8dmVu
+a2F0YTEucHlsYUB0b3NoaWJhYXAub25taWNyb3NvZnQuY29tPG1haWx0bzp2ZW5rYXRhMS5weWxh
+QHRvc2hpYmFhcC5vbm1pY3Jvc29mdC5jb20+Pjsga3VuaWphZGFyIHNoaXZhbmFuZCij1KPTo8mj
+0CBUTUlFQyBPREcgUG9ydGluZykgPFNoaXZhbmFuZC5LdW5pamFkYXJAdG9zaGliYS10c2lwLmNv
+bTxtYWlsdG86U2hpdmFuYW5kLkt1bmlqYWRhckB0b3NoaWJhLXRzaXAuY29tPj47IGJhbGFrdW1h
+ciBhZGl0aHlhKKPUo9OjyaPQIFRFVVIpIDxBZGl0aHlhLkJhbGFrdW1hckB0b3NoaWJhLXRzaXAu
+Y29tPG1haWx0bzpBZGl0aHlhLkJhbGFrdW1hckB0b3NoaWJhLXRzaXAuY29tPj47IHNhbmdsaWth
+ciB6YWliYSij1KPTo8mj0CBURVVSKSA8WmFpYmEuU2FuZ2xpa2FyQHRvc2hpYmEtdHNpcC5jb208
+bWFpbHRvOlphaWJhLlNhbmdsaWthckB0b3NoaWJhLXRzaXAuY29tPj4NClN1YmplY3Q6IFJFOiBR
+dWVyeSAtICggUnVubmluZyBMaW51eCBjb21tYW5kcyBpbiBMQVZBIGhvc3QgYmVmb3JlIGJvb3Rp
+bmcgdGhlIGltYWdlICkNCg0KSGVsbG8gU2FpLA0KDQpJoa92ZSBoYWQgYSBsb29rLg0KDQpGb3Ig
+b3B0aW9uIDEpLCB3ZSBjb3VsZCBoYXZlIGRvbmUgaXQgaWYgd2UgaGFkIGEgd2F5IG9mIGtub3dp
+bmcgdGhlIExBVkEgSm9iIG51bWJlciB3aGVuIHdlIHJ1biB0aGUgY29tbWFuZCwgaG93ZXZlciBm
+cm9tIHdoYXQgSaGvdmUgZXhwZXJpbWVudGVkIHdpdGggd2UgZG9uoa90Lg0KV2UgY291bGQgY3Jl
+YXRlIGEgZGlyZWN0b3J5IHdpdGggoa5kb6GvIGFuZCByZW1vdmUgaXQgd2l0aCChrnVuZG+hrywg
+aG93ZXZlciB0aGUgZGlyZWN0b3J5IHdvdWxkIG5lZWQgdG8gYmUgdW5pcXVlIHRvIGF2b2lkIGNs
+YXNoZXMuDQpJZiB3ZSB3ZXJlIHRvIGFkZCBvdXIgY3VzdG9tIGNvbW1hbmQgaW5kaXZpZHVhbGx5
+IHRvIGV2ZXJ5IGRldmljZSBkaWN0aW9uYXJ5IHdlIGNvdWxkIGRvIHRoaXMsIGJ1dCBpdCB3b3Vs
+ZCBiZSBlYXNpZXIgdG8gbWFpbnRhaW4gaWYgd2Ugb25seSBhZGRlZCB0aGUgY29tbWVuZCB0byB0
+aGUgZGV2aWNlIHR5cGUgZGljdGlvbmFyaWVzLg0KDQpGb3Igb3B0aW9uIDIpLCB3b3VsZG6hr3Qg
+d2UgZmFjZSBhIHNpbWlsYXIgaXNzdWU/IFRoZSBUUE1fUEFUSCB2YXJpYWJsZSB3b3VsZCBuZWVk
+IHRvIGJlIHNldCB3aXRoIGEgdW5pcXVlIHZhbHVlIGZvciBlYWNoIHRlc3QgcnVuIGJlZm9yZSB0
+aGUgam9iIHN0YXJ0cy4NCg0KV291bGRuoa90IHdlIG5lZWQgdG8gc3RvcCB0aGUgVFBNIGVtdWxh
+dG9yIG9uY2UgYSBqb2IgaGFzIGNvbXBsZXRlZD8NCg0KS2luZCByZWdhcmRzLCBDaHJpcw0KDQpG
+cm9tOiBTYWkuU2F0aHVqb2RhQHRvc2hpYmEtdHNpcC5jb208bWFpbHRvOlNhaS5TYXRodWpvZGFA
+dG9zaGliYS10c2lwLmNvbT4gPFNhaS5TYXRodWpvZGFAdG9zaGliYS10c2lwLmNvbTxtYWlsdG86
+U2FpLlNhdGh1am9kYUB0b3NoaWJhLXRzaXAuY29tPj4NClNlbnQ6IFdlZG5lc2RheSwgSmFudWFy
+eSAzLCAyMDI0IDc6MjUgQU0NClRvOiBDaHJpcyBQYXRlcnNvbiA8Q2hyaXMuUGF0ZXJzb24yQHJl
+bmVzYXMuY29tPG1haWx0bzpDaHJpcy5QYXRlcnNvbjJAcmVuZXNhcy5jb20+Pg0KQ2M6IGRpbmVz
+aC5rdW1hckB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpkaW5lc2gua3VtYXJAdG9zaGliYS10c2lw
+LmNvbT47IHZlbmthdGExLnB5bGFAdG9zaGliYWFwLm9ubWljcm9zb2Z0LmNvbTxtYWlsdG86dmVu
+a2F0YTEucHlsYUB0b3NoaWJhYXAub25taWNyb3NvZnQuY29tPjsgU2hpdmFuYW5kLkt1bmlqYWRh
+ckB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpTaGl2YW5hbmQuS3VuaWphZGFyQHRvc2hpYmEtdHNp
+cC5jb20+OyBBZGl0aHlhLkJhbGFrdW1hckB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpBZGl0aHlh
+LkJhbGFrdW1hckB0b3NoaWJhLXRzaXAuY29tPjsgWmFpYmEuU2FuZ2xpa2FyQHRvc2hpYmEtdHNp
+cC5jb208bWFpbHRvOlphaWJhLlNhbmdsaWthckB0b3NoaWJhLXRzaXAuY29tPg0KU3ViamVjdDog
+UkU6IFF1ZXJ5IC0gKCBSdW5uaW5nIExpbnV4IGNvbW1hbmRzIGluIExBVkEgaG9zdCBiZWZvcmUg
+Ym9vdGluZyB0aGUgaW1hZ2UgKQ0KDQpIaSBDaHJpcywNCg0KSSB3YXMgYWJsZSB0byBhY2Nlc3Mg
+T1ZNRiByZWxhdGVkIGZpbGVzIGluIG15IGpvYiBkZWZpbml0aW9ucyBpbiBxZW11LWRldmljZXMg
+aW4gobBsYWItcmVuZXNhcy1jaXChsS4gTm93IGxldCBtZSBleHBsYWluIHRoZSBjdXJyZW50IHNp
+dHVhdGlvbiB3aGlsZSBzdGFydGluZyB0aGUgdHBtIGVtdWxhdG9yIHVzaW5nIHN3dHBtLg0KDQpX
+ZSBuZWVkIHRvIHJ1biB0aGlzIGNvbW1hbmQgcmlnaHQgYmVmb3JlIHdlIGJvb3QgdGhlIGltYWdl
+IHRvIHN0YXJ0IHRoZSBUUE0gZW11bGF0b3IgLS0+IHN3dHBtIHNvY2tldCAtZCAtLXRwbXN0YXRl
+IGRpcj0iJHtTV1RQTV9ESVJ9IiAtLWN0cmwgdHlwZT11bml4aW8scGF0aD0vdG1wL3FlbXUtc3d0
+cG0uc29jayAtLXRwbTINCg0KDQogIDEuICBBIGRpcmVjdG9yeSBtdXN0IGJlIGNyZWF0ZWQgdG8g
+c3RvcmUgdGhlIFRQTSBzdGF0ZSBmaWxlcyBiZWZvcmUgd2UgcnVuIHRoaXMgY29tbWFuZC4gSSBk
+b3VidCBpZiB0aGVyZSBpcyBhIHdheSB0byBjcmVhdGUgYSB0ZW1wb3JhcnkgZGlyZWN0b3J5IGlu
+IHRoaXMgcGF0aCAvdmFyL2xpYi9sYXZhL2Rpc3BhdGNoZXIvdG1wLzxqb2JfaWQ+Lywgc28gdGhh
+dCBpdCBjYW4gYmUgY2xlYXJlZCBhdXRvbWF0aWNhbGx5IHdoZW4gdGhlIGVudGlyZSB0ZXN0IGpv
+YiBpcyBkb25lLg0KDQooT1IpDQoNCg0KICAxLiAgQW4gZW52aXJvbm1lbnQgdmFyaWFibGUgbmFt
+ZWQgVFBNX1BBVEggbXVzdCBiZSB1cGRhdGVkIHdpdGggdGhlIGRpcmVjdG9yeSBwYXRoIHRvIHN0
+b3JlIHRoZSBUUE0gc3RhdGUgZmlsZXMuDQoNCklmIHlvdSB0aGluayB0aGF0IG1ldGhvZCAyIGlz
+IGZhdm9yYWJsZSwgdGhlbiBJIHJlcXVlc3QgeW91IHRvIGFkZCBzd3RwbSBzb2NrZXQgLWQgIC0t
+Y3RybCB0eXBlPXVuaXhpbyxwYXRoPS90bXAvcWVtdS1zd3RwbS5zb2NrIC0tdHBtMiBpbiB0aGUg
+obBkb6GxIHNlY3Rpb24gaW4gdGhlIGRldmljZSBkaWN0aW9uYXJ5LiBJIGRvbqGvdCB0aGluayBh
+bnl0aGluZyBuZWVkcyB0byBiZSBhZGRlZCBpbiB0aGUgobB1bmRvDQpzZWN0aW9uIENocmlzLg0K
+DQpJIGFwb2xvZ2l6ZSBmb3IgYXNraW5nIG1hbnkgcXVlc3Rpb25zIENocmlzLiBQbGVhc2UgcHJv
+dmlkZSB5b3VyIG9waW5pb24gb24gdGhlIGFib3ZlIHF1ZXJ5Lg0KDQpUaGFua3MgYW5kIFJlZ2Fy
+ZHMsDQpTYWkgQXNocml0aCAoVCBTIEkgUCkNCg0KRnJvbTogYXNocml0aCBzYWkoo9Sj06PJo9Ap
+DQpTZW50OiBUdWVzZGF5LCBKYW51YXJ5IDIsIDIwMjQgNjowMyBQTQ0KVG86IENocmlzIFBhdGVy
+c29uIDxDaHJpcy5QYXRlcnNvbjJAcmVuZXNhcy5jb208bWFpbHRvOkNocmlzLlBhdGVyc29uMkBy
+ZW5lc2FzLmNvbT4+DQpDYzogZGluZXNoIGt1bWFyKKPUo9OjyaPQIFRNSUVDIE9ERyBQb3J0aW5n
+KSA8ZGluZXNoLmt1bWFyQHRvc2hpYmEtdHNpcC5jb208bWFpbHRvOmRpbmVzaC5rdW1hckB0b3No
+aWJhLXRzaXAuY29tPj47IFZlbmthdGEuUHlsYUB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpWZW5r
+YXRhLlB5bGFAdG9zaGliYS10c2lwLmNvbT47IGt1bmlqYWRhciBzaGl2YW5hbmQoo9Sj06PJo9Ag
+VE1JRUMgT0RHIFBvcnRpbmcpIDxTaGl2YW5hbmQuS3VuaWphZGFyQHRvc2hpYmEtdHNpcC5jb208
+bWFpbHRvOlNoaXZhbmFuZC5LdW5pamFkYXJAdG9zaGliYS10c2lwLmNvbT4+OyBiYWxha3VtYXIg
+YWRpdGh5YSij1KPTo8mj0CBURVVSKSA8QWRpdGh5YS5CYWxha3VtYXJAdG9zaGliYS10c2lwLmNv
+bTxtYWlsdG86QWRpdGh5YS5CYWxha3VtYXJAdG9zaGliYS10c2lwLmNvbT4+OyBzYW5nbGlrYXIg
+emFpYmEoo9Sj06PJo9AgVEVVUikgPFphaWJhLlNhbmdsaWthckB0b3NoaWJhLXRzaXAuY29tPG1h
+aWx0bzpaYWliYS5TYW5nbGlrYXJAdG9zaGliYS10c2lwLmNvbT4+DQpTdWJqZWN0OiBSRTogUXVl
+cnkgLSAoIFJ1bm5pbmcgTGludXggY29tbWFuZHMgaW4gTEFWQSBob3N0IGJlZm9yZSBib290aW5n
+IHRoZSBpbWFnZSApDQoNCkhpIENocmlzLA0KDQpUaGFua3MgZm9yIHlvdXIgc3VwcG9ydC4NCg0K
+SSB3aWxsIHRyeSBhbmQgbGV0IHlvdSBrbm93IGlmIEkgZmFjZSBhbnkgaXNzdWVzIGFuZCBhYm91
+dCB1cGRhdGluZyB0aGUgZGV2aWNlIGRpY3Rpb25hcnkgYXMgd2VsbCBhcyBzb29uIGFzIHBvc3Np
+YmxlIENocmlzLiBCZWZvcmUgdGhhdCBJIHdpbGwgZG8gc29tZSBzYW1wbGUgdGVzdGluZyB0byBj
+b25maXJtIHNvbWUgdGhpbmdzLg0KDQpUaGFua3MgYW5kIFJlZ2FyZHMsDQpTYWkgQXNocml0aA0K
+DQpGcm9tOiBDaHJpcyBQYXRlcnNvbiA8Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tPG1haWx0
+bzpDaHJpcy5QYXRlcnNvbjJAcmVuZXNhcy5jb20+Pg0KU2VudDogVHVlc2RheSwgSmFudWFyeSAy
+LCAyMDI0IDU6NDcgUE0NClRvOiBhc2hyaXRoIHNhaSij1KPTo8mj0CkgPFNhaS5TYXRodWpvZGFA
+dG9zaGliYS10c2lwLmNvbTxtYWlsdG86U2FpLlNhdGh1am9kYUB0b3NoaWJhLXRzaXAuY29tPj4N
+CkNjOiBkaW5lc2gga3VtYXIoo9Sj06PJo9AgVE1JRUMgT0RHIFBvcnRpbmcpIDxkaW5lc2gua3Vt
+YXJAdG9zaGliYS10c2lwLmNvbTxtYWlsdG86ZGluZXNoLmt1bWFyQHRvc2hpYmEtdHNpcC5jb20+
+PjsgVmVua2F0YS5QeWxhQHRvc2hpYmEtdHNpcC5jb208bWFpbHRvOlZlbmthdGEuUHlsYUB0b3No
+aWJhLXRzaXAuY29tPjsga3VuaWphZGFyIHNoaXZhbmFuZCij1KPTo8mj0CBUTUlFQyBPREcgUG9y
+dGluZykgPFNoaXZhbmFuZC5LdW5pamFkYXJAdG9zaGliYS10c2lwLmNvbTxtYWlsdG86U2hpdmFu
+YW5kLkt1bmlqYWRhckB0b3NoaWJhLXRzaXAuY29tPj47IGJhbGFrdW1hciBhZGl0aHlhKKPUo9Oj
+yaPQIFRFVVIpIDxBZGl0aHlhLkJhbGFrdW1hckB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpBZGl0
+aHlhLkJhbGFrdW1hckB0b3NoaWJhLXRzaXAuY29tPj47IHNhbmdsaWthciB6YWliYSij1KPTo8mj
+0CBURVVSKSA8WmFpYmEuU2FuZ2xpa2FyQHRvc2hpYmEtdHNpcC5jb208bWFpbHRvOlphaWJhLlNh
+bmdsaWthckB0b3NoaWJhLXRzaXAuY29tPj4NClN1YmplY3Q6IFJFOiBRdWVyeSAtICggUnVubmlu
+ZyBMaW51eCBjb21tYW5kcyBpbiBMQVZBIGhvc3QgYmVmb3JlIGJvb3RpbmcgdGhlIGltYWdlICkN
+Cg0KSGVsbG8gU2FpLA0KDQpBcyBJoa9tIGluIHRoZSBvZmZpY2UgdG9kYXksIEkgY2Fuoa90IHVw
+ZGF0ZSBteSBsYWIgYXQgaG9tZS4NCkluc3RlYWQgSaGvdmUgaW5zdGFsbGVkIHRoZSBzd3RwbSBh
+bmQgb3ZtZiBwYWNrYWdlcyBpbnRvIGxhYi1yZW5lc2FzLWNpcC4NCg0KSaGvdmUgbWFya2VkIHRo
+ZSBxZW11IGRldmljZXMgaW4gbGFiLXJlbmVzYXMtY2lwIHdpdGggdGhlIKGwc3ctdXBkYXRlLXRl
+c3RpbmehsSB0YWcuDQpTbyBpZiB5b3UgYWRkIHRoZSBiZWxvdyB0byB5b3VyIGpvYiBkZWZpbml0
+aW9uLCB0aGUgam9iIHdpbGwgb25seSBydW4gb24gb25lIG9mIHRoZSBxZW11IGRldmljZXMgaW4g
+dGhlIFJlbmVzYXMgbGFiOg0KDQp0YWdzOg0KDQotIHN3LXVwZGF0ZS10ZXN0aW5nDQoNClBsZWFz
+ZSBnaXZlIGl0IGEgdHJ5IGFuZCBsZXQgbWUga25vdyBpZiB5b3UgaGF2ZSBhbnkgaXNzdWVzLg0K
+DQpMZXQgbWUga25vdyBpZiB5b3UgbmVlZCBtZSB0byB1cGRhdGUgdGhlIGRldmljZSBkaWN0aW9u
+YXJ5IGFzIHdlbGwuDQoNCktpbmQgcmVnYXJkcywgQ2hyaXMNCg0KRnJvbTogU2FpLlNhdGh1am9k
+YUB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpTYWkuU2F0aHVqb2RhQHRvc2hpYmEtdHNpcC5jb20+
+IDxTYWkuU2F0aHVqb2RhQHRvc2hpYmEtdHNpcC5jb208bWFpbHRvOlNhaS5TYXRodWpvZGFAdG9z
+aGliYS10c2lwLmNvbT4+DQpTZW50OiBUdWVzZGF5LCBKYW51YXJ5IDIsIDIwMjQgMTE6MjUgQU0N
+ClRvOiBDaHJpcyBQYXRlcnNvbiA8Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tPG1haWx0bzpD
+aHJpcy5QYXRlcnNvbjJAcmVuZXNhcy5jb20+Pg0KQ2M6IGRpbmVzaC5rdW1hckB0b3NoaWJhLXRz
+aXAuY29tPG1haWx0bzpkaW5lc2gua3VtYXJAdG9zaGliYS10c2lwLmNvbT47IFZlbmthdGEuUHls
+YUB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpWZW5rYXRhLlB5bGFAdG9zaGliYS10c2lwLmNvbT47
+IFNoaXZhbmFuZC5LdW5pamFkYXJAdG9zaGliYS10c2lwLmNvbTxtYWlsdG86U2hpdmFuYW5kLkt1
+bmlqYWRhckB0b3NoaWJhLXRzaXAuY29tPjsgQWRpdGh5YS5CYWxha3VtYXJAdG9zaGliYS10c2lw
+LmNvbTxtYWlsdG86QWRpdGh5YS5CYWxha3VtYXJAdG9zaGliYS10c2lwLmNvbT47IFphaWJhLlNh
+bmdsaWthckB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpaYWliYS5TYW5nbGlrYXJAdG9zaGliYS10
+c2lwLmNvbT4NClN1YmplY3Q6IFJFOiBRdWVyeSAtICggUnVubmluZyBMaW51eCBjb21tYW5kcyBp
+biBMQVZBIGhvc3QgYmVmb3JlIGJvb3RpbmcgdGhlIGltYWdlICkNCg0KSGVsbG8gQ2hyaXMsDQoN
+ClRoYW5rcyBmb3IgeW91ciByZXBseS4NCg0KSW5jbHVkaW5nIHN3dHBtIGFuZCBvdm1mIHBhY2th
+Z2VzIGlzIG5lY2Vzc2FyeSBmb3IgdGVzdCBjYXNlcyByZWxhdGVkIHRvIHNlY3VyZSBib290LCBz
+b2Z0d2FyZSB1cGRhdGUgYW5kIElFQyBsYXllciB0ZXN0aW5nLiBQbGVhc2UgbGV0IG1lIGZpbmFs
+aXplIHRoZSBsaW51eCBjb21tYW5kIEkgaGF2ZSBtZW50aW9uZWQgaW4gdGhpcyBtYWlsaW5nIHRo
+cmVhZC4NCkl0IHdpbGwgYmUgdmVyeSBoZWxwZnVsIGlmIHRoaXMgY29tbWFuZCBpcyBhdmFpbGFi
+bGUgZm9yIHFlbXUgZGV2aWNlIGluIHlvdXIgTEFWQSBsYWIuIFBsZWFzZSB0ZWxsIG1lIGhvdyBJ
+IGNhbiBhY2Nlc3MgeW91ciBMQVZBIGxhYiBpbiB3aGljaCBJIGNhbiBydW4gbXkgc2FtcGxlIHRl
+c3Qgam9icy4NCg0KVGhhbmtzIGFuZCBSZWdhcmRzLA0KU2FpIEFzaHJpdGgNCg0KDQpGcm9tOiBD
+aHJpcyBQYXRlcnNvbiA8Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tPG1haWx0bzpDaHJpcy5Q
+YXRlcnNvbjJAcmVuZXNhcy5jb20+Pg0KU2VudDogVHVlc2RheSwgSmFudWFyeSAyLCAyMDI0IDQ6
+MjkgUE0NClRvOiBhc2hyaXRoIHNhaSij1KPTo8mj0CkgPFNhaS5TYXRodWpvZGFAdG9zaGliYS10
+c2lwLmNvbTxtYWlsdG86U2FpLlNhdGh1am9kYUB0b3NoaWJhLXRzaXAuY29tPj4NCkNjOiBkaW5l
+c2gga3VtYXIoo9Sj06PJo9AgVE1JRUMgT0RHIFBvcnRpbmcpIDxkaW5lc2gua3VtYXJAdG9zaGli
+YS10c2lwLmNvbTxtYWlsdG86ZGluZXNoLmt1bWFyQHRvc2hpYmEtdHNpcC5jb20+PjsgVmVua2F0
+YS5QeWxhQHRvc2hpYmEtdHNpcC5jb208bWFpbHRvOlZlbmthdGEuUHlsYUB0b3NoaWJhLXRzaXAu
+Y29tPjsga3VuaWphZGFyIHNoaXZhbmFuZCij1KPTo8mj0CBUTUlFQyBPREcgUG9ydGluZykgPFNo
+aXZhbmFuZC5LdW5pamFkYXJAdG9zaGliYS10c2lwLmNvbTxtYWlsdG86U2hpdmFuYW5kLkt1bmlq
+YWRhckB0b3NoaWJhLXRzaXAuY29tPj47IGJhbGFrdW1hciBhZGl0aHlhKKPUo9OjyaPQIFRFVVIp
+IDxBZGl0aHlhLkJhbGFrdW1hckB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpBZGl0aHlhLkJhbGFr
+dW1hckB0b3NoaWJhLXRzaXAuY29tPj47IHNhbmdsaWthciB6YWliYSij1KPTo8mj0CBURVVSKSA8
+WmFpYmEuU2FuZ2xpa2FyQHRvc2hpYmEtdHNpcC5jb208bWFpbHRvOlphaWJhLlNhbmdsaWthckB0
+b3NoaWJhLXRzaXAuY29tPj4NClN1YmplY3Q6IFJFOiBRdWVyeSAtICggUnVubmluZyBMaW51eCBj
+b21tYW5kcyBpbiBMQVZBIGhvc3QgYmVmb3JlIGJvb3RpbmcgdGhlIGltYWdlICkNCg0KSGVsbG8g
+U2FpLA0KDQpJIHRoaW5rIHVzaW5nIHRoZSChsGNvbW1hbmShsSBhY3Rpb24gaXMgcHJvYmFibHkg
+dGhlIGJlc3QgYXBwcm9hY2guDQpEb2VzIHRoZSBjb21tYW5kIHlvdSB3YW50IHRvIHJ1biBldmVy
+IGNoYW5nZT8gT3IgaXMgaXQgdGhlIHNhbWUgZm9yIGV2ZXJ5IHRlc3Qgam9iIGFuZCBmb3IgZXZl
+cnkgcGxhdGZvcm0/DQoNCldloa9sbCBoYXZlIHRvIG1ha2Ugc3VyZSB0aGF0IHRoZSBsYXZhLWRv
+Y2tlciBjb250YWluZXIgd2UgdXNlIGluY2x1ZGVzIHRoZSBzd3RwbSBhbmQgb3ZtZiBwYWNrYWdl
+cywgdGhlbiBnZXQgYWxsIG9mIHRoZSBsYWJzIHVwZGF0ZWQuDQpXZSBjYW4gZ2V0IGEgcXVpY2so
+ZXIpIHRlc3QgcnVuIHVzaW5nIG15IGxhYiB0aG91Z2ggaWYgaXQgaGVscHMgeW91Lg0KDQpLaW5k
+IHJlZ2FyZHMsIENocmlzDQoNCkZyb206IFNhaS5TYXRodWpvZGFAdG9zaGliYS10c2lwLmNvbTxt
+YWlsdG86U2FpLlNhdGh1am9kYUB0b3NoaWJhLXRzaXAuY29tPiA8U2FpLlNhdGh1am9kYUB0b3No
+aWJhLXRzaXAuY29tPG1haWx0bzpTYWkuU2F0aHVqb2RhQHRvc2hpYmEtdHNpcC5jb20+Pg0KU2Vu
+dDogVGh1cnNkYXksIERlY2VtYmVyIDIxLCAyMDIzIDQ6MTkgQU0NClRvOiBDaHJpcyBQYXRlcnNv
+biA8Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tPG1haWx0bzpDaHJpcy5QYXRlcnNvbjJAcmVu
+ZXNhcy5jb20+Pg0KQ2M6IGRpbmVzaC5rdW1hckB0b3NoaWJhLXRzaXAuY29tPG1haWx0bzpkaW5l
+c2gua3VtYXJAdG9zaGliYS10c2lwLmNvbT47IFZlbmthdGEuUHlsYUB0b3NoaWJhLXRzaXAuY29t
+PG1haWx0bzpWZW5rYXRhLlB5bGFAdG9zaGliYS10c2lwLmNvbT47IFNoaXZhbmFuZC5LdW5pamFk
+YXJAdG9zaGliYS10c2lwLmNvbTxtYWlsdG86U2hpdmFuYW5kLkt1bmlqYWRhckB0b3NoaWJhLXRz
+aXAuY29tPjsgQWRpdGh5YS5CYWxha3VtYXJAdG9zaGliYS10c2lwLmNvbTxtYWlsdG86QWRpdGh5
+YS5CYWxha3VtYXJAdG9zaGliYS10c2lwLmNvbT47IFphaWJhLlNhbmdsaWthckB0b3NoaWJhLXRz
+aXAuY29tPG1haWx0bzpaYWliYS5TYW5nbGlrYXJAdG9zaGliYS10c2lwLmNvbT4NClN1YmplY3Q6
+IFF1ZXJ5IC0gKCBSdW5uaW5nIExpbnV4IGNvbW1hbmRzIGluIExBVkEgaG9zdCBiZWZvcmUgYm9v
+dGluZyB0aGUgaW1hZ2UgKQ0KDQpEZWFyIENocmlzLA0KDQpDdXJyZW50bHkgd2UgYXJlIHdvcmtp
+bmcgb24gcnVubmluZyBJRUMgbGF5ZXIgdGVzdHMgcHJlc2VudCBpbiBodHRwczovL2dpdGxhYi5j
+b20vY2lwLXByb2plY3QvY2lwLXRlc3RpbmcvY2lwLXNlY3VyaXR5LXRlc3RzIG9uIENJUCBzZWN1
+cml0eSBpbWFnZS4gQXMgeW91IG1pZ2h0IGJlIGF3YXJlLCBjdXJyZW50IHNlY3VyaXR5IGltYWdl
+IGhhcyBzZWN1cmUgYm9vdCwgc3d1cGRhdGUgYW5kIERhdGEgZW5jcnlwdGlvbiBmZWF0dXJlcyBh
+bHNvIGVuYWJsZWQgYWxvbmcgd2l0aCBzZWN1cml0eSBsYXllci4NClNvIHRvIGJvb3QgdGhpcyBp
+bWFnZSwgd2UgbmVlZCB0byBydW4gdGhlIGJlbG93IGNvbW1hbmQganVzdCBiZWZvcmUgYm9vdGlu
+ZyB0aGUgaW1hZ2UgdG8gc3RhcnQgVFBNIGVtdWxhdG9yLg0KDQpzd3RwbSBzb2NrZXQgLWQgLS10
+cG1zdGF0ZSBkaXI9IiR7U1dUUE1fRElSfSIgIC0tY3RybCB0eXBlPXVuaXhpbyxwYXRoPS90bXAv
+cWVtdS1zd3RwbS5zb2NrICAtLXRwbTINCg0KT3VyIGN1cnJlbnQgcmVxdWlyZW1lbnRzOg0KDQoN
+CiAgMS4gIFByZXNlbmNlIG9mIHRoZXNlIHBhY2thZ2VzIGluIExBVkEgaG9zdCBlbnZpcm9ubWVu
+dCAtLT4gc3d0cG0sIG92bWYNCiAgMi4gIEFiaWxpdHkgdG8gcnVuIHRoZSBhYm92ZSBtZW50aW9u
+ZWQgaW4gdGhlIExBVkEgaG9zdCBiZWZvcmUgdGhlIGZpcnN0IGJvb3QgYWN0aW9uLg0KDQpBZnRl
+ciBnb2luZyB0aHJvdWdoIHRoZSBMQVZBIGRvY3VtZW50YXRpb24sIEkgZm91bmQgYW4gYWN0aW9u
+IG5hbWVkIGNvbW1hbmQgd2hlcmUgd2UgY2FuIHJ1biBjb21tYW5kcyBvbiB0aGUgZGlzcGF0Y2hl
+ciBpdHNlbGYuIC0tPiBodHRwczovL2xhdmEucmVhZHRoZWRvY3MuaW8vZW4vbGF0ZXN0L3RlY2hu
+aWNhbC1yZWZlcmVuY2VzL2pvYi1kZWZpbml0aW9uL2FjdGlvbnMvY29tbWFuZC8jOn46dGV4dD1U
+aGUlMjBjb21tYW5kJTIwYWN0aW9uJTIwaXMlMjB1c2VkLGJvYXJkJTIwYnklMjBjb250cm9sbGlu
+ZyUyMGElMjByZWxheS4NCg0KQnV0IHRoZXkgYXJlIHN1Z2dlc3RpbmcgdGhhdCB0aGVzZSBjb21t
+YW5kcyBuZWVkIHRvIGJlIGFkZGVkIGluIHRoZSBkZXZpY2UgZGljdGlvbmFyeSBpbiBDSVAgTEFW
+QSBzZXJ2ZXIgc28gdGhhdCB1c2VycyBjYW4ganVzdCB1c2UgdGhlIG5hbWUgb2YgdGhlIGNvbW1h
+bmQgKCBrZXkgKSBpbiB0aGVpciBqb2IgZGVmaW5pdGlvbi4gUGxlYXNlIGNvcnJlY3QgbWUgaWYg
+bXkgdW5kZXJzdGFuZGluZyBpcyB3cm9uZy4gQW5kIGFsc28gY2FuIHlvdSBwbGVhc2Ugc3VnZ2Vz
+dCBpZiB0aGVyZSBpcyBhbnkgb3RoZXIgd2F5IHRvIHJ1biBMaW51eCBjb21tYW5kcyBpbiB0aGUg
+TEFWQSBob3N0IGVudmlyb25tZW50Lg0KDQpOb3RlOiBXZSBhcmUgdXNpbmcgcWVtdSBkZXZpY2Ug
+Zm9yIHRoaXMgam9iIGRlZmluaXRpb24uDQoNClRoYW5rcyBhbmQgUmVnYXJkcywNClNhaSBBc2hy
+aXRoDQoNCg==
+
+--_000_TYWPR01MB1186210D2225AADE6438DCDADB7452TYWPR01MB11862jp_
+Content-Type: text/html; charset="gb2312"
 Content-Transfer-Encoding: quoted-printable
 
 <html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
@@ -1047,8 +890,7 @@ osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
 xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
 //www.w3.org/TR/REC-html40">
 <head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
-jp">
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dgb2312">
 <meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
 <style><!--
 /* Font Definitions */
@@ -1059,33 +901,27 @@ jp">
 	{font-family:SimSun;
 	panose-1:2 1 6 0 3 1 1 1 1 1;}
 @font-face
-	{font-family:"MS Gothic";
-	panose-1:2 11 6 9 7 2 5 8 2 4;}
-@font-face
 	{font-family:"Cambria Math";
 	panose-1:2 4 5 3 5 4 6 3 2 4;}
 @font-face
 	{font-family:Calibri;
 	panose-1:2 15 5 2 2 2 4 3 2 4;}
 @font-face
+	{font-family:Aptos;}
+@font-face
+	{font-family:Consolas;
+	panose-1:2 11 6 9 2 2 4 3 2 4;}
+@font-face
 	{font-family:"MS PGothic";
 	panose-1:2 11 6 0 7 2 5 8 2 4;}
 @font-face
 	{font-family:"\@MS PGothic";}
 @font-face
-	{font-family:Consolas;
-	panose-1:2 11 6 9 2 2 4 3 2 4;}
-@font-face
-	{font-family:Aptos;}
-@font-face
-	{font-family:"\@MS Gothic";
-	panose-1:2 11 6 9 7 2 5 8 2 4;}
-@font-face
 	{font-family:"\@SimSun";
 	panose-1:2 1 6 0 3 1 1 1 1 1;}
 /* Style Definitions */
 p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{margin:0in;
+	{margin:0cm;
 	font-size:11.0pt;
 	font-family:"Calibri",sans-serif;
 	mso-ligatures:standardcontextual;
@@ -1101,21 +937,36 @@ a:visited, span.MsoHyperlinkFollowed
 pre
 	{mso-style-priority:99;
 	mso-style-link:"HTML Preformatted Char";
-	margin:0in;
+	margin:0cm;
 	margin-bottom:.0001pt;
 	font-size:10.0pt;
 	font-family:"Courier New";
 	mso-fareast-language:ZH-CN;}
 p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph
 	{mso-style-priority:34;
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:0in;
-	margin-left:.5in;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:36.0pt;
 	font-size:11.0pt;
 	font-family:"Calibri",sans-serif;
 	mso-ligatures:standardcontextual;
 	mso-fareast-language:ZH-CN;}
+p.Code, li.Code, div.Code
+	{mso-style-name:Code;
+	mso-style-link:"Code Char";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:36.0pt;
+	font-size:11.0pt;
+	font-family:"Courier New";
+	mso-ligatures:standardcontextual;
+	mso-fareast-language:ZH-CN;}
+span.CodeChar
+	{mso-style-name:"Code Char";
+	mso-style-link:Code;
+	font-family:"Courier New";}
 span.HTMLPreformattedChar
 	{mso-style-name:"HTML Preformatted Char";
 	mso-style-priority:99;
@@ -1124,26 +975,11 @@ span.HTMLPreformattedChar
 p.msonormal0, li.msonormal0, div.msonormal0
 	{mso-style-name:msonormal;
 	mso-margin-top-alt:auto;
-	margin-right:0in;
+	margin-right:0cm;
 	mso-margin-bottom-alt:auto;
-	margin-left:0in;
+	margin-left:0cm;
 	font-size:12.0pt;
 	font-family:SimSun;
-	mso-fareast-language:ZH-CN;}
-span.CodeChar
-	{mso-style-name:"Code Char";
-	mso-style-link:Code;
-	font-family:"Courier New";}
-p.Code, li.Code, div.Code
-	{mso-style-name:Code;
-	mso-style-link:"Code Char";
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:0in;
-	margin-left:.5in;
-	font-size:11.0pt;
-	font-family:"Courier New";
-	mso-ligatures:standardcontextual;
 	mso-fareast-language:ZH-CN;}
 span.EmailStyle23
 	{mso-style-type:personal;
@@ -1169,17 +1005,21 @@ span.EmailStyle28
 	{mso-style-type:personal;
 	font-family:"Calibri",sans-serif;
 	color:windowtext;}
-span.EmailStyle30
-	{mso-style-type:personal-reply;
+span.EmailStyle29
+	{mso-style-type:personal;
 	font-family:"Calibri",sans-serif;
 	color:windowtext;}
+span.EmailStyle31
+	{mso-style-type:personal-reply;
+	font-family:"Aptos",sans-serif;
+	color:#7030A0;}
 .MsoChpDefault
 	{mso-style-type:export-only;
 	font-size:10.0pt;
 	mso-ligatures:none;}
 @page WordSection1
-	{size:8.5in 11.0in;
-	margin:1.0in 1.0in 1.0in 1.0in;}
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
 div.WordSection1
 	{page:WordSection1;}
 /* List Definitions */
@@ -1191,12 +1031,12 @@ div.WordSection1
 @list l0:level1
 	{mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l0:level2
 	{mso-level-number-format:alpha-lower;
 	mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l0:level3
 	{mso-level-number-format:roman-lower;
 	mso-level-tab-stop:none;
@@ -1205,12 +1045,12 @@ div.WordSection1
 @list l0:level4
 	{mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l0:level5
 	{mso-level-number-format:alpha-lower;
 	mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l0:level6
 	{mso-level-number-format:roman-lower;
 	mso-level-tab-stop:none;
@@ -1219,12 +1059,12 @@ div.WordSection1
 @list l0:level7
 	{mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l0:level8
 	{mso-level-number-format:alpha-lower;
 	mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l0:level9
 	{mso-level-number-format:roman-lower;
 	mso-level-tab-stop:none;
@@ -1238,12 +1078,12 @@ div.WordSection1
 @list l1:level1
 	{mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l1:level2
 	{mso-level-number-format:alpha-lower;
 	mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l1:level3
 	{mso-level-number-format:roman-lower;
 	mso-level-tab-stop:none;
@@ -1252,12 +1092,12 @@ div.WordSection1
 @list l1:level4
 	{mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l1:level5
 	{mso-level-number-format:alpha-lower;
 	mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l1:level6
 	{mso-level-number-format:roman-lower;
 	mso-level-tab-stop:none;
@@ -1266,12 +1106,12 @@ div.WordSection1
 @list l1:level7
 	{mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l1:level8
 	{mso-level-number-format:alpha-lower;
 	mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l1:level9
 	{mso-level-number-format:roman-lower;
 	mso-level-tab-stop:none;
@@ -1285,12 +1125,12 @@ div.WordSection1
 @list l2:level1
 	{mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l2:level2
 	{mso-level-number-format:alpha-lower;
 	mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l2:level3
 	{mso-level-number-format:roman-lower;
 	mso-level-tab-stop:none;
@@ -1299,12 +1139,12 @@ div.WordSection1
 @list l2:level4
 	{mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l2:level5
 	{mso-level-number-format:alpha-lower;
 	mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l2:level6
 	{mso-level-number-format:roman-lower;
 	mso-level-tab-stop:none;
@@ -1313,12 +1153,12 @@ div.WordSection1
 @list l2:level7
 	{mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l2:level8
 	{mso-level-number-format:alpha-lower;
 	mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l2:level9
 	{mso-level-number-format:roman-lower;
 	mso-level-tab-stop:none;
@@ -1332,12 +1172,12 @@ div.WordSection1
 @list l3:level1
 	{mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l3:level2
 	{mso-level-number-format:alpha-lower;
 	mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l3:level3
 	{mso-level-number-format:roman-lower;
 	mso-level-tab-stop:none;
@@ -1346,12 +1186,12 @@ div.WordSection1
 @list l3:level4
 	{mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l3:level5
 	{mso-level-number-format:alpha-lower;
 	mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l3:level6
 	{mso-level-number-format:roman-lower;
 	mso-level-tab-stop:none;
@@ -1360,21 +1200,21 @@ div.WordSection1
 @list l3:level7
 	{mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l3:level8
 	{mso-level-number-format:alpha-lower;
 	mso-level-tab-stop:none;
 	mso-level-number-position:left;
-	text-indent:-.25in;}
+	text-indent:-18.0pt;}
 @list l3:level9
 	{mso-level-number-format:roman-lower;
 	mso-level-tab-stop:none;
 	mso-level-number-position:right;
 	text-indent:-9.0pt;}
 ol
-	{margin-bottom:0in;}
+	{margin-bottom:0cm;}
 ul
-	{margin-bottom:0in;}
+	{margin-bottom:0cm;}
 --></style><!--[if gte mso 9]><xml>
 <o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
 </xml><![endif]--><!--[if gte mso 9]><xml>
@@ -1382,21 +1222,95 @@ ul
 <o:idmap v:ext=3D"edit" data=3D"1" />
 </o:shapelayout></xml><![endif]-->
 </head>
-<body lang=3D"EN-US" link=3D"#0563C1" vlink=3D"#954F72" style=3D"word-wrap:=
+<body lang=3D"EN-GB" link=3D"#0563C1" vlink=3D"#954F72" style=3D"word-wrap:=
 break-word">
 <div class=3D"WordSection1">
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hello Chr=
-is,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Another o=
-bservation which can give you better idea about the issue I am facing is, j=
-ust now I tried to run this job
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">Hello Sai,<o:p></o:p></span><=
+/p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">I=A1=AFve seen your tests and=
+ done some of my own.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">Indeed it looks like adding [=
+0] to qemu.jinja2 OR to the qemu-renesas-01 device dictionary directly seem=
+s to break the test jobs, regardless of whether
+ the user_commands are being used or not.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">Interestingly the healthcheck=
+s are still working though.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">Also, other jobs (e.g. [1]) w=
+ork with the device dict changes we have.
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">&gt;Whenever I change <b>method=
+:minimal</b> to
+<b>method:qemu</b> and <b>media:tmpfs, </b>it is not throwing this error</s=
+pan><span style=3D"font-family:&quot;Aptos&quot;,sans-serif;color:#7030A0;m=
+so-fareast-language:EN-US"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">Interesting. I=A1=AFm not sur=
+e why adding the user_commands would affect this?<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">[0]
+<a href=3D"https://gitlab.com/cip-project/cip-testing/lava-docker/-/blob/11=
+4a2684e0f44577e8f259eac434ad39c93568c0/lava-master/device-types/cip-qemu.ji=
+nja2">
+https://gitlab.com/cip-project/cip-testing/lava-docker/-/blob/114a2684e0f44=
+577e8f259eac434ad39c93568c0/lava-master/device-types/cip-qemu.jinja2</a><o:=
+p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">[1]
+<a href=3D"https://lava.ciplatform.org/scheduler/job/1090026">https://lava.=
+ciplatform.org/scheduler/job/1090026</a><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<div>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-ligatures:none;mso-fareast-language:EN-GB">Kind regar=
+ds, Chris<o:p></o:p></span></p>
+</div>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0cm 0cm 0cm =
+4.0pt">
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+>From:</span></b><span lang=3D"EN-US" style=3D"mso-ligatures:none"> Sai.Sat=
+hujoda@toshiba-tsip.com &lt;Sai.Sathujoda@toshiba-tsip.com&gt;
+<br>
+<b>Sent:</b> Wednesday, February 7, 2024 11:53 AM<br>
+<b>To:</b> Chris Paterson &lt;Chris.Paterson2@renesas.com&gt;<br>
+<b>Cc:</b> dinesh.kumar@toshiba-tsip.com; venkata1.pyla@toshibaap.onmicroso=
+ft.com; Shivanand.Kunijadar@toshiba-tsip.com; Adithya.Balakumar@toshiba-tsi=
+p.com; Zaiba.Sanglikar@toshiba-tsip.com; cip-dev@lists.cip-project.org; kaz=
+uhiro3.hayashi@toshiba.co.jp<br>
+<b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
+oting the image )<o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Hello Chris,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Another observation which can give you better idea about the issue I =
+am facing is, just now I tried to run this job
 <b>( has a minimal boot action &amp; does not need swtpm socket changes )</=
 b> which ran successfully
-</span><a href=3D"https://lava.ciplatform.org/scheduler/job/1089979">LAVA |=
- Scheduler | Jobs | 1089979 (ciplatform.org)</a> today some hours ago. Afte=
-r you made changes in your lava slave, now if I run the same job now
+</span><span lang=3D"EN-US"><a href=3D"https://lava.ciplatform.org/schedule=
+r/job/1089979">LAVA | Scheduler | Jobs | 1089979 (ciplatform.org)</a> today=
+ some hours ago. After you made changes in your lava slave, now if I run th=
+e same job now
 <a href=3D"https://lava.ciplatform.org/scheduler/job/1090009">LAVA | Schedu=
 ler | Jobs | 1090009 (ciplatform.org)</a>, it is giving
 <b>Cannot find command '' in $PATH, Please report this to LAVA admins</b>, =
@@ -1404,204 +1318,217 @@ so do you think the script additions and changes to device dictionaries we =
 made can be conflicting the minimal boot action and giving infrastructure e=
 rror ? Whenever I change
 <b>method:minimal</b> to <b>method:qemu</b> and <b>media:tmpfs, </b>it is n=
-ot throwing this error.<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Can you please help me with this Chris ?<o:p></o:p><=
-/p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Thanks and regards,<o:p></o:p></p>
-<p class=3D"MsoNormal">Sai Ashrith (T S I P)<o:p></o:p></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
+ot throwing this error.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Can you please help me with thi=
+s Chris ?<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Thanks and regards,<o:p></o:p><=
+/span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Sai Ashrith (T S I P)<o:p></o:p=
+></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
 <div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none;mso-fareast-lan=
-guage:JA">From:</span></b><span style=3D"mso-ligatures:none;mso-fareast-lan=
-guage:JA"> ashrith sai(</span><span lang=3D"JA" style=3D"font-family:&quot;=
-MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B=
-$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-languag=
-e:JA">)
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none;=
+mso-fareast-language:JA">From:</span></b><span lang=3D"EN-US" style=3D"mso-=
+ligatures:none;mso-fareast-language:JA"> ashrith sai(</span><span lang=3D"J=
+A" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:non=
+e;mso-fareast-language:JA">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-=
+US" style=3D"mso-ligatures:none;mso-fareast-language:JA">)
 <br>
 <b>Sent:</b> Wednesday, February 7, 2024 5:09 PM<br>
-<b>To:</b> Chris Paterson &lt;Chris.Paterson2@renesas.com&gt;<br>
+<b>To:</b> Chris Paterson &lt;<a href=3D"mailto:Chris.Paterson2@renesas.com=
+">Chris.Paterson2@renesas.com</a>&gt;<br>
 <b>Cc:</b> dinesh kumar(</span><span lang=3D"JA" style=3D"font-family:&quot=
 ;MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=
-=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-lang=
-uage:JA"> TMIEC ODG Porting) &lt;dinesh.kumar@toshiba-tsip.com&gt;; venkata=
-1.pyla
- &lt;venkata1.pyla@toshibaap.onmicrosoft.com&gt;; kunijadar shivanand(</spa=
-n><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;=
-mso-ligatures:none;mso-fareast-language:JA">=1B$B#T#S#I#P=1B(B</span><span =
-style=3D"mso-ligatures:none;mso-fareast-language:JA"> TMIEC ODG Porting)
- &lt;Shivanand.Kunijadar@toshiba-tsip.com&gt;; balakumar adithya(</span><sp=
-an lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-l=
-igatures:none;mso-fareast-language:JA">=1B$B#T#S#I#P=1B(B</span><span style=
-=3D"mso-ligatures:none;mso-fareast-language:JA"> TEUR) &lt;Adithya.Balakuma=
-r@toshiba-tsip.com&gt;;
- sanglikar zaiba(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGo=
-thic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#T#S=
-#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-language:JA">=
- TEUR) &lt;Zaiba.Sanglikar@toshiba-tsip.com&gt;; cip-dev@lists.cip-project.=
-org;
- hayashi kazuhiro(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PG=
-othic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$BNS=
-=1B(B</span><span lang=3D"JA" style=3D"mso-ligatures:none;mso-fareast-langu=
-age:JA">
-</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
-erif;mso-ligatures:none;mso-fareast-language:JA">=1B$BOB9(=1B(B</span><span=
- lang=3D"JA" style=3D"mso-ligatures:none;mso-fareast-language:JA">
-</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
-erif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#D#M#E=1B(B</span><sp=
-an style=3D"mso-ligatures:none;mso-fareast-language:JA"> =1B$B!{=1B(B</span=
+=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" style=3D"mso-ligatures:=
+none;mso-fareast-language:JA"> TMIEC ODG Porting) &lt;<a href=3D"mailto:din=
+esh.kumar@toshiba-tsip.com">dinesh.kumar@toshiba-tsip.com</a>&gt;;
+ venkata1.pyla &lt;<a href=3D"mailto:venkata1.pyla@toshibaap.onmicrosoft.co=
+m">venkata1.pyla@toshibaap.onmicrosoft.com</a>&gt;; kunijadar shivanand(</s=
+pan><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-seri=
+f;mso-ligatures:none;mso-fareast-language:JA">=A3=D4=A3=D3=A3=C9=A3=D0</spa=
+n><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-language:JA"=
+>
+ TMIEC ODG Porting) &lt;<a href=3D"mailto:Shivanand.Kunijadar@toshiba-tsip.=
+com">Shivanand.Kunijadar@toshiba-tsip.com</a>&gt;; balakumar adithya(</span=
 ><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;m=
-so-ligatures:none;mso-fareast-language:JA">=1B$B#D#I#G=1B(B</span><span sty=
-le=3D"mso-ligatures:none;mso-fareast-language:JA">=1B$B""=1B(B</span><span =
-lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-liga=
-tures:none;mso-fareast-language:JA">=1B$B#M#P#S=1B(B</span><span style=3D"m=
-so-ligatures:none;mso-fareast-language:JA">=1B$B!{=1B(B</span><span lang=3D=
-"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:n=
-one;mso-fareast-language:JA">=1B$B#M#P#4=1B(B</span><span style=3D"mso-liga=
-tures:none;mso-fareast-language:JA">)
- &lt;kazuhiro3.hayashi@toshiba.co.jp&gt;<br>
-<b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
-oting the image )<o:p></o:p></span></p>
-</div>
-</div>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hello Chr=
-is,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Thanks a =
-lot for your great support.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Yes, I am=
- able to run my jobs in lab-cip-renesas now. But I am facing this issue , =
-=1B$B!H=1B(B</span>Cannot find command '' in $PATH, Please report this to L=
-AVA admins=1B$B!I=1B(B now in CIP LAVA Lab as well. This is
- happening whenever to try a minimal boot for a swtpm related CIP security =
-image. Previously I faced this issue in my own setup and suspected somethin=
-g is wrong with my setup, but now after seeing the same thing in CIP LAVA l=
-ab,
-<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<ol style=3D"margin-top:0in" start=3D"1" type=3D"1">
-<li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l2 level1 =
-lfo1">Do you think minimal boot will not work if there is some communicatio=
-n through a socket from the dispatcher to the DUT ? I am not sure of this, =
-but this validation error is coming
- only when I use minimal boot with these swtpm security image related jobs.=
- <o:p>
-</o:p></li></ol>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">For jobs which do not use swtpm, the minimal boot is=
- working fine. The reason I am particular about this minimal boot is becaus=
-e I want to capture a certain shutdown down message after a soft reboot whi=
-ch can help job to complete if it
- captures that message. If you can surely say [1] is the reason, then do yo=
-u have any idea how to use shutdown-message along with something other than=
- minimal boot ?<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Please provide your opinion on this Chris.<o:p></o:p=
-></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Thanks and regards,<o:p></o:p></p>
-<p class=3D"MsoNormal">Sai Ashrith (T S I P)<span style=3D"mso-fareast-lang=
-uage:EN-US"><o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none">From:</span></=
-b><span style=3D"mso-ligatures:none"> Chris Paterson &lt;<a href=3D"mailto:=
-Chris.Paterson2@renesas.com">Chris.Paterson2@renesas.com</a>&gt;
-<br>
-<b>Sent:</b> Wednesday, February 7, 2024 4:45 PM<br>
-<b>To:</b> ashrith sai(</span><span lang=3D"ZH-CN" style=3D"font-family:Sim=
-Sun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatur=
-es:none">) &lt;<a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com">Sai.Sathuj=
-oda@toshiba-tsip.com</a>&gt;<br>
-<b>Cc:</b> dinesh kumar(</span><span lang=3D"ZH-CN" style=3D"font-family:Si=
-mSun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatu=
-res:none"> TMIEC ODG Porting) &lt;<a href=3D"mailto:dinesh.kumar@toshiba-ts=
-ip.com">dinesh.kumar@toshiba-tsip.com</a>&gt;; venkata1.pyla
- &lt;<a href=3D"mailto:venkata1.pyla@toshibaap.onmicrosoft.com">venkata1.py=
-la@toshibaap.onmicrosoft.com</a>&gt;; kunijadar shivanand(</span><span lang=
-=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#T#S#I#P=1B=
-(B</span><span style=3D"mso-ligatures:none"> TMIEC ODG Porting)
- &lt;<a href=3D"mailto:Shivanand.Kunijadar@toshiba-tsip.com">Shivanand.Kuni=
-jadar@toshiba-tsip.com</a>&gt;; balakumar adithya(</span><span lang=3D"ZH-C=
-N" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span=
-><span style=3D"mso-ligatures:none"> TEUR) &lt;<a href=3D"mailto:Adithya.Ba=
-lakumar@toshiba-tsip.com">Adithya.Balakumar@toshiba-tsip.com</a>&gt;;
- sanglikar zaiba(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;ms=
-o-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:non=
-e"> TEUR) &lt;<a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com">Zaiba.San=
-glikar@toshiba-tsip.com</a>&gt;;
+so-ligatures:none;mso-fareast-language:JA">=A3=D4=A3=D3=A3=C9=A3=D0</span><=
+span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-language:JA">
+ TEUR) &lt;<a href=3D"mailto:Adithya.Balakumar@toshiba-tsip.com">Adithya.Ba=
+lakumar@toshiba-tsip.com</a>&gt;; sanglikar zaiba(</span><span lang=3D"JA" =
+style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:none;m=
+so-fareast-language:JA">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US"=
+ style=3D"mso-ligatures:none;mso-fareast-language:JA">
+ TEUR) &lt;<a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com">Zaiba.Sangli=
+kar@toshiba-tsip.com</a>&gt;;
 <a href=3D"mailto:cip-dev@lists.cip-project.org">cip-dev@lists.cip-project.=
-org</a>; hayashi kazuhiro(</span><span lang=3D"ZH-CN" style=3D"font-family:=
-SimSun;mso-ligatures:none">=1B$BNS=1B(B</span><span lang=3D"ZH-CN" style=3D=
-"mso-ligatures:none">
-</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none"=
->=1B$BOB9(=1B(B</span><span lang=3D"ZH-CN" style=3D"mso-ligatures:none">
-</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none"=
->=1B$B#D#M#E=1B(B</span><span style=3D"mso-ligatures:none"> =1B$B!{=1B(B</s=
-pan><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=
-=1B$B#D#I#G=1B(B</span><span style=3D"mso-ligatures:none">=1B$B""=1B(B</spa=
-n><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=1B$=
-B#M#P#S=1B(B</span><span style=3D"mso-ligatures:none">=1B$B!{=1B(B</span><s=
-pan lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#M#=
-P#4=1B(B</span><span style=3D"mso-ligatures:none">)
+org</a>; hayashi kazuhiro(</span><span lang=3D"JA" style=3D"font-family:&qu=
+ot;MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=
+=C1=D6</span><span lang=3D"JA" style=3D"mso-ligatures:none;mso-fareast-lang=
+uage:JA">
+</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
+erif;mso-ligatures:none;mso-fareast-language:JA">=BA=CD=BA=EA</span><span l=
+ang=3D"JA" style=3D"mso-ligatures:none;mso-fareast-language:JA">
+</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
+erif;mso-ligatures:none;mso-fareast-language:JA">=A3=C4=A3=CD=A3=C5</span><=
+span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-language:JA"> =
+=A1=F0</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,=
+sans-serif;mso-ligatures:none;mso-fareast-language:JA">=A3=C4=A3=C9=A3=C7</=
+span><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-language:=
+JA">=A1=F5</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&qu=
+ot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=A3=CD=A3=D0=A3=
+=D3</span><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-lang=
+uage:JA">=A1=F0</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGoth=
+ic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=A3=CD=A3=
+=D0=A3=B4</span><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareas=
+t-language:JA">)
  &lt;<a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.jp">kazuhiro3.hayashi@t=
 oshiba.co.jp</a>&gt;<br>
 <b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
 oting the image )<o:p></o:p></span></p>
 </div>
 </div>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Hello Sai,<o:p=
-></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">I=1B$B!G=1B(Bv=
-e added the scripts to lab-cip-renesas and added the user-commands to the q=
-emu device-type templates.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">You can use th=
-e =1B$B!H=1B(Bsw-update-testing=1B$B!I=1B(B tag in your job definition to f=
-orce LAVA to use the correct devices.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Let me know ho=
-w it goes.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Hello Chris,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Thanks a lot for your great support.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Yes, I am able to run my jobs in lab-cip-renesas now. But I am facing=
+ this issue , =A1=B0</span><span lang=3D"EN-US">Cannot find command '' in $=
+PATH, Please report this to LAVA admins=A1=B1 now
+ in CIP LAVA Lab as well. This is happening whenever to try a minimal boot =
+for a swtpm related CIP security image. Previously I faced this issue in my=
+ own setup and suspected something is wrong with my setup, but now after se=
+eing the same thing in CIP LAVA
+ lab, <o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<ol style=3D"margin-top:0cm" start=3D"1" type=3D"1">
+<li class=3D"MsoListParagraph" style=3D"margin-left:0cm;mso-list:l2 level1 =
+lfo1"><span lang=3D"EN-US">Do you think minimal boot will not work if there=
+ is some communication through a socket from the dispatcher to the DUT ? I =
+am not sure of this, but this validation
+ error is coming only when I use minimal boot with these swtpm security ima=
+ge related jobs.
+<o:p></o:p></span></li></ol>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">For jobs which do not use swtpm=
+, the minimal boot is working fine. The reason I am particular about this m=
+inimal boot is because I want to capture a certain shutdown down message af=
+ter a soft reboot which can help job
+ to complete if it captures that message. If you can surely say [1] is the =
+reason, then do you have any idea how to use shutdown-message along with so=
+mething other than minimal boot ?<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Please provide your opinion on =
+this Chris.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Thanks and regards,<o:p></o:p><=
+/span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Sai Ashrith (T S I P)</span><sp=
+an lang=3D"EN-US" style=3D"mso-fareast-language:EN-US"><o:p></o:p></span></=
+p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
 <div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-ligatures:none;mso-fareast-language:EN=
--GB">Thanks, Chris<o:p></o:p></span></p>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+>From:</span></b><span lang=3D"EN-US" style=3D"mso-ligatures:none"> Chris P=
+aterson &lt;<a href=3D"mailto:Chris.Paterson2@renesas.com">Chris.Paterson2@=
+renesas.com</a>&gt;
+<br>
+<b>Sent:</b> Wednesday, February 7, 2024 4:45 PM<br>
+<b>To:</b> ashrith sai(</span><span lang=3D"ZH-CN" style=3D"font-family:Sim=
+Sun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US"=
+ style=3D"mso-ligatures:none">) &lt;<a href=3D"mailto:Sai.Sathujoda@toshiba=
+-tsip.com">Sai.Sathujoda@toshiba-tsip.com</a>&gt;<br>
+<b>Cc:</b> dinesh kumar(</span><span lang=3D"ZH-CN" style=3D"font-family:Si=
+mSun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US=
+" style=3D"mso-ligatures:none"> TMIEC ODG Porting) &lt;<a href=3D"mailto:di=
+nesh.kumar@toshiba-tsip.com">dinesh.kumar@toshiba-tsip.com</a>&gt;;
+ venkata1.pyla &lt;<a href=3D"mailto:venkata1.pyla@toshibaap.onmicrosoft.co=
+m">venkata1.pyla@toshibaap.onmicrosoft.com</a>&gt;; kunijadar shivanand(</s=
+pan><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=
+=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" style=3D"mso-ligatures:=
+none">
+ TMIEC ODG Porting) &lt;<a href=3D"mailto:Shivanand.Kunijadar@toshiba-tsip.=
+com">Shivanand.Kunijadar@toshiba-tsip.com</a>&gt;; balakumar adithya(</span=
+><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=A3=
+=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" style=3D"mso-ligatures:non=
+e">
+ TEUR) &lt;<a href=3D"mailto:Adithya.Balakumar@toshiba-tsip.com">Adithya.Ba=
+lakumar@toshiba-tsip.com</a>&gt;; sanglikar zaiba(</span><span lang=3D"ZH-C=
+N" style=3D"font-family:SimSun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0=
+</span><span lang=3D"EN-US" style=3D"mso-ligatures:none"> TEUR) &lt;<a href=
+=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com">Zaiba.Sanglikar@toshiba-tsip.c=
+om</a>&gt;;
+<a href=3D"mailto:cip-dev@lists.cip-project.org">cip-dev@lists.cip-project.=
+org</a>; hayashi kazuhiro(</span><span lang=3D"ZH-CN" style=3D"font-family:=
+SimSun;mso-ligatures:none">=C1=D6</span><span lang=3D"ZH-CN" style=3D"mso-l=
+igatures:none">
+</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none"=
+>=BA=CD=BA=EA</span><span lang=3D"ZH-CN" style=3D"mso-ligatures:none">
+</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none"=
+>=A3=C4=A3=CD=A3=C5</span><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+> =A1=F0</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatur=
+es:none">=A3=C4=A3=C9=A3=C7</span><span lang=3D"EN-US" style=3D"mso-ligatur=
+es:none">=A1=F5</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-=
+ligatures:none">=A3=CD=A3=D0=A3=D3</span><span lang=3D"EN-US" style=3D"mso-=
+ligatures:none">=A1=F0</span><span lang=3D"ZH-CN" style=3D"font-family:SimS=
+un;mso-ligatures:none">=A3=CD=A3=D0=A3=B4</span><span lang=3D"EN-US" style=
+=3D"mso-ligatures:none">)
+ &lt;<a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.jp">kazuhiro3.hayashi@t=
+oshiba.co.jp</a>&gt;<br>
+<b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
+oting the image )<o:p></o:p></span></p>
 </div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0in 0in 0in =
+</div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">Hello Sai,<o:p></o:p></span><=
+/p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">I=A1=AFve added the scripts t=
+o lab-cip-renesas and added the user-commands to the qemu device-type templ=
+ates.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">You can use the =A1=B0sw-upda=
+te-testing=A1=B1 tag in your job definition to force LAVA to use the correc=
+t devices.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">Let me know how it goes.<o:p>=
+</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<div>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-ligatures:none;mso-fareast-language:EN-GB">Thanks, Ch=
+ris<o:p></o:p></span></p>
+</div>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0cm 0cm 0cm =
 4.0pt">
 <div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none">From:</span></=
-b><span style=3D"mso-ligatures:none">
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+>From:</span></b><span lang=3D"EN-US" style=3D"mso-ligatures:none">
 <a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com">Sai.Sathujoda@toshiba-tsi=
 p.com</a> &lt;<a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com">Sai.Sathujo=
 da@toshiba-tsip.com</a>&gt;
@@ -1627,164 +1554,164 @@ a.co.jp</a><br>
 oting the image )<o:p></o:p></span></p>
 </div>
 </div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hello Chr=
-is,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">While ver=
-ifying few scenarios in my job definitions in my Local LAVA Lab, I observed=
- some issues. I found the minimal boot is not working in my local setup. It=
- is failing at the first validation
- stage with this message, =1B$B!H=1B(B</span>Cannot find command '' in $PAT=
-H, Please report this to LAVA admins=1B$B!I=1B(B. When I try to run this jo=
-b with minimal boot in CIP LAVA lab, it is running successfully.
-<o:p></o:p></p>
 <p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Currently I am not sure why the same job is failing =
-to start in my lab but is running fine in CIP LAVA lab. But since you asked=
- previously if you need to make any changes to lab-cip-renesas, it will be =
-very helpful if you place the scripts
- I have added in this MR <a href=3D"https://gitlab.com/cip-project/cip-test=
-ing/lava-docker/-/merge_requests/35/diffs">
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Hello Chris,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">While verifying few scenarios in my job definitions in my Local LAVA =
+Lab, I observed some issues. I found the minimal boot is not working in my =
+local setup. It is failing at the first
+ validation stage with this message, =A1=B0</span><span lang=3D"EN-US">Cann=
+ot find command '' in $PATH, Please report this to LAVA admins=A1=B1. When =
+I try to run this job with minimal boot in CIP LAVA lab, it is running succ=
+essfully.
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Currently I am not sure why the=
+ same job is failing to start in my lab but is running fine in CIP LAVA lab=
+. But since you asked previously if you need to make any changes to lab-cip=
+-renesas, it will be very helpful if
+ you place the scripts I have added in this MR <a href=3D"https://gitlab.co=
+m/cip-project/cip-testing/lava-docker/-/merge_requests/35/diffs">
 lava-slave/scripts: Add scripts needed to run for booting CIP QEMU security=
- target (!35) &middot; Merge requests &middot; cip-project / cip-testing / =
-lava-docker &middot; GitLab</a>, and update the qemu jinja2 template with t=
-he user commands I mentioned in lava-server qemu.jina2
- template<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Then it will be helpful for me to quickly debug my j=
-ob definitions in CIP lava lab. I also request you to review the MR I menti=
-oned above and provide your review comments.<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Thanks for your constant support, Chris.<o:p></o:p><=
-/p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Regards,<o:p></o:p></p>
-<p class=3D"MsoNormal">Sai Ashrith ( T S I P )<o:p></o:p></p>
+ target (!35) =A1=A4 Merge requests =A1=A4 cip-project / cip-testing / lava=
+-docker =A1=A4 GitLab</a>, and update the qemu jinja2 template with the use=
+r commands I mentioned in lava-server qemu.jina2
+ template<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Then it will be helpful for me =
+to quickly debug my job definitions in CIP lava lab. I also request you to =
+review the MR I mentioned above and provide your review comments.<o:p></o:p=
+></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Thanks for your constant suppor=
+t, Chris.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Regards,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Sai Ashrith ( T S I P )<o:p></o=
+:p></span></p>
 <div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none">From:</span></=
-b><span style=3D"mso-ligatures:none"> Chris Paterson &lt;<a href=3D"mailto:=
-Chris.Paterson2@renesas.com">Chris.Paterson2@renesas.com</a>&gt;
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+>From:</span></b><span lang=3D"EN-US" style=3D"mso-ligatures:none"> Chris P=
+aterson &lt;<a href=3D"mailto:Chris.Paterson2@renesas.com">Chris.Paterson2@=
+renesas.com</a>&gt;
 <br>
 <b>Sent:</b> Friday, February 2, 2024 4:05 PM<br>
 <b>To:</b> ashrith sai(</span><span lang=3D"ZH-CN" style=3D"font-family:Sim=
-Sun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatur=
-es:none">) &lt;<a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com">Sai.Sathuj=
-oda@toshiba-tsip.com</a>&gt;<br>
+Sun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US"=
+ style=3D"mso-ligatures:none">) &lt;<a href=3D"mailto:Sai.Sathujoda@toshiba=
+-tsip.com">Sai.Sathujoda@toshiba-tsip.com</a>&gt;<br>
 <b>Cc:</b> dinesh kumar(</span><span lang=3D"ZH-CN" style=3D"font-family:Si=
-mSun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatu=
-res:none"> TMIEC ODG Porting) &lt;<a href=3D"mailto:dinesh.kumar@toshiba-ts=
-ip.com">dinesh.kumar@toshiba-tsip.com</a>&gt;; venkata1.pyla
- &lt;<a href=3D"mailto:venkata1.pyla@toshibaap.onmicrosoft.com">venkata1.py=
-la@toshibaap.onmicrosoft.com</a>&gt;; kunijadar shivanand(</span><span lang=
-=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#T#S#I#P=1B=
-(B</span><span style=3D"mso-ligatures:none"> TMIEC ODG Porting)
- &lt;<a href=3D"mailto:Shivanand.Kunijadar@toshiba-tsip.com">Shivanand.Kuni=
-jadar@toshiba-tsip.com</a>&gt;; balakumar adithya(</span><span lang=3D"ZH-C=
-N" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span=
-><span style=3D"mso-ligatures:none"> TEUR) &lt;<a href=3D"mailto:Adithya.Ba=
-lakumar@toshiba-tsip.com">Adithya.Balakumar@toshiba-tsip.com</a>&gt;;
- sanglikar zaiba(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;ms=
-o-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:non=
-e"> TEUR) &lt;<a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com">Zaiba.San=
-glikar@toshiba-tsip.com</a>&gt;;
+mSun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US=
+" style=3D"mso-ligatures:none"> TMIEC ODG Porting) &lt;<a href=3D"mailto:di=
+nesh.kumar@toshiba-tsip.com">dinesh.kumar@toshiba-tsip.com</a>&gt;;
+ venkata1.pyla &lt;<a href=3D"mailto:venkata1.pyla@toshibaap.onmicrosoft.co=
+m">venkata1.pyla@toshibaap.onmicrosoft.com</a>&gt;; kunijadar shivanand(</s=
+pan><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=
+=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" style=3D"mso-ligatures:=
+none">
+ TMIEC ODG Porting) &lt;<a href=3D"mailto:Shivanand.Kunijadar@toshiba-tsip.=
+com">Shivanand.Kunijadar@toshiba-tsip.com</a>&gt;; balakumar adithya(</span=
+><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=A3=
+=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" style=3D"mso-ligatures:non=
+e">
+ TEUR) &lt;<a href=3D"mailto:Adithya.Balakumar@toshiba-tsip.com">Adithya.Ba=
+lakumar@toshiba-tsip.com</a>&gt;; sanglikar zaiba(</span><span lang=3D"ZH-C=
+N" style=3D"font-family:SimSun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0=
+</span><span lang=3D"EN-US" style=3D"mso-ligatures:none"> TEUR) &lt;<a href=
+=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com">Zaiba.Sanglikar@toshiba-tsip.c=
+om</a>&gt;;
 <a href=3D"mailto:cip-dev@lists.cip-project.org">cip-dev@lists.cip-project.=
 org</a>; hayashi kazuhiro(</span><span lang=3D"ZH-CN" style=3D"font-family:=
-SimSun;mso-ligatures:none">=1B$BNS=1B(B</span><span lang=3D"ZH-CN" style=3D=
-"mso-ligatures:none">
+SimSun;mso-ligatures:none">=C1=D6</span><span lang=3D"ZH-CN" style=3D"mso-l=
+igatures:none">
 </span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none"=
->=1B$BOB9(=1B(B</span><span lang=3D"ZH-CN" style=3D"mso-ligatures:none">
+>=BA=CD=BA=EA</span><span lang=3D"ZH-CN" style=3D"mso-ligatures:none">
 </span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none"=
->=1B$B#D#M#E=1B(B</span><span style=3D"mso-ligatures:none"> =1B$B!{=1B(B</s=
-pan><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=
-=1B$B#D#I#G=1B(B</span><span style=3D"mso-ligatures:none">=1B$B""=1B(B</spa=
-n><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=1B$=
-B#M#P#S=1B(B</span><span style=3D"mso-ligatures:none">=1B$B!{=1B(B</span><s=
-pan lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#M#=
-P#4=1B(B</span><span style=3D"mso-ligatures:none">)
+>=A3=C4=A3=CD=A3=C5</span><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+> =A1=F0</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatur=
+es:none">=A3=C4=A3=C9=A3=C7</span><span lang=3D"EN-US" style=3D"mso-ligatur=
+es:none">=A1=F5</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-=
+ligatures:none">=A3=CD=A3=D0=A3=D3</span><span lang=3D"EN-US" style=3D"mso-=
+ligatures:none">=A1=F0</span><span lang=3D"ZH-CN" style=3D"font-family:SimS=
+un;mso-ligatures:none">=A3=CD=A3=D0=A3=B4</span><span lang=3D"EN-US" style=
+=3D"mso-ligatures:none">)
  &lt;<a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.jp">kazuhiro3.hayashi@t=
 oshiba.co.jp</a>&gt;<br>
 <b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
 oting the image )<o:p></o:p></span></p>
 </div>
 </div>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Hello Sai,<o:p=
-></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">I think we=1B$=
-B!G=1B(Bre at the point now where we can get some merge requests created.<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Please could y=
-ou create an MR for the CIP
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">Hello Sai,<o:p></o:p></span><=
+/p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">I think we=A1=AFre at the poi=
+nt now where we can get some merge requests created.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">Please could you create an MR=
+ for the CIP
 <a href=3D"https://gitlab.com/cip-project/cip-testing/lava-docker">lava-doc=
 ker</a> repository?<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">I suggest that=
- we put your scripts in lava-slave/scripts. They will then end up being cop=
-ied into the /usr/local/bin/ directory on the lava-dispatchers.<o:p></o:p><=
-/span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">For the device=
- templates, perhaps we should create a common cip.jinja2 template which we =
-can use to include the user_commands.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">We could then =
-patch the device-type templates to extend cip.jinja2 and therefore have acc=
-ess to start_tpm etc.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">&gt;So, I=
- feel it would be good if we can add a tag name related to
-</span><span style=3D"font-family:&quot;Courier New&quot;;mso-fareast-langu=
-age:EN-US">QEMU swtpm
-</span><span style=3D"mso-fareast-language:EN-US">to avoid confusion after =
-seeing the job definition head</span><span style=3D"font-family:&quot;Couri=
-er New&quot;;mso-fareast-language:EN-US">.
-</span><span style=3D"mso-fareast-language:EN-US">Please provide your opini=
-on Chris.</span><span lang=3D"EN-GB" style=3D"font-family:&quot;Aptos&quot;=
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">I suggest that we put your sc=
+ripts in lava-slave/scripts. They will then end up being copied into the /u=
+sr/local/bin/ directory on the lava-dispatchers.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">For the device templates, per=
+haps we should create a common cip.jinja2 template which we can use to incl=
+ude the user_commands.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">We could then patch the devic=
+e-type templates to extend cip.jinja2 and therefore have access to start_tp=
+m etc.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">&gt;So, I feel it would be good if we can add a tag name related to
+</span><span lang=3D"EN-US" style=3D"font-family:&quot;Courier New&quot;;ms=
+o-fareast-language:EN-US">QEMU swtpm
+</span><span lang=3D"EN-US" style=3D"mso-fareast-language:EN-US">to avoid c=
+onfusion after seeing the job definition head</span><span lang=3D"EN-US" st=
+yle=3D"font-family:&quot;Courier New&quot;;mso-fareast-language:EN-US">.
+</span><span lang=3D"EN-US" style=3D"mso-fareast-language:EN-US">Please pro=
+vide your opinion Chris.</span><span style=3D"font-family:&quot;Aptos&quot;=
 ,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p></o:p></span></p=
 >
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Yes we could a=
-dd a tag like this until all of the CIP LAVA labs are updated based on the =
-merged MR from above.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Do you need me=
- to make any changes to lab-cip-renesas now?<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">Yes we could add a tag like t=
+his until all of the CIP LAVA labs are updated based on the merged MR from =
+above.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">Do you need me to make any ch=
+anges to lab-cip-renesas now?<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
 <div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-ligatures:none;mso-fareast-language:EN=
--GB">Kind regards, Chris<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-ligatures:none;mso-fareast-language:EN-GB">Kind regar=
+ds, Chris<o:p></o:p></span></p>
 </div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0in 0in 0in =
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0cm 0cm 0cm =
 4.0pt">
 <div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none">From:</span></=
-b><span style=3D"mso-ligatures:none">
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+>From:</span></b><span lang=3D"EN-US" style=3D"mso-ligatures:none">
 <a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com">Sai.Sathujoda@toshiba-tsi=
 p.com</a> &lt;<a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com">Sai.Sathujo=
 da@toshiba-tsip.com</a>&gt;
@@ -1810,587 +1737,605 @@ a.co.jp</a><br>
 oting the image )<o:p></o:p></span></p>
 </div>
 </div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hello Chr=
-is,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">I removed=
- the </span>
-<span style=3D"font-family:&quot;Courier New&quot;;mso-fareast-language:EN-=
-US">sure_kill </span>
-<span style=3D"mso-fareast-language:EN-US">and </span><span style=3D"font-f=
-amily:&quot;Courier New&quot;;mso-fareast-language:EN-US">rm_tmpdir
-</span><span style=3D"mso-fareast-language:EN-US">commands from the device =
-dictionary. I updated the swtpm_finish.sh script. As you mentioned swtpm_fi=
-nish.sh stands okay even if it runs twice as undo action in software update=
- test cases. Please have a look at
- the updated scripts and device dictionaries. <o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Note: I a=
-m running the scripts from /home right, if you think it is not the right pl=
-ace to place the scripts then I request you to change the path in the devic=
-e dictionaries as well when calling
- those scripts from the job definition.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">According=
- to my understanding all these changes in only
-</span><b><span style=3D"font-family:&quot;Courier New&quot;;mso-fareast-la=
-nguage:EN-US">lab-cip-renesas</span></b><b><span style=3D"mso-fareast-langu=
-age:EN-US"> ,
-</span></b><span style=3D"mso-fareast-language:EN-US">right Chris? &nbsp;Cu=
-rrently all my job definitions of software update testing, secure boot test=
-ing and IEC Layer tests are only QEMU swtpm based since I am using security=
- image for all the cases.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">So, I fee=
-l it would be good if we can add a tag name related to
-</span><span style=3D"font-family:&quot;Courier New&quot;;mso-fareast-langu=
-age:EN-US">QEMU swtpm
-</span><span style=3D"mso-fareast-language:EN-US">to avoid confusion after =
-seeing the job definition head</span><span style=3D"font-family:&quot;Couri=
-er New&quot;;mso-fareast-language:EN-US">.
-</span><span style=3D"mso-fareast-language:EN-US">Please provide your opini=
-on Chris.</span><span style=3D"font-family:&quot;Courier New&quot;;mso-fare=
-ast-language:EN-US"><o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Courier New&quot;;m=
-so-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Courier New&quot;;m=
-so-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Thanks an=
-d Regards,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Sai Ashri=
-th ( T S I P )<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Hello Chris,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">I removed the
+</span><span lang=3D"EN-US" style=3D"font-family:&quot;Courier New&quot;;ms=
+o-fareast-language:EN-US">sure_kill
+</span><span lang=3D"EN-US" style=3D"mso-fareast-language:EN-US">and </span=
+><span lang=3D"EN-US" style=3D"font-family:&quot;Courier New&quot;;mso-fare=
+ast-language:EN-US">rm_tmpdir
+</span><span lang=3D"EN-US" style=3D"mso-fareast-language:EN-US">commands f=
+rom the device dictionary. I updated the swtpm_finish.sh script. As you men=
+tioned swtpm_finish.sh stands okay even if it runs twice as undo action in =
+software update test cases. Please have
+ a look at the updated scripts and device dictionaries. <o:p></o:p></span><=
+/p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Note: I am running the scripts from /home right, if you think it is n=
+ot the right place to place the scripts then I request you to change the pa=
+th in the device dictionaries as well
+ when calling those scripts from the job definition.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">According to my understanding all these changes in only
+</span><b><span lang=3D"EN-US" style=3D"font-family:&quot;Courier New&quot;=
+;mso-fareast-language:EN-US">lab-cip-renesas</span></b><b><span lang=3D"EN-=
+US" style=3D"mso-fareast-language:EN-US"> ,
+</span></b><span lang=3D"EN-US" style=3D"mso-fareast-language:EN-US">right =
+Chris? &nbsp;Currently all my job definitions of software update testing, s=
+ecure boot testing and IEC Layer tests are only QEMU swtpm based since I am=
+ using security image for all the cases.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">So, I feel it would be good if we can add a tag name related to
+</span><span lang=3D"EN-US" style=3D"font-family:&quot;Courier New&quot;;ms=
+o-fareast-language:EN-US">QEMU swtpm
+</span><span lang=3D"EN-US" style=3D"mso-fareast-language:EN-US">to avoid c=
+onfusion after seeing the job definition head</span><span lang=3D"EN-US" st=
+yle=3D"font-family:&quot;Courier New&quot;;mso-fareast-language:EN-US">.
+</span><span lang=3D"EN-US" style=3D"mso-fareast-language:EN-US">Please pro=
+vide your opinion Chris.</span><span lang=3D"EN-US" style=3D"font-family:&q=
+uot;Courier New&quot;;mso-fareast-language:EN-US"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Cour=
+ier New&quot;;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Cour=
+ier New&quot;;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Thanks and Regards,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Sai Ashrith ( T S I P )<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
 <div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none">From:</span></=
-b><span style=3D"mso-ligatures:none"> Chris Paterson &lt;<a href=3D"mailto:=
-Chris.Paterson2@renesas.com">Chris.Paterson2@renesas.com</a>&gt;
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+>From:</span></b><span lang=3D"EN-US" style=3D"mso-ligatures:none"> Chris P=
+aterson &lt;<a href=3D"mailto:Chris.Paterson2@renesas.com">Chris.Paterson2@=
+renesas.com</a>&gt;
 <br>
 <b>Sent:</b> Monday, January 29, 2024 7:48 PM<br>
 <b>To:</b> ashrith sai(</span><span lang=3D"ZH-CN" style=3D"font-family:Sim=
-Sun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatur=
-es:none">) &lt;<a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com">Sai.Sathuj=
-oda@toshiba-tsip.com</a>&gt;<br>
+Sun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US"=
+ style=3D"mso-ligatures:none">) &lt;<a href=3D"mailto:Sai.Sathujoda@toshiba=
+-tsip.com">Sai.Sathujoda@toshiba-tsip.com</a>&gt;<br>
 <b>Cc:</b> dinesh kumar(</span><span lang=3D"ZH-CN" style=3D"font-family:Si=
-mSun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span lang=3D"ZH-CN" styl=
-e=3D"mso-ligatures:none">
-</span><span style=3D"mso-ligatures:none">TMIEC ODG Porting) &lt;<a href=3D=
-"mailto:dinesh.kumar@toshiba-tsip.com">dinesh.kumar@toshiba-tsip.com</a>&gt=
-;; venkata1.pyla &lt;<a href=3D"mailto:venkata1.pyla@toshibaap.onmicrosoft.=
-com">venkata1.pyla@toshibaap.onmicrosoft.com</a>&gt;;
+mSun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"ZH-CN=
+" style=3D"mso-ligatures:none">
+</span><span lang=3D"EN-US" style=3D"mso-ligatures:none">TMIEC ODG Porting)=
+ &lt;<a href=3D"mailto:dinesh.kumar@toshiba-tsip.com">dinesh.kumar@toshiba-=
+tsip.com</a>&gt;; venkata1.pyla &lt;<a href=3D"mailto:venkata1.pyla@toshiba=
+ap.onmicrosoft.com">venkata1.pyla@toshibaap.onmicrosoft.com</a>&gt;;
  kunijadar shivanand(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSu=
-n;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures=
-:none"> TMIEC ODG Porting) &lt;<a href=3D"mailto:Shivanand.Kunijadar@toshib=
-a-tsip.com">Shivanand.Kunijadar@toshiba-tsip.com</a>&gt;; balakumar
- adithya(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatu=
-res:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none"> TEUR=
-) &lt;<a href=3D"mailto:Adithya.Balakumar@toshiba-tsip.com">Adithya.Balakum=
-ar@toshiba-tsip.com</a>&gt;; sanglikar zaiba(</span><span lang=3D"ZH-CN" st=
-yle=3D"font-family:SimSun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><spa=
-n style=3D"mso-ligatures:none">
- TEUR) &lt;<a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com">Zaiba.Sangli=
-kar@toshiba-tsip.com</a>&gt;;
+n;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" s=
+tyle=3D"mso-ligatures:none"> TMIEC ODG Porting) &lt;<a href=3D"mailto:Shiva=
+nand.Kunijadar@toshiba-tsip.com">Shivanand.Kunijadar@toshiba-tsip.com</a>&g=
+t;;
+ balakumar adithya(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;=
+mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" sty=
+le=3D"mso-ligatures:none"> TEUR) &lt;<a href=3D"mailto:Adithya.Balakumar@to=
+shiba-tsip.com">Adithya.Balakumar@toshiba-tsip.com</a>&gt;; sanglikar
+ zaiba(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligature=
+s:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" style=3D"mso-li=
+gatures:none"> TEUR) &lt;<a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com=
+">Zaiba.Sanglikar@toshiba-tsip.com</a>&gt;;
 <a href=3D"mailto:cip-dev@lists.cip-project.org">cip-dev@lists.cip-project.=
 org</a>; hayashi kazuhiro(</span><span lang=3D"ZH-CN" style=3D"font-family:=
-SimSun;mso-ligatures:none">=1B$BNS=1B(B</span><span lang=3D"ZH-CN" style=3D=
-"mso-ligatures:none">
+SimSun;mso-ligatures:none">=C1=D6</span><span lang=3D"ZH-CN" style=3D"mso-l=
+igatures:none">
 </span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none"=
->=1B$BOB9(=1B(B</span><span lang=3D"ZH-CN" style=3D"mso-ligatures:none">
+>=BA=CD=BA=EA</span><span lang=3D"ZH-CN" style=3D"mso-ligatures:none">
 </span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none"=
->=1B$B#D#M#E=1B(B</span><span lang=3D"ZH-CN" style=3D"mso-ligatures:none">
-</span><span style=3D"mso-ligatures:none">=1B$B!{=1B(B</span><span lang=3D"=
-ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#D#I#G=1B(B</sp=
-an><span style=3D"mso-ligatures:none">=1B$B""=1B(B</span><span lang=3D"ZH-C=
-N" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#M#P#S=1B(B</span><=
-span style=3D"mso-ligatures:none">=1B$B!{=1B(B</span><span lang=3D"ZH-CN" s=
-tyle=3D"font-family:SimSun;mso-ligatures:none">=1B$B#M#P#4=1B(B</span><span=
- style=3D"mso-ligatures:none">)
+>=A3=C4=A3=CD=A3=C5</span><span lang=3D"ZH-CN" style=3D"mso-ligatures:none"=
+>
+</span><span lang=3D"EN-US" style=3D"mso-ligatures:none">=A1=F0</span><span=
+ lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=A3=C4=A3=
+=C9=A3=C7</span><span lang=3D"EN-US" style=3D"mso-ligatures:none">=A1=F5</s=
+pan><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=
+=A3=CD=A3=D0=A3=D3</span><span lang=3D"EN-US" style=3D"mso-ligatures:none">=
+=A1=F0</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures=
+:none">=A3=CD=A3=D0=A3=B4</span><span lang=3D"EN-US" style=3D"mso-ligatures=
+:none">)
  &lt;<a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.jp">kazuhiro3.hayashi@t=
 oshiba.co.jp</a>&gt;<br>
 <b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
 oting the image )<o:p></o:p></span></p>
 </div>
 </div>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Hello Sai,<o:p=
-></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Thank you for =
-the updates.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Rather than ha=
-ve a separate
-</span><span class=3D"CodeChar"><span lang=3D"EN-GB" style=3D"mso-fareast-l=
-anguage:EN-US">sure_kill</span></span><span lang=3D"EN-GB" style=3D"font-fa=
-mily:&quot;Aptos&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"=
-> command which is run at the start, couldn=1B$B!G=1B(Bt we just
- add an undo to the </span><span class=3D"CodeChar"><span lang=3D"EN-GB">st=
-art_tpm</span></span><span lang=3D"EN-GB" style=3D"font-family:&quot;Aptos&=
-quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"> task that runs =
-the
-</span><span class=3D"CodeChar"><span lang=3D"EN-GB" style=3D"mso-fareast-l=
-anguage:EN-US">swtpm_finish.sh</span></span><span lang=3D"EN-GB" style=3D"f=
-ont-family:&quot;Aptos&quot;,sans-serif;color:#7030A0;mso-fareast-language:=
-EN-US"> script?<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">My understandi=
-ng is that the undo action would only be run at the end of the job, which i=
-s what we want.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">If we have mul=
-tiple calls of the
-</span><span class=3D"CodeChar"><span lang=3D"EN-GB">start_tpm</span></span=
-><span lang=3D"EN-GB" style=3D"font-family:&quot;Aptos&quot;,sans-serif;col=
-or:#7030A0;mso-fareast-language:EN-US"> task then we=1B$B!G=1B(Bll get mult=
-iple calls of the undo action, but with the
-</span><span class=3D"CodeChar"><span lang=3D"EN-GB" style=3D"mso-fareast-l=
-anguage:EN-US">swtpm_finish.sh</span></span><span lang=3D"EN-GB" style=3D"f=
-ont-family:&quot;Aptos&quot;,sans-serif;color:#7030A0;mso-fareast-language:=
-EN-US"> script as it stands I think that should be okay?<o:p></o:p></span><=
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">Hello Sai,<o:p></o:p></span><=
 /p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Let me know if=
- it works, or if you need me to implement anything my end to help with test=
-ing.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">Thank you for the updates.<o:=
+p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">Rather than have a separate
+</span><span class=3D"CodeChar"><span style=3D"mso-fareast-language:EN-US">=
+sure_kill</span></span><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"> command which is run at the =
+start, couldn=A1=AFt we just add an undo to the
+</span><span class=3D"CodeChar">start_tpm</span><span style=3D"font-family:=
+&quot;Aptos&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"> tas=
+k that runs the
+</span><span class=3D"CodeChar"><span style=3D"mso-fareast-language:EN-US">=
+swtpm_finish.sh</span></span><span style=3D"font-family:&quot;Aptos&quot;,s=
+ans-serif;color:#7030A0;mso-fareast-language:EN-US"> script?<o:p></o:p></sp=
+an></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">My understanding is that the =
+undo action would only be run at the end of the job, which is what we want.=
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">If we have multiple calls of =
+the
+</span><span class=3D"CodeChar">start_tpm</span><span style=3D"font-family:=
+&quot;Aptos&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"> tas=
+k then we=A1=AFll get multiple calls of the undo action, but with the
+</span><span class=3D"CodeChar"><span style=3D"mso-fareast-language:EN-US">=
+swtpm_finish.sh</span></span><span style=3D"font-family:&quot;Aptos&quot;,s=
+ans-serif;color:#7030A0;mso-fareast-language:EN-US"> script as it stands I =
+think that should be okay?<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">Let me know if it works, or i=
+f you need me to implement anything my end to help with testing.<o:p></o:p>=
+</span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
 <div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-ligatures:none;mso-fareast-language:EN=
--GB">Thanks, Chris<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-ligatures:none;mso-fareast-language:EN-GB">Thanks, Ch=
+ris<o:p></o:p></span></p>
 </div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0in 0in 0in =
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0cm 0cm 0cm =
 4.0pt">
 <div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none">From:</span></=
-b><span style=3D"mso-ligatures:none">
-</span><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com"><span style=3D"mso=
--ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span></a><span style=3D"ms=
-o-ligatures:none"> &lt;</span><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.=
-com"><span style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</spa=
-n></a><span style=3D"mso-ligatures:none">&gt;
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+>From:</span></b><span lang=3D"EN-US" style=3D"mso-ligatures:none">
+</span><span lang=3D"EN-US"><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.co=
+m"><span style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span>=
+</a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none"> &lt;</span><s=
+pan lang=3D"EN-US"><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com"><span =
+style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span></a></spa=
+n><span lang=3D"EN-US" style=3D"mso-ligatures:none">&gt;
 <br>
 <b>Sent:</b> Monday, January 29, 2024 5:29 AM<br>
-<b>To:</b> Chris Paterson &lt;</span><a href=3D"mailto:Chris.Paterson2@rene=
-sas.com"><span style=3D"mso-ligatures:none">Chris.Paterson2@renesas.com</sp=
-an></a><span style=3D"mso-ligatures:none">&gt;<br>
-<b>Cc:</b> </span><a href=3D"mailto:dinesh.kumar@toshiba-tsip.com"><span st=
-yle=3D"mso-ligatures:none">dinesh.kumar@toshiba-tsip.com</span></a><span st=
-yle=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:venkata1.pyla@toshibaap.onmicrosoft.com"><span sty=
-le=3D"mso-ligatures:none">venkata1.pyla@toshibaap.onmicrosoft.com</span></a=
-><span style=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:Shivanand.Kunijadar@toshiba-tsip.com"><span style=
-=3D"mso-ligatures:none">Shivanand.Kunijadar@toshiba-tsip.com</span></a><spa=
-n style=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:Adithya.Balakumar@toshiba-tsip.com"><span style=3D=
-"mso-ligatures:none">Adithya.Balakumar@toshiba-tsip.com</span></a><span sty=
-le=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com"><span style=3D"m=
-so-ligatures:none">Zaiba.Sanglikar@toshiba-tsip.com</span></a><span style=
-=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:cip-dev@lists.cip-project.org"><span style=3D"mso-=
-ligatures:none">cip-dev@lists.cip-project.org</span></a><span style=3D"mso-=
-ligatures:none">;
-</span><a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.jp"><span style=3D"ms=
-o-ligatures:none">kazuhiro3.hayashi@toshiba.co.jp</span></a><span style=3D"=
-mso-ligatures:none"><br>
-<b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
-oting the image )<o:p></o:p></span></p>
-</div>
-</div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hello Chr=
-is,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Sorry I f=
-orgot to attach the job definition using which you can understand where I a=
-m using those commands sent in the previous mail. Please have a look and le=
-t me know your thoughts.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Thanks an=
-d regards,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Sai Ashri=
-th ( T S I P )<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none;mso-fareast-lan=
-guage:JA">From:</span></b><span style=3D"mso-ligatures:none;mso-fareast-lan=
-guage:JA"> ashrith sai(</span><span lang=3D"JA" style=3D"font-family:&quot;=
-MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B=
-$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-languag=
-e:JA">)
-<br>
-<b>Sent:</b> Monday, January 29, 2024 10:53 AM<br>
-<b>To:</b> 'Chris Paterson' &lt;</span><a href=3D"mailto:Chris.Paterson2@re=
-nesas.com"><span style=3D"mso-ligatures:none;mso-fareast-language:JA">Chris=
-.Paterson2@renesas.com</span></a><span style=3D"mso-ligatures:none;mso-fare=
-ast-language:JA">&gt;<br>
-<b>Cc:</b> dinesh kumar(</span><span lang=3D"JA" style=3D"font-family:&quot=
-;MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=
-=1B$B#T#S#I#P=1B(B</span><span lang=3D"JA" style=3D"mso-ligatures:none;mso-=
-fareast-language:JA">
-</span><span style=3D"mso-ligatures:none;mso-fareast-language:JA">TMIEC ODG=
- Porting) &lt;</span><a href=3D"mailto:dinesh.kumar@toshiba-tsip.com"><span=
- style=3D"mso-ligatures:none;mso-fareast-language:JA">dinesh.kumar@toshiba-=
-tsip.com</span></a><span style=3D"mso-ligatures:none;mso-fareast-language:J=
-A">&gt;;
- venkata1.pyla &lt;</span><a href=3D"mailto:venkata1.pyla@toshibaap.onmicro=
-soft.com"><span style=3D"mso-ligatures:none;mso-fareast-language:JA">venkat=
-a1.pyla@toshibaap.onmicrosoft.com</span></a><span style=3D"mso-ligatures:no=
-ne;mso-fareast-language:JA">&gt;; kunijadar
- shivanand(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&q=
-uot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#T#S#I#P=
-=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-language:JA"> TMI=
-EC ODG Porting) &lt;</span><a href=3D"mailto:Shivanand.Kunijadar@toshiba-ts=
-ip.com"><span style=3D"mso-ligatures:none;mso-fareast-language:JA">Shivanan=
-d.Kunijadar@toshiba-tsip.com</span></a><span style=3D"mso-ligatures:none;ms=
-o-fareast-language:JA">&gt;;
- balakumar adithya(</span><span lang=3D"JA" style=3D"font-family:&quot;MS P=
-Gothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#T=
-#S#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-language:JA=
-"> TEUR) &lt;</span><a href=3D"mailto:Adithya.Balakumar@toshiba-tsip.com"><=
-span style=3D"mso-ligatures:none;mso-fareast-language:JA">Adithya.Balakumar=
-@toshiba-tsip.com</span></a><span style=3D"mso-ligatures:none;mso-fareast-l=
-anguage:JA">&gt;;
- sanglikar zaiba(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGo=
-thic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#T#S=
-#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-language:JA">=
- TEUR) &lt;</span><a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com"><span=
- style=3D"mso-ligatures:none;mso-fareast-language:JA">Zaiba.Sanglikar@toshi=
-ba-tsip.com</span></a><span style=3D"mso-ligatures:none;mso-fareast-languag=
-e:JA">&gt;;
-</span><a href=3D"mailto:cip-dev@lists.cip-project.org"><span style=3D"mso-=
-ligatures:none;mso-fareast-language:JA">cip-dev@lists.cip-project.org</span=
-></a><span style=3D"mso-ligatures:none;mso-fareast-language:JA">; hayashi k=
-azuhiro(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot=
-;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$BNS=1B(B</span=
-><span lang=3D"JA" style=3D"mso-ligatures:none;mso-fareast-language:JA">
-</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
-erif;mso-ligatures:none;mso-fareast-language:JA">=1B$BOB9(=1B(B</span><span=
- lang=3D"JA" style=3D"mso-ligatures:none;mso-fareast-language:JA">
-</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
-erif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#D#M#E=1B(B</span><sp=
-an lang=3D"JA" style=3D"mso-ligatures:none;mso-fareast-language:JA">
-</span><span style=3D"mso-ligatures:none;mso-fareast-language:JA">=1B$B!{=
-=1B(B</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,s=
-ans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#D#I#G=1B(B</spa=
-n><span style=3D"mso-ligatures:none;mso-fareast-language:JA">=1B$B""=1B(B</=
-span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-ser=
-if;mso-ligatures:none;mso-fareast-language:JA">=1B$B#M#P#S=1B(B</span><span=
- style=3D"mso-ligatures:none;mso-fareast-language:JA">=1B$B!{=1B(B</span><s=
-pan lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-=
-ligatures:none;mso-fareast-language:JA">=1B$B#M#P#4=1B(B</span><span style=
-=3D"mso-ligatures:none;mso-fareast-language:JA">)
- &lt;</span><a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.jp"><span style=
-=3D"mso-ligatures:none;mso-fareast-language:JA">kazuhiro3.hayashi@toshiba.c=
-o.jp</span></a><span style=3D"mso-ligatures:none;mso-fareast-language:JA">&=
-gt;<br>
+<b>To:</b> Chris Paterson &lt;</span><span lang=3D"EN-US"><a href=3D"mailto=
+:Chris.Paterson2@renesas.com"><span style=3D"mso-ligatures:none">Chris.Pate=
+rson2@renesas.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatu=
+res:none">&gt;<br>
+<b>Cc:</b> </span><span lang=3D"EN-US"><a href=3D"mailto:dinesh.kumar@toshi=
+ba-tsip.com"><span style=3D"mso-ligatures:none">dinesh.kumar@toshiba-tsip.c=
+om</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:venkata1.pyla@toshibaap.onmic=
+rosoft.com"><span style=3D"mso-ligatures:none">venkata1.pyla@toshibaap.onmi=
+crosoft.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:no=
+ne">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Shivanand.Kunijadar@toshiba-t=
+sip.com"><span style=3D"mso-ligatures:none">Shivanand.Kunijadar@toshiba-tsi=
+p.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Adithya.Balakumar@toshiba-tsi=
+p.com"><span style=3D"mso-ligatures:none">Adithya.Balakumar@toshiba-tsip.co=
+m</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.=
+com"><span style=3D"mso-ligatures:none">Zaiba.Sanglikar@toshiba-tsip.com</s=
+pan></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:cip-dev@lists.cip-project.org=
+"><span style=3D"mso-ligatures:none">cip-dev@lists.cip-project.org</span></=
+a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.=
+jp"><span style=3D"mso-ligatures:none">kazuhiro3.hayashi@toshiba.co.jp</spa=
+n></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none"><br>
 <b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
 oting the image )<o:p></o:p></span></p>
 </div>
 </div>
 <p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hello Chr=
-is,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Thank you=
- for suggesting this scenario.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Yes, if w=
-e cancel the job in between, then both the swtpm process as well as the .sw=
-tpm directory which we created in the beginning will remain causing the lat=
-er jobs to fail. So, we need to add
- killing the process as well as removing the directory as part of undo acti=
-on to some command which we will run at the beginning of the job. I don=1B$=
-B!G=1B(Bt think it is possible to add more than one command as undo action =
-to a command in LAVA. So, to keep it simple,
- let us include two small scripts in any directory you prefer in the slave =
-machine. One script will start the tpm after checking if any swtpm process =
-is not running already and the other will make sure that whatever the case,=
- there should be no presence of
- swtpm process running as well as the temporary directory we created to sto=
-re TPM state files. I did not add the
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Hello Chris,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Sorry I forgot to attach the job definition using which you can under=
+stand where I am using those commands sent in the previous mail. Please hav=
+e a look and let me know your thoughts.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Thanks and regards,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Sai Ashrith ( T S I P )<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none;=
+mso-fareast-language:JA">From:</span></b><span lang=3D"EN-US" style=3D"mso-=
+ligatures:none;mso-fareast-language:JA"> ashrith sai(</span><span lang=3D"J=
+A" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:non=
+e;mso-fareast-language:JA">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-=
+US" style=3D"mso-ligatures:none;mso-fareast-language:JA">)
+<br>
+<b>Sent:</b> Monday, January 29, 2024 10:53 AM<br>
+<b>To:</b> 'Chris Paterson' &lt;</span><span lang=3D"EN-US"><a href=3D"mail=
+to:Chris.Paterson2@renesas.com"><span style=3D"mso-ligatures:none;mso-farea=
+st-language:JA">Chris.Paterson2@renesas.com</span></a></span><span lang=3D"=
+EN-US" style=3D"mso-ligatures:none;mso-fareast-language:JA">&gt;<br>
+<b>Cc:</b> dinesh kumar(</span><span lang=3D"JA" style=3D"font-family:&quot=
+;MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=
+=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"JA" style=3D"mso-ligatures:non=
+e;mso-fareast-language:JA">
+</span><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-languag=
+e:JA">TMIEC ODG Porting) &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:=
+dinesh.kumar@toshiba-tsip.com"><span style=3D"mso-ligatures:none;mso-fareas=
+t-language:JA">dinesh.kumar@toshiba-tsip.com</span></a></span><span lang=3D=
+"EN-US" style=3D"mso-ligatures:none;mso-fareast-language:JA">&gt;;
+ venkata1.pyla &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:venkata1.p=
+yla@toshibaap.onmicrosoft.com"><span style=3D"mso-ligatures:none;mso-fareas=
+t-language:JA">venkata1.pyla@toshibaap.onmicrosoft.com</span></a></span><sp=
+an lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-language:JA">&gt;=
+;
+ kunijadar shivanand(</span><span lang=3D"JA" style=3D"font-family:&quot;MS=
+ PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=A3=
+=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" style=3D"mso-ligatures:non=
+e;mso-fareast-language:JA"> TMIEC ODG Porting) &lt;</span><span lang=3D"EN-=
+US"><a href=3D"mailto:Shivanand.Kunijadar@toshiba-tsip.com"><span style=3D"=
+mso-ligatures:none;mso-fareast-language:JA">Shivanand.Kunijadar@toshiba-tsi=
+p.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso=
+-fareast-language:JA">&gt;;
+ balakumar adithya(</span><span lang=3D"JA" style=3D"font-family:&quot;MS P=
+Gothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=A3=D4=
+=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" style=3D"mso-ligatures:none;m=
+so-fareast-language:JA"> TEUR) &lt;</span><span lang=3D"EN-US"><a href=3D"m=
+ailto:Adithya.Balakumar@toshiba-tsip.com"><span style=3D"mso-ligatures:none=
+;mso-fareast-language:JA">Adithya.Balakumar@toshiba-tsip.com</span></a></sp=
+an><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-language:JA=
+">&gt;;
+ sanglikar zaiba(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGo=
+thic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=A3=D4=A3=
+=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-=
+fareast-language:JA"> TEUR) &lt;</span><span lang=3D"EN-US"><a href=3D"mail=
+to:Zaiba.Sanglikar@toshiba-tsip.com"><span style=3D"mso-ligatures:none;mso-=
+fareast-language:JA">Zaiba.Sanglikar@toshiba-tsip.com</span></a></span><spa=
+n lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-language:JA">&gt;;
+</span><span lang=3D"EN-US"><a href=3D"mailto:cip-dev@lists.cip-project.org=
+"><span style=3D"mso-ligatures:none;mso-fareast-language:JA">cip-dev@lists.=
+cip-project.org</span></a></span><span lang=3D"EN-US" style=3D"mso-ligature=
+s:none;mso-fareast-language:JA">; hayashi
+ kazuhiro(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&qu=
+ot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=C1=D6</span><sp=
+an lang=3D"JA" style=3D"mso-ligatures:none;mso-fareast-language:JA">
+</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
+erif;mso-ligatures:none;mso-fareast-language:JA">=BA=CD=BA=EA</span><span l=
+ang=3D"JA" style=3D"mso-ligatures:none;mso-fareast-language:JA">
+</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
+erif;mso-ligatures:none;mso-fareast-language:JA">=A3=C4=A3=CD=A3=C5</span><=
+span lang=3D"JA" style=3D"mso-ligatures:none;mso-fareast-language:JA">
+</span><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-languag=
+e:JA">=A1=F0</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&=
+quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=A3=C4=A3=C9=
+=A3=C7</span><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-l=
+anguage:JA">=A1=F5</span><span lang=3D"JA" style=3D"font-family:&quot;MS PG=
+othic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=A3=CD=
+=A3=D0=A3=D3</span><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-far=
+east-language:JA">=A1=F0</span><span lang=3D"JA" style=3D"font-family:&quot=
+;MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=
+=A3=CD=A3=D0=A3=B4</span><span lang=3D"EN-US" style=3D"mso-ligatures:none;m=
+so-fareast-language:JA">)
+ &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:kazuhiro3.hayashi@toshib=
+a.co.jp"><span style=3D"mso-ligatures:none;mso-fareast-language:JA">kazuhir=
+o3.hayashi@toshiba.co.jp</span></a></span><span lang=3D"EN-US" style=3D"mso=
+-ligatures:none;mso-fareast-language:JA">&gt;<br>
+<b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
+oting the image )<o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Hello Chris,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Thank you for suggesting this scenario.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Yes, if we cancel the job in between, then both the swtpm process as =
+well as the .swtpm directory which we created in the beginning will remain =
+causing the later jobs to fail. So, we
+ need to add killing the process as well as removing the directory as part =
+of undo action to some command which we will run at the beginning of the jo=
+b. I don=A1=AFt think it is possible to add more than one command as undo a=
+ction to a command in LAVA. So, to keep
+ it simple, let us include two small scripts in any directory you prefer in=
+ the slave machine. One script will start the tpm after checking if any swt=
+pm process is not running already and the other will make sure that whateve=
+r the case, there should be no presence
+ of swtpm process running as well as the temporary directory we created to =
+store TPM state files. I did not add the
 <b>swtpm_finish.sh </b>as part of undo action of <b>start_tpm </b>because w=
 e need to use start_tpm twice in Swupdate related job definitions.
 <o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">I am atta=
-ching the scripts, updated device dictionaries as well as the job definitio=
-n in which we can use them. Please have a look at them.<o:p></o:p></span></=
-p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Thanks an=
-d Regards,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Sai Ashri=
-th ( T S I P )<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">I am attaching the scripts, updated device dictionaries as well as th=
+e job definition in which we can use them. Please have a look at them.<o:p>=
+</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Thanks and Regards,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Sai Ashrith ( T S I P )<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
 <div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none">From:</span></=
-b><span style=3D"mso-ligatures:none"> Chris Paterson &lt;</span><a href=3D"=
-mailto:Chris.Paterson2@renesas.com"><span style=3D"mso-ligatures:none">Chri=
-s.Paterson2@renesas.com</span></a><span style=3D"mso-ligatures:none">&gt;
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+>From:</span></b><span lang=3D"EN-US" style=3D"mso-ligatures:none"> Chris P=
+aterson &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:Chris.Paterson2@r=
+enesas.com"><span style=3D"mso-ligatures:none">Chris.Paterson2@renesas.com<=
+/span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">&gt;
 <br>
 <b>Sent:</b> Thursday, January 25, 2024 7:53 PM<br>
 <b>To:</b> ashrith sai(</span><span lang=3D"ZH-CN" style=3D"font-family:Sim=
-Sun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatur=
-es:none">) &lt;</span><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com"><sp=
-an style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span></a><s=
-pan style=3D"mso-ligatures:none">&gt;<br>
+Sun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US"=
+ style=3D"mso-ligatures:none">) &lt;</span><span lang=3D"EN-US"><a href=3D"=
+mailto:Sai.Sathujoda@toshiba-tsip.com"><span style=3D"mso-ligatures:none">S=
+ai.Sathujoda@toshiba-tsip.com</span></a></span><span lang=3D"EN-US" style=
+=3D"mso-ligatures:none">&gt;<br>
 <b>Cc:</b> dinesh kumar(</span><span lang=3D"ZH-CN" style=3D"font-family:Si=
-mSun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatu=
-res:none"> TMIEC ODG Porting) &lt;</span><a href=3D"mailto:dinesh.kumar@tos=
-hiba-tsip.com"><span style=3D"mso-ligatures:none">dinesh.kumar@toshiba-tsip=
-.com</span></a><span style=3D"mso-ligatures:none">&gt;;
- venkata1.pyla &lt;</span><a href=3D"mailto:venkata1.pyla@toshibaap.onmicro=
-soft.com"><span style=3D"mso-ligatures:none">venkata1.pyla@toshibaap.onmicr=
-osoft.com</span></a><span style=3D"mso-ligatures:none">&gt;; kunijadar shiv=
-anand(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures=
-:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none">
- TMIEC ODG Porting) &lt;</span><a href=3D"mailto:Shivanand.Kunijadar@toshib=
-a-tsip.com"><span style=3D"mso-ligatures:none">Shivanand.Kunijadar@toshiba-=
-tsip.com</span></a><span style=3D"mso-ligatures:none">&gt;; balakumar adith=
-ya(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:no=
-ne">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none">
- TEUR) &lt;</span><a href=3D"mailto:Adithya.Balakumar@toshiba-tsip.com"><sp=
-an style=3D"mso-ligatures:none">Adithya.Balakumar@toshiba-tsip.com</span></=
-a><span style=3D"mso-ligatures:none">&gt;; sanglikar zaiba(</span><span lan=
-g=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#T#S#I#P=
-=1B(B</span><span style=3D"mso-ligatures:none">
- TEUR) &lt;</span><a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com"><span=
- style=3D"mso-ligatures:none">Zaiba.Sanglikar@toshiba-tsip.com</span></a><s=
-pan style=3D"mso-ligatures:none">&gt;;
-</span><a href=3D"mailto:cip-dev@lists.cip-project.org"><span style=3D"mso-=
-ligatures:none">cip-dev@lists.cip-project.org</span></a><span style=3D"mso-=
-ligatures:none">; hayashi kazuhiro(</span><span lang=3D"ZH-CN" style=3D"fon=
-t-family:SimSun;mso-ligatures:none">=1B$BNS=1B(B</span><span lang=3D"ZH-CN"=
- style=3D"mso-ligatures:none">
+mSun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US=
+" style=3D"mso-ligatures:none"> TMIEC ODG Porting) &lt;</span><span lang=3D=
+"EN-US"><a href=3D"mailto:dinesh.kumar@toshiba-tsip.com"><span style=3D"mso=
+-ligatures:none">dinesh.kumar@toshiba-tsip.com</span></a></span><span lang=
+=3D"EN-US" style=3D"mso-ligatures:none">&gt;;
+ venkata1.pyla &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:venkata1.p=
+yla@toshibaap.onmicrosoft.com"><span style=3D"mso-ligatures:none">venkata1.=
+pyla@toshibaap.onmicrosoft.com</span></a></span><span lang=3D"EN-US" style=
+=3D"mso-ligatures:none">&gt;; kunijadar shivanand(</span><span lang=3D"ZH-C=
+N" style=3D"font-family:SimSun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0=
+</span><span lang=3D"EN-US" style=3D"mso-ligatures:none">
+ TMIEC ODG Porting) &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:Shiva=
+nand.Kunijadar@toshiba-tsip.com"><span style=3D"mso-ligatures:none">Shivana=
+nd.Kunijadar@toshiba-tsip.com</span></a></span><span lang=3D"EN-US" style=
+=3D"mso-ligatures:none">&gt;; balakumar adithya(</span><span lang=3D"ZH-CN"=
+ style=3D"font-family:SimSun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</=
+span><span lang=3D"EN-US" style=3D"mso-ligatures:none">
+ TEUR) &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:Adithya.Balakumar@=
+toshiba-tsip.com"><span style=3D"mso-ligatures:none">Adithya.Balakumar@tosh=
+iba-tsip.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:n=
+one">&gt;; sanglikar zaiba(</span><span lang=3D"ZH-CN" style=3D"font-family=
+:SimSun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN=
+-US" style=3D"mso-ligatures:none">
+ TEUR) &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:Zaiba.Sanglikar@to=
+shiba-tsip.com"><span style=3D"mso-ligatures:none">Zaiba.Sanglikar@toshiba-=
+tsip.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+>&gt;;
+</span><span lang=3D"EN-US"><a href=3D"mailto:cip-dev@lists.cip-project.org=
+"><span style=3D"mso-ligatures:none">cip-dev@lists.cip-project.org</span></=
+a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">; hayashi kazuhi=
+ro(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:no=
+ne">=C1=D6</span><span lang=3D"ZH-CN" style=3D"mso-ligatures:none">
 </span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none"=
->=1B$BOB9(=1B(B</span><span lang=3D"ZH-CN" style=3D"mso-ligatures:none">
+>=BA=CD=BA=EA</span><span lang=3D"ZH-CN" style=3D"mso-ligatures:none">
 </span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none"=
->=1B$B#D#M#E=1B(B</span><span lang=3D"ZH-CN" style=3D"mso-ligatures:none">
-</span><span style=3D"mso-ligatures:none">=1B$B!{=1B(B</span><span lang=3D"=
-ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#D#I#G=1B(B</sp=
-an><span style=3D"mso-ligatures:none">=1B$B""=1B(B</span><span lang=3D"ZH-C=
-N" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#M#P#S=1B(B</span><=
-span style=3D"mso-ligatures:none">=1B$B!{=1B(B</span><span lang=3D"ZH-CN" s=
-tyle=3D"font-family:SimSun;mso-ligatures:none">=1B$B#M#P#4=1B(B</span><span=
- style=3D"mso-ligatures:none">)
- &lt;</span><a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.jp"><span style=
-=3D"mso-ligatures:none">kazuhiro3.hayashi@toshiba.co.jp</span></a><span sty=
-le=3D"mso-ligatures:none">&gt;<br>
+>=A3=C4=A3=CD=A3=C5</span><span lang=3D"ZH-CN" style=3D"mso-ligatures:none"=
+>
+</span><span lang=3D"EN-US" style=3D"mso-ligatures:none">=A1=F0</span><span=
+ lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=A3=C4=A3=
+=C9=A3=C7</span><span lang=3D"EN-US" style=3D"mso-ligatures:none">=A1=F5</s=
+pan><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=
+=A3=CD=A3=D0=A3=D3</span><span lang=3D"EN-US" style=3D"mso-ligatures:none">=
+=A1=F0</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures=
+:none">=A3=CD=A3=D0=A3=B4</span><span lang=3D"EN-US" style=3D"mso-ligatures=
+:none">)
+ &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:kazuhiro3.hayashi@toshib=
+a.co.jp"><span style=3D"mso-ligatures:none">kazuhiro3.hayashi@toshiba.co.jp=
+</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">&gt;<br=
+>
 <b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
 oting the image )<o:p></o:p></span></p>
 </div>
 </div>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Hello Sai,<o:p=
-></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Thank you for =
-the information. It looks like you=1B$B!G=1B(Bre making good progress.<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Your new appro=
-ach seems pretty good to me, although one though=1B$B!D=1B(B<o:p></o:p></sp=
-an></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">What happens i=
-f a job fails or is cancelled before reaching the end =1B$B!H=1B(Brm_tpmdir=
-=1B$B!I=1B(B and =1B$B!H=1B(Bkill_tpm=1B$B!I=1B(B commands?<o:p></o:p></spa=
-n></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Wouldn=1B$B!G=
-=1B(Bt the original swtpm instance set up by =1B$B!H=1B(Bstart_tpm=1B$B!I=
-=1B(B keep running? And any subsequent jobs would end up in the infinite wh=
-ile loop
- in your script.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Is there a way=
- to make it so that a command action is _<i>always</i>_ run at the end of a=
- job?<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-ligatures:none;mso-fareast-language:EN=
--GB">Kind regards, Chris<o:p></o:p></span></p>
-</div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0in 0in 0in =
-4.0pt">
-<div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none">From:</span></=
-b><span style=3D"mso-ligatures:none">
-</span><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com"><span style=3D"mso=
--ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span></a><span style=3D"ms=
-o-ligatures:none"> &lt;</span><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.=
-com"><span style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</spa=
-n></a><span style=3D"mso-ligatures:none">&gt;
-<br>
-<b>Sent:</b> Tuesday, January 23, 2024 5:04 AM<br>
-<b>To:</b> Chris Paterson &lt;</span><a href=3D"mailto:Chris.Paterson2@rene=
-sas.com"><span style=3D"mso-ligatures:none">Chris.Paterson2@renesas.com</sp=
-an></a><span style=3D"mso-ligatures:none">&gt;<br>
-<b>Cc:</b> </span><a href=3D"mailto:dinesh.kumar@toshiba-tsip.com"><span st=
-yle=3D"mso-ligatures:none">dinesh.kumar@toshiba-tsip.com</span></a><span st=
-yle=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:venkata1.pyla@toshibaap.onmicrosoft.com"><span sty=
-le=3D"mso-ligatures:none">venkata1.pyla@toshibaap.onmicrosoft.com</span></a=
-><span style=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:Shivanand.Kunijadar@toshiba-tsip.com"><span style=
-=3D"mso-ligatures:none">Shivanand.Kunijadar@toshiba-tsip.com</span></a><spa=
-n style=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:Adithya.Balakumar@toshiba-tsip.com"><span style=3D=
-"mso-ligatures:none">Adithya.Balakumar@toshiba-tsip.com</span></a><span sty=
-le=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com"><span style=3D"m=
-so-ligatures:none">Zaiba.Sanglikar@toshiba-tsip.com</span></a><span style=
-=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:cip-dev@lists.cip-project.org"><span style=3D"mso-=
-ligatures:none">cip-dev@lists.cip-project.org</span></a><span style=3D"mso-=
-ligatures:none">;
-</span><a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.jp"><span style=3D"ms=
-o-ligatures:none">kazuhiro3.hayashi@toshiba.co.jp</span></a><span style=3D"=
-mso-ligatures:none"><br>
-<b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
-oting the image )<o:p></o:p></span></p>
-</div>
-</div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">Hello Chris,<o:p></o:p></span></p>
+rif;color:#7030A0;mso-fareast-language:EN-US">Hello Sai,<o:p></o:p></span><=
+/p>
 <p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">Please provide your opinion regarding the c=
-hanges proposed in the below mail.<o:p></o:p></span></p>
+rif;color:#7030A0;mso-fareast-language:EN-US">Thank you for the information=
+. It looks like you=A1=AFre making good progress.<o:p></o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">Thanks and Regards,<o:p></o:p></span></p>
+rif;color:#7030A0;mso-fareast-language:EN-US">Your new approach seems prett=
+y good to me, although one though=A1=AD<o:p></o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">Sai Ashrith (T S I P)<o:p></o:p></span></p>
+rif;color:#7030A0;mso-fareast-language:EN-US">What happens if a job fails o=
+r is cancelled before reaching the end =A1=B0rm_tpmdir=A1=B1 and =A1=B0kill=
+_tpm=A1=B1 commands?<o:p></o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none;mso-fareast-lan=
-guage:JA">From:</span></b><span style=3D"mso-ligatures:none;mso-fareast-lan=
-guage:JA"> ashrith sai(</span><span lang=3D"JA" style=3D"font-family:&quot;=
-MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B=
-$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-languag=
-e:JA">)
-<br>
-<b>Sent:</b> Friday, January 19, 2024 12:46 AM<br>
-<b>To:</b> Chris Paterson &lt;</span><a href=3D"mailto:Chris.Paterson2@rene=
-sas.com"><span style=3D"mso-ligatures:none;mso-fareast-language:JA">Chris.P=
-aterson2@renesas.com</span></a><span style=3D"mso-ligatures:none;mso-fareas=
-t-language:JA">&gt;<br>
-<b>Cc:</b> dinesh kumar(</span><span lang=3D"JA" style=3D"font-family:&quot=
-;MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=
-=1B$B#T#S#I#P=1B(B</span><span lang=3D"JA" style=3D"mso-ligatures:none;mso-=
-fareast-language:JA">
-</span><span style=3D"mso-ligatures:none;mso-fareast-language:JA">TMIEC ODG=
- Porting) &lt;</span><a href=3D"mailto:dinesh.kumar@toshiba-tsip.com"><span=
- style=3D"mso-ligatures:none;mso-fareast-language:JA">dinesh.kumar@toshiba-=
-tsip.com</span></a><span style=3D"mso-ligatures:none;mso-fareast-language:J=
-A">&gt;;
- 'venkata1.pyla' &lt;</span><a href=3D"mailto:venkata1.pyla@toshibaap.onmic=
-rosoft.com"><span style=3D"mso-ligatures:none;mso-fareast-language:JA">venk=
-ata1.pyla@toshibaap.onmicrosoft.com</span></a><span style=3D"mso-ligatures:=
-none;mso-fareast-language:JA">&gt;; kunijadar
- shivanand(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&q=
-uot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#T#S#I#P=
-=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-language:JA"> TMI=
-EC ODG Porting) &lt;</span><a href=3D"mailto:Shivanand.Kunijadar@toshiba-ts=
-ip.com"><span style=3D"mso-ligatures:none;mso-fareast-language:JA">Shivanan=
-d.Kunijadar@toshiba-tsip.com</span></a><span style=3D"mso-ligatures:none;ms=
-o-fareast-language:JA">&gt;;
- balakumar adithya(</span><span lang=3D"JA" style=3D"font-family:&quot;MS P=
-Gothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#T=
-#S#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-language:JA=
-"> TEUR) &lt;</span><a href=3D"mailto:Adithya.Balakumar@toshiba-tsip.com"><=
-span style=3D"mso-ligatures:none;mso-fareast-language:JA">Adithya.Balakumar=
-@toshiba-tsip.com</span></a><span style=3D"mso-ligatures:none;mso-fareast-l=
-anguage:JA">&gt;;
- sanglikar zaiba(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGo=
-thic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#T#S=
-#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-language:JA">=
- TEUR) &lt;</span><a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com"><span=
- style=3D"mso-ligatures:none;mso-fareast-language:JA">Zaiba.Sanglikar@toshi=
-ba-tsip.com</span></a><span style=3D"mso-ligatures:none;mso-fareast-languag=
-e:JA">&gt;<br>
-<b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
-oting the image )<o:p></o:p></span></p>
-</div>
-</div>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">Hello Chris,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">We investigated further more about this iss=
-ue you pointed out where two jobs using swtpm run at a similar time on the =
-same dispatcher. I agree with your opinion that
- it is not ideal and maintainable if we try to use different variables for =
-each qemu device template. So we came up with another approach.<o:p></o:p><=
+rif;color:#7030A0;mso-fareast-language:EN-US">Wouldn=A1=AFt the original sw=
+tpm instance set up by =A1=B0start_tpm=A1=B1 keep running? And any subseque=
+nt jobs would end up in the infinite while loop in your script.<o:p></o:p><=
 /span></p>
 <p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+rif;color:#7030A0;mso-fareast-language:EN-US">Is there a way to make it so =
+that a command action is _<i>always</i>_ run at the end of a job?<o:p></o:p=
+></span></p>
 <p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">As per my understanding, swtpm package is i=
-nstalled in lab-cip-renesas slave right, so for now let us consider just us=
-ing the
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<div>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-ligatures:none;mso-fareast-language:EN-GB">Kind regar=
+ds, Chris<o:p></o:p></span></p>
+</div>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0cm 0cm 0cm =
+4.0pt">
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+>From:</span></b><span lang=3D"EN-US" style=3D"mso-ligatures:none">
+</span><span lang=3D"EN-US"><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.co=
+m"><span style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span>=
+</a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none"> &lt;</span><s=
+pan lang=3D"EN-US"><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com"><span =
+style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span></a></spa=
+n><span lang=3D"EN-US" style=3D"mso-ligatures:none">&gt;
+<br>
+<b>Sent:</b> Tuesday, January 23, 2024 5:04 AM<br>
+<b>To:</b> Chris Paterson &lt;</span><span lang=3D"EN-US"><a href=3D"mailto=
+:Chris.Paterson2@renesas.com"><span style=3D"mso-ligatures:none">Chris.Pate=
+rson2@renesas.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatu=
+res:none">&gt;<br>
+<b>Cc:</b> </span><span lang=3D"EN-US"><a href=3D"mailto:dinesh.kumar@toshi=
+ba-tsip.com"><span style=3D"mso-ligatures:none">dinesh.kumar@toshiba-tsip.c=
+om</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:venkata1.pyla@toshibaap.onmic=
+rosoft.com"><span style=3D"mso-ligatures:none">venkata1.pyla@toshibaap.onmi=
+crosoft.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:no=
+ne">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Shivanand.Kunijadar@toshiba-t=
+sip.com"><span style=3D"mso-ligatures:none">Shivanand.Kunijadar@toshiba-tsi=
+p.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Adithya.Balakumar@toshiba-tsi=
+p.com"><span style=3D"mso-ligatures:none">Adithya.Balakumar@toshiba-tsip.co=
+m</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.=
+com"><span style=3D"mso-ligatures:none">Zaiba.Sanglikar@toshiba-tsip.com</s=
+pan></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:cip-dev@lists.cip-project.org=
+"><span style=3D"mso-ligatures:none">cip-dev@lists.cip-project.org</span></=
+a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.=
+jp"><span style=3D"mso-ligatures:none">kazuhiro3.hayashi@toshiba.co.jp</spa=
+n></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none"><br>
+<b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
+oting the image )<o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">Hello Chris,<o:p></o:p></spa=
+n></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">Please provide your opinion =
+regarding the changes proposed in the below mail.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">Thanks and Regards,<o:p></o:=
+p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">Sai Ashrith (T S I P)<o:p></=
+o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none;=
+mso-fareast-language:JA">From:</span></b><span lang=3D"EN-US" style=3D"mso-=
+ligatures:none;mso-fareast-language:JA"> ashrith sai(</span><span lang=3D"J=
+A" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:non=
+e;mso-fareast-language:JA">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-=
+US" style=3D"mso-ligatures:none;mso-fareast-language:JA">)
+<br>
+<b>Sent:</b> Friday, January 19, 2024 12:46 AM<br>
+<b>To:</b> Chris Paterson &lt;</span><span lang=3D"EN-US"><a href=3D"mailto=
+:Chris.Paterson2@renesas.com"><span style=3D"mso-ligatures:none;mso-fareast=
+-language:JA">Chris.Paterson2@renesas.com</span></a></span><span lang=3D"EN=
+-US" style=3D"mso-ligatures:none;mso-fareast-language:JA">&gt;<br>
+<b>Cc:</b> dinesh kumar(</span><span lang=3D"JA" style=3D"font-family:&quot=
+;MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=
+=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"JA" style=3D"mso-ligatures:non=
+e;mso-fareast-language:JA">
+</span><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-languag=
+e:JA">TMIEC ODG Porting) &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:=
+dinesh.kumar@toshiba-tsip.com"><span style=3D"mso-ligatures:none;mso-fareas=
+t-language:JA">dinesh.kumar@toshiba-tsip.com</span></a></span><span lang=3D=
+"EN-US" style=3D"mso-ligatures:none;mso-fareast-language:JA">&gt;;
+ 'venkata1.pyla' &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:venkata1=
+.pyla@toshibaap.onmicrosoft.com"><span style=3D"mso-ligatures:none;mso-fare=
+ast-language:JA">venkata1.pyla@toshibaap.onmicrosoft.com</span></a></span><=
+span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-language:JA">&g=
+t;;
+ kunijadar shivanand(</span><span lang=3D"JA" style=3D"font-family:&quot;MS=
+ PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=A3=
+=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" style=3D"mso-ligatures:non=
+e;mso-fareast-language:JA"> TMIEC ODG Porting) &lt;</span><span lang=3D"EN-=
+US"><a href=3D"mailto:Shivanand.Kunijadar@toshiba-tsip.com"><span style=3D"=
+mso-ligatures:none;mso-fareast-language:JA">Shivanand.Kunijadar@toshiba-tsi=
+p.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso=
+-fareast-language:JA">&gt;;
+ balakumar adithya(</span><span lang=3D"JA" style=3D"font-family:&quot;MS P=
+Gothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=A3=D4=
+=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" style=3D"mso-ligatures:none;m=
+so-fareast-language:JA"> TEUR) &lt;</span><span lang=3D"EN-US"><a href=3D"m=
+ailto:Adithya.Balakumar@toshiba-tsip.com"><span style=3D"mso-ligatures:none=
+;mso-fareast-language:JA">Adithya.Balakumar@toshiba-tsip.com</span></a></sp=
+an><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-language:JA=
+">&gt;;
+ sanglikar zaiba(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGo=
+thic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=A3=D4=A3=
+=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-=
+fareast-language:JA"> TEUR) &lt;</span><span lang=3D"EN-US"><a href=3D"mail=
+to:Zaiba.Sanglikar@toshiba-tsip.com"><span style=3D"mso-ligatures:none;mso-=
+fareast-language:JA">Zaiba.Sanglikar@toshiba-tsip.com</span></a></span><spa=
+n lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-language:JA">&gt;<=
+br>
+<b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
+oting the image )<o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">Hello Chris,<o:p></o:p></spa=
+n></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">We investigated further more=
+ about this issue you pointed out where two jobs using swtpm run at a simil=
+ar time on the same dispatcher. I agree with your
+ opinion that it is not ideal and maintainable if we try to use different v=
+ariables for each qemu device template. So we came up with another approach=
+.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">As per my understanding, swt=
+pm package is installed in lab-cip-renesas slave right, so for now let us c=
+onsider just using the
 <b>qemu-01-renesas </b>and <b>qemu-02-renesas </b>&nbsp;devices to run the =
 jobs which use swtpm related job definitions. Since there are only 2 qemu d=
 evices currently, we can use locking mechanism to force the second job ( th=
@@ -2398,1037 +2343,1099 @@ e one which was started later ) to wait
  until the first one is completely done with removal of .swtpm &nbsp;direct=
 ory as well killing that process. Once we confirm this in the script, only =
 then the second job will start swtpm socket.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">We measured the approximate time a full sof=
-tware update testing job can take and I will take care of that with the com=
-mand action timeout considering the worst case
- wait time. I revised the user-commands in the device dictionaries consider=
-ing how the software update scenario can be tested successfully using the s=
-ecurity image. So I removed adding killing and removing swtpm as undo actio=
-ns and instead added them as do
- action. To give you a better understanding for why I did this, please have=
- a look at the job definition I have attached in which I&nbsp; demonstrated=
- how multiple reboots can be handled with this kind of image running with a=
- swtpm socket.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">I also attached another file where I put th=
-e script to be present in LAVA dispatcher and the QEMU device dictionaries =
-(same for both qemu-01-renesas and qemu-02-renesas).<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">Please provide your feedback on the above m=
-entioned approach Chris.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">Thanks and Regards,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">Sai Ashrith (T S I P)<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">We measured the approximate =
+time a full software update testing job can take and I will take care of th=
+at with the command action timeout considering the
+ worst case wait time. I revised the user-commands in the device dictionari=
+es considering how the software update scenario can be tested successfully =
+using the security image. So I removed adding killing and removing swtpm as=
+ undo actions and instead added
+ them as do action. To give you a better understanding for why I did this, =
+please have a look at the job definition I have attached in which I&nbsp; d=
+emonstrated how multiple reboots can be handled with this kind of image run=
+ning with a swtpm socket.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">I also attached another file=
+ where I put the script to be present in LAVA dispatcher and the QEMU devic=
+e dictionaries (same for both qemu-01-renesas and
+ qemu-02-renesas).<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">Please provide your feedback=
+ on the above mentioned approach Chris.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">Thanks and Regards,<o:p></o:=
+p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">Sai Ashrith (T S I P)<o:p></=
+o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
 <div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none;mso-fareast-lan=
-guage:JA">From:</span></b><span style=3D"mso-ligatures:none;mso-fareast-lan=
-guage:JA"> ashrith sai(</span><span lang=3D"JA" style=3D"font-family:&quot;=
-MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B=
-$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-languag=
-e:JA">)
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none;=
+mso-fareast-language:JA">From:</span></b><span lang=3D"EN-US" style=3D"mso-=
+ligatures:none;mso-fareast-language:JA"> ashrith sai(</span><span lang=3D"J=
+A" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:non=
+e;mso-fareast-language:JA">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-=
+US" style=3D"mso-ligatures:none;mso-fareast-language:JA">)
 <br>
 <b>Sent:</b> Thursday, January 18, 2024 3:34 AM<br>
-<b>To:</b> 'Chris Paterson' &lt;</span><a href=3D"mailto:Chris.Paterson2@re=
-nesas.com"><span style=3D"mso-ligatures:none;mso-fareast-language:JA">Chris=
-.Paterson2@renesas.com</span></a><span style=3D"mso-ligatures:none;mso-fare=
-ast-language:JA">&gt;<br>
+<b>To:</b> 'Chris Paterson' &lt;</span><span lang=3D"EN-US"><a href=3D"mail=
+to:Chris.Paterson2@renesas.com"><span style=3D"mso-ligatures:none;mso-farea=
+st-language:JA">Chris.Paterson2@renesas.com</span></a></span><span lang=3D"=
+EN-US" style=3D"mso-ligatures:none;mso-fareast-language:JA">&gt;<br>
 <b>Cc:</b> dinesh kumar(</span><span lang=3D"JA" style=3D"font-family:&quot=
 ;MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=
-=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-lang=
-uage:JA"> TMIEC ODG Porting) &lt;</span><a href=3D"mailto:dinesh.kumar@tosh=
-iba-tsip.com"><span style=3D"mso-ligatures:none;mso-fareast-language:JA">di=
-nesh.kumar@toshiba-tsip.com</span></a><span style=3D"mso-ligatures:none;mso=
+=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"JA" style=3D"mso-ligatures:non=
+e;mso-fareast-language:JA">
+</span><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-languag=
+e:JA">TMIEC ODG Porting) &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:=
+dinesh.kumar@toshiba-tsip.com"><span style=3D"mso-ligatures:none;mso-fareas=
+t-language:JA">dinesh.kumar@toshiba-tsip.com</span></a></span><span lang=3D=
+"EN-US" style=3D"mso-ligatures:none;mso-fareast-language:JA">&gt;;
+ venkata1.pyla &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:venkata1.p=
+yla@toshibaap.onmicrosoft.com"><span style=3D"mso-ligatures:none;mso-fareas=
+t-language:JA">venkata1.pyla@toshibaap.onmicrosoft.com</span></a></span><sp=
+an lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-language:JA">&gt;=
+;
+ kunijadar shivanand(</span><span lang=3D"JA" style=3D"font-family:&quot;MS=
+ PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=A3=
+=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" style=3D"mso-ligatures:non=
+e;mso-fareast-language:JA"> TMIEC ODG Porting) &lt;</span><span lang=3D"EN-=
+US"><a href=3D"mailto:Shivanand.Kunijadar@toshiba-tsip.com"><span style=3D"=
+mso-ligatures:none;mso-fareast-language:JA">Shivanand.Kunijadar@toshiba-tsi=
+p.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso=
 -fareast-language:JA">&gt;;
- venkata1.pyla &lt;</span><a href=3D"mailto:venkata1.pyla@toshibaap.onmicro=
-soft.com"><span style=3D"mso-ligatures:none;mso-fareast-language:JA">venkat=
-a1.pyla@toshibaap.onmicrosoft.com</span></a><span style=3D"mso-ligatures:no=
-ne;mso-fareast-language:JA">&gt;; kunijadar
- shivanand(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&q=
-uot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#T#S#I#P=
-=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-language:JA"> TMI=
-EC ODG Porting) &lt;</span><a href=3D"mailto:Shivanand.Kunijadar@toshiba-ts=
-ip.com"><span style=3D"mso-ligatures:none;mso-fareast-language:JA">Shivanan=
-d.Kunijadar@toshiba-tsip.com</span></a><span style=3D"mso-ligatures:none;ms=
-o-fareast-language:JA">&gt;;
  balakumar adithya(</span><span lang=3D"JA" style=3D"font-family:&quot;MS P=
-Gothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#T=
-#S#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-language:JA=
-"> TEUR) &lt;</span><a href=3D"mailto:Adithya.Balakumar@toshiba-tsip.com"><=
-span style=3D"mso-ligatures:none;mso-fareast-language:JA">Adithya.Balakumar=
-@toshiba-tsip.com</span></a><span style=3D"mso-ligatures:none;mso-fareast-l=
-anguage:JA">&gt;;
+Gothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=A3=D4=
+=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" style=3D"mso-ligatures:none;m=
+so-fareast-language:JA"> TEUR) &lt;</span><span lang=3D"EN-US"><a href=3D"m=
+ailto:Adithya.Balakumar@toshiba-tsip.com"><span style=3D"mso-ligatures:none=
+;mso-fareast-language:JA">Adithya.Balakumar@toshiba-tsip.com</span></a></sp=
+an><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-language:JA=
+">&gt;;
  sanglikar zaiba(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGo=
-thic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#T#S=
-#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-language:JA">=
- TEUR) &lt;</span><a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com"><span=
- style=3D"mso-ligatures:none;mso-fareast-language:JA">Zaiba.Sanglikar@toshi=
-ba-tsip.com</span></a><span style=3D"mso-ligatures:none;mso-fareast-languag=
-e:JA">&gt;<br>
+thic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=A3=D4=A3=
+=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-=
+fareast-language:JA"> TEUR) &lt;</span><span lang=3D"EN-US"><a href=3D"mail=
+to:Zaiba.Sanglikar@toshiba-tsip.com"><span style=3D"mso-ligatures:none;mso-=
+fareast-language:JA">Zaiba.Sanglikar@toshiba-tsip.com</span></a></span><spa=
+n lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-language:JA">&gt;<=
+br>
 <b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
 oting the image )<o:p></o:p></span></p>
 </div>
 </div>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">Hello Chris,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">Thank you for identifying this scenario.<o:=
-p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">Yes, if two swupdate jobs runs on two devic=
-es on the same dispatcher, the latter will fail if needs to reboot again af=
-ter the first job is done. The reason is the UNIXIO
- socket will be gone after the client closed the connection. <o:p></o:p></s=
-pan></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">Here there are two problems,<o:p></o:p></sp=
-an></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<ol style=3D"margin-top:0in" start=3D"1" type=3D"1">
-<li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l0 level1 =
-lfo2"><span style=3D"font-family:&quot;Aptos&quot;,sans-serif;mso-fareast-l=
-anguage:EN-US">The .swtpm file names should be different or else there will=
- be TPM failures. I tried to resolve this ways which
- does not have us hardcoding the directory paths in each device template. F=
-or example, I tried to generate random strings using $RANDOM in the script,=
- so that they don=1B$B!G=1B(Bt have to hardcoded in the templates. But then=
- the problem will be, ------ &nbsp;How will we delete
- the directory after the job if cant send the name back to the template.<o:=
-p></o:p></span></li></ol>
-<p class=3D"MsoListParagraph"><span style=3D"font-family:&quot;Aptos&quot;,=
-sans-serif;mso-fareast-language:EN-US">So after some trials, I made the fol=
-lowing changes to the device templates and the script to handle the naming =
-problem of .swtpm file. I am attaching the new
- changes to this mail. Please have a look at those changes.<o:p></o:p></spa=
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">Hello Chris,<o:p></o:p></spa=
 n></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<ol style=3D"margin-top:0in" start=3D"2" type=3D"1">
-<li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l0 level1 =
-lfo2"><span style=3D"font-family:&quot;Aptos&quot;,sans-serif;mso-fareast-l=
-anguage:EN-US">Since the /tmp/qemu-swtpm.sock UNIXIO socket is gone after o=
-ne of the jobs is done, we can try to make this
- individual for each device just like how we did for .swtpm directory. But =
-now the problem will be, ---------- How will use the correct path for the c=
-haracter device in the boot arguments if it depends on the QEMU device. I t=
-ried to add a condition in the device
- template specific to the jobs which include security targets as mentioned =
-below.<o:p></o:p></span></li></ol>
-<p class=3D"MsoListParagraph"><span style=3D"font-family:&quot;Aptos&quot;,=
-sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoListParagraph"><span style=3D"font-family:&quot;Courier New&=
-quot;;mso-fareast-language:EN-US">{% if =1B$B!F=1B(Blava_test_results_dir=
-=1B$B!G=1B(B =3D=3D =1B$B!F=1B(B/home/lava-%s %}<o:p></o:p></span></p>
-<p class=3D"MsoListParagraph"><span style=3D"font-family:&quot;Courier New&=
-quot;;mso-fareast-language:EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp; - -chardev socket,id=3Dchrtpm,path=3D/tmp/qemu-01.sock<o:p></=
-o:p></span></p>
-<p class=3D"MsoListParagraph"><span style=3D"font-family:&quot;Courier New&=
-quot;;mso-fareast-language:EN-US">{% endif %}<o:p></o:p></span></p>
-<p class=3D"MsoListParagraph"><span style=3D"font-family:&quot;Courier New&=
-quot;;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<ol style=3D"margin-top:0in" start=3D"3" type=3D"1">
-<li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l0 level1 =
-lfo2"><span style=3D"font-family:&quot;Aptos&quot;,sans-serif;mso-fareast-l=
-anguage:EN-US">I used it like above because I was not able to find any cont=
-ext which narrow down to our jobs where we are using
- a read-only file system (That is why I changed the directory into /home). =
-But still the character device boot arguments are not updated while running=
- the test job. Please correct me if I was wrong.<o:p></o:p></span></li></ol=
->
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<ol style=3D"margin-top:0in" start=3D"4" type=3D"1">
-<li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l0 level1 =
-lfo2"><span style=3D"font-family:&quot;Aptos&quot;,sans-serif;mso-fareast-l=
-anguage:EN-US">Based on my investigation today, I think handling the test j=
-obs using these TPM based images simultaneously
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">Thank you for identifying th=
+is scenario.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">Yes, if two swupdate jobs ru=
+ns on two devices on the same dispatcher, the latter will fail if needs to =
+reboot again after the first job is done. The reason
+ is the UNIXIO socket will be gone after the client closed the connection. =
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">Here there are two problems,=
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<ol style=3D"margin-top:0cm" start=3D"1" type=3D"1">
+<li class=3D"MsoListParagraph" style=3D"margin-left:0cm;mso-list:l0 level1 =
+lfo2"><span lang=3D"EN-US" style=3D"font-family:&quot;Aptos&quot;,sans-seri=
+f;mso-fareast-language:EN-US">The .swtpm file names should be different or =
+else there will be TPM failures. I tried to resolve
+ this ways which does not have us hardcoding the directory paths in each de=
+vice template. For example, I tried to generate random strings using $RANDO=
+M in the script, so that they don=A1=AFt have to hardcoded in the templates=
+. But then the problem will be, ------
+ &nbsp;How will we delete the directory after the job if cant send the name=
+ back to the template.<o:p></o:p></span></li></ol>
+<p class=3D"MsoListParagraph"><span lang=3D"EN-US" style=3D"font-family:&qu=
+ot;Aptos&quot;,sans-serif;mso-fareast-language:EN-US">So after some trials,=
+ I made the following changes to the device templates and the script to han=
+dle the naming problem of .swtpm file. I am attaching
+ the new changes to this mail. Please have a look at those changes.<o:p></o=
+:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<ol style=3D"margin-top:0cm" start=3D"2" type=3D"1">
+<li class=3D"MsoListParagraph" style=3D"margin-left:0cm;mso-list:l0 level1 =
+lfo2"><span lang=3D"EN-US" style=3D"font-family:&quot;Aptos&quot;,sans-seri=
+f;mso-fareast-language:EN-US">Since the /tmp/qemu-swtpm.sock UNIXIO socket =
+is gone after one of the jobs is done, we can try
+ to make this individual for each device just like how we did for .swtpm di=
+rectory. But now the problem will be, ---------- How will use the correct p=
+ath for the character device in the boot arguments if it depends on the QEM=
+U device. I tried to add a condition
+ in the device template specific to the jobs which include security targets=
+ as mentioned below.<o:p></o:p></span></li></ol>
+<p class=3D"MsoListParagraph"><span lang=3D"EN-US" style=3D"font-family:&qu=
+ot;Aptos&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></sp=
+an></p>
+<p class=3D"MsoListParagraph"><span lang=3D"EN-US" style=3D"font-family:&qu=
+ot;Courier New&quot;;mso-fareast-language:EN-US">{% if =A1=AElava_test_resu=
+lts_dir=A1=AF =3D=3D =A1=AE/home/lava-%s %}<o:p></o:p></span></p>
+<p class=3D"MsoListParagraph"><span lang=3D"EN-US" style=3D"font-family:&qu=
+ot;Courier New&quot;;mso-fareast-language:EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp; - -chardev socket,id=3Dchrtpm,path=3D/tmp/qemu=
+-01.sock<o:p></o:p></span></p>
+<p class=3D"MsoListParagraph"><span lang=3D"EN-US" style=3D"font-family:&qu=
+ot;Courier New&quot;;mso-fareast-language:EN-US">{% endif %}<o:p></o:p></sp=
+an></p>
+<p class=3D"MsoListParagraph"><span lang=3D"EN-US" style=3D"font-family:&qu=
+ot;Courier New&quot;;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></=
+p>
+<ol style=3D"margin-top:0cm" start=3D"3" type=3D"1">
+<li class=3D"MsoListParagraph" style=3D"margin-left:0cm;mso-list:l0 level1 =
+lfo2"><span lang=3D"EN-US" style=3D"font-family:&quot;Aptos&quot;,sans-seri=
+f;mso-fareast-language:EN-US">I used it like above because I was not able t=
+o find any context which narrow down to our jobs where
+ we are using a read-only file system (That is why I changed the directory =
+into /home). But still the character device boot arguments are not updated =
+while running the test job. Please correct me if I was wrong.<o:p></o:p></s=
+pan></li></ol>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<ol style=3D"margin-top:0cm" start=3D"4" type=3D"1">
+<li class=3D"MsoListParagraph" style=3D"margin-left:0cm;mso-list:l0 level1 =
+lfo2"><span lang=3D"EN-US" style=3D"font-family:&quot;Aptos&quot;,sans-seri=
+f;mso-fareast-language:EN-US">Based on my investigation today, I think hand=
+ling the test jobs using these TPM based images simultaneously
  shall require independent variables for each device. But as you said befor=
 e, it might not be ideal to setup and maintain.<o:p></o:p></span></li></ol>
-<p class=3D"MsoListParagraph"><span style=3D"font-family:&quot;Aptos&quot;,=
-sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">Please provide your opinion on this and ple=
-ase suggest anything that I can try which can resolve the issue in point 2 =
-mentioned above.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">Thanks and Regards,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">Sai Ashrith ( T S I P )<o:p></o:p></span></=
-p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoListParagraph"><span lang=3D"EN-US" style=3D"font-family:&qu=
+ot;Aptos&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></sp=
+an></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">Please provide your opinion =
+on this and please suggest anything that I can try which can resolve the is=
+sue in point 2 mentioned above.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">Thanks and Regards,<o:p></o:=
+p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">Sai Ashrith ( T S I P )<o:p>=
+</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
 <div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none">From:</span></=
-b><span style=3D"mso-ligatures:none"> Chris Paterson &lt;</span><a href=3D"=
-mailto:Chris.Paterson2@renesas.com"><span style=3D"mso-ligatures:none">Chri=
-s.Paterson2@renesas.com</span></a><span style=3D"mso-ligatures:none">&gt;
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+>From:</span></b><span lang=3D"EN-US" style=3D"mso-ligatures:none"> Chris P=
+aterson &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:Chris.Paterson2@r=
+enesas.com"><span style=3D"mso-ligatures:none">Chris.Paterson2@renesas.com<=
+/span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">&gt;
 <br>
 <b>Sent:</b> Wednesday, January 17, 2024 7:26 PM<br>
 <b>To:</b> ashrith sai(</span><span lang=3D"ZH-CN" style=3D"font-family:Sim=
-Sun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatur=
-es:none">) &lt;</span><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com"><sp=
-an style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span></a><s=
-pan style=3D"mso-ligatures:none">&gt;<br>
+Sun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US"=
+ style=3D"mso-ligatures:none">) &lt;</span><span lang=3D"EN-US"><a href=3D"=
+mailto:Sai.Sathujoda@toshiba-tsip.com"><span style=3D"mso-ligatures:none">S=
+ai.Sathujoda@toshiba-tsip.com</span></a></span><span lang=3D"EN-US" style=
+=3D"mso-ligatures:none">&gt;<br>
 <b>Cc:</b> dinesh kumar(</span><span lang=3D"ZH-CN" style=3D"font-family:Si=
-mSun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatu=
-res:none"> TMIEC ODG Porting) &lt;</span><a href=3D"mailto:dinesh.kumar@tos=
-hiba-tsip.com"><span style=3D"mso-ligatures:none">dinesh.kumar@toshiba-tsip=
-.com</span></a><span style=3D"mso-ligatures:none">&gt;;
- venkata1.pyla &lt;</span><a href=3D"mailto:venkata1.pyla@toshibaap.onmicro=
-soft.com"><span style=3D"mso-ligatures:none">venkata1.pyla@toshibaap.onmicr=
-osoft.com</span></a><span style=3D"mso-ligatures:none">&gt;; kunijadar shiv=
-anand(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures=
-:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none">
- TMIEC ODG Porting) &lt;</span><a href=3D"mailto:Shivanand.Kunijadar@toshib=
-a-tsip.com"><span style=3D"mso-ligatures:none">Shivanand.Kunijadar@toshiba-=
-tsip.com</span></a><span style=3D"mso-ligatures:none">&gt;; balakumar adith=
-ya(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:no=
-ne">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none">
- TEUR) &lt;</span><a href=3D"mailto:Adithya.Balakumar@toshiba-tsip.com"><sp=
-an style=3D"mso-ligatures:none">Adithya.Balakumar@toshiba-tsip.com</span></=
-a><span style=3D"mso-ligatures:none">&gt;; sanglikar zaiba(</span><span lan=
-g=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#T#S#I#P=
-=1B(B</span><span style=3D"mso-ligatures:none">
- TEUR) &lt;</span><a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com"><span=
- style=3D"mso-ligatures:none">Zaiba.Sanglikar@toshiba-tsip.com</span></a><s=
-pan style=3D"mso-ligatures:none">&gt;<br>
+mSun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US=
+" style=3D"mso-ligatures:none"> TMIEC ODG Porting) &lt;</span><span lang=3D=
+"EN-US"><a href=3D"mailto:dinesh.kumar@toshiba-tsip.com"><span style=3D"mso=
+-ligatures:none">dinesh.kumar@toshiba-tsip.com</span></a></span><span lang=
+=3D"EN-US" style=3D"mso-ligatures:none">&gt;;
+ venkata1.pyla &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:venkata1.p=
+yla@toshibaap.onmicrosoft.com"><span style=3D"mso-ligatures:none">venkata1.=
+pyla@toshibaap.onmicrosoft.com</span></a></span><span lang=3D"EN-US" style=
+=3D"mso-ligatures:none">&gt;; kunijadar shivanand(</span><span lang=3D"ZH-C=
+N" style=3D"font-family:SimSun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0=
+</span><span lang=3D"EN-US" style=3D"mso-ligatures:none">
+ TMIEC ODG Porting) &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:Shiva=
+nand.Kunijadar@toshiba-tsip.com"><span style=3D"mso-ligatures:none">Shivana=
+nd.Kunijadar@toshiba-tsip.com</span></a></span><span lang=3D"EN-US" style=
+=3D"mso-ligatures:none">&gt;; balakumar adithya(</span><span lang=3D"ZH-CN"=
+ style=3D"font-family:SimSun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</=
+span><span lang=3D"EN-US" style=3D"mso-ligatures:none">
+ TEUR) &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:Adithya.Balakumar@=
+toshiba-tsip.com"><span style=3D"mso-ligatures:none">Adithya.Balakumar@tosh=
+iba-tsip.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:n=
+one">&gt;; sanglikar zaiba(</span><span lang=3D"ZH-CN" style=3D"font-family=
+:SimSun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN=
+-US" style=3D"mso-ligatures:none">
+ TEUR) &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:Zaiba.Sanglikar@to=
+shiba-tsip.com"><span style=3D"mso-ligatures:none">Zaiba.Sanglikar@toshiba-=
+tsip.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+>&gt;<br>
+<b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
+oting the image )<o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">Hello Sai,<o:p></o:p></span><=
+/p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">Thank you for the update.<o:p=
+></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">If I understand it correctly,=
+ when you run swtpm_start.sh, the
+</span><span class=3D"CodeChar"><span style=3D"mso-fareast-language:EN-US">=
+/var/lib/lava/dispatcher/tmp/cip-core-security.swtpm</span></span><span sty=
+le=3D"font-family:&quot;Aptos&quot;,sans-serif;color:#7030A0;mso-fareast-la=
+nguage:EN-US"> file will be created.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">And then when the job is fini=
+shed, the undo command will be run and this file will be removed.<o:p></o:p=
+></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">Sounds good.<o:p></o:p></span=
+></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">However, this location is gen=
+eric to ALL jobs run on that LAVA dispatcher.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">So, if you had a SW Update te=
+st job running on two boards connected to the same LAVA dispatcher at the s=
+ame time, we could have a case where the
+</span><span class=3D"CodeChar"><span style=3D"mso-fareast-language:EN-US">=
+cip-core-security.swtpm</span></span><span style=3D"font-family:&quot;Aptos=
+&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"> file either ge=
+ts corrupted by a second LAVA job trying to use
+ it at the same time, or we could face an issue where the first job deletes=
+ the file before the second has finished with it.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">Is it possible to use the swt=
+pm socket with multiple devices at the same time?<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">Or is it a 1to1 relationship?=
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">If the latter, then we can ke=
+ep the current approach, but we need to somehow use a different
+</span><span class=3D"CodeChar"><span style=3D"mso-fareast-language:EN-US">=
+cip-core-security.swtpm</span></span><span style=3D"font-family:&quot;Aptos=
+&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"> file for each =
+running job.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">Are you planning to add the
+</span><span class=3D"CodeChar"><span style=3D"mso-fareast-language:EN-US">=
+create_swtpm_tmpdir</span></span><span style=3D"font-family:&quot;Aptos&quo=
+t;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"> to the device temp=
+late for each individual device? Or only to the
+ device-type definitions? Are there any other places this can be defined?<o=
+:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US">If we are planning to add it =
+to each individual device template, we could just use a different filename =
+for each of them. Not ideal to setup &amp; maintain
+ though.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<div>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-ligatures:none;mso-fareast-language:EN-GB">Kind regar=
+ds, Chris<o:p></o:p></span></p>
+</div>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
+rif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0cm 0cm 0cm =
+4.0pt">
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+>From:</span></b><span lang=3D"EN-US" style=3D"mso-ligatures:none">
+</span><span lang=3D"EN-US"><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.co=
+m"><span style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span>=
+</a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none"> &lt;</span><s=
+pan lang=3D"EN-US"><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com"><span =
+style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span></a></spa=
+n><span lang=3D"EN-US" style=3D"mso-ligatures:none">&gt;
+<br>
+<b>Sent:</b> Tuesday, January 16, 2024 12:40 PM<br>
+<b>To:</b> Chris Paterson &lt;</span><span lang=3D"EN-US"><a href=3D"mailto=
+:Chris.Paterson2@renesas.com"><span style=3D"mso-ligatures:none">Chris.Pate=
+rson2@renesas.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatu=
+res:none">&gt;<br>
+<b>Cc:</b> </span><span lang=3D"EN-US"><a href=3D"mailto:dinesh.kumar@toshi=
+ba-tsip.com"><span style=3D"mso-ligatures:none">dinesh.kumar@toshiba-tsip.c=
+om</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:venkata1.pyla@toshibaap.onmic=
+rosoft.com"><span style=3D"mso-ligatures:none">venkata1.pyla@toshibaap.onmi=
+crosoft.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:no=
+ne">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Shivanand.Kunijadar@toshiba-t=
+sip.com"><span style=3D"mso-ligatures:none">Shivanand.Kunijadar@toshiba-tsi=
+p.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Adithya.Balakumar@toshiba-tsi=
+p.com"><span style=3D"mso-ligatures:none">Adithya.Balakumar@toshiba-tsip.co=
+m</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.=
+com"><span style=3D"mso-ligatures:none">Zaiba.Sanglikar@toshiba-tsip.com</s=
+pan></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none"><br>
 <b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
 oting the image )<o:p></o:p></span></p>
 </div>
 </div>
 <p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Hello Sai,<o:p=
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">Hello Chris,<o:p></o:p></spa=
+n></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">Hope you are doing well.<o:p=
 ></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Thank you for =
-the update.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">If I understan=
-d it correctly, when you run swtpm_start.sh, the
-</span><span class=3D"CodeChar"><span lang=3D"EN-GB" style=3D"mso-fareast-l=
-anguage:EN-US">/var/lib/lava/dispatcher/tmp/cip-core-security.swtpm</span><=
-/span><span lang=3D"EN-GB" style=3D"font-family:&quot;Aptos&quot;,sans-seri=
-f;color:#7030A0;mso-fareast-language:EN-US"> file will
- be created.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">And then when =
-the job is finished, the undo command will be run and this file will be rem=
-oved.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Sounds good.<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">However, this =
-location is generic to ALL jobs run on that LAVA dispatcher.<o:p></o:p></sp=
-an></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">So, if you had=
- a SW Update test job running on two boards connected to the same LAVA disp=
-atcher at the same time, we could have a case where
- the </span><span class=3D"CodeChar"><span lang=3D"EN-GB" style=3D"mso-fare=
-ast-language:EN-US">cip-core-security.swtpm</span></span><span lang=3D"EN-G=
-B" style=3D"font-family:&quot;Aptos&quot;,sans-serif;color:#7030A0;mso-fare=
-ast-language:EN-US"> file either gets corrupted by a
- second LAVA job trying to use it at the same time, or we could face an iss=
-ue where the first job deletes the file before the second has finished with=
- it.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Is it possible=
- to use the swtpm socket with multiple devices at the same time?<o:p></o:p>=
-</span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Or is it a 1to=
-1 relationship?<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">If the latter,=
- then we can keep the current approach, but we need to somehow use a differ=
-ent
-</span><span class=3D"CodeChar"><span lang=3D"EN-GB" style=3D"mso-fareast-l=
-anguage:EN-US">cip-core-security.swtpm</span></span><span lang=3D"EN-GB" st=
-yle=3D"font-family:&quot;Aptos&quot;,sans-serif;color:#7030A0;mso-fareast-l=
-anguage:EN-US"> file for each running job.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Are you planni=
-ng to add the
-</span><span class=3D"CodeChar"><span lang=3D"EN-GB" style=3D"mso-fareast-l=
-anguage:EN-US">create_swtpm_tmpdir</span></span><span lang=3D"EN-GB" style=
-=3D"font-family:&quot;Aptos&quot;,sans-serif;color:#7030A0;mso-fareast-lang=
-uage:EN-US"> to the device template for each individual
- device? Or only to the device-type definitions? Are there any other places=
- this can be defined?<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">If we are plan=
-ning to add it to each individual device template, we could just use a diff=
-erent filename for each of them. Not ideal to setup
- &amp; maintain though.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-ligatures:none;mso-fareast-language:EN=
--GB">Kind regards, Chris<o:p></o:p></span></p>
-</div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0in 0in 0in =
-4.0pt">
-<div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none">From:</span></=
-b><span style=3D"mso-ligatures:none">
-</span><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com"><span style=3D"mso=
--ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span></a><span style=3D"ms=
-o-ligatures:none"> &lt;</span><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.=
-com"><span style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</spa=
-n></a><span style=3D"mso-ligatures:none">&gt;
-<br>
-<b>Sent:</b> Tuesday, January 16, 2024 12:40 PM<br>
-<b>To:</b> Chris Paterson &lt;</span><a href=3D"mailto:Chris.Paterson2@rene=
-sas.com"><span style=3D"mso-ligatures:none">Chris.Paterson2@renesas.com</sp=
-an></a><span style=3D"mso-ligatures:none">&gt;<br>
-<b>Cc:</b> </span><a href=3D"mailto:dinesh.kumar@toshiba-tsip.com"><span st=
-yle=3D"mso-ligatures:none">dinesh.kumar@toshiba-tsip.com</span></a><span st=
-yle=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:venkata1.pyla@toshibaap.onmicrosoft.com"><span sty=
-le=3D"mso-ligatures:none">venkata1.pyla@toshibaap.onmicrosoft.com</span></a=
-><span style=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:Shivanand.Kunijadar@toshiba-tsip.com"><span style=
-=3D"mso-ligatures:none">Shivanand.Kunijadar@toshiba-tsip.com</span></a><spa=
-n style=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:Adithya.Balakumar@toshiba-tsip.com"><span style=3D=
-"mso-ligatures:none">Adithya.Balakumar@toshiba-tsip.com</span></a><span sty=
-le=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com"><span style=3D"m=
-so-ligatures:none">Zaiba.Sanglikar@toshiba-tsip.com</span></a><span style=
-=3D"mso-ligatures:none"><br>
-<b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
-oting the image )<o:p></o:p></span></p>
-</div>
-</div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">Hello Chris,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">Hope you are doing well.<o:p></o:p></span><=
-/p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">I locally tested some configurations requir=
-ed to start the swtpm before booting the CIP security image and I am able t=
-o boot the image.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<pre><span style=3D"font-family:&quot;Aptos&quot;,sans-serif">When we inclu=
-de </span>swtpm socket -t -d --tpmstate dir=3D&quot;${SWTPM_DIR}&quot; --ct=
-rl type=3Dunixio,path=3D/tmp/qemu-swtpm.sock --tpm2, <span style=3D"font-si=
-ze:11.0pt;font-family:&quot;Aptos&quot;,sans-serif">it does not return valu=
-e 0. And until the command run in the LAVA dispatcher does not return a val=
-ue, the job will stuck leading to a timeout. So to handle this we can do it=
- just like how it is implemented in isar-cip-core i.e by putting it in an i=
-f-condition. Please have a look at this code snippet.<o:p></o:p></span></pr=
-e>
-<p class=3D"MsoNormal"><a href=3D"https://gitlab.com/cip-project/cip-core/i=
-sar-cip-core/-/blob/master/start-qemu.sh?ref_type=3Dheads#L173"><span style=
-=3D"font-family:&quot;Aptos&quot;,sans-serif;mso-fareast-language:EN-US">ht=
-tps://gitlab.com/cip-project/cip-core/isar-cip-core/-/blob/master/start-qem=
-u.sh?ref_type=3Dheads#L173</span></a><span style=3D"font-family:&quot;Aptos=
-&quot;,sans-serif;mso-fareast-language:EN-US"><o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US">But we cannot define a script inside
-</span><span style=3D"font-family:&quot;Courier New&quot;">{% set user_comm=
-ands =3D %}, </span>
-<span style=3D"font-family:&quot;Aptos&quot;,sans-serif">qemu-**.jinja2 tem=
-plate. So instead we can create a swtpm_start.sh script with a+x permission=
-s in LAVA slave container and append the below configurations in the qemu j=
-inja2 device templates in the LAVA server.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Courier New&quot;;m=
-so-ligatures:none;mso-fareast-language:EN-US">{% set user_commands =3D {'cr=
-eate_swtpm_tmpdir': {'do': 'sh /home/swtpm_start.sh',</span><span style=3D"=
-font-family:&quot;Aptos&quot;,sans-serif;mso-ligatures:none;mso-fareast-lan=
-guage:EN-US">
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">I locally tested some config=
+urations required to start the swtpm before booting the CIP security image =
+and I am able to boot the image.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<pre><span lang=3D"EN-US" style=3D"font-family:&quot;Aptos&quot;,sans-serif=
+">When we include </span><span lang=3D"EN-US">swtpm socket -t -d --tpmstate=
+ dir=3D&quot;${SWTPM_DIR}&quot; --ctrl type=3Dunixio,path=3D/tmp/qemu-swtpm=
+.sock --tpm2, </span><span lang=3D"EN-US" style=3D"font-size:11.0pt;font-fa=
+mily:&quot;Aptos&quot;,sans-serif">it does not return value 0. And until th=
+e command run in the LAVA dispatcher does not return a value, the job will =
+stuck leading to a timeout. So to handle this we can do it just like how it=
+ is implemented in isar-cip-core i.e by putting it in an if-condition. Plea=
+se have a look at this code snippet.<o:p></o:p></span></pre>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><a href=3D"https://gitlab.com/c=
+ip-project/cip-core/isar-cip-core/-/blob/master/start-qemu.sh?ref_type=3Dhe=
+ads#L173"><span style=3D"font-family:&quot;Aptos&quot;,sans-serif;mso-farea=
+st-language:EN-US">https://gitlab.com/cip-project/cip-core/isar-cip-core/-/=
+blob/master/start-qemu.sh?ref_type=3Dheads#L173</span></a></span><span lang=
+=3D"EN-US" style=3D"font-family:&quot;Aptos&quot;,sans-serif;mso-fareast-la=
+nguage:EN-US"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US">But we cannot define a scrip=
+t inside
+</span><span lang=3D"EN-US" style=3D"font-family:&quot;Courier New&quot;">{=
+% set user_commands =3D %},
+</span><span lang=3D"EN-US" style=3D"font-family:&quot;Aptos&quot;,sans-ser=
+if">qemu-**.jinja2 template. So instead we can create a swtpm_start.sh scri=
+pt with a+x permissions in LAVA slave container and append the below config=
+urations in the qemu jinja2 device templates in
+ the LAVA server.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Cour=
+ier New&quot;;mso-ligatures:none;mso-fareast-language:EN-US">{% set user_co=
+mmands =3D {'create_swtpm_tmpdir': {'do': 'sh /home/swtpm_start.sh',</span>=
+<span lang=3D"EN-US" style=3D"font-family:&quot;Aptos&quot;,sans-serif;mso-=
+ligatures:none;mso-fareast-language:EN-US">
 <o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Courier New&quot;;m=
-so-ligatures:none;mso-fareast-language:EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Cour=
+ier New&quot;;mso-ligatures:none;mso-fareast-language:EN-US">&nbsp;&nbsp;&n=
 bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
 ;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;'undo': 'rm -rf /var/lib/lava/dispatcher/tmp/cip-core-secur=
-ity.swtpm'}} %}</span><span style=3D"font-family:&quot;Aptos&quot;,sans-ser=
-if;mso-ligatures:none;mso-fareast-language:EN-US">
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'undo': 'rm -rf /var/lib/lava/dispatcher/tmp=
+/cip-core-security.swtpm'}} %}</span><span lang=3D"EN-US" style=3D"font-fam=
+ily:&quot;Aptos&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:EN=
+-US">
 <o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-ligatures:none;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-ligatures:none;mso-fareast-language:EN-US">We can add the below bas=
-h script in
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:EN-US">We can ad=
+d the below bash script in
 <b>swtpm_start.sh</b><o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-ligatures:none;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Courier New&quot;;m=
-so-ligatures:none;mso-fareast-language:EN-US">#!/bin/sh<o:p></o:p></span></=
-p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Courier New&quot;;m=
-so-ligatures:none;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Courier New&quot;;m=
-so-ligatures:none;mso-fareast-language:EN-US">mkdir -p /var/lib/lava/dispat=
-cher/tmp/cip-core-security.swtpm<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Courier New&quot;;m=
-so-ligatures:none;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Courier New&quot;;m=
-so-ligatures:none;mso-fareast-language:EN-US">if swtpm socket -d --tpmstate=
- dir=3D&quot;/var/lib/lava/dispatcher/tmp/cip-core-security.swtpm&quot; \<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Courier New&quot;;m=
-so-ligatures:none;mso-fareast-language:EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --ctrl type=3Dunixio,path=3D/tmp/q=
-emu-swtpm.sock \<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Courier New&quot;;m=
-so-ligatures:none;mso-fareast-language:EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --tpm2; then<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Courier New&quot;;m=
-so-ligatures:none;mso-fareast-language:EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp; echo $?<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Courier New&quot;;m=
-so-ligatures:none;mso-fareast-language:EN-US">fi<o:p></o:p></span></p>
-<div style=3D"border:none;border-bottom:solid windowtext 1.0pt;padding:0in =
-0in 1.0pt 0in">
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Courier New&quot;;m=
-so-ligatures:none;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-</div>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-ligatures:none;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-ligatures:none;mso-fareast-language:EN-US">Please provide your feed=
-back on the above approach Chris.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-ligatures:none;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-ligatures:none;mso-fareast-language:EN-US">Thanks and regards,<o:p>=
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Cour=
+ier New&quot;;mso-ligatures:none;mso-fareast-language:EN-US">#!/bin/sh<o:p>=
 </o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-ligatures:none;mso-fareast-language:EN-US">Sai Ashrith<o:p></o:p></=
-span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Cour=
+ier New&quot;;mso-ligatures:none;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
+:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Cour=
+ier New&quot;;mso-ligatures:none;mso-fareast-language:EN-US">mkdir -p /var/=
+lib/lava/dispatcher/tmp/cip-core-security.swtpm<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Cour=
+ier New&quot;;mso-ligatures:none;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
+:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Cour=
+ier New&quot;;mso-ligatures:none;mso-fareast-language:EN-US">if swtpm socke=
+t -d --tpmstate dir=3D&quot;/var/lib/lava/dispatcher/tmp/cip-core-security.=
+swtpm&quot; \<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Cour=
+ier New&quot;;mso-ligatures:none;mso-fareast-language:EN-US">&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --ctrl type=3Dunixi=
+o,path=3D/tmp/qemu-swtpm.sock \<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Cour=
+ier New&quot;;mso-ligatures:none;mso-fareast-language:EN-US">&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --tpm2; then<o:p></=
+o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Cour=
+ier New&quot;;mso-ligatures:none;mso-fareast-language:EN-US">&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp; echo $?<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Cour=
+ier New&quot;;mso-ligatures:none;mso-fareast-language:EN-US">fi<o:p></o:p><=
+/span></p>
+<div style=3D"border:none;border-bottom:solid windowtext 1.0pt;padding:0cm =
+0cm 1.0pt 0cm">
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Cour=
+ier New&quot;;mso-ligatures:none;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
+:p></span></p>
+</div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:EN-US">Please pr=
+ovide your feedback on the above approach Chris.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:EN-US">Thanks an=
+d regards,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:EN-US">Sai Ashri=
+th<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
 <div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none">From:</span></=
-b><span style=3D"mso-ligatures:none"> Chris Paterson &lt;</span><a href=3D"=
-mailto:Chris.Paterson2@renesas.com"><span style=3D"mso-ligatures:none">Chri=
-s.Paterson2@renesas.com</span></a><span style=3D"mso-ligatures:none">&gt;
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+>From:</span></b><span lang=3D"EN-US" style=3D"mso-ligatures:none"> Chris P=
+aterson &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:Chris.Paterson2@r=
+enesas.com"><span style=3D"mso-ligatures:none">Chris.Paterson2@renesas.com<=
+/span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">&gt;
 <br>
 <b>Sent:</b> Thursday, January 4, 2024 5:58 PM<br>
 <b>To:</b> ashrith sai(</span><span lang=3D"ZH-CN" style=3D"font-family:Sim=
-Sun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatur=
-es:none">) &lt;</span><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com"><sp=
-an style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span></a><s=
-pan style=3D"mso-ligatures:none">&gt;<br>
+Sun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US"=
+ style=3D"mso-ligatures:none">) &lt;</span><span lang=3D"EN-US"><a href=3D"=
+mailto:Sai.Sathujoda@toshiba-tsip.com"><span style=3D"mso-ligatures:none">S=
+ai.Sathujoda@toshiba-tsip.com</span></a></span><span lang=3D"EN-US" style=
+=3D"mso-ligatures:none">&gt;<br>
 <b>Cc:</b> dinesh kumar(</span><span lang=3D"ZH-CN" style=3D"font-family:Si=
-mSun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatu=
-res:none"> TMIEC ODG Porting) &lt;</span><a href=3D"mailto:dinesh.kumar@tos=
-hiba-tsip.com"><span style=3D"mso-ligatures:none">dinesh.kumar@toshiba-tsip=
-.com</span></a><span style=3D"mso-ligatures:none">&gt;;
- venkata1.pyla &lt;</span><a href=3D"mailto:venkata1.pyla@toshibaap.onmicro=
-soft.com"><span style=3D"mso-ligatures:none">venkata1.pyla@toshibaap.onmicr=
-osoft.com</span></a><span style=3D"mso-ligatures:none">&gt;; kunijadar shiv=
-anand(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures=
-:none">=1B$B#T#S#I#P=1B(B</span><span lang=3D"ZH-CN" style=3D"mso-ligatures=
-:none">
-</span><span style=3D"mso-ligatures:none">TMIEC ODG Porting) &lt;</span><a =
-href=3D"mailto:Shivanand.Kunijadar@toshiba-tsip.com"><span style=3D"mso-lig=
-atures:none">Shivanand.Kunijadar@toshiba-tsip.com</span></a><span style=3D"=
-mso-ligatures:none">&gt;; balakumar adithya(</span><span lang=3D"ZH-CN" sty=
-le=3D"font-family:SimSun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span=
- style=3D"mso-ligatures:none">
- TEUR) &lt;</span><a href=3D"mailto:Adithya.Balakumar@toshiba-tsip.com"><sp=
-an style=3D"mso-ligatures:none">Adithya.Balakumar@toshiba-tsip.com</span></=
-a><span style=3D"mso-ligatures:none">&gt;; sanglikar zaiba(</span><span lan=
-g=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#T#S#I#P=
-=1B(B</span><span style=3D"mso-ligatures:none">
- TEUR) &lt;</span><a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com"><span=
- style=3D"mso-ligatures:none">Zaiba.Sanglikar@toshiba-tsip.com</span></a><s=
-pan style=3D"mso-ligatures:none">&gt;<br>
+mSun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US=
+" style=3D"mso-ligatures:none"> TMIEC ODG Porting) &lt;</span><span lang=3D=
+"EN-US"><a href=3D"mailto:dinesh.kumar@toshiba-tsip.com"><span style=3D"mso=
+-ligatures:none">dinesh.kumar@toshiba-tsip.com</span></a></span><span lang=
+=3D"EN-US" style=3D"mso-ligatures:none">&gt;;
+ venkata1.pyla &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:venkata1.p=
+yla@toshibaap.onmicrosoft.com"><span style=3D"mso-ligatures:none">venkata1.=
+pyla@toshibaap.onmicrosoft.com</span></a></span><span lang=3D"EN-US" style=
+=3D"mso-ligatures:none">&gt;; kunijadar shivanand(</span><span lang=3D"ZH-C=
+N" style=3D"font-family:SimSun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0=
+</span><span lang=3D"ZH-CN" style=3D"mso-ligatures:none">
+</span><span lang=3D"EN-US" style=3D"mso-ligatures:none">TMIEC ODG Porting)=
+ &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:Shivanand.Kunijadar@tosh=
+iba-tsip.com"><span style=3D"mso-ligatures:none">Shivanand.Kunijadar@toshib=
+a-tsip.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:non=
+e">&gt;;
+ balakumar adithya(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;=
+mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" sty=
+le=3D"mso-ligatures:none"> TEUR) &lt;</span><span lang=3D"EN-US"><a href=3D=
+"mailto:Adithya.Balakumar@toshiba-tsip.com"><span style=3D"mso-ligatures:no=
+ne">Adithya.Balakumar@toshiba-tsip.com</span></a></span><span lang=3D"EN-US=
+" style=3D"mso-ligatures:none">&gt;;
+ sanglikar zaiba(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;ms=
+o-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" style=
+=3D"mso-ligatures:none"> TEUR) &lt;</span><span lang=3D"EN-US"><a href=3D"m=
+ailto:Zaiba.Sanglikar@toshiba-tsip.com"><span style=3D"mso-ligatures:none">=
+Zaiba.Sanglikar@toshiba-tsip.com</span></a></span><span lang=3D"EN-US" styl=
+e=3D"mso-ligatures:none">&gt;<br>
 <b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
 oting the image )<o:p></o:p></span></p>
 </div>
 </div>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US">Hello Sai,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US">I=1B$B!G=1B(Bve had a look.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US">For option 1), we could have done it if we had a way of=
- knowing the LAVA Job number when we run the command, however from what I=
-=1B$B!G=1B(Bve experimented with we don=1B$B!G=1B(Bt.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US">We could create a directory with =1B$B!F=1B(Bdo=1B$B!G=
-=1B(B and remove it with =1B$B!F=1B(Bundo=1B$B!G=1B(B, however the director=
-y would need to be unique to avoid clashes.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US">If we were to add our custom command individually to ev=
-ery device dictionary we could do this, but it would be easier to maintain =
-if we only added the commend to the device
- type dictionaries.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US">For option 2), wouldn=1B$B!G=1B(Bt we face a similar is=
-sue? The TPM_PATH variable would need to be set with a unique value for eac=
-h test run before the job starts.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US">Wouldn=1B$B!G=1B(Bt we need to stop the TPM emulator on=
-ce a job has completed?<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US">Hello Sai,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US">I=A1=AFve had a look.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US">For option 1), we could have done it if we had a way of knowing the LA=
+VA Job number when we run the command, however from what I=A1=AFve experime=
+nted with we don=A1=AFt.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US">We could create a directory with =A1=AEdo=A1=AF and remove it with =A1=
+=AEundo=A1=AF, however the directory would need to be unique to avoid clash=
+es.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US">If we were to add our custom command individually to every device dict=
+ionary we could do this, but it would be easier to maintain if we only adde=
+d the commend to the device type dictionaries.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US">For option 2), wouldn=A1=AFt we face a similar issue? The TPM_PATH var=
+iable would need to be set with a unique value for each test run before the=
+ job starts.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US">Wouldn=A1=AFt we need to stop the TPM emulator once a job has complete=
+d?<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US"><o:p>&nbsp;</o:p></span></p>
 <div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-liga=
-tures:none;mso-fareast-language:EN-GB">Kind regards, Chris<o:p></o:p></span=
-></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-ligatures:none;mso-=
+fareast-language:EN-GB">Kind regards, Chris<o:p></o:p></span></p>
 </div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0in 0in 0in =
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US"><o:p>&nbsp;</o:p></span></p>
+<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0cm 0cm 0cm =
 4.0pt">
 <div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none">From:</span></=
-b><span style=3D"mso-ligatures:none">
-</span><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com"><span style=3D"mso=
--ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span></a><span style=3D"ms=
-o-ligatures:none"> &lt;</span><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.=
-com"><span style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</spa=
-n></a><span style=3D"mso-ligatures:none">&gt;
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+>From:</span></b><span lang=3D"EN-US" style=3D"mso-ligatures:none">
+</span><span lang=3D"EN-US"><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.co=
+m"><span style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span>=
+</a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none"> &lt;</span><s=
+pan lang=3D"EN-US"><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com"><span =
+style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span></a></spa=
+n><span lang=3D"EN-US" style=3D"mso-ligatures:none">&gt;
 <br>
 <b>Sent:</b> Wednesday, January 3, 2024 7:25 AM<br>
-<b>To:</b> Chris Paterson &lt;</span><a href=3D"mailto:Chris.Paterson2@rene=
-sas.com"><span style=3D"mso-ligatures:none">Chris.Paterson2@renesas.com</sp=
-an></a><span style=3D"mso-ligatures:none">&gt;<br>
-<b>Cc:</b> </span><a href=3D"mailto:dinesh.kumar@toshiba-tsip.com"><span st=
-yle=3D"mso-ligatures:none">dinesh.kumar@toshiba-tsip.com</span></a><span st=
-yle=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:venkata1.pyla@toshibaap.onmicrosoft.com"><span sty=
-le=3D"mso-ligatures:none">venkata1.pyla@toshibaap.onmicrosoft.com</span></a=
-><span style=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:Shivanand.Kunijadar@toshiba-tsip.com"><span style=
-=3D"mso-ligatures:none">Shivanand.Kunijadar@toshiba-tsip.com</span></a><spa=
-n style=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:Adithya.Balakumar@toshiba-tsip.com"><span style=3D=
-"mso-ligatures:none">Adithya.Balakumar@toshiba-tsip.com</span></a><span sty=
-le=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com"><span style=3D"m=
-so-ligatures:none">Zaiba.Sanglikar@toshiba-tsip.com</span></a><span style=
-=3D"mso-ligatures:none"><br>
-<b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
-oting the image )<o:p></o:p></span></p>
-</div>
-</div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hi Chris,=
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">I was abl=
-e to access OVMF related files in my job definitions in qemu-devices in =1B=
-$B!H=1B(Blab-renesas-cip=1B$B!I=1B(B. Now let me explain the current situat=
-ion while starting the tpm emulator using swtpm<b>.<o:p></o:p></b></span></=
-p>
-<p class=3D"MsoNormal"><b><span style=3D"mso-fareast-language:EN-US"><o:p>&=
-nbsp;</o:p></span></b></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">We need t=
-o run this command right before we boot the image to start the TPM emulator
-</span><span style=3D"font-family:Wingdings;mso-fareast-language:EN-US">&ag=
-rave;</span><span style=3D"mso-fareast-language:EN-US">
-<b>swtpm socket -d --tpmstate dir=3D&quot;${SWTPM_DIR}&quot; --ctrl type=3D=
-unixio,path=3D/tmp/qemu-swtpm.sock --tpm2<o:p></o:p></b></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<ol style=3D"margin-top:0in" start=3D"1" type=3D"1">
-<li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l1 level1 =
-lfo3"><span style=3D"mso-fareast-language:EN-US">A directory must be create=
-d to store the TPM state files before we run this command. I doubt if there=
- is a way to create a temporary directory
- in this path </span><span style=3D"font-size:9.5pt;font-family:Consolas;co=
-lor:black;background:#F9F2F4">/var/lib/lava/dispatcher/tmp/&lt;job_id&gt;/<=
-/span><span style=3D"mso-fareast-language:EN-US">, so that it can be cleare=
-d automatically when the entire test job is
- done.<o:p></o:p></span></li></ol>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">(OR)<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<ol style=3D"margin-top:0in" start=3D"2" type=3D"1">
-<li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l1 level1 =
-lfo3"><span style=3D"mso-fareast-language:EN-US">An environment variable na=
-med TPM_PATH must be updated with the directory path to store the TPM state=
- files.<o:p></o:p></span></li></ol>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">If you th=
-ink that method 2 is favorable, then I request you to add
-<b>swtpm socket -d &nbsp;--ctrl type=3Dunixio,path=3D/tmp/qemu-swtpm.sock -=
--tpm2 </b>in the =1B$B!H=1B(Bdo=1B$B!I=1B(B section in the device dictionar=
-y. I don=1B$B!G=1B(Bt think anything needs to be added in the =1B$B!H=1B(Bu=
-ndo<br>
-section Chris.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">I apologi=
-ze for asking many questions Chris. Please provide your opinion on the abov=
-e query.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Thanks an=
-d Regards,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Sai Ashri=
-th (T S I P)<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none;mso-fareast-lan=
-guage:JA">From:</span></b><span style=3D"mso-ligatures:none;mso-fareast-lan=
-guage:JA"> ashrith sai(</span><span lang=3D"JA" style=3D"font-family:&quot;=
-MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B=
-$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-languag=
-e:JA">)
-<br>
-<b>Sent:</b> Tuesday, January 2, 2024 6:03 PM<br>
-<b>To:</b> Chris Paterson &lt;</span><a href=3D"mailto:Chris.Paterson2@rene=
-sas.com"><span style=3D"mso-ligatures:none;mso-fareast-language:JA">Chris.P=
-aterson2@renesas.com</span></a><span style=3D"mso-ligatures:none;mso-fareas=
-t-language:JA">&gt;<br>
-<b>Cc:</b> dinesh kumar(</span><span lang=3D"JA" style=3D"font-family:&quot=
-;MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=
-=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-lang=
-uage:JA"> TMIEC ODG Porting) &lt;</span><a href=3D"mailto:dinesh.kumar@tosh=
-iba-tsip.com"><span style=3D"mso-ligatures:none;mso-fareast-language:JA">di=
-nesh.kumar@toshiba-tsip.com</span></a><span style=3D"mso-ligatures:none;mso=
--fareast-language:JA">&gt;;
-</span><a href=3D"mailto:Venkata.Pyla@toshiba-tsip.com"><span style=3D"mso-=
-ligatures:none;mso-fareast-language:JA">Venkata.Pyla@toshiba-tsip.com</span=
-></a><span style=3D"mso-ligatures:none;mso-fareast-language:JA">; kunijadar=
- shivanand(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&q=
-uot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#T#S#I#P=
-=1B(B</span><span lang=3D"JA" style=3D"mso-ligatures:none;mso-fareast-langu=
-age:JA">
-</span><span style=3D"mso-ligatures:none;mso-fareast-language:JA">TMIEC ODG=
- Porting) &lt;</span><a href=3D"mailto:Shivanand.Kunijadar@toshiba-tsip.com=
-"><span style=3D"mso-ligatures:none;mso-fareast-language:JA">Shivanand.Kuni=
-jadar@toshiba-tsip.com</span></a><span style=3D"mso-ligatures:none;mso-fare=
-ast-language:JA">&gt;;
- balakumar adithya(</span><span lang=3D"JA" style=3D"font-family:&quot;MS P=
-Gothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#T=
-#S#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-language:JA=
-"> TEUR) &lt;</span><a href=3D"mailto:Adithya.Balakumar@toshiba-tsip.com"><=
-span style=3D"mso-ligatures:none;mso-fareast-language:JA">Adithya.Balakumar=
-@toshiba-tsip.com</span></a><span style=3D"mso-ligatures:none;mso-fareast-l=
-anguage:JA">&gt;;
- sanglikar zaiba(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGo=
-thic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#T#S=
-#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-language:JA">=
- TEUR) &lt;</span><a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com"><span=
- style=3D"mso-ligatures:none;mso-fareast-language:JA">Zaiba.Sanglikar@toshi=
-ba-tsip.com</span></a><span style=3D"mso-ligatures:none;mso-fareast-languag=
-e:JA">&gt;<br>
+<b>To:</b> Chris Paterson &lt;</span><span lang=3D"EN-US"><a href=3D"mailto=
+:Chris.Paterson2@renesas.com"><span style=3D"mso-ligatures:none">Chris.Pate=
+rson2@renesas.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatu=
+res:none">&gt;<br>
+<b>Cc:</b> </span><span lang=3D"EN-US"><a href=3D"mailto:dinesh.kumar@toshi=
+ba-tsip.com"><span style=3D"mso-ligatures:none">dinesh.kumar@toshiba-tsip.c=
+om</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:venkata1.pyla@toshibaap.onmic=
+rosoft.com"><span style=3D"mso-ligatures:none">venkata1.pyla@toshibaap.onmi=
+crosoft.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:no=
+ne">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Shivanand.Kunijadar@toshiba-t=
+sip.com"><span style=3D"mso-ligatures:none">Shivanand.Kunijadar@toshiba-tsi=
+p.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Adithya.Balakumar@toshiba-tsi=
+p.com"><span style=3D"mso-ligatures:none">Adithya.Balakumar@toshiba-tsip.co=
+m</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.=
+com"><span style=3D"mso-ligatures:none">Zaiba.Sanglikar@toshiba-tsip.com</s=
+pan></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none"><br>
 <b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
 oting the image )<o:p></o:p></span></p>
 </div>
 </div>
 <p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hi Chris,=
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Thanks fo=
-r your support.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">I will tr=
-y and let you know if I face any issues and about updating the device dicti=
-onary as well as soon as possible Chris. Before that I will do some sample =
-testing to confirm some things.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Thanks an=
-d Regards,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Sai Ashri=
-th<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Hi Chris,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">I was able to access OVMF related files in my job definitions in qemu=
+-devices in =A1=B0lab-renesas-cip=A1=B1. Now let me explain the current sit=
+uation while starting the tpm emulator using swtpm<b>.<o:p></o:p></b></span=
+></p>
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-fareast-languag=
+e:EN-US"><o:p>&nbsp;</o:p></span></b></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">We need to run this command right before we boot the image to start t=
+he TPM emulator
+</span><span lang=3D"EN-US" style=3D"font-family:Wingdings;mso-fareast-lang=
+uage:EN-US">=A8=A4</span><span lang=3D"EN-US" style=3D"mso-fareast-language=
+:EN-US">
+<b>swtpm socket -d --tpmstate dir=3D&quot;${SWTPM_DIR}&quot; --ctrl type=3D=
+unixio,path=3D/tmp/qemu-swtpm.sock --tpm2<o:p></o:p></b></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<ol style=3D"margin-top:0cm" start=3D"1" type=3D"1">
+<li class=3D"MsoListParagraph" style=3D"margin-left:0cm;mso-list:l1 level1 =
+lfo3"><span lang=3D"EN-US" style=3D"mso-fareast-language:EN-US">A directory=
+ must be created to store the TPM state files before we run this command. I=
+ doubt if there is a way to create a temporary
+ directory in this path </span><span lang=3D"EN-US" style=3D"font-size:9.5p=
+t;font-family:Consolas;color:black;background:#F9F2F4">/var/lib/lava/dispat=
+cher/tmp/&lt;job_id&gt;/</span><span lang=3D"EN-US" style=3D"mso-fareast-la=
+nguage:EN-US">, so that it can be cleared automatically
+ when the entire test job is done.<o:p></o:p></span></li></ol>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">(OR)<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<ol style=3D"margin-top:0cm" start=3D"2" type=3D"1">
+<li class=3D"MsoListParagraph" style=3D"margin-left:0cm;mso-list:l1 level1 =
+lfo3"><span lang=3D"EN-US" style=3D"mso-fareast-language:EN-US">An environm=
+ent variable named TPM_PATH must be updated with the directory path to stor=
+e the TPM state files.<o:p></o:p></span></li></ol>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">If you think that method 2 is favorable, then I request you to add
+<b>swtpm socket -d &nbsp;--ctrl type=3Dunixio,path=3D/tmp/qemu-swtpm.sock -=
+-tpm2 </b>in the =A1=B0do=A1=B1 section in the device dictionary. I don=A1=
+=AFt think anything needs to be added in the =A1=B0undo<br>
+section Chris.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">I apologize for asking many questions Chris. Please provide your opin=
+ion on the above query.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Thanks and Regards,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Sai Ashrith (T S I P)<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
 <div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none">From:</span></=
-b><span style=3D"mso-ligatures:none"> Chris Paterson &lt;</span><a href=3D"=
-mailto:Chris.Paterson2@renesas.com"><span style=3D"mso-ligatures:none">Chri=
-s.Paterson2@renesas.com</span></a><span style=3D"mso-ligatures:none">&gt;
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none;=
+mso-fareast-language:JA">From:</span></b><span lang=3D"EN-US" style=3D"mso-=
+ligatures:none;mso-fareast-language:JA"> ashrith sai(</span><span lang=3D"J=
+A" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:non=
+e;mso-fareast-language:JA">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-=
+US" style=3D"mso-ligatures:none;mso-fareast-language:JA">)
+<br>
+<b>Sent:</b> Tuesday, January 2, 2024 6:03 PM<br>
+<b>To:</b> Chris Paterson &lt;</span><span lang=3D"EN-US"><a href=3D"mailto=
+:Chris.Paterson2@renesas.com"><span style=3D"mso-ligatures:none;mso-fareast=
+-language:JA">Chris.Paterson2@renesas.com</span></a></span><span lang=3D"EN=
+-US" style=3D"mso-ligatures:none;mso-fareast-language:JA">&gt;<br>
+<b>Cc:</b> dinesh kumar(</span><span lang=3D"JA" style=3D"font-family:&quot=
+;MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=
+=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" style=3D"mso-ligatures:=
+none;mso-fareast-language:JA"> TMIEC ODG Porting) &lt;</span><span lang=3D"=
+EN-US"><a href=3D"mailto:dinesh.kumar@toshiba-tsip.com"><span style=3D"mso-=
+ligatures:none;mso-fareast-language:JA">dinesh.kumar@toshiba-tsip.com</span=
+></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-la=
+nguage:JA">&gt;;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Venkata.Pyla@toshiba-tsip.com=
+"><span style=3D"mso-ligatures:none;mso-fareast-language:JA">Venkata.Pyla@t=
+oshiba-tsip.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligature=
+s:none;mso-fareast-language:JA">; kunijadar
+ shivanand(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&q=
+uot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=A3=D4=A3=D3=A3=
+=C9=A3=D0</span><span lang=3D"JA" style=3D"mso-ligatures:none;mso-fareast-l=
+anguage:JA">
+</span><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-languag=
+e:JA">TMIEC ODG Porting) &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:=
+Shivanand.Kunijadar@toshiba-tsip.com"><span style=3D"mso-ligatures:none;mso=
+-fareast-language:JA">Shivanand.Kunijadar@toshiba-tsip.com</span></a></span=
+><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-language:JA">=
+&gt;;
+ balakumar adithya(</span><span lang=3D"JA" style=3D"font-family:&quot;MS P=
+Gothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=A3=D4=
+=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" style=3D"mso-ligatures:none;m=
+so-fareast-language:JA"> TEUR) &lt;</span><span lang=3D"EN-US"><a href=3D"m=
+ailto:Adithya.Balakumar@toshiba-tsip.com"><span style=3D"mso-ligatures:none=
+;mso-fareast-language:JA">Adithya.Balakumar@toshiba-tsip.com</span></a></sp=
+an><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-language:JA=
+">&gt;;
+ sanglikar zaiba(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGo=
+thic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=A3=D4=A3=
+=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" style=3D"mso-ligatures:none;mso-=
+fareast-language:JA"> TEUR) &lt;</span><span lang=3D"EN-US"><a href=3D"mail=
+to:Zaiba.Sanglikar@toshiba-tsip.com"><span style=3D"mso-ligatures:none;mso-=
+fareast-language:JA">Zaiba.Sanglikar@toshiba-tsip.com</span></a></span><spa=
+n lang=3D"EN-US" style=3D"mso-ligatures:none;mso-fareast-language:JA">&gt;<=
+br>
+<b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
+oting the image )<o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Hi Chris,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Thanks for your support.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">I will try and let you know if I face any issues and about updating t=
+he device dictionary as well as soon as possible Chris. Before that I will =
+do some sample testing to confirm some
+ things.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Thanks and Regards,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Sai Ashrith<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+>From:</span></b><span lang=3D"EN-US" style=3D"mso-ligatures:none"> Chris P=
+aterson &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:Chris.Paterson2@r=
+enesas.com"><span style=3D"mso-ligatures:none">Chris.Paterson2@renesas.com<=
+/span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">&gt;
 <br>
 <b>Sent:</b> Tuesday, January 2, 2024 5:47 PM<br>
 <b>To:</b> ashrith sai(</span><span lang=3D"ZH-CN" style=3D"font-family:Sim=
-Sun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatur=
-es:none">) &lt;</span><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com"><sp=
-an style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span></a><s=
-pan style=3D"mso-ligatures:none">&gt;<br>
+Sun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US"=
+ style=3D"mso-ligatures:none">) &lt;</span><span lang=3D"EN-US"><a href=3D"=
+mailto:Sai.Sathujoda@toshiba-tsip.com"><span style=3D"mso-ligatures:none">S=
+ai.Sathujoda@toshiba-tsip.com</span></a></span><span lang=3D"EN-US" style=
+=3D"mso-ligatures:none">&gt;<br>
 <b>Cc:</b> dinesh kumar(</span><span lang=3D"ZH-CN" style=3D"font-family:Si=
-mSun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatu=
-res:none"> TMIEC ODG Porting) &lt;</span><a href=3D"mailto:dinesh.kumar@tos=
-hiba-tsip.com"><span style=3D"mso-ligatures:none">dinesh.kumar@toshiba-tsip=
-.com</span></a><span style=3D"mso-ligatures:none">&gt;;
-</span><a href=3D"mailto:Venkata.Pyla@toshiba-tsip.com"><span style=3D"mso-=
-ligatures:none">Venkata.Pyla@toshiba-tsip.com</span></a><span style=3D"mso-=
-ligatures:none">; kunijadar shivanand(</span><span lang=3D"ZH-CN" style=3D"=
-font-family:SimSun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=
-=3D"mso-ligatures:none">
- TMIEC ODG Porting) &lt;</span><a href=3D"mailto:Shivanand.Kunijadar@toshib=
-a-tsip.com"><span style=3D"mso-ligatures:none">Shivanand.Kunijadar@toshiba-=
-tsip.com</span></a><span style=3D"mso-ligatures:none">&gt;; balakumar adith=
-ya(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:no=
-ne">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none">
- TEUR) &lt;</span><a href=3D"mailto:Adithya.Balakumar@toshiba-tsip.com"><sp=
-an style=3D"mso-ligatures:none">Adithya.Balakumar@toshiba-tsip.com</span></=
-a><span style=3D"mso-ligatures:none">&gt;; sanglikar zaiba(</span><span lan=
-g=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#T#S#I#P=
-=1B(B</span><span style=3D"mso-ligatures:none">
- TEUR) &lt;</span><a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com"><span=
- style=3D"mso-ligatures:none">Zaiba.Sanglikar@toshiba-tsip.com</span></a><s=
-pan style=3D"mso-ligatures:none">&gt;<br>
+mSun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US=
+" style=3D"mso-ligatures:none"> TMIEC ODG Porting) &lt;</span><span lang=3D=
+"EN-US"><a href=3D"mailto:dinesh.kumar@toshiba-tsip.com"><span style=3D"mso=
+-ligatures:none">dinesh.kumar@toshiba-tsip.com</span></a></span><span lang=
+=3D"EN-US" style=3D"mso-ligatures:none">&gt;;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Venkata.Pyla@toshiba-tsip.com=
+"><span style=3D"mso-ligatures:none">Venkata.Pyla@toshiba-tsip.com</span></=
+a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">; kunijadar shiv=
+anand(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures=
+:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" style=3D"mso-lig=
+atures:none">
+ TMIEC ODG Porting) &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:Shiva=
+nand.Kunijadar@toshiba-tsip.com"><span style=3D"mso-ligatures:none">Shivana=
+nd.Kunijadar@toshiba-tsip.com</span></a></span><span lang=3D"EN-US" style=
+=3D"mso-ligatures:none">&gt;; balakumar adithya(</span><span lang=3D"ZH-CN"=
+ style=3D"font-family:SimSun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</=
+span><span lang=3D"EN-US" style=3D"mso-ligatures:none">
+ TEUR) &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:Adithya.Balakumar@=
+toshiba-tsip.com"><span style=3D"mso-ligatures:none">Adithya.Balakumar@tosh=
+iba-tsip.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:n=
+one">&gt;; sanglikar zaiba(</span><span lang=3D"ZH-CN" style=3D"font-family=
+:SimSun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN=
+-US" style=3D"mso-ligatures:none">
+ TEUR) &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:Zaiba.Sanglikar@to=
+shiba-tsip.com"><span style=3D"mso-ligatures:none">Zaiba.Sanglikar@toshiba-=
+tsip.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+>&gt;<br>
+<b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
+oting the image )<o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US">Hello Sai,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US">As I=A1=AFm in the office today, I can=A1=AFt update my lab at home.<o=
+:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US">Instead I=A1=AFve installed the swtpm and ovmf packages into lab-renes=
+as-cip.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US">I=A1=AFve marked the qemu devices in lab-renesas-cip with the =A1=B0sw=
+-update-testing=A1=B1 tag.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US">So if you add the below to your job definition, the job will only run =
+on one of the qemu devices in the Renesas lab:<o:p></o:p></span></p>
+<p class=3D"Code"><span style=3D"mso-fareast-language:EN-US">tags:<o:p></o:=
+p></span></p>
+<p class=3D"Code"><span style=3D"mso-fareast-language:EN-US">- sw-update-te=
+sting<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US">Please give it a try and let me know if you have any issues.<o:p></o:p=
+></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US">Let me know if you need me to update the device dictionary as well.<o:=
+p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US"><o:p>&nbsp;</o:p></span></p>
+<div>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-ligatures:none;mso-=
+fareast-language:EN-GB">Kind regards, Chris<o:p></o:p></span></p>
+</div>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US"><o:p>&nbsp;</o:p></span></p>
+<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0cm 0cm 0cm =
+4.0pt">
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+>From:</span></b><span lang=3D"EN-US" style=3D"mso-ligatures:none">
+</span><span lang=3D"EN-US"><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.co=
+m"><span style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span>=
+</a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none"> &lt;</span><s=
+pan lang=3D"EN-US"><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com"><span =
+style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span></a></spa=
+n><span lang=3D"EN-US" style=3D"mso-ligatures:none">&gt;
+<br>
+<b>Sent:</b> Tuesday, January 2, 2024 11:25 AM<br>
+<b>To:</b> Chris Paterson &lt;</span><span lang=3D"EN-US"><a href=3D"mailto=
+:Chris.Paterson2@renesas.com"><span style=3D"mso-ligatures:none">Chris.Pate=
+rson2@renesas.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatu=
+res:none">&gt;<br>
+<b>Cc:</b> </span><span lang=3D"EN-US"><a href=3D"mailto:dinesh.kumar@toshi=
+ba-tsip.com"><span style=3D"mso-ligatures:none">dinesh.kumar@toshiba-tsip.c=
+om</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Venkata.Pyla@toshiba-tsip.com=
+"><span style=3D"mso-ligatures:none">Venkata.Pyla@toshiba-tsip.com</span></=
+a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Shivanand.Kunijadar@toshiba-t=
+sip.com"><span style=3D"mso-ligatures:none">Shivanand.Kunijadar@toshiba-tsi=
+p.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Adithya.Balakumar@toshiba-tsi=
+p.com"><span style=3D"mso-ligatures:none">Adithya.Balakumar@toshiba-tsip.co=
+m</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.=
+com"><span style=3D"mso-ligatures:none">Zaiba.Sanglikar@toshiba-tsip.com</s=
+pan></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none"><br>
 <b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
 oting the image )<o:p></o:p></span></p>
 </div>
 </div>
 <p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US">Hello Sai,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US">As I=1B$B!G=1B(Bm in the office today, I can=1B$B!G=1B(=
-Bt update my lab at home.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US">Instead I=1B$B!G=1B(Bve installed the swtpm and ovmf pa=
-ckages into lab-renesas-cip.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US">I=1B$B!G=1B(Bve marked the qemu devices in lab-renesas-=
-cip with the =1B$B!H=1B(Bsw-update-testing=1B$B!I=1B(B tag.<o:p></o:p></spa=
-n></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US">So if you add the below to your job definition, the job=
- will only run on one of the qemu devices in the Renesas lab:<o:p></o:p></s=
-pan></p>
-<p class=3D"Code"><span lang=3D"EN-GB" style=3D"mso-fareast-language:EN-US"=
->tags:<o:p></o:p></span></p>
-<p class=3D"Code"><span lang=3D"EN-GB" style=3D"mso-fareast-language:EN-US"=
->- sw-update-testing<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US">Please give it a try and let me know if you have any is=
-sues.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US">Let me know if you need me to update the device diction=
-ary as well.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-liga=
-tures:none;mso-fareast-language:EN-GB">Kind regards, Chris<o:p></o:p></span=
-></p>
-</div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0in 0in 0in =
-4.0pt">
-<div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none">From:</span></=
-b><span style=3D"mso-ligatures:none">
-</span><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com"><span style=3D"mso=
--ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span></a><span style=3D"ms=
-o-ligatures:none"> &lt;</span><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.=
-com"><span style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</spa=
-n></a><span style=3D"mso-ligatures:none">&gt;
-<br>
-<b>Sent:</b> Tuesday, January 2, 2024 11:25 AM<br>
-<b>To:</b> Chris Paterson &lt;</span><a href=3D"mailto:Chris.Paterson2@rene=
-sas.com"><span style=3D"mso-ligatures:none">Chris.Paterson2@renesas.com</sp=
-an></a><span style=3D"mso-ligatures:none">&gt;<br>
-<b>Cc:</b> </span><a href=3D"mailto:dinesh.kumar@toshiba-tsip.com"><span st=
-yle=3D"mso-ligatures:none">dinesh.kumar@toshiba-tsip.com</span></a><span st=
-yle=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:Venkata.Pyla@toshiba-tsip.com"><span style=3D"mso-=
-ligatures:none">Venkata.Pyla@toshiba-tsip.com</span></a><span style=3D"mso-=
-ligatures:none">;
-</span><a href=3D"mailto:Shivanand.Kunijadar@toshiba-tsip.com"><span style=
-=3D"mso-ligatures:none">Shivanand.Kunijadar@toshiba-tsip.com</span></a><spa=
-n style=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:Adithya.Balakumar@toshiba-tsip.com"><span style=3D=
-"mso-ligatures:none">Adithya.Balakumar@toshiba-tsip.com</span></a><span sty=
-le=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com"><span style=3D"m=
-so-ligatures:none">Zaiba.Sanglikar@toshiba-tsip.com</span></a><span style=
-=3D"mso-ligatures:none"><br>
-<b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
-oting the image )<o:p></o:p></span></p>
-</div>
-</div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hello Chr=
-is,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Thanks fo=
-r your reply.
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Hello Chris,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Thanks for your reply.
 <o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Including=
- swtpm and ovmf packages is necessary for test cases related to secure boot=
-, software update and IEC layer testing. Please let me finalize the linux c=
-ommand I have mentioned in this mailing
- thread.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">It will b=
-e very helpful if this command is available for qemu device in your LAVA la=
-b. Please tell me how I can access your LAVA lab in which I can run my samp=
-le test jobs.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Thanks an=
-d Regards,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Sai Ashri=
-th<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Including swtpm and ovmf packages is necessary for test cases related=
+ to secure boot, software update and IEC layer testing. Please let me final=
+ize the linux command I have mentioned
+ in this mailing thread.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">It will be very helpful if this command is available for qemu device =
+in your LAVA lab. Please tell me how I can access your LAVA lab in which I =
+can run my sample test jobs.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Thanks and Regards,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US">Sai Ashrith<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"mso-fareast-language:E=
+N-US"><o:p>&nbsp;</o:p></span></p>
 <div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none">From:</span></=
-b><span style=3D"mso-ligatures:none"> Chris Paterson &lt;</span><a href=3D"=
-mailto:Chris.Paterson2@renesas.com"><span style=3D"mso-ligatures:none">Chri=
-s.Paterson2@renesas.com</span></a><span style=3D"mso-ligatures:none">&gt;
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+>From:</span></b><span lang=3D"EN-US" style=3D"mso-ligatures:none"> Chris P=
+aterson &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:Chris.Paterson2@r=
+enesas.com"><span style=3D"mso-ligatures:none">Chris.Paterson2@renesas.com<=
+/span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">&gt;
 <br>
 <b>Sent:</b> Tuesday, January 2, 2024 4:29 PM<br>
 <b>To:</b> ashrith sai(</span><span lang=3D"ZH-CN" style=3D"font-family:Sim=
-Sun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatur=
-es:none">) &lt;</span><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com"><sp=
-an style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span></a><s=
-pan style=3D"mso-ligatures:none">&gt;<br>
+Sun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US"=
+ style=3D"mso-ligatures:none">) &lt;</span><span lang=3D"EN-US"><a href=3D"=
+mailto:Sai.Sathujoda@toshiba-tsip.com"><span style=3D"mso-ligatures:none">S=
+ai.Sathujoda@toshiba-tsip.com</span></a></span><span lang=3D"EN-US" style=
+=3D"mso-ligatures:none">&gt;<br>
 <b>Cc:</b> dinesh kumar(</span><span lang=3D"ZH-CN" style=3D"font-family:Si=
-mSun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span lang=3D"ZH-CN" styl=
-e=3D"mso-ligatures:none">
-</span><span style=3D"mso-ligatures:none">TMIEC ODG Porting) &lt;</span><a =
-href=3D"mailto:dinesh.kumar@toshiba-tsip.com"><span style=3D"mso-ligatures:=
-none">dinesh.kumar@toshiba-tsip.com</span></a><span style=3D"mso-ligatures:=
-none">&gt;;
-</span><a href=3D"mailto:Venkata.Pyla@toshiba-tsip.com"><span style=3D"mso-=
-ligatures:none">Venkata.Pyla@toshiba-tsip.com</span></a><span style=3D"mso-=
-ligatures:none">; kunijadar shivanand(</span><span lang=3D"ZH-CN" style=3D"=
-font-family:SimSun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=
-=3D"mso-ligatures:none">
- TMIEC ODG Porting) &lt;</span><a href=3D"mailto:Shivanand.Kunijadar@toshib=
-a-tsip.com"><span style=3D"mso-ligatures:none">Shivanand.Kunijadar@toshiba-=
-tsip.com</span></a><span style=3D"mso-ligatures:none">&gt;; balakumar adith=
-ya(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:no=
-ne">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none">
- TEUR) &lt;</span><a href=3D"mailto:Adithya.Balakumar@toshiba-tsip.com"><sp=
-an style=3D"mso-ligatures:none">Adithya.Balakumar@toshiba-tsip.com</span></=
-a><span style=3D"mso-ligatures:none">&gt;; sanglikar zaiba(</span><span lan=
-g=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#T#S#I#P=
-=1B(B</span><span style=3D"mso-ligatures:none">
- TEUR) &lt;</span><a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com"><span=
- style=3D"mso-ligatures:none">Zaiba.Sanglikar@toshiba-tsip.com</span></a><s=
-pan style=3D"mso-ligatures:none">&gt;<br>
+mSun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"ZH-CN=
+" style=3D"mso-ligatures:none">
+</span><span lang=3D"EN-US" style=3D"mso-ligatures:none">TMIEC ODG Porting)=
+ &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:dinesh.kumar@toshiba-tsi=
+p.com"><span style=3D"mso-ligatures:none">dinesh.kumar@toshiba-tsip.com</sp=
+an></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">&gt;;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Venkata.Pyla@toshiba-tsip.com=
+"><span style=3D"mso-ligatures:none">Venkata.Pyla@toshiba-tsip.com</span></=
+a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">; kunijadar shiv=
+anand(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures=
+:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN-US" style=3D"mso-lig=
+atures:none">
+ TMIEC ODG Porting) &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:Shiva=
+nand.Kunijadar@toshiba-tsip.com"><span style=3D"mso-ligatures:none">Shivana=
+nd.Kunijadar@toshiba-tsip.com</span></a></span><span lang=3D"EN-US" style=
+=3D"mso-ligatures:none">&gt;; balakumar adithya(</span><span lang=3D"ZH-CN"=
+ style=3D"font-family:SimSun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</=
+span><span lang=3D"EN-US" style=3D"mso-ligatures:none">
+ TEUR) &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:Adithya.Balakumar@=
+toshiba-tsip.com"><span style=3D"mso-ligatures:none">Adithya.Balakumar@tosh=
+iba-tsip.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:n=
+one">&gt;; sanglikar zaiba(</span><span lang=3D"ZH-CN" style=3D"font-family=
+:SimSun;mso-ligatures:none">=A3=D4=A3=D3=A3=C9=A3=D0</span><span lang=3D"EN=
+-US" style=3D"mso-ligatures:none">
+ TEUR) &lt;</span><span lang=3D"EN-US"><a href=3D"mailto:Zaiba.Sanglikar@to=
+shiba-tsip.com"><span style=3D"mso-ligatures:none">Zaiba.Sanglikar@toshiba-=
+tsip.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+>&gt;<br>
 <b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
 oting the image )<o:p></o:p></span></p>
 </div>
 </div>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US">Hello Sai,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US">I think using the =1B$B!H=1B(Bcommand=1B$B!I=1B(B actio=
-n is probably the best approach.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US">Does the command you want to run ever change? Or is it =
-the same for every test job and for every platform?<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US">We=1B$B!G=1B(Bll have to make sure that the lava-docker=
- container we use includes the swtpm and ovmf packages, then get all of the=
- labs updated.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US">We can get a quick(er) test run using my lab though if =
-it helps you.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US">Hello Sai,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US">I think using the =A1=B0command=A1=B1 action is probably the best appr=
+oach.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US">Does the command you want to run ever change? Or is it the same for ev=
+ery test job and for every platform?<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US">We=A1=AFll have to make sure that the lava-docker container we use inc=
+ludes the swtpm and ovmf packages, then get all of the labs updated.<o:p></=
+o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US">We can get a quick(er) test run using my lab though if it helps you.<o=
+:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US"><o:p>&nbsp;</o:p></span></p>
 <div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-liga=
-tures:none">Kind regards, Chris<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-ligatures:none">Kin=
+d regards, Chris<o:p></o:p></span></p>
 </div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-fare=
-ast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-fareast-language:EN=
+-US"><o:p>&nbsp;</o:p></span></p>
 <div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none">From:</span></=
-b><span style=3D"mso-ligatures:none">
-</span><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com"><span style=3D"mso=
--ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span></a><span style=3D"ms=
-o-ligatures:none"> &lt;</span><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.=
-com"><span style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</spa=
-n></a><span style=3D"mso-ligatures:none">&gt;
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none"=
+>From:</span></b><span lang=3D"EN-US" style=3D"mso-ligatures:none">
+</span><span lang=3D"EN-US"><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.co=
+m"><span style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span>=
+</a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none"> &lt;</span><s=
+pan lang=3D"EN-US"><a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com"><span =
+style=3D"mso-ligatures:none">Sai.Sathujoda@toshiba-tsip.com</span></a></spa=
+n><span lang=3D"EN-US" style=3D"mso-ligatures:none">&gt;
 <br>
 <b>Sent:</b> Thursday, December 21, 2023 4:19 AM<br>
-<b>To:</b> Chris Paterson &lt;</span><a href=3D"mailto:Chris.Paterson2@rene=
-sas.com"><span style=3D"mso-ligatures:none">Chris.Paterson2@renesas.com</sp=
-an></a><span style=3D"mso-ligatures:none">&gt;<br>
-<b>Cc:</b> </span><a href=3D"mailto:dinesh.kumar@toshiba-tsip.com"><span st=
-yle=3D"mso-ligatures:none">dinesh.kumar@toshiba-tsip.com</span></a><span st=
-yle=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:Venkata.Pyla@toshiba-tsip.com"><span style=3D"mso-=
-ligatures:none">Venkata.Pyla@toshiba-tsip.com</span></a><span style=3D"mso-=
-ligatures:none">;
-</span><a href=3D"mailto:Shivanand.Kunijadar@toshiba-tsip.com"><span style=
-=3D"mso-ligatures:none">Shivanand.Kunijadar@toshiba-tsip.com</span></a><spa=
-n style=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:Adithya.Balakumar@toshiba-tsip.com"><span style=3D=
-"mso-ligatures:none">Adithya.Balakumar@toshiba-tsip.com</span></a><span sty=
-le=3D"mso-ligatures:none">;
-</span><a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com"><span style=3D"m=
-so-ligatures:none">Zaiba.Sanglikar@toshiba-tsip.com</span></a><span style=
-=3D"mso-ligatures:none"><br>
+<b>To:</b> Chris Paterson &lt;</span><span lang=3D"EN-US"><a href=3D"mailto=
+:Chris.Paterson2@renesas.com"><span style=3D"mso-ligatures:none">Chris.Pate=
+rson2@renesas.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatu=
+res:none">&gt;<br>
+<b>Cc:</b> </span><span lang=3D"EN-US"><a href=3D"mailto:dinesh.kumar@toshi=
+ba-tsip.com"><span style=3D"mso-ligatures:none">dinesh.kumar@toshiba-tsip.c=
+om</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Venkata.Pyla@toshiba-tsip.com=
+"><span style=3D"mso-ligatures:none">Venkata.Pyla@toshiba-tsip.com</span></=
+a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Shivanand.Kunijadar@toshiba-t=
+sip.com"><span style=3D"mso-ligatures:none">Shivanand.Kunijadar@toshiba-tsi=
+p.com</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Adithya.Balakumar@toshiba-tsi=
+p.com"><span style=3D"mso-ligatures:none">Adithya.Balakumar@toshiba-tsip.co=
+m</span></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none">;
+</span><span lang=3D"EN-US"><a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.=
+com"><span style=3D"mso-ligatures:none">Zaiba.Sanglikar@toshiba-tsip.com</s=
+pan></a></span><span lang=3D"EN-US" style=3D"mso-ligatures:none"><br>
 <b>Subject:</b> Query - ( Running Linux commands in LAVA host before bootin=
 g the image )<o:p></o:p></span></p>
 </div>
 </div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal">Dear Chris,<o:p></o:p></p>
 <p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Currently we are working on running IEC layer tests =
-present in
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Dear Chris,<o:p></o:p></span></=
+p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Currently we are working on run=
+ning IEC layer tests present in
 <a href=3D"https://gitlab.com/cip-project/cip-testing/cip-security-tests">h=
 ttps://gitlab.com/cip-project/cip-testing/cip-security-tests</a> on CIP sec=
 urity image. As you might be aware, current security image has
 <b>secure boot</b>, <b>swupdate</b> and <b>Data encryption</b> features als=
-o enabled along with security layer.<o:p></o:p></p>
-<p class=3D"MsoNormal">So to boot this image, we need to run the below comm=
-and just before booting the image to start TPM emulator.
-<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><b>swtpm socket -d --tpmstate dir=3D&quot;${SWTPM_DI=
-R}&quot; &nbsp;--ctrl type=3Dunixio,path=3D/tmp/qemu-swtpm.sock &nbsp;--tpm=
-2<o:p></o:p></b></p>
-<p class=3D"MsoNormal"><b><o:p>&nbsp;</o:p></b></p>
-<p class=3D"MsoNormal">Our current requirements:<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<ol style=3D"margin-top:0in" start=3D"1" type=3D"1">
-<li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l3 level1 =
-lfo4">Presence of these packages in LAVA host environment
-<span style=3D"font-family:Wingdings">&agrave;</span> swtpm, ovmf<o:p></o:p=
-></li><li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l3 l=
-evel1 lfo4">Ability to run the above mentioned in the LAVA host before the =
-first boot action.<o:p></o:p></li></ol>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">After going through the LAVA documentation, I found =
-an action named command where we can run commands on the dispatcher itself.
-<span style=3D"font-family:Wingdings">&agrave;</span> <a href=3D"https://la=
-va.readthedocs.io/en/latest/technical-references/job-definition/actions/com=
-mand/#:~:text=3DThe%20command%20action%20is%20used,board%20by%20controlling=
-%20a%20relay">
+o enabled along with security layer.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">So to boot this image, we need =
+to run the below command just before booting the image to start TPM emulato=
+r.
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US">swtpm socket -d --tpmstate d=
+ir=3D&quot;${SWTPM_DIR}&quot; &nbsp;--ctrl type=3Dunixio,path=3D/tmp/qemu-s=
+wtpm.sock &nbsp;--tpm2<o:p></o:p></span></b></p>
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></b>=
+</p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Our current requirements:<o:p><=
+/o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<ol style=3D"margin-top:0cm" start=3D"1" type=3D"1">
+<li class=3D"MsoListParagraph" style=3D"margin-left:0cm;mso-list:l3 level1 =
+lfo4"><span lang=3D"EN-US">Presence of these packages in LAVA host environm=
+ent
+</span><span lang=3D"EN-US" style=3D"font-family:Wingdings">=A8=A4</span><s=
+pan lang=3D"EN-US"> swtpm, ovmf<o:p></o:p></span></li><li class=3D"MsoListP=
+aragraph" style=3D"margin-left:0cm;mso-list:l3 level1 lfo4"><span lang=3D"E=
+N-US">Ability to run the above mentioned in the LAVA host before the first =
+boot action.<o:p></o:p></span></li></ol>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">After going through the LAVA do=
+cumentation, I found an action named command where we can run commands on t=
+he dispatcher itself.
+</span><span lang=3D"EN-US" style=3D"font-family:Wingdings">=A8=A4</span><s=
+pan lang=3D"EN-US">
+<a href=3D"https://lava.readthedocs.io/en/latest/technical-references/job-d=
+efinition/actions/command/#:~:text=3DThe%20command%20action%20is%20used,boa=
+rd%20by%20controlling%20a%20relay">
 https://lava.readthedocs.io/en/latest/technical-references/job-definition/a=
 ctions/command/#:~:text=3DThe%20command%20action%20is%20used,board%20by%20c=
-ontrolling%20a%20relay</a>.<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">But they are suggesting that these commands need to =
-be added in the device dictionary in CIP LAVA server so that users can just=
- use the name of the command ( key ) in their job definition. Please correc=
-t me if my understanding is wrong.
- And also can you please suggest if there is any other way to run Linux com=
-mands in the LAVA host environment.<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><b>Note: </b>We are using qemu device for this job d=
-efinition.<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Thanks and Regards, <o:p></o:p></p>
-<p class=3D"MsoNormal">Sai Ashrith<o:p></o:p></p>
-<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0in 0in 0in =
+ontrolling%20a%20relay</a>.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">But they are suggesting that th=
+ese commands need to be added in the device dictionary in CIP LAVA server s=
+o that users can just use the name of the command ( key ) in their job defi=
+nition. Please correct me if my understanding
+ is wrong. And also can you please suggest if there is any other way to run=
+ Linux commands in the LAVA host environment.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US">Note: </span></b><span lang=
+=3D"EN-US">We are using qemu device for this job definition.<o:p></o:p></sp=
+an></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Thanks and Regards, <o:p></o:p>=
+</span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Sai Ashrith<o:p></o:p></span></=
+p>
+<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0cm 0cm 0cm =
 4.0pt">
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+</div>
 </div>
 </div>
 </div>
@@ -3441,6 +3448,5 @@ efinition.<o:p></o:p></p>
 </body>
 </html>
 
---_000_OS3PR01MB6103B3C3E79AB76D6008C7D3C2452OS3PR01MB6103jpnp_--
-
+--_000_TYWPR01MB1186210D2225AADE6438DCDADB7452TYWPR01MB11862jp_--
 
