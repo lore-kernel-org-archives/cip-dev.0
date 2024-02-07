@@ -2,53 +2,53 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47228C4828F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 553E2C4829C
 	for <webhook@archiver.kernel.org>; Wed,  7 Feb 2024 18:11:49 +0000 (UTC)
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
- by mx.groups.io with SMTP id smtpd.web11.5135.1707329506589266449
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+ by mx.groups.io with SMTP id smtpd.web11.5138.1707329507878974824
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Wed, 07 Feb 2024 10:11:46 -0800
+ Wed, 07 Feb 2024 10:11:47 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=pjtoHjx/;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.177, mailfrom: bot@kernelci.org)
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6da9c834646so766870b3a.3
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Wed, 07 Feb 2024 10:11:46 -0800 (PST)
+ dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=Zq9u8vdC;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.215.169, mailfrom: bot@kernelci.org)
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-5d3907ff128so709173a12.3
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Wed, 07 Feb 2024 10:11:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1707329505; x=1707934305; darn=lists.cip-project.org;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1707329507; x=1707934307; darn=lists.cip-project.org;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=U8prlucRXaWS3Pfd7+expLTZEnt1Ubiw6Z646ohn5lE=;
-        b=pjtoHjx//1tEfc96rE+pFHdH0IucJRTgHJsRkwfMznjZXByJbiaGmuk0Og5+YCWpYY
-         x4rsdcgYh1VBG5Coe5LJL25oHG6ZbluzTl15RZ5KbA+JIqckT0J1h2lcO7R7PFJvjCep
-         LkgpwS3zIeWcnGNeX9RzkWxMzV4EB+9AKNUPAvsz9um1bfQyH8S3XvQXZc0n2Zf7vaXd
-         CT9iBFCMvt8birXqrjkJ4uGyHaj+TkJs3SlipNicFzjr1xilF4gjfWUXMiUe8qfb0sqc
-         EXCWiKqShzQQqqn2oEPSH+cK/r/vwihVFe3bb2sfmfoBZ+UQwNs45MXTTf0oe9kYh4qM
-         btDg==
+        bh=J6RFnR6ZekwHYSV4nzAHURA3WJgwh4QPzfCwtWrco8I=;
+        b=Zq9u8vdCKJjPa1onhtpna6h59yceL6sfniapVPiszvsGzug3sUdh5fHkzoTLh6GMdK
+         KOGAUj6iA+VFeOVzyCOcX5ZjtUfPivJPn5fGYCLIfRA04TX0CshoHn2NFKlUlrrQ351M
+         w17D6+Tm2W/qpzrwIzS95P3Ntb8AicH5PMEH87O5EnynHEeZFXvGVZWfGCLMxALOcJaO
+         aZ838sGvkaCtXlD9orhwfjT78EpTQy4jCMB1vvu3e9xPXIo6i5gkP5KZ3f7w8ignVPYq
+         6AKXg2SwUpPaEIJqjjgwRab5vBKm6X+d759CzVMgnenqKXDDTgLBJCk7yx/l5aFpfN1Y
+         djZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707329505; x=1707934305;
+        d=1e100.net; s=20230601; t=1707329507; x=1707934307;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=U8prlucRXaWS3Pfd7+expLTZEnt1Ubiw6Z646ohn5lE=;
-        b=LJSKT1BMPB+keUQIHEGGVhDagwd3sGGcVSUwaD/Bv1FEtde9OXjGln7/Dryz0j/h/b
-         rQCrU98y2vkdrWeQgUdtf9Dv7xIiehwhZC/pSmV1eA9cAKnlV0Ty+5uaZRdd6PmN6EDd
-         RuEMISNbXUifEPRZM2dQ0qfXgVXwF9wC0MEJp0ySf04PDNb4KjagzqyR9sUaKUN0uBcG
-         bYpZfsQ+PiIPfVjYgrWnV8/EJ9WUTLzbCXZHospTrPBea5H3ecgDiiYnXcg9HSlTtFht
-         yyWv5SYn9/4IhOeNseswCITn+gyjAuqFRhClY57r99sCVS3XQukQViCc3r8JtjrJm2IW
-         gI6g==
-X-Gm-Message-State: AOJu0YyfKerfXsHgDaoFhUgp/ZBlz+/ULeWy8k5lyO4owv323KFMHgvc
-	vSL+qCrLdRw0wfVkXqXjf7R2nCbYqYSWUDJPA1cJIIntQnTgQmRBlb57t3w/+IRaTHjaSO5YAjN
-	gdAE=
-X-Google-Smtp-Source: AGHT+IGybaVL5GGIXDR+KSWp2/6mbLAiKmYq/uV3TPp+94fDz1oIR/vmYmQ+n5rWK4A1rd9Azxzvdg==
-X-Received: by 2002:a05:6a00:44c5:b0:6e0:6c89:e306 with SMTP id cv5-20020a056a0044c500b006e06c89e306mr2081440pfb.18.1707329505117;
-        Wed, 07 Feb 2024 10:11:45 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUnRCJoceWBbiTEUedUvEjs9CYIyAYYOlxS4BfseFCECoz5iVwOej0xf96w5Ufnv0ruNqledJxROmtNYMkpFz5dFMZSfS2WQXD6+5O9cwSYKGq+OdMz9IGfhRscBKIXCwnHKmQTD4L54r1UQlQKnYCwTQ==
+        bh=J6RFnR6ZekwHYSV4nzAHURA3WJgwh4QPzfCwtWrco8I=;
+        b=N2IPY7SLkOpl6Nw96hMFmKTypuNAhucz3aj+Njf6UMiL5MaMQCEfqLO+LympV5Du0f
+         ntSdPHLSOitEUfpjQzGwp/epr1oo79mAm07hkdyoq1Phwa56BXtc8xd9lxkPNFlu++Kh
+         EpLRpGWd8RvXafIWkV+To769Ty8gIr+138LFL8mkU3D/vNbuSeChURhZylcCAvy7Bn8V
+         g4yPrEoObkOVQLCNObpMQYA6q3fQZl62fRZyTWJ9RVR2Qk3RpEXJK1LcmQ+77H6/XdDz
+         rp1wQVFzu2fDJbqvQ2ZzCYOcfvjDNYZ8FRN0YzVaqALzRirIxqzfA4bPWF29r694TlGO
+         ZGrQ==
+X-Gm-Message-State: AOJu0YxGUS1wbDJU7TzG8d+zbWvm8kW6dqED0pb48ohLVMFIf8uzeqaS
+	BiGqZ8C1R+USzNtCTOYwL9qGmc5efhFg+YnUfY7FAyxVj4obiY+z+XOhy8r7k/2UuVs3dGtOWuH
+	ZChM=
+X-Google-Smtp-Source: AGHT+IH1ZVjQoqwc/AEJ4Bi/184bknTAdjS4atfq4phZeiCVs6Fw5QOULcFPmb6pzwnckj/Cubasgw==
+X-Received: by 2002:a05:6a20:4ba9:b0:19e:3093:9b89 with SMTP id fu41-20020a056a204ba900b0019e30939b89mr4132009pzb.25.1707329506946;
+        Wed, 07 Feb 2024 10:11:46 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXwuyoND8F4XZ32UpLHWT0ZIp2l9rc8YBNF9xCNCR4hXoqUIIYHxJ72T4rGBMON09sa736BsnXPSCQOY5tICjf6ZlkXUDheHQ5RxR2dQgQPTR/k90w70Ew2Z6d9lFXiHEWhNpP8HSRv/M36NtwAbuS1Sg==
 Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id y11-20020aa793cb000000b006e044e376adsm1926563pff.166.2024.02.07.10.11.44
+        by smtp.gmail.com with ESMTPSA id r6-20020a17090aad0600b0029020be4298sm4282552pjq.0.2024.02.07.10.11.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Feb 2024 10:11:44 -0800 (PST)
-Message-ID: <65c3c7e0.a70a0220.983da.65f4@mx.google.com>
-Date: Wed, 07 Feb 2024 10:11:44 -0800 (PST)
+        Wed, 07 Feb 2024 10:11:45 -0800 (PST)
+Message-ID: <65c3c7e1.170a0220.c7ac2.ea48@mx.google.com>
+Date: Wed, 07 Feb 2024 10:11:45 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,8 +56,8 @@ X-Kernelci-Tree: cip
 X-Kernelci-Branch: linux-4.19.y-cip
 X-Kernelci-Report-Type: test
 X-Kernelci-Kernel: v4.19.304-cip106-3-gaf120b32b886e
-Subject: cip/linux-4.19.y-cip baseline-cip-nfs: 9 runs,
- 9 regressions (v4.19.304-cip106-3-gaf120b32b886e)
+Subject: cip/linux-4.19.y-cip baseline-nfs: 34 runs,
+ 3 regressions (v4.19.304-cip106-3-gaf120b32b886e)
 To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
  kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
 From: "kernelci.org bot" <bot@kernelci.org>
@@ -65,50 +65,29 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 07 Feb 2024 18:11:49 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14897
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14899
 
-cip/linux-4.19.y-cip baseline-cip-nfs: 9 runs, 9 regressions (v4.19.304-cip=
-106-3-gaf120b32b886e)
+cip/linux-4.19.y-cip baseline-nfs: 34 runs, 3 regressions (v4.19.304-cip106=
+-3-gaf120b32b886e)
 
 Regressions Summary
 -------------------
 
-platform                 | arch  | lab         | compiler | defconfig      =
-            | regressions
--------------------------+-------+-------------+----------+----------------=
-------------+------------
-beaglebone-black         | arm   | lab-cip     | gcc-10   | multi_v7_defcon=
-fig         | 1          =
+platform         | arch  | lab           | compiler | defconfig            =
+      | regressions
+-----------------+-------+---------------+----------+----------------------=
+------+------------
+at91sam9g20ek    | arm   | lab-broonie   | gcc-10   | multi_v5_defconfig   =
+      | 1          =
 
-beaglebone-black         | arm   | lab-broonie | gcc-10   | omap2plus_defco=
-nfig        | 1          =
-
-beaglebone-black         | arm   | lab-cip     | gcc-10   | omap2plus_defco=
-nfig        | 1          =
-
-r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip     | gcc-10   | defconfig      =
-            | 1          =
-
-r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip     | gcc-10   | defconfig+arm64=
--chromebook | 1          =
-
-r8a774b1-hihope-rzg2n-ex | arm64 | lab-cip     | gcc-10   | defconfig      =
-            | 1          =
-
-r8a774b1-hihope-rzg2n-ex | arm64 | lab-cip     | gcc-10   | defconfig+arm64=
--chromebook | 1          =
-
-r8a774c0-ek874           | arm64 | lab-cip     | gcc-10   | defconfig      =
-            | 1          =
-
-r8a774c0-ek874           | arm64 | lab-cip     | gcc-10   | defconfig+arm64=
--chromebook | 1          =
+rk3399-gru-kevin | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrom=
+ebook | 2          =
 
 
   Details:  https://kernelci.org/test/job/cip/branch/linux-4.19.y-cip/kerne=
-l/v4.19.304-cip106-3-gaf120b32b886e/plan/baseline-cip-nfs/
+l/v4.19.304-cip106-3-gaf120b32b886e/plan/baseline-nfs/
 
-  Test:     baseline-cip-nfs
+  Test:     baseline-nfs
   Tree:     cip
   Branch:   linux-4.19.y-cip
   Describe: v4.19.304-cip106-3-gaf120b32b886e
@@ -123,307 +102,104 @@ Test Regressions
 
 
 
-platform                 | arch  | lab         | compiler | defconfig      =
-            | regressions
--------------------------+-------+-------------+----------+----------------=
-------------+------------
-beaglebone-black         | arm   | lab-cip     | gcc-10   | multi_v7_defcon=
-fig         | 1          =
+platform         | arch  | lab           | compiler | defconfig            =
+      | regressions
+-----------------+-------+---------------+----------+----------------------=
+------+------------
+at91sam9g20ek    | arm   | lab-broonie   | gcc-10   | multi_v5_defconfig   =
+      | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/65c3bffe4707c66cde8e1e85
+  Details:     https://kernelci.org/test/plan/id/65c3bba1772e518c898e1e9f
 
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
+  Results:     42 PASS, 9 FAIL, 1 SKIP
+  Full config: multi_v5_defconfig
   Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
 10110)
   Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106-3-gaf120b32b886e/arm/multi_v7_defconfig/gcc-10/lab-cip/baseline-cip=
--nfs-beaglebone-black.txt
+-cip106-3-gaf120b32b886e/arm/multi_v5_defconfig/gcc-10/lab-broonie/baseline=
+-nfs-at91sam9g20ek.txt
   HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106-3-gaf120b32b886e/arm/multi_v7_defconfig/gcc-10/lab-cip/baseline-cip=
--nfs-beaglebone-black.html
-  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
--arm/cip-core-image-kernelci-cip-core-bookworm-qemu-arm-initrd.img.gz =
+-cip106-3-gaf120b32b886e/arm/multi_v5_defconfig/gcc-10/lab-broonie/baseline=
+-nfs-at91sam9g20ek.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/armel/initrd.cpio.gz =
 
 
 
-  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/65c3bffe4707c=
-66cde8e1e86
-        failing since 61 days (last pass: v4.19.256-cip80, first fail: v4.1=
-9.299-cip105) =
+  * baseline-nfs.bootrr.deferred-probe-empty: https://kernelci.org/test/cas=
+e/id/65c3bba1772e518c898e1ed1
+        failing since 131 days (last pass: v4.19.287-cip100, first fail: v4=
+.19.295-cip103)
+
+    2024-02-07T17:18:47.656011  + set +x<8><LAVA_SIGNAL_ENDRUN 0_dmesg 5542=
+16_1.6.2.4.1>
+    2024-02-07T17:18:47.823901  #
+    2024-02-07T17:18:47.926095  / # #export SHELL=3D/bin/sh
+    2024-02-07T17:18:47.926895  =
+
+    2024-02-07T17:18:48.028917  / # export SHELL=3D/bin/sh. /lava-554216/en=
+vironment
+    2024-02-07T17:18:48.029710  =
+
+    2024-02-07T17:18:48.131981  / # . /lava-554216/environment/lava-554216/=
+bin/lava-test-runner /lava-554216/1
+    2024-02-07T17:18:48.133245  =
+
+    2024-02-07T17:18:48.137147  / # /lava-554216/bin/lava-test-runner /lava=
+-554216/1
+    2024-02-07T17:18:48.491538  + export TESTRUN_ID=3D1_bootrr =
+
+    ... (11 line(s) more)  =
 
  =
 
 
 
-platform                 | arch  | lab         | compiler | defconfig      =
-            | regressions
--------------------------+-------+-------------+----------+----------------=
-------------+------------
-beaglebone-black         | arm   | lab-broonie | gcc-10   | omap2plus_defco=
-nfig        | 1          =
+platform         | arch  | lab           | compiler | defconfig            =
+      | regressions
+-----------------+-------+---------------+----------+----------------------=
+------+------------
+rk3399-gru-kevin | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrom=
+ebook | 2          =
 
 
-  Details:     https://kernelci.org/test/plan/id/65c3bc417bf33117f68e1e7d
+  Details:     https://kernelci.org/test/plan/id/65c3bafc3552c942408e1e7a
 
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: omap2plus_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106-3-gaf120b32b886e/arm/omap2plus_defconfig/gcc-10/lab-broonie/baselin=
-e-cip-nfs-beaglebone-black.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106-3-gaf120b32b886e/arm/omap2plus_defconfig/gcc-10/lab-broonie/baselin=
-e-cip-nfs-beaglebone-black.html
-  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
--arm/cip-core-image-kernelci-cip-core-bookworm-qemu-arm-initrd.img.gz =
-
-
-
-  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/65c3bc417bf33=
-117f68e1e7e
-        failing since 61 days (last pass: v4.19.251-cip77, first fail: v4.1=
-9.299-cip105) =
-
- =
-
-
-
-platform                 | arch  | lab         | compiler | defconfig      =
-            | regressions
--------------------------+-------+-------------+----------+----------------=
-------------+------------
-beaglebone-black         | arm   | lab-cip     | gcc-10   | omap2plus_defco=
-nfig        | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/65c3c2e2d179df07e98e1e7b
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: omap2plus_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106-3-gaf120b32b886e/arm/omap2plus_defconfig/gcc-10/lab-cip/baseline-ci=
-p-nfs-beaglebone-black.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106-3-gaf120b32b886e/arm/omap2plus_defconfig/gcc-10/lab-cip/baseline-ci=
-p-nfs-beaglebone-black.html
-  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
--arm/cip-core-image-kernelci-cip-core-bookworm-qemu-arm-initrd.img.gz =
-
-
-
-  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/65c3c2e2d179d=
-f07e98e1e7c
-        failing since 61 days (last pass: v4.19.251-cip77, first fail: v4.1=
-9.299-cip105) =
-
- =
-
-
-
-platform                 | arch  | lab         | compiler | defconfig      =
-            | regressions
--------------------------+-------+-------------+----------+----------------=
-------------+------------
-r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip     | gcc-10   | defconfig      =
-            | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/65c3be468964b3a08d8e1e86
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106-3-gaf120b32b886e/arm64/defconfig/gcc-10/lab-cip/baseline-cip-nfs-r8=
-a774a1-hihope-rzg2m-ex.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106-3-gaf120b32b886e/arm64/defconfig/gcc-10/lab-cip/baseline-cip-nfs-r8=
-a774a1-hihope-rzg2m-ex.html
-  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
--arm64/cip-core-image-kernelci-cip-core-bookworm-qemu-arm64-initrd.img.gz =
-
-
-
-  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/65c3be468964b=
-3a08d8e1e87
-        failing since 61 days (last pass: v4.19.256-cip80, first fail: v4.1=
-9.299-cip105) =
-
- =
-
-
-
-platform                 | arch  | lab         | compiler | defconfig      =
-            | regressions
--------------------------+-------+-------------+----------+----------------=
-------------+------------
-r8a774a1-hihope-rzg2m-ex | arm64 | lab-cip     | gcc-10   | defconfig+arm64=
--chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/65c3beb2e5f9a901f48e1e7a
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Results:     77 PASS, 5 FAIL, 1 SKIP
   Full config: defconfig+arm64-chromebook
   Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
 110)
   Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106-3-gaf120b32b886e/arm64/defconfig+arm64-chromebook/gcc-10/lab-cip/ba=
-seline-cip-nfs-r8a774a1-hihope-rzg2m-ex.txt
+-cip106-3-gaf120b32b886e/arm64/defconfig+arm64-chromebook/gcc-10/lab-collab=
+ora/baseline-nfs-rk3399-gru-kevin.txt
   HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106-3-gaf120b32b886e/arm64/defconfig+arm64-chromebook/gcc-10/lab-cip/ba=
-seline-cip-nfs-r8a774a1-hihope-rzg2m-ex.html
-  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
--arm64/cip-core-image-kernelci-cip-core-bookworm-qemu-arm64-initrd.img.gz =
+-cip106-3-gaf120b32b886e/arm64/defconfig+arm64-chromebook/gcc-10/lab-collab=
+ora/baseline-nfs-rk3399-gru-kevin.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/arm64/initrd.cpio.gz =
 
 
 
-  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/65c3beb2e5f9a=
-901f48e1e7b
-        failing since 61 days (last pass: v4.19.256-cip80, first fail: v4.1=
-9.299-cip105) =
+  * baseline-nfs.bootrr.rockchip-usb2phy1-probed: https://kernelci.org/test=
+/case/id/65c3bafc3552c942408e1e80
+        failing since 322 days (last pass: v4.19.276-cip93, first fail: v4.=
+19.277-cip94)
 
- =
-
-
-
-platform                 | arch  | lab         | compiler | defconfig      =
-            | regressions
--------------------------+-------+-------------+----------+----------------=
-------------+------------
-r8a774b1-hihope-rzg2n-ex | arm64 | lab-cip     | gcc-10   | defconfig      =
-            | 1          =
+    2024-02-07T17:16:19.596384  /lava-12713721/1/../bin/lava-test-case
+   =
 
 
-  Details:     https://kernelci.org/test/plan/id/65c3bd56b43cb048848e1e88
+  * baseline-nfs.bootrr.rockchip-usb2phy0-probed: https://kernelci.org/test=
+/case/id/65c3bafc3552c942408e1e81
+        failing since 322 days (last pass: v4.19.276-cip93, first fail: v4.=
+19.277-cip94)
 
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106-3-gaf120b32b886e/arm64/defconfig/gcc-10/lab-cip/baseline-cip-nfs-r8=
-a774b1-hihope-rzg2n-ex.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106-3-gaf120b32b886e/arm64/defconfig/gcc-10/lab-cip/baseline-cip-nfs-r8=
-a774b1-hihope-rzg2n-ex.html
-  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
--arm64/cip-core-image-kernelci-cip-core-bookworm-qemu-arm64-initrd.img.gz =
+    2024-02-07T17:16:18.532569  /lava-12713721/1/../bin/lava-test-case
 
-
-
-  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/65c3bd56b43cb=
-048848e1e89
-        failing since 61 days (last pass: v4.19.256-cip80, first fail: v4.1=
-9.299-cip105) =
-
- =
-
-
-
-platform                 | arch  | lab         | compiler | defconfig      =
-            | regressions
--------------------------+-------+-------------+----------+----------------=
-------------+------------
-r8a774b1-hihope-rzg2n-ex | arm64 | lab-cip     | gcc-10   | defconfig+arm64=
--chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/65c3bfc296833a806f8e1e86
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106-3-gaf120b32b886e/arm64/defconfig+arm64-chromebook/gcc-10/lab-cip/ba=
-seline-cip-nfs-r8a774b1-hihope-rzg2n-ex.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106-3-gaf120b32b886e/arm64/defconfig+arm64-chromebook/gcc-10/lab-cip/ba=
-seline-cip-nfs-r8a774b1-hihope-rzg2n-ex.html
-  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
--arm64/cip-core-image-kernelci-cip-core-bookworm-qemu-arm64-initrd.img.gz =
-
-
-
-  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/65c3bfc296833=
-a806f8e1e87
-        failing since 61 days (last pass: v4.19.256-cip80, first fail: v4.1=
-9.299-cip105) =
-
- =
-
-
-
-platform                 | arch  | lab         | compiler | defconfig      =
-            | regressions
--------------------------+-------+-------------+----------+----------------=
-------------+------------
-r8a774c0-ek874           | arm64 | lab-cip     | gcc-10   | defconfig      =
-            | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/65c3bd43b43cb048848e1e85
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106-3-gaf120b32b886e/arm64/defconfig/gcc-10/lab-cip/baseline-cip-nfs-r8=
-a774c0-ek874.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106-3-gaf120b32b886e/arm64/defconfig/gcc-10/lab-cip/baseline-cip-nfs-r8=
-a774c0-ek874.html
-  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
--arm64/cip-core-image-kernelci-cip-core-bookworm-qemu-arm64-initrd.img.gz =
-
-
-
-  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/65c3bd43b43cb=
-048848e1e86
-        failing since 61 days (last pass: v4.19.256-cip80, first fail: v4.1=
-9.299-cip105) =
-
- =
-
-
-
-platform                 | arch  | lab         | compiler | defconfig      =
-            | regressions
--------------------------+-------+-------------+----------+----------------=
-------------+------------
-r8a774c0-ek874           | arm64 | lab-cip     | gcc-10   | defconfig+arm64=
--chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/65c3c09e04f99526778e1e79
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106-3-gaf120b32b886e/arm64/defconfig+arm64-chromebook/gcc-10/lab-cip/ba=
-seline-cip-nfs-r8a774c0-ek874.txt
-  HTML log:    https://storage.kernelci.org//cip/linux-4.19.y-cip/v4.19.304=
--cip106-3-gaf120b32b886e/arm64/defconfig+arm64-chromebook/gcc-10/lab-cip/ba=
-seline-cip-nfs-r8a774c0-ek874.html
-  Rootfs:      https://storage.kernelci.org/images/rootfs/cip/20231004/qemu=
--arm64/cip-core-image-kernelci-cip-core-bookworm-qemu-arm64-initrd.img.gz =
-
-
-
-  * baseline-cip-nfs.login: https://kernelci.org/test/case/id/65c3c09e04f99=
-526778e1e7a
-        failing since 61 days (last pass: v4.19.256-cip80, first fail: v4.1=
-9.299-cip105) =
+    2024-02-07T17:16:18.558083  <8>[   39.330522] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Drockchip-usb2phy0-probed RESULT=3Dfail>
+   =
 
  =20
 
