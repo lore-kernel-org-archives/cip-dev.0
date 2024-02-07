@@ -1,152 +1,292 @@
-Return-Path: <chris.paterson2@renesas.com>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CBD9C4828F
-	for <webhook@archiver.kernel.org>; Wed,  7 Feb 2024 22:47:12 +0000 (UTC)
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (JPN01-TYC-obe.outbound.protection.outlook.com [40.107.114.84])
- by mx.groups.io with SMTP id smtpd.web11.4489.1707346030194943390
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 527B7C4828D
+	for <webhook@archiver.kernel.org>; Wed,  7 Feb 2024 23:05:52 +0000 (UTC)
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+ by mx.groups.io with SMTP id smtpd.web11.4971.1707347148956168386
  for <cip-dev@lists.cip-project.org>;
- Wed, 07 Feb 2024 14:47:10 -0800
+ Wed, 07 Feb 2024 15:05:49 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@renesas.com header.s=selector1 header.b=Nb/rc6pC;
- spf=pass (domain: renesas.com, ip: 40.107.114.84, mailfrom: chris.paterson2@renesas.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VevMAQQHpSWB3aU37My4R9GwNIi0Yod/FS1+KV4dduDMCDxGUak4jepNSly/vqeOmYzbbtFbNyhu49RYF/J7JFgFA3WAeWryiGDdVTpWd8PkbSeD/HUYJ0yRrAZIQwBbFZ9oQi3P4Xi4mMxkEuyE/WCZfDkoDBIm1hp7D0a7SdqvOS0jDPH+54tt+fIQWS5komUwhEwruAVecr4ITFmOtthysqHiT5pDD3B+rMsVAh8u4t3rvRtUQnzwdXtB602NiU5y0UX2xhCCxUuiJjIaqYj+tldbAuGNjf3R5ax4NjTQ0ROnRGWipt+1hjvvicDj90a6NBX6bDTKzcpCm5qbqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cjR+Nzf+NLcxLnqq5eSKr+wlsqlhBN75rluwEFm4zB0=;
- b=cWrEYGLQ3i6/yss1oUux3Y+rX9DGYSD1Tz7wMOMntWbxVxExNOhkvZ71nGgVLCUo/FlpgQFquWaeJIpnYxwgQGFrTwJiTtHn0Lrm7TV/VINWuCegNulUV4pwnO10bvH14NbalI3N6zYLw9yRZjOeHY95SMAHBNqhbRR3CMPTkZQrCLueNxgTggIO929mihJUkojASQhLtrgy97mCMLJAX4FWxgf3YNh3L1x+Zgp9isWbB56H+IolfS7dL0t/jx6ExgbDGAtJSX5k6T2aNEIeXOlRg8/w3zliV7LrQRziMiGHaX59amdjxd5YY3AYF3Y0NPV3544VLWax9s33ryjoPw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cjR+Nzf+NLcxLnqq5eSKr+wlsqlhBN75rluwEFm4zB0=;
- b=Nb/rc6pCTd7yDWBmPy7rHTlNXncS+AEqjNYjksdv8KZG9zw1WCFvxSfV3LEJJ2Oxts22DvYd6bhBSL6SfAI7vZDEQveWuoIiiXCTynws99RHLWE7OoC6h5e3JuYvcRjZW8OeND0pROAPVkYY/4Ccb0mjfMCz++bc6ZM+THQzJDM=
-Received: from TYWPR01MB11862.jpnprd01.prod.outlook.com (2603:1096:400:3fc::6)
- by TYCPR01MB11988.jpnprd01.prod.outlook.com (2603:1096:400:37c::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7249.36; Wed, 7 Feb
- 2024 22:47:07 +0000
-Received: from TYWPR01MB11862.jpnprd01.prod.outlook.com
- ([fe80::d543:aeea:6f7b:2a47]) by TYWPR01MB11862.jpnprd01.prod.outlook.com
- ([fe80::d543:aeea:6f7b:2a47%5]) with mapi id 15.20.7249.039; Wed, 7 Feb 2024
- 22:47:07 +0000
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-To: Pavel Machek <pavel@denx.de>, "jan.kiszka@siemens.com"
-	<jan.kiszka@siemens.com>, "cip-dev@lists.cip-project.org"
-	<cip-dev@lists.cip-project.org>
-Subject: RE: [ANNOUNCE] 5.10.209-cip44-rt18
-Thread-Topic: [ANNOUNCE] 5.10.209-cip44-rt18
-Thread-Index: AQHaWF5NoGcXN6haf0Cy1q+16iXwgbD/fgrA
-Date: Wed, 7 Feb 2024 22:47:06 +0000
-Message-ID: 
- <TYWPR01MB118627FE1C9D6E1D42F3F9AA3B7452@TYWPR01MB11862.jpnprd01.prod.outlook.com>
-References: <ZcEkEFRfo3D3n8lh@duo.ucw.cz>
-In-Reply-To: <ZcEkEFRfo3D3n8lh@duo.ucw.cz>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYWPR01MB11862:EE_|TYCPR01MB11988:EE_
-x-ms-office365-filtering-correlation-id: a1c19fae-cd88-4d88-fb28-08dc282eb630
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- LxPxh6gLGARqVu0APkyU4hSRtMMv4QtBJx7kOD+sJ+vbwzQy4CkNnAghyUziASPWmj94j9G1MaC7fL+iB/TKBis9l26lL3RO1j7feqK7rB0/GT5hkzAsbq1D7HH6yGgi4HtXwyYybweVOq8T3XPRuumuoiUgWDSE4O5tX7QHYrfJn9ZqATG/viEkUcywHoJ+gHfMgA/6oNEYSiNGYuvuuxdPgE7/PktVfBG2VWAYIng/zamTGm0b5bcAFx+Lfr6lzTfD5y8UEpBaGew9/2iFrCRVNTxFuJVX30oFbaVEqOhIVEM54xMdLQ/jTi8f7qehpg0Dyst4nRdbc252ps6QGNAxNuPd7joQWtl58exqwQKcZYdVAC67JT42GYg9Vvvyh7zq5Vq3geWIjtuGJCsvr+4nmvIQPY9IcnBTZuPh4hMTFKVfywOkskjgZ/eAcvY2tQboNVsUGcC3qUul0bH/NrplNc0jwEpX7/85GSRZuE2iN/e6ChbKhVLuHLeSLgxrqIwZjPQKqfocGYuvCzLhSQbmmn9Nkwyp6evdDXs0Vha9doGKq69/FOKjwsPL7H6XdR18aeaqikgXAT1BreOlsRk6ktatMHr/WjkUzdnqlNs=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB11862.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(376002)(136003)(366004)(39860400002)(396003)(230922051799003)(186009)(1800799012)(451199024)(64100799003)(5660300002)(38100700002)(55016003)(84970400001)(122000001)(41300700001)(966005)(478600001)(110136005)(2906002)(4744005)(76116006)(66476007)(64756008)(38070700009)(316002)(66446008)(66556008)(66946007)(71200400001)(9686003)(33656002)(6506007)(7696005)(8936002)(8676002)(86362001)(26005)(52536014);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?Windows-1252?Q?ExEe6yn+D5530CyaiNo0oWyBpcgTmh5+12hTisY7B+EEYNHpuMpu8viC?=
- =?Windows-1252?Q?M7ENXSpPC1Ab6OYsR39vqXxfjHBYE0JPH8TYTculM3T03EONMxwh/GdI?=
- =?Windows-1252?Q?GCGLFe8HA2BtnEEZrY0/FDGu01MaPpw1r9aVq3ej+86Mi1/DF9BjdLJI?=
- =?Windows-1252?Q?K7jgk+nTbICQdHQAm7yRJt18LmyWK3wwGH02qtSLq/U/8qZWL2Z2B8z8?=
- =?Windows-1252?Q?DHtwDW0nC2SwChWsV9c96uYU4ASWh6T0YOzFc55yOsFG1hbEjYIAvB5C?=
- =?Windows-1252?Q?8278AfykVi3r0g/H8FZcNAi/kimedCTsDvRphbdaAx5wh92ucqJlO6bO?=
- =?Windows-1252?Q?ZWEfVV84742mtVyLEN8kET4+PZMX2j0tX4iwl5MW9mFpBmyEJ14rnhyd?=
- =?Windows-1252?Q?SPKpslUHcg9Y4nFNAFw/XkEj6+O6P6g5TXDIqXtkdeJpACWwvPjTJVgO?=
- =?Windows-1252?Q?EWLBSk8RqLe8LLdoJCdZzdSxDdUG+MazvGN8LKlJAO+j+JY6/494nw4k?=
- =?Windows-1252?Q?kYN3PiLWBkQoMNis+ALcJff93EzL5YeGRdAo+YdvEQq8w7HrPwngPczJ?=
- =?Windows-1252?Q?tfi5QCLzkgWN1aLJRIUm01ONeqiX93hm6TQOoYPx3vYSN2gh32SJpiLB?=
- =?Windows-1252?Q?NcWcn23pVHji9HtW1Ky+DEOhZe/B6EgY9OjFDIS2XzRl0Jw7S6/Yl1m6?=
- =?Windows-1252?Q?qzjf+Fpjt6rtzMpWuxrF0RgM1CJ7eGt29k7SVIZu1l7aBjia+zXqZAH7?=
- =?Windows-1252?Q?fFNe6l2bKp0o4J8yAKJeob660ZF13tkyfaaQmjyInpzw8iI+TxmDmvBj?=
- =?Windows-1252?Q?pEvb05bp3tu/ejgCDLVPmVLymfSlkQ+Pe4lf4iqkmu0aRq9bPXpMPKGh?=
- =?Windows-1252?Q?8FalIlVbVL7dtiTFeFkRqIrnKBJqSj3/lu93IzESQXL6R9FQpjgMDUmz?=
- =?Windows-1252?Q?7vuiQ/ptoqckWFiT/oART0/0BZ9nw6XDO5rAJbWBtA/c1/iLLv0V0kS9?=
- =?Windows-1252?Q?FYa4c7PXgaJx5b64UfWPOS56B3QCQEhXpJgLEaVos5q5hd9sHdv+60lA?=
- =?Windows-1252?Q?5PkjECBMp5F7rAlCO1YCv5DmmM2vvRUSw3knF9FPjZq5jLiVnGW4vWMs?=
- =?Windows-1252?Q?Ek3ZJWGjxUewumw6cI/Vl8r9yiWzxT7e0qpRjetwHn/A0EujhkVVv76L?=
- =?Windows-1252?Q?0S2Jgj9RO11UPrySKuu2HlW0Gc7By7l8nhy5+6WN8UEVUomXlcDuSb88?=
- =?Windows-1252?Q?9N2lj3iRqsx+mDULioyF15sxaeMDmxbRB9r6VArrsFX71NQrAf6Gr/Bd?=
- =?Windows-1252?Q?4kEW0XlPbn/clMUgUqkNhFtGqpTDrSVLCP1EdnzBu7ebfLBUn1/WQXIc?=
- =?Windows-1252?Q?6vpZCnvPNmxq10/MoNqDWPSXbZnsUA6BuTb6hqFmtBbY8j6Yp2VTzJrY?=
- =?Windows-1252?Q?LPIr5W9phUtp498ssOiOfA3RCXIhFpQ9TuTmg5iak7RgPjpzPO5NQyPS?=
- =?Windows-1252?Q?xAdMtzNEcJ4G9FoimsNVMeAus3vHXVESVZBdEk6XJ3jKkcVoD3VM4mvA?=
- =?Windows-1252?Q?UzHvtJf929A0SYNvXjQ78mf+3/KT6uDp5MjlshetV2qqGQ8pq8wg+sS3?=
- =?Windows-1252?Q?TYEoSRnwoNNBICYdlx3k7wknfViRjVtgVmnVaRiqXafjjnjwRqjudrtb?=
- =?Windows-1252?Q?nXTyHmjbIXsuBeefyq66yiEBf30pZYNNlyJ3u2d6PnWIRvCgccUoxg?=
- =?Windows-1252?Q?=3D=3D?=
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+ dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=Kv+o7hIN;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.160.43, mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2196dd318f5so869513fac.3
+        for <cip-dev@lists.cip-project.org>; Wed, 07 Feb 2024 15:05:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1707347148; x=1707951948; darn=lists.cip-project.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=I1jbGaWTg2JxR6I/4C6QxbIa9kSv4qrfU/hQ4C5c29o=;
+        b=Kv+o7hINnsliMqZ0H0cCMFccfLJwlJtXiinGkWfeoDKee67QDBR+DXVb9OxNpnGP7k
+         sJr45iuI8E7v0SJRM4aK++3o6ksarv/pcGayNMA2+trHQ5t2D8BrGQXcl71nJIPaLQkf
+         +mmvYoGf0LaE6xN+Bn/afFHcPXkuNoeV4TwAzJguNtkjlhUsIK64XgXxbLATqSlXhcfK
+         petlhmIqU38Qp6kGew+l2Vl/2CDVpGg4eaQnkXrL/pcpagCW2ojzpZCMT+/8ud2lS3oA
+         A8j1Wak1WKIf/plMiIkSoUZ11tD9CMYCo43nfrb90bFg8BUENfQvOBe5qr3dxCY4IdG6
+         3JzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707347148; x=1707951948;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=I1jbGaWTg2JxR6I/4C6QxbIa9kSv4qrfU/hQ4C5c29o=;
+        b=plSVAjgTCT0zIbeMJjo1wLoOsubwNg+TcUDIAZV6z+KGg88861jLx1eJ8qEmrFNNiC
+         5nIxzQ1rNL8MdSNT3BDMDOu8WPLsVf/Dsr7875Mj2Y0BopHi8BA9JaywBWpONUxKz9UP
+         iG85Ixv49iuuQduveRHKIgaauxOcXBZz43SX4/QP9ZNltjhG3/Ne91DpQU7SsSjj4kp5
+         mbNVSBPtdaWKi5lyu9sICZ85b7tXi0IsZ1nXIDigdJA7JsCdXTbJP55T7f2NPIPy3LHv
+         w4iDpRXs9SP9ogtoMsEgnfY5mDJ4VtfBIEnTUIn35pFmBwRA4l2AuaPrtOvk5A/BwDmL
+         6ACg==
+X-Gm-Message-State: AOJu0YwFSmZD4xstG4IZYJZFkAm/08+oe2TJ3AqHXi1YSsbY7rI9T+Ko
+	vn5cU4eYZ2fLEkbYEzlEKaLq7QzShHtuelZNGzqT/yspOBzFBUJnhbd72lVgAARsSYE99h+wgeu
+	5y+sfAosBX10gszuTDt+r7UEk3N6reMoUyikoaZXCqALrj+koUmI=
+X-Google-Smtp-Source: AGHT+IEgwqO4iffZ5ZmB5k4eZpoVePhbLqDn3weuYp8nEuYb4J8qtSrylwgG3fo+8cc8gM8HpEMLWTSd2NVpzZXYJKw=
+X-Received: by 2002:a05:6870:6390:b0:218:db16:8983 with SMTP id
+ t16-20020a056870639000b00218db168983mr8190125oap.50.1707347147852; Wed, 07
+ Feb 2024 15:05:47 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB11862.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a1c19fae-cd88-4d88-fb28-08dc282eb630
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Feb 2024 22:47:06.9811
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: nuIMZlEnytkJsiuJPi2zQc9wIaswacSDSeFNqJ79WUVYT1xCFOtWUC+kYqcSKQxwYkGnF7t0+fEu/VEXOtkLLEpQ73+K+lZ0+mNGZYp9CJw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB11988
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 8 Feb 2024 08:05:11 +0900
+Message-ID: <CAODzB9rAHEekG4XfSQzigdMh0N+6KO-Z+H2mWZ+cLrbWBXX65g@mail.gmail.com>
+Subject: [kernel-cve-report] New CVE entries this week
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 07 Feb 2024 22:47:12 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14914
+ <cip-dev@lists.cip-project.org>; Wed, 07 Feb 2024 23:05:52 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14915
 
-Hello,
+Hi!
 
-> From: Pavel Machek <pavel@denx.de>
-> Sent: Monday, February 5, 2024 6:08 PM
->=20
-> Hi!
->=20
-> New realtime trees should be available at kernel.org.
->=20
-> Trees are available at
->=20
-> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-
-> cip.git/log/?h=3Dlinux-5.10.y-cip-rt
-> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-
-> cip.git/log/?h=3Dlinux-5.10.y-cip-rt-rebase
+It's this week's CVE report.
 
-Test results:=20
-- Dashboard: https://squad.ciplatform.org/linux-cip/linux-5.10.y-cip-rt/bui=
-ld/5.10.209-cip44-rt18_d814befd1/
-- Summary: No new regressions
+This week reported 10 new CVEs and 3 updated CVEs.
 
-Kind regards, Chris
+* New CVEs
 
->=20
-> And their content should be identical. There are also tar archives, at:
->=20
-> https://mirrors.edge.kernel.org/pub/linux/kernel/projects/cip/
->=20
-> Best regards,
->                                                                 Pavel
->=20
-> --
-> DENX Software Engineering GmbH,        Managing Director: Erika Unter
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+CVE-2023-6240: Marvin vulnerability side-channel leakage in the RSA
+decryption operation
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): 6.5 (MEDIUM)
+
+A Marvin vulnerability side-channel leakage was found in the RSA
+decryption operation in the Linux Kernel. This issue may allow a
+network attacker to decrypt ciphertexts or forge signatures, limiting
+the services that use that private key.
+
+This vulnerability is not only affecting Linux kernel, it is also
+affecting lots of softwares.
+https://people.redhat.com/~hkario/marvin/
+
+Fixed status
+Not fixed yet.
+
+CVE-2024-22386: NULL pointer dereference bug was found in drm/exynos
+device driver
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): 5.3 (MEDIUM)
+
+A race condition was found in the Linux kernel's drm/exynos device
+driver in exynos_drm_crtc_atomic_disable() function. This can result
+in a null pointer dereference issue, possibly leading to a kernel
+panic or denial of service issue.
+
+It looks like commit 2e63972a ("drm/exynos: fix a possible
+null-pointer dereference due to data race in
+exynos_drm_crtc_atomic_disable()") fixes this vulnerability but
+accessing to the bugzilla
+(https://bugzilla.openanolis.cn/show_bug.cgi?id=8147) is restricted
+now so we need to wait for sometime.
+
+Fixed status
+Not fixed yet.
+
+CVE-2024-23196: NULL pointer dereference bug was found in sound/hda
+device driver
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): 5.3 (MEDIUM)
+
+A race condition was found in the Linux kernel's sound/hda device
+driver in snd_hdac_regmap_sync() function. This can result in a null
+pointer dereference issue, possibly leading to a kernel panic or
+denial of service issue.
+
+It looks like commit 1f4a08fed ("ALSA: hda: fix a possible
+null-pointer dereference due to data race in snd_hdac_regmap_sync()")
+fixes this vulnerability but accessing to the bugzilla
+(https://bugzilla.openanolis.cn/show_bug.cgi?id=8148) is restricted
+now so we need to wait for sometime.
+
+Fixed status
+Not fixed yet.
+
+CVE-2024-24855: NULL pointer dereference bug was found in scsi device driver
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): 5.0 (MEDIUM)
+
+A race condition was found in the Linux kernel's scsi device driver in
+lpfc_unregister_fcf_rescan() function. This can result in a null
+pointer dereference issue, possibly leading to a kernel panic or
+denial of service issue.
+
+It looks like commit 0e881c0a ("scsi: lpfc: Fix a possible data race
+in lpfc_unregister_fcf_rescan()") fixes this vulnerability but
+accessing to the bugzilla
+(https://bugzilla.openanolis.cn/show_bug.cgi?id=8149) is restricted
+now so we need to wait for sometime.
+
+Fixed status
+Not fixed yet.
+
+CVE-2024-24857: Integer overflow bug was found in bluetooth device driver
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): 4.6 (MEDIUM)
+
+A race condition was found in the Linux kernel's net/bluetooth device
+driver in conn_info_{min,max}_age_set() function. This can result in
+integrity overflow issue, possibly leading to bluetooth connection
+abnormality or denial of service.
+
+Fixed status
+Not fixed yet.
+
+CVE-2024-24858: Race condition bug in
+{conn,adv}_{min,max}_interval_set() in bluetooth driver causes DoS
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): 4.6 (MEDIUM)
+
+A race condition was found in the Linux kernel's net/bluetooth in
+{conn,adv}_{min,max}_interval_set() function. This can result in I2cap
+connection or broadcast abnormality issue, possibly leading to denial
+of service.
+
+Fixed status
+Not fixed yet.
+
+CVE-2024-24859: Race condition bug in sniff_{min,max}_interval_set()
+in bluetooth driver causes DoS
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): 4.6 (MEDIUM)
+
+A race condition was found in the Linux kernel's net/bluetooth in
+sniff_{min,max}_interval_set() function. This can result in a
+bluetooth sniffing exception issue, possibly leading denial of
+service.
+
+Fixed status
+Not fixed yet.
+
+CVE-2024-24860: NULL pointer dereference bug was found in bluetooth
+device driver in {min,max}_key_size_set()
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): 4.6 (MEDIUM)
+
+A race condition was found in the Linux kernel's bluetooth device
+driver in {min,max}_key_size_set() function. This can result in a null
+pointer dereference issue, possibly leading to a kernel panic or
+denial of service issue.
+
+It looks like commit da9065caa ("Bluetooth: Fix atomicity violation in
+{min,max}_key_size_set") fixes this vulnerability but accessing to the
+bugzilla (https://bugzilla.openanolis.cn/show_bug.cgi?id=8151) is
+restricted now so we need to wait for sometime.
+
+Fixed status
+Not fixed yet.
+
+CVE-2024-24861: Race condition bug was found in media/xc4000 device
+driver in xc4000 xc4000_get_frequency()
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): 3.3 (LOW)
+
+A race condition was found in the Linux kernel's media/xc4000 device
+driver in xc4000 xc4000_get_frequency() function. This can result in
+return value overflow issue, possibly leading to malfunction or denial
+of service issue.
+
+Fixed status
+Not fixed yet.
+
+CVE-2024-24864: Race condition bug in media/dvb-core in dvbdmx_write()
+causes DoS
+
+A race condition was found in the Linux kernel's media/dvb-core in
+dvbdmx_write() function. This can result in a null pointer dereference
+issue, possibly leading to a kernel panic or denial of service issue.
+
+CVSS v3(NIST): N/A
+CVSS v3(CNA): 5.3 (MEDIUM)
+
+Fixed status
+Not fixed yet.
+
+* Updated CVEs
+
+CVE-2024-1086: netfilter: nf_tables: reject QUEUE/DROP verdict parameters
+
+stable 6.1, 6.6, and 6.7 were fixed.
+
+Fixed status
+mainline: [f342de4e2f33e0e39165d8639387aa6c19dff660]
+stable/6.1: [8e34430e33b8a80bc014f3efe29cac76bc30a4b4]
+stable/6.6: [6653118b176a00915125521c6572ae8e507621db]
+stable/6.7: [f05a497e7bc8851eeeb3a58da180ba469efebb05]
+
+CVE-2024-23849: net/rds: Fix UBSAN: array-index-out-of-bounds in rds_cmsg_recv
+
+The mainlinx, stable 6.1, 6.6, and 6.7 were fixed.
+
+Fixed status
+mainline: [13e788deb7348cc88df34bed736c3b3b9927ea52]
+stable/6.1: [71024928b3f71ce4529426f8692943205c58d30b]
+stable/6.6: [7a73190ea557e7f26914b0fe04c1f57a96cb771f]
+stable/6.7: [0b787c2dea15e7a2828fa3a74a5447df4ed57711]
+
+CVE-2024-23851: Kernel crash in drivers/md/dm-ioctl.c when allocate
+memory more than INT_MAX bytes
+
+Fixed in 6.8-rc3.
+
+Fixed status
+mainline: [bd504bcfec41a503b32054da5472904b404341a4]
+
+Currently tracking CVEs
+
+CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
+Bluetooth Core Specifications 4.0 through 5.2
+
+There is no fix information.
+
+CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
+Provisioning Leads to MITM
+
+No fix information.
+
+CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
+
+No fix information.
+
+Regards,
+-- 
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
+
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
