@@ -2,28 +2,28 @@ Return-Path: <sai.sathujoda@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 885D9C4828D
-	for <webhook@archiver.kernel.org>; Wed,  7 Feb 2024 11:39:41 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.131])
- by mx.groups.io with SMTP id smtpd.web10.18507.1707305970629653612
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3528C4828F
+	for <webhook@archiver.kernel.org>; Wed,  7 Feb 2024 11:52:51 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
+ by mx.groups.io with SMTP id smtpd.web10.18693.1707306769167233430
  for <cip-dev@lists.cip-project.org>;
- Wed, 07 Feb 2024 03:39:32 -0800
+ Wed, 07 Feb 2024 03:52:50 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.131, mailfrom: sai.sathujoda@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1120) id 417BdSsE2482379; Wed, 7 Feb 2024 20:39:28 +0900
-X-Iguazu-Qid: 2rWhQ9h8CNyOAg5mXA
-X-Iguazu-QSIG: v=2; s=0; t=1707305967; q=2rWhQ9h8CNyOAg5mXA; m=3ZQGf36VHxF+bMyOYOsnyXyixPgaTNQKFqQwPa5YLpk=
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.152, mailfrom: sai.sathujoda@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 417BqkEv3055761; Wed, 7 Feb 2024 20:52:46 +0900
+X-Iguazu-Qid: 2yAbno87TfANyuxrsn
+X-Iguazu-QSIG: v=2; s=0; t=1707306766; q=2yAbno87TfANyuxrsn; m=NW68ktjjOKIHctTTx4Ifxm9X640Qmj8ZK056AP92XUU=
 Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1120) id 417BdQ7R2866490
+	by relay.securemx.jp (mx-mr1800) id 417BqiCX1841563
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Wed, 7 Feb 2024 20:39:27 +0900
+	Wed, 7 Feb 2024 20:52:45 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mtLWbrPpk4ZYukowP7RqqN8FUFGmBrMUr2QfxttxaeStWLrFJkVTpEFqyM6xlMz5rYBK7Rj787E/SEDhENfFqwogF1f3+i+OjrG68/1e4js60a+JsFBmxgviJ8QuI+kyrQh1HPJz3/oXMnMCLoZ+cNZY2tjAqa6smvKR4tbOlz2h0jXEgGdtEm8XQ5xPLI26Zgib+jLCrVaKRe2jS1Vl8AqrahI6YoigiR2CbOwcs47VtF3Vu4KOiAygCFOb7fvftj+oPRJjZZ60oJJqEwOdqO2BKgjppIa+IHI40QreEWgUsY/wcCVq0bmGdNLS7o8VcRuCHzLusPqTXlG+QRI+6w==
+ b=SQBw8kW4HaRMPXjGvkMoDW6QWY9LApgldgCgBslV/F+2TaGSK+iFYyS12vFUGjjzFPa6HPErxL8nxWlR+idrio8Wq7cVxFqH0hd7uALYGUaBFI1QcuqYXdfIP4+ShAsN88Pqh9w/6hQkOK2E3Kseyb4AnnA+OaVuEAoFHi5QxCgFbkO1keXOTkItyuIRMfvv1EKKltXWmAi11A56tslDJYfUciu1rg3M/lPm23yxL9yJlGS0I9X6bGX4mXuIL4KO7WG8tbfmRbID1WG8dtur8sCTWPl7paaOadTERXwFk5I5f4hXYbNzumdCJi6u7Si7u342AU4XdmXrSN0JMuf47w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KPfpKokkpWdEzjpbP2TrFUtQPfaHm/qwwm5sUoEPGDs=;
- b=PQJCyqpVpimdM0D1kJOWJNqSQLFtYuNbS6/+kM8lEmyg8w5cVI0veDwiMFNKMNa7FB2Mrl+nnRmKEeG/gwZdMQiHbflKNhLjTvohhvrpGRUjzmBxI/Y+NU5Xx9LsNCkUfqrflyTmCcodnUVi0mTTSl4zQhsqAkHyZiwiaBZMzPJKegpI1YraQeI/8fjxCphk/yFYvsk9ID5VfWI+yHKKn8TRO+hphh1gDeETf1iGZMxyrB0MiDAPs8vj2Skn4t3/JCHnTe6MuQljRDlhhjkJx9tMHEcztcmz7JIYzSbPd9f6xi2NFc3pDjycLMLmJve/3hUsG/PcMqvUarpwCt4hCg==
+ bh=CowaiskeLH6YB7NpsguhPaWD6aSdrj5cCAT7VAORWEU=;
+ b=MY03S1xBnG2NmW1TCetMHfk8A+xdqkWZlUcnk7c2AI5fPdy0T2BqsFsmg03KykJehWMWbXPbxj+hUHb8QB9fVs+I3coXUYPEauVcUgHbsizm7CzTtboNmTHZAEfE6Ebo8li3Rw1qxQUPZPcCLGZdzBh1PfwGip0cR8x8guilIRxDrx+M8P68aO6t1qu2/3QxeG1WxsiFnQVzQl7X1e2Y1PSYlM7XRmT3o+O52slXFcrkAxx/xMjfwBoNwSgovbFW4n+1ba/qufTBBxaU/V1amkf9U2D+IR+OoSmP7FcgFOL5B+N0GLyogxPxRET7D3U71vn0yyhFKsLKzVGcnBY2yg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
  header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
@@ -39,11 +39,11 @@ Subject: RE: Query - ( Running Linux commands in LAVA host before booting the
 Thread-Topic: Query - ( Running Linux commands in LAVA host before booting the
  image )
 Thread-Index: 
- AdozwvV9UNGTGxZYRGqGmeIZ2P0TlwJpyH3gAACV+xAAAiUg0AAAckCwACcWkkAAPCHDMAJbyUuwADZLu0AAEFBIYAAqverQAOAY0AAAeDM7MAC1qp8QAADiP3AAElkEwAAIKc+gALj1AzAA+YOqgAADw2CwAAB+4oA=
-Date: Wed, 7 Feb 2024 11:39:22 +0000
+ AdozwvV9UNGTGxZYRGqGmeIZ2P0TlwJpyH3gAACV+xAAAiUg0AAAckCwACcWkkAAPCHDMAJbyUuwADZLu0AAEFBIYAAqverQAOAY0AAAeDM7MAC1qp8QAADiP3AAElkEwAAIKc+gALj1AzAA+YOqgAADw2CwAAB+4oAAAJtgwA==
+Date: Wed, 7 Feb 2024 11:52:40 +0000
 X-TSB-HOP2: ON
 Message-ID: 
- <OS3PR01MB61036685298B1AEF896EFF0FC2452@OS3PR01MB6103.jpnprd01.prod.outlook.com>
+ <OS3PR01MB6103B3C3E79AB76D6008C7D3C2452@OS3PR01MB6103.jpnprd01.prod.outlook.com>
 References: 
  <TY2PR01MB4954D32835FCAF8245111E1DC295A@TY2PR01MB4954.jpnprd01.prod.outlook.com>
  <TYYPR01MB6809B0815132278008135537B761A@TYYPR01MB6809.jpnprd01.prod.outlook.com>
@@ -65,8 +65,9 @@ References:
  <TYWPR01MB11862FCB741E34176B014E586B7422@TYWPR01MB11862.jpnprd01.prod.outlook.com>
  <OS3PR01MB61033CE311E22152AF467E07C2452@OS3PR01MB6103.jpnprd01.prod.outlook.com>
  <TYWPR01MB118628433A0B23D25E7F8E6D5B7452@TYWPR01MB11862.jpnprd01.prod.outlook.com>
+ <OS3PR01MB61036685298B1AEF896EFF0FC2452@OS3PR01MB6103.jpnprd01.prod.outlook.com>
 In-Reply-To: 
- <TYWPR01MB118628433A0B23D25E7F8E6D5B7452@TYWPR01MB11862.jpnprd01.prod.outlook.com>
+ <OS3PR01MB61036685298B1AEF896EFF0FC2452@OS3PR01MB6103.jpnprd01.prod.outlook.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -74,79 +75,114 @@ X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS3PR01MB6103:EE_|OS0PR01MB5794:EE_
-x-ms-office365-filtering-correlation-id: 94167a9c-495c-466d-c82b-08dc27d16dd8
+x-ms-traffictypediagnostic: OS3PR01MB6103:EE_|TY3PR01MB11798:EE_
+x-ms-office365-filtering-correlation-id: aa30b832-37d3-4fc3-6d00-08dc27d349ca
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
 x-microsoft-antispam-message-info: 
- h978aS3SkDQ8lLVJK/qSUUzAelzCkuyAaBFxaSF27IWD1mLzGNq7EI3ZcIvfhx3ok7BpPRafWkoIcrQrb0qnSE/d1ywIZtg2nIaE1csZEr4Mx8MfOeOabHj+NEZJSECDSRoa2SptKHU9tLgdzORNZcZrSsa5uENQ3Yh+y5bPXymVdABA+c1aIU/0rxDBL2D72QKYlx+PrvayCtu437gPLc6i0amqAXxlRky/RJqx+Z8XFzY4z4+EMGWqYvs0ADaJPyS8OKKK9YlgBuNIGTUbAL248DyR1uiNKvr4yCHWmfc2ZldSoG/3dfY8yMy39PuivZQCA2t87cVzXPMxi0soxfQYJX1GPaZI2GsA6Aq7Q320lRZzYvkAsJOEg6os/CQ923eCUkbpJzIebO2LZQloIwuDW1kb8X8r5sNGdllXlk3jfHpY8SNp9cZkqAIlEPIp4Amh9QCIUidtxT8++5KUxt+l4s6fDMf7mHJSIm3jljQqaEzGavkn/HGqcLauQw0JGFn07M26DYgRgxKAf4M7JS2YqSzbxfXPoZBxQBI+lfMfT1XPXc/2Ia/gDapsJSdLw/iBO9Xq2Ywz19vtFvplXKrUuEosc406Glakyk7ONa6aEDhX6O1gvbhk/rZlwa2C+3lDwyGvP2ZHLL9StBGfhQ==
+ YqFKbARajH2AtfpYRyo3vq5wqdg9gT+eTU0DCiHOk3RTMfnYk+XPQkknGaBERLig8geyq3/jNg5y/yF4SSvfgR43lGc3mlgYinf27baM7HVaNKTHPDAmTn/yNq9Jti9sODgs4dMBw2lB4V5AAv6AB2Q8kWMn+OvKQMBKadnhBb+RH2sqo34QSN+y0rqDzdbuZqLxxP/teGBHBh5Fi+nNlwORyWJQqFW2jWNGvSG1Ewfpf6//PtsEBaQOn2uf5YaddR4Imw50lvztwGmvRBT7pciajubyeAGgfyp5OzhodvjUuKNRq+mbLvpb+g3CbNXmpuHHQXLPuo9Dztfxd0aU0XPTIyznTTjewcXv8RfWpq1TKnDerWbbMo5HvcGylgoxN93uFWn9xWw9/nqIHtnIVSAC0Hv9dNvRSdw6dhLewp3lAhKBANFxpq4nrL3dIJ4LDULGYtcRfaevbvI81Cgm+sEoYcGa7SttiUfmnNAcZw8AlWG6y6myK4xFOHsqrk55v6pAg/mSkl3wsVr8zqet+VJ0Y9JTjtqGoNrvz6aPYSEaKn1OpPWlAQSQPSPaBkwaEitHi9uRNcG9utL0PWz/pzD0iP1kJJk00QO1BnvpYLSGRh4y3uNEMKkUNl4svnZgVz3X+wI/dYMRj0TbUlhxJg==
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB6103.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(396003)(136003)(366004)(346002)(376002)(230922051799003)(64100799003)(451199024)(186009)(1800799012)(41300700001)(66899024)(966005)(85182001)(478600001)(53546011)(9686003)(7696005)(6506007)(38070700009)(6916009)(316002)(54906003)(64756008)(76116006)(66946007)(66556008)(66476007)(66446008)(122000001)(166002)(38100700002)(107886003)(33656002)(71200400001)(26005)(86362001)(83380400001)(52536014)(4326008)(9326002)(8936002)(8676002)(2906002)(30864003)(5660300002)(55016003)(579004)(559001);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB6103.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(376002)(366004)(346002)(396003)(136003)(230922051799003)(64100799003)(1800799012)(451199024)(186009)(55016003)(5660300002)(2906002)(30864003)(41300700001)(66899024)(83380400001)(26005)(122000001)(86362001)(2940100002)(107886003)(9686003)(6506007)(66476007)(33656002)(966005)(478600001)(38070700009)(53546011)(85182001)(71200400001)(54906003)(7696005)(4326008)(66556008)(66946007)(6916009)(64756008)(76116006)(66446008)(8936002)(166002)(52536014)(38100700002)(8676002)(316002)(9326002)(559001)(579004);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?L0krTnRtbUMvNWo4WjQyOWZzVDdYbEFNekRTd0VvN2pQODVUdmZjam5k?=
- =?iso-2022-jp?B?b09RZDR4Tng1aTA1Y3QrRnhWNFpFV1BGeHpmUFpXUnJ0TTdEZE5qR1c1?=
- =?iso-2022-jp?B?VVlmSlptQ1BuR2pyZW9iOVFGT1hialdSTEUzVWw5WUpJa0xWK0JReEFG?=
- =?iso-2022-jp?B?TnUrZ3U4Q3BUVHJPcFV2R1RlTnhCdWZLNCtHbURzNDFITWtUeWwwcjN6?=
- =?iso-2022-jp?B?ZUFleEFHWTBUQmduWFRyRWVpek5hMEZSRUcreVFjZExDczIwR3phUHlZ?=
- =?iso-2022-jp?B?SHFjaHRUWGdlS2VTVFFaSXQxZ3ZYUkI5VFluUmJGb2xSOEloSWlKVmNa?=
- =?iso-2022-jp?B?WnVWWGFpSTZoOE41aS8yWDE1bHFyNk01NXduL09LeThvakhaOXkrQmxV?=
- =?iso-2022-jp?B?NWNaaEdIR1BhYXNjL3U1QkZ1WEIzSzFzODRFdEhKQnFlTlMrK2xnWVpz?=
- =?iso-2022-jp?B?azVWUTNLK2trK21xOG1RMmxjcUlzZGtVSWNWd3pXQ2YzQkVJdWVYSVNR?=
- =?iso-2022-jp?B?cEs5Mm5yUGc2dDBwWkZoSWRnY0wycHBUTkQvUzZuOW5tTXZCT3JkL3RS?=
- =?iso-2022-jp?B?ZzVvazJudndyT2l4UFdOaEdQR3B6YkRHbmREMGk5N3ZHd3ZMemNxV0V4?=
- =?iso-2022-jp?B?S0lHWTI0czFCcVJXaWRvK0VNSEc0bUh0U2NwSXRNWDhWaUVTUWNGKzNr?=
- =?iso-2022-jp?B?Ynl0Y2ZXSUtDWXQ2VEczVmxiVTVCRVlUUFM0QU50T2t4Z2gxbENndFhI?=
- =?iso-2022-jp?B?SlE5em1STDZXQWNiemZyaWcwd0E1b2VTZDRMVVR5UXlaODZKUFo1NTl3?=
- =?iso-2022-jp?B?eXZxamsrRGdPT2ZhUVdZTzd4dmc0bVIrR1A3WG5oSzRXUHlNUFh0eTdO?=
- =?iso-2022-jp?B?UHVPaEtjRjArdGhFQjRnRlRQc2pEQkx1ZWJYb2FEbzQ2bWM0bURXVnd6?=
- =?iso-2022-jp?B?ZHpWbFJnUmVWN2RlTU9FdmE4cENYY2tyYm9zVk5FVHJFcy9IQXhub3ZV?=
- =?iso-2022-jp?B?cWJtaHkxdDNyV0w2RGoyZVRoQ3dVRmtyMzNPWS9wRTdaLzdmQUJwZzgx?=
- =?iso-2022-jp?B?MlRPRWdPRFE1b1gzdFBraERWd29NM1FXejlWcCtSelRxU25lZ1VSUDRK?=
- =?iso-2022-jp?B?SDZIc3crdG9hZ1JxNGoyVFlxdjdUVVRwcTJCVWpwUkVydStuQS9yaUZr?=
- =?iso-2022-jp?B?Y1VCdzJoR3l4Q2NpellLMEZKWlpDM3IvSDFvdmE0QmFYNExLaE9vSTE1?=
- =?iso-2022-jp?B?SkdXenNVQnBMVUFNN3N4Y213aDJmckdUeXhKOXJ5NGNCL1hrVUsvL0lv?=
- =?iso-2022-jp?B?OW1LOUYxaXZVZ2pFTU9PWXdCUXZ4NlRQSW1Fblc2dTU4djRxWHI4eXZW?=
- =?iso-2022-jp?B?Mm5lbHVyVE9oR0MwT1BCc1NOTzVMdmlZSFdDVW9TNzVrQ3ZBZkRSTm12?=
- =?iso-2022-jp?B?anYvYXlkZmNvRlZ2Vk5HbzZIUkJCV0N1OFQzaDNPemJURXg4TFhlTDh3?=
- =?iso-2022-jp?B?WFMvek90Q1FNUkdhSFFPdHZZYmJERFN4dGYxUFRoa2FhZFNjWEliRU5G?=
- =?iso-2022-jp?B?b3lNZGRMN3R2WmVWR1BUUnM1bkpXaE9WZnRjZ3JqRGVmN3o3S3ltTWhB?=
- =?iso-2022-jp?B?NGJxbFhrM2F3Vy9FdVFCK2lDYUdsMFBDZXdUbkxKbzYyQjlMK2VyQVND?=
- =?iso-2022-jp?B?NW9aaHgvbVd1K1ZmRHpsZlJQSjBHRk9LeHR0bERVUE42MFlSMTJHd016?=
- =?iso-2022-jp?B?MDQ0RG1xUEtQazZYTlNRNmNsWDg4RytzYytERnVDdXg4OHR0eWpObWIr?=
- =?iso-2022-jp?B?YnVDakhkOHdSOUkxQy9HM1krWW0va3I3aTh1dEFnekpmWTFZekp6U05v?=
- =?iso-2022-jp?B?Z05ta2lvMEhVNy9mVnorZW8zbGJzdjF3cTFXdlo5RmhVSUtML1JFcjRH?=
- =?iso-2022-jp?B?M3plTkZ0SnkzTmduYmpKbGw0dFhKOXBuOGtQNTZySnVGL2orak90REx1?=
- =?iso-2022-jp?B?SDdVZmUyWW4yUVV5UmVaUkovaUhGMG9GNHo2RDFLamFaM2NmZytQR25T?=
- =?iso-2022-jp?B?d0M4bUJ2dkNiUzZOMGJiT2ZNd1V5TVpvWUR1YUhnMHdpM3o1M1JVM1lJ?=
- =?iso-2022-jp?B?Z0V6U0U2L21LZ1IzTFhreklMeitGcXNVNy9SUEFveTMyR2wyUjNtRmti?=
- =?iso-2022-jp?B?TlQ1ZE5nRkE1WW1IcThLYlk1OFlOS0pqZXpCWExKQ3poRHRzUW1LUWIr?=
- =?iso-2022-jp?B?Rk9VdnlPRnIrVE9Kb0JYa0Mxa1k1dFFHeXFPV2s5SFQ0QmdpL05DVkcr?=
- =?iso-2022-jp?B?S3JuckliQU5TYXBGUG9PcUhSTENvTC9GbkE9PQ==?=
+ =?iso-2022-jp?B?WnpGN0ZvTXIrRVZ1dVloQ0ovTUNTcVNEdlF0RXBNTUVIYnFzcks0d1pP?=
+ =?iso-2022-jp?B?Y0hBU3lTRThEZDV5WmZuMHpDSkR3N2F4Mkc0SG9iUDFFODVwYWRyV21j?=
+ =?iso-2022-jp?B?QnpJZ1RZL3pwanN6Z0lVazlxWm8yRVUva2lsUk5SMkovM245REZXZjdk?=
+ =?iso-2022-jp?B?bHNlTXEyTFN1OEVRdzhaZTF0dVk4UmpReU8yRlB5bDNuUWVsYlArb2pa?=
+ =?iso-2022-jp?B?RmhqY0xMdm8rNzB0UU1kUnJnSFdyTUtVYUw4UmRqRjgrNVZzdTIzdFQy?=
+ =?iso-2022-jp?B?K1NlaVhCejFjNVp2WEZ2NXRZR2VrVmJsRVlNZklNUks1YlJvaGRWU3My?=
+ =?iso-2022-jp?B?YmtzaVEzdTM5K0I2cy95SlF5Z2swVW82ZElicUxCSUlPVkZlZ1JpQWJE?=
+ =?iso-2022-jp?B?cjVBd0toSndMbkRkaU50aHZPLytRQ0NaN3NnczJmMEFIY0FGV2xuRlNJ?=
+ =?iso-2022-jp?B?UEtIeUJYNE00UDh6TE80eElBOUVLZFJYTFNqZXVzTzJzaHgrbzVqdGVZ?=
+ =?iso-2022-jp?B?UGRpMkVCNERSa0l1QWxrYkMwVi9iNU1YTC9jY1QwYk5rZUs3bDNoOHB6?=
+ =?iso-2022-jp?B?NGRQMVFNbHhOODNBMnlLN1hvS0F6WkdOcUtkVmtZWHMwSE1QUC9QdlZ0?=
+ =?iso-2022-jp?B?MlNiSlZNcGJxNXdlZmhEK3Vhb1VHVWpFeXcxak9mdXNJZHJIMnBoRjVE?=
+ =?iso-2022-jp?B?VCswTEVXNGlPaHpVZ1o4dmw5L0c4T2xjV2NRVTNnMUdSaEhRWGZ4L3pJ?=
+ =?iso-2022-jp?B?YUd4cmdmSFB2dGNlSTBDOGQyOEpCdGpsaHVMNHZCNU0vaU1xYUJ3Q0Fm?=
+ =?iso-2022-jp?B?dVVZL3JwNkR0WWxKc0tmMDBtR3lLTm5KL3lLVzc3ck9QRGplMVllSFJy?=
+ =?iso-2022-jp?B?YWJ1VGtCKytENTlxWHA3WU5NL1VNN081Mmw3SkE2b3padG43Ky9jaWZE?=
+ =?iso-2022-jp?B?VWRjNjFJby95VWc5MXVPSDVmY0ZEWTZYaTlaSVJYRkdvMUloaE9rY3Jw?=
+ =?iso-2022-jp?B?SzdsSnRvQXVzZktGQ1Z4SDVoRmdiTHVkcjBSOTdxN2JSWmJ3QkN1TzhD?=
+ =?iso-2022-jp?B?UEE1K0RVOUYxZk8xMDN0Szd4R3pZVEx1MllPemJIWFcvNlpYZ2owR0J4?=
+ =?iso-2022-jp?B?ajNSMEg4cExFRjNWWWFVUXJveS9WQThIOWFCZXBoZWNnRmMwcUh0ODNG?=
+ =?iso-2022-jp?B?MWhXTVFxSWVHN08zeUkwS1k4RWlRYzI0S3FxdzFIU2FJWTlkYW5SRkhN?=
+ =?iso-2022-jp?B?VFNZTjZ5WUlPQXRTRXR3b3JCTWZNUUVNZHJNTGxFZ3BVN0lGb3NWY0Vy?=
+ =?iso-2022-jp?B?K2prT2xLWGJkbmJrYVZmYVdmRTg4MFNRZzNlbytNaFJFM05GSlhnSFVn?=
+ =?iso-2022-jp?B?NHV0OS9zU2w1ZmZUNFFncWNralk4c2c2dUpFazQyQ1N6Tm9rY3FCbmNu?=
+ =?iso-2022-jp?B?cGxoUzR0U0pDSm5kWjU1d29ZNVdhWktRSUZoK1ptNzIxd09hVnFMdHJl?=
+ =?iso-2022-jp?B?Tnk5aTRJU1JaSmxkVC9kNitmYjVBaCs4TEQxYTdqOGVGWHhSUDRERTY3?=
+ =?iso-2022-jp?B?UG9DSVNJeklsTXZiQlk5SVVlam1wQTNiR2I2ekUxRDZmbGhTbFNvSStx?=
+ =?iso-2022-jp?B?ckF3TEo2TmdjdFFHVGZkMGxNSi9FUFMwTkZPVmhIYi9zcjN5NDBvTm9i?=
+ =?iso-2022-jp?B?bEtuem9QYUI0dDRFNml0eGRqcDZURjhPWjV1R3FXUWJxTk93bTZsanRk?=
+ =?iso-2022-jp?B?amlGQ0hmb0VzOEg0WmtuNkRRdjZYSnAwSUFmZkZBODNMZ3gyQTFIYTJM?=
+ =?iso-2022-jp?B?N21BLys4dlFPdFBNNGM3aEIyTndxbk5ZTDkrTVg3bHE5RmpiWER1aFoy?=
+ =?iso-2022-jp?B?SHd6bUVZTE5YQWlmbllxT3VmTmErSHRBQlY0aTdMYVdDaE1sUS9JcGk4?=
+ =?iso-2022-jp?B?aUJkd09XM0xyOC9pUENCN2tiem5aQnhNQWlJSHdRa0FCTmJlSS8vMFdk?=
+ =?iso-2022-jp?B?SlFDZlBPZUFKVjBmUTZ2Q3JIazAzMWVNclVlWitWZ3JMek9hSktWM0JP?=
+ =?iso-2022-jp?B?TXFIWGxVakZxWWFyRnVSUC81Y2tlSXFsR0hrL05UQXovVEMrTTZMN2Vn?=
+ =?iso-2022-jp?B?NVhHcnd2Uzc5VXdXVm1zVXl1UXpHbmlxejh3WVpISGFWczNQUEpxQ2N4?=
+ =?iso-2022-jp?B?cTFNOXN6ZTBOVnIzTElZamRqZ2FJTHdxMHRpakZGbm9VQ1NWTWJad2NX?=
+ =?iso-2022-jp?B?T0pSM09DZGxHMFVKVUNDa1BiS0laVTF0V2RoaXpOWGhJamlvTlZDQmdy?=
+ =?iso-2022-jp?B?KzNTUHUyR1ZZTXp4RTlMTTM4WmdsQ25Pbmc9PQ==?=
 Content-Type: multipart/alternative;
-	boundary="_000_OS3PR01MB61036685298B1AEF896EFF0FC2452OS3PR01MB6103jpnp_"
+	boundary="_000_OS3PR01MB6103B3C3E79AB76D6008C7D3C2452OS3PR01MB6103jpnp_"
 MIME-Version: 1.0
 X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB6103.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 94167a9c-495c-466d-c82b-08dc27d16dd8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Feb 2024 11:39:22.3918
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa30b832-37d3-4fc3-6d00-08dc27d349ca
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Feb 2024 11:52:40.9057
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mHVaaEwS26zuKUwOMrFMRduE2sWeb+J0MMH6zgd3ty9hg6syAK4WoCEKwttzUKa6JDtnGu6m45Uu+dvZuZhYfuBxy1NvhEfN4Oj78P1CHEY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS0PR01MB5794
+X-MS-Exchange-CrossTenant-userprincipalname: 9+am6uOmKFAc7jzPlz9qjr9oR2gaM8oP8ksje1+GQsIiqTWIQ6yJEquxJbf0LVt+kxLCyQfK6dehJMeZ2N2x2BJEln3xzspuu61/yfhmODI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB11798
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 07 Feb 2024 11:39:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14877
+ <cip-dev@lists.cip-project.org>; Wed, 07 Feb 2024 11:52:51 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14878
 
---_000_OS3PR01MB61036685298B1AEF896EFF0FC2452OS3PR01MB6103jpnp_
+--_000_OS3PR01MB6103B3C3E79AB76D6008C7D3C2452OS3PR01MB6103jpnp_
 Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
+
+Hello Chris,
+
+Another observation which can give you better idea about the issue I am fac=
+ing is, just now I tried to run this job ( has a minimal boot action & does=
+ not need swtpm socket changes ) which ran successfully LAVA | Scheduler | =
+Jobs | 1089979 (ciplatform.org)<https://lava.ciplatform.org/scheduler/job/1=
+089979> today some hours ago. After you made changes in your lava slave, no=
+w if I run the same job now LAVA | Scheduler | Jobs | 1090009 (ciplatform.o=
+rg)<https://lava.ciplatform.org/scheduler/job/1090009>, it is giving Cannot=
+ find command '' in $PATH, Please report this to LAVA admins, so do you thi=
+nk the script additions and changes to device dictionaries we made can be c=
+onflicting the minimal boot action and giving infrastructure error ? Whenev=
+er I change method:minimal to method:qemu and media:tmpfs, it is not throwi=
+ng this error.
+
+Can you please help me with this Chris ?
+
+Thanks and regards,
+Sai Ashrith (T S I P)
+
+
+From: ashrith sai(=1B$B#T#S#I#P=1B(B)
+Sent: Wednesday, February 7, 2024 5:09 PM
+To: Chris Paterson <Chris.Paterson2@renesas.com>
+Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshib=
+a-tsip.com>; venkata1.pyla <venkata1.pyla@toshibaap.onmicrosoft.com>; kunij=
+adar shivanand(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <Shivanand.Kunijadar@t=
+oshiba-tsip.com>; balakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) <Adithya.Balak=
+umar@toshiba-tsip.com>; sanglikar zaiba(=1B$B#T#S#I#P=1B(B TEUR) <Zaiba.San=
+glikar@toshiba-tsip.com>; cip-dev@lists.cip-project.org; hayashi kazuhiro(=
+=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D#I#G""#M#P#S!{#M#P#4=
+=1B(B) <kazuhiro3.hayashi@toshiba.co.jp>
+Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
+he image )
 
 Hello Chris,
 
@@ -177,17 +213,23 @@ Please provide your opinion on this Chris.
 Thanks and regards,
 Sai Ashrith (T S I P)
 
-From: Chris Paterson <Chris.Paterson2@renesas.com>
+From: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@re=
+nesas.com>>
 Sent: Wednesday, February 7, 2024 4:45 PM
-To: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com>
+To: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com<mailto:=
+Sai.Sathujoda@toshiba-tsip.com>>
 Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshib=
-a-tsip.com>; venkata1.pyla <venkata1.pyla@toshibaap.onmicrosoft.com>; kunij=
-adar shivanand(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <Shivanand.Kunijadar@t=
-oshiba-tsip.com>; balakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) <Adithya.Balak=
-umar@toshiba-tsip.com>; sanglikar zaiba(=1B$B#T#S#I#P=1B(B TEUR) <Zaiba.San=
-glikar@toshiba-tsip.com>; cip-dev@lists.cip-project.org; hayashi kazuhiro(=
-=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D#I#G""#M#P#S!{#M#P#4=
-=1B(B) <kazuhiro3.hayashi@toshiba.co.jp>
+a-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>>; venkata1.pyla <venkata1.=
+pyla@toshibaap.onmicrosoft.com<mailto:venkata1.pyla@toshibaap.onmicrosoft.c=
+om>>; kunijadar shivanand(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <Shivanand.=
+Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijadar@toshiba-tsip.com>>; b=
+alakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) <Adithya.Balakumar@toshiba-tsip.c=
+om<mailto:Adithya.Balakumar@toshiba-tsip.com>>; sanglikar zaiba(=1B$B#T#S#I=
+#P=1B(B TEUR) <Zaiba.Sanglikar@toshiba-tsip.com<mailto:Zaiba.Sanglikar@tosh=
+iba-tsip.com>>; cip-dev@lists.cip-project.org<mailto:cip-dev@lists.cip-proj=
+ect.org>; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B=
+$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp<mailto:ka=
+zuhiro3.hayashi@toshiba.co.jp>>
 Subject: RE: Query - ( Running Linux commands in LAVA host before booting t=
 he image )
 
@@ -996,7 +1038,7 @@ Thanks and Regards,
 Sai Ashrith
 
 
---_000_OS3PR01MB61036685298B1AEF896EFF0FC2452OS3PR01MB6103jpnp_
+--_000_OS3PR01MB6103B3C3E79AB76D6008C7D3C2452OS3PR01MB6103jpnp_
 Content-Type: text/html; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
 
@@ -1017,6 +1059,9 @@ jp">
 	{font-family:SimSun;
 	panose-1:2 1 6 0 3 1 1 1 1 1;}
 @font-face
+	{font-family:"MS Gothic";
+	panose-1:2 11 6 9 7 2 5 8 2 4;}
+@font-face
 	{font-family:"Cambria Math";
 	panose-1:2 4 5 3 5 4 6 3 2 4;}
 @font-face
@@ -1032,6 +1077,9 @@ jp">
 	panose-1:2 11 6 9 2 2 4 3 2 4;}
 @font-face
 	{font-family:Aptos;}
+@font-face
+	{font-family:"\@MS Gothic";
+	panose-1:2 11 6 9 7 2 5 8 2 4;}
 @font-face
 	{font-family:"\@SimSun";
 	panose-1:2 1 6 0 3 1 1 1 1 1;}
@@ -1117,7 +1165,11 @@ span.EmailStyle27
 	{mso-style-type:personal;
 	font-family:"Aptos",sans-serif;
 	color:#7030A0;}
-span.EmailStyle29
+span.EmailStyle28
+	{mso-style-type:personal;
+	font-family:"Calibri",sans-serif;
+	color:windowtext;}
+span.EmailStyle30
 	{mso-style-type:personal-reply;
 	font-family:"Calibri",sans-serif;
 	color:windowtext;}
@@ -1337,23 +1389,109 @@ break-word">
 is,<o:p></o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
 p;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Another o=
+bservation which can give you better idea about the issue I am facing is, j=
+ust now I tried to run this job
+<b>( has a minimal boot action &amp; does not need swtpm socket changes )</=
+b> which ran successfully
+</span><a href=3D"https://lava.ciplatform.org/scheduler/job/1089979">LAVA |=
+ Scheduler | Jobs | 1089979 (ciplatform.org)</a> today some hours ago. Afte=
+r you made changes in your lava slave, now if I run the same job now
+<a href=3D"https://lava.ciplatform.org/scheduler/job/1090009">LAVA | Schedu=
+ler | Jobs | 1090009 (ciplatform.org)</a>, it is giving
+<b>Cannot find command '' in $PATH, Please report this to LAVA admins</b>, =
+so do you think the script additions and changes to device dictionaries we =
+made can be conflicting the minimal boot action and giving infrastructure e=
+rror ? Whenever I change
+<b>method:minimal</b> to <b>method:qemu</b> and <b>media:tmpfs, </b>it is n=
+ot throwing this error.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Can you please help me with this Chris ?<o:p></o:p><=
+/p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Thanks and regards,<o:p></o:p></p>
+<p class=3D"MsoNormal">Sai Ashrith (T S I P)<o:p></o:p></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
+0in 0in">
+<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none;mso-fareast-lan=
+guage:JA">From:</span></b><span style=3D"mso-ligatures:none;mso-fareast-lan=
+guage:JA"> ashrith sai(</span><span lang=3D"JA" style=3D"font-family:&quot;=
+MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B=
+$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-languag=
+e:JA">)
+<br>
+<b>Sent:</b> Wednesday, February 7, 2024 5:09 PM<br>
+<b>To:</b> Chris Paterson &lt;Chris.Paterson2@renesas.com&gt;<br>
+<b>Cc:</b> dinesh kumar(</span><span lang=3D"JA" style=3D"font-family:&quot=
+;MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=
+=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-lang=
+uage:JA"> TMIEC ODG Porting) &lt;dinesh.kumar@toshiba-tsip.com&gt;; venkata=
+1.pyla
+ &lt;venkata1.pyla@toshibaap.onmicrosoft.com&gt;; kunijadar shivanand(</spa=
+n><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;=
+mso-ligatures:none;mso-fareast-language:JA">=1B$B#T#S#I#P=1B(B</span><span =
+style=3D"mso-ligatures:none;mso-fareast-language:JA"> TMIEC ODG Porting)
+ &lt;Shivanand.Kunijadar@toshiba-tsip.com&gt;; balakumar adithya(</span><sp=
+an lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-l=
+igatures:none;mso-fareast-language:JA">=1B$B#T#S#I#P=1B(B</span><span style=
+=3D"mso-ligatures:none;mso-fareast-language:JA"> TEUR) &lt;Adithya.Balakuma=
+r@toshiba-tsip.com&gt;;
+ sanglikar zaiba(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGo=
+thic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#T#S=
+#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-language:JA">=
+ TEUR) &lt;Zaiba.Sanglikar@toshiba-tsip.com&gt;; cip-dev@lists.cip-project.=
+org;
+ hayashi kazuhiro(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PG=
+othic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$BNS=
+=1B(B</span><span lang=3D"JA" style=3D"mso-ligatures:none;mso-fareast-langu=
+age:JA">
+</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
+erif;mso-ligatures:none;mso-fareast-language:JA">=1B$BOB9(=1B(B</span><span=
+ lang=3D"JA" style=3D"mso-ligatures:none;mso-fareast-language:JA">
+</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
+erif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#D#M#E=1B(B</span><sp=
+an style=3D"mso-ligatures:none;mso-fareast-language:JA"> =1B$B!{=1B(B</span=
+><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;m=
+so-ligatures:none;mso-fareast-language:JA">=1B$B#D#I#G=1B(B</span><span sty=
+le=3D"mso-ligatures:none;mso-fareast-language:JA">=1B$B""=1B(B</span><span =
+lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-liga=
+tures:none;mso-fareast-language:JA">=1B$B#M#P#S=1B(B</span><span style=3D"m=
+so-ligatures:none;mso-fareast-language:JA">=1B$B!{=1B(B</span><span lang=3D=
+"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:n=
+one;mso-fareast-language:JA">=1B$B#M#P#4=1B(B</span><span style=3D"mso-liga=
+tures:none;mso-fareast-language:JA">)
+ &lt;kazuhiro3.hayashi@toshiba.co.jp&gt;<br>
+<b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
+oting the image )<o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hello Chr=
+is,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Thanks a =
 lot for your great support.<o:p></o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
 p;</o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Yes, I am=
- able to run my jobs in lab-cip-renesas now. But I am facing this issue
-</span><span style=3D"mso-fareast-language:EN-US">, =1B$B!H=1B(B</span>Cann=
-ot find command '' in $PATH, Please report this to LAVA admins=1B$B!I=1B(B =
-now in CIP LAVA Lab as well. This is happening whenever to try a minimal bo=
-ot for a swtpm related CIP security image. Previously I
- faced this issue in my own setup and suspected something is wrong with my =
-setup, but now after seeing the same thing in CIP LAVA lab,
+ able to run my jobs in lab-cip-renesas now. But I am facing this issue , =
+=1B$B!H=1B(B</span>Cannot find command '' in $PATH, Please report this to L=
+AVA admins=1B$B!I=1B(B now in CIP LAVA Lab as well. This is
+ happening whenever to try a minimal boot for a swtpm related CIP security =
+image. Previously I faced this issue in my own setup and suspected somethin=
+g is wrong with my setup, but now after seeing the same thing in CIP LAVA l=
+ab,
 <o:p></o:p></p>
 <p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
 <ol style=3D"margin-top:0in" start=3D"1" type=3D"1">
 <li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l2 level1 =
-lfo4">Do you think minimal boot will not work if there is some communicatio=
+lfo1">Do you think minimal boot will not work if there is some communicatio=
 n through a socket from the dispatcher to the DUT ? I am not sure of this, =
 but this validation error is coming
  only when I use minimal boot with these swtpm security image related jobs.=
@@ -1380,29 +1518,35 @@ p;</o:p></span></p>
 <div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
 0in 0in">
 <p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none">From:</span></=
-b><span style=3D"mso-ligatures:none"> Chris Paterson &lt;Chris.Paterson2@re=
-nesas.com&gt;
+b><span style=3D"mso-ligatures:none"> Chris Paterson &lt;<a href=3D"mailto:=
+Chris.Paterson2@renesas.com">Chris.Paterson2@renesas.com</a>&gt;
 <br>
 <b>Sent:</b> Wednesday, February 7, 2024 4:45 PM<br>
 <b>To:</b> ashrith sai(</span><span lang=3D"ZH-CN" style=3D"font-family:Sim=
 Sun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatur=
-es:none">) &lt;Sai.Sathujoda@toshiba-tsip.com&gt;<br>
+es:none">) &lt;<a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com">Sai.Sathuj=
+oda@toshiba-tsip.com</a>&gt;<br>
 <b>Cc:</b> dinesh kumar(</span><span lang=3D"ZH-CN" style=3D"font-family:Si=
 mSun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatu=
-res:none"> TMIEC ODG Porting) &lt;dinesh.kumar@toshiba-tsip.com&gt;; venkat=
-a1.pyla &lt;venkata1.pyla@toshibaap.onmicrosoft.com&gt;; kunijadar
- shivanand(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-liga=
-tures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none"> TM=
-IEC ODG Porting) &lt;Shivanand.Kunijadar@toshiba-tsip.com&gt;; balakumar ad=
-ithya(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures=
-:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none">
- TEUR) &lt;Adithya.Balakumar@toshiba-tsip.com&gt;; sanglikar zaiba(</span><=
-span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#T=
-#S#I#P=1B(B</span><span style=3D"mso-ligatures:none"> TEUR) &lt;Zaiba.Sangl=
-ikar@toshiba-tsip.com&gt;; cip-dev@lists.cip-project.org; hayashi
- kazuhiro(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligat=
-ures:none">=1B$BNS=1B(B</span><span lang=3D"ZH-CN" style=3D"mso-ligatures:n=
-one">
+res:none"> TMIEC ODG Porting) &lt;<a href=3D"mailto:dinesh.kumar@toshiba-ts=
+ip.com">dinesh.kumar@toshiba-tsip.com</a>&gt;; venkata1.pyla
+ &lt;<a href=3D"mailto:venkata1.pyla@toshibaap.onmicrosoft.com">venkata1.py=
+la@toshibaap.onmicrosoft.com</a>&gt;; kunijadar shivanand(</span><span lang=
+=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#T#S#I#P=1B=
+(B</span><span style=3D"mso-ligatures:none"> TMIEC ODG Porting)
+ &lt;<a href=3D"mailto:Shivanand.Kunijadar@toshiba-tsip.com">Shivanand.Kuni=
+jadar@toshiba-tsip.com</a>&gt;; balakumar adithya(</span><span lang=3D"ZH-C=
+N" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span=
+><span style=3D"mso-ligatures:none"> TEUR) &lt;<a href=3D"mailto:Adithya.Ba=
+lakumar@toshiba-tsip.com">Adithya.Balakumar@toshiba-tsip.com</a>&gt;;
+ sanglikar zaiba(</span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;ms=
+o-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:non=
+e"> TEUR) &lt;<a href=3D"mailto:Zaiba.Sanglikar@toshiba-tsip.com">Zaiba.San=
+glikar@toshiba-tsip.com</a>&gt;;
+<a href=3D"mailto:cip-dev@lists.cip-project.org">cip-dev@lists.cip-project.=
+org</a>; hayashi kazuhiro(</span><span lang=3D"ZH-CN" style=3D"font-family:=
+SimSun;mso-ligatures:none">=1B$BNS=1B(B</span><span lang=3D"ZH-CN" style=3D=
+"mso-ligatures:none">
 </span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none"=
 >=1B$BOB9(=1B(B</span><span lang=3D"ZH-CN" style=3D"mso-ligatures:none">
 </span><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none"=
@@ -1413,7 +1557,8 @@ n><span lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=1B$=
 B#M#P#S=1B(B</span><span style=3D"mso-ligatures:none">=1B$B!{=1B(B</span><s=
 pan lang=3D"ZH-CN" style=3D"font-family:SimSun;mso-ligatures:none">=1B$B#M#=
 P#4=1B(B</span><span style=3D"mso-ligatures:none">)
- &lt;kazuhiro3.hayashi@toshiba.co.jp&gt;<br>
+ &lt;<a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.jp">kazuhiro3.hayashi@t=
+oshiba.co.jp</a>&gt;<br>
 <b>Subject:</b> RE: Query - ( Running Linux commands in LAVA host before bo=
 oting the image )<o:p></o:p></span></p>
 </div>
@@ -2360,7 +2505,7 @@ an></p>
 rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
 <ol style=3D"margin-top:0in" start=3D"1" type=3D"1">
 <li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l0 level1 =
-lfo1"><span style=3D"font-family:&quot;Aptos&quot;,sans-serif;mso-fareast-l=
+lfo2"><span style=3D"font-family:&quot;Aptos&quot;,sans-serif;mso-fareast-l=
 anguage:EN-US">The .swtpm file names should be different or else there will=
  be TPM failures. I tried to resolve this ways which
  does not have us hardcoding the directory paths in each device template. F=
@@ -2379,7 +2524,7 @@ n></p>
 rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
 <ol style=3D"margin-top:0in" start=3D"2" type=3D"1">
 <li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l0 level1 =
-lfo1"><span style=3D"font-family:&quot;Aptos&quot;,sans-serif;mso-fareast-l=
+lfo2"><span style=3D"font-family:&quot;Aptos&quot;,sans-serif;mso-fareast-l=
 anguage:EN-US">Since the /tmp/qemu-swtpm.sock UNIXIO socket is gone after o=
 ne of the jobs is done, we can try to make this
  individual for each device just like how we did for .swtpm directory. But =
@@ -2403,7 +2548,7 @@ quot;;mso-fareast-language:EN-US">{% endif %}<o:p></o:p></span></p>
 quot;;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
 <ol style=3D"margin-top:0in" start=3D"3" type=3D"1">
 <li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l0 level1 =
-lfo1"><span style=3D"font-family:&quot;Aptos&quot;,sans-serif;mso-fareast-l=
+lfo2"><span style=3D"font-family:&quot;Aptos&quot;,sans-serif;mso-fareast-l=
 anguage:EN-US">I used it like above because I was not able to find any cont=
 ext which narrow down to our jobs where we are using
  a read-only file system (That is why I changed the directory into /home). =
@@ -2414,7 +2559,7 @@ But still the character device boot arguments are not updated while running=
 rif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span></p>
 <ol style=3D"margin-top:0in" start=3D"4" type=3D"1">
 <li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l0 level1 =
-lfo1"><span style=3D"font-family:&quot;Aptos&quot;,sans-serif;mso-fareast-l=
+lfo2"><span style=3D"font-family:&quot;Aptos&quot;,sans-serif;mso-fareast-l=
 anguage:EN-US">Based on my investigation today, I think handling the test j=
 obs using these TPM based images simultaneously
  shall require independent variables for each device. But as you said befor=
@@ -2862,7 +3007,7 @@ unixio,path=3D/tmp/qemu-swtpm.sock --tpm2<o:p></o:p></b></span></p>
 p;</o:p></span></p>
 <ol style=3D"margin-top:0in" start=3D"1" type=3D"1">
 <li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l1 level1 =
-lfo2"><span style=3D"mso-fareast-language:EN-US">A directory must be create=
+lfo3"><span style=3D"mso-fareast-language:EN-US">A directory must be create=
 d to store the TPM state files before we run this command. I doubt if there=
  is a way to create a temporary directory
  in this path </span><span style=3D"font-size:9.5pt;font-family:Consolas;co=
@@ -2878,7 +3023,7 @@ p;</o:p></span></p>
 p;</o:p></span></p>
 <ol style=3D"margin-top:0in" start=3D"2" type=3D"1">
 <li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l1 level1 =
-lfo2"><span style=3D"mso-fareast-language:EN-US">An environment variable na=
+lfo3"><span style=3D"mso-fareast-language:EN-US">An environment variable na=
 med TPM_PATH must be updated with the directory path to store the TPM state=
  files.<o:p></o:p></span></li></ol>
 <p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
@@ -3253,10 +3398,10 @@ R}&quot; &nbsp;--ctrl type=3Dunixio,path=3D/tmp/qemu-swtpm.sock &nbsp;--tpm=
 <p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
 <ol style=3D"margin-top:0in" start=3D"1" type=3D"1">
 <li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l3 level1 =
-lfo3">Presence of these packages in LAVA host environment
+lfo4">Presence of these packages in LAVA host environment
 <span style=3D"font-family:Wingdings">&agrave;</span> swtpm, ovmf<o:p></o:p=
 ></li><li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l3 l=
-evel1 lfo3">Ability to run the above mentioned in the LAVA host before the =
+evel1 lfo4">Ability to run the above mentioned in the LAVA host before the =
 first boot action.<o:p></o:p></li></ol>
 <p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
 <p class=3D"MsoNormal">After going through the LAVA documentation, I found =
@@ -3296,6 +3441,6 @@ efinition.<o:p></o:p></p>
 </body>
 </html>
 
---_000_OS3PR01MB61036685298B1AEF896EFF0FC2452OS3PR01MB6103jpnp_--
+--_000_OS3PR01MB6103B3C3E79AB76D6008C7D3C2452OS3PR01MB6103jpnp_--
 
 
