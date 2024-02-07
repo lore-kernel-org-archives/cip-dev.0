@@ -2,53 +2,53 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B96FAC4829A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B829BC4828F
 	for <webhook@archiver.kernel.org>; Wed,  7 Feb 2024 20:44:41 +0000 (UTC)
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
- by mx.groups.io with SMTP id smtpd.web10.879.1707338678155427881
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+ by mx.groups.io with SMTP id smtpd.web11.797.1707338679498851714
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Wed, 07 Feb 2024 12:44:38 -0800
+ Wed, 07 Feb 2024 12:44:39 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=cKjwuTLX;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.176, mailfrom: bot@kernelci.org)
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1d94b222a3aso9778895ad.2
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Wed, 07 Feb 2024 12:44:38 -0800 (PST)
+ dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=sQcVWVDX;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.216.45, mailfrom: bot@kernelci.org)
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-296dcd75be7so800361a91.2
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Wed, 07 Feb 2024 12:44:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1707338677; x=1707943477; darn=lists.cip-project.org;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1707338678; x=1707943478; darn=lists.cip-project.org;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=T833CkZXuryPipUpDFZ0vo0/B1uqtWkIzl9PRppMYio=;
-        b=cKjwuTLXrPwvp7uzQdvKMuEy0ZBkAQQZ+cMyqN+ZRJV7JFFfKrO/IKuQkeLNrBHKgs
-         P5XJSeuM+MvLGu3bMAoUaxagKnxNCaqi6W0UyP1OJ/9b4zrZUevUCW8eX8UABdlTqkMB
-         m2lt3BdTlEdSSNC5dcFgeHhpMNszDO51gxqPOu9RjMLwRywOHuvqI7Nn5Qfrzu0VUEBB
-         G0Hw8Apskfn03imutSuwPR8DBvgj7tWSJNGXVAGHvKdlNQcXnQTKYqalPDThAbF4EQyU
-         Zb+uJ+0gp0e0EnV8Soa6y+jzHBEKdYS+qAsUlLAKR7LO2CFDVSfo3qs1/QAy0LT5aD86
-         v9vw==
+        bh=RhntgZXV80Cmj/XgjtL7d49oDIwNEBXgGP8qMVs72BU=;
+        b=sQcVWVDXTOE/w4i3tEuDpeu4qhrj8S7Ickw1kylp7cicUuT3HfPBl6M2z1sLhxVZfZ
+         HpiyuBVZs+iaIVhQ1DupAU6v1JjoOA5SYFKFSbVgJLKVB7AIFhJzHiwenIOKda8Zi8bJ
+         7savXWrp+O+CjsEKp9Pu50S4ludig8FZFHzhZFzkYUzZhXFZ32IxsyqOaHGWeoYRi0nM
+         lZ5zHIx6jA2j+iS6Ii3ZfeARVjlLKR3tJZXXkHOUQk7Gg1EBiannwa7XtMA5aNTyQQ/F
+         6K043hadC+cuSWVucIVl0WT77BaC9az/4s++dhUABZBy9UkmyX5PfsVTEaoVNAvb0sko
+         ptpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707338677; x=1707943477;
+        d=1e100.net; s=20230601; t=1707338678; x=1707943478;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=T833CkZXuryPipUpDFZ0vo0/B1uqtWkIzl9PRppMYio=;
-        b=rkhVwBs64ZJ3BXZr7kZGj2ynSyfaSqmbcbnQ+MOVfGsB9e3a93pIfxvmnWDuhpZDDT
-         uVuNNZjAoKufkfdWQt6nbbfxlVwz/rsz7E2wWLID9WDaPjzJqlCyFoLfphm64Rtdx098
-         n9zht+WY2BHw1qwB3r28jyyhHRv6EU3wyKvRDDCLgjAe/kwtVYysxxf5SWGeEhWphpHJ
-         5+gfoWyeHWF47LQCjr/g+nf7iZ9mk+JnmzTwoPsMHvEQWxW1glXlXVDjYlVYATggJObi
-         Tig9vUEfh2HCl8rhjd4cWvI6kIAu+nOuCiOquub//+gIPoEEpZxN4QBV8PLuOh2+4unx
-         ZR7w==
-X-Gm-Message-State: AOJu0YzNfmvAcuAe2Q0iqCIRJwCu8C68izgVICR2Xz4M/A7TbxiFRRGo
-	40lunZ473JiOxtexz+UXwlc3I8O2L+RT6MuHjJ2mPRhAjjBf/GppKnygYrNPIt6cBuNQjwhk6eo
-	Ag8Q=
-X-Google-Smtp-Source: AGHT+IEb2IhrXvqjCtVoAqImN127ZYS/CPAR/GAvRqHzUTkUivb1weB/zBkUOb8itQwTId3iY/xwTw==
-X-Received: by 2002:a17:902:ee42:b0:1d9:a50f:9419 with SMTP id 2-20020a170902ee4200b001d9a50f9419mr5864764plo.40.1707338677188;
-        Wed, 07 Feb 2024 12:44:37 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUpjibuJoKK46jGurPVXjH4MotN6taBemNnQT9/rctFTOCTdzx80UVKrPeXWp/fAcw3KOlt+nm6O5ILKwvpx8Ed1DO3QBwvHoZ2Mi4ttED1BTuex35OrPGRT8fKVGcwBjGmDzmkYpDxzZYxKMh3VwgMjg==
+        bh=RhntgZXV80Cmj/XgjtL7d49oDIwNEBXgGP8qMVs72BU=;
+        b=Hyt4ABpm8B/ONYaCjW4Ds8KrtLhw2PXfQ9aikvLmVIA9Nw92z8s6+cpkLVUm1d5Dzo
+         WxTOTCWvdWx8R6b1bqnoNYunUFH7ovtZXm6haEXF/eonMuubbD5GFqyPNU9t6vXNuGUJ
+         NRMYQ7EUhO9ylcrPgQVDlQS5ImMWEGTeW4Fy4jHWBexaUvVjDU9Mgvqs72rCtsNyc3/h
+         aCVuMKgYXauFb16IkjTOs2Kkme7gFrXAieVmDBOaEDkpUy0ipZlyrRHIszHEbXNmdSC6
+         vXO9QHUHnFPZ6GWJC1l2z8oFeIKI/W33QgV3rCeNe7z2liCkbEV1c3dxC+AYQmWDNZUx
+         5kAw==
+X-Gm-Message-State: AOJu0YxB9KuM0Z3OxoDOrGV0mkL8c2rRSn7BFfhUFCJ+0ztyGgxCMb4z
+	tOh1K79pcM/xU6N6eCmPSWkQKbks1i3qWDmJOitVFo11+t8c4I6C6MjXsmR1D4RaMsMPhEhBi8z
+	vkqA=
+X-Google-Smtp-Source: AGHT+IHaV5VSiKPh9WEIe0R6QQYdW9aktIf7Js2mLmRRygZO+nTtETB1ElqXcN0RQUiogliPyo+fOw==
+X-Received: by 2002:a17:90a:4b4f:b0:296:f6d3:db5d with SMTP id o15-20020a17090a4b4f00b00296f6d3db5dmr400147pjl.4.1707338678542;
+        Wed, 07 Feb 2024 12:44:38 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUileXh8x29KyQIDBq3J4UaXsXKYJUm8QFBn2D9ZTkNoH63elZx9d26GBJoRGX9lA0o75npg2uoUGyf5uh+r4TzWtLEbjqTRRVPY1/w3WdPcqEMvVXWNw3eMB+yPTwT4iIdV8mzDBaQOEocJ7cHkV6smA==
 Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id ka5-20020a170903334500b001d99530e3eesm1882538plb.282.2024.02.07.12.44.36
+        by smtp.gmail.com with ESMTPSA id bo6-20020a17090b090600b0029552a03219sm4340013pjb.29.2024.02.07.12.44.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Feb 2024 12:44:36 -0800 (PST)
-Message-ID: <65c3ebb4.170a0220.277bd.64d1@mx.google.com>
-Date: Wed, 07 Feb 2024 12:44:36 -0800 (PST)
+        Wed, 07 Feb 2024 12:44:37 -0800 (PST)
+Message-ID: <65c3ebb5.170a0220.4d92.f837@mx.google.com>
+Date: Wed, 07 Feb 2024 12:44:37 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,7 +56,7 @@ X-Kernelci-Tree: cip
 X-Kernelci-Branch: linux-4.4.y-cip
 X-Kernelci-Report-Type: test
 X-Kernelci-Kernel: v4.4.302-cip72-1251-g681701bd9bc1f
-Subject: cip/linux-4.4.y-cip baseline: 65 runs,
+Subject: cip/linux-4.4.y-cip baseline-nfs: 31 runs,
  2 regressions (v4.4.302-cip72-1251-g681701bd9bc1f)
 To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
  kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
@@ -65,26 +65,29 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 07 Feb 2024 20:44:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14905
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14907
 
-cip/linux-4.4.y-cip baseline: 65 runs, 2 regressions (v4.4.302-cip72-1251-g=
-681701bd9bc1f)
+cip/linux-4.4.y-cip baseline-nfs: 31 runs, 2 regressions (v4.4.302-cip72-12=
+51-g681701bd9bc1f)
 
 Regressions Summary
 -------------------
 
-platform          | arch | lab           | compiler | defconfig          | =
-regressions
-------------------+------+---------------+----------+--------------------+-=
------------
-rk3288-veyron-jaq | arm  | lab-collabora | gcc-10   | multi_v7_defconfig | =
-2          =
+platform                  | arch   | lab           | compiler | defconfig  =
+                | regressions
+--------------------------+--------+---------------+----------+------------=
+----------------+------------
+beaglebone-black          | arm    | lab-cip       | gcc-10   | multi_v7_de=
+fconfig         | 1          =
+
+lenovo-TPad-C13-Yoga-zork | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
+onfig+x86-board | 1          =
 
 
   Details:  https://kernelci.org/test/job/cip/branch/linux-4.4.y-cip/kernel=
-/v4.4.302-cip72-1251-g681701bd9bc1f/plan/baseline/
+/v4.4.302-cip72-1251-g681701bd9bc1f/plan/baseline-nfs/
 
-  Test:     baseline
+  Test:     baseline-nfs
   Tree:     cip
   Branch:   linux-4.4.y-cip
   Describe: v4.4.302-cip72-1251-g681701bd9bc1f
@@ -99,71 +102,67 @@ Test Regressions
 
 
 
-platform          | arch | lab           | compiler | defconfig          | =
-regressions
-------------------+------+---------------+----------+--------------------+-=
------------
-rk3288-veyron-jaq | arm  | lab-collabora | gcc-10   | multi_v7_defconfig | =
-2          =
+platform                  | arch   | lab           | compiler | defconfig  =
+                | regressions
+--------------------------+--------+---------------+----------+------------=
+----------------+------------
+beaglebone-black          | arm    | lab-cip       | gcc-10   | multi_v7_de=
+fconfig         | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/65c3ddc2cba1f954238e1eb9
+  Details:     https://kernelci.org/test/plan/id/65c3e222903f6be4a88e1e7b
 
-  Results:     37 PASS, 22 FAIL, 2 SKIP
+  Results:     0 PASS, 1 FAIL, 0 SKIP
   Full config: multi_v7_defconfig
   Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
 10110)
   Plain log:   https://storage.kernelci.org//cip/linux-4.4.y-cip/v4.4.302-c=
-ip72-1251-g681701bd9bc1f/arm/multi_v7_defconfig/gcc-10/lab-collabora/baseli=
-ne-rk3288-veyron-jaq.txt
+ip72-1251-g681701bd9bc1f/arm/multi_v7_defconfig/gcc-10/lab-cip/baseline-nfs=
+-beaglebone-black.txt
   HTML log:    https://storage.kernelci.org//cip/linux-4.4.y-cip/v4.4.302-c=
-ip72-1251-g681701bd9bc1f/arm/multi_v7_defconfig/gcc-10/lab-collabora/baseli=
-ne-rk3288-veyron-jaq.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/armel/rootfs.cpio.gz =
+ip72-1251-g681701bd9bc1f/arm/multi_v7_defconfig/gcc-10/lab-cip/baseline-nfs=
+-beaglebone-black.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/armhf/initrd.cpio.gz =
 
 
 
-  * baseline.bootrr.dwhdmi-rockchip-driver-cec-present: https://kernelci.or=
-g/test/case/id/65c3ddc3cba1f954238e1ee2
-        failing since 378 days (last pass: v4.4.302-cip71-1-g61333eee4869, =
-first fail: v4.4.302-cip71-590-g22fc523bf881)
+  * baseline-nfs.login: https://kernelci.org/test/case/id/65c3e222903f6be4a=
+88e1e7c
+        new failure (last pass: v4.4.302-cip72-1250-gd530578b1386) =
 
-    2024-02-07T19:52:04.257470  Usage: seq [-w] [-s SEP] [FIRST [INC]] LA[ =
-  26.250398] <LAVA_SIGNAL_TESTCASE TEST_CASE_ID=3Ddwhdmi-rockchip-driver-au=
-dio-present RESULT=3Dfail>
-
-    2024-02-07T19:52:04.257704  ST
-
-    2024-02-07T19:52:04.257757  =
+ =
 
 
-    2024-02-07T19:52:04.262141  Print numbers from FIRST to LAST, in steps =
-of INC.
 
-    2024-02-07T19:52:04.264493  FIRST, INC default to 1.
-
-    2024-02-07T19:52:04.264836  =
-
-
-    2024-02-07T19:52:04.267779  	-w	Pad to last with leading zeros
-   =
+platform                  | arch   | lab           | compiler | defconfig  =
+                | regressions
+--------------------------+--------+---------------+----------+------------=
+----------------+------------
+lenovo-TPad-C13-Yoga-zork | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
+onfig+x86-board | 1          =
 
 
-  * baseline.bootrr.dwhdmi-rockchip-driver-audio-present: https://kernelci.=
-org/test/case/id/65c3ddc3cba1f954238e1ee3
-        failing since 378 days (last pass: v4.4.302-cip71-1-g61333eee4869, =
-first fail: v4.4.302-cip71-590-g22fc523bf881)
+  Details:     https://kernelci.org/test/plan/id/65c3dd8a18cf29cce08e1e98
 
-    2024-02-07T19:52:04.203991  [   26.200175] <LAVA_SIGNAL_TESTCASE TEST_C=
-ASE_ID=3Ddwhdmi-rockchip-probed RESULT=3Dfail>
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip/linux-4.4.y-cip/v4.4.302-c=
+ip72-1251-g681701bd9bc1f/x86_64/x86_64_defconfig+x86-board/gcc-10/lab-colla=
+bora/baseline-nfs-lenovo-TPad-C13-Yoga-zork.txt
+  HTML log:    https://storage.kernelci.org//cip/linux-4.4.y-cip/v4.4.302-c=
+ip72-1251-g681701bd9bc1f/x86_64/x86_64_defconfig+x86-board/gcc-10/lab-colla=
+bora/baseline-nfs-lenovo-TPad-C13-Yoga-zork.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+230623.0/amd64/initrd.cpio.gz =
 
-    2024-02-07T19:52:04.244806  BusyBox v1.31.1 (2023-06-23 08:10:20 UTC) m=
-ulti-call binary.
 
-    2024-02-07T19:52:04.245133  =
 
-   =
+  * baseline-nfs.login: https://kernelci.org/test/case/id/65c3dd8a18cf29cce=
+08e1e99
+        failing since 35 days (last pass: v4.4.302-cip72-1187-g657481329b53=
+c, first fail: v4.4.302-cip72-1224-ga0ac575eeff8) =
 
  =20
 
