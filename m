@@ -2,53 +2,53 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9295C48260
-	for <webhook@archiver.kernel.org>; Tue, 13 Feb 2024 19:15:56 +0000 (UTC)
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
- by mx.groups.io with SMTP id smtpd.web10.22173.1707851756049658446
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B477AC48260
+	for <webhook@archiver.kernel.org>; Tue, 13 Feb 2024 19:16:06 +0000 (UTC)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+ by mx.groups.io with SMTP id smtpd.web10.22175.1707851756730925475
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
  Tue, 13 Feb 2024 11:15:56 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=Dn0qhRJv;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.173, mailfrom: bot@kernelci.org)
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6e0f9bcdcc2so696169b3a.1
+ dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=zYv9XCTU;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.214.178, mailfrom: bot@kernelci.org)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1d911c2103aso23655675ad.0
         for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Tue, 13 Feb 2024 11:15:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1707851754; x=1708456554; darn=lists.cip-project.org;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1707851756; x=1708456556; darn=lists.cip-project.org;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hsk1Bcj7qqtv6BxZoBmhHOunL4X7Bd2JP1dc06e61Bo=;
-        b=Dn0qhRJvc5qheE22oxVt5p0Qw7p7Ux0vj/eO+ayfXjqk8phXD0JkQsQ+E9XNhvV1gJ
-         BgAQJUCINh4RVUwS5ye31eRQ/40Pu8LaIKKYjE4ESSqt2+rDqAQSpRuzOmBdFtv2uIrS
-         GP+6N42NIMbO7GGemKTPQtkZ5eSnhUNKq+CUCGIdy99vyAP2aJ0/eMj1TtY43ZN8njn1
-         t8gyDqRUIl4ZFIjlhWteMmKg4WsZTf8Co41+EryFPOl4L3rRoJBiQgCBsmDLlbDWCg3t
-         ija6tn2+HEaA4OBVCxwCO1k5G7PZlJvah3I/BADiYgddp6/0yxIWwsbnz9EP0M91GJ+b
-         HjwQ==
+        bh=MLDs6xGvA2+3sypClbXrs7oJUxA0n8Tcvt+rYtVwWA0=;
+        b=zYv9XCTUS0/ifTeCfY6+gS/nmtdpRFT2aWzqdAzfM2DlY6pXOhPIrh8KtO5W/GBO+G
+         cvSwoGExmIR+i6OZdV1eg3gk/rVuq0zWX1zAzAdFL6b5LLvZKD7Y1BrKbEYwhjWRYlgp
+         VnXlpNjwXOcUvaY7o+4lX0xEXzXaOifkADnvOI2CwwPk0YX/7KiIhqlRXa7SsyM+f9KU
+         VD8HbqI8kqBTLv32qFZcDNniWS4KPeiT6xJE2DYHkZuTq5veK1NhvaWNeFUvHQXoMaeG
+         v3Z+UD6aYYjG9IeKY12EYQDFvrIOQFcJ+67IUDXba0LLJ7J4kWJmT6DaBlimJmafewU+
+         1E/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707851754; x=1708456554;
+        d=1e100.net; s=20230601; t=1707851756; x=1708456556;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Hsk1Bcj7qqtv6BxZoBmhHOunL4X7Bd2JP1dc06e61Bo=;
-        b=BJkzRKiDloRaq/bTcCkdb3tH5iHaMsWLgdjkrSxx//4bnxtlFmuEZn4fzYB91TWAOf
-         XQDjW0AIcbV+griY1Axcs8STfmD1/ETWPsGQwde12KM0+Knc1vlehhs1+oMXrpcx9igV
-         RsKBYaJ65Yx3CySfswFTUbKo84ZcoyIWJU+o/UbCa2mZyZaFfN7i0hnpUyfnez4cVWPg
-         j4VsaOpGZbSjnYM2aXoZlXyPTgntZM6KrEGmFN9kfdcDQAaynWk6Ky0ckxqH0/WUVdcL
-         WDitdOWINrPEh9OKUBkPI/ANiHAWVor9UVwYPRgUQ/9IxwPQghAVwe8TvPiLfKOdA/Kj
-         dWSQ==
-X-Gm-Message-State: AOJu0YwY94p5eIPTJMqfkDHzoYm2sQvIZMYDl8Qr3Bywh7gmTCv/LrLa
-	VOy63lHSGbtsNJfKKR1pMNnKtD7LvHOv3i/2iLRD7FyEYo+NYUuQcTB5sBJvr9dP4wwbF5mdOCm
-	N8iE=
-X-Google-Smtp-Source: AGHT+IGY4WO+SnYM93Q3skbgPCSvG8YKlGg3H1DK/tfv4x0cIurr8potrRtNqVKCr9saiW+HiDsWIg==
-X-Received: by 2002:a05:6a20:d494:b0:19e:9d92:b6a6 with SMTP id im20-20020a056a20d49400b0019e9d92b6a6mr661900pzb.44.1707851754440;
-        Tue, 13 Feb 2024 11:15:54 -0800 (PST)
+        bh=MLDs6xGvA2+3sypClbXrs7oJUxA0n8Tcvt+rYtVwWA0=;
+        b=amRSamoddFutoxrxATku2Xs9qG4QkMywRS8gidhs4x+fTJaWLbFRK00FG+Y1xWD64M
+         3fPa5Q21yoAH+65jleFARbAngX1R3rigDt+kgGvUNkRXqF2vHV7Z8lvyw4CprhfQCcE5
+         ItsVRrgGW6ki0XmGg4ESSVn4InliynJXw6h92kqbann9yBg/KbGJil3hP0oDtCbcFew0
+         3woQmoyj8OKE5TtVP/EqnK6sYGOZUfJOqGxoQEO41eNLqq5MV0kCx+4hQfffraRuzbKW
+         1+ZYM00n47jdVzBEqD2Nz51cMKavzc2nsNwq6bcZc/s4IKqBJWoJQBi/c8sNU5rbfIgn
+         nuYQ==
+X-Gm-Message-State: AOJu0YwkngVeJ7NtZZCkiu4kvf52Zgb2skLBOkXMQZwAC3y9m/4IjvmX
+	GyMhiV1LfN9a2x56OssYWspQ0KidxdjX5nL6puLfp16CYb36U4PUDyelYWFu4FNawwFSNQiq/V7
+	xzYU=
+X-Google-Smtp-Source: AGHT+IGk23rxIW0ZrLX5uuifgBvrwbDS1uRKj/pURN6zYJpHJBB6ug6JyiNJB90vFwPf1WWZOTMhjA==
+X-Received: by 2002:a17:902:8206:b0:1db:4f01:bcc8 with SMTP id x6-20020a170902820600b001db4f01bcc8mr432977pln.54.1707851755483;
+        Tue, 13 Feb 2024 11:15:55 -0800 (PST)
 Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id r3-20020a62e403000000b006e02f4bb4e4sm7938600pfh.18.2024.02.13.11.15.53
+        by smtp.gmail.com with ESMTPSA id x20-20020a170902ea9400b001d987771271sm2405809plb.123.2024.02.13.11.15.53
         for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Feb 2024 11:15:53 -0800 (PST)
-Message-ID: <65cbbfe9.620a0220.43f5f.6dcd@mx.google.com>
-Date: Tue, 13 Feb 2024 11:15:53 -0800 (PST)
+        Tue, 13 Feb 2024 11:15:54 -0800 (PST)
+Message-ID: <65cbbfea.170a0220.61e50.8e43@mx.google.com>
+Date: Tue, 13 Feb 2024 11:15:54 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -56,55 +56,70 @@ X-Kernelci-Tree: cip-gitlab
 X-Kernelci-Branch: ci/pavel/linux-test
 X-Kernelci-Kernel: v5.10.209-cip44-51-gdb99ac443b0da
 X-Kernelci-Report-Type: test
-Subject: cip-gitlab/ci/pavel/linux-test baseline-nfs: 33 runs,
+Subject: cip-gitlab/ci/pavel/linux-test baseline: 101 runs,
  21 regressions (v5.10.209-cip44-51-gdb99ac443b0da)
 To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org
 From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 13 Feb 2024 19:15:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14955
+ <cip-dev@lists.cip-project.org>; Tue, 13 Feb 2024 19:16:06 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14956
 
-cip-gitlab/ci/pavel/linux-test baseline-nfs: 33 runs, 21 regressions (v5.10=
-.209-cip44-51-gdb99ac443b0da)
+cip-gitlab/ci/pavel/linux-test baseline: 101 runs, 21 regressions (v5.10.20=
+9-cip44-51-gdb99ac443b0da)
 
 Regressions Summary
 -------------------
 
-platform                  | arch   | lab           | compiler | defconfig  =
-                | regressions
---------------------------+--------+---------------+----------+------------=
-----------------+------------
-acer-cbv514-1h-34uz-brya  | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-onfig+x86-board | 1          =
+platform                  | arch   | lab             | compiler | defconfig=
+                  | regressions
+--------------------------+--------+-----------------+----------+----------=
+------------------+------------
+acer-cbv514-1h-34uz-brya  | x86_64 | lab-collabora   | gcc-10   | x86_64_de=
+fconfig+x86-board | 1          =
 
-acer-chromebox-cxi5-brask | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-onfig+x86-board | 1          =
+acer-chromebox-cxi5-brask | x86_64 | lab-collabora   | gcc-10   | x86_64_de=
+fconfig+x86-board | 1          =
 
-beaglebone-black          | arm    | lab-broonie   | gcc-10   | multi_v7_de=
-fconfig         | 5          =
+beaglebone-black          | arm    | lab-cip         | gcc-10   | multi_v7_=
+defconfig         | 5          =
 
-beaglebone-black          | arm    | lab-cip       | gcc-10   | multi_v7_de=
-fconfig         | 5          =
+imx6qp-wandboard-revd1    | arm    | lab-pengutronix | gcc-10   | imx_v6_v7=
+_defconfig        | 1          =
 
-kontron-kbox-a-230-ls     | arm64  | lab-kontron   | gcc-10   | defconfig  =
-                | 3          =
+imx6qp-wandboard-revd1    | arm    | lab-pengutronix | gcc-10   | multi_v7_=
+defconfig         | 1          =
 
-kontron-sl28-var3-ads2    | arm64  | lab-kontron   | gcc-10   | defconfig  =
-                | 3          =
+kontron-kbox-a-230-ls     | arm64  | lab-kontron     | gcc-10   | defconfig=
+                  | 3          =
 
-mt8173-elm-hana           | arm64  | lab-collabora | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
+qemu_mips-malta           | mips   | lab-broonie     | gcc-10   | malta_def=
+config            | 1          =
 
-rk3399-gru-kevin          | arm64  | lab-collabora | gcc-10   | defconfig+a=
-rm64-chromebook | 2          =
+qemu_mips-malta           | mips   | lab-collabora   | gcc-10   | malta_def=
+config            | 1          =
+
+r8a7743-iwg20d-q7         | arm    | lab-cip         | gcc-10   | shmobile_=
+defconfig         | 1          =
+
+rk3288-veyron-jaq         | arm    | lab-collabora   | gcc-10   | multi_v7_=
+defconfig         | 2          =
+
+rk3399-gru-kevin          | arm64  | lab-collabora   | gcc-10   | defconfig=
++arm64-chromebook | 2          =
+
+zynqmp-zcu102             | arm64  | lab-cip         | gcc-10   | defconfig=
++arm64-chromebook | 1          =
+
+zynqmp-zcu102             | arm64  | lab-cip         | gcc-10   | defconfig=
+                  | 1          =
 
 
   Details:  https://kernelci.org/test/job/cip-gitlab/branch/ci%2Fpavel%2Fli=
-nux-test/kernel/v5.10.209-cip44-51-gdb99ac443b0da/plan/baseline-nfs/
+nux-test/kernel/v5.10.209-cip44-51-gdb99ac443b0da/plan/baseline/
 
-  Test:     baseline-nfs
+  Test:     baseline
   Tree:     cip-gitlab
   Branch:   ci/pavel/linux-test
   Describe: v5.10.209-cip44-51-gdb99ac443b0da
@@ -118,32 +133,65 @@ Test Regressions
 
 
 
-platform                  | arch   | lab           | compiler | defconfig  =
-                | regressions
---------------------------+--------+---------------+----------+------------=
-----------------+------------
-acer-cbv514-1h-34uz-brya  | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-onfig+x86-board | 1          =
+platform                  | arch   | lab             | compiler | defconfig=
+                  | regressions
+--------------------------+--------+-----------------+----------+----------=
+------------------+------------
+acer-cbv514-1h-34uz-brya  | x86_64 | lab-collabora   | gcc-10   | x86_64_de=
+fconfig+x86-board | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/65cbb4b6924a2bdb3e637065
+  Details:     https://kernelci.org/test/plan/id/65cbb4ae924a2bdb3e63705f
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
   Full config: x86_64_defconfig+x86-board
   Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
   Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
 /v5.10.209-cip44-51-gdb99ac443b0da/x86_64/x86_64_defconfig+x86-board/gcc-10=
-/lab-collabora/baseline-nfs-acer-cbv514-1h-34uz-brya.txt
+/lab-collabora/baseline-acer-cbv514-1h-34uz-brya.txt
   HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
 /v5.10.209-cip44-51-gdb99ac443b0da/x86_64/x86_64_defconfig+x86-board/gcc-10=
-/lab-collabora/baseline-nfs-acer-cbv514-1h-34uz-brya.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
-230623.0/amd64/initrd.cpio.gz =
+/lab-collabora/baseline-acer-cbv514-1h-34uz-brya.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/x86/rootfs.cpio.gz =
 
 
 
-  * baseline-nfs.login: https://kernelci.org/test/case/id/65cbb4b6924a2bdb3=
-e637066
+  * baseline.login: https://kernelci.org/test/case/id/65cbb4ae924a2bdb3e637=
+060
+        failing since 8 days (last pass: v6.1.75-cip14-132-g6e54756fbd6c2, =
+first fail: v5.10.209-cip44-rebase) =
+
+ =
+
+
+
+platform                  | arch   | lab             | compiler | defconfig=
+                  | regressions
+--------------------------+--------+-----------------+----------+----------=
+------------------+------------
+acer-chromebox-cxi5-brask | x86_64 | lab-collabora   | gcc-10   | x86_64_de=
+fconfig+x86-board | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65cbb4b93f44492f9e63702b
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-board
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.209-cip44-51-gdb99ac443b0da/x86_64/x86_64_defconfig+x86-board/gcc-10=
+/lab-collabora/baseline-acer-chromebox-cxi5-brask.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.209-cip44-51-gdb99ac443b0da/x86_64/x86_64_defconfig+x86-board/gcc-10=
+/lab-collabora/baseline-acer-chromebox-cxi5-brask.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/x86/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/65cbb4b93f44492f9e637=
+02c
         failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
 st fail: v5.10.209-cip44-rebase) =
 
@@ -151,135 +199,15 @@ st fail: v5.10.209-cip44-rebase) =
 
 
 
-platform                  | arch   | lab           | compiler | defconfig  =
-                | regressions
---------------------------+--------+---------------+----------+------------=
-----------------+------------
-acer-chromebox-cxi5-brask | x86_64 | lab-collabora | gcc-10   | x86_64_defc=
-onfig+x86-board | 1          =
+platform                  | arch   | lab             | compiler | defconfig=
+                  | regressions
+--------------------------+--------+-----------------+----------+----------=
+------------------+------------
+beaglebone-black          | arm    | lab-cip         | gcc-10   | multi_v7_=
+defconfig         | 5          =
 
 
-  Details:     https://kernelci.org/test/plan/id/65cbb4ba924a2bdb3e63706b
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: x86_64_defconfig+x86-board
-  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.209-cip44-51-gdb99ac443b0da/x86_64/x86_64_defconfig+x86-board/gcc-10=
-/lab-collabora/baseline-nfs-acer-chromebox-cxi5-brask.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.209-cip44-51-gdb99ac443b0da/x86_64/x86_64_defconfig+x86-board/gcc-10=
-/lab-collabora/baseline-nfs-acer-chromebox-cxi5-brask.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
-230623.0/amd64/initrd.cpio.gz =
-
-
-
-  * baseline-nfs.login: https://kernelci.org/test/case/id/65cbb4ba924a2bdb3=
-e63706c
-        failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
-st fail: v5.10.209-cip44-rebase) =
-
- =
-
-
-
-platform                  | arch   | lab           | compiler | defconfig  =
-                | regressions
---------------------------+--------+---------------+----------+------------=
-----------------+------------
-beaglebone-black          | arm    | lab-broonie   | gcc-10   | multi_v7_de=
-fconfig         | 5          =
-
-
-  Details:     https://kernelci.org/test/plan/id/65cbb6e9d12c0b2cc5637033
-
-  Results:     31 PASS, 15 FAIL, 1 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.209-cip44-51-gdb99ac443b0da/arm/multi_v7_defconfig/gcc-10/lab-brooni=
-e/baseline-nfs-beaglebone-black.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.209-cip44-51-gdb99ac443b0da/arm/multi_v7_defconfig/gcc-10/lab-brooni=
-e/baseline-nfs-beaglebone-black.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
-230623.0/armhf/initrd.cpio.gz =
-
-
-
-  * baseline-nfs.bootrr.hdmi-audio: https://kernelci.org/test/case/id/65cbb=
-6e9d12c0b2cc563703a
-        failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
-st fail: v5.10.209-cip44-rebase)
-
-    2024-02-13T18:37:04.963678  /lava-580164/1/../bin/lava-test-case
-    2024-02-13T18:37:05.021643  <8>[   81.442199] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dhdmi-audio RESULT=3Dfail>   =
-
-
-  * baseline-nfs.bootrr.hdmi-codec-driver-present: https://kernelci.org/tes=
-t/case/id/65cbb6e9d12c0b2cc563703d
-        failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
-st fail: v5.10.209-cip44-rebase)
-
-    2024-02-13T18:37:01.528718  /lava-580164/1/../bin/lava-test-case
-    2024-02-13T18:37:01.582668  <8>[   78.004697] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dmcasp0-probed RESULT=3Dblocked>
-    2024-02-13T18:37:02.631893  /lava-580164/1/../bin/lava-test-case
-    2024-02-13T18:37:02.690653  <8>[   79.111806] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dhdmi-codec-driver-present RESULT=3Dfail>   =
-
-
-  * baseline-nfs.bootrr.mcasp-driver-loaded: https://kernelci.org/test/case=
-/id/65cbb6e9d12c0b2cc563703e
-        failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
-st fail: v5.10.209-cip44-rebase)
-
-    2024-02-13T18:36:59.312840  /lava-580164/1/../bin/lava-test-case
-    2024-02-13T18:36:59.371693  <8>[   75.793649] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dtda19988-probed RESULT=3Dblocked>
-    2024-02-13T18:37:00.420022  /lava-580164/1/../bin/lava-test-case
-    2024-02-13T18:37:00.479841  <8>[   76.901963] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dmcasp-driver-loaded RESULT=3Dfail>   =
-
-
-  * baseline-nfs.bootrr.tda19988-driver-present: https://kernelci.org/test/=
-case/id/65cbb6e9d12c0b2cc563703f
-        failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
-st fail: v5.10.209-cip44-rebase)
-
-    2024-02-13T18:36:57.101664  /lava-580164/1/../bin/lava-test-case
-    2024-02-13T18:36:57.157701  <8>[   73.580001] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dlcdc-probed RESULT=3Dblocked>
-    2024-02-13T18:36:58.207487  /lava-580164/1/../bin/lava-test-case
-    2024-02-13T18:36:58.262357  <8>[   74.683886] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dtda19988-driver-present RESULT=3Dfail>   =
-
-
-  * baseline-nfs.bootrr.cpsw-switch-driver-present: https://kernelci.org/te=
-st/case/id/65cbb6e9d12c0b2cc563704b
-        failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
-st fail: v5.10.209-cip44-rebase)
-
-    2024-02-13T18:36:44.421703  /lava-580164/1/../bin/lava-test-case
-    2024-02-13T18:36:44.476380  <8>[   60.898114] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dcpsw-switch-driver-present RESULT=3Dfail>   =
-
- =
-
-
-
-platform                  | arch   | lab           | compiler | defconfig  =
-                | regressions
---------------------------+--------+---------------+----------+------------=
-----------------+------------
-beaglebone-black          | arm    | lab-cip       | gcc-10   | multi_v7_de=
-fconfig         | 5          =
-
-
-  Details:     https://kernelci.org/test/plan/id/65cbb72d5fade1115d63701b
+  Details:     https://kernelci.org/test/plan/id/65cbb6293719521b74637013
 
   Results:     31 PASS, 15 FAIL, 1 SKIP
   Full config: multi_v7_defconfig
@@ -287,88 +215,192 @@ fconfig         | 5          =
 10110)
   Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
 /v5.10.209-cip44-51-gdb99ac443b0da/arm/multi_v7_defconfig/gcc-10/lab-cip/ba=
-seline-nfs-beaglebone-black.txt
+seline-beaglebone-black.txt
   HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
 /v5.10.209-cip44-51-gdb99ac443b0da/arm/multi_v7_defconfig/gcc-10/lab-cip/ba=
-seline-nfs-beaglebone-black.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
-230623.0/armhf/initrd.cpio.gz =
+seline-beaglebone-black.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/armel/rootfs.cpio.gz =
 
 
 
-  * baseline-nfs.bootrr.hdmi-audio: https://kernelci.org/test/case/id/65cbb=
-72d5fade1115d637022
+  * baseline.bootrr.hdmi-audio: https://kernelci.org/test/case/id/65cbb6293=
+719521b7463701a
         failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
 st fail: v5.10.209-cip44-rebase)
 
-    2024-02-13T18:38:32.590662  /lava-1092735/1/../bin/lava-test-case
-    2024-02-13T18:38:32.654219  <8>[   72.439725] <LAVA_SIGNAL_TESTCASE TES=
+    2024-02-13T18:33:57.137331  /lava-1092734/1/../bin/lava-test-case
+    2024-02-13T18:33:57.170805  <8>[   41.999381] <LAVA_SIGNAL_TESTCASE TES=
 T_CASE_ID=3Dhdmi-audio RESULT=3Dfail>   =
 
 
-  * baseline-nfs.bootrr.hdmi-codec-driver-present: https://kernelci.org/tes=
-t/case/id/65cbb72d5fade1115d637025
+  * baseline.bootrr.hdmi-codec-driver-present: https://kernelci.org/test/ca=
+se/id/65cbb6293719521b7463701d
         failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
 st fail: v5.10.209-cip44-rebase)
 
-    2024-02-13T18:38:29.117035  /lava-1092735/1/../bin/lava-test-case
-    2024-02-13T18:38:29.181374  <8>[   68.966147] <LAVA_SIGNAL_TESTCASE TES=
+    2024-02-13T18:33:53.906855  /lava-1092734/1/../bin/lava-test-case
+    2024-02-13T18:33:53.941301  <8>[   38.769144] <LAVA_SIGNAL_TESTCASE TES=
 T_CASE_ID=3Dmcasp0-probed RESULT=3Dblocked>
-    2024-02-13T18:38:29.852213  <6>[   69.639188] platform sound: deferred =
-probe pending
-    2024-02-13T18:38:30.238707  /lava-1092735/1/../bin/lava-test-case
-    2024-02-13T18:38:30.296501  <8>[   70.080601] <LAVA_SIGNAL_TESTCASE TES=
+    2024-02-13T18:33:54.968176  /lava-1092734/1/../bin/lava-test-case
+    2024-02-13T18:33:55.005314  <8>[   39.830273] <LAVA_SIGNAL_TESTCASE TES=
 T_CASE_ID=3Dhdmi-codec-driver-present RESULT=3Dfail>   =
 
 
-  * baseline-nfs.bootrr.mcasp-driver-loaded: https://kernelci.org/test/case=
-/id/65cbb72d5fade1115d637026
+  * baseline.bootrr.mcasp-driver-loaded: https://kernelci.org/test/case/id/=
+65cbb6293719521b7463701e
         failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
 st fail: v5.10.209-cip44-rebase)
 
-    2024-02-13T18:38:26.869873  /lava-1092735/1/../bin/lava-test-case
-    2024-02-13T18:38:26.940324  <8>[   66.724780] <LAVA_SIGNAL_TESTCASE TES=
+    2024-02-13T18:33:51.779691  /lava-1092734/1/../bin/lava-test-case
+    2024-02-13T18:33:51.813772  <8>[   36.641360] <LAVA_SIGNAL_TESTCASE TES=
 T_CASE_ID=3Dtda19988-probed RESULT=3Dblocked>
-    2024-02-13T18:38:27.995645  /lava-1092735/1/../bin/lava-test-case
-    2024-02-13T18:38:28.061832  <8>[   67.846338] <LAVA_SIGNAL_TESTCASE TES=
+    2024-02-13T18:33:52.840366  /lava-1092734/1/../bin/lava-test-case
+    2024-02-13T18:33:52.879954  <8>[   37.707390] <LAVA_SIGNAL_TESTCASE TES=
 T_CASE_ID=3Dmcasp-driver-loaded RESULT=3Dfail>   =
 
 
-  * baseline-nfs.bootrr.tda19988-driver-present: https://kernelci.org/test/=
-case/id/65cbb72d5fade1115d637027
+  * baseline.bootrr.tda19988-driver-present: https://kernelci.org/test/case=
+/id/65cbb6293719521b7463701f
         failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
 st fail: v5.10.209-cip44-rebase)
 
-    2024-02-13T18:38:24.643473  /lava-1092735/1/../bin/lava-test-case
-    2024-02-13T18:38:24.702986  <8>[   64.487792] <LAVA_SIGNAL_TESTCASE TES=
+    2024-02-13T18:33:49.651003  /lava-1092734/1/../bin/lava-test-case
+    2024-02-13T18:33:49.689647  <8>[   34.517544] <LAVA_SIGNAL_TESTCASE TES=
 T_CASE_ID=3Dlcdc-probed RESULT=3Dblocked>
-    2024-02-13T18:38:25.753921  /lava-1092735/1/../bin/lava-test-case
-    2024-02-13T18:38:25.814880  <8>[   65.598947] <LAVA_SIGNAL_TESTCASE TES=
+    2024-02-13T18:33:50.716323  /lava-1092734/1/../bin/lava-test-case
+    2024-02-13T18:33:50.752632  <8>[   35.579714] <LAVA_SIGNAL_TESTCASE TES=
 T_CASE_ID=3Dtda19988-driver-present RESULT=3Dfail>   =
 
 
-  * baseline-nfs.bootrr.cpsw-switch-driver-present: https://kernelci.org/te=
-st/case/id/65cbb72d5fade1115d637030
+  * baseline.bootrr.cpsw-switch-driver-present: https://kernelci.org/test/c=
+ase/id/65cbb6293719521b7463702b
         failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
 st fail: v5.10.209-cip44-rebase)
 
-    2024-02-13T18:38:11.854786  /lava-1092735/1/../bin/lava-test-case
-    2024-02-13T18:38:11.915001  <8>[   51.698173] <LAVA_SIGNAL_TESTCASE TES=
+    2024-02-13T18:33:37.721126  /lava-1092734/1/../bin/lava-test-case
+    2024-02-13T18:33:37.755175  <8>[   22.581407] <LAVA_SIGNAL_TESTCASE TES=
 T_CASE_ID=3Dcpsw-switch-driver-present RESULT=3Dfail>   =
 
  =
 
 
 
-platform                  | arch   | lab           | compiler | defconfig  =
-                | regressions
---------------------------+--------+---------------+----------+------------=
-----------------+------------
-kontron-kbox-a-230-ls     | arm64  | lab-kontron   | gcc-10   | defconfig  =
-                | 3          =
+platform                  | arch   | lab             | compiler | defconfig=
+                  | regressions
+--------------------------+--------+-----------------+----------+----------=
+------------------+------------
+imx6qp-wandboard-revd1    | arm    | lab-pengutronix | gcc-10   | imx_v6_v7=
+_defconfig        | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/65cbb4135019f27cc863702d
+  Details:     https://kernelci.org/test/plan/id/65cbb326d00007172763704e
+
+  Results:     5 PASS, 1 FAIL, 1 SKIP
+  Full config: imx_v6_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.209-cip44-51-gdb99ac443b0da/arm/imx_v6_v7_defconfig/gcc-10/lab-pengu=
+tronix/baseline-imx6qp-wandboard-revd1.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.209-cip44-51-gdb99ac443b0da/arm/imx_v6_v7_defconfig/gcc-10/lab-pengu=
+tronix/baseline-imx6qp-wandboard-revd1.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/armel/rootfs.cpio.gz =
+
+
+
+  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
+/65cbb326d000071727637057
+        failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
+st fail: v5.10.209-cip44-rebase)
+
+    2024-02-13T18:21:18.997402  + set +x
+    2024-02-13T18:21:18.997560  [   10.242477] <LAVA_SIGNAL_ENDRUN 0_dmesg =
+1024609_1.5.2.3.1>
+    2024-02-13T18:21:19.104795  / # #
+    2024-02-13T18:21:19.206242  export SHELL=3D/bin/sh
+    2024-02-13T18:21:19.206788  #
+    2024-02-13T18:21:19.307587  / # export SHELL=3D/bin/sh. /lava-1024609/e=
+nvironment
+    2024-02-13T18:21:19.308200  =
+
+    2024-02-13T18:21:19.409035  / # . /lava-1024609/environment/lava-102460=
+9/bin/lava-test-runner /lava-1024609/1
+    2024-02-13T18:21:19.409673  =
+
+    2024-02-13T18:21:19.412490  / # /lava-1024609/bin/lava-test-runner /lav=
+a-1024609/1 =
+
+    ... (12 line(s) more)  =
+
+ =
+
+
+
+platform                  | arch   | lab             | compiler | defconfig=
+                  | regressions
+--------------------------+--------+-----------------+----------+----------=
+------------------+------------
+imx6qp-wandboard-revd1    | arm    | lab-pengutronix | gcc-10   | multi_v7_=
+defconfig         | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65cbb5e22b3805a7f363702d
+
+  Results:     5 PASS, 1 FAIL, 1 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.209-cip44-51-gdb99ac443b0da/arm/multi_v7_defconfig/gcc-10/lab-pengut=
+ronix/baseline-imx6qp-wandboard-revd1.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.209-cip44-51-gdb99ac443b0da/arm/multi_v7_defconfig/gcc-10/lab-pengut=
+ronix/baseline-imx6qp-wandboard-revd1.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/armel/rootfs.cpio.gz =
+
+
+
+  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
+/65cbb5e22b3805a7f3637036
+        failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
+st fail: v5.10.209-cip44-rebase)
+
+    2024-02-13T18:32:58.630242  + set[    7.260990] <LAVA_SIGNAL_ENDRUN 0_d=
+mesg 1024612_1.5.2.3.1>
+    2024-02-13T18:32:58.630514   +x
+    2024-02-13T18:32:58.735846  / # #
+    2024-02-13T18:32:58.837091  export SHELL=3D/bin/sh
+    2024-02-13T18:32:58.837611  #
+    2024-02-13T18:32:58.938420  / # export SHELL=3D/bin/sh. /lava-1024612/e=
+nvironment
+    2024-02-13T18:32:58.938883  =
+
+    2024-02-13T18:32:59.039744  / # . /lava-1024612/environment/lava-102461=
+2/bin/lava-test-runner /lava-1024612/1
+    2024-02-13T18:32:59.040386  =
+
+    2024-02-13T18:32:59.042828  / # /lava-1024612/bin/lava-test-runner /lav=
+a-1024612/1 =
+
+    ... (12 line(s) more)  =
+
+ =
+
+
+
+platform                  | arch   | lab             | compiler | defconfig=
+                  | regressions
+--------------------------+--------+-----------------+----------+----------=
+------------------+------------
+kontron-kbox-a-230-ls     | arm64  | lab-kontron     | gcc-10   | defconfig=
+                  | 3          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65cbb35fb8a39ed78d63707f
 
   Results:     89 PASS, 3 FAIL, 1 SKIP
   Full config: defconfig
@@ -376,143 +408,75 @@ kontron-kbox-a-230-ls     | arm64  | lab-kontron   | gcc-10   | defconfig  =
 110)
   Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
 /v5.10.209-cip44-51-gdb99ac443b0da/arm64/defconfig/gcc-10/lab-kontron/basel=
-ine-nfs-kontron-kbox-a-230-ls.txt
+ine-kontron-kbox-a-230-ls.txt
   HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
 /v5.10.209-cip44-51-gdb99ac443b0da/arm64/defconfig/gcc-10/lab-kontron/basel=
-ine-nfs-kontron-kbox-a-230-ls.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
-230623.0/arm64/initrd.cpio.gz =
+ine-kontron-kbox-a-230-ls.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/arm64/rootfs.cpio.gz =
 
 
 
-  * baseline-nfs.bootrr.rcpm-driver-present: https://kernelci.org/test/case=
-/id/65cbb4135019f27cc8637071
+  * baseline.bootrr.rcpm-driver-present: https://kernelci.org/test/case/id/=
+65cbb35fb8a39ed78d6370c3
         failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
 st fail: v5.10.209-cip44-rebase)
 
-    2024-02-13T18:25:05.814040  <8>[   20.580050] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dpci-host-generic-probed RESULT=3Dpass>
-    2024-02-13T18:25:06.847644  /lava-429066/1/../bin/lava-test-case
-    2024-02-13T18:25:06.850728  <8>[   21.620312] <LAVA_SIGNAL_TESTCASE TES=
+    2024-02-13T18:21:54.525533  /lava-429067/1/../bin/lava-test-case
+    2024-02-13T18:21:54.528841  <8>[   15.444821] <LAVA_SIGNAL_TESTCASE TES=
 T_CASE_ID=3Drcpm-driver-present RESULT=3Dfail>   =
 
 
-  * baseline-nfs.bootrr.ftm-alarm-driver-present: https://kernelci.org/test=
-/case/id/65cbb4135019f27cc8637072
+  * baseline.bootrr.ftm-alarm-driver-present: https://kernelci.org/test/cas=
+e/id/65cbb35fb8a39ed78d6370c4
         failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
 st fail: v5.10.209-cip44-rebase)
 
-    2024-02-13T18:25:07.872672  /lava-429066/1/../bin/lava-test-case
-    2024-02-13T18:25:07.894653  <8>[   22.662657] <LAVA_SIGNAL_TESTCASE TES=
+    2024-02-13T18:21:55.537431  /lava-429067/1/../bin/lava-test-case
+    2024-02-13T18:21:55.540605  <8>[   16.462362] <LAVA_SIGNAL_TESTCASE TES=
 T_CASE_ID=3Drcpm-probed RESULT=3Dblocked>
-    2024-02-13T18:25:08.916160  /lava-429066/1/../bin/lava-test-case
-    2024-02-13T18:25:08.942050  <8>[   23.709560] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dftm-alarm-driver-present RESULT=3Dfail>   =
+    2024-02-13T18:21:56.560228  /lava-429067/1/../bin/lava-test-case   =
 
 
-  * baseline-nfs.bootrr.layerscape-sfp-driver-present: https://kernelci.org=
-/test/case/id/65cbb4135019f27cc8637089
+  * baseline.bootrr.layerscape-sfp-driver-present: https://kernelci.org/tes=
+t/case/id/65cbb35fb8a39ed78d6370db
         failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
 st fail: v5.10.209-cip44-rebase)
 
-    2024-02-13T18:25:11.812903  /lava-429066/1/../bin/lava-test-case
-    2024-02-13T18:25:11.833798  <8>[   26.601779] <LAVA_SIGNAL_TESTCASE TES=
+    2024-02-13T18:21:58.992800  /lava-429067/1/../bin/lava-test-case
+    2024-02-13T18:21:58.996141  <8>[   19.912207] <LAVA_SIGNAL_TESTCASE TES=
 T_CASE_ID=3Dlayerscape-sfp-driver-present RESULT=3Dfail>   =
 
  =
 
 
 
-platform                  | arch   | lab           | compiler | defconfig  =
-                | regressions
---------------------------+--------+---------------+----------+------------=
-----------------+------------
-kontron-sl28-var3-ads2    | arm64  | lab-kontron   | gcc-10   | defconfig  =
-                | 3          =
+platform                  | arch   | lab             | compiler | defconfig=
+                  | regressions
+--------------------------+--------+-----------------+----------+----------=
+------------------+------------
+qemu_mips-malta           | mips   | lab-broonie     | gcc-10   | malta_def=
+config            | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/65cbb43b9f0b7ec179637073
-
-  Results:     97 PASS, 3 FAIL, 1 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.209-cip44-51-gdb99ac443b0da/arm64/defconfig/gcc-10/lab-kontron/basel=
-ine-nfs-kontron-sl28-var3-ads2.txt
-  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.209-cip44-51-gdb99ac443b0da/arm64/defconfig/gcc-10/lab-kontron/basel=
-ine-nfs-kontron-sl28-var3-ads2.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
-230623.0/arm64/initrd.cpio.gz =
-
-
-
-  * baseline-nfs.bootrr.rcpm-driver-present: https://kernelci.org/test/case=
-/id/65cbb43b9f0b7ec1796370be
-        failing since 7 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
-st fail: v5.10.209-cip44-526-gbbb905888ca85)
-
-    2024-02-13T18:25:39.223512  <8>[   15.234162] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dpci-host-generic-probed RESULT=3Dpass>
-    2024-02-13T18:25:40.230106  /lava-429068/1/../bin/lava-test-case
-    2024-02-13T18:25:40.255046  <8>[   16.267631] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Drcpm-driver-present RESULT=3Dfail>   =
-
-
-  * baseline-nfs.bootrr.ftm-alarm-driver-present: https://kernelci.org/test=
-/case/id/65cbb43b9f0b7ec1796370bf
-        failing since 7 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
-st fail: v5.10.209-cip44-526-gbbb905888ca85)
-
-    2024-02-13T18:25:41.261557  /lava-429068/1/../bin/lava-test-case
-    2024-02-13T18:25:41.290352  <8>[   17.302697] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Drcpm-probed RESULT=3Dblocked>
-    2024-02-13T18:25:42.296948  /lava-429068/1/../bin/lava-test-case
-    2024-02-13T18:25:42.321886  <8>[   18.334655] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dftm-alarm-driver-present RESULT=3Dfail>   =
-
-
-  * baseline-nfs.bootrr.layerscape-sfp-driver-present: https://kernelci.org=
-/test/case/id/65cbb43b9f0b7ec1796370d4
-        failing since 7 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
-st fail: v5.10.209-cip44-526-gbbb905888ca85)
-
-    2024-02-13T18:25:45.052808  /lava-429068/1/../bin/lava-test-case
-    2024-02-13T18:25:45.078789  <8>[   21.091125] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dlayerscape-sfp-driver-present RESULT=3Dfail>   =
-
- =
-
-
-
-platform                  | arch   | lab           | compiler | defconfig  =
-                | regressions
---------------------------+--------+---------------+----------+------------=
-----------------+------------
-mt8173-elm-hana           | arm64  | lab-collabora | gcc-10   | defconfig+a=
-rm64-chromebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/65cbb33cd9f4ae86c26370b1
+  Details:     https://kernelci.org/test/plan/id/65cbaed51712acbb42637043
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
+  Full config: malta_defconfig
+  Compiler:    gcc-10 (mips-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210110)
   Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.209-cip44-51-gdb99ac443b0da/arm64/defconfig+arm64-chromebook/gcc-10/=
-lab-collabora/baseline-nfs-mt8173-elm-hana.txt
+/v5.10.209-cip44-51-gdb99ac443b0da/mips/malta_defconfig/gcc-10/lab-broonie/=
+baseline-qemu_mips-malta.txt
   HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
-/v5.10.209-cip44-51-gdb99ac443b0da/arm64/defconfig+arm64-chromebook/gcc-10/=
-lab-collabora/baseline-nfs-mt8173-elm-hana.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
-230623.0/arm64/initrd.cpio.gz =
+/v5.10.209-cip44-51-gdb99ac443b0da/mips/malta_defconfig/gcc-10/lab-broonie/=
+baseline-qemu_mips-malta.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/mipsel/rootfs.cpio.gz =
 
 
 
-  * baseline-nfs.login: https://kernelci.org/test/case/id/65cbb33cd9f4ae86c=
-26370b2
+  * baseline.login: https://kernelci.org/test/case/id/65cbaed51712acbb42637=
+044
         failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
 st fail: v5.10.209-cip44-rebase) =
 
@@ -520,15 +484,160 @@ st fail: v5.10.209-cip44-rebase) =
 
 
 
-platform                  | arch   | lab           | compiler | defconfig  =
-                | regressions
---------------------------+--------+---------------+----------+------------=
-----------------+------------
-rk3399-gru-kevin          | arm64  | lab-collabora | gcc-10   | defconfig+a=
-rm64-chromebook | 2          =
+platform                  | arch   | lab             | compiler | defconfig=
+                  | regressions
+--------------------------+--------+-----------------+----------+----------=
+------------------+------------
+qemu_mips-malta           | mips   | lab-collabora   | gcc-10   | malta_def=
+config            | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/65cbb325d45c55a198637016
+  Details:     https://kernelci.org/test/plan/id/65cbaced845c2d5d8e63701d
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: malta_defconfig
+  Compiler:    gcc-10 (mips-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.209-cip44-51-gdb99ac443b0da/mips/malta_defconfig/gcc-10/lab-collabor=
+a/baseline-qemu_mips-malta.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.209-cip44-51-gdb99ac443b0da/mips/malta_defconfig/gcc-10/lab-collabor=
+a/baseline-qemu_mips-malta.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/mipsel/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/65cbaced845c2d5d8e637=
+01e
+        failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
+st fail: v5.10.209-cip44-rebase) =
+
+ =
+
+
+
+platform                  | arch   | lab             | compiler | defconfig=
+                  | regressions
+--------------------------+--------+-----------------+----------+----------=
+------------------+------------
+r8a7743-iwg20d-q7         | arm    | lab-cip         | gcc-10   | shmobile_=
+defconfig         | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65cbac5048a79343ed637032
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: shmobile_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.209-cip44-51-gdb99ac443b0da/arm/shmobile_defconfig/gcc-10/lab-cip/ba=
+seline-r8a7743-iwg20d-q7.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.209-cip44-51-gdb99ac443b0da/arm/shmobile_defconfig/gcc-10/lab-cip/ba=
+seline-r8a7743-iwg20d-q7.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/armel/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/65cbac5048a79343ed637=
+033
+        failing since 7 days (last pass: v5.10.209-cip44-rebase, first fail=
+: v5.10.209-cip44-526-gbbb905888ca85) =
+
+ =
+
+
+
+platform                  | arch   | lab             | compiler | defconfig=
+                  | regressions
+--------------------------+--------+-----------------+----------+----------=
+------------------+------------
+rk3288-veyron-jaq         | arm    | lab-collabora   | gcc-10   | multi_v7_=
+defconfig         | 2          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65cbb605416b2d1f9d637018
+
+  Results:     63 PASS, 7 FAIL, 1 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.209-cip44-51-gdb99ac443b0da/arm/multi_v7_defconfig/gcc-10/lab-collab=
+ora/baseline-rk3288-veyron-jaq.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.209-cip44-51-gdb99ac443b0da/arm/multi_v7_defconfig/gcc-10/lab-collab=
+ora/baseline-rk3288-veyron-jaq.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/armel/rootfs.cpio.gz =
+
+
+
+  * baseline.bootrr.dwmmc_rockchip-sdio0-probed: https://kernelci.org/test/=
+case/id/65cbb605416b2d1f9d637048
+        failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
+st fail: v5.10.209-cip44-rebase)
+
+    2024-02-13T18:41:07.353695  /lava-12758030/1/../bin/lava-test-case<8>[ =
+  19.654156] <LAVA_SIGNAL_TESTCASE TEST_CASE_ID=3Ddwmmc_rockchip-sdmmc-prob=
+ed RESULT=3Dfail>
+
+    2024-02-13T18:41:07.353753  =
+
+
+    2024-02-13T18:41:08.365023  /lava-12758030/1/../bin/lava-test-case
+   =
+
+
+  * baseline.bootrr.dwmmc_rockchip-sdmmc-probed: https://kernelci.org/test/=
+case/id/65cbb605416b2d1f9d637049
+        new failure (last pass: v4.4.302-cip72-1251-g57b839f015944)
+
+    2024-02-13T18:41:06.332843  	-w	Pad to last with lea<8>[   18.629271] <=
+LAVA_SIGNAL_TESTCASE TEST_CASE_ID=3Ddwmmc_rockchip-driver-present RESULT=3D=
+pass>
+
+    2024-02-13T18:41:06.333718  ding zeros
+
+    2024-02-13T18:41:06.336339  	-s SEP	String separator
+
+    2024-02-13T18:41:06.340045  /lava-12758030/1/../bin/lava-test-case
+
+    2024-02-13T18:41:06.346051  BusyBox v1.31.1 (2023-06-23 08:10:20 UTC) m=
+ulti-call binary.
+
+    2024-02-13T18:41:06.346580  =
+
+
+    2024-02-13T18:41:06.351139  Usage: seq [-w] [-s SEP] [FIRST [INC]] LAST
+
+    2024-02-13T18:41:06.351197  =
+
+
+    2024-02-13T18:41:06.355885  Print numbers from FIRST to LAST, in steps =
+of INC.
+
+    2024-02-13T18:41:06.358402  FIRST, INC default to 1.
+ =
+
+    ... (5 line(s) more)  =
+
+ =
+
+
+
+platform                  | arch   | lab             | compiler | defconfig=
+                  | regressions
+--------------------------+--------+-----------------+----------+----------=
+------------------+------------
+rk3399-gru-kevin          | arm64  | lab-collabora   | gcc-10   | defconfig=
++arm64-chromebook | 2          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65cbb35eb8a39ed78d637024
 
   Results:     84 PASS, 2 FAIL, 1 SKIP
   Full config: defconfig+arm64-chromebook
@@ -536,34 +645,108 @@ rm64-chromebook | 2          =
 110)
   Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
 /v5.10.209-cip44-51-gdb99ac443b0da/arm64/defconfig+arm64-chromebook/gcc-10/=
-lab-collabora/baseline-nfs-rk3399-gru-kevin.txt
+lab-collabora/baseline-rk3399-gru-kevin.txt
   HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
 /v5.10.209-cip44-51-gdb99ac443b0da/arm64/defconfig+arm64-chromebook/gcc-10/=
-lab-collabora/baseline-nfs-rk3399-gru-kevin.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
-230623.0/arm64/initrd.cpio.gz =
+lab-collabora/baseline-rk3399-gru-kevin.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/arm64/rootfs.cpio.gz =
 
 
 
-  * baseline-nfs.bootrr.rockchip-usb2phy1-probed: https://kernelci.org/test=
-/case/id/65cbb325d45c55a198637020
+  * baseline.bootrr.rockchip-usb2phy1-probed: https://kernelci.org/test/cas=
+e/id/65cbb35eb8a39ed78d63702e
         failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
 st fail: v5.10.209-cip44-rebase)
 
-    2024-02-13T18:21:51.419163  /lava-12757876/1/../bin/lava-test-case
+    2024-02-13T18:22:05.368556  /lava-12757892/1/../bin/lava-test-case
+
+    2024-02-13T18:22:05.379250  <8>[   62.134738] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Drockchip-usb2phy1-probed RESULT=3Dfail>
    =
 
 
-  * baseline-nfs.bootrr.rockchip-usb2phy0-probed: https://kernelci.org/test=
-/case/id/65cbb325d45c55a198637021
+  * baseline.bootrr.rockchip-usb2phy0-probed: https://kernelci.org/test/cas=
+e/id/65cbb35eb8a39ed78d63702f
         failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
 st fail: v5.10.209-cip44-rebase)
 
-    2024-02-13T18:21:50.314792  /lava-12757876/1/../bin/lava-test-case
+    2024-02-13T18:22:03.309173  <8>[   60.062291] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Drockchip-usb2phy-driver-present RESULT=3Dpass>
 
-    2024-02-13T18:21:50.355524  <8>[   37.838091] <LAVA_SIGNAL_TESTCASE TES=
+    2024-02-13T18:22:04.330459  /lava-12757892/1/../bin/lava-test-case
+
+    2024-02-13T18:22:04.341408  <8>[   61.097064] <LAVA_SIGNAL_TESTCASE TES=
 T_CASE_ID=3Drockchip-usb2phy0-probed RESULT=3Dfail>
    =
+
+ =
+
+
+
+platform                  | arch   | lab             | compiler | defconfig=
+                  | regressions
+--------------------------+--------+-----------------+----------+----------=
+------------------+------------
+zynqmp-zcu102             | arm64  | lab-cip         | gcc-10   | defconfig=
++arm64-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65cbb3e5fb210f9e7a637034
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.209-cip44-51-gdb99ac443b0da/arm64/defconfig+arm64-chromebook/gcc-10/=
+lab-cip/baseline-zynqmp-zcu102.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.209-cip44-51-gdb99ac443b0da/arm64/defconfig+arm64-chromebook/gcc-10/=
+lab-cip/baseline-zynqmp-zcu102.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/65cbb3e5fb210f9e7a637=
+035
+        failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
+st fail: v5.10.209-cip44-rebase) =
+
+ =
+
+
+
+platform                  | arch   | lab             | compiler | defconfig=
+                  | regressions
+--------------------------+--------+-----------------+----------+----------=
+------------------+------------
+zynqmp-zcu102             | arm64  | lab-cip         | gcc-10   | defconfig=
+                  | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/65cbb561c5eed138e6637037
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.209-cip44-51-gdb99ac443b0da/arm64/defconfig/gcc-10/lab-cip/baseline-=
+zynqmp-zcu102.txt
+  HTML log:    https://storage.kernelci.org//cip-gitlab/ci-pavel-linux-test=
+/v5.10.209-cip44-51-gdb99ac443b0da/arm64/defconfig/gcc-10/lab-cip/baseline-=
+zynqmp-zcu102.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
+t-baseline/20230623.0/arm64/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/65cbb561c5eed138e6637=
+038
+        failing since 8 days (last pass: v6.1.75-cip14-6-ga817aa655908, fir=
+st fail: v5.10.209-cip44-rebase) =
 
  =20
 
