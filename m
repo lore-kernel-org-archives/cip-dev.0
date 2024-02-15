@@ -1,276 +1,183 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 125B3C48BEB
-	for <webhook@archiver.kernel.org>; Thu, 15 Feb 2024 15:53:58 +0000 (UTC)
-Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
- by mx.groups.io with SMTP id smtpd.web11.17379.1708012436057702912
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79AF7C4829E
+	for <webhook@archiver.kernel.org>; Thu, 15 Feb 2024 20:14:44 +0000 (UTC)
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (EUR02-VI1-obe.outbound.protection.outlook.com [40.107.241.86])
+ by mx.groups.io with SMTP id smtpd.web11.809.1708028079045592003
  for <cip-dev@lists.cip-project.org>;
- Thu, 15 Feb 2024 07:53:57 -0800
+ Thu, 15 Feb 2024 12:14:39 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=f2PT9dFI;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-51332-20240215155351ea12d446ba09a6a46b-ilvgjf@rts-flowmailer.siemens.com)
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 20240215155351ea12d446ba09a6a46b
-        for <cip-dev@lists.cip-project.org>;
-        Thu, 15 Feb 2024 16:53:53 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=Su5eNO0TcC00+V7chSS9L0DZRl9ICrVH9QjrH78Rf7o=;
- b=f2PT9dFI5fnQ1roMXSiaogpABf3Py6hEJVflRmFMV8k8GTUiYJ1gnhynA4ERc3NEopCjC6
- FoQcfFs5WcDSQL2WnpbNAJlDLLdPFWmehvqFay6EFDG71BulFC+CCSWMoG17hBDuN/Y2bld9
- 5BZThKEpNylgoJ1h7yf62DnthvB6E=;
-From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: jan.kiszka@siemens.com,
-	felix.moessbauer@siemens.com,
-	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH v2 2/3] add SWUpdate 2022.12
-Date: Thu, 15 Feb 2024 16:53:27 +0100
-Message-ID: <20240215155350.434472-3-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20240215155350.434472-1-Quirin.Gylstorff@siemens.com>
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=hqNDXqXt;
+ spf=pass (domain: siemens.com, ip: 40.107.241.86, mailfrom: jan.kiszka@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=c3iomfPoerDJolBQBkX1kd0lgdhfS0Zh+Xd6jEhtrfZRlFBniurHHuwYzBk+vWWhXfGwXoSrY33rJG2KkJVnnijsmwjFq1PogogLu6fOtbYkUS2ieLIwJ1RBehCJy9FAn7NHqTB+Zws4IG9w4j5B6jrPb6lo8Z5NFpv80CETdDyX90+0kw5h+CEsW65D9Y/eueMdvFDNqm63J3ryV4r6k+IXC2AhjorkEZmo1TKA9ZgSHzuodfsj5kpbuqFkNWhMxC70FSOJyuJs8Nfy1/IH4VUCYpksIpVOLcDxH6oHWQo3UwcPYYM+Cmw8tctRouuqluEEke8uCyL0uxRuBbJggA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=f+A51dSx824/pKOQt4wU95+ggMFkM1dyea8A9aGKWZc=;
+ b=g3LNXLxfeG/AVzmB7ktVTvGct6VbIkbrTJkureCp1DZG8o2rKcakACc7DD1HZIQk4BVPdc7m3YcomJh1QgC1HPzlktQ5IrMnhoMNj0Yvc0nbfMhKTifko7u1uTy06wt/nMLoru0th+uTmtVudQza4+zspo/Cx0Qv8VAxHYCN/u7xMtRiGcH6LINtIZ8HBuswDyACko2Spa7MUNeXfiVOqOWxe9mOTxc2IzMDd0jW6MXq9DErUTCVCQYrNXsRpssaq5VRmuvrUxCv9rC0IrxHHztvPMs/QfaivUQXDGrcpXr4CbsjsEehGrf+iTYgKEJUlb1aJF8vhRPmZumnNexUEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=f+A51dSx824/pKOQt4wU95+ggMFkM1dyea8A9aGKWZc=;
+ b=hqNDXqXtadTpX9CouQbAntaF33mESGMHbiCWe0NQOg7yv4V14nytrI5RffnoeE1DrspR5yfbvevBOk0lo6Yl/xi7G1yhpNvpQ/+6jMZzKgIL9ozkvIOhY5ciiIkadVAtn396ctGA1G8Kvnjl4ZXI/ILC7iRmEgi83+cjgJrJSMmLvCEtU6xJv6KdBDqUZBW8EckKkM2VRG6Pncp2eyIDYY/7g3KSa4tIFSquuvpyx/49WqOCX6xGSPerkvQZv7ut7pSo4qAO4G48qbB6Wsfu+48GHHciPKy5Tn4GftnrMwbPbOPnd/CiYGwS/zoFfMN0ThW3MAGcfOyx8efno3IBDA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by GVXPR10MB8180.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:119::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7228.34; Thu, 15 Feb
+ 2024 20:14:35 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8d16:7fbb:4964:94fe]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8d16:7fbb:4964:94fe%3]) with mapi id 15.20.7270.036; Thu, 15 Feb 2024
+ 20:14:34 +0000
+Message-ID: <6148d08a-69ac-4b1d-aa87-0301786aab1a@siemens.com>
+Date: Thu, 15 Feb 2024 21:14:32 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cip-dev][isar-cip-core][PATCH v2 2/3] add SWUpdate 2022.12
+Content-Language: en-US
+To: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>,
+ felix.moessbauer@siemens.com, cip-dev@lists.cip-project.org
 References: <20240215155350.434472-1-Quirin.Gylstorff@siemens.com>
+ <20240215155350.434472-3-Quirin.Gylstorff@siemens.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+In-Reply-To: <20240215155350.434472-3-Quirin.Gylstorff@siemens.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR0P281CA0104.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a9::15) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GVXPR10MB8180:EE_
+X-MS-Office365-Filtering-Correlation-Id: a34607d9-df67-4972-aded-08dc2e62b9d4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	JGDqiIqScicbmWCoeAOynw8cGoAE/4lMujuwWzz9iQxP6oj41cSRLFCML/32fC9noX9nBgBXR2vl5pq3f67DgVulClQ6c+pQ2ASO2amGuBJ9VceNxZQd+1LzTUjMPzmzXC84z6rgK4/Erqit8d79Hl0cASELZ13OwBDX5J4rJuaVGIAPwUxUFj5WK260XJJoduPh2YzKSiPwt7rp2CMtPBhjswWcohpNurtcVioprdtFIReXFN4nTPaIeGUJFb2Ze02IyAW0r0Ay6rzLmogMkDiNw0SXwHRrNgPcTBIqQJAuAu6cDcHU0yB9j87tAC0usKxIAMPdC1r4GfmsC8YZrIV+fn0h6HUQwJvlqbbTxObmlozD5ZbJtYNJoqNdvoAA2aMZ1sr+78uOve8jRRzkEj/DQOiR5viZZCvd7ev8ShG5OsiFGvNj9TU8rTHns6W9fkaHI43E8zbV/9LhqVmyAHsafAUO1Ull9/Iyk4vhu1r759Aa0FOMe3UGLIkhZtcXkcFM9fry8TdClzMeSdAT73q4h1tk+o9cdMLUkihfU8E=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(346002)(39860400002)(136003)(396003)(366004)(376002)(230922051799003)(1800799012)(451199024)(64100799003)(186009)(6486002)(478600001)(966005)(31686004)(41300700001)(6512007)(8936002)(44832011)(2906002)(8676002)(5660300002)(66946007)(53546011)(6506007)(66476007)(316002)(66556008)(83380400001)(2616005)(31696002)(82960400001)(86362001)(38100700002)(26005)(36756003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?R0I4bERZT2tDcDVNNHJOV3NkazZXaEEyUDY0ZEV6S0xoMDFMbG5ldmtLajhK?=
+ =?utf-8?B?amQ2aHA2YTM3eXJtTXBwRGc4MXRvbnBZOXVtdWJQNmg4RjVRSjNqVWhRcGJM?=
+ =?utf-8?B?eXBHUyttV0VhSVFPcW5mNzRUVDdhbzEvZWw3QVlsNlRXRkVLKzhtaHQwTlFv?=
+ =?utf-8?B?bWpaOXZPVHNCK0haZFE4SktLV0VhRjNHT09kNGtIYi9SdWJhamt0QU9jQmEw?=
+ =?utf-8?B?cWxxcmhZVU92TWxRYU5VQkZ6N2VZa2pqVGlVaWhqTjhqbXlIeHU1eWwzK2dk?=
+ =?utf-8?B?eVR5elhpaDd0a29FYmpJYmFPU2l0TFJIcFRGaGYwai95N3hoaWJSOHJkM1BT?=
+ =?utf-8?B?cGg5eXdmWEVFbDBwbVd5bEFsMEh2UTgrbm0rSzZVV1EweUlENTZ3bStlNldj?=
+ =?utf-8?B?RUNoank5RzNQQXhSbnpldGw5L0tPVXU2WEQraTgrUVlMOHhXcTNITndlK0hE?=
+ =?utf-8?B?RGN0TzBacnlNM0xKdTBBTzRQdGsyMDJWUW1JbnFLcU5CT3BxR2ZBWnU3cUtq?=
+ =?utf-8?B?cmtjVTJ2K3RQcHkvK1NUNzh6bnJuNVRpWGNLQUZQV3hFUTZ2RElMK0tSdk9B?=
+ =?utf-8?B?WTl6UnFLNlErTVo1ek9FODJHQUhyeHZxQi93VE1jRFYzcEZTZE1tdFp0NnVX?=
+ =?utf-8?B?NDlRVUV0MWFhU1p3Y04vRE5xajFyU1htMkwrMlExcXR4NnBLRXdlenQ3Q3Iy?=
+ =?utf-8?B?UW96clhBN0p6eEY5U1Z1VlpvOTg0NUM3ZmYxSjJrbSszOG1mdE5GSjljZ0FD?=
+ =?utf-8?B?cHdoNUZyOFB4SGFzYlJMMWdER1Z3ZzBrblVWUG9jS1dSTzNsU0FoSGx1L3Nn?=
+ =?utf-8?B?V0N3QWV5U0pSRVliUVZHaXM3UTZaYm5KMms1SFJvT1czaVE3aUNyWWFSYjZt?=
+ =?utf-8?B?dm1zaitHb04yRDJuUVFBMWlqZnc0QkhnTHltYlR4aFhYNklTd2ZPLzhpMnJv?=
+ =?utf-8?B?L1BOeCtuamdUVzRKR0xubG1DVEd4SGZ5Wlp3TEN0ZGRHUm1uRjdNZXBzSmsv?=
+ =?utf-8?B?dUJyNElHeHJFOTZPdXRGdmNTeHZrWTNYcTJBOEtOVnVveU93YlBNMkZlNmVL?=
+ =?utf-8?B?cS8wczJyTDhMZFo0dlEzbmNlaGx2d2FPaTBsTENlQS9EYkNCamdZeG1DQTQ1?=
+ =?utf-8?B?T2dqN0xtdzZPS01qWkQybURvZS85bnNFSHdrNnpYZUZwZXZuc2pLT2krYWpD?=
+ =?utf-8?B?U0UxNW5zZ3RnZ2lNN05PQmFtQy83azZsYnlESzBCUm9TMU9qek9TNjBNeXBO?=
+ =?utf-8?B?YjNtVDdBbEx0dTNNdHV4RlEyR0VuZlZ6YmhsTE5DTTEvK1dLbEUrZ1FiSE1p?=
+ =?utf-8?B?TWczWWRLRVRVRk5ibjRqcjZDaFMwZHg3Z2dmenJVNUJ1UXBySVZyUmxEdjNC?=
+ =?utf-8?B?ZENoSzMyWGRteWZUck5Ddmp1aG44V1ZkbGg5TDVXNnVxMDh2VC9tR1ZHVXhI?=
+ =?utf-8?B?YnZtbEVXSDFJY2I5YXVWWFNoWTNubjB4VTBsaU1qUms2STdkT1BIdTdCQkll?=
+ =?utf-8?B?a0s2QnltQm52L0F4YXV0MDVHeVJDVC9vMUs3SmllNXR6L0ZwY3EwNWZCL3lh?=
+ =?utf-8?B?aHhXOUlhU1ZGNmpTRHBQUXpFZk1BbUdqNis1NnpHRXpRSjRvcEJrdDA0dFo1?=
+ =?utf-8?B?V3QrZnJ4alcrd2xrRXdaS0hDdVdVVE93TlhNSUdpSmdQRkNoYTZWeWtBK3Bo?=
+ =?utf-8?B?RUdpeVFqclBwR2dHdnhDQTJwTEJtakJRRURkZ2F3bmJXZWtDanVoU0p6cVZz?=
+ =?utf-8?B?M2JDbVJlM3QwR2s1YlRQYUFrODRkSHpXNTkzQkdsWTF0VTNOZEY5NzBPeUNj?=
+ =?utf-8?B?KzQwTFZlVTBoYnFyZlNzMUk2L21PY0lodC9YdnZSdndRS2J4Wllwd3V0ZTl6?=
+ =?utf-8?B?ZDFCTUhieDJQcWgxcEo1RFp1M1dwWk1mRTRxb1g3anNyVFVudS9BQTlCUE56?=
+ =?utf-8?B?clRmZW5id3NHUVozcGpzTDgwZE0vYlc2TUZVUzA3eC90bktTN09zeDViZ01o?=
+ =?utf-8?B?bzgxSDlURGJtdlErMEVCRFVLaGFmZ0VOQnY1M2R3U3g4Z0hmc0VZelhOTkY2?=
+ =?utf-8?B?ZUNhbEh5MFA0WStJbUE3bm1uQm4yK1dMcTZwOGo0M2Q2U2hEc0xobjJ3UURY?=
+ =?utf-8?B?RjBnU0p0RGxyYkQ2REZ5QkM1NThkNU5RRHJmR3lLemUraWhQcW9lMDZHenVM?=
+ =?utf-8?B?ZVE9PQ==?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a34607d9-df67-4972-aded-08dc2e62b9d4
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Feb 2024 20:14:34.0195
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MYifShHbTxGRy80XrxG324JSdQya3UK8SdfP7IgX63OcSZzS1u/lmdWc14cOrXPrS+px2T+oRAUR695aj8C49g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR10MB8180
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 15 Feb 2024 15:53:58 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15002
+ <cip-dev@lists.cip-project.org>; Thu, 15 Feb 2024 20:14:44 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15006
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+On 15.02.24 16:53, Quirin Gylstorff wrote:
+> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> 
+> SWUpdate changed the Suricatta lua API in release 2023.05.
+> To support released legacy applications add SWUpdate 2022.12
+> which supports the old api.
+> 
+> We use the latest release from salsa[1].
+> 
+> [1]: https://salsa.debian.org/debian/swupdate/-/tree/debian/2022.12+dfsg-4?ref_type=tags
+> 
+> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> ---
+>  kas/opt/swupdate-2022.12.yaml                 | 22 +++++
+>  ...-Add-option-to-enable-surricatta-lua.patch | 27 ++++++
+>  ...tch-to-add-the-build-version-to-swup.patch | 94 +++++++++++++++++++
+>  .../swupdate/swupdate_2022.12+dsfg-4-cip.bb   | 41 ++++++++
+>  4 files changed, 184 insertions(+)
+>  create mode 100644 kas/opt/swupdate-2022.12.yaml
+>  create mode 100644 recipes-core/swupdate/files/2022.12/0001-Add-option-to-enable-surricatta-lua.patch
+>  create mode 100644 recipes-core/swupdate/files/2022.12/0002-d-patches-Add-patch-to-add-the-build-version-to-swup.patch
+>  create mode 100644 recipes-core/swupdate/swupdate_2022.12+dsfg-4-cip.bb
+> 
+> diff --git a/kas/opt/swupdate-2022.12.yaml b/kas/opt/swupdate-2022.12.yaml
+> new file mode 100644
+> index 0000000..5dfe97a
+> --- /dev/null
+> +++ b/kas/opt/swupdate-2022.12.yaml
+> @@ -0,0 +1,22 @@
+> +#
+> +# CIP Core, generic profile
+> +#
+> +# Copyright (c) Siemens AG, 2020
+> +#
+> +# Authors:
+> +#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> +#
+> +# SPDX-License-Identifier: MIT
+> +#
+> +# This kas file adds swupdate and generates a ${IMAGE_NAME}.swu
+> +# from the first wic partition
+> +
+> +header:
+> +  version: 14
+> +  includes:
+> +   - kas/opt/swupdate.yml
+> +
+> +local_conf_header:
+> +  swupdate-2022.12: |
+> +    PREFERRED_VERSION_swupdate = "2022.12%"
+> +    IMAGE_PREINSTALL += "cowsay"
 
-SWUpdate changed the Suricatta lua API in release 2023.05.
-To support released legacy applications add SWUpdate 2022.12
-which supports the old api.
+Still there - may I send this cow back to the barn while merging?
 
-We use the latest release from salsa[1].
+Jan
 
-[1]: https://salsa.debian.org/debian/swupdate/-/tree/debian/2022.12+dfsg-4?ref_type=tags
-
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- kas/opt/swupdate-2022.12.yaml                 | 22 +++++
- ...-Add-option-to-enable-surricatta-lua.patch | 27 ++++++
- ...tch-to-add-the-build-version-to-swup.patch | 94 +++++++++++++++++++
- .../swupdate/swupdate_2022.12+dsfg-4-cip.bb   | 41 ++++++++
- 4 files changed, 184 insertions(+)
- create mode 100644 kas/opt/swupdate-2022.12.yaml
- create mode 100644 recipes-core/swupdate/files/2022.12/0001-Add-option-to-enable-surricatta-lua.patch
- create mode 100644 recipes-core/swupdate/files/2022.12/0002-d-patches-Add-patch-to-add-the-build-version-to-swup.patch
- create mode 100644 recipes-core/swupdate/swupdate_2022.12+dsfg-4-cip.bb
-
-diff --git a/kas/opt/swupdate-2022.12.yaml b/kas/opt/swupdate-2022.12.yaml
-new file mode 100644
-index 0000000..5dfe97a
---- /dev/null
-+++ b/kas/opt/swupdate-2022.12.yaml
-@@ -0,0 +1,22 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2020
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+# This kas file adds swupdate and generates a ${IMAGE_NAME}.swu
-+# from the first wic partition
-+
-+header:
-+  version: 14
-+  includes:
-+   - kas/opt/swupdate.yml
-+
-+local_conf_header:
-+  swupdate-2022.12: |
-+    PREFERRED_VERSION_swupdate = "2022.12%"
-+    IMAGE_PREINSTALL += "cowsay"
-diff --git a/recipes-core/swupdate/files/2022.12/0001-Add-option-to-enable-surricatta-lua.patch b/recipes-core/swupdate/files/2022.12/0001-Add-option-to-enable-surricatta-lua.patch
-new file mode 100644
-index 0000000..dafbf6d
---- /dev/null
-+++ b/recipes-core/swupdate/files/2022.12/0001-Add-option-to-enable-surricatta-lua.patch
-@@ -0,0 +1,27 @@
-+From 451a80e1a98d7f6abd287215e7cac3929eebe025 Mon Sep 17 00:00:00 2001
-+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+Date: Thu, 15 Feb 2024 11:06:52 +0100
-+Subject: [PATCH 1/2] Add option to enable surricatta-lua
-+
-+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+---
-+ debian/rules | 3 +++
-+ 1 file changed, 3 insertions(+)
-+
-+diff --git a/debian/rules b/debian/rules
-+index 57da4ca7..a78d9ca8 100755
-+--- a/debian/rules
-++++ b/debian/rules
-+@@ -56,6 +56,9 @@ endif
-+ ifneq (,$(filter pkg.swupdate.p11,$(DEB_BUILD_PROFILES)))
-+ 	echo CONFIG_PKCS11=y >> configs/debian_defconfig
-+ endif
-++ifneq (,$(filter pkg.swupdate.suricattalua,$(DEB_BUILD_PROFILES)))
-++	echo CONFIG_SURICATTA_LUA=y              >> configs/debian_defconfig
-++endif
-+ ifneq (,$(LUA_VERSION))
-+ 	echo CONFIG_LUAPKG=\"lua$(LUA_VERSION)\" >> configs/debian_defconfig
-+ 	echo CONFIG_LUASCRIPTHANDLER=y           >> configs/debian_defconfig
-+-- 
-+2.43.0
-+
-diff --git a/recipes-core/swupdate/files/2022.12/0002-d-patches-Add-patch-to-add-the-build-version-to-swup.patch b/recipes-core/swupdate/files/2022.12/0002-d-patches-Add-patch-to-add-the-build-version-to-swup.patch
-new file mode 100644
-index 0000000..4ff7419
---- /dev/null
-+++ b/recipes-core/swupdate/files/2022.12/0002-d-patches-Add-patch-to-add-the-build-version-to-swup.patch
-@@ -0,0 +1,94 @@
-+From 356ed7987a489f0259c0878117a4cac8e22ba8d5 Mon Sep 17 00:00:00 2001
-+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+Date: Fri, 16 Jun 2023 19:43:38 +0200
-+Subject: [PATCH 2/2] d/patches: Add patch to add the build version to swupdate
-+
-+The build version is only set if build in a git repository
-+this patch allows to use the version information stored in
-+the Makefile.
-+
-+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+---
-+ ...Set-version-if-git-returns-no-informa.diff | 46 +++++++++++++++++++
-+ debian/patches/series                         |  1 +
-+ debian/rules                                  |  2 +
-+ 3 files changed, 49 insertions(+)
-+ create mode 100644 debian/patches/Makefile.flags-Set-version-if-git-returns-no-informa.diff
-+
-+diff --git a/debian/patches/Makefile.flags-Set-version-if-git-returns-no-informa.diff b/debian/patches/Makefile.flags-Set-version-if-git-returns-no-informa.diff
-+new file mode 100644
-+index 00000000..480b67f5
-+--- /dev/null
-++++ b/debian/patches/Makefile.flags-Set-version-if-git-returns-no-informa.diff
-+@@ -0,0 +1,46 @@
-++From 40b3d8036ba08da2cb0013f5fefd4736b25dca8e Mon Sep 17 00:00:00 2001
-++From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-++Date: Sat, 17 Jun 2023 17:56:18 +0200
-++Subject: [PATCH] Makefile.flags: Set version if git returns no information
-++
-++This set the swupdate version if build in a non git environment.
-++E.g. pristine-tar build or from a release tarball.
-++
-++Also allows to set the EXTRAVERSION from the command line.
-++
-++Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-++---
-++ Makefile       | 2 +-
-++ Makefile.flags | 3 +++
-++ 2 files changed, 4 insertions(+), 1 deletion(-)
-++
-++diff --git a/Makefile b/Makefile
-++index 9f6a33a6..56189688 100644
-++--- a/Makefile
-+++++ b/Makefile
-++@@ -5,7 +5,7 @@
-++ VERSION = 2022
-++ PATCHLEVEL = 12
-++ SUBLEVEL = 0
-++-EXTRAVERSION =
-+++EXTRAVERSION ?=
-++ NAME =
-++ 
-++ IPCLIB_VERSION = 0.1
-++diff --git a/Makefile.flags b/Makefile.flags
-++index 2bec8468..f69ab5e8 100644
-++--- a/Makefile.flags
-+++++ b/Makefile.flags
-++@@ -7,6 +7,9 @@
-++ # ==========================================================================
-++ SWU_DIR = $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-++ SWU_VER = $(shell git -C $(SWU_DIR) describe --tags --always --dirty)
-+++ifeq (,$(SWU_VER))
-+++	SWU_VER = $(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRAVERSION)
-+++endif
-++ export SWU_VER
-++ SKIP_STRIP ?= n
-++ 
-++-- 
-++2.39.2
-++
-+diff --git a/debian/patches/series b/debian/patches/series
-+index 5638bbf5..12324569 100644
-+--- a/debian/patches/series
-++++ b/debian/patches/series
-+@@ -1,3 +1,4 @@
-+ Link-config-to-swupdate-www-path.diff
-+ Replace-Font-Awesome-5-with-Fork-Awesome.diff
-+ use-gcc-compiler.diff
-++Makefile.flags-Set-version-if-git-returns-no-informa.diff
-+diff --git a/debian/rules b/debian/rules
-+index a78d9ca8..1bc70f84 100755
-+--- a/debian/rules
-++++ b/debian/rules
-+@@ -17,6 +17,8 @@ export DH_WITH=--with lua
-+ export HAVE_LUA=y
-+ endif
-+ 
-++DEB_CHANGELOG_VERSION := $(shell dpkg-parsechangelog | sed -n -e 's/^Version: //p' | cut -d + -f 2)
-++export EXTRAVERSION=($(DEB_CHANGELOG_VERSION))
-+ BU_SWU=
-+ ifeq (linux,$(DEB_HOST_ARCH_OS))
-+ 	BU_SWU += -VBuilt-Using="$(shell dpkg-query -f '$${source:Package} (= $${source:Version}), ' -W libmtd-dev libubi-dev)"
-+-- 
-+2.43.0
-+
-diff --git a/recipes-core/swupdate/swupdate_2022.12+dsfg-4-cip.bb b/recipes-core/swupdate/swupdate_2022.12+dsfg-4-cip.bb
-new file mode 100644
-index 0000000..fcccc2c
---- /dev/null
-+++ b/recipes-core/swupdate/swupdate_2022.12+dsfg-4-cip.bb
-@@ -0,0 +1,41 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2023
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+
-+inherit dpkg
-+
-+require swupdate.inc
-+
-+DEPENDS += "libebgenv-dev"
-+
-+DEB_BUILD_PROFILES += "nodoc"
-+DEB_BUILD_OPTIONS += "nodoc"
-+
-+FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files/2022.12:"
-+
-+SRC_URI += "git://salsa.debian.org/debian/swupdate.git;protocol=https;branch=debian/master;destsuffix=${P}"
-+
-+SRCREV = "aa9edf070567fa5b3e942c270633a8feef49dad8"
-+SRC_URI += "file://0001-Add-option-to-enable-surricatta-lua.patch"
-+SRC_URI += "file://0002-d-patches-Add-patch-to-add-the-build-version-to-swup.patch"
-+
-+ISAR_CROSS_COMPILE:bullseye = "0"
-+
-+DEB_BUILD_PROFILES += "pkg.swupdate.suricattalua"
-+
-+# use backport build profile for bullseye
-+DEB_BUILD_PROFILES:append:bullseye = " pkg.swupdate.bpo"
-+
-+CHANGELOG_V ?= "${PV}-${SRCREV}"
-+
-+do_prepare_build() {
-+    deb_add_changelog
-+    cd ${WORKDIR}
-+    tar cJf ${PN}_${PV}.orig.tar.xz --exclude=.git --exclude=debian ${P}
-+}
 -- 
-2.43.0
+Siemens AG, Technology
+Linux Expert Center
 
 
