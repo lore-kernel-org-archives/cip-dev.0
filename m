@@ -2,32 +2,32 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0671C48BF0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDA83C48BEB
 	for <webhook@archiver.kernel.org>; Thu, 15 Feb 2024 12:17:06 +0000 (UTC)
-Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
- by mx.groups.io with SMTP id smtpd.web10.12404.1707999422842656181
+Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
+ by mx.groups.io with SMTP id smtpd.web11.12622.1707999422853780723
  for <cip-dev@lists.cip-project.org>;
- Thu, 15 Feb 2024 04:17:03 -0800
+ Thu, 15 Feb 2024 04:17:04 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=mglu9FWo;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-51332-202402151217007045c3ec69144c2265-5xzwpg@rts-flowmailer.siemens.com)
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 202402151217007045c3ec69144c2265
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=e/FovIY7;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-51332-2024021512170029078e20812e48776f-5mhfaw@rts-flowmailer.siemens.com)
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 2024021512170029078e20812e48776f
         for <cip-dev@lists.cip-project.org>;
         Thu, 15 Feb 2024 13:17:00 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=B+5OxU/5EHXHonSgLx82UNhWIoikErw1XMJjnhbp56Q=;
- b=mglu9FWoWTva+LKnAFef5KK918i/No7d3rwbNmoQ596ZMnbdtDftbsjDk7Y2QL60sEs8hS
- GkosXZ09CLa/9BNmBCGJbmMys4A0eUQko+lVA+/FKsIRq9i+HBKIU1lryos99WbXw4DsLRXf
- 2RJZw2DkBTNHd9Pn62cu+qWZMLz40=;
+ bh=dHCj/UKeO8MUO/F8Tt0OU806qoW/XP9ErTwLErgwV+Q=;
+ b=e/FovIY7zvqlqXLpOUFdiTv69mDdwcFECXLwlZ2N8RGzUkRupm4OEBlhZWkLq3c3yn/awS
+ 9V4TUch789FbrhQnw6acmIIkszVjSTQOegIFasfEYMvoIQ6d6EXqCqiXf/uh/FBsa3AVRcE5
+ ug0M3TH/c8v8GlVTgKMOXt6Yr9+7I=;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: felix.moessbauer@siemens.com,
 	jan.kiszka@siemens.com,
 	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH 1/3] swupdate delete unused patch
-Date: Thu, 15 Feb 2024 13:14:05 +0100
-Message-ID: <20240215121659.315309-2-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH 3/3] build swupdate 2022.12 for qemu-amd64-secure-boot-bullseye
+Date: Thu, 15 Feb 2024 13:14:07 +0100
+Message-ID: <20240215121659.315309-4-Quirin.Gylstorff@siemens.com>
 In-Reply-To: <20240215121659.315309-1-Quirin.Gylstorff@siemens.com>
 References: <20240215121659.315309-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
@@ -38,116 +38,46 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 15 Feb 2024 12:17:06 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14990
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/14993
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
+This ensure minimal build testing for SWUpdate 2022.12
+
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- ...tch-to-add-the-build-version-to-swup.patch | 94 -------------------
- 1 file changed, 94 deletions(-)
- delete mode 100644 recipes-core/swupdate/files/0001-d-patches-Add-patch-to-add-the-build-version-to-swup.patch
+ .gitlab-ci.yml | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/recipes-core/swupdate/files/0001-d-patches-Add-patch-to-add-the-build-version-to-swup.patch b/recipes-core/swupdate/files/0001-d-patches-Add-patch-to-add-the-build-version-to-swup.patch
-deleted file mode 100644
-index efc584b..0000000
---- a/recipes-core/swupdate/files/0001-d-patches-Add-patch-to-add-the-build-version-to-swup.patch
-+++ /dev/null
-@@ -1,94 +0,0 @@
--From 48963be5c3cd33ed9f36db52130cbd1dda3ed007 Mon Sep 17 00:00:00 2001
--From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
--Date: Fri, 16 Jun 2023 19:43:38 +0200
--Subject: [PATCH] d/patches: Add patch to add the build version to swupdate
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index 9c3ee0f..d39ecb3 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -25,7 +25,7 @@ variables:
+   dtb: none
+   deploy: enable
+   deploy_kernelci: disable
 -
--The build version is only set if build in a git repository
--this patch allows to use the version information stored in
--the Makefile.
--
--Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-----
-- ...Set-version-if-git-returns-no-informa.diff | 46 +++++++++++++++++++
-- debian/patches/series                         |  1 +
-- debian/rules                                  |  2 +
-- 3 files changed, 49 insertions(+)
-- create mode 100644 debian/patches/Makefile.flags-Set-version-if-git-returns-no-informa.diff
--
--diff --git a/debian/patches/Makefile.flags-Set-version-if-git-returns-no-informa.diff b/debian/patches/Makefile.flags-Set-version-if-git-returns-no-informa.diff
--new file mode 100644
--index 00000000..480b67f5
----- /dev/null
--+++ b/debian/patches/Makefile.flags-Set-version-if-git-returns-no-informa.diff
--@@ -0,0 +1,46 @@
--+From 40b3d8036ba08da2cb0013f5fefd4736b25dca8e Mon Sep 17 00:00:00 2001
--+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
--+Date: Sat, 17 Jun 2023 17:56:18 +0200
--+Subject: [PATCH] Makefile.flags: Set version if git returns no information
--+
--+This set the swupdate version if build in a non git environment.
--+E.g. pristine-tar build or from a release tarball.
--+
--+Also allows to set the EXTRAVERSION from the command line.
--+
--+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
--+---
--+ Makefile       | 2 +-
--+ Makefile.flags | 3 +++
--+ 2 files changed, 4 insertions(+), 1 deletion(-)
--+
--+diff --git a/Makefile b/Makefile
--+index 9f6a33a6..56189688 100644
--+--- a/Makefile
--++++ b/Makefile
--+@@ -5,7 +5,7 @@
--+ VERSION = 2022
--+ PATCHLEVEL = 12
--+ SUBLEVEL = 0
--+-EXTRAVERSION =
--++EXTRAVERSION ?=
--+ NAME =
--+ 
--+ IPCLIB_VERSION = 0.1
--+diff --git a/Makefile.flags b/Makefile.flags
--+index 2bec8468..f69ab5e8 100644
--+--- a/Makefile.flags
--++++ b/Makefile.flags
--+@@ -7,6 +7,9 @@
--+ # ==========================================================================
--+ SWU_DIR = $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
--+ SWU_VER = $(shell git -C $(SWU_DIR) describe --tags --always --dirty)
--++ifeq (,$(SWU_VER))
--++	SWU_VER = $(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRAVERSION)
--++endif
--+ export SWU_VER
--+ SKIP_STRIP ?= n
--+ 
--+-- 
--+2.39.2
--+
--diff --git a/debian/patches/series b/debian/patches/series
--index 5638bbf5..12324569 100644
----- a/debian/patches/series
--+++ b/debian/patches/series
--@@ -1,3 +1,4 @@
-- Link-config-to-swupdate-www-path.diff
-- Replace-Font-Awesome-5-with-Fork-Awesome.diff
-- use-gcc-compiler.diff
--+Makefile.flags-Set-version-if-git-returns-no-informa.diff
--diff --git a/debian/rules b/debian/rules
--index 57da4ca7..f645cc6e 100755
----- a/debian/rules
--+++ b/debian/rules
--@@ -17,6 +17,8 @@ export DH_WITH=--with lua
-- export HAVE_LUA=y
-- endif
-- 
--+DEB_CHANGELOG_VERSION := $(shell dpkg-parsechangelog | sed -n -e 's/^Version: //p' | cut -d + -f 2)
--+export EXTRAVERSION=($(DEB_CHANGELOG_VERSION))
-- BU_SWU=
-- ifeq (linux,$(DEB_HOST_ARCH_OS))
-- 	BU_SWU += -VBuilt-Using="$(shell dpkg-query -f '$${source:Package} (= $${source:Version}), ' -W libmtd-dev libubi-dev)"
---- 
--2.39.2
--
++  swupdate_version: default
+ stages:
+   - build
+   - test
+@@ -63,6 +63,7 @@ default:
+     - if [ "${release}" = "bookworm" ]; then base_yaml="${base_yaml}:kas/opt/bookworm.yml"; fi
+     - if [ "${release}" = "sid" ]; then base_yaml="${base_yaml}:kas/opt/sid.yml"; fi
+     - if [ "${encrypt}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/encrypt-partitions.yml"; fi
++    - if [ "${swupdate_version}" = "2022.12" ]; then base_yaml="${base_yaml}:kas/opt/swupdate-2022.12.yaml"; fi
+     - echo "Building ${base_yaml}"
+     - kas build ${base_yaml}
+     - if [ "${deploy}" = "enable" ]; then scripts/deploy-cip-core.sh ${release} ${target} ${extension} ${dtb} ${CI_COMMIT_REF_SLUG}; fi
+@@ -303,6 +304,7 @@ build:qemu-amd64-secure-boot-bullseye:
+     use_rt: disable
+     wic_targz: disable
+     deploy: disable
++    swupdate_version: "2022.12"
+ 
+ # buster images
+ build:iwg20m-buster:
 -- 
 2.43.0
 
