@@ -1,979 +1,478 @@
-Return-Path: <sai.sathujoda@toshiba-tsip.com>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A440C48BF6
-	for <webhook@archiver.kernel.org>; Wed, 21 Feb 2024 12:31:57 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.131])
- by mx.groups.io with SMTP id smtpd.web11.11737.1708518710832643380
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B321DC48BEB
+	for <webhook@archiver.kernel.org>; Thu, 22 Feb 2024 00:31:53 +0000 (UTC)
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+ by mx.groups.io with SMTP id smtpd.web10.2363.1708561906385304602
  for <cip-dev@lists.cip-project.org>;
- Wed, 21 Feb 2024 04:31:51 -0800
+ Wed, 21 Feb 2024 16:31:47 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.131, mailfrom: sai.sathujoda@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1120) id 41LCVmZk1073559; Wed, 21 Feb 2024 21:31:48 +0900
-X-Iguazu-Qid: 2rWgWcEMvC3EF2m0DQ
-X-Iguazu-QSIG: v=2; s=0; t=1708518708; q=2rWgWcEMvC3EF2m0DQ; m=vWSNZ+Eop2gb1o7eSA9swKuI58T0JWvsTysb9PTpHNs=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1120) id 41LCVlEF2745795
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Wed, 21 Feb 2024 21:31:47 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=d/rs0skM+f1GeZdL+c78vuCiSfMS/8lvfhIRsjjPq3asE9WpGofQhAF9W5AG2fOrrFzdSjwwczkl/1+GOtNUHfJi5RCkw+fcNhDKU/kBscY1OHtx3Vccr9EKjlLoUREMuunYL3OHtv9qtipJJngIF5UFI/oT22hGvLMHw9U+rf5I8Z9TuX52hLH9l1XD5w9kXgKMV+OjHyKInBVKmjoeEd7WRwZx9iyaZGvkDzoDmGCOjtt/KyOgeR/FhXVp1sfKQtdRdTm6/E4uVJJZWCIiO5qNlOzlMr9dg291B/kaGNNTA9qgwHLq2V6wOffDWH+kIbq0LTZi6utoKOfxUgVuTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xKHVimx+Cibo98NvGfyGMfUn/TJoN3KanqbuJ4XIwOI=;
- b=g2nK5zjzAXj2/AG7nRU/LEL2IoPjr6sDgsifmY9tbxcZM8G6GFR8JiC4Bm+ebnChjQHElGyOgy+hA7fkGerdR6N/NOPT/yqnaIunBMBJrQQY9L6GQSzLWbBa+CDpm0wselEROtP2al0xN9F9hc5hy8wIt2gOtU4KznG7cn1CvRwxeFJ0HlOD1dWICJrHeqT1hqTbaILhJevWP1WgKeTX6ZybU3nvXaxUSRO/jQTd1PLofNw3rTWUQ52dag54GsJItHo0/D2HGLNk34AgFcp39P9pZU+HeylWJsBl4JI3Iw3nCyUApuMwpu7xGvF6P6YffHM4vU8w5edqbWF5wdCYbg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
- header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
-From: <Sai.Sathujoda@toshiba-tsip.com>
-To: <Chris.Paterson2@renesas.com>
-CC: <cip-dev@lists.cip-project.org>, <kazuhiro3.hayashi@toshiba.co.jp>,
-        <dinesh.kumar@toshiba-tsip.com>
-Subject: RE: LAVA test job definitions ( software update, secure boot and IEC
- layer testing )
-Thread-Topic: LAVA test job definitions ( software update, secure boot and IEC
- layer testing )
-Thread-Index: 
- AdpYW/mgLfuVvDVHQv2V4kqjG1tanACcarPQALyDjoAAT66ioAD7Ws/gAHPcRqAAAY+0YA==
-Date: Wed, 21 Feb 2024 12:31:45 +0000
-X-TSB-HOP2: ON
-Message-ID: 
- <OS3PR01MB610352AB4942C739EFFB9C6AC2572@OS3PR01MB6103.jpnprd01.prod.outlook.com>
-References: 
- <OS3PR01MB6103A1EC373CEA6213199114C2472@OS3PR01MB6103.jpnprd01.prod.outlook.com>
- <TYWPR01MB118625EE66B03E0DE98380BDFB7442@TYWPR01MB11862.jpnprd01.prod.outlook.com>
- <OS3PR01MB610381F654F75EE67B00D02BC2482@OS3PR01MB6103.jpnprd01.prod.outlook.com>
- <OS3PR01MB6103E2D6E60760A098F979FEC24E2@OS3PR01MB6103.jpnprd01.prod.outlook.com>
- <OS3PR01MB61034E05C271281A1CD2FE78C2512@OS3PR01MB6103.jpnprd01.prod.outlook.com>
- <TYWPR01MB11862816FF930969C5B302BF4B7572@TYWPR01MB11862.jpnprd01.prod.outlook.com>
-In-Reply-To: 
- <TYWPR01MB11862816FF930969C5B302BF4B7572@TYWPR01MB11862.jpnprd01.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS3PR01MB6103:EE_|TYCPR01MB10649:EE_
-x-ms-office365-filtering-correlation-id: 1da4848d-b8da-4afa-d21b-08dc32d910df
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- icLiJ2i5OO+nJbkV3OJjRQ9DBnNNSJQCyY39Iyp0epc6SuFGE1FQvzu9qYBcCiWmXXHHbcszJijkWpL4MvmB28oXpgwJuDcza3dVyUBFvYYrCvmKAAIz6VUj/mfgbVmXR6gxLF+9rwe6jylait22PQKUK1zomXCHgqF8XPf+OnhK9bA4dJ3P6PNetMmjIUlzWVngMrSgwqPb7T2fmRCapb6ikoEHfdgLGBxPATfQck3SttL2/Aegd8PCAE0yMid3CD+3/c5IA6OfaNh/mCN2KcjVT67n02UpauzPrZlnW/3eaQvLJeDC5Qo0MtZOBmuGfSRztZEMIoBjBqkkkUjnY6+yiywfCm5INBnE0u1L8ySKtnYfASMZGP20+WDAdXYM2/R6eIo0wTfKHhr5DdqMY0hCQokbwb/3sdBzwVRhQf1yy+mrL+WVV2A66ddxhP7/4kLULRHaz+nRelF6SSIyVA/iRpuCodwKjGF8HNn1ceaMTvmXNBmVWpFnxTtJema/pCtgIcQtJYC5lIhjLPglCG88hGiwH4lBok9svMLQtdoq+Kpj42pS+w4OnQSNU9U5JcgDaT+2nRu03ua+gCWxJFiH7bXqqQ1damXTgOXE+es=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB6103.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?Y3F3dS94YnJBTnE1cHNESkFia3NYdE8xRXlOWFdFVmhzYXZMb2ZQL0Vm?=
- =?iso-2022-jp?B?MzVZMy9nU1BUWVVORXU2SXdTdjhYUWgyeTdZekFVbEZHZUIxaUppTnBn?=
- =?iso-2022-jp?B?RUtXS2FzcjRxS1llTEVZMjlZQzd6RFZSSXJya3ZZTzFyS0RIT2hEL0ox?=
- =?iso-2022-jp?B?S0xSb1d4RGtrSzhZejNtbTFPcnZ0cGtUazhwcXN0OFRoYi95VVVvYm90?=
- =?iso-2022-jp?B?WHN4MmU4QTFFQlBuRyt0cjJVODNmSnRxWVdvR3l2T201ZGhKWlFQcEph?=
- =?iso-2022-jp?B?MFJGcW95UExSaXArRFd4TTRYR2lHQTVXTHdmS1Y3RHowL3d1RTZqK2x0?=
- =?iso-2022-jp?B?Z3ZNZ3V5YkNhYWRQWklsSWJQc245ZGIwQVRncjFPVGxQKzN0RlJXYjln?=
- =?iso-2022-jp?B?c3k0US9wVDVZaTZkMS96Sk5TWWhVQVJrMTB6ckszQlRzOThOY1p5WFBr?=
- =?iso-2022-jp?B?VXZJeUZRRlNyZ1FWM3V3VUsyU1lKbFBNTDVmU3I2amxWdGlxcmg3M3JE?=
- =?iso-2022-jp?B?UzAzbk55RUdaeHNCbThvQkVWb1NWYnVYb1pxVlZnVHRQY3RYNW1BWmlW?=
- =?iso-2022-jp?B?cG92OE8zSzZ2VytGeDVuaEJpSDVhMjN5TEMxbmZXU29NTGdZYm8wYTFU?=
- =?iso-2022-jp?B?WUFYMDY5b1JLeDhHUFk5L2VUd1R0bWhocW44WUhpM2NudjU0dHNGbGk0?=
- =?iso-2022-jp?B?V1JHYklnZWw1QVJuZlg0NzM1WDh2c2lpM0FqdDhkaFFCNlBnZFFPNjlD?=
- =?iso-2022-jp?B?QVNxQmVEWlc1QzZ1MVIzcTlzcjJ1WDVjYklFZ2l5bEkwVVIzNWd3OUFl?=
- =?iso-2022-jp?B?R2FhUTYxUGtSYU1WbHJoN2lKRkF0bmV4R3IrQ0gxMGJsZ0dxQXFpanNa?=
- =?iso-2022-jp?B?SXhIODFlSmliRDVtb0NPQnRzc041RzJOb2VCM3psQU1QV09FY282MHZN?=
- =?iso-2022-jp?B?TkVkZlVKSHhlQVMyQmRlQjRwT0ZtVWVGcUpLa2N3YjBIdzI5MExZdG5y?=
- =?iso-2022-jp?B?OEdjekZnOVYwNlNXb3ZBWjhCZGdta05JRjl6STFtL0docUdEamFIRTA5?=
- =?iso-2022-jp?B?cFZtNk03NlFhTStPNFFrM0wrSzFGMTl3Rno2SmFRSGQzYWloWmpjMUZs?=
- =?iso-2022-jp?B?bE54cC9qejR4NjlWWkxpU28wU05Va1c3cy80UzB2WW1sR01OTkFSck16?=
- =?iso-2022-jp?B?bXVUM2dpeVpjekgwTUs0d2ZqWGpvSzdxV1AxOVdWQ25NN2pJcFRkSHhZ?=
- =?iso-2022-jp?B?WEtrVDJNVjdNQm5nM21sSG9oNlFmcVRuYUlnQlowbERKUjYyeUJKQmN2?=
- =?iso-2022-jp?B?MFd5UzV2QzFDdnlKZkVXRm5KalhRdldNdHh6cW1rNE5NZzJiVVcxcE1p?=
- =?iso-2022-jp?B?TzJVTnI0TUtJM1laU0wvZlFzN1FLVXNiWW9SODRQZWhRSlB2QkRrQ25I?=
- =?iso-2022-jp?B?QzVGSlo3cmJqQ1MzSnk1WGJtQmR4NitSdnZCNmIvVERjNHdyN0hmZHJx?=
- =?iso-2022-jp?B?d2Z5QjhJMjU5Y1liajBCWGZCTW9GUG8rTzZYQVhQRy9CV3Y5SHkyUCtW?=
- =?iso-2022-jp?B?VnpnVDFuMVc3VFFYWloxWWVoZmt3RmVSSnZJdVFJOU9YSWMxelUyM2ho?=
- =?iso-2022-jp?B?TE5rVmpmQ3RsUk5BU3p1TkxWYWk5YUZEYkhmYmxaK0l4M1hSYWhJTHRU?=
- =?iso-2022-jp?B?NmxwQWNNRlI1ZEZLWk0zN3Z0Tkdkak93dWtZUWxEcStaUGtZbDJZZTFE?=
- =?iso-2022-jp?B?ZGMxN2VQSndvNVUxOHpaeEZpSFlydG1ORkFaZG5xVGZ6ZDI2L3dUNjgv?=
- =?iso-2022-jp?B?ZjkrUjY2L3ZjY20xQUlrSmdhc25FR0duL25CTzM0UDRjUmY2S1BPRXJh?=
- =?iso-2022-jp?B?Yy9FZFNhZDZtYlM3ZENCOTVaTUZ1M281SUhGWEVudk4xTXV5WTdRR1Vv?=
- =?iso-2022-jp?B?TVgvc3djVmxnRmZ2V3NWQ0NCWEZaNzNGNm1YV2Y2bVRDbFE2Rlhwckpo?=
- =?iso-2022-jp?B?VzFIRXRWNUtpaGM5Wml0RkFWcFlxdFZDNFFvcnIzdGZwTGU2bXBOM2lG?=
- =?iso-2022-jp?B?ODE1ZDJOenBVMUV6VDBHeWFobTgzejNwNzdkbjljQ2d0SWhJRFY0TmVG?=
- =?iso-2022-jp?B?Uzdnb0RMRHgxVWc4Qzl1S2dsdjVKaGVSMEIxellLbGc2NDFNMWZKby9M?=
- =?iso-2022-jp?B?ejc3dGlFWThFdm0wNHByRVE5VUk4ckQyWWs2VVpWa0p6VzJ0VWlvS2Fr?=
- =?iso-2022-jp?B?V0lwK2JNRUEwODVudTZ2MnZHMDRzdlB1SGlOZWhmeEFLb2xtRVppbytO?=
- =?iso-2022-jp?B?SnNXaG9nQ2o4eXlTL050aFh0cC9PN0IzS3c9PQ==?=
-Content-Type: multipart/alternative;
-	boundary="_000_OS3PR01MB610352AB4942C739EFFB9C6AC2572OS3PR01MB6103jpnp_"
+ dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=0Y6i9iNV;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.160.41, mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-21e5fa2f7efso605025fac.0
+        for <cip-dev@lists.cip-project.org>; Wed, 21 Feb 2024 16:31:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1708561905; x=1709166705; darn=lists.cip-project.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=F02dBCulYayWhLsMEan/wnYaRdc753auZl4fB9NpbrU=;
+        b=0Y6i9iNV6Px069UIk3xr4ySRIeomL1E4v3T3rgOgyCjnUNhZ6MMyudG+Kzf/D38sYH
+         pRrC2gm4UJUg+YjzI0qej/GGZhm+BTbwKH+9ye74ERQNWvkqzOwTtRipdYS5DMYkhOMy
+         MbTWs03FqU30KJkQ3uZXgO/QrqJP22M5CQBIttsUWEaRqnwMIVdebWlITYIEOh2C0+mN
+         2Hud91hYawV+3/HCG/tyKeQHDNnE1Z9n1LHSCILITXZlw3lrasLUrgiZT/Xrs31RIy3u
+         b5VhdUXCehrjfw1S8rNMHxCVVl7zYT3zUuyZg0YLD+JbuRJCj8Q9WLOT2JoqLMj1/gbb
+         lW+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708561905; x=1709166705;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=F02dBCulYayWhLsMEan/wnYaRdc753auZl4fB9NpbrU=;
+        b=eAQM/okGq1DY8ywXaWH/fiQpXMEozfeP+8NWyvTZNLjpqdKB/9ggNGL5wqLssA7iEc
+         ExpXcBm6R9F6VcDg7WnevpjS5ZUV1fSnSOyq2k4T98B7fhoHt8kqF7m5TYc/EK6ZBIaP
+         GN1z4ON4Yz1d4FAJLTpDlXMhGon6kEcce/m1oOW5Qo5gvjdO3eaGD3PISWO8Ovoa/zKV
+         L03siIhNRWCf1FO1p5m1IG4VXXIAa7ZMhRkJUvVQG0HRYw8VBGMmaKigjWbj48xx+Hep
+         /P2cZK/nEA4L/MyeoOYMa21XCyQ2swpCqwevge2ibL4J5ydlL7T8gjLN67TwrlRk8iBf
+         lLqg==
+X-Gm-Message-State: AOJu0Ywetic5p17U+mIa9NWLes80v1WVI14uKDcVg09DKFNt++W2DHrB
+	Vgrjhj5sp1+ic2Kn7PDejYMuEPOcvcVGZ736zEmvwdUo69a7D5aP4AbTEPXkvDS3MC95xm0Oxeu
+	QK9JKYAKzaLtgC/6ao1sqhwaa7UJiE0D0A64bmZ1rQP91OolnJcw=
+X-Google-Smtp-Source: AGHT+IHY0ensbXdvxZ+YXiMMIOovVUgRUOkRIGXEiGV1dImuMO98jsjUi5uan+n4FtpVMHYPGGb4tgQdgqHzIMjqPgo=
+X-Received: by 2002:a05:6870:8a0f:b0:21e:c717:625e with SMTP id
+ p15-20020a0568708a0f00b0021ec717625emr11757310oaq.46.1708561905066; Wed, 21
+ Feb 2024 16:31:45 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: toshiba-tsip.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB6103.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1da4848d-b8da-4afa-d21b-08dc32d910df
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2024 12:31:45.1565
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: kzbFhx0xCd4SLdWxFFbwHvY+LYzjpeRUY/8YLqL/5i2rYSwD16T241MYen4eUlvwDKdmC51DOn+bTv6hh7eH+ZFFlTjhI648VLUQwMT4aFU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB10649
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 22 Feb 2024 09:31:09 +0900
+Message-ID: <CAODzB9qsE8-ADWL2JMgXJnLeOfdFHuDEi6D0tYhQb_J2cF9bAg@mail.gmail.com>
+Subject: [kernel-cve-report] New CVE entries this week
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 21 Feb 2024 12:31:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15056
+ <cip-dev@lists.cip-project.org>; Thu, 22 Feb 2024 00:31:53 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15057
 
---_000_OS3PR01MB610352AB4942C739EFFB9C6AC2572OS3PR01MB6103jpnp_
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+Hi!
 
-Hi Chris,
+It's this week's CVE report.
 
-Then I shall proceed with creating a project under cip-playground for this =
-use-case. I shall request for your review once it is done.
+This week reported 15 new CVEs and 2 updated CVEs.
 
-Take care Chris.
+* New CVEs
 
-Thanks and Regards,
-Sai Ashrith ( T S I P )
+CVE-2023-52433: netfilter: nft_set_rbtree: skip sync GC for new
+elements in this transaction
 
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-Sent: Wednesday, February 21, 2024 5:46 PM
-To: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com>
-Cc: cip-dev@lists.cip-project.org; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=
-=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayas=
-hi@toshiba.co.jp>; dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dine=
-sh.kumar@toshiba-tsip.com>
-Subject: RE: LAVA test job definitions ( software update, secure boot and I=
-EC layer testing )
+Announce: https://lore.kernel.org/linux-cve-announce/2024022058-outsell-equator-e1c5@gregkh/
+CVSS v3(NIST): N/A
+CVSS v3(CNA): N/A
 
-Hi Sai,
+In the Linux kernel, the following vulnerability has been resolved:
+netfilter: nft_set_rbtree: skip sync GC for new elements in this
+transaction New elements in this transaction might expired before such
+transaction ends.
+Skip sync GC for such elements otherwise commit path might walk over
+an already released object. Once transaction is finished,
+async GC will collect such expired element.
 
-Sorry for the slow reply, I=1B$B!G=1B(Bve been poorly.
+This bug was introduced by commit f6c383b ("netfilter: nf_tables:
+adapt set backend to use GC transaction API") in 6.5-rc6.
+This patch is not backported to 4.x kernels. Therefore, 4.19, 4.14,
+and 4.4 are not affected.
 
-It=1B$B!G=1B(Bs certainly an option to separate the cip-core testing contai=
-ner/scripts etc. from the kernel testing, however most of the functionality=
- will end up being very similar, so we=1B$B!G=1B(Bll end up with duplicatio=
-n.
+Fixed by commit 2ee52ae ("netfilter: nft_set_rbtree: skip sync GC for
+new elements in this transaction") in 6.6-rc1.
 
-Feel free to create your project(s) in cip-playground, then we can move the=
-m across to cip-testing when ready & we have approval from the TSC.
+Fixed status
+mainline: [2ee52ae94baabf7ee09cf2a8d854b990dac5d0e4]
+stable/5.10: [c323ed65f66e5387ee0a73452118d49f1dae81b8]
+stable/5.15: [9af7dfb3c9d7985172a240f85e684c5cd33e29ce]
+stable/5.4: [03caf75da1059f0460666c826e9f50e13dfd0017]
+stable/6.1: [9a8c544158f68f656d1734eb5ba00c4f817b76b1]
 
-Thanks, Chris
+CVE-2023-52434: smb: client: fix potential OOBs in smb2_parse_contexts()
 
-From: Sai.Sathujoda@toshiba-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>=
- <Sai.Sathujoda@toshiba-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>>
-Sent: Monday, February 19, 2024 4:32 AM
-To: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@rene=
-sas.com>>
-Cc: cip-dev@lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>; ka=
-zuhiro3.hayashi@toshiba.co.jp<mailto:kazuhiro3.hayashi@toshiba.co.jp>; dine=
-sh.kumar@toshiba-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>
-Subject: RE: LAVA test job definitions ( software update, secure boot and I=
-EC layer testing )
+Announce: https://lore.kernel.org/linux-cve-announce/2024022033-makeshift-flammable-cb72@gregkh/
+CVSS v3(NIST): N/A
+CVSS v3(CNA): N/A
 
-Hello Chris,
+An OOB bug was found in smb2_parse_contexts(). The
+smb2_parse_contexts() needed to validate offsets and lengths before
+creating contexts.
 
-Hope you are doing well.
+Fixed by commit af1689a ("smb: client: fix potential OOBs in
+smb2_parse_contexts()") in 6.7-rc6.
 
-I request you to please provide your opinion about creating a fresh reposit=
-ory under cip-testing which serves the purpose of creating container having=
- CIP Core testing lava job definitions, lavacli dependencies and a simple s=
-cript tp submit the tests to CIP LAVA server. We shall invoke this script i=
-n a separate action in .gitlab-ci.yml file in isar-cip-core.
+Fixed status
+mainline: [af1689a9b7701d9907dfc84d2a4b57c4bc907144]
+stable/6.6: [17a0f64cc02d4972e21c733d9f21d1c512963afa]
 
-Thanks and Regards,
-Sai Ashrith ( T S I P )
+CVE-2023-52435: net: prevent mss overflow in skb_segment()
 
+Announce: https://lore.kernel.org/linux-cve-announce/2024022048-rind-huff-b1a2@gregkh/
+CVSS v3(NIST): N/A
+CVSS v3(CNA): N/A
 
-From: ashrith sai(=1B$B#T#S#I#P=1B(B)
-Sent: Wednesday, February 14, 2024 10:06 AM
-To: 'Chris Paterson' <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@re=
-nesas.com>>
-Cc: 'cip-dev@lists.cip-project.org' <cip-dev@lists.cip-project.org<mailto:c=
-ip-dev@lists.cip-project.org>>; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(=
-B =1B$B#D#M#E=1B(B =1B$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@t=
-oshiba.co.jp<mailto:kazuhiro3.hayashi@toshiba.co.jp>>; dinesh kumar(=1B$B#T=
-#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshiba-tsip.com<mailto:dinesh=
-.kumar@toshiba-tsip.com>>
-Subject: RE: LAVA test job definitions ( software update, secure boot and I=
-EC layer testing )
+Invalid mss value causes invalid page access when calculating
+partial_segs in slb segment().
+Added length check to prevent length size should be smaller than GSO_BY_FRAGS.
 
-Hello Chris,
+This bug was introduced by commit 3953c46 ("sk_buff: allow segmenting
+based on frag sizes") in 4.8-rc1.
+This commit is not backported to 4.4 so 4.4 kernels are not affected.
 
-We got some opinion from yesterday=1B$B!G=1B(Bs CIP Core meeting that it mi=
-ght not be optimal to touch this container Files * master * cip-project / c=
-ip-testing / linux-cip-ci * GitLab<https://gitlab.com/cip-project/cip-testi=
-ng/linux-cip-ci/-/tree/master?ref_type=3Dheads> and modify that by adding C=
-IP Core job definitions and submit_tests script specific for this use-case.=
- Do you think the same ? If yes, then do you think creating a fresh reposit=
-ory under cip-testing using which we can build the containers and scripts u=
-sed in the CI testing of CIP Core functionalities is a better choice ?
+Fixed by commit 23d05d5 ("net: prevent mss overflow in skb_segment()
+") in 6.7-rc6.
 
-Please provide your opinion on this Chris.
+Fixed status
+mainline: [23d05d563b7e7b0314e65c8e882bc27eac2da8e7]
+stable/6.6: [95b3904a261a9f810205da560e802cc326f50d77]
 
-Thanks and Regards,
-Sai Ashrith ( T S I P )
+CVE-2023-52436: f2fs: explicitly null-terminate the xattr list
 
-From: ashrith sai(=1B$B#T#S#I#P=1B(B)
-Sent: Monday, February 12, 2024 8:27 PM
-To: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@rene=
-sas.com>>
-Cc: cip-dev@lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>; ha=
-yashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D#I#G""=
-#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp<mailto:kazuhiro3.haya=
-shi@toshiba.co.jp>>; dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <di=
-nesh.kumar@toshiba-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>>
-Subject: RE: LAVA test job definitions ( software update, secure boot and I=
-EC layer testing )
+Announce: https://lore.kernel.org/linux-cve-announce/2024022056-operative-cork-082c@gregkh/T/#u
+CVSS v3(NIST): N/A
+CVSS v3(CNA): N/A
 
-Hello Chris,
+In the Linux kernel, the following vulnerability has been resolved:
+f2fs: explicitly null-terminate the xattr list When setting an xattr,
+explicitly null-terminate the xattr list. This eliminates the fragile
+assumption that the unused xattr space is always zeroed.
 
-Hope you are doing well.
+Fixed by commit e26b6d3 ("f2fs: explicitly null-terminate the xattr
+list") in 6.8-rc1.
 
-I will summarize my understanding and approach to trigger CIP Core testing =
-LAVA jobs.
+It seems as if 4.4 kernels are affected too.
 
-So currently we have all the lava templates in linux-cip-ci container which=
- are pre-processed to form final LAVA job definitions using the submit_test=
-s.sh * master * cip-project / cip-testing / linux-cip-ci * GitLab<https://g=
-itlab.com/cip-project/cip-testing/linux-cip-ci/-/blob/master/submit_tests.s=
-h?ref_type=3Dheads> script. As I went through the script I understood that =
-a lot of logic is involved in preparing the job definitions from the templa=
-te specific for CIP Kernel testing. And this script is run with a trigger f=
-rom here https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines/-/b=
-lame/master/linux-cip-pipeline.yml?ref_type=3Dheads#L69. I feel it will mes=
-s up the existing testing being done on CIP kernel and shall also require a=
- lot of effort to integrate changes required to prepare job definitions for=
- CIP-Core testing considering huge variations in the final job definitions.=
- And also since submit_tests.sh already with every test action trigger in l=
-inux-cip-pipelines.yml, I think making changes to the script to support CIP=
--Core testing will imply that every trigger in linux-cip-ci shall test our =
-software update, secure boot and IEC tests on QEMU images which I think is =
-not right.
+Fixed status
+mainline: [e26b6d39270f5eab0087453d9b544189a38c8564]
+stable/4.19: [16ae3132ff7746894894927c1892493693b89135]
+stable/5.10: [3e47740091b05ac8d7836a33afd8646b6863ca52]
+stable/5.15: [32a6cfc67675ee96fe107aeed5af9776fec63f11]
+stable/5.4: [12cf91e23b126718a96b914f949f2cdfeadc7b2a]
+stable/6.1: [5de9e9dd1828db9b8b962f7ca42548bd596deb8a]
+stable/6.6: [2525d1ba225b5c167162fa344013c408e8b4de36]
+stable/6.7: [f6c30bfe5a49bc38cae985083a11016800708fea]
 
-Our requirement here is to trigger a script which submits the CIP-Core rela=
-ted LAVA job definitions when a change is made in isar-cip-core. So I think=
- we can a short script similar to submit_tests.sh like submit_cip_core_test=
-s.sh and separate folder for LAVA definitions for CIP Core testing in cip-p=
-roject / cip-testing / linux-cip-ci * GitLab<https://gitlab.com/cip-project=
-/cip-testing/linux-cip-ci/-/tree/master?ref_type=3Dheads> container. We wil=
-l run this new script using a test action in .gitlab-ci.yml In isar-cip-cor=
-e. In this new script we shall submit only the CIP Core related job definit=
-ions which we added in a separate folder in linux-cip-ci container to LAVA =
-master.
+CVE-2023-52437: Revert "md/raid5: Wait for MD_SB_CHANGE_PENDING in raid5d"
 
-I chose this approach to minimize the effort and avoid messing up the exist=
-ing implementation which is highly specific for CIP Kernel testing and to a=
-lso use the existing linux-cip-ci container. This is the first time we are =
-testing CIP Core functionalities on LAVA, so initially we started small wit=
-h QEMU and in the future once we spread the testing to multiple devices, th=
-en may be we can setup a new repository like cip-project / cip-testing / li=
-nux-cip-ci * GitLab<https://gitlab.com/cip-project/cip-testing/linux-cip-ci=
-/-/tree/master?ref_type=3Dheads> to build a separate container only to deal=
- with CIP Core LAVA definitions.
+Announce: https://lore.kernel.org/linux-cve-announce/2024022009-subsoil-halt-4b28@gregkh/T/#u
+CVSS v3(NIST): N/A
+CVSS v3(CNA): N/A
 
-What do you think of my approach Chris ? Please provide your opinion and co=
-rrect me if I am wrong.
+The commit 5e2cf33 ("md/raid5: Wait for MD_SB_CHANGE_PENDING in
+raid5d") causes a deadlock bug. So revert 5e2cf33 to fix the deadlock.
+The commit 5e2cf33 is not backported to 4.4 so 4.4 kernels are not affected.
 
-I also request other CIP members to provide their suggestions.
+Fixed by commit bed9e27 ("Revert "md/raid5: Wait for
+MD_SB_CHANGE_PENDING in raid5d"") in 6.8-rc1.
 
-Thanks and regards,
-Sai Ashrith ( T S I P )
+Fixed status
+mainline: [bed9e27baf52a09b7ba2a3714f1e24e17ced386d]
+stable/5.15: [0ee3ded745ca8ce68e107d9b5e5d33938e091003]
+stable/6.1: [bed0acf330b2c50c688f6d9cfbcac2aa57a8e613]
+stable/6.6: [e16a0bbdb7e590a6607b0d82915add738c03c069]
+stable/6.7: [0de40f76d567133b871cd6ad46bb87afbce46983]
 
-From: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@re=
-nesas.com>>
-Sent: Friday, February 9, 2024 2:09 AM
-To: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com<mailto:=
-Sai.Sathujoda@toshiba-tsip.com>>
-Cc: cip-dev@lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>; ha=
-yashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D#I#G""=
-#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp<mailto:kazuhiro3.haya=
-shi@toshiba.co.jp>>; dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <di=
-nesh.kumar@toshiba-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>>
-Subject: RE: LAVA test job definitions ( software update, secure boot and I=
-EC layer testing )
+CVE-2023-52438: binder: fix use-after-free in shinker's callback
 
-Hello Sai,
+Announce: https://lore.kernel.org/linux-cve-announce/2024022017-slit-wish-e5d7@gregkh/
+CVSS v3(NIST): N/A
+CVSS v3(CNA): N/A
 
-Firstly, let=1B$B!G=1B(Bs get some background for this request.
+A use-after-free bug was found in the binder driver.
+This bug was introduced by commit dd2283f ("mm: mmap: zap pages with
+read mmap_sem in munmap") in 4.20-rc1.
+The commit dd2283f is not backported to 4.x kernels so that kernel 4.x
+are not affected.
 
-What is it you=1B$B!G=1B(Bre testing? And when is it you=1B$B!G=1B(Bd like =
-the tests to run?
-I=1B$B!G=1B(Bm guessing isar-cip-core? And whenever a change is made on _an=
-y_ of the branches? E.g. next, master or feature branches?
+Fixed by commit 3f489c2 ("binder: fix use-after-free in shinker's
+callback") in 6.8-rc1.
 
-On the Linux kernel side of things, the test pipelines are driven by linux-=
-cip-pipelines<https://gitlab.com/cip-project/cip-testing/linux-cip-pipeline=
-s> using the scripts provided in linux-cip-ci<https://gitlab.com/cip-projec=
-t/cip-testing/linux-cip-ci>.
-However, neither of these repositories are currently set up for cip core te=
-sting.
-We=1B$B!G=1B(Bd need to add something to isar-cip-core to trigger the test =
-jobs, and have a way to create the LAVA test job definitions we need there.
+Fixed status
+mainline: [3f489c2067c5824528212b0fc18b28d51332d906]
+stable/5.10: [c8c1158ffb007197f31f9d9170cf13e4f34cbb5c]
+stable/5.15: [8ad4d580e8aff8de2a4d57c5930fcc29f1ffd4a6]
+stable/5.4: [a53e15e592b4dcc91c3a3b8514e484a0bdbc53a3]
+stable/6.1: [9fa04c93f24138747807fe75b5591bb680098f56]
+stable/6.6: [a49087ab93508b60d9b8add91707a22dda832869]
+stable/6.7: [e074686e993ff1be5f21b085a3b1b4275ccd5727]
 
-That said, perhaps the templates and submit_tests.sh script from linux-cip-=
-ci could be updated to be able to run these security tests?
-The build side of isar-cip-core can obviously stay as it is now.
-Take a look through the above repos and see if we could integrate your job =
-definitions into the same lava template style. Or whether you think it woul=
-d be cleaner to take a fresh approach specifically for cip core/security te=
-sting.
+CVE-2023-52439: uio: Fix use-after-free in uio_open
 
-Kind regards, Chris
+Announce: https://lore.kernel.org/linux-cve-announce/2024022026-wobbling-jumbo-748e@gregkh/
+CVSS v3(NIST): N/A
+CVSS v3(CNA): N/A
 
-From: Sai.Sathujoda@toshiba-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>=
- <Sai.Sathujoda@toshiba-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>>
-Sent: Monday, February 5, 2024 5:59 PM
-To: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@rene=
-sas.com>>
-Cc: cip-dev@lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>; ka=
-zuhiro3.hayashi@toshiba.co.jp<mailto:kazuhiro3.hayashi@toshiba.co.jp>; dine=
-sh.kumar@toshiba-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>
-Subject: LAVA test job definitions ( software update, secure boot and IEC l=
-ayer testing )
+A race condition bug causes use-after-free vulnerability in the uio_open().
 
-Hi Chris,
+This bug was introduced by commit 57c5f4d ("uio: fix crash after the
+device is unregistered") in 4.18-rc5.
+The commit 57c5f4d is not backported to 4.4 kernels so that 4.4
+kernels are not affected.
 
-Hope you are doing well.
+Fixed by commit 0c9ae0b ("uio: Fix use-after-free in uio_open") in 6.8-rc1.
 
-Please review the job definitions attached to this mail and kindly provide =
-your review comments.
+Fixed status
+mainline: [0c9ae0b8605078eafc3bea053cc78791e97ba2e2]
+stable/4.19: [3174e0f7de1ba392dc191625da83df02d695b60c]
+stable/5.10: [5e0be1229ae199ebb90b33102f74a0f22d152570]
+stable/5.15: [5cf604ee538ed0c467abe3b4cda5308a6398f0f7]
+stable/5.4: [e93da893d52d82d57fc0db2ca566024e0f26ff50]
+stable/6.1: [17a8519cb359c3b483fb5c7367efa9a8a508bdea]
+stable/6.6: [35f102607054faafe78d2a6994b18d5d9d6e92ad]
+stable/6.7: [913205930da6213305616ac539447702eaa85e41]
 
-Doubts:
+CVE-2024-26581: netfilter: nft_set_rbtree: skip end interval element from gc
 
-  1.  Do I need to add these definitions in this repository?. https://gitla=
-b.com/cip-project/cip-testing/test-definitions
-  2.  I am not sure how to schedule these LAVA jobs in CIP LAVA lab. Can yo=
-u please help me with this ?
-  3.  I remember you installed swtpm and ovmf packages in lab-renesas-cip s=
-lave. Can you install those packages all the CIP LAVA slave machines Chris =
-?
+Announce: https://lore.kernel.org/linux-cve-announce/2024022024-uniquely-recluse-d893@gregkh/
+CVSS v3(NIST): N/A
+CVSS v3(CNA): N/A
 
-Thanks and Regards,
-Sai Ashrith ( T S I P )
+In the Linux kernel, the following vulnerability has been resolved:
+netfilter: nft_set_rbtree: skip end interval element from
+gc rbtree lazy gc on insert might collect an end interval element that
+has been just added in this transactions,
+skip end interval elements that are not yet active.
 
---_000_OS3PR01MB610352AB4942C739EFFB9C6AC2572OS3PR01MB6103jpnp_
-Content-Type: text/html; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+The commit f718863 is not backported to 4.x kernels so that 4.x
+kernels are not affected.
+Fixed by commit 60c0c23 ("netfilter: nft_set_rbtree: skip end interval
+element from gc") in 6.8-rc4.
 
-<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
-osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
-xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
-//www.w3.org/TR/REC-html40">
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
-jp">
-<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
-<style><!--
-/* Font Definitions */
-@font-face
-	{font-family:Gulim;
-	panose-1:2 11 6 0 0 1 1 1 1 1;}
-@font-face
-	{font-family:"Cambria Math";
-	panose-1:2 4 5 3 5 4 6 3 2 4;}
-@font-face
-	{font-family:Calibri;
-	panose-1:2 15 5 2 2 2 4 3 2 4;}
-@font-face
-	{font-family:Aptos;}
-@font-face
-	{font-family:"\@Gulim";
-	panose-1:2 11 6 0 0 1 1 1 1 1;}
-@font-face
-	{font-family:"MS PGothic";
-	panose-1:2 11 6 0 7 2 5 8 2 4;}
-@font-face
-	{font-family:"\@MS PGothic";}
-/* Style Definitions */
-p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{margin:0in;
-	font-size:11.0pt;
-	font-family:"Calibri",sans-serif;
-	mso-ligatures:standardcontextual;
-	mso-fareast-language:JA;}
-a:link, span.MsoHyperlink
-	{mso-style-priority:99;
-	color:#0563C1;
-	text-decoration:underline;}
-p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph
-	{mso-style-priority:34;
-	margin-top:0in;
-	margin-right:0in;
-	margin-bottom:0in;
-	margin-left:.5in;
-	font-size:11.0pt;
-	font-family:"Calibri",sans-serif;
-	mso-ligatures:standardcontextual;
-	mso-fareast-language:JA;}
-span.EmailStyle21
-	{mso-style-type:personal-reply;
-	font-family:"Calibri",sans-serif;
-	color:windowtext;}
-.MsoChpDefault
-	{mso-style-type:export-only;
-	font-size:10.0pt;
-	mso-ligatures:none;}
-@page WordSection1
-	{size:8.5in 11.0in;
-	margin:1.0in 1.0in 1.0in 1.0in;}
-div.WordSection1
-	{page:WordSection1;}
-/* List Definitions */
-@list l0
-	{mso-list-id:145242541;
-	mso-list-type:hybrid;
-	mso-list-template-ids:1258724112 67698703 67698713 67698715 67698703 67698=
-713 67698715 67698703 67698713 67698715;}
-@list l0:level1
-	{mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l0:level2
-	{mso-level-number-format:alpha-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l0:level3
-	{mso-level-number-format:roman-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:right;
-	text-indent:-9.0pt;}
-@list l0:level4
-	{mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l0:level5
-	{mso-level-number-format:alpha-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l0:level6
-	{mso-level-number-format:roman-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:right;
-	text-indent:-9.0pt;}
-@list l0:level7
-	{mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l0:level8
-	{mso-level-number-format:alpha-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-.25in;}
-@list l0:level9
-	{mso-level-number-format:roman-lower;
-	mso-level-tab-stop:none;
-	mso-level-number-position:right;
-	text-indent:-9.0pt;}
-@list l1
-	{mso-list-id:923681598;
-	mso-list-template-ids:-1308691426;}
-ol
-	{margin-bottom:0in;}
-ul
-	{margin-bottom:0in;}
---></style><!--[if gte mso 9]><xml>
-<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
-</xml><![endif]--><!--[if gte mso 9]><xml>
-<o:shapelayout v:ext=3D"edit">
-<o:idmap v:ext=3D"edit" data=3D"1" />
-</o:shapelayout></xml><![endif]-->
-</head>
-<body lang=3D"EN-US" link=3D"#0563C1" vlink=3D"#954F72" style=3D"word-wrap:=
-break-word">
-<div class=3D"WordSection1">
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hi Chris,=
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Then I sh=
-all proceed with creating a project under cip-playground for this use-case.=
- I shall request for your review once it is done.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Take care=
- Chris.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Thanks an=
-d Regards,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Sai Ashri=
-th ( T S I P )<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none;mso-fareast-lan=
-guage:KO">From:</span></b><span style=3D"mso-ligatures:none;mso-fareast-lan=
-guage:KO"> Chris Paterson &lt;Chris.Paterson2@renesas.com&gt;
-<br>
-<b>Sent:</b> Wednesday, February 21, 2024 5:46 PM<br>
-<b>To:</b> ashrith sai(</span><span lang=3D"KO" style=3D"font-family:&quot;=
-Gulim&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:KO">=1B$B#T#=
-S#I#P=1B(B</span><span style=3D"mso-ligatures:none;mso-fareast-language:KO"=
->) &lt;Sai.Sathujoda@toshiba-tsip.com&gt;<br>
-<b>Cc:</b> cip-dev@lists.cip-project.org; hayashi kazuhiro(</span><span lan=
-g=3D"KO" style=3D"font-family:&quot;Gulim&quot;,sans-serif;mso-ligatures:no=
-ne;mso-fareast-language:KO">=1B$BNS=1B(B</span><span lang=3D"KO" style=3D"m=
-so-ligatures:none;mso-fareast-language:KO">
-</span><span lang=3D"KO" style=3D"font-family:&quot;Gulim&quot;,sans-serif;=
-mso-ligatures:none;mso-fareast-language:KO">=1B$BOB9(=1B(B</span><span lang=
-=3D"KO" style=3D"mso-ligatures:none;mso-fareast-language:KO">
-</span><span lang=3D"KO" style=3D"font-family:&quot;Gulim&quot;,sans-serif;=
-mso-ligatures:none;mso-fareast-language:KO">=1B$B#D#M#E=1B(B</span><span st=
-yle=3D"mso-ligatures:none;mso-fareast-language:KO"> =1B$B!{=1B(B</span><spa=
-n lang=3D"KO" style=3D"font-family:&quot;Gulim&quot;,sans-serif;mso-ligatur=
-es:none;mso-fareast-language:KO">=1B$B#D#I#G=1B(B</span><span style=3D"mso-=
-ligatures:none;mso-fareast-language:KO">=1B$B""=1B(B</span><span lang=3D"KO=
-" style=3D"font-family:&quot;Gulim&quot;,sans-serif;mso-ligatures:none;mso-=
-fareast-language:KO">=1B$B#M#P#S=1B(B</span><span style=3D"mso-ligatures:no=
-ne;mso-fareast-language:KO">=1B$B!{=1B(B</span><span lang=3D"KO" style=3D"f=
-ont-family:&quot;Gulim&quot;,sans-serif;mso-ligatures:none;mso-fareast-lang=
-uage:KO">=1B$B#M#P#4=1B(B</span><span style=3D"mso-ligatures:none;mso-farea=
-st-language:KO">)
- &lt;kazuhiro3.hayashi@toshiba.co.jp&gt;; dinesh kumar(</span><span lang=3D=
-"KO" style=3D"font-family:&quot;Gulim&quot;,sans-serif;mso-ligatures:none;m=
-so-fareast-language:KO">=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatur=
-es:none;mso-fareast-language:KO"> TMIEC ODG Porting) &lt;dinesh.kumar@toshi=
-ba-tsip.com&gt;<br>
-<b>Subject:</b> RE: LAVA test job definitions ( software update, secure boo=
-t and IEC layer testing )<o:p></o:p></span></p>
-</div>
-</div>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Hi Sai,<o:p></=
-o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Sorry for the =
-slow reply, I=1B$B!G=1B(Bve been poorly.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">It=1B$B!G=1B(B=
-s certainly an option to separate the cip-core testing container/scripts et=
-c. from the kernel testing, however most of the functionality
- will end up being very similar, so we=1B$B!G=1B(Bll end up with duplicatio=
-n.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Feel free to c=
-reate your project(s) in cip-playground, then we can move them across to ci=
-p-testing when ready &amp; we have approval from the
- TSC.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-ligatures:none;mso-fareast-language:EN=
--GB">Thanks, Chris<o:p></o:p></span></p>
-</div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0in 0in 0in =
-4.0pt">
-<div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none;mso-fareast-lan=
-guage:KO">From:</span></b><span style=3D"mso-ligatures:none;mso-fareast-lan=
-guage:KO">
-<a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com">Sai.Sathujoda@toshiba-tsi=
-p.com</a> &lt;<a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com">Sai.Sathujo=
-da@toshiba-tsip.com</a>&gt;
-<br>
-<b>Sent:</b> Monday, February 19, 2024 4:32 AM<br>
-<b>To:</b> Chris Paterson &lt;<a href=3D"mailto:Chris.Paterson2@renesas.com=
-">Chris.Paterson2@renesas.com</a>&gt;<br>
-<b>Cc:</b> <a href=3D"mailto:cip-dev@lists.cip-project.org">cip-dev@lists.c=
-ip-project.org</a>;
-<a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.jp">kazuhiro3.hayashi@toshib=
-a.co.jp</a>;
-<a href=3D"mailto:dinesh.kumar@toshiba-tsip.com">dinesh.kumar@toshiba-tsip.=
-com</a><br>
-<b>Subject:</b> RE: LAVA test job definitions ( software update, secure boo=
-t and IEC layer testing )<o:p></o:p></span></p>
-</div>
-</div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hello Chr=
-is,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hope you =
-are doing well.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">I request=
- you to please provide your opinion about creating a fresh repository under=
- cip-testing which serves the purpose of creating container having CIP Core=
- testing lava job definitions, lavacli
- dependencies and a simple script tp submit the tests to CIP LAVA server. W=
-e shall invoke this script in a separate action in .gitlab-ci.yml file in i=
-sar-cip-core.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Thanks an=
-d Regards,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Sai Ashri=
-th ( T S I P )<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none">From:</span></=
-b><span style=3D"mso-ligatures:none"> ashrith sai(</span><span lang=3D"JA" =
-style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:none">=
-=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none">)
-<br>
-<b>Sent:</b> Wednesday, February 14, 2024 10:06 AM<br>
-<b>To:</b> 'Chris Paterson' &lt;<a href=3D"mailto:Chris.Paterson2@renesas.c=
-om">Chris.Paterson2@renesas.com</a>&gt;<br>
-<b>Cc:</b> 'cip-dev@lists.cip-project.org' &lt;<a href=3D"mailto:cip-dev@li=
-sts.cip-project.org">cip-dev@lists.cip-project.org</a>&gt;; hayashi kazuhir=
-o(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans=
--serif;mso-ligatures:none">=1B$BNS=1B(B</span><span lang=3D"JA" style=3D"ms=
-o-ligatures:none">
-</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
-erif;mso-ligatures:none">=1B$BOB9(=1B(B</span><span lang=3D"JA" style=3D"ms=
-o-ligatures:none">
-</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
-erif;mso-ligatures:none">=1B$B#D#M#E=1B(B</span><span style=3D"mso-ligature=
-s:none"> =1B$B!{=1B(B</span><span lang=3D"JA" style=3D"font-family:&quot;MS=
- PGothic&quot;,sans-serif;mso-ligatures:none">=1B$B#D#I#G=1B(B</span><span =
-style=3D"mso-ligatures:none">=1B$B""=1B(B</span><span lang=3D"JA" style=3D"=
-font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:none">=1B$B#M#P=
-#S=1B(B</span><span style=3D"mso-ligatures:none">=1B$B!{=1B(B</span><span l=
-ang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligat=
-ures:none">=1B$B#M#P#4=1B(B</span><span style=3D"mso-ligatures:none">)
- &lt;<a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.jp">kazuhiro3.hayashi@t=
-oshiba.co.jp</a>&gt;; dinesh kumar(</span><span lang=3D"JA" style=3D"font-f=
-amily:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:none">=1B$B#T#S#I#P=
-=1B(B</span><span style=3D"mso-ligatures:none"> TMIEC ODG Porting) &lt;<a h=
-ref=3D"mailto:dinesh.kumar@toshiba-tsip.com">dinesh.kumar@toshiba-tsip.com<=
-/a>&gt;<br>
-<b>Subject:</b> RE: LAVA test job definitions ( software update, secure boo=
-t and IEC layer testing )<o:p></o:p></span></p>
-</div>
-</div>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hello Chr=
-is,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">We got so=
-me opinion from yesterday=1B$B!G=1B(Bs CIP Core meeting that it might not b=
-e optimal to touch this container
-</span><a href=3D"https://gitlab.com/cip-project/cip-testing/linux-cip-ci/-=
-/tree/master?ref_type=3Dheads">Files &middot; master &middot; cip-project /=
- cip-testing / linux-cip-ci &middot; GitLab</a> and modify that by adding C=
-IP Core job definitions and submit_tests script specific
- for this use-case. Do you think the same ? If yes, then do you think creat=
-ing a fresh repository under cip-testing using which we can build the conta=
-iners and scripts used in the CI testing of CIP Core functionalities is a b=
-etter choice ?<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Please pr=
-ovide your opinion on this Chris.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Thanks an=
-d Regards,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Sai Ashri=
-th ( T S I P )<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none">From:</span></=
-b><span style=3D"mso-ligatures:none"> ashrith sai(</span><span lang=3D"JA" =
-style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:none">=
-=1B$B#T#S#I#P=1B(B</span><span style=3D"mso-ligatures:none">)
-<br>
-<b>Sent:</b> Monday, February 12, 2024 8:27 PM<br>
-<b>To:</b> Chris Paterson &lt;<a href=3D"mailto:Chris.Paterson2@renesas.com=
-">Chris.Paterson2@renesas.com</a>&gt;<br>
-<b>Cc:</b> <a href=3D"mailto:cip-dev@lists.cip-project.org">cip-dev@lists.c=
-ip-project.org</a>; hayashi kazuhiro(</span><span lang=3D"JA" style=3D"font=
--family:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:none">=1B$BNS=1B(B<=
-/span><span lang=3D"JA" style=3D"mso-ligatures:none">
-</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
-erif;mso-ligatures:none">=1B$BOB9(=1B(B</span><span lang=3D"JA" style=3D"ms=
-o-ligatures:none">
-</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
-erif;mso-ligatures:none">=1B$B#D#M#E=1B(B</span><span style=3D"mso-ligature=
-s:none"> =1B$B!{=1B(B</span><span lang=3D"JA" style=3D"font-family:&quot;MS=
- PGothic&quot;,sans-serif;mso-ligatures:none">=1B$B#D#I#G=1B(B</span><span =
-style=3D"mso-ligatures:none">=1B$B""=1B(B</span><span lang=3D"JA" style=3D"=
-font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:none">=1B$B#M#P=
-#S=1B(B</span><span style=3D"mso-ligatures:none">=1B$B!{=1B(B</span><span l=
-ang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligat=
-ures:none">=1B$B#M#P#4=1B(B</span><span style=3D"mso-ligatures:none">)
- &lt;<a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.jp">kazuhiro3.hayashi@t=
-oshiba.co.jp</a>&gt;; dinesh kumar(</span><span lang=3D"JA" style=3D"font-f=
-amily:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:none">=1B$B#T#S#I#P=
-=1B(B</span><span style=3D"mso-ligatures:none"> TMIEC ODG Porting) &lt;<a h=
-ref=3D"mailto:dinesh.kumar@toshiba-tsip.com">dinesh.kumar@toshiba-tsip.com<=
-/a>&gt;<br>
-<b>Subject:</b> RE: LAVA test job definitions ( software update, secure boo=
-t and IEC layer testing )<o:p></o:p></span></p>
-</div>
-</div>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hello Chr=
-is,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hope you =
-are doing well.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">I will su=
-mmarize my understanding and approach to trigger CIP Core testing LAVA jobs=
-.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">So curren=
-tly we have all the lava templates in linux-cip-ci container which are pre-=
-processed to form final LAVA job definitions using the
-</span><a href=3D"https://gitlab.com/cip-project/cip-testing/linux-cip-ci/-=
-/blob/master/submit_tests.sh?ref_type=3Dheads">submit_tests.sh &middot; mas=
-ter &middot; cip-project / cip-testing / linux-cip-ci &middot; GitLab</a> s=
-cript. As I went through the script I understood that a lot
- of logic is involved in preparing the job definitions from the template sp=
-ecific for CIP Kernel testing. And this script is run with a trigger from h=
-ere
-<a href=3D"https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines/-=
-/blame/master/linux-cip-pipeline.yml?ref_type=3Dheads#L69">
-https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines/-/blame/mast=
-er/linux-cip-pipeline.yml?ref_type=3Dheads#L69</a>. I feel it will mess up =
-the existing testing being done on CIP kernel and shall also require a lot =
-of effort to integrate changes required
- to prepare job definitions for CIP-Core testing considering huge variation=
-s in the final job definitions. And also since submit_tests.sh already with=
- every test action trigger in linux-cip-pipelines.yml, I think making chang=
-es to the script to support CIP-Core
- testing will imply that every trigger in linux-cip-ci shall test our softw=
-are update, secure boot and IEC tests on QEMU images which I think is not r=
-ight.<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Our requirement here is to trigger a script which su=
-bmits the CIP-Core related LAVA job definitions when a change is made in is=
-ar-cip-core. So I think we can a short script similar to submit_tests.sh li=
-ke submit_cip_core_tests.sh and separate
- folder for LAVA definitions for CIP Core testing in <a href=3D"https://git=
-lab.com/cip-project/cip-testing/linux-cip-ci/-/tree/master?ref_type=3Dheads=
-">
-cip-project / cip-testing / linux-cip-ci &middot; GitLab</a> container. We =
-will run this new script using a test action in .gitlab-ci.yml In isar-cip-=
-core. In this new script we shall submit only the CIP Core related job defi=
-nitions which we added in a separate folder
- in linux-cip-ci container to LAVA master.<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">I chose this approach to minimize the effort and avo=
-id messing up the existing implementation which is highly specific for CIP =
-Kernel testing and to also use the existing linux-cip-ci container. This is=
- the first time we are testing CIP
- Core functionalities on LAVA, so initially we started small with QEMU and =
-in the future once we spread the testing to multiple devices, then may be w=
-e can setup a new repository like
-<a href=3D"https://gitlab.com/cip-project/cip-testing/linux-cip-ci/-/tree/m=
-aster?ref_type=3Dheads">
-cip-project / cip-testing / linux-cip-ci &middot; GitLab</a> to build a sep=
-arate container only to deal with CIP Core LAVA definitions.
-<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">What do you think of my approach Chris ? Please prov=
-ide your opinion and correct me if I am wrong.<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">I also request other CIP members to provide their su=
-ggestions.<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Thanks and regards,<o:p></o:p></p>
-<p class=3D"MsoNormal">Sai Ashrith ( T S I P )<span style=3D"mso-fareast-la=
-nguage:EN-US"><o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
-p;</o:p></span></p>
-<div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none">From:</span></=
-b><span style=3D"mso-ligatures:none"> Chris Paterson &lt;<a href=3D"mailto:=
-Chris.Paterson2@renesas.com">Chris.Paterson2@renesas.com</a>&gt;
-<br>
-<b>Sent:</b> Friday, February 9, 2024 2:09 AM<br>
-<b>To:</b> ashrith sai(</span><span lang=3D"JA" style=3D"font-family:&quot;=
-MS PGothic&quot;,sans-serif;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><s=
-pan style=3D"mso-ligatures:none">) &lt;<a href=3D"mailto:Sai.Sathujoda@tosh=
-iba-tsip.com">Sai.Sathujoda@toshiba-tsip.com</a>&gt;<br>
-<b>Cc:</b> <a href=3D"mailto:cip-dev@lists.cip-project.org">cip-dev@lists.c=
-ip-project.org</a>; hayashi kazuhiro(</span><span lang=3D"JA" style=3D"font=
--family:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:none">=1B$BNS=1B(B<=
-/span><span lang=3D"JA" style=3D"mso-ligatures:none">
-</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
-erif;mso-ligatures:none">=1B$BOB9(=1B(B</span><span lang=3D"JA" style=3D"ms=
-o-ligatures:none">
-</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
-erif;mso-ligatures:none">=1B$B#D#M#E=1B(B</span><span style=3D"mso-ligature=
-s:none"> =1B$B!{=1B(B</span><span lang=3D"JA" style=3D"font-family:&quot;MS=
- PGothic&quot;,sans-serif;mso-ligatures:none">=1B$B#D#I#G=1B(B</span><span =
-style=3D"mso-ligatures:none">=1B$B""=1B(B</span><span lang=3D"JA" style=3D"=
-font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:none">=1B$B#M#P=
-#S=1B(B</span><span style=3D"mso-ligatures:none">=1B$B!{=1B(B</span><span l=
-ang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligat=
-ures:none">=1B$B#M#P#4=1B(B</span><span style=3D"mso-ligatures:none">)
- &lt;<a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.jp">kazuhiro3.hayashi@t=
-oshiba.co.jp</a>&gt;; dinesh kumar(</span><span lang=3D"JA" style=3D"font-f=
-amily:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:none">=1B$B#T#S#I#P=
-=1B(B</span><span style=3D"mso-ligatures:none"> TMIEC ODG Porting) &lt;<a h=
-ref=3D"mailto:dinesh.kumar@toshiba-tsip.com">dinesh.kumar@toshiba-tsip.com<=
-/a>&gt;<br>
-<b>Subject:</b> RE: LAVA test job definitions ( software update, secure boo=
-t and IEC layer testing )<o:p></o:p></span></p>
-</div>
-</div>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Hello Sai,<o:p=
-></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Firstly, let=
-=1B$B!G=1B(Bs get some background for this request.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">What is it you=
-=1B$B!G=1B(Bre testing? And when is it you=1B$B!G=1B(Bd like the tests to r=
-un?<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">I=1B$B!G=1B(Bm=
- guessing isar-cip-core? And whenever a change is made on _<i>any</i>_ of t=
-he branches? E.g. next, master or feature branches?
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">On the Linux k=
-ernel side of things, the test pipelines are driven by
-<a href=3D"https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines">=
-linux-cip-pipelines</a> using the scripts provided in
-<a href=3D"https://gitlab.com/cip-project/cip-testing/linux-cip-ci">linux-c=
-ip-ci</a>.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">However, neith=
-er of these repositories are currently set up for cip core testing.<o:p></o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">We=1B$B!G=1B(B=
-d need to add something to isar-cip-core to trigger the test jobs, and have=
- a way to create the LAVA test job definitions we need there.<o:p></o:p></s=
-pan></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">That said, per=
-haps the templates and submit_tests.sh script from linux-cip-ci could be up=
-dated to be able to run these security tests?<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">The build side=
- of isar-cip-core can obviously stay as it is now.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Take a look th=
-rough the above repos and see if we could integrate your job definitions in=
-to the same lava template style. Or whether you
- think it would be cleaner to take a fresh approach specifically for cip co=
-re/security testing.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-ligatures:none;mso-fareast-language:EN=
--GB">Kind regards, Chris<o:p></o:p></span></p>
-</div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Apto=
-s&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp;</o=
-:p></span></p>
-<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0in 0in 0in =
-4.0pt">
-<div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal"><b><span style=3D"mso-ligatures:none">From:</span></=
-b><span style=3D"mso-ligatures:none">
-<a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com">Sai.Sathujoda@toshiba-tsi=
-p.com</a> &lt;<a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com">Sai.Sathujo=
-da@toshiba-tsip.com</a>&gt;
-<br>
-<b>Sent:</b> Monday, February 5, 2024 5:59 PM<br>
-<b>To:</b> Chris Paterson &lt;<a href=3D"mailto:Chris.Paterson2@renesas.com=
-">Chris.Paterson2@renesas.com</a>&gt;<br>
-<b>Cc:</b> <a href=3D"mailto:cip-dev@lists.cip-project.org">cip-dev@lists.c=
-ip-project.org</a>;
-<a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.jp">kazuhiro3.hayashi@toshib=
-a.co.jp</a>;
-<a href=3D"mailto:dinesh.kumar@toshiba-tsip.com">dinesh.kumar@toshiba-tsip.=
-com</a><br>
-<b>Subject:</b> LAVA test job definitions ( software update, secure boot an=
-d IEC layer testing )<o:p></o:p></span></p>
-</div>
-</div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal">Hi Chris,<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Hope you are doing well.<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Please review the job definitions attached to this m=
-ail and kindly provide your review comments.
-<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Doubts: <o:p></o:p></p>
-<ol style=3D"margin-top:0in" start=3D"1" type=3D"1">
-<li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l0 level1 =
-lfo3">Do I need to add these definitions in this repository?.
-<a href=3D"https://gitlab.com/cip-project/cip-testing/test-definitions">htt=
-ps://gitlab.com/cip-project/cip-testing/test-definitions</a><o:p></o:p></li=
-><li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l0 level1=
- lfo3">I am not sure how to schedule these LAVA jobs in CIP LAVA lab. Can y=
-ou please help me with this ?<o:p></o:p></li><li class=3D"MsoListParagraph"=
- style=3D"margin-left:0in;mso-list:l0 level1 lfo3">I remember you installed=
- swtpm and ovmf packages in lab-renesas-cip slave. Can you install those pa=
-ckages all the CIP LAVA slave machines Chris ?<o:p></o:p></li></ol>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Thanks and Regards,<o:p></o:p></p>
-<p class=3D"MsoNormal">Sai Ashrith ( T S I P )<o:p></o:p></p>
-</div>
-</div>
-</div>
-</body>
-</html>
+Fixed status
+mainline: [60c0c230c6f046da536d3df8b39a20b9a9fd6af0]
+stable/6.1: [1296c110c5a0b45a8fcf58e7d18bc5da61a565cb]
+stable/6.6: [b734f7a47aeb32a5ba298e4ccc16bb0c52b6dbf7]
+stable/6.7: [6eb14441f10602fa1cf691da9d685718b68b78a9]
 
---_000_OS3PR01MB610352AB4942C739EFFB9C6AC2572OS3PR01MB6103jpnp_--
+CVE-2023-52440: ksmbd: fix slub overflow in ksmbd_decode_ntlmssp_auth_blob()
 
+Announce: https://lore.kernel.org/linux-cve-announce/2024022123-glance-wrinkle-26c1@gregkh/T/#u
+CVSS v3(NIST): N/A
+CVSS v3(CNA): N/A
+
+In the Linux kernel, the following vulnerability has been resolved:
+ksmbd: fix slub overflow in ksmbd_decode_ntlmssp_auth_blob()
+If authblob->SessionKey.Length is bigger than session key
+size(CIFS_KEY_SIZE), slub overflow can happen in key exchange codes.
+cifs_arc4_crypt copy to session key array from SessionKey from client.
+
+Fixed by commit 4b081ce0 ("ksmbd: fix slub overflow in
+ksmbd_decode_ntlmssp_auth_blob()") in 6.6-rc1.
+The ksmbd was introduced in 5.15 so prior to this version is not affected.
+
+Fixed status
+mainline: [4b081ce0d830b684fdf967abc3696d1261387254]
+stable/5.15: [bd554ed4fdc3d38404a1c43d428432577573e809]
+stable/6.1: [30fd6521b2fbd9b767e438e31945e5ea3e3a2fba]
+
+CVE-2023-52441: ksmbd: fix out of bounds in init_smb2_rsp_hdr()
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024022129-gently-activity-ca7d@gregkh/T/#u
+CVSS v3(NIST): N/A
+CVSS v3(CNA): N/A
+
+In the Linux kernel, the following vulnerability has been resolved:
+ksmbd: fix out of bounds in init_smb2_rsp_hdr()
+If client send smb2 negotiate request and then send smb1 negotiate
+request, init_smb2_rsp_hdr is called for smb1
+negotiate request since need_neg is set to false. This patch ignore
+smb1 packets after ->need_neg is set to false.
+
+Fixed by commit 536bb492 ("ksmbd: fix out of bounds in
+init_smb2_rsp_hdr()") in 6.5-rc4.
+The ksmbd was introduced in 5.15 so prior to this version is not affected.
+
+Fixed status
+mainline: [536bb492d39bb6c080c92f31e8a55fe9934f452b]
+stable/5.15: [5c0df9d30c289d6b9d7d44e2a450de2f8e3cf40b]
+stable/6.1: [330d900620dfc9893011d725b3620cd2ee0bc2bc]
+
+CVE-2023-52442: ksmbd: validate session id and tree id in compound request
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024022132-unvented-arguably-5ea9@gregkh/T/#u
+CVSS v3(NIST): N/A
+CVSS v3(CNA): N/A
+
+In the Linux kernel, the following vulnerability has been resolved:
+ksmbd: validate session id and tree id in
+compound request `smb2_get_msg()` in smb2_get_ksmbd_tcon() and
+smb2_check_user_session() will always return
+the first request smb2 header in a compound request. if
+`SMB2_TREE_CONNECT_HE` is the first command in compound
+request, will return 0, i.e. The tree id check is skipped. This patch
+use ksmbd_req_buf_next() to get current
+command in compound.
+
+Fixed by commit 3df0411 ("ksmbd: validate session id and tree id in
+compound request") in 6.5-rc4.
+The ksmbd was introduced in 5.15 so prior to this version is not affected.
+
+Fixed status
+mainline: [3df0411e132ee74a87aa13142dfd2b190275332e]
+stable/5.15: [017d85c94f02090a87f4a473dbe0d6ee0da72693]
+stable/6.1: [becb5191d1d5fdfca0198a2e37457bbbf4fe266f]
+
+CVE-2024-26582: net: tls: fix use-after-free with partial reads and
+async decrypt
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024022139-spruce-prelude-c358@gregkh/T/#u
+CVSS v3(NIST): N/A
+CVSS v3(CNA): N/A
+
+In the Linux kernel, the following vulnerability has been resolved:
+net: tls: fix use-after-free with partial reads
+and async decrypt tls_decrypt_sg doesn't take a reference on the pages
+from clear_skb, so the put_page() in
+tls_decrypt_done releases them, and we trigger a use-after-free in
+process_rx_list when we try to read from the
+partially-read skb.
+
+This bug was introduced by commit fd31f39 ("tls: rx: decrypt into a
+fresh skb") in 6.0-rc1.
+This commit is not backported to 5.x and 4.x kernels.
+
+Fixed by commit 32b55c ("net: tls: fix use-after-free with partial
+reads and async decrypt") in 6.8-rc5.
+
+Fixed status
+mainline: [32b55c5ff9103b8508c1e04bfa5a08c64e7a925f]
+
+CVE-2024-26583: tls: fix race between async notify and socket close
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024022146-traction-unjustly-f451@gregkh/T/#u
+CVSS v3(NIST): N/A
+CVSS v3(CNA): N/A
+
+In the Linux kernel, the following vulnerability has been resolved:
+tls: fix race between async notify and socket
+close The submitting thread (one which called recvmsg/sendmsg) may
+exit as soon as the async crypto handler calls
+complete() so any code past that point risks touching already freed
+data. Try to avoid the locking and extra flags
+altogether. Have the main thread hold an extra reference, this way we
+can depend solely on the atomic ref counter
+for synchronization. Don't futz with reiniting the completion, either,
+we are now tightly controlling when
+completion fires.
+
+This bug was introduced by commit 0cada33 ("net/tls: fix race
+condition causing kernel panic") in 5.7.
+This commit was backported to 5.4 but not to 4.x kernels. so kernel
+4.x are not affected.
+
+Fixed by commit aec7961 ("tls: fix race between async notify and
+socket close") in 6.8-rc5.
+
+Fixed status
+mainline: [aec7961916f3f9e88766e2688992da6980f11b8d]
+
+CVE-2024-26584: net: tls: handle backlogging of crypto requests
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024022148-showpiece-yanking-107c@gregkh/T/#u
+CVSS v3(NIST): N/A
+CVSS v3(CNA): N/A
+
+In the Linux kernel, the following vulnerability has been resolved:
+net: tls: handle backlogging of crypto requests
+Since we're setting the CRYPTO_TFM_REQ_MAY_BACKLOG flag on our
+requests to the crypto API, crypto_aead_{encrypt,decrypt}
+can return -EBUSY instead of -EINPROGRESS in valid situations. For
+example, when the cryptd queue for AESNI is full
+(easy to trigger with an artificially low cryptd.cryptd_max_cpu_qlen),
+requests will be enqueued to the backlog but still
+processed. In that case, the async callback will also be called twice:
+first with err == -EINPROGRESS, which it seems we
+can just ignore, then with err == 0. Compared to Sabrina's original
+patch this version uses the new tls_*crypt_async_wait()
+helpers and converts the EBUSY to EINPROGRESS to avoid having to
+modify all the error handling paths. The handling is identical.
+
+This bug was introduced by a54667f ("tls: Add support for encryption
+using async offload accelerator") in 4.16-rc1
+This patch is not backported to 4.4.
+
+Fixed by commit 8590541 ("net: tls: handle backlogging of crypto
+requests") oin 6.8-rc5.
+
+Fixed status
+mainline: [8590541473188741055d27b955db0777569438e3]
+
+CVE-2024-26585: tls: fix race between tx work scheduling and socket close
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024022150-fancy-numerate-94ab@gregkh/T/#u
+CVSS v3(NIST): N/A
+CVSS v3(CNA): N/A
+
+In the Linux kernel, the following vulnerability has been resolved:
+tls: fix race between tx work scheduling and
+socket close Similarly to previous commit, the submitting thread
+(recvmsg/sendmsg) may exit as soon as the async
+crypto handler calls complete(). Reorder scheduling the work before
+calling complete(). This seems more logical
+in the first place, as it's the inverse order of what the submitting
+thread will do.
+
+This bug was introduced by commit a42055e ("net/tls: Add support for
+async encryption of records for performance")
+in 4.20-rc1. Linux 4.19, and 4.4 are not affected.
+
+Fixed by commit e01e393 ("tls: fix race between tx work scheduling and
+socket close") in 6.8-rc5.
+
+Fixed status
+mainline: [e01e3934a1b2d122919f73bc6ddbe1cdafc4bbdb]
+
+* Updated CVEs
+
+CVE-2024-0340: vhost: use kzalloc() instead of kmalloc() followed by memset()
+
+stable/6.1 was fixed.
+
+Fixed status
+mainline: [4d8df0f5f79f747d75a7d356d9b9ea40a4e4c8a9]
+stable/6.1: [4675661672e3730597babf97c4e9593a775c8917]
+
+CVE-2024-1151: net: openvswitch: limit the number of recursions from action sets
+
+Fixed in 6.8-rc5.
+
+Fixed status
+mainline: [6e2f90d31fe09f2b852de25125ca875aabd81367]
+
+Currently tracking CVEs
+
+CVE-2021-31615: Unencrypted Bluetooth Low Energy baseband links in
+Bluetooth Core Specifications 4.0 through 5.2
+
+There is no fix information.
+
+CVE-2020-26556: kernel: malleable commitment Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26557: kernel: predictable Authvalue in Bluetooth Mesh
+Provisioning Leads to MITM
+
+No fix information.
+
+CVE-2020-26559: kernel: Authvalue leak in Bluetooth Mesh Provisioning
+
+No fix information.
+
+CVE-2020-26560: kernel: impersonation attack in Bluetooth Mesh Provisioning
+
+No fix information.
+
+Regards,
+-- 
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
+
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
