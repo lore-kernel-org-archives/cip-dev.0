@@ -2,48 +2,52 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF1BC48BF8
-	for <webhook@archiver.kernel.org>; Thu, 22 Feb 2024 16:31:18 +0000 (UTC)
-Received: from EUR01-VE1-obe.outbound.protection.outlook.com (EUR01-VE1-obe.outbound.protection.outlook.com [40.107.14.88])
- by mx.groups.io with SMTP id smtpd.web11.17186.1708619474311830617
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8610C48BF8
+	for <webhook@archiver.kernel.org>; Thu, 22 Feb 2024 16:31:38 +0000 (UTC)
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (EUR05-DB8-obe.outbound.protection.outlook.com [40.107.20.66])
+ by mx.groups.io with SMTP id smtpd.web10.17331.1708619489592837725
  for <cip-dev@lists.cip-project.org>;
- Thu, 22 Feb 2024 08:31:14 -0800
+ Thu, 22 Feb 2024 08:31:30 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=Z1DbN2Fd;
- spf=pass (domain: siemens.com, ip: 40.107.14.88, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=K2zERsyd;
+ spf=pass (domain: siemens.com, ip: 40.107.20.66, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=npA3hv+xuTViHgJAwN+5kYspQHgtQxw3w/1W7SuANFdDBwn6gPALrqp9afwvF0FVfm1SIOOsyXTiMmbYVSQpKm/MCz1ubQUqyOVOBqflUWy45TyfrTPjeLxdAaUCLG8W//O4/rPe177+qBUT1poDJv3mTqr09RJUpq9c7jpZYQd5kESzzROWUJcgunAcQW219uwlFtBS7cKxh43dmS1xtD1yX2RRVqWIQUxTRt6UwiAsQNXiByDzYvhO2yArCQbilX/sJjda6uLVAG/g0PrKxmY4S1jurI6nqfEMpjgc58TR5rdt02xgtlg1yenqa97fiEs432t/dw+A94Jf7SlcuQ==
+ b=gnCrkIA0/PlHrIQXwFPWOhawfbO+GRb3GiaG4hZQBuDBU+ssOSDixNt+TtmiRB29W1wWdc6ZGQCmGEkfBAwOE9DB8NL9fethJPbQFFeJ+fcJIJCsSXTJEmoNNkdEN7UKsdWZQlYcFhht6zmJCBNaeorpWY2lvy53e4qi++8IDkwTjjt9H1QuAct2X37A3P/pKZsyTNftvt9XLSq+2PzrROg8UQ77HjcsNZ93BEnNiUegJjkx7cdBMni5wcmAyYf7tXsgmmxXXzuJY8qH6YYEND6lod7ickegDUXbhxoJiwFnVy77ypo3IGOGNsTUtfjBOQcHTjycAg4TEPPZlXXpPQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GdBUJqlbCYHQGvIee4821fr8G/UEwuNMIx4LXLUESCU=;
- b=Xgh59sZ00qEz/ylrbRJpCbZbdIQaedyi01I4xm0ieEqLLZs97ZyVj/Ze+8aMh6DTvHgMKM/JW/NALBQpYtAtvN6YqUajwnJnsMIArGuyz0ydA3wEQ6bZ0oR31gM5w3H0XLkqCv/RN+XGgcpf6OPLmZc2PRSgq22Esy8+RMN3QkEdCVLUvWL5IvTIPVAn2FU4ijxXxAS3hr/9+O9/pIs78r05pOEwY2ohnBibRLNoD0wBYIbb6NZnkiGUT6dTweLVVInSXmxL3g1YD5uSp5FiHLTHT6J04FkedD+ryPZ95SebnGjSlx/N/Yq56SKyi433zKcD6itt4MXoe9AU9TXebA==
+ bh=ZlVrWxPNO4HvuVmgakKMqk+7vyw+iMC1XIamkwygGvs=;
+ b=krlpA9H0WXdwniSJZaae+Nu7ZxuiNxv+OavKwdPw/EqgYWXghxnL8jRDiViQKkWCaM3AOBwEYHf0RSkMeqy84VA+rHMlQLzVVoP1vr1w37GjJIZIGYYUXCKgZed7AQo/DdSmKjiJILbdhoij6kvsHZh/ZFZY0RfDKQNCQry6+MM/aYIR6TxVP3Gybko/RNIsSIvZGs9Q/X5adUvy8yw5u7MrPsw3s7NHWk8Vh3H6OitfEHP1PuLkH8+UwnNaNuMTAvklMegXw7qZRD6HNg9eCM7p11g6N4p+O+KpFIBz4NNq4fHfYmGTH0lCW3XMzQfnT8+ULiNWUcodNwXgVJvduQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GdBUJqlbCYHQGvIee4821fr8G/UEwuNMIx4LXLUESCU=;
- b=Z1DbN2FdXJxTz/t2nHIolOPW3WpSfd//J/F4tui0iXiNFJZa1ds5is+153xC01FtmpME+QD+AhGnGLgfhRJsA3kOKhHyy//lhKv5Nw8UUpiABNMkttMNHTn5Lv2NpcbaYr+Ylv05IvveDL/3qkQ79Pio4W5hGKlUE6dic3e+oPcsrLKf75IxXWl9ZKFsAtKhwis4sgGuuBCuWP1ZJztHbazM1sMkc9bPR/lsFZPAlxnKr7C8ctLPNFb5vlELuUYX1Zjn8x3qzOR7terJE+6DdsLK0oLFbciwNrnYyceM6VoZaIwUNtHl0bvFigjXBeoCGJUPnegC3IqvEQmTEN5dyA==
+ bh=ZlVrWxPNO4HvuVmgakKMqk+7vyw+iMC1XIamkwygGvs=;
+ b=K2zERsydk+QVX1zmQ+Rkk4JqmjoXNNUS26TwgjuL/QeTwqQfUPzh6MIeE8B+JudlVnCiSE1SzjR7T4t5X8k4AkT8TfAZAzJdM0IJbdp7OnhXNcN7Jzh7gphVgAvF5Kcw7jPcKozqtxT9X5RdRIJuxFXuK78g/fa70xVyKB7kMIvwa96O0Dyq5b4FTKEdvV1sgeTj1C9moSUyHDHNixDT0qOAlX/Frd9wkuYiK9hiFeLrkUKViDuzqg66lKQmzH3os2KAWQ+4/+RPTaSmzm64siN7a8Ojw5g5vXHOLAbVaCmilFQSESZ0V/DXAA6O5UXqarFqEU80Icr4SrEerJZ6Jg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
  by AM7PR10MB3157.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:105::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7316.24; Thu, 22 Feb
- 2024 16:31:11 +0000
+ 2024 16:31:26 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8d16:7fbb:4964:94fe]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8d16:7fbb:4964:94fe%3]) with mapi id 15.20.7292.036; Thu, 22 Feb 2024
- 16:31:11 +0000
-Message-ID: <a7bf4cfc-71be-4303-8fc3-6440e3c6593a@siemens.com>
-Date: Thu, 22 Feb 2024 17:31:06 +0100
+ 16:31:26 +0000
+Message-ID: <425d6ed0-66c4-4bdf-9707-eb03481fce4a@siemens.com>
+Date: Thu, 22 Feb 2024 17:31:24 +0100
 User-Agent: Mozilla Thunderbird
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: cip-dev <cip-dev@lists.cip-project.org>
-Subject: [isar-cip-core][PATCH] linux-cip: Update to 4.19.306-cip107
+Subject: Re: [cip-dev][isar-cip-core][PATCH v7] swupdate.bbclass: add scripts
+ section to the swu file
 Content-Language: en-US
+To: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>,
+ cip-dev@lists.cip-project.org, felix.moessbauer@siemens.com
+References: <20240222141526.1431859-1-Quirin.Gylstorff@siemens.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+In-Reply-To: <20240222141526.1431859-1-Quirin.Gylstorff@siemens.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: CH2PR08CA0009.namprd08.prod.outlook.com
@@ -52,91 +56,315 @@ X-ClientProxiedBy: CH2PR08CA0009.namprd08.prod.outlook.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AM7PR10MB3157:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4245dfa9-d9fa-4749-4ec2-08dc33c3addf
+X-MS-Office365-Filtering-Correlation-Id: 1392af30-2c1e-42a2-de04-08dc33c3b6e6
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	b9Y+uo/ceiATiDDiZQJi3epRuHdEnbn7YPWL7+YKGV2HTkmCTa0CZVEM7v5+OnWyKm4xHv+EVM0ldjpPMZTGwtFJ/8UwzfvUdevfuFGPpH9EGaWtASptVEZhNOzq8/MCr2RHFKSrrZJb8CZZfEARS/d/HxDxNOTbN923KpucgOaGtzI4CQUIClED5omOOzzzO4yKyJ7qRJr2uvKAKAgi6FLXGXq0wvgUPVAyLzCb1udmEDvkzP9R34yYMSWO6Ltu2APcUgCK11NNnadNU6wpWhhKggcifLnL7ttq7XcXxDFKNJYwU7OL/a8cZH0fEQ4tSjmN8V6gPiGYM3fDvC+KnBHf23tFjlqZY2UBxIqI5CeF82ZXcTmbQfwLwCO/dvwt1WoeCfhJTK2UUWedmZT6PvVVkrAwLdneMwoC69kDIj0i9AIvZu3Q3xKQXv70dqpo/Lo84kitF+67Aiu2ggOrMwuAZE9LQL45/mvqdZdv6MBLCPLbQbGu0V/2vSKt0czgB09Q/Cv5dKO6SYJtw0NyJPOfBFGilu3p2xg6YnmLCgY=
+	7E1OX8E0hI6q4zup/CgoTKux20jw/cQoM2FN3lPp46osQHsGuIBISGFQ28a84Fw6yjvgEVGPcfeBAt3Wi9vvVLnQFUt4fTipA1Z8QjhG5yrrJYnlibSKfgq78SwhkZDJBsuzq35KwPvDKnFJ4WhYOp2n9vyklvEhYMi03PtCUcmcLd1jNogKuz2lzg/TuH8orhEo1C3F24/V+clTFTOBsui3ZlfTuSNpag3O173tqHYJapKQ0i7rrQfUFbmjq8ZoOA2vRrOW6eEWGzY3JtKsudf/4b0i1kPGyGXj71xknHxYtxXkc+8UDKC6cKDjz9ih17VXug9R3ibgdBNpiZbF75ub7X9dRgVPGE5XCwq0IRwxsCeOwqgDYfNVHP3LAQsZb2NwF0kFIGeE2zK1pxp3Qrcvu+rQTvQccMglDt5ZGH/Mmuwd7BrwStofJt6/0NAxXTaJxYFS1MjQRgm3bfIhHeucF1dYg25HG63Wk9/s+rhdQZSzZepxYiY+Ab3/xMhHT+raVWJDkUEkS1JwUQkDLGcabA5snLmhqVO4C13L6mA=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(230273577357003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?TzhpNzE0S2lHR2VVYWlhTWlRWllEU2k3T1VyZk5mVkJKajRUS0Q2Wjg1SDNL?=
- =?utf-8?B?SFQzQStoQ3JyNkZVREhGZGgzV1pmeXFhQXAxVmM1U2dJeW9WTlJnaFIvUnVs?=
- =?utf-8?B?bnh1WDJ0S1E5TlRLdHJJZU5FRWp6MHRScUQ1UWRqWGxwSDE4VjFGdHllSGZw?=
- =?utf-8?B?SFBlV1JKWE5yVU5ZalNGU1kyOWdYZjNEZHpiUGtMNjhPOEQxR1hPQlRoLzNt?=
- =?utf-8?B?aXFqcHJkWW54eVZ0RTNSR1Z6RTFXcTBqVUlyazF6aDB3ZThOUmdURnYrT01y?=
- =?utf-8?B?VHhUaVpIaDhpQ1k4TDMxMVV6NFJYWGNGMzFPM3dhK291V1hrSmVpbytBZ3NG?=
- =?utf-8?B?a2lVSHVYU2JhbUpVM0NSUS9vSlZlRmU1WWZuY0NMLzc1WDRHN3Rxa0x3dEtW?=
- =?utf-8?B?Y2FCc1lnYWNzQ1FqVVFxb3k4WUI1MUp5RmFGSVFyRmUvYUxvMnNpOGk3QnVD?=
- =?utf-8?B?dEJCUkdpTlVUcERnMmdDZWs2ZlNNV3k4V1hMVURJbE9ETkNYL1pvMVFEWVFL?=
- =?utf-8?B?bWZ3dW12bDFsK3hQUkxEbGp2N2x4QlJzYlJWY3FieG5DaEMwdVFZVHRXK1g5?=
- =?utf-8?B?d2ZSd2ZTTjZaeWdTbzkwcmdadnE2cm9VQmZJWG45SG55aExJWDIwZHlTS3A4?=
- =?utf-8?B?aUoxSlB2VjcyWTZhUjVES3ZsMFlEcEZMQlluNFQrRFoyZVRZbVNDQUpaamt3?=
- =?utf-8?B?cmlDRmd0QklzT1RaY3l4bS96ckV3cUFzeVAzSzhBc0tyYTRVaHRvTHAvb0tP?=
- =?utf-8?B?ZUFBK1JIOUhHUU9oaFhUUTlubG15NVJabDNGN0xsWmsyZ0FoUE5pWkZ0NGxw?=
- =?utf-8?B?bnducTExK042R1pEejhLaS9JSDRPck1CeW9pU3BXZFdOSFNKOElvbmRTOXVW?=
- =?utf-8?B?d0lLdFlEQ2krY3JXbVNOYnBuR3Y2SVBzTTVYcHkySnFBT0hzRnQ2VFdvUmEy?=
- =?utf-8?B?N3FxMXpoeXE1ZHhyamJIQ2VqSXdYR0d2ZmFucHVwdW9xR2pjUzR5ZU5ZeTc3?=
- =?utf-8?B?ZWNPeUozUnU0K2ZlY0tTQ0NrZlBnTXRsN29OOHNaRjFJVklxamNkUE9SQmJR?=
- =?utf-8?B?emJlQWFiOXpuOXFRM3gvREdxWTVIRisxWmpBOGJqTjhmaXl4MUpMRVFGbVdv?=
- =?utf-8?B?YWxXWFJvdHJqQmNjWlk5Y2ttRXd3TGVTanNnb054Yks0V0R5bGdpRDlKRzE3?=
- =?utf-8?B?dzFvaGpRRUNnZHl6YUE0VTZjdWh5VUxrWjR0cklPODV6Vzl0ZW5qQmR4OUtq?=
- =?utf-8?B?eVZMQVM1cy9MMVhNbko5cG16OFFmajduZms0Uk9HWUZERXZVVG1BUXZPOEFx?=
- =?utf-8?B?eXZoZDNPNTlvaEZuekNodWI4R3gyNStWbGZiZnZyeEVDc2FwckE4YWc4WTdt?=
- =?utf-8?B?a01vSG1sRXUyanJQQkFHM3kvNzhzQzNVRDV5azIwRE5LbG9pbzFKbzNoa0hO?=
- =?utf-8?B?STNhdWJkMmE3R0Y5UlVBY3RjQ1hMSldDN0pxL282UXlkaERwS1h4UFlUUXdk?=
- =?utf-8?B?RHk4ZzZXZThaUFdhRWhOcDFVVU1kQ0FnalZlcUtPTnVEY1ptZ1hmNW5SWFJl?=
- =?utf-8?B?YlNPK2d4ZGNsOFd3K0RFRlVac3g3OGpIQ09YSWlJNmEvY3psVzZWOWxJTE5j?=
- =?utf-8?B?UGR6dnh2MHJhNTV2WWVPMWFGTXExbHNKRFdNSWVsLzJwYk5LRU1ISTNIbFlV?=
- =?utf-8?B?MkZsSUlGS0svMXgrTlhVTEVxUTJyMG1HbEtldmhoVkY5bUt6K3VkTlBIbWUx?=
- =?utf-8?B?dzkvb0wrSVcxeVk1bEVEUjV1YVFidDJhWDY1bWRRK0RVbnJkQ2RVVWpuTGsw?=
- =?utf-8?B?d1Ztb00zbnVPZS9kWTM3L3BSc3RSNlR5TVRXejJySnFpcGs0WDRYclAwNEtT?=
- =?utf-8?B?OG8zdCtSc1NmNzJOMTA3ZE9YeTdJWE5TS1Fad0NHN091S1dDT3RkMnAvL01q?=
- =?utf-8?B?ZEgzS01BT0ZELzR5cmNHYUNhaExjWDNDdVd0RW5PcWlJTG5qMXdwaFZlM0dE?=
- =?utf-8?B?RjNtRklEcVJSR05KVmErWStsdUlIVHhjM1dyQU80RzlzK1VxalRIdy9xTDJV?=
- =?utf-8?B?Z0lSazJLNDJ2UUlzbExFNjhZdWZkZS95WFRwVWFVMFYvT3NPTDJ2QWF0czJQ?=
- =?utf-8?B?SlNzb3dVZEpzQW8vVk0vaDM5RUxycndrR1REdS8ybVhxYzF4VnNqNUNMK05B?=
- =?utf-8?B?RGc9PQ==?=
+	=?utf-8?B?WURRV0dGdlNIcXN3SWYwQTJmWDlkK2RVeHptWHhObktEcE8xdkFuTkw1dUdD?=
+ =?utf-8?B?NjAxQXVIUVV5YzlGUkpKbmRpQUMxWFlnZkNSQ3BXRFNHT3VCTkt1d1ZBYWJI?=
+ =?utf-8?B?V09ya3hrckRaR3VjSGVXcjVUZWFxVHJoMDU1WThLcG9KUGlnSnZYRXF4cGxF?=
+ =?utf-8?B?dU5Fckt1KzVDeW5BQk03WEVQZE4wNjdCOTZtZDM0cHY1NzhPSVM3QzZsY05E?=
+ =?utf-8?B?bEVmeDdQMXRQR2dCMHZtMlFma2hJc09YNG9Tb1JuK1BBR2pFNVV2UmxGcis2?=
+ =?utf-8?B?N2p0Q1dVc0FYaldVSXViTlM3alJVcUd3T1VkbzNNcXVrU2JBdTNGelFQU0ow?=
+ =?utf-8?B?K2pIOEtRTDVNWjhzdG5MT29Pa21lZ3BnK2UwQXVndm5mOExiRy9hTVhlVUI0?=
+ =?utf-8?B?aGtaa2RCZmZzR1dWMEQ5MEVoa1hYdGYveVgyeGVGb0kvK3ZUSnFTM0FDR01U?=
+ =?utf-8?B?eVV0WlNyTmNMc1NXNU9Xa1owZDdrZnF3aVVac1JseC95Z1IxZjNjOGRzNUU1?=
+ =?utf-8?B?aWRhckliOFY5dVpXWTB6QTZpL2VydnY4RFprQlk4SXYwVEREMkU0UTNnZEtJ?=
+ =?utf-8?B?YXhaRy96cHZWelI5cEhuVSt2YThNVVdDUnNtRFoyVWgwOHhqQ0h3Tk1vbDJh?=
+ =?utf-8?B?ZnBCaHZSdUZ1OEtaYk1Vc0ozYndLQnFXVXlqYW1VZ0c5OWx1VDhRU29BKzRi?=
+ =?utf-8?B?WXFNMHdxdEp5ZnNwUnNaYnd6UXo5bm5BRitUbFFpR3QvWXpzZ3g4ZFlOZXYz?=
+ =?utf-8?B?SVhubTUzOFRzMWp2cTRPVjE4TmV5YkRQdDUyeXIxc3U1R3R1U1FBcVFsUVha?=
+ =?utf-8?B?SW1vWEZDdTJ1T3FCZ1p1T0Y0NWsvUDk2TWtIUGlhTmRDSGlRd3dOQ3FGREhI?=
+ =?utf-8?B?U3lJS3Q1WGZUYWg3OVZmdStHT1ZQZ2xBZUx0bjY1TVZoVmxZYWxxc0djQXlp?=
+ =?utf-8?B?VURqdmo4WDhGMDN2OW5tS0VwZ1ExRERmbXpOOVpLQlhxSndqbFBSUTFUY3l3?=
+ =?utf-8?B?SVhHelU2NHEwNlhaemg4U1pJS2g3eDRtRy9pUWprWFZCbWVIcFJqWkVBYStl?=
+ =?utf-8?B?aUxMRUhzS0w3RGJyMDYyTE5Cc0xFTnNXMHowY0JCQ3ZsMStYMVVwbnBKVzYx?=
+ =?utf-8?B?ZmxwNW10dnE0Sk4xZS90bWNtNzFTUmtvMnVQYzlISXF1VzR1Q3pjaGJSZkJN?=
+ =?utf-8?B?Q25PSWVxd1BsZ2UwcTlqclFTbTVtUDF4MS9uZGFkQmNpbXRtcEJTUWRXMXow?=
+ =?utf-8?B?aGRvZTZnS1RZcERJclN3Y2xsaElMeUY4YUtaYk9CRWZXY3JmUC9HdzkwSVRL?=
+ =?utf-8?B?ZS9VcGdmTjBVZVlwRlkyQTFGdEFkbkJzL2E5YWNYQkp6TTJNYjRNZFA5UFBi?=
+ =?utf-8?B?VDR0M0R5L250TGRoeUVWUkxnc3VtTW5GS0V4L1Y1ZUxFb1l0R21xcTIyNllF?=
+ =?utf-8?B?ZTN5bEtmdm43ZC91bGNWeC92ZVdnQ1lnQ0VlRlVJNjBqNm55SzNmaWlqa05D?=
+ =?utf-8?B?a25QelI2RjR6WWV2eGFWdlZzNnR2QmN5U2QvRE9mQjZRcjcrdnU1RmM3R3hq?=
+ =?utf-8?B?eWhhS1BuL0Q5ZEZiOEdxWWo1UVhSTGV1TDA2b3RuYnZ0YmlWVFB2OEc3eklp?=
+ =?utf-8?B?d3hRaWdONGNMWnNiOU5wMGhCMmVJOWlOS09JZnRDa3hLN21RZ2dQaHhaeTJR?=
+ =?utf-8?B?NnhJS0xuM3IybU1pdDZqQjN4QjY4ME5ENWtuRUxDVkRvYUEzajM3NmZpTVFn?=
+ =?utf-8?B?L01qVEEwR3dXSWtsZnczL04xOFhGOVVnSVRTTHpjU2M0cVBvM0ZUclhUU3Qy?=
+ =?utf-8?B?N08rekpxVWZqVDlKN2NNbUNQaENmNDZONkxSTnh6RHd4WkZXZGJRS0M4RVNl?=
+ =?utf-8?B?eFRjN3JCb0FHVmU5UHBVb2o3ZndUS1J4b2J6QURKR2xUVnd4Y1ZybUQ2MW1E?=
+ =?utf-8?B?aS83S3E3KzNkNHBlMTBFd1RXb0tsOUZhNEZPRDBQTllaeVlaU3A4dHRsdGJZ?=
+ =?utf-8?B?MTlFSlp3MmJPdXF0eXZFYTVCd1VIUkFsZUs4NzZLWnpoT3p2b1BwVnJVcm9G?=
+ =?utf-8?B?Zy94emZlT2dUeVpnbUM0akV3MTFvNThYTHNNdlRoRUlPMU0veWRiSmRXTklJ?=
+ =?utf-8?B?aTA4K2RrVWNtamYzOWp4SnQ4SUppbVZHZEFMaTc4aHM5MHVLWk94UzZ1MHFU?=
+ =?utf-8?B?YVE9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4245dfa9-d9fa-4749-4ec2-08dc33c3addf
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1392af30-2c1e-42a2-de04-08dc33c3b6e6
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2024 16:31:11.0809
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2024 16:31:26.0906
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aSE+KFF8J/LCpw4qyRapNG1cbMkcbwdTz1P/9sHEcAdSxsu2mcG3aG4rx3u2EjNgzgsyQIiWzkz4Q4W2rDHvAw==
+X-MS-Exchange-CrossTenant-UserPrincipalName: 95D2WAJU4BQLwMrea7fn08Fqu6Kjm7kX6JiIA7ptiziH+abrHs+nr7US8VC2lRiLP6j1rotrFPNJeq0Z4fEzLQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3157
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 22 Feb 2024 16:31:18 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15064
+ <cip-dev@lists.cip-project.org>; Thu, 22 Feb 2024 16:31:38 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15065
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+On 22.02.24 15:14, Quirin Gylstorff wrote:
+> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> 
+> This allows the user to add scripts[1] to the swu file by
+> setting the variable `SWU_SCRIPTS`. Scripts can be used to
+> prepare the system for an update.
+> 
+> ```
+> SWU_SCRIPTS = "postinstall"
+> SWU_SCRIPT_postinstall[file] = "postinstall.sh"
+> SWU_SCRIPT_postinstall[type] = "postinstall"
+> ```
+> An optional data element is possible with
+> 
+> ```
+> SWU_SCRIPT_postinstall[data]= "some_data"
+> ```
+> 
+> This will add  `file://<script_file_name>` to the variable `SRC_URI` and
+> `<script_file_name>` to `SWU_ADDTIONAL_FILES`. The sw-description will contain
+> the following section:
+> ```
+>     scripts: (
+>         {
+>           filename = "<script_file_name>";
+>           type = "<script_type>";
+>           data = "<script_data>";
+>           sha256 = "<automatically added sha256 of script_file_name>";
+>         },):
+> ```
+> 
+> [1]: https://sbabic.github.io/swupdate/sw-description.html?#scripts
+> 
+> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> ---
+> Changes v7:
+>  - remove message in case of missing type
+>  - change documentation for flag type
+> Changes v6:
+>  - rebase onto next
+>  - if type is not set still generate the script section
+>  - print info if type is not set
+> 
+> Changes v5:
+>  - use variable flags
+> 
+> Changes v4:
+>  - rebase onto next
+> Changes v3:
+>  - fix message
+>  - add luascript example to README
+> 
+> Changes v2:
+>  - change seperator from `:` to `@` as it already used for the
+>    configfilecheck
+>  - add optional data entry
+>  - add warning if less then 2 parameters are given for entry
+> 
+> 
+> 
+> 
+>  classes/swupdate.bbclass                    | 43 ++++++++++
+>  doc/README.swupdate.md                      | 90 +++++++++++++++++++++
+>  recipes-core/images/swu/sw-description.tmpl |  1 +
+>  3 files changed, 134 insertions(+)
+> 
+> diff --git a/classes/swupdate.bbclass b/classes/swupdate.bbclass
+> index 403bdef..2c69892 100644
+> --- a/classes/swupdate.bbclass
+> +++ b/classes/swupdate.bbclass
+> @@ -57,6 +57,7 @@ IMAGE_TEMPLATE_VARS:swu = " \
+>      SWU_NAME \
+>      SWU_FILE_NODES \
+>      SWU_BOOTLOADER_FILE_NODE \
+> +    SWU_SCRIPTS_NODE \
+>      "
+>  
+>  # TARGET_IMAGE_UUID needs to be generated before completing the template
+> @@ -93,6 +94,48 @@ python add_swu_compression(){
+>          d.setVar('SWU_COMPRESSION_NODE', '')
+>  }
+>  
+> +
+> +SWU_EXTEND_SW_DESCRIPTION += "add_scripts"
+> +python add_scripts(){
+> +    swu_scripts = d.getVar('SWU_SCRIPTS')
+> +    if not swu_scripts:
+> +        return
+> +    swu_script_entries = swu_scripts.split()
+> +    script_node_list = []
+> +    for entry in swu_script_entries:
+> +        script_entry = f"SWU_SCRIPT_{entry}"
+> +
+> +        script_file = d.getVarFlag(script_entry, "file")
+> +        if not script_file:
+> +            bb.warn(f"flag 'file' is empty for {script_entry} ")
+> +            continue
+> +
+> +        script_type = d.getVarFlag(script_entry, "type") or None
+> +        allowed_script_types = [None, "lua", "shellscript", "preinstall", "postinstall"]
+> +        if script_type not in allowed_script_types:
+> +            bb.warn(f"flag 'type' is not of value {allowed_script_types} ")
+> +            continue
+> +
+> +        script_data = d.getVarFlag(script_entry, "data")
+> +        node = f"""
+> +        {{
+> +          filename = "{script_file}";
+> +        """
+> +        if script_type:
+> +            node += f"""  type = "{script_type}";"""
+> +        if script_data:
+> +            node += f"""  data = "{script_data}";"""
+> +        node += f"""
+> +          sha256 = "{script_file}-sha256";
+> +        }}"""
+> +        script_node_list.append(node)
+> +        d.appendVar('SWU_ADDITIONAL_FILES', " " + script_file)
+> +        d.appendVar('SRC_URI', f" file://{script_file}")
+> +
+> +    swu_scripts_node = "scripts: (" + ','.join([n for n in script_node_list]) + ");"
+> +    d.appendVar('SWU_SCRIPTS_NODE', swu_scripts_node)
+> +}
+> +
+>  # convert between swupdate compressor name and imagetype extension
+>  def get_swu_compression_type(d):
+>      swu_ct = d.getVar('SWU_COMPRESSION_TYPE')
+> diff --git a/doc/README.swupdate.md b/doc/README.swupdate.md
+> index 1c94699..cf1bcfb 100644
+> --- a/doc/README.swupdate.md
+> +++ b/doc/README.swupdate.md
+> @@ -21,6 +21,96 @@ window is still possible.
+>  If the variable `SWU_EBG_UPDATE` is set to `"1"` the update is also stored in
+>  the `*.swu` file.
+>  
+> +## SWUpdate scripts
+> +
+> +It is possible to add [scripts](https://sbabic.github.io/swupdate/sw-description.html?#scripts) to a swu file.
+> +
+> +To add a script entry in isar-cip-core set the variable `SWU_SCRIPTS`.
+> +The content of the variable has the following pattern:
+> +`script_name`
+> +
+> +For each `script_name` the following flags need to be set:
+> +
+> +```
+> +SWU_SCRIPT_script_name[file] = "<script_file_name>"
+> +```
+> +
+> +The optional flag `type` can be used to set one of the following script types:
+> + - [lua](https://sbabic.github.io/swupdate/sw-description.html#lua)
+> + - [shellscript](https://sbabic.github.io/swupdate/sw-description.html#shellscript)
+> + - [preinstall](https://sbabic.github.io/swupdate/sw-description.html#preinstall)
+> + - [postinstall](https://sbabic.github.io/swupdate/sw-description.html#postinstall)
+> +
+> +If no type is given SWUpdate defaults to "lua".
+> +```
+> +SWU_SCRIPT_script_name[type] = "<script_type>"
+> +```
+> +
+> +The optional flag `data` can be used as an script argument:
+> +
+> +```
+> +SWU_SCRIPT_script_name[data] = "<script argument>"
+> +```
+> +
+> +The file referenced by `<script_file_name>` is added to the variables `SRC_URI`
+> +and `SWU_ADDITIONAL_FILES`. Therefore, it needs to be saved in a `FILESPATH`
+> +location.
+> +
+> +### Example: postinstall.sh
+> +
+> +```
+> +SWU_SCRIPTS = "postinstall"
+> +SWU_SCRIPT_postinstall[file] = "postinstall.sh"
+> +SWU_SCRIPT_postinstall[type] = "postinstall"
+> +SWU_SCRIPT_postinstall[data] = "some_data"
+> +```
+> +
+> +This will add  `file://postinstall.sh` to the variable `SRC_URI` and
+> +`postinstall.sh` to `SWU_ADDTIONAL_FILES`. The sw-description will contain
+> +the following section:
+> +```
+> +    scripts: (
+> +        {
+> +          filename = "postinstall.sh";
+> +          type = "postinstall";
+> +          data = "some_data"
+> +          sha256 = "<sha256 of postinstall.sh>";
+> +        }):
+> +```
+> +### Example: Luascript
+> +The simplest lua script has the following content:
+> +```lua
+> +function preinst()
+> +	local message = "preinst called\n"
+> +	local success = true
+> +	return success, message
+> +end
+> +function postinst()
+> +	local message = "postinst called\n"
+> +	local success = true
+> +	return success, message
+> +end
+> +```
+> +and is added:
+> +
+> +```
+> +SWU_SCRIPTS = "luascript"
+> +SWU_SCRIPT_luascript[file] = "luascript.lua"
+> +SWU_SCRIPT_luascript[type] = "luascript"
+> +SWU_SCRIPT_luascript[data] = "some_data"
+> +```
+> +
+> +The sw-description will contain the following section:
+> +```
+> +    scripts: (
+> +        {
+> +          filename = "luascript.lua";
+> +          type = "lua";
+> +          data = "some_data"
+> +          sha256 = "<sha256 of luascript.lua>";
+> +        }):
+> +```
+> +
+>  # Building and testing the CIP Core image
+>  
+>  Set up `kas-container` as described in the [top-level README](../README.md).
+> diff --git a/recipes-core/images/swu/sw-description.tmpl b/recipes-core/images/swu/sw-description.tmpl
+> index c52372c..88cb475 100644
+> --- a/recipes-core/images/swu/sw-description.tmpl
+> +++ b/recipes-core/images/swu/sw-description.tmpl
+> @@ -35,4 +35,5 @@ software =
+>              };
+>              sha256 = "linux.efi-sha256";
+>      }${SWU_FILE_NODES});
+> +    ${SWU_SCRIPTS_NODE}
+>  }
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- ...inux-cip_4.19.304-cip106.bb => linux-cip_4.19.306-cip107.bb} | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
- rename recipes-kernel/linux/{linux-cip_4.19.304-cip106.bb => linux-cip_4.19.306-cip107.bb} (68%)
+Thanks, applied.
 
-diff --git a/recipes-kernel/linux/linux-cip_4.19.304-cip106.bb b/recipes-kernel/linux/linux-cip_4.19.306-cip107.bb
-similarity index 68%
-rename from recipes-kernel/linux/linux-cip_4.19.304-cip106.bb
-rename to recipes-kernel/linux/linux-cip_4.19.306-cip107.bb
-index 055006eb..57dd2502 100644
---- a/recipes-kernel/linux/linux-cip_4.19.304-cip106.bb
-+++ b/recipes-kernel/linux/linux-cip_4.19.306-cip107.bb
-@@ -11,4 +11,4 @@
- 
- require linux-cip-common.inc
- 
--SRC_URI[sha256sum] = "3c920d95bf991d4242bbfd5f89e623aff5037863a9a7b0e8b2ea3a374105a635"
-+SRC_URI[sha256sum] = "ed0dc5037bcf213bd4852710f65f99e87272f6b295d2214ef270d1651c5c4896"
+Jan
+
 -- 
-2.35.3
+Siemens AG, Technology
+Linux Expert Center
+
 
