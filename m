@@ -2,58 +2,136 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E011C48BF6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E062C54E4A
 	for <webhook@archiver.kernel.org>; Mon, 26 Feb 2024 10:39:59 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.17710.1708943994617712635
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web10.17711.1708943998572307424
  for <cip-dev@lists.cip-project.org>;
- Mon, 26 Feb 2024 02:39:54 -0800
+ Mon, 26 Feb 2024 02:39:58 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.06,185,1705330800"; 
-   d="scan'208";a="195337691"
+   d="scan'208";a="199275385"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 26 Feb 2024 19:39:53 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 26 Feb 2024 19:39:57 +0900
 Received: from localhost.localdomain (unknown [10.226.93.86])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 45157400C4F9;
-	Mon, 26 Feb 2024 19:39:50 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id F2F7D400C0A9;
+	Mon, 26 Feb 2024 19:39:55 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 0/5] Add RZ/G2UL MTU3a support
-Date: Mon, 26 Feb 2024 10:39:44 +0000
-Message-Id: <20240226103949.138960-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 2/5] dt-bindings: timer: renesas,rz-mtu3: Improve documentation
+Date: Mon, 26 Feb 2024 10:39:46 +0000
+Message-Id: <20240226103949.138960-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240226103949.138960-1-biju.das.jz@bp.renesas.com>
+References: <20240226103949.138960-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 26 Feb 2024 10:39:59 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15088
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15090
 
-This patch series aims to add support for RZ/G2UL MTU3a driver.
+commit b121e7881b8975cf8dc24d9bd71a5af81ed8a6b1 upstream.
 
-All the patches are cherry-picked from the mainline.
+Fix the documentation issues pointed by Pavel while backporting
+it to 6.1.y-cip.
+ - Replace '32- bit'->'32-bit'
+ - Consistently remove '.' at the end of line for the specifications
+ - Replace '          (excluding MTU8)'-> '(excluding MTU8)'
 
-Biju Das (5):
-  dt-bindings: timer: renesas,rz-mtu3: Fix overflow/underflow interrupt
-    names
-  dt-bindings: timer: renesas,rz-mtu3: Improve documentation
-  dt-bindings: timer: renesas,rz-mtu3: Document RZ/{G2UL,Five} SoCs
-  arm64: dts: renesas: r9a07g043: Add MTU3a node
-  arm64: dts: renesas: rzg2ul-smarc: Add support for enabling MTU3
+Reported-by: Pavel Machek <pavel@denx.de>
+Closes: https://lore.kernel.org/all/ZH79%2FUjgYg+0Ruiu@duo.ucw.cz
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Link: https://lore.kernel.org/r/20230727081848.100834-3-biju.das.jz@bp.renesas.com
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ .../bindings/timer/renesas,rz-mtu3.yaml       | 28 +++++++++----------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
- .../bindings/timer/renesas,rz-mtu3.yaml       | 67 +++++++++---------
- arch/arm64/boot/dts/renesas/r9a07g043.dtsi    | 70 +++++++++++++++++++
- .../boot/dts/renesas/r9a07g043u11-smarc.dts   | 11 +++
- .../dts/renesas/rzg2ul-smarc-pinfunction.dtsi |  6 ++
- arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi | 13 ++++
- 5 files changed, 134 insertions(+), 33 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml b/Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml
+index fbac40b958dd..670a2ebaacdb 100644
+--- a/Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml
++++ b/Documentation/devicetree/bindings/timer/renesas,rz-mtu3.yaml
+@@ -11,8 +11,8 @@ maintainers:
+ 
+ description: |
+   This hardware block consists of eight 16-bit timer channels and one
+-  32- bit timer channel. It supports the following specifications:
+-    - Pulse input/output: 28 lines max.
++  32-bit timer channel. It supports the following specifications:
++    - Pulse input/output: 28 lines max
+     - Pulse input 3 lines
+     - Count clock 11 clocks for each channel (14 clocks for MTU0, 12 clocks
+       for MTU2, and 10 clocks for MTU5, four clocks for MTU1-MTU2 combination
+@@ -23,11 +23,11 @@ description: |
+         - Input capture function (noise filter setting available)
+         - Counter-clearing operation
+         - Simultaneous writing to multiple timer counters (TCNT)
+-          (excluding MTU8).
++          (excluding MTU8)
+         - Simultaneous clearing on compare match or input capture
+-          (excluding MTU8).
++          (excluding MTU8)
+         - Simultaneous input and output to registers in synchronization with
+-          counter operations           (excluding MTU8).
++          counter operations (excluding MTU8)
+         - Up to 12-phase PWM output in combination with synchronous operation
+           (excluding MTU8)
+     - [MTU0 MTU3, MTU4, MTU6, MTU7, and MTU8]
+@@ -40,26 +40,26 @@ description: |
+     - [MTU3, MTU4, MTU6, and MTU7]
+         - Through interlocked operation of MTU3/4 and MTU6/7, the positive and
+           negative signals in six phases (12 phases in total) can be output in
+-          complementary PWM and reset-synchronized PWM operation.
++          complementary PWM and reset-synchronized PWM operation
+         - In complementary PWM mode, values can be transferred from buffer
+           registers to temporary registers at crests and troughs of the timer-
+           counter values or when the buffer registers (TGRD registers in MTU4
+-          and MTU7) are written to.
+-        - Double-buffering selectable in complementary PWM mode.
++          and MTU7) are written to
++        - Double-buffering selectable in complementary PWM mode
+     - [MTU3 and MTU4]
+         - Through interlocking with MTU0, a mode for driving AC synchronous
+           motors (brushless DC motors) by using complementary PWM output and
+           reset-synchronized PWM output is settable and allows the selection
+-          of two types of waveform output (chopping or level).
++          of two types of waveform output (chopping or level)
+     - [MTU5]
+-        - Capable of operation as a dead-time compensation counter.
++        - Capable of operation as a dead-time compensation counter
+     - [MTU0/MTU5, MTU1, MTU2, and MTU8]
+         - 32-bit phase counting mode specifiable by combining MTU1 and MTU2 and
+-          through interlocked operation with MTU0/MTU5 and MTU8.
++          through interlocked operation with MTU0/MTU5 and MTU8
+     - Interrupt-skipping function
+         - In complementary PWM mode, interrupts on crests and troughs of counter
+           values and triggers to start conversion by the A/D converter can be
+-          skipped.
++          skipped
+     - Interrupt sources: 43 sources.
+     - Buffer operation:
+         - Automatic transfer of register data (transfer from the buffer
+@@ -68,9 +68,9 @@ description: |
+         - A/D converter start triggers can be generated
+         - A/D converter start request delaying function enables A/D converter
+           to be started with any desired timing and to be synchronized with
+-          PWM output.
++          PWM output
+     - Low power consumption function
+-        - The MTU3a can be placed in the module-stop state.
++        - The MTU3a can be placed in the module-stop state
+ 
+     There are two phase counting modes. 16-bit phase counting mode in which
+     MTU1 and MTU2 operate independently, and cascade connection 32-bit phase
 -- 
 2.25.1
 
