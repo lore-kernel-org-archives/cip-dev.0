@@ -2,52 +2,52 @@ Return-Path: <webhook@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92B16C47DD9
-	for <webhook@archiver.kernel.org>; Mon, 26 Feb 2024 03:15:26 +0000 (UTC)
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
- by mx.groups.io with SMTP id smtpd.web10.13136.1708917325393027812
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 480B6C54798
+	for <webhook@archiver.kernel.org>; Mon, 26 Feb 2024 03:15:36 +0000 (UTC)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+ by mx.groups.io with SMTP id smtpd.web11.12907.1708917327951405581
  for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>;
- Sun, 25 Feb 2024 19:15:25 -0800
+ Sun, 25 Feb 2024 19:15:28 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=T4+DZe/g;
- spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.210.182, mailfrom: bot@kernelci.org)
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6da202aa138so1631181b3a.2
-        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Sun, 25 Feb 2024 19:15:25 -0800 (PST)
+ dkim=pass header.i=@kernelci-org.20230601.gappssmtp.com header.s=20230601 header.b=VQgL3B42;
+ spf=none, err=permanent DNS error (domain: kernelci.org, ip: 209.85.219.180, mailfrom: bot@kernelci.org)
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dc745927098so2414917276.3
+        for <cip-dev+int+1680+2922216858170285886@lists.cip-project.org>; Sun, 25 Feb 2024 19:15:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1708917324; x=1709522124; darn=lists.cip-project.org;
+        d=kernelci-org.20230601.gappssmtp.com; s=20230601; t=1708917326; x=1709522126; darn=lists.cip-project.org;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=G8WGe9OIPvIsSUGzpIQMuJJtrCjXddBpZ9IBoY1IQtI=;
-        b=T4+DZe/gPFCWIZNNNbivgOltfsTH16eehRq0AiSBEVYbB01uN4s7GGlr1XmAOLkgvN
-         0aiGNxyu2+i5l8kRe0PpqxA7Ds50rNiRnGBeDBaObr5UM1ycYNr7M8omg/Kg79WFT7u8
-         3zWAN14B2KZIkDwSV189T9PvJig6cOqEssH/WzMb0zcke9G2SvtKW9Z77zKOTOTfNeCO
-         QpAL/sPBoX2wEtesA2PoO5Kfd37Mcor4tyaClfFMfPdvQ3UIt2nSrSnlQvieyVOP7ZM1
-         Kl7e2MgLwh/ZF25pqgJLLp+U9tfadoHpOUTy3mK0yo+opDun1RLAk9DKlY95rD83ZClT
-         A/rQ==
+        bh=uYwZQ79GMdyguEBvzNezMC/Yz7I5dd/tkJqSMf1Ibko=;
+        b=VQgL3B427Yo6ehNxLpryybVehUdEcnGBmHZQBwiCYmdcRFCFeA0JetbdASOKEFp97d
+         jCnPMR5ldt5raEOvU2oCSvt11hmPs+3GykN9UXvTdoot7AqjCV3Hu2nTUpTQ1Qbcodh8
+         wlw3w3MZw8eN/vjs32HQZOnlf+jNSOC+NsSlNfENt/PtZtqW2K+vo0+E98zz4YjlvU2H
+         wlpv3B4tvNBmpgjiKIZmjHvBQzoqk+oaG4N62Ed+GFWmmacanuEY+UFIiW7AQTUWLVNy
+         kFtAXH5EjeoAnIHgVkeJYkkmy3ecejpFefNnHs7hh1YLIa1vuiSF8aEW3ioMD/BFsMft
+         JNsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708917324; x=1709522124;
+        d=1e100.net; s=20230601; t=1708917326; x=1709522126;
         h=from:to:subject:content-transfer-encoding:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=G8WGe9OIPvIsSUGzpIQMuJJtrCjXddBpZ9IBoY1IQtI=;
-        b=Kc2Oqn/4/FZU7pTAqYoJlpQuOiCF/KigKhTyPfbi4Pge1psPJIrJ9rj0hVurHswvdN
-         Pj7jT1nuHwANiBX2xsV4eiajDuKBsCD+J1WT8bw4ol+h5L6/cI4e1k5fawtj7GZVqA7C
-         Cd6fab/V9Cx63iWyDHKTdtnCZxL3cmwd5l6mEDbeJ6Oa84JTFnZ76cu12D3ibJ8F+52w
-         Flv4Dgn5fZifIspMiPiU51T9EUnSUo12vjLRvbyqMQ31TqeGLdikl/r090ZMBIeRjVcI
-         M2ay4viFU5IxzHvS7EGX/9SSbjQtVTuYMd1zFfk813WGJ8qfUad3Hrv/SqUyyVyqusEe
-         00cw==
-X-Gm-Message-State: AOJu0YymkJf9ngWeacrj2SAO/EvvDsjkfGXRgvHaMncXg0P1t+8F6v2e
-	uHUco44XZJWf0Rr9JT+jtzFLKSRuF3Foh5A3yLsElNs2f+LeDfyOBaCZ0aRgMhBiJZriK9ZvR/G
-	Y
-X-Google-Smtp-Source: AGHT+IFZP30L835AxPeOpTcSvDhCFG1ukZtcWErs40nzIfdNRPolQKG9SHVkjvKIhE3KQXxFhnUQ4g==
-X-Received: by 2002:a05:6a00:9391:b0:6e5:34b5:4485 with SMTP id ka17-20020a056a00939100b006e534b54485mr593229pfb.29.1708917324320;
-        Sun, 25 Feb 2024 19:15:24 -0800 (PST)
+        bh=uYwZQ79GMdyguEBvzNezMC/Yz7I5dd/tkJqSMf1Ibko=;
+        b=oO9fDxyBM2P89wOISOsQVxWXKXRhecpojQOJPGe12cphUXwR5XU0YWIwTUrhu6f6gs
+         CWCHBGSoFjmcmRsEYrP7bl9LQKPUGSAvTI5OcsLlu5QoasJi9vMqQmKyB+F6Bn464nn1
+         qO6oQBVje1YGdnTc+yjBkRKxDXWoEQxBkr2ptJaszWaOfuRmIOwGW0vHGT/inxzdEIaI
+         jwI39ZI3NQK6SsSvyrKcJqf72INcjqajIcHWdMv/F1u7IlwL+3xUL6+tg6kQv3dv0GGj
+         hBQzdt027JBQi6DA4OvnbgOubKL5a166Lg699UGgVBsp/m+k3m06gQpDx3BMOrFjJxN4
+         xD4g==
+X-Gm-Message-State: AOJu0Yxj8+WrRgC/8ejHhn2YOVVjr5GAAwvRXKfnc6xfmNMUOc/SnL44
+	dvJ6YlOPF9+KwVj43dPJc/5z9owvoAyjvyQnPePh4B3304XLjPYyzQSU1yW9/oqE0JtsJZPVaY1
+	r
+X-Google-Smtp-Source: AGHT+IGJ0Lpr/RUV0I+tsgTnX4UZfu0q2ORLBA1d28g94MV3VtyBnZ+vLxPX/7NdwYdIKXED7dm0vw==
+X-Received: by 2002:a5b:c07:0:b0:dcd:9808:2563 with SMTP id f7-20020a5b0c07000000b00dcd98082563mr3584909ybq.38.1708917326536;
+        Sun, 25 Feb 2024 19:15:26 -0800 (PST)
 Received: from kernelci-production.internal.cloudapp.net ([20.171.243.82])
-        by smtp.gmail.com with ESMTPSA id o4-20020a634104000000b005dc88b232a5sm2973316pga.26.2024.02.25.19.15.23
+        by smtp.gmail.com with ESMTPSA id p21-20020a631e55000000b005cfbf96c733sm2969218pgm.30.2024.02.25.19.15.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Feb 2024 19:15:23 -0800 (PST)
-Message-ID: <65dc024b.630a0220.a4119.7c8f@mx.google.com>
-Date: Sun, 25 Feb 2024 19:15:23 -0800 (PST)
+        Sun, 25 Feb 2024 19:15:26 -0800 (PST)
+Message-ID: <65dc024e.630a0220.9a3e6.788c@mx.google.com>
+Date: Sun, 25 Feb 2024 19:15:26 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -55,30 +55,34 @@ X-Kernelci-Tree: cip
 X-Kernelci-Branch: linux-6.1.y-cip
 X-Kernelci-Kernel: v6.1.78-cip15
 X-Kernelci-Report-Type: test
-Subject: cip/linux-6.1.y-cip baseline: 114 runs, 1 regressions (v6.1.78-cip15)
+Subject: cip/linux-6.1.y-cip baseline-nfs: 64 runs,
+ 1 regressions (v6.1.78-cip15)
 To: cip-dev+int+1680+2922216858170285886@lists.cip-project.org,
  kernel-build-reports@lists.linaro.org, kernelci-results@groups.io
 From: "kernelci.org bot" <bot@kernelci.org>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 26 Feb 2024 03:15:26 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15084
+ <cip-dev@lists.cip-project.org>; Mon, 26 Feb 2024 03:15:36 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15085
 
-cip/linux-6.1.y-cip baseline: 114 runs, 1 regressions (v6.1.78-cip15)
+cip/linux-6.1.y-cip baseline-nfs: 64 runs, 1 regressions (v6.1.78-cip15)
 
 Regressions Summary
 -------------------
 
-platform      | arch  | lab           | compiler | defconfig | regressions
---------------+-------+---------------+----------+-----------+------------
-r8a779m1-ulcb | arm64 | lab-collabora | gcc-10   | defconfig | 1          =
+platform   | arch | lab             | compiler | defconfig          | regre=
+ssions
+-----------+------+-----------------+----------+--------------------+------=
+------
+imx53-qsrb | arm  | lab-pengutronix | gcc-10   | multi_v7_defconfig | 1    =
+      =
 
 
   Details:  https://kernelci.org/test/job/cip/branch/linux-6.1.y-cip/kernel=
-/v6.1.78-cip15/plan/baseline/
+/v6.1.78-cip15/plan/baseline-nfs/
 
-  Test:     baseline
+  Test:     baseline-nfs
   Tree:     cip
   Branch:   linux-6.1.y-cip
   Describe: v6.1.78-cip15
@@ -93,59 +97,54 @@ Test Regressions
 
 
 
-platform      | arch  | lab           | compiler | defconfig | regressions
---------------+-------+---------------+----------+-----------+------------
-r8a779m1-ulcb | arm64 | lab-collabora | gcc-10   | defconfig | 1          =
+platform   | arch | lab             | compiler | defconfig          | regre=
+ssions
+-----------+------+-----------------+----------+--------------------+------=
+------
+imx53-qsrb | arm  | lab-pengutronix | gcc-10   | multi_v7_defconfig | 1    =
+      =
 
 
-  Details:     https://kernelci.org/test/plan/id/65dbf040c9c33235d46370c1
+  Details:     https://kernelci.org/test/plan/id/65dbf502dcc1cbe64f637074
 
   Results:     5 PASS, 1 FAIL, 1 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
   Plain log:   https://storage.kernelci.org//cip/linux-6.1.y-cip/v6.1.78-ci=
-p15/arm64/defconfig/gcc-10/lab-collabora/baseline-r8a779m1-ulcb.txt
+p15/arm/multi_v7_defconfig/gcc-10/lab-pengutronix/baseline-nfs-imx53-qsrb.t=
+xt
   HTML log:    https://storage.kernelci.org//cip/linux-6.1.y-cip/v6.1.78-ci=
-p15/arm64/defconfig/gcc-10/lab-collabora/baseline-r8a779m1-ulcb.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20230623.0/arm64/rootfs.cpio.gz =
+p15/arm/multi_v7_defconfig/gcc-10/lab-pengutronix/baseline-nfs-imx53-qsrb.h=
+tml
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+240129.0/armhf/initrd.cpio.gz =
 
 
 
-  * baseline.bootrr.deferred-probe-empty: https://kernelci.org/test/case/id=
-/65dbf040c9c33235d46370c6
-        failing since 93 days (last pass: v6.1.59-cip8, first fail: v6.1.62=
--cip9-12-g3a5321f469b07)
+  * baseline-nfs.bootrr.deferred-probe-empty: https://kernelci.org/test/cas=
+e/id/65dbf502dcc1cbe64f637079
+        new failure (last pass: v6.1.31-53-g486caac40d06)
 
-    2024-02-26T01:59:29.724055  / # #
+    2024-02-26T02:18:32.419682  + set +x
+    2024-02-26T02:18:32.419855  [   29.065650] <LAVA_SIGNAL_ENDRUN 0_dmesg =
+1028941_1.6.2.3.1>
+    2024-02-26T02:18:32.528471  #
+    2024-02-26T02:18:32.629792  / # #export SHELL=3D/bin/sh
+    2024-02-26T02:18:32.630292  =
 
-    2024-02-26T01:59:30.798223  export SHELL=3D/bin/sh
+    2024-02-26T02:18:32.731186  / # export SHELL=3D/bin/sh. /lava-1028941/e=
+nvironment
+    2024-02-26T02:18:32.731606  =
 
-    2024-02-26T01:59:30.799507  #
+    2024-02-26T02:18:32.832365  / # . /lava-1028941/environment/lava-102894=
+1/bin/lava-test-runner /lava-1028941/1
+    2024-02-26T02:18:32.832987  =
 
-    2024-02-26T01:59:32.282627  / # export SHELL=3D/bin/sh. /lava-12860298/=
-environment
+    2024-02-26T02:18:32.835701  / # /lava-1028941/bin/lava-test-runner /lav=
+a-1028941/1 =
 
-    2024-02-26T01:59:32.283886  =
-
-
-    2024-02-26T01:59:35.002832  / # . /lava-12860298/environment/lava-12860=
-298/bin/lava-test-runner /lava-12860298/1
-
-    2024-02-26T01:59:35.004654  =
-
-
-    2024-02-26T01:59:35.004884  / # /lava-12860298/bin/lava-test-runner /la=
-va-12860298/1
-
-    2024-02-26T01:59:35.072080  + export 'TESTRUN_ID=3D1_bootrr'
-
-    2024-02-26T01:59:35.072325  +<8>[   28.470438] <LAVA_SIGNAL_STARTRUN 1_=
-bootrr 12860298_1.5.2.4.5>
- =
-
-    ... (39 line(s) more)  =
+    ... (12 line(s) more)  =
 
  =20
 
