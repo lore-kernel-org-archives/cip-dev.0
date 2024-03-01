@@ -1,86 +1,63 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <ncaidin@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52FCFC5478C
-	for <webhook@archiver.kernel.org>; Fri,  1 Mar 2024 12:18:14 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web11.21297.1709295484041544027
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FA43C5478C
+	for <webhook@archiver.kernel.org>; Fri,  1 Mar 2024 13:11:24 +0000 (UTC)
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
+ by mx.groups.io with SMTP id smtpd.web11.19003.1709285679264799931
  for <cip-dev@lists.cip-project.org>;
- Fri, 01 Mar 2024 04:18:04 -0800
+ Fri, 01 Mar 2024 01:34:40 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id F34DD1C006B; Fri,  1 Mar 2024 13:18:00 +0100 (CET)
-Date: Fri, 1 Mar 2024 13:18:00 +0100
-From: Pavel Machek <pavel@denx.de>
-To: nobuhiro1.iwamatsu@toshiba.co.jp
-Cc: biju.das.jz@bp.renesas.com, cip-dev@lists.cip-project.org,
-	pavel@denx.de, prabhakar.mahadev-lad.rj@bp.renesas.com
-Subject: Re: [PATCH 5.10.y-cip 0/5] Add RZ/G2UL MTU3a support
-Message-ID: <ZeHHeHkklgZq8HIF@duo.ucw.cz>
-References: <20240226103949.138960-1-biju.das.jz@bp.renesas.com>
- <OS0PR01MB63881BCB411CF35BC6A90364925F2@OS0PR01MB6388.jpnprd01.prod.outlook.com>
+ dkim=pass header.i=felix.moessbauer@siemens.com header.s=fm1 header.b=HgSZxyyM;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-1321639-20240301093436629b77dea59bc66c00-cf_m0o@rts-flowmailer.siemens.com)
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20240301093436629b77dea59bc66c00
+        for <cip-dev@lists.cip-project.org>;
+        Fri, 01 Mar 2024 10:34:36 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=felix.moessbauer@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=YdqaWedES9RlHhSmtB4GJjGluvF/HhR8NCHIzeFZXRM=;
+ b=HgSZxyyMO8jIybPGcTO08+8Qc9pwZDbRaAxqpv62sDyT5fY0Wp9WUZeQYNwt3UOb+92Q13
+ FqL0bdQPVI6z+ogvwW4yMR1o9JtAUreTgYOfnZQNOOer7sj5PEdSGj3WhTNEYt9HE6s8gY2J
+ xiR0t+cuH2jpR4y2SXRQREB3wOsyY=;
+From: Felix Moessbauer <felix.moessbauer@siemens.com>
+To: cip-dev@lists.cip-project.org
+Cc: jan.kiszka@siemens.com,
+	Felix Moessbauer <felix.moessbauer@siemens.com>,
+	Sai Sathujoda <Sai.Sathujoda@toshiba-tsip.com>
+Subject: [isar-cip-core][PATCH 1/1] create audit log folder with tmpfiles.d
+Date: Fri,  1 Mar 2024 10:34:22 +0100
+Message-Id: <20240301093422.572373-1-felix.moessbauer@siemens.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="IVP7BW7PwBDl+IyY"
-Content-Disposition: inline
-In-Reply-To: <OS0PR01MB63881BCB411CF35BC6A90364925F2@OS0PR01MB6388.jpnprd01.prod.outlook.com>
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1321639:519-21489:flowmailer
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 01 Mar 2024 12:18:14 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15116
+ <cip-dev@lists.cip-project.org>; Fri, 01 Mar 2024 13:11:24 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15117
 
+The current packaging of auditd is incompatible with an empty /var, as
+the directory is created at install time. Until this is fixed upstream,
+we add a tmpfiles.d entry to create the directory if it does not exist.
 
---IVP7BW7PwBDl+IyY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: #101
+Reported-by: Sai Sathujoda <Sai.Sathujoda@toshiba-tsip.com>
+Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
+---
+ recipes-core/immutable-rootfs/files/immutable-rootfs.tmpfiles | 1 +
+ 1 file changed, 1 insertion(+)
 
-Hi!
+diff --git a/recipes-core/immutable-rootfs/files/immutable-rootfs.tmpfiles b/recipes-core/immutable-rootfs/files/immutable-rootfs.tmpfiles
+index d180bc5..2f7c338 100644
+--- a/recipes-core/immutable-rootfs/files/immutable-rootfs.tmpfiles
++++ b/recipes-core/immutable-rootfs/files/immutable-rootfs.tmpfiles
+@@ -1 +1,2 @@
+ L /var/lib/dpkg - - - - /usr/share/immutable-data/var/lib/dpkg
++d /var/log/audit 0700 root adm -
+-- 
+2.39.2
 
-> > Biju Das (5):
-> >   dt-bindings: timer: renesas,rz-mtu3: Fix overflow/underflow interrupt
-> >     names
-> >   dt-bindings: timer: renesas,rz-mtu3: Improve documentation
-> >   dt-bindings: timer: renesas,rz-mtu3: Document RZ/{G2UL,Five} SoCs
-> >   arm64: dts: renesas: r9a07g043: Add MTU3a node
-> >   arm64: dts: renesas: rzg2ul-smarc: Add support for enabling MTU3
-> >=20
-> >  .../bindings/timer/renesas,rz-mtu3.yaml       | 67 +++++++++---------
-> >  arch/arm64/boot/dts/renesas/r9a07g043.dtsi    | 70
-> > +++++++++++++++++++
-> >  .../boot/dts/renesas/r9a07g043u11-smarc.dts   | 11 +++
-> >  .../dts/renesas/rzg2ul-smarc-pinfunction.dtsi |  6 ++
-> > arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi | 13 ++++
-> >  5 files changed, 134 insertions(+), 33 deletions(-)
->=20
-> I reviewed this series, looks good to me. I can apply this series, if the=
-re are no other comment.
-> Test pipeline: https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipe=
-lines/1194909294
->=20
-> Reviewed-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-
-Thanks for review. Series looks ok to me, too, so I added your
-Reviewed-by: tag and pushed it.
-
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---IVP7BW7PwBDl+IyY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZeHHeAAKCRAw5/Bqldv6
-8nKJAJ9HwXcXDtcxzXaJTSserL/f4JDZOwCfR1cLSOE+X/6kJSY/PdcMIV1tOU0=
-=57Jd
------END PGP SIGNATURE-----
-
---IVP7BW7PwBDl+IyY--
 
