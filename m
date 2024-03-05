@@ -2,172 +2,94 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B41E6C54798
-	for <webhook@archiver.kernel.org>; Tue,  5 Mar 2024 06:30:22 +0000 (UTC)
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.84])
- by mx.groups.io with SMTP id smtpd.web11.16099.1709620218411919187
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B117C54E55
+	for <webhook@archiver.kernel.org>; Tue,  5 Mar 2024 09:07:43 +0000 (UTC)
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
+ by mx.groups.io with SMTP id smtpd.web11.18060.1709629657163427447
  for <cip-dev@lists.cip-project.org>;
- Mon, 04 Mar 2024 22:30:18 -0800
+ Tue, 05 Mar 2024 01:07:38 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=PP7qMpXc;
- spf=pass (domain: siemens.com, ip: 40.107.21.84, mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nE17xhwG75kSB6c4Rnz/Ow3Hcpuvav/jYzviW6KNcIqP63ldJne8546plXZveCQJSOFghHSuVn0P93RDNwASLjlrS1zpB6Gq0LN/7rWfNk/3JGTE1HA4S3LwZoQHo0Gk1DL5I0eZAiUw+ph1a8jvEJozKCAmM8Uo3NXE7QVdeb2/YH8YaC6Bw0Vi+NMYP47DequkP9euB+VWFs0JbWLqsQSfpUIsRgLPBvKte/f9CkXS6ttxW56MRgcowhynvDCpZLK9DIe70hFXjAfNNuuLmQpJgf5Y86ByAIHHoVsLi/7t7akXetTkvAHyQenWnPLqas7VsZriZXxrI/fyWkgpRg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wi9tZFyFArvcJFXhI+ufT7WoWBSkgGbh8mhACh6CENw=;
- b=H5XhZAQVITX6ijq2xYZMD8E7YxHt6ets0zi3Y4pvRQIdA/xIqn0OvX4CmbnnHHjOMa4s+ZoN9ex5MPd+Kw/U1B5ApFrwck8hFvDwx+sSPyx5Sksv6h9ooawQzqBtGBRYUYcxwUZVKtXfHz/UCPh6aqINGR27qqz5fKL8b/R4nLuoyHV2B5Y1cEGQ0yzodugLKg2MOYatuMOQk3GqWsPuuznqkveArF4xx3AK7G08vkBVTRQrPYACCU9deVcyBGVYikxe4ghoA2+D8Ml9CQ9rQ1cIiRxOD1ExnmM+GAXkzSF/RJCicqFomcMmQ5MY+cynRfbc7M8fyPe43tCQrUPUIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wi9tZFyFArvcJFXhI+ufT7WoWBSkgGbh8mhACh6CENw=;
- b=PP7qMpXcjlyUmkluWrnMsQT9+e3uVrbjk7W5LcpPUrFjaAhFdRcKY7RX3kQs6wTXj4CTRWyXd5sUgOErlWSofQg/oYC+QgBjfHxl8hHhvh/oBG38En4bU63KT3lXhsW9dz8DAq/Gqcv5SCh6tNXEkbww9jXGDPHoV5pyPHZ7YMMMBBTi9OL0G5K9iDABQIM6NZ8mkFqxz2U58AmzIUer20S925GofQtsA/nugBtLm3I3phN4ArV4mHk6Dn2gNCoX6BnjASn6D0wPFBNK3mcdqssZYIh28309iloywdBrlv4S8n+T57yS14igSIJTwZiPykyLNt0SYeFRD3rDDEsFOg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by PA4PR10MB5563.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:260::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7339.39; Tue, 5 Mar
- 2024 06:30:15 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8d16:7fbb:4964:94fe]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8d16:7fbb:4964:94fe%3]) with mapi id 15.20.7339.035; Tue, 5 Mar 2024
- 06:30:15 +0000
-Message-ID: <bb934b8e-63ad-422b-a9c5-8d6d69e54232@siemens.com>
-Date: Tue, 5 Mar 2024 07:30:13 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev][isar-cip-core][PATCH v4 0/4] Reduce difference to
- debian
-Content-Language: en-US
-To: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>,
- cip-dev@lists.cip-project.org
-References: <20240304105453.984881-1-Quirin.Gylstorff@siemens.com>
+ dkim=pass header.i=jan.kiszka@siemens.com header.s=fm1 header.b=qYxxwgTe;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-294854-20240305090733682a3b02db74ae308b-aiksgm@rts-flowmailer.siemens.com)
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 20240305090733682a3b02db74ae308b
+        for <cip-dev@lists.cip-project.org>;
+        Tue, 05 Mar 2024 10:07:34 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=jan.kiszka@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
+ bh=LHyEOvPE2nzeJqa+rBgagwDYqpnejA6BSX4VJFf1lHg=;
+ b=qYxxwgTejJgJSo6P0hI22bn+3E0aOJltTMsEX9PAqd8iB5Kte9ex4j2fgF/bsEE+aBuHWb
+ W8WA3TxOXrXQvgFEFQvqjy2uIqOBzGuNIiYMGY9Y6ZgzSYLUfva7Sj/O+RylkHe2ikU3zUCE
+ ljdPDLJ7M939Y62mP5iNS699e2J6c=;
 From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20240304105453.984881-1-Quirin.Gylstorff@siemens.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0274.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e6::18) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+To: cip-dev@lists.cip-project.org
+Subject: [isar-cip-core][PATCH 1/4] linux-cip: Update to 4.19.306-cip107-rt35 and 6.1.80-cip16[-rt9]
+Date: Tue,  5 Mar 2024 10:07:30 +0100
+Message-Id: <6453e697f873d88abf526eb96441516c4e076ca8.1709629653.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1709629653.git.jan.kiszka@siemens.com>
+References: <cover.1709629653.git.jan.kiszka@siemens.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PA4PR10MB5563:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7cdef54d-6075-4e23-dc17-08dc3cddb7ef
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	OGl79MYhnf44L2/akTveiXMQhbsAS3zQBMdojApzrvdTbgjwlJt58JFEoUd7Th11AcDhGgQUfJpfxV3hgOuB9GiRI+bTcgyJV79LphOM5cX7njnTLAwv4eDEeghDr0zsaAaYQj60cLScnt+hrQ8F71upUu/i2e+kLLuw7PeUoVzK2UfI2ZGUdCwL6jPb/3bQ6sJRSd3dZvO5StVECEZ5tAycqLkw2/gtk0ejswr5ktdrlSuU+0o4RimAl76K4zouI3+QUeBKZqK0P7gDfqBIQyIKqmiGTCy9HX3bqR+kPK1pEFhWYyrGPjVyO4dNriAEmPAUkGCZA3jVfLG2POJOND3OX+UeGsXC1+5srJcQBbBNlwLhTKO3RMWoFtZIEoktjdBpZxuk2rW9n+YNhcM3l1zBacB8P61U1uUptTzS2s8czHFtCU+dvHaszpkOv/lKL3/JKV01mNMqZfqUpRxz3PgGWr6Qr9sL6BfEIShofpFxso7C3stx7fTcOhPuN921Q6rJFyOHeyDYyQFGR4/enzYVefTmGxiPOVN3eO4DtK+PbhreZ2HqUJyJV5WUQlA4FtQOFtljxtGy80VCL8ALN3Ji9H3ZeH6JAH5gllm9dguD6c9VFEqorleMEKX4yFXrcSC2BKrE1df4eSIGIo0WdVhPw+CmmOfSE2980wNJOyo=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?SmQwZTd3WFJXVndFcnhxWFhHZE9JWUJ5TGJTSVFaMWlZcW1EQ0FlTm5NeGpH?=
- =?utf-8?B?TWh1MVV4QjVGZEI3TlRPdGtqN2hVY0F4TGE5UTJWdkdraXFPNnRyOVBGTlIz?=
- =?utf-8?B?UG02SDFMcnhuTFBlUnFuQXVGV1JGU0pCZGhkNkJaNXEvTkZlUTRJYnNobDNK?=
- =?utf-8?B?QmtMR0g2Rk96a29IVzdCaUgrWDdtRFNXSW12cVlxakFOSytpR1ZVY2dZOFJJ?=
- =?utf-8?B?NG9CZVdGbk1pOWdhTDIyeGFUb202cUNCZ1gxZDRMRmdzcU00SDlVZG5GZ0VD?=
- =?utf-8?B?T2VCZlMwc0QyV2ZqYS9mbHkwNjdxWDRRWitvZHJGTS85Z3NoK21xeUZ1UnVr?=
- =?utf-8?B?Y0h3QXpNeTE3THdiTTRCZnRMZitqd1BrdHM3dXRGMWk5WFB4dzRBT0x3NjFR?=
- =?utf-8?B?Zk43VHQzQ2ZJNkQzWXBDK2ZjbHk4WHUyQ2ZIejJTNitoaUZhcEMxZ3MrZmRq?=
- =?utf-8?B?dk5mZEdHaWNNUml3TTBkQ1hOMEpKbHpOMlBocm1nSnVkMWxtM0ZEZElKUUdy?=
- =?utf-8?B?c0hZYzZXOWE2VmU4Zk9HRGFQR2tjbkZtbkxKWFJQZ1JmUlZMWWh4ZUIvQU83?=
- =?utf-8?B?MnB1QW1tLzlkQnF5RkxuTlpvTTJXZzNZandPR0lRMzE4Q0NhVTV0eHplRlZV?=
- =?utf-8?B?RmFqQmQ0STF1ckN6RGdhSWQ5YzJCb2VRYnZxTi9heTd5WUZyNk9CZSs5WkJt?=
- =?utf-8?B?OTNZb05PV1V6dEQ3cFkvQnhhUEh5OEVRN1FvMUJ1ekg0SmMzWkZpa3M4dHRa?=
- =?utf-8?B?aHgyRkVmVzdJRkZiUmRHT0c4M0dZSWhKK0EwS2lWYytOVjl2aGhJRWcrYm1j?=
- =?utf-8?B?ajgvZkpid2g3cEowSWlPTE4xYytaT2orc0JITU56YVZ4em1lamJtUnFmSndR?=
- =?utf-8?B?MVZQUkp4dUc2YmhiQ1R3SU5ieU1pNlg4bmg5RmxpWVFSeDRCendyVGNRc09v?=
- =?utf-8?B?dWF2L25TbTFzVGRGSUErVUZEM2cwR3g4NDlDQTNKdVV0WmZ0Ni9mYlVaSlcw?=
- =?utf-8?B?b3hHdm10Sm10bmNOVnRsNno2U1Q0NytMblUvdkZKb2xGU0R0L2pvb3BRYlV3?=
- =?utf-8?B?aVhhb21XUjNjWkRDTjdpYkZMdnVVeGovVVJBSG1mek8wMXpBMUx3bzFRalR0?=
- =?utf-8?B?VE41K3dBTXMzNGhZaHROY1FRSjF1VC9janVJOFk0NWZWNktDQkhqTGlBcFlL?=
- =?utf-8?B?dkhGTlp2andXQ3prcDU0VWp5Sm10dHdwdlRTcVlxbjRLTTN3aUgyM1g4RTRF?=
- =?utf-8?B?WVY2Rm5STTZ5MFo2Z0ZXNUtZVmljbDE1Qjlxd3JoMnR6UUY0aEJDamRMeUFX?=
- =?utf-8?B?UEFJNXZ4ZjhnNlFrcEVMYWp4TWh0TWpyM29ROFc3bElscFF6N0xvVUZib2J2?=
- =?utf-8?B?amUvZFJEVnh2aGRXcGc2c2N5enhYdFNvZFdqOTZhNmhCUkJXc212clViV3c4?=
- =?utf-8?B?Q3o4MDR1aVJLQ0t3ejJ2TTFRb1lpK3FBMU41aUtTaS9MMUJVbldJV0lLb2pz?=
- =?utf-8?B?c3lwOVNaQnI0RlpoSFkxeno0NE1vVlNsMWhFTVZ2MkoydlFEOWxCNlNBQWRG?=
- =?utf-8?B?RVVnUTR2ZzR2OEhBeVdZU05lTmdJZVhtVXd1OVIvaHkrcnNJYnc5bnZiVzFU?=
- =?utf-8?B?Z3FCQWxEdUNUNXJtbWZyeHlLR1JYbTFPMEtHTTN4cEZLZzB4YVhrcjd5QnFR?=
- =?utf-8?B?N1JlT054dExFYldxR3hMMDdRSXNuZXJQVE13UE9SaUw2V3FQWE9BQVFiTHBK?=
- =?utf-8?B?MmEwME9KMk5DTlMvSUJkUFNqSGo0TnYwRmRSQnJ2UnpoaUxWQXF6cGc4NVlS?=
- =?utf-8?B?QmVISmdvbStrVVF3NWZaRGZQeHhsUTlDMGY0K3dma1hGaGtEU1QyQVBvTk5k?=
- =?utf-8?B?dEVISlY1NkE4UWtQdGY5TUZNNG8vMC9JWlpyaEllcndFeVNxY3hDMzROc0NB?=
- =?utf-8?B?S0hhbFRPajRjaVZHY0JVMWpvY2YzNkFwb0YyTm5TYm9XRDBWVVc4Y2pTaWVm?=
- =?utf-8?B?ck1Td0FaYXpjVGlCb25uakRQU21Eb2NFWFkvUE10TGsrRFFDVmtpTmFpZVBO?=
- =?utf-8?B?ei8xM2IwWkRLdVlDQ0J3OU53dlBhL0UwNk1wa3M1cUh5cCtNOFVaZmRpUVIx?=
- =?utf-8?B?TGkwRmdCRWNDVWgzWXVPdDlYdWJwOHdINTBYTWZic1dUWXA1K01rT1hTZnc5?=
- =?utf-8?B?SHc9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7cdef54d-6075-4e23-dc17-08dc3cddb7ef
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2024 06:30:15.1878
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3HLXVFZ7knc9SuvQpp1x4ZyFybl5uWC5NUqm9Sue6IkRWs5WjI0LZ4Sqmxt0TrNHE4IaCv3mLRwgMwKiY0AHcw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR10MB5563
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-294854:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 05 Mar 2024 06:30:22 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15207
+ <cip-dev@lists.cip-project.org>; Tue, 05 Mar 2024 09:07:43 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15209
 
-On 04.03.24 11:54, Quirin Gylstorff wrote:
-> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> 
-> This patchset introduces a new configuration package for SWUpdate:
->   - It adds /etc/hwrevision to allow removal of the
->     swupdate.pkg.nohwcompat build options
->   - It moves the swupdate.cfg from customizations to allow the reusage
->     in downstream layers
-> 
-> Changes v4:
->  - rebase onto next(35f5ab2)
->  - Add information for HW_COMPAT in production
-> 
-> Changes v3:
->  - add entry to README.swupdate.md
->  - correct hwrevision.tmpl
->  - rework commit message
-> 
-> Changes v2:
->  - drop Add patch to copy the server_wfx.lua to /usr/share as Debian
->    upstream is also enabling CONFIG_EMBEDDED_SURICATTA_LUA[1]
->  - Use RDEPENDS in customization
-> 
-> Quirin Gylstorff (4):
->   swupdate-config: move swupdate.cfg from customizations to own recipe
->   swupdate: set SWU_HW_COMPAT
->   swupdate.bbclass: weak default assignment for SWU_HW_COMPAT
->   doc/README.swupdate.md: Add documentation for hardware compatibility
-> 
->  classes/swupdate.bbclass                      |  2 +-
->  doc/README.swupdate.md                        | 14 ++++++++++
->  recipes-core/customizations/common.inc        |  8 ++----
->  recipes-core/images/swupdate.inc              |  2 +-
->  .../swupdate-config/files/hwrevision.tmpl     |  1 +
->  .../files/swupdate.cfg                        |  0
->  .../swupdate-config/swupdate-config_0.1.bb    | 27 +++++++++++++++++++
->  recipes-core/swupdate/swupdate.inc            |  3 ---
->  8 files changed, 46 insertions(+), 11 deletions(-)
->  create mode 100644 recipes-core/swupdate-config/files/hwrevision.tmpl
->  rename recipes-core/{customizations => swupdate-config}/files/swupdate.cfg (100%)
->  create mode 100644 recipes-core/swupdate-config/swupdate-config_0.1.bb
-> 
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Thanks, merged, fixing indention of patch 1.
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ ....299-cip105-rt34.bb => linux-cip-rt_4.19.306-cip107-rt35.bb} | 2 +-
+ ...-rt_6.1.75-cip14-rt8.bb => linux-cip-rt_6.1.80-cip16-rt9.bb} | 2 +-
+ .../{linux-cip_6.1.75-cip14.bb => linux-cip_6.1.80-cip16.bb}    | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+ rename recipes-kernel/linux/{linux-cip-rt_4.19.299-cip105-rt34.bb => linux-cip-rt_4.19.306-cip107-rt35.bb} (68%)
+ rename recipes-kernel/linux/{linux-cip-rt_6.1.75-cip14-rt8.bb => linux-cip-rt_6.1.80-cip16-rt9.bb} (59%)
+ rename recipes-kernel/linux/{linux-cip_6.1.75-cip14.bb => linux-cip_6.1.80-cip16.bb} (59%)
 
-Jan
+diff --git a/recipes-kernel/linux/linux-cip-rt_4.19.299-cip105-rt34.bb b/recipes-kernel/linux/linux-cip-rt_4.19.306-cip107-rt35.bb
+similarity index 68%
+rename from recipes-kernel/linux/linux-cip-rt_4.19.299-cip105-rt34.bb
+rename to recipes-kernel/linux/linux-cip-rt_4.19.306-cip107-rt35.bb
+index b5924013..cc95e0e0 100644
+--- a/recipes-kernel/linux/linux-cip-rt_4.19.299-cip105-rt34.bb
++++ b/recipes-kernel/linux/linux-cip-rt_4.19.306-cip107-rt35.bb
+@@ -11,4 +11,4 @@
+ 
+ require linux-cip-rt-common.inc
+ 
+-SRC_URI[sha256sum] = "cbbaf945457a045fa5adafcc9206ffab26139d5ea9f21fb2f57f33923aaa24e1"
++SRC_URI[sha256sum] = "91feddff1eeb7cefe7099d3c2c5333d14287080885e82d396420226421f85711"
+diff --git a/recipes-kernel/linux/linux-cip-rt_6.1.75-cip14-rt8.bb b/recipes-kernel/linux/linux-cip-rt_6.1.80-cip16-rt9.bb
+similarity index 59%
+rename from recipes-kernel/linux/linux-cip-rt_6.1.75-cip14-rt8.bb
+rename to recipes-kernel/linux/linux-cip-rt_6.1.80-cip16-rt9.bb
+index fd451452..3b690741 100644
+--- a/recipes-kernel/linux/linux-cip-rt_6.1.75-cip14-rt8.bb
++++ b/recipes-kernel/linux/linux-cip-rt_6.1.80-cip16-rt9.bb
+@@ -7,4 +7,4 @@
+ 
+ require linux-cip-common.inc
+ 
+-SRC_URI[sha256sum] = "5b03796de85dd71b0fc1c67ee0fb5071dae10f22c85ca7c502b5b21f141d16c3"
++SRC_URI[sha256sum] = "384369dbdd689831e69899c8c584feef6677382c1448a2e9195523c0594ba761"
+diff --git a/recipes-kernel/linux/linux-cip_6.1.75-cip14.bb b/recipes-kernel/linux/linux-cip_6.1.80-cip16.bb
+similarity index 59%
+rename from recipes-kernel/linux/linux-cip_6.1.75-cip14.bb
+rename to recipes-kernel/linux/linux-cip_6.1.80-cip16.bb
+index 4fdc6069..10058ac2 100644
+--- a/recipes-kernel/linux/linux-cip_6.1.75-cip14.bb
++++ b/recipes-kernel/linux/linux-cip_6.1.80-cip16.bb
+@@ -7,4 +7,4 @@
+ 
+ require linux-cip-common.inc
+ 
+-SRC_URI[sha256sum] = "a820699d7342d8ad8a8f580da90e03ee4db37e9d5dac4cf8d14015ab3bae5f62"
++SRC_URI[sha256sum] = "70c9e7ea89951450885f33f8056f484e1197ec39ebe2b6d49fb9357bec4247a8"
 -- 
-Siemens AG, Technology
-Linux Expert Center
+2.35.3
 
 
