@@ -2,140 +2,155 @@ Return-Path: <adithya.balakumar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 553DAC54E49
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61647C48BF6
 	for <webhook@archiver.kernel.org>; Thu,  7 Mar 2024 07:46:08 +0000 (UTC)
 Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.132])
- by mx.groups.io with SMTP id smtpd.web10.18099.1709797557578798239
+ by mx.groups.io with SMTP id smtpd.web10.18100.1709797557826109324
  for <cip-dev@lists.cip-project.org>;
- Wed, 06 Mar 2024 23:45:57 -0800
+ Wed, 06 Mar 2024 23:45:58 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.132, mailfrom: adithya.balakumar@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1121) id 4277juGx829453; Thu, 7 Mar 2024 16:45:56 +0900
-X-Iguazu-Qid: 2rWg6j0N7RLe8F3pah
-X-Iguazu-QSIG: v=2; s=0; t=1709797555; q=2rWg6j0N7RLe8F3pah; m=PAYRmkbvZc3K6iwzgfdhlyLYm3e58hFuPN6QzykMZ4M=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1121) id 4277js5I996572
+Received: by mo-csw.securemx.jp (mx-mo-csw1121) id 4277ju2a829478; Thu, 7 Mar 2024 16:45:56 +0900
+X-Iguazu-Qid: 2rWgQ8FBVOzxzEuOOG
+X-Iguazu-QSIG: v=2; s=0; t=1709797556; q=2rWgQ8FBVOzxzEuOOG; m=YjPJFeuQBsRfmA/oU26LR3ZMAawmO0Uqnvw+1nhDWHk=
+Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
+	by relay.securemx.jp (mx-mr1123) id 4277jsYU1092844
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
 	Thu, 7 Mar 2024 16:45:55 +0900
 From: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
 To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
 Cc: shivanand.kunijadar@toshiba-tsip.com, sai.sathujoda@toshiba-tsip.com,
         dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
-Subject: [isar-cip-core][RFC v1 5/6] swupdate.bbclass: Generate swu for delta updates
-Date: Thu,  7 Mar 2024 13:16:11 +0530
+Subject: [isar-cip-core][RFC v1 6/6] doc/README.swupdate.md: Update steps to test Delta software Update
+Date: Thu,  7 Mar 2024 13:16:12 +0530
 X-TSB-HOP2: ON
-Message-Id: <20240307074612.1996609-6-Adithya.Balakumar@toshiba-tsip.com>
+Message-Id: <20240307074612.1996609-7-Adithya.Balakumar@toshiba-tsip.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240307074612.1996609-1-Adithya.Balakumar@toshiba-tsip.com>
 References: <20240307074612.1996609-1-Adithya.Balakumar@toshiba-tsip.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 07 Mar 2024 07:45:48.0806 (UTC) FILETIME=[78969A60:01DA7063]
+X-OriginalArrivalTime: 07 Mar 2024 07:45:48.0884 (UTC) FILETIME=[78A28140:01DA7063]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 07 Mar 2024 07:46:08 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15257
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15258
 
-This allows the creation of a swu file for delta update. The swu file
-for delta update is only created when delta-update.yml file is included
-at build time.
+This change includes steps to verify Delta Software Update with
+rdiff_image and delta handler
 
 Signed-off-by: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
 ---
- classes/swupdate.bbclass | 35 +++++++++++++++++++++++++++++++++--
- 1 file changed, 33 insertions(+), 2 deletions(-)
+ doc/README.swupdate.md | 95 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 95 insertions(+)
 
-diff --git a/classes/swupdate.bbclass b/classes/swupdate.bbclass
-index 2c69892..2964024 100644
---- a/classes/swupdate.bbclass
-+++ b/classes/swupdate.bbclass
-@@ -26,10 +26,13 @@ SWU_EBG_UPDATE ?= ""
- SWU_EFI_BOOT_DEVICE ?= "/dev/disk/by-uuid/4321-DCBA"
- SWU_BOOTLOADER ??= "ebg"
- SWU_DESCRIPITION_FILE_BOOTLOADER ??= "${SWU_DESCRIPTION_FILE}-${SWU_BOOTLOADER}"
-+SWU_DESCRIPITION_FILE_DELTA_UPDATE ??= "${SWU_DESCRIPTION_FILE}-delta"
-+SWU_DELTA_UPDATE_ARTIFACT = "${SWU_ROOTFS_NAME}.delta_update${@get_swu_compression_type(d)}"
-+SWU_DELTA_UPDATE_ARTIFACT_TYPE = "delta_update${@get_swu_compression_type(d)}"
+diff --git a/doc/README.swupdate.md b/doc/README.swupdate.md
+index cf1bcfb..4003243 100644
+--- a/doc/README.swupdate.md
++++ b/doc/README.swupdate.md
+@@ -324,6 +324,101 @@ user variables:
  
- SWU_IMAGE_FILE ?= "${IMAGE_FULLNAME}"
- SWU_DESCRIPTION_FILE ?= "sw-description"
--SWU_ADDITIONAL_FILES ?= "linux.efi ${SWU_ROOTFS_PARTITION_NAME}"
-+SWU_ADDITIONAL_FILES ?= "linux.efi ${SWU_ROOTFS_PARTITION_NAME} ${SWU_DELTA_UPDATE_ARTIFACT}"
- SWU_SIGNED ??= ""
- SWU_SIGNATURE_EXT ?= "sig"
- SWU_SIGNATURE_TYPE ?= "cms"
-@@ -37,6 +40,7 @@ SWU_SIGNATURE_TYPE ?= "cms"
- SWU_BUILDCHROOT_IMAGE_FILE ?= "${@os.path.basename(d.getVar('SWU_IMAGE_FILE'))}"
  
- IMAGE_TYPEDEP:swu = "${SWU_ROOTFS_TYPE}${@get_swu_compression_type(d)}"
-+IMAGE_TYPEDEP:swu += "${@ '${SWU_DELTA_UPDATE_ARTIFACT_TYPE}' if d.getVar('DELTA_UPDATE_TYPE') else ''}"
- IMAGER_BUILD_DEPS:swu += "${@'swupdate-certificates-key' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
- IMAGER_INSTALL:swu += "cpio ${@'openssl swupdate-certificates-key' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
- IMAGE_INSTALL += "${@'swupdate-certificates' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
-@@ -46,6 +50,7 @@ IMAGE_SRC_URI:swu = "file://${SWU_DESCRIPTION_FILE}.tmpl"
- IMAGE_SRC_URI:swu += "file://${SWU_DESCRIPITION_FILE_BOOTLOADER}.tmpl"
- IMAGE_TEMPLATE_FILES:swu = "${SWU_DESCRIPTION_FILE}.tmpl"
- IMAGE_TEMPLATE_FILES:swu += "${SWU_DESCRIPITION_FILE_BOOTLOADER}.tmpl"
-+IMAGE_TEMPLATE_FILES:delta_update += "${SWU_DESCRIPITION_FILE_DELTA_UPDATE}.tmpl"
- IMAGE_TEMPLATE_VARS:swu = " \
-     SWU_ROOTFS_PARTITION_NAME \
-     TARGET_IMAGE_UUID \
-@@ -58,6 +63,8 @@ IMAGE_TEMPLATE_VARS:swu = " \
-     SWU_FILE_NODES \
-     SWU_BOOTLOADER_FILE_NODE \
-     SWU_SCRIPTS_NODE \
-+    SWU_DELTA_UPDATE_ARTIFACT \
-+    SWU_DELTA_UPDATE_ADDITIONAL_PROPERTIES \
-     "
- 
- # TARGET_IMAGE_UUID needs to be generated before completing the template
-@@ -136,6 +143,22 @@ python add_scripts(){
-     d.appendVar('SWU_SCRIPTS_NODE', swu_scripts_node)
- }
- 
-+SWU_EXTEND_SW_DESCRIPTION += "add_swu_delta_update_properties"
-+python add_swu_delta_update_properties() {
-+    delta_type = d.getVar('DELTA_UPDATE_TYPE')
-+    swu_delta_update_properties = ""
-+    if delta_type == "rdiff":
-+        swu_delta_update_properties =  'chainhandler = "rdiff_image";'
-+    elif delta_type == "zchunk":
-+        zck_url = d.getVar('DELTA_ZCK_URL')
-+        swu_delta_update_properties = f"""
-+                        chainhandler = "delta";
-+                        url = "{zck_url}";
-+                        zckloglevel = "error";
-+        """
-+    d.setVar('SWU_DELTA_UPDATE_ADDITIONAL_PROPERTIES', swu_delta_update_properties)
-+}
+ ```
++# Building and testing the CIP Core image for Delta Software Update
 +
- # convert between swupdate compressor name and imagetype extension
- def get_swu_compression_type(d):
-     swu_ct = d.getVar('SWU_COMPRESSION_TYPE')
-@@ -154,13 +177,21 @@ FILESEXTRAPATHS:append = ":${LAYERDIR_cip-core}/recipes-core/images/swu"
- 
- do_image_swu[depends] += "${PN}:do_transform_template"
- do_image_swu[stamp-extra-info] = "${DISTRO}-${MACHINE}"
--do_image_swu[cleandirs] += "${WORKDIR}/swu ${WORKDIR}/swu-${SWU_BOOTLOADER}"
-+do_image_swu[cleandirs] += "${WORKDIR}/swu ${WORKDIR}/swu-${SWU_BOOTLOADER} ${WORKDIR}/swu-delta"
- IMAGE_CMD:swu() {
-     rm -f '${DEPLOY_DIR_IMAGE}/${SWU_IMAGE_FILE}'*.swu
-+    if [ -z "${DELTA_UPDATE_TYPE}" ]; then
-+        rm -rf ${WORKDIR}/swu-delta
-+    fi
++Set up `kas-container` as described in the [top-level README](../README.md), and then proceed with the following steps.
 +
-     cp '${WORKDIR}/${SWU_DESCRIPTION_FILE}' '${WORKDIR}/swu/${SWU_DESCRIPTION_FILE}'
-     if [ -f '${WORKDIR}/${SWU_DESCRIPITION_FILE_BOOTLOADER}' ]; then
-         cp '${WORKDIR}/${SWU_DESCRIPITION_FILE_BOOTLOADER}' '${WORKDIR}/swu-${SWU_BOOTLOADER}/${SWU_DESCRIPTION_FILE}'
-     fi
-+    if [ -f '${WORKDIR}/${SWU_DESCRIPITION_FILE_DELTA_UPDATE}' ]; then
-+        cp '${WORKDIR}/${SWU_DESCRIPITION_FILE_DELTA_UPDATE}' '${WORKDIR}/swu-delta/${SWU_DESCRIPTION_FILE}'
-+    fi
++First build an image using the following command:
++```
++host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/rt.yml
++```
++Currently, Delta Software Update is supported only for root file system.
++Now, to verify a delta update, build an image with some modifications to the root file system (ex: Add additional packages).
++For this example, add the packages vim and nano (since the packages are not already included in the base image) to the image. This can be done by modifying the `recipes-core/images/cip-core-image.bb` file as shown below.
++```
++diff --git a/recipes-core/images/cip-core-image.bb b/recipes-core/images/cip-core-image.bb
++index 0ec7220..f61ce23 100644
++--- a/recipes-core/images/cip-core-image.bb
+++++ b/recipes-core/images/cip-core-image.bb
++@@ -14,6 +14,7 @@ inherit image
++ ISAR_RELEASE_CMD = "git -C ${LAYERDIR_cip-core} describe --tags --dirty --always --match 'v[0-9].[0-9]*'"
++ DESCRIPTION = "CIP Core image"
 +
+++IMAGE_PREINSTALL += "vim nano"
++ IMAGE_INSTALL += "customizations"
++
++ CIP_IMAGE_OPTIONS ?= ""
++```
++## Delta Software Update using rdiff_image handler
++
++Creating a delta update file for rdiff_image handler requires a reference image (against which the delta is computed). In this case, the image built in the previous section can be used as the reference image.
++Copy the reference image to the project directory. And set the variable `DELTA_RDIFF_REF_IMAGE` with the path to the reference image and set the variable `DELTA_UPDATE_TYPE` to `rdiff`.
++
++```
++header:
++  version: 14
++
++local_conf_header:
++  delta-update: |
++    IMAGE_CLASSES:append = " delta_update"
++    DELTA_UPDATE_TYPE = "rdiff"
++    DELTA_ZCK_URL = ""
++    DELTA_RDIFF_REF_IMAGE = "path/to/image/from/project/root/directory.wic"
++
++```
++Run the below command to build the image with the modification as shown above and with the root file system modification as described in previous section.
++```
++KAS_BUILD_DIR=image2 ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/delta-update.yml
++```
++Run the below command to start first image
++```
++host$ DISTRO_RELEASE=bookworm SWUPDATE_BOOT=y ./start-qemu.sh amd64
++```
++Copy `cip-core-image-cip-core-bookworm-qemu-amd64-delta.swu` file from `image2/tmp/deploy/images/qemu-amd64/` folder into the running system:
++```
++host$ cd image2/tmp/deploy/images/qemu-amd64/
++host$ scp -P 22222 ./cip-core-image-cip-core-bookworm-qemu-amd64-delta.swu root@localhost:
++```
++
++### Delta Software Update Verification
++
++Follow the steps mentioned in the section [SWUpdate verification](#swupdate-verification) for verification.
++
++Since our target was to update the root file system by adding a few packages (vim and nano in this example), Check if the packages are available after the update by running either the `vim` command or `nano` command.
++
++## Delta Software Update using delta handler
++
++For Delta update with zchunk, set the variable `DELTA_ZCK_URL` with the URL of the zck file that is hosted in a http server and set the variable `DELTA_UPDATE_TYPE` to `zchunk`.
++```
++header:
++  version: 14
++
++local_conf_header:
++  delta-update: |
++    IMAGE_CLASSES:append = " delta_update"
++    DELTA_UPDATE_TYPE = "zchunk"
++    DELTA_ZCK_URL = "<zck file url>"
++    DELTA_RDIFF_REF_IMAGE = ""
++
++```
++Run the below command to build the image with the modification as shown above and with the root file system modification as described in previous section.
++```
++KAS_BUILD_DIR=image2 ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/delta-update.yml
++```
++Run the below command to start first image
++```
++host$ DISTRO_RELEASE=bookworm SWUPDATE_BOOT=y ./start-qemu.sh amd64
++```
++Copy `cip-core-image-cip-core-bookworm-qemu-amd64-delta.swu` file from `image2/tmp/deploy/images/qemu-amd64/` folder into the running system:
++```
++host$ cd image2/tmp/deploy/images/qemu-amd64/
++host$ scp -P 22222 ./cip-core-image-cip-core-bookworm-qemu-amd64-delta.swu root@localhost:
++```
++The `cip-core-image-cip-core-bookworm-qemu-amd64.zck` file must be hosted in a server.
++
++### Delta Software Update Verification
++
++Follow the steps mentioned in the section [Delta Software Update Verification](#delta-software-update-verification) for verification.
  
-     for swu_file in "${WORKDIR}"/swu*; do
-         swu_file_base=$(basename $swu_file)
+ # Building and testing the CIP Core image for BBB
+ 
 -- 
 2.39.2
 
