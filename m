@@ -1,65 +1,95 @@
-Return-Path: <arisu.tachibana@miraclelinux.com>
+Return-Path: <adithya.balakumar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 813A7C48BF6
-	for <webhook@archiver.kernel.org>; Thu,  7 Mar 2024 05:05:27 +0000 (UTC)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
- by mx.groups.io with SMTP id smtpd.web11.16392.1709787923078809257
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DEDFC54E55
+	for <webhook@archiver.kernel.org>; Thu,  7 Mar 2024 07:45:58 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.135])
+ by mx.groups.io with SMTP id smtpd.web11.18217.1709797555596097576
  for <cip-dev@lists.cip-project.org>;
- Wed, 06 Mar 2024 21:05:23 -0800
+ Wed, 06 Mar 2024 23:45:56 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=di+eopW8;
- spf=pass (domain: miraclelinux.com, ip: 209.85.167.41, mailfrom: arisu.tachibana@miraclelinux.com)
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-513298d6859so428907e87.3
-        for <cip-dev@lists.cip-project.org>; Wed, 06 Mar 2024 21:05:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1709787921; x=1710392721; darn=lists.cip-project.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Ah7IZjU1NIkjkJ/3bSBfPe6X+g5STjodG1biY7bTIF4=;
-        b=di+eopW8xHmi+coXvcOP3pVyCTdiqTlnODhCob0k/HIZMDXMV5I4RNK/DiA/j8BZgu
-         DSpPxENUUYez1i8PP5XPMt0RwlSHPr0eSfiQRvQtm5m6iOzR1xdFgJKmzbRbX0VQ3db5
-         x2guiKt0sSqSnNT16fWc6hp21cO9WZh2IUUva+AVfzCw8p//J1L/2ZS4FbOQ72nCgnJ2
-         oJ//+ySoA+jmvviV8/I5iKUyWbIbvaJxjqWw74gdjiw7sRfPyx6YjHVwC/h/qjd5rCAU
-         SuZrBKUVdh+7PnzfzkQyxqg7DT6MR4KfOHVITJvSl0lLden4LVJGSEPfPf0Ymp39SClF
-         +vIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709787921; x=1710392721;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ah7IZjU1NIkjkJ/3bSBfPe6X+g5STjodG1biY7bTIF4=;
-        b=ShY0WtUDFhxCcVrKcR3nYmTYOl8ECsBM47c+nz6di3eANnTgriuC+ISbvxlt8jOMKZ
-         xP3fBgedz/GWlg7fqD1LzppAn/Ry0teotq6JUMHqcA4fju213oKBfIYHY3XaPmh46lnG
-         MDYTNj+WI8uzlOZyyevHN5hjNgBVkgWiLaUVH+Q7mvrLPVk/x0oRN3CQUdcKjMOmPJG3
-         KmXJlsAU802aPTkbBUyQhw1xjGlbKS1bv0Q05Iu23d3ZzeHGG2MCt6OTZkwbgLdqki07
-         tjhfpn/I8B9gmeJOk3HPGCHFTmcsEsmFNNpUi0Uwcb1mxHqYB/OpvwsJolGaYRdCqT4p
-         3PWQ==
-X-Gm-Message-State: AOJu0Yzsqzgejq23CuXGwEQMqpKL1rf0s81SlF9/9cA4pplSz7/7hfF8
-	m5a8l0FRNTCEKUl5IJZir5MvYTehAzVAmSzEDe98T1SkGRpSIuhRiOkgkdy5Icnr71sbJIdq+wr
-	OkbRhuegar9emnIHl6yPKRRMe89OO82bxCgB1c7Pd8ecFnKZ8Pg==
-X-Google-Smtp-Source: AGHT+IELZslNqbI7yerIFHUpsOClXoPDCYRX/nQBlFciqFEeM1YKccw+5m/NXhhpEtodWDyT11dZn4HVioAQrzNu8Dk=
-X-Received: by 2002:ac2:43ba:0:b0:513:5957:13ed with SMTP id
- t26-20020ac243ba000000b00513595713edmr556681lfl.30.1709787920358; Wed, 06 Mar
- 2024 21:05:20 -0800 (PST)
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.135, mailfrom: adithya.balakumar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1801) id 4277jrnJ2670744; Thu, 7 Mar 2024 16:45:53 +0900
+X-Iguazu-Qid: 2yAawbgn0wgfftke5F
+X-Iguazu-QSIG: v=2; s=0; t=1709797552; q=2yAawbgn0wgfftke5F; m=v1aFdulxRbpHqMWFKfRBERZwGrZOmTOaOxMh9F+ezyw=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1800) id 4277jpXR1313310
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 7 Mar 2024 16:45:52 +0900
+From: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Cc: shivanand.kunijadar@toshiba-tsip.com, sai.sathujoda@toshiba-tsip.com,
+        dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
+Subject: [isar-cip-core][RFC v1 1/6] conf: Use bookworm backports for enabling delta handler in swupdate
+Date: Thu,  7 Mar 2024 13:16:07 +0530
+X-TSB-HOP2: ON
+Message-Id: <20240307074612.1996609-2-Adithya.Balakumar@toshiba-tsip.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240307074612.1996609-1-Adithya.Balakumar@toshiba-tsip.com>
+References: <20240307074612.1996609-1-Adithya.Balakumar@toshiba-tsip.com>
 MIME-Version: 1.0
-From: Arisu Tachibana <arisu.tachibana@miraclelinux.com>
-Date: Thu, 7 Mar 2024 14:04:43 +0900
-Message-ID: <CANgtXuM6+kCFaU2hhHrPVc2vKJVeWXb3i0nNC2pWdOp_gYZgbw@mail.gmail.com>
-Subject: IRC meeting
-To: cip-dev@lists.cip-project.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 07 Mar 2024 07:45:48.0462 (UTC) FILETIME=[78621CE0:01DA7063]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 07 Mar 2024 05:05:27 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15251
+ <cip-dev@lists.cip-project.org>; Thu, 07 Mar 2024 07:45:58 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15252
 
-Hello
+Delta handler requires zchunk > 1.3, but the required version is only
+available in bookworm backports
 
-for personal reasons,
-I cannot attend today IRC meeting.
+Signed-off-by: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
+---
+ conf/distro/cip-core-bookworm.conf                   |  3 +++
+ conf/distro/debian-bookworm-backports.list           |  1 +
+ .../preferences.swupdate-bookworm-backports.conf     | 12 ++++++++++++
+ 3 files changed, 16 insertions(+)
+ create mode 100644 conf/distro/debian-bookworm-backports.list
+ create mode 100644 conf/distro/preferences.swupdate-bookworm-backports.conf
 
-Thanks,
-Arisu
+diff --git a/conf/distro/cip-core-bookworm.conf b/conf/distro/cip-core-bookworm.conf
+index 9bcf559..e0a4f7f 100644
+--- a/conf/distro/cip-core-bookworm.conf
++++ b/conf/distro/cip-core-bookworm.conf
+@@ -12,6 +12,9 @@
+ require conf/distro/debian-bookworm.conf
+ require cip-core-common.inc
+ 
++DISTRO_APT_SOURCES:append:swupdate = " conf/distro/debian-bookworm-backports.list"
++DISTRO_APT_PREFERENCES:append:swupdate = " conf/distro/preferences.swupdate-bookworm-backports.conf"
++
+ PREFERRED_VERSION_swupdate ?= "2023.05%"
+ PREFERRED_VERSION_linux-cip ?= "6.1.%"
+ PREFERRED_VERSION_linux-cip-rt ?= "6.1.%"
+diff --git a/conf/distro/debian-bookworm-backports.list b/conf/distro/debian-bookworm-backports.list
+new file mode 100644
+index 0000000..c4873b4
+--- /dev/null
++++ b/conf/distro/debian-bookworm-backports.list
+@@ -0,0 +1 @@
++deb http://deb.debian.org/debian bookworm-backports main contrib non-free
+diff --git a/conf/distro/preferences.swupdate-bookworm-backports.conf b/conf/distro/preferences.swupdate-bookworm-backports.conf
+new file mode 100644
+index 0000000..b6efffc
+--- /dev/null
++++ b/conf/distro/preferences.swupdate-bookworm-backports.conf
+@@ -0,0 +1,12 @@
++Package: libzck-dev
++Pin: release n=bookworm-backports
++Pin-Priority: 801
++
++Package: libzck1
++Pin: release n=bookworm-backports
++Pin-Priority: 801
++
++Package: zchunk
++Pin: release n=bookworm-backports
++Pin-Priority: 801
++
+-- 
+2.39.2
+
+
 
