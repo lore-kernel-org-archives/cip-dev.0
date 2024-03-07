@@ -1,151 +1,125 @@
-Return-Path: <chris.paterson2@renesas.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25173C54E49
-	for <webhook@archiver.kernel.org>; Thu,  7 Mar 2024 09:41:59 +0000 (UTC)
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (JPN01-TYC-obe.outbound.protection.outlook.com [40.107.114.73])
- by mx.groups.io with SMTP id smtpd.web10.19609.1709804515231852474
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BB90C54E49
+	for <webhook@archiver.kernel.org>; Thu,  7 Mar 2024 14:02:50 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web11.23871.1709820161513700216
  for <cip-dev@lists.cip-project.org>;
- Thu, 07 Mar 2024 01:41:55 -0800
+ Thu, 07 Mar 2024 06:02:42 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@renesas.com header.s=selector1 header.b=iWqM8OCD;
- spf=pass (domain: renesas.com, ip: 40.107.114.73, mailfrom: chris.paterson2@renesas.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QsGKXZm3pOfkUm8njFv8XuoEEAb4r1IJqUic9jQY9t4SjYR/A19A3PseFOabsGrY+og3vom0ggbA048MrIaDQrUq0uZrkWqkB+u9OnrIKVujevHaaW2W9xagU3Rr8zbzpSYWY5M3nUQX3hNTmnOFb7O9p6UKXxlod2rfx+P+pwG/Q3uNnawqOpiHHI47N8byE6yYt/EqVE+QVmRqg7YjPh3FzdcnFYB/MNnaryUxKou0p74eNi4dvWFtSN+mX3IRjFhDNlU64rtOYyXxkSwNJ4ETw6Dj9FkP6lZ87jiYC5gWCXQekip7S+98tMG8OF0M91m5HaKviH7X4abzRfHFXg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EWc4XsQSG/Hlfiz36tM2+ZT/6fekYUpNaAYPGN7c6JU=;
- b=ex+ZmvYHg1zAIbjiXvlrHI3U8gC+FcUKDMMkf2H9/LZS6V8TWDk4qy1lsqxrfTKPptxm054mu6b32oiLvnRLuU/b3C2a9zmU8k2tYGB0heR6sJ+HpyTLc456N2WKTb7Lcl9iWlNfFXzJONLlZBOnBUuDaR9rzDZVjgmPQWU31lT6FFUqHnpQm02jNQTyw1zK6eGfUFQ9WLupSzaw1sA0ikvzXXo3P2h8BasJy1Yq6v8NuXWvKLaCWsDiftHZgwwzX5SoiDO44qfq4uS/QEDi6CrrsQ3+LQvetO4LrnGv/f9CEXidZJo+oklw9l3fTmfRqHQi+2GjnRrEVWzHYIPHKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EWc4XsQSG/Hlfiz36tM2+ZT/6fekYUpNaAYPGN7c6JU=;
- b=iWqM8OCDWmeWwGaAOxij5qA9YQWtU+Yh41Md9GLdqXADm2Tus4QUahOLH2BSTvq1WnHJzm23Urw37Ye5LT2hzgpI3IJPCTVyucKOoXxwseTiS3RoCJYCzNLtmdS8XKMx8Y3n/sgQ05Bx6dU9xJCLqu6SLiD1j8O5bociIY3Q8GI=
-Received: from TYWPR01MB11862.jpnprd01.prod.outlook.com (2603:1096:400:3fc::6)
- by TYYPR01MB6841.jpnprd01.prod.outlook.com (2603:1096:400:d0::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7362.26; Thu, 7 Mar
- 2024 09:41:51 +0000
-Received: from TYWPR01MB11862.jpnprd01.prod.outlook.com
- ([fe80::ec68:1357:d0c9:ad1a]) by TYWPR01MB11862.jpnprd01.prod.outlook.com
- ([fe80::ec68:1357:d0c9:ad1a%3]) with mapi id 15.20.7362.019; Thu, 7 Mar 2024
- 09:41:51 +0000
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-To: Pavel Machek <pavel@denx.de>, "jan.kiszka@siemens.com"
-	<jan.kiszka@siemens.com>, "cip-dev@lists.cip-project.org"
-	<cip-dev@lists.cip-project.org>
-Subject: RE: [ANNOUNCE] 6.1.80-cip16-rt9 (rt26)
-Thread-Topic: [ANNOUNCE] 6.1.80-cip16-rt9 (rt26)
-Thread-Index: AQHabZ460MDXeuRbBEenStzNrlJyjrEsCOww
-Date: Thu, 7 Mar 2024 09:41:50 +0000
-Message-ID: 
- <TYWPR01MB118622D55E6FDB034EFF8C661B7202@TYWPR01MB11862.jpnprd01.prod.outlook.com>
-References: <ZeTKvaCqyhOOkjWg@duo.ucw.cz>
-In-Reply-To: <ZeTKvaCqyhOOkjWg@duo.ucw.cz>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYWPR01MB11862:EE_|TYYPR01MB6841:EE_
-x-ms-office365-filtering-correlation-id: bd04d00c-c456-41e0-d60b-08dc3e8ad0e8
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- XInYVsMSZtdkVF562Q3gd9AXH1/2kwNFV+z7zcoPIzqOVjSfq1OGculZzKo0uLATryJ6URUoDXbd6RDDMqDcdS6yDCFsyeRE9wiEnmTHR7h5XHhrW6ijAP7dVFX/L/M2YMC4MmJL04vRlh52Mo0STZip92nLP38CXjqYri3Kw/Dw3jumBzVKxqoRAtMbA5XSClGPCjfIg5OS3tsJZc8u0N5e+c8SbxNhienEhXgwVSYL1vp1dIqMosspAUhxrC7sJYkPmqYujj/Ce6yWY3cvcFM21vTW4WQWtZWMmNSLy75vBz2m6qYtNVUti+4s2iXEyv++Dzsy0RZH714KoHmcRpJ6iIQEiTy+xTxOBPgLd7F3bTVnRf/mNW9rD00kSbnQPY13lFeKQAjpBEOQrwF6NLYRpMvJFjImMUXBXtXn+TRc2WjgVO5ydd1r/CtfS9kUGq3H480IJZfIPcgiTX4wsPHR7+LNGAm9FcN9Q0wECfiIQwANCEZUOU0obGwN4+M6lAjlIQt8B1znTbfBW5Zc7RlgVI97dRtelI02pt5v8TBIAxJ1EG+1orimHnF1YF7uvtneuDCW04wY1Lh+x8VKwNBhb0ZoGhcunJidF7+sLLdr46iATVVpS1Hq49O5+C5a++eKGUfIVZ88rGNElrSFrm0ddt2fPspQYc/pwPUSLo4=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB11862.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?Windows-1252?Q?NNZeCEwrMt+nIWlNtNfF1zHMsrQSBJ0EglhQn536ISrTY+gZPvsnK3iE?=
- =?Windows-1252?Q?LFqZRrnj+Hg4C6xu8Zd7w/6avmoawf+eKgTvJfXxsBXvUMdkniTUQJvD?=
- =?Windows-1252?Q?6myZ5deweLaSPOvh58Wf7TsfBNxKfu2moPCPYBQdnov0YEEOB+X5Ud/X?=
- =?Windows-1252?Q?ZGGTMVyaReCUR+St12AfhPUMTXHCEkbySdYYA/m4gaoKowz1MKLL04xX?=
- =?Windows-1252?Q?nfIpgZa+sCx1XQxmaHmE178XKeqXwiOjNGCLlmCm6XqtUX2JAyJ5+HcY?=
- =?Windows-1252?Q?bLAwGsd+haPtw61wJPrkfzDDrY4MP8uy0REbfvcz3BksnZa9ixffd0xp?=
- =?Windows-1252?Q?C6uZzxjJreW/UVeE5xoir/7wwDp3WEY42R5pcOVQnBEsbNERFyQlhxfX?=
- =?Windows-1252?Q?cjzczQQtX7QIQ7z6NLbjW5McqwSTeMCQabwBveTcRFRNN+UTCdxJ34Zc?=
- =?Windows-1252?Q?sR5N238bxyQPQ4kbT2hCiJ9MSiaZfNArrtNxpLzBoacuVqSTY7X/ipOU?=
- =?Windows-1252?Q?vEAOyLW9C0Cj/ImGU47f2uhLkkfkffJw83dutOp0b4AalnJogagzBbpG?=
- =?Windows-1252?Q?FvPGViopvsTRtto7MTiCiVzOmXEpaLEpfmTCki5N2Sm9UeMW7cXczUP7?=
- =?Windows-1252?Q?84eIBcVa2MJjVpccO/nhafEJJhGjxRNbEDsxoutZ7EH5G9BBukg44mox?=
- =?Windows-1252?Q?nBt8iI9tLqOwpmhvgxUjzrHpUdtr5FF6x7lBo/Egtg+WTJs3U2Y80CAj?=
- =?Windows-1252?Q?JqtxweBtaeZ302ns+BXqP3tdFYmOK80DfJKlAmqhXRvpQyfoqa4nkFDT?=
- =?Windows-1252?Q?oE4gRhLkr/u0Eh+VZJAY05jrh9kVlVt9F1K5TxFWcjKGSToX+lWvL9N5?=
- =?Windows-1252?Q?+j7XQNarDSrYCnIOMytgVnvyaCznalUgzjh+ZQm4DgXANmt1I84xzIeO?=
- =?Windows-1252?Q?I67XvTGssRkOMkSHuXLRyRVekeJzhPYLKCcXyaFAT2ZBltkMVSgeV/TW?=
- =?Windows-1252?Q?GsoEa05JMY7OV6O8UjNdRPOZNYHhOUPLFkrtCTwUgTGDf4UW7ZLWEU0Q?=
- =?Windows-1252?Q?JpaJsZFetuFH6aHVjAVH0ahrv3IRmc/4TaccDIwSdRQVJZs6KfwySg2x?=
- =?Windows-1252?Q?oP7UOXtEvDTIBytl932QB8QvJqDx7e9mlua76PfMfCElO/BcgG1q/JAW?=
- =?Windows-1252?Q?hanQssyIVWPkodYaQu3XNUD1Ep90sAiowoUZaIszPWtcmaB+z7sAFQbq?=
- =?Windows-1252?Q?VFmP6HEUkVmtJ5r9axjsla+3seKSh7nZoXGna7v3QRCQDyxMiBSXBvua?=
- =?Windows-1252?Q?j2b4936Mt2ZmjvhZ2M/7/QT+Rl5VR4nFLhvQ27HBCWuLxS3aQ/Uaq44V?=
- =?Windows-1252?Q?sKYAq2u538Z2Ld2MEFuSbCTuY+HngwttQU2KzBXfeVHJZXeJSepvdis+?=
- =?Windows-1252?Q?0FjLfrNi4azREAszccTVVdlF23KBJCT/SD9u7o54brRZeSQtkjgibJCb?=
- =?Windows-1252?Q?kfDUVUe6H2q36rJG7oEiiu8NTlpDLGZPB7C3jIZV3EPFZ4ANw8O8IHM7?=
- =?Windows-1252?Q?6UYKJHzMMI3az2pEGGmEfhh2xA2iVr1ctu6X0yd/bnDnWUVXKATlPRgn?=
- =?Windows-1252?Q?MM50HVbLA6NqRAi1I5xk7iQ0jMBwAsEYV8yEQ62EUqY/cdEhtr1rtYVC?=
- =?Windows-1252?Q?DABoC61GDa/BGNUpyyrUaOjIxdQDXmcmRuKGwmuPP5XCqBzCnAmmiQ?=
- =?Windows-1252?Q?=3D=3D?=
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+ dkim=none (message not signed); spf=pass (domain: ucw.cz, ip: 46.255.230.98, mailfrom: pavel@ucw.cz)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 05A921C0071; Thu,  7 Mar 2024 15:02:36 +0100 (CET)
+Date: Thu, 7 Mar 2024 15:02:35 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Ulrich Hecht <uli@fpond.eu>
+Cc: "pavel@denx.de" <pavel@denx.de>,
+	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: Re: Request for reviews for 4.4-st49, 4.4-cip84
+Message-ID: <ZenI+yzYaVc+ENDl@duo.ucw.cz>
+References: <595658312.2214847.1709631661765@webmail.strato.com>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB11862.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bd04d00c-c456-41e0-d60b-08dc3e8ad0e8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Mar 2024 09:41:51.0623
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 1ZIgFfYBVY6zJqjzJge3X4lkja6Wn855zr7KkZXd+khFR3MK8cqoaKEquLV9y9zThZX7pho3l/kP1YGsukvfl3UUNaea9hyxcKmUkIp7vDQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB6841
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="x44QzvX7syC26NwL"
+Content-Disposition: inline
+In-Reply-To: <595658312.2214847.1709631661765@webmail.strato.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 07 Mar 2024 09:41:59 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15262
+ <cip-dev@lists.cip-project.org>; Thu, 07 Mar 2024 14:02:50 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15263
 
-Hello,
 
-> From: Pavel Machek <pavel@denx.de>
-> Sent: Sunday, March 3, 2024 7:09 PM
->=20
-> Hi!
->=20
-> New realtime trees should be available at kernel.org.
->=20
-> Trees are available at
->=20
-> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-
-> cip.git/log/?h=3Dlinux-6.1.y-cip-rt
+--x44QzvX7syC26NwL
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Test results:=20
-- Dashboard: https://squad.ciplatform.org/linux-cip/linux-6.1.y-cip-rt/buil=
-d/6.1.80-cip16-rt9_b5450675e/
-- Summary: No new regressions
+Hi!
 
-Kind regards, Chris
+> Due to the switch from 4.14.y the upcoming release of 4.4 covers five 4.1=
+9 cycles and comes in at 26 manual backports that need to be reviewed. My a=
+pologies.
+>=20
+> As usual, patches can be found in
+> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=
+=3Dlinux-4.4.y-st-rc
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-
-> cip.git/log/?h=3Dlinux-6.1.y-cip-rt-rebase
->=20
-> And their content should be identical. There are also tar archives, at:
->=20
-> https://mirrors.edge.kernel.org/pub/linux/kernel/projects/cip/
->=20
-> Best regards,
->                                                                 Pavel
-> --
-> DENX Software Engineering GmbH,        Managing Director: Erika Unter
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+These should be kfree(range) in the added path, AFAICT:
+
+!!a just an API tweak for future compatibility, wrong -- introduces memory =
+leak | f08405728 173431 o  | btrfs: defrag: reject unknown flags of btrfs_i=
+octl_defrag_range_args
+
+There's extra whitespace change here.
+
+!! strange whitespace change | 17c04def4 658a52 o  | ext4: unify the type o=
+f flexbg_size to unsigned int
+
+These look ok to me:
+
+a | 2db1c46c3 9eab04 o  | mm: fix unmap_mapping_range high bits shift bug
+a | 063f6c37b a1c95d .+ | crypto: ccp - fix memleak in ccp_init_dm_workarea
+a | 71ba0d44a ee6e6f .+ | crypto: sahara - fix error handling in sahara_hw_=
+descriptor_create()
+a | f7f627ac7 d03376 o+ | Bluetooth: Fix bogus check for re-auth no support=
+ed with non-ssp
+a | 02160112e 53edb5 o+ | f2fs: fix to avoid dirent corruption
+a | 14b84d9a2 15e4c1 o+ | fbdev: flush deferred work in fb_deferred_io_fsyn=
+c()
+a | fef91b68a b3943b o+ | wifi: rtlwifi: Remove bogus and dangerous ASPM di=
+sable/enable code
+a not a minimum fix | 5733959d6 3ef79c .+ | serial: sc16is7xx: set safe def=
+ault SPI clock frequency
+a | eafd83b92 78aafb o+ | hwrng: core - Fix page fault dead lock on mmap-ed=
+ hwrng
+a | 771df0145 None o+ | x86/CPU/AMD: Fix disabling XSAVES on AMD family 0x1=
+7 due to erratum
+a | 07f181ed6 3ed48c o  | PCI: Add no PM reset quirk for NVIDIA Spectrum de=
+vices
+a two fixes in one | 0fee6850e d6b83f o  | bonding: return -ENOMEM instead =
+of BUG in alb_upper_dev_walk
+a just a warning fix | 9d3aeecaa c248e5 o  | ARM: dts: imx1: Fix sram node
+a | 81ca80caa dc1cc2 o  | md: Whenassemble the array, consult the superbloc=
+k of the freshest device
+a | 9eef5de46 90d50b o  | drm/mipi-dsi: Fix detach call without attach
+a | c807df25c bfbea9 .  | clk: hi3620: Fix memory leak in hi3620_mmc_clk_in=
+it()
+a just a warning workaround | 7840b2e4b e3fe8d o  | virtio_net: Fix "=E2=80=
+=98%d=E2=80=99 directive writing between 1 and 11 bytes into a region of si=
+ze 10" warnings
+a | b74c5d0d1 bbc404 o+ | ixgbe: Fix an error handling path in ixgbe_read_i=
+osf_sb_reg_x550()
+a | b0b2937fd 259eb3 o+ | netfilter: nf_log: replace BUG_ON by WARN_ON_ONCE=
+ when putting logger
+a | 324181326 5dee6d o+ | net: ipv4: fix a memleak in ip_setup_cork
+a | 04b9c13dc c73729 o+ | i40e: Fix waiting for queues of all VSIs to be di=
+sabled
+a just an API tweak | bcf4a115a 0958b3 o+ | tracing/trigger: Fix to return =
+error if failed to alloc snapshot
+a | 81c0229f3 741ba0 o+ | pmdomain: core: Move the unused cleanup to a _syn=
+c initcall
+a just tweaks printk/return value | 42fada9bf 5124a0 o  | nilfs2: replace W=
+ARN_ONs for invalid DAT metadata block requests
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--x44QzvX7syC26NwL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZenI+wAKCRAw5/Bqldv6
+8h73AJ9nSTLLwRoXO88L8AnKyFDfDzuxNgCgw0Q7X7/KY0Ss7xSlHK2GKjMLmSU=
+=endU
+-----END PGP SIGNATURE-----
+
+--x44QzvX7syC26NwL--
 
