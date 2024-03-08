@@ -1,234 +1,423 @@
-Return-Path: <ncaidin@linuxfoundation.org>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4BFEC5475B
-	for <webhook@archiver.kernel.org>; Fri,  8 Mar 2024 15:19:47 +0000 (UTC)
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (EUR02-VI1-obe.outbound.protection.outlook.com [40.107.241.57])
- by mx.groups.io with SMTP id smtpd.web10.19126.1709895412906934445
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41656C5475B
+	for <webhook@archiver.kernel.org>; Fri,  8 Mar 2024 16:43:28 +0000 (UTC)
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.64])
+ by mx.groups.io with SMTP id smtpd.web11.26832.1709916206247825094
  for <cip-dev@lists.cip-project.org>;
- Fri, 08 Mar 2024 02:56:53 -0800
+ Fri, 08 Mar 2024 08:43:26 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=dikWghdC;
- spf=pass (domain: siemens.com, ip: 40.107.241.57, mailfrom: felix.moessbauer@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=B6brM/Qe;
+ spf=pass (domain: siemens.com, ip: 40.107.21.64, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ym0O8f3B5XtBHgFZqp0YQnz3RyxEpSIwBbbSbRS/HGIhlA2KXm9AHXPFF0KHZXxjbyCtbVLvofq3YN95gb53MENqHnWrDbCVdexQMumqVokRV1eD+qMN2JLFOf/ooizTWkCl5UPkhYD2yfvHkJiuxztEkcyi6tWhsA/ljIu8FyiwXFoy9bniHx4oISwt9wVVwt8JiWt7KPmowpHGjwD54eytSj3pabxYL5rG1Ucs7WAFlHLFaC7TFGC1R4J6oZ4HoBy+rKVtk2+4HEN5+H2RrJA4+aQPeBfAc0wVoBPr7QZlG2X2QSVlgZs6nBwbw9rjBV9q+Yxwh3e2VuDqdfonmQ==
+ b=Dv+6GCkqF8Ai3+4XHj6NohRbHbNbgXE1NpHLeuLBI4P1QkFQibjYc8ZET9y/WmZ833JpTjmfnTzqxKRlTbAupR+vlScdH6We23iBGGkdrwa12wx2VovqEi+TiHf56aa+6Z1V8Y7HQjSb0Yd4rI0CB3k1UGz3O02p64f7YFnjxtQMVwIkhv5DeDECAjPPMG8gd2dYuIT2HX6/2xQAbmSq3cfN+PN+HHWk2WwyvjvP3g210JFCLkEp6iXiPAq9sE7NUT0gomVUjzMYn1Se5mc6rvtGvnyqLwUD3Xwu/klwDIXNotWBzn+Jgz7cq8pVgX/0mOHeZpiM2jb4huSz5BEvBg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MyQbUYW+QhvbocyTT4O1DcIR+X3Cjb/3Zxo9aql5TCw=;
- b=Gx4SNvRFUyD/VcBUl1i9nu4JYp3dR64XZ+pTUN6IGk0kPFPOz2G4Eh/jbjybMyZHigJMIXLxvpmYWT5ZFkU5E6YFooVAZJIfKucH4Ij6XWCTBhoRFa1UP7hLXtJHw6ZvM7fHe+SM6H6KiMEDJgxpZZ1SvpVBWpJkD/lEsN/xBz8Mck0/wM3aKH9C8Zx+vCr8sNbADxqVMoOjCld0RVQtGraeMIwzVAwblj/JlGrxlQCfO2gsY7UPFwMD55E6AnTjUYxTfQw8Vp5ILfPKQINNfmZhdaXP5O/DYHxXKMI/+Ai8xJVQo+DxVoZ873bv2+Ok0nINpEpwueJQroFLMEQ4Sg==
+ bh=sYXvNmp3ZpZmziS6WPMBIfd3+n0cZ6NZZJIbHQt8tDM=;
+ b=lPOn6lS+OZvzamacWwYmKMWeutfchm6y1DeE2NNlcB/VEl4jJDne7uXN+NJv2tQFpSf6xRk7Db+LV1sq6DX90NQG12me4M5E1fAIrI3c09HXDp13TZRPe6C+ly1haSWAbj8W+FcPCN9+c2fpR/MhtsxjBS4frCsd41HFcj31NNO11NPcG0xenoATnuDo6bjOoxDA3DQUxGK868xYvBkiDvzulp4lMk6wDrjB1PCzwoq4kcOGOD/N3h5tZqe69LhYeJ7qEFR6IMEQJ0oGgHPn9Xsy+OVh4NHe+arPYmhhsuX5JAAi3Cm6GHp4TQg4qRIi2mx/OgIV4WIooed5I5uiBQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MyQbUYW+QhvbocyTT4O1DcIR+X3Cjb/3Zxo9aql5TCw=;
- b=dikWghdCtwVlLW7mn5CBak9OuN8XpVSmoOVVkDe4wsEJoplh0i4fh58rv8J4qq2QkM40CJyFqv/0vBO9cECKV4tcUOXPOx8J6JiK/wxZpeQfOLnmxoZ5ty8N3AZppiFnLa+sxueE4tbKXQyGdFKH/GTChkIOVvmCorh76BdmMfJ5zoh3RxEprAu5X359hJAEJzvZ3tGwMGJOA562c7kN7XBCo9R2x/bw85LdLHMe1Hw8H2MRn/3YnLJlipG6l4nb69K1pUc4q25h9tTQqxxjP4FfJD9lOkAdc4zyUs2V6OfyxzcfcGv4xXpFXlzXel/yIM7KTZsMAdTUEzwjcg7qzA==
-Received: from DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:47f::13)
- by AS1PR10MB5189.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:4a9::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7362.24; Fri, 8 Mar
- 2024 10:56:49 +0000
-Received: from DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::e0b3:537d:ebe2:c0a3]) by DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::e0b3:537d:ebe2:c0a3%5]) with mapi id 15.20.7362.028; Fri, 8 Mar 2024
- 10:56:49 +0000
-From: "MOESSBAUER, Felix" <felix.moessbauer@siemens.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"Adithya.Balakumar@toshiba-tsip.com" <Adithya.Balakumar@toshiba-tsip.com>,
-	"Kiszka, Jan" <jan.kiszka@siemens.com>
-CC: "shivanand.kunijadar@toshiba-tsip.com"
-	<shivanand.kunijadar@toshiba-tsip.com>, "sai.sathujoda@toshiba-tsip.com"
-	<sai.sathujoda@toshiba-tsip.com>, "dinesh.kumar@toshiba-tsip.com"
-	<dinesh.kumar@toshiba-tsip.com>, "kazuhiro3.hayashi@toshiba.co.jp"
-	<kazuhiro3.hayashi@toshiba.co.jp>
-Subject: Re: [isar-cip-core][RFC v1 5/6] swupdate.bbclass: Generate swu for delta updates
-Thread-Topic: [isar-cip-core][RFC v1 5/6] swupdate.bbclass: Generate swu for
- delta updates
-Thread-Index: AQHacUdRwfqS/nxwrkSvKIu6SvzBBQ==
-Date: Fri, 8 Mar 2024 10:56:49 +0000
-Message-ID: <4fb765ea54765e58a93b6aa0d19f0054a0e680f1.camel@siemens.com>
-References: <20240307074612.1996609-1-Adithya.Balakumar@toshiba-tsip.com>
-	 <20240307074612.1996609-6-Adithya.Balakumar@toshiba-tsip.com>
-In-Reply-To: <20240307074612.1996609-6-Adithya.Balakumar@toshiba-tsip.com>
-Accept-Language: de-DE, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.46.4-2 
-authentication-results: dkim=none (message not signed)
+ bh=sYXvNmp3ZpZmziS6WPMBIfd3+n0cZ6NZZJIbHQt8tDM=;
+ b=B6brM/QezGePTuW8vU16UPUX3f44YNu4uKOMCXyPXIfdIo5a/Q6aui9xvVHk0Oje9+iONU+qmkYsthipnFNRBvk3epp74d3MbdLGzu45lY9LLXzB30ElbZeJXYf/74FfgrvLlFoCvM/JjmKPcwhdli1j4Q/sRhtfs6XMdiR5gXlnW6MQhcE95vGvminz4Ds6YvcWd1Xpgx9EttBSbphqZ2rxfmM5QhL739njyoPbjJrSR5k9TD4F/EcLp3ots354fSphcixsKMdIb7syQ6oI++XKTcKQofw6k9fp7z2HPACTrK0NmR9iErko5OcY50Y2b8ZfDyu9O9dN1j6h41lPqA==
+Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DU0PR10MB6828:EE_|AS1PR10MB5189:EE_
-x-ms-office365-filtering-correlation-id: 0188f0d1-2680-4ecd-cb38-08dc3f5e7462
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- 94ImcPtSxD5deRhu8AIwkLPbbwUtJO9nJrmhnxuS//ZYu+hjXILKcVkg1Zxh0UFZvTWVDtPUqLmlr6EUpskkx1ti/C6R8gyyD2R3+VE4bu7fhbt/hshyPsIDJW0bHGl5EXHUQ1Dw4nIGo2/imzV/yZPamn1Zh38ngyZCtv52WTmkidj6mBf5QhvFb4p78UZWwEbBR+cAQ4p6UqXJxFidZf0rU8QdRQ+Vzk7h1uMJmsg/HBGpuvmMTTa9MRWmw9gS8HEEm+TSVXr+ojiXRoFa/92f7RKBQ6YoFX4mNAD5dY7+TSNhoNeORRWbwHjHA2zAh5YSFYYBlJVuh9ibrcLZxTbia/c+3Cn9weBgd1DQaouEOdFn12BYHaWuNaotBz1AgMGGk43MNQwHLLLw9TwQ9EaaftAZYdTUpkwzPAz9LNbm91lXxDfJbOa5rRT9esBvvfN4gD5pwwZwi0ZInrLY3vfNpZLEr7+HlHQh+Mq3YQTptxXkF+XOhB3iXL8HvJ5T6q/syuIN1HFCR4L7TQvnB8CDK3+014hGF/koeBWXnz9jsR+2pG7dT1F4ifIMLqv2oc6k/0R6NCHjAbXOnOwonI2ge8FZyhN7srwWdGKiEMnvI0tdRMqsy8KassfY9c59G8GkGOIx+z1eD4mVn8g6SdQF4JEDyAZjKrQB7TFWQtmJSh0DTFbjiAM5eBqGdZaZ4NsuPu31sID9Qv4R5tX3uNI2c5wQejkSVd8j6MlVUY8=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?YnlEb1FCSEpnbjExTXlWelVNL3BqaStnTCtsR2pET2hucExNZ05tQkVYeUFS?=
- =?utf-8?B?dkFqY3FEQ3o1NFBUN2d1Vk8xb0NDU1pQKzkxODlRbGR6TUZXMy8vai9ZaHhD?=
- =?utf-8?B?cG9ha2R3bGx4VGpVWTNVeGRpY0ppZG9kdkdCa2dNNTRwdWIyRHQyUWpHRmVB?=
- =?utf-8?B?bHg2Y3I5SUE4dll5Y0RuWmh4cXk5cnpLRnhSVzJqVmtaaEE5UTI4Z0xnMHZD?=
- =?utf-8?B?c2xXRE8xVGVzUUIxazRIQUtKSmVmN0lnQ1hTaFhFWkZCNmtaOEROS3pHZTF5?=
- =?utf-8?B?N1F5UlpBcEcvd3F2NnRTT1BGYndHblI3bHlFZ0RwSFpranBZekpVV1prenlW?=
- =?utf-8?B?cGtRaTQyaFVvaFk4blB2NmJEdFlJM016UHh0Wmpuc0RlTFdBbk12U2kwOE1u?=
- =?utf-8?B?bTdweVpaQ2h0aGNlWlVIT0x1bGZWa3ZOTmZyQWl6VXU5eTJIaFFGK3U0bVgz?=
- =?utf-8?B?REZLZ21uckZPQWdYNlBsR2RSUUdBdmtZeHlvZzg0dGxuV3dqaEVFcG5UTWJp?=
- =?utf-8?B?WlpFOEV2aUIxbFl3cXdqRFRTVlRoN3ZDY1BuWURaMjdTeDBCaEF1V1dNalpm?=
- =?utf-8?B?d2tlcUNRaWhPNGxaaHFWSDBqSVRSQlpwSFFpeW1UY1RJUEVtcXNkbmloY1I2?=
- =?utf-8?B?bHpVTWRKRzZpY2NySjBKeStac0E3K2JTQzdiTzkzZUdkaitGT2F4dlphRTlS?=
- =?utf-8?B?Njg0ZUlLK2Jucys0RDFBcEdiVkd5a0NQdTdOMFBpa2N0dG1BVk9lT0x6b09u?=
- =?utf-8?B?a0d4WWpyNjNYK0FyNFR2UlhOLzZvSU1HRElaQ09OaG9yakNUYVNYMmN3citZ?=
- =?utf-8?B?NlJKam9LalJTMEVSaXBEbzdKMFMzbXRvWEY2YVdsVXRvWkEvcXVEZlJXaEMx?=
- =?utf-8?B?UXprQkVTK0U0L25MMDIrbWJuQ0NYYmRBbzRFQmhaWkM0VWJvcm9HOHhmL1lW?=
- =?utf-8?B?SHNGUjJMWEVpcW04VEdDRFk0QlIrK05sbHB3MXc5ZWpYaFlvTlpEZFBUL2VO?=
- =?utf-8?B?bUxkRXJleSsxQ2J5K3l6dGkvRCtiZTdvY1VCY2tZV0NJUENNMHg5eDFKRk1P?=
- =?utf-8?B?K2dLVUhkRVZmc0xqTkw4SU5iZHNNem1rbkNyOGwzN0JQRm8waEYvTmhIenhU?=
- =?utf-8?B?TFRGY0dJWVdPemFGRXNQWkhyTERjR3BvSGsyeS9GNVJPZ0k2TVFNc2g3Y0lt?=
- =?utf-8?B?aWlveWVjWkIySVp3MEcwRnVTMUF3RmlBOWErRGJqMnpzYkMyRGNnamUydjRM?=
- =?utf-8?B?OTBCS2djV1Y2NVV5OG96QXhHZDJVZXVYQXN1RStxMDNJUVNURWlIa3VPbTJn?=
- =?utf-8?B?aU0zeUFDRHZZU3FUL2NiYkpTaVZ5TUhMbFFIVy9TcjZodXZFTG1nYzBsTTRx?=
- =?utf-8?B?UDBQRDRILzU0Q3c5dUk2N3Vuc3hzZ2V2KzZWUUdoTG8wU2hXN2xydlFnTjNW?=
- =?utf-8?B?Um91L3h0bUFzRldCT0xnVG5QdVJPczFXa1lua3J6S2NudmpJWUtXSEI0UXd4?=
- =?utf-8?B?YjliTG1VZ0Z0QUxWaGxES3d4bW0zUTkrY0RwKzhienJNUU54dUtwS05jNVdD?=
- =?utf-8?B?WnVhcjNlclFCMVdJRE9CSU1lWmZQbXBOaUlBeVAvUjZrMnY1K25qcVVtYlZ5?=
- =?utf-8?B?UUVXWG1kbGR1bVdTcXpIMjJIc1V3YkcvbUVEWlJkUnhSbXRDV0pxWFlXaVJH?=
- =?utf-8?B?aHhLNW5YelF5ZVZ6SGZqcG5hNHNTTGsxRXZaRUFTNVhBTEt4REZJUTVkQ0RS?=
- =?utf-8?B?dWFVYkc3TFh5UzgvYWdOU3Z3ejVnWEpudzZrWWNRNTZ4YTdXVlFrNklOaDR5?=
- =?utf-8?B?b2loN3B4OTJ0QUFkMDB5dmJQcXZVbzN5UTFvSXBGaDl2eHNrQlRMdmlRdUVF?=
- =?utf-8?B?M2hqT01zclJBSGlHWHFaN0FzUXY1VGNHMzB5TW9tTVd6QmU2RTVRSnRUL3B4?=
- =?utf-8?B?ZFhJMlN2MVQwVzEyZ2JuNHRJb29BaXRyQitQUldjZ1BsZ1dLMnFUQ1lORnJk?=
- =?utf-8?B?WHc0UWZRT2JhRERhdWU1cEtKRXUxdTZBeUdZREpaYkp3SHMzN0UxVHR0bEJm?=
- =?utf-8?B?UGNBUTFEN0VZSUZVYlNNY29hYjNybVpIUE96T05HZWdJRDFFdmFBQS8wQU5F?=
- =?utf-8?B?ZktQaDB5YVBEaXNoRGVVdVVRNU9NL2s3cktoZlQ4VnJXcFpFQWdWVStONERY?=
- =?utf-8?B?Qjk5TmRrZjZhWXJ1ZUY3NHBUN1grRnVINGUxM0RGdW1wV1NleW5nelJjSEY0?=
- =?utf-8?B?a2ZkUUFrWlk2MWJNeld4d1JEV3pRPT0=?=
+Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1f9::22)
+ by DB8PR10MB3195.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:117::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7362.27; Fri, 8 Mar
+ 2024 16:43:22 +0000
+Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::67a7:ac13:3db4:91cf]) by AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::67a7:ac13:3db4:91cf%7]) with mapi id 15.20.7362.029; Fri, 8 Mar 2024
+ 16:43:21 +0000
+Message-ID: <5c405595-0182-4e1f-9687-7b7edd9d1e95@siemens.com>
+Date: Fri, 8 Mar 2024 17:43:11 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [isar-cip-core][RFC v1 4/6] Add Delta update support with
+ rdiff_image and delta handler
+Content-Language: en-US, de-DE
+To: "Moessbauer, Felix (T CED OES-DE)" <felix.moessbauer@siemens.com>,
+ "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+ "Adithya.Balakumar@toshiba-tsip.com" <Adithya.Balakumar@toshiba-tsip.com>,
+ "Kiszka, Jan (T CED)" <jan.kiszka@siemens.com>
+CC: "shivanand.kunijadar@toshiba-tsip.com"
+ <shivanand.kunijadar@toshiba-tsip.com>,
+ "sai.sathujoda@toshiba-tsip.com" <sai.sathujoda@toshiba-tsip.com>,
+ "dinesh.kumar@toshiba-tsip.com" <dinesh.kumar@toshiba-tsip.com>,
+ "kazuhiro3.hayashi@toshiba.co.jp" <kazuhiro3.hayashi@toshiba.co.jp>
+References: <20240307074612.1996609-1-Adithya.Balakumar@toshiba-tsip.com>
+ <20240307074612.1996609-5-Adithya.Balakumar@toshiba-tsip.com>
+ <0876d8dd533161214f2010cdbcd65d5084a1ddd3.camel@siemens.com>
+From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
+Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
+ 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
+ XSdq0hnpafc1V+voPJq3LMxUvLNrwg==
+In-Reply-To: <0876d8dd533161214f2010cdbcd65d5084a1ddd3.camel@siemens.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: CH0P223CA0012.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:610:116::29) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:1f9::22)
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|DB8PR10MB3195:EE_
+X-MS-Office365-Filtering-Correlation-Id: b7047630-f01f-439b-88dd-08dc3f8edd67
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	ViCCViZejy1NT9GUES+9ulnRA1VPoKwrjMyH9/S7toagWL1HIiLbWooTG5wWoeMz5ed81QszUoDLj91RzxoZ2wn3palacoWsYQlCf6lpB5G3iDqM4szoFT7PaKTlE0eBJ+uDcEWb1fyYetMyhphaDunKsMGgUxsFfWFLAtCYSfKSvDDlBJibxpBVBzaf3X3GMj9XDFlQjkOrW+HxkbxzATWbTisC9bW9zNFmC2ubVm158PJl4buaaOTUCb4dXJOOocG2XQ0O1+bnpEuQMkgTFtnzHfVwJEcMDMR9KFjZxaXxlaEmBAdxKTCj6GOl5Z4qXJx+B3iX7eqsKFnkQSF24y88cc+R7eu0K2E2PSb1F2Is2Et9UK7zNUePcbsnVz4SEsyVwy0Wj9f9MVYaiRgs6kdlZO8dlwtamy/etXryBdtPLUVwnbOPCloD6NmDqTBSjS+jU5huNgvWd83kruXKkxaO8wkod79SPvuG5Uyq+Ai8YLzHsrifJhXyLlYu1B+2iwJtJIMexl/81T6wnx4aHdQ8aMY4I7t59WIiw/vWTmPh9ohpDAeZAXrJ0a74E+FFR3hOInrDVh4NI0WxgIIM+u4FT9KIFweYacbtOpDC8xM=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?OJwO4gPc8kpdc4sGtXVwExdSPG2FDWGNImfI4aWpnRq5vZrtzLeg4fZ39phw?=
+ =?us-ascii?Q?zoEhpmkO+BIbMumHbylfEmPZDcO0mp/Zc7+5AAaW4F4ZXSbRY15UCYp7+mEn?=
+ =?us-ascii?Q?CBw57aUnt8qA8302Q/OZMi5bHlp2zbiu8Ja8G8IZrRK28nVSezYlVqJmK+13?=
+ =?us-ascii?Q?PUyVzsB0zXr1/Pw9lUPXlGR03D1H7+4ady6xfX3TxjEM3tZcjyHw+/09XCQS?=
+ =?us-ascii?Q?sr2Q1PXjMkqwJiVe+osigPWVZ2TD7H43qDovu7KgH5iCofpw9Lc+DdY9RGNU?=
+ =?us-ascii?Q?z1Y+x7/7Bvg2U8WEkUL+HzYGXKrWgltvY0iv2Q0WHHWYjl3rLoOMIv7R+jAE?=
+ =?us-ascii?Q?59qztSoLvuE8tLWd+0nbCSOjcv+4L8fp5AqzS1b41X5UKK9vAwkhGpwd0lYp?=
+ =?us-ascii?Q?Kr0yZWza8lZ//kkGvtGFHJdZquHhCrtau4QrQDWR1ndOZOVgXu0xz3xY1+Ic?=
+ =?us-ascii?Q?5AVpflVFk2tNKANfDFUt3zns0aAaGWi/Ly1hXGbxYP31NRjf7wyn8+AvJMI1?=
+ =?us-ascii?Q?GF1ZRYGd8wcyqe/qqeKoGcPflvJjv6bLeftqpze2blsyu+/OMHX3Q8ynk3kc?=
+ =?us-ascii?Q?qmTtL/SQESTGRtQdszBBy7IcsMsXlcZgYfaKTwGahMEgG4fJkQMCVmBrRLfZ?=
+ =?us-ascii?Q?Zpty2efEztP9tncWxLC8Rg1IUdG0eb8vAFsMqKuMUVJp46ameeGgmW0dNtTd?=
+ =?us-ascii?Q?zVhD7ljTxavMt/RqBOo18I9ilE6/M8fEiwtZTNYSZS1e4Ru9WITQMKyk10EK?=
+ =?us-ascii?Q?Xg/iybtzjYiLxEpTuzIv3bhU5n0y10QihF3SQ6MwX7Xym6OFf2BupNX7/0Xg?=
+ =?us-ascii?Q?0uvNt4ybVUp1UfCkGj7ShbCS/Tu+phF1804uupRP24L6hEt75djNRL/vxOKC?=
+ =?us-ascii?Q?y0YR+iooHhI+BgjyVdUkjwUg2frzmG7m/+LWsijp1Ca2Pa/6vEEYVh/2fcCf?=
+ =?us-ascii?Q?MnX+m3W8BohndlCAIqH2KiOWBN2LhCJKSvZx4Xh8N0H6jD5B2+p6SVODZjYo?=
+ =?us-ascii?Q?5YKm58kVWH6oK9SEAoOasXt+2LQfn2cZzElGMbjCtX+UpvYLQzW32LEBPjxS?=
+ =?us-ascii?Q?mI53sPyP7g/smkwoqBvYJ7eKqWQW+JGhzRFPXI1yfK3E5voOpZlgzyOCoVlF?=
+ =?us-ascii?Q?Do2BIKHgokm31pLV6sYhbb07A1k5BjOmIsw4+cmwbCZry4zqQVuaInow+/6b?=
+ =?us-ascii?Q?yMplFHK73Z7vw/CfXxnfYbgRMAkCtpPmJdSPF6ONp6DpuUOQj9P5f+Qv9+O+?=
+ =?us-ascii?Q?RudZza8Ax9XCeeuOgpyiB9PmjNYbX4RXxuzrsVdG1UzMJLHI931AthZiw6TM?=
+ =?us-ascii?Q?sQ1Sxebonyr/fmQqufNPJxQThOLNX1elsWHZkgBseAuf5zel4eh9bv3lbDf3?=
+ =?us-ascii?Q?CurX3lgv8xhp4laHyPhaB6kr3Y267JajGYzsr6WyUcLZRZgMQuIYR7wR+66B?=
+ =?us-ascii?Q?7uYD2Fdv/cxdssBz195yWPcj6LFRr/E4MKoMepwjwB8Mxhy1Hzge+1G1Hob7?=
+ =?us-ascii?Q?9rV6G2ostcaxBaVD2StKfPw48wUWja4qDSlD+guUQLKxl8UqaaION9BGyFZR?=
+ =?us-ascii?Q?iYkcFpN22jRUR0idOUQokuLpLRyTYA8wbt8GYVu6CP/DiujZk7cb/U1HQbi6?=
+ =?us-ascii?Q?Ug=3D=3D?=
 X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b7047630-f01f-439b-88dd-08dc3f8edd67
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0188f0d1-2680-4ecd-cb38-08dc3f5e7462
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Mar 2024 10:56:49.1484
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Mar 2024 16:43:21.4336
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 8ENHKpTFO8vQfOxeguJ4dVrogpDRgulSKa7NftNe8mmj9zm2zrWB8rbThZi20SLbOMo5pcJTAsOeA+IpckaVOR0M9AWfmx52BQYtdn0thM8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR10MB5189
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F8156BBEAAC32149AB358BC7784C595E@EURPRD10.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +kzeuxaVM9DcEeOZ2WbA2MChjIvTDmfSpdmp5K3VP4VIRxL2y3b5B1OFJ++nsBfHfE0RDuFfXHCMquExn+TwnINtE04rgB7aslMyoo+R8HM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR10MB3195
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 08 Mar 2024 15:19:47 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15270
+ <cip-dev@lists.cip-project.org>; Fri, 08 Mar 2024 16:43:28 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15272
 
-T24gVGh1LCAyMDI0LTAzLTA3IGF0IDEzOjE2ICswNTMwLCBBZGl0aHlhIEJhbGFrdW1hciB3cm90
-ZToNCj4gVGhpcyBhbGxvd3MgdGhlIGNyZWF0aW9uIG9mIGEgc3d1IGZpbGUgZm9yIGRlbHRhIHVw
-ZGF0ZS4gVGhlIHN3dSBmaWxlDQo+IGZvciBkZWx0YSB1cGRhdGUgaXMgb25seSBjcmVhdGVkIHdo
-ZW4gZGVsdGEtdXBkYXRlLnltbCBmaWxlIGlzDQo+IGluY2x1ZGVkDQo+IGF0IGJ1aWxkIHRpbWUu
-DQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBBZGl0aHlhIEJhbGFrdW1hciA8QWRpdGh5YS5CYWxha3Vt
-YXJAdG9zaGliYS10c2lwLmNvbT4NCj4gLS0tDQo+IMKgY2xhc3Nlcy9zd3VwZGF0ZS5iYmNsYXNz
-IHwgMzUgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0NCj4gwqAxIGZpbGUgY2hh
-bmdlZCwgMzMgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQg
-YS9jbGFzc2VzL3N3dXBkYXRlLmJiY2xhc3MgYi9jbGFzc2VzL3N3dXBkYXRlLmJiY2xhc3MNCj4g
-aW5kZXggMmM2OTg5Mi4uMjk2NDAyNCAxMDA2NDQNCj4gLS0tIGEvY2xhc3Nlcy9zd3VwZGF0ZS5i
-YmNsYXNzDQo+ICsrKyBiL2NsYXNzZXMvc3d1cGRhdGUuYmJjbGFzcw0KPiBAQCAtMjYsMTAgKzI2
-LDEzIEBAIFNXVV9FQkdfVVBEQVRFID89ICIiDQo+IMKgU1dVX0VGSV9CT09UX0RFVklDRSA/PSAi
-L2Rldi9kaXNrL2J5LXV1aWQvNDMyMS1EQ0JBIg0KPiDCoFNXVV9CT09UTE9BREVSID8/PSAiZWJn
-Ig0KPiDCoFNXVV9ERVNDUklQSVRJT05fRklMRV9CT09UTE9BREVSID8/PSAiJHtTV1VfREVTQ1JJ
-UFRJT05fRklMRX0tDQo+ICR7U1dVX0JPT1RMT0FERVJ9Ig0KPiArU1dVX0RFU0NSSVBJVElPTl9G
-SUxFX0RFTFRBX1VQREFURSA/Pz0NCg0KSGksIGRvIHdlIHJlYWxseSBuZWVkIGEgZGVkaWNhdGVk
-IGZpbGUgLyB2YXJpYWJsZSBmb3IgdGhhdD8NCg0KPiAiJHtTV1VfREVTQ1JJUFRJT05fRklMRX0t
-ZGVsdGEiDQo+ICtTV1VfREVMVEFfVVBEQVRFX0FSVElGQUNUID0NCj4gIiR7U1dVX1JPT1RGU19O
-QU1FfS5kZWx0YV91cGRhdGUke0BnZXRfc3d1X2NvbXByZXNzaW9uX3R5cGUoZCl9Ig0KPiArU1dV
-X0RFTFRBX1VQREFURV9BUlRJRkFDVF9UWVBFID0NCj4gImRlbHRhX3VwZGF0ZSR7QGdldF9zd3Vf
-Y29tcHJlc3Npb25fdHlwZShkKX0iDQo+IMKgDQo+IMKgU1dVX0lNQUdFX0ZJTEUgPz0gIiR7SU1B
-R0VfRlVMTE5BTUV9Ig0KPiDCoFNXVV9ERVNDUklQVElPTl9GSUxFID89ICJzdy1kZXNjcmlwdGlv
-biINCj4gLVNXVV9BRERJVElPTkFMX0ZJTEVTID89ICJsaW51eC5lZmkgJHtTV1VfUk9PVEZTX1BB
-UlRJVElPTl9OQU1FfSINCj4gK1NXVV9BRERJVElPTkFMX0ZJTEVTID89ICJsaW51eC5lZmkgJHtT
-V1VfUk9PVEZTX1BBUlRJVElPTl9OQU1FfQ0KPiAke1NXVV9ERUxUQV9VUERBVEVfQVJUSUZBQ1R9
-Ig0KDQpEb2VzIHRoaXMgbWVhbiB0aGUgZGVsdGEgYXJ0aWZhY3QgaXMgYWx3YXlzIGFkZGVkIGhl
-cmU/DQoNCj4gwqBTV1VfU0lHTkVEID8/PSAiIg0KPiDCoFNXVV9TSUdOQVRVUkVfRVhUID89ICJz
-aWciDQo+IMKgU1dVX1NJR05BVFVSRV9UWVBFID89ICJjbXMiDQo+IEBAIC0zNyw2ICs0MCw3IEBA
-IFNXVV9TSUdOQVRVUkVfVFlQRSA/PSAiY21zIg0KPiDCoFNXVV9CVUlMRENIUk9PVF9JTUFHRV9G
-SUxFID89DQo+ICIke0Bvcy5wYXRoLmJhc2VuYW1lKGQuZ2V0VmFyKCdTV1VfSU1BR0VfRklMRScp
-KX0iDQo+IMKgDQo+IMKgSU1BR0VfVFlQRURFUDpzd3UgPQ0KPiAiJHtTV1VfUk9PVEZTX1RZUEV9
-JHtAZ2V0X3N3dV9jb21wcmVzc2lvbl90eXBlKGQpfSINCj4gK0lNQUdFX1RZUEVERVA6c3d1ICs9
-ICIke0AgJyR7U1dVX0RFTFRBX1VQREFURV9BUlRJRkFDVF9UWVBFfScgaWYNCj4gZC5nZXRWYXIo
-J0RFTFRBX1VQREFURV9UWVBFJykgZWxzZSAnJ30iDQo+IMKgSU1BR0VSX0JVSUxEX0RFUFM6c3d1
-ICs9ICIke0Anc3d1cGRhdGUtY2VydGlmaWNhdGVzLWtleScgaWYNCj4gYmIudXRpbHMudG9fYm9v
-bGVhbihkLmdldFZhcignU1dVX1NJR05FRCcpKSBlbHNlICcnfSINCj4gwqBJTUFHRVJfSU5TVEFM
-TDpzd3UgKz0gImNwaW8gJHtAJ29wZW5zc2wgc3d1cGRhdGUtY2VydGlmaWNhdGVzLWtleScNCj4g
-aWYgYmIudXRpbHMudG9fYm9vbGVhbihkLmdldFZhcignU1dVX1NJR05FRCcpKSBlbHNlICcnfSIN
-Cj4gwqBJTUFHRV9JTlNUQUxMICs9ICIke0Anc3d1cGRhdGUtY2VydGlmaWNhdGVzJyBpZg0KPiBi
-Yi51dGlscy50b19ib29sZWFuKGQuZ2V0VmFyKCdTV1VfU0lHTkVEJykpIGVsc2UgJyd9Ig0KPiBA
-QCAtNDYsNiArNTAsNyBAQCBJTUFHRV9TUkNfVVJJOnN3dSA9DQo+ICJmaWxlOi8vJHtTV1VfREVT
-Q1JJUFRJT05fRklMRX0udG1wbCINCj4gwqBJTUFHRV9TUkNfVVJJOnN3dSArPQ0KPiAiZmlsZTov
-LyR7U1dVX0RFU0NSSVBJVElPTl9GSUxFX0JPT1RMT0FERVJ9LnRtcGwiDQo+IMKgSU1BR0VfVEVN
-UExBVEVfRklMRVM6c3d1ID0gIiR7U1dVX0RFU0NSSVBUSU9OX0ZJTEV9LnRtcGwiDQo+IMKgSU1B
-R0VfVEVNUExBVEVfRklMRVM6c3d1ICs9DQo+ICIke1NXVV9ERVNDUklQSVRJT05fRklMRV9CT09U
-TE9BREVSfS50bXBsIg0KPiArSU1BR0VfVEVNUExBVEVfRklMRVM6ZGVsdGFfdXBkYXRlICs9DQo+
-ICIke1NXVV9ERVNDUklQSVRJT05fRklMRV9ERUxUQV9VUERBVEV9LnRtcGwiDQo+IMKgSU1BR0Vf
-VEVNUExBVEVfVkFSUzpzd3UgPSAiIFwNCj4gwqDCoMKgwqAgU1dVX1JPT1RGU19QQVJUSVRJT05f
-TkFNRSBcDQo+IMKgwqDCoMKgIFRBUkdFVF9JTUFHRV9VVUlEIFwNCj4gQEAgLTU4LDYgKzYzLDgg
-QEAgSU1BR0VfVEVNUExBVEVfVkFSUzpzd3UgPSAiIFwNCj4gwqDCoMKgwqAgU1dVX0ZJTEVfTk9E
-RVMgXA0KPiDCoMKgwqDCoCBTV1VfQk9PVExPQURFUl9GSUxFX05PREUgXA0KPiDCoMKgwqDCoCBT
-V1VfU0NSSVBUU19OT0RFIFwNCj4gK8KgwqDCoCBTV1VfREVMVEFfVVBEQVRFX0FSVElGQUNUIFwN
-Cj4gK8KgwqDCoCBTV1VfREVMVEFfVVBEQVRFX0FERElUSU9OQUxfUFJPUEVSVElFUyBcDQo+IMKg
-wqDCoMKgICINCj4gwqANCj4gwqAjIFRBUkdFVF9JTUFHRV9VVUlEIG5lZWRzIHRvIGJlIGdlbmVy
-YXRlZCBiZWZvcmUgY29tcGxldGluZyB0aGUNCj4gdGVtcGxhdGUNCj4gQEAgLTEzNiw2ICsxNDMs
-MjIgQEAgcHl0aG9uIGFkZF9zY3JpcHRzKCl7DQo+IMKgwqDCoMKgIGQuYXBwZW5kVmFyKCdTV1Vf
-U0NSSVBUU19OT0RFJywgc3d1X3NjcmlwdHNfbm9kZSkNCj4gwqB9DQo+IMKgDQo+ICtTV1VfRVhU
-RU5EX1NXX0RFU0NSSVBUSU9OICs9ICJhZGRfc3d1X2RlbHRhX3VwZGF0ZV9wcm9wZXJ0aWVzIg0K
-PiArcHl0aG9uIGFkZF9zd3VfZGVsdGFfdXBkYXRlX3Byb3BlcnRpZXMoKSB7DQo+ICvCoMKgwqAg
-ZGVsdGFfdHlwZSA9IGQuZ2V0VmFyKCdERUxUQV9VUERBVEVfVFlQRScpDQo+ICvCoMKgwqAgc3d1
-X2RlbHRhX3VwZGF0ZV9wcm9wZXJ0aWVzID0gIiINCj4gK8KgwqDCoCBpZiBkZWx0YV90eXBlID09
-ICJyZGlmZiI6DQo+ICvCoMKgwqDCoMKgwqDCoCBzd3VfZGVsdGFfdXBkYXRlX3Byb3BlcnRpZXMg
-PcKgICdjaGFpbmhhbmRsZXIgPQ0KPiAicmRpZmZfaW1hZ2UiOycNCj4gK8KgwqDCoCBlbGlmIGRl
-bHRhX3R5cGUgPT0gInpjaHVuayI6DQo+ICvCoMKgwqDCoMKgwqDCoCB6Y2tfdXJsID0gZC5nZXRW
-YXIoJ0RFTFRBX1pDS19VUkwnKQ0KPiArwqDCoMKgwqDCoMKgwqAgc3d1X2RlbHRhX3VwZGF0ZV9w
-cm9wZXJ0aWVzID0gZiIiIg0KPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCBjaGFpbmhhbmRsZXIgPSAiZGVsdGEiOw0KPiArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB1cmwgPSAie3pja191cmx9IjsNCj4gK8KgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgemNrbG9nbGV2ZWwgPSAi
-ZXJyb3IiOw0KPiArwqDCoMKgwqDCoMKgwqAgIiIiDQo+ICvCoMKgwqAgZC5zZXRWYXIoJ1NXVV9E
-RUxUQV9VUERBVEVfQURESVRJT05BTF9QUk9QRVJUSUVTJywNCj4gc3d1X2RlbHRhX3VwZGF0ZV9w
-cm9wZXJ0aWVzKQ0KPiArfQ0KPiArDQo+IMKgIyBjb252ZXJ0IGJldHdlZW4gc3d1cGRhdGUgY29t
-cHJlc3NvciBuYW1lIGFuZCBpbWFnZXR5cGUgZXh0ZW5zaW9uDQo+IMKgZGVmIGdldF9zd3VfY29t
-cHJlc3Npb25fdHlwZShkKToNCj4gwqDCoMKgwqAgc3d1X2N0ID0gZC5nZXRWYXIoJ1NXVV9DT01Q
-UkVTU0lPTl9UWVBFJykNCj4gQEAgLTE1NCwxMyArMTc3LDIxIEBAIEZJTEVTRVhUUkFQQVRIUzph
-cHBlbmQgPSAiOiR7TEFZRVJESVJfY2lwLQ0KPiBjb3JlfS9yZWNpcGVzLWNvcmUvaW1hZ2VzL3N3
-dSINCj4gwqANCj4gwqBkb19pbWFnZV9zd3VbZGVwZW5kc10gKz0gIiR7UE59OmRvX3RyYW5zZm9y
-bV90ZW1wbGF0ZSINCj4gwqBkb19pbWFnZV9zd3Vbc3RhbXAtZXh0cmEtaW5mb10gPSAiJHtESVNU
-Uk99LSR7TUFDSElORX0iDQo+IC1kb19pbWFnZV9zd3VbY2xlYW5kaXJzXSArPSAiJHtXT1JLRElS
-fS9zd3UgJHtXT1JLRElSfS9zd3UtDQo+ICR7U1dVX0JPT1RMT0FERVJ9Ig0KPiArZG9faW1hZ2Vf
-c3d1W2NsZWFuZGlyc10gKz0gIiR7V09SS0RJUn0vc3d1ICR7V09SS0RJUn0vc3d1LQ0KPiAke1NX
-VV9CT09UTE9BREVSfSAke1dPUktESVJ9L3N3dS1kZWx0YSINCj4gwqBJTUFHRV9DTUQ6c3d1KCkg
-ew0KPiDCoMKgwqDCoCBybSAtZiAnJHtERVBMT1lfRElSX0lNQUdFfS8ke1NXVV9JTUFHRV9GSUxF
-fScqLnN3dQ0KPiArwqDCoMKgIGlmIFsgLXogIiR7REVMVEFfVVBEQVRFX1RZUEV9IiBdOyB0aGVu
-DQo+ICvCoMKgwqDCoMKgwqDCoCBybSAtcmYgJHtXT1JLRElSfS9zd3UtZGVsdGENCg0KV2h5IGlz
-IHRoaXMgcmVxdWlyZWQgaWYgd2UgYWxyZWFkeSBjbGVhciB0aGUgJHtXT1JLRElSfS9zd3UtZGVs
-dGEgaW4NCmNsZWFuZGlycz8NCg0KRmVsaXgNCg0KPiANCj4gK8KgwqDCoCBmaQ0KPiArDQo+IMKg
-wqDCoMKgIGNwICcke1dPUktESVJ9LyR7U1dVX0RFU0NSSVBUSU9OX0ZJTEV9Jw0KPiAnJHtXT1JL
-RElSfS9zd3UvJHtTV1VfREVTQ1JJUFRJT05fRklMRX0nDQo+IMKgwqDCoMKgIGlmIFsgLWYgJyR7
-V09SS0RJUn0vJHtTV1VfREVTQ1JJUElUSU9OX0ZJTEVfQk9PVExPQURFUn0nIF07IHRoZW4NCj4g
-wqDCoMKgwqDCoMKgwqDCoCBjcCAnJHtXT1JLRElSfS8ke1NXVV9ERVNDUklQSVRJT05fRklMRV9C
-T09UTE9BREVSfScNCj4gJyR7V09SS0RJUn0vc3d1LSR7U1dVX0JPT1RMT0FERVJ9LyR7U1dVX0RF
-U0NSSVBUSU9OX0ZJTEV9Jw0KPiDCoMKgwqDCoCBmaQ0KPiArwqDCoMKgIGlmIFsgLWYgJyR7V09S
-S0RJUn0vJHtTV1VfREVTQ1JJUElUSU9OX0ZJTEVfREVMVEFfVVBEQVRFfScgXTsNCj4gdGhlbg0K
-PiArwqDCoMKgwqDCoMKgwqAgY3AgJyR7V09SS0RJUn0vJHtTV1VfREVTQ1JJUElUSU9OX0ZJTEVf
-REVMVEFfVVBEQVRFfScNCj4gJyR7V09SS0RJUn0vc3d1LWRlbHRhLyR7U1dVX0RFU0NSSVBUSU9O
-X0ZJTEV9Jw0KPiArwqDCoMKgIGZpDQo+ICsNCj4gwqANCj4gwqDCoMKgwqAgZm9yIHN3dV9maWxl
-IGluICIke1dPUktESVJ9Ii9zd3UqOyBkbw0KPiDCoMKgwqDCoMKgwqDCoMKgIHN3dV9maWxlX2Jh
-c2U9JChiYXNlbmFtZSAkc3d1X2ZpbGUpDQoNCi0tIA0KU2llbWVucyBBRywgVGVjaG5vbG9neQ0K
-TGludXggRXhwZXJ0IENlbnRlcg0KDQoNCg==
+
+
+On 3/8/24 11:52 AM, Moessbauer, Felix (T CED OES-DE) wrote:
+> On Thu, 2024-03-07 at 13:16 +0530, Adithya Balakumar wrote:
+>> swupdate supports delta updates with rdiff_image and delta(zchunk)
+>> handler. This change adds support to use either of the handler
+>> for creating delta update artifacts. The type of handler can be set
+>> in the delta-update.yml file along with additional variables needed
+>> for the chosen handler.
+>>
+>> Signed-off-by: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
+>> ---
+>>  =C2=A0classes/delta_update.bbclass | 90
+>=20
+> Hi,
+>=20
+> please name this class delta-update.bbclass to keep the naming style
+> similar with the rest of the project.
+>=20
+>> ++++++++++++++++++++++++++++++++++++
+>>  =C2=A0kas/opt/delta-update.yml=C2=A0=C2=A0=C2=A0=C2=A0 | 21 +++++++++
+>>  =C2=A02 files changed, 111 insertions(+)
+>>  =C2=A0create mode 100644 classes/delta_update.bbclass
+>>  =C2=A0create mode 100644 kas/opt/delta-update.yml
+>>
+>> diff --git a/classes/delta_update.bbclass
+>> b/classes/delta_update.bbclass
+>> new file mode 100644
+>> index 0000000..8d47081
+>> --- /dev/null
+>> +++ b/classes/delta_update.bbclass
+>> @@ -0,0 +1,90 @@
+>> +#
+>> +# CIP Core, generic profile
+>> +#
+>> +# Copyright (c) Toshiba Corporation 2024
+>> +#
+>> +# Authors:
+>> +#=C2=A0 Adithya Balakumar <adithya.balakumar@toshiba-tsip.com>
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>> +
+>> +IMAGER_INSTALL:delta_update +=3D "fdisk zchunk rdiff"
+>=20
+> Conditionally appending with +=3D overwrites already set weak defaults.
+> You might want to use .=3D " fdisk zchunk rdiff" instead.
+>=20
+>> +
+>> +FILESEXTRAPATHS:append =3D ":${LAYERDIR_cip-core}"
+>> +IMAGE_SRC_URI:delta_update +=3D " ${@ "
+>=20
+> Same here.
+>=20
+>> file://"+d.getVar('DELTA_RDIFF_REF_IMAGE')=C2=A0if
+>=20
+> I guess this could be simplified and made more portable by referencing
+> the DELTA_RDIFF_REF_IMAGE directly (e.g. from ${DEPLOY_DIR_IMAGE}). The
+> problem with the FILESEXTRAPATHS:append =3D ":${LAYERDIR_cip-core}" is
+> that it only works if the delta image is also from cip-core, but
+> usually cip-core is just referenced in a downstream layer and used
+> there.
+>=20
+>=20
+>> d.getVar('DELTA_UPDATE_TYPE') =3D=3D 'rdiff' and
+>> d.getVar('DELTA_RDIFF_REF_IMAGE') else '' }"
+>> +
+>> +do_image_delta_update[cleandirs] +=3D
+>> "${WORKDIR}/delta_interim_artifacts"
+>> +
+>> +extract_root_fs() {
+>> +=C2=A0=C2=A0=C2=A0 INPUT_ARTIFACT=3D$1
+>> +=C2=A0=C2=A0=C2=A0 OUTPUT_ARTIFACT=3D$2
+>> +=C2=A0=C2=A0=C2=A0 SECTOR_SIZE=3D512
+>> +=C2=A0=C2=A0=C2=A0 ROOTFS_LABEL=3D"primary"
+>> +=C2=A0=C2=A0=C2=A0 ROOTFS_START_SECTOR=3D$(${SUDO_CHROOT} /sbin/fdisk -=
+l -o
+>=20
+> Can't we simply use sfdisk to query this information instead of all the
+> awk stuff?
+>=20
+>> Name,Start "${INPUT_ARTIFACT}" | awk -v name=3D"${ROOTFS_LABEL}" '$0 ~
+>> name {print $2}' | head -n 1)
+>> +=C2=A0=C2=A0=C2=A0 SKIP_VALUE=3D"$(expr $(expr $ROOTFS_START_SECTOR \* =
+$SECTOR_SIZE)
+>> / $(expr 1024 \* 1024))"
+>> +=C2=A0=C2=A0=C2=A0 ${SUDO_CHROOT} /bin/dd if=3D${INPUT_ARTIFACT} bs=3D1=
+M
+>> skip=3D$SKIP_VALUE count=3D1024 of=3D${OUTPUT_ARTIFACT} status=3Dnone
+>> +}Why do we do this extraction from the WIC file. We established in the=
+=20
+issue that the verity/squashfs file is working. see=20
+https://gitlab.com/cip-project/cip-core/isar-cip-core/-/issues/99#note_1798=
+945281
+
+>=20
+> Why copy exactly 1GB?
+>=20
+> Instead of extracting that here, it might be simpler to just store the
+> .rdiff file (of the rootfs) with each image build and use that.
+>=20
+>> +
+>> +do_delta_update_sw_description_template() {
+>> +=C2=A0=C2=A0 # Since the sw-description file for delta update would not=
+ be
+>> very different from that of a
+>> +=C2=A0=C2=A0 # normal update, copy sw-description.tmpl as sw-descriptio=
+n-
+>> delta.tmpl and add delta update
+>> +=C2=A0=C2=A0 # specific properties
+>> +=C2=A0=C2=A0 SWU_DESCRIPTION_DELTA_UPDATE=3D"sw-description-delta"
+>> +=C2=A0=C2=A0 cp "${WORKDIR}/${SWU_DESCRIPTION_FILE}".tmpl
+>> "${WORKDIR}/${SWU_DESCRIPTION_DELTA_UPDATE}".tmpl
+>> +=C2=A0=C2=A0 sed -i 's/\SWU_ROOTFS_PARTITION_NAME/SWU_DELTA_UPDATE_ARTI=
+FACT/g'
+>> ${WORKDIR}/${SWU_DESCRIPTION_DELTA_UPDATE}.tmpl
+>> +=C2=A0=C2=A0 sed -i '/configfilecheck =3D/a \
+>> \'$'{SWU_DELTA_UPDATE_ADDITIONAL_PROPERTIES}'
+>> ${WORKDIR}/${SWU_DESCRIPTION_DELTA_UPDATE}.tmpl
+>> +}
+>=20
+> @Quirin: IIRC you recently refactored the creation of the sw-
+> description file. This might simplify things here.
+
+Please don't use sed but adapt the sw-description Variables
+to allow both variants.
+
+>=20
+>> +addtask do_delta_update_sw_description_template before
+>> do_transform_template after do_generate_image_uuid
+>> +
+>> +IMAGE_CMD:delta_update() {
+>> +=C2=A0=C2=A0=C2=A0 if [ "${DELTA_UPDATE_TYPE}" !=3D "zchunk" ] && [
+>> "${DELTA_UPDATE_TYPE}" !=3D "rdiff" ]; then
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bbfatal "You must set a vali=
+d DELTA_UPDATE_TYPE
+>> (rdiff/zchunk)"
+>> +=C2=A0=C2=A0=C2=A0 fi
+>> +
+>> +=C2=A0=C2=A0=C2=A0 DELTA_ARTIFACT_SWU=3D""
+>> +
+>> +=C2=A0=C2=A0=C2=A0 if [ "${DELTA_UPDATE_TYPE}" =3D "zchunk" ]; then
+use the case statement.
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0extract_root_fs "${PP_DEPLOY}=
+/${IMAGE_FULLNAME}.wic"
+>> "${WORKDIR}/delta_interim_artifacts/${IMAGE_FULLNAME}.raw"
+>> +
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0# Create .zck file
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0${SUDO_CHROOT} /bin/zck \
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0--output ${PP_DEPLOY}/${IMAGE_FULLNAME}.zck \
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0-u --chunk-hash-type sha256 \
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0${WORKDIR}/delta_interim_artifacts/${IMAGE_FULLNAME}.
+>> raw
+>> +
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0# Calculate size of zck heade=
+r
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0HSIZE=3D"$(${SUDO_CHROOT} /bi=
+n/zck_read_header -v
+>> ${PP_DEPLOY}/${IMAGE_FULLNAME}.zck | grep "Header size" | cut -d ':'
+>> -f 2)"
+>> +
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0# Extract the zck header
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0${SUDO_CHROOT} /bin/dd
+>> if=3D"${PP_DEPLOY}/${IMAGE_FULLNAME}".zck
+>> of=3D"${PP_DEPLOY}/${IMAGE_FULLNAME}".zck.header bs=3D1 count=3D"$HSIZE"
+>> status=3Dnone
+>> +
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 DELTA_ARTIFACT_SWU=3D${IMAGE=
+_FULLNAME}.zck.header
+
+>> +
+>> +=C2=A0=C2=A0=C2=A0 elif [ "${DELTA_UPDATE_TYPE}" =3D "rdiff" ]; then
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if [ -z "${DELTA_RDIFF_REF_I=
+MAGE}" ]; then
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bbfa=
+tal "You must set DELTA_RDIFF_REF_IMAGE and provide
+>> the required files as artifacts to this recipe"
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 fi
+>> +
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0# Extracting root partition f=
+rom image1
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0extract_root_fs "${WORKDIR}/$=
+{DELTA_RDIFF_REF_IMAGE}"
+>> "${WORKDIR}/delta_interim_artifacts/old-image-rootfs.raw"
+>=20
+> We only need that to compute the rdiff signature, right?
+> As these images might be quite big, better remove the old one before
+> extracting the new one. By that we save ~half of temporary space.
+>=20
+>> +
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0# Extracting root partition f=
+rom image2
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0extract_root_fs "${PP_DEPLOY}=
+/${IMAGE_FULLNAME}.wic"
+>> "${WORKDIR}/delta_interim_artifacts/new-image-rootfs.raw"
+>> +
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f ${DEPLOY_DIR_IMAGE}/${I=
+MAGE_FULLNAME}.delta
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0# create signature file with =
+rdiff
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0${SUDO_CHROOT} /usr/bin/rdiff=
+ signature
+>> ${WORKDIR}/delta_interim_artifacts/old-image-rootfs.raw \
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0${WORKDIR}/delta_interim_artifacts/old-image-
+>> rootfs.sig
+>> +
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 # create delta file with the=
+ signature file
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0${SUDO_CHROOT} /usr/bin/rdiff=
+ delta
+>> ${WORKDIR}/delta_interim_artifacts/old-image-rootfs.sig \
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0${WORKDIR}/delta_interim_artifacts/new-image-
+>> rootfs.raw ${PP_DEPLOY}/${IMAGE_FULLNAME}.delta
+>> +
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0DELTA_ARTIFACT_SWU=3D${IMAGE_=
+FULLNAME}.delta
+Can you use seperate functions for rdiff and zchunk?
+>> +=C2=A0=C2=A0=C2=A0 fi
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 # create a symbolic link as =
+IMAGE_CMD expects a
+>> *.delta_update file in deploy image directory
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ln -sf ${DELTA_ARTIFACT_SWU}
+>> ${DEPLOY_DIR_IMAGE}/${IMAGE_FULLNAME}.delta_update
+>> +}
+>> +
+>> +addtask do_image_delta_update before do_image_swu after do_image_wic
+>> diff --git a/kas/opt/delta-update.yml b/kas/opt/delta-update.yml
+>> new file mode 100644
+>> index 0000000..c7a3893
+>> --- /dev/null
+>> +++ b/kas/opt/delta-update.yml
+>> @@ -0,0 +1,21 @@
+>> +#
+>> +# CIP Core, generic profile
+>> +#
+>> +# Copyright (c) Toshiba Corporation 2024
+>> +#
+>> +# Authors:
+>> +#=C2=A0 Adithya Balakumar <adithya.balakumar@toshiba-tsip.com>
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>> +
+>> +header:
+>> +=C2=A0 version: 14
+>> +
+>> +local_conf_header:
+>> +=C2=A0 delta-update: |
+>> +=C2=A0=C2=A0=C2=A0 IMAGE_CLASSES:append =3D " delta_update"
+>> +=C2=A0=C2=A0=C2=A0 IMAGE_FSTYPES:append =3D " delta_update"
+>> +=C2=A0=C2=A0=C2=A0 DELTA_UPDATE_TYPE =3D ""
+>> +=C2=A0=C2=A0=C2=A0 DELTA_ZCK_URL =3D ""
+>> +=C2=A0=C2=A0=C2=A0 DELTA_RDIFF_REF_IMAGE =3D ""
+>=20
+> Please also extra-weak define the DELTA_* variables in the
+> delta_update.bbclass (to always have them defined and for documentation
+> reasons).
+>=20
+> Best regards,
+> Felix
+>=20
 
