@@ -2,271 +2,257 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFEC5C5475B
-	for <webhook@archiver.kernel.org>; Fri,  8 Mar 2024 11:44:56 +0000 (UTC)
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.84])
- by mx.groups.io with SMTP id smtpd.web10.19943.1709898294059760645
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE3C3C54E4A
+	for <webhook@archiver.kernel.org>; Fri,  8 Mar 2024 11:47:36 +0000 (UTC)
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.89])
+ by mx.groups.io with SMTP id smtpd.web11.19959.1709898452607613382
  for <cip-dev@lists.cip-project.org>;
- Fri, 08 Mar 2024 03:44:55 -0800
+ Fri, 08 Mar 2024 03:47:33 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=tr02fLM7;
- spf=pass (domain: siemens.com, ip: 40.107.21.84, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=Tu3bpsqy;
+ spf=pass (domain: siemens.com, ip: 40.107.6.89, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KFl1sRCq2zBrXHCUeqQlwi4/s3snpmg2/JP7tkw3tFtTlZMn8Zg15L9HThYAIm+wYXfNuh0wYdhqff6XaFGSQj8cYVG+Az79oqzDvMYGU2Dg4rkOTQW83jxU+ELNAuQKvAdlE2/PpakqGopgWXjc6WxPApATS36Ye9ogktZnmqmb0qDEExf6qSArxhl8n2ZoXlWysvUcK+y1JfSH1sQiiuYRqGGyGrwiMlpURpq5FseEPOooXbZzW2f2L1RgTR5aVbwK946+WxFnd+ViaFqHX8OMTz44HpOBbMUf8ErRYpEAV2kncJnGiOTJnDlo4MFBlPW+xYEXaFjEaKBWNKTrqA==
+ b=msl1ihXLSQiCbID9H6TU8YKltW6za3UidsVMdCJdI9j/oV6vQnFf5o12TTv5itiHO+Ksp1b/nOnkTPKL5iTe1uSy6BBuJl7I8nnrYiVNmlFmyYg1ly5EsPgem/lBNOcTCQ1Q1A23/KdXeVJ3EeNVNor07PbaGEwQBNOcGB0bQYrzVys5/FcGwV+JWU5Ufu7vBmuo58819I4ORlgMVCFXqNKgOKHDW114lgurn3E6cpJiuoz3M6h9/cITgAA29MT1H98c538+2XeyG1cNjPE0p1TMtg4JoOzP8B8oHBUekR7C9w0vCXZUA0H2/xGw1uGtVKOzKIvff6K3NYY4x4rGlg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lhbt6r0LSSBWnQLJMRzA5jXLkHuQFze7bDW3ptO42BI=;
- b=g5NBDC3cU4PReg7aBCOVnkGlnkzzzSAKPeIpDZk17Rmq66oE9GimY1lw1CLdwvvs/U9fKXww7mtbCRH6xfTlnpCjgiIwVWfp4DHdVn4NJfqUXsFePiNnpA5TdOOjtfPlw22ek6GQGCh9Bjvd4h+hQKcMCjLhVfweLLM2g2HyxcEUXs/R4PJes+X9yA+fYMMChp0pMMRn7f1gnbzkVOHJwV3vPnIugDmATq2E0CNNkLnlDIFbcNU+NPt8BpCGe2yRLGkHWYqIL2CvfdJ3mFIxDe7bGI2G0DhjM08jT2pwxPMmqNOTQ6XCAFzzzsPt5vf9f8/qnpwevzqJEh9uUdnowg==
+ bh=TQ4wj67K9YpH/rYh50c7b+U/rR0SAYtwvHtQYKZ9XgU=;
+ b=LOPXSijM/Fm1Cfatw/ZGe9TW7jTq5l7QHJ2LQBQfGa445/Hl1oOwzFRxXNbLDYBv0MiRh+95YqBtNhruI13U1BprJsJ0S3/3yLdBhgNICenRAE8l8Yq1O8Z6i6aUAU2pZiOSqwPbEKG7CJ80hcaoYfqoAw0l7kukliGiZx3uC+b/RnpMFN3k03DsatgUQZeJ2Wk3lFoRMvGgDoqoDdtFb6s+35LSo0+BYDXaWRuoYPRhzv4MjTdXqHzhqYweB7nE9Fqd9WqdB5q5wkWPVyoYKfhuYvYGlVZW06t4UCh5ViMHvVkXsLwmkSDXy8liFuNu4mQFZ1c2THFPS5Lnjs0t5w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lhbt6r0LSSBWnQLJMRzA5jXLkHuQFze7bDW3ptO42BI=;
- b=tr02fLM765aV0nVHrbfaTOAChWaf7IF4hE2H4CCWm2tpoludLpWqbUQZnJlq1U98Z8pvyU8lV2PqU9b1ybIdmF2ZY0eicxHqY1tGHTh+0YQpH+qj7Pm1ntX9skGWn6MCetgi5NFrvMQzgnSGhVEsIedJ1M3YWICBjxI0Etunpf5nQkX/Ioc0FaWm7aVGCkw7sgnbqgRmKB+UFMCzfVtX/gpD1KbQkXl7MpqQS8HiL2F5wPma9LUI/QVlXOshgQUOUtBITwEbR9drGO5YwBxGg50ygtY4WYbHD4N7g4jq9dgreJAZb7/58s+qFRMAWmraU3Ui5dy6t6XDvhd6P0Gcyw==
+ bh=TQ4wj67K9YpH/rYh50c7b+U/rR0SAYtwvHtQYKZ9XgU=;
+ b=Tu3bpsqyJj51KpCo+X96grUxEU+DTZcnMR1E/KdLmE/09iBU0pnY9+H224MmQt2Oi4Bv487UqYquprs1rM6+bmECvhPaK2nkGpniGRHZ4u9LmI7V41hsVdmbcfkW0wNfpZiZXM1CeevOBqWUqcijNNNFCEbBt/Tha0qKt1Bf/LiVCVRRTaslJ2cf0GQal7QJ5DvVFw3Fr1veT8NgZkjjH1vC/CQMLmCfvM15utXSF/XfJ7th7FRfTOpGdCNmXdavD/t7o/pG7Y2x7t8IVOKGLYaYXshh2mEHFJLIrsMic5nWcuoE0d3Z5k+54tmG+Sa4ncS3y/r5y8eGG7rZuVl1+w==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by DB8PR10MB3564.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:136::16) with
+ by AS8PR10MB6843.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5b7::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7362.27; Fri, 8 Mar
- 2024 11:44:50 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7362.26; Fri, 8 Mar
+ 2024 11:47:29 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8d16:7fbb:4964:94fe]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8d16:7fbb:4964:94fe%3]) with mapi id 15.20.7362.024; Fri, 8 Mar 2024
- 11:44:50 +0000
-Message-ID: <31bf9be7-30c7-4717-a34a-9d0477607f55@siemens.com>
-Date: Fri, 8 Mar 2024 12:44:48 +0100
+ 11:47:28 +0000
+Message-ID: <4d62b5be-0e26-4752-bcc3-d2d18d043f66@siemens.com>
+Date: Fri, 8 Mar 2024 12:47:27 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core][RFC v1 4/6] Add Delta update support with
- rdiff_image and delta handler
+Subject: Re: [isar-cip-core][RFC v1 6/6] doc/README.swupdate.md: Update steps
+ to test Delta software Update
 Content-Language: en-US
 To: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>,
  cip-dev@lists.cip-project.org
 Cc: shivanand.kunijadar@toshiba-tsip.com, sai.sathujoda@toshiba-tsip.com,
  dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
 References: <20240307074612.1996609-1-Adithya.Balakumar@toshiba-tsip.com>
- <20240307074612.1996609-5-Adithya.Balakumar@toshiba-tsip.com>
+ <20240307074612.1996609-7-Adithya.Balakumar@toshiba-tsip.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <20240307074612.1996609-5-Adithya.Balakumar@toshiba-tsip.com>
+In-Reply-To: <20240307074612.1996609-7-Adithya.Balakumar@toshiba-tsip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR0P281CA0143.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:96::17) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR4P281CA0247.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:f5::10) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB8PR10MB3564:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1340ef4f-a6c4-4c2f-ddfd-08dc3f6529aa
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS8PR10MB6843:EE_
+X-MS-Office365-Filtering-Correlation-Id: 63c171a9-3e73-4bba-68ba-08dc3f65881e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	s6YGp5Hbajj2u0Q+tInM8ZXPfTDB9i5F+fc2zwpp86cyrUIs6PUVPLfGYacp5cM7OdlfIsm7qctgYF8Spzpx2mN2KfB3r2kdUsbUmaiMIHOWogobgEC7PUMUOoTTlt5cid9gWuXkOjuiNJmAcTBEM0bEFUATxIue+dJCohWY1buTxGuEnpRsR5aoadT98w3xqq+jawtem8jZEXwz6AY6mxjr4w9+9QklT1yQQ8dkyCWDckp6iba06hZkZNxa851FdCGOtsxcPrEgrhdU919j2yynDpXxSalYITOASzZsB5lIRZL+ic/0RmyIJVkfdNX/zSlI7lWhRXrhNQSkteV7GaV5a96OUgMhWzJ8FG75koAEniQHVANZoaXRJsu1dezA7kebfOnkqnz6DQxq29mgO77QiyL8octN1OIDfnoXiWCi/qA2d6z5rvqwLGilsP7exIPxkoU2ryhCcEsSQN+mtUNdLJxQi85MVDen2Sz6lPqdy8rbPmWahhfHFFJpMBJbokfBMQuvWkp9zIlU+awzLirwvWAO/rqvHWtu6swsZMkdGXDhNtKBEX4Zu9SIJ75BsMydnTVzf7ppefsuvl517e1M+V2CZHaBHfTJdbjrvLjlMP2doHWHo8LQTcd1PCngdTjB+b7gRNpuAeb82oQKpqgQlu4gdSj90tKqEkNFnxk=
+	BKbcbNb6UDYUVlMJGQLpK1VccPOlqtxRj/E18sUpQ8HZlp7GnmGLL+ZR3obX2dScA4hr4HnDGeAiPh0XvvHpffcaClaAOS8vGf/giTQstHj6Qc99ULk2Zei6e/FXYSMSpSutakhD8R+AAq3yPMPWTDKlUT5r/6/HMPobmUNMbUMI8DrXJZO90JahQnoJYxiC8uKEnng7tOegcgJvEuo1eP+bCRQPVcuNjylmardov/3ktN/J1XOPakaMuC2+yJv/3byONWzOuC1Sxxr1Ga9IwQJQcjrqRUCVBpn+bjFbWNOkJ2lPpcEVefvS2Kkg31SXm2+8n/dIRVM7HHhEJcq3NhshTEGMEZPhCevZFFnpxI0wcEwbDuDFd1AK1IFRllbqWGkQdwM57ar2nz4IyyjDGDKfTpdEyykAl51bZrJdxTlcy6Htj7U0J8K+LwJ2aWV74PvoWYyiWuKh4cu2XPJb7I2+UNHErP98wghvNDmMijr21u1b+sP1i2upFs9bXtEkQS6D6JqSTcduaWWw5LeNlWFz4tFP6B6fteBXnJiCKJZwt9wn+DA7SKevKSmDCkzzR9D/ZikSKG0Pe47Cbd87imgbZAqcy+JTAFXhCpgTLeTkXRzr4iWGo9WarqSU48+L4gjrCVmiLW7w/9G1BmvWljff1qggBq20BiuffsdQc7g=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?Q1pHazdHV1o1REhJN3ppV1drVWJrcTZaNm1jNDAydWhqZ1AxR0c4TW9qc1Y0?=
- =?utf-8?B?RmtEQTl2b1E5TGU4cnBBYmN2RGZ1NHBDZkhVWE43ck94UTQwdENseDUxWkJP?=
- =?utf-8?B?bFdvc1VIVnFxYTJmdmc2RDNuM0NGMGY5Tzd4RHRSeXNHU3ZSNG9oR3d6Sllz?=
- =?utf-8?B?dnNSV2ZUVklaS1BrdzVzNVo0TUN0WHdBYjNZTjR4WW9ZSW9TSDdueGNoOVNS?=
- =?utf-8?B?Yk4vemJLZFVjWDRLS200blFud3ZtMUNTenZzRmxPcE8xckVvdFdMOWdkSjR0?=
- =?utf-8?B?YzZwNzVSbUNEbU04QXprWjg2TXpIbThDanVXUSs0WGh2S1Y2VTdrR3pCUGhK?=
- =?utf-8?B?UFMvbjg2Mm1CM2E1U2RvWnUvS0p3S3MvVWtXVzBCVXdEbTBwQ0dsN0w4bEE2?=
- =?utf-8?B?Z2lwWThIYmtrSlZZa1dmTytlQ0swR21uU0tvaU94ektFT1B4ZE1yN212MDc2?=
- =?utf-8?B?eUJhR3lndCs3M2RPU2RYS2JDazhqSHozNmE0eTNQQko2Nlp0UEl3V1BkaFcy?=
- =?utf-8?B?c1dhZzBnNnR3TnFjS0lQRFJhMGJOOUgrdzkvTmhYNzNnWVQ4c2dHWDNjSDZP?=
- =?utf-8?B?ZWRpVDlWNWVmNXBQUWlXNmEzbUdpWEQwcHFpTnJIMm13ZGRaOVlNMDcwVlZV?=
- =?utf-8?B?UHBERDROamdEVDR2MDVrREhZdHZ5dWFkeFd2UHRrSHMvNUpHV2ljZ2RmSSsx?=
- =?utf-8?B?REsxeXN2cnV5cHBTOGlQYzVkVlR1amwrVjNsL1N6bUVobCtKNXR5R3dLMk94?=
- =?utf-8?B?NFg5cTh4Kys5NktDR2V2WDVWODdlRzZ2REQxN0RLcFMxSkRhSnUyMTl2TXF0?=
- =?utf-8?B?VjlsNlZzeXVmOEZSeWR1cVBUMW12NGxwZ1RPbUx4bVBBTGNVYXdTWlRZbU82?=
- =?utf-8?B?Ym9RZCtidUNqdWFEenVrdnJLL1c1Mk8zdzlLTlVqN3JNd3dLVG1JazdaNG9S?=
- =?utf-8?B?NXdPemJ4TEpFMmdteFpjQzlubEVXbUo2Ylo3M0FBOE1ST2EwUXRHM001TThM?=
- =?utf-8?B?eWxqWExkWUN6VFZpQ05XT2t4elVOaUlNRkFLbDVYd0E3alFxcmJvNUVuUFcr?=
- =?utf-8?B?ZE85R3IxTkxSanlDR01jcFJQNlFVeStiSk1OdmJ6d28zbzc1cTNNOTlCa3Ax?=
- =?utf-8?B?OWV3dEtQQzdhRVdxVll0cGVkR0Vpc1lmWUJvVGViTFgrRms0MzBwb3FEeXJh?=
- =?utf-8?B?bStndGZ4cGl6YXRiSnNzVlArMGhOV2Ridk15emhOUWhXc3g1ZCtHOGYzdldv?=
- =?utf-8?B?bFA5K0hIRkg4VFo0d0YwaDVxYkF4Wkp6UWoreG41TndCNTQ1ay9GQldWWCt0?=
- =?utf-8?B?ZGRmMnAwMlk4UEgyanVndXdvUmRiZktCWWo4WWpzelFOb1Q1RUsvaUt2bE9h?=
- =?utf-8?B?ZHNveVNkNS9yb0loOWZ2bkpLNXkyZFlReXFEZy9ybVl4RWszUUNQejVSUzZt?=
- =?utf-8?B?QStuTVdSa2tmZHVXclh2L3p1dkVWZlRCMVBrNFc1U2VlRUxXT2RwRjVuY0xY?=
- =?utf-8?B?RjJFYUFLNGlpTjdpcWdySURDNVNFbWI2TkNvS3k3Z1I0R1RRUk5sMjhjaXYy?=
- =?utf-8?B?dStBSXcrUGZaSnlUTzl4eTFmVm4yOHVnNjZ5WkFWYmZKNDJZK0NvNlh2TnVl?=
- =?utf-8?B?NnN4RmZsanpTcVhmM083ZEJxSXpBY1NXdUZid0gvWVRrdmg2d0RJdVNVYmE0?=
- =?utf-8?B?QUdESFdnWmtMSzN2UWU2dnBGSlY1Ym9MRURxd1pjamEvYmwxbTlJTWE3Y290?=
- =?utf-8?B?c3VlQU9RS3ppdlluU0h0RUhoa29YbE1NVlJmT3ZsN21QMHdCSWQvWmFCbEJN?=
- =?utf-8?B?eGhxczJrS0k4MGhmRTR4ZlROd1A2V20vQ2ZPOC85U3ZiL2V3SllBT0pYRVo1?=
- =?utf-8?B?YWZxdHl4N3d1MTB3UXByTWJ4Q2JFaUQ3dmRhWEN2cmhsWGdUSGQzN2M0SFZr?=
- =?utf-8?B?M012OHZOZ2lPdmsvL0VJYS9tVDFFU2lBNUQrT0NIWjJVMUlaeFF5UDdQUXVT?=
- =?utf-8?B?SXBoVklPaHVDbkMrcXIxdWdyRjcybDNKNnpvanVDTjlRN0hCOFIzNDNWaHc1?=
- =?utf-8?B?elQ4clk0L3FIYlR0RHNXRUk0UXhjQm0yRHE0ckcrYWRuQ2VUZkRIT3cyYWRk?=
- =?utf-8?B?aFcwZlN2T2Q3Q1NzRUJYdW45bFZWWTNPcCtDalRZeXFTT09ORkE2RlpISmk0?=
- =?utf-8?B?aVE9PQ==?=
+	=?utf-8?B?MERnK2d1N0VyNG1obTZrSTgwdk9NZm1SYW12cXlaOWVERlJqd2RqQXF6bWJT?=
+ =?utf-8?B?TmpOejYwSVRLVm1TY2FISkswMW1Qemt1YmxiRExWYnRGTTdub3QzcjdQbk5r?=
+ =?utf-8?B?YTRUbnVZczFnZjNLZnFZdkNLakJDV3AzVVlzMHJVWkpweGdrSGdTQmdoV1Nj?=
+ =?utf-8?B?ams5Zmh6YjFhc3REU0Q3M1ZIRGJsZnVqOEVTaEhjbERqK3d0RjVCVGpqSTdP?=
+ =?utf-8?B?MVlEeWd0TUVnRHNlTE5zbUMyZjZCeW1vMHgvOVRTSFlyRDZrZ2ttWkQzaEpG?=
+ =?utf-8?B?ZDZsRXd5b05acmVRbElsMnIxWXd4K3hHQTA0YmdFVHhLRmZXVnQ1MmF6YXdj?=
+ =?utf-8?B?QTFhTjdKWjZid3pjRFZDVjhTbEtpRUJkMVRwSDJjNUJEQ0xyZ2RLV0N1alhu?=
+ =?utf-8?B?YXJ6eS85aHB1bjF3bHBFaERsdlBOOEY0N2dRcXZPYmt2c1l6WVYwdzRZY1l6?=
+ =?utf-8?B?OHpVbEV3ckVyZG9kN2Z2QWZHZFNOUEFDZXZza29NTDU4V3BnZGE2Kzl1dm1O?=
+ =?utf-8?B?aWl5WWlFNkZ3RXVGRlg5NHB5YW9qVnYzcEZtSFBoV1dlNmtZMlYrektwc3dB?=
+ =?utf-8?B?WWtkK2NnRVFwdFVpSkJlS0pZR3BBOGFDTXZtVzNhZVF4Q1dEVzZjdCtMTGJi?=
+ =?utf-8?B?S09CY281TXdrQXFuUE5udHI0bTZicFVpc0hsQnJhckFGa0xlUzdhbzhNODhZ?=
+ =?utf-8?B?T3p3dVVpbmdGVTFYb0NieW9La1ZMQVQwNUlrS2J1Y2phNWphVmRzVkFyc2tV?=
+ =?utf-8?B?aUdXczRhUU8wMzhIUG44SVVGdGt6NTNhNjZzVFBSQ21HdXl2OXU4aUVXTExx?=
+ =?utf-8?B?WEdDSVNnc3BpNUEzT1N3MnZQaUsreGxVYkxjc3VSNUN0QXd4L2txMzJreUlE?=
+ =?utf-8?B?QmZrY3A4WlhXNVFyRVVZbk1qb1VLL1A4TGtTUTJtMUdtZ29SN0VobmhTQ1FI?=
+ =?utf-8?B?RExTMHI2aDVpb20vY1lKZWpYVm9qS2NMdnJ4VjlYVHRodzRyek9JRW1nY3dW?=
+ =?utf-8?B?cVREU0pUeHAyd1BiUittQzZOOFRBMTNXbmdvRUthT09GdmVkY2R4UU04L2ox?=
+ =?utf-8?B?cHV4cUlqSC9WZDhNTkdBOEZVMXpOdHdWM0lzdzd0V3htOVZ4TlV5ZTl3amdJ?=
+ =?utf-8?B?N1JQeVhMSi9NaVo2TFlqZFN6dWhRTmdNV05WMitPQWQ2Zk94bzdXNUlBSmh6?=
+ =?utf-8?B?U0tPVXNwWWlMTjk1dXdPb0IrMnV4Rjk1WmkzMEVSYWRmbmQ2OVB3M2dCMmhl?=
+ =?utf-8?B?MUpDdHdEYXMvNkRjc0ZybkVyRW0xWXJ0OWFLWVo0T2E0Z00zdmd3Wm1pUGIy?=
+ =?utf-8?B?MERyNHRWSzBHSFZwN3RGWDY3Y2dZc2NrcWQ3VTVoNjdhMitnRHNhMXhOR2RD?=
+ =?utf-8?B?M1daTnpKUSthRzZQUDRsaElFM0diMjY3TWY5djFUcm9Hb1YrMUFDWHJ5ZjZS?=
+ =?utf-8?B?Q2VrNGhiTTJoZ1FTRnpndFVoWWVMZmNoTi9naVJIeTFJSXpkVWZ1dDFlUzNX?=
+ =?utf-8?B?UnZHWUwxaWkyYTFiNG9xbUk2ZjU3ZWgyenBmK3JubVQ1WHBjV04wa0d2RGtm?=
+ =?utf-8?B?QmdtdWR6ZlUwSm1RRUJMbUk3a0JOcXRhQWR3a0dMSDZET2VpTS81ZUdMVkNw?=
+ =?utf-8?B?Sng4VTVRU05jdkl5NTAwUjRiVlR4NGtBNTI4VkhrcWs4R3k1SU4rQUl2Z1Bu?=
+ =?utf-8?B?OWNhZzNGOFN3eU12ZC9RQ0dOakxUYjFlV25WSTNlYUFvOFdrNi9UWTNUeVhZ?=
+ =?utf-8?B?MEIvbkhmak5kMWdURnVZd05sdW9RK1UrRXFhUE81alh1V1M2N0w2dE42YWFE?=
+ =?utf-8?B?cm1JSnc1UU0rSnBLdDZSZ2srckVWUW1RYnFPYWQyK3ZsckxqeENWNENjR0J6?=
+ =?utf-8?B?bU1CalZCTTQ0VU52YnZIRElhcmFIZE4wYlZML25TR3RYZ25ITDB3bUV4V2hp?=
+ =?utf-8?B?ZXpxU2g2YUt3SzVpNHBwZWdFU0JBdTRYWnJIZm51R0VpNWErKytxWlBZL012?=
+ =?utf-8?B?U3MwR1FwN3hxMndjNWVWSjFrcVIxVkVSaHNCTHRZeE1KNjE2L3pCeHh6ZjNF?=
+ =?utf-8?B?QU9ENzJsbmJPaTZVYlZCeTlISEdRYWJZZWtRUExsUmV4aXR3RlZDU3JMRXpj?=
+ =?utf-8?B?V3k2ZlY3MmdqaEUxODMzenVyVTUwUkpxZlpNelNtQW00eDhiUEFPRGVsVHhZ?=
+ =?utf-8?B?Q2c9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1340ef4f-a6c4-4c2f-ddfd-08dc3f6529aa
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63c171a9-3e73-4bba-68ba-08dc3f65881e
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Mar 2024 11:44:50.4065
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Mar 2024 11:47:28.8803
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BhphQdRhu+sTlnxH1D2ByCvOKWI+AcxYLmZwFbIO9/yFgq1oNBixoCIUhmKEoYj2GWVTznSBXbM5Q100gsIhYw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR10MB3564
+X-MS-Exchange-CrossTenant-UserPrincipalName: gonwD+JghS5ou6I/zVpPuKn70egGy467SWDVnRQqUQ4+LKvswuvWtNp3pnizLWm6y43ydJX6/i7r6mZCnwlleA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB6843
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 08 Mar 2024 11:44:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15266
+ <cip-dev@lists.cip-project.org>; Fri, 08 Mar 2024 11:47:36 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15267
 
 On 07.03.24 08:46, Adithya Balakumar wrote:
-> swupdate supports delta updates with rdiff_image and delta(zchunk)
-> handler. This change adds support to use either of the handler
-> for creating delta update artifacts. The type of handler can be set
-> in the delta-update.yml file along with additional variables needed
-> for the chosen handler.
+> This change includes steps to verify Delta Software Update with
+> rdiff_image and delta handler
 > 
 > Signed-off-by: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
 > ---
->  classes/delta_update.bbclass | 90 ++++++++++++++++++++++++++++++++++++
->  kas/opt/delta-update.yml     | 21 +++++++++
->  2 files changed, 111 insertions(+)
->  create mode 100644 classes/delta_update.bbclass
->  create mode 100644 kas/opt/delta-update.yml
+>  doc/README.swupdate.md | 95 ++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 95 insertions(+)
 > 
-> diff --git a/classes/delta_update.bbclass b/classes/delta_update.bbclass
-> new file mode 100644
-> index 0000000..8d47081
-> --- /dev/null
-> +++ b/classes/delta_update.bbclass
-> @@ -0,0 +1,90 @@
-> +#
-> +# CIP Core, generic profile
-> +#
-> +# Copyright (c) Toshiba Corporation 2024
-> +#
-> +# Authors:
-> +#  Adithya Balakumar <adithya.balakumar@toshiba-tsip.com>
-> +#
-> +# SPDX-License-Identifier: MIT
-> +#
+> diff --git a/doc/README.swupdate.md b/doc/README.swupdate.md
+> index cf1bcfb..4003243 100644
+> --- a/doc/README.swupdate.md
+> +++ b/doc/README.swupdate.md
+> @@ -324,6 +324,101 @@ user variables:
+>  
+>  
+>  ```
+> +# Building and testing the CIP Core image for Delta Software Update
 > +
-> +IMAGER_INSTALL:delta_update += "fdisk zchunk rdiff"
+> +Set up `kas-container` as described in the [top-level README](../README.md), and then proceed with the following steps.
 > +
-> +FILESEXTRAPATHS:append = ":${LAYERDIR_cip-core}"
-> +IMAGE_SRC_URI:delta_update += " ${@ "file://"+d.getVar('DELTA_RDIFF_REF_IMAGE') if d.getVar('DELTA_UPDATE_TYPE') == 'rdiff' and d.getVar('DELTA_RDIFF_REF_IMAGE') else '' }"
+> +First build an image using the following command:
+> +```
+> +host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/rt.yml
+> +```
+> +Currently, Delta Software Update is supported only for root file system.
+> +Now, to verify a delta update, build an image with some modifications to the root file system (ex: Add additional packages).
+> +For this example, add the packages vim and nano (since the packages are not already included in the base image) to the image. This can be done by modifying the `recipes-core/images/cip-core-image.bb` file as shown below.
+> +```
+> +diff --git a/recipes-core/images/cip-core-image.bb b/recipes-core/images/cip-core-image.bb
+> +index 0ec7220..f61ce23 100644
+> +--- a/recipes-core/images/cip-core-image.bb
+> ++++ b/recipes-core/images/cip-core-image.bb
+> +@@ -14,6 +14,7 @@ inherit image
+> + ISAR_RELEASE_CMD = "git -C ${LAYERDIR_cip-core} describe --tags --dirty --always --match 'v[0-9].[0-9]*'"
+> + DESCRIPTION = "CIP Core image"
 > +
-> +do_image_delta_update[cleandirs] += "${WORKDIR}/delta_interim_artifacts"
+> ++IMAGE_PREINSTALL += "vim nano"
+> + IMAGE_INSTALL += "customizations"
 > +
-> +extract_root_fs() {
-> +    INPUT_ARTIFACT=$1
-> +    OUTPUT_ARTIFACT=$2
-> +    SECTOR_SIZE=512
-> +    ROOTFS_LABEL="primary"
-> +    ROOTFS_START_SECTOR=$(${SUDO_CHROOT} /sbin/fdisk -l -o Name,Start "${INPUT_ARTIFACT}" | awk -v name="${ROOTFS_LABEL}" '$0 ~ name {print $2}' | head -n 1)
-> +    SKIP_VALUE="$(expr $(expr $ROOTFS_START_SECTOR \* $SECTOR_SIZE) / $(expr 1024 \* 1024))"
-> +    ${SUDO_CHROOT} /bin/dd if=${INPUT_ARTIFACT} bs=1M skip=$SKIP_VALUE count=1024 of=${OUTPUT_ARTIFACT} status=none
-> +}
+> + CIP_IMAGE_OPTIONS ?= ""
+> +```
+
+Do not duplicate the description how to generate v1 and v2 images,
+compared to the existing "Building and testing the CIP Core image", that
+is just confusing. Describe the delta-update specifics only, likely the
+bits below.
+
+> +## Delta Software Update using rdiff_image handler
 > +
-> +do_delta_update_sw_description_template() {
-> +   # Since the sw-description file for delta update would not be very different from that of a 
-> +   # normal update, copy sw-description.tmpl as sw-description-delta.tmpl and add delta update 
-> +   # specific properties
-> +   SWU_DESCRIPTION_DELTA_UPDATE="sw-description-delta"
-> +   cp "${WORKDIR}/${SWU_DESCRIPTION_FILE}".tmpl "${WORKDIR}/${SWU_DESCRIPTION_DELTA_UPDATE}".tmpl
-> +   sed -i 's/\SWU_ROOTFS_PARTITION_NAME/SWU_DELTA_UPDATE_ARTIFACT/g' ${WORKDIR}/${SWU_DESCRIPTION_DELTA_UPDATE}.tmpl
-> +   sed -i '/configfilecheck =/a \                      \'$'{SWU_DELTA_UPDATE_ADDITIONAL_PROPERTIES}' ${WORKDIR}/${SWU_DESCRIPTION_DELTA_UPDATE}.tmpl
-> +}
-> +addtask do_delta_update_sw_description_template before do_transform_template after do_generate_image_uuid
+> +Creating a delta update file for rdiff_image handler requires a reference image (against which the delta is computed). In this case, the image built in the previous section can be used as the reference image.
+> +Copy the reference image to the project directory. And set the variable `DELTA_RDIFF_REF_IMAGE` with the path to the reference image and set the variable `DELTA_UPDATE_TYPE` to `rdiff`.
 > +
-> +IMAGE_CMD:delta_update() {
-> +    if [ "${DELTA_UPDATE_TYPE}" != "zchunk" ] && [ "${DELTA_UPDATE_TYPE}" != "rdiff" ]; then
-> +        bbfatal "You must set a valid DELTA_UPDATE_TYPE (rdiff/zchunk)"
-> +    fi
-> +    
-> +    DELTA_ARTIFACT_SWU=""
-> +
-> +    if [ "${DELTA_UPDATE_TYPE}" = "zchunk" ]; then 
-> +	extract_root_fs "${PP_DEPLOY}/${IMAGE_FULLNAME}.wic" "${WORKDIR}/delta_interim_artifacts/${IMAGE_FULLNAME}.raw"
-> +
-> +    	# Create .zck file
-> +    	${SUDO_CHROOT} /bin/zck \
-> +		--output ${PP_DEPLOY}/${IMAGE_FULLNAME}.zck \
-> +		-u --chunk-hash-type sha256 \
-> +		${WORKDIR}/delta_interim_artifacts/${IMAGE_FULLNAME}.raw
-> +
-> +    	# Calculate size of zck header
-> +    	HSIZE="$(${SUDO_CHROOT} /bin/zck_read_header -v ${PP_DEPLOY}/${IMAGE_FULLNAME}.zck | grep "Header size" | cut -d ':' -f 2)"
-> +    
-> +    	# Extract the zck header
-> +    	${SUDO_CHROOT} /bin/dd if="${PP_DEPLOY}/${IMAGE_FULLNAME}".zck of="${PP_DEPLOY}/${IMAGE_FULLNAME}".zck.header bs=1 count="$HSIZE" status=none
-> +
-> +        DELTA_ARTIFACT_SWU=${IMAGE_FULLNAME}.zck.header
-> +
-> +    elif [ "${DELTA_UPDATE_TYPE}" = "rdiff" ]; then
-> +        if [ -z "${DELTA_RDIFF_REF_IMAGE}" ]; then
-> +            bbfatal "You must set DELTA_RDIFF_REF_IMAGE and provide the required files as artifacts to this recipe"
-> +        fi
-> +
-> +	# Extracting root partition from image1
-> +	extract_root_fs "${WORKDIR}/${DELTA_RDIFF_REF_IMAGE}"  "${WORKDIR}/delta_interim_artifacts/old-image-rootfs.raw"
-> +	
-> +	# Extracting root partition from image2
-> +	extract_root_fs "${PP_DEPLOY}/${IMAGE_FULLNAME}.wic"  "${WORKDIR}/delta_interim_artifacts/new-image-rootfs.raw"	
-> +
-> +	rm -f ${DEPLOY_DIR_IMAGE}/${IMAGE_FULLNAME}.delta
-> +	# create signature file with rdiff
-> +	${SUDO_CHROOT} /usr/bin/rdiff signature ${WORKDIR}/delta_interim_artifacts/old-image-rootfs.raw \
-> +		${WORKDIR}/delta_interim_artifacts/old-image-rootfs.sig
-> +
-> +        # create delta file with the signature file
-> +	${SUDO_CHROOT} /usr/bin/rdiff delta ${WORKDIR}/delta_interim_artifacts/old-image-rootfs.sig \
-> +		${WORKDIR}/delta_interim_artifacts/new-image-rootfs.raw ${PP_DEPLOY}/${IMAGE_FULLNAME}.delta
-> +
-> +	DELTA_ARTIFACT_SWU=${IMAGE_FULLNAME}.delta
-> +    fi
-> +        # create a symbolic link as IMAGE_CMD expects a *.delta_update file in deploy image directory
-> +        ln -sf ${DELTA_ARTIFACT_SWU} ${DEPLOY_DIR_IMAGE}/${IMAGE_FULLNAME}.delta_update
-> +}
-> +
-> +addtask do_image_delta_update before do_image_swu after do_image_wic
-> diff --git a/kas/opt/delta-update.yml b/kas/opt/delta-update.yml
-> new file mode 100644
-> index 0000000..c7a3893
-> --- /dev/null
-> +++ b/kas/opt/delta-update.yml
-> @@ -0,0 +1,21 @@
-> +#
-> +# CIP Core, generic profile
-> +#
-> +# Copyright (c) Toshiba Corporation 2024
-> +#
-> +# Authors:
-> +#  Adithya Balakumar <adithya.balakumar@toshiba-tsip.com>
-> +#
-> +# SPDX-License-Identifier: MIT
-> +#
-> +
+> +```
 > +header:
 > +  version: 14
 > +
 > +local_conf_header:
 > +  delta-update: |
 > +    IMAGE_CLASSES:append = " delta_update"
-> +    IMAGE_FSTYPES:append = " delta_update"
-> +    DELTA_UPDATE_TYPE = ""
+> +    DELTA_UPDATE_TYPE = "rdiff"
 > +    DELTA_ZCK_URL = ""
-> +    DELTA_RDIFF_REF_IMAGE = "" 
+> +    DELTA_RDIFF_REF_IMAGE = "path/to/image/from/project/root/directory.wic"
+> +
+> +```
 
-What prevents making this the default for generating update images?
-People could still add their own options or local configs if they want
-to deviate. Would also simplify patch 6 further.
+I don't want to fiddle with such files for a first test unless I really
+have to. I would like to have a default case ideally without any
+editing, just by rebuilding an image differently, maybe providing v1 to
+that build under a specific path/filename, and let the second build
+generate the delta image automatically.
 
 Jan
+
+> +Run the below command to build the image with the modification as shown above and with the root file system modification as described in previous section.
+> +```
+> +KAS_BUILD_DIR=image2 ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/delta-update.yml
+> +```
+> +Run the below command to start first image
+> +```
+> +host$ DISTRO_RELEASE=bookworm SWUPDATE_BOOT=y ./start-qemu.sh amd64
+> +```
+> +Copy `cip-core-image-cip-core-bookworm-qemu-amd64-delta.swu` file from `image2/tmp/deploy/images/qemu-amd64/` folder into the running system:
+> +```
+> +host$ cd image2/tmp/deploy/images/qemu-amd64/
+> +host$ scp -P 22222 ./cip-core-image-cip-core-bookworm-qemu-amd64-delta.swu root@localhost:
+> +```
+> +
+> +### Delta Software Update Verification
+> +
+> +Follow the steps mentioned in the section [SWUpdate verification](#swupdate-verification) for verification.
+> +
+> +Since our target was to update the root file system by adding a few packages (vim and nano in this example), Check if the packages are available after the update by running either the `vim` command or `nano` command.
+> +
+> +## Delta Software Update using delta handler
+> +
+> +For Delta update with zchunk, set the variable `DELTA_ZCK_URL` with the URL of the zck file that is hosted in a http server and set the variable `DELTA_UPDATE_TYPE` to `zchunk`.
+> +```
+> +header:
+> +  version: 14
+> +
+> +local_conf_header:
+> +  delta-update: |
+> +    IMAGE_CLASSES:append = " delta_update"
+> +    DELTA_UPDATE_TYPE = "zchunk"
+> +    DELTA_ZCK_URL = "<zck file url>"
+> +    DELTA_RDIFF_REF_IMAGE = ""
+> +
+> +```
+> +Run the below command to build the image with the modification as shown above and with the root file system modification as described in previous section.
+> +```
+> +KAS_BUILD_DIR=image2 ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/delta-update.yml
+> +```
+> +Run the below command to start first image
+> +```
+> +host$ DISTRO_RELEASE=bookworm SWUPDATE_BOOT=y ./start-qemu.sh amd64
+> +```
+> +Copy `cip-core-image-cip-core-bookworm-qemu-amd64-delta.swu` file from `image2/tmp/deploy/images/qemu-amd64/` folder into the running system:
+> +```
+> +host$ cd image2/tmp/deploy/images/qemu-amd64/
+> +host$ scp -P 22222 ./cip-core-image-cip-core-bookworm-qemu-amd64-delta.swu root@localhost:
+> +```
+> +The `cip-core-image-cip-core-bookworm-qemu-amd64.zck` file must be hosted in a server.
+> +
+> +### Delta Software Update Verification
+> +
+> +Follow the steps mentioned in the section [Delta Software Update Verification](#delta-software-update-verification) for verification.
+>  
+>  # Building and testing the CIP Core image for BBB
+>  
 
 -- 
 Siemens AG, Technology
