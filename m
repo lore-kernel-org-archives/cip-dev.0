@@ -1,413 +1,338 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <chris.paterson2@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A981FC54E58
-	for <webhook@archiver.kernel.org>; Tue, 12 Mar 2024 10:00:27 +0000 (UTC)
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.66])
- by mx.groups.io with SMTP id smtpd.web10.5018.1710237622789186475
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B2DC54E58
+	for <webhook@archiver.kernel.org>; Tue, 12 Mar 2024 10:50:17 +0000 (UTC)
+Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.9])
+ by mx.groups.io with SMTP id smtpd.web10.5827.1710240612901620332
  for <cip-dev@lists.cip-project.org>;
- Tue, 12 Mar 2024 03:00:23 -0700
+ Tue, 12 Mar 2024 03:50:13 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=IYvzX976;
- spf=pass (domain: siemens.com, ip: 40.107.6.66, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@renesas.com header.s=selector1 header.b=JT9SjtTg;
+ spf=pass (domain: renesas.com, ip: 52.101.228.9, mailfrom: chris.paterson2@renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IVUL2zRGwdDjfIBLlaOvtX/FmfARW5O63aqedStKk9N6hB6l7DHsy1kjfH3Yuvfl9his/yFSxmdEDOpeYqqLBRIiLslvgQXlx2XYLV4bABLQ/hpZU6XSblrjNK71jEBTrnLBmWQGjN5581gTKsa3Sn5K3tmB/kdtnFTghihmT0aSbvmPZ7zWW3nGek7FAoYV9BSPwA9TMERut4eaMAGAuSwyjc+j8SIFWCvTlpQgS3f5hDlE3dcURzLnqipu3EPqN2vGQ7t0WH893g/V+diISw+JGGe1U4ocO+E1vALF19lilt6xVixod4TzeJ0vmw+/GaP8zLw3+ybt0tywWBvsPA==
+ b=nO+gLHHd7/DIZwJX/DfKmX+caCqJF1BUTnYZbg3iT4Q67f3+I5eqb3bGyRr7MSf/ef/vEOmSuIlndGG/HD+g2ZMZ7afhOIeq+cdWW7YHr58W/rAOWygCDL+MPAVfEl+h02bgyH0Ti3O6NBj1rNew5RSvHX76ropXZQPVQldFt4+dOtdWUReieSYRhAlFH2wtnOlt9r97tamQovNtZm96H8so4ZO3v8S5Kja9DSZSUzXJL9c1FXM2cbgBj2lOkf6LSVfzAQClZG7Or32PhlBbbY1iSETEzi8gTHxhVWeGY0UEzA/xTbf8wed9y0pjGJzPQA88aaro/YoxAVM0emL4Uw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z7YWZ6HxLiRhoNATQqUZooO6uyOm07EY/dF7r92XqE0=;
- b=m+oHBWdd55md3Mp9SBYxu2+IJFdlnCJX7VuUOdW6rgB79MBhxGPtI7+DWobF6L3Uis4rJEShSn2on+ARIybVzU2V5/mH6rNmNCag9D78c6vFBDYnTRY5H/EZ2PIQYGJI3T1MdTvbtj8UyMcibQrRElyUCXyGoTJeypXSjyKdIC6raYkRqC4FPv/lhAvliOeoWe/2+07Mnfiy+U85ifwxGRIR5iPhSqxl8LnQMZOqLskKL4D0c66Y3fnP1iZm5bzOp5XymFPxH1BFtctdvCxJRy4PvLvarr4eFszFL3u0cRz8vgZsrIeuTKR5ijC5SKzqnWK+zHYQ8I+nurF5l+/oZg==
+ bh=ZpPQcNpB4rrT7HXpRL4J+yyAgEubedyVCSJBDvkQizU=;
+ b=C+U/I//KT4FrWY+ksdtG5jf1bsw/mW5Zkux0v33nxhToJ/EjrsP2G84tdIlZASsWRwk7p29I/GH4GU47hOoAsyyGIT7TN+lpJhYiACDa23ryBqOUlOiosRn0SLq4Z1oy8RvMuatsTgKOs3ZP5wbCmLgFyK8h7uFwcef6JuiXv1jcuwrEk3jO63VIPq4kHEU60Xsy8vFHih59gYjQ9XYHilX40/+PhZjCmiAc3+P+XdPBtwvgpryMoCuMP6yu44dO1KEbq6w8Tb+GRx+2jnzynJbchprmBH1Wh5qZCZKfXbuAXl60WohC1a46S26okYDBcziTjmzZpW4JhZNUiJZ60A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z7YWZ6HxLiRhoNATQqUZooO6uyOm07EY/dF7r92XqE0=;
- b=IYvzX976+8CDiibvRkHw5yjGdlnILR9wOThjqPMnAEjU7JdBUDHmDU1/gow/uK+/rmt3KRq25S6fdvlQNZcbXw2/JadSFJcHxL7ygnJ9wVi67gtb1SmHHDMW/Vp8FFAz+V29zh6RjgXhMyZ1bjHcKLemtsfBNnIjcmO90eTNVeGRZ/kek/kFuIntaGLTBpoLRGKGngs3R2p1eka6/wRLesi4UwZsqY0bThRP2K/REPfAsPtTVygD62qKW3E9ewTEO2OYsCq2Kq0GmbhvOQO9CMhLAbaQ9fIEXz0QhHa1Jk+cWlZFpabKqFOEIxzW+Wd0vs1ebnw83k7JVa0Nkl5/zA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by AM0PR10MB3585.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:154::22) with
+ bh=ZpPQcNpB4rrT7HXpRL4J+yyAgEubedyVCSJBDvkQizU=;
+ b=JT9SjtTgpvCp5hHNoKiWMCHFdUsaWSu11Yhn6A96lgDK5lCteNEFfwyMeFyS2OAZqTuR8EwbwIZT+ZvGHaeDH8qWhT3HYsYtd9N7EunJyNnGPdIdNT/y4Ulr1DIobpxWpiLYPpIDt4c2g21RfL+nKf5b4RTN/afIKJhvAG0RGA4=
+Received: from TYWPR01MB11862.jpnprd01.prod.outlook.com (2603:1096:400:3fc::6)
+ by TYWPR01MB10521.jpnprd01.prod.outlook.com (2603:1096:400:29e::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7362.36; Tue, 12 Mar
- 2024 10:00:19 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8d16:7fbb:4964:94fe]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8d16:7fbb:4964:94fe%3]) with mapi id 15.20.7362.035; Tue, 12 Mar 2024
- 10:00:19 +0000
-Message-ID: <a2ade114-6b49-46d6-a9da-b314b26e0086@siemens.com>
-Date: Tue, 12 Mar 2024 11:00:17 +0100
-User-Agent: Mozilla Thunderbird
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: cip-dev <cip-dev@lists.cip-project.org>
-Subject: [isar-cip-core][PATCH] Update to kas 4.3
+ 2024 10:50:08 +0000
+Received: from TYWPR01MB11862.jpnprd01.prod.outlook.com
+ ([fe80::ec68:1357:d0c9:ad1a]) by TYWPR01MB11862.jpnprd01.prod.outlook.com
+ ([fe80::ec68:1357:d0c9:ad1a%3]) with mapi id 15.20.7362.035; Tue, 12 Mar 2024
+ 10:50:08 +0000
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: "nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+CC: "jan.kiszka@siemens.com" <jan.kiszka@siemens.com>, "pavel@denx.de"
+	<pavel@denx.de>, "uli@fpond.eu" <uli@fpond.eu>,
+	"masami.ichikawa@cybertrust.co.jp" <masami.ichikawa@cybertrust.co.jp>
+Subject: RE: [ANNOUNCE] Release v5.10.212-cip45
+Thread-Topic: [ANNOUNCE] Release v5.10.212-cip45
+Thread-Index: Adpz/OV5dAvh9TgmQRe2pzr68fqDbAAbTxyQ
+Date: Tue, 12 Mar 2024 10:50:08 +0000
+Message-ID: 
+ <TYWPR01MB1186205FD65E906E2B45636DAB72B2@TYWPR01MB11862.jpnprd01.prod.outlook.com>
+References: 
+ <OS0PR01MB638832966C2DFF1BA6799C3092242@OS0PR01MB6388.jpnprd01.prod.outlook.com>
+In-Reply-To: 
+ <OS0PR01MB638832966C2DFF1BA6799C3092242@OS0PR01MB6388.jpnprd01.prod.outlook.com>
+Accept-Language: en-US, en-GB
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR5P281CA0034.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f3::13) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYWPR01MB11862:EE_|TYWPR01MB10521:EE_
+x-ms-office365-filtering-correlation-id: 72145b28-11e6-4902-eaf8-08dc42822f59
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ 6QXjtdThd3X1GPjhLCgsCQlNUxgj17nBTbKQkNPga1/j/ErM9AShzPZ34P5QqiNGlStyBds79hs9Ty6LfPey/kOREwRJMo0+OJEdEcGtU/1oGiu2VkC3nSWVaKaAff7/8dPKv18HBCTr7B/7KidaARl60jbtUByDMGe4KR24F69YlXhreLVJoqeE5T3UucEVobT3nyZ8xL65sy4xtlKOBDiW8LfNhsLzfgojQTmvnXcfEr02Drc3rLsA57Xru0s+D7JwbDVvIUsR+Josf++Qe0X0T56e7MYdTOh8W8KIGS7uZHKOdBf8IJzpn+R7t2tLykLgDVN55KxHPkKH+mnEGY4YR9mECHeM7ikizLk+lFhFLwE8LNQ2THuHwjKOfTO7jWM1z/o9NlIdc78PZOHdiMmTpFvyslJyadQqHhigtUfqUJ7UbVHtLCJWvs8aRiC7NLsVi5DRSvuK/fj4ekmjX5FskzGOs6uKnCBp9HZyWJ/jPzx9u5L7ZIzbjhSvjldmgsySNdk3s4kn5us50AO7V4CnGEi/vNquOp1z0e/I+HNa59fWHvYYG6GdGgHCTQE2Xl5N9BTymcmuEa/UXqY1+fMc3/kvYfVXN02xUNcKcvbTvtMds9+JPE492MZnLXyFDPnFTN0oBTBfDA53ddw1NxMeX6VDmPkQjRauTKBsXHc=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB11862.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?ZmZKaWprbGFOMEh3S3l2V1ZKWlVhS1NKTXZHZ3hPUk9QUlBsRFY1Q29J?=
+ =?iso-2022-jp?B?c1NndlFNRnkwY2gzc09aTkh6LzkzTkh3ZDFqT2tLS0FUVVNpc0NsZ0VN?=
+ =?iso-2022-jp?B?bWtWSnJISjkzNEdvMXVhTVdnVzk1WVVDVCtWbXpIUFhPcGo4NTMwaHIx?=
+ =?iso-2022-jp?B?RWRiM05yanV5NHpnd2xhYmNyUGNqU2R2Vnh6NXhTRnVCOElqNjRxZmgy?=
+ =?iso-2022-jp?B?Z05zdkdEK2RUdDRRcjltYjVjZWlQb21xcDU0VGtteTViM0lnalpkYmZF?=
+ =?iso-2022-jp?B?NFdpY1FQbXh0T1pJcjNRbnh2aTA3SHJ1ZURSL1l3VVJPeHpCUWNMOXZF?=
+ =?iso-2022-jp?B?aXExWHBXSWs2QlFoSEpMK3J5dzlacnBZSzFJSHR6K3BybHZpQTVJVWZl?=
+ =?iso-2022-jp?B?NXJMcTJTNnRRZnU2SzU3eXk3WmwzcmY5c21zdjNVQmhkMlEvWGZjU0Jk?=
+ =?iso-2022-jp?B?M2pXRXZtQjZ0R0xpSjdBYkVyQXI4TndyM3RIcjk3b2dvdFl0ZGdUcWtM?=
+ =?iso-2022-jp?B?OXNOZ2x3U3VmQlMxQkRmU2JVQVgvd3JCYWlDVDU1a2s4RENBeEF4b2Qw?=
+ =?iso-2022-jp?B?azUvSFBBNHlxWm9SanBIRWZPU2hUbFMyTER5dllDajFrWmxST1FYbnVt?=
+ =?iso-2022-jp?B?d29naUFBd01ySFRlb1ppT1ZFSDlwbWc2MERsM1NCM21uakdXb1EzSjRV?=
+ =?iso-2022-jp?B?YUV3RGdEd2luSHZaazBqenh6MlNPWkJyTDQyQ1lMNnI3M3h0YkM2blJG?=
+ =?iso-2022-jp?B?bGJIL09iV1J1QTRob1ZVcjhjZHhaa1lHODFBcDRmRlZMUDhXZ0JIckND?=
+ =?iso-2022-jp?B?cTlObnV3M1FFc3FuVm9ycjU0RGYxdXZkeVZscytxY2tmdTZ4SnUvK1VZ?=
+ =?iso-2022-jp?B?WDNsajZQWHhXdEhWa0Z6czI1RC8wUWNIellFSEZvM2xwWGJhVG1JQUs1?=
+ =?iso-2022-jp?B?aUZQY1FxQXJaUWRKcU04MGN0eDFYREJqcmltV0R6VDJXK3BpekJiaXRr?=
+ =?iso-2022-jp?B?dndBTk5DRk9lMUhvNnZyNlpKWjdPYXZEVEF6UVRnRFhLTFdDZEo4Y1V0?=
+ =?iso-2022-jp?B?Vm9yazZWSzE5N0c0NWdsUW5la0RucTNmSU1xM3g2WXRSeVhyVkhuYmhF?=
+ =?iso-2022-jp?B?Sk9LblZCMENZSFV0bk5kUjExampRajRJVkE4cjBpM1Voa0tjcmxOZk5z?=
+ =?iso-2022-jp?B?NGJ1Z244V2hna0szV0U4SUZTUmUyS3d3SzVibHhMR2NDODBYMnErNHlS?=
+ =?iso-2022-jp?B?bGlhZFVONDlCdW8yMUJiQjcxdElGOHRoK1E4Z0wzSFovQkpPYXF5aFIz?=
+ =?iso-2022-jp?B?encwR3RTNjVzU1AzNTVQZnBPbVNmVkFJTE82T3UyWmlLUTVDNzJIR2x3?=
+ =?iso-2022-jp?B?bDcwb1oxRGo2a2FUdVhKNmpIZXVBU2sralAzUGJmN0FXQ2tScWlmSTFG?=
+ =?iso-2022-jp?B?RllCVldSYUFwYjcraC9GK0paS0xkUWpGTVhTSzVsVG4xNktnRnV2OGJW?=
+ =?iso-2022-jp?B?NjN1UExqaUI3WjNUaVgxUXpvdXNwRW02dlFFUmdITU1qTDNRVXkrTEhh?=
+ =?iso-2022-jp?B?OVA2aHZraC9UVHR2K1NWYWg0Wnl5SjQ2YXZ4U2hCUUZROTFsNmkzZC9D?=
+ =?iso-2022-jp?B?L2tXUTRLbGNEcTF4c2c4eG01SHN0ZFJJQlVQK2liVVAvSGxFb3p0aXlp?=
+ =?iso-2022-jp?B?eExrSmZmOFBqTjI5cERka3hqZEdCaWdrOWt6WktqK0tPUTZvQ2o4c1l2?=
+ =?iso-2022-jp?B?LzQwZ1NHVmRoaFBGRzB5YXZQTWJyYmdLZEEvMUVDL0l1OUExcFEzYU85?=
+ =?iso-2022-jp?B?N1NrcHQ1RGx4N0ZCWXRkY01aQjk4YUp2VGZkcGNEZXFwMUlycUR3NGlr?=
+ =?iso-2022-jp?B?REcwd0ZyNjVIRWNqM24zUUYyUW1XeW05c3g4eS9Cb1pjOUtlTkJ4bHJX?=
+ =?iso-2022-jp?B?WEg2M2djTFpIQXpiNGtxMkNFeEx4YkhwNmllcVN0dGR2clhWWTBHbEpz?=
+ =?iso-2022-jp?B?TkdEb0VET3JMNko4U0R2T0VwelJURnd1a01Gam9wMnZpcmc4aDlqOS9E?=
+ =?iso-2022-jp?B?SHI3T2ZVZkZKaEdacXRVREU3QWFMUm9maTRqQVZwUWNVKzBZMzJFNkhi?=
+ =?iso-2022-jp?B?MFhESVhrUG0vb3ozZ0NGci9EbzFVSlUrNVVuejRYazUvd1B5NnQ0Tm55?=
+ =?iso-2022-jp?B?SGNoV0IzV2wyRFU2akkvdjIvbnhwMFduVm1OTDlhcWF0VCt5VlV2Si9L?=
+ =?iso-2022-jp?B?cGVvTGJ2K0tWT2luUHVZbjU3dDdXbGNUR1QwNytRc0Q5Y1o4NkFPcmFy?=
+ =?iso-2022-jp?B?aDE0VjljcEhqNDl0MVFvUWVaU1RMUVVIZGc9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AM0PR10MB3585:EE_
-X-MS-Office365-Filtering-Correlation-Id: 565a635e-80ff-4933-c94c-08dc427b3976
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	N15Td4VoOO15l1CnGfn22iokiEsZQouunnmKRWa/fNIOwzAZrzpEhY5O3/bdRdVMQGJ++Zncae/9A7ig7MqYbzzgdoDZUmd4ch7zMTO7kutTZCe8Aqc+lR2GCsBQzUGfdHVwKNDf1xAxdLsewvU4sj4CwsJRsVz0AZlFJUBc3pu0jX+sSGa2iQ7dU5wwfy7Yt+JsoEDLkXwKAkpUFZ9yR5dHHDek4Xmki8hxh+ThU1fHUOEFYVRRyL/PZmBVaHtL4Rzzzpuv07UYtRD64DNEw8sDxH6QWp4odCtT7dd2J8cldwUnwgHLDbbjqY4IsqsNY9V8DOofA3yQ0a9T6VkTmW6nZLHkDNQVHpQ/RKyOdLh+C38Gs5e0S/7gsGPHJf57hcNBYScnCgxHtAMJWOG8v2NkviwXHfkHoub0RuyQzZVrZLfTea2zxtULYPErvTiryyyUzdkxc+SPWYx+Fd/v426DGtMXHB6YadJzgmFMi6bZHGeYhsxa5KuMjYKqXdI5c6wAIZ1Wr92nEnfQ1rHYaVvALsvXC40w5YxPbsctXepL2H1ioQUzP3/JTGL5fvmJagzPwTSHT2d0Uffl4nbcEBo0s3eiVNbIq9QhtHu0/z0=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?ajBSc25aeGdyTTRMQkh6RWlSTXRGdW9wdS8rYTExcGp2N3dFNnBNQnF1T2hH?=
- =?utf-8?B?bHA4czFwKzVXZmx3QVhmdlhKN0FEaXZKK2ZLTjFxQUpnZ0x3L1ZmQll4aC81?=
- =?utf-8?B?ZDcyNUpWR3MwVUwwWXBoR05NNk9ZMEZDZCtvTW9JcGFDZm5DYzkrSlZlbVZU?=
- =?utf-8?B?NTljZllxMXZZNkFBMjN1bExxc2RkamJjMnJuV282UUVHdUNITUNqUUZ2T2Ur?=
- =?utf-8?B?Q09IZFpIS0FIYnhEc3lsSm83aENHNU4zVDNzY1N6ZFZjeUx1alpzMzJFOTlt?=
- =?utf-8?B?N0JyWnpldTBZNDRta2xPT2dtbDRXMWNPYWhxNDVCaWNGUENDNUIyTGJnUjBV?=
- =?utf-8?B?Qlc2aXpXUHRmY2hWMTBzQ0dzMnkwY21DcGdaNXBlNnN5UlRIU01udk1HMVQ4?=
- =?utf-8?B?L25yZWVvZEVQVWxCU1RGYnA4NjhNVjRyR0lkWXpURTRsM21jYkZ2clZGSSts?=
- =?utf-8?B?QTVwbFNxM3F0L3IyVHRucUduaUZJTU1rNTRDNk0wWlczTTRGcGFJSWd0Zk5V?=
- =?utf-8?B?YWFFM2hacnFRMVJkdUxobXVFRkl1OEdBN3FFd1VDSFBmemIxWXJjUkV0c2x4?=
- =?utf-8?B?c3NuZCtvS1dzbTI0UTRpcTNFZ0RGNEE5UDRQazQ4UEthMGh4SGRheWxaa1VM?=
- =?utf-8?B?Rkl3WjlkVHM2My9zRlZKZ2tUTS9iSWo2ZkkyKzBZcmRNMFc4cndES3p5ZXFz?=
- =?utf-8?B?c21jV2Fya1NoQWZkc2FxQ1NBcFZQN0VyMkl4UTkrOVdiNE03VHczV1RVME8x?=
- =?utf-8?B?V2VGYnp5d0xFNCswQ1VFWjNSbC9sK3pacGNndmR2U2l3VlUzZEhVOEpWcEVI?=
- =?utf-8?B?Y09aNjJCdGtUTjdXM09tRE5pQkk1OW1oVGhtYjFtL2hubTJMcEI0VnR0VGtw?=
- =?utf-8?B?bmpkdEExVWJVRzJOM283dHZsTUtoSS9sRGdvVy9mTnhPOWVrblNUNy9ZL1Bv?=
- =?utf-8?B?NEF0cVI5ZURySVBnbGJSY2kxakRYWVRaKzBOdnF0RW1yb2FZczlwVHNXYzBK?=
- =?utf-8?B?SXNqMUlxUkZJRUxudEYxWWp0dytILzEvUmZJTkdQUXY5VEtJTVVlNUtYMi9K?=
- =?utf-8?B?dUxMTkdFM0Exbjl4aUwweDRnMWxibDFFUytJOTM2blBjT3BicXdVMzJpS1ZP?=
- =?utf-8?B?M1REL1FTdXY1RkFTU3dqVjZvRXJ4U3pFc05iOE5uSjAxZGw5SVdsMzkvcDFo?=
- =?utf-8?B?SFVQTHRLOHZrRVQ3UGdEV1A4ck1GRGRzdVU5YXZsaWhIK2ZKWjEwWUx5N0Zy?=
- =?utf-8?B?cHRqbm01azdDWFIrNnoyQ3NaSE04dWlBb2ttb3d1Y1B3TlNrSWh4RWpPTGRW?=
- =?utf-8?B?ZkRsbmFWWnFIQXhRazI5djVma3AwQStKVHgyVFZKNkJ2NWk0Tk4yVnRtYklH?=
- =?utf-8?B?ZXk4b3FLeCthSjM1QTd0VlhKdFJxaFJnaW8wMm56V0xENXI4VlZlc05zc1Iz?=
- =?utf-8?B?NFl5akljZFF1Z3lQZSszNEJkMEdCbXJ2TXZmbERvRWEyd0d6cExST1ptWUQ2?=
- =?utf-8?B?WjlqbVB5c0hJZUlBbC9XQys1L0VpVlJiNVY3a0hwS0k2RitmbWRiNWt5aHBG?=
- =?utf-8?B?M3gwdEsxVEhPY1JQcHlZRXFzVkxkRlpkTk02Rm03eW1KZFJGVVVMeDFRWTNW?=
- =?utf-8?B?YUh3VUtNV252cG9xOFBUdmVUSlRQZWtNSzdIa1UwaEExSVB4dG82a21CU0VQ?=
- =?utf-8?B?MDFWbUVha0JoZTlZODJyZUQxVmV2amJLY2F2UXN3OE1iT2xDMER6alU0UWdu?=
- =?utf-8?B?dkkzSW5qRzhubjhyc2dIQi9yaWFYZStHdC9vZWRNeHVOQWdIYzJ0Ni9hRnRS?=
- =?utf-8?B?SU1MakZld1dlRnpxUnNJanNNOUtVaUtOTVlmQ295QjRmb3BSMnllVld4UUQx?=
- =?utf-8?B?dTY5eitQOGlBVmM0ZHZ6bi9GTmpUQjlSbEVqU1hmRVpFMVlYL0lNQ1phelcy?=
- =?utf-8?B?T0NGUThsMkJEcTFPY1pYcHJSUkxMSlJBV0xqeFdOdlh1QmN1amJNT2RnMTha?=
- =?utf-8?B?RGJjTXIyekV3VHA3Zy90QXQ4MWhQREdzSWRiYzcvTWRXOUdyTDZwVzVaMk1P?=
- =?utf-8?B?WU4xWUxTODV4OTExb2I0RDY1dlIrK2dkQjdBUWlMaWJKb2tIZHNTUDVTQllF?=
- =?utf-8?B?bEtCZ2RyaUd5WWZaZWZhRXRjMW1PcUlLcDBoTTdHY0txbFJsZ290VDFzdE9i?=
- =?utf-8?B?aWc9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 565a635e-80ff-4933-c94c-08dc427b3976
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-OriginatorOrg: renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2024 10:00:19.3241
+X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB11862.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72145b28-11e6-4902-eaf8-08dc42822f59
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Mar 2024 10:50:08.7356
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lQ5KSjcv04w4u8VItLLmrNSu+OIfAb1mcOwGdRmmYQPutUosYsU1YfIWpbvUFx/LHdYeB/nSdXaQzk5e5tCuYw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR10MB3585
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: yU3/uuLKg5dWeHw3PxNWd06qN+3x4A2rigy+/mWG8IX5C4duXd9yQlvj3RdwgqfE+x/6ELKyoHuIUSzlzOXOQbuhkEXj80i7EvHYLgKMLW4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB10521
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 12 Mar 2024 10:00:27 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15275
+ <cip-dev@lists.cip-project.org>; Tue, 12 Mar 2024 10:50:17 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15276
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+Hello,
 
-Less noise outputs of kas, reproducible build container and more.
+> From: nobuhiro1.iwamatsu@toshiba.co.jp
+> <nobuhiro1.iwamatsu@toshiba.co.jp>
+> Sent: Monday, March 11, 2024 9:48 PM
+>=20
+> Hi,
+>=20
+> CIP kernel team has released Linux kernel v5.10.212-cip45.
+> The linux-5.10.y-cip tree has been updated base version from v5.10.209 to
+> v5.10.212.
+> This release adds support for Renesas RISC-V SoC (rzfive/r9a07g043f).
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- .gitlab-ci.yml |   2 +-
- kas-container  | 110 +++++++++++++++++++++++++++++++------------------
- 2 files changed, 70 insertions(+), 42 deletions(-)
+Test results:=20
+- New (draft) release report: https://cip-playground.gitlab.io/squad-hackin=
+g/cip-release-reports/linux-cip/linux-5.10.y-cip/5.10.212-cip45_6d03567cb.h=
+tml
+- Summary: No new regressions
 
-diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-index 67e341e1..4dae1d80 100644
---- a/.gitlab-ci.yml
-+++ b/.gitlab-ci.yml
-@@ -12,7 +12,7 @@
- # SPDX-License-Identifier: MIT
- #
- 
--image: ghcr.io/siemens/kas/kas-isar:4.0
-+image: ghcr.io/siemens/kas/kas-isar:4.3
- 
- variables:
-   GIT_STRATEGY: clone
-diff --git a/kas-container b/kas-container
-index 8fa2d16e..85412383 100755
---- a/kas-container
-+++ b/kas-container
-@@ -29,11 +29,12 @@ set -e
- 
- usage()
- {
--	printf "%b" "Usage: $0 [OPTIONS] { build | shell } [KASOPTIONS] [KASFILE]\n"
--	printf "%b" "       $0 [OPTIONS] { checkout | dump } [KASOPTIONS] [KASFILE]\n"
--	printf "%b" "       $0 [OPTIONS] for-all-repos [KASOPTIONS] [KASFILE] COMMAND\n"
--	printf "%b" "       $0 [OPTIONS] { clean | cleansstate | cleanall}\n"
--	printf "%b" "       $0 [OPTIONS] menu [KCONFIG]\n"
-+	SELF="${KAS_CONTAINER_SELF_NAME}"
-+	printf "%b" "Usage: ${SELF} [OPTIONS] { build | shell } [KASOPTIONS] [KASFILE]\n"
-+	printf "%b" "       ${SELF} [OPTIONS] { checkout | dump } [KASOPTIONS] [KASFILE]\n"
-+	printf "%b" "       ${SELF} [OPTIONS] for-all-repos [KASOPTIONS] [KASFILE] COMMAND\n"
-+	printf "%b" "       ${SELF} [OPTIONS] { clean | cleansstate | cleanall} [KASFILE]\n"
-+	printf "%b" "       ${SELF} [OPTIONS] menu [KCONFIG]\n"
- 	printf "%b" "\nPositional arguments:\n"
- 	printf "%b" "build\t\t\tCheck out repositories and build target.\n"
- 	printf "%b" "checkout\t\tCheck out repositories but do not build.\n"
-@@ -80,6 +81,15 @@ usage()
- 	exit 1
- }
- 
-+fatal_error(){
-+	echo "${KAS_CONTAINER_SELF_NAME}: Error: $*" >&2
-+	exit 1
-+}
-+
-+warning(){
-+	echo "${KAS_CONTAINER_SELF_NAME}: Warning: $*" >&2
-+}
-+
- trace()
- {
- 	[ -n "${KAS_VERBOSE}" ] && echo "+ $*" >&2
-@@ -113,7 +123,6 @@ enable_oe_mode() {
- 
- run_clean() {
- 	if [ -n "${KAS_ISAR_ARGS}" ]; then
--		set_container_image_var
- 		# SC2086: Double quote to prevent globbing and word splitting.
- 		# shellcheck disable=2086
- 		trace ${KAS_CONTAINER_COMMAND} run -v "${KAS_BUILD_DIR}":/build:rw \
-@@ -135,9 +144,10 @@ run_clean() {
- 	fi
- }
- 
--KAS_IMAGE_VERSION_DEFAULT="4.0"
-+KAS_IMAGE_VERSION_DEFAULT="4.3"
- KAS_CONTAINER_IMAGE_PATH_DEFAULT="ghcr.io/siemens/kas"
- KAS_CONTAINER_IMAGE_NAME_DEFAULT="kas"
-+KAS_CONTAINER_SELF_NAME="$(basename "$0")"
- 
- set_container_image_var() {
- 	KAS_IMAGE_VERSION="${KAS_IMAGE_VERSION:-${KAS_IMAGE_VERSION_DEFAULT}}"
-@@ -168,14 +178,12 @@ if [ -z "${KAS_CONTAINER_ENGINE}" ]; then
- 			;;
- 		*)
- 			# The docker command is an unknown engine
--			echo "$0: docker command found, but unknown engine detected" >&2
--			exit 1
-+			fatal_error "docker command found, but unknown engine detected"
- 		esac
- 	elif command -v podman >/dev/null; then
- 		KAS_CONTAINER_ENGINE=podman
- 	else
--		echo "$0: no container engine found, need docker or podman" >&2
--		exit 1
-+		fatal_error "no container engine found, need docker or podman"
- 	fi
- fi
- 
-@@ -190,8 +198,7 @@ podman)
- 	KAS_RUNTIME_ARGS="${KAS_RUNTIME_ARGS} --security-opt label=disable"
- 	;;
- *)
--	echo "$0: unknown container engine '${KAS_CONTAINER_ENGINE}'" >&2
--	exit 1
-+	fatal_error "unknown container engine '${KAS_CONTAINER_ENGINE}'"
- 	;;
- esac
- 
-@@ -205,8 +212,7 @@ while [ $# -gt 0 ]; do
- 	--with-loop-dev)
- 		if ! KAS_LOOP_DEV=$(/sbin/losetup -f 2>/dev/null); then
- 			if [ "$(id -u)" -eq 0 ]; then
--				echo "Error: loop device not available!"
--				exit 1
-+				fatal_error "loop device not available!"
- 			fi
- 			sudo_command="/sbin/losetup -f"
- 			sudo_message="[sudo] enter password to setup loop"
-@@ -216,10 +222,9 @@ while [ $# -gt 0 ]; do
- 			# shellcheck disable=2086
- 			if ! KAS_LOOP_DEV=$(sudo -p "$sudo_message" $sudo_command \
- 				2>/dev/null); then
--				echo "Error: loop device setup unsuccessful!"
--				echo "try calling '$sudo_command' with root" \
--					"permissions manually."
--				exit 1
-+				fatal_error "loop device setup unsuccessful!" \
-+				            "try calling '$sudo_command' with root" \
-+				            "permissions manually."
- 			fi
- 		fi
- 		KAS_WITH_LOOP_DEV="--device ${KAS_LOOP_DEV}"
-@@ -236,6 +241,9 @@ while [ $# -gt 0 ]; do
- 		shift 2
- 		;;
- 	--ssh-agent)
-+		if [ -z "${SSH_AUTH_SOCK}" ]; then
-+			fatal_error "no SSH agent running"
-+		fi
- 		KAS_SSH_AUTH_SOCK=$(readlink -fv "$SSH_AUTH_SOCK")
- 		shift 1
- 		;;
-@@ -274,16 +282,16 @@ while [ $# -gt 0 ]; do
- 		shift 2
- 		;;
- 	--version)
--		echo "$(basename "$0") $KAS_IMAGE_VERSION_DEFAULT"
-+		echo "${KAS_CONTAINER_SELF_NAME} $KAS_IMAGE_VERSION_DEFAULT"
- 		exit 0
- 		;;
- 	--*)
- 		usage
- 		;;
- 	clean|cleansstate|cleanall)
--		[ $# -eq 1 ] || usage
--		run_clean "$1"
--		exit 0
-+		KAS_CMD=$1
-+		shift 1
-+		break
- 		;;
- 	shell)
- 		KAS_REPO_MOUNT_OPT_DEFAULT="rw"
-@@ -329,8 +337,7 @@ while [ $# -gt 0 ] && [ $KAS_EXTRA_BITBAKE_ARGS -eq 0 ]; do
- 		shift 2
- 		;;
- 	-E|--preserve-env)
--		echo "$1 is not supported with kas-container"
--		exit 1
-+		fatal_error "$1 is not supported with ${KAS_CONTAINER_SELF_NAME}"
- 		;;
- 	--)
- 		KAS_EXTRA_BITBAKE_ARGS=$#
-@@ -345,8 +352,7 @@ while [ $# -gt 0 ] && [ $KAS_EXTRA_BITBAKE_ARGS -eq 0 ]; do
- 		# shellcheck disable=2086
- 		for FILE in $(IFS=':'; echo $1); do
- 			if ! KAS_REAL_FILE="$(realpath -qe "$FILE")"; then
--				echo "Error: configuration file '${FILE}' not found"
--				exit 1
-+				fatal_error "configuration file '${FILE}' not found"
- 			fi
- 			if [ -z "${KAS_FILES}" ]; then
- 				KAS_FIRST_FILE="${KAS_REAL_FILE}"
-@@ -416,15 +422,21 @@ fi
- 
- set_container_image_var
- 
-+# short circuit for clean* commands. We just need
-+# the build-system information, but no repo mounts, etc...
-+if echo "${KAS_CMD}" | grep -qe "^clean"; then
-+	run_clean "${KAS_CMD}"
-+	exit 0
-+fi
-+
- KAS_REPO_MOUNT_OPT="${KAS_REPO_MOUNT_OPT:-${KAS_REPO_MOUNT_OPT_DEFAULT}}"
- 
- KAS_FILES="$(echo "${KAS_FILES}" | sed 's|'"${KAS_REPO_DIR}"'/|/repo/|g')"
- 
- if [ "$(id -u)" -eq 0 ] && [ "${KAS_ALLOW_ROOT}" != "yes" ] ; then
--	echo "Error: Running as root - may break certain recipes."
--	echo "Better give a regular user docker access. Set" \
--	     "KAS_ALLOW_ROOT=yes to override."
--	exit 1
-+	fatal_error "Running as root - may break certain recipes." \
-+	            "Better give a regular user docker access. Set" \
-+	            "KAS_ALLOW_ROOT=yes to override."
- fi
- 
- set -- "$@" -v "${KAS_REPO_DIR}":/repo:${KAS_REPO_MOUNT_OPT} \
-@@ -436,16 +448,14 @@ set -- "$@" -v "${KAS_REPO_DIR}":/repo:${KAS_REPO_MOUNT_OPT} \
- 
- if [ -n "${KAS_SSH_DIR}" ] ; then
- 	if [ ! -d "${KAS_SSH_DIR}" ]; then
--		echo "Passed KAS_SSH_DIR '${KAS_SSH_DIR}' is not a directory"
--		exit 1
-+		fatal_error "passed KAS_SSH_DIR '${KAS_SSH_DIR}' is not a directory"
- 	fi
- 	set -- "$@" -v "$(readlink -fv "${KAS_SSH_DIR}")":/var/kas/userdata/.ssh:ro
- fi
- 
- if [ -n "${KAS_SSH_AUTH_SOCK}" ]; then
- 	if [ ! -S "${KAS_SSH_AUTH_SOCK}" ]; then
--		echo "Passed SSH_AUTH_SOCK '${KAS_SSH_AUTH_SOCK}' is not a socket"
--		exit 1
-+		fatal_error "passed SSH_AUTH_SOCK '${KAS_SSH_AUTH_SOCK}' is not a socket"
- 	fi
- 	set -- "$@" -v "${KAS_SSH_AUTH_SOCK}":/ssh-agent/ssh-auth-sock \
- 		-e SSH_AUTH_SOCK=/ssh-agent/ssh-auth-sock
-@@ -453,20 +463,27 @@ fi
- 
- if [ -n "${KAS_AWS_DIR}" ] ; then
- 	if [ ! -d "${KAS_AWS_DIR}" ]; then
--		echo "Passed KAS_AWS_DIR '${KAS_AWS_DIR}' is not a directory"
--		exit 1
-+		fatal_error "passed KAS_AWS_DIR '${KAS_AWS_DIR}' is not a directory"
- 	fi
- 	set -- "$@" -v "$(readlink -fv "${KAS_AWS_DIR}")":/var/kas/userdata/.aws:ro \
- 		-e AWS_CONFIG_FILE="${AWS_CONFIG_FILE:-/var/kas/userdata/.aws/config}" \
- 		-e AWS_SHARED_CREDENTIALS_FILE="${AWS_SHARED_CREDENTIALS_FILE:-/var/kas/userdata/.aws/credentials}"
- fi
-+if [ -n "${AWS_WEB_IDENTITY_TOKEN_FILE}" ] ; then
-+	if [ ! -f "${AWS_WEB_IDENTITY_TOKEN_FILE}" ]; then
-+		echo "Passed AWS_WEB_IDENTITY_TOKEN_FILE '${AWS_WEB_IDENTITY_TOKEN_FILE}' is not a directory"
-+		exit 1
-+	fi
-+	set -- "$@" -v "$(readlink -fv "${AWS_WEB_IDENTITY_TOKEN_FILE}")":/var/kas/userdata/.aws/web_identity_token:ro \
-+		-e AWS_WEB_IDENTITY_TOKEN_FILE="${AWS_CONFIG_FILE:-/var/kas/userdata/.aws/web_identity_token}" \
-+		-e AWS_ROLE_ARN="${AWS_ROLE_ARN}"
-+fi
- 
- KAS_GIT_CREDENTIAL_HELPER_DEFAULT=""
- 
- if [ -n "${KAS_GIT_CREDENTIAL_STORE}" ] ; then
- 	if [ ! -f "${KAS_GIT_CREDENTIAL_STORE}" ]; then
--		echo "Passed KAS_GIT_CREDENTIAL_STORE '${KAS_GIT_CREDENTIAL_STORE}' is not a file"
--		exit 1
-+		fatal_error "passed KAS_GIT_CREDENTIAL_STORE '${KAS_GIT_CREDENTIAL_STORE}' is not a file"
- 	fi
- 	KAS_GIT_CREDENTIAL_HELPER_DEFAULT="store --file=/var/kas/userdata/.git-credentials"
- 	set -- "$@" -v "$(readlink -fv "${KAS_GIT_CREDENTIAL_STORE}")":/var/kas/userdata/.git-credentials:ro
-@@ -483,6 +500,11 @@ if [ -f "${NETRC_FILE}" ]; then
- 		-e NETRC_FILE="/var/kas/userdata/.netrc"
- fi
- 
-+if [ -f "${GITCONFIG_FILE}" ]; then
-+	set -- "$@" -v "$(readlink -fv "${GITCONFIG_FILE}")":/var/kas/userdata/.gitconfig:ro \
-+		-e GITCONFIG_FILE="/var/kas/userdata/.gitconfig"
-+fi
-+
- if [ -t 1 ]; then
- 	set -- "$@" -t -i
- fi
-@@ -500,11 +522,17 @@ if [ -n "${SSTATE_DIR}" ]; then
- 		-v "$(readlink -fv "${SSTATE_DIR}")":/sstate:rw \
- 		-e SSTATE_DIR=/sstate
- fi
-+if [ -n "${SSTATE_MIRRORS}" ]; then
-+	if echo "${SSTATE_MIRRORS}" | grep -q "file:///"; then
-+		warning "SSTATE_MIRRORS contains a local path." \
-+		        "Make sure to make this path available inside the container."
-+	fi
-+	set -- "$@" -e "SSTATE_MIRRORS=${SSTATE_MIRRORS}"
-+fi
- 
- if [ -n "${KAS_REPO_REF_DIR}" ]; then
- 	if [ ! -d "${KAS_REPO_REF_DIR}" ]; then
--		echo "Passed KAS_REPO_REF_DIR '${KAS_REPO_REF_DIR}' is not a directory"
--		exit 1
-+		fatal_error "Passed KAS_REPO_REF_DIR '${KAS_REPO_REF_DIR}' is not a directory"
- 	fi
- 	set -- "$@" \
- 		-v "$(readlink -fv "${KAS_REPO_REF_DIR}")":/repo-ref:rw \
--- 
-2.35.3
+Kind regards, Chris
+
+>=20
+> You can get this release via the git tree at:
+>=20
+>   v5.10.212-cip45:
+>     repository:
+>       https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+>     branch:
+>       linux-5.10.y-cip
+>     commit hash:
+>       6d03567cbcdc99d0c6372154f02172276261f851
+>     Fixed CVEs:
+>       CVE-2024-23850: btrfs: do not ASSERT() if the newly created subvolu=
+me
+> already got read
+>       CVE-2023-52491: media: mtk-jpeg: Fix use after free bug due to erro=
+r
+> path handling in mtk_jpeg_dec_device_run
+>       CVE-2023-52437: Revert "md/raid5: Wait for
+> MD_SB_CHANGE_PENDING in raid5d"
+>       CVE-2024-26606: binder: signal epoll threads of self-work
+>       CVE-2023-52492: dmaengine: fix NULL pointer in channel
+> unregistration function
+>       CVE-2023-52486: drm: Don't unref the same fb many times by mistake
+> due to deadlock handling
+>       CVE-2023-52493: bus: mhi: host: Drop chan lock before queuing buffe=
+rs
+>       CVE-2024-26614: tcp: make sure init the accept_queue's spinlocks
+> once
+>       CVE-2024-26600: phy: ti: phy-omap-usb2: Fix NULL pointer dereferenc=
+e
+> for SRP
+>       CVE-2024-1086: netfilter: nf_tables: reject QUEUE/DROP verdict
+> parameters
+>       CVE-2024-26610: wifi: iwlwifi: fix a memory corruption
+>       CVE-2023-52595: wifi: rt2x00: restart beacon queue when hardware
+> reset
+>       CVE-2024-26609: netfilter: nf_tables: reject QUEUE/DROP verdict
+> parameters
+>       CVE-2023-52598: s390/ptrace: handle setting of fpc register correct=
+ly
+>       CVE-2023-52604: FS:JFS:UBSAN:array-index-out-of-bounds in
+> dbAdjTree
+>       CVE-2023-52429: dm: limit the number of targets and parameter size
+> area
+>       CVE-2023-52587: IB/ipoib: Fix mcast list locking
+>       CVE-2024-26581: netfilter: nft_set_rbtree: skip end interval elemen=
+t
+> from gc
+>       CVE-2023-52597: KVM: s390: fix setting of fpc register
+>       CVE-2023-52435: net: prevent mss overflow in skb_segment()
+>       CVE-2024-26593: i2c: i801: Fix block process call transactions
+>       CVE-2023-52594: wifi: ath9k: Fix potential array-index-out-of-bound=
+s
+> read in ath9k_htc_txstatus()
+>       CVE-2023-52606: powerpc/lib: Validate size for vector operations
+>       CVE-2024-1151: net: openvswitch: limit the number of recursions fro=
+m
+> action sets
+>       CVE-2023-52603: UBSAN: array-index-out-of-bounds in dtSplitRoot
+>       CVE-2023-52600: jfs: fix uaf in jfs_evict_inode
+>       CVE-2023-52602: jfs: fix slab-out-of-bounds Read in dtSearch
+>       CVE-2023-52601: jfs: fix array-index-out-of-bounds in dbAdjTree
+>       CVE-2024-26627: scsi: core: Move scsi_host_busy() out of host lock =
+for
+> waking up EH handler
+>       CVE-2023-52599: jfs: fix array-index-out-of-bounds in diNewExt
+>       CVE-2024-26625: llc: call sock_orphan() at release time
+>       CVE-2024-26624: af_unix: fix lockdep positive in sk_diag_dump_icons=
+()
+>       CVE-2024-0607: netfilter: nf_tables: fix pointer math issue in
+> nft_byteorder_eval()
+>       CVE-2024-23849: net/rds: Fix UBSAN: array-index-out-of-bounds in
+> rds_cmsg_recv
+>       CVE-2024-0340: vhost: use kzalloc() instead of kmalloc() followed b=
+y
+> memset()
+>       CVE-2023-52583: ceph: fix deadlock or deadcode of misusing dget()
+>       CVE-2024-23851: Kernel crash in drivers/md/dm-ioctl.c when allocate
+> memory more than INT_MAX bytes
+>       CVE-2024-26613: net/rds: Fix UBSAN: array-index-out-of-bounds in
+> rds_cmsg_recv
+>       CVE-2024-26602: sched/membarrier: reduce the ability to hammer on
+> sys_membarrier
+>       CVE-2024-26615: net/smc: fix illegal rmb_desc access in SMC-D
+> connection dump
+>       CVE-2023-52489: mm/sparsemem: fix race in accessing
+> memory_section->usage
+>       CVE-2023-52498: PM: sleep: Fix possible deadlocks in core system-
+> wide PM code
+>       CVE-2023-52607: powerpc/mm: Fix null-pointer dereference in
+> pgtable_cache_add
+>       CVE-2023-52605: ACPI: extlog: fix NULL pointer dereference check
+>       CVE-2024-26601: ext4: regenerate buddy after block freeing failed i=
+f
+> under fc replay
+>       CVE-2023-52497: erofs: fix lz4 inplace decompression
+>       CVE-2024-0565: smb: client: fix OOB in receive_encrypted_standard()
+>       CVE-2023-52434: smb: client: fix potential OOBs in
+> smb2_parse_contexts()
+>       CVE-2024-26622: tomoyo: fix UAF write bug in tomoyo_write_control()
+>       CVE-2024-0841: hugetlbfs: Null pointer dereference in
+> hugetlbfs_fill_super function
+>     added commits:
+>       CIP: Bump version suffix to -cip45 after merge from stable
+>       arm64: dts: renesas: rzg2ul-smarc: Add support for enabling MTU3
+>       arm64: dts: renesas: r9a07g043: Add MTU3a node
+>       dt-bindings: timer: renesas,rz-mtu3: Document RZ/{G2UL,Five} SoCs
+>       dt-bindings: timer: renesas,rz-mtu3: Improve documentation
+>       dt-bindings: timer: renesas,rz-mtu3: Fix overflow/underflow interru=
+pt
+> names
+>       cache: Kconfig: Add dependency for RISCV on AX45MP_L2_CACHE
+> config
+>       riscv: dts: renesas: rzfive-smarc: Enable the blocks which were
+> explicitly disabled
+>       riscv: dts: renesas: r9a07g043f: Add dma-noncoherent property
+>       riscv: dts: renesas: r9a07g043f: Add L2 cache node
+>       riscv: dts: renesas: Clean up dtbs_check W=3D1 warning due to empty=
+ phy
+> node
+>       riscv: dts: renesas: rzfive-smarc-som: Drop PHY interrupt support f=
+or
+> ETH{0,1}
+>       riscv: dts: renesas: rzfive-smarc-som: Enable OSTM nodes
+>       riscv: dts: renesas: rzfive-smarc-som: Enable WDT
+>       riscv: dts: renesas: rzfive-smarc: Enable CANFD/I2C
+>       riscv: dts: renesas: r9a07g043f/rzfive-smarc-som: Enable
+> ADC/OPP/Thermal Zones/TSU
+>       riscv: dts: renesas: Add minimal DTS for Renesas RZ/Five SMARC EVK
+>       riscv: dts: renesas: Add initial devicetree for Renesas RZ/Five SoC
+>       riscv: Kconfig.socs: Add ARCH_RENESAS kconfig option
+>       soc: renesas: Kconfig: Select the required configs for RZ/Five SoC
+>       cache: ax45mp_cache: Add non coherent support
+>       cache: Add L2 cache management for Andes AX45MP RISC-V core
+>       clk: renesas: r9a07g043: Add support for RZ/Five SoC
+>       soc: renesas: Identify RZ/Five SoC
+>       dt-bindings: cache: andestech,ax45mp-cache: Add DT binding
+> documentation for L2 cache controller
+>       dt-bindings: clock: r9a07g043-cpg: Add Renesas RZ/Five CPG Clock an=
+d
+> Reset Definitions
+>       dt-bindings: riscv: Add Andes AX45MP core to the list
+>       dt-bindings: riscv: Sort the CPU core list alphabetically
+>       mmc: host: Kconfig: Make MMC_SDHI_INTERNAL_DMAC config option
+> dependant on ARCH_RENESAS
+>       clocksource/drivers/riscv: Get rid of clocksource_arch_init() callb=
+ack
+>       clocksource/drivers/riscv: Increase the clock source rating
+>       clocksource/drivers/renesas-ostm: Add support for RZ/V2L SoC
+>       irqchip/sifive-plic: Separate the enable and mask operations
+>       irqchip/sifive-plic: Make better use of the effective affinity mask
+>       irqchip/sifive-plic: Add support for Renesas RZ/Five SoC
+>       irqchip/sifive-plic: Disable S-mode IRQs if running in M-mode
+>       irqchip/sifive-plic: Improve naming scheme for per context offsets
+>       of/irq: Use interrupts-extended to find parent
+>       of: also handle dma-noncoherent in of_dma_is_coherent()
+>       dma-mapping: make the global coherent pool conditional
+>       dma-mapping: add a dma_init_global_coherent helper
+>       dma-mapping: simplify dma_init_coherent_memory
+>       dma-mapping: allow using the global coherent pool for !ARM
+>       dma-direct: add support for dma_coherent_default_memory
+>       riscv: Kconfig: Enable cpufreq kconfig menu
+>       cacheinfo: clear cache_leaves(cpu) in free_cache_attributes()
+>       arm64: dts: renesas: r9a07g043: Split out RZ/G2UL SoC specific part=
+s
+>       arm64: dts: renesas: r9a07g043: Update IRQ numbers for SSI channels
+>       arm64: dts: renesas: r9a07g043: Introduce SOC_PERIPHERAL_IRQ()
+> macro to specify interrupt property
+>       arm64: dts: renesas: rzg2ul-smarc: Include SoM DTSI into board DTS
+>       arm64: dts: renesas: rzg2ul-smarc: Move selecting PMOD_SCI0_EN to
+> board DTS
+>       clk: versaclock3: Drop ret variable
+>       clk: versaclock3: Add missing space between ')' and '{'
+>       clk: versaclock3: Use u8 return type for get_parent() callback
+>       clk: versaclock3: Avoid unnecessary padding
+>       clk: versaclock3: Update vc3_get_div() to avoid divide by zero
+>       arm64: defconfig: Enable Renesas VersaClock 3 clock generator confi=
+g
+>=20
+> Best regards,
+>    Nobuhiro
+>=20
+>=20
+> --
+> Nobuhiro Iwamatsu
+
 
