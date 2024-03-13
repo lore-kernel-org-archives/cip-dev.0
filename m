@@ -1,412 +1,252 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <adithya.balakumar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B28AAC54791
-	for <webhook@archiver.kernel.org>; Wed, 13 Mar 2024 09:10:30 +0000 (UTC)
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.54])
- by mx.groups.io with SMTP id smtpd.web10.11985.1710321028720463953
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C88C54E58
+	for <webhook@archiver.kernel.org>; Wed, 13 Mar 2024 09:21:10 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.web10.12078.1710321661655728736
  for <cip-dev@lists.cip-project.org>;
- Wed, 13 Mar 2024 02:10:29 -0700
+ Wed, 13 Mar 2024 02:21:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=sKt60fc5;
- spf=pass (domain: siemens.com, ip: 40.107.22.54, mailfrom: jan.kiszka@siemens.com)
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.158, mailfrom: adithya.balakumar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 42D9KwS31088289; Wed, 13 Mar 2024 18:20:58 +0900
+X-Iguazu-Qid: 2rWglQcuMCbb8gkVu9
+X-Iguazu-QSIG: v=2; s=0; t=1710321658; q=2rWglQcuMCbb8gkVu9; m=zfwQiiqZPHwiDRcCBggbGmQ9xJP3drITWa/mufzlgFY=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1123) id 42D9KuEN2535818
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 13 Mar 2024 18:20:57 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Y/GuED7kMWyWxsPkWu73vINb2tcMTm8Tkpyq/mD4m2DK/CYe30cs2feRnURf14WBTs8fiSuZlcj2k3yTZ+zFdsc3jeiWJBhTRuXJM9Q5qoJwzitqmg3sBtBd6aiht6+lChMj3EXnBYtPgjPoT7GvF34ZH4umMpac0seQV58Vsy9ztLq5ejafHE9rjlpUjydzl72VY3hBgMaZqiXNJutwyuxa0rN250MZSyuanCCT8BTkGZn829iKFBX8DYCXYqS4lTnAESvNxy1quxx9/KWTvokuCX5yJFhnQB2wLWccZhd4ZhiAYCYXHU+gN1pIyJHp6FiIMGSEDa9ei5F84L006g==
+ b=Z5IM0nEMH2Nmko45x2zNFWfm/NEGU3IxZhHvvVvk+RMw46Cvh2i+t+ShydpZWAElci7qPJHK8i3bmeZODo46elF+L2a76a1kSLcGeOULVj3mHei4xcdHjZwvx2egPj4J2oQ0FmEvR8fdGT6L/3r1hRN9788RGVPCSdYQRWpca51i8JuuyhUEKthFImT7j6om4vH19pepbaxS8JFLYbpXlD/ja+564Ns15q0zgr2IfE4heX+eNjMgv4J7harxBEuEkvYqkeCPZjEPzQNW5VqH+l/6NK9ksSnkVGBDo7/cMEWbSclrphtcFQ5JYtM4/x8bovFZP8IlfPiEmeNj8GjCkg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MHY+FvL/92fyvZ0/JWCRKW9STN+/6szalcIQ8q5ol+Y=;
- b=VvOOBG+/FJHWYQKUU9pQai1FzY0L4meWEkz3MftbD4Vq7LVK7VKzFNUxuIjLqDrEiErzosd0bANKmsERLYWDLDDkabrIHQSzPASHCEsdIMynkpXD9TBcCWFMmbFCJhqcMcIIInkUCMQRJ33kADpkMpCr0Wn66e6h7TR0Ss08bLl4sBAlK2Sd3HX75UCy84xCSba6UMUHfUPE30Pi4XR1+w3UeWB+9o8MXokXvhvYVDJKFgOYL/15MihCfDvnk4C7aotb5IfLuEGpuxOjMIjZ2qdbpe3PKweS+eXGXO80IHn4uoN09qj8BDB5pg2cm+hycK60cDec7XIh+jyoaVDk+g==
+ bh=U6R95nANt3JV8cOGuLxv0Sf/rzEXI9+fVOTUzGztWGU=;
+ b=B6fs5Lbti7bfvljTogyuY3y3KOKXROPHnC8JDbfB99Fbl/ZSdBIZuU8KJeOOa1IgkdvISdiLO5UIG/8tLKPct22KNlC9sguTSuKSToNnqZjXr5zb0Yq+5cfpf1KQT6jnww5bRKdTgd44O9JoZiY76fxBEM+6EWr8Kx2g7FaPuSwKYNmSAlUO0Z/lZfe5ROjqw2l9p1lkMANa2piSuSQqqnyGb5KFzLtAatDhMTPQ5Wy7XktCuSguEGw0BDVnMCvgXOogC4oecNY67bz4oPIRRCgpvjZD8NJsF0o7cq6aMTvizczW/NyvuWm1yMB+KNjl0cwAziELiwE/GoccK6nFRQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MHY+FvL/92fyvZ0/JWCRKW9STN+/6szalcIQ8q5ol+Y=;
- b=sKt60fc59VrJN3mqqqBYHiWafkLvQa6OoB5npY0/zY0wF9NHNkYluZCOMcNOoryzL53lDyOzwHSa+StZG15BV09+UZDafYh/ZNy2hcE22vsAdcUkJB3a9FVoWt0O8hWdvjCm4efldec3zO6Dvj7JA2pfrsi9/Qmy5WZq95WwQ2mFMHVd1LN3sVt+OPOJongWiezVU5syC+sI+FFioSGr8EqoNBWNBJdAoQDdZtF3DhqpPKe9cwtxK0dBApnHZq95W1WSX4jugUPtg6kXckiS+Eo1bMlSe5QdErN6CX9gHBQ5LZCIjP6Elmwby8hF6Ievv8Ik0ofeOYeVwWzSYJFPsA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by DU0PR10MB6511.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:405::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7362.39; Wed, 13 Mar
- 2024 09:10:22 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8d16:7fbb:4964:94fe]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8d16:7fbb:4964:94fe%3]) with mapi id 15.20.7362.035; Wed, 13 Mar 2024
- 09:10:22 +0000
-Message-ID: <c772f038-7f72-4b3c-9826-b547b02a753d@siemens.com>
-Date: Wed, 13 Mar 2024 10:10:22 +0100
-User-Agent: Mozilla Thunderbird
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: cip-dev <cip-dev@lists.cip-project.org>
-Subject: [isar-cip-core][PATCH v2] Update to kas 4.3.1
+ smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
+ header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
+From: <Adithya.Balakumar@toshiba-tsip.com>
+To: <jan.kiszka@siemens.com>, <cip-dev@lists.cip-project.org>
+CC: <Shivanand.Kunijadar@toshiba-tsip.com>, <Sai.Sathujoda@toshiba-tsip.com>,
+        <dinesh.kumar@toshiba-tsip.com>, <kazuhiro3.hayashi@toshiba.co.jp>
+Subject: RE: [isar-cip-core][RFC v1 4/6] Add Delta update support with
+ rdiff_image and delta handler
+Thread-Topic: [isar-cip-core][RFC v1 4/6] Add Delta update support with
+ rdiff_image and delta handler
+Thread-Index: AQHacU4FQEIPxVUPs0WPd8OoJhjfd7E1bEGA
+Date: Wed, 13 Mar 2024 09:20:54 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <TYCPR01MB96693926FB38BED196FFEFC0C42A2@TYCPR01MB9669.jpnprd01.prod.outlook.com>
+References: <20240307074612.1996609-1-Adithya.Balakumar@toshiba-tsip.com>
+ <20240307074612.1996609-5-Adithya.Balakumar@toshiba-tsip.com>
+ <31bf9be7-30c7-4717-a34a-9d0477607f55@siemens.com>
+In-Reply-To: <31bf9be7-30c7-4717-a34a-9d0477607f55@siemens.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0272.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e6::13) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCPR01MB9669:EE_|OS3PR01MB8761:EE_
+x-ms-office365-filtering-correlation-id: 10cb235e-dc56-4b25-abaa-08dc433ee276
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ lmQ/lIBRe0VZ4ux23n6iojhBqCAEPqFn6mse+hqkskoNVQ+ZzJBpZWicO00NjE2NbXRnbORbcramv88CdTgtKcVQrfWtiAqRJ+GmnwsLm7cjyUsGMQoiiHK778yq0ObH0WLMIDp2rjOs2RGfg0BEmIP86yAXGaIgMOLmqeXo7b2K8VHhk3OQ0RLifP0SjWR8T/B+n75LCMGrirKuvTjUZwImMl2H/GFyr51QQ6PHEvd1y9hY73QmLJGdZ4rkdmCd9wBbeuRuC1TzHYALQv/yxSHC11VGmZBCF4UinESsNzIUdakM2wfj33HoibAJpwCLGiAOZjO64WxfOfvIPjYQmOE3o0PovcRmbCCQ5ehT+pyvX93Vnp3TiKo5ojJKlAdgNRLM0jd5szg3jE5ITwM8bfBmZxubSGnAKlEwNHzi7/dvMtTldnLQYQhPvdmsaMfkHIF7kLs4+FlyWQ5f5cNLMl7DkPz4skcpWbww0qIw3CFZsfaP711Utnmb6C38iBDJmG4hGj7aczfppaXnGVtBH3Ke6+ksawo772h7ZjqRXG8r9B3f6RJ1ue2bI5UUF2pM0U6ZvkAHXt4p8L6nG4YxbJwMqf3ztungYxkSjiRoRriUodaz1vMIoZCBeujl6NNpa2QcJn6ryZXIL1IPaiGGQ7KIean8F/NXmRUXA1a8RA8oNUzUL0faq6uuj+XjWVk7PEkIxzvy7sjhekD/pQSUvw==
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB9669.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?am1xZllmeVBOdzBkMEptRkZ3cFNXSmVwU2hEbWhGMWdaQ3ZGbG9BbVg1Qkd2?=
+ =?utf-8?B?YmpaVWU3UDBVcXpFelJZWUh5cXR5QWpTSUhTbStrNnYrU3ZUWnMwNkJDb1gv?=
+ =?utf-8?B?akV3MG40dmJaOEhVTG9nSW51ZWNieFBGdm5aQ24vZG5rOXFPMmdEZGNEUXFE?=
+ =?utf-8?B?bXFxSmJYOHd4WjE2ZVdaNEJVOWdGZjA2VGVqeXY0S0ZkTStSajNzZURUaEFo?=
+ =?utf-8?B?aW1HUXJvbUs1cnMvTEpTdC9zZS9FNHdHTTBiV0VCVDRvQ294b0UvbHFzaXhX?=
+ =?utf-8?B?YWljelF4RTJ5N2NSd3JTOWpTbXBDdWdMTmtHdWF5LzBXckJLV2t2T1ZWTEwr?=
+ =?utf-8?B?QkppWkwzU0xIZjY0NVZuUnlLcElGK2FTODUvN0RYOE93WTdjd1hpMFF5NUNS?=
+ =?utf-8?B?Ri9GaWpEQ2RITFEzckMzcVdUdGE3U3lZbjNlVm1oQW1vL0N3SzkxYWgxQktr?=
+ =?utf-8?B?S0wvQTlkSENXaENFRmZIdUIvVHV4NHo4RitEUHhZK1FmNmVRZDdBcGFsNnFq?=
+ =?utf-8?B?eTJwaWRPTlZnc0hWczlrVzlKUGV3UW8vOFdadis5ajRPU1daaTM3MDBPdlJo?=
+ =?utf-8?B?RVN6SXpxZzREV3FyTklmOVFJV25ic05lbnlZbmR6QVVSN1F3UGI3RUdFZFM0?=
+ =?utf-8?B?b0hEYjZGdEZ3eTJ0eGhFQlVNSWlsaVdVYVVGQ0Vacjd0VFA3a0FRRkJlQWFo?=
+ =?utf-8?B?VlJYVDVhSVpkUHNWN09nK2pnSWowY0V4TE54bUVXbkYrNXZ0WS9KblQ3cFR2?=
+ =?utf-8?B?eWFPTmdkNkE3UDZTWG1ZZTFaMHRkNDlnWXFick9xWmtCWkYxSFI5aXN5M2xF?=
+ =?utf-8?B?NUVEV08rRzV1QitIOUlJcWpNUFZRRXZTUWl0RFdtM2hWRHhNZ3A2eW5SM3h2?=
+ =?utf-8?B?NXNxRk9xM1FNSHBmb1VvRGg3MHNWMHNXOFE2TmhqYnZ3VVY2a0k4cjNzdFoy?=
+ =?utf-8?B?VEpsclMxZm9Nc1lndUgxeEZVZkZpUkZyVW1XUTlGbUNwaXBOZnR5ZTFreCtV?=
+ =?utf-8?B?SElHOGh6ZVRqSE4xRGZnY2ZEVFM4TU1Yc0tjUk1XVGdxMVM2SVNzSjFQdDJa?=
+ =?utf-8?B?QjZsQUpkVjlJYUJsZGdkcGJDSStuenM1emtBTjZhRVIwUHZJS2tUc3RnbVFJ?=
+ =?utf-8?B?UHYramt6aGQxSXNHZVNpeUpndlpYV3Q1bE8rbWk3WGtSajVlcXFFVWw4azN2?=
+ =?utf-8?B?MlQxNnFzMU1xZHQ4Sk5hcUhicG1LQ2Q5YVowWFlTSUFkMkxhYXhuVjMxYk0w?=
+ =?utf-8?B?TEJIMXRrM2JhMjlNbSttSzBBd21JRGNjNWVlZEIxMEx4WmQ3RXJSdXh5NllU?=
+ =?utf-8?B?QWI1cGxmVHQ5U1RhWENVZGJ1MThoeWsyaXFzUDNFK0ZtWDQxckwxQlFZUXhO?=
+ =?utf-8?B?ZWJnMGFyOENFZ3ZqZTJ2YTVzUTQrMnRZQ1NQMHE3bGZ6V0dKaXFVOUhxQ2RT?=
+ =?utf-8?B?VXJpZmpvV054RHprNWpnZjRySkY3dGtGUnJqcGhTbDhYelZxTGU5aEdJRTF2?=
+ =?utf-8?B?d2NsYVFIdlNYSmpLSTZ4cjFCOUFEeGFjQkNOcWNWTXRqOHdZc0xmTUE5ZlF0?=
+ =?utf-8?B?YlhRWU9EVjNyRDVBeHJ4UVhQSm0wWk5INnNGYVZkVXRJNUxVajdLMXpGSW9M?=
+ =?utf-8?B?dHphZDdFZHJOV2JFYWxCcjh5UU1WcGE3a3RRQWFqcTVHQ0svREc2aXRHNXA5?=
+ =?utf-8?B?SVU0NzUwWHNFcmYyVTN0ZFFMeFQ0QjFuTUs3elZvQ09VYUtyaUxvc3VLYXA4?=
+ =?utf-8?B?OGtnN2RZUjVFSDFwQ2VjYTFlc0JSVEdSTDQ2WXdpU1BkYm9tbWpwd3Y0RUxv?=
+ =?utf-8?B?UjNCZExtYkczNnJ6U2s3MnluRVJHaHdnWTBBMitVcTVqZzZOdWtsdTZqenc3?=
+ =?utf-8?B?K3dpaVFVQlNyT3NPWU1EWmNGVjZnRHpoeVpqdjVwT1BKcHM2WWZvd2oxK1Yv?=
+ =?utf-8?B?Rk5JRmpuZk1hbFdOTVVmR3pCVnpPUUhhZFdlR0hJcDFSbm1xNmxxTmVzTnpK?=
+ =?utf-8?B?QjI0VFk1TEZIUXZRakxmYk84bFp4NVJFQmQ2MlZkckEwR0FyOVowWWFZSXNJ?=
+ =?utf-8?B?WEpzNnRvRWxqb3Qyd2pUY3luKzhwSVZIMUs0K0VjWDcxVStjZUtTdDVZTXh6?=
+ =?utf-8?B?UmFqMTEwWUZ6dmtBTkJDS2xRUmVveTdsK2hkV2N1YVFvQ3hNdElJM2pwN2Ex?=
+ =?utf-8?B?K1E9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DU0PR10MB6511:EE_
-X-MS-Office365-Filtering-Correlation-Id: 82c998ac-3814-4241-a584-08dc433d69bd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	S9TbHQnOWs4FqGhx6gZPxVoocNf5wVgRa1zmG0v1597ynh/lEYOdhnd077CV+AGxjS4CQZkkYZ+v9TFhjcN1yTBLePOPR8vNCBb+/QxxO3J1yDol8Gdt1AzPllX7CjZdhpbvgUkCvLKRrep1oUBVLKAjqaLxMUZcGw7TY4bu+wgxFdsvxnGdtbSevHva57nPGhfE2wlxuXjjvCe4ciVynnOF56Na4HbcIuxXU4PB4d+LuwbdUqXyNznUuUgL3prxIBRxbVqczj9VQ0D/GtglR2FGILxl66oQFpX3Ck/0uIvEx5p++4n7Y5VxCnlpfZKDb37DChPcjlyFbK5XBPNvPRqrE6/Zxs5kSf54thTC4iDHcuqtXaOI/a2H1ivSM+ty4q384c+i2zAy6k9GYEt4Nb1/zVEL1gVJoXtBGCu36uQwbmxi8nddJaI2P/G5/HbvKvQu8yrXUPuC1GSA0vTKo71xkDNlDo51aXCTSEpdlWRR0hBiwcDjKcliDd/TAV7IW9W9t6mORX6RtktoPh8k+Vg0cIlIjzc75fe2PtkxTf7xjRd461I2SkqZWeKTHRyBa+hrqGe+PJH1cMkNj3c9Ne7sbpRb9UmltDtFpk5P73Q=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?UkM4eFRwczZ4TDFlZTRrV0VYbk5udkJ6SXpSM3VOMFNrMzl5TVVXYll1VmtQ?=
- =?utf-8?B?K3hqemp5RUszNC9iMGlWTFZSV3ZuT0tuMFMrNUk4Mm15ckRJYjFBekhTaFQ2?=
- =?utf-8?B?UTVvbVdGckRJVStVRTIva2VYczJyUE5Kbll5c055dVU2bmQrSHhSTFdEa055?=
- =?utf-8?B?RWhRTERjcm1tbWxGRkJEQnFwOXRZeTNYMmlNY3FKRDRoWFJHYy9rdGFRWlQ5?=
- =?utf-8?B?TFgrODNkVEIyclVlTGNBbjhqcm9pcCtON0xNRk1RWEUydVJjbmJUQzJyclQ4?=
- =?utf-8?B?T0p5ZDBpZDZZVmh2VlRDc25Deit4VHBBenZQM044UXlnbUQzRWhCMHdnTnIw?=
- =?utf-8?B?R0NLMWRGcjRkNXhtUWFjb3ptUTNwWGZzdUFsMjhhV251Vm9PY2VDamNMdWU2?=
- =?utf-8?B?T2hGclFYVDBDTVE2VzZnSkxpVUpTK2pmMTBiajFGMDNmSTFSY3N1SGJoQVd2?=
- =?utf-8?B?S052ck9QNWZvNWcybzBVcHloNEdVOXdIa1Z1MXJNWlJvUmZ5NkNWVzlpWk1p?=
- =?utf-8?B?RHFkcU9BTEdkVnlMVDg3aTFMVjFVVTE4KzJ2eXNzWjZPa1BJeFplRm42TDRU?=
- =?utf-8?B?TkM3b1dQYS9VMnBQRFhLYVl5OVMxR29sZHFhTE40eWFRU1NaZXFJOU1YcVU0?=
- =?utf-8?B?VG5jL3p5czBVcS9yTEFLSFZ3VllDVjdRcVdrWlAyaUNBSXdvN25ULzV5UDBo?=
- =?utf-8?B?YW5RTXIwSFBJTEV4QnJjVDIyRGlncnE5cVI5RExVRW1kcW5ONVVCcTMwek8y?=
- =?utf-8?B?bm56TWwzOGdsc1lXSnpIajhtc3ZFSHNZZDI5a3A5KzZlT1VvTlIwckdIQi9k?=
- =?utf-8?B?clloNk9DU2FpcSt6MURCVWhJY0txTDhLa0Z0ajJWUUw0eHRaZW5ZR3NqTVNT?=
- =?utf-8?B?dGh1c1pWRXJSRHJsQTc3anVTeXBqVlZrenIzZTI2aGhqSFBuV0g4UXNxSEZh?=
- =?utf-8?B?RnJCYjRKQ0R4MktrOVRJR2NFUHF2bzhnTVlwU0E4U3NZcHdwZnhzcUs1Rmpz?=
- =?utf-8?B?dk54bEpDckVlRVRBd1JaOSs0L1gvQ213enE4eXNkYkRzdW81MzJRVmxHVlVZ?=
- =?utf-8?B?d092SWVsTmhNTkNHWFR6Z1RhNU90dXcyTGE2bDVWTVFROG40VW9DN0ZMZGhM?=
- =?utf-8?B?MEJ3TE1yeTQwbS91VzBySEFJdHh1Z2trcURmd3NacGIxYWRxMjRndzNzZit0?=
- =?utf-8?B?c1JDT20yNnlsa3RISndZQzlLRUdhaDZlUnNNTVFxNktmZ1ZURGEweFYrQmY5?=
- =?utf-8?B?WC9ZN3Y5MzBoOXludUpWZjhid2k5WElFeHI0amM1dGVoYXcxZWFFSFBVVnFU?=
- =?utf-8?B?TkRDRTY4TVF2UHFYRmtnZjJqN2JyUXRMb0dZK1pMaXAwcnRwSG5CWUZzOGlZ?=
- =?utf-8?B?U0J3TTFLWVRoL1NkY05WaWlUSWI2WWZBbHNWaVlvZGFkcTU5Zmt1eTBzcklm?=
- =?utf-8?B?Qk8vVzdXQ1ZBbm1LSmZUZEhtOGhxWTZKemo2TDRha2ZENW5INGgxUXBieW13?=
- =?utf-8?B?YmkwSHIrZldSR212VWUwK08zMFFSS1U2dWdldjlPMDBRcHVFL2dEZFJ4bXJr?=
- =?utf-8?B?aGpMNUE4eVdqVGdVVjdvY09NODVFblY5QXZqTG1zd1JZRkllOEZDOHhzS2V6?=
- =?utf-8?B?S1lLMzlUZVFWeGJqM2JFNitqWG4yeHh2SHVKbUFTUnhHUGExUnV0VWtiV0d1?=
- =?utf-8?B?ckk4b0NxSlpONEl4Q1lEeFhwNVR4QTdJQXErUm0rOXY4cGxjbzh0eDY1aXdG?=
- =?utf-8?B?ZG50a0IweTQwa3hiai8wOHVESzJkZ1l6bWhIc1ZrQUI3R3NaRzc1S0pRV2Vk?=
- =?utf-8?B?b0tDL2JiRkcvRUlaNFdXSzExYXN3YmNvYmVvNFAzSEowcHJJMTltT2xZTGxQ?=
- =?utf-8?B?SGlOOGp5V05VTjBEWEM0Y3ZpNm1lQ2Fva254THE0T0hZLzBUZ3I4SVdoVEVv?=
- =?utf-8?B?RFAweVlYV0JyN3Z4SHNCM2t1OGZ2T0xWRTF6YUhUak5qQ29pZ1RKb2JlTWZx?=
- =?utf-8?B?WVJFV09DSWx6akxjNzh2RklGV3RxS0pGcUh0aUtoWGxyb1J5ajZnaDQxK3ZX?=
- =?utf-8?B?VUFhZ1JTNTFoenNTK1FKcFFHYnJ1WG5DWDJYK2dkUFU2Mncxa3ovSjcxMTIr?=
- =?utf-8?Q?4rRyRuPnG1Y30DmAo3eH1XQCB?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 82c998ac-3814-4241-a584-08dc433d69bd
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2024 09:10:22.6631
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB9669.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 10cb235e-dc56-4b25-abaa-08dc433ee276
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Mar 2024 09:20:54.5607
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +o2st6DUrCxE/9UwjpBkZ3uMqt7kSw9kZkq7DxCei7VPVV6ZmT1If25GSXY3BXGwvyWq2UYsugYwp7CpKFPWEw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB6511
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: OLruCqe6Bies0y9JIlCv5+HoRFDnHRC7TT6SXyXolSGW3+0lmb+MrX3EkF7iuVCUyYjQf/1gacAJ7872LzRawcXuAbugAA6lB3svpSyzmguW2mcQazsji+cyaOK1fMjK
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB8761
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 13 Mar 2024 09:10:30 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15286
+ <cip-dev@lists.cip-project.org>; Wed, 13 Mar 2024 09:21:10 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15287
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+LS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206IEphbiBLaXN6a2EgPGphbi5raXN6a2FA
+c2llbWVucy5jb20+IA0KU2VudDogRnJpZGF5LCBNYXJjaCA4LCAyMDI0IDU6MTUgUE0NClRvOiBi
+YWxha3VtYXIgYWRpdGh5YSjvvLTvvLPvvKnvvLAgVEVVUikgPEFkaXRoeWEuQmFsYWt1bWFyQHRv
+c2hpYmEtdHNpcC5jb20+OyBjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZw0KQ2M6IGt1bmlq
+YWRhciBzaGl2YW5hbmQo77y077yz77yp77ywIFRNSUVDIE9ERyBQb3J0aW5nKSA8U2hpdmFuYW5k
+Lkt1bmlqYWRhckB0b3NoaWJhLXRzaXAuY29tPjsgYXNocml0aCBzYWko77y077yz77yp77ywKSA8
+U2FpLlNhdGh1am9kYUB0b3NoaWJhLXRzaXAuY29tPjsgZGluZXNoIGt1bWFyKO+8tO+8s++8qe+8
+sCBUTUlFQyBPREcgUG9ydGluZykgPGRpbmVzaC5rdW1hckB0b3NoaWJhLXRzaXAuY29tPjsgaGF5
+YXNoaSBrYXp1aGlybyjmnpcg5ZKM5a6PIO+8pO+8re+8pSDil4vvvKTvvKnvvKfilqHvvK3vvLDv
+vLPil4vvvK3vvLDvvJQpIDxrYXp1aGlybzMuaGF5YXNoaUB0b3NoaWJhLmNvLmpwPg0KU3ViamVj
+dDogUmU6IFtpc2FyLWNpcC1jb3JlXVtSRkMgdjEgNC82XSBBZGQgRGVsdGEgdXBkYXRlIHN1cHBv
+cnQgd2l0aCByZGlmZl9pbWFnZSBhbmQgZGVsdGEgaGFuZGxlcg0KDQpPbiAwNy4wMy4yNCAwODo0
+NiwgQWRpdGh5YSBCYWxha3VtYXIgd3JvdGU6DQo+IHN3dXBkYXRlIHN1cHBvcnRzIGRlbHRhIHVw
+ZGF0ZXMgd2l0aCByZGlmZl9pbWFnZSBhbmQgZGVsdGEoemNodW5rKSANCj4gaGFuZGxlci4gVGhp
+cyBjaGFuZ2UgYWRkcyBzdXBwb3J0IHRvIHVzZSBlaXRoZXIgb2YgdGhlIGhhbmRsZXIgZm9yIA0K
+PiBjcmVhdGluZyBkZWx0YSB1cGRhdGUgYXJ0aWZhY3RzLiBUaGUgdHlwZSBvZiBoYW5kbGVyIGNh
+biBiZSBzZXQgaW4gdGhlIA0KPiBkZWx0YS11cGRhdGUueW1sIGZpbGUgYWxvbmcgd2l0aCBhZGRp
+dGlvbmFsIHZhcmlhYmxlcyBuZWVkZWQgZm9yIHRoZSANCj4gY2hvc2VuIGhhbmRsZXIuDQo+IA0K
+PiBTaWduZWQtb2ZmLWJ5OiBBZGl0aHlhIEJhbGFrdW1hciA8QWRpdGh5YS5CYWxha3VtYXJAdG9z
+aGliYS10c2lwLmNvbT4NCj4gLS0tDQo+ICBjbGFzc2VzL2RlbHRhX3VwZGF0ZS5iYmNsYXNzIHwg
+OTAgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ICBrYXMvb3B0L2RlbHRh
+LXVwZGF0ZS55bWwgICAgIHwgMjEgKysrKysrKysrDQo+ICAyIGZpbGVzIGNoYW5nZWQsIDExMSBp
+bnNlcnRpb25zKCspDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgY2xhc3Nlcy9kZWx0YV91cGRhdGUu
+YmJjbGFzcyAgY3JlYXRlIG1vZGUgMTAwNjQ0IA0KPiBrYXMvb3B0L2RlbHRhLXVwZGF0ZS55bWwN
+Cj4gDQo+IGRpZmYgLS1naXQgYS9jbGFzc2VzL2RlbHRhX3VwZGF0ZS5iYmNsYXNzIA0KPiBiL2Ns
+YXNzZXMvZGVsdGFfdXBkYXRlLmJiY2xhc3MgbmV3IGZpbGUgbW9kZSAxMDA2NDQgaW5kZXggDQo+
+IDAwMDAwMDAuLjhkNDcwODENCj4gLS0tIC9kZXYvbnVsbA0KPiArKysgYi9jbGFzc2VzL2RlbHRh
+X3VwZGF0ZS5iYmNsYXNzDQo+IEBAIC0wLDAgKzEsOTAgQEANCj4gKyMNCj4gKyMgQ0lQIENvcmUs
+IGdlbmVyaWMgcHJvZmlsZQ0KPiArIw0KPiArIyBDb3B5cmlnaHQgKGMpIFRvc2hpYmEgQ29ycG9y
+YXRpb24gMjAyNCAjICMgQXV0aG9yczoNCj4gKyMgIEFkaXRoeWEgQmFsYWt1bWFyIDxhZGl0aHlh
+LmJhbGFrdW1hckB0b3NoaWJhLXRzaXAuY29tPg0KPiArIw0KPiArIyBTUERYLUxpY2Vuc2UtSWRl
+bnRpZmllcjogTUlUDQo+ICsjDQo+ICsNCj4gK0lNQUdFUl9JTlNUQUxMOmRlbHRhX3VwZGF0ZSAr
+PSAiZmRpc2sgemNodW5rIHJkaWZmIg0KPiArDQo+ICtGSUxFU0VYVFJBUEFUSFM6YXBwZW5kID0g
+Ijoke0xBWUVSRElSX2NpcC1jb3JlfSINCj4gK0lNQUdFX1NSQ19VUkk6ZGVsdGFfdXBkYXRlICs9
+ICIgJHtAICJmaWxlOi8vIitkLmdldFZhcignREVMVEFfUkRJRkZfUkVGX0lNQUdFJykgaWYgZC5n
+ZXRWYXIoJ0RFTFRBX1VQREFURV9UWVBFJykgPT0gJ3JkaWZmJyBhbmQgZC5nZXRWYXIoJ0RFTFRB
+X1JESUZGX1JFRl9JTUFHRScpIGVsc2UgJycgfSINCj4gKw0KPiArZG9faW1hZ2VfZGVsdGFfdXBk
+YXRlW2NsZWFuZGlyc10gKz0gIiR7V09SS0RJUn0vZGVsdGFfaW50ZXJpbV9hcnRpZmFjdHMiDQo+
+ICsNCj4gK2V4dHJhY3Rfcm9vdF9mcygpIHsNCj4gKyAgICBJTlBVVF9BUlRJRkFDVD0kMQ0KPiAr
+ICAgIE9VVFBVVF9BUlRJRkFDVD0kMg0KPiArICAgIFNFQ1RPUl9TSVpFPTUxMg0KPiArICAgIFJP
+T1RGU19MQUJFTD0icHJpbWFyeSINCj4gKyAgICBST09URlNfU1RBUlRfU0VDVE9SPSQoJHtTVURP
+X0NIUk9PVH0gL3NiaW4vZmRpc2sgLWwgLW8gTmFtZSxTdGFydCAiJHtJTlBVVF9BUlRJRkFDVH0i
+IHwgYXdrIC12IG5hbWU9IiR7Uk9PVEZTX0xBQkVMfSIgJyQwIH4gbmFtZSB7cHJpbnQgJDJ9JyB8
+IGhlYWQgLW4gMSkNCj4gKyAgICBTS0lQX1ZBTFVFPSIkKGV4cHIgJChleHByICRST09URlNfU1RB
+UlRfU0VDVE9SIFwqICRTRUNUT1JfU0laRSkgLyAkKGV4cHIgMTAyNCBcKiAxMDI0KSkiDQo+ICsg
+ICAgJHtTVURPX0NIUk9PVH0gL2Jpbi9kZCBpZj0ke0lOUFVUX0FSVElGQUNUfSBicz0xTSANCj4g
+K3NraXA9JFNLSVBfVkFMVUUgY291bnQ9MTAyNCBvZj0ke09VVFBVVF9BUlRJRkFDVH0gc3RhdHVz
+PW5vbmUgfQ0KPiArDQo+ICtkb19kZWx0YV91cGRhdGVfc3dfZGVzY3JpcHRpb25fdGVtcGxhdGUo
+KSB7DQo+ICsgICAjIFNpbmNlIHRoZSBzdy1kZXNjcmlwdGlvbiBmaWxlIGZvciBkZWx0YSB1cGRh
+dGUgd291bGQgbm90IGJlIHZlcnkgZGlmZmVyZW50IGZyb20gdGhhdCBvZiBhIA0KPiArICAgIyBu
+b3JtYWwgdXBkYXRlLCBjb3B5IHN3LWRlc2NyaXB0aW9uLnRtcGwgYXMgc3ctZGVzY3JpcHRpb24t
+ZGVsdGEudG1wbCBhbmQgYWRkIGRlbHRhIHVwZGF0ZSANCj4gKyAgICMgc3BlY2lmaWMgcHJvcGVy
+dGllcw0KPiArICAgU1dVX0RFU0NSSVBUSU9OX0RFTFRBX1VQREFURT0ic3ctZGVzY3JpcHRpb24t
+ZGVsdGEiDQo+ICsgICBjcCAiJHtXT1JLRElSfS8ke1NXVV9ERVNDUklQVElPTl9GSUxFfSIudG1w
+bCAiJHtXT1JLRElSfS8ke1NXVV9ERVNDUklQVElPTl9ERUxUQV9VUERBVEV9Ii50bXBsDQo+ICsg
+ICBzZWQgLWkgJ3MvXFNXVV9ST09URlNfUEFSVElUSU9OX05BTUUvU1dVX0RFTFRBX1VQREFURV9B
+UlRJRkFDVC9nJyAke1dPUktESVJ9LyR7U1dVX0RFU0NSSVBUSU9OX0RFTFRBX1VQREFURX0udG1w
+bA0KPiArICAgc2VkIC1pICcvY29uZmlnZmlsZWNoZWNrID0vYSBcICAgICAgICAgICAgICAgICAg
+ICAgIFwnJCd7U1dVX0RFTFRBX1VQREFURV9BRERJVElPTkFMX1BST1BFUlRJRVN9JyAke1dPUktE
+SVJ9LyR7U1dVX0RFU0NSSVBUSU9OX0RFTFRBX1VQREFURX0udG1wbA0KPiArfQ0KPiArYWRkdGFz
+ayBkb19kZWx0YV91cGRhdGVfc3dfZGVzY3JpcHRpb25fdGVtcGxhdGUgYmVmb3JlIA0KPiArZG9f
+dHJhbnNmb3JtX3RlbXBsYXRlIGFmdGVyIGRvX2dlbmVyYXRlX2ltYWdlX3V1aWQNCj4gKw0KPiAr
+SU1BR0VfQ01EOmRlbHRhX3VwZGF0ZSgpIHsNCj4gKyAgICBpZiBbICIke0RFTFRBX1VQREFURV9U
+WVBFfSIgIT0gInpjaHVuayIgXSAmJiBbICIke0RFTFRBX1VQREFURV9UWVBFfSIgIT0gInJkaWZm
+IiBdOyB0aGVuDQo+ICsgICAgICAgIGJiZmF0YWwgIllvdSBtdXN0IHNldCBhIHZhbGlkIERFTFRB
+X1VQREFURV9UWVBFIChyZGlmZi96Y2h1bmspIg0KPiArICAgIGZpDQo+ICsgICAgDQo+ICsgICAg
+REVMVEFfQVJUSUZBQ1RfU1dVPSIiDQo+ICsNCj4gKyAgICBpZiBbICIke0RFTFRBX1VQREFURV9U
+WVBFfSIgPSAiemNodW5rIiBdOyB0aGVuIA0KPiArCWV4dHJhY3Rfcm9vdF9mcyAiJHtQUF9ERVBM
+T1l9LyR7SU1BR0VfRlVMTE5BTUV9LndpYyIgIiR7V09SS0RJUn0vZGVsdGFfaW50ZXJpbV9hcnRp
+ZmFjdHMvJHtJTUFHRV9GVUxMTkFNRX0ucmF3Ig0KPiArDQo+ICsgICAgCSMgQ3JlYXRlIC56Y2sg
+ZmlsZQ0KPiArICAgIAkke1NVRE9fQ0hST09UfSAvYmluL3pjayBcDQo+ICsJCS0tb3V0cHV0ICR7
+UFBfREVQTE9ZfS8ke0lNQUdFX0ZVTExOQU1FfS56Y2sgXA0KPiArCQktdSAtLWNodW5rLWhhc2gt
+dHlwZSBzaGEyNTYgXA0KPiArCQkke1dPUktESVJ9L2RlbHRhX2ludGVyaW1fYXJ0aWZhY3RzLyR7
+SU1BR0VfRlVMTE5BTUV9LnJhdw0KPiArDQo+ICsgICAgCSMgQ2FsY3VsYXRlIHNpemUgb2YgemNr
+IGhlYWRlcg0KPiArICAgIAlIU0laRT0iJCgke1NVRE9fQ0hST09UfSAvYmluL3pja19yZWFkX2hl
+YWRlciAtdiAke1BQX0RFUExPWX0vJHtJTUFHRV9GVUxMTkFNRX0uemNrIHwgZ3JlcCAiSGVhZGVy
+IHNpemUiIHwgY3V0IC1kICc6JyAtZiAyKSINCj4gKyAgICANCj4gKyAgICAJIyBFeHRyYWN0IHRo
+ZSB6Y2sgaGVhZGVyDQo+ICsgICAgCSR7U1VET19DSFJPT1R9IC9iaW4vZGQgaWY9IiR7UFBfREVQ
+TE9ZfS8ke0lNQUdFX0ZVTExOQU1FfSIuemNrIA0KPiArIG9mPSIke1BQX0RFUExPWX0vJHtJTUFH
+RV9GVUxMTkFNRX0iLnpjay5oZWFkZXIgYnM9MSBjb3VudD0iJEhTSVpFIiANCj4gKyBzdGF0dXM9
+bm9uZQ0KPiArDQo+ICsgICAgICAgIERFTFRBX0FSVElGQUNUX1NXVT0ke0lNQUdFX0ZVTExOQU1F
+fS56Y2suaGVhZGVyDQo+ICsNCj4gKyAgICBlbGlmIFsgIiR7REVMVEFfVVBEQVRFX1RZUEV9IiA9
+ICJyZGlmZiIgXTsgdGhlbg0KPiArICAgICAgICBpZiBbIC16ICIke0RFTFRBX1JESUZGX1JFRl9J
+TUFHRX0iIF07IHRoZW4NCj4gKyAgICAgICAgICAgIGJiZmF0YWwgIllvdSBtdXN0IHNldCBERUxU
+QV9SRElGRl9SRUZfSU1BR0UgYW5kIHByb3ZpZGUgdGhlIHJlcXVpcmVkIGZpbGVzIGFzIGFydGlm
+YWN0cyB0byB0aGlzIHJlY2lwZSINCj4gKyAgICAgICAgZmkNCj4gKw0KPiArCSMgRXh0cmFjdGlu
+ZyByb290IHBhcnRpdGlvbiBmcm9tIGltYWdlMQ0KPiArCWV4dHJhY3Rfcm9vdF9mcyAiJHtXT1JL
+RElSfS8ke0RFTFRBX1JESUZGX1JFRl9JTUFHRX0iICAiJHtXT1JLRElSfS9kZWx0YV9pbnRlcmlt
+X2FydGlmYWN0cy9vbGQtaW1hZ2Utcm9vdGZzLnJhdyINCj4gKwkNCj4gKwkjIEV4dHJhY3Rpbmcg
+cm9vdCBwYXJ0aXRpb24gZnJvbSBpbWFnZTINCj4gKwlleHRyYWN0X3Jvb3RfZnMgIiR7UFBfREVQ
+TE9ZfS8ke0lNQUdFX0ZVTExOQU1FfS53aWMiICAiJHtXT1JLRElSfS9kZWx0YV9pbnRlcmltX2Fy
+dGlmYWN0cy9uZXctaW1hZ2Utcm9vdGZzLnJhdyIJDQo+ICsNCj4gKwlybSAtZiAke0RFUExPWV9E
+SVJfSU1BR0V9LyR7SU1BR0VfRlVMTE5BTUV9LmRlbHRhDQo+ICsJIyBjcmVhdGUgc2lnbmF0dXJl
+IGZpbGUgd2l0aCByZGlmZg0KPiArCSR7U1VET19DSFJPT1R9IC91c3IvYmluL3JkaWZmIHNpZ25h
+dHVyZSAke1dPUktESVJ9L2RlbHRhX2ludGVyaW1fYXJ0aWZhY3RzL29sZC1pbWFnZS1yb290ZnMu
+cmF3IFwNCj4gKwkJJHtXT1JLRElSfS9kZWx0YV9pbnRlcmltX2FydGlmYWN0cy9vbGQtaW1hZ2Ut
+cm9vdGZzLnNpZw0KPiArDQo+ICsgICAgICAgICMgY3JlYXRlIGRlbHRhIGZpbGUgd2l0aCB0aGUg
+c2lnbmF0dXJlIGZpbGUNCj4gKwkke1NVRE9fQ0hST09UfSAvdXNyL2Jpbi9yZGlmZiBkZWx0YSAk
+e1dPUktESVJ9L2RlbHRhX2ludGVyaW1fYXJ0aWZhY3RzL29sZC1pbWFnZS1yb290ZnMuc2lnIFwN
+Cj4gKwkJJHtXT1JLRElSfS9kZWx0YV9pbnRlcmltX2FydGlmYWN0cy9uZXctaW1hZ2Utcm9vdGZz
+LnJhdyANCj4gKyR7UFBfREVQTE9ZfS8ke0lNQUdFX0ZVTExOQU1FfS5kZWx0YQ0KPiArDQo+ICsJ
+REVMVEFfQVJUSUZBQ1RfU1dVPSR7SU1BR0VfRlVMTE5BTUV9LmRlbHRhDQo+ICsgICAgZmkNCj4g
+KyAgICAgICAgIyBjcmVhdGUgYSBzeW1ib2xpYyBsaW5rIGFzIElNQUdFX0NNRCBleHBlY3RzIGEg
+Ki5kZWx0YV91cGRhdGUgZmlsZSBpbiBkZXBsb3kgaW1hZ2UgZGlyZWN0b3J5DQo+ICsgICAgICAg
+IGxuIC1zZiAke0RFTFRBX0FSVElGQUNUX1NXVX0gDQo+ICske0RFUExPWV9ESVJfSU1BR0V9LyR7
+SU1BR0VfRlVMTE5BTUV9LmRlbHRhX3VwZGF0ZQ0KPiArfQ0KPiArDQo+ICthZGR0YXNrIGRvX2lt
+YWdlX2RlbHRhX3VwZGF0ZSBiZWZvcmUgZG9faW1hZ2Vfc3d1IGFmdGVyIGRvX2ltYWdlX3dpYw0K
+PiBkaWZmIC0tZ2l0IGEva2FzL29wdC9kZWx0YS11cGRhdGUueW1sIGIva2FzL29wdC9kZWx0YS11
+cGRhdGUueW1sIG5ldyANCj4gZmlsZSBtb2RlIDEwMDY0NCBpbmRleCAwMDAwMDAwLi5jN2EzODkz
+DQo+IC0tLSAvZGV2L251bGwNCj4gKysrIGIva2FzL29wdC9kZWx0YS11cGRhdGUueW1sDQo+IEBA
+IC0wLDAgKzEsMjEgQEANCj4gKyMNCj4gKyMgQ0lQIENvcmUsIGdlbmVyaWMgcHJvZmlsZQ0KPiAr
+Iw0KPiArIyBDb3B5cmlnaHQgKGMpIFRvc2hpYmEgQ29ycG9yYXRpb24gMjAyNCAjICMgQXV0aG9y
+czoNCj4gKyMgIEFkaXRoeWEgQmFsYWt1bWFyIDxhZGl0aHlhLmJhbGFrdW1hckB0b3NoaWJhLXRz
+aXAuY29tPg0KPiArIw0KPiArIyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogTUlUDQo+ICsjDQo+
+ICsNCj4gK2hlYWRlcjoNCj4gKyAgdmVyc2lvbjogMTQNCj4gKw0KPiArbG9jYWxfY29uZl9oZWFk
+ZXI6DQo+ICsgIGRlbHRhLXVwZGF0ZTogfA0KPiArICAgIElNQUdFX0NMQVNTRVM6YXBwZW5kID0g
+IiBkZWx0YV91cGRhdGUiDQo+ICsgICAgSU1BR0VfRlNUWVBFUzphcHBlbmQgPSAiIGRlbHRhX3Vw
+ZGF0ZSINCj4gKyAgICBERUxUQV9VUERBVEVfVFlQRSA9ICIiDQo+ICsgICAgREVMVEFfWkNLX1VS
+TCA9ICIiDQo+ICsgICAgREVMVEFfUkRJRkZfUkVGX0lNQUdFID0gIiIgDQoNCldoYXQgcHJldmVu
+dHMgbWFraW5nIHRoaXMgdGhlIGRlZmF1bHQgZm9yIGdlbmVyYXRpbmcgdXBkYXRlIGltYWdlcz8N
+ClBlb3BsZSBjb3VsZCBzdGlsbCBhZGQgdGhlaXIgb3duIG9wdGlvbnMgb3IgbG9jYWwgY29uZmln
+cyBpZiB0aGV5IHdhbnQgdG8gZGV2aWF0ZS4gV291bGQgYWxzbyBzaW1wbGlmeSBwYXRjaCA2IGZ1
+cnRoZXIuDQoNCkphbg0KDQpbQWRpdGh5YSBCYWxha3VtYXJdIA0KSGkgSmFuLA0KDQpBcG9sb2dp
+ZXMsIEkgd291bGQgbGlrZSB0byB1bmRlcnN0YW5kIHlvdXIgcmVtYXJrcyBtb3JlIGNsZWFybHku
+DQpBcmUgeW91IHN1Z2dlc3RpbmcgdG8gaGF2ZSBzZW5zaWJsZSBkZWZhdWx0IHZhbHVlcyBmb3Ig
+dGhlIGRlbHRhLXVwZGF0ZSB2YXJpYWJsZXMgaW4gdGhlIGRlbHRhLXVwZGF0ZS55bWwgZmlsZSBv
+ciB0byBub3QgaGF2ZSB0aGVzZSB2YXJpYWJsZXMgaW4gYSBzZXBlcmF0ZSAueW1sIGZpbGUgYXQg
+YWxsPw0KDQpUaGFua3MgYW5kIFJlZ2FyZHMsDQpBZGl0aHlhDQoNCi0tDQo+U2llbWVucyBBRywg
+VGVjaG5vbG9neQ0KPkxpbnV4IEV4cGVydCBDZW50ZXINCg==
 
-Less noise outputs of kas, reproducible build container and more.
-
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- .gitlab-ci.yml |   2 +-
- kas-container  | 110 +++++++++++++++++++++++++++++++------------------
- 2 files changed, 70 insertions(+), 42 deletions(-)
-
-diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-index 67e341e1..bd34c823 100644
---- a/.gitlab-ci.yml
-+++ b/.gitlab-ci.yml
-@@ -12,7 +12,7 @@
- # SPDX-License-Identifier: MIT
- #
- 
--image: ghcr.io/siemens/kas/kas-isar:4.0
-+image: ghcr.io/siemens/kas/kas-isar:4.3.1
- 
- variables:
-   GIT_STRATEGY: clone
-diff --git a/kas-container b/kas-container
-index 8fa2d16e..af938285 100755
---- a/kas-container
-+++ b/kas-container
-@@ -29,11 +29,12 @@ set -e
- 
- usage()
- {
--	printf "%b" "Usage: $0 [OPTIONS] { build | shell } [KASOPTIONS] [KASFILE]\n"
--	printf "%b" "       $0 [OPTIONS] { checkout | dump } [KASOPTIONS] [KASFILE]\n"
--	printf "%b" "       $0 [OPTIONS] for-all-repos [KASOPTIONS] [KASFILE] COMMAND\n"
--	printf "%b" "       $0 [OPTIONS] { clean | cleansstate | cleanall}\n"
--	printf "%b" "       $0 [OPTIONS] menu [KCONFIG]\n"
-+	SELF="${KAS_CONTAINER_SELF_NAME}"
-+	printf "%b" "Usage: ${SELF} [OPTIONS] { build | shell } [KASOPTIONS] [KASFILE]\n"
-+	printf "%b" "       ${SELF} [OPTIONS] { checkout | dump } [KASOPTIONS] [KASFILE]\n"
-+	printf "%b" "       ${SELF} [OPTIONS] for-all-repos [KASOPTIONS] [KASFILE] COMMAND\n"
-+	printf "%b" "       ${SELF} [OPTIONS] { clean | cleansstate | cleanall} [KASFILE]\n"
-+	printf "%b" "       ${SELF} [OPTIONS] menu [KCONFIG]\n"
- 	printf "%b" "\nPositional arguments:\n"
- 	printf "%b" "build\t\t\tCheck out repositories and build target.\n"
- 	printf "%b" "checkout\t\tCheck out repositories but do not build.\n"
-@@ -80,6 +81,15 @@ usage()
- 	exit 1
- }
- 
-+fatal_error(){
-+	echo "${KAS_CONTAINER_SELF_NAME}: Error: $*" >&2
-+	exit 1
-+}
-+
-+warning(){
-+	echo "${KAS_CONTAINER_SELF_NAME}: Warning: $*" >&2
-+}
-+
- trace()
- {
- 	[ -n "${KAS_VERBOSE}" ] && echo "+ $*" >&2
-@@ -113,7 +123,6 @@ enable_oe_mode() {
- 
- run_clean() {
- 	if [ -n "${KAS_ISAR_ARGS}" ]; then
--		set_container_image_var
- 		# SC2086: Double quote to prevent globbing and word splitting.
- 		# shellcheck disable=2086
- 		trace ${KAS_CONTAINER_COMMAND} run -v "${KAS_BUILD_DIR}":/build:rw \
-@@ -135,9 +144,10 @@ run_clean() {
- 	fi
- }
- 
--KAS_IMAGE_VERSION_DEFAULT="4.0"
-+KAS_IMAGE_VERSION_DEFAULT="4.3.1"
- KAS_CONTAINER_IMAGE_PATH_DEFAULT="ghcr.io/siemens/kas"
- KAS_CONTAINER_IMAGE_NAME_DEFAULT="kas"
-+KAS_CONTAINER_SELF_NAME="$(basename "$0")"
- 
- set_container_image_var() {
- 	KAS_IMAGE_VERSION="${KAS_IMAGE_VERSION:-${KAS_IMAGE_VERSION_DEFAULT}}"
-@@ -168,14 +178,12 @@ if [ -z "${KAS_CONTAINER_ENGINE}" ]; then
- 			;;
- 		*)
- 			# The docker command is an unknown engine
--			echo "$0: docker command found, but unknown engine detected" >&2
--			exit 1
-+			fatal_error "docker command found, but unknown engine detected"
- 		esac
- 	elif command -v podman >/dev/null; then
- 		KAS_CONTAINER_ENGINE=podman
- 	else
--		echo "$0: no container engine found, need docker or podman" >&2
--		exit 1
-+		fatal_error "no container engine found, need docker or podman"
- 	fi
- fi
- 
-@@ -190,8 +198,7 @@ podman)
- 	KAS_RUNTIME_ARGS="${KAS_RUNTIME_ARGS} --security-opt label=disable"
- 	;;
- *)
--	echo "$0: unknown container engine '${KAS_CONTAINER_ENGINE}'" >&2
--	exit 1
-+	fatal_error "unknown container engine '${KAS_CONTAINER_ENGINE}'"
- 	;;
- esac
- 
-@@ -205,8 +212,7 @@ while [ $# -gt 0 ]; do
- 	--with-loop-dev)
- 		if ! KAS_LOOP_DEV=$(/sbin/losetup -f 2>/dev/null); then
- 			if [ "$(id -u)" -eq 0 ]; then
--				echo "Error: loop device not available!"
--				exit 1
-+				fatal_error "loop device not available!"
- 			fi
- 			sudo_command="/sbin/losetup -f"
- 			sudo_message="[sudo] enter password to setup loop"
-@@ -216,10 +222,9 @@ while [ $# -gt 0 ]; do
- 			# shellcheck disable=2086
- 			if ! KAS_LOOP_DEV=$(sudo -p "$sudo_message" $sudo_command \
- 				2>/dev/null); then
--				echo "Error: loop device setup unsuccessful!"
--				echo "try calling '$sudo_command' with root" \
--					"permissions manually."
--				exit 1
-+				fatal_error "loop device setup unsuccessful!" \
-+				            "try calling '$sudo_command' with root" \
-+				            "permissions manually."
- 			fi
- 		fi
- 		KAS_WITH_LOOP_DEV="--device ${KAS_LOOP_DEV}"
-@@ -236,6 +241,9 @@ while [ $# -gt 0 ]; do
- 		shift 2
- 		;;
- 	--ssh-agent)
-+		if [ -z "${SSH_AUTH_SOCK}" ]; then
-+			fatal_error "no SSH agent running"
-+		fi
- 		KAS_SSH_AUTH_SOCK=$(readlink -fv "$SSH_AUTH_SOCK")
- 		shift 1
- 		;;
-@@ -274,16 +282,16 @@ while [ $# -gt 0 ]; do
- 		shift 2
- 		;;
- 	--version)
--		echo "$(basename "$0") $KAS_IMAGE_VERSION_DEFAULT"
-+		echo "${KAS_CONTAINER_SELF_NAME} $KAS_IMAGE_VERSION_DEFAULT"
- 		exit 0
- 		;;
- 	--*)
- 		usage
- 		;;
- 	clean|cleansstate|cleanall)
--		[ $# -eq 1 ] || usage
--		run_clean "$1"
--		exit 0
-+		KAS_CMD=$1
-+		shift 1
-+		break
- 		;;
- 	shell)
- 		KAS_REPO_MOUNT_OPT_DEFAULT="rw"
-@@ -329,8 +337,7 @@ while [ $# -gt 0 ] && [ $KAS_EXTRA_BITBAKE_ARGS -eq 0 ]; do
- 		shift 2
- 		;;
- 	-E|--preserve-env)
--		echo "$1 is not supported with kas-container"
--		exit 1
-+		fatal_error "$1 is not supported with ${KAS_CONTAINER_SELF_NAME}"
- 		;;
- 	--)
- 		KAS_EXTRA_BITBAKE_ARGS=$#
-@@ -345,8 +352,7 @@ while [ $# -gt 0 ] && [ $KAS_EXTRA_BITBAKE_ARGS -eq 0 ]; do
- 		# shellcheck disable=2086
- 		for FILE in $(IFS=':'; echo $1); do
- 			if ! KAS_REAL_FILE="$(realpath -qe "$FILE")"; then
--				echo "Error: configuration file '${FILE}' not found"
--				exit 1
-+				fatal_error "configuration file '${FILE}' not found"
- 			fi
- 			if [ -z "${KAS_FILES}" ]; then
- 				KAS_FIRST_FILE="${KAS_REAL_FILE}"
-@@ -416,15 +422,21 @@ fi
- 
- set_container_image_var
- 
-+# short circuit for clean* commands. We just need
-+# the build-system information, but no repo mounts, etc...
-+if echo "${KAS_CMD}" | grep -qe "^clean"; then
-+	run_clean "${KAS_CMD}"
-+	exit 0
-+fi
-+
- KAS_REPO_MOUNT_OPT="${KAS_REPO_MOUNT_OPT:-${KAS_REPO_MOUNT_OPT_DEFAULT}}"
- 
- KAS_FILES="$(echo "${KAS_FILES}" | sed 's|'"${KAS_REPO_DIR}"'/|/repo/|g')"
- 
- if [ "$(id -u)" -eq 0 ] && [ "${KAS_ALLOW_ROOT}" != "yes" ] ; then
--	echo "Error: Running as root - may break certain recipes."
--	echo "Better give a regular user docker access. Set" \
--	     "KAS_ALLOW_ROOT=yes to override."
--	exit 1
-+	fatal_error "Running as root - may break certain recipes." \
-+	            "Better give a regular user docker access. Set" \
-+	            "KAS_ALLOW_ROOT=yes to override."
- fi
- 
- set -- "$@" -v "${KAS_REPO_DIR}":/repo:${KAS_REPO_MOUNT_OPT} \
-@@ -436,16 +448,14 @@ set -- "$@" -v "${KAS_REPO_DIR}":/repo:${KAS_REPO_MOUNT_OPT} \
- 
- if [ -n "${KAS_SSH_DIR}" ] ; then
- 	if [ ! -d "${KAS_SSH_DIR}" ]; then
--		echo "Passed KAS_SSH_DIR '${KAS_SSH_DIR}' is not a directory"
--		exit 1
-+		fatal_error "passed KAS_SSH_DIR '${KAS_SSH_DIR}' is not a directory"
- 	fi
- 	set -- "$@" -v "$(readlink -fv "${KAS_SSH_DIR}")":/var/kas/userdata/.ssh:ro
- fi
- 
- if [ -n "${KAS_SSH_AUTH_SOCK}" ]; then
- 	if [ ! -S "${KAS_SSH_AUTH_SOCK}" ]; then
--		echo "Passed SSH_AUTH_SOCK '${KAS_SSH_AUTH_SOCK}' is not a socket"
--		exit 1
-+		fatal_error "passed SSH_AUTH_SOCK '${KAS_SSH_AUTH_SOCK}' is not a socket"
- 	fi
- 	set -- "$@" -v "${KAS_SSH_AUTH_SOCK}":/ssh-agent/ssh-auth-sock \
- 		-e SSH_AUTH_SOCK=/ssh-agent/ssh-auth-sock
-@@ -453,20 +463,27 @@ fi
- 
- if [ -n "${KAS_AWS_DIR}" ] ; then
- 	if [ ! -d "${KAS_AWS_DIR}" ]; then
--		echo "Passed KAS_AWS_DIR '${KAS_AWS_DIR}' is not a directory"
--		exit 1
-+		fatal_error "passed KAS_AWS_DIR '${KAS_AWS_DIR}' is not a directory"
- 	fi
- 	set -- "$@" -v "$(readlink -fv "${KAS_AWS_DIR}")":/var/kas/userdata/.aws:ro \
- 		-e AWS_CONFIG_FILE="${AWS_CONFIG_FILE:-/var/kas/userdata/.aws/config}" \
- 		-e AWS_SHARED_CREDENTIALS_FILE="${AWS_SHARED_CREDENTIALS_FILE:-/var/kas/userdata/.aws/credentials}"
- fi
-+if [ -n "${AWS_WEB_IDENTITY_TOKEN_FILE}" ] ; then
-+	if [ ! -f "${AWS_WEB_IDENTITY_TOKEN_FILE}" ]; then
-+		echo "Passed AWS_WEB_IDENTITY_TOKEN_FILE '${AWS_WEB_IDENTITY_TOKEN_FILE}' is not a directory"
-+		exit 1
-+	fi
-+	set -- "$@" -v "$(readlink -fv "${AWS_WEB_IDENTITY_TOKEN_FILE}")":/var/kas/userdata/.aws/web_identity_token:ro \
-+		-e AWS_WEB_IDENTITY_TOKEN_FILE="${AWS_CONFIG_FILE:-/var/kas/userdata/.aws/web_identity_token}" \
-+		-e AWS_ROLE_ARN="${AWS_ROLE_ARN}"
-+fi
- 
- KAS_GIT_CREDENTIAL_HELPER_DEFAULT=""
- 
- if [ -n "${KAS_GIT_CREDENTIAL_STORE}" ] ; then
- 	if [ ! -f "${KAS_GIT_CREDENTIAL_STORE}" ]; then
--		echo "Passed KAS_GIT_CREDENTIAL_STORE '${KAS_GIT_CREDENTIAL_STORE}' is not a file"
--		exit 1
-+		fatal_error "passed KAS_GIT_CREDENTIAL_STORE '${KAS_GIT_CREDENTIAL_STORE}' is not a file"
- 	fi
- 	KAS_GIT_CREDENTIAL_HELPER_DEFAULT="store --file=/var/kas/userdata/.git-credentials"
- 	set -- "$@" -v "$(readlink -fv "${KAS_GIT_CREDENTIAL_STORE}")":/var/kas/userdata/.git-credentials:ro
-@@ -483,6 +500,11 @@ if [ -f "${NETRC_FILE}" ]; then
- 		-e NETRC_FILE="/var/kas/userdata/.netrc"
- fi
- 
-+if [ -f "${GITCONFIG_FILE}" ]; then
-+	set -- "$@" -v "$(readlink -fv "${GITCONFIG_FILE}")":/var/kas/userdata/.gitconfig:ro \
-+		-e GITCONFIG_FILE="/var/kas/userdata/.gitconfig"
-+fi
-+
- if [ -t 1 ]; then
- 	set -- "$@" -t -i
- fi
-@@ -500,11 +522,17 @@ if [ -n "${SSTATE_DIR}" ]; then
- 		-v "$(readlink -fv "${SSTATE_DIR}")":/sstate:rw \
- 		-e SSTATE_DIR=/sstate
- fi
-+if [ -n "${SSTATE_MIRRORS}" ]; then
-+	if echo "${SSTATE_MIRRORS}" | grep -q "file:///"; then
-+		warning "SSTATE_MIRRORS contains a local path." \
-+		        "Make sure to make this path available inside the container."
-+	fi
-+	set -- "$@" -e "SSTATE_MIRRORS=${SSTATE_MIRRORS}"
-+fi
- 
- if [ -n "${KAS_REPO_REF_DIR}" ]; then
- 	if [ ! -d "${KAS_REPO_REF_DIR}" ]; then
--		echo "Passed KAS_REPO_REF_DIR '${KAS_REPO_REF_DIR}' is not a directory"
--		exit 1
-+		fatal_error "Passed KAS_REPO_REF_DIR '${KAS_REPO_REF_DIR}' is not a directory"
- 	fi
- 	set -- "$@" \
- 		-v "$(readlink -fv "${KAS_REPO_REF_DIR}")":/repo-ref:rw \
--- 
-2.35.3
 
