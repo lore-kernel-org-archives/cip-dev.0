@@ -2,55 +2,55 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C6B3C54E66
-	for <webhook@archiver.kernel.org>; Wed, 13 Mar 2024 17:16:07 +0000 (UTC)
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (EUR03-DBA-obe.outbound.protection.outlook.com [40.107.104.55])
- by mx.groups.io with SMTP id smtpd.web10.1586.1710350156553541414
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11349C54E66
+	for <webhook@archiver.kernel.org>; Wed, 13 Mar 2024 17:19:37 +0000 (UTC)
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (EUR05-DB8-obe.outbound.protection.outlook.com [40.107.20.74])
+ by mx.groups.io with SMTP id smtpd.web10.1684.1710350369839429433
  for <cip-dev@lists.cip-project.org>;
- Wed, 13 Mar 2024 10:15:57 -0700
+ Wed, 13 Mar 2024 10:19:30 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=B7Oiaxtg;
- spf=pass (domain: siemens.com, ip: 40.107.104.55, mailfrom: quirin.gylstorff@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=OiuUm4QZ;
+ spf=pass (domain: siemens.com, ip: 40.107.20.74, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DDbe+5l7BP1CMaWGRRxByyrMpB5busTVRlo6oB0m8rjPe7o8VFZXnX/vS+d7vRH2k/Bl6Ua4UtQGg/9FDujPwlWQnERo+sfyLpuFJK5rDRm7Q0N8xY8cNynmPiRx2j59vjt4L/TFGnOFebaY8Zl15n1QEocjrOPrj6YBT4MlNu4i0G2STbCeYbbzHBF5nGbmm4Bz9+scfsp0Zz43uh8ChrEHp7x0kew00OqsE4cXC5Iipb5KQdkRnUhTUHzSJzhTLgD4mL0TTc+BArylOo6Bd+WRdbtpkXGantgGfbgZSiTGF5umK13/IXDmTRyDghGMJXVv7MxdNZISNFVIwkz+NQ==
+ b=TnIOA4LVKvWMPkima1wGxqqHtJT6k0QQ4aB6MF5CAXkCu01XVEHg+WZpc4bLVonox8qy3jm98RU/wqs7OIl8LqxAMbui80bYIWP7kJExTjgXW5CW4SnxMxSGy4j2DyNs8ZfaRlrCOzjYn3HsYttopQ81wnVkXP0htoMGbK48fFzoHwqtu/UoxuanuJei60PHSHQOhg0cflYTN96Mkh/gMPy7iDdtR7V1wxutZLKRA/klqnNUEJdvnFltc5bkWZQrKuBQgKt7w7H6QXWnXs3ZUYyNAb3GqgvgvS8cE0EKfvRlCUTQNxCYg+W1CncsDtrbxMZ7XtBZKu+ii97s/w/bfg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pIuK4Amh27TVRUUZAo/tBMQTSH8WUI8LnKMYdATMkaQ=;
- b=BLjk1RtV4dkqBikAkFMiabcsYi3RS2Tew3zqtGDx6bO2P+tiDTIKDFw8x7x32cpwdlXIjO3TyxtopLz/Vp5yeFPGdwZzJj6TzP1vw43AJgLeoUZNxsRDOHjNxqz6O+scim2boI1YMAm1f7/IMCoMC7zqGDljmcbjjyDwqm3UsR90CAx4l7dU17m5PR7TeM09Rw++XbRP9XAUu3VOTONhUGulTrYpKyBGlOwI5roGhnliOReVuzq8RWuhIcS3Q1qXQGNqRf6msyvnV3cuLVPgp3RKhtQJCvM3mdN+K4WRyZASsGZ4PklLn/yTVe0azQjcFFGnVEA01T9dO0/RGbXgBA==
+ bh=PB8LetGbmkY7GfUU5C7w6HRXuNnv+HQpkHcLzyHlqxQ=;
+ b=nouP5Fc7xr95snOc10l8oo7gjpP6Sds6NfnbakVuJUM0U0O0gtbRQIhxY6F8hImnyupMlLg4/TW8XmzQjzh77wUmoQz68iqd8ndDIpfF4wp2YeUgS7j06pm22GJNQOMPGYt6wUdaKZukQWgSZPoLz0MwAwyTB6iF5UFrrIgRw9uyi1bP7s6ktMDe7Ml+5Rhop6U5/eCv5xjw23ALMjtB0hLCMVQ3k/1vqD+MbBTiW9M41T08Agin/Vs851PGAs3ty0Ez1X7TOpua21t+yxyaGfIbyb/bwaOK8AT4GdIDkT6Y6Eo3xjcX44KYlTchqzfRaAUnfpqkTDKcX1fHIWmiMw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pIuK4Amh27TVRUUZAo/tBMQTSH8WUI8LnKMYdATMkaQ=;
- b=B7OiaxtgRqOVGOWKRL0TWMfjoe6vWPg4QB09YM87Fv9/sjW6VpnZ9xuLlKspT0jnLBd7gQJJZGG2L4YFI3XxRohbh8go17pPyWiA2utfSM5MPAu+M6eIRHhG2vUiFmYQDGLCln9qNeFa1LW/ytVi5MpzoIZqmRgvtMnB0A2yGTF9zQjSGGGLH1w5+ttlDq8bKnCXO7lOi10nZk5JKXOa1mmWjFwAtxQiJDxykxNd/AurcCwRuiDtyT7OIvJM9m5W+++CFUulKnIAxW2sW1Xao0sm0YnXPQtCc7tnY9BCOMxH9G3o88tOomAtcQs/4slusSJkrEXWHBRgyx03g3y+7w==
+ bh=PB8LetGbmkY7GfUU5C7w6HRXuNnv+HQpkHcLzyHlqxQ=;
+ b=OiuUm4QZDX3Aso3xmDJ+d0kuW1jPUwA6+vHEto3y07BI/m0h0D0LdMjufjo0+sK3g1yGQUPDs8EEuN/bBTuHIVF0ZHkQRFfSZjzH7L1hHMGDLdsxYGaiTEhknmzap/tlVvTVnIL9sXAd319O1FnF2GYalZQtMnZhgwoda03wfe6RH8W3pWDH2nJLcs4UqWoTwChXe7qDSq85tTm3C8kFiCqV3yGWNlS5GLTeCjFS+ODoH1fb3iFaO2b3To52RDWqNRSPPi4R+ev+M0ag2zvvsd2gzrTU5KwqQTbw0AAaE+R4OYbq3dHoVqaWhqo0OpdXAJwsUXVosc31GHK2S59K9Q==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1f9::22)
  by DB4PR10MB6070.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:38e::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7386.18; Wed, 13 Mar
- 2024 17:15:53 +0000
+ 2024 17:19:26 +0000
 Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::67a7:ac13:3db4:91cf]) by AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::67a7:ac13:3db4:91cf%7]) with mapi id 15.20.7386.017; Wed, 13 Mar 2024
- 17:15:53 +0000
-Message-ID: <d9b9a979-41b3-4348-8171-14727d79d7c7@siemens.com>
-Date: Wed, 13 Mar 2024 18:15:48 +0100
+ 17:19:26 +0000
+Message-ID: <bfc4ba9a-d473-47e9-93d7-1fc3937215ec@siemens.com>
+Date: Wed, 13 Mar 2024 18:19:25 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev] [isar-cip-core][RFC v1 5/6] swupdate.bbclass: Generate
- swu for delta updates
+Subject: Re: [isar-cip-core][RFC v1 4/6] Add Delta update support with
+ rdiff_image and delta handler
 Content-Language: en-US, de-DE
-To: cip-dev@lists.cip-project.org, felix.moessbauer@siemens.com,
- jan.kiszka@siemens.com
+To: Adithya.Balakumar@toshiba-tsip.com, felix.moessbauer@siemens.com,
+ cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
 CC: Shivanand.Kunijadar@toshiba-tsip.com, Sai.Sathujoda@toshiba-tsip.com,
  dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
 References: <20240307074612.1996609-1-Adithya.Balakumar@toshiba-tsip.com>
- <20240307074612.1996609-6-Adithya.Balakumar@toshiba-tsip.com>
- <4fb765ea54765e58a93b6aa0d19f0054a0e680f1.camel@siemens.com>
- <TYCPR01MB96694682086B4F651CE7C8FDC42A2@TYCPR01MB9669.jpnprd01.prod.outlook.com>
+ <20240307074612.1996609-5-Adithya.Balakumar@toshiba-tsip.com>
+ <0876d8dd533161214f2010cdbcd65d5084a1ddd3.camel@siemens.com>
+ <TYCPR01MB966940F5431AB8457BD3204AC42A2@TYCPR01MB9669.jpnprd01.prod.outlook.com>
 From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
 Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
  xsDNBGE5tqgBDACpa0M7NVvWkE84XaWEmmQT0REu4Ad8DGRzxlQdLHn4PwakShu46Kl9Rrwm
@@ -86,79 +86,79 @@ Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
  Xe/DyZ2leVdCQVbhsUb4z1b1nAYAxVB+4yIqi5uc1cQYFzb1LPeMcQ0YVv9UAjqaYzP4vh6e
  2zRoeyL3H2PAQbodkBam6WiNHFG0HezOnSTxOHcpqx8s8bzgrJHGj6eUbQjxG27SGvTcy6Gs
  XSdq0hnpafc1V+voPJq3LMxUvLNrwg==
-In-Reply-To: <TYCPR01MB96694682086B4F651CE7C8FDC42A2@TYCPR01MB9669.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYCPR01MB966940F5431AB8457BD3204AC42A2@TYCPR01MB9669.jpnprd01.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: CH2PR10CA0013.namprd10.prod.outlook.com
- (2603:10b6:610:4c::23) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR0P281CA0116.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a8::18) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:1f9::22)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|DB4PR10MB6070:EE_
-X-MS-Office365-Filtering-Correlation-Id: 27fd3bcb-76d5-45be-c592-08dc43813d07
+X-MS-Office365-Filtering-Correlation-Id: c058c766-6bfc-47bc-15c1-08dc4381bc2d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	1zWzCMHuZzroyCd85OXgFdsC6jEJNd9RYBOfvIzQyvGZDD/gSVG2I+s8NjtPCBJUB5dW6mzm5sVDoILgS1EOwsYE0aIJIjVz/FyI24c2whQ9Way0fTCZNjNR1io+TT7fiTRngn8lCzNE7/8MtH8fYpFVkrA/99x/j9DfCFEaGOshfvweAGPcYXKVtcs6TC6yqwQbq63NYny3Fef4zlN01RE+lFXRsHpnpgY3qY6kmd3Rh5Aq2ombr/4ZxQx5Mnqont9AH9NN31NhC9+RotFGBUMJ2URaU4bavlNagWlFzFZigzJruwGjW/f1A9jk2y3aFsgJkSgwNWsRR1eYClpqwZafwvojL46eKiaHbwj3FKgO+f7LHU4AMgQYepPSAV/wXFNOVoIqsGrr4P4PcMoLkYwFhSum/jqg85kZ7K0eNt21pywULI01RSITZQXnooMlmiuD5RuolqZc5t6Ctfg82gyyuFrqfQFymMC3lQppTp4Mbcp7LIWg3JtfSFT4ITO2b1EdPplJlc8d4KC7Yuq9U6b4YEjNSPa2D0pIgh2jxsQsrgUK2T2kAQHo4q9uIasdCSxeIGQwfFQjzQjgFegWwreVftbWF3PwKKMDCCt4fMU=
+	uAO29csMTzzFtetdSpIIKfNdGTySOtOSraE0oFKjz78i8pPxjsX6dJKehdMFUDeRwBFGLlIElgKcivmu2UEkAeot0VJODV9wMaS7IMNJ3479tbe9ktMKBOeTmPp3vRCYJ6IP/10LauiA+nRkQYQT34OLf0gi1D3GmV6nd1kXUVyZaN1LjF40aC3Euc5gyXYVoJ8YSc2601vvV21aJc0KZXCrG9L4CzkY49AstMHCxbKB94YBvroIH6Ol4v+AnH0uEqXnsfJb66dIA8+7Eu0fZdaqetIFIniLUsBuAOuC6LoiykTJoxZUxhT9DrFOVAOY0IodIT0C6eRXgLCl4+JA7RtzuUptGFYSXNv3qykbQsK/UTzEGjrTuepqkFXt+7FjTa1qMPr7JL3CmI+w8EbykGcVJqGQuq5FQ9btJfVE6azzxKnhDHtnA3vVN5E4WPARoR9V/JgUTNB7S7CRduoZ6/A+7tmcNXFTPcaWkkXyJOfFI4EBwp9Tu1SqqWhjOv6rEnQRuJESyDeCqlsXWV5siTp4Fr0MI8e5PIIWvyh/fQQfeNJFJAfgvJdWzhtsk9CTgjPuHGpM6iGp7foqXjHYxNP+TYVkAkg7CqmOyxdNvwvQEK3MhCgE46mYsRToOSEJuhqbMCXlQ54gUp9Cr95zfQykcn++ad91PnR1kSnu15g=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?+B+QeHeh6YUAzC0UkSZ3UTIs4Mv55d1iMEfrMdrNlLHcDq7DhY1Me2Ufo1EB?=
- =?us-ascii?Q?iI/5yfXBVt9OOt9E2gJ25XtSwbhVSuAhbbeVICYjppSVT+lNBQNWNzoz1xyw?=
- =?us-ascii?Q?NrBF/6KoGidb2uf2E66Y9mm7H1dbBhKNe9xF9nx/jNBQZEBBI2LzhS24Wf13?=
- =?us-ascii?Q?6dRGwUPggUvBdpiKw+f1ou+13BH+UCcFhEJAYiyWB3sg9lDOUcL1SuSRjFGg?=
- =?us-ascii?Q?h7gvLJiBpzU24EPFo17mr74R3YghYg8tERlmA5KVH2ImYRqmQia8BXrNry1C?=
- =?us-ascii?Q?4ij4RkHNDA7u9zWBOkjOcwCFzDlc4siBakCyhVst0JqDYv0uXCH58NjkoJ9N?=
- =?us-ascii?Q?ysXIEvYgK2Zl7rFctLujasbQnSZNMgDsTwS65BXr/LjKwg0NCE/mjU9a5xdt?=
- =?us-ascii?Q?3y+4Q2CzHIiRTxYEzfhmqNmFpABWIarrZw+55HDWM3DRyrAgciYWXuRla1bC?=
- =?us-ascii?Q?pMKRVlrmBA7cebL6PfUegT26kyeyhsK0dk1DYT9yalyxivdogPc/w7d8ieY0?=
- =?us-ascii?Q?WRgOPemRUSXStIpate0hPFTbFGX/K3+5zvgq/MIKxQV5kvcStWHJVZHDHkmW?=
- =?us-ascii?Q?IE5H3NPlBriK0I51j0n9NQ++Av+QSJ3wJJC2lau1Jt/+h/P1AE+iCFN1CSFk?=
- =?us-ascii?Q?eH6tWT+4+OP9IhbBbKJ3Nx7mBo+uIYz0y6tKZ0M9fJFqZAovmeCUmc4sb2gU?=
- =?us-ascii?Q?letfAmo0/SD/ayR/ltsHmwcv1XIb8JDcPc6rmOpVQnwCwY7FlBVvupk0mq6I?=
- =?us-ascii?Q?NrTyCxVWjrBiLFep5eeDOJq8UapfT+qekErGbIY37Evm5/Yh15uzsEHIyxgk?=
- =?us-ascii?Q?9oB2b4xCgHJmL4PY7MjLXI/E3pwC84gYWdeRqI3osqgAoojSv+B4MbEIG0zs?=
- =?us-ascii?Q?wHAbf4y/tr0OZLaiDfNTSsCUsW22DuKNqHYn77/rfQFCkcxbU8uQCB1SAKHm?=
- =?us-ascii?Q?UkHqnKswAa8vjWsycJBKtTJprNF80DWDnozo/eH02uUpwlC/dvQmjgjcmhsk?=
- =?us-ascii?Q?XEf9uKkjD774d5d21YseaIE/uCI76bKk+Kp8dsSaILDRJVwZ4S0rBwlJP8jC?=
- =?us-ascii?Q?tBxJETyftiyj84mySEuGt/iDLnvGihIN5iggrIM1+lZ+zRup4zVAbyNQDFkk?=
- =?us-ascii?Q?7NO3bJC4F7KUrQubAmEBUZEDTHCD/OX7b8d1R50ZfjIc6uoz9iwvhHzo4jii?=
- =?us-ascii?Q?pcpkNwChFBMlZlk4hqbKeahbqM6fxYfj6MMwRs8w11h+zlX1lDNbrix70axK?=
- =?us-ascii?Q?eU4B8KN3LE9+IRXnF2jEV6NvH8fNPBmIELBL+1NSf6Dz5+z47B+n0qtxhXe0?=
- =?us-ascii?Q?K61FDQLpsJxUAhfWWtKFwUKvn3yYOlSUDSvPLbxIsYx7BkX1AQkRVUhNhvDw?=
- =?us-ascii?Q?AjHRHVSj4SJ97R8K5lq+UAuoq6s7xIKM3H3dD0R6tVlc2+ROHxGlCsTfypAi?=
- =?us-ascii?Q?lxnXE9l+zQfe0bbdbRcTppnlGu/ACPcpOK+/2eloYJ6Q/GD9LysXpMriRY0W?=
- =?us-ascii?Q?R7GWCTgJuve+XBu8Lh56TBr3+F5e8qRGhUhwfwlaBeuHkdA5EbNmKucp9fsr?=
- =?us-ascii?Q?SZdoVTxqgMaoGS5ba9wn6/lXlEdsoygcf0euHJGmVg5cBr0eJcCp+I0BJyvT?=
- =?us-ascii?Q?Zw=3D=3D?=
+	=?us-ascii?Q?WF9INsS1GZ4Yu1+RUwLFciW0DIWbIdCF/KgDFqt5bGhGLtzVAkDEUavJRy9z?=
+ =?us-ascii?Q?Wd6AZpEC5/BHDrfyOVOlbvTvxe3DTlFTcHSDHyZNUw5WP7OSVeCZPtC4rhR0?=
+ =?us-ascii?Q?pgIF1ytRxd2iJdwawxI38+Oo1jQfZYLbn1gx0XjxcSLqnHE7tQ2xNw1T7ci9?=
+ =?us-ascii?Q?rRgaUNp3Hb8zAZFlNfowAYgNRgVh9ZOh8490lxRHtA1o8HUEY28FwDJoSypX?=
+ =?us-ascii?Q?1EayscIwnUQnHW0upRfKgFxACemSAZMtglg4IDV+9IIwCfJz516dH1StsZU8?=
+ =?us-ascii?Q?htzbCpMdNFJQcMCBjYtv1FdX2CClIvibuh0UHsvG5M3z5bJE7JZrhSBnZpxp?=
+ =?us-ascii?Q?Dcdj4AGqS/f/GHal6HNmRHVki2K947nIi6epkalMeoRoTLQ7f67CtfmC5h6Z?=
+ =?us-ascii?Q?tVbjLpZl1rRZ8j6W92/L1yNhSGQsQN9FAfGEi8wNZFTHfNIwrBjDK9IH+rSy?=
+ =?us-ascii?Q?7ZWRESigWp9Z/TTTq5pxX66LOcJYfjvtIruTBhxp7FkW1R0/Ow6Og4Vamdc6?=
+ =?us-ascii?Q?wyk+v/X70644z1ISFKrwSaCZK2NCpjMtHzRX+cRbVmWmWBhD4FIsKyPeXoip?=
+ =?us-ascii?Q?/6rS1DLBBeR7UCl75EG+4e1/FAt/G0TsZLA3sPpGcdZkPbuRJ+R1UAsBWd5H?=
+ =?us-ascii?Q?Au7p8nwUmW7xf5dquXR1x+ncrQEFTzs2vFS4gloVow8xNIj5EGAmLAshVjfG?=
+ =?us-ascii?Q?BhKHdun/ch7lruuxuP9ajbyJ/z6l79dgKCr+pH0zJc//epJW24b9grsJwn+j?=
+ =?us-ascii?Q?fsHywP/Rs6R44PEGwU92vnjgVD0a53o/CX52pEmTthCf2L/b8Fce+SpMzWWi?=
+ =?us-ascii?Q?ApLj76qrJ48df3jy4xlaoSpfSQMRXG7/jUkOHwSoZf2KAYi+x0DqXmzdjVr5?=
+ =?us-ascii?Q?TWu8mJZ3aENkA46K/RIKW9EGdNtG90TrltGyXDVvG4092gceFa/whiuOccyM?=
+ =?us-ascii?Q?cEtZVh06KlmwZfadQFCfzF2bKEPuzyUzeH7FNlR2CmPjU3OKHP6eXzv3Orb+?=
+ =?us-ascii?Q?5vOUzksKsrR/RFMnAQbYvPo72GSiqHrShx+y5WoshLhBs4est/xpevt4NPjS?=
+ =?us-ascii?Q?fj+9IpMfXpzV0C7b2ohH/9wbPaD2xAL1Kj5iwCOmOIhuXAhX4w3CazGPJsEf?=
+ =?us-ascii?Q?vWVIO5QjV2pQIN6ndckX5oyIdMLr03fKTMaI/z/RUSQiklyVw1KJ8ajmnssA?=
+ =?us-ascii?Q?txHYfSH74gKOabfxGjN9I9YX+/IlrNxTYwQvp+LFfjPHeyb5zJeGjUnnv245?=
+ =?us-ascii?Q?+wc9eD8SgSGBpK1ciuNdMnom3f2ZmS5R7H1Gdp3Xdu+Y0nLfBCIz1849gPKH?=
+ =?us-ascii?Q?uJgsoYpHZH8diDtC6UbHkeTeRvrHed92fqMDTd7NwCGhmcWpOxRsVP6tn5Jp?=
+ =?us-ascii?Q?oy/w7yupUrw6nXgOjiENSGH+NYuupbBYnDvLE3tHYaf2LnqXgL++VJ6bLVrs?=
+ =?us-ascii?Q?Fp3wRfD8adLFRr0ve4UOY8hFTbVJEgxrmWsQgdN8rLRQma8CIjuJIvYiJbRh?=
+ =?us-ascii?Q?nmjXXn7+tT9T9a8z8cGle2875tQQaAefRrRua52ON/xgGQb775Mz+3Dx5O/A?=
+ =?us-ascii?Q?8Kes7mn0QIBoQsDcwNER43qQm2AW7pD5J/SbgH+D1yhC86d378wSIjqzjCOY?=
+ =?us-ascii?Q?t4GVZteEgiUZftfQdMkNb2I=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 27fd3bcb-76d5-45be-c592-08dc43813d07
+X-MS-Exchange-CrossTenant-Network-Message-Id: c058c766-6bfc-47bc-15c1-08dc4381bc2d
 X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2024 17:15:53.4514
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2024 17:19:26.8103
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SfV6syDYsy8EDaBz9GvrZSbUiaTM8r9bev4nZ/zQGd7b/IRjQqeBBFZDpk+PcEpazcLblzWVJIfMOR9ATlvNUNKwyUrpxWsDAMCGzPiKtw8=
+X-MS-Exchange-CrossTenant-UserPrincipalName: xtO6C87IrbdDwCtF/6ys81H9/ElkshRhuGvSssZrpJa8H+qQVd1C78UsYz1Qb1K2w5F2Hj5tSAmkmTcC/eACF2VR6faOunzR0DjxFTK6UcA=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB4PR10MB6070
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 13 Mar 2024 17:16:07 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15292
+ <cip-dev@lists.cip-project.org>; Wed, 13 Mar 2024 17:19:37 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15293
 
 
 
-On 3/13/24 8:03 AM, Adithya Balakumar via lists.cip-project.org wrote:
-> -----Original Message-----
+On 3/13/24 7:11 AM, Adithya.Balakumar@toshiba-tsip.com wrote:
+>=20
 > From: MOESSBAUER, Felix <felix.moessbauer@siemens.com>
-> Sent: Friday, March 8, 2024 4:27 PM
+> Sent: Friday, March 8, 2024 4:22 PM
 > To: cip-dev@lists.cip-project.org; balakumar adithya(=EF=BC=B4=EF=BC=B3=
-=EF=BC=A9=EF=BC=B0 TEUR) <Adithya.Balakumar@toshiba-tsip.com>; Kiszka, Jan =
-<jan.kiszka@siemens.com>
+=EF=BC=A9=EF=BC=B0 TEUR) <Adithya.Balakumar@toshiba-tsip.com>; quirin.gylst=
+orff@siemens.com; Kiszka, Jan <jan.kiszka@siemens.com>
 > Cc: kunijadar shivanand(=EF=BC=B4=EF=BC=B3=EF=BC=A9=EF=BC=B0 TMIEC ODG Po=
 rting) <Shivanand.Kunijadar@toshiba-tsip.com>; ashrith sai(=EF=BC=B4=EF=BC=
 =B3=EF=BC=A9=EF=BC=B0) <Sai.Sathujoda@toshiba-tsip.com>; dinesh kumar(=EF=
@@ -167,236 +167,285 @@ tsip.com>; hayashi kazuhiro(=E6=9E=97 =E5=92=8C=E5=AE=8F =EF=BC=A4=EF=BC=AD=
 =EF=BC=A5 =E2=97=8B=EF=BC=A4=EF=BC=A9=EF=BC=A7=E2=96=A1=EF=BC=AD=EF=BC=B0=
 =EF=BC=B3=E2=97=8B=EF=BC=AD=EF=BC=B0=EF=BC=94) <kazuhiro3.hayashi@toshiba.c=
 o.jp>
-> Subject: Re: [isar-cip-core][RFC v1 5/6] swupdate.bbclass: Generate swu f=
-or delta updates
+> Subject: Re: [isar-cip-core][RFC v1 4/6] Add Delta update support with rd=
+iff_image and delta handler
 >=20
 > On Thu, 2024-03-07 at 13:16 +0530, Adithya Balakumar wrote:
->> This allows the creation of a swu file for delta update. The swu file
->> for delta update is only created when delta-update.yml file is
->> included at build time.
+>> swupdate supports delta updates with rdiff_image and delta(zchunk)
+>> handler. This change adds support to use either of the handler for
+>> creating delta update artifacts. The type of handler can be set in the
+>> delta-update.yml file along with additional variables needed for the
+>> chosen handler.
 >>
 >> Signed-off-by: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
 >> ---
->>  =C2=A0classes/swupdate.bbclass | 35 +++++++++++++++++++++++++++++++++--
->>  =C2=A01 file changed, 33 insertions(+), 2 deletions(-)
->>
->> diff --git a/classes/swupdate.bbclass b/classes/swupdate.bbclass index
->> 2c69892..2964024 100644
->> --- a/classes/swupdate.bbclass
->> +++ b/classes/swupdate.bbclass
->> @@ -26,10 +26,13 @@ SWU_EBG_UPDATE ?=3D ""
->>  =C2=A0SWU_EFI_BOOT_DEVICE ?=3D "/dev/disk/by-uuid/4321-DCBA"
->>  =C2=A0SWU_BOOTLOADER ??=3D "ebg"
->>  =C2=A0SWU_DESCRIPITION_FILE_BOOTLOADER ??=3D "${SWU_DESCRIPTION_FILE}-
->> ${SWU_BOOTLOADER}"
->> +SWU_DESCRIPITION_FILE_DELTA_UPDATE ??=3D
+>>  =C2=A0classes/delta_update.bbclass | 90
 >=20
-> Hi, do we really need a dedicated file / variable for that?
+>> Hi,
+>=20
+>> please name this class delta-update.bbclass to keep the naming style sim=
+ilar with the rest of the project.
+>=20
+>> ++++++++++++++++++++++++++++++++++++
+>>  =C2=A0kas/opt/delta-update.yml=C2=A0=C2=A0=C2=A0=C2=A0 | 21 +++++++++
+>>  =C2=A02 files changed, 111 insertions(+)
+>>  =C2=A0create mode 100644 classes/delta_update.bbclass
+>>  =C2=A0create mode 100644 kas/opt/delta-update.yml
+>>
+>> diff --git a/classes/delta_update.bbclass
+>> b/classes/delta_update.bbclass new file mode 100644 index
+>> 0000000..8d47081
+>> --- /dev/null
+>> +++ b/classes/delta_update.bbclass
+>> @@ -0,0 +1,90 @@
+>> +#
+>> +# CIP Core, generic profile
+>> +#
+>> +# Copyright (c) Toshiba Corporation 2024 # # Authors:
+>> +#=C2=A0 Adithya Balakumar <adithya.balakumar@toshiba-tsip.com>
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>> +
+>> +IMAGER_INSTALL:delta_update +=3D "fdisk zchunk rdiff"
+>=20
+>> Conditionally appending with +=3D overwrites already set weak defaults.
+>> You might want to use .=3D " fdisk zchunk rdiff" instead.
+>=20
+>> +
+>> +FILESEXTRAPATHS:append =3D ":${LAYERDIR_cip-core}"
+>> +IMAGE_SRC_URI:delta_update +=3D " ${@ "
+>=20
+>> Same here.
+>=20
+>> file://"+d.getVar('DELTA_RDIFF_REF_IMAGE')=C2=A0if
+>=20
+>> I guess this could be simplified and made more portable by referencing t=
+he DELTA_RDIFF_REF_IMAGE directly (e.g. from ${DEPLOY_DIR_IMAGE}). The prob=
+lem with the FILESEXTRAPATHS:append =3D ":${LAYERDIR_cip->core}" is that it=
+ only works if the delta image is also from cip-core, but usually cip-core =
+is just referenced in a downstream layer and used there.
 >=20
 > [Adithya Balakumar]
 > Hi Felix,
 >=20
-> The sw-description file for a delta update is slightly different in terms=
- of the image artifact inlcuded in the swu file and some additional delta u=
-pdate
-> specific properties included in the sw-description file. Hence I chose to=
- create a seperate sw-description file for delta update.
+> I understand the drawback of using FILESEXTRAPATHS:append =3D ":${LAYERDI=
+R_cip-core}" that it only looks for the delta image placed in the isar-cip-=
+core layer.
+> As an example you point to referencing the DELTA_RDIFF_REF_IMAGE directly=
+ from ${DEPLOY_DIR_IMAGE} but as per my understanding ${DEPLOY_DIR_IMAGE} p=
+oints to the current build's image deploy directory.
 >=20
-> Would like to understand if there is a better approach.
+> So, Could you please suggest a suitable way to provide the delta image in=
+ the case of rdiff.
+>=20
+>> d.getVar('DELTA_UPDATE_TYPE') =3D=3D 'rdiff' and
+>> d.getVar('DELTA_RDIFF_REF_IMAGE') else '' }"
+>> +
+>> +do_image_delta_update[cleandirs] +=3D
+>> "${WORKDIR}/delta_interim_artifacts"
+>> +
+>> +extract_root_fs() {
+>> +=C2=A0=C2=A0=C2=A0 INPUT_ARTIFACT=3D$1
+>> +=C2=A0=C2=A0=C2=A0 OUTPUT_ARTIFACT=3D$2
+>> +=C2=A0=C2=A0=C2=A0 SECTOR_SIZE=3D512
+>> +=C2=A0=C2=A0=C2=A0 ROOTFS_LABEL=3D"primary"
+>> +=C2=A0=C2=A0=C2=A0 ROOTFS_START_SECTOR=3D$(${SUDO_CHROOT} /sbin/fdisk -=
+l -o
+>=20
+>> Can't we simply use sfdisk to query this information instead of all the =
+awk stuff?
+>=20
+>> Name,Start "${INPUT_ARTIFACT}" | awk -v name=3D"${ROOTFS_LABEL}" '$0 ~
+>> name {print $2}' | head -n 1)
+>> +=C2=A0=C2=A0=C2=A0 SKIP_VALUE=3D"$(expr $(expr $ROOTFS_START_SECTOR \* =
+$SECTOR_SIZE)
+>> / $(expr 1024 \* 1024))"
+>> +=C2=A0=C2=A0=C2=A0 ${SUDO_CHROOT} /bin/dd if=3D${INPUT_ARTIFACT} bs=3D1=
+M
+>> skip=3D$SKIP_VALUE count=3D1024 of=3D${OUTPUT_ARTIFACT} status=3Dnone
+>> +}
+>=20
+>> Why copy exactly 1GB?
+>=20
+>> Instead of extracting that here, it might be simpler to just store the .=
+rdiff file (of the rootfs) with each image build and use that.[Adithya Bala=
+kumar]
+>=20
+> [Adithya Balakumar]  Here, I am copying 1GB from the wic image because th=
+at is the size of the rootfs partition.
+>=20
+> However, Quirin left a remark stating that the .squashfs file (or .verity=
+ file) could be used to create the delta artifact. Using the squashfs or ve=
+rity file to create the delta will eliminate need for extracting the rootfs=
+ from the wic image and will simplify many things in this recipe. Would lik=
+e to understand your opinion on this.
 
-A seperate sw-description file is not ideal, we should take the same=20
-abroach as with scripts and other optional or malible fields by writing
-the content to variable and use the template mechanism of ISAR. The=20
-sw-description can look like this:
-
-```
-      images: ({
--            filename =3D "${SWU_ROOTFS_PARTITION_NAME}";
-+            filename =3D "${SWU_IMAGE_ARTIFACT}";
-              device =3D=20
-"C:BOOT0:linux.efi->${ABROOTFS_PART_UUID_A},C:BOOT1:linux.efi->${ABROOTFS_P=
-ART_UUID_B}";
-              type =3D "roundrobin";
-              ${SWU_COMPRESSION_NODE}
--            properties: {
--                        subtype =3D "image";
--                        configfilecheck =3D=20
-"/etc/os-release@not_match@IMAGE_UUID=3D${TARGET_IMAGE_UUID}";
--            };
-+            ${SWU_IMAGE_PROPERTIES}
-              sha256 =3D "${SWU_ROOTFS_PARTITION_NAME}-sha256";
-      });
-```
-
-an alternative would be generate the whole swu with the Variable[flag]=20
-syntax, e.g.=20
-https://gitlab.com/cip-project/cip-core/isar-cip-core/-/blob/feat/generate-=
-sw-description/classes/sw-description-generator.bbclass?ref_type=3Dheads
+Also you can use the `WIC_DEPLOY_PARTITIONS =3D "1"` to generate the=20
+seperate wic partitions. That is much more robust then some
+dd magic.
 
 Quirin
-
->=20
->> "${SWU_DESCRIPTION_FILE}-delta"
->> +SWU_DELTA_UPDATE_ARTIFACT =3D
->> "${SWU_ROOTFS_NAME}.delta_update${@get_swu_compression_type(d)}"
->> +SWU_DELTA_UPDATE_ARTIFACT_TYPE =3D
->> "delta_update${@get_swu_compression_type(d)}"
->>  =20
->>  =C2=A0SWU_IMAGE_FILE ?=3D "${IMAGE_FULLNAME}"
->>  =C2=A0SWU_DESCRIPTION_FILE ?=3D "sw-description"
->> -SWU_ADDITIONAL_FILES ?=3D "linux.efi ${SWU_ROOTFS_PARTITION_NAME}"
->> +SWU_ADDITIONAL_FILES ?=3D "linux.efi ${SWU_ROOTFS_PARTITION_NAME}
->> ${SWU_DELTA_UPDATE_ARTIFACT}"
->=20
-> Does this mean the delta artifact is always added here?
-> [Adithya Balakumar]  Apologies, I should have appended ${SWU_DELTA_UPDATE=
-_ARTIFACT} conditionally if delta update is enabled.
->=20
->>  =C2=A0SWU_SIGNED ??=3D ""
->>  =C2=A0SWU_SIGNATURE_EXT ?=3D "sig"
->>  =C2=A0SWU_SIGNATURE_TYPE ?=3D "cms"
->> @@ -37,6 +40,7 @@ SWU_SIGNATURE_TYPE ?=3D "cms"
->>  =C2=A0SWU_BUILDCHROOT_IMAGE_FILE ?=3D
->> "${@os.path.basename(d.getVar('SWU_IMAGE_FILE'))}"
->>  =20
->>  =C2=A0IMAGE_TYPEDEP:swu =3D
->> "${SWU_ROOTFS_TYPE}${@get_swu_compression_type(d)}"
->> +IMAGE_TYPEDEP:swu +=3D "${@ '${SWU_DELTA_UPDATE_ARTIFACT_TYPE}' if
->> d.getVar('DELTA_UPDATE_TYPE') else ''}"
->>  =C2=A0IMAGER_BUILD_DEPS:swu +=3D "${@'swupdate-certificates-key' if
->> bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
->>  =C2=A0IMAGER_INSTALL:swu +=3D "cpio ${@'openssl swupdate-certificates-k=
-ey'
->> if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
->>  =C2=A0IMAGE_INSTALL +=3D "${@'swupdate-certificates' if
->> bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
->> @@ -46,6 +50,7 @@ IMAGE_SRC_URI:swu =3D
->> "file://${SWU_DESCRIPTION_FILE}.tmpl"
->>  =C2=A0IMAGE_SRC_URI:swu +=3D
->> "file://${SWU_DESCRIPITION_FILE_BOOTLOADER}.tmpl"
->>  =C2=A0IMAGE_TEMPLATE_FILES:swu =3D "${SWU_DESCRIPTION_FILE}.tmpl"
->>  =C2=A0IMAGE_TEMPLATE_FILES:swu +=3D
->> "${SWU_DESCRIPITION_FILE_BOOTLOADER}.tmpl"
->> +IMAGE_TEMPLATE_FILES:delta_update +=3D
->> "${SWU_DESCRIPITION_FILE_DELTA_UPDATE}.tmpl"
->>  =C2=A0IMAGE_TEMPLATE_VARS:swu =3D " \
->>  =C2=A0=C2=A0=C2=A0=C2=A0 SWU_ROOTFS_PARTITION_NAME \
->>  =C2=A0=C2=A0=C2=A0=C2=A0 TARGET_IMAGE_UUID \
->> @@ -58,6 +63,8 @@ IMAGE_TEMPLATE_VARS:swu =3D " \
->>  =C2=A0=C2=A0=C2=A0=C2=A0 SWU_FILE_NODES \
->>  =C2=A0=C2=A0=C2=A0=C2=A0 SWU_BOOTLOADER_FILE_NODE \
->>  =C2=A0=C2=A0=C2=A0=C2=A0 SWU_SCRIPTS_NODE \
->> +=C2=A0=C2=A0=C2=A0 SWU_DELTA_UPDATE_ARTIFACT \
->> +=C2=A0=C2=A0=C2=A0 SWU_DELTA_UPDATE_ADDITIONAL_PROPERTIES \
->>  =C2=A0=C2=A0=C2=A0=C2=A0 "
->>  =20
->>  =C2=A0# TARGET_IMAGE_UUID needs to be generated before completing the
->> template @@ -136,6 +143,22 @@ python add_scripts(){
->>  =C2=A0=C2=A0=C2=A0=C2=A0 d.appendVar('SWU_SCRIPTS_NODE', swu_scripts_no=
-de)
->>  =C2=A0}
->>  =20
->> +SWU_EXTEND_SW_DESCRIPTION +=3D "add_swu_delta_update_properties"
->> +python add_swu_delta_update_properties() {
->> +=C2=A0=C2=A0=C2=A0 delta_type =3D d.getVar('DELTA_UPDATE_TYPE')
->> +=C2=A0=C2=A0=C2=A0 swu_delta_update_properties =3D ""
->> +=C2=A0=C2=A0=C2=A0 if delta_type =3D=3D "rdiff":
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 swu_delta_update_properties =
-=3D=C2=A0 'chainhandler =3D
->> "rdiff_image";'
->> +=C2=A0=C2=A0=C2=A0 elif delta_type =3D=3D "zchunk":
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 zck_url =3D d.getVar('DELTA_=
-ZCK_URL')
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 swu_delta_update_properties =
-=3D f"""
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 chain=
-handler =3D "delta";
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 url =
-=3D "{zck_url}";
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 zcklo=
-glevel =3D "error";
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 """
->> +=C2=A0=C2=A0=C2=A0 d.setVar('SWU_DELTA_UPDATE_ADDITIONAL_PROPERTIES',
->> swu_delta_update_properties)
->> +}
->> +
->>  =C2=A0# convert between swupdate compressor name and imagetype extensio=
-n
->>  =C2=A0def get_swu_compression_type(d):
->>  =C2=A0=C2=A0=C2=A0=C2=A0 swu_ct =3D d.getVar('SWU_COMPRESSION_TYPE') @@=
- -154,13 +177,21 @@
->> FILESEXTRAPATHS:append =3D ":${LAYERDIR_cip-
->> core}/recipes-core/images/swu"
->>  =20
->>  =C2=A0do_image_swu[depends] +=3D "${PN}:do_transform_template"
->>  =C2=A0do_image_swu[stamp-extra-info] =3D "${DISTRO}-${MACHINE}"
->> -do_image_swu[cleandirs] +=3D "${WORKDIR}/swu ${WORKDIR}/swu-
->> ${SWU_BOOTLOADER}"
->> +do_image_swu[cleandirs] +=3D "${WORKDIR}/swu ${WORKDIR}/swu-
->> ${SWU_BOOTLOADER} ${WORKDIR}/swu-delta"
->>  =C2=A0IMAGE_CMD:swu() {
->>  =C2=A0=C2=A0=C2=A0=C2=A0 rm -f '${DEPLOY_DIR_IMAGE}/${SWU_IMAGE_FILE}'*=
-.swu
->> +=C2=A0=C2=A0=C2=A0 if [ -z "${DELTA_UPDATE_TYPE}" ]; then
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rm -rf ${WORKDIR}/swu-delta
->=20
-> Why is this required if we already clear the ${WORKDIR}/swu-delta in clea=
-ndirs?
->=20
-> Felix
->=20
-> [Adithya Balakumar] Apologies. I should add swu-delta to do_image_swu[cle=
-andirs] only if a delta update is enabled.
-> But even with the above change, in a case where we build with delta updat=
-e enabled and without cleaning the build directory if we build again withou=
-t enabling delta update, the swu-delta directory is retained in the WORKDIR=
-.
 >=20
 > Thanks and Regards,
 > Adithya
 >=20
->>
+>> +
+>> +do_delta_update_sw_description_template() {
+>> +=C2=A0=C2=A0 # Since the sw-description file for delta update would not=
+ be
+>> very different from that of a
+>> +=C2=A0=C2=A0 # normal update, copy sw-description.tmpl as sw-descriptio=
+n-
+>> delta.tmpl and add delta update
+>> +=C2=A0=C2=A0 # specific properties
+>> +=C2=A0=C2=A0 SWU_DESCRIPTION_DELTA_UPDATE=3D"sw-description-delta"
+>> +=C2=A0=C2=A0 cp "${WORKDIR}/${SWU_DESCRIPTION_FILE}".tmpl
+>> "${WORKDIR}/${SWU_DESCRIPTION_DELTA_UPDATE}".tmpl
+>> +=C2=A0=C2=A0 sed -i 's/\SWU_ROOTFS_PARTITION_NAME/SWU_DELTA_UPDATE_ARTI=
+FACT/g'
+>> ${WORKDIR}/${SWU_DESCRIPTION_DELTA_UPDATE}.tmpl
+>> +=C2=A0=C2=A0 sed -i '/configfilecheck =3D/a \
+>> \'$'{SWU_DELTA_UPDATE_ADDITIONAL_PROPERTIES}'
+>> ${WORKDIR}/${SWU_DESCRIPTION_DELTA_UPDATE}.tmpl
+>> +}
+>=20
+>> @Quirin: IIRC you recently refactored the creation of the sw- descriptio=
+n file. This might simplify things here.
+>=20
+>> +addtask do_delta_update_sw_description_template before
+>> do_transform_template after do_generate_image_uuid
+>> +
+>> +IMAGE_CMD:delta_update() {
+>> +=C2=A0=C2=A0=C2=A0 if [ "${DELTA_UPDATE_TYPE}" !=3D "zchunk" ] && [
+>> "${DELTA_UPDATE_TYPE}" !=3D "rdiff" ]; then
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bbfatal "You must set a vali=
+d DELTA_UPDATE_TYPE
+>> (rdiff/zchunk)"
 >> +=C2=A0=C2=A0=C2=A0 fi
 >> +
->>  =C2=A0=C2=A0=C2=A0=C2=A0 cp '${WORKDIR}/${SWU_DESCRIPTION_FILE}'
->> '${WORKDIR}/swu/${SWU_DESCRIPTION_FILE}'
->>  =C2=A0=C2=A0=C2=A0=C2=A0 if [ -f '${WORKDIR}/${SWU_DESCRIPITION_FILE_BO=
-OTLOADER}' ]; then
->>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cp '${WORKDIR}/${SWU_D=
-ESCRIPITION_FILE_BOOTLOADER}'
->> '${WORKDIR}/swu-${SWU_BOOTLOADER}/${SWU_DESCRIPTION_FILE}'
->>  =C2=A0=C2=A0=C2=A0=C2=A0 fi
->> +=C2=A0=C2=A0=C2=A0 if [ -f '${WORKDIR}/${SWU_DESCRIPITION_FILE_DELTA_UP=
-DATE}' ];
->> then
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cp '${WORKDIR}/${SWU_DESCRIP=
-ITION_FILE_DELTA_UPDATE}'
->> '${WORKDIR}/swu-delta/${SWU_DESCRIPTION_FILE}'
->> +=C2=A0=C2=A0=C2=A0 fi
+>> +=C2=A0=C2=A0=C2=A0 DELTA_ARTIFACT_SWU=3D""
 >> +
->>  =20
->>  =C2=A0=C2=A0=C2=A0=C2=A0 for swu_file in "${WORKDIR}"/swu*; do
->>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 swu_file_base=3D$(base=
-name $swu_file)
+>> +=C2=A0=C2=A0=C2=A0 if [ "${DELTA_UPDATE_TYPE}" =3D "zchunk" ]; then
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0extract_root_fs "${PP_DEPLOY}=
+/${IMAGE_FULLNAME}.wic"
+>> "${WORKDIR}/delta_interim_artifacts/${IMAGE_FULLNAME}.raw"
+>> +
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0# Create .zck file
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0${SUDO_CHROOT} /bin/zck \
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0--output ${PP_DEPLOY}/${IMAGE_FULLNAME}.zck \
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0-u --chunk-hash-type sha256 \
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0${WORKDIR}/delta_interim_artifacts/${IMAGE_FULLNAME}.
+>> raw
+>> +
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0# Calculate size of zck heade=
+r
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0HSIZE=3D"$(${SUDO_CHROOT} /bi=
+n/zck_read_header -v
+>> ${PP_DEPLOY}/${IMAGE_FULLNAME}.zck | grep "Header size" | cut -d ':'
+>> -f 2)"
+>> +
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0# Extract the zck header
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0${SUDO_CHROOT} /bin/dd
+>> if=3D"${PP_DEPLOY}/${IMAGE_FULLNAME}".zck
+>> of=3D"${PP_DEPLOY}/${IMAGE_FULLNAME}".zck.header bs=3D1 count=3D"$HSIZE"
+>> status=3Dnone
+>> +
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 DELTA_ARTIFACT_SWU=3D${IMAGE=
+_FULLNAME}.zck.header
+>> +
+>> +=C2=A0=C2=A0=C2=A0 elif [ "${DELTA_UPDATE_TYPE}" =3D "rdiff" ]; then
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if [ -z "${DELTA_RDIFF_REF_I=
+MAGE}" ]; then
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bbfa=
+tal "You must set DELTA_RDIFF_REF_IMAGE and provide
+>> the required files as artifacts to this recipe"
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 fi
+>> +
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0# Extracting root partition f=
+rom image1
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0extract_root_fs "${WORKDIR}/$=
+{DELTA_RDIFF_REF_IMAGE}"
+>> "${WORKDIR}/delta_interim_artifacts/old-image-rootfs.raw"
 >=20
-> --
->> Siemens AG, Technology
->> Linux Expert Center
+>> We only need that to compute the rdiff signature, right?
+>> As these images might be quite big, better remove the old one before
+>> extracting the new one. By that we save ~half of temporary space.
 >=20
+>> +
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0# Extracting root partition f=
+rom image2
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0extract_root_fs "${PP_DEPLOY}=
+/${IMAGE_FULLNAME}.wic"
+>> "${WORKDIR}/delta_interim_artifacts/new-image-rootfs.raw"
+>> +
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rm -f ${DEPLOY_DIR_IMAGE}/${I=
+MAGE_FULLNAME}.delta
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0# create signature file with =
+rdiff
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0${SUDO_CHROOT} /usr/bin/rdiff=
+ signature
+>> ${WORKDIR}/delta_interim_artifacts/old-image-rootfs.raw \
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0${WORKDIR}/delta_interim_artifacts/old-image-
+>> rootfs.sig
+>> +
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 # create delta file with the=
+ signature file
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0${SUDO_CHROOT} /usr/bin/rdiff=
+ delta
+>> ${WORKDIR}/delta_interim_artifacts/old-image-rootfs.sig \
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0${WORKDIR}/delta_interim_artifacts/new-image-
+>> rootfs.raw ${PP_DEPLOY}/${IMAGE_FULLNAME}.delta
+>> +
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0DELTA_ARTIFACT_SWU=3D${IMAGE_=
+FULLNAME}.delta
+>> +=C2=A0=C2=A0=C2=A0 fi
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 # create a symbolic link as =
+IMAGE_CMD expects a
+>> *.delta_update file in deploy image directory
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ln -sf ${DELTA_ARTIFACT_SWU}
+>> ${DEPLOY_DIR_IMAGE}/${IMAGE_FULLNAME}.delta_update
+>> +}
+>> +
+>> +addtask do_image_delta_update before do_image_swu after do_image_wic
+>> diff --git a/kas/opt/delta-update.yml b/kas/opt/delta-update.yml
+>> new file mode 100644
+>> index 0000000..c7a3893
+>> --- /dev/null
+>> +++ b/kas/opt/delta-update.yml
+>> @@ -0,0 +1,21 @@
+>> +#
+>> +# CIP Core, generic profile
+>> +#
+>> +# Copyright (c) Toshiba Corporation 2024
+>> +#
+>> +# Authors:
+>> +#=C2=A0 Adithya Balakumar <adithya.balakumar@toshiba-tsip.com>
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>> +
+>> +header:
+>> +=C2=A0 version: 14
+>> +
+>> +local_conf_header:
+>> +=C2=A0 delta-update: |
+>> +=C2=A0=C2=A0=C2=A0 IMAGE_CLASSES:append =3D " delta_update"
+>> +=C2=A0=C2=A0=C2=A0 IMAGE_FSTYPES:append =3D " delta_update"
+>> +=C2=A0=C2=A0=C2=A0 DELTA_UPDATE_TYPE =3D ""
+>> +=C2=A0=C2=A0=C2=A0 DELTA_ZCK_URL =3D ""
+>> +=C2=A0=C2=A0=C2=A0 DELTA_RDIFF_REF_IMAGE =3D ""
 >=20
+>> Please also extra-weak define the DELTA_* variables in the
+>> delta_update.bbclass (to always have them defined and for documentation
+>> reasons).
 >=20
->=20
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#15284): https://lists.cip-project.org/g/cip-dev/messa=
-ge/15284
-> Mute This Topic: https://lists.cip-project.org/mt/104783341/1753640
-> Group Owner: cip-dev+owner@lists.cip-project.org
-> Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129121/175364=
-0/1405269326/xyzzy [quirin.gylstorff@siemens.com]
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+>> Best regards,
+>> Felix
 >=20
 
