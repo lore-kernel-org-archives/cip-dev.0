@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD45C54E68
-	for <webhook@archiver.kernel.org>; Thu, 14 Mar 2024 19:30:02 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web10.1789.1710444599362286876
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 338E7C54E68
+	for <webhook@archiver.kernel.org>; Thu, 14 Mar 2024 19:30:12 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web11.1808.1710444597208809443
  for <cip-dev@lists.cip-project.org>;
- Thu, 14 Mar 2024 12:29:59 -0700
+ Thu, 14 Mar 2024 12:30:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.07,126,1708354800"; 
-   d="scan'208";a="201703499"
+   d="scan'208";a="197762407"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 15 Mar 2024 04:29:58 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 15 Mar 2024 04:30:02 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.128])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 35BBB4005445;
-	Fri, 15 Mar 2024 04:29:56 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 23A00400C4CB;
+	Fri, 15 Mar 2024 04:30:00 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 4.19.y-cip 3/9] memory: renesas-rpc-if: Fix HF/OSPI data transfer in Manual Mode
-Date: Thu, 14 Mar 2024 19:29:44 +0000
-Message-Id: <20240314192950.27343-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 4.19.y-cip 5/9] memory: renesas-rpc-if: Drop usage of RPCIF_DIRMAP_SIZE macro
+Date: Thu, 14 Mar 2024 19:29:46 +0000
+Message-Id: <20240314192950.27343-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240314192950.27343-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20240314192950.27343-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -33,170 +33,50 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 14 Mar 2024 19:30:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15311
+ <cip-dev@lists.cip-project.org>; Thu, 14 Mar 2024 19:30:12 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15313
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+commit 5da9b59b23d8112709034a07338e03dcc65fa11f upstream.
 
-commit 7e842d70fe599bc13594b650b2144c4b6e6d6bf1 upstream.
+RPCIF_DIRMAP_SIZE may differ on various SoC's. Instead of using
+RPCIF_DIRMAP_SIZE macro use resource size to get dirmap size
+which is already part of struct rpcif.
 
-HyperFlash devices fail to probe:
-
-    rpc-if-hyperflash rpc-if-hyperflash: probing of hyperbus device failed
-
-In HyperFlash or Octal-SPI Flash mode, the Transfer Data Enable bits
-(SPIDE) in the Manual Mode Enable Setting Register (SMENR) are derived
-from half of the transfer size, cfr. the rpcif_bits_set() helper
-function.  However, rpcif_reg_{read,write}() does not take the bus size
-into account, and does not double all Manual Mode Data Register access
-sizes when communicating with a HyperFlash or Octal-SPI Flash device.
-
-Fix this, and avoid the back-and-forth conversion between transfer size
-and Transfer Data Enable bits, by explicitly storing the transfer size
-in struct rpcif, and using that value to determine access size in
-rpcif_reg_{read,write}().
-
-Enforce that the "high" Manual Mode Read/Write Data Registers
-(SM[RW]DR1) are only used for 8-byte data accesses.
-While at it, forbid writing to the Manual Mode Read Data Registers,
-as they are read-only.
-
-Fixes: fff53a551db50f5e ("memory: renesas-rpc-if: Correct QSPI data transfer in Manual mode")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Link: https://lore.kernel.org/r/cde9bfacf704c81865f57b15d1b48a4793da4286.1649681476.git.geert+renesas@glider.be
-Link: https://lore.kernel.org/r/20220420070526.9367-1-krzysztof.kozlowski@linaro.org'
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20211025205631.21151-7-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/memory/renesas-rpc-if.c | 60 +++++++++++++++++++++++++--------
- include/memory/renesas-rpc-if.h |  1 +
- 2 files changed, 47 insertions(+), 14 deletions(-)
+ drivers/memory/renesas-rpc-if.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
-index 4a9fd90b1a79..24eb3a5799c6 100644
+index 68b6efc0c428..ae1aa4d5aa68 100644
 --- a/drivers/memory/renesas-rpc-if.c
 +++ b/drivers/memory/renesas-rpc-if.c
-@@ -162,25 +162,39 @@ static const struct regmap_access_table rpcif_volatile_table = {
+@@ -147,8 +147,6 @@
+ #define RPCIF_PHYINT		0x0088	/* R/W */
+ #define RPCIF_PHYINT_WPVAL	BIT(1)
  
- 
- /*
-- * Custom accessor functions to ensure SMRDR0 and SMWDR0 are always accessed
-- * with proper width. Requires SMENR_SPIDE to be correctly set before!
-+ * Custom accessor functions to ensure SM[RW]DR[01] are always accessed with
-+ * proper width.  Requires rpcif.xfer_size to be correctly set before!
-  */
- static int rpcif_reg_read(void *context, unsigned int reg, unsigned int *val)
- {
- 	struct rpcif *rpc = context;
- 
--	if (reg == RPCIF_SMRDR0 || reg == RPCIF_SMWDR0) {
--		u32 spide = readl(rpc->base + RPCIF_SMENR) & RPCIF_SMENR_SPIDE(0xF);
+-#define RPCIF_DIRMAP_SIZE	0x4000000
 -
--		if (spide == 0x8) {
-+	switch (reg) {
-+	case RPCIF_SMRDR0:
-+	case RPCIF_SMWDR0:
-+		switch (rpc->xfer_size) {
-+		case 1:
- 			*val = readb(rpc->base + reg);
- 			return 0;
--		} else if (spide == 0xC) {
-+
-+		case 2:
- 			*val = readw(rpc->base + reg);
- 			return 0;
--		} else if (spide != 0xF) {
-+
-+		case 4:
-+		case 8:
-+			*val = readl(rpc->base + reg);
-+			return 0;
-+
-+		default:
- 			return -EILSEQ;
- 		}
-+
-+	case RPCIF_SMRDR1:
-+	case RPCIF_SMWDR1:
-+		if (rpc->xfer_size != 8)
-+			return -EILSEQ;
-+		break;
- 	}
+ static const struct regmap_range rpcif_volatile_ranges[] = {
+ 	regmap_reg_range(RPCIF_SMRDR0, RPCIF_SMRDR1),
+ 	regmap_reg_range(RPCIF_SMWDR0, RPCIF_SMWDR1),
+@@ -581,8 +579,8 @@ EXPORT_SYMBOL(rpcif_manual_xfer);
  
- 	*val = readl(rpc->base + reg);
-@@ -192,18 +206,34 @@ static int rpcif_reg_write(void *context, unsigned int reg, unsigned int val)
+ ssize_t rpcif_dirmap_read(struct rpcif *rpc, u64 offs, size_t len, void *buf)
  {
- 	struct rpcif *rpc = context;
+-	loff_t from = offs & (RPCIF_DIRMAP_SIZE - 1);
+-	size_t size = RPCIF_DIRMAP_SIZE - from;
++	loff_t from = offs & (rpc->size - 1);
++	size_t size = rpc->size - from;
  
--	if (reg == RPCIF_SMRDR0 || reg == RPCIF_SMWDR0) {
--		u32 spide = readl(rpc->base + RPCIF_SMENR) & RPCIF_SMENR_SPIDE(0xF);
--
--		if (spide == 0x8) {
-+	switch (reg) {
-+	case RPCIF_SMWDR0:
-+		switch (rpc->xfer_size) {
-+		case 1:
- 			writeb(val, rpc->base + reg);
- 			return 0;
--		} else if (spide == 0xC) {
-+
-+		case 2:
- 			writew(val, rpc->base + reg);
- 			return 0;
--		} else if (spide != 0xF) {
-+
-+		case 4:
-+		case 8:
-+			writel(val, rpc->base + reg);
-+			return 0;
-+
-+		default:
- 			return -EILSEQ;
- 		}
-+
-+	case RPCIF_SMWDR1:
-+		if (rpc->xfer_size != 8)
-+			return -EILSEQ;
-+		break;
-+
-+	case RPCIF_SMRDR0:
-+	case RPCIF_SMRDR1:
-+		return -EPERM;
- 	}
- 
- 	writel(val, rpc->base + reg);
-@@ -444,6 +474,7 @@ int rpcif_manual_xfer(struct rpcif *rpc)
- 
- 			smenr |= RPCIF_SMENR_SPIDE(rpcif_bits_set(rpc, nbytes));
- 			regmap_write(rpc->regmap, RPCIF_SMENR, smenr);
-+			rpc->xfer_size = nbytes;
- 
- 			memcpy(data, rpc->buffer + pos, nbytes);
- 			if (nbytes == 8) {
-@@ -508,6 +539,7 @@ int rpcif_manual_xfer(struct rpcif *rpc)
- 			regmap_write(rpc->regmap, RPCIF_SMENR, smenr);
- 			regmap_write(rpc->regmap, RPCIF_SMCR,
- 				     rpc->smcr | RPCIF_SMCR_SPIE);
-+			rpc->xfer_size = nbytes;
- 			ret = wait_msg_xfer_end(rpc);
- 			if (ret)
- 				goto err_out;
-diff --git a/include/memory/renesas-rpc-if.h b/include/memory/renesas-rpc-if.h
-index 2df18b7a35fa..020ea247a368 100644
---- a/include/memory/renesas-rpc-if.h
-+++ b/include/memory/renesas-rpc-if.h
-@@ -66,6 +66,7 @@ struct	rpcif {
- 	size_t size;
- 	enum rpcif_data_dir dir;
- 	u8 bus_size;
-+	u8 xfer_size;
- 	void *buffer;
- 	u32 xferlen;
- 	u32 smcr;
+ 	if (len > size)
+ 		len = size;
 -- 
 2.34.1
 
