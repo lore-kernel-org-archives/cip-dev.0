@@ -2,32 +2,32 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C46CD11BF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 950A5CD1280
 	for <webhook@archiver.kernel.org>; Tue, 19 Mar 2024 18:20:41 +0000 (UTC)
-Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
- by mx.groups.io with SMTP id smtpd.web11.23524.1710872431292357602
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
+ by mx.groups.io with SMTP id smtpd.web11.23523.1710872431192895745
  for <cip-dev@lists.cip-project.org>;
  Tue, 19 Mar 2024 11:20:32 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=nT64cg2P;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-51332-202403191820299c7c2bf8bf1c3c2c75-_trxn2@rts-flowmailer.siemens.com)
-Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 202403191820299c7c2bf8bf1c3c2c75
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=b59YtGxe;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-51332-202403191820280c997bfd04c70957fa-piczlr@rts-flowmailer.siemens.com)
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 202403191820280c997bfd04c70957fa
         for <cip-dev@lists.cip-project.org>;
-        Tue, 19 Mar 2024 19:20:29 +0100
+        Tue, 19 Mar 2024 19:20:28 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=05BhD/qINPIeOPskabF8QakDCUtkBq5OSKpeAoOiVNE=;
- b=nT64cg2PYl4K+EiPfo2SaMaQJPU+NABb1FRAkZCBh6b5MPu8GX0u09BtFNvmYy4waGqano
- auut0dYELR5E00Q1qiBJhCuP4fERQMUmXJY8I+vv/n4lmCWjl39mAOx8Zh8czxd18nSg017A
- r3cb0+FVWV+jPSc5PW5PtiFYAg9yU=;
+ bh=SihjlxuH8eCo+mput6tIaKyWQBDGiv1ic/gp94GvunU=;
+ b=b59YtGxegW26YHRfarzyyJcimgVDc8TPvnK2rR9+VOf3NWWj/ZOp6Xxh4M4VSgPmANaIhA
+ es+m5fgrPY5NgZZ2GZOMa1dke8V1fI4uyJKGB2xXB/pmzJ7VERidD6GcV4x7GzfUg8wMb3wP
+ FXsujSO6kTM9WjILYHUDxX4x8pMK4=;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org,
 	jan.kiszka@siemens.com,
 	johnxw@amazon.com
-Subject: [cip-dev][isar-cip-core][RFC 6/8] initramfs-crypt-hook: add e2fsck to avoid resize error
-Date: Tue, 19 Mar 2024 19:18:30 +0100
-Message-ID: <20240319182026.1571362-7-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][RFC 1/8] initramfs-crypt-hook: Allow switching between clevis and systemd
+Date: Tue, 19 Mar 2024 19:18:25 +0100
+Message-ID: <20240319182026.1571362-2-Quirin.Gylstorff@siemens.com>
 In-Reply-To: <20240319182026.1571362-1-Quirin.Gylstorff@siemens.com>
 References: <20240319182026.1571362-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
@@ -38,42 +38,50 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 19 Mar 2024 18:20:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15368
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15366
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-This avoids the following error during resizing a file system:
+This allows device which started on Debian 11 to continue using
+clevis for encryption and decryption.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- .../initramfs-crypt-hook/files/encrypt_partition.clevis.script   | 1 +
- .../initramfs-crypt-hook/files/encrypt_partition.systemd.script  | 1 +
- 2 files changed, 2 insertions(+)
+ .../initramfs-crypt-hook_0.1.bb                    | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script
-index 6e2713f..0bb6720 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script
-@@ -81,6 +81,7 @@ reencrypt_existing_partition() {
- 	reduced_size="$(expr "$part_size_blocks" - 65536 )"
- 	reduced_size_in_byte="$(expr "$reduced_size" \* 512)"
- 	reduced_size_in_kb="$(expr "$reduced_size_in_byte" / 1024)K"
-+	e2fsck -f "$1"
- 	if ! resize2fs "$1" "${reduced_size_in_kb}"; then
- 		panic "reencryption of filesystem $1 cannot continue!"
- 	fi
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script
-index 2e6691a..9809c87 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script
-@@ -94,6 +94,7 @@ reencrypt_existing_partition() {
- 	reduced_size="$(expr "$part_size_blocks" - 65536 )"
- 	reduced_size_in_byte="$(expr "$reduced_size" \* 512)"
- 	reduced_size_in_kb="$(expr "$reduced_size_in_byte" / 1024)K"
-+	e2fsck -f "$1"
- 	if ! resize2fs "$1" "${reduced_size_in_kb}"; then
- 		panic "reencryption of filesystem $1 cannot continue!"
- 	fi
+diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb
+index b275c0f..317ea12 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb
++++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb
+@@ -1,7 +1,7 @@
+ #
+ # CIP Core, generic profile
+ #
+-# Copyright (c) Siemens AG, 2020-2023
++# Copyright (c) Siemens AG, 2020-2024
+ #
+ # Authors:
+ #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+@@ -17,7 +17,17 @@ CLEVIS_DEPEND = ", clevis-luks, jose, bash, luksmeta, file, libpwquality-tools"
+ 
+ DEBIAN_DEPENDS:append:buster = "${CLEVIS_DEPEND}, libgcc-7-dev"
+ DEBIAN_DEPENDS:append:bullseye = "${CLEVIS_DEPEND}"
+-DEBIAN_DEPENDS:append = ", systemd (>= 251) | clevis-tpm2"
++DEBIAN_DEPENDS:append = "${@encryption_dependency(d)}"
++
++def encryption_dependency(d):
++    crypt_backend = d.getVar('CRYPT_BACKEND')
++    if crypt_backend == 'clevis':
++        clevis_depends= d.getVar('CLEVIS_DEPEND')
++        return f"{clevis_depends}, clevis-tpm2"
++    elif crypt_backend == 'systemd':
++        return ", systemd (>= 251)"
++    else:
++        bb.error("unkown cryptbackend defined")
+ 
+ CRYPT_BACKEND:buster = "clevis"
+ CRYPT_BACKEND:bullseye = "clevis"
 -- 
 2.43.0
 
