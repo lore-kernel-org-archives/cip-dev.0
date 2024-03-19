@@ -2,117 +2,74 @@ Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B0E1C54E58
-	for <webhook@archiver.kernel.org>; Mon, 18 Mar 2024 19:01:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7201DC54E60
+	for <webhook@archiver.kernel.org>; Tue, 19 Mar 2024 11:10:39 +0000 (UTC)
 Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web11.53712.1710788480575755896
+ by mx.groups.io with SMTP id smtpd.web10.12629.1710846635256995288
  for <cip-dev@lists.cip-project.org>;
- Mon, 18 Mar 2024 12:01:20 -0700
+ Tue, 19 Mar 2024 04:10:35 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id DC7711C007E; Mon, 18 Mar 2024 20:01:17 +0100 (CET)
-Date: Mon, 18 Mar 2024 20:01:17 +0100
+	id BC5A11C006B; Tue, 19 Mar 2024 12:10:31 +0100 (CET)
+Date: Tue, 19 Mar 2024 12:10:31 +0100
 From: Pavel Machek <pavel@denx.de>
-To: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Cc: Pavel Machek <pavel@denx.de>,
+To: Pavel Machek <pavel@denx.de>
+Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>
-Subject: Re: Backporting Renesas IA55 IRQC driver
-Message-ID: <ZfiPfc9UZGcIL25F@duo.ucw.cz>
-References: <TYCPR01MB64784B67B1AD38E99F08C2ED9F282@TYCPR01MB6478.jpnprd01.prod.outlook.com>
- <Zfgvq46kKNklD/tK@duo.ucw.cz>
- <TYCPR01MB6478033DC33FDEA53E2D809D9F2D2@TYCPR01MB6478.jpnprd01.prod.outlook.com>
+Subject: Re: [PATCH 5.10.y-cip 0/3] Add RPC-IF support for RZ/G2{EHMN}
+Message-ID: <Zflyp/RX5b7hOXWc@duo.ucw.cz>
+References: <20240315170304.31604-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <Zfgn7KcyVy2vaK/c@duo.ucw.cz>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="FCxzgdcV0E5BpHTC"
+	protocol="application/pgp-signature"; boundary="IDvPVu0Vr/e9sbVk"
 Content-Disposition: inline
-In-Reply-To: <TYCPR01MB6478033DC33FDEA53E2D809D9F2D2@TYCPR01MB6478.jpnprd01.prod.outlook.com>
+In-Reply-To: <Zfgn7KcyVy2vaK/c@duo.ucw.cz>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 18 Mar 2024 19:01:26 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15362
+ <cip-dev@lists.cip-project.org>; Tue, 19 Mar 2024 11:10:39 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15363
 
 
---FCxzgdcV0E5BpHTC
+--IDvPVu0Vr/e9sbVk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> > and then arrange new_style_board to be set on machines you converted but
-> > nowhere else. Best would be passing that information down the callchain
-> > somehow, but you use have global variable or even config option...
+> > This patch series adds RPC-IF support for RZ/G2{EHMN} SoCs. Note by
+> > default the RPC-IF is not enabled on the boards as the hyperflash is
+> > locked by TF-A. To unlock the hyperflash one must build TF-A with
+> > "RCAR_RPC_HYPERFLASH_LOCKED=3D0" flag and enable it in the board DTS.
+> >=20
+> > Note: All the patches have been cherry picked from upstream kernel.
 >=20
-> IIUC the proposal here: the of_device_alloc() is called in the
-> initialization phase, this being the call stack:
->=20
-> [    0.057410] Call trace:
-> [    0.057438]  dump_backtrace+0x0/0x1c0
-> [    0.057453]  show_stack+0x18/0x40
-> [    0.057471]  dump_stack+0xe8/0x124
-> [    0.057489]  of_device_alloc+0x54/0x1dc
-> [    0.057501]  of_platform_device_create_pdata.part.0+0x24/0xc4
-> [    0.057520]  of_platform_device_create_pdata+0x74/0xa0
-> [    0.057533]  of_platform_bus_create+0x180/0x3e0
-> [    0.057545]  of_platform_populate+0x58/0xfc
-> [    0.057563]  of_platform_default_populate_init+0xb8/0xdc
-> [    0.057576]  do_one_initcall+0x50/0x1c0
-> [    0.057596]  kernel_init_freeable+0x230/0x298
-> [    0.057609]  kernel_init+0x14/0x118
-> [    0.057620]  ret_from_fork+0x10/0x38
->=20
-> while the IRQ driver is probed and used later, so, I cannot pass
-> information from driver to of_device_alloc().
->=20
-> Based on your proposal, what about the following diff (or something
-> similar)? Would it be acceptable for CIP:
+> The series looks ok to me, thank you. I can apply it if it passes
+> testing and if there are no other comments. I guess this should be
+> applied before corresponding 4.19 patch.
 
-This is just a warning workarond, AFAICT, so I guess more will be
-needed and I'm not the only stakeholder. We'll need to see whole
-series. But this sounds better than 1/ or 2/ alternatives proposed.
-
-> diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-> index 43748c6480c8..ddbd46043d46 100644
-> --- a/drivers/of/platform.c
-> +++ b/drivers/of/platform.c
-> @@ -135,7 +135,8 @@ struct platform_device *of_device_alloc(struct device=
-_node *np,
->                         rc =3D of_address_to_resource(np, i, res);
->                         WARN_ON(rc);
->                 }
-> -               if (of_irq_to_resource_table(np, res, num_irq) !=3D num_i=
-rq)
-> +               if (!of_device_is_compatible(np, "renesas,rzg2l-irqc") &&
-> +                   of_irq_to_resource_table(np, res, num_irq) !=3D num_i=
-rq)
->                         pr_debug("not all legacy IRQ resources mapped for=
- %pOFn\n",
->                                  np);
->         }
->=20
-> where "renesas,rzg2l-irqc" is the compatible for IA55 IRQ driver.
+Thank you, applied.
 
 Best regards,
 								Pavel
-
 --=20
 DENX Software Engineering GmbH,        Managing Director: Erika Unter
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---FCxzgdcV0E5BpHTC
+--IDvPVu0Vr/e9sbVk
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZfiPfQAKCRAw5/Bqldv6
-8onZAJsHoI/S/7FoJLq8XbevNh97Z4IQ1wCgk62HOwCGZ3FNVy2YCNxYT1bouxk=
-=R2Rp
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZflypwAKCRAw5/Bqldv6
+8v2hAJ9ubJfuNgZOdDj24uJjrm+gxjeTqgCgmF03ApalLHmzolKj2x4pNi74j1I=
+=L8vj
 -----END PGP SIGNATURE-----
 
---FCxzgdcV0E5BpHTC--
+--IDvPVu0Vr/e9sbVk--
 
