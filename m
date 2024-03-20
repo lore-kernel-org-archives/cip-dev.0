@@ -2,51 +2,52 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D357C54E58
-	for <webhook@archiver.kernel.org>; Wed, 20 Mar 2024 13:14:42 +0000 (UTC)
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.69])
- by mx.groups.io with SMTP id smtpd.web10.44029.1710940474467208712
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1DC6C6FD1F
+	for <webhook@archiver.kernel.org>; Wed, 20 Mar 2024 13:31:22 +0000 (UTC)
+Received: from EUR04-VI1-obe.outbound.protection.outlook.com (EUR04-VI1-obe.outbound.protection.outlook.com [40.107.8.52])
+ by mx.groups.io with SMTP id smtpd.web11.44776.1710941477557893772
  for <cip-dev@lists.cip-project.org>;
- Wed, 20 Mar 2024 06:14:35 -0700
+ Wed, 20 Mar 2024 06:31:18 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=G3Jxd5zj;
- spf=pass (domain: siemens.com, ip: 40.107.6.69, mailfrom: quirin.gylstorff@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=LM40romE;
+ spf=pass (domain: siemens.com, ip: 40.107.8.52, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NJF+KnWvTeA2zCO6ZxzVdjpyhZ5Aor9N2k7ZunYryufZWr3sXhkbOg9DaIM/3pqb62cXzqAXp+oJVSyRP9jHjKkzY2pyLXX6dp5jfp81rmK5hB1TmizNDN+x+lxAhv6HfzhNziTpFhyu5pP+CSNMSwTuGFIu1gghj4j/loeCo1vRQX11rwNOHauWiPjTmp8glDzgqdjVy503OjVLIb0UehVRZfak0zsCWKgkqkgarNLiaSj7N0HNq8zrL00e5FyhQ/xsHmMz8ULrCvsPSsWJRIU+3vKOwBRO4pUYOtGNYREYYewkLR6W8mJwjGwxNaw6H0DJ7L8t/htgzuM8qbrdNw==
+ b=N4AYZnPGq9ozqz09tXSdcvvAw8KyY6x9dMM27zdLFCiQBtpVpPRmj8IzdsIruIF+yGCgw+jR1/izGSHhqgeDwhdSfms6QfyzkB13/CgSaVM1uqpkT/dAlOGcL7fXVJ4M/X74ffClWNIUCMBOfmEYDbmqABvewFF6YtR7p8Ua6fQjkzbGh3FH+fA3BKFhhLWh7mz4Crz2T8L8I3l8B6JIAkZqstVE/5JgHxWAQUcMOYfjipkfLSBLXw60k8Lg5eCZl64FvzfftVzZ3KIJpQdwdmueoYAznBZLdU/5c83MJ7KE5T5yAqljPz2bM5rQdmrQ6qtOuLrAFXbLOjaQoMNIyQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HVET74qtDEGMfQN+0sJM5SXr794KAqWgr6dFPsmVlJE=;
- b=Ny0/uiXSy4vqZhr+VYbNmZ6SxFD44W/6eyPhU/GEhfT2MMTQmw+av3gb8galJyMICut/swcrsNLEtGHhumfanFAWj2rZBVw4NhE/QqpNtq/XXzRZToQpoKZ0Ku13Eu8XHUDB408dW3Eo9jC1iHm3KzAfKDaS2LslE0EzCRvDKKGYNeHlUVm1yiz9VbvEh/0cC72Qej4MsJYErZFSE0GVyFk9ar1k4SOmRX1cSOcyx2VYowcUNq/K3kKJaB47qjJBZiEnXVTNgbx9pYfs5NE6AYlSRRqTMQjqPeekHe8bksCsBIRxknJ6G8QX49x7TCfjwtp/nkQ0c64n9Zh5mLzIaQ==
+ bh=3wqgstgo/eSsIf6j6PVcDzRapCfulhxsP+8f59g6eyQ=;
+ b=CvdHW9E3YpBzxZaF2pgfq+Mwe14HMnI+xZp5bKkYWewBuQgnNTxquSzIKaBxiTKEOy/XgZrI4ZMB/QtImF7FWPwYs/CPAh1DHYvDkWWQ4+gVZsveG2uNHjaankMvHUbaougEMPCnCpSHtAfXAwjvT4z3P/rHmuJuxbyUTuX+pND5HSQMsMS4hBq7t0/82suKz4Cw23yZ4jZVtcKbfGj/0TeHMY/i843DEx14UhgpBOTGQMyVi0vvKivwYMxHLx9MHITMeJrHa/vGf8QOgvRtqBLr2RKpPUa1rXNDIje9hVkHhRZpSmWYpuI/F5iqFwvQzIRZx7F2m6QzJyOVRHNAXQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HVET74qtDEGMfQN+0sJM5SXr794KAqWgr6dFPsmVlJE=;
- b=G3Jxd5zjO+oZIJSIXEJlIy2xEmsltNwwVmzk1z85fUUkCY0R0uXe5HyerfE5VWfrbb9lqLyYFrDaGsu8H4CKVd1oZUj+nW9cMbLQAQ44A6XaMUnZh8V9rYgEob2sKwoes5ISX5+3LWkoAQz50HQ9FWLRmFJ3c/6mFHwG3lZ+W4RKreN7RzT2RS2rJpdqafZfEJQb+MAMCcLnafmOSluc9d6tCcb3gD24ymn+UXurss+5V0AKjLAJg1YiOiIvdpcnWjIdfNNhs6Wd9kagTUnxB7eyrNhSA5stAT0xrSrs22nfz+gtiMLNS4efPyyvRZZDPvrw98pN/uqo9yYSeegcFQ==
+ bh=3wqgstgo/eSsIf6j6PVcDzRapCfulhxsP+8f59g6eyQ=;
+ b=LM40romE2V6zDPgF/kheb727xVKtz5sZ56gii9/lPWoZRUbBkUu8dWZN9LnfRgu9WXIGyT/F6beNtvhfGeTwF6bKJY8+HIQxsPav7kLnblMNur42Pn8cylgMtl/DUfwTf5o9URt8+rdZvoh7oFAD/KopYuVmW/lS9kdUyskOR/W+EygR8+FnLtpKaG5FY2ECI4g2Eo3+JMpJawz+dE8O4ZMiSx/qxvFrBSQD47xkaAALSbywM91B3/ohmcaTi7W0jbjjzG2BOlyjvOzC5vQAVR88wXssPXNBqD58gy+o348A4qlQqYPDomYhrWMcqeGJC3p/RtfpEmjhLJmEwidfZQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1f9::22)
- by PAWPR10MB6880.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:33d::15) with
+ by PAWPR10MB8164.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:391::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7386.30; Wed, 20 Mar
- 2024 13:14:31 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7386.31; Wed, 20 Mar
+ 2024 13:31:14 +0000
 Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::67a7:ac13:3db4:91cf]) by AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::67a7:ac13:3db4:91cf%7]) with mapi id 15.20.7386.025; Wed, 20 Mar 2024
- 13:14:31 +0000
-Message-ID: <6232a276-c260-440e-a870-55800807822e@siemens.com>
-Date: Wed, 20 Mar 2024 14:14:29 +0100
+ 13:31:14 +0000
+Message-ID: <beca38bf-8cad-4d51-85bf-cfc9f1d0b9a1@siemens.com>
+Date: Wed, 20 Mar 2024 14:31:02 +0100
 User-Agent: Mozilla Thunderbird
 Subject: Re: [cip-dev][isar-cip-core][PATCH] swupdate-handler-roundrobin: Add
  link for handler search path
 Content-Language: en-US, de-DE
-To: Jan Kiszka <jan.kiszka@siemens.com>, cip-dev@lists.cip-project.org,
+To: cip-dev@lists.cip-project.org, Jan Kiszka <jan.kiszka@siemens.com>,
  Adithya.Balakumar@toshiba-tsip.com
 References: <20240320130056.2335582-1-Quirin.Gylstorff@siemens.com>
  <3f30557c-6fdd-4715-a959-1cb27334a319@siemens.com>
+ <6232a276-c260-440e-a870-55800807822e@siemens.com>
 From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
 Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
  xsDNBGE5tqgBDACpa0M7NVvWkE84XaWEmmQT0REu4Ad8DGRzxlQdLHn4PwakShu46Kl9Rrwm
@@ -82,145 +83,187 @@ Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
  Xe/DyZ2leVdCQVbhsUb4z1b1nAYAxVB+4yIqi5uc1cQYFzb1LPeMcQ0YVv9UAjqaYzP4vh6e
  2zRoeyL3H2PAQbodkBam6WiNHFG0HezOnSTxOHcpqx8s8bzgrJHGj6eUbQjxG27SGvTcy6Gs
  XSdq0hnpafc1V+voPJq3LMxUvLNrwg==
-In-Reply-To: <3f30557c-6fdd-4715-a959-1cb27334a319@siemens.com>
+In-Reply-To: <6232a276-c260-440e-a870-55800807822e@siemens.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0445.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:c6::18) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: CH5PR04CA0004.namprd04.prod.outlook.com
+ (2603:10b6:610:1f4::10) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:1f9::22)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|PAWPR10MB6880:EE_
-X-MS-Office365-Filtering-Correlation-Id: 64dc01ef-952a-4b2a-59dc-08dc48dfadd1
+X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|PAWPR10MB8164:EE_
+X-MS-Office365-Filtering-Correlation-Id: c9ec8af8-57de-4ddb-e182-08dc48e20341
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	jmKxLAodQ8e4Y6PPNXxys++M8kaei3qFkLrcGInyWEs0xWvXwydQ8//iDolpnJSodj9OhNrChZ3ja7arqsgF1nOH9/erlhPGKdHiOCsoS51Ch2yTuLUaCEuEGYn6jV7QG/SBvn6ZRSfRuIHmf3Je6uwiOa3GUuGGrZw2iEYKXfa6VshX9gys6WTe4gB9utWVq3weEgG/JrIrQFa61PbsF3LxCspHrV5db51SQki6LOxZ3OMyShPLbpt2yWTKVOoTkLAhUQpHB+Vy0Ai/WKIyGJK8GVpbAD1p7aDo9O2O0Qa4b5oA0OOaW9KXdqQTjeGVCfsSmmznr3oNOz464CrdphJa7gpuMdhbG94nFBga6t5ho5qYGKOE1JRyzzJhfSKsIBulqtpGZjTXkgk5ws0M+y+jtolZWozy7bu56OlAWkbpEGvPoC0y6GmtPgPx+Yd4+YRVTIuKhxvPmfA7nUIER5XfZwNfjpaFROA5fVJlaAvp+faj8+KD+BTLIXhEhnzmAxamM6C4GcO/RgdjLVeLRhJhuIOkYuK48ilKeqSU6icjrmD9/sT7mLscgbILBYXoffv3uZDXz7DNQJLTons0gBwIfJnnJClu89s7Omx7re8=
+	aV99C+YgnquMjf5Tg09uwcnaYqoptfY7Z1zYs12GSicOMR+is31IfhnCkr6OHaF3lJrdt3IjDy9H2oWXOyPXxlC0UOUJLCrVKr1eVOF6aCRRfTABz2PkL+8nBDHrF1Y5wtzot9uvHhPEzrUNkEbIA1DCABc29H67MgR41xXXQwQ2q7+5FgVj7BEtHDhml0De+LKrYOK++SPpS9+zgkq0vYITrqjLRxjd+cGUcMcfJDVzgB5kY0cDdC1kB23NvLA2C9mCthWUK6UiGckBxXvo4B2lCMHo4o/+DGbisfmwmynMkpOg/XX0PPtyHLvNwbbqqHsmOSjZEkrg6hhHMiRFH8PBtdiJA0l8S0G2Lr5b95q1RjYoZIZOo9G39K45NzV2OHfi+Q/S0Xmck0rmOPkXp/3NVdD6izf9q77Vz2mCvEhpAfwBR6H2KoOC2/V9MXBvkHCf6M9N/Rvtwm3K+6YWqphBLZW5oivXYcgt58bnaBMDRmE6yhmsV5Oh09Dx7Gl6TWnC9W3BlgGnGQOiHMAxmdZIRX48JE5eyx4TodiiqQgHmm6k6zu3a0lBJe0D/z1A4VOFIzBywl/oBEoPuJ7owYot0xoxU+Y4FVgTKE5tG5U=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?aXZCQ0IzYVZOWW9CbFhPUmtBcmhOZC9WTmRFRm5SeXFMRFYxb3ZLSEZjbnFV?=
- =?utf-8?B?UlBLU2tVc1VsZjZGYzkybmVjNGRpK0UzempEOWt0Tk5JY1hwQ0FlTTlHNmZr?=
- =?utf-8?B?N3JBRUNGY0NzOW8rTzZWOWVUVURDSU1Kd0M3ZVFRQlpHbXQxQTVkTkhObTk3?=
- =?utf-8?B?bGZPZDk4clBHRDJ5SW4xdzZwakFVOE1ZeTB3T29lSmhZTnBmV1A2ay9vZlRD?=
- =?utf-8?B?ZHdVY3dVWDY4bFcybUx0S3pNMGpCdWNOdWZRQkU2dy9ZcTBoVDhQMEVoYTFk?=
- =?utf-8?B?QmJ6dGpqR2c3N1djN0tjT0ZVQnJQS29zS3g3NW82TGdSWElhVnFKRVZtcEVF?=
- =?utf-8?B?YlY5Znc3R2ZJZG1TajVLSkh2L1hYNnErWm5vWktscVE3aG1FeFRTM1dSU1Rh?=
- =?utf-8?B?NFluNzh5TjAzYzFzb1ZSMXM4UHg2ZjRXYmRtZkhwY3hzaDZSaVhhQlZ5clRJ?=
- =?utf-8?B?SS9VSG9ZSTlIb3VoUER6V1gzdWwwSG02ZDRCdjErZ2JPb3lFcW5pQjNQWnhz?=
- =?utf-8?B?Y3hIKzNML1htOStUdi9vOE82bDA3VVljUG01M210aFMweGVDZ21MTVJjNzRr?=
- =?utf-8?B?Q2tDWThnRFp0L01NcWh2NEZjTFpiZXNPWk9jNkpibjRBa21xU1lSd2NFZzRH?=
- =?utf-8?B?c1lGdktjdlZudDNsL0oxM3lPdmxaYVJsWnlOR3pJVGxTTHBDNEZQNytQckIv?=
- =?utf-8?B?Zm1Uc1RaQXRJelFkNlFlbUFZbllibDZKeG45bW9sM0hWYlgzYThwY1NCMFRt?=
- =?utf-8?B?dGdmSzBheWJHNzIrMmFKOXYrN3phZkt1d2xxWlRoYk9SSWwzSms0bXM2K2Zh?=
- =?utf-8?B?VmViTEtIbnluOVFacnFNTU9Zdi9JVEorbEhvOUxhV2kvdGI5bHpRSWRPbHJp?=
- =?utf-8?B?TzlCOEpKMS85Ny9mU1RUeE52QytYaTFSUUQ4QjZDVnVsT09SeTQ5MnNXeFFq?=
- =?utf-8?B?Tnlqd1VFazJQakU5dXZEMEhhWE5pS1dzbXlxSVV5YjR5NTdTR2pGUlFNanhH?=
- =?utf-8?B?VWttLzNPZWN0ZS9jMUZnQ3YxNlhCMldNanA0bVVoNXNQOVlTRUgvTWlLelBn?=
- =?utf-8?B?dTdKR3dlLytaS1pqTkZPb2tidytscUZUQlBRU0tOaVBLdE80UUVoVzN3SEU0?=
- =?utf-8?B?WGZiNzYzSWo1U0IyVjljYkRFMGkyOTNMMDBoZDZsVEloMnpkMFBDMTRnYjRJ?=
- =?utf-8?B?OXZuKzd2UVhjOE1OL1FMKzZZWXg0RmlXZmFlYzVic0JBRUVTbVBDaDlkeU9J?=
- =?utf-8?B?Q0hvWFgxaWg4a1B0TTZIM0lOYnhHUk1VVHZ2NnZySFYvQXRGWFdrVFFaOWU4?=
- =?utf-8?B?K3B0MzhRa2RaUEZVaXl0UW41NFdkTm9CMng1MWpiUHVKZTlpOFAzZzlKbzBp?=
- =?utf-8?B?MCtnZzJMTk56OVlBZHJOTFZsREF3SmRZV213bk9kWnRQWktPMk95OGp3cHR3?=
- =?utf-8?B?OTgxUWpXYlpZTHF1ZERxR013ZkdPZm93Q2pyUSs3NHFkMllVVDd4MFQ5cEFI?=
- =?utf-8?B?YjVZUDhHSHIyRDN1U2FTeHBHY2lnamtRRlBIQkhzZElpc3ZIVFlCbVc3Mldw?=
- =?utf-8?B?Wk54S1AwUjFnYzZOazlUcFNRcmtRQmFyN2hnRFRnNWQ2NzdyRUxWaS9JVXFE?=
- =?utf-8?B?cXJJdkdOWnJpMkNNVzR6aE1ONGRHUFl5WVlQNEwzMlRzR1Y2cEVHcWl3TkVY?=
- =?utf-8?B?UXQ1aGVsdUlENWdJcExkcG1LQ3Z6Z2RRcUhpSWk4R0ZPaWZKYzU5TnNrYUtZ?=
- =?utf-8?B?WktHYTFWQks4TVRFMmtpZEJIWHBjUnN1WmJtWVp6ZGRlUnZkdWtHQjM0eFNs?=
- =?utf-8?B?UExNL3NHVmhzdWExWjhHeXhzYS9iWGRvbGxib2dsVzNpR1ErSGxOOU5vdm9K?=
- =?utf-8?B?ZGpvVDdKRWNCNmJWQm9oZmVodlJYQnYyaHJja1A1Zmdxbitmc2ZSOTJ3Q29P?=
- =?utf-8?B?ZmRYQVdiK0IyODROUEZBbzRHYlpoZ1NzbDZUL1pmRnowTFVlQ0pYVi9qaFRD?=
- =?utf-8?B?SzZhUFc5T2wrUGdhVGtheEdreElyNFgyUWtkRVF1aEoya3NYeDVrQWhqOGo4?=
- =?utf-8?B?eFZTMUIxQ0UyNmwxa0h5ZzFUQWx1aVBPWFdCNmFxc1dKTUsvWVhCaG10QjJK?=
- =?utf-8?B?WGp1Qmg1R3BwZmZiTFlxNi91SE9tU3ZKZncxQlU4REdKMXZWSDBvOWI1aUFX?=
- =?utf-8?B?UEE9PQ==?=
+	=?us-ascii?Q?cyRsKvSPyDJ82dxDDLbiARgCXh5iiF8hYDSy+V/46U2ifQYAEKZV+BoOvPjQ?=
+ =?us-ascii?Q?K3adNt202/6CTPNMj1xbS/dJj+9bM6BBcu3yzs0rgmMSg3worJgTZg/x/rsK?=
+ =?us-ascii?Q?clFtobpaPE+zumeZFo6Ieex/noxRgrr/VHMh3bMimeDttQYdaEBVwsjHGd3U?=
+ =?us-ascii?Q?DiTd6SXJEWEqQHkQlXBlr8Qu0pYXLkgohTElwieuXi0M9o7p6o2/5EVfmH3y?=
+ =?us-ascii?Q?yH+8ruuCnqBrLU13NDRh4QVBQpAFOPZEoGmEbKrAiCKMUmOMNF7L5PxhAvIm?=
+ =?us-ascii?Q?7EkPcDS9JpvdIoCNsFLgEsKWkYDSPsMvAz33BaIdLodN1uWniXeBRza+e/zo?=
+ =?us-ascii?Q?XIhtipURZz/EPba+7IlXFRjEPlDdZVwEVknmAroRMOdzMycc4AgAFcP5EYpI?=
+ =?us-ascii?Q?j3pSygPwV1GWvJGNvdxUgYFRiDa4cgpiw6d3L6zfBMWqAf7llISU51EajgdW?=
+ =?us-ascii?Q?qjgl1GfjzkWcimLE2sCgFB8jYJI5RGso73GsrWklD9Gttpu4iRTTWLc4cnlr?=
+ =?us-ascii?Q?aH1tPEBCVEJKFlWuC+7VcE7jblX/avsOb4z85dasaF2c2aBCv7G0P+z6zqNN?=
+ =?us-ascii?Q?xJv/tNVZ5ZVums/7PxeMC7AmS/Y+PATuuYnOHc0u2Bte7MrwpS8U6nwGwfXd?=
+ =?us-ascii?Q?2cInBl2awuObI+LpvHUIYrdqpu06NdU5keIAGLnxLyoHqsrhoQVB/aGgSyNN?=
+ =?us-ascii?Q?2myeSI3I1OsxSh2VUi13prE1gslXCuZP4j6EVgDOPyKihEZnjUaezLhxrml0?=
+ =?us-ascii?Q?BEMaREHFN8xR2nNGEe4RZR70mtrRpaLd22g0aDh7k+CcEg5LtWP+ZY4E9txh?=
+ =?us-ascii?Q?lB8LXzDyCuNplapGZG52s5zyyx+6TGycGQz2xvlqz3K8Z6ijuSa4YGfVTP72?=
+ =?us-ascii?Q?a+ZcybBdTJVDYMZoBtbrOv2KpWlMjP2Mhx5pEfXk26AklrhqRGvf7npvjLvT?=
+ =?us-ascii?Q?6QhWDVm/J7R3Ec7oWt8DViz+daB539k2w4uvBAYLLsKr6hv6yoJ4dk/44sbD?=
+ =?us-ascii?Q?UXgLGt2WG3345wFoOM1RrvM3TvP1LRRGv8QapyoJ5gEzHHcajj9Q9LTi/xUM?=
+ =?us-ascii?Q?F9L/yMpwAsZnQ29PbED7co+IAe8Slt7d7geBuYxAbBEJGSsexoH8Vpu5s8Zz?=
+ =?us-ascii?Q?3C+Gm8IEED/RnFxb+mfB21kW2jdpcEh9cYJ8aveFHX9uCFmWOjDxeJg4NxYi?=
+ =?us-ascii?Q?299FwsdWnRkHqnRiLYM1YvDzPnk0q0uRIZkgOUqMVDH/k4h2raiV+qy2ZJei?=
+ =?us-ascii?Q?x6EaB/LFJwHfLyU3mYgdguERhaNkoSG9buJde3MAFITET0GPWFst//aizO4l?=
+ =?us-ascii?Q?rFnJoC/oF0EEO6Z9YVgGE7TmEO3YzlrSCUry9YX8UEOygScfVRNq+V7Cttg2?=
+ =?us-ascii?Q?IN5pGgRz/NCbdJxSM+ZfoFSIpcLZ6c9b1u/609y6TTdQG/lAYwA4+OBbkDGh?=
+ =?us-ascii?Q?+orFlvpe8t4wVb5NQvL2sT7w8CspxAqYyDSDfbqmsUetfFS9iHzh2oFpWv7C?=
+ =?us-ascii?Q?7k8uPCyvU/pKNLYWineDlTQk2+b8rB2jqegDXQrsc2Bv4LiZphFBune2qkUn?=
+ =?us-ascii?Q?cdacO46jMPwVPQLS9bxl4P54UdrXAApQZFFhu4keOFOrbmwvMUz5M76ttHZ7?=
+ =?us-ascii?Q?9g=3D=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 64dc01ef-952a-4b2a-59dc-08dc48dfadd1
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9ec8af8-57de-4ddb-e182-08dc48e20341
 X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2024 13:14:31.2050
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2024 13:31:13.9554
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Unl/v+dNLw9b+hwo4pGUVn+fn0iSDmegR9D+kZ4AevKillnf2DRr9XnnUXm/H1DVmg3BC/IDGL9OwqAqFN7gtVqV2npVVfd/ANBi+LBjwWo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR10MB6880
+X-MS-Exchange-CrossTenant-UserPrincipalName: MFeIZME1+85uldy3EEAWPmuayJ5g6A3r6T7giH2rBbjjaZLFzLTFW9o3WjgNYl0E50ZEX3+bFQK6+6OcIB90YkzDAc6nipnABWwRh+7HEQo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR10MB8164
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 20 Mar 2024 13:14:42 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15390
+ <cip-dev@lists.cip-project.org>; Wed, 20 Mar 2024 13:31:22 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15391
 
 
 
-On 3/20/24 2:09 PM, Jan Kiszka wrote:
-> On 20.03.24 13:59, Quirin Gylstorff wrote:
->> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+On 3/20/24 2:14 PM, Quirin Gylstorff via lists.cip-project.org wrote:
+>=20
+>=20
+> On 3/20/24 2:09 PM, Jan Kiszka wrote:
+>> On 20.03.24 13:59, Quirin Gylstorff wrote:
+>>> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>>>
+>>> The lua version which is used to search for additional handler is
+>>> hard coded in SWUpdate and debian salsa[1].
+>>>
+>>> To support multiple distribution with different lua versions add
+>>> the variables SWUPDATE_LUA_VERSION and SWUPDATE_ADDITIONAL_LUA_VERSIONS=
+.
+>>>
+>>> SWUPDATE_LUA_VERSION defines the main version and for all space
+>>> seperated entries in SWUPDATE_ADDITIONAL_LUA_VERSIONS a symbolic link
+>>> is generated.
+>>>
+>>> [1]:=20
+>>> https://salsa.debian.org/debian/swupdate/-/blob/6ccd44a8539ebb880bf0dac=
+408d5db5de7e2de99/debian/rules#L13
+>>>
+>>> This fixes issue #102 SWUpdate failed to install update on bookworm
+>>> amd64 image.
+>>>
 >>
->> The lua version which is used to search for additional handler is
->> hard coded in SWUpdate and debian salsa[1].
+>> Should this move in front of your recent changes in 'next'? Or is this
+>> issue older?
+> The patch can be moved in front of adding SWUpdate 2023.12.1. The=20
+> problem was previously undetected as all supported swupdate version
+> used the search path /usr/share/lua/5.3. But the delete comment=20
+> indicates this path was updated once.
+It was update with e17bf5cf83714e4783885f54a7939a51a8fba5a2.
+
+Quirin
 >>
->> To support multiple distribution with different lua versions add
->> the variables SWUPDATE_LUA_VERSION and SWUPDATE_ADDITIONAL_LUA_VERSIONS.
+>> Jan
 >>
->> SWUPDATE_LUA_VERSION defines the main version and for all space
->> seperated entries in SWUPDATE_ADDITIONAL_LUA_VERSIONS a symbolic link
->> is generated.
+>>> Reported-by: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
+>>> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>>> ---
+>>> =C2=A0 .../swupdate-handler-roundrobin_0.1.bb=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 16 +++++++++++++---
+>>> =C2=A0 1 file changed, 13 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git=20
+>>> a/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_=
+0.1.bb b/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrob=
+in_0.1.bb
+>>> index b39278e..95ceedd 100644
+>>> ---=20
+>>> a/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_=
+0.1.bb
+>>> +++=20
+>>> b/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_=
+0.1.bb
+>>> @@ -20,12 +20,22 @@ SWUPDATE_LUASCRIPT =3D=20
+>>> "swupdate-handler-roundrobin/swupdate_handlers_roundrobin.l
+>>> =C2=A0 SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG ?=3D=20
+>>> "swupdate.handler.${SWUPDATE_BOOTLOADER}.ini"
+>>> =C2=A0 SRC_URI +=3D "${@('file://' +=20
+>>> d.getVar('SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG')) if=20
+>>> d.getVar('SWUPDATE_BOOTLOADER') else ''}"
+>>> -# lua version 5.2 is currently hard coded in swupdate @ debian salsa
+>>> +# The lua version used by swupdate to search for additional handler=20
+>>> is hard coded in debian/rules
+>>> +# see=20
+>>> https://salsa.debian.org/debian/swupdate/-/blob/6ccd44a8539ebb880bf0dac=
+408d5db5de7e2de99/debian/rules#L13
+>>> +SWUPDATE_LUA_VERSION ??=3D "5.4"
+>>> +SWUPDATE_ADDITIONAL_LUA_VERSIONS ??=3D "5.3"
+>>> +
+>>> +do_prepare_build:append() {
+>>> +=C2=A0=C2=A0=C2=A0 for lua_version in ${SWUPDATE_ADDITIONAL_LUA_VERSIO=
+NS}; do
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 echo "usr/share/lua/${SWUPD=
+ATE_LUA_VERSION}=20
+>>> usr/share/lua/$lua_version" >> ${WORKDIR}/${PN}-${PV}/debian/${PN}.link=
+s
+>>> +=C2=A0=C2=A0=C2=A0 done
+>>> +}
+>>> +
+>>> =C2=A0 do_install[cleandirs] =3D "${D}/etc \
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ ${D}/usr/share/lua/5.3"
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ ${D}/usr/share/lua/${SWUPDATE_LUA_VERSION}"
+>>> =C2=A0 do_install() {
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if [ -e ${WORKDIR}/${SWUPDATE_LUASCRIPT}=
+ ]; then
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 install -m 0644 ${WORKDIR}/=
+${SWUPDATE_LUASCRIPT}=20
+>>> ${D}/usr/share/lua/5.3/swupdate_handlers.lua
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 install -m 0644 ${WORKDIR}/=
+${SWUPDATE_LUASCRIPT}=20
+>>> ${D}/usr/share/lua/${SWUPDATE_LUA_VERSION}/swupdate_handlers.lua
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 fi
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if [ -e ${WORKDIR}/${SWUPDATE_ROUND_ROBI=
+N_HANDLER_CONFIG} ]; then
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 install -m 0644=20
+>>> ${WORKDIR}/${SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG}=20
+>>> ${D}/etc/swupdate.handler.ini
 >>
->> [1]: https://salsa.debian.org/debian/swupdate/-/blob/6ccd44a8539ebb880bf0dac408d5db5de7e2de99/debian/rules#L13
->>
->> This fixes issue #102 SWUpdate failed to install update on bookworm
->> amd64 image.
->>
-> 
-> Should this move in front of your recent changes in 'next'? Or is this
-> issue older?
-The patch can be moved in front of adding SWUpdate 2023.12.1. The 
-problem was previously undetected as all supported swupdate version
-used the search path /usr/share/lua/5.3. But the delete comment 
-indicates this path was updated once.
-> 
-> Jan
-> 
->> Reported-by: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
->> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
->> ---
->>   .../swupdate-handler-roundrobin_0.1.bb           | 16 +++++++++++++---
->>   1 file changed, 13 insertions(+), 3 deletions(-)
->>
->> diff --git a/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb b/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
->> index b39278e..95ceedd 100644
->> --- a/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
->> +++ b/recipes-core/swupdate-handler-roundrobin/swupdate-handler-roundrobin_0.1.bb
->> @@ -20,12 +20,22 @@ SWUPDATE_LUASCRIPT = "swupdate-handler-roundrobin/swupdate_handlers_roundrobin.l
->>   SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG ?= "swupdate.handler.${SWUPDATE_BOOTLOADER}.ini"
->>   SRC_URI += "${@('file://' + d.getVar('SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG')) if d.getVar('SWUPDATE_BOOTLOADER') else ''}"
->>   
->> -# lua version 5.2 is currently hard coded in swupdate @ debian salsa
->> +# The lua version used by swupdate to search for additional handler is hard coded in debian/rules
->> +# see https://salsa.debian.org/debian/swupdate/-/blob/6ccd44a8539ebb880bf0dac408d5db5de7e2de99/debian/rules#L13
->> +SWUPDATE_LUA_VERSION ??= "5.4"
->> +SWUPDATE_ADDITIONAL_LUA_VERSIONS ??= "5.3"
->> +
->> +do_prepare_build:append() {
->> +    for lua_version in ${SWUPDATE_ADDITIONAL_LUA_VERSIONS}; do
->> +        echo "usr/share/lua/${SWUPDATE_LUA_VERSION} usr/share/lua/$lua_version" >> ${WORKDIR}/${PN}-${PV}/debian/${PN}.links
->> +    done
->> +}
->> +
->>   do_install[cleandirs] = "${D}/etc \
->> -                         ${D}/usr/share/lua/5.3"
->> +                         ${D}/usr/share/lua/${SWUPDATE_LUA_VERSION}"
->>   do_install() {
->>       if [ -e ${WORKDIR}/${SWUPDATE_LUASCRIPT} ]; then
->> -        install -m 0644 ${WORKDIR}/${SWUPDATE_LUASCRIPT} ${D}/usr/share/lua/5.3/swupdate_handlers.lua
->> +        install -m 0644 ${WORKDIR}/${SWUPDATE_LUASCRIPT} ${D}/usr/share/lua/${SWUPDATE_LUA_VERSION}/swupdate_handlers.lua
->>       fi
->>       if [ -e ${WORKDIR}/${SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG} ]; then
->>          install -m 0644 ${WORKDIR}/${SWUPDATE_ROUND_ROBIN_HANDLER_CONFIG} ${D}/etc/swupdate.handler.ini
-> 
+>=20
+>=20
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#15390): https://lists.cip-project.org/g/cip-dev/messa=
+ge/15390
+> Mute This Topic: https://lists.cip-project.org/mt/105043814/1753640
+> Group Owner: cip-dev+owner@lists.cip-project.org
+> Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129121/175364=
+0/1405269326/xyzzy [quirin.gylstorff@siemens.com]
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+>=20
 
