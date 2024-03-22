@@ -2,34 +2,32 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B36CD1288
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A40CD1285
 	for <webhook@archiver.kernel.org>; Fri, 22 Mar 2024 10:06:20 +0000 (UTC)
-Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
- by mx.groups.io with SMTP id smtpd.web10.9304.1711101968804391098
+Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
+ by mx.groups.io with SMTP id smtpd.web11.9594.1711101968928122286
  for <cip-dev@lists.cip-project.org>;
  Fri, 22 Mar 2024 03:06:09 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=Uh9Wvrfg;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-51332-2024032210060628392b1af52b107c9c-fxnn79@rts-flowmailer.siemens.com)
-Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 2024032210060628392b1af52b107c9c
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=RRgmqNSQ;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228, mailfrom: fm-51332-202403221006064c11c90233dff34cc3-9nzdy3@rts-flowmailer.siemens.com)
+Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 202403221006064c11c90233dff34cc3
         for <cip-dev@lists.cip-project.org>;
         Fri, 22 Mar 2024 11:06:06 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=yqlNpChmOvPHuitayu5PdAQTVGO9xrsKLIRb+IZoWSo=;
- b=Uh9Wvrfgr3GTFCCTf6JDOLzcnPmz+6dY8QWb1cGQrWOp1QCX2KOj0ztT9b3n/Zb59Ks2hG
- zgTTJBmYE1Mq6jjkslHZ/jO4YFIF/+DDK1oH3+wvxPVsQUyKzBd5fA0uk6CJqf/2khqSoZZG
- FaIGXMT3UwWB49OgUJnN6hrwob60Q=;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ bh=yOJo14qHQc7sHu+tqIAKWchZXA/opboRTacJcEinxzs=;
+ b=RRgmqNSQPmtR7XmOBfogTh0rtkwnybXjeDe0hQneVaduYrt7xk0QV19wv2TGjhHnmOV5pe
+ X6pZFI86hK5u9LY48D6WFkCbGj6VdCGji2XKl8lHOKAdhUv3eRrwsW0T8uKVkoYAKvuR+ekU
+ k++JmgwHY9MxiSgOg+dSr5UVdB9hw=;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: jan.kiszka@siemens.com,
 	cip-dev@lists.cip-project.org,
 	johnxw@amazon.com
-Subject: [cip-dev][isar-cip-core][PATCH v2 02/13] initramfs-crypt-hook: Align systemd encryption and clevis encryption
-Date: Fri, 22 Mar 2024 11:05:12 +0100
-Message-ID: <20240322100605.4129226-3-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20240322100605.4129226-1-Quirin.Gylstorff@siemens.com>
-References: <20240322100605.4129226-1-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v2 00/13] Rework disk encryption
+Date: Fri, 22 Mar 2024 11:05:10 +0100
+Message-ID: <20240322100605.4129226-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
@@ -38,119 +36,74 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 22 Mar 2024 10:06:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15398
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15402
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-The following changes were copied from systemd to clevis:
- - check return of resize command
-The following changes were copied form clevis to systemd:
- - check if create_filesystem command is empty
- - use part_device(/dev/*) instead of disk
-   label(/dev/disk/by-partlabel/*)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- .../files/encrypt_partition.clevis.script     |  6 ++++--
- .../files/encrypt_partition.systemd.script    | 21 +++++++++++--------
- 2 files changed, 16 insertions(+), 11 deletions(-)
+This patchset is a cleanup of the initramfs-crypt-hook:
+ - Aligns the systemd and clevis implementation
+ - consolidate script in a main, clevis and systemd part
+ - split clevis hook for readability
+ - Adds some checks for TPM parameter
+ - Remove the dependency in the overlay
+ - Adds an example to encrypt the rootfs
+ - Add readme to switch from clevis based encryption to systemd
 
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script
-index 0318966..4e76c44 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script
-@@ -2,7 +2,7 @@
- #
- # CIP Core, generic profile
- #
--# Copyright (c) Siemens AG, 2023
-+# Copyright (c) Siemens AG, 2023-2024
- #
- # Authors:
- #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-@@ -82,7 +82,9 @@ reencrypt_existing_partition() {
- 	reduced_size="$(expr "$part_size_blocks" - 65536 )"
- 	reduced_size_in_byte="$(expr "$reduced_size" \* 512)"
- 	reduced_size_in_kb="$(expr "$reduced_size_in_byte" / 1024)K"
--	resize2fs "$1" "${reduced_size_in_kb}"
-+	if ! resize2fs "$1" "${reduced_size_in_kb}"; then
-+		panic "reencryption of filesystem $1 cannot continue!"
-+	fi
- 	if [ -x /usr/sbin/cryptsetup-reencrypt ]; then
- 		/usr/sbin/cryptsetup-reencrypt --new --reduce-device-size "$reduce_device_size"k "$1" < "$2"
- 	else
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script
-index eeeb55a..f97a461 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script
-@@ -2,7 +2,7 @@
- #
- # CIP Core, generic profile
- #
--# Copyright (c) Siemens AG, 2023
-+# Copyright (c) Siemens AG, 2023-2024
- #
- # Authors:
- #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-@@ -47,6 +47,9 @@ modprobe loop
- tpm_device=/dev/tpmrm0
- partition_sets="$PARTITIONS"
- create_file_system_cmd="$CREATE_FILE_SYSTEM_CMD"
-+if [ -z "${create_file_system_cmd}" ]; then
-+	create_file_system_cmd="mke2fs -t ext4"
-+fi
- 
- service_watchdog() {
- 	for n in $(seq $(($SETUP_TIMEOUT / 10)) ); do
-@@ -83,8 +86,7 @@ enroll_tpm2_token() {
- }
- 
- reencrypt_existing_partition() {
--	part_device="$(readlink -f "$partition")"
--	part_size_blocks="$(cat /sys/class/block/"$(awk -v dev="$part_device" 'BEGIN{split(dev,a,"/"); print a[3]}' )"/size)"
-+	part_size_blocks="$(cat /sys/class/block/"$(awk -v dev="$1" 'BEGIN{split(dev,a,"/"); print a[3]}' )"/size)"
- 	# reduce the filesystem and partition by 32M to fit the LUKS header
- 	reduce_device_size=32768
- 	reduced_size="$(expr "$part_size_blocks" - 65536 )"
-@@ -111,15 +113,16 @@ for partition_set in $partition_sets; do
- 	partition=/dev/disk/by-partlabel/"$partition_label"
- 	crypt_mount_name="encrypted_$partition_label"
- 	decrypted_part=/dev/mapper/"$crypt_mount_name"
-+	part_device=$(readlink -f "$partition")
- 
- 	# check if partition is already encrypted with systemd-tpm2
- 	if /usr/sbin/cryptsetup luksDump --batch-mode "$partition" \
- 			| grep -q "systemd-tpm2"; then
--		open_tpm2_partition "$partition"
- 		if ! mount -t "$(get_fstype "${decrypted_part}")" "${decrypted_part}" \
- 			 "${rootmnt}${partition_mountpoint}"; then
- 			panic "Can't mount encrypted partition '${decrypted_part}'!"
- 		fi
-+		open_tpm2_partition "$part_device"
- 		continue
- 	fi
- 
-@@ -136,15 +139,15 @@ for partition_set in $partition_sets; do
- 
- 	case "${partition_format}" in
- 		"reencrypt")
--			reencrypt_existing_partition "$partition" "$tmp_key"
--			enroll_tpm2_token "$partition" "$tmp_key"
--			open_tpm2_partition "$partition"
-+			reencrypt_existing_partition "$part_device" "$tmp_key"
-+			enroll_tpm2_token "$part_device" "$tmp_key"
-+			open_tpm2_partition "$part_device"
- 		;;
- 		"format")
- 			/usr/sbin/cryptsetup luksFormat --batch-mode \
- 				 --type luks2 "$partition" < "$tmp_key"
--			enroll_tpm2_token "$partition" "$tmp_key"
--			open_tpm2_partition "$partition"
-+			enroll_tpm2_token "$part_device" "$tmp_key"
-+			open_tpm2_partition "$part_device"
- 			eval "${create_file_system_cmd} ${decrypted_part}"
- 		;;
- 		*)
+
+Changes v2:
+ - fix typos in commit messages
+ - some fixes for Debian buster
+ - split clevis hook for readability
+ - consolidate script in a main, clevis and systemd part
+ - Add readme to switch from clevis based encryption to systemd
+ - Increase version of the hook
+ - The disk encryption now sets the root mount if necessary
+
+
+Quirin Gylstorff (13):
+  initramfs-crypt-hook: Allow switching between clevis and systemd
+  initramfs-crypt-hook: Align systemd encryption and clevis encryption
+  initramfs-crypt-hook: move the mounting of encrypted disks in a
+    seperate function
+  initramfs-crypt-hook: Check if the TPM device fulfills the given
+    requirements
+  initramfs-crypt-hook: add flag to make encryption optional
+  initramfs-crypt-hook: add e2fsck to avoid resize error
+  initramfs-crypt-hook: split encryption and mounting
+  initramfs-crypt-hook: Add check if root is part of the mountpoints
+  initramfs-crypt-hook: split hook in multiple files
+  initramfs-crypt-hook: Consolidate clevis and systemd scripts
+  initramfs-crypt-hook: Increase version
+  README.tpm2.encryption: Add section to switch from clevis to systemd
+  Add example to encrypt the rootfs
+
+ doc/README.tpm2.encryption.md                 |  20 +++
+ kas/opt/encrypt_rootfs.yml                    |  24 +++
+ ...pt_partition.clevis.bullseye_or_later.hook |  34 ++++
+ .../encrypt_partition.clevis.buster.hook      |  30 ++++
+ .../files/encrypt_partition.clevis.hook       |  20 +--
+ .../files/encrypt_partition.clevis.script     | 157 +++--------------
+ .../files/encrypt_partition.env.tmpl          |   4 +-
+ .../files/encrypt_partition.script            | 164 ++++++++++++++++++
+ .../files/encrypt_partition.systemd.hook      |   5 +-
+ .../files/encrypt_partition.systemd.script    | 152 +++-------------
+ .../files/mount_crypt_partitions.script       |  61 +++++++
+ ...ook_0.1.bb => initramfs-crypt-hook_0.2.bb} |  49 +++++-
+ .../files/overlay.script.tmpl                 |   2 +-
+ wic/x86_64-encryption.wks.in                  |  16 ++
+ 14 files changed, 442 insertions(+), 296 deletions(-)
+ create mode 100644 kas/opt/encrypt_rootfs.yml
+ create mode 100755 recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.bullseye_or_later.hook
+ create mode 100755 recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.buster.hook
+ create mode 100644 recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.script
+ create mode 100644 recipes-initramfs/initramfs-crypt-hook/files/mount_crypt_partitions.script
+ rename recipes-initramfs/initramfs-crypt-hook/{initramfs-crypt-hook_0.1.bb => initramfs-crypt-hook_0.2.bb} (54%)
+ create mode 100644 wic/x86_64-encryption.wks.in
+
 -- 
 2.43.0
 
