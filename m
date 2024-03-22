@@ -2,32 +2,32 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1EF4CD1280
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3583CD11DF
 	for <webhook@archiver.kernel.org>; Fri, 22 Mar 2024 10:06:19 +0000 (UTC)
-Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
- by mx.groups.io with SMTP id smtpd.web10.9307.1711101969159460432
+Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
+ by mx.groups.io with SMTP id smtpd.web10.9303.1711101968633346777
  for <cip-dev@lists.cip-project.org>;
- Fri, 22 Mar 2024 03:06:09 -0700
+ Fri, 22 Mar 2024 03:06:10 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=IRvj+/wB;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-51332-202403221006074cf17f9c35fee44de0-acksbr@rts-flowmailer.siemens.com)
-Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 202403221006074cf17f9c35fee44de0
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=qf/ip9NL;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.225, mailfrom: fm-51332-202403221006086a79f0615b739c5462-ymgw9d@rts-flowmailer.siemens.com)
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 202403221006086a79f0615b739c5462
         for <cip-dev@lists.cip-project.org>;
-        Fri, 22 Mar 2024 11:06:07 +0100
+        Fri, 22 Mar 2024 11:06:08 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=/9EchmLfU9nprs/USFX4/6R1U5g1uq/u9eGaTRDxEh0=;
- b=IRvj+/wBi7y8Na4wbct5lwfQqQAJLidSm05WV4AskY1KyazhiF2uuNCj8GwjBu3Q144NbT
- hvo2AqD0tB0nj10s75mlYY0nSBBCFKkI0VOvC6RJkIHqAzwhIr9pAToj3Xnxg5382dspCBvo
- AYyJSKLbOXeijHAETNGHRpAVjimeU=;
+ bh=lP8vPta3VBv1pv1h9gXXM2wjvwupA4CkmTLpNinx7gg=;
+ b=qf/ip9NLb7iyfZc7i5SftjrRgPUZvXFK9T79/3dDuYlyiOnyEIVbLezw7OfwCamx3Xnhtv
+ 2qz1m9c5J7S6eJJKl69+USILOLfOQcs53DzoHOvCp38OMb++Hckc9c9NLej3WdvLknVY+1dv
+ C+3+U9IwcgLkIklDja7eLMe3j4J3A=;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: jan.kiszka@siemens.com,
 	cip-dev@lists.cip-project.org,
 	johnxw@amazon.com
-Subject: [cip-dev][isar-cip-core][PATCH v2 04/13] initramfs-crypt-hook: Check if the TPM device fulfills the given requirements
-Date: Fri, 22 Mar 2024 11:05:14 +0100
-Message-ID: <20240322100605.4129226-5-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v2 09/13] initramfs-crypt-hook: split hook in multiple files
+Date: Fri, 22 Mar 2024 11:05:19 +0100
+Message-ID: <20240322100605.4129226-10-Quirin.Gylstorff@siemens.com>
 In-Reply-To: <20240322100605.4129226-1-Quirin.Gylstorff@siemens.com>
 References: <20240322100605.4129226-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
@@ -38,206 +38,173 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 22 Mar 2024 10:06:19 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15399
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15405
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-This also adds the Crypt hash and Crypt algorithm parameter and avoids
-errors on missmatches between Hardware and software.
+Split the clevis hook in Distro specific files to increase
+the readability.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- .../files/encrypt_partition.clevis.hook       |  7 ++---
- .../files/encrypt_partition.clevis.script     | 28 +++++++++++++++----
- .../files/encrypt_partition.env.tmpl          |  3 +-
- .../files/encrypt_partition.systemd.hook      |  4 ++-
- .../files/encrypt_partition.systemd.script    | 15 ++++++++--
- .../initramfs-crypt-hook_0.1.bb               |  7 +++--
- 6 files changed, 48 insertions(+), 16 deletions(-)
+ ...pt_partition.clevis.bullseye_or_later.hook | 34 +++++++++++++++++++
+ .../encrypt_partition.clevis.buster.hook      | 30 ++++++++++++++++
+ .../files/encrypt_partition.clevis.hook       | 16 ---------
+ .../initramfs-crypt-hook_0.1.bb               | 18 +++++++++-
+ 4 files changed, 81 insertions(+), 17 deletions(-)
+ create mode 100755 recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.bullseye_or_later.hook
+ create mode 100755 recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.buster.hook
 
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook
-index d08594c..347551a 100755
---- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook
-@@ -66,9 +66,10 @@ copy_exec /usr/bin/tpm2_create || hook_error "Unable to copy /usr/bin/tpm2_creat
- copy_exec /usr/bin/tpm2_load || hook_error "Unable to copy /usr/bin/tpm2_load"
- if [ "$VERSION_CODENAME" != "buster" ] && [ -x /usr/bin/tpm2_pcrread ]; then
-     copy_exec /usr/bin/tpm2_pcrread || hook_error "Unable to copy /usr/bin/tpm2_pcrread"
-+    copy_exec /usr/bin/tpm2_testparms || hook_error "Unable to copy /usr/bin/tpm2_testparms"
- fi
- if [ "$VERSION_CODENAME" = "buster" ] && [ -x /usr/bin/tpm2_pcrlist ]; then
--    copy_exec /usr/bin/tpm2_pcrlist || hook_error "Unable to copy /usr/bin/tpm2_pcrread"
-+    copy_exec /usr/bin/tpm2_pcrlist || hook_error "Unable to copy /usr/bin/tpm2_pcrlist"
- fi
- copy_exec /usr/bin/tpm2_createpolicy || hook_error "Unable to copy /usr/bin/tpm2_createpolicy"
- if [ "$VERSION_CODENAME" != "buster" ] && [ -x /usr/bin/tpm2_flushcontext ]; then
-@@ -86,9 +87,7 @@ copy_exec /usr/bin/basename || hook_error "Unable to copy /usr/bin/basename"
- copy_exec /usr/bin/seq || hook_error "Unable to copy /usr/bin/seq"
- copy_exec /usr/bin/pwmake || hook_error "Unable to copy /usr/bin/pwmake"
- copy_exec /usr/bin/file || hook_error "Unable to copy /usr/bin/file "
--if [ "$VERSION_CODENAME" = "buster" ]; then
--    copy_exec /usr/lib/*/libgcc_s.so.1 || hook_error "Unable to copy /usr/lib/*/libgcc_s.so.1 "
--fi
-+copy_exec /usr/lib/*/libgcc_s.so.1 || hook_error "Unable to copy /usr/lib/*/libgcc_s.so.1 "
- if [ -x /usr/sbin/cryptsetup-reencrypt ]; then
-     copy_exec /usr/sbin/cryptsetup-reencrypt
- fi
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script
-index 0f82c1a..8de8015 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.script
-@@ -43,12 +43,10 @@ modprobe xts
- # this needs to be probed particularly for re-encryption
- modprobe loop
- 
--# fixed tpm device or do we need to find it
--tpm_device=/dev/tpmrm0
- partition_sets="$PARTITIONS"
- create_file_system_cmd="$CREATE_FILE_SYSTEM_CMD"
--hash_type="$HASH_TYPE"
--
-+pcr_bank_hash_type="$HASH_TYPE"
-+tpm_key_algorithm="$KEY_ALGORITHM"
- if [ -z "${create_file_system_cmd}" ]; then
- 	create_file_system_cmd="mke2fs -t ext4"
- fi
-@@ -69,7 +67,7 @@ open_tpm2_partition() {
- 
- enroll_tpm2_token() {
- 	if [ -x /usr/bin/clevis ]; then
--		clevis luks bind -d "$1" tpm2 '{"pcr_bank":"'"$hash_type"'","pcr_ids":"7"}' < "$2"
-+		clevis luks bind -d "$1" tpm2 '{"key":"'"$tpm_key_algorithm"'", "pcr_bank":"'"$pcr_bank_hash_type"'","pcr_ids":"7"}' < "$2"
- 	else
- 		panic "clevis not available cannot enroll tpm2 key!"
- 	fi
-@@ -102,6 +100,26 @@ mount_partition() {
- 	fi
- }
- 
-+for candidate in /dev/tpm*; do
-+	if [ -x /usr/bin/tpm2_pcrread ]; then
-+		if ! tpm2_pcrread -T device:"$candidate" "$pcr_bank_hash_type":7 --quiet ; then
-+			continue
-+		fi
-+	elif [ -x /usr/bin/tpm2_pcrlist ]; then
-+		export TPM2TOOLS_DEVICE_FILE="$candidate"
-+		if ! tpm2_pcrlist -L "$pcr_bank_hash_type":7 > /dev/null; then
-+			continue
-+		fi
-+	fi
-+	# Debian buster does not have tpm_testparms
-+	if [ -x /usr/bin/tpm2_testparms ]; then
-+		if ! tpm2_testparms -T device:"$candidate" "$tpm_key_algorithm" --quiet; then
-+			continue
-+		fi
-+	fi
-+	tpm_device=$candidate
-+done
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.bullseye_or_later.hook b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.bullseye_or_later.hook
+new file mode 100755
+index 0000000..b244d45
+--- /dev/null
++++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.bullseye_or_later.hook
+@@ -0,0 +1,34 @@
++#!/bin/sh
++# Copyright (C) Siemens AG, 2020-2023
++#
++# SPDX-License-Identifier: MIT
 +
- if [ ! -e "$tpm_device" ]; then
- 	panic "tpm device '$tpm_device' does not exists - cannot create a encrypted device!"
- fi
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tmpl b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tmpl
-index bcc57be..5d28dc5 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tmpl
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tmpl
-@@ -2,4 +2,5 @@ PARTITIONS="${CRYPT_PARTITIONS}"
- CREATE_FILE_SYSTEM_CMD="${CRYPT_CREATE_FILE_SYSTEM_CMD}"
- SETUP_TIMEOUT="${CRYPT_SETUP_TIMEOUT}"
- WATCHDOG_DEV="${INITRAMFS_WATCHDOG_DEVICE}"
--HASH_TYPE="${CRYPT_HASH_TYPE}"
-\ No newline at end of file
-+HASH_TYPE="${CRYPT_HASH_TYPE}"
-+KEY_ALGORITHM="${CRYPT_KEY_ALGORITHM}"
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.hook b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.hook
-index c3b31d6..6e2a211 100755
---- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.hook
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.hook
-@@ -1,5 +1,5 @@
- #!/bin/sh
--# Copyright (C) Siemens AG, 2020-2023
-+# Copyright (C) Siemens AG, 2020-2024
- #
- # SPDX-License-Identifier: MIT
- 
-@@ -49,6 +49,8 @@ copy_exec /usr/sbin/resize2fs || hook_error "/usr/sbin/resize2fs not found"
- copy_exec /usr/sbin/cryptsetup || hook_error "/usr/sbin/cryptsetup not found"
- copy_exec /usr/bin/systemd-cryptenroll || hook_error "/usr/bin/systemd-cryptenroll not found"
- copy_exec /usr/lib/systemd/systemd-cryptsetup || hook_error "/usr/lib/systemd/systemd-cryptsetup not found"
++PREREQ=""
++
++prereqs()
++{
++     echo "$PREREQ"
++}
++
++case $1 in
++prereqs)
++     prereqs
++     exit 0
++     ;;
++esac
++
++. /usr/share/initramfs-tools/hook-functions
++
++if [ -f /etc/os-release ]; then
++    . /etc/os-release
++fi
++hook_error() {
++    echo "(ERROR): $1" >&2
++    exit 1
++}
++
++copy_exec /usr/bin/clevis-luks-list || hook_error "/usr/bin/clevis-luks-list not found"
++copy_exec /usr/bin/clevis-luks-common-functions || hook_error "/usr/bin/clevis-luks-common-functions not found"
 +copy_exec /usr/bin/tpm2_pcrread || hook_error "Unable to copy /usr/bin/tpm2_pcrread"
 +copy_exec /usr/bin/tpm2_testparms || hook_error "Unable to copy /usr/bin/tpm2_testparms"
- 
- copy_exec /usr/lib/*/cryptsetup/libcryptsetup-token-systemd-tpm2.so || hook_error "/usr/lib/*/cryptsetup/libcryptsetup-token-systemd-tpm2.so not found"
- if [ -x /usr/sbin/cryptsetup-reencrypt ]; then
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script
-index 6c6d22e..ea267ac 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.script
-@@ -43,10 +43,10 @@ modprobe xts
- # this needs to be probed particularly for re-encryption
- modprobe loop
- 
--# fixed tpm device or do we need to find it
--tpm_device=/dev/tpmrm0
- partition_sets="$PARTITIONS"
- create_file_system_cmd="$CREATE_FILE_SYSTEM_CMD"
-+pcr_bank_hash_type="$HASH_TYPE"
-+tpm_key_algorithm="$KEY_ALGORITHM"
- if [ -z "${create_file_system_cmd}" ]; then
- 	create_file_system_cmd="mke2fs -t ext4"
- fi
-@@ -71,6 +71,7 @@ enroll_tpm2_token() {
- 		systemd_version=$(systemd-cryptenroll --version | \
- 			  awk -F " " 'NR==1{print $2 }')
- 		# check systemd version and export password if necessary
-+		# systemd version 251 does not suport hash_types
- 		if [ "$systemd_version" -ge "251" ]; then
- 			PASSWORD=$(cat "$2" )
- 			export PASSWORD
-@@ -112,6 +113,16 @@ mount_partition() {
- 	fi
- }
- 
-+for candidate in /dev/tpm*; do
-+	if ! tpm2_pcrread -T device:"$candidate" "$pcr_bank_hash_type":7 --quiet 2>/dev/null; then
-+		continue
-+	fi
-+	if ! tpm2_testparms -T device:"$candidate" "$tpm_key_algorithm" --quiet 2>/dev/null; then
-+		continue
-+	fi
-+	tpm_device=$candidate
-+done
++copy_exec /usr/bin/tpm2_flushcontext || hook_error "Unable to copy /usr/bin/tpm2_flushcontext"
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.buster.hook b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.buster.hook
+new file mode 100755
+index 0000000..fd39c34
+--- /dev/null
++++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.buster.hook
+@@ -0,0 +1,30 @@
++#!/bin/sh
++# Copyright (C) Siemens AG, 2020-2023
++#
++# SPDX-License-Identifier: MIT
 +
- if [ ! -e "$tpm_device" ]; then
- 	panic "tpm device '$tpm_device' does not exists - cannot create a encrypted device!"
- fi
++PREREQ=""
++
++prereqs()
++{
++     echo "$PREREQ"
++}
++
++case $1 in
++prereqs)
++     prereqs
++     exit 0
++     ;;
++esac
++
++. /usr/share/initramfs-tools/hook-functions
++
++if [ -f /etc/os-release ]; then
++    . /etc/os-release
++fi
++hook_error() {
++    echo "(ERROR): $1" >&2
++    exit 1
++}
++copy_exec /usr/bin/tpm2_pcrlist || hook_error "Unable to copy /usr/bin/tpm2_pcrlist"
++
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook
+index 347551a..1921aba 100755
+--- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook
++++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook
+@@ -54,27 +54,11 @@ copy_exec /usr/bin/clevis-encrypt-tpm2 || hook_error "/usr/bin/clevis-encrypt-tp
+ copy_exec /usr/bin/clevis-decrypt-tpm2 || hook_error "/usr/bin/clevis-decrypt-tpm2 not found"
+ copy_exec /usr/bin/clevis-luks-bind || hook_error "/usr/bin/clevis-luks-bind not found"
+ copy_exec /usr/bin/clevis-luks-unlock || hook_error "/usr/bin/clevis-luks-unlock not found"
+-if [ "$VERSION_CODENAME" != "buster" ] && [ -x /usr/bin/clevis-luks-list ]; then
+-    copy_exec /usr/bin/clevis-luks-list || hook_error "/usr/bin/clevis-luks-list not found"
+-fi
+-if [ "$VERSION_CODENAME" != "buster" ] && [ -x /usr/bin/clevis-luks-common-functions  ]; then
+-    copy_exec /usr/bin/clevis-luks-common-functions || hook_error "/usr/bin/clevis-luks-common-functions not found"
+-fi
+ copy_exec /usr/bin/tpm2_createprimary || hook_error "Unable to copy /usr/bin/tpm2_createprimary"
+ copy_exec /usr/bin/tpm2_unseal || hook_error "Unable to copy /usr/bin/tpm2_unseal"
+ copy_exec /usr/bin/tpm2_create || hook_error "Unable to copy /usr/bin/tpm2_create"
+ copy_exec /usr/bin/tpm2_load || hook_error "Unable to copy /usr/bin/tpm2_load"
+-if [ "$VERSION_CODENAME" != "buster" ] && [ -x /usr/bin/tpm2_pcrread ]; then
+-    copy_exec /usr/bin/tpm2_pcrread || hook_error "Unable to copy /usr/bin/tpm2_pcrread"
+-    copy_exec /usr/bin/tpm2_testparms || hook_error "Unable to copy /usr/bin/tpm2_testparms"
+-fi
+-if [ "$VERSION_CODENAME" = "buster" ] && [ -x /usr/bin/tpm2_pcrlist ]; then
+-    copy_exec /usr/bin/tpm2_pcrlist || hook_error "Unable to copy /usr/bin/tpm2_pcrlist"
+-fi
+ copy_exec /usr/bin/tpm2_createpolicy || hook_error "Unable to copy /usr/bin/tpm2_createpolicy"
+-if [ "$VERSION_CODENAME" != "buster" ] && [ -x /usr/bin/tpm2_flushcontext ]; then
+-    copy_exec /usr/bin/tpm2_flushcontext || hook_error "Unable to copy /usr/bin/tpm2_flushcontext"
+-fi
+ copy_exec /usr/bin/bash || hook_error "Unable to copy /usr/bin/bash"
+ copy_exec /usr/bin/luksmeta || hook_error "Unable to copy /usr/bin/luksmeta"
+ copy_exec /usr/bin/jose || hook_error "Unable to copy /usr/bin/jose"
 diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb
-index 317ea12..7f732cf 100644
+index 4e60c10..dc46ff8 100644
 --- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb
 +++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.1.bb
-@@ -11,7 +11,7 @@
- inherit dpkg-raw
- DEBIAN_DEPENDS = "initramfs-tools, cryptsetup, \
-     awk, openssl, libtss2-esys-3.0.2-0 | libtss2-esys0, \
--    libtss2-rc0 | libtss2-esys0, libtss2-mu0 | libtss2-esys0, e2fsprogs"
-+    libtss2-rc0 | libtss2-esys0, libtss2-mu0 | libtss2-esys0, e2fsprogs, tpm2-tools"
+@@ -29,6 +29,16 @@ def encryption_dependency(d):
+     else:
+         bb.error("unkown cryptbackend defined")
  
- CLEVIS_DEPEND = ", clevis-luks, jose, bash, luksmeta, file, libpwquality-tools"
- 
-@@ -49,10 +49,11 @@ CRYPT_SETUP_TIMEOUT ??= "600"
- INITRAMFS_WATCHDOG_DEVICE ??= "/dev/watchdog"
- # clevis needs tpm hash algorithm type
- CRYPT_HASH_TYPE ??= "sha256"
++def add_additional_clevis_hooks(d):
++    base_distro_code_name = d.getVar('BASE_DISTRO_CODENAME') or ""
++    crypt_backend = d.getVar('CRYPT_BACKEND') or ""
++    if crypt_backend != 'clevis':
++        return ""
++    if base_distro_code_name == "buster":
++        return f"encrypt_partition.{crypt_backend}.buster.hook"
++    else:
++        return f"encrypt_partition.{crypt_backend}.bullseye_or_later.hook"
++
+ CRYPT_BACKEND:buster = "clevis"
+ CRYPT_BACKEND:bullseye = "clevis"
+ CRYPT_BACKEND = "systemd"
+@@ -38,7 +48,8 @@ SRC_URI += "file://encrypt_partition.env.tmpl \
+             file://mount_crypt_partitions.script \
+             file://encrypt_partition.${CRYPT_BACKEND}.hook \
+             file://pwquality.conf"
 -
-+CRYPT_KEY_ALGORITHM ??= "ecc"
- 
- TEMPLATE_VARS = "CRYPT_PARTITIONS CRYPT_CREATE_FILE_SYSTEM_CMD \
--    CRYPT_SETUP_TIMEOUT INITRAMFS_WATCHDOG_DEVICE CRYPT_HASH_TYPE"
-+    CRYPT_SETUP_TIMEOUT INITRAMFS_WATCHDOG_DEVICE CRYPT_HASH_TYPE \
-+    CRYPT_KEY_ALGORITHM CRYPT_ENCRYPTION_OPTIONAL"
- TEMPLATE_FILES = "encrypt_partition.env.tmpl"
- 
- do_install[cleandirs] += " \
++ADDITIONAL_CLEVIS_HOOK = "${@add_additional_clevis_hooks(d)}"
++SRC_URI += "${@ 'file://' + d.getVar('ADDITIONAL_CLEVIS_HOOK') if d.getVar('ADDITIONAL_CLEVIS_HOOK')else ''}"
+ # CRYPT_PARTITIONS elements are <partition-label>:<mountpoint>:<reencrypt or format>
+ CRYPT_PARTITIONS ??= "home:/home:reencrypt var:/var:reencrypt"
+ # CRYPT_CREATE_FILE_SYSTEM_CMD contains the shell command to create the filesystem
+@@ -72,5 +83,10 @@ do_install() {
+         "${D}/usr/share/initramfs-tools/scripts/local-bottom/mount_decrypted_partition"
+     install -m 0755 "${WORKDIR}/encrypt_partition.${CRYPT_BACKEND}.hook" \
+         "${D}/usr/share/initramfs-tools/hooks/encrypt_partition"
++    if [ -f "${WORKDIR}"/"${ADDITIONAL_CLEVIS_HOOK}" ]; then
++        install -m 0755 "${WORKDIR}"/"${ADDITIONAL_CLEVIS_HOOK}" \
++            "${D}/usr/share/initramfs-tools/hooks/encrypt_partition.${BASE_DISTRO_CODENAME}"
++    fi
++
+     install -m 0644 "${WORKDIR}/pwquality.conf" "${D}/usr/share/encrypt_partition/pwquality.conf"
+ }
 -- 
 2.43.0
 
