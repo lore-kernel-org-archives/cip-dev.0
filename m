@@ -1,219 +1,136 @@
-Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89FD2C54E67
-	for <webhook@archiver.kernel.org>; Tue, 26 Mar 2024 06:29:37 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
- by mx.groups.io with SMTP id smtpd.web10.2129.1711434568338871979
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F20C54E58
+	for <webhook@archiver.kernel.org>; Tue, 26 Mar 2024 06:52:27 +0000 (UTC)
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.130])
+ by mx.groups.io with SMTP id smtpd.web11.2569.1711435937893030764
  for <cip-dev@lists.cip-project.org>;
- Mon, 25 Mar 2024 23:29:29 -0700
+ Mon, 25 Mar 2024 23:52:18 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba.co.jp, ip: 210.130.202.152, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
-Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 42Q6T65R3183484; Tue, 26 Mar 2024 15:29:06 +0900
-X-Iguazu-Qid: 2yAajzvdac7Aoj1uRQ
-X-Iguazu-QSIG: v=2; s=0; t=1711434545; q=2yAajzvdac7Aoj1uRQ; m=l0kGhENtY/7sotx2WVSkP4lk1uw0f1v5+Oj2tTH3n3M=
-Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1803) id 42Q6T3S01903197
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Tue, 26 Mar 2024 15:29:03 +0900
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=wXesXFea;
+ spf=pass (domain: siemens.com, ip: 40.107.22.130, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iUBoyZyrYtcdDXQn0QMDaUswCWA6SwEwNSqZ4BcNPG5hKuZ6FTaNkDxfTJ9ZX+i68nViV0NPLeMe2i7l+E9iNQXlcmN3W0jFbY+Yz959dXK/N1mCcJ8tf88VXhSdGTYfQ3oxG0KpD32FUv8rq0GIlVO7k3vUOQzcLVmd2mL+PKkU4qNQUoBL1e91ugPW/cTJtQ8WHrhu3SDWqj/aum2vCNDFjg4uARrGEVI44Kjuk6fFhoYuvZGNBMMo2oKsEmYyHt6kqTJS1CrvvaEnHwPC8SkMHu+KCjO++59HRJYUL8glMLHfxR1lV5/l4Ig8XKPVhzn9PnmPhTz9cF24XbD+Hw==
+ b=RrxTng8El+4O1Yui61CLJ+AfLCKz+RSsNaf5/tX6x3gfFLt3kNih3H/AiRdzfIho3WceJjKdwkGTvN5e8G58UoYqTAzn0b1sIXY/R2EzeckVvq0396ANkkIrCLK7upofVyr6eolD91SvQBJqouQw2Ar8Kt/git+dZnnmRDC6st1LV8Us7iMYrAvjd6ruCuX2sEnRT7zcWzX0jzwcGMcKOnLvDicLvoXZ/1QRDC0E1tV9gglOzbSJjZZXJXw4Iv4Nz5AIm2XGZ5dTqCL70/IDfOYNB8yLyfoM4zLj0/soNYs9zYBx9kx+6mKXrghZG3xNc8zQBWi0j98obof+DcnMaQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Eyy9Z68Us62EiaVVqWAmIfE9qnzAevrSj3vvgliFK34=;
- b=Q7LN1pTBQSRnfuHKm/AFjJffpD3Qj7qS65CIVJZL0CV23sZe/cDoAEY2RJeV/0NvZAgtiSUiynmED3inhsbgpaPN1lUZNYQ5pFDWczWfKa+CQ0zX/Yhxc0n7NwETfWdTV1elplSQhC5hmpwQ64HwzQdqHeQ/YWgRXesXGyfVtbS84OfxHtFsiTko4el4qETczfWn4bSfWRPoAVnrwrYbZHyeGj7LlaKZ39962Rn6Ad5BGxaugTYhTM82k4i2GhsuC76GE9Hpd9dQLue4CWMJrw2h9eN1WIBdy6mX0+86rKA3hwHJCKz8QH2mpcf2J74Kc7Z50h1mzJ3cALDcPvVLeg==
+ bh=xNB+ibmgTpK6g/a2pxdu1oPg3akqZLbVzpekiW07M1A=;
+ b=gVQMGMHiG2imsDuCLluqKUdFmsckCS8bN1oEKrmaawVXMiZ5E/2uPm4VrTBJeqvg1Q6FF6LPe/fuVBqob3v7v7rIR0Zuh4b2G/2jKKtyEMgwsqM8azdFKbOVtAB05v4T0u+jtoPlgpEqpZAXfzciQhRErXY8eFfFGL8cfaMzT3RAgAxj6jUBADM5V41JxlpGwrQHyJ9CiBGC4oxPm2PHZGvBtKIlFRdU6aijznLlJI4b8yyRPU4TYlM4FA3nCEJFnko8m4deWtNA3PdN3+PItKsK4/VBCeCLFwLUKPVf8/e+DIZpsxz7zXdDGfcjhNaeDoV+QfbtcARwHNmUjPOv0w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From: <nobuhiro1.iwamatsu@toshiba.co.jp>
-To: <cip-dev@lists.cip-project.org>
-CC: <jan.kiszka@siemens.com>, <Chris.Paterson2@renesas.com>, <pavel@denx.de>,
-        <masami.ichikawa@cybertrust.co.jp>, <uli@fpond.eu>
-Subject: [ANNOUNCE] Release v4.19.310-cip108 and v6.1.82-cip17
-Thread-Topic: [ANNOUNCE] Release v4.19.310-cip108 and v6.1.82-cip17
-Thread-Index: Adp/RrXy7RSIertBR7S2IADM9bgaHw==
-Date: Tue, 26 Mar 2024 06:29:00 +0000
-X-TSB-HOP2: ON
-Message-ID: 
- <OS0PR01MB63886C24A1FA29E2DEFA45BC92352@OS0PR01MB6388.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS0PR01MB6388:EE_|TY3PR01MB10486:EE_
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 
- mHbES2Xoh4Z+sxny1eEetZX+TZTtvxVTUjDSfrBRAz85alpzkI4pQp1znomUXHHWkF8MbCrqnc+lOIZJMgCTYDtTr3Ppx1Gp5KQ0LTMLfyElGKIudYUPtdpxLP5kvKpi8uAAp7dn2xiyTuzGaiRn44UsJxgm/qlPfYomut21eL/b8dB3ukDrFQI2Na0lQeLio2N9V2jont+cVJmO05cx5XGQD0vSuDepDUrBjLtY4A2XrqqUXl/BBAgIKukor33oh/cYJNikzf8XiHzIX8oTMUKgfnnvHuh+b7UWkNDf+Pi0aE4yUqeBobG7L8Go0bN1nGEZNgzUryPKelBysUtd9QnSeAAREZStWk1vH7EjS6uzI++hWfpzkHHdxceEI4vYfp8+bCSmKMhQ+2o3ruePZWgm9YCb8IcSpMwysLQb+q0aY6z4jApekqJYaRRXI7vp6B/baSCd03gOft9nxNNiMZlxf6TSl422ou+mk8+r0OomfpF7LkNG2LIu+loTkOLVevnVD9zoNBUZFA7sQc4bGskubfE/qAcNP3p3leMt9qYWEZ5G1w4yoo4hg/DrhTj2RnDZwmsIDWSSW5VWWwaaSWqNnv/GSaxfnpp1csAc+wcpVWYfIKseKc8hHKJjgZC/gnUJdBb6habMhESsXRuW44LQyVvg7DxYWA63gGKZPFE=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB6388.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(95630200002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?c0t0RlRtMWxUZDNRT3c5ajVyYUYxVmc4SHcrNmRYMm1oM2VBWDQ0MUt1?=
- =?iso-2022-jp?B?SnJBbXJPN2FnK1ltZC96ekZBNi84bDZ1YlBGZ3Z6TmFrZGM1K1c2ZjhJ?=
- =?iso-2022-jp?B?Rkt1WGl5Ti94YVpMYVczcyswNEQ1RXVUSVovd1FIUXIrTUpwdDlrM2VX?=
- =?iso-2022-jp?B?NThKRXBEbnE0VG9QY2ZYVitMTVZZQ0tqb08zektja1d5Rk1CVUhZS3NC?=
- =?iso-2022-jp?B?YVlKSk1QNms1UGswNjVuV2NWUzBqY3Y2OTNESjJCNmVXQ0EyeDdlek45?=
- =?iso-2022-jp?B?cm55M2paOVJLZHdSbVFhVFdGZGI5bjNtZTdKckV5L0lxV3YxRnNrY1ZO?=
- =?iso-2022-jp?B?L1Nia2pXRk9YMHB0MS9zWHhUTFV3eHJrZUtabVoyV1NCQVFLQXp3RXZR?=
- =?iso-2022-jp?B?TXZpR1JRZ3dGODNjVjA3d0dyeW54OFNHelBQSzF4T0ptUzVpa001WFNW?=
- =?iso-2022-jp?B?V2hpa09wSTYrU1hjUERkYnJZOWlVY2FFUUMwaldvL0xMMzJ3bzE4UGpa?=
- =?iso-2022-jp?B?SUFTWWZiajljQ1lYN1ZDdjRDMjZDOFY1T3dsdlZZOXl5SndQVHZzVkJi?=
- =?iso-2022-jp?B?L0RIcm9BNCtoYzhydlBlUFY4cXJTTzJ4SW9qb0ZaYlBNOFQrNWNmM3pX?=
- =?iso-2022-jp?B?VUloa213VFlHZ0F4VnYwNlJVMDd5ZDhIcW9VcUVZd2RoNk96NHNUaFlS?=
- =?iso-2022-jp?B?dUtuWVJjRmU2YWoxa3c0WmZ6YWF2c2lQb2NuMFN0clZmV1dZYVlkZHgz?=
- =?iso-2022-jp?B?OVIzNzBFd3RTUmJkUE95WXN3Si9jZ3k0amd5UEN6bnpXZWEzN3puYU8y?=
- =?iso-2022-jp?B?aEIyckx6b3lNTkJxMWM2TnRpUGVieGRYeS9mS1VPMTYya1V0c3NzZHYw?=
- =?iso-2022-jp?B?dUJnZmZRaDVUOXpHK0p4d1F1SlgzbFNuR0xTYTk5NzZEckY5NWpZR0V5?=
- =?iso-2022-jp?B?c1J5U0lBeTVzWmJpU3pjQXN2TE4vK2FQU3pDYkZ4dGlkZDdNQng2RXgv?=
- =?iso-2022-jp?B?ZjFTcjlNRE8wNEk2Q0tSNlltemtQSHYzbW9tdkRrNG5MQ1h1MEJCWU0r?=
- =?iso-2022-jp?B?aXgxZEZUVmNJSHpNR1VXeTZoMytBMFI2Y01TMFM5S3daN2hsWTZ5TTFZ?=
- =?iso-2022-jp?B?ZjFqZmx4SEdRYzNrVWFVZGNLYVltWmNCNkJyTlNPeVFrSXUyd2JhaWxJ?=
- =?iso-2022-jp?B?L2JicVZhbjBXNUxsUTJRelFaY3gzNldTZE1UOUJDd1RYUkErZXJMRXB0?=
- =?iso-2022-jp?B?c3VKRlZTOVkyWDhINTE1OUpqM0VnUE85bG5rRzhRazNYaHdCR3pYeDhD?=
- =?iso-2022-jp?B?MzZqb3JIRWVxMWRFOW1aZWhVZ2R5T2hFY2Q1c3NSU1JueXdjd1I2clB2?=
- =?iso-2022-jp?B?R1p2Kzdoc3kxUklYb0E1M0JvcCtYUy9KbGI5TGh1WEZQU1g5cnMvNWFU?=
- =?iso-2022-jp?B?Uk1RNG9vYnJmNlczMHN1SWM0M3gyM2lVVi9UR0dNQk9FRmg5amRabVBa?=
- =?iso-2022-jp?B?VHN2VWJIR1FGd1d4WjRkT3ZBQk1wVXNWMlN4OEVyWXZ3Wk02VkpQNHhM?=
- =?iso-2022-jp?B?WVptQVlkUWVsN2hRYWNhNmt4d0ZXY3pSOVZYNUtYV2FiSjVLSXY5OFZn?=
- =?iso-2022-jp?B?RktlVHZ3VkJPSE5mZnhOQjJJeDVSUlFvbnM5TWQ3YVRBcTlCeG85UUhy?=
- =?iso-2022-jp?B?RUNHOER0QWxGYUtvUXhQZjRwbWVXNGZTWEprci9ZczlvdndhaWJWS2JK?=
- =?iso-2022-jp?B?S28zYTIvVFExUjg4d0c3RmN4dlRJQ2EwZkZubFdLcEZtY3pFR2pLbXJw?=
- =?iso-2022-jp?B?bm9aM1VRRktSQXh3WVE1UmY1aWtHL2JhUlA5OFQrVTZkbjN4NW9SajZJ?=
- =?iso-2022-jp?B?dkpwZUJXaVF6WmJPQVFmOHdmaE1rRUxqNjc0eGFMLzlaOE82UDdORkRr?=
- =?iso-2022-jp?B?MWErUm5VdFFOZEFiNE9XaVBBb2p1U3hYd1prdXNEQVk5cVFWeWloSWZP?=
- =?iso-2022-jp?B?TGExMzV5bDY4aEVVV1pBZ2FrWVNtZS83dktFdDZReFNFNWg0TDBPa29h?=
- =?iso-2022-jp?B?aU1aeFUxUnN5dXdUYXN4TzlxdFU4bFNEUkhRcnFlOUFtRTdVOWNVSmVk?=
- =?iso-2022-jp?B?SExYc1AzNzY3eEgyZkI5UlJyL0FQMExTRURlcFJ1eTFDUlJrUUNTOEl2?=
- =?iso-2022-jp?B?REFjZ01DYmJyQlhrV0ZUUVJmWVBzckFqdkdtcE8rV21GSERVMEJTUm1o?=
- =?iso-2022-jp?B?VXk5SzNGM3VVYldzL21aMzRqVEZGdHNvNEhncmhMSTh4SGtRaysvQzlB?=
- =?iso-2022-jp?B?azNRcFEwbmpoWjQxMk50OUJzdEU0K3IzUWc9PQ==?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xNB+ibmgTpK6g/a2pxdu1oPg3akqZLbVzpekiW07M1A=;
+ b=wXesXFeaVtgK73ZJbWvk2vDuJbRoGd8oubP8LeTBAlE/o51p1PWWlhkiqjoRQYdQSyxVMQWDi5ioOgYAar/Jd4wUnzBLwoWPcnjo2Bb3+kgvNUr8KBOnchG6q0xOK8erW29t8sZWphdN5BzduqdyxBARLZqZ2wuzm4rq5/XsCmppqAQMUhwguHiZCleqAskly5bDPH2q1izmHCT970KwY+Iz/AlHx4Dt0npu9C5aZIQ/V67FFmfs31hcisLS8dzduFG4k8Nzczh8Z2h7BQOWAWbRPHENBhPc309Hd8whqZxB1HG9fZaRLFK1xYf4RyJ7KoMfnYh21UPvUr3RI4i90A==
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by DU0PR10MB7335.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:445::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.32; Tue, 26 Mar
+ 2024 06:52:15 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::4e33:3630:e08:77b9]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::4e33:3630:e08:77b9%4]) with mapi id 15.20.7409.031; Tue, 26 Mar 2024
+ 06:52:15 +0000
+Message-ID: <2fa52e58-0ba5-4865-adac-3dbe03c9b83e@siemens.com>
+Date: Tue, 26 Mar 2024 07:52:13 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [isar-cip-core][PATCH] Add support Plat'Home OpenBlocks IoT VX2
+Content-Language: en-US
+To: Benjamin Schilling <schilling.benjamin@siemens.com>,
+ cip-dev@lists.cip-project.org,
+ Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+References: <TYVPR01MB11245F45500C758184F6369A092C5A@TYVPR01MB11245.jpnprd01.prod.outlook.com>
+ <5367.1711107559199640802@lists.cip-project.org>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+In-Reply-To: <5367.1711107559199640802@lists.cip-project.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR2P281CA0163.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:99::6) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
-X-OriginatorOrg: toshiba.co.jp
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DU0PR10MB7335:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	dlbEhnRkTZ16gveVAwi5IbZw/XBB3C13lmeITtX0X/zYBs9gyaRmS47QSVwmHVj97JFpI2UPVblQ8xrG34XuGjli9FR+/xbHemh4xTkVENxZiPT3eLQYdUvhClLwlmz45nnIfqVrWV6q56a0J7vcPKJzHNGYU8B/Znjo1+bU4Te06ykUo9275qm2aHK5bmDNPfSQd+k2ITIJgG6xYnvtz1SjOdvg8yPN9Vwjs+SoyfpFBILhI8WeH6Z0lnWmiTvBtv0GzAJigMeOhF60KywTRWleNA0EeGxPIodmjouDFuXNIl2w17NxRiSStDvzM45FJHmj10jTi1qI3j31vKEwvYTCtFWTuSUkpxopeDjTNBLDqQCCzSjFWab8s57FklUSdb945S15uXq+OncgXAZlc13gyaPSopJ1IUFhSATrUTRgiZ+FrSM/0s0sy2k8acLwUBP5rovHnSjwGXcX2433E+A4gR0ZY2AMDsxb5j7giv6MDZEF+1hK4KZOptWKzFGtuU5Aq/R0T7K1+EREpUrBmBuUe25+brCduv+wvsbPqaKM9E6Y1p/Ii2JV8n+hX3cC4JKCu5pDr3HZAnXdELinGVSNMcjw+RAHuSHDE66KwqnO4JfnMOMDeWEKuDcI9x0bDdLOfffjBK7/fsP9k057HSRizDb+c0+vfB5JSHC2fA8=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?TDNSMWQ3WTZnZzBRS3JxaUNqdHVDL3JXTUZrSEFZeDh6SE9pc0FwUVQ1ajg2?=
+ =?utf-8?B?Wkh5eUF3NkQ4NjlKVHdqVlF6N21LNXlYTDRJY2MwUWtwNkQraFE2STVJaXE3?=
+ =?utf-8?B?cjhpU0RmYjlndnJiOXh0NEZBLy9ZOVl5ck9vbjJHNFhNekYyc2dkZ1c4UFVr?=
+ =?utf-8?B?dERFeWZIVloyQlJpLzhpTjh2K0RZNUlRQ1lmNy9GM2U3MThzeW4vbGxod0dU?=
+ =?utf-8?B?ZVd3cHZXRmpLYVk4ZFM4QWpVVE5YN01SY1drdldpbk03OHMyYTRZODl5MUxM?=
+ =?utf-8?B?b05kcStCalZSK2s1cGh0Q2JHY2JoN3JLTGVDR1J6SVBqbVV3UXlCQWpaZk1D?=
+ =?utf-8?B?Skd4RFpxTHRPZm5PNUNsZ1MvUkUrV3VUZ1lJZ1o0VjVMQ2paODdEa2FiV1FU?=
+ =?utf-8?B?L05xbjR1VWZHZUpNQ2RpRUh2dG1wTEdKL0FwYTV3c3FCTXp6OGl0V1FhT3VO?=
+ =?utf-8?B?RmpmVHFCQXhHcFhyTHFRL0ZCbHg4eFZNb21RK2NJc2wzSUhLVFpBdkNsM1Rj?=
+ =?utf-8?B?VWJUYkgrOEhXNkFtZ2VHZUtWRWMxL3BQRGcrZ05aSCt2WWxsTjdaRXIrczcx?=
+ =?utf-8?B?YnkrK2hLWnhVMkVxZUNkQjFlaHRoTW9CVUZhdkN2ZGJzWXFvOGV0OVQ0cWVo?=
+ =?utf-8?B?R0FLZG5FSlRFVXI3L3JmaUpOSWp2M2dSWEtqck52RjJVVHF5RThuUmxZVmpn?=
+ =?utf-8?B?TjF0VklIL2hoViszdGZlKzVLTUJtWnFWVzAwQ0MvVnJhQUFleHZ3QnlxY09O?=
+ =?utf-8?B?UnN2VG1wREd3dEhtNnBPS2VGRExmbDRxQkE1cjk5bFJkemIxZTRXZ0NTUzJV?=
+ =?utf-8?B?alNMK01QVktrK3IxMHlkVUxkVU1BNjVFNDdKdW13dE45cGhPZFpUTGYzdGph?=
+ =?utf-8?B?azlrV1lGMFJXbmt1NHlqWG5WUkdtTXR5VjYwWkQ1UkNLR1pnN2xkb3BJOFhJ?=
+ =?utf-8?B?ZURXbFFUbzNSRjJwMlZ3MDRreDdjQjVqb0o1WE4wVzNCTCtieU0yY3NzV2RK?=
+ =?utf-8?B?TG5VcUJjYk5QRXR6Mjlpa2djcGpUZGpXeHRldy9DNUc5a0JhdTlaZUlwK3lr?=
+ =?utf-8?B?VWwyTkFoenRCUWF4TnJDWWZudEt0SE1VRFJxVm92WlNBUkJKSXpSRHhHdXNO?=
+ =?utf-8?B?eTRoem5BZ1VoOWdsdGZMU2IwdVFHM2JrcUZXRWJ1bnZvaFJKU1ZXa0Q4eE8w?=
+ =?utf-8?B?S2FiblZRb3lQSlU3WVp4Q1FQNC9BdVFCaDBQN2g1T0JROFlHVnBBV1BOLzZt?=
+ =?utf-8?B?Uk91eHlOSHlHYm8xdTNzZHVyN3RKeGFpQm5sMlNTY3NEMVh3T0hEUW41RC82?=
+ =?utf-8?B?QmkyL3k3Mmt3VUNCNEdzU0o1c25QcklxRG9YU2M5bmRvN2hOQzdZcmpkNzIr?=
+ =?utf-8?B?U3p4eko4OHVLUCtZN1JjUzdWY0hxOTBQckM3dDVEeEhGeXViODc3UzZpU2I2?=
+ =?utf-8?B?cm1zZ3BkTy92MURDYmdZYXJZYnN0Mi9PcWNWYnFkZU4rR0U3amltSkYwVmJ1?=
+ =?utf-8?B?VThyMjFKZGtPckk3cDBLTmx4akNMSFh3RS9YWTU3b01DQWY3NFU5U2lmNUww?=
+ =?utf-8?B?MjhkNkMzWUJHWEFrZW9vdVBzTWxWT2xWcDAyMmEwTWZYeUhiK2RzS2V4REcv?=
+ =?utf-8?B?L2hJeVdDcFMrUURVSWVXZVFhTldpV0pxUmJkUnhwQm9UbVo3aHBzTVR6Ynpz?=
+ =?utf-8?B?a0EzM3hhZ3dZdWpOTUx2RVRxYk9CbnVkNGc3OUg2TTNmbnpyMFhkbGVSeElR?=
+ =?utf-8?B?S2wwaXp3Wmk4Q1c5RVA2VVdyazZTOTdsdEUwQVN0TmduV1ZzRnQzeHFqWnI1?=
+ =?utf-8?B?c2VkaXFWa1dlRE1NcjV3aTNpMUp2MkdST0JkT0lGTG9vaUUyU3pjblY5ZFla?=
+ =?utf-8?B?cXUzTGoxbXMzZmdEOVBIUHplTldEQmhzOER0UHVJRUFCT0JHVjE2OVJXZHZH?=
+ =?utf-8?B?TDd4eUl1aFVHcS95RFhlMFluOEZ0bG8rVEVzN0hYaFdXME0zbWwxdXd1eXE4?=
+ =?utf-8?B?UnhMZnVjYTh3THAxSGR5UWljS3p6VTA0NTRpTzNjcmZiNHAxN2RKdk5mek1L?=
+ =?utf-8?B?eWpjWGpaSUprUzg4ZDlmaHdNNXRxRFpCQVdOSTloSy9RMGh0N2NwbDRXMjU5?=
+ =?utf-8?Q?t6x5AaspVrbkVF/rr1y2246T+?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: be17c209-392d-4d47-d623-08dc4d61453b
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB6388.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 00d1abe0-c8fe-48d6-59cc-08dc4d5e0642
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Mar 2024 06:29:00.6531
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2024 06:52:15.0192
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: R0isb+egdSbuTDyJk/Mf/KBLBziIar8V0Na+ohUe/aOp03b3HDE+Mbkb0l+N8XuHd9cfxJCkqm/Jv+XCJp8yGz948HuEFli1E8S3gP3phmsQDp3RbjPr9aoG9jVJkiPo
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB10486
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BTH7gXtohkjNsSK+CF+2fcaCcDhnxGceTNKCuCWlYmUvZqQMX5kArLFFT1ohJMjvFWEQK9VMvB+PXmR+xS2HLQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB7335
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 26 Mar 2024 06:29:37 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15414
+ <cip-dev@lists.cip-project.org>; Tue, 26 Mar 2024 06:52:27 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15415
 
-Hi,
+On 22.03.24 12:39, Benjamin Schilling wrote:
+> Hi all,
+> 
+> I'm joining the discussion to start integrating the M-COM x86 support.
+> What's the status on the generic x86-64 target?
+> 
 
-CIP kernel team has released Linux kernel v4.19.310-cip108 and v6.1.82-cip1=
-7.
-The linux-4.19.y-cip tree has been updated base version from v4.19.306 to v=
-4.19.310, and the linux-6.1.y-cip tree has been updated base version from
-v6.1.80 to v6.1.82.
+Nobuhiro wrote recently he has a prototype. Maybe he can share to
+finalize it together.
 
-You can get this release via the git tree at:
+Jan
 
-  v4.19.310-cip108:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-4.19.y-cip
-    commit hash:
-      b39bba29c35ca19fc6eec7baed1210cfa4c70c44
-    Fixed CVEs:
-      CVE-2023-52437: Revert "md/raid5: Wait for MD_SB_CHANGE_PENDING in ra=
-id5d"
-      CVE-2024-26606: binder: signal epoll threads of self-work
-      CVE-2023-52486: drm: Don't unref the same fb many times by mistake du=
-e to deadlock handling
-      CVE-2024-26600: phy: ti: phy-omap-usb2: Fix NULL pointer dereference =
-for SRP
-      CVE-2024-1086: netfilter: nf_tables: reject QUEUE/DROP verdict parame=
-ters
-      CVE-2024-26609: netfilter: nf_tables: reject QUEUE/DROP verdict param=
-eters
-      CVE-2023-52598: s390/ptrace: handle setting of fpc register correctly
-      CVE-2023-52615: hwrng: core - Fix page fault dead lock on mmap-ed hwr=
-ng
-      CVE-2023-52619: pstore/ram: Fix crash when setting number of cpus to =
-an odd number
-      CVE-2023-52604: FS:JFS:UBSAN:array-index-out-of-bounds in dbAdjTree
-      CVE-2024-26635: llc: Drop support for ETH_P_TR_802_2.
-      CVE-2021-33630: net/sched: cbs: Fix not adding cbs instance to list
-      CVE-2023-52587: IB/ipoib: Fix mcast list locking
-      CVE-2023-52597: KVM: s390: fix setting of fpc register
-      CVE-2023-52594: wifi: ath9k: Fix potential array-index-out-of-bounds =
-read in ath9k_htc_txstatus()
-      CVE-2023-52606: powerpc/lib: Validate size for vector operations
-      CVE-2023-52603: UBSAN: array-index-out-of-bounds in dtSplitRoot
-      CVE-2024-26636: llc: make llc_ui_sendmsg() more robust against bondin=
-g changes
-      CVE-2023-52600: jfs: fix uaf in jfs_evict_inode
-      CVE-2023-52602: jfs: fix slab-out-of-bounds Read in dtSearch
-      CVE-2023-52601: jfs: fix array-index-out-of-bounds in dbAdjTree
-      CVE-2023-52599: jfs: fix array-index-out-of-bounds in diNewExt
-      CVE-2024-26625: llc: call sock_orphan() at release time
-      CVE-2024-26624: af_unix: fix lockdep positive in sk_diag_dump_icons()
-      CVE-2024-0607: netfilter: nf_tables: fix pointer math issue in
-nft_byteorder_eval()
-      CVE-2024-23849: net/rds: Fix UBSAN: array-index-out-of-bounds in rds_=
-cmsg_recv
-      CVE-2024-0340: vhost: use kzalloc() instead of kmalloc() followed by =
-memset()
-      CVE-2023-52583: ceph: fix deadlock or deadcode of misusing dget()
-      CVE-2024-26613: net/rds: Fix UBSAN: array-index-out-of-bounds in rds_=
-cmsg_recv
-      CVE-2024-26602: sched/membarrier: reduce the ability to hammer on sys=
-_membarrier
-      CVE-2024-26615: net/smc: fix illegal rmb_desc access in SMC-D connect=
-ion dump
-      CVE-2023-52607: powerpc/mm: Fix null-pointer dereference in pgtable_c=
-ache_add
-      CVE-2023-52605: ACPI: extlog: fix NULL pointer dereference check
-    added commits:
-      CIP: Bump version suffix to -cip108 after merge from stable
-      memory: renesas-rpc-if: Clear HS bit during hardware initialization
-      arm64: dts: renesas: rzg2: Add RPC-IF Support
-      spi: spi-rpc-if: Check return value of rpcif_sw_init()
-      memory: renesas-rpc-if: Remove redundant division of dummy
-      memory: renesas-rpc-if: Simplify single/double data register access
-      memory: renesas-rpc-if: Drop usage of RPCIF_DIRMAP_SIZE macro
-      memory: renesas-rpc-if: Return error in case devm_ioremap_resource() =
-fails
-      memory: renesas-rpc-if: Fix HF/OSPI data transfer in Manual Mode
-      memory: renesas-rpc-if: Correct QSPI data transfer in Manual mode
-      memory: renesas-rpc-if: fix possible NULL pointer dereference of reso=
-urce
-
-  v6.1.82-cip17:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-6.1.y-cip
-    commit hash:
-      9697800989924e6cf915d19fdd0704ff259c4413
-    Fixed CVEs:
-      CVE-2024-26622: tomoyo: fix UAF write bug in tomoyo_write_control()
-      CVE-2023-52620: netfilter: nf_tables: disallow timeout for anonymous =
-sets
-      CVE-2023-2176: Kernel: Slab-out-of-bound read in compare_netdev_and_i=
-p
-      CVE-2024-26621: mm: huge_memory: don't force huge page alignment on 3=
-2 bit
-      CVE-2023-28746: Register File Data Sampling (RFDS)
-    added commits:
-      CIP: Bump version suffix to -cip17 after merge from stable
-
-Best regards,
-   Nobuhiro
+-- 
+Siemens AG, Technology
+Linux Expert Center
 
 
