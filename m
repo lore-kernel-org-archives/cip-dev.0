@@ -1,136 +1,114 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <ncaidin@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F20C54E58
-	for <webhook@archiver.kernel.org>; Tue, 26 Mar 2024 06:52:27 +0000 (UTC)
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.130])
- by mx.groups.io with SMTP id smtpd.web11.2569.1711435937893030764
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDBB1C6FD1F
+	for <webhook@archiver.kernel.org>; Tue, 26 Mar 2024 18:43:20 +0000 (UTC)
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+ by mx.groups.io with SMTP id smtpd.web11.18159.1711478348888452421
  for <cip-dev@lists.cip-project.org>;
- Mon, 25 Mar 2024 23:52:18 -0700
+ Tue, 26 Mar 2024 11:39:09 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=wXesXFea;
- spf=pass (domain: siemens.com, ip: 40.107.22.130, mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RrxTng8El+4O1Yui61CLJ+AfLCKz+RSsNaf5/tX6x3gfFLt3kNih3H/AiRdzfIho3WceJjKdwkGTvN5e8G58UoYqTAzn0b1sIXY/R2EzeckVvq0396ANkkIrCLK7upofVyr6eolD91SvQBJqouQw2Ar8Kt/git+dZnnmRDC6st1LV8Us7iMYrAvjd6ruCuX2sEnRT7zcWzX0jzwcGMcKOnLvDicLvoXZ/1QRDC0E1tV9gglOzbSJjZZXJXw4Iv4Nz5AIm2XGZ5dTqCL70/IDfOYNB8yLyfoM4zLj0/soNYs9zYBx9kx+6mKXrghZG3xNc8zQBWi0j98obof+DcnMaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xNB+ibmgTpK6g/a2pxdu1oPg3akqZLbVzpekiW07M1A=;
- b=gVQMGMHiG2imsDuCLluqKUdFmsckCS8bN1oEKrmaawVXMiZ5E/2uPm4VrTBJeqvg1Q6FF6LPe/fuVBqob3v7v7rIR0Zuh4b2G/2jKKtyEMgwsqM8azdFKbOVtAB05v4T0u+jtoPlgpEqpZAXfzciQhRErXY8eFfFGL8cfaMzT3RAgAxj6jUBADM5V41JxlpGwrQHyJ9CiBGC4oxPm2PHZGvBtKIlFRdU6aijznLlJI4b8yyRPU4TYlM4FA3nCEJFnko8m4deWtNA3PdN3+PItKsK4/VBCeCLFwLUKPVf8/e+DIZpsxz7zXdDGfcjhNaeDoV+QfbtcARwHNmUjPOv0w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xNB+ibmgTpK6g/a2pxdu1oPg3akqZLbVzpekiW07M1A=;
- b=wXesXFeaVtgK73ZJbWvk2vDuJbRoGd8oubP8LeTBAlE/o51p1PWWlhkiqjoRQYdQSyxVMQWDi5ioOgYAar/Jd4wUnzBLwoWPcnjo2Bb3+kgvNUr8KBOnchG6q0xOK8erW29t8sZWphdN5BzduqdyxBARLZqZ2wuzm4rq5/XsCmppqAQMUhwguHiZCleqAskly5bDPH2q1izmHCT970KwY+Iz/AlHx4Dt0npu9C5aZIQ/V67FFmfs31hcisLS8dzduFG4k8Nzczh8Z2h7BQOWAWbRPHENBhPc309Hd8whqZxB1HG9fZaRLFK1xYf4RyJ7KoMfnYh21UPvUr3RI4i90A==
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by DU0PR10MB7335.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:445::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.32; Tue, 26 Mar
- 2024 06:52:15 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::4e33:3630:e08:77b9]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::4e33:3630:e08:77b9%4]) with mapi id 15.20.7409.031; Tue, 26 Mar 2024
- 06:52:15 +0000
-Message-ID: <2fa52e58-0ba5-4865-adac-3dbe03c9b83e@siemens.com>
-Date: Tue, 26 Mar 2024 07:52:13 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core][PATCH] Add support Plat'Home OpenBlocks IoT VX2
-Content-Language: en-US
-To: Benjamin Schilling <schilling.benjamin@siemens.com>,
- cip-dev@lists.cip-project.org,
- Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-References: <TYVPR01MB11245F45500C758184F6369A092C5A@TYVPR01MB11245.jpnprd01.prod.outlook.com>
- <5367.1711107559199640802@lists.cip-project.org>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-In-Reply-To: <5367.1711107559199640802@lists.cip-project.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0163.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:99::6) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=UTm5RDhy;
+ spf=pass (domain: gmail.com, ip: 209.85.160.176, mailfrom: flamefire89@gmail.com)
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-430c4b1a439so37575561cf.3
+        for <cip-dev@lists.cip-project.org>; Tue, 26 Mar 2024 11:39:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1711478348; x=1712083148; darn=lists.cip-project.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qGkZTlTeVG49dzNbYUhlI8jGlADFwzGK+4u8D17E+I8=;
+        b=UTm5RDhyS4cMD95TuKn9GmGm1RZvBO7WtZW8rvt8hJE587dZKfpAHdshJ0NdF4/ZPC
+         F9GBd1/0iP4yf3rOKxT02t4T26ypT38HDsVYHl/E3/hk8hKJz6lOuc459ClZdbT1uRDo
+         uErERzrH7bOXF0TQA5xe6VYEuRyoA0+/jZ5JdecJuANzQH8vHu3LwVZNIql4j0shD9Cl
+         KVRJBucMAvbwp8F/BhLVa9e3gfB7kcKDI6dj9ZPpEETg5aZJluAjJQCtNl1cYTJuNxlG
+         TJGpA/vUTT9KytcQmtVbXSjjzVcd8I/IIMQDzFlhvRY/Rxxvc7CfjlQaf5VR0xeW140A
+         DaEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711478348; x=1712083148;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qGkZTlTeVG49dzNbYUhlI8jGlADFwzGK+4u8D17E+I8=;
+        b=KHQI8ggXvqRQB7uUqPiGETSJXn7OaxdvR6cTlTQ9WargN3hy2pnQCPMGAZ+Wes2Pfd
+         fWIB++i1pPmBWHDxYVfyuh7jJHn8d461DEHwsgTDEdw4WNzrYEfMHSKucy3ryN9V4ytp
+         f6JtlWnPW3IgRJDObXaWdky0SMaUSGStTc8yqh57o45k1kCIDnBbsP+G+1RXX203MN4V
+         4D1VkVmDLi7rAdRYfI52spW4q/4VQbVMbqMWqValJNV2YeQJBJZIlp3BjF42jog50nBN
+         7mjPTvSFlAaPDcUZJHQuCphWcEQR+mBp4C7vJCKqGu5K5Peg/ybrKyiEXw8H3L4HBnI9
+         mQng==
+X-Gm-Message-State: AOJu0Yy0tqdKmdvi4ypafi0oLx31Q3BbVPI5zoK5TgDKDfeJ7p2qCcOX
+	aiFSYjqOvpBtvdTgDfv3VlkUQCTawOeHzGwNc/QtS8/lJFBcz7Sb2F2BMbuuqf7vroORjfILxaD
+	z1av5cRa14rirSEUwDfMZfSHU2t99G89eIek=
+X-Google-Smtp-Source: AGHT+IEIS7ILz0SOexFkL84yERJD4q0cZVIyA2u9m8mvptm2JfjQI23x45al2I95EDBiB9n33Xp99qan6AJEVgEePDE=
+X-Received: by 2002:ac8:5c55:0:b0:431:7329:9945 with SMTP id
+ j21-20020ac85c55000000b0043173299945mr416165qtj.60.1711478347760; Tue, 26 Mar
+ 2024 11:39:07 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DU0PR10MB7335:EE_
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	dlbEhnRkTZ16gveVAwi5IbZw/XBB3C13lmeITtX0X/zYBs9gyaRmS47QSVwmHVj97JFpI2UPVblQ8xrG34XuGjli9FR+/xbHemh4xTkVENxZiPT3eLQYdUvhClLwlmz45nnIfqVrWV6q56a0J7vcPKJzHNGYU8B/Znjo1+bU4Te06ykUo9275qm2aHK5bmDNPfSQd+k2ITIJgG6xYnvtz1SjOdvg8yPN9Vwjs+SoyfpFBILhI8WeH6Z0lnWmiTvBtv0GzAJigMeOhF60KywTRWleNA0EeGxPIodmjouDFuXNIl2w17NxRiSStDvzM45FJHmj10jTi1qI3j31vKEwvYTCtFWTuSUkpxopeDjTNBLDqQCCzSjFWab8s57FklUSdb945S15uXq+OncgXAZlc13gyaPSopJ1IUFhSATrUTRgiZ+FrSM/0s0sy2k8acLwUBP5rovHnSjwGXcX2433E+A4gR0ZY2AMDsxb5j7giv6MDZEF+1hK4KZOptWKzFGtuU5Aq/R0T7K1+EREpUrBmBuUe25+brCduv+wvsbPqaKM9E6Y1p/Ii2JV8n+hX3cC4JKCu5pDr3HZAnXdELinGVSNMcjw+RAHuSHDE66KwqnO4JfnMOMDeWEKuDcI9x0bDdLOfffjBK7/fsP9k057HSRizDb+c0+vfB5JSHC2fA8=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?TDNSMWQ3WTZnZzBRS3JxaUNqdHVDL3JXTUZrSEFZeDh6SE9pc0FwUVQ1ajg2?=
- =?utf-8?B?Wkh5eUF3NkQ4NjlKVHdqVlF6N21LNXlYTDRJY2MwUWtwNkQraFE2STVJaXE3?=
- =?utf-8?B?cjhpU0RmYjlndnJiOXh0NEZBLy9ZOVl5ck9vbjJHNFhNekYyc2dkZ1c4UFVr?=
- =?utf-8?B?dERFeWZIVloyQlJpLzhpTjh2K0RZNUlRQ1lmNy9GM2U3MThzeW4vbGxod0dU?=
- =?utf-8?B?ZVd3cHZXRmpLYVk4ZFM4QWpVVE5YN01SY1drdldpbk03OHMyYTRZODl5MUxM?=
- =?utf-8?B?b05kcStCalZSK2s1cGh0Q2JHY2JoN3JLTGVDR1J6SVBqbVV3UXlCQWpaZk1D?=
- =?utf-8?B?Skd4RFpxTHRPZm5PNUNsZ1MvUkUrV3VUZ1lJZ1o0VjVMQ2paODdEa2FiV1FU?=
- =?utf-8?B?L05xbjR1VWZHZUpNQ2RpRUh2dG1wTEdKL0FwYTV3c3FCTXp6OGl0V1FhT3VO?=
- =?utf-8?B?RmpmVHFCQXhHcFhyTHFRL0ZCbHg4eFZNb21RK2NJc2wzSUhLVFpBdkNsM1Rj?=
- =?utf-8?B?VWJUYkgrOEhXNkFtZ2VHZUtWRWMxL3BQRGcrZ05aSCt2WWxsTjdaRXIrczcx?=
- =?utf-8?B?YnkrK2hLWnhVMkVxZUNkQjFlaHRoTW9CVUZhdkN2ZGJzWXFvOGV0OVQ0cWVo?=
- =?utf-8?B?R0FLZG5FSlRFVXI3L3JmaUpOSWp2M2dSWEtqck52RjJVVHF5RThuUmxZVmpn?=
- =?utf-8?B?TjF0VklIL2hoViszdGZlKzVLTUJtWnFWVzAwQ0MvVnJhQUFleHZ3QnlxY09O?=
- =?utf-8?B?UnN2VG1wREd3dEhtNnBPS2VGRExmbDRxQkE1cjk5bFJkemIxZTRXZ0NTUzJV?=
- =?utf-8?B?alNMK01QVktrK3IxMHlkVUxkVU1BNjVFNDdKdW13dE45cGhPZFpUTGYzdGph?=
- =?utf-8?B?azlrV1lGMFJXbmt1NHlqWG5WUkdtTXR5VjYwWkQ1UkNLR1pnN2xkb3BJOFhJ?=
- =?utf-8?B?ZURXbFFUbzNSRjJwMlZ3MDRreDdjQjVqb0o1WE4wVzNCTCtieU0yY3NzV2RK?=
- =?utf-8?B?TG5VcUJjYk5QRXR6Mjlpa2djcGpUZGpXeHRldy9DNUc5a0JhdTlaZUlwK3lr?=
- =?utf-8?B?VWwyTkFoenRCUWF4TnJDWWZudEt0SE1VRFJxVm92WlNBUkJKSXpSRHhHdXNO?=
- =?utf-8?B?eTRoem5BZ1VoOWdsdGZMU2IwdVFHM2JrcUZXRWJ1bnZvaFJKU1ZXa0Q4eE8w?=
- =?utf-8?B?S2FiblZRb3lQSlU3WVp4Q1FQNC9BdVFCaDBQN2g1T0JROFlHVnBBV1BOLzZt?=
- =?utf-8?B?Uk91eHlOSHlHYm8xdTNzZHVyN3RKeGFpQm5sMlNTY3NEMVh3T0hEUW41RC82?=
- =?utf-8?B?QmkyL3k3Mmt3VUNCNEdzU0o1c25QcklxRG9YU2M5bmRvN2hOQzdZcmpkNzIr?=
- =?utf-8?B?U3p4eko4OHVLUCtZN1JjUzdWY0hxOTBQckM3dDVEeEhGeXViODc3UzZpU2I2?=
- =?utf-8?B?cm1zZ3BkTy92MURDYmdZYXJZYnN0Mi9PcWNWYnFkZU4rR0U3amltSkYwVmJ1?=
- =?utf-8?B?VThyMjFKZGtPckk3cDBLTmx4akNMSFh3RS9YWTU3b01DQWY3NFU5U2lmNUww?=
- =?utf-8?B?MjhkNkMzWUJHWEFrZW9vdVBzTWxWT2xWcDAyMmEwTWZYeUhiK2RzS2V4REcv?=
- =?utf-8?B?L2hJeVdDcFMrUURVSWVXZVFhTldpV0pxUmJkUnhwQm9UbVo3aHBzTVR6Ynpz?=
- =?utf-8?B?a0EzM3hhZ3dZdWpOTUx2RVRxYk9CbnVkNGc3OUg2TTNmbnpyMFhkbGVSeElR?=
- =?utf-8?B?S2wwaXp3Wmk4Q1c5RVA2VVdyazZTOTdsdEUwQVN0TmduV1ZzRnQzeHFqWnI1?=
- =?utf-8?B?c2VkaXFWa1dlRE1NcjV3aTNpMUp2MkdST0JkT0lGTG9vaUUyU3pjblY5ZFla?=
- =?utf-8?B?cXUzTGoxbXMzZmdEOVBIUHplTldEQmhzOER0UHVJRUFCT0JHVjE2OVJXZHZH?=
- =?utf-8?B?TDd4eUl1aFVHcS95RFhlMFluOEZ0bG8rVEVzN0hYaFdXME0zbWwxdXd1eXE4?=
- =?utf-8?B?UnhMZnVjYTh3THAxSGR5UWljS3p6VTA0NTRpTzNjcmZiNHAxN2RKdk5mek1L?=
- =?utf-8?B?eWpjWGpaSUprUzg4ZDlmaHdNNXRxRFpCQVdOSTloSy9RMGh0N2NwbDRXMjU5?=
- =?utf-8?Q?t6x5AaspVrbkVF/rr1y2246T+?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: be17c209-392d-4d47-d623-08dc4d61453b
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2024 06:52:15.0192
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BTH7gXtohkjNsSK+CF+2fcaCcDhnxGceTNKCuCWlYmUvZqQMX5kArLFFT1ohJMjvFWEQK9VMvB+PXmR+xS2HLQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB7335
+From: Alex Grund <flamefire89@gmail.com>
+Date: Tue, 26 Mar 2024 19:38:57 +0100
+Message-ID: <CAFm405kQcpwwY9i52V0CHtOem84ze_MOLfTxVJVUbG6MKt6zjQ@mail.gmail.com>
+Subject: [4.4] Broken GIV crypto
+To: cip-dev@lists.cip-project.org
+Content-Type: multipart/alternative; boundary="000000000000f595d20614949aac"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 26 Mar 2024 06:52:27 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15415
+ <cip-dev@lists.cip-project.org>; Tue, 26 Mar 2024 18:43:20 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15416
 
-On 22.03.24 12:39, Benjamin Schilling wrote:
-> Hi all,
-> 
-> I'm joining the discussion to start integrating the M-COM x86 support.
-> What's the status on the generic x86-64 target?
-> 
+--000000000000f595d20614949aac
+Content-Type: text/plain; charset="UTF-8"
 
-Nobuhiro wrote recently he has a prototype. Maybe he can share to
-finalize it together.
+Hi,
+I need to report a bug against the linux-4.4.y-st branch caused by commit
+24a1889c (crypto: api - Disallow identical driver names)
 
-Jan
+The upstream commit on which this is based is applied to a kernel tree that
+removed the GIV ciphers and the CRYPTO_ALG_TYPE_GIVCIPHER in upstream
+commit c79b411eaa (crypto: skcipher - remove remnants of internal IV
+generators)
 
--- 
-Siemens AG, Technology
-Linux Expert Center
+However in 4.4 this is still present and after "something" registered a
+"cts(cbc(aes))" alg on the "cts(cbc(aes-ce))" driver the code in
+crypto_lookup_skcipher will dismiss it because of the missing GIVCIPHER
+flag (type is BLKCIPHER)
+It will then add a fitting alg through crypto_givcipher_default which ends
+up calling "__crypto_register_alg" which then fails (returns EEXISTS)
+because it is adding it with the same name and driver name, although the
+flag is different (GIVCIPHER instead of BLKCIPHER) which is actually fine:
+__crypto_alg_lookup checks for a matching type before checking the name.
 
+Hence duplicate names are OK if the flags are different.
+
+I hence argue that the commit should be reverted as it causes regressions.
+In my case the device doesn't boot at all anymore as it relies on that
+crypto alg.
+
+Regards,
+Alexander Grund
+
+--000000000000f595d20614949aac
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div>Hi,</div><div>I need to report a bug against the linu=
+x-4.4.y-st branch caused by commit 24a1889c (crypto: api - Disallow identic=
+al driver names)<br><br></div><div>The upstream commit on which this is bas=
+ed is applied to a kernel tree that removed the GIV ciphers and the CRYPTO_=
+ALG_TYPE_GIVCIPHER in upstream commit c79b411eaa (crypto: skcipher - remove=
+ remnants of internal IV generators)<br><br></div><div>However in 4.4 this =
+is still present and after &quot;something&quot; registered a &quot;cts(cbc=
+(aes))&quot; alg on the &quot;cts(cbc(aes-ce))&quot; driver the code in cry=
+pto_lookup_skcipher will dismiss it because of the missing GIVCIPHER flag (=
+type is BLKCIPHER)<br></div><div>It will then add a fitting alg through cry=
+pto_givcipher_default which ends up calling &quot;__crypto_register_alg&quo=
+t; which then fails (returns EEXISTS) because it is adding it with the same=
+ name and driver name, although the flag is different (GIVCIPHER instead of=
+ BLKCIPHER) which is actually fine: __crypto_alg_lookup checks for a matchi=
+ng type before checking the name.<br><br></div><div>Hence duplicate names a=
+re OK if the flags are different.<br><br></div><div>I hence argue that the =
+commit should be reverted as it causes regressions. In my case the device d=
+oesn&#39;t boot at all anymore as it relies on that crypto alg.<br><br></di=
+v><div>Regards,<br></div><div>Alexander Grund<br></div></div>
+
+--000000000000f595d20614949aac--
 
