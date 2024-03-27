@@ -2,50 +2,50 @@ Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A025CD129D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22906CD1298
 	for <webhook@archiver.kernel.org>; Wed, 27 Mar 2024 10:37:06 +0000 (UTC)
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
- by mx.groups.io with SMTP id smtpd.web10.32447.1711527512992185459
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+ by mx.groups.io with SMTP id smtpd.web11.32306.1711527514297422374
  for <cip-dev@lists.cip-project.org>;
- Wed, 27 Mar 2024 01:18:33 -0700
+ Wed, 27 Mar 2024 01:18:34 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=BXtlQ4uv;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.49, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-41495dce900so584755e9.0
-        for <cip-dev@lists.cip-project.org>; Wed, 27 Mar 2024 01:18:32 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=kQVnhycQ;
+ spf=pass (domain: tuxon.dev, ip: 209.85.208.175, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2d094bc2244so84022131fa.1
+        for <cip-dev@lists.cip-project.org>; Wed, 27 Mar 2024 01:18:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1711527511; x=1712132311; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1711527512; x=1712132312; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NA/nZ1SUt8zbviRtEJNZhpS2YUAb5gd6lR6iarWytMY=;
-        b=BXtlQ4uv7rmLX2ohufnPzlWkQmFVjiEiR2Tdf7YmFUBXgEjO827MgypjUbkrioDvMl
-         LQDactmZZ+q4xPZ0g8mKPVfSiFtO8Jk1UNRVmJlkqWPBGcPjaX0RwAMjNfKkW9JB7Ndn
-         Jh8s1/pLspm/mIOJCxQCmUJ/jwvAfDwIFuLml6+9SWVZPfuOuguwpGs/S363siLT7Dom
-         3H1n6ePB4fINC55tW7nut6Xf+5wHbfDBQT2PnllesVCDq9iS6NBAxZVDAnkpp1e6iGCa
-         ADvE4m/xVHcMz8r7W48kJ+ykWwlSGd+FnMT6scXgEZue3UzAe2R+aCimwjOvbjgfEju4
-         nDJg==
+        bh=gndqMjqTXWbuAAMSpbCUpgJoNh7MBvK07glniHFUq4s=;
+        b=kQVnhycQ04Ux2Hy+5xuDy6xwSB2EiDYSOu1oeWoUCb+v3fADX4vTwrGDjUdqvs81ok
+         iJeRZQDYVjcfZ7zvW+QHxrXWGD6wARYA5MzUW/AgCm1tNltUE/VtvLp58mx/TxPytapT
+         jPIsFg+ijw3gvXMB4eyaeOVO/PD1daaTBntCop1RlWyx/kA+rFMTLE3LWkfnXEC3WKBr
+         M7jZ1UY/b960Po/e7OX4wMK2ORO1XQo8v8XqagLqDi0ZBT29WjxzOlfQ8g6Ls3zLg7kW
+         xXpua5qUJohUkzPWg0u97L42y0HguFRcbYOxjA2e1gjMPpCIkcpPGm55dwF8/1nwjo3n
+         zbag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711527511; x=1712132311;
+        d=1e100.net; s=20230601; t=1711527512; x=1712132312;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NA/nZ1SUt8zbviRtEJNZhpS2YUAb5gd6lR6iarWytMY=;
-        b=ewhylgs8o+t9D8n3b0TDkYMjc7BxvCaaScvv0DOmY2KYKhK/wKTOtu19Ukg/JMYjAC
-         y89V3DUfjoXB7OmlsHxe+FExBIsithvY6LtYGXUPL2Z5/mp6Tjvx6FxC4PnCAr46xlgm
-         ecFqaMkohak/5zT/Ct0yti6VlCG/BbmhCXqCZBefFN+T7g/GWnF9ED1Wja7bNw7RlSit
-         B3OdsZm3FPPIP2JMWjzoesOXmJm522yh1JJ52ljP5yxeZ3clpVwAyKFMFskrdmYxWf13
-         r/zj9DuriWp/f4WKdtuNIgyew4yCn3xv7mZQNuRp+AvV3R8aDZ/UMcVx/9Om2JsYtga1
-         9bNQ==
-X-Gm-Message-State: AOJu0Yxdy4wLwkYHV+AH5jjBCHYRACeQznIXu1ku82lFuOFl+Tezsilh
-	gd4KhVKLPpC7yjJvS3o25wmGD3npPtjF+4KZkxEYKA4xZ3jDXyYwllcmlXIsS3I=
-X-Google-Smtp-Source: AGHT+IFS75TcljIXxYLCddQFjtbYzc8BO9WRiEjp8F/qFUMVV7f+ygx8JC4cUrhtbpnKeMALd98mVA==
-X-Received: by 2002:a05:600c:3d89:b0:414:95ae:51ff with SMTP id bi9-20020a05600c3d8900b0041495ae51ffmr333121wmb.20.1711527511502;
-        Wed, 27 Mar 2024 01:18:31 -0700 (PDT)
+        bh=gndqMjqTXWbuAAMSpbCUpgJoNh7MBvK07glniHFUq4s=;
+        b=VRcuXAKmOuNY1n/h+bStHqv4Cfs4Emthl5LAGeZvShHZJ6NTsLAQFgKgci2u/oKyeF
+         aG22xvaPtRZ+agtzGG4iySwI+6A2QGJTLWZkAyQU/2HMu4NgLaQhTYLU9qneFE0LKpr3
+         ZMDo2oiEqynXfYt1vRw3wQV2msVX6WcH9Bo6c2Tdb502KL5tyVyvYoJ0E9z9eG0t/epT
+         ZeeP5d/B3jBH4ChE2Zd5BFSNu+g7PIb+Q4QZAZlIM7I5ieAcXEg2xksyPxEcS2ObDfyV
+         2TE6878PLGvFV6PUC0U7RaQJ0TLGIGW1FZ2WcjdlScB5N4pM9gHv0ryrRMYY03TSwTMk
+         QyRw==
+X-Gm-Message-State: AOJu0YxaTqcPj8b2mUly7bpi0SIPKfywMMWdKU24Jo7LaoFpsqIudvQZ
+	wZmISTVr5yd6rLxIHKxbSulkY7VhZ7OMUO8Ug0kPYx9wAKQSJJT7gC5BKwSdvIc=
+X-Google-Smtp-Source: AGHT+IH2qlrMcKUh6dr47TONHbMDiOdAgoQDzGa079tvvOgoE0f0X7ZxidniwDpzGOo7j6AK7QmQmQ==
+X-Received: by 2002:a2e:3c0b:0:b0:2d5:b33c:1f64 with SMTP id j11-20020a2e3c0b000000b002d5b33c1f64mr301809lja.38.1711527512511;
+        Wed, 27 Mar 2024 01:18:32 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id c9-20020a7bc2a9000000b0041493615585sm1353783wmk.39.2024.03.27.01.18.30
+        by smtp.gmail.com with ESMTPSA id c9-20020a7bc2a9000000b0041493615585sm1353783wmk.39.2024.03.27.01.18.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Mar 2024 01:18:31 -0700 (PDT)
+        Wed, 27 Mar 2024 01:18:32 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
@@ -54,9 +54,9 @@ Cc: cip-dev@lists.cip-project.org,
 	biju.das.jz@bp.renesas.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com,
 	claudiu.beznea@tuxon.dev
-Subject: [PATCH 5.10.y-cip 28/36] arm64: dts: renesas: r9a07g044: Add IRQC node
-Date: Wed, 27 Mar 2024 10:17:48 +0200
-Message-Id: <20240327081756.2228036-29-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 29/36] arm64: dts: renesas: r9a07g054: Add IRQC node
+Date: Wed, 27 Mar 2024 10:17:49 +0200
+Message-Id: <20240327081756.2228036-30-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240327081756.2228036-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240327081756.2228036-1-claudiu.beznea.uj@bp.renesas.com>
@@ -66,32 +66,32 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 27 Mar 2024 10:37:06 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15445
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15446
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 5edc51af5b304a91a957b862d150cd8a89c4aa97 upstream.
+commit 379478ab09e0c25709e804b732ee7910d14a3972 upstream.
 
-Add IRQC node to R9A07G044 (RZ/G2L) SoC DTSI.
+Add IRQC node to R9A07G054 (RZ/V2L) SoC DTSI.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20220718195651.7711-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/r/20220718195651.7711-4-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 55 ++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r9a07g054.dtsi | 55 ++++++++++++++++++++++
  1 file changed, 55 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-index f7edace31807..881fecc8d0bc 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-@@ -775,6 +775,61 @@ pinctrl: pinctrl@11030000 {
- 				 <&cpg R9A07G044_GPIO_SPARE_RESETN>;
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
+index fa2dfd5eee41..9a856dda9fa7 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
+@@ -782,6 +782,61 @@ pinctrl: pinctrl@11030000 {
+ 				 <&cpg R9A07G054_GPIO_SPARE_RESETN>;
  		};
  
 +		irqc: interrupt-controller@110a0000 {
-+			compatible = "renesas,r9a07g044-irqc",
++			compatible = "renesas,r9a07g054-irqc",
 +				     "renesas,rzg2l-irqc";
 +			#interrupt-cells = <2>;
 +			#address-cells = <0>;
@@ -138,15 +138,15 @@ index f7edace31807..881fecc8d0bc 100644
 +				     <GIC_SPI 473 IRQ_TYPE_LEVEL_HIGH>,
 +				     <GIC_SPI 474 IRQ_TYPE_LEVEL_HIGH>,
 +				     <GIC_SPI 475 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD R9A07G044_IA55_CLK>,
-+				 <&cpg CPG_MOD R9A07G044_IA55_PCLK>;
++			clocks = <&cpg CPG_MOD R9A07G054_IA55_CLK>,
++				 <&cpg CPG_MOD R9A07G054_IA55_PCLK>;
 +			clock-names = "clk", "pclk";
 +			power-domains = <&cpg>;
-+			resets = <&cpg R9A07G044_IA55_RESETN>;
++			resets = <&cpg R9A07G054_IA55_RESETN>;
 +		};
 +
  		dmac: dma-controller@11820000 {
- 			compatible = "renesas,r9a07g044-dmac",
+ 			compatible = "renesas,r9a07g054-dmac",
  				     "renesas,rz-dmac";
 -- 
 2.39.2
