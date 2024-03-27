@@ -2,51 +2,50 @@ Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65078CD12AC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C76CD12AB
 	for <webhook@archiver.kernel.org>; Wed, 27 Mar 2024 10:37:06 +0000 (UTC)
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
- by mx.groups.io with SMTP id smtpd.web11.32514.1711528518426879478
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+ by mx.groups.io with SMTP id smtpd.web11.32512.1711528516087702052
  for <cip-dev@lists.cip-project.org>;
- Wed, 27 Mar 2024 01:35:18 -0700
+ Wed, 27 Mar 2024 01:35:16 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=aYB0rq/i;
- spf=pass (domain: tuxon.dev, ip: 209.85.221.54, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-33ed7ba1a42so4349922f8f.2
-        for <cip-dev@lists.cip-project.org>; Wed, 27 Mar 2024 01:35:18 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=SmusL/5L;
+ spf=pass (domain: tuxon.dev, ip: 209.85.221.50, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-33d90dfe73cso319999f8f.0
+        for <cip-dev@lists.cip-project.org>; Wed, 27 Mar 2024 01:35:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1711528517; x=1712133317; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1711528514; x=1712133314; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=x7g5fTc14qsP28r1k5RjYQCPW18M91Dr5/3NKQ3Cp/Q=;
-        b=aYB0rq/i0QRMQyJWryjc55J1mGazhshg8Jauk0fn/0baLZ+4aAYs9hkhH3DEitI6iU
-         Gb2zqfxXzBUMBodF6qEVGqothC8zYZVZbi+0Se/XcslYzZUCs+HIJs16c+V+EAMnG2sB
-         kB5VrlqCxi4KVGI77g2/yBtcQ1BeZYCtXKWPiglBu4eZBH2Dfg7FM8YkZQTX1PzRtJkC
-         RbFw9gQaioBJFnvPkPCFDPybje5O/Nc1v4vITNjFIEKm1xGdm0V5Le+/qixM+T8w6WDT
-         oq7Gr/fKHaIAQsQG3W3WQvIdrWzPPO+ZiHmMw+g7kZMmvOluxJ++iciPTBFsOpmnmMXw
-         fEqA==
+        bh=xlZNVeHKvbtBeNW38McajTNAPghlBWj9e5vgpxA3xF4=;
+        b=SmusL/5LGcDnFRb7SLmrcY73trkUtzSS54yW4vRe16eyUFicz+GnrEzXnZYoolITTc
+         vQ6413jHBNOBh5ueitnfXFxngfLVQK950UIGhZWRhQ3atjNNdrMshRxbicTrOWt/spWv
+         k5gOnW+ZNHaZMFwvLGJHxhTfHWlQeID09mTCAXOGeTt/Jzs2ef0cOcBF3L3Stjlj9Ohe
+         2j7KdctU4Srho15TQJ/WINj5mmftfrn9aKDULjuUVlZBF91tScd7rWCVtx9qSdI/vA6U
+         xmdthuh7+uo56X3V32yjGT/hkbbx2W1QCIKLhjBhKwlnWXp1yVOejI1c/xwAsAq3Yhgr
+         2lhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711528517; x=1712133317;
+        d=1e100.net; s=20230601; t=1711528514; x=1712133314;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=x7g5fTc14qsP28r1k5RjYQCPW18M91Dr5/3NKQ3Cp/Q=;
-        b=OKVtBsBZLn/wjfFTekd0ICgmtvN9b7PImkIS3wIJYJXfLow6vLy90molQuF5Q6rLRW
-         OU4sWqB9SmHejsO5e74pxir/MjVNCH5h3zatI5WAo8lvwoXnOpVzn6OCCEpnLCO+4a7w
-         QQmW0BuCFVShkxT6b5oiiYpWxpMdWgw7Rr4alJWkqD/+AR8DYtMIm4svOg1NHxrs6NdB
-         2Az1ro2CbjI3vx69G3oFHtUaOYIEM/2sypoaH7+KaV+C+pbX2ZE6hAHZVOOLy0fhSVVN
-         dGoSC+sbOXmBQK3fC1BNT7eJm+KEPlMcvt5j66yerZweycHaOU6NZrG/vuKAKtQ7COrK
-         VuXA==
-X-Gm-Message-State: AOJu0Yx7A7zU+Z/Vah1/9tLrZMSBbP9CP+gfm2FYp7R5f7g18DDdWI3L
-	gM3R8jNpc2XcwW7Mh9JN9iRATeBfM2MTCWPqzpP+iUc4rnyd3vB3dubROamJBgwPfkQmmM9ibbY
-	L
-X-Google-Smtp-Source: AGHT+IHsz5JIG6D73WGjO6IlaQh4qB7uRw4DE7sGTr5k5mI8HBNOZo3iRMwd5NrCR5haBFdzdo04UQ==
-X-Received: by 2002:a05:6000:174a:b0:33d:d7be:3bec with SMTP id m10-20020a056000174a00b0033dd7be3becmr556117wrf.58.1711528516899;
-        Wed, 27 Mar 2024 01:35:16 -0700 (PDT)
+        bh=xlZNVeHKvbtBeNW38McajTNAPghlBWj9e5vgpxA3xF4=;
+        b=Io1lzLbjZC1/7fwRy8b2LloxGJ5bmg7SFkxOtj5rGdV341r52etVmPJ1zY2OnLf9eo
+         xmftjoJEPik0HxdkHBGGD7Mk49EP5F+QLiQG6UoLpkdqyMDZeauWpza6FOfKFaZCa/qD
+         QRX/AVEaP87C7bNE05geejqSdGPGCZmCXYzXvQOc4wBpQ1TVEbnTmlgnzPNBs2IktaZJ
+         27G8c1PbC1OibvJuBrUSvEYztU7gWu+1QN+8/CIACS4zGOrchyGt3lcKXXNU5d0PxrjA
+         kaPuxUD3n9o4Yh+mSMw+3blNAWSQsPuVxajjRqKc7rZ56bmyoG/vDMc0ZVmD+M1H2zVB
+         Olog==
+X-Gm-Message-State: AOJu0YyULB6NOyl445ciq23zJlc3XCooZ+AtektMN1Yyyab9taNdJob/
+	hTqwxzx1OYavTzMN/SUtXCiBx54YpDnCzpdJQBIXOMAS3cTwNF7VBazR1uwW5c4=
+X-Google-Smtp-Source: AGHT+IGzZGDLKyT8UlrnpDtqNaFEN4bZ49ynBxXi5ruHheLbjMBG7notPeWekszwmiF6GKDUwY27SQ==
+X-Received: by 2002:a5d:5505:0:b0:341:b5ca:9e9c with SMTP id b5-20020a5d5505000000b00341b5ca9e9cmr3110305wrv.25.1711528514538;
+        Wed, 27 Mar 2024 01:35:14 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id bq28-20020a5d5a1c000000b00341d84f641asm3591461wrb.8.2024.03.27.01.35.16
+        by smtp.gmail.com with ESMTPSA id bq28-20020a5d5a1c000000b00341d84f641asm3591461wrb.8.2024.03.27.01.35.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Mar 2024 01:35:16 -0700 (PDT)
+        Wed, 27 Mar 2024 01:35:14 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
@@ -55,9 +54,9 @@ Cc: cip-dev@lists.cip-project.org,
 	biju.das.jz@bp.renesas.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com,
 	claudiu.beznea@tuxon.dev
-Subject: [PATCH 6.1.y-cip 06/13] irqchip/renesas-rzg2l: Document structure members
-Date: Wed, 27 Mar 2024 10:35:01 +0200
-Message-Id: <20240327083508.2229567-7-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 04/13] irqchip/renesas-rzg2l: Use tabs instead of spaces
+Date: Wed, 27 Mar 2024 10:34:59 +0200
+Message-Id: <20240327083508.2229567-5-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240327083508.2229567-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240327083508.2229567-1-claudiu.beznea.uj@bp.renesas.com>
@@ -67,41 +66,41 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 27 Mar 2024 10:37:06 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15460
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15458
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit b94f455372ad6e6b4da8e8ed9864d9c7daaf54b8 upstream.
+commit c90b5c4e6554c1194d5f7cfe13dfd710a7661cab upstream.
 
-Document structure members to follow the requirements specified in
-maintainer-tip, section 4.3.7. Struct declarations and initializers.
+Use tabs instead of spaces in definition of TINT_EXTRACT_HWIRQ()
+and TINT_EXTRACT_GPIOINT() macros to align with coding style
+requirements described in Documentation/process/coding-style.rst,
+"Indentation" chapter.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20231120111820.87398-5-claudiu.beznea.uj@bp.renesas.com
+Link: https://lore.kernel.org/r/20231120111820.87398-3-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/irqchip/irq-renesas-rzg2l.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/irqchip/irq-renesas-rzg2l.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
-index 90971ab06f0c..0a77927b678b 100644
+index fe8d516f3614..cc42cbd05762 100644
 --- a/drivers/irqchip/irq-renesas-rzg2l.c
 +++ b/drivers/irqchip/irq-renesas-rzg2l.c
-@@ -56,6 +56,12 @@
- #define TINT_EXTRACT_HWIRQ(x)		FIELD_GET(GENMASK(15, 0), (x))
- #define TINT_EXTRACT_GPIOINT(x)		FIELD_GET(GENMASK(31, 16), (x))
+@@ -53,8 +53,8 @@
+ #define IITSR_IITSEL_EDGE_BOTH		3
+ #define IITSR_IITSEL_MASK(n)		IITSR_IITSEL((n), 3)
  
-+/**
-+ * struct rzg2l_irqc_priv - IRQ controller private data structure
-+ * @base:	Controller's base address
-+ * @fwspec:	IRQ firmware specific data
-+ * @lock:	Lock to serialize access to hardware registers
-+ */
+-#define TINT_EXTRACT_HWIRQ(x)           FIELD_GET(GENMASK(15, 0), (x))
+-#define TINT_EXTRACT_GPIOINT(x)         FIELD_GET(GENMASK(31, 16), (x))
++#define TINT_EXTRACT_HWIRQ(x)		FIELD_GET(GENMASK(15, 0), (x))
++#define TINT_EXTRACT_GPIOINT(x)		FIELD_GET(GENMASK(31, 16), (x))
+ 
  struct rzg2l_irqc_priv {
- 	void __iomem			*base;
- 	struct irq_fwspec		fwspec[IRQC_NUM_IRQ];
+ 	void __iomem *base;
 -- 
 2.39.2
 
