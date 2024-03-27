@@ -2,51 +2,50 @@ Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 818BACD12A8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59051CD12A7
 	for <webhook@archiver.kernel.org>; Wed, 27 Mar 2024 10:37:06 +0000 (UTC)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
- by mx.groups.io with SMTP id smtpd.web10.32450.1711527516332914887
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+ by mx.groups.io with SMTP id smtpd.web11.32288.1711527488365563536
  for <cip-dev@lists.cip-project.org>;
- Wed, 27 Mar 2024 01:18:36 -0700
+ Wed, 27 Mar 2024 01:18:08 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=GKJVgTXe;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.41, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4141156f245so43040815e9.2
-        for <cip-dev@lists.cip-project.org>; Wed, 27 Mar 2024 01:18:36 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=EcHg27hf;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.53, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-41494714fd1so2171615e9.2
+        for <cip-dev@lists.cip-project.org>; Wed, 27 Mar 2024 01:18:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1711527515; x=1712132315; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1711527487; x=1712132287; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SmKGK3vdK5uJgoMZKJ3vL7L0C4g0A3QkHWLueTVsAgs=;
-        b=GKJVgTXebS0+zwX5cdBl2pt0jaAKX+f45TarqiTxNKEsorM+0YLX1oJ+ErxhnwvcBq
-         i4V80QH7qYaPaXstEzKVjEyUONZpLhJOnmT0c6vXFDoUVt4MSDuBHBwcMfDePG6/rqju
-         7vq9HQyt0FIcofezBPktCiNP+NZMUUglO/Qb6K8gZX9YiRM3hkE4ca/CDVdzdiayFwgV
-         Zb/PFCWlFlgRI4IoUz4t7zrRYfIaEwNMeXZX8lVLOKhiNW3x4sEFIvjpMUmYwoomi7N5
-         bWt/yUUGFoFtTXFzQzVSqmswmRFPz2UxWr067nz2T4pawR9UYZx8zDFMM9qiMZ906fB3
-         uIqw==
+        bh=qVEyDplVIpP9cdWkq05qf2SYfw8rH6B38WcrbtKAotA=;
+        b=EcHg27hfqjh+3M3X63nV0WuUPDKhh99E6G+J48HPkx2A3tuT1KzPXx3D9k9qw5u4Wz
+         i6/+InJcpPYbl+JH2ifp7+aqhQhvPCGmsC+ifExWoe215vXQE3FoSV5+ESVuoVlUsfcZ
+         9pzyo6KtshqbZKzUcLRGyC1SYozQuUKE+2JspweQ0YmUPu38CB9KOw3nEBlfIU2phoH4
+         5yj+DG1BuqxWYakaFQ0O4cgCLK6CDe6Meut6RLMatZ9OgUg6nekiJjbugNnGprmZNk98
+         CWEW7fvBndH4lOmiSWPlk+jkvrkX09flPUcSrEST6equCr6qjJF2H3Pw/9deKNxneLYZ
+         z3zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711527515; x=1712132315;
+        d=1e100.net; s=20230601; t=1711527487; x=1712132287;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SmKGK3vdK5uJgoMZKJ3vL7L0C4g0A3QkHWLueTVsAgs=;
-        b=i8BzNNml8YS4EXzNnccUc+2TzRO/FDJUkN+RON/PBbl5Gfdy92OBTyS2YmYJmCAneH
-         cCq9k+8Q+GutV9YjL80n2cupVZ3zhWh9kezdRAtNxm7zlNinwKj+iZX3uIczYxCWERsS
-         yRbJrS9FJQAS0to6qjei5gu8SQVNymVZP/9/+VOp1HbTWt+8a4rLU3vtxGQ1mnLyfyhu
-         8PmLkXH2Bk5hQuhzVqrgy6eAfjuVVzL6eVqrlqVu9JN153+250HsMIeHHphPBFGJf/sZ
-         e/ENfmVzsyV2Wct9KUdLf3slaxD0RgXVQgB/DYU2cax9n78bEkU1G6PYZaEJOue6QPRB
-         4GwQ==
-X-Gm-Message-State: AOJu0Yz/oteEMS4u0PRif/jxthlhgpN2GlXffOkyylGYuilyfcJetwZa
-	Jyu564em6LNG2rb7WU1rXlabS2QRcFrn22e3lxS1cBeR11jJ5v3CLPq4u9PClq9W4/KPukWSatv
-	7
-X-Google-Smtp-Source: AGHT+IH12RGaW59LSoDaSdoT8OLdKgbfz2L3qfcekv4COgTnXD/oiE8bUx7jMqJLE0L0mRtelGXWHw==
-X-Received: by 2002:a05:600c:4f06:b0:414:95de:6c7a with SMTP id l6-20020a05600c4f0600b0041495de6c7amr198619wmq.40.1711527514852;
-        Wed, 27 Mar 2024 01:18:34 -0700 (PDT)
+        bh=qVEyDplVIpP9cdWkq05qf2SYfw8rH6B38WcrbtKAotA=;
+        b=StVD4D7UM9Pj9n149tjxCtdj+7lBKQt0+YiiGTvs4onvSGx1H1yEQbNf6I7Bflvgxl
+         e6sVFODgvXA9gbp34cWDzfNtyomugcITif+QAgY5iMa8Bgaz0dcscaUt23UpJePh3EP+
+         biJhOqAZVXyLB5TbMCZkoTHqknf6eQsPNNUu4RYXuKNGH6kqwBW6/4RFWeVUn44TGto3
+         BV+Gp8iGMbnNzqzlEiqWxsILbxfd0W6XwwMjwD2kw3MSbZDDkPIBTs+qZUYvvjounhFg
+         JSZw6408f+jsAPBqiHmBLlVAXDlQzf2xfjwJq5y09L4MxOf9vhJVXYzwm1VEH8L/cwVa
+         SJgQ==
+X-Gm-Message-State: AOJu0YyPj4+DY2XuozYfvo82QsLltUswlgOaeu0tJvwcsXzCwG91SNeT
+	vbDf7LiC0B04HO7fIecG0aQYnzLvENcUZoI9HC/AtUf/iTxCU41NlQesJZGcKpM=
+X-Google-Smtp-Source: AGHT+IETQ2ouWa1W0GcfCGVx+Ik4psJWhNc5n0IwuQkl83f1vEc2ngbQyJZ+SnGUKFg1e9gEbDMPkg==
+X-Received: by 2002:a05:600c:4510:b0:414:1351:8662 with SMTP id t16-20020a05600c451000b0041413518662mr2650359wmo.12.1711527486830;
+        Wed, 27 Mar 2024 01:18:06 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id c9-20020a7bc2a9000000b0041493615585sm1353783wmk.39.2024.03.27.01.18.33
+        by smtp.gmail.com with ESMTPSA id c9-20020a7bc2a9000000b0041493615585sm1353783wmk.39.2024.03.27.01.18.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Mar 2024 01:18:34 -0700 (PDT)
+        Wed, 27 Mar 2024 01:18:06 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
@@ -55,9 +54,9 @@ Cc: cip-dev@lists.cip-project.org,
 	biju.das.jz@bp.renesas.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com,
 	claudiu.beznea@tuxon.dev
-Subject: [PATCH 5.10.y-cip 31/36] arm64: dts: renesas: r9a07g044: Update pinctrl node to handle GPIO interrupts
-Date: Wed, 27 Mar 2024 10:17:51 +0200
-Message-Id: <20240327081756.2228036-32-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 07/36] pinctrl: renesas: rzg2l: Enhance driver to support interrupt affinity setting
+Date: Wed, 27 Mar 2024 10:17:27 +0200
+Message-Id: <20240327081756.2228036-8-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240327081756.2228036-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240327081756.2228036-1-claudiu.beznea.uj@bp.renesas.com>
@@ -67,37 +66,38 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 27 Mar 2024 10:37:06 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15448
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15424
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 989fd5a7fb7927da37a004cce5336e3940a842e1 upstream.
+commit e4c3a81ab88f3230713f4678deb9dd3cb8d0382c upstream.
 
-Add required properties in pinctrl node to handle GPIO interrupts.
+Implement irq_set_affinity callback so that we can set affinity
+for GPIO IRQs.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20220718195651.7711-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20231011195923.67404-1-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[claudiu.beznea: fixed conflict by removing IRQCHIP_IMMUTABLE and
+ GPIOCHIP_IRQ_RESOURCE_HELPERS as these are not available in v5.10]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-index 881fecc8d0bc..390914c8db49 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-@@ -767,6 +767,10 @@ pinctrl: pinctrl@11030000 {
- 			reg = <0 0x11030000 0 0x10000>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			#address-cells = <2>;
-+			#interrupt-cells = <2>;
-+			interrupt-parent = <&irqc>;
-+			interrupt-controller;
- 			gpio-ranges = <&pinctrl 0 0 392>;
- 			clocks = <&cpg CPG_MOD R9A07G044_GPIO_HCLK>;
- 			power-domains = <&cpg>;
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index a0a704449caf..2965c67d8ad0 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -1242,6 +1242,7 @@ static const struct irq_chip rzg2l_gpio_irqchip = {
+ 	.irq_set_type = rzg2l_gpio_irq_set_type,
+ 	.irq_eoi = rzg2l_gpio_irqc_eoi,
+ 	.irq_print_chip = rzg2l_gpio_irq_print_chip,
++	.irq_set_affinity = irq_chip_set_affinity_parent,
+ };
+ 
+ static int rzg2l_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
 -- 
 2.39.2
 
