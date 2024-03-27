@@ -2,50 +2,50 @@ Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C9A0CD12B0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A93CD12B4
 	for <webhook@archiver.kernel.org>; Wed, 27 Mar 2024 10:37:06 +0000 (UTC)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
- by mx.groups.io with SMTP id smtpd.web11.32289.1711527489513052852
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+ by mx.groups.io with SMTP id smtpd.web10.32433.1711527490489761232
  for <cip-dev@lists.cip-project.org>;
- Wed, 27 Mar 2024 01:18:09 -0700
+ Wed, 27 Mar 2024 01:18:10 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=JFH53TpH;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.52, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4148c5de23fso13651755e9.1
-        for <cip-dev@lists.cip-project.org>; Wed, 27 Mar 2024 01:18:09 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=HokYqtc4;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.43, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4148c6132b4so3120275e9.1
+        for <cip-dev@lists.cip-project.org>; Wed, 27 Mar 2024 01:18:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1711527488; x=1712132288; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1711527489; x=1712132289; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=O2Cc7kAEpFuy//l5Tsh++q77snO4W4RVQYsZaqHJXbk=;
-        b=JFH53TpHcOfqrO93DwR36duClBbh8Hj8f68DgD+LvNL0DAQqh9rxCa2DagYaynmQn4
-         NvCFyr41eVpS5+gxkrsGRhpwP2DNhZJ3pDFqN2XiFmgU0OJOd62sd3d45ejmecklGQd2
-         RtkJByw1d20IQkhThZenBz5qG8YFFYfwn/wmnRIm1ESYmOV0MBpiYt7gijKA+lANnV23
-         L4xughXckcUJ2lp0TgrSbPKTlKl4nDpll42LYMfXS/+b7G73GGG3NvXT9PRnsd+Qk7Ok
-         n4VzVv3kOocn2ioB+BKyIBFFKV3GAOkdlnAuc5aiieNQ0sXXbrPrSU0fssNI56sDFXPA
-         0kHw==
+        bh=ToSucKwbPqdoHraBZXnmWdJqUnwHYMVZqR4ncg2CPCA=;
+        b=HokYqtc4eP34cGmgp3o3OodsYz/pkBHwk1EZQymk0a9DRxLEdRLSxgrDYVxlaGtymR
+         PAMlaPcFt39ikk/4ROoc4pH65E1NLu2HI3cEilxSWzWLKG7tdkEAwZAftOEWSXynGFOe
+         Ob9l24cO/mbAJj8wytaW/Cp+KPLX2NVSUNvlZiRymQ8z/lXZBpHuVaFyL5a6CHKzx9kR
+         AEy34xhMwc/L9GTNo4B1gJWJD5IvVURM3HLeHpTn6G6t23V4omA4ND78lr7YG20J+WXP
+         KE+VWG5O02nNSGuZuMrmrHna1HE5Tu9u6tySK+lEZEB+L/Ss0NZ+g+GYYiGRiRhkTrsR
+         l8pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711527488; x=1712132288;
+        d=1e100.net; s=20230601; t=1711527489; x=1712132289;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=O2Cc7kAEpFuy//l5Tsh++q77snO4W4RVQYsZaqHJXbk=;
-        b=DAr4zZyV3dFfBys7TlCYb0aK106m4CacFBMSGznTiLrp1CgWePca9sA5orZ84Mqc92
-         atJpu2ru4xvAsjgAZ6xb2U3aBjMuk/3Drvil3NuW51+cTkKRKq9rdAQGhRGXwvHr4YU/
-         eYsC5nT4VFcjeuI/FUfcM5gkd5WbbH3e5Tx29VuoD0b/s5aI9LWyQNl8YAXvlnCjgCU3
-         uhgfUqlRaBwwGILs3Frwr3xn2ztkp1c4fEOTjE6QdeC6l8lhJ9eZ3xC00Aa2MVuot4Zo
-         FTlRnRCN78Iniavk67jS+DSr5o2KshSPDMH1TZvCVQYntCW+1GOGo/JBCed9bnKDaa/v
-         d/cQ==
-X-Gm-Message-State: AOJu0YxhLkuzIMLv+0vxqR+6it1qyBmrNY6dH2sDMPwv19EYiIkNHjVj
-	uQxKMujcbvOWS792i/awsiflRU+TCbjt9GObLDDyyHeZDquMFMy4XOzjA1mrSRw=
-X-Google-Smtp-Source: AGHT+IHLW5TBOfJ5OWIygFTfgOQwlEqp00/Xx2F3UThWpYGhRfQeAo1ZUGexvgSqT/LtM/Yn50kuDA==
-X-Received: by 2002:a05:600c:54ea:b0:414:8889:5a39 with SMTP id jb10-20020a05600c54ea00b0041488895a39mr1240046wmb.17.1711527487982;
-        Wed, 27 Mar 2024 01:18:07 -0700 (PDT)
+        bh=ToSucKwbPqdoHraBZXnmWdJqUnwHYMVZqR4ncg2CPCA=;
+        b=hBD4V+tmAiiSwF/2fu0n52Wpjw6fF13tbzog49d6t/JJFYz7Hgkd/MNwH9g6eP/XC2
+         hSg+bcO5VViavs4mtmmWzcOJi0d/ZfdVXRhkVGMKYSKM7M2xNeUKW8K4QlNbxidUMk11
+         Lqygz+THgNGSDDyVo21pk/NnA0g7yzzfkFTI6qnBTp/Y5k5fnlaFxFHNO01tqbr5NanD
+         IsFBdIEPVCWC9HUHPLAOu2rqM6P//bGJGFia911S2JQU0ADK86c6kTBIAPorJqYcSw0b
+         YmHitAQSNYJMlZQ+QnLcBPSD3+8H1DkNlefl+T0WIaUjyZwjKv6jawaSvuqBBCU5RP6s
+         RWeg==
+X-Gm-Message-State: AOJu0YzRKEc2i8ht4uoa8a7A8jLzPacxcVFmq3wvSzZK6W5JM1Wb22S2
+	diz0csBiNOWinvqPHSWuVmzwim8Kco2xMHtLGH7wt/I7aokWe0isbek2wOGOQoY=
+X-Google-Smtp-Source: AGHT+IHwTaREpG2JprD9rgxprvxPQoamwTm7+w8ySz9s7XENRqfX4i0hVxQhqIUlhPcEJBfGdK9XKg==
+X-Received: by 2002:a05:600c:354d:b0:414:8849:947e with SMTP id i13-20020a05600c354d00b004148849947emr3420724wmq.3.1711527488978;
+        Wed, 27 Mar 2024 01:18:08 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id c9-20020a7bc2a9000000b0041493615585sm1353783wmk.39.2024.03.27.01.18.07
+        by smtp.gmail.com with ESMTPSA id c9-20020a7bc2a9000000b0041493615585sm1353783wmk.39.2024.03.27.01.18.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Mar 2024 01:18:07 -0700 (PDT)
+        Wed, 27 Mar 2024 01:18:08 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
@@ -54,9 +54,9 @@ Cc: cip-dev@lists.cip-project.org,
 	biju.das.jz@bp.renesas.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com,
 	claudiu.beznea@tuxon.dev
-Subject: [PATCH 5.10.y-cip 08/36] dt-bindings: interrupt-controller: Add Renesas RZ/G2L Interrupt Controller
-Date: Wed, 27 Mar 2024 10:17:28 +0200
-Message-Id: <20240327081756.2228036-9-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 09/36] irqdomain: Make of_phandle_args_to_fwspec() generally available
+Date: Wed, 27 Mar 2024 10:17:29 +0200
+Message-Id: <20240327081756.2228036-10-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240327081756.2228036-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240327081756.2228036-1-claudiu.beznea.uj@bp.renesas.com>
@@ -66,164 +66,67 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 27 Mar 2024 10:37:06 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15425
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15426
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Marc Zyngier <maz@kernel.org>
 
-commit 96fed779d3d4cb3c221bb70e94de59b8dec0abfc upstream.
+commit 8b0b9d113ac2dfedf8daff18429b56f9de6d0fea upstream.
 
-Add DT bindings for the Renesas RZ/G2L Interrupt Controller.
+of_phandle_args_to_fwspec() can be generally useful to code extracting a DT
+of_phandle and using an irq_fwspec to use the hierarchical irqdomain API.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Make it visible to the rest of the kernel, including modules.
+
+Link: https://lore.kernel.org/r/20210929163847.2807812-2-maz@kernel.org
+Tested-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
-Link: https://lore.kernel.org/r/20220707182314.66610-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- .../renesas,rzg2l-irqc.yaml                   | 133 ++++++++++++++++++
- 1 file changed, 133 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
+ include/linux/irqdomain.h | 4 ++++
+ kernel/irq/irqdomain.c    | 6 +++---
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
-new file mode 100644
-index 000000000000..ffbb4ab4d9a7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzg2l-irqc.yaml
-@@ -0,0 +1,133 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/interrupt-controller/renesas,rzg2l-irqc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
+index 9b9743f7538c..7871b4adeb3a 100644
+--- a/include/linux/irqdomain.h
++++ b/include/linux/irqdomain.h
+@@ -66,6 +66,10 @@ struct irq_fwspec {
+ 	u32 param[IRQ_DOMAIN_IRQ_SPEC_PARAMS];
+ };
+ 
++/* Conversion function from of_phandle_args fields to fwspec  */
++void of_phandle_args_to_fwspec(struct device_node *np, const u32 *args,
++			       unsigned int count, struct irq_fwspec *fwspec);
 +
-+title: Renesas RZ/G2L (and alike SoC's) Interrupt Controller (IA55)
-+
-+maintainers:
-+  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-+  - Geert Uytterhoeven <geert+renesas@glider.be>
-+
-+description: |
-+  IA55 performs various interrupt controls including synchronization for the external
-+  interrupts of NMI, IRQ, and GPIOINT and the interrupts of the built-in peripheral
-+  interrupts output by each IP. And it notifies the interrupt to the GIC
-+    - IRQ sense select for 8 external interrupts, mapped to 8 GIC SPI interrupts
-+    - GPIO pins used as external interrupt input pins, mapped to 32 GIC SPI interrupts
-+    - NMI edge select (NMI is not treated as NMI exception and supports fall edge and
-+      stand-up edge detection interrupts)
-+
-+allOf:
-+  - $ref: /schemas/interrupt-controller.yaml#
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - renesas,r9a07g044-irqc    # RZ/G2L
-+      - const: renesas,rzg2l-irqc
-+
-+  '#interrupt-cells':
-+    description: The first cell should contain external interrupt number (IRQ0-7) and the
-+                 second cell is used to specify the flag.
-+    const: 2
-+
-+  '#address-cells':
-+    const: 0
-+
-+  interrupt-controller: true
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 41
-+
-+  clocks:
-+    maxItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: clk
-+      - const: pclk
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - '#interrupt-cells'
-+  - '#address-cells'
-+  - interrupt-controller
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - power-domains
-+  - resets
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/clock/r9a07g044-cpg.h>
-+
-+    irqc: interrupt-controller@110a0000 {
-+            compatible = "renesas,r9a07g044-irqc", "renesas,rzg2l-irqc";
-+            reg = <0x110a0000 0x10000>;
-+            #interrupt-cells = <2>;
-+            #address-cells = <0>;
-+            interrupt-controller;
-+            interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 445 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 446 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 447 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 448 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 450 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 451 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 452 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 453 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 454 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 455 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 456 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 457 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 458 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 459 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 460 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 461 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 462 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 463 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 464 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 469 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 470 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 471 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 472 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 473 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 474 IRQ_TYPE_LEVEL_HIGH>,
-+                         <GIC_SPI 475 IRQ_TYPE_LEVEL_HIGH>;
-+            clocks = <&cpg CPG_MOD R9A07G044_IA55_CLK>,
-+                     <&cpg CPG_MOD R9A07G044_IA55_PCLK>;
-+            clock-names = "clk", "pclk";
-+            power-domains = <&cpg>;
-+            resets = <&cpg R9A07G044_IA55_RESETN>;
-+    };
+ /*
+  * Should several domains have the same device node, but serve
+  * different purposes (for example one domain is for PCI/MSI, and the
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index fd3f7c16c299..b9fda33a2148 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -784,9 +784,8 @@ static int irq_domain_translate(struct irq_domain *d,
+ 	return 0;
+ }
+ 
+-static void of_phandle_args_to_fwspec(struct device_node *np, const u32 *args,
+-				      unsigned int count,
+-				      struct irq_fwspec *fwspec)
++void of_phandle_args_to_fwspec(struct device_node *np, const u32 *args,
++			       unsigned int count, struct irq_fwspec *fwspec)
+ {
+ 	int i;
+ 
+@@ -796,6 +795,7 @@ static void of_phandle_args_to_fwspec(struct device_node *np, const u32 *args,
+ 	for (i = 0; i < count; i++)
+ 		fwspec->param[i] = args[i];
+ }
++EXPORT_SYMBOL_GPL(of_phandle_args_to_fwspec);
+ 
+ unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
+ {
 -- 
 2.39.2
 
