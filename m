@@ -2,50 +2,51 @@ Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59103CD12A9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65078CD12AC
 	for <webhook@archiver.kernel.org>; Wed, 27 Mar 2024 10:37:06 +0000 (UTC)
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
- by mx.groups.io with SMTP id smtpd.web10.32432.1711527487337625102
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+ by mx.groups.io with SMTP id smtpd.web11.32514.1711528518426879478
  for <cip-dev@lists.cip-project.org>;
- Wed, 27 Mar 2024 01:18:07 -0700
+ Wed, 27 Mar 2024 01:35:18 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=dnrwNeA3;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.49, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-41488e17e1cso17815725e9.0
-        for <cip-dev@lists.cip-project.org>; Wed, 27 Mar 2024 01:18:07 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=aYB0rq/i;
+ spf=pass (domain: tuxon.dev, ip: 209.85.221.54, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-33ed7ba1a42so4349922f8f.2
+        for <cip-dev@lists.cip-project.org>; Wed, 27 Mar 2024 01:35:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1711527486; x=1712132286; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1711528517; x=1712133317; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=L54lWPHYc9HFQiRqSsiWrn83FaCx6Rp3gfoBfFoHZac=;
-        b=dnrwNeA3h1shLimWGh1qQqwT92MtpMRhrgx09kBokyqLs0M5d9UaRdA3yJyquVemBv
-         zVTydlYrP1fuAeC0vG1B+GLd3p5b918CZoOn0Y/4shP15oJipD0ogLSG3PlPtUDYBgv8
-         1FfnHhnq4bwWB882ZGydchWFgObtqW6LWu5A1eH/JmnumD/B2VKRZVcgwN+IwvtQ+k1t
-         CmrrDeD4JgtTkrCi8xHipe1X4vmr1dLX0f83sJww2mpsN0cFVLw37LUHTuSIFatroOk3
-         HQcvZPcu+CdpBnIGsaQaO1wkjHPHlrBUpwRzB9aC1egxrKiTAPa65kDI72w6h5xn0LGI
-         b/FA==
+        bh=x7g5fTc14qsP28r1k5RjYQCPW18M91Dr5/3NKQ3Cp/Q=;
+        b=aYB0rq/i0QRMQyJWryjc55J1mGazhshg8Jauk0fn/0baLZ+4aAYs9hkhH3DEitI6iU
+         Gb2zqfxXzBUMBodF6qEVGqothC8zYZVZbi+0Se/XcslYzZUCs+HIJs16c+V+EAMnG2sB
+         kB5VrlqCxi4KVGI77g2/yBtcQ1BeZYCtXKWPiglBu4eZBH2Dfg7FM8YkZQTX1PzRtJkC
+         RbFw9gQaioBJFnvPkPCFDPybje5O/Nc1v4vITNjFIEKm1xGdm0V5Le+/qixM+T8w6WDT
+         oq7Gr/fKHaIAQsQG3W3WQvIdrWzPPO+ZiHmMw+g7kZMmvOluxJ++iciPTBFsOpmnmMXw
+         fEqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711527486; x=1712132286;
+        d=1e100.net; s=20230601; t=1711528517; x=1712133317;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=L54lWPHYc9HFQiRqSsiWrn83FaCx6Rp3gfoBfFoHZac=;
-        b=BJIaAWPjDA61WN+gLvYjJzVIV4BndVNsXtI9oFN1FSsBIfvzvazdt9+9YyZ25R4rdZ
-         7ZZSfUdpSo8p8FBGjqSOIlbQ6bsemxiAVSJ+G2aUbYoSTY09QX4efkuYpJBTN4ljzZHs
-         J6f7L3B/is+UYeh2iSBXsNC1gpmfa9BIZeX6axwkfEc9VA3aZ6QiDv/qEiSAzW3SlUhE
-         e3Yoh9cEYNU/7ovUh25Dx6vbO+5HDjCUmQbGJ/oyf7jESHfMKGPZSB49fxxf3Z/xhmYA
-         0DF0uJFjCy6RFWVs1emIz8vDY4FYWCjdvVYhdXlGJ3xWo/mAtppyHQAvWrX/gD73hlV9
-         U+bA==
-X-Gm-Message-State: AOJu0YwfP+IiUwSW2Yu1WutdZtBoi4UhIRC9+iGrHPPlhI6radXIu68D
-	lXUHVSPav9fwR2ydfo+oG5/Ei2IVi16WQE5F0GJ8UiMmf5B3Rlz9AjmQ0r2P6Fg=
-X-Google-Smtp-Source: AGHT+IEZmrTHpN441cpLLtYrk2OdUqOxpR8jhVVK1NTgKXOzEJQDtcHQoaKfY+NNRH31vSNo1iVD6Q==
-X-Received: by 2002:a05:600c:46c7:b0:414:7597:c2dc with SMTP id q7-20020a05600c46c700b004147597c2dcmr3486007wmo.17.1711527485741;
-        Wed, 27 Mar 2024 01:18:05 -0700 (PDT)
+        bh=x7g5fTc14qsP28r1k5RjYQCPW18M91Dr5/3NKQ3Cp/Q=;
+        b=OKVtBsBZLn/wjfFTekd0ICgmtvN9b7PImkIS3wIJYJXfLow6vLy90molQuF5Q6rLRW
+         OU4sWqB9SmHejsO5e74pxir/MjVNCH5h3zatI5WAo8lvwoXnOpVzn6OCCEpnLCO+4a7w
+         QQmW0BuCFVShkxT6b5oiiYpWxpMdWgw7Rr4alJWkqD/+AR8DYtMIm4svOg1NHxrs6NdB
+         2Az1ro2CbjI3vx69G3oFHtUaOYIEM/2sypoaH7+KaV+C+pbX2ZE6hAHZVOOLy0fhSVVN
+         dGoSC+sbOXmBQK3fC1BNT7eJm+KEPlMcvt5j66yerZweycHaOU6NZrG/vuKAKtQ7COrK
+         VuXA==
+X-Gm-Message-State: AOJu0Yx7A7zU+Z/Vah1/9tLrZMSBbP9CP+gfm2FYp7R5f7g18DDdWI3L
+	gM3R8jNpc2XcwW7Mh9JN9iRATeBfM2MTCWPqzpP+iUc4rnyd3vB3dubROamJBgwPfkQmmM9ibbY
+	L
+X-Google-Smtp-Source: AGHT+IHsz5JIG6D73WGjO6IlaQh4qB7uRw4DE7sGTr5k5mI8HBNOZo3iRMwd5NrCR5haBFdzdo04UQ==
+X-Received: by 2002:a05:6000:174a:b0:33d:d7be:3bec with SMTP id m10-20020a056000174a00b0033dd7be3becmr556117wrf.58.1711528516899;
+        Wed, 27 Mar 2024 01:35:16 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id c9-20020a7bc2a9000000b0041493615585sm1353783wmk.39.2024.03.27.01.18.04
+        by smtp.gmail.com with ESMTPSA id bq28-20020a5d5a1c000000b00341d84f641asm3591461wrb.8.2024.03.27.01.35.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Mar 2024 01:18:05 -0700 (PDT)
+        Wed, 27 Mar 2024 01:35:16 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
@@ -54,111 +55,53 @@ Cc: cip-dev@lists.cip-project.org,
 	biju.das.jz@bp.renesas.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com,
 	claudiu.beznea@tuxon.dev
-Subject: [PATCH 5.10.y-cip 06/36] pinctrl: renesas: rzg2l: Use devm_clk_get_enabled() helper
-Date: Wed, 27 Mar 2024 10:17:26 +0200
-Message-Id: <20240327081756.2228036-7-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 06/13] irqchip/renesas-rzg2l: Document structure members
+Date: Wed, 27 Mar 2024 10:35:01 +0200
+Message-Id: <20240327083508.2229567-7-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240327081756.2228036-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20240327081756.2228036-1-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240327083508.2229567-1-claudiu.beznea.uj@bp.renesas.com>
+References: <20240327083508.2229567-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 27 Mar 2024 10:37:06 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15423
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15460
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 95eb19869401850f069723b296170b8b3bd5be9e upstream.
+commit b94f455372ad6e6b4da8e8ed9864d9c7daaf54b8 upstream.
 
-The devm_clk_get_enabled() helper:
-   - calls devm_clk_get()
-   - calls clk_prepare_enable() and registers what is needed in order to
-     call clk_disable_unprepare() when needed, as a managed resource.
+Document structure members to follow the requirements specified in
+maintainer-tip, section 4.3.7. Struct declarations and initializers.
 
-This simplifies the code and avoids the need of a dedicated function used
-with devm_add_action_or_reset().
-
-While at it, use dev_err_probe() which filters -EPROBE_DEFER.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/a4a586337d692f0ca396b80d275ba634eb419593.1690058500.git.christophe.jaillet@wanadoo.fr
-[geert: Make clk local to rzg2l_pinctrl_probe()]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20231120111820.87398-5-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 32 ++++---------------------
- 1 file changed, 5 insertions(+), 27 deletions(-)
+ drivers/irqchip/irq-renesas-rzg2l.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 230075645094..a0a704449caf 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -142,7 +142,6 @@ struct rzg2l_pinctrl {
- 	const struct rzg2l_pinctrl_data	*data;
+diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
+index 90971ab06f0c..0a77927b678b 100644
+--- a/drivers/irqchip/irq-renesas-rzg2l.c
++++ b/drivers/irqchip/irq-renesas-rzg2l.c
+@@ -56,6 +56,12 @@
+ #define TINT_EXTRACT_HWIRQ(x)		FIELD_GET(GENMASK(15, 0), (x))
+ #define TINT_EXTRACT_GPIOINT(x)		FIELD_GET(GENMASK(31, 16), (x))
+ 
++/**
++ * struct rzg2l_irqc_priv - IRQ controller private data structure
++ * @base:	Controller's base address
++ * @fwspec:	IRQ firmware specific data
++ * @lock:	Lock to serialize access to hardware registers
++ */
+ struct rzg2l_irqc_priv {
  	void __iomem			*base;
- 	struct device			*dev;
--	struct clk			*clk;
- 
- 	struct gpio_chip		gpio_chip;
- 	struct pinctrl_gpio_range	gpio_range;
-@@ -1476,14 +1475,10 @@ static int rzg2l_pinctrl_register(struct rzg2l_pinctrl *pctrl)
- 	return 0;
- }
- 
--static void rzg2l_pinctrl_clk_disable(void *data)
--{
--	clk_disable_unprepare(data);
--}
--
- static int rzg2l_pinctrl_probe(struct platform_device *pdev)
- {
- 	struct rzg2l_pinctrl *pctrl;
-+	struct clk *clk;
- 	int ret;
- 
- 	BUILD_BUG_ON(ARRAY_SIZE(rzg2l_gpio_configs) * RZG2L_PINS_PER_PORT >
-@@ -1506,12 +1501,10 @@ static int rzg2l_pinctrl_probe(struct platform_device *pdev)
- 	if (IS_ERR(pctrl->base))
- 		return PTR_ERR(pctrl->base);
- 
--	pctrl->clk = devm_clk_get(pctrl->dev, NULL);
--	if (IS_ERR(pctrl->clk)) {
--		ret = PTR_ERR(pctrl->clk);
--		dev_err(pctrl->dev, "failed to get GPIO clk : %i\n", ret);
--		return ret;
--	}
-+	clk = devm_clk_get_enabled(pctrl->dev, NULL);
-+	if (IS_ERR(clk))
-+		return dev_err_probe(pctrl->dev, PTR_ERR(clk),
-+				     "failed to enable GPIO clk\n");
- 
- 	spin_lock_init(&pctrl->lock);
- 	spin_lock_init(&pctrl->bitmap_lock);
-@@ -1519,21 +1512,6 @@ static int rzg2l_pinctrl_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, pctrl);
- 
--	ret = clk_prepare_enable(pctrl->clk);
--	if (ret) {
--		dev_err(pctrl->dev, "failed to enable GPIO clk: %i\n", ret);
--		return ret;
--	}
--
--	ret = devm_add_action_or_reset(&pdev->dev, rzg2l_pinctrl_clk_disable,
--				       pctrl->clk);
--	if (ret) {
--		dev_err(pctrl->dev,
--			"failed to register GPIO clk disable action, %i\n",
--			ret);
--		return ret;
--	}
--
- 	ret = rzg2l_pinctrl_register(pctrl);
- 	if (ret)
- 		return ret;
+ 	struct irq_fwspec		fwspec[IRQC_NUM_IRQ];
 -- 
 2.39.2
 
