@@ -1,100 +1,228 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <chris.paterson2@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 443F6C67861
-	for <webhook@archiver.kernel.org>; Tue,  9 Apr 2024 09:15:19 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web10.131674.1712654117136333069
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 022ACC67861
+	for <webhook@archiver.kernel.org>; Tue,  9 Apr 2024 11:59:00 +0000 (UTC)
+Received: from TYVP286CU001.outbound.protection.outlook.com (TYVP286CU001.outbound.protection.outlook.com [52.101.229.2])
+ by mx.groups.io with SMTP id smtpd.web10.134263.1712663937051397304
  for <cip-dev@lists.cip-project.org>;
- Tue, 09 Apr 2024 02:15:17 -0700
+ Tue, 09 Apr 2024 04:58:57 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 943381C0080; Tue,  9 Apr 2024 11:15:13 +0200 (CEST)
-Date: Tue, 9 Apr 2024 11:15:13 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Ulrich Hecht <uli@fpond.eu>
-Cc: "pavel@denx.de" <pavel@denx.de>,
-	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: Re: Request for reviews for 4.4-st51, 4.4-cip86
-Message-ID: <ZhUHIa7hW+5VNtEY@duo.ucw.cz>
-References: <1155634901.1549797.1712565256786@webmail.strato.com>
+ dkim=pass header.i=@renesas.com header.s=selector1 header.b=CPM8n7tF;
+ spf=pass (domain: renesas.com, ip: 52.101.229.2, mailfrom: chris.paterson2@renesas.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LpeKxjt95+IOUPZMv3FIk5ro+cBZtA7dUiAwWn3fIF3pCDV6I+SqhxlHPuvduiY71PvF4Ydb+RskY9otgalBJlOWigWzQiRED8TfGHPFZHQ4qkshEOi+tFBEBAUAAp51f0CdTj3oPRa6RctNxHf0AxSK+nRSFQBLEbGBIGFyWMeeQ79Z8EPpq4wOesNl+Skrh69DYpdkhYd6ChksqJPmfj/6Ig9XmGMIjGIQggHx/bfxRo4f6FH/X9hD4ZzbS1WjK8yRDV4X6dy7je6yaJv6aws2X9HU8sng4CS/66bizt+QKhENpoLWZ6dt8LcPagmTjPgw1WjgXN2cqMj+GOZ65Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uzK3xDlmoCcandxle79GrgPD5S9Q+0jyEBTvGROWO2M=;
+ b=GVcAO+M/O5w3Kko3N0vPUaxASMPlWI8r54U70u9F2b2XdjE9x6qk6DcF5Nl93Rk4bZUGsq/Zpf2USxa/bpoVX/82Jk1nldwoIZgIeKJ+lp4bI2yJH5hPInnwlP9SiR93Uf5yIUe2DiFA3AiBM6tSVrfCCp64I6D+RsnoklqEW8fvRT7t6U4Et0TCSbXQhivTYi0rjvulXmN/ZpySgQKLi0orAUYRYl+hKBea7oxYlfKSakyCs9QmDpqTI2v6AGn0a5cm1V5RYv+oX+y6ggtl2MSsLZl8k/KVSeyGeRaVbBRZBi+brsN4j1qVO4ytYaEItbbo73bLQAenirtYoh7YHQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uzK3xDlmoCcandxle79GrgPD5S9Q+0jyEBTvGROWO2M=;
+ b=CPM8n7tFwW7xx53sSFApzXqeCeh1cZgbXzDOn72wN4X9DaP1KJeL1vyl4cgDFr23d0kX6oQ4LOAxeHIq9NZPXa7p8tEWZ8q1FLf2LWiOu39y/OSMPY+bcRka1WLgJz6otV4nYDNBkF+LdVMPktHs+A6CBZuNpl+yd/2ZJHBA7VE=
+Received: from TYWPR01MB11862.jpnprd01.prod.outlook.com (2603:1096:400:3fc::6)
+ by OSYPR01MB5368.jpnprd01.prod.outlook.com (2603:1096:604:85::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.46; Tue, 9 Apr
+ 2024 11:58:52 +0000
+Received: from TYWPR01MB11862.jpnprd01.prod.outlook.com
+ ([fe80::fbad:9a9e:9e5:7cfa]) by TYWPR01MB11862.jpnprd01.prod.outlook.com
+ ([fe80::fbad:9a9e:9e5:7cfa%6]) with mapi id 15.20.7409.053; Tue, 9 Apr 2024
+ 11:58:52 +0000
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: Gylstorff Quirin <quirin.gylstorff@siemens.com>
+CC: "Kiszka, Jan (CT RDA IOT SES-DE)" <jan.kiszka@siemens.com>,
+	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+Subject: RE: lab-cip-siemens-muc downtime from 17th April
+Thread-Topic: lab-cip-siemens-muc downtime from 17th April
+Thread-Index: AQHainQxkyKKARKxU0abbCNkOwDMYLFf1Q3A
+Date: Tue, 9 Apr 2024 11:58:52 +0000
+Message-ID: 
+ <TYWPR01MB118621765BF006B640D98D645B7072@TYWPR01MB11862.jpnprd01.prod.outlook.com>
+References: <b00e2f4c-be8c-48d6-b59c-54d4e79496df@siemens.com>
+In-Reply-To: <b00e2f4c-be8c-48d6-b59c-54d4e79496df@siemens.com>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYWPR01MB11862:EE_|OSYPR01MB5368:EE_
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ ENnFbWEDVcgEtLYw4VDLsJU//LAwCT1+xltR4vYW2zuRFyR5HDEnTFTiVGZarEIIEc0D6cqPsE/WCzfqLGdMa7IsXBhiaX+66eJyjAbPWECyd8R1BuzVEizGSpvK9im8R1exm0qt8mJkR4dBjfmBG11zToRdndm7HYj0qhbHSAuYLtdGbL+fzeHqz5cBpHD+C9mxWQktgpqWGrzT7zIQoZj5rFC0SyynAesWIQWhLFULd9AR7IdA64B2ewpU1+6mv8nkLY69lV8lkTVMSUFFJK/Tcn9sz3FGcflBfv/5s76IqWVTYzyOM08PA/slfbDhZPngP84K7qgf7b4ordOdI5Apqs1RNyeXlcqBNB/TwezsTk057PZ4iKUjwYir6HIVrUSH1fJH3nVYuR7PGDZ4bl7zrAR1940b/nK4f2IixB0gWGjcX/cuvr8yIbc0UttNxVF3VOOv+zRE8Z4i6HccTPS4BN9vh1OqJ6vjDrK52P26udEtTkb5h8P/sojrm/L6KGpcJE8JyAA9AFmuGcWvM10SEahWaDOM1DGCYFkk1qv7ZdUj9NCwl5RBf08xAxXgv5h29ARB5X8ffm85+eR2gPvLYQkWHWEL55uxUAoeRuI=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB11862.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?T1RER3FEUU5iYnVyK3JQdXFKY3FOVnB4MGNrc1lLVUtpV1Rjb3N2NTlheTJl?=
+ =?utf-8?B?ajdFbTc4WWtQNEw5eEI1RlpnUU1LUnB4WG1JMkl4NzQyamZZdHNOOHVVcWl2?=
+ =?utf-8?B?WVRXaGowTW5YK0JveXE4RTJzRmlyVW8vSE9BNGVJcEh5eGd4L2liTmVTa2dY?=
+ =?utf-8?B?TzRPV2tPamowT3ArbFlXMFpCUEZ6TVRQakxkT2FXajBVYXhnZEcrbTZGWFJZ?=
+ =?utf-8?B?ekdxVGpkS3lvaWt6NXBmSE1YOEI5akxuQ0d5NGNycEd1YmYyS1YzS21LTGJD?=
+ =?utf-8?B?VjFwS1hnOG1EanYwOXZLNVA5MEovUndaNWhqR2RhY0tOV056NjhUdjNaSHcr?=
+ =?utf-8?B?MWJzWDJPUnlQWUlsMGhVdWV0Ymljb2ZxZCtmRFlmamdjQ2hHMnY5Qm9MNWZx?=
+ =?utf-8?B?a1ZGekZEWms4dGVQSzArWDdLWTgyOUJuTzJiNUE0QUlobG9Jc1NuMDdaWmpM?=
+ =?utf-8?B?akZIalBVZzBmbHlhVS9PcExhUWxQT3ROSS9zVldCN00vVmZuRmEycy9PVHJS?=
+ =?utf-8?B?c0toeWxrL2NQSi9Ub3RhanpidEZtRzhzNng4U25Lc3BzdngyOVNyT1QrU1BD?=
+ =?utf-8?B?TGRhQXdLL095VFhpNHIrUEpEaTE5Y0JKRThQR0tDU3lUbkR1cGtGM0EzaUtn?=
+ =?utf-8?B?LzNCWnhHaXJvTUpKQi9WOHhSUEhZbDlwV2NDcCt1NDN6YTlYWU5pUm1HYVR1?=
+ =?utf-8?B?Z0VpQ3VmejlKT1FLSnpzeThJSC9xM3pRU1FtNXJUbEJYbjdtRUtMRFA2Q1VM?=
+ =?utf-8?B?T0NCRUQzeGRYdnlCT2JkSEpLK0FFWjZLRzhLOGI2cTZud0dldDZ5bVBSd1pM?=
+ =?utf-8?B?d1h6dFZoODVIK2RrdUFHNDkydU9lSHpmekV1ZWtOR0hhUnFiclVxMFZOQktS?=
+ =?utf-8?B?SzhVamxqcTZsNXhXRS9TVkozZ2crclpEeFNzUTBWUFZkUUNqMnkyYlBHSFRS?=
+ =?utf-8?B?elYwTmJrdXlFUzN4K2VWdGp5YUJXaDg1dElUMk96ZUVheHl3SnhiR2VKSmZu?=
+ =?utf-8?B?RlhMRnVnRVdGbG01azVaT3JqUUxlUlFScE9JUHZWNzVQeG53SzNlMStleXB4?=
+ =?utf-8?B?K09QMEwrS3F5a3F5ZHViVUEwMGE3Ylp4ekhvL0kzMm9uQXFGbjc4WWk0Smgw?=
+ =?utf-8?B?aGFOWC9OL3ZhZjFkdTdqUE5VcHZvcHdsZStzMVNuTHhxQUFKeHVMbVU2a25l?=
+ =?utf-8?B?eUp1V3cycit0cnZ1R0FaT0hyWkxxWnUxNjRUcksyWGlOQ1B3OUJyRjJKYS8x?=
+ =?utf-8?B?U0F4bDlJcWIxRUozenRQVWZ4S29QMTlaTmt0OXV6d2tYTnhtaGU5ajNMTC9s?=
+ =?utf-8?B?ZG8zTlZ6RXgwTHA4WjhDM0s3N3ZveXVVOEt5LytDV1hsemMySGZZNUNoaElh?=
+ =?utf-8?B?K2wrTHh4MWUyd2hSNk9QY2hwdkh1OEZuQ3pUa05WbHlibXVaNm5QNXYweDUz?=
+ =?utf-8?B?Tlc1MjkwTzhQdmZWM3JxQkhZQ0JuZEhPalZOL0NvclJFdG5lMFVVWU1jMkMy?=
+ =?utf-8?B?MVdqakhQL0tqdlR2cFNsZW1uNW9SU3VSK0FoZUM5RGNnQ25jTWhNMkFWYlZm?=
+ =?utf-8?B?VnRtVFpYbW1BeC9jTWJGenp0TmtLWk5FV3p0dDFrb00rMjY0eEVjU0MrMm5v?=
+ =?utf-8?B?WnVLL00vWG56a05nMGxGOGRwbjc2TTRPQXlhN1hYMXRXQWhBUXhsRHlnTFVj?=
+ =?utf-8?B?dDBFMHRua0txb1RWNHVWSG5jWC93bzVzLzhoT0lVVld1aVgzcmhyVVhXMVl5?=
+ =?utf-8?B?eGYvd3RuUjRLaTJUb2g5NkxJOW5PNStUWDFUQTU1WnJGcGEzM2pKMG41UklX?=
+ =?utf-8?B?U21DZjZ0M3FmMTBhdWU0SEhzenB4dE9YTlJod2Erb2YzYlpTWG90blEyLzlQ?=
+ =?utf-8?B?UU1jRDJuMEFiRzVRb0Frd05HOTVqMTRTQlpJZDhlRlB4dW9acFZoKzArcE8x?=
+ =?utf-8?B?bTVIc1pjVnhDcWFZQ0pvYzN1MVU3WHYza0VCb1NEUFpuOHdRM1pGYmlFNHg1?=
+ =?utf-8?B?REtuelJWUzNpM2lyQ2NPQlpPcTJFb3YvdGdYMmIvRVQ0cjh6T2E0OTMvak9n?=
+ =?utf-8?B?disvMklwQTF0QzF1WWIram1tZVdjdWZ6UVczWFF6Slh4b3hKN0hSSVdTcThM?=
+ =?utf-8?B?Z2xtTU5jU3NORmZrclg0cHlyL0hwZndRdFJ5TUszN1lpYTdkS2NnZ2RzYlNE?=
+ =?utf-8?B?Smc9PQ==?=
+Content-Type: multipart/alternative;
+	boundary="_000_TYWPR01MB118621765BF006B640D98D645B7072TYWPR01MB11862jp_"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="xZXhVk3vxxPQffh8"
-Content-Disposition: inline
-In-Reply-To: <1155634901.1549797.1712565256786@webmail.strato.com>
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB11862.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8eb8c75c-6d85-4a59-d4f1-08dc588c6d09
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Apr 2024 11:58:52.7496
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: lFw4VaJQ2HN9h36Gy3CcSXqef1FQy/avjieyGx0GKMX9/manBV/opcHYeC4Lr8q8qFBeVdKJqhdXIxeD/UvJt5NWBdUAFbUcxdKR7yAg2rg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSYPR01MB5368
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 09 Apr 2024 09:15:19 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15510
+ <cip-dev@lists.cip-project.org>; Tue, 09 Apr 2024 11:59:00 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15511
 
+--_000_TYWPR01MB118621765BF006B640D98D645B7072TYWPR01MB11862jp_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
---xZXhVk3vxxPQffh8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+SGkgUXVpcmluLA0KK0NjIGNpcC1kZXYNCg0KVGhhbmsgeW91IGZvciBsZXR0aW5nIG1lIGtub3cu
+DQpXZSBoYXZlIHRoZSBib2FyZHMgdGhhdCBhcmUgaW4geW91ciBsYWIgaW4gb3RoZXIgbG9jYXRp
+b25zLCBzbyB3ZSBzaG91bGQgYmUgYWJsZSB0byBtYW5hZ2UgZmluZSBkdXJpbmcgdGhlIGRvd250
+aW1lLg0KDQpHb29kIGx1Y2sgd2l0aCB0aGUgbW92ZSENCg0KS2luZCByZWdhcmRzLCBDaHJpcw0K
+DQpGcm9tOiBHeWxzdG9yZmYgUXVpcmluIDxxdWlyaW4uZ3lsc3RvcmZmQHNpZW1lbnMuY29tPg0K
+U2VudDogVHVlc2RheSwgQXByaWwgOSwgMjAyNCAxMjo1MSBQTQ0KVG86IENocmlzIFBhdGVyc29u
+IDxDaHJpcy5QYXRlcnNvbjJAcmVuZXNhcy5jb20+DQpDYzogS2lzemthLCBKYW4gKENUIFJEQSBJ
+T1QgU0VTLURFKSA8amFuLmtpc3prYUBzaWVtZW5zLmNvbT4NClN1YmplY3Q6IGxhYi1jaXAtc2ll
+bWVucy1tdWMgZG93bnRpbWUgZnJvbSAxN3RoIEFwcmlsDQoNCg0KSGkgQ2hyaXMsDQoNCndlIHdp
+bGwgbW92ZSB0aGUgbGFiLWNpcC1zaWVtZW5zLW11YzxodHRwczovL2xhdmEuY2lwbGF0Zm9ybS5v
+cmcvc2NoZWR1bGVyL3dvcmtlci9sYWItY2lwLXNpZW1lbnMtbXVjPiB3b3JrZXIgaW4gdGhlIG5l
+eHQgd2VlayB0byBvdXIgbmV3IGxvY2F0aW9uLiBEdXJpbmcgdGhhdCB0aW1lDQoNCml0IHdpbGwg
+bm90IGJlIGF2YWlsYWJsZS4NCg0KQmVzdCByZWdhcmRzDQoNClF1aXJpbg0KDQotLQ0KDQpRdWly
+aW4gR3lsc3RvcmZmDQoNCg0KDQpTaWVtZW5zIEFHDQoNClRlY2hub2xvZ3kNCg==
 
-Hi!
+--_000_TYWPR01MB118621765BF006B640D98D645B7072TYWPR01MB11862jp_
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-> Here's the manual backports to review for the next 4.4 release which, as =
-always, can be found in https://git.kernel.org/pub/scm/linux/kernel/git/cip=
-/linux-cip.git/log/?h=3Dlinux-4.4.y-st-rc :
->
+PGh0bWwgeG1sbnM6dj0idXJuOnNjaGVtYXMtbWljcm9zb2Z0LWNvbTp2bWwiIHhtbG5zOm89InVy
+bjpzY2hlbWFzLW1pY3Jvc29mdC1jb206b2ZmaWNlOm9mZmljZSIgeG1sbnM6dz0idXJuOnNjaGVt
+YXMtbWljcm9zb2Z0LWNvbTpvZmZpY2U6d29yZCIgeG1sbnM6bT0iaHR0cDovL3NjaGVtYXMubWlj
+cm9zb2Z0LmNvbS9vZmZpY2UvMjAwNC8xMi9vbW1sIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcv
+VFIvUkVDLWh0bWw0MCI+DQo8aGVhZD4NCjxtZXRhIGh0dHAtZXF1aXY9IkNvbnRlbnQtVHlwZSIg
+Y29udGVudD0idGV4dC9odG1sOyBjaGFyc2V0PXV0Zi04Ij4NCjxtZXRhIG5hbWU9IkdlbmVyYXRv
+ciIgY29udGVudD0iTWljcm9zb2Z0IFdvcmQgMTUgKGZpbHRlcmVkIG1lZGl1bSkiPg0KPHN0eWxl
+PjwhLS0NCi8qIEZvbnQgRGVmaW5pdGlvbnMgKi8NCkBmb250LWZhY2UNCgl7Zm9udC1mYW1pbHk6
+IkNhbWJyaWEgTWF0aCI7DQoJcGFub3NlLTE6MiA0IDUgMyA1IDQgNiAzIDIgNDt9DQpAZm9udC1m
+YWNlDQoJe2ZvbnQtZmFtaWx5OkNhbGlicmk7DQoJcGFub3NlLTE6MiAxNSA1IDIgMiAyIDQgMyAy
+IDQ7fQ0KQGZvbnQtZmFjZQ0KCXtmb250LWZhbWlseTpBcHRvczt9DQpAZm9udC1mYWNlDQoJe2Zv
+bnQtZmFtaWx5OkNvbnNvbGFzOw0KCXBhbm9zZS0xOjIgMTEgNiA5IDIgMiA0IDMgMiA0O30NCi8q
+IFN0eWxlIERlZmluaXRpb25zICovDQpwLk1zb05vcm1hbCwgbGkuTXNvTm9ybWFsLCBkaXYuTXNv
+Tm9ybWFsDQoJe21hcmdpbjowY207DQoJZm9udC1zaXplOjEyLjBwdDsNCglmb250LWZhbWlseToi
+QXB0b3MiLHNhbnMtc2VyaWY7fQ0KYTpsaW5rLCBzcGFuLk1zb0h5cGVybGluaw0KCXttc28tc3R5
+bGUtcHJpb3JpdHk6OTk7DQoJY29sb3I6Ymx1ZTsNCgl0ZXh0LWRlY29yYXRpb246dW5kZXJsaW5l
+O30NCnByZQ0KCXttc28tc3R5bGUtcHJpb3JpdHk6OTk7DQoJbXNvLXN0eWxlLWxpbms6IkhUTUwg
+UHJlZm9ybWF0dGVkIENoYXIiOw0KCW1hcmdpbjowY207DQoJZm9udC1zaXplOjEwLjBwdDsNCglm
+b250LWZhbWlseToiQ291cmllciBOZXciO30NCnNwYW4uSFRNTFByZWZvcm1hdHRlZENoYXINCgl7
+bXNvLXN0eWxlLW5hbWU6IkhUTUwgUHJlZm9ybWF0dGVkIENoYXIiOw0KCW1zby1zdHlsZS1wcmlv
+cml0eTo5OTsNCgltc28tc3R5bGUtbGluazoiSFRNTCBQcmVmb3JtYXR0ZWQiOw0KCWZvbnQtZmFt
+aWx5OkNvbnNvbGFzO30NCnNwYW4uRW1haWxTdHlsZTIzDQoJe21zby1zdHlsZS10eXBlOnBlcnNv
+bmFsLXJlcGx5Ow0KCWZvbnQtZmFtaWx5OiJBcHRvcyIsc2Fucy1zZXJpZjsNCgljb2xvcjojNzAz
+MEEwO30NCi5Nc29DaHBEZWZhdWx0DQoJe21zby1zdHlsZS10eXBlOmV4cG9ydC1vbmx5Ow0KCWZv
+bnQtc2l6ZToxMC4wcHQ7DQoJbXNvLWxpZ2F0dXJlczpub25lO30NCkBwYWdlIFdvcmRTZWN0aW9u
+MQ0KCXtzaXplOjYxMi4wcHQgNzkyLjBwdDsNCgltYXJnaW46NzIuMHB0IDcyLjBwdCA3Mi4wcHQg
+NzIuMHB0O30NCmRpdi5Xb3JkU2VjdGlvbjENCgl7cGFnZTpXb3JkU2VjdGlvbjE7fQ0KLS0+PC9z
+dHlsZT48IS0tW2lmIGd0ZSBtc28gOV0+PHhtbD4NCjxvOnNoYXBlZGVmYXVsdHMgdjpleHQ9ImVk
+aXQiIHNwaWRtYXg9IjEwMjYiIC8+DQo8L3htbD48IVtlbmRpZl0tLT48IS0tW2lmIGd0ZSBtc28g
+OV0+PHhtbD4NCjxvOnNoYXBlbGF5b3V0IHY6ZXh0PSJlZGl0Ij4NCjxvOmlkbWFwIHY6ZXh0PSJl
+ZGl0IiBkYXRhPSIxIiAvPg0KPC9vOnNoYXBlbGF5b3V0PjwveG1sPjwhW2VuZGlmXS0tPg0KPC9o
+ZWFkPg0KPGJvZHkgbGFuZz0iRU4tR0IiIGxpbms9ImJsdWUiIHZsaW5rPSJwdXJwbGUiIHN0eWxl
+PSJ3b3JkLXdyYXA6YnJlYWstd29yZCI+DQo8ZGl2IGNsYXNzPSJXb3JkU2VjdGlvbjEiPg0KPHAg
+Y2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gc3R5bGU9ImZvbnQtc2l6ZToxMS4wcHQ7Y29sb3I6Izcw
+MzBBMDttc28tZmFyZWFzdC1sYW5ndWFnZTpFTi1VUyI+SGkgUXVpcmluLDxvOnA+PC9vOnA+PC9z
+cGFuPjwvcD4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxzcGFuIHN0eWxlPSJmb250LXNpemU6MTEu
+MHB0O2NvbG9yOiM3MDMwQTA7bXNvLWZhcmVhc3QtbGFuZ3VhZ2U6RU4tVVMiPitDYyBjaXAtZGV2
+PG86cD48L286cD48L3NwYW4+PC9wPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gc3R5bGU9
+ImZvbnQtc2l6ZToxMS4wcHQ7Y29sb3I6IzcwMzBBMDttc28tZmFyZWFzdC1sYW5ndWFnZTpFTi1V
+UyI+PG86cD4mbmJzcDs8L286cD48L3NwYW4+PC9wPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNw
+YW4gc3R5bGU9ImZvbnQtc2l6ZToxMS4wcHQ7Y29sb3I6IzcwMzBBMDttc28tZmFyZWFzdC1sYW5n
+dWFnZTpFTi1VUyI+VGhhbmsgeW91IGZvciBsZXR0aW5nIG1lIGtub3cuPG86cD48L286cD48L3Nw
+YW4+PC9wPg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gc3R5bGU9ImZvbnQtc2l6ZToxMS4w
+cHQ7Y29sb3I6IzcwMzBBMDttc28tZmFyZWFzdC1sYW5ndWFnZTpFTi1VUyI+V2UgaGF2ZSB0aGUg
+Ym9hcmRzIHRoYXQgYXJlIGluIHlvdXIgbGFiIGluIG90aGVyIGxvY2F0aW9ucywgc28gd2Ugc2hv
+dWxkIGJlIGFibGUgdG8gbWFuYWdlIGZpbmUgZHVyaW5nIHRoZSBkb3dudGltZS48bzpwPjwvbzpw
+Pjwvc3Bhbj48L3A+DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj48c3BhbiBzdHlsZT0iZm9udC1zaXpl
+OjExLjBwdDtjb2xvcjojNzAzMEEwO21zby1mYXJlYXN0LWxhbmd1YWdlOkVOLVVTIj48bzpwPiZu
+YnNwOzwvbzpwPjwvc3Bhbj48L3A+DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj48c3BhbiBzdHlsZT0i
+Zm9udC1zaXplOjExLjBwdDtjb2xvcjojNzAzMEEwO21zby1mYXJlYXN0LWxhbmd1YWdlOkVOLVVT
+Ij5Hb29kIGx1Y2sgd2l0aCB0aGUgbW92ZSE8bzpwPjwvbzpwPjwvc3Bhbj48L3A+DQo8cCBjbGFz
+cz0iTXNvTm9ybWFsIj48c3BhbiBzdHlsZT0iZm9udC1zaXplOjExLjBwdDtjb2xvcjojNzAzMEEw
+O21zby1mYXJlYXN0LWxhbmd1YWdlOkVOLVVTIj48bzpwPiZuYnNwOzwvbzpwPjwvc3Bhbj48L3A+
+DQo8ZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gc3R5bGU9ImZvbnQtc2l6ZToxMS4w
+cHQ7Y29sb3I6IzcwMzBBMCI+S2luZCByZWdhcmRzLCBDaHJpczxvOnA+PC9vOnA+PC9zcGFuPjwv
+cD4NCjwvZGl2Pg0KPHAgY2xhc3M9Ik1zb05vcm1hbCI+PHNwYW4gc3R5bGU9ImZvbnQtc2l6ZTox
+MS4wcHQ7Y29sb3I6IzcwMzBBMDttc28tZmFyZWFzdC1sYW5ndWFnZTpFTi1VUyI+PG86cD4mbmJz
+cDs8L286cD48L3NwYW4+PC9wPg0KPGRpdiBzdHlsZT0iYm9yZGVyOm5vbmU7Ym9yZGVyLWxlZnQ6
+c29saWQgYmx1ZSAxLjVwdDtwYWRkaW5nOjBjbSAwY20gMGNtIDQuMHB0Ij4NCjxkaXY+DQo8ZGl2
+IHN0eWxlPSJib3JkZXI6bm9uZTtib3JkZXItdG9wOnNvbGlkICNFMUUxRTEgMS4wcHQ7cGFkZGlu
+ZzozLjBwdCAwY20gMGNtIDBjbSI+DQo8cCBjbGFzcz0iTXNvTm9ybWFsIj48Yj48c3BhbiBsYW5n
+PSJFTi1VUyIgc3R5bGU9ImZvbnQtc2l6ZToxMS4wcHQ7Zm9udC1mYW1pbHk6JnF1b3Q7Q2FsaWJy
+aSZxdW90OyxzYW5zLXNlcmlmIj5Gcm9tOjwvc3Bhbj48L2I+PHNwYW4gbGFuZz0iRU4tVVMiIHN0
+eWxlPSJmb250LXNpemU6MTEuMHB0O2ZvbnQtZmFtaWx5OiZxdW90O0NhbGlicmkmcXVvdDssc2Fu
+cy1zZXJpZiI+IEd5bHN0b3JmZiBRdWlyaW4gJmx0O3F1aXJpbi5neWxzdG9yZmZAc2llbWVucy5j
+b20mZ3Q7DQo8YnI+DQo8Yj5TZW50OjwvYj4gVHVlc2RheSwgQXByaWwgOSwgMjAyNCAxMjo1MSBQ
+TTxicj4NCjxiPlRvOjwvYj4gQ2hyaXMgUGF0ZXJzb24gJmx0O0NocmlzLlBhdGVyc29uMkByZW5l
+c2FzLmNvbSZndDs8YnI+DQo8Yj5DYzo8L2I+IEtpc3prYSwgSmFuIChDVCBSREEgSU9UIFNFUy1E
+RSkgJmx0O2phbi5raXN6a2FAc2llbWVucy5jb20mZ3Q7PGJyPg0KPGI+U3ViamVjdDo8L2I+IGxh
+Yi1jaXAtc2llbWVucy1tdWMgZG93bnRpbWUgZnJvbSAxN3RoIEFwcmlsPG86cD48L286cD48L3Nw
+YW4+PC9wPg0KPC9kaXY+DQo8L2Rpdj4NCjxwIGNsYXNzPSJNc29Ob3JtYWwiPjxvOnA+Jm5ic3A7
+PC9vOnA+PC9wPg0KPHA+SGkgQ2hyaXMsIDxvOnA+PC9vOnA+PC9wPg0KPHA+d2Ugd2lsbCBtb3Zl
+IHRoZSA8YSBocmVmPSJodHRwczovL2xhdmEuY2lwbGF0Zm9ybS5vcmcvc2NoZWR1bGVyL3dvcmtl
+ci9sYWItY2lwLXNpZW1lbnMtbXVjIj4NCmxhYi1jaXAtc2llbWVucy1tdWM8L2E+IHdvcmtlciBp
+biB0aGUgbmV4dCB3ZWVrIHRvIG91ciBuZXcgbG9jYXRpb24uIER1cmluZyB0aGF0IHRpbWUNCjxv
+OnA+PC9vOnA+PC9wPg0KPHA+aXQgd2lsbCBub3QgYmUgYXZhaWxhYmxlLjxvOnA+PC9vOnA+PC9w
+Pg0KPHA+QmVzdCByZWdhcmRzIDxvOnA+PC9vOnA+PC9wPg0KPHA+UXVpcmluPG86cD48L286cD48
+L3A+DQo8cHJlPi0tIDxvOnA+PC9vOnA+PC9wcmU+DQo8cHJlPlF1aXJpbiBHeWxzdG9yZmY8bzpw
+PjwvbzpwPjwvcHJlPg0KPHByZT48bzpwPiZuYnNwOzwvbzpwPjwvcHJlPg0KPHByZT5TaWVtZW5z
+IEFHPG86cD48L286cD48L3ByZT4NCjxwcmU+VGVjaG5vbG9neTxvOnA+PC9vOnA+PC9wcmU+DQo8
+L2Rpdj4NCjwvZGl2Pg0KPC9ib2R5Pg0KPC9odG1sPg0K
 
-Thanks for patches, they look ok to me. I'd not bother with GFP_KERNEL
-fails, printk and READ_ONCE stuff, as they are not user-triggerable
-or not really serious bugs, but this is within what stable does.
-
-Best regards,
-								Pavel
-
-a | 575689f40 1eecc7 o+ | net: lan78xx: fix runtime PM count underflow on l=
-ink stop
-a | 98db42191 767146 o+ | netfilter: nf_conntrack_h323: Add protection for =
-bmp length out of range
-a does that mean we only moved lockup to the unlikely case? | c96f49d3a f7e=
-c1c o  | getrusage: use sig->stats_lock rather than lock_task_sighand()
-a GFP_KERNEL never fails, anyway | 70a33a629 3693bb .  | x86/xen: Add some =
-null pointer checking to smp.c
-a driver uses -EFAULT wrongly | 6cc96148d ee0017 o  | scsi: mpt3sas: Preven=
-t sending diag_reset when the controller is ready
-a just a printk fix | a215f042a 963465 o  | Input: gpio_keys_polled - suppr=
-ess deferred probe error for gpio
-a just a printk fix | d619f175f 96e202 .  | ASoC: wm8962: Fix up incorrect =
-error message in wm8962_set_fll
-a just a _ONCE annotation | cffd4a7c9 efd402 o+ | sock_diag: annotate data-=
-races around sock_diag_handlers[family]
-a | 085f36c31 167faa o  | media: dvbdev: Fix memleak in dvb_register_device
-a | d0f5c2833 8c64f4 o+ | media: edia: dvbdev: fix a use-after-free
-a | 578eb0d0f 0f7352 F+ | wifi: brcmfmac: Fix use-after-free bug in brcmf_c=
-fg80211_detach
-a | 1fac009e1 3d75b8 o+ | KVM: Always flush async #PF workqueue when vCPU i=
-s being destroyed
-a just a preparation | dbc478390 097d9d o  | PCI: Drop pci_device_remove() =
-test of pci_dev->driver
-a | 8ef8bdb2b 269cdf o+ | nilfs2: prevent kernel bug at submit_bh_wbc()
-a | 114fd53bc 6b959b o  | perf/core: Fix reentry problem in perf_output_rea=
-d_group()
-a looks tricky | 1830e5b0b f45812 o  | efivarfs: Request at most 512 bytes =
-for variable names
-
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---xZXhVk3vxxPQffh8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZhUHIQAKCRAw5/Bqldv6
-8pjvAJ9Q2hqC7jFKkuZ5eUNiJr3pF6ivEgCcCM7OEBc73JEMKeGwo5oXAfwfvRw=
-=JIeP
------END PGP SIGNATURE-----
-
---xZXhVk3vxxPQffh8--
+--_000_TYWPR01MB118621765BF006B640D98D645B7072TYWPR01MB11862jp_--
 
