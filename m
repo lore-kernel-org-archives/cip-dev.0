@@ -2,299 +2,214 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B75C4345F
-	for <webhook@archiver.kernel.org>; Thu, 11 Apr 2024 16:45:57 +0000 (UTC)
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.50])
- by mx.groups.io with SMTP id smtpd.web11.23118.1712853954655772493
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E5CC4345F
+	for <webhook@archiver.kernel.org>; Thu, 11 Apr 2024 16:51:27 +0000 (UTC)
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.63])
+ by mx.groups.io with SMTP id smtpd.web10.23479.1712854286898078624
  for <cip-dev@lists.cip-project.org>;
- Thu, 11 Apr 2024 09:45:55 -0700
+ Thu, 11 Apr 2024 09:51:27 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=L2uK2iD7;
- spf=pass (domain: siemens.com, ip: 40.107.6.50, mailfrom: jan.kiszka@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=jRmiWwIR;
+ spf=pass (domain: siemens.com, ip: 40.107.6.63, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oGB9IRjkkRORFGth4j+G/0s6lEBHY+gRRKgtbebcXMJcryCcw2JbZvuKP05KLow55JtPWxKDQ3CJOH0lejUDSk8/mIR3kSbKcMdL8BgGhtRYaV1D03vC0CXs1xIWLN4Pt20fd5c+qTCo1K+YzjDiJTei7Zqg7wAacm4HuCzDvLmePEYzNrBdOtTOnRwBY+83NE2ovXqi9KKoOemWLhKJKOMX6b5lVzHdRk2PeGnyF1K0n4EJetTUligel8nznvVCzzLKO94MRaV1OW9ZyJHd2bX+vbL/9L2TfeyWBJoGFbQE575gIvXxnvWbkaQRv+Ss0yxZ38sLBLifSxiRTg0ujQ==
+ b=WSYAB6glKgRRaZP4EyhTEKfgXMk4mGv4q8BSE9UWjPjJC8XHir0hii/tSK0zXtjX/cNbo9Z8sQULRFZFx0kzzTLHv5puG1A5MPlGQeiADdfD58vPDsY2rSJc3RGbVTqhuM3WRJXaVx4u13r/ho2RGsv/5semVlybmYqvFzk1e9xZT2raoRYprq++4a3x7wDXFRYsefr7DbUYnsq6aG2/eQGlvmKsbgTkHtTNj6Eu7Y2teacUFY0A2uHC/3sYSLgAwH8H/1zaob497fBtr2KWeu6FmFS4bFmkiozFQRbYScP4xvXrCiHHICu/q6pFwa8VagwgM1jbx7A2rIrSbO2BhA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5Z2MKcwCxen8IogITgA94g1xYVUgWXvQv7ZvIB0/vbo=;
- b=WrFY/0T/y8CvLsqakEYzUsmPaEFpYg2JpxjIbXmLUjjX3QAQmz0dkKt0y+zlGfZld1eeNpwmVWFmYPYFUjl2oOdMWQsBft5REcweMrRDzMaeB/7uY4wk8w6L7xF4ekYYlagiN47GrJNXc0+YmINCLnC7HCtxffHI8hwDQwcjkc5gek4LFPvcIhGhIGEYFmfsNyGEvbXn5BTZdRVJwTD7LNteLoWNhWeE/LUjdfi6I/G/mMR8BqEioVZMCU6Aw2vU5e+arE2qDRVYxkoRcvzu4ZsklXhb3r3/nYY8yZWVs3M8j+JzeoNol7RI7M4YGPqP6XllNZ+/1RkXzOe/0O0eFg==
+ bh=9YhOzoj9bUqtAy2k2gir/uplwIH8p0XLYhD6Iv17SLE=;
+ b=DBSvV4q7PfiNYuMvUctoJmPvzWKVMx6h70nJKOl9P6zNnS9rqjWLytjFYPqQ4dUTvYKHr7q+luSIaInwsbILw4u28Rh5MQFT9MbJlL7MPotZ7rje1owsoTCHdrfn0VLt4gfu6/TTyD65hlpvKEACMs5igyVn23kJi+XE/t37va47NC7BXA5/dHzsBBSypq56xQZT61hGkqqt72+FpdPNSap92wr+cXuAddnDiKnjoYenk4OjmuztGoZSdK2FwpeXtHSIEOHP37X9SE4vocSHSLpFvY1ZkW0zFl5vCD/dhqHAj8ILr/+1jCd3MfDSn3BRuZ0ZhY9r7YItjSB0SsUcRw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5Z2MKcwCxen8IogITgA94g1xYVUgWXvQv7ZvIB0/vbo=;
- b=L2uK2iD7njkuMIkfb2w4U6e0HB/UCbTdXTOPwlqDJ3j9p98jCGx9N0gl1QTPC64qK8sL0ACElq70o3IurgDxEzsVxrxijMKrTA+fxGHRQMT6ojXeHdFMsD7toaQiXpZcMLdgL9l2+fsibR0mz4JVu+JBcqkBPvb1w4EveImTgkiOGfbvxrFlF7393pTPWPHXdU9jB9xU7rVxVivnaRgt3z69ZzsQXNJUHKZ1BgFkqNORqoemlETifqc6co2k8E6ac31+p+XqJP6yzX/oPE2ktCOwEVSzAtgWtr387avxwmh9r1MfP0P8w38Du0dMzOkGfR29s/0K+Bk7j/mLEogDkQ==
+ bh=9YhOzoj9bUqtAy2k2gir/uplwIH8p0XLYhD6Iv17SLE=;
+ b=jRmiWwIRgObvo4lvlGQF6PQGQze2/o002fAwTkPWgcahJpOJWAhzZR3PeKzBJ7ZYpsXv5MEzraJcegX3YhRh0JOh07dNOeDltsBoY6DIupDm+OGkB5q3zlqTZdZ4NEi2UbAyyx5RzMODegUd9GYR2EU0cSzzgQGjUiXo3eL/LXs/7ZgFKNwX+/hXCz/lSPPuYxvUMeAICCnhkKo90FWJhW7EwQqYyuD1LS/jUNWL0T5gkTiKl4bx05H6kTew+Tp6LwYQQgHhLjHZ3sU8CtNrYZoi/u7bMCBHLR6oXtKAoBnwqzxFZAnCyw+VTUbo2uDRK0T2oanAoF/VmgCkovxtXA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by AM7PR10MB3688.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:138::7) with
+ by DB3PR10MB6905.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:428::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.55; Thu, 11 Apr
- 2024 16:45:49 +0000
+ 2024 16:51:23 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::4e33:3630:e08:77b9]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::4e33:3630:e08:77b9%4]) with mapi id 15.20.7409.053; Thu, 11 Apr 2024
- 16:45:48 +0000
-Message-ID: <71e9f4ce-970e-41b1-b4e6-ef16e184a77d@siemens.com>
-Date: Thu, 11 Apr 2024 18:45:43 +0200
+ 16:51:23 +0000
+Message-ID: <5c49bdf7-5909-418c-a8ab-683797f6b141@siemens.com>
+Date: Thu, 11 Apr 2024 18:51:20 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: Bookworm with swupdate 2021.11: Error getting key 'kernelfile'
- from bootloader environment.
-To: Hannah Kiekens <hannah.kiekens@essensium.com>,
- cip-dev@lists.cip-project.org,
- Quirin Gylstorff <quirin.gylstorff@siemens.com>,
- "Schaffner, Tobias (T CED SES-DE)" <tobias.schaffner@siemens.com>
-References: <CAP07BnkpBLJ0vnN3FUJZp+DDiWm8wjj5F3=wMNfabqjPJvMDDQ@mail.gmail.com>
+Subject: Re: Generic x86 kernel configration (RE: [isar-cip-core][PATCH] Add
+ support Plat'Home OpenBlocks IoT VX2)
+To: nobuhiro1.iwamatsu@toshiba.co.jp, schilling.benjamin@siemens.com,
+ cip-dev@lists.cip-project.org
+CC: Chris.Paterson2@renesas.com, minmin@plathome.co.jp
+References: <TYVPR01MB11245F45500C758184F6369A092C5A@TYVPR01MB11245.jpnprd01.prod.outlook.com>
+ <5367.1711107559199640802@lists.cip-project.org>
+ <2fa52e58-0ba5-4865-adac-3dbe03c9b83e@siemens.com>
+ <OS0PR01MB6388EFEF8FAA99557205AB4092032@OS0PR01MB6388.jpnprd01.prod.outlook.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
 Content-Language: en-US
-In-Reply-To: <CAP07BnkpBLJ0vnN3FUJZp+DDiWm8wjj5F3=wMNfabqjPJvMDDQ@mail.gmail.com>
+In-Reply-To: <OS0PR01MB6388EFEF8FAA99557205AB4092032@OS0PR01MB6388.jpnprd01.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: CH0PR03CA0230.namprd03.prod.outlook.com
- (2603:10b6:610:e7::25) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: VI1PR06CA0096.eurprd06.prod.outlook.com
+ (2603:10a6:803:8c::25) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AM7PR10MB3688:EE_
-X-MS-Office365-Filtering-Correlation-Id: db4f5bf1-bd86-48f8-0328-08dc5a46d730
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB3PR10MB6905:EE_
+X-MS-Office365-Filtering-Correlation-Id: f86743d7-ae60-418b-baee-08dc5a479dfb
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info: 
-	CjzYejcP1Z2y7focowbclrZtJK7QvmeM18HtHlXcrZnTuUdP4kFAPDux+sSmLonKM8MFvpcSTDp8QePP/xeqQzXk/CDsGShlI5CX9RHQpHKjQi13XP57ZFMhD7LT6jVBjH/5enbJo+NyX0IwOSObOO5Bv1D1iwc9b/9ReyCvBI59lak8pmI6H/wcju6qU65d9ouE3gBZSx+hrjgGLmrE5rz01/U2/egp28eOvWEHLlnURKYmF+3wA27HVVNXhX1c8+DGFt+HJ1w+DncMjajCYIYVDX0zAg+KJbmLY94dVz7gpcTW29YnAQYsO7XJKpQK1g95TcZcYljYSKZKK9hYKGly6+KK0kFVfV3XsOWBf4f1ttKHqzBXWktg5qnb1f7d9E8TUX1NJNKQi8w3m71as81LEFqU5S8yF1S4w8GekJvZzfnXhQmsui+w6DVGyYpUP+ZDQ9Wa6WZMQvyNhAZgOwWVDtFn3Vo7ZxEuv31kCeqjtfDKIVEtIEQC5bQpiQXEtkU73jPWDJvT/GXCoji3mqg0T0MIWAuxt5aU21UtrfL436mDPjRZY7dQv7Kj/DDc3QrO0sCWZnOjECQ2yjmUIWsACQ3CTYEInX5oeEJSNjbJhk7HIk9kGhssQxAEUsjasVX2HlGPMVqkRx5p53f5EQ4xFcvnLoDtPW3uWHXn1rs=
+	Z6Q78xlMjOVsWhcqE7AT9Rxe8lSAJiQPRD5rlZxWwkROW0YlP8LsMuv6nGUgYHIcEQNDvBbHyvInkEvoyfmkfZS8hwbpPqMGmFh8GNlGlnzwYuLafKa/xdZG7izcGkSXj++qNZsoZgnvs57uCncWKw/ZQ8I4x1lFBzct8A4aiFUuXx3tgMdhLrF7Km4YNVhTfJHF+NXK4qEtUmx4QUamJDzkfiHumaxeqQfGDqS7nDDkch4gVovfm+m1erHX4J150eqaVVFux6pyiqv8OT3hifhOH33JAnGS14iI+QNJyJpPsWM2UAUKE4R5bgFABEwgiM5vqFFmOTk4cxh7+F6EJSPLkOE+NEiqySk64zvo9meTtLtbzWkvBOaIHiWs8rJgswIzLOIPej7fVa+9jRqnwoWbm3AdGr7WNJ1kY/Mjqz+p+WOV1e8r1hSzCNQd/AgLodPufrHtIpZoRWd2QpGj5Vapee1aqRKh3FaNdqrLHu8yAdCUEF0J/jk2XlHEDnUiRGCk252eywwhxGPqgjqnC7GnBOnO6uEr11qfT12jysGmetJPgBl9q7jnT5BgIt6uPg8zNV4Fu4SmWqBo5DBDpOFGVMJEWjxCUcsRZNStVJk=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?eG45wV6zI7vQaHtDwlJQ841lecwEkwHE57IS264y1dJJszCrQrSawvNV5RqB?=
- =?us-ascii?Q?Ysn/qfYHHkMfKQDCEVdomYQeseAarvsnPKHjQ3nKdH/vhvYcu2Esoear2jQu?=
- =?us-ascii?Q?R93vP4XcgzdxKcmhx3TyaFjrp9RdGxVcqvNJk1nBSK5c1XzcCtRxWLwfDz0T?=
- =?us-ascii?Q?Ei1c25+ApsMHjdBS9Z6UPM7meou/cdSBWuKUpp98n3x5k+DUNoa4y07fjiMi?=
- =?us-ascii?Q?ZP8F6gmK1dY65O66hZbcRV2+12QFYyTX935LyxAWItgqfU5SJzL5D/Qkm86a?=
- =?us-ascii?Q?pp6YtUl8t5pPrJ4W8rmo54pt7oxPmwaMl2KwEnUmRsr/NGR2/c2gLcVHGw3t?=
- =?us-ascii?Q?345FLIaKCbUFFBnyjzZdYheH9ljpFByLF69DeCZLpMQJQpgvTpa95Sz4MJHP?=
- =?us-ascii?Q?sgSj9+UDkNC3O+UD3yZdhJ00G28QduF+aGfGDWE6Bqmjmsx736IGDygVXgPK?=
- =?us-ascii?Q?nV4hQZlH6NVQP9TG8WBLMmb2aWxiDDnUIyzHfY9Wypu+0xAfudvDoVRbFzZB?=
- =?us-ascii?Q?wLa3HumAe2+hwaq7qm5EMIzplQZtxTYClpa314N6j4j7oBwZgzXmcfCaKMIK?=
- =?us-ascii?Q?e7K/pj4PS/B9OGRAp3q+C97Wsjdb3p43amaG0F1uSoRDd9vMxgQB9Ojl2Sm4?=
- =?us-ascii?Q?v2jwC9yeX1ClDXRAnzpEWNEeq1hVzwON5eSElMzXjD4GDE21PuuiwTwT/mJ5?=
- =?us-ascii?Q?kFiCBug2LqOFoTBgSdPn0Z+jmTlDS25sbXRAkqasb1EIarGu9S+K5iBTgkzq?=
- =?us-ascii?Q?CXVxu8xMCQrsn3wQV2mCb1mmPaCthSGJUQMt3ACs11Cy10JIbjTNomYhNE+b?=
- =?us-ascii?Q?CEkCO42Tu6XwwBR1yNDRYHp6kIi2QUkxywqtLev1EoRgJvjfvGJ7VjZgzXcf?=
- =?us-ascii?Q?iUORkYZUyqkGKTIZIlqg3NrfOsOmQBz8ryT3vbSSFhl+VjKApeJIsuFcYJ/v?=
- =?us-ascii?Q?NuAU1g5jSZsqzdcBFekdNBvrbOVETJDSzvH6kchx2hUpArOWsBMLXPx6EBMh?=
- =?us-ascii?Q?MbdQZ5rCnTXCL/GhxqR83kHq5Jlz1grXtmTOQsUgghELkWp9dOVHyl8dgVu6?=
- =?us-ascii?Q?baSR/dWumxLDsmuBwNGK0iXS1oFLYUPQzwSfj+zyPCi7aa4KYLBdOS28wRRC?=
- =?us-ascii?Q?EyOa97iyixRaH0ShwUdZau0qn99qSFM6hIRziqIec+4eB/2vRMpsgff7ZF8w?=
- =?us-ascii?Q?q+TP9mqMZuISBqwU0+w3uOK13riSxdV/yHtkPE1eAI2nG1yUlbWSPdmyJhCG?=
- =?us-ascii?Q?lUJHNXj1hCW5QmhNEopj6G+rn57FBGMFnS7MF8qvQq+jkaRc69w0/SrBgSLj?=
- =?us-ascii?Q?9KoklP18V1K+jXRjMBeQwNzH7gMNRUWYqhBpyXjPWC6U21Vu7pkvJFj6WuEn?=
- =?us-ascii?Q?BzFHVhhwZlcb2UY3JTs3tBgk6NuYgY6AWzok3zGlnu9xZccmTEwftyrTtz2n?=
- =?us-ascii?Q?WsZ5Hs/t/e+FMB9fYfQgZh4o5x2gs1rZLxZrtdPLxc4LAm45IGBEY1Xo6YvX?=
- =?us-ascii?Q?VL0D0JD+SRoWqyLJ8l5fB9xcH/erYZkGRoJfE/TyW214Nop5gqhQIEKJFanZ?=
- =?us-ascii?Q?txJ9cUvtm2vmw0NvelVY1i70jnYuq685kMyBu83g1bVnVVMoEcyaHlVaTBmq?=
- =?us-ascii?Q?TA=3D=3D?=
+	=?us-ascii?Q?cdsnqSmw9wg7R96GzaPZCiH0b70tq47lhQoPwPrPt5NR9ZpfkllnGqZQVvlq?=
+ =?us-ascii?Q?xHsa8lhhJkTfULtQRrdX4QMn9bZ2gWWMIMBO9JZhR/koohU7WNQzLLEzfCtM?=
+ =?us-ascii?Q?V+P2W3g88BGSz+wuHMUU89928jvkEUOXQQM4hyWbtKELR7YhLu+dyvnNJ2RU?=
+ =?us-ascii?Q?zIVGIDAVz6MQILeSCjJ/vm/NPNgj39ldk9JamPGWBW03RcFLXOLxdx4L8oqu?=
+ =?us-ascii?Q?qE/kgKHKL5NPYmmvLi3LdbkSWSIc+JZVKdN71Mlbdp+qIIh9kcQr0zXBCBZv?=
+ =?us-ascii?Q?3ZEcLXzIRgEWPCQmtH+56Oj6W2wZqwRNu5Iq2CFz9Afnuv9fIstlMJXp87Bp?=
+ =?us-ascii?Q?3xm3FjsBihEMUqosSimcYOrBIUZIrdKw1acViSjm5vBRxnQOxz9SfW3n7oYx?=
+ =?us-ascii?Q?P3OnYcWa/A1HreaBkWPBVhpOqxwvmt3UHTXeG3UqgKIYPBJQeoDE+mSIewlO?=
+ =?us-ascii?Q?N0vWCXtrhITmDZqgpg0O2LtRIQF74zs3CPTBcTVKJPBBH4g8PtF7U8aYRfFZ?=
+ =?us-ascii?Q?1UrsIDqv/wE/Cdwz8XZtZAOZunRwKzXv6/S2u1uAfDPi3LviZ7mE1UhYfsKG?=
+ =?us-ascii?Q?yqAmHi3Rg4oNi2bkeEkNoUJBLgPZouH5gE6ZsgbSetwiW84W36K/Bf0xsX+d?=
+ =?us-ascii?Q?fjv+4yG9D18jRajD6xc/8exUlHDllF1eV7/uu+VpM9YneiPo5BezCTqxDki3?=
+ =?us-ascii?Q?rgaJbIs+e+sKFPWMxBvKJaAVk7F1za+Icw6t6PEq9AGnuKaaxna0l3gwklx2?=
+ =?us-ascii?Q?eA9vpHbXUBNxaBz2znPkV/hyMsyIKOEuhy+WRN9/xX/1RE/MlxpTu6XZMEmh?=
+ =?us-ascii?Q?5wGlMsYxCkOF18OTxL6TQZRMVXd/uZshd+Pz5dfy/vkr0NXc1IxU5JRR+HFU?=
+ =?us-ascii?Q?lPKFur6WXyLfc+RmGcvhUIN++LREuOOL+/YInhWcGVfUnuwUYyXlMoA+Bg/P?=
+ =?us-ascii?Q?XwHOl93MLzDOLinJIh6NDF1y2j7gJgPfRQ+7Rb8sZRPwIQ2tpoTn9q9PrwPs?=
+ =?us-ascii?Q?oZl7ldNaFhq8bXCN6cWPqxpmAbmO7x//dx5B5nHwFGOFNvakt4ikNQvpQVs2?=
+ =?us-ascii?Q?w1Fa2kXh2mvDDVUlhaZchR7B7qrjkMDt3QaucZWsxZEPYwGY+uBzEHt77RKq?=
+ =?us-ascii?Q?wT5QSyX6u6rcUApph9iku2xjiXTGZkIkAK4eIBNU6iL32LKkU4m2ewwzBx+E?=
+ =?us-ascii?Q?o2OgDwOXiDIachUqHyqWSlAOOTsGrF1h3gVd7CqKWeVvF2Di6QCgfsdN1JBq?=
+ =?us-ascii?Q?0TYwgdoANJDYtepgRFp6HC5zWQrfuQxEmwmIed4NA8CJ5IZeMvmrXBWaEx1X?=
+ =?us-ascii?Q?C/UJ1RKeo8v0VQsuyRg9zlH/dv2XKFWMBLQNkNFx0cDLWCQgipmQH760Ee7K?=
+ =?us-ascii?Q?TR0SKJ3VDJKdBoJL/ShZ0vQ+IaVquJ2tpxCAVXT4+DUdc2SKDOfXxTfSrvO2?=
+ =?us-ascii?Q?e36fBtLgldS7MlvVijnSptX08tzvAYZfpo50m5K/8MdSRFvzQn3/KGerU06M?=
+ =?us-ascii?Q?M7/NEws7zi/5Wj8r11S+PzSd+zCeatGc9s3QlNBBehH8Fbnwn1sgQoFVHX0m?=
+ =?us-ascii?Q?c+1ERQAC2GGyVaHzFMBTGjVglBZhFqKTk47lS9dZiFVyPy8gkJr39gtUiu00?=
+ =?us-ascii?Q?ig=3D=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: db4f5bf1-bd86-48f8-0328-08dc5a46d730
+X-MS-Exchange-CrossTenant-Network-Message-Id: f86743d7-ae60-418b-baee-08dc5a479dfb
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2024 16:45:48.6585
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2024 16:51:22.9795
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: C5rx+0YkMCI7NRrfqNSXznABhZcrRt5YrLkm0+vbU6r45e/OYYLE2G6m9fHQq2rodARLU2meiu+3datgWVOayw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3688
+X-MS-Exchange-CrossTenant-UserPrincipalName: KzilnLHlmS2r2MWjZB4sQlTSO0YlraLNCq5H0FmkEfHZ1Z0CpxbjqAu+OgZ4+DA12AQs1U87BOkmt/DfOGDFOg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR10MB6905
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 11 Apr 2024 16:45:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15546
+ <cip-dev@lists.cip-project.org>; Thu, 11 Apr 2024 16:51:27 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15547
 
-CC'ing folks who may have a clue as they may actually use that combo.
+Hi Nobuhiro,
 
-On 11.04.24 17:09, Hannah Kiekens wrote:
-> Hi everyone!
->=20
-> The roundrobin handler seems broken for the bookworm with swupdate
-> 2021.11 combination.
-> It is easy to reproduce with qemu on the next branch,
-> PREFERRED_VERSION_swupdate =3D "2021.11%" is the only change that's
-> needed. Log of this setup included at the end of the e-mail
->=20
-> I am not seeing anything that's obviously different with bullseye.=C2=A0
-> We are using bullseye with swupdate 2021.11 on tag v1.3. I am working on
-> an upgrade path to bookworm
+thanks for picking this up!
 
-So, bullseye and 2021.11 are still fine with current 'next'?
+On 05.04.24 09:39, nobuhiro1.iwamatsu@toshiba.co.jp wrote:
+> Hi all,
+>=20
+> First of all I created generic kernel configuration for x86 CIP reference=
+ hardware and performed boot tests.
+> The configurations of each device in cip-kernel-config are merged using K=
+ERNEL/scripts/kconfig/merge_config.sh.
 
->=20
-> Regards,
-> Hannah
->=20
-> LOG:
-> root@demo:~# swupdate -v -i cip-core-image-cip-core-bookworm-qemu-amd64.s=
-wu
-> [TRACE] : SWUPDATE running : =C2=A0[swupdate_dgst_init] : public key / ce=
-rt
-> /usr/share/swupdate-signing/swupdate-sign.crt ignored, you need to set
-> SIGALG
-> Swupdate v2021.11.0
->=20
-> Licensed under GPLv2. See source distribution for detailed copyright
-> notices.
->=20
-> [INFO ] : SWUPDATE running : =C2=A0[lua_handlers_init] : Lua handler(s) f=
-ound.
-> [INFO ] : SWUPDATE running : =C2=A0[main] : Running on cip-qemu-amd64
-> Revision cip-core-1.0
-> [INFO ] : SWUPDATE running : =C2=A0[print_registered_handlers] : Register=
-ed
-> handlers:
-> [INFO ] : SWUPDATE running : =C2=A0[print_registered_handlers] : =C2=A0 =
-=C2=A0 dummy
-> [INFO ] : SWUPDATE running : =C2=A0[print_registered_handlers] : =C2=A0 =
-=C2=A0 archive
-> [INFO ] : SWUPDATE running : =C2=A0[print_registered_handlers] : =C2=A0 =
-=C2=A0 tar
-> [INFO ] : SWUPDATE running : =C2=A0[print_registered_handlers] : =C2=A0 =
-=C2=A0 uboot
-> [INFO ] : SWUPDATE running : =C2=A0[print_registered_handlers] : =C2=A0 =
-=C2=A0 bootloader
-> [INFO ] : SWUPDATE running : =C2=A0[print_registered_handlers] : =C2=A0 =
-=C2=A0 uniqueuuid
-> [INFO ] : SWUPDATE running : =C2=A0[print_registered_handlers] : =C2=A0 =
-=C2=A0 lua
-> [INFO ] : SWUPDATE running : =C2=A0[print_registered_handlers] : =C2=A0 =
-=C2=A0 raw
-> [INFO ] : SWUPDATE running : =C2=A0[print_registered_handlers] : =C2=A0 =
-=C2=A0 rawfile
-> [INFO ] : SWUPDATE running : =C2=A0[print_registered_handlers] : =C2=A0 =
-=C2=A0 rawcopy
-> [INFO ] : SWUPDATE running : =C2=A0[print_registered_handlers] : =C2=A0 =
-=C2=A0 rdiff_image
-> [INFO ] : SWUPDATE running : =C2=A0[print_registered_handlers] : =C2=A0 =
-=C2=A0 rdiff_file
-> [INFO ] : SWUPDATE running : =C2=A0[print_registered_handlers] : =C2=A0 =
-=C2=A0 readback
-> [INFO ] : SWUPDATE running : =C2=A0[print_registered_handlers] : =C2=A0 =
-=C2=A0 shellscript
-> [INFO ] : SWUPDATE running : =C2=A0[print_registered_handlers] : =C2=A0 =
-=C2=A0 preinstall
-> [INFO ] : SWUPDATE running : =C2=A0[print_registered_handlers] : =C2=A0 =
-=C2=A0 postinstall
-> [INFO ] : SWUPDATE running : =C2=A0[print_registered_handlers] : =C2=A0 =
-=C2=A0 roundrobin
-> [TRACE] : SWUPDATE running : =C2=A0[network_initializer] : Main loop daem=
-on
-> [TRACE] : SWUPDATE running : =C2=A0[listener_create] : got no socket at
-> /tmp/swupdateprog from systemd
-> [TRACE] : SWUPDATE running : =C2=A0[listener_create] : creating socket at
-> /tmp/swupdateprog
-> [TRACE] : SWUPDATE running : =C2=A0[listener_create] : got no socket at
-> /tmp/sockinstctrl from systemd
-> [TRACE] : SWUPDATE running : =C2=A0[listener_create] : creating socket at
-> /tmp/sockinstctrl
-> [TRACE] : SWUPDATE running : =C2=A0[network_thread] : Incoming network
-> request: processing...
-> [INFO ] : SWUPDATE started : =C2=A0Software Update started !
-> [TRACE] : SWUPDATE running : =C2=A0[network_initializer] : Software updat=
-e
-> started
-> [TRACE] : SWUPDATE running : =C2=A0[extract_file_to_tmp] : Found file
-> [TRACE] : SWUPDATE running : =C2=A0[extract_file_to_tmp] : =C2=A0 filenam=
-e
-> sw-description
-> [TRACE] : SWUPDATE running : =C2=A0[extract_file_to_tmp] : =C2=A0 size 12=
-67
-> [TRACE] : SWUPDATE running : =C2=A0[get_common_fields] : Version 0.2
-> [TRACE] : SWUPDATE running : =C2=A0[parse_hw_compatibility] : Accepted Hw
-> Revision : cip-core-1.0
-> [TRACE] : SWUPDATE running : =C2=A0[add_properties] : Found properties fo=
-r
-> linux.efi:
-> [TRACE] : SWUPDATE running : =C2=A0[add_properties_cb] : =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 Property
-> subtype: kernel
-> [TRACE] : SWUPDATE running : =C2=A0[_parse_files] : Found File: linux.efi=
- -->
-> linux.efi (C:BOOT0:linux.efi->BOOT0,C:BOOT1:linux.efi->BOOT1)
-> [TRACE] : SWUPDATE running : =C2=A0[add_properties] : Found properties fo=
-r
-> cip-core-image-cip-core-bookworm-qemu-amd64.squashfs:
-> [TRACE] : SWUPDATE running : =C2=A0[add_properties_cb] : =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 Property
-> subtype: image
-> [TRACE] : SWUPDATE running : =C2=A0[add_properties_cb] : =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 Property
-> configfilecheck:
-> /etc/os-release@not_match@IMAGE_UUID=3D7f15735e-dd28-48b3-a881-a2e7353d93=
-df
-> [TRACE] : SWUPDATE running : =C2=A0[_parse_images] : Found Image:
-> cip-core-image-cip-core-bookworm-qemu-amd64.squashfs in device :
-> C:BOOT0:linux.efi->fedcba98-7654-3210-cafe-5e0710000001,C:BOOT1:linux.efi=
-->fedcba98-7654-3210-cafe-5e0710000002 for handler roundrobin
-> [TRACE] : SWUPDATE running : =C2=A0[check_hw_compatibility] : Hardware
-> cip-qemu-amd64 Revision: cip-core-1.0
-> [TRACE] : SWUPDATE running : =C2=A0[check_hw_compatibility] : Hardware
-> compatibility verified
-> [TRACE] : SWUPDATE running : =C2=A0[extract_files] : Found file
-> [TRACE] : SWUPDATE running : =C2=A0[extract_files] : =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 filename
-> sw-description.sig
-> [TRACE] : SWUPDATE running : =C2=A0[extract_files] : =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 size 1348 Not
-> required: skipping
-> [TRACE] : SWUPDATE running : =C2=A0[extract_files] : Found file
-> [TRACE] : SWUPDATE running : =C2=A0[extract_files] : =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 filename
-> cip-core-image-cip-core-bookworm-qemu-amd64.squashfs
-> [TRACE] : SWUPDATE running : =C2=A0[extract_files] : =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 size 119066624
-> required
-> [TRACE] : SWUPDATE running : =C2=A0[extract_files] : Found file
-> [TRACE] : SWUPDATE running : =C2=A0[extract_files] : =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 filename linux.efi
-> [TRACE] : SWUPDATE running : =C2=A0[extract_files] : =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 size 16962560
-> required
-> [TRACE] : SWUPDATE running : =C2=A0[extract_padding] : Expecting 388 padd=
-ing
-> bytes at end-of-file
-> [TRACE] : SWUPDATE running : =C2=A0[network_initializer] : Valid image fo=
-und:
-> copying to FLASH
-> [INFO ] : SWUPDATE running : =C2=A0Installation in progress
-> [TRACE] : SWUPDATE running : =C2=A0[install_single_image] : Found install=
-er
-> for stream cip-core-image-cip-core-bookworm-qemu-amd64.squashfs roundrobi=
-n
-> [TRACE] : SWUPDATE running : =C2=A0[notify_helper] : Round Robin Handler:=
- No
-> compiled-in config found, trying /etc/swupdate.handler.ini
-> [ERROR] : SWUPDATE failed [0] ERROR : Round Robin Handler: Error getting
-> key 'kernelfile' from bootloader environment.
-
-I suppose this is where the problem starts.
+This script will likely prioritize the choice of later-provided configs
+over those earlier listed. But we rather generally want that features
+enabled in one config are also enabled in the merged ones (superset).
+How could we achieve this? Probably most of the comments I would have on
+the ipc227e diff would relate to this.
 
 Jan
 
-> [ERROR] : SWUPDATE failed [0] ERROR : Round Robin Handler: Could not
-> determine current root device.
-> [TRACE] : SWUPDATE running : =C2=A0[l_handler_wrapper] : [Lua handler]
-> returned: 1
-> [TRACE] : SWUPDATE running : =C2=A0[install_single_image] : Installer for
-> roundrobin not successful !
-> [ERROR] : SWUPDATE failed [1] Installation failed !
-> [TRACE] : SWUPDATE running : =C2=A0[network_initializer] : Main thread sl=
-eep
-> again !
-> [INFO ] : No SWUPDATE running : =C2=A0Waiting for requests...
-> [INFO ] : SWUPDATE running : =C2=A0[endupdate] : Swupdate *failed* !
+> Also, booting is fine[2][3]. But there are a lot of differences in the co=
+nfigurations[0][1], so I think we need to decide
+> what to do with them.
+>=20
+> About M-COM x86, but I haven't investigated it yet.
+>=20
+> Best regards,
+>   Nobuhiro
+>=20
+> Merged config:
+>     https://gitlab.com/iwamatsu/cip-merge-config-work/-/raw/master/config
+> Diff with ipc227e original config [0]:
+>     https://gitlab.com/iwamatsu/cip-merge-config-work/-/raw/master/siemen=
+s_ipc227e_config.v6.1.83-cip18.diff
+> Diff with OpenBlocks IoT VX2 original config[1]:
+>     https://gitlab.com/iwamatsu/cip-merge-config-work/-/blob/master/plath=
+ome_obsvx2_config.v6.1.83-cip18.diff
+> Kernel size:
+>     7760544 bytes
+>=20
+> ipc227e boot log (merged)[2]
+>     https://lava.ciplatform.org/scheduler/job/1113259
+>     https://gitlab.com/iwamatsu/cip-merge-config-work/-/raw/master/ipc227=
+e-merged.log
+> ipc227e boot log (NO merged)
+>     https://lava.ciplatform.org/scheduler/job/1113356
+>     https://gitlab.com/iwamatsu/cip-merge-config-work/-/raw/master/ipc227=
+e-NO-merged.log
+>     kernel size: 7251072 bytes
+> ipc227e boot log (diff)
+>     https://gitlab.com/iwamatsu/cip-merge-config-work/-/blob/master/ipc22=
+7e.log.diff
+>=20
+> OpenBlocks IoT VX2 boot log (merged)[3]
+>     https://lava.ciplatform.org/scheduler/job/1113301
+>     https://gitlab.com/iwamatsu/cip-merge-config-work/-/raw/master/obs-me=
+rged.log
+> OpenBlocks IoT VX2 boot log (NO merged)
+>     https://lava.ciplatform.org/scheduler/job/1113303
+>     https://gitlab.com/iwamatsu/cip-merge-config-work/-/raw/master/obs-no=
+-merge.log
+>     kernel size: 9203296 bytes
+> OpenBlocks IoT VX2 boot log (diff)
+>     https://gitlab.com/iwamatsu/cip-merge-config-work/-/raw/master/obs.lo=
+g.diff
 >=20
 >=20
+>> -----Original Message-----
+>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>> Sent: Tuesday, March 26, 2024 3:52 PM
+>> To: Benjamin Schilling <schilling.benjamin@siemens.com>;
+>> cip-dev@lists.cip-project.org; iwamatsu nobuhiro(=E5=B2=A9=E6=9D=BE =E4=
+=BF=A1=E6=B4=8B =E2=97=8B=EF=BC=A4=EF=BC=A9=EF=BC=B4=EF=BC=A3=E2=96=A1=EF=
+=BC=A4
+>> =EF=BC=A9=EF=BC=B4=E2=97=8B=EF=BC=AF=EF=BC=B3=EF=BC=B4) <nobuhiro1.iwama=
+tsu@toshiba.co.jp>
+>> Subject: Re: [isar-cip-core][PATCH] Add support Plat'Home OpenBlocks IoT
+>> VX2
+>>
+>> On 22.03.24 12:39, Benjamin Schilling wrote:
+>>> Hi all,
+>>>
+>>> I'm joining the discussion to start integrating the M-COM x86 support.
+>>> What's the status on the generic x86-64 target?
+>>>
+>>
+>> Nobuhiro wrote recently he has a prototype. Maybe he can share to finali=
+ze it
+>> together.
+>>
+>> Jan
+>>
+>> --
+>> Siemens AG, Technology
+>> Linux Expert Center
 
 --=20
 Siemens AG, Technology
