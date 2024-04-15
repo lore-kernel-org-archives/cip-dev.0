@@ -1,88 +1,83 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <adithya.balakumar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC9F5C4345F
-	for <webhook@archiver.kernel.org>; Mon, 15 Apr 2024 09:57:56 +0000 (UTC)
-Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
- by mx.groups.io with SMTP id smtpd.web11.17247.1713175074115107365
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21397C00A94
+	for <webhook@archiver.kernel.org>; Mon, 15 Apr 2024 10:45:37 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.web10.17935.1713177933759195460
  for <cip-dev@lists.cip-project.org>;
- Mon, 15 Apr 2024 02:57:55 -0700
+ Mon, 15 Apr 2024 03:45:34 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=Yfj13xZ6;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.225, mailfrom: fm-51332-20240415095750e1db6f3e5d4ec61e67-ll9fdf@rts-flowmailer.siemens.com)
-Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 20240415095750e1db6f3e5d4ec61e67
-        for <cip-dev@lists.cip-project.org>;
-        Mon, 15 Apr 2024 11:57:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
- bh=vv+bJFADBtGeQqQwNLAAdo+/Tdq20Bt5f0FKGRBCs9o=;
- b=Yfj13xZ6fA9XZ+dDH/Y+7x/jptj6lWAK/X3PcFe6l9aQWsXYOsdS428ygsxdMEP9+vFx1Z
- 3SCCnf2bxnVrTx7ShleR1dgqLqAhfXnMr4jkPn1ve7k+PN2YzrymUnqaLzROmFYXHZGJpv/n
- qryyupmhMyHH90/1MPE+wipeulceA=;
-From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: jan.kiszka@siemens.com,
-	hannah.kiekens@essensium.com,
-	cip-dev@lists.cip-project.org,
-	tobias.schaffner@siemens.com
-Subject: [cip-core][isar-cip-core][PATCH] fix: swupdate_2021.11 with efibootguard
-Date: Mon, 15 Apr 2024 11:54:19 +0200
-Message-ID: <20240415095749.572576-1-Quirin.Gylstorff@siemens.com>
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.158, mailfrom: adithya.balakumar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 43FAjVUT2374549; Mon, 15 Apr 2024 19:45:31 +0900
+X-Iguazu-Qid: 2rWgdkpBONmLVFU8Mi
+X-Iguazu-QSIG: v=2; s=0; t=1713177931; q=2rWgdkpBONmLVFU8Mi; m=6mlvJU8Hb80/53cAUslAxFu8kZt7sy+GMzQjaDSbKJg=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1120) id 43FAjUuQ1793473
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Mon, 15 Apr 2024 19:45:30 +0900
+From: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Cc: quirin.gylstorff@siemens.com, felix.moessbauer@siemens.com,
+        shivanand.kunijadar@toshiba-tsip.com, sai.sathujoda@toshiba-tsip.com,
+        dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
+Subject: [isar-cip-core][PATCH v3 0/3] Integrate Delta Update with rdiff_image and delta handler
+Date: Mon, 15 Apr 2024 16:16:07 +0530
+X-TSB-HOP2: ON
+Message-Id: <20240415104610.3073497-1-Adithya.Balakumar@toshiba-tsip.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+X-OriginalArrivalTime: 15 Apr 2024 10:45:28.0781 (UTC) FILETIME=[08107FD0:01DA8F22]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 15 Apr 2024 09:57:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15557
+ <cip-dev@lists.cip-project.org>; Mon, 15 Apr 2024 10:45:37 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15558
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+These series of patches enable the support for delta update for the root file system with swupdate's 
+rdiff_image and delta handler(zchunk).
 
-This fixes a regression introduced with
-5e2c207abae61e073bc732d0b93ba390891cd0c7 by readding the bootloader
-selection with DEB_BUILD_PROFILES for SWUpdate 2021.11.
+A couple notes about the implementation:
+- In this patchset, Delta update is only supported for the root file system.
+- The newly added delta-update.bbclass handles the creation of the delta update artifacts.
+- The update handler type i.e rdiff_image or delta handler is set in the variable "DELTA_UPDATE_TYPE"
+in the swupdate.yml file along with some variables required for each handler.
+- The creation of delta artifact for the rdiff_image handler requires a reference image (against which 
+the delta is computed). Currently the reference artifact file (.squashfs/.verity) is passed to the 
+build system by placing the artifact in the path "${TOPDIR}/previous-image" and setting the name of the
+artifact in the variable DELTA_RDIFF_REF_IMAGE in the swupdate.yml file.
 
-SWUpdate 2021.11 selects the bootloader at  compile time instead
-of runtime. This fixes the following error message during installing
-a binary update:
+Changes in v3:
+- Rebase to current next branch (61e998e1e0541e2713c05fcbf21df39fbc882a0a)
+- Set "${TOPDIR}/previous-image" as the path for the previous image artifact for rdiff update.
+- README updates to verify delta update.
 
- [INFO ] : SWUPDATE running :  Installation in progress
- [TRACE] : SWUPDATE running :  [install_single_image] : Found installer
- for stream cip-core-image-cip-core-bookworm-qemu-amd64.squashfs roundrobin
- [TRACE] : SWUPDATE running :  [notify_helper] : Round Robin Handler: No
- compiled-in config found, trying /etc/swupdate.handler.ini
- [ERROR] : SWUPDATE failed [0] ERROR : Round Robin Handler: Error getting
- key 'kernelfile' from bootloader environment.
+Changes in v2:
+- Removed zchunk support for bookworm (due to use of backports). Currently zchunk based update only supported in Sid.
+- Removed delta-update.yml file. Related variables have default values and can be set in manually swupdate.yml file.
+- Using .squashfs file (.verity file in the case of Secure boot) for rdiff delta creation instead of .wic file.
+- rdiff is set as default for delta update type, the build system looks for the v1 artifact in a default path (image-v1/<artifact_name>).
+- Created a separate template file for sw-description of delta update.
+- Renamed delta_update.bbclass to delta-update.bbclass.
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Adithya Balakumar (3):
+  Add Delta update support with rdiff_image and delta handler
+  swupdate.bbclass: Generate swu for delta updates
+  doc/README.swupdate.md: Update steps to test Delta software Update
 
-diff --git a/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb b/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
-index 0039116..bb98ede 100644
---- a/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
-+++ b/recipes-core/swupdate/swupdate_2021.11-1+debian-gbp.bb
-@@ -33,6 +33,15 @@ SRC_URI += "file://0001-debian-Remove-SWUpdate-USB-service-and-Udev-rules.patch
- # DEPENDS += "swupdate-handlers"
- # GBP_DEPENDS += "swupdate-handlers"
- # DEB_BUILD_PROFILES += "pkg.swupdate.embeddedlua"
-+def get_bootloader_build_profile(d):
-+    bootloader = d.getVar("SWUPDATE_BOOTLOADER") or ""
-+    if bootloader == "efibootguard":
-+        return "pkg.swupdate.efibootguard"
-+    if bootloader == "u-boot":
-+        return "pkg.swupdate.uboot"
-+    return ""
-+
-+DEB_BUILD_PROFILES += "${@get_bootloader_build_profile(d)}"
- 
- # modify for debian buster build
- SRC_URI:append = " file://0006-debian-prepare-build-for-isar-debian-buster.patch"
+ classes/delta-update.bbclass                  | 97 +++++++++++++++++++
+ classes/swupdate.bbclass                      | 32 +++++-
+ conf/layer.conf                               |  2 +-
+ doc/README.swupdate.md                        | 59 +++++++++++
+ kas/opt/swupdate.yml                          |  6 ++
+ .../images/swu/sw-description-delta.tmpl      | 39 ++++++++
+ 6 files changed, 233 insertions(+), 2 deletions(-)
+ create mode 100644 classes/delta-update.bbclass
+ create mode 100644 recipes-core/images/swu/sw-description-delta.tmpl
+
 -- 
-2.43.0
+2.39.2
 
 
