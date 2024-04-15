@@ -2,186 +2,120 @@ Return-Path: <adithya.balakumar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AFA2C05023
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30996C04FFE
 	for <webhook@archiver.kernel.org>; Mon, 15 Apr 2024 10:45:37 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.132])
- by mx.groups.io with SMTP id smtpd.web10.17936.1713177934152165620
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.135])
+ by mx.groups.io with SMTP id smtpd.web10.17938.1713177935186818887
  for <cip-dev@lists.cip-project.org>;
- Mon, 15 Apr 2024 03:45:34 -0700
+ Mon, 15 Apr 2024 03:45:35 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.132, mailfrom: adithya.balakumar@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1121) id 43FAjVFX2074212; Mon, 15 Apr 2024 19:45:32 +0900
-X-Iguazu-Qid: 2rWgYo6Fms1IDI6vqs
-X-Iguazu-QSIG: v=2; s=0; t=1713177931; q=2rWgYo6Fms1IDI6vqs; m=NGH5Km5IByi84QABD1d1bMP+iYswap9ob7cN7W+b5wo=
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.135, mailfrom: adithya.balakumar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1801) id 43FAjXcx3293501; Mon, 15 Apr 2024 19:45:33 +0900
+X-Iguazu-Qid: 2yAamVQ9TxupoPiotw
+X-Iguazu-QSIG: v=2; s=0; t=1713177932; q=2yAamVQ9TxupoPiotw; m=GQQX31/JmlDQ9pzvUnhmDM1WhN2uNFwEetkD1g2Tgv0=
 Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1121) id 43FAjUqv1070684
+	by relay.securemx.jp (mx-mr1801) id 43FAjWFO2474511
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 15 Apr 2024 19:45:31 +0900
+	Mon, 15 Apr 2024 19:45:32 +0900
 From: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
 To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
 Cc: quirin.gylstorff@siemens.com, felix.moessbauer@siemens.com,
         shivanand.kunijadar@toshiba-tsip.com, sai.sathujoda@toshiba-tsip.com,
         dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
-Subject: [isar-cip-core][PATCH v3 1/3] Add Delta update support with rdiff_image and delta handler
-Date: Mon, 15 Apr 2024 16:16:08 +0530
+Subject: [isar-cip-core][PATCH v3 3/3] doc/README.swupdate.md: Update steps to test Delta software Update
+Date: Mon, 15 Apr 2024 16:16:10 +0530
 X-TSB-HOP2: ON
-Message-Id: <20240415104610.3073497-2-Adithya.Balakumar@toshiba-tsip.com>
+Message-Id: <20240415104610.3073497-4-Adithya.Balakumar@toshiba-tsip.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240415104610.3073497-1-Adithya.Balakumar@toshiba-tsip.com>
 References: <20240415104610.3073497-1-Adithya.Balakumar@toshiba-tsip.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 15 Apr 2024 10:45:28.0859 (UTC) FILETIME=[081C66B0:01DA8F22]
+X-OriginalArrivalTime: 15 Apr 2024 10:45:29.0016 (UTC) FILETIME=[08345B80:01DA8F22]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 15 Apr 2024 10:45:37 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15559
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15560
 
-swupdate supports delta updates with rdiff_image and delta(zchunk)
-handler. This change adds support to use either of the handler
-for creating delta update artifacts. zchunk based updates are supported
-only for sid.
-
-DELTA_UPDATE_TYPE, DELTA_RDIFF_REF_IMAGE and DELTA_ZCK_URL variables can
-be modified based on the update type in the swupdate.yml file.
+This change includes steps to verify Delta Software Update with
+rdiff_image and delta handler
 
 Signed-off-by: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
 ---
- classes/delta-update.bbclass | 97 ++++++++++++++++++++++++++++++++++++
- conf/layer.conf              |  2 +-
- kas/opt/swupdate.yml         |  6 +++
- 3 files changed, 104 insertions(+), 1 deletion(-)
- create mode 100644 classes/delta-update.bbclass
+ doc/README.swupdate.md | 59 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
-diff --git a/classes/delta-update.bbclass b/classes/delta-update.bbclass
-new file mode 100644
-index 0000000..87bf7ff
---- /dev/null
-+++ b/classes/delta-update.bbclass
-@@ -0,0 +1,97 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Toshiba Corporation 2024
-+#
-+# Authors:
-+#  Adithya Balakumar <adithya.balakumar@toshiba-tsip.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+IMAGER_INSTALL:delta_update .= "zchunk rdiff"
-+
-+FILESEXTRAPATHS:append = ":${TOPDIR}/previous-image"
-+do_image_delta_update[cleandirs] += "${WORKDIR}/delta_interim_artifacts"
-+
-+DELTA_UPDATE_TYPE ??= "rdiff"
-+DELTA_RDIFF_REF_IMAGE ??= "${IMAGE_FULLNAME}.${SWU_ROOTFS_TYPE}"
-+DELTA_ZCK_URL ??= ""
-+DELTA_PREV_IMAGE_PATH ??= "${TOPDIR}/previous-image"
-+
-+def disable_delta_update_tasks (d):
-+    d.appendVarFlag("do_image_delta_update", "noexec", "1")
-+    d.setVar("DELTA_UPDATE_TYPE", "")
-+
-+def delta_update_prereq_check (d):
-+    import os
-+    if d.getVar("DELTA_UPDATE_TYPE") == "rdiff":
-+        path = d.getVar("DELTA_PREV_IMAGE_PATH") + "/" + d.getVar("DELTA_RDIFF_REF_IMAGE")
-+        if not os.path.isfile(path):
-+            disable_delta_update_tasks(d)
-+        else:
-+            return "file://" + d.getVar("DELTA_RDIFF_REF_IMAGE")
-+    elif d.getVar("DELTA_UPDATE_TYPE") == "zchunk":
-+        if d.getVar("BASE_DISTRO_CODENAME") != "sid":
-+            disable_delta_update_tasks(d)
-+    else:
-+        disable_delta_update_tasks(d)
-+    return ""
-+
-+SRC_URI += "${@delta_update_prereq_check(d)}"
-+
-+create_rdiff_delta_artifact() {
-+    if [ -z "${DELTA_RDIFF_REF_IMAGE}" ]; then
-+        bbfatal "You must set DELTA_RDIFF_REF_IMAGE and provide the required files as artifacts to this recipe"
-+    fi
-+
-+    rm -f ${DEPLOY_DIR_IMAGE}/${IMAGE_FULLNAME}.delta
-+    # create signature file with rdiff
-+    ${SUDO_CHROOT} /usr/bin/rdiff signature ${WORKDIR}/${DELTA_RDIFF_REF_IMAGE} \
-+        ${WORKDIR}/delta_interim_artifacts/old-image-rootfs.sig
-+
-+    # create delta file with the signature file
-+    ${SUDO_CHROOT} /usr/bin/rdiff delta ${WORKDIR}/delta_interim_artifacts/old-image-rootfs.sig \
-+        ${PP_DEPLOY}/${IMAGE_FULLNAME}.${SWU_ROOTFS_TYPE} ${PP_DEPLOY}/${IMAGE_FULLNAME}.delta
-+
-+    DELTA_ARTIFACT_SWU=${IMAGE_FULLNAME}.delta
-+
-+    # create a symbolic link as IMAGE_CMD expects a *.delta_update file in deploy image directory
-+    ln -sf ${DELTA_ARTIFACT_SWU} ${DEPLOY_DIR_IMAGE}/${IMAGE_FULLNAME}.delta_update
-+}
-+
-+create_zchunk_delta_artifact() {
-+    # Create .zck file
-+    ${SUDO_CHROOT} /bin/zck \
-+        --output ${PP_DEPLOY}/${IMAGE_FULLNAME}.zck \
-+        -u --chunk-hash-type sha256 \
-+        ${PP_DEPLOY}/${IMAGE_FULLNAME}.${SWU_ROOTFS_TYPE}
-+
-+    # Calculate size of zck header
-+    HSIZE="$(${SUDO_CHROOT} /bin/zck_read_header -v ${PP_DEPLOY}/${IMAGE_FULLNAME}.zck | grep "Header size" | cut -d ':' -f 2)"
-+
-+    # Extract the zck header
-+    ${SUDO_CHROOT} /bin/dd if="${PP_DEPLOY}/${IMAGE_FULLNAME}".zck of="${PP_DEPLOY}/${IMAGE_FULLNAME}".zck.header bs=1 count="$HSIZE" status=none
-+
-+    DELTA_ARTIFACT_SWU=${IMAGE_FULLNAME}.zck.header
-+
-+    # create a symbolic link as IMAGE_CMD expects a *.delta_update file in deploy image directory
-+    ln -sf ${DELTA_ARTIFACT_SWU} ${DEPLOY_DIR_IMAGE}/${IMAGE_FULLNAME}.delta_update
-+}
-+
-+do_image_delta_update[depends] += "${PN}:do_transform_template"
-+IMAGE_CMD:delta_update() {
-+    case "${DELTA_UPDATE_TYPE}" in
-+    "rdiff")
-+        create_rdiff_delta_artifact
-+        ;;
-+    "zchunk")
-+        create_zchunk_delta_artifact
-+        ;;
-+    *)
-+        bbfatal "You must set a valid DELTA_UPDATE_TYPE (rdiff/zchunk)"
-+        ;;
-+    esac
-+}
-+
-+addtask do_image_delta_update before do_image_swu after do_image_wic
-diff --git a/conf/layer.conf b/conf/layer.conf
-index 6198e1b..c652a61 100644
---- a/conf/layer.conf
-+++ b/conf/layer.conf
-@@ -23,5 +23,5 @@ LAYERSERIES_COMPAT_cip-core = "next"
- LAYERDIR_cip-core = "${LAYERDIR}"
- LAYERDIR_cip-core[vardepvalue] = "isar-cip-core"
+diff --git a/doc/README.swupdate.md b/doc/README.swupdate.md
+index b7e13f7..c3bd3b4 100644
+--- a/doc/README.swupdate.md
++++ b/doc/README.swupdate.md
+@@ -360,6 +360,65 @@ user variables:
  
--IMAGE_CLASSES += "squashfs verity swupdate"
-+IMAGE_CLASSES += "squashfs verity swupdate delta-update"
+ ```
  
-diff --git a/kas/opt/swupdate.yml b/kas/opt/swupdate.yml
-index ef61e4e..81dbe95 100644
---- a/kas/opt/swupdate.yml
-+++ b/kas/opt/swupdate.yml
-@@ -30,3 +30,9 @@ local_conf_header:
-     ABROOTFS_PART_UUID_B ?= "fedcba98-7654-3210-cafe-5e0710000002"
-     PREFERRED_PROVIDER_swupdate-certificates-key ??= "swupdate-certificates-key-snakeoil"
-     PREFERRED_PROVIDER_swupdate-certificates ??= "swupdate-certificates-snakeoil"
-+    # delta update specific variables"
-+    IMAGE_FSTYPES:append = " delta_update"
-+    DELTA_UPDATE_TYPE = "rdiff"
-+    DELTA_RDIFF_REF_IMAGE = "${IMAGE_FULLNAME}.${SWU_ROOTFS_TYPE}"
-+    DELTA_ZCK_URL = ""
++# Building and testing the CIP Core image for Delta Software Update
 +
++Set up `kas-container` as described in the [top-level README](../README.md), and then proceed with the following steps.
++
++First build an image using the following command:
++```
++host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/rt.yml
++```
++The above image will be used as the base image to which the update is applied.
++
++## Delta Software Update using rdiff_image handler
++
++Creating an delta update file for rdiff_image handler requires a reference artifact (against which the delta is computed). In this case, the image built in the previous section can be used as the reference artifact. By default the `DELTA_UPDATE_TYPE` is set to `rdiff` and `DELTA_RDIFF_REF_IMAGE` is set to the name `${IMAGE_FULLNAME}.squashfs` (or ${IMAGE_FULLNAME}.verity in the case of Secure boot enabled image). The values of `DELTA_UPDATE_TYPE` and `DELTA_RDIFF_REF_IMAGE` can be changed in the `swupdate.yml` file.
++
++The build system looks for the reference artifact in a directory named `previous-image` in the build directory used for the build process.
++
++Copy the reference artifact to the mentioned directory with the following commands:
++```
++mkdir -p build-v2/previous-image
++cp build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-bookworm-qemu-amd64.squashfs build-v2/previous-image
++```
++Build the second image with `build-v2` as the build directory with the following command:
++```
++KAS_BUILD_DIR=build-v2 ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml
++```
++Now start the first image. Run the following commands:
++```
++host$ DISTRO_RELEASE=bookworm SWUPDATE_BOOT=y ./start-qemu.sh amd64
++```
++Copy `cip-core-image-cip-core-bookworm-qemu-amd64-delta.swu` file from `build-v2/tmp/deploy/images/qemu-amd64/` folder into the running system:
++```
++host$ cd build-v2/tmp/deploy/images/qemu-amd64/
++host$ scp -P 22222 ./cip-core-image-cip-core-bookworm-qemu-amd64-delta.swu root@localhost:
++```
++
++## Delta Software Update using delta handler
++
++Currently zchunk based delta updates are supported only in Sid images. Make sure to build the first image with Sid as the distribution (use `sid.yml` file as part of the build command).
++For Delta update with zchunk, set the variable `DELTA_ZCK_URL` with the URL of the zck file that is hosted in a http server and set the `DELTA_UPDATE_TYPE` to `zchunk` in `swupdate.yml` file.
++
++Build the second image with the modification as shown above with the following command:
++```
++KAS_BUILD_DIR=build-v2 ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/sid.yml
++```
++Now start the first image. Run the following commands:
++```
++host$ DISTRO_RELEASE=sid SWUPDATE_BOOT=y ./start-qemu.sh amd64
++```
++Copy `cip-core-image-cip-core-sid-qemu-amd64-delta.swu` file from `build-v2/tmp/deploy/images/qemu-amd64/` folder into the running system:
++```
++host$ cd build-v2/tmp/deploy/images/qemu-amd64/
++host$ scp -P 22222 ./cip-core-image-cip-core-sid-qemu-amd64-delta.swu root@localhost:
++```
++The `cip-core-image-cip-core-sid-qemu-amd64.zck` file must be hosted in a http server.
++
++### Delta Software Update Verification
++
++Follow the steps mentioned in the section [SWUpdate verification](#swupdate-verification) for verification.
++
+ # Building and testing the CIP Core image for BBB
+ 
+ Follow the steps mentioned in the section [Building and testing the CIP Core image](README.swupdate.md#building-and-testing-the-cip-core-image) for creating images and .swu files.
 -- 
 2.39.2
 
