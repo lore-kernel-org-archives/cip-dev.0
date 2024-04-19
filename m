@@ -2,50 +2,50 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F332C4345F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 933AEC07C79
 	for <webhook@archiver.kernel.org>; Fri, 19 Apr 2024 11:39:10 +0000 (UTC)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
- by mx.groups.io with SMTP id smtpd.web10.18437.1713526740236951108
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+ by mx.groups.io with SMTP id smtpd.web10.18439.1713526741605709202
  for <cip-dev@lists.cip-project.org>;
- Fri, 19 Apr 2024 04:39:00 -0700
+ Fri, 19 Apr 2024 04:39:01 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=fgJVLy+q;
- spf=pass (domain: tuxon.dev, ip: 209.85.208.45, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-56e1bbdb362so2240474a12.1
-        for <cip-dev@lists.cip-project.org>; Fri, 19 Apr 2024 04:39:00 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=plC2B6qD;
+ spf=pass (domain: tuxon.dev, ip: 209.85.208.51, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-56e78970853so4777612a12.0
+        for <cip-dev@lists.cip-project.org>; Fri, 19 Apr 2024 04:39:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1713526738; x=1714131538; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1713526740; x=1714131540; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=crWfIaVyz2slnAzlQast5vbjAXs1OwXJA6IeTLjBbc0=;
-        b=fgJVLy+qwC6BfnzcleUHMeo57s1BSoJ4BtrZnbG8K3mGJ7VOZ/n+moTRYjl7+B4u09
-         30/EWIeqDVfhsg4AnI3HnxnYY/vIc9fl67FX01vFSBcTMGZERYxer3qdYO5DkYmQ3pO+
-         Fd4R9vRbO9P8NoBBOr/H0bRLpBBfsbppWPLWyVoc5N8JIPz3LaF9xOzxIJ7PeslpkhJ/
-         AT7BDJf/RqKh7haMNhT56tBMz8l7I/l27gvImmXIB+1NyBVVk4mBhNBgQlOjsUFLKj8+
-         nx723C/oKXJ8luQlOcM2o/TZh8qPAc+bZiuxEeaCc93EeahZZLsemrD4LG8lJtWzMjIc
-         vd/Q==
+        bh=LmjfW3gLAuiwFo4TBjIKxX7mrD4NENzgTfPQzyBWof0=;
+        b=plC2B6qDr361w9fRsIfuv9yYtG/S3g20v+QMsRvFBVCnJMA5Vy0NqkXwwW8xvDwbO1
+         0CZz2MVp8hUOud339c+kqKx01x3euSv73LVQie9KvqCQCEW5R39ilYqOz1k4sVf72SKN
+         4mI6wrXMZf7B0FpF2SWPaJ+4mg0bjqjAd/i6TxrGf+3kaQx96939uki1Nb5Aez/57e3P
+         Vl+M/MnU/3n+MTl4Qown2mJmEmu8uf/yrJ17xiXkIki2Geu6WYGaff2lPn4t2/V8oXWW
+         WVSXTR79W4NAAc78GcQH8lnAiPiuLQ21UAT7EBCcj5GcCBFPEtB+6OGgYXs6UMeGr5CO
+         N7bQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713526738; x=1714131538;
+        d=1e100.net; s=20230601; t=1713526740; x=1714131540;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=crWfIaVyz2slnAzlQast5vbjAXs1OwXJA6IeTLjBbc0=;
-        b=XPW7GtXCQrM20K1k46KfMcPBIZ9udwKFDrZPOWjI0Hb+oH6Bwl5woKfdm0v1qpCTiC
-         LuB1KT+eURQd0g4z5lLHdz8FLRulOSRaWHIc444ySmT3QJf+r9z+hTAu/3SBFlQ8lO8/
-         WVGiJVj/knwjOUbrNJICQGJTCMwGP/CEvHmxbauaA+xoqHhUOLop/y6sgaRU5IQanzMa
-         +HKUp6VWGt53bdDS9DOJGDxvXreGRNOIOouIkrbgh7SPQ0v1fL+P5Jl5L3noH1on7MAP
-         Er2SoPCvph6w53zZd5mPwGGeCit8+0PD3TP5ImRJMJKd87lGOTJtMa9e/2xEcPKwrsYK
-         YUNQ==
-X-Gm-Message-State: AOJu0YyDetBXb/YCqPR6DOeukXa5h97sVSsytMlkb7Gy3B+q3eOjPZTy
-	DZOaG3/iLKMP1aok6v2UTd4Hk6r4enF/g/o0nMFQIqzx0QjwjJqoW3/Fq7cN+tU=
-X-Google-Smtp-Source: AGHT+IE+3diB5yx1//5wlymALd/Qls6ZLx8YhpbZyYg70ft8odHHOf4s4lGo3Va6t1r392jzb71+vA==
-X-Received: by 2002:a50:999c:0:b0:570:2418:3607 with SMTP id m28-20020a50999c000000b0057024183607mr1820082edb.36.1713526738637;
-        Fri, 19 Apr 2024 04:38:58 -0700 (PDT)
+        bh=LmjfW3gLAuiwFo4TBjIKxX7mrD4NENzgTfPQzyBWof0=;
+        b=GsQW4uF5wKHpCTY5B7QFl5qzk+W+xAosjFUwsKumNAvH4NDt7nTOVe1EEjCSMPfg89
+         RPFvGLhDSOXL/D9mj+zjUtyBSaO88Gi1lCQja1VsEFelyTTyEcmAG6Q49/oj8Zu/Y4gQ
+         GaMxApEsiA3XyVhSmHAwNmF6N6Z6cylEO6NfJur2Ih2Yb30kxK7ORfSTOu0ID+pV9dgo
+         wkr84opCLGp7Rj6K4CfMwgW5/JOThLecIgjMNXdZo0MLXLFAWOCQVDCpPq4XQtiJkbnn
+         08Lu6hvq1FxzVZs87GhiddkLk5HUMpUdIeReYQxAe2/49ngk3MP+KMXpAPg34JO/gHc6
+         8LoA==
+X-Gm-Message-State: AOJu0YwQx2kP2Bpx9sYkP8cxggLgESkP+/OMCcmJ1ZPZsPHaglE6NauH
+	dfXUMY8mFQ0ugpr4k5idmA6mzoIHtvW+TzI0L218DkplguOvoGd274BKT7pu9Dg=
+X-Google-Smtp-Source: AGHT+IHeD94Us7rNhDKqbCaxaLe6iMEusfeNY4ypS03qxPUHKxdTSoxEEocl7HDQ6h+p/Bwj9kBodg==
+X-Received: by 2002:a50:d4c3:0:b0:571:b82f:630d with SMTP id e3-20020a50d4c3000000b00571b82f630dmr1782241edj.0.1713526740008;
+        Fri, 19 Apr 2024 04:39:00 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.89])
-        by smtp.gmail.com with ESMTPSA id u20-20020aa7d994000000b005700fa834acsm2022992eds.45.2024.04.19.04.38.57
+        by smtp.gmail.com with ESMTPSA id u20-20020aa7d994000000b005700fa834acsm2022992eds.45.2024.04.19.04.38.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Apr 2024 04:38:57 -0700 (PDT)
+        Fri, 19 Apr 2024 04:38:59 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
@@ -53,9 +53,9 @@ To: nobuhiro1.iwamatsu@toshiba.co.jp,
 Cc: cip-dev@lists.cip-project.org,
 	biju.das.jz@bp.renesas.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com
-Subject: [PATCH 6.1.y-cip 10/44] clk: renesas: rzg2l: Add support for RZ/G3S PLL
-Date: Fri, 19 Apr 2024 14:38:08 +0300
-Message-Id: <20240419113842.3675543-11-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 11/44] clk: renesas: rzg2l: Add struct clk_hw_data
+Date: Fri, 19 Apr 2024 14:38:09 +0300
+Message-Id: <20240419113842.3675543-12-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240419113842.3675543-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240419113842.3675543-1-claudiu.beznea.uj@bp.renesas.com>
@@ -65,133 +65,136 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 19 Apr 2024 11:39:10 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15661
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15662
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 01eabef547e63d80086acd3f247d36c5f9f92456 upstream.
+commit 97c1c4ccda76d2919775d748cf223637cf0e82ae upstream.
 
-Add support for reading the frequency of PLL1/4/6 as available on
-RZ/G3S.  The computation formula for the PLL frequency is as follows:
-
-    Fout = (nir + nfr / 4096) * Fin / (mr * pr)
+Add clk_hw_data struct that keeps the core part of the clock data.
+sd_hw_data embeds a member of type struct clk_hw_data along with other
+members (in the next commits).  This commit prepares the field for
+refactoring the SD MUX clock driver.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20230929053915.1530607-8-claudiu.beznea@bp.renesas.com
+Link: https://lore.kernel.org/r/20230929053915.1530607-9-claudiu.beznea@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 49 ++++++++++++++++++++++++++++++---
- drivers/clk/renesas/rzg2l-cpg.h |  3 ++
- 2 files changed, 48 insertions(+), 4 deletions(-)
+ drivers/clk/renesas/rzg2l-cpg.c | 52 +++++++++++++++++++++------------
+ 1 file changed, 34 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index b280a468c4a8..1a928828baac 100644
+index 1a928828baac..fa492813f127 100644
 --- a/drivers/clk/renesas/rzg2l-cpg.c
 +++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -48,6 +48,11 @@
- #define PDIV(val)		FIELD_GET(GENMASK(5, 0), val)
- #define SDIV(val)		FIELD_GET(GENMASK(2, 0), val)
+@@ -64,13 +64,29 @@
  
-+#define RZG3S_DIV_P		GENMASK(28, 26)
-+#define RZG3S_DIV_M		GENMASK(25, 22)
-+#define RZG3S_DIV_NI		GENMASK(21, 13)
-+#define RZG3S_DIV_NF		GENMASK(12, 1)
-+
- #define CLK_ON_R(reg)		(reg)
- #define CLK_MON_R(reg)		(0x180 + (reg))
- #define CLK_RST_R(reg)		(reg)
-@@ -714,11 +719,43 @@ static const struct clk_ops rzg2l_cpg_pll_ops = {
- 	.recalc_rate = rzg2l_cpg_pll_clk_recalc_rate,
+ #define MAX_VCLK_FREQ		(148500000)
+ 
+-struct sd_hw_data {
++/**
++ * struct clk_hw_data - clock hardware data
++ * @hw: clock hw
++ * @conf: clock configuration (register offset, shift, width)
++ * @priv: CPG private data structure
++ */
++struct clk_hw_data {
+ 	struct clk_hw hw;
+ 	u32 conf;
+ 	struct rzg2l_cpg_priv *priv;
  };
  
-+static unsigned long rzg3s_cpg_pll_clk_recalc_rate(struct clk_hw *hw,
-+						   unsigned long parent_rate)
-+{
-+	struct pll_clk *pll_clk = to_pll(hw);
-+	struct rzg2l_cpg_priv *priv = pll_clk->priv;
-+	u32 nir, nfr, mr, pr, val;
-+	u64 rate;
+-#define to_sd_hw_data(_hw)	container_of(_hw, struct sd_hw_data, hw)
++#define to_clk_hw_data(_hw)	container_of(_hw, struct clk_hw_data, hw)
 +
-+	if (pll_clk->type != CLK_TYPE_G3S_PLL)
-+		return parent_rate;
-+
-+	val = readl(priv->base + GET_REG_SAMPLL_CLK1(pll_clk->conf));
-+
-+	pr = 1 << FIELD_GET(RZG3S_DIV_P, val);
-+	/* Hardware interprets values higher than 8 as p = 16. */
-+	if (pr > 8)
-+		pr = 16;
-+
-+	mr  = FIELD_GET(RZG3S_DIV_M, val) + 1;
-+	nir = FIELD_GET(RZG3S_DIV_NI, val) + 1;
-+	nfr = FIELD_GET(RZG3S_DIV_NF, val);
-+
-+	rate = mul_u64_u32_shr(parent_rate, 4096 * nir + nfr, 12);
-+
-+	return DIV_ROUND_CLOSEST_ULL(rate, (mr * pr));
-+}
-+
-+static const struct clk_ops rzg3s_cpg_pll_ops = {
-+	.recalc_rate = rzg3s_cpg_pll_clk_recalc_rate,
++/**
++ * struct sd_hw_data - SD clock hardware data
++ * @hw_data: clock hw data
++ */
++struct sd_hw_data {
++	struct clk_hw_data hw_data;
 +};
 +
- static struct clk * __init
- rzg2l_cpg_pll_clk_register(const struct cpg_core_clk *core,
- 			   struct clk **clks,
- 			   void __iomem *base,
--			   struct rzg2l_cpg_priv *priv)
-+			   struct rzg2l_cpg_priv *priv,
-+			   const struct clk_ops *ops)
++#define to_sd_hw_data(_hw)	container_of(_hw, struct sd_hw_data, hw_data)
+ 
+ struct rzg2l_pll5_param {
+ 	u32 pl5_fracin;
+@@ -189,10 +205,10 @@ rzg2l_cpg_mux_clk_register(const struct cpg_core_clk *core,
+ 
+ static int rzg2l_cpg_sd_clk_mux_set_parent(struct clk_hw *hw, u8 index)
  {
- 	struct device *dev = priv->dev;
- 	const struct clk *parent;
-@@ -736,7 +773,7 @@ rzg2l_cpg_pll_clk_register(const struct cpg_core_clk *core,
+-	struct sd_hw_data *hwdata = to_sd_hw_data(hw);
+-	struct rzg2l_cpg_priv *priv = hwdata->priv;
+-	u32 off = GET_REG_OFFSET(hwdata->conf);
+-	u32 shift = GET_SHIFT(hwdata->conf);
++	struct clk_hw_data *clk_hw_data = to_clk_hw_data(hw);
++	struct rzg2l_cpg_priv *priv = clk_hw_data->priv;
++	u32 off = GET_REG_OFFSET(clk_hw_data->conf);
++	u32 shift = GET_SHIFT(clk_hw_data->conf);
+ 	const u32 clk_src_266 = 2;
+ 	u32 msk, val, bitmask;
+ 	unsigned long flags;
+@@ -209,7 +225,7 @@ static int rzg2l_cpg_sd_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	 * The clock mux has 3 input clocks(533 MHz, 400 MHz, and 266 MHz), and
+ 	 * the index to value mapping is done by adding 1 to the index.
+ 	 */
+-	bitmask = (GENMASK(GET_WIDTH(hwdata->conf) - 1, 0) << shift) << 16;
++	bitmask = (GENMASK(GET_WIDTH(clk_hw_data->conf) - 1, 0) << shift) << 16;
+ 	msk = off ? CPG_CLKSTATUS_SELSDHI1_STS : CPG_CLKSTATUS_SELSDHI0_STS;
+ 	spin_lock_irqsave(&priv->rmw_lock, flags);
+ 	if (index != clk_src_266) {
+@@ -238,12 +254,12 @@ static int rzg2l_cpg_sd_clk_mux_set_parent(struct clk_hw *hw, u8 index)
  
- 	parent_name = __clk_get_name(parent);
+ static u8 rzg2l_cpg_sd_clk_mux_get_parent(struct clk_hw *hw)
+ {
+-	struct sd_hw_data *hwdata = to_sd_hw_data(hw);
+-	struct rzg2l_cpg_priv *priv = hwdata->priv;
+-	u32 val = readl(priv->base + GET_REG_OFFSET(hwdata->conf));
++	struct clk_hw_data *clk_hw_data = to_clk_hw_data(hw);
++	struct rzg2l_cpg_priv *priv = clk_hw_data->priv;
++	u32 val = readl(priv->base + GET_REG_OFFSET(clk_hw_data->conf));
+ 
+-	val >>= GET_SHIFT(hwdata->conf);
+-	val &= GENMASK(GET_WIDTH(hwdata->conf) - 1, 0);
++	val >>= GET_SHIFT(clk_hw_data->conf);
++	val &= GENMASK(GET_WIDTH(clk_hw_data->conf) - 1, 0);
+ 
+ 	return val ? val - 1 : 0;
+ }
+@@ -259,17 +275,17 @@ rzg2l_cpg_sd_mux_clk_register(const struct cpg_core_clk *core,
+ 			      void __iomem *base,
+ 			      struct rzg2l_cpg_priv *priv)
+ {
+-	struct sd_hw_data *clk_hw_data;
++	struct sd_hw_data *sd_hw_data;
+ 	struct clk_init_data init;
+ 	struct clk_hw *clk_hw;
+ 	int ret;
+ 
+-	clk_hw_data = devm_kzalloc(priv->dev, sizeof(*clk_hw_data), GFP_KERNEL);
+-	if (!clk_hw_data)
++	sd_hw_data = devm_kzalloc(priv->dev, sizeof(*sd_hw_data), GFP_KERNEL);
++	if (!sd_hw_data)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	clk_hw_data->priv = priv;
+-	clk_hw_data->conf = core->conf;
++	sd_hw_data->hw_data.priv = priv;
++	sd_hw_data->hw_data.conf = core->conf;
+ 
  	init.name = core->name;
--	init.ops = &rzg2l_cpg_pll_ops;
-+	init.ops = ops;
- 	init.flags = 0;
- 	init.parent_names = &parent_name;
- 	init.num_parents = 1;
-@@ -831,8 +868,12 @@ rzg2l_cpg_register_core_clk(const struct cpg_core_clk *core,
- 						core->mult, div);
- 		break;
- 	case CLK_TYPE_SAM_PLL:
--		clk = rzg2l_cpg_pll_clk_register(core, priv->clks,
--						 priv->base, priv);
-+		clk = rzg2l_cpg_pll_clk_register(core, priv->clks, priv->base, priv,
-+						 &rzg2l_cpg_pll_ops);
-+		break;
-+	case CLK_TYPE_G3S_PLL:
-+		clk = rzg2l_cpg_pll_clk_register(core, priv->clks, priv->base, priv,
-+						 &rzg3s_cpg_pll_ops);
- 		break;
- 	case CLK_TYPE_SIPLL5:
- 		clk = rzg2l_cpg_sipll5_register(core, priv->clks, priv);
-diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
-index 097fd8f61680..20da0c620b90 100644
---- a/drivers/clk/renesas/rzg2l-cpg.h
-+++ b/drivers/clk/renesas/rzg2l-cpg.h
-@@ -102,6 +102,7 @@ enum clk_types {
- 	CLK_TYPE_IN,		/* External Clock Input */
- 	CLK_TYPE_FF,		/* Fixed Factor Clock */
- 	CLK_TYPE_SAM_PLL,
-+	CLK_TYPE_G3S_PLL,
+ 	init.ops = &rzg2l_cpg_sd_clk_mux_ops;
+@@ -277,7 +293,7 @@ rzg2l_cpg_sd_mux_clk_register(const struct cpg_core_clk *core,
+ 	init.num_parents = core->num_parents;
+ 	init.parent_names = core->parent_names;
  
- 	/* Clock with divider */
- 	CLK_TYPE_DIV,
-@@ -129,6 +130,8 @@ enum clk_types {
- 	DEF_TYPE(_name, _id, _type, .parent = _parent)
- #define DEF_SAMPLL(_name, _id, _parent, _conf) \
- 	DEF_TYPE(_name, _id, CLK_TYPE_SAM_PLL, .parent = _parent, .conf = _conf)
-+#define DEF_G3S_PLL(_name, _id, _parent, _conf) \
-+	DEF_TYPE(_name, _id, CLK_TYPE_G3S_PLL, .parent = _parent, .conf = _conf)
- #define DEF_INPUT(_name, _id) \
- 	DEF_TYPE(_name, _id, CLK_TYPE_IN)
- #define DEF_FIXED(_name, _id, _parent, _mult, _div) \
+-	clk_hw = &clk_hw_data->hw;
++	clk_hw = &sd_hw_data->hw_data.hw;
+ 	clk_hw->init = &init;
+ 
+ 	ret = devm_clk_hw_register(priv->dev, clk_hw);
 -- 
 2.39.2
 
