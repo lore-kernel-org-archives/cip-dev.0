@@ -2,50 +2,50 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8FCDC04FFF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2123C41513
 	for <webhook@archiver.kernel.org>; Fri, 19 Apr 2024 08:18:07 +0000 (UTC)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
- by mx.groups.io with SMTP id smtpd.web11.15257.1713514679806825419
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+ by mx.groups.io with SMTP id smtpd.web10.15294.1713514682963795522
  for <cip-dev@lists.cip-project.org>;
- Fri, 19 Apr 2024 01:18:00 -0700
+ Fri, 19 Apr 2024 01:18:03 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=NRY6Kee8;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.41, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a51a7d4466bso184738966b.2
-        for <cip-dev@lists.cip-project.org>; Fri, 19 Apr 2024 01:17:59 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=l3Di59IB;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.49, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a5565291ee7so189283566b.2
+        for <cip-dev@lists.cip-project.org>; Fri, 19 Apr 2024 01:18:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1713514678; x=1714119478; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1713514681; x=1714119481; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yewcQmmxC8Th8ZVMjI2OZlthzTp28WUdygEyExZdDwI=;
-        b=NRY6Kee8DffklThO8UQglYS9PZZA1oNWnRmQHEr4nZvtOG5pLxYAzbazSPveXTO3gF
-         m9Vu97W3gkU84P/v4g7UiNNwzNT8C7z9vjXNFy54AUOdYMS9x3WMNRd28XxqXR+m+wQZ
-         q4ZRaYv3JRFMg8Y/9VsXu8HKJpdXO3fGyCkmAv8epbiCIIuHY0O7xwFhi5wekRI25sA6
-         TIk7lz6fBg4es4nTtK629lHd9TdGwjYjS1v6XnshAD4T6RV9lfESLkZ6XDtyaRxYh70H
-         V22Fxy3qf8J8/H95n9P1oaOiLPH2r/bgakkLgqXGZyGFwgw3TILjcQUxwBq7tYkjruvf
-         n35w==
+        bh=7DfxzZeV2M7Ov3zftSJ4L5B8aFL7EklzMiuHIa/WXhA=;
+        b=l3Di59IBWwvm+68DqKSRxYdUoEZrC5+60O8/1iGm1p9Hie0Vu0K2RaZuk46+UyaadO
+         H7qVts3AwXMIRUiAsAoBxLVgB3fKeVVH4j+nwWEYGuEchS8xXOW0mf1Pxwjb9iVrJlc4
+         jC8fAPRsbgkXWDTu56qlyvYjoN1LtxSIsXBHVbeUBkZKhRJE4d1h+SmLs3NRtieHiyAu
+         kqjZF+3pS1+YJQiFXaCgMuLz8BITKGz5iV+4jiBwthPNwz6QdOVRJIYP1B7rh/z1KbdM
+         g/pb+V9uubTT3KBpPiF+QUmfvlkdQ/YHd3ZkWi08Gq60hO/bwar5A222SWzbS+QO7JFD
+         y76A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713514678; x=1714119478;
+        d=1e100.net; s=20230601; t=1713514681; x=1714119481;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yewcQmmxC8Th8ZVMjI2OZlthzTp28WUdygEyExZdDwI=;
-        b=As7/X6fysP/fsY4UCn+CQMbu9Fx1PVM82qiMf9zsZs0FCOIZAh7tgAVs3aWQDFbEq+
-         NrS6oWOLoi88cX8Rrkd2gfJA9FfGOeBv4QGG6ALN+1sKzTJT4SHbKAFsOvXZACRlH7Kx
-         coaB07oR6o5Ur7Tb1P/PlIjFiU0+59ZxN6EUdbAhd4ta7zLRRemXYlCBFlT9CYT/ePe7
-         r/yeBWgeql2ucgHF/jhO4iRe0qENLeN1wC5sZ5gOSriHQkRX3o5I0Jgr5IYbZ21G8GTM
-         WdWd6JZDmxChjZPo/1yUBHk6CrxRNKjR/ntqw5zJFSIZyzSD7jcOPl7OicWua04vU8MD
-         4ghA==
-X-Gm-Message-State: AOJu0YxBjCtlQzEovyAjTRawRdTelRdsYavwcLHFsKa7VvxBggVY0wu5
-	iZCkqyReBB4cbLkr96QuVWT+7H3cdI5LF5TV8berHpf9c0qG6iAsUE/TMaT7ARE=
-X-Google-Smtp-Source: AGHT+IEqNDHMyoNssoMWRw0GxtcHMn3yHMdrOYi/wdP6NYcgs8R1neXpxDi3NRIYVaYiBHeVPPwuGw==
-X-Received: by 2002:a17:906:7949:b0:a47:20c3:7c51 with SMTP id l9-20020a170906794900b00a4720c37c51mr1177634ejo.71.1713514678281;
-        Fri, 19 Apr 2024 01:17:58 -0700 (PDT)
+        bh=7DfxzZeV2M7Ov3zftSJ4L5B8aFL7EklzMiuHIa/WXhA=;
+        b=TbEF88bOZaYKvvuYHS6wqxjDoHQXUkurH1D0Q3S5dClszC6AJVtsxxBU4+y0gm22Cj
+         Isr2JUci3ZOthrMjFl1Eyx/QFvg+2PNcHtvLjY8uvcFXuHw0ob5VijHxD3KJ7G+ZeXeG
+         cclpY1G3qnJpwxTb54G6vRwI/X5za8NmeQaInBHRMq3+DkiHnEHGXTt5POXITfqofueW
+         xrZGlK0e3NH2hVhx6iBGkp+f2xdGimKg+8oc77JsicvxKcr+lwnBl8t88SjiiuHN16Kz
+         eU2ayhVfcFmm8FuKoS1TCVkgo3Wz45KrjoesgryH/wDRy6ZeXkoe7eUW9Nv6hF/1WSTD
+         50yA==
+X-Gm-Message-State: AOJu0YyZPn9tVsd1oPxBOUurkznwxprtuuH24y3kNDprA+2Dzna/jn4C
+	W/kEORG+EMzqaJiiuzumkBjmOkwLWIgnLE3zEkvSRMOugcLg7hmS2hVL7SQp65s=
+X-Google-Smtp-Source: AGHT+IECzicwoUdOIdBK/+I/jmx1tkAagrmmo7q2c29/EwfVfhfra657UA0fOdCO71EJjHdrVx77Sg==
+X-Received: by 2002:a17:906:2a8c:b0:a53:4cae:e40 with SMTP id l12-20020a1709062a8c00b00a534cae0e40mr936762eje.25.1713514681263;
+        Fri, 19 Apr 2024 01:18:01 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.185])
-        by smtp.gmail.com with ESMTPSA id w23-20020a170907271700b00a556f2f18d6sm1816243ejk.57.2024.04.19.01.17.56
+        by smtp.gmail.com with ESMTPSA id w23-20020a170907271700b00a556f2f18d6sm1816243ejk.57.2024.04.19.01.17.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Apr 2024 01:17:57 -0700 (PDT)
+        Fri, 19 Apr 2024 01:18:00 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
@@ -54,49 +54,76 @@ Cc: cip-dev@lists.cip-project.org,
 	biju.das.jz@bp.renesas.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com,
 	claudiu.beznea@tuxon.dev
-Subject: [PATCH 5.10.y-cip 09/53] dt-bindings: soc: renesas: renesas,rzg2l-sysc: Document RZ/G3S SoC
-Date: Fri, 19 Apr 2024 11:16:58 +0300
-Message-Id: <20240419081742.3496709-10-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 11/53] clk: renesas: rzg2l: Convert to readl_poll_timeout_atomic()
+Date: Fri, 19 Apr 2024 11:17:00 +0300
+Message-Id: <20240419081742.3496709-12-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240419081742.3496709-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240419081742.3496709-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 19 Apr 2024 08:18:07 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15596
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15598
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 111287aa60004e1a58320048c89391056288c455 upstream.
+commit 7df8eea64a417f1db6777cddc1d7eda3634b7175 upstream.
 
-Document RZ/G3S (R9A08G045) SYSC bindings. The SYSC block found on the
-RZ/G3S SoC is similar to the one found on the RZ/G2UL.
+Use readl_poll_timeout_atomic() instead of open-coding the same
+operation.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20230912045157.177966-4-claudiu.beznea.uj@bp.renesas.com
+As typically no retries are needed, 10 µs is a suitable timeout value.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/900543d4b9abc1004e6aecdb676f23e5508ae96f.1685692810.git.geert+renesas@glider.be
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- .../devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml      | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/renesas/rzg2l-cpg.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
-index ce2875c89329..3c2ede52d9af 100644
---- a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
-+++ b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
-@@ -23,6 +23,7 @@ properties:
-       - renesas,r9a07g043-sysc # RZ/G2UL
-       - renesas,r9a07g044-sysc # RZ/G2{L,LC}
-       - renesas,r9a07g054-sysc # RZ/V2L
-+      - renesas,r9a08g045-sysc # RZ/G3S
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index 2262c70fb383..cf6337fa5e7a 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -903,9 +903,9 @@ static int rzg2l_mod_clock_endisable(struct clk_hw *hw, bool enable)
+ 	unsigned int reg = clock->off;
+ 	struct device *dev = priv->dev;
+ 	unsigned long flags;
+-	unsigned int i;
+ 	u32 bitmask = BIT(clock->bit);
+ 	u32 value;
++	int error;
  
-   reg:
-     maxItems: 1
+ 	if (!clock->off) {
+ 		dev_dbg(dev, "%pC does not support ON/OFF\n",  hw->clk);
+@@ -930,19 +930,13 @@ static int rzg2l_mod_clock_endisable(struct clk_hw *hw, bool enable)
+ 	if (!priv->info->has_clk_mon_regs)
+ 		return 0;
+ 
+-	for (i = 1000; i > 0; --i) {
+-		if (((readl(priv->base + CLK_MON_R(reg))) & bitmask))
+-			break;
+-		cpu_relax();
+-	}
+-
+-	if (!i) {
++	error = readl_poll_timeout_atomic(priv->base + CLK_MON_R(reg), value,
++					  value & bitmask, 0, 10);
++	if (error)
+ 		dev_err(dev, "Failed to enable CLK_ON %p\n",
+ 			priv->base + CLK_ON_R(reg));
+-		return -ETIMEDOUT;
+-	}
+ 
+-	return 0;
++	return error;
+ }
+ 
+ static int rzg2l_mod_clock_enable(struct clk_hw *hw)
 -- 
 2.39.2
 
