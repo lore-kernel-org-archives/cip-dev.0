@@ -2,50 +2,50 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 764CBC04FFF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74FB7C4345F
 	for <webhook@archiver.kernel.org>; Fri, 19 Apr 2024 08:17:57 +0000 (UTC)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
- by mx.groups.io with SMTP id smtpd.web10.15280.1713514667101796297
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+ by mx.groups.io with SMTP id smtpd.web11.15252.1713514670162408090
  for <cip-dev@lists.cip-project.org>;
- Fri, 19 Apr 2024 01:17:47 -0700
+ Fri, 19 Apr 2024 01:17:50 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=jBbOwi8W;
- spf=pass (domain: tuxon.dev, ip: 209.85.208.46, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-565c6cf4819so5006940a12.1
-        for <cip-dev@lists.cip-project.org>; Fri, 19 Apr 2024 01:17:46 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=XKc0lE7A;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.49, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a4715991c32so186129666b.1
+        for <cip-dev@lists.cip-project.org>; Fri, 19 Apr 2024 01:17:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1713514665; x=1714119465; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1713514668; x=1714119468; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+1amMR8EPWpnlnfA7KuX/3/FmNZgNSEd9tib+5jAE4o=;
-        b=jBbOwi8WM9JT0/GObKrmwPehsG3qDdH9QukHYaNJCHD1bs1bN4DHjDX9AZ7NNiyCDK
-         X2DbbUI5RyrAc+/G9a/mWKryPuk9YuyGDbRcvzkSYVxvFj3AxdWYfvG1gaczvFOq/1+F
-         itVqkUsgS/lpPt7d9XfRBVkfzIGaIUVJHrSVgMpVAGeF0+QpzHqW76oGXL2VIiy3Rdxp
-         HYkaP+PNch+Q5+0pnZIf2H7YN6+TaB/yMIAix0vsVk+msJenvzJk6+np9nOz8I7Nw4qA
-         jc5VEKDCEqUoIqP8VPTLP0NZnDvdlXyec8BiMzscad+gdKukC3VpO65AgFmBecw1FzYJ
-         jQKg==
+        bh=im9BhV8e+mg0Pd+K2yFeYFHTd+RD8vwsP2TzyvVWPV4=;
+        b=XKc0lE7AW7ns3/kvbKEf9I4s+v8KLx2H3KjmhzBS1JpYE7NH4y8VKScOxDQffIvCMr
+         dl0yJPghL93fZc8GD1BR8YRzzKv8ohYrnXKbVZA5n5hCJJcbtiNWcMllRBl8USA8gyRG
+         wcTExlq17Ho7N1FU8LlPJ+v5dtq2wyijrL0htZgU7BY/Eg34vNN+fXJxg/xIldrpuZKY
+         tbNLLmxVqKy8rERb1DxmbT/rPngbEQsL2raPg0vC99XSbTJShHC9kfI3Dc794eGsFloT
+         MyPn1IBUYVaI7PE0/bkEYIggtAcrI2SqpqIF73VTydtKa411+H/y5St4n7F1zDQqtZvs
+         h6gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713514665; x=1714119465;
+        d=1e100.net; s=20230601; t=1713514668; x=1714119468;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+1amMR8EPWpnlnfA7KuX/3/FmNZgNSEd9tib+5jAE4o=;
-        b=hW74nxkrWFxciPg12BgDD2f0avsFLhvHkVmcT8RAFrE88fG1X7M7hYMW6CzryyQva3
-         0KeXnTDs4hGtddIc7t9HL/s3w5XfVdn2YmLv5p93WkcGDtnZMaZ/bEKPT5tzHyvjgfil
-         2UKAqRD67rTDraX+s75ruLEUA0gOWJ1trUamrwekVXNRgoScef9I4LYrdv4b4Lm+iU3R
-         f4N2DRkpdCLeYsUJgtfOspn0XZOs+aEDBg/vx4HM0zLVM4WioMcj73UrWCo5ZFFp2JSe
-         4/6TWmKjRYXiaUp6PHqbxyTk4MU2gvsWI959G8lvTq1fJZKDj7FP7muaTyJzlChKoiuq
-         qqFg==
-X-Gm-Message-State: AOJu0Yw+BgKxGvILDwX9Uiz//xPqrareBV2n0gphCBhyQRX4wRPxBoQn
-	M7TFgFWGjnaepKLCyjMwTJd05VywN8XEQo7CK00qBbkVETjgJ3L8A6Xd8xipRSU=
-X-Google-Smtp-Source: AGHT+IH+1vdx2W9NNaq/5dy+9v6otHDBNVsvmReEJIraxEZVyuhGIaDZKVeUkyhWtUC2n2dLAKHN8Q==
-X-Received: by 2002:a17:906:3ad1:b0:a52:54f2:6d0 with SMTP id z17-20020a1709063ad100b00a5254f206d0mr1397391ejd.15.1713514665221;
-        Fri, 19 Apr 2024 01:17:45 -0700 (PDT)
+        bh=im9BhV8e+mg0Pd+K2yFeYFHTd+RD8vwsP2TzyvVWPV4=;
+        b=FgFA2MHOSVicYUIQI5KmJipaBnUvNqs3CNfeEaDW1Xh28RSjzMIHTl16XFJOp26hx9
+         qrYGWO2MTWZO77P9DYy2S4vtfcl1AZ5fPxXUB4t4v6+1Fg1ZmssNHn+2MyHq1lmSJHd3
+         jMKAxlW34hhlfdxRkIB21mM1qaddn66rIc6b2aRgKs0o0UW0z+uvGyRNzj5LSCIiYp+D
+         P/eveTu/yzfecaUiOsd2fd9i4SIHYjB6A5bS+KlSe+/wAt5CsNwDDD0Bn4+/XGh8kmkI
+         PED5Og+nxW7QNfVEIm85GWECM9KwtgSUyBwnmi8qGKDqHp+uFz2XbiVztXkrU+8BqijU
+         1c3g==
+X-Gm-Message-State: AOJu0YyTHBg1ot4JgPz53PrTZ5+/vq+m/PN55aIrKqAw/ap2w03nr8VW
+	PDXnZ2pwuvuxMAimJr4gvj3shfTjDXhlDHyq3kpJGr+Sx735hMlM4XUeFZKafr0=
+X-Google-Smtp-Source: AGHT+IGC0lXmdUNw3fnT95mVo1NhOY8lx9BkXrJcseuHT3HmOcJRXHW+TFSn0MnWThVMXdH4jkpFlg==
+X-Received: by 2002:a17:906:4555:b0:a52:5460:a1d1 with SMTP id s21-20020a170906455500b00a525460a1d1mr1032816ejq.60.1713514668640;
+        Fri, 19 Apr 2024 01:17:48 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.185])
-        by smtp.gmail.com with ESMTPSA id w23-20020a170907271700b00a556f2f18d6sm1816243ejk.57.2024.04.19.01.17.44
+        by smtp.gmail.com with ESMTPSA id w23-20020a170907271700b00a556f2f18d6sm1816243ejk.57.2024.04.19.01.17.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Apr 2024 01:17:44 -0700 (PDT)
+        Fri, 19 Apr 2024 01:17:48 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
@@ -54,9 +54,9 @@ Cc: cip-dev@lists.cip-project.org,
 	biju.das.jz@bp.renesas.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com,
 	claudiu.beznea@tuxon.dev
-Subject: [PATCH 5.10.y-cip 01/53] clk: renesas: rzg2l: Wait for status bit of SD mux before continuing
-Date: Fri, 19 Apr 2024 11:16:50 +0300
-Message-Id: <20240419081742.3496709-2-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 02/53] clk: renesas: rzg2l: Lock around writes to mux register
+Date: Fri, 19 Apr 2024 11:16:51 +0300
+Message-Id: <20240419081742.3496709-3-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240419081742.3496709-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240419081742.3496709-1-claudiu.beznea.uj@bp.renesas.com>
@@ -66,72 +66,92 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 19 Apr 2024 08:17:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15588
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15589
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 549f4ae2601f968e2474c6031fb4799468882f64 upstream.
+commit d2692ed490e680a41401cef879adebcfafb4298f upstream.
 
-The hardware user manual for RZ/G2L (r01uh0914ej0130-rzg2l-rzg2lc.pdf,
-chapter 7.4.7 Procedure for Switching Clocks by the Dynamic Switching
-Frequency Selectors) specifies that we need to check CPG_PL2SDHI_DSEL
-for SD clock switching status.
+The SD MUX output (SD0) is further divided by 4 in G2{L,UL}.  The
+divided clock is SD0_DIV4. SD0_DIV4 is registered with
+CLK_SET_RATE_PARENT which means a rate request for it is propagated to
+the MUX and could reach rzg2l_cpg_sd_clk_mux_set_parent() concurrently
+with the users of SD0.
+Add proper locking to avoid concurrent accesses on SD MUX set rate
+registers.
 
 Fixes: eaff33646f4cb ("clk: renesas: rzg2l: Add SDHI clk mux support")
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20230929053915.1530607-3-claudiu.beznea@bp.renesas.com
+Link: https://lore.kernel.org/r/20230929053915.1530607-4-claudiu.beznea@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ drivers/clk/renesas/rzg2l-cpg.c | 23 +++++++++++++----------
+ drivers/clk/renesas/rzg2l-cpg.h |  2 +-
+ 2 files changed, 14 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 77513ceaaf2d..da81059d4bd8 100644
+index da81059d4bd8..fcbb0e2d2123 100644
 --- a/drivers/clk/renesas/rzg2l-cpg.c
 +++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -192,7 +192,8 @@ static int rzg2l_cpg_sd_clk_mux_set_parent(struct clk_hw *hw, u8 index)
- 	u32 off = GET_REG_OFFSET(hwdata->conf);
+@@ -193,6 +193,7 @@ static int rzg2l_cpg_sd_clk_mux_set_parent(struct clk_hw *hw, u8 index)
  	u32 shift = GET_SHIFT(hwdata->conf);
  	const u32 clk_src_266 = 2;
--	u32 bitmask;
-+	u32 msk, val, bitmask;
-+	int ret;
+ 	u32 msk, val, bitmask;
++	unsigned long flags;
+ 	int ret;
  
  	/*
- 	 * As per the HW manual, we should not directly switch from 533 MHz to
-@@ -206,14 +207,10 @@ static int rzg2l_cpg_sd_clk_mux_set_parent(struct clk_hw *hw, u8 index)
- 	 * the index to value mapping is done by adding 1 to the index.
+@@ -208,23 +209,25 @@ static int rzg2l_cpg_sd_clk_mux_set_parent(struct clk_hw *hw, u8 index)
  	 */
  	bitmask = (GENMASK(GET_WIDTH(hwdata->conf) - 1, 0) << shift) << 16;
-+	msk = off ? CPG_CLKSTATUS_SELSDHI1_STS : CPG_CLKSTATUS_SELSDHI0_STS;
+ 	msk = off ? CPG_CLKSTATUS_SELSDHI1_STS : CPG_CLKSTATUS_SELSDHI0_STS;
++	spin_lock_irqsave(&priv->rmw_lock, flags);
  	if (index != clk_src_266) {
--		u32 msk, val;
--		int ret;
--
  		writel(bitmask | ((clk_src_266 + 1) << shift), priv->base + off);
  
--		msk = off ? CPG_CLKSTATUS_SELSDHI1_STS : CPG_CLKSTATUS_SELSDHI0_STS;
--
- 		ret = readl_poll_timeout(priv->base + CPG_CLKSTATUS, val,
- 					 !(val & msk), 100,
- 					 CPG_SDHI_CLK_SWITCH_STATUS_TIMEOUT_US);
-@@ -225,7 +222,13 @@ static int rzg2l_cpg_sd_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+-		ret = readl_poll_timeout(priv->base + CPG_CLKSTATUS, val,
+-					 !(val & msk), 100,
+-					 CPG_SDHI_CLK_SWITCH_STATUS_TIMEOUT_US);
+-		if (ret) {
+-			dev_err(priv->dev, "failed to switch clk source\n");
+-			return ret;
+-		}
++		ret = readl_poll_timeout_atomic(priv->base + CPG_CLKSTATUS, val,
++						!(val & msk), 10,
++						CPG_SDHI_CLK_SWITCH_STATUS_TIMEOUT_US);
++		if (ret)
++			goto unlock;
+ 	}
  
  	writel(bitmask | ((index + 1) << shift), priv->base + off);
  
--	return 0;
-+	ret = readl_poll_timeout(priv->base + CPG_CLKSTATUS, val,
-+				 !(val & msk), 100,
-+				 CPG_SDHI_CLK_SWITCH_STATUS_TIMEOUT_US);
-+	if (ret)
-+		dev_err(priv->dev, "failed to switch clk source\n");
+-	ret = readl_poll_timeout(priv->base + CPG_CLKSTATUS, val,
+-				 !(val & msk), 100,
+-				 CPG_SDHI_CLK_SWITCH_STATUS_TIMEOUT_US);
++	ret = readl_poll_timeout_atomic(priv->base + CPG_CLKSTATUS, val,
++					!(val & msk), 10,
++					CPG_SDHI_CLK_SWITCH_STATUS_TIMEOUT_US);
++unlock:
++	spin_unlock_irqrestore(&priv->rmw_lock, flags);
 +
-+	return ret;
- }
+ 	if (ret)
+ 		dev_err(priv->dev, "failed to switch clk source\n");
  
- static u8 rzg2l_cpg_sd_clk_mux_get_parent(struct clk_hw *hw)
+diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
+index b33a3e79161b..aefa53a90059 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.h
++++ b/drivers/clk/renesas/rzg2l-cpg.h
+@@ -43,7 +43,7 @@
+ #define CPG_CLKSTATUS_SELSDHI0_STS	BIT(28)
+ #define CPG_CLKSTATUS_SELSDHI1_STS	BIT(29)
+ 
+-#define CPG_SDHI_CLK_SWITCH_STATUS_TIMEOUT_US	20000
++#define CPG_SDHI_CLK_SWITCH_STATUS_TIMEOUT_US	200
+ 
+ /* n = 0/1/2 for PLL1/4/6 */
+ #define CPG_SAMPLL_CLK1(n)	(0x04 + (16 * n))
 -- 
 2.39.2
 
