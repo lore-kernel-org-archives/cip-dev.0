@@ -2,50 +2,50 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E060C05052
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83EC8C04FF6
 	for <webhook@archiver.kernel.org>; Fri, 19 Apr 2024 08:17:57 +0000 (UTC)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
- by mx.groups.io with SMTP id smtpd.web11.15253.1713514673721295800
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+ by mx.groups.io with SMTP id smtpd.web10.15281.1713514671815579808
  for <cip-dev@lists.cip-project.org>;
- Fri, 19 Apr 2024 01:17:54 -0700
+ Fri, 19 Apr 2024 01:17:52 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=Lh2V234Z;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.54, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a5269c3f9c7so192612966b.2
-        for <cip-dev@lists.cip-project.org>; Fri, 19 Apr 2024 01:17:53 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=nUXL1ONO;
+ spf=pass (domain: tuxon.dev, ip: 209.85.167.49, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-51abd9fcbf6so638075e87.1
+        for <cip-dev@lists.cip-project.org>; Fri, 19 Apr 2024 01:17:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1713514672; x=1714119472; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1713514670; x=1714119470; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DsdCjrlZL0HXe4FRq418Kin+ww19GRS1XMhADQ8Q0x0=;
-        b=Lh2V234ZrGx1Meid46ALyB1ji+YGHSihgA0dhbUEjKUhnQMygwStyRAfqL7YyQVy19
-         lIelbRINY1EblSW0M+pwV1wIlLv48+bmDZSEH9CinvVPgqeKnN6QWMQExRRTtB+nFbp9
-         g+5YqL837pQTBN7wOYLFZAKYYbZVlUHdROZaQO3rgQSn4q6Z2XcD+9CufFKIdNXz2YzA
-         tPgdrpCKgqcTT7IErwHTfIxm7PVa01cAqAQGE5fjRabNsjrwc1taVCAlzCNI80SL/vXw
-         PPduvT1r2c9Ku3PGRlk3M3rku/G6Am675GMqGyUHAu6qM74gPdvV1CywAbVRcSjY8zkm
-         hOaw==
+        bh=N44mTATHDnjbI2lgGO1YblTU01V/FkQm4BHSFQHsSd4=;
+        b=nUXL1ONOjY+OEL3+zL2Eq4rErRang8nfGXhYbOu4OeOclfnoCYEHKyxjHCXcSuRq8r
+         JhAgidKV0/aXd2a1hklaj2cR2w36NSdNdp7xXsn+4962B6tQ49JhwhkPvgLzjyCL54RD
+         1xJZOnp0hSFt4flW+9FotVLAz+0J0ImvxK+W9C4Eq3AB0BABAbwqXdHYgGOH11c3auhW
+         SE6/+nwYmgbZPkd4WrhZrzoWmc8sTdFyp6+pW8Ss/27MCy3+tclWDhXsBfrF92uQ69CT
+         1hX+hGURPcJHa4TKm2pYNTXmCDxYVsIaRtqEoQBtSyJh60AE0uLUjtN6SSc9+hGiQyfP
+         hdew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713514672; x=1714119472;
+        d=1e100.net; s=20230601; t=1713514670; x=1714119470;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DsdCjrlZL0HXe4FRq418Kin+ww19GRS1XMhADQ8Q0x0=;
-        b=n2KajmuSv7zfy76Q7gH5s6DN80A6T38FddFVbGD6zpkLFh502Oy/icveegMfbAJ44r
-         +KYuG1u5xzhtcxXGLnnIkJuBFi1HsN3WSpnSuLmoP7vqZXZS7ZlH6QXmetySd6mZU2V4
-         IseSOqo983SlfD+cuTFZqk/pkjbkUgbgwCU/C8yIEeUvPVLWPm6s7bXJndq+GaRrGL0V
-         r2ctDOVzTxaXfBRTB7OTwVExhbDLQeDlvv2romIS4jwX9wH//VhqPPPegVdRNZA5dEcy
-         r5mbGWJLJnnmJQegKXdX+Ney3C7nT9STA69dXtdozEbG/pyxW3urbNmvYkipaXIHME+q
-         bgnw==
-X-Gm-Message-State: AOJu0YxliqERh6kCiRtdAC5HrBLldHskoVRTYAQcYd803NlzfqhbsY2f
-	ibCKc6aoBlFKOi0P0rCZA/KgWAyg9CYui+9QuG6Xllvy/zynQ3W+zFgdXm29QHU=
-X-Google-Smtp-Source: AGHT+IFW53gBPwrxIMSCT5Epo/S0oypiwc/Hds1p9JkykHNDWZjswZPmdLTxDfz9QX67OOp6bCxduw==
-X-Received: by 2002:a17:907:7215:b0:a55:8609:1c34 with SMTP id dr21-20020a170907721500b00a5586091c34mr938182ejc.28.1713514672196;
-        Fri, 19 Apr 2024 01:17:52 -0700 (PDT)
+        bh=N44mTATHDnjbI2lgGO1YblTU01V/FkQm4BHSFQHsSd4=;
+        b=aF3GImMYg+iYYkBJ7ylMmWvrP2MmhZbtHgEoEYQ7u0+QoHMrdKPA4wtf+QF/i5kWFZ
+         MDWsh+vlM3qHqq4kztBO5lFW8pKIZnPRKIhPKzuErLF/P2syKOTsoIOEBbFfNRXrbR+g
+         ztX28ZJAthaA7jwWfbuEPjdBlHRdwj8jA+7pvczirkBktWpBt1c7AV7TI4RIldqh+3FH
+         NnpOxGQ4VAHL4sfPaLkrNj/johUhyRSHNJmzXZohCvqe62vqyr6ViNgcdVF1qBPdNG90
+         p5L+b1kwXcNnJouwZs1wGvUFpNpgb0FkRCvG0i/XG/2UWYDuXnWqtG9IUNxLZ/+t1x+J
+         fFHA==
+X-Gm-Message-State: AOJu0YzaS6p9j7ViAMuh0sMMEZqSKfWg6RTZyl3cChYBNNeVZX0Grsw8
+	R6ezmHXrVboeEWeJ0RksPrXQTuBuObu9mQCSCiFSAw4k3bYqbqy2GwEVKvpjFOs=
+X-Google-Smtp-Source: AGHT+IG/LXcBSjrbZYNRYYuDADQb6gSzZZ398Ccu5VLB4Y64SupFhTxkURcTRAGLcLjvTFdJCemGxw==
+X-Received: by 2002:ac2:5bcd:0:b0:515:9c73:e29a with SMTP id u13-20020ac25bcd000000b005159c73e29amr1020551lfn.66.1713514669741;
+        Fri, 19 Apr 2024 01:17:49 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.185])
-        by smtp.gmail.com with ESMTPSA id w23-20020a170907271700b00a556f2f18d6sm1816243ejk.57.2024.04.19.01.17.51
+        by smtp.gmail.com with ESMTPSA id w23-20020a170907271700b00a556f2f18d6sm1816243ejk.57.2024.04.19.01.17.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Apr 2024 01:17:51 -0700 (PDT)
+        Fri, 19 Apr 2024 01:17:49 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
@@ -54,9 +54,9 @@ Cc: cip-dev@lists.cip-project.org,
 	biju.das.jz@bp.renesas.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com,
 	claudiu.beznea@tuxon.dev
-Subject: [PATCH 5.10.y-cip 05/53] clk: renesas: rzg2l: Fix computation formula
-Date: Fri, 19 Apr 2024 11:16:54 +0300
-Message-Id: <20240419081742.3496709-6-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 03/53] clk: renesas: rzg2l: Trust value returned by hardware
+Date: Fri, 19 Apr 2024 11:16:52 +0300
+Message-Id: <20240419081742.3496709-4-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240419081742.3496709-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240419081742.3496709-1-claudiu.beznea.uj@bp.renesas.com>
@@ -66,70 +66,48 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 19 Apr 2024 08:17:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15592
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15590
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit a2b23159499efd36b2d63b3c4534075d12ddc97a upstream.
+commit bf51d3b2d048c312764a55d91d67a85ee5535e31 upstream.
 
-According to the hardware manual for RZ/G2L
-(r01uh0914ej0130-rzg2l-rzg2lc.pdf), the computation formula for PLL rate
-is as follows:
+The onitial value of the CPG_PL2SDHI_DSEL bits 0..1 or 4..6 is 01b.  The
+hardware user's manual (r01uh0914ej0130-rzg2l-rzg2lc.pdf) specifies that
+setting 0 is prohibited.  Hence rzg2l_cpg_sd_clk_mux_get_parent() should
+just read CPG_PL2SDHI_DSEL, trust the value, and return the proper clock
+parent index based on the value read.
 
-    Fout = ((m + k/65536) * Fin) / (p * 2^s)
-
-and k has values in the range [-32768, 32767].  Dividing k by 65536 with
-integer arithmetic gives zero all the time, causing slight differences
-b/w what has been set vs. what is displayed.  Thus, get rid of this and
-decompose the formula before dividing k by 65536.
-
-Fixes: ef3c613ccd68a ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")
+Fixes: eaff33646f4cb ("clk: renesas: rzg2l: Add SDHI clk mux support")
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20230929053915.1530607-6-claudiu.beznea@bp.renesas.com
+Link: https://lore.kernel.org/r/20230929053915.1530607-5-claudiu.beznea@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/clk/renesas/rzg2l-cpg.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
 diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 3035b1535344..2260741433b2 100644
+index fcbb0e2d2123..330aa67fdab2 100644
 --- a/drivers/clk/renesas/rzg2l-cpg.c
 +++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -43,7 +43,7 @@
- #define GET_SHIFT(val)		((val >> 12) & 0xff)
- #define GET_WIDTH(val)		((val >> 8) & 0xf)
+@@ -242,14 +242,8 @@ static u8 rzg2l_cpg_sd_clk_mux_get_parent(struct clk_hw *hw)
  
--#define KDIV(val)		FIELD_GET(GENMASK(31, 16), val)
-+#define KDIV(val)		((s16)FIELD_GET(GENMASK(31, 16), val))
- #define MDIV(val)		FIELD_GET(GENMASK(15, 6), val)
- #define PDIV(val)		FIELD_GET(GENMASK(5, 0), val)
- #define SDIV(val)		FIELD_GET(GENMASK(2, 0), val)
-@@ -699,18 +699,18 @@ static unsigned long rzg2l_cpg_pll_clk_recalc_rate(struct clk_hw *hw,
- 	struct pll_clk *pll_clk = to_pll(hw);
- 	struct rzg2l_cpg_priv *priv = pll_clk->priv;
- 	unsigned int val1, val2;
--	unsigned int mult = 1;
--	unsigned int div = 1;
-+	u64 rate;
+ 	val >>= GET_SHIFT(hwdata->conf);
+ 	val &= GENMASK(GET_WIDTH(hwdata->conf) - 1, 0);
+-	if (val) {
+-		val--;
+-	} else {
+-		/* Prohibited clk source, change it to 533 MHz(reset value) */
+-		rzg2l_cpg_sd_clk_mux_set_parent(hw, 0);
+-	}
  
- 	if (pll_clk->type != CLK_TYPE_SAM_PLL)
- 		return parent_rate;
- 
- 	val1 = readl(priv->base + GET_REG_SAMPLL_CLK1(pll_clk->conf));
- 	val2 = readl(priv->base + GET_REG_SAMPLL_CLK2(pll_clk->conf));
--	mult = MDIV(val1) + KDIV(val1) / 65536;
--	div = PDIV(val1) << SDIV(val2);
- 
--	return DIV_ROUND_CLOSEST_ULL((u64)parent_rate * mult, div);
-+	rate = mul_u64_u32_shr(parent_rate, (MDIV(val1) << 16) + KDIV(val1),
-+			       16 + SDIV(val2));
-+
-+	return DIV_ROUND_CLOSEST_ULL(rate, PDIV(val1));
+-	return val;
++	return val ? val - 1 : 0;
  }
  
- static const struct clk_ops rzg2l_cpg_pll_ops = {
+ static const struct clk_ops rzg2l_cpg_sd_clk_mux_ops = {
 -- 
 2.39.2
 
