@@ -1,90 +1,73 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F7A2C071FD
-	for <webhook@archiver.kernel.org>; Fri, 19 Apr 2024 08:20:49 +0000 (UTC)
-Received: from mta-65-228.siemens.flowmailer.net (mta-65-228.siemens.flowmailer.net [185.136.65.228])
- by mx.groups.io with SMTP id smtpd.web10.15348.1713514840432269894
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D93A3C4345F
+	for <webhook@archiver.kernel.org>; Fri, 19 Apr 2024 10:07:39 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web10.16978.1713521251956797531
  for <cip-dev@lists.cip-project.org>;
- Fri, 19 Apr 2024 01:20:41 -0700
+ Fri, 19 Apr 2024 03:07:32 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=IvFuvnWx;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.228, mailfrom: fm-51332-20240419082038007e83438833e0aa47-ndsstl@rts-flowmailer.siemens.com)
-Received: by mta-65-228.siemens.flowmailer.net with ESMTPSA id 20240419082038007e83438833e0aa47
-        for <cip-dev@lists.cip-project.org>;
-        Fri, 19 Apr 2024 10:20:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=uqit3BLEeDuEB4mr1mO8T+mdkR0/0w4koXdXGP2Gw3w=;
- b=IvFuvnWxY3dfcxOMhhlGunnxv7rAiyI97gsgJHbT+UPMDaGYYXlhNBG06oEw0In3ZYo88G
- l8p4X1XV0NEMZTA9rAvuUAagLXwzOGSYDAk3aQgKn7w4blyGf1UnMBHzlg4ZxWGYQFwFXZdm
- 7aKKhLLfbE9rSE1bt96b6XojIbXfU=;
-From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: johnxw@amazon.com,
-	cip-dev@lists.cip-project.org,
-	jan.kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH 4/7] initramfs-crypt: Only resize partition if ext* formatted
-Date: Fri, 19 Apr 2024 10:20:14 +0200
-Message-ID: <20240419082036.2389583-5-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20240419082036.2389583-1-Quirin.Gylstorff@siemens.com>
-References: <20240419082036.2389583-1-Quirin.Gylstorff@siemens.com>
+ dkim=none (message not signed); spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 2B03A1C0080; Fri, 19 Apr 2024 12:07:29 +0200 (CEST)
+Date: Fri, 19 Apr 2024 12:07:28 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: nobuhiro1.iwamatsu@toshiba.co.jp, pavel@denx.de,
+	cip-dev@lists.cip-project.org, biju.das.jz@bp.renesas.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com
+Subject: Re: [PATCH 5.10.y-cip 00/53] Add initial support for the Renesas
+ RZ/G3S SoC
+Message-ID: <ZiJCYMyD2rciVwq9@duo.ucw.cz>
+References: <20240419081742.3496709-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="M3ddLMR1xOlfwoB5"
+Content-Disposition: inline
+In-Reply-To: <20240419081742.3496709-1-claudiu.beznea.uj@bp.renesas.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 19 Apr 2024 08:20:49 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15648
+ <cip-dev@lists.cip-project.org>; Fri, 19 Apr 2024 10:07:39 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15649
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-squashfs or empty partition cannot be resized with resize2fs.
+--M3ddLMR1xOlfwoB5
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- .../files/encrypt_partition.script            | 20 +++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+Hi!
 
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.script b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.script
-index 8f6cbf6..51c81f3 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.script
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.script
-@@ -64,14 +64,26 @@ service_watchdog() {
- reencrypt_existing_partition() {
- 	part_size_blocks="$(cat /sys/class/block/"$(awk -v dev="$1" 'BEGIN{split(dev,a,"/"); print a[3]}' )"/size)"
- 	# reduce the filesystem and partition by 32M to fit the LUKS header
-+	partition_fstype=$(get_fstype "${1}")
- 	reduce_device_size=32768
- 	reduced_size="$(expr "$part_size_blocks" - 65536 )"
- 	reduced_size_in_byte="$(expr "$reduced_size" \* 512)"
- 	reduced_size_in_kb="$(expr "$reduced_size_in_byte" / 1024)K"
--	e2fsck -f "$1"
--	if ! resize2fs "$1" "${reduced_size_in_kb}"; then
--		panic "reencryption of filesystem $1 cannot continue!"
--	fi
-+	case $partition_fstype in
-+	ext*)
-+		# reduce the filesystem and partition by 32M to fit the LUKS header
-+		e2fsck -f "$1"
-+		if ! resize2fs "$1" "${reduced_size_in_kb}"; then
-+			panic "reencryption of filesystem $1 cannot continue!"
-+		fi
-+		;;
-+	squashfs|"")
-+		echo "skip disk resize as it not support or unnecessary for fstype: '$partition_fstype'"
-+		;;
-+	*)
-+		panic "cannot resize parition. unsupport fstype: $partition_fstype"
-+		;;
-+	esac
- 	if [ -x /usr/sbin/cryptsetup-reencrypt ]; then
- 		/usr/sbin/cryptsetup-reencrypt --new --reduce-device-size "$reduce_device_size"k "$1" < "$2"
- 	else
--- 
-2.43.0
+> This patch series adds initial support for The Renesas RZ/G3S (R9A08G045{=
+S33})
+> SoC. The RZ/G3S device is a general-purpose microprocessor with a
+> single-core Arm=AE Cortex=AE-A55 (1.1GHz) and a dual-core Arm=AE Cortex=
+=AE-M33 (250MHz),
+> perfect for an IOT gateway controller.
 
+Ok, let me review this.
+
+But parts of these are not in 6.1. I'd like to merge this no earlier
+than 5.10 changes.
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--M3ddLMR1xOlfwoB5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZiJCYAAKCRAw5/Bqldv6
+8mdGAJ9LM+HX/0vVg3CGJgx/GSbM7ZmTGACgpvc4qO5/2wHFFfjXqKkamm7PQEo=
+=w8gj
+-----END PGP SIGNATURE-----
+
+--M3ddLMR1xOlfwoB5--
 
