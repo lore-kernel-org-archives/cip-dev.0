@@ -2,50 +2,50 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F731C05052
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53149C04FFF
 	for <webhook@archiver.kernel.org>; Fri, 19 Apr 2024 08:18:38 +0000 (UTC)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
- by mx.groups.io with SMTP id smtpd.web10.15316.1713514714014936181
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+ by mx.groups.io with SMTP id smtpd.web10.15315.1713514712796690959
  for <cip-dev@lists.cip-project.org>;
- Fri, 19 Apr 2024 01:18:34 -0700
+ Fri, 19 Apr 2024 01:18:33 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=nP6DSzUJ;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.46, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a5269c3f9c7so192702466b.2
-        for <cip-dev@lists.cip-project.org>; Fri, 19 Apr 2024 01:18:33 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=pcDUWRuv;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.42, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a5557e3ebcaso290874766b.1
+        for <cip-dev@lists.cip-project.org>; Fri, 19 Apr 2024 01:18:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1713514712; x=1714119512; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1713514711; x=1714119511; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RoUlEaYptIxHAAha0kI3E2qQMB1I0667JVuMWCK9CEs=;
-        b=nP6DSzUJBB1pCS5VTT+m2jPPaJxyyZe3+o9LT10+QatrNSIpzGKVNWXb3ueenzSwnt
-         hszTm0IB6td1VS6DoZanE3UzruH5T6re/pHHrsI72OUPyyTvXB8ISmW8WeGHGLLAXDN7
-         pfzNYNa9txNA+EgV5vCdChtmy7yi2WW7rLcCBsPHSb9GvGp5jFdJPKNW0ihY+viuLsJj
-         fTiYELOMt2bCcsDa6Yy/rBgPIq6QwYmSA7GONjrF3Gqp1K0NMIJl75IkeGelFxXIwUaB
-         VIaHD4asBNZFPGX7Tpe1K5I8tSc4GXOsLpA3xKpTZHvvmyBXtM3HGcfqGz0w3IlrHqbH
-         nJ2A==
+        bh=dbAYJfSHyWAa/RaHAACeJhexN6Yn1A33rLMrdz9biAY=;
+        b=pcDUWRuv99awzZDd9V6Qwh9b/XRX1jkxgBxpuneY8ytG5XTG+giFwiQa81fO5+P563
+         drOmIT9LxNVe5/DD1a+yNMERNs5yoV9nhlDU4s8CUV6QjhVMMDEHBQq4CF+kpvYBiGAC
+         eGCC4z1ALJ6AwZKSb4hu/Q6YPtxsnH0Rsg9+xYeGJPPW8YeSbCNfungVayd6OPeDBk/p
+         1EiLVW95RRLH3d4Jfhk5sWVHBracc44TpFwYwRVJ1jJftYQOREBSEUsyyf649wxoidxN
+         i+5VZQCzXq1v3QOTPAVNBo8pah+PvCjppe6ETbAbz1LE0498DerRq+nPWr0HcIVKbZkk
+         fLow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713514712; x=1714119512;
+        d=1e100.net; s=20230601; t=1713514711; x=1714119511;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RoUlEaYptIxHAAha0kI3E2qQMB1I0667JVuMWCK9CEs=;
-        b=GR+Y/SLVc2fZkfvabO2Cicffr1ggDFBHRw2xvIpW9+h+cP9T5bRwgpybgIZLUgjfSF
-         QNyQ/bBX/ygZ6W0ALN1z8SsTwHbNNKBHQ7Nf/K+bYpPeiN6DmLARr25bQrpGsVL45agz
-         r63EWajmHVrEglv6deYaiGWaO+UMSByfBCX2eOtHdkAS9DzrASHokv94wqUg0kCYGoJm
-         e6ugo7/0wWGm09dZ6vckM3dbNFlYIVvf5s4J1WCV1muyTi7YwPM0A4/z851JUHumx/TB
-         oj+RkZun+RAduHUW+4quUBwUhFe7si1YCQRobFS94oRP74K21IPD+J0L5X3J3ZI/VgN7
-         WcNA==
-X-Gm-Message-State: AOJu0YyWoxTGiS85ygfJRiYf1IgM3P0XFUvvlErC//nnm7eLe2p+UmbT
-	hAxcc1MrvOCLJeVM33uBJKSWk0uvBtK9N9u0Zr5SKlOImuH/V9FGljDY81l0zhw=
-X-Google-Smtp-Source: AGHT+IHMRCijOOlv6zrh0OpXalajVhqnfr5nnvUVx6QL0ojtHYJwYbM5HT+m420UUfjzNJYpAUhXrg==
-X-Received: by 2002:a17:907:2daa:b0:a51:deec:483c with SMTP id gt42-20020a1709072daa00b00a51deec483cmr1236842ejc.6.1713514712499;
-        Fri, 19 Apr 2024 01:18:32 -0700 (PDT)
+        bh=dbAYJfSHyWAa/RaHAACeJhexN6Yn1A33rLMrdz9biAY=;
+        b=GEK6LMMyYgyvJCYlJWbzzoFk9gqD7SLU6aaWnFelR3e9rJpShKdozuwwaaW5PLO1nf
+         JFqJchoxpMaVDzCaFbh5wMHIIA+lgf6ctoVoLFUvLuYyAEYbkmsCGzZbcGLmP3U2aVsj
+         AetuYpraq3gHWy1RCHLeTxV+YDu+UKu1X6D7oYu9q2uzKrK/NpjcqWcV9CZhc1AFVaK8
+         R/sx3dgYdazpoHutcZhZv0BpiPV/T8ipqM69br6UoONrCcI4lRN3xwthiR3b529Fucsp
+         EMsSJNMmA235QyE2F0H587Z3mM4T/mP83i8Knv/qQNyUyzTM6jP49iArvp8YWbYgJbSs
+         QjhQ==
+X-Gm-Message-State: AOJu0YzfVXwR7h44hiDWSxqHdDZ3ETx4WRxIc2TuYwnLYczGQPdwXL+j
+	EAsmFU80awuTBKiZb02yBHrI4AAHe7/kIJbFfpYqfKKVq2A7QM/mgNEix4UP92Y=
+X-Google-Smtp-Source: AGHT+IFG8a2UixQX8uR72NZQZMa8BdO9vOr/FuEBdSe8VFdcekkywFBv+937K4BeanaqN/M9mjbgMw==
+X-Received: by 2002:a17:906:28d1:b0:a55:6c07:1569 with SMTP id p17-20020a17090628d100b00a556c071569mr1408934ejd.0.1713514711269;
+        Fri, 19 Apr 2024 01:18:31 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.185])
-        by smtp.gmail.com with ESMTPSA id w23-20020a170907271700b00a556f2f18d6sm1816243ejk.57.2024.04.19.01.18.31
+        by smtp.gmail.com with ESMTPSA id w23-20020a170907271700b00a556f2f18d6sm1816243ejk.57.2024.04.19.01.18.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Apr 2024 01:18:32 -0700 (PDT)
+        Fri, 19 Apr 2024 01:18:30 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
@@ -54,9 +54,9 @@ Cc: cip-dev@lists.cip-project.org,
 	biju.das.jz@bp.renesas.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com,
 	claudiu.beznea@tuxon.dev
-Subject: [PATCH 5.10.y-cip 32/53] pinctrl: renesas: rzg2l: Add validation of GPIO pin in rzg2l_gpio_request()
-Date: Fri, 19 Apr 2024 11:17:21 +0300
-Message-Id: <20240419081742.3496709-33-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 31/53] pinctrl: renesas: rzg2l: Rename rzg2l_gpio_configs[]
+Date: Fri, 19 Apr 2024 11:17:20 +0300
+Message-Id: <20240419081742.3496709-32-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240419081742.3496709-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240419081742.3496709-1-claudiu.beznea.uj@bp.renesas.com>
@@ -66,50 +66,58 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 19 Apr 2024 08:18:38 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15619
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15618
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit c944d9dea75e453d18bc8c100022e990c2eac3cb upstream.
+commit c385256611b1af79d180e35c07992b43e1be5067 upstream.
 
-Validate the GPIO pin request in the rzg2l_gpio_request() callback using
-the rzg2l_validate_gpio_pin() function.  This stops any accidental usage
-of GPIO pins which are not supported by the SoC.
+The rzg2l_gpio_configs array is really related to the RZ/G2L (R9A07G044)
+Soc only.  Hence rename it to r9a07g044_gpio_configs[].
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20230925154548.27048-1-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/19958e63a2b793be5182640c4301ec5a77a507f6.1695369116.git.geert+renesas@glider.be
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index beb6fd73c3fa..85d9d2895fc3 100644
+index 4802c6b1302a..beb6fd73c3fa 100644
 --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
 +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -791,12 +791,18 @@ static const struct pinconf_ops rzg2l_pinctrl_confops = {
- static int rzg2l_gpio_request(struct gpio_chip *chip, unsigned int offset)
- {
- 	struct rzg2l_pinctrl *pctrl = gpiochip_get_data(chip);
-+	const struct pinctrl_pin_desc *pin_desc = &pctrl->desc.pins[offset];
- 	u32 port = RZG2L_PIN_ID_TO_PORT(offset);
- 	u8 bit = RZG2L_PIN_ID_TO_PIN(offset);
-+	u32 *pin_data = pin_desc->drv_data;
- 	unsigned long flags;
- 	u8 reg8;
+@@ -981,7 +981,7 @@ static const char * const rzg2l_gpio_names[] = {
+ 	"P48_0", "P48_1", "P48_2", "P48_3", "P48_4", "P48_5", "P48_6", "P48_7",
+ };
+ 
+-static const u32 rzg2l_gpio_configs[] = {
++static const u32 r9a07g044_gpio_configs[] = {
+ 	RZG2L_GPIO_PORT_PACK(2, 0x10, RZG2L_MPXED_PIN_FUNCS),
+ 	RZG2L_GPIO_PORT_PACK(2, 0x11, RZG2L_MPXED_PIN_FUNCS),
+ 	RZG2L_GPIO_PORT_PACK(2, 0x12, RZG2L_MPXED_PIN_FUNCS),
+@@ -1483,7 +1483,7 @@ static int rzg2l_pinctrl_probe(struct platform_device *pdev)
+ 	struct clk *clk;
  	int ret;
  
-+	ret = rzg2l_validate_gpio_pin(pctrl, *pin_data, port, bit);
-+	if (ret)
-+		return ret;
-+
- 	ret = pinctrl_gpio_request(chip->base + offset);
- 	if (ret)
- 		return ret;
+-	BUILD_BUG_ON(ARRAY_SIZE(rzg2l_gpio_configs) * RZG2L_PINS_PER_PORT >
++	BUILD_BUG_ON(ARRAY_SIZE(r9a07g044_gpio_configs) * RZG2L_PINS_PER_PORT >
+ 		     ARRAY_SIZE(rzg2l_gpio_names));
+ 
+ 	BUILD_BUG_ON(ARRAY_SIZE(r9a07g043_gpio_configs) * RZG2L_PINS_PER_PORT >
+@@ -1533,10 +1533,10 @@ static struct rzg2l_pinctrl_data r9a07g043_data = {
+ 
+ static struct rzg2l_pinctrl_data r9a07g044_data = {
+ 	.port_pins = rzg2l_gpio_names,
+-	.port_pin_configs = rzg2l_gpio_configs,
+-	.n_ports = ARRAY_SIZE(rzg2l_gpio_configs),
++	.port_pin_configs = r9a07g044_gpio_configs,
++	.n_ports = ARRAY_SIZE(r9a07g044_gpio_configs),
+ 	.dedicated_pins = rzg2l_dedicated_pins.common,
+-	.n_port_pins = ARRAY_SIZE(rzg2l_gpio_configs) * RZG2L_PINS_PER_PORT,
++	.n_port_pins = ARRAY_SIZE(r9a07g044_gpio_configs) * RZG2L_PINS_PER_PORT,
+ 	.n_dedicated_pins = ARRAY_SIZE(rzg2l_dedicated_pins.common) +
+ 		ARRAY_SIZE(rzg2l_dedicated_pins.rzg2l_pins),
+ };
 -- 
 2.39.2
 
