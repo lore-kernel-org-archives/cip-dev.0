@@ -1,129 +1,101 @@
-Return-Path: <ncaidin@linuxfoundation.org>
+Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FBECC4345F
-	for <webhook@archiver.kernel.org>; Sun, 21 Apr 2024 23:45:18 +0000 (UTC)
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
- by mx.groups.io with SMTP id smtpd.web11.32697.1713708903959434375
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EAD0C4345F
+	for <webhook@archiver.kernel.org>; Mon, 22 Apr 2024 04:43:59 +0000 (UTC)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+ by mx.groups.io with SMTP id smtpd.web10.11041.1713761033822709538
  for <cip-dev@lists.cip-project.org>;
- Sun, 21 Apr 2024 07:15:04 -0700
+ Sun, 21 Apr 2024 21:43:54 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernel.org header.s=k20201202 header.b=meGvwpVc;
- spf=pass (domain: kernel.org, ip: 139.178.84.217, mailfrom: krzk@kernel.org)
-Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
-	by dfw.source.kernel.org (Postfix) with ESMTP id 4AAC660BC3;
-	Sun, 21 Apr 2024 14:15:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAFF2C113CE;
-	Sun, 21 Apr 2024 14:15:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713708902;
-	bh=c2DbnHT7TQMy9HD1UsFgbFRJH5+n/JyYaKTQS/1f3QU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=meGvwpVckIoU9n4XlZcc+wARxKyriKNqEWMn65aX93Njjn6lye+6QUwdTGljnOnxY
-	 dgQT6Gjn8yFPV+4uoTmR8VClKsVRl/boWQN4Ratm0WeLjKK12Zu+AVjsc3CDZTg3FG
-	 Avl8l3oGMkXceDtrGCF7tRCRJIVKbEZOF4uJSV9GQwxwAIg3Rt65nLP4gu3yCZFtNW
-	 NWxktb+zFj2dStunOmhQ+dMxxahaXGASN2WWZnvq4N38p9sAs1nhYj3mQfHGvUVivi
-	 6gYlJkUQk4mFXhRkNANAAPC0di2vS2ejzfPDF6KnmZ/1ugRwO11eMdfR9KgYT5fYB4
-	 rW7RFlrt2ilZA==
-Message-ID: <8bc364cf-fc6f-43f4-aa23-d9ea224080f7@kernel.org>
-Date: Sun, 21 Apr 2024 16:14:58 +0200
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=GD1JHJ9V;
+ spf=pass (domain: tuxon.dev, ip: 209.85.208.52, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-56e1baf0380so4560432a12.3
+        for <cip-dev@lists.cip-project.org>; Sun, 21 Apr 2024 21:43:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1713761031; x=1714365831; darn=lists.cip-project.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/kkTdRTc6DieSWRiXHkSMjxOrT0o0t3EENye0dtYJCg=;
+        b=GD1JHJ9VoCv8tka7hFWnNLoMGJiY6IRDcKuZHAL8Q05UQCT3nnwdFJro0NQPtngn4y
+         x3Qs0UlhSzjUoBAUCVozE7fKM/su+Q54bQ4+CcnHRNmoHIX0H85HsRyS3eh6ZdLWu0TX
+         7gcTOCGcEGoa7EAgP2MZ8OeHxzYA0G0leGZioOw0DSej4yTj8pktrSSAPuOPb52qTjUV
+         oCaRK6S6OrZdHmjh+qKi7MtivFHEKWAnDkKochp33ebiLTYDXUIbQt8YJ3P1oIjndFhw
+         DNW8nbce3eUD4BGTgSq7of9WLYeTUuvPNt46orQtaAhU0JACwjaBarYZXZgUjJADFM+Y
+         xvvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713761031; x=1714365831;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/kkTdRTc6DieSWRiXHkSMjxOrT0o0t3EENye0dtYJCg=;
+        b=SXzbQJtZnbioLyOwStnnzzuRmZDlaJg7tMxYJt6Tkfkf11SVKg1A89F2WZVdZq/W0h
+         SypYFNrLfpTAIDdyhJ3nskR2gRoB3EpkmmqB2l+iOV1hsA0J4sMarCtJgg40gcuBtIPc
+         5kzptStlTfUaCuS+Ycq5vCfolJ/KeNqkbq4eFtnlfq9WO8VQ9zAiuUFM2kYY4VNJoOdn
+         lO0viKUsw0hQIohCwpMUsh6DlZvXp6yaWt/YFFoqD9BywHoyt+yiKOrzzwejJXxTiWiP
+         qdq0AT95cX+G5osk0TWTtMuGdRJT8txsUa1E1Q91tfgyVRiTuSySvDJ2ucmTzawpXpCh
+         W9bg==
+X-Forwarded-Encrypted: i=1; AJvYcCWLV+BoFmzieU2yoOPoNpo466fhrwJCSuGCk+6KJOSsNR5mnVP5tS/WlHqw1zBbfKJxLgFfejoUrgu9kSvt0cY7uojkOL8lDddvcUNBDw==
+X-Gm-Message-State: AOJu0YywINJjrJ4zSfzgp02qzRFjsUwXdM2xcXlJyfgiGbx6+r2a85yK
+	pV7xJzIiWLKv+3Q1QPbV2h4IxXd2lpcMGXkjoCBWD/kxpVRGzOBFFIwhmaH+xTU=
+X-Google-Smtp-Source: AGHT+IHjQ09iSKC1JNTVyfWx/rQVqKKU0rhLmUqfa7csVy4s+aE1eceLtT8SqpWcFEtGgsR/NJ91NA==
+X-Received: by 2002:a17:907:7247:b0:a55:b345:63ec with SMTP id ds7-20020a170907724700b00a55b34563ecmr1612105ejc.15.1713761031545;
+        Sun, 21 Apr 2024 21:43:51 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.53])
+        by smtp.gmail.com with ESMTPSA id k15-20020a170906128f00b00a473a1fe089sm5261695ejb.1.2024.04.21.21.43.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 21 Apr 2024 21:43:51 -0700 (PDT)
+Message-ID: <a2e1c86f-9600-48b6-bebd-bd2a223a3530@tuxon.dev>
+Date: Mon, 22 Apr 2024 07:43:48 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.10.y-cip 00/36] Add IA55 interrupt controller support
-To: Pavel Machek <pavel@denx.de>
-Cc: Claudiu <claudiu.beznea@tuxon.dev>, nobuhiro1.iwamatsu@toshiba.co.jp,
- cip-dev@lists.cip-project.org, biju.das.jz@bp.renesas.com,
- prabhakar.mahadev-lad.rj@bp.renesas.com
-References: <20240327081756.2228036-1-claudiu.beznea.uj@bp.renesas.com>
- <11c7f37d-d18d-4120-ad04-8efc3dec8305@kernel.org>
- <ZiLJe38ZgWbYC7P2@duo.ucw.cz>
- <ad85fa92-5b70-4b47-83c0-a2d307538934@kernel.org>
- <ZiUejtwUYcdfRVoj@duo.ucw.cz>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ZiUejtwUYcdfRVoj@duo.ucw.cz>
+Subject: Re: [PATCH 5.10.y-cip 17/53] clk: renesas: rzg2l: Add support for
+ RZ/G3S PLL
 Content-Language: en-US
+To: Pavel Machek <pavel@denx.de>
+Cc: nobuhiro1.iwamatsu@toshiba.co.jp, cip-dev@lists.cip-project.org,
+ biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com
+References: <20240419081742.3496709-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240419081742.3496709-18-claudiu.beznea.uj@bp.renesas.com>
+ <ZiUgTsFF7W7+wvqW@duo.ucw.cz>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <ZiUgTsFF7W7+wvqW@duo.ucw.cz>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Sun, 21 Apr 2024 23:45:18 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15718
+ <cip-dev@lists.cip-project.org>; Mon, 22 Apr 2024 04:43:59 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15719
 
-On 21/04/2024 16:11, Pavel Machek wrote:
+Hi, Pavel,
+
+On 21.04.2024 17:18, Pavel Machek wrote:
 > Hi!
 > 
->>>> Please use same tooling as stable is using, so you will produce
->>>> "X-stable: review" header. Or any other header which will allow people
->>>> to filter out huge CIP mailings when using lei/lore, just like we filter
->>>> out the stable ones.
->>>
->>> I'm confused, what should such header mean and what would you like to
->>> filter?
->>
->> Meaning would be the same as in stable process. Why CIP is doing this
->> differently?
->>
->> What we all are filtering? Emails from stable and CIP. It's way too
->> much. Many of us have several filters on lei for specific paths in
->> kernel, because lei successfully allows to replace the MAINTAINER entry.
->> stable and CIP postings are picked up by such filters, because they
->> touch the same paths. And it's not  just one email, it's entire thread,
->> like 200 patches from stable. CIP is somehow smaller but still.
->> Therefore the filter has AND NOT for mentioned header - I can nicely
->> remove all stable postings which I am not interested at all.
+>> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+>> @@ -714,11 +719,43 @@ static const struct clk_ops rzg2l_cpg_pll_ops = {
+>> +static unsigned long rzg3s_cpg_pll_clk_recalc_rate(struct clk_hw *hw,
+>> +						   unsigned long parent_rate)
+>> +{
+> ...
+>> +	val = readl(priv->base + GET_REG_SAMPLL_CLK1(pll_clk->conf));
+>> +
+>> +	pr = 1 << FIELD_GET(RZG3S_DIV_P, val);
+>> +	/* Hardware interprets values higher than 8 as p = 16. */
+>> +	if (pr > 8)
+>> +		pr = 16;
 > 
-> Why not simply ignore everything on cip-dev? We have rule that
-> everything applied to -cip has to be upstream first.
+> What does "p" mean in the above comment. Should it say "pr"?
 
-Because it is simpler to ignore one tag for all backports. But sure, I
-will ignore everything from all folks listed here.
+Yes, it should be "pr". I'll update it in upstream kernel.
 
-Best regards,
-Krzysztof
+Thank you,
+Claudiu Beznea
 
+> 
+> Best regards,
+> 							Pavel
 
