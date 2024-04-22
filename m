@@ -2,34 +2,32 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 881C0C1746D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 706B2C16B13
 	for <webhook@archiver.kernel.org>; Mon, 22 Apr 2024 14:11:33 +0000 (UTC)
-Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
- by mx.groups.io with SMTP id smtpd.web11.19558.1713795085210414205
+Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
+ by mx.groups.io with SMTP id smtpd.web11.19554.1713795084841615664
  for <cip-dev@lists.cip-project.org>;
  Mon, 22 Apr 2024 07:11:25 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=K5dwBCY3;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-51332-20240422141122be789fa53f90c6d5b9-jf9aiu@rts-flowmailer.siemens.com)
-Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20240422141122be789fa53f90c6d5b9
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=TMZxBto7;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228, mailfrom: fm-51332-20240422141121be66fb90ad46c66a54-5oad8a@rts-flowmailer.siemens.com)
+Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 20240422141121be66fb90ad46c66a54
         for <cip-dev@lists.cip-project.org>;
         Mon, 22 Apr 2024 16:11:22 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=wPdEsy+RHXV4s6BGhtUdmK9gYW1y2CD4292j3IfUK5o=;
- b=K5dwBCY3mogFTe7t6W9i9jvwHt0Ez+5ONxHYfW+z5wNcDALq3x29j1jpKMJzxQQSE6Hvdb
- ghycgkUcOUiY+HGjQoEJi5JP5H6e93vTkgaiZk2uKR7i4uOSKPBwUNM86DA9SuykK8sqz72+
- C0/2KIfPKZNgQOWDZAG86TD61aONI=;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ bh=X/sotUJFvxwS5k7rAO9+dO+ZEDyGE2dmqCF3IgRlHK0=;
+ b=TMZxBto72Lt0LPL0FC3aua6ATW5FiclseiNW/0NuP/oA8afXX4H4n0KUfUmfBsOhix4aOd
+ CrHsngPSVdg0/xIdGg+0OxwBKMNK1wgNFLbEzSM0CFHL5umXOvR+5dHO+ZOWmMDd5OTtKuB0
+ EnZtyWyHiPdnXNvp7Kh2CguqlMHJo=;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: jan.kiszka@siemens.com,
 	johnxw@amazon.com,
 	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH v2 5/7] Rename encrypt-partitions to encrypt-data
-Date: Mon, 22 Apr 2024 16:09:10 +0200
-Message-ID: <20240422141120.577573-6-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20240422141120.577573-1-Quirin.Gylstorff@siemens.com>
-References: <20240422141120.577573-1-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v2 0/7] Add option to encrypt the rootfs
+Date: Mon, 22 Apr 2024 16:09:05 +0200
+Message-ID: <20240422141120.577573-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
@@ -38,77 +36,56 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 22 Apr 2024 14:11:33 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15729
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15725
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-This makes the purpose of this option more clear.
+This adds the option to encrypt both root file system partions(systema
+and systemb). The encrypted partition can be updated with SWUpdate.
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- .gitlab-ci.yml                                       | 2 +-
- Kconfig                                              | 2 +-
- doc/README.tpm2.encryption.md                        | 2 +-
- kas/opt/{encrypt-partitions.yml => encrypt-data.yml} | 0
- kas/opt/security.yml                                 | 2 +-
- 5 files changed, 4 insertions(+), 4 deletions(-)
+Currently an update will lead to a reencryption of the update partition as
+the underlying device(/dev/sdaX) is written instead of the device mapper
+partition.
+
+Changes v2:
+ - Rewrite commit messages
+ - Rename kas/opt/encrypt-partitions.yml to kas/opt/encrypt-data.yml
+ - Rename kas/opt/encrypt-rootfs.yml to kas/opt/encrypt-all.yml
+ - Fix assignment of CRYPT_PARTITIONS
+
+Changes from https://lists.cip-project.org/g/cip-dev/message/15512:
+ - add partition labels for a/b partitions
+ - use a/b rootfs configuration instead seperate wks file
+
+
+Quirin Gylstorff (7):
+  wic/*: Add part-labels to system partition
+  initramfs: allow empty mountpoint for crypt hooks
+  initramfs-crypt: Only resize partition if ext* formatted
+  fix: use luks2 to identify encrypted partition
+  Rename encrypt-partitions to encrypt-data
+  Kconfig: Add option to encrypt the rootfs
+  README: Add rootfs encryption
+
+ .gitlab-ci.yml                                |  2 +-
+ Kconfig                                       | 22 ++++++++++++++++---
+ doc/README.tpm2.encryption.md                 | 14 ++++++++++--
+ kas/opt/encrypt-all.yml                       | 22 +++++++++++++++++++
+ ...ncrypt-partitions.yml => encrypt-data.yml} |  0
+ kas/opt/security.yml                          |  2 +-
+ .../files/encrypt_partition.script            | 22 ++++++++++++++-----
+ .../files/mount_crypt_partitions.script       |  4 +++-
+ wic/bbb-efibootguard.wks.in                   |  4 ++--
+ wic/hihope-rzg2m-efibootguard.wks.in          |  4 ++--
+ wic/qemu-amd64-efibootguard-secureboot.wks.in |  4 ++--
+ wic/qemu-arm64-efibootguard-secureboot.wks.in |  4 ++--
+ wic/qemu-arm64-efibootguard.wks.in            |  4 ++--
+ wic/qemu-riscv64-efibootguard.wks.in          |  4 ++--
+ wic/x86-efibootguard.wks.in                   |  4 ++--
+ 15 files changed, 89 insertions(+), 27 deletions(-)
+ create mode 100644 kas/opt/encrypt-all.yml
  rename kas/opt/{encrypt-partitions.yml => encrypt-data.yml} (100%)
 
-diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-index bd34c82..aab55be 100644
---- a/.gitlab-ci.yml
-+++ b/.gitlab-ci.yml
-@@ -64,7 +64,7 @@ default:
-     - if [ "${release}" = "bullseye" ]; then base_yaml="${base_yaml}:kas/opt/bullseye.yml"; fi
-     - if [ "${release}" = "bookworm" ]; then base_yaml="${base_yaml}:kas/opt/bookworm.yml"; fi
-     - if [ "${release}" = "sid" ]; then base_yaml="${base_yaml}:kas/opt/sid.yml"; fi
--    - if [ "${encrypt}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/encrypt-partitions.yml"; fi
-+    - if [ "${encrypt}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/encrypt-data.yml"; fi
-     - if [ "${swupdate_version}" = "2022.12" ]; then base_yaml="${base_yaml}:kas/opt/swupdate-2022.12.yaml"; fi
-     - echo "Building ${base_yaml}"
-     - kas build ${base_yaml}
-diff --git a/Kconfig b/Kconfig
-index 7c19640..9478a06 100644
---- a/Kconfig
-+++ b/Kconfig
-@@ -211,6 +211,6 @@ config IMAGE_DATA_ENCRYPTION
- 
- config KAS_INCLUDE_DATA_ENCRYPTION
- 	string
--	default "kas/opt/encrypt-partitions.yml" if IMAGE_DATA_ENCRYPTION
-+	default "kas/opt/encrypt-data.yml" if IMAGE_DATA_ENCRYPTION
- 
- endif
-diff --git a/doc/README.tpm2.encryption.md b/doc/README.tpm2.encryption.md
-index 69a18dd..c5ac6c4 100644
---- a/doc/README.tpm2.encryption.md
-+++ b/doc/README.tpm2.encryption.md
-@@ -27,7 +27,7 @@ An example for qemu-amd64 can be build with by selecting the option after callin
- or by adding using the following command line build:
- 
- ```
--./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/encrypt-partitions.yml
-+./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/encrypt-data.yml
- ```
- ## initramfs-crypt-hook configuration
- 
-diff --git a/kas/opt/encrypt-partitions.yml b/kas/opt/encrypt-data.yml
-similarity index 100%
-rename from kas/opt/encrypt-partitions.yml
-rename to kas/opt/encrypt-data.yml
-diff --git a/kas/opt/security.yml b/kas/opt/security.yml
-index 000c522..4aa40e0 100644
---- a/kas/opt/security.yml
-+++ b/kas/opt/security.yml
-@@ -11,7 +11,7 @@
- header:
-   version: 14
-   includes:
--   - kas/opt/encrypt-partitions.yml
-+   - kas/opt/encrypt-data.yml
-    - kas/opt/ebg-secure-boot-snakeoil.yml
- 
- target: cip-core-image-security
 -- 
 2.43.0
 
