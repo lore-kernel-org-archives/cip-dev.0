@@ -2,32 +2,32 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40547C07E8E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EEB0C4345F
 	for <webhook@archiver.kernel.org>; Mon, 22 Apr 2024 14:11:33 +0000 (UTC)
 Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
- by mx.groups.io with SMTP id smtpd.web11.19556.1713795084930940205
+ by mx.groups.io with SMTP id smtpd.web11.19555.1713795084846421415
  for <cip-dev@lists.cip-project.org>;
  Mon, 22 Apr 2024 07:11:25 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=JlCuBOMN;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-51332-20240422141122d769edc314a911ff97-icbbfz@rts-flowmailer.siemens.com)
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 20240422141122d769edc314a911ff97
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=YDMPYDa5;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-51332-202404221411211b81ebea9dd93916c8-zba8wf@rts-flowmailer.siemens.com)
+Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 202404221411211b81ebea9dd93916c8
         for <cip-dev@lists.cip-project.org>;
         Mon, 22 Apr 2024 16:11:22 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=uqit3BLEeDuEB4mr1mO8T+mdkR0/0w4koXdXGP2Gw3w=;
- b=JlCuBOMN5QvUag3oSCF8iHy2ALcX6G8XDJVhqqzXoZwo5Zaq8w0UMReQCHe2cM0+gQOis6
- UQDzExdrco027U/O098+WJnMKLPMAB2fgXULK1O5rYvo1aKL//XQmxTi7T3Gd6tRJmsMw5ww
- CJD6zrrC7iDKvKWmb4KT4u4oWhfyU=;
+ bh=8YZbiSNipjBPgR3SWctZAv1TvugTkr/LyZIYtY1NtlY=;
+ b=YDMPYDa5jyxy3c3qlffx87STDoiZzfCe+GfdAIUdg2SibuFlp4y4XfStkV+fJSqXazAfmH
+ xHwMkXb5KXzroJKrtsaNkDOm/cjoIJl/+OiQK5e/eMA7Rv3sgvpDbXkD7dOiDMkOrV430aJJ
+ QEne64bsejfCDoihjHAiLjd1YnPNM=;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: jan.kiszka@siemens.com,
 	johnxw@amazon.com,
 	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH v2 3/7] initramfs-crypt: Only resize partition if ext* formatted
-Date: Mon, 22 Apr 2024 16:09:08 +0200
-Message-ID: <20240422141120.577573-4-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v2 1/7] wic/*: Add part-labels to system partition
+Date: Mon, 22 Apr 2024 16:09:06 +0200
+Message-ID: <20240422141120.577573-2-Quirin.Gylstorff@siemens.com>
 In-Reply-To: <20240422141120.577573-1-Quirin.Gylstorff@siemens.com>
 References: <20240422141120.577573-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
@@ -38,52 +38,127 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 22 Apr 2024 14:11:33 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15723
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15722
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-squashfs or empty partition cannot be resized with resize2fs.
+This allows to use the part-label for encryptition or
+boot selection.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- .../files/encrypt_partition.script            | 20 +++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ wic/bbb-efibootguard.wks.in                   | 4 ++--
+ wic/hihope-rzg2m-efibootguard.wks.in          | 4 ++--
+ wic/qemu-amd64-efibootguard-secureboot.wks.in | 4 ++--
+ wic/qemu-arm64-efibootguard-secureboot.wks.in | 4 ++--
+ wic/qemu-arm64-efibootguard.wks.in            | 4 ++--
+ wic/qemu-riscv64-efibootguard.wks.in          | 4 ++--
+ wic/x86-efibootguard.wks.in                   | 4 ++--
+ 7 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.script b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.script
-index 8f6cbf6..51c81f3 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.script
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.script
-@@ -64,14 +64,26 @@ service_watchdog() {
- reencrypt_existing_partition() {
- 	part_size_blocks="$(cat /sys/class/block/"$(awk -v dev="$1" 'BEGIN{split(dev,a,"/"); print a[3]}' )"/size)"
- 	# reduce the filesystem and partition by 32M to fit the LUKS header
-+	partition_fstype=$(get_fstype "${1}")
- 	reduce_device_size=32768
- 	reduced_size="$(expr "$part_size_blocks" - 65536 )"
- 	reduced_size_in_byte="$(expr "$reduced_size" \* 512)"
- 	reduced_size_in_kb="$(expr "$reduced_size_in_byte" / 1024)K"
--	e2fsck -f "$1"
--	if ! resize2fs "$1" "${reduced_size_in_kb}"; then
--		panic "reencryption of filesystem $1 cannot continue!"
--	fi
-+	case $partition_fstype in
-+	ext*)
-+		# reduce the filesystem and partition by 32M to fit the LUKS header
-+		e2fsck -f "$1"
-+		if ! resize2fs "$1" "${reduced_size_in_kb}"; then
-+			panic "reencryption of filesystem $1 cannot continue!"
-+		fi
-+		;;
-+	squashfs|"")
-+		echo "skip disk resize as it not support or unnecessary for fstype: '$partition_fstype'"
-+		;;
-+	*)
-+		panic "cannot resize parition. unsupport fstype: $partition_fstype"
-+		;;
-+	esac
- 	if [ -x /usr/sbin/cryptsetup-reencrypt ]; then
- 		/usr/sbin/cryptsetup-reencrypt --new --reduce-device-size "$reduce_device_size"k "$1" < "$2"
- 	else
+diff --git a/wic/bbb-efibootguard.wks.in b/wic/bbb-efibootguard.wks.in
+index e9c04b9..b5772c2 100644
+--- a/wic/bbb-efibootguard.wks.in
++++ b/wic/bbb-efibootguard.wks.in
+@@ -11,8 +11,8 @@ part --source rawcopy --sourceparams "file=/usr/lib/u-boot/bbb/u-boot.img" --no-
+ 
+ include ebg-sysparts.inc
+ 
+-part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4
+-part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4
++part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
++part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
+ 
+ # home and var are extra partitions
+ part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
+diff --git a/wic/hihope-rzg2m-efibootguard.wks.in b/wic/hihope-rzg2m-efibootguard.wks.in
+index 9227a71..164e8a9 100644
+--- a/wic/hihope-rzg2m-efibootguard.wks.in
++++ b/wic/hihope-rzg2m-efibootguard.wks.in
+@@ -3,8 +3,8 @@
+ 
+ include ebg-sysparts.inc
+ 
+-part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4
+-part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4
++part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
++part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
+ 
+ # home and var are extra partitions
+ 
+diff --git a/wic/qemu-amd64-efibootguard-secureboot.wks.in b/wic/qemu-amd64-efibootguard-secureboot.wks.in
+index ef40d70..0f4d637 100644
+--- a/wic/qemu-amd64-efibootguard-secureboot.wks.in
++++ b/wic/qemu-amd64-efibootguard-secureboot.wks.in
+@@ -1,7 +1,7 @@
+ include ebg-signed-sysparts.inc
+ 
+-part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4
+-part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4
++part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
++part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
+ 
+ # home and var are extra partitions
+ part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024 --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
+diff --git a/wic/qemu-arm64-efibootguard-secureboot.wks.in b/wic/qemu-arm64-efibootguard-secureboot.wks.in
+index 01f395d..00d627d 100644
+--- a/wic/qemu-arm64-efibootguard-secureboot.wks.in
++++ b/wic/qemu-arm64-efibootguard-secureboot.wks.in
+@@ -1,7 +1,7 @@
+ include ebg-signed-sysparts.inc
+ 
+-part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4
+-part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4
++part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
++part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
+ 
+ # home and var are extra partitions
+ part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024 --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
+diff --git a/wic/qemu-arm64-efibootguard.wks.in b/wic/qemu-arm64-efibootguard.wks.in
+index 942c3e1..6f03420 100644
+--- a/wic/qemu-arm64-efibootguard.wks.in
++++ b/wic/qemu-arm64-efibootguard.wks.in
+@@ -3,8 +3,8 @@
+ 
+ include ebg-sysparts.inc
+ 
+-part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4
+-part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4
++part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
++part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
+ 
+ # home and var are extra partitions
+ part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
+diff --git a/wic/qemu-riscv64-efibootguard.wks.in b/wic/qemu-riscv64-efibootguard.wks.in
+index 6934977..1704ded 100644
+--- a/wic/qemu-riscv64-efibootguard.wks.in
++++ b/wic/qemu-riscv64-efibootguard.wks.in
+@@ -3,8 +3,8 @@
+ 
+ include ebg-sysparts.inc
+ 
+-part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4
+-part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4
++part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
++part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
+ 
+ # home and var are extra partitions
+ part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
+diff --git a/wic/x86-efibootguard.wks.in b/wic/x86-efibootguard.wks.in
+index 6382ff7..4c0484f 100644
+--- a/wic/x86-efibootguard.wks.in
++++ b/wic/x86-efibootguard.wks.in
+@@ -3,8 +3,8 @@
+ 
+ include ebg-sysparts.inc
+ 
+-part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4
+-part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4
++part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.squashfs" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
++part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
+ 
+ # home and var are extra partitions
+ 
 -- 
 2.43.0
 
