@@ -2,32 +2,32 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 797A9C18E72
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 881C0C1746D
 	for <webhook@archiver.kernel.org>; Mon, 22 Apr 2024 14:11:33 +0000 (UTC)
-Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
- by mx.groups.io with SMTP id smtpd.web10.19472.1713795084846138737
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
+ by mx.groups.io with SMTP id smtpd.web11.19558.1713795085210414205
  for <cip-dev@lists.cip-project.org>;
  Mon, 22 Apr 2024 07:11:25 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=bBZfZ2XD;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-51332-20240422141122ded3887665e9febd28-hj54bw@rts-flowmailer.siemens.com)
-Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 20240422141122ded3887665e9febd28
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=K5dwBCY3;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-51332-20240422141122be789fa53f90c6d5b9-jf9aiu@rts-flowmailer.siemens.com)
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20240422141122be789fa53f90c6d5b9
         for <cip-dev@lists.cip-project.org>;
         Mon, 22 Apr 2024 16:11:22 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=92laoSyA7ibBoNhzAQr2FvY4IP6MNIW/tOc+ONdCPmM=;
- b=bBZfZ2XDUocMojJwsu7WHM0KRlwigigjr7VjECzwkVipVLJtZRFo++HUq1cUCcrXjRl3T+
- /R6KYv15da2PLUXbhj9SPPua/Jnr4LnUZCAqNtPHPUNKT73JZ18xcO+P7ZEvhHwd/wY9Tfwu
- Kcc1tW9HWyzlU6xN5gOl8nQ3aK1iI=;
+ bh=wPdEsy+RHXV4s6BGhtUdmK9gYW1y2CD4292j3IfUK5o=;
+ b=K5dwBCY3mogFTe7t6W9i9jvwHt0Ez+5ONxHYfW+z5wNcDALq3x29j1jpKMJzxQQSE6Hvdb
+ ghycgkUcOUiY+HGjQoEJi5JP5H6e93vTkgaiZk2uKR7i4uOSKPBwUNM86DA9SuykK8sqz72+
+ C0/2KIfPKZNgQOWDZAG86TD61aONI=;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: jan.kiszka@siemens.com,
 	johnxw@amazon.com,
 	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH v2 4/7] fix: use luks2 to identify encrypted partition
-Date: Mon, 22 Apr 2024 16:09:09 +0200
-Message-ID: <20240422141120.577573-5-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v2 5/7] Rename encrypt-partitions to encrypt-data
+Date: Mon, 22 Apr 2024 16:09:10 +0200
+Message-ID: <20240422141120.577573-6-Quirin.Gylstorff@siemens.com>
 In-Reply-To: <20240422141120.577573-1-Quirin.Gylstorff@siemens.com>
 References: <20240422141120.577573-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
@@ -38,32 +38,77 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 22 Apr 2024 14:11:33 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15724
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15729
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-This fixes an issue with encrypted rootfs during system reboot.
-With the token option it can happen that during reboot the no
-valid Luks partition is found and the boot up fails in the initrd.
+This makes the purpose of this option more clear.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- .../initramfs-crypt-hook/files/encrypt_partition.script         | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .gitlab-ci.yml                                       | 2 +-
+ Kconfig                                              | 2 +-
+ doc/README.tpm2.encryption.md                        | 2 +-
+ kas/opt/{encrypt-partitions.yml => encrypt-data.yml} | 0
+ kas/opt/security.yml                                 | 2 +-
+ 5 files changed, 4 insertions(+), 4 deletions(-)
+ rename kas/opt/{encrypt-partitions.yml => encrypt-data.yml} (100%)
 
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.script b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.script
-index 51c81f3..685d882 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.script
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.script
-@@ -134,7 +134,7 @@ for partition_set in $partition_sets; do
- 	fi
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index bd34c82..aab55be 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -64,7 +64,7 @@ default:
+     - if [ "${release}" = "bullseye" ]; then base_yaml="${base_yaml}:kas/opt/bullseye.yml"; fi
+     - if [ "${release}" = "bookworm" ]; then base_yaml="${base_yaml}:kas/opt/bookworm.yml"; fi
+     - if [ "${release}" = "sid" ]; then base_yaml="${base_yaml}:kas/opt/sid.yml"; fi
+-    - if [ "${encrypt}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/encrypt-partitions.yml"; fi
++    - if [ "${encrypt}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/encrypt-data.yml"; fi
+     - if [ "${swupdate_version}" = "2022.12" ]; then base_yaml="${base_yaml}:kas/opt/swupdate-2022.12.yaml"; fi
+     - echo "Building ${base_yaml}"
+     - kas build ${base_yaml}
+diff --git a/Kconfig b/Kconfig
+index 7c19640..9478a06 100644
+--- a/Kconfig
++++ b/Kconfig
+@@ -211,6 +211,6 @@ config IMAGE_DATA_ENCRYPTION
  
- 	if /usr/sbin/cryptsetup luksDump --batch-mode "$partition" \
--			| grep -q "token"; then
-+			| grep -q "luks2"; then
- 		open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
- 		continue
- 	fi
+ config KAS_INCLUDE_DATA_ENCRYPTION
+ 	string
+-	default "kas/opt/encrypt-partitions.yml" if IMAGE_DATA_ENCRYPTION
++	default "kas/opt/encrypt-data.yml" if IMAGE_DATA_ENCRYPTION
+ 
+ endif
+diff --git a/doc/README.tpm2.encryption.md b/doc/README.tpm2.encryption.md
+index 69a18dd..c5ac6c4 100644
+--- a/doc/README.tpm2.encryption.md
++++ b/doc/README.tpm2.encryption.md
+@@ -27,7 +27,7 @@ An example for qemu-amd64 can be build with by selecting the option after callin
+ or by adding using the following command line build:
+ 
+ ```
+-./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/encrypt-partitions.yml
++./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/encrypt-data.yml
+ ```
+ ## initramfs-crypt-hook configuration
+ 
+diff --git a/kas/opt/encrypt-partitions.yml b/kas/opt/encrypt-data.yml
+similarity index 100%
+rename from kas/opt/encrypt-partitions.yml
+rename to kas/opt/encrypt-data.yml
+diff --git a/kas/opt/security.yml b/kas/opt/security.yml
+index 000c522..4aa40e0 100644
+--- a/kas/opt/security.yml
++++ b/kas/opt/security.yml
+@@ -11,7 +11,7 @@
+ header:
+   version: 14
+   includes:
+-   - kas/opt/encrypt-partitions.yml
++   - kas/opt/encrypt-data.yml
+    - kas/opt/ebg-secure-boot-snakeoil.yml
+ 
+ target: cip-core-image-security
 -- 
 2.43.0
 
