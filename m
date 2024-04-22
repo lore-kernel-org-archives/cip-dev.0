@@ -1,92 +1,81 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 706B2C16B13
-	for <webhook@archiver.kernel.org>; Mon, 22 Apr 2024 14:11:33 +0000 (UTC)
-Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
- by mx.groups.io with SMTP id smtpd.web11.19554.1713795084841615664
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A1AC4345F
+	for <webhook@archiver.kernel.org>; Mon, 22 Apr 2024 20:37:37 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web11.2940.1713818250499742817
  for <cip-dev@lists.cip-project.org>;
- Mon, 22 Apr 2024 07:11:25 -0700
+ Mon, 22 Apr 2024 13:37:30 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=TMZxBto7;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228, mailfrom: fm-51332-20240422141121be66fb90ad46c66a54-5oad8a@rts-flowmailer.siemens.com)
-Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 20240422141121be66fb90ad46c66a54
-        for <cip-dev@lists.cip-project.org>;
-        Mon, 22 Apr 2024 16:11:22 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
- bh=X/sotUJFvxwS5k7rAO9+dO+ZEDyGE2dmqCF3IgRlHK0=;
- b=TMZxBto72Lt0LPL0FC3aua6ATW5FiclseiNW/0NuP/oA8afXX4H4n0KUfUmfBsOhix4aOd
- CrHsngPSVdg0/xIdGg+0OxwBKMNK1wgNFLbEzSM0CFHL5umXOvR+5dHO+ZOWmMDd5OTtKuB0
- EnZtyWyHiPdnXNvp7Kh2CguqlMHJo=;
-From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: jan.kiszka@siemens.com,
-	johnxw@amazon.com,
-	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH v2 0/7] Add option to encrypt the rootfs
-Date: Mon, 22 Apr 2024 16:09:05 +0200
-Message-ID: <20240422141120.577573-1-Quirin.Gylstorff@siemens.com>
+ dkim=none (message not signed); spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 842191C0080; Mon, 22 Apr 2024 22:37:27 +0200 (CEST)
+Date: Mon, 22 Apr 2024 22:37:27 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: nobuhiro1.iwamatsu@toshiba.co.jp, pavel@denx.de,
+	cip-dev@lists.cip-project.org, biju.das.jz@bp.renesas.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com
+Subject: Re: [PATCH 6.1.y-cip 00/44] Add initial support for the Renesas
+ RZ/G3S SoC
+Message-ID: <ZibKh3qxKMgR9ZDS@duo.ucw.cz>
+References: <20240419113842.3675543-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="GzB+/hHni0IqQRcS"
+Content-Disposition: inline
+In-Reply-To: <20240419113842.3675543-1-claudiu.beznea.uj@bp.renesas.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 22 Apr 2024 14:11:33 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15725
-
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-
-This adds the option to encrypt both root file system partions(systema
-and systemb). The encrypted partition can be updated with SWUpdate.
-
-Currently an update will lead to a reencryption of the update partition as
-the underlying device(/dev/sdaX) is written instead of the device mapper
-partition.
-
-Changes v2:
- - Rewrite commit messages
- - Rename kas/opt/encrypt-partitions.yml to kas/opt/encrypt-data.yml
- - Rename kas/opt/encrypt-rootfs.yml to kas/opt/encrypt-all.yml
- - Fix assignment of CRYPT_PARTITIONS
-
-Changes from https://lists.cip-project.org/g/cip-dev/message/15512:
- - add partition labels for a/b partitions
- - use a/b rootfs configuration instead seperate wks file
+ <cip-dev@lists.cip-project.org>; Mon, 22 Apr 2024 20:37:37 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15730
 
 
-Quirin Gylstorff (7):
-  wic/*: Add part-labels to system partition
-  initramfs: allow empty mountpoint for crypt hooks
-  initramfs-crypt: Only resize partition if ext* formatted
-  fix: use luks2 to identify encrypted partition
-  Rename encrypt-partitions to encrypt-data
-  Kconfig: Add option to encrypt the rootfs
-  README: Add rootfs encryption
+--GzB+/hHni0IqQRcS
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- .gitlab-ci.yml                                |  2 +-
- Kconfig                                       | 22 ++++++++++++++++---
- doc/README.tpm2.encryption.md                 | 14 ++++++++++--
- kas/opt/encrypt-all.yml                       | 22 +++++++++++++++++++
- ...ncrypt-partitions.yml => encrypt-data.yml} |  0
- kas/opt/security.yml                          |  2 +-
- .../files/encrypt_partition.script            | 22 ++++++++++++++-----
- .../files/mount_crypt_partitions.script       |  4 +++-
- wic/bbb-efibootguard.wks.in                   |  4 ++--
- wic/hihope-rzg2m-efibootguard.wks.in          |  4 ++--
- wic/qemu-amd64-efibootguard-secureboot.wks.in |  4 ++--
- wic/qemu-arm64-efibootguard-secureboot.wks.in |  4 ++--
- wic/qemu-arm64-efibootguard.wks.in            |  4 ++--
- wic/qemu-riscv64-efibootguard.wks.in          |  4 ++--
- wic/x86-efibootguard.wks.in                   |  4 ++--
- 15 files changed, 89 insertions(+), 27 deletions(-)
- create mode 100644 kas/opt/encrypt-all.yml
- rename kas/opt/{encrypt-partitions.yml => encrypt-data.yml} (100%)
+Hi!
 
--- 
-2.43.0
+> This patch series adds initial support for The Renesas RZ/G3S (R9A08G045{=
+S33})
+> SoC. The RZ/G3S device is a general-purpose microprocessor with a
+> single-core Arm=AE Cortex=AE-A55 (1.1GHz) and a dual-core Arm=AE Cortex=
+=AE-M33 (250MHz),
+> perfect for an IOT gateway controller.
+>=20
+> This patch series includes:
+> - SoC identification;
+> - clocks (core clocks, pin controller clock, serial interface, SDHI
+>   clocks) and corresponding resets;
+> - pinctrl support necessary for SDHIs and serial console
+> - minimal device tree for SoM and carrier boards.
+>=20
+> With this series Linux can boot from eMMC or SD card. The eMMC and uSD
+> interface are multiplexed on the SoM; selection is made using a hardware
+> switch.
 
+Thanks for the patches, applied.
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--GzB+/hHni0IqQRcS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZibKhwAKCRAw5/Bqldv6
+8rYiAKCib62D2v6PBpiDYcP9Md+MJ9APvACeI1DgRnAll/z/Je67gs0EqAEO5IQ=
+=6NWK
+-----END PGP SIGNATURE-----
+
+--GzB+/hHni0IqQRcS--
 
