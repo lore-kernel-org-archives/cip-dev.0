@@ -1,192 +1,424 @@
-Return-Path: <ncaidin@linuxfoundation.org>
+Return-Path: <schilling.benjamin@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 126D0C41513
-	for <webhook@archiver.kernel.org>; Tue, 23 Apr 2024 11:36:32 +0000 (UTC)
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.82])
- by mx.groups.io with SMTP id smtpd.web11.14320.1713864952078983878
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18512C4345F
+	for <webhook@archiver.kernel.org>; Tue, 23 Apr 2024 11:53:32 +0000 (UTC)
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (EUR02-DB5-obe.outbound.protection.outlook.com [40.107.249.74])
+ by mx.groups.io with SMTP id smtpd.web11.16368.1713873211276125309
  for <cip-dev@lists.cip-project.org>;
- Tue, 23 Apr 2024 02:35:52 -0700
+ Tue, 23 Apr 2024 04:53:31 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=t0HtGjgK;
- spf=pass (domain: siemens.com, ip: 40.107.21.82, mailfrom: felix.moessbauer@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=e0Lh5svf;
+ spf=pass (domain: siemens.com, ip: 40.107.249.74, mailfrom: schilling.benjamin@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=g3BWLCQJPIbSZnF674/6JH3fUJf1ZlkS2dqeHm8j6ne43RZNpP0xK02/+Jkwm8A3RJCyje2IF6pD/nrfC+mLLIvrVcijrgkX5X3JAfAB4phBwFTnHZZSWCjwqAnW+bihf9S9mg2r2hFjxN7x7f4BCbV//duZ5dDW/O6S+c8Ty1LEmKIGSFrTudmJ3mpwMDvxh13sPvveultFrBo0++sAbEz1mwayqPlYZXeSda3DaCBnl0IqkcWBe3dnV5iftOwZrJXdMu4C2sLa3kD+zwCLaqZXx4Xd034GG3ZQEaUYLUTRQhqBR2VCXlNUnsEASGVbpZXMpHg5jg4upbkhL0M/yQ==
+ b=eAesAN+6owCjwDUHo8gXewXk/j8JocXHfELrO/CdlHpJC/9M2ge/oqhPEciS44c21pXIzw3nOgUjaezbhrutd4PhQ5lSP1rBlpnhUW51esFe709L1hD645X3ZQKM0nh44IVGjOQ7UQeSMIoQaxlJyMgOcJNgXZTwPjHOXrD5TY8+F4o/fUSvKmoqzeHsjPvkrNO4Vrq7p53l8ZKiMwyEB8V2xJDsHUCb4wDDGwIOh5NR7hLV8NqkFNkk8+UvYSFaQhMMJSHK0vVaZ8d7IKG2+7wbImPMYOJGUO49Ykd9U2d8N3OLgddblau0lMY9Y/YD4wZC3naGXwf5XNAJREEN0g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mY07twswuQAkCVxO7PSFE6Y98ZXR64MoHrCWORB7z2s=;
- b=VwfBzUIAMdy1/i6A3iHbg9Io6Sp7Kk8ZgeEtUolg4C+e7Gt13aYPHgJtyxQZsAENqpkKiBnGy36NlpFyQRb2WXOoTCgl8chKicj0Hyp8RXsiy5vLBKPFApZ5bVceMeg7MJLDBv7OBOIRE/yx3eknB1RrpCqrRCSOVqsNln5krNlfcY4RptxIEqKa6dXoOFxXfV6u3MGF4eU0GLe6MJRN3WDTKVBC17WkFUNADKbwXS78gbEi4O1uQ55KWjgmJLDak4+b+H7z2W+p/CXBq6Ym2UoSkePZsHbe02OjZbbJx7dcpMdUEezXiauZhSow5rbeLJx3s7KzCbNgZyGMvJgi5Q==
+ bh=N2PxRSvSstWn2FQ9XZhBtR/H6leE+L24pVM+eduKePQ=;
+ b=efS0jEkyUzejJw4195wtVWDfmZmDjjdKu1FYJ31AXwv1By7uDW8t5G556wNRMRaXvnafNLyw0Y4uNn7iJT7xYGEYZkUg6PNMnBr2mcQXIWx2vyChP6ncj5Zu5ZEMmtqGfzn/NmPi/JwOebSFwG7Div+kf6HLXks3cBMyKaXEob05YI0U2fBR2FOmBeVn8BOPmzzMyHbDC9kGTRSQNY7Mu5xAoV69sDWXF8KcSXdmMAndnBq/j/dL0JS6i77G8varHHsrzFL53cI7yvZTW12CJStrX88kPkuj47YwrE95HF/5J0maSi7FOEELNrHEGOutHrWldbaFOyQ/Bh1lAcphdA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mY07twswuQAkCVxO7PSFE6Y98ZXR64MoHrCWORB7z2s=;
- b=t0HtGjgKvCWl4z5tmUmrjNiaNspkctbTHcjZX7hKhHUznOjChDX/MzL4CAj6mf+jcKM9/4CJzHwWBq6EkdnrZ5NXs0rx/KdLsJQe3d/9U7ELc4IHfbSr+jrSHzyBsiD7ZtHFrjDacJV1pPfjDatQ60FZTIkdhlGG8VN/+0T0B5CxIttjgyJjiin7wd1iJu4C6DEbT5UHz5MGChkoSIsESZjn/MEwetY0+konpqIlBr6W/5oNeCdKUBEprHsZ+HaQTP88o5EIaZBQ4GNQ0ePauORQ43EGYpJdxub3CZlFAo1KlzIRq7f7dt7xNKLmdFMejd+IQGpyTKLUAoEn25bODA==
-Received: from DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:47f::13)
- by DB8PR10MB3628.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:134::13) with
+ bh=N2PxRSvSstWn2FQ9XZhBtR/H6leE+L24pVM+eduKePQ=;
+ b=e0Lh5svfTDuwgaY+3gUiNhjTM04ISgTXs+b6I/julzxSARNc6qHB8c8K8FhICGk9ipR7V2DhvvO5lEOlwiy2UH8Je4Frk7+tr5Ao6gchSCh8Cf6311SBjAY4D/CF2+o+7DCVC/iJHHF0xdog5v27aCSOA+Gtbx5lpFaA2ikb8vrW+Ew9pP0pswokZhoID+m3xQkBDsgiJ8pY4wtplfy4MmaQm4jWW6tX6XoiR2VZHgTnts6L8QY8RCoz/C4Xv4nEtwHMennLp2Oxo0M8VVJ3cF/0SesxPA2J2ixmVw8kHb7Hlw5uj+d6/QjOua6UsHOe3qZUnMEgu4GOwVTUwNIX+Q==
+Received: from GVXPR10MB5837.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:6d::17)
+ by AM8PR10MB4113.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1ee::8) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.44; Tue, 23 Apr
- 2024 09:35:48 +0000
-Received: from DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8198:b4e0:8d12:3dfe]) by DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8198:b4e0:8d12:3dfe%4]) with mapi id 15.20.7472.044; Tue, 23 Apr 2024
- 09:35:48 +0000
-From: "MOESSBAUER, Felix" <felix.moessbauer@siemens.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"quirin.gylstorff@siemens.com" <quirin.gylstorff@siemens.com>, "Kiszka, Jan"
-	<jan.kiszka@siemens.com>, "johnxw@amazon.com" <johnxw@amazon.com>
-Subject: Re: [cip-dev][isar-cip-core][PATCH v2 4/7] fix: use luks2 to identify encrypted partition
-Thread-Topic: [cip-dev][isar-cip-core][PATCH v2 4/7] fix: use luks2 to
- identify encrypted partition
-Thread-Index: AQHalWGf3mtVU5Lzz0SMvFl7Y1ut7Q==
-Date: Tue, 23 Apr 2024 09:35:48 +0000
-Message-ID: <9154239823f08a82d34c8810a51290e8e557fb40.camel@siemens.com>
-References: <20240422141120.577573-1-Quirin.Gylstorff@siemens.com>
-	 <20240422141120.577573-5-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20240422141120.577573-5-Quirin.Gylstorff@siemens.com>
+ 2024 11:53:28 +0000
+Received: from GVXPR10MB5837.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8e3f:ee20:5b20:8a7b]) by GVXPR10MB5837.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8e3f:ee20:5b20:8a7b%5]) with mapi id 15.20.7472.044; Tue, 23 Apr 2024
+ 11:53:28 +0000
+From: "Schilling, Benjamin" <schilling.benjamin@siemens.com>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+Subject: [isar-cip-core] [PATCH] HW: add basic M-COM x86 support
+Thread-Topic: [isar-cip-core] [PATCH] HW: add basic M-COM x86 support
+Thread-Index: AdqVdNUVlEu9uZKuRRmK1w/6/rn/Ng==
+Date: Tue, 23 Apr 2024 11:53:28 +0000
+Message-ID: 
+ <GVXPR10MB583719E1FC03FA839A16DF5F88112@GVXPR10MB5837.EURPRD10.PROD.OUTLOOK.COM>
 Accept-Language: de-DE, en-US
+Content-Language: de-DE
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.46.4-2 
+msip_labels: 
+ MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ActionId=1891e4bd-18a5-4559-9f56-85bc61c79f22;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=true;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=restricted;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2024-04-23T11:32:32Z;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DU0PR10MB6828:EE_|DB8PR10MB3628:EE_
-x-ms-office365-filtering-correlation-id: 6b0cafff-cc88-4f97-a538-08dc6378c241
+x-ms-traffictypediagnostic: GVXPR10MB5837:EE_|AM8PR10MB4113:EE_
+x-ms-office365-filtering-correlation-id: c0fcde46-5d5a-4f0f-38bb-08dc638bfd76
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
 x-microsoft-antispam-message-info: 
- =?utf-8?B?VTJhN2ZjZkFtVHdZV0JuTmVYeGpGaVJkMjZGb1ZGbDY2ZUxyaU9FeXBBV2tS?=
- =?utf-8?B?UlhvYjVWeUxGZDY5emxQUGkwQXdEd3RkbHdOb2FIZlZoWU5sR2NGVlV0YnRC?=
- =?utf-8?B?c0xpTVcvckh5SVBZcUpzVWdLb3lHd3lXMlV3ZU9Hd0wwbW90T3dwYW9uQ3U5?=
- =?utf-8?B?Z1JINldybjF4Ym0zZUUxLzF3Mm05eGs2bmFYSFF2eXA2WC8rU3pjUnBOTlp5?=
- =?utf-8?B?dVFPSVBNVDN0NnRmU3ZvdXhGWjd5cnZNbXV2b2JoT0o3SXBsbFJCN3N3V240?=
- =?utf-8?B?dGpCcXpsTXFuVWdZSWwySmFibndEaWdZa2FZWEVOQkU4Q2cwdFJMR3pVUXZy?=
- =?utf-8?B?dTVYMzBCdUl4VjF4TXhzVmtONFlnVVpUcVU5RFZrZUUwWnVVcFdMS1VEWmVw?=
- =?utf-8?B?b2M2WXlDRkVoOVB4SXRmWDNaN1dxQ3JzYWptQjJPRkFwLyttNldMODFaTWdO?=
- =?utf-8?B?VUw0S3ZOZmNLUW8wcEFnbk9VKzBQQ0VBaGxEYkpCR1B0cUE3NGY5Sm4wdW9J?=
- =?utf-8?B?ZjJEUmRVL1FLcnd2MExGOE1XZlpwc1V0SGJXZDAyYkFoN1llZXRvdElDRnJR?=
- =?utf-8?B?N213TWRyR09SdzZ1TGJIaHM1WVBnTUtJaFpFRjI0T2wwdjNuZjhUS0xrRHA4?=
- =?utf-8?B?SDJ1cDg4SUkvc1ZQeWMzdGVnQkVUOXFBT0ovUGRTcCtxZDhQOE9BcVFJL0RI?=
- =?utf-8?B?Q3Q0N21NWHlYcUhZRFdZcnJvU0M2L1dpS04vSCtuMWtEQ2hyVW8rMGhaMGdK?=
- =?utf-8?B?UU9yQnhwdk5UaDg2QWp2ZlpWT0x6eEZpbzRoUHZUbEc5MWRFdUtzYnRXOXNO?=
- =?utf-8?B?cXYrYWNJaXFIeVJtTXJESndCVEZYb0xnajFzeWN1Qk5tSTNsZ3l6ZURFRmNG?=
- =?utf-8?B?ZlcvZmV4OUM2QVIvaHc3bFdLTGExMDgxTzA1QmNwd2ZIaW9oZlVUYmRNK3cw?=
- =?utf-8?B?QU1UNk14bXN1SGd0dDE2SVBHTHJQZldubDlTSFBOWXFSMEl4Mk1qT1poTmJD?=
- =?utf-8?B?RTFMSGl3WlNwLzRocVcyREdkNGM1Ni9INmZxemxvRDk5WFdobzdKSVFlZ0xx?=
- =?utf-8?B?SXA0MWRxVGFaWkdTajRrNjBnL3llOUxKTUI2V0NwdjZtQjVkRElvaTZPRklo?=
- =?utf-8?B?QU9HWEo3RXVEWUJtbGpGRWV4b1F3cS85UXNQMVNOd3AvbjNFQWtaVURsQVV4?=
- =?utf-8?B?TytxZHFQNDJOUjdzZG5oTmFrK0orVFVGQ0xwNFQvWmJIbXpsVC9HaDhvUVQ1?=
- =?utf-8?B?UGdNaHFxMStJVko0dGlnY3hQb05ISkVlQTE3VG4zZG9PV3NTdlZWcVdudDdj?=
- =?utf-8?B?ZVl3YlJBYXhyajNFOGNZcTNKMmZjUStaemVIbmM5RjhRUmw3VjdJcFNQR2Zn?=
- =?utf-8?B?VTF3M2RYYkpBZk9Mb085Y2k0SHkvenZSK3JiZnRtVVdUWG8xbmxjUUlMWm5z?=
- =?utf-8?B?Z2g2Y2JGNlFmMnU2TFJGeVJJM09nRU9iV3hTZW9QTDIzSFFIRjNSN3l2b0VH?=
- =?utf-8?B?WWZzd1Q0VlNiYnhLMU1rMVkyNkZBS1JnTDdXT2hCT3IzK2NVZHozbUsxVS9o?=
- =?utf-8?B?bGc2blJQOWJlVTB1YU91alhWSzBGRG51WnZaU1pNb281RzJKc28zdDBsVzlE?=
- =?utf-8?B?bHNlOXpHWnlESUREZEVMYW9UeU44QWhkZVYxT1phbHY0N1JySkdsVStqL3Fx?=
- =?utf-8?B?SndnV2dSNnZneEltMVRoNTJObHpGYVhGbjNlVUpYRkUrV0lVcDlOT3lYQ2xl?=
- =?utf-8?B?TWs0ay91NXg1Wk9EWUx4TWE2OXM1TFF6VWV4Y3NqNTVBMmdUR0hOVVp6eVdh?=
- =?utf-8?B?R0dkMVE0eTNERXdGeWhZdz09?=
+ =?us-ascii?Q?NP03ePz+WGvlAJ35Louf42ami4v6oTdL3njeqqvvSNLWvc9nSu/2MB2cyxEC?=
+ =?us-ascii?Q?kVXTpOHQBY6cvCX2+rOUAvTYkEcb3Z8BDb3PPWVBwkyM86vOczzUQZW9PFLI?=
+ =?us-ascii?Q?2Gjxrn9bgY26creQkKcSs/GG9wwjSLtwEKn2fZvwSGbTlpJZpHDvAw9E1q4p?=
+ =?us-ascii?Q?72OlEbtpCHXf/BqlaVZfifW9ovon2pVU20SFNbG1Pd9zOKE1QwJH3phBjomp?=
+ =?us-ascii?Q?7r/TcX1n/SiPR/I+JlvVaMGHbTGch54lmdpBUA/eTQxE1olIAMeQjcgYy3wY?=
+ =?us-ascii?Q?Qgcvwkf9vdUG/nAbXlOel0rj4fwxXKmF0SgPjd5JAg/x2Tw8m//ZTCvKzaBU?=
+ =?us-ascii?Q?dk9SgwIjqdVsgPJNSjEfmBtzDl1pg+we6AnTzPr9Dsi7Rwkq5AjvNw55KS/y?=
+ =?us-ascii?Q?PnM78Hj+iAE3PgRVKE00yYbfoPYf0wdA9qMr+tKjS5SU8ye95XMUG9BomM3Q?=
+ =?us-ascii?Q?PTaAkKgZcYiSI6VPSoF/hPh0gzZSZx/yS+IY5Hzmd/Ondbwgdvg08YZ2cgvW?=
+ =?us-ascii?Q?eU3o5pwY+iVgdKYbYzmeZuQF+TC9BUZ+tPmPrY8RqDsEzwZpiV+MGCIvF6sJ?=
+ =?us-ascii?Q?DqtY4WyQd77i8MnMJtAK5erUB/POv2648NECfLoUX1IQE0pUHNG4KWOQG7ea?=
+ =?us-ascii?Q?Cr11bPCk4NzEph5s8ACkuKu9u1wofJ5vLyMKUjeLMmNIKL//AfZp/qqy09Ej?=
+ =?us-ascii?Q?PAdNKoNc07l7vbQsh1daojdpvCUr2XoEZE+irIt7/8p10T0XQ3NXjHRgWXs8?=
+ =?us-ascii?Q?3KLpfF4rF5faa/YqLVjNKZWTnPBQdJm3d85a6sqjpeurIvKJbjRF0AdbI082?=
+ =?us-ascii?Q?2ql3FDTLW9AU1gDmsk0c2GdS+xgeeAtsDxF5jfghNTUbVXiQqN4KbwMj6JMl?=
+ =?us-ascii?Q?zNkDH+zvzyW6cL5VV1O8rdrvLSA8G1uy+GyYC+6DAaVvcg+7YRj50o/9lYoP?=
+ =?us-ascii?Q?GAq6Yl3oEWQBfVCkX0WwBY5MHW0S6oStAAkgdVeDVk579H/xam9CqT3d7Ws6?=
+ =?us-ascii?Q?O43WQJ0aumzs7bJkLOpzJQePCpRxoDCr2Gt38GWBRbOJnNxdFxmfzfpe71ck?=
+ =?us-ascii?Q?nGw5EhUlixAiLYqJ606PVtD+dLOVO4QriZd94FEw1QKA116awT1xpLBsRRJF?=
+ =?us-ascii?Q?pdHzSyVBEyhgL4MZ5svfhyyV2K5VhCe5Z18Kte8QSdTr9ziT5fNKbu+x7dm5?=
+ =?us-ascii?Q?IOZtGHsJEW5kMirazWFusUIg+GMkGTiOOQWgX9/CzgBWsKCxcKYC3G01lxVu?=
+ =?us-ascii?Q?FrEaMTDsloNvEqTJ/Wu2yVAHZNcuyczw/muE4jNvnN+HTHAnXpZud+DXB846?=
+ =?us-ascii?Q?lkktZKF1NOpBnW+KV35DZHZBykgAfnZIeYpJtdmAgCLlnQ=3D=3D?=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005)(38070700009);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GVXPR10MB5837.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015)(38070700009);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?UFBYWXNuN2dqM3lBYXNlWnR2UDlKSXVGeDhWYlBIb21VcFVtWU5oUEZVVnF2?=
- =?utf-8?B?eDJ0SmkrQ0ZWOTZQMDJzNE5jbW5jSVZ2dEpJMHhqQURVdGdwZGdkODBad1Aw?=
- =?utf-8?B?OGc3KzZWQzhMMktDRklSczdFR2tWckdvQXVsdW96N25uako5ak92QWU0cjB3?=
- =?utf-8?B?WXNjd05udEY5S2dZaGtvY1BySGwyUzNQM3ptZU83cG1YRDM4WTYzS0ZZK2Fa?=
- =?utf-8?B?Y1dIeW0zZEhpVlo1RTBSRmZ5YSsxK04yTFJTSmRKZUprME5vTG81MG1YWnRD?=
- =?utf-8?B?TDRMQkVUa2ZIQnRvMlFiL0NtT05NdGh0dU1YdlVQd2pMSHRFMno3WGdjb0Rz?=
- =?utf-8?B?bE9hZU9HMGNKMGx3VzJ5ZDFoREo3dkJ0SkFQY0FhdUxFcXFqOWx4K3k3NzBj?=
- =?utf-8?B?eVFsMm9zTCtGTlRSN0lLUVN2RnRhbFQ0SGllZ2ZtQmZjR3QxTzFka2hlSHF6?=
- =?utf-8?B?enJJdStwRkszYmhTYU9nQ1FLMG5vanJMZ3ErUmhyUUtLR3I3UEpsTUpsOWt5?=
- =?utf-8?B?VlBtTjEvcHBvUmQ0Nk96ajFQemJWVWF4eUJRM1Z0bkIwWkUyNkRzeGpTQzBy?=
- =?utf-8?B?ZDliWTJDRndLMmx5cXcvUHNKL3dFTmtiMmhjY3EraXBqcklUYVR0SUlNRHB0?=
- =?utf-8?B?V2pUSGtPQ1VnYWwxYUNVeW5LUE9iU0xRdjYvVWNCUmFtT29OeFFLTXoxM09r?=
- =?utf-8?B?b3JoU0EzVGVQK1MrWGZhQVREei9vTVVZYWdsTUZReVJFSi9vZHdmV0VyUDg0?=
- =?utf-8?B?dnlGMDlQQS8vS21ya0podVlPdlYvUWNyUnRSczROSWpWOXhUaE9yaGlyL0JZ?=
- =?utf-8?B?amxiVTRxcWRRRWthTEc3bkdrRnpPOE53STI0VEZPbFgrNFRQMmpyS2pNRUIw?=
- =?utf-8?B?bjZVRUtMYUtFUzkydHJKL29jRlZCeWZnaGh3cThGb1FneDVuUnV0REJDVWVZ?=
- =?utf-8?B?S3Z4Y1dCY3FodWJiRG9xSkRsMmRaVTRkWmhrVitIblFtM2ZYdENkV0l5MjJr?=
- =?utf-8?B?ZUNUdEFFY0lxeVJabkx6K25kNkJtTUtsMWJ0bEJSVUtncDZydXFRQWZzRmpZ?=
- =?utf-8?B?Vk4ra3kxOHBFaDdjMG53VHgzWlRFOExtRGQyVWd2U0I5VmF1eVRXMHMxeWVL?=
- =?utf-8?B?RVhBOUNzQUsxNy9EQldNb3dITEN2NDBoUzBCcEdNek00eU5NWTVEN2pPSnlh?=
- =?utf-8?B?S0l3Sk9rRTJ3dENRdDRXWEFGS3FHTi9hSWh6MTl1U2NSTXhLS3RDVEpsMlps?=
- =?utf-8?B?RzBJdk5DTUxQbGlFZ0UzQ0Y0eVVlenRzcURYSzh1cHcvMGw1dVJVUnZMTit3?=
- =?utf-8?B?VW1kdnNUS2RBTEdGY21CcEdVM0NNcUNYa041SE1JeTFqdHdVZytDNHBUT2lD?=
- =?utf-8?B?QjdNZFljZ2UvaFplcUZpM1hHaFZwZnc0MDUvOTZDR1REZVFZSXJLeFpmTzM5?=
- =?utf-8?B?ZXZIK3pacjRxbC9NS2E3K21JZWoyaVZRVGNsZVlqZlhidndEb2NRRGdpT2Rw?=
- =?utf-8?B?bS9ZaDdVSUxjT1dkTEVmVStGeWV6S1JuQUVrSVNDUUZQMkNrK3hwcFRacm1H?=
- =?utf-8?B?Nitlc3NPT3E3YWNaSG40bVcwUUliR0RJVDJxZlpSZ2tEUUlBclF4SVhUcWha?=
- =?utf-8?B?Q09RK0YyRU5MaEowSFJpZ3hKL3lqaVdkaXlPYkVLd25KeFRhQi9wSGEvWWw0?=
- =?utf-8?B?N3l5MkxSY2hTc0NReVNjTXhUejRJbXpzbXJLMVBGVC9od05NQ0o5WDQvY2h1?=
- =?utf-8?B?ZEMvak5BbzRINERhL3dNQVA4d2lzK1k2V1l2elRXWWZlRFpqU2xVY2pDOS9M?=
- =?utf-8?B?dXNGQzRuVVExNWpuQW9ycFpSeDBIaVJ6UzdtZ1NIWUdYN3o5S0FIb05NZzA2?=
- =?utf-8?B?dWpCZVZFUWF0ZkttSjQ4Q2hwaGlzank1MVQxZldURkJvb1B1NFIvK21NNXkr?=
- =?utf-8?B?ODI4c2k5bDdKM0pFYVc0YytQZmUrVVF5bSsvT3NtMEowUGUzQmt6aTMxT1NW?=
- =?utf-8?B?U0M5c20wK0dPSUlRSmgxUDE1RFJONFlLYjMxaXZydnZRd2ZpRWR0UWFYZkZy?=
- =?utf-8?B?OGdxdmV4S3h0T2pUUnBxaFp2aGxBQ09qbmRhaDRGUlBjaStIRDIyM0VKbWkr?=
- =?utf-8?B?STg3RTU3bjNsVXBRVmZwekZjeHpkT2RGYkROZHRadHplWWJPNkVKSlJpaTdQ?=
- =?utf-8?B?czFqSWplT0JzaGtpU3FZVDlUQU1XMTY1RHBaaFNiYmJ5cGpITUVMaGMvZjdv?=
- =?utf-8?Q?BMR8mS/UhBNMB4M4VN6jExt0cdd/4g6l8ZMOcmal6U=3D?=
+ =?us-ascii?Q?vLT7JjOQbX6hensgLcqt52NqC68faFHwizGDjBck4CvKJ3tfhOmORq9NG2jX?=
+ =?us-ascii?Q?UdsLG1KgVlHA9pVmnfWFUl0jh1HqOxIEZSVg/YFReeawDbe/IwE0P77XqMvF?=
+ =?us-ascii?Q?GqqebLs6/BSSV5+7X05qBAw2NaFGpawp8IRiMYMfMWPtHyaBS1uW4/RXgHZy?=
+ =?us-ascii?Q?C1axNnuxS4xfMzBjee9gfjievucr9XWwDxUgEs2xBqtAmEm8C5MW/0RRJoxC?=
+ =?us-ascii?Q?S38kribFzif70W37zbLlohVVNR78bg1WEDedw1qd42NXClgzZKNg+ZynbtBp?=
+ =?us-ascii?Q?P0PCdpK51SUKNcFxS8aB+pXPBfybihNqG9IZJ115UcAR9cqWu+Qlw+w9MiwY?=
+ =?us-ascii?Q?LdLn3jpgPC628zDKOwcxCD/ijUXsBV08sMVq5B7ghfYHcNyFjDqDqv57KPcw?=
+ =?us-ascii?Q?MXNAaPHRRwBFNgK4+JxNiLLGALonhWXvcoEbm5SJpXs1/dU1hxgbtRg7G0/e?=
+ =?us-ascii?Q?gsIVRPr25yqVIhPATf+vDQJuOrft5ZtMlzy6L7cboNH7o7oPJb+rXrU49cqa?=
+ =?us-ascii?Q?7XPLAHtBwWI2FV0VjqaQEcflpMkzfa7vMFmnuUHf1CQo+Lr5lm7qR/hC/ol7?=
+ =?us-ascii?Q?NvF16CPfHB9+RdUfLnMt5Y9ghIurmYyGwXBL6BsacFIpmY256HfY4N6FGBrq?=
+ =?us-ascii?Q?OWymR1z5B2kEzluviDmQYEKLrtkhGDyeP1B4NGja6ZOz8N/NQmYVrSRZNzJj?=
+ =?us-ascii?Q?0J4iSBY9jkwsgT80twZsCoMd86odlcBTMxwRW7bCcWKxVa9/chCIWqH43wYj?=
+ =?us-ascii?Q?PtXKySeL7noLMS/lW7I3HgLrmd1FfmZ8aNpP8Eh20EXT0hB6QXs0j8nq/B65?=
+ =?us-ascii?Q?KWev6vz9DKOC4PwEWnKbC2yMu0qy/qehw4z/y6mcnirjYA23OgEtXlyEIMWs?=
+ =?us-ascii?Q?OTfmEEBX16npoX7Gyna/Mh8s4UmBXQh+0VM2XSZGuFtTVtdW8wIg1bg6r3g8?=
+ =?us-ascii?Q?TZZEvzMFZIJ6Xa0G9wnTcfkM6O8V9UZm0dzcUJdAPu/gzT7NWZMTRQXfTTvD?=
+ =?us-ascii?Q?aVgN9Xrcuqjws1zFnq50yBLyP0ZzzeC2dL0AUUmdFVys2HhDmCPSgeCpYh89?=
+ =?us-ascii?Q?wfrzRSROGdHCnaYx9eky1QV1wIrrNqBmNvkcuYtLJt3R9d2qk57nqGtShCgs?=
+ =?us-ascii?Q?FVlgqIzxRQg87h4siCosZitrBG0KudyxHDFp9mIc3xj3nTtL4gBALKfKWzrr?=
+ =?us-ascii?Q?ul/tMl/vTMl0PHkV5QnXHa+3SVTBACe5CblF0tRrzvg5plrXyxqlLJa8MyMk?=
+ =?us-ascii?Q?HbbLgtAy7adGd4/1WmySQIOEClmDAqis9QN9M0oQxcb9pgDosyBXewM9Qn48?=
+ =?us-ascii?Q?W5cZggkOqzWQ6boHhE4w0IUHYG8yvQBYqdBB6anuhwKPambrPexCjPL1P53i?=
+ =?us-ascii?Q?ObpLvJTRkU5WZ1f5IwPU06G9RrGmDcs1R36wo394W4lTCQUCaJ9pnsNW4802?=
+ =?us-ascii?Q?WgAliYupNMAN3kcCzL+NWuTl5fPSnlWrVf4zrkB2EvZF6C9RL+Z9s185pFC1?=
+ =?us-ascii?Q?77uBCbFymb1u9W56RfjHnChC0YZLTsD0NQzZSvfjESmgrVtMnCwy1pleTrjz?=
+ =?us-ascii?Q?3o6+tneI5vUUFXz/EKYVGqL+NPnEUma7FoyY1pJOieVnr95PBswCsMADBmL2?=
+ =?us-ascii?Q?DA=3D=3D?=
+Content-Type: multipart/alternative;
+	boundary="_000_GVXPR10MB583719E1FC03FA839A16DF5F88112GVXPR10MB5837EURP_"
 MIME-Version: 1.0
 X-OriginatorOrg: siemens.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR10MB6828.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6b0cafff-cc88-4f97-a538-08dc6378c241
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Apr 2024 09:35:48.5459
+X-MS-Exchange-CrossTenant-AuthSource: GVXPR10MB5837.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: c0fcde46-5d5a-4f0f-38bb-08dc638bfd76
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Apr 2024 11:53:28.3678
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: kV/qC2ZB/I07jlxB6/G+kBdr3WoBjt8I4wuF4Gaw8aSrXpsvaw9lFqYKut4vTTd1cW9QWyNfPylB3KeNA5Kp59WG0Q84npsKUyUSBFS0oV0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR10MB3628
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6D0547727A83454887F0680E84CD3312@EURPRD10.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+X-MS-Exchange-CrossTenant-userprincipalname: nwRPPl2j5+av2iL9REy0O2/QD92gg0oWSmDJ1/AoPRgJYuJcfztIXj0dK+R0zJ4T5S20urytQcBXlNa0nnffuEYRG5fUAG6ESDOsLAN7gmY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR10MB4113
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 23 Apr 2024 11:36:32 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15736
+ <cip-dev@lists.cip-project.org>; Tue, 23 Apr 2024 11:53:32 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15739
 
-T24gTW9uLCAyMDI0LTA0LTIyIGF0IDE2OjA5ICswMjAwLCBRdWlyaW4gR3lsc3RvcmZmIHdyb3Rl
-Og0KPiBGcm9tOiBRdWlyaW4gR3lsc3RvcmZmIDxxdWlyaW4uZ3lsc3RvcmZmQHNpZW1lbnMuY29t
-Pg0KPiANCj4gVGhpcyBmaXhlcyBhbiBpc3N1ZSB3aXRoIGVuY3J5cHRlZCByb290ZnMgZHVyaW5n
-IHN5c3RlbSByZWJvb3QuDQo+IFdpdGggdGhlIHRva2VuIG9wdGlvbiBpdCBjYW4gaGFwcGVuIHRo
-YXQgZHVyaW5nIHJlYm9vdCB0aGUgbm8NCj4gdmFsaWQgTHVrcyBwYXJ0aXRpb24gaXMgZm91bmQg
-YW5kIHRoZSBib290IHVwIGZhaWxzIGluIHRoZSBpbml0cmQuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5
-OiBRdWlyaW4gR3lsc3RvcmZmIDxxdWlyaW4uZ3lsc3RvcmZmQHNpZW1lbnMuY29tPg0KPiAtLS0N
-Cj4gwqAuLi4vaW5pdHJhbWZzLWNyeXB0LWhvb2svZmlsZXMvZW5jcnlwdF9wYXJ0aXRpb24uc2Ny
-aXB0wqDCoMKgwqDCoMKgwqDCoCB8IDINCj4gKy0NCj4gwqAxIGZpbGUgY2hhbmdlZCwgMSBpbnNl
-cnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9yZWNpcGVzLWluaXRy
-YW1mcy9pbml0cmFtZnMtY3J5cHQtDQo+IGhvb2svZmlsZXMvZW5jcnlwdF9wYXJ0aXRpb24uc2Ny
-aXB0IGIvcmVjaXBlcy1pbml0cmFtZnMvaW5pdHJhbWZzLQ0KPiBjcnlwdC1ob29rL2ZpbGVzL2Vu
-Y3J5cHRfcGFydGl0aW9uLnNjcmlwdA0KPiBpbmRleCA1MWM4MWYzLi42ODVkODgyIDEwMDY0NA0K
-PiAtLS0gYS9yZWNpcGVzLWluaXRyYW1mcy9pbml0cmFtZnMtY3J5cHQtDQo+IGhvb2svZmlsZXMv
-ZW5jcnlwdF9wYXJ0aXRpb24uc2NyaXB0DQo+ICsrKyBiL3JlY2lwZXMtaW5pdHJhbWZzL2luaXRy
-YW1mcy1jcnlwdC0NCj4gaG9vay9maWxlcy9lbmNyeXB0X3BhcnRpdGlvbi5zY3JpcHQNCj4gQEAg
-LTEzNCw3ICsxMzQsNyBAQCBmb3IgcGFydGl0aW9uX3NldCBpbiAkcGFydGl0aW9uX3NldHM7IGRv
-DQo+IMKgwqDCoMKgwqDCoMKgwqBmaQ0KPiDCoA0KPiDCoMKgwqDCoMKgwqDCoMKgaWYgL3Vzci9z
-YmluL2NyeXB0c2V0dXAgbHVrc0R1bXAgLS1iYXRjaC1tb2RlICIkcGFydGl0aW9uIiBcDQo+IC3C
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfCBncmVwIC1xICJ0
-b2tlbiI7IHRoZW4NCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqB8IGdyZXAgLXEgImx1a3MyIjsgdGhlbg0KDQpIb3cgZG8gd2UgaWRlbnRpZnkgIm91ciIg
-cGFydGl0aW9ucyBpbiB0aGUgZmlyc3QgcGxhY2U/IElmIEkgcmVhZCB0aGUNCmNvZGUgY29ycmVj
-dGx5LCB3ZSBzdGlsbCBpZGVudGlmeSBieSBsYWJlbCwgd2hpY2ggaXMgcXVpdGUgcmlza3kuDQpP
-dGhlcndpc2Ugd2UgbWlnaHQgcmUtZW5jcnlwdCBwYXJ0aXRpb25zIHdoaWNoIGFyZSBub3QgZXZl
-biB1bmRlciBvdXINCmNvbnRyb2wuDQoNCldlIG11c3QgZWl0aGVyIGlkZW50aWZ5IGJ5IFVVSUQs
-IG9yIGF0IGxlYXN0IGxpbWl0IHRoZSBzZWFyY2ggdG8gdGhlDQpkZXZpY2UgdGhhdCB3ZSBib290
-ZXQgZnJvbSAodGhpcyBpcyBrbm93biB2aWEgdGhlIHN5c3RlbWQNCkJPT1RfTE9BREVSX0lOVEVS
-RkFDRSBvbiByZWNlbnQgZW5vdWdoIGViZyB2ZXJzaW9ucykuDQoNCkZlbGl4DQoNCj4gwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBvcGVuX3RwbTJfcGFydGl0aW9uICIkcGFydF9kZXZp
-Y2UiDQo+ICIkY3J5cHRfbW91bnRfbmFtZSIgIiR0cG1fZGV2aWNlIg0KPiDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoGNvbnRpbnVlDQo+IMKgwqDCoMKgwqDCoMKgwqBmaQ0KDQotLSAN
-ClNpZW1lbnMgQUcsIFRlY2hub2xvZ3kNCkxpbnV4IEV4cGVydCBDZW50ZXINCg0KDQo=
+--_000_GVXPR10MB583719E1FC03FA839A16DF5F88112GVXPR10MB5837EURP_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+From fcc60a65011c9545bb90f27fb88200d2dff72faf Mon Sep 17 00:00:00 2001
+From: Benjamin Schilling <schilling.benjamin@siemens.com>
+Date: Wed, 10 Apr 2024 17:21:11 +0200
+Subject: [isar-cip-core] [PATCH] HW: add basic M-COM x86 support
+
+This patch allows building and image capable of booting on M-COM x86 device
+when using the following configuration:
+
+- Siemens SIMATIC IPC227e target
+- 5.10 kernel
+- Debian Bookworm
+- Flashable image
+- SWUpdate support
+
+This is not intended to be included as is, but to be used as a starting
+point for proper integration by a separate kas file for hardware support
+and respective kernel configuration in cip-kernel-config repository.
+
+Signed-off-by: Benjamin Schilling <schilling.benjamin@siemens.com>
+---
+recipes-kernel/linux/files/mcom.cfg           | 35 +++++++++++++++++++
+.../linux/linux-cip_5.10.212-cip45.bb         |  2 ++
+2 files changed, 37 insertions(+)
+create mode 100644 recipes-kernel/linux/files/mcom.cfg
+
+diff --git a/recipes-kernel/linux/files/mcom.cfg b/recipes-kernel/linux/fil=
+es/mcom.cfg
+new file mode 100644
+index 0000000..5c46614
+--- /dev/null
++++ b/recipes-kernel/linux/files/mcom.cfg
+@@ -0,0 +1,35 @@
++CONFIG_USB_ROLE_SWITCH=3Dm
++# CONFIG_USB_ROLES_INTEL_XHCI is not set
++CONFIG_MMC=3Dm
++CONFIG_MMC_BLOCK=3Dm
++CONFIG_MMC_BLOCK_MINORS=3D256
++CONFIG_SDIO_UART=3Dm
++# CONFIG_MMC_TEST is not set
++
++#
++# MMC/SD/SDIO Host Controller Drivers
++#
++# CONFIG_MMC_DEBUG is not set
++CONFIG_MMC_SDHCI=3Dm
++CONFIG_MMC_SDHCI_IO_ACCESSORS=3Dy
++CONFIG_MMC_SDHCI_PCI=3Dm
++CONFIG_MMC_RICOH_MMC=3Dy
++CONFIG_MMC_SDHCI_ACPI=3Dm
++# CONFIG_MMC_SDHCI_PLTFM is not set
++CONFIG_MMC_WBSD=3Dm
++CONFIG_MMC_TIFM_SD=3Dm
++CONFIG_MMC_SPI=3Dm
++CONFIG_MMC_SDRICOH_CS=3Dm
++CONFIG_MMC_CB710=3Dm
++CONFIG_MMC_VIA_SDMMC=3Dm
++CONFIG_MMC_VUB300=3Dm
++CONFIG_MMC_USHC=3Dm
++# CONFIG_MMC_USDHI6ROL0 is not set
++CONFIG_MMC_REALTEK_PCI=3Dm
++CONFIG_MMC_REALTEK_USB=3Dm
++CONFIG_MMC_CQHCI=3Dm
++# CONFIG_MMC_HSQ is not set
++CONFIG_MMC_TOSHIBA_PCI=3Dm
++# CONFIG_MMC_MTK is not set
++CONFIG_MEMSTICK=3Dm
++# CONFIG_MEMSTICK_DEBUG is not set
+diff --git a/recipes-kernel/linux/linux-cip_5.10.212-cip45.bb b/recipes-ker=
+nel/linux/linux-cip_5.10.212-cip45.bb
+index 111866a..7db93a1 100644
+--- a/recipes-kernel/linux/linux-cip_5.10.212-cip45.bb
++++ b/recipes-kernel/linux/linux-cip_5.10.212-cip45.bb
+@@ -12,3 +12,5 @@
+require linux-cip-common.inc
+ SRC_URI[sha256sum] =3D "904e4b2547eed965998236bebbfbbd60ae8bd800d11ad46fbe=
+eeb0d67a4fcae1"
++
++SRC_URI +=3D "file://mcom.cfg"
+\ No newline at end of file
+--
+2.39.2
+
+
+--_000_GVXPR10MB583719E1FC03FA839A16DF5F88112GVXPR10MB5837EURP_
+Content-Type: text/html; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
+osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
+//www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
+>
+<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
+<style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	font-size:11.0pt;
+	font-family:"Calibri",sans-serif;
+	mso-ligatures:standardcontextual;
+	mso-fareast-language:EN-US;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	mso-fareast-language:EN-US;}
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
+div.WordSection1
+	{page:WordSection1;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]-->
+</head>
+<body lang=3D"DE" link=3D"#0563C1" vlink=3D"#954F72" style=3D"word-wrap:bre=
+ak-word">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal"><span lang=3D"EN-US">From fcc60a65011c9545bb90f27fb8=
+8200d2dff72faf Mon Sep 17 00:00:00 2001<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">From: Benjamin Schilling &lt;sc=
+hilling.benjamin@siemens.com&gt;<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Date: Wed, 10 Apr 2024 17:21:11=
+ +0200<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Subject: [isar-cip-core] [PATCH=
+] HW: add basic M-COM x86 support<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">This patch allows building and =
+image capable of booting on M-COM x86 device<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">when using the following config=
+uration:<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">- Siemens SIMATIC IPC227e targe=
+t<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">- 5.10 kernel<o:p></o:p></span>=
+</p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">- Debian Bookworm<o:p></o:p></s=
+pan></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">- Flashable image<o:p></o:p></s=
+pan></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">- SWUpdate support<o:p></o:p></=
+span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">This is not intended to be incl=
+uded as is, but to be used as a starting<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">point for proper integration by=
+ a separate kas file for hardware support<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">and respective kernel configura=
+tion in cip-kernel-config repository.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">Signed-off-by: Benjamin Schilli=
+ng &lt;schilling.benjamin@siemens.com&gt;<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">---<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">recipes-kernel/linux/files/mcom=
+.cfg&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 35 +++++=
+++++++++++++++<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">.../linux/linux-cip_5.10.212-ci=
+p45.bb&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp; 2 ++<o:p></o=
+:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">2 files changed, 37 insertions(=
++)<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">create mode 100644 recipes-kern=
+el/linux/files/mcom.cfg<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">diff --git a/recipes-kernel/lin=
+ux/files/mcom.cfg b/recipes-kernel/linux/files/mcom.cfg<o:p></o:p></span></=
+p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">new file mode 100644<o:p></o:p>=
+</span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">index 0000000..5c46614<o:p></o:=
+p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">--- /dev/null<o:p></o:p></span>=
+</p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+++ b/recipes-kernel/linux/file=
+s/mcom.cfg<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">@@ -0,0 +1,35 @@<o:p></o:p></sp=
+an></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_USB_ROLE_SWITCH=3Dm<o:p=
+></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+# CONFIG_USB_ROLES_INTEL_XHCI =
+is not set<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_MMC=3Dm<o:p></o:p></spa=
+n></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_MMC_BLOCK=3Dm<o:p></o:p=
+></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_MMC_BLOCK_MINORS=3D256<=
+o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_SDIO_UART=3Dm<o:p></o:p=
+></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+# CONFIG_MMC_TEST is not set<o=
+:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+#<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+# MMC/SD/SDIO Host Controller =
+Drivers<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+#<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+# CONFIG_MMC_DEBUG is not set<=
+o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_MMC_SDHCI=3Dm<o:p></o:p=
+></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_MMC_SDHCI_IO_ACCESSORS=
+=3Dy<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_MMC_SDHCI_PCI=3Dm<o:p><=
+/o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_MMC_RICOH_MMC=3Dy<o:p><=
+/o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_MMC_SDHCI_ACPI=3Dm<o:p>=
+</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+# CONFIG_MMC_SDHCI_PLTFM is no=
+t set<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_MMC_WBSD=3Dm<o:p></o:p>=
+</span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_MMC_TIFM_SD=3Dm<o:p></o=
+:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_MMC_SPI=3Dm<o:p></o:p><=
+/span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_MMC_SDRICOH_CS=3Dm<o:p>=
+</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_MMC_CB710=3Dm<o:p></o:p=
+></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_MMC_VIA_SDMMC=3Dm<o:p><=
+/o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_MMC_VUB300=3Dm<o:p></o:=
+p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_MMC_USHC=3Dm<o:p></o:p>=
+</span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+# CONFIG_MMC_USDHI6ROL0 is not=
+ set<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_MMC_REALTEK_PCI=3Dm<o:p=
+></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_MMC_REALTEK_USB=3Dm<o:p=
+></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_MMC_CQHCI=3Dm<o:p></o:p=
+></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+# CONFIG_MMC_HSQ is not set<o:=
+p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_MMC_TOSHIBA_PCI=3Dm<o:p=
+></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+# CONFIG_MMC_MTK is not set<o:=
+p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+CONFIG_MEMSTICK=3Dm<o:p></o:p>=
+</span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+# CONFIG_MEMSTICK_DEBUG is not=
+ set<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">diff --git a/recipes-kernel/lin=
+ux/linux-cip_5.10.212-cip45.bb b/recipes-kernel/linux/linux-cip_5.10.212-ci=
+p45.bb<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">index 111866a..7db93a1 100644<o=
+:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">--- a/recipes-kernel/linux/linu=
+x-cip_5.10.212-cip45.bb<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+++ b/recipes-kernel/linux/linu=
+x-cip_5.10.212-cip45.bb<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">@@ -12,3 +12,5 @@<o:p></o:p></s=
+pan></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">require linux-cip-common.inc<o:=
+p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;SRC_URI[sha256sum] =3D &q=
+uot;904e4b2547eed965998236bebbfbbd60ae8bd800d11ad46fbeeeb0d67a4fcae1&quot;<=
+o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">+SRC_URI +=3D &quot;file://mcom=
+.cfg&quot;<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US">\ No newline at end of file<o:p=
+></o:p></span></p>
+<p class=3D"MsoNormal">-- <o:p></o:p></p>
+<p class=3D"MsoNormal">2.39.2<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+</div>
+</body>
+</html>
+
+--_000_GVXPR10MB583719E1FC03FA839A16DF5F88112GVXPR10MB5837EURP_--
 
