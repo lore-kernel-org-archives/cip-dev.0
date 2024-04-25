@@ -2,85 +2,120 @@ Return-Path: <adithya.balakumar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A899C10F15
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58EE6C4345F
 	for <webhook@archiver.kernel.org>; Thu, 25 Apr 2024 09:44:19 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.135])
- by mx.groups.io with SMTP id smtpd.web10.12860.1714038257349844791
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
+ by mx.groups.io with SMTP id smtpd.web11.12884.1714038258804306863
  for <cip-dev@lists.cip-project.org>;
- Thu, 25 Apr 2024 02:44:18 -0700
+ Thu, 25 Apr 2024 02:44:19 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.135, mailfrom: adithya.balakumar@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1801) id 43P9iFOT3641123; Thu, 25 Apr 2024 18:44:15 +0900
-X-Iguazu-Qid: 2yAblVO8DqQAt9AAzv
-X-Iguazu-QSIG: v=2; s=0; t=1714038254; q=2yAblVO8DqQAt9AAzv; m=QLf4qMeaXEXPaAN4XIk2V4SwTiAm8a7VdxX9cD3QgJo=
-Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1800) id 43P9iDQX1436208
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Thu, 25 Apr 2024 18:44:14 +0900
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.134, mailfrom: adithya.balakumar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 43P9iHhe2532123; Thu, 25 Apr 2024 18:44:17 +0900
+X-Iguazu-Qid: 2yAbxjwjvAUjfMW0ZB
+X-Iguazu-QSIG: v=2; s=0; t=1714038256; q=2yAbxjwjvAUjfMW0ZB; m=m4/X1qVXWJJgj8GOFL3/FKGdA8h5S6+oWZgBHeEuchQ=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1802) id 43P9iFxX1197184
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 25 Apr 2024 18:44:16 +0900
 From: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
 To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
 Cc: quirin.gylstorff@siemens.com, felix.moessbauer@siemens.com,
         shivanand.kunijadar@toshiba-tsip.com, sai.sathujoda@toshiba-tsip.com,
         dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
-Subject: [isar-cip-core][PATCH v4 0/3] Integrate Delta Update with rdiff_image and delta handler
-Date: Thu, 25 Apr 2024 15:14:41 +0530
+Subject: [isar-cip-core][PATCH v4 3/3] doc/README.swupdate.md: Update steps to test Delta software Update
+Date: Thu, 25 Apr 2024 15:14:44 +0530
 X-TSB-HOP2: ON
-Message-Id: <20240425094444.404036-1-Adithya.Balakumar@toshiba-tsip.com>
+Message-Id: <20240425094444.404036-4-Adithya.Balakumar@toshiba-tsip.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240425094444.404036-1-Adithya.Balakumar@toshiba-tsip.com>
+References: <20240425094444.404036-1-Adithya.Balakumar@toshiba-tsip.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 25 Apr 2024 09:44:12.0189 (UTC) FILETIME=[20C694D0:01DA96F5]
+X-OriginalArrivalTime: 25 Apr 2024 09:44:12.0439 (UTC) FILETIME=[20ECBA70:01DA96F5]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 25 Apr 2024 09:44:19 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15747
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15750
 
-These series of patches enable the support for delta update for the root file system with swupdate's 
-rdiff_image and delta handler(zchunk).
+This change includes steps to verify Delta Software Update with
+rdiff_image and delta handler
 
-A couple notes about the implementation:
-- In this patchset, Delta update is only supported for the root file system.
-- The newly added delta-update.bbclass handles the creation of the delta update artifacts.
-- The update handler type i.e rdiff_image or delta handler is set in the variable "DELTA_UPDATE_TYPE"
-in the swupdate.yml file along with some variables required for each handler.
-- The creation of delta artifact for the rdiff_image handler requires a reference image (against which 
-the delta is computed). Currently the reference artifact file (.squashfs/.verity) is passed to the 
-build system by placing the artifact in the path "${TOPDIR}/previous-image" and setting the name of the
-artifact in the variable DELTA_RDIFF_REF_IMAGE in the swupdate.yml file.
-- zchunk based delta update is only supported for sid onwards.
+Signed-off-by: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
+---
+ doc/README.swupdate.md | 59 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
-Changes in v4:
-- Create only 1 .swu file, either delta or complete swu.
-- By default complete update swu is created.
-
-Changes in v3:
-- Rebase to current next branch (61e998e1e0541e2713c05fcbf21df39fbc882a0a)
-- Set "${TOPDIR}/previous-image" as the path for the previous image artifact for rdiff update.
-- README updates to verify delta update.
-
-Changes in v2:
-- Removed zchunk support for bookworm (due to use of backports). Currently zchunk based update only supported in Sid.
-- Removed delta-update.yml file. Related variables have default values and can be set in manually swupdate.yml file.
-- Using .squashfs file (.verity file in the case of Secure boot) for rdiff delta creation instead of .wic file.
-- rdiff is set as default for delta update type, the build system looks for the v1 artifact in a default path (image-v1/<artifact_name>).
-- Created a separate template file for sw-description of delta update.
-- Renamed delta_update.bbclass to delta-update.bbclass.
-
-Adithya Balakumar (3):
-  Add Delta update support with rdiff_image and delta handler
-  swupdate.bbclass: Generate swu for delta updates
-  doc/README.swupdate.md: Update steps to test Delta software Update
-
- classes/delta-update.bbclass                | 97 +++++++++++++++++++++
- classes/swupdate.bbclass                    | 27 +++++-
- conf/layer.conf                             |  2 +-
- doc/README.swupdate.md                      | 59 +++++++++++++
- kas/opt/swupdate.yml                        |  5 ++
- recipes-core/images/swu/sw-description.tmpl |  5 +-
- 6 files changed, 189 insertions(+), 6 deletions(-)
- create mode 100644 classes/delta-update.bbclass
-
+diff --git a/doc/README.swupdate.md b/doc/README.swupdate.md
+index b7e13f7..d955868 100644
+--- a/doc/README.swupdate.md
++++ b/doc/README.swupdate.md
+@@ -360,6 +360,65 @@ user variables:
+ 
+ ```
+ 
++# Building and testing the CIP Core image for Delta Software Update
++
++Set up `kas-container` as described in the [top-level README](../README.md), and then proceed with the following steps.
++
++First build an image using the following command:
++```
++host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/rt.yml
++```
++The above image will be used as the base image to which the update is applied.
++
++## Delta Software Update using rdiff_image handler
++
++Creating an delta update file for rdiff_image handler requires a reference artifact (against which the delta is computed). In this case, the image built in the previous section can be used as the reference artifact(.squashfs/.verity file). Set the variable `DELTA_UPDATE_TYPE` as `rdiff` and set the variable `DELTA_RDIFF_REF_IMAGE` with the name of the reference artifact. The values of `DELTA_UPDATE_TYPE` and `DELTA_RDIFF_REF_IMAGE` can be changed in the `swupdate.yml` file.
++
++The build system looks for the reference artifact in a directory named `previous-image` in the build directory used for the build process.
++
++Copy the reference artifact to the mentioned directory with the following commands:
++```
++mkdir -p build-v2/previous-image
++cp build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-bookworm-qemu-amd64.squashfs build-v2/previous-image
++```
++Build the second image with `build-v2` as the build directory with the following command:
++```
++KAS_BUILD_DIR=build-v2 ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml
++```
++Now start the first image. Run the following commands:
++```
++host$ DISTRO_RELEASE=bookworm SWUPDATE_BOOT=y ./start-qemu.sh amd64
++```
++Copy `cip-core-image-cip-core-bookworm-qemu-amd64-delta.swu` file from `build-v2/tmp/deploy/images/qemu-amd64/` folder into the running system:
++```
++host$ cd build-v2/tmp/deploy/images/qemu-amd64/
++host$ scp -P 22222 ./cip-core-image-cip-core-bookworm-qemu-amd64-delta.swu root@localhost:
++```
++
++## Delta Software Update using delta handler
++
++Currently zchunk based delta updates are supported only in Sid images. Make sure to build the first image with Sid as the distribution (use `sid.yml` file as part of the build command).
++For Delta update with zchunk, set the variable `DELTA_ZCK_URL` with the URL of the zck file that is hosted in a http server and set the `DELTA_UPDATE_TYPE` to `zchunk` in `swupdate.yml` file.
++
++Build the second image with the modification as shown above with the following command:
++```
++KAS_BUILD_DIR=build-v2 ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/sid.yml
++```
++Now start the first image. Run the following commands:
++```
++host$ DISTRO_RELEASE=sid SWUPDATE_BOOT=y ./start-qemu.sh amd64
++```
++Copy `cip-core-image-cip-core-sid-qemu-amd64-delta.swu` file from `build-v2/tmp/deploy/images/qemu-amd64/` folder into the running system:
++```
++host$ cd build-v2/tmp/deploy/images/qemu-amd64/
++host$ scp -P 22222 ./cip-core-image-cip-core-sid-qemu-amd64-delta.swu root@localhost:
++```
++The `cip-core-image-cip-core-sid-qemu-amd64.zck` file must be hosted in a http server.
++
++### Delta Software Update Verification
++
++Follow the steps mentioned in the section [SWUpdate verification](#swupdate-verification) for verification.
++
+ # Building and testing the CIP Core image for BBB
+ 
+ Follow the steps mentioned in the section [Building and testing the CIP Core image](README.swupdate.md#building-and-testing-the-cip-core-image) for creating images and .swu files.
 -- 
 2.39.2
 
