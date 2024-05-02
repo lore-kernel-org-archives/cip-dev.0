@@ -1,103 +1,52 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <ncaidin@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA78C25B78
-	for <webhook@archiver.kernel.org>; Thu,  2 May 2024 09:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F80C4345F
+	for <webhook@archiver.kernel.org>; Thu,  2 May 2024 11:25:36 +0000 (UTC)
 Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
- by mx.groups.io with SMTP id smtpd.web11.9362.1714642365647951203
+ by mx.groups.io with SMTP id smtpd.web10.2024.1714645631095269823
  for <cip-dev@lists.cip-project.org>;
- Thu, 02 May 2024 02:32:46 -0700
+ Thu, 02 May 2024 03:27:12 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=U3ZOd1l2;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-51332-20240502093243fc18a377471848525b-dxy1mx@rts-flowmailer.siemens.com)
-Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20240502093243fc18a377471848525b
+ dkim=pass header.i=kumar.rakesh@siemens.com header.s=fm1 header.b=UZ+iotLx;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-1325885-202405021027081ed8465301d0df3dfe-4kskz7@rts-flowmailer.siemens.com)
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 202405021027081ed8465301d0df3dfe
         for <cip-dev@lists.cip-project.org>;
-        Thu, 02 May 2024 11:32:43 +0200
+        Thu, 02 May 2024 12:27:08 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=EeCB0hwFvOY3aLh0gV3XxJa9ZpnFjr0BRbGX+EjFW3k=;
- b=U3ZOd1l2Na4RdANQrFl9lYfi++XP661krO2aU59HxgGn40PmLOco7IVuMARWFIRm2t0Jw0
- AtXvtUC1Qi+a/Xrz6TgT5P0bNVNMcYwfjo0RHVnsLEJQDLy8glc8El9b96FN3v6cATJV5eQy
- parywhp8NUvAkkzNy7Yqhl8Qnpi30=;
-From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: cip-dev@lists.cip-project.org,
-	jan.kiszka@siemens.com,
-	johnxw@amazon.com,
-	felix.moessbauer@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH v4 8/9] README: Add rootfs encryption
-Date: Thu,  2 May 2024 11:31:53 +0200
-Message-ID: <20240502093240.364093-9-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20240502093240.364093-1-Quirin.Gylstorff@siemens.com>
-References: <20240502093240.364093-1-Quirin.Gylstorff@siemens.com>
+ d=siemens.com; i=kumar.rakesh@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=6EUoShhywqt8jfNesKr+sSg/zsuE08Ht4deR7C+8WFU=;
+ b=UZ+iotLxEx5CTFmYagvewJmhQmtl8/qFg/Gtr7ZBVro4e2GUaUi1dBMgXs/PTRKTUkdblk
+ p0bQsbv5qFxC2e15/c58u28n6wHox6T04CRMIg1a1H/pHPvxrTfrVf6Jo7n5UBXDXhJQ3dzZ
+ Bk7l1wES/cTC8zy5RGezbHz85o9ss=;
+From: Rakesh Kumar <kumar.rakesh@siemens.com>
+To: jan.kiszka@siemens.com,
+	cip-dev@lists.cip-project.org
+Cc: kumar.rakesh@siemens.com
+Subject: [isar-cip-core] [PATCH v3] update ISAR to latest version
+Date: Thu,  2 May 2024 15:56:36 +0530
+Message-Id: <20240502102636.909130-1-kumar.rakesh@siemens.com>
+In-Reply-To: <321d6c65-fe1a-4714-98dc-5e496cf6d22a@siemens.com>
+References: <321d6c65-fe1a-4714-98dc-5e496cf6d22a@siemens.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+Feedback-ID: 519:519-1325885:519-21489:flowmailer
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 02 May 2024 09:32:55 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15796
+ <cip-dev@lists.cip-project.org>; Thu, 02 May 2024 11:25:36 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15804
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+From: kumar.rakesh@siemens.com
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- doc/README.tpm2.encryption.md | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
 
-diff --git a/doc/README.tpm2.encryption.md b/doc/README.tpm2.encryption.md
-index c5ac6c4..889c3ca 100644
---- a/doc/README.tpm2.encryption.md
-+++ b/doc/README.tpm2.encryption.md
-@@ -4,6 +4,10 @@ By adding the recipe `initramfs-crypt-hook` to the initramfs build user defined
- encrypted during first boot. The encrypted partition is a LUKS partition and uses a TPM to secure the
- passphrase on the device.
- 
-+> :exclamation:**IMPORTANT**
-+> All selected partition are encrypted on first boot. In order to avoid the leakage of secrets
-+> the disk encryption should occur in a secure environment.
-+
- ## Requirements
- 
- Testing with qemu-amd64 requires the package `swtpm`. Under Debian/Ubuntu this can be installed
-@@ -38,12 +42,22 @@ The initramfs-crypt-hook recipe has the following variables which can be overwri
- ### CRYPT_PARTITIONS
- 
- The variable `CRYPT_PARTITIONS` contains the information which partition shall be encrypted where to mount it.
--Each entry uses the schema `<partition-label>:<mountpoint>:<reencrypt or format>`.
--- The `partition-label` is used to identify the partition on the disk
-+Each entry uses the schema `<partition-identifier>:<mountpoint>:<reencrypt or format>`.
-+- The `partition-idenitifer` is used to identify the partition on the disk, it can contain a partition label, partition UUID or absolute path to the partition device, e.g. `/dev/sda`.
- - The `mountpoint` is used mount the decrypted partition in the root file system
- - `reencrypt` uses `cryptsetup reencrypt` to encrypt the exiting content of the partition. This reduces the partition by 32MB and the file system by a similar amount
- - `format` creates a empty LUKS partition and creates a file system defined with the shell command given in `CRYPT_CREATE_FILE_SYSTEM_CMD`
- 
-+#### Encrypted root file system
-+
-+To encrypt the root file system the variable `CRYPT_PARTITIONS` needs to be set to:
-+```
-+CRYPT_PARTITIONS = "${ABROOTFS_PART_UUID_A}::reencrypt ${ABROOTFS_PART_UUID_B}::reencrypt"
-+```
-+The mountpoint is empty as the root partition is mounted by another initramfs service.
-+Both partitions are encrypted during first boot. The initramfs opens `${ABROOTFS_PART_UUID_A}` and `${ABROOTFS_PART_UUID_B}`
-+during boot.
-+
- ### CRYPT_CREATE_FILE_SYSTEM_CMD
- 
- The variable `CRYPT_CREATE_FILE_SYSTEM_CMD` contains the command to create a new file system on a newly
-@@ -59,7 +73,7 @@ based encryption:
-  - jq
- 
- ## steps to convert clevis to systemd
--The following script shows how to enroll a systemd-tpm2 token with a existinng clevis based encryption:
-+The following script shows how to enroll a systemd-tpm2 token with a existing clevis based encryption:
- ```bash
- export device=/dev/sda6
- export keyslot=$(sudo cryptsetup luksDump "$device" --dump-json-metadata | jq -c '.tokens.[] | select( .type == "clevis") | .keyslots | first' | head -n1)
--- 
-2.43.0
+Yes, I think we can wait for the mentioned patch.
 
+https://patchwork.isar-build.org/project/isar/patch/aa9baf96-98d8-41fb-9297-9d9b20d1520e@siemens.com/
+
+Regards,
+Rakesh
 
