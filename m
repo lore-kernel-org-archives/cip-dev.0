@@ -1,229 +1,275 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CAC1C10F16
-	for <webhook@archiver.kernel.org>; Fri,  3 May 2024 15:58:40 +0000 (UTC)
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.41])
- by mx.groups.io with SMTP id smtpd.web10.16876.1714751911853322055
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E2DDC4345F
+	for <webhook@archiver.kernel.org>; Fri,  3 May 2024 16:54:30 +0000 (UTC)
+Received: from EUR01-HE1-obe.outbound.protection.outlook.com (EUR01-HE1-obe.outbound.protection.outlook.com [40.107.13.74])
+ by mx.groups.io with SMTP id smtpd.web10.18325.1714755262502002267
  for <cip-dev@lists.cip-project.org>;
- Fri, 03 May 2024 08:58:32 -0700
+ Fri, 03 May 2024 09:54:23 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=q7G7AiV7;
- spf=pass (domain: siemens.com, ip: 40.107.6.41, mailfrom: quirin.gylstorff@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=Z7gFwtfY;
+ spf=pass (domain: siemens.com, ip: 40.107.13.74, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nyVuyenY8xGH8+8U6/PxXSTgV5EZzQaAjonR3hJRqlWkDC6A+n+Kf1vmXNr5qxGGJ1quIOqu0ZdorSff6ruW5sEiPzyh8kTmIpBSg4JNMEh4MZ00t+inCAMBTJenSDGxhcdNH/BkkHX01z+aT0v/nBSZX+AxbNsw19pgJalw+Nn4AJyLdq8xFh5ud3ymSerRGK865160SR2te44z9JaPfV2918GmuEo1orWHlZX0eFm1vSPJz+vPdZenoAb6EGEwvERmeU4vsbERye3rHQ/iQw0giND5B/NpUhQ2ZccKasUSe5BJ3eY4hOZ8ooVEZ0cunnFL3VkvevqkWvhqMrnrFw==
+ b=DHWPYV0bRJJZmLbEZEJd0lxq7nt+BaLD2+8P/c6r3uPBRnGVRGsj0eVw5CCfBtT3WJVyb+vDtTA3bkvOtW6IfAH78wSz79CTWbjfWOzWqJiWTvt7cQgSXQQEpN8Biz50HVTNgy4mqwg0RnOlaz0v0ZLMCI0CvNFHm+83L0depQdCSaEDa0gAThjsNIhLHZcyfJzZb3QjHhiwicQI+LO71gHMTax67+jwX9odvSQULmjFH1A3Lrqg/SnGLaZ+gfwrHOm/cVBNOGiCanuAzSPgkBBzmwgpBVfCSDdfpjwmxexYj3gO0ijea8WYdK0IxKSXN5qlYSMNrCWWNFabThGgVQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+DptECynu1q7qtWF0cc+/E9ldVf2Jf3qMpBCobUrIMc=;
- b=BtLeQV29xrLy36uTYKA6zMtVM/KIVPejVoYTg8l25CFQ/1mZPV+TVwleJhLpa4iYzDnO26p+ip4zQs+imD5zhQed3l06GNCiK3Rk+F0PKyEx3vHuhRI3rdCs985QFTu786/KpDy4P3tBvcpdjNPR+luASDyAbJmoBt1ofUFC8NRiAvTlzdSk1XYRq1QpdipR8xu3cmk0sJk4ZBpbVyedt/1ovIc0yieXSYasToCANREJKUYr7J1p3v1Nrj660+U4aRSSVmmStuBn6C2l/Fmyq62CUTZq31kTDklumk6bVJAjjjYopN8rPCBhPPLv5u5pF9WLJltve/Y26PYbZtztaw==
+ bh=7VOkloD7/asBCOPUA4OeIadIrjcxRt5e6se9w623Nl8=;
+ b=AgJ/3Hb1dC7kKG3xXF0MMH75VOcn5+djwJYnebYXLqLf8qT5e7UC2DzgykxAVWotMjNq7X6LYZLmQonSQ4nui+8TQa3DZEMyd1lMuaJwPUbG+fBqfKmu88kcBlI+5g/hUmwk5Sm0qSo3WvUPTBqX0Gqv9c3TqNDm40bWUtqHuFs5kQ7hIKsRN1o7OExwZr05hY4iYLdn0bItPbkcXHOdLfnkuLG4hoNiCRBWWX9pPjTrmuewbGt42Ahs9U2YEWdX2obebRtaXovkIXkd5vuEXomy064Ysn+sdcA45e09pDgAWWJ5gKkKMUV5rj5x3Bwbaxyld9xwQ1uO9sO32oCqtQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+DptECynu1q7qtWF0cc+/E9ldVf2Jf3qMpBCobUrIMc=;
- b=q7G7AiV7iEaQuZYm+bPGDhgPrD5zE173OMYKnKx6gfQEkSJRsOkXIKun7cdgj85qYgr6E67/VpcTV15T0QwQoBLHOAatmgoMqmthTsSdR4NAgFmfBuMvzAQre5/Ik12zu5b1NL7kit1ZyR1XakfTWmSw1yxzNUlxLIGNiDjExsvCiBDg3DgIVCBcGuts3HU05Ta97OXYtHnz4otYFVECsl+/QAAGwOB2cFAfWMDZWkZU8b33X+XGWSCY3Oc+//LepgLwBRtL1NuE3JlPtp8PXa/EUj/3IjfY2ygrx+ZL61uuOeFBf+QugNvtSxzuUW7kCypydAvXHwa8hT8oiQoe1Q==
+ bh=7VOkloD7/asBCOPUA4OeIadIrjcxRt5e6se9w623Nl8=;
+ b=Z7gFwtfYJ5cKmpA8Lo22pActEY4X0JjJjL4doUiZq6fmYjjF01jE1ePLQbcxvaFOKS85rW6rgmhwmJZfXbx24pfoG6n1p16jFpDC9CnPxds1KFCGh3ZCXYnuG9OD6qixzQ09Fv5YTuZnzo+bYRSWMf/xExLtKkORYwfFWtTnMgp9CD9fbYWzaX3ofVQVlNwg5of0s4K+ODxTUIurLTNe8Myk0pEMRjK4fc1jK7c45dibNAekWnKNZxWDN3WN3LemQmwhswrYsqFaouNTc9W+hRDII++5bDRMIhj+U+UHuRw66xYS9Qgj/Sa71dl4iE72d+4E8HR0hHlRulib5WkS9A==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1f9::22)
- by DUZPR10MB8170.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:4ad::18) with
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by GV1PR10MB7571.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:3d::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7519.34; Fri, 3 May
- 2024 15:58:28 +0000
-Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::3087:c116:dfed:1ca2]) by AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::3087:c116:dfed:1ca2%5]) with mapi id 15.20.7544.029; Fri, 3 May 2024
- 15:58:27 +0000
-Message-ID: <04b43c19-f26d-49c9-a12c-71cf3ba22e63@siemens.com>
-Date: Fri, 3 May 2024 17:58:21 +0200
+ 2024 16:54:16 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408%7]) with mapi id 15.20.7544.029; Fri, 3 May 2024
+ 16:54:15 +0000
+Message-ID: <045cdff0-0e76-4795-951b-ebdfdf9d50f1@siemens.com>
+Date: Fri, 3 May 2024 18:54:13 +0200
 User-Agent: Mozilla Thunderbird
-Content-Language: en-US, de-DE
-To: "Kiszka, Jan (CT RDA IOT SES-DE)" <jan.kiszka@siemens.com>,
- "Schilling, Benjamin (MO MM R&D SYS SEC)" <schilling.benjamin@siemens.com>,
- "dinesh.kumar@toshiba-tsip.com" <dinesh.kumar@toshiba-tsip.com>,
- Chris Paterson <chris.paterson2@renesas.com>,
- Nobuhiro Iwamatsu <iwamatsu@nigauri.org>,
- "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
-Subject: Re: [cip-dev] Generic x86 kernel configration
-Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
- 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
- XSdq0hnpafc1V+voPJq3LMxUvLNrwg==
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [cip-dev][isar-cip-core][PATCH v2] wic/plugins/efibootguard*:
+ Take --size and --fixed-size into account
+To: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>,
+ cip-dev@lists.cip-project.org
+References: <20240503145416.663757-1-Quirin.Gylstorff@siemens.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Content-Language: en-US
+In-Reply-To: <20240503145416.663757-1-Quirin.Gylstorff@siemens.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR3P281CA0029.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:1c::22) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:1f9::22)
+X-ClientProxiedBy: FR4P281CA0407.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:d0::16) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|DUZPR10MB8170:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0cece1b2-45d3-4e23-4db2-08dc6b89df05
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GV1PR10MB7571:EE_
+X-MS-Office365-Filtering-Correlation-Id: e4a3a376-83f2-4b9a-b1cd-08dc6b91aa96
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?TThsWEdEOHFMc1ZyMFVOMnlBOUVxSm03ZnlnOXBWZXUzWDU0ZW81cEFLOUhB?=
- =?utf-8?B?Rlk0NXcxZTNWNmFvNVFyeDEreG94TmorS2RmQ1JWZHFFYnkxS3owak52Mk5V?=
- =?utf-8?B?MHZPN1JVTktHZ291alcyNzVIcjJVUExzbDNvYmZrNDRSc3Fzb2laRE9EZ0lu?=
- =?utf-8?B?cCtYbVF6VWhFM1J3NFhXdEZhd0RVM3ZGMWlwdGZsTnRHM214MWhHS2tYZU1j?=
- =?utf-8?B?WXc4cUkwMkp5Q29sVHFON1UreWxyUExFc1Npc0hlRzkzdWZtR1RtdTI1S2dx?=
- =?utf-8?B?dDE3U1JRbzlLL1NGTjJ0NHJ6ZjhFV2RiT3NOMVNYaUpBdUJESjN0UDlpRllP?=
- =?utf-8?B?bzhac003b09FU3VKckU5VmFPcjRjRnZMaEhpWGVDbmphMUhCZCtqd214MnZn?=
- =?utf-8?B?QUU1Q0xxdVkwZFNiYVBwRmZqcFR1Um1JdUNuL1VrUzFwTFFnK2hiRzVJZ3M1?=
- =?utf-8?B?OFM4TDRDTU1JcExOVnVOcG1kN3ZtS1VlK1ZueExwU1lQUHRKeFgyeWM5T0Nu?=
- =?utf-8?B?elRwc24zSkRHUlpKYjRuc3Zla202V0dqMC9wa2pTTFlubGN6c0VUNkt5Vno2?=
- =?utf-8?B?am1EeElQcUFjRmdwUG8valBSR1NkazdYSVMwMkNsaWozMFNuWEZBTGpULzU0?=
- =?utf-8?B?QUtoaHBFb2o4WWJnVkJ6V1RKUXIxR0lCUW91b1huVmdpUUhTcEdUVjQzWkRw?=
- =?utf-8?B?aDlDVVJPWENiR0NmeE1LWHY2SU9sdDVBVjlBTGxpVWRabWJrTUMzSUwzV0Mx?=
- =?utf-8?B?WHZOZlh5MmVKUGNMWHpTVHY5dlpYSisxa2dsZHJEQWdPdHRQdXZuVUNMU3Js?=
- =?utf-8?B?TTdnQ2E1WjUvRHR5N0g5TTVMYkhtYmRBVzZ5YVNzTksydGwyaklEMkJaajRm?=
- =?utf-8?B?VGhkcmRyYXIxM1A3dlhtQ2tGV2JhdnRsTHFtNkdRS2c5Z2FaMDFxaXpwemxO?=
- =?utf-8?B?Z3Y4K29TZUJKR3Z0d3NPNTVsdjVMMmEzbkFKUlI4bFVBM3RvYmlJb2dlY003?=
- =?utf-8?B?ZkJvUHRZdFBLM2IvU25ReFprTWJEbW1JWjdzRjgxWEM1VklWZXZvNTJCcDNW?=
- =?utf-8?B?S2o0M3JwT3VsK0lqdEpkcHNxZlRwMnZIRjIreXhRSkRLYkZxRFR1enNWQTVJ?=
- =?utf-8?B?QkpmVmtnTCtycit1N0x0VExiYXBOWUFkRXBkNXRhQVNjaytXLzFCdzE4Ni83?=
- =?utf-8?B?dm9FRWliWEF1bnpDaEZOcHk5LzU0N1A3S0xyTDcxOXh0UUx0dENQNlJmRzl3?=
- =?utf-8?B?TTlsc0xOdE9CckRtNzF1K3ZTalhvS0R6OUdveWxBemFKdWhYdjg0Qm1YRTh1?=
- =?utf-8?B?enc2SWNZdkE1R05OK2lqbW5EVlNsSURkNFlXc05DS3R1aVNYbDBPU1JiaHky?=
- =?utf-8?B?bFM0UmpRMUx4cXZjVHJnSjZOcVBGUVRMNzlxdU1xbWJGNkN2STArYkZ1TG1X?=
- =?utf-8?B?eDZ3MEIrWXUvV1RyWVZOTkhqTWxSNHdmSS8vK1pTTHhUaktVNlhoWVl3dEJB?=
- =?utf-8?B?OHIzbUFrN0orelUxeG13a0huL0MyWGtLYm9hekx3Z2ZHakdyTDBQT1RjZTcv?=
- =?utf-8?B?eVczaklNaysvSkxJZVZPSnlJMGlLbEpjQU1VQkRFMS9LUnJtRDBKS2V0WkJJ?=
- =?utf-8?B?a1hoSVB2b1NTWS93RFoxYUxUTmFIMkhPaXhVZk5Vbzhsb1pIdXB5bjZyREdW?=
- =?utf-8?B?blF4aUVmNEtQZDJSRkFxcWxNOHN0OXpmcVRqZFlwMFYxcVdIODJRZnlnPT0=?=
+	=?utf-8?B?S092Z29oV0ZGdm01dVpObU90WGtIbmY2TmVBVTN2VDBYOWg4Y1NYQWVmZndk?=
+ =?utf-8?B?VUhISzBSUVduUnk1MFVPOEdSb0FtWWoxeExBaFdSSk5ZOUxmZWNpWDNINTcv?=
+ =?utf-8?B?QU5VL1F3QXM3WEpaN3ZudEVGeW9ibTVFNnZndVd3bzA0Z3J0aWtEMnJ5TWM1?=
+ =?utf-8?B?WG9SWm5SSmJJWXR6ck5aUXNRV09kaFRWZUxJQmwvRHhyMXlHRzA0dDdzUlJ1?=
+ =?utf-8?B?ZDZvRVBnWEF0UklUSklhb2FLUkIzcmdPWVQ1bEZNZmh5c2oyaldxTFM2WmhN?=
+ =?utf-8?B?QXVENFo4ZWt6UnlSR0J4QXVXaVNQYkdEeVdPNkJVUDk3cWsyVlJwSGxycGRU?=
+ =?utf-8?B?cmxrcStaYnhsMjUrcHVWeHRveURBVjI1VnYzd2s2S1FwQzV2TGk2MERCTVpz?=
+ =?utf-8?B?Zk5wUk0wLzZoUktqZHRTOFpKUVNsZzBiUjkwN1NxUHZOUk1RUWo0eno0YzN4?=
+ =?utf-8?B?RjJYcVdXaUk1SjRjZDZDR2RCZmVaTHlwMFRGM3kyL0NtSytUa1dEL1pqRFFK?=
+ =?utf-8?B?SWdaU3ZhOEphR3g4RGNMOXFXQkNHclRwN2dOY3lhdTFUVW9iZGZrOHBiVTN3?=
+ =?utf-8?B?QW1KRGY3UGxLdVg5N1BIWXFEbmN0Um5oM0phUHdGaUVlZ1BpNEhZOFlsQ3lQ?=
+ =?utf-8?B?KzJ5QTRHQWRBYkJtK0JKcHZWVlVpZUE4Z21GY3FUc3pFQmtCTDdxWXdPL3FH?=
+ =?utf-8?B?aWhFYVlXMnVXVmJzS1pPRi8rZjBJdUQvWUY0b3dDTFJhZE9IS0hwVG0vUzBP?=
+ =?utf-8?B?RE9HN2FEZkp5OXpFemgvejcxY1hDWXRFYTVNMlpENXJieVFzWkhXMW9JUHM5?=
+ =?utf-8?B?WlB5ZTVPL2RLNk94LzZMZHFvSTdpaEJ3enA3ZHUyZk1OblZQaUp0THZ3alpX?=
+ =?utf-8?B?OTZOV0ZDLzUwdnRJL1J3aWdNQUpSSklZQVA3a21yRXFsVWNsS1ZWRjFIRHdi?=
+ =?utf-8?B?S2o3eXdQS0sxV1pRTitvbW1Vc2hMd0Z4WmdXRWZ0WU9MVlRINlVvbWpOSmRx?=
+ =?utf-8?B?TTNNbkVwQi9KVTY0SVF2enkzY1J2LzluMHREYlI1MHltUkVGb0t3eVpNSHVV?=
+ =?utf-8?B?T1E4dlpFU1I3SW1QS1pFK0w2eStpZTg2T0pyMnhhT29Gbk5YY1pHU1FJRzAx?=
+ =?utf-8?B?T0N1YUNjdzh4Vk5PakdRRE1ZZkJ3Z3NxaVhYb05mdlBmZENoUnN0Rm8xUXho?=
+ =?utf-8?B?SlFPL3BmSHovREk2NzA3cUZiUDk5Q0UxSDhhQkxMNTRwcVdMWitHbFgzekRM?=
+ =?utf-8?B?am9HTGxpZjR4a0dUVnBwQTUzb3hqbFlFMWxtcXlocHlackJoVlRqekV1K24y?=
+ =?utf-8?B?MFlKVU1hS3ZQdW9jQWthYmtZVUkrNXdYcnFxRGc2S0tEWmVpYzFhSlBwN1FP?=
+ =?utf-8?B?aVR4bnljMFBoZHptNXl1K2QzdFZIVG0rbktoRnVQT1NtVmpOUGxlN3pxdHdX?=
+ =?utf-8?B?WXdWZmpkSjlTZWNWNCtWWEF3QnJudFQrZUhjUmI0a2JwZlBIQkhvWkRpWEV5?=
+ =?utf-8?B?b1R4dWhuVXdvMUdicGZCcWRkaDBvQ3AxOTcrVjA0MDRNVFVCWElXNWZkb1du?=
+ =?utf-8?B?UlAvSS9tS3VWYTVmbkdiRTVMSmRxRS9aM0huaWVLdGFSME05aU0zOUIwdy82?=
+ =?utf-8?B?a0tOZk5YVUIxbHIybmZFYzdoQ3IwL1E9PQ==?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?NmgxRnV4cGxnSmZuOFl4MnNIaU9Gd2FPci9UVUZ5R3BLdWhMWXh1V2tjMHd6?=
- =?utf-8?B?WWkvRGVkTFc3c2V1clZsa1J0VXU0c3l0LzJhNVY2TGlqeXF3OXVwalBKWEFQ?=
- =?utf-8?B?bFdlUHArUmN3bC9RZ3Nrd3JPaVBIaFF4L3lEekhleDlBTk1oT29GdlozeVF2?=
- =?utf-8?B?T0dQOWVCVm8xZnlJenQxdUZHUFUxMmU4UjhBb3lhWnJsRnFhRUF5dGlCcG1D?=
- =?utf-8?B?dk00SHl4L3FmMWtBVXdhNkh4Z0ZCTU9xcnhscUt3N3RWR01kMU93UDR5aDdB?=
- =?utf-8?B?bDFFZmwvYXdmaEV0elB3dXBidGN6NGtPWWlIT09GVmdwc1ZjMDhUSmY3NmVQ?=
- =?utf-8?B?NExwQXFjQzVibCt1d0s3b1JhTW9BVnRDN2UxeTVkWFZxSHhQUkM1dmFsaDd3?=
- =?utf-8?B?ZGRRT1lUTXFaU21KK2FwZ01Cd3Z6ODRVbGM3d055UElXTHVpZE1KdHFNQlR6?=
- =?utf-8?B?SktJTFZYSG15bWlUUUVPZkY2UzlVcDl5emdHUFZDd2ZKTTFWODR4SzFzYzRV?=
- =?utf-8?B?eWNGZjQ3eGg5bzJodnJhcWcxRUVCTTVUVGNOQmY3aUNLb2pGU0NybzU2U1Q3?=
- =?utf-8?B?UGhmR3liR0QvZzNsaVp6bER3WGZYbGgyclY5TTRYUDArUldsYTFoNVJoQ2wz?=
- =?utf-8?B?ZjdnMFJpNnRCTWE4YTZKYm1BLzNEVlFIMkVjWEpCa0k4alJFdzFYWjJYTkRz?=
- =?utf-8?B?QmZNR1drTFB3ZTk0ZDRDcUVCbkg1OGp6aTdoOTN0M1YxSWczV2FVNGw4MWxL?=
- =?utf-8?B?OTVjS1ZyYjh3L0tIaVQ1bkMxSjBDMjFhbG1OV0hyUnhNaHhtbUM3KzE2ency?=
- =?utf-8?B?Y1VNY2FwN2p0TEJjVVUxZkpOcTZJSnk2a29ZZ1Y4ajZsMWMvMUJCUWF0OFJr?=
- =?utf-8?B?RzZCcDZkTlY5b2pZTmFoZXJMdzBtNlh4Q085UXEwNTdzSGF2K0ZuU0lUd1FQ?=
- =?utf-8?B?MWlpOU11ZlNPT0FSM1MwYzRsc1BoamxDQlM4azI1bFZ6cVlKNkROQW5HRUdj?=
- =?utf-8?B?OFZzbW9CVis3bnJHcXFHbVhhTlRJcUhzd0JKNW5LN1lLcUNsbTlDbGIrMytH?=
- =?utf-8?B?UGt2Skx5aWF1emN0dkVIY0gvdVZrUHJReHZBS3c5d0JKRWw3NDNZa2RoV1E5?=
- =?utf-8?B?VE1Db25id0hrVFFkaS9KWXE2MFAyWHRpeGxTcFRlN3BZZVcvdHFoN2c2Y3VH?=
- =?utf-8?B?M1NibkYvY00rRDJzckFQOGZvK1hjSWNsL0kxYlVkS2NrRXFvWDdpUXU4R0RR?=
- =?utf-8?B?aVJuaXp6RmdpeTNNTThCeGwzaFdpQVFIR0tJcVhyNy9pZXJBU2V1NFhyTmZN?=
- =?utf-8?B?Y0EyMVE4VFlMRjJMV1N6Z2YvaWFkamkxNnhaSHA1U0tsQjdFU3FJWTUyM0Q5?=
- =?utf-8?B?dE4wVFNjOVVOODdrVU4xVm45My9OOGJYMGd4N0FNRDR2aGJJdEdkQUR0QkV6?=
- =?utf-8?B?emlPV0pNQWNJbnI4QnVSdEhCclNWL2gvZzVlTTVkb2drUHhha0J0eWR2b3Q1?=
- =?utf-8?B?M3dqdG9ZK0FsVGNuNlhJLzVvOGF6SlRiWlpoeXBOVlFMOGZkZlBTL0Y5VnIr?=
- =?utf-8?B?ckZQakVVTHBDNFY4Ujg1akxrS0x4RWNLaGtWa2pHVU42K1hsTDFFWHNLUVdH?=
- =?utf-8?B?bU1FcjFwemhwSGUzb0Q1ODdsMlEvK21HRFhxT3g2T1VUclVmV3RGYlJOUlFZ?=
- =?utf-8?B?K2pzQWpUYUJtQVBtK1M2SEdLUXA4KzhQVVg5Zy9Uc3RwSC81RTludjlzZzZJ?=
- =?utf-8?B?eUpBeG5HTzRrUmVsMDBBaU5uMUtGTWYzZXpIWURQbFhORUdYWVNwUnNpVnUx?=
- =?utf-8?B?N3pxbExsOWc2a1RTY1Fwc2xBenVPa2d0bWFvZWZNTGRRK3hsdUx1elErOG02?=
- =?utf-8?B?TXhNa2wvaEsrOUQ2SFhleU5lQVNTWjM2eHp2Mk9mVTJjZmpTS2tFQkdCU2Ns?=
- =?utf-8?B?bFFqeElKNXpyV0RMbDNHNk1oakVVQnFDbVV6UmFCSmZxcFlDZEVJcEJCSjRB?=
- =?utf-8?B?V3gzcTJ3OHJlYjZCN3V1RXF4OXVjNUVIQ0s5ZXVWaWFyejEvVzhBSlB3a2tV?=
- =?utf-8?B?NjJaVWhueTMxeXBUZ0s2MU5ydGs0enRRMElkd0xuNVUzY2lUZUVzejI1VVA2?=
- =?utf-8?B?UTN6SW9jNnNNVjI3MXpMVVlGNDBWajZWWjBuS2ltcVUvNGh3MitYbjZGemsz?=
- =?utf-8?B?elE9PQ==?=
+	=?utf-8?B?SHBySzBIZW1GOUdXZSt0OVFxVlNpZkYzcldEcGhxSVpNM0pwejRWcXd1dVJE?=
+ =?utf-8?B?dHBGbFpQSnJ2bHRJenhZZEVCc0dMdEZLSzQwSHd5cUwwc3FJOVJleUZYaFBE?=
+ =?utf-8?B?MkMwQllzdUcxV3RkeDZlRmRCcGhsVERVQkhSeVFQcUVDWkpCaWV6cE9DK3pm?=
+ =?utf-8?B?d1c3YjFsWHFqQ1AvRXY4MVlBQ1FUUGxxbDdKY1ByUWx1MG9lNFRTdmxRMkxm?=
+ =?utf-8?B?UU9wYnZCc3BFRWhESEgvQ1VSencrdEI2L04wZnZkbFd3VUVSdmduYUpra0xE?=
+ =?utf-8?B?eUhqb0lxZXBiUFFVV21Lc0NOZGJUSDNoN3NycSt0RzFKdzlBYlFoZE1pelNt?=
+ =?utf-8?B?a1RSMnhUcmNXNWIraW4weDBvbWMzelVGQlBwbnBrZ28wRGJGY05KMDNaNEFs?=
+ =?utf-8?B?Uzl3RklaTFkvUmczMFNCeFRBNlJuVGNaRFZKbUk5d1Njang5Z3FqR0xCVi92?=
+ =?utf-8?B?OFVrYmF0OW1XS292WU9iREE2WG1DQXlnajVuR24wek1Ncy90eDl2V3AzNFpz?=
+ =?utf-8?B?UGZWaWU1THRRbWdtU054ZSs3UTJWd3BMNTBLWDE5dlNvUXIzUkthc2VLdFpI?=
+ =?utf-8?B?NWpZaE5od0pmeFJFdXJURUlDNjU4ZVJHVEorNWNHWnlUR1I4WVo0aUNDOFBr?=
+ =?utf-8?B?NWJWQXpUM1VjN0hkOGNzMEZsYStKUzFjWE4wRkQyaHNpSnVrRm1Md24xbDJ5?=
+ =?utf-8?B?cXRBU1RvUVA3c0VraDMzM3FNL2tlalBITXZ5TVdjYlBiS0thMWdMUXBPekc1?=
+ =?utf-8?B?VldzS0gwSTBxS2xCMHB0OWhPYWtwS2EwR2xwd3JKN2ZLQXJDUHA2cDlxRXVX?=
+ =?utf-8?B?Nk1COTE3TlBlZFY4UDJoTE5LVVFrOGhld0lEdmdCNDRhankwaDFSTXJyUHZG?=
+ =?utf-8?B?am1QVlBrU3hJclNMT2RMNWozQytCU013eWZOQ2doSm5NbkowOUVPOHRpcnpN?=
+ =?utf-8?B?TnQ2UUZpZjRZb0VDSlBxaTZHbXNGQnFlNHp3S081WklUZ2hUQ21TSkRBYmp0?=
+ =?utf-8?B?ODRDazVOek4wOHQvSkw4MDZyWDFJWGxOb2lWY0hHZWpEZXY4bnZlMXI5Z2NE?=
+ =?utf-8?B?V0cyRWFZUXc2dFoyQTM5UUZFamhyRVRndnMrY0JGc29aWVVSMGl4bHhJenV4?=
+ =?utf-8?B?dWcwemtuVUZ3dFFMdnJPUExCTnp1cyt2d0Y0SHNHbi81cURWMzd1UWlCZEJM?=
+ =?utf-8?B?eXk0YUQ2QkEyN1d1UUJoZTNQK2pFTWtwM3lSTGZRRnVybGVlZFpsYWJPMUJE?=
+ =?utf-8?B?dW1rNXVPYzFmRFVwRmRHbzlPdU9qSXB2dUIyb0piYUc2ZTQzbTJjK2VuTUU1?=
+ =?utf-8?B?NVNweVlHbWlESndDQ3VYaHovOFE2OUNoaWxSc05nWjh2VDk4R2s0NXJTemM5?=
+ =?utf-8?B?ZjJWMXQ0SVFpWUR2cmJ3ZTROSWxnM290cmwzZWJ1bm5oOExUczBmSjFFb3pp?=
+ =?utf-8?B?RTNOWEVYaHBXYklaMjJSN3lDeUlBaEFvZzg5YTFUZDRsWkFBdktOZkxRU2FH?=
+ =?utf-8?B?cXJkMlljdXYzSDd0MGVGZjdEYVlxMmFzNm9SQVpwQjUrQnFrdGRsUDhYdEJP?=
+ =?utf-8?B?d2tmZGI2N1hDNGMyUUtJelBiTnZTek9Cc1pvaVREajh5a0dRYnpxWi9PWmVK?=
+ =?utf-8?B?d1BPRlNmS05kWlhOSk91S2kza1c5eDdlSXV4TksraUIxU3RSL3NBc1VVcnZG?=
+ =?utf-8?B?QUJSVkNXOWh0blViUVlpUFdXYVQ4b29Yem52d2p1TXdXQkJvNEM4Y1I2Q3Ni?=
+ =?utf-8?B?dGRYOEZsMDFWUkpRa095Rk1vNThpOTViS24xL0NiOWtoL2NoRFQ3TXlHVDBx?=
+ =?utf-8?B?dUN6VzA3WERGUlJuUndxKytiQ3NRcDFuMi9rTml6OXYyY1c0bE9JTzc2R3dZ?=
+ =?utf-8?B?djFpWVJrdTdoQTc5TllZNnlzalltMlB0dFZ5aSt0bkJIelArUjh3anNpa25H?=
+ =?utf-8?B?aUdCeTB2UVRnR29ITlYvZEsvTE1meG5KMVZkcWFyK3MzczBhV2ZuVVBBc2dO?=
+ =?utf-8?B?dHdhUmRsZyt0SHBhdHhGR1hGYlM2TG5GUms2Z1NqRFVzeTZrd1BtTFNPa0dl?=
+ =?utf-8?B?UFRralcreVRMS1NJQTlRZGcvZ3J3ak51OXh3RU8zVXF6cEJTLzZkU0JBTWVF?=
+ =?utf-8?Q?mbpBNNKDyDy6ViOr/LyK5IVf+?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0cece1b2-45d3-4e23-4db2-08dc6b89df05
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4a3a376-83f2-4b9a-b1cd-08dc6b91aa96
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 May 2024 15:58:27.7227
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 May 2024 16:54:15.7241
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qqkA0qa7Xzl9g6JZOSct80hOeZwm3t/YzAt8gAlH4dCz3BDZXXhPtdU0GCcHq9tU6WGxLjCBApmTbCXn/GV8xfkxAozYrnLreG3vfE1b0tw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DUZPR10MB8170
+X-MS-Exchange-CrossTenant-UserPrincipalName: mDyU9hsYPsq6TlffxQjev/uJMJ7YGwuTaJltHAmP5U+2q7GMZWlwUiAPxyK5HkanTiC5vq/uce5uS5GXip4OMw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB7571
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 03 May 2024 15:58:40 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15823
+ <cip-dev@lists.cip-project.org>; Fri, 03 May 2024 16:54:30 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15824
 
-Dear all,
+On 03.05.24 16:53, Quirin Gylstorff wrote:
+> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> 
+> This fixes the issue that wic arguments --size and --fixed-size
+> are not correctly interpreted.
+> 
+> This fixes issue #104.
+> 
+> [1]: https://github.com/ilbers/isar/blob/26e9653eb5e096e8b367ebd73054b2fd2310e9bc/scripts/lib/wic/partition.py#L104
+> 
+> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> ---
+> I tested it with qemu-amd64 and qemu-arm64
+> Changes v2:
+>  - replace size calculation with part.prepare_rootfs_msdos
+> 
+>  .../wic/plugins/source/efibootguard-boot.py   | 37 +++++--------------
+>  .../wic/plugins/source/efibootguard-efi.py    | 30 +--------------
+>  2 files changed, 11 insertions(+), 56 deletions(-)
+> 
+> diff --git a/scripts/lib/wic/plugins/source/efibootguard-boot.py b/scripts/lib/wic/plugins/source/efibootguard-boot.py
+> index 4e3aefb..1101f38 100644
+> --- a/scripts/lib/wic/plugins/source/efibootguard-boot.py
+> +++ b/scripts/lib/wic/plugins/source/efibootguard-boot.py
+> @@ -136,40 +136,21 @@ class EfibootguardBootPlugin(SourcePlugin):
+>                  msger.error("file %s not found in directory %s",
+>                              boot_file, kernel_dir)
+>                  exit(1)
+> -        cls._create_img(part_rootfs_dir, part, cr_workdir)
+> +        cls._create_img(part_rootfs_dir, part, cr_workdir,
+> +                        native_sysroot, oe_builddir)
+>  
+>      @classmethod
+> -    def _create_img(cls, part_rootfs_dir, part, cr_workdir):
+> -            # Write label as utf-16le to EFILABEL file
+> +    def _create_img(cls, part_rootfs_dir, part, cr_workdir,
+> +                    native_sysroot, oe_builddir):
+> +        # Write label as utf-16le to EFILABEL file
+>          with open("%s/EFILABEL" % part_rootfs_dir, 'wb') as filedescriptor:
+>              filedescriptor.write(part.label.upper().encode("utf-16le"))
+>  
+> -        du_cmd = "du --apparent-size -ks %s" % part_rootfs_dir
+> -        blocks = int(exec_cmd(du_cmd).split()[0])
+> -
+> -        extra_blocks = part.get_extra_block_count(blocks)
+> -        if extra_blocks < BOOTDD_EXTRA_SPACE:
+> -            extra_blocks = BOOTDD_EXTRA_SPACE
+> -
+> -        blocks += extra_blocks
+> -        blocks = blocks + (16 - (blocks % 16))
+> -
+> -        msger.debug("Added %d extra blocks to %s to get to %d total blocks",
+> -                    extra_blocks, part.mountpoint, blocks)
+> -
+> -        # dosfs image, created by mkdosfs
+>          bootimg = "%s/%s.%s.img" % (cr_workdir, part.label, part.lineno)
+> -
+> -        dosfs_cmd = "mkdosfs -F 16 -S 512 -n %s -C %s %d -i %s" % \
+> -            (part.label.upper(), bootimg, blocks, part.fsuuid)
+> -        exec_cmd(dosfs_cmd)
+> -
+> -        mcopy_cmd = "mcopy -v -i %s -s %s/* ::/" % (bootimg, part_rootfs_dir)
+> -        exec_cmd(mcopy_cmd, True)
+> -
+> -        chmod_cmd = "chmod 644 %s" % bootimg
+> -        exec_cmd(chmod_cmd)
+> -
+> +        # create a fat16 partition with a sector size of 512
+> +        part.mkfs_extraopts += '-S 512 -F 16'
+> +        part.prepare_rootfs_msdos(bootimg, cr_workdir, oe_builddir,
+> +                                  part_rootfs_dir, native_sysroot, None)
+>          du_cmd = "du -Lbks %s" % bootimg
+>          bootimg_size = int(exec_cmd(du_cmd).split()[0])
+>  
+> diff --git a/scripts/lib/wic/plugins/source/efibootguard-efi.py b/scripts/lib/wic/plugins/source/efibootguard-efi.py
+> index e82e990..48f7523 100644
+> --- a/scripts/lib/wic/plugins/source/efibootguard-efi.py
+> +++ b/scripts/lib/wic/plugins/source/efibootguard-efi.py
+> @@ -100,35 +100,9 @@ class EfibootguardEFIPlugin(SourcePlugin):
+>                                                 name)
+>          exec_cmd(cp_to_deploy_cmd, True)
+>  
+> -        du_cmd = "du --apparent-size -ks %s" % part_rootfs_dir
+> -        blocks = int(exec_cmd(du_cmd).split()[0])
+> -
+> -        extra_blocks = part.get_extra_block_count(blocks)
+> -        if extra_blocks < BOOTDD_EXTRA_SPACE:
+> -            extra_blocks = BOOTDD_EXTRA_SPACE
+> -        blocks += extra_blocks
+> -        blocks = blocks + (16 - (blocks % 16))
+> -
+> -        msger.debug("Added %d extra blocks to %s to get to %d total blocks",
+> -                    extra_blocks, part.mountpoint, blocks)
+> -
+> -        # dosfs image, created by mkdosfs
+>          efi_part_image = "%s/%s.%s.img" % (cr_workdir, part.label, part.lineno)
+> -
+> -        dosfs_cmd = "mkdosfs -S 512 -n %s -C %s %d -i %s" % \
+> -            (part.label.upper(), efi_part_image, blocks, part.fsuuid)
+> -        exec_cmd(dosfs_cmd)
+> -
+> -        # mtools for buster have problems with resursive mcopy.
+> -        # Therefore, create the target dir via mmd first.
+> -        mmd_cmd = "mmd -i %s ::/EFI ::/EFI/BOOT" % (efi_part_image)
+> -        exec_cmd(mmd_cmd, True)
+> -        mcopy_cmd = "mcopy -v -i %s -s %s/EFI/BOOT/* ::/EFI/BOOT" % \
+> -            (efi_part_image, part_rootfs_dir)
+> -        exec_cmd(mcopy_cmd, True)
+> -
+> -        chmod_cmd = "chmod 644 %s" % efi_part_image
+> -        exec_cmd(chmod_cmd)
+> +        part.prepare_rootfs_msdos(efi_part_image, cr_workdir, oe_builddir,
+> +                                  part_rootfs_dir, native_sysroot, None)
+>  
+>          du_cmd = "du -Lbks %s" % efi_part_image
+>          efi_part_image_size = int(exec_cmd(du_cmd).split()[0])
 
-I have used a forked version of [1], which you can find here[2] to
-merge the following x86 kernel configs together:
+Nice consolidation! I'll wait a bit for feedback on the original issue,
+then merge it.
 
-cip-kernel-config/5.10.y-cip/x86/siemens_server_defconfig'
-cip-kernel-config/5.10.y-cip/x86/toshiba_atom_baytrail_cip_defconfig'
-cip-kernel-config/5.10.y-cip/x86/siemens_ipc127e_defconfig'
-cip-kernel-config/5.10.y-cip/x86/plathome_obsvx2_defconfig'
-cip-kernel-config/5.10.y-cip/x86/cip_qemu_defconfig'
-cip-kernel-config/5.10.y-cip/x86/siemens_ipc227e_defconfig'
-cip-kernel-config/5.10.y-cip/x86/siemens_iot2000_defconfig'
-cip_core_merge_kernel_config/recipes-kernel/linux/files/mcom.cfg'
-
-
-I have tested the v5.10.214-cip46 version of the config with qemu-amd64. 
-The next step would be to check it in the cip lab on the real hardware.
-
-The script takes the Kconfig entries of the specific kernel version into
-account. It also adds all dependencies to the config. You can find to 
-log of the merge at [3] and the diffs to each configuration at [4].
-
-An first integration into cip-core can be found at [5]. 	
-
-Any comments from your side?
-
-[1]: 
-https://github.com/zephyrproject-rtos/zephyr/blob/main/scripts/kconfig/kconfig.py
-[2]:https://gitlab.com/Quirin.Gy/cip-merge-config-work/-/blob/master/kconfig_merge.sh
-[3]: 
-https://gitlab.com/Quirin.Gy/cip-merge-config-work/-/blob/master/merged_config_5.10_x86.log?ref_type=heads
-[4]: 
-https://gitlab.com/Quirin.Gy/cip-merge-config-work/-/tree/master/5.10?ref_type=heads
-[5]: 
-https://gitlab.com/cip-project/cip-core/isar-cip-core/-/tree/qg/merge_kernel_configs?ref_type=heads
-
-Kind regards,
+Jan
 
 -- 
-Quirin Gylstorff
+Siemens AG, Technology
+Linux Expert Center
 
-Siemens AG
-Technology
 
