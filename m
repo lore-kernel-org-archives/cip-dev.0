@@ -1,292 +1,255 @@
-Return-Path: <schilling.benjamin@siemens.com>
+Return-Path: <sai.sathujoda@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D7AC4345F
-	for <webhook@archiver.kernel.org>; Thu,  2 May 2024 13:14:46 +0000 (UTC)
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.51])
- by mx.groups.io with SMTP id smtpd.web10.4968.1714655677241213905
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C6CC4345F
+	for <webhook@archiver.kernel.org>; Fri,  3 May 2024 04:31:56 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
+ by mx.groups.io with SMTP id smtpd.web10.5223.1714710711773854754
  for <cip-dev@lists.cip-project.org>;
- Thu, 02 May 2024 06:14:38 -0700
+ Thu, 02 May 2024 21:31:52 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=dtQWX83O;
- spf=pass (domain: siemens.com, ip: 40.107.22.51, mailfrom: schilling.benjamin@siemens.com)
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.134, mailfrom: sai.sathujoda@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 4434VjnL740832; Fri, 3 May 2024 13:31:45 +0900
+X-Iguazu-Qid: 2yAbfjWaknhOVZ6tph
+X-Iguazu-QSIG: v=2; s=0; t=1714710704; q=2yAbfjWaknhOVZ6tph; m=Qfv8edoXhzFN86VmYxjdfiovLJeDwq6BUwH/lcjUa7w=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1801) id 4434VhMm895297
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Fri, 3 May 2024 13:31:44 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dhaVPCyY/0h0J7oBIyxsqNfYWm2zCJhaUpSU2XOMeoxixk7hnFollJzBR3FUeaGLUXiuEKZLDOc4u0wB8JH+bL1d6K6iR13h7qWcKS7gBAhRR8Xs3oeueQM0LaL3SvGtWjR6E+EtXfCIuSNtKmlQ9A+0FP7fqzHz6BxoS22sHayaW8fFFDqrgXxCBQ9wjUCSkEtcvASgHSXLimrOH9vx4vRSKeffX32dO5EaK+pKv5AxBMdOjt0uRw385e2v/GVoypX+o2NoI2lQ8ery9CyNGrQGTybLHPAf1EvOJwP/kDStev8gpE3/Hx8bpTr0++r+W05dan90/wpXbYcyOYcouQ==
+ b=On2ZgtxfD1i+MnxbUKCd0Axx0C1KJJ1UpUDLn05C9afL2UDKlSMEoKSbiCEp3UJyMA02HYaYLLFg/LZjY1KTXcv2CKRL3UVBmZN++eKjF16T/u2ZYOE1HY+1o8Pqv5KHHbbNZXAPOtaBIKQTLcgxHVBFGnlmq1n9TfsZOkVYk0gA2D3tjfN7a6JwGvJL7JafuwEuKrc1nYxmvTKMsCAMUYvYLscLwKTxLZUmCEKTC0BxuvuCedpANntfwQYb7ff3UmVSGExC2YR+MlOyZ3nD4IE1hETb/BzMUjMQMIskntdxZ2E7nPNNDq912Q1PgFFyyxbFK90S81tugKyLcLvpOw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5OqmHSl1TlEWbWZX/j8/wFQqisV0P11HJES/PvXwf7w=;
- b=KcGUS6tSeY2hmt7Kn92ux+dfLDebOf5b72RHkaw//rNvAxyE8ig/yxLWNbEwH5FxSSz2/siRSOYf0C67+GwDgOSeMINQSRh5FoPUyFF/cLdp88jkjGWFWfbs2ABFCDNy13GyNyCUIP7vQpRZcssVwELKEekccUQjClOfmWvfTvD5/7qshRTA1H7+eViyetQ3Hyat5rN3IVHIwtHB6UqqQmcZvYWxxhro9tvMAItwLbo+UGiuqCDwbygkTbYPyI1m+N/D36c0TaYnBcI0bjVo6ePqmlUooGUaeK5lCm2utfJPzi5eS0L5zwL5FRHmJXRS2cATbGKtnMG6AM01G9cXTQ==
+ bh=pVb5pSVSLKLtWraMbDS3ecHipEu3lSFyo6lDKIqQ6W4=;
+ b=WV3qR/vG1i6kCLYtepjkEt5P1VSWTVRApKNTXF2QV7XIe9lh7hv1Vc5G99BApHa8yveg8260cqyVg25KYFfBjmQhumbdcBGQcImVe0/kxWuNINtZw04MLRTA5cwLVldY4B+MUuGJZgc1/6eHk1ZKhxfEPUOJEI//h8vboltbxY7JwqWRzO73jztJy63OzptHws8bRwou+fffTkrp71Cp20xjJBi/cdIgm47oQhw4XXE0YuckweC7v/8XLwMVa2jJflABo+/7bVZ7UiMt2hwYnGrdDsuW4rNqmEehVZicwC6F/yoQZBJzyEkf6rXa8APUQZGLMEvdCTnb/TqdbGzmng==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5OqmHSl1TlEWbWZX/j8/wFQqisV0P11HJES/PvXwf7w=;
- b=dtQWX83OkIrSXq9DEYtmOkqKdL0biserpEP9ZfVknfKqPB2bSj2oQkV1A2/mtuMgPZkRR0u3heaTzJ+70JGSPOEGH16cPVpZrsuYDjHcGz59Ieeep+dBBT1hCdsmb3KlQijRap+Qzae2cU/yitna3N3v3YyGFXSTwt62o8F52EX2OjV1CYuMPrOPpV8Es4fRpVlJ4Lh2UhgeImtpFjvqRHauCm4AgEPZH+rqpdC16TUyi0EMaxt4k4ru+ODrCzM3v30oPMVYuMNVSpAUm/RHrFS54C+MigTH0YwfLd/c2WtgQ4tzYBFSJd8leLuGVlIWoyxXr9H2c4tgthsR943Lhw==
-Received: from GVXPR10MB5837.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:6d::17)
- by DU0PR10MB5560.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:320::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.26; Thu, 2 May
- 2024 13:14:33 +0000
-Received: from GVXPR10MB5837.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8e3f:ee20:5b20:8a7b]) by GVXPR10MB5837.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8e3f:ee20:5b20:8a7b%5]) with mapi id 15.20.7544.029; Thu, 2 May 2024
- 13:14:33 +0000
-From: "Schilling, Benjamin" <schilling.benjamin@siemens.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Subject: [isar-cip-core] [PATCH] Add MCOM x86 target
-Thread-Topic: [isar-cip-core] [PATCH] Add MCOM x86 target
-Thread-Index: AdqckpcQz3qSMzH8TIiOyax9RYdnUA==
-Date: Thu, 2 May 2024 13:14:33 +0000
+ smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
+ header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
+From: <Sai.Sathujoda@toshiba-tsip.com>
+To: <Chris.Paterson2@renesas.com>
+CC: <Sietze.vanBuuren@de.bosch.com>, <cip-dev@lists.cip-project.org>
+Subject: RE: Query regarding SQUAD watch job submission
+Thread-Topic: Query regarding SQUAD watch job submission
+Thread-Index: Adqciz/XU7pqriezQs2bbbOHPjbwrwAhgrSA
+Date: Fri, 3 May 2024 04:31:41 +0000
+X-TSB-HOP2: ON
 Message-ID: 
- <GVXPR10MB58375213D66CD4C30A60188888182@GVXPR10MB5837.EURPRD10.PROD.OUTLOOK.COM>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
+ <OS3PR01MB61037CD9DE8F85E63A9EC0DEC21F2@OS3PR01MB6103.jpnprd01.prod.outlook.com>
+References: 
+ <OS0PR01MB6100BB4B8D14EC6E9527AD68C2182@OS0PR01MB6100.jpnprd01.prod.outlook.com>
+In-Reply-To: 
+ <OS0PR01MB6100BB4B8D14EC6E9527AD68C2182@OS0PR01MB6100.jpnprd01.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: 
- MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ActionId=1d99b187-98d9-46d5-8325-af65e7891a27;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=true;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=restricted;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2024-05-02T13:09:35Z;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
+ header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: GVXPR10MB5837:EE_|DU0PR10MB5560:EE_
-x-ms-office365-filtering-correlation-id: 5af205f8-a9cf-44da-b145-08dc6aa9cf39
+x-ms-traffictypediagnostic: OS3PR01MB6103:EE_|OS3PR01MB10025:EE_
+x-ms-office365-filtering-correlation-id: 21150572-7ba5-4e23-9495-08dc6b29ee30
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|366007|376005|38070700009;
 x-microsoft-antispam-message-info: 
- =?us-ascii?Q?yhAVAsR0NOCw+6c2zK5zz1A/RTUYmupv551YMhL7TGhRB9C+T0tYdBnkZ5HM?=
- =?us-ascii?Q?pr8j/fm6QXgdwGHPj2ylcm7KkJxqH7gDmGYF4EU+QALEIu+4aantbbwRCAPW?=
- =?us-ascii?Q?4bn1N2w+RaBJTPxZ+p/NYV5TaKvYKWYTrL2wUuaXoGAeMToqXuUCdrKVlnue?=
- =?us-ascii?Q?coefQL7WJ7nI37TZQ/wGrO5XJthV8eBXvKfB12bPCJs8PjzQRgp62l1rng1O?=
- =?us-ascii?Q?mHA0Oj6uTymaH4D6pKZCK7DRK5TCO0Vi7EHXQLYiNZst5uaIprPxdwjddYXG?=
- =?us-ascii?Q?DAoQ0uffTvSwPjhtophO7HPrY8zu701CkkkOd6F2fkRCnzO2ac3D9bqPt15w?=
- =?us-ascii?Q?RhtQ/lXV5MNu6195FOt68fQJd07zuL5pRme/Ta+5AWWpPS9zXNLsg384+MhZ?=
- =?us-ascii?Q?tu/dhpAt467aws+Y6mtuaRe993zEIyYaLDLq91atMY/CuNN9G5SnqeadSxrU?=
- =?us-ascii?Q?4PrObVMXWunFVDYL8TtWNgeYWloW0YL3JdLCufuQg5kJPsw0loaSANguK0iU?=
- =?us-ascii?Q?3X4BFE7EYJKuzGP028EfPj/pe6NCbNvnyk9+Eay7FUFd2D/TnWgNIXpMPAPq?=
- =?us-ascii?Q?OVMzbwfMkxKoJlVIAO++2+/1kA7fGpqmnrYZ+CznRATRjtYqUH8SUqW8xnDm?=
- =?us-ascii?Q?CIecPSGuLBCpKd4evKsRJrseceCrCOgRT5N2l8J1C9AazgRF4oFpI3PIiX/9?=
- =?us-ascii?Q?2ybGj7JdsnKNJTLycFZ4LUX5hmK4tu2400qqQN+SNGrgQ4NSycJi56T9cjgz?=
- =?us-ascii?Q?ZMH9UPGpvH5s0xyDRIISCDdopMgzS9p6crdOR1FXN+BowWFGd9DEAFRcXGRP?=
- =?us-ascii?Q?gQXljnBMvO7xtLc7otyxLLoFI5JIIeIV49sgbfWl46YAbwWluwvUov/+xZKh?=
- =?us-ascii?Q?FZ7IZAxieNvz496ORvJTsjwqYPUJB6JRjWM5VvztP77TU0/WdevwLZT73+qy?=
- =?us-ascii?Q?pqHWCorUGdnjSmvuvuVAuEBB9WSTIuOcHvXzz1Ta8Mwts3eVRVB8ljxpIv4x?=
- =?us-ascii?Q?IbEeO31IPSeBskOns2CZA9eVZPHVQwPR0uIPQtYc8kag5cp47Ms7CWvj02TJ?=
- =?us-ascii?Q?954E22o4ep7LtmHw0kMLQIsn7KU0sifWE4tE8u256O+3gq7b3sa1B7Km46F8?=
- =?us-ascii?Q?8MMou2omUBbgRLnEpVGjsdxgX310SOtDRxA5r0SsFwtJ8FVdDQvS1P/rGrKC?=
- =?us-ascii?Q?wr+dempcj61S5ieXmRf2uylCTgg85oUfbx5s68Yq7ubRWK8azk11EwU7s3ld?=
- =?us-ascii?Q?h+aEV959TgTxPsG/ZHgK7kJB1giSIxQ0LMEkaH5rzwHJZJ8L4YBBtELGIxEz?=
- =?us-ascii?Q?yCPT1PAOl7S+TTwRea0k5wJg8/gkEOqSFwwKndsI59CFKA=3D=3D?=
+ =?iso-2022-jp?B?UDdyNmJEekxYOFpZTDBtRk85d3h2aDhnbjVRODVUTm0zZGVMZ2g3NDNN?=
+ =?iso-2022-jp?B?VmtpSVhiVno4N3hSeVhYa09VK3NvNDlJUmJwL3JVTjhTRVVVOUZuWWlh?=
+ =?iso-2022-jp?B?RGJRNUY4OGdIWkNCcnRXd2s0SEZ3NjhmREo3QmZTMG1ZYkVOeTVzZWUx?=
+ =?iso-2022-jp?B?WlMxQmQyR2NtNzRGSkxwdmhOSUx1dFdoNUpYK2tOb0pCeGYzVVdXMFpO?=
+ =?iso-2022-jp?B?dWdWeFpzM2FUeTU5RXVEbnQyZ2JwS2h4YW9JZG5ZdTVMRmRiZUlVazZr?=
+ =?iso-2022-jp?B?aCs3cDkvcEt1ejZYWGppc0ZUVFJVZjFOeWV1L2JrSy81UFhDR05nY1gx?=
+ =?iso-2022-jp?B?RERjZEszaEJtMFhTdXlqRVJIUmVuZFRXUkh6bVdNUlNsRjNUUVdWSUxj?=
+ =?iso-2022-jp?B?b05KRW5QTDB2UVc0WS9KVEZzeUtKTUlQTDRyOXRBbHh4RURWNnhsbDlD?=
+ =?iso-2022-jp?B?U0NXc3lORkFiM2g0RkdmUkZiYk9TNWxwM1JwVksyMWVGRkYzTUNNRWxO?=
+ =?iso-2022-jp?B?bzJFbk42T0Urbll2THAzRE54V1BCMG9kL1FrdG1UMGFleTBDY1V5TnBh?=
+ =?iso-2022-jp?B?b21SeU9mMDc2bURBdXdZa1dSSTRQSFdjV3RHMDhTZzZKZitHMjZDV1Nr?=
+ =?iso-2022-jp?B?aWxkSTg0bEJ5cTYwVmV1L3Rrc2pqY1JWWkZDcWxnZEVHbDd3U1hmS1lo?=
+ =?iso-2022-jp?B?MHc2akZVdW5mekpLdzFlNllZTjRiQVBWZTd3VHBMVVMrWnk2czBxRUli?=
+ =?iso-2022-jp?B?MHQ1VGtCMGd1bWNEOHh6MXgvdTA0c0RnZWRuMG5ZTy9hVUFpS3krTXd3?=
+ =?iso-2022-jp?B?dzVUeXV0WUJ2Q3dVREZMRE9vN0VoODArVTlnSy9Xemt6OUNabUJDbTg4?=
+ =?iso-2022-jp?B?T3lwTFBHMTdPeFVuMUg1MUlYazdCSkoyOUtQSmk1NVJidzVjR3Y0b2E3?=
+ =?iso-2022-jp?B?R25HU1FrTUFFWlVpelF0MUtBbkpFbW1MVmhXN2J4dlZ3TnVSb3JBQWpo?=
+ =?iso-2022-jp?B?YWcvbG9LZDRoSVdlQlQ0eXlkOFBlQ2MrWUo4Q2lkRWNtaFltNzJJUFNP?=
+ =?iso-2022-jp?B?WlFZbkVjVGR1NGF5cUR4bFJKTGF5OTlyQnRyWGZHVDQya0pSQk9MLzBX?=
+ =?iso-2022-jp?B?T0FJcXIxNklTNlp1OFMxTUZGRUtPSVIxay9xejcxM2taRTdOdUtRK2Rk?=
+ =?iso-2022-jp?B?c0M4RFZYSC9pbThPRVpwUjZoL2Z3NlVacTlMa2wwNEJtY1JnZVdPZWJF?=
+ =?iso-2022-jp?B?d2l3Y2F2Rzg5Vm9TUEkvNmJYamIwM04yVzgzTVVhL0kzSWtjRnlDN0lh?=
+ =?iso-2022-jp?B?OW5rcDdJK2xwSXR1djBPVHdwTGwreHowd1M4QXI5ZStPeFljdk1HWWxp?=
+ =?iso-2022-jp?B?RFdhc1hlMU9CYk1lWDM2eFJZNm5tRmx6enkzaldiMkdwWFZja3lpTytk?=
+ =?iso-2022-jp?B?QUpOanRpdC91WWJYZDUyTXJaUmFLaUZnZHc3UE93amNSbUFrQ3ZobERP?=
+ =?iso-2022-jp?B?UFd5MVJvek5pRmhBNmhFb0xOWG4rWm5wT1g5OVBuc1VtM3pUUTNNSlFp?=
+ =?iso-2022-jp?B?TFkvZXhZUmZOdDZITlhjd0ZRb1dCMjRmY25TRWtyTFVtWUJBNmNpRi9P?=
+ =?iso-2022-jp?B?THRlQUJ5dm15WFprV0FoSElpb3N4d1FoVTVjeFJwM0JZb0xLR2h5bGVy?=
+ =?iso-2022-jp?B?MXFWTkEvbXUxWFQ1VTRyRElVaTJjM3VWV3B3b3UyeXZnS21kS0lUQXdx?=
+ =?iso-2022-jp?B?VUZNSzB1U0RvSnBRd3FPbHJGaFg4dGtTUjdBVWlMMzNxU2ZKbXBGeitF?=
+ =?iso-2022-jp?B?ZFhORnh1VHprUnE5WWM0am0vVlJ0THRBcjM1N0VFNUNxR0szRXNjY0ZB?=
+ =?iso-2022-jp?B?PT0=?=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GVXPR10MB5837.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005)(38070700009);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB6103.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005)(38070700009);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?zE62b3j4vAZDDhUU8nszJV1MxBdeHMXWuZom00lb+0GQuQWx6B0iNW9340jK?=
- =?us-ascii?Q?Qa5xIXdmHnEwB9toiRnJaGf0wW72H5yL/GZk95upvQ4Qmrjb/hU4FGOwuInP?=
- =?us-ascii?Q?AQwwob6kra6CqXxOijGd7dUZgMzneHxgd+JSx29C3CTvJpMzN4IK1p87eAmk?=
- =?us-ascii?Q?aJaGz+yf5TJtv/TJ9RIj3drXxCZJHp3Q19e8lmkVNTPTZGmU1739yZXxtSIn?=
- =?us-ascii?Q?8dWR39q3K9L9WKc0qZEBnnqvPeRlc9UD7VWVCnepDgCHHPY5sw+bOtR2RsU0?=
- =?us-ascii?Q?5d8mLOSDtu2bBT7kLAyUdvWlXYy2M/rtgUd4diuor1sVa1kIp03WMJio+ATJ?=
- =?us-ascii?Q?AbNMPv9CKfEF971KYw7l783nLjV46l/HW4uH3POJmqaTvgmqeKQamvHvmhrf?=
- =?us-ascii?Q?flz9C41Fk4OflntOLP5n3GmPnvY5SUisFmKLIeJpoKyB33UxF9vYxqJLN+Zx?=
- =?us-ascii?Q?cib0uL4MvucsGQv+98oCikJe3TM2fML65wiyaK81cM9g+6LUb+6AODNXy+KF?=
- =?us-ascii?Q?/NHM9mTTAkW+EH/733+NxsFC0rr9Yux/bkecAnp12GfYjQ08x+T0fc8YG3ve?=
- =?us-ascii?Q?t34gcCsX7MzJBrD1Nj2VUEQLaoM9aL1cnP+lOxrYDD/48N8TNlIAnT6rIvzt?=
- =?us-ascii?Q?cSc3PxNfxbfp6IUIeqq4UbI4C3CNdEV2hNxIuLW2c0sqfPM57QJ95gdJ78Kg?=
- =?us-ascii?Q?AeF++3P02LXUtBxrpwXSbAl22rJws90AtG77WYjqVuPm7YFNsqkF3Ty7b5oB?=
- =?us-ascii?Q?mfXaK/onDcYAr9+Li1UtkpC2zpEeRT5TJ4Jsku69ksqMq3WFIME/qgRGz8/g?=
- =?us-ascii?Q?wA1B7Qqd8lUehcDmGaKdm8sheP9WcZUtSOpe8Z5gU5ZidVZuTIZljlCorwrY?=
- =?us-ascii?Q?X3sXWvdkSdNf9BT4BQbDb3MWEghOE03DHh12e+LHJdLbEGRsDwO3soYd1JqD?=
- =?us-ascii?Q?PSwXTb2BksmIPp9Ywr676bkQkKFgr3G/bajUb9+4xSXPucrPJOpleQFU3aYG?=
- =?us-ascii?Q?tDObsJ1904pshJlNn7ZfooCXZ8JeXBxXrcOeCcK2xApxVboMTLJDTyx5cslg?=
- =?us-ascii?Q?O35pXG39k9RmYU6OVq1lwf7BkwWHAIg+Y5M+o65uKy9D7fOe9Az4KwCaZK+u?=
- =?us-ascii?Q?My3MEAttJZr1hchsez2YiXezIgJYvdudVmgVbeBTMV+Sjx/3fFYkqAfd8py9?=
- =?us-ascii?Q?8/q3UwMT7U8Cg7RW6lXW166b/POdkwQG3sfHav902IyadBitOWMdZN4v0f4v?=
- =?us-ascii?Q?DUvdy7GuYZZes/wg6tqeI2b6Vp6GFQ0ZGdJZbPahxx77q1BX0sQdv+NHE+S/?=
- =?us-ascii?Q?hjoqMkcTBPC8O2nJrJoiFxVzEcK7uptJIxq20C+Tc4k2TbVzZam96lJ9oyXe?=
- =?us-ascii?Q?7qGyHB7qYUB70LCpeDY5dbSBnoVSMpw55dNU2uO8WBiUQI9CSzYqbwjoDjk5?=
- =?us-ascii?Q?Ys9uGbghB2PRl70r2xC0QR74TyYDL3OChdIh3lr55cQ5EgZPBihaMi1T00zc?=
- =?us-ascii?Q?Kv9DgE3zC9fm22AbAvFJwYZ9BXlMhFVaOUyccnCvUQzfnWBqMvm1Mra5aZHD?=
- =?us-ascii?Q?H/f4mCMXU97zSSKBJOWYeEgE3+aFqYQ61X6/5GP6xINquPezAQo4U0Ulgtux?=
- =?us-ascii?Q?sA=3D=3D?=
+ =?iso-2022-jp?B?bUkzd0k2Zkl6RXBNU3YzZTdMZmpiSkxOcGcyQ0xWMFQweEdWbGpvdFZF?=
+ =?iso-2022-jp?B?d2lqZUE2eWpsMlpLMEpQNXpqbjlZWllxUFZpd3pHdmpiMHRqZU1pRGJE?=
+ =?iso-2022-jp?B?bU1EZEtJamZ4WU9RaGgyZjd2N2d0d2JnSmdlcXRxNjBDMDBKK0hWUnNE?=
+ =?iso-2022-jp?B?SkExSTM4enVyNXlTZ01MejNhSUt0ekJ0cUJTMTQ4MDNWamZCZnZxS1JV?=
+ =?iso-2022-jp?B?UjlwR0FRQThxTWppL0h5M0FyYnA0REJMc2c0dTcxb0pnUHFmQXZpMVc0?=
+ =?iso-2022-jp?B?WTFGTmVFZnpwWGRjeWVjODlQL0diR3B1dWRMcVZCSTNueTNZMVRyS2N5?=
+ =?iso-2022-jp?B?WnZzTUZRS0JDNWlNU2g3dVdBNHpHbDZEZUdwUWZFbDZvanVNb2hMN0cv?=
+ =?iso-2022-jp?B?aWM1MDRyWTRxaW8vWjkxT2RrY1hWam9GQnhkcFdTQkRQTUFvRzFsblUr?=
+ =?iso-2022-jp?B?VnBGVkt0VFpIaDUxTjhOcmVTNnlRUUE5ZkNsOVpxQWlnZUN5ZVpTbzdD?=
+ =?iso-2022-jp?B?Zk52Y3kvckd4NnpsYVl1ZFd2T2dIVVU1ZXFBU2xRT0U1WE5PTmUwcm96?=
+ =?iso-2022-jp?B?MUhzSjdiOGdJaTF4bUhsaDdvR1ZlMTlBazFubmNsUzg2bGlOa0VmSUlD?=
+ =?iso-2022-jp?B?NDJscWZ0VXcxWUxHWDd0eGJ2NEhoYVRvWk8yZW1KUmNpMUQvRWd3L2d6?=
+ =?iso-2022-jp?B?dHdXQWdmbzRvNzUxL3lhdzlUczVCalRQZ1V3YXBCT2YzWS80VXhITk5m?=
+ =?iso-2022-jp?B?Z1IwdkY5N3BBMjV6c3QwckhGVkJoakxObHpzSjA3c1VBOTdGNFN6cnJk?=
+ =?iso-2022-jp?B?eGZTcG5QL2ZxNEhHUVREd1V4c0NudzdiTnpHWXFDTnpaQWU5RGRkNXBw?=
+ =?iso-2022-jp?B?bERieXhrSXJjL1o1bElNN1F1d1BnY24yWC91Y2l0eDRWdmNyYXhsMmp1?=
+ =?iso-2022-jp?B?aGsydWxOaERmOGMzZXkzSVZUQjhLSzd4YlNQR3VRZjN5dE8wOUJuV2RB?=
+ =?iso-2022-jp?B?QXlYbnUwUWlDM3A1OGpBSGdaM1RwUjdMSm9HL0pQTzVCdXlxSlUrTWZl?=
+ =?iso-2022-jp?B?aWREdzZDZHZEWTlKZFRvU1p4TzFMcHE0aFQyOFFsVmdlWHRTRG9KZXQ3?=
+ =?iso-2022-jp?B?NnQ0S2I3dlBEY251SWJkRzRMc3lRcllTMDVJeS8yU3NTWXkxb0lVeEoz?=
+ =?iso-2022-jp?B?ZXJwR0ZrSUxrL2Z5dTNWNjlpNXVmRzFpbGQvd3VjcWJ3WlpoVXI2Z0lh?=
+ =?iso-2022-jp?B?ajgwOEtjbFdYOHVVQVBLM2RqN3E2YitHbzkxYlVHT1ZwK1JQVGM3eFEv?=
+ =?iso-2022-jp?B?ZmQ3Rkl1bUQybnl4Lytjb01VMWNSQ3RzVUNVNWFhdHdZZTQ1ZmRuZVM0?=
+ =?iso-2022-jp?B?bHZ6cnhWVFdMUnNqQ0hIR0owbU9BYXNORnM1RWdSOEhlcDlvVFlvS0J5?=
+ =?iso-2022-jp?B?bkhLMFozQjcwaCtzSlBtbzJKWVkrNXFVa2lqSTdYNkNOc2VidmsxR0Rr?=
+ =?iso-2022-jp?B?T2k5Q2UzaTZvNEZzeFFlSzlVZFY0ODVDUXN4cWRyN3kxdnFJMWxNKys2?=
+ =?iso-2022-jp?B?bkVOVi82a1NEUXczWFdES0s4U0I0OGxzMkFVOWhGNWtsMy9CV2xWZTJm?=
+ =?iso-2022-jp?B?VVMyQy84dDRUWG55cGhpenQ5S0J6U0tGdEVWUGtwb2RLL0J2S2pqaGoy?=
+ =?iso-2022-jp?B?QVBsbUx1NFhmRkMyU0NxZkZmblk2TkFxQm9IeFRWaUFLY0xMbUNKT1Z1?=
+ =?iso-2022-jp?B?OWFibUU3WGR1UUh5cUJrMEhjN3RtZVFnclR0RU02emJSTW1IT3BURCto?=
+ =?iso-2022-jp?B?UkdNeExFNnVGNUpSTkc4eFhWMCtxbVdaWnZtajN1OWVweUYxRWZZNGpy?=
+ =?iso-2022-jp?B?dm4zd1dXTFR5cnhzUXVkRTB2dmc2MDJpbDNBMjRKbWJiNWVYRDVDN3gr?=
+ =?iso-2022-jp?B?WHVxUjhJdWQvaCtmNEdrSjMvY1BGTEs2c2tJMHhmeGdpSTg5elNldUI1?=
+ =?iso-2022-jp?B?SVBaZHhpZi83ZUxNbVBSbituNDNOeDRYbjRsVURGWmppUjFvWlpSNjY4?=
+ =?iso-2022-jp?B?QnFka2hmdGg0cG5tOVB5Q0UzZTNDT3RxZ2hTRVNwT0lXaGp2cnVkWVky?=
+ =?iso-2022-jp?B?UHF0a3BvNlYvcTRwQ3JEWjVQV0RKVzZLVWtPVTZmMFI5RlE3Yys4NGhW?=
+ =?iso-2022-jp?B?MXlVLytwWkh4bVZGZHFoZFRCNENNSXVET0dKZk9pR0I1bzh6WHRiQm8w?=
+ =?iso-2022-jp?B?eCs3WTkwZm1QTUVZVTZxczJZTmx3Vm1EeEVnK0Q0cExDaXNDdmMvb1Bo?=
+ =?iso-2022-jp?B?Rkl1UzBkZU9qbmpzNm9qcjFPY1lQdG8rS25VZDY5M0pETS9PWlU5aHha?=
+ =?iso-2022-jp?B?My8yOFZNN0VDWnVaWFFycnVEYitTNU9waXdaV29tTU1ZdzQrSzVYVFJm?=
+ =?iso-2022-jp?B?b1RoRFFnPT0=?=
 Content-Type: multipart/alternative;
-	boundary="_000_GVXPR10MB58375213D66CD4C30A60188888182GVXPR10MB5837EURP_"
+	boundary="_000_OS3PR01MB61037CD9DE8F85E63A9EC0DEC21F2OS3PR01MB6103jpnp_"
 MIME-Version: 1.0
-X-OriginatorOrg: siemens.com
+X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: GVXPR10MB5837.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5af205f8-a9cf-44da-b145-08dc6aa9cf39
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 May 2024 13:14:33.7944
+X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB6103.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21150572-7ba5-4e23-9495-08dc6b29ee30
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 May 2024 04:31:41.3680
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: /lvODvd3LApiY7JFXkUikcamx4FXve5omrdI3VrdQfJm/WL7LV05+YhOB4f3v61QNeGPloWaN6+yt58YAhdmz1fm7Bj5l5/Tm/QjRrm7PiI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB5560
+X-MS-Exchange-CrossTenant-userprincipalname: w+P9+qyfBh7r+GOoDy2DewE99z6TO0ebOIw9v8+I+FMITlspw8JZeJ1l5gcOL4KA1DSGI26/W83239tQo9yOTNH0hTzTNjIyuEbADLsCAtc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB10025
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 02 May 2024 13:14:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15808
+ <cip-dev@lists.cip-project.org>; Fri, 03 May 2024 04:31:56 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15810
 
---_000_GVXPR10MB58375213D66CD4C30A60188888182GVXPR10MB5837EURP_
-Content-Type: text/plain; charset="us-ascii"
+--_000_OS3PR01MB61037CD9DE8F85E63A9EC0DEC21F2OS3PR01MB6103jpnp_
+Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
 
-From edb4f62f1f11252bc82d34325130e072825d75ef Mon Sep 17 00:00:00 2001
-From: Benjamin Schilling <schilling.benjamin@siemens.com>
-Date: Wed, 10 Apr 2024 17:21:11 +0200
-Subject: [isar-cip-core] [PATCH] Add MCOM x86 target
+Hi Chris,
 
-This patch adds the MCOM x86 as another hardware target.
+I just wanted to clarify that the local_lava.sh which you can see in the co=
+nsole output section is exactly same as submit_jobs script I attached to th=
+e previous mail. Sorry for the naming confusion.
 
-Signed-off-by: Benjamin Schilling <schilling.benjamin@siemens.com>
----
-Kconfig                                    |  7 ++++++-
-conf/machine/mcom-x86.conf                 | 15 +++++++++++++++
-kas/board/mcom-x86.yml                     | 15 +++++++++++++++
-recipes-kernel/linux/cip-kernel-config.inc |  4 ++--
-wic/mcom-x86-efibootguard.wks.in           | 14 ++++++++++++++
-5 files changed, 52 insertions(+), 3 deletions(-)
-create mode 100644 conf/machine/mcom-x86.conf
-create mode 100644 kas/board/mcom-x86.yml
-create mode 100644 wic/mcom-x86-efibootguard.wks.in
+Thanks and regards,
+Sai Ashrith Sathujoda
 
-diff --git a/Kconfig b/Kconfig
-index 7c19640..89f7467 100644
---- a/Kconfig
-+++ b/Kconfig
-@@ -43,6 +43,10 @@ config TARGET_SIMATIC_IPC227E
-               bool "Siemens SIMATIC IPC227E"
-               select ARCH_AMD64
-+config TARGET_MCOM_X86
-+             bool "Siemens M-COM X86"
-+             select ARCH_AMD64
-+
-config TARGET_QEMU_ARM64
-               bool "QEMU ARM64 (aarch64)"
-               select ARCH_ARM64
-@@ -73,6 +77,7 @@ config KAS_INCLUDE_BOARD
-               string
-               default "kas/board/qemu-amd64.yml" if TARGET_QEMU_AMD64
-               default "kas/board/simatic-ipc227e.yml" if TARGET_SIMATIC_IP=
-C227E
-+             default "kas/board/mcom-x86.yml" if TARGET_MCOM_X86
-               default "kas/board/qemu-arm64.yml" if TARGET_QEMU_ARM64
-               default "kas/board/hihope-rzg2m.yml" if TARGET_HIHOPE_RZG2M
-               default "kas/board/qemu-arm.yml" if TARGET_QEMU_ARM
-@@ -190,7 +195,7 @@ if IMAGE_FLASH && !KERNEL_4_4 && !KERNEL_4_19
- config IMAGE_SWUPDATE
-               bool "SWUpdate support for root partition"
--              depends on TARGET_QEMU_AMD64 || TARGET_SIMATIC_IPC227E || TA=
-RGET_QEMU_ARM64 || TARGET_QEMU_ARM || TARGET_BBB || ( TARGET_QEMU_RISCV64 &=
-& KERNEL_6_1 ) || TARGET_HIHOPE_RZG2M
-+             depends on TARGET_QEMU_AMD64 || TARGET_SIMATIC_IPC227E || TAR=
-GET_MCOM_X86 ||TARGET_QEMU_ARM64 || TARGET_QEMU_ARM || TARGET_BBB || ( TARG=
-ET_QEMU_RISCV64 && KERNEL_6_1 ) || TARGET_HIHOPE_RZG2M
- config IMAGE_SECURE_BOOT
-               bool "Secure boot support"
-diff --git a/conf/machine/mcom-x86.conf b/conf/machine/mcom-x86.conf
-new file mode 100644
-index 0000000..21bcd1e
---- /dev/null
-+++ b/conf/machine/mcom-x86.conf
-@@ -0,0 +1,15 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens Mobility GmbH, 2024
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+DISTRO_ARCH =3D "amd64"
-+
-+IMAGE_FSTYPES ?=3D "wic"
-+WKS_FILE ?=3D "x86_64-generic.wks"
-+IMAGER_INSTALL:wic +=3D "${GRUB_BOOTLOADER_INSTALL}"
-+USE_CIP_KERNEL_CONFIG =3D "1"
-+KERNEL_DEFCONFIG =3D "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/x86/si=
-emens_mcom_x86_defconfig"
-diff --git a/kas/board/mcom-x86.yml b/kas/board/mcom-x86.yml
-new file mode 100644
-index 0000000..28c4674
---- /dev/null
-+++ b/kas/board/mcom-x86.yml
-@@ -0,0 +1,15 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens Mobility GmbH, 2024
-+#
-+# Authors:
-+#  Benjamin Schilling <schilling.benjamin@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+header:
-+  version: 14
-+
-+machine: mcom-x86
-diff --git a/recipes-kernel/linux/cip-kernel-config.inc b/recipes-kernel/li=
-nux/cip-kernel-config.inc
-index 40c378b..7acdc0d 100644
---- a/recipes-kernel/linux/cip-kernel-config.inc
-+++ b/recipes-kernel/linux/cip-kernel-config.inc
-@@ -10,8 +10,8 @@
-#
- SRC_URI:append =3D " ${@ \
--    'git://gitlab.com/cip-project/cip-kernel/cip-kernel-config.git;protoco=
-l=3Dhttps;branch=3Dmaster;destsuffix=3Dcip-kernel-config;name=3Dcip-kernel-=
-config' \
-+    'git://gitlab.com/benjamin-schilling/cip-kernel-config.git;protocol=3D=
-https;branch=3Dbs/mcom;destsuffix=3Dcip-kernel-config;name=3Dcip-kernel-con=
-fig' \
-     if d.getVar('USE_CIP_KERNEL_CONFIG') =3D=3D '1' else '' \
-     }"
--SRCREV_cip-kernel-config ?=3D "ee86aca8abbe7a41536bcb53142fbf0f57b1c9b7"
-+SRCREV_cip-kernel-config ?=3D "50f7039f6c1486be2f1e1b2ca0ddc300895e44cd"
-diff --git a/wic/mcom-x86-efibootguard.wks.in b/wic/mcom-x86-efibootguard.w=
-ks.in
-new file mode 100644
-index 0000000..6382ff7
---- /dev/null
-+++ b/wic/mcom-x86-efibootguard.wks.in
-@@ -0,0 +1,14 @@
-+# short-description: x86 with EFI Boot Guard and SWUpdate
-+# long-description: Disk image for x86 machines with EFI Boot Guard and SW=
-Update
-+
-+include ebg-sysparts.inc
-+
-+part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.squashfs" -=
--align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0F=
-C63DAF-8483-4772-8E79-3D69D8477DE4
-+part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_U=
-UID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4
-+
-+# home and var are extra partitions
-+
-+part /home --source rootfs --change-directory=3Dhome --fstype=3Dext4 --lab=
-el home --align 1024  --size 1G --extra-space=3D100M --fsuuid 1f55d66a-40d8=
--11ee-be56-0242ac120002
-+part /var --fstype=3Dext4 --label var --align 1024 --fixed-size 2G --fsuui=
-d 96be3374-4258-11ee-be56-0242ac120002
-+
-+bootloader --ptable gpt --append=3D"console=3Dtty0 console=3DttyS0,115200 =
-rootwait earlyprintk watchdog.handle_boot_enabled=3D0 iTCO_wdt.nowayout=3D1=
- "
---
-2.39.2
+From: ashrith sai(=1B$B#T#S#I#P=1B(B)
+Sent: Friday, May 3, 2024 12:53 AM
+To: Chris Paterson <Chris.Paterson2@renesas.com>
+Cc: Sietze.vanBuuren@de.bosch.com; cip-dev@lists.cip-project.org
+Subject: Query regarding SQUAD watch job submission
+
+Hi Chris,
+
+Hope you are doing well.
+
+We are planning to post CIP Core LAVA testing results on CIP SQUAD instance=
+. So I am trying to setup a local SQUAD instance and integrate it with my l=
+ocal LAVA Lab so that I can understand the traceability between changes req=
+uired in https://gitlab.com/cip-playground/cip-core-ci/-/blob/master/lava.s=
+h?ref_type=3Dheads and results displayed on the dashboard.
+
+I followed the below mentioned steps:
 
 
---_000_GVXPR10MB58375213D66CD4C30A60188888182GVXPR10MB5837EURP_
-Content-Type: text/html; charset="us-ascii"
+  1.  I started the server locally after following the steps mentioned in t=
+his README file squad/doc/quickstart.rst at master * Linaro/squad * GitHub<=
+https://github.com/Linaro/squad/blob/master/doc/quickstart.rst> .
+  2.  After the server started, I was able to access web UI at localhost:80=
+00.
+  3.  I followed the steps mentioned in https://github.com/Linaro/squad/blo=
+b/master/doc/lava_usecase.rst#creating-a-backend-for-a-lava-instance to  cr=
+eate backend for my LAVA instance.
+  4.  I created a fresh token in API -> Authentication token in my local LA=
+VA Lab and I added that token while creating the SQUAD backend.
+  5.  I created a SQUAD token based on my SQUAD username and I referenced t=
+hat token as value to Authorization token: while using SQUAD watch job API.
+  6.  I added my LAVA username in the username section while creating the b=
+ackend.
+  7.  I created a sample group in the administration page, and I selected t=
+hat group slug while creating a project in administration page.
+
+After I gathered all these details, I modified submit_jobs script to test w=
+hether I can attach a SQUAD watch job to a just-submitted LAVA job based on=
+ it=1B$B!G=1B(Bs job ID.
+
+After I submit my job to LAVA, I am immediately calling the watch job API t=
+o attach a watch job to the submitted LAVA job. But I am getting the below =
+mentioned error message.
+
+$ ./local_lava.sh
+/tmp/tmp.FJGGBcxzNn/IEC_amd64.yml is a valid definition
+There are currently 1 "qemu" devices online.
+Submitting /tmp/tmp.FJGGBcxzNn/IEC_amd64.yml to LAVA master...
+Job submitted successfully as #634.
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Cur=
+rent
+                                 Dload  Upload   Total   Spent    Left  Spe=
+ed
+100   315  100    56  100   259   9333  43166 --:--:-- --:--:-- --:--:-- 52=
+500
+Something went wrong with SQUAD watch job submission. SQUAD returned:
+{"detail": "User needs permission to submit test jobs."}
+SQUAD URL: http://127.0.0.1:8000/api/submitjob/tsip_squad/cip-core-testing/=
+2.0/local_env
+SQUAD Backend: lavabackend.org
+LAVA Job Id: 634
+
+I am attaching my script to this email which can make it easier for you to =
+point my mistakes. No issues regarding the exposed token I am using in the =
+script since this is a local setup done for my understanding. Please have a=
+ look at lines 17-22 and 107-137 which contain changes made to call SQUAD w=
+atch job API.
+
+I will also attach screenshots for group, project and backend page in my SQ=
+UAD admin section which might be helpful to point out if I passed wrong dat=
+a to SQUAD watch job API call.
+
+Please have a look at this data and kindly provide your suggestions which c=
+an help me fix this problem.
+
+Thanks and regards,
+Sai Ashrith Sathujoda (T S I P)
+
+
+
+
+
+
+
+--_000_OS3PR01MB61037CD9DE8F85E63A9EC0DEC21F2OS3PR01MB6103jpnp_
+Content-Type: text/html; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
 
 <html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
@@ -294,8 +257,8 @@ osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
 xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
 //www.w3.org/TR/REC-html40">
 <head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
->
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
 <meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
 <style><!--
 /* Font Definitions */
@@ -305,21 +268,102 @@ xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
 @font-face
 	{font-family:Calibri;
 	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:Aptos;}
+@font-face
+	{font-family:"MS PGothic";
+	panose-1:2 11 6 0 7 2 5 8 2 4;}
+@font-face
+	{font-family:"\@MS PGothic";}
 /* Style Definitions */
 p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{margin:0cm;
+	{margin:0in;
 	font-size:11.0pt;
-	font-family:"Calibri",sans-serif;
+	font-family:"Aptos",sans-serif;
 	mso-ligatures:standardcontextual;
-	mso-fareast-language:EN-US;}
+	mso-fareast-language:JA;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:#467886;
+	text-decoration:underline;}
+p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph
+	{mso-style-priority:34;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:.5in;
+	font-size:11.0pt;
+	font-family:"Aptos",sans-serif;
+	mso-ligatures:standardcontextual;
+	mso-fareast-language:JA;}
+span.EmailStyle20
+	{mso-style-type:personal-reply;
+	font-family:"Aptos",sans-serif;
+	color:windowtext;}
 .MsoChpDefault
 	{mso-style-type:export-only;
-	mso-fareast-language:EN-US;}
+	font-size:10.0pt;
+	mso-ligatures:none;}
 @page WordSection1
-	{size:612.0pt 792.0pt;
-	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
+	{size:8.5in 11.0in;
+	margin:1.0in 1.0in 1.0in 1.0in;}
 div.WordSection1
 	{page:WordSection1;}
+/* List Definitions */
+@list l0
+	{mso-list-id:1814715072;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1592213718 67698703 67698713 67698715 67698703 6769=
+8713 67698715 67698703 67698713 67698715;}
+@list l0:level1
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level2
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level3
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l0:level4
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level5
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level6
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l0:level7
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level8
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level9
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l1
+	{mso-list-id:1912887948;
+	mso-list-template-ids:311692384;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
 --></style><!--[if gte mso 9]><xml>
 <o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
 </xml><![endif]--><!--[if gte mso 9]><xml>
@@ -327,280 +371,166 @@ div.WordSection1
 <o:idmap v:ext=3D"edit" data=3D"1" />
 </o:shapelayout></xml><![endif]-->
 </head>
-<body lang=3D"DE" link=3D"#0563C1" vlink=3D"#954F72" style=3D"word-wrap:bre=
-ak-word">
+<body lang=3D"EN-US" link=3D"#467886" vlink=3D"#96607D" style=3D"word-wrap:=
+break-word">
 <div class=3D"WordSection1">
-<p class=3D"MsoNormal"><span lang=3D"EN-US">From edb4f62f1f11252bc82d343251=
-30e072825d75ef Mon Sep 17 00:00:00 2001<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">From: Benjamin Schilling &lt;sc=
-hilling.benjamin@siemens.com&gt;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">Date: Wed, 10 Apr 2024 17:21:11=
- +0200<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">Subject: [isar-cip-core] [PATCH=
-] Add MCOM x86 target<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">This patch adds the MCOM x86 as=
- another hardware target.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">Signed-off-by: Benjamin Schilli=
-ng &lt;schilling.benjamin@siemens.com&gt;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">---<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">Kconfig&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp; 7 ++++++-<o:p></o:p></span></p=
->
-<p class=3D"MsoNormal"><span lang=3D"EN-US">conf/machine/mcom-x86.conf&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp; | 15 +++++++++++++++<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">kas/board/mcom-x86.yml&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 15 +++++++++++++++<o:p></o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">recipes-kernel/linux/cip-kernel=
--config.inc |&nbsp; 4 ++--<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">wic/mcom-x86-efibootguard.wks.i=
-n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 14 ++++++++=
-++++++<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">5 files changed, 52 insertions(=
-+), 3 deletions(-)<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">create mode 100644 conf/machine=
-/mcom-x86.conf<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">create mode 100644 kas/board/mc=
-om-x86.yml<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">create mode 100644 wic/mcom-x86=
--efibootguard.wks.in<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">diff --git a/Kconfig b/Kconfig<=
-o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">index 7c19640..89f7467 100644<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">--- a/Kconfig<o:p></o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+++ b/Kconfig<o:p></o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">@@ -43,6 +43,10 @@ config TARGE=
-T_SIMATIC_IPC227E<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bool &quot;Siemens SI=
-MATIC IPC227E&quot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; select ARCH_AMD64<o:p=
-></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+config TARGET_MCOM_X86<o:p></o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bool &quot;Siemens M-COM X86&quo=
-t;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; select ARCH_AMD64<o:p></o:p></sp=
-an></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">config TARGET_QEMU_ARM64<o:p></=
-o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bool &quot;QEMU ARM64=
- (aarch64)&quot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; select ARCH_ARM64<o:p=
-></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">@@ -73,6 +77,7 @@ config KAS_IN=
-CLUDE_BOARD<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; string<o:p></o:p></sp=
-an></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; default &quot;kas/boa=
-rd/qemu-amd64.yml&quot; if TARGET_QEMU_AMD64<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; default &quot;kas/boa=
-rd/simatic-ipc227e.yml&quot; if TARGET_SIMATIC_IPC227E<o:p></o:p></span></p=
->
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; default &quot;kas/board/mcom-x86=
-.yml&quot; if TARGET_MCOM_X86<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; default &quot;kas/boa=
-rd/qemu-arm64.yml&quot; if TARGET_QEMU_ARM64<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; default &quot;kas/boa=
-rd/hihope-rzg2m.yml&quot; if TARGET_HIHOPE_RZG2M<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; default &quot;kas/boa=
-rd/qemu-arm.yml&quot; if TARGET_QEMU_ARM<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">@@ -190,7 +195,7 @@ if IMAGE_FL=
-ASH &amp;&amp; !KERNEL_4_4 &amp;&amp; !KERNEL_4_19<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;config IMAGE_SWUPDATE<o:p=
-></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bool &quot;SWUpdate s=
-upport for root partition&quot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; depends on TARGET_QEMU_AMD=
-64 || TARGET_SIMATIC_IPC227E || TARGET_QEMU_ARM64 || TARGET_QEMU_ARM || TAR=
-GET_BBB || ( TARGET_QEMU_RISCV64 &amp;&amp; KERNEL_6_1 ) || TARGET_HIHOPE_R=
-ZG2M<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; depends on TARGET_QEMU_AMD64 || =
-TARGET_SIMATIC_IPC227E || TARGET_MCOM_X86 ||TARGET_QEMU_ARM64 || TARGET_QEM=
-U_ARM || TARGET_BBB || ( TARGET_QEMU_RISCV64 &amp;&amp; KERNEL_6_1 ) || TAR=
-GET_HIHOPE_RZG2M<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;config IMAGE_SECURE_BOOT<=
-o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bool &quot;Secure boo=
-t support&quot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">diff --git a/conf/machine/mcom-=
-x86.conf b/conf/machine/mcom-x86.conf<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">new file mode 100644<o:p></o:p>=
-</span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">index 0000000..21bcd1e<o:p></o:=
-p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">--- /dev/null<o:p></o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+++ b/conf/machine/mcom-x86.con=
-f<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">@@ -0,0 +1,15 @@<o:p></o:p></sp=
-an></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# CIP Core, generic profile<o:=
-p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# Copyright (c) Siemens Mobili=
-ty GmbH, 2024<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# SPDX-License-Identifier: MIT=
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hi Chris,=
 <o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+DISTRO_ARCH =3D &quot;amd64&qu=
-ot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+IMAGE_FSTYPES ?=3D &quot;wic&q=
-uot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+WKS_FILE ?=3D &quot;x86_64-gen=
-eric.wks&quot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+IMAGER_INSTALL:wic +=3D &quot;=
-${GRUB_BOOTLOADER_INSTALL}&quot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+USE_CIP_KERNEL_CONFIG =3D &quo=
-t;1&quot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+KERNEL_DEFCONFIG =3D &quot;cip=
--kernel-config/${KERNEL_DEFCONFIG_VERSION}/x86/siemens_mcom_x86_defconfig&q=
-uot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">diff --git a/kas/board/mcom-x86=
-.yml b/kas/board/mcom-x86.yml<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">new file mode 100644<o:p></o:p>=
-</span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">index 0000000..28c4674<o:p></o:=
-p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">--- /dev/null<o:p></o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+++ b/kas/board/mcom-x86.yml<o:=
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">I just wa=
+nted to clarify that the local_lava.sh which you can see in the console out=
+put section is exactly same as submit_jobs script I attached to the previou=
+s mail. Sorry for the naming confusion.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Thanks an=
+d regards,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Sai Ashri=
+th Sathujoda<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
+0in 0in">
+<p class=3D"MsoNormal"><b><span style=3D"font-family:&quot;Calibri&quot;,sa=
+ns-serif;mso-ligatures:none">From:</span></b><span style=3D"font-family:&qu=
+ot;Calibri&quot;,sans-serif;mso-ligatures:none"> ashrith sai(</span><span l=
+ang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligat=
+ures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"font-family:&quot;Calibr=
+i&quot;,sans-serif;mso-ligatures:none">)
+<br>
+<b>Sent:</b> Friday, May 3, 2024 12:53 AM<br>
+<b>To:</b> Chris Paterson &lt;Chris.Paterson2@renesas.com&gt;<br>
+<b>Cc:</b> Sietze.vanBuuren@de.bosch.com; cip-dev@lists.cip-project.org<br>
+<b>Subject:</b> Query regarding SQUAD watch job submission<o:p></o:p></span=
+></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Hi Chris,<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Hope you are doing well.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">We are planning to post CIP Core LAVA testing result=
+s on CIP SQUAD instance. So I am trying to setup a local SQUAD instance and=
+ integrate it with my local LAVA Lab so that I can understand the traceabil=
+ity between changes required in
+<a href=3D"https://gitlab.com/cip-playground/cip-core-ci/-/blob/master/lava=
+.sh?ref_type=3Dheads">
+https://gitlab.com/cip-playground/cip-core-ci/-/blob/master/lava.sh?ref_typ=
+e=3Dheads</a> and results displayed on the dashboard.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">I followed the below mentioned steps:<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<ol style=3D"margin-top:0in" start=3D"1" type=3D"1">
+<li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l0 level1 =
+lfo3">I started the server locally after following the steps mentioned in t=
+his README file
+<a href=3D"https://github.com/Linaro/squad/blob/master/doc/quickstart.rst">=
+squad/doc/quickstart.rst at master &middot; Linaro/squad &middot; GitHub</a=
+> .<o:p></o:p></li><li class=3D"MsoListParagraph" style=3D"margin-left:0in;=
+mso-list:l0 level1 lfo3">After the server started, I was able to access web=
+ UI at localhost:8000.<o:p></o:p></li><li class=3D"MsoListParagraph" style=
+=3D"margin-left:0in;mso-list:l0 level1 lfo3">I followed the steps mentioned=
+ in
+<a href=3D"https://github.com/Linaro/squad/blob/master/doc/lava_usecase.rst=
+#creating-a-backend-for-a-lava-instance">
+https://github.com/Linaro/squad/blob/master/doc/lava_usecase.rst#creating-a=
+-backend-for-a-lava-instance</a> to&nbsp; create backend for my LAVA instan=
+ce.<o:p></o:p></li><li class=3D"MsoListParagraph" style=3D"margin-left:0in;=
+mso-list:l0 level1 lfo3">I created a fresh token in API -&gt; Authenticatio=
+n token in my local LAVA Lab and I added that token while creating the SQUA=
+D backend.<o:p></o:p></li><li class=3D"MsoListParagraph" style=3D"margin-le=
+ft:0in;mso-list:l0 level1 lfo3">I created a SQUAD token based on my SQUAD u=
+sername and I referenced that token as value to
+<b>Authorization token: </b>while using SQUAD watch job API.<o:p></o:p></li=
+><li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l0 level1=
+ lfo3">I added my LAVA username in the username section while creating the =
+backend.<o:p></o:p></li><li class=3D"MsoListParagraph" style=3D"margin-left=
+:0in;mso-list:l0 level1 lfo3">I created a sample group in the administratio=
+n page, and I selected that group slug while creating a project in administ=
+ration page.<o:p></o:p></li></ol>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">After I gathered all these details, I modified submi=
+t_jobs script to test whether I can attach a SQUAD watch job to a just-subm=
+itted LAVA job based on it=1B$B!G=1B(Bs job ID.
+<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">After I submit my job to LAVA, I am immediately call=
+ing the watch job API to attach a watch job to the submitted LAVA job. But =
+I am getting the below mentioned error message.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">$ ./local_lava.sh<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">/tmp/tmp.FJGGBcxzNn/IEC_amd64.yml is a valid definition<o:=
 p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">@@ -0,0 +1,15 @@<o:p></o:p></sp=
-an></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# CIP Core, generic profile<o:=
-p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# Copyright (c) Siemens Mobili=
-ty GmbH, 2024<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# Authors:<o:p></o:p></span></=
-p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#&nbsp; Benjamin Schilling &lt=
-;schilling.benjamin@siemens.com&gt;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# SPDX-License-Identifier: MIT=
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+header:<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+&nbsp; version: 14<o:p></o:p><=
-/span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+machine: mcom-x86<o:p></o:p></=
-span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">diff --git a/recipes-kernel/lin=
-ux/cip-kernel-config.inc b/recipes-kernel/linux/cip-kernel-config.inc<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">index 40c378b..7acdc0d 100644<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">--- a/recipes-kernel/linux/cip-=
-kernel-config.inc<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+++ b/recipes-kernel/linux/cip-=
-kernel-config.inc<o:p></o:p></span></p>
-<p class=3D"MsoNormal">@@ -10,8 +10,8 @@<o:p></o:p></p>
-<p class=3D"MsoNormal">#<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p></o:p></p>
-<p class=3D"MsoNormal">&nbsp;SRC_URI:append =3D &quot; ${@ \<o:p></o:p></p>
-<p class=3D"MsoNormal">-&nbsp;&nbsp;&nbsp; 'git://gitlab.com/cip-project/ci=
-p-kernel/cip-kernel-config.git;protocol=3Dhttps;branch=3Dmaster;destsuffix=
-=3Dcip-kernel-config;name=3Dcip-kernel-config' \<o:p></o:p></p>
-<p class=3D"MsoNormal">+&nbsp;&nbsp;&nbsp; 'git://gitlab.com/benjamin-schil=
-ling/cip-kernel-config.git;protocol=3Dhttps;branch=3Dbs/mcom;destsuffix=3Dc=
-ip-kernel-config;name=3Dcip-kernel-config' \<o:p></o:p></p>
-<p class=3D"MsoNormal">&nbsp;&nbsp;&nbsp;&nbsp; <span lang=3D"EN-US">if d.g=
-etVar('USE_CIP_KERNEL_CONFIG') =3D=3D '1' else '' \<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp; }&quot=
-;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">-SRCREV_cip-kernel-config ?=3D =
-&quot;ee86aca8abbe7a41536bcb53142fbf0f57b1c9b7&quot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+SRCREV_cip-kernel-config ?=3D =
-&quot;50f7039f6c1486be2f1e1b2ca0ddc300895e44cd&quot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">diff --git a/wic/mcom-x86-efibo=
-otguard.wks.in b/wic/mcom-x86-efibootguard.wks.in<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">new file mode 100644<o:p></o:p>=
-</span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">index 0000000..6382ff7<o:p></o:=
-p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">--- /dev/null<o:p></o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+++ b/wic/mcom-x86-efibootguard=
-.wks.in<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">@@ -0,0 +1,14 @@<o:p></o:p></sp=
-an></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# short-description: x86 with =
-EFI Boot Guard and SWUpdate<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# long-description: Disk image=
- for x86 machines with EFI Boot Guard and SWUpdate<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+include ebg-sysparts.inc<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+part --source rawcopy --source=
-params &quot;file=3D${IMAGE_FULLNAME}.squashfs&quot; --align 1024 --fixed-s=
-ize 1G --uuid &quot;${ABROOTFS_PART_UUID_A}&quot; --part-type 0FC63DAF-8483=
--4772-8E79-3D69D8477DE4<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+part --source empty --align 10=
-24 --fixed-size 1G --uuid &quot;${ABROOTFS_PART_UUID_B}&quot; --part-type 0=
-FC63DAF-8483-4772-8E79-3D69D8477DE4<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# home and var are extra parti=
-tions<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+part /home --source rootfs --c=
-hange-directory=3Dhome --fstype=3Dext4 --label home --align 1024&nbsp; --si=
-ze 1G --extra-space=3D100M --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002<o:=
-p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+part /var --fstype=3Dext4 --la=
-bel var --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242a=
-c120002<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+bootloader --ptable gpt --appe=
-nd=3D&quot;console=3Dtty0 console=3DttyS0,115200 rootwait earlyprintk watch=
-dog.handle_boot_enabled=3D0 iTCO_wdt.nowayout=3D1 &quot;<o:p></o:p></span><=
-/p>
-<p class=3D"MsoNormal">-- <o:p></o:p></p>
-<p class=3D"MsoNormal">2.39.2<o:p></o:p></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">There are currently 1 &quot;qemu&quot; devices online.<o:p=
+></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">Submitting /tmp/tmp.FJGGBcxzNn/IEC_amd64.yml to LAVA maste=
+r...<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">Job submitted successfully as #634.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">&nbsp; % Total&nbsp;&nbsp;&nbsp; % Received % Xferd&nbsp; =
+Average Speed&nbsp;&nbsp; Time&nbsp;&nbsp;&nbsp; Time&nbsp;&nbsp;&nbsp;&nbs=
+p; Time&nbsp; Current<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Dload&nbsp; Upl=
+oad&nbsp;&nbsp; Total&nbsp;&nbsp; Spent&nbsp;&nbsp;&nbsp; Left&nbsp; Speed<=
+o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">100&nbsp;&nbsp; 315&nbsp; 100&nbsp;&nbsp;&nbsp; 56&nbsp; 1=
+00&nbsp;&nbsp; 259&nbsp;&nbsp; 9333&nbsp; 43166 --:--:-- --:--:-- --:--:-- =
+52500<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">Something went wrong with SQUAD watch job submission. SQUA=
+D returned:<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">{&quot;detail&quot;: &quot;User needs permission to submit=
+ test jobs.&quot;}<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">SQUAD URL:
+<a href=3D"http://127.0.0.1:8000/api/submitjob/tsip_squad/cip-core-testing/=
+2.0/local_env">
+http://127.0.0.1:8000/api/submitjob/tsip_squad/cip-core-testing/2.0/local_e=
+nv</a><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">SQUAD Backend: lavabackend.org<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">LAVA Job Id: 634</span><o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">I am attaching my script to this email which can mak=
+e it easier for you to point my mistakes. No issues regarding the exposed t=
+oken I am using in the script since this is a local setup done for my under=
+standing. Please have a look at lines
+<b>17-22 </b>and <b>107-137 </b>which contain changes made to call SQUAD wa=
+tch job API.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">I will also attach screenshots for group, project an=
+d backend page in my SQUAD admin section which might be helpful to point ou=
+t if I passed wrong data to SQUAD watch job API call.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Please have a look at this data and kindly provide y=
+our suggestions which can help me fix this problem.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Thanks and regards,<o:p></o:p></p>
+<p class=3D"MsoNormal">Sai Ashrith Sathujoda (T S I P)<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
 <p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
 </div>
 </body>
 </html>
 
---_000_GVXPR10MB58375213D66CD4C30A60188888182GVXPR10MB5837EURP_--
+--_000_OS3PR01MB61037CD9DE8F85E63A9EC0DEC21F2OS3PR01MB6103jpnp_--
+
 
