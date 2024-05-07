@@ -2,96 +2,147 @@ Return-Path: <adithya.balakumar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC26C10F1A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE107C25B4F
 	for <webhook@archiver.kernel.org>; Tue,  7 May 2024 09:14:24 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
- by mx.groups.io with SMTP id smtpd.web11.7174.1715073257328623619
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
+ by mx.groups.io with SMTP id smtpd.web10.7201.1715073258288174807
  for <cip-dev@lists.cip-project.org>;
- Tue, 07 May 2024 02:14:17 -0700
+ Tue, 07 May 2024 02:14:18 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.158, mailfrom: adithya.balakumar@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 4479EDVa3577374; Tue, 7 May 2024 18:14:14 +0900
-X-Iguazu-Qid: 2rWh7Tpb9BTKqKnA8q
-X-Iguazu-QSIG: v=2; s=0; t=1715073253; q=2rWh7Tpb9BTKqKnA8q; m=diom70J/i1oMs3l12uKy3tCHTdyjBgFrBFErE/e2BJw=
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.134, mailfrom: adithya.balakumar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 4479EGBg3257108; Tue, 7 May 2024 18:14:16 +0900
+X-Iguazu-Qid: 2yAbrn6vFUkJaO52I7
+X-Iguazu-QSIG: v=2; s=0; t=1715073256; q=2yAbrn6vFUkJaO52I7; m=tff3F6bz9c+mkrr+9G1ymU3T/4ZWpvNyTghkIkUYOso=
 Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1122) id 4479ECcA3015402
+	by relay.securemx.jp (mx-mr1802) id 4479EFxH1182938
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 7 May 2024 18:14:13 +0900
+	Tue, 7 May 2024 18:14:16 +0900
 From: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
 To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
 Cc: quirin.gylstorff@siemens.com, felix.moessbauer@siemens.com,
         shivanand.kunijadar@toshiba-tsip.com, sai.sathujoda@toshiba-tsip.com,
         dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
-Subject: [isar-cip-core][PATCH v6 0/4] Integrate Delta Update with rdiff_image and delta handler
-Date: Tue,  7 May 2024 14:44:28 +0530
+Subject: [isar-cip-core][PATCH v6 2/4] swupdate.bbclass: Generate swu for delta updates
+Date: Tue,  7 May 2024 14:44:30 +0530
 X-TSB-HOP2: ON
-Message-Id: <20240507091432.895626-1-Adithya.Balakumar@toshiba-tsip.com>
+Message-Id: <20240507091432.895626-3-Adithya.Balakumar@toshiba-tsip.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240507091432.895626-1-Adithya.Balakumar@toshiba-tsip.com>
+References: <20240507091432.895626-1-Adithya.Balakumar@toshiba-tsip.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 07 May 2024 09:14:10.0983 (UTC) FILETIME=[EC215B70:01DAA05E]
+X-OriginalArrivalTime: 07 May 2024 09:14:11.0140 (UTC) FILETIME=[EC395040:01DAA05E]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 07 May 2024 09:14:24 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15851
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15852
 
-These series of patches enable the support for delta update for the root file system with swupdate's
-rdiff_image and delta handler(zchunk).
+This allows the creation of a swu file for delta update when a delta
+update is chosen through the DELTA_UPDATE_TYPE variable
 
-A couple notes about the implementation:
-- In this patchset, Delta update is only supported for the root file system.
-- The newly added delta-update.bbclass handles the creation of the delta update artifacts.
-- The update handler type i.e rdiff_image or delta handler is set in the variable "DELTA_UPDATE_TYPE"
-in the delta-update.yml file along with some variables required for each handler.
-- The creation of delta artifact for the rdiff_image handler requires a reference image (against which
-the delta is computed). Currently the reference artifact file (.squashfs/.verity) is passed to the
-build system by placing the artifact in the path "${TOPDIR}/previous-image" and setting the name of the
-artifact in the variable DELTA_RDIFF_REF_IMAGE in the delta-update.yml file.
-- zchunk based delta update is only supported for sid onwards.
+Signed-off-by: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
+---
+ classes/swupdate.bbclass                    | 32 +++++++++++++++++++--
+ recipes-core/images/swu/sw-description.tmpl |  5 ++--
+ 2 files changed, 32 insertions(+), 5 deletions(-)
 
-Changes in v6:
-- Minor refactoring and improve error messages in delta-update.bbclass  
-
-Changes in v5:
-- Introduce delta-update.yml file for delta update related configs.
-- Set rdiff as the default for delta update type.
-- Add delta update option in Kconfig menu.
-
-Changes in v4:
-- Create only 1 .swu file, either delta or complete swu.
-- By default complete update swu is created.
-
-Changes in v3:
-- Rebase to current next branch (61e998e1e0541e2713c05fcbf21df39fbc882a0a)
-- Set "${TOPDIR}/previous-image" as the path for the previous image artifact for rdiff update.
-- README updates to verify delta update.
-
-Changes in v2:
-- Removed zchunk support for bookworm (due to use of backports). Currently zchunk based update only supported in Sid.
-- Removed delta-update.yml file. Related variables have default values and can be set in manually swupdate.yml file.
-- Using .squashfs file (.verity file in the case of Secure boot) for rdiff delta creation instead of .wic file.
-- rdiff is set as default for delta update type, the build system looks for the v1 artifact in a default path (image-v1/<artifact_name>).
-- Created a separate template file for sw-description of delta update.
-- Renamed delta_update.bbclass to delta-update.bbclass.
-
-Adithya Balakumar (4):
-  Add Delta update support with rdiff_image and delta handler
-  swupdate.bbclass: Generate swu for delta updates
-  doc/README.swupdate.md: Update steps to test Delta software Update
-  Kconfig: Add delta update option
-
- Kconfig                                     | 16 ++++
- classes/delta-update.bbclass                | 99 +++++++++++++++++++++
- classes/swupdate.bbclass                    | 32 ++++++-
- conf/layer.conf                             |  2 +-
- doc/README.swupdate.md                      | 59 ++++++++++++
- kas/opt/delta-update.yml                    | 20 +++++
- recipes-core/images/swu/sw-description.tmpl |  5 +-
- 7 files changed, 227 insertions(+), 6 deletions(-)
- create mode 100644 classes/delta-update.bbclass
- create mode 100644 kas/opt/delta-update.yml
-
+diff --git a/classes/swupdate.bbclass b/classes/swupdate.bbclass
+index 1a7cd4d..e91238d 100644
+--- a/classes/swupdate.bbclass
++++ b/classes/swupdate.bbclass
+@@ -26,17 +26,26 @@ SWU_EBG_UPDATE ?= ""
+ SWU_EFI_BOOT_DEVICE ?= "/dev/disk/by-uuid/4321-DCBA"
+ SWU_BOOTLOADER ??= "ebg"
+ SWU_DESCRIPITION_FILE_BOOTLOADER ??= "${SWU_DESCRIPTION_FILE}-${SWU_BOOTLOADER}"
++SWU_DELTA_UPDATE_ARTIFACT = "${SWU_ROOTFS_NAME}.delta_update${@get_swu_compression_type(d)}"
++SWU_ROOTFS_ARTIFACT_NAME = "${@ '${SWU_DELTA_UPDATE_ARTIFACT}' \
++    if d.getVar('DELTA_UPDATE_TYPE') == "rdiff" or d.getVar('DELTA_UPDATE_TYPE') == "zchunk" \
++    else '${SWU_ROOTFS_PARTITION_NAME}'}"
+ 
+ SWU_IMAGE_FILE ?= "${IMAGE_FULLNAME}"
+ SWU_DESCRIPTION_FILE ?= "sw-description"
+-SWU_ADDITIONAL_FILES ?= "linux.efi ${SWU_ROOTFS_PARTITION_NAME}"
++SWU_ADDITIONAL_FILES ?= "linux.efi ${SWU_ROOTFS_ARTIFACT_NAME}"
+ SWU_SIGNED ??= ""
+ SWU_SIGNATURE_EXT ?= "sig"
+ SWU_SIGNATURE_TYPE ?= "cms"
+ 
+ SWU_BUILDCHROOT_IMAGE_FILE ?= "${@os.path.basename(d.getVar('SWU_IMAGE_FILE'))}"
+ 
+-IMAGE_TYPEDEP:swu = "${SWU_ROOTFS_TYPE}${@get_swu_compression_type(d)}"
++SWU_UPDATE_ARTIFACT_TYPE = "${SWU_ROOTFS_TYPE}${@get_swu_compression_type(d)}"
++SWU_DELTA_UPDATE_ARTIFACT_TYPE = "delta_update${@get_swu_compression_type(d)}"
++IMAGE_TYPEDEP:swu = "${@ '${SWU_DELTA_UPDATE_ARTIFACT_TYPE}' \
++    if d.getVar('DELTA_UPDATE_TYPE') == "rdiff" or d.getVar('DELTA_UPDATE_TYPE') == "zchunk" \
++    else '${SWU_UPDATE_ARTIFACT_TYPE}' }"
++
+ IMAGER_BUILD_DEPS:swu += "${@'swupdate-certificates-key' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
+ IMAGER_INSTALL:swu += "cpio ${@'openssl swupdate-certificates-key' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
+ IMAGE_INSTALL += "${@'swupdate-certificates' if bb.utils.to_boolean(d.getVar('SWU_SIGNED')) else ''}"
+@@ -47,7 +56,7 @@ IMAGE_SRC_URI:swu += "file://${SWU_DESCRIPITION_FILE_BOOTLOADER}.tmpl"
+ IMAGE_TEMPLATE_FILES:swu = "${SWU_DESCRIPTION_FILE}.tmpl"
+ IMAGE_TEMPLATE_FILES:swu += "${SWU_DESCRIPITION_FILE_BOOTLOADER}.tmpl"
+ IMAGE_TEMPLATE_VARS:swu = " \
+-    SWU_ROOTFS_PARTITION_NAME \
++    SWU_ROOTFS_ARTIFACT_NAME \
+     TARGET_IMAGE_UUID \
+     ABROOTFS_PART_UUID_A \
+     ABROOTFS_PART_UUID_B \
+@@ -58,6 +67,7 @@ IMAGE_TEMPLATE_VARS:swu = " \
+     SWU_FILE_NODES \
+     SWU_BOOTLOADER_FILE_NODE \
+     SWU_SCRIPTS_NODE \
++    SWU_DELTA_UPDATE_PROPERTIES \
+     "
+ 
+ # TARGET_IMAGE_UUID needs to be generated before completing the template
+@@ -148,6 +158,22 @@ python add_scripts_node() {
+     d.appendVar('SWU_SCRIPTS_NODE', swu_scripts_node)
+ }
+ 
++SWU_EXTEND_SW_DESCRIPTION += "add_swu_delta_update_properties"
++python add_swu_delta_update_properties() {
++    delta_type = d.getVar('DELTA_UPDATE_TYPE')
++    swu_delta_update_properties = ""
++    if delta_type == "rdiff":
++        swu_delta_update_properties =  'chainhandler = "rdiff_image";'
++    elif delta_type == "zchunk":
++        zck_url = d.getVar('DELTA_ZCK_URL')
++        swu_delta_update_properties = f"""
++                        chainhandler = "delta";
++                        url = "{zck_url}";
++                        zckloglevel = "error";
++        """
++    d.setVar('SWU_DELTA_UPDATE_PROPERTIES', swu_delta_update_properties)
++}
++
+ # convert between swupdate compressor name and imagetype extension
+ def get_swu_compression_type(d):
+     swu_ct = d.getVar('SWU_COMPRESSION_TYPE')
+diff --git a/recipes-core/images/swu/sw-description.tmpl b/recipes-core/images/swu/sw-description.tmpl
+index 88cb475..eeb8fc2 100644
+--- a/recipes-core/images/swu/sw-description.tmpl
++++ b/recipes-core/images/swu/sw-description.tmpl
+@@ -14,15 +14,16 @@ software =
+     name = "${SWU_NAME}";
+     ${SWU_HW_COMPAT_NODE}
+     images: ({
+-            filename = "${SWU_ROOTFS_PARTITION_NAME}";
++            filename = "${SWU_ROOTFS_ARTIFACT_NAME}";
+             device = "C:BOOT0:linux.efi->${ABROOTFS_PART_UUID_A},C:BOOT1:linux.efi->${ABROOTFS_PART_UUID_B}";
+             type = "roundrobin";
+             ${SWU_COMPRESSION_NODE}
+             properties: {
+                         subtype = "image";
+                         configfilecheck = "/etc/os-release@not_match@IMAGE_UUID=${TARGET_IMAGE_UUID}";
++                        ${SWU_DELTA_UPDATE_PROPERTIES}
+             };
+-            sha256 = "${SWU_ROOTFS_PARTITION_NAME}-sha256";
++            sha256 = "${SWU_ROOTFS_ARTIFACT_NAME}-sha256";
+     });
+     files: ({
+             filename = "linux.efi";
 -- 
 2.39.2
 
