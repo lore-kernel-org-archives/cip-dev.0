@@ -1,116 +1,157 @@
-Return-Path: <uli@fpond.eu>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1366C04FFE
-	for <webhook@archiver.kernel.org>; Wed,  8 May 2024 13:22:02 +0000 (UTC)
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.216])
- by mx.groups.io with SMTP id smtpd.web10.12233.1715174512522091234
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17863C04FFE
+	for <webhook@archiver.kernel.org>; Wed,  8 May 2024 13:55:53 +0000 (UTC)
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
+ by mx.groups.io with SMTP id smtpd.web10.13077.1715176542963998834
  for <cip-dev@lists.cip-project.org>;
- Wed, 08 May 2024 06:21:52 -0700
+ Wed, 08 May 2024 06:55:44 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=ZB+8giex;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=QGKz6/1X;
- spf=none, err=permanent DNS error (domain: fpond.eu, ip: 81.169.146.216, mailfrom: uli@fpond.eu)
-ARC-Seal: i=1; a=rsa-sha256; t=1715174488; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=Iu0p+ADXEx0PkXkwX7SlftPHBVsWRafbh98Oi8IP6YPEpmnO1+eGNo9HeKbzmgfevg
-    kjpYWbHhkkAtURU5OyVJGPLQ1oc53Nqi5YQ327Q7Iop2jcCPqjnWyZ2AfFuUImeqZA0k
-    +nziR347i/Szpt58RfgOcAjVknyRQz13B+gt9Mdv7clYakayrQYmmcP5tNuhiNAy+xfi
-    y04n7VruqoZmM43x9qysTzFwkTayJ+juw5daxg9i/ubFhbJkT1TOybxUafOVOJPL9lsl
-    sOfZrkAoi29rOuHnbTux8YV2HvfIS5o5uYHYzSKGyUGFtLdsIOT77gn8TZa+X3g6CJzc
-    yoTg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1715174488;
-    s=strato-dkim-0002; d=strato.com;
-    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
-    bh=hnAxxWipdKufjTqoej5UXPslfhBFW6uWVeKMi+VOqDo=;
-    b=plOAcECZmhkOtYnIUN0oYPYkDXzkqHvUQj1zG++uvQrl1+p65Y/308BkfV/V2qG6uG
-    yCenC28bHdVTFCeNaMgcKf+fRQoQedmhiQ7Z9flJ8ukuEwWJo1sajo/6ZQqxDgmk5vHj
-    YpMuZyrcnymohjaLzBn0H3BAzMaikt3sSrDt1ancPL8hkac3MWsL4914rd/unSREQDGc
-    xyvLcWqwCyyTq2uVMXZgQs3g5JUWiEnI7HleNIcdM1PXoW1CsBiTmqUxomf+QAMUKDB2
-    bJxdDUKF9CgKSv1oXanrpsCpLM8+pFHVNjSkWwAZew32lpTu32LRmmD1q2LHU2cGFdWz
-    +FcA==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1715174487;
-    s=strato-dkim-0002; d=fpond.eu;
-    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
-    bh=hnAxxWipdKufjTqoej5UXPslfhBFW6uWVeKMi+VOqDo=;
-    b=ZB+8giexTV8DomcQk3zDexxUphRVOVHF5i5RBKfXv4k9XCMPih0qlAOmSuBJNSzxiK
-    oCc2H055xOh5HZlPQ3iU2t4BC6sApxzdfGIj51SCwxVogtRENSLAPNIEM52dE6FN62xv
-    +aCch5Qlnmw6yoUjBWTggvKf9DkrOiePZjYYSbAvN2qxes6kAhuFB+XszLoxsCE3t6nz
-    BPrd3sD4YNi8I8kfs1DYrBqdfQFotKrP42NMoeaRNpelK4eL0U5aQRODSsFC1+1zR0mf
-    2Rblr4bTyWmBx81dvPDsAGsw8xMVpg3l4UN9j7sJRxWnnvtGRgsghmcQuHRKqtCPHmJJ
-    cWww==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1715174487;
-    s=strato-dkim-0003; d=fpond.eu;
-    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
-    bh=hnAxxWipdKufjTqoej5UXPslfhBFW6uWVeKMi+VOqDo=;
-    b=QGKz6/1XXkHBkRXOhemO6c2/h7cEbkMa8OsZdlBvESc4HQbVZgg5ByUcFEZT0Ii8oj
-    HiIMC6ypRqgybDUWwUDg==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzstnjV5GU9c7oKNYMuRPGHqNLlPQ1COXxkLaOKhogcq0A3ukKl5MCt"
-Received: from ox-live-app204.back.ox.d0m.de
-    by smtp-ox.front (RZmta 50.5.0 AUTH)
-    with ESMTPSA id z08c3e048DLPuS3
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Wed, 8 May 2024 15:21:25 +0200 (CEST)
-Date: Wed, 8 May 2024 15:21:25 +0200 (CEST)
-From: Ulrich Hecht <uli@fpond.eu>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"pavel@denx.de" <pavel@denx.de>,
-	"jan.kiszka@siemens.com" <jan.kiszka@siemens.com>,
-	"masami.ichikawa@cybertrust.co.jp" <masami.ichikawa@cybertrust.co.jp>,
-	"chris.paterson2@renesas.com" <chris.paterson2@renesas.com>,
-	"nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>
-Message-ID: <468289932.3431212.1715174485792@webmail.strato.com>
-Subject: [ANNOUNCE] Release v4.4.302-cip87
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=pWW7neBV;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-51332-202405081355395e1a3c1c7d9573d26f-uyhbho@rts-flowmailer.siemens.com)
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 202405081355395e1a3c1c7d9573d26f
+        for <cip-dev@lists.cip-project.org>;
+        Wed, 08 May 2024 15:55:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ bh=Bl/p6V1l1FPgrzyIl5tWN0kVM9keOlKlQOrFilBKL38=;
+ b=pWW7neBVXC1Rksi9JDvWVGUmnElxcbgAOvy2tVFEX/TTzQKsBJI8aXaYB/idTEmeyLgc4k
+ a64MkqUQsFD82Z9es+D+NiGIMShoU1CxgCbqzfq0W8P1AjkZoex9tFcUuNWQpucFb/YRMPJo
+ xP4YghoqY66MVD+V9+RpFDnoFiQfY=;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: jan.kiszka@siemens.com,
+	cip-dev@lists.cip-project.org
+Subject: [cip-dev][isar-cip-core][PATCH v3] wic/plugins/efibootguard*: Take --size and --fixed-size into account
+Date: Wed,  8 May 2024 15:55:15 +0200
+Message-ID: <20240508135539.2780114-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.6-Rev61
-X-Originating-Client: open-xchange-appsuite
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 08 May 2024 13:22:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15860
+ <cip-dev@lists.cip-project.org>; Wed, 08 May 2024 13:55:53 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15861
 
-Hi,
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-the CIP kernel team has released Linux kernel v4.4.302-cip87. The linux-4.4.y-cip tree's base version has been updated to v4.4-st52. The trees are up-to-date with kernel 4.19.313-rc1.
+This fixes the issue that wic arguments --size and --fixed-size
+are not correctly interpreted.
 
-You can get this release via the git tree or as a tarball from https://mirrors.edge.kernel.org/pub/linux/kernel/projects/cip/4.4/
+This fixes issue #104.
 
-  v4.4.302-cip87:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-4.4.y-cip
-    commit hash:
-      ebf863bf45b2a7c261d41713bc751839878a577d
-    Fixed CVEs:
-      CVE-2022-48627: vt: fix memory overlapping when deleting chars in the buffer
-      CVE-2023-52620: netfilter: nf_tables: disallow timeout for anonymous sets
-      CVE-2024-24857: Integer overflow bug was found in bluetooth device driver
-      CVE-2024-24858: Race condition bug in bluetooth driver causes DoS
-      CVE-2024-24859: Race condition bug in sniff_{min,max}_interval_set() in bluetooth driver causes DoS
-      CVE-2024-26920: tracing/trigger: Fix to return error if failed to alloc snapshot
-      CVE-2024-26934: USB: core: Fix deadlock in usb_deauthorize_interface()
-      CVE-2024-26981: nilfs2: fix OOB in nilfs_set_de_type
-      CVE-2024-26993: fs: sysfs: Fix reference leak in sysfs_break_active_protection()
-      CVE-2024-26994: speakup: Avoid crash on very long word
-      CVE-2024-26999: serial/pmac_zilog: Remove flawed mitigation for rx irq flood
-      CVE-2024-27000: serial: mxs-auart: add spinlock around changing cts state
-      CVE-2024-27001: comedi: vmk80xx: fix incomplete endpoint checking
-      CVE-2024-27008: drm: nv04: Fix out of bounds access
-      CVE-2024-27013: tun: limit printing rate when illegal packet received by tun dev
-      CVE-2024-27020: netfilter: nf_tables: Fix potential data-race in __nft_expr_type_get()
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+Changes v3:
+ - remove unnecesary setting of FAT-Size(-F) and sector size(-S 512)
+   the sector size default is 512 and as FAT size should be caluclate
+   according to the partition size.
+Changes v2:
+ - replace size calculation with part.prepare_rootfs_msdos
 
-Best regards,
-Ulrich Hecht
+ .../wic/plugins/source/efibootguard-boot.py   | 34 ++++---------------
+ .../wic/plugins/source/efibootguard-efi.py    | 30 ++--------------
+ 2 files changed, 9 insertions(+), 55 deletions(-)
+
+diff --git a/scripts/lib/wic/plugins/source/efibootguard-boot.py b/scripts/lib/wic/plugins/source/efibootguard-boot.py
+index 4e3aefb..2b06fd1 100644
+--- a/scripts/lib/wic/plugins/source/efibootguard-boot.py
++++ b/scripts/lib/wic/plugins/source/efibootguard-boot.py
+@@ -136,40 +136,20 @@ class EfibootguardBootPlugin(SourcePlugin):
+                 msger.error("file %s not found in directory %s",
+                             boot_file, kernel_dir)
+                 exit(1)
+-        cls._create_img(part_rootfs_dir, part, cr_workdir)
++        cls._create_img(part_rootfs_dir, part, cr_workdir,
++                        native_sysroot, oe_builddir)
+ 
+     @classmethod
+-    def _create_img(cls, part_rootfs_dir, part, cr_workdir):
+-            # Write label as utf-16le to EFILABEL file
++    def _create_img(cls, part_rootfs_dir, part, cr_workdir,
++                    native_sysroot, oe_builddir):
++        # Write label as utf-16le to EFILABEL file
+         with open("%s/EFILABEL" % part_rootfs_dir, 'wb') as filedescriptor:
+             filedescriptor.write(part.label.upper().encode("utf-16le"))
+ 
+-        du_cmd = "du --apparent-size -ks %s" % part_rootfs_dir
+-        blocks = int(exec_cmd(du_cmd).split()[0])
+-
+-        extra_blocks = part.get_extra_block_count(blocks)
+-        if extra_blocks < BOOTDD_EXTRA_SPACE:
+-            extra_blocks = BOOTDD_EXTRA_SPACE
+-
+-        blocks += extra_blocks
+-        blocks = blocks + (16 - (blocks % 16))
+-
+-        msger.debug("Added %d extra blocks to %s to get to %d total blocks",
+-                    extra_blocks, part.mountpoint, blocks)
+-
+-        # dosfs image, created by mkdosfs
+         bootimg = "%s/%s.%s.img" % (cr_workdir, part.label, part.lineno)
+ 
+-        dosfs_cmd = "mkdosfs -F 16 -S 512 -n %s -C %s %d -i %s" % \
+-            (part.label.upper(), bootimg, blocks, part.fsuuid)
+-        exec_cmd(dosfs_cmd)
+-
+-        mcopy_cmd = "mcopy -v -i %s -s %s/* ::/" % (bootimg, part_rootfs_dir)
+-        exec_cmd(mcopy_cmd, True)
+-
+-        chmod_cmd = "chmod 644 %s" % bootimg
+-        exec_cmd(chmod_cmd)
+-
++        part.prepare_rootfs_msdos(bootimg, cr_workdir, oe_builddir,
++                                  part_rootfs_dir, native_sysroot, None)
+         du_cmd = "du -Lbks %s" % bootimg
+         bootimg_size = int(exec_cmd(du_cmd).split()[0])
+ 
+diff --git a/scripts/lib/wic/plugins/source/efibootguard-efi.py b/scripts/lib/wic/plugins/source/efibootguard-efi.py
+index e82e990..48f7523 100644
+--- a/scripts/lib/wic/plugins/source/efibootguard-efi.py
++++ b/scripts/lib/wic/plugins/source/efibootguard-efi.py
+@@ -100,35 +100,9 @@ class EfibootguardEFIPlugin(SourcePlugin):
+                                                name)
+         exec_cmd(cp_to_deploy_cmd, True)
+ 
+-        du_cmd = "du --apparent-size -ks %s" % part_rootfs_dir
+-        blocks = int(exec_cmd(du_cmd).split()[0])
+-
+-        extra_blocks = part.get_extra_block_count(blocks)
+-        if extra_blocks < BOOTDD_EXTRA_SPACE:
+-            extra_blocks = BOOTDD_EXTRA_SPACE
+-        blocks += extra_blocks
+-        blocks = blocks + (16 - (blocks % 16))
+-
+-        msger.debug("Added %d extra blocks to %s to get to %d total blocks",
+-                    extra_blocks, part.mountpoint, blocks)
+-
+-        # dosfs image, created by mkdosfs
+         efi_part_image = "%s/%s.%s.img" % (cr_workdir, part.label, part.lineno)
+-
+-        dosfs_cmd = "mkdosfs -S 512 -n %s -C %s %d -i %s" % \
+-            (part.label.upper(), efi_part_image, blocks, part.fsuuid)
+-        exec_cmd(dosfs_cmd)
+-
+-        # mtools for buster have problems with resursive mcopy.
+-        # Therefore, create the target dir via mmd first.
+-        mmd_cmd = "mmd -i %s ::/EFI ::/EFI/BOOT" % (efi_part_image)
+-        exec_cmd(mmd_cmd, True)
+-        mcopy_cmd = "mcopy -v -i %s -s %s/EFI/BOOT/* ::/EFI/BOOT" % \
+-            (efi_part_image, part_rootfs_dir)
+-        exec_cmd(mcopy_cmd, True)
+-
+-        chmod_cmd = "chmod 644 %s" % efi_part_image
+-        exec_cmd(chmod_cmd)
++        part.prepare_rootfs_msdos(efi_part_image, cr_workdir, oe_builddir,
++                                  part_rootfs_dir, native_sysroot, None)
+ 
+         du_cmd = "du -Lbks %s" % efi_part_image
+         efi_part_image_size = int(exec_cmd(du_cmd).split()[0])
+-- 
+2.43.0
+
 
