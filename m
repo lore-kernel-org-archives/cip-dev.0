@@ -1,307 +1,677 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <sai.sathujoda@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81DC9C04FFE
-	for <webhook@archiver.kernel.org>; Tue, 14 May 2024 08:28:30 +0000 (UTC)
-Received: from EUR01-VE1-obe.outbound.protection.outlook.com (EUR01-VE1-obe.outbound.protection.outlook.com [40.107.14.59])
- by mx.groups.io with SMTP id smtpd.web11.10263.1715675303795349206
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5FA1C25B75
+	for <webhook@archiver.kernel.org>; Tue, 14 May 2024 12:27:13 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
+ by mx.groups.io with SMTP id smtpd.web11.13992.1715689623638632644
  for <cip-dev@lists.cip-project.org>;
- Tue, 14 May 2024 01:28:24 -0700
+ Tue, 14 May 2024 05:27:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=bYGID+r6;
- spf=pass (domain: siemens.com, ip: 40.107.14.59, mailfrom: quirin.gylstorff@siemens.com)
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.152, mailfrom: sai.sathujoda@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 44ECQuvY1235851; Tue, 14 May 2024 21:26:56 +0900
+X-Iguazu-Qid: 2yAb3nxBqMiJtfHa2F
+X-Iguazu-QSIG: v=2; s=0; t=1715689616; q=2yAb3nxBqMiJtfHa2F; m=U6C5Paf0UyF83pg5cxMxVekKa/HRsnwNwAKgIg/1RK4=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1801) id 44ECQsUF2898657
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 14 May 2024 21:26:55 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GqlqZRj4vKpK3WTJgGl1WdsjYWZwFHBk2nc1CQezDK5CgH6WyDz80dbTLR+78APeaymyZmJfXEndPK8MaEazpa120zJRAEPI8xjv3n/6eeqLaUaQmPNk3IzScbSd3ox+KL71WdUZYahEw+c11i3dkQK2XyIEY/VJyepPgSrb0OJqFTpfHgwo0nR2RoCdSjJQh56OV+51EsSda28xRDow1wuPQDwHz5rCbwpowdMRzBsWn5ZapCBfpR7EYfl4q+GImIg9slwdM/N08/3FYuxyL2I7TJ5kGazi3ddQouLPfrQYhJ8BL+jAPFTSGL9TdvMv4lnfZHDgB4+AJCX8tJZ0NQ==
+ b=Rd0cDdyPps8IIAlYgFGlOD8MLn9C6Cnzux81n3vW40K9SP90AZ3CMKzzZMe9IHOfSwrg615I8jxR+p4CyVFMfEw37UAZInDD3EKII6qk6vOGt4awyKRprTTUYUv1sI6sgykHqYKpGhE8dvmcBjHKIlcdaRctghQjhYTr/nefu2q8Rd1Idyw7iImBctdiPeKleZBLbsO0sIBC1O/3ZaUj74gXkB/Mkk5FQRyMn1G9hK75g0evkE8DaO4v92Nv/HdHB6XgRrTNGlFgU+afYcgh83a/GIlWMOgQ6X2RYny0Gz3IMvBc5nEqUxmZCIYit7iJ+sWKbYhXAf7QTTdXgzZZ0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=h7Qfy3A5F94Ll6F8SW7Kj1EZDoq9H1dieJNDsKDTDts=;
- b=m/KmBqZMjch5EJAj5pPVjwAZF70gSCnR8gvdtYaSxvz31qB8/xLB4YDoaTcTtG8k8cLpfL0Q1utDRjq+sQVvIeBooZ42pRhJJd6h/BBMP0YM2nzHKfzq9DYxp1Yp1kx6ebl5HEX/Z5Y2usZZxLHT1wLF9l4pBWNkBt9LueNi6Bgn+dmALcKl/nip6/92bw8ngNYWdSY9IfYsMwGbCZcOaDlO2GE2HQLLDiBkhzO49qAoWyg4VuCD90O7pJR6qt5H8Hmm14tV0ZGQMVaSWG+tFMnrveeiboW3iEjCBAF46LPh8e6UTe1zPt2q14aiatYx18X74K2ihSEz0MHt3jZg+A==
+ bh=CWMgTJnW7G/kxiZtguKymm8xygiqDMSrgrxapddE+qE=;
+ b=VbGWhfO5GUi0cvlca6esPHQtuBWYNhx8d6kocHwZ8anBA6YFNknm/3gtMAt3Ob0LWiiYiW2tO+dGVcQZTQLXb7uT6WVBxeuHhlQrxUqQ8Rmd5KP1ODWffB9IFcPYI3r17KjMpJo1Q5FqobcVkcONekUK2rNry+hkuAxNv2gcpnRsig6nq8MCTJ/wAZYq5JzGRm8PLqkiHFK8NTRfTMQ/FjllSxrsGHaf7L0QXwXYm4/HmS5qQoq/OzdmI22SWYrMhobQwf/C5Wr44QNvU1rtaOSU63xREsGgUbBhOFoUplsAVLTSzjOYQYghy01HKQAY9W5ULL7+ZDIECjVsmxoVaQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h7Qfy3A5F94Ll6F8SW7Kj1EZDoq9H1dieJNDsKDTDts=;
- b=bYGID+r6R+B5jAMT6kop2fwJDkRP3rMnKJrnDp5K8DTtOlG5PAxLiuSDFt72eVbK0P2E6lXFLFaR2QqMV1GnyYfQBVJjcaf0CKtIFSV6opWDKtRq3QHAteE4A54HZiv4hWrZSu6Tij5Af+PXxhtc4hSkJEuLXldgVaaK9B9F8YOU9ohY2zctydWUZ6obHRnT640h/AtKqc8YnJLAKoX/4figK1iGtg8p4uunx8ewQ40KkmrOr8rcpXuKjl+1zSsHpVQ+H+UKz6OTsomHB263noBzps/7DYQzsZ25uy7/xXUKqv6Hmcfc0IUKJzKwWArOgr19M+2+gBs6JE5bIpmfAg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1f9::22)
- by PA2PR10MB8912.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:41b::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Tue, 14 May
- 2024 08:28:20 +0000
-Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::3087:c116:dfed:1ca2]) by AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::3087:c116:dfed:1ca2%5]) with mapi id 15.20.7544.052; Tue, 14 May 2024
- 08:28:20 +0000
-Message-ID: <31ac4186-abf1-4e9c-ae71-63de8bd99013@siemens.com>
-Date: Tue, 14 May 2024 10:28:18 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev] Generic x86 kernel configration
-To: Shivanand.Kunijadar@toshiba-tsip.com, cip-dev@lists.cip-project.org,
- jan.kiszka@siemens.com, Chris.Paterson2@renesas.com,
- schilling.benjamin@siemens.com, dinesh.kumar@toshiba-tsip.com,
- iwamatsu@nigauri.org
-References: <04b43c19-f26d-49c9-a12c-71cf3ba22e63@siemens.com>
- <TYWPR01MB1186261BB1B3D572F59B287E5B7E52@TYWPR01MB11862.jpnprd01.prod.outlook.com>
- <078e13fd-59cc-4955-be45-9ad5906eaf29@siemens.com>
- <AM9PR10MB4085D362B7DC095E040E755F81E52@AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM>
- <TY3PR01MB11075F2400D6FB592B37DE2A5C7E62@TY3PR01MB11075.jpnprd01.prod.outlook.com>
-Content-Language: en-US, de-DE
-From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
-Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
- 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
- XSdq0hnpafc1V+voPJq3LMxUvLNrwg==
-In-Reply-To: <TY3PR01MB11075F2400D6FB592B37DE2A5C7E62@TY3PR01MB11075.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: FR0P281CA0104.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a9::15) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:1f9::22)
+ smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
+ header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
+From: <Sai.Sathujoda@toshiba-tsip.com>
+To: <Chris.Paterson2@renesas.com>
+CC: <Sietze.vanBuuren@de.bosch.com>, <cip-dev@lists.cip-project.org>,
+        <dinesh.kumar@toshiba-tsip.com>, <kazuhiro3.hayashi@toshiba.co.jp>
+Subject: RE: Query regarding SQUAD watch job submission
+Thread-Topic: Query regarding SQUAD watch job submission
+Thread-Index: Adqciz/XU7pqriezQs2bbbOHPjbwrwFpC16QAPKDO0A=
+Date: Tue, 14 May 2024 12:26:52 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <OS3PR01MB6103E3F045D7C595C11FA58AC2E32@OS3PR01MB6103.jpnprd01.prod.outlook.com>
+References: 
+ <OS0PR01MB6100BB4B8D14EC6E9527AD68C2182@OS0PR01MB6100.jpnprd01.prod.outlook.com>
+ <OS3PR01MB61038D732173B9974298157EC2E62@OS3PR01MB6103.jpnprd01.prod.outlook.com>
+In-Reply-To: 
+ <OS3PR01MB61038D732173B9974298157EC2E62@OS3PR01MB6103.jpnprd01.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS3PR01MB6103:EE_|TYCPR01MB8109:EE_
+x-ms-office365-filtering-correlation-id: 7d31e612-7ecb-41a9-6383-08dc741122c6
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|376005|1800799015|366007|38070700009;
+x-microsoft-antispam-message-info: 
+ =?iso-2022-jp?B?Yld4ZWVMVkxNV1hqay9NN1Z6RllCeWRKOVpDYW00c1E3cEVOV1U0MGlC?=
+ =?iso-2022-jp?B?b3RDMDh2ZkJiTXJQUkZyTDAxSmVyQXZlY091UHFnTkxMb3hmbXpWaUFl?=
+ =?iso-2022-jp?B?TDNqa3FoQmpPNVlxMGhqTUs2WG5HU2RxcjJRaS9neDUxd1lmRHJqbDI4?=
+ =?iso-2022-jp?B?bWJQeWpoRlZRNklXVXNqcENjcjVrRnU4dmtzR212T1gwelJrNVg2Qk5L?=
+ =?iso-2022-jp?B?MlFkbVNEVEpHQkRmYTlOcDRYenV3ejdRYW1lWEdYK0hlODF5Y3ZINnVO?=
+ =?iso-2022-jp?B?Q2s2bzg0ZnZSek40ZDRDbHFESTNuYjhUb0RBdHQ4S3ZuSkhkV0w2OWtW?=
+ =?iso-2022-jp?B?dTUxaHorazNtRkJlY2ZpeWVzU0ZEcHBTTXhFOHZ5ek54U0k1aVhnQVFz?=
+ =?iso-2022-jp?B?SUFYdUJkQVFlMEVPY1RJbktFUDBzQWZvVGNpQ3VMcUxGc3JESjluNlZF?=
+ =?iso-2022-jp?B?VGtua1AxQmVxZjMwMXp2SnAwYU12bGpsdTBhYzZoUFhNSEtLb2lEd09O?=
+ =?iso-2022-jp?B?a3lwbUdKcHNqQVpWbWk1V0paVFJmZy9nM00vU3dOWWJvYnZGMzhvTDdT?=
+ =?iso-2022-jp?B?NGM1OVh4V0xlNDVlbWphZnVXOVNMQWU2RGFkU3BZdnd5VlVJZXJmRmgw?=
+ =?iso-2022-jp?B?VmVuM0NYcUhLV2V0MWxmNFliQVpRVmRZZHBLN1RQSW14TGdjWEM5RU1Y?=
+ =?iso-2022-jp?B?UE9PQ0dRdGV3VFh4MDltK0ZoQnlZNVJ2ak8vcGY4bnVsaHRUeWdxMnpR?=
+ =?iso-2022-jp?B?bW9ONlJlRmsxaFc3TGFScnNvcWJZbENYa0xwR0xpalh3TUZCZjdVQURk?=
+ =?iso-2022-jp?B?SmV6cDhleUtJNWZZUWN4MVRYa1FtemRYaFgwTXIzRjlGZ3BMcVdhb21q?=
+ =?iso-2022-jp?B?M0QvcGpFVUN5Y3IreFZKQWJJUWl3YTRqRXVKU0J5Q1RjZlN5RTJpOW5W?=
+ =?iso-2022-jp?B?RjZHSnBmY1QvNmp6SEhTazhCWmdjQzk3NFBRS1RvNjFUTTJQazJtdzZv?=
+ =?iso-2022-jp?B?Wnhad2JhZTZidFVNMTZPSlBjcWpIOE9MSy9scDBJQmZSS2dDMng4Z1Vj?=
+ =?iso-2022-jp?B?bzJheGQvTlZBSHVOd3RVdERubUliNDFJVm9LcTdCNmh1dXNjUDM3cnBo?=
+ =?iso-2022-jp?B?eDdaQk5iRVpzTmJlSHlxNFRKS1pOemd6QTJpZGFkZHEyYmpSakdXUmw5?=
+ =?iso-2022-jp?B?TmpMU1dvTVRKaTBPM2JDUU5iVkZLbmN6cHQvdWxrM1JRMGlvTjE1eWt4?=
+ =?iso-2022-jp?B?OG85TVBvVUhkVFArR202aDBjRDdqU3hqaHB5M2VNTEZKVER3LzBMUjMy?=
+ =?iso-2022-jp?B?UnoxdXFyUDFFSVJzenY2U21VWi94Uy80NWNrNjRWWTI1K0RJcGRyY1FE?=
+ =?iso-2022-jp?B?emE3aUR3N0JWNU1ZalpiZVE1RGR1OUpVOWZwTDZ4VllRcTArSklzL2Zy?=
+ =?iso-2022-jp?B?K2VsQ1BnTy9vcDRRYWhYT1NyUnhKZWg4NzFueVZOVTlkK0IzYW9ydEov?=
+ =?iso-2022-jp?B?R29oRVZXTTBhdmN2aVV3MW5sVCtDOFU1S1R0MUEzWDYzYjFCTmo1NlhQ?=
+ =?iso-2022-jp?B?MHdBanBQRXZwSTI1akJiNWljcS9PWGlrNXNJTmhrZGxJeVJJMi9CeGpC?=
+ =?iso-2022-jp?B?YW9OSUZmeVVmaUV5S0V0a3lkZ1NtcGNzRWFHMHhiZEorZWpsNjlIT1NK?=
+ =?iso-2022-jp?B?V1JnR2Rsa21XK3NQME1UenVKSGl3eS9SU1RMMjJZY2tUOXpIS3A1eERF?=
+ =?iso-2022-jp?B?TjlRMGtDOEJmbFFJNTE5UU9yR3lkSTJvVzM1ay9GS1ZKQkM1OEpzWnJN?=
+ =?iso-2022-jp?B?M0c2Z2NsbE5RYWZNajFmYm5XbFRoUkE0UlJ2Mm9xaXpoZjB6ZCtJdDdy?=
+ =?iso-2022-jp?B?MFNGQVdpSG1LVnV2R2R5MndjL09jPQ==?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB6103.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?Unc0b3paOHlqUkFaeVNwVkJtZWtzb1ZrL04wNDBZWE5HQzJXZ2pRaDBE?=
+ =?iso-2022-jp?B?d1hGdnJwalJFdjNLTHNLc3dvRzRncENrSGlka1RPTWp1d1dDaTFUcHVk?=
+ =?iso-2022-jp?B?VGZjalBNZG5HOEYwK1FsN1hNOHFLVzdkYjhQckZHaEE4dVBDSFJhOU5E?=
+ =?iso-2022-jp?B?NE10REFJUXAyZDFHS29WVSt1VStUYldTUnN5bFI1MmJZU2xLeG1IRklo?=
+ =?iso-2022-jp?B?YTBJMjBtWHZmQWdibjhYQnpuZXliMG9EVDBiREpjL0lnUHVHRVp0Umkr?=
+ =?iso-2022-jp?B?YW1JazJnV1RJR2VhK0VVSlVWemhYaUpxY1BZeE12bk5NdzlvbUtCTTQ1?=
+ =?iso-2022-jp?B?ZS9QRThTbUlpcnJQTW84SWJZNHZmSi9NcVRWMUhGUFpJZ2NDVzRaUWZm?=
+ =?iso-2022-jp?B?SkUyU0huZVpuQ1I2WUdCMGVsb1NpL0lVYTJuRXVmRjdIMVY2Q1IrZ2tJ?=
+ =?iso-2022-jp?B?SlR0YWlLMHo4a3M2eWFNSWxFSjdiS0w0YlNURWhFdUJqQnN5S0tHaSti?=
+ =?iso-2022-jp?B?UEcvSXVaTGRiZUtUSXBwYWVaWGM5RXBHWjc1M2JjbTM1M2ZnU1BHSkxq?=
+ =?iso-2022-jp?B?M0pIOFg0S3ViZGJaelkvZ2ZMWmhCNlJvK3pJay9IYnErMklTR3BFV3VI?=
+ =?iso-2022-jp?B?dlRuN1ZKV1ZvRDVWNW5lTXBqSTEyOXZSM1NXS054aFpjWkdxSFJDU2kz?=
+ =?iso-2022-jp?B?eHRUdHJrekN0eHdUbmJSamRqcG81WVZVYzMzNnJIZWpxODFWUXFlSXpT?=
+ =?iso-2022-jp?B?djhBYXowTkp5RWw5K2diRTFJRkYvRXZwdDlmcDFuSElUWnJ2YzV0cG0y?=
+ =?iso-2022-jp?B?WmJHanlXbWdpVWM1VitJcXg1QlVEK0pkUGExdjRSdG5ERTBXTXR4MUVT?=
+ =?iso-2022-jp?B?WUd1ZmJyY2E0NzVmS2xvMGxVZXNlSnQxWVk2WUd2aVVNMGJCazVoVUpG?=
+ =?iso-2022-jp?B?QUdSUU9YU3E1Yno1RWo0bFJKV1FVY1YrV0dxQ0xCSkxzMGFqVllRTC9N?=
+ =?iso-2022-jp?B?U0FGNUZOeVBsdWI3eXlXd3RmRytRVmVHU3JmVVVxeFA4R044b1NPU1pI?=
+ =?iso-2022-jp?B?WUVsNkRaUzhReGlJRmJ0a1NmMVIwRzQxdlhUMkxueFl4ZFl2L2lyaE9M?=
+ =?iso-2022-jp?B?endXZ1pRcW5EaHFlZmIyME9JL3hZbVhHZjhlYjdidmJIcVBoSFpzcmxI?=
+ =?iso-2022-jp?B?bHB6bEdHM1VsbmdOK2xWV3hhYUhlMlNyTFE3RWpKeW4waXNkZFgxWHV2?=
+ =?iso-2022-jp?B?VlR5d3MxSTFoczROYWVMczJVRVRQNXM3Wm5DSkhBdUVBd04ySFUvR1RU?=
+ =?iso-2022-jp?B?TS9FdzltMWtWVEJOYjFQM3VyNUk2U1pLdkRyb2haS1Rud2ZQMUlNeXFI?=
+ =?iso-2022-jp?B?VUMrdEZFTE9OTWFhbE9yOVBrSmNUMVBkUElRMzhML3JvSVFqaWJUYktJ?=
+ =?iso-2022-jp?B?OFNqcjlvRjdEb0ZwY2ZNWkE0WjVOMjc2RkYxMlorT0ZxZUprWmFYVXJ5?=
+ =?iso-2022-jp?B?SWNFNDFSYndiSnVTQVRoMlNFL285OFBoOHlBdXU3Q2VzRWl3ZUpPekJr?=
+ =?iso-2022-jp?B?ZE5vK1FqTWFpbnNia0VSNmFobDJkdEhkN2JKTXc4OHF2OFhsOUE2cE5j?=
+ =?iso-2022-jp?B?MXZHTlpOU2pJdzFJa3M1S0Z1aU5xbE5XVkxZZEs4Mkh1U1YzTWhyS0U3?=
+ =?iso-2022-jp?B?aFlGeDBXcFVaQWk4WDByNDNOSXhXSUpkaGZ5d2I2RkZZb1M1OTVqNkh3?=
+ =?iso-2022-jp?B?STQ5b2gwZzdvalBHUlJteXIvYm1RV0grK1NQc2NLNFhrc3hUaW5SVzFO?=
+ =?iso-2022-jp?B?UCt2S3lZUGIyZ201VGpiZkd0UTFoVTZ2TjRoeklDV29vaEhjaDNZNTY1?=
+ =?iso-2022-jp?B?c25jOXVKUVJmOXdZVHZKdmJUTWpyei9FZTg5bFJvYXYvVnEyN3pXZ3BM?=
+ =?iso-2022-jp?B?SHlaQ2xZMTBNVTUxREpnczhvK1BBOU1kT3hTdS81Ny9NV3NvSnhEaENm?=
+ =?iso-2022-jp?B?M05JYVlBc0tpZnY1bk5hSUg4ZzRjSzNHOGZZWlpDWVFQSDBkQWc0OTY1?=
+ =?iso-2022-jp?B?NmlmRlNRMWpsM0lMZ2d1VWpxREgxSmE5ZHJoVTNCUXpRZEpMWWRoN2J4?=
+ =?iso-2022-jp?B?aXc3cmZpSXM2Q015eHA3eUlpTTkzTjllSmh1VXVYaGZGNzBqMmc1dkZB?=
+ =?iso-2022-jp?B?dTYyb2tHU205VW51alpUUDlkZTM0cUxFc3ZQR2dLdDEzb2pXdk1JUFdk?=
+ =?iso-2022-jp?B?K2s1ZkhNM3dCRTJZanBVb3NEOE1VVlVMdC82aWdwSEZGeHVtUXc4Q2My?=
+ =?iso-2022-jp?B?NmZTbA==?=
+Content-Type: multipart/alternative;
+	boundary="_000_OS3PR01MB6103E3F045D7C595C11FA58AC2E32OS3PR01MB6103jpnp_"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|PA2PR10MB8912:EE_
-X-MS-Office365-Filtering-Correlation-Id: 325dc797-f04c-424d-32c4-08dc73efd006
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007;
-X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?GGFHkJCRhcGDfEC6xd5cn0caioorVsCb15tdMA5wPq/i1Bt7HKg2M7KbhTCB?=
- =?us-ascii?Q?pwmgW38Vs3duqQ4+z+DrjT2QkAXi9PGgMkUHuKmivULVAvMHRBCXhyMwX9eq?=
- =?us-ascii?Q?luehtTzNYGXvv5E2V1rp7/uHy/aTGFVHn5O9UIQdhDO+V1nwO3Je4QMUhRZK?=
- =?us-ascii?Q?XBosjleBXuSsxAOarf/HCjvsLK7zjITUFoUSZ9MvuGYYpD5QhOTXbEGga16l?=
- =?us-ascii?Q?GSOU4ckNfqHgMpFh8+6sfVLLRqfzCUVdPDm5AXY9hHR4I24KGQAF9ZIXaFoM?=
- =?us-ascii?Q?LB3Ut3eIYJ01FrdNGLwcCicGxYA7eSKpQl1orxd7w/nJS+MiBReueEFzR9Cp?=
- =?us-ascii?Q?4Jl8EeGIgZCHZ763amcsMJYPMBjuGoYda/gUE6bpjvBtHwYMgJxVxEqOGJRd?=
- =?us-ascii?Q?Hx7Klrf5D3UK/KTT+RDN5ldeAQVNw0WyRBInmoTczf9R2fmgTc3AlSRVfV+4?=
- =?us-ascii?Q?Qt9HyKx6s5h1eMdZp9oKG4nYjWcsGZxgEhAJJov50P49CwS96dcQFRtDwZak?=
- =?us-ascii?Q?IzOHI2ECa4I18CcZ+O3+i5t7S02VIaHQJWQJjbgKbqAkk+5S735L0kAg9Ztr?=
- =?us-ascii?Q?jFCBhVSWQEkQH6nFI7QDt96+AiJ4EGKNMhVRcsz3345D2u5BJWfddZbx9JhV?=
- =?us-ascii?Q?VUqgZQWkREPzTPIRCCSFVoluUvpamEdyx+ppK4I58f2BGBUNL2+Bm/qtJZJ8?=
- =?us-ascii?Q?7dpZvaIGhpUN96jTC1IACTSt/oTHMIQIRc8YaZXCOB6zD8dtLWljV4rSMhn1?=
- =?us-ascii?Q?QMV4zFGbCk3fYkuIhRdmZ/FPek3VWDCPu7+L46KJ6WbpR2+wj9blrxTGMRJl?=
- =?us-ascii?Q?IFjvNxDJMMjvyo74bSXswFpbyJ3XWg8VCPiLNoR1GPynLGBw6DBYGhC0AM5M?=
- =?us-ascii?Q?oIhT9NTyN//plKMCeOwsF9MjGwrqoJQ9JOoF/srkQdzQGBHfo0e2sob0dJPH?=
- =?us-ascii?Q?r95P2foKTxYVvzRfV5vnd1VW/CgZm+MQzA8t7zde29o19Ts6kkUhvEMjgjW5?=
- =?us-ascii?Q?fUhSoOSZKquokKdL6PTih7mrLXcWaUuL5JJPHGwz/gaVeSAUpmkcBe1bER3o?=
- =?us-ascii?Q?DAzdp0r87tpe/7NYE4UCfDmWSqqrgR8cqAJuQmXjBTo1sWZJ5voJU9wwFgyP?=
- =?us-ascii?Q?S0na957gl0vGezta5g8tOvkbsp6jVc4vkMsktBFUDMKOGRaInJBKZyMVpOy+?=
- =?us-ascii?Q?lx+M+xYM42KMB6F4Gn78f+pCbeQM/HdJVB00UeNdsA86zexMnQETWPW9brA?=
- =?us-ascii?Q?=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?CkcsXpb7+ZmNFrZSC0afsArw576sHeh+oA+AR3ZbURlRmO8ZJaGCVvQG/4Qh?=
- =?us-ascii?Q?RC417SL7DZQ5YIEg2WSMLePAv5eMhogmt4UBPM4InTuscT98relWo3JJUqYV?=
- =?us-ascii?Q?voKXcK8NgNRaV1oj25kyLtoXmGQGHuwX3pVwVHLQ6b/Dcii39Yo6CLytM/UD?=
- =?us-ascii?Q?gsOMicnZIzmxmLA9guGRyANMYKzNIYZiwVkmgdoOESir5wmYOTH7NvibdXsl?=
- =?us-ascii?Q?7l9CUARS+2C6EuFT+haLO5POJeT+7B9JlyBx9cNaU72uIUypLK1aeIMgRPUd?=
- =?us-ascii?Q?WQtE4GjYtDidZnmqY3pS7D/GSwcjKmjEZX0lxgcJYyvgczBeITHGFTd1dfuM?=
- =?us-ascii?Q?bmNEBSzf37r6K0tqagwAGmUNxh1aNsxOzKEkmm0X5Z7D/Q/D8YO+FRA3Z4xN?=
- =?us-ascii?Q?mMrJnFp8p1HTCcwjk0iHI7kqXgXIcRF26x63CvLOEIqBPbX8JrqMTpwUoi4W?=
- =?us-ascii?Q?NdZn25Njn0ulBMuuZ1R6IHcmiNtTqGk39pdOHQ4enpX5tmhYvNpx36IkWEzY?=
- =?us-ascii?Q?Fhc3JtmfPlS3mnjCXFUJVTrpgKzUAbKalXXdVBBuuRS1Mobg/3eafxmkcD7h?=
- =?us-ascii?Q?JYaa6tUbKghddVANToo3YsSb7INgYos0c+JSbo7wzLJKpPqQse+ynUR2Teqb?=
- =?us-ascii?Q?5uCpaF4GjitlG+pz4AdSqj7lMF0jXGJM52HzPk7NJa04OCrFkSQg83KC0B3A?=
- =?us-ascii?Q?Ma0SmL7vocPhB8hyqK/MV3jMEDCJGYl1awQEHmCBdXWEPVq/EQEixMu2IoGG?=
- =?us-ascii?Q?3E/BMw+ru+PZLpkwhP/FlAmaDVgqvAjraOh0ua3e/Tqysr6QRsuwQwNSWwuG?=
- =?us-ascii?Q?HGiauSIMUXAUhZynfpDuUBpNQ4kZ7nMxQKOtETvBZ2QAZVuyBsku+OgWK7C8?=
- =?us-ascii?Q?F/Fg2CknP7s6zvDdhbfmQivC8Ux6+7dXSPh/2dAsAc7PhKoCPkrB4DGGJc9m?=
- =?us-ascii?Q?MZd8LwgFgUa6x3dAfx/1IRxzVP8UhRA64whHQHq9qulfi2+Z3CjigjU9xVD/?=
- =?us-ascii?Q?ZTeEe3Ek823sPcbM3VRDDBjgIATfiqUg7uycn7SBwX4mAIvFRaGTCNi/QwOU?=
- =?us-ascii?Q?qNOp9Y2OBfKsp8x5KXcfXhu3wErbk0qqk3W83dpK0XCzgqAhTRgmlixkDlcV?=
- =?us-ascii?Q?qzPaZ2km+dDsn9I45eBZc0a9Uj/HJZWanyJXrJq3SL3vq8Zh4IFK+1Q8TFm0?=
- =?us-ascii?Q?PgAQl0ywCtM+1J/qp40oKE0R0aDk/42kqFr7yDgSCOGNTBU97fLiQXv73r5l?=
- =?us-ascii?Q?9bPCeFjPMDjlxslafgXQz5w/jDmT0tLC6Ch38s06fQTTvWvj1kJ/Sp8NVv9E?=
- =?us-ascii?Q?ify6KK5Xg+nkQyXahgkpvcYJ2Sdr1AFqjv4A8ZZ6RvbX7iOoT3l+VOJeSiey?=
- =?us-ascii?Q?C0Owaplcu5TxIDLtObRzVXFJSd/UyE6Xqf4rCeQ8tGyiDNc30OzkdSL8m6KN?=
- =?us-ascii?Q?0lqOyRq3Tmm5t5NCCzC+kOF1GzMoH3++3dm8R7BUQSy9t0D7H7aZjgsTx6N7?=
- =?us-ascii?Q?3uIgZlCJWcRR4r+dduvEm4ZxgFaVmoDQV1ZYXd1HE7N8rJzqbTgZk7GRnD5O?=
- =?us-ascii?Q?oQXUETUSm21bFGwXFATYmTc0ecYGOATq1z4S9jJgC02rFLkR/avwDOCVNY+H?=
- =?us-ascii?Q?5w=3D=3D?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 325dc797-f04c-424d-32c4-08dc73efd006
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2024 08:28:20.5117
+X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB6103.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d31e612-7ecb-41a9-6383-08dc741122c6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 May 2024 12:26:52.6345
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pNMvM8U2Hmj6Hg08Kya0le9nczeQ3OKi4s1yBAVqSRTy+Rv/uANxSpzN7eh6P1FLITljQxTrXXooAEdvOzjFgfl9tzPRFbZSPiLsGQ8GSLY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR10MB8912
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: N++pzvPbQDu1ow/5s08+PdKfpQJx6AT9G8YhgOPl+MoF36txCyZBbwi4Vbenm/CuImwUuy9XIE9dQ9rMdP9WtAhgg2kFiAMqo3lFV8CzZZE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB8109
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 14 May 2024 08:28:30 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15889
+ <cip-dev@lists.cip-project.org>; Tue, 14 May 2024 12:27:13 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15890
 
-Hi,
+--_000_OS3PR01MB6103E3F045D7C595C11FA58AC2E32OS3PR01MB6103jpnp_
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/9/24 10:54 AM, Shivanand.Kunijadar@toshiba-tsip.com wrote:
-> Hi Quirin, Chris
->=20
-> @Quirin Gylstorff <mailto:quirin.gylstorff@siemens.com> Thank you for=20
-> creating a branch to test generic kernel configs for x86.
->=20
-> I checked out your branch =E2=80=9Cqg/merge_kernel_configs=E2=80=9D and c=
-reated image=20
-> for qemu-amd64.
->=20
-> Locally I also tried to boot the image but it failed with below message.
->=20
-> Booting from ROM...
->=20
-> This kernel requires the following features not present on the CPU:
->=20
-> movbe
->=20
-The error was introduced with the toshiba_atom_baytrail_cip_defconfig.
+Hello Chris,
 
-Best regards
-Quirin
+Any update on creation of separate group and projects needed for hosting CI=
+P Core LAVA test results on SQUAD ?
 
-> Unable to boot - please use a kernel appropriate for your CPU.
->=20
-> Thanks & Regards
->=20
-> Shivanand K
->=20
-> *From:*cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> *On=
-=20
-> Behalf Of *Quirin Gylstorff via lists.cip-project.org
-> *Sent:* Wednesday, May 8, 2024 9:46 PM
-> *To:* Kiszka, Jan <jan.kiszka@siemens.com>; Chris Paterson=20
-> <Chris.Paterson2@renesas.com>; Schilling, Benjamin=20
-> <schilling.benjamin@siemens.com>; dinesh kumar(=EF=BC=B4=EF=BC=B3=EF=BC=
-=A9=EF=BC=B0TMIEC ODG=20
-> Porting) <dinesh.kumar@toshiba-tsip.com>; Nobuhiro Iwamatsu=20
-> <iwamatsu@nigauri.org>; cip-dev@lists.cip-project.org
-> *Subject:* Re: [cip-dev] Generic x86 kernel configration
->=20
-> I will investigate it. =C2=A0I think this be one of the cases were automa=
-te=20
-> merging will fail.
->=20
-> Quirin
->=20
-> ------------------------------------------------------------------------
->=20
-> *Von:*Kiszka, Jan (T CED) <jan.kiszka@siemens.com=20
-> <mailto:jan.kiszka@siemens.com>>
-> *Gesendet:* Wednesday, May 8, 2024 6:03:38 PM
-> *An:* Chris Paterson <Chris.Paterson2@renesas.com=20
-> <mailto:Chris.Paterson2@renesas.com>>; Gylstorff, Quirin (T CED OES-DE)=20
-> <quirin.gylstorff@siemens.com <mailto:quirin.gylstorff@siemens.com>>;=20
-> Schilling, Benjamin (SMO RI R&D F SEC) <schilling.benjamin@siemens.com=20
-> <mailto:schilling.benjamin@siemens.com>>; dinesh.kumar@toshiba-tsip.com=20
-> <mailto:dinesh.kumar@toshiba-tsip.com> <dinesh.kumar@toshiba-tsip.com=20
-> <mailto:dinesh.kumar@toshiba-tsip.com>>; Nobuhiro Iwamatsu=20
-> <iwamatsu@nigauri.org <mailto:iwamatsu@nigauri.org>>;=20
-> cip-dev@lists.cip-project.org <mailto:cip-dev@lists.cip-project.org>=20
-> <cip-dev@lists.cip-project.org <mailto:cip-dev@lists.cip-project.org>>
-> *Betreff:* Re: [cip-dev] Generic x86 kernel configration
->=20
-> On 08.05.24 18:00, Chris Paterson wrote:
->> Hello Quirin,
->>=20
->> Thank you for your work on this.
->>=20
->>> From: Gylstorff Quirin <quirin.gylstorff@siemens.com <mailto:quirin.gyl=
-storff@siemens.com>>
->>> Sent: Friday, May 3, 2024 4:58 PM
->>>
->>> Dear all,
->>>
->>> I have used a forked version of [1], which you can find here[2] to
->>> merge the following x86 kernel configs together:
->>>
->>> cip-kernel-config/5.10.y-cip/x86/siemens_server_defconfig'
->>> cip-kernel-config/5.10.y-cip/x86/toshiba_atom_baytrail_cip_defconfig'
->>> cip-kernel-config/5.10.y-cip/x86/siemens_ipc127e_defconfig'
->>> cip-kernel-config/5.10.y-cip/x86/plathome_obsvx2_defconfig'
->>> cip-kernel-config/5.10.y-cip/x86/cip_qemu_defconfig'
->>> cip-kernel-config/5.10.y-cip/x86/siemens_ipc227e_defconfig'
->>> cip-kernel-config/5.10.y-cip/x86/siemens_iot2000_defconfig'
->>> cip_core_merge_kernel_config/recipes-kernel/linux/files/mcom.cfg'
->>>
->>>
->>> I have tested the v5.10.214-cip46 version of the config with qemu-amd64=
-.
->>> The next step would be to check it in the cip lab on the real hardware.
->>>
->>> The script takes the Kconfig entries of the specific kernel version int=
-o
->>> account. It also adds all dependencies to the config. You can find to
->>> log of the merge at [3] and the diffs to each configuration at [4].
->>>
->>> An first integration into cip-core can be found at [5].
->>>
->>> Any comments from your side?
->>=20
->> I had a go at building/boot testing the linux-cip 6.1 kernel in our GitL=
-ab CI setup using your merged config:
->> https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/12834768=
-01 <https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/1283476=
-801>
->>=20
->> It built and booted okay on the ipc227e.
->> However, it didn't boot on the qemu setup in our LAVA lab:
->> https://lava.ciplatform.org/scheduler/job/1129968=20
-> <https://lava.ciplatform.org/scheduler/job/1129968>
->> "This kernel requires the following features not present on the CPU: mov=
-be"
->>=20
->> I don't know if that's an issue with our qemu setup or with the kernel c=
-onfig.
->=20
-> The CPU type the kernel supports/expects is a choice. I suspect that
-> merging multiple configs shifted us from "works with generic x86"
-> towards "only works on Intel-whatsoever". Combine that with a
-> restrictive CPU type selected for qemu/kvm, and you get that kind of erro=
-r.
->=20
-> We should likely tune the common config for generic x86.
->=20
-> Jan
->=20
-> --=20
-> Siemens AG, Technology
-> Linux Expert Center
->=20
+Regards,
+Sai Ashrith Sathujoda (T S I P)
+
+From: ashrith sai(=1B$B#T#S#I#P=1B(B)
+Sent: Thursday, May 9, 2024 10:55 PM
+To: 'Chris Paterson' <Chris.Paterson2@renesas.com>
+Cc: 'Sietze.vanBuuren@de.bosch.com' <Sietze.vanBuuren@de.bosch.com>; 'cip-d=
+ev@lists.cip-project.org' <cip-dev@lists.cip-project.org>; dinesh kumar(=1B=
+$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshiba-tsip.com>
+Subject: RE: Query regarding SQUAD watch job submission
+
+Hello Chris,
+
+Hope you are doing well.
+
+The issue I mentioned in the previous mail in this thread is resolved now s=
+o please ignore that query if you have not gone through yet.
+
+As mentioned earlier we are planning to add CIP-Core LAVA test results in C=
+IP SQUAD. It will be of great help to us if you provide your support in thi=
+s.
+
+Can you please create a group named =1B$B!H=1B(Blinux-cip-core=1B$B!I=1B(B,=
+ three projects named =1B$B!H=1B(BSwupdate-testing=1B$B!I=1B(B, =1B$B!H=1B(=
+BSecure boot testing=1B$B!I=1B(B and =1B$B!H=1B(BIEC Layer testing=1B$B!I=
+=1B(B under that group ?
+
+Currently I believe that results present under various projects in =1B$B!H=
+=1B(Blinux-cip=1B$B!I=1B(B and =1B$B!H=1B(Blinux-stable-rc=1B$B!I=1B(B will=
+ not be disturbed while we experiment in adding CIP Core LAVA results in th=
+e projects under =1B$B!H=1B(Blinux-cip-core=1B$B!I=1B(B group. Please corre=
+ct me if I am wrong about this.
+
+We also need a user created in CIP SQUAD with a SQUAD token assigned to, so=
+ that we can start modifying this script lava.sh * master * cip-playground =
+/ cip-core-ci * GitLab<https://gitlab.com/cip-playground/cip-core-ci/-/blob=
+/master/lava.sh?ref_type=3Dheads> to experiment on hosting CIP Core LAVA re=
+sults on SQUAD.
+
+Chris, I request you to add the mentioned items to CIP SQUAD which will hel=
+p us to start this task as soon as possible.
+
+If there are any issues with doing these changes to current CIP SQUAD, plea=
+se let me know.
+
+Note: If anyone has any concerns about the group and project names proposed=
+ above, please reply to this email.
+
+Thanks and regards,
+Sai Ashrith Sathujoda (T S I P)
+
+
+
+From: ashrith sai(=1B$B#T#S#I#P=1B(B)
+Sent: Friday, May 3, 2024 12:53 AM
+To: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@rene=
+sas.com>>
+Cc: Sietze.vanBuuren@de.bosch.com<mailto:Sietze.vanBuuren@de.bosch.com>; ci=
+p-dev@lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>
+Subject: Query regarding SQUAD watch job submission
+
+Hi Chris,
+
+Hope you are doing well.
+
+We are planning to post CIP Core LAVA testing results on CIP SQUAD instance=
+. So I am trying to setup a local SQUAD instance and integrate it with my l=
+ocal LAVA Lab so that I can understand the traceability between changes req=
+uired in https://gitlab.com/cip-playground/cip-core-ci/-/blob/master/lava.s=
+h?ref_type=3Dheads and results displayed on the dashboard.
+
+I followed the below mentioned steps:
+
+
+  1.  I started the server locally after following the steps mentioned in t=
+his README file squad/doc/quickstart.rst at master * Linaro/squad * GitHub<=
+https://github.com/Linaro/squad/blob/master/doc/quickstart.rst> .
+  2.  After the server started, I was able to access web UI at localhost:80=
+00.
+  3.  I followed the steps mentioned in https://github.com/Linaro/squad/blo=
+b/master/doc/lava_usecase.rst#creating-a-backend-for-a-lava-instance to  cr=
+eate backend for my LAVA instance.
+  4.  I created a fresh token in API -> Authentication token in my local LA=
+VA Lab and I added that token while creating the SQUAD backend.
+  5.  I created a SQUAD token based on my SQUAD username and I referenced t=
+hat token as value to Authorization token: while using SQUAD watch job API.
+  6.  I added my LAVA username in the username section while creating the b=
+ackend.
+  7.  I created a sample group in the administration page, and I selected t=
+hat group slug while creating a project in administration page.
+
+After I gathered all these details, I modified submit_jobs script to test w=
+hether I can attach a SQUAD watch job to a just-submitted LAVA job based on=
+ it=1B$B!G=1B(Bs job ID.
+
+After I submit my job to LAVA, I am immediately calling the watch job API t=
+o attach a watch job to the submitted LAVA job. But I am getting the below =
+mentioned error message.
+
+$ ./local_lava.sh
+/tmp/tmp.FJGGBcxzNn/IEC_amd64.yml is a valid definition
+There are currently 1 "qemu" devices online.
+Submitting /tmp/tmp.FJGGBcxzNn/IEC_amd64.yml to LAVA master...
+Job submitted successfully as #634.
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Cur=
+rent
+                                 Dload  Upload   Total   Spent    Left  Spe=
+ed
+100   315  100    56  100   259   9333  43166 --:--:-- --:--:-- --:--:-- 52=
+500
+Something went wrong with SQUAD watch job submission. SQUAD returned:
+{"detail": "User needs permission to submit test jobs."}
+SQUAD URL: http://127.0.0.1:8000/api/submitjob/tsip_squad/cip-core-testing/=
+2.0/local_env
+SQUAD Backend: lavabackend.org
+LAVA Job Id: 634
+
+I am attaching my script to this email which can make it easier for you to =
+point my mistakes. No issues regarding the exposed token I am using in the =
+script since this is a local setup done for my understanding. Please have a=
+ look at lines 17-22 and 107-137 which contain changes made to call SQUAD w=
+atch job API.
+
+I will also attach screenshots for group, project and backend page in my SQ=
+UAD admin section which might be helpful to point out if I passed wrong dat=
+a to SQUAD watch job API call.
+
+Please have a look at this data and kindly provide your suggestions which c=
+an help me fix this problem.
+
+Thanks and regards,
+Sai Ashrith Sathujoda (T S I P)
+
+
+
+
+
+
+
+--_000_OS3PR01MB6103E3F045D7C595C11FA58AC2E32OS3PR01MB6103jpnp_
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
+osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
+//www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
+<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
+<style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:Aptos;}
+@font-face
+	{font-family:"MS PGothic";
+	panose-1:2 11 6 0 7 2 5 8 2 4;}
+@font-face
+	{font-family:"\@MS PGothic";}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0in;
+	font-size:11.0pt;
+	font-family:"Aptos",sans-serif;
+	mso-ligatures:standardcontextual;
+	mso-fareast-language:JA;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:#467886;
+	text-decoration:underline;}
+p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph
+	{mso-style-priority:34;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:.5in;
+	font-size:11.0pt;
+	font-family:"Aptos",sans-serif;
+	mso-ligatures:standardcontextual;
+	mso-fareast-language:JA;}
+span.EmailStyle21
+	{mso-style-type:personal-reply;
+	font-family:"Aptos",sans-serif;
+	color:windowtext;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-size:10.0pt;
+	mso-ligatures:none;}
+@page WordSection1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.0in 1.0in 1.0in;}
+div.WordSection1
+	{page:WordSection1;}
+/* List Definitions */
+@list l0
+	{mso-list-id:1473329392;
+	mso-list-template-ids:954608222;}
+@list l1
+	{mso-list-id:1814715072;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1592213718 67698703 67698713 67698715 67698703 6769=
+8713 67698715 67698703 67698713 67698715;}
+@list l1:level1
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level2
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level3
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l1:level4
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level5
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level6
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+@list l1:level7
+	{mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level8
+	{mso-level-number-format:alpha-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level9
+	{mso-level-number-format:roman-lower;
+	mso-level-tab-stop:none;
+	mso-level-number-position:right;
+	text-indent:-9.0pt;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]-->
+</head>
+<body lang=3D"EN-US" link=3D"#467886" vlink=3D"#96607D" style=3D"word-wrap:=
+break-word">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hello Chr=
+is,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Any updat=
+e on creation of separate group and projects needed for hosting CIP Core LA=
+VA test results on SQUAD ?<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Regards,<=
+o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Sai Ashri=
+th Sathujoda (T S I P)<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
+0in 0in">
+<p class=3D"MsoNormal"><b><span style=3D"font-family:&quot;Calibri&quot;,sa=
+ns-serif;mso-ligatures:none">From:</span></b><span style=3D"font-family:&qu=
+ot;Calibri&quot;,sans-serif;mso-ligatures:none"> ashrith sai(</span><span l=
+ang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligat=
+ures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"font-family:&quot;Calibr=
+i&quot;,sans-serif;mso-ligatures:none">)
+<br>
+<b>Sent:</b> Thursday, May 9, 2024 10:55 PM<br>
+<b>To:</b> 'Chris Paterson' &lt;Chris.Paterson2@renesas.com&gt;<br>
+<b>Cc:</b> 'Sietze.vanBuuren@de.bosch.com' &lt;Sietze.vanBuuren@de.bosch.co=
+m&gt;; 'cip-dev@lists.cip-project.org' &lt;cip-dev@lists.cip-project.org&gt=
+;; dinesh kumar(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGot=
+hic&quot;,sans-serif;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span sty=
+le=3D"font-family:&quot;Calibri&quot;,sans-serif;mso-ligatures:none">
+ TMIEC ODG Porting) &lt;dinesh.kumar@toshiba-tsip.com&gt;<br>
+<b>Subject:</b> RE: Query regarding SQUAD watch job submission<o:p></o:p></=
+span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hello Chr=
+is,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hope you =
+are doing well.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">The issue=
+ I mentioned in the previous mail in this thread is resolved now so please =
+ignore that query if you have not gone through yet.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">As mentio=
+ned earlier we are planning to add CIP-Core LAVA test results in CIP SQUAD.=
+ It will be of great help to us if you provide your support in this.<o:p></=
+o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Can you p=
+lease create a group named =1B$B!H=1B(Blinux-cip-core=1B$B!I=1B(B, three pr=
+ojects named =1B$B!H=1B(BSwupdate-testing=1B$B!I=1B(B, =1B$B!H=1B(BSecure b=
+oot testing=1B$B!I=1B(B and =1B$B!H=1B(BIEC Layer testing=1B$B!I=1B(B under=
+ that group ?<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Currently=
+ I believe that results present under various projects in =1B$B!H=1B(Blinux=
+-cip=1B$B!I=1B(B and =1B$B!H=1B(Blinux-stable-rc=1B$B!I=1B(B will not be di=
+sturbed while we experiment in adding CIP Core LAVA results in the projects=
+ under
+ =1B$B!H=1B(Blinux-cip-core=1B$B!I=1B(B group. Please correct me if I am wr=
+ong about this.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">We also n=
+eed a user created in CIP SQUAD with a SQUAD token assigned to, so that we =
+can start modifying this script
+</span><a href=3D"https://gitlab.com/cip-playground/cip-core-ci/-/blob/mast=
+er/lava.sh?ref_type=3Dheads">lava.sh &middot; master &middot; cip-playgroun=
+d / cip-core-ci &middot; GitLab</a> to experiment on hosting CIP Core LAVA =
+results on SQUAD.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Chris, I request you to add the mentioned items to C=
+IP SQUAD which will help us to start this task as soon as possible.<o:p></o=
+:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">If there are any issues with doing these changes to =
+current CIP SQUAD, please let me know.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><b>Note: If anyone has any concerns about the group =
+and project names proposed above, please reply to this email.<o:p></o:p></b=
+></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Thanks and regards,<o:p></o:p></p>
+<p class=3D"MsoNormal">Sai Ashrith Sathujoda (T S I P) <span style=3D"mso-f=
+areast-language:EN-US">
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
+0in 0in">
+<p class=3D"MsoNormal"><b><span style=3D"font-family:&quot;Calibri&quot;,sa=
+ns-serif;mso-ligatures:none">From:</span></b><span style=3D"font-family:&qu=
+ot;Calibri&quot;,sans-serif;mso-ligatures:none"> ashrith sai(</span><span l=
+ang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligat=
+ures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"font-family:&quot;Calibr=
+i&quot;,sans-serif;mso-ligatures:none">)
+<br>
+<b>Sent:</b> Friday, May 3, 2024 12:53 AM<br>
+<b>To:</b> Chris Paterson &lt;<a href=3D"mailto:Chris.Paterson2@renesas.com=
+">Chris.Paterson2@renesas.com</a>&gt;<br>
+<b>Cc:</b> <a href=3D"mailto:Sietze.vanBuuren@de.bosch.com">Sietze.vanBuure=
+n@de.bosch.com</a>;
+<a href=3D"mailto:cip-dev@lists.cip-project.org">cip-dev@lists.cip-project.=
+org</a><br>
+<b>Subject:</b> Query regarding SQUAD watch job submission<o:p></o:p></span=
+></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Hi Chris,<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Hope you are doing well.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">We are planning to post CIP Core LAVA testing result=
+s on CIP SQUAD instance. So I am trying to setup a local SQUAD instance and=
+ integrate it with my local LAVA Lab so that I can understand the traceabil=
+ity between changes required in
+<a href=3D"https://gitlab.com/cip-playground/cip-core-ci/-/blob/master/lava=
+.sh?ref_type=3Dheads">
+https://gitlab.com/cip-playground/cip-core-ci/-/blob/master/lava.sh?ref_typ=
+e=3Dheads</a> and results displayed on the dashboard.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">I followed the below mentioned steps:<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<ol style=3D"margin-top:0in" start=3D"1" type=3D"1">
+<li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l1 level1 =
+lfo3">I started the server locally after following the steps mentioned in t=
+his README file
+<a href=3D"https://github.com/Linaro/squad/blob/master/doc/quickstart.rst">=
+squad/doc/quickstart.rst at master &middot; Linaro/squad &middot; GitHub</a=
+> .<o:p></o:p></li><li class=3D"MsoListParagraph" style=3D"margin-left:0in;=
+mso-list:l1 level1 lfo3">After the server started, I was able to access web=
+ UI at localhost:8000.<o:p></o:p></li><li class=3D"MsoListParagraph" style=
+=3D"margin-left:0in;mso-list:l1 level1 lfo3">I followed the steps mentioned=
+ in
+<a href=3D"https://github.com/Linaro/squad/blob/master/doc/lava_usecase.rst=
+#creating-a-backend-for-a-lava-instance">
+https://github.com/Linaro/squad/blob/master/doc/lava_usecase.rst#creating-a=
+-backend-for-a-lava-instance</a> to&nbsp; create backend for my LAVA instan=
+ce.<o:p></o:p></li><li class=3D"MsoListParagraph" style=3D"margin-left:0in;=
+mso-list:l1 level1 lfo3">I created a fresh token in API -&gt; Authenticatio=
+n token in my local LAVA Lab and I added that token while creating the SQUA=
+D backend.<o:p></o:p></li><li class=3D"MsoListParagraph" style=3D"margin-le=
+ft:0in;mso-list:l1 level1 lfo3">I created a SQUAD token based on my SQUAD u=
+sername and I referenced that token as value to
+<b>Authorization token: </b>while using SQUAD watch job API.<o:p></o:p></li=
+><li class=3D"MsoListParagraph" style=3D"margin-left:0in;mso-list:l1 level1=
+ lfo3">I added my LAVA username in the username section while creating the =
+backend.<o:p></o:p></li><li class=3D"MsoListParagraph" style=3D"margin-left=
+:0in;mso-list:l1 level1 lfo3">I created a sample group in the administratio=
+n page, and I selected that group slug while creating a project in administ=
+ration page.<o:p></o:p></li></ol>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">After I gathered all these details, I modified submi=
+t_jobs script to test whether I can attach a SQUAD watch job to a just-subm=
+itted LAVA job based on it=1B$B!G=1B(Bs job ID.
+<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">After I submit my job to LAVA, I am immediately call=
+ing the watch job API to attach a watch job to the submitted LAVA job. But =
+I am getting the below mentioned error message.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">$ ./local_lava.sh<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">/tmp/tmp.FJGGBcxzNn/IEC_amd64.yml is a valid definition<o:=
+p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">There are currently 1 &quot;qemu&quot; devices online.<o:p=
+></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">Submitting /tmp/tmp.FJGGBcxzNn/IEC_amd64.yml to LAVA maste=
+r...<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">Job submitted successfully as #634.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">&nbsp; % Total&nbsp;&nbsp;&nbsp; % Received % Xferd&nbsp; =
+Average Speed&nbsp;&nbsp; Time&nbsp;&nbsp;&nbsp; Time&nbsp;&nbsp;&nbsp;&nbs=
+p; Time&nbsp; Current<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Dload&nbsp; Upl=
+oad&nbsp;&nbsp; Total&nbsp;&nbsp; Spent&nbsp;&nbsp;&nbsp; Left&nbsp; Speed<=
+o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">100&nbsp;&nbsp; 315&nbsp; 100&nbsp;&nbsp;&nbsp; 56&nbsp; 1=
+00&nbsp;&nbsp; 259&nbsp;&nbsp; 9333&nbsp; 43166 --:--:-- --:--:-- --:--:-- =
+52500<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">Something went wrong with SQUAD watch job submission. SQUA=
+D returned:<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">{&quot;detail&quot;: &quot;User needs permission to submit=
+ test jobs.&quot;}<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">SQUAD URL:
+<a href=3D"http://127.0.0.1:8000/api/submitjob/tsip_squad/cip-core-testing/=
+2.0/local_env">
+http://127.0.0.1:8000/api/submitjob/tsip_squad/cip-core-testing/2.0/local_e=
+nv</a><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">SQUAD Backend: lavabackend.org<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:10.0pt;font-family:&quot;Co=
+urier New&quot;">LAVA Job Id: 634</span><o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">I am attaching my script to this email which can mak=
+e it easier for you to point my mistakes. No issues regarding the exposed t=
+oken I am using in the script since this is a local setup done for my under=
+standing. Please have a look at lines
+<b>17-22 </b>and <b>107-137 </b>which contain changes made to call SQUAD wa=
+tch job API.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">I will also attach screenshots for group, project an=
+d backend page in my SQUAD admin section which might be helpful to point ou=
+t if I passed wrong data to SQUAD watch job API call.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Please have a look at this data and kindly provide y=
+our suggestions which can help me fix this problem.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Thanks and regards,<o:p></o:p></p>
+<p class=3D"MsoNormal">Sai Ashrith Sathujoda (T S I P)<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+</div>
+</body>
+</html>
+
+--_000_OS3PR01MB6103E3F045D7C595C11FA58AC2E32OS3PR01MB6103jpnp_--
+
 
