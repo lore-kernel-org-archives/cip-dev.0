@@ -1,708 +1,313 @@
-Return-Path: <Shivanand.Kunijadar@toshiba-tsip.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98378C04FFE
-	for <webhook@archiver.kernel.org>; Tue, 14 May 2024 05:01:39 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.131])
- by mx.groups.io with SMTP id smtpd.web10.7831.1715662892665807508
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61A4CC25B75
+	for <webhook@archiver.kernel.org>; Tue, 14 May 2024 08:24:30 +0000 (UTC)
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (EUR05-DB8-obe.outbound.protection.outlook.com [40.107.20.45])
+ by mx.groups.io with SMTP id smtpd.web11.10215.1715675066371222629
  for <cip-dev@lists.cip-project.org>;
- Mon, 13 May 2024 22:01:33 -0700
+ Tue, 14 May 2024 01:24:26 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.131, mailfrom: shivanand.kunijadar@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1120) id 44E51U8q4083872; Tue, 14 May 2024 14:01:30 +0900
-X-Iguazu-Qid: 2rWhYYPQEolUMpkvbj
-X-Iguazu-QSIG: v=2; s=0; t=1715662890; q=2rWhYYPQEolUMpkvbj; m=XtHqaVM+IcNY08q4HmdLknkbbiUeBxTEkp0Gif6x9ws=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1120) id 44E51SMe3179947
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Tue, 14 May 2024 14:01:29 +0900
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=tybholk0;
+ spf=pass (domain: siemens.com, ip: 40.107.20.45, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BRklJsvQgpx4WLujEDLc9KpITCFQmcC7HYnVACyZf/HE85aGHNlRYLKoUfSZ9O2Vvo0C7XvlLkJ4dmPfoj6Btmn9BTSeb3YWHeHWOlR02F7p2ohzJV28qffsimV7TqG76tUfrm0zBj99YwxzjVUDtfsFkkPxuxPmn56Q1rOKK/yXVKwnB1v7wb/6opuIsoc9nLST24OLtDL+ZxeDRPXlTLIiB9GSo3mdGdVfRgU5EE+8hYN09ORyPVekNUSDKA1Yoyw1bGkLi/Q/os3FQzcma12o+3hlXPUHMlDNhKS1gElwo8chsAyBpeEie+rR6PP3EK8ptaqS73D5dsiRxY8slQ==
+ b=WY210wmG6kAvuQ1h0z80FemPmFGWuwHUn/C7vH8wL9UEhGaEhze6UZo/aIBn0HQzvV8H5WHO4YQivSl15e3ZuW8IrCGj31cShTO9cS8qQEovS0blRyVX65mxApp8/IJCRWVM08VxxiGm1DNbE+StVMgtxogWLFt8FOOe2AmTo8ogMciryRDZKxPzg3ZozqrNmgK3tH2eINyux6aU2vlf3+N5id4TXmTlqkaBdiT1nP4p/Fei3MZx06J6P7F3ayjPeHO7TVqgn1xd9YXw7N4lFXZ1zw6trLA9Z56xWGGHQZZmir9wn3sF0gOi2tmC8aQOjmpOxP9VmFVhRbMAh+0YYQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kuc6R0rloYDSo8nVVTuOy/mW8wWor2w0c7NtucJ4fcU=;
- b=F3RNC5w5TLuOlyIrwzjSjyoUU4gi80GJFq7lzy52DKgWwlET0y3xZPquPTgWAFEQy7SqOPsbmzwNKqAzUviISelktsAFr5SZhiNEn3vJAH4RoTLai2WPCbpXIkP8hKxAA8H0orDMynoJhMjQ95UFycYqzc2jxpIiZqc5BDROuj85xVhK5KiLdFx4VCfVGuKA1SiciH8fqJhr4yQxnWvdYBwv2xaKKgX9dQUkZ0wlkqX+wo5DDV22i8qHXnMQkP5g1h9w+lHLtUN0zx804Eh2AWV6Jt4LI0MYc6cqk2QoH6DSblvEXXKqwTSvOWcWxTjFk3VfKH9+hKFaYi7oAiPe3A==
+ bh=+hSQgdGSGohC2ky/wZahEvhm3W4VqIPUoXCnrDrO74M=;
+ b=DPuthV1Hs4+/N35X/nsP0NfSZ+2sdFrrI0gWfGjXzhj+MAA35MMarz0MQSUz15vSJ60HmnccLM6mGrtE3Do7EPyY6u4hm4WcczQKUamQohmLXk75Bri1/CuQo3j3uiiR17hlFlZIroaay8/cnJaPp8ogXIz1AU4fzIuDNIhAMnd9d2V18u3Ox/QG7A2x58s9FDfttpduzlpI+Ek14uqLOfHmnZauerGIHkFyujDRgq9sqd/VYOnEBLlr3dIa86SUet8Bf9YTiTGhRkXX6u68zW7ue0hOyJ8FsLo0D7TkotpQrODZjU1pphjGoNHweUdwYrjRJdyPOzmGsYCp2aFT9w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
- header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
-From: <Shivanand.Kunijadar@toshiba-tsip.com>
-To: <cip-dev@lists.cip-project.org>
-CC: <dinesh.kumar@toshiba-tsip.com>
-Subject: RE: [isar-cip-core] [PATCH] Add MCOM x86 target
-Thread-Topic: [isar-cip-core] [PATCH] Add MCOM x86 target
-Thread-Index: AdqckpcQz3qSMzH8TIiOyax9RYdnUAJKC78g
-Date: Tue, 14 May 2024 05:01:26 +0000
-X-TSB-HOP2: ON
-Message-ID: 
- <TY3PR01MB1107541CD6CC53A98748546C4C7E32@TY3PR01MB11075.jpnprd01.prod.outlook.com>
-References: 
- <GVXPR10MB58375213D66CD4C30A60188888182@GVXPR10MB5837.EURPRD10.PROD.OUTLOOK.COM>
-In-Reply-To: 
- <GVXPR10MB58375213D66CD4C30A60188888182@GVXPR10MB5837.EURPRD10.PROD.OUTLOOK.COM>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
- MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ActionId=1d99b187-98d9-46d5-8325-af65e7891a27;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=true;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=restricted;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2024-05-02T13:09:35Z;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11075:EE_|TYWPR01MB9559:EE_
-x-ms-office365-filtering-correlation-id: 317e93e9-08ec-43a1-c703-08dc73d2e888
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|376005|1800799015|366007|38070700009;
-x-microsoft-antispam-message-info: 
- =?iso-2022-jp?B?SHg3RUl2UzRScVBKVCttaHdLL3FQOURxOVU4djNVVm9EYVFkY3o3WXpr?=
- =?iso-2022-jp?B?ZXF0cmhMRWRlTVRtajRhQUNzcElUNjJWeCtaODJwZVFUZ3VjK0xwcTN6?=
- =?iso-2022-jp?B?QzFpbHY0amREK1Zta2ROQnRBNDZVeEMvVXRtaWR2UFdUL3VrU1pEQmp2?=
- =?iso-2022-jp?B?eFlqdm9oMVdBM2NleWZld1NtYjdSYUM3RkE4UDYzZGVxNEpLd1ZMcmdE?=
- =?iso-2022-jp?B?QVNDTkl3bVVZQVV5RElUYnpKVGo4bitFcmhVS1V1bEVzaXd4VmYwM0pj?=
- =?iso-2022-jp?B?R3hoSy9qNFZYTWttVlkzYis5RmVLWWVPb002a09NWEhZTHBWRmR3S2dM?=
- =?iso-2022-jp?B?ckZpVGY0ekI3TE5iZU1nYzhQWnlFSzlhUkR0dW1YVC9BaklVTGRGTW14?=
- =?iso-2022-jp?B?V0hSbDlERkV6ZjU0WWZ4K1RmZTc0NDh0MDZoNHhUOHFLVmNpYlpFVFRO?=
- =?iso-2022-jp?B?UnIxVmdGVzdLb1ViUmc1VWtlSG9WaVdjSTVQYy9uaGc2cUQvV2VEMlgv?=
- =?iso-2022-jp?B?TlFzakFGMHpVVkwyc0wzaFpCNWM0azBLcTNBVmorTTY0bGlXUitXZkcz?=
- =?iso-2022-jp?B?UXhzSEY2VG5QaGxaZXA2VjVENFdSNStTWGdFdmdtRlJGVHNodGVFc2Fk?=
- =?iso-2022-jp?B?SnVmTjd6N1FIdXYzTi84N04xSi9mQ3hVeXJIdWlrWnlKckJoUzZHVjlE?=
- =?iso-2022-jp?B?aFFkM1IxTit5ZHM1Y3hUSnVCQ2tjUVp2bHJsTFFJY2NGVUVLNTZXcWFZ?=
- =?iso-2022-jp?B?aHluMUJ2UDdYVk1IMzRpK2FxemRHYXgra0M1ZDhyTGFIYktHZlVLaDBK?=
- =?iso-2022-jp?B?OTV5RHppTERvR3F0NTZYWUlTSTdMeUhVK2JhSlowdXVxQnFCbFg0bEts?=
- =?iso-2022-jp?B?cjBTSVR6YWhvY0E4QWV1anNXVFoxSmdLM0NtRG8xTXhFczVKcGdLS2Jk?=
- =?iso-2022-jp?B?TDgxNm50THFVUk5IVmJoSHdKUFh2S1k5OHp6VGhrVFFET2plNkNPRVJO?=
- =?iso-2022-jp?B?QitMbnIvbjBGTlNGbEV3NS9NcktMc25WNTFpRXFodCs3eUk3S0g1S1Ix?=
- =?iso-2022-jp?B?V3FiK2NydnFJSDZDMk5zM3NSSTRVOE9TeEtLWXBWQWFrKzBUUEFCVnVX?=
- =?iso-2022-jp?B?V0F2TzRGb3RvSjEyK1NhTjVPd0thQXFuSFU1dFpwZHZObEtoZGVuQWJn?=
- =?iso-2022-jp?B?VGI3aTdIMzJJaVU3UVBDdzlvOUs0QVg4VTEyeG1nREZOSklpZUc5UTFl?=
- =?iso-2022-jp?B?S0ViQ2JiL1lFaDU5MTM2VVNhS0ZTNG82VW1FaVpDY3JBdGJIQXZFd2cv?=
- =?iso-2022-jp?B?eVBnUnNtVEFKZHoyRVhDWGs1WEFiMkMySUZzZm0wQ21iSCtaZHNZSVIw?=
- =?iso-2022-jp?B?cmIrTGk4ditXOEdGVTNRUk9keXM2TnZETTNxWXlNVTBEeDR3dVVlM2E4?=
- =?iso-2022-jp?B?VW5FdFVqUEw5bEJNU2liSFNtNEJjN1hWOFdwV084bWQ3bmlXb2VxOUNo?=
- =?iso-2022-jp?B?ZnJ4YjJEUUM0dG5mRndFSm1paUtIL2I2YmV4bnJjelkrWWx1QVYwSGhX?=
- =?iso-2022-jp?B?ejF2VW16dEcxbTMxbXBRZzdxYU5yRnUwOEZBMlU5K3VlbmU0bWx6dUow?=
- =?iso-2022-jp?B?cy96T3EwenRjVlJBOU0rOTJ4QUZYTFFMWlg0U0kwZHBIUVdiQWtYWWxh?=
- =?iso-2022-jp?B?STZ1aVJWaUZFV1lZOTNhenpyUEVwNHdXeUk1cXJLdklZWGZZZTEwL1h4?=
- =?iso-2022-jp?B?SUx0MmVDVXorcFVYWHV1SjNvRzV2R0Y2THZ5ZjNBdDVDQ1pVWWxCeWUy?=
- =?iso-2022-jp?B?OENQcjdselZ3ZGJWSk1RSUdyQ3N4U0xCc0RKZXlPREcvVGp6UGwvZkgr?=
- =?iso-2022-jp?B?Ri84NHFtNFZrOE1iVFJUUFJFZUtOenVESnN5bG5UY0pUVzRRdUJ1VUZv?=
- =?iso-2022-jp?B?N3NIYWt2MjFZbkZ3and4ZXZWZVBGdz09?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11075.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?Y0t3ZldRMllYbWdvMWFja0FhcnRFRUZ2SW1QMTFxUE1lQ2tvclJGdVAx?=
- =?iso-2022-jp?B?QnkreFp6a1BIdEZoajFlN1dhWGFTZkJ3em5nQ0xpcnpONm5ER3R5NkNZ?=
- =?iso-2022-jp?B?a3RhNERCbENsRWlKQm5XU0FLRkMxN0QzazExSjlGQ3dtNE5iTUdTVVYw?=
- =?iso-2022-jp?B?VlZ2QkdmbUdQNktubVZORlJIc3JYSjFNTDlHUlNZTmNuWU1KTHNiaXRB?=
- =?iso-2022-jp?B?WWNHVXlVZ1Z4b1hWWWhvUTlDQ24xVVh5UlhtQmx4Y3FNSTd5NXlQZDQx?=
- =?iso-2022-jp?B?dk5zYXRCTWJWNUlkM0hvalRXd3pXd1pOdERjQU1FQVBSWEdROXhBM2xQ?=
- =?iso-2022-jp?B?UXJucjBLYWJWVitMVEd5OHNVbVZhMUxxSHQvYmljQm5PS2NJUllnYkJS?=
- =?iso-2022-jp?B?NzQxbTRMcG9CUUxUZmt0OXpOek5xWjlRSGFXWWZaMm1zZ1pRRDlLc2tm?=
- =?iso-2022-jp?B?MWZzUHRvbjZENDNDazFtM3hFcFFlcHMwYU9hVjNtSUlBTFFHSHlVNGpR?=
- =?iso-2022-jp?B?cTZ6aU9aQmgxRllwUDV3bVVZT0VLd3VsaERMVFEvSm8ra21GbUFvQThU?=
- =?iso-2022-jp?B?WlRqcXB2U1V0Vy85Z2cwMjVXNlBrTTRHblVMTUNiTDJ5L0RsaTBuVnpG?=
- =?iso-2022-jp?B?N1VZWjgrMEg2amVORW1za2dlWHBjZTdVNHM2b0xwcjN6Z2t4NGg3L3o0?=
- =?iso-2022-jp?B?KzlUUGd5UWZxamhoZEhOaDJaMm1xbWR2WlhiTTZpNS9MaWtEbVpTMjFU?=
- =?iso-2022-jp?B?N3Y1VjhMMHN1emJOV1RNb24xUSt0MzNLWlFsTWd2SVJqdnFCNy9JNHRT?=
- =?iso-2022-jp?B?UmtDWk5HbXAyLzRzOFhQa2VoNDNKNXA4K092d0Z6VzlxaWdxU0JmVlpL?=
- =?iso-2022-jp?B?WnpzY2toaHhOZ2ltZEViNUY3bXR2N0gwcG8vRDVwNjcvSTZSZ1FTcmk3?=
- =?iso-2022-jp?B?WlRMRTNTWEtGR0RlRlVtUnlNR0RYQWhnZTFrUVVrdWRwLzFLZnNOeWpH?=
- =?iso-2022-jp?B?MlNQeXEzSnVMVDZ3ZUdSbit6bTl5VGZIdDBaeUFzcGdKb21LYUw4REJa?=
- =?iso-2022-jp?B?RTFHMG5tbnU5Ullwd1B0Z3FqNzZIMU9xV0RucDdFYTlrSnh4TWdEWE9N?=
- =?iso-2022-jp?B?SkFNSU5zRHRVVFM1akdWMVhJcjRJK3JwRDVIRGZEQTRyVWpDc0xybUZX?=
- =?iso-2022-jp?B?RG54ZnhNOWt6Y1dLYitKUHpkY2RucW8wSkdwajdpWVRKN1VoYmJubFZQ?=
- =?iso-2022-jp?B?ek1lOFVQNDEvdjJFUm9EV09FMURoSEFFUStaS0lpTFhvWTlZYnBlMFdk?=
- =?iso-2022-jp?B?ald1NTNDaDg0Z2F5Sk9mSUtuTUJ5UW5JUm94SWRXd3hXZlhlMWIyMUc2?=
- =?iso-2022-jp?B?T2JxNk85cUwveFVkZnpGZ3JSU3JaaEE5WWpBOVZJZWRkZUg2UWRvR2Ry?=
- =?iso-2022-jp?B?bEd2ckZhaXZjbStNZG9hRG9aRDUvaVVZWG9mVzVzRC9TU1BLTTR4eHBS?=
- =?iso-2022-jp?B?VVM0aUlpYUVISTJMMUYwUkNmZTVBTnFBVkdyQlo1RHVwKzhOZ21CcTBJ?=
- =?iso-2022-jp?B?VXdmdWFtaWQ0bitqSzNtTUMwQTRPd2pGQ2ZPMktyUWJPbWNXNEs3Tkg0?=
- =?iso-2022-jp?B?dE1WUStJZ2JIbVNQTUtYaDc4MnltTW1uV3hDdG02bWFxa24velgrTnlp?=
- =?iso-2022-jp?B?d2xMMUFyRk1oN2lvd09kS29PenRIZytWV3BhdWs2ejAyTXBSU09vWC9D?=
- =?iso-2022-jp?B?ZWxENGRBSjBEVEgzbXR4cSs3S1g4Y2ptTTMzK1BYM1N6bithUDVtem95?=
- =?iso-2022-jp?B?OG1rRGd3enRvZWZkQTVIMjNYdnFxbnFvZVZqcEFENWdJa1l6RHFFaDgx?=
- =?iso-2022-jp?B?VnlGYUw3Wk1nbWFsLytvMjJTRW1PaGxoemZpMXZWUThWMVVVZXI3TXpE?=
- =?iso-2022-jp?B?b2ZFalhMby9MRkJLWm9DNkxTdEltc2RpbDZ5LzNxcG1zMGtYbnMwc3Jx?=
- =?iso-2022-jp?B?ZzNoMmVtd1MyWHRzRFk1RWJpcVUwOWN5TkxUQllvQnBtV3dGemZiNTAr?=
- =?iso-2022-jp?B?V0lWeVAra3oyenBaQkZCN0oxVC9OU2k3SGwvb1RYN1BxSkRpYnhVU2Y3?=
- =?iso-2022-jp?B?Y1ovd2hmRkNGWEY3UWJSbzlWUmxFUC9TdFdtYXVYZElYd0dBRU8vZW45?=
- =?iso-2022-jp?B?K3lGOXlPVlNKVWVKT1QvamFCZmlJdFJaS1RmR3dqVmpwL1NNdSt5Qm51?=
- =?iso-2022-jp?B?cHpzL29vdktCcTRJUXoyWHpldWxXUS8wTHVUcWJGMklhUFRXZEdUdGc2?=
- =?iso-2022-jp?B?RDdJbmJLejc5ZFdDdkVIbzZma0hOVkpYWW51cjZ2YTJSNFA0aHhMcDhZ?=
- =?iso-2022-jp?B?aFdOQW89?=
-Content-Type: multipart/alternative;
-	boundary="_000_TY3PR01MB1107541CD6CC53A98748546C4C7E32TY3PR01MB11075jp_"
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+hSQgdGSGohC2ky/wZahEvhm3W4VqIPUoXCnrDrO74M=;
+ b=tybholk0MurOXYK3qN6NrnEJE6uZvx0HS14kAhplj9NVtD9Z12+G5C/zQxqeEkKlvLrb53GiZAKSozkz5sPIVz7JXTl+xMw9IhPaQpnN0K5ECQjZGxpn09agPsC39yjgraWCczbFJ4o3lxc5iLL2wUk+VzIxBECWX16VtCMJy+82U1q79nR4zzNXa3ZNem81QlvnG5YRmk2CYq5bpzevZ58TV6ZinlxVDe1CuI60SJ7qdNNTzB85PG//dQ2qd1tSHg3CqwpUiYuvT2gDpHmgnzMh6mKecttX6vaDbZC8ky4Z8xzAbrKDB3WpATEQbWg6+AVxa7WhF8ndSJJ1dv83TA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1f9::22)
+ by PA1PR10MB8595.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:451::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Tue, 14 May
+ 2024 08:24:23 +0000
+Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::3087:c116:dfed:1ca2]) by AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::3087:c116:dfed:1ca2%5]) with mapi id 15.20.7544.052; Tue, 14 May 2024
+ 08:24:23 +0000
+Message-ID: <d0335e75-97d1-494d-b60e-99f16b0a359e@siemens.com>
+Date: Tue, 14 May 2024 10:24:16 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cip-dev] Generic x86 kernel configration
+To: Shivanand.Kunijadar@toshiba-tsip.com, cip-dev@lists.cip-project.org,
+ jan.kiszka@siemens.com, Chris.Paterson2@renesas.com,
+ schilling.benjamin@siemens.com, dinesh.kumar@toshiba-tsip.com,
+ iwamatsu@nigauri.org
+References: <04b43c19-f26d-49c9-a12c-71cf3ba22e63@siemens.com>
+ <TYWPR01MB1186261BB1B3D572F59B287E5B7E52@TYWPR01MB11862.jpnprd01.prod.outlook.com>
+ <078e13fd-59cc-4955-be45-9ad5906eaf29@siemens.com>
+ <AM9PR10MB4085D362B7DC095E040E755F81E52@AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM>
+ <TY3PR01MB11075F2400D6FB592B37DE2A5C7E62@TY3PR01MB11075.jpnprd01.prod.outlook.com>
+Content-Language: en-US, de-DE
+From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
+Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
+ 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
+ XSdq0hnpafc1V+voPJq3LMxUvLNrwg==
+In-Reply-To: <TY3PR01MB11075F2400D6FB592B37DE2A5C7E62@TY3PR01MB11075.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: FR0P281CA0153.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:b3::12) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:1f9::22)
 MIME-Version: 1.0
-X-OriginatorOrg: toshiba-tsip.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|PA1PR10MB8595:EE_
+X-MS-Office365-Filtering-Correlation-Id: db0008b6-45d3-40a6-0e3a-08dc73ef427f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|366007;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?IDq+7MNnwdq39zyMT/e0hL50Vxh0tsmMUBfsA0XXA2rsCzH72+NlMazuIHFn?=
+ =?us-ascii?Q?hjkirIGTrLCNFxbfGBFGrwZeM4Uyp4aDe0dsmjcvON7LeNYug0ZZQ8BL8psh?=
+ =?us-ascii?Q?EXjdekzenmLy4GosNxkjnLpWKk2BvKNoInKq9000z2shH+S7qR5HIHXlQl3O?=
+ =?us-ascii?Q?82heiNmU2RgFEXcBtg3mbyFTkmTFjHcMr5wE0w0haXYcfg7SyuoxiMxxJjvk?=
+ =?us-ascii?Q?5y6JUrWttaAW6C4W18z6OAmhWBX14YEevZk8nLYV0aS6KWB9AtmbqeZcCHHp?=
+ =?us-ascii?Q?uCeg4ZsaUFt/gRCpK/3mR90XlskHhMWmo0zj+zfrch4PSgZvIn9TPlEF2EC3?=
+ =?us-ascii?Q?+APXhj4pSbOIrXfscSZ8O8veYlxMPSWGN1NptQOtkyhKrP2c0k3sC8t6CSiV?=
+ =?us-ascii?Q?A4UZrBk7OBXGfqCV3lWog49kInZJx+CFo7ICjmdVA1YstwU9CVuBxDcnXPCM?=
+ =?us-ascii?Q?ikB7lckdi65TlLBZZR822z17RMq2W/r47EiUfFtjQ0LKkexLJkBrlPkPLMhP?=
+ =?us-ascii?Q?i9sQxN+u0HZ7OtojCEsOzlyXEpaVw1jUqH1eosMpRHYbgPS09tnWBfmDA5ib?=
+ =?us-ascii?Q?RI8ddeez0/FfKdFl8t1RGV1pBibhITAbRAe8ihG9ilwJ1ObXUEzq+dMkus/R?=
+ =?us-ascii?Q?ZtNpQh2LlzGoimQ0eauegthHngv5rdsIGmIVtDi9UN9OGqM4Sw3QM6+PCEsv?=
+ =?us-ascii?Q?6gqxXzrcpkRhqrtnnlWHttQ090HpJfijzGt12JDX5FOUMlaeJYSczFppLUXn?=
+ =?us-ascii?Q?Qt4mZM+J9UjwkkNzWBLVZBjc5Dx3f2mV9WP7mxv3c9zmE6EdweYkJXEAmWmI?=
+ =?us-ascii?Q?UeKiMOSMEBaxwSS8/DniDBgi7LDwA9JA9rMt5yJkexAncTUpqE7YuhKUSUVd?=
+ =?us-ascii?Q?kJBq2NuufQlq7rWnIS1471uNavBSN+1+K/1YFMjPR1QvpA9bAo9IzMRXQLDc?=
+ =?us-ascii?Q?yjaEfSjDRzjjK6iTBPvXmf2QsiBZcK/3b0X476Ckji8Rhp+GCZ57T5tFrpMh?=
+ =?us-ascii?Q?nQ41vHuKifwEWheqK6Q4fbLr/rppT8CDJrYp6vjemCu+cyNS9tlxe+mGKTA7?=
+ =?us-ascii?Q?lRIzDui3p/Y6VzN1PMDMMiWJwGyUzRQL1iSfwxQRYblAOkBS2oDU4VmsMfqh?=
+ =?us-ascii?Q?Ks/LpkEplKJYukz60FEHutvyf7QtoddA3tAFMm9nIoF2hPgUJIxg385pW3aJ?=
+ =?us-ascii?Q?gkBkDJU/aGMPfb7n2w/kcjZWr+qftwyNK/OssuOHNCOk00kwO4HyDit0Q6c?=
+ =?us-ascii?Q?=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?0ymR2UfbRDN5wOoIOCPagXqzWaBp3TDUPkDXJfKH6gHJoD6RWjeGZDTnEsWN?=
+ =?us-ascii?Q?vGyOMD31RoRN0CywEMRNKsQVI2WijetArneYclgD2vw8WYaTEVZ73oxvDs68?=
+ =?us-ascii?Q?dwCtpeKjLyv+FG4Nus4R6UA5oASvzgMcX8uNrJ/S9gUkAmovTn/wWTWRx6WE?=
+ =?us-ascii?Q?Gb2Y0rCoPTy3rMeaAtdKzK1GKaipiXcm5uFm8rqSLdpXpT5xwOf+ZZXb20TF?=
+ =?us-ascii?Q?/OHeY8DvL3EFdYZYTGJc20/xsLSkTf+zGBOFnRFRf/eC00uK1UFBa++TsrVe?=
+ =?us-ascii?Q?Ecq+cpqA12BPHG05aWieke6uhxbxexnMV6QxchLxxU6kixUXERsVpGaHodoi?=
+ =?us-ascii?Q?qDrnkBX2TWWRJb1zTkEiYY/ySamwn5szYHGRg5Es1fggoffZaU+hLhQhTIJ/?=
+ =?us-ascii?Q?hhefVntOsS/9ykN6Yzl208WxhaCySZngsClyFo08WkNOO16cEzyzgJagHFR5?=
+ =?us-ascii?Q?33l5slAEfgGBKXBA4lrSe50z1tFV+95Ft/73YIA6nEqWSbXkqYPl4JIT0H+4?=
+ =?us-ascii?Q?HBY+aOf186g3wogxB7CWFrfbgi44Ca/HNxoTm7cHn0ZyI5m4lk00AErDmeUp?=
+ =?us-ascii?Q?kfFpfD4yXmlhli6JqTkPL7+cectAqOGf+V6GtrJ0Wp2qeGZG6FUKnnzzd6t5?=
+ =?us-ascii?Q?F59o5g4iWgMaQoAYCWXLw1dMmJfGquGC6wZtfu0ZtlxGqRPgrP59TfpOG1Yb?=
+ =?us-ascii?Q?MUBLGX3dRuM3oUjJFqOnW9xBXVEy5dv/Hjmn6oOceLfKed8d9OXesWIOO0ls?=
+ =?us-ascii?Q?ScWGgXg/aoiphQy99hLm2+x6+eQwQ91vrHSeeo0JQXAgP5NRtbiDEzTTBRYc?=
+ =?us-ascii?Q?3MteRQvyFD45S41gzzpyEvY+++yjjXRRrvlFodfRgSGOsV6b4E1+mJEaoKxh?=
+ =?us-ascii?Q?oWYOTfL8qozZ98U61bKsHDtrN6PWWV4BD9Dyg8mHW8qOvcbzoztoLUioG2D7?=
+ =?us-ascii?Q?NdeUC7pdvIWioN3RSq2ku0KkDkyLosJUK8+NNwzwDBZaLtPEd+sOpVKMuVm5?=
+ =?us-ascii?Q?dlOvT5AB6xwFdRsM0jLsgZZtWkmmwENgAGZdIzDvzATIZQRg9WrlaKp20c35?=
+ =?us-ascii?Q?hCP/z1xc+16ragWT7WJjqcfWPC5ZOZLWBlTlg9oOhCabI8++2Fl0o/4FlN2B?=
+ =?us-ascii?Q?maEzqvtp5HgLrRrHnhwczM7z7dso5UGs/Y2dLj1weNjQh7cu0Js+KLnxe4xO?=
+ =?us-ascii?Q?+E5AcI854AqMjUqGS7NSAnJVXhs4g3CCXbKPZliio6SBCL8lvpPgTstMFNZO?=
+ =?us-ascii?Q?hob99GZnEtUEqN1hGWM7PS7NemB16zhp28w1J8xqWR1Q6EsnHveY0iX7ko4I?=
+ =?us-ascii?Q?PZJSELXLH9ri+LlUf0ejUX+k3MMWDS/p4nOCQdnTHOqyVSXyaLUYOxAGoHmR?=
+ =?us-ascii?Q?3sKq990KPB9Oqz/xXup7ztY4tyeDd2CjxccvNAWKxC6zNm8gdsBlL0/GwboC?=
+ =?us-ascii?Q?Iofi1Em4BxHnFS845clilz9vphMe4Go+7utg+kr2GWg1CYGRozQ0zm1U0DbU?=
+ =?us-ascii?Q?mPGE21NLLFsCB1VvUZwIpQqg6Xce+a8914WoeGIWrk9Z3LPS8T5hUaYUFkfx?=
+ =?us-ascii?Q?Pc9MZEsO8Q6bkQJMi8tZTIf7c8t0Voj3BcuBDl6l9H9uHYoPJwZ8q2ml5+XX?=
+ =?us-ascii?Q?1A=3D=3D?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: db0008b6-45d3-40a6-0e3a-08dc73ef427f
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11075.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 317e93e9-08ec-43a1-c703-08dc73d2e888
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 May 2024 05:01:26.0903
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2024 08:24:23.2745
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6IkWT410F4qAmmh/VUCl3U7vlq9Uqk1DPf1JuX+brpr7yXMzvOVrSV4NZI0lsMpjipyHPl3bIN2a8h5WuRjy37XUJQdL69wQfQUIr/MsXxr+ZWYqR1eVwYP2Wt8xjV0P
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB9559
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kb/yrbpU+nhRirL4Z3STzEzVCXqX4AjrVSJCprfZ+zcB/1NZt5wViF/x8um79NXqd65e20sgy6wlBldDZFB5mGUE8d/1uPNRlJdCSTuXfog=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR10MB8595
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 14 May 2024 05:01:39 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15887
+ <cip-dev@lists.cip-project.org>; Tue, 14 May 2024 08:24:30 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15888
 
---_000_TY3PR01MB1107541CD6CC53A98748546C4C7E32TY3PR01MB11075jp_
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+Dear all,
 
-Hi Benjamin,
-
-The MCOM kernel configs for 5.10.y-cip/x86 are merged to cip-kernel-config =
-master branch now.
-Could you please send the revised patches for MCOM x86 target.
-
-Probably, you may need to update =1B$B!H=1B(Brecipes-kernel/linux/cip-kerne=
-l-config.inc=1B$B!I=1B(B file.
-
-Thanks & Regards
-Shivanand K
-From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On Beha=
-lf Of Benjamin Schilling via lists.cip-project.org
-Sent: Thursday, May 2, 2024 6:45 PM
-To: cip-dev@lists.cip-project.org
-Subject: [cip-dev] [isar-cip-core] [PATCH] Add MCOM x86 target
-
-From edb4f62f1f11252bc82d34325130e072825d75ef Mon Sep 17 00:00:00 2001
-From: Benjamin Schilling <schilling.benjamin@siemens.com<mailto:schilling.b=
-enjamin@siemens.com>>
-Date: Wed, 10 Apr 2024 17:21:11 +0200
-Subject: [isar-cip-core] [PATCH] Add MCOM x86 target
-
-This patch adds the MCOM x86 as another hardware target.
-
-Signed-off-by: Benjamin Schilling <schilling.benjamin@siemens.com<mailto:sc=
-hilling.benjamin@siemens.com>>
----
-Kconfig                                    |  7 ++++++-
-conf/machine/mcom-x86.conf                 | 15 +++++++++++++++
-kas/board/mcom-x86.yml                     | 15 +++++++++++++++
-recipes-kernel/linux/cip-kernel-config.inc |  4 ++--
-wic/mcom-x86-efibootguard.wks.in           | 14 ++++++++++++++
-5 files changed, 52 insertions(+), 3 deletions(-)
-create mode 100644 conf/machine/mcom-x86.conf
-create mode 100644 kas/board/mcom-x86.yml
-create mode 100644 wic/mcom-x86-efibootguard.wks.in
-
-diff --git a/Kconfig b/Kconfig
-index 7c19640..89f7467 100644
---- a/Kconfig
-+++ b/Kconfig
-@@ -43,6 +43,10 @@ config TARGET_SIMATIC_IPC227E
-               bool "Siemens SIMATIC IPC227E"
-               select ARCH_AMD64
-
-+config TARGET_MCOM_X86
-+             bool "Siemens M-COM X86"
-+             select ARCH_AMD64
-+
-config TARGET_QEMU_ARM64
-               bool "QEMU ARM64 (aarch64)"
-               select ARCH_ARM64
-@@ -73,6 +77,7 @@ config KAS_INCLUDE_BOARD
-               string
-               default "kas/board/qemu-amd64.yml" if TARGET_QEMU_AMD64
-               default "kas/board/simatic-ipc227e.yml" if TARGET_SIMATIC_IP=
-C227E
-+             default "kas/board/mcom-x86.yml" if TARGET_MCOM_X86
-               default "kas/board/qemu-arm64.yml" if TARGET_QEMU_ARM64
-               default "kas/board/hihope-rzg2m.yml" if TARGET_HIHOPE_RZG2M
-               default "kas/board/qemu-arm.yml" if TARGET_QEMU_ARM
-@@ -190,7 +195,7 @@ if IMAGE_FLASH && !KERNEL_4_4 && !KERNEL_4_19
-
- config IMAGE_SWUPDATE
-               bool "SWUpdate support for root partition"
--              depends on TARGET_QEMU_AMD64 || TARGET_SIMATIC_IPC227E || TA=
-RGET_QEMU_ARM64 || TARGET_QEMU_ARM || TARGET_BBB || ( TARGET_QEMU_RISCV64 &=
-& KERNEL_6_1 ) || TARGET_HIHOPE_RZG2M
-+             depends on TARGET_QEMU_AMD64 || TARGET_SIMATIC_IPC227E || TAR=
-GET_MCOM_X86 ||TARGET_QEMU_ARM64 || TARGET_QEMU_ARM || TARGET_BBB || ( TARG=
-ET_QEMU_RISCV64 && KERNEL_6_1 ) || TARGET_HIHOPE_RZG2M
-
- config IMAGE_SECURE_BOOT
-               bool "Secure boot support"
-diff --git a/conf/machine/mcom-x86.conf b/conf/machine/mcom-x86.conf
-new file mode 100644
-index 0000000..21bcd1e
---- /dev/null
-+++ b/conf/machine/mcom-x86.conf
-@@ -0,0 +1,15 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens Mobility GmbH, 2024
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+DISTRO_ARCH =3D "amd64"
-+
-+IMAGE_FSTYPES ?=3D "wic"
-+WKS_FILE ?=3D "x86_64-generic.wks"
-+IMAGER_INSTALL:wic +=3D "${GRUB_BOOTLOADER_INSTALL}"
-+USE_CIP_KERNEL_CONFIG =3D "1"
-+KERNEL_DEFCONFIG =3D "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/x86/si=
-emens_mcom_x86_defconfig"
-diff --git a/kas/board/mcom-x86.yml b/kas/board/mcom-x86.yml
-new file mode 100644
-index 0000000..28c4674
---- /dev/null
-+++ b/kas/board/mcom-x86.yml
-@@ -0,0 +1,15 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens Mobility GmbH, 2024
-+#
-+# Authors:
-+#  Benjamin Schilling <schilling.benjamin@siemens.com<mailto:schilling.ben=
-jamin@siemens.com>>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+header:
-+  version: 14
-+
-+machine: mcom-x86
-diff --git a/recipes-kernel/linux/cip-kernel-config.inc b/recipes-kernel/li=
-nux/cip-kernel-config.inc
-index 40c378b..7acdc0d 100644
---- a/recipes-kernel/linux/cip-kernel-config.inc
-+++ b/recipes-kernel/linux/cip-kernel-config.inc
-@@ -10,8 +10,8 @@
-#
-
- SRC_URI:append =3D " ${@ \
--    'git://gitlab.com/cip-project/cip-kernel/cip-kernel-config.git;protoco=
-l=3Dhttps;branch=3Dmaster;destsuffix=3Dcip-kernel-config;name=3Dcip-kernel-=
-config' \
-+    'git://gitlab.com/benjamin-schilling/cip-kernel-config.git;protocol=3D=
-https;branch=3Dbs/mcom;destsuffix=3Dcip-kernel-config;name=3Dcip-kernel-con=
-fig' \
-     if d.getVar('USE_CIP_KERNEL_CONFIG') =3D=3D '1' else '' \
-     }"
-
--SRCREV_cip-kernel-config ?=3D "ee86aca8abbe7a41536bcb53142fbf0f57b1c9b7"
-+SRCREV_cip-kernel-config ?=3D "50f7039f6c1486be2f1e1b2ca0ddc300895e44cd"
-diff --git a/wic/mcom-x86-efibootguard.wks.in b/wic/mcom-x86-efibootguard.w=
-ks.in
-new file mode 100644
-index 0000000..6382ff7
---- /dev/null
-+++ b/wic/mcom-x86-efibootguard.wks.in
-@@ -0,0 +1,14 @@
-+# short-description: x86 with EFI Boot Guard and SWUpdate
-+# long-description: Disk image for x86 machines with EFI Boot Guard and SW=
-Update
-+
-+include ebg-sysparts.inc
-+
-+part --source rawcopy --sourceparams "file=3D${IMAGE_FULLNAME}.squashfs" -=
--align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0F=
-C63DAF-8483-4772-8E79-3D69D8477DE4
-+part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_U=
-UID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4
-+
-+# home and var are extra partitions
-+
-+part /home --source rootfs --change-directory=3Dhome --fstype=3Dext4 --lab=
-el home --align 1024  --size 1G --extra-space=3D100M --fsuuid 1f55d66a-40d8=
--11ee-be56-0242ac120002
-+part /var --fstype=3Dext4 --label var --align 1024 --fixed-size 2G --fsuui=
-d 96be3374-4258-11ee-be56-0242ac120002
-+
-+bootloader --ptable gpt --append=3D"console=3Dtty0 console=3DttyS0,115200 =
-rootwait earlyprintk watchdog.handle_boot_enabled=3D0 iTCO_wdt.nowayout=3D1=
- "
---
-2.39.2
+On 5/9/24 10:54 AM, Shivanand.Kunijadar@toshiba-tsip.com wrote:
+> Hi Quirin, Chris
+>=20
+> @Quirin Gylstorff <mailto:quirin.gylstorff@siemens.com> Thank you for=20
+> creating a branch to test generic kernel configs for x86.
+>=20
+> I checked out your branch =E2=80=9Cqg/merge_kernel_configs=E2=80=9D and c=
+reated image=20
+> for qemu-amd64.
+>=20
+> Locally I also tried to boot the image but it failed with below message.
+>=20
+> Booting from ROM...
+>=20
+> This kernel requires the following features not present on the CPU:
+>=20
+> movbe
+>=20
+> Unable to boot - please use a kernel appropriate for your CPU.
+>=20
 
 
---_000_TY3PR01MB1107541CD6CC53A98748546C4C7E32TY3PR01MB11075jp_
-Content-Type: text/html; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+I created a merge request which should contain the fixes for the
+movbe problem.
 
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
-jp">
-<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
-<style><!--
-/* Font Definitions */
-@font-face
-	{font-family:"Cambria Math";
-	panose-1:2 4 5 3 5 4 6 3 2 4;}
-@font-face
-	{font-family:Calibri;
-	panose-1:2 15 5 2 2 2 4 3 2 4;}
-@font-face
-	{font-family:Aptos;}
-/* Style Definitions */
-p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{margin:0cm;
-	font-size:11.0pt;
-	font-family:"Calibri",sans-serif;
-	mso-ligatures:standardcontextual;
-	mso-fareast-language:EN-US;}
-a:link, span.MsoHyperlink
-	{mso-style-priority:99;
-	color:#0563C1;
-	text-decoration:underline;}
-span.EmailStyle19
-	{mso-style-type:personal-reply;
-	font-family:"Aptos",sans-serif;
-	color:windowtext;}
-.MsoChpDefault
-	{mso-style-type:export-only;
-	font-size:10.0pt;
-	mso-ligatures:none;}
-@page WordSection1
-	{size:612.0pt 792.0pt;
-	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
-div.WordSection1
-	{page:WordSection1;}
---></style><!--[if gte mso 9]><xml>
-<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
-</xml><![endif]--><!--[if gte mso 9]><xml>
-<o:shapelayout v:ext=3D"edit">
-<o:idmap v:ext=3D"edit" data=3D"1" />
-</o:shapelayout></xml><![endif]-->
-</head>
-<body lang=3D"EN-IN" link=3D"#0563C1" vlink=3D"#954F72" style=3D"word-wrap:=
-break-word">
-<div class=3D"WordSection1">
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif">Hi Benjamin, <o:p>
-</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif">The MCOM kernel configs for 5.10.y-cip/x86 are merged to cip-kernel-co=
-nfig master branch now.
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif">Could you please send the revised patches for MCOM x86 target.
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif">Probably, you may need to update =1B$B!H=1B(B</span><span lang=3D"EN-U=
-S">recipes-kernel/linux/cip-kernel-config.inc=1B$B!I=1B(B file.
-</span><span style=3D"font-family:&quot;Aptos&quot;,sans-serif"><o:p></o:p>=
-</span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif">Thanks &amp; Regards<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif">Shivanand K<o:p></o:p></span></p>
-<div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
-0cm 0cm">
-<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"mso-ligatures:none;=
-mso-fareast-language:EN-IN">From:</span></b><span lang=3D"EN-US" style=3D"m=
-so-ligatures:none;mso-fareast-language:EN-IN"> cip-dev@lists.cip-project.or=
-g &lt;cip-dev@lists.cip-project.org&gt;
-<b>On Behalf Of </b>Benjamin Schilling via lists.cip-project.org<br>
-<b>Sent:</b> Thursday, May 2, 2024 6:45 PM<br>
-<b>To:</b> cip-dev@lists.cip-project.org<br>
-<b>Subject:</b> [cip-dev] [isar-cip-core] [PATCH] Add MCOM x86 target<o:p><=
-/o:p></span></p>
-</div>
-</div>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">From edb4f62f1f11252bc82d343251=
-30e072825d75ef Mon Sep 17 00:00:00 2001<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">From: Benjamin Schilling &lt;<a=
- href=3D"mailto:schilling.benjamin@siemens.com">schilling.benjamin@siemens.=
-com</a>&gt;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">Date: Wed, 10 Apr 2024 17:21:11=
- +0200<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">Subject: [isar-cip-core] [PATCH=
-] Add MCOM x86 target<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">This patch adds the MCOM x86 as=
- another hardware target.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">Signed-off-by: Benjamin Schilli=
-ng &lt;<a href=3D"mailto:schilling.benjamin@siemens.com">schilling.benjamin=
-@siemens.com</a>&gt;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">---<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">Kconfig&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp; 7 ++++++-<o:p></o:p></span></p=
->
-<p class=3D"MsoNormal"><span lang=3D"EN-US">conf/machine/mcom-x86.conf&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp; | 15 +++++++++++++++<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">kas/board/mcom-x86.yml&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 15 +++++++++++++++<o:p></o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">recipes-kernel/linux/cip-kernel=
--config.inc |&nbsp; 4 ++--<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">wic/mcom-x86-efibootguard.wks.i=
-n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 14 ++++++++=
-++++++<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">5 files changed, 52 insertions(=
-+), 3 deletions(-)<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">create mode 100644 conf/machine=
-/mcom-x86.conf<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">create mode 100644 kas/board/mc=
-om-x86.yml<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">create mode 100644 wic/mcom-x86=
--efibootguard.wks.in<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">diff --git a/Kconfig b/Kconfig<=
-o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">index 7c19640..89f7467 100644<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">--- a/Kconfig<o:p></o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+++ b/Kconfig<o:p></o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">@@ -43,6 +43,10 @@ config TARGE=
-T_SIMATIC_IPC227E<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bool &quot;Siemens SI=
-MATIC IPC227E&quot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; select ARCH_AMD64<o:p=
-></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+config TARGET_MCOM_X86<o:p></o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bool &quot;Siemens M-COM X86&quo=
-t;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; select ARCH_AMD64<o:p></o:p></sp=
-an></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">config TARGET_QEMU_ARM64<o:p></=
-o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bool &quot;QEMU ARM64=
- (aarch64)&quot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; select ARCH_ARM64<o:p=
-></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">@@ -73,6 +77,7 @@ config KAS_IN=
-CLUDE_BOARD<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; string<o:p></o:p></sp=
-an></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; default &quot;kas/boa=
-rd/qemu-amd64.yml&quot; if TARGET_QEMU_AMD64<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; default &quot;kas/boa=
-rd/simatic-ipc227e.yml&quot; if TARGET_SIMATIC_IPC227E<o:p></o:p></span></p=
->
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; default &quot;kas/board/mcom-x86=
-.yml&quot; if TARGET_MCOM_X86<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; default &quot;kas/boa=
-rd/qemu-arm64.yml&quot; if TARGET_QEMU_ARM64<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; default &quot;kas/boa=
-rd/hihope-rzg2m.yml&quot; if TARGET_HIHOPE_RZG2M<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; default &quot;kas/boa=
-rd/qemu-arm.yml&quot; if TARGET_QEMU_ARM<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">@@ -190,7 +195,7 @@ if IMAGE_FL=
-ASH &amp;&amp; !KERNEL_4_4 &amp;&amp; !KERNEL_4_19<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;config IMAGE_SWUPDATE<o:p=
-></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bool &quot;SWUpdate s=
-upport for root partition&quot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; depends on TARGET_QEMU_AMD=
-64 || TARGET_SIMATIC_IPC227E || TARGET_QEMU_ARM64 || TARGET_QEMU_ARM || TAR=
-GET_BBB || ( TARGET_QEMU_RISCV64 &amp;&amp; KERNEL_6_1 ) || TARGET_HIHOPE_R=
-ZG2M<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; depends on TARGET_QEMU_AMD64 || =
-TARGET_SIMATIC_IPC227E || TARGET_MCOM_X86 ||TARGET_QEMU_ARM64 || TARGET_QEM=
-U_ARM || TARGET_BBB || ( TARGET_QEMU_RISCV64 &amp;&amp; KERNEL_6_1 ) || TAR=
-GET_HIHOPE_RZG2M<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;config IMAGE_SECURE_BOOT<=
-o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bool &quot;Secure boo=
-t support&quot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">diff --git a/conf/machine/mcom-=
-x86.conf b/conf/machine/mcom-x86.conf<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">new file mode 100644<o:p></o:p>=
-</span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">index 0000000..21bcd1e<o:p></o:=
-p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">--- /dev/null<o:p></o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+++ b/conf/machine/mcom-x86.con=
-f<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">@@ -0,0 +1,15 @@<o:p></o:p></sp=
-an></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# CIP Core, generic profile<o:=
-p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# Copyright (c) Siemens Mobili=
-ty GmbH, 2024<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# SPDX-License-Identifier: MIT=
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+DISTRO_ARCH =3D &quot;amd64&qu=
-ot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+IMAGE_FSTYPES ?=3D &quot;wic&q=
-uot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+WKS_FILE ?=3D &quot;x86_64-gen=
-eric.wks&quot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+IMAGER_INSTALL:wic +=3D &quot;=
-${GRUB_BOOTLOADER_INSTALL}&quot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+USE_CIP_KERNEL_CONFIG =3D &quo=
-t;1&quot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+KERNEL_DEFCONFIG =3D &quot;cip=
--kernel-config/${KERNEL_DEFCONFIG_VERSION}/x86/siemens_mcom_x86_defconfig&q=
-uot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">diff --git a/kas/board/mcom-x86=
-.yml b/kas/board/mcom-x86.yml<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">new file mode 100644<o:p></o:p>=
-</span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">index 0000000..28c4674<o:p></o:=
-p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">--- /dev/null<o:p></o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+++ b/kas/board/mcom-x86.yml<o:=
-p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">@@ -0,0 +1,15 @@<o:p></o:p></sp=
-an></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# CIP Core, generic profile<o:=
-p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# Copyright (c) Siemens Mobili=
-ty GmbH, 2024<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# Authors:<o:p></o:p></span></=
-p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#&nbsp; Benjamin Schilling &lt=
-;<a href=3D"mailto:schilling.benjamin@siemens.com">schilling.benjamin@sieme=
-ns.com</a>&gt;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# SPDX-License-Identifier: MIT=
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+header:<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+&nbsp; version: 14<o:p></o:p><=
-/span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+machine: mcom-x86<o:p></o:p></=
-span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">diff --git a/recipes-kernel/lin=
-ux/cip-kernel-config.inc b/recipes-kernel/linux/cip-kernel-config.inc<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">index 40c378b..7acdc0d 100644<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">--- a/recipes-kernel/linux/cip-=
-kernel-config.inc<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+++ b/recipes-kernel/linux/cip-=
-kernel-config.inc<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"DE">@@ -10,8 +10,8 @@<o:p></o:p></span=
-></p>
-<p class=3D"MsoNormal"><span lang=3D"DE">#<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"DE"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"DE">&nbsp;SRC_URI:append =3D &quot; ${=
-@ \<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"DE">-&nbsp;&nbsp;&nbsp; 'git://gitlab.=
-com/cip-project/cip-kernel/cip-kernel-config.git;protocol=3Dhttps;branch=3D=
-master;destsuffix=3Dcip-kernel-config;name=3Dcip-kernel-config' \<o:p></o:p=
-></span></p>
-<p class=3D"MsoNormal"><span lang=3D"DE">+&nbsp;&nbsp;&nbsp; 'git://gitlab.=
-com/benjamin-schilling/cip-kernel-config.git;protocol=3Dhttps;branch=3Dbs/m=
-com;destsuffix=3Dcip-kernel-config;name=3Dcip-kernel-config' \<o:p></o:p></=
-span></p>
-<p class=3D"MsoNormal"><span lang=3D"DE">&nbsp;&nbsp;&nbsp;&nbsp; </span><s=
-pan lang=3D"EN-US">if d.getVar('USE_CIP_KERNEL_CONFIG') =3D=3D '1' else '' =
-\<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;&nbsp;&nbsp;&nbsp; }&quot=
-;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">-SRCREV_cip-kernel-config ?=3D =
-&quot;ee86aca8abbe7a41536bcb53142fbf0f57b1c9b7&quot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+SRCREV_cip-kernel-config ?=3D =
-&quot;50f7039f6c1486be2f1e1b2ca0ddc300895e44cd&quot;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">diff --git a/wic/mcom-x86-efibo=
-otguard.wks.in b/wic/mcom-x86-efibootguard.wks.in<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">new file mode 100644<o:p></o:p>=
-</span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">index 0000000..6382ff7<o:p></o:=
-p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">--- /dev/null<o:p></o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+++ b/wic/mcom-x86-efibootguard=
-.wks.in<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">@@ -0,0 +1,14 @@<o:p></o:p></sp=
-an></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# short-description: x86 with =
-EFI Boot Guard and SWUpdate<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# long-description: Disk image=
- for x86 machines with EFI Boot Guard and SWUpdate<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+include ebg-sysparts.inc<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+part --source rawcopy --source=
-params &quot;file=3D${IMAGE_FULLNAME}.squashfs&quot; --align 1024 --fixed-s=
-ize 1G --uuid &quot;${ABROOTFS_PART_UUID_A}&quot; --part-type 0FC63DAF-8483=
--4772-8E79-3D69D8477DE4<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+part --source empty --align 10=
-24 --fixed-size 1G --uuid &quot;${ABROOTFS_PART_UUID_B}&quot; --part-type 0=
-FC63DAF-8483-4772-8E79-3D69D8477DE4<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# home and var are extra parti=
-tions<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+part /home --source rootfs --c=
-hange-directory=3Dhome --fstype=3Dext4 --label home --align 1024&nbsp; --si=
-ze 1G --extra-space=3D100M --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002<o:=
-p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+part /var --fstype=3Dext4 --la=
-bel var --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242a=
-c120002<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+bootloader --ptable gpt --appe=
-nd=3D&quot;console=3Dtty0 console=3DttyS0,115200 rootwait earlyprintk watch=
-dog.handle_boot_enabled=3D0 iTCO_wdt.nowayout=3D1 &quot;<o:p></o:p></span><=
-/p>
-<p class=3D"MsoNormal"><span lang=3D"DE">-- <o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"DE">2.39.2<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"DE"><o:p>&nbsp;</o:p></span></p>
-</div>
-</body>
-</html>
+https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/-/merge_request=
+s/92
 
---_000_TY3PR01MB1107541CD6CC53A98748546C4C7E32TY3PR01MB11075jp_--
+Best regards
+Quirin
 
+> Thanks & Regards
+>=20
+> Shivanand K
+>=20
+> *From:*cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> *On=
+=20
+> Behalf Of *Quirin Gylstorff via lists.cip-project.org
+> *Sent:* Wednesday, May 8, 2024 9:46 PM
+> *To:* Kiszka, Jan <jan.kiszka@siemens.com>; Chris Paterson=20
+> <Chris.Paterson2@renesas.com>; Schilling, Benjamin=20
+> <schilling.benjamin@siemens.com>; dinesh kumar(=EF=BC=B4=EF=BC=B3=EF=BC=
+=A9=EF=BC=B0TMIEC ODG=20
+> Porting) <dinesh.kumar@toshiba-tsip.com>; Nobuhiro Iwamatsu=20
+> <iwamatsu@nigauri.org>; cip-dev@lists.cip-project.org
+> *Subject:* Re: [cip-dev] Generic x86 kernel configration
+>=20
+> I will investigate it. =C2=A0I think this be one of the cases were automa=
+te=20
+> merging will fail.
+>=20
+> Quirin
+>=20
+> ------------------------------------------------------------------------
+>=20
+> *Von:*Kiszka, Jan (T CED) <jan.kiszka@siemens.com=20
+> <mailto:jan.kiszka@siemens.com>>
+> *Gesendet:* Wednesday, May 8, 2024 6:03:38 PM
+> *An:* Chris Paterson <Chris.Paterson2@renesas.com=20
+> <mailto:Chris.Paterson2@renesas.com>>; Gylstorff, Quirin (T CED OES-DE)=20
+> <quirin.gylstorff@siemens.com <mailto:quirin.gylstorff@siemens.com>>;=20
+> Schilling, Benjamin (SMO RI R&D F SEC) <schilling.benjamin@siemens.com=20
+> <mailto:schilling.benjamin@siemens.com>>; dinesh.kumar@toshiba-tsip.com=20
+> <mailto:dinesh.kumar@toshiba-tsip.com> <dinesh.kumar@toshiba-tsip.com=20
+> <mailto:dinesh.kumar@toshiba-tsip.com>>; Nobuhiro Iwamatsu=20
+> <iwamatsu@nigauri.org <mailto:iwamatsu@nigauri.org>>;=20
+> cip-dev@lists.cip-project.org <mailto:cip-dev@lists.cip-project.org>=20
+> <cip-dev@lists.cip-project.org <mailto:cip-dev@lists.cip-project.org>>
+> *Betreff:* Re: [cip-dev] Generic x86 kernel configration
+>=20
+> On 08.05.24 18:00, Chris Paterson wrote:
+>> Hello Quirin,
+>>=20
+>> Thank you for your work on this.
+>>=20
+>>> From: Gylstorff Quirin <quirin.gylstorff@siemens.com <mailto:quirin.gyl=
+storff@siemens.com>>
+>>> Sent: Friday, May 3, 2024 4:58 PM
+>>>
+>>> Dear all,
+>>>
+>>> I have used a forked version of [1], which you can find here[2] to
+>>> merge the following x86 kernel configs together:
+>>>
+>>> cip-kernel-config/5.10.y-cip/x86/siemens_server_defconfig'
+>>> cip-kernel-config/5.10.y-cip/x86/toshiba_atom_baytrail_cip_defconfig'
+>>> cip-kernel-config/5.10.y-cip/x86/siemens_ipc127e_defconfig'
+>>> cip-kernel-config/5.10.y-cip/x86/plathome_obsvx2_defconfig'
+>>> cip-kernel-config/5.10.y-cip/x86/cip_qemu_defconfig'
+>>> cip-kernel-config/5.10.y-cip/x86/siemens_ipc227e_defconfig'
+>>> cip-kernel-config/5.10.y-cip/x86/siemens_iot2000_defconfig'
+>>> cip_core_merge_kernel_config/recipes-kernel/linux/files/mcom.cfg'
+>>>
+>>>
+>>> I have tested the v5.10.214-cip46 version of the config with qemu-amd64=
+.
+>>> The next step would be to check it in the cip lab on the real hardware.
+>>>
+>>> The script takes the Kconfig entries of the specific kernel version int=
+o
+>>> account. It also adds all dependencies to the config. You can find to
+>>> log of the merge at [3] and the diffs to each configuration at [4].
+>>>
+>>> An first integration into cip-core can be found at [5].
+>>>
+>>> Any comments from your side?
+>>=20
+>> I had a go at building/boot testing the linux-cip 6.1 kernel in our GitL=
+ab CI setup using your merged config:
+>> https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/12834768=
+01 <https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/1283476=
+801>
+>>=20
+>> It built and booted okay on the ipc227e.
+>> However, it didn't boot on the qemu setup in our LAVA lab:
+>> https://lava.ciplatform.org/scheduler/job/1129968=20
+> <https://lava.ciplatform.org/scheduler/job/1129968>
+>> "This kernel requires the following features not present on the CPU: mov=
+be"
+>>=20
+>> I don't know if that's an issue with our qemu setup or with the kernel c=
+onfig.
+>=20
+> The CPU type the kernel supports/expects is a choice. I suspect that
+> merging multiple configs shifted us from "works with generic x86"
+> towards "only works on Intel-whatsoever". Combine that with a
+> restrictive CPU type selected for qemu/kvm, and you get that kind of erro=
+r.
+>=20
+> We should likely tune the common config for generic x86.
+>=20
+> Jan
+>=20
+> --=20
+> Siemens AG, Technology
+> Linux Expert Center
+>=20
 
