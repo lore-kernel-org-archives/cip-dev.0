@@ -1,449 +1,244 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <sai.sathujoda@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05960C04FFE
-	for <webhook@archiver.kernel.org>; Tue, 14 May 2024 13:26:54 +0000 (UTC)
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.63])
- by mx.groups.io with SMTP id smtpd.web10.15523.1715693210934913203
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4ABBC25B75
+	for <webhook@archiver.kernel.org>; Wed, 15 May 2024 04:55:59 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.132])
+ by mx.groups.io with SMTP id smtpd.web10.7090.1715748950206715186
  for <cip-dev@lists.cip-project.org>;
- Tue, 14 May 2024 06:26:51 -0700
+ Tue, 14 May 2024 21:55:50 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=pFkSCprz;
- spf=pass (domain: siemens.com, ip: 40.107.6.63, mailfrom: jan.kiszka@siemens.com)
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.132, mailfrom: sai.sathujoda@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1121) id 44F4tlx03273466; Wed, 15 May 2024 13:55:48 +0900
+X-Iguazu-Qid: 2rWhNMNecUgHB75IRC
+X-Iguazu-QSIG: v=2; s=0; t=1715748947; q=2rWhNMNecUgHB75IRC; m=ERmHpCBbnA3LP11d2+QzKRtgvosNt+YK7nPLs3+8XuU=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1121) id 44F4tjfF394487
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 15 May 2024 13:55:47 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jYvtNDANbX82dJXi+QDCU2j8OG9d47IM5JoCIN7lSc67rKFfwpAkvZIzxZqrw5hpA+14lhncSLkPIyAIPj/uHRryrVfwGJg8mbBjP4TT5rKGLO1GDny6/+QW6kxIaKDLUfcg7HfQvr3Cbj7RMGuSDa/McbDZ5UvlDXSdW+AF2JghCY3mSUjXzZW+yebEj1ZZIJXUq/to2ycuZssjMSw1HUMGI4U3LmK0SjgiLErtx7iitjvaACQdHHcEWvETaQthmWcLbCG4BHnFxBbLqUWacTToFkO7ZU/Ayp6Q6vkMEr/i2mcHYqIV3mltBieohBmT1PCndVHgZl9ItIm/tgltMg==
+ b=nZe5DX+m02y6UHOoTXJhEvcaUE0CPyFR1qOZhEDs+OCrjwupvEdz6QO8Ups4r1gJ+GjEGJrh1/+BqxEoxIFchOcx3sOMMW6zsai+O6ha8V8Ckbs6dQUnC/fxLD2KoFrN8YwFD9sbh3F1OLK0iUximSKlJTaq33ZhXU7nq9aZAnMScqESdnALMmBxMAV/sU2oiNVeGQjQjH7Gk9ZmAZkiWBpJBhukJxFaVgUkqm9NKEurZdlKfT2rZj+TdRj+IOCyTxbLG7KrX6tiewOiT17PJOA2ongFixY2cs9Xqg+fJHFECwszVsujD6KEAqWs9gpBW2Pmk4/XJ6GxAldEfUDZ8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=b2aorIQ0iSk34MmkxtIdGcNm8QS1S4eyOQn99bgUuz4=;
- b=Igq9nB/cOyniioHZrCCl/Xbhz+4AbnqICp/wx3atgNXmxCofWoiHE+6jbZRIuIPB0L+KocgitrQxZEi47AlunWntlYohWhyzSsFy1aE7wYGYQTUzOAsGy73/I2bQxXFfBtzxDu8ZdKShVUyaszMEjJtniG9TBrvyBSC+BPG9XWfbyaB9HfSE+Wth1NmmSdTMeRZ/EIwaGG2chxTCNX0MPmbP3j9KSyqMn79Ha4nqpTjAB9QVo1H5er7LQxGMkdVLI6Q5U1OvLPvQCMgalrbQiT+MiS7mrUCkbDNXBTn7VKIiWLgYD5bad9CJFZMetcNLQcClAiZrvvNsg1KjeNfjqA==
+ bh=L0uqr/kAoRt3XZx6CcGx9lqJbCHMXZjlwIbAV5adFaw=;
+ b=H9JDK9z9HLEH/s00PjRsrIlLgGhjvDdOxOmF3kT1TZqhOMu5bcsaDdyvbvFXHAYzHKlJtlTwvjAe7XNwGaq+SvWcw+nEqS+rO+Yb1/s8iXxG9SlKBPiUufTqtEmaktq3nxviI9u5ZL7wy03B1RFN1iSZ3BVca9NYVLwaRNP0vlKz/3PekcXMCwdORj/TfPH5sd288VUIzmQa5IlW2zC3sXSry83DqWE5/HHW0spVE1eis0i8tat8KneJ09bFv0XqN3HaGxsa95HdAHBY9YPBezfFIBQ7IbGU+jsD0nLMVo1Wo4xaWulcbPyD+NaHrkoHqo/XLYFHFTnRJrHuN3s+rw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=b2aorIQ0iSk34MmkxtIdGcNm8QS1S4eyOQn99bgUuz4=;
- b=pFkSCprzmj7vA4tLaiLRRew2eSKDMF9fATjj4JY01iOSkf0TG9wa9axssN1WrO6zMcvoDDo+N8Ledu7/B7L5ZqG2diT3YR82V2a8UPwjjJd9nFceLJTqrAQQRUjsAHN3+bwiLxHgBaLhY2L3tZfU2y+Qnc021ly7spfXqIE0lvzFhZicFtaR0XjoHwdezOwRBc5bJGpmS7hyBnsHfG7CBtAYeUQGFn3gbQyI5A9KfrQCec6b5NksHzLwIW2CqyxwNQLDZ6HFqvPCacx4RqJLSrsKVQpDambzn6D42v9d/SDBmO6qAAgHyIcAy+VAkFw7fqFxN93qykLADz7dVorZPA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by DB4PR10MB6167.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:388::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.25; Tue, 14 May
- 2024 13:26:47 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408%7]) with mapi id 15.20.7544.052; Tue, 14 May 2024
- 13:26:47 +0000
-Message-ID: <2f21e81b-a87c-4d15-af8a-d50c201461c7@siemens.com>
-Date: Tue, 14 May 2024 15:26:45 +0200
-User-Agent: Mozilla Thunderbird
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: cip-dev <cip-dev@lists.cip-project.org>
-Subject: [isar-cip-core][PATCH v5] Update ISAR to latest version
+ smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
+ header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
+From: <Sai.Sathujoda@toshiba-tsip.com>
+To: <cip-dev@lists.cip-project.org>
+CC: <dinesh.kumar@toshiba-tsip.com>, <kazuhiro3.hayashi@toshiba.co.jp>
+Subject: Request to set new variables in isar-cip-core CI/CD settings
+Thread-Topic: Request to set new variables in isar-cip-core CI/CD settings
+Thread-Index: AdqmgelZjuWYB43CS9e3LFgjIYj0/Q==
+Date: Wed, 15 May 2024 04:55:43 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <OS3PR01MB610309B1762500EE7829FB75C2EC2@OS3PR01MB6103.jpnprd01.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-Cc: Rakesh Kumar <kumar.rakesh@siemens.com>,
- "Moessbauer, Felix (T CED SES-DE)" <felix.moessbauer@siemens.com>,
- Quirin Gylstorff <quirin.gylstorff@siemens.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR0P281CA0093.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a9::7) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS3PR01MB6103:EE_|TYYPR01MB7903:EE_
+x-ms-office365-filtering-correlation-id: 0cba55ad-2378-4b7c-aa83-08dc749b46b3
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|366007|376005|1800799015|38070700009;
+x-microsoft-antispam-message-info: 
+ =?iso-2022-jp?B?Qzh6dk8vdzJ3Umo0REJFU1M4aG1reElXaFQvMFFlQkE4R05ieGY3a3Vv?=
+ =?iso-2022-jp?B?QjJGTnZ3ZXVBWmM1R3NGSDhuOVh4RGd0VUxwLzh3S2x0OVBYblZNRERQ?=
+ =?iso-2022-jp?B?bjdjbmE4cjE2VzdCT1pVZCtTZzdqN2l1d3hKV1pnYzdMS2puZC9FN3ZT?=
+ =?iso-2022-jp?B?YVEzTUlXWlNwSlhPU0dobnQwTmxmUThFYUhpSFdRdzNRRWdwdWtvU2pr?=
+ =?iso-2022-jp?B?bHBLcllPcW5IZU1QQ3VwU3lhYWR6SGRIbENJc1VMUlJrM3lqTnVyUmRn?=
+ =?iso-2022-jp?B?Qm1ocEtTNjNxbUluRE1BWk9aRnBrVTRFdGVHL0JiS3plVXNoMC83TjVD?=
+ =?iso-2022-jp?B?NE9Pak0zU3JzWlphNDAyK3Y1eVQxZzEraWZZalR6NTIxWURkZG1jaGkv?=
+ =?iso-2022-jp?B?WUxRSFE5SWdtZjV0UmZwZ1JxMXNUNWRyaHcreDk1eVRBbzU1R1J0REFL?=
+ =?iso-2022-jp?B?UUlUS1BqWktaK01IdVdwOWQ3UkFRM00zRTVQNnFKNGJOdFNHMnFXcUlG?=
+ =?iso-2022-jp?B?UUtneEdKR0dkYmtyeEo3ZTVnTXpxb09kelFnVmZhK3plVHloQlQ2TkRz?=
+ =?iso-2022-jp?B?L24wWm1pakc5L2pGSWx5Y3REK0FCekNtN01oUmVDZmNSZng2NDEzQVV6?=
+ =?iso-2022-jp?B?TWRSVkp4N3Z4bmlOQlp0RDU4Wlp0UTV5R0ptaVY1NnA1UXJTWko4T2tl?=
+ =?iso-2022-jp?B?bC9ZeDdHRlpsWjNaT0dBNmhSYXExazhqTDFjLzNIQ3hRYjZhRzNjVkc4?=
+ =?iso-2022-jp?B?MzZrTFk2WVBjWE9MRHE2dk1scHVRdE95VVpIZ2NJM1cxbGJLQmxnR3pN?=
+ =?iso-2022-jp?B?eU9TeEU2V25Ya3R6VkVzQWZLRkxTSGNRdnhVUmtSaDM5eWZxa2ZVbS9L?=
+ =?iso-2022-jp?B?dGZ2T1k4N2VGaE5SS29Td2IrSk41cy9FSm5hZVZPYy9xUEVnc1Vwc2NC?=
+ =?iso-2022-jp?B?bmtOVzRBaWhlb1RoUlI2UXBIZXNFZ0dvNWhwd3kzTW5mOG9jTmhUSFh3?=
+ =?iso-2022-jp?B?SFVVdHIvb0FBejhJOStnVzV2dUk1ajdlQWhlN0IyRHJwSmt4OWsxNk54?=
+ =?iso-2022-jp?B?STlxNTJua3ZBZ3ZoeERPaUdlSjQwcG4rWDN5Tis3cU14ODBMSUQ2S1dz?=
+ =?iso-2022-jp?B?cnZLd3U0alJua3VHdEl5TU44ck1HQW5DOVR1MTVnalV2VFdQb3FOanRv?=
+ =?iso-2022-jp?B?dE9SVFZJeTg2TU00aFlpeU1pamVmUmNMRG1Pbk9QSy91U1Rkd3k2TDZH?=
+ =?iso-2022-jp?B?VG1Xa3I3R1dHZnlPM1ZVUUxwbEZZbUpyVmVoTmtUVGFJaHhuRXJqVEFr?=
+ =?iso-2022-jp?B?NEtFVTZmamNNMUpFWmpuVTgrUWJkeGN5K1F3bHdJaExCb1R2WGVoQVEy?=
+ =?iso-2022-jp?B?VmkvbWFhdjJtV0dPVFNIcHVLUk9YV085aStpOFRUSmNqRWY3bEpqcFhT?=
+ =?iso-2022-jp?B?WndhMUlubGtlOFJjQU5CbGxVU2tQalNaUDhpM0ZKL2VFNmMzVTAraHRq?=
+ =?iso-2022-jp?B?cThKR2NnUks1RXlNQ1BKOVBEc3ZCbjZ1RVQwOHNUWHpqTGxmaDhlcnJi?=
+ =?iso-2022-jp?B?aDFHeW1ZZnFZcjgyc0ZSM2F3VlFXSFh5UjYyZWpBeDd6L25SWk1ybERl?=
+ =?iso-2022-jp?B?ZVl1QWIrQ013MlhWenllYy9SRWxHR3BMUlJ2QnRQTG5OZ2dyS3YwRVg0?=
+ =?iso-2022-jp?B?NE9oME9vVFFYRElyZEVsMXA4d2E1WUV4a3RTTVR3NWx5WlltUCtrM2k5?=
+ =?iso-2022-jp?B?aXRuaUNWOEQvRVR4eVE2SUtRZld6M2sxb3lHMW4ybnBYcCtDZ0FldGhU?=
+ =?iso-2022-jp?B?YjVhU1huNlRoblBQU2Niby9mNkdUWC9VeW5IajlBdFVQaVJnaVJiQkxq?=
+ =?iso-2022-jp?B?OTN0ZFJCaHA1SEVYSUc4VStMTm1rOFVkMkpDZG00cTRPc1ViSmk4RFJ1?=
+ =?iso-2022-jp?B?ZlEzdWphUE5BZlBjRmZJdEkwNHc2QT09?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB6103.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?cHdyWXY2QWdwZjEzWVA2amlQVDk3L3kxYzhrL0pFNnVsb1VZVTQ4aGs2?=
+ =?iso-2022-jp?B?TDlHeVVYTTlqaG1mdE8rbVBZcjBodjljTGJTOWsrT2pFSWk5aEc3bkkv?=
+ =?iso-2022-jp?B?OWJwQVdKbVlFZEdPT2xEbFBBbWhPbjZQYnZwN0FoR25UMVJWckowd1k3?=
+ =?iso-2022-jp?B?SXpmY24wVHl3WG9BdWtxa1V2NXFzQ0JGdCtkaHFCLzRlWWdVelhjM0VR?=
+ =?iso-2022-jp?B?bUNuTjBoUUZ6eWptU2MwQnFhaWVrOW1YN0phWWYvMHNKckw0R20vVlFz?=
+ =?iso-2022-jp?B?U2syVVFLaGl3QjZ0Z084SkIrZEhmblpsU2dUd3ZtTGRPMS9wc0d5VXlt?=
+ =?iso-2022-jp?B?TFpQbGlRLzNlb0pNekVzYXA1U2lOd0hza1RWaVppU0pNaWkxQXZoZ1k2?=
+ =?iso-2022-jp?B?bHlsVVpkYkpCTmI4NXVQS2lZRTBaSkR1N2VzZ3N5aVhmQytvUVUvS1Fx?=
+ =?iso-2022-jp?B?Q3RGL21FYk14T29kdDA4dm85bm05NjBIMS9NbU9Ca1IvbUxYbUVCdmU5?=
+ =?iso-2022-jp?B?MTJ5Q2hKM09DdWZYV0dzYXZZUmVJbk5ERHpvbXUrM0hYcDNUTnlnc252?=
+ =?iso-2022-jp?B?ZXRaenhBMDlzN2tXc3MzTWxCWmx2K1d2V0tZTjlOREtlN1BiWmk2QmFB?=
+ =?iso-2022-jp?B?UmR6aktSVzlqbXdpVm1CTXdqSWxNY2QzTHg3TGwxNHRBNUhad29TY3p0?=
+ =?iso-2022-jp?B?M0hOSnhJRmtGa2pvYWRpcGZrYW5TcktuVG1BK3FMSGdqVm1zUVVaUmd6?=
+ =?iso-2022-jp?B?b0haRGl1MytkNkJmTURqZDNQblp6am9nRUNoSDBlWFV4ek9BOUJLQmYv?=
+ =?iso-2022-jp?B?L2hOMmJkS2VsQk9NV09leHpja3JtMWNVNkRsUkdmN1JFSEc4bXdGMGFh?=
+ =?iso-2022-jp?B?eUZWdGsyMndOV3pjYXIxUG1sSndheTU0RCtmc3VtZFZYKzQ3dTBhb0Ju?=
+ =?iso-2022-jp?B?MEdvK01PY1RFbWNPRmVweEZQdXgrZWFRSjRiV05ONURkTnVvNk1RTjJY?=
+ =?iso-2022-jp?B?YlplMEJncGtRL3NMUGF5RWxOQ3BxdWpNYWdUUjdHblkzWGRTNi9TdWJF?=
+ =?iso-2022-jp?B?ZU8xTXFzZGFJNEErL2UrdUNnTk5IcE9BNlFpK1dSdDJzN05sOFJYMFpT?=
+ =?iso-2022-jp?B?RjVJUzBJUStQMWhqeHJQNWJ6Zjh4WDVwZERlVlh1SUFIODcxNEc5VXpV?=
+ =?iso-2022-jp?B?RTNMd2tISmFaQjRZRm02MUw1UXk2RnFLM3VwSVYycWQ0RWVtbDZld05L?=
+ =?iso-2022-jp?B?Y2RYT3R0dEwxdDB4L2pMWWZDN1FKRlY0T0ZnVjhhb01aSEpPeXpFaXA5?=
+ =?iso-2022-jp?B?MVJ1TENsL09yZVhaMjNqOXlreWF2Tm5KeDZtM0taVG9LWmZpNHZHdlBG?=
+ =?iso-2022-jp?B?QUtwRzFzV29objFkSjY5RkVqR1BRTzJ2V0luY3lxMGVFKy9iQTJNQm1P?=
+ =?iso-2022-jp?B?ckpvWWNUajlQYjZUcVRORzB5ZWw4Z2ErbURMbnppbFpkQnVRUlpaUkVY?=
+ =?iso-2022-jp?B?UDFCc3M5KzNYaXlmUGFJSkJ5Tjd3VG41WjdEL1VkWVJLSzk4NUU2NGxS?=
+ =?iso-2022-jp?B?UXV3d055VUpSd0NkbmpSM2szTHU4eXFOR0trYkJIRVduR2l2YkZXdU1n?=
+ =?iso-2022-jp?B?SjZodkVCK2kyNlVZZFZIbXhjU1pXTUFCL2xRYUpWQUFKbGIzQzlkTGNK?=
+ =?iso-2022-jp?B?M01sNjBIUnduNGxvSDBvVXdyYmhuY1l2SXFSenZKekk4ZjA5VzNnVytl?=
+ =?iso-2022-jp?B?eUxIVnh5Yzd6ckJJWStjWnpWK1V6WnNKam1JWi9rblp6WmNsaUxPOWpp?=
+ =?iso-2022-jp?B?RTFuV0daL2FZd01ZdktSS01SUDd6akQwcVQ0MElMVFMvKy9SeGNXRDBM?=
+ =?iso-2022-jp?B?a1VDb2hna1BVZnFJVHNJQ2E2MHc4UGhXRVZVVTVPNHFNbHUxTkRyN0ow?=
+ =?iso-2022-jp?B?c2p5emZFME1IVU4zTG4rL1ViYnNFVnpyQUpXUXFtd1RHNDI0emVRcEY3?=
+ =?iso-2022-jp?B?QlNITS9jS1ZUV1VWRDJBNzlMWWdsZC9ieU1NVjE5eEpSQXBRMUVwSElM?=
+ =?iso-2022-jp?B?Q0p3K2VDY0J6d0Iwb0lsWlE4c0pJaTRpRGE5cjBGSjJnNm14Rm10MWU2?=
+ =?iso-2022-jp?B?WnVsZ2RPckNsbjI4SnVwZVN5OWFweHVFbUlCdmFrY0RpTlorN3Bxb3VG?=
+ =?iso-2022-jp?B?KzFNS3ZYYmY4SHBKUERWNXUvK0ZtSDdRN1N0VGgveUJpWWRkVUlLSmN2?=
+ =?iso-2022-jp?B?bjB1VVdnOTVuR2pxRzhrRVcyM2IrbFdjZ1dmZHlUSjUrU3k4NUNITVBr?=
+ =?iso-2022-jp?B?eWRZZ1kyNnFvMEdLcDZidDRQajZ3cG9CS3Y0eGROcU92amRxSkdRSTFC?=
+ =?iso-2022-jp?B?ZmUxRXZrdElYUEcwalVlMFk0TlR0N0xxY0g0cHF0KzZlNHJwdVdBK0x6?=
+ =?iso-2022-jp?B?YURuNEdBPT0=?=
+Content-Type: multipart/alternative;
+	boundary="_000_OS3PR01MB610309B1762500EE7829FB75C2EC2OS3PR01MB6103jpnp_"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB4PR10MB6167:EE_
-X-MS-Office365-Filtering-Correlation-Id: 276c5a24-4323-4a75-6860-08dc7419816d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?ajFRRERRS3ErVmVMclpLNnF6M2ttQ1o4eFFjRFhtY3B3eTV3MzhwRE1JVHdl?=
- =?utf-8?B?SnVtaWJyWmprK2ZsdTMyTTV5VEIzeHdlcjl3Vjg5Nm9qbkNZelpFdERSR2Jx?=
- =?utf-8?B?akp0OEt1ck1HcmpxMGhqa1doTVhOTlpxT3QrOVVkcTl2M3FrbGN4dWtPdnBE?=
- =?utf-8?B?QUhRZEFOZGh6UCtxOFBmVWdXVDFzOUplRDQvLzJUS3NjTjhHQnhRbWtRSzJx?=
- =?utf-8?B?WnFyZFVIanJ1aktLTkV0THdUd1RxS05PV0xyUDlNYmpaQzVpb3Mzd1Fxb05x?=
- =?utf-8?B?b3F6R1RXVFZRQ3VybzN3eXpDaWl0dUFheCttWnBqaWtHZ05KMW9JbE40cXRJ?=
- =?utf-8?B?Z2NMVlVLVlVaVVhRVllUeFFZRmVCbGgxQ2NCWjhYVFQvbHRZUlNheTR2bGZ1?=
- =?utf-8?B?bldRekFkUFR3K29OQ3diaEJaTUhtS3MwT0NQUFVVL0E3QUlhQjUzaVdvMUZw?=
- =?utf-8?B?UVFNK1BXVkU0d1d4WFcrVXdHcG9sVm9VL3VtQXlnbnpuaWtWUk93L0ZXS0hw?=
- =?utf-8?B?VXliellUaTZPS3dzRFcvZldsTFhQdlR0akxKTHNlTkZnNjIvcldpZUIvbW5o?=
- =?utf-8?B?UGU1bDFXOUszWC9PRnI0dFdaSCtXOGNrZ0ozSlpXREEyajJCd0xLK2xzekR3?=
- =?utf-8?B?NWRnbU55ZjBUR3FZdTFZdmY4UXlUOFN2d0ZjRThnSUV2ZmhZWWlvSnZaR3Zh?=
- =?utf-8?B?QUpYR0YwU1l1NUtPOTh6SDFEdWUzb2huZGY3ZWdmSmwyUWxETGNVSEw5MFll?=
- =?utf-8?B?SXQzK0REUGQ2MmMyVnIrNTBiWjdTaHVsRFM2LzRBZVhrMWY1dTl3OG4zMUhx?=
- =?utf-8?B?cHk3dTlFOVFybjJhS3pkOGZhUzRlNlUrOVlPblY3NWR3dFRRVEJ2VjQ2Rk9S?=
- =?utf-8?B?WVgwUUlTVENra3J4elBIMXV1ckhmL0tydy9WQTI4ekFldWpyMU9xUDdKaTlm?=
- =?utf-8?B?encyeEFQSjdTTHZpV3V4Zk1EcW5nTjhkTzlvNG1mNHhaNUZxMkY2MzlUZ3Ju?=
- =?utf-8?B?T2xPN0RvWkUvMkxialB1V3JBNmFqWEpmRmQvd1AvSCtBeVBjclJhc1VNUnhB?=
- =?utf-8?B?S2pDZnViWExhTjRHS2NPTVlaSUpDcFV5QzFzME9JNnRMVFpsNG5qZWxubWgz?=
- =?utf-8?B?dGZsTDJJT3AvNDNVemhTbDBQQ3VGMUoweDQ2MXNDbTBsbzZoTktmU0RNWWgz?=
- =?utf-8?B?Z2txVWxva282Rnl5RWdRUThJK2M3WEhpNFFncmJxL3lIbXFSdkdteUhTMTBi?=
- =?utf-8?B?N2lDbmFUQkJiMkhvcWdoeXdKd25qZDJjQ1hXWUxxWDJVeUR4NzI3WlZORkdO?=
- =?utf-8?B?eXNtZlNTdU10RnNDQjFETW4zWDlJVXNJeTBERTA2bXp6S3ZqYWQvbWU4aDhs?=
- =?utf-8?B?NnBmVmpwYkR2VmFTU0lacVVJUVlCdXdTU0E0Qk4rSG5sM1ErckR6TzRmaXJD?=
- =?utf-8?B?OGNXWkk1RzV0Rk9XVTlibXEwZGxjeUdEMmwrYW0vSWV2S25xR1NISUpYRXBs?=
- =?utf-8?B?VkNrdTUzTTdDangxZjI2QkYvQ25BeHRuQ1lJT1B6MktFSUJSK0M3ZmZSQWhK?=
- =?utf-8?B?STBRcXJ4dGo3b041eTVwMTlIcU9wUVFyQ2tVaC9wbFRXOGtXVkRPZ05rYXZP?=
- =?utf-8?Q?batir/x6H+qTPKGnL8SXsaBczu1JHmUQER2Tueyy46Sg=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?dklTWFR0QTV2VE5qY3hBcFM3eldqTXBKY1g2blhYMzFKenRucjNsMUFqYU1F?=
- =?utf-8?B?Z3NHSXdzVE4weWJUSXlHVlRvcVBpVVZzY2dRWUNxbXprVW5yb0liZVVCclJM?=
- =?utf-8?B?TklCbjJoR0c1bU1RK09qRGJMYThqL1JPYU0wTGsvRjR1akg5djhEWDRXZUwv?=
- =?utf-8?B?U0dQU0pITVArbkdjRDhnT1JTeHpFdXF3bk10VmpqenE2eDV5WVVYODZTRER3?=
- =?utf-8?B?clFsbFRLY1RLSFFxNnFzNVoxa25uM2lESFdRMVgySHFVUHRudkkybEk5TzJM?=
- =?utf-8?B?YkZFQ29ldEZ5UEZvUThNdlBiVVZMYjFwR3loM2pJT2I3YjQ4UExiclJrK1p5?=
- =?utf-8?B?dTJMSkV4dVk0cUY2V2I0NnBpTWpLT2h1Rm1UbjRSc3RhRytPRE12VVlscXVD?=
- =?utf-8?B?VDJ3VDZUbDArdzl6MHhSYURYVk9oOHNJQnVyZWh3YTdTV2pINFNFaFc0RUVU?=
- =?utf-8?B?RGpsd05iSitEbUt4QkdjOUNOL2NGaVVYNnUvL0VvOTA4T0orZG1tTDlHY2Ju?=
- =?utf-8?B?QTlXbXZRTU8zL1dmc2pnYUpQaE95TXk1NStUYi9zTGpmU3NXcGt6UWNmbExn?=
- =?utf-8?B?WUhHLzYybDNKdUVJOTh6Vk9mN29aaVFRVkpsK1BxNzFJWXNQd0s1cDcrSW9o?=
- =?utf-8?B?SWtvNmhOd29yL3BpQ1pLbzZTRVZmMGljVFpiOW1YdHR2aklodXFpTVdPdCt2?=
- =?utf-8?B?OStJMnVoUEExd2dkYjQ2TUVCbDhxK0RuZWNydStmQkRueFNUeGdLWnFubHVt?=
- =?utf-8?B?QUJKTTJybW5tRHA2SXMwOHVHUjFKRldraXRKT1g0TFdRdDNsUDZNT2UzQzd4?=
- =?utf-8?B?alVhTXdXQ09yZGpFSEVRTGprbmRrR2llM0RGVG9XS0NYYlVpZUVKL2t1Tmdi?=
- =?utf-8?B?TUdJUVMzNEk2QUpVZmRDZzdveFJhMldpU0tpdXB2QW1xdVpySFJocEJFdEJX?=
- =?utf-8?B?WDh1UGpTV3djUVdZeHkwd1BBUVZUUE5Gdmc4cW5vWWt0UTlUcC93QWpMWWlC?=
- =?utf-8?B?a1FzZmd4V2liY01nVS9mV0RyV0VoMWdoTitvSjNDVXlIeEQwVWNvaEE1TE1v?=
- =?utf-8?B?REJxZVpTalFrUnptWWpIR1h3WDNoalRKN2pHSXQ3MTVZcVoxQmljVHJjSjd5?=
- =?utf-8?B?eFp6dUZVU2JLVWF2WGxLd0RsbFpJZjFpR2NyeXh4TGZ6cHVKN3FFdFRpZTh5?=
- =?utf-8?B?RmFweHV5L2pMQmRNbHl6d2s2V09EVzBxZG5pV0RMZi9nK1J3WldQRG0ySTN1?=
- =?utf-8?B?REFOdERlMTZFQWd6OFRuaW1HOGZ5WXl0OSs3R0lRMHBlbkVjempxbjgyOEhK?=
- =?utf-8?B?VTBtenpGWjZRYnRLTjd2Mjd4M3FFSGRxclk2OXhRenQxaUdSdnd4VXV4QjJW?=
- =?utf-8?B?eDRkSW5qbDQ2Ym9xZmk2WTk0MUVUVkp0QUtpbUZQWHZtMW51dHdDMUZvVExm?=
- =?utf-8?B?bHNxaVlxWXdqQ0JHbkQzVXFoWm43d2x6dUdwVWE4Y2RJdy9rK0hCWFV4S2lr?=
- =?utf-8?B?R2U2ZTRzRWRFbnViQmpZS1l2VGJvaU9iM1BPbUlXYmtUMUl2ZDFDVTlNUjNl?=
- =?utf-8?B?TGN5ZzY5ak9FcGRtOGZSMW9qdGV1TWhucy9wNHozTFRwS3ErdnhWOU44dkFS?=
- =?utf-8?B?VjFXQ045M2MyUzhjZ3RCVXpHV05IUjJhaUtVcGRrNmZZTHorcTJsQi9NNEhp?=
- =?utf-8?B?Q2NzbERRS0xFK3pqdElxTkk4MTE2Y3JGZWVSNmtXOUYrbXFuSXltY3pITTFN?=
- =?utf-8?B?T3FDT01ENHBZKzROTlRLazZwYTVhVFlmd1lRV1VNUysvWVgzWWE4TmFhSWlp?=
- =?utf-8?B?dW8xNTdqVXpSMEcrd254WTRObEVreEZRcFlBNnZiVUxkYW1yZk9iMXgwWmZZ?=
- =?utf-8?B?aThnaEUwaXhseURYZzVGMGtrRUg5bWdCYXNZTklvejg1cVQrNU5BR1hMNFZT?=
- =?utf-8?B?MmV1ZnlkdnlzV1BZS0FiZGRuRmQwRFk0Qkh2NmZBTktscjR2cTIwd1F5V1gx?=
- =?utf-8?B?U2liOGRhZDliNXVSVnd2STEwL1hWbGRKVE9vWGJUQ2tiUVFZTU8xRHFKc1I1?=
- =?utf-8?B?amdTYytadFJYY0tSeXhUSjFoZ0dQbXNPNzRqOVMrMHFmUjdDNWRld1Byb090?=
- =?utf-8?B?bmNFT1pXTHV3cEwwRlZyKytOaXdLN3pCREZ4TVZ4dEllZFBJZTFBUldXWHNm?=
- =?utf-8?B?SkE9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 276c5a24-4323-4a75-6860-08dc7419816d
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2024 13:26:47.5843
+X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB6103.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0cba55ad-2378-4b7c-aa83-08dc749b46b3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 May 2024 04:55:43.4608
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3f2TzhCMYBZSS7DqyvTPP9au9uV7XqH0nfNJsQgwFKhCldSV3wBf91qfwrTIBT2ij+V7zzrIuVKFPEHQmEBDvg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB4PR10MB6167
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: lO2wkornZNnLVO0X8K8P2z0HpBELpRhjH0EIg+W73yOweX2BiKTvMf4d8rVSExmXUueCR33VXwlfmfMc6CZ0tL2YR9Z+QRpxBDX4vuIRLwE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB7903
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 14 May 2024 13:26:54 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15893
+ <cip-dev@lists.cip-project.org>; Wed, 15 May 2024 04:55:59 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15894
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+--_000_OS3PR01MB610309B1762500EE7829FB75C2EC2OS3PR01MB6103jpnp_
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 
-This update requires to resolve duplicate "Provides:" statements in
-secrets/certificates recipes (based on original patch by Rakesh Kumar).
+Hello everyone,
 
-We furthermore need to drop the now obsolete SOURCE_DATE_EPOCH variable
-injection in squashfs.bbclass and define SOURCE_DATE_EPOCH_FALLBACK,
-rather than SOURCE_DATE_EPOCH directly as this is now handled by isar
-itself.
+Currently I am working on a script which prepares and send LAVA job definit=
+ions to CIP LAVA server whenever a pipeline is triggered in isar-cip-core. =
+I need to use below mentioned variables which are required to run my script=
+. Since they are token related variables (lava user, lava token and squad t=
+oken), I think it is better to hide them in CI/CD variables section.
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
+If any one with maintainer or owner status is willing to add them in isar-c=
+ip-core, I request them to reply to this mail. I will send them the variabl=
+e keys and values.
 
-Changes in v5:
- - added new linux-cip targets to PREFERRED_VERSION definitions
-   (reported by Quirin)
+Thanks and regards,
+Sai Ashrith Sathujoda (T S I P)
 
-Note that upstream isar still has a few open issues with the new kbuild 
-model. We are trying to sort them out, and I will likely have to wait 
-with the v1.4 release on them.
 
- classes/squashfs.bbclass                                    | 6 ------
- conf/distro/cip-core-bookworm.conf                          | 6 +++++-
- conf/distro/cip-core-bullseye.conf                          | 6 +++++-
- conf/distro/cip-core-buster.conf                            | 6 +++++-
- conf/distro/cip-core-sid.conf                               | 4 ++++
- kas-cip.yml                                                 | 4 ++--
- kas/opt/4.19.yml                                            | 6 +++++-
- kas/opt/4.4.yml                                             | 5 +++++
- kas/opt/5.10.yml                                            | 6 +++++-
- kas/opt/6.1.yml                                             | 6 +++++-
- .../secure-boot-secrets/secure-boot-secrets.inc             | 4 +---
- .../swupdate-certificates/swupdate-certificates-key.inc     | 4 +---
- .../swupdate-certificates/swupdate-certificates.inc         | 4 +---
- 13 files changed, 44 insertions(+), 23 deletions(-)
 
-diff --git a/classes/squashfs.bbclass b/classes/squashfs.bbclass
-index bf72133e..b39be0cd 100644
---- a/classes/squashfs.bbclass
-+++ b/classes/squashfs.bbclass
-@@ -31,12 +31,6 @@ SQUASHFS_MEMLIMIT ?= "${@int(get_free_mem() * 3/4)}"
- SQUASHFS_CREATION_LIMITS = "-mem ${SQUASHFS_MEMLIMIT} -processors ${SQUASHFS_THREADS}"
- 
- python __anonymous() {
--    # Set file timestamps for reproducible builds
--    source_date_epoch = d.getVar('SOURCE_DATE_EPOCH')
--    if source_date_epoch:
--        args = " -fstime {time}".format(time=source_date_epoch)
--        d.appendVar('SQUASHFS_CREATION_ARGS', args)
--
-     exclude_directories = d.getVar('SQUASHFS_EXCLUDE_DIRS').split()
-     if len(exclude_directories) == 0:
-         return
-diff --git a/conf/distro/cip-core-bookworm.conf b/conf/distro/cip-core-bookworm.conf
-index a827c254..16fce25e 100644
---- a/conf/distro/cip-core-bookworm.conf
-+++ b/conf/distro/cip-core-bookworm.conf
-@@ -1,7 +1,7 @@
- #
- # CIP Core, generic profile
- #
--# Copyright (c) Siemens AG, 2023
-+# Copyright (c) Siemens AG, 2023-2024
- #
- # Authors:
- #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-@@ -14,4 +14,8 @@ require cip-core-common.inc
- 
- PREFERRED_VERSION_swupdate ?= "2023.12%"
- PREFERRED_VERSION_linux-cip ?= "6.1.%"
-+PREFERRED_VERSION_linux-cip-native ?= "6.1.%"
-+PREFERRED_VERSION_linux-cip-kbuildtarget ?= "6.1.%"
- PREFERRED_VERSION_linux-cip-rt ?= "6.1.%"
-+PREFERRED_VERSION_linux-cip-rt-native ?= "6.1.%"
-+PREFERRED_VERSION_linux-cip-rt-kbuildtarget ?= "6.1.%"
-diff --git a/conf/distro/cip-core-bullseye.conf b/conf/distro/cip-core-bullseye.conf
-index 110f3343..fc8981f9 100644
---- a/conf/distro/cip-core-bullseye.conf
-+++ b/conf/distro/cip-core-bullseye.conf
-@@ -1,7 +1,7 @@
- #
- # CIP Core, generic profile
- #
--# Copyright (c) Siemens AG, 2021-2022
-+# Copyright (c) Siemens AG, 2021-2024
- #
- # Authors:
- #  Jan Kiszka <jan.kiszka@siemens.com>
-@@ -17,4 +17,8 @@ DISTRO_APT_PREFERENCES:append:swupdate = " conf/distro/preferences.swupdate-bull
- 
- PREFERRED_VERSION_swupdate ?= "2023.12%"
- PREFERRED_VERSION_linux-cip ?= "5.10.%"
-+PREFERRED_VERSION_linux-cip-native ?= "5.10.%"
-+PREFERRED_VERSION_linux-cip-kbuildtarget ?= "5.10.%"
- PREFERRED_VERSION_linux-cip-rt ?= "5.10.%"
-+PREFERRED_VERSION_linux-cip-rt-native ?= "5.10.%"
-+PREFERRED_VERSION_linux-cip-rt-kbuildtarget ?= "5.10.%"
-diff --git a/conf/distro/cip-core-buster.conf b/conf/distro/cip-core-buster.conf
-index 4e9a4a73..e30603fd 100644
---- a/conf/distro/cip-core-buster.conf
-+++ b/conf/distro/cip-core-buster.conf
-@@ -1,7 +1,7 @@
- #
- # CIP Core, generic profile
- #
--# Copyright (c) Siemens AG, 2019
-+# Copyright (c) Siemens AG, 2019-2024
- #
- # Authors:
- #  Jan Kiszka <jan.kiszka@siemens.com>
-@@ -14,4 +14,8 @@ require cip-core-common.inc
- 
- PREFERRED_VERSION_swupdate ?= "2021.11%"
- PREFERRED_VERSION_linux-cip ?= "4.19.%"
-+PREFERRED_VERSION_linux-cip-native ?= "4.19.%"
-+PREFERRED_VERSION_linux-cip-kbuildtarget ?= "4.19.%"
- PREFERRED_VERSION_linux-cip-rt ?= "4.19.%"
-+PREFERRED_VERSION_linux-cip-rt-native ?= "4.19.%"
-+PREFERRED_VERSION_linux-cip-rt-kbuildtarget ?= "4.19.%"
-diff --git a/conf/distro/cip-core-sid.conf b/conf/distro/cip-core-sid.conf
-index 48f26ff5..42eb311c 100644
---- a/conf/distro/cip-core-sid.conf
-+++ b/conf/distro/cip-core-sid.conf
-@@ -16,4 +16,8 @@ DISTRO_APT_SOURCES = "conf/distro/cip-debian-sid-snapshot.list"
- HOST_DISTRO_APT_SOURCES = "${DISTRO_APT_SOURCES}"
- 
- PREFERRED_VERSION_linux-cip ?= "6.1.%"
-+PREFERRED_VERSION_linux-cip-native ?= "6.1.%"
-+PREFERRED_VERSION_linux-cip-kbuildtarget ?= "6.1.%"
- PREFERRED_VERSION_linux-cip-rt ?= "6.1.%"
-+PREFERRED_VERSION_linux-cip-rt-native ?= "6.1.%"
-+PREFERRED_VERSION_linux-cip-rt-kbuildtarget ?= "6.1.%"
-diff --git a/kas-cip.yml b/kas-cip.yml
-index 2c3c8b0b..52e53061 100644
---- a/kas-cip.yml
-+++ b/kas-cip.yml
-@@ -22,7 +22,7 @@ repos:
- 
-   isar:
-     url: https://github.com/ilbers/isar.git
--    commit: 9dc362cd7115074c0f60843e687ed89db5c9339a
-+    commit: 3d863aad5e12c7bef382cb6fb3f1f5e18b236156
-     layers:
-       meta:
- 
-@@ -42,7 +42,7 @@ local_conf_header:
-     USER_root[password] = "root"
-     USER_root[flags] = "clear-text-password"
-   source_epoch: |
--    SOURCE_DATE_EPOCH := "${@bb.process.run("git -C ${LAYERDIR_cip-core} log -1 --pretty=%ct | tr -d '\n'")[0]}"
-+    SOURCE_DATE_EPOCH_FALLBACK := "${@bb.process.run("git -C ${LAYERDIR_cip-core} log -1 --pretty=%ct | tr -d '\n'")[0]}"
- 
- env:
-   DISTRO_APT_PREMIRRORS: ""
-diff --git a/kas/opt/4.19.yml b/kas/opt/4.19.yml
-index bad4293d..799b890e 100644
---- a/kas/opt/4.19.yml
-+++ b/kas/opt/4.19.yml
-@@ -1,7 +1,7 @@
- #
- # CIP Core, generic profile
- #
--# Copyright (c) Siemens AG, 2021
-+# Copyright (c) Siemens AG, 2021-2024
- #
- # Authors:
- #  Jan Kiszka <jan.kiszka@siemens.com>
-@@ -15,4 +15,8 @@ header:
- local_conf_header:
-   kernel-version: |
-     PREFERRED_VERSION_linux-cip = "4.19.%"
-+    PREFERRED_VERSION_linux-cip-native = "4.19.%"
-+    PREFERRED_VERSION_linux-cip-kbuildtarget = "4.19.%"
-     PREFERRED_VERSION_linux-cip-rt = "4.19.%"
-+    PREFERRED_VERSION_linux-cip-rt-native = "4.19.%"
-+    PREFERRED_VERSION_linux-cip-rt-kbuildtarget = "4.19.%"
-diff --git a/kas/opt/4.4.yml b/kas/opt/4.4.yml
-index c0c5c055..3b9239c1 100644
---- a/kas/opt/4.4.yml
-+++ b/kas/opt/4.4.yml
-@@ -2,6 +2,7 @@
- # CIP Core, generic profile
- #
- # Copyright (c) Toshiba corp., 2019
-+# Copyright (c) Siemens AG, 2024
- #
- # Authors:
- #  Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
-@@ -15,4 +16,8 @@ header:
- local_conf_header:
-   kernel-version: |
-     PREFERRED_VERSION_linux-cip = "4.4.%"
-+    PREFERRED_VERSION_linux-cip-native = "4.4.%"
-+    PREFERRED_VERSION_linux-cip-kbuildtarget = "4.4.%"
-     PREFERRED_VERSION_linux-cip-rt = "4.4.%"
-+    PREFERRED_VERSION_linux-cip-rt-native = "4.4.%"
-+    PREFERRED_VERSION_linux-cip-rt-kbuildtarget = "4.4.%"
-diff --git a/kas/opt/5.10.yml b/kas/opt/5.10.yml
-index f3a6d86b..a9cbe25b 100644
---- a/kas/opt/5.10.yml
-+++ b/kas/opt/5.10.yml
-@@ -1,7 +1,7 @@
- #
- # CIP Core, generic profile
- #
--# Copyright (c) Siemens AG, 2021
-+# Copyright (c) Siemens AG, 2021-2024
- #
- # Authors:
- #  Jan Kiszka <jan.kiszka@siemens.com>
-@@ -15,4 +15,8 @@ header:
- local_conf_header:
-   kernel-version: |
-     PREFERRED_VERSION_linux-cip = "5.10.%"
-+    PREFERRED_VERSION_linux-cip-native = "5.10.%"
-+    PREFERRED_VERSION_linux-cip-kbuildtarget = "5.10.%"
-     PREFERRED_VERSION_linux-cip-rt = "5.10.%"
-+    PREFERRED_VERSION_linux-cip-rt-native = "5.10.%"
-+    PREFERRED_VERSION_linux-cip-rt-kbuildtarget = "5.10.%"
-diff --git a/kas/opt/6.1.yml b/kas/opt/6.1.yml
-index 7ac27359..f140c273 100644
---- a/kas/opt/6.1.yml
-+++ b/kas/opt/6.1.yml
-@@ -1,7 +1,7 @@
- #
- # CIP Core, generic profile
- #
--# Copyright (c) Siemens AG, 2023
-+# Copyright (c) Siemens AG, 2023-2024
- #
- # Authors:
- #  Felix Moessbauer <felix.moessbauer@siemens.com>
-@@ -15,4 +15,8 @@ header:
- local_conf_header:
-   kernel-version: |
-     PREFERRED_VERSION_linux-cip = "6.1.%"
-+    PREFERRED_VERSION_linux-cip-native = "6.1.%"
-+    PREFERRED_VERSION_linux-cip-kbuildtarget = "6.1.%"
-     PREFERRED_VERSION_linux-cip-rt = "6.1.%"
-+    PREFERRED_VERSION_linux-cip-rt-native = "6.1.%"
-+    PREFERRED_VERSION_linux-cip-rt-kbuildtarget = "6.1.%"
-diff --git a/recipes-devtools/secure-boot-secrets/secure-boot-secrets.inc b/recipes-devtools/secure-boot-secrets/secure-boot-secrets.inc
-index 2164b121..f11e93d2 100644
---- a/recipes-devtools/secure-boot-secrets/secure-boot-secrets.inc
-+++ b/recipes-devtools/secure-boot-secrets/secure-boot-secrets.inc
-@@ -14,6 +14,7 @@ inherit dpkg-raw
- DPKG_ARCH = "all"
- DEBIAN_MULTI_ARCH = "foreign"
- PROVIDES += "secure-boot-secrets"
-+DEBIAN_PROVIDES = "secure-boot-secrets"
- 
- SB_KEY ??= ""
- SB_CERT ??= ""
-@@ -31,6 +32,3 @@ do_install() {
-     install -m 0700 ${WORKDIR}/${SB_CERT} ${TARGET}/secure-boot.pem
- }
- 
--do_prepare_build:append() {
--    echo "Provides: secure-boot-secrets" >> ${S}/debian/control
--}
-diff --git a/recipes-devtools/swupdate-certificates/swupdate-certificates-key.inc b/recipes-devtools/swupdate-certificates/swupdate-certificates-key.inc
-index 944c2dce..93cf255e 100644
---- a/recipes-devtools/swupdate-certificates/swupdate-certificates-key.inc
-+++ b/recipes-devtools/swupdate-certificates/swupdate-certificates-key.inc
-@@ -15,6 +15,7 @@ FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files:"
- 
- DPKG_ARCH = "all"
- PROVIDES += "swupdate-certificates-key"
-+DEBIAN_PROVIDES = "swupdate-certificates-key"
- 
- SWU_SIGN_KEY ??= ""
- SWU_SIGN_SCRIPT ??= "sign-swu-cms"
-@@ -35,6 +36,3 @@ do_install() {
-     install -m 0600 ${WORKDIR}/${SWU_SIGN_KEY} ${TARGET}/swupdate-sign.key
- }
- 
--do_prepare_build:append() {
--    echo "Provides: swupdate-certificates-key" >> ${S}/debian/control
--}
-diff --git a/recipes-devtools/swupdate-certificates/swupdate-certificates.inc b/recipes-devtools/swupdate-certificates/swupdate-certificates.inc
-index dec9a836..2532de6d 100644
---- a/recipes-devtools/swupdate-certificates/swupdate-certificates.inc
-+++ b/recipes-devtools/swupdate-certificates/swupdate-certificates.inc
-@@ -16,6 +16,7 @@ FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files:"
- DPKG_ARCH = "all"
- DEBIAN_MULTI_ARCH = "foreign"
- PROVIDES += "swupdate-certificates"
-+DEBIAN_PROVIDES = "swupdate-certificates"
- 
- SWU_SIGN_CERT ??= ""
- 
-@@ -30,6 +31,3 @@ do_install() {
-     install -m 0700 ${WORKDIR}/${SWU_SIGN_CERT} ${TARGET}/swupdate-sign.crt
- }
- 
--do_prepare_build:append() {
--    echo "Provides: swupdate-certificates" >> ${S}/debian/control
--}
--- 
-2.35.3
+
+--_000_OS3PR01MB610309B1762500EE7829FB75C2EC2OS3PR01MB6103jpnp_
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
+osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
+//www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
+<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
+<style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Aptos;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0in;
+	font-size:11.0pt;
+	font-family:"Aptos",sans-serif;
+	mso-ligatures:standardcontextual;}
+span.EmailStyle17
+	{mso-style-type:personal-compose;
+	font-family:"Aptos",sans-serif;
+	color:windowtext;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-size:11.0pt;}
+@page WordSection1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.0in 1.0in 1.0in;}
+div.WordSection1
+	{page:WordSection1;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]-->
+</head>
+<body lang=3D"EN-US" link=3D"#467886" vlink=3D"#96607D" style=3D"word-wrap:=
+break-word">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal">Hello everyone,<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Currently I am working on a script which prepares an=
+d send LAVA job definitions to CIP LAVA server whenever a pipeline is trigg=
+ered in isar-cip-core. I need to use below mentioned variables which are re=
+quired to run my script. Since they
+ are token related variables (lava user, lava token and squad token), I thi=
+nk it is better to hide them in CI/CD variables section.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">If any one with maintainer or owner status is willin=
+g to add them in isar-cip-core, I request them to reply to this mail. I wil=
+l send them the variable keys and values.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Thanks and regards,<o:p></o:p></p>
+<p class=3D"MsoNormal">Sai Ashrith Sathujoda (T S I P)<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+</div>
+</body>
+</html>
+
+--_000_OS3PR01MB610309B1762500EE7829FB75C2EC2OS3PR01MB6103jpnp_--
+
 
