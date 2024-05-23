@@ -1,70 +1,83 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8701C25B79
-	for <webhook@archiver.kernel.org>; Thu, 23 May 2024 11:02:00 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web10.12742.1716462116636564977
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB712C25B75
+	for <webhook@archiver.kernel.org>; Thu, 23 May 2024 12:03:40 +0000 (UTC)
+Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
+ by mx.groups.io with SMTP id smtpd.web10.13680.1716465810588826565
  for <cip-dev@lists.cip-project.org>;
- Thu, 23 May 2024 04:01:56 -0700
+ Thu, 23 May 2024 05:03:32 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 42BC31C0081; Thu, 23 May 2024 13:01:54 +0200 (CEST)
-Date: Thu, 23 May 2024 13:01:53 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Michael Adler <michael.adler@siemens.com>
-Cc: cip-dev@lists.cip-project.org,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	"pavel@denx.de" <pavel@denx.de>
-Subject: Re: Re: [cip-dev] gitlab testing stuck?
-Message-ID: <Zk8iIfG70SxOC7gx@duo.ucw.cz>
-References: <ZkTwEKwobEIumswy@duo.ucw.cz>
- <TYWPR01MB118620EFB0163032D2062BA13B7ED2@TYWPR01MB11862.jpnprd01.prod.outlook.com>
- <Zk8NZmeJPwIYiqqH@duo.ucw.cz>
- <17D2152C9599A0A5.4692@lists.cip-project.org>
- <c4topyfzwtzk4h7525yjhe56lgtrisjfqkbsvmboz3o24wgub7@ji4aqgxfow6b>
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=bkNAKGrg;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228, mailfrom: fm-51332-20240523120327db3e86881a7c5b213d-ud8cbp@rts-flowmailer.siemens.com)
+Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 20240523120327db3e86881a7c5b213d
+        for <cip-dev@lists.cip-project.org>;
+        Thu, 23 May 2024 14:03:28 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ bh=YcB6cWbUitS+g2nJtcaqotcPuJcKmJqnv339GPLNL1c=;
+ b=bkNAKGrgATQ7Jo1k1XMHta6U3n+d2ry13DJKIEeuBDsDpHve3kM+52sGw3fBnnHG9ocuO6
+ U6g4QVc9Oal3QQTJe4y1vs/jZn1vAmJc5vBScorvZvU9Wp0fsilqYDUt/PF3CC/E7b8heZDH
+ YC+0Io5kkOmKie02orzDQhuE1bUik=;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: cip-dev@lists.cip-project.org,
+	jan.kiszka@siemens.com
+Subject: [cip-dev][isar-cip-core][PATCH] fix: Add missing mountpoint to crypthook
+Date: Thu, 23 May 2024 14:03:18 +0200
+Message-ID: <20240523120326.1702505-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="H+MbsS/2qrXUwKoZ"
-Content-Disposition: inline
-In-Reply-To: <c4topyfzwtzk4h7525yjhe56lgtrisjfqkbsvmboz3o24wgub7@ji4aqgxfow6b>
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 23 May 2024 11:02:00 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15933
+ <cip-dev@lists.cip-project.org>; Thu, 23 May 2024 12:03:40 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15934
 
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
---H+MbsS/2qrXUwKoZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The crypthook requires `/usr/bin/mountpoint` to avoid the error:
 
-Hi!
+ "mountpoint: not found"
 
-> Thanks to Chris for providing me the new tokens. I've registered the runn=
-ers
-> again and it seems to be working.
+ This was not found because other hooks already add the binary to
+ the initramfs.
 
-Thank you, testing seems to work now.
+Reported-by: Wang, John <johnxw@amazon.com>
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ .../initramfs-crypt-hook/files/encrypt_partition.clevis.hook     | 1 +
+ .../initramfs-crypt-hook/files/encrypt_partition.systemd.hook    | 1 +
+ 2 files changed, 2 insertions(+)
 
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook
+index 0644eab..4e62ef7 100755
+--- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook
++++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis.hook
+@@ -73,6 +73,7 @@ copy_exec /usr/bin/pwmake || hook_error "Unable to copy /usr/bin/pwmake"
+ copy_exec /usr/bin/file || hook_error "Unable to copy /usr/bin/file "
+ copy_exec /usr/lib/*/libgcc_s.so.1 || hook_error "Unable to copy /usr/lib/*/libgcc_s.so.1 "
+ copy_exec /usr/bin/uuidparse || hook_error "Unable to copy /usr/bin/uuidparse"
++copy_exec /usr/bin/mountpoint || hook_error "Unable to copy /usr/bin/mountpoint"
+ 
+ if [ -x /usr/sbin/cryptsetup-reencrypt ]; then
+     copy_exec /usr/sbin/cryptsetup-reencrypt
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.hook b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.hook
+index 19e0fe4..be8c117 100755
+--- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.hook
++++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.systemd.hook
+@@ -53,6 +53,7 @@ copy_exec /usr/bin/tpm2_pcrread || hook_error "Unable to copy /usr/bin/tpm2_pcrr
+ copy_exec /usr/bin/tpm2_testparms || hook_error "Unable to copy /usr/bin/tpm2_testparms"
+ copy_exec /usr/bin/basename || hook_error "Unable to copy /usr/bin/basename"
+ copy_exec /usr/bin/uuidparse || hook_error "Unable to copy /usr/bin/uuidparse"
++copy_exec /usr/bin/mountpoint || hook_error "Unable to copy /usr/bin/mountpoint"
+ 
+ copy_exec /usr/lib/*/cryptsetup/libcryptsetup-token-systemd-tpm2.so || hook_error "/usr/lib/*/cryptsetup/libcryptsetup-token-systemd-tpm2.so not found"
+ if [ -x /usr/sbin/cryptsetup-reencrypt ]; then
+-- 
+2.43.0
 
---H+MbsS/2qrXUwKoZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZk8iIQAKCRAw5/Bqldv6
-8loIAJ4hF///s+4ii9qRqc/5eP36okYGRACfQUdYBHlvq6Swtdgc/0PLBBcf0MY=
-=o5Dh
------END PGP SIGNATURE-----
-
---H+MbsS/2qrXUwKoZ--
 
