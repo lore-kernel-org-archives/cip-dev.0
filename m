@@ -1,293 +1,177 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <chris.paterson2@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E2DCC25B79
-	for <webhook@archiver.kernel.org>; Fri, 24 May 2024 10:58:30 +0000 (UTC)
-Received: from EUR01-DB5-obe.outbound.protection.outlook.com (EUR01-DB5-obe.outbound.protection.outlook.com [40.107.15.83])
- by mx.groups.io with SMTP id smtpd.web11.13195.1716548305346715081
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65B39C25B74
+	for <webhook@archiver.kernel.org>; Fri, 24 May 2024 12:21:31 +0000 (UTC)
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (JPN01-OS0-obe.outbound.protection.outlook.com [40.107.113.40])
+ by mx.groups.io with SMTP id smtpd.web11.14424.1716553287384991502
  for <cip-dev@lists.cip-project.org>;
- Fri, 24 May 2024 03:58:25 -0700
+ Fri, 24 May 2024 05:21:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=JC3EEwOt;
- spf=pass (domain: siemens.com, ip: 40.107.15.83, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@renesas.com header.s=selector1 header.b=iGbNu+hQ;
+ spf=pass (domain: renesas.com, ip: 40.107.113.40, mailfrom: chris.paterson2@renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=O/ajFTTyww7ec2IHaLEuEkRja1mA/eaC+sK10lBwJpugTx9LAVrToy1AIhe/OBdTsKHrn8BhJ1+UZxF/bTVNTEVvd4msipSrsddDUAF/umN5zqaNv4DeY1tteBfLP4r/HmWdIJlTEDzKwDMC45V7sxTQvRSELxoH0lYzqYOOEEdt1gNFyje6H+sHsIlw7nvSfylcFynVdb3pIMzEY7rOnSFD4JAgUxynLwvCKl3p2QLhapDbdxgdF6w7LSzvHTk2nZyMFuSOjgDfeh/9YhV84EA3ezTgeky9Xp+StVe/MYCpdTtSnMlqpTgwomaGN7UjbYUSYle6M/B6acakQb6uBg==
+ b=jf74k1/UsT7jyqM48DNvDrHLYscybfEC8uvIs4oF/0N5Iku0wbA4q9/+ya8/aLwOByfJeFd7Fl12ChWe5OSliNT8i31H/dZF5fDAaz5Oznf51Cnh9ztQtyktGx+48Nfm+Or6tW8xKmMw60sT74cEvw49SZdcvIBJ4m1e09ew8ugdVga1K3la5DcYMs97PTr+/QGnVqFy7K8TMU5zdg2u8h6qYMUrB++NcVhIxRnVVXJoRFsmMpiwPIYHWyIsZZ1j+mKvIyyBGFRXKVuAgAJXfw23V/b2G/LvYj+Pj0IQQABB7UidHZeZ46WinIu3ttu3I7VTQHineVh30aM/Gj1HIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gl37ChFGr6VHcU+S+zwyZOY0zg7nZ7sP5iljUAwVggA=;
- b=OJLmvuwyynwZUBtv3jWK6HmvsLWiyJm80iLWHNv/i9dimgdof5wAtF/Xl2klHP/xacvlQvZMpuR8M7w1itUjcXvPHYeS01OGLow6m92WEHQAb48x+XFhRuD8QgdkZc0EeGIGa2cRu6xHatA/GkdMAMLn+7IuV9jG58jeFAaPwe7Q5HQiVr6BFbU3H24A+zQNgggES8QwHZo+elaH7EAMDfFv8J6sDEp2JRMioqo0NCcGY7iISixgrsdeg4AkaIIdBCZP86pShoKyuw6iO3DjJOLYarkgREEAu5d6IL6//P7zA7cykfdzss6/8Pd7azJNgSwXn2ltE4rFeqAogDo7Ng==
+ bh=b9jx3WCxzUxa+WqRd8zd1X8VIF2iAjWC0I5tsR2kRw4=;
+ b=aMd7XEI9CV+WqcWK8FrZIe2iY8gfnyheMqHwyWfUfaogxDcsgvJJUKuSfOim74YXwth7BoMoZFRSiq9LsHjs6ik+xWh/ctxxrOT+jCwRp+aJhDqZMmuhEzQNLxClf8eNa3Qxw3GZ+3jpfC8IWeX9r92lXa0M1e9sZv3TRL5IafTHboH3trAIAGiYJBRuW6LakxBXxYaKWt2V5zYseOsBvGB1ZcbcFr0Jy+ASErCQhdOVBgxBVHpt9RwS0guv3w+tkxEtkcOcVtdzffNzpctfJu1Z4e1u8hyQ2ArD3BvhXLPO6WaqsN/u4UB5yYts+9Mt3N6+5OgXZC9seYqWSZHGtw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gl37ChFGr6VHcU+S+zwyZOY0zg7nZ7sP5iljUAwVggA=;
- b=JC3EEwOttxQHSHH6smtS3A1bmU80k+bpBmZy1k+0cWBIn5gmBP2xL2xEDU6OhCbNeQdfnZboPsnE47SwIwzVQ1QhMfxQl68+unTEy1aw9oRBOV6ZJoy9a2GixTgmEQmb9ASKznThKMewP3eTXaVKhkCHmQ0iMVUjJy3bFe2um6+g3Hk+6h8SdFNzHkDq2EnAVpCNGSsZuYGhAvGPJY8qQvqYKuSIj/nxG/uxnz8QZiV+qWoQvnLIRIGyoOqLR2AxJYbdFTcIPqKNIXnOh1cSvKBzBaSdapp8quPeCn9HECq5+yiqITDJNPUcUtwXvR2/E4qhXFFgmRTzg3kE/LsPaQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by GV1PR10MB8536.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:1cc::18) with
+ bh=b9jx3WCxzUxa+WqRd8zd1X8VIF2iAjWC0I5tsR2kRw4=;
+ b=iGbNu+hQ9TGPuv2j2k39RfabvZrsvVEobU+LYUouyQxL1ECSvNGMkG3I9SueOLek0NbUeS4OjovLzMi6yqye0vcedG56zMqluPMUOFLGH18+w+4CcfehZSnaa4tfzY9Nvd/omzE0RXG1Vx4EXJNepMORS1TABPdnfhFJDYcLsGs=
+Received: from TYWPR01MB11862.jpnprd01.prod.outlook.com (2603:1096:400:3fc::6)
+ by TYWPR01MB10034.jpnprd01.prod.outlook.com (2603:1096:400:1e2::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.22; Fri, 24 May
- 2024 10:58:22 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408%7]) with mapi id 15.20.7611.016; Fri, 24 May 2024
- 10:58:22 +0000
-Message-ID: <929eccd1-fdb6-47ac-9b48-87eba36a203c@siemens.com>
-Date: Fri, 24 May 2024 12:58:18 +0200
-User-Agent: Mozilla Thunderbird
-Subject: [isar-cip-core][PATCH v2 2/2] Generalize SIMATIC IPC227E
- configuration to a common x86 UEFI target
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: cip-dev <cip-dev@lists.cip-project.org>
-References: <be7c406d-ee6c-4270-b9d7-52b6f24078c2@siemens.com>
- <ecae148c-1e87-4ba4-9e36-fbcd2d9e9ee8@siemens.com>
+ 2024 12:21:23 +0000
+Received: from TYWPR01MB11862.jpnprd01.prod.outlook.com
+ ([fe80::fbad:9a9e:9e5:7cfa]) by TYWPR01MB11862.jpnprd01.prod.outlook.com
+ ([fe80::fbad:9a9e:9e5:7cfa%6]) with mapi id 15.20.7611.016; Fri, 24 May 2024
+ 12:21:23 +0000
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: "pavel@denx.de" <pavel@denx.de>
+CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+Subject: RE: [cip-dev] gitlab -stable-rc: mirroring not working?
+Thread-Topic: [cip-dev] gitlab -stable-rc: mirroring not working?
+Thread-Index: AQHapuzrvr46zaW5HUiHSrZakm0AcbGmWZtQ
+Date: Fri, 24 May 2024 12:21:23 +0000
+Message-ID: 
+ <TYWPR01MB11862A1D29648613FB34FD137B7F52@TYWPR01MB11862.jpnprd01.prod.outlook.com>
+References: <ZkTwEKwobEIumswy@duo.ucw.cz>
+In-Reply-To: <ZkTwEKwobEIumswy@duo.ucw.cz>
+Accept-Language: en-US, en-GB
 Content-Language: en-US
-In-Reply-To: <ecae148c-1e87-4ba4-9e36-fbcd2d9e9ee8@siemens.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CH0PR03CA0422.namprd03.prod.outlook.com
- (2603:10b6:610:10e::19) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYWPR01MB11862:EE_|TYWPR01MB10034:EE_
+x-ms-office365-filtering-correlation-id: 5d3e892c-abc4-486a-4b7c-08dc7bec06a5
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|376005|366007|38070700009;
+x-microsoft-antispam-message-info: 
+ =?Windows-1252?Q?h27Lgz1ecKK43SJOf0aaUssvfMhBbFjgtGTJOrbZg+n5mmVUH0r6HD5s?=
+ =?Windows-1252?Q?8UH2RRrIfF4F0DPGC2gG0hEzGaAaZLylZdY6nDWyo2G5EKnIyZQYtHcr?=
+ =?Windows-1252?Q?mORy6+jSPCxDxMY32PHRXumiQRX7cGyVN1U4LrKqfamSX60x7kB8Ce0n?=
+ =?Windows-1252?Q?N173ibnYH9zpYzqytdHxcVXPaFedFjL7eR/1kCZGLP+SDK/s1wK3iJyY?=
+ =?Windows-1252?Q?g3kx6glzBBjza4TGinsi0ifDOon9fXum9Cc33ReR0PnrXtHkLLjyN47j?=
+ =?Windows-1252?Q?L4cBgR8JUCi+7EamRhQ5EbujfpE3jsDVDNmQWU/dnqb7u4ulWE44H/Ou?=
+ =?Windows-1252?Q?dVMnOHSXfCBEkBvmF+el+SjiLj1q9eUqmYInnv+VJKBC+6VwowyFmmAc?=
+ =?Windows-1252?Q?81PHFm8janTKYRk8TkmVtJrnKbdrSUD2MGlTlK2h7eEdaFtogLqTdI5x?=
+ =?Windows-1252?Q?CoH4btMJInGGBAcdfla5e9ct08Wkf7BlqfoNiNlTi0zX+cRjRaBFIgAR?=
+ =?Windows-1252?Q?czLJA/kre3v6KDJBHKqE5xqlsMu1bgyM59NNxnT3UaG1O7gFrSJR7nVq?=
+ =?Windows-1252?Q?63QjUkCOeI815S1mrd1xFMDlpJjHlDihCn+402nfwr58N79JRWwsSX8S?=
+ =?Windows-1252?Q?gvwGePxfRS9YJxLwwnJvDNGV8PP8pnRFk/in2czfglebw1kTFg69+T50?=
+ =?Windows-1252?Q?GIr64COYg+JmwWSSbYTqh/79R2/4t6C3QcSc+45c/SDrogCVLcw6V9h0?=
+ =?Windows-1252?Q?6Jg6oOTM2Du51IhxhDtexbk1+/k0zUMK9IL6mhZoh9LtfpLLKV5LUSTF?=
+ =?Windows-1252?Q?M4aHC4S7zFjdNRu220IDZVM4lXMJ+2yv8hamlla/z9I8TVBLuIP+LxTF?=
+ =?Windows-1252?Q?G+IZ62NRl4re4y8CgROjaaIhhsdjAzEE0gTrRF/jE1gKPbC716sQ4hTE?=
+ =?Windows-1252?Q?PlX5kcmio3HHXqUebvUGDKi3DSkfzPKEFYRC9I3vvUjpgpHMwCNLwJB5?=
+ =?Windows-1252?Q?0qI6xvCM9xy9mcO8v4cP6+ESTFoDSofIMbVCO9wOO5mcG9nWHvt5VNVY?=
+ =?Windows-1252?Q?YiJn6q4ngh59TbliWxQD/iPECyIhI+9Hw0N9W/2em1sj8hLnMNie/NsB?=
+ =?Windows-1252?Q?nIgTOMkIVSEmYcv+t1EgRG+Ntw5Sev00agLgc7BuhGRqB87T7qBRjztd?=
+ =?Windows-1252?Q?qpZJRWgXyd9HQ5KKwP8LZkq9LMia3fDCl72YdCQhcQkE+lXRcNUHHGUB?=
+ =?Windows-1252?Q?0JlpiHk0FrPSQ9QimHeimwciFA/G6YdlVB/wdmTG+56CFzrFS2gcXcqF?=
+ =?Windows-1252?Q?jA0KtoPVn+r3w0wPzbD1Icg80yjpd7HXeub1bQD6kzvgNHQX2nOE8goz?=
+ =?Windows-1252?Q?ObpydP10mOr8MQ=3D=3D?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB11862.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?Windows-1252?Q?ddJnACjj2GnRid7pkzZDpQFq6r98Dp+vLryU+hm4bGVvODJo9455ELlj?=
+ =?Windows-1252?Q?iUHtUmCYPKF1KG0F8QFtT5kbVeF/8IMxLYUD9KgKbUhjurtzkAcwsL6V?=
+ =?Windows-1252?Q?vMSkj/oXyA4K29ekw7X1uHXPgJXiZG3SWPwdnmXYdff0P0pq81luOrjN?=
+ =?Windows-1252?Q?Tq5C1LBqiHlH83lX2zFFrgvyiFYimb3A+j35zRPJS1032mC28s1PMyrj?=
+ =?Windows-1252?Q?3Majh4PuZ2Tbh3y4G+I38r77hAjv2J9/d8vZXZtR3G2u10X+s5Y/OiBb?=
+ =?Windows-1252?Q?22AKfG2xjqPw6PmuUp/I7gbeZM0Rj7V1Y1yDR3ZMP77QtigsSXOogjCi?=
+ =?Windows-1252?Q?Et86jg2Ck55Rk+52jPxDpe829kFHCI/w6m7Hfbk8BolZig8m4bBpCrAP?=
+ =?Windows-1252?Q?uoUKrRWII1pRKy0Bnjtjk5+gg5SbqvMaEdFb+PG79qti/OROdSD9DNG+?=
+ =?Windows-1252?Q?BZ+KNofxGd5+Ozp4y+RVEwHIVu8D19AK4xx07FO5R6sLkEINX4UX9EiL?=
+ =?Windows-1252?Q?V49PqwlAESeEbluNEsj2SPw3SBRttkTxwh9fZ/m172SjJ48gaolfA23A?=
+ =?Windows-1252?Q?rx6jtAjcxw7CvedXhI4Z1beELCOQX9FrRpz6WWnvnVb5KgrXGcEOLlXW?=
+ =?Windows-1252?Q?v5+gzaIEhkr6GRw/77dRikM3IJkSRjXA8vfgEa0dAbjgO5q32PUEiIdf?=
+ =?Windows-1252?Q?B3gZqhz9MjQtKwBjhxRCdAOmoo3R/ccL/kWywoa4HPzEtdlwnIixMsig?=
+ =?Windows-1252?Q?a6usIDhQMvkeTO9LJxNkjtW6v8HIl5v9q5lEP+0MeC0qp+4iFrPGqITl?=
+ =?Windows-1252?Q?CYgn8ZYnJZlS8/qGuqTZl7xPzGs7qTfv6nnzJ17FQ2EYjGre53nO+RSS?=
+ =?Windows-1252?Q?qZOLDWG43jPt81xcUznNZiSEJ9Xs03BDE7ovIrV9BEqYlrij9i/xXx05?=
+ =?Windows-1252?Q?C8n0IuqS9r4XuCNvap/P+H9P+6Jk8tD+h+CB6UWjWeWYRGM779ymf7DM?=
+ =?Windows-1252?Q?oU2fNZGCPXFjWIWBcJetI8f+bnEuAESgTvfDorURgDLcdCtJzdCG19+7?=
+ =?Windows-1252?Q?6WHQ9ZOwQcxltk1nkruzQdPNFO9doYQUC7ty/jsiR5+AuVqTzOTwrPko?=
+ =?Windows-1252?Q?ilD+vqzUF0TMVtKE9maGoydl93qSmha9rpeohe8HNL+kctehhWTZmBjM?=
+ =?Windows-1252?Q?xgMtfejvyDqO7G9Y6DTwV0bnJ9gXo+HCZmILAG4oc+9tb39yTEQnG/u9?=
+ =?Windows-1252?Q?76dyT0Zoi/rRnt8shaB+C/xVBkLM/cqwVMuZtvblAv+nFiNnJt8UDlcC?=
+ =?Windows-1252?Q?r7isfbUSKHyRx8GOAoqjKUzLGEvsYHnKwvTrgt0U57Ci11ZCxed6o3hh?=
+ =?Windows-1252?Q?YFUs+XIhlhrCdUZksJACfBWUEZYqFFQa0xZKwu5L4n4OZ0Q9pwZX3APl?=
+ =?Windows-1252?Q?kBrBbfKXXwTS6+0L4pPNN0av+DWk9GfwXZzvW5XDmv/952t8eZppMiH7?=
+ =?Windows-1252?Q?p3AHfOnRNmJUD/pwmTgq6um3IqoKqZX0QwmUZpqnEZqyvOZLUrtpm4Y4?=
+ =?Windows-1252?Q?5Yu99iEGaaPs1q2uEmxPTp+YiZsE8TsjybRgy6ieQO6TpIyupMlmewYM?=
+ =?Windows-1252?Q?hpXBUdK937RDiG7WfvEOkpdT/R6JNIzaS2lhM+VlTITJh6zWcxt1lg1n?=
+ =?Windows-1252?Q?rrq11vqmzlMHl4A1Ub1wzi06zo2tvSqkf3WUfrQ4hgaPeH6zBqFRfw?=
+ =?Windows-1252?Q?=3D=3D?=
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GV1PR10MB8536:EE_
-X-MS-Office365-Filtering-Correlation-Id: 98e0e9f1-9bad-498f-cee3-08dc7be06db0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?T25DWW1PTU9SU0Ywcml0M3hZKzBYY1JqSmZ6MnNjUkNUeUNFaHNYQzNnWlp4?=
- =?utf-8?B?Uks2MDRHdjB1SGdEWWdpOE54WnRndWloQnhHckZ5QXplUVA3aDZlNjZ1alZi?=
- =?utf-8?B?ZThVYVVOQkFaVFBrc1JPRkJiN0J3R3NOUVJhNk9URjM4c1o5eWRCVEUzZ081?=
- =?utf-8?B?d0lXMi9uZEVBWmFVaEF5ZG1JZkVlTWJqbHVkWXA2bDIxaWozVG9iU1dRbFVQ?=
- =?utf-8?B?UXJXVFk2eFc4Z0ZBYVN3cXp0MkE3WWNWYXBFRW04YithQTQxM1Z6V3RENS9x?=
- =?utf-8?B?NndqSmZMSnU0dU8xaWswU1RPMm8vcEJ3c0paZnNvU3E1eXErenp6SXdKTnk1?=
- =?utf-8?B?R05PbXRyczdzV0dRZSsyN3BsMFJGOUZ2aU1pOGRzbGNzM1NzRCtZeERkU3F3?=
- =?utf-8?B?SmFXSmhPTk5WRmZHUXdLeGRzTXgrbGdsblB1RkZ2Wks4ZmI5bEphZzUyQktu?=
- =?utf-8?B?K2ExWkQ0cyt1VjV3c3BZRGVqbFhuUXVaM3JEWFVVVCs2cjEzYkR4VlZDMkQz?=
- =?utf-8?B?SW1sZ1IzMEZsa2VVZzlrRUprOTh5K2x5N0gybVhERnVCcEhVbDFDcmVBR3NP?=
- =?utf-8?B?RXNveDgwS2d6WHplUGVQYThTMGpMclNSYzluSE5ZUnNYQVpBWndIak0zUnBT?=
- =?utf-8?B?T1hsRHk0WXEyOVB2b25GYTk4YXpGazRtY25ZV09wc0Jxck56WjVIMkJRTU1L?=
- =?utf-8?B?SXllbm1weFg2amM2U2RRQ3F1UUNMVVR4R3JQYURzSTdJQTlIU290SThIZHZC?=
- =?utf-8?B?NGFRdTl0dS9hVElpZzhwemlNZmdOSHFIU1JEWnVSdmo4bXRlQldvWjhqbTFa?=
- =?utf-8?B?VGhXZUpIQS9wUWtQK2VBWHlIVWdiallRU2FBN2VHaHJEUWJrZXZwOTBucnFJ?=
- =?utf-8?B?eFg2SkdsVk1NSDRhcVRpZXNDUVlxUlFyYmRIaE5PbGI5RXlGakJEZXlLUGRJ?=
- =?utf-8?B?VVAxWUFpZDE2bTdRdDhNc1ROM09ic2pHTWEySmdlUkN3WWg1QXhNd2hRTTRW?=
- =?utf-8?B?MzltL092ZDFINmpPbGg5UkIybUcyWWhzTGVqODZlNzVrbU51YzlnV05Sc1RH?=
- =?utf-8?B?TEQ0WjZZdVE3d1BpbnFzNmJJM1hvdSt0aWpKQkFSeHVOTXEraFlEWmhqNXd3?=
- =?utf-8?B?SHphZmQyZ01sWFBOMTlRL1BDSlhKNnpGaVpHWUZiaDJ4VHhkczh1UHNXS1Nv?=
- =?utf-8?B?Q2FaVDNyY0pMNENkMEN1VjZ1dGdncWxKYSs0bkRzSDdKTW9Bd3M1Y2VRelVO?=
- =?utf-8?B?QlVHTUU3YkVvQ1BYazliU1VqbnBTbSs5ai8yYXNOSm1VZ1hWazZYdXVRRjNz?=
- =?utf-8?B?ODZCSUVqbWV3MVZET3lGWmVTTU5SRmMvZXVFdjFjUTNNNTFoUGc4RWkvSk51?=
- =?utf-8?B?TkFZQUhHNnVUSDk0Zll4SER6aFFmdWdYY2k3eEhPMWtWaWloRVQvemp1N2xC?=
- =?utf-8?B?Rzl5ZTFGZXZyR2M5RGVFYTlJQnFMQ21kNDlwMlRpWjdnVXlTYVhNbmZDSnR1?=
- =?utf-8?B?b05hR1VBdkpPTm1XbitnSDAzbDFUeUJuUVh1U2M5by8zdGdGUzNCZjd3TEEz?=
- =?utf-8?B?N0JRbjJYcEJnSWRlc0Z4cGh2UGZuM0JKcHlzaXpyRFdwVkF2WjJqNy93Y1Ix?=
- =?utf-8?B?MHd4U2tjbGx2dWtRcE9ORjBWMC9FUWYwdmpBZzJrS0M3U3hZUGU0bmc3clhL?=
- =?utf-8?B?eUc3SEhzQXZxWjlOYXhVRnR6ZW1OUnhDak1nUWxUOUVaZjhFbjlkN0dnPT0=?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?YWphdVQrR3pnSEVsY0kwY2x6OG9MNDNsZCtaYzk1VEJvakh3TnVlQXNwZ2hQ?=
- =?utf-8?B?MDYxaDhzZml4UTYwbWJtbTRxS2RHaHRkUkh3ZEo2ZnBycThYRVgxV2N6MjFB?=
- =?utf-8?B?NDA1R09ZZ3I4NE9jY0FpRDhTcUk0S0VmaGMwb3pUSHVoT1Z0YVREUnN0MVpW?=
- =?utf-8?B?b2JDeUlFdUVYWHg5ZTNyK3kyTHRhUmdRRkE2RjA0Yk1aT25VQW1yQWpLRC84?=
- =?utf-8?B?dDFib2FjYStQY2tJZFBqMWlnaFFQVVNNbDcySjMwYlpZeUpsdjhrZmlabVVU?=
- =?utf-8?B?bWcxS3BHNjFTZFpHRUlTVUpuMnI2SFAyMzhxQ3FIRFBOcXo4NmpReVdiRWl1?=
- =?utf-8?B?YVlXTXljYjVOSS82OU9xMVlQT2IzVEN6Y2prRzJ1ak1oUzlCdmxGdmFlVmlJ?=
- =?utf-8?B?VEFvRmNxM1NOTDlQSWxpTU1sYTlCVEJmdzN4eERvVXJvb29JTWFTQzd6c0hi?=
- =?utf-8?B?aEVZaFY2VmF0VW11Q2JuSkJGNG12MVkrTUM5VEREdUFsYit0NDB5cDVzdmdu?=
- =?utf-8?B?K2FsdjRINW4yZXV0ektLWkptZ0c2ZmNNQUEwL0ozdlVNT2JRVlUrUlNuQldF?=
- =?utf-8?B?cmlTRGNEcm5KaWNLOWNPVmg3eVZsQnNxbHdLd3VtVTJSTGwvN0NRVnJTZno3?=
- =?utf-8?B?RW1QS014Q1VRWUlZUnB6bEg5RWVFeDdWbjVVcXZ3WkdxWjlrQmhINEVtSzh1?=
- =?utf-8?B?Q0hqdCtBN1RGSmw3MmFEemxNWXFNSlFabkNpL2NsdXRRSUNzZERrWXpVK0FT?=
- =?utf-8?B?VkpjQ29OUTFYUlhMMDQzcjVJQmRkblVoOVN2azBBdUVMMGRQTlR2OXpEWnlR?=
- =?utf-8?B?eU5HRzVVUnlpK2V6TEdibXdoK0N1Y3R0TEVwaWlCZjIrTlFzOE5lbEhVaWtk?=
- =?utf-8?B?SnQ4QVpncHNnYS9CYXV3VUxhYjZJN3hDTUpheC9PK29KRjNKSzN6T3R3RDdu?=
- =?utf-8?B?Q3lCTVdNT0ZGOEpVY25ZVncwUkM1NkI4dVRQNGZ3ZHlFdEJhOUtsVUtiK0tN?=
- =?utf-8?B?S3hIcThRbWU5MUpjaHNsUiswU0hBUnRoc3I5TUJuV0thd3gxMk95Zm1sdFJ3?=
- =?utf-8?B?S0ttYzJwTUtMYTVJbUkwVmNzR09BUFVzL045eHF4UHpTN2M5dDlmeEpGL3cw?=
- =?utf-8?B?MDZjczI0K05iSUhVNHlzWHdmZUtCQUN5VjZkOG54a2ovQUdST3hMY2swUHhI?=
- =?utf-8?B?b01Gb2dja0VqUkgzc0JwZ1ZMR05TNDQxNFo5Mld6WnkzUFhRRlpGclEzaFFD?=
- =?utf-8?B?SXU5aGZYSGY4cWE1aWlMdkxncnVrRzJhRkx4Q2xPcnQ2REhEbEFGb3hVV0J5?=
- =?utf-8?B?OEtONmR2REVxQ0gwQWNaUkRIdGdiR1hrYXNZNk5Jd1pUS1ZxKzdGUDIwY1dk?=
- =?utf-8?B?azVhMVh2d2hlUGNXUXQvR0Eva2lZWmhTN1RJTzZVKzZHc2NVcU4rVW1iTWdB?=
- =?utf-8?B?M2ozMWhlT1FXQ01FTjJiaGI0ZVFKMTVsN010cmhhWkc5SVNyUjMwcTRyVHZ1?=
- =?utf-8?B?eVhkYmJLOEx4anBGOWtLV1QwQVdJb2U1N29sQUVtSWZrSlY1U2hSQ2dMa3Jn?=
- =?utf-8?B?N2s5dnVsN0lYWkdkTkE4UTA2ckRrdDlUbHZMRHdmZ2dBUGVJQkptc0MzdCta?=
- =?utf-8?B?eENLc0g0bkgwMEN2dFBYbkdZK2lRc3V1ZU5FMnR2LzNZRlpMcnlNbkh3OUt3?=
- =?utf-8?B?cUlnNVhlTjVGZGxKMWpoTmNOZ3pQMGJxSDVpS2pCbEhLT3ZpVzJONGFIYmJR?=
- =?utf-8?B?dXVDVWtiU0Z5TmhUYjFEdmdyTUNGdG5GOWpIUGs4NURmVTZNMHZjNWFLWCt3?=
- =?utf-8?B?UWJtNlNUUEtZbHROQkQ0SEdSSS9QVWtOYm9UUXN1MFRzWmNSZ2haVjFKZmEv?=
- =?utf-8?B?TzhIMGREa0xpaWk1dGRBWVEzcWdtaTlkcXVVZFZZUXE1YUc4bmM5QUVOaVlH?=
- =?utf-8?B?dnNWOXVndUtYVW5MVEpHSTJCSzBOeGRFRTZ0STFvUXRPODd6RDZCZ2kxVlpD?=
- =?utf-8?B?NXJjMENteVBsbFJXWE8yclZzU3RwOTdBS1Mxc2VqNUx2TUZiUW52dm5HSGw2?=
- =?utf-8?B?NndEWEFFUGkxQm9Ed1FZeGV5Y1NiTU1TWGdEUUZnT1dyeWliY1M3aVBKUDZG?=
- =?utf-8?B?elF5ek05eFJKc2YzanY1MUdUSEZpaHZvRU1oV1RmcEJReWNBOXc4bGJLUHZz?=
- =?utf-8?B?Q1E9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 98e0e9f1-9bad-498f-cee3-08dc7be06db0
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-OriginatorOrg: renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2024 10:58:22.3980
+X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB11862.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5d3e892c-abc4-486a-4b7c-08dc7bec06a5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 May 2024 12:21:23.3270
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XSg5tA6UoX6WLOW276HMQdis238mgJENUsvmoyEm+SHmu52p+3m2sCZd+3w7IVzHhFrRC9Xk6jGtJ2ccMiWx5A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB8536
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: X6wAqP6fdxaNbCznXRhpuirakKESjW25dpzQbzKR+xEzTupnCTmnJHPAqbr/S0/fS15wN42ZDWRjqndGMoh/eZ1ms8cy4Nz7Hs6O6u+FBPU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB10034
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 24 May 2024 10:58:30 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15944
+ <cip-dev@lists.cip-project.org>; Fri, 24 May 2024 12:21:31 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15945
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+Hello Pavel,
 
-Officially signals that this image is supposed to be usable on all our
-physical x86 targets. QEMU remains special, even when using a UEFI disk
-image as well, due to extra needs for the host.
+> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
+> Behalf Of Pavel Machek via lists.cip-project.org
+> Sent: Wednesday, May 15, 2024 6:26 PM
+>=20
+> Hi!
+>=20
+> I'd like to test 6.1.91-rc2 and friends, but gitlab still have -rc1:
+> https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-
+> /tree/linux-6.1.y
+>=20
+> Can someone take a look what is wrong?
+>=20
+> Plus, it would be cool to start testing 6.9-stable branch.
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
+Support is now added:
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/pipelines?r=
+ef=3Dlinux-6.9.y
 
-Hmpf, too quick.
+The initial test results look okay, apart from one thing...
 
-Changes in v2:
- - fix and cleanup efibootguard wic file reference
+It looks like we're seeing a new failure (VULN) for one of the spectre-melt=
+down checker tests - CVE-2017-5715.
+We're only seeing this failure on the x86 simatic-ipc227e platform.
+Failed test case log:
+https://lava.ciplatform.org/scheduler/job/1138103#L998
 
- .gitlab-ci.yml                                            | 8 ++++----
- Kconfig                                                   | 8 ++++----
- conf/machine/{simatic-ipc227e.conf => x86-uefi.conf}      | 0
- kas/board/{simatic-ipc227e.yml => x86-uefi.yml}           | 4 ++--
- wic/qemu-amd64-efibootguard.wks.in                        | 2 +-
- wic/simatic-ipc227e-efibootguard.wks.in                   | 1 -
- ...6-efibootguard.wks.in => x86-uefi-efibootguard.wks.in} | 0
- 7 files changed, 11 insertions(+), 12 deletions(-)
- rename conf/machine/{simatic-ipc227e.conf => x86-uefi.conf} (100%)
- rename kas/board/{simatic-ipc227e.yml => x86-uefi.yml} (71%)
- delete mode 120000 wic/simatic-ipc227e-efibootguard.wks.in
- rename wic/{x86-efibootguard.wks.in => x86-uefi-efibootguard.wks.in} (100%)
+I checked v6.8.11-rc1 and this test case passes:
+https://lava.ciplatform.org/scheduler/job/1137807#L976
 
-diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-index 4a397121..f3d05525 100644
---- a/.gitlab-ci.yml
-+++ b/.gitlab-ci.yml
-@@ -81,11 +81,11 @@ default:
-     - if [ "${deploy_kernelci}" = "enable" ]; then scripts/deploy-kernelci.py ${release} ${target} ${extension} ${dtb}; fi
- 
- # base image
--build:simatic-ipc227e-base:
-+build:x86-uefi-base:
-   extends:
-     - .build_base
-   variables:
--    target: simatic-ipc227e
-+    target: x86-uefi
- 
- build:bbb-base:
-   extends:
-@@ -166,11 +166,11 @@ build:qemu-arm-base-kernelci:
-     deploy_kernelci: enable
- 
- # test
--build:simatic-ipc227e-test:
-+build:x86-uefi-test:
-   extends:
-     - .build_base
-   variables:
--    target: simatic-ipc227e
-+    target: x86-uefi
-     extension: test
- 
- build:bbb-test:
-diff --git a/Kconfig b/Kconfig
-index 6e3ad3ea..334b5c66 100644
---- a/Kconfig
-+++ b/Kconfig
-@@ -39,8 +39,8 @@ config TARGET_QEMU_AMD64
- 	bool "QEMU AMD64 (x86-64)"
- 	select ARCH_AMD64
- 
--config TARGET_SIMATIC_IPC227E
--	bool "Siemens SIMATIC IPC227E"
-+config TARGET_X86_UEFI
-+	bool "Generic x86 machine booting via UEFI"
- 	select ARCH_AMD64
- 
- config TARGET_QEMU_ARM64
-@@ -72,7 +72,7 @@ endchoice
- config KAS_INCLUDE_BOARD
- 	string
- 	default "kas/board/qemu-amd64.yml" if TARGET_QEMU_AMD64
--	default "kas/board/simatic-ipc227e.yml" if TARGET_SIMATIC_IPC227E
-+	default "kas/board/x86-uefi.yml" if TARGET_X86_UEFI
- 	default "kas/board/qemu-arm64.yml" if TARGET_QEMU_ARM64
- 	default "kas/board/hihope-rzg2m.yml" if TARGET_HIHOPE_RZG2M
- 	default "kas/board/qemu-arm.yml" if TARGET_QEMU_ARM
-@@ -173,7 +173,7 @@ if !KERNEL_4_4 && !KERNEL_4_19
- 
- config IMAGE_SWUPDATE
- 	bool "SWUpdate support for root partition"
--	depends on TARGET_QEMU_AMD64 || TARGET_SIMATIC_IPC227E || TARGET_QEMU_ARM64 || TARGET_QEMU_ARM || TARGET_BBB || ( TARGET_QEMU_RISCV64 && KERNEL_6_1 ) || TARGET_HIHOPE_RZG2M
-+	depends on TARGET_QEMU_AMD64 || TARGET_X86_UEFI || TARGET_QEMU_ARM64 || TARGET_QEMU_ARM || TARGET_BBB || ( TARGET_QEMU_RISCV64 && KERNEL_6_1 ) || TARGET_HIHOPE_RZG2M
- 
- if IMAGE_SWUPDATE
- 
-diff --git a/conf/machine/simatic-ipc227e.conf b/conf/machine/x86-uefi.conf
-similarity index 100%
-rename from conf/machine/simatic-ipc227e.conf
-rename to conf/machine/x86-uefi.conf
-diff --git a/kas/board/simatic-ipc227e.yml b/kas/board/x86-uefi.yml
-similarity index 71%
-rename from kas/board/simatic-ipc227e.yml
-rename to kas/board/x86-uefi.yml
-index cf27058f..056ca322 100644
---- a/kas/board/simatic-ipc227e.yml
-+++ b/kas/board/x86-uefi.yml
-@@ -1,7 +1,7 @@
- #
- # CIP Core, generic profile
- #
--# Copyright (c) Siemens AG, 2019
-+# Copyright (c) Siemens AG, 2019-2024
- #
- # Authors:
- #  Jan Kiszka <jan.kiszka@siemens.com>
-@@ -12,4 +12,4 @@
- header:
-   version: 14
- 
--machine: simatic-ipc227e
-+machine: x86-uefi
-diff --git a/wic/qemu-amd64-efibootguard.wks.in b/wic/qemu-amd64-efibootguard.wks.in
-index b3a73fa9..e93d7bf7 120000
---- a/wic/qemu-amd64-efibootguard.wks.in
-+++ b/wic/qemu-amd64-efibootguard.wks.in
-@@ -1 +1 @@
--x86-efibootguard.wks.in
-\ No newline at end of file
-+x86-uefi-efibootguard.wks.in
-\ No newline at end of file
-diff --git a/wic/simatic-ipc227e-efibootguard.wks.in b/wic/simatic-ipc227e-efibootguard.wks.in
-deleted file mode 120000
-index b3a73fa9..00000000
---- a/wic/simatic-ipc227e-efibootguard.wks.in
-+++ /dev/null
-@@ -1 +0,0 @@
--x86-efibootguard.wks.in
-\ No newline at end of file
-diff --git a/wic/x86-efibootguard.wks.in b/wic/x86-uefi-efibootguard.wks.in
-similarity index 100%
-rename from wic/x86-efibootguard.wks.in
-rename to wic/x86-uefi-efibootguard.wks.in
--- 
-2.43.0
 
+Perhaps this isn't a massive issue, but I thought I should report it anyway=
+.
+For now I won't mark this as a "known issue".
+
+Kind regards, Chris
 
