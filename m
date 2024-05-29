@@ -2,51 +2,50 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C55FC27C50
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D88EC27C44
 	for <webhook@archiver.kernel.org>; Wed, 29 May 2024 08:11:26 +0000 (UTC)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
- by mx.groups.io with SMTP id smtpd.web11.8581.1716970283770682337
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+ by mx.groups.io with SMTP id smtpd.web10.8649.1716970285143418129
  for <cip-dev@lists.cip-project.org>;
- Wed, 29 May 2024 01:11:24 -0700
+ Wed, 29 May 2024 01:11:25 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=UUbOrpFJ;
- spf=pass (domain: tuxon.dev, ip: 209.85.167.42, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52b119986f2so299502e87.1
-        for <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 01:11:23 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=nr+ablj/;
+ spf=pass (domain: tuxon.dev, ip: 209.85.167.54, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-529b79609cbso2727431e87.3
+        for <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 01:11:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1716970282; x=1717575082; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1716970283; x=1717575083; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Fia4iY/LqSkrgqV0nx8icdq2dZUgvuZTfUUf21Pf+Po=;
-        b=UUbOrpFJ3IhhcxEw3RN2fEebF1ChWN0ZPGzG5CpZb6mMkrlMtTZMMHAUJ3lh3AI1ev
-         R9Q1LkfOMwqGD+WeH+ok7Pv0p0MNt9kA8VSfKUoWTgqn8dq6c/gSLFXuqz9q+9TGQ0Bt
-         N6P3TWoTAWAwt5nHaW/BdNvxMW1URXicVtjQvv6X+XTuN1JRQ72udjOjtKudFsC5raSi
-         qinSjH30p6L0qXlib9tab2KfS2LiVtV9Yx9/kVC3KM5Lq+STiy9V+XHg4w9SOTrzY0Fw
-         MtWIKFIxs1hP/3MB+RBdB7jJrq5ixsEa718t5avulKUCPpf6EgwDZfCHDoQhpl7wn6E3
-         5d8g==
+        bh=sBPXQ9NOH2876e4EiDZm2RUzMP8Z/F3D9PjVHBqj9oE=;
+        b=nr+ablj/A0gBjSxPB1B2s/JzxMUe+xFFG1SreLx+77MkilUu51WA8AgoUqBH5Mj+g3
+         E9L9nBrKL4PZFOQnkkfCKcZcbpX+ybZBi6SeJh7ajYh4UEmyusH0JkG2c8wc+bhzGxuz
+         q/bUjAPXj8NDagCH10sKqaBSXzrq1FM9bwCDsvcr5cNzuZjLGvLM3H2NBoA6AlTTmaeD
+         C7en9PAuDeDSkrQs8ytd7MMEnQy1NfCqOw8P5+/eEfAhmdgL2zI+WHDSMiE1mCAKuiWf
+         9pRcC92vk7oS2fWC1YsYLj/oKPYfA8/hdUti86lXiboOtxUQWF6JozkdE7i/189z9Fuv
+         UF0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716970282; x=1717575082;
+        d=1e100.net; s=20230601; t=1716970283; x=1717575083;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Fia4iY/LqSkrgqV0nx8icdq2dZUgvuZTfUUf21Pf+Po=;
-        b=rTq3kXhC+SbEsCKuXyU7qNOsXhyRfjN4Vw+x0al6g/azY7rfIVofQm1XgpsWl8WwJs
-         PONX/iRnjnh+Md03AJ1gHEwzyiy5mmM8JmTJOEdk0LrBcHifHFKx4Rj67/CifAi1qXl3
-         i+gNgTrPpyqL0DlHMN3Y/yTQCJiWrOy7HoEXTLGLELZ12My3PfGjO1XC95AsazTrr+hi
-         dcxZA2Fv5ul/MB3nseHKr48iADyG05RLheRX0p9uuGqONvtEpZ5N4t9jW6XuNC1m7SX3
-         3M9VsEwiVNOhE9spwYduIJfei7twSX924qcyR3h1+pm6RKeosAeEXM4sGmRyClRiGvbI
-         IBTg==
-X-Gm-Message-State: AOJu0Yy0Q5Ygh3SMo2GEET49+IfWaSXbf8agUkRAaEZGB94OoHiE4TV/
-	XEQyXN8vffze69MxBFNUNhjVGAqWRXWLxT79Mx7tEqidZhHNpqixQFx4D44/o5lEcT0lxhw2iXw
-	CYEk=
-X-Google-Smtp-Source: AGHT+IFcAkb00EbT90Z7XHhHW7nob0OTQRj96GoUIXzmqdMQtIagSrgfrRej/XyZNjIp+0Q5199vVg==
-X-Received: by 2002:ac2:43b7:0:b0:51f:b781:72a7 with SMTP id 2adb3069b0e04-52966ab5947mr9311548e87.60.1716970281955;
-        Wed, 29 May 2024 01:11:21 -0700 (PDT)
+        bh=sBPXQ9NOH2876e4EiDZm2RUzMP8Z/F3D9PjVHBqj9oE=;
+        b=Cqi6JsKhAlU4uGbPwg66jtDN5wbr3dqFRZbC64C/0GNNXlSeedVIbiGVCHhMHjGB90
+         RHlzzMrskw3lz9jty1hnnhrrT0E5D/0zA2U9ptIa919CShxn70d6UpP05Y9g/vJ+Vu8d
+         efN4tNd5VQHiR4HmYo1zK2HjGN1C5a7ZfvIXyE8lLi7zAxjon4NY3DsP0gGglp0e1t0a
+         y5jug6ygSU4RdILoz0NRtrxZeQFKZOsjCvUQRY6PfO3tkea0TPhoBeii6DD0OoaXzouO
+         ufsnqS0Tyjz+6Z+qX7kK/7KDCFEdVjp376RDzlS9M2g1EJB2Px+Bmm+V/q6URTBosR29
+         9Jkw==
+X-Gm-Message-State: AOJu0YzE4fl2IwfXW+gbu2ucRyALgKXfmuwl5f0M+NIUGkHe6IsBc2JR
+	OjXp0FDISLdi/G3SYWupJkEzORmGCie6z0TxK0Tvag0Q/Q2m6ZqbmrcXL2jx5AM=
+X-Google-Smtp-Source: AGHT+IHsOETF0S3WpgQJPNWwvTxX/Xa+9nentbG1j55NMPgqKzx9GNWYXBj9D2jIRKzpzN8RgSMFCw==
+X-Received: by 2002:a19:914d:0:b0:518:dfed:f021 with SMTP id 2adb3069b0e04-529645e2b3dmr9022089e87.24.1716970283265;
+        Wed, 29 May 2024 01:11:23 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.124])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108966b63sm171973865e9.1.2024.05.29.01.11.20
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108966b63sm171973865e9.1.2024.05.29.01.11.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 01:11:21 -0700 (PDT)
+        Wed, 29 May 2024 01:11:22 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
@@ -55,9 +54,9 @@ Cc: cip-dev@lists.cip-project.org,
 	biju.das.jz@bp.renesas.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com,
 	paul.barker.ct@bp.renesas.com
-Subject: [PATCH 5.10.y-cip 24/47] net: ravb: Move reference clock enable/disable on runtime PM APIs
-Date: Wed, 29 May 2024 11:10:16 +0300
-Message-Id: <20240529081039.639010-25-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 25/47] net: ravb: Move getting/requesting IRQs in the probe() method
+Date: Wed, 29 May 2024 11:10:17 +0300
+Message-Id: <20240529081039.639010-26-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240529081039.639010-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240529081039.639010-1-claudiu.beznea.uj@bp.renesas.com>
@@ -67,287 +66,501 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 08:11:26 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16004
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16005
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit a654f6e875b753d11643840e266f7fd75e5ee1fa upstream.
+commit 32f012b8c01ca9fd26a28134cc2165ead93c22d0 upstream.
 
-Reference clock could be or not be part of the power domain. If it is part
-of the power domain, the power domain takes care of properly setting it. In
-case it is not part of the power domain and full runtime PM support is
-available in driver the clock will not be propertly disabled/enabled at
-runtime. For this, keep the prepare/unprepare operations in the driver's
-probe()/remove() functions and move the enable/disable in runtime PM
-functions.
+The runtime PM implementation will disable clocks at the end of
+ravb_probe(). As some IP variants switch to reset mode as a result of
+setting module standby through clock disable APIs, to implement runtime PM
+the resource parsing and requesting are moved in the probe function and IP
+settings are moved in the open function. This is done because at the end of
+the probe some IP variants will switch anyway to reset mode and the
+registers content is lost. Also keeping only register settings operations
+in the ravb_open()/ravb_close() functions will make them faster.
 
-By doing this, the previous ravb_runtime_nop() function was renamed
-ravb_runtime_suspend() and the comment was removed. A proper runtime PM
-resume function was added (ravb_runtime_resume()). The current driver
-still don't need to make any register settings on runtime suspend/resume
-(as expressed in the removed comment) because, currently,
-pm_runtime_put_sync() is called on the driver remove function. This will be
-changed in the next commits (that extends the runtime PM support) such
-that proper register settings (along with runtime resume/suspend) will be
-done on ravb_open()/ravb_close().
+Commit moves IRQ requests to ravb_probe() to have all the IRQs ready when
+the interface is open. As now getting/requesting IRQs is done in a single
+place there is no need to keep intermediary data (like ravb_rx_irqs[] and
+ravb_tx_irqs[] arrays or IRQs in struct ravb_private).
 
-Along with it, the other clock request operations were moved close to
-reference clock request and prepare to have all the clock requests
-specific code grouped together.
+In order to avoid accessing the IP registers while the IP is runtime
+suspended (e.g. in the timeframe b/w the probe requests shared IRQs and
+IP clocks are enabled) in the interrupt handlers were introduced
+pm_runtime_active() checks. The device runtime PM usage counter has been
+incremented to avoid disabling the device's clocks while the check is in
+progress (if any).
+
+This is a preparatory change to add runtime PM support for all IP variants.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-[claudiu.beznea:
- - added __maybe_unused to ravb_runtime_suspend(),
-   ravb_runtime_resume()
- - fixed conflict around SET_RUNTIME_PM_OPS()]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 110 ++++++++++++-----------
- 1 file changed, 57 insertions(+), 53 deletions(-)
+ drivers/net/ethernet/renesas/ravb.h      |   4 -
+ drivers/net/ethernet/renesas/ravb_main.c | 299 ++++++++++-------------
+ 2 files changed, 130 insertions(+), 173 deletions(-)
 
+diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
+index 29b8b163a3ca..2226c757fa9a 100644
+--- a/drivers/net/ethernet/renesas/ravb.h
++++ b/drivers/net/ethernet/renesas/ravb.h
+@@ -1089,10 +1089,6 @@ struct ravb_private {
+ 	int msg_enable;
+ 	int speed;
+ 	int emac_irq;
+-	int erra_irq;
+-	int mgmta_irq;
+-	int rx_irqs[NUM_RX_QUEUE];
+-	int tx_irqs[NUM_TX_QUEUE];
+ 
+ 	unsigned no_avb_link:1;
+ 	unsigned avb_link_active_low:1;
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 5e7b5857d347..112939f13577 100644
+index 112939f13577..7dbd8130fdc1 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2667,11 +2667,6 @@ static int ravb_probe(struct platform_device *pdev)
+@@ -40,16 +40,6 @@
+ 		 NETIF_MSG_RX_ERR | \
+ 		 NETIF_MSG_TX_ERR)
+ 
+-static const char *ravb_rx_irqs[NUM_RX_QUEUE] = {
+-	"ch0", /* RAVB_BE */
+-	"ch1", /* RAVB_NC */
+-};
+-
+-static const char *ravb_tx_irqs[NUM_TX_QUEUE] = {
+-	"ch18", /* RAVB_BE */
+-	"ch19", /* RAVB_NC */
+-};
+-
+ void ravb_modify(struct net_device *ndev, enum ravb_reg reg, u32 clear,
+ 		 u32 set)
+ {
+@@ -1086,11 +1076,23 @@ static irqreturn_t ravb_emac_interrupt(int irq, void *dev_id)
+ {
+ 	struct net_device *ndev = dev_id;
+ 	struct ravb_private *priv = netdev_priv(ndev);
++	struct device *dev = &priv->pdev->dev;
++	irqreturn_t result = IRQ_HANDLED;
++
++	pm_runtime_get_noresume(dev);
++
++	if (unlikely(!pm_runtime_active(dev))) {
++		result = IRQ_NONE;
++		goto out_rpm_put;
++	}
+ 
+ 	spin_lock(&priv->lock);
+ 	ravb_emac_interrupt_unlocked(ndev);
+ 	spin_unlock(&priv->lock);
+-	return IRQ_HANDLED;
++
++out_rpm_put:
++	pm_runtime_put_noidle(dev);
++	return result;
+ }
+ 
+ /* Error interrupt handler */
+@@ -1170,9 +1172,15 @@ static irqreturn_t ravb_interrupt(int irq, void *dev_id)
+ 	struct net_device *ndev = dev_id;
+ 	struct ravb_private *priv = netdev_priv(ndev);
+ 	const struct ravb_hw_info *info = priv->info;
++	struct device *dev = &priv->pdev->dev;
+ 	irqreturn_t result = IRQ_NONE;
+ 	u32 iss;
+ 
++	pm_runtime_get_noresume(dev);
++
++	if (unlikely(!pm_runtime_active(dev)))
++		goto out_rpm_put;
++
+ 	spin_lock(&priv->lock);
+ 	/* Get interrupt status */
+ 	iss = ravb_read(ndev, ISS);
+@@ -1216,6 +1224,9 @@ static irqreturn_t ravb_interrupt(int irq, void *dev_id)
+ 	}
+ 
+ 	spin_unlock(&priv->lock);
++
++out_rpm_put:
++	pm_runtime_put_noidle(dev);
+ 	return result;
+ }
+ 
+@@ -1224,9 +1235,15 @@ static irqreturn_t ravb_multi_interrupt(int irq, void *dev_id)
+ {
+ 	struct net_device *ndev = dev_id;
+ 	struct ravb_private *priv = netdev_priv(ndev);
++	struct device *dev = &priv->pdev->dev;
+ 	irqreturn_t result = IRQ_NONE;
+ 	u32 iss;
+ 
++	pm_runtime_get_noresume(dev);
++
++	if (unlikely(!pm_runtime_active(dev)))
++		goto out_rpm_put;
++
+ 	spin_lock(&priv->lock);
+ 	/* Get interrupt status */
+ 	iss = ravb_read(ndev, ISS);
+@@ -1248,6 +1265,9 @@ static irqreturn_t ravb_multi_interrupt(int irq, void *dev_id)
+ 	}
+ 
+ 	spin_unlock(&priv->lock);
++
++out_rpm_put:
++	pm_runtime_put_noidle(dev);
+ 	return result;
+ }
+ 
+@@ -1255,8 +1275,14 @@ static irqreturn_t ravb_dma_interrupt(int irq, void *dev_id, int q)
+ {
+ 	struct net_device *ndev = dev_id;
+ 	struct ravb_private *priv = netdev_priv(ndev);
++	struct device *dev = &priv->pdev->dev;
+ 	irqreturn_t result = IRQ_NONE;
+ 
++	pm_runtime_get_noresume(dev);
++
++	if (unlikely(!pm_runtime_active(dev)))
++		goto out_rpm_put;
++
+ 	spin_lock(&priv->lock);
+ 
+ 	/* Network control/Best effort queue RX/TX */
+@@ -1264,6 +1290,9 @@ static irqreturn_t ravb_dma_interrupt(int irq, void *dev_id, int q)
+ 		result = IRQ_HANDLED;
+ 
+ 	spin_unlock(&priv->lock);
++
++out_rpm_put:
++	pm_runtime_put_noidle(dev);
+ 	return result;
+ }
+ 
+@@ -1737,85 +1766,21 @@ static const struct ethtool_ops ravb_ethtool_ops = {
+ 	.set_wol		= ravb_set_wol,
+ };
+ 
+-static inline int ravb_hook_irq(unsigned int irq, irq_handler_t handler,
+-				struct net_device *ndev, struct device *dev,
+-				const char *ch)
+-{
+-	char *name;
+-	int error;
+-
+-	name = devm_kasprintf(dev, GFP_KERNEL, "%s:%s", ndev->name, ch);
+-	if (!name)
+-		return -ENOMEM;
+-	error = request_irq(irq, handler, 0, name, ndev);
+-	if (error)
+-		netdev_err(ndev, "cannot request IRQ %s\n", name);
+-
+-	return error;
+-}
+-
+ /* Network device open function for Ethernet AVB */
+ static int ravb_open(struct net_device *ndev)
+ {
+ 	struct ravb_private *priv = netdev_priv(ndev);
+ 	const struct ravb_hw_info *info = priv->info;
+-	struct platform_device *pdev = priv->pdev;
+-	struct device *dev = &pdev->dev;
+ 	int error;
+ 
+ 	napi_enable(&priv->napi[RAVB_BE]);
+ 	if (info->nc_queues)
+ 		napi_enable(&priv->napi[RAVB_NC]);
+ 
+-	if (!info->multi_irqs) {
+-		error = request_irq(ndev->irq, ravb_interrupt, IRQF_SHARED,
+-				    ndev->name, ndev);
+-		if (error) {
+-			netdev_err(ndev, "cannot request IRQ\n");
+-			goto out_napi_off;
+-		}
+-	} else {
+-		error = ravb_hook_irq(ndev->irq, ravb_multi_interrupt, ndev,
+-				      dev, "ch22:multi");
+-		if (error)
+-			goto out_napi_off;
+-		error = ravb_hook_irq(priv->emac_irq, ravb_emac_interrupt, ndev,
+-				      dev, "ch24:emac");
+-		if (error)
+-			goto out_free_irq;
+-		error = ravb_hook_irq(priv->rx_irqs[RAVB_BE], ravb_be_interrupt,
+-				      ndev, dev, "ch0:rx_be");
+-		if (error)
+-			goto out_free_irq_emac;
+-		error = ravb_hook_irq(priv->tx_irqs[RAVB_BE], ravb_be_interrupt,
+-				      ndev, dev, "ch18:tx_be");
+-		if (error)
+-			goto out_free_irq_be_rx;
+-		error = ravb_hook_irq(priv->rx_irqs[RAVB_NC], ravb_nc_interrupt,
+-				      ndev, dev, "ch1:rx_nc");
+-		if (error)
+-			goto out_free_irq_be_tx;
+-		error = ravb_hook_irq(priv->tx_irqs[RAVB_NC], ravb_nc_interrupt,
+-				      ndev, dev, "ch19:tx_nc");
+-		if (error)
+-			goto out_free_irq_nc_rx;
+-
+-		if (info->err_mgmt_irqs) {
+-			error = ravb_hook_irq(priv->erra_irq, ravb_multi_interrupt,
+-					      ndev, dev, "err_a");
+-			if (error)
+-				goto out_free_irq_nc_tx;
+-			error = ravb_hook_irq(priv->mgmta_irq, ravb_multi_interrupt,
+-					      ndev, dev, "mgmt_a");
+-			if (error)
+-				goto out_free_irq_erra;
+-		}
+-	}
+-
+ 	/* Device init */
+ 	error = ravb_dmac_init(ndev);
+ 	if (error)
+-		goto out_free_irq_mgmta;
++		goto out_napi_off;
+ 	ravb_emac_init(ndev);
+ 
+ 	/* Initialise PTP Clock driver */
+@@ -1836,26 +1801,6 @@ static int ravb_open(struct net_device *ndev)
+ 	if (info->gptp)
+ 		ravb_ptp_stop(ndev);
+ 	ravb_stop_dma(ndev);
+-out_free_irq_mgmta:
+-	if (!info->multi_irqs)
+-		goto out_free_irq;
+-	if (info->err_mgmt_irqs)
+-		free_irq(priv->mgmta_irq, ndev);
+-out_free_irq_erra:
+-	if (info->err_mgmt_irqs)
+-		free_irq(priv->erra_irq, ndev);
+-out_free_irq_nc_tx:
+-	free_irq(priv->tx_irqs[RAVB_NC], ndev);
+-out_free_irq_nc_rx:
+-	free_irq(priv->rx_irqs[RAVB_NC], ndev);
+-out_free_irq_be_tx:
+-	free_irq(priv->tx_irqs[RAVB_BE], ndev);
+-out_free_irq_be_rx:
+-	free_irq(priv->rx_irqs[RAVB_BE], ndev);
+-out_free_irq_emac:
+-	free_irq(priv->emac_irq, ndev);
+-out_free_irq:
+-	free_irq(ndev->irq, ndev);
+ out_napi_off:
+ 	if (info->nc_queues)
+ 		napi_disable(&priv->napi[RAVB_NC]);
+@@ -2190,19 +2135,6 @@ static int ravb_close(struct net_device *ndev)
+ 
+ 	cancel_work_sync(&priv->work);
+ 
+-	if (info->multi_irqs) {
+-		free_irq(priv->tx_irqs[RAVB_NC], ndev);
+-		free_irq(priv->rx_irqs[RAVB_NC], ndev);
+-		free_irq(priv->tx_irqs[RAVB_BE], ndev);
+-		free_irq(priv->rx_irqs[RAVB_BE], ndev);
+-		free_irq(priv->emac_irq, ndev);
+-		if (info->err_mgmt_irqs) {
+-			free_irq(priv->erra_irq, ndev);
+-			free_irq(priv->mgmta_irq, ndev);
+-		}
+-	}
+-	free_irq(ndev->irq, ndev);
+-
+ 	if (info->nc_queues)
+ 		napi_disable(&priv->napi[RAVB_NC]);
+ 	napi_disable(&priv->napi[RAVB_BE]);
+@@ -2619,6 +2551,90 @@ static void ravb_parse_delay_mode(struct device_node *np, struct net_device *nde
+ 	}
+ }
+ 
++static int ravb_setup_irq(struct ravb_private *priv, const char *irq_name,
++			  const char *ch, int *irq, irq_handler_t handler)
++{
++	struct platform_device *pdev = priv->pdev;
++	struct net_device *ndev = priv->ndev;
++	struct device *dev = &pdev->dev;
++	const char *dev_name;
++	unsigned long flags;
++	int error;
++
++	if (irq_name) {
++		dev_name = devm_kasprintf(dev, GFP_KERNEL, "%s:%s", ndev->name, ch);
++		if (!dev_name)
++			return -ENOMEM;
++
++		*irq = platform_get_irq_byname(pdev, irq_name);
++		flags = 0;
++	} else {
++		dev_name = ndev->name;
++		*irq = platform_get_irq(pdev, 0);
++		flags = IRQF_SHARED;
++	}
++	if (*irq < 0)
++		return *irq;
++
++	error = devm_request_irq(dev, *irq, handler, flags, dev_name, ndev);
++	if (error)
++		netdev_err(ndev, "cannot request IRQ %s\n", dev_name);
++
++	return error;
++}
++
++static int ravb_setup_irqs(struct ravb_private *priv)
++{
++	const struct ravb_hw_info *info = priv->info;
++	struct net_device *ndev = priv->ndev;
++	const char *irq_name, *emac_irq_name;
++	int error, irq;
++
++	if (!info->multi_irqs)
++		return ravb_setup_irq(priv, NULL, NULL, &ndev->irq, ravb_interrupt);
++
++	if (info->err_mgmt_irqs) {
++		irq_name = "dia";
++		emac_irq_name = "line3";
++	} else {
++		irq_name = "ch22";
++		emac_irq_name = "ch24";
++	}
++
++	error = ravb_setup_irq(priv, irq_name, "ch22:multi", &ndev->irq, ravb_multi_interrupt);
++	if (error)
++		return error;
++
++	error = ravb_setup_irq(priv, emac_irq_name, "ch24:emac", &priv->emac_irq,
++			       ravb_emac_interrupt);
++	if (error)
++		return error;
++
++	if (info->err_mgmt_irqs) {
++		error = ravb_setup_irq(priv, "err_a", "err_a", &irq, ravb_multi_interrupt);
++		if (error)
++			return error;
++
++		error = ravb_setup_irq(priv, "mgmt_a", "mgmt_a", &irq, ravb_multi_interrupt);
++		if (error)
++			return error;
++	}
++
++	error = ravb_setup_irq(priv, "ch0", "ch0:rx_be", &irq, ravb_be_interrupt);
++	if (error)
++		return error;
++
++	error = ravb_setup_irq(priv, "ch1", "ch1:rx_nc", &irq, ravb_nc_interrupt);
++	if (error)
++		return error;
++
++	error = ravb_setup_irq(priv, "ch18", "ch18:tx_be", &irq, ravb_be_interrupt);
++	if (error)
++		return error;
++
++	return ravb_setup_irq(priv, "ch19", "ch19:tx_nc", &irq, ravb_nc_interrupt);
++}
++
+ static void ravb_set_delay_mode(struct net_device *ndev)
+ {
+ 	struct ravb_private *priv = netdev_priv(ndev);
+@@ -2638,9 +2654,8 @@ static int ravb_probe(struct platform_device *pdev)
+ 	struct reset_control *rstc;
+ 	struct ravb_private *priv;
+ 	struct net_device *ndev;
+-	int error, irq, q;
+ 	struct resource *res;
+-	int i;
++	int error, q;
+ 
+ 	if (!np) {
+ 		dev_err(&pdev->dev,
+@@ -2667,20 +2682,6 @@ static int ravb_probe(struct platform_device *pdev)
  	if (error)
  		goto out_free_netdev;
  
--	pm_runtime_enable(&pdev->dev);
--	error = pm_runtime_resume_and_get(&pdev->dev);
--	if (error < 0)
--		goto out_rpm_disable;
+-	if (info->multi_irqs) {
+-		if (info->err_mgmt_irqs)
+-			irq = platform_get_irq_byname(pdev, "dia");
+-		else
+-			irq = platform_get_irq_byname(pdev, "ch22");
+-	} else {
+-		irq = platform_get_irq(pdev, 0);
+-	}
+-	if (irq < 0) {
+-		error = irq;
+-		goto out_reset_assert;
+-	}
+-	ndev->irq = irq;
 -
- 	if (info->multi_irqs) {
- 		if (info->err_mgmt_irqs)
- 			irq = platform_get_irq_byname(pdev, "dia");
-@@ -2682,7 +2677,7 @@ static int ravb_probe(struct platform_device *pdev)
- 	}
- 	if (irq < 0) {
- 		error = irq;
--		goto out_release;
-+		goto out_reset_assert;
- 	}
- 	ndev->irq = irq;
+ 	SET_NETDEV_DEV(ndev, &pdev->dev);
  
-@@ -2700,10 +2695,37 @@ static int ravb_probe(struct platform_device *pdev)
+ 	priv = netdev_priv(ndev);
+@@ -2695,6 +2696,10 @@ static int ravb_probe(struct platform_device *pdev)
  		priv->num_rx_ring[RAVB_NC] = NC_RX_RING_SIZE;
  	}
  
-+	priv->clk = devm_clk_get(&pdev->dev, NULL);
-+	if (IS_ERR(priv->clk)) {
-+		error = PTR_ERR(priv->clk);
++	error = ravb_setup_irqs(priv);
++	if (error)
 +		goto out_reset_assert;
-+	}
 +
-+	if (info->gptp_ref_clk) {
-+		priv->gptp_clk = devm_clk_get(&pdev->dev, "gptp");
-+		if (IS_ERR(priv->gptp_clk)) {
-+			error = PTR_ERR(priv->gptp_clk);
-+			goto out_reset_assert;
-+		}
-+	}
-+
-+	priv->refclk = devm_clk_get_optional(&pdev->dev, "refclk");
-+	if (IS_ERR(priv->refclk)) {
-+		error = PTR_ERR(priv->refclk);
-+		goto out_reset_assert;
-+	}
-+	clk_prepare(priv->refclk);
-+
-+	platform_set_drvdata(pdev, ndev);
-+	pm_runtime_enable(&pdev->dev);
-+	error = pm_runtime_resume_and_get(&pdev->dev);
-+	if (error < 0)
-+		goto out_rpm_disable;
-+
- 	priv->addr = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
- 	if (IS_ERR(priv->addr)) {
- 		error = PTR_ERR(priv->addr);
--		goto out_release;
-+		goto out_rpm_put;
- 	}
- 
- 	/* The Ether-specific entries in the device structure. */
-@@ -2714,7 +2736,7 @@ static int ravb_probe(struct platform_device *pdev)
- 
- 	error = of_get_phy_mode(np, &priv->phy_interface);
- 	if (error && error != -ENODEV)
--		goto out_release;
-+		goto out_rpm_put;
- 
- 	priv->no_avb_link = of_property_read_bool(np, "renesas,no-ether-link");
+ 	priv->clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(priv->clk)) {
+ 		error = PTR_ERR(priv->clk);
+@@ -2742,50 +2747,6 @@ static int ravb_probe(struct platform_device *pdev)
  	priv->avb_link_active_low =
-@@ -2727,14 +2749,14 @@ static int ravb_probe(struct platform_device *pdev)
- 			irq = platform_get_irq_byname(pdev, "ch24");
- 		if (irq < 0) {
- 			error = irq;
--			goto out_release;
-+			goto out_rpm_put;
- 		}
- 		priv->emac_irq = irq;
- 		for (i = 0; i < NUM_RX_QUEUE; i++) {
- 			irq = platform_get_irq_byname(pdev, ravb_rx_irqs[i]);
- 			if (irq < 0) {
- 				error = irq;
--				goto out_release;
-+				goto out_rpm_put;
- 			}
- 			priv->rx_irqs[i] = irq;
- 		}
-@@ -2742,7 +2764,7 @@ static int ravb_probe(struct platform_device *pdev)
- 			irq = platform_get_irq_byname(pdev, ravb_tx_irqs[i]);
- 			if (irq < 0) {
- 				error = irq;
--				goto out_release;
-+				goto out_rpm_put;
- 			}
- 			priv->tx_irqs[i] = irq;
- 		}
-@@ -2751,40 +2773,19 @@ static int ravb_probe(struct platform_device *pdev)
- 			irq = platform_get_irq_byname(pdev, "err_a");
- 			if (irq < 0) {
- 				error = irq;
--				goto out_release;
-+				goto out_rpm_put;
- 			}
- 			priv->erra_irq = irq;
+ 		of_property_read_bool(np, "renesas,ether-link-active-low");
  
- 			irq = platform_get_irq_byname(pdev, "mgmt_a");
- 			if (irq < 0) {
- 				error = irq;
--				goto out_release;
-+				goto out_rpm_put;
- 			}
- 			priv->mgmta_irq = irq;
- 		}
- 	}
- 
--	priv->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(priv->clk)) {
--		error = PTR_ERR(priv->clk);
--		goto out_release;
--	}
+-	if (info->multi_irqs) {
+-		if (info->err_mgmt_irqs)
+-			irq = platform_get_irq_byname(pdev, "line3");
+-		else
+-			irq = platform_get_irq_byname(pdev, "ch24");
+-		if (irq < 0) {
+-			error = irq;
+-			goto out_rpm_put;
+-		}
+-		priv->emac_irq = irq;
+-		for (i = 0; i < NUM_RX_QUEUE; i++) {
+-			irq = platform_get_irq_byname(pdev, ravb_rx_irqs[i]);
+-			if (irq < 0) {
+-				error = irq;
+-				goto out_rpm_put;
+-			}
+-			priv->rx_irqs[i] = irq;
+-		}
+-		for (i = 0; i < NUM_TX_QUEUE; i++) {
+-			irq = platform_get_irq_byname(pdev, ravb_tx_irqs[i]);
+-			if (irq < 0) {
+-				error = irq;
+-				goto out_rpm_put;
+-			}
+-			priv->tx_irqs[i] = irq;
+-		}
 -
--	priv->refclk = devm_clk_get_optional(&pdev->dev, "refclk");
--	if (IS_ERR(priv->refclk)) {
--		error = PTR_ERR(priv->refclk);
--		goto out_release;
--	}
--	clk_prepare_enable(priv->refclk);
+-		if (info->err_mgmt_irqs) {
+-			irq = platform_get_irq_byname(pdev, "err_a");
+-			if (irq < 0) {
+-				error = irq;
+-				goto out_rpm_put;
+-			}
+-			priv->erra_irq = irq;
 -
--	if (info->gptp_ref_clk) {
--		priv->gptp_clk = devm_clk_get(&pdev->dev, "gptp");
--		if (IS_ERR(priv->gptp_clk)) {
--			error = PTR_ERR(priv->gptp_clk);
--			goto out_disable_refclk;
+-			irq = platform_get_irq_byname(pdev, "mgmt_a");
+-			if (irq < 0) {
+-				error = irq;
+-				goto out_rpm_put;
+-			}
+-			priv->mgmta_irq = irq;
 -		}
 -	}
 -
  	ndev->max_mtu = info->rx_max_buf_size - (ETH_HLEN + VLAN_HLEN + ETH_FCS_LEN);
  	ndev->min_mtu = ETH_MIN_MTU;
  
-@@ -2802,13 +2803,13 @@ static int ravb_probe(struct platform_device *pdev)
- 	/* Set AVB config mode */
- 	error = ravb_set_config_mode(ndev);
- 	if (error)
--		goto out_disable_refclk;
-+		goto out_rpm_put;
- 
- 	if (info->gptp || info->ccc_gac) {
- 		/* Set GTI value */
- 		error = ravb_set_gti(ndev);
- 		if (error)
--			goto out_disable_refclk;
-+			goto out_rpm_put;
- 
- 		/* Request GTI loading */
- 		ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
-@@ -2828,7 +2829,7 @@ static int ravb_probe(struct platform_device *pdev)
- 			"Cannot allocate desc base address table (size %d bytes)\n",
- 			priv->desc_bat_size);
- 		error = -ENOMEM;
--		goto out_disable_refclk;
-+		goto out_rpm_put;
- 	}
- 	for (q = RAVB_BE; q < DBAT_ENTRY_NUM; q++)
- 		priv->desc_bat[q].die_dt = DT_EOS;
-@@ -2874,8 +2875,6 @@ static int ravb_probe(struct platform_device *pdev)
- 	netdev_info(ndev, "Base address at %#x, %pM, IRQ %d.\n",
- 		    (u32)ndev->base_addr, ndev->dev_addr, ndev->irq);
- 
--	platform_set_drvdata(pdev, ndev);
--
- 	return 0;
- 
- out_napi_del:
-@@ -2891,12 +2890,12 @@ static int ravb_probe(struct platform_device *pdev)
- 	/* Stop PTP Clock driver */
- 	if (info->ccc_gac)
- 		ravb_ptp_stop(ndev);
--out_disable_refclk:
--	clk_disable_unprepare(priv->refclk);
--out_release:
-+out_rpm_put:
- 	pm_runtime_put(&pdev->dev);
- out_rpm_disable:
- 	pm_runtime_disable(&pdev->dev);
-+	clk_unprepare(priv->refclk);
-+out_reset_assert:
- 	reset_control_assert(rstc);
- out_free_netdev:
- 	free_netdev(ndev);
-@@ -2925,10 +2924,9 @@ static int ravb_remove(struct platform_device *pdev)
- 
- 	ravb_set_opmode(ndev, CCC_OPC_RESET);
- 
--	clk_disable_unprepare(priv->refclk);
--
- 	pm_runtime_put_sync(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
-+	clk_unprepare(priv->refclk);
- 	reset_control_assert(priv->rstc);
- 	free_netdev(ndev);
- 	platform_set_drvdata(pdev, NULL);
-@@ -3065,21 +3063,27 @@ static int __maybe_unused ravb_resume(struct device *dev)
- 	return ret;
- }
- 
--static int __maybe_unused ravb_runtime_nop(struct device *dev)
-+static int __maybe_unused ravb_runtime_suspend(struct device *dev)
- {
--	/* Runtime PM callback shared between ->runtime_suspend()
--	 * and ->runtime_resume(). Simply returns success.
--	 *
--	 * This driver re-initializes all registers after
--	 * pm_runtime_get_sync() anyway so there is no need
--	 * to save and restore registers here.
--	 */
-+	struct net_device *ndev = dev_get_drvdata(dev);
-+	struct ravb_private *priv = netdev_priv(ndev);
-+
-+	clk_disable(priv->refclk);
-+
- 	return 0;
- }
- 
-+static int __maybe_unused ravb_runtime_resume(struct device *dev)
-+{
-+	struct net_device *ndev = dev_get_drvdata(dev);
-+	struct ravb_private *priv = netdev_priv(ndev);
-+
-+	return clk_enable(priv->refclk);
-+}
-+
- static const struct dev_pm_ops ravb_dev_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(ravb_suspend, ravb_resume)
--	SET_RUNTIME_PM_OPS(ravb_runtime_nop, ravb_runtime_nop, NULL)
-+	SET_RUNTIME_PM_OPS(ravb_runtime_suspend, ravb_runtime_resume, NULL)
- };
- 
- static struct platform_driver ravb_driver = {
 -- 
 2.39.2
 
