@@ -2,50 +2,51 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60ABAC41513
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E389C25B7C
 	for <webhook@archiver.kernel.org>; Wed, 29 May 2024 08:11:26 +0000 (UTC)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
- by mx.groups.io with SMTP id smtpd.web10.8646.1716970279103936959
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+ by mx.groups.io with SMTP id smtpd.web10.8648.1716970281699473405
  for <cip-dev@lists.cip-project.org>;
- Wed, 29 May 2024 01:11:19 -0700
+ Wed, 29 May 2024 01:11:21 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=GGqKNZ6m;
- spf=pass (domain: tuxon.dev, ip: 209.85.208.173, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e95a1f9c53so21263171fa.0
-        for <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 01:11:18 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=A52zUcsV;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.54, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4210aa012e5so16611855e9.0
+        for <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 01:11:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1716970277; x=1717575077; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1716970280; x=1717575080; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=I/3xBresTmjspqu22A2IKtdhVbktNBoVmxHYo5+aEYI=;
-        b=GGqKNZ6m6k6JqzxgdFetf5vMjUMnlr9fBFN1EOQouxdfdv66lpfvWcT+aWV9bzpYTq
-         86vTmSRrDlqG/ZS8bpd3XFOBZfQx7WkdhHUVRaiv/yI3IYq4ZpLvJvUWxJK7CKfC5Ay/
-         JdXbV9m5EAWnE/yv1w6NqKM/q1z4pos9VwFUw7idNvCsL6OjbEFlczTnZB+7MGmIXDDw
-         a8+3hniuzPigBreInvBGFIIgAMr0FQkXv7ALFYKq1orPndGgw11X/2Pf8twiVQVaeqzO
-         +JcrLjM3c/2njfoxG/0UPLSbO8/7beiMxbdpxArqSaEeUdbRQkQOFoTq0x3FckRdR4Bb
-         XTmQ==
+        bh=3LzsHXa4OakELPHllrwwEvUfLcOdKyJ/XyOT1ZLf7Tw=;
+        b=A52zUcsVKFekwizSvDjcLQ+9lIFpMckq1NZok2K7Cs72znigQMeTBJTxRpsMAlJeZP
+         1hUrToGrTbTPPPHSbximhplJ5g/iVBdOeOktkv3SSEi0T1v1L613rzBGSD9IkZHmvcwD
+         ZEgzq0nfegohDuxJtsWLkvYcuTJP7QZuvCHnryVEYxk//1W5X00r1sansYvVWQEX+FBs
+         re1GcST+ObyE2kGgF1ZrB1t8p3j6bhjGtf6bUAwiisJLA/Cfiaq1+1VlT4jcjB32cKOE
+         aSixpaToaKzquuCx1IfVMjFc5bzV0fnNqM92Y0Uy+VTrzfEGS5941fG0X8FT4hOgSeKi
+         d92g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716970277; x=1717575077;
+        d=1e100.net; s=20230601; t=1716970280; x=1717575080;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=I/3xBresTmjspqu22A2IKtdhVbktNBoVmxHYo5+aEYI=;
-        b=K2QVvu70vp/iyAmUSqwokAHqMDWWVPAGptXhAS9+FI4YtRnVQZpSL0Hg0Ho5Vhacoy
-         e3/zkSrblMH2QEpYO5yLLWT4axj5cxmFXaJYuOVF5rv/6q14RN4+kqH26xZe84PTGth1
-         yxTE/pfQ8KW4jWIJf5VjsTX5a3C4p9J99YzMkLRt/NfCDqhqFRICizoIB90+Y7RDtwXs
-         3zhL6bmJL6s5l1M7PRz0Qk9dwb4Fnvc2RBPfQCKYqfQq4PkbZIombDsZB3irS52+UYvg
-         zc0afwampglpdBk9OfbIV3AUNVqS0yaG98fb8q1olEepfq8mYtvJJ90NBmOx+fThuqqa
-         +w1Q==
-X-Gm-Message-State: AOJu0Yz9aW9avs3CEH3mDq6L1C4GWdZIGQAz8F9Lwvd2vsEA+I57Gar2
-	RfZBj1BbCCuBDOJ1xGbdzEmzqJ9zZQVjDWwtX3vY57VZp69ExHUuENmS3Kcw9iw=
-X-Google-Smtp-Source: AGHT+IHglkzxldV0yIKibDMHwUbeD0dDcznsvM+qQSxQ7L+apURurpIMpNtIpC47NURKNZNFlfYH5w==
-X-Received: by 2002:a2e:b0f6:0:b0:2e9:8661:927d with SMTP id 38308e7fff4ca-2e9866195a4mr24589601fa.51.1716970277323;
-        Wed, 29 May 2024 01:11:17 -0700 (PDT)
+        bh=3LzsHXa4OakELPHllrwwEvUfLcOdKyJ/XyOT1ZLf7Tw=;
+        b=aUcM0hSJ5THWdKXI+STbb4uWCHS51Mw/6W9Gzxg3vm75OYsJiCNZiM+aj5W0fZaxMx
+         w/VlN2liJegwChOdZecCxxhdljoPBKC0Jt4ROP64r3zu3W6OYikLIufFUituH/UucGSH
+         zDrcRXHBsJMsoc9GLkd+m7GUy06BrYa4teKym0mro61iyg4/BRfF7/aWKU4b3R6XqF3I
+         kLLaigMN3a2PDZcsqN3DGBsYFws7FvXrMU4EwBWlxeRyXCDGXohM2/+SNvJlPpa0GQgF
+         WDNrnDfAB/f4YUNvQeTSZfi3pUza8W7c23yYA7gEyvdoFT1QbDGJVLSHW4tUHjPl3Qe/
+         Z2IQ==
+X-Gm-Message-State: AOJu0Yyhs5DCWT4cSCG5istim/iAJG0N0oNivEalg5S1YKkTyNy5uJ7Q
+	9qpZWEi+yGuCz2/RdTYL/HuL5EZO8sgBTRUQTEqHPgJzgCrznECNKnzBD5cwa96IJgNDOTpqU90
+	DXAI=
+X-Google-Smtp-Source: AGHT+IECCb283izpKI2eYd6xMEZPgHN7GbCDUAq4Ne2atpGzUWcyMLonQgwlLa7QYTlWNW9Qx9NXuA==
+X-Received: by 2002:a05:600c:5121:b0:41e:3272:6476 with SMTP id 5b1f17b1804b1-42108a5929dmr117720755e9.10.1716970280236;
+        Wed, 29 May 2024 01:11:20 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.124])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108966b63sm171973865e9.1.2024.05.29.01.11.16
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108966b63sm171973865e9.1.2024.05.29.01.11.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 01:11:16 -0700 (PDT)
+        Wed, 29 May 2024 01:11:19 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
@@ -54,9 +55,9 @@ Cc: cip-dev@lists.cip-project.org,
 	biju.das.jz@bp.renesas.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com,
 	paul.barker.ct@bp.renesas.com
-Subject: [PATCH 5.10.y-cip 21/47] net: ravb: Rely on PM domain to enable gptp_clk
-Date: Wed, 29 May 2024 11:10:13 +0300
-Message-Id: <20240529081039.639010-22-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 23/47] net: ravb: Assert/de-assert reset on suspend/resume
+Date: Wed, 29 May 2024 11:10:15 +0300
+Message-Id: <20240529081039.639010-24-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240529081039.639010-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240529081039.639010-1-claudiu.beznea.uj@bp.renesas.com>
@@ -66,93 +67,68 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 08:11:26 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16001
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16003
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit e1da043f2b2d956818728ca74c8eacd17feccf5c upstream.
+commit c5c0714e29508fd748ee5df09ae242476bf2e451 upstream.
 
-ravb_rzv2m_hw_info::gptp_ref_clk is enabled only for RZ/V2M. RZ/V2M
-is an ARM64-based device which selects power domains by default and
-CONFIG_PM. The RZ/V2M Ethernet DT node has proper power-domain binding
-available in device tree from the commit that added the Ethernet node.
-(4872ca1f92b0 ("arm64: dts: renesas: r9a09g011: Add ethernet nodes")).
+RZ/G3S can go to deep sleep states where power to most of the SoC parts is
+off. When resuming from such a state, the Ethernet controller needs to be
+reinitialized. De-asserting the reset signal for it should also be done.
+Thus, add reset assert/de-assert on suspend/resume functions.
 
-Power domain support was available in the rzg2l-cpg.c driver when the
-Ethernet DT node has been enabled in RZ/V2M device tree.
-(ef3c613ccd68 ("clk: renesas: Add CPG core wrapper for RZ/G2L SoC")).
-
-Thus, remove the explicit clock enable for gptp_clk (and treat it as the
-other clocks are treated) as it is not needed and removing it doesn't
-break the ABI according to the above explanations.
-
-By removing the enable/disable operation from the driver we can add
-runtime PM support (which operates on clocks) w/o the need to handle
-the gptp_clk in the Ethernet driver functions like ravb_runtime_nop().
-PM domain does all that is needed.
+On the resume function, the de-assert was not reverted in case of failures
+to give the user a chance to restore the interface (e.g., bringing down/up
+the interface) in case suspend/resume failed.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/renesas/ravb_main.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 546a32c6d130..09796da2bd57 100644
+index 44cdef3d2b18..5e7b5857d347 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2783,7 +2783,6 @@ static int ravb_probe(struct platform_device *pdev)
- 			error = PTR_ERR(priv->gptp_clk);
- 			goto out_disable_refclk;
- 		}
--		clk_prepare_enable(priv->gptp_clk);
- 	}
+@@ -2983,7 +2983,7 @@ static int __maybe_unused ravb_suspend(struct device *dev)
+ 	int ret;
  
- 	ndev->max_mtu = info->rx_max_buf_size - (ETH_HLEN + VLAN_HLEN + ETH_FCS_LEN);
-@@ -2803,13 +2802,13 @@ static int ravb_probe(struct platform_device *pdev)
- 	/* Set AVB config mode */
- 	error = ravb_set_config_mode(ndev);
- 	if (error)
--		goto out_disable_gptp_clk;
-+		goto out_disable_refclk;
+ 	if (!netif_running(ndev))
+-		return 0;
++		goto reset_assert;
  
- 	if (info->gptp || info->ccc_gac) {
- 		/* Set GTI value */
- 		error = ravb_set_gti(ndev);
- 		if (error)
--			goto out_disable_gptp_clk;
-+			goto out_disable_refclk;
+ 	netif_device_detach(ndev);
  
- 		/* Request GTI loading */
- 		ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
-@@ -2829,7 +2828,7 @@ static int ravb_probe(struct platform_device *pdev)
- 			"Cannot allocate desc base address table (size %d bytes)\n",
- 			priv->desc_bat_size);
- 		error = -ENOMEM;
--		goto out_disable_gptp_clk;
-+		goto out_disable_refclk;
- 	}
- 	for (q = RAVB_BE; q < DBAT_ENTRY_NUM; q++)
- 		priv->desc_bat[q].die_dt = DT_EOS;
-@@ -2892,8 +2891,6 @@ static int ravb_probe(struct platform_device *pdev)
- 	/* Stop PTP Clock driver */
- 	if (info->ccc_gac)
+@@ -2995,7 +2995,11 @@ static int __maybe_unused ravb_suspend(struct device *dev)
+ 	if (priv->info->ccc_gac)
  		ravb_ptp_stop(ndev);
--out_disable_gptp_clk:
--	clk_disable_unprepare(priv->gptp_clk);
- out_disable_refclk:
- 	clk_disable_unprepare(priv->refclk);
- out_release:
-@@ -2928,7 +2925,6 @@ static int ravb_remove(struct platform_device *pdev)
  
- 	ravb_set_opmode(ndev, CCC_OPC_RESET);
+-	return ret;
++	if (priv->wol_enabled)
++		return ret;
++
++reset_assert:
++	return reset_control_assert(priv->rstc);
+ }
  
--	clk_disable_unprepare(priv->gptp_clk);
- 	clk_disable_unprepare(priv->refclk);
+ static int __maybe_unused ravb_resume(struct device *dev)
+@@ -3003,7 +3007,11 @@ static int __maybe_unused ravb_resume(struct device *dev)
+ 	struct net_device *ndev = dev_get_drvdata(dev);
+ 	struct ravb_private *priv = netdev_priv(ndev);
+ 	const struct ravb_hw_info *info = priv->info;
+-	int ret = 0;
++	int ret;
++
++	ret = reset_control_deassert(priv->rstc);
++	if (ret)
++		return ret;
  
- 	pm_runtime_put_sync(&pdev->dev);
+ 	/* If WoL is enabled set reset mode to rearm the WoL logic */
+ 	if (priv->wol_enabled) {
 -- 
 2.39.2
 
