@@ -2,51 +2,50 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC1F9C25B75
-	for <webhook@archiver.kernel.org>; Wed, 29 May 2024 08:10:45 +0000 (UTC)
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
- by mx.groups.io with SMTP id smtpd.web10.8628.1716970245254500270
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0BEAC25B7C
+	for <webhook@archiver.kernel.org>; Wed, 29 May 2024 08:10:55 +0000 (UTC)
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+ by mx.groups.io with SMTP id smtpd.web11.8561.1716970246077436464
  for <cip-dev@lists.cip-project.org>;
- Wed, 29 May 2024 01:10:45 -0700
+ Wed, 29 May 2024 01:10:46 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=RxhKlvpx;
- spf=pass (domain: tuxon.dev, ip: 209.85.208.170, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2e95a1d5ee2so32855931fa.0
-        for <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 01:10:44 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=pxMxtGpU;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.43, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42108739ed8so21247105e9.0
+        for <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 01:10:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1716970243; x=1717575043; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1716970244; x=1717575044; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QEoQuJHyn2Mh9Mw3YZSnCxftwhyhkacyw3vyfCZ+U3k=;
-        b=RxhKlvpx6AVfPsPYDgRm11AYalPmnJeDILsVf1L4x+aPyoozDXUu5NffKOwmSlQmel
-         DIo6KRGQjuAarnHpnSp4jqY0uYYdTA/HgCFTFXtS2tBa5ut5yYCxZ7wc06aFHm99EYsc
-         7s71Tax/V0S86yeVYsbdl/Evg9jIz61GnQYbBe5+5jmlv9NAdmhycM3pHjqCq6mYHEN+
-         FwHLeyspbQs4t48zzYp70Y4/q6PAzUlMUf3jcx9dMNBTBd4jBPUn2y5xC099qLDvLVn9
-         ffOUAcOUBbnIeLmSAw1V3fOF1k8iFEBQ3jNKVIKWiuGrctjaYW9Od1fEwxU+qI1HK+h4
-         vs+Q==
+        bh=Dyg+0RNietexKhCdgpfqu1Bqtvm67+BZ77jMA1GXI8o=;
+        b=pxMxtGpUwtmVIOm+EWA5mXyE01d6Nem2o1N0FhPrio+ZKrGS/YOSiTx29NATtifqdg
+         p4/Nh0IVpnhJPTJfA1uchQccSeJwhB9auIr/gH1tMgiu8iHmP7+SZEjGBZcqAm1RPc55
+         ZdtaYxe248KbKJmrK3gwt+w/ytcoBZ5Zv9f/XJ10IEnxH/CtQekrZ06mgxRQ94NBmzyu
+         UnGa98hLvUSFhDu3sDiWHyPfbciC3PI2P6scyrqDiY89spWtZhTZS3hdXY1HUt8OkVJP
+         ZuEVrlD1Y7xeRPIHjNHOfrpKMx4mx1MCoPuLzFNEOycjWPUWq/jVROkq4MrB6QDLjnMa
+         irig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716970243; x=1717575043;
+        d=1e100.net; s=20230601; t=1716970244; x=1717575044;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QEoQuJHyn2Mh9Mw3YZSnCxftwhyhkacyw3vyfCZ+U3k=;
-        b=W/9rg6sr/0xZMn4s3I60EhaF6Znyk0WvIL2l6RnhL3AgtqxjTEco6KrUv0AEPkiJhi
-         EzV/2BQW4/knpfRk3Cz4ZC6W3RS+RofK9zLwqMV2NyKP/vCHi04Lm7PodYaJMdzfWWi8
-         McNBYTYHImQ2T8FZxjeR4HM1Gn1FX4wQNK4ia5NOWE5xGyZ28mExaKif+iljCC+4hGYB
-         HtjXtJSiUTis4KdcU4CNVz7yxGqcR40blrftBN9DEbZtOgkUVhf+XpIh68aok50rw9So
-         C/5Oq387CQV2MbQT38u9GJV1gT3TSrNMiB1RRyQdq5uGlFzqwndfFIi+0ecxnZLX7g4q
-         dlUA==
-X-Gm-Message-State: AOJu0YyXu6IBDOf/YXNWQ36qNP+GnZDMk0RXIH3ahKMj6r0jKsgyUXK5
-	ZajpbNPD7IS/M757LFNv3otwJpXbzV9vQDAO0uXbinQ12YWyB+vKNZ9vIqbwfJw+NLxVByzMU1d
-	X9i8=
-X-Google-Smtp-Source: AGHT+IEwqEWjjXp5h6+Jg4CzoQ/PsW1+hOJlICGu1VJpz23h0o66V1BLnCX6dUFdsShGFTpS98Adew==
-X-Received: by 2002:a2e:3514:0:b0:2ea:7e39:bd38 with SMTP id 38308e7fff4ca-2ea7e39c68dmr4109541fa.34.1716970243154;
-        Wed, 29 May 2024 01:10:43 -0700 (PDT)
+        bh=Dyg+0RNietexKhCdgpfqu1Bqtvm67+BZ77jMA1GXI8o=;
+        b=uJS6Efy6vs8YQOVvtfgBNj/CaaygWJIiuclCLF7dKA/05bRptSZgwcYFZ8UrLXfhXo
+         p32Yi/PXQjLfPUSbka9Sxnq8Y5U2CLvCnh0VZBnvUsHAP+lLgorZtll74HLeGwzJgWbD
+         hl/uscIWgBzX3WiLCPuO4mpWrvlHKlm1p9gh0g/J0//adJFceIiS8r5lGSaSYOLWdDjA
+         R0hCw1ke9LBTQ0uY9CAoaC9+1JrrzkaYvFkfpU3vAQFYTavUQ07WZH8581xy9y/J9Gv9
+         vkq0d6hwQ91FvxC9WlJmhu1P4Z56G3uo9+LYj4Y/kV4TghjmOxT9PweesZB5Gchx84oR
+         g7jg==
+X-Gm-Message-State: AOJu0Yy/JBAaFteY87iLhVooxN4gLI6GTgdTN87odeSJniCyAMk4KX53
+	UkvMPizFuGRqmbYF+BxCM2yZyGY1G/P8lAwj0XhB5dxFPtuUAWpcSBRBSYXyqfI=
+X-Google-Smtp-Source: AGHT+IH0yxI0FvxpCA8l0dogI3luAEf/MSgaD8B5HSJaiZR4nHWpgyg7lDWnQyzLDAjZ16usRypKzg==
+X-Received: by 2002:a05:600c:5746:b0:420:29dd:84f8 with SMTP id 5b1f17b1804b1-42108a99ba4mr149541875e9.32.1716970244469;
+        Wed, 29 May 2024 01:10:44 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.124])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108966b63sm171973865e9.1.2024.05.29.01.10.42
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108966b63sm171973865e9.1.2024.05.29.01.10.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 01:10:42 -0700 (PDT)
+        Wed, 29 May 2024 01:10:43 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
@@ -55,9 +54,9 @@ Cc: cip-dev@lists.cip-project.org,
 	biju.das.jz@bp.renesas.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com,
 	paul.barker.ct@bp.renesas.com
-Subject: [PATCH 5.10.y-cip 01/47] clk: renesas: r9a08g045: Add clock and reset support for ETH0 and ETH1
-Date: Wed, 29 May 2024 11:09:53 +0300
-Message-Id: <20240529081039.639010-2-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 02/47] pinctrl: renesas: rzg2l: Move arg and index in the main function block
+Date: Wed, 29 May 2024 11:09:54 +0300
+Message-Id: <20240529081039.639010-3-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240529081039.639010-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240529081039.639010-1-claudiu.beznea.uj@bp.renesas.com>
@@ -66,63 +65,96 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 08:10:45 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15981
+ <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 08:10:55 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15982
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 515f05da372aedf347a1ac99d17fb832ba371d4d upstream.
+commit 906b545b16594e45f2d3433028dcf649d2c05ebb upstream.
 
-RZ/G3S has 2 Gigabit Ethernet interfaces available.  Add clock and reset
-support for both of them.
+Move arg and index in the main block of the function as they are used by
+more than one case block of switch-case (3 out of 4 for arg, 2 out of 4
+for index). In this way some lines of code are removed.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20231207070700.4156557-3-claudiu.beznea.uj@bp.renesas.com
+Link: https://lore.kernel.org/r/20231207070700.4156557-4-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a08g045-cpg.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
-index 4394cb241d99..a6d3bea968c0 100644
---- a/drivers/clk/renesas/r9a08g045-cpg.c
-+++ b/drivers/clk/renesas/r9a08g045-cpg.c
-@@ -181,9 +181,11 @@ static const struct cpg_core_clk r9a08g045_core_clks[] __initconst = {
- 	DEF_G3S_DIV("P3", R9A08G045_CLK_P3, CLK_PLL3_DIV2_4, DIVPL3C, G3S_DIVPL3C_STS,
- 		    dtable_1_32, 0, 0, 0, NULL),
- 	DEF_FIXED("P3_DIV2", CLK_P3_DIV2, R9A08G045_CLK_P3, 1, 2),
-+	DEF_FIXED("ZT", R9A08G045_CLK_ZT, CLK_PLL3_DIV2_8, 1, 1),
- 	DEF_FIXED("S0", R9A08G045_CLK_S0, CLK_SEL_PLL4, 1, 2),
- 	DEF_FIXED("OSC", R9A08G045_OSCCLK, CLK_EXTAL, 1, 1),
- 	DEF_FIXED("OSC2", R9A08G045_OSCCLK2, CLK_EXTAL, 1, 3),
-+	DEF_FIXED("HP", R9A08G045_CLK_HP, CLK_PLL6, 1, 2),
- };
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index a3f31065c4bc..480d4bba2704 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -838,7 +838,7 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
+ 	struct rzg2l_pinctrl_pin_settings settings = pctrl->settings[_pin];
+ 	unsigned int *pin_data = pin->drv_data;
+ 	enum pin_config_param param;
+-	unsigned int i;
++	unsigned int i, arg, index;
+ 	u32 cfg, off;
+ 	int ret;
+ 	u8 bit;
+@@ -860,24 +860,21 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
+ 	for (i = 0; i < num_configs; i++) {
+ 		param = pinconf_to_config_param(_configs[i]);
+ 		switch (param) {
+-		case PIN_CONFIG_INPUT_ENABLE: {
+-			unsigned int arg =
+-					pinconf_to_config_argument(_configs[i]);
++		case PIN_CONFIG_INPUT_ENABLE:
++			arg = pinconf_to_config_argument(_configs[i]);
  
- static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
-@@ -202,6 +204,12 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
- 	DEF_MOD("sdhi2_imclk2",		R9A08G045_SDHI2_IMCLK2, CLK_SD2_DIV4, 0x554, 9),
- 	DEF_MOD("sdhi2_clk_hs",		R9A08G045_SDHI2_CLK_HS, R9A08G045_CLK_SD2, 0x554, 10),
- 	DEF_MOD("sdhi2_aclk",		R9A08G045_SDHI2_ACLK, R9A08G045_CLK_P1, 0x554, 11),
-+	DEF_COUPLED("eth0_axi",		R9A08G045_ETH0_CLK_AXI, R9A08G045_CLK_M0, 0x57c, 0),
-+	DEF_COUPLED("eth0_chi",		R9A08G045_ETH0_CLK_CHI, R9A08G045_CLK_ZT, 0x57c, 0),
-+	DEF_MOD("eth0_refclk",		R9A08G045_ETH0_REFCLK, R9A08G045_CLK_HP, 0x57c, 8),
-+	DEF_COUPLED("eth1_axi",		R9A08G045_ETH1_CLK_AXI, R9A08G045_CLK_M0, 0x57c, 1),
-+	DEF_COUPLED("eth1_chi",		R9A08G045_ETH1_CLK_CHI, R9A08G045_CLK_ZT, 0x57c, 1),
-+	DEF_MOD("eth1_refclk",		R9A08G045_ETH1_REFCLK, R9A08G045_CLK_HP, 0x57c, 9),
- 	DEF_MOD("scif0_clk_pck",	R9A08G045_SCIF0_CLK_PCK, R9A08G045_CLK_P0, 0x584, 0),
- 	DEF_MOD("gpio_hclk",		R9A08G045_GPIO_HCLK, R9A08G045_OSCCLK, 0x598, 0),
- };
-@@ -212,6 +220,8 @@ static const struct rzg2l_reset r9a08g045_resets[] = {
- 	DEF_RST(R9A08G045_SDHI0_IXRST, 0x854, 0),
- 	DEF_RST(R9A08G045_SDHI1_IXRST, 0x854, 1),
- 	DEF_RST(R9A08G045_SDHI2_IXRST, 0x854, 2),
-+	DEF_RST(R9A08G045_ETH0_RST_HW_N, 0x87c, 0),
-+	DEF_RST(R9A08G045_ETH1_RST_HW_N, 0x87c, 1),
- 	DEF_RST(R9A08G045_SCIF0_RST_SYSTEM_N, 0x884, 0),
- 	DEF_RST(R9A08G045_GPIO_RSTN, 0x898, 0),
- 	DEF_RST(R9A08G045_GPIO_PORT_RESETN, 0x898, 1),
+ 			if (!(cfg & PIN_CFG_IEN))
+ 				return -EINVAL;
+ 
+ 			rzg2l_rmw_pin_config(pctrl, IEN(off), bit, IEN_MASK, !!arg);
+ 			break;
+-		}
+ 
+ 		case PIN_CONFIG_POWER_SOURCE:
+ 			settings.power_source = pinconf_to_config_argument(_configs[i]);
+ 			break;
+ 
+-		case PIN_CONFIG_DRIVE_STRENGTH: {
+-			unsigned int arg = pinconf_to_config_argument(_configs[i]);
+-			unsigned int index;
++		case PIN_CONFIG_DRIVE_STRENGTH:
++			arg = pinconf_to_config_argument(_configs[i]);
+ 
+ 			if (!(cfg & PIN_CFG_IOLH_A) || hwcfg->drive_strength_ua)
+ 				return -EINVAL;
+@@ -892,7 +889,6 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
+ 
+ 			rzg2l_rmw_pin_config(pctrl, IOLH(off), bit, IOLH_MASK, index);
+ 			break;
+-		}
+ 
+ 		case PIN_CONFIG_DRIVE_STRENGTH_UA:
+ 			if (!(cfg & (PIN_CFG_IOLH_A | PIN_CFG_IOLH_B | PIN_CFG_IOLH_C)) ||
+@@ -902,9 +898,8 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
+ 			settings.drive_strength_ua = pinconf_to_config_argument(_configs[i]);
+ 			break;
+ 
+-		case PIN_CONFIG_OUTPUT_IMPEDANCE_OHMS: {
+-			unsigned int arg = pinconf_to_config_argument(_configs[i]);
+-			unsigned int index;
++		case PIN_CONFIG_OUTPUT_IMPEDANCE_OHMS:
++			arg = pinconf_to_config_argument(_configs[i]);
+ 
+ 			if (!(cfg & PIN_CFG_IOLH_B) || !hwcfg->iolh_groupb_oi[0])
+ 				return -EINVAL;
+@@ -918,7 +913,6 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
+ 
+ 			rzg2l_rmw_pin_config(pctrl, IOLH(off), bit, IOLH_MASK, index);
+ 			break;
+-		}
+ 
+ 		default:
+ 			return -EOPNOTSUPP;
 -- 
 2.39.2
 
