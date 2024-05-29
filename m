@@ -2,50 +2,50 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB5DC3DA40
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC967C27C44
 	for <webhook@archiver.kernel.org>; Wed, 29 May 2024 08:10:55 +0000 (UTC)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
- by mx.groups.io with SMTP id smtpd.web10.8634.1716970253661455566
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+ by mx.groups.io with SMTP id smtpd.web10.8633.1716970252490930059
  for <cip-dev@lists.cip-project.org>;
- Wed, 29 May 2024 01:10:53 -0700
+ Wed, 29 May 2024 01:10:52 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=TPt0flS3;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.44, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4202cea9a2fso14144095e9.3
-        for <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 01:10:53 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=ZiKBclZH;
+ spf=pass (domain: tuxon.dev, ip: 209.85.167.44, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52961b77655so2021252e87.2
+        for <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 01:10:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1716970252; x=1717575052; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1716970251; x=1717575051; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+yfM9PqjJzcRP3D5IlsUWqrorPDN5bZe/Rv5u+w2hyc=;
-        b=TPt0flS3QUDXQOmyxahN5VOknduFTp7bL6Ra1tZAxvIn7NnyZxWJ5L0k+z+i8Nue3f
-         CuUy+QrXD9bXK5zF/BBGzgbLZeCJZ37KvPez4OxJijhGMA71pbZ3MTrjIrL5EBNP95lV
-         xG0hG2rzE1Yw6lwFih3zWlSXdbkGSC+OTE8YbaJZO5IOttvrMS+k2evvEL2/QOmBnGmM
-         Ee2G8j/tFSpixC8/dUAH4bMl4XfHFN7oGUu8db6fs7bIoG8rUzG2Lu1P5nXraGrx7B0G
-         eF0bnrGq4ZFZEP0H48Japtia6hQnZF8Zg6OYSz/vN5u2EXgLia7GK597TfjEXM4vzszA
-         2/3w==
+        bh=XHoCSJtWFYDBm9gN29zxfd9NDDGOVbQ+fZ6tqxis/Y4=;
+        b=ZiKBclZHakyLLAMrOBPyLn/jcZsUgN37RMpKaHZ865lF1rB/ym/wlZ40sS/Usr9Wb8
+         4gvdhEGTnd/rTmMleZHkwacaU3r7/DAdstZHML/+EepAYdvWhbPPhpnoPopgUeS+lRpW
+         L90stkU4j/jQhEgIkBfRjeXYMM+NN+eAJWO3SPxIxQF08aTsEuzmj13109OSCca8Rs5n
+         JBMV88ty3RyT4DNXLcPUxvFKwYdYPdUd/iCemLTSZ9gleZWHnn/+RVydxmZjPt9x0f00
+         gYjGtG2gUxUI64agPR8hPx5+SUbE/KrNF8egGX+tjyMJGUOCeWmYoCQPhKDvsooktUbb
+         D7PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716970252; x=1717575052;
+        d=1e100.net; s=20230601; t=1716970251; x=1717575051;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+yfM9PqjJzcRP3D5IlsUWqrorPDN5bZe/Rv5u+w2hyc=;
-        b=Kn4+bqGbK/dxsz1Y0WHjg8dEuqJUtRXUTHD1sYNJ3AWPedCYPfnP9fpYZyXY4aLvA8
-         Wqz0sCtR9fYbCx4oAE7/1CJ1L1fG+tq/cdanDYnA/WP5ss86mQa4F0GlndUh29k5cPkv
-         5vlvAU4Dubx3gs+td5zZ79YKtMmMWZvo39bxpW26AzMozGYbl35c6u7bTT6Pk5IuUL2m
-         jyoD4QHO2Ql6hqKnVRyIUUM28grce2IRZEzVwtC3iisVlcGRf4BCI58YYwL3sCEhzCwa
-         BTqt3uKC6HRrJd8qXfHKeLczpiGn4YoqflnY0IZ1P3JNtx8LWVhQfZwf9kN4ZqgkrjyP
-         UI/w==
-X-Gm-Message-State: AOJu0YxhG5y4i2yzMYJNR9VOs8XJTPr4mdLCrGBSjk2iVoBgF15uAyST
-	37mmalmusCRJtRH6nrB7HAMC3BzaAD7m7JxkNP2n8UzPx/LAYptbH8TvO2+Isy8=
-X-Google-Smtp-Source: AGHT+IGxOH7jN0JJSAHcNUw+y1THhmoPFLB5dQIwVgf5sjLH/v7h2IvhxQrCENrZqfl9Y3CEpFN/jA==
-X-Received: by 2002:a1c:4b0b:0:b0:418:5ed2:5aa6 with SMTP id 5b1f17b1804b1-42108a1fa4dmr131588055e9.31.1716970252152;
-        Wed, 29 May 2024 01:10:52 -0700 (PDT)
+        bh=XHoCSJtWFYDBm9gN29zxfd9NDDGOVbQ+fZ6tqxis/Y4=;
+        b=KsVcZSnzrVAtFKiX97lw9gt6c05bz+SawL7rj8feLr4zzhoyZnyvr9X9wanTRTlGkh
+         JdLmZLpDkI4rJNchHDEV1JIgEQNQtI2StfSajzl0Aj1QCgNc7tl3l1Y+jqwqcUNL7DRA
+         6U3d2t3YuVWLXdHs2MUMzAuKO7kV4Oyjqq1WZH0APJQAm7l51spqW2+9pzOz6krZSw6Q
+         Bma1y6sW0xKIgVsU2zp71KpGgfrV+Jvd2GqJun5EsWZiOtUPOY22YSRoTUFu6A6uBmT2
+         c66nhNK4A+D0TUwduepN00wJcQUzP9is3S2WhKl3Ge5BzbBFFNkgt3lmJX1lBou+wl+1
+         haJw==
+X-Gm-Message-State: AOJu0YyMRtlkY15TiX1jmItBCXaqV8PdZRIXBlDWaBnmTsPsQUmxqXQH
+	MASO3pjMaAs/f9AajcHQLwHMbOI77E2EVkGHtLtyIyt8bm1aFAW+1eR++Nnot9c=
+X-Google-Smtp-Source: AGHT+IHC9L+DC704xwWabRFuXGyG1gEBpXBypPnbZmeKyUGNIk5VVWK+QrEsbU7GCIVIkmAqQP42bg==
+X-Received: by 2002:a05:6512:1597:b0:51d:3fe4:c3cc with SMTP id 2adb3069b0e04-529613bf320mr12145775e87.0.1716970250711;
+        Wed, 29 May 2024 01:10:50 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.124])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108966b63sm171973865e9.1.2024.05.29.01.10.51
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108966b63sm171973865e9.1.2024.05.29.01.10.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 01:10:51 -0700 (PDT)
+        Wed, 29 May 2024 01:10:50 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
@@ -54,9 +54,9 @@ Cc: cip-dev@lists.cip-project.org,
 	biju.das.jz@bp.renesas.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com,
 	paul.barker.ct@bp.renesas.com
-Subject: [PATCH 5.10.y-cip 07/47] pinctrl: renesas: rzg2l: Fix locking in rzg2l_dt_subnode_to_map()
-Date: Wed, 29 May 2024 11:09:59 +0300
-Message-Id: <20240529081039.639010-8-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 06/47] pinctrl: renesas: rzg2l: Add input enable to the Ethernet pins
+Date: Wed, 29 May 2024 11:09:58 +0300
+Message-Id: <20240529081039.639010-7-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240529081039.639010-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240529081039.639010-1-claudiu.beznea.uj@bp.renesas.com>
@@ -66,74 +66,46 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 08:10:55 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15987
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15986
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit bd433c25ca81b2ac6dca7ea288a8474eea4fb8a0 upstream.
+commit 9e5889c68d992b65efd10aa0a4523c96fd07077f upstream.
 
-Commit d3aaa7203a17 ("pinctrl: renesas: rzg2l: Add pin configuration
-support for pinmux groups") introduced the possibility to parse pin
-configuration for pinmux groups. It did that by calling
-rzg2l_map_add_config() at the end of rzg2l_dt_subnode_to_map() and
-jumping to the remove_group label in case rzg2l_map_add_config() failed.
-But if that happens, the mutex will already be unlocked, thus this it will
-lead to double mutex unlock operation. To fix this move the
-rzg2l_map_add_config() call just after all the name argument is ready and
-before the mutex is locked. There is no harm in doing this, as this only
-parses the data from device tree that will be further processed by
-pinctrl core code.
+Some of the RZ/G3S Ethernet pins (P1_0, P7_0) can be configured with
+input enable.  Enable this functionality for these pins.
 
-Fixes: d3aaa7203a17 ("pinctrl: renesas: rzg2l: Add pin configuration support for pinmux groups")
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/all/f8c3a3a0-7c48-4e40-8af0-ed4e9d9b049f@moroto.mountain
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20240115153453.99226-1-claudiu.beznea.uj@bp.renesas.com
+Link: https://lore.kernel.org/r/20231207070700.4156557-8-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index bd54ab706654..32ca9da27d11 100644
+index 6d0b10f77692..bd54ab706654 100644
 --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
 +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -443,6 +443,16 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 		name = np->name;
- 	}
- 
-+	if (num_configs) {
-+		ret = rzg2l_map_add_config(&maps[idx], name,
-+					   PIN_MAP_TYPE_CONFIGS_GROUP,
-+					   configs, num_configs);
-+		if (ret < 0)
-+			goto done;
-+
-+		idx++;
-+	}
-+
- 	mutex_lock(&pctrl->mutex);
- 
- 	/* Register a single pin group listing all the pins we read from DT */
-@@ -470,16 +480,6 @@ static int rzg2l_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 	maps[idx].data.mux.function = name;
- 	idx++;
- 
--	if (num_configs) {
--		ret = rzg2l_map_add_config(&maps[idx], name,
--					   PIN_MAP_TYPE_CONFIGS_GROUP,
--					   configs, num_configs);
--		if (ret < 0)
--			goto remove_group;
--
--		idx++;
--	}
--
- 	dev_dbg(pctrl->dev, "Parsed %pOF with %d pins\n", np, num_pinmux);
- 	ret = 0;
- 	goto done;
+@@ -1440,7 +1440,7 @@ static const u32 r9a08g045_gpio_configs[] = {
+ 	RZG2L_GPIO_PORT_PACK(4, 0x20, RZG3S_MPXED_PIN_FUNCS(A)),			/* P0  */
+ 	RZG2L_GPIO_PORT_PACK(5, 0x30, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_C |
+ 								PIN_CFG_IO_VMC_ETH0)) |
+-				      PIN_CFG_OEN,					/* P1 */
++				      PIN_CFG_OEN | PIN_CFG_IEN,			/* P1 */
+ 	RZG2L_GPIO_PORT_PACK(4, 0x31, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_C |
+ 								PIN_CFG_IO_VMC_ETH0)),	/* P2 */
+ 	RZG2L_GPIO_PORT_PACK(4, 0x32, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_C |
+@@ -1451,7 +1451,7 @@ static const u32 r9a08g045_gpio_configs[] = {
+ 	RZG2L_GPIO_PORT_PACK(5, 0x22, RZG3S_MPXED_PIN_FUNCS(A)),			/* P6  */
+ 	RZG2L_GPIO_PORT_PACK(5, 0x34, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_C |
+ 								PIN_CFG_IO_VMC_ETH1)) |
+-				      PIN_CFG_OEN,					/* P7 */
++				      PIN_CFG_OEN | PIN_CFG_IEN,			/* P7 */
+ 	RZG2L_GPIO_PORT_PACK(5, 0x35, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_C |
+ 								PIN_CFG_IO_VMC_ETH1)),	/* P8 */
+ 	RZG2L_GPIO_PORT_PACK(4, 0x36, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IOLH_C |
 -- 
 2.39.2
 
