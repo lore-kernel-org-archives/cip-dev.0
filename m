@@ -2,50 +2,50 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A329CC41513
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A325CC25B75
 	for <webhook@archiver.kernel.org>; Wed, 29 May 2024 08:11:36 +0000 (UTC)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
- by mx.groups.io with SMTP id smtpd.web10.8650.1716970286358498868
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+ by mx.groups.io with SMTP id smtpd.web10.8652.1716970289878943453
  for <cip-dev@lists.cip-project.org>;
- Wed, 29 May 2024 01:11:26 -0700
+ Wed, 29 May 2024 01:11:30 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=V1c6maS5;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.52, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4211249fdf4so16467095e9.3
-        for <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 01:11:26 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=fgWgNYE+;
+ spf=pass (domain: tuxon.dev, ip: 209.85.167.48, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52ab11ecdbaso628291e87.3
+        for <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 01:11:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1716970285; x=1717575085; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1716970288; x=1717575088; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fZqMyKQfpKXQfGaISngBLbw5AQP9nL9bM/cNU/1ItoE=;
-        b=V1c6maS5Ttn9pp9bgTLEhMZqCfZVe0Heb2eSAJ/O5UtFh3PPyJzrUc1Lw+1nOa5REq
-         V8zqkDS/On/Z0qNt/xPBFOW0VA+/yc17bS4f2mw8rqh5t2SlZUq1vXJbu4PYbut2y8lY
-         dklHvnhPuTeQ4xrXbxtTcDPsADe9hyTa/zwOxHQL5JIJmLuepFsJvvY0fj7blmbuPjse
-         G95xdqNNz42Wv+xppshcrW6Or8RvMhW75eEe62lsVUlFkAVFITEJguDyWRZar5MlyJ9x
-         WnYbf38hj7ZY68yfAEFLkgpVZ2c9VhZFPZpASb4tFNiipksVsH0C4cqe/v42viDc4zXh
-         5+Lg==
+        bh=gfcBhCscqGDBPpr7CIU+4ogWKdubLdnw3XpPXtdGBSc=;
+        b=fgWgNYE+4Ac2J7EbfVgDpTK0igwNASfzCwAaWd+cIO+1lMhJAInxlI0MlzS8k5Dcph
+         jtwR78vL4Bwvy7uhpEO/mofxRyepQcvbeQ5+96VpnwpNaHL0Dvhr+ig4+3xteVR7cuvb
+         uRbPPZiVXl1W9DPqTWK0H4g3Snx0imPGyEtjPqWov63aWQmJ01K0Dx7uk1YW8YuZYWNK
+         mvXn36Kx3yLxuiJuzC26IFMOXxTcOUy3uqnuwrWz53JQt38f7aupzJY5bOoQIf/ebLJP
+         IyqKrnOHrV/l7cu/A59xr24Nfqj7wyyf7GUCbQrfMRRPWCG/zB8aoB8+ZhtpD9jFb1tc
+         ceqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716970285; x=1717575085;
+        d=1e100.net; s=20230601; t=1716970288; x=1717575088;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fZqMyKQfpKXQfGaISngBLbw5AQP9nL9bM/cNU/1ItoE=;
-        b=QErL83zcWw4T3/jqSDqEk2NhlmPWN3ZK/s5KAAxo5P1ZoIlXUH/kt75gRDtF+/a6Yb
-         w35Wfmhi1hDchIlsQyUdz2qqL9gs/W8xJXR/AR08rHNJsDJdieU2HVu0EAazeIjeHwKR
-         M9O2sY1j9p2FXpMBHoFPq8WBoNVed5HvdcaH2nkFhbCSAsfB0vqexbx2iVUb+QD4tW7E
-         YRUC5RtZHth/v1a/IqUluR5sjATySXazI0JsuwEGaFK43ADq5Pw1PbdV1UlH3VjySEw/
-         YHvkgv9gisIb6zuPfH2Tuxi5o7/BpK+U66cdgPEU5y8WkwckKwpOSUtqSrNxhDa6rW46
-         tyNg==
-X-Gm-Message-State: AOJu0YzcAZhZGNRmwtISzkq0G//K5/PCEJhCysWaKbaI3QdwY4XTpl/7
-	7V1IlNvhkQYqJkieUHPdii6XJzceF1ZqPcXdvdLuyhYPaEut9RJjamEB+v34t+E=
-X-Google-Smtp-Source: AGHT+IGXwj2HBJWzCSOrQNa1HV86dWva/yK8+XRDDxeoNSv7b9BnBGWA7iWItk+ARJFmQxvi+30zSw==
-X-Received: by 2002:a05:600c:5813:b0:420:309a:fe63 with SMTP id 5b1f17b1804b1-42108a79ceamr114095035e9.22.1716970284799;
-        Wed, 29 May 2024 01:11:24 -0700 (PDT)
+        bh=gfcBhCscqGDBPpr7CIU+4ogWKdubLdnw3XpPXtdGBSc=;
+        b=H+/EGfGHnYL8OtKZGSVojNtELf7sR/NSU/FX+xtJGcV2WwsXZR/OR8icf78anrP0Os
+         pq6EXu8k4Y9XUWYg9CBJMuRIioomfGO6d5196Z1+gLb+hcqNu196tHG5PpzB/p2AXmzu
+         /59xAIbYJ+StaTcCyCKq+g/yv3oBTAOLwkJYtNzQgCpL+T/yHXUE0K+poElql6ouyK5q
+         0nLw9dIPK6GFfmT+t0/cB5woRKdkx1Mh5DIIYfcmKFp22ZluLoHSyZDBfsbAPz/rTH2J
+         2AJrnarSLnyI0raO7OAFkgvzxfAlPZkgxGpVGMNoIHk52aKD3229ISgK1GkaBMOOnrIp
+         pEaQ==
+X-Gm-Message-State: AOJu0Ywn/lBc5ILAo7rPzt1XptcUygt0y2KYMK/VwbbySdSaLPULzZ2F
+	Xh9pwFyJ3X0ejjMQ8iDX74p7cwOWXk2VncPCuw6ZuipdjGFauso65orXIgzLgwo=
+X-Google-Smtp-Source: AGHT+IEMIWH+Y4qk8SZDsmwCT3x6hgWJfmrhT3Yrlq7oZmUI3OF6AUpJKTngB7me8x+OECKBjtvPzg==
+X-Received: by 2002:a05:6512:1309:b0:523:90df:a9c6 with SMTP id 2adb3069b0e04-529661f2e0emr9626925e87.50.1716970288092;
+        Wed, 29 May 2024 01:11:28 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.124])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108966b63sm171973865e9.1.2024.05.29.01.11.23
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108966b63sm171973865e9.1.2024.05.29.01.11.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 01:11:24 -0700 (PDT)
+        Wed, 29 May 2024 01:11:27 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
@@ -54,9 +54,9 @@ Cc: cip-dev@lists.cip-project.org,
 	biju.das.jz@bp.renesas.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com,
 	paul.barker.ct@bp.renesas.com
-Subject: [PATCH 5.10.y-cip 26/47] net: ravb: Split GTI computation and set operations
-Date: Wed, 29 May 2024 11:10:18 +0300
-Message-Id: <20240529081039.639010-27-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 28/47] net: ravb: Move DBAT configuration to the driver's ndo_open API
+Date: Wed, 29 May 2024 11:10:20 +0300
+Message-Id: <20240529081039.639010-29-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240529081039.639010-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240529081039.639010-1-claudiu.beznea.uj@bp.renesas.com>
@@ -66,178 +66,47 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 08:11:36 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16006
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16008
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit f384ab481cab6ad71afdf9c80a8b407a70a8624c upstream.
+commit cd1fb46e02de3c70d6379b00c0e860ca44954574 upstream.
 
-ravb_set_gti() was computing the value of GTI based on the reference clock
-rate and then applied it to register. This was done on the driver's probe
-function. In order to implement runtime PM for all IP variants (as some IP
-variants switches to reset mode (and thus the registers content is lost)
-when module standby is configured through clock APIs) the GTI setup was
-split in 2 parts: one computing the value of the GTI register (done in the
-driver's probe function) and one applying the computed value to register
-(done in the driver's ndo_open API).
+DBAT setup was done in the driver's probe API. As some IP variants switch
+to reset mode (and thus registers content is lost) when setting clocks
+(due to module standby functionality) to be able to implement runtime PM
+move the DBAT configuration in the driver's ndo_open API.
+
+This commit prepares the code for the addition of runtime PM.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/net/ethernet/renesas/ravb.h      |  2 +
- drivers/net/ethernet/renesas/ravb_main.c | 96 ++++++++++++------------
- 2 files changed, 52 insertions(+), 46 deletions(-)
+ drivers/net/ethernet/renesas/ravb_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index 2226c757fa9a..3b7016bbf716 100644
---- a/drivers/net/ethernet/renesas/ravb.h
-+++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -1102,6 +1102,8 @@ struct ravb_private {
- 
- 	const struct ravb_hw_info *info;
- 	struct reset_control *rstc;
-+
-+	u32 gti_tiv;
- };
- 
- static inline u32 ravb_read(struct net_device *ndev, enum ravb_reg reg)
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 7dbd8130fdc1..2e96ce403da0 100644
+index bf909302ecf4..1989320b84c7 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1766,6 +1766,50 @@ static const struct ethtool_ops ravb_ethtool_ops = {
- 	.set_wol		= ravb_set_wol,
- };
+@@ -1875,6 +1875,7 @@ static int ravb_open(struct net_device *ndev)
+ 		napi_enable(&priv->napi[RAVB_NC]);
  
-+static void ravb_set_gti(struct net_device *ndev)
-+{
-+	struct ravb_private *priv = netdev_priv(ndev);
-+	const struct ravb_hw_info *info = priv->info;
-+
-+	if (!(info->gptp || info->ccc_gac))
-+		return;
-+
-+	ravb_write(ndev, priv->gti_tiv, GTI);
-+
-+	/* Request GTI loading */
-+	ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
-+}
-+
-+static int ravb_compute_gti(struct net_device *ndev)
-+{
-+	struct ravb_private *priv = netdev_priv(ndev);
-+	const struct ravb_hw_info *info = priv->info;
-+	struct device *dev = ndev->dev.parent;
-+	unsigned long rate;
-+	u64 inc;
-+
-+	if (!(info->gptp || info->ccc_gac))
-+		return 0;
-+
-+	if (info->gptp_ref_clk)
-+		rate = clk_get_rate(priv->gptp_clk);
-+	else
-+		rate = clk_get_rate(priv->clk);
-+	if (!rate)
-+		return -EINVAL;
-+
-+	inc = div64_ul(1000000000ULL << 20, rate);
-+
-+	if (inc < GTI_TIV_MIN || inc > GTI_TIV_MAX) {
-+		dev_err(dev, "gti.tiv increment 0x%llx is outside the range 0x%x - 0x%x\n",
-+			inc, GTI_TIV_MIN, GTI_TIV_MAX);
-+		return -EINVAL;
-+	}
-+	priv->gti_tiv = inc;
-+
-+	return 0;
-+}
-+
- /* Network device open function for Ethernet AVB */
- static int ravb_open(struct net_device *ndev)
- {
-@@ -1783,6 +1827,8 @@ static int ravb_open(struct net_device *ndev)
- 		goto out_napi_off;
- 	ravb_emac_init(ndev);
+ 	ravb_set_delay_mode(ndev);
++	ravb_write(ndev, priv->desc_bat_dma, DBAT);
  
-+	ravb_set_gti(ndev);
-+
- 	/* Initialise PTP Clock driver */
- 	if (info->gptp)
- 		ravb_ptp_init(ndev, priv->pdev);
-@@ -2467,34 +2513,6 @@ static const struct of_device_id ravb_match_table[] = {
- };
- MODULE_DEVICE_TABLE(of, ravb_match_table);
+ 	/* Device init */
+ 	error = ravb_dmac_init(ndev);
+@@ -2811,7 +2812,6 @@ static int ravb_probe(struct platform_device *pdev)
+ 	}
+ 	for (q = RAVB_BE; q < DBAT_ENTRY_NUM; q++)
+ 		priv->desc_bat[q].die_dt = DT_EOS;
+-	ravb_write(ndev, priv->desc_bat_dma, DBAT);
  
--static int ravb_set_gti(struct net_device *ndev)
--{
--	struct ravb_private *priv = netdev_priv(ndev);
--	const struct ravb_hw_info *info = priv->info;
--	struct device *dev = ndev->dev.parent;
--	unsigned long rate;
--	uint64_t inc;
--
--	if (info->gptp_ref_clk)
--		rate = clk_get_rate(priv->gptp_clk);
--	else
--		rate = clk_get_rate(priv->clk);
--	if (!rate)
--		return -EINVAL;
--
--	inc = div64_ul(1000000000ULL << 20, rate);
--
--	if (inc < GTI_TIV_MIN || inc > GTI_TIV_MAX) {
--		dev_err(dev, "gti.tiv increment 0x%llx is outside the range 0x%x - 0x%x\n",
--			inc, GTI_TIV_MIN, GTI_TIV_MAX);
--		return -EINVAL;
--	}
--
--	ravb_write(ndev, inc, GTI);
--
--	return 0;
--}
--
- static int ravb_set_config_mode(struct net_device *ndev)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
-@@ -2766,15 +2784,9 @@ static int ravb_probe(struct platform_device *pdev)
- 	if (error)
- 		goto out_rpm_put;
- 
--	if (info->gptp || info->ccc_gac) {
--		/* Set GTI value */
--		error = ravb_set_gti(ndev);
--		if (error)
--			goto out_rpm_put;
--
--		/* Request GTI loading */
--		ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
--	}
-+	error = ravb_compute_gti(ndev);
-+	if (error)
-+		goto out_rpm_put;
- 
- 	if (info->internal_delay) {
- 		ravb_parse_delay_mode(np, ndev);
-@@ -2989,15 +3001,7 @@ static int __maybe_unused ravb_resume(struct device *dev)
- 	if (ret)
- 		return ret;
- 
--	if (info->gptp || info->ccc_gac) {
--		/* Set GTI value */
--		ret = ravb_set_gti(ndev);
--		if (ret)
--			return ret;
--
--		/* Request GTI loading */
--		ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
--	}
-+	ravb_set_gti(ndev);
- 
- 	if (info->internal_delay)
- 		ravb_set_delay_mode(ndev);
+ 	/* Initialise HW timestamp list */
+ 	INIT_LIST_HEAD(&priv->ts_skb_list);
 -- 
 2.39.2
 
