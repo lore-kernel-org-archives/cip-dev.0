@@ -2,50 +2,50 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5FCEC25B7C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD48C27C50
 	for <webhook@archiver.kernel.org>; Wed, 29 May 2024 08:15:07 +0000 (UTC)
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
- by mx.groups.io with SMTP id smtpd.web11.8682.1716970501884236567
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+ by mx.groups.io with SMTP id smtpd.web10.8733.1716970507201494484
  for <cip-dev@lists.cip-project.org>;
- Wed, 29 May 2024 01:15:02 -0700
+ Wed, 29 May 2024 01:15:07 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=rKSZbIdH;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.50, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4202ca70270so21129325e9.3
-        for <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 01:15:01 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=WYxB39Cl;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.45, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4201986d60aso14210755e9.3
+        for <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 01:15:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1716970500; x=1717575300; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1716970505; x=1717575305; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EAGctp94e/ryCox7b57FlaGxB1SgSwkrD25f2n+iPzM=;
-        b=rKSZbIdHJAKTm60EAK1E5zWeQeq/B+zQ8EP+Q0efRSEmHRG1DFG6RCeqxNsXWl+jdj
-         VgmE+vO57Thm7XEPv7m7sKtsMdOX50xz33opNtXZ1fNpII4EB9GA8kAMFP3mnNsSeYyc
-         OdSZuuooU9uSnz8fWlLWC5EYDtqJXZS23t6nvvW2CRRFBV2IvlnB0vHNMvLULHlqxSew
-         usF/gfn0tRk0k0xPkLJP7ddrjm3XvEYam5vkD/Nc2Lf+4LG3VaTnXl/hR2Ze9ZQcb9u5
-         w21p1O4MMXV9PyosfInvwRKGl5Ww1gJNuX7S5cepFLVKHtmz02DfxrVLUgAqQrk7JT8p
-         5rDg==
+        bh=eszmK4kIKcsHS1rTwlLHwiv6PvRyqqA/nIQOy09JiZo=;
+        b=WYxB39ClSIzn6rTaXqRAnScWJ2oXe2a/QBeehPE4rTOxh6j60jfMra5prUMd74DAE8
+         BvcVoZwqcKc2jVWJrNDsB9Pnsc4RWqvJxg+RKhf3c4ScCdkBaVf2Ny8LldoRrnmtBorN
+         rzgp8IGm5A6b4hR950aoSDms+Et+Utzhjd2cP3FCGjBdpDkf+cBPSJxoSzbbNPrZX2Wi
+         uIQMDnoa6JkYMrGpxito9tYSa9w4w3k5MO119DLC79BCHpFDRolGY4iz65q7xQna1P+W
+         b82cI6KuLEB9aqifjAj/1Wrr3lD87+RQZwhWfTU7YBgamKy5e1ljBfgj6jG8WX5cP7aL
+         +ytw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716970500; x=1717575300;
+        d=1e100.net; s=20230601; t=1716970505; x=1717575305;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EAGctp94e/ryCox7b57FlaGxB1SgSwkrD25f2n+iPzM=;
-        b=FMC3QMQ5DLSdjCHqQ7NivA7WOVzZAnlhxgZMcQFSxK4rfvokpl3wQ9j9SD2Om+nqDu
-         KDhNHaB5vKQ5e8OLnizV+BfghtYqboR8DLwjHpZw5EZU33aG1Q3FKIvzlKdBW4ilXikk
-         kfc9b3vFh6IBPS5x+JEHO8RP1GJ7M/1hwq+LI9rD0K7kO9zCtvxZDU9AaA7ZaCTJh4XW
-         sukJOImmkV7QfvrEQEM041Jt8MMCL4akgnUZ9+pj47xa7M4PKwy0sPhRNtvZOQYktW8L
-         tgc0AB1rbVujSVugesnHzPR8z6bPW7tpOKrtPtK/7YtFtmoC7+0U6xguI8x+b0KGp0OU
-         Pr6w==
-X-Gm-Message-State: AOJu0YynjEIxL4CAmbwJ3niirVHSbtg9ULhMKxG94f+AGWr2JJvcCAnL
-	DxcEeLFXY4ZFVi1vCruEqH+dS8CYE53vSkAswSav/IAIoqVqSYse079xtMNUVqo=
-X-Google-Smtp-Source: AGHT+IGrl8EbBi8zFIebMpFkIOgD44aR64dJl+5jRwzjg/M+OCXcmRR7pgaoHX7WdLOvGDAoH475uQ==
-X-Received: by 2002:a05:600c:1c02:b0:41c:23f3:65fa with SMTP id 5b1f17b1804b1-42108a99cf6mr127864255e9.28.1716970500375;
-        Wed, 29 May 2024 01:15:00 -0700 (PDT)
+        bh=eszmK4kIKcsHS1rTwlLHwiv6PvRyqqA/nIQOy09JiZo=;
+        b=rL29hvG4cTFCLn2FLK/GvdtJk0t9ge+Ei/0x5eeKaqAZ4o6wS+Y60n/ApxGmHrqqsw
+         N6ZB2Gn15h9YVBF3b9x2vyVHcAGkBSCd3CTqeAXXk90EysXOun82rn9C22+VEhej1khN
+         tlqz03pJCFfBsn1jUhg8aMBKCyCr9ZGgO1LhkulrDM7cY73OdzPdS5ufsXq4s4xtJCxZ
+         XZIE+UAv4n0lZUMxM6C93NCfQNbAmRr10Yr4/j7K8V3j4Ua5n82YWsfmgEI1nylmKPn6
+         mkXLvh2XRXzINgac1qz/QL/GcwQoBxQwvG1c0hrpKnb16EvkoTE1oHc9ZBpIfnDn+4Pe
+         ItRg==
+X-Gm-Message-State: AOJu0Yzwgm+NY1pdJj8MzqRGbfPKBxH+ouBUDhAx3B5CAns+82MH2Syb
+	6LAKD1eb9Nqv86+PpIa0T0PHx3w4FR2b8y4frmSmycuX/abyUK2qkaLxQVlmIMI=
+X-Google-Smtp-Source: AGHT+IF9XAntZNfD/oPUqBB14q4pvHzchBkn+bLQJWZEsyXj29KoRW+m6lpNBCDZ1CB9bQc0DB+95g==
+X-Received: by 2002:a1c:7902:0:b0:41b:c024:8e88 with SMTP id 5b1f17b1804b1-42108a0dc79mr94498965e9.33.1716970505693;
+        Wed, 29 May 2024 01:15:05 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.124])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421089711e8sm171803935e9.18.2024.05.29.01.14.59
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421089711e8sm171803935e9.18.2024.05.29.01.15.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 01:14:59 -0700 (PDT)
+        Wed, 29 May 2024 01:15:05 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
@@ -54,9 +54,9 @@ Cc: cip-dev@lists.cip-project.org,
 	biju.das.jz@bp.renesas.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com,
 	paul.barker.ct@bp.renesas.com
-Subject: [PATCH 6.1.y-cip 15/33] net: ravb: Move delay mode set in the driver's ndo_open API
-Date: Wed, 29 May 2024 11:14:16 +0300
-Message-Id: <20240529081434.639519-16-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 18/33] net: ravb: Set config mode in ndo_open and reset mode in ndo_close
+Date: Wed, 29 May 2024 11:14:19 +0300
+Message-Id: <20240529081434.639519-19-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240529081434.639519-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240529081434.639519-1-claudiu.beznea.uj@bp.renesas.com>
@@ -66,176 +66,189 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 08:15:07 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16043
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16046
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 23698a9abb629009b42ef419072e567b43ca6866 upstream.
+commit 76fd52c1007785fcea1d3405907cec940d44f403 upstream.
 
-Delay parsing and setting were done in the driver's probe API. As some IP
-variants switch to reset mode (and thus the register contents is lost) when
-setting clocks (due to module standby functionality) to be able to
-implement runtime PM keep the delay parsing in the driver's probe function
-and move the delay applying function to the driver's ndo_open API.
-
-Along with it, ravb_parse_delay_mode() function was moved close to
-ravb_set_delay_mode() function to have the delay specific code in the
-same place.
+As some IP variants switch to reset mode (and thus the register contents is
+lost) when setting clocks (due to module standby functionality) to be able
+to implement runtime PM and save more power, set the IP's operating mode to
+reset at the end of the probe. Along with it, in the ndo_open API the IP
+will be switched to configuration, then operation mode. In the ndo_close
+API, the IP will be switched back to reset mode. This allows implementing
+runtime PM and, along with it, save more power when the IP is not used.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 107 ++++++++++++-----------
- 1 file changed, 56 insertions(+), 51 deletions(-)
+ drivers/net/ethernet/renesas/ravb_main.c | 78 ++++++++++++++----------
+ 1 file changed, 46 insertions(+), 32 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 90a61e2e1a77..0e2014f172f2 100644
+index cb6e9bf8bddc..a76cc7aec5df 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1820,6 +1820,59 @@ static int ravb_compute_gti(struct net_device *ndev)
- 	return 0;
- }
+@@ -1776,6 +1776,27 @@ static const struct ethtool_ops ravb_ethtool_ops = {
+ 	.set_wol		= ravb_set_wol,
+ };
  
-+/* Set tx and rx clock internal delay modes */
-+static void ravb_parse_delay_mode(struct device_node *np, struct net_device *ndev)
++static int ravb_set_config_mode(struct net_device *ndev)
 +{
 +	struct ravb_private *priv = netdev_priv(ndev);
-+	bool explicit_delay = false;
-+	u32 delay;
++	const struct ravb_hw_info *info = priv->info;
++	int error;
 +
-+	if (!priv->info->internal_delay)
-+		return;
-+
-+	if (!of_property_read_u32(np, "rx-internal-delay-ps", &delay)) {
-+		/* Valid values are 0 and 1800, according to DT bindings */
-+		priv->rxcidm = !!delay;
-+		explicit_delay = true;
-+	}
-+	if (!of_property_read_u32(np, "tx-internal-delay-ps", &delay)) {
-+		/* Valid values are 0 and 2000, according to DT bindings */
-+		priv->txcidm = !!delay;
-+		explicit_delay = true;
++	if (info->gptp) {
++		error = ravb_set_opmode(ndev, CCC_OPC_CONFIG);
++		if (error)
++			return error;
++		/* Set CSEL value */
++		ravb_modify(ndev, CCC, CCC_CSEL, CCC_CSEL_HPB);
++	} else if (info->ccc_gac) {
++		error = ravb_set_opmode(ndev, CCC_OPC_CONFIG | CCC_GAC | CCC_CSEL_HPB);
++	} else {
++		error = ravb_set_opmode(ndev, CCC_OPC_CONFIG);
 +	}
 +
-+	if (explicit_delay)
-+		return;
-+
-+	/* Fall back to legacy rgmii-*id behavior */
-+	if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
-+	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_RXID) {
-+		priv->rxcidm = 1;
-+		priv->rgmii_override = 1;
-+	}
-+
-+	if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
-+	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID) {
-+		priv->txcidm = 1;
-+		priv->rgmii_override = 1;
-+	}
++	return error;
 +}
 +
-+static void ravb_set_delay_mode(struct net_device *ndev)
-+{
-+	struct ravb_private *priv = netdev_priv(ndev);
-+	u32 set = 0;
-+
-+	if (!priv->info->internal_delay)
-+		return;
-+
-+	if (priv->rxcidm)
-+		set |= APSR_RDM;
-+	if (priv->txcidm)
-+		set |= APSR_TDM;
-+	ravb_modify(ndev, APSR, APSR_RDM | APSR_TDM, set);
-+}
-+
- /* Network device open function for Ethernet AVB */
- static int ravb_open(struct net_device *ndev)
+ static void ravb_set_gti(struct net_device *ndev)
  {
-@@ -1831,6 +1884,8 @@ static int ravb_open(struct net_device *ndev)
+ 	struct ravb_private *priv = netdev_priv(ndev);
+@@ -1884,13 +1905,19 @@ static int ravb_open(struct net_device *ndev)
  	if (info->nc_queues)
  		napi_enable(&priv->napi[RAVB_NC]);
  
-+	ravb_set_delay_mode(ndev);
++	/* Set AVB config mode */
++	error = ravb_set_config_mode(ndev);
++	if (error)
++		goto out_napi_off;
 +
+ 	ravb_set_delay_mode(ndev);
+ 	ravb_write(ndev, priv->desc_bat_dma, DBAT);
+ 
  	/* Device init */
  	error = ravb_dmac_init(ndev);
  	if (error)
-@@ -2551,41 +2606,6 @@ static int ravb_set_config_mode(struct net_device *ndev)
- 	return error;
+-		goto out_napi_off;
++		goto out_set_reset;
++
+ 	ravb_emac_init(ndev);
+ 
+ 	ravb_set_gti(ndev);
+@@ -1913,6 +1940,8 @@ static int ravb_open(struct net_device *ndev)
+ 	if (info->gptp || info->ccc_gac)
+ 		ravb_ptp_stop(ndev);
+ 	ravb_stop_dma(ndev);
++out_set_reset:
++	ravb_set_opmode(ndev, CCC_OPC_RESET);
+ out_napi_off:
+ 	if (info->nc_queues)
+ 		napi_disable(&priv->napi[RAVB_NC]);
+@@ -2256,7 +2285,8 @@ static int ravb_close(struct net_device *ndev)
+ 	if (info->nc_queues)
+ 		ravb_ring_free(ndev, RAVB_NC);
+ 
+-	return 0;
++	/* Set reset mode. */
++	return ravb_set_opmode(ndev, CCC_OPC_RESET);
  }
  
--/* Set tx and rx clock internal delay modes */
--static void ravb_parse_delay_mode(struct device_node *np, struct net_device *ndev)
+ static int ravb_hwtstamp_get(struct net_device *ndev, struct ifreq *req)
+@@ -2586,27 +2616,6 @@ static const struct of_device_id ravb_match_table[] = {
+ };
+ MODULE_DEVICE_TABLE(of, ravb_match_table);
+ 
+-static int ravb_set_config_mode(struct net_device *ndev)
 -{
 -	struct ravb_private *priv = netdev_priv(ndev);
--	bool explicit_delay = false;
--	u32 delay;
+-	const struct ravb_hw_info *info = priv->info;
+-	int error;
 -
--	if (!of_property_read_u32(np, "rx-internal-delay-ps", &delay)) {
--		/* Valid values are 0 and 1800, according to DT bindings */
--		priv->rxcidm = !!delay;
--		explicit_delay = true;
--	}
--	if (!of_property_read_u32(np, "tx-internal-delay-ps", &delay)) {
--		/* Valid values are 0 and 2000, according to DT bindings */
--		priv->txcidm = !!delay;
--		explicit_delay = true;
--	}
--
--	if (explicit_delay)
--		return;
--
--	/* Fall back to legacy rgmii-*id behavior */
--	if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
--	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_RXID) {
--		priv->rxcidm = 1;
--		priv->rgmii_override = 1;
+-	if (info->gptp) {
+-		error = ravb_set_opmode(ndev, CCC_OPC_CONFIG);
+-		if (error)
+-			return error;
+-		/* Set CSEL value */
+-		ravb_modify(ndev, CCC, CCC_CSEL, CCC_CSEL_HPB);
+-	} else if (info->ccc_gac) {
+-		error = ravb_set_opmode(ndev, CCC_OPC_CONFIG | CCC_GAC | CCC_CSEL_HPB);
+-	} else {
+-		error = ravb_set_opmode(ndev, CCC_OPC_CONFIG);
 -	}
 -
--	if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
--	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID) {
--		priv->txcidm = 1;
--		priv->rgmii_override = 1;
--	}
+-	return error;
 -}
 -
  static int ravb_setup_irq(struct ravb_private *priv, const char *irq_name,
  			  const char *ch, int *irq, irq_handler_t handler)
  {
-@@ -2670,18 +2690,6 @@ static int ravb_setup_irqs(struct ravb_private *priv)
- 	return ravb_setup_irq(priv, "ch19", "ch19:tx_nc", &irq, ravb_nc_interrupt);
- }
+@@ -2805,11 +2814,6 @@ static int ravb_probe(struct platform_device *pdev)
+ 	ndev->netdev_ops = &ravb_netdev_ops;
+ 	ndev->ethtool_ops = &ravb_ethtool_ops;
  
--static void ravb_set_delay_mode(struct net_device *ndev)
--{
--	struct ravb_private *priv = netdev_priv(ndev);
--	u32 set = 0;
+-	/* Set AVB config mode */
+-	error = ravb_set_config_mode(ndev);
+-	if (error)
+-		goto out_rpm_put;
 -
--	if (priv->rxcidm)
--		set |= APSR_RDM;
--	if (priv->txcidm)
--		set |= APSR_TDM;
--	ravb_modify(ndev, APSR, APSR_RDM | APSR_TDM, set);
--}
--
- static int ravb_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
-@@ -2805,10 +2813,7 @@ static int ravb_probe(struct platform_device *pdev)
+ 	error = ravb_compute_gti(ndev);
  	if (error)
  		goto out_rpm_put;
+@@ -2836,6 +2840,11 @@ static int ravb_probe(struct platform_device *pdev)
+ 	/* Debug message level */
+ 	priv->msg_enable = RAVB_DEF_MSG_ENABLE;
  
--	if (info->internal_delay) {
--		ravb_parse_delay_mode(np, ndev);
--		ravb_set_delay_mode(ndev);
--	}
-+	ravb_parse_delay_mode(np, ndev);
++	/* Set config mode as this is needed for PHY initialization. */
++	error = ravb_set_opmode(ndev, CCC_OPC_CONFIG);
++	if (error)
++		goto out_rpm_put;
++
+ 	/* Read and set MAC address */
+ 	ravb_read_mac_address(np, ndev);
+ 	if (!is_valid_ether_addr(ndev->dev_addr)) {
+@@ -2848,9 +2857,14 @@ static int ravb_probe(struct platform_device *pdev)
+ 	error = ravb_mdio_init(priv);
+ 	if (error) {
+ 		dev_err(&pdev->dev, "failed to initialize MDIO\n");
+-		goto out_dma_free;
++		goto out_reset_mode;
+ 	}
  
- 	/* Allocate descriptor base address table */
- 	priv->desc_bat_size = sizeof(struct ravb_desc) * DBAT_ENTRY_NUM;
++	/* Undo previous switch to config opmode. */
++	error = ravb_set_opmode(ndev, CCC_OPC_RESET);
++	if (error)
++		goto out_mdio_release;
++
+ 	netif_napi_add(ndev, &priv->napi[RAVB_BE], ravb_poll);
+ 	if (info->nc_queues)
+ 		netif_napi_add(ndev, &priv->napi[RAVB_NC], ravb_poll);
+@@ -2873,8 +2887,10 @@ static int ravb_probe(struct platform_device *pdev)
+ 		netif_napi_del(&priv->napi[RAVB_NC]);
+ 
+ 	netif_napi_del(&priv->napi[RAVB_BE]);
++out_mdio_release:
+ 	ravb_mdio_release(priv);
+-out_dma_free:
++out_reset_mode:
++	ravb_set_opmode(ndev, CCC_OPC_RESET);
+ 	dma_free_coherent(ndev->dev.parent, priv->desc_bat_size, priv->desc_bat,
+ 			  priv->desc_bat_dma);
+ out_rpm_put:
+@@ -2905,8 +2921,6 @@ static int ravb_remove(struct platform_device *pdev)
+ 	dma_free_coherent(ndev->dev.parent, priv->desc_bat_size, priv->desc_bat,
+ 			  priv->desc_bat_dma);
+ 
+-	ravb_set_opmode(ndev, CCC_OPC_RESET);
+-
+ 	pm_runtime_put_sync(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+ 	clk_unprepare(priv->refclk);
 -- 
 2.39.2
 
