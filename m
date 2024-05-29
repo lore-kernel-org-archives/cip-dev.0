@@ -1,109 +1,69 @@
-Return-Path: <johnxw@amazon.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECB34C25B75
-	for <webhook@archiver.kernel.org>; Wed, 29 May 2024 16:51:50 +0000 (UTC)
-Subject: Adding swap space to the encrypted partition
-To: cip-dev@lists.cip-project.org
-From: "JohnW" <johnxw@amazon.com>
-X-Originating-Location: Puyallup, Washington, US (174.21.53.213)
-X-Originating-Platform: Mac Firefox 126
-User-Agent: GROUPS.IO Web Poster
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CC31C25B75
+	for <webhook@archiver.kernel.org>; Wed, 29 May 2024 18:42:31 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web10.23693.1717008144073747836
+ for <cip-dev@lists.cip-project.org>;
+ Wed, 29 May 2024 11:42:24 -0700
+Authentication-Results: mx.groups.io;
+ dkim=none (message not signed); spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 853441C0080; Wed, 29 May 2024 20:42:21 +0200 (CEST)
+Date: Wed, 29 May 2024 20:42:20 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: nobuhiro1.iwamatsu@toshiba.co.jp, pavel@denx.de,
+	cip-dev@lists.cip-project.org, biju.das.jz@bp.renesas.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	paul.barker.ct@bp.renesas.com
+Subject: Re: [PATCH 6.1.y-cip 00/33] Add Ethernet support for Renesas RZ/G3S
+ SoC
+Message-ID: <Zld3DHvUmRKYE8Mt@duo.ucw.cz>
+References: <20240529081434.639519-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
-Date: Wed, 29 May 2024 09:51:44 -0700
-Message-ID: <lc89.1717001504639248244.RWYi@lists.cip-project.org>
-Content-Type: multipart/alternative; boundary="rK7f82hBqIdV9fUfFPiQ"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="f6ISjL1SpzcmxV+c"
+Content-Disposition: inline
+In-Reply-To: <20240529081434.639519-1-claudiu.beznea.uj@bp.renesas.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 16:51:50 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16066
+ <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 18:42:31 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16067
 
---rK7f82hBqIdV9fUfFPiQ
-Content-Type: text/plain; charset="utf-8"
+
+--f6ISjL1SpzcmxV+c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Cip-Dev community,
+Hi!
 
-Is there a way to add a swap space to the encrypted partition? Something th=
-at will look like
+> Series adds Ethernet support for Renesas RZ/G3S SoC. Ethernet driver
+> has been enhanced with runtime PM support. The suspend to RAM support
+> was also improved.
 
-nvme0n1=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 259:0=C2=A0=C2=A0=C2=A0=C2=A00 238.5G=C2=A0=C2=A00 disk
-=E2=94=9C=E2=94=80nvme0n1p1=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 259:1=C2=A0=C2=A0=C2=A0=C2=A00=C2=A0=C2=A0 512M=C2=A0=C2=A00 p=
-art=C2=A0=C2=A0/boot/efi
-=E2=94=9C=E2=94=80nvme0n1p2=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 259:2=C2=A0=C2=A0=C2=A0=C2=A00=C2=A0=C2=A0 1.4G=C2=A0=C2=A00 p=
-art=C2=A0=C2=A0/boot
-=E2=94=94=E2=94=80nvme0n1p3=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 259:3=C2=A0=C2=A0=C2=A0=C2=A00 236.6G=C2=A0=C2=A00 part
-=E2=94=94=E2=94=80nvme0n1p3_crypt=C2=A0=C2=A0 253:0=C2=A0=C2=A0=C2=A0=C2=A0=
-0 236.5G=C2=A0=C2=A00 crypt
-=E2=94=9C=E2=94=80my-root=C2=A0=C2=A0 253:1=C2=A0=C2=A0=C2=A0=C2=A00 235.6G=
-=C2=A0=C2=A00 lvm=C2=A0=C2=A0 /
-=E2=94=94=E2=94=80my-swap_1 253:2=C2=A0=C2=A0=C2=A0=C2=A00=C2=A0=C2=A0 980M=
-=C2=A0=C2=A00 lvm=C2=A0=C2=A0 [SWAP]
+I started reviewing this, and it looks okay so far. I can apply it
+if it passes testing and there are no other comments.
 
-Regards,
-John
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---rK7f82hBqIdV9fUfFPiQ
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+--f6ISjL1SpzcmxV+c
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Hi Cip-Dev community,<br /><br />Is there a way to add a swap space to the =
-encrypted partition? Something that will look like<br /><br />
-<div style=3D"caret-color: #000000; color: #000000; font-family: Aptos; fon=
-t-style: normal; font-variant-caps: normal; font-weight: 400; letter-spacin=
-g: normal; orphans: auto; text-align: start; text-indent: 0px; text-transfo=
-rm: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-tex=
-t-stroke-width: 0px; text-decoration: none;">nvme0n1&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 259:0&nbsp;&n=
-bsp;&nbsp;&nbsp;0 238.5G&nbsp;&nbsp;0 disk</div>
-<div style=3D"caret-color: #000000; color: #000000; font-family: Aptos; fon=
-t-style: normal; font-variant-caps: normal; font-weight: 400; letter-spacin=
-g: normal; orphans: auto; text-align: start; text-indent: 0px; text-transfo=
-rm: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-tex=
-t-stroke-width: 0px; text-decoration: none;">=E2=94=9C=E2=94=80nvme0n1p1&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 259:1&nbsp;&nbsp;=
-&nbsp;&nbsp;0&nbsp;&nbsp; 512M&nbsp;&nbsp;0 part&nbsp;&nbsp;/boot/efi</div>
-<div style=3D"caret-color: #000000; color: #000000; font-family: Aptos; fon=
-t-style: normal; font-variant-caps: normal; font-weight: 400; letter-spacin=
-g: normal; orphans: auto; text-align: start; text-indent: 0px; text-transfo=
-rm: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-tex=
-t-stroke-width: 0px; text-decoration: none;">=E2=94=9C=E2=94=80nvme0n1p2&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 259:2&nbsp;&nbsp;=
-&nbsp;&nbsp;0&nbsp;&nbsp; 1.4G&nbsp;&nbsp;0 part&nbsp;&nbsp;/boot</div>
-<div style=3D"caret-color: #000000; color: #000000; font-family: Aptos; fon=
-t-style: normal; font-variant-caps: normal; font-weight: 400; letter-spacin=
-g: normal; orphans: auto; text-align: start; text-indent: 0px; text-transfo=
-rm: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-tex=
-t-stroke-width: 0px; text-decoration: none;">=E2=94=94=E2=94=80nvme0n1p3&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 259:3&nbsp;&nbsp;=
-&nbsp;&nbsp;0 236.6G&nbsp;&nbsp;0 part</div>
-<div style=3D"caret-color: #000000; color: #000000; font-family: Aptos; fon=
-t-style: normal; font-variant-caps: normal; font-weight: 400; letter-spacin=
-g: normal; orphans: auto; text-align: start; text-indent: 0px; text-transfo=
-rm: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-tex=
-t-stroke-width: 0px; text-decoration: none;">&nbsp;&nbsp;=E2=94=94=E2=94=80=
-nvme0n1p3_crypt&nbsp;&nbsp; 253:0&nbsp;&nbsp;&nbsp;&nbsp;0 236.5G&nbsp;&nbs=
-p;0 crypt</div>
-<div style=3D"caret-color: #000000; color: #000000; font-family: Aptos; fon=
-t-style: normal; font-variant-caps: normal; font-weight: 400; letter-spacin=
-g: normal; orphans: auto; text-align: start; text-indent: 0px; text-transfo=
-rm: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-tex=
-t-stroke-width: 0px; text-decoration: none;">&nbsp;&nbsp;&nbsp;&nbsp;=E2=94=
-=9C=E2=94=80my-root&nbsp;&nbsp; 253:1&nbsp;&nbsp;&nbsp;&nbsp;0 235.6G&nbsp;=
-&nbsp;0 lvm&nbsp;&nbsp; /</div>
-<div style=3D"caret-color: #000000; color: #000000; font-family: Aptos; fon=
-t-style: normal; font-variant-caps: normal; font-weight: 400; letter-spacin=
-g: normal; orphans: auto; text-align: start; text-indent: 0px; text-transfo=
-rm: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-tex=
-t-stroke-width: 0px; text-decoration: none;">&nbsp;&nbsp;&nbsp;&nbsp;=E2=94=
-=94=E2=94=80my-swap_1 253:2&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp; 980M&nbsp;=
-&nbsp;0 lvm&nbsp;&nbsp; [SWAP]<br /><br />Regards,<br />John</div>
+-----BEGIN PGP SIGNATURE-----
 
---rK7f82hBqIdV9fUfFPiQ--
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZld3DAAKCRAw5/Bqldv6
+8mRnAJ0ZVPh+IKkPCtnP8WXP4WNDfsBR5QCgivcG3kfSUczxlsjuS7kQAQ4cYfU=
+=g1WY
+-----END PGP SIGNATURE-----
+
+--f6ISjL1SpzcmxV+c--
 
