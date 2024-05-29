@@ -2,50 +2,50 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F34E5C25B7C
-	for <webhook@archiver.kernel.org>; Wed, 29 May 2024 08:11:05 +0000 (UTC)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
- by mx.groups.io with SMTP id smtpd.web10.8636.1716970257464464662
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19DD9C25B7E
+	for <webhook@archiver.kernel.org>; Wed, 29 May 2024 08:11:06 +0000 (UTC)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+ by mx.groups.io with SMTP id smtpd.web10.8639.1716970259266039354
  for <cip-dev@lists.cip-project.org>;
- Wed, 29 May 2024 01:10:57 -0700
+ Wed, 29 May 2024 01:10:59 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=kTucsQpZ;
- spf=pass (domain: tuxon.dev, ip: 209.85.167.44, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-529682e013dso2087924e87.3
-        for <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 01:10:57 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=axpjIn4E;
+ spf=pass (domain: tuxon.dev, ip: 209.85.208.175, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2e95a74d51fso24531591fa.2
+        for <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 01:10:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1716970256; x=1717575056; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1716970257; x=1717575057; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lHwaqK8FDbrUJOjMh40D051saX2MZgSoYnTbNQAYvkk=;
-        b=kTucsQpZ8vC6oV6YziDNiSYFMYkCLEq9+hVmSncczRIsmQXOLyRSl7/t8THDUnRCFm
-         JzrVSW1yQk5dHfRoDDpTHwb7AOGbU+8Z0A/IlU+s4Uy7f9S61nd6rpobHaljsjjBvpF+
-         1Kn0XMvPCr4C7A0t6cInw9fbCMCo0gT4C2ZF/mZTWkGe26TCkRrkwi0s1Nclhj2ei8YM
-         PFHYhT/ef+Aq1wzdtynWGP4bDOVYprGGSdH9HJsITfkPgxno4L+uDCM7On544vCkSDRH
-         l1SwMemE+7BQPL6+pepmLtbNk32rcVxbmspr4J6c/Egb+cFP9JUiHvEF1Hoz5v2dHBMw
-         /oPw==
+        bh=tOLHZx555kbJ+Nz+oy4ud3S/v5u8QAeS8Cx1sKq0Hlw=;
+        b=axpjIn4E4VPSWo6eYcwYd4WOdmDyTCLSlVJoBuWf3v5V3FrxwsgcOMli9nOqvxz3bu
+         jeaVmh6Pm100a2yu/KO03p17rJWFFzhXJ4T9OjSGZtYT13WTf89jS57x2z/hOWaHnhpT
+         MOKcRqhZYFZli+5WTAFL9afjGoukE1zSlvSFIokh/fqQm4Ht92uFlJUQ50goPr9I6FFS
+         In/95owFLd4dZAjHYGml2c256xkWQgGTre05PC2JQMzfb00/gic9xdmnnc5shYW8LJOf
+         OWxJoF3t5y6LJ57yk9cZMJde8QBs/bhn/wofvcmPFVJBqiRJPf8qn3BgonDB3PA6gRmV
+         dffg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716970256; x=1717575056;
+        d=1e100.net; s=20230601; t=1716970257; x=1717575057;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lHwaqK8FDbrUJOjMh40D051saX2MZgSoYnTbNQAYvkk=;
-        b=KEIBtVNXEqV12/0nz+Q726oTfSA2QE9Obo7FPQpm6DuZaGny9z6lf7q8sajBQgy5v/
-         jt0jfBtdvY1dE5jUYI4SM4Xbvud/MPzyDEx8zPxDBzwyYlCAxeY3zsi59uA/t8bCjqF9
-         fDAaxU1k7XWpnELXKPoMnXBI/xbNg8AGm1Ykfl64tTJBCNTxOjMwMxYP4gt2CEMWEdgB
-         g1DQdy0Nc8SCnEIOF8ffeZEFrKcbHXC1vmwag5XLbBZjqB47cgDTtWO2r3Yjxbv3ZGGm
-         cbojhcMR4e5+sMPy9ebupA1zCikSj66nMpSadF/x7jJ4S/LLWkDUV8mNo12vYodw3fEu
-         MB9Q==
-X-Gm-Message-State: AOJu0YwlDyeQ9437UL4DgTL8d2bcdwOyzUO2k1kqiwGYY0mIFtNbpU2J
-	E0eiLrQUmCn2EYXr26AEpAT0+qxKVqp6SRILzK35x/3Fer+bWntCuyJeUf3KN7I=
-X-Google-Smtp-Source: AGHT+IGUQfqe8sx4jqWwk63f7ASn1lJGX+KTDnq07Sz4Lr/2/Wnzx4Z/+Wq+9XXnUmTLl1a3pbtSMg==
-X-Received: by 2002:ac2:58f7:0:b0:515:d038:5548 with SMTP id 2adb3069b0e04-529650a4281mr8135561e87.31.1716970255684;
-        Wed, 29 May 2024 01:10:55 -0700 (PDT)
+        bh=tOLHZx555kbJ+Nz+oy4ud3S/v5u8QAeS8Cx1sKq0Hlw=;
+        b=Qnx/wj2hqF679QqoX9WJOk5QwRum40ARAH6XJ2q8L9zsjaCQtui2juGD8MD69TpU9/
+         E98di7+OMwl7IuCrBI/33w5kxT8iYh85Y7TU0xHh94F94ASV0qaGiqqYybW6arHEOTvN
+         n44uHg/hFW4hL+fWZsmp8xvuOg3XHQzes6CtqtzqJqbbeYt2gLx2oI3xVmjSl00PNK3B
+         57uqxh6I73Uw0CcRYqTIXJSCA8qq1sPjQvYRY/yJDongYgWv6M8q28cmOxrjQiSxrQw6
+         OltfOPh44WHGqv1gEcp+9o9/8y1JsIQmlItNPn8LdaGRCjbCID6sBS/osM0vTdgs6DG/
+         YWhQ==
+X-Gm-Message-State: AOJu0YybdwOmg5N7OYKUYaM18LohrMe7J6tR9IEY1FtETdipTHk+Hsqe
+	nDUicphkDy0kuSOiCi+xftCRgVejqOwYyGCofDNbrniTuO81bpwyX+s5/GheMAs=
+X-Google-Smtp-Source: AGHT+IGQp4kjwwbMdyMLJmU+bgeZS8bmDl6G8O/qottjaiZM82msMmjwujbhw5INAk330Z0wO6OYrg==
+X-Received: by 2002:a2e:961a:0:b0:2e5:6957:187a with SMTP id 38308e7fff4ca-2e95b041638mr112052231fa.4.1716970257536;
+        Wed, 29 May 2024 01:10:57 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.124])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108966b63sm171973865e9.1.2024.05.29.01.10.53
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108966b63sm171973865e9.1.2024.05.29.01.10.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 01:10:54 -0700 (PDT)
+        Wed, 29 May 2024 01:10:56 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
@@ -54,9 +54,9 @@ Cc: cip-dev@lists.cip-project.org,
 	biju.das.jz@bp.renesas.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com,
 	paul.barker.ct@bp.renesas.com
-Subject: [PATCH 5.10.y-cip 09/47] net: ravb: Fix lack of register setting after system resumed for Gen3
-Date: Wed, 29 May 2024 11:10:01 +0300
-Message-Id: <20240529081039.639010-10-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 10/47] net: ravb: Check return value of reset_control_deassert()
+Date: Wed, 29 May 2024 11:10:02 +0300
+Message-Id: <20240529081039.639010-11-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240529081039.639010-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240529081039.639010-1-claudiu.beznea.uj@bp.renesas.com>
@@ -65,52 +65,62 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 08:11:05 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15989
+ <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 08:11:06 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15990
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit c2b6cdee1d13ffbb24baca3c9b8a572d6b541e4e upstream.
+commit d8eb6ea4b302e7ff78535c205510e359ac10a0bd upstream.
 
-After system entered Suspend to RAM, registers setting of this
-hardware is reset because the SoC will be turned off. On R-Car Gen3
-(info->ccc_gac), ravb_ptp_init() is called in ravb_probe() only. So,
-after system resumed, it lacks of the initial settings for ptp. So,
-add ravb_ptp_{init,stop}() into ravb_{resume,suspend}().
+reset_control_deassert() could return an error. Some devices cannot work
+if reset signal de-assert operation fails. To avoid this check the return
+code of reset_control_deassert() in ravb_probe() and take proper action.
 
-Fixes: f5d7837f96e5 ("ravb: ptp: Add CONFIG mode support")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Along with it, the free_netdev() call from the error path was moved after
+reset_control_assert() on its own label (out_free_netdev) to free
+netdev in case reset_control_deassert() fails.
+
+Fixes: 0d13a1a464a0 ("ravb: Add reset support")
 Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/ethernet/renesas/ravb_main.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 23fb75b9ee0d..c15a4d56e79f 100644
+index c15a4d56e79f..ef7ab9a3ff29 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2994,6 +2994,9 @@ static int __maybe_unused ravb_suspend(struct device *dev)
- 	else
- 		ret = ravb_close(ndev);
+@@ -2666,7 +2666,10 @@ static int ravb_probe(struct platform_device *pdev)
+ 	ndev->features = info->net_features;
+ 	ndev->hw_features = info->net_hw_features;
  
-+	if (priv->info->ccc_gac)
-+		ravb_ptp_stop(ndev);
+-	reset_control_deassert(rstc);
++	error = reset_control_deassert(rstc);
++	if (error)
++		goto out_free_netdev;
 +
- 	return ret;
+ 	pm_runtime_enable(&pdev->dev);
+ 	error = pm_runtime_resume_and_get(&pdev->dev);
+ 	if (error < 0)
+@@ -2895,12 +2898,12 @@ static int ravb_probe(struct platform_device *pdev)
+ out_disable_refclk:
+ 	clk_disable_unprepare(priv->refclk);
+ out_release:
+-	free_netdev(ndev);
+-
+ 	pm_runtime_put(&pdev->dev);
+ out_rpm_disable:
+ 	pm_runtime_disable(&pdev->dev);
+ 	reset_control_assert(rstc);
++out_free_netdev:
++	free_netdev(ndev);
+ 	return error;
  }
  
-@@ -3032,6 +3035,9 @@ static int __maybe_unused ravb_resume(struct device *dev)
- 	/* Restore descriptor base address table */
- 	ravb_write(ndev, priv->desc_bat_dma, DBAT);
- 
-+	if (priv->info->ccc_gac)
-+		ravb_ptp_init(ndev, priv->pdev);
-+
- 	if (netif_running(ndev)) {
- 		if (priv->wol_enabled) {
- 			ret = ravb_wol_restore(ndev);
 -- 
 2.39.2
 
