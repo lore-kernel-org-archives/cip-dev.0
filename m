@@ -2,50 +2,51 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E47DC41513
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C287C25B7C
 	for <webhook@archiver.kernel.org>; Wed, 29 May 2024 08:11:16 +0000 (UTC)
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
- by mx.groups.io with SMTP id smtpd.web11.8574.1716970269103757782
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+ by mx.groups.io with SMTP id smtpd.web10.8641.1716970266872002858
  for <cip-dev@lists.cip-project.org>;
- Wed, 29 May 2024 01:11:09 -0700
+ Wed, 29 May 2024 01:11:07 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=inCVSpeG;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.45, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42120e3911eso12040355e9.0
-        for <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 01:11:08 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=fouOiQ/P;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.46, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4202ca70270so21099385e9.3
+        for <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 01:11:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1716970267; x=1717575067; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1716970265; x=1717575065; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mFn52GZj4zA/bx2lr0z33NXuStNVJOwxX4B6CDIZEts=;
-        b=inCVSpeGbKcP4KHN0e7GtLdOssRWrIq/FOjaJ0NIs/DKQN1zZfeZIDUekcCjZQKXen
-         XvjPcdxXhziwW4GDcz4ZElREijKB5uV24MyiqaCIqMtn3g6wjihYrHIKveKllfIqBgZ+
-         6n9DKgklj8YUbkIK1HAqBw9MDSY8uNdadx1r4cZYGXiufMj9FOdpmC2kiIwUM3sbp8vB
-         Nz+9NLtBU7qKLGq6OthlWH/3JZVxgHKB8USIV7GLtgU5HA2G48mMAVJ9AP4hTxOZMOZP
-         7wxpNTrkEwzCQtlKe53uQzZIiUftoSX/dnKpqEQ5etgSVNOLR9OREDn9cmyjYcORbS0S
-         5Kqw==
+        bh=iQAHUJGjPROmWGGyTUMWT0CDvD42t4CgjOPY+7RlqZ4=;
+        b=fouOiQ/PmRe+PxT/bX9IGindF3DOrrRHrIlRJIRP6PQE6+sOp9xl2YKLZT5tdYBKLo
+         7hA+xo26DkXdcx3pjLrXFpWkGuGsKBHSuWCDPQYuinwGhh0rOSxoWI32hH7NsZTI4CVU
+         SqGkL44fWxKRK/7ZEsicx4J04Sw6rSjdHSleybDOl0kzSrsGEFh0O+a7F4JQsl07vPQ8
+         SEXiczQNsd7HPZpeN1x2RYxIrYga+hZ3AuOfkLBs9sRqiDk8cBBoL5Gn4o1ut7EXdN/8
+         E1jEREAy4IsBZYsdAsArfWjXXjKPYQKTnhoOqxtg3CWAf6RJSpPgBMz1yqFuvL+Su6Lf
+         ZJpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716970267; x=1717575067;
+        d=1e100.net; s=20230601; t=1716970265; x=1717575065;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mFn52GZj4zA/bx2lr0z33NXuStNVJOwxX4B6CDIZEts=;
-        b=CZJ0jpTADVc5XKjCnwPQzypLiWgfjgtulSYRrJfPkL+97mEG1GGUm1hK8QqENWSRBR
-         UjwEvmP+oLUPEqsPTWyipuD5jqOXWhNpljESce59EfGv8o+r3vP63cj/zIM/aL5xG9Xv
-         hlyp+5S9Jcyc/EoFxFNawt9QYmyQ9UV5ZKhy90AHOaopRWef5kjvVjDFmN7VfrUp7HIO
-         yp+bApHwoa6U+jMyUbUhzDM8O/Y2kGZApKkx/gb5J3CESSAVloXYFMGaD4CvG1fUiK91
-         0THvUr4zba1I7n3zeP9yfQQJuxbV6Bv7JUjkD2RsHoahpFCmKzk+lSnrjY/6xIA2NKP5
-         VwAQ==
-X-Gm-Message-State: AOJu0YzzS5PWTqEmMFbmtIOvZ05kfIZ57e/+i05+LAMWaYr1n10cjDcE
-	JaiXkuU1nJcnLeylpjfE6IzAz9UPLzl21YTDZC85r3F5S0srhFk3cgMFDvKRZ4o=
-X-Google-Smtp-Source: AGHT+IGxdbWRotKTlNg+r2FiJnQQeXrTNtJfnIqTxtnlBmSgclMS2pJcpzpiKsbM6dEIdfWecxbZag==
-X-Received: by 2002:a05:600c:4f0d:b0:421:1e47:f80a with SMTP id 5b1f17b1804b1-4211e47f85fmr29174115e9.41.1716970267616;
-        Wed, 29 May 2024 01:11:07 -0700 (PDT)
+        bh=iQAHUJGjPROmWGGyTUMWT0CDvD42t4CgjOPY+7RlqZ4=;
+        b=nun0Cli97E+WDv8IrvKAR22qbLxhRIrFRuLmAROMWMXLtU+TsyhlVoOIAi6c8gCQDJ
+         QJRBZmETsIlwXrJ6ed+XBQgRQwusdPM1NB66JilK0mQOmjzXdIe25BZTHNctKdeqqKGx
+         gO6UHw9EIozvsd1CKi7+Y8IZbKabvmxJupgI5qiav7qbAWwxOKLDK3dPGjtdHlnWVx8C
+         tAEX0dxEY7V4WFoowUV4ygOYXUjumfnKsn0ru6aY8G2N5KHj5GR3HrYdaDZ9dXg19fUM
+         BQHz9M4p8iEA5IVNkOs1GKFw0O0zNskR7RlInZNIFn6AgCsG/Ee8lGCmBxDXZXfBIMx2
+         gU4g==
+X-Gm-Message-State: AOJu0YyE/w4GSF5hvghHKBWn9ESmQzFBDDX3ZDQ+fl2bzCvNqJqBSndh
+	c2KUEaBBlGDGXvxbGBZ55vTq7pR5fbImDsBoh+Wey4VcDLqZAxWsnUP9kQwSvDs1z0jq5kD1HNi
+	dbqk=
+X-Google-Smtp-Source: AGHT+IHkRtgywwDFsif8LFoSCu4biQAjaS4FS/EcnLcr66jT5/5AAYifyaX4VYH8A0JFRuKIMXaZVQ==
+X-Received: by 2002:a7b:ce8c:0:b0:41b:edf4:4071 with SMTP id 5b1f17b1804b1-42108aa6fc3mr168473945e9.35.1716970265238;
+        Wed, 29 May 2024 01:11:05 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.124])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108966b63sm171973865e9.1.2024.05.29.01.11.06
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42108966b63sm171973865e9.1.2024.05.29.01.11.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 01:11:07 -0700 (PDT)
+        Wed, 29 May 2024 01:11:04 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
@@ -54,9 +55,9 @@ Cc: cip-dev@lists.cip-project.org,
 	biju.das.jz@bp.renesas.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com,
 	paul.barker.ct@bp.renesas.com
-Subject: [PATCH 5.10.y-cip 15/47] net: ravb: Count packets instead of descriptors in GbEth RX path
-Date: Wed, 29 May 2024 11:10:07 +0300
-Message-Id: <20240529081039.639010-16-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 13/47] net: ravb: Keep reverse order of operations in ravb_remove()
+Date: Wed, 29 May 2024 11:10:05 +0300
+Message-Id: <20240529081039.639010-14-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240529081039.639010-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240529081039.639010-1-claudiu.beznea.uj@bp.renesas.com>
@@ -66,94 +67,141 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 08:11:16 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15995
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15993
 
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit ed4adc07207d9165a4b3b36199231a22e9f51a55 upstream.
+commit edf9bc396e05081ca281ffb0cd41e44db478ff26 upstream.
 
-The units of "work done" in the RX path should be packets instead of
-descriptors, as large packets can be spread over multiple descriptors.
+On RZ/G3S SMARC Carrier II board having RGMII connections b/w Ethernet
+MACs and PHYs it has been discovered that doing unbind/bind for ravb
+driver in a loop leads to wrong speed and duplex for Ethernet links and
+broken connectivity (the connectivity cannot be restored even with
+bringing interface down/up). Before doing unbind/bind the Ethernet
+interfaces were configured though systemd. The sh instructions used to
+do unbind/bind were:
 
-Fixes: 1c59eb678cbd ("ravb: Fillup ravb_rx_gbeth() stub")
-Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+$ cd /sys/bus/platform/drivers/ravb/
+$ while :; do echo 11c30000.ethernet > unbind ; \
+  echo 11c30000.ethernet > bind; done
+
+It has been discovered that there is a race b/w IOCTLs initialized by
+systemd at the response of success binding and the
+"ravb_write(ndev, CCC_OPC_RESET, CCC)" call in ravb_remove() as
+follows:
+
+1/ as a result of bind success the user space open/configures the
+   interfaces tough an IOCTL; the following stack trace has been
+   identified on RZ/G3S:
+
+Call trace:
+dump_backtrace+0x9c/0x100
+show_stack+0x20/0x38
+dump_stack_lvl+0x48/0x60
+dump_stack+0x18/0x28
+ravb_open+0x70/0xa58
+__dev_open+0xf4/0x1e8
+__dev_change_flags+0x198/0x218
+dev_change_flags+0x2c/0x80
+devinet_ioctl+0x640/0x708
+inet_ioctl+0x1e4/0x200
+sock_do_ioctl+0x50/0x108
+sock_ioctl+0x240/0x358
+__arm64_sys_ioctl+0xb0/0x100
+invoke_syscall+0x50/0x128
+el0_svc_common.constprop.0+0xc8/0xf0
+do_el0_svc+0x24/0x38
+el0_svc+0x34/0xb8
+el0t_64_sync_handler+0xc0/0xc8
+el0t_64_sync+0x190/0x198
+
+2/ this call may execute concurrently with ravb_remove() as the
+   unbind/bind operation was executed in a loop
+3/ if the operation mode is changed to RESET (through
+   ravb_write(ndev, CCC_OPC_RESET, CCC) call in ravb_remove())
+   while the above ravb_open() is in progress it may lead to MAC
+   (or PHY, or MAC-PHY connection, the right point hasn't been identified
+   at the moment) to be broken, thus the Ethernet connectivity fails to
+   restore.
+
+The simple fix for this is to move ravb_write(ndev, CCC_OPC_RESET, CCC))
+after unregister_netdev() to avoid resetting the controller while the
+netdev interface is still registered.
+
+To avoid future issues in ravb_remove(), the patch follows the proper order
+of operations in ravb_remove(): reverse order compared with ravb_probe().
+This avoids described races as the IOCTLs as well as unregister_netdev()
+(called now at the beginning of ravb_remove()) calls rtnl_lock() before
+continuing and IOCTLs check (though devinet_ioctl()) if device is still
+registered just after taking the lock:
+
+int devinet_ioctl(struct net *net, unsigned int cmd, struct ifreq *ifr)
+{
+	// ...
+
+        rtnl_lock();
+
+        ret = -ENODEV;
+        dev = __dev_get_by_name(net, ifr->ifr_name);
+        if (!dev)
+                goto done;
+
+	// ...
+done:
+        rtnl_unlock();
+out:
+        return ret;
+}
+
+Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
 Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
-Link: https://lore.kernel.org/r/20240214151204.2976-1-paul.barker.ct@bp.renesas.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+ drivers/net/ethernet/renesas/ravb_main.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 1420c41b6480..6cc3dc8d85f4 100644
+index 17a461ae84ef..9362f60a584d 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -771,29 +771,25 @@ static bool ravb_rx_gbeth(struct net_device *ndev, int *quota, int q)
- 	struct ravb_rx_desc *desc;
- 	struct sk_buff *skb;
- 	dma_addr_t dma_addr;
-+	int rx_packets = 0;
- 	u8  desc_status;
--	int boguscnt;
- 	u16 pkt_len;
- 	u8  die_dt;
- 	int entry;
- 	int limit;
-+	int i;
+@@ -2915,22 +2915,26 @@ static int ravb_remove(struct platform_device *pdev)
+ 	struct ravb_private *priv = netdev_priv(ndev);
+ 	const struct ravb_hw_info *info = priv->info;
  
- 	entry = priv->cur_rx[q] % priv->num_rx_ring[q];
--	boguscnt = priv->dirty_rx[q] + priv->num_rx_ring[q] - priv->cur_rx[q];
-+	limit = priv->dirty_rx[q] + priv->num_rx_ring[q] - priv->cur_rx[q];
- 	stats = &priv->stats[q];
- 
--	boguscnt = min(boguscnt, *quota);
--	limit = boguscnt;
- 	desc = &priv->gbeth_rx_ring[entry];
--	while (desc->die_dt != DT_FEMPTY) {
-+	for (i = 0; i < limit && rx_packets < *quota && desc->die_dt != DT_FEMPTY; i++) {
- 		/* Descriptor type must be checked before all other reads */
- 		dma_rmb();
- 		desc_status = desc->msc;
- 		pkt_len = le16_to_cpu(desc->ds_cc) & RX_DS;
- 
--		if (--boguscnt < 0)
--			break;
+-	/* Stop PTP Clock driver */
+-	if (info->ccc_gac)
+-		ravb_ptp_stop(ndev);
 -
- 		/* We use 0-byte descriptors to mark the DMA mapping errors */
- 		if (!pkt_len)
- 			continue;
-@@ -819,7 +815,7 @@ static bool ravb_rx_gbeth(struct net_device *ndev, int *quota, int q)
- 				skb_put(skb, pkt_len);
- 				skb->protocol = eth_type_trans(skb, ndev);
- 				napi_gro_receive(&priv->napi[q], skb);
--				stats->rx_packets++;
-+				rx_packets++;
- 				stats->rx_bytes += pkt_len;
- 				break;
- 			case DT_FSTART:
-@@ -847,7 +843,7 @@ static bool ravb_rx_gbeth(struct net_device *ndev, int *quota, int q)
- 					eth_type_trans(priv->rx_1st_skb, ndev);
- 				napi_gro_receive(&priv->napi[q],
- 						 priv->rx_1st_skb);
--				stats->rx_packets++;
-+				rx_packets++;
- 				stats->rx_bytes += pkt_len;
- 				break;
- 			}
-@@ -886,9 +882,9 @@ static bool ravb_rx_gbeth(struct net_device *ndev, int *quota, int q)
- 		desc->die_dt = DT_FEMPTY;
- 	}
- 
--	*quota -= limit - (++boguscnt);
+-	clk_disable_unprepare(priv->gptp_clk);
+-	clk_disable_unprepare(priv->refclk);
 -
--	return boguscnt <= 0;
-+	stats->rx_packets += rx_packets;
-+	*quota -= rx_packets;
-+	return *quota == 0;
- }
- 
- /* Packet receive function for Ethernet AVB */
+-	/* Set reset mode */
+-	ravb_write(ndev, CCC_OPC_RESET, CCC);
+ 	unregister_netdev(ndev);
+ 	if (info->nc_queues)
+ 		netif_napi_del(&priv->napi[RAVB_NC]);
+ 	netif_napi_del(&priv->napi[RAVB_BE]);
++
+ 	ravb_mdio_release(priv);
++
++	/* Stop PTP Clock driver */
++	if (info->ccc_gac)
++		ravb_ptp_stop(ndev);
++
+ 	dma_free_coherent(ndev->dev.parent, priv->desc_bat_size, priv->desc_bat,
+ 			  priv->desc_bat_dma);
++
++	/* Set reset mode */
++	ravb_write(ndev, CCC_OPC_RESET, CCC);
++
++	clk_disable_unprepare(priv->gptp_clk);
++	clk_disable_unprepare(priv->refclk);
++
+ 	pm_runtime_put_sync(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+ 	reset_control_assert(priv->rstc);
 -- 
 2.39.2
 
