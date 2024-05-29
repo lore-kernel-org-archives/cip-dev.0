@@ -1,51 +1,43 @@
-Return-Path: <chris.paterson2@renesas.com>
+Return-Path: <sai.sathujoda@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69661C25B78
-	for <webhook@archiver.kernel.org>; Tue, 28 May 2024 23:13:23 +0000 (UTC)
-Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.9])
- by mx.groups.io with SMTP id smtpd.web11.407.1716938001372577495
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2B08C27C43
+	for <webhook@archiver.kernel.org>; Wed, 29 May 2024 00:55:53 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
+ by mx.groups.io with SMTP id smtpd.web11.2622.1716944143904282810
  for <cip-dev@lists.cip-project.org>;
- Tue, 28 May 2024 16:13:22 -0700
+ Tue, 28 May 2024 17:55:44 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@renesas.com header.s=selector1 header.b=CRCdlpOg;
- spf=pass (domain: renesas.com, ip: 52.101.228.9, mailfrom: chris.paterson2@renesas.com)
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.134, mailfrom: sai.sathujoda@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 44T0tf881923067; Wed, 29 May 2024 09:55:42 +0900
+X-Iguazu-Qid: 2yAbAhOadC1axDBiRp
+X-Iguazu-QSIG: v=2; s=0; t=1716944141; q=2yAbAhOadC1axDBiRp; m=CMCqoDgBjlUr44f12NWSUH6i8rUHgyLcgwq8sAeHeyg=
+Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
+	by relay.securemx.jp (mx-mr1801) id 44T0tes6484716
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 29 May 2024 09:55:41 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fYDPGZirfKPNNY9VyRQdA9uxfCA/GRh9N8056pI0KlAHk+/ZBYfa+e4gfUAebHwqc3KyugWWh1yRGo6A1UJC2ei90aZ32aRsOyQGundJYMHeXBY62i8kAyCjCnMImTjpzgYIurPur21mEkeznS8O3e90leYAaxlwQ14HOPJkg+Qsyxp1o4NW3aklHce+QCzdHItp9B76nWtwSw5SMOP2qmYeCAPctJ0TixCpQ6STLYvqXu5Ny2FONnGUJ6i4loJ+iloCh/ZmHw4salgOFt43UMerkgep7fjdJdsdf5XCAlXbeG6aCSrX9TNIr6+Ba1iG+at/At0tU10YESzomqTDjQ==
+ b=gAw9yVwTmX+H77K9cyWRGvYAZJoc1LEeA/iIiHHh3tOJWBzBAYAxgHXBhfjIjXpvq91HfDMM1vCvHMPdYDzxFIras+71Wwytg7GJesTT7bcpyZR0Knh9+GaQgG07xEBL3shYToB9Uj+g1mOYKVGpnkCHU9W2o8cgW3Yfsk0eI/zDhzTvr+GeJfOBTtmajrKNCFc8Amx35mEdKWTQViZiVHhqu+fJT3ZbM3BaCrL11BS5dvWk7zjnjHwSjuVtH4T0rUqafK3w5r8jrt1WUTvrQi3KERcLnzFB0Q9n/Pe6Ye9Y0QCqFNaVHRuRz14p+0zRcqO3xnXyZ9JuV3EdFX0gUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=r79L22UAIdz9lup1UtPGt5CLBWLuPNoWJLxZumuwc2w=;
- b=WTNlHK1pEi50Xscs+mQKZLzctA3cHmdY8Hti7Ntou27CEBT+6aqPU/jtWPVk9f62BNvo9MPk+uAHeYlRopSq18NExB08SQBRPW7hhF4NQ0h5qIdSn0qWm332L8HzZesjhsk5uz9AIG1EBzASBBdskJ8B7LwvC8cxq2rAkhAlxV9umC2nKBvsJzZnr22EpfhvHYHTqHC6rI8lbvHlfGZ1MyOhaifqYSwwt+fpykf0xc5Xakw1T1SeqSFKrLbPxEU/TWA7l7A3TGLBcRGgP0HqeVBju0dDVixpPkUyhUzqJd3RsltbjA35BPK61Jt2vnc2/DiI7btopO98joJNRBjRjQ==
+ bh=cAmxaHgqIbtxznNIaSIGm78TrvxV7toW+1guTbM9dhE=;
+ b=QW08pnQJbU56Gd/qbvZiiMpQC9zZUD64hmrp4rePghzVG1oQUAESzBotIidF8CVTMs84ZrpTFR4xdyPIHSF8Irh3aja73YeDs8SN4kazXigNNN5i2MSR2Qm5M82UE+HoMLf4skzLRPgn3bqd8OiEdI3uq8rGqS1dTHVyOabO4LWkWOlJwugu9s0GkdT9SrT2lLcxI4+LlRx8IOoKnSsQ4+IKXToPxNoVE+AdxJKzN+eAw9fwDHq6YawojgipQHgKptofNCVQNzMwJxXO3ay9ltxxL9Z81I62EG8Xyaj7TUKdKNTFHcqEDncITk6XUhzyS7G45PgoGYC13HfD4yf1cg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r79L22UAIdz9lup1UtPGt5CLBWLuPNoWJLxZumuwc2w=;
- b=CRCdlpOgaBjIcW6d5Y1koNdERu/x4TBuWwOlbhqv3rLXFbS31JK5fAbcyUmieDEROPanXGRH9egNEQpwhi7sT73zm3a8wnpyuPQKMDyD6Bs/KQrt/Rb0fzMNTarMsfFwx0PnMXspOdy6cpnVHU0JAJAfWyGwfO7DLPIkri+K1Ms=
-Received: from TYWPR01MB11862.jpnprd01.prod.outlook.com (2603:1096:400:3fc::6)
- by TY3PR01MB10985.jpnprd01.prod.outlook.com (2603:1096:400:3af::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.19; Tue, 28 May
- 2024 23:13:16 +0000
-Received: from TYWPR01MB11862.jpnprd01.prod.outlook.com
- ([fe80::1bc:6d4b:6770:82c9]) by TYWPR01MB11862.jpnprd01.prod.outlook.com
- ([fe80::1bc:6d4b:6770:82c9%3]) with mapi id 15.20.7633.017; Tue, 28 May 2024
- 23:13:16 +0000
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-To: "Sai.Sathujoda@toshiba-tsip.com" <Sai.Sathujoda@toshiba-tsip.com>
-CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"kazuhiro3.hayashi@toshiba.co.jp" <kazuhiro3.hayashi@toshiba.co.jp>
+ smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
+ header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
+From: <Sai.Sathujoda@toshiba-tsip.com>
+To: <Chris.Paterson2@renesas.com>
+CC: <cip-dev@lists.cip-project.org>, <kazuhiro3.hayashi@toshiba.co.jp>
 Subject: RE: Request for updating device dictionaries
 Thread-Topic: Request for updating device dictionaries
 Thread-Index: 
- AdqmtLnvothy4nUKQBSdfu8qbwxdbQD6sUBwADL8pYAAAIHQ4ABsGuiAACP4ZqAA3sUFkAAKdJig
-Date: Tue, 28 May 2024 23:13:16 +0000
+ AdqmtLnvothy4nUKQBSdfu8qbwxdbQD6sUBwADL8pYAAAIHQ4ABsGuiAACP4ZqAA3sUFkAAKdJigAAOXNVA=
+Date: Wed, 29 May 2024 00:55:37 +0000
+X-TSB-HOP2: ON
 Message-ID: 
- <TYWPR01MB11862B2E811EE59BBC4A0CCA0B7F12@TYWPR01MB11862.jpnprd01.prod.outlook.com>
+ <OS3PR01MB61036314A0787E645985735AC2F22@OS3PR01MB6103.jpnprd01.prod.outlook.com>
 References: 
  <OS3PR01MB6103AFC364EE1AD1A9C0C81AC2EC2@OS3PR01MB6103.jpnprd01.prod.outlook.com>
  <OS3PR01MB6103F00964E26A0F5D38A8ECC2E92@OS3PR01MB6103.jpnprd01.prod.outlook.com>
@@ -54,307 +46,531 @@ References:
  <TYWPR01MB1186210AA7A8F762825C4BD44B7F42@TYWPR01MB11862.jpnprd01.prod.outlook.com>
  <OS3PR01MB6103B95D6D38ECAB1BE70F18C2F52@OS3PR01MB6103.jpnprd01.prod.outlook.com>
  <OS3PR01MB6103AF590A9C795BD550C65BC2F12@OS3PR01MB6103.jpnprd01.prod.outlook.com>
+ <TYWPR01MB11862B2E811EE59BBC4A0CCA0B7F12@TYWPR01MB11862.jpnprd01.prod.outlook.com>
 In-Reply-To: 
- <OS3PR01MB6103AF590A9C795BD550C65BC2F12@OS3PR01MB6103.jpnprd01.prod.outlook.com>
-Accept-Language: en-US, en-GB
+ <TYWPR01MB11862B2E811EE59BBC4A0CCA0B7F12@TYWPR01MB11862.jpnprd01.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
+ header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYWPR01MB11862:EE_|TY3PR01MB10985:EE_
-x-ms-office365-filtering-correlation-id: e340b194-9e02-4087-58e2-08dc7f6bc164
+x-ms-traffictypediagnostic: OS3PR01MB6103:EE_|TYCPR01MB11938:EE_
+x-ms-office365-filtering-correlation-id: 18fe691a-812c-42f1-3009-08dc7f7a0dc9
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|376005|366007|38070700009;
 x-microsoft-antispam-message-info: 
- =?big5?B?dVhFcWRnV2FZckx4RVhLZUlVN0F1dFI2SUwyK2VEZFdMSkdkYVZGUlA5NEJST0ps?=
- =?big5?B?eWcrUnFCUjBCZmtKbFphVFJ3WmluV0FrQXFEK2hnWGcxaWc3ZmUxSnVPbm1CTnZv?=
- =?big5?B?SC9XUytOYXNJRWMzenlMV2F3cDMzMVUvM1lmaksySVlxTGRMRGRlNE1ERzhBTkxD?=
- =?big5?B?c0cwOStoZ0JMUkRvOW51WEdUSjgxL0F4SGREMWUwdHlCR2RuOW1Cb2pQMXlXaVRh?=
- =?big5?B?UTc4RzFyWnY3QytHa2FtdDRnaDIzRm1qbUErUGFrMDVxb05rdS9DcnZvWWhka2w4?=
- =?big5?B?dHpRZ0o4cnRuVXFUaERGRTRqZ2UzdnA4NEJEQTJwY1VZSU92RFhiaUJqeXJEL1ll?=
- =?big5?B?SUxINkFjMzZCMExyS0M5NWxuTFliMmdiSEVlYmFQM2Z4MEx3SWpZMDNpVGI5OFJB?=
- =?big5?B?T0NuRkVjWDJUcUsyRGNqbGpRUExKRnFya1NBaE1sWmFjeEhHRVFEcElTU0xqMzRn?=
- =?big5?B?NFJDejZSMzFuYzFwMmxQWFY3NWJZc1FkYVpsRURSbHFkdWlrVlgrbGRUaHVuU3Jk?=
- =?big5?B?Qk1YUTBGRWRwU3VnaFNKOTEwalhiU0N5Tm5CdFFKRFpLRTBZNmRtYUJFNG52c2lS?=
- =?big5?B?dCtoVlZkNlZJMW9IeXlXOG1JRGVBWG0yVHlwbDJuRVU2WFNZTC82aTFxVVdDRkdT?=
- =?big5?B?WW1TTk9WSk11Z0RHVlM5dFdQRk83d0FrQVhYKzV6NGsvLzQzU3N5ckFpT1VtZlc3?=
- =?big5?B?MmpnalRKUG5GdlB3ZHUzTW1jbFBWbExJRkR0QWxDOVVzcXg3UDY5MzV6eWpYWVFs?=
- =?big5?B?SkFLbTZianpNYjk2emdZL0RtblpGNHh2dFhUc3J1bE1BUmNwQ21HUkdJMmZkcStX?=
- =?big5?B?V2NKaExCY01GemxsUk1wSUhqMGx2SEQ3bjFRU2xDdy8wOVZXTC91TlFoUGhPQnkr?=
- =?big5?B?T3hUK1lBNXJ1UFFVZThNQmlBMzFlK0s5eFpkaUN0V0Uydm9jcmRaYjFOQ2hFRXBq?=
- =?big5?B?SWJ2MWtoUm1jL3ZFUm9rNUd6cHc1VCthWmRpVXVJcHg2cDBXQ2N2ZUd2TFhuRjlh?=
- =?big5?B?dDkyMjRGN0duWWk3bSsyTUhxOVFRdlpGOFEvWFVoTDF1T2lPbUM0Ylk5b05pazY3?=
- =?big5?B?ODdHNkxmWm5qUStJUmlKb0FqZHplMmJMSXJKellXMVV6ZGx3NzBtRDVsWXhBeTRt?=
- =?big5?B?Y1U0VXpOT0MxaXFJR1JHU0lXeCtkb3Ric2dFL3NQZlJHOEtZbmxnZ1lnaEVrVE1i?=
- =?big5?B?clBveXpqdXBIVnkrRDhhMHk5STluc3RiMzNjMXRyNUdoOVc0cDdHVXl3TmM4NnFv?=
- =?big5?B?NTZHanM0WWp0RFltYXhVT2JoUHBJcWthd2wrQTY3VzgvQWN0S1Avb09kbkdvMVFH?=
- =?big5?B?WlY3WkN6YzJpYzdaTG9XL2dQdHlqOVRzWEcvUlVvYW5WT1N2aWFNWHI1dFFINlJq?=
- =?big5?B?UmpVZEI5MjJBdWtYbGdxc3NnWFJuSDhUK0JSVVIyU2NTM0xzK2JqUXRLL2dUNHNr?=
- =?big5?B?NEZHQUdDUHlwdm1NTExtd2lEZjFLQWtuaS94Mm5iRjNHY3gwaGVEekNRdGNKSHlr?=
- =?big5?B?VllvdmtQSElvZGJjcWVSNDd6NkhucmxCN1BIeUo2bk1wU0hmb2lqT0hQWHljWno1?=
- =?big5?B?UmQ5ZllUb0ZQek9UcE90dWhNbk1IS29tRnkvd0VYNE9QNTRmOXVDQUZtOUdLQlFk?=
- =?big5?B?NjF1MnVRPT0=?=
+ =?iso-2022-jp?B?ZnplUk1CQXVQT1lTUjRtMjI1SXA5TTZSaUVaZVFxck9heVB6cEdhdUZ0?=
+ =?iso-2022-jp?B?Mm9Sc1dITm1nTUZKNzVyWnZnS29TTmpqQ3dTZDVhWmRHQ2Jva2pTVlpl?=
+ =?iso-2022-jp?B?NEs4WmNOU2FmbWJ2TVF1bjFZWHJYSUFpd2hCM0cxRDFmTWo2TG8venVz?=
+ =?iso-2022-jp?B?djJ2WitmZ05pZTIvZ0VhRjZtQzNRUnhLaTFFTFFOS2ExS2hlTVBkZU9Z?=
+ =?iso-2022-jp?B?UEdGTHBKaEk5TVJNSzN5ZmxxM0NGcDFiTksxNlAwMncwR25yUHhEVnZL?=
+ =?iso-2022-jp?B?TTUzTzdPZjhDdjkwanN6c3VmMkNCTmZvdm1vbTZ1dE80SktEUE9QK0Rw?=
+ =?iso-2022-jp?B?bmFRNnhMNzhUMGdUZWdmNzl2WXBQWlNDUXduWGdvTFN0MGJtV01VRkdY?=
+ =?iso-2022-jp?B?bmhGWmhIL3BJTGFURVpxQWZObkJzQzhxSWxERGZEZEs1K0VOTEQyM2xo?=
+ =?iso-2022-jp?B?SUU2d1l3QVFuSEVMbmk0eDJoTzYrYzdMOStXc0pTUE9nVU0rOXcrSGZY?=
+ =?iso-2022-jp?B?SjNVYWxROEV0c29OcUx0b21CaERzZmczZDNQSzZNVzJlcFhYSUVKKzhH?=
+ =?iso-2022-jp?B?blp3L0I0ZjJack5MM3FubEtReFNuZEFnUm1Yam9PcFRQK2NUMkY4N1F4?=
+ =?iso-2022-jp?B?cElvMEEwQjhIVnIzeUcyc2pPeHFveGh4M1FRQk5vTCtuT1lHMWdYWS9m?=
+ =?iso-2022-jp?B?ZllzT3pxN05aY2ZkZUtMMzJaSkdSOFRvM3hyRi84TCtzSWI4OTVCdzZq?=
+ =?iso-2022-jp?B?V3d1SytucjlHMzZ3YU16UnZCQlkrSVBYN0hOT1FXNG5PVDRvTEc0MU81?=
+ =?iso-2022-jp?B?clhhMG5raTlWNUI1bTRYOUxTaGh5aDQyckZKaDFxcitCL3pnMmxOaG1U?=
+ =?iso-2022-jp?B?SjJ1NEpoSjRzUllyTmdKRU02NnBDY3lZSHY1aGptVklUNnNnOWUyMUox?=
+ =?iso-2022-jp?B?eFlWMVRIVEFnTnNDY3YzTk82THN6ZkZ1cXg5V1JISk10RUIyUTJQaG1K?=
+ =?iso-2022-jp?B?WW92TG0wbHRPQldGNjNvT3A2N3BnOHk3ZTVzRE5zckpQdVRSamdIWVdX?=
+ =?iso-2022-jp?B?VnFBL3hLM1ZlSU5saG00TkJoT2I2bWtyNjdpWTQ3VE1hMEM5OU95M3V0?=
+ =?iso-2022-jp?B?MkJIckhTOEpVb1BjQlpCM1QrR1czSnAxZllIQ01MaEtLVmx6SFd6T2ND?=
+ =?iso-2022-jp?B?cjJDbVI3dHlHNWJHK1NoMGl5bEQ0b29oV21jMjg1WHJheTZVRWZzdlhT?=
+ =?iso-2022-jp?B?d1ZkYTVOYnRwRU4yVERwbXFWa0lxZzFkeG5TbUdNeUJIbDJXcFp3V2dl?=
+ =?iso-2022-jp?B?OWNISytoNWxSMWdCeVd0RzdQbE1hMnIxRVFZNkIrRzRUTUI4bmlpSW5Z?=
+ =?iso-2022-jp?B?TDBRQ0NKUDdmbGRpTXd5RlNjSWxRdjVzMkZ3R3p0SEFyRzBHNXZ0M2tJ?=
+ =?iso-2022-jp?B?UnMzeVh1Mi9udHJKUFhYTkIzRXI2SkY3c3ZQUnpINDIybW5NUFNmK3Ay?=
+ =?iso-2022-jp?B?Y3dFbU8xWEk1NnZHRXM4eWM0dlMvUnVqMC9QdnpGYjJGVExTRmEyaVJi?=
+ =?iso-2022-jp?B?a2NVWXhxVCt4azIxUk9VRTZJbmZRbGY3akZ0NHE0Vm8rWW1tMHhkRzgw?=
+ =?iso-2022-jp?B?alJKb0hBZXh1dS9xL0lXaVNVbXpDalYrYTZNcjY2K0dlR29PLzBjNnRH?=
+ =?iso-2022-jp?B?S2tBWUw0a3dteFI1ZjV4Nm5QamRaSnM0SC9zVmNocDAzbFBsS2pLTDdL?=
+ =?iso-2022-jp?B?STBtTXFmZ3ZhN1JuZGVQeHJ3RjluU0R2a1VHVDhYZWN6L25sSmhES2Vv?=
+ =?iso-2022-jp?B?cCtPOE1mS3YxOU5xU3dzTXA0VHVaSTRYaDdMVjc3QVhUcmxNS1lVUVZW?=
+ =?iso-2022-jp?B?TmY0ZVgvR1JySjRRcWlRWU9qN3hvPQ==?=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB11862.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007)(38070700009);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB6103.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007)(38070700009);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?big5?B?bUh3dVRFTi9SYkJxSVVwekp4NjBNMEtIL1NnRlFmam40RWF4TUJ3U1BzZjJBdyt4?=
- =?big5?B?Q01FbStYV1NDTGZWaWxDbGkwemxYUEJvM1d2K1dUUGwzS2oxZlpvcyt0YmVqRDRH?=
- =?big5?B?OFp1YTRVVW5HdHpqYzBZM1J2ZjdHODdZSE04amxMVGFJMVdsZzR4K1ZzYjUrdnBj?=
- =?big5?B?bFRwKzJ3YzBHTHVudlVqRUhDRERvWDJvZUZtTjAwNnZ5bmJsSklBYVBqckUxYklQ?=
- =?big5?B?ZE5UaENGZXQwNU5nQ09QS2hCd3hqbEluVjIvZkdXc1h2NTJjWDQrSnBRVzBjUFNm?=
- =?big5?B?YVBlcmhqaEM0ZmRSRk9iMHVvcUFGV1h1UTNEbEVrUlZCNkRaQUZCT1pxbG5jNUtN?=
- =?big5?B?WGhTbHpIK3FKQzA3QTZTK2FHbElsY0NnSkRWbjZtbjVCZmFldE5sTUpXTEtHMHcw?=
- =?big5?B?NFJqZW5sN3A2TXdHemNvQXAwNUtRT1FUckgxSzIwZ3JyNUtiNTF6NHA0WS9NdzB0?=
- =?big5?B?L013SFUzcHRFNkVnb1lKUHlrNGtrNGwwZnlwT0c0bmNjelJ1YTFpbXdzRXJhUTFS?=
- =?big5?B?U0RWQ3VsRGh4QlRaSllVcTlpeFJBMXZzVHJsNDVEOVlWVVFuRE02Wm1TTU9zRUZh?=
- =?big5?B?N2QydzN2aUpxdGhlWi91bjhXcllpV21aQXFjZkRwRGd2OXg3WkF5REEyekJHbFlB?=
- =?big5?B?bWhNWXk4cnZLcnI0UFlkQmJ4Tnd6QlNXRGIvNGViUlNJK1pSL0g0c3ByM0xybDJY?=
- =?big5?B?RGhRQVpKeFU2Ym56S0txRTYrd0lEWXBVajJnbUpXV1BtbFhEVDlXZWlCT1RrNlc5?=
- =?big5?B?M0Q0VFloeTIrWWk3VUdQbnArTS83WU5SM0ZhRm1WYVFwL3BhdHphbnN5SVBHMDRR?=
- =?big5?B?QVVUbFB3OWc3VFhIWmdBcEtZSThHNE5nT3lOSzM4M21ZeDZFY29LcU5GeTVaRjRy?=
- =?big5?B?eURKTll3Myt1Kzh5T1VOVFFyMDAzb3FVYjlnWTduVDM3NkppWE5SaDg2SHhucHVv?=
- =?big5?B?RXlZcWgwYWN3RWc5OWdhMFZCY2sxUVFFVURTN0RlM29jUE91WGxNaWpialNQQmVH?=
- =?big5?B?cnByS21tMVFzMStSQjhid1FJVzFzanBGSFVrNkY1Z0VqNWVQa1lvWE94QnQ4ZWRI?=
- =?big5?B?TkxVYTlvVmJydTcrSXdqc2RDWFhJckxNVmpWUXVyRU9uYWlJMFBwUW5FWWZCbzlv?=
- =?big5?B?ckh2SjNyeXNzWkp6Q3JqUEJXcDM4NjFaQm54SWVtcStQVXY1c0FIbzA2UHFtLzFS?=
- =?big5?B?R3JLc1hOWDdPVDl2c0wzeFpycFcxSXN0YmxyUzRIaDVSQ01BVWQ2cGprdVVRLzRI?=
- =?big5?B?aUorN3Y3aEJMUllZNytZTEtxR2JMRUtXODhzK2hjbHp6U1RSYW5ZN3BxK1p1ejJR?=
- =?big5?B?ekQrYWREL0pha2xScll2TTErM21vVXlmZlRZS0UzVmlhZmQ3LzlyMWVGZ2ZwSkdP?=
- =?big5?B?MFN0TnBWNTRVM0I2ZlFUVFN1bkhDVTg5NmlBOVdJSCtQeTBaUTJOQ0M0ajhGeTNO?=
- =?big5?B?blpUTk4vN3V3dEd3aHg2TSs1VS8wYTNVNTVQYmNPUWVCMFVDam1Kei8rVm9VRUEx?=
- =?big5?B?K2hndjlzSDR4NnVpdmVVRW9rYlFDc0lmZDBrcG1ZZ1BpRE85S3hhNFA2K3lselA0?=
- =?big5?B?Q1FydlpNS2g1aDJlVVNTN0Z2UFFqUHNzQ3NSb2FseFBwVUN3SkFJTGRvUUJzM3FL?=
- =?big5?B?alM0YW1xdUdxQStDdlRRaHhSb3BKV3FGU2o5QmwrM2pTYkVyMitFSFdNWXBEVUxl?=
- =?big5?B?SUxpMlBxNmk1aHcxMWRDcXU5OXZFSDFCd1dMVEcyQzhsSXUyRlVVUytsOU83d3Ft?=
- =?big5?B?N0JDbnppMjk1N1o3dnR5TTZVcEp1U3B5VTNnOGFnendUcWhKcDd6eFFwSDRWcjRW?=
- =?big5?B?Z1F6MDhiRzZtZktlUlM4Q1NkZVprMkNuNzdNU3JDQnFoQ1hKcHJ2bFNGcEpSK2FV?=
- =?big5?B?d0VJbGs4cGV2L2dKeS93MTJ4c0R2NVo0dHp4dlpiTnhGZEFLd0xTNWx2cFNSYW1F?=
- =?big5?B?bG1SalVpOHd6TW9BMU1jQzRiSmhhZG5YM0pGTld3NlhVUDlXWTNZNWxXVlVMTzZn?=
- =?big5?B?d3c0RU1BbE9UVUx3b29xUm5xbDZEcHUwUTVHRjRDVzNxMENCS2c9PQ==?=
-Content-Type: text/plain; charset="big5"
-Content-Transfer-Encoding: base64
+ =?iso-2022-jp?B?TWFVM2ZzU3F3WlQ3M1UwN3JSOGprVEw0YVZCTERvbWVxOVRqa29ldWtQ?=
+ =?iso-2022-jp?B?eWs2N3JqSGxtejdyRHo1SDN4aU92YUJUN00vM3dhQmVGZ1BCbmI0S2hR?=
+ =?iso-2022-jp?B?Y2lxNU12YzJMWW90eEtyci9yL214R3RoSDFCMUFkTFFmdXRlOFhtYWRE?=
+ =?iso-2022-jp?B?Wng1NXlyY3Q4YjFpUllHZUt3WVo1Qy8zOEYwZDhpVC9qTVB6QXdOMmgr?=
+ =?iso-2022-jp?B?ZzJWRUpQL0Q4UGlERUZmQ3NIV0k3ZFd4UUlndFZjZTVtMVJTbG9tTGkr?=
+ =?iso-2022-jp?B?ckVONkNYcjVGY3B0Y2s3OUxSZ2RmeHFDd0p5QVpvUXQ2Yml4aHBpYVU0?=
+ =?iso-2022-jp?B?TkxvU1kvcHFyT0hsVHExckluOWlhVjY0Z29vL0U1NWFaUklIN2xDa0JJ?=
+ =?iso-2022-jp?B?R0ZIRXp0bXZ2ZS9xWUVndWFHVnVDcjUxQ0JSejhIdyt5OGpvU3BlMWVq?=
+ =?iso-2022-jp?B?azFRVzRSQTRtZUtkdjE0emlnR3BoaUVHbk5uSk1BY1pFY2pUV2l6YXY5?=
+ =?iso-2022-jp?B?OGs1MWhNYVI5cVB4NVBKOEF1OXYwd2JCb0JNSm9DNllnWDRtbzZTOEcy?=
+ =?iso-2022-jp?B?WDljT3ZHN2pla1hhNVZRL2ZGZ1ZRSThsN3dJTjlyK2h6NFpySHVUUXZz?=
+ =?iso-2022-jp?B?Y1dmdnZITTUvcnFnZ3laYS9zekZZSW9DNHhQK2FFRTBhQmNsanluRlpT?=
+ =?iso-2022-jp?B?OU8xSGwzdDVJR0ZWakpRYThTcE85aU1qcU5sWFMwbzNGeHN1WFlkTjBX?=
+ =?iso-2022-jp?B?c2MxV2Eya2V2S1RtNTdIc2NqK2lKU3Y3akxwa1dWWGM4Y2pJL2d6aHAv?=
+ =?iso-2022-jp?B?bFhwQS93b0FQWFJKRExMay9wTXU5VEVXR2FhTUZVL2lqQnkzczZHTWk2?=
+ =?iso-2022-jp?B?OGZSaUloYzZCSU9vRG1VSitYam14UmZITlA1T2JaUllYVkpURDR3K01L?=
+ =?iso-2022-jp?B?ZmJ1bk1UdnVVR2FtNGdMdWZaRHU1ZG12SHc4OGFRbktub0NUMkdNLzFP?=
+ =?iso-2022-jp?B?YUZzbGZoMDJZRlM3dG9FbFlJdzY5L1VqUDd5eGpFdkxlOFE2d0t4Z201?=
+ =?iso-2022-jp?B?cXNVZy84Wll0STVOeGIwU3N5dzZGQ0g0cTYyNTJ4a0JSN0JlenBjTS9p?=
+ =?iso-2022-jp?B?MVhMTWJjb0xscnN6TGlzQlM5ZXk1UXdKWWd1WVdSblFWeTlRVkhpSjBF?=
+ =?iso-2022-jp?B?dGNFMVZHNUwwVU9DVjd6dG1KdjNFOTk2WE91ZHRpcjNCQ2VwTU1tR1By?=
+ =?iso-2022-jp?B?dUh1QzB3NEQyQWpTY0tlTmc2RnUrbThUSzB4aC83aGhtRjhtSHEzYVRm?=
+ =?iso-2022-jp?B?dE9oSTlSNzZGWWFyOUFmRzRIWWI4TzlHVEFGdHgrMDRyaUVjS3FoSG4y?=
+ =?iso-2022-jp?B?UkJIU1NHYmhjNk1TUENkekoxVThyZFh2ak1tT0xtVmJpclJmR25JY0Nn?=
+ =?iso-2022-jp?B?c0dGT3pZQ082YlRyeTVhWlBiRVY1alYrOHBzaEVNUFhpTkpLY3d4NTNy?=
+ =?iso-2022-jp?B?TlI5bzBMR3Vha2liOXY1UlJxVCsxLzBTKzFpbDVBYnNIaHZqRzhBU0Z5?=
+ =?iso-2022-jp?B?WnBQbXZlU3N0V0xEeWV2SE1iT2ptMExhNE9naTVCaHZQTHg5YUZISzdX?=
+ =?iso-2022-jp?B?MjNVNUFQVWVTYTRtb0t6VVkvMEpSZE1ldERONzdYSFk5dnRjQVAxa25z?=
+ =?iso-2022-jp?B?anE0Q0Yxeko3R05NMUZSbjZFZ2pKM3VlZnB1OG9CR3ozekJSb01PV1Ux?=
+ =?iso-2022-jp?B?VFA5MS9jZEt2bUFwczg1cWxOY0w3RENzc3pTNmlZZWVFVlpFQ0FGQlpE?=
+ =?iso-2022-jp?B?U0lUUFhNYzZLZjUzOFVYaUJHMmJoR3VOSnd0MDFONHhhQzBjUzkrOHA2?=
+ =?iso-2022-jp?B?VllzMWs4VG43SkVEOU1nSmtYcSt5NGwvTUZYRWUxRlNMZU1ZMW01RGd0?=
+ =?iso-2022-jp?B?TG54bjN2QmwxY0FudFAxRjA5SEcxT2JOSExsNkphcXVFdkNPS3ZIYXdk?=
+ =?iso-2022-jp?B?Y0FXanhVMTFxMHhEUUpiMy9YMy9HWnkwMHNOenJvd2VBQWlsbmUzRlpj?=
+ =?iso-2022-jp?B?OXBibFk1WjJTbmhOYy80Z2IyZEVWblk4V2p1YjRXbk9sTWxNSUkwc1I5?=
+ =?iso-2022-jp?B?UVNXcDJramthTnIydmVSUVBqYlMxMlhLQzZsVzhDY2NwMTM1MEViRXJ3?=
+ =?iso-2022-jp?B?clhsL3QyUDlOQmRTR0QxRXN5RjhnZnJ3ZjZKMjc4VVJMUnpYY2F4aGtB?=
+ =?iso-2022-jp?B?ZHJCcHBGTTF4WUtyZTRvMmdjMGxJeVpmZ2RPbUsxc3VvckpOc3NaYThR?=
+ =?iso-2022-jp?B?eFdiWTlnNzExcklQN3BST3BrVlZvK0E1NWtGQWlwQS8yRytRbjdkS29w?=
+ =?iso-2022-jp?B?SDJKOVc1MUxGODZXWlIvUTRhcnAyRHI2MkFGSlpOV2QyWDVDdUVMODI1?=
+ =?iso-2022-jp?B?eDl5NmtnPT0=?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
+X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB11862.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e340b194-9e02-4087-58e2-08dc7f6bc164
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 May 2024 23:13:16.2452
+X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB6103.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 18fe691a-812c-42f1-3009-08dc7f7a0dc9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 May 2024 00:55:37.3183
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: gqlc3BVHezlXPjwB89XeCFRLPgySOrEdf6mMX97GYGgiBdWRTeplvU1h9gZ+Uwo6PIGranoorPmO7saPBfjXW9pViMKJ6QDnKUj++gwF5kM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB10985
+X-MS-Exchange-CrossTenant-userprincipalname: HpC9EmahIQmDxBhClrWOew092M52KN8aJdQG+fovpeKwm65ckIhLG0EF+I1MCcpV/ITfQke3H8NkeS5HDYbY5UKZsCyTdJyMCgLYUg+2d/k=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB11938
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 28 May 2024 23:13:23 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15975
+ <cip-dev@lists.cip-project.org>; Wed, 29 May 2024 00:55:53 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/15976
 
-SGVsbG8gU2FpLA0KDQo+IEZyb206IFNhaS5TYXRodWpvZGFAdG9zaGliYS10c2lwLmNvbSA8U2Fp
-LlNhdGh1am9kYUB0b3NoaWJhLXRzaXAuY29tPg0KPiBTZW50OiBUdWVzZGF5LCBNYXkgMjgsIDIw
-MjQgNzoyMyBQTQ0KPiANCj4gSGkgQ2hyaXMsDQo+IA0KPiANCj4gDQo+IFRvZGF5IHdoaWxlIEkg
-d2FzIHRlc3RpbmcgaXNhci1jaXAtY29yZSBMQVZBIGpvYiB0cmlnZ2VyIHBpcGVsaW5lLCBJDQo+
-IG5vdGljZWQgdGhhdCB0aGUgb25lIGFuZCBvbmx5IGRldmljZSAocWVtdS1yZW5lc2FzLTAxKSB3
-aGljaCBoYXMgY3VzdG9tDQo+IGRldmljZSBkaWN0aW9uYXJ5IGNoYW5nZXMgdG8gdXNlIHN3dHBt
-IHJlbGF0ZWQgc2NyaXB0cyB0byBib290IENJUA0KPiBzZWN1cml0eSBpbWFnZSBhcmUgZ29uZS4g
-TEFWQSB8IFNjaGVkdWxlciB8IERldmljZXMgfCBxZW11LXJlbmVzYXMtMDEgfA0KPiBkaWN0aW9u
-YXJ5IChjaXBsYXRmb3JtLm9yZykNCj4gPGh0dHBzOi8vbGF2YS5jaXBsYXRmb3JtLm9yZy9zY2hl
-ZHVsZXIvZGV2aWNlL3FlbXUtcmVuZXNhcy0wMS9kZXZpY2VkaWN0Pg0KPiAuIEJlY2F1c2Ugb2Yg
-dGhpcyBub25lIG9mIHRoZSBRRU1VIGRldmljZXMgcHJlc2VudCB3aWxsIGJlIGFibGUgdG8gdGVz
-dA0KPiBTd3VwZGF0ZSwgc2VjdXJlIGJvb3QgYW5kIElFQyBsYXllci4NCj4gDQo+IA0KPiANCj4g
-Q2hyaXMsIEkgYW0gYWJvdXQgdG8gc2VuZCBwYXRjaGVzIHRvIGlzYXItY2lwLWNvcmUgdG8gdHJp
-Z2dlciBMQVZBIGpvYnMuDQo+IEZvciBldmVyeSBwaXBlbGluZSBpdCBtdXN0IHJ1biAxMSBqb2Jz
-IG9uIENJUCBMQVZBIFFFTVUgZGV2aWNlcy4gU28sIEkNCj4gcmVxdWVzdCB5b3UgdG8gcGxlYXNl
-IHVwZGF0ZSBkZXZpY2UgZGljdGlvbmFyaWVzIG9mIG9ubHkgb25lIFFFTVUgZGV2aWNlDQo+IGlu
-IGVhY2ggbGFiIHNvIHRoYXQgd2UgY2FuIGhhdmUgMyB0byA0IFFFTVUgZGV2aWNlcyBhYmxlIHRv
-IHJ1biBDSVAgQ29yZQ0KPiBqb2JzIGFuZCB0aGlzIGFsc28gbWFrZXMgdGVzdCBzdGFnZSBydW5z
-IGZhc3RlciBpbiBpc2FyLWNpcC1jb3JlDQo+IHBpcGVsaW5lcy4NCj4gDQo+IA0KPiANCj4gSSBo
-YXZlIGFscmVhZHkgY3JlYXRlZCBhbiBNUiBodHRwczovL2dpdGxhYi5jb20vY2lwLXByb2plY3Qv
-Y2lwLQ0KPiB0ZXN0aW5nL2xhdmEtZG9ja2VyLy0vbWVyZ2VfcmVxdWVzdHMvMzUgPGh0dHBzOi8v
-Z2l0bGFiLmNvbS9jaXAtDQo+IHByb2plY3QvY2lwLXRlc3RpbmcvbGF2YS1kb2NrZXIvLS9tZXJn
-ZV9yZXF1ZXN0cy8zNT4gIHRvIGluY2x1ZGUgcmVxdWlyZWQNCj4gc2NyaXB0cyBpbiBhbGwgQ0lQ
-IExBVkEgd29ya2Vycy4gSSBtZW50aW9uZWQgdGhlIHJlYXNvbiB3aHkgd2UgbmVlZCB0bw0KPiBt
-YW51YWxseSB1cGRhdGUgdGhlIGRpY3Rpb25hcmllcyBpbnN0ZWFkIG9mIHVwZGF0aW5nIHRoZSBk
-aWN0aW9uYXJpZXMgb2YNCj4gYWxsIHRoZSBhdmFpbGFibGUgUUVNVSBkZXZpY2VzIGhlcmUgaHR0
-cHM6Ly9naXRsYWIuY29tL2NpcC1wcm9qZWN0L2NpcC0NCj4gdGVzdGluZy9sYXZhLWRvY2tlci8t
-L21lcmdlX3JlcXVlc3RzLzM1I25vdGVfMTkyMTEzMjgwNQ0KPiA8aHR0cHM6Ly9naXRsYWIuY29t
-L2NpcC1wcm9qZWN0L2NpcC10ZXN0aW5nL2xhdmEtZG9ja2VyLy0NCj4gL21lcmdlX3JlcXVlc3Rz
-LzM1I25vdGVfMTkyMTEzMjgwNT4gIC4gUGxlYXNlIGhhdmUgYSBsb29rIGF0IHRoaXMuDQoNCkkn
-bSBzdGlsbCBub3QgaGFwcHkgd2l0aCB0aGUgYXBwcm9hY2ggdGhpcyBNUiBpcyB0YWtpbmcsIGJ1
-dCBhcyB5b3UgbmVlZCB0aGlzIGZ1bmN0aW9uYWxpdHkgd29ya2luZywgSSd2ZSBtZXJnZWQgaXQg
-Zm9yIG5vdy4NCkkndmUgY3JlYXRlZCBhIGZvbGxvdyB1cCBpc3N1ZSBhbmQgYXNzaWduZWQgaXQg
-dG8geW91IHRvIGxvb2sgYXQgd2hlbiB5b3UgaGF2ZSB0aW1lLg0KDQpJJ3ZlIGFsc28gY3JlYXRl
-ZCBhbiBhZGRpdGlvbmFsIE1SIHRvIGFkZCB0aGUgZnVuY3Rpb25hbGl0eSBtaXNzaW5nIGZyb20g
-eW91ciBvd24gKHdlIG5lZWQgdG8gYWRkIHBhY2thZ2VzIHRvIHRoZSBMQVZBIHNsYXZlIERvY2tl
-cmZpbGUpLg0KVGhpcyB0b28gaGFzIGJlZW4gbWVyZ2VkLg0KDQo+IA0KPiANCj4gDQo+IEkgcmVx
-dWVzdCB5b3UgdG8gY29uc2lkZXIgdGhpcyBhcyBoaWdoIHByaW9yaXR5IGJlY2F1c2Ugd2UgYXJl
-IHdvcmtpbmcgdG8NCj4gZW5hYmxlIHRoaXMgTEFWQSBqb2IgdHJpZ2dlcnMgZnJvbSBpc2FyLWNp
-cC1jb3JlIGFzIHNvb24gYXMgcG9zc2libGUuIFdlDQo+IHdpbGwgbm90IGJlIGFibGUgdG8gdGVz
-dCBpZiBub25lIG9mIHRoZSBRRU1VIGRldmljZXMgYXJlIGFibGUgdG8gcnVuIGFueQ0KPiBvZiB0
-aGUgQ0lQIENvcmUgam9icy4NCg0KTGFiLWNpcC1yZW5lc2FzIGFuZCBsYWItcGF0ZXJzb25jIGhh
-dmUgYm90aCBiZWVuIHVwZGF0ZWQgdG8gdGhlIGxhdGVzdCBjaXAtbGF2YS1kb2NrZXIgdmVyc2lv
-bi4NCk9uZSBxZW11IG1hY2hpbmUgZnJvbSBlYWNoIGxhYiBzaG91bGQgbm93IHdvcmsgb2theSBm
-b3IgeW91ciB0ZXN0aW5nLCBidXQgcGxlYXNlIGRvdWJsZSBjaGVjayBmb3IgbWUuDQoNCkkgd2ls
-bCBhc2sgdGhlIG90aGVyIGxhYiBtYWludGFpbmVycyB0byBtYWtlIHNpbWlsYXIgY2hhbmdlcyB0
-aGVpciBlbmQuDQpPbmNlIGRvbmUgdGhlcmUgd2lsbCBiZSBmb3VyIHFlbXUgZGV2aWNlcyBhdmFp
-bGFibGUgdG8geW91Lg0KDQpLaW5kIHJlZ2FyZHMsIENocmlzDQoNCj4gDQo+IA0KPiANCj4gVGhh
-bmtzIGFuZCByZWdhcmRzLA0KPiANCj4gU2FpIEFzaHJpdGggU2F0aHVqb2RhIChUIFMgSSBQKQ0K
-PiANCj4gDQo+IA0KPiBGcm9tOiBhc2hyaXRoIHNhaSii4qLhotei3ikNCj4gU2VudDogRnJpZGF5
-LCBNYXkgMjQsIDIwMjQgMToxNSBQTQ0KPiBUbzogQ2hyaXMgUGF0ZXJzb24gPENocmlzLlBhdGVy
-c29uMkByZW5lc2FzLmNvbT4NCj4gQ2M6IGNpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnDQo+
-IFN1YmplY3Q6IFJFOiBSZXF1ZXN0IGZvciB1cGRhdGluZyBkZXZpY2UgZGljdGlvbmFyaWVzDQo+
-IA0KPiANCj4gDQo+IA0KPiANCj4gSGkgQ2hyaXMsDQo+IA0KPiANCj4gDQo+IEkgdXBkYXRlZCB0
-aGUgY29ycmVzcG9uZGluZyBNUiBsYXZhLXNsYXZlL3NjcmlwdHM6IEFkZCBzY3JpcHRzIG5lZWRl
-ZCB0bw0KPiBydW4gZm9yIGJvb3RpbmcgQ0lQIFFFTVUgc2VjdXJpdHkgdGFyZ2V0ICghMzUpIKFQ
-IE1lcmdlIHJlcXVlc3RzIKFQIGNpcC0NCj4gcHJvamVjdCAvIGNpcC10ZXN0aW5nIC8gbGF2YS1k
-b2NrZXIgoVAgR2l0TGFiIDxodHRwczovL2dpdGxhYi5jb20vY2lwLQ0KPiBwcm9qZWN0L2NpcC10
-ZXN0aW5nL2xhdmEtZG9ja2VyLy0NCj4gL21lcmdlX3JlcXVlc3RzLzM1P2NvbW1pdF9pZD02NjQy
-YTIzOTBlYWQ3NThlY2JiOGIwOTZjNjJjNGM1ZDRmZDUwNGIzPg0KPiANCj4gDQo+IA0KPiBUaGlz
-IE1SIG9ubHkgYWRkcyB0aGUgc2NyaXB0cyBpbiB0aGUgd29ya2Vycy4gVXBkYXRpbmcgZGV2aWNl
-IGRpY3Rpb25hcmllcw0KPiBvbiBvbmx5IG9uZSBRRU1VIGRldmljZSBpbiBlYWNoIHdvcmtlciBo
-YXMgdG8gYmUgZG9uZSBtYW51YWxseS4NCj4gDQo+IA0KPiANCj4gSWYgeW91IGhhdmUgZnVydGhl
-ciByZXZpZXcgY29tbWVudHMsIHBsZWFzZSBwcm92aWRlIHRoZW0gaW4gdGhlIE1SLg0KPiANCj4g
-DQo+IA0KPiBUaGFua3MgYW5kIHJlZ2FyZHMsDQo+IA0KPiBTYWkgQXNocml0aCBTYXRodWpvZGEg
-KFQgUyBJIFApDQo+IA0KPiBGcm9tOiBDaHJpcyBQYXRlcnNvbiA8Q2hyaXMuUGF0ZXJzb24yQHJl
-bmVzYXMuY29tDQo+IDxtYWlsdG86Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tPiA+DQo+IFNl
-bnQ6IFRodXJzZGF5LCBNYXkgMjMsIDIwMjQgODowNCBQTQ0KPiBUbzogYXNocml0aCBzYWkoouKi
-4aLXot4pIDxTYWkuU2F0aHVqb2RhQHRvc2hpYmEtdHNpcC5jb20NCj4gPG1haWx0bzpTYWkuU2F0
-aHVqb2RhQHRvc2hpYmEtdHNpcC5jb20+ID4NCj4gQ2M6IGRpbmVzaCBrdW1hciii4qLhotei3iBU
-TUlFQyBPREcgUG9ydGluZykgPGRpbmVzaC5rdW1hckB0b3NoaWJhLXRzaXAuY29tDQo+IDxtYWls
-dG86ZGluZXNoLmt1bWFyQHRvc2hpYmEtdHNpcC5jb20+ID47IGhheWFzaGkga2F6dWhpcm8oqkwg
-qU2nuyCi0qLbotMNCj4gobOi0qLXotWhvKLbot6i4aGzotui3qKzKSA8a2F6dWhpcm8zLmhheWFz
-aGlAdG9zaGliYS5jby5qcA0KPiA8bWFpbHRvOmthenVoaXJvMy5oYXlhc2hpQHRvc2hpYmEuY28u
-anA+ID47IGphbi5raXN6a2FAc2llbWVucy5jb20NCj4gPG1haWx0bzpqYW4ua2lzemthQHNpZW1l
-bnMuY29tPg0KPiBTdWJqZWN0OiBSRTogUmVxdWVzdCBmb3IgdXBkYXRpbmcgZGV2aWNlIGRpY3Rp
-b25hcmllcw0KPiANCj4gDQo+IA0KPiBIZWxsbyBTYWksDQo+IA0KPiANCj4gDQo+IEkgY2FuIHVw
-ZGF0ZSB0aGUgZGV2aWNlIGRpY3Rpb25hcmllcywgaG93ZXZlciBlYWNoIGxhYiB3b3VsZCBuZWVk
-IHRvDQo+IHVwZGF0ZSBpdKGmcyB3b3JrZXIgZG9ja2VyIGltYWdlIHRvIGluY2x1ZGUgdGhlIHN3
-dHBtKi5zaCBzY3JpcHRzLg0KPiANCj4gQmVmb3JlIHdlIGRvIHRoaXMsIHdlIHNob3VsZCByZWFs
-bHkgZmluaXNoIGFuZCBtZXJnZSB0aGUgY29ycmVzcG9uZGluZyBNUjoNCj4gaHR0cHM6Ly9naXRs
-YWIuY29tL2NpcC1wcm9qZWN0L2NpcC10ZXN0aW5nL2xhdmEtZG9ja2VyLy0NCj4gL21lcmdlX3Jl
-cXVlc3RzLzM1LyA8aHR0cHM6Ly9naXRsYWIuY29tL2NpcC1wcm9qZWN0L2NpcC10ZXN0aW5nL2xh
-dmEtDQo+IGRvY2tlci8tL21lcmdlX3JlcXVlc3RzLzM1Lz4NCj4gDQo+IFBsZWFzZSBjb3VsZCB5
-b3UgY2hlY2sgdGhlIHJlbWFpbmluZyB0aHJlYWRzPw0KPiANCj4gT25jZSBtZXJnZWQgSaGmbGwg
-YXNrIGZvciBlYWNoIG9mIHRoZSB3b3JrZXJzIHRvIGJlIHVwZ3JhZGVkIChJIG9ubHkgaGF2ZQ0K
-PiBhY2Nlc3MgdG8gbXkgb3duIHdvcmtlcikuDQo+IA0KPiANCj4gDQo+IEmhpmxsIHJlbW92ZSB0
-aGUgc3d0cG0tam9icyB0YWdzIEkgYWRkZWQgdGhlIG90aGVyIGRheSwgc28gYXQgbGVhc3QgeW91
-cg0KPiBwaXBlbGluZXMgZG9uoaZ0IGZhaWwgoVYgdGhleaGmbGwganVzdCBydW4gc2xvd2VyLg0K
-PiANCj4gDQo+IA0KPiBUaGFua3MsIENocmlzDQo+IA0KPiANCj4gDQo+IEZyb206IFNhaS5TYXRo
-dWpvZGFAdG9zaGliYS10c2lwLmNvbSA8bWFpbHRvOlNhaS5TYXRodWpvZGFAdG9zaGliYS0NCj4g
-dHNpcC5jb20+ICA8U2FpLlNhdGh1am9kYUB0b3NoaWJhLXRzaXAuY29tIDxtYWlsdG86U2FpLlNh
-dGh1am9kYUB0b3NoaWJhLQ0KPiB0c2lwLmNvbT4gPg0KPiBTZW50OiBUdWVzZGF5LCBNYXkgMjEs
-IDIwMjQgMTI6MDUgUE0NCj4gVG86IENocmlzIFBhdGVyc29uIDxDaHJpcy5QYXRlcnNvbjJAcmVu
-ZXNhcy5jb20NCj4gPG1haWx0bzpDaHJpcy5QYXRlcnNvbjJAcmVuZXNhcy5jb20+ID4NCj4gQ2M6
-IGRpbmVzaC5rdW1hckB0b3NoaWJhLXRzaXAuY29tIDxtYWlsdG86ZGluZXNoLmt1bWFyQHRvc2hp
-YmEtdHNpcC5jb20+IDsNCj4ga2F6dWhpcm8zLmhheWFzaGlAdG9zaGliYS5jby5qcCA8bWFpbHRv
-OmthenVoaXJvMy5oYXlhc2hpQHRvc2hpYmEuY28uanA+IDsNCj4gamFuLmtpc3prYUBzaWVtZW5z
-LmNvbSA8bWFpbHRvOmphbi5raXN6a2FAc2llbWVucy5jb20+DQo+IFN1YmplY3Q6IFJFOiBSZXF1
-ZXN0IGZvciB1cGRhdGluZyBkZXZpY2UgZGljdGlvbmFyaWVzDQo+IA0KPiANCj4gDQo+IEhpIENo
-cmlzLA0KPiANCj4gDQo+IA0KPiBUaGFuayB5b3Ugc28gbXVjaCBmb3IgYWRkaW5nIHRoZSB0YWdz
-IHRvIG9uZSBxZW11IGZvciBlYWNoIHdvcmtlci4gQnV0IHRoZQ0KPiBkZXZpY2UgZGljdGlvbmFy
-aWVzIGZvciB0aGVzZSB0YWdnZWQgZGV2aWNlcyBuZWVkIHRvIGJlIHVwZGF0ZWQgd2l0aCB0aGUN
-Cj4gYmVsb3cgc25pcHBldC4gV2l0aG91dCB0aGVzZSBjaGFuZ2VzIHdlIGNhbm5vdCBib290IHRo
-ZSBzZWN1cml0eSBpbWFnZSBpbg0KPiBMQVZBLg0KPiANCj4gDQo+IA0KPiB7JSBzZXQgdXNlcl9j
-b21tYW5kcyA9IHsnc3RhcnRfdHBtJzogeydkbyc6JyIvdXNyL2Jpbi9zaA0KPiAvdXNyL2xvY2Fs
-L2Jpbi9zd3RwbV9zdGFydC5zaCInLA0KPiANCj4gDQo+IA0KPiAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICd1bmRvJzonIi91c3IvYmluL3NoDQo+IC91c3IvbG9jYWwvYmlu
-L3N3dHBtX2ZpbmlzaC5zaCInIH0sDQo+IA0KPiANCj4gDQo+ICAgICAgICAgICAgICAgICAgICAg
-ICAgICdtYW51YWxfa2lsbCc6IHsnZG8nOiciL3Vzci9iaW4vcGtpbGwgLTE1DQo+IHN3dHBtIid9
-fSAlfQ0KPiANCj4gDQo+IA0KPiBKdXN0IGxpa2UgaXQgaXMgdXBkYXRlZCBmb3IgdGhpcyBkZXZp
-Y2UgTEFWQSB8IFNjaGVkdWxlciB8IERldmljZXMgfCBxZW11LQ0KPiByZW5lc2FzLTAxIHwgZGlj
-dGlvbmFyeSAoY2lwbGF0Zm9ybS5vcmcpDQo+IDxodHRwczovL2xhdmEuY2lwbGF0Zm9ybS5vcmcv
-c2NoZWR1bGVyL2RldmljZS9xZW11LXJlbmVzYXMtMDEvZGV2aWNlZGljdD4NCj4gLg0KPiANCj4g
-DQo+IA0KPiBDYW4geW91IGtpbmRseSB1cGRhdGUgdGhlIGRldmljZSBkaWN0aW9uYXJpZXMgZm9y
-IHRoZSBiZWxvdyChp3N3dHBtLWpvYnOhqA0KPiB0YWdnZWQgZGV2aWNlcyA/DQo+IA0KPiANCj4g
-DQo+ICoJaHR0cHM6Ly9sYXZhLmNpcGxhdGZvcm0ub3JnL3NjaGVkdWxlci9kZXZpY2UvcWVtdS0w
-Mw0KPiAqCWh0dHBzOi8vbGF2YS5jaXBsYXRmb3JtLm9yZy9zY2hlZHVsZXIvZGV2aWNlL3FlbXUt
-Y2lwLXNpZW1lbnMtbXVjDQo+ICoJaHR0cHM6Ly9sYXZhLmNpcGxhdGZvcm0ub3JnL3NjaGVkdWxl
-ci9kZXZpY2UvcWVtdS1wYXRlcnNvbmMtMDENCj4gDQo+IA0KPiANCj4gSSB3aWxsIGNvbnRhY3Qg
-dGhlIG1haW50YWluZXJzIG9mIGlzYXItY2lwLWNvcmUgcHJvamVjdCByZWdhcmRpbmcgQ0kvQ0QN
-Cj4gdmFyaWFibGVzLg0KPiANCj4gDQo+IA0KPiBUaGFua3MgYW5kIHJlZ2FyZHMsDQo+IA0KPiBT
-YWkgQXNocml0aCBTYXRodWpvZGEgKFQgUyBJIFApDQo+IA0KPiANCj4gDQo+IA0KPiANCj4gDQo+
-IA0KPiBGcm9tOiBDaHJpcyBQYXRlcnNvbiA8Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tDQo+
-IDxtYWlsdG86Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tPiA+DQo+IFNlbnQ6IFR1ZXNkYXks
-IE1heSAyMSwgMjAyNCA0OjI0IFBNDQo+IFRvOiBhc2hyaXRoIHNhaSii4qLhotei3ikgPFNhaS5T
-YXRodWpvZGFAdG9zaGliYS10c2lwLmNvbQ0KPiA8bWFpbHRvOlNhaS5TYXRodWpvZGFAdG9zaGli
-YS10c2lwLmNvbT4gPg0KPiBDYzogZGluZXNoIGt1bWFyKKLiouGi16LeIFRNSUVDIE9ERyBQb3J0
-aW5nKSA8ZGluZXNoLmt1bWFyQHRvc2hpYmEtdHNpcC5jb20NCj4gPG1haWx0bzpkaW5lc2gua3Vt
-YXJAdG9zaGliYS10c2lwLmNvbT4gPjsgaGF5YXNoaSBrYXp1aGlybyiqTCCpTae7IKLSotui0w0K
-PiChs6LSotei1aG8otui3qLhobOi26LeorMpIDxrYXp1aGlybzMuaGF5YXNoaUB0b3NoaWJhLmNv
-LmpwDQo+IDxtYWlsdG86a2F6dWhpcm8zLmhheWFzaGlAdG9zaGliYS5jby5qcD4gPjsgamFuLmtp
-c3prYUBzaWVtZW5zLmNvbQ0KPiA8bWFpbHRvOmphbi5raXN6a2FAc2llbWVucy5jb20+DQo+IFN1
-YmplY3Q6IFJFOiBSZXF1ZXN0IGZvciB1cGRhdGluZyBkZXZpY2UgZGljdGlvbmFyaWVzDQo+IA0K
-PiANCj4gDQo+IEhlbGxvIFNhaSwNCj4gDQo+IA0KPiANCj4gWW91IG5lZWQgdG8gdGFsayB0byB0
-aGUgbWFpbnRhaW5lcnMgb2YgdGhlIGlzYXItY2lwLWNvcmUgcHJvamVjdCB0byBnZXQNCj4gQ0kv
-Q0QgdmFyaWFibGVzIHNldCB0aGVyZS4gSXShpnMgbm90IG15IHByb2plY3Qgc28gSSBzaG91bGRu
-oaZ0IG1ha2Ugc3VjaA0KPiBjaGFuZ2VzLg0KPiANCj4gDQo+IA0KPiBJoaZ2ZSBhZGRlZCB0aGUg
-c3d0cG0tam9icyB0YWcgdG8gb25lIHFlbXUgZnJvbSBlYWNoIHdvcmtlci4gQ2hlY2sgdGhlDQo+
-IKGnZ3JlZW4gZXlloaggb24gdGhlIHJpZ2h0IG9mIHRoaXMgcGFnZToNCj4gaHR0cHM6Ly9sYXZh
-LmNpcGxhdGZvcm0ub3JnL3NjaGVkdWxlci9kZXZpY2VfdHlwZS9xZW11DQo+IDxodHRwczovL2xh
-dmEuY2lwbGF0Zm9ybS5vcmcvc2NoZWR1bGVyL2RldmljZV90eXBlL3FlbXU+DQo+IA0KPiANCj4g
-DQo+IEtpbmQgcmVnYXJkcywgQ2hyaXMNCj4gDQo+IA0KPiANCj4gRnJvbTogU2FpLlNhdGh1am9k
-YUB0b3NoaWJhLXRzaXAuY29tIDxtYWlsdG86U2FpLlNhdGh1am9kYUB0b3NoaWJhLQ0KPiB0c2lw
-LmNvbT4gIDxTYWkuU2F0aHVqb2RhQHRvc2hpYmEtdHNpcC5jb20gPG1haWx0bzpTYWkuU2F0aHVq
-b2RhQHRvc2hpYmEtDQo+IHRzaXAuY29tPiA+DQo+IFNlbnQ6IE1vbmRheSwgTWF5IDIwLCAyMDI0
-IDExOjIzIEFNDQo+IFRvOiBDaHJpcyBQYXRlcnNvbiA8Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMu
-Y29tDQo+IDxtYWlsdG86Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29tPiA+DQo+IENjOiBjaXAt
-ZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZyA8bWFpbHRvOmNpcC1kZXZAbGlzdHMuY2lwLXByb2pl
-Y3Qub3JnPiA7DQo+IGRpbmVzaC5rdW1hckB0b3NoaWJhLXRzaXAuY29tIDxtYWlsdG86ZGluZXNo
-Lmt1bWFyQHRvc2hpYmEtdHNpcC5jb20+IDsNCj4ga2F6dWhpcm8zLmhheWFzaGlAdG9zaGliYS5j
-by5qcCA8bWFpbHRvOmthenVoaXJvMy5oYXlhc2hpQHRvc2hpYmEuY28uanA+DQo+IFN1YmplY3Q6
-IFJFOiBSZXF1ZXN0IGZvciB1cGRhdGluZyBkZXZpY2UgZGljdGlvbmFyaWVzDQo+IA0KPiANCj4g
-DQo+IEhlbGxvIENocmlzLA0KPiANCj4gDQo+IA0KPiBBbnkgdXBkYXRlcyBvbiAybmQgYW5kIDNy
-ZCByZXF1ZXN0cyBJIG1hZGUgaW4gdGhlIGJlbG93IG1haWwgPw0KPiANCj4gDQo+IA0KPiBUaGFu
-a3MgYW5kIHJlZ2FyZHMsDQo+IA0KPiBTYWkgQXNocml0aCBTYXRodWpvZGEgKFQgUyBJIFApDQo+
-IA0KPiANCj4gDQo+IEZyb206IGFzaHJpdGggc2FpKKLiouGi16LeKQ0KPiBTZW50OiBXZWRuZXNk
-YXksIE1heSAxNSwgMjAyNCA0OjQxIFBNDQo+IFRvOiBDaHJpcyBQYXRlcnNvbiA8Q2hyaXMuUGF0
-ZXJzb24yQHJlbmVzYXMuY29tDQo+IDxtYWlsdG86Q2hyaXMuUGF0ZXJzb24yQHJlbmVzYXMuY29t
-PiA+DQo+IENjOiBjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZyA8bWFpbHRvOmNpcC1kZXZA
-bGlzdHMuY2lwLXByb2plY3Qub3JnPiA7DQo+IGRpbmVzaCBrdW1hciii4qLhotei3iBUTUlFQyBP
-REcgUG9ydGluZykgPGRpbmVzaC5rdW1hckB0b3NoaWJhLXRzaXAuY29tDQo+IDxtYWlsdG86ZGlu
-ZXNoLmt1bWFyQHRvc2hpYmEtdHNpcC5jb20+ID47IGhheWFzaGkga2F6dWhpcm8oqkwgqU2nuyCi
-0qLbotMNCj4gobOi0qLXotWhvKLbot6i4aGzotui3qKzKSA8a2F6dWhpcm8zLmhheWFzaGlAdG9z
-aGliYS5jby5qcA0KPiA8bWFpbHRvOmthenVoaXJvMy5oYXlhc2hpQHRvc2hpYmEuY28uanA+ID4N
-Cj4gU3ViamVjdDogUmVxdWVzdCBmb3IgdXBkYXRpbmcgZGV2aWNlIGRpY3Rpb25hcmllcw0KPiAN
-Cj4gDQo+IA0KPiBIZWxsbyBDaHJpcywNCj4gDQo+IA0KPiANCj4gSG9wZSB5b3UgYXJlIGRvaW5n
-IHdlbGwuDQo+IA0KPiANCj4gDQo+IFNvcnJ5IHRvIGRpc3R1cmIgeW91IHdpdGggdGhlc2UgZXh0
-cmEgdGhpbmdzIEkgbmVlZCBvbiBDSVAgTEFWQSBMYWIuIExldA0KPiBtZSBjb25zb2xpZGF0ZSBt
-eSByZXF1ZXN0cyBpbiB0aGlzIG1haWwuDQo+IA0KPiANCj4gDQo+IEkgYW0gcHJlcGFyaW5nIGEg
-cGF0Y2ggdG8gdHJpZ2dlciBMQVZBIGpvYiBkZWZpbml0aW9ucyBmcm9tIGlzYXItY2lwLWNvcmUu
-DQo+IEN1cnJlbnRseSBJIGFtIHdvcmtpbmcgb24gdGhhdCBpbiBhIGN1c3RvbSBicmFuY2guIEJl
-Zm9yZSBzZW5kaW5nIHRoYXQNCj4gcGF0Y2gsIEkgaGF2ZSBjcmVhdGVkIGFuIE1SIHRvIHVwZGF0
-ZSB0aGUgY2lwLWNvcmUtY2kgcmVwb3NpdG9yeSB3aGljaCBpcw0KPiByZXF1aXJlZCB0byBydW4g
-dGhlIHRlc3Qgam9icyBpbiBpc2FyLWNpcC1jb3JlLiBJIHdpbGwgYXNzaWduIGl0IGZvciB5b3Vy
-DQo+IHJldmlldyBzb29uLg0KPiANCj4gDQo+IA0KPiBJIHdpbGwgYmUgYWJsZSB0byBzZW5kIHRo
-ZSBwYXRjaCB0byBhZGQgdGVzdCBqb2JzIGluIGlzYXItY2lwLWNvcmUgb25jZQ0KPiB0aGUgYmVs
-b3cgbWVudGlvbmVkIHRoaW5ncyBhcmUgZG9uZS4NCj4gDQo+IDEuCVRoaXMgTVIgbmVlZHMgdG8g
-bWVyZ2UgYnVpbGQtYm9va3dvcm0uRG9ja2VyZmlsZTogSW5jbHVkZSBsYXZhLnNoDQo+IGFuZCB0
-ZW1wbGF0ZXMgaW4gdGhlIGRvY2tlciBpbWFnZS4gKCEzKSChUCBNZXJnZSByZXF1ZXN0cyChUCBj
-aXAtcGxheWdyb3VuZA0KPiAvIGNpcC1jb3JlLWNpIKFQIEdpdExhYiA8aHR0cHM6Ly9naXRsYWIu
-Y29tL2NpcC1wbGF5Z3JvdW5kL2NpcC1jb3JlLWNpLy0NCj4gL21lcmdlX3JlcXVlc3RzLzM+ICB3
-aGljaCBJIHNoYWxsIGFzc2lnbiB0byB5b3Ugc29vbiBhZnRlciBzb21lIGludGVybmFsDQo+IHJl
-dmlldy4NCj4gMi4JSSBuZWVkIHNvbWUgdmFyaWFibGVzIGluIGlzYXItY2lwLWNvcmUgQ0kvQ0Qg
-c2V0dGluZyBzZWN0aW9uIGxpa2UNCj4gTEFWQV9VU0VSLCBMQVZBX1RPS0VOIGFuZCBTUVVBRF9U
-T0tFTi4gV2UgZG9uoaZ0IGhhdmUgdGhlIHByaXZpbGVnZSB0byBkbw0KPiB0aGF0LiBJIHdpbGwg
-bWFpbCB0aGVtIHRvIHlvdSBwZXJzb25hbGx5LiBQbGVhc2UgaGlkZSB0aGVtIGluIGlzYXItY2lw
-LQ0KPiBjb3JlIEdpdGxhYiBDSS9DRCBzZWN0aW9uIHNvIHRoYXQgSSBjYW4gdXNlIHRoZW0gd2hp
-bGUgcnVubmluZyBsYXZhLnNoDQo+IHNjcmlwdC4NCj4gMy4JU2luY2Ugd2UgbmVlZCB0byBydW4g
-dGhlc2UgTEFWQSBqb2JzIHdoZW4gcGlwZWxpbmVzIGFyZSB0cmlnZ2VyZWQgaW4NCj4gaXNhci1j
-aXAtY29yZSwgSSBhbSBtYWtpbmcgY2hhbmdlcyBpbiBzdWNoIGEgd2F5IHRoYXQgcGlwZWxpbmUg
-a2VlcHMNCj4gcnVubmluZyB1bnRpbCBhbGwgdGhlIGpvYnMgYXJlIGRvbmUgYW5kIHdlIHJlcG9y
-dCB0aGUgaGVhbHRoIGFzIGEgcmVzdWx0Lg0KPiBJdCB3aWxsIHRha2UgYXJvdW5kIDEyMCBtaW5z
-IHRvIHJ1biBhbGwgdGhlIGpvYnMuIFdlIGhhdmUgb25seSBkZXZpY2UNCj4gKHFlbXUtcmVuZXNh
-LTAxKSB1bmRlciBsYWItY2lwLXJlbmVzYXMuIFNvLCBJIHJlcXVlc3QgeW91IHRvIHBsZWFzZSBh
-ZGQNCj4gdGhlIHN3dHBtIGRldmljZSBkaWN0aW9uYXJ5IGNoYW5nZXMgYW5kIHN3dHBtLWpvYnMg
-dGFnIHRvIG9ubHkgb25lIFFFTVUNCj4gZGV2aWNlIGluIGV2ZXJ5IExBVkEgbGFiIHlvdSBjYW4g
-YWNjZXNzLiBCeSB0aGlzIHdpbGwgYmUgYWJsZSB0byByZWR1Y2UNCj4gdGhlIHBpcGVsaW5lIHJ1
-bi10aW1lIGR1ZSB0byBzaW11bHRhbmVvdXMgcnVucy4NCj4gDQo+IA0KPiANCj4gSXQgd2lsbCBi
-ZSB2ZXJ5IGhlbHBmdWwgaWYgeW91IHByb3ZpZGUgeW91ciBzdXBwb3J0IHdpdGggdGhlIGFib3Zl
-LQ0KPiBtZW50aW9uZWQgaXRlbXMuDQo+IA0KPiANCj4gDQo+IFRoYW5rcyBhbmQgcmVnYXJkcywN
-Cj4gDQo+IFNhaSBBc2hyaXRoIFNhdGh1am9kYSAoVCBTIEkgUCkNCg0K
+Hi Chris,
+
+Thanks a lot for your support. I apologize for not including changes to ins=
+tall swtpm and ovmf packages to the slaves. Thank you for creating an MR fo=
+r that.
+
+I agree that we must work on this limitation that only one QEMU device will=
+ be able to run these jobs in each lab. The problem is if the image boots o=
+n a QEMU device in a lab, it acquires the below socket.
+
+swtpm socket -d --tpmstate dir=3D/home/######/XXXXXX/isar-cip-core/build/tm=
+p/deploy/images/qemu-amd64/cip-core-image-security-cip-core-bookworm-qemu-a=
+md64.swtpm --ctrl type=3Dunixio,path=3D/tmp/qemu-swtpm.sock --tpm2.=20
+
+Then if the other QEMU device in that slave also starts booting, we will ha=
+ve some conflicts to due to which there are high chances that both the jobs=
+ can fail. Let me investigate on how to overcome this limitation and make t=
+he both the QEMU devices ready to run these swtpm related jobs.
+
+Thanks and regards,
+Sai Ashrith Sathujoda (T S I P)
+
+
+
+-----Original Message-----
+From: Chris Paterson <Chris.Paterson2@renesas.com>=20
+Sent: Wednesday, May 29, 2024 4:43 AM
+To: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com>
+Cc: cip-dev@lists.cip-project.org; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=
+=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayas=
+hi@toshiba.co.jp>
+Subject: RE: Request for updating device dictionaries
+
+Hello Sai,
+
+> From: Sai.Sathujoda@toshiba-tsip.com <Sai.Sathujoda@toshiba-tsip.com>
+> Sent: Tuesday, May 28, 2024 7:23 PM
+>=20
+> Hi Chris,
+>=20
+>=20
+>=20
+> Today while I was testing isar-cip-core LAVA job trigger pipeline, I=20
+> noticed that the one and only device (qemu-renesas-01) which has=20
+> custom device dictionary changes to use swtpm related scripts to boot=20
+> CIP security image are gone. LAVA | Scheduler | Devices |=20
+> qemu-renesas-01 | dictionary (ciplatform.org)=20
+> <https://lava.ciplatform.org/scheduler/device/qemu-renesas-01/devicedi
+> ct> . Because of this none of the QEMU devices present will be able to=20
+> test Swupdate, secure boot and IEC layer.
+>=20
+>=20
+>=20
+> Chris, I am about to send patches to isar-cip-core to trigger LAVA jobs.
+> For every pipeline it must run 11 jobs on CIP LAVA QEMU devices. So, I=20
+> request you to please update device dictionaries of only one QEMU=20
+> device in each lab so that we can have 3 to 4 QEMU devices able to run=20
+> CIP Core jobs and this also makes test stage runs faster in=20
+> isar-cip-core pipelines.
+>=20
+>=20
+>=20
+> I have already created an MR https://gitlab.com/cip-project/cip-
+> testing/lava-docker/-/merge_requests/35 <https://gitlab.com/cip-=20
+> project/cip-testing/lava-docker/-/merge_requests/35>  to include=20
+> required scripts in all CIP LAVA workers. I mentioned the reason why=20
+> we need to manually update the dictionaries instead of updating the=20
+> dictionaries of all the available QEMU devices here=20
+> https://gitlab.com/cip-project/cip-
+> testing/lava-docker/-/merge_requests/35#note_1921132805
+> <https://gitlab.com/cip-project/cip-testing/lava-docker/-
+> /merge_requests/35#note_1921132805>  . Please have a look at this.
+
+I'm still not happy with the approach this MR is taking, but as you need th=
+is functionality working, I've merged it for now.
+I've created a follow up issue and assigned it to you to look at when you h=
+ave time.
+
+I've also created an additional MR to add the functionality missing from yo=
+ur own (we need to add packages to the LAVA slave Dockerfile).
+This too has been merged.
+
+>=20
+>=20
+>=20
+> I request you to consider this as high priority because we are working=20
+> to enable this LAVA job triggers from isar-cip-core as soon as=20
+> possible. We will not be able to test if none of the QEMU devices are=20
+> able to run any of the CIP Core jobs.
+
+Lab-cip-renesas and lab-patersonc have both been updated to the latest cip-=
+lava-docker version.
+One qemu machine from each lab should now work okay for your testing, but p=
+lease double check for me.
+
+I will ask the other lab maintainers to make similar changes their end.
+Once done there will be four qemu devices available to you.
+
+Kind regards, Chris
+
+>=20
+>=20
+>=20
+> Thanks and regards,
+>=20
+> Sai Ashrith Sathujoda (T S I P)
+>=20
+>=20
+>=20
+> From: ashrith sai(=1B$B#T#S#I#P=1B(B)
+> Sent: Friday, May 24, 2024 1:15 PM
+> To: Chris Paterson <Chris.Paterson2@renesas.com>
+> Cc: cip-dev@lists.cip-project.org
+> Subject: RE: Request for updating device dictionaries
+>=20
+>=20
+>=20
+>=20
+>=20
+> Hi Chris,
+>=20
+>=20
+>=20
+> I updated the corresponding MR lava-slave/scripts: Add scripts needed=20
+> to run for booting CIP QEMU security target (!35) =1B$B!&=1B(B Merge requ=
+ests =1B$B!&=1B(B=20
+> cip- project / cip-testing / lava-docker =1B$B!&=1B(B GitLab=20
+> <https://gitlab.com/cip-
+> project/cip-testing/lava-docker/-
+> /merge_requests/35?commit_id=3D6642a2390ead758ecbb8b096c62c4c5d4fd504b3>
+>=20
+>=20
+>=20
+> This MR only adds the scripts in the workers. Updating device=20
+> dictionaries on only one QEMU device in each worker has to be done manual=
+ly.
+>=20
+>=20
+>=20
+> If you have further review comments, please provide them in the MR.
+>=20
+>=20
+>=20
+> Thanks and regards,
+>=20
+> Sai Ashrith Sathujoda (T S I P)
+>=20
+> From: Chris Paterson <Chris.Paterson2@renesas.com=20
+> <mailto:Chris.Paterson2@renesas.com> >
+> Sent: Thursday, May 23, 2024 8:04 PM
+> To: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com=20
+> <mailto:Sai.Sathujoda@toshiba-tsip.com> >
+> Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting)=20
+> <dinesh.kumar@toshiba-tsip.com <mailto:dinesh.kumar@toshiba-tsip.com>=20
+> >; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B
+> =1B$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp=20
+> <mailto:kazuhiro3.hayashi@toshiba.co.jp> >; jan.kiszka@siemens.com=20
+> <mailto:jan.kiszka@siemens.com>
+> Subject: RE: Request for updating device dictionaries
+>=20
+>=20
+>=20
+> Hello Sai,
+>=20
+>=20
+>=20
+> I can update the device dictionaries, however each lab would need to=20
+> update it=1B$B!G=1B(Bs worker docker image to include the swtpm*.sh scrip=
+ts.
+>=20
+> Before we do this, we should really finish and merge the corresponding MR=
+:
+> https://gitlab.com/cip-project/cip-testing/lava-docker/-
+> /merge_requests/35/ <https://gitlab.com/cip-project/cip-testing/lava-
+> docker/-/merge_requests/35/>
+>=20
+> Please could you check the remaining threads?
+>=20
+> Once merged I=1B$B!G=1B(Bll ask for each of the workers to be upgraded (I=
+ only=20
+> have access to my own worker).
+>=20
+>=20
+>=20
+> I=1B$B!G=1B(Bll remove the swtpm-jobs tags I added the other day, so at l=
+east=20
+> your pipelines don=1B$B!G=1B(Bt fail ? they=1B$B!G=1B(Bll just run slower=
+.
+>=20
+>=20
+>=20
+> Thanks, Chris
+>=20
+>=20
+>=20
+> From: Sai.Sathujoda@toshiba-tsip.com <mailto:Sai.Sathujoda@toshiba-=20
+> tsip.com>  <Sai.Sathujoda@toshiba-tsip.com=20
+> <mailto:Sai.Sathujoda@toshiba- tsip.com> >
+> Sent: Tuesday, May 21, 2024 12:05 PM
+> To: Chris Paterson <Chris.Paterson2@renesas.com=20
+> <mailto:Chris.Paterson2@renesas.com> >
+> Cc: dinesh.kumar@toshiba-tsip.com=20
+> <mailto:dinesh.kumar@toshiba-tsip.com> ;=20
+> kazuhiro3.hayashi@toshiba.co.jp=20
+> <mailto:kazuhiro3.hayashi@toshiba.co.jp> ; jan.kiszka@siemens.com=20
+> <mailto:jan.kiszka@siemens.com>
+> Subject: RE: Request for updating device dictionaries
+>=20
+>=20
+>=20
+> Hi Chris,
+>=20
+>=20
+>=20
+> Thank you so much for adding the tags to one qemu for each worker. But=20
+> the device dictionaries for these tagged devices need to be updated=20
+> with the below snippet. Without these changes we cannot boot the=20
+> security image in LAVA.
+>=20
+>=20
+>=20
+> {% set user_commands =3D {'start_tpm': {'do':'"/usr/bin/sh=20
+> /usr/local/bin/swtpm_start.sh"',
+>=20
+>=20
+>=20
+>                                       'undo':'"/usr/bin/sh=20
+> /usr/local/bin/swtpm_finish.sh"' },
+>=20
+>=20
+>=20
+>                         'manual_kill': {'do':'"/usr/bin/pkill -15=20
+> swtpm"'}} %}
+>=20
+>=20
+>=20
+> Just like it is updated for this device LAVA | Scheduler | Devices |=20
+> qemu-
+> renesas-01 | dictionary (ciplatform.org)=20
+> <https://lava.ciplatform.org/scheduler/device/qemu-renesas-01/devicedi
+> ct>
+> .
+>=20
+>=20
+>=20
+> Can you kindly update the device dictionaries for the below =1B$B!H=1B(Bs=
+wtpm-jobs=1B$B!I=1B(B
+> tagged devices ?
+>=20
+>=20
+>=20
+> *	https://lava.ciplatform.org/scheduler/device/qemu-03
+> *	https://lava.ciplatform.org/scheduler/device/qemu-cip-siemens-muc
+> *	https://lava.ciplatform.org/scheduler/device/qemu-patersonc-01
+>=20
+>=20
+>=20
+> I will contact the maintainers of isar-cip-core project regarding=20
+> CI/CD variables.
+>=20
+>=20
+>=20
+> Thanks and regards,
+>=20
+> Sai Ashrith Sathujoda (T S I P)
+>=20
+>=20
+>=20
+>=20
+>=20
+>=20
+>=20
+> From: Chris Paterson <Chris.Paterson2@renesas.com=20
+> <mailto:Chris.Paterson2@renesas.com> >
+> Sent: Tuesday, May 21, 2024 4:24 PM
+> To: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com=20
+> <mailto:Sai.Sathujoda@toshiba-tsip.com> >
+> Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting)=20
+> <dinesh.kumar@toshiba-tsip.com <mailto:dinesh.kumar@toshiba-tsip.com>=20
+> >; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B
+> =1B$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp=20
+> <mailto:kazuhiro3.hayashi@toshiba.co.jp> >; jan.kiszka@siemens.com=20
+> <mailto:jan.kiszka@siemens.com>
+> Subject: RE: Request for updating device dictionaries
+>=20
+>=20
+>=20
+> Hello Sai,
+>=20
+>=20
+>=20
+> You need to talk to the maintainers of the isar-cip-core project to=20
+> get CI/CD variables set there. It=1B$B!G=1B(Bs not my project so I should=
+n=1B$B!G=1B(Bt make=20
+> such changes.
+>=20
+>=20
+>=20
+> I=1B$B!G=1B(Bve added the swtpm-jobs tag to one qemu from each worker. Ch=
+eck the=20
+> =1B$B!H=1B(Bgreen eye=1B$B!I=1B(B on the right of this page:
+> https://lava.ciplatform.org/scheduler/device_type/qemu
+> <https://lava.ciplatform.org/scheduler/device_type/qemu>
+>=20
+>=20
+>=20
+> Kind regards, Chris
+>=20
+>=20
+>=20
+> From: Sai.Sathujoda@toshiba-tsip.com <mailto:Sai.Sathujoda@toshiba-=20
+> tsip.com>  <Sai.Sathujoda@toshiba-tsip.com=20
+> <mailto:Sai.Sathujoda@toshiba- tsip.com> >
+> Sent: Monday, May 20, 2024 11:23 AM
+> To: Chris Paterson <Chris.Paterson2@renesas.com=20
+> <mailto:Chris.Paterson2@renesas.com> >
+> Cc: cip-dev@lists.cip-project.org=20
+> <mailto:cip-dev@lists.cip-project.org> ; dinesh.kumar@toshiba-tsip.com=20
+> <mailto:dinesh.kumar@toshiba-tsip.com> ;=20
+> kazuhiro3.hayashi@toshiba.co.jp=20
+> <mailto:kazuhiro3.hayashi@toshiba.co.jp>
+> Subject: RE: Request for updating device dictionaries
+>=20
+>=20
+>=20
+> Hello Chris,
+>=20
+>=20
+>=20
+> Any updates on 2nd and 3rd requests I made in the below mail ?
+>=20
+>=20
+>=20
+> Thanks and regards,
+>=20
+> Sai Ashrith Sathujoda (T S I P)
+>=20
+>=20
+>=20
+> From: ashrith sai(=1B$B#T#S#I#P=1B(B)
+> Sent: Wednesday, May 15, 2024 4:41 PM
+> To: Chris Paterson <Chris.Paterson2@renesas.com=20
+> <mailto:Chris.Paterson2@renesas.com> >
+> Cc: cip-dev@lists.cip-project.org=20
+> <mailto:cip-dev@lists.cip-project.org> ; dinesh kumar(=1B$B#T#S#I#P=1B(B =
+TMIEC ODG=20
+> Porting) <dinesh.kumar@toshiba-tsip.com=20
+> <mailto:dinesh.kumar@toshiba-tsip.com> >; hayashi kazuhiro(=1B$BNS=1B(B =
+=1B$BOB9(=1B(B =1B$B#D#M#E=1B(B
+> =1B$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp=20
+> <mailto:kazuhiro3.hayashi@toshiba.co.jp> >
+> Subject: Request for updating device dictionaries
+>=20
+>=20
+>=20
+> Hello Chris,
+>=20
+>=20
+>=20
+> Hope you are doing well.
+>=20
+>=20
+>=20
+> Sorry to disturb you with these extra things I need on CIP LAVA Lab.=20
+> Let me consolidate my requests in this mail.
+>=20
+>=20
+>=20
+> I am preparing a patch to trigger LAVA job definitions from isar-cip-core=
+.
+> Currently I am working on that in a custom branch. Before sending that=20
+> patch, I have created an MR to update the cip-core-ci repository which=20
+> is required to run the test jobs in isar-cip-core. I will assign it=20
+> for your review soon.
+>=20
+>=20
+>=20
+> I will be able to send the patch to add test jobs in isar-cip-core=20
+> once the below mentioned things are done.
+>=20
+> 1.	This MR needs to merge build-bookworm.Dockerfile: Include lava.sh
+> and templates in the docker image. (!3) =1B$B!&=1B(B Merge requests =1B$B=
+!&=1B(B=20
+> cip-playground / cip-core-ci =1B$B!&=1B(B GitLab=20
+> <https://gitlab.com/cip-playground/cip-core-ci/-
+> /merge_requests/3>  which I shall assign to you soon after some=20
+> internal review.
+> 2.	I need some variables in isar-cip-core CI/CD setting section like
+> LAVA_USER, LAVA_TOKEN and SQUAD_TOKEN. We don=1B$B!G=1B(Bt have the privi=
+lege to=20
+> do that. I will mail them to you personally. Please hide them in=20
+> isar-cip- core Gitlab CI/CD section so that I can use them while=20
+> running lava.sh script.
+> 3.	Since we need to run these LAVA jobs when pipelines are triggered in
+> isar-cip-core, I am making changes in such a way that pipeline keeps=20
+> running until all the jobs are done and we report the health as a result.
+> It will take around 120 mins to run all the jobs. We have only device
+> (qemu-renesa-01) under lab-cip-renesas. So, I request you to please=20
+> add the swtpm device dictionary changes and swtpm-jobs tag to only one=20
+> QEMU device in every LAVA lab you can access. By this will be able to=20
+> reduce the pipeline run-time due to simultaneous runs.
+>=20
+>=20
+>=20
+> It will be very helpful if you provide your support with the above-=20
+> mentioned items.
+>=20
+>=20
+>=20
+> Thanks and regards,
+>=20
+> Sai Ashrith Sathujoda (T S I P)
+
+
 
