@@ -2,48 +2,45 @@ Return-Path: <adithya.balakumar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F68C25B74
-	for <webhook@archiver.kernel.org>; Sun,  2 Jun 2024 14:26:10 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.135])
- by mx.groups.io with SMTP id smtpd.web11.59673.1717338368764425502
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58571C25B74
+	for <webhook@archiver.kernel.org>; Sun,  2 Jun 2024 14:27:10 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
+ by mx.groups.io with SMTP id smtpd.web10.59697.1717338425147165179
  for <cip-dev@lists.cip-project.org>;
- Sun, 02 Jun 2024 07:26:09 -0700
+ Sun, 02 Jun 2024 07:27:05 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.135, mailfrom: adithya.balakumar@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1801) id 452EQ6FR4165524; Sun, 2 Jun 2024 23:26:07 +0900
-X-Iguazu-Qid: 2yAbXhlxOjm8ECYogT
-X-Iguazu-QSIG: v=2; s=0; t=1717338366; q=2yAbXhlxOjm8ECYogT; m=QeWwfnloD0wXC8Y1VKA2UoOT4n1Y6x3gN00z9OsahxE=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1801) id 452EQ5VJ057461
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Sun, 2 Jun 2024 23:26:06 +0900
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.134, mailfrom: adithya.balakumar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 452ER2Pf3876970; Sun, 2 Jun 2024 23:27:03 +0900
+X-Iguazu-Qid: 2yAbfjWaldOADISIls
+X-Iguazu-QSIG: v=2; s=0; t=1717338422; q=2yAbfjWaldOADISIls; m=GsM0EV0j7l90owYUMixbO+GK4S2z5thhhx71JWmIng0=
+Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
+	by relay.securemx.jp (mx-mr1800) id 452ER1Ie3643119
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Sun, 2 Jun 2024 23:27:02 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JS7M0cmyZRkWPF191Oum/wlCEA4RZ7luTPTRsxLiMOtRKrLKIN7aouHcrGM6RmKHmASgzN8nwrmoqDHrl/OSNPO2C9bYuJJEIWGD14hCX2g4+wc5UDTPBAJMfyOqvp7uyyw56vtgan688CquVXCrrw5+vqZZr5cvnwHiWy+1TcAxYKyIzmJe/OXQZQ7MslsymLedHn40ZD8NRIymueIEJBiVQCUJhZ0AQ5JKBKPRWlWDVbBEbUEHg+Bq9NrkinEjDJ5c79wh9hbX5zJzvQcgbc3+ER++3WXK4H1nwpkMxvFciSuHlt1+r87Fnu9z9bU4NRobdqbA+joqWkplAjrx9Q==
+ b=Nv2/uvIafx4EiJ9bvD290vPqtyLFt9LPHybizBh5PhHyoEo41rSHGtBAMtmwwnuL8Qa3R0emIAQExdZhkA1QpHLMhKjB1nSadujreb7PnrZfKqEJ1fPk5gcn3h+W1oydiF5AGMsDwo2TO/FUIeFECuGp+ijao1flqC8rqM3RBGYL0NCw428trm9Uf6v+b+XOB+Nw4IBXgIH8d5nmfGIjBq/HnNfDDjacgLUjwkXjbNuh20J8Dol2mjJftFgJ2jFy6F+rKg2F7w2j7EidhMYIfjy0vy5ebWT7jc3SQXmCKY4UrVbGwlrGilaOoL+0e7P8e88uAtgEVOrDii9ibA+FIA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=u4Sk/TyLamVFkyVyPuWZVM2h+/O+ePF8HxrqNO+XH7o=;
- b=GtBdAxNPBnXB1K4pMnpn9QlYZ7LYKOSNeVqXbXXW2jF6rwgJYB2QulVo8gKX9jbHzSrMM9RDSeMsnFXCpZyz/b04I9DbloTJpiXBHQpu3eGasPofB771NmvK2JfYgm9PThQIH2lMBZBeCVqIEZRlQDA+vtpZhZVQBs7U4/IF9bJ6m2ZbwIMjwy0wO1mvrtwdUOB5ALwwwuTTHUTA4VUAsW/TyKUMVo1c6ZGURpY544yX6BsIZ6RVGZvfr2bvexmhycGWGgra++6JaCyGUfkEzFyN5r7yzW4v2Gd+tX1nNiHORyzG78zFiwTHZHyNreTkI34ioUm+w+Vjio7VsXhlqA==
+ bh=50PPAmAraOHsLeOufHKIocLCrbfmpLMnIzOjxKPggys=;
+ b=MQ35WQdKACKScebkGFYpRjZGlupJJgGsk0oApbSAfj4mPpuB7W8xisbhW1Qx0repzLA4O8ufLH+6Jb4+30G2g00NY/Ec4FfQ4ZTHP0GUoroYLl1iJAwFjgKeKz6vO+rtNeiBREuN93aWRDLCabOTqoLjMr0D4sx7gywiXKW1woDTcUU/iEKTWoBftf+JuThy6OnSw4VcBLjgiYN2r6p2iXpBJhHD4RCyjnvv/hYFrl6fYXPtNq1MkJYUBd7V3jV0Drh73sa9+1b7+omFGwqPuEnwXFtNo5KZr/9f+p85o10NGih5n4w8Z0zm1oeNq3guIPcyBFGwhH2qdiboRmc6hw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
  header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
 From: <Adithya.Balakumar@toshiba-tsip.com>
-To: <kazuhiro3.hayashi@toshiba.co.jp>
-CC: <cip-dev@lists.cip-project.org>, <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: RE: [cip-dev] Preparing test evidences for CIP Core packages for IEC
- 62443-4-x assessment
-Thread-Topic: [cip-dev] Preparing test evidences for CIP Core packages for IEC
- 62443-4-x assessment
-Thread-Index: AdqngyKNF2gl+sOgQmW8Zvoy0bqzgAAfUtvAAz3859A=
-Date: Sun, 2 Jun 2024 14:26:02 +0000
+To: <nobuhiro1.iwamatsu@toshiba.co.jp>
+CC: <cip-dev@lists.cip-project.org>
+Subject: RE: Preparing test evidences for CIP Core packages for IEC 62443-4-x
+ assessment
+Thread-Topic: Preparing test evidences for CIP Core packages for IEC 62443-4-x
+ assessment
+Thread-Index: AdqngyKNF2gl+sOgQmW8Zvoy0bqzgANdasWw
+Date: Sun, 2 Jun 2024 14:26:59 +0000
 X-TSB-HOP2: ON
 Message-ID: 
- <TYCPR01MB96699E420B7EAA6E49F50263C4FE2@TYCPR01MB9669.jpnprd01.prod.outlook.com>
-References: 
- <TYCPR01MB9669D37EC2865C6595EFD118C4ED2@TYCPR01MB9669.jpnprd01.prod.outlook.com>
- <TYCPR01MB113852C6B7DC0548305FB8A0DE1EE2@TYCPR01MB11385.jpnprd01.prod.outlook.com>
-In-Reply-To: 
- <TYCPR01MB113852C6B7DC0548305FB8A0DE1EE2@TYCPR01MB11385.jpnprd01.prod.outlook.com>
+ <TYCPR01MB96695706DE27A0CADA000C27C4FE2@TYCPR01MB9669.jpnprd01.prod.outlook.com>
+References: <17CFF53CC1142B4C.16299@lists.cip-project.org>
+In-Reply-To: <17CFF53CC1142B4C.16299@lists.cip-project.org>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -52,161 +49,131 @@ authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: TYCPR01MB9669:EE_|TYCPR01MB10462:EE_
-x-ms-office365-filtering-correlation-id: 5b3bc752-086a-4420-85e8-08dc830fee8f
+x-ms-office365-filtering-correlation-id: 5a2963e2-3753-4063-90b5-08dc8310102e
 x-ld-processed: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f,ExtAddr,ExtFwd
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|376005|366007|38070700009;
 x-microsoft-antispam-message-info: 
- =?iso-2022-jp?B?aEJ3TWIxVXJHZExoOXdGaWtHZEt6NkpjNlpQLzR6ZzlnRUJsV2JRcyts?=
- =?iso-2022-jp?B?eW05akMreEJJNmF4cDl5c1VWVmpvRlVxYkZJUTROcTBoRS9McSt5QmNa?=
- =?iso-2022-jp?B?M2JUN09DTmpkblNzWndiM0FubEZxRUlZZ0pmTXk5TSttQ0w4WGNlcFN0?=
- =?iso-2022-jp?B?SGR1YTNobTQ2V0dXb2xlcisxUkZmWHhkRXdkOW52S3ZWU0ZNYThhS1dm?=
- =?iso-2022-jp?B?YmRIaG5Sbmpoai9wZmpDNVNVTlpmd3RqUFdPZEJTVmx3RFpyckR2ajYw?=
- =?iso-2022-jp?B?OGEycXVjYmczU21LUTZsMEpwQks2V1k1TFBEQmw1Y2EvRGdaWEFsVVlG?=
- =?iso-2022-jp?B?cnZqMFFlU1duUUI4QlFHZ3dYYlhObnJDZzE3VWh3alhnbFJFdTBlUzUx?=
- =?iso-2022-jp?B?RnlHSi8xM1N0a2NKR3Q4N090bVVnUEtadGpiajFMckJCUlF1RzB2Z3BP?=
- =?iso-2022-jp?B?NDhnM2FxeGtJWGRuNytKUjFobUNzdGpQaHZ6czRROVRlSWx4VVVnNjBz?=
- =?iso-2022-jp?B?Uys5cXR1cWNjTmNwVCtaenROV3h2TnNlWEZ5VTZnWTdxOGdSQllQNkZX?=
- =?iso-2022-jp?B?Z1hQK2JIbC9RaFFqNVFIVWYyajUxTGVmSXVuemJRTjVqWmJ6MEMvNFJn?=
- =?iso-2022-jp?B?QWNRSnBLNkppWEQ1RlFuVTNBeHMrNEIzRWZ4RUVPbmUvNFREODZHL3p6?=
- =?iso-2022-jp?B?VVgyNFE4TDBRSitETEVldHVhK05DZzZNWTF6S2VTdXBIVjdxc09TREMy?=
- =?iso-2022-jp?B?NitYaXlmR3NhWHFHWkZjcXBrOUdwWG4xOGlHa3JqdGNXSjZTdkQ2SUdG?=
- =?iso-2022-jp?B?cURHVmxMNFBsQWwxUGZLOEpVeXBvaXd4eXE2RHc1QU5tVjlQWDJycWVo?=
- =?iso-2022-jp?B?K2t5eDN6QkJmZ2NtdloveFJDUk0xaUhYQWRMZlBldm1DRkdrcS85ZVlQ?=
- =?iso-2022-jp?B?OE5rbThjbXdNQVdSR3lVSzZ4NFVlTVN4ZUlsOUhWZG8vNzNMTzBHMGs3?=
- =?iso-2022-jp?B?UjZYeGU1cEx5cHlsNEt6WTg0TG00d3hYY3ZRNzl6eDZoNGsrMERBbzdL?=
- =?iso-2022-jp?B?Rk5ZUmZkSmVhcFozZ3hMV1FBUldwcXpnU0JLNXpNQ1RoaDgrUkJ6RU12?=
- =?iso-2022-jp?B?OHFoUVg2TkJLcmtZRXJxcGZ4Um11ZXl0UW5nMnZHeHo5Q09kb2tKTkRh?=
- =?iso-2022-jp?B?d0UxbXlQZk5PQ0hlYXlaZ2VxSzhBQm9QK1FZWG4vRmlqMSsxd2pTRENR?=
- =?iso-2022-jp?B?ZTdOb2pCL2JHRVk1b3BxcjZ2N09rcGUydWRxWEtUWFdkVytpYnRrRHdt?=
- =?iso-2022-jp?B?MHlFZXBPWmFHclpnTEhGWHZwSUxmaVRhWVp0T0Eva3pnZkpRcEZyWHc5?=
- =?iso-2022-jp?B?U0o0SkpzRkVINldUQTVjYzNUQ0VhVTBPNEpBUGhwWkMyYm1tUC9sV2h1?=
- =?iso-2022-jp?B?VGF6WkFzM0JpTS9Qci9PVWFVOWEyaHZQZ09rQ0hTTElVSGpnNFVxQTNz?=
- =?iso-2022-jp?B?MUFDZWtpY21wcXhkRHE5akFYVFF5dTRad2hLNmZtMVYxbCtvODdXUXdu?=
- =?iso-2022-jp?B?b0dYTHZIS1UzdnMvT29wQ2xXTitJTVpGbDZxSFlaTDl2MHNRbGFEK2d1?=
- =?iso-2022-jp?B?ZDZYTlR0Lzdza1QwdmgxMXNSM3IrcnEvQnAxaVJBd1dzN0xVMXc5cWNs?=
- =?iso-2022-jp?B?UVFheVd2R0U1c3ZEUW9CNFBpZm1RbDhXY1ZON0drMDlKaloraE0wcFRG?=
- =?iso-2022-jp?B?TjNHcElPc212UWdqUXhTMEpYUXFmK0NvZlFadWR5QUdmODd0VEZxem1C?=
- =?iso-2022-jp?B?aENxR3B5K0cxc2oweVl3UlZGMGdpUithRHdBRHVTWmN3WkZYNmFWTEVn?=
+ =?iso-2022-jp?B?dXgzWG5jbnhPRFFBZDhzTUhBcE9NalJxMnFIeGhlcXZueS9wT3RhaXZ6?=
+ =?iso-2022-jp?B?S2orVm94Vk9Mak52dm9wT2s2S0orWCs4VU1KR214QVRsdXlmb2NqQ1Js?=
+ =?iso-2022-jp?B?eG1oR1JLa3pvdFE1NUlOSm5hUjFxdEVvemxTZ0xTVHM2T0Z4a0VaRjly?=
+ =?iso-2022-jp?B?WGovalAyVVRvN3NhL01MaWlMZWNDOW9NZG1xenBzOEgzbE45VUFLNGF3?=
+ =?iso-2022-jp?B?NzVCQTFUUStxeERIOXp6V3ZGYmtWanhONHYwdlMrNkZ0QW1qa1A3MFNI?=
+ =?iso-2022-jp?B?QkxWQjVvZzFtZXpOWVpJUGZ6NTlGNnBnK2lzdlBIODdQRnRoUFpnaDJV?=
+ =?iso-2022-jp?B?cXo4OUc0UWhmNzgySHhCUmkyWSs5UC9hVGp5azFoajZ6Y2I5MGhYU1Uy?=
+ =?iso-2022-jp?B?aFJlR0l5cHVjT3NJN002ZVFCQWN6Q3FoRjlibzRRUWkwOUtaMFVWR3pG?=
+ =?iso-2022-jp?B?Vzlaa09lRlZNaEdsdGo1bFhZM2V3TUxEc1JNcHZ6SW1Uc1E5MUZwTmxv?=
+ =?iso-2022-jp?B?b3ZGMFBGd3YzMHBGRDVVMktTSkZaYXJnVXpBcGt5SS84U2UvcWM4ZVlp?=
+ =?iso-2022-jp?B?cHZuTWoxMm4xczZqL3M0czVjbTh3cmZuT3J3TENWNGVYTENmdkx3WFFH?=
+ =?iso-2022-jp?B?cXdpa3hRSHNqZlE4MDZaRWtmU0cxODdvMFVSK1dMVzRYMGxVUEV5ckh5?=
+ =?iso-2022-jp?B?Znp5dUpPWUJHME1pWDhVQ3NpN1JyUzZmVi9oRUhIYTQyQVRxbWk0Wmxv?=
+ =?iso-2022-jp?B?bnYxZmt3MERTQzMvOGFBN3BXZTZrKy9zcXBFZUUvejRzZ1dUbmwrdXZl?=
+ =?iso-2022-jp?B?SnpsRHRJcStpYWkwNnpBNExqbzZ0THZIOUJtK1NmQkhSSmc5N0lJdE5p?=
+ =?iso-2022-jp?B?OUR1NlNjSWpZRkZ1czR5aUV5OHNQZHdjWVlYOGxkbGRROFlzQm9SQS9G?=
+ =?iso-2022-jp?B?OWN2MnhjdVRBMGk4VktNOUMrNlZGNHhpc0dRY1A1UDlicW9yTU9BejRv?=
+ =?iso-2022-jp?B?UlRDTEJWYjhjTFkrWVdOSUdjU2J3eHY1Ung1bWN6ZHJSQnQ1ckV4Q3pp?=
+ =?iso-2022-jp?B?NEV5cjFJSi90b0k3dkNnY0NqeUdPbTl0YVBYWk5iRnhkd3JIZkprVEwy?=
+ =?iso-2022-jp?B?bUFIOVdPOVFPbEFlZG84cDNFMjg1bGYwbGJwMDBXQ0Y0cXZ4cnowZXUr?=
+ =?iso-2022-jp?B?OEhLWHU5WmliN0hSek1lMFA2eS9SZStTa0RDYW1PZkxRQkdPNE9xaDZD?=
+ =?iso-2022-jp?B?MlNxTFJDK2d1dzJ4bTRHWmNFempGN3N0M1pNcE5xa1dhVEhsTldXaUxj?=
+ =?iso-2022-jp?B?VGFKdHBUbnU2MXBuL3E4MnhIdE53VDBzKy9PRmlaY0MxcmxVQjhCT1JS?=
+ =?iso-2022-jp?B?cGg4a1o1T3NzRlpSVjBuWFcvQnRWWFYrY1BhVTlzbmpKZUEvV3JURTRY?=
+ =?iso-2022-jp?B?bTRwU2hoN1Nyam01K25IdDdYSVVKVmoyMWFiV3lYejBvcEErODJvTWVO?=
+ =?iso-2022-jp?B?L1JpOTY0ZXJxNGJxZEgwbnRFK0NUZjZrZUo1WFVDbjVCalluNzljdGVm?=
+ =?iso-2022-jp?B?TUV6L3BNY2tnVHprYnQ5aW1yZmpVZ1B5WkxOU1hMVkVlQzV0QnpqWTRF?=
+ =?iso-2022-jp?B?aURHdHBYanBXaGdpa3lGWHBQd1J3VHF2YmFaeEIvblNwQWM2YlNsNklL?=
+ =?iso-2022-jp?B?ZVA5NEJhUUlkRURtcFlGemJPUWlHSWFPWnhTRnc0RWJ3dWdBQnF5YkUv?=
+ =?iso-2022-jp?B?TmhhNXppeHU3MDNSQ1Z1dkVIM0VyUm5DSDQxNjJ3VDFpZ2ZTOCtDRG5r?=
+ =?iso-2022-jp?B?WjZXQUxxelZncUtsZ0xsL3dJOC83cTRWRVFKQ1JZQTFmMlRUSW5mN3dn?=
  =?iso-2022-jp?B?PT0=?=
 x-forefront-antispam-report: 
  CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB9669.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007)(38070700009);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?QVI4VFFINklZeUZPUE8ydmFFR3dEMk0vUlNrK21UTm84Vnl1YlV3MTRa?=
- =?iso-2022-jp?B?SjRNOUhDUWtnUVJObnlwVE52TkxiaGt6RytheThIdzlWcVp2blNZT1VV?=
- =?iso-2022-jp?B?d2FnVmxRNndoN0hHY2VKTmJsTjl6RFNka3htZmp5MkROK3BUc3FKWkx3?=
- =?iso-2022-jp?B?WFY1a2RoYkpNN2hCcWhQZ2ZadmtvK1gwWHVmQTh6bk1uS0llZzlYRFY0?=
- =?iso-2022-jp?B?akVrRHloZ3F0MkphczZiOVJ1WnZBeEFwZWdpZWFLZmhpZE4xeTFXaHls?=
- =?iso-2022-jp?B?VFRLNG5VczF6eTRIeWFvWXRvaW42SkMzSnM2cTZmTUc5UGVmRHdIS1hB?=
- =?iso-2022-jp?B?QkZnanVsMHRlWUc5OWZMQVNySEQwdVlHejh3UGtWQStLUlBFaUVzL1Fj?=
- =?iso-2022-jp?B?S0pId2Nid3JKMWU4N280SlNRS1pnUllNRktTTFNtc0oxdEJWM1Q1c0My?=
- =?iso-2022-jp?B?cXY3Ri9TWlh0MzZLMWc5QnA0K2kxd2RkSnN6U0JuS3FORXdkSXZwcmlW?=
- =?iso-2022-jp?B?R0g0SFhYTExpR1FaYnNZZ3RNWE0xaGpwZXJOR0NBZDJydjhTWWtmcU5k?=
- =?iso-2022-jp?B?dlo0M0ttWTUva3ZPemE3aGxCaTJCVFp1R3NqbXJ6dXZubzhlWGhxdG1E?=
- =?iso-2022-jp?B?NDN0MURrcVZhN3lTcEQyUWtHdzBtTEdiT2xiWXdSOGhqbE9xNFFIMDd4?=
- =?iso-2022-jp?B?VWxsd1dMd3ZMRmhXYTJWWjlOZVdyZXRzUFR0ZnBMVGo3OWFBU3hmbnM1?=
- =?iso-2022-jp?B?NDFuUUFoYWhhbHFrcHpIc3VLUGY3Vnd6bnpuOEFML1FYK05rR3NyNzYr?=
- =?iso-2022-jp?B?RE1DT2R5bHNKemhYaVZCcHQrd0hKUUUrdnh6V0xOZVExaFdlYmplM1du?=
- =?iso-2022-jp?B?Qnc4QXJmcldrWVJyRVRvU0lvOVloZkM0b3JRQ1U4bC9jQ2dldEtpbERz?=
- =?iso-2022-jp?B?dlRqNGx3NGNDd2lqV3JHTFBqY0FqRnVuV2ZsbmRGU09nTXpucnlkcHN3?=
- =?iso-2022-jp?B?QXo4RGhkcjV6V1VERUd3akFYUXU3OXJEQksySE1YYjRFSFAwUmVIOE5q?=
- =?iso-2022-jp?B?cU9zT1hZMU5GSWUvWExYR3I0c0V5U21CVmpJZElRVjJTbHlXQXlZVXBs?=
- =?iso-2022-jp?B?V1V3bzBqamx6ZjIrbkFzQWp6ajRSMTFEZUlsakdTTjdvT29KRllGanUw?=
- =?iso-2022-jp?B?QTdHRDJEWTk4T2JHaE5FNHFMS3V2NG9OdG1NRFFCZEF0NTJBUUg2WEti?=
- =?iso-2022-jp?B?Q0hlS212NXBrM1VsSW9DbWVzOEpOUGV2dHU5czZZZXUrNTYwMWIxckhQ?=
- =?iso-2022-jp?B?Q3E5VUNzQzgxSzdqUGlWYWU3VEV5MnBHWXBCZGRJa205VjlJTFlHbW9B?=
- =?iso-2022-jp?B?SktrSS9HK1NEdGZQQ1dMVlNMdjdQcU5mQzh3NDRqdERNclFXL0VsdG5q?=
- =?iso-2022-jp?B?Q1N4RXFaNjE1MWYxSStLSkVYeHRTejVFaUQ1T1hZUG9WQTlyTWJUUldP?=
- =?iso-2022-jp?B?dy9odWRoRTd3bDhqZEtQbG43eDVDV1FEUmJPRkwxSUZJQmRpZmlEa25K?=
- =?iso-2022-jp?B?NHVEczhRekwwNnV3TXg5aEhwVk85SnpjZWsyWGc2cEsyWTROQ2hLN2xN?=
- =?iso-2022-jp?B?RG1vR0s4NGhmUTJ3YUhjWlFrcWYyeTlPT2lWcFJ1U2d3N1Ezb0gycTMx?=
- =?iso-2022-jp?B?Q0V0QzZLbXA4dGNCK0hGbVZ3WnNiajcweUQ0alB1dUZtamw0WHM2VWN0?=
- =?iso-2022-jp?B?ZUt5T3FFVFRLZ1lxZk5wNithYUJPc1NsUitjMFFYTmNVNWRiSkRIam5V?=
- =?iso-2022-jp?B?WnZvTnpHdEZYV1RERWxxYS9sbWxpeEhEQlZiV2tGSTVpbDBXUGc0eUpF?=
- =?iso-2022-jp?B?QWlOWTg2TThPbWtxZUhRcmQrRHBxR1pTSWh3amhZNVl2QVhTTVNER0VD?=
- =?iso-2022-jp?B?Vk9tYS9wN0dITjlVRlZiL2NjU1NldUZSN0lLcHh4MHlJU0RFbTFZbFo4?=
- =?iso-2022-jp?B?a1Q0QUVRKzQ3ZUdnZVl3RTMySTZyY3A0VU5BS3FZU2dYb0V4OTY4SVB4?=
- =?iso-2022-jp?B?SFljT3Bvbjd1b3dFU0o3VkhzV3RCV1l1Z09qcHZCWkIyMEtQZXZNTFRF?=
- =?iso-2022-jp?B?UjZLS3pmSEd1Q2czZWxmNE16MVFmVXhKbk1DKzVxUVN5ZzB5T1J4aUxF?=
- =?iso-2022-jp?B?YWRYSmJ5WVVrZVVWVDhIaTViUEY3Mndha2o2Umh4UkZZZEhaeFhySml1?=
- =?iso-2022-jp?B?UEhJK2Z6Y3dJQ1RRL1h1ekZuMFB2dkg4R014N25yNnpLbUVtaXZ3ZUxS?=
- =?iso-2022-jp?B?Y2RrckFrenlJU1NUZDdxZWREc3ljRjBQbjRoSHBubEhrd25RcWZLdndV?=
- =?iso-2022-jp?B?YUEwVUE9?=
+ =?iso-2022-jp?B?QktsNE5QTVNpQUlTYU9SR2ptK0kvMzlvdUJBbUtrQXIzVmwvd0M5YmdL?=
+ =?iso-2022-jp?B?QUdXWE50aGZpMjQ2eUcxemRqaXZEemk1QWhxVHFLVkNnN21qQkNpNFJo?=
+ =?iso-2022-jp?B?aC84QVNTNkV4TzNtN1VOQzNOYWhScUNsZW9MdStBbFhSS2pDcjV6ZFRw?=
+ =?iso-2022-jp?B?SGVJQWRHOTI4OXNzNXc1ZmJJbDZZN2p6ek1GbDdXWmhRWjdoR0ZBQUN2?=
+ =?iso-2022-jp?B?aFhrNjFjcjJmV1E5UjB0Y2hmamlyanl5Qms2cmhrUVRIYzhQQUh0QU94?=
+ =?iso-2022-jp?B?U2NxUngzVGlmYjFFZnBzWVRYbVY0YkZISXZWUkNneUVOYWFSeHpQUkJo?=
+ =?iso-2022-jp?B?cHdHbU5UNmxLWUxhUUk2ME94NmY1TEl0UThNSjJlbHVVWjJCNVprVm1s?=
+ =?iso-2022-jp?B?Q3VRdkdnNGhPVEZqbW5NNWJvMHNSUzBzUU9nNFBoSURoRnk0YVhuMlJF?=
+ =?iso-2022-jp?B?VUtobVJIYVZDTDFVTzI4WENpdllndFp3MjJ6UEJYdnMrYUpHZWd4VnZp?=
+ =?iso-2022-jp?B?NDVoZ2tMRFU0M2N2U3lZUFdUcmhKcUNCNERUL2VjL3VGenlrUVVXb0Js?=
+ =?iso-2022-jp?B?dkdveWpCVHVvVzdvN1Y3RS9UMUJUdjZIWFc4YzFXOGpOMTZCSnNLRHM1?=
+ =?iso-2022-jp?B?MEs1b3c3dWJoL2ZEM2o5RWUzdWcrNEVHbnh1ZlBqQXdPT3NacHllRFBM?=
+ =?iso-2022-jp?B?NERDYzZodlVRZ3NFNWpueEVsaXp1TVcvSCtseitoZSt1VDZiNGxJMFVt?=
+ =?iso-2022-jp?B?T2w2YlU4R0pMWCtJeG1EVDBTVXNwbjRRWFpmNlhPRHU4dUFnUFY1RERZ?=
+ =?iso-2022-jp?B?T0kzTmIxL0Q0K3hkRlE0clgzMWtVK0FuakpyaWw5Y0Rydnk2T2FsUGI0?=
+ =?iso-2022-jp?B?TnlKdjRSdmVhcC9lRnJkcGQxZkQ4YVBNNzN4U2NxVy9DY2FxTGltVnh1?=
+ =?iso-2022-jp?B?c0dSMm5ONS8zb0JNYVRHQWZabG4xRTRENllDVStUM3F2Mm94dzBNa3d5?=
+ =?iso-2022-jp?B?b3FmOE15b2taUnVZVnYzZ1ZzcmNVTGZmQytHQWxGUG54OWJzUUQ1MExv?=
+ =?iso-2022-jp?B?RDM5ZFMzSFhRcFoydlV0MXh5NURFeU9DSTRXNktpM01BMzBVSmxvZ2N2?=
+ =?iso-2022-jp?B?NUlFbkZTcDVlOFc3bS80eGNtajYycHlrc1IzcEo3aDR4MDdNWjFhSXAz?=
+ =?iso-2022-jp?B?UnVGQVd0YURTalBJTXQwaFFzZCszTU12bWtKYXY3cVRYK2wyRXFwVFda?=
+ =?iso-2022-jp?B?TWxkVmZ0QktjSzRKc2FOdmNQM1RSWExvaVcwMThjbDlNVGJtYUtoSmhB?=
+ =?iso-2022-jp?B?ZG94RUJma3UrVEdvOEdDTzE5bUF4eWVlazkrRng4eXNPMHNhNXdLNHhk?=
+ =?iso-2022-jp?B?VEI5c1R6SmMwTmxGWVh0TjNlNmhLZ1hkaFQyVStSSUgyU2NERFpnaWs2?=
+ =?iso-2022-jp?B?cFZ3SnJtd3FXUFI3TC9Ta0VMVkFEc0J2eDlkeFJmMXF1TDl1bjJZejhJ?=
+ =?iso-2022-jp?B?U2NFb0p6ZlkwUkltSy9pZWx4SUlVZ3VsRmxETVpndWthSE1nUUVvNFp3?=
+ =?iso-2022-jp?B?ZnFVdllvb2VWMFk2WFlwRHBrSDZxSVkwQnZnYmczVEVEbzM1VCtiSmt6?=
+ =?iso-2022-jp?B?WTlPbS9nbERaSDhJdU5ZU1pqd3hWckdKT0dyMDU4UktNcGh0cGIwUFpL?=
+ =?iso-2022-jp?B?aWQ0MFpRVWJqZmJHcitpcGRHZk5adkw5K1ZFM0tZN2w4ZWRNYklDdUlp?=
+ =?iso-2022-jp?B?Y3ZJVHJ6anE3UThMWHVLc1o1dXhIWm5xcmFtNlZzNjBaVis4N2l4WW8z?=
+ =?iso-2022-jp?B?VUo4bzUvdDdPc0dReTR6UFQ5NWREM1k3bklLS0V0SERoc0xvenc4aTFy?=
+ =?iso-2022-jp?B?Rkc1amVMeU41M0MwbjZDZjZWS3Q4MEVFQ0tWR25GSHAwMG52N3ErT3dk?=
+ =?iso-2022-jp?B?QnN4SDljMkNYSnZZVDM0VVpqYnlVRmNHL29kVGZrV3RiTUswWFd1Y1Jo?=
+ =?iso-2022-jp?B?RkFDRWs4bCt0SjBmZFlWUEttZEdaZWtNWFpaZTBONXR6Z1hhem95TEUr?=
+ =?iso-2022-jp?B?TkxHNXUwMjdBMEEwT3FHcjJYajZoZ1pSTzdlNmRNaklnelVvajduckVI?=
+ =?iso-2022-jp?B?Tm9xZm5VdlUydk1nLzhwZUNPU1N6VEFFZjVHUlg1Wkh0bmNsYTEzQ1dr?=
+ =?iso-2022-jp?B?cURjZVFBK24rb0hSTTU5UDFhSm5NeExJdmozOG1BdHppK1ZLeEx3Sy9k?=
+ =?iso-2022-jp?B?NlN2UU1saWFuUWlWOVB6S3J5TitCLzRIcmFvc3d6TFRwU00rL05WODVh?=
+ =?iso-2022-jp?B?MWRsd0lJYmlZbHc5NVFIUU0xOXpPajEwWTRsVVhwbzQrTCtEZCtnLzhz?=
+ =?iso-2022-jp?B?dlNML0U9?=
 Content-Type: multipart/alternative;
-	boundary="_000_TYCPR01MB96699E420B7EAA6E49F50263C4FE2TYCPR01MB9669jpnp_"
+	boundary="_000_TYCPR01MB96695706DE27A0CADA000C27C4FE2TYCPR01MB9669jpnp_"
 MIME-Version: 1.0
 X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB9669.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b3bc752-086a-4420-85e8-08dc830fee8f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jun 2024 14:26:02.9508
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a2963e2-3753-4063-90b5-08dc8310102e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jun 2024 14:26:59.3890
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Db2iz8AOM+Eiqm9T4qVTyRpTJ3GQ/bngfM68pLAdAOS6IfCc6UzaMeNToSw9rSe4aQpoATMqn4VRE2HsBjBGb/6ZOvvqqlv9XbVrkF+TtFqmJQjcyGWSvIQS3lU+MSAc
+X-MS-Exchange-CrossTenant-userprincipalname: FuydggpOCQrtXoAxt/FOQJFsldFB9t0xPjAm3sBWOxWNl3zJwIuBT++6TBfGSqZd2L/RTlY5s79uVAIvLztj6WMldMlU97Ch687wbeqr+hmPJlGtw+U4CWHZl5OXoyA1
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB10462
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Sun, 02 Jun 2024 14:26:10 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16078
+ <cip-dev@lists.cip-project.org>; Sun, 02 Jun 2024 14:27:10 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16079
 
---_000_TYCPR01MB96699E420B7EAA6E49F50263C4FE2TYCPR01MB9669jpnp_
+--_000_TYCPR01MB96695706DE27A0CADA000C27C4FE2TYCPR01MB9669jpnp_
 Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
 
-Hello Kazu-san,
+Hello Iwamatsu-san,
 
-Apologies for the delayed response.
+Sorry to bother you again.
 
-As you suggested, it is important define what should be tested from IEC per=
-spective. The suggestion from BV is also to create a process to perform ris=
-k / impact analysis for the packages that currently don't have any tests de=
-fined and provide tests for packages that are identified as essential.
+Just wanted to follow up on the previous mail regarding the test evidences =
+for CIP Core packages.
+Would like to know if you have any suggestions on which other distributions=
+ to look into for packages that do not have tests defined in Debian Salsa o=
+r upstream.
 
 Thanks and Regards,
 Adithya Balakumar
 
 From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On Beha=
-lf Of Kazuhiro Hayashi
-Sent: Friday, May 17, 2024 8:17 AM
-To: cip-dev@lists.cip-project.org; iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B?.=
-MN=1B(B =1B$B!{#D#I#T#C""#D#I#T!{#O#S#T=1B(B) <nobuhiro1.iwamatsu@toshiba.c=
-o.jp>
-Subject: Re: [cip-dev] Preparing test evidences for CIP Core packages for I=
-EC 62443-4-x assessment
-
-Hi Adithya,
-
-> We would like to understand your opinion on the next steps to take or oth=
-er distributions to target for tests for the above listed packages.
-
-It=1B$B!G=1B(Bs better to define what should be tested from IEC perspective=
-.
-e.g. python3 does not provide any functions and just for controlling other =
-packages (like a meta package).
-See the package description and contained files: https://packages.debian.or=
-g/bookworm/python3
-No need to prepare any tests for such package at all (at least for OS secur=
-ity).
-
-Some packages like base-files only contain data, which may be hard to test =
-without concrete methods to use them.
-
-Best regards,
-Kazu
-
-From: cip-dev@lists.cip-project.org<mailto:cip-dev@lists.cip-project.org> <=
-cip-dev@lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>> On Beh=
-alf Of Adithya Balakumar
-Sent: Thursday, May 16, 2024 8:40 PM
+lf Of Adithya Balakumar
+Sent: Thursday, May 16, 2024 5:10 PM
 To: iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B?.MN=1B(B =1B$B!{#D#I#T#C""#D#I#T=
-!{#O#S#T=1B(B) <nobuhiro1.iwamatsu@toshiba.co.jp<mailto:nobuhiro1.iwamatsu@=
-toshiba.co.jp>>
-Cc: cip-dev@lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>
+!{#O#S#T=1B(B) <nobuhiro1.iwamatsu@toshiba.co.jp>
+Cc: cip-dev@lists.cip-project.org
 Subject: [cip-dev] Preparing test evidences for CIP Core packages for IEC 6=
 2443-4-x assessment
 
@@ -368,7 +335,7 @@ Thanks and Regards,
 Adithya Balakumar
 
 
---_000_TYCPR01MB96699E420B7EAA6E49F50263C4FE2TYCPR01MB9669jpnp_
+--_000_TYCPR01MB96695706DE27A0CADA000C27C4FE2TYCPR01MB9669jpnp_
 Content-Type: text/html; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
 
@@ -392,28 +359,20 @@ jp">
 	{font-family:"Cambria Math";
 	panose-1:2 4 5 3 5 4 6 3 2 4;}
 @font-face
-	{font-family:"Yu Gothic";
-	panose-1:2 11 4 0 0 0 0 0 0 0;}
-@font-face
 	{font-family:Calibri;
 	panose-1:2 15 5 2 2 2 4 3 2 4;}
 @font-face
 	{font-family:Aptos;}
 @font-face
-	{font-family:"\6E38\30B4 \30B7 \30C3 \30AF";}
-@font-face
 	{font-family:"\@PMingLiU";
 	panose-1:2 1 6 1 0 1 1 1 1 1;}
-@font-face
-	{font-family:"\@Yu Gothic";
-	panose-1:2 11 4 0 0 0 0 0 0 0;}
 /* Style Definitions */
 p.MsoNormal, li.MsoNormal, div.MsoNormal
 	{margin:0in;
 	font-size:11.0pt;
 	font-family:"Aptos",sans-serif;
 	mso-ligatures:standardcontextual;
-	mso-fareast-language:ZH-TW;}
+	mso-fareast-language:JA;}
 a:link, span.MsoHyperlink
 	{mso-style-priority:99;
 	color:#467886;
@@ -427,8 +386,8 @@ p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph
 	font-size:11.0pt;
 	font-family:"Aptos",sans-serif;
 	mso-ligatures:standardcontextual;
-	mso-fareast-language:ZH-TW;}
-span.EmailStyle21
+	mso-fareast-language:JA;}
+span.EmailStyle20
 	{mso-style-type:personal-reply;
 	font-family:"Aptos",sans-serif;
 	color:windowtext;}
@@ -443,77 +402,9 @@ div.WordSection1
 	{page:WordSection1;}
 /* List Definitions */
 @list l0
-	{mso-list-id:215094890;
-	mso-list-type:hybrid;
-	mso-list-template-ids:633612152 67698689 67698691 67698693 67698689 676986=
-91 67698693 67698689 67698691 67698693;}
+	{mso-list-id:52119350;
+	mso-list-template-ids:1587441870;}
 @list l0:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l0:level2
-	{mso-level-number-format:bullet;
-	mso-level-text:o;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:"Courier New";}
-@list l0:level3
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0A7;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Wingdings;}
-@list l0:level4
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l0:level5
-	{mso-level-number-format:bullet;
-	mso-level-text:o;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:"Courier New";}
-@list l0:level6
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0A7;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Wingdings;}
-@list l0:level7
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Symbol;}
-@list l0:level8
-	{mso-level-number-format:bullet;
-	mso-level-text:o;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:"Courier New";}
-@list l0:level9
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0A7;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	font-family:Wingdings;}
-@list l1
-	{mso-list-id:696588672;
-	mso-list-template-ids:-473123258;}
-@list l1:level1
 	{mso-level-number-format:bullet;
 	mso-level-text:\F0B7;
 	mso-level-tab-stop:.5in;
@@ -521,15 +412,16 @@ div.WordSection1
 	text-indent:-.25in;
 	mso-ansi-font-size:10.0pt;
 	font-family:Symbol;}
-@list l1:level2
+@list l0:level2
 	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
+	mso-level-text:o;
 	mso-level-tab-stop:1.0in;
 	mso-level-number-position:left;
 	text-indent:-.25in;
 	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l1:level3
+	font-family:"Courier New";
+	mso-bidi-font-family:"Times New Roman";}
+@list l0:level3
 	{mso-level-number-format:bullet;
 	mso-level-text:\F0B7;
 	mso-level-tab-stop:1.5in;
@@ -537,7 +429,7 @@ div.WordSection1
 	text-indent:-.25in;
 	mso-ansi-font-size:10.0pt;
 	font-family:Symbol;}
-@list l1:level4
+@list l0:level4
 	{mso-level-number-format:bullet;
 	mso-level-text:\F0B7;
 	mso-level-tab-stop:2.0in;
@@ -545,7 +437,7 @@ div.WordSection1
 	text-indent:-.25in;
 	mso-ansi-font-size:10.0pt;
 	font-family:Symbol;}
-@list l1:level5
+@list l0:level5
 	{mso-level-number-format:bullet;
 	mso-level-text:\F0B7;
 	mso-level-tab-stop:2.5in;
@@ -553,7 +445,7 @@ div.WordSection1
 	text-indent:-.25in;
 	mso-ansi-font-size:10.0pt;
 	font-family:Symbol;}
-@list l1:level6
+@list l0:level6
 	{mso-level-number-format:bullet;
 	mso-level-text:\F0B7;
 	mso-level-tab-stop:3.0in;
@@ -561,7 +453,7 @@ div.WordSection1
 	text-indent:-.25in;
 	mso-ansi-font-size:10.0pt;
 	font-family:Symbol;}
-@list l1:level7
+@list l0:level7
 	{mso-level-number-format:bullet;
 	mso-level-text:\F0B7;
 	mso-level-tab-stop:3.5in;
@@ -569,7 +461,7 @@ div.WordSection1
 	text-indent:-.25in;
 	mso-ansi-font-size:10.0pt;
 	font-family:Symbol;}
-@list l1:level8
+@list l0:level8
 	{mso-level-number-format:bullet;
 	mso-level-text:\F0B7;
 	mso-level-tab-stop:4.0in;
@@ -577,7 +469,7 @@ div.WordSection1
 	text-indent:-.25in;
 	mso-ansi-font-size:10.0pt;
 	font-family:Symbol;}
-@list l1:level9
+@list l0:level9
 	{mso-level-number-format:bullet;
 	mso-level-text:\F0B7;
 	mso-level-tab-stop:4.5in;
@@ -585,9 +477,77 @@ div.WordSection1
 	text-indent:-.25in;
 	mso-ansi-font-size:10.0pt;
 	font-family:Symbol;}
+@list l1
+	{mso-list-id:215094890;
+	mso-list-type:hybrid;
+	mso-list-template-ids:633612152 67698689 67698691 67698693 67698689 676986=
+91 67698693 67698689 67698691 67698693;}
+@list l1:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l1:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:"Courier New";}
+@list l1:level3
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Wingdings;}
+@list l1:level4
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l1:level5
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:"Courier New";}
+@list l1:level6
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Wingdings;}
+@list l1:level7
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l1:level8
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:"Courier New";}
+@list l1:level9
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Wingdings;}
 @list l2
-	{mso-list-id:805049656;
-	mso-list-template-ids:-1763964900;}
+	{mso-list-id:378015779;
+	mso-list-template-ids:1621655554;}
 @list l2:level1
 	{mso-level-number-format:bullet;
 	mso-level-text:\F0B7;
@@ -598,13 +558,12 @@ div.WordSection1
 	font-family:Symbol;}
 @list l2:level2
 	{mso-level-number-format:bullet;
-	mso-level-text:o;
+	mso-level-text:\F0B7;
 	mso-level-tab-stop:1.0in;
 	mso-level-number-position:left;
 	text-indent:-.25in;
 	mso-ansi-font-size:10.0pt;
-	font-family:"Courier New";
-	mso-bidi-font-family:"Times New Roman";}
+	font-family:Symbol;}
 @list l2:level3
 	{mso-level-number-format:bullet;
 	mso-level-text:\F0B7;
@@ -662,8 +621,8 @@ div.WordSection1
 	mso-ansi-font-size:10.0pt;
 	font-family:Symbol;}
 @list l3
-	{mso-list-id:923612629;
-	mso-list-template-ids:-929027262;}
+	{mso-list-id:684526932;
+	mso-list-template-ids:130457480;}
 @list l3:level1
 	{mso-level-number-format:bullet;
 	mso-level-text:\F0B7;
@@ -737,8 +696,8 @@ div.WordSection1
 	mso-ansi-font-size:10.0pt;
 	font-family:Symbol;}
 @list l4
-	{mso-list-id:940379066;
-	mso-list-template-ids:1002331722;}
+	{mso-list-id:711268500;
+	mso-list-template-ids:1037707122;}
 @list l4:level1
 	{mso-level-number-format:bullet;
 	mso-level-text:\F0B7;
@@ -749,12 +708,13 @@ div.WordSection1
 	font-family:Symbol;}
 @list l4:level2
 	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
+	mso-level-text:o;
 	mso-level-tab-stop:1.0in;
 	mso-level-number-position:left;
 	text-indent:-.25in;
 	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
+	font-family:"Courier New";
+	mso-bidi-font-family:"Times New Roman";}
 @list l4:level3
 	{mso-level-number-format:bullet;
 	mso-level-text:\F0B7;
@@ -812,8 +772,8 @@ div.WordSection1
 	mso-ansi-font-size:10.0pt;
 	font-family:Symbol;}
 @list l5
-	{mso-list-id:1056929347;
-	mso-list-template-ids:1467258768;}
+	{mso-list-id:1305353157;
+	mso-list-template-ids:-251336644;}
 @list l5:level1
 	{mso-level-number-format:bullet;
 	mso-level-text:\F0B7;
@@ -887,232 +847,6 @@ div.WordSection1
 	text-indent:-.25in;
 	mso-ansi-font-size:10.0pt;
 	font-family:Symbol;}
-@list l6
-	{mso-list-id:1263219702;
-	mso-list-template-ids:1603552136;}
-@list l6:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l6:level2
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l6:level3
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l6:level4
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l6:level5
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l6:level6
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l6:level7
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l6:level8
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l6:level9
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l7
-	{mso-list-id:1890071985;
-	mso-list-template-ids:329809658;}
-@list l7:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l7:level2
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l7:level3
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l7:level4
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l7:level5
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l7:level6
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l7:level7
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l7:level8
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l7:level9
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l8
-	{mso-list-id:2021394710;
-	mso-list-template-ids:2031911568;}
-@list l8:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l8:level2
-	{mso-level-number-format:bullet;
-	mso-level-text:o;
-	mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:"Courier New";
-	mso-bidi-font-family:"Times New Roman";}
-@list l8:level3
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:1.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l8:level4
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:2.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l8:level5
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:2.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l8:level6
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:3.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l8:level7
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:3.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l8:level8
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:4.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l8:level9
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:4.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
 ol
 	{margin-bottom:0in;}
 ul
@@ -1127,20 +861,23 @@ ul
 <body lang=3D"EN-US" link=3D"#467886" vlink=3D"#96607D" style=3D"word-wrap:=
 break-word">
 <div class=3D"WordSection1">
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hello Kaz=
-u-san,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Hello Iwa=
+matsu-san,<o:p></o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
 p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Apologies=
- for the delayed response.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Sorry to =
+bother you again.
+<o:p></o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
 p;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">As you su=
-ggested, it is important define what should be tested from IEC perspective.=
- The suggestion from BV is also to create a process to perform risk / impac=
-t analysis for the packages that currently
- don't have any tests defined and provide tests for packages that are ident=
-ified as essential.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Just want=
+ed to follow up on the previous mail regarding the test evidences for CIP C=
+ore packages.
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Would lik=
+e to know if you have any suggestions on which other distributions to look =
+into for packages that do not have tests defined in Debian Salsa or upstrea=
+m.<o:p></o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
 p;</o:p></span></p>
 <p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Thanks an=
@@ -1153,226 +890,124 @@ p;</o:p></span></p>
 <div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
 0in 0in">
 <p class=3D"MsoNormal" style=3D"margin-left:.5in"><b><span style=3D"font-fa=
-mily:&quot;Calibri&quot;,sans-serif;mso-ligatures:none">From:</span></b><sp=
-an style=3D"font-family:&quot;Calibri&quot;,sans-serif;mso-ligatures:none">=
- cip-dev@lists.cip-project.org &lt;cip-dev@lists.cip-project.org&gt;
-<b>On Behalf Of </b>Kazuhiro Hayashi<br>
-<b>Sent:</b> Friday, May 17, 2024 8:17 AM<br>
-<b>To:</b> cip-dev@lists.cip-project.org; iwamatsu nobuhiro(</span><span la=
-ng=3D"ZH-TW" style=3D"font-family:&quot;PMingLiU&quot;,serif;mso-ligatures:=
-none">=1B$B4d>>=1B(B</span><span lang=3D"ZH-TW" style=3D"font-family:&quot;=
-Calibri&quot;,sans-serif;mso-ligatures:none">
-</span><span lang=3D"ZH-TW" style=3D"font-family:&quot;PMingLiU&quot;,serif=
-;mso-ligatures:none">=1B$B?.MN=1B(B</span><span style=3D"font-family:&quot;=
-Calibri&quot;,sans-serif;mso-ligatures:none"> =1B$B!{=1B(B</span><span lang=
-=3D"ZH-TW" style=3D"font-family:&quot;PMingLiU&quot;,serif;mso-ligatures:no=
-ne">=1B$B#D#I#T#C=1B(B</span><span style=3D"font-family:&quot;Calibri&quot;=
-,sans-serif;mso-ligatures:none">=1B$B""=1B(B</span><span lang=3D"ZH-TW" sty=
-le=3D"font-family:&quot;PMingLiU&quot;,serif;mso-ligatures:none">=1B$B#D#I#=
-T=1B(B</span><span style=3D"font-family:&quot;Calibri&quot;,sans-serif;mso-=
-ligatures:none">=1B$B!{=1B(B</span><span lang=3D"ZH-TW" style=3D"font-famil=
-y:&quot;PMingLiU&quot;,serif;mso-ligatures:none">=1B$B#O#S#T=1B(B</span><sp=
-an style=3D"font-family:&quot;Calibri&quot;,sans-serif;mso-ligatures:none">=
-)
- &lt;nobuhiro1.iwamatsu@toshiba.co.jp&gt;<br>
-<b>Subject:</b> Re: [cip-dev] Preparing test evidences for CIP Core package=
-s for IEC 62443-4-x assessment<o:p></o:p></span></p>
-</div>
-</div>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"font-famil=
-y:&quot;Yu Gothic&quot;,sans-serif;mso-fareast-language:JA">Hi Adithya,<o:p=
-></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"font-famil=
-y:&quot;Yu Gothic&quot;,sans-serif;mso-fareast-language:JA"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"font-famil=
-y:&quot;Yu Gothic&quot;,sans-serif;mso-fareast-language:JA">&gt; We would l=
-ike to understand your opinion on the next steps to take or other distribut=
-ions to target for tests for the above listed packages.<o:p></o:p></span></=
-p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"font-famil=
-y:&quot;Yu Gothic&quot;,sans-serif;mso-fareast-language:JA"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"font-famil=
-y:&quot;Yu Gothic&quot;,sans-serif;mso-fareast-language:JA">It<span lang=3D=
-"JA">=1B$B!G=1B(B</span>s better to define what should be tested from IEC p=
-erspective.<o:p></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"font-famil=
-y:&quot;Yu Gothic&quot;,sans-serif;mso-fareast-language:JA">e.g. python3 do=
-es not provide any functions and just for controlling other packages (like =
-a meta package).<o:p></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"font-famil=
-y:&quot;Yu Gothic&quot;,sans-serif;mso-fareast-language:JA">See the package=
- description and contained files:
-<a href=3D"https://packages.debian.org/bookworm/python3">https://packages.d=
-ebian.org/bookworm/python3</a><o:p></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"font-famil=
-y:&quot;Yu Gothic&quot;,sans-serif;mso-fareast-language:JA">No need to prep=
-are any tests for such package at all (at least for OS security).<o:p></o:p=
-></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"font-famil=
-y:&quot;Yu Gothic&quot;,sans-serif;mso-fareast-language:JA"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"font-famil=
-y:&quot;Yu Gothic&quot;,sans-serif;mso-fareast-language:JA">Some packages l=
-ike base-files only contain data, which may be hard to test without concret=
-e methods to use them.<o:p></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"font-famil=
-y:&quot;Yu Gothic&quot;,sans-serif;mso-fareast-language:JA"><o:p>&nbsp;</o:=
-p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"font-famil=
-y:&quot;Yu Gothic&quot;,sans-serif;mso-fareast-language:JA">Best regards,<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"font-famil=
-y:&quot;Yu Gothic&quot;,sans-serif;mso-fareast-language:JA">Kazu<o:p></o:p>=
-</span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"font-famil=
-y:&quot;Yu Gothic&quot;,sans-serif;mso-fareast-language:JA"><o:p>&nbsp;</o:=
-p></span></p>
-<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0in 0in 0in =
-4.0pt">
-<div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
-0in 0in">
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><b><span style=3D"font-fa=
 mily:&quot;Calibri&quot;,sans-serif;mso-ligatures:none;mso-fareast-language=
-:JA">From:</span></b><span style=3D"font-family:&quot;Calibri&quot;,sans-se=
-rif;mso-ligatures:none;mso-fareast-language:JA">
-<a href=3D"mailto:cip-dev@lists.cip-project.org">cip-dev@lists.cip-project.=
-org</a> &lt;<a href=3D"mailto:cip-dev@lists.cip-project.org">cip-dev@lists.=
-cip-project.org</a>&gt;
-<b>On Behalf Of </b>Adithya Balakumar<br>
-<b>Sent:</b> Thursday, May 16, 2024 8:40 PM<br>
-<b>To:</b> iwamatsu nobuhiro(</span><span lang=3D"JA" style=3D"font-family:=
-&quot;PMingLiU&quot;,serif;mso-ligatures:none;mso-fareast-language:JA">=1B$=
-B4d>>=1B(B</span><span lang=3D"JA" style=3D"font-family:&quot;Calibri&quot;=
-,sans-serif;mso-ligatures:none;mso-fareast-language:JA">
-</span><span lang=3D"JA" style=3D"font-family:&quot;PMingLiU&quot;,serif;ms=
-o-ligatures:none;mso-fareast-language:JA">=1B$B?.MN=1B(B</span><span style=
-=3D"font-family:&quot;Calibri&quot;,sans-serif;mso-ligatures:none;mso-farea=
-st-language:JA"> =1B$B!{=1B(B</span><span lang=3D"JA" style=3D"font-family:=
-&quot;PMingLiU&quot;,serif;mso-ligatures:none;mso-fareast-language:JA">=1B$=
-B#D#I#T#C=1B(B</span><span style=3D"font-family:&quot;Calibri&quot;,sans-se=
-rif;mso-ligatures:none;mso-fareast-language:JA">=1B$B""=1B(B</span><span la=
-ng=3D"JA" style=3D"font-family:&quot;PMingLiU&quot;,serif;mso-ligatures:non=
-e;mso-fareast-language:JA">=1B$B#D#I#T=1B(B</span><span style=3D"font-famil=
-y:&quot;Calibri&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA=
-">=1B$B!{=1B(B</span><span lang=3D"JA" style=3D"font-family:&quot;PMingLiU&=
-quot;,serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#O#S#T=1B(B</s=
-pan><span style=3D"font-family:&quot;Calibri&quot;,sans-serif;mso-ligatures=
-:none;mso-fareast-language:JA">)
- &lt;<a href=3D"mailto:nobuhiro1.iwamatsu@toshiba.co.jp">nobuhiro1.iwamatsu=
-@toshiba.co.jp</a>&gt;<br>
-<b>Cc:</b> <a href=3D"mailto:cip-dev@lists.cip-project.org">cip-dev@lists.c=
-ip-project.org</a><br>
+:ZH-TW">From:</span></b><span style=3D"font-family:&quot;Calibri&quot;,sans=
+-serif;mso-ligatures:none;mso-fareast-language:ZH-TW"> cip-dev@lists.cip-pr=
+oject.org
+ &lt;cip-dev@lists.cip-project.org&gt; <b>On Behalf Of </b>Adithya Balakuma=
+r<br>
+<b>Sent:</b> Thursday, May 16, 2024 5:10 PM<br>
+<b>To:</b> iwamatsu nobuhiro(</span><span lang=3D"ZH-TW" style=3D"font-fami=
+ly:&quot;PMingLiU&quot;,serif;mso-ligatures:none;mso-fareast-language:ZH-TW=
+">=1B$B4d>>=1B(B</span><span lang=3D"ZH-TW" style=3D"font-family:&quot;Cali=
+bri&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:ZH-TW">
+</span><span lang=3D"ZH-TW" style=3D"font-family:&quot;PMingLiU&quot;,serif=
+;mso-ligatures:none;mso-fareast-language:ZH-TW">=1B$B?.MN=1B(B</span><span =
+style=3D"font-family:&quot;Calibri&quot;,sans-serif;mso-ligatures:none;mso-=
+fareast-language:ZH-TW"> =1B$B!{=1B(B</span><span lang=3D"ZH-TW" style=3D"f=
+ont-family:&quot;PMingLiU&quot;,serif;mso-ligatures:none;mso-fareast-langua=
+ge:ZH-TW">=1B$B#D#I#T#C=1B(B</span><span style=3D"font-family:&quot;Calibri=
+&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:ZH-TW">=1B$B""=1B=
+(B</span><span lang=3D"ZH-TW" style=3D"font-family:&quot;PMingLiU&quot;,ser=
+if;mso-ligatures:none;mso-fareast-language:ZH-TW">=1B$B#D#I#T=1B(B</span><s=
+pan style=3D"font-family:&quot;Calibri&quot;,sans-serif;mso-ligatures:none;=
+mso-fareast-language:ZH-TW">=1B$B!{=1B(B</span><span lang=3D"ZH-TW" style=
+=3D"font-family:&quot;PMingLiU&quot;,serif;mso-ligatures:none;mso-fareast-l=
+anguage:ZH-TW">=1B$B#O#S#T=1B(B</span><span style=3D"font-family:&quot;Cali=
+bri&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:ZH-TW">)
+ &lt;nobuhiro1.iwamatsu@toshiba.co.jp&gt;<br>
+<b>Cc:</b> cip-dev@lists.cip-project.org<br>
 <b>Subject:</b> [cip-dev] Preparing test evidences for CIP Core packages fo=
 r IEC 62443-4-x assessment<o:p></o:p></span></p>
 </div>
 </div>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"mso-fareas=
-t-language:JA"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"mso-fareas=
-t-language:JA">Hello Iwamatsu-san,<o:p></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"mso-fareas=
-t-language:JA"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"mso-fareas=
-t-language:JA">Hope this message finds you well.<o:p></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"mso-fareas=
-t-language:JA"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"mso-fareas=
-t-language:JA">We at the CIP Security Workgroup have been working to collec=
-t test evidences for CIP Core packages included in CIP Security image as pa=
-rt of IEC 62443-4-x assessment.<o:p></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"mso-fareas=
-t-language:JA"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"mso-fareas=
-t-language:JA">To summarize the work done by CIP SWG so far, CIP SWG invest=
-igated the number of packages in CIP Security image and tried to understand=
- the number of packages that have test
- results available in debian and number of packages for which we have to ru=
-n the tests ourselves and provide the results. I am including the summary o=
-f the packages below:<o:p></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"mso-fareas=
-t-language:JA"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">Hello Iwamatsu-san,<o:p><=
+/o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">Hope this message finds y=
+ou well.<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">We at the CIP Security Wo=
+rkgroup have been working to collect test evidences for CIP Core packages i=
+ncluded in CIP Security image as part of IEC 62443-4-x assessment.<o:p></o:=
+p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">To summarize the work don=
+e by CIP SWG so far, CIP SWG investigated the number of packages in CIP Sec=
+urity image and tried to understand the number of packages that have test r=
+esults available in debian and number
+ of packages for which we have to run the tests ourselves and provide the r=
+esults. I am including the summary of the packages below:<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in"><o:p>&nbsp;</o:p></p>
 <p class=3D"MsoListParagraph" style=3D"margin-left:1.0in;text-indent:-.25in=
-;mso-list:l0 level1 lfo3">
-<![if !supportLists]><span style=3D"font-family:Symbol;mso-fareast-language=
-:JA"><span style=3D"mso-list:Ignore">&middot;<span style=3D"font:7.0pt &quo=
-t;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]><span style=3D"mso-fareast-language:JA">Tota=
-l packages in CIP Security image - 242<o:p></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"mso-fareas=
-t-language:JA"><o:p>&nbsp;</o:p></span></p>
+;mso-list:l1 level1 lfo3">
+<![if !supportLists]><span style=3D"font-family:Symbol"><span style=3D"mso-=
+list:Ignore">&middot;<span style=3D"font:7.0pt &quot;Times New Roman&quot;"=
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]>Total packages in CIP Security image - 242<o=
+:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in"><o:p>&nbsp;</o:p></p>
 <p class=3D"MsoListParagraph" style=3D"margin-left:1.0in;text-indent:-.25in=
-;mso-list:l0 level1 lfo3">
-<![if !supportLists]><span style=3D"font-family:Symbol;mso-fareast-language=
-:JA"><span style=3D"mso-list:Ignore">&middot;<span style=3D"font:7.0pt &quo=
-t;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]><span style=3D"mso-fareast-language:JA">Cust=
-om CIP packages (from isar-cip-core recipes) &#8211; 13<o:p></o:p></span></=
-p>
+;mso-list:l1 level1 lfo3">
+<![if !supportLists]><span style=3D"font-family:Symbol"><span style=3D"mso-=
+list:Ignore">&middot;<span style=3D"font:7.0pt &quot;Times New Roman&quot;"=
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]>Custom CIP packages (from isar-cip-core reci=
+pes) &#8211; 13<o:p></o:p></p>
 <p class=3D"MsoListParagraph" style=3D"margin-left:1.5in;text-indent:-.25in=
-;mso-list:l0 level2 lfo3">
-<![if !supportLists]><span style=3D"font-family:&quot;Courier New&quot;;mso=
--fareast-language:JA"><span style=3D"mso-list:Ignore">o<span style=3D"font:=
-7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;
-</span></span></span><![endif]><span style=3D"mso-fareast-language:JA">Thes=
-e packages are created by recipes in isar-cip-core or isar that are deploye=
-d into image as a .deb file.<o:p></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"mso-fareas=
-t-language:JA"><o:p>&nbsp;</o:p></span></p>
+;mso-list:l1 level2 lfo3">
+<![if !supportLists]><span style=3D"font-family:&quot;Courier New&quot;"><s=
+pan style=3D"mso-list:Ignore">o<span style=3D"font:7.0pt &quot;Times New Ro=
+man&quot;">&nbsp;&nbsp;
+</span></span></span><![endif]>These packages are created by recipes in isa=
+r-cip-core or isar that are deployed into image as a .deb file.<o:p></o:p><=
+/p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in"><o:p>&nbsp;</o:p></p>
 <p class=3D"MsoListParagraph" style=3D"margin-left:1.0in;text-indent:-.25in=
-;mso-list:l0 level1 lfo3">
-<![if !supportLists]><span style=3D"font-family:Symbol;mso-fareast-language=
-:JA"><span style=3D"mso-list:Ignore">&middot;<span style=3D"font:7.0pt &quo=
-t;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]><span style=3D"mso-fareast-language:JA">Pack=
-ages with Debian CI autopkgtest - 140
-<o:p></o:p></span></p>
+;mso-list:l1 level1 lfo3">
+<![if !supportLists]><span style=3D"font-family:Symbol"><span style=3D"mso-=
+list:Ignore">&middot;<span style=3D"font:7.0pt &quot;Times New Roman&quot;"=
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]>Packages with Debian CI autopkgtest - 140 <o=
+:p></o:p></p>
 <p class=3D"MsoListParagraph" style=3D"margin-left:1.5in;text-indent:-.25in=
-;mso-list:l0 level2 lfo3">
-<![if !supportLists]><span style=3D"font-family:&quot;Courier New&quot;;mso=
--fareast-language:JA"><span style=3D"mso-list:Ignore">o<span style=3D"font:=
-7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;
-</span></span></span><![endif]><span style=3D"mso-fareast-language:JA">97 p=
-ackages with functional tests, 41 packages with non-functional tests, 2 pac=
-kages with no tests running in debian CI<o:p></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"mso-fareas=
-t-language:JA"><o:p>&nbsp;</o:p></span></p>
+;mso-list:l1 level2 lfo3">
+<![if !supportLists]><span style=3D"font-family:&quot;Courier New&quot;"><s=
+pan style=3D"mso-list:Ignore">o<span style=3D"font:7.0pt &quot;Times New Ro=
+man&quot;">&nbsp;&nbsp;
+</span></span></span><![endif]>97 packages with functional tests, 41 packag=
+es with non-functional tests, 2 packages with no tests running in debian CI=
+<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in"><o:p>&nbsp;</o:p></p>
 <p class=3D"MsoListParagraph" style=3D"margin-left:1.0in;text-indent:-.25in=
-;mso-list:l0 level1 lfo3">
-<![if !supportLists]><span style=3D"font-family:Symbol;mso-fareast-language=
-:JA"><span style=3D"mso-list:Ignore">&middot;<span style=3D"font:7.0pt &quo=
-t;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]><span style=3D"mso-fareast-language:JA">Pack=
-ages without tests in Debian CI &#8211; 89<o:p></o:p></span></p>
+;mso-list:l1 level1 lfo3">
+<![if !supportLists]><span style=3D"font-family:Symbol"><span style=3D"mso-=
+list:Ignore">&middot;<span style=3D"font:7.0pt &quot;Times New Roman&quot;"=
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]>Packages without tests in Debian CI &#8211; =
+89<o:p></o:p></p>
 <p class=3D"MsoListParagraph" style=3D"margin-left:1.5in;text-indent:-.25in=
-;mso-list:l0 level2 lfo3">
-<![if !supportLists]><span style=3D"font-family:&quot;Courier New&quot;;mso=
--fareast-language:JA"><span style=3D"mso-list:Ignore">o<span style=3D"font:=
-7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;
-</span></span></span><![endif]><span style=3D"mso-fareast-language:JA">70 p=
-ackages have tests available either in debian salsa or upstream.<o:p></o:p>=
-</span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"mso-fareas=
-t-language:JA"><o:p>&nbsp;</o:p></span></p>
+;mso-list:l1 level2 lfo3">
+<![if !supportLists]><span style=3D"font-family:&quot;Courier New&quot;"><s=
+pan style=3D"mso-list:Ignore">o<span style=3D"font:7.0pt &quot;Times New Ro=
+man&quot;">&nbsp;&nbsp;
+</span></span></span><![endif]>70 packages have tests available either in d=
+ebian salsa or upstream.<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in"><o:p>&nbsp;</o:p></p>
 <p class=3D"MsoListParagraph" style=3D"margin-left:1.0in;text-indent:-.25in=
-;mso-list:l0 level1 lfo3">
-<![if !supportLists]><span style=3D"font-family:Symbol;mso-fareast-language=
-:JA"><span style=3D"mso-list:Ignore">&middot;<span style=3D"font:7.0pt &quo=
-t;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]><span style=3D"mso-fareast-language:JA">Pack=
-ages without tests in upstream as well &#8211; 19<o:p></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"mso-fareas=
-t-language:JA"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"mso-fareas=
-t-language:JA">There are a few packages that do not have tests defined in e=
-ither debian salsa or upstream. I am listing the packages that do not have =
-tests defined in either debian salsa or
- upstream below:<o:p></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"mso-fareas=
-t-language:JA"><o:p>&nbsp;</o:p></span></p>
+;mso-list:l1 level1 lfo3">
+<![if !supportLists]><span style=3D"font-family:Symbol"><span style=3D"mso-=
+list:Ignore">&middot;<span style=3D"font:7.0pt &quot;Times New Roman&quot;"=
+>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]>Packages without tests in upstream as well &=
+#8211; 19<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">There are a few packages =
+that do not have tests defined in either debian salsa or upstream. I am lis=
+ting the packages that do not have tests defined in either debian salsa or =
+upstream below:<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in"><o:p>&nbsp;</o:p></p>
 <table class=3D"MsoNormalTable" border=3D"0" cellspacing=3D"0" cellpadding=
 =3D"0" width=3D"1261" style=3D"width:946.0pt;margin-left:35.85pt;border-col=
 lapse:collapse">
@@ -2109,8 +1744,7 @@ serif;color:black;mso-ligatures:none">&nbsp;<o:p></o:p></span></p>
 </tr>
 </tbody>
 </table>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"mso-fareas=
-t-language:JA"><br>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in"><br>
 As suggested by you in the previous TSC meeting, we are looking for any tes=
 ts available for the above packages in other distributions as well. So far,=
  we have checked ubuntu, where we found a test suite for the net-tools pack=
@@ -2119,19 +1753,15 @@ age. The rest of the packages do
 <br>
 We would like to understand your opinion on the next steps to take or other=
  distributions to target for tests for the above listed packages.<o:p></o:p=
-></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"mso-fareas=
-t-language:JA"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"mso-fareas=
-t-language:JA">Thanks and Regards,<br>
-Adithya Balakumar<o:p></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"margin-left:.5in"><span style=3D"mso-fareas=
-t-language:JA"><o:p>&nbsp;</o:p></span></p>
-</div>
+></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">Thanks and Regards,<br>
+Adithya Balakumar<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in"><o:p>&nbsp;</o:p></p>
 </div>
 </body>
 </html>
 
---_000_TYCPR01MB96699E420B7EAA6E49F50263C4FE2TYCPR01MB9669jpnp_--
+--_000_TYCPR01MB96695706DE27A0CADA000C27C4FE2TYCPR01MB9669jpnp_--
 
 
