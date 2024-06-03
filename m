@@ -2,50 +2,52 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DD31C25B76
-	for <webhook@archiver.kernel.org>; Mon,  3 Jun 2024 09:09:06 +0000 (UTC)
-Received: from EUR04-VI1-obe.outbound.protection.outlook.com (EUR04-VI1-obe.outbound.protection.outlook.com [40.107.8.64])
- by mx.groups.io with SMTP id smtpd.web11.78801.1717405739954836586
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D3C4C25B75
+	for <webhook@archiver.kernel.org>; Mon,  3 Jun 2024 09:09:16 +0000 (UTC)
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (EUR04-DB3-obe.outbound.protection.outlook.com [40.107.6.75])
+ by mx.groups.io with SMTP id smtpd.web10.78874.1717405754836654605
  for <cip-dev@lists.cip-project.org>;
- Mon, 03 Jun 2024 02:09:00 -0700
+ Mon, 03 Jun 2024 02:09:15 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=E7oSiPHt;
- spf=pass (domain: siemens.com, ip: 40.107.8.64, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=ryrCWPgP;
+ spf=pass (domain: siemens.com, ip: 40.107.6.75, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PvZj6duYw6wt1lCqlOrp+p6A/jvHsEPDyvXk4vz2u7hnhmSM5nSCPCC8HuLy7iFaqw58IRKxpT4laAuIaaVR2lHSiea4szNWWZYf73foAGyHlwCqXdeUI/Eclum2I9+n7u3gjnohO/d/CvySEkzhQY+LhaOJhB/XQm7rZozYYPcNTrAy9PzBZwbhnfrs4q7QtG4pyV5w00N6tX4vN2/j8aqLzrR9II7ox1z7Op1qqnbH+Yx8grnRyTFqN//4zyf+KEu/GNKEIpVZdMDEEAQjCJHpOK37gt8rh8A67YmWWsKYpPL7j0MTDRBZwOliF/vYHbClHX44zYsnx1mvN+pchw==
+ b=jkI7WBqEPBKyHJSG2UPcw3xsNxVlRAtfKDuZkWkFZCUgF1A1wZ86awoiTtY7mQc3LjAAmwzMgXJu/exg1zIY2Mfzq/bjxIVP0X0SJ8Oes88MXmradVotF/ClH682ea7vTepWJxMbeLua8HxWdcb5eg78rmUOkMY/sDIoqsAqMviZkwfAElmsgxsoVZepbBuMVSP/+Oa9ArXRTVB/9ukxJ5hS/PC7tY9iJWjkqbSkySKOd7BEJJciKJPnfeIDCIT+0FCRIY4TrdbzJKdm6i2WpcODBau1wD2ZaUr4FFK8S4YvCWoEn5Jf9FSAKuE27SGNnYU0eBBSef1b8/oQwLYIMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bfIT3DErI8UoQRK5/F6cBvdGOVZPsvW7nB+fjzbKlRc=;
- b=CDJ0s52ztEHtnnHIxyPxnUHOS20nRcf2pE12qG1WtFzjsutiBaAxGbtIat96o+YBBwEzkTdriLaQsa1Aptjm4jU9OE/maCk2+A7cgEeFxiyO9cj2Q6vDTKUvhOC/KIeaeoT8g0qQQWzxN2BClAzOxLK9vdn9yFWbzk4IQf6JNCmHfQbmzx+kVbYYlEZAseGyH7omYh64yI+1J83LC7anrALAszN2OlTmgzkArVljX9pqPqnWL1kruAOPxKwiiBAZZsVUOnapJ831crsNSc5Ifvh748IGrx1kC85LjT/hruZJ08ilNdmEeq9dbI+GgBB/v3w1qsCRj3O4W9v0iF50lQ==
+ bh=abjmsoTtj7DYJSEK0J6mRKm3xOdmGMsURpfriuOBGO4=;
+ b=GahIp9kZRnAUtnvy73RCACJJU+fMd0woL7fuCO/aOyX5GLOjgBPPr8oUofF59v2v+VUsZuiQu0ManULzBqN0xIALFoYRk7M6RM7dLtjvk/Wv+uid+eFRcfyKfq05aeA4pj6PqtAJ7jZ4gmiDUrypV6SzoWrum+46CTZUewt/aBGVjgRt1lSof13uLyZ6znXnZVuFK40Q0RfHxUs2SWUvM+TLPGcrwqn0SBMkAshlVMhOVy74g22TCvvQu5zxacHvcpmRE3U+LHPNHIu2vHUPxT4d9z73wQ67ZOSAKCda4ThyL+1VvYrXyIB1LmdWEp9Q+i5Gg1T/+XXdht9ZHtYH6g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bfIT3DErI8UoQRK5/F6cBvdGOVZPsvW7nB+fjzbKlRc=;
- b=E7oSiPHtOIj2v03sX6Td95oBGyTJFhFuZ8Df9cqrvkVTHeqb8VSPZrr12DOpA+b7b4LCee3vt/klLkt/+pXa/5dsOvk0IFCiBFOyEuoXS3zOjfubx3s42BsqgM8d2r6sD6/LXC4bk3m9SoWt5aIUI7BQWpN0NE+KOKQR64M68r8gyczY37O7+focZp6d0lhR09gPr/5dkrmad6WhdouiUBccGNmgEhzIz4ddDuIT+EgML5qWeOk3+rpvKe6htpnCIFGqAXSyS/AS6sXZNkz+iCHdgRmbW4yfHgw927B0SKPj7B2KJ6fzYhKOR4IFzpJvCyu2xrpb1wLlASyZsaJmbg==
+ bh=abjmsoTtj7DYJSEK0J6mRKm3xOdmGMsURpfriuOBGO4=;
+ b=ryrCWPgPlrPxb1KiEROaTgAWPKZTsnlGZlSHrUZ6Ul8ySGW1echwMIE8oGXDdbvwZDUC7VkNTvDfaCiafJdznwDxOoRZ5cA746WCoe5tVvboTqqXX/fEKq7wb3joKBtzHCBmrVMHrWfzVd3IgIJOx8XLH/T76jVGXFtzPboUkHJ7nSjlWGMD38lPiBjUjjTubmDGNysKXVCdfwF/TSI6cAjQaPKU6GvSPeZ7Y6/b63d1C4jxuoDQOU4lOZu0Nhp6P/lGLSUUMdCl+HhxAP5P5wdDmyjI5usy8LebYqwIPK9O+kY9izGfmKD1YWgHoyEONCdN4z7Ud8EjwWku61ASag==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
  by DB5PR10MB7920.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:4a5::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.21; Mon, 3 Jun
- 2024 09:08:56 +0000
+ 2024 09:09:12 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408%7]) with mapi id 15.20.7633.021; Mon, 3 Jun 2024
- 09:08:56 +0000
-Message-ID: <9f1638f8-2f94-4b3e-bc3e-4871f83c6146@siemens.com>
-Date: Mon, 3 Jun 2024 11:08:51 +0200
+ 09:09:11 +0000
+Message-ID: <41e33c3b-6f1f-46b3-9061-a1368fa8a088@siemens.com>
+Date: Mon, 3 Jun 2024 11:09:07 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core 0/3] Trigger CIP Core testing LAVA jobs
+Subject: Re: [isar-cip-core 1/3] test/templates: Include functionality based
+ templates
 To: Sai.Sathujoda@toshiba-tsip.com, cip-dev@lists.cip-project.org
 Cc: dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
 References: <20240603070920.2942859-1-Sai.Sathujoda@toshiba-tsip.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
+ <20240603070920.2942859-2-Sai.Sathujoda@toshiba-tsip.com>
 Content-Language: en-US
+From: Jan Kiszka <jan.kiszka@siemens.com>
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
  uNUqthIkgLGWzKugodvkcCK8Wbyw+1vxcl4Lw56WezLsOTfu7oi7Z0vp1XkrLcM0tofTbClW
@@ -89,137 +91,417 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
  8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
-In-Reply-To: <20240603070920.2942859-1-Sai.Sathujoda@toshiba-tsip.com>
+In-Reply-To: <20240603070920.2942859-2-Sai.Sathujoda@toshiba-tsip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CH2PR16CA0011.namprd16.prod.outlook.com
- (2603:10b6:610:50::21) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: CH2PR16CA0025.namprd16.prod.outlook.com
+ (2603:10b6:610:50::35) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB5PR10MB7920:EE_
-X-MS-Office365-Filtering-Correlation-Id: b8640e44-295b-42ae-868e-08dc83accc51
+X-MS-Office365-Filtering-Correlation-Id: 958ca7c1-71d5-4a24-87e8-08dc83acd570
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?UjMrVjltUGxFUmdqak5RZ0xzSVRuTkFndnBYR3VUc3laNnhYSTgwWjhpRWlw?=
- =?utf-8?B?dzU2THA5UmVLT2ZzRE1paFJ4ZTI5TS82MXc4TVJFRFM4ZzJrTTM5VlpaMGtu?=
- =?utf-8?B?TlhiN0g5NTNwaG5ibExzQ3FqWGZ0UmladFZCSzR4Skc2QnF3SmVCR0Z6TXgy?=
- =?utf-8?B?a0hveWF2RGJDQ1FtdHVrRWZrWmtVUEhBVmJXT2VnY3kzTy9hQ0xJbGkzL3Fu?=
- =?utf-8?B?dUROYjA0eUFxSk5YQzNlOUFEQ2NNM1FhdGh4TFIvWFZyMjFjcXVKdEZWNHN0?=
- =?utf-8?B?aFdoSWF6dyswZEdERGliSGVBR0U2UHFnQkMrclpTS3hlWWlKOVBWMmpwSTA2?=
- =?utf-8?B?TXZtNUpBQTYrTEl5Wjg5aFBTa2hoNEk3V3JFZUYxOWR2ZGJYendwZGJiUnFl?=
- =?utf-8?B?TlMyVzVGdkIwcjR1OGRJZUNUNmN0VDhFTGdYRWkwWVhoNmNHR3hjY0hZeWpK?=
- =?utf-8?B?UjZ6RXgyZElXblBsTStGZ3d1SnJ1MWdoclhOTzdZZEl2enRyZWRUMUVvcWxr?=
- =?utf-8?B?YzJUN2JwL0s3SjA0NmxTQ1hhMHBLQkRBckhlcEplZEVVT244dnNBTEoybnhZ?=
- =?utf-8?B?UVVFaVZUZVJUUGd3aVQyOW1qTmVIdkNMNFNIM1AvM0FvOStnTW1aMmdZem5L?=
- =?utf-8?B?eGFMU0JRWEJibXlTNUZDTW1tdEErTTh3OC81UWJyMU9LV1FrSEJBNWM5ZWFK?=
- =?utf-8?B?Y3ZUTFJsZ1M0SXlZTm1iaTF4RFlOd1ZLaWRkWmcyaGdPTkF3amI5aVpUazVm?=
- =?utf-8?B?cDZyS0tNM09MeFhFYWl6aUxhMmI2VDl3aWc2eWEzMFZHNjhvcmdkcVRLL2xN?=
- =?utf-8?B?NnY0UUI1MXUvMm13RXU4MWN2MGpUODZQdmlWTUlvaUNpV1oxTEtraElCcXk1?=
- =?utf-8?B?QnJrTDR5bFp3WnkvTEt3VEo0Z3VTMnhLdHVHTWdsZ3VUZzNJOVlqdnNoS1Z4?=
- =?utf-8?B?NmJ6T0RmUGdPclBYTFZsem9Ra3ZVazhiSmlTSnpBaEZ6aEhzQURGZHNwS0t0?=
- =?utf-8?B?V3FjUVc0cWt2OEZlanpIeFdGWUk0NzNNWFVUd1NOSEJKVDJ1cUhCbElmVFhJ?=
- =?utf-8?B?K1RmQmpKTHl6d0RidEFRVkRwR0FpRzBidlBaNjNNWVYyQ1gwNEh2M2g1cFl6?=
- =?utf-8?B?bkE2ejlUY0Z2MVZUa2M1WnpHT3Y3TlNHaFo2cVZjUnU2QVdZZWFzMHYwaS9D?=
- =?utf-8?B?dE1KSkgwbzNNTlN2VUFvMVo5Uk1Zc3V3NllndlBSRk9uUEkvcEErbjFNeXJ3?=
- =?utf-8?B?M1RjaWNjYWhTR1hoOVZ3dUNoRDRJVWpSc2NCT1BFSEcyRUcrcy9rajBHY3p0?=
- =?utf-8?B?MDNlSlN5WVVpcVRPQ2FXNXRoRW9kOFM1ODJsSXBPUXJBWTRpUFVnY056djNT?=
- =?utf-8?B?bjlTcU02TG1ISitqU2Y4SHhmMHlSUllKendHOVlyeTQ4Sm91alFDTFNsb05y?=
- =?utf-8?B?L3hXWWpPRkt3aEd4Ty9HM3FuUVZnT1h6cXNIRHo1RS91RkFsUWVUU0syU0Fv?=
- =?utf-8?B?emk4N082bGVsVkltd0NJRDJyTGRpSGNiQmFQQTFMSGNVeXhrVUlFZjJ2Z0Vu?=
- =?utf-8?B?R3BMb2JXQnlyREp2eDArd3RIeTZvcVdsaWNmVDdlMmwzR3o5Zmc0Z1JZZ01V?=
- =?utf-8?B?dVJwSy9KL3hoLy84aHNUMTNkMnNmT3FLSnU4VzJmd0VKOEdwby93eDQwMGZP?=
- =?utf-8?B?eU91UXFDNzJxSGpLU3R2Y29mYTZCL1I0NHc4Q21lUllqWGl5V1oxY2h3PT0=?=
+	=?utf-8?B?dUE4M01RVUVwZHp4aDNwVHJlNGpHSk5EZ1NsdnphNGtxWjhCVEFDQzBNZEo3?=
+ =?utf-8?B?eVFsNW5WMEpxYVRRMXVZckRLcStrYTd4TUhDRkNMM1dybmRFYmx5Ykxxc3hu?=
+ =?utf-8?B?c0g1REdmSGVuUjQ0U2NKY1Rrd0I4bFd1UTRNcXJDbm1WRWdxUkgySlEyNXUy?=
+ =?utf-8?B?cXk2b2ZxSGt4aE1wd1FrcU9UY0JrUUU1ZmF6Tm42K2JsbVV6aGppV1hiN3hP?=
+ =?utf-8?B?SEZiVjU5WHZYeVVidjBjUXlObzVmTjF2WW12UjNocjhvVi9TRW1CYlFxWWRU?=
+ =?utf-8?B?NmNmK0dBOHVhYXJ2bHlLM1p1RW14SVl3dVdBUW51MTFPZFZzMzkvRzY4WUVh?=
+ =?utf-8?B?Qmw5MThZRndINU9jVzVmaHpJTGNNN2ROMzJDaE5kSVgyV1lQbjgrTHJ2c3FW?=
+ =?utf-8?B?NGpMZU9qdFFhdzNQbG9jSjhVaGFmZTQvMFQ3Z0ZqRzhBaXlGUjdGRnkyVWNH?=
+ =?utf-8?B?RGh1QUs0eUlPMXlXSytsMXJTOUkzSXkwN2I4MHVueUkwZDJueVRGVnJIT1RQ?=
+ =?utf-8?B?NHZrL2xsQWRvVFJNemNzSEdxSk5IMVQ0eGVLWHN5WThWeDQ3d2ttbEtjd1Jy?=
+ =?utf-8?B?QVZKUHBHK3gzZXRhWDBTbDVzcm5lWlF0Z25KR0hObEdKTTdkcWFFTHUzTlU1?=
+ =?utf-8?B?aURna3JKSlF5YlFmV1YrNGpzMis5V1dzQ1dMQVVTQm1jSXVJdTNrelplY2lr?=
+ =?utf-8?B?bTRoay80d2E2dzZJR3doYzA4MjRKMHJDakRYSEZTdWw2MW9IaHA1SjROVUZ3?=
+ =?utf-8?B?eUNWOHYydSsrUXVvZk8xcnpZNFM2djUwbERva3E4ZnpXbnY2b3lGZW5wOHhN?=
+ =?utf-8?B?WHVTRm9QNkFlanhNQi9sVjNkYkNVVWk0bzhQUXlhelBJa2NORWFFOGROem8z?=
+ =?utf-8?B?Q2hNRTFrY2VabzBMZWRNaStoRkpMem1TY1I5ZHJwQWZMcG5aOWFxVjFsTm9w?=
+ =?utf-8?B?S3ZhRXNrdW5zK2NseERIVWNpRHpEbHNWbm1aL0UwdWxLQkk1d2xmcDVlS21U?=
+ =?utf-8?B?VXJlYjNxM3dHcE9CM1ZvdFJNaDBNV0xIV2g2aHdLdytXblltT2JPWDAzYUIz?=
+ =?utf-8?B?VWlsdTJWWG41VTZQOTdMaG1IN29DdlVQRFlUcm5aM2orNzFXQjJ0a1U2Nllz?=
+ =?utf-8?B?NzNsZjBKV29LVUVvaDhzWFJ4dmJFK1NpMmp6R3N5MGU4RmZYYXhjamQ5Uzl5?=
+ =?utf-8?B?Q2hQQ0Q5N2FDNiszVk05aVR2cXJnM05VTTNTeUNwSWp2WUV4YXBacVZRb0FU?=
+ =?utf-8?B?NlJNakRjemM1UW92UkE0T3JvQkJHNzVOY2NwZzRuTFg0VlNGdVZyZjhLTWFW?=
+ =?utf-8?B?bnYycGRpTXNnZ2IxWmNwLzFoL00yMkkvc045ZzBjM2J0TWRuWENrZ2xod0VO?=
+ =?utf-8?B?djFCUXpnWllmM2x2UEVUZnpRNkdxRXh1QnB1K0FBMVQxU1I5Wm0wSGhWemNN?=
+ =?utf-8?B?STdDREdZOTMzaThnWWpuaXhvMVJ5bVlyWDdOZTlINmV3N1Nvd2R1THpnZGlV?=
+ =?utf-8?B?RVRKT0poMjdkZ2lieHZ1V1FKZ0ZPVXNQTTF0OGY5L2FQNXNyWjRmYUxtYWN5?=
+ =?utf-8?B?byt2ZTk5MEtkZFhNZ3JaT1l2ams5OUVVM1RFTHo4anZocjhwdjdTVzBQOG9t?=
+ =?utf-8?Q?CZS8Txs1Pd5jpK6Awa0z69iI+rBDlZqbDwYVsEm7P9r0=3D?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?b2ZDRVZLTGJvanBwdGdSQnVwYVhDQWRibFQ0Nll0NXlyYUZsbEtjV0xLREYx?=
- =?utf-8?B?TVRveEl3R2NzS0hQbFR1VVMzY2FyODRZcDJGZnhuS0ltTnkwandSNE9nZHgr?=
- =?utf-8?B?dlk4VHArdXozS3B4eFc3dFErUU9FM1RHeEhQUEpWSUVCY2ozeEk4YmFrVXFQ?=
- =?utf-8?B?UWEwbnRpRVZSdEhxZXo4aUpkaVlZQkM5b3JFMHh3a1dwcjlwYzNPaC9jNmhn?=
- =?utf-8?B?Vjc5eTRjNThBd0xzQXE3cm9yN0Q2aFpHYW42dEMvSEFIN3EzL3hVY1FWaDBT?=
- =?utf-8?B?SUY5RzF6VGQ0ZWs0RHk0VnZVS2htQnYwa1dEZUNQWjJFMlAzK1hiR3pyN1V2?=
- =?utf-8?B?OE1sWjBnVGNlMXI4Z28zS0lsM0dOQWtNNHFGMC8zVlAzenpudHV3TzJXdXhx?=
- =?utf-8?B?N3hjNWZDV24vVzdqUWZnS2g5VXIxMXA5bTdsSmt0ajROVFRaL2xiTUhDeFdy?=
- =?utf-8?B?OUFHWlY4MnhFVGh6NVJXUTFnc2NWcHR1VHRHazByLzZOUEN5VlJMbTlBSllV?=
- =?utf-8?B?WExYMi94bEhWZVFEYzVwNllaMXBnY3lkOUdaQVJoWkZJUFZDL3U3QjZteEdL?=
- =?utf-8?B?cHBvMEdkUnY0YVJVWVVybmh4SlNaeFFzekhnV2ZYODVtMmVadWtTVE5TeGRL?=
- =?utf-8?B?MlZjTU1iaC8zekFJWi9JYXJqNmpDbHlqYUFNMDJjOElEbFB1Y09id3hOMFcz?=
- =?utf-8?B?QUkrR0h5VHljdFFCTzBkbHJFWWhHTllUOGVKVVJXWjd5aG51WS9CVlVOdFdN?=
- =?utf-8?B?NitNd3N3SExkd05GNk12c0IxMTdaZ3JPRmd1aGQ4dURmVmhtSGY1ZXh4WVQw?=
- =?utf-8?B?Um5zbmlTMFp6SFlRdkhSTGJ5STdqamVXMXQxWlczY1MvLzhGZHp6VXowdW82?=
- =?utf-8?B?TmtSU3pOR3NxZU9zNWd1aFlyTnA4L3hWWkZiMk16Q2ZNVEYrR1RqdXRydjRV?=
- =?utf-8?B?NzB0OXc4amdjaWZhZXRka1FBL1B0UlZ1djBBSjhaeUF5VGJodnFwOEgwdDFy?=
- =?utf-8?B?YmdmSmw1bXRrU0J2K1l2NGdCczRwd2YwZk1sZkxGc1ZnYWFCdENuSmY2ckc4?=
- =?utf-8?B?bHRwTjZrbmpyOCtyWTZrVmQ2L202N21WTkM2SEhhdytNc0VoTzkwb2RJVVg3?=
- =?utf-8?B?bjRZMjBXdFhneHh0Tnk5RzZFaC9sV0tzZzBnS2NZQkJtMUVzQ1VOMGFRVEFn?=
- =?utf-8?B?c1NYN250WUJvL3o2MTVTUjErQk1XcnRNK3JaWHBuRHgzSENTYWFQYnNrUS8v?=
- =?utf-8?B?WmRuNDEvRmhqRHFYem5OUlZ2Zk9NVmhNbHRDVXJvZEZQZ3ZteUpUMjFtb1Ri?=
- =?utf-8?B?RXhWWXcyQlAzNDVwcjNhM0FvdFplVXZGcTNGaUxXYVM5dTFsajNxczQrQUln?=
- =?utf-8?B?T2FTU2NWbWUydUlXallNQVZKQm53VzNiRDdzbWNUMVhwdlV3YXRlMC9FMEFZ?=
- =?utf-8?B?Mi80Tk9WQTlQdldHSm1BTFk3cHl5RVhZQWZPZ2t5a2hpV1FLRGROSlNWVEM2?=
- =?utf-8?B?ajJqRjdnYlVCcFJLVllGUkc5TnRRQkVFZkdtZzVUclF2eFBZaEVTT0dVbktI?=
- =?utf-8?B?bm40bmFQR3RDRmoyMjU0Q1lCMjFDWjAzR2s1aVdmZzRIbTBCQVFkbGxKZFd6?=
- =?utf-8?B?MzhpNDRMdzlkYm80eFpNMWluaExsNkM1Q2JXSXVoNEhsbElxdUo0ODhLWk56?=
- =?utf-8?B?aXlhRlhrWGFhOTNKZTdVYkcvQ3FGOU53UEM1NE9oK2lJTVY0cHZ6MGN0OXho?=
- =?utf-8?B?MzNMdUp1VGNVZ0J2NEJSQ2Z1MjFoYVVkUmRDMFdWM3dnNFVTb1lmMk90bW4v?=
- =?utf-8?B?RGxsM3k1VXJtN1A3d2ZUS1hFSVFSYTgwYmVORk9UL1lveXp0SzF0OVZ2ZVBU?=
- =?utf-8?B?Zjg5NlhYU0NFWGNuVk96eVAwTFZoam9SK3hvUi9BaTdlNEptdVd5em1XaWZS?=
- =?utf-8?B?dGdnNFZ1b2o5VWlZTUczV1pCeGsrZ0hPem1uc3VDNTFLZi9RdzFTTGorK1pF?=
- =?utf-8?B?Sk1KNlZQaitPMXBYT1BZeVRVdzIvd044VWIzait4aUFBUjFRdG1SZ094eUZ2?=
- =?utf-8?B?K2JxVE5EWjRBcS9ic1l1aXJYTHB5U3YwblFpTEFCOVBFWC9ySmhkRmY3aVdN?=
- =?utf-8?B?ZC93VklScG80OE1WeXI5UTBwTjhtVGJWVjZNemxDdmFuU2ZXYUFZSm9JcEhk?=
- =?utf-8?B?UWc9PQ==?=
+	=?utf-8?B?RC9nclMyTVk4YzdadFdSS3hTYzhEazJYRlBXMFRqM2o1THV0cEord2JvYUxh?=
+ =?utf-8?B?a3FTL3lKMWd6MG5uZXRmK09PZ0w5VkhIV0RUY1BJMHJFcklkZ2FVa2JTQzR4?=
+ =?utf-8?B?RXNvbFQvM2NWaktvTjlFSDU2eGFPSlc5SzFYRXkwTE1OTGkrWnN0b1VNcHNM?=
+ =?utf-8?B?RHNRRkR4c1kzTlBPdEZUbHJrRXFrN0FGTjUyZGh4MW9PaHI5SkEvTTR2T0NX?=
+ =?utf-8?B?cy9lNjBCOWJTV0pwNlJob1J4djlCZEh0SHUrWHNYRkwwek5iUEtlMTJwQVBF?=
+ =?utf-8?B?c1pPQzdmT25td3FSbzZhSm5HNGEvWEZkVEVLZTNuM2k2dXVaUUNYT3R2QTU0?=
+ =?utf-8?B?MFhXeXZGL0NKVnZxUzBwT3RzWVR5eFI0empSYXlKQVluWDlIVWVpRVgyNFh6?=
+ =?utf-8?B?SU9JNlhpQzRwNnJMVlpRRTl5Vk1zZG9vajF4N0UrMjhWZU8xU1IrT1J4UU51?=
+ =?utf-8?B?ZWN2bVJEWFZIeU1SVElwSTBGTThzcHdZRVVmeVZOdHBNeElKcmxRSXRMSFZC?=
+ =?utf-8?B?MlI2Uk5Cb1Y0dXAwK3VGZVdGSzMwbnQrSUNHbXZxaU42MlFLOCtoNjZKNGpq?=
+ =?utf-8?B?ZlRCT0hzUzBkb0g5d0lKaXFLeExESVJaUDdrNml1dkU5ZXA5RnJDMWJvcnla?=
+ =?utf-8?B?RlBpSWJVbHN3S1VGRzZsTElBVnBwRXBkVTlERVhlMHpYc3hBczAyNDlZeFJI?=
+ =?utf-8?B?WFpmTitSRm16NW12c2pXT1ZvNkIyYWZnZTl1YlBEOGZqcW4vTTk3VmVWbGw4?=
+ =?utf-8?B?dHh5ZURYSXk1cUgrU09ncGR4ZUVIYUhUYlE3ai9jNUUzOC9kSklTampFWmVZ?=
+ =?utf-8?B?RHBUMCtZQVlFZVE5eFBjMDl5NmFVM0ZxeXdrbHNtSVVKOWVQa2VoMnpEckpC?=
+ =?utf-8?B?bDJjemhWTU9MbzdFMFJCdnZrS3BzMzJneG5pYVJSVnRoNkFUYnFVcUlUVnBX?=
+ =?utf-8?B?Q0hNcngrRWJCN213K2pMQmhrQ3FzOENjdVZxdVdxbm9ibDNDNUxwNGNtQjQv?=
+ =?utf-8?B?THlSNUs1a093bVk4bkdRYUgwV0ZYWWRNOUlpSnJZeVloSElXbDVzMWlyWUZk?=
+ =?utf-8?B?MHZic24yK1NpajNaMDVEWXhFYWxSTm90bDhLRkJla3gzQjJKYlFQV1piMk5r?=
+ =?utf-8?B?UVhZTHUxQ0N3T3RnU05iM1hDeUdpRUIyYm9nMVVXY0U2NVlSNzdkMHFrNnNt?=
+ =?utf-8?B?QVhRWHdhOHNScmxxVWdML0JXZjN3T1o4ZzJTQlJsWWcwZ05GaTJRUjBMSHBI?=
+ =?utf-8?B?N2p1MDdqSkRZT1g0R09GU09TK3FWYy9CcXlUb1ppLzN3Nzlyelc2YUlja3hM?=
+ =?utf-8?B?UlFHUUxCQzlnelFMdFdlVWdyMXlMb0dZQWJVVVFjWTkwRUt6V0F1MlA3aXRk?=
+ =?utf-8?B?YjVpbWRtQnNiRVdwNllaZDhlNDlXMEpwaitUZ21jUloyUVpMNGptY0M2N2ZZ?=
+ =?utf-8?B?cXhML2ZoNVR2em05MFcvSlU2N0FXQ1FxT3BzOHp4dElLM2VRbUxNOXkzWURU?=
+ =?utf-8?B?eDgwbFI0Rk1YeGpvWlhTWHh1WUluTlVDR0h5SUZxMGtUK1Q1ejBuWVRVY05z?=
+ =?utf-8?B?K1VJMGx0djlVRlc3aFhGSGVPelpId2ZRUEFCS3l6dUJUdzc0RzAzd05lbi95?=
+ =?utf-8?B?MHZCMFhrb1luYmkzay9uVXZYaGQ4TTJ0UjFiTk5haEdXOVArQmJPd1FVT2Vw?=
+ =?utf-8?B?ZnpQb2dKdHl2RnRPcTh3MVVWWXlPeWUxSnN5YTRMaTV4NG9uSnhzejBMZHVI?=
+ =?utf-8?B?U3dLVFFYZHlQclpUVnVUeUpLb3RGVkpUd3d5dVNYc0NhSDk3cmFOemFOeVFT?=
+ =?utf-8?B?NmxtY1RmdDdKd1ZUUVlGeWhtT1liYnFIM21SOHZYYTF4NSsrUmxoUTRPUm9Y?=
+ =?utf-8?B?WXhWWGdoUEsyTDdNWElGMnR1NVp6SHJNaU83YnMrQjZ3Vy82VVU5NW9uNVEr?=
+ =?utf-8?B?eERhT0gyNEhta3NkTkVxR0dmVks3WnQwUGg4ZTJZTStJQlF4anoybDlQWjI3?=
+ =?utf-8?B?anZUazFxTkJHMTNYSFN5RUF5dE5rcjZ5cit3dzB6UVdORE5zU01mUzIveW5Y?=
+ =?utf-8?B?bXdUd3hHYkdUR0lvOFhTZ2h6a2tYY0ZxaWE5ekFwSnFZR0NkaGtUWTVNMkJW?=
+ =?utf-8?B?UUQ1WmNxbFBwYmFIWHVDZ0JZK3dYK29uNWZ0SUFtUm9IMXJTL1dTMllLeXBz?=
+ =?utf-8?B?YlE9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8640e44-295b-42ae-868e-08dc83accc51
+X-MS-Exchange-CrossTenant-Network-Message-Id: 958ca7c1-71d5-4a24-87e8-08dc83acd570
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 09:08:56.6796
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2024 09:09:11.9136
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ViD+0C+COlAYXAqT/bdKKurfvEyehgGB5y4yqlgeOAGV9D6F7EnbxnfvFFCAheSmFDJWH18ErNtCIZlBTXxiNg==
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZwCHx6x3kCTn3FYkRqxGZigdw5NHd1YOrA6ZzdedpcMK0y47uwRlpYdQUyrK/c8C9xUzVg3XLT/AN4kvZ4/iug==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR10MB7920
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 03 Jun 2024 09:09:06 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16087
+ <cip-dev@lists.cip-project.org>; Mon, 03 Jun 2024 09:09:16 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16088
 
 On 03.06.24 09:09, Sai.Sathujoda@toshiba-tsip.com wrote:
 > From: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
 > 
-> This series of patches will trigger LAVA jobs which test swupdate, secure boot
-> and IEC layer.
-
-So, if I apply all these to 'next', what will happen, what can I expect?
-I'm keen on getting these in before the release to have that validated,
-but I'd like to understand where we are in this regard and only rush if
-that adds value.
-
-Jan
-
+> These templates shall be extended to form architecture specific LAVA job
+> definitions
 > 
-> sai ashrith sathujoda (3):
->   test/templates: Include functionality based templates
->   submit_lava.sh: Add script to submit the jobs prepared from templates
->   .gitlab-ci.yml: Add test targets specific for CIP core functionalities
-> 
->  .gitlab-ci.yml                         |  33 ++
->  scripts/submit_lava.sh                 | 458 +++++++++++++++++++++++++
->  test/templates/IEC_template.yml        |  72 ++++
->  test/templates/secureboot_template.yml |  63 ++++
->  test/templates/swupdate_template.yml   | 123 +++++++
->  5 files changed, 749 insertions(+)
->  create mode 100755 scripts/submit_lava.sh
+> Signed-off-by: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
+> ---
+>  test/templates/IEC_template.yml        |  72 +++++++++++++++
+>  test/templates/secureboot_template.yml |  63 +++++++++++++
+>  test/templates/swupdate_template.yml   | 123 +++++++++++++++++++++++++
+
+tests/
+
+And a short README about what is expected in this folder, how to use it
+would be nice. Similar to
+https://source.denx.de/Xenomai/xenomai-images/-/blob/master/tests/README.md,
+but you can start shorter.
+
+>  3 files changed, 258 insertions(+)
 >  create mode 100644 test/templates/IEC_template.yml
 >  create mode 100644 test/templates/secureboot_template.yml
 >  create mode 100644 test/templates/swupdate_template.yml
 > 
+> diff --git a/test/templates/IEC_template.yml b/test/templates/IEC_template.yml
+> new file mode 100644
+> index 0000000..7f930cc
+> --- /dev/null
+> +++ b/test/templates/IEC_template.yml
+> @@ -0,0 +1,72 @@
+> +device_type: qemu
+> +job_name: qemu #architecture# IEC layer testing
+> +timeouts:
+> +  job:
+> +    minutes: 30
+> +  action:
+> +   minutes: 20
+> +  actions:
+> +    power-off:
+> +      seconds: 60
+> +priority: medium
+> +tags:
+> +- swtpm-jobs
+> +visibility: public
+> +notify:
+> +  criteria:
+> +    status: finished
+> +  recipients:
+> +  - to:
+> +     method: email
+> +     email: cip-testing-results@lists.cip-project.org
+> +
+> +# ACTION BLOCK
+> +actions:
+> +- command:
+> +    name: start_tpm
+> +    timeout:
+> +          minutes: 20
+> +
+> +# DEPLOY BLOCK
+> +- deploy:
+> +    timeout:
+> +      minutes: 15
+> +    to: tmpfs
+> +    images:
+> +      system:
+> +        image_arg: '-drive file={system},discard=unmap,if=none,id=disk,format=raw -m 1G -serial mon:stdio -smp 4 -nographic -netdev user,id=net,hostfwd=tcp:127.0.0.1:22222-:22 -chardev socket,id=chrtpm,path=/tmp/qemu-swtpm.sock -tpmdev emulator,id=tpm0,chardev=chrtpm #imageargs#'
+
+This is a really long line. Can we wrap this around somehow? Maybe with
+the help of 'image_arg: |'?
+
+> +        url: https://s3.eu-central-1.amazonaws.com/download2.cip-project.org/cip-core/next/qemu-#architecture#/cip-core-image-security-cip-core-#distribution#-qemu-#architecture#.wic.xz
+
+This hard-codes the origin, project and even branch. When someone wants
+to instantiate this downstream, all that needs patching, no? Can we use
+variables for that as well?
+
+> +        compression: xz
+> +
+> +      #Firmware#
+> +        #Firmware_args#
+> +        #Firmware_url#
+> +
+> +# BOOT BLOCK
+> +- boot:
+> +    timeout:
+> +      minutes: 15
+> +    method: qemu
+> +    media: tmpfs
+> +    prompts: ["root@demo:~#"]
+> +    auto_login:
+> +      login_prompt: "demo login:"
+> +      username: "root"
+> +      password_prompt: "Password:"
+> +      password: "CIPsecurity@123"
+> +    
+> +# TEST_BLOCK
+> +- test:
+> +     timeout:
+> +       minutes: 30
+> +     definitions:
+> +     - repository: https://gitlab.com/cip-project/cip-testing/cip-security-tests.git
+> +       from: git
+> +       branch: master
+> +       path: iec-security-tests/Singlenode-TestDefinition.yaml
+> +       name: Security-Testcases
+> +
+> +context:
+> +  arch: #architecture#
+> +  guestfs_interface: virtio
+> +  lava_test_results_dir: '/home/lava-%s'
+> diff --git a/test/templates/secureboot_template.yml b/test/templates/secureboot_template.yml
+> new file mode 100644
+> index 0000000..124ad15
+> --- /dev/null
+> +++ b/test/templates/secureboot_template.yml
+> @@ -0,0 +1,63 @@
+> +device_type: qemu
+> +job_name: qemu #architecture# secure boot testing
+> +timeouts:
+> +  job:
+> +    minutes: 30
+> +  action:
+> +   minutes: 20
+> +  actions:
+> +    power-off:
+> +      seconds: 60
+> +priority: medium
+> +tags:
+> +- swtpm-jobs
+> +visibility: public
+> +notify:
+> +  criteria:
+> +    status: finished
+> +  recipients:
+> +  - to:
+> +     method: email
+> +     email: cip-testing-results@lists.cip-project.org
+> +
+> +# ACTION BLOCK
+> +actions:
+> +- command:
+> +    name: start_tpm
+> +    timeout:
+> +          minutes: 20
+> +
+> +# DEPLOY BLOCK
+> +- deploy:
+> +    timeout:
+> +      minutes: 15
+> +    to: tmpfs
+> +    images:
+> +      system:
+> +        image_arg: '-drive file={system},discard=unmap,if=none,id=disk,format=raw -m 1G -serial mon:stdio -smp 4 -nographic -netdev user,id=net,hostfwd=tcp:127.0.0.1:22222-:22 -chardev socket,id=chrtpm,path=/tmp/qemu-swtpm.sock -tpmdev emulator,id=tpm0,chardev=chrtpm #imageargs#'
+> +        url: https://s3.eu-central-1.amazonaws.com/download2.cip-project.org/cip-core/next/qemu-#architecture#/cip-core-image-security-cip-core-#distribution#-qemu-#architecture#.wic.xz
+> +        compression: xz
+> +
+> +      #Firmware#
+> +        #Firmware_args#
+> +        #Firmware_url#
+> +
+> +# BOOT BLOCK
+> +- boot:
+> +    timeout:
+> +      minutes: 15
+> +    method: qemu
+> +    media: tmpfs
+> +    prompts: ["root@demo:~#"]
+> +    auto_login:
+> +      login_prompt: "demo login:"
+> +      username: "root"
+> +      password_prompt: "Password:"
+> +      password: "CIPsecurity@123"
+> +    parameters:
+> +      kernel-start-message: "EFI stub: UEFI Secure Boot is enabled."
+> +
+> +context:
+> +  arch: #architecture#
+> +  guestfs_interface: virtio
+> +  lava_test_results_dir: '/home/lava-%s'
+> diff --git a/test/templates/swupdate_template.yml b/test/templates/swupdate_template.yml
+> new file mode 100644
+> index 0000000..3284977
+> --- /dev/null
+> +++ b/test/templates/swupdate_template.yml
+> @@ -0,0 +1,123 @@
+> +device_type: qemu
+> +job_name: qemu #architecture# software update testing
+> +timeouts:
+> +  job:
+> +    minutes: 30
+> +  action:
+> +   minutes: 20
+> +  actions:
+> +    power-off:
+> +      seconds: 60
+> +tags:
+> +- swtpm-jobs
+> +priority: medium
+> +visibility: public
+> +notify:
+> +  criteria:
+> +    status: finished
+> +  recipients:
+> +  - to:
+> +     method: email
+> +     email: cip-testing-results@lists.cip-project.org
+> +
+> +# ACTION BLOCK
+> +actions:
+> +- command:
+> +    name: start_tpm
+> +    timeout:
+> +          minutes: 20
+> +
+> +# DEPLOY BLOCK
+> +- deploy:
+> +    timeout:
+> +      minutes: 15
+> +    to: tmpfs
+> +    images:
+> +      system:
+> +        image_arg: -drive file={system},discard=unmap,if=none,id=disk,format=raw -m 1G -serial mon:stdio -smp 4 -nographic -netdev user,id=net,hostfwd=tcp:127.0.0.1:22222-:22 -chardev socket,id=chrtpm,path=/tmp/qemu-swtpm.sock -tpmdev emulator,id=tpm0,chardev=chrtpm '#imageargs#'
+> +        url: https://s3.eu-central-1.amazonaws.com/download2.cip-project.org/cip-core/next/qemu-#architecture#/cip-core-image-security-cip-core-#distribution#-qemu-#architecture#.wic.xz
+> +        compression: xz
+> +    
+> +      #Firmware#
+> +        #Firmware_args#
+> +        #Firmware_url#
+> +
+> +# BOOT BLOCK
+> +- boot:
+> +    timeout:
+> +      minutes: 15
+> +    method: qemu
+> +    media: tmpfs
+> +    prompts: ["root@demo:~#"]
+> +    auto_login:
+> +      login_prompt: "demo login:"
+> +      username: "root"
+> +      password_prompt: "Password:"
+> +      password: "CIPsecurity@123"
+> +
+> +# TEST_BLOCK
+> +# Sleep 200s is added to make the job incomplete with a timeout if software update application failed
+> +- test:
+> +    timeout:
+> +      minutes: 5
+> +    definitions:
+> +    - repository:
+> +        metadata:
+> +          format: Lava-Test Test Definition 1.0
+> +          name: sample-test
+> +          description: "Test software update"
+> +        run:
+> +          steps:
+> +            - if swupdate -d "-u https://s3.eu-central-1.amazonaws.com/download2.cip-project.org/cip-core/next/qemu-#architecture#/cip-core-image-security-cip-core-bookworm-qemu-#architecture#.swu"; then echo software update is successful!!; else sleep 200s; fi
+> +      from: inline
+> +      name: sample-test-1
+> +      path: inline/sample-test.yaml
+> +
+> +# qemu-swtpm.sock will be gone after soft reboot.
+> +# So the swtpm socket need to be started again for proper reboot
+> +# To start the swtpm daemon, first the existing one should be killed
+> +- command:
+> +    name: manual_kill
+> +    timeout:
+> +          minutes: 1
+> +# Start the swtpm daemon
+> +- command:
+> +    name: start_tpm
+> +    timeout:
+> +          minutes: 1
+> +
+> +- boot:
+> +    timeout:
+> +      minutes: 5
+> +    method: qemu
+> +    media: tmpfs
+> +    prompts: ["root@demo:~#"]
+> +    auto_login:
+> +      login_prompt: "demo login:"
+> +      username: "root"
+> +      password_prompt: "Password:"
+> +      password: "CIPsecurity@123"
+> +    parameters:
+> +       kernel-start-message: "kernel: C:BOOT1:linux.efi"
+> +
+> +# sleep 180s is added to make the job incomplete if ustate is not 2 in the updated partition
+> +- test:
+> +    timeout:
+> +      minutes: 5
+> +    definitions:
+> +    - repository:
+> +        metadata:
+> +          format: Lava-Test Test Definition 1.0
+> +          name: sample-test
+> +          description: "check boot loader environment variables"
+> +        run:
+> +          steps:
+> +            - if [ $(bg_printenv | grep ustate | awk 'FNR == 2{print $2}') = 2 ]; then bg_setenv -c; else sleep 180s; fi
+> +      from: inline
+> +      name: sample-test-2
+> +      path: inline/sample-test.yaml
+> +
+> +context:
+> +  arch: #architecture#
+> +  guestfs_interface: virtio
+> +  lava_test_results_dir: '/home/lava-%s'
+
+Jan
 
 -- 
 Siemens AG, Technology
