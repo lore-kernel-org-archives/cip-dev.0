@@ -2,50 +2,50 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D41C27C77
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB04C41513
 	for <webhook@archiver.kernel.org>; Fri,  7 Jun 2024 14:09:21 +0000 (UTC)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
- by mx.groups.io with SMTP id smtpd.web10.42763.1717769356496463770
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+ by mx.groups.io with SMTP id smtpd.web11.43052.1717769353276573751
  for <cip-dev@lists.cip-project.org>;
- Fri, 07 Jun 2024 07:09:16 -0700
+ Fri, 07 Jun 2024 07:09:13 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=PDwd33qS;
- spf=pass (domain: tuxon.dev, ip: 209.85.167.53, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52bbdb15dd5so798581e87.3
-        for <cip-dev@lists.cip-project.org>; Fri, 07 Jun 2024 07:09:16 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=kSQo50E5;
+ spf=pass (domain: tuxon.dev, ip: 209.85.167.47, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52bc335e49aso299141e87.3
+        for <cip-dev@lists.cip-project.org>; Fri, 07 Jun 2024 07:09:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1717769355; x=1718374155; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1717769351; x=1718374151; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=u81mZfEinelIyL03W15UUf0MJDX3JCbJOhGAI4+NIxI=;
-        b=PDwd33qSfoAWjYvtuoirlEUl6GrZIxVA7HlxFpYTg3L/E0AneW1Pv2xXGlM3UIwNlA
-         gRrxxCk+wPAOCRmRWSJznxdny4o8qK1xSpEgDfpJLYeswntShLeIvgs1izcPyBApzMDT
-         wDR79122isnSUDmiiS3MahU6s0vTzaYDbmfCqzHQhY/br82GTrP75HiJlpWRc2muelJ2
-         XY5snECS5j509sd95IFLWQamU8QUhdOuyv7ReOl8HhVtmOcJ0Y7iCjsq5OxXiCWqvVd7
-         yWCRvISq5nOqx2Lw02777RmXsY0/EatmQWdk1P8xfejRZB+UkE9jsXIlV97fWnm96L9N
-         rnlQ==
+        bh=cA3EPoGWGBugroqTalIpgl/f3/OmNU9egTQ61XzBNeI=;
+        b=kSQo50E5BPluAATuXNLTaapniwcDqzUHQkEGSBY6X1uNh/wHgNmp6vy3aYFAobIMwj
+         TWYeKMkDXu9yjQ6mVPoVIiM9d+w0XTTDBxf1u/K3oEtxPNmfJLlPl1+lOlgu8f9MkdTB
+         DH4iwMB9s6itzVHHDt86muMYGODz7Hkm2No8b1MvbhcdHkOsCtayHBVo/OinoU/19sNU
+         9HrrftOmQzWN5o037icx4BpjoTowNqBuomnZ3kBjSLrpPR6sGDiIfSgKRihPh8g+hfEz
+         f/WfrogIJ+Tov/exsiSjb3vu59SvXvIll/ZmZfd3R7SrMZTDgU9wvQSkrinEo44LvriQ
+         VSuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717769355; x=1718374155;
+        d=1e100.net; s=20230601; t=1717769351; x=1718374151;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=u81mZfEinelIyL03W15UUf0MJDX3JCbJOhGAI4+NIxI=;
-        b=r29QaU6qokWS3mEny4YrzRhWSAdyk4lyAjnxiMc9kbqCwNV41R9kYI3VC3TUcCorVS
-         91GrIGcmqmtZ21+iPbk36fZ+jDwdTRUnpwQljq5fOlRT2WE9DVqbRhn4zRSYDvpfQO6G
-         dESm6SgdO2nrCgb0ALkOJP5Ki7Q/BGC260PdNT6aZWSCLguZJ40jce5EYYrTBsUxbCwo
-         WgfeKIlI/eqpYG1sWBspAhyovLoitTPwR1Po/OjPafz7o2Ew5f894SXOtdHp4CeEjWw5
-         wLy/DcKt3CHK5X0MWw+lhLl9UU9YlkD7OEHXALR6s3yDAcPeXfQo9auTU2ju5xMMChKQ
-         dpfw==
-X-Gm-Message-State: AOJu0Yz2f6V9gxjspoIUeop8ZeVTLL28/kCLKLG+Iuqwqo5LrGSpz5Op
-	2jtCT/InHr8THm9PoR6/dgPDc4f6rS6vtRzR8/IJx40tVP1EDW1MUlKBpCqkgWU=
-X-Google-Smtp-Source: AGHT+IHzEXvkKlEo2IxuxVtDwkTk2hBRZD8L8fap2EFE4m5TRm4WtGmGrpIuO6+vS78HeDuhrRoUoQ==
-X-Received: by 2002:a05:6512:3092:b0:52b:4f30:9cac with SMTP id 2adb3069b0e04-52bb9fcf7eemr2182338e87.56.1717769354643;
-        Fri, 07 Jun 2024 07:09:14 -0700 (PDT)
+        bh=cA3EPoGWGBugroqTalIpgl/f3/OmNU9egTQ61XzBNeI=;
+        b=gIqIvbImi30PKIJoNrfFpVgTHXQwMX3yAmyez9MQ6UNBWKae6Wa1Qy2TR7jsPZXGFh
+         rTA9/o1oFvcfDRClpXWvKRVE+CIe3X4MbL7UXmcNpgerhJay2b5mW+/d9OC72X5DPV/U
+         8VRwPXAlt5yR3E4PmdtBPTCu75t7SWsb+9tNeUJg4p5tATeAsQR3PWUnR/i+Tr0nMQB9
+         AYR5xwb1KKUh35MIsWphHexi24P6GLuK5MjHZQANqbeyCi3aXbvodwO+nXQZHgqKu0bC
+         LaA3ITNc1BTyVZLnj2N42GoDhQXFSYBLQtKPfAT/KqGkyzJHtGnBYz/rBD6QySZRtU87
+         lIMQ==
+X-Gm-Message-State: AOJu0Yz1QjQrrDU6oLx6600id2C7WvnNFO4Kx/DaCxtBTUTyL3MBPtqo
+	96S9NzwA7ZigqwSbpA1C4YqYtXPxQqJDb9jgfZxxz4GelHnLZclrmcV1qp7BSWM=
+X-Google-Smtp-Source: AGHT+IESvVV0LkjhvDqLItjlu0gaj4nR7NtOZ7Z7eO93TuuqUw5TpyWVBaIdEC2Ti1Rtmio1JtDmoQ==
+X-Received: by 2002:a19:ac07:0:b0:52b:360f:ceb4 with SMTP id 2adb3069b0e04-52bb9f755c6mr1709819e87.17.1717769351456;
+        Fri, 07 Jun 2024 07:09:11 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.189])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c80581870sm251987466b.25.2024.06.07.07.09.13
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c80581870sm251987466b.25.2024.06.07.07.09.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jun 2024 07:09:13 -0700 (PDT)
+        Fri, 07 Jun 2024 07:09:10 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
@@ -53,217 +53,571 @@ To: nobuhiro1.iwamatsu@toshiba.co.jp,
 Cc: cip-dev@lists.cip-project.org,
 	biju.das.jz@bp.renesas.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com
-Subject: [PATCH 6.1.y-cip 11/17] irqchip/renesas-rzg2l: Add support for suspend to RAM
-Date: Fri,  7 Jun 2024 17:08:50 +0300
-Message-Id: <20240607140856.2497508-12-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 09/17] pinctrl: renesas: rzg2l: Add suspend/resume support
+Date: Fri,  7 Jun 2024 17:08:48 +0300
+Message-Id: <20240607140856.2497508-10-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240607140856.2497508-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240607140856.2497508-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 07 Jun 2024 14:09:21 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16172
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16170
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 74d2ef5f6f4b2437e6292ab2502400e8048db4aa upstream.
+commit 254203f9a94cf8f8f406e241a11f38b8e4701d91 upstream.
 
-The irqchip-renesas-rzg2l driver is used on RZ/G3S SoC. RZ/G3S can go into
-deep sleep states where power to different SoC's parts is cut off and RAM
-is switched to self-refresh. The resume from these states is done with the
-help of the bootloader.
+pinctrl-rzg2l driver is used on RZ/G3S which support deep sleep states
+where power to most of the SoC components is turned off.
 
-The IA55 IRQ controller needs to be reconfigured when resuming from deep
-sleep state. For this the IA55 registers are cached in suspend and restored
-in resume.
+For this add suspend/resume support. This involves saving and restoring
+configured registers along with disabling clock in case there is no pin
+configured as wakeup sources.
 
-The IA55 IRQ controller is connected to GPIO controller and GIC as follows:
+To save/restore registers 2 caches were allocated: one for GPIO pins and
+one for dedicated pins.
 
-                                      ┌──────────┐          ┌──────────┐
-                                      │          │ SPIX     │          │
-                                      │          ├─────────►│          │
-                                      │          │          │          │
-                                      │          │          │          │
-              ┌────────┐IRQ0-7        │  IA55    │          │  GIC     │
- Pin0 ───────►│        ├─────────────►│          │          │          │
-              │        │              │          │ PPIY     │          │
- ...          │  GPIO  │              │          ├─────────►│          │
-              │        │GPIOINT0-127  │          │          │          │
- PinN ───────►│        ├─────────────►│          │          │          │
-              └────────┘              └──────────┘          └──────────┘
+On suspend path the pin controller registers are saved and if none of the
+pins are configured as wakeup sources the pinctrl clock is disabled.
+Otherwise it remains on.
 
-where:
-  - Pin0 is the first GPIO controller pin
-  - PinN is the last GPIO controller pin
+On resume path the configuration is done as follows:
+1/ setup PFCs by writing to registers on pin based accesses
+2/ setup GPIOs by writing to registers on port based accesses and
+   following configuration steps specified in hardware manual
+3/ setup dedicated pins by writing to registers on port based accesses
+4/ setup interrupts.
 
-  - SPIX is the SPI interrupt with identifier X
-  - PPIY is the PPI interrupt with identifier Y
-
-Implement suspend/resume functionality with syscore_ops to be able to
-cache/restore the registers after/before the GPIO controller suspend/resume
-functions are invoked.
-
-As the syscore_ops suspend/resume functions do not take any argument make
-the driver private data static so it can be accessed from the
-suspend/resume functions.
-
-The IA55 interrupt controller is resumed before the GPIO controller. As
-GPIO pins could be in an a state which causes spurious interrupts, the
-reconfiguration of the interrupt controller is restricted to restore the
-interrupt type and leave them disabled.
-
-An eventually required interrupt enable operation will be done as part of
-the GPIO controller resume function after restoring the GPIO state.
-
-[ tglx: Massaged changelog ]
+Because interrupt signals are routed to IA55 interrupt controller and
+IA55 interrupt controller resumes before pin controller, patch restores
+also the configured interrupts just after pin settings are restored to
+avoid invalid interrupts while resuming.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/r/20231120111820.87398-8-claudiu.beznea.uj@bp.renesas.com
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20240215124112.2259103-3-claudiu.beznea.uj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/irqchip/irq-renesas-rzg2l.c | 68 ++++++++++++++++++++++++-----
- 1 file changed, 57 insertions(+), 11 deletions(-)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 408 +++++++++++++++++++++++-
+ 1 file changed, 404 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
-index 9b0a748ea2cb..ae67fec2ab46 100644
---- a/drivers/irqchip/irq-renesas-rzg2l.c
-+++ b/drivers/irqchip/irq-renesas-rzg2l.c
-@@ -18,6 +18,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
- #include <linux/spinlock.h>
-+#include <linux/syscore_ops.h>
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index 38cff01a5852..6f49da4bd327 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -148,6 +148,33 @@
+ #define RZG2L_TINT_IRQ_START_INDEX	9
+ #define RZG2L_PACK_HWIRQ(t, i)		(((t) << 16) | (i))
  
- #define IRQC_IRQ_START			1
- #define IRQC_IRQ_COUNT			8
-@@ -55,17 +56,29 @@
- #define TINT_EXTRACT_HWIRQ(x)		FIELD_GET(GENMASK(15, 0), (x))
- #define TINT_EXTRACT_GPIOINT(x)		FIELD_GET(GENMASK(31, 16), (x))
- 
-+/**
-+ * struct rzg2l_irqc_reg_cache - registers cache (necessary for suspend/resume)
-+ * @iitsr: IITSR register
-+ * @titsr: TITSR registers
-+ */
-+struct rzg2l_irqc_reg_cache {
-+	u32	iitsr;
-+	u32	titsr[2];
-+};
++/* Read/write 8 bits register */
++#define RZG2L_PCTRL_REG_ACCESS8(_read, _addr, _val)	\
++	do {						\
++		if (_read)				\
++			_val = readb(_addr);		\
++		else					\
++			writeb(_val, _addr);		\
++	} while (0)
++
++/* Read/write 16 bits register */
++#define RZG2L_PCTRL_REG_ACCESS16(_read, _addr, _val)	\
++	do {						\
++		if (_read)				\
++			_val = readw(_addr);		\
++		else					\
++			writew(_val, _addr);		\
++	} while (0)
++
++/* Read/write 32 bits register */
++#define RZG2L_PCTRL_REG_ACCESS32(_read, _addr, _val)	\
++	do {						\
++		if (_read)				\
++			_val = readl(_addr);		\
++		else					\
++			writel(_val, _addr);		\
++	} while (0)
 +
  /**
-  * struct rzg2l_irqc_priv - IRQ controller private data structure
-  * @base:	Controller's base address
-  * @fwspec:	IRQ firmware specific data
-  * @lock:	Lock to serialize access to hardware registers
-+ * @cache:	Registers cache for suspend/resume
-  */
--struct rzg2l_irqc_priv {
-+static struct rzg2l_irqc_priv {
- 	void __iomem			*base;
- 	struct irq_fwspec		fwspec[IRQC_NUM_IRQ];
- 	raw_spinlock_t			lock;
--};
-+	struct rzg2l_irqc_reg_cache	cache;
-+} *rzg2l_irqc_data;
+  * struct rzg2l_register_offsets - specific register offsets
+  * @pwpr: PWPR register offset
+@@ -240,6 +267,32 @@ struct rzg2l_pinctrl_pin_settings {
+ 	u16 drive_strength_ua;
+ };
  
- static struct rzg2l_irqc_priv *irq_data_to_priv(struct irq_data *data)
- {
-@@ -282,6 +295,38 @@ static int rzg2l_irqc_set_type(struct irq_data *d, unsigned int type)
- 	return irq_chip_set_type_parent(d, IRQ_TYPE_LEVEL_HIGH);
++/**
++ * struct rzg2l_pinctrl_reg_cache - register cache structure (to be used in suspend/resume)
++ * @p: P registers cache
++ * @pm: PM registers cache
++ * @pmc: PMC registers cache
++ * @pfc: PFC registers cache
++ * @iolh: IOLH registers cache
++ * @ien: IEN registers cache
++ * @sd_ch: SD_CH registers cache
++ * @eth_poc: ET_POC registers cache
++ * @eth_mode: ETH_MODE register cache
++ * @qspi: QSPI registers cache
++ */
++struct rzg2l_pinctrl_reg_cache {
++	u8	*p;
++	u16	*pm;
++	u8	*pmc;
++	u32	*pfc;
++	u32	*iolh[2];
++	u32	*ien[2];
++	u8	sd_ch[2];
++	u8	eth_poc[2];
++	u8	eth_mode;
++	u8	qspi;
++};
++
+ struct rzg2l_pinctrl {
+ 	struct pinctrl_dev		*pctl;
+ 	struct pinctrl_desc		desc;
+@@ -249,6 +302,8 @@ struct rzg2l_pinctrl {
+ 	void __iomem			*base;
+ 	struct device			*dev;
+ 
++	struct clk			*clk;
++
+ 	struct gpio_chip		gpio_chip;
+ 	struct pinctrl_gpio_range	gpio_range;
+ 	DECLARE_BITMAP(tint_slot, RZG2L_TINT_MAX_INTERRUPT);
+@@ -259,6 +314,9 @@ struct rzg2l_pinctrl {
+ 	struct mutex			mutex; /* serialize adding groups and functions */
+ 
+ 	struct rzg2l_pinctrl_pin_settings *settings;
++	struct rzg2l_pinctrl_reg_cache	*cache;
++	struct rzg2l_pinctrl_reg_cache	*dedicated_cache;
++	atomic_t			wakeup_path;
+ };
+ 
+ static const u16 available_ps[] = { 1800, 2500, 3300 };
+@@ -1867,6 +1925,28 @@ static void rzg2l_gpio_irq_print_chip(struct irq_data *data, struct seq_file *p)
+ 	seq_printf(p, dev_name(gc->parent));
  }
  
-+static int rzg2l_irqc_irq_suspend(void)
++static int rzg2l_gpio_irq_set_wake(struct irq_data *data, unsigned int on)
 +{
-+	struct rzg2l_irqc_reg_cache *cache = &rzg2l_irqc_data->cache;
-+	void __iomem *base = rzg2l_irqc_data->base;
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
++	struct rzg2l_pinctrl *pctrl = container_of(gc, struct rzg2l_pinctrl, gpio_chip);
++	int ret;
 +
-+	cache->iitsr = readl_relaxed(base + IITSR);
-+	for (u8 i = 0; i < 2; i++)
-+		cache->titsr[i] = readl_relaxed(base + TITSR(i));
++	/* It should not happen. */
++	if (!data->parent_data)
++		return -EOPNOTSUPP;
++
++	ret = irq_chip_set_wake_parent(data, on);
++	if (ret)
++		return ret;
++
++	if (on)
++		atomic_inc(&pctrl->wakeup_path);
++	else
++		atomic_dec(&pctrl->wakeup_path);
 +
 +	return 0;
 +}
 +
-+static void rzg2l_irqc_irq_resume(void)
+ static const struct irq_chip rzg2l_gpio_irqchip = {
+ 	.name = "rzg2l-gpio",
+ 	.irq_disable = rzg2l_gpio_irq_disable,
+@@ -1877,6 +1957,7 @@ static const struct irq_chip rzg2l_gpio_irqchip = {
+ 	.irq_eoi = rzg2l_gpio_irqc_eoi,
+ 	.irq_print_chip = rzg2l_gpio_irq_print_chip,
+ 	.irq_set_affinity = irq_chip_set_affinity_parent,
++	.irq_set_wake = rzg2l_gpio_irq_set_wake,
+ 	.flags = IRQCHIP_IMMUTABLE,
+ 	GPIOCHIP_IRQ_RESOURCE_HELPERS,
+ };
+@@ -1957,6 +2038,35 @@ static int rzg2l_gpio_populate_parent_fwspec(struct gpio_chip *chip,
+ 	return 0;
+ }
+ 
++static void rzg2l_gpio_irq_restore(struct rzg2l_pinctrl *pctrl)
 +{
-+	struct rzg2l_irqc_reg_cache *cache = &rzg2l_irqc_data->cache;
-+	void __iomem *base = rzg2l_irqc_data->base;
++	struct irq_domain *domain = pctrl->gpio_chip.irq.domain;
 +
-+	/*
-+	 * Restore only interrupt type. TSSRx will be restored at the
-+	 * request of pin controller to avoid spurious interrupts due
-+	 * to invalid PIN states.
-+	 */
-+	for (u8 i = 0; i < 2; i++)
-+		writel_relaxed(cache->titsr[i], base + TITSR(i));
-+	writel_relaxed(cache->iitsr, base + IITSR);
++	for (unsigned int i = 0; i < RZG2L_TINT_MAX_INTERRUPT; i++) {
++		struct irq_data *data;
++		unsigned int virq;
++
++		if (!pctrl->hwirq[i])
++			continue;
++
++		virq = irq_find_mapping(domain, pctrl->hwirq[i]);
++		if (!virq) {
++			dev_crit(pctrl->dev, "Failed to find IRQ mapping for hwirq %u\n",
++				 pctrl->hwirq[i]);
++			continue;
++		}
++
++		data = irq_domain_get_irq_data(domain, virq);
++		if (!data) {
++			dev_crit(pctrl->dev, "Failed to get IRQ data for virq=%u\n", virq);
++			continue;
++		}
++
++		if (!irqd_irq_disabled(data))
++			rzg2l_gpio_irq_enable(data);
++	}
 +}
 +
-+static struct syscore_ops rzg2l_irqc_syscore_ops = {
-+	.suspend	= rzg2l_irqc_irq_suspend,
-+	.resume		= rzg2l_irqc_irq_resume,
-+};
+ static void rzg2l_gpio_irq_domain_free(struct irq_domain *domain, unsigned int virq,
+ 				       unsigned int nr_irqs)
+ {
+@@ -2007,6 +2117,68 @@ static void rzg2l_init_irq_valid_mask(struct gpio_chip *gc,
+ 	}
+ }
+ 
++static int rzg2l_pinctrl_reg_cache_alloc(struct rzg2l_pinctrl *pctrl)
++{
++	u32 nports = pctrl->data->n_port_pins / RZG2L_PINS_PER_PORT;
++	struct rzg2l_pinctrl_reg_cache *cache, *dedicated_cache;
 +
- static const struct irq_chip irqc_chip = {
- 	.name			= "rzg2l-irqc",
- 	.irq_eoi		= rzg2l_irqc_eoi,
-@@ -367,7 +412,6 @@ static int rzg2l_irqc_init(struct device_node *node, struct device_node *parent)
- 	struct irq_domain *irq_domain, *parent_domain;
- 	struct platform_device *pdev;
- 	struct reset_control *resetn;
--	struct rzg2l_irqc_priv *priv;
++	cache = devm_kzalloc(pctrl->dev, sizeof(*cache), GFP_KERNEL);
++	if (!cache)
++		return -ENOMEM;
++
++	dedicated_cache = devm_kzalloc(pctrl->dev, sizeof(*dedicated_cache), GFP_KERNEL);
++	if (!dedicated_cache)
++		return -ENOMEM;
++
++	cache->p = devm_kcalloc(pctrl->dev, nports, sizeof(*cache->p), GFP_KERNEL);
++	if (!cache->p)
++		return -ENOMEM;
++
++	cache->pm = devm_kcalloc(pctrl->dev, nports, sizeof(*cache->pm), GFP_KERNEL);
++	if (!cache->pm)
++		return -ENOMEM;
++
++	cache->pmc = devm_kcalloc(pctrl->dev, nports, sizeof(*cache->pmc), GFP_KERNEL);
++	if (!cache->pmc)
++		return -ENOMEM;
++
++	cache->pfc = devm_kcalloc(pctrl->dev, nports, sizeof(*cache->pfc), GFP_KERNEL);
++	if (!cache->pfc)
++		return -ENOMEM;
++
++	for (u8 i = 0; i < 2; i++) {
++		u32 n_dedicated_pins = pctrl->data->n_dedicated_pins;
++
++		cache->iolh[i] = devm_kcalloc(pctrl->dev, nports, sizeof(*cache->iolh[i]),
++					      GFP_KERNEL);
++		if (!cache->iolh[i])
++			return -ENOMEM;
++
++		cache->ien[i] = devm_kcalloc(pctrl->dev, nports, sizeof(*cache->ien[i]),
++					     GFP_KERNEL);
++		if (!cache->ien[i])
++			return -ENOMEM;
++
++		/* Allocate dedicated cache. */
++		dedicated_cache->iolh[i] = devm_kcalloc(pctrl->dev, n_dedicated_pins,
++							sizeof(*dedicated_cache->iolh[i]),
++							GFP_KERNEL);
++		if (!dedicated_cache->iolh[i])
++			return -ENOMEM;
++
++		dedicated_cache->ien[i] = devm_kcalloc(pctrl->dev, n_dedicated_pins,
++						       sizeof(*dedicated_cache->ien[i]),
++						       GFP_KERNEL);
++		if (!dedicated_cache->ien[i])
++			return -ENOMEM;
++	}
++
++	pctrl->cache = cache;
++	pctrl->dedicated_cache = dedicated_cache;
++
++	return 0;
++}
++
+ static int rzg2l_gpio_register(struct rzg2l_pinctrl *pctrl)
+ {
+ 	struct device_node *np = pctrl->dev->of_node;
+@@ -2147,6 +2319,10 @@ static int rzg2l_pinctrl_register(struct rzg2l_pinctrl *pctrl)
+ 		}
+ 	}
+ 
++	ret = rzg2l_pinctrl_reg_cache_alloc(pctrl);
++	if (ret)
++		return ret;
++
+ 	ret = devm_pinctrl_register_and_init(pctrl->dev, &pctrl->desc, pctrl,
+ 					     &pctrl->pctl);
+ 	if (ret) {
+@@ -2172,7 +2348,6 @@ static int rzg2l_pinctrl_register(struct rzg2l_pinctrl *pctrl)
+ static int rzg2l_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	struct rzg2l_pinctrl *pctrl;
+-	struct clk *clk;
  	int ret;
  
- 	pdev = of_find_device_by_node(node);
-@@ -380,15 +424,15 @@ static int rzg2l_irqc_init(struct device_node *node, struct device_node *parent)
- 		return -ENODEV;
- 	}
+ 	BUILD_BUG_ON(ARRAY_SIZE(r9a07g044_gpio_configs) * RZG2L_PINS_PER_PORT >
+@@ -2198,14 +2373,16 @@ static int rzg2l_pinctrl_probe(struct platform_device *pdev)
+ 	if (IS_ERR(pctrl->base))
+ 		return PTR_ERR(pctrl->base);
  
--	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
--	if (!priv)
-+	rzg2l_irqc_data = devm_kzalloc(&pdev->dev, sizeof(*rzg2l_irqc_data), GFP_KERNEL);
-+	if (!rzg2l_irqc_data)
- 		return -ENOMEM;
+-	clk = devm_clk_get_enabled(pctrl->dev, NULL);
+-	if (IS_ERR(clk))
+-		return dev_err_probe(pctrl->dev, PTR_ERR(clk),
++	pctrl->clk = devm_clk_get_enabled(pctrl->dev, NULL);
++	if (IS_ERR(pctrl->clk)) {
++		return dev_err_probe(pctrl->dev, PTR_ERR(pctrl->clk),
+ 				     "failed to enable GPIO clk\n");
++	}
  
--	priv->base = devm_of_iomap(&pdev->dev, pdev->dev.of_node, 0, NULL);
--	if (IS_ERR(priv->base))
--		return PTR_ERR(priv->base);
-+	rzg2l_irqc_data->base = devm_of_iomap(&pdev->dev, pdev->dev.of_node, 0, NULL);
-+	if (IS_ERR(rzg2l_irqc_data->base))
-+		return PTR_ERR(rzg2l_irqc_data->base);
+ 	spin_lock_init(&pctrl->lock);
+ 	spin_lock_init(&pctrl->bitmap_lock);
+ 	mutex_init(&pctrl->mutex);
++	atomic_set(&pctrl->wakeup_path, 0);
  
--	ret = rzg2l_irqc_parse_interrupts(priv, node);
-+	ret = rzg2l_irqc_parse_interrupts(rzg2l_irqc_data, node);
- 	if (ret) {
- 		dev_err(&pdev->dev, "cannot parse interrupts: %d\n", ret);
- 		return ret;
-@@ -411,17 +455,19 @@ static int rzg2l_irqc_init(struct device_node *node, struct device_node *parent)
- 		goto pm_disable;
- 	}
+ 	platform_set_drvdata(pdev, pctrl);
  
--	raw_spin_lock_init(&priv->lock);
-+	raw_spin_lock_init(&rzg2l_irqc_data->lock);
- 
- 	irq_domain = irq_domain_add_hierarchy(parent_domain, 0, IRQC_NUM_IRQ,
- 					      node, &rzg2l_irqc_domain_ops,
--					      priv);
-+					      rzg2l_irqc_data);
- 	if (!irq_domain) {
- 		dev_err(&pdev->dev, "failed to add irq domain\n");
- 		ret = -ENOMEM;
- 		goto pm_put;
- 	}
- 
-+	register_syscore_ops(&rzg2l_irqc_syscore_ops);
-+
+@@ -2217,6 +2394,224 @@ static int rzg2l_pinctrl_probe(struct platform_device *pdev)
  	return 0;
+ }
  
- pm_put:
++static void rzg2l_pinctrl_pm_setup_regs(struct rzg2l_pinctrl *pctrl, bool suspend)
++{
++	u32 nports = pctrl->data->n_port_pins / RZG2L_PINS_PER_PORT;
++	struct rzg2l_pinctrl_reg_cache *cache = pctrl->cache;
++
++	for (u32 port = 0; port < nports; port++) {
++		bool has_iolh, has_ien;
++		u32 off, caps;
++		u8 pincnt;
++		u64 cfg;
++
++		cfg = pctrl->data->port_pin_configs[port];
++		off = RZG2L_PIN_CFG_TO_PORT_OFFSET(cfg);
++		pincnt = hweight8(FIELD_GET(PIN_CFG_PIN_MAP_MASK, cfg));
++
++		caps = FIELD_GET(PIN_CFG_MASK, cfg);
++		has_iolh = !!(caps & (PIN_CFG_IOLH_A | PIN_CFG_IOLH_B | PIN_CFG_IOLH_C));
++		has_ien = !!(caps & PIN_CFG_IEN);
++
++		if (suspend)
++			RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + PFC(off), cache->pfc[port]);
++
++		/*
++		 * Now cache the registers or set them in the order suggested by
++		 * HW manual (section "Operation for GPIO Function").
++		 */
++		RZG2L_PCTRL_REG_ACCESS8(suspend, pctrl->base + PMC(off), cache->pmc[port]);
++		if (has_iolh) {
++			RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + IOLH(off),
++						 cache->iolh[0][port]);
++			if (pincnt >= 4) {
++				RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + IOLH(off) + 4,
++							 cache->iolh[1][port]);
++			}
++		}
++
++		RZG2L_PCTRL_REG_ACCESS16(suspend, pctrl->base + PM(off), cache->pm[port]);
++		RZG2L_PCTRL_REG_ACCESS8(suspend, pctrl->base + P(off), cache->p[port]);
++
++		if (has_ien) {
++			RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + IEN(off),
++						 cache->ien[0][port]);
++			if (pincnt >= 4) {
++				RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + IEN(off) + 4,
++							 cache->ien[1][port]);
++			}
++		}
++	}
++}
++
++static void rzg2l_pinctrl_pm_setup_dedicated_regs(struct rzg2l_pinctrl *pctrl, bool suspend)
++{
++	struct rzg2l_pinctrl_reg_cache *cache = pctrl->dedicated_cache;
++
++	/*
++	 * Make sure entries in pctrl->data->n_dedicated_pins[] having the same
++	 * port offset are close together.
++	 */
++	for (u32 i = 0, caps = 0; i < pctrl->data->n_dedicated_pins; i++) {
++		bool has_iolh, has_ien;
++		u32 off, next_off = 0;
++		u64 cfg, next_cfg;
++		u8 pincnt;
++
++		cfg = pctrl->data->dedicated_pins[i].config;
++		off = RZG2L_PIN_CFG_TO_PORT_OFFSET(cfg);
++		if (i + 1 < pctrl->data->n_dedicated_pins) {
++			next_cfg = pctrl->data->dedicated_pins[i + 1].config;
++			next_off = RZG2L_PIN_CFG_TO_PORT_OFFSET(next_cfg);
++		}
++
++		if (off == next_off) {
++			/* Gather caps of all port pins. */
++			caps |= FIELD_GET(PIN_CFG_MASK, cfg);
++			continue;
++		}
++
++		/* And apply them in a single shot. */
++		has_iolh = !!(caps & (PIN_CFG_IOLH_A | PIN_CFG_IOLH_B | PIN_CFG_IOLH_C));
++		has_ien = !!(caps & PIN_CFG_IEN);
++		pincnt = hweight8(FIELD_GET(RZG2L_SINGLE_PIN_BITS_MASK, cfg));
++
++		if (has_iolh) {
++			RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + IOLH(off),
++						 cache->iolh[0][i]);
++		}
++		if (has_ien) {
++			RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + IEN(off),
++						 cache->ien[0][i]);
++		}
++
++		if (pincnt >= 4) {
++			if (has_iolh) {
++				RZG2L_PCTRL_REG_ACCESS32(suspend,
++							 pctrl->base + IOLH(off) + 4,
++							 cache->iolh[1][i]);
++			}
++			if (has_ien) {
++				RZG2L_PCTRL_REG_ACCESS32(suspend,
++							 pctrl->base + IEN(off) + 4,
++							 cache->ien[1][i]);
++			}
++		}
++		caps = 0;
++	}
++}
++
++static void rzg2l_pinctrl_pm_setup_pfc(struct  rzg2l_pinctrl *pctrl)
++{
++	u32 nports = pctrl->data->n_port_pins / RZG2L_PINS_PER_PORT;
++	const struct rzg2l_hwcfg *hwcfg = pctrl->data->hwcfg;
++	const struct rzg2l_register_offsets *regs = &hwcfg->regs;
++
++	/* Set the PWPR register to allow PFC register to write. */
++	writel(0x0, pctrl->base + regs->pwpr);		/* B0WI=0, PFCWE=0 */
++	writel(PWPR_PFCWE, pctrl->base + regs->pwpr);	/* B0WI=0, PFCWE=1 */
++
++	/* Restore port registers. */
++	for (u32 port = 0; port < nports; port++) {
++		unsigned long pinmap;
++		u8 pmc = 0, max_pin;
++		u32 off, pfc = 0;
++		u64 cfg;
++		u16 pm;
++		u8 pin;
++
++		cfg = pctrl->data->port_pin_configs[port];
++		off = RZG2L_PIN_CFG_TO_PORT_OFFSET(cfg);
++		pinmap = FIELD_GET(PIN_CFG_PIN_MAP_MASK, cfg);
++		max_pin = fls(pinmap);
++
++		pm = readw(pctrl->base + PM(off));
++		for_each_set_bit(pin, &pinmap, max_pin) {
++			struct rzg2l_pinctrl_reg_cache *cache = pctrl->cache;
++
++			/* Nothing to do if PFC was not configured before. */
++			if (!(cache->pmc[port] & BIT(pin)))
++				continue;
++
++			/* Set pin to 'Non-use (Hi-Z input protection)' */
++			pm &= ~(PM_MASK << (pin * 2));
++			writew(pm, pctrl->base + PM(off));
++
++			/* Temporarily switch to GPIO mode with PMC register */
++			pmc &= ~BIT(pin);
++			writeb(pmc, pctrl->base + PMC(off));
++
++			/* Select Pin function mode. */
++			pfc &= ~(PFC_MASK << (pin * 4));
++			pfc |= (cache->pfc[port] & (PFC_MASK << (pin * 4)));
++			writel(pfc, pctrl->base + PFC(off));
++
++			/* Switch to Peripheral pin function. */
++			pmc |= BIT(pin);
++			writeb(pmc, pctrl->base + PMC(off));
++		}
++	}
++
++	/* Set the PWPR register to be write-protected. */
++	writel(0x0, pctrl->base + regs->pwpr);		/* B0WI=0, PFCWE=0 */
++	writel(PWPR_B0WI, pctrl->base + regs->pwpr);	/* B0WI=1, PFCWE=0 */
++}
++
++static int rzg2l_pinctrl_suspend_noirq(struct device *dev)
++{
++	struct rzg2l_pinctrl *pctrl = dev_get_drvdata(dev);
++	const struct rzg2l_hwcfg *hwcfg = pctrl->data->hwcfg;
++	const struct rzg2l_register_offsets *regs = &hwcfg->regs;
++	struct rzg2l_pinctrl_reg_cache *cache = pctrl->cache;
++
++	rzg2l_pinctrl_pm_setup_regs(pctrl, true);
++	rzg2l_pinctrl_pm_setup_dedicated_regs(pctrl, true);
++
++	for (u8 i = 0; i < 2; i++) {
++		cache->sd_ch[i] = readb(pctrl->base + SD_CH(regs->sd_ch, i));
++		cache->eth_poc[i] = readb(pctrl->base + ETH_POC(regs->eth_poc, i));
++	}
++
++	cache->qspi = readb(pctrl->base + QSPI);
++	cache->eth_mode = readb(pctrl->base + ETH_MODE);
++
++	if (!atomic_read(&pctrl->wakeup_path))
++		clk_disable_unprepare(pctrl->clk);
++	else
++		device_set_wakeup_path(dev);
++
++	return 0;
++}
++
++static int rzg2l_pinctrl_resume_noirq(struct device *dev)
++{
++	struct rzg2l_pinctrl *pctrl = dev_get_drvdata(dev);
++	const struct rzg2l_hwcfg *hwcfg = pctrl->data->hwcfg;
++	const struct rzg2l_register_offsets *regs = &hwcfg->regs;
++	struct rzg2l_pinctrl_reg_cache *cache = pctrl->cache;
++	int ret;
++
++	if (!atomic_read(&pctrl->wakeup_path)) {
++		ret = clk_prepare_enable(pctrl->clk);
++		if (ret)
++			return ret;
++	}
++
++	writeb(cache->qspi, pctrl->base + QSPI);
++	writeb(cache->eth_mode, pctrl->base + ETH_MODE);
++	for (u8 i = 0; i < 2; i++) {
++		writeb(cache->sd_ch[i], pctrl->base + SD_CH(regs->sd_ch, i));
++		writeb(cache->eth_poc[i], pctrl->base + ETH_POC(regs->eth_poc, i));
++	}
++
++	rzg2l_pinctrl_pm_setup_pfc(pctrl);
++	rzg2l_pinctrl_pm_setup_regs(pctrl, false);
++	rzg2l_pinctrl_pm_setup_dedicated_regs(pctrl, false);
++	rzg2l_gpio_irq_restore(pctrl);
++
++	return 0;
++}
++
+ static const struct rzg2l_hwcfg rzg2l_hwcfg = {
+ 	.regs = {
+ 		.pwpr = 0x3014,
+@@ -2313,10 +2708,15 @@ static const struct of_device_id rzg2l_pinctrl_of_table[] = {
+ 	{ /* sentinel */ }
+ };
+ 
++static const struct dev_pm_ops rzg2l_pinctrl_pm_ops = {
++	NOIRQ_SYSTEM_SLEEP_PM_OPS(rzg2l_pinctrl_suspend_noirq, rzg2l_pinctrl_resume_noirq)
++};
++
+ static struct platform_driver rzg2l_pinctrl_driver = {
+ 	.driver = {
+ 		.name = DRV_NAME,
+ 		.of_match_table = of_match_ptr(rzg2l_pinctrl_of_table),
++		.pm = pm_sleep_ptr(&rzg2l_pinctrl_pm_ops),
+ 	},
+ 	.probe = rzg2l_pinctrl_probe,
+ };
 -- 
 2.39.2
 
