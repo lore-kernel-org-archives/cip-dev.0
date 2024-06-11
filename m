@@ -1,88 +1,80 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <johnxw@amazon.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B27CCC27C55
-	for <webhook@archiver.kernel.org>; Mon, 10 Jun 2024 21:26:33 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web10.31888.1718054787618409884
- for <cip-dev@lists.cip-project.org>;
- Mon, 10 Jun 2024 14:26:28 -0700
-Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id F381B1C0099; Mon, 10 Jun 2024 23:26:25 +0200 (CEST)
-Date: Mon, 10 Jun 2024 23:26:25 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: nobuhiro1.iwamatsu@toshiba.co.jp, pavel@denx.de,
-	cip-dev@lists.cip-project.org, biju.das.jz@bp.renesas.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com
-Subject: Re: [PATCH 5.10.y-cip 00/19] Add suspend to RAM support for pin and
- IA55 IRQ controllers
-Message-ID: <ZmdvgdE0A0f/go/b@duo.ucw.cz>
-References: <20240607140711.2497286-1-claudiu.beznea.uj@bp.renesas.com>
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14FA9C27C4F
+	for <webhook@archiver.kernel.org>; Tue, 11 Jun 2024 03:31:44 +0000 (UTC)
+Subject: Re: Adding swap space to the encrypted partition
+To: cip-dev@lists.cip-project.org
+From: "JohnW" <johnxw@amazon.com>
+X-Originating-Location: Puyallup, Washington, US (174.21.53.213)
+X-Originating-Platform: Mac Firefox 126
+User-Agent: GROUPS.IO Web Poster
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="PaDyEBzLHnjhLO+H"
-Content-Disposition: inline
-In-Reply-To: <20240607140711.2497286-1-claudiu.beznea.uj@bp.renesas.com>
+Date: Mon, 10 Jun 2024 20:31:41 -0700
+References: <26684.1718045165094836518@lists.cip-project.org>
+In-Reply-To: <26684.1718045165094836518@lists.cip-project.org>
+Message-ID: <19666.1718076701122955939@lists.cip-project.org>
+Content-Type: multipart/alternative; boundary="fGwXbUXBJ58K6gLdK3Kr"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 10 Jun 2024 21:26:33 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16185
+ <cip-dev@lists.cip-project.org>; Tue, 11 Jun 2024 03:31:44 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16186
 
-
---PaDyEBzLHnjhLO+H
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--fGwXbUXBJ58K6gLdK3Kr
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
+I tried adding the following before the rootfs partition in the kickstart f=
+ile.
 
-> Series adds suspend to RAM support for PIN and IA55 IRQ controller.
-> Support is needed for RZ/G3S SoC.
 >=20
-> Along with it pin controller and IA55 interrupt controller drivers
-> were updated with enhancements.
+> part swap --use-label --size 2G --label swap1 --fstype=3Dswap --fsoptions=
+=3Dsw
+
+and also tried updating https://github.com/ilbers/isar/blob/2c76d889035ea05=
+114b1a31bb73b025c0247a278/scripts/lib/wic/plugins/imager/direct.py#L105 to =
+allow swap to be added to the fstab. CRYPT_PARTITIONS has been updated to
 >=20
-> Series is split as follows:
-> - patch 01:      add clock and reset support for IA55 IRQ controller on
->                  RZ/G3S
-> - patches 02-08: update the pin controller driver with fixes for spurious
->                  interrupts when pin controller interrupt lines are routed
->                  to IA55 IRQ controller
-> - patch 09:      add suspend to RAM support for pinctrl driver
-> - patch 10:      add suspend to RAM support for IA55 IRQ controler
-> - patches 11-14: documentation patches
-> - patches 15-19: update the device tree with IA55, gpio keys, PSCI
->                  support
+>=20
+> CRYPT_PARTITIONS =3D "swap1:swap:reencrypt platform:/:reencrypt"
 
-Thanks for the series. It looks pretty similar to 6.1 version.
+also tried
+>=20
+> CRYPT_PARTITIONS =3D "swap1::reencrypt platform:/:reencrypt"
 
-I noticed "pinctrl: renesas: rzg2l: Select GPIOLIB_IRQCHIP and
-IRQ_DOMAIN_HIERARCHY" is missing from this version, should we have it,
-too?
+The image booted into initramfs and based on the debug log it says
+>=20
+> Begin: Encryption of /dev/sda2 ... cannot resize partition. unsupport
+> fstype: swap
 
-I can apply it if it passes testing and if there are no other
-comments.
+Regards,
+John
 
-Thanks and best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+--fGwXbUXBJ58K6gLdK3Kr
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
---PaDyEBzLHnjhLO+H
-Content-Type: application/pgp-signature; name="signature.asc"
+I tried adding the following before the rootfs partition in the kickstart f=
+ile.<br />
+<blockquote>part swap --use-label --size 2G --label swap1 --fstype=3Dswap -=
+-fsoptions=3Dsw</blockquote>
+and also tried updating <a href=3D"https://github.com/ilbers/isar/blob/2c76=
+d889035ea05114b1a31bb73b025c0247a278/scripts/lib/wic/plugins/imager/direct.=
+py#L105" target=3D"_blank" rel=3D"noopener">https://github.com/ilbers/isar/=
+blob/2c76d889035ea05114b1a31bb73b025c0247a278/scripts/lib/wic/plugins/image=
+r/direct.py#L105</a> to allow swap to be added to the fstab. CRYPT_PARTITIO=
+NS has been updated to
+<blockquote>CRYPT_PARTITIONS =3D "swap1:swap:reencrypt platform:/:reencrypt=
+"</blockquote>
+also tried
+<blockquote>CRYPT_PARTITIONS =3D "swap1::reencrypt platform:/:reencrypt"</b=
+lockquote>
+The image booted into initramfs and based on the debug log it says
+<blockquote>Begin: Encryption of /dev/sda2 ... cannot resize partition. uns=
+upport fstype: swap</blockquote>
+Regards,<br />John
 
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZmdvgQAKCRAw5/Bqldv6
-8mvsAJ916m8t6wvjBVHvWJtzqde8jqpGzgCgsdk2qcDk+Fag2M9tFlMJhnsBRvs=
-=SnvM
------END PGP SIGNATURE-----
-
---PaDyEBzLHnjhLO+H--
+--fGwXbUXBJ58K6gLdK3Kr--
 
