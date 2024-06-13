@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47EF1C2BA15
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC93C41513
 	for <webhook@archiver.kernel.org>; Thu, 13 Jun 2024 10:47:42 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web10.5253.1718275650054850559
  for <cip-dev@lists.cip-project.org>;
- Thu, 13 Jun 2024 03:47:34 -0700
+ Thu, 13 Jun 2024 03:47:39 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.08,234,1712588400"; 
-   d="scan'208";a="211744436"
+   d="scan'208";a="211744446"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 13 Jun 2024 19:47:34 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 13 Jun 2024 19:47:38 +0900
 Received: from localhost.localdomain (unknown [10.226.92.168])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3D400400563D;
-	Thu, 13 Jun 2024 19:47:31 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id C658D400563D;
+	Thu, 13 Jun 2024 19:47:36 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 2/7] dt-bindings: usb: renesas,usbhs: Document RZ/G2L family compatible
-Date: Thu, 13 Jun 2024 11:47:21 +0100
-Message-Id: <20240613104726.422783-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 4/7] usb: renesas_usbhs: Improve usbhsc_default_pipe[] for isochronous transfers
+Date: Thu, 13 Jun 2024 11:47:23 +0100
+Message-Id: <20240613104726.422783-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240613104726.422783-1-biju.das.jz@bp.renesas.com>
 References: <20240613104726.422783-1-biju.das.jz@bp.renesas.com>
@@ -35,44 +35,45 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 13 Jun 2024 10:47:42 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16212
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16214
 
-commit c4f426460febadd10002248f579ee69374a4ef99 upstream.
+commit 790effae39cf368a9ff029406b8033ab6618ff90 upstream.
 
-The USBHS IP found on RZ/G2L SoCs only has 10 pipe buffers compared
-to 16 pipe buffers on RZ/A2M. Document renesas,rzg2l-usbhs family
-compatible to handle this difference for RZ/G2L family SoCs.
+As per the hardware manual, double buffer setting results in fewer
+interrupts for high-speed data transfers. Improve usbhsc_default_pipe[]
+for isochronous transfers by updating the table from single->double
+buffering and update the pipe number accordingly.
 
+Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20240319105356.87287-2-biju.das.jz@bp.renesas.com
+Link: https://lore.kernel.org/r/20240319105356.87287-4-biju.das.jz@bp.renesas.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/usb/renesas,usbhs.yaml | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/usb/renesas_usbhs/common.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/renesas,usbhs.yaml b/Documentation/devicetree/bindings/usb/renesas,usbhs.yaml
-index 0ce8f105b7d5..c83b6e8e2040 100644
---- a/Documentation/devicetree/bindings/usb/renesas,usbhs.yaml
-+++ b/Documentation/devicetree/bindings/usb/renesas,usbhs.yaml
-@@ -19,10 +19,14 @@ properties:
-       - items:
-           - enum:
-               - renesas,usbhs-r7s9210   # RZ/A2
-+          - const: renesas,rza2-usbhs
-+
-+      - items:
-+          - enum:
-               - renesas,usbhs-r9a07g043 # RZ/G2UL and RZ/Five
-               - renesas,usbhs-r9a07g044 # RZ/G2{L,LC}
-               - renesas,usbhs-r9a07g054 # RZ/V2L
--          - const: renesas,rza2-usbhs
-+          - const: renesas,rzg2l-usbhs
- 
-       - items:
-           - enum:
+diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
+index 9196461e07ef..4e0cf6b33bdb 100644
+--- a/drivers/usb/renesas_usbhs/common.c
++++ b/drivers/usb/renesas_usbhs/common.c
+@@ -366,11 +366,11 @@ static void usbhsc_clk_disable_unprepare(struct usbhs_priv *priv)
+ /* commonly used on old SH-Mobile SoCs */
+ static struct renesas_usbhs_driver_pipe_config usbhsc_default_pipe[] = {
+ 	RENESAS_USBHS_PIPE(USB_ENDPOINT_XFER_CONTROL, 64, 0x00, false),
+-	RENESAS_USBHS_PIPE(USB_ENDPOINT_XFER_ISOC, 1024, 0x08, false),
+-	RENESAS_USBHS_PIPE(USB_ENDPOINT_XFER_ISOC, 1024, 0x18, false),
+-	RENESAS_USBHS_PIPE(USB_ENDPOINT_XFER_BULK, 512, 0x28, true),
+-	RENESAS_USBHS_PIPE(USB_ENDPOINT_XFER_BULK, 512, 0x38, true),
++	RENESAS_USBHS_PIPE(USB_ENDPOINT_XFER_ISOC, 1024, 0x08, true),
++	RENESAS_USBHS_PIPE(USB_ENDPOINT_XFER_ISOC, 1024, 0x28, true),
+ 	RENESAS_USBHS_PIPE(USB_ENDPOINT_XFER_BULK, 512, 0x48, true),
++	RENESAS_USBHS_PIPE(USB_ENDPOINT_XFER_BULK, 512, 0x58, true),
++	RENESAS_USBHS_PIPE(USB_ENDPOINT_XFER_BULK, 512, 0x68, true),
+ 	RENESAS_USBHS_PIPE(USB_ENDPOINT_XFER_INT, 64, 0x04, false),
+ 	RENESAS_USBHS_PIPE(USB_ENDPOINT_XFER_INT, 64, 0x05, false),
+ 	RENESAS_USBHS_PIPE(USB_ENDPOINT_XFER_INT, 64, 0x06, false),
 -- 
 2.25.1
 
