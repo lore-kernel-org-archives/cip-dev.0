@@ -2,31 +2,31 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A140FC41513
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E371C27C4F
 	for <webhook@archiver.kernel.org>; Thu, 13 Jun 2024 09:16:41 +0000 (UTC)
-Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
- by mx.groups.io with SMTP id smtpd.web11.3964.1718270199690338944
+Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
+ by mx.groups.io with SMTP id smtpd.web11.3965.1718270199772358175
  for <cip-dev@lists.cip-project.org>;
  Thu, 13 Jun 2024 02:16:40 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm2 header.b=cAAe4dtM;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-51332-20240613091637e985df6e6a60623a01-v5uyzp@rts-flowmailer.siemens.com)
-Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20240613091637e985df6e6a60623a01
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm2 header.b=UgZDfv3a;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.225, mailfrom: fm-51332-2024061309163796315b8287e3d424e3-nyxowr@rts-flowmailer.siemens.com)
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 2024061309163796315b8287e3d424e3
         for <cip-dev@lists.cip-project.org>;
         Thu, 13 Jun 2024 11:16:37 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=58xVTOATdz6SDUvL4Nz7AEODe8f/YxGAWqDnesrKTx0=;
- b=cAAe4dtMrJ8zpcW6KEQsrBKhq4jK5uOKATwb3ml1cfpD/KU6P4NlUrx6zHmpZYsqXBGde5
- Fzb6V4nWLGZrczipGUPqRGdWPfsh7u6i1xuUK/wyYFznHTAwt/GAvhyNwkHZee4DnjB1E6Mn
- edjasJsUp/cND3w5U7pRmGaf29jss=;
+ bh=r00BKmYRaG9mh+idAZUG3Qi4JdNiaB67rXPDjIq9/7k=;
+ b=UgZDfv3a8Wf3USjw/rJO3XtnUSv2HjlfkDGmU+vqcnYQyZvhsdlevfk7gW8rvx6r4asdLX
+ e1L94uJ0nx9tpQFAalZdYmwy+folgiL88BfvW1UH1TK7SCd1N0XT65yMHL8/YRp+Do9a+tBZ
+ VqL4NoWOEuFJMAf0kv2aFPQqdQfpM=;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: jan.kiszka@siemens.com,
 	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH v4 1/2] wic/plugins/efibootguard*: Take --size and --fixed-size into account
-Date: Thu, 13 Jun 2024 11:16:18 +0200
-Message-ID: <20240613091636.1156475-2-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v4 2/2] wic/ebg*sysparts.inc increase the size of the boot partitions
+Date: Thu, 13 Jun 2024 11:16:19 +0200
+Message-ID: <20240613091636.1156475-3-Quirin.Gylstorff@siemens.com>
 In-Reply-To: <20240613091636.1156475-1-Quirin.Gylstorff@siemens.com>
 References: <20240613091636.1156475-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
@@ -37,115 +37,58 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 13 Jun 2024 09:16:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16198
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16196
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-This fixes the issue that wic arguments --size and --fixed-size
-are not correctly interpreted.
+This fixes a build error with the following error message:
 
-This fixes issue #104.
+```
+ INFO: sign with script /usr/bin/sign_secure_image.sh
+ ERROR: _exec_cmd: export PATH=//sbin://usr/sbin://usr/bin://usr/bin/None://bin:None:$PATH;mcopy -i /tmp/cip-core-image-security-cip-core-bookworm-qemu-arm64.wic/tmp.wic.yo_hrfgu/BOOT0.2.img -s /tmp/cip-core-image-security-cip-core-bookworm-qemu-arm64.wic/tmp.wic.yo_hrfgu/disk/BOOT0.2/* ::/ returned '1' instead of 0
+ output: Disk full
+```
+
+This error occurs as the unfied kernel image can be greater than 31MB.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- .../wic/plugins/source/efibootguard-boot.py   | 34 ++++---------------
- .../wic/plugins/source/efibootguard-efi.py    | 30 ++--------------
- 2 files changed, 9 insertions(+), 55 deletions(-)
+ wic/ebg-signed-sysparts.inc | 6 +++---
+ wic/ebg-sysparts.inc        | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/scripts/lib/wic/plugins/source/efibootguard-boot.py b/scripts/lib/wic/plugins/source/efibootguard-boot.py
-index 4e3aefb..2b06fd1 100644
---- a/scripts/lib/wic/plugins/source/efibootguard-boot.py
-+++ b/scripts/lib/wic/plugins/source/efibootguard-boot.py
-@@ -136,40 +136,20 @@ class EfibootguardBootPlugin(SourcePlugin):
-                 msger.error("file %s not found in directory %s",
-                             boot_file, kernel_dir)
-                 exit(1)
--        cls._create_img(part_rootfs_dir, part, cr_workdir)
-+        cls._create_img(part_rootfs_dir, part, cr_workdir,
-+                        native_sysroot, oe_builddir)
+diff --git a/wic/ebg-signed-sysparts.inc b/wic/ebg-signed-sysparts.inc
+index be63cd7..9292eee 100644
+--- a/wic/ebg-signed-sysparts.inc
++++ b/wic/ebg-signed-sysparts.inc
+@@ -1,8 +1,8 @@
+ # default partition layout EFI Boot Guard usage, signed version
  
-     @classmethod
--    def _create_img(cls, part_rootfs_dir, part, cr_workdir):
--            # Write label as utf-16le to EFILABEL file
-+    def _create_img(cls, part_rootfs_dir, part, cr_workdir,
-+                    native_sysroot, oe_builddir):
-+        # Write label as utf-16le to EFILABEL file
-         with open("%s/EFILABEL" % part_rootfs_dir, 'wb') as filedescriptor:
-             filedescriptor.write(part.label.upper().encode("utf-16le"))
+ # EFI partition containing efibootguard bootloader binary
+-part --source efibootguard-efi  --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active --sourceparams "signwith=/usr/bin/sign_secure_image.sh" --fsuuid 0x4321dcba --uuid d1360f76-b09a-4bcc-b923-8195088cbe02
++part --source efibootguard-efi  --size 16M --label efi   --align 1024 --part-type=EF00 --active --sourceparams "signwith=/usr/bin/sign_secure_image.sh" --fsuuid 0x4321dcba --uuid d1360f76-b09a-4bcc-b923-8195088cbe02
  
--        du_cmd = "du --apparent-size -ks %s" % part_rootfs_dir
--        blocks = int(exec_cmd(du_cmd).split()[0])
--
--        extra_blocks = part.get_extra_block_count(blocks)
--        if extra_blocks < BOOTDD_EXTRA_SPACE:
--            extra_blocks = BOOTDD_EXTRA_SPACE
--
--        blocks += extra_blocks
--        blocks = blocks + (16 - (blocks % 16))
--
--        msger.debug("Added %d extra blocks to %s to get to %d total blocks",
--                    extra_blocks, part.mountpoint, blocks)
--
--        # dosfs image, created by mkdosfs
-         bootimg = "%s/%s.%s.img" % (cr_workdir, part.label, part.lineno)
+ # EFI Boot Guard environment/config partitions plus Kernel files
+-part --source efibootguard-boot --size 32M --extra-space 0 --overhead-factor 1 --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2,signwith=/usr/bin/sign_secure_image.sh" --fsuuid 0x4321dcbb --uuid f870258b-706f-4a66-8d58-b5a75ce61b8b
+-part --source efibootguard-boot --size 32M --extra-space 0 --overhead-factor 1 --label BOOT1 --align 1024 --part-type=0700 --sourceparams "revision=1,signwith=/usr/bin/sign_secure_image.sh" --fsuuid 0x4321dcbc --uuid 6e41f2a7-e3eb-403f-8637-b111e4482ee9
++part --source efibootguard-boot --fixed-size 64M --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2,signwith=/usr/bin/sign_secure_image.sh" --fsuuid 0x4321dcbb --uuid f870258b-706f-4a66-8d58-b5a75ce61b8b
++part --source efibootguard-boot --fixed-size 64M --label BOOT1 --align 1024 --part-type=0700 --sourceparams "revision=1,signwith=/usr/bin/sign_secure_image.sh" --fsuuid 0x4321dcbc --uuid 6e41f2a7-e3eb-403f-8637-b111e4482ee9
+diff --git a/wic/ebg-sysparts.inc b/wic/ebg-sysparts.inc
+index 121dc73..ab6c817 100644
+--- a/wic/ebg-sysparts.inc
++++ b/wic/ebg-sysparts.inc
+@@ -1,8 +1,8 @@
+ # default partition layout EFI Boot Guard usage
  
--        dosfs_cmd = "mkdosfs -F 16 -S 512 -n %s -C %s %d -i %s" % \
--            (part.label.upper(), bootimg, blocks, part.fsuuid)
--        exec_cmd(dosfs_cmd)
--
--        mcopy_cmd = "mcopy -v -i %s -s %s/* ::/" % (bootimg, part_rootfs_dir)
--        exec_cmd(mcopy_cmd, True)
--
--        chmod_cmd = "chmod 644 %s" % bootimg
--        exec_cmd(chmod_cmd)
--
-+        part.prepare_rootfs_msdos(bootimg, cr_workdir, oe_builddir,
-+                                  part_rootfs_dir, native_sysroot, None)
-         du_cmd = "du -Lbks %s" % bootimg
-         bootimg_size = int(exec_cmd(du_cmd).split()[0])
+ # EFI partition containing efibootguard bootloader binary
+-part --source efibootguard-efi  --size 16M --extra-space 0 --overhead-factor 1 --label efi   --align 1024 --part-type=EF00 --active --fsuuid 0x4321dcba --uuid c19e7e9f-bacf-49a6-b43d-2fc18d2a8d03
++part --source efibootguard-efi  --fixed-size 16M --label efi   --align 1024 --part-type=EF00 --active --fsuuid 0x4321dcba --uuid c19e7e9f-bacf-49a6-b43d-2fc18d2a8d03
  
-diff --git a/scripts/lib/wic/plugins/source/efibootguard-efi.py b/scripts/lib/wic/plugins/source/efibootguard-efi.py
-index e82e990..48f7523 100644
---- a/scripts/lib/wic/plugins/source/efibootguard-efi.py
-+++ b/scripts/lib/wic/plugins/source/efibootguard-efi.py
-@@ -100,35 +100,9 @@ class EfibootguardEFIPlugin(SourcePlugin):
-                                                name)
-         exec_cmd(cp_to_deploy_cmd, True)
- 
--        du_cmd = "du --apparent-size -ks %s" % part_rootfs_dir
--        blocks = int(exec_cmd(du_cmd).split()[0])
--
--        extra_blocks = part.get_extra_block_count(blocks)
--        if extra_blocks < BOOTDD_EXTRA_SPACE:
--            extra_blocks = BOOTDD_EXTRA_SPACE
--        blocks += extra_blocks
--        blocks = blocks + (16 - (blocks % 16))
--
--        msger.debug("Added %d extra blocks to %s to get to %d total blocks",
--                    extra_blocks, part.mountpoint, blocks)
--
--        # dosfs image, created by mkdosfs
-         efi_part_image = "%s/%s.%s.img" % (cr_workdir, part.label, part.lineno)
--
--        dosfs_cmd = "mkdosfs -S 512 -n %s -C %s %d -i %s" % \
--            (part.label.upper(), efi_part_image, blocks, part.fsuuid)
--        exec_cmd(dosfs_cmd)
--
--        # mtools for buster have problems with resursive mcopy.
--        # Therefore, create the target dir via mmd first.
--        mmd_cmd = "mmd -i %s ::/EFI ::/EFI/BOOT" % (efi_part_image)
--        exec_cmd(mmd_cmd, True)
--        mcopy_cmd = "mcopy -v -i %s -s %s/EFI/BOOT/* ::/EFI/BOOT" % \
--            (efi_part_image, part_rootfs_dir)
--        exec_cmd(mcopy_cmd, True)
--
--        chmod_cmd = "chmod 644 %s" % efi_part_image
--        exec_cmd(chmod_cmd)
-+        part.prepare_rootfs_msdos(efi_part_image, cr_workdir, oe_builddir,
-+                                  part_rootfs_dir, native_sysroot, None)
- 
-         du_cmd = "du -Lbks %s" % efi_part_image
-         efi_part_image_size = int(exec_cmd(du_cmd).split()[0])
+ # EFI Boot Guard environment/config partitions plus Kernel files
+-part --source efibootguard-boot --size 32M --extra-space 0 --overhead-factor 1 --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2" --fsuuid 0x4321dcbb --uuid e8567692-2dfa-459a-be15-f6e5ddcc8f49
+-part --source efibootguard-boot --size 32M --extra-space 0 --overhead-factor 1 --label BOOT1 --align 1024 --part-type=0700 --sourceparams "revision=1" --fsuuid 0x4321dcbc --uuid 94b2174d-c792-4e8e-8a34-b506e2927937
++part --source efibootguard-boot --fixed-size 64M --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2" --fsuuid 0x4321dcbb --uuid e8567692-2dfa-459a-be15-f6e5ddcc8f49
++part --source efibootguard-boot --fixed-size 64M --label BOOT1 --align 1024 --part-type=0700 --sourceparams "revision=1" --fsuuid 0x4321dcbc --uuid 94b2174d-c792-4e8e-8a34-b506e2927937
 -- 
 2.43.0
 
