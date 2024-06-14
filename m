@@ -2,67 +2,185 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 771A5C2BA12
-	for <webhook@archiver.kernel.org>; Fri, 14 Jun 2024 10:13:48 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.8057.1718360022965805988
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE94C27C6E
+	for <webhook@archiver.kernel.org>; Fri, 14 Jun 2024 10:18:58 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web10.8152.1718360329191467768
  for <cip-dev@lists.cip-project.org>;
- Fri, 14 Jun 2024 03:13:47 -0700
+ Fri, 14 Jun 2024 03:18:49 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.08,237,1712588400"; 
-   d="scan'208";a="207938212"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 14 Jun 2024 19:13:47 +0900
+   d="scan'208";a="211896698"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 14 Jun 2024 19:18:48 +0900
 Received: from localhost.localdomain (unknown [10.226.92.95])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5DB81428BB34;
-	Fri, 14 Jun 2024 19:13:45 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id BD478401C577;
+	Fri, 14 Jun 2024 19:18:46 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 14/14] arm64: defconfig: Enable Renesas RZ/G2L display unit DRM driver
-Date: Fri, 14 Jun 2024 11:13:08 +0100
-Message-Id: <20240614101308.40407-15-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 0/8] Add Display support for SMARC RZ/{G2L,G2LC,V2L}
+Date: Fri, 14 Jun 2024 11:18:37 +0100
+Message-Id: <20240614101845.40656-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240614101308.40407-1-biju.das.jz@bp.renesas.com>
-References: <20240614101308.40407-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 14 Jun 2024 10:13:48 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16247
+ <cip-dev@lists.cip-project.org>; Fri, 14 Jun 2024 10:18:58 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16248
 
-commit 8ea517c014ad4956ab7536277dd3f89bfad39069 upstream.
+This patch series aims to add Display support for SMARC RZ/{G2L,G2LC,V2L} EVK
+platforms.
 
-Enable the RZ/G2L display unit DRM drivers used on the RZ/{G2L,G2LC,V2L}
-SMARC EVK development boards.
+All the patches are cherry-picked from the mainline.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20240223123646.245655-1-biju.das.jz@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 25228f0a5c7b..a26ae513bb72 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -657,6 +657,7 @@ CONFIG_ROCKCHIP_INNO_HDMI=y
- CONFIG_DRM_RCAR_DU=m
- CONFIG_DRM_RCAR_DW_HDMI=m
- CONFIG_DRM_RZG2L_MIPI_DSI=m
-+CONFIG_DRM_RZG2L_DU=m
- CONFIG_DRM_SUN4I=m
- CONFIG_DRM_SUN6I_DSI=m
- CONFIG_DRM_SUN8I_DW_HDMI=m
+Adapted header files/KConfig changes for 6.1 kernel
+in patch#4 (0004-drm-renesas-Add-RZ-G2L-DU-Support.patch)
+similar to rcar_du and shmobile drm drivers.
+
+Biju Das (8):
+  drm: Place Renesas drivers in a separate dir
+  dt-bindings: display: Document Renesas RZ/G2L DU bindings
+  dt-bindings: display: renesas,rzg2l-du: Document RZ/V2L DU bindings
+  drm: renesas: Add RZ/G2L DU Support
+  arm64: dts: renesas: r9a07g044: Add DU node
+  arm64: dts: renesas: r9a07g054: Add DU node
+  arm64: dts: renesas: rzg2l-smarc: Enable DU and link with DSI
+  arm64: defconfig: Enable Renesas RZ/G2L display unit DRM driver
+
+ .../bindings/display/renesas,rzg2l-du.yaml    | 126 ++++++
+ MAINTAINERS                                   |   3 +-
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi    |  46 ++
+ arch/arm64/boot/dts/renesas/r9a07g054.dtsi    |  47 ++
+ arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi  |  14 +-
+ arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi |  14 +-
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/gpu/drm/Kconfig                       |   4 +-
+ drivers/gpu/drm/Makefile                      |   3 +-
+ drivers/gpu/drm/renesas/Kconfig               |   5 +
+ drivers/gpu/drm/renesas/Makefile              |   5 +
+ drivers/gpu/drm/{ => renesas}/rcar-du/Kconfig |   0
+ .../gpu/drm/{ => renesas}/rcar-du/Makefile    |   0
+ .../gpu/drm/{ => renesas}/rcar-du/rcar_cmm.c  |   0
+ .../gpu/drm/{ => renesas}/rcar-du/rcar_cmm.h  |   0
+ .../drm/{ => renesas}/rcar-du/rcar_du_crtc.c  |   0
+ .../drm/{ => renesas}/rcar-du/rcar_du_crtc.h  |   0
+ .../drm/{ => renesas}/rcar-du/rcar_du_drv.c   |   0
+ .../drm/{ => renesas}/rcar-du/rcar_du_drv.h   |   0
+ .../{ => renesas}/rcar-du/rcar_du_encoder.c   |   0
+ .../{ => renesas}/rcar-du/rcar_du_encoder.h   |   0
+ .../drm/{ => renesas}/rcar-du/rcar_du_group.c |   0
+ .../drm/{ => renesas}/rcar-du/rcar_du_group.h |   0
+ .../drm/{ => renesas}/rcar-du/rcar_du_kms.c   |   0
+ .../drm/{ => renesas}/rcar-du/rcar_du_kms.h   |   0
+ .../drm/{ => renesas}/rcar-du/rcar_du_plane.c |   0
+ .../drm/{ => renesas}/rcar-du/rcar_du_plane.h |   0
+ .../drm/{ => renesas}/rcar-du/rcar_du_regs.h  |   0
+ .../drm/{ => renesas}/rcar-du/rcar_du_vsp.c   |   0
+ .../drm/{ => renesas}/rcar-du/rcar_du_vsp.h   |   0
+ .../{ => renesas}/rcar-du/rcar_du_writeback.c |   0
+ .../{ => renesas}/rcar-du/rcar_du_writeback.h |   0
+ .../drm/{ => renesas}/rcar-du/rcar_dw_hdmi.c  |   0
+ .../gpu/drm/{ => renesas}/rcar-du/rcar_lvds.c |   0
+ .../gpu/drm/{ => renesas}/rcar-du/rcar_lvds.h |   0
+ .../{ => renesas}/rcar-du/rcar_lvds_regs.h    |   0
+ .../drm/{ => renesas}/rcar-du/rcar_mipi_dsi.c |   0
+ .../drm/{ => renesas}/rcar-du/rcar_mipi_dsi.h |   0
+ .../rcar-du/rcar_mipi_dsi_regs.h              |   0
+ .../{ => renesas}/rcar-du/rzg2l_mipi_dsi.c    |   0
+ .../rcar-du/rzg2l_mipi_dsi_regs.h             |   0
+ drivers/gpu/drm/renesas/rz-du/Kconfig         |  12 +
+ drivers/gpu/drm/renesas/rz-du/Makefile        |   8 +
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c | 422 ++++++++++++++++++
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.h |  89 ++++
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c  | 178 ++++++++
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.h  |  78 ++++
+ .../gpu/drm/renesas/rz-du/rzg2l_du_encoder.c  |  72 +++
+ .../gpu/drm/renesas/rz-du/rzg2l_du_encoder.h  |  32 ++
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c  | 371 +++++++++++++++
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.h  |  43 ++
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.c  | 349 +++++++++++++++
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.h  |  82 ++++
+ .../gpu/drm/{ => renesas}/shmobile/Kconfig    |   0
+ .../gpu/drm/{ => renesas}/shmobile/Makefile   |   0
+ .../shmobile/shmob_drm_backlight.c            |   0
+ .../shmobile/shmob_drm_backlight.h            |   0
+ .../{ => renesas}/shmobile/shmob_drm_crtc.c   |   0
+ .../{ => renesas}/shmobile/shmob_drm_crtc.h   |   0
+ .../{ => renesas}/shmobile/shmob_drm_drv.c    |   0
+ .../{ => renesas}/shmobile/shmob_drm_drv.h    |   0
+ .../{ => renesas}/shmobile/shmob_drm_kms.c    |   0
+ .../{ => renesas}/shmobile/shmob_drm_kms.h    |   0
+ .../{ => renesas}/shmobile/shmob_drm_plane.c  |   0
+ .../{ => renesas}/shmobile/shmob_drm_plane.h  |   0
+ .../{ => renesas}/shmobile/shmob_drm_regs.h   |   0
+ 66 files changed, 1977 insertions(+), 27 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
+ create mode 100644 drivers/gpu/drm/renesas/Kconfig
+ create mode 100644 drivers/gpu/drm/renesas/Makefile
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/Kconfig (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/Makefile (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_cmm.c (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_cmm.h (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_crtc.c (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_crtc.h (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_drv.c (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_drv.h (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_encoder.c (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_encoder.h (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_group.c (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_group.h (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_kms.c (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_kms.h (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_plane.c (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_plane.h (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_regs.h (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_vsp.c (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_vsp.h (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_writeback.c (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_writeback.h (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_dw_hdmi.c (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_lvds.c (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_lvds.h (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_lvds_regs.h (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_mipi_dsi.c (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_mipi_dsi.h (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_mipi_dsi_regs.h (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rzg2l_mipi_dsi.c (100%)
+ rename drivers/gpu/drm/{ => renesas}/rcar-du/rzg2l_mipi_dsi_regs.h (100%)
+ create mode 100644 drivers/gpu/drm/renesas/rz-du/Kconfig
+ create mode 100644 drivers/gpu/drm/renesas/rz-du/Makefile
+ create mode 100644 drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
+ create mode 100644 drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.h
+ create mode 100644 drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
+ create mode 100644 drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.h
+ create mode 100644 drivers/gpu/drm/renesas/rz-du/rzg2l_du_encoder.c
+ create mode 100644 drivers/gpu/drm/renesas/rz-du/rzg2l_du_encoder.h
+ create mode 100644 drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c
+ create mode 100644 drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.h
+ create mode 100644 drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.c
+ create mode 100644 drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.h
+ rename drivers/gpu/drm/{ => renesas}/shmobile/Kconfig (100%)
+ rename drivers/gpu/drm/{ => renesas}/shmobile/Makefile (100%)
+ rename drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_backlight.c (100%)
+ rename drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_backlight.h (100%)
+ rename drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_crtc.c (100%)
+ rename drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_crtc.h (100%)
+ rename drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_drv.c (100%)
+ rename drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_drv.h (100%)
+ rename drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_kms.c (100%)
+ rename drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_kms.h (100%)
+ rename drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_plane.c (100%)
+ rename drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_plane.h (100%)
+ rename drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_regs.h (100%)
+
 -- 
 2.25.1
 
