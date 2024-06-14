@@ -2,280 +2,198 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F10DEC27C79
-	for <webhook@archiver.kernel.org>; Fri, 14 Jun 2024 10:13:27 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.8276.1718359994763562701
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F281C41513
+	for <webhook@archiver.kernel.org>; Fri, 14 Jun 2024 10:13:38 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web11.8281.1718360006029977314
  for <cip-dev@lists.cip-project.org>;
- Fri, 14 Jun 2024 03:13:23 -0700
+ Fri, 14 Jun 2024 03:13:30 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.08,237,1712588400"; 
-   d="scan'208";a="207938166"
+   d="scan'208";a="211895904"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 14 Jun 2024 19:13:23 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 14 Jun 2024 19:13:30 +0900
 Received: from localhost.localdomain (unknown [10.226.92.95])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 571FA428BB21;
-	Fri, 14 Jun 2024 19:13:21 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 7B2B7428BB26;
+	Fri, 14 Jun 2024 19:13:28 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 04/14] drm/plane: add drmm_universal_plane_alloc()
-Date: Fri, 14 Jun 2024 11:12:58 +0100
-Message-Id: <20240614101308.40407-5-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 07/14] dt-bindings: display: Document Renesas RZ/G2L DU bindings
+Date: Fri, 14 Jun 2024 11:13:01 +0100
+Message-Id: <20240614101308.40407-8-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240614101308.40407-1-biju.das.jz@bp.renesas.com>
 References: <20240614101308.40407-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 14 Jun 2024 10:13:27 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16237
+ <cip-dev@lists.cip-project.org>; Fri, 14 Jun 2024 10:13:38 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16240
 
-From: Philipp Zabel <p.zabel@pengutronix.de>
+commit c1bb7f9f1e151bb50888666108e66ad2848e030d upstream.
 
-commit 0a1b813f06f1009d1d44d48888e92e3a59ea0be3 upstream.
+The RZ/G2L LCD controller is composed of Frame Compression Processor
+(FCPVD), Video Signal Processor (VSPD), and Display Unit (DU).
 
-Add an alternative to drm_universal_plane_init() that allocates
-and initializes a plane and registers drm_plane_cleanup() with
-drmm_add_action_or_reset().
+The DU module supports the following hardware features
+− Display Parallel Interface (DPI) and MIPI LINK Video Interface
+− Display timing master
+− Generates video timings
+− Selecting the polarity of output DCLK, HSYNC, VSYNC, and DE
+− Supports Progressive
+− Input data format (from VSPD): RGB888, RGB666
+− Output data format: same as Input data format
+− Supporting Full HD (1920 pixels x 1080 lines) for MIPI-DSI Output
+− Supporting WXGA (1280 pixels x 800 lines) for Parallel Output
 
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+This patch documents the DU module found on RZ/G2L LCDC.
+
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Link: https://lore.kernel.org/r/20240218164840.57662-2-biju.das.jz@bp.renesas.com
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/gpu/drm/drm_plane.c | 134 ++++++++++++++++++++++++++++--------
- include/drm/drm_plane.h     |  42 +++++++++++
- 2 files changed, 147 insertions(+), 29 deletions(-)
+ .../bindings/display/renesas,rzg2l-du.yaml    | 121 ++++++++++++++++++
+ 1 file changed, 121 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
 
-diff --git a/drivers/gpu/drm/drm_plane.c b/drivers/gpu/drm/drm_plane.c
-index 79249568bdec..27456ba2443c 100644
---- a/drivers/gpu/drm/drm_plane.c
-+++ b/drivers/gpu/drm/drm_plane.c
-@@ -30,6 +30,7 @@
- #include <drm/drm_file.h>
- #include <drm/drm_crtc.h>
- #include <drm/drm_fourcc.h>
-+#include <drm/drm_managed.h>
- #include <drm/drm_vblank.h>
- 
- #include "drm_crtc_internal.h"
-@@ -152,31 +153,16 @@ static int create_in_format_blob(struct drm_device *dev, struct drm_plane *plane
- 	return 0;
- }
- 
--/**
-- * drm_universal_plane_init - Initialize a new universal plane object
-- * @dev: DRM device
-- * @plane: plane object to init
-- * @possible_crtcs: bitmask of possible CRTCs
-- * @funcs: callbacks for the new plane
-- * @formats: array of supported formats (DRM_FORMAT\_\*)
-- * @format_count: number of elements in @formats
-- * @format_modifiers: array of struct drm_format modifiers terminated by
-- *                    DRM_FORMAT_MOD_INVALID
-- * @type: type of plane (overlay, primary, cursor)
-- * @name: printf style format string for the plane name, or NULL for default name
-- *
-- * Initializes a plane object of type @type.
-- *
-- * Returns:
-- * Zero on success, error code on failure.
-- */
--int drm_universal_plane_init(struct drm_device *dev, struct drm_plane *plane,
--			     uint32_t possible_crtcs,
--			     const struct drm_plane_funcs *funcs,
--			     const uint32_t *formats, unsigned int format_count,
--			     const uint64_t *format_modifiers,
--			     enum drm_plane_type type,
--			     const char *name, ...)
-+__printf(9, 0)
-+static int __drm_universal_plane_init(struct drm_device *dev,
-+				      struct drm_plane *plane,
-+				      uint32_t possible_crtcs,
-+				      const struct drm_plane_funcs *funcs,
-+				      const uint32_t *formats,
-+				      unsigned int format_count,
-+				      const uint64_t *format_modifiers,
-+				      enum drm_plane_type type,
-+				      const char *name, va_list ap)
- {
- 	struct drm_mode_config *config = &dev->mode_config;
- 	unsigned int format_modifier_count = 0;
-@@ -237,11 +223,7 @@ int drm_universal_plane_init(struct drm_device *dev, struct drm_plane *plane,
- 	}
- 
- 	if (name) {
--		va_list ap;
--
--		va_start(ap, name);
- 		plane->name = kvasprintf(GFP_KERNEL, name, ap);
--		va_end(ap);
- 	} else {
- 		plane->name = kasprintf(GFP_KERNEL, "plane-%d",
- 					drm_num_planes(dev));
-@@ -286,8 +268,102 @@ int drm_universal_plane_init(struct drm_device *dev, struct drm_plane *plane,
- 
- 	return 0;
- }
+diff --git a/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
+new file mode 100644
+index 000000000000..c0ad194c538d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
+@@ -0,0 +1,121 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/renesas,rzg2l-du.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+/**
-+ * drm_universal_plane_init - Initialize a new universal plane object
-+ * @dev: DRM device
-+ * @plane: plane object to init
-+ * @possible_crtcs: bitmask of possible CRTCs
-+ * @funcs: callbacks for the new plane
-+ * @formats: array of supported formats (DRM_FORMAT\_\*)
-+ * @format_count: number of elements in @formats
-+ * @format_modifiers: array of struct drm_format modifiers terminated by
-+ *                    DRM_FORMAT_MOD_INVALID
-+ * @type: type of plane (overlay, primary, cursor)
-+ * @name: printf style format string for the plane name, or NULL for default name
-+ *
-+ * Initializes a plane object of type @type. The &drm_plane_funcs.destroy hook
-+ * should call drm_plane_cleanup() and kfree() the plane structure. The plane
-+ * structure should not be allocated with devm_kzalloc().
-+ *
-+ * Note: consider using drmm_universal_plane_alloc() instead of
-+ * drm_universal_plane_init() to let the DRM managed resource infrastructure
-+ * take care of cleanup and deallocation.
-+ *
-+ * Returns:
-+ * Zero on success, error code on failure.
-+ */
-+int drm_universal_plane_init(struct drm_device *dev, struct drm_plane *plane,
-+			     uint32_t possible_crtcs,
-+			     const struct drm_plane_funcs *funcs,
-+			     const uint32_t *formats, unsigned int format_count,
-+			     const uint64_t *format_modifiers,
-+			     enum drm_plane_type type,
-+			     const char *name, ...)
-+{
-+	va_list ap;
-+	int ret;
++title: Renesas RZ/G2L Display Unit (DU)
 +
-+	WARN_ON(!funcs->destroy);
++maintainers:
++  - Biju Das <biju.das.jz@bp.renesas.com>
++  - Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 +
-+	va_start(ap, name);
-+	ret = __drm_universal_plane_init(dev, plane, possible_crtcs, funcs,
-+					 formats, format_count, format_modifiers,
-+					 type, name, ap);
-+	va_end(ap);
-+	return ret;
-+}
- EXPORT_SYMBOL(drm_universal_plane_init);
- 
-+static void drmm_universal_plane_alloc_release(struct drm_device *dev, void *ptr)
-+{
-+	struct drm_plane *plane = ptr;
++description: |
++  These DT bindings describe the Display Unit embedded in the Renesas RZ/G2L
++  and RZ/V2L SoCs.
 +
-+	if (WARN_ON(!plane->dev))
-+		return;
++properties:
++  compatible:
++    enum:
++      - renesas,r9a07g044-du # RZ/G2{L,LC}
 +
-+	drm_plane_cleanup(plane);
-+}
++  reg:
++    maxItems: 1
 +
-+void *__drmm_universal_plane_alloc(struct drm_device *dev, size_t size,
-+				   size_t offset, uint32_t possible_crtcs,
-+				   const struct drm_plane_funcs *funcs,
-+				   const uint32_t *formats, unsigned int format_count,
-+				   const uint64_t *format_modifiers,
-+				   enum drm_plane_type type,
-+				   const char *name, ...)
-+{
-+	void *container;
-+	struct drm_plane *plane;
-+	va_list ap;
-+	int ret;
++  interrupts:
++    maxItems: 1
 +
-+	if (WARN_ON(!funcs || funcs->destroy))
-+		return ERR_PTR(-EINVAL);
++  clocks:
++    items:
++      - description: Main clock
++      - description: Register access clock
++      - description: Video clock
 +
-+	container = drmm_kzalloc(dev, size, GFP_KERNEL);
-+	if (!container)
-+		return ERR_PTR(-ENOMEM);
++  clock-names:
++    items:
++      - const: aclk
++      - const: pclk
++      - const: vclk
 +
-+	plane = container + offset;
++  resets:
++    maxItems: 1
 +
-+	va_start(ap, name);
-+	ret = __drm_universal_plane_init(dev, plane, possible_crtcs, funcs,
-+					 formats, format_count, format_modifiers,
-+					 type, name, ap);
-+	va_end(ap);
-+	if (ret)
-+		return ERR_PTR(ret);
++  power-domains:
++    maxItems: 1
 +
-+	ret = drmm_add_action_or_reset(dev, drmm_universal_plane_alloc_release,
-+				       plane);
-+	if (ret)
-+		return ERR_PTR(ret);
++  ports:
++    $ref: /schemas/graph.yaml#/properties/ports
++    description: |
++      The connections to the DU output video ports are modeled using the OF
++      graph bindings. The number of ports and their assignment are
++      model-dependent. Each port shall have a single endpoint.
 +
-+	return container;
-+}
-+EXPORT_SYMBOL(__drmm_universal_plane_alloc);
++    patternProperties:
++      "^port@[0-1]$":
++        $ref: /schemas/graph.yaml#/properties/port
++        unevaluatedProperties: false
 +
- int drm_plane_register_all(struct drm_device *dev)
- {
- 	unsigned int num_planes = 0;
-diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
-index 3f396d94afe4..82bd63710a39 100644
---- a/include/drm/drm_plane.h
-+++ b/include/drm/drm_plane.h
-@@ -746,6 +746,48 @@ int drm_plane_init(struct drm_device *dev,
- 		   bool is_primary);
- void drm_plane_cleanup(struct drm_plane *plane);
- 
-+__printf(10, 11)
-+void *__drmm_universal_plane_alloc(struct drm_device *dev,
-+				   size_t size, size_t offset,
-+				   uint32_t possible_crtcs,
-+				   const struct drm_plane_funcs *funcs,
-+				   const uint32_t *formats,
-+				   unsigned int format_count,
-+				   const uint64_t *format_modifiers,
-+				   enum drm_plane_type plane_type,
-+				   const char *name, ...);
++    required:
++      - port@0
 +
-+/**
-+ * drmm_universal_plane_alloc - Allocate and initialize an universal plane object
-+ * @dev: DRM device
-+ * @type: the type of the struct which contains struct &drm_plane
-+ * @member: the name of the &drm_plane within @type
-+ * @possible_crtcs: bitmask of possible CRTCs
-+ * @funcs: callbacks for the new plane
-+ * @formats: array of supported formats (DRM_FORMAT\_\*)
-+ * @format_count: number of elements in @formats
-+ * @format_modifiers: array of struct drm_format modifiers terminated by
-+ *                    DRM_FORMAT_MOD_INVALID
-+ * @plane_type: type of plane (overlay, primary, cursor)
-+ * @name: printf style format string for the plane name, or NULL for default name
-+ *
-+ * Allocates and initializes a plane object of type @type. Cleanup is
-+ * automatically handled through registering drm_plane_cleanup() with
-+ * drmm_add_action().
-+ *
-+ * The @drm_plane_funcs.destroy hook must be NULL.
-+ *
-+ * Returns:
-+ * Pointer to new plane, or ERR_PTR on failure.
-+ */
-+#define drmm_universal_plane_alloc(dev, type, member, possible_crtcs, funcs, formats, \
-+				   format_count, format_modifiers, plane_type, name, ...) \
-+	((type *)__drmm_universal_plane_alloc(dev, sizeof(type), \
-+					      offsetof(type, member), \
-+					      possible_crtcs, funcs, formats, \
-+					      format_count, format_modifiers, \
-+					      plane_type, name, ##__VA_ARGS__))
++    unevaluatedProperties: false
 +
- /**
-  * drm_plane_index - find the index of a registered plane
-  * @plane: plane to find index for
++  renesas,vsps:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    items:
++      items:
++        - description: phandle to VSP instance that serves the DU channel
++        - description: Channel index identifying the LIF instance in that VSP
++    description:
++      A list of phandle and channel index tuples to the VSPs that handle the
++      memory interfaces for the DU channels.
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - resets
++  - power-domains
++  - ports
++  - renesas,vsps
++
++additionalProperties: false
++
++examples:
++  # RZ/G2L DU
++  - |
++    #include <dt-bindings/clock/r9a07g044-cpg.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    display@10890000 {
++        compatible = "renesas,r9a07g044-du";
++        reg = <0x10890000 0x10000>;
++        interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&cpg CPG_MOD R9A07G044_LCDC_CLK_A>,
++                 <&cpg CPG_MOD R9A07G044_LCDC_CLK_P>,
++                 <&cpg CPG_MOD R9A07G044_LCDC_CLK_D>;
++        clock-names = "aclk", "pclk", "vclk";
++        resets = <&cpg R9A07G044_LCDC_RESET_N>;
++        power-domains = <&cpg>;
++
++        renesas,vsps = <&vspd0 0>;
++
++        ports {
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            port@0 {
++                reg = <0>;
++                endpoint {
++                    remote-endpoint = <&dsi0_in>;
++                };
++            };
++            port@1 {
++                reg = <1>;
++            };
++        };
++    };
++
++...
 -- 
 2.25.1
 
