@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FECAC27C75
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F684C27C79
 	for <webhook@archiver.kernel.org>; Fri, 14 Jun 2024 10:18:58 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web10.8153.1718360331427501293
  for <cip-dev@lists.cip-project.org>;
- Fri, 14 Jun 2024 03:18:51 -0700
+ Fri, 14 Jun 2024 03:18:56 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.08,237,1712588400"; 
-   d="scan'208";a="207938983"
+   d="scan'208";a="207938996"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 14 Jun 2024 19:18:50 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 14 Jun 2024 19:18:55 +0900
 Received: from localhost.localdomain (unknown [10.226.92.95])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 26C0A401C577;
-	Fri, 14 Jun 2024 19:18:48 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id D2F56401C579;
+	Fri, 14 Jun 2024 19:18:53 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 1/8] drm: Place Renesas drivers in a separate dir
-Date: Fri, 14 Jun 2024 11:18:38 +0100
-Message-Id: <20240614101845.40656-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 3/8] dt-bindings: display: renesas,rzg2l-du: Document RZ/V2L DU bindings
+Date: Fri, 14 Jun 2024 11:18:40 +0100
+Message-Id: <20240614101845.40656-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240614101845.40656-1-biju.das.jz@bp.renesas.com>
 References: <20240614101845.40656-1-biju.das.jz@bp.renesas.com>
@@ -35,349 +35,44 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 14 Jun 2024 10:18:58 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16249
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16251
 
-commit 11696c5e89245a1d360f75be3dfc4960b25a265a upstream.
+commit ac23216bb1f5caa5ae6f3ac70aa7f78a5b50f88d upstream.
 
-Create vendor specific renesas directory and move renesas drivers
-to that directory.
+Document DU found in RZ/V2L SoC. The DU block is identical to RZ/G2L
+SoC and therefore use RZ/G2L fallback to avoid any driver changes.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Acked-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20240218164840.57662-3-biju.das.jz@bp.renesas.com
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- MAINTAINERS                                                  | 3 +--
- drivers/gpu/drm/Kconfig                                      | 4 +---
- drivers/gpu/drm/Makefile                                     | 3 +--
- drivers/gpu/drm/renesas/Kconfig                              | 4 ++++
- drivers/gpu/drm/renesas/Makefile                             | 4 ++++
- drivers/gpu/drm/{ => renesas}/rcar-du/Kconfig                | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/Makefile               | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_cmm.c             | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_cmm.h             | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_crtc.c         | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_crtc.h         | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_drv.c          | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_drv.h          | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_encoder.c      | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_encoder.h      | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_group.c        | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_group.h        | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_kms.c          | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_kms.h          | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_plane.c        | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_plane.h        | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_regs.h         | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_vsp.c          | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_vsp.h          | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_writeback.c    | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_writeback.h    | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_dw_hdmi.c         | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_lvds.c            | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_lvds.h            | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_lvds_regs.h       | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_mipi_dsi.c        | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_mipi_dsi.h        | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rcar_mipi_dsi_regs.h   | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rzg2l_mipi_dsi.c       | 0
- drivers/gpu/drm/{ => renesas}/rcar-du/rzg2l_mipi_dsi_regs.h  | 0
- drivers/gpu/drm/{ => renesas}/shmobile/Kconfig               | 0
- drivers/gpu/drm/{ => renesas}/shmobile/Makefile              | 0
- drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_backlight.c | 0
- drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_backlight.h | 0
- drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_crtc.c      | 0
- drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_crtc.h      | 0
- drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_drv.c       | 0
- drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_drv.h       | 0
- drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_kms.c       | 0
- drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_kms.h       | 0
- drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_plane.c     | 0
- drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_plane.h     | 0
- drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_regs.h      | 0
- 48 files changed, 11 insertions(+), 7 deletions(-)
- create mode 100644 drivers/gpu/drm/renesas/Kconfig
- create mode 100644 drivers/gpu/drm/renesas/Makefile
- rename drivers/gpu/drm/{ => renesas}/rcar-du/Kconfig (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/Makefile (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_cmm.c (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_cmm.h (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_crtc.c (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_crtc.h (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_drv.c (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_drv.h (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_encoder.c (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_encoder.h (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_group.c (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_group.h (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_kms.c (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_kms.h (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_plane.c (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_plane.h (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_regs.h (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_vsp.c (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_vsp.h (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_writeback.c (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_du_writeback.h (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_dw_hdmi.c (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_lvds.c (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_lvds.h (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_lvds_regs.h (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_mipi_dsi.c (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_mipi_dsi.h (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rcar_mipi_dsi_regs.h (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rzg2l_mipi_dsi.c (100%)
- rename drivers/gpu/drm/{ => renesas}/rcar-du/rzg2l_mipi_dsi_regs.h (100%)
- rename drivers/gpu/drm/{ => renesas}/shmobile/Kconfig (100%)
- rename drivers/gpu/drm/{ => renesas}/shmobile/Makefile (100%)
- rename drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_backlight.c (100%)
- rename drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_backlight.h (100%)
- rename drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_crtc.c (100%)
- rename drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_crtc.h (100%)
- rename drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_drv.c (100%)
- rename drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_drv.h (100%)
- rename drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_kms.c (100%)
- rename drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_kms.h (100%)
- rename drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_plane.c (100%)
- rename drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_plane.h (100%)
- rename drivers/gpu/drm/{ => renesas}/shmobile/shmob_drm_regs.h (100%)
+ .../devicetree/bindings/display/renesas,rzg2l-du.yaml    | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 832d9d90a8aa..3f2ce6b806a1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6977,8 +6977,7 @@ F:	Documentation/devicetree/bindings/display/bridge/renesas,dsi-csi2-tx.yaml
- F:	Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.yaml
- F:	Documentation/devicetree/bindings/display/bridge/renesas,lvds.yaml
- F:	Documentation/devicetree/bindings/display/renesas,du.yaml
--F:	drivers/gpu/drm/rcar-du/
--F:	drivers/gpu/drm/shmobile/
-+F:	drivers/gpu/drm/renesas/
- F:	include/linux/platform_data/shmob_drm.h
+diff --git a/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
+index c0ad194c538d..08e5b9478051 100644
+--- a/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
++++ b/Documentation/devicetree/bindings/display/renesas,rzg2l-du.yaml
+@@ -16,8 +16,13 @@ description: |
  
- DRM DRIVERS FOR ROCKCHIP
-diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-index f30f99166531..d1d9a0a2e5a3 100644
---- a/drivers/gpu/drm/Kconfig
-+++ b/drivers/gpu/drm/Kconfig
-@@ -341,9 +341,7 @@ source "drivers/gpu/drm/armada/Kconfig"
+ properties:
+   compatible:
+-    enum:
+-      - renesas,r9a07g044-du # RZ/G2{L,LC}
++    oneOf:
++      - enum:
++          - renesas,r9a07g044-du # RZ/G2{L,LC}
++      - items:
++          - enum:
++              - renesas,r9a07g054-du    # RZ/V2L
++          - const: renesas,r9a07g044-du # RZ/G2L fallback
  
- source "drivers/gpu/drm/atmel-hlcdc/Kconfig"
- 
--source "drivers/gpu/drm/rcar-du/Kconfig"
--
--source "drivers/gpu/drm/shmobile/Kconfig"
-+source "drivers/gpu/drm/renesas/Kconfig"
- 
- source "drivers/gpu/drm/sun4i/Kconfig"
- 
-diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
-index 0b283e46f28b..1f9d060bd072 100644
---- a/drivers/gpu/drm/Makefile
-+++ b/drivers/gpu/drm/Makefile
-@@ -110,8 +110,7 @@ obj-$(CONFIG_DRM_UDL) += udl/
- obj-$(CONFIG_DRM_AST) += ast/
- obj-$(CONFIG_DRM_ARMADA) += armada/
- obj-$(CONFIG_DRM_ATMEL_HLCDC)	+= atmel-hlcdc/
--obj-y			+= rcar-du/
--obj-$(CONFIG_DRM_SHMOBILE) +=shmobile/
-+obj-y			+= renesas/
- obj-y			+= omapdrm/
- obj-$(CONFIG_DRM_SUN4I) += sun4i/
- obj-y			+= tilcdc/
-diff --git a/drivers/gpu/drm/renesas/Kconfig b/drivers/gpu/drm/renesas/Kconfig
-new file mode 100644
-index 000000000000..3777dad17f81
---- /dev/null
-+++ b/drivers/gpu/drm/renesas/Kconfig
-@@ -0,0 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+source "drivers/gpu/drm/renesas/rcar-du/Kconfig"
-+source "drivers/gpu/drm/renesas/shmobile/Kconfig"
-diff --git a/drivers/gpu/drm/renesas/Makefile b/drivers/gpu/drm/renesas/Makefile
-new file mode 100644
-index 000000000000..ec0e89e7a592
---- /dev/null
-+++ b/drivers/gpu/drm/renesas/Makefile
-@@ -0,0 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+obj-y += rcar-du/
-+obj-$(CONFIG_DRM_SHMOBILE) += shmobile/
-diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/renesas/rcar-du/Kconfig
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/Kconfig
-rename to drivers/gpu/drm/renesas/rcar-du/Kconfig
-diff --git a/drivers/gpu/drm/rcar-du/Makefile b/drivers/gpu/drm/renesas/rcar-du/Makefile
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/Makefile
-rename to drivers/gpu/drm/renesas/rcar-du/Makefile
-diff --git a/drivers/gpu/drm/rcar-du/rcar_cmm.c b/drivers/gpu/drm/renesas/rcar-du/rcar_cmm.c
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_cmm.c
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_cmm.c
-diff --git a/drivers/gpu/drm/rcar-du/rcar_cmm.h b/drivers/gpu/drm/renesas/rcar-du/rcar_cmm.h
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_cmm.h
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_cmm.h
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_crtc.c
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_du_crtc.c
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/renesas/rcar-du/rcar_du_crtc.h
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_du_crtc.h
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_du_drv.c
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.c
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.h
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_du_drv.h
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_du_drv.h
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.c
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h b/drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.h
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_du_encoder.h
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_du_group.c
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_du_group.c
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.h b/drivers/gpu/drm/renesas/rcar-du/rcar_du_group.h
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_du_group.h
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_du_group.h
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_du_kms.c
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.h b/drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.h
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_du_kms.h
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.h
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.c
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_du_plane.c
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.c
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.h b/drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.h
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_du_plane.h
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_du_plane.h
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_regs.h b/drivers/gpu/drm/renesas/rcar-du/rcar_du_regs.h
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_du_regs.h
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_du_regs.h
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.c
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.h b/drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.h
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_du_vsp.h
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_du_vsp.h
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_writeback.c b/drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_du_writeback.c
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.c
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_writeback.h b/drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.h
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_du_writeback.h
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_du_writeback.h
-diff --git a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_dw_hdmi.c
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_dw_hdmi.c
-diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_lvds.c
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c
-diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.h b/drivers/gpu/drm/renesas/rcar-du/rcar_lvds.h
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_lvds.h
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_lvds.h
-diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds_regs.h b/drivers/gpu/drm/renesas/rcar-du/rcar_lvds_regs.h
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_lvds_regs.h
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_lvds_regs.h
-diff --git a/drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c
-diff --git a/drivers/gpu/drm/rcar-du/rcar_mipi_dsi.h b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.h
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_mipi_dsi.h
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.h
-diff --git a/drivers/gpu/drm/rcar-du/rcar_mipi_dsi_regs.h b/drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rcar_mipi_dsi_regs.h
-rename to drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi_regs.h
-diff --git a/drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rcar-du/rzg2l_mipi_dsi.c
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi.c
-rename to drivers/gpu/drm/renesas/rcar-du/rzg2l_mipi_dsi.c
-diff --git a/drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi_regs.h b/drivers/gpu/drm/renesas/rcar-du/rzg2l_mipi_dsi_regs.h
-similarity index 100%
-rename from drivers/gpu/drm/rcar-du/rzg2l_mipi_dsi_regs.h
-rename to drivers/gpu/drm/renesas/rcar-du/rzg2l_mipi_dsi_regs.h
-diff --git a/drivers/gpu/drm/shmobile/Kconfig b/drivers/gpu/drm/renesas/shmobile/Kconfig
-similarity index 100%
-rename from drivers/gpu/drm/shmobile/Kconfig
-rename to drivers/gpu/drm/renesas/shmobile/Kconfig
-diff --git a/drivers/gpu/drm/shmobile/Makefile b/drivers/gpu/drm/renesas/shmobile/Makefile
-similarity index 100%
-rename from drivers/gpu/drm/shmobile/Makefile
-rename to drivers/gpu/drm/renesas/shmobile/Makefile
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_backlight.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_backlight.c
-similarity index 100%
-rename from drivers/gpu/drm/shmobile/shmob_drm_backlight.c
-rename to drivers/gpu/drm/renesas/shmobile/shmob_drm_backlight.c
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_backlight.h b/drivers/gpu/drm/renesas/shmobile/shmob_drm_backlight.h
-similarity index 100%
-rename from drivers/gpu/drm/shmobile/shmob_drm_backlight.h
-rename to drivers/gpu/drm/renesas/shmobile/shmob_drm_backlight.h
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-similarity index 100%
-rename from drivers/gpu/drm/shmobile/shmob_drm_crtc.c
-rename to drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.c
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_crtc.h b/drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
-similarity index 100%
-rename from drivers/gpu/drm/shmobile/shmob_drm_crtc.h
-rename to drivers/gpu/drm/renesas/shmobile/shmob_drm_crtc.h
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-similarity index 100%
-rename from drivers/gpu/drm/shmobile/shmob_drm_drv.c
-rename to drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_drv.h b/drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.h
-similarity index 100%
-rename from drivers/gpu/drm/shmobile/shmob_drm_drv.h
-rename to drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.h
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_kms.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_kms.c
-similarity index 100%
-rename from drivers/gpu/drm/shmobile/shmob_drm_kms.c
-rename to drivers/gpu/drm/renesas/shmobile/shmob_drm_kms.c
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_kms.h b/drivers/gpu/drm/renesas/shmobile/shmob_drm_kms.h
-similarity index 100%
-rename from drivers/gpu/drm/shmobile/shmob_drm_kms.h
-rename to drivers/gpu/drm/renesas/shmobile/shmob_drm_kms.h
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_plane.c b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-similarity index 100%
-rename from drivers/gpu/drm/shmobile/shmob_drm_plane.c
-rename to drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.c
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_plane.h b/drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.h
-similarity index 100%
-rename from drivers/gpu/drm/shmobile/shmob_drm_plane.h
-rename to drivers/gpu/drm/renesas/shmobile/shmob_drm_plane.h
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_regs.h b/drivers/gpu/drm/renesas/shmobile/shmob_drm_regs.h
-similarity index 100%
-rename from drivers/gpu/drm/shmobile/shmob_drm_regs.h
-rename to drivers/gpu/drm/renesas/shmobile/shmob_drm_regs.h
+   reg:
+     maxItems: 1
 -- 
 2.25.1
 
