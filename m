@@ -2,67 +2,58 @@ Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C52C27C79
-	for <webhook@archiver.kernel.org>; Mon, 17 Jun 2024 11:49:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3BDAC2BA15
+	for <webhook@archiver.kernel.org>; Mon, 17 Jun 2024 11:52:14 +0000 (UTC)
 Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web10.54718.1718624987594107012
+ by mx.groups.io with SMTP id smtpd.web10.54749.1718625133034085178
  for <cip-dev@lists.cip-project.org>;
- Mon, 17 Jun 2024 04:49:47 -0700
+ Mon, 17 Jun 2024 04:52:13 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
 Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 2A5D91C0082; Mon, 17 Jun 2024 13:49:46 +0200 (CEST)
-Date: Mon, 17 Jun 2024 13:49:45 +0200
+	id 8324A1C009A; Mon, 17 Jun 2024 13:52:11 +0200 (CEST)
+Date: Mon, 17 Jun 2024 13:52:11 +0200
 From: Pavel Machek <pavel@denx.de>
 To: Biju Das <biju.das.jz@bp.renesas.com>
 Cc: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 5.10.y-cip 07/14] dt-bindings: display: Document Renesas
- RZ/G2L DU bindings
-Message-ID: <ZnAi2dawElgdK/b9@duo.ucw.cz>
+Subject: Re: [PATCH 5.10.y-cip 00/14] Add Display support for SMARC
+ RZ/{G2L,G2LC,V2L}
+Message-ID: <ZnAja/EbkQHrjfLL@duo.ucw.cz>
 References: <20240614101308.40407-1-biju.das.jz@bp.renesas.com>
- <20240614101308.40407-8-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="lbQNGZQPfvqVk1s9"
+	protocol="application/pgp-signature"; boundary="Nlm5TXa8O6CWpIcN"
 Content-Disposition: inline
-In-Reply-To: <20240614101308.40407-8-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20240614101308.40407-1-biju.das.jz@bp.renesas.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 17 Jun 2024 11:49:54 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16262
+ <cip-dev@lists.cip-project.org>; Mon, 17 Jun 2024 11:52:14 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16263
 
 
---lbQNGZQPfvqVk1s9
-Content-Type: text/plain; charset=utf-8
+--Nlm5TXa8O6CWpIcN
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> commit c1bb7f9f1e151bb50888666108e66ad2848e030d upstream.
+> This patch series aims to add Display support for SMARC RZ/{G2L,G2LC,V2L}=
+ EVK
+> platforms.
 >=20
-> The RZ/G2L LCD controller is composed of Frame Compression Processor
-> (FCPVD), Video Signal Processor (VSPD), and Display Unit (DU).
+> All the patches are cherry-picked from the mainline.
 >=20
-> The DU module supports the following hardware features
-> =E2=88=92 Display Parallel Interface (DPI) and MIPI LINK Video Interface
-> =E2=88=92 Display timing master
-> =E2=88=92 Generates video timings
-> =E2=88=92 Selecting the polarity of output DCLK, HSYNC, VSYNC, and DE
-> =E2=88=92 Supports Progressive
-> =E2=88=92 Input data format (from VSPD): RGB888, RGB666
-> =E2=88=92 Output data format: same as Input data format
-> =E2=88=92 Supporting Full HD (1920 pixels x 1080 lines) for MIPI-DSI Outp=
-ut
-> =E2=88=92 Supporting WXGA (1280 pixels x 800 lines) for Parallel Output
+> Patch 1 mainline commit does not include some files present
+> in 5.10 tree, so manually moved across.
 
-This is somehow interesting information, but will likely get lost in
-the changelogs. I'd not mind it going to comment somewhere, along with
-possible pointer to pdf with datasheet.
+Thanks for the series. I could not find anything significant in the
+review and it passes testing. I can apply the series if there are no
+other comments.
 
 Best regards,
 								Pavel
@@ -70,15 +61,15 @@ Best regards,
 DENX Software Engineering GmbH,        Managing Director: Erika Unter
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---lbQNGZQPfvqVk1s9
+--Nlm5TXa8O6CWpIcN
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZnAi2QAKCRAw5/Bqldv6
-8rDLAJ4tDTssZODJhmAkDP7Qt7o0QapPQACgv+0kvKjXHUrn8SoFjLRb0ifSKBM=
-=3sAY
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZnAjawAKCRAw5/Bqldv6
+8n1EAJ4hSTiPoVfvgLaJxrNK8PUIKUD7sACgub/HzV+rpsv1yQg3BjFVR811rZM=
+=6OeO
 -----END PGP SIGNATURE-----
 
---lbQNGZQPfvqVk1s9--
+--Nlm5TXa8O6CWpIcN--
 
