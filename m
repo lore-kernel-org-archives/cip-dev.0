@@ -1,379 +1,238 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <sai.sathujoda@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4DBC27C53
-	for <webhook@archiver.kernel.org>; Wed, 19 Jun 2024 08:44:21 +0000 (UTC)
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.49])
- by mx.groups.io with SMTP id smtpd.web10.16282.1718786658143116619
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06661C27C53
+	for <webhook@archiver.kernel.org>; Wed, 19 Jun 2024 08:53:42 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
+ by mx.groups.io with SMTP id smtpd.web10.16403.1718787219353029955
  for <cip-dev@lists.cip-project.org>;
- Wed, 19 Jun 2024 01:44:19 -0700
+ Wed, 19 Jun 2024 01:53:40 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=U6Amkr4/;
- spf=pass (domain: siemens.com, ip: 40.107.22.49, mailfrom: jan.kiszka@siemens.com)
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.152, mailfrom: sai.sathujoda@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 45J8raxL1088350; Wed, 19 Jun 2024 17:53:37 +0900
+X-Iguazu-Qid: 2yAbxjwjwfuZjpWhnh
+X-Iguazu-QSIG: v=2; s=0; t=1718787216; q=2yAbxjwjwfuZjpWhnh; m=nOlvQQWSVW11siw2bSCMfjtplomg5KyMkEFsJx1V4p0=
+Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
+	by relay.securemx.jp (mx-mr1802) id 45J8rZeK2598224
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 17:53:36 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VG4tC/L0aBKtEnf7Rq4vT78YzrkKqSJp/KsbFBm/8rrLGdC/TX4TmiwgFTWMd+ZA0Zd3BYLPG5N+ihpcPeyD2/WmRDfRxlTxYu9cfWm5RU60+NxKE+mvp/2RnG4XGVteZoe7FScZe+xudINursEp98S9BjlqAzhoTKYfJV0f8euH2eyEkPr1dJN7WFMU4OGB1+NJPJzVAYGa0JZf5H2Aefl9iPjyGE3ULxv+c6bpDj7bYbKhL1aQIEfO1jK8N65j/BefbpFo3qYGeE3tVgivoV8/WxabxmGty0ZuiJSv2iZTnP6UaiTBddU71/IuMgee97q9yyVVpbm1xCz6mj+kvQ==
+ b=l+gMfmsjMe9roTXoXxQdN/VyGbtRSDTzHsYEb7b6dYijlOVV5J7CgCV0eGGh5WD9Qq1WAUu8Pmwivbjmn1zZ9KcPx+mmHOYcZaE8IdghW7tpBnUMQiIGi4+0GrLyCbxRSXCpj4N0NkrcN6GTe3O3yjlvRoyibpGPUv47Ezdb81GMaDQH/h1Geaa5ypqCNP+dVnSlwPcOPn2oKYW1JBmhmeTkbrtkNbuaT38Sg+ol/j3251sEA1PvW0pd6VenOjAt+WHXEdxcDEDJijtsAfMX2yb9Hs1tODS6G3HxMoe8ehKrXJwetvEQ+8FXiY8nfPRgkWnCUhUGcoLVezy/Dqv7+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bUMX++OinZhEcGT3twfpeGj/aJeJyUTB3KTY2GoYLvM=;
- b=JIKhcTP0zlRzbX/8rLsFBFmIlTugBWRFKqEgq7SeiUJtkSIIOpfTIFSJCnhnHH2cGyrH7LUia28TKXYDXd73onGEHZqY28k/+5x/Mh6OJlRRAgHOK4XcCNGHg+dWC8+TUk2Q0H20qQNyFFrog0UZjkUphvioZ9dkelz3JTetNnadNNBYGCbigsg+O9Q/0X8xG0u7VkapYOsuHfCqEQ60qVC8bKnPPUIpXvLoGBVrUW5qm18qiMZGo1r64qUpj+tip2b/2QLGXCNDu8WqtEKbZiCxzzYkpZ/tj1+5RyD9sHQWYXuT05cgqc3iKaxLCqTCCoRE6gtw2k8e/hd8KGxn2w==
+ bh=QUh4XQ7tqJy1QT5+6r3KpeGkNu4TdB68JSlZq4VwtAw=;
+ b=IfKdpLPTLsCf1r5D4j4JDTa0NBnj2FJCkvTJZqwxsFhNvzNgVfIx3KTiF4sUfRh7faYZhPJK5pmi2EPnhK+s3l2BBBOqWGC47rZWYiYiSwPLCkMKowr9Vdk8x4ZsbbDDq0JSwEUR3t/rQnMe3TPnmhCF523pcT9lQQReuxgIt3z8PROq+I/7oqqb07S6htbCwHYCSO1CQh1h7yOicL8mNSGfKuJroocbP5hLO8f7QJgQnQSc42+aQQG+ZAsAhhSnED4pC2UvSWC3oNejWlUEesArsqGKbsjv2zsqSRbSlVm3TadBf1N6SpDfXwajCQKI+4nPyc2uYOJbEy+xHUBZWA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bUMX++OinZhEcGT3twfpeGj/aJeJyUTB3KTY2GoYLvM=;
- b=U6Amkr4/v96WcbGqeI6Quex2Ub8ss5+LrcvZeMJWymsk1ldNTY/uGDkuJsJHf/ZhtfCI+xfyP6WvmYokajwEJgtTPHZn74G2oOFcLx6xI34Qvuyr+yPDp7AiB0avmtYwWRd9K1/CpECbNh3mPA2OhoYBg10bryb/a5v5Lk2QMt6ZZZ/JSHlIMNnkouCczOIuV8ju8QOtJWbq7ZXBvvhEttxmE5QmGEuAfTAdXj+2ZtRLVq5QxE8WrOnNR/DLBw+8nVjQ0u5ji0tfI36u90bii8UT1T8NxnElsthElOrYOn+pUsUsK5lEyaNSMM4/aGdgSyM8CUq6N+Uhj1/HGodDqw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by VI1PR10MB3263.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:803:13d::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.31; Wed, 19 Jun
- 2024 08:44:15 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408%7]) with mapi id 15.20.7677.030; Wed, 19 Jun 2024
- 08:44:15 +0000
-Message-ID: <9a14755c-f33c-4d9d-91c0-4270b098d35a@siemens.com>
-Date: Wed, 19 Jun 2024 10:44:13 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev][isar-cip-core][PATCH] swupdate: fix reboot progress
- with wfx
-To: Gylstorff Quirin <quirin.gylstorff@siemens.com>,
- cip-dev@lists.cip-project.org
-CC: Christian Storm <christian.storm@siemens.com>,
- "Schaffner, Tobias (T CED SES-DE)" <tobias.schaffner@siemens.com>
-References: <20240618155914.1458889-1-Quirin.Gylstorff@siemens.com>
- <d3c6d33f-4e7e-44a9-9fa6-cfd308e645b4@siemens.com>
- <6fc5ee26-59a9-4c68-ad2d-597a01e5f5fb@siemens.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
+ smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
+ header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
+From: <Sai.Sathujoda@toshiba-tsip.com>
+To: <jan.kiszka@siemens.com>
+CC: <cip-dev@lists.cip-project.org>, <dinesh.kumar@toshiba-tsip.com>,
+        <kazuhiro3.hayashi@toshiba.co.jp>
+Subject: Unable to start cve-checks job because it cannot be picked by any
+ runner
+Thread-Topic: Unable to start cve-checks job because it cannot be picked by
+ any runner
+Thread-Index: AdrCJV9SjQ/myfPNSdO7WDG07nlVFg==
+Date: Wed, 19 Jun 2024 08:53:30 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <OS3PR01MB610300320EFEC1A03B28BAC1C2CF2@OS3PR01MB6103.jpnprd01.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-In-Reply-To: <6fc5ee26-59a9-4c68-ad2d-597a01e5f5fb@siemens.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: FR0P281CA0191.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:ab::14) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS3PR01MB6103:EE_|TYCPR01MB10777:EE_
+x-ms-office365-filtering-correlation-id: 7202ac79-af9c-4599-711e-08dc903d4afb
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230037|366013|376011|1800799021|38070700015;
+x-microsoft-antispam-message-info: 
+ =?iso-2022-jp?B?WDVqK2hKVExLOUh4ejRhQnY3WExtT0t3VG5jN2E1WmduaFM4SVVyWUZr?=
+ =?iso-2022-jp?B?aHdYMFZJT1pjVHZIQ29pUDlFczdSMHBVem9sZlFMMWRHSWVOV2liTGtV?=
+ =?iso-2022-jp?B?cUtoQmgyMTlma0hCS1NRSDAyUk1iR1IyTCtObUViRmdzSHpsMTFvaitB?=
+ =?iso-2022-jp?B?bW53SldrQmpvektvdnk4YU9NNVliK09IdnIwa2Q2YTZDSndFZHBpOGdw?=
+ =?iso-2022-jp?B?S2NZTncvbzc5dGhCMzZsRWtVZWtJQUY0Y0NMVVk3R1VkOXBYUEE3QVpW?=
+ =?iso-2022-jp?B?SDF2Qmg0ZkhnMDYzRFM5elRWT2w0VXRGWDJvcHZXMmtYcXZseVVnU2Mx?=
+ =?iso-2022-jp?B?RGM5ZDFZUFhBeU5HN0lkMjhjTmFBQTdORlFsR3RRVllXejNoQ3pzRDFh?=
+ =?iso-2022-jp?B?SGZ5UW9WUlp4aDdEdkFYekJjb0tSNzhjT1VwbkZzVGw2dEFncnhCSzhE?=
+ =?iso-2022-jp?B?SU1mdEpNcCs4YXVIK1UrQTFHWnZlOEVGUzIzcnpWUXB4YloxL2Q3OUU3?=
+ =?iso-2022-jp?B?Q2FtK1VhWXc1WkI3bVlNQ2JxS0tTODNsNXhCdHVwOXkyKzdQN2RTM3BC?=
+ =?iso-2022-jp?B?cHk2aW81eG9vT3NLT1pjT0VmZ2hDK3dWYWc0UkNINW9DNzM3SGdWaytv?=
+ =?iso-2022-jp?B?T2I4YnVEbndFQS82ZGFBaWJjYTJ6M3NieG1Jd3RNMUltMTAxeFRhVkNn?=
+ =?iso-2022-jp?B?U3gxT1RETU9nZmNqRCsvTndOQVNnZC8rb2N5MWNSUFIzMzEwZjRkby9M?=
+ =?iso-2022-jp?B?bVpZZkV3NFFSSnhIcW13SHA5TU1acU1xUldKd0NwQnRYVFZ5OE02WkZr?=
+ =?iso-2022-jp?B?Ri8rR00ydmF5VUZ6T0J4VzF3dG11MW1uTWtaVnVxd0xoVUpjdUxseFNC?=
+ =?iso-2022-jp?B?SXBLeGFiaW1ycVZoT20vb2Z4TThHRGZ5YnN2bnBkYzVhWGh6dEdqbHZt?=
+ =?iso-2022-jp?B?NDhiUjdoRHB5KytoNCtYRTJ3d0NTSGxmcWg2Sm1FbkNWMnRSYnJyd1Ex?=
+ =?iso-2022-jp?B?OE9VYUFHdDBkM2trQ0o0MXRaM2ZUMmpFQUtlS2JzWXc4VlV4K3p1Smw0?=
+ =?iso-2022-jp?B?UjRqYXpJeEpvMXJOaWdKM2FwN0t5eVN5Sk1MaW5PaGRRdFI4UXkyaEdY?=
+ =?iso-2022-jp?B?d2l2UTNpTmFWR3grN0xLRS92clIxYjdvVi9DSmtQU0FNMWtTMjcvditp?=
+ =?iso-2022-jp?B?OEFMamFqNlFYOXlXRUJFdzFOdVBIQ08zb1U1d2Z0bjZCbXJKd1k5VmND?=
+ =?iso-2022-jp?B?eGUrdUthcEpKaHhOL0tiRlR3WmdYUEdmZnpETkhmazNNM2JXdzBZYnpB?=
+ =?iso-2022-jp?B?clVCZUNYTTFicEhBdlM3TUVROG1UUTcxNHVtdWhaOTFUQlUrUVhuL2lk?=
+ =?iso-2022-jp?B?ejNCc0ZoWURlLzh4dU5VcTExb1JFN1pRQzIrWC95eGNZbVBUOUVPWlJF?=
+ =?iso-2022-jp?B?aTRCMmVyVmlTMUVRQSs1YXJIWHp0RU1Hc3RNV3A2Ym1MV0g5QW9hZG84?=
+ =?iso-2022-jp?B?NDBtaThuaEdPZXYya1FkVFl5WmFETmoxbEhmUGQ4aS9zRHp2VnN4RTE1?=
+ =?iso-2022-jp?B?dDFPUUEzUTdTOTEyR1E0a1g3eFJ6WE9keHFrWHdRcnlHR2tZTDdta1Rq?=
+ =?iso-2022-jp?B?N2R2djZCYndvQWV4S1hDaGRYMElrOWl1M01uK0ZuNFkxTEs4WUZWUWdy?=
+ =?iso-2022-jp?B?SnhtWDFZNHZFVHNvWlRkRXlqTStwcDQ1bnFHTDFZYlo3d2Q1WkdZaTRF?=
+ =?iso-2022-jp?B?WFd1VUt2ZE1QeGNqdUxNcWZVQlQ5TGRFSjFNaDU4RmtOTWI4S2lBek1B?=
+ =?iso-2022-jp?B?SUZieldmZ1IrUmdyOEVDTnBGMHdwRmx0c2dBSTBwam9vTTA5ZGZnd0lI?=
+ =?iso-2022-jp?B?a1ZtVEdXKzZjaUV2QlBRYkpTcml1SjJ3U01nbEx5Nk0xUlluTU5iVWRr?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB6103.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(1800799021)(38070700015);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?am9raCtBZW52UWpGaTFXL3ArRWRRVHplUTh4UFBNd2xDTmo2TkttUkhS?=
+ =?iso-2022-jp?B?TXVMSTZCeCtqd2xDSHNSOHZaNG01amRLSG1PRDZvMzZaTzVZSHdIelJT?=
+ =?iso-2022-jp?B?QWlQbUJlWU1nZUtyT0UxVVUrcFdiZ3hJK01ML0VORCtHNWVlbDRkUG15?=
+ =?iso-2022-jp?B?UU5rcUt5Q3FXOXpCNzYxUzNsNW8zV0U5SDNMQ2trenFkM2tkTlBiaTVY?=
+ =?iso-2022-jp?B?S0wreHZuSjhUS1hkQXEyTm9SdFhhZ1M3RG9OSFp0QTBFNjMwL0Jpc25x?=
+ =?iso-2022-jp?B?YUZFNVpkQ2NxL01QOEVxSE1Iei8vR1FCdHhrUENkbFNmMmQvM2d2YVNx?=
+ =?iso-2022-jp?B?RG9oVHkwWWRkSjFYL2poRjd0TVZMUUZ4OWRpeTBXYTR4NlFzRVU2bElj?=
+ =?iso-2022-jp?B?TnNXcmxQUXZ2bENISktRS0pIOVFiaVZwT2lGUDJmMFZtcnBkWnQxcERI?=
+ =?iso-2022-jp?B?UjZtSXZXZXYvYlJGdjloWmF5ZlAwNllIWjhWSGxFNDFUSU9hQWZpdnpN?=
+ =?iso-2022-jp?B?VGZ0QURoaGN0Z203dHQrVGlFajRjSHNRTXVjNWZaQ3QvbnVzY3ZTNGhW?=
+ =?iso-2022-jp?B?TGN1WUh3QU9EZFlLRUFvMHQyK1RQNkE1OFZOeTV5dVB3REgxbXZ3QUM3?=
+ =?iso-2022-jp?B?SlhZTUpPOTVPaWhsbnFkckxRL3lhejM2eHRYMWJKdHQzV0t6c3ZPdVFJ?=
+ =?iso-2022-jp?B?Z1MrUVVBRjZVQzQxM1pIQjF1UHZmS1d4eU1HTW4xcmZpTVVYVzVQaXRH?=
+ =?iso-2022-jp?B?WHg5RUJ1dFlFby8rMnptR2txTjRtT3VmWHAvZ1pmbktaYXRhdGtFZG1r?=
+ =?iso-2022-jp?B?WVhMZklGTEpTYW94a2FFYnhNeXIzYVkzYTY5YXladmNQRDg2OGY5TmVB?=
+ =?iso-2022-jp?B?eWhlTTFhUFo4KzRUYi9hQnF0eEtrQ2dLREdXRHF5OTZad3BXMzQ5SURy?=
+ =?iso-2022-jp?B?em1BRDVYa24rTTcrZlBMdjdEa0srU0RpQXdycXpRQytMSTI4S3ZaTGtJ?=
+ =?iso-2022-jp?B?UnVZSkIwNVh6SVRFVkVvOSt6cCt1dGRWcUVEUHBFU0d3Q0FoRVVsQWta?=
+ =?iso-2022-jp?B?UmJkTGZyNzk2RFNzYUcyam1Mck9WMDdEZExBK0FiZlNQQ3oxakdiMzd3?=
+ =?iso-2022-jp?B?NVFHY09jcWsyb1UrQUdlUXBjM01MTVZ4TzAxNW8xb0xmVzV0SjYyeldu?=
+ =?iso-2022-jp?B?SmlEb05vWm1Xa1NDNktwaElpV200cTRyYXk4ditNUTVydnBSektJUlgx?=
+ =?iso-2022-jp?B?cXRlVDFtcTJsRklid0lQQXhpMTM3alM5VUN6VTNreEh5MGRIaU81UElO?=
+ =?iso-2022-jp?B?L2R3ekJ1RW80Tzh5Z2w1clBmbXBYTW1rbCtNOUNyWEhZRUhjNmR5M0FS?=
+ =?iso-2022-jp?B?T3RNZ0lPYS9Nb0JwSENKdXBvVTd1N2cvdGx4RmNsUDRCNUFzeEpyY2JU?=
+ =?iso-2022-jp?B?THV0NkJ6Mk5jTytUSjNlR1R2MDcwL210RUs2MkVTVVRlK3lZRXgxWVFE?=
+ =?iso-2022-jp?B?UnJhd1NPV3lkR0RtNFRNaEVuS2ZNN0Y4T3NwWURTWXFVZzhZYVVZYVF4?=
+ =?iso-2022-jp?B?UW15Rit2VE5tVEs5ZDB2M3psMjV4Tkd0S3BMVEJvSlR5RUZHU09ISTBM?=
+ =?iso-2022-jp?B?dHFQTytsNFEzQ0d4VG4zdVJOQTh0TFl1Mks4c083Q3djVVRCeHY4Z0NE?=
+ =?iso-2022-jp?B?SGxXaFl4Wi9YMWdBYlV1WktHblFTcVFzS2J2MkRuSWMxSE5FUml6R1do?=
+ =?iso-2022-jp?B?RDMweU5RcE50dnN6WHBQekQwZVB1Si9xWURsQjQxRzhpYjF0em5zakhh?=
+ =?iso-2022-jp?B?dUxpQkhjUlZiaFVianYwZmxsbUYxZVkwTk5Xai8wNFhzdythdHRidWc3?=
+ =?iso-2022-jp?B?SVlhcGhKYWh5TXgweDZUeUNDc1pyZjlydlZseEV2TU5TSE9WYWZTSmMy?=
+ =?iso-2022-jp?B?VCtJYUlyTlp6bnZRTitnUDdGT2pZajVYVXJUaVlLOUNYOUtOaStZelJn?=
+ =?iso-2022-jp?B?TnJ4VFMwNXM0WTF1OGpCMEZsRTExNENmeTJaa29sOVlqL0V1ZEZQbDdB?=
+ =?iso-2022-jp?B?ZEVMMlQxRTlLWTIyWHlFL3pDeUQwdkJXOGovQkpvS2NaWXMvU0FEa01P?=
+ =?iso-2022-jp?B?N0VFUVVkdHI5RmpiSmJuNnYybUJZcW1HWmovL0U4WG1KVFRJTnRoWFdD?=
+ =?iso-2022-jp?B?M1ZYNUNVc1hrSXhRTTBTZ3RZQWRVNCtpaTUzSnh5bDRMbWVlbXlmSTBV?=
+ =?iso-2022-jp?B?SEttLzRFMkpldnFGclk0VnFXRkV1ZGZlSEluNDYxeSs2N00xeU5mRlcx?=
+ =?iso-2022-jp?B?MjUyOWVrck1SM05Pb2E4SnB5aklnU0Frcmc9PQ==?=
+Content-Type: multipart/alternative;
+	boundary="_000_OS3PR01MB610300320EFEC1A03B28BAC1C2CF2OS3PR01MB6103jpnp_"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|VI1PR10MB3263:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8e1becdc-252c-41a3-dea2-08dc903bffc4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|376011|1800799021;
-X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?9dibIcZcFAon1zaHvJaH/BTel3QhetNggn2JJSoA9RLVRHB9AS6R7mEC5miZ?=
- =?us-ascii?Q?kxBllK8nI6AYuh2uo5xkh34kOhxKTvqungWvl0oCE+wLB4biQ4fxgClHwvZ6?=
- =?us-ascii?Q?5Zv+tiwHVLALwDI/COiogPcrZOYD1/rvwieoRkYK/McaM3Jyzm0n5O6uMIcM?=
- =?us-ascii?Q?ILwfW+CzB5G9+izvA90wm5Yopkqfy5nPcmFEB2c3FIQPDfXM/JSFkZkR4tC8?=
- =?us-ascii?Q?B+sFGOPmjbwzzdmwmhiiDtb7oQduLj/0Vdp5SjNI3f/+TU38fsbeaZGzWNMB?=
- =?us-ascii?Q?wZyPsFlLGB4uvvEmEsSxtoacE0wmsProuoeqSegNq2xqcAAPA2yBv1/WJPBp?=
- =?us-ascii?Q?m2hFIbwuaX4Eg4yw3qO8WVNT3SM+U2VxiENVI1L/AD/1Yb3LU97zX0zVjwbX?=
- =?us-ascii?Q?Z+Wshs5F9Hca+tnCSPZ4HoOnL+tGSm6lAmti8uJ/kN1Wjh1BS+IgLTObgVeS?=
- =?us-ascii?Q?P7mCtnhNeLeO1n4DnFhbIr9vjDHcna/ZHtbu8HOOTOEMovGSQUit8qc2Qjhf?=
- =?us-ascii?Q?F0DmFJ1yvxviDfowDjMHL3/R/nyXvU+/DiZFeUm/jBI+B0DM+md57+yK+Bo9?=
- =?us-ascii?Q?SfGcfdP1S4KJzb139otjhJr4KPc+0HpgyWcLksRpXiQS5D0lm8bOfvnKBywO?=
- =?us-ascii?Q?CxP/Vhd4ll5VqzQ9K2XGBHvBVTW6Lbn7gPID56RsP/fsoJusVp2o8tpuiJGP?=
- =?us-ascii?Q?d1iNFXFXYPAnc/1t/8jBb+qNyl4+L4ViW+QIAlRXpBf+0VvbAnJ6sHpZ0xVj?=
- =?us-ascii?Q?Q+CXxb8dDzSN1rRlX5n/YPMCH4/D96ev62LPtreNv4oZXC4xn7IQdHuv2aK6?=
- =?us-ascii?Q?rgTGF3/jQtFRCvu49+Rewtnd6rcgqZ6aweKLaAEy7QmmQHiI1PkmLOazcujH?=
- =?us-ascii?Q?uJCY9+CeHOXFk92QJYWHdylD2y84+zeX1p9aX3muyc/NoZmPPZqFJrYn4/tL?=
- =?us-ascii?Q?bu6SXiMc0kdK2j4yrbscCybfZCReBJrtM21HgpTzpXRdl69PCN2s8UxlX80b?=
- =?us-ascii?Q?XBGLvxNZr09RL9piZf/sHoYrescv6b9Sm9qnKJlywm+hbhALCK7HNFmFg9YP?=
- =?us-ascii?Q?YOSi/G5C8PiCjjBBU3K6AuT5pb3KUuu0PmbL4KyJ4mDsh2C14tzW0sPr05W2?=
- =?us-ascii?Q?SOIfehLX+5mEVHwQfFELdzTBLq9TBgW1Y1j7118RcyjWKQDVbTzTQ6O8TWUv?=
- =?us-ascii?Q?7r1g2p5KMgiqo9Yxh7OflBnQ84mI7g53fDufQ4AkYyEQR/ksZzf4djztY9a/?=
- =?us-ascii?Q?NXMU8ydFLI58qv8y7o83?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(1800799021);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?ZocfP3hr4TSyDrIkVaJ1sOkQJfp1KOlGaSXom2qCVj/n0VpBfCbmIf9H0DXx?=
- =?us-ascii?Q?iTB/tc3NfGjOVuDir0sNkXvnXtk8xqGbd5dpjO0R/o7LFTLhSekLXGWSG49b?=
- =?us-ascii?Q?eTE+8vS0dp1Cxs6Ex9iGWke4oVtYdjFTeOqkBxkZ7pz9venY+5Qp+A299WNh?=
- =?us-ascii?Q?dTzs+xJl0koNsZpXAfxQ8wYIDxLxqpCubdbpuM4fDOoE15hxwIOy9zU2Umzz?=
- =?us-ascii?Q?DTsg1/QbjFnt0HaE+HUHzi9ckZL907x9trZcZDkK8TIqAEH86YxrQB199fdQ?=
- =?us-ascii?Q?LEJkrjxUhxeLZinfhS5V/gX2xFvf6CKh/xgdghJri792981AKFJ05RwhY8fU?=
- =?us-ascii?Q?WBdkikzOQkxpFdQ6OucDZtBGn8PMh90TQfLec0rNZOZqsWexYbvZtmDInKXm?=
- =?us-ascii?Q?h6+fZFeMfjb3WmjQj1xq3Q8ciUbqCsRwmz/5RO1V6lSA8K6UFlIATT2X7mL5?=
- =?us-ascii?Q?WYQXyShSUgwxORwCCOCo+Lk1/35okd6DJ/kIGO9c+xUfC83LveBN6q3EvtOq?=
- =?us-ascii?Q?uu61PKpjP90thPn4B28EzAvsn91U/rW1DCm+xfX/BVju4GHuvxCorqnYyuEf?=
- =?us-ascii?Q?ZMPhOSTj6KAJhiBs1r2B1+cSAH+V7WtBf8pHTuPC/6cfqkW7raGN+AeI10hg?=
- =?us-ascii?Q?ncY7OwWUqMrza4MZt0+iQVoMbbSRa8W7+PPRDzTiYuFSTtsAOQu8TwWCo7kC?=
- =?us-ascii?Q?FGkwUPs8LrJhlxHsG+gI/9OLHNldMjm/FvzHr8/7Hg/cs4WambsHeDeH/itX?=
- =?us-ascii?Q?orEGLus7XfY8k7+a8DRqNhFFqx0E/ENeLHDb5PTOSB7iofoLkXqRB78M+UnC?=
- =?us-ascii?Q?B7oUkiUKzUOkLeX5AtUecDKalITW2PtmLiN5rkkooykZmWjwqSS/9f0LvdPO?=
- =?us-ascii?Q?oRSNluOC6Nj+BtYKJqP6ZEto91Pa8G4ivIAPZWmU19j5woUmUhOcZYf6MRWX?=
- =?us-ascii?Q?qXmu6ETXCxdfz/K2jZQo1bG2pIWsLCqPasdkMhAiFKtlNDwJ0zSwTEI72VdW?=
- =?us-ascii?Q?rliFCtwzsypvFTy9HPHwD7/Rl9FnXFPhqlX22LO/y010jlLhc3gfRM20RKo7?=
- =?us-ascii?Q?GzgMJHndFwpdseZ3G1l+kAo2CWy6oLvxuRgqV5P28rpQmlHh1z53vZlP/LFb?=
- =?us-ascii?Q?LkW0HypB2+fVjAQy1H/GplUoiDylwOedhNHQ2TcV4SiH2yamnq/8kWU7N2k7?=
- =?us-ascii?Q?SZBHSA/9C0ZNbYP1JYziKpn9lDYr24ibM9+yOuB9LuLx17TjnFZgq29OosK0?=
- =?us-ascii?Q?NiBVnlSUEzFqcI6dX6JNC1VAjo6Y7b9d5iM6YIyhUfky/futqtlFXkFqbrI4?=
- =?us-ascii?Q?vez5I8UnFQ09kTYF8iLkQcxTuIf7XyB69DCbxIvkaIJta2t5bGf0GFxnMhJw?=
- =?us-ascii?Q?5wiOr2uOtkSZX/q4YP2A4s3zHT3M02bZ1kOoz+1pJpyyvn956ewTgw2/p3xa?=
- =?us-ascii?Q?Igvo71NdTQF7uBKJmlE8TZP78SMYwnpwrLoI+dGjxutaddLssKlPtGLzDIVo?=
- =?us-ascii?Q?EwUQd0PUbzVb+YlNqGNkKopc6uDmuimQgEZNuj8TgPQ8sHk6TQv9e1wizZiH?=
- =?us-ascii?Q?k0Ax11nK8bJawoGtknNVEuLae0k9M4T10BYgFxYEyEmIf16Vg02mRldfRY0C?=
- =?us-ascii?Q?AQ=3D=3D?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8e1becdc-252c-41a3-dea2-08dc903bffc4
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jun 2024 08:44:14.9344
+X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB6103.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7202ac79-af9c-4599-711e-08dc903d4afb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jun 2024 08:53:30.4726
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 35IOCajJW2HBhQpWRJvI5dwWTfL9hNjj150stnJf/faMkFQPZlJOKBGlub1cpbc8B4/qXkqWnDecvT318JJL6Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB3263
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: x3Ep/JbGU31qSR4ZzbJrxz0A7iXNa9b7tMoKhnN8M4/xRua6rzjyyR7HrqN7V+txmkm5xJQPyEeIQr2RgvEhZ/+R99OwY6Dvh2XJ9HS6j4c=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB10777
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 19 Jun 2024 08:44:21 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16291
+ <cip-dev@lists.cip-project.org>; Wed, 19 Jun 2024 08:53:42 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16292
 
-On 19.06.24 10:01, Gylstorff Quirin wrote:
-> Hi,
->=20
-> On 6/18/24 10:31 PM, Jan Kiszka wrote:
->> On 18.06.24 17:56, Quirin Gylstorff wrote:
->>> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
->>>
->>> This back ports the fixes for the wfx progress handler to avoid a
->>> second reboot on the device, see [1]
->>>
->>> [1]: https://groups.google.com/g/swupdate/c/wJ6g5lajuYw
->>>
->>> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
->>> ---
->>> =C2=A0 ...d-suricatta.ipc.progress_cause-table.patch | 30 +++++++++++
->>> =C2=A0 ...ress-Fix-reboot-mode-message-parsing.patch | 52 +++++++++++++=
-++++++
->>> =C2=A0 recipes-core/swupdate/swupdate_2023.12.bb=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0 3 +-
->>> =C2=A0 3 files changed, 84 insertions(+), 1 deletion(-)
->>> =C2=A0 create mode 100644
->>> recipes-core/swupdate/files/2023.12/0001-suricatta-lua-Add-suricatta.ip=
-c.progress_cause-table.patch
->>> =C2=A0 create mode 100644
->>> recipes-core/swupdate/files/2023.12/0002-swupdate-progress-Fix-reboot-m=
-ode-message-parsing.patch
->>>
->>> diff --git
->>> a/recipes-core/swupdate/files/2023.12/0001-suricatta-lua-Add-suricatta.=
-ipc.progress_cause-table.patch b/recipes-core/swupdate/files/2023.12/0001-s=
-uricatta-lua-Add-suricatta.ipc.progress_cause-table.patch
->>> new file mode 100644
->>> index 0000000..69873cb
->>> --- /dev/null
->>> +++
->>> b/recipes-core/swupdate/files/2023.12/0001-suricatta-lua-Add-suricatta.=
-ipc.progress_cause-table.patch
->>> @@ -0,0 +1,30 @@
->>> +From 3ac2b34958a31c3694a78f840201373cfaff6c10 Mon Sep 17 00:00:00 2001
->>> +From: "Storm, Christian" <christian.storm@siemens.com>
->>> +Date: Mon, 3 Jun 2024 20:16:56 +0000
->>> +Subject: [PATCH 1/2] suricatta/lua: Add suricatta.ipc.progress_cause
->>> table
->>> +
->>> +Reported-by: Adithya Balakumar <adithya190298@gmail.com>
->>> +Signed-off-by: Christian Storm <christian.storm@siemens.com>
->>> +---
->>> + suricatta/server_lua.c | 5 +++++
->>> + 1 file changed, 5 insertions(+)
->>> +
->>> +diff --git a/suricatta/server_lua.c b/suricatta/server_lua.c
->>> +index 7ac5e972..2641a037 100644
->>> +--- a/suricatta/server_lua.c
->>> ++++ b/suricatta/server_lua.c
->>> +@@ -1592,6 +1592,11 @@ static int suricatta_lua_module(lua_State *L)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 push_to_table(L, "SUBPROCESS", SUBPROCESS);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 push_to_table(L, "PROGRESS", PROGRESS);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 lua_settable(L, -3);
->>> ++=C2=A0=C2=A0=C2=A0 lua_pushstring(L, "progress_cause");
->>> ++=C2=A0=C2=A0=C2=A0 lua_newtable(L);
->>> ++=C2=A0=C2=A0=C2=A0 push_to_table(L, "CAUSE_NONE", CAUSE_NONE);
->>> ++=C2=A0=C2=A0=C2=A0 push_to_table(L, "CAUSE_REBOOT_MODE", CAUSE_REBOOT=
-_MODE);
->>> ++=C2=A0=C2=A0=C2=A0 lua_settable(L, -3);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 lua_settable(L, -3);
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 lua_pushstring(L, "status");
->>> +--
->>> +2.43.0
->>> +
->>> diff --git
->>> a/recipes-core/swupdate/files/2023.12/0002-swupdate-progress-Fix-reboot=
--mode-message-parsing.patch b/recipes-core/swupdate/files/2023.12/0002-swup=
-date-progress-Fix-reboot-mode-message-parsing.patch
->>> new file mode 100644
->>> index 0000000..9719057
->>> --- /dev/null
->>> +++
->>> b/recipes-core/swupdate/files/2023.12/0002-swupdate-progress-Fix-reboot=
--mode-message-parsing.patch
->>> @@ -0,0 +1,52 @@
->>> +From c65f5435eec2a0c51f6f0c356451c2091b2f3fdc Mon Sep 17 00:00:00 2001
->>> +From: "Storm, Christian" <christian.storm@siemens.com>
->>> +Date: Wed, 5 Jun 2024 06:35:24 +0000
->>> +Subject: [PATCH 2/2] swupdate-progress: Fix reboot-mode message parsin=
-g
->>> +
->>> +The incoming msg.info reads, e.g.,
->>> +{"0": {"1": { "reboot-mode" : "no-reboot"}}}
->>> +and sscanf() also needs to parse/read over the enclosing
->>> +{"0": <...>}
->>> +part, though discarding it.
->>> +
->>> +While at it, use static buffer allocation as the BSDs don't have %m
->>> +
->>> +Signed-off-by: Christian Storm <christian.storm@siemens.com>
->>> +---
->>> + tools/swupdate-progress.c | 7 +++----
->>> + 1 file changed, 3 insertions(+), 4 deletions(-)
->>> +
->>> +diff --git a/tools/swupdate-progress.c b/tools/swupdate-progress.c
->>> +index 584910d4..14040757 100644
->>> +--- a/tools/swupdate-progress.c
->>> ++++ b/tools/swupdate-progress.c
->>> +@@ -339,7 +339,7 @@ int main(int argc, char **argv)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Be sure that =
-string in message are Null terminated
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (msg.infolen > 0) =
-{
->>> +-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ch=
-ar *reboot_mode;
->>> ++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ch=
-ar reboot_mode[20] =3D { 0 };
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 int n, cause;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 if (msg.infolen >=3D sizeof(msg.info) - 1) {
->>> +@@ -354,15 +354,14 @@ int main(int argc, char **argv)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 * will be added, JSON lib should be linked.
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 * NOTE: Until then, the exact string format is
->>> imperative!
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 */
->>> +-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 n =
-=3D sscanf(msg.info, "{\"%d\": { \"reboot-mode\" :
->>> \"%m[-a-z]\"}}",
->>> +-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &cause, &reboot_mode);
->>> ++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 n =
-=3D sscanf(msg.info, "{\"%*d\": {\"%d\": {
->>> \"reboot-mode\" : \"%19[-a-z]\"}}}",
->>> ++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &cause, reboot_mode);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 if (n =3D=3D 2) {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (cause =3D=3D CAUSE_REBOOT_MODE) {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!strcmp(reboot_mode=
-, "no-reboot")) {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- disable_reboot =3D true;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>> +-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 free(reboot_mode);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 }
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 msg.cur_image[sizeof(=
-msg.cur_image) - 1] =3D '\0';
->>> +--
->>> +2.43.0
->>> +
->>> diff --git a/recipes-core/swupdate/swupdate_2023.12.bb
->>> b/recipes-core/swupdate/swupdate_2023.12.bb
->>> index 1c140b0..cc01a98 100644
->>> --- a/recipes-core/swupdate/swupdate_2023.12.bb
->>> +++ b/recipes-core/swupdate/swupdate_2023.12.bb
->>> @@ -27,7 +27,8 @@ SRCREV =3D "6ccd44a8539ebb880bf0dac408d5db5de7e2de99"
->>> =C2=A0 # patches
->>> =C2=A0 SRC_URI +=3D
->>> "file://0001-d-rules-Add-seperate-build_profile-option-for-delta-.patch=
-"
->>> =C2=A0 SRC_URI +=3D
->>> "file://0002-d-swupdate-www.install-Fix-path-for-debian-bullseye.patch"
->>> -
->>> +SRC_URI +=3D
->>> "file://0001-suricatta-lua-Add-suricatta.ipc.progress_cause-table.patch=
-"
->>> +SRC_URI +=3D
->>> "file://0002-swupdate-progress-Fix-reboot-mode-message-parsing.patch"
->>> =C2=A0 # suricatta wfx requires suricatta lua and the dependency
->>> =C2=A0 # is not set automatically
->>> =C2=A0 DEB_BUILD_PROFILES +=3D "pkg.swupdate.suricattalua"
->>
->> We only support wfx with SWUpdate 2023.12, not with the other versions
->> we have recipes for, right?
->=20
-> IMHO, we only support wfx with SWUpdate 2023.12.
->=20
+--_000_OS3PR01MB610300320EFEC1A03B28BAC1C2CF2OS3PR01MB6103jpnp_
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 
-OK, thanks - applied (likely as last patch before the release, finally).
+Hi Jan,
 
-Jan
+Previously cve-checks job can be run manually in a pipeline at the time of =
+applying this patch https://gitlab.com/cip-project/cip-core/isar-cip-core/-=
+/commit/bcc87ac5309b0c606eaba3a760ab5fd5acce5a3a even though the job has no=
+ assigned tag. But now when I tried to manually run this job, it is stuck b=
+ecause there is no assigned runner to pick it up. Is it OK if I send a patc=
+h to assign =1B$B!H=1B(Btags: small=1B$B!I=1B(B runner to this job ? Can th=
+is be included in the upcoming release ?
 
---=20
-Siemens AG, Technology
-Linux Expert Center
+Thanks and regards,
+Sai Ashrith Sathujoda (T S I P)
+
+--_000_OS3PR01MB610300320EFEC1A03B28BAC1C2CF2OS3PR01MB6103jpnp_
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
+<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
+<style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Aptos;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0in;
+	font-size:11.0pt;
+	font-family:"Aptos",sans-serif;
+	mso-ligatures:standardcontextual;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:#467886;
+	text-decoration:underline;}
+span.EmailStyle17
+	{mso-style-type:personal-compose;
+	font-family:"Aptos",sans-serif;
+	color:windowtext;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-size:11.0pt;}
+@page WordSection1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.0in 1.0in 1.0in;}
+div.WordSection1
+	{page:WordSection1;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]-->
+</head>
+<body lang=3D"EN-US" link=3D"#467886" vlink=3D"#96607D" style=3D"word-wrap:=
+break-word">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal">Hi Jan,<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Previously <b>cve-checks</b> job can be run manually=
+ in a pipeline at the time of applying this patch
+<a href=3D"https://gitlab.com/cip-project/cip-core/isar-cip-core/-/commit/b=
+cc87ac5309b0c606eaba3a760ab5fd5acce5a3a">
+https://gitlab.com/cip-project/cip-core/isar-cip-core/-/commit/bcc87ac5309b=
+0c606eaba3a760ab5fd5acce5a3a</a> even though the job has no assigned tag. B=
+ut now when I tried to manually run this job, it is stuck because there is =
+no assigned runner to pick it up.
+ Is it OK if I send a patch to assign =1B$B!H=1B(Btags: small=1B$B!I=1B(B r=
+unner to this job ? Can this be included in the upcoming release ?<o:p></o:=
+p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Thanks and regards,<o:p></o:p></p>
+<p class=3D"MsoNormal">Sai Ashrith Sathujoda (T S I P)<o:p></o:p></p>
+</div>
+</body>
+</html>
+
+--_000_OS3PR01MB610300320EFEC1A03B28BAC1C2CF2OS3PR01MB6103jpnp_--
 
 
