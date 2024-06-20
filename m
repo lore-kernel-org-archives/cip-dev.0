@@ -2,43 +2,47 @@ Return-Path: <adithya.balakumar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC289C27C79
-	for <webhook@archiver.kernel.org>; Thu, 20 Jun 2024 05:56:38 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
- by mx.groups.io with SMTP id smtpd.web11.40964.1718862990166184292
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E708FC27C79
+	for <webhook@archiver.kernel.org>; Thu, 20 Jun 2024 06:10:28 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
+ by mx.groups.io with SMTP id smtpd.web10.41198.1718863826968799277
  for <cip-dev@lists.cip-project.org>;
- Wed, 19 Jun 2024 22:56:31 -0700
+ Wed, 19 Jun 2024 23:10:27 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.134, mailfrom: adithya.balakumar@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 45K5uSLF3661275; Thu, 20 Jun 2024 14:56:28 +0900
-X-Iguazu-Qid: 2yAbdMiuZwt7MwTpbF
-X-Iguazu-QSIG: v=2; s=0; t=1718862987; q=2yAbdMiuZwt7MwTpbF; m=NN/XLf7OSTiWgzpXMjBLcGp9Ouew4aB9Os/VxwMn0SA=
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.152, mailfrom: adithya.balakumar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 45K6AOtZ3566956; Thu, 20 Jun 2024 15:10:25 +0900
+X-Iguazu-Qid: 2yAbLYkr6kTwlFhvE4
+X-Iguazu-QSIG: v=2; s=0; t=1718863824; q=2yAbLYkr6kTwlFhvE4; m=H8GSx4mKVFfZguH7EhyLEe2JByjozaMALUop/qctG3E=
 Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1800) id 45K5uQJE451281
+	by relay.securemx.jp (mx-mr1803) id 45K6ANQ44076561
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Thu, 20 Jun 2024 14:56:27 +0900
+	Thu, 20 Jun 2024 15:10:24 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bqu+Mt2+RtnQ/uG00FfiC4rPEh6wX0GaoztKoiw6yreD9UF3o7vAGYr4wFKww7vdtROsAov5tFW6vIml0nBzJGXbY7rGS1RZmYIM6bRmWIlE47aU/A/Mv0g48CajOLi1bR7vQmJyvulQIeNKcsSgq/jo2sD+J1f35Ttpvz/+AWJOT48M0zpgXsGPsy77LpdLYNeo8l3enEXPnH1LgUfW2RBlx0D2cjJSw65F+p4HHn4eqiQAzB7pIY+Fmd2F/yMwhhMLbbov4l+qqIuvvbvMlT9yonWeSIBvxbXwLuoVY+WDP1LrwJEVVgGPLCZpdhC+5yaxMN4mm3rDvg0mz+GbFQ==
+ b=HIJJ+oVLJOKJt0Gt7Frr8etlNP7eyq7vjmahqxhcj7xInsLJBsJJbyKXBV8JMn9Ty48jWasFeQ1QZtuWaB9TY2TRHI/WY3cL613ZykaMQPdxf7AHmuU/jt170RAcTRaOgraG8ELH4HWch5DyJqB0FXUiDfP/u0uWddqk6nt+fxUolYN9GMbz5TJdz85wMdmeDtej/yjiBrzXq//+SC6Kb/5LG6ArWcrib8ELVhIUxxADVTXmeAJ1dqHO44K8PK3SJnMvQbO8vM0ItR3hxtcMy3CyvEDPUjHqq5ab84li+Hgs81dIT7XTR9EaPdCBpqo7fSsURntPH3ie5WJoDmdAtA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C2bPNXEGixxkgT1ySOrFSlk0R7NGdsWf/iPh7zHYszE=;
- b=EVVXaOEoSYnn7Rco9zhcylaT13quaZ0VPyxQmRiOGzLjqGm17R3gMDYfO0h/OZSX+5TtMOrFFqS8K5uXzHK3lU6A9fOsyfCtAs3/fLnqErZCI2tvS5cZG9hLojh0ud8rjqBaMKEpSd7U7JA8TXBFGI0ScZZgCs6Pa36lEfMli3mJn8bDWjJfbzfecL3Ji/cPtp+eE+CETGfrYnTPoc9FZrYj9P7/z3qUVzC4qf/Thp3R5NFr3BSO6HXFHqpqkVNZMWAhKoG100386ntoZ57Mpu782Ncz568YIUy7ySuUL5tBeluGf/HK1GIBrroVsLprJ+IV/09Ja0CLynaY/S5ZMw==
+ bh=cqxWMWAz1QSZFhX1nqD9bdk3i5ABMirtUQNxfb36I4Q=;
+ b=WmNmd3hoyhSo4RCEjrAbVPnCYybCiIv2IW5Sm/N2miskrxcvUbQfpePbNfQWo0K98d/6ByyTFKsJpB43dyUqAEFyh06xDIliopBOKfb5Y2KYQDLi9ikFga4ZoC+a7/61k1tKNts+kioAvZnX2+goYO4EV9Nnsxr5ZFl7WYbW+BxcgRL1q2Yvm7KPPanYLLtRM/ZV5wyOYkErUTPYgTY6GVktSQKXdozMXC9HAJa75r5zWM8OHV/7HPHCpWabBmw5yLit5CjMeJdzYoPGtkDW/+5NEuPgQOADZ7OEWBrpwjH0qfFghyXq4uIpltL8ZA/19n06zqvNd78EbrcQ0s4e0Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
  header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
 From: <Adithya.Balakumar@toshiba-tsip.com>
 To: <cip-dev@lists.cip-project.org>
 CC: <dinesh.kumar@toshiba-tsip.com>, <Shivanand.Kunijadar@toshiba-tsip.com>,
-        <Sai.Sathujoda@toshiba-tsip.com>, <kazuhiro3.hayashi@toshiba.co.jp>
-Subject: Regarding support for WFX backend for software updates in CIP Images
+        <Sai.Sathujoda@toshiba-tsip.com>, <kazuhiro3.hayashi@toshiba.co.jp>,
+        <koshiro1.onuki@toshiba.co.jp>
+Subject: RE: Regarding support for WFX backend for software updates in CIP
+ Images
 Thread-Topic: Regarding support for WFX backend for software updates in CIP
  Images
-Thread-Index: AdrC1ksCFU48h0ptQR+cT3Q7rfn9dA==
-Date: Thu, 20 Jun 2024 05:56:25 +0000
+Thread-Index: AdrC1ksCFU48h0ptQR+cT3Q7rfn9dAAAgPvg
+Date: Thu, 20 Jun 2024 06:10:21 +0000
 X-TSB-HOP2: ON
 Message-ID: 
- <TYCPR01MB9669288BB5107DAC76CE3DF7C4C82@TYCPR01MB9669.jpnprd01.prod.outlook.com>
+ <TYCPR01MB9669E4ECC7E73AF97DEC3447C4C82@TYCPR01MB9669.jpnprd01.prod.outlook.com>
+References: <17DAA0C89420B334.21660@lists.cip-project.org>
+In-Reply-To: <17DAA0C89420B334.21660@lists.cip-project.org>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -46,111 +50,126 @@ X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYCPR01MB9669:EE_|OS9PR01MB12420:EE_
-x-ms-office365-filtering-correlation-id: 4ce07b4e-e97c-4087-7515-08dc90edb828
+x-ms-traffictypediagnostic: TYCPR01MB9669:EE_|OSZPR01MB7017:EE_
+x-ms-office365-filtering-correlation-id: 26734769-cfe6-49eb-db3d-08dc90efaad4
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230037|1800799021|366013|376011|38070700015;
+x-microsoft-antispam: BCL:0;ARA:13230037|376011|1800799021|366013|38070700015;
 x-microsoft-antispam-message-info: 
- =?iso-2022-jp?B?c1Jya2lOZDZsUVNHUmtXWGlOYmhsaFB0aEttZ21NUVEzWDg3QXh4Q0Jh?=
- =?iso-2022-jp?B?bDBOYjVYT0FtUVhDQjNSQ2kwSDJhVlh0Q3kzWENRVnU4MVN3c200WHZh?=
- =?iso-2022-jp?B?MjJrekJPenhVdUlBTXFiUWxMcTBIaldFbG1wS1ZsRGVUb05zZGpNQmpw?=
- =?iso-2022-jp?B?WCtPN2htRUN6czU0MmlhRDVQWE9MNGZyS2FaR1VQM21lQTVrczkwd1ZW?=
- =?iso-2022-jp?B?ekRCZ21EanBsWk01SlQ5YVc3TFFmK0VQQkh2cVVtV05vaHFEQlBOUHY5?=
- =?iso-2022-jp?B?andnVUlhMzlZUEgvZXBUVW8rQndJaCt2aXArL2p4MERNUDFscHIxZlo5?=
- =?iso-2022-jp?B?SW1xbUNwM1FoUjhGY2FsS2Y4dENlaSs0aXJvOHUzNkc4OG5lSzMzWXBW?=
- =?iso-2022-jp?B?aEw2cFV0ZlIvK1hIV3ZIK1hrZmJGVUU2ZWRvSjdXQnZ0YVhxOUNCUTF1?=
- =?iso-2022-jp?B?c09ZNjAvK1g2RkpFenNmdEdGajhBVDJIR055NytPNm9hRXgvanJ3M01M?=
- =?iso-2022-jp?B?RFJReUZpUUtNZzZTcEMzQVFacHlkSHdrV3BYbVpNL0NyZTNyeDFpRkEv?=
- =?iso-2022-jp?B?NjdxbHc4VVgxdmh3OTEySThJVUNtTXFoOEFvcWNlSHJmRm9hZFpnNmc1?=
- =?iso-2022-jp?B?UStDOWhxczZYWkdXVGNUNnBMQTBuUkdpenZLOUpNNDV5dytiN2M2YUxL?=
- =?iso-2022-jp?B?bFRpNjJ6WEgrb2J6V1JsS0c0c0VTZWFPb01RTkp2ZGwxc1NhZWp2d3or?=
- =?iso-2022-jp?B?aVMvcFVxU1hQK0pESVBZbXlzQ1BHZXNwNDBSNWNzZnZ2WGFCOGhiV1FE?=
- =?iso-2022-jp?B?WnBmWkRqeXI0SlVJNlhjc3ZJa2ZMaFBUK2pwMGkvdjBmdndyZkd1cHIv?=
- =?iso-2022-jp?B?NU5JajhyczNoRWNRQ2N4YzltcWxXTXZBRXo5a3Q1Q0YzV1BWcjBsbk43?=
- =?iso-2022-jp?B?Q0VzN0dheFZGNk1ZdWE3d2dqVi9tVXFMbEFnbzRMOUNzZGEyYlgrWHg4?=
- =?iso-2022-jp?B?UHQvbzFOUnlwVlQvOFNQSU81eUR1NW9rVThpOWs1d0YxNW5obWFaNU42?=
- =?iso-2022-jp?B?TkxURlY5QWI0YnVmbUlWdWdSL3dkY3pUZzdjdi8zeGtYV3UxL0NIZ3Jy?=
- =?iso-2022-jp?B?czhFaXQ2SGNURHVUcy9CcFVkditvaGxLM3RRWE5zS1F6VXRmbzdkSmJU?=
- =?iso-2022-jp?B?WVNOMjRpdExUc1kzdVU5OUVHb29CMDZ3Tm5jVkJrYk5QR2N5a1l0NVEr?=
- =?iso-2022-jp?B?RzVtLzVCNzc3RmRUR1hGUElmeW5FSEZhVkVVSnFkMHkxempJUUdQTzZj?=
- =?iso-2022-jp?B?eC93Q2lyQSt3Y3NyWkd2bkpkR3hYWEpXN1FJMHZWcy95MmxEek1YM2g5?=
- =?iso-2022-jp?B?QzVVWEVidUxXSjkySlBnRmdFSVYyUCtCWnpEYUlyYlVEM2FMR2hzU3cy?=
- =?iso-2022-jp?B?L3hNZkxwVmZpN3dMQVJRUWd2aXY1bUFpTC84ZVl1eWVIVGwzOHkzSmVJ?=
- =?iso-2022-jp?B?RjQxM1FNUVJLbVA1UFJaY1ZnNkxYNVZhT21iL3M1REdMVFhmYWU5UEZX?=
- =?iso-2022-jp?B?WkpTK1YzV1VzVGdsa2NkdzZaVUZvMk8xUTBmK3NCUStXYmR3QU5WZENq?=
- =?iso-2022-jp?B?K1ZISnRsSkp5b0k4bVAyU1Bsa3Y4dFVodk8vZmlRenpZQU9XSEdVMjk4?=
- =?iso-2022-jp?B?V2h5anFZS3dWb1ZoQzJLRlNHM0RMRlZ6cEUwOFl0cHVBRThjdG0zajBT?=
- =?iso-2022-jp?B?cTB3S2ZwR2FCVnRhU1o1b01QZllRTjVSYWc1TWR2cStvaXEvem16UTBv?=
- =?iso-2022-jp?B?b1pyc1U3U0pSb2lHeXVsZjJtUlRVdFBuU2xTUzEvaE53WDZVeEI5RmxV?=
- =?iso-2022-jp?B?bVovOXYwc3NJWVUwWkVCYXBCR2swRFliNUV4VXo3Ung1R0xxYlNScGxQ?=
+ =?iso-2022-jp?B?M09LZktRd0VjMGRHUTZIaFhOSXJXSkpnSUFzODFBSXE1Y0VTSlV3MlVK?=
+ =?iso-2022-jp?B?UGQrakVpcElLYlRPOWxwREVLdWN2MUl2UTFKMGhlSXd6RDdRVW9Jajk4?=
+ =?iso-2022-jp?B?eWN1eS9UWjBDVXB3S01EY1h4dUZRbDdBL1BWNUpIN2kwaFdINXAzclVt?=
+ =?iso-2022-jp?B?QWdYWi8yUS9sUE9tbS9nQ29kYkNQeG51V0N4WndrQ0FNSmhqT2NzQzNF?=
+ =?iso-2022-jp?B?QW8zcnFvUGorUEN4K3kwVStKTzlzUHRnbXdaY0xCTzlQczRFaXhXUWI2?=
+ =?iso-2022-jp?B?RmliVHBTajV2UzdNaW1sdHJ6OEtaUVNicXBmR09hRWcxVXRJMDlGc0Rj?=
+ =?iso-2022-jp?B?QmZLTm5mYlVrUnVnVTRqT3BoV0FaY2pPZGVyc0R1bTN0OUN4dUQ2MDRG?=
+ =?iso-2022-jp?B?WGFjSHI1eDV5Zk1SQWQ0K2FXWFM3YXBBNy9kVjh6Yk00aU5ocEsydFpO?=
+ =?iso-2022-jp?B?UGdoQm50Nys1Q3lyTVJTclRrNUVBY2g0S25IMWRKNUIzaHR2WmFxWG5O?=
+ =?iso-2022-jp?B?WkRNeGloNnI1cG9rclhkM2txaWs4VXNWeUVuV2tna0RETDFJbU1IVWlW?=
+ =?iso-2022-jp?B?SUdMOUNzNHo5eTJ6RXJMVnZ4Z3NVdWlUZDRhQU1rbGhqK1VzNkNxa0Vm?=
+ =?iso-2022-jp?B?Z3pnS01nVEdId0hDeXlCSTlWNjB5L0ZXb3ludDlPZnFPTTJLMEZIdjhB?=
+ =?iso-2022-jp?B?N1p4QkYwUlp2SG1TMHFaMHRTa2lJK2NIb0J3VWpYekYwbjRUZUpNSlpX?=
+ =?iso-2022-jp?B?UVhlU1VkTEJyTk9JOTdyTVV3cVpZN0htUUQ2WmJ1NWw0Yy9Pbis2S2wr?=
+ =?iso-2022-jp?B?WjcxVitBaCtVcmxzNG5YR2tadkZWUHRzWS91eDRWS05kQlZBM1Z0ODV6?=
+ =?iso-2022-jp?B?YnQvRnFHSjVXYUYxOUEwSzE5T2tuRjNhbExWRHY2V2t0WlFPUEhFY2NZ?=
+ =?iso-2022-jp?B?U29rU2tORURoaTBwYVdkTzNEd3ZRcDlja0pSRGZzdlQzd2trcWNiekhq?=
+ =?iso-2022-jp?B?aTJqOHRhQWQyOWVBRXNUS1pHcjRMd3N2NjdzTWZlWXVIeTF4czFsdjR6?=
+ =?iso-2022-jp?B?dlpMakREZzVOY0R0WjB6ODQzd245Rno5VjdwS1NtbXlSa1ZwWXdBeUt1?=
+ =?iso-2022-jp?B?dVd6MWtIczAxUjBIZVlkTENBK1JlVmgvTktPYms2SkFGYkZtWU0xNW9G?=
+ =?iso-2022-jp?B?U1JEdUVQTmxDRnJxck9PbDB3RXpCTzVhWEhORWNNMi9uYnQ2Q0JXZElx?=
+ =?iso-2022-jp?B?WE5KbDBTbmJSbzZNc0V6RzdBQXRNcGVUbm5TQlhwZFlOUnNWU0ZFY0pB?=
+ =?iso-2022-jp?B?NldRalVXRS83ekxtNTRSc29FWWppcmtDL2xnTFhrU0NpMjd5cjJrV3Rl?=
+ =?iso-2022-jp?B?SlZHM2F1VUxnZW9xcE9uSkhPWUVCTXArTE0wSWdJd3UybWRyZnVCRVI1?=
+ =?iso-2022-jp?B?SFNORDdqcFhCSmlPbnNFQUJNZDVPR3I1TGtIZXlzazExa1lEVG1WYWg1?=
+ =?iso-2022-jp?B?TUc1K3EycEMzck0zTjBGejlndzI2aWtpTm9rZ0E1eUFYdVR1UThkQ2lF?=
+ =?iso-2022-jp?B?Vkw5ZVlHay9wWVF4WllCRFkwUVFKNFVTMGtjNTRBaHJKY3hSc0JqU2FQ?=
+ =?iso-2022-jp?B?NCt6ZVY1cmJuRWJIdHhGZzh4a2F0RXpUbzNkcjNML2pWSmhXeUV2Qnhn?=
+ =?iso-2022-jp?B?M3d3K2dQVUFGeVdWYzdmejBhVTcwcUx4RG5JdHBRenI2cU5mUUZjRGNv?=
+ =?iso-2022-jp?B?V3l2UzZ2ZFJJcEZDUnd6RkV0TjM2Y1BLM1Mrc1Iyc0szUXRLK2V1Ulhi?=
+ =?iso-2022-jp?B?R0NzclB2ZFdlNm0zTmtpeEZXbEFROU1ZSnNHcWtRYkpGZnBvb3oyOU9H?=
+ =?iso-2022-jp?B?eFZPMGdEb3hYbHBhK29oYkxqTWZSai92aEorOXJWVDU4YktodmNqQUY3?=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB9669.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(366013)(376011)(38070700015);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB9669.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(1800799021)(366013)(38070700015);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?LzBSU1U5WE1RWCtxeFlmbUtxUHNJTnR1UTdIUytJdkpXQ3NYV25KYUFa?=
- =?iso-2022-jp?B?NGhHV29DUmNSSU1jTG9ySCtRMmxuRlNCRUFweGdIQ2laeFUvMVYrU2dh?=
- =?iso-2022-jp?B?UWVOY0E1cDNsZkk4czR0dzdBd3Uva1F3a3BMTC9xa0J5a3dSUmZjUVNU?=
- =?iso-2022-jp?B?TEhqOEV0SFFXT0JNem1FQnZQaVk2bHc3TGxhc25sUkVZekRFclQ2Ynpv?=
- =?iso-2022-jp?B?RnNJcStHb0l2ek40bit1dzA3OHNOZ2Y3RTU2cXdtU3hvdW5Eekd1YU1E?=
- =?iso-2022-jp?B?aFNudTdQR0tzMjMra3BlWEhPdDR4Q215MjMxQzQ4dFRyZWl6bituMi9z?=
- =?iso-2022-jp?B?ZHhLODdzS09PaWI1MHVEdTlFYnpTRko4emZLN0p2VWZZZjVmeWZzeXhq?=
- =?iso-2022-jp?B?OXlHNTVyZWJWbE9BUFExTHRWa1MzbjBuRXcwaFpydFV2K0JhNjM3M2xI?=
- =?iso-2022-jp?B?QW10bjdsV3FUbTFoRXFBL3NWV2FLekZWSkhTSWpuQUp2RmVtYUdsRThu?=
- =?iso-2022-jp?B?R1hKS0xDWTgzSUV4ZVNFMjdQbG9JSzRWdlZjbTlJZmdBT1ZkRS93SHpK?=
- =?iso-2022-jp?B?YWl2cUhIWUZyWnBjYUZwYmQyWkVqaFpHKzJ2OWhUWVoyc1pQT2E1N3RQ?=
- =?iso-2022-jp?B?bDN3SnFadWMvZkJDNmNHR3BMS0lqeUNZV2RpdWQ5OGZqWXpnVHByQStr?=
- =?iso-2022-jp?B?TFhFeWlwUlJIdDIxc01CbmtOUld2eXNVcXk4c2VveTZ4cjFZOFRaSUJX?=
- =?iso-2022-jp?B?K2lHbDZKdXZTRXo3aFJDK1M2K2g0WWtNa0JNUlVzNVNOZ2s0UXgrY0hP?=
- =?iso-2022-jp?B?M0JFWFI4RFZLc0NXcXRZUnZsejBkOTNWM0VieTRUWTBzd3pLdVBXWVlW?=
- =?iso-2022-jp?B?L3N6YUo5NEd6eDZlV0ErKzlLZHgyZU9iSXNxQWhMNi9oS3JZTS9PRUcr?=
- =?iso-2022-jp?B?VWF3ekFnMVFrREhVS3laQzN0OEVuTXhKY3RTQzRTQlhTb3Q2RDlOSFYw?=
- =?iso-2022-jp?B?MTZReFhIOStaK2MrdEcyL2kxQk5CbnVtS1R2TFhHQmtwNEp3N2ZBc3V2?=
- =?iso-2022-jp?B?UGdERE5sYTRPNFBBNXhDREhvdE42YlJpc0NCNlAxOTlIbzQxaGFRdFRm?=
- =?iso-2022-jp?B?eEtJZFJYZ0d6UXZGK09lbk5OdlNCVXA1V0puWkt6dGxwd2JycUI4aktF?=
- =?iso-2022-jp?B?ZTJqbDVLc0l3NlRlN1ljZENNMkg5ck9iSXA1R3l0bmJiRnpEemtsbUs1?=
- =?iso-2022-jp?B?MkdMVFBuQjNxSU85QXhZVnBvTUFsZFcwWlpML1Vwd3lMNWJsLzd2eXhJ?=
- =?iso-2022-jp?B?RVMwUi84c1UyZW40SVJBMHRDWWR3RzZNWGc3bVBjYUxudWtCVTloWXd4?=
- =?iso-2022-jp?B?WFRlV0k0TmgvdzhjdEFXaHVVbE93T3paaVFCM2hGOUJ3QUhzZWFsR2Ja?=
- =?iso-2022-jp?B?NlFYb08zZkdad1dOaHp0TlRERUFYWFdPbDhNeGdvUG9IT2QxOXh1RUJL?=
- =?iso-2022-jp?B?M2gyWjFhVnpIQnhnSFBRVXBYNWtLVmpEYTZPa01ZZDFUM0FEdVpUN1Nq?=
- =?iso-2022-jp?B?SGl3cHBWemFrRWNZVGp5UldhVUJvOENnY2dtUUN5MzFRenFRQWxPMDRL?=
- =?iso-2022-jp?B?QmNCMmV3VW53WmZvV2F3MDVodzdVL2xlQUlVVXNEbFNhR3Y3T2RSb2Mw?=
- =?iso-2022-jp?B?Z0FXbHEvdUZSQWRDd3Q2dlU2MS9vYS9XTW5WaHJ0RUFFQVJFWStBN2dB?=
- =?iso-2022-jp?B?QXQ2WjdqSG5RVHg5cVVxSVVsVHdIWS9NaC9ZRGxUbGo3U2JWWUFuc0w1?=
- =?iso-2022-jp?B?VTBYNHNnOWZyY1crU0tSRWM5eGVIUno4Q05WWTJ6WnpkcXpBd3JMenlt?=
- =?iso-2022-jp?B?Z01xMFJDNk1kelh5ejg4MnYwYis4dzlWNmFmTUVqSUFwR2ZMNWF5RXVj?=
- =?iso-2022-jp?B?TUxZcUJaV1luaDQwajY4bmVDaFlpc2ZoL3g1cXZTQVRaRy83UFZMV2E3?=
- =?iso-2022-jp?B?QWU4TlROb3dreVdobWdWYkxoR3A0QlMvS0NRSktpUjYybnVOTmRnMnFT?=
- =?iso-2022-jp?B?RWpiam1ZNGozN2ZTV2JvZmVpL2dmNUdQOXZkSHBjUGc0Wm40aDFvYUZa?=
- =?iso-2022-jp?B?b2lLS0dGVnB2YnJCQnYrSk44ZmJZUjEwMm5lQkE5SzV2UnZmSDBnS0ZM?=
- =?iso-2022-jp?B?bzg5WEgzYXJhRWRydkRhdmx6RXBvcFN1TGNaY0tMWXpJMTd6RmtXRkgz?=
- =?iso-2022-jp?B?R29JYndBbm5LZzdoRG9UejlEOHNCaXVGM3NWTUJ1K0VKY0ZUbmxtbHdw?=
- =?iso-2022-jp?B?bVJPanR5SXpkcklTbE5pWnRlVktKNjlWQVJTZHNxdTdsTk01SndwdUpr?=
- =?iso-2022-jp?B?VlpmcEE9?=
+ =?iso-2022-jp?B?b01Wd2hoNTFGTGRRMTR6YkpyS2FicWJvd3NvUkVsbDFtbnVCRk9SYlox?=
+ =?iso-2022-jp?B?UWJmSEluWFFuQ0Rrbk1qT3ozVnRGZFRYQ3djSDhkbGxablIreTBBamZm?=
+ =?iso-2022-jp?B?WWhoczE5cFQ1VVBCbTgwWFFVRnkwVk1scGY5WGkzVmViS0djSXpqT2Rl?=
+ =?iso-2022-jp?B?YkhNZ29Iak1mdklaY1NuWldsQ3ZhUHZMUmZrWEsxRlN0dHlOWVN0d05j?=
+ =?iso-2022-jp?B?WkFWalVRR29EVGF2YjhDSytOYmNhSk1FZDVYemZ6Rm0veE1TYWNjMUhB?=
+ =?iso-2022-jp?B?NS9kL3BxQXNXWEk5RGkvdjF2Mks1eU9yWVNHd0dyZUdYUUFVUDU0cWdn?=
+ =?iso-2022-jp?B?MXQ5UXdLZHh5cnlkejVWaURsWkVQMEpKMEluMHZ0MkpYcFZqN1A0Qzhv?=
+ =?iso-2022-jp?B?RzRlcDJTdVBleTR3eXUrQThDdDJMcGtHZk9zWitoVzcyUEgrdTFod2lM?=
+ =?iso-2022-jp?B?a2lseDdQTUphbS9haFFHVnpxZ1ZnSUFwU2tOaVRkZmF2SXRLUnprQjBD?=
+ =?iso-2022-jp?B?TjVZWFpGWmNoaS9iUTRoc3Y5VmZFZThqM3JMdmFkMXM0WEtOdHZmeHdK?=
+ =?iso-2022-jp?B?Zld1ZnFsWUdJSzR1cXBiMCtaZnMvK2Rvbm5iR2w4WjQ3emliYWM3Q0Qy?=
+ =?iso-2022-jp?B?ajJCUUs2R0hlb01BdGY1WUZmbkFpVnA4ZVBCRjBsTm1Od3YySFZmNzFm?=
+ =?iso-2022-jp?B?RGl4Z3VnazlMS0xIYVJZbU1iTmpoam5xNXJRTWtpK01FQVFhakx5YnVh?=
+ =?iso-2022-jp?B?NVRuU2Nud1V2Uy9VS3BUUEVxWWw2ZjJpQmFTOXZuQWJwSEo2Vm5kMVNl?=
+ =?iso-2022-jp?B?dWJOM1g3SjZyemY0SEFWLy9SN25aTUpwdzlsN0RjSlQvRFdMcGF0TDNQ?=
+ =?iso-2022-jp?B?czk3UEYyaFpiRHJRWGtXMkV2ZHdZN044dlF1MUJXenpoZVo2bmxER1BI?=
+ =?iso-2022-jp?B?OEdwSy9YVHhXUm4xd2V3em9CeHZWUUhhTm5WTVArelVoZFFuaUJYU0Nn?=
+ =?iso-2022-jp?B?YmV0L05nYTkvTHZ4WkI0aGprdkROaGVPSU0wL01KMTRFRzNnYmNXaWMw?=
+ =?iso-2022-jp?B?R1h5a0RFWCthaDZKc3ByaW5HMHhyOCtXbVpRRzI5M1M0Q2JiUGVlclRy?=
+ =?iso-2022-jp?B?dVVPaGkzdmtPTE9qQUNSNVhTOC85ZDAyK2FuNzRwL1Z6di9Hc3o1NXI0?=
+ =?iso-2022-jp?B?eitEcGs4YWUvRmJxVm5mNFF4MW1kS2piM21Xd1Y0WmpFUzM3c1AyaVR1?=
+ =?iso-2022-jp?B?YUUzM3RTMFVOU0d2Vm5MSWcwZVJ4WGM1SlRxekM4UFhORXl3WWtib29G?=
+ =?iso-2022-jp?B?K0NpYkVDa0lzRXFpUTRxZk0yQVkyOWhnMVhYd2toYWxxeWl4NGhjSlpw?=
+ =?iso-2022-jp?B?c0lEa001a05HVWE0MTRmZDByU0svMXo4OTFpYWowUWNUbmJCT1ZEVjJ0?=
+ =?iso-2022-jp?B?ZXJ5a2pTcHUyRTFYTm1HSytqNUpqQWYxTW5tY2w2d1pPTkdZelBhNkhk?=
+ =?iso-2022-jp?B?SDUwTjJWUGpablk4K1VKYUpqTFoyNnpkL3piOTlheGxrZkNWNlllZjh6?=
+ =?iso-2022-jp?B?QlpqbmNrVmUzRHZWYXkyYjB1TU9ORWY3M1d1RlEvc2VjZFZWdGVsS1Av?=
+ =?iso-2022-jp?B?M2NzT3hTalc2Szk2UVlHdkw1MXpTVGtjbzV5OVY3UGxaTURsMHFTYTcv?=
+ =?iso-2022-jp?B?ZXRqeUlrKzVCZDJENk5yWkdna0diWk5VM1ZoWWtPVmNZSGdMbEt3TVlM?=
+ =?iso-2022-jp?B?akprOW5IMlZzWG5TVG9rZ1NHTGdXVk1Pakk1cnh5NGlUZmx2ZU9TMjNm?=
+ =?iso-2022-jp?B?TEtHOW9GbUFmWGltc2dWZzFxZTRNdHFwKys0RlhCTTBqdFFYaVQrcmZP?=
+ =?iso-2022-jp?B?UlNCNmdtQmN6U0RrNHo4Z002TGFWM3JBaXFNYnNRY0t6czZuaitnNkRS?=
+ =?iso-2022-jp?B?S2s0eUs0enJreUN6bHVaOUJVak9zblZ5VE12Y1FyWmZBeE1Jcm4vUEpC?=
+ =?iso-2022-jp?B?d05RQk0yZ21oUHZkWlRDTUNWY2taWjBFaGg5TUZHdG5aQzl0cTlqUzFJ?=
+ =?iso-2022-jp?B?RXVNeVd5Z1hUMkFvMUZmZXRUbDJaNEpEVm5qblp4REthOWkwbFM4SHIr?=
+ =?iso-2022-jp?B?Uk5CY0xCVlBPejhtWXRaMktUMmcxQkhpampUYTJnUmN0VHVGMU1KYXVE?=
+ =?iso-2022-jp?B?RW5wSTdyYUdMQmlpNCtCZGdvVm50YmFjeHZseVdwRFFiRmNmVXEyNGJB?=
+ =?iso-2022-jp?B?cU1qeEQ5R01sRmtKanBsSXBKcTZZMjlzbHpONVhvM243aXR6QVFJUSsw?=
+ =?iso-2022-jp?B?emdMRW1odi9tNmJaWWpZQ3dDemI0YnpmUFp3TUpDQ3NPZmJCMktzK0Vj?=
+ =?iso-2022-jp?B?M29ncm89?=
 Content-Type: multipart/alternative;
-	boundary="_000_TYCPR01MB9669288BB5107DAC76CE3DF7C4C82TYCPR01MB9669jpnp_"
+	boundary="_000_TYCPR01MB9669E4ECC7E73AF97DEC3447C4C82TYCPR01MB9669jpnp_"
 MIME-Version: 1.0
 X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB9669.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4ce07b4e-e97c-4087-7515-08dc90edb828
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jun 2024 05:56:25.0932
+X-MS-Exchange-CrossTenant-Network-Message-Id: 26734769-cfe6-49eb-db3d-08dc90efaad4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jun 2024 06:10:21.7210
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ZG19tOHbkXB4BxeCaGxs+4Ayf2dZ90N570gKdzoj4ur9IM/12mVXNiVZYYTPFfmcE6dEu67YDM4jzibWBF4T/jYt8CvRgztCVGqfv85IlcsmoVNDuPyIAD/Wv4t+LHdg
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB12420
+X-MS-Exchange-CrossTenant-userprincipalname: pA13vNlB591LckRPH5RoK+N/j6eG8iDWvOVmh/XlmeqgJJS7tmZNHOiiqIibjT3+eSVvGXs2M6GA1UnpdAUywK/g87i23Jf8ivwfpVMxP/LbeNczfnHj2Rb/zfiyrjTU
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB7017
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 20 Jun 2024 05:56:38 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16301
+ <cip-dev@lists.cip-project.org>; Thu, 20 Jun 2024 06:10:28 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16302
 
---_000_TYCPR01MB9669288BB5107DAC76CE3DF7C4C82TYCPR01MB9669jpnp_
+--_000_TYCPR01MB9669E4ECC7E73AF97DEC3447C4C82TYCPR01MB9669jpnp_
 Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
+
+Adding Koshiro Onuki san from Toshiba to the mail chain
+
+From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On Beha=
+lf Of Adithya Balakumar
+Sent: Thursday, June 20, 2024 11:26 AM
+To: cip-dev@lists.cip-project.org
+Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshib=
+a-tsip.com>; kunijadar shivanand(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <Shi=
+vanand.Kunijadar@toshiba-tsip.com>; ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sa=
+thujoda@toshiba-tsip.com>; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B=
+$B#D#M#E=1B(B =1B$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshib=
+a.co.jp>
+Subject: [cip-dev] Regarding support for WFX backend for software updates i=
+n CIP Images
 
 Hi All,
 
@@ -189,11 +208,14 @@ a
 Thanks and Regards,
 Adithya Balakumar
 
---_000_TYCPR01MB9669288BB5107DAC76CE3DF7C4C82TYCPR01MB9669jpnp_
+--_000_TYCPR01MB9669E4ECC7E73AF97DEC3447C4C82TYCPR01MB9669jpnp_
 Content-Type: text/html; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
 
-<html>
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
+osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
+//www.w3.org/TR/REC-html40">
 <head>
 <meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
 jp">
@@ -204,24 +226,34 @@ jp">
 	{font-family:"Cambria Math";
 	panose-1:2 4 5 3 5 4 6 3 2 4;}
 @font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
 	{font-family:Aptos;}
+@font-face
+	{font-family:"MS PGothic";
+	panose-1:2 11 6 0 7 2 5 8 2 4;}
+@font-face
+	{font-family:"\@MS PGothic";}
 /* Style Definitions */
 p.MsoNormal, li.MsoNormal, div.MsoNormal
 	{margin:0in;
 	font-size:11.0pt;
 	font-family:"Aptos",sans-serif;
-	mso-ligatures:standardcontextual;}
+	mso-ligatures:standardcontextual;
+	mso-fareast-language:JA;}
 a:link, span.MsoHyperlink
 	{mso-style-priority:99;
 	color:#467886;
 	text-decoration:underline;}
-span.EmailStyle17
-	{mso-style-type:personal-compose;
+span.EmailStyle19
+	{mso-style-type:personal-reply;
 	font-family:"Aptos",sans-serif;
 	color:windowtext;}
 .MsoChpDefault
 	{mso-style-type:export-only;
-	font-size:11.0pt;}
+	font-size:10.0pt;
+	mso-ligatures:none;}
 @page WordSection1
 	{size:8.5in 11.0in;
 	margin:1.0in 1.0in 1.0in 1.0in;}
@@ -237,55 +269,113 @@ div.WordSection1
 <body lang=3D"EN-US" link=3D"#467886" vlink=3D"#96607D" style=3D"word-wrap:=
 break-word">
 <div class=3D"WordSection1">
-<p class=3D"MsoNormal">Hi All,<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">This is regarding support for WFX backend for softwa=
-re updates in CIP Images. I am writing to understand the opinions of the co=
-mmunity on how to go about with the integration of WFX support.
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US">Adding Ko=
+shiro Onuki san from Toshiba to the mail chain<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0in =
+0in 0in">
+<p class=3D"MsoNormal" style=3D"margin-left:.5in"><b><span style=3D"font-fa=
+mily:&quot;Calibri&quot;,sans-serif;mso-ligatures:none">From:</span></b><sp=
+an style=3D"font-family:&quot;Calibri&quot;,sans-serif;mso-ligatures:none">=
+ cip-dev@lists.cip-project.org &lt;cip-dev@lists.cip-project.org&gt;
+<b>On Behalf Of </b>Adithya Balakumar<br>
+<b>Sent:</b> Thursday, June 20, 2024 11:26 AM<br>
+<b>To:</b> cip-dev@lists.cip-project.org<br>
+<b>Cc:</b> dinesh kumar(</span><span lang=3D"JA" style=3D"font-family:&quot=
+;MS PGothic&quot;,sans-serif;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><=
+span style=3D"font-family:&quot;Calibri&quot;,sans-serif;mso-ligatures:none=
+"> TMIEC ODG Porting) &lt;dinesh.kumar@toshiba-tsip.com&gt;; kunijadar shiv=
+anand(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,=
+sans-serif;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"font=
+-family:&quot;Calibri&quot;,sans-serif;mso-ligatures:none">
+ TMIEC ODG Porting) &lt;Shivanand.Kunijadar@toshiba-tsip.com&gt;; ashrith s=
+ai(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,san=
+s-serif;mso-ligatures:none">=1B$B#T#S#I#P=1B(B</span><span style=3D"font-fa=
+mily:&quot;Calibri&quot;,sans-serif;mso-ligatures:none">) &lt;Sai.Sathujoda=
+@toshiba-tsip.com&gt;;
+ hayashi kazuhiro(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PG=
+othic&quot;,sans-serif;mso-ligatures:none">=1B$BNS=1B(B</span><span lang=3D=
+"JA" style=3D"font-family:&quot;Calibri&quot;,sans-serif;mso-ligatures:none=
+">
+</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
+erif;mso-ligatures:none">=1B$BOB9(=1B(B</span><span lang=3D"JA" style=3D"fo=
+nt-family:&quot;Calibri&quot;,sans-serif;mso-ligatures:none">
+</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
+erif;mso-ligatures:none">=1B$B#D#M#E=1B(B</span><span style=3D"font-family:=
+&quot;Calibri&quot;,sans-serif;mso-ligatures:none"> =1B$B!{=1B(B</span><spa=
+n lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-li=
+gatures:none">=1B$B#D#I#G=1B(B</span><span style=3D"font-family:&quot;Calib=
+ri&quot;,sans-serif;mso-ligatures:none">=1B$B""=1B(B</span><span lang=3D"JA=
+" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:none=
+">=1B$B#M#P#S=1B(B</span><span style=3D"font-family:&quot;Calibri&quot;,san=
+s-serif;mso-ligatures:none">=1B$B!{=1B(B</span><span lang=3D"JA" style=3D"f=
+ont-family:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:none">=1B$B#M#P#=
+4=1B(B</span><span style=3D"font-family:&quot;Calibri&quot;,sans-serif;mso-=
+ligatures:none">)
+ &lt;kazuhiro3.hayashi@toshiba.co.jp&gt;<br>
+<b>Subject:</b> [cip-dev] Regarding support for WFX backend for software up=
+dates in CIP Images<o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">Hi All,<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">&nbsp;<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">This is regarding support=
+ for WFX backend for software updates in CIP Images. I am writing to unders=
+tand the opinions of the community on how to go about with the integration =
+of WFX support.
 <o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">As I understand there are 2 parts to the WFX integra=
-tion:<o:p></o:p></p>
-<p class=3D"MsoNormal">1. Hosting the WFX server.<o:p></o:p></p>
-<p class=3D"MsoNormal">2. Suricatta configuration in the CIP Images via the=
- swupdate.cfg for communication with WFX server.<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">As from the device side, communication with the WFX =
-server is already supported by SWUpdate through the server_wfx.lua module. =
-See [1].<o:p></o:p></p>
-<p class=3D"MsoNormal">However the necessary suricatta configs in the swupd=
-ate.cfg file are required to be set which is currently missing from image r=
-ecipes.&nbsp;
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">&nbsp;<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">As I understand there are=
+ 2 parts to the WFX integration:<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">1. Hosting the WFX server=
+.<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">2. Suricatta configuratio=
+n in the CIP Images via the swupdate.cfg for communication with WFX server.=
 <o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Based on CIP Core work group meetings, I understand =
-that there is already a plan to host a WFX server for CIP related purposes.=
- While that is still in the works, would it be alright to update recipes to=
- include the necessary configs needed
- for WFX support or wait for the server side to be completed?<o:p></o:p></p=
->
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Until the planned WFX server setup is completed, how=
- about including details of setting up a WFX server and other details for m=
-inimal verification in a README file?<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Would like to understand the opinions of the maintai=
-ner and the rest of the community on such an approach and also other ideas =
-on how to go about with this integration?<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">[1]: <a href=3D"https://github.com/sbabic/swupdate/b=
-lob/master/suricatta/server_wfx.lua">
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">&nbsp;<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">As from the device side, =
+communication with the WFX server is already supported by SWUpdate through =
+the server_wfx.lua module. See [1].<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">However the necessary sur=
+icatta configs in the swupdate.cfg file are required to be set which is cur=
+rently missing from image recipes.&nbsp;
+<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">&nbsp;<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">Based on CIP Core work gr=
+oup meetings, I understand that there is already a plan to host a WFX serve=
+r for CIP related purposes. While that is still in the works, would it be a=
+lright to update recipes to include
+ the necessary configs needed for WFX support or wait for the server side t=
+o be completed?<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">&nbsp;<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">Until the planned WFX ser=
+ver setup is completed, how about including details of setting up a WFX ser=
+ver and other details for minimal verification in a README file?<o:p></o:p>=
+</p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">&nbsp;<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">Would like to understand =
+the opinions of the maintainer and the rest of the community on such an app=
+roach and also other ideas on how to go about with this integration?<o:p></=
+o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">&nbsp;<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">&nbsp;<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">[1]: <a href=3D"https://g=
+ithub.com/sbabic/swupdate/blob/master/suricatta/server_wfx.lua">
 https://github.com/sbabic/swupdate/blob/master/suricatta/server_wfx.lua</a>=
 <o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Thanks and Regards,<o:p></o:p></p>
-<p class=3D"MsoNormal">Adithya Balakumar<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">&nbsp;<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">&nbsp;<o:p></o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">Thanks and Regards,<o:p><=
+/o:p></p>
+<p class=3D"MsoNormal" style=3D"margin-left:.5in">Adithya Balakumar<o:p></o=
+:p></p>
 </div>
 </body>
 </html>
 
---_000_TYCPR01MB9669288BB5107DAC76CE3DF7C4C82TYCPR01MB9669jpnp_--
+--_000_TYCPR01MB9669E4ECC7E73AF97DEC3447C4C82TYCPR01MB9669jpnp_--
 
 
