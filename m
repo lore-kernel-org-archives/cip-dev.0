@@ -2,47 +2,48 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E62C2BD05
-	for <webhook@archiver.kernel.org>; Mon, 24 Jun 2024 06:13:19 +0000 (UTC)
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.62])
- by mx.groups.io with SMTP id smtpd.web10.134303.1719209589466734507
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B59C2D0D1
+	for <webhook@archiver.kernel.org>; Mon, 24 Jun 2024 16:28:23 +0000 (UTC)
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.40])
+ by mx.groups.io with SMTP id smtpd.web10.145957.1719246501032311709
  for <cip-dev@lists.cip-project.org>;
- Sun, 23 Jun 2024 23:13:10 -0700
+ Mon, 24 Jun 2024 09:28:21 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=FhushSIa;
- spf=pass (domain: siemens.com, ip: 40.107.21.62, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=r66fJoV0;
+ spf=pass (domain: siemens.com, ip: 40.107.21.40, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=og0dzU5wfVpcQ52amCAFRBGq8x/mk30bLMP9WkLLHBbbPzM06D5YaAOFW1SWrU9Cj9OwRHfYAQ7xMfiis9A72N8UTZhbiy40ktuxipXLjWMJZst6VwG17+pmQSf4OCo7K6qGncPtCnZcVG0176DmIaFJActrB+zKOGtVAA/FrEV3GHR1dQJ2U//8RjZySVQmFXmh/0Gyng9w65mA2AbQDMcOlthL1LFvbSvRHQyCEaThcF4OR+qped9Z3t685e6riIlbazbwtKCDF5d2swFI+gU8KqBADVDXz/nbDTAEFt2P1tKRsBMccxSSkd/Y5bdG8690WglRUUZHC5hR0IKD+A==
+ b=U4y8KyZ5QMebIz+l/hSQNJZVIY2U9F0ka4jclMLGf9rgkaQRAffJ3HxkUgAJtd6ywqLDciHA75CQiofRGk1ZAzw7nVqJCJljEPulu11FgR3AOFf3KYLZwoF0DE2PpmYAKz7oQ3f4TTDvXqBrSX5Y/aMpvIUW8ej/Y9Q9m7xhK49JrOKYpY+o42pTIG0wEblINBa0G4SLPzrP+iVESDsXCNUiUf3K++BCMyXtXnRDZimgjLQ0BIbEAF7f8y+rIQ3A0En35vxbe0ss36nKCTGVZAWQrKd70peBf9CO/6zhNGit4gmpT4eeR4CEvinMDyD5Har1qD/V4GfGO2KY3T7POw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=b3BGHA1tLHM1Id++E0uJg39wnYQsOU/M3WW7i4Mul04=;
- b=lpWq+zG38MXItgF8HoGmOi6kwQX40WxQz6aJma9BZw19T45QrFvWSG/zBKTwFgdGE+DX7Q6N5WU9yXq8GcrBpGOYIetRyJ9MTQQNSm7pOeO5uBQB+4KgwuHNccqC9+XYppnjXX7Ms8qMgY3CkTz6YThxdXhcYLMfruT7y2drTgBqz6+DVinLRVgBO3ObNhBF+Oam2bgFvuWqfT5ctkkIqkLjAo+XtKVNsOIs1WP/neRgF+jdyki18KDZNdkuhMaoPzlKKAOmbZIPmADd53jLLHewTISXq0NXQjMYOLnqZJXaI5m1SMWneTt1t5Gn9X0c8X5i0NOHwKvJ57HdBAelww==
+ bh=pl7uwPoTya0Sd6sgcaT53cagFqIBqx1lvhC6U2DO+RY=;
+ b=XCHX2KRbkcKniJ8v+aM5iMpU903Mx76jbpWfKB136TIgLaI0SFl8KFevcXNSqeNVgZdpASjbkYIGrwQA6JHR+pEdJneIutcV54mFq8bCovETxRWf0D8yDkkt9xS7ZnN+rhvSTWR+l/xPp0qFkiUjBXSpmJHEsKqvcJRIC9Ml4WtbJjQjhVxVo9qftVZ2WzxNmgRgG2KV82OpMMHbFQsn3AFjPT6bBAnGwFmpwNRskmz28L5l3ZP/dZCr0cEdiKH/vxmJIs5fjJEbOTqeqF9IMlFLki0gwRORbFXa8OWtzCMyViFqP1wvuNq8zOd2D6LiSPa670wTQcOm2ESXKYVZNg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=b3BGHA1tLHM1Id++E0uJg39wnYQsOU/M3WW7i4Mul04=;
- b=FhushSIaIF97aV+sJfpovec/maPTXZT2jjLtqZ0VhMHvCj23cOOqT/jZAXWeXOZmUQ1Xy5kEaY2chmPob+0bSLLY1Ox6u97tyV/eHCnyRbwgeBCf7RC1mdLPRAWIFjm9EWdy3RlaFna0d7YyAZk0BXGgZAEuhV2+kRcc+gL1ME0C7xQNv+xTnRWLsWcdK99WdtHYngSxWcGSoLFImA4CVVRKQhnvyEYV1irZyUvzd35IZ0y0dcn1U5mSwBLonOTbfoRvRZQN+q9A3h1Ds8owXIOGcOPq73hhYr/W0dafYfOuAvRUznf9RY6wwF+XNAYnj+N/QJZh0KME6luBi8BxYQ==
+ bh=pl7uwPoTya0Sd6sgcaT53cagFqIBqx1lvhC6U2DO+RY=;
+ b=r66fJoV0VzNmze19FQDa1UdgpHeiDY62W6MlUSr6BovTwr9Bw370xwzOCgRfZDACswpm0Mheo4QueW+zuIewzjlf8KqsFxd1hc2ciyGYUBrL+tcc5TlJOIDaMbWDQwQaAKw/fHRrJDdYUa8UizPk9WdBl0/e8bjcdgdyQyrVkAg0+vlgKSqpDkee9SPDjf+6+2mDhv87CgWbdV4lTjeXFyWxdXHSxhtW7C3AM88aaDx057pQ1qcz504rP3h7zRn1zqhENKm9i35oJHkeAiGJfT6P9MNybcVfrbNAgR7mmjjE98SvmSCeiPoeDdLoXvBKSCcp1IMXSItJzr6rvIew5w==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by VE1PR10MB3968.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:16e::12) with
+ by DU0PR10MB7263.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:448::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.28; Mon, 24 Jun
- 2024 06:13:06 +0000
+ 2024 16:28:17 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408%7]) with mapi id 15.20.7698.025; Mon, 24 Jun 2024
- 06:13:06 +0000
-Message-ID: <80e94cb8-e6d5-4dde-822d-227617bf7997@siemens.com>
-Date: Mon, 24 Jun 2024 08:12:59 +0200
+ 16:28:17 +0000
+Message-ID: <dfdb05a7-2dbc-4e01-abca-0f0727af1190@siemens.com>
+Date: Mon, 24 Jun 2024 18:28:13 +0200
 User-Agent: Mozilla Thunderbird
 From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: [ANNOUNCE] isar-cip-core v1.4
 To: cip-dev <cip-dev@lists.cip-project.org>
-Subject: [isar-cip-core][PATCH] linux-cip: Update cip-kernel-config revision
+X-Mozilla-News-Host: news://news://news://news://nntp.lore.kernel.org:119
 Content-Language: en-US
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
@@ -89,128 +90,281 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0109.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:bb::13) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR3P281CA0195.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a4::7) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|VE1PR10MB3968:EE_
-X-MS-Office365-Filtering-Correlation-Id: 27372c78-f498-4ea1-7a60-08dc9414b672
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DU0PR10MB7263:EE_
+X-MS-Office365-Filtering-Correlation-Id: b22e8fc5-9f3c-4475-fa22-08dc946aa737
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|1800799021|376011;
+X-Microsoft-Antispam: BCL:0;ARA:13230037|376011|1800799021|366013;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?UUFIMGV2azdMWEFzMFBZOC8rVXZURkxDVnNNWEV2RGgyUkJLUFhUMG12dXlQ?=
- =?utf-8?B?Skw5T3J4VTQzWlEzdDNTWUxqUzJvYnRCN01DQ1lwZEdBOEVKbDJ5TG1JU25j?=
- =?utf-8?B?NFJzdWc0WjNhUmczVDVBK2k0VElsVjZYRXZDZGgwV2MzZWQvd0R5Z2xLbjN5?=
- =?utf-8?B?cS9CME52UU00US9GbTVsc1Q1SHNka1lUZ0dIMEJjRWJrZ2xrVVpzaGM0L0s5?=
- =?utf-8?B?cDFUV3ZlOEcxUFBod1FpY1ZMa3RmTkg1a1JZMTFncXM0Mkc0ZzZiUFRWcWdr?=
- =?utf-8?B?bGxFek9za25zR0duVUs3c1RuRDVsZHJDZ0tIWmRScnFOcWNoMy8xMFVEK3k4?=
- =?utf-8?B?Z2ZXbE9IZ09BNDdlZWpXR2FTdmV4di9ZZlhNSmJwUWpHQ3RuNUVrejVyK21p?=
- =?utf-8?B?SDN6T0xOQ2hsVnMvWlpKS3RtT3NWSVRraVBqZktmUFN4TmxqbTA1OVEzcmVh?=
- =?utf-8?B?MzVidEpKdSsvTGppNU8vcDh5eFNZMTJrbTk2dnV6aVAvd1QvNmRHYlRPTmxw?=
- =?utf-8?B?bzVBWmdvWkIrVkpuL1VJY3drOXRQQWRQOHJOK2lhb1JWdmljL1JBZjlWNHQ2?=
- =?utf-8?B?WVA1OWNHYVlwYTl2K0RDc2E3bU9CR0FDSU91Q1AvVEFYZ2FMM1kvaDBDY01W?=
- =?utf-8?B?WDN3YjZNT0RlNXYyT2hJQkU3Umc5ZHFoRkdxT3NRd0s3Y29wQlhvSTBZRnFt?=
- =?utf-8?B?TkpFbVdEOHc4V1k5anZOYXQ3NU0yYkJlYlREemYvK2hTLzg4YlAvRjhNZVdU?=
- =?utf-8?B?UlFpVDF0OERjNHZsaVh0OUczalhhamVOSmhBdCtsaWtlVjJ1NWdTN3RyVDBq?=
- =?utf-8?B?RVo2TThmNUpWT1RaKzV2U3g4enMzblNwU1pROFBOdnhrTWdSQU0zVWNsUGpv?=
- =?utf-8?B?ZUJHTjNzaFRTV3cwc3NXelZDeWRKdlVTakZOUFgrNzJ5Rnhta3E4c1B6WjIw?=
- =?utf-8?B?T0NhVVZVV2NMK3NTVzNvaFQvaVI5K0dvQmQwMjh2Q2FuVVhnTUpRc1Y4eUYr?=
- =?utf-8?B?Ly9VOW91NitIOEhQWVZ0WnNIcWtxK21vZWcyMGVSNUJjb2lDY2kwMGFIZjRH?=
- =?utf-8?B?NHN3VHZ6VDhqQXpQQys3U0hZVk42T1pYMGhJNzU1cTJJSk85bnNHOXhGZ3pr?=
- =?utf-8?B?Qm93ZllHa0NJUCsweGZaSkNRNHRRUjE0SkpCSHB3Z1dUYTRqVENHTi83alAx?=
- =?utf-8?B?RjdKV3dFb0hkVElJdk9qUlVaK2RmWFJxb2tqYlpDZDFObEo1NmJ6N1hiZ3d5?=
- =?utf-8?B?b2JhMWdmOXBIcHdIbFZTb0RzMTErLzByelA1N3FvbWxQUVVTczZnalQ1RDBt?=
- =?utf-8?B?S3g5NlM2RXNpZ09sbjYvMWFMeG1DU1R6bjByb0U3K04vck4xSDdLbTc4enEz?=
- =?utf-8?B?UWswTER5SmdzNFRZdXhDYnRQMFlDdUg3clZlcU01bjhST2UwdVRtL3JuVzgy?=
- =?utf-8?B?Mi9Dak9xSTllSi94U2lpaEFkOC9TQ2xkUzZadmozWVVNK2tDYTFNZnd0bjN3?=
- =?utf-8?B?c1pxUHpGWHhTcGdoVUxWVG81R0xtRnhtejBjT3NLOThvMnorNDMwaTlacnVK?=
- =?utf-8?B?YlVLdHZaYnBFeExuNVRRSHF5N1NEc3U5WmdneVRxbkV3VmlBZnlCOGlYY01C?=
- =?utf-8?B?VGJsOURkUW5iWkRhTjIzVWNqM05EMEsxLy84ZmVwRFBMbVJBRHAvSVByQ1Vi?=
- =?utf-8?B?TU9TREpEbCsvOHlUMG11bnpYTml4Qis4SlA2bTZteFJMRE1NdmQvb3JWVUxV?=
- =?utf-8?Q?0JQwAqgqIDtB1AzH/aBg2ZEfa07pjcwe1ib9S5S?=
+	=?utf-8?B?bmdGaU5QNndwT1NsVmVuSFozamE0R3pIZnhTV240MzNyZ0xyWWdjZUZzMitw?=
+ =?utf-8?B?d29SRmk1aEIzeUQ4QlJET29HaEw5aS9IZVpQU3ZKN1hDellZV1B2ckI4M2xo?=
+ =?utf-8?B?TlAxc20yWm5MTkZXaGFva0JjczFDSGpOWklUT2lBSTd2YmpHNUUzc2NiVEg3?=
+ =?utf-8?B?T25ZVjhCNEd6cWlWNlA2MjBjWVRMQ0RNRzlLaGJnQ3dCbjV6amFUVHFpdVgy?=
+ =?utf-8?B?V0ZEdlF3dWN1cU1EQjlYVmtZZHIyZXhKSlpGZTZhc0xrb0s5eFY3bUQxa0hQ?=
+ =?utf-8?B?NjJPcWNvT0xmeC9EWGJoZDN4QVg5Um9iT1NTWExMdmEwN1JMWEpkdS9wcFBN?=
+ =?utf-8?B?ZG1GRTl5RGR6NEMzblZVZGN2MGRyV2JRQXNySFdkOVUyMHJ6ZHdyOXRuUkNT?=
+ =?utf-8?B?cXRuUllrL2pEdUZ2alVuU2dtYjUrSkdrZTZPeUl2czBzdVl6OVJYekJ3NzVj?=
+ =?utf-8?B?OVEzYm56UVJ0bGRmSzhnSVNjTGlMVHYzSU9sVXRZMzhYWklHQ0pMUnRiZFNN?=
+ =?utf-8?B?cHp6WmEyUXc1SU94MkhJVEhRWW12cldHSTYvdGJ6eTV0dTljRGEydDdqMWFm?=
+ =?utf-8?B?RWRONStob3JOeUJaRzRzMVE0NVBnRHJCc3hJckdCR1dGRS9yKzBSaVhpQkZw?=
+ =?utf-8?B?aHZkQ0ZreTZ2aHQyQmptTVVUK2VJbXcxMm9XSDZiZGVlVWxFV01pZ29IQnQ4?=
+ =?utf-8?B?Z05pc01nNGRJWGx4d2dEcWhBZ0pPNHMybVZKblRDdW9kaDFEempoZDBkWW5N?=
+ =?utf-8?B?Wklma3pQRUZyd1l5SHdSc2tOSmlDbXBTYTlORW9aWmkxMlBBanFrSUlOTDJN?=
+ =?utf-8?B?VjFzUnFrekNweDA2WTFGb05mM0JnaEczcmFjU0pBdGx3bTRHNU5NdnZuZk8x?=
+ =?utf-8?B?UnFyNFB3R0V4UkphMDcySzR6RHRHQkZBejYvdUE0bnpnL3kzK1M2YzB0dFdC?=
+ =?utf-8?B?R3FhQXMvSk01UVRaejhnRE1UVXpwbkl1MkMrQ3A4alhtbVFDSkQvOE4yaU9X?=
+ =?utf-8?B?aVNUK0g3L1BEcG5JVVhJM1JxUGYzYXlVc09SMlRFK1lZUEpIeW91TGtaSXln?=
+ =?utf-8?B?eHM1L21RZ1k4ZzFQbHVOK0YzQU9qRE5FalJXaTBpNElUSG1hVXoxcHQrUEpr?=
+ =?utf-8?B?V0w2MTluTEdLVU5JZHBKNUVyQTExOHFoQ2NEOUZsWUpMaHVQZUNGNjl0UUxa?=
+ =?utf-8?B?NHRZT1ZmM3dhanZxUU9jQnFyUjRtSFZWc0orSmZQQ0phZ09tbnk2Y3ZPNUVw?=
+ =?utf-8?B?aVYyekIxY1ZsOUxwalFJeXVLa0hQaVdMMHFBYzRrYUVFK3J6bVZPNmtjK0l2?=
+ =?utf-8?B?TUZDOHIvaEpFR1c4U3VRbUZoOElFZ1FZMTlidG1Ob3lHQzVKRUtKbC80cEFp?=
+ =?utf-8?B?OVNIUk5kdExHY0FzcWp2cngxNlQ5Q25FSWtrVzVvOG9RaU9TeEM5blZuS1pE?=
+ =?utf-8?B?TmFzempOSitodVBUNmJlOGZMWG9uNEJhdGp0Z1lmSjNucHpyQUk5T0gxZEM1?=
+ =?utf-8?B?SE4rNzV2TURHcXpCaUpES3owTmhRVmk0YWh5MFlnUjhHb0FBclJlUXJkbGUr?=
+ =?utf-8?B?Zi8zaVVrcS9JNnhvYWNGenNRdUlqcFNhYWVVSUprSGc2TmRGOExVWnVVdDZE?=
+ =?utf-8?B?WHdJcmJMdjNaaTBSVndQaElFeXFTTTlNN3FWOEs3NmM4dzBIcEtGYk5RZWJG?=
+ =?utf-8?B?MS9GUk83cUJ0eWt1dHJ6a1phSEJlMFp3d2JWMmwvdTdFWFcvSTBraWNaczVJ?=
+ =?utf-8?Q?hhGCMZnVOZl0MA2B8R8m0iLOS1UHID8lBDAKh59?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230037)(366013)(1800799021)(376011);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230037)(376011)(1800799021)(366013);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?ckNCY3JXVXltRjN6VkVXMFlqalN2dW1RK3V2RlZhSEMrVWxMQVErZCtlaGZV?=
- =?utf-8?B?WVZTeHBnckhpNDNML1RMQm9yY3dNUUJXZ1ZvQVJ4bVVlZWpaWkY4b05XWW80?=
- =?utf-8?B?R1FpOGxwSmJnZmQzcSt3UTJFV0lUSW1oRThRU3hWVzNRNmt3bXRYR2xCN3Fx?=
- =?utf-8?B?ckhFMlJvc1M0QmYyMStJWXRyZjVPLzBWNU1OZEYrL2JUcnpVdXF2ZG1ma013?=
- =?utf-8?B?VXZRN1NhMmZ2c2wwVEpWcEFSb3VUK1JYcDZaWjJvWWtoL2kreGsxOERGbUlm?=
- =?utf-8?B?dTZLSEhHUS8zUlpSZFFMRnp1bENCL04wVUcveGRld1ZtTFd4ZmlBaFc4dlQ5?=
- =?utf-8?B?eEhtaFF1T3E4UVI3NGRjVk5uT2lOUFZQMlZsOWRqQXoxckZDMmovRElkbHhs?=
- =?utf-8?B?Wk1oRG5LZmJPWXZmb01rUE5PSys5NVpIK3JmeXkwWFh3c2RySGllTlkrcmZ5?=
- =?utf-8?B?ODBQZ2xHYzVROHdnTUErR0g4RExLcmQraXlsMWxYZVA0VjNuc21sbXBYVGUx?=
- =?utf-8?B?OGF0eHR1WmxaVUxkK1doNzlOaUNJYzhXblA2Vk9SM1U3NklCQnB4TXlLb2t0?=
- =?utf-8?B?d3JFeGNJOUxkckxQTHoyZmYxNTVLNjdyaEFYRUZwTUc3TzF1TkVmRVNmaUFK?=
- =?utf-8?B?amt4bXg0NlRSUU5BZENrMGlTTGVwbTg4U2hDbEFyWENCOEdrNEwrVTMrOHZI?=
- =?utf-8?B?L2hNVEo4ejhrczE4RjJadXNNcmxUOW82ekFwa3RGWHlXOE9lYmljTFRhNkEw?=
- =?utf-8?B?U2ZzNVdBeWRJb3A0WnNMYW1rbGl3cnExOWhjY2NmZjAvMTMvWDNjaFREcnQ5?=
- =?utf-8?B?Q1BHWENNZkp4VEd1aWRHbHVmU29aZW9uRlJWR2NLODhJUERvVUNvVzUvdUND?=
- =?utf-8?B?S24wYUZlekZrT2xHVDdyS05idFBCTnZJSm1wNkZiWllDZlNsNllwUC9HbVIr?=
- =?utf-8?B?Z3g0ejNZK3k4V1AzWTlEazRPNlFKOURMVllOZFBpV3hCMVBQZ1JwbGZMV1Ba?=
- =?utf-8?B?dXhDd2R4Q0V6VVJNTUZzYkNRa1lnNGlNUHAvcitXMVVZdE5SeStSMDBXRVJy?=
- =?utf-8?B?YWhTNWYyYnpnQlU0dHFaZ2duMmxtbzJoZlpSR2FqUjg1bC9JSUEvbXNaVXRi?=
- =?utf-8?B?Y1VMelpIbmFkWVBEai9SaVFXMDBkT29CZHVYbUk5bStBMnMvcWVidmp0cTNp?=
- =?utf-8?B?QW4ycTRpZHR6RjQ4M25Cb0d2MnBIcGlUdnh4UU81NU0xR3h5S0VCbFV2M05z?=
- =?utf-8?B?Vy9pRDVGd1hPR04zUDBaWDlkTldUQytYQlhNSDRjdFUyMjFrNWs2RTNTRkhy?=
- =?utf-8?B?OWJVaFR5blQvUHNiT0Y2R3FzV2E3RFg1dWhCbVAwNzc5ekg0MVRCNWU3aFRr?=
- =?utf-8?B?bXQ2TCtNdmV0M041cThSWVJWVWNXRDNldEh1LzlXVWwvL0dQeDJQZlZmcDRq?=
- =?utf-8?B?SGxSQlJucW0zQW9VMTlIU2ZIVUxDdUg0NjZNb003UmZhanE3bjNNMkhWWW1R?=
- =?utf-8?B?MVZtaU0xL3A5dUZXSEVKaFU4aUpDbGdzS1N1UDJNaUJhZGs1L0dwN1lVZFVD?=
- =?utf-8?B?azhvUlAyWFR4cHUrN21SOGdDbU9Ha2VoZ0lJb0dFNFVibGdrajFDV0tnYmRO?=
- =?utf-8?B?ZTRsTFpHck1VV0dpeVoyL1o4YTk4cnk1MjVNQTljZzJXSllzL2R6bVZTY2ha?=
- =?utf-8?B?OFRTNjBHcmFkemNibDJNQVVkOFhxaC9OdUJycWw0ZEhvR2ZqdGcvMkVXK2J4?=
- =?utf-8?B?dEhOUGtuNk0xcDlPU1FueHBjZkh0ZXFMcnZoNHJGMGtSQnRXa1QwdW1UeGs3?=
- =?utf-8?B?VkxVWVQ4dndVYVVUOXR2VVU4K24vUGNUZHNnVU1yczZvbUhIRkordWxVdHJh?=
- =?utf-8?B?eTFla2NjN0hHZ3hHQ0Jvbnl4cG80RjBMUGxsb3QxNnJ3SnlidHc1cTZNNmpn?=
- =?utf-8?B?QURJYnYrOWh5a0NuOE95MnRySVIyWUpmelJ1bk5ESTk4Vmp4S0pGTUtIVTlO?=
- =?utf-8?B?aTRsUmFDRXc1Snp0TzB2bTllRS82Tm5IcXhTdU5JU3NNVDNBTHFRelpCN1p2?=
- =?utf-8?B?cXI5dDVjSDVHNVRwcXM1UGVSTlBIcEZoZzdTOGNscjYyRDQ4alNRQTBFRkR4?=
- =?utf-8?Q?3rEQYppKcvOa8hUw9575B8oxe?=
+	=?utf-8?B?dEduR01acDMzSFlnL1JYUDY5RUlWTDVsUmFkRXVCc012VXNlYVNMTkpabEQr?=
+ =?utf-8?B?dnhkS0o2WVpCME1Dc3ZyNlhKWFplUDRJOHNUY3F4Qm9ZRU82dmtDK3d1YzZD?=
+ =?utf-8?B?WVpHRjkyTmg4Nkk2UkVTb0ttQlpWVkpEdjdXcFpUR2dmVDRyT3hnbXExbloy?=
+ =?utf-8?B?eUVQaE1CdCtYM2ZZN3BteXJ2c2RDTlpDYmVKelBvOHNXZkhDdi80QWgyREdO?=
+ =?utf-8?B?NWhFN3paY242enNXMWRhaE5yazV1akR0V3d3RUhweW0wQUVJZ3lBQWdUaElS?=
+ =?utf-8?B?d2MyMFJGSFpEU01SZjc0ZGNXMG04OE9kZ3N4T2gzMlFqcnovREU1ZUVOdDg4?=
+ =?utf-8?B?U280SVJlS2N2SVA1V1FIenRPUC9mLzZQT3NURURNVG5oYWVMZHdMTXJSWTdX?=
+ =?utf-8?B?MnBjVjNtc0ZyMzZIZWphQXpQbS9TUzZJczJFdXg0RmZrQUVCeHFYb285N2xH?=
+ =?utf-8?B?Zlkxc1V5UXlFbUdSZ05FTU9oM0NLeW1JVWlmQkc3OWw5c3VnbWpvVW5BcmVv?=
+ =?utf-8?B?WnJmckl3QWxSY1BpNUhBcjJLRWtzU0lNRWE5Vkhqek0vbURzRFExNjJZcVI1?=
+ =?utf-8?B?Z3dScWFPVjUvR2R2UzRXcERXa1UvVzhmMXVwL3ZnWUpxZlBveVZodjFndEw0?=
+ =?utf-8?B?eW1idmMyS2t0TytPNlBCc0RzQUFZR2VWaVlpZmpUb2xsRE4wY0lyRGoxRENG?=
+ =?utf-8?B?TVhtZ0VJekV4SXNKOWRUNFJJRG9PUjBCMlVrVm1mWkg5TmxRS3Z3L0Y3TlAv?=
+ =?utf-8?B?R2QzQ3pUdVdUTGd6VVB5Y2VxSVJNa0NuTGdWeHRpdzY0c2M3djF4TXJrS2Rk?=
+ =?utf-8?B?RWFLR3Z0L1JxTHo1dEowSHoxSGVFYzg0K3RkQVJDNHdqaHFIQlRVaG5tTWtw?=
+ =?utf-8?B?WEcvYlFJZHFUM2UzOUhNTWRNdmMzV0xHRVRnc1IydDRWNm5BNSttL0gwZ0hl?=
+ =?utf-8?B?cjNhbDltdTRaYXQ1dm50bEc3N01LN3VnU3pZNmgvbEtobEFHVyszVEFTMXp0?=
+ =?utf-8?B?U0tVNjB3UU8zWnA4dkNhZ2VmZG9ob1cwb2ZmVXBKUHJFaUpnNmJTckx1NUNW?=
+ =?utf-8?B?K1BidkpKMW9NSFU3TGh5VmNvblJERDdicmpXNEJtZEVDazBEMTdDWUF2Q3A1?=
+ =?utf-8?B?VW1FaUJWNVBWSjFCRmhLQWtxV1czOFl5Q2ZLalZXNEM3MDgyZUdqK0krQndE?=
+ =?utf-8?B?NGZuTWlrOHhaV0tsUUxyWXJ1RHFCOEU5bWdCNG1wUEZYdlJHR3haT3dZWmx4?=
+ =?utf-8?B?eVo4THRyY1N0MXp6KzhIczgxbDZlUE5mYnJRSUJuTjhORVJ4OTM0dGNSUURS?=
+ =?utf-8?B?VjVBQWtrVTV6M2NPTkhTZHh0VEpIdVRtYzgyOGtzNFgxRGdEV2h3QjZ1eUFR?=
+ =?utf-8?B?b1dZNW5Za2hRQnVzRkF2b3NScDRSQ0dadEJaWXcwTDdoTUJqcTlRclQ0SnZr?=
+ =?utf-8?B?Mnl1YkNtbnU2cmU2QmcxSy9TWTA0U0M3Z1l3VnJjN1g4TFhITXkza2d2Slly?=
+ =?utf-8?B?UDVBejh5angvZVFpdXhjNTA4UzFla3BzMVBmZUlxbTZldHU2ZWtzUDVQSVpM?=
+ =?utf-8?B?T1JLYXVhd3B0NTY4K3c5YVpqd1UwRm5wbWJtajhTT1pySUtpb1VDUDNGMlhn?=
+ =?utf-8?B?V1N1dHBTeUhVVGt3MitWOHZBYmRkMG95WFVkazY3WmoxeHhHYVlickQva3p5?=
+ =?utf-8?B?Y21CSkR5SEJ4TnRFaWlNaGJSOXdIQjZjUkJzQlFaZzlzZTFOZTg2RHVKR2RD?=
+ =?utf-8?B?MzQybXlTeTd1QnIrNWlWSEdIOHhSTXVJa1FORHkzWkZtU0MrR2Q3M01jb091?=
+ =?utf-8?B?TStqMk1WOHJ4TU1OTmFJTmRESFpsNkppaWVnTGlYUXlQZS9La2JNR3NiV3ll?=
+ =?utf-8?B?d2J4bzhDVDBsSEhSR1ZFVVZtVHJ2Y1JPRUtTU1g3SWxLTC9PQ0RWenRzbkJj?=
+ =?utf-8?B?QlkyMW5WditUc1haU2s0SFVYUVNqVDRiMXdabzc3dnV4eXB6d002eUs3WjBR?=
+ =?utf-8?B?d2cremR3Rjdpbk9QOUNPT1VnL0dycHVqQm5NNzVOQ3hMdmh6NVdHS0cxbEx1?=
+ =?utf-8?B?M3g5dXplUUNSczJycVArbnhLa09CRjFJaTRwWHZmTTF3OGsrWHRJWjJncmRq?=
+ =?utf-8?B?bUluR1NwNEtKczdlbGdLbUt3Z1oxdnZwSWU3ejU2ZmpxUzZQNEZzVXJKS0VU?=
+ =?utf-8?B?YWc9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 27372c78-f498-4ea1-7a60-08dc9414b672
+X-MS-Exchange-CrossTenant-Network-Message-Id: b22e8fc5-9f3c-4475-fa22-08dc946aa737
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 06:13:06.2127
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 16:28:17.4603
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gMBqHmMqg60Jp4cuSJMftXdRwZNJvLFfXB88yVWR3MI0mtrD/X/FDqW6+8ieoz1HWt9/zueyDvacEkAF7aHVVw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR10MB3968
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3Vsy3E9id2ol48UQ8j3uH9sg+lqVSrlJhY/XJ66ruRkwOQ3jSEPyWoy1cY0li0C7Mk8Zq26deIxaev7fudyZKQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB7263
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 24 Jun 2024 06:13:19 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16319
+ <cip-dev@lists.cip-project.org>; Mon, 24 Jun 2024 16:28:23 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16320
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+A new release of isar-cip-core is available.
 
-This only makes the WDAT watchdog built-in to support its usage already
-during cip-core initramfs execution which does not include watchdog
-driver modules.
+133 changeset, 10 contributors, 12 files changed, 2679 insertions(+), 
+820 deletions(-), these are the stats of release 1.4. This is clearly 
+larger than the last one because we are exceptionally late with v1.4. 
+Originally planned was spring, now it's summer, but there were good 
+reasons to wait for the dust of isar and our own one to settle.
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- recipes-kernel/linux/cip-kernel-config.inc | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This release brings pre-integration of delta updates, see 
+doc/README.swupdate.md for more details. There are many more changes to 
+SWUpdate support, e.g. empty /var on first boot or a fix to work with 
+the immutable dpkg database in read-only mode. Support for rootfs 
+encryption, and you can switch more easily between the different 
+encryption helpers, systemd and clevis. If you want secure boot with 
+TPM-based disk encyrption, this is now officially available for a 
+generic x86 target image. Last but not least: Our CI pipeline now 
+performs an automated test of SWUpdate, including certain update errors. 
+This shall help to keep the integration quality up. Find the full list 
+of changes below - I'm almost sure I missed some important highlight.
 
-diff --git a/recipes-kernel/linux/cip-kernel-config.inc b/recipes-kernel/linux/cip-kernel-config.inc
-index 1656728a..9c1ab946 100644
---- a/recipes-kernel/linux/cip-kernel-config.inc
-+++ b/recipes-kernel/linux/cip-kernel-config.inc
-@@ -14,6 +14,6 @@ SRC_URI:append = " ${@ \
-     if d.getVar('USE_CIP_KERNEL_CONFIG') == '1' else '' \
-     }"
- 
--SRCREV_cip-kernel-config ?= "93b9ba271c14556a24b3f8392d10a8647b496f1f"
-+SRCREV_cip-kernel-config ?= "f6b7018cb6845f34f8a03c126bf4f823ce10d637"
- 
- do_fetch[vardeps] += "SRCREV_cip-kernel-config"
--- 
-2.43.0
+Thanks a lot to all the contributors - and sorry for the late release!
+
+Jan
+
+
+Adithya Balakumar (8):
+      swupdate-handler-roundrobin: Increase revision for Delta Handler support
+      swupdate.bbclass: Fix setting reproducible timestamps for files in .swu file
+      Add Delta update support with rdiff_image and delta handler
+      swupdate.bbclass: Generate swu for delta updates
+      doc/README.swupdate.md: Update steps to test Delta software Update
+      Kconfig: Add delta update option
+      .gitlab-ci.yml: Build for delta update when build_swu_v2 is enabled
+      doc/README.swupdate.md: Minor updates to verification steps and additional information on usage of zchunk handler
+
+Cedric Hombourger (1):
+      recipes-devtools: use DPKG_ARCH=all for arch-independent packages
+
+Felix Moessbauer (8):
+      refactor: use change-dir to split rootfs parts
+      update ISAR to latest next for dh-compat improvements
+      swupdate images: initially deploy empty var part
+      copy and symlink dpkg db to ro-rootfs
+      swupdate: use to_boolean to compare boolean variables
+      create audit log folder with tmpfiles.d
+      fix(sid): copy immutable dpkg db
+      use ISAR snapshot infrastructure for sid
+
+Jan Kiszka (45):
+      swupdate: Use prebuilt version on sid
+      ci: Reorder rules to ensure they are all evaluated
+      linux-cip: Update to 4.19.306-cip107
+      linux-cip: Update to 4.19.306-cip107-rt35 and 6.1.80-cip16[-rt9]
+      Switch sid-based riscv64 back to a snapshot
+      Update Isar to release 0.10
+      linux-cip: Update cip-kernel-config
+      Update to kas 4.3.1
+      linux-cip: Update to 4.4.302-cip85[-rt48] and 5.10.212-cip45
+      linux-cip: Update to 4.19.310-cip108, 5.10.214-cip46, 6.1.83-cip18[-rt10]
+      swupdate-handler-roundrobin: Silence fetcher warnings with different SWUPDATE_BOOTLOADER
+      Switch to snapshot.d.o for ovmf from buster-backports
+      linux-cip: Update to 4.4.302-cip86, 5.10.214-cip46-rt19, 6.1.86-cip19
+      dosfstools: Use BPN instead of PN
+      linux-cip: Update to 4.19.312-cip109, 6.1.90-cip20[-rt11]
+      linux-cip: Update to 4.4.302-cip87 and 5.10.216-cip47
+      Update ISAR to latest version
+      Enable APT snapshot for reproducible builds
+      ci: Append reproducible.yml unconditionally
+      ci: Require qemu-riscv64 sid target to succeed
+      Refactor tar.gz image option
+      kconfig: Express dependencies on SWUpdate
+      linux-cip: Update to 4.4.302-cip87-rt49
+      deploy-ovmf: Avoid blank in network varflag
+      shtab: Align recipe name with source name
+      ci: Drop obsolete setting from reproducible-check
+      cip-core-images: Make ISAR_RELEASE_CMD available to them all
+      linux-cip: Switch x86 targets to new cip_merged_defconfig
+      Generalize SIMATIC IPC227E configuration to a common x86 UEFI target
+      linux-cip: Update to 4.19.312-cip109-rt36 and 6.1.91-cip21
+      linux-cip: Derive PREFERRED_VERSION for native and kbuildtarget from base target
+      Update isar revision
+      linux-cip: Bump cip-kernel-config revision
+      linux-cip: Ensure rebuild after changing SRCREV_cip-kernel-config
+      linux-cip: Update to 4.19.315-cip110, 5.10.218-cip49[-rt20] and 6.1.92-cip22[-rt12]
+      Kconfig: Fix and update security extension option
+      ci: Only test stage when build stage ran as well
+      Bump Isar revision
+      linux-cip: Update to 4.4.302-cip88
+      scripts: Address shellcheck warnings in submit_lava.sh
+      Add missing wic file for x86-uefi secureboot case
+      ci: Use small runner for CVE check
+      Kconfig: Make EFI Boot Guard watchdog configurable
+      linux-cip: Update to 6.1.94-cip23
+      linux-cip: Update cip-kernel-config revision
+
+Quirin Gylstorff (56):
+      Update certificates for sid
+      swupdate delete unused patch
+      add SWUpdate 2022.12
+      build swupdate 2022.12 for qemu-amd64-secure-boot-bullseye
+      swupdate.bbclass: add scripts section to the swu file
+      swupdate-config: move swupdate.cfg from customizations to own recipe
+      swupdate: set SWU_HW_COMPAT
+      swupdate.bbclass: weak default assignment for SWU_HW_COMPAT
+      doc/README.swupdate.md: Add documentation for hardware compatibility
+      swupdate: check output of sign-swu
+      sign-swu-cms: check if key and cert are valid
+      doc: Add section about SWUpdate signing to README.swupdate.md
+      fix do not add files to each image recipe
+      format: classes/efibootguard fix spacing
+      format: classes/swupdate fix parenthesis
+      swupdate-handler-roundrobin: Add link for handler search path
+      swupdate: Add recipe for 2023.12.1
+      conf/distro/cip-core-*: prefer swupdate 2023.12 for all distro except buster
+      remove SWUpdate recipe 2023.05
+      layer.conf: Move SOURCE_EPOCH to kas-cip.yml
+      initramfs-crypt-hook: Allow switching between clevis and systemd
+      initramfs-crypt-hook: Align systemd encryption and clevis encryption
+      initramfs-crypt-hook: move the mounting of encrypted disks in a seperate function
+      initramfs-crypt-hook: Check if the TPM device fulfills the given requirements
+      initramfs-crypt-hook: add flag to make encryption optional
+      initramfs-crypt-hook: add e2fsck to avoid resize error
+      initramfs-crypt-hook: split encryption and mounting
+      initramfs-crypt-hook: Add check if root is part of the mountpoints
+      initramfs-crypt-hook: split hook in multiple files
+      initramfs-crypt-hook: Consolidate clevis and systemd scripts
+      initramfs-crypt-hook: Increase version
+      README.tpm2.encryption: Add section to switch from clevis to systemd
+      fix: swupdate_2021.11 with efibootguard
+      fix: disk formatting
+      wic/*: Add part-labels to system partition
+      initramfs: allow empty mountpoint for crypt hooks
+      initramfs-crypt: Only resize partition if ext* formatted
+      fix: use luks2 to identify encrypted partition
+      Rename encrypt-partitions to encrypt-data
+      Kconfig: Add option to encrypt the rootfs
+      crypt-hook: Extend partition selection
+      README: Add rootfs encryption
+      README.swupdate: Add section about partition selection
+      fix: Remove spurious '-'
+      initramfs-crypt-hook: cleanup logging
+      fix: Add missing mountpoint to crypthook
+      encrypt_partition.clevis: select tpm2_device for encryptition
+      Enable secureboot and tpm2 encryption for generic x86
+      Add fail2ban-config
+      Remove tpm2-abrmd
+      wic/ebg*sysparts.inc: increase the size of the boot partitions
+      wic/plugins/efibootguard*: Take --size and --fixed-size into account
+      encrypt partition: Add support for swap partition
+      swupdate: fix reboot progress with wfx
+      encryption: assume broken_system_clock for e2fsck before resize
+      doc: Add section howto generate the a efi auth file from snakeoil certs
+
+Sai Sathujoda (2):
+      deploy-cip-core.sh: Deploy .swu only if "swu" is passed from .gitlab-ci.yml
+      .gitlab-ci.yml: Add condition check in .build_base to build v2 image
+
+Shivanand Kunijadar (1):
+      doc/README.secureboot.md: Fix incorrect secure boot user generated keys path
+
+Srinuvasan A (1):
+      recipes-initramfs/initramfs-crypt-hook: remove unwanted directory
+
+Tobias Schaffner (1):
+      swupdate_2021.11: Backport raw handler unmount fix
+
+sai ashrith sathujoda (10):
+      tests/templates: Include functionality based templates
+      submit_lava.sh: Add script to submit the jobs prepared from templates
+      .gitlab-ci.yml: Add test targets specific for CIP core functionalities
+      doc/README.lava-testing.md: Add README to explain CIP Core testing
+      tests: Modify the replacable strings and increase timeouts in the templates
+      submit_lava.sh: Modify the script to handle only one job at a time
+      .gitlab-ci.yml: Break current test jobs to run one LAVA job per Gitlab job
+      templates/swupdate_template.yml: Fail the job immediately after unexpected outcome
+      submit_lava.sh: Rectify the ustate value in case of a rollback scenario
+      .gitlab-ci.yml: Add relevant qemu target in 'needs' for test targets
 
