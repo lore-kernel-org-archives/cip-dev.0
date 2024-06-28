@@ -1,67 +1,74 @@
-Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
+Return-Path: <sai.sathujoda@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E95C2BD09
-	for <webhook@archiver.kernel.org>; Fri, 28 Jun 2024 02:01:52 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.131])
- by mx.groups.io with SMTP id smtpd.web10.8068.1719540109459735251
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5419C2BBCA
+	for <webhook@archiver.kernel.org>; Fri, 28 Jun 2024 04:38:33 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.135])
+ by mx.groups.io with SMTP id smtpd.web11.10123.1719549510258787608
  for <cip-dev@lists.cip-project.org>;
- Thu, 27 Jun 2024 19:01:50 -0700
+ Thu, 27 Jun 2024 21:38:30 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=nobuhiro1.iwamatsu@toshiba.co.jp header.s=key2.smx header.b=qWYXTWbC;
- spf=pass (domain: toshiba.co.jp, ip: 210.130.202.131, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
-DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=toshiba.co.jp;h=From:To:Cc
-	:Subject:Date:Message-Id;i=nobuhiro1.iwamatsu@toshiba.co.jp;s=key2.smx;t=
-	1719540107;x=1720749707;bh=iq0oowB7aztd+nfAVZDl2ql4U5XDWy/60k0YhQ8IxGI=;b=qWY
-	XTWbCd0k+0FFeh3EU8aFFI2qdFRNqcPreiJ7WDDoB0CmuzTeBazvLIn3iAhA+tA4npKZhn8J7NZ7d
-	rxk35VhwpfxfpZjQpw1zLXpl94rILpXaKr9v4oqKpnARbu/01g80bRFEnqthYEx/QRKhbb+FaIwlC
-	c4W9Kca9CqleruYGWzmFWZMZa2w+GVyrPEpSkYfpIpSssK2FfYblIjU6J2ovPgSy/p7nY0D8MPAH2
-	4nDv+L5HQAjoJTELcc+yjmuqeIFQtIMZA5inrNmp+OumXl3WI2sWcPQQnGI69vExiR6A046SQsw2X
-	F0PuNhO2vQ6vJrrhHTBthcX6IRcwufg==;
-Received: by mo-csw.securemx.jp (mx-mo-csw1120) id 45S21llA3722941; Fri, 28 Jun 2024 11:01:47 +0900
-X-Iguazu-Qid: 2rWgPVHIQi9x3L2sXD
-X-Iguazu-QSIG: v=2; s=0; t=1719540106; q=2rWgPVHIQi9x3L2sXD; m=wU+0bzoC8yfPJmMNGaMq5Km/Q73/hllM/ZAG6eQIYIw=
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.135, mailfrom: sai.sathujoda@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1801) id 45S4cSSH3305162; Fri, 28 Jun 2024 13:38:28 +0900
+X-Iguazu-Qid: 2yAaTpjblSkZuuPTfi
+X-Iguazu-QSIG: v=2; s=0; t=1719549507; q=2yAaTpjblSkZuuPTfi; m=et51F00xoK+BEFmJ3WEJwCA8Et8BA5Jzge5qq8SC6cE=
 Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1121) id 45S21jxv1556738
+	by relay.securemx.jp (mx-mr1800) id 45S4cQcJ3491877
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 11:01:46 +0900
-From: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: cip-dev@lists.cip-project.org,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: [isar-cip-core][PATCH] recipes-core: ltp: Update LTP to 20240524
-Date: Fri, 28 Jun 2024 11:01:43 +0900
+	Fri, 28 Jun 2024 13:38:27 +0900
+From: Sai.Sathujoda@toshiba-tsip.com
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Cc: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>,
+        dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
+Subject: [isar-cip-core] submit_lava.sh: Rectify condition to push results to relevant projects in SQUAD.
+Date: Fri, 28 Jun 2024 10:08:27 +0530
 X-TSB-HOP2: ON
-Message-Id: <1719540103-23049-1-git-send-email-nobuhiro1.iwamatsu@toshiba.co.jp>
-X-Mailer: git-send-email 2.7.4
+Message-Id: <20240628043827.3608797-1-Sai.Sathujoda@toshiba-tsip.com>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 28 Jun 2024 04:38:25.0459 (UTC) FILETIME=[03B5C030:01DAC915]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 28 Jun 2024 02:01:52 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16339
+ <cip-dev@lists.cip-project.org>; Fri, 28 Jun 2024 04:38:33 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16340
 
-Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+From: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
+
+This commit makes kernel-panic, initramfs-crash rollback test results available
+under swupdate project in CIP SQUAD.
+
+Signed-off-by: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
 ---
- recipes-core/ltp/{ltp-full_20230516.bb => ltp-full_20240524.bb} | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
- rename recipes-core/ltp/{ltp-full_20230516.bb => ltp-full_20240524.bb} (69%)
+ scripts/submit_lava.sh | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/recipes-core/ltp/ltp-full_20230516.bb b/recipes-core/ltp/ltp-full_20240524.bb
-similarity index 69%
-rename from recipes-core/ltp/ltp-full_20230516.bb
-rename to recipes-core/ltp/ltp-full_20240524.bb
-index 943340f..1ec0974 100644
---- a/recipes-core/ltp/ltp-full_20230516.bb
-+++ b/recipes-core/ltp/ltp-full_20240524.bb
-@@ -11,4 +11,4 @@
+diff --git a/scripts/submit_lava.sh b/scripts/submit_lava.sh
+index ee8dd37..4b1b671 100755
+--- a/scripts/submit_lava.sh
++++ b/scripts/submit_lava.sh
+@@ -103,12 +103,15 @@ submit_squad_watch_job(){
+ 		return 0
+ 	fi
  
- require recipes-core/ltp/ltp.inc
+-	if [ "$TEST" = "swupdate" ]; then
++	if [ "$TEST" = "swupdate" ] || [ "$TEST" = "kernel-panic" ] || [ "$TEST" = "initramfs-crash" ]; then
+ 		squad_project="swupdate-testing"
+ 	elif [ "$TEST" = "secure-boot" ]; then
+ 		squad_project="secure-boot-testing"
+-	else
++	elif [ "$TEST" = "IEC" ]; then
+ 		squad_project="iec-layer-testing"
++	else
++		echo "Unable to host results in available CIP Core SQUAD projects"
++		return 1
+ 	fi
  
--SRC_URI[sha256sum] = "d78f4bdd5bdc9e91357631954affba7e66190a2509c369b59f55efd190268956"
-+SRC_URI[sha256sum] = "2b7c07bb281b7ec49981eeb06c4b66f147b103977254632678d384034f6e9663"
+ 	local DEVICE=$2
 -- 
-2.43.0
+2.30.2
 
 
 
