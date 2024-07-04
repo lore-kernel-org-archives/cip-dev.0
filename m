@@ -1,128 +1,107 @@
-Return-Path: <ch@denx.de>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A43CC38150
-	for <webhook@archiver.kernel.org>; Thu,  4 Jul 2024 13:29:37 +0000 (UTC)
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
- by mx.groups.io with SMTP id smtpd.web10.10227.1720099770456333087
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B989C30653
+	for <webhook@archiver.kernel.org>; Thu,  4 Jul 2024 19:25:02 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web10.2818.1720121100725435377
  for <cip-dev@lists.cip-project.org>;
- Thu, 04 Jul 2024 06:29:31 -0700
+ Thu, 04 Jul 2024 12:25:01 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@denx.de header.s=phobos-20191101 header.b=NTSxVdvu;
- spf=pass (domain: denx.de, ip: 85.214.62.61, mailfrom: ch@denx.de)
-Received: from [10.0.200.95] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: ch@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 62DB78867A;
-	Thu,  4 Jul 2024 15:29:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1720099768;
-	bh=DhihECRICpkdV7HwMNCneBacT5NSKkatXKgSJtYNhdc=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=NTSxVdvuMLrkZMban5qvREU3p1cDfS7quA6jO+fpPRDK9DXOIypkOz/Q2m5NOQx2T
-	 jvj+7Szsf+ktRs22ld7fMVrKlFwMiZdaGfz+G2tisQsK7nps66G8UvH+PxBK1RaGs3
-	 tSwHW6gY2t6K4a7r1np287um7BEk0pWpo4hjK6tc7rCiUSovpXaK40ZjSRccoDS4aK
-	 +B5LwVrbTJZYhG3GFt6wU1Wf3700EvEyR0CW77MaN8hhOp9uNvd4Q/gO2jQwttU3vU
-	 OAwzJuZke9r1T1qUwqD2k5zBlVQZA2dNpCLCR+AhqGNbpg1icXwHkNk6tBLWg+wOSZ
-	 KQw5gEovdMSXA==
-Message-ID: <204be939-3a9e-4210-9194-a70ac83640da@denx.de>
-Date: Thu, 4 Jul 2024 15:29:27 +0200
+ dkim=none (message not signed); spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 1BAC31C0098; Thu,  4 Jul 2024 21:24:57 +0200 (CEST)
+Date: Thu, 4 Jul 2024 21:24:56 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Ulrich Hecht <uli@fpond.eu>
+Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"pavel@denx.de" <pavel@denx.de>,
+	"nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: Re: Request for reviews for 4.4-st54, 4.4-cip89
+Message-ID: <Zob3CMMN5xTB21pM@duo.ucw.cz>
+References: <729272238.766733.1719933056170@webmail.strato.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] swupdate.bbclass: make swu_files entries unique
-To: "MOESSBAUER, Felix" <felix.moessbauer@siemens.com>,
- "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-References: <20240703114242.1896508-1-ch@denx.de>
- <7a7ed1e59a5682144aaaad819fbbd1264f3ece34.camel@siemens.com>
-Content-Language: en-US
-From: Claudius Heine <ch@denx.de>
-Organization: Denx Software Engineering
-In-Reply-To: <7a7ed1e59a5682144aaaad819fbbd1264f3ece34.camel@siemens.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FNmZO+IBvNUdI+l/"
+Content-Disposition: inline
+In-Reply-To: <729272238.766733.1719933056170@webmail.strato.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 04 Jul 2024 13:29:37 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16374
+ <cip-dev@lists.cip-project.org>; Thu, 04 Jul 2024 19:25:02 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16375
 
-Hi Felix,
 
-On 2024-07-04 2:15 pm, MOESSBAUER, Felix wrote:
-> On Wed, 2024-07-03 at 13:42 +0200, Claudius Heine wrote:
->> In case a sw-description contains multiple entries of the same file,
->> swu_files will contains multiples of the same file and thus later
->> operations fail.
->=20
-> Hi, I'm wondering how that can happen, but OK.
+--FNmZO+IBvNUdI+l/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-How it happens that there are multiple mentions of the same file in a=20
-sw-description, or how it happens that it fails?
+Hi!
 
-Multiple instances of the same file happens when the swupdate software=20
-collections are used to implement A/B update:=20
-https://sbabic.github.io/swupdate/sw-description.html#software-collection=
-s
+> Here's the manual backports to review for the next 4.4 release which, as =
+always, can be found in https://git.kernel.org/pub/scm/linux/kernel/git/cip=
+/linux-cip.git/log/?h=3Dlinux-4.4.y-st-rc
+>
 
-There the same image can be flashed to different devices.
+Thanks for series. This one is a bit crazy, and wrong. Crazy because
+it moves code for staging, and wrong because... it turns -ERANGE into
+success. It should use 6.1 version of param_set_uint_minmax AFAICT.
 
-The build fails on the `ln -s` just a couple of lines later in that=20
-file, since `--force` isn't used, the symlink will already exist on the=20
-second mention of that file.
++int param_set_uint_minmax(const char *val, const struct kernel_param *kp,
++               unsigned int min, unsigned int max)
++{
++       unsigned int num;
++       int ret;
++
++       if (!val)
++               return -EINVAL;
++       ret =3D kstrtouint(val, 0, &num);
++       if (ret =3D=3D -EINVAL || num < min || num > max)
++               return -EINVAL;
++       *((unsigned int *)kp->arg) =3D num;
++       return 0;
++}
++EXPORT_SYMBOL_GPL(param_set_uint_minmax);
 
->=20
->>
->> This change makes the files in the swu_files variable unique, so they
->> are only operated on once.
->>
->> Signed-off-by: Claudius Heine <ch@denx.de>
->> ---
->>  =C2=A0classes/swupdate.bbclass | 2 +-
->>  =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/classes/swupdate.bbclass b/classes/swupdate.bbclass
->> index e91238d..5e54853 100644
->> --- a/classes/swupdate.bbclass
->> +++ b/classes/swupdate.bbclass
->> @@ -205,7 +205,7 @@ IMAGE_CMD:swu() {
->>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 swu_file_base=3D$(ba=
-sename $swu_file)
->>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 # Create symlinks fo=
-r files used in the update image
->>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 swu_files=3D$(awk '$=
-1=3D=3D"filename"{gsub(/[",;]/, "", $3); print
->> $3}' \
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "$=
-{WORKDIR}/$swu_file_base/${SWU_DESCRIPTION_FILE}")
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "$=
-{WORKDIR}/$swu_file_base/${SWU_DESCRIPTION_FILE}" |
->> sort | uniq)
->=20
-> By that, we also change the order of the files in the swu. Are we sure
-> that there are no unwanted side effects?
 
-Hmm... this is a interesting point, it might be the case for streaming=20
-update files, I will check that.
+ ** m | 459de98d7 2a14c9 o  | params: lift param_set_uint_minmax to
+    common code
 
-regards,
-Claudius
+The reset is okay AFAICT.=20
 
->=20
-> Felix
->=20
->>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 export swu_files
->>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for file in $swu_fil=
-es; do
->>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 if [ -e "${WORKDIR}/$file" ]; then
->=20
+a | 62a95de44 30a92c o+ | openvswitch: Set the skbuff pkt_type for proper p=
+mtud support.
+a | 85b6bcf9d 52a2f0 o+ | net: usb: smsc95xx: fix changing LED_SEL bit valu=
+e updated from EEPROM
+a | 0049a623d b3dc6e o+ | ipvlan: Dont Use skb->sk in ipvlan_process_v{4,6}=
+_outbound
+a | 822ae5a8e f5d4e0 o+ | nilfs2: fix use-after-free of timer for log write=
+r thread
+a | f6141cbc2 1cd4bc o+ | vxlan: Fix regression when dropping packets due t=
+o invalid src addresses
+a | 1ea3de272 1ed447 o  | media: v4l2-core: hold videodev_lock until dev re=
+g, finishes
+a | 3c9ee8294 dfe6d1 o+ | KVM: arm64: Allow AArch32 PSTATE.M to be restored=
+ as System mode
+a | 72c5d8e41 25460d o+ | net/9p: fix uninit-value in p9_client_rpc()
 
+Best regards,
+							Pavel
 --=20
 DENX Software Engineering GmbH,        Managing Director: Erika Unter
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-54 Fax: (+49)-8142-66989-80 Email: ch@denx.de
+
+--FNmZO+IBvNUdI+l/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZob3CAAKCRAw5/Bqldv6
+8vF5AKCCuhyBG8NGiB2Hp9VIZVqJbC44vQCfZOPhoyly0gZ6mbU69VW5A+j01zQ=
+=Lz75
+-----END PGP SIGNATURE-----
+
+--FNmZO+IBvNUdI+l/--
 
