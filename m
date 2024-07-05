@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A62D5C41513
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A55C4C30658
 	for <webhook@archiver.kernel.org>; Fri,  5 Jul 2024 12:52:57 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web10.16121.1720183966307535087
  for <cip-dev@lists.cip-project.org>;
- Fri, 05 Jul 2024 05:52:48 -0700
+ Fri, 05 Jul 2024 05:52:50 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.09,184,1716217200"; 
-   d="scan'208";a="214373461"
+   d="scan'208";a="214373464"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 05 Jul 2024 21:52:47 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 05 Jul 2024 21:52:49 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.112])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 453B344B8E9A;
-	Fri,  5 Jul 2024 21:52:45 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6C50A44B8E96;
+	Fri,  5 Jul 2024 21:52:48 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 07/10] riscv: dts: renesas: r9a07g043f: Add IRQC node to RZ/Five SoC DTSI
-Date: Fri,  5 Jul 2024 13:52:27 +0100
-Message-Id: <20240705125230.125392-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 08/10] arm64: dts: renesas: r9a07g043: Move interrupt-parent property to common DTSI
+Date: Fri,  5 Jul 2024 13:52:28 +0100
+Message-Id: <20240705125230.125392-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240705125230.125392-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20240705125230.125392-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -34,107 +34,51 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 05 Jul 2024 12:52:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16402
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16403
 
-commit 808852fa3a5e11c8d2bf0aef3695aaf930bd4fa9 upstream.
+commit 1731ab2f8b62f0be2073de581ffef6db1196ad4f upstream.
 
-Add the IRQC node to RZ/Five (R9A07G043F) SoC DTSI.
+Now that we have added support for IRQC to both RZ/Five and RZ/G2UL SoCs
+we can move the interrupt-parent for pinctrl node back to the common
+shared r9a07g043.dtsi file.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20240403203503.634465-4-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/r/20240403203503.634465-5-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/riscv/boot/dts/renesas/r9a07g043f.dtsi | 75 +++++++++++++++++++++
- 1 file changed, 75 insertions(+)
+ arch/arm64/boot/dts/renesas/r9a07g043.dtsi  | 1 +
+ arch/arm64/boot/dts/renesas/r9a07g043u.dtsi | 4 ----
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-index e68a91c9fe775..611f6908aede2 100644
---- a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-+++ b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-@@ -50,6 +50,81 @@ &soc {
- 	dma-noncoherent;
- 	interrupt-parent = <&plic>;
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
+index 766c54b91acce..6212ee550f330 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
+@@ -598,6 +598,7 @@ pinctrl: pinctrl@11030000 {
+ 			gpio-ranges = <&pinctrl 0 0 152>;
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
++			interrupt-parent = <&irqc>;
+ 			clocks = <&cpg CPG_MOD R9A07G043_GPIO_HCLK>;
+ 			power-domains = <&cpg>;
+ 			resets = <&cpg R9A07G043_GPIO_RSTN>,
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi b/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi
+index 68b802a90c1c0..011d4c88f4ed9 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g043u.dtsi
+@@ -48,10 +48,6 @@ timer {
+ 	};
+ };
  
-+	irqc: interrupt-controller@110a0000 {
-+		compatible = "renesas,r9a07g043f-irqc";
-+		reg = <0 0x110a0000 0 0x20000>;
-+		#interrupt-cells = <2>;
-+		#address-cells = <0>;
-+		interrupt-controller;
-+		interrupts = <32 IRQ_TYPE_LEVEL_HIGH>,
-+			     <33 IRQ_TYPE_LEVEL_HIGH>,
-+			     <34 IRQ_TYPE_LEVEL_HIGH>,
-+			     <35 IRQ_TYPE_LEVEL_HIGH>,
-+			     <36 IRQ_TYPE_LEVEL_HIGH>,
-+			     <37 IRQ_TYPE_LEVEL_HIGH>,
-+			     <38 IRQ_TYPE_LEVEL_HIGH>,
-+			     <39 IRQ_TYPE_LEVEL_HIGH>,
-+			     <40 IRQ_TYPE_LEVEL_HIGH>,
-+			     <476 IRQ_TYPE_LEVEL_HIGH>,
-+			     <477 IRQ_TYPE_LEVEL_HIGH>,
-+			     <478 IRQ_TYPE_LEVEL_HIGH>,
-+			     <479 IRQ_TYPE_LEVEL_HIGH>,
-+			     <480 IRQ_TYPE_LEVEL_HIGH>,
-+			     <481 IRQ_TYPE_LEVEL_HIGH>,
-+			     <482 IRQ_TYPE_LEVEL_HIGH>,
-+			     <483 IRQ_TYPE_LEVEL_HIGH>,
-+			     <484 IRQ_TYPE_LEVEL_HIGH>,
-+			     <485 IRQ_TYPE_LEVEL_HIGH>,
-+			     <486 IRQ_TYPE_LEVEL_HIGH>,
-+			     <487 IRQ_TYPE_LEVEL_HIGH>,
-+			     <488 IRQ_TYPE_LEVEL_HIGH>,
-+			     <489 IRQ_TYPE_LEVEL_HIGH>,
-+			     <490 IRQ_TYPE_LEVEL_HIGH>,
-+			     <491 IRQ_TYPE_LEVEL_HIGH>,
-+			     <492 IRQ_TYPE_LEVEL_HIGH>,
-+			     <493 IRQ_TYPE_LEVEL_HIGH>,
-+			     <494 IRQ_TYPE_LEVEL_HIGH>,
-+			     <495 IRQ_TYPE_LEVEL_HIGH>,
-+			     <496 IRQ_TYPE_LEVEL_HIGH>,
-+			     <497 IRQ_TYPE_LEVEL_HIGH>,
-+			     <498 IRQ_TYPE_LEVEL_HIGH>,
-+			     <499 IRQ_TYPE_LEVEL_HIGH>,
-+			     <500 IRQ_TYPE_LEVEL_HIGH>,
-+			     <501 IRQ_TYPE_LEVEL_HIGH>,
-+			     <502 IRQ_TYPE_LEVEL_HIGH>,
-+			     <503 IRQ_TYPE_LEVEL_HIGH>,
-+			     <504 IRQ_TYPE_LEVEL_HIGH>,
-+			     <505 IRQ_TYPE_LEVEL_HIGH>,
-+			     <506 IRQ_TYPE_LEVEL_HIGH>,
-+			     <507 IRQ_TYPE_LEVEL_HIGH>,
-+			     <57 IRQ_TYPE_LEVEL_HIGH>,
-+			     <66 IRQ_TYPE_EDGE_RISING>,
-+			     <67 IRQ_TYPE_EDGE_RISING>,
-+			     <68 IRQ_TYPE_EDGE_RISING>,
-+			     <69 IRQ_TYPE_EDGE_RISING>,
-+			     <70 IRQ_TYPE_EDGE_RISING>,
-+			     <71 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-names = "nmi",
-+				  "irq0", "irq1", "irq2", "irq3",
-+				  "irq4", "irq5", "irq6", "irq7",
-+				  "tint0", "tint1", "tint2", "tint3",
-+				  "tint4", "tint5", "tint6", "tint7",
-+				  "tint8", "tint9", "tint10", "tint11",
-+				  "tint12", "tint13", "tint14", "tint15",
-+				  "tint16", "tint17", "tint18", "tint19",
-+				  "tint20", "tint21", "tint22", "tint23",
-+				  "tint24", "tint25", "tint26", "tint27",
-+				  "tint28", "tint29", "tint30", "tint31",
-+				  "bus-err", "ec7tie1-0", "ec7tie2-0",
-+				  "ec7tiovf-0", "ec7tie1-1", "ec7tie2-1",
-+				  "ec7tiovf-1";
-+		clocks = <&cpg CPG_MOD R9A07G043_IAX45_CLK>,
-+			 <&cpg CPG_MOD R9A07G043_IAX45_PCLK>;
-+		clock-names = "clk", "pclk";
-+		power-domains = <&cpg>;
-+		resets = <&cpg R9A07G043_IAX45_RESETN>;
-+	};
-+
- 	plic: interrupt-controller@12c00000 {
- 		compatible = "renesas,r9a07g043-plic", "andestech,nceplic100";
- 		#interrupt-cells = <2>;
+-&pinctrl {
+-	interrupt-parent = <&irqc>;
+-};
+-
+ &soc {
+ 	interrupt-parent = <&gic>;
+ 
 -- 
 2.34.1
 
