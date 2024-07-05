@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F143CC38150
-	for <webhook@archiver.kernel.org>; Fri,  5 Jul 2024 13:04:37 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.16672.1720184668856225869
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7FBC3DA42
+	for <webhook@archiver.kernel.org>; Fri,  5 Jul 2024 13:04:38 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web10.16345.1720184677011733360
  for <cip-dev@lists.cip-project.org>;
- Fri, 05 Jul 2024 06:04:32 -0700
+ Fri, 05 Jul 2024 06:04:37 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.09,184,1716217200"; 
-   d="scan'208";a="214374053"
+   d="scan'208";a="210416827"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 05 Jul 2024 22:04:32 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 05 Jul 2024 22:04:36 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.112])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id ED44B453293E;
-	Fri,  5 Jul 2024 22:04:30 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0AA114532922;
+	Fri,  5 Jul 2024 22:04:34 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 6/9] riscv: dts: renesas: r9a07g043f: Add IRQC node to RZ/Five SoC DTSI
-Date: Fri,  5 Jul 2024 14:04:14 +0100
-Message-Id: <20240705130417.125593-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 8/9] riscv: dts: renesas: rzfive-smarc-som: Drop deleting interrupt properties from ETH0/1 nodes
+Date: Fri,  5 Jul 2024 14:04:16 +0100
+Message-Id: <20240705130417.125593-9-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240705130417.125593-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20240705130417.125593-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -33,108 +33,47 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 05 Jul 2024 13:04:37 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16412
+ <cip-dev@lists.cip-project.org>; Fri, 05 Jul 2024 13:04:38 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16414
 
-commit 808852fa3a5e11c8d2bf0aef3695aaf930bd4fa9 upstream.
+commit fc5d2b222ab18612bc7bdfef7f672afd2cd7275b upstream.
 
-Add the IRQC node to RZ/Five (R9A07G043F) SoC DTSI.
+Now that we have enabled IRQC support for RZ/Five SoC switch to interrupt
+mode for ethernet0/1 PHYs instead of polling mode.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20240403203503.634465-4-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/r/20240403203503.634465-6-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/riscv/boot/dts/renesas/r9a07g043f.dtsi | 75 +++++++++++++++++++++
- 1 file changed, 75 insertions(+)
+ .../riscv/boot/dts/renesas/rzfive-smarc-som.dtsi | 16 ----------------
+ 1 file changed, 16 deletions(-)
 
-diff --git a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-index e68a91c9fe775..611f6908aede2 100644
---- a/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-+++ b/arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
-@@ -50,6 +50,81 @@ &soc {
- 	dma-noncoherent;
- 	interrupt-parent = <&plic>;
+diff --git a/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi b/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi
+index 433ab5c6a626c..5e808242649ec 100644
+--- a/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi
++++ b/arch/riscv/boot/dts/renesas/rzfive-smarc-som.dtsi
+@@ -6,19 +6,3 @@
+  */
  
-+	irqc: interrupt-controller@110a0000 {
-+		compatible = "renesas,r9a07g043f-irqc";
-+		reg = <0 0x110a0000 0 0x20000>;
-+		#interrupt-cells = <2>;
-+		#address-cells = <0>;
-+		interrupt-controller;
-+		interrupts = <32 IRQ_TYPE_LEVEL_HIGH>,
-+			     <33 IRQ_TYPE_LEVEL_HIGH>,
-+			     <34 IRQ_TYPE_LEVEL_HIGH>,
-+			     <35 IRQ_TYPE_LEVEL_HIGH>,
-+			     <36 IRQ_TYPE_LEVEL_HIGH>,
-+			     <37 IRQ_TYPE_LEVEL_HIGH>,
-+			     <38 IRQ_TYPE_LEVEL_HIGH>,
-+			     <39 IRQ_TYPE_LEVEL_HIGH>,
-+			     <40 IRQ_TYPE_LEVEL_HIGH>,
-+			     <476 IRQ_TYPE_LEVEL_HIGH>,
-+			     <477 IRQ_TYPE_LEVEL_HIGH>,
-+			     <478 IRQ_TYPE_LEVEL_HIGH>,
-+			     <479 IRQ_TYPE_LEVEL_HIGH>,
-+			     <480 IRQ_TYPE_LEVEL_HIGH>,
-+			     <481 IRQ_TYPE_LEVEL_HIGH>,
-+			     <482 IRQ_TYPE_LEVEL_HIGH>,
-+			     <483 IRQ_TYPE_LEVEL_HIGH>,
-+			     <484 IRQ_TYPE_LEVEL_HIGH>,
-+			     <485 IRQ_TYPE_LEVEL_HIGH>,
-+			     <486 IRQ_TYPE_LEVEL_HIGH>,
-+			     <487 IRQ_TYPE_LEVEL_HIGH>,
-+			     <488 IRQ_TYPE_LEVEL_HIGH>,
-+			     <489 IRQ_TYPE_LEVEL_HIGH>,
-+			     <490 IRQ_TYPE_LEVEL_HIGH>,
-+			     <491 IRQ_TYPE_LEVEL_HIGH>,
-+			     <492 IRQ_TYPE_LEVEL_HIGH>,
-+			     <493 IRQ_TYPE_LEVEL_HIGH>,
-+			     <494 IRQ_TYPE_LEVEL_HIGH>,
-+			     <495 IRQ_TYPE_LEVEL_HIGH>,
-+			     <496 IRQ_TYPE_LEVEL_HIGH>,
-+			     <497 IRQ_TYPE_LEVEL_HIGH>,
-+			     <498 IRQ_TYPE_LEVEL_HIGH>,
-+			     <499 IRQ_TYPE_LEVEL_HIGH>,
-+			     <500 IRQ_TYPE_LEVEL_HIGH>,
-+			     <501 IRQ_TYPE_LEVEL_HIGH>,
-+			     <502 IRQ_TYPE_LEVEL_HIGH>,
-+			     <503 IRQ_TYPE_LEVEL_HIGH>,
-+			     <504 IRQ_TYPE_LEVEL_HIGH>,
-+			     <505 IRQ_TYPE_LEVEL_HIGH>,
-+			     <506 IRQ_TYPE_LEVEL_HIGH>,
-+			     <507 IRQ_TYPE_LEVEL_HIGH>,
-+			     <57 IRQ_TYPE_LEVEL_HIGH>,
-+			     <66 IRQ_TYPE_EDGE_RISING>,
-+			     <67 IRQ_TYPE_EDGE_RISING>,
-+			     <68 IRQ_TYPE_EDGE_RISING>,
-+			     <69 IRQ_TYPE_EDGE_RISING>,
-+			     <70 IRQ_TYPE_EDGE_RISING>,
-+			     <71 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-names = "nmi",
-+				  "irq0", "irq1", "irq2", "irq3",
-+				  "irq4", "irq5", "irq6", "irq7",
-+				  "tint0", "tint1", "tint2", "tint3",
-+				  "tint4", "tint5", "tint6", "tint7",
-+				  "tint8", "tint9", "tint10", "tint11",
-+				  "tint12", "tint13", "tint14", "tint15",
-+				  "tint16", "tint17", "tint18", "tint19",
-+				  "tint20", "tint21", "tint22", "tint23",
-+				  "tint24", "tint25", "tint26", "tint27",
-+				  "tint28", "tint29", "tint30", "tint31",
-+				  "bus-err", "ec7tie1-0", "ec7tie2-0",
-+				  "ec7tiovf-0", "ec7tie1-1", "ec7tie2-1",
-+				  "ec7tiovf-1";
-+		clocks = <&cpg CPG_MOD R9A07G043_IAX45_CLK>,
-+			 <&cpg CPG_MOD R9A07G043_IAX45_PCLK>;
-+		clock-names = "clk", "pclk";
-+		power-domains = <&cpg>;
-+		resets = <&cpg R9A07G043_IAX45_RESETN>;
-+	};
-+
- 	plic: interrupt-controller@12c00000 {
- 		compatible = "renesas,r9a07g043-plic", "andestech,nceplic100";
- 		#interrupt-cells = <2>;
+ #include <arm64/renesas/rzg2ul-smarc-som.dtsi>
+-
+-#if (!SW_ET0_EN_N)
+-&eth0 {
+-	phy0: ethernet-phy@7 {
+-		/delete-property/ interrupt-parent;
+-		/delete-property/ interrupts;
+-	};
+-};
+-#endif
+-
+-&eth1 {
+-	phy1: ethernet-phy@7 {
+-		/delete-property/ interrupt-parent;
+-		/delete-property/ interrupts;
+-	};
+-};
 -- 
 2.34.1
 
