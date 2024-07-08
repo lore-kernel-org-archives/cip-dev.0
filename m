@@ -1,257 +1,227 @@
-Return-Path: <christian.storm@siemens.com>
+Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C5A3C3DA42
-	for <webhook@archiver.kernel.org>; Mon,  8 Jul 2024 06:22:46 +0000 (UTC)
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (EUR02-DB5-obe.outbound.protection.outlook.com [40.107.249.76])
- by mx.groups.io with SMTP id smtpd.web10.73921.1720419758772412289
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 459C9C3271E
+	for <webhook@archiver.kernel.org>; Mon,  8 Jul 2024 06:40:16 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.135])
+ by mx.groups.io with SMTP id smtpd.web11.74097.1720420812171905279
  for <cip-dev@lists.cip-project.org>;
- Sun, 07 Jul 2024 23:22:39 -0700
+ Sun, 07 Jul 2024 23:40:12 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=Mfu9djti;
- spf=pass (domain: siemens.com, ip: 40.107.249.76, mailfrom: christian.storm@siemens.com)
+ dkim=pass header.i=nobuhiro1.iwamatsu@toshiba.co.jp header.s=key2.smx header.b=Hyr0hzrG;
+ spf=pass (domain: toshiba.co.jp, ip: 210.130.202.135, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=toshiba.co.jp;h=From:To:CC
+	:Subject:Date:Message-ID:References:In-Reply-To:Content-Type:
+	Content-Transfer-Encoding:MIME-Version;i=nobuhiro1.iwamatsu@toshiba.co.jp;s=
+	key2.smx;t=1720420801;x=1721630401;bh=dVuMlgvJWdT/XtMhZsW5FvVZE/Q6Mtsr5M2lLjF
+	/dzw=;b=Hyr0hzrG+8XGJY8aIlmGMFS3vN9b/25ZX0wq7IrxX0S0vg2Ukby0PtDaqZR0xLRJUfTo6
+	N2P/HeLEXwwyjE6YAk24SPZU3Is9cUYTQ+FFF4Il5L+isupZg7PALkLdFNkl1Rnzc6rk7y1CHVWFH
+	Vw6d6gKh0FURUrOiUoezfTthTK/SwMqG8fjhB6aq8W6jKNrXKu5QM248bOImnw1RuRusseBEGcQ8x
+	8N8pbr4P3kbv3R1Plv0EUHz9OBrDk+vIdEHfuiMMGvRR60vNRxdnQMGA0SomF5a2E6D8+scJXlwsa
+	OdvjGLgDeNv8kAzZhC55gUkq8kyX9LlBXzNy0IwNUg==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1801) id 4686e0h63587722; Mon, 8 Jul 2024 15:40:00 +0900
+X-Iguazu-Qid: 2yAa9B2RMoo0zq3CgT
+X-Iguazu-QSIG: v=2; s=0; t=1720420800; q=2yAa9B2RMoo0zq3CgT; m=SqlbE8j0LeHSb9VELY3J3jE7wTFbJimJdOZvAiluz/I=
+Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
+	by relay.securemx.jp (mx-mr1803) id 4686dxDo089893
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Mon, 8 Jul 2024 15:39:59 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oNThKO/Y4Pi/SMlg5cFjGFJVQdunZYh9u/++SfXnJcn+OHxalktxJEMec7pA721RC2+zZoUDt9xc6K79RkAfJyJmmdys4LXS8i+lTAvAllWVBYwJDqCoeQur4NJhrzFByAWNiyyA8dwKZDN/7WgSS4oTPzKV+MdCXnWD3mGB4Edt9GkfwDm0m5BwMkrGjaSxCKOi5RAwlkU6hu/r4M2/8TAQr6s2c9Da5FC5S5++kbW8pVeVMH/OHg6c8QcrXXVJabrbCNEbpqlxYhB2YvBdo1xU/zjJaZRZBsyPtK5vMlB3Kf7aRR/zgG6d1VpEXUJisZox8Jm2V9BnFzH6jY6l6g==
+ b=KtoqRWV3p5RORbLwZQb2B/vuHlS9Pa5s/VxPUv4XmOW5g5ZS15mgICBBVC+zhBrcDfdts5shrp+Nbey2QbPI12xhUjl26/rzN9VYnSvoN05xQoC/RDNFU1M4wJQfSeG3NywuxQ8G1yQfAoKLjm5j8MhU6jdTQLYLJ3oRv+OweoWmY7H8PJvsH+UqW4yEZyLFDjCPKRH1BUBlX9lLUrCK/ORG8XoSDGiF7eeCAHDKVKGeWYMdtTwXjlbrhSyhRPHi0/w8mgZkSX/p/mOyfKlBi3dY6W3VTIou5ZXbVSGkgGJmeoJCIprDfPfdQhXj8/OnP/CYVlFTM7orku4IXxaL2A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VxcfWC4MR7Tf1LPLpeiz4FISBYq3Zp9fxm5LhWQf7dQ=;
- b=CeE+FO57MZyHT5LdIktQQzGkNfNDB8SpV6WnJ+QhaUuKfWScTy0JnD38y4l3A/4QVpAuZ8zuJKHIejHOLpLxlYqEQdXxs+lcVgpbmyjyDNqtefF1LKmXWIL/Rg/v6nYNqT3iMvfkG/ARwLmCSDUad53AODaVKMC/XxGnZhNU13xNryDu0DvtIbUBvnUVzZAm7TZ46Hue2uLD3RM2LxylpoNbwxJRQ88pqyRDmLd4jAQdmTsTOSGoxaSw1pLnn8DfYkaA0O1GLLZyldDSJaAB2wc/VnQAP4c/r05lKEGLAcWZmKdXxpVfWQAcct5Sz0y0x5DseOULrOFM45KICqwO3Q==
+ bh=etjVpyq34nTt9Jbq8Hwm+zwkRgiypsF24jlFk000mmI=;
+ b=A09LS9UB/l5s5SxeXSH3wkMUcP/EquaxygDQ7q5DXv29cJD3DNQ54+ZU3886ZbOpRnIPHnWif1EkrGe/F+t1pJPfMC0YsKdt8IQ2AsutTi4VLqlSSpwxl59FiQDQ0ITCw4DvpxLwRnQc2xHN/GWSy+glNnU9MoRkI8T2TmlzBaiYq/itjqmkKXKd8FYkFmzdwc1EXa6h7n+p7zpH9408tZsVW7Se5eHYqMwyRw2Zw4ynKSJAnXM0LmdcZoIKl5Wsrk0o4qh5toB93ZnZhabo5BE8VL2Tk7O8lDfEtTEJbfQnPNW+hZdoNksxdvSzCQfBywBZBQYQxvUwsDPXBbwKGA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VxcfWC4MR7Tf1LPLpeiz4FISBYq3Zp9fxm5LhWQf7dQ=;
- b=Mfu9djtidhFp393PDXEAfSjRdcTZXkPiWvblB3AiBcZJh7v+TdSRnqwm4HEcDRcvEpB1/V8Q291Zjf6LNk5L3Kic+9+S0X0LVDOJl6YD9KQ280SzgTpE4jjHZCgU9YKjjmBo6maXwqgwEu0gIJCx5Iy+7al5EDYi2ZuvzrpThNXVjCtNETgLvIAIHpZbK1gwntdH0NXI9PTSH9+YrXMjUZGRO93RTKRN4p58bq7+VMJztisjKw/E8bZHYO/Hq7w8OPQo0CKwwFmEh6e7KIlxgK9gxJeeqKSezTVKt+IKR2o8A6jgnPef8yUV0apYXzkrcwVEdGfchaNsKHn26/OGhQ==
-Received: from DB9PR10MB5404.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:333::17)
- by PA4PR10MB5729.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:266::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.34; Mon, 8 Jul
- 2024 06:22:32 +0000
-Received: from DB9PR10MB5404.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::e659:e46:3b99:a440]) by DB9PR10MB5404.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::e659:e46:3b99:a440%4]) with mapi id 15.20.7741.033; Mon, 8 Jul 2024
- 06:22:32 +0000
-From: "Storm, Christian" <christian.storm@siemens.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Subject: Re: [PATCH] swupdate.bbclass: make swu_files entries unique
-Thread-Topic: [PATCH] swupdate.bbclass: make swu_files entries unique
-Thread-Index: AQHazrKCL7WXL1IgbkeDcF9cOFvTebHsYQkA
-Date: Mon, 8 Jul 2024 06:22:32 +0000
-Message-ID: <F901FB53-B396-4FEA-8BE9-4C4DFD907B0F@siemens.com>
-References: <20240703114242.1896508-1-ch@denx.de>
- <7a7ed1e59a5682144aaaad819fbbd1264f3ece34.camel@siemens.com>
- <204be939-3a9e-4210-9194-a70ac83640da@denx.de>
- <349d4345-dfa5-4925-b9da-8217b6caca64@siemens.com>
- <f8734192-f1f7-4cb1-bff8-edc950eb390e@denx.de>
- <8fc0b73c-5185-4bd0-952d-7f01aa2a1a2b@siemens.com>
-In-Reply-To: <8fc0b73c-5185-4bd0-952d-7f01aa2a1a2b@siemens.com>
-Accept-Language: en-US
-Content-Language: en-US
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: <prabhakar.mahadev-lad.rj@bp.renesas.com>, <cip-dev@lists.cip-project.org>,
+        <pavel@denx.de>
+CC: <biju.das.jz@bp.renesas.com>
+Subject: RE: [PATCH 6.1.y-cip 0/9] Add IRQC support for RZ/Five SoC
+Thread-Topic: [PATCH 6.1.y-cip 0/9] Add IRQC support for RZ/Five SoC
+Thread-Index: AQHaztvfaIaOxW379EScgA/Dc6I9HrHsZSkw
+Date: Mon, 8 Jul 2024 06:39:56 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <OS3PR01MB6391ADDA9FCEE7A5B46567E592DA2@OS3PR01MB6391.jpnprd01.prod.outlook.com>
+References: <20240705130417.125593-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240705130417.125593-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
+ header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DB9PR10MB5404:EE_|PA4PR10MB5729:EE_
-x-ms-office365-filtering-correlation-id: 2b9659b7-47bd-4169-9466-08dc9f1659dd
-x-ms-exchange-atpmessageproperties: SA
+x-ms-traffictypediagnostic: OS3PR01MB6391:EE_|TYCPR01MB11898:EE_
+x-ms-office365-filtering-correlation-id: 55b6b3fb-01a2-4e3c-5dcd-08dc9f18c7fd
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|376014|366016|1800799024|38070700018|95630200002;
 x-microsoft-antispam-message-info: 
- =?us-ascii?Q?SQ9Xz36IyqMOTms1MkWJCk7X3kApJ9ZFAtuuq52fQSb7Hos+/XPOhJr2QPhU?=
- =?us-ascii?Q?9FmM2ATT3G4kdWSoOhZON/o+/bBUc2MfjYPPVSxMz47qa9W4u7adjyQr6jHv?=
- =?us-ascii?Q?FUzpWXukOaj9xZA05gzUSZWVqK9OstOLeFzfUbPHpWEasnN9IJJmA55yTKgw?=
- =?us-ascii?Q?gLIu8nyP5OWazrotFe1ypbEIS6pFzYZ+RuQ7I0uQ77oUTNZQuJhGbSUAQB/y?=
- =?us-ascii?Q?2p4t9BgC1XebUJyEnAFCbxPquknDLtMfSvTboppzrUhSQZwDMeIDBS0rMUHN?=
- =?us-ascii?Q?WLaIAOOSYt+1abL72qlJ9Y63Gw1TW4+TDEey4k7RUxZaujpRyG791hvhfdgi?=
- =?us-ascii?Q?ZlSGGkIxjA9Ntee5q49AuY/MjN+VvppyWfow6wqthOSqH4EonDku0LS1LjdH?=
- =?us-ascii?Q?ZrwqAUdEcQvPWNojj4RxJ+ohgkM5h5EJabWAQfCE8JYQNdY9J3qAdqzbAav3?=
- =?us-ascii?Q?/cRvW7AQo4WOGPmhbCInfxRctoo6AY2j4n9/wCJRo2wV8XDAocY7xUN44ZiO?=
- =?us-ascii?Q?SBsHQgFFq0y+2CKwppIvxvIzh0kCh1/bXUbXWJR2mm8kIcRpXTxzyjGrPPfH?=
- =?us-ascii?Q?nVZ+nDVuTZqfbi1PkqDc6iTeJK6P13VUYkpzdWUxiIKM7jpYglmCbNKGwPQN?=
- =?us-ascii?Q?kDPQgDOJgOBoEzs9hwzrJ1uG+w1pICTrpOWhFgGH09hyzMVnIdPJMlsWalte?=
- =?us-ascii?Q?vZ0dpXLPiyoaLLBeD7lEuRMjJuCc+dGKw2Nc31TtqdjcNFrOGu/6F6bX60jC?=
- =?us-ascii?Q?jkSOniA6hioykVBmcs2Oj/Q33R4Mlwhc9JfXYKgH7dDJp+M9Opel9jmFkvL/?=
- =?us-ascii?Q?XCeQpXM9poOqOiHhIEcQiAYJKKKcrcI4X+b/EHQUTxT7UPBgJyEgwHgyMUsK?=
- =?us-ascii?Q?wF5tbxIXLsjE6SXrGoU7GGSWp+vbhICavYxzCKvcgAM2Vactzo9GqRsjn0l2?=
- =?us-ascii?Q?iAEBvdp0vXtrz6RFgF9hHtu/qdmUJAGgFKqzsHAI22LEADoPOl/rv1p1BL+4?=
- =?us-ascii?Q?A3Rmb1EWYLIdojkQ7TCoiqCqKp9CSkme41SnntTRlX2wFCQ7sBFHWy+Fl/14?=
- =?us-ascii?Q?2Qm5NnF6RhKYXDOezoWYuPFK8Ta1It8zkOTSBfoKPZs6obMi5hsFpAJl4ZDu?=
- =?us-ascii?Q?X4sooJtP5mSxB/8QL9IThn2zthi2vX/gNHMVCpb9TazJgwAVwayC4VMVnz/N?=
- =?us-ascii?Q?xWTR2JZnCJuw/MGwxJ7iwnIInZsSC1+T5qwNDFGcVqx90NHO3rDMB+JnxdmI?=
- =?us-ascii?Q?7Y7O0Hbt330DFee78gHxww5oEQOrrgc1RjKam+jKg3boRgNm0QdOFGZHgrQD?=
- =?us-ascii?Q?v1iVbbE3ZkZeK3fqS2JFsN9hcg9djuQZR6ERdsLxHy8L0bywWlA4n6xiQemP?=
- =?us-ascii?Q?zMmauNs=3D?=
+ =?iso-2022-jp?B?VHQ1SXpmRHNWNFNKb0tDbVBUeTVmeEtoejhweXZpZzQwd3B1ZWo4TmNJ?=
+ =?iso-2022-jp?B?Z001Um9nMWdUTUNLS1dmVk45MmFMemRHNE9zN29odDd3UHRZNmNSdTZs?=
+ =?iso-2022-jp?B?T01KT0xOY3FLWlNtL2lpL0ZvTFplOCsrM0gveGZhbUJGTUZyZlpuR0Np?=
+ =?iso-2022-jp?B?cVRHOERReklEWEU3QXBhc09sNkpqMzVhMHlPWnpLV0hrTmJIUnlsN3ZS?=
+ =?iso-2022-jp?B?TGtiaUZDVW9ZNm4xU3MzSTdTUUgxOWdZelpSSkhaWG9wYlFlTkxLSDlJ?=
+ =?iso-2022-jp?B?bXcyaGd5OHIzYVBBOW5EekV2VE9oYWRTamdEaXI4SEIyeXBzY1BNcTE0?=
+ =?iso-2022-jp?B?bksrNnVJclVHODFSdnhwV3lOTWZURUZSa050dkp6clVwVGo5ZWJEVFVL?=
+ =?iso-2022-jp?B?NmJ5YkZCVnZMSWRFQVFDTWZQNE15UTkrOGlSZEE0aW51MnlSd096Vm5F?=
+ =?iso-2022-jp?B?MCtPR25Ienl2eDhTYk45VUNnajR1SkxDOSt6L296R2FCTm92ZGtFOTFD?=
+ =?iso-2022-jp?B?VGptSXQrQms4b05ZcmVTNEgyV0orTFFURWZKbkV2R3VMenRNUWhJUi80?=
+ =?iso-2022-jp?B?dWx4UktzVGFoRUMyMjV3bENjRm9GeVVKOW1QNlVjODhidTBqQTBlYWxJ?=
+ =?iso-2022-jp?B?Zk9xd3g2VzIvcDFCMmRvT2UvMCtZb25iV3o0VnRzR0QrWmJxZkF1aHlm?=
+ =?iso-2022-jp?B?Y2N1SVk1b2RsVEtRcFhycVMwYld2RXdrcjFJeU9ZNzF1dU1RZGxmb3Fy?=
+ =?iso-2022-jp?B?emNoekFRT1FTbXV6Q2ErRVhyc1c5cSs4RnZQRGtUK0QwMWRsWWRONzl0?=
+ =?iso-2022-jp?B?dE04YWVXeDRiR3RSRytHWWtTM0pKM0oxTzdOWW5JdEU4REhERHJldG54?=
+ =?iso-2022-jp?B?RDFiUnp5Y1paRFhYNzUyREo2cklURmRPb2VxVlJxUmpBSWxjd2drZ3pM?=
+ =?iso-2022-jp?B?VVVZYWU1bStUaU1PZm5WMll3OTJ0NHRNZFdDQ2xwSVBDc0s5YzBoVkZw?=
+ =?iso-2022-jp?B?VFZ0eWRkWEd3QW5oM1NnV09kVitFMnFWTm5JdG5GN1VZRzByMlpkQzNN?=
+ =?iso-2022-jp?B?QTNIQ2VvdmUwcUpNTUZWYWVMQlZid0ZJRy9jZ1lUN2dlUldDYVYvNmJs?=
+ =?iso-2022-jp?B?SlFNaWNJMExuWWpLV3hFdXNuTzlRVW8yNVJYWjI4R3k1ckhnMi9LZVVr?=
+ =?iso-2022-jp?B?aXlFZUZNM2tVTEduODFoNVIvSDE1NVgyMXM2V2ZXblpCNzNFREtUVFJr?=
+ =?iso-2022-jp?B?ZVpnQ0U1VXd0QlRLK00wM3dLVUVJdkxaYlBDTFczSVVVNCtWTmhJSUxB?=
+ =?iso-2022-jp?B?S1E4U3FWdXB5UVBPN2xtSFpYUm1ZUnpsejdTZUk1dnQ5ZTlsaC84RHUv?=
+ =?iso-2022-jp?B?WHNyeTNFUUU0YlVYRjEzdHQ2eWhrUXlaTm13YS8xMzlBdUtzdHIvcUht?=
+ =?iso-2022-jp?B?QWtsVkEzbUNaeElVcEVTbnZaMTVsMndpUG5YN0VaSnZUWW51d3VzcmM5?=
+ =?iso-2022-jp?B?bkZRWWlrcGthVFNuRGNLMm15bnA2SDMwcXlzSWZLNW4zQ1I2aDNxdVVi?=
+ =?iso-2022-jp?B?TEZqaGdlM1FGczFDUEtpTnQ2ZnFCWGFhYW9jYXAveDRZazdQNDFrN0FH?=
+ =?iso-2022-jp?B?QlhMRFJYT3U3aTNYSGp2ci8yb01GenR6Q2pLTWRaVFQyWlNmS3B1UExh?=
+ =?iso-2022-jp?B?NkN5b1JpRklnWXFTK0dZaGpMa1pOZkJ1S3lzNUxSVm16Q0NPdWhTZTRH?=
+ =?iso-2022-jp?B?VXVXY2l1ckhEL1FSN2gzTVNzYVdzenlaRm9TOUhPNTJVS2JqQTRCMWZx?=
+ =?iso-2022-jp?B?VFRkUTNCZTBuL1NiWXdWZnBTUlNMUUtQMGJQeWEwNUlDT3ZrdkVrVGpr?=
+ =?iso-2022-jp?B?N3NyOGJwZlMzQ21qRGw4SnN0dGdITjlYamNFTmljUGNaVXZ4NWpjTnBU?=
+ =?iso-2022-jp?B?YmVQT2NCSXJ6T0IwTVNQTEtqRnhNRUF0UzM1alN6T3BpSlozVDdBY1Ro?=
+ =?iso-2022-jp?B?QTRsNUd0SXNib2pvVDkrTHNmMnByTFJ2RHptc1JuNHpHZHhESHhaWFZL?=
+ =?iso-2022-jp?B?UC9xTmNVa21aTWZwL3FCMHVpYlh0T0U9?=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR10MB5404.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB6391.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018)(95630200002);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?U2b5JHALEzj8xwOMIMXk3bG2sA2+yQASUgKA6te+kd85XXB5wZU4u1z9I+MF?=
- =?us-ascii?Q?iGLb0UFHZRsviYJHQz08ap96D7YY9/xuSwNx8Uexu0JqNo+U6xo2Phae/nZ8?=
- =?us-ascii?Q?0lfdGAbaXEd9cMk5wrqVcVsvg49KgcxJ2/JAnwzxuF8rHH6pmR/KmA8Zj91M?=
- =?us-ascii?Q?ktasiAel/YNnOKg0VPhm+mGfVbXmvNPsMTkJAnk/3oiVb9XaGguHzbJWU8QA?=
- =?us-ascii?Q?LhPbroNBg3AmMfGIGhBuMVFXh0g6TEcp8Cn+lSq3Oxx8fHBpq6NsSeKSENny?=
- =?us-ascii?Q?uwU9XK8OMRmaCiRFk3zp0Av1H59EUsJ2X+/rvQZ00xXHhEl7oKB7PAt29ZAw?=
- =?us-ascii?Q?/hCqcKgH+O3u9quvs3qsaGJvN+6rCCS2J/1N5A1TnK0l/XefCf9fcmsMGlwR?=
- =?us-ascii?Q?+ntXIuipWzusssxASXYLBQ2GQlKgyLuUSW5Ynub9JKIqt5Ai2g93AYsOnerc?=
- =?us-ascii?Q?m/PeORARuqAm7BYr2S4cu9euTg8e+SjZlbq1q3nc32WaOmxtVdbS3gCEoO2q?=
- =?us-ascii?Q?Bu73ey0mx0oRefOhcl8IBgOxRVj+qeTN4L5O8epNV484+Z43oJwUfwLDNHe6?=
- =?us-ascii?Q?17L0+HFd/xh78JzQ4s0y9tbJJY4PDQkhAJCGV9ESsvHEANn6IGgMHQAXYgxR?=
- =?us-ascii?Q?je8uQmrYXKSx86nilV+GYp2spILx6wzNCWVwjO/ii/u5/ctAQB4zaMiJjr4Z?=
- =?us-ascii?Q?47iP8Jvl4Ii4wknmMF3ubhcPgCGro5quB1powcfusyNaWQWNuoc73Lwhc3vw?=
- =?us-ascii?Q?5Ua0OpCM4sKTz70F5M+gL8A77PeCtpU/nOfOYxitVVvhHpt56LxKTXcOITrS?=
- =?us-ascii?Q?f4BFVu75+oa9pzu2W6PBrApaWHj+3AlwM+mMvO0uS01QbSlJWEEJecDBakiI?=
- =?us-ascii?Q?WxXfGryCLeYC+mnki9xY+CgUd10cTmhlZ1l+CJ0LS4XGqw+XhlPSpNsrrg9A?=
- =?us-ascii?Q?u4zOGg3mkyAVe9w762EX+sz47M48bWvKtCuSQMen2h6ETU7dHafzEW/2krb3?=
- =?us-ascii?Q?PFuEiaYG/gJqXCo6j7spbwgHWlbIQztm0QtkkyhtMMbkBzqMnhuaQVyldXuM?=
- =?us-ascii?Q?5Di0IwcjPK1T/FbYzc8+S9P7tDOyHyOLy/AeTephp2LLmuUJJz77iQd6V3kq?=
- =?us-ascii?Q?U+ArR6zTOVEORzqff1nUkZYrvQrRxANnPkqwhJUd+Q8xrXHai4lZnI8n59An?=
- =?us-ascii?Q?lHK1EJeyoGd4DYT/hjwvuUUKXu9VAFuxJ3EsKfgDUTx2pZiufTPp9Y7YXHjp?=
- =?us-ascii?Q?cmOH5DDnpSAf+YmxMCE+qNjebrm2Yj4JrlX2FVPnxxc2roBuZ3JbPDISATLI?=
- =?us-ascii?Q?5pyF4nyF63c/Fp2AiRwlpHoUnPvqh2FR0S6ZwdsLfadCV/lhSOVF20TCsiak?=
- =?us-ascii?Q?fNjYIAT/lBjD98Evm/wVkUIsM2E8PpYYEB1st5hpI6h7pVc7xLBO9pNmyHrp?=
- =?us-ascii?Q?mLi2X6Pfb+3LXv/2M8jFHZ9bsMiTAa1yBYDvoMmh1a916BDuLB2tfydv5gmo?=
- =?us-ascii?Q?cURdtoy8kUVklGBZnoqEI1liuaUrq7L0PX8bSCbgUGR3foghEBqoVglTQ4ax?=
- =?us-ascii?Q?7kzFjaIqtUlrZ4Fhx8REg8sTlY/sEXKDi7tBsy9W/Pap6MikTjB412DTV2Ij?=
- =?us-ascii?Q?wiwSOKEW0J1/XSkwko1J0To=3D?=
-Content-Type: multipart/alternative;
-	boundary="_000_F901FB53B3964FEA8BE94C4DFD907B0Fsiemenscom_"
+ =?iso-2022-jp?B?L2t4SkdQSkhOSkVaUGRJakZ5SkliWUJJT2hWZ3l4MkFadUlCeWd5dFhZ?=
+ =?iso-2022-jp?B?azZFc2RHWXh4MXhzTkxMemR2cXdsRHVpZ0JtRzVmbzlMM1lFQmlRZXlt?=
+ =?iso-2022-jp?B?Z1h0TjJJNUxqRXByck81Mkwyai9wMklBNEo0K2dhNWVxcnlYR2Fya3lj?=
+ =?iso-2022-jp?B?aW9yRWZDMzRmbFpRWjYrTi9Neit0cWZrNmI5WDdMUTNhQllHL3c5TTV6?=
+ =?iso-2022-jp?B?YThZbTh5djYrbTBMMXRSblIyMGxuUnZVL0dqa3N4NlViN1pHcFJIVW9n?=
+ =?iso-2022-jp?B?ODBGd2IwY2J5NW00TGlydUtMVFZqR0dwRVpRSkxwNnZ3RVFyODNPbTRC?=
+ =?iso-2022-jp?B?KzZGT1RhYW03OXV5aFI3SVdic2pVVXhpOW9vVVdibGVGckFqWDMrQnhE?=
+ =?iso-2022-jp?B?S00zVGgrUGMvK2VRMWlvcGFqZmJ4RGpWallVdmRBV1g2WVdQMVhMT2NO?=
+ =?iso-2022-jp?B?VHNyc3U0RTMrWWVpMldCMldWRjU1Qk1SNU1ZWjEwYlBOOWwzd3dXUmsy?=
+ =?iso-2022-jp?B?WTFiU013b3lXL09CRG5QaEJzWmdJVXUwTkxmUUprTWZLanJKYUpiUHZJ?=
+ =?iso-2022-jp?B?V2s0Unovb01pa1JDekNzUkxNUmFaVFhsUkpDNWNWVGxKV205SkNhSTNu?=
+ =?iso-2022-jp?B?T043c094MTJmREN3WnVuMWQ5NjcxY3pLWVlHcnp3djdDYkcwNS9Tc0pR?=
+ =?iso-2022-jp?B?NTRTU2JvZ0pKMmVSUElnMWlUVVE3TXdHOENnQmpEV3JnSFZFelVNVTds?=
+ =?iso-2022-jp?B?N0Y3eGJWYVprdVMwZWs5akp1ZDBBSjdUQklBTW5iOFAxb0Jzd1B5Lyto?=
+ =?iso-2022-jp?B?bG5iZXo5bndoQ04rd3V1bUQwcVFvWHBuaWM4Z0RDZVVzT0x0M3VVNkhF?=
+ =?iso-2022-jp?B?c3FpYkpnNHJwOHJiZzJjNlRmRkZ3bm8rQm1oZDhNKytFa0NvWVMzVk9H?=
+ =?iso-2022-jp?B?eGpFMFdBYWc1UitPYjY0Y29tSi9QMUJWL0tSbFRlZm5vTE43aDRRRGVT?=
+ =?iso-2022-jp?B?UWQ4MUFMVWJ3SFE2T2hXU0I4Wk1FTy85ajA5ejMxVU9acGZqUUgwVTV3?=
+ =?iso-2022-jp?B?eVpVWkRvUFU3N1hUYWxKWVprbjEzWEt5U2ptRXRLazBQRjZ4Y1c1KzYr?=
+ =?iso-2022-jp?B?bE90MGdrMTc4a3BxZGdySmlxWXZacGR0WUI0aktsUFhyZ0lLdldWdDBK?=
+ =?iso-2022-jp?B?N1BPT2ZTOXY5NlZvZ09uRXRST0NOQUxXWkxxWDZSZ1B2L2VBWEpBc1Iv?=
+ =?iso-2022-jp?B?NEJCVDVmdVZ0WGZ5ZFpxYU0yRUdpQi9kemNEV0F1MFBJd053K2g2SWFP?=
+ =?iso-2022-jp?B?bmVBZU9ObTRHNTN4Z2kxUzBJakovMWFBNEN5end1R2VFMnI2T0NKMjBL?=
+ =?iso-2022-jp?B?QjlMdXRLUU9CR3ZlSGpXTzBjTzZOTDNoM0hmakxVL042czhFVjRKdWNE?=
+ =?iso-2022-jp?B?OFJjVWloQzZXdnFnNnA2OHVBZk5oRWw3dUZub2RkY25QekNYMHMwNkZO?=
+ =?iso-2022-jp?B?NGNSV0xGZmtyTHpBNUw4MnZHNTdWYXAxOHl3c09NSU5YdDdDTmpxTHRx?=
+ =?iso-2022-jp?B?Ungwb2MxNkJucXJYME1QTlpLNGlKenBFSDYyNlYzOEQ1Q2g5Mk5ZMjFo?=
+ =?iso-2022-jp?B?aCtrOXh4V2hvRUpKTWR0WnkvRmR0Vm5STUlsZzdrN0xkT1lMYzl0L2lF?=
+ =?iso-2022-jp?B?WXRFZEY4eDlsYndDVGFaR24zUFN4cHdYSXRCeG1BUVJnVWdwUE1OeGRI?=
+ =?iso-2022-jp?B?bDlUZTVwVkliUHZreXVaVlZ1VThOSWNTV21yN1dwMUs4NlpPSHNvOTB4?=
+ =?iso-2022-jp?B?UnlqZnBjTitCZnhFOVpMVDRLekVRc0VoWkVjVmxyekYyemlFMzhuNWJT?=
+ =?iso-2022-jp?B?NnMwdDVjZ0xVUWtuUzFRMFNDd2F4L0xYdTdBWHRWUGQzeXVnTDNrbklN?=
+ =?iso-2022-jp?B?WXVTVE11ZHE2SGlzS3F6MGRxeEJUQ3BRSzhEdWNvaUpzMjQ5KzI3T1d1?=
+ =?iso-2022-jp?B?ZHBBZWtyeXVzbEI0WnErRTJlcW1GMjYyY1l1M3lQT0dCQjNJc2ZENkRW?=
+ =?iso-2022-jp?B?YzB6MVd5VjlLNkJlMGdxdGc1ejAzTmY3QUc1U3gyeXh6bU8rc0pmRC9v?=
+ =?iso-2022-jp?B?U3MwN1k4Z2FxNERnV2tXNkM4Q1hWRW1NeHZ4d2pIcVZoalhRS3djQkFL?=
+ =?iso-2022-jp?B?ODdxditOWCtyRUc3eGphK1VQNkRrcVA5UE5zOTJ2UmdWRENibk82MTlN?=
+ =?iso-2022-jp?B?R3ljcVFCSldtK21Ld2RFcXZnSXY1YXN0RlNCQUIxb1VtQ2VPSUdnVWI5?=
+ =?iso-2022-jp?B?aXV2LytpS0FsR1hPVEdlTmdzdzZvamszclE9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: siemens.com
+X-OriginatorOrg: toshiba.co.jp
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR10MB5404.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2b9659b7-47bd-4169-9466-08dc9f1659dd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2024 06:22:32.5399
+X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB6391.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 55b6b3fb-01a2-4e3c-5dcd-08dc9f18c7fd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2024 06:39:56.2538
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ZZ6OEA8T0Rl2i0uMU5SO2CtcnXjU/7pt5dqtgvqSNXbDhOfaI9AHLlgtzTJmFdMJ8pIpWdr59TaDkZWZs2nKchtnrtYqDXIYwOg4b559kXU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR10MB5729
+X-MS-Exchange-CrossTenant-userprincipalname: YMjKyz02q2qSaI8iIdTKsFRiceR+idpkTN0DAsuCqhw0KOqL1r8DamF9Hgla5DQBpupZVZWy0agOharvCNnJee6R3qCGd/FpYyU+6TZevIb7bPhaEMaJwHqZCWPCo4F5
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB11898
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 08 Jul 2024 06:22:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16424
+ <cip-dev@lists.cip-project.org>; Mon, 08 Jul 2024 06:40:16 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16425
 
---_000_F901FB53B3964FEA8BE94C4DFD907B0Fsiemenscom_
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+HI all,
 
+> -----Original Message-----
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Sent: Friday, July 5, 2024 10:04 PM
+> To: cip-dev@lists.cip-project.org; iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B=
+?.MN=1B(B =1B$B!{#D#I#T#C""=1B(B
+> =1B$B#D#I#T!{#O#S#T=1B(B) <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Mache=
+k
+> <pavel@denx.de>
+> Cc: Biju Das <biju.das.jz@bp.renesas.com>
+> Subject: [PATCH 6.1.y-cip 0/9] Add IRQC support for RZ/Five SoC
+>=20
+> Hi All,
+>=20
+> This patch series aims to add IRQC support to RZ/Five SoC. While at it fi=
+x build
+> warning for RZ/G2L CPG driver and fix for ax45mp_cache driver.
+>=20
+> - patches 4/9 and 5/9 have been cherry picked from -next
+> - rest of the patches have been cherry picked from v6.10-rc6
+>=20
+> Cheers,
+> Prabhakar
+>=20
+> Biju Das (1):
+>   irqchip/renesas-rzg2l: Simplify rzg2l_irqc_irq_{en,dis}able()
+>=20
+> Lad Prabhakar (8):
+>   dt-bindings: interrupt-controller: renesas,rzg2l-irqc: Update
+>     interrupts
+>   dt-bindings: interrupt-controller: renesas,rzg2l-irqc: Document
+>     RZ/Five SoC
+>   irqchip/renesas-rzg2l: Add support for RZ/Five SoC
+>   irqchip/renesas-rzg2l: Reorder function calls in
+>     rzg2l_irqc_irq_disable()
+>   riscv: dts: renesas: r9a07g043f: Add IRQC node to RZ/Five SoC DTSI
+>   arm64: dts: renesas: r9a07g043: Move interrupt-parent property to
+>     common DTSI
+>   riscv: dts: renesas: rzfive-smarc-som: Drop deleting interrupt
+>     properties from ETH0/1 nodes
+>   cache: ax45mp_cache: Align end size to cache boundary in
+>     ax45mp_dma_cache_wback()
+>=20
+>  .../renesas,rzg2l-irqc.yaml                   |  61 +++++--
+>  arch/arm64/boot/dts/renesas/r9a07g043.dtsi    |   1 +
+>  arch/arm64/boot/dts/renesas/r9a07g043u.dtsi   |   4 -
+>  arch/riscv/boot/dts/renesas/r9a07g043f.dtsi   |  75 +++++++++
+>  .../boot/dts/renesas/rzfive-smarc-som.dtsi    |  16 --
+>  drivers/cache/ax45mp_cache.c                  |   4 +
+>  drivers/irqchip/irq-renesas-rzg2l.c           | 158
+> ++++++++++++++++--
+>  7 files changed, 272 insertions(+), 47 deletions(-)
 
-From what I experienced, outside of isar-cip-core, the software
-collection approach is much more common. There we have swupdate wrapper
-scripts, that figure out which software collection should be used, and
-call swupdate accordingly.
+I reviewed this series, I don' t have any comment.
+I can apppy this series, if there are no other comments.
 
-Right, and that additional, possibly ugly wrapping is what the pattern
-in isar-cip-core avoids: You just call "swupdate -i my.swu" (or
-equivalent triggers), and everything works as it should.
+Reviewed-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 
-Christian, seems there is a gap in awareness for this option outside of
-the isar-cip-core universe.
+Best regards,
+  Nobuhiro
 
-Hm, it's well known to the readers of the SWUpdate mailing list and has bee=
-n announced officially (https://swupdate.org/2021/06/14) but yes, we may ma=
-rket that more prominently.
-Nowadays, having all the infrastructure in SWUpdate itself, we may even pur=
-sue upstreaming that to SWUpdate instead of maintaining it ourselves... On =
-the other hand, we may as well advertise it in CIP more prominently?
-
-Christian
-
---
-Dr. Christian Storm
-Siemens AG, Technology, T CED OES-DE
-Friedrich-Ludwig-Bauer-Str. 3, 85748 Garching, Germany
-
-
---_000_F901FB53B3964FEA8BE94C4DFD907B0Fsiemenscom_
-Content-Type: text/html; charset="us-ascii"
-Content-ID: <76BDDCC9E24F5F48A539B6B0ABF310D6@EURPRD10.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
->
-</head>
-<body style=3D"overflow-wrap: break-word; -webkit-nbsp-mode: space; line-br=
-eak: after-white-space;">
-<div><br>
-<blockquote type=3D"cite">
-<div>
-<div>
-<blockquote type=3D"cite">From what I experienced, outside of isar-cip-core=
-, the software<br>
-collection approach is much more common. There we have swupdate wrapper<br>
-scripts, that figure out which software collection should be used, and<br>
-call swupdate accordingly.<br>
-</blockquote>
-<br>
-Right, and that additional, possibly ugly wrapping is what the pattern<br>
-in isar-cip-core avoids: You just call &quot;swupdate -i my.swu&quot; (or<b=
-r>
-equivalent triggers), and everything works as it should.<br>
-<br>
-Christian, seems there is a gap in awareness for this option outside of<br>
-the isar-cip-core universe.<br>
-</div>
-</div>
-</blockquote>
-<div><br>
-</div>
-<div>Hm, it's well known to the readers of the SWUpdate mailing list and ha=
-s been announced officially (<a href=3D"https://swupdate.org/2021/06/14">ht=
-tps://swupdate.org/2021/06/14</a>) but yes, we may market that more promine=
-ntly.</div>
-<div>Nowadays, having all the infrastructure in SWUpdate itself, we may eve=
-n pursue upstreaming that to SWUpdate instead of maintaining it ourselves..=
-. On the other hand, we may as well advertise it in CIP more prominently?</=
-div>
-<div><br>
-</div>
-<div><span class=3D"Apple-tab-span" style=3D"white-space:pre"></span>Christ=
-ian</div>
-<div><br>
-</div>
-</div>
-<div>
-<div dir=3D"auto" style=3D"caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0); =
-letter-spacing: normal; text-align: start; text-indent: 0px; text-transform=
-: none; white-space: normal; word-spacing: 0px; -webkit-text-stroke-width: =
-0px; text-decoration: none; overflow-wrap: break-word; -webkit-nbsp-mode: s=
-pace; line-break: after-white-space;">
-<div dir=3D"auto" style=3D"caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0); =
-letter-spacing: normal; text-align: start; text-indent: 0px; text-transform=
-: none; white-space: normal; word-spacing: 0px; -webkit-text-stroke-width: =
-0px; text-decoration: none; overflow-wrap: break-word; -webkit-nbsp-mode: s=
-pace; line-break: after-white-space;">
-<div dir=3D"auto" style=3D"caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0); =
-letter-spacing: normal; text-align: start; text-indent: 0px; text-transform=
-: none; white-space: normal; word-spacing: 0px; -webkit-text-stroke-width: =
-0px; text-decoration: none; overflow-wrap: break-word; -webkit-nbsp-mode: s=
-pace; line-break: after-white-space;">
-<div>--&nbsp;<br>
-Dr. Christian Storm<br>
-Siemens AG, Technology, T CED OES-DE</div>
-<div><span class=3D"ui-provider a b c d e f g h i j k l m n o p q r s t u v=
- w x y z ab ac ae af ag ah ai aj ak" dir=3D"ltr">Friedrich-Ludwig-Bauer-Str=
-. 3,&nbsp;85748 Garching,<span class=3D"Apple-converted-space">&nbsp;</span=
->Germany</span><br>
-</div>
-</div>
-</div>
-</div>
-</div>
-<br>
-</body>
-</html>
-
---_000_F901FB53B3964FEA8BE94C4DFD907B0Fsiemenscom_--
 
