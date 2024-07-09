@@ -1,633 +1,246 @@
-Return-Path: <schilling.benjamin@siemens.com>
+Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3811AC3DA41
-	for <webhook@archiver.kernel.org>; Mon,  8 Jul 2024 19:17:13 +0000 (UTC)
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.79])
- by mx.groups.io with SMTP id smtpd.web11.2155.1720466232086625094
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A8EC2BD09
+	for <webhook@archiver.kernel.org>; Tue,  9 Jul 2024 04:46:47 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
+ by mx.groups.io with SMTP id smtpd.web11.5671.1720500400117300679
  for <cip-dev@lists.cip-project.org>;
- Mon, 08 Jul 2024 12:17:12 -0700
+ Mon, 08 Jul 2024 21:46:41 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=XhxZjNrm;
- spf=pass (domain: siemens.com, ip: 40.107.21.79, mailfrom: schilling.benjamin@siemens.com)
+ dkim=pass header.i=nobuhiro1.iwamatsu@toshiba.co.jp header.s=key2.smx header.b=IBfEgqil;
+ spf=pass (domain: toshiba.co.jp, ip: 210.130.202.134, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=toshiba.co.jp;h=From:To:CC
+	:Subject:Date:Message-ID:References:In-Reply-To:Content-Type:
+	Content-Transfer-Encoding:MIME-Version;i=nobuhiro1.iwamatsu@toshiba.co.jp;s=
+	key2.smx;t=1720500389;x=1721709989;bh=+9Idx7x7kLKk9hzi/hkH3Vi5n/EVntItdH3TfoX
+	WMOE=;b=IBfEgqilthnS/bzA9ac3F1tb+iNPdCXh8SuZy5p4j+YKJ0DuKsjd+5OSeeASCD9JGXd67
+	X0v1aDfWFZau54z1V73vC6o6lSz15hgpqldXYDblY4NWVvUeGEQCCsL9LTXwLuQWhIXYm3xHmKTFs
+	vO5L0z0Dz4nHxcMxwMzrNSk4v92OIi+Szc8f8d7XKzxSIYJFydDj+t/iIBO8/EtJB2+AL53CJjYHg
+	nPdOrcBBWOOanKsixrzTu1Xb/gGAQmndS+ZwzPyuswpKD1ZnUaJE+WQeskPg8jRbSSEYyedVsqfj8
+	OvdIlsbVKnRbgis2g4z7TD+yuLe/Rzu83Vct+FoOlg==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 4694kSFB2593564; Tue, 9 Jul 2024 13:46:29 +0900
+X-Iguazu-Qid: 2yAamb6APVXBBXxdkm
+X-Iguazu-QSIG: v=2; s=0; t=1720500388; q=2yAamb6APVXBBXxdkm; m=7WsVcGYJcX5kbniiZ/96YLMshgT+bqq2NbAHnEVqeMg=
+Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
+	by relay.securemx.jp (mx-mr1801) id 4694kRWQ3237442
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 13:46:27 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=F4UNxewSxj13lLEMcWokV26PJ7XDAlspVmOjuIN1D2+OWd42yzrInBH/zS0EchuEwxNifUncXkLEj7FaulA8wl7p2cqtpKD3Q/d6nB5uTqR+t8TirxURSspZM63hBVznT44OkGMmGh7ywB2PfJVQoV1qWo9elMQot4/Tc0VDA/ZrRqX41Ww+rkb4Tj11ujPP1Pvgc8t4VNGg2+ZDuNsYTvOD/T3/54I6gZmHfOVgCX6Ia9hn99CAzTtr4JGXGz8n292MwCpKku/+u61RxRgtkhln+33YdSOJsL2Ay43OmYK4BSout278xukv2U35w3Pp8t6woDUEgVbPEW++IyHRZg==
+ b=Sah3jfz7EO3pxyEsjNu1dE82I/O5zi/jdXcoBb/h9aoxlUDkd7APEOrUm0eN9fXdX92TTLQFN6rHmSCdqH8D2t55SPR3Ajzy/3EaO7Vy4+zZkuo8Rpq6iHQhCkbHYfV/9fqbzZ9oQlbsi+kD4qSfj/L1mBWieuMrlibbU7+MNmTiQQu9J9KVSnONmAp1LklFio/hy+CZMAhN8HswxuaNV2tcU30H8FZsaDOLPvH0o4YJekyj2Ao5NkGb4sIHO3jUcl+TGfOizMXB7GIXAKHwUhGJ8iJypg7i51yCrLpLHgHRA90kUP/jhuZqr2w7vZ6tRYYlmZrcUL9oxApM8gWSuA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oD8jDe533WS/9QTnyTWVXMMlUSqWQqZimW/oGCgbWlE=;
- b=M97D3uQa4e0Qjs8PFUjUsp3n+LFDZ0fQyWM9ijBHOEx/D2qXP2GzPQ1y532r0Z+4M2x+aJeUUvnRBXLVV75BbpFPaNpG01QdVqXdui4KVxiKR8XkgVSTAnDM7td+AKAO0p/YKjctAsTmubD+2ecTOYIwrx/5dz4y3f2TP1Jfdwj3P1IjhGe9Tv3cDhHMg2CHlGn2NWQE9UHWp6N3AnSPNpE+lW6KFDhJs2Uo24p71/P40C52zlaOQn7LFptOPFfRzZm3XbQ5lmXfSkE9QSTpUlXoFboRCCUkCtteH2mth0oKeFc9px9dxSWZzcCX75rUUFTm+JIY5T/FGzfznAPd2A==
+ bh=7Z+Ae8ftYT1pWeFneP8ndDI4Fm8QHc25/5CqbxwNVus=;
+ b=HQkC+kBDaAUPe6c26zVPmnstYVoP1J0fkjedLkyNMvrTtVmd2tsvPugJ4qz4Syxyana3HSm8sF7SDM0i8sQvOvW6BE/zW0vCsFAfpVLKu0UZJ5hMmcBij5H6KsttIH2nxdr31NqmUWwRQv3cd49BSCQEsf8HbwBN9Visy6SL5MqiTGn/4PxlWI9FyboK5ldydfWgsB+iFuMgI818yy0Tgl1IEC9KXj2RHVyUfZIiX/w49vmKPBoT5QLkUggpkg7G2F2nYAOIKfSMA7IEjmhzBOICtcCK0OtkaTCOzdMs5uLmiESlUMd05q760PahWdlXwmsTVvwLGzMik5svhKklSA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oD8jDe533WS/9QTnyTWVXMMlUSqWQqZimW/oGCgbWlE=;
- b=XhxZjNrmadH5Xq5drP2zT6DTA2h9DLCNWbun2aP+DOruoN7Wm05fHaG6Wm/i+5WaOw8lDhi2TJ9Wix7M70SxCF0FCduMYe6rWfw6cbNRyVGV13JTyy/HTUGPg3/Oy5XToUK3rrHkwBrkUgrjLh/YPHfZeHi2yUW0MGqH5uteX0m9Lt2LSmKzQuvbf7Kn5TSkq77ZZpOOuB0EAmInI0AtiLJ3UZoJVaK58tvakPJsbK3JAQUcgqu9llTUvxSpnfN+xq2vRxFEX3sJxNSyv7fL3qfk1IQNIc0G5+w0hFOAIyPV4rfGUpnc47iHFJmRex3cBJIKE2fYYtETb4Uf4ECnEg==
-Received: from GVXPR10MB5837.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:6d::17)
- by DB9PR10MB7409.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:462::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Mon, 8 Jul
- 2024 19:17:04 +0000
-Received: from GVXPR10MB5837.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8e3f:ee20:5b20:8a7b]) by GVXPR10MB5837.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8e3f:ee20:5b20:8a7b%6]) with mapi id 15.20.7741.033; Mon, 8 Jul 2024
- 19:17:03 +0000
-From: "Schilling, Benjamin" <schilling.benjamin@siemens.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Subject: [PATCH] README.m-com-x86.md: Add hardware details
-Thread-Topic: [PATCH] README.m-com-x86.md: Add hardware details
-Thread-Index: AQHa0WoMtLneHGC5O0mPJoBUkEeQPQ==
-Date: Mon, 8 Jul 2024 19:17:03 +0000
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: <paul.barker.ct@bp.renesas.com>, <pavel@denx.de>
+CC: <prabhakar.mahadev-lad.rj@bp.renesas.com>, <biju.das.jz@bp.renesas.com>,
+        <cip-dev@lists.cip-project.org>
+Subject: RE: [PATCH 6.1.y-cip 1/1] net: ravb: Fix GbEth jumbo packet RX
+ checksum handling
+Thread-Topic: [PATCH 6.1.y-cip 1/1] net: ravb: Fix GbEth jumbo packet RX
+ checksum handling
+Thread-Index: AQHa0WYbG99RcDiMX0mg26fArY14v7Ht0QTQ
+Date: Tue, 9 Jul 2024 04:46:24 +0000
+X-TSB-HOP2: ON
 Message-ID: 
- <GVXPR10MB58372489E9C91ECFC0AB51A588DA2@GVXPR10MB5837.EURPRD10.PROD.OUTLOOK.COM>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
+ <OS0PR01MB63885D918692983EA4B890AD92DB2@OS0PR01MB6388.jpnprd01.prod.outlook.com>
+References: <20240708183832.33446-1-paul.barker.ct@bp.renesas.com>
+ <20240708183832.33446-2-paul.barker.ct@bp.renesas.com>
+In-Reply-To: <20240708183832.33446-2-paul.barker.ct@bp.renesas.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: 
- MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=True;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2024-07-08T19:07:17.1778584Z;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
+ header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: GVXPR10MB5837:EE_|DB9PR10MB7409:EE_
-x-ms-office365-filtering-correlation-id: 6d520350-3b3f-4de3-0b1e-08dc9f828cee
-x-ms-exchange-atpmessageproperties: SA
+x-ms-traffictypediagnostic: OS0PR01MB6388:EE_|TYWPR01MB7212:EE_
+x-ms-office365-filtering-correlation-id: c18b241f-a4f5-4f70-b261-08dc9fd2168e
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|1800799024|376014|366016|38070700018|95630200002;
 x-microsoft-antispam-message-info: 
- =?iso-8859-1?Q?ht+Zj07WWxF6cQGkfOw9G4cb8wjDWu3owozUt95IqVcAZudnGvvuIx6jV0?=
- =?iso-8859-1?Q?ddupF774z1+RcJwvKIi8CDP8NaNFjhRDL98OsyZl5zgO/7+plj1d2a/+LB?=
- =?iso-8859-1?Q?Ci8GFcjrkvj59eTimX1SnNAbx+Z34WkWQVrmHeN9rm2IEc9ZQMN4tanj6n?=
- =?iso-8859-1?Q?FHUBwOmRzJgg4Lb1SSlzWmzmbw8+5vjPHHpoRT17fZ0TfX/qbJEU90Vf2B?=
- =?iso-8859-1?Q?VTS6VC5LqBz2WhdzJOD7evfLcpABKC1Ywz2eU8yeuoMAbFmlYQnv6aerZX?=
- =?iso-8859-1?Q?6kg+6kaFxV9DTbf13L2ap42P3i3/KosFEDjhTGozUftNlMcgBTJk3N7uwi?=
- =?iso-8859-1?Q?iiZJ6nYzIhdhX+5ARkCVjsXgsKfRj2sWDDnNJqRtmIU/ryMlKVndC5bYQg?=
- =?iso-8859-1?Q?R4er/UIxXNRcu7jtkaOhsxi50nUPwTCLsK1enfNjdvIhk/CdaJrvY5souz?=
- =?iso-8859-1?Q?k/4LqVqyxMTDlyjLz6sXBd3yJzv0WUX2yDWfX+mNuCyagQYWg5UZWnkZt5?=
- =?iso-8859-1?Q?IL+hkcpec/RXAAle2M/iP5mCwAyCkfU//VrJhsiY5dKiwvCXB0SQyhRbQz?=
- =?iso-8859-1?Q?Z0ZBx6enbacvDOtqjpUv4oS6hKbUZjyhcfX/wItvd52PvegXkZ+XHYA9c/?=
- =?iso-8859-1?Q?sqMjqXePpfVQ8rkqasdCTQYR4SXNvZnlRM5y3Ovzvl08Fk853qgHSJNooH?=
- =?iso-8859-1?Q?Fd97RlXSuQs3XsncX8tBrRirDVlM6NUnX0N763QTXKEyEWxfzPxVuP5UzI?=
- =?iso-8859-1?Q?e9O0ofk0NLCiHbg12IMHOrGZqpsPXbO3Fd5z5SxPcOzkjAY5h7ehwWEvZN?=
- =?iso-8859-1?Q?kvWDQFj32r0gPoYbWnunU7OjZmTMtq+hoOaw9MbpFxUQVFOCZUbyPR9FS9?=
- =?iso-8859-1?Q?meZeZBSZCi1GBiilrVrsHxbS7c0CDB89LX98M+MOneC3JGu1xZkvs4DeTE?=
- =?iso-8859-1?Q?Mzusldnk17jbbRy47P/0+2RlyhS9hG7566LLwgMWYT2KEPF/BgZ9f8K74G?=
- =?iso-8859-1?Q?rkf+kV8skPXhbeuZNZsSi63HQ62djZSSu/ijRuyuYl52D1c1bGG3BjBnAM?=
- =?iso-8859-1?Q?oSGwfLVvVxZAeO5wbiMumQ43FReNLzEviCnsDWT5g9D1MtS3l9w0J1Hs8l?=
- =?iso-8859-1?Q?/9QfNkVSMdromgmthb7K8mrPR5SrGP3Od7J8uTeW2HDpC2rTyhfjfbKWre?=
- =?iso-8859-1?Q?4EJ3PbJIdwO+TnXj/yzBIvl8sIHHxm4EyPhUOz55NET+duCaCPBcAcpSuQ?=
- =?iso-8859-1?Q?/agPBzmJ/+RdAPIEdFa8xUiYDZoKjdUdExJPrM792qZuKlyuaOwcrE8S6q?=
- =?iso-8859-1?Q?DCr9d2RVJeQ0nLdrk/Vr5ZY5fMilyP4BWk6Hm82zSL3qPFxnQrgnhpZ9h0?=
- =?iso-8859-1?Q?o2fJP5jnrF+VGGbFpbNv45LBmWD74AnEtr/rYr1MSNEeqP+ao1pHSmGLHA?=
- =?iso-8859-1?Q?gIPz3ZTpDFAUcuejGMgc2QH/HwoIQdSp4PtIgg=3D=3D?=
+ =?iso-2022-jp?B?b1FaVUpKWW53REtvdFN6U1IwakZubmpQUHRwL1ZPMGYzSHlZbGZkQlNq?=
+ =?iso-2022-jp?B?WnlLdUhiak9yWDlra1A3RmNjMEtTQ3NIWXhyeitwSkhQdmx2ZjAwc2F1?=
+ =?iso-2022-jp?B?a3dqc3ZwdmlvOUR5N0ZnQnRUSmtYRGkyeFNqdG0xRkFCZWRjaXIvY2JL?=
+ =?iso-2022-jp?B?c1pQdUhlWkhkdHlSQmxTVmNJdjVoNEhkRmpXYVZVenV1WXFwYVNXV2Yw?=
+ =?iso-2022-jp?B?czF6ZUFLaE8xbVBQWUJJTnVZT05Bd1RwU0lCSS9GWHVZazVOWUhyZ3dL?=
+ =?iso-2022-jp?B?eERxWU85MzRjZzd5ZGluVGc5R2hJMzAxSHJQbU9UdXpLa1FGRngwQWlI?=
+ =?iso-2022-jp?B?Y0NaejNPUlB6QytDNzdqenZFS3JqUldIa2VXdTFNamUzZjJkSUFyRlJQ?=
+ =?iso-2022-jp?B?WUxHTjFnQWtCVVEvRE0wN0VKMWJ5dTFWWkN6WmFhdnVCWDJEUHdxa0Jw?=
+ =?iso-2022-jp?B?aEVJYithelVBU0NYTlZ0NEVUb0ZyVktEbC9QcnRQY3NHMW4xZWkybElq?=
+ =?iso-2022-jp?B?VmdaWnN6MWNFQWZnM3FTOHJCekhQQ2l6enNYc0Z5azNrNWFTd0F0WG9v?=
+ =?iso-2022-jp?B?TDlBZDVKWk12WmREVWNONzMzRG5CV0ZCbTYzNnFadHFLdWo0aDdhMzB2?=
+ =?iso-2022-jp?B?N3k4SlM2elpDWXZJN1dPMjhVemdPbDRPTjZ0Wm9WalNjL3NzcU12TUlI?=
+ =?iso-2022-jp?B?UG9pcjBHODN3ZnRYODNZV21oLzNUTmlGZUx2MExLTGJ4cWNBNDFwVXc1?=
+ =?iso-2022-jp?B?UGZpVGlsTCtXKzh4MEhEekJlbmI1U3BYNG8zNmdMOUUyMCtVcy92MkEw?=
+ =?iso-2022-jp?B?bDRuaFVycTNHYThtV1dDL3ZFSnR4dVNQS0FMZS9kWU42VjRtNU5VNWx5?=
+ =?iso-2022-jp?B?WjBERDA3QnZlKyttWlFFMnMwSGoxaHNXS2VPSjVyQTdNaCtNYXZoN3k5?=
+ =?iso-2022-jp?B?ZlVPLy9Bbm50WXlpaGNlTkFZdW9kcVVHbHY1c1NlbmNJcm1EdHU0WW9W?=
+ =?iso-2022-jp?B?dWhXUFNRVmE0cm9uNXBaNUtSQzE4UnM4cVduMndzVndFNG00MVlZWStx?=
+ =?iso-2022-jp?B?ejVKYk1hK2JWejF4TGZ6NHk0WDVYdU1lZFFYNDhwRmkzV2JSemtIY0dM?=
+ =?iso-2022-jp?B?emNwZE1XWDFXRTNZeGVvQ3VTZTBiT0pkNDhnbUREWnV5SSt2SVFQWWl5?=
+ =?iso-2022-jp?B?YUJvM2NJQ0hGLzdLUzVhYzNpbEEyN1A3S1NIMCsyM2F6ZmZUMmJPNGNp?=
+ =?iso-2022-jp?B?QjRYWDAzY2V3dmM1NTZZbVQzMVE2dTJ5UXBFbEFzOFRKaFBrT0JrM3ZE?=
+ =?iso-2022-jp?B?S3cwQjgvL1hNdEhtTGJRYTl4c0VLRlFuM2FBMzFEZDd4bWtmbElFdkE0?=
+ =?iso-2022-jp?B?aFMrT0VJTXQ5Q3BDZjBtaXBNVVR6Y0lXSUROWHlzaGxYdmJvdmZmV3gw?=
+ =?iso-2022-jp?B?SzlmTWs0bFFxS2NTdEN5cUhZcmdvdnlZWEY1Z1NMalBUMjdrQ2NxQ1Ny?=
+ =?iso-2022-jp?B?d1dTN3ZZSk9QZkVwYUJsS2xaWlpBVk0xY3BhQjJRZFpDUURWdlQ2czMz?=
+ =?iso-2022-jp?B?bi93Ylg4YjI0OUx6VktEU0xPMy9SQlRMbVNlOTRjVytVVnJwZFZhNE9w?=
+ =?iso-2022-jp?B?b3FEUmVLZ2RNR1FwUzg4d0dTZkRzNHVmek5XVTNvZXBmZ21NZ21HdmJi?=
+ =?iso-2022-jp?B?ZWx4cVVHOXNlcGhpVUdvbWZmREszZURtNjViQ1lNOVZsdTQrcGp4ZzZE?=
+ =?iso-2022-jp?B?S0FhVVBhcUo5L3dyYldpREtuZGhnRm1PUzBUZjMybVlEVTVpakh3NG1P?=
+ =?iso-2022-jp?B?NHhDcmhNdVA2UDU0WDlqc0xsL0dGZHVIMnBxOWJPNW93My9kUGNEUXZK?=
+ =?iso-2022-jp?B?dXk0Q1ZtYlFVTWlXVUJ5U3gzRStYaGtKMnRSUG9RZWVRNlY2U2xMMFdF?=
+ =?iso-2022-jp?B?d2pMVW9samYwbjM4ODhNditZYkdRbTZTQXo2L1lGSlUyc2F5NXppbytI?=
+ =?iso-2022-jp?B?c3FvVnFSNzczUVljaXUralhkMEx1ckZYa3MwdGtINnNKVUU4Vkdid2Nh?=
+ =?iso-2022-jp?B?UkxPMGtWRnVocXRlNmU2L1BUaDJ3L0FvSFMwNnpTVzZjNy84SVpVMElG?=
+ =?iso-2022-jp?B?MnY=?=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GVXPR10MB5837.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB6388.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018)(95630200002);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?iso-8859-1?Q?T6A1GLKe30W/BqxVMPbABJeNctxcWp2B3osgptrpOIoV7EGXfG4QvPetoW?=
- =?iso-8859-1?Q?3hHNtSVQTrhJo0NnciRzg1Zhqa68JV2QyUsoi1vKwGKsHL3gYuRwA3oCHu?=
- =?iso-8859-1?Q?uXH21oQ2uouRlfcdr0USZxIPiz5S3G9zNMpqvUS4NoPdH+Hd5IclmM224r?=
- =?iso-8859-1?Q?8oj6rdZlRjsh5uiBiZ120OMklZtCKak8pS7tJXXSIBpjebYg/WMvnsZh8C?=
- =?iso-8859-1?Q?xdDRohuLkhHkmdpF3MirkPn829dwiDlcJ0zSRQ2rRpRuvOSfXid3dNoQWl?=
- =?iso-8859-1?Q?vJMPrnHRkLJkXnQhkuYqEZcGwWhuXcLYCbf18QWzoW725QqgsWuD+H4OA/?=
- =?iso-8859-1?Q?fwnpsJNZTV6tlvW4+u/y7wr0htoo6XUbQXPKuZyE+myHb1XIqWjkS8mNf1?=
- =?iso-8859-1?Q?IPHgzx90T/DZVpUyY1/CMSQG30vMPTWHII07Zz7yAFY43EtYnx2G9LhEBT?=
- =?iso-8859-1?Q?K2iKMvz8MMlzuu4qbnkvKRv5dJkoQl9q/eR/ZSC947FLtKW/0Qhe7pHVah?=
- =?iso-8859-1?Q?0WdmEFzSQedi+yfK5jnL2AUjGsVkWTiTaDeFdEren0+uYbBvzvY5ky1uW2?=
- =?iso-8859-1?Q?B8aApetDxDIA2Ljtg/84sHITXDNs3nFYyCPb4ktaObUOD5Udfss19ucfm9?=
- =?iso-8859-1?Q?h+GUjOh5KRdA7xyt/GPcFeIetNtt5ekuldTTkpKQY/fHBVqP68g+6oPDNb?=
- =?iso-8859-1?Q?zLnztu4vpZlhW0UTuFcAKxNhyMiTVM/RYj+moSB5jhakKMLNYi3txcw+RT?=
- =?iso-8859-1?Q?kVA4urbQB3YMG1mAUprRdHPY2072IPHwtr596+JKfL48yx27+7oh5NhuQT?=
- =?iso-8859-1?Q?63DgwDeRwefadsDfaHWb2fBsI9ceDPyuhbSQIL9rcqOosR0EjgDkYVn7uF?=
- =?iso-8859-1?Q?v1RnmWhU0nnwnFxHqo+oUZtd9ErOI8rf0CRU/mYbzEabqed3uG7uC/9mjZ?=
- =?iso-8859-1?Q?KWyry3LXJDEVko+5zXRGI3ehBl07iCjVm8MfgWXhVrCKDuaxZok2MczkZ1?=
- =?iso-8859-1?Q?WP61KfdQLBktW7PzmMQWyySzCqvbIxlRAMYp9QUySLye94LWnvjDhKi8Ps?=
- =?iso-8859-1?Q?Dvu8COSgMtY8mYGEuu1lQ3jN1X/D17Wh2Np0Z2HgZLwTfXtxYVbY18qPsL?=
- =?iso-8859-1?Q?uRDLhtWJFTgUZKh0lO8DKbkby8rzw1sfgPeAIwjGGTB9NmZxGABQw33kD1?=
- =?iso-8859-1?Q?vFGdqg3ai53+fFLS5llCZTN0CiibpHQcL8XWb6KWTBAv0ZghwoGOaHsiZc?=
- =?iso-8859-1?Q?VC8csalrB6JamLZ04xquJrPnHTmC9oh9M5eAiMFHcpjLgaJ807X8o/bcjq?=
- =?iso-8859-1?Q?tcMA4Jag2XPOq6u7MFNY0+pQ/C5RvWn55V8gQRDvQlhv3jmwr8hBMMI5+Q?=
- =?iso-8859-1?Q?qhjISsBiZYJkG7BZ4ctDWaxo6kqB3bAlzAG+jHiA5h2E6K9qwOltD4H9J2?=
- =?iso-8859-1?Q?DA0i0xM9vVwH+cixMArlNK5qaq4yhFmGAR064fksw4/LY3KPAaSRkfPoTV?=
- =?iso-8859-1?Q?47UvxX3FBc2J3tr3sKDkV9y2c3OoVaFyMSgLk3zIKqnVrpjiPXxEwBc4pk?=
- =?iso-8859-1?Q?axTEwp9iN0MMEYzXnErmtgX4F/6GBws+ygVe+cH1mq7C1JlUGnmLjSiEqo?=
- =?iso-8859-1?Q?i5XyBB4i/xa55FG5KvX1oWnTaqO3H+Bd9iHucT4mEHYAXfKAiFNeaQEHow?=
- =?iso-8859-1?Q?ODvEvEosOmNfhpb20q0=3D?=
-Content-Type: multipart/alternative;
-	boundary="_000_GVXPR10MB58372489E9C91ECFC0AB51A588DA2GVXPR10MB5837EURP_"
+ =?iso-2022-jp?B?NGNZYjVjV2JrVnZmdElMQUp3eG0wMVdUdTJXaXZPNGRHZXVvSG9Za1NR?=
+ =?iso-2022-jp?B?RUpzV3NKTGJ0eDdtZjdoT0hGcEVQYmN2MmlOb3k1THVJQ2JSREtQT0dX?=
+ =?iso-2022-jp?B?TlJhdzc2MTM5RmZGbWRrZlB5SjVZUlRXaWxWdkF2OHdqUndsc3BubjMv?=
+ =?iso-2022-jp?B?aUZBVkQ2S0dqNlJoYWQ2emd1SERYSk9CaFZ4RmxSN3J6UzZ3SjMxUnNI?=
+ =?iso-2022-jp?B?cGJyUk1tMDQ4WUxiQUV5RVNiNURtZ0ZvOG5UMUp3MTd0WFE1aE9XcW1Z?=
+ =?iso-2022-jp?B?dG1pZkpoZGMwZjNNa1N0bWlSb2luWXBTYkx4aWJsQlZhRXdPOVZsaWNO?=
+ =?iso-2022-jp?B?NWFaQlQ1ZTdrQ05mMzd6dmR4UW5mMWtobHNpWmdIVGtDOTJUR3RSc21Z?=
+ =?iso-2022-jp?B?aGZYczRwZGpXYVJuRlRabWMwdzhUa1l1UnZGcDFsM1N4d2JSdHJaM1N0?=
+ =?iso-2022-jp?B?b2I3bFprSXRSZFZ3a3NwMmNKRjhSd0R3bzMxTkRmSm16bUlZUWRDVHQr?=
+ =?iso-2022-jp?B?a0ZvMHZCbXVQcWdFVUt2WC85bmVSUXRNbmV5cllaUmdhWmVZL0pHMjhS?=
+ =?iso-2022-jp?B?UHJQRnBrQk5UWjNhMjdNTGdFMkpyNlpOZnljUDRyTitidHNpeFZrTGpL?=
+ =?iso-2022-jp?B?ZlNwbGdjeDliRnNHUkxRT1gxV0NHVDd3Q3dlTkNXc0MwNkVwRDBra3Bu?=
+ =?iso-2022-jp?B?ajc3KytnSjRpcHpGbzkyMmZkT081blUxMlNQbHQxdEhOYWFwNEIxL1Fn?=
+ =?iso-2022-jp?B?TzVDZlJ0VFI1UVJZUTdMcmVVSEV0VkxVQXMyd3VCY1JOdlJDWFE1MzNi?=
+ =?iso-2022-jp?B?Z0o5RVlyMzlKRkNvejVwYi9MMjhMSXBaMHkrYmxjbXJsYW9UVnVNT3pE?=
+ =?iso-2022-jp?B?RkZCOUN3WUZhV0RjRVNPcHFrTWIwN2dNOHpiRWdPaklTekc5M1JhUTRl?=
+ =?iso-2022-jp?B?ZTZzMm5QQWdrUktKY3ozT3RSRWpDVTFmZnhHRk01VW1kSk9rNUloNDVj?=
+ =?iso-2022-jp?B?TE16MUx1c2hIR0pLaHlyQWJvb2JWc1JTTnFoYjdBaHBRZTl2dGJObDBE?=
+ =?iso-2022-jp?B?dkxVdWdmdGxEZzBOWCt4WVREa3BRNVJQVkVZdG9jNlZXZTRPcS9WZXhi?=
+ =?iso-2022-jp?B?Q1k2VkhOL1hCUzZERkR1cWs0Zm1rVmNjYUt1eFBucUt6MWloL3Urd3k0?=
+ =?iso-2022-jp?B?d2J1dWNVZmE4Qm5tRTFKM2NNWlJ3b2xDNmxCWU5xemNhQ0M4K3lLa0Np?=
+ =?iso-2022-jp?B?Qnc5WEUyN2NBZ1F1VCtRWEhOaHo4VWZTQVBFbDFyZkxhV0ttRDJEZ0Ro?=
+ =?iso-2022-jp?B?Z3djcUljSkVkdGU1R2diME5acVhzbVVZRGdoVnpTNHBaa0lMbFJYWHQ2?=
+ =?iso-2022-jp?B?bGg1NXgyeThWNG10M1lySXd0RHFjM0poTzN0RDg2WUhmOTY2NGlQRU82?=
+ =?iso-2022-jp?B?a0M2cWhJcDlGMEZ5RUtnTWU1d1pMUG9WNnJneXNPNnBJQWpJdDJjSFli?=
+ =?iso-2022-jp?B?ckhwZTVRK3lZZk9GWDN3Tm01SThYcy9nbElhYXJOZ0Y4VHAxUmxkY3hW?=
+ =?iso-2022-jp?B?Q3c4c3VTbHlMWlhUMEIxVXN4TjlxS0Y5T1B4V1oxUDFSd0sxcllxTFpq?=
+ =?iso-2022-jp?B?Tk9id0pGYm9Na1IrcVlKNzZnS1QxNGl2WVJoWHBpbW0vSEpXakRERjI0?=
+ =?iso-2022-jp?B?UzBmSUdKN3crWVRhSFRrMGtKZDBTbDVWUXB2bC9LV1g5a3VHakQ5WEZY?=
+ =?iso-2022-jp?B?Y1pkWHdhaHVzalI2cEFlN2xTQzJaemt4VGd1SWdtQ2t3Q1B6TmhESktj?=
+ =?iso-2022-jp?B?eWZDSzFPRGlPVWxEZzFHblZ6TnFSMWdZRDBPN3dVNzJ4MEtiTXdKWVkv?=
+ =?iso-2022-jp?B?UklVWWtMeVFDMHBNY0c3U0lqWEU4aDZKZ3A4azNxOFZBMVduOGFXWnVB?=
+ =?iso-2022-jp?B?aDIzL2hBQzRTK01LV3VReWxEbzhRdFM1MVFXaENOMlN3dlVRcmJNRFRs?=
+ =?iso-2022-jp?B?ODZ3R2hFOGR1NTBLSFZISThYNEdld1NPVTNhdTFtK3pTLzJDN3Z6QTBQ?=
+ =?iso-2022-jp?B?U3c4c3VnQUlFY0ZBQmNVNG51OE9sdnFFdzhoZU1PQzIyT01GTnp4RUN0?=
+ =?iso-2022-jp?B?NnB1aEZFNEprKzgvVEg1bG1oVktPMkgxUnJkVnZjZ01YbDB1RFJpMTNk?=
+ =?iso-2022-jp?B?L2RlV0d5WWp0SFdzQkk0UiswRFRuZzg1WlpacUNEejZiemhZT1dIL0tB?=
+ =?iso-2022-jp?B?a1htcGZrNnBaZ016YlZ2bFdBQXMrcmhRTmpYajBCZy8vMnFwVGpwMmdJ?=
+ =?iso-2022-jp?B?b2htaGd1U2kwN1pHNkpIU0lqSHlzWm9uaWxGMkhHNkl4UXk3OWVwazB4?=
+ =?iso-2022-jp?B?OUpsNmFIWkpDTzN1TGZScmV3TFhVVGJzTkYzZGhhZW52T1Y1bjRCOEt3?=
+ =?iso-2022-jp?B?SnVXZ1pMOU1yaDhnWGo2WFBPU2REOGxjb1JnPQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: siemens.com
+X-OriginatorOrg: toshiba.co.jp
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: GVXPR10MB5837.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6d520350-3b3f-4de3-0b1e-08dc9f828cee
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jul 2024 19:17:03.8146
+X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB6388.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c18b241f-a4f5-4f70-b261-08dc9fd2168e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2024 04:46:25.0017
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 2u2MCcpEgbj4BAXD+N74L2NBAR8hy6uYPy0yL2/dVf6KbD1OAom1+PurMCu94hUJKcPgv2Iw7+OyuwAgO2nd4AioSlz4jYw38TePLFbnlT0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB7409
+X-MS-Exchange-CrossTenant-userprincipalname: ZMoV4yT7jfxfPPnD4YCkrjjDUyo5oH/DZO+dR3PdlRhRYfKIT4GubRuCv+9qk8f/Hih7sw0KLm4sntwfB0/8398bUznuQCLAnxGrlSz1+6u57h8GVrlAE757CQVVCFgO
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB7212
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 08 Jul 2024 19:17:13 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16437
+ <cip-dev@lists.cip-project.org>; Tue, 09 Jul 2024 04:46:47 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16438
 
---_000_GVXPR10MB58372489E9C91ECFC0AB51A588DA2GVXPR10MB5837EURP_
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-From 4e6b957569e0a4dd617cc1f4fd716c769681f6dc Mon Sep 17 00:00:00 2001
-From: Benjamin Schilling <schilling.benjamin@siemens.com>
-Date: Mon, 8 Jul 2024 21:00:14 +0200
-Subject: [PATCH] README.m-com-x86.md: Add hardware details
+> -----Original Message-----
+> From: Paul Barker <paul.barker.ct@bp.renesas.com>
+> Sent: Tuesday, July 9, 2024 3:39 AM
+> To: Pavel Machek <pavel@denx.de>
+> Cc: Paul Barker <paul.barker.ct@bp.renesas.com>; iwamatsu nobuhiro(=1B$B4=
+d>>=1B(B
+> =1B$B?.MN=1B(B =1B$B!{#D#I#T#C""#D#I#T!{#O#S#T=1B(B) <nobuhiro1.iwamatsu@=
+toshiba.co.jp>;
+> Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>; Biju Das
+> <biju.das.jz@bp.renesas.com>; cip-dev@lists.cip-project.org
+> Subject: [PATCH 6.1.y-cip 1/1] net: ravb: Fix GbEth jumbo packet RX
+> checksum handling
+>=20
+> commit c7c449502b51c5b5de79f97a42be750b28f6ecee upstream.
+>=20
+> Sending a 7kB ping packet to the RZ/G2L in v6.9-rc2 causes the following
+> backtrace:
+>=20
+> 	WARNING: CPU: 0 PID: 0 at include/linux/skbuff.h:3127
+> skb_trim+0x30/0x38
+> 	Hardware name: Renesas SMARC EVK based on r9a07g044l2 (DT)
+> 	pc : skb_trim+0x30/0x38
+> 	lr : ravb_rx_csum_gbeth+0x40/0x90
+> 	Call trace:
+> 	 skb_trim+0x30/0x38
+> 	 ravb_rx_gbeth+0x56c/0x5cc
+> 	 ravb_poll+0xa0/0x204
+> 	 __napi_poll+0x38/0x17c
+>=20
+> This is caused by ravb_rx_gbeth() calling ravb_rx_csum_gbeth() with the
+> wrong skb for a packet which spans multiple descriptors. To fix this, use=
+ the
+> correct skb.
+>=20
+> Fixes: c2da9408579d ("ravb: Add Rx checksum offload support for GbEth")
+> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+> Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+> Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+>=20
+> [backported to 6.1.y-cip]
+> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+> ---
+>  drivers/net/ethernet/renesas/ravb_main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/net/ethernet/renesas/ravb_main.c
+> b/drivers/net/ethernet/renesas/ravb_main.c
+> index dda7fb410657..07771bdf0fc7 100644
+> --- a/drivers/net/ethernet/renesas/ravb_main.c
+> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> @@ -897,7 +897,7 @@ static bool ravb_rx_gbeth(struct net_device *ndev, in=
+t
+> *quota, int q)
+>  				priv->rx_1st_skb->protocol =3D
+>  					eth_type_trans(priv->rx_1st_skb,
+> ndev);
+>  				if (ndev->features & NETIF_F_RXCSUM)
+> -					ravb_rx_csum_gbeth(skb);
+> +
+> 	ravb_rx_csum_gbeth(priv->rx_1st_skb);
+>  				napi_gro_receive(&priv->napi[q],
+>  						 priv->rx_1st_skb);
+>  				stats->rx_packets++;
+> --
 
-Signed-off-by: Benjamin Schilling <schilling.benjamin@siemens.com>
----
-doc/boards/README.m-com-x86.md | 131 ++++++++++++++++++++++++++++++++-
-1 file changed, 130 insertions(+), 1 deletion(-)
+Thanks for this patch. Looks good to me.
+I can apppy this series, if there are no other comments.
 
-diff --git a/doc/boards/README.m-com-x86.md b/doc/boards/README.m-com-x86.m=
-d
-index cbd74ad..d677b76 100644
---- a/doc/boards/README.m-com-x86.md
-+++ b/doc/boards/README.m-com-x86.md
-@@ -1,4 +1,73 @@
--# ISAR CIP Core: Instructions for M-COM RT X86 V1
-+ISAR CIP Core: Instructions for the Siemens Mobility GmbH M-COM RT X86 V1
-+
-+## About the M-COM RT X86 V1
-+
-+The M-COM RT X86 V1 is an industrial grade PC.
-+It is designed to be installed on-board of trains and can be used for comm=
-unication and processing purposes or as a security gateway.
-+
-+## Hardware Specifications
-+
-+- Intel Atom E3950 CPU
-+- 8GB DDR3 DRAM soldered, ECC
-+- Trusted Platform Module V2.0
-+- 3 Gigabit Ethernet ports (M12 X-coded)
-+- 1 USB 3.0 on front
-+- -40=B0C to +70=B0C, fanless
-+- EN 50155 compliant (railways)
-+- 16 GB eMMC storage
-+- Input voltage range: 24 - 110 V DC EN50155
-+
-+### Power Plug Pinout
-+
-+M12 B-coded Plug
-+
-+| Column 1 | Column 2                    |
-+| -------- | --------------------------- |
-+| 24-110V  | Edge triggered power on |
-+| GND      | Not connected               |
-+
-+#### Powering the device
-+
-+The device must be connected to a powersupply providing 24V to 110V output=
- voltage at the "+" and "-" pins.
-+The "switch" pin is used for edge triggered power on.
-+It can be hardwired to the power supply 24V to 110V to trigger power on of=
- the device.
-+
-+### LED Matrix:
-+
-+| Column 1       | Column 2       | Column 3       | Column 4      |
-+| -------------- | -------------- | -------------- | ------------- |
-+| Power STBY     | Power ON       | WD-Trigger     | Error 1       |
-+| ETH0 Link/Data | ETH1 Link/Data | ETH2 Link/Data | RS232/RS422   |
-+| Module1        | Module1        | F1             | M.2 Used/Data |
-+
-+Power STBY (Yellow):
-+- Standby: on
-+- Powering down: flashing
-+
-+Power ON (Green):
-+- Operation: on
-+- Powering up: flashing
-+
-+WD-Trigger (Yellow):
-+- Trigger pulses: flashing per pulse
-+
-+Error 1 (Red):
-+- WD-Permanent-Reset: flashing 4 Hz
-+- WD-Disabled: flashing 2 Hz
-+
-+ETHx (Yellow/Green):
-+- Link: on
-+- Data transfer: flashing
-+
-+Module1 (Yellow/Green):
-+- Module-specific
-+
-+F1 (Yellow):
-+- Controlled via Software
-+
-+M.2 (Green):
-+- Module installed:on
-+- Data transfer: flashing
- ## Build the CIP Core image
-@@ -100,3 +169,63 @@ After boot, check the dmesg for Secure Boot status lik=
-e below:
-root@demo:~# dmesg | grep Secure
-[    0.008368] Secure boot enabled
-```
-+
-+## Internal interfaces
-+
-+The M-COM contains an internal serial port that can be used to access the =
-devices kernel console for debug purposes.
-+
-+To access it, the backside of the device has to be unscrewed.
-+Afterwards it can be connected using a Mini-USB cable.
-+Make sure to have the appropriate FTDI driver installed.
-+
-+## Software Interfaces
-+
-+The following chapter describes interfaces accessible from software level.
-+
-+### Controlling the watchdogs
-+
-+The M-COM RT x86 contains two watchdogs:
-+
-+- Custom Hardware Watchdog
-+- UEFI watchdog of efibootguard
-+
-+The UEFI watchdog is controlled via efibootguard variables.
-+It can be configured for both partition sets using `bg_setenv -p <partitio=
-n number> -w <timeout in seconds>`.
-+To confirm the new watchdog configuration use `bg_setenv -c`.
-+To disable the watchdog set the timeout to 0.
-+The watchdog is fed via `/dev/wdog`.
-+
-+The custom watchdog is controlled via I2C.
-+The following scripts can be used to control it.
-+
-+Enable watchdog:
-+```bash
-+#!/bin/bash
-+
-+# i2cset <i2cbus> <chip-address> <data-address> <value> <mode>
-+
-+# i2cbus       =3D 2
-+# chip-address =3D 0x3c
-+# data-address =3D 0x00 (Status Register)
-+# value =3D 0x8000
-+# mode =3D w
-+
-+# enable watchdog
-+i2cset -y 2 -m 0x8000 0x3c 0x00 0x8000 w
-+```
-+
-+Disable watchdog:
-+```bash
-+#!/bin/bash
-+
-+# i2cset <i2cbus> <chip-address> <data-address> <value> <mode>
-+
-+# i2cbus       =3D 2
-+# chip-address =3D 0x3c
-+# data-address =3D 0x00 (Status Register)
-+# value =3D 0x0000
-+# mode =3D w
-+
-+# disable watchdog
-+i2cset -y 2 -m 0x8000 0x3c 0x00 0x0000 w
-+```
-\ No newline at end of file
---
-2.45.2
+Reviewed-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 
+Best regards,
+  Nobuhiro
 
---_000_GVXPR10MB58372489E9C91ECFC0AB51A588DA2GVXPR10MB5837EURP_
-Content-Type: text/html; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-<html xmlns:o=3D"urn:schemas-microsoft-com:office:office" xmlns:w=3D"urn:sc=
-hemas-microsoft-com:office:word" xmlns:m=3D"http://schemas.microsoft.com/of=
-fice/2004/12/omml" xmlns=3D"http://www.w3.org/TR/REC-html40">
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
-1">
-<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
-<style><!--
-/* Font Definitions */
-@font-face
-	{font-family:"Cambria Math";
-	panose-1:2 4 5 3 5 4 6 3 2 4;}
-@font-face
-	{font-family:Aptos;
-	panose-1:2 11 0 4 2 2 2 2 2 4;}
-/* Style Definitions */
-p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{margin:0cm;
-	font-size:11.0pt;
-	font-family:"Aptos",sans-serif;
-	mso-ligatures:standardcontextual;
-	mso-fareast-language:EN-US;}
-.MsoChpDefault
-	{mso-style-type:export-only;
-	font-size:11.0pt;
-	mso-ligatures:none;
-	mso-fareast-language:EN-US;}
-@page WordSection1
-	{size:612.0pt 792.0pt;
-	margin:70.85pt 70.85pt 2.0cm 70.85pt;}
-div.WordSection1
-	{page:WordSection1;}
---></style>
-</head>
-<body lang=3D"DE" link=3D"#467886" vlink=3D"#96607D" style=3D"word-wrap:bre=
-ak-word">
-<div class=3D"WordSection1">
-<p class=3D"MsoNormal"><span lang=3D"EN-US">From 4e6b957569e0a4dd617cc1f4fd=
-716c769681f6dc Mon Sep 17 00:00:00 2001<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">From: Benjamin Schilling &lt;sc=
-hilling.benjamin@siemens.com&gt;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">Date: Mon, 8 Jul 2024 21:00:14 =
-+0200<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">Subject: [PATCH] README.m-com-x=
-86.md: Add hardware details<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">Signed-off-by: Benjamin Schilli=
-ng &lt;schilling.benjamin@siemens.com&gt;<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">---<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">doc/boards/README.m-com-x86.md =
-| 131 ++++++++++++++++++++++++++++++++-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">1 file changed, 130 insertions(=
-+), 1 deletion(-)<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">diff --git a/doc/boards/README.=
-m-com-x86.md b/doc/boards/README.m-com-x86.md<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">index cbd74ad..d677b76 100644<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">--- a/doc/boards/README.m-com-x=
-86.md<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+++ b/doc/boards/README.m-com-x=
-86.md<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">@@ -1,4 +1,73 @@<o:p></o:p></sp=
-an></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">-# ISAR CIP Core: Instructions =
-for M-COM RT X86 V1<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+ISAR CIP Core: Instructions fo=
-r the Siemens Mobility GmbH M-COM RT X86 V1<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+## About the M-COM RT X86 V1<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+The M-COM RT X86 V1 is an indu=
-strial grade PC.
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+It is designed to be installed=
- on-board of trains and can be used for communication and processing purpos=
-es or as a security gateway.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+## Hardware Specifications<o:p=
-></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- Intel Atom E3950 CPU<o:p></o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- 8GB DDR3 DRAM soldered, ECC<=
-o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- Trusted Platform Module V2.0=
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- 3 Gigabit Ethernet ports (M1=
-2 X-coded)<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- 1 USB 3.0 on front<o:p></o:p=
-></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- -40=B0C to +70=B0C, fanless<=
-o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- EN 50155 compliant (railways=
-)<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- 16 GB eMMC storage<o:p></o:p=
-></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- Input voltage range: 24 - 11=
-0 V DC EN50155<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+### Power Plug Pinout<o:p></o:=
-p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+M12 B-coded Plug<o:p></o:p></s=
-pan></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+| Column 1 | Column 2&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+| -------- | -----------------=
----------- |<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+| 24-110V&nbsp; | Edge trigger=
-ed power on |<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+| GND&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp; | Not connected&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#### Powering the device<o:p><=
-/o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+The device must be connected t=
-o a powersupply providing 24V to 110V output voltage at the &quot;+&quot; a=
-nd &quot;-&quot; pins.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+The &quot;switch&quot; pin is =
-used for edge triggered power on.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+It can be hardwired to the pow=
-er supply 24V to 110V to trigger power on of the device.<o:p></o:p></span><=
-/p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+### LED Matrix:<o:p></o:p></sp=
-an></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+| Column 1&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp; | Column 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Column 3&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Column 4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-; |<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+| -------------- | -----------=
---- | -------------- | ------------- |<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+| Power STBY&nbsp;&nbsp;&nbsp;=
-&nbsp; | Power ON&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | WD-Trigger&nbsp;&nb=
-sp;&nbsp;&nbsp; | Error 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |<o:p></o:p><=
-/span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+| ETH0 Link/Data | ETH1 Link/D=
-ata | ETH2 Link/Data | RS232/RS422&nbsp;&nbsp; |<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+| Module1&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; | Module1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |=
- F1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
- | M.2 Used/Data |<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+Power STBY (Yellow):<o:p></o:p=
-></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- Standby: on<o:p></o:p></span=
-></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- Powering down: flashing<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+Power ON (Green):<o:p></o:p></=
-span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- Operation: on<o:p></o:p></sp=
-an></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- Powering up: flashing<o:p></=
-o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+WD-Trigger (Yellow):<o:p></o:p=
-></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- Trigger pulses: flashing per=
- pulse<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+Error 1 (Red):<o:p></o:p></spa=
-n></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- WD-Permanent-Reset: flashing=
- 4 Hz<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- WD-Disabled: flashing 2 Hz<o=
-:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+ETHx (Yellow/Green):<o:p></o:p=
-></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- Link: on<o:p></o:p></span></=
-p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- Data transfer: flashing<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+Module1 (Yellow/Green):<o:p></=
-o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- Module-specific<o:p></o:p></=
-span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+F1 (Yellow):<o:p></o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- Controlled via Software<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+M.2 (Green):<o:p></o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- Module installed:on<o:p></o:=
-p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- Data transfer: flashing<o:p>=
-</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">&nbsp;## Build the CIP Core ima=
-ge<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US"><o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">@@ -100,3 +169,63 @@ After boot=
-, check the dmesg for Secure Boot status like below:<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">root@demo:~# dmesg | grep Secur=
-e<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">[&nbsp;&nbsp;&nbsp; 0.008368] S=
-ecure boot enabled<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">```<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+## Internal interfaces<o:p></o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+The M-COM contains an internal=
- serial port that can be used to access the devices kernel console for debu=
-g purposes.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+To access it, the backside of =
-the device has to be unscrewed.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+Afterwards it can be connected=
- using a Mini-USB cable.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+Make sure to have the appropri=
-ate FTDI driver installed.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+## Software Interfaces<o:p></o=
-:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+The following chapter describe=
-s interfaces accessible from software level.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+### Controlling the watchdogs<=
-o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+The M-COM RT x86 contains two =
-watchdogs:<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- Custom Hardware Watchdog<o:p=
-></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+- UEFI watchdog of efibootguar=
-d<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+The UEFI watchdog is controlle=
-d via efibootguard variables.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+It can be configured for both =
-partition sets using `bg_setenv -p &lt;partition number&gt; -w &lt;timeout =
-in seconds&gt;`.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+To confirm the new watchdog co=
-nfiguration use `bg_setenv -c`.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+To disable the watchdog set th=
-e timeout to 0.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+The watchdog is fed via `/dev/=
-wdog`.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+The custom watchdog is control=
-led via I2C.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+The following scripts can be u=
-sed to control it.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+Enable watchdog:<o:p></o:p></s=
-pan></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+```bash<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#!/bin/bash<o:p></o:p></span><=
-/p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# i2cset &lt;i2cbus&gt; &lt;ch=
-ip-address&gt; &lt;data-address&gt; &lt;value&gt; &lt;mode&gt;<o:p></o:p></=
-span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# i2cbus&nbsp;&nbsp;&nbsp;&nbs=
-p;&nbsp;&nbsp; =3D 2<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# chip-address =3D 0x3c<o:p></=
-o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# data-address =3D 0x00 (Statu=
-s Register)<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# value =3D 0x8000<o:p></o:p><=
-/span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# mode =3D w<o:p></o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# enable watchdog<o:p></o:p></=
-span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+i2cset -y 2 -m 0x8000 0x3c 0x0=
-0 0x8000 w<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+```<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+Disable watchdog:<o:p></o:p></=
-span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+```bash<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+#!/bin/bash<o:p></o:p></span><=
-/p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# i2cset &lt;i2cbus&gt; &lt;ch=
-ip-address&gt; &lt;data-address&gt; &lt;value&gt; &lt;mode&gt;<o:p></o:p></=
-span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# i2cbus&nbsp;&nbsp;&nbsp;&nbs=
-p;&nbsp;&nbsp; =3D 2<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# chip-address =3D 0x3c<o:p></=
-o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# data-address =3D 0x00 (Statu=
-s Register)<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# value =3D 0x0000<o:p></o:p><=
-/span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# mode =3D w<o:p></o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+# disable watchdog<o:p></o:p><=
-/span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+i2cset -y 2 -m 0x8000 0x3c 0x0=
-0 0x0000 w<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">+```<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">\ No newline at end of file<o:p=
-></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">-- <o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-US">2.45.2<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-</div>
-</body>
-</html>
-
---_000_GVXPR10MB58372489E9C91ECFC0AB51A588DA2GVXPR10MB5837EURP_--
 
