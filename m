@@ -2,41 +2,41 @@ Return-Path: <stefan-koch@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7774C3DA45
-	for <webhook@archiver.kernel.org>; Fri, 12 Jul 2024 08:12:00 +0000 (UTC)
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.69])
- by mx.groups.io with SMTP id smtpd.web11.3144.1720771916444724822
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0882C3DA45
+	for <webhook@archiver.kernel.org>; Fri, 12 Jul 2024 08:12:10 +0000 (UTC)
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (EUR05-DB8-obe.outbound.protection.outlook.com [40.107.20.57])
+ by mx.groups.io with SMTP id smtpd.web10.3116.1720771920681530655
  for <cip-dev@lists.cip-project.org>;
- Fri, 12 Jul 2024 01:11:57 -0700
+ Fri, 12 Jul 2024 01:12:01 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=Zzrz/XAI;
- spf=pass (domain: siemens.com, ip: 40.107.22.69, mailfrom: stefan-koch@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=DRp/JIND;
+ spf=pass (domain: siemens.com, ip: 40.107.20.57, mailfrom: stefan-koch@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nkroddKBJUFQqqsf6P/HlCZ9+ixY5wTI9zMYjupX2u/PDO8NbPOWt9OI85YEkS659CYJyLAHAEghA1R5gPrjKPb9/kL6qtFNXjISfgX3+vwuq/WBpluB/8yyEpOiMAUhaEpNwr2VIZ/orsy09nsQLFrzeuLSmkFxcBi5qsHwEUvWaKABGUyquYaodHJ1BDxT5APd/0jcaDuLcKMqpkrhatV/LgfcvXON0sQZ5IDoY56sjKauP6uO04miOJWkxqMxUma4ndXnfWxWukfVxJUSn0bKX5cLHkpb3yK3ZvFsAtzjXwehRt2bVwv8fFBOrgCVYHs/FqwN/vbC0XE6AabTPg==
+ b=qwpUemaGGIXMCIA5VxUp97O92QmgyFCljACDkU6JRs+WJeZrQat5OGxjveaUDoFM2b7OCSc1IfPh6ErcxUmSfI+J2YLQGrfPvroLDdwelnmEBHHVzvGGTqnbzxvWgwL4h4RyWhBDfNqGBSNxeonuoMd7rPKuzFc2PqGxW/qqwdKeXPhOpqBacYssAwAtMmPbI7/6YL2lR6SNqCkZB0PsWsKiEewt5uhJlkRxMTQGWWQfc+yD8sgVeyCffZczJr1DmvByW5b6FM101UVX8J7dQEP3WZbb+OW7jUbQglqZur2Fwa1y+wxv2uE+BN3NLwdiMa9KiScnun8hGmDVGSsYCw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ba9y4KDCaEb23d7FS43uUh/ESktNEkzhli+JTZceamg=;
- b=oP2DW9LB1wB53mQKqrep2HORQLDZ2bPwUdwobs7+ZiOD8DII7JHJYim5vVn0NOpQefwkfuOuR9HX0+YZ/ySVURk52QixvIgd45yXyT2Q5OIxcdnMv3xrfgcYTc1n6TjPx52qoPzM9yC0/InfH0vHauTVJR3VtqpS0s3wRs+PI2wOOwDpY7iLpEeMSpKvnlV2jYI03HAMTLI6GoyK6PFsZ2P2vJPmW96Zs7+NSRDqPFqPxrZtzZCB9s3Nbic8erPzpXQrE48oMwoXyMhwGNZDu9WfKYMrN0TJuVIhE9HlLi6A13A030FF22LsxL32tFAQhxJsbYT67WGr3cO/uXBqlA==
+ bh=KDFKkQykj7N89n+n2HVmJjrDY62BxlYiTvEIbhe+Iv8=;
+ b=nu7lu1soHco8UszAnzCSO9jbI7QiHWc1jr2LGlikEy0NnAAn0pCv5WTFlTW6ZLTEkOHmDPjfhO55dVzRxxpzEuIrxCGMqPM31i8HX7EHXjSdFatXOJPfaXTMrvbyuqfDq2IHx231idpOkQXfiMr73IgV79546U5mkuaM+yZ0qnFqI8LGJueN/WCBr04RZYkAJELe8XIPqmn+DuhfelJL+tAE+947/8gbYBsm+JLsXZDGt2goec7Fjq/DEnXSkHIqhQWb5ls/L2GO9xD3Iz2FNLOQSgRV1Gb8PBGwWQKEvYo3zbmVUMmpts53mcOI57h/iEnsRx379ikGoP+FFxaCDw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ba9y4KDCaEb23d7FS43uUh/ESktNEkzhli+JTZceamg=;
- b=Zzrz/XAI3GQp0qwi0bx8Qh9i0a8d3mWuA6UrAzSOue9WiJWJhkFSWRStZCZUabwj0GOj/nkBTjklYFBiQtqpmPTNgYlqLOg4t/8ZPBl+U6q6qvFejiRM4VM8hOdv27hI38xLf16XhaM1FThWWkwUrl33jgQ0pP+IhIJ2wjGc6gr38XlCIgjJqkNC99LGod4iSlhEbGqenn6445w6HVUhj1tXJm/MhKWLX43mjPQYi7xm9fJEl8aVUy0dZGN6zBfysgxbALHXVLd6zdXyfc1+I6AuKKCDbFGJlXYXcJheJ0KupRf5wSD90t5GpXCHi9Dky8yl6WLKMc3KNgOLptRtIQ==
+ bh=KDFKkQykj7N89n+n2HVmJjrDY62BxlYiTvEIbhe+Iv8=;
+ b=DRp/JINDrWXYslLWKe/WQlDMFXkpGWfnTWjCkSYf8EMtHM+9YBydiojr8wiSTLXsZNpTdZLrrLoTXMfKXxWai+QkhqU8bDtwJ8u7ugU0W3I/5vaej0xCLj1+pLsGDf1Eypidjoii5EU5fkjLrdcjbqh6X4gqCyB1X+v2VkEW+NTQpEhWux2d8Q9vtWYKWIoM/RcIom+dEvwEkt8YVKPbAtli1aiZcJy2Vx4Yz1cE8geUrByJQEhFcVai5HOMFSjMLkIQlubjJ7hDIk6e3Q6DvMmH+AehyogTVO9K6p7OBUL3FKeplZOxl+ia6j0L2wSqueaUYca0KlLnzgWM+wAtXg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AM9PR10MB4959.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:41e::11)
  by GVXPR10MB8316.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:1e4::18) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23; Fri, 12 Jul
- 2024 08:11:55 +0000
+ 2024 08:11:56 +0000
 Received: from AM9PR10MB4959.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::71d7:e998:3abf:a1ec]) by AM9PR10MB4959.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::71d7:e998:3abf:a1ec%4]) with mapi id 15.20.7762.020; Fri, 12 Jul 2024
- 08:11:55 +0000
+ 08:11:56 +0000
 From: Stefan Koch <stefan-koch@siemens.com>
 To: cip-dev@lists.cip-project.org
 CC: jan.kiszka@siemens.com,
@@ -45,252 +45,157 @@ CC: jan.kiszka@siemens.com,
 	michael.adler@siemens.com,
 	simon.sudler@siemens.com,
 	stefan-koch@siemens.com
-Subject: [PATCH 3/4] initramfs-crypt-hook: Speedup disk-encryption reencrypt
-Date: Fri, 12 Jul 2024 10:11:42 +0200
-Message-ID: <20240712081143.1376952-4-stefan-koch@siemens.com>
+Subject: [PATCH 4/4] initramfs-crypt-hook: Add missing mountpoint executable
+Date: Fri, 12 Jul 2024 10:11:43 +0200
+Message-ID: <20240712081143.1376952-5-stefan-koch@siemens.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240712081143.1376952-1-stefan-koch@siemens.com>
 References: <20240712081143.1376952-1-stefan-koch@siemens.com>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
-X-ClientProxiedBy: FR3P281CA0032.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:1c::13) To AM9PR10MB4959.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR0P281CA0113.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a8::13) To AM9PR10MB4959.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:41e::11)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AM9PR10MB4959:EE_|GVXPR10MB8316:EE_
-X-MS-Office365-Filtering-Correlation-Id: 40c9bad7-70af-4c83-df00-08dca24a4b04
+X-MS-Office365-Filtering-Correlation-Id: 9caa251a-3f1e-4ddd-cebc-08dca24a4be5
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?L1nj/DFkDxvr7zjgchc6BJr5NxpFbcgV27l+ybwWuTelMIlIYQbmWgvzvzRt?=
- =?us-ascii?Q?XPvxShUb88H2fiZ11NqbmqGeQoy8E3KRfARKZHQHyFQhKxQKLAfIUYVihK2l?=
- =?us-ascii?Q?qXJZXDCDyn3bH/33jcXjmq3oIV7jAjoa1fdnrKzjdvEMPcbONLgD1N9wpKos?=
- =?us-ascii?Q?1ob2BIwq31QlqxUGutlGqX5lTHKoaiiSWQJvYnFz0zw9nb+BRDoO/l84/TBD?=
- =?us-ascii?Q?DIV75nVRlmnu1afhyqllKBXI4ituxS4DK8geU7si9NpCHYUH3p0FXf8tOoiS?=
- =?us-ascii?Q?4gpYsA2X6EOZTW1A/dUh506F7WYdZuTl+TarAun/1OCmYakD5XH0xgbgCaC9?=
- =?us-ascii?Q?cU0CdEO7VAYNPnAnh/mn71T1jmNUlXjTtq3beEuJlR2CaaCumsgACw5eWV4v?=
- =?us-ascii?Q?yxRi7gBy8ipLwCg3ejqYzgSr45k6zsscpHsZ14hr3EMsSNMlj6KS68HD/LrF?=
- =?us-ascii?Q?yjsbNAndBaBhCkwbPOuyagsyiuv2uVBKtQYoiVZu6WdJgpcOiPPkmQlJb8be?=
- =?us-ascii?Q?X+Ck+YXpyicnzVb29eydkf2j/CJBzBJlUGDwgsCnWu6EiUfUeHb1cYGkfd8i?=
- =?us-ascii?Q?dyhgh3VHfZTuK3xdCMtQY4lJ7hUk38xKZkjaNVCkrt9KJWA+dDmkYhiS4LZA?=
- =?us-ascii?Q?tIbbIDY6rixP8XuJQlu9gkKMaavM+e5oh01a0x9vl4BRw4UE9FjJaQnZUOEN?=
- =?us-ascii?Q?ppOMsHSXWzPsvvSE8sg9JxeA0nMoOhLwaCBqCGPtJMMuDQ4rwWqOoq8Y/v7N?=
- =?us-ascii?Q?NMu5BH1xibuHNwJh+ZIn+wCRfufGGa42xrotx7o2XRK7eRuVlqkcGW4ISI2V?=
- =?us-ascii?Q?P8oXTU0tULuReo1qtJtHsuGBnCXtf4MoLgQDQ/fYmQThMy5btKhwjzCEwYLy?=
- =?us-ascii?Q?kQBz4FESce04n/BY4XgfuRoNSD5oho1Y/DQNF8tHZKCoG77qfHROcCMP5GJh?=
- =?us-ascii?Q?+BQitrUmloBCEzYLyu5fST04IH24hvMGfLmDpR78z/9Q+OASrzHpAvCQpCto?=
- =?us-ascii?Q?M0BDkQzTrPtIab53R7c0w0qz1wFzQNzvEDkVbsBLfax7zYsS0McXhjH4XVbX?=
- =?us-ascii?Q?fUz6CXCwfZT+9H0L1Vzpgrdb8qc1G+0NnGDrLACtsduCHHqf1G+Y4gjh+6uE?=
- =?us-ascii?Q?TZgCN2BVGhcbUFh4IvFrR7OnxBNJ59Cr8PxbjVIQAs2zpTSL8UmJ7eKnx2W4?=
- =?us-ascii?Q?GHzilEuqFMgApe1GeimGR4yteoSVeREq9QKXNKQZzzWWv2aT84HaVs6jiN1y?=
- =?us-ascii?Q?mGkjs8QVliLfWL7Yrk4+kTJ3SJKbEcAhlqCgBbG3f4XmIp/muYs29v9HUtoq?=
- =?us-ascii?Q?uP3jCii18XNEWj0feLbCvJmWePaydqz2Y9Yww4Ambld7Kw=3D=3D?=
+	=?us-ascii?Q?9d3YPHim4yzkAO52/LFszJxURYC/1mCWcIqb3QSWLMmmA9a695/wlN3QBoef?=
+ =?us-ascii?Q?6tXb6h8pH+de1oJQr1PrhiS+xtnB69yZXObIrEUF3Gmy6oaooyXs4juWC9o/?=
+ =?us-ascii?Q?+0CyOjOTAQ8IqwIOoDDjvTl48IfP6yZ2I2U5GX0c5B6Oy4lqVIJMS25IPidj?=
+ =?us-ascii?Q?gZfMnAleqCVZ2jFRC4XPKBMnTEXtIUqtJnpa2qH6/XjfdgqAjQmfGfWOCq8D?=
+ =?us-ascii?Q?ZvkLp+65UehQohliKoM3EJkLkxUioajGdDSAQAmebiB5BgW/S+vb8vzO7orG?=
+ =?us-ascii?Q?Wg70NrGYt8ZvtXmvG3lrcEemDowJHOIm0FhLdc//uGszyqrfRH+d578iz/hv?=
+ =?us-ascii?Q?k5qPSo5ylAUO/jJapZKM+zR0fXIUXkAMsxkDcD+8ojLZ4tqsgd+p+FJHYzEy?=
+ =?us-ascii?Q?WBMFuSijzhv2PVhNkYV/eTNIgnSyoRMzYa+Kgv34OpDTYHPe0D0LGioDK3D8?=
+ =?us-ascii?Q?liPO6tAwjUnZwf+CuAA05WUZHy1E0wFJqo4gge9k66k4PgKfASUAZAc/CDsI?=
+ =?us-ascii?Q?pfCHlmQAuVvv7v4ACpXfSG1QOYJpFWPDa+ZSO8z4H23SUY8r2Cj2Fc49DJEN?=
+ =?us-ascii?Q?6WgHk6jbku6FuVJofzYdrDiolQ5S9lD7e96lP7G9MEE+8T2ONbcopM7S/dg/?=
+ =?us-ascii?Q?DYLsll4x3TH1dTJUkXA143KWwYxRjkwf8ceERnor7A0AYwRqqxtJ3w/1PDCK?=
+ =?us-ascii?Q?eViMjT4FLmyp917EKmFoot1iM0ycOh41Wz2Ezc6GzIVfnIH+aF+EsBC08QBT?=
+ =?us-ascii?Q?AH1UFrvYJACDivCkDfFc27+8L3hUjjyX1DMXdf4yS7HWzh3YLgTrvrHfCTHm?=
+ =?us-ascii?Q?Pkis2rcc1MhwS+1ao4Z8ApC2Vfu52ZjxHYfiH2TO0qQO7lZ71ZsPIWY5SaTD?=
+ =?us-ascii?Q?/IougUz0qytlrd3O0zsJK+H1DjWNV1XEJI/lGevLWkIIZoBj6hbrR6PYb+gG?=
+ =?us-ascii?Q?WnEDxGkHy/4Ohxv/azOks3WXRlji6oMygW+E/L0i4DpFoDUE5u5BoeDYmUqU?=
+ =?us-ascii?Q?gDkJtIVxXju967mTYa+pEBOAu/i+0Bhet49Gi0b95ow823CzX21HxDpjUBTi?=
+ =?us-ascii?Q?KcS/TQv0BPnq3SidXIZbjOKI4ZkJWbGHiqyCSE6inx7qMjENGKOzRc3cCfuG?=
+ =?us-ascii?Q?el4NMsqXzXqwaAi37TeofI0uIR1ES+u8ZK9E2+2vSD5yyRUexd2z4+yVkFr1?=
+ =?us-ascii?Q?cG6SI85ZybBG4HIB8QOCwAQ15ayY85lxj//qAdEMWGFv3xfPrvw6ujwkMYxJ?=
+ =?us-ascii?Q?CKAUQA3zQr+RKFs1WefgpHjlyFYqt+jqkBV1EE0YbGXlrwT0etGtADyTEgv6?=
+ =?us-ascii?Q?8pGZb3FPIoFy7ZexTudGPdsM97x9Lp8aNoAYuPlwuBpVAg=3D=3D?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4959.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?heEe8UHXdAIn5R/51+OtuaB7+Y35y2HOIAqnMMnPV3yNto5VJKJIwCXbA27a?=
- =?us-ascii?Q?eS6F02+QRl1zbi43wO7OrDFGLizjCv34ljD7uSvMeIsKGMNww4XjkILe8N8c?=
- =?us-ascii?Q?7XNA2KuWIEukV8ct87iGb4vfb57vRB3QMjtrhxyy+k8EVGARRuua4GVbJLDE?=
- =?us-ascii?Q?+Yro9W9asoeUKqEAFN7WV6aqJ/OU0EY0y4SPQXb6SphJfZNsFtgcvR7S7Wzj?=
- =?us-ascii?Q?7va9EaQCRbmweiJ/T5dawGKArS4WwagpEYckDAOA6nbajiV58jatJCsH4MWz?=
- =?us-ascii?Q?Fb4jEpe5axVXJF3FfK/F5EamA7hq2+y7kyPanXS6HNFM2zY+dj/uDKwoNfyo?=
- =?us-ascii?Q?3FWTgn2TGh1SKDVA76FvmnjC8qc50w3/LqBWv+5yR/ey66sWfJ6gOB066FOn?=
- =?us-ascii?Q?Q8AnBELEyCLUS7d8e29cTOiz/CKBrVWUuTLW6MrttvG2JSqntUuSOlPH3p18?=
- =?us-ascii?Q?4J58ttrYtYgCfWjcO0UnVxqhei0sz/YR2bminIxWg/2KCRYj1GGH5STEbbea?=
- =?us-ascii?Q?TYmSibq0d7feXBMnK3Lmwc0GRKua3EtHiSafdZ/QMRF+spxGZbe8KTTW5T7/?=
- =?us-ascii?Q?1+8Uxb7kr0BzS+1QCgcebR+IKHGvJUhymgcInkCPiZOMr7LcSDemR6eovW7j?=
- =?us-ascii?Q?MiZkN8pLnygak7LMgETqh75iFEZGJO/FPvhisreu8cBA1w6lfcEIhDlPEMVj?=
- =?us-ascii?Q?Uc1H5DtDHsVZrvGs43lYaeeBeTH4EH0gmCy83dqqyeUQRjh5z1JV0MALEcH7?=
- =?us-ascii?Q?kxHSVpDu124TbcpZRq4t+YfcYXvxbYMkvt7pZ1aiYKQ+WqrIk8kKhkKXMrfj?=
- =?us-ascii?Q?OfgeKCAITfFdOH9DMiAawaxOv32mo+ncX8h7iJgy8yyYyIEPA6HFkbwMAYAo?=
- =?us-ascii?Q?TK6Njj4f0NoszLrnC3RCLKU+7W+GW4IBxODPGsH3GD3pR+FZG69oOLcPeEUu?=
- =?us-ascii?Q?U6VjfvdGauMa6HabxXxPHIn8gX+WvL+jFIiU+isifmVZ4AV9N5zOMvE1t5Mf?=
- =?us-ascii?Q?ElUQbDNw22KI4HKkPUUZNvJyYzoyWAiuUSiAibTA4KNWmxEHZKIcWnihphgs?=
- =?us-ascii?Q?0lGjGvmfRrnyOOBoWPERSbBSbM0+C8yU2ftqVitfn+pM4+t10z/WDeleZbpA?=
- =?us-ascii?Q?+aLOAnwRgiTDICGLusgviiAlbDK0zPFMcOFugFKh7LSxncNSdh2ExONS7/jU?=
- =?us-ascii?Q?udwg963J7xiPbObTIfYajP91LOY57sDbiElZlutER+EQo5EMEu1Klrp7ZZAm?=
- =?us-ascii?Q?IZQ5RnfO4RgLiNy2SUxwhE6vD4jTWecLY9UblC8B82TDduD8FH7jmgxODUHF?=
- =?us-ascii?Q?oGn07wZl+mc8QyMkmDUNPPYOdmddNKK1MUEOXxzG/a7Atd9U9v9S4j5CnwTd?=
- =?us-ascii?Q?rIvxDFfPKjvjPVOcZyUKZeEHBZEkIR3RrRRK2HTm/XingXQnkDwdxIH/SNfG?=
- =?us-ascii?Q?4Znj6lHvXL7rYYlj6tVTgZkWak8GheVmzy+YoiULd/RmZPpOQl2iGVpbdZoK?=
- =?us-ascii?Q?4FY4QOeEpmbQsIqttHeWK6tQOzJZ0OAxiVhCtsORMSwGfGjPD/kNu/eDWe3i?=
- =?us-ascii?Q?6XUYYZn6SU3LOyG/xZ5Iwjt8Gq4l6ArdERQ0ttkB7mae+h3VEzyprIHLQFms?=
- =?us-ascii?Q?wKGrGLTp0s9KNglMoUGHPdcWKmUMeJ/7klXb//HnEweK?=
+	=?us-ascii?Q?h6P4g8lUfwhItSuDb2sq7clGj55kLOErG00OVKeovvzi6n745blh9wfmGlvE?=
+ =?us-ascii?Q?Bcjq8f9DCnz3Zky7uz5gUw+aR9tDsvkTWfVqCj0G9RK1kLPAlM7a+Pe3nBty?=
+ =?us-ascii?Q?05MRWyr/p73Nmf7l6PUnQzc7O6jow+zJjm8KdTCz8CRW0ICbgoyqftyuAiY1?=
+ =?us-ascii?Q?LRT0OS48c9Xjf5cqN9l7TyLGL1D3Kn4XBKOh7D8E43kgR+h6agOxZVVmTdNY?=
+ =?us-ascii?Q?rzCG+TbEGURyEnnXo1AdfSpO1LoKt6zbJ/sx0dgPknKk4vGexSAiEe9r9QvR?=
+ =?us-ascii?Q?kCTli4Auj2EXNQQfXvWygPbxaA9E97+aavmQMQ7/c6TUX+stp7JKP4Y0FKqt?=
+ =?us-ascii?Q?NHCjmOFenNj7fbTFCVKfQMj9mUOBj89FdbqUfZq7tMWDSR9D8ITtr6eTHOcF?=
+ =?us-ascii?Q?spjEnN5RE27V2+1oWR1KvL/sUwpEsKkkhwNwmTJoSiLeKtnWLGk5nh4xHhMC?=
+ =?us-ascii?Q?9k4qeT82UmQFxx5aVL74N5dzzDtKmmNRAglaiiqRjP3Z2MtDejdjWosOYpbi?=
+ =?us-ascii?Q?YmuUS7ouTdzhExj5pviysEkz4IJfccvF+hwyRhjro6Zoy3S/xMgBbabqPBUY?=
+ =?us-ascii?Q?QXzqh6vJ/9+dVMKHYK9C8hnv1RJwSjFhcGzbrPqZsqmh3p10vVsxK52rkmns?=
+ =?us-ascii?Q?jyc40iRBv11JFV527ex3sZR4igp3GRwINGJvKCNHnaZ1byqZGED+xtKXx+q/?=
+ =?us-ascii?Q?mGF7zpFAXTwrX5awKMN3ZGnOa9SZjH/6yIqgfuFuuXIQaug8w1Eh43I9Puko?=
+ =?us-ascii?Q?U+y6BJEoidwuLB3cke6nAzSGvVwIy5lsN3ufh+nlY6iVbWakLoqVQcYh8jwm?=
+ =?us-ascii?Q?B1U1l/eo4aGPAhz3P4WKjeWx+9LMU/g65XP8zVoaRbwh63/M08YOpxpw9r1A?=
+ =?us-ascii?Q?ADG4Cg35VoHYbuFouXCOhQflbsXWS+acER3YHSq2CIEGOw9KV1KT9THmcGtl?=
+ =?us-ascii?Q?YJtkac7/a8poHV+vxPSix/pYCziq6J1OHNavBr/R12NyyzqcGKLOhGeYnZV4?=
+ =?us-ascii?Q?5NaYrcqjejnCYtXPjJ+FyjheyGP2CnFKcEgkGkI7wemfj7JwOOcdTQdGEJ42?=
+ =?us-ascii?Q?gWJ2CC54ft0ttXfbrTfzxtgize2KEYYJng+A4/OS7dSh72h9P0S0gcKZ9nCg?=
+ =?us-ascii?Q?oYi1zN2TpQVEmeEGx1rE94K+dz/+mjdD+njghPV3dHm2OMUM8ElBdKWnBCRR?=
+ =?us-ascii?Q?2IV0d650Z4+hmZkiXjO/xXsOpUHCeOJuqLGzps0MI4NgTHnzverqrCxuoxIo?=
+ =?us-ascii?Q?T6orL50JStGIqb01U3U64+FSliuMw6k7+p6EQlmDJpSi8Su+iFXwtTqEWODs?=
+ =?us-ascii?Q?iXo2iNtf+l8E9EyaNrm/2tghDQ34eAw00QdbriKJdOH5IO6OP57cB7UEPT/E?=
+ =?us-ascii?Q?0b4cfpzaq+CzowuD633rhHkUddJ+aTq3lGW917LOtJCMZEMcx4WgfbWYcwJO?=
+ =?us-ascii?Q?e2IEF0w9kR6VeMuCWol6G06qXW46ABHvVfCxLrWM+BDoV3wKhfWx/wby08Sf?=
+ =?us-ascii?Q?jhmgW4pagDLuXB6a1A5t0FwbaYKL6YGFZ6avxZD54R6BpXYb08uYj4LihEMR?=
+ =?us-ascii?Q?PQlcKTr/T9OsYanJjtqPv2S0X/IqLj2Lpnq9luI1lEZbK7FrB4lkRSEV8AVe?=
+ =?us-ascii?Q?JNa3Z9oxIiLn5PxPmDKNoeVQ2P/Hava9oPWmJm3ygXiT?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 40c9bad7-70af-4c83-df00-08dca24a4b04
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9caa251a-3f1e-4ddd-cebc-08dca24a4be5
 X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4959.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 08:11:55.0636
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 08:11:56.5395
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xz1CcqZQ6Y0V6fCdSqJ3YQLmbLizBxeTlXILnySo/D81/j34GjaqPUe0r3j12Q7f4TMLG71fuUdUXORFkJYHCA==
+X-MS-Exchange-CrossTenant-UserPrincipalName: QOMN5Kyvg/yUTyrFwHXIAQI2s+28R3WGbT0+UbPNeT+JaXq6UbIDKjqBxWgjcvTfDlbdCcFSFa1ZuOUQnJxriQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR10MB8316
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 12 Jul 2024 08:12:00 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16460
-
-- When "CRYPT_FAST_REENCRYPTION" is set to "1" (consider security and
-  data reliablity aspects when enabling):
-  - shrink partition temporarily to minimum
-  - encrypt shrinked partition
-  - expand encrypted partition to maximum
+ <cip-dev@lists.cip-project.org>; Fri, 12 Jul 2024 08:12:10 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16461
 
 Signed-off-by: Stefan Koch <stefan-koch@siemens.com>
 ---
- .../files/encrypt_partition.env.tmpl          |  1 +
- .../files/encrypt_partition.script            | 50 ++++++++++++++++---
- .../initramfs-crypt-hook_0.2.bb               |  6 ++-
- 3 files changed, 49 insertions(+), 8 deletions(-)
+ .../initramfs-crypt-hook/files/encrypt_partition.clevis.hook    | 1 +
+ .../initramfs-crypt-hook/files/encrypt_partition.systemd.hook   | 1 +
+ .../initramfs-crypt-hook/initramfs-crypt-hook_0.2.bb            | 2 +-
+ 3 files changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition=
-.env.tmpl b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.=
-env.tmpl
-index 72033d1..9f3df4f 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tm=
-pl
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.env.tm=
-pl
-@@ -6,3 +6,4 @@ HASH_TYPE=3D"${CRYPT_HASH_TYPE}"
- KEY_ALGORITHM=3D"${CRYPT_KEY_ALGORITHM}"
- ENCRYPTION_IS_OPTIONAL=3D"${CRYPT_ENCRYPTION_OPTIONAL}"
- LOSETUP_PATH=3D"${CRYPT_LOSETUP_PATH}"
-+FAST_REENCRYPTION=3D"${CRYPT_FAST_REENCRYPTION}"
+.clevis.hook b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partiti=
+on.clevis.hook
+index 4e62ef7..275461d 100755
+--- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis=
+.hook
++++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.clevis=
+.hook
+@@ -45,6 +45,7 @@ copy_exec /usr/sbin/mke2fs || hook_error "/usr/sbin/mke2f=
+s not found"
+ copy_exec /usr/bin/grep || hook_error "/usr/bin/grep not found"
+ copy_exec /usr/bin/awk || hook_error "/usr/bin/awk not found"
+ copy_exec /usr/bin/expr || hook_error "/usr/bin/expr not found"
++copy_exec /usr/bin/mountpoint || hook_error "/usr/bin/mountpoint not found=
+"
+ copy_exec /usr/sbin/e2fsck || hook_error "/usr/sbin/e2fsck not found"
+ copy_exec /usr/sbin/resize2fs || hook_error "/usr/sbin/resize2fs not found=
+"
+ copy_exec /usr/sbin/cryptsetup || hook_error "/usr/sbin/cryptsetup not fou=
+nd"
 diff --git a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition=
-.script b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.sc=
-ript
-index f943aea..e768b54 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.script
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.script
-@@ -62,13 +62,16 @@ service_watchdog() {
- }
-=20
- reencrypt_existing_partition() {
-+	reencrypt_device=3D"$1"
- 	part_size_blocks=3D"$(cat /sys/class/block/"$(awk -v dev=3D"$1" 'BEGIN{sp=
-lit(dev,a,"/"); print a[3]}' )"/size)"
--	# reduce the filesystem and partition by 32M to fit the LUKS header
-+	part_size_in_kb=3D"$(expr "$part_size_blocks" / 2)" # blocksize 512 byte
-+
- 	partition_fstype=3D$(get_fstype "${1}")
-+	# reduce the filesystem and partition by 32M to fit the LUKS header
- 	reduce_device_size=3D32768
--	reduced_size=3D"$(expr "$part_size_blocks" - 65536 )"
--	reduced_size_in_byte=3D"$(expr "$reduced_size" \* 512)"
--	reduced_size_in_kb=3D"$(expr "$reduced_size_in_byte" / 1024)K"
-+	reduce_device_size_blocks=3D"$(expr "$reduce_device_size" \* 2)" # 512 by=
-te blocks
-+	reduced_size=3D"$(expr "$part_size_blocks" - "$reduce_device_size_blocks"=
- )"
-+	reduced_size_in_kb=3D"$(expr "$reduced_size" / 2)" # blocksize 512 byte
- 	case $partition_fstype in
- 	ext*)
- 		# reduce the filesystem and partition by 32M to fit the LUKS header
-@@ -84,9 +87,31 @@ EOF
- 		if ! cryptsetup luksUUID "$1" &> /dev/null; then
- 			e2fsck -p -f "$1"
- 		fi
--		if ! resize2fs "$1" "${reduced_size_in_kb}"; then
-+		# shrink partition temporarily to minimum
-+		min_size_fsblocks=3D"$(resize2fs "$1" -P | awk -F ": " '{ print $2 }')"
-+		if [ "$FAST_REENCRYPTION" =3D "1" ] && loop_device=3D"$("$LOSETUP_PATH" =
--f)" && [ -n "$min_size_fsblocks" ]; then
-+			# set encrypted size for expanding step
-+			encrypted_size_in_kb=3D"$reduced_size_in_kb"
-+			# minimum partition size
-+			min_size_in_kb=3D"$(expr "$min_size_fsblocks" \* 4)" # blocksize 4096 b=
-yte
-+			# shrinked partition size (reduce_size + minimum partition size)
-+			reduced_size_in_kb=3D"$(expr "$reduce_device_size" + "$min_size_in_kb")=
+.systemd.hook b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partit=
+ion.systemd.hook
+index 2ace533..4aa3e91 100755
+--- a/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.system=
+d.hook
++++ b/recipes-initramfs/initramfs-crypt-hook/files/encrypt_partition.system=
+d.hook
+@@ -45,6 +45,7 @@ copy_exec /usr/sbin/mke2fs || hook_error "/usr/sbin/mke2f=
+s not found"
+ copy_exec /usr/bin/grep || hook_error "/usr/bin/grep not found"
+ copy_exec /usr/bin/awk || hook_error "/usr/bin/awk not found"
+ copy_exec /usr/bin/expr || hook_error "/usr/bin/expr not found"
++copy_exec /usr/bin/mountpoint || hook_error "/usr/bin/mountpoint not found=
 "
-+			# set loop device as reencrypt device
-+			reencrypt_device=3D"$loop_device"
-+		else
-+			# continue with default reencryption in failure case
-+			FAST_REENCRYPTION=3D"0"
-+		fi
-+
-+		if ! resize2fs "$1" "${reduced_size_in_kb}K"; then
- 			panic "reencryption of filesystem $1 cannot continue!"
- 		fi
-+
-+		if [ "$FAST_REENCRYPTION" =3D "1" ]; then
-+			# use temporarily loop device to simulate shrinked device
-+			# because cryptsetup uses device size at reducing
-+			"$LOSETUP_PATH" --sizelimit "${reduced_size_in_kb}K" "$loop_device" "$1=
-"
-+		fi
- 		;;
- 	squashfs|swap|"")
- 		[ "$debug" =3D "y" ] && echo "skip disk resize as it is not supported or=
- unnecessary for fstype: '$partition_fstype'"
-@@ -96,9 +121,14 @@ EOF
- 		;;
- 	esac
- 	if [ -x /usr/sbin/cryptsetup-reencrypt ]; then
--		/usr/sbin/cryptsetup-reencrypt --new --reduce-device-size "$reduce_devic=
-e_size"k "$1" < "$2"
-+		/usr/sbin/cryptsetup-reencrypt --new --reduce-device-size "$reduce_devic=
-e_size"k "$reencrypt_device" < "$2"
- 	else
--		/usr/sbin/cryptsetup reencrypt --encrypt --reduce-device-size "$reduce_d=
-evice_size"k "$1" < "$2"
-+		/usr/sbin/cryptsetup reencrypt --encrypt --reduce-device-size "$reduce_d=
-evice_size"k "$reencrypt_device" < "$2"
-+	fi
-+
-+	if [ "$FAST_REENCRYPTION" =3D "1" ]; then
-+		# remove temporarily loop device
-+		"$LOSETUP_PATH" -d "$loop_device"
- 	fi
- }
- for candidate in /dev/tpm*; do
-@@ -182,6 +212,12 @@ for partition_set in $partition_sets; do
- 			reencrypt_existing_partition "$part_device" "$tmp_key"
- 			enroll_tpm2_token "$part_device" "$tmp_key" "$tpm_device" "$tpm_key_alg=
-orithm" "$pcr_bank_hash_type"
- 			open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
-+			if [ "$FAST_REENCRYPTION" =3D "1" ]; then
-+				# expand encrypted partition to maximum
-+				/usr/sbin/cryptsetup resize "$decrypted_part"
-+				# expand filesystem within encrypted layer to maximum
-+				resize2fs "$decrypted_part" "${encrypted_size_in_kb}K"
-+			fi
- 			log_end_msg
- 		;;
- 		"format")
+ copy_exec /usr/bin/seq || hook_error "/usr/bin/seq not found"
+ copy_exec /usr/bin/sleep || hook_error "/usr/bin/sleep not found"
+ copy_exec /usr/sbin/e2fsck || hook_error "/usr/sbin/e2fsck not found"
 diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.=
 2.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.2.bb
-index 1679133..76ce72c 100644
+index 76ce72c..1364248 100644
 --- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.2.bb
 +++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.2.bb
-@@ -59,6 +59,10 @@ CRYPT_PARTITIONS ??=3D "home:/home:reencrypt var:/var:re=
-encrypt"
- CRYPT_CREATE_FILE_SYSTEM_CMD ??=3D "/usr/sbin/mke2fs -t ext4"
- # Path to full (non-busybox) losetup binary
- CRYPT_LOSETUP_PATH ??=3D "/usr/local/sbin/losetup"
-+# Fast reencryption state
-+# It uses temporary partition resize,
-+# consider security and data reliablity aspects when enabling
-+CRYPT_FAST_REENCRYPTION ??=3D "0"
- # Timeout for creating / re-encrypting partitions on first boot
- CRYPT_SETUP_TIMEOUT ??=3D "600"
- # Watchdog to service during the initial setup of the crypto partitions
-@@ -70,7 +74,7 @@ CRYPT_ENCRYPTION_OPTIONAL ??=3D "false"
+@@ -12,7 +12,7 @@ inherit dpkg-raw
+ DEBIAN_DEPENDS =3D "initramfs-tools, mount, cryptsetup, \
+     awk, openssl, libtss2-esys-3.0.2-0 | libtss2-esys0, \
+     libtss2-rc0 | libtss2-esys0, libtss2-mu0 | libtss2-esys0, \
+-    e2fsprogs, tpm2-tools, coreutils, uuid-runtime"
++    e2fsprogs, tpm2-tools, coreutils, util-linux, uuid-runtime"
 =20
- TEMPLATE_VARS =3D "CRYPT_PARTITIONS CRYPT_CREATE_FILE_SYSTEM_CMD \
-     CRYPT_SETUP_TIMEOUT INITRAMFS_WATCHDOG_DEVICE CRYPT_HASH_TYPE \
--    CRYPT_LOSETUP_PATH \
-+    CRYPT_LOSETUP_PATH CRYPT_FAST_REENCRYPTION \
-     CRYPT_KEY_ALGORITHM CRYPT_ENCRYPTION_OPTIONAL"
- TEMPLATE_FILES =3D "encrypt_partition.env.tmpl"
+ CLEVIS_DEPEND =3D ", clevis-luks, jose, bash, luksmeta, file, libpwquality=
+-tools"
 =20
 --=20
 2.39.2
