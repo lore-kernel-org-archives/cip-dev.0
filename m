@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D34EC3DA59
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 912D1C3DA62
 	for <webhook@archiver.kernel.org>; Tue, 16 Jul 2024 07:56:57 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web11.5540.1721116607082293588
  for <cip-dev@lists.cip-project.org>;
- Tue, 16 Jul 2024 00:56:52 -0700
+ Tue, 16 Jul 2024 00:56:48 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.09,211,1716217200"; 
-   d="scan'208";a="211463311"
+   d="scan'208";a="211463298"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 16 Jul 2024 16:56:52 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 16 Jul 2024 16:56:47 +0900
 Received: from localhost.localdomain (unknown [10.226.92.125])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9737B41CF052;
-	Tue, 16 Jul 2024 16:56:50 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id EC1AE41CF052;
+	Tue, 16 Jul 2024 16:56:45 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 03/23] mfd: da9062: Simplify obtaining I2C match data
-Date: Tue, 16 Jul 2024 08:56:08 +0100
-Message-ID: <20240716075641.32177-4-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 01/23] mfd: da9062: Use MFD_CELL_OF macro
+Date: Tue, 16 Jul 2024 08:56:06 +0100
+Message-ID: <20240716075641.32177-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240716075641.32177-1-biju.das.jz@bp.renesas.com>
 References: <20240716075641.32177-1-biju.das.jz@bp.renesas.com>
@@ -35,78 +35,134 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 16 Jul 2024 07:56:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16503
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16501
 
-commit 9b413e3c07d251191410976d669260079b48e7b1 upstream.
+From: Christoph Niedermaier <cniedermaier@dh-electronics.com>
 
-Simplify probe() by replacing of_device_get_match_data() and ID lookup for
-retrieving match data by i2c_get_match_data().
+commit 7d61f6313e90cdbe592eba5e0ae6d1c367b03548 upstream.
 
-Some minor cleanups:
- * Remove the trailing comma in the terminator entry for the ID
-   table making code robust against (theoretical) misrebases or other
-   similar things where the new entry goes _after_ the termination without
-   the compiler noticing.
- * Move OF table near to the user.
+Use MFD_CELL_OF macro helper instead of plain struct properties, which makes
+the code a bit shorter and to have commonly defined MFD cell attributes.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20231204124507.124758-1-biju.das.jz@bp.renesas.com
+Signed-off-by: Christoph Niedermaier <cniedermaier@dh-electronics.com>
+Acked-by: Adam Ward <DLG-Adam.Ward.opensource@dm.renesas.com>
 Signed-off-by: Lee Jones <lee@kernel.org>
+Link: https://lore.kernel.org/r/20230309092254.56279-1-cniedermaier@dh-electronics.com
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/mfd/da9062-core.c | 21 +++++++++------------
- 1 file changed, 9 insertions(+), 12 deletions(-)
+ drivers/mfd/da9062-core.c | 92 ++++++++++-----------------------------
+ 1 file changed, 24 insertions(+), 68 deletions(-)
 
 diff --git a/drivers/mfd/da9062-core.c b/drivers/mfd/da9062-core.c
-index 07801696e879..87a4251e892e 100644
+index a26e473507c7..fd2769592a4f 100644
 --- a/drivers/mfd/da9062-core.c
 +++ b/drivers/mfd/da9062-core.c
-@@ -588,13 +588,6 @@ static struct regmap_config da9062_regmap_config = {
- 	.volatile_table = &da9062_aa_volatile_table,
+@@ -182,34 +182,16 @@ static const struct resource da9061_onkey_resources[] = {
  };
  
--static const struct of_device_id da9062_dt_ids[] = {
--	{ .compatible = "dlg,da9061", .data = (void *)COMPAT_TYPE_DA9061, },
--	{ .compatible = "dlg,da9062", .data = (void *)COMPAT_TYPE_DA9062, },
--	{ }
--};
--MODULE_DEVICE_TABLE(of, da9062_dt_ids);
--
- static int da9062_i2c_probe(struct i2c_client *i2c,
- 	const struct i2c_device_id *id)
- {
-@@ -611,10 +604,7 @@ static int da9062_i2c_probe(struct i2c_client *i2c,
- 	if (!chip)
- 		return -ENOMEM;
- 
--	if (i2c->dev.of_node)
--		chip->chip_type = (uintptr_t)of_device_get_match_data(&i2c->dev);
--	else
--		chip->chip_type = id->driver_data;
-+	chip->chip_type = (uintptr_t)i2c_get_match_data(i2c);
- 
- 	i2c_set_clientdata(i2c, chip);
- 	chip->dev = &i2c->dev;
-@@ -714,10 +704,17 @@ static void da9062_i2c_remove(struct i2c_client *i2c)
- 	regmap_del_irq_chip(i2c->irq, chip->regmap_irq);
- }
- 
-+static const struct of_device_id da9062_dt_ids[] = {
-+	{ .compatible = "dlg,da9061", .data = (void *)COMPAT_TYPE_DA9061 },
-+	{ .compatible = "dlg,da9062", .data = (void *)COMPAT_TYPE_DA9062 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, da9062_dt_ids);
-+
- static const struct i2c_device_id da9062_i2c_id[] = {
- 	{ "da9061", COMPAT_TYPE_DA9061 },
- 	{ "da9062", COMPAT_TYPE_DA9062 },
--	{ },
-+	{ }
+ static const struct mfd_cell da9061_devs[] = {
+-	{
+-		.name		= "da9061-core",
+-		.num_resources	= ARRAY_SIZE(da9061_core_resources),
+-		.resources	= da9061_core_resources,
+-	},
+-	{
+-		.name		= "da9062-regulators",
+-		.num_resources	= ARRAY_SIZE(da9061_regulators_resources),
+-		.resources	= da9061_regulators_resources,
+-	},
+-	{
+-		.name		= "da9061-watchdog",
+-		.num_resources	= ARRAY_SIZE(da9061_wdt_resources),
+-		.resources	= da9061_wdt_resources,
+-		.of_compatible  = "dlg,da9061-watchdog",
+-	},
+-	{
+-		.name		= "da9061-thermal",
+-		.num_resources	= ARRAY_SIZE(da9061_thermal_resources),
+-		.resources	= da9061_thermal_resources,
+-		.of_compatible  = "dlg,da9061-thermal",
+-	},
+-	{
+-		.name		= "da9061-onkey",
+-		.num_resources	= ARRAY_SIZE(da9061_onkey_resources),
+-		.resources	= da9061_onkey_resources,
+-		.of_compatible = "dlg,da9061-onkey",
+-	},
++	MFD_CELL_OF("da9061-core", da9061_core_resources, NULL, 0, 0,
++		    NULL),
++	MFD_CELL_OF("da9062-regulators", da9061_regulators_resources, NULL, 0, 0,
++		    NULL),
++	MFD_CELL_OF("da9061-watchdog", da9061_wdt_resources, NULL, 0, 0,
++		    "dlg,da9061-watchdog"),
++	MFD_CELL_OF("da9061-thermal", da9061_thermal_resources, NULL, 0, 0,
++		    "dlg,da9061-thermal"),
++	MFD_CELL_OF("da9061-onkey", da9061_onkey_resources, NULL, 0, 0,
++		    "dlg,da9061-onkey"),
  };
- MODULE_DEVICE_TABLE(i2c, da9062_i2c_id);
  
+ static const struct resource da9062_core_resources[] = {
+@@ -246,46 +228,20 @@ static const struct resource da9062_gpio_resources[] = {
+ };
+ 
+ static const struct mfd_cell da9062_devs[] = {
+-	{
+-		.name		= "da9062-core",
+-		.num_resources	= ARRAY_SIZE(da9062_core_resources),
+-		.resources	= da9062_core_resources,
+-	},
+-	{
+-		.name		= "da9062-regulators",
+-		.num_resources	= ARRAY_SIZE(da9062_regulators_resources),
+-		.resources	= da9062_regulators_resources,
+-	},
+-	{
+-		.name		= "da9062-watchdog",
+-		.num_resources	= ARRAY_SIZE(da9062_wdt_resources),
+-		.resources	= da9062_wdt_resources,
+-		.of_compatible  = "dlg,da9062-watchdog",
+-	},
+-	{
+-		.name		= "da9062-thermal",
+-		.num_resources	= ARRAY_SIZE(da9062_thermal_resources),
+-		.resources	= da9062_thermal_resources,
+-		.of_compatible  = "dlg,da9062-thermal",
+-	},
+-	{
+-		.name		= "da9062-rtc",
+-		.num_resources	= ARRAY_SIZE(da9062_rtc_resources),
+-		.resources	= da9062_rtc_resources,
+-		.of_compatible  = "dlg,da9062-rtc",
+-	},
+-	{
+-		.name		= "da9062-onkey",
+-		.num_resources	= ARRAY_SIZE(da9062_onkey_resources),
+-		.resources	= da9062_onkey_resources,
+-		.of_compatible	= "dlg,da9062-onkey",
+-	},
+-	{
+-		.name		= "da9062-gpio",
+-		.num_resources	= ARRAY_SIZE(da9062_gpio_resources),
+-		.resources	= da9062_gpio_resources,
+-		.of_compatible	= "dlg,da9062-gpio",
+-	},
++	MFD_CELL_OF("da9062-core", da9062_core_resources, NULL, 0, 0,
++		    NULL),
++	MFD_CELL_OF("da9062-regulators", da9062_regulators_resources, NULL, 0, 0,
++		    NULL),
++	MFD_CELL_OF("da9062-watchdog", da9062_wdt_resources, NULL, 0, 0,
++		    "dlg,da9062-watchdog"),
++	MFD_CELL_OF("da9062-thermal", da9062_thermal_resources, NULL, 0, 0,
++		    "dlg,da9062-thermal"),
++	MFD_CELL_OF("da9062-rtc", da9062_rtc_resources, NULL, 0, 0,
++		    "dlg,da9062-rtc"),
++	MFD_CELL_OF("da9062-onkey", da9062_onkey_resources, NULL, 0, 0,
++		    "dlg,da9062-onkey"),
++	MFD_CELL_OF("da9062-gpio", da9062_gpio_resources, NULL, 0, 0,
++		    "dlg,da9062-gpio"),
+ };
+ 
+ static int da9062_clear_fault_log(struct da9062 *chip)
 -- 
 2.43.0
 
