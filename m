@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FC86C41513
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F840C3DA5D
 	for <webhook@archiver.kernel.org>; Tue, 16 Jul 2024 08:23:18 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web10.5927.1721118184270232470
  for <cip-dev@lists.cip-project.org>;
- Tue, 16 Jul 2024 01:23:15 -0700
+ Tue, 16 Jul 2024 01:23:17 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.09,211,1716217200"; 
-   d="scan'208";a="215425990"
+   d="scan'208";a="215425998"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 16 Jul 2024 17:23:14 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 16 Jul 2024 17:23:17 +0900
 Received: from localhost.localdomain (unknown [10.226.92.125])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 1C9CB4016D5E;
-	Tue, 16 Jul 2024 17:23:12 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 5BD6040178CB;
+	Tue, 16 Jul 2024 17:23:15 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 07/31] mfd: da9062: Use MFD_CELL_OF macro
-Date: Tue, 16 Jul 2024 09:22:18 +0100
-Message-ID: <20240716082255.56551-8-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 08/31] mfd: da9062: Remove IRQ requirement
+Date: Tue, 16 Jul 2024 09:22:19 +0100
+Message-ID: <20240716082255.56551-9-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240716082255.56551-1-biju.das.jz@bp.renesas.com>
 References: <20240716082255.56551-1-biju.das.jz@bp.renesas.com>
@@ -35,135 +35,175 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 16 Jul 2024 08:23:18 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16533
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16534
 
 From: Christoph Niedermaier <cniedermaier@dh-electronics.com>
 
-commit 7d61f6313e90cdbe592eba5e0ae6d1c367b03548 upstream.
+commit c923d5001ba054df10ed3441d24f8f2c01db7e00 upstream.
 
-Use MFD_CELL_OF macro helper instead of plain struct properties, which makes
-the code a bit shorter and to have commonly defined MFD cell attributes.
+This patch removes the requirement for an IRQ, because for the core
+functionality IRQ isn't needed. So this makes the DA9061/62 chip
+usable for designs which haven't connected the IRQ pin.
 
 Signed-off-by: Christoph Niedermaier <cniedermaier@dh-electronics.com>
 Acked-by: Adam Ward <DLG-Adam.Ward.opensource@dm.renesas.com>
 Signed-off-by: Lee Jones <lee@kernel.org>
-Link: https://lore.kernel.org/r/20230309092254.56279-1-cniedermaier@dh-electronics.com
-[Biju: Replaced MFD_CELL_OF->OF_MFD_CELL]
+Link: https://lore.kernel.org/r/20230309092254.56279-2-cniedermaier@dh-electronics.com
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/mfd/da9062-core.c | 92 ++++++++++-----------------------------
- 1 file changed, 24 insertions(+), 68 deletions(-)
+ drivers/mfd/da9062-core.c | 84 +++++++++++++++++++++++++--------------
+ 1 file changed, 55 insertions(+), 29 deletions(-)
 
 diff --git a/drivers/mfd/da9062-core.c b/drivers/mfd/da9062-core.c
-index c2acdbcd5d6b..ae5274315554 100644
+index ae5274315554..f821ef4909ec 100644
 --- a/drivers/mfd/da9062-core.c
 +++ b/drivers/mfd/da9062-core.c
-@@ -182,34 +182,16 @@ static const struct resource da9061_onkey_resources[] = {
+@@ -181,7 +181,7 @@ static const struct resource da9061_onkey_resources[] = {
+ 	DEFINE_RES_IRQ_NAMED(DA9061_IRQ_ONKEY, "ONKEY"),
  };
  
- static const struct mfd_cell da9061_devs[] = {
--	{
--		.name		= "da9061-core",
--		.num_resources	= ARRAY_SIZE(da9061_core_resources),
--		.resources	= da9061_core_resources,
--	},
--	{
--		.name		= "da9062-regulators",
--		.num_resources	= ARRAY_SIZE(da9061_regulators_resources),
--		.resources	= da9061_regulators_resources,
--	},
--	{
--		.name		= "da9061-watchdog",
--		.num_resources	= ARRAY_SIZE(da9061_wdt_resources),
--		.resources	= da9061_wdt_resources,
--		.of_compatible  = "dlg,da9061-watchdog",
--	},
--	{
--		.name		= "da9061-thermal",
--		.num_resources	= ARRAY_SIZE(da9061_thermal_resources),
--		.resources	= da9061_thermal_resources,
--		.of_compatible  = "dlg,da9061-thermal",
--	},
--	{
--		.name		= "da9061-onkey",
--		.num_resources	= ARRAY_SIZE(da9061_onkey_resources),
--		.resources	= da9061_onkey_resources,
--		.of_compatible = "dlg,da9061-onkey",
--	},
-+	OF_MFD_CELL("da9061-core", da9061_core_resources, NULL, 0, 0,
-+		    NULL),
-+	OF_MFD_CELL("da9062-regulators", da9061_regulators_resources, NULL, 0, 0,
-+		    NULL),
-+	OF_MFD_CELL("da9061-watchdog", da9061_wdt_resources, NULL, 0, 0,
-+		    "dlg,da9061-watchdog"),
-+	OF_MFD_CELL("da9061-thermal", da9061_thermal_resources, NULL, 0, 0,
-+		    "dlg,da9061-thermal"),
-+	OF_MFD_CELL("da9061-onkey", da9061_onkey_resources, NULL, 0, 0,
-+		    "dlg,da9061-onkey"),
+-static const struct mfd_cell da9061_devs[] = {
++static const struct mfd_cell da9061_devs_irq[] = {
+ 	OF_MFD_CELL("da9061-core", da9061_core_resources, NULL, 0, 0,
+ 		    NULL),
+ 	OF_MFD_CELL("da9062-regulators", da9061_regulators_resources, NULL, 0, 0,
+@@ -194,6 +194,14 @@ static const struct mfd_cell da9061_devs[] = {
+ 		    "dlg,da9061-onkey"),
  };
  
++static const struct mfd_cell da9061_devs_noirq[] = {
++	OF_MFD_CELL("da9061-core", NULL, NULL, 0, 0, NULL),
++	OF_MFD_CELL("da9062-regulators", NULL, NULL, 0, 0, NULL),
++	OF_MFD_CELL("da9061-watchdog", NULL, NULL, 0, 0, "dlg,da9061-watchdog"),
++	OF_MFD_CELL("da9061-thermal", NULL, NULL, 0, 0, "dlg,da9061-thermal"),
++	OF_MFD_CELL("da9061-onkey", NULL, NULL, 0, 0, "dlg,da9061-onkey"),
++};
++
  static const struct resource da9062_core_resources[] = {
-@@ -246,46 +228,20 @@ static const struct resource da9062_gpio_resources[] = {
+ 	DEFINE_RES_NAMED(DA9062_IRQ_VDD_WARN, 1, "VDD_WARN", IORESOURCE_IRQ),
+ };
+@@ -227,7 +235,7 @@ static const struct resource da9062_gpio_resources[] = {
+ 	DEFINE_RES_NAMED(DA9062_IRQ_GPI4, 1, "GPI4", IORESOURCE_IRQ),
  };
  
- static const struct mfd_cell da9062_devs[] = {
--	{
--		.name		= "da9062-core",
--		.num_resources	= ARRAY_SIZE(da9062_core_resources),
--		.resources	= da9062_core_resources,
--	},
--	{
--		.name		= "da9062-regulators",
--		.num_resources	= ARRAY_SIZE(da9062_regulators_resources),
--		.resources	= da9062_regulators_resources,
--	},
--	{
--		.name		= "da9062-watchdog",
--		.num_resources	= ARRAY_SIZE(da9062_wdt_resources),
--		.resources	= da9062_wdt_resources,
--		.of_compatible  = "dlg,da9062-watchdog",
--	},
--	{
--		.name		= "da9062-thermal",
--		.num_resources	= ARRAY_SIZE(da9062_thermal_resources),
--		.resources	= da9062_thermal_resources,
--		.of_compatible  = "dlg,da9062-thermal",
--	},
--	{
--		.name		= "da9062-rtc",
--		.num_resources	= ARRAY_SIZE(da9062_rtc_resources),
--		.resources	= da9062_rtc_resources,
--		.of_compatible  = "dlg,da9062-rtc",
--	},
--	{
--		.name		= "da9062-onkey",
--		.num_resources	= ARRAY_SIZE(da9062_onkey_resources),
--		.resources	= da9062_onkey_resources,
--		.of_compatible	= "dlg,da9062-onkey",
--	},
--	{
--		.name		= "da9062-gpio",
--		.num_resources	= ARRAY_SIZE(da9062_gpio_resources),
--		.resources	= da9062_gpio_resources,
--		.of_compatible	= "dlg,da9062-gpio",
--	},
-+	OF_MFD_CELL("da9062-core", da9062_core_resources, NULL, 0, 0,
-+		    NULL),
-+	OF_MFD_CELL("da9062-regulators", da9062_regulators_resources, NULL, 0, 0,
-+		    NULL),
-+	OF_MFD_CELL("da9062-watchdog", da9062_wdt_resources, NULL, 0, 0,
-+		    "dlg,da9062-watchdog"),
-+	OF_MFD_CELL("da9062-thermal", da9062_thermal_resources, NULL, 0, 0,
-+		    "dlg,da9062-thermal"),
-+	OF_MFD_CELL("da9062-rtc", da9062_rtc_resources, NULL, 0, 0,
-+		    "dlg,da9062-rtc"),
-+	OF_MFD_CELL("da9062-onkey", da9062_onkey_resources, NULL, 0, 0,
-+		    "dlg,da9062-onkey"),
-+	OF_MFD_CELL("da9062-gpio", da9062_gpio_resources, NULL, 0, 0,
-+		    "dlg,da9062-gpio"),
+-static const struct mfd_cell da9062_devs[] = {
++static const struct mfd_cell da9062_devs_irq[] = {
+ 	OF_MFD_CELL("da9062-core", da9062_core_resources, NULL, 0, 0,
+ 		    NULL),
+ 	OF_MFD_CELL("da9062-regulators", da9062_regulators_resources, NULL, 0, 0,
+@@ -244,6 +252,16 @@ static const struct mfd_cell da9062_devs[] = {
+ 		    "dlg,da9062-gpio"),
  };
  
++static const struct mfd_cell da9062_devs_noirq[] = {
++	OF_MFD_CELL("da9062-core", NULL, NULL, 0, 0, NULL),
++	OF_MFD_CELL("da9062-regulators", NULL, NULL, 0, 0, NULL),
++	OF_MFD_CELL("da9062-watchdog", NULL, NULL, 0, 0, "dlg,da9062-watchdog"),
++	OF_MFD_CELL("da9062-thermal", NULL, NULL, 0, 0, "dlg,da9062-thermal"),
++	OF_MFD_CELL("da9062-rtc", NULL, NULL, 0, 0, "dlg,da9062-rtc"),
++	OF_MFD_CELL("da9062-onkey", NULL, NULL, 0, 0, "dlg,da9062-onkey"),
++	OF_MFD_CELL("da9062-gpio", NULL, NULL, 0, 0, "dlg,da9062-gpio"),
++};
++
  static int da9062_clear_fault_log(struct da9062 *chip)
+ {
+ 	int ret;
+@@ -581,7 +599,7 @@ static int da9062_i2c_probe(struct i2c_client *i2c,
+ 	const struct i2c_device_id *id)
+ {
+ 	struct da9062 *chip;
+-	unsigned int irq_base;
++	unsigned int irq_base = 0;
+ 	const struct mfd_cell *cell;
+ 	const struct regmap_irq_chip *irq_chip;
+ 	const struct regmap_config *config;
+@@ -601,22 +619,16 @@ static int da9062_i2c_probe(struct i2c_client *i2c,
+ 	i2c_set_clientdata(i2c, chip);
+ 	chip->dev = &i2c->dev;
+ 
+-	if (!i2c->irq) {
+-		dev_err(chip->dev, "No IRQ configured\n");
+-		return -EINVAL;
+-	}
+-
++	/* Start with a base configuration without IRQ */
+ 	switch (chip->chip_type) {
+ 	case COMPAT_TYPE_DA9061:
+-		cell = da9061_devs;
+-		cell_num = ARRAY_SIZE(da9061_devs);
+-		irq_chip = &da9061_irq_chip;
++		cell = da9061_devs_noirq;
++		cell_num = ARRAY_SIZE(da9061_devs_noirq);
+ 		config = &da9061_regmap_config;
+ 		break;
+ 	case COMPAT_TYPE_DA9062:
+-		cell = da9062_devs;
+-		cell_num = ARRAY_SIZE(da9062_devs);
+-		irq_chip = &da9062_irq_chip;
++		cell = da9062_devs_noirq;
++		cell_num = ARRAY_SIZE(da9062_devs_noirq);
+ 		config = &da9062_regmap_config;
+ 		break;
+ 	default:
+@@ -651,29 +663,43 @@ static int da9062_i2c_probe(struct i2c_client *i2c,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = da9062_configure_irq_type(chip, i2c->irq, &trigger_type);
+-	if (ret < 0) {
+-		dev_err(chip->dev, "Failed to configure IRQ type\n");
+-		return ret;
+-	}
++	/* If IRQ is available, reconfigure it accordingly */
++	if (i2c->irq) {
++		if (chip->chip_type == COMPAT_TYPE_DA9061) {
++			cell = da9061_devs_irq;
++			cell_num = ARRAY_SIZE(da9061_devs_irq);
++			irq_chip = &da9061_irq_chip;
++		} else {
++			cell = da9062_devs_irq;
++			cell_num = ARRAY_SIZE(da9062_devs_irq);
++			irq_chip = &da9062_irq_chip;
++		}
+ 
+-	ret = regmap_add_irq_chip(chip->regmap, i2c->irq,
+-			trigger_type | IRQF_SHARED | IRQF_ONESHOT,
+-			-1, irq_chip, &chip->regmap_irq);
+-	if (ret) {
+-		dev_err(chip->dev, "Failed to request IRQ %d: %d\n",
+-			i2c->irq, ret);
+-		return ret;
+-	}
++		ret = da9062_configure_irq_type(chip, i2c->irq, &trigger_type);
++		if (ret < 0) {
++			dev_err(chip->dev, "Failed to configure IRQ type\n");
++			return ret;
++		}
+ 
+-	irq_base = regmap_irq_chip_get_base(chip->regmap_irq);
++		ret = regmap_add_irq_chip(chip->regmap, i2c->irq,
++					  trigger_type | IRQF_SHARED | IRQF_ONESHOT,
++					  -1, irq_chip, &chip->regmap_irq);
++		if (ret) {
++			dev_err(chip->dev, "Failed to request IRQ %d: %d\n",
++				i2c->irq, ret);
++			return ret;
++		}
++
++		irq_base = regmap_irq_chip_get_base(chip->regmap_irq);
++	}
+ 
+ 	ret = mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE, cell,
+ 			      cell_num, NULL, irq_base,
+ 			      NULL);
+ 	if (ret) {
+ 		dev_err(chip->dev, "Cannot register child devices\n");
+-		regmap_del_irq_chip(i2c->irq, chip->regmap_irq);
++		if (i2c->irq)
++			regmap_del_irq_chip(i2c->irq, chip->regmap_irq);
+ 		return ret;
+ 	}
+ 
 -- 
 2.43.0
 
