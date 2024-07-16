@@ -2,135 +2,238 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C876C3DA5D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C75C41513
 	for <webhook@archiver.kernel.org>; Tue, 16 Jul 2024 08:23:08 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.5818.1721118180107077795
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web10.5927.1721118184270232470
  for <cip-dev@lists.cip-project.org>;
- Tue, 16 Jul 2024 01:23:00 -0700
+ Tue, 16 Jul 2024 01:23:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.09,211,1716217200"; 
-   d="scan'208";a="211467668"
+   d="scan'208";a="215425972"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 16 Jul 2024 17:22:58 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 16 Jul 2024 17:23:03 +0900
 Received: from localhost.localdomain (unknown [10.226.92.125])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4A2494016D5E;
-	Tue, 16 Jul 2024 17:22:57 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id C74654005B53;
+	Tue, 16 Jul 2024 17:23:01 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 00/31] Add PMIC DA9062 support
-Date: Tue, 16 Jul 2024 09:22:11 +0100
-Message-ID: <20240716082255.56551-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 02/31] mfd: da9xxx-core: Constify static struct resource
+Date: Tue, 16 Jul 2024 09:22:13 +0100
+Message-ID: <20240716082255.56551-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240716082255.56551-1-biju.das.jz@bp.renesas.com>
+References: <20240716082255.56551-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 16 Jul 2024 08:23:08 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16526
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16528
 
-This patch series aims to add PMIC DA9062 support for SMARC RZ/{G2UL,Five}
-EVK platforms.
+From: Rikard Falkeborn <rikard.falkeborn@gmail.com>
 
-All the patches are cherry-picked from the mainline.
+commit a0fa0abeb508360bea82a84ce83aea49769641d3 upstream.
 
-Andrej Picej (1):
-  mfd: da9062: Support SMBus and I2C mode
+Constify a number of static struct resource. The only usage of the
+structs are to assign their address to the resources field in the
+mfd_cell struct. This allows the compiler to put them in read-only
+memory. Done with the help of Coccinelle.
 
-Andy Shevchenko (1):
-  pinctrl: Propagate firmware node from a parent device
+Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
+Acked-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/mfd/da9055-core.c |  8 ++++----
+ drivers/mfd/da9062-core.c | 24 ++++++++++++------------
+ drivers/mfd/da9063-core.c |  8 ++++----
+ drivers/mfd/da9150-core.c |  6 +++---
+ 4 files changed, 23 insertions(+), 23 deletions(-)
 
-Biju Das (16):
-  mfd: da9062: Simplify obtaining I2C match data
-  rtc: da9063: Make IRQ as optional
-  rtc: da9063: Use device_get_match_data()
-  rtc: da9063: Use dev_err_probe()
-  pinctrl: da9062: Add OF table
-  Input: da9063 - simplify obtaining OF match data
-  Input: da9063 - drop redundant prints in probe()
-  Input: da9063 - use dev_err_probe()
-  dt-bindings: mfd: da9062: Update watchdog description
-  dt-bindings: mfd: dlg,da9063: Update watchdog child node
-  dt-bindings: input: Convert da906{1,2,3} onkey to json-schema
-  dt-bindings: thermal: Convert da906{1,2} thermal to json-schema
-  dt-bindings: mfd: dlg,da9063: Sort child devices
-  dt-bindings: mfd: dlg,da9063: Convert da9062 to json-schema
-  arm64: dts: renesas: rzg2ul-smarc: Enable PMIC and built-in RTC, GPIO
-    and ONKEY
-  arm64: defconfig: Enable Renesas DA9062 PMIC
-
-Christoph Niedermaier (2):
-  mfd: da9062: Use MFD_CELL_OF macro
-  mfd: da9062: Remove IRQ requirement
-
-Conor Dooley (1):
-  dt-bindings: mfd: Convert da9063 to yaml
-
-Jens Hillenstedt (1):
-  mfd: da9061: Fix Failed to set Two-Wire Bus Mode.
-
-Kaixu Xia (1):
-  rtc: da9063: Simplify bool comparison
-
-Krzysztof Kozlowski (2):
-  mfd: da9062: Drop of_match_ptr from of_device_id table
-  mfd: da9062: Simplify getting of_device_id match data
-
-Michal Oleszczyk (1):
-  mfd: core: Delete corresponding OF node entries from list on MFD
-    removal
-
-Nik Bune (1):
-  dt-bindings: watchdog: da9062-wdt: convert txt to yaml
-
-Nikita Shubin (1):
-  rtc: da9063: add as wakeup source
-
-Rikard Falkeborn (1):
-  mfd: da9xxx-core: Constify static struct resource
-
-Samuel Holland (2):
-  rtc: da9063: Mark the alarm IRQ as a wake IRQ
-  Input: da9063 - add wakeup support
-
- .../bindings/input/da9062-onkey.txt           |  47 ---
- .../bindings/input/dlg,da9062-onkey.yaml      |  38 +++
- .../devicetree/bindings/mfd/da9062.txt        | 123 -------
- .../devicetree/bindings/mfd/da9063.txt        | 111 -------
- .../devicetree/bindings/mfd/dlg,da9063.yaml   | 313 ++++++++++++++++++
- .../bindings/thermal/da9062-thermal.txt       |  36 --
- .../bindings/thermal/dlg,da9062-thermal.yaml  |  35 ++
- .../devicetree/bindings/trivial-devices.yaml  |   2 -
- .../bindings/watchdog/da9062-wdt.txt          |  28 --
- .../watchdog/dlg,da9062-watchdog.yaml         |  50 +++
- MAINTAINERS                                   |   7 +-
- arch/arm64/boot/dts/renesas/rzg2ul-smarc.dtsi |  58 ++++
- arch/arm64/configs/defconfig                  |   4 +
- drivers/input/misc/da9063_onkey.c             |  64 ++--
- drivers/mfd/da9055-core.c                     |   8 +-
- drivers/mfd/da9062-core.c                     | 245 +++++++-------
- drivers/mfd/da9063-core.c                     |   8 +-
- drivers/mfd/da9150-core.c                     |   6 +-
- drivers/mfd/mfd-core.c                        |   7 +
- drivers/pinctrl/pinctrl-da9062.c              |  13 +-
- drivers/rtc/rtc-da9063.c                      |  83 ++---
- 21 files changed, 718 insertions(+), 568 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/input/da9062-onkey.txt
- create mode 100644 Documentation/devicetree/bindings/input/dlg,da9062-onkey.yaml
- delete mode 100644 Documentation/devicetree/bindings/mfd/da9062.txt
- delete mode 100644 Documentation/devicetree/bindings/mfd/da9063.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/dlg,da9063.yaml
- delete mode 100644 Documentation/devicetree/bindings/thermal/da9062-thermal.txt
- create mode 100644 Documentation/devicetree/bindings/thermal/dlg,da9062-thermal.yaml
- delete mode 100644 Documentation/devicetree/bindings/watchdog/da9062-wdt.txt
- create mode 100644 Documentation/devicetree/bindings/watchdog/dlg,da9062-watchdog.yaml
-
+diff --git a/drivers/mfd/da9055-core.c b/drivers/mfd/da9055-core.c
+index 6d0af8486269..d074d213e661 100644
+--- a/drivers/mfd/da9055-core.c
++++ b/drivers/mfd/da9055-core.c
+@@ -254,14 +254,14 @@ const struct regmap_config da9055_regmap_config = {
+ };
+ EXPORT_SYMBOL_GPL(da9055_regmap_config);
+ 
+-static struct resource da9055_onkey_resource = {
++static const struct resource da9055_onkey_resource = {
+ 	.name = "ONKEY",
+ 	.start = DA9055_IRQ_NONKEY,
+ 	.end   = DA9055_IRQ_NONKEY,
+ 	.flags = IORESOURCE_IRQ,
+ };
+ 
+-static struct resource da9055_rtc_resource[] = {
++static const struct resource da9055_rtc_resource[] = {
+ 	{
+ 		.name = "ALM",
+ 		.start = DA9055_IRQ_ALARM,
+@@ -276,14 +276,14 @@ static struct resource da9055_rtc_resource[] = {
+ 	},
+ };
+ 
+-static struct resource da9055_hwmon_resource = {
++static const struct resource da9055_hwmon_resource = {
+ 	.name = "HWMON",
+ 	.start = DA9055_IRQ_HWMON,
+ 	.end   = DA9055_IRQ_HWMON,
+ 	.flags = IORESOURCE_IRQ,
+ };
+ 
+-static struct resource da9055_ld05_6_resource = {
++static const struct resource da9055_ld05_6_resource = {
+ 	.name = "REGULATOR",
+ 	.start = DA9055_IRQ_REGULATOR,
+ 	.end   = DA9055_IRQ_REGULATOR,
+diff --git a/drivers/mfd/da9062-core.c b/drivers/mfd/da9062-core.c
+index fc30726e2e27..9583a98d3aae 100644
+--- a/drivers/mfd/da9062-core.c
++++ b/drivers/mfd/da9062-core.c
+@@ -160,23 +160,23 @@ static struct regmap_irq_chip da9062_irq_chip = {
+ 	.ack_base = DA9062AA_EVENT_A,
+ };
+ 
+-static struct resource da9061_core_resources[] = {
++static const struct resource da9061_core_resources[] = {
+ 	DEFINE_RES_IRQ_NAMED(DA9061_IRQ_VDD_WARN, "VDD_WARN"),
+ };
+ 
+-static struct resource da9061_regulators_resources[] = {
++static const struct resource da9061_regulators_resources[] = {
+ 	DEFINE_RES_IRQ_NAMED(DA9061_IRQ_LDO_LIM, "LDO_LIM"),
+ };
+ 
+-static struct resource da9061_thermal_resources[] = {
++static const struct resource da9061_thermal_resources[] = {
+ 	DEFINE_RES_IRQ_NAMED(DA9061_IRQ_TEMP, "THERMAL"),
+ };
+ 
+-static struct resource da9061_wdt_resources[] = {
++static const struct resource da9061_wdt_resources[] = {
+ 	DEFINE_RES_IRQ_NAMED(DA9061_IRQ_WDG_WARN, "WD_WARN"),
+ };
+ 
+-static struct resource da9061_onkey_resources[] = {
++static const struct resource da9061_onkey_resources[] = {
+ 	DEFINE_RES_IRQ_NAMED(DA9061_IRQ_ONKEY, "ONKEY"),
+ };
+ 
+@@ -211,32 +211,32 @@ static const struct mfd_cell da9061_devs[] = {
+ 	},
+ };
+ 
+-static struct resource da9062_core_resources[] = {
++static const struct resource da9062_core_resources[] = {
+ 	DEFINE_RES_NAMED(DA9062_IRQ_VDD_WARN, 1, "VDD_WARN", IORESOURCE_IRQ),
+ };
+ 
+-static struct resource da9062_regulators_resources[] = {
++static const struct resource da9062_regulators_resources[] = {
+ 	DEFINE_RES_NAMED(DA9062_IRQ_LDO_LIM, 1, "LDO_LIM", IORESOURCE_IRQ),
+ };
+ 
+-static struct resource da9062_thermal_resources[] = {
++static const struct resource da9062_thermal_resources[] = {
+ 	DEFINE_RES_NAMED(DA9062_IRQ_TEMP, 1, "THERMAL", IORESOURCE_IRQ),
+ };
+ 
+-static struct resource da9062_wdt_resources[] = {
++static const struct resource da9062_wdt_resources[] = {
+ 	DEFINE_RES_NAMED(DA9062_IRQ_WDG_WARN, 1, "WD_WARN", IORESOURCE_IRQ),
+ };
+ 
+-static struct resource da9062_rtc_resources[] = {
++static const struct resource da9062_rtc_resources[] = {
+ 	DEFINE_RES_NAMED(DA9062_IRQ_ALARM, 1, "ALARM", IORESOURCE_IRQ),
+ 	DEFINE_RES_NAMED(DA9062_IRQ_TICK, 1, "TICK", IORESOURCE_IRQ),
+ };
+ 
+-static struct resource da9062_onkey_resources[] = {
++static const struct resource da9062_onkey_resources[] = {
+ 	DEFINE_RES_NAMED(DA9062_IRQ_ONKEY, 1, "ONKEY", IORESOURCE_IRQ),
+ };
+ 
+-static struct resource da9062_gpio_resources[] = {
++static const struct resource da9062_gpio_resources[] = {
+ 	DEFINE_RES_NAMED(DA9062_IRQ_GPI0, 1, "GPI0", IORESOURCE_IRQ),
+ 	DEFINE_RES_NAMED(DA9062_IRQ_GPI1, 1, "GPI1", IORESOURCE_IRQ),
+ 	DEFINE_RES_NAMED(DA9062_IRQ_GPI2, 1, "GPI2", IORESOURCE_IRQ),
+diff --git a/drivers/mfd/da9063-core.c b/drivers/mfd/da9063-core.c
+index a353d52210a9..df407c3afce3 100644
+--- a/drivers/mfd/da9063-core.c
++++ b/drivers/mfd/da9063-core.c
+@@ -29,7 +29,7 @@
+ #include <linux/uaccess.h>
+ 
+ 
+-static struct resource da9063_regulators_resources[] = {
++static const struct resource da9063_regulators_resources[] = {
+ 	{
+ 		.name	= "LDO_LIM",
+ 		.start	= DA9063_IRQ_LDO_LIM,
+@@ -38,7 +38,7 @@ static struct resource da9063_regulators_resources[] = {
+ 	},
+ };
+ 
+-static struct resource da9063_rtc_resources[] = {
++static const struct resource da9063_rtc_resources[] = {
+ 	{
+ 		.name	= "ALARM",
+ 		.start	= DA9063_IRQ_ALARM,
+@@ -53,7 +53,7 @@ static struct resource da9063_rtc_resources[] = {
+ 	}
+ };
+ 
+-static struct resource da9063_onkey_resources[] = {
++static const struct resource da9063_onkey_resources[] = {
+ 	{
+ 		.name	= "ONKEY",
+ 		.start	= DA9063_IRQ_ONKEY,
+@@ -62,7 +62,7 @@ static struct resource da9063_onkey_resources[] = {
+ 	},
+ };
+ 
+-static struct resource da9063_hwmon_resources[] = {
++static const struct resource da9063_hwmon_resources[] = {
+ 	{
+ 		.start	= DA9063_IRQ_ADC_RDY,
+ 		.end	= DA9063_IRQ_ADC_RDY,
+diff --git a/drivers/mfd/da9150-core.c b/drivers/mfd/da9150-core.c
+index 7f0aa1e8db96..d8b0cde48589 100644
+--- a/drivers/mfd/da9150-core.c
++++ b/drivers/mfd/da9150-core.c
+@@ -350,18 +350,18 @@ static const struct regmap_irq_chip da9150_regmap_irq_chip = {
+ 	.num_irqs = ARRAY_SIZE(da9150_irqs),
+ };
+ 
+-static struct resource da9150_gpadc_resources[] = {
++static const struct resource da9150_gpadc_resources[] = {
+ 	DEFINE_RES_IRQ_NAMED(DA9150_IRQ_GPADC, "GPADC"),
+ };
+ 
+-static struct resource da9150_charger_resources[] = {
++static const struct resource da9150_charger_resources[] = {
+ 	DEFINE_RES_IRQ_NAMED(DA9150_IRQ_CHG, "CHG_STATUS"),
+ 	DEFINE_RES_IRQ_NAMED(DA9150_IRQ_TJUNC, "CHG_TJUNC"),
+ 	DEFINE_RES_IRQ_NAMED(DA9150_IRQ_VFAULT, "CHG_VFAULT"),
+ 	DEFINE_RES_IRQ_NAMED(DA9150_IRQ_VBUS, "CHG_VBUS"),
+ };
+ 
+-static struct resource da9150_fg_resources[] = {
++static const struct resource da9150_fg_resources[] = {
+ 	DEFINE_RES_IRQ_NAMED(DA9150_IRQ_FG, "FG"),
+ };
+ 
 -- 
 2.43.0
 
