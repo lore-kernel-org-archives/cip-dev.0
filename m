@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 912D1C3DA62
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D767C3DA61
 	for <webhook@archiver.kernel.org>; Tue, 16 Jul 2024 07:56:57 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web11.5540.1721116607082293588
  for <cip-dev@lists.cip-project.org>;
- Tue, 16 Jul 2024 00:56:48 -0700
+ Tue, 16 Jul 2024 00:56:55 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.09,211,1716217200"; 
-   d="scan'208";a="211463298"
+   d="scan'208";a="211463314"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 16 Jul 2024 16:56:47 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 16 Jul 2024 16:56:54 +0900
 Received: from localhost.localdomain (unknown [10.226.92.125])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id EC1AE41CF052;
-	Tue, 16 Jul 2024 16:56:45 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id DDD4F41CF65A;
+	Tue, 16 Jul 2024 16:56:52 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 01/23] mfd: da9062: Use MFD_CELL_OF macro
-Date: Tue, 16 Jul 2024 08:56:06 +0100
-Message-ID: <20240716075641.32177-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 04/23] rtc: da9063: Mark the alarm IRQ as a wake IRQ
+Date: Tue, 16 Jul 2024 08:56:09 +0100
+Message-ID: <20240716075641.32177-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240716075641.32177-1-biju.das.jz@bp.renesas.com>
 References: <20240716075641.32177-1-biju.das.jz@bp.renesas.com>
@@ -35,134 +35,50 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 16 Jul 2024 07:56:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16501
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16504
 
-From: Christoph Niedermaier <cniedermaier@dh-electronics.com>
+From: Samuel Holland <samuel.holland@sifive.com>
 
-commit 7d61f6313e90cdbe592eba5e0ae6d1c367b03548 upstream.
+commit ed17a2bcbb75505bb979e3e8ecb6c5fb2518bf3b upstream.
 
-Use MFD_CELL_OF macro helper instead of plain struct properties, which makes
-the code a bit shorter and to have commonly defined MFD cell attributes.
+This keeps the IRQ enabled during system suspend, if the RTC's wakeup
+source is enabled. Since the IRQ is not required to wake from shutdown,
+continue to add the wakeup source even if registering the wakeirq fails.
+See commit 029d3a6f2f3c ("rtc: da9063: add as wakeup source").
 
-Signed-off-by: Christoph Niedermaier <cniedermaier@dh-electronics.com>
-Acked-by: Adam Ward <DLG-Adam.Ward.opensource@dm.renesas.com>
-Signed-off-by: Lee Jones <lee@kernel.org>
-Link: https://lore.kernel.org/r/20230309092254.56279-1-cniedermaier@dh-electronics.com
+Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+Link: https://lore.kernel.org/r/20230717190937.1301509-1-samuel.holland@sifive.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/mfd/da9062-core.c | 92 ++++++++++-----------------------------
- 1 file changed, 24 insertions(+), 68 deletions(-)
+ drivers/rtc/rtc-da9063.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/mfd/da9062-core.c b/drivers/mfd/da9062-core.c
-index a26e473507c7..fd2769592a4f 100644
---- a/drivers/mfd/da9062-core.c
-+++ b/drivers/mfd/da9062-core.c
-@@ -182,34 +182,16 @@ static const struct resource da9061_onkey_resources[] = {
- };
+diff --git a/drivers/rtc/rtc-da9063.c b/drivers/rtc/rtc-da9063.c
+index ee2efb496174..2f5d60622564 100644
+--- a/drivers/rtc/rtc-da9063.c
++++ b/drivers/rtc/rtc-da9063.c
+@@ -11,6 +11,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_wakeirq.h>
+ #include <linux/regmap.h>
+ #include <linux/rtc.h>
+ #include <linux/slab.h>
+@@ -496,6 +497,12 @@ static int da9063_rtc_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "Failed to request ALARM IRQ %d: %d\n",
+ 			irq_alarm, ret);
  
- static const struct mfd_cell da9061_devs[] = {
--	{
--		.name		= "da9061-core",
--		.num_resources	= ARRAY_SIZE(da9061_core_resources),
--		.resources	= da9061_core_resources,
--	},
--	{
--		.name		= "da9062-regulators",
--		.num_resources	= ARRAY_SIZE(da9061_regulators_resources),
--		.resources	= da9061_regulators_resources,
--	},
--	{
--		.name		= "da9061-watchdog",
--		.num_resources	= ARRAY_SIZE(da9061_wdt_resources),
--		.resources	= da9061_wdt_resources,
--		.of_compatible  = "dlg,da9061-watchdog",
--	},
--	{
--		.name		= "da9061-thermal",
--		.num_resources	= ARRAY_SIZE(da9061_thermal_resources),
--		.resources	= da9061_thermal_resources,
--		.of_compatible  = "dlg,da9061-thermal",
--	},
--	{
--		.name		= "da9061-onkey",
--		.num_resources	= ARRAY_SIZE(da9061_onkey_resources),
--		.resources	= da9061_onkey_resources,
--		.of_compatible = "dlg,da9061-onkey",
--	},
-+	MFD_CELL_OF("da9061-core", da9061_core_resources, NULL, 0, 0,
-+		    NULL),
-+	MFD_CELL_OF("da9062-regulators", da9061_regulators_resources, NULL, 0, 0,
-+		    NULL),
-+	MFD_CELL_OF("da9061-watchdog", da9061_wdt_resources, NULL, 0, 0,
-+		    "dlg,da9061-watchdog"),
-+	MFD_CELL_OF("da9061-thermal", da9061_thermal_resources, NULL, 0, 0,
-+		    "dlg,da9061-thermal"),
-+	MFD_CELL_OF("da9061-onkey", da9061_onkey_resources, NULL, 0, 0,
-+		    "dlg,da9061-onkey"),
- };
++	ret = dev_pm_set_wake_irq(&pdev->dev, irq_alarm);
++	if (ret)
++		dev_warn(&pdev->dev,
++			 "Failed to set IRQ %d as a wake IRQ: %d\n",
++			 irq_alarm, ret);
++
+ 	device_init_wakeup(&pdev->dev, true);
  
- static const struct resource da9062_core_resources[] = {
-@@ -246,46 +228,20 @@ static const struct resource da9062_gpio_resources[] = {
- };
- 
- static const struct mfd_cell da9062_devs[] = {
--	{
--		.name		= "da9062-core",
--		.num_resources	= ARRAY_SIZE(da9062_core_resources),
--		.resources	= da9062_core_resources,
--	},
--	{
--		.name		= "da9062-regulators",
--		.num_resources	= ARRAY_SIZE(da9062_regulators_resources),
--		.resources	= da9062_regulators_resources,
--	},
--	{
--		.name		= "da9062-watchdog",
--		.num_resources	= ARRAY_SIZE(da9062_wdt_resources),
--		.resources	= da9062_wdt_resources,
--		.of_compatible  = "dlg,da9062-watchdog",
--	},
--	{
--		.name		= "da9062-thermal",
--		.num_resources	= ARRAY_SIZE(da9062_thermal_resources),
--		.resources	= da9062_thermal_resources,
--		.of_compatible  = "dlg,da9062-thermal",
--	},
--	{
--		.name		= "da9062-rtc",
--		.num_resources	= ARRAY_SIZE(da9062_rtc_resources),
--		.resources	= da9062_rtc_resources,
--		.of_compatible  = "dlg,da9062-rtc",
--	},
--	{
--		.name		= "da9062-onkey",
--		.num_resources	= ARRAY_SIZE(da9062_onkey_resources),
--		.resources	= da9062_onkey_resources,
--		.of_compatible	= "dlg,da9062-onkey",
--	},
--	{
--		.name		= "da9062-gpio",
--		.num_resources	= ARRAY_SIZE(da9062_gpio_resources),
--		.resources	= da9062_gpio_resources,
--		.of_compatible	= "dlg,da9062-gpio",
--	},
-+	MFD_CELL_OF("da9062-core", da9062_core_resources, NULL, 0, 0,
-+		    NULL),
-+	MFD_CELL_OF("da9062-regulators", da9062_regulators_resources, NULL, 0, 0,
-+		    NULL),
-+	MFD_CELL_OF("da9062-watchdog", da9062_wdt_resources, NULL, 0, 0,
-+		    "dlg,da9062-watchdog"),
-+	MFD_CELL_OF("da9062-thermal", da9062_thermal_resources, NULL, 0, 0,
-+		    "dlg,da9062-thermal"),
-+	MFD_CELL_OF("da9062-rtc", da9062_rtc_resources, NULL, 0, 0,
-+		    "dlg,da9062-rtc"),
-+	MFD_CELL_OF("da9062-onkey", da9062_onkey_resources, NULL, 0, 0,
-+		    "dlg,da9062-onkey"),
-+	MFD_CELL_OF("da9062-gpio", da9062_gpio_resources, NULL, 0, 0,
-+		    "dlg,da9062-gpio"),
- };
- 
- static int da9062_clear_fault_log(struct da9062 *chip)
+ 	return devm_rtc_register_device(rtc->rtc_dev);
 -- 
 2.43.0
 
