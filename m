@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F840C3DA5D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 633C3C3DA59
 	for <webhook@archiver.kernel.org>; Tue, 16 Jul 2024 08:23:18 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web10.5927.1721118184270232470
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web11.5818.1721118180107077795
  for <cip-dev@lists.cip-project.org>;
- Tue, 16 Jul 2024 01:23:17 -0700
+ Tue, 16 Jul 2024 01:23:10 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.09,211,1716217200"; 
-   d="scan'208";a="215425998"
+   d="scan'208";a="211467688"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 16 Jul 2024 17:23:17 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 16 Jul 2024 17:23:10 +0900
 Received: from localhost.localdomain (unknown [10.226.92.125])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 5BD6040178CB;
-	Tue, 16 Jul 2024 17:23:15 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8A7424005B53;
+	Tue, 16 Jul 2024 17:23:08 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 08/31] mfd: da9062: Remove IRQ requirement
-Date: Tue, 16 Jul 2024 09:22:19 +0100
-Message-ID: <20240716082255.56551-9-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 05/31] mfd: da9062: Support SMBus and I2C mode
+Date: Tue, 16 Jul 2024 09:22:16 +0100
+Message-ID: <20240716082255.56551-6-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240716082255.56551-1-biju.das.jz@bp.renesas.com>
 References: <20240716082255.56551-1-biju.das.jz@bp.renesas.com>
@@ -35,175 +35,54 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 16 Jul 2024 08:23:18 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16534
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16531
 
-From: Christoph Niedermaier <cniedermaier@dh-electronics.com>
+From: Andrej Picej <andrej.picej@norik.com>
 
-commit c923d5001ba054df10ed3441d24f8f2c01db7e00 upstream.
+commit 5c6f0f456351f5ca7d3b1a82060821eac4a7dc5c upstream.
 
-This patch removes the requirement for an IRQ, because for the core
-functionality IRQ isn't needed. So this makes the DA9061/62 chip
-usable for designs which haven't connected the IRQ pin.
+Enable the I2C bus mode if I2C_FUNC_I2C is set. Based on da6093 commit:
+"586478bfc9f7 mfd: da9063: Support SMBus and I2C mode"
 
-Signed-off-by: Christoph Niedermaier <cniedermaier@dh-electronics.com>
-Acked-by: Adam Ward <DLG-Adam.Ward.opensource@dm.renesas.com>
-Signed-off-by: Lee Jones <lee@kernel.org>
-Link: https://lore.kernel.org/r/20230309092254.56279-2-cniedermaier@dh-electronics.com
+Signed-off-by: Andrej Picej <andrej.picej@norik.com>
+Reviewed-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Link: https://lore.kernel.org/r/20211124065119.2514872-1-andrej.picej@norik.com
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/mfd/da9062-core.c | 84 +++++++++++++++++++++++++--------------
- 1 file changed, 55 insertions(+), 29 deletions(-)
+ drivers/mfd/da9062-core.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/drivers/mfd/da9062-core.c b/drivers/mfd/da9062-core.c
-index ae5274315554..f821ef4909ec 100644
+index 01f8e10dfa55..2774b2cbaea6 100644
 --- a/drivers/mfd/da9062-core.c
 +++ b/drivers/mfd/da9062-core.c
-@@ -181,7 +181,7 @@ static const struct resource da9061_onkey_resources[] = {
- 	DEFINE_RES_IRQ_NAMED(DA9061_IRQ_ONKEY, "ONKEY"),
+@@ -556,6 +556,7 @@ static const struct regmap_range da9062_aa_writeable_ranges[] = {
+ 	regmap_reg_range(DA9062AA_VBUCK3_B, DA9062AA_VBUCK3_B),
+ 	regmap_reg_range(DA9062AA_VLDO1_B, DA9062AA_VLDO4_B),
+ 	regmap_reg_range(DA9062AA_BBAT_CONT, DA9062AA_BBAT_CONT),
++	regmap_reg_range(DA9062AA_CONFIG_J, DA9062AA_CONFIG_J),
+ 	regmap_reg_range(DA9062AA_GP_ID_0, DA9062AA_GP_ID_19),
  };
  
--static const struct mfd_cell da9061_devs[] = {
-+static const struct mfd_cell da9061_devs_irq[] = {
- 	OF_MFD_CELL("da9061-core", da9061_core_resources, NULL, 0, 0,
- 		    NULL),
- 	OF_MFD_CELL("da9062-regulators", da9061_regulators_resources, NULL, 0, 0,
-@@ -194,6 +194,14 @@ static const struct mfd_cell da9061_devs[] = {
- 		    "dlg,da9061-onkey"),
- };
- 
-+static const struct mfd_cell da9061_devs_noirq[] = {
-+	OF_MFD_CELL("da9061-core", NULL, NULL, 0, 0, NULL),
-+	OF_MFD_CELL("da9062-regulators", NULL, NULL, 0, 0, NULL),
-+	OF_MFD_CELL("da9061-watchdog", NULL, NULL, 0, 0, "dlg,da9061-watchdog"),
-+	OF_MFD_CELL("da9061-thermal", NULL, NULL, 0, 0, "dlg,da9061-thermal"),
-+	OF_MFD_CELL("da9061-onkey", NULL, NULL, 0, 0, "dlg,da9061-onkey"),
-+};
-+
- static const struct resource da9062_core_resources[] = {
- 	DEFINE_RES_NAMED(DA9062_IRQ_VDD_WARN, 1, "VDD_WARN", IORESOURCE_IRQ),
- };
-@@ -227,7 +235,7 @@ static const struct resource da9062_gpio_resources[] = {
- 	DEFINE_RES_NAMED(DA9062_IRQ_GPI4, 1, "GPI4", IORESOURCE_IRQ),
- };
- 
--static const struct mfd_cell da9062_devs[] = {
-+static const struct mfd_cell da9062_devs_irq[] = {
- 	OF_MFD_CELL("da9062-core", da9062_core_resources, NULL, 0, 0,
- 		    NULL),
- 	OF_MFD_CELL("da9062-regulators", da9062_regulators_resources, NULL, 0, 0,
-@@ -244,6 +252,16 @@ static const struct mfd_cell da9062_devs[] = {
- 		    "dlg,da9062-gpio"),
- };
- 
-+static const struct mfd_cell da9062_devs_noirq[] = {
-+	OF_MFD_CELL("da9062-core", NULL, NULL, 0, 0, NULL),
-+	OF_MFD_CELL("da9062-regulators", NULL, NULL, 0, 0, NULL),
-+	OF_MFD_CELL("da9062-watchdog", NULL, NULL, 0, 0, "dlg,da9062-watchdog"),
-+	OF_MFD_CELL("da9062-thermal", NULL, NULL, 0, 0, "dlg,da9062-thermal"),
-+	OF_MFD_CELL("da9062-rtc", NULL, NULL, 0, 0, "dlg,da9062-rtc"),
-+	OF_MFD_CELL("da9062-onkey", NULL, NULL, 0, 0, "dlg,da9062-onkey"),
-+	OF_MFD_CELL("da9062-gpio", NULL, NULL, 0, 0, "dlg,da9062-gpio"),
-+};
-+
- static int da9062_clear_fault_log(struct da9062 *chip)
- {
- 	int ret;
-@@ -581,7 +599,7 @@ static int da9062_i2c_probe(struct i2c_client *i2c,
- 	const struct i2c_device_id *id)
- {
- 	struct da9062 *chip;
--	unsigned int irq_base;
-+	unsigned int irq_base = 0;
- 	const struct mfd_cell *cell;
- 	const struct regmap_irq_chip *irq_chip;
- 	const struct regmap_config *config;
-@@ -601,22 +619,16 @@ static int da9062_i2c_probe(struct i2c_client *i2c,
- 	i2c_set_clientdata(i2c, chip);
- 	chip->dev = &i2c->dev;
- 
--	if (!i2c->irq) {
--		dev_err(chip->dev, "No IRQ configured\n");
--		return -EINVAL;
--	}
--
-+	/* Start with a base configuration without IRQ */
- 	switch (chip->chip_type) {
- 	case COMPAT_TYPE_DA9061:
--		cell = da9061_devs;
--		cell_num = ARRAY_SIZE(da9061_devs);
--		irq_chip = &da9061_irq_chip;
-+		cell = da9061_devs_noirq;
-+		cell_num = ARRAY_SIZE(da9061_devs_noirq);
- 		config = &da9061_regmap_config;
- 		break;
- 	case COMPAT_TYPE_DA9062:
--		cell = da9062_devs;
--		cell_num = ARRAY_SIZE(da9062_devs);
--		irq_chip = &da9062_irq_chip;
-+		cell = da9062_devs_noirq;
-+		cell_num = ARRAY_SIZE(da9062_devs_noirq);
- 		config = &da9062_regmap_config;
- 		break;
- 	default:
-@@ -651,29 +663,43 @@ static int da9062_i2c_probe(struct i2c_client *i2c,
- 	if (ret)
- 		return ret;
- 
--	ret = da9062_configure_irq_type(chip, i2c->irq, &trigger_type);
--	if (ret < 0) {
--		dev_err(chip->dev, "Failed to configure IRQ type\n");
--		return ret;
--	}
-+	/* If IRQ is available, reconfigure it accordingly */
-+	if (i2c->irq) {
-+		if (chip->chip_type == COMPAT_TYPE_DA9061) {
-+			cell = da9061_devs_irq;
-+			cell_num = ARRAY_SIZE(da9061_devs_irq);
-+			irq_chip = &da9061_irq_chip;
-+		} else {
-+			cell = da9062_devs_irq;
-+			cell_num = ARRAY_SIZE(da9062_devs_irq);
-+			irq_chip = &da9062_irq_chip;
-+		}
- 
--	ret = regmap_add_irq_chip(chip->regmap, i2c->irq,
--			trigger_type | IRQF_SHARED | IRQF_ONESHOT,
--			-1, irq_chip, &chip->regmap_irq);
--	if (ret) {
--		dev_err(chip->dev, "Failed to request IRQ %d: %d\n",
--			i2c->irq, ret);
--		return ret;
--	}
-+		ret = da9062_configure_irq_type(chip, i2c->irq, &trigger_type);
-+		if (ret < 0) {
-+			dev_err(chip->dev, "Failed to configure IRQ type\n");
-+			return ret;
-+		}
- 
--	irq_base = regmap_irq_chip_get_base(chip->regmap_irq);
-+		ret = regmap_add_irq_chip(chip->regmap, i2c->irq,
-+					  trigger_type | IRQF_SHARED | IRQF_ONESHOT,
-+					  -1, irq_chip, &chip->regmap_irq);
-+		if (ret) {
-+			dev_err(chip->dev, "Failed to request IRQ %d: %d\n",
-+				i2c->irq, ret);
-+			return ret;
-+		}
-+
-+		irq_base = regmap_irq_chip_get_base(chip->regmap_irq);
-+	}
- 
- 	ret = mfd_add_devices(chip->dev, PLATFORM_DEVID_NONE, cell,
- 			      cell_num, NULL, irq_base,
- 			      NULL);
- 	if (ret) {
- 		dev_err(chip->dev, "Cannot register child devices\n");
--		regmap_del_irq_chip(i2c->irq, chip->regmap_irq);
-+		if (i2c->irq)
-+			regmap_del_irq_chip(i2c->irq, chip->regmap_irq);
+@@ -674,6 +675,17 @@ static int da9062_i2c_probe(struct i2c_client *i2c,
  		return ret;
  	}
  
++	/* If SMBus is not available and only I2C is possible, enter I2C mode */
++	if (i2c_check_functionality(i2c->adapter, I2C_FUNC_I2C)) {
++		dev_info(chip->dev, "Entering I2C mode!\n");
++		ret = regmap_clear_bits(chip->regmap, DA9062AA_CONFIG_J,
++					DA9062AA_TWOWIRE_TO_MASK);
++		if (ret < 0) {
++			dev_err(chip->dev, "Failed to set Two-Wire Bus Mode.\n");
++			return ret;
++		}
++	}
++
+ 	ret = da9062_clear_fault_log(chip);
+ 	if (ret < 0)
+ 		dev_warn(chip->dev, "Cannot clear fault log\n");
 -- 
 2.43.0
 
