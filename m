@@ -1,75 +1,128 @@
-Return-Path: <sai.sathujoda@toshiba-tsip.com>
+Return-Path: <paul.barker.ct@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB86C3DA63
-	for <webhook@archiver.kernel.org>; Tue, 23 Jul 2024 17:51:27 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
- by mx.groups.io with SMTP id smtpd.web10.1678.1721757079571350405
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 064A0C3DA70
+	for <webhook@archiver.kernel.org>; Wed, 24 Jul 2024 08:00:58 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web10.5867.1721808052528588612
  for <cip-dev@lists.cip-project.org>;
- Tue, 23 Jul 2024 10:51:20 -0700
+ Wed, 24 Jul 2024 01:00:52 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.152, mailfrom: sai.sathujoda@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 46NHpHOh1296327; Wed, 24 Jul 2024 02:51:17 +0900
-X-Iguazu-Qid: 2yAbQ60VQtsZBsCm3d
-X-Iguazu-QSIG: v=2; s=0; t=1721757076; q=2yAbQ60VQtsZBsCm3d; m=qSxdvXbaCbHHZiSFTlU9bSQ/wfBf7/MnDlQk9oFb0Os=
-Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1801) id 46NHpGUa156821
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 24 Jul 2024 02:51:16 +0900
-From: Sai.Sathujoda@toshiba-tsip.com
-To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
-Cc: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>,
-        dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
-Subject: [isar-cip-core] IEC_template.yml: Update revision of cip-security-tests
-Date: Tue, 23 Jul 2024 23:21:17 +0530
-X-TSB-HOP2: ON
-Message-Id: <20240723175117.2471090-1-Sai.Sathujoda@toshiba-tsip.com>
-X-Mailer: git-send-email 2.30.2
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: paul.barker.ct@bp.renesas.com)
+X-IronPort-AV: E=Sophos;i="6.09,232,1716217200"; 
+   d="scan'208";a="212533004"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 24 Jul 2024 17:00:51 +0900
+Received: from ree-du1sdd5.ree.adwin.renesas.com (unknown [10.226.105.7])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id A66CD41D0C91;
+	Wed, 24 Jul 2024 17:00:49 +0900 (JST)
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+To: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Pavel Machek <pavel@denx.de>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 01/11] net: ravb: Count packets instead of descriptors in GbEth RX path
+Date: Wed, 24 Jul 2024 08:00:36 +0000
+Message-Id: <20240724080046.1500825-2-paul.barker.ct@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240724080046.1500825-1-paul.barker.ct@bp.renesas.com>
+References: <20240724080046.1500825-1-paul.barker.ct@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 23 Jul 2024 17:51:13.0673 (UTC) FILETIME=[E8E6EF90:01DADD28]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 23 Jul 2024 17:51:27 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16598
+ <cip-dev@lists.cip-project.org>; Wed, 24 Jul 2024 08:00:58 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16600
 
-From: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
+commit ed4adc07207d9165a4b3b36199231a22e9f51a55 upstream.
 
-It is expected for all the test cases to pass with the revision
-mentioned in this commit.
+The units of "work done" in the RX path should be packets instead of
+descriptors, as large packets can be spread over multiple descriptors.
 
-Below mentioned test cases are fixed with the updated revision.
+Fixes: 1c59eb678cbd ("ravb: Fillup ravb_rx_gbeth() stub")
+Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+Link: https://lore.kernel.org/r/20240214151204.2976-1-paul.barker.ct@bp.renesas.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 
-a) TC_CR1.11_2
-b) TC_CR2.10_1
-c) TC_CR2.9-RE1_1
-d) TC_CR2.9_2
-e) TC_CR3.4-RE2_1,
-f) TC_CR6.2_1
-g) TC_CR7.1_1
-
-Signed-off-by: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
+Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
 ---
- tests/templates/IEC_template.yml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/renesas/ravb_main.c | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
-diff --git a/tests/templates/IEC_template.yml b/tests/templates/IEC_template.yml
-index 1d46791..a196bb5 100644
---- a/tests/templates/IEC_template.yml
-+++ b/tests/templates/IEC_template.yml
-@@ -64,7 +64,7 @@ actions:
-      definitions:
-      - repository: https://gitlab.com/cip-project/cip-testing/cip-security-tests.git
-        from: git
--       revision: 07021c3b7455ed354a00f4de0f1a7267788c414a
-+       revision: 064a92b98127b0001ca527a83b175521bea4b626
-        path: iec-security-tests/Singlenode-TestDefinition.yaml
-        name: Security-Testcases
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index 07771bdf0fc7..92fe9a244fd1 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -820,29 +820,25 @@ static bool ravb_rx_gbeth(struct net_device *ndev, int *quota, int q)
+ 	struct ravb_rx_desc *desc;
+ 	struct sk_buff *skb;
+ 	dma_addr_t dma_addr;
++	int rx_packets = 0;
+ 	u8  desc_status;
+-	int boguscnt;
+ 	u16 pkt_len;
+ 	u8  die_dt;
+ 	int entry;
+ 	int limit;
++	int i;
  
+ 	entry = priv->cur_rx[q] % priv->num_rx_ring[q];
+-	boguscnt = priv->dirty_rx[q] + priv->num_rx_ring[q] - priv->cur_rx[q];
++	limit = priv->dirty_rx[q] + priv->num_rx_ring[q] - priv->cur_rx[q];
+ 	stats = &priv->stats[q];
+ 
+-	boguscnt = min(boguscnt, *quota);
+-	limit = boguscnt;
+ 	desc = &priv->gbeth_rx_ring[entry];
+-	while (desc->die_dt != DT_FEMPTY) {
++	for (i = 0; i < limit && rx_packets < *quota && desc->die_dt != DT_FEMPTY; i++) {
+ 		/* Descriptor type must be checked before all other reads */
+ 		dma_rmb();
+ 		desc_status = desc->msc;
+ 		pkt_len = le16_to_cpu(desc->ds_cc) & RX_DS;
+ 
+-		if (--boguscnt < 0)
+-			break;
+-
+ 		/* We use 0-byte descriptors to mark the DMA mapping errors */
+ 		if (!pkt_len)
+ 			continue;
+@@ -870,7 +866,7 @@ static bool ravb_rx_gbeth(struct net_device *ndev, int *quota, int q)
+ 				if (ndev->features & NETIF_F_RXCSUM)
+ 					ravb_rx_csum_gbeth(skb);
+ 				napi_gro_receive(&priv->napi[q], skb);
+-				stats->rx_packets++;
++				rx_packets++;
+ 				stats->rx_bytes += pkt_len;
+ 				break;
+ 			case DT_FSTART:
+@@ -900,7 +896,7 @@ static bool ravb_rx_gbeth(struct net_device *ndev, int *quota, int q)
+ 					ravb_rx_csum_gbeth(priv->rx_1st_skb);
+ 				napi_gro_receive(&priv->napi[q],
+ 						 priv->rx_1st_skb);
+-				stats->rx_packets++;
++				rx_packets++;
+ 				stats->rx_bytes += pkt_len;
+ 				break;
+ 			}
+@@ -939,9 +935,9 @@ static bool ravb_rx_gbeth(struct net_device *ndev, int *quota, int q)
+ 		desc->die_dt = DT_FEMPTY;
+ 	}
+ 
+-	*quota -= limit - (++boguscnt);
+-
+-	return boguscnt <= 0;
++	stats->rx_packets += rx_packets;
++	*quota -= rx_packets;
++	return *quota == 0;
+ }
+ 
+ /* Packet receive function for Ethernet AVB */
 -- 
-2.30.2
-
+2.25.1
 
 
