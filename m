@@ -2,30 +2,30 @@ Return-Path: <paul.barker.ct@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 648C7C49EA1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 572B6C3DA70
 	for <webhook@archiver.kernel.org>; Wed, 24 Jul 2024 08:01:18 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web10.5867.1721808052528588612
  for <cip-dev@lists.cip-project.org>;
- Wed, 24 Jul 2024 01:01:12 -0700
+ Wed, 24 Jul 2024 01:01:14 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: paul.barker.ct@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.09,232,1716217200"; 
-   d="scan'208";a="212533082"
+   d="scan'208";a="212533093"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 24 Jul 2024 17:01:11 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 24 Jul 2024 17:01:14 +0900
 Received: from ree-du1sdd5.ree.adwin.renesas.com (unknown [10.226.105.7])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id F00FA41D15D7;
-	Wed, 24 Jul 2024 17:01:09 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3E72A41D15E1;
+	Wed, 24 Jul 2024 17:01:11 +0900 (JST)
 From: Paul Barker <paul.barker.ct@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 10/11] net: ravb: Allow RX loop to move past DMA mapping errors
-Date: Wed, 24 Jul 2024 08:00:45 +0000
-Message-Id: <20240724080046.1500825-11-paul.barker.ct@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 11/11] net: ravb: Fix RX byte accounting for jumbo packets
+Date: Wed, 24 Jul 2024 08:00:46 +0000
+Message-Id: <20240724080046.1500825-12-paul.barker.ct@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240724080046.1500825-1-paul.barker.ct@bp.renesas.com>
 References: <20240724080046.1500825-1-paul.barker.ct@bp.renesas.com>
@@ -35,105 +35,110 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 24 Jul 2024 08:01:18 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16609
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16610
 
-commit a892493a343494bd6bab9d098593932077ff3c43 upstream.
+commit 2e36c9fbc476f95a1b19e3fa0a2cdf408475ff56 upstream.
 
-The RX loops in ravb_rx_gbeth() and ravb_rx_rcar() skip to the next loop
-iteration if a zero-length descriptor is seen (indicating a DMA mapping
-error). However, the current RX descriptor index `priv->cur_rx[q]` was
-incremented at the end of the loop and so would not be incremented when
-we skip to the next loop iteration. This would cause the loop to keep
-seeing the same zero-length descriptor instead of moving on to the next
-descriptor.
+The RX byte accounting for jumbo packets was changed to fix a potential
+use-after-free bug. However, that fix used the wrong variable and so
+only accounted for the number of bytes in the final descriptor, not the
+number of bytes in the whole packet.
 
-As the loop counter `i` still increments, the loop would eventually
-terminate so there is no risk of being stuck here forever - but we
-should still fix this to avoid wasting cycles.
+To fix this, we can simply update our stats with the correct number of
+bytes before calling napi_gro_receive().
 
-To fix this, the RX descriptor index is incremented at the top of the
-loop, in the for statement itself. The assignments of `entry` and `desc`
-are brought into the loop to avoid the need for duplication.
+Also rename pkt_len to desc_len in ravb_rx_gbeth() to avoid any future
+confusion. The variable name pkt_len is correct in ravb_rx_rcar() as
+that function does not handle packets spanning multiple descriptors.
 
-Fixes: d8b48911fd24 ("ravb: fix ring memory allocation")
+Fixes: 5a5a3e564de6 ("ravb: Fix potential use-after-free in ravb_rx_gbeth()")
 Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
 Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 
 Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 25 ++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+ drivers/net/ethernet/renesas/ravb_main.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index ff9f059e92f0..cc18cb9efb98 100644
+index cc18cb9efb98..207c2bf005c0 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -777,12 +777,15 @@ static bool ravb_rx_gbeth(struct net_device *ndev, int *quota, int q)
+@@ -771,7 +771,7 @@ static bool ravb_rx_gbeth(struct net_device *ndev, int *quota, int q)
+ 	dma_addr_t dma_addr;
+ 	int rx_packets = 0;
+ 	u8  desc_status;
+-	u16 pkt_len;
++	u16 desc_len;
+ 	u8  die_dt;
+ 	int entry;
  	int limit;
- 	int i;
- 
--	entry = priv->cur_rx[q] % priv->num_rx_ring[q];
- 	limit = priv->dirty_rx[q] + priv->num_rx_ring[q] - priv->cur_rx[q];
- 	stats = &priv->stats[q];
- 
--	desc = &priv->rx_ring[q].desc[entry];
--	for (i = 0; i < limit && rx_packets < *quota && desc->die_dt != DT_FEMPTY; i++) {
-+	for (i = 0; i < limit; i++, priv->cur_rx[q]++) {
-+		entry = priv->cur_rx[q] % priv->num_rx_ring[q];
-+		desc = &priv->rx_ring[q].desc[entry];
-+		if (rx_packets == *quota || desc->die_dt == DT_FEMPTY)
-+			break;
-+
+@@ -789,10 +789,10 @@ static bool ravb_rx_gbeth(struct net_device *ndev, int *quota, int q)
  		/* Descriptor type must be checked before all other reads */
  		dma_rmb();
  		desc_status = desc->msc;
-@@ -850,9 +853,6 @@ static bool ravb_rx_gbeth(struct net_device *ndev, int *quota, int q)
+-		pkt_len = le16_to_cpu(desc->ds_cc) & RX_DS;
++		desc_len = le16_to_cpu(desc->ds_cc) & RX_DS;
+ 
+ 		/* We use 0-byte descriptors to mark the DMA mapping errors */
+-		if (!pkt_len)
++		if (!desc_len)
+ 			continue;
+ 
+ 		if (desc_status & MSC_MC)
+@@ -813,25 +813,25 @@ static bool ravb_rx_gbeth(struct net_device *ndev, int *quota, int q)
+ 			switch (die_dt) {
+ 			case DT_FSINGLE:
+ 				skb = ravb_get_skb_gbeth(ndev, entry, desc);
+-				skb_put(skb, pkt_len);
++				skb_put(skb, desc_len);
+ 				skb->protocol = eth_type_trans(skb, ndev);
+ 				if (ndev->features & NETIF_F_RXCSUM)
+ 					ravb_rx_csum_gbeth(skb);
+ 				napi_gro_receive(&priv->napi[q], skb);
+ 				rx_packets++;
+-				stats->rx_bytes += pkt_len;
++				stats->rx_bytes += desc_len;
+ 				break;
+ 			case DT_FSTART:
+ 				priv->rx_1st_skb = ravb_get_skb_gbeth(ndev, entry, desc);
+-				skb_put(priv->rx_1st_skb, pkt_len);
++				skb_put(priv->rx_1st_skb, desc_len);
+ 				break;
+ 			case DT_FMID:
+ 				skb = ravb_get_skb_gbeth(ndev, entry, desc);
+ 				skb_copy_to_linear_data_offset(priv->rx_1st_skb,
+ 							       priv->rx_1st_skb->len,
+ 							       skb->data,
+-							       pkt_len);
+-				skb_put(priv->rx_1st_skb, pkt_len);
++							       desc_len);
++				skb_put(priv->rx_1st_skb, desc_len);
+ 				dev_kfree_skb(skb);
+ 				break;
+ 			case DT_FEND:
+@@ -839,17 +839,17 @@ static bool ravb_rx_gbeth(struct net_device *ndev, int *quota, int q)
+ 				skb_copy_to_linear_data_offset(priv->rx_1st_skb,
+ 							       priv->rx_1st_skb->len,
+ 							       skb->data,
+-							       pkt_len);
+-				skb_put(priv->rx_1st_skb, pkt_len);
++							       desc_len);
++				skb_put(priv->rx_1st_skb, desc_len);
+ 				dev_kfree_skb(skb);
+ 				priv->rx_1st_skb->protocol =
+ 					eth_type_trans(priv->rx_1st_skb, ndev);
+ 				if (ndev->features & NETIF_F_RXCSUM)
+ 					ravb_rx_csum_gbeth(priv->rx_1st_skb);
++				stats->rx_bytes += priv->rx_1st_skb->len;
+ 				napi_gro_receive(&priv->napi[q],
+ 						 priv->rx_1st_skb);
+ 				rx_packets++;
+-				stats->rx_bytes += pkt_len;
  				break;
  			}
  		}
--
--		entry = (++priv->cur_rx[q]) % priv->num_rx_ring[q];
--		desc = &priv->rx_ring[q].desc[entry];
- 	}
- 
- 	/* Refill the RX ring buffers. */
-@@ -893,7 +893,6 @@ static bool ravb_rx_rcar(struct net_device *ndev, int *quota, int q)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
- 	const struct ravb_hw_info *info = priv->info;
--	int entry = priv->cur_rx[q] % priv->num_rx_ring[q];
- 	struct net_device_stats *stats = &priv->stats[q];
- 	struct ravb_ex_rx_desc *desc;
- 	unsigned int limit, i;
-@@ -903,10 +902,15 @@ static bool ravb_rx_rcar(struct net_device *ndev, int *quota, int q)
- 	int rx_packets = 0;
- 	u8  desc_status;
- 	u16 pkt_len;
-+	int entry;
- 
- 	limit = priv->dirty_rx[q] + priv->num_rx_ring[q] - priv->cur_rx[q];
--	desc = &priv->rx_ring[q].ex_desc[entry];
--	for (i = 0; i < limit && rx_packets < *quota && desc->die_dt != DT_FEMPTY; i++) {
-+	for (i = 0; i < limit; i++, priv->cur_rx[q]++) {
-+		entry = priv->cur_rx[q] % priv->num_rx_ring[q];
-+		desc = &priv->rx_ring[q].ex_desc[entry];
-+		if (rx_packets == *quota || desc->die_dt == DT_FEMPTY)
-+			break;
-+
- 		/* Descriptor type must be checked before all other reads */
- 		dma_rmb();
- 		desc_status = desc->msc;
-@@ -960,9 +964,6 @@ static bool ravb_rx_rcar(struct net_device *ndev, int *quota, int q)
- 			rx_packets++;
- 			stats->rx_bytes += pkt_len;
- 		}
--
--		entry = (++priv->cur_rx[q]) % priv->num_rx_ring[q];
--		desc = &priv->rx_ring[q].ex_desc[entry];
- 	}
- 
- 	/* Refill the RX ring buffers. */
 -- 
 2.25.1
 
