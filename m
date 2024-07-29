@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EFBDC49EA1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9796CC3DA4A
 	for <webhook@archiver.kernel.org>; Mon, 29 Jul 2024 15:35:19 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web11.59261.1722267308418907779
  for <cip-dev@lists.cip-project.org>;
- Mon, 29 Jul 2024 08:35:12 -0700
+ Mon, 29 Jul 2024 08:35:17 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.09,246,1716217200"; 
-   d="scan'208";a="213909289"
+   d="scan'208";a="213909300"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 30 Jul 2024 00:35:12 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 30 Jul 2024 00:35:16 +0900
 Received: from localhost.localdomain (unknown [10.226.92.63])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8D6EA4017D6C;
-	Tue, 30 Jul 2024 00:35:10 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 007244012BFD;
+	Tue, 30 Jul 2024 00:35:14 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 02/13] regulator: core: Add helper for allow HW access to enable/disable regulator
-Date: Mon, 29 Jul 2024 16:34:47 +0100
-Message-ID: <20240729153504.510443-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 04/13] reset: renesas: Add USB VBUS regulator device as child
+Date: Mon, 29 Jul 2024 16:34:49 +0100
+Message-ID: <20240729153504.510443-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240729153504.510443-1-biju.das.jz@bp.renesas.com>
 References: <20240729153504.510443-1-biju.das.jz@bp.renesas.com>
@@ -35,104 +35,111 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 29 Jul 2024 15:35:19 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16670
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16672
 
-commit 1cb7d29157603561af4c38535e936850ceb99f0f upstream.
+commit 4068f22e4b47f7352fc369c22800e04d2860416b upstream.
 
-Add a helper function that allow regulator consumers to allow low-level
-HW access, in order to enable/disable regulator in atomic context.
+As per RZ/G2L HW manual, VBUS enable can be controlled by the VBOUT bit
+of the VBUS Control Register(VBENCTL) register in the USBPHY Control.
 
-The use-case for RZ/G2L SoC is to enable VBUS selection register based
-on vbus detection that happens in interrupt context.
+Expose this register as regmap and instantiate the USB VBUS regulator
+device, so that consumer can control the vbus using regulator API's
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://patch.msgid.link/20240616105402.45211-4-biju.das.jz@bp.renesas.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Link: https://lore.kernel.org/r/20240702180032.207275-3-biju.das.jz@bp.renesas.com
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- Documentation/power/regulator/consumer.rst |  6 +++++
- drivers/regulator/core.c                   | 28 ++++++++++++++++++++++
- include/linux/regulator/consumer.h         |  7 ++++++
- 3 files changed, 41 insertions(+)
+ drivers/reset/reset-rzg2l-usbphy-ctrl.c | 31 +++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/Documentation/power/regulator/consumer.rst b/Documentation/power/regulator/consumer.rst
-index 0cd8cc1275a7..ebc4c8076711 100644
---- a/Documentation/power/regulator/consumer.rst
-+++ b/Documentation/power/regulator/consumer.rst
-@@ -227,3 +227,9 @@ directly written to the voltage selector register, use::
+diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
+index bea3270fb698..255c894a4782 100644
+--- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
++++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
+@@ -10,10 +10,12 @@
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
++#include <linux/regmap.h>
+ #include <linux/reset.h>
+ #include <linux/reset-controller.h>
  
- 	int regulator_list_hardware_vsel(struct regulator *regulator,
- 					 unsigned selector);
-+
-+To access the hardware for enabling/disabling the regulator, consumers must
-+use regulator_get_exclusive(), as it can't work if there's more than one
-+consumer. To enable/disable regulator use::
-+
-+	int regulator_hardware_enable(struct regulator *regulator, bool enable);
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 7082cffdd10e..c5b6979b2560 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -3244,6 +3244,34 @@ int regulator_list_hardware_vsel(struct regulator *regulator,
- }
- EXPORT_SYMBOL_GPL(regulator_list_hardware_vsel);
+ #define RESET			0x000
++#define VBENCTL			0x03c
  
-+/**
-+ * regulator_hardware_enable - access the HW for enable/disable regulator
-+ * @regulator: regulator source
-+ * @enable: true for enable, false for disable
-+ *
-+ * Request that the regulator be enabled/disabled with the regulator output at
-+ * the predefined voltage or current value.
-+ *
-+ * On success 0 is returned, otherwise a negative errno is returned.
-+ */
-+int regulator_hardware_enable(struct regulator *regulator, bool enable)
-+{
-+	struct regulator_dev *rdev = regulator->rdev;
-+	const struct regulator_ops *ops = rdev->desc->ops;
-+	int ret = -EOPNOTSUPP;
-+
-+	if (!rdev->exclusive || !ops || !ops->enable || !ops->disable)
-+		return ret;
-+
-+	if (enable)
-+		ret = ops->enable(rdev);
-+	else
-+		ret = ops->disable(rdev);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(regulator_hardware_enable);
-+
- /**
-  * regulator_get_linear_step - return the voltage step size between VSEL values
-  * @regulator: regulator source
-diff --git a/include/linux/regulator/consumer.h b/include/linux/regulator/consumer.h
-index 20e84a84fb77..42da800f86ff 100644
---- a/include/linux/regulator/consumer.h
-+++ b/include/linux/regulator/consumer.h
-@@ -268,6 +268,7 @@ int regulator_get_hardware_vsel_register(struct regulator *regulator,
- 					 unsigned *vsel_mask);
- int regulator_list_hardware_vsel(struct regulator *regulator,
- 				 unsigned selector);
-+int regulator_hardware_enable(struct regulator *regulator, bool enable);
+ #define RESET_SEL_PLLRESET	BIT(12)
+ #define RESET_PLLRESET		BIT(8)
+@@ -32,6 +34,7 @@ struct rzg2l_usbphy_ctrl_priv {
+ 	struct reset_controller_dev rcdev;
+ 	struct reset_control *rstc;
+ 	void __iomem *base;
++	struct platform_device *vdev;
  
- /* regulator notifier block */
- int regulator_register_notifier(struct regulator *regulator,
-@@ -565,6 +566,12 @@ static inline int regulator_list_hardware_vsel(struct regulator *regulator,
- 	return -EOPNOTSUPP;
- }
+ 	spinlock_t lock;
+ };
+@@ -100,10 +103,19 @@ static const struct reset_control_ops rzg2l_usbphy_ctrl_reset_ops = {
+ 	.status = rzg2l_usbphy_ctrl_status,
+ };
  
-+static inline int regulator_hardware_enable(struct regulator *regulator,
-+					    bool enable)
-+{
-+	return -EOPNOTSUPP;
-+}
++static const struct regmap_config rzg2l_usb_regconf = {
++	.reg_bits = 32,
++	.val_bits = 32,
++	.reg_stride = 4,
++	.max_register = 1,
++};
 +
- static inline int regulator_register_notifier(struct regulator *regulator,
- 			      struct notifier_block *nb)
+ static int rzg2l_usbphy_ctrl_probe(struct platform_device *pdev)
  {
+ 	struct device *dev = &pdev->dev;
+ 	struct rzg2l_usbphy_ctrl_priv *priv;
++	struct platform_device *vdev;
++	struct regmap *regmap;
+ 	unsigned long flags;
+ 	int error;
+ 	u32 val;
+@@ -116,6 +128,10 @@ static int rzg2l_usbphy_ctrl_probe(struct platform_device *pdev)
+ 	if (IS_ERR(priv->base))
+ 		return PTR_ERR(priv->base);
+ 
++	regmap = devm_regmap_init_mmio(dev, priv->base + VBENCTL, &rzg2l_usb_regconf);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
+ 	priv->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+ 	if (IS_ERR(priv->rstc))
+ 		return dev_err_probe(dev, PTR_ERR(priv->rstc),
+@@ -152,8 +168,22 @@ static int rzg2l_usbphy_ctrl_probe(struct platform_device *pdev)
+ 	if (error)
+ 		goto err_pm_runtime_put;
+ 
++	vdev = platform_device_alloc("rzg2l-usb-vbus-regulator", pdev->id);
++	if (!vdev) {
++		error = -ENOMEM;
++		goto err_pm_runtime_put;
++	}
++	vdev->dev.parent = dev;
++	priv->vdev = vdev;
++
++	error = platform_device_add(vdev);
++	if (error)
++		goto err_device_put;
++
+ 	return 0;
+ 
++err_device_put:
++	platform_device_put(vdev);
+ err_pm_runtime_put:
+ 	pm_runtime_put(&pdev->dev);
+ err_pm_disable_reset_deassert:
+@@ -166,6 +196,7 @@ static int rzg2l_usbphy_ctrl_remove(struct platform_device *pdev)
+ {
+ 	struct rzg2l_usbphy_ctrl_priv *priv = dev_get_drvdata(&pdev->dev);
+ 
++	platform_device_unregister(priv->vdev);
+ 	pm_runtime_put(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+ 	reset_control_assert(priv->rstc);
 -- 
 2.43.0
 
