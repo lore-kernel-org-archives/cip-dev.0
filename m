@@ -2,92 +2,81 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C3DC3DA4A
-	for <webhook@archiver.kernel.org>; Mon, 29 Jul 2024 15:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91405C3DA4A
+	for <webhook@archiver.kernel.org>; Mon, 29 Jul 2024 15:35:09 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.58762.1722267101575259670
+ by mx.groups.io with SMTP id smtpd.web11.59261.1722267308418907779
  for <cip-dev@lists.cip-project.org>;
- Mon, 29 Jul 2024 08:31:41 -0700
+ Mon, 29 Jul 2024 08:35:08 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.09,246,1716217200"; 
-   d="scan'208";a="213908975"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 30 Jul 2024 00:31:40 +0900
+   d="scan'208";a="213909261"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 30 Jul 2024 00:35:07 +0900
 Received: from localhost.localdomain (unknown [10.226.92.63])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 53CA34006A90;
-	Tue, 30 Jul 2024 00:31:39 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 360154012BFD;
+	Tue, 30 Jul 2024 00:35:05 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 13/13] rtc: isl1208: Update correct procedure for clearing alarm
-Date: Mon, 29 Jul 2024 16:30:52 +0100
-Message-ID: <20240729153109.510325-14-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 00/13] RZ/G2L enhancements
+Date: Mon, 29 Jul 2024 16:34:45 +0100
+Message-ID: <20240729153504.510443-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240729153109.510325-1-biju.das.jz@bp.renesas.com>
-References: <20240729153109.510325-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 29 Jul 2024 15:31:49 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16667
+ <cip-dev@lists.cip-project.org>; Mon, 29 Jul 2024 15:35:09 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16668
 
-commit 43696b3a9e46cf622bfeb70856b9b1cfa5a9fb23 upstream.
+This patch series aim to add below enhancements on RZ/G2L SoCs.
+1) Add VBUS regulator to control vbus voltage
+2) Update correct procedure for cleating Alarm
+3) Fix lockdep assert warning on DMA driver
 
-As per the latest HW manual[1], there is an internal delay(~250 microsec)
-from setting ALME = 0 to disabling the alarm function, so the user must
-add a short delay of greater than 250µs between setting ALME = 0 and
-clearing ALM.
+All the patches are cherry-picked from the mainline.
 
-Currently setting of ALME = 0 is done after clearing the ALM, so just
-reverse the operation and add a delay of 275 microsec.
+Biju Das (12):
+  reset: rzg2l-usbphy-ctrl: Move reset controller registration
+  regulator: core: Add helper for allow HW access to enable/disable
+    regulator
+  dt-bindings: reset: renesas,rzg2l-usbphy-ctrl: Document USB VBUS
+    regulator
+  reset: renesas: Add USB VBUS regulator device as child
+  regulator: Add Renesas RZ/G2L USB VBUS regulator driver
+  regulator: renesas-usb-vbus-regulator: Update the default
+  phy: renesas: phy-rcar-gen3-usb2: Control VBUS for RZ/G2L SoCs
+  arm64: dts: renesas: rz-smarc: Replace fixed regulator for USB VBUS
+  dmaengine: sh: rz-dmac: Fix lockdep assert warning
+  dt-bindings: watchdog: dlg,da9062-watchdog: Drop blank space
+  rtc: isl1208: Add a delay for clearing alarm
+  rtc: isl1208: Update correct procedure for clearing alarm
 
-[1]https://www.renesas.com/us/en/document/dst/raa215300-datasheet?r=1506351
+Mark Brown (1):
+  regulator: Further restrict RZG2L USB VBCTRL regulator dependencies
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20240618152635.48956-3-biju.das.jz@bp.renesas.com
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/rtc/rtc-isl1208.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ .../reset/renesas,rzg2l-usbphy-ctrl.yaml      | 10 +++
+ .../watchdog/dlg,da9062-watchdog.yaml         |  2 +-
+ Documentation/power/regulator/consumer.rst    |  6 ++
+ .../boot/dts/renesas/rz-smarc-common.dtsi     | 11 +--
+ drivers/dma/sh/rz-dmac.c                      |  2 +-
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c      |  8 +-
+ drivers/regulator/Kconfig                     |  9 +++
+ drivers/regulator/Makefile                    |  1 +
+ drivers/regulator/core.c                      | 28 +++++++
+ .../regulator/renesas-usb-vbus-regulator.c    | 74 +++++++++++++++++++
+ drivers/reset/reset-rzg2l-usbphy-ctrl.c       | 63 ++++++++++++----
+ drivers/rtc/rtc-isl1208.c                     | 25 +++++--
+ include/linux/regulator/consumer.h            |  7 ++
+ 13 files changed, 217 insertions(+), 29 deletions(-)
+ create mode 100644 drivers/regulator/renesas-usb-vbus-regulator.c
 
-diff --git a/drivers/rtc/rtc-isl1208.c b/drivers/rtc/rtc-isl1208.c
-index 030573ffca69..5669dbd51d67 100644
---- a/drivers/rtc/rtc-isl1208.c
-+++ b/drivers/rtc/rtc-isl1208.c
-@@ -663,6 +663,13 @@ isl1208_rtc_interrupt(int irq, void *data)
- 
- 		rtc_update_irq(isl1208->rtc, 1, RTC_IRQF | RTC_AF);
- 
-+		/* Disable the alarm */
-+		err = isl1208_rtc_toggle_alarm(client, 0);
-+		if (err)
-+			return err;
-+
-+		fsleep(275);
-+
- 		/* Clear the alarm */
- 		sr &= ~ISL1208_REG_SR_ALM;
- 		sr = i2c_smbus_write_byte_data(client, ISL1208_REG_SR, sr);
-@@ -671,11 +678,6 @@ isl1208_rtc_interrupt(int irq, void *data)
- 				__func__);
- 		else
- 			handled = 1;
--
--		/* Disable the alarm */
--		err = isl1208_rtc_toggle_alarm(client, 0);
--		if (err)
--			return err;
- 	}
- 
- 	if (isl1208->config->has_tamper && (sr & ISL1208_REG_SR_EVT)) {
 -- 
 2.43.0
 
