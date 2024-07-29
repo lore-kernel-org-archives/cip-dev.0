@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E730C3DA4A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82152C3DA61
 	for <webhook@archiver.kernel.org>; Mon, 29 Jul 2024 15:31:39 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web11.59154.1722267088428592872
  for <cip-dev@lists.cip-project.org>;
- Mon, 29 Jul 2024 08:31:30 -0700
+ Mon, 29 Jul 2024 08:31:39 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.09,246,1716217200"; 
-   d="scan'208";a="217878586"
+   d="scan'208";a="217878605"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 30 Jul 2024 00:31:30 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 30 Jul 2024 00:31:38 +0900
 Received: from localhost.localdomain (unknown [10.226.92.63])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 67C8F4006C72;
-	Tue, 30 Jul 2024 00:31:28 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 28B124006A90;
+	Tue, 30 Jul 2024 00:31:36 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 08/13] phy: renesas: phy-rcar-gen3-usb2: Control VBUS for RZ/G2L SoCs
-Date: Mon, 29 Jul 2024 16:30:47 +0100
-Message-ID: <20240729153109.510325-9-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 12/13] rtc: isl1208: Add a delay for clearing alarm
+Date: Mon, 29 Jul 2024 16:30:51 +0100
+Message-ID: <20240729153109.510325-13-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240729153109.510325-1-biju.das.jz@bp.renesas.com>
 References: <20240729153109.510325-1-biju.das.jz@bp.renesas.com>
@@ -35,48 +35,58 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 29 Jul 2024 15:31:39 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16662
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16666
 
-commit 24843404efe47eab1ee88d7475a0be0f2f6fd9db upstream.
+commit 0dbd610c426ed695eef5d26584259d96b6250c76 upstream.
 
-Use regulator_hardware_enable() for controlling VBUS enable for
-RZ/G2L alike SoCs in interrupt context.
+As per the latest HW manual[1], the INT# output is pulled low after the
+alarm is triggered. After the INT# output is pulled low, it is low for at
+least 250ms, even if the correct action is taken to clear it. It is
+impossible to clear ALM if it is still active. The host must wait for the
+RTC to progress past the alarm time plus the 250ms delay before clearing
+ALM.
+
+[1]https://www.renesas.com/us/en/document/dst/raa215300-datasheet?r=1506351
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Acked-by: Vinod Koul <vkoul@kernel.org>
-Link: https://lore.kernel.org/r/20240702180032.207275-4-biju.das.jz@bp.renesas.com
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Link: https://lore.kernel.org/r/20240618152635.48956-2-biju.das.jz@bp.renesas.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/rtc/rtc-isl1208.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 7e61c6b278a7..90756f6befb0 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -190,6 +190,9 @@ static void rcar_gen3_enable_vbus_ctrl(struct rcar_gen3_chan *ch, int vbus)
+diff --git a/drivers/rtc/rtc-isl1208.c b/drivers/rtc/rtc-isl1208.c
+index 6b2f14c319ad..030573ffca69 100644
+--- a/drivers/rtc/rtc-isl1208.c
++++ b/drivers/rtc/rtc-isl1208.c
+@@ -7,6 +7,7 @@
  
- 	dev_vdbg(ch->dev, "%s: %08x, %d\n", __func__, val, vbus);
- 	if (ch->soc_no_adp_ctrl) {
-+		if (ch->vbus)
-+			regulator_hardware_enable(ch->vbus, vbus);
+ #include <linux/bcd.h>
+ #include <linux/clk.h>
++#include <linux/delay.h>
+ #include <linux/i2c.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
+@@ -628,6 +629,18 @@ isl1208_rtc_interrupt(int irq, void *data)
+ 	struct isl1208_state *isl1208 = i2c_get_clientdata(client);
+ 	int handled = 0, sr, err;
+ 
++	if (!isl1208->config->has_tamper) {
++		/*
++		 * The INT# output is pulled low 250ms after the alarm is
++		 * triggered. After the INT# output is pulled low, it is low for
++		 * at least 250ms, even if the correct action is taken to clear
++		 * it. It is impossible to clear ALM if it is still active. The
++		 * host must wait for the RTC to progress past the alarm time
++		 * plus the 250ms delay before clearing ALM.
++		 */
++		msleep(250);
++	}
 +
- 		vbus_ctrl_reg = USB2_VBCTRL;
- 		vbus_ctrl_val = USB2_VBCTRL_VBOUT;
- 	}
-@@ -720,7 +723,10 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 		phy_set_drvdata(channel->rphys[i].phy, &channel->rphys[i]);
- 	}
- 
--	channel->vbus = devm_regulator_get_optional(dev, "vbus");
-+	if (channel->soc_no_adp_ctrl && channel->is_otg_channel)
-+		channel->vbus = devm_regulator_get_exclusive(dev, "vbus");
-+	else
-+		channel->vbus = devm_regulator_get_optional(dev, "vbus");
- 	if (IS_ERR(channel->vbus)) {
- 		if (PTR_ERR(channel->vbus) == -EPROBE_DEFER) {
- 			ret = PTR_ERR(channel->vbus);
+ 	/*
+ 	 * I2C reads get NAK'ed if we read straight away after an interrupt?
+ 	 * Using a mdelay/msleep didn't seem to help either, so we work around
 -- 
 2.43.0
 
