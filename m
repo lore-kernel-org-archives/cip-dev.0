@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F748C3DA61
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EFBDC49EA1
 	for <webhook@archiver.kernel.org>; Mon, 29 Jul 2024 15:35:19 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web11.59261.1722267308418907779
  for <cip-dev@lists.cip-project.org>;
- Mon, 29 Jul 2024 08:35:10 -0700
+ Mon, 29 Jul 2024 08:35:12 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.09,246,1716217200"; 
-   d="scan'208";a="213909278"
+   d="scan'208";a="213909289"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 30 Jul 2024 00:35:10 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 30 Jul 2024 00:35:12 +0900
 Received: from localhost.localdomain (unknown [10.226.92.63])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 5FB9E4012BFD;
-	Tue, 30 Jul 2024 00:35:08 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8D6EA4017D6C;
+	Tue, 30 Jul 2024 00:35:10 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 01/13] reset: rzg2l-usbphy-ctrl: Move reset controller registration
-Date: Mon, 29 Jul 2024 16:34:46 +0100
-Message-ID: <20240729153504.510443-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 02/13] regulator: core: Add helper for allow HW access to enable/disable regulator
+Date: Mon, 29 Jul 2024 16:34:47 +0100
+Message-ID: <20240729153504.510443-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240729153504.510443-1-biju.das.jz@bp.renesas.com>
 References: <20240729153504.510443-1-biju.das.jz@bp.renesas.com>
@@ -35,85 +35,104 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 29 Jul 2024 15:35:19 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16669
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16670
 
-commit b081f13c11500bceb8ab504797a48cc7751de4b5 upstream.
+commit 1cb7d29157603561af4c38535e936850ceb99f0f upstream.
 
-As soon as the reset controller is registered, it could be used by a
-reset consumer. That means hardware setup to be done first and then the
-registration of the reset controller. So move the registration of reset
-controller at the end of probe().
+Add a helper function that allow regulator consumers to allow low-level
+HW access, in order to enable/disable regulator in atomic context.
 
-While at it, fix the issue that the reset is not re-asserted in case
-devm_reset_controller_register() fails and also use goto statements to
-simplify the error path in probe().
+The use-case for RZ/G2L SoC is to enable VBUS selection register based
+on vbus detection that happens in interrupt context.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20240610164845.89666-1-biju.das.jz@bp.renesas.com
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Link: https://patch.msgid.link/20240616105402.45211-4-biju.das.jz@bp.renesas.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/reset/reset-rzg2l-usbphy-ctrl.c | 32 +++++++++++++++----------
- 1 file changed, 19 insertions(+), 13 deletions(-)
+ Documentation/power/regulator/consumer.rst |  6 +++++
+ drivers/regulator/core.c                   | 28 ++++++++++++++++++++++
+ include/linux/regulator/consumer.h         |  7 ++++++
+ 3 files changed, 41 insertions(+)
 
-diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-index a8dde4606360..bea3270fb698 100644
---- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-+++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-@@ -125,25 +125,14 @@ static int rzg2l_usbphy_ctrl_probe(struct platform_device *pdev)
- 	if (error)
- 		return error;
+diff --git a/Documentation/power/regulator/consumer.rst b/Documentation/power/regulator/consumer.rst
+index 0cd8cc1275a7..ebc4c8076711 100644
+--- a/Documentation/power/regulator/consumer.rst
++++ b/Documentation/power/regulator/consumer.rst
+@@ -227,3 +227,9 @@ directly written to the voltage selector register, use::
  
--	priv->rcdev.ops = &rzg2l_usbphy_ctrl_reset_ops;
--	priv->rcdev.of_reset_n_cells = 1;
--	priv->rcdev.nr_resets = NUM_PORTS;
--	priv->rcdev.of_node = dev->of_node;
--	priv->rcdev.dev = dev;
--
--	error = devm_reset_controller_register(dev, &priv->rcdev);
--	if (error)
--		return error;
--
- 	spin_lock_init(&priv->lock);
- 	dev_set_drvdata(dev, priv);
- 
- 	pm_runtime_enable(&pdev->dev);
- 	error = pm_runtime_resume_and_get(&pdev->dev);
- 	if (error < 0) {
--		pm_runtime_disable(&pdev->dev);
--		reset_control_assert(priv->rstc);
--		return dev_err_probe(&pdev->dev, error, "pm_runtime_resume_and_get failed");
-+		dev_err_probe(&pdev->dev, error, "pm_runtime_resume_and_get failed");
-+		goto err_pm_disable_reset_deassert;
- 	}
- 
- 	/* put pll and phy into reset state */
-@@ -153,7 +142,24 @@ static int rzg2l_usbphy_ctrl_probe(struct platform_device *pdev)
- 	writel(val, priv->base + RESET);
- 	spin_unlock_irqrestore(&priv->lock, flags);
- 
-+	priv->rcdev.ops = &rzg2l_usbphy_ctrl_reset_ops;
-+	priv->rcdev.of_reset_n_cells = 1;
-+	priv->rcdev.nr_resets = NUM_PORTS;
-+	priv->rcdev.of_node = dev->of_node;
-+	priv->rcdev.dev = dev;
+ 	int regulator_list_hardware_vsel(struct regulator *regulator,
+ 					 unsigned selector);
 +
-+	error = devm_reset_controller_register(dev, &priv->rcdev);
-+	if (error)
-+		goto err_pm_runtime_put;
++To access the hardware for enabling/disabling the regulator, consumers must
++use regulator_get_exclusive(), as it can't work if there's more than one
++consumer. To enable/disable regulator use::
 +
- 	return 0;
++	int regulator_hardware_enable(struct regulator *regulator, bool enable);
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 7082cffdd10e..c5b6979b2560 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -3244,6 +3244,34 @@ int regulator_list_hardware_vsel(struct regulator *regulator,
+ }
+ EXPORT_SYMBOL_GPL(regulator_list_hardware_vsel);
+ 
++/**
++ * regulator_hardware_enable - access the HW for enable/disable regulator
++ * @regulator: regulator source
++ * @enable: true for enable, false for disable
++ *
++ * Request that the regulator be enabled/disabled with the regulator output at
++ * the predefined voltage or current value.
++ *
++ * On success 0 is returned, otherwise a negative errno is returned.
++ */
++int regulator_hardware_enable(struct regulator *regulator, bool enable)
++{
++	struct regulator_dev *rdev = regulator->rdev;
++	const struct regulator_ops *ops = rdev->desc->ops;
++	int ret = -EOPNOTSUPP;
 +
-+err_pm_runtime_put:
-+	pm_runtime_put(&pdev->dev);
-+err_pm_disable_reset_deassert:
-+	pm_runtime_disable(&pdev->dev);
-+	reset_control_assert(priv->rstc);
-+	return error;
++	if (!rdev->exclusive || !ops || !ops->enable || !ops->disable)
++		return ret;
++
++	if (enable)
++		ret = ops->enable(rdev);
++	else
++		ret = ops->disable(rdev);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(regulator_hardware_enable);
++
+ /**
+  * regulator_get_linear_step - return the voltage step size between VSEL values
+  * @regulator: regulator source
+diff --git a/include/linux/regulator/consumer.h b/include/linux/regulator/consumer.h
+index 20e84a84fb77..42da800f86ff 100644
+--- a/include/linux/regulator/consumer.h
++++ b/include/linux/regulator/consumer.h
+@@ -268,6 +268,7 @@ int regulator_get_hardware_vsel_register(struct regulator *regulator,
+ 					 unsigned *vsel_mask);
+ int regulator_list_hardware_vsel(struct regulator *regulator,
+ 				 unsigned selector);
++int regulator_hardware_enable(struct regulator *regulator, bool enable);
+ 
+ /* regulator notifier block */
+ int regulator_register_notifier(struct regulator *regulator,
+@@ -565,6 +566,12 @@ static inline int regulator_list_hardware_vsel(struct regulator *regulator,
+ 	return -EOPNOTSUPP;
  }
  
- static int rzg2l_usbphy_ctrl_remove(struct platform_device *pdev)
++static inline int regulator_hardware_enable(struct regulator *regulator,
++					    bool enable)
++{
++	return -EOPNOTSUPP;
++}
++
+ static inline int regulator_register_notifier(struct regulator *regulator,
+ 			      struct notifier_block *nb)
+ {
 -- 
 2.43.0
 
