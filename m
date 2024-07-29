@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6044C52CDA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1373C3DA61
 	for <webhook@archiver.kernel.org>; Mon, 29 Jul 2024 15:35:29 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.59261.1722267308418907779
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web10.58893.1722267324064889186
  for <cip-dev@lists.cip-project.org>;
- Mon, 29 Jul 2024 08:35:21 -0700
+ Mon, 29 Jul 2024 08:35:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.09,246,1716217200"; 
-   d="scan'208";a="213909314"
+   d="scan'208";a="217878974"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 30 Jul 2024 00:35:21 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 30 Jul 2024 00:35:27 +0900
 Received: from localhost.localdomain (unknown [10.226.92.63])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9027F4012BFD;
-	Tue, 30 Jul 2024 00:35:19 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4117E401A444;
+	Tue, 30 Jul 2024 00:35:25 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 06/13] regulator: renesas-usb-vbus-regulator: Update the default
-Date: Mon, 29 Jul 2024 16:34:51 +0100
-Message-ID: <20240729153504.510443-7-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 09/13] arm64: dts: renesas: rz-smarc: Replace fixed regulator for USB VBUS
+Date: Mon, 29 Jul 2024 16:34:54 +0100
+Message-ID: <20240729153504.510443-10-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240729153504.510443-1-biju.das.jz@bp.renesas.com>
 References: <20240729153504.510443-1-biju.das.jz@bp.renesas.com>
@@ -35,37 +35,52 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 29 Jul 2024 15:35:29 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16674
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16677
 
-commit 7164122e25b18806f5dce68c8a0bdaa9e4f902a5 upstream.
+commit c1267e1afae60e0b1d17d3a2e55515ecccb22a3e upstream.
 
-As the "rzg2l-usb-vbus-regulator" platform device is only created by
-drivers/reset/reset-rzg2l-usbphy-ctrl.c, update the default stricter by
-replacing ARCH_RZG2L->RESET_RZG2L_USBPHY_CTRL.
+Replace the fixed regulator for USB VBUS and use the proper one that
+controls regulator based on VBUS detection.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Closes: https://lore.kernel.org/all/CAMuHMdX5ayWbLEEa6nAipECVB6H9eCpRg21pu3zYrTdiER0F+Q@mail.gmail.com/
-Link: https://patch.msgid.link/20240715134120.312610-1-biju.das.jz@bp.renesas.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20240702180032.207275-5-biju.das.jz@bp.renesas.com
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/regulator/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 0bf6004bcbe2..75ccde6e8e64 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -1237,7 +1237,7 @@ config REGULATOR_RZG2L_VBCTRL
- 	depends on ARCH_RZG2L || COMPILE_TEST
- 	depends on OF
- 	select REGMAP_MMIO
--	default ARCH_RZG2L
-+	default RESET_RZG2L_USBPHY_CTRL
- 	help
- 	  Support for VBUS regulators implemented on Renesas RZ/G2L SoCs.
+diff --git a/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi b/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi
+index 48b839a6eae4..90b20324c5d1 100644
+--- a/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi
+@@ -54,14 +54,6 @@ codec_dai: simple-audio-card,codec {
+ 		};
+ 	};
  
+-	usb0_vbus_otg: regulator-usb0-vbus-otg {
+-		compatible = "regulator-fixed";
+-
+-		regulator-name = "USB0_VBUS_OTG";
+-		regulator-min-microvolt = <5000000>;
+-		regulator-max-microvolt = <5000000>;
+-	};
+-
+ 	vccq_sdhi1: regulator-vccq-sdhi1 {
+ 		compatible = "regulator-gpio";
+ 		regulator-name = "SDHI1 VccQ";
+@@ -139,6 +131,9 @@ &ohci1 {
+ 
+ &phyrst {
+ 	status = "okay";
++	usb0_vbus_otg: regulator-vbus {
++		regulator-name = "vbus";
++	};
+ };
+ 
+ &scif0 {
 -- 
 2.43.0
 
