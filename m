@@ -2,123 +2,97 @@ Return-Path: <paul.barker.ct@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BC41C3DA7E
-	for <webhook@archiver.kernel.org>; Mon, 29 Jul 2024 14:30:48 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.57356.1722263436472009546
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6413C3DA7E
+	for <webhook@archiver.kernel.org>; Mon, 29 Jul 2024 15:00:58 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web10.58079.1722265254667312243
  for <cip-dev@lists.cip-project.org>;
- Mon, 29 Jul 2024 07:30:38 -0700
+ Mon, 29 Jul 2024 08:00:55 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: paul.barker.ct@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: paul.barker.ct@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.09,246,1716217200"; 
-   d="scan'208";a="213905662"
+   d="scan'208";a="217876769"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 29 Jul 2024 23:30:38 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 30 Jul 2024 00:00:52 +0900
 Received: from ree-du1sdd5.ree.adwin.renesas.com (unknown [10.226.105.7])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 63FD94017D89;
-	Mon, 29 Jul 2024 23:30:36 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0222C4018253;
+	Tue, 30 Jul 2024 00:00:50 +0900 (JST)
 From: Paul Barker <paul.barker.ct@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y cip 10/11] net: ravb: Count packets instead of descriptors in R-Car RX path
-Date: Mon, 29 Jul 2024 14:30:10 +0000
-Message-Id: <20240729143011.1920068-11-paul.barker.ct@bp.renesas.com>
+Subject: [PATCH 6.1.y cip 0/8] Backport ravb driver performance improvements
+Date: Mon, 29 Jul 2024 15:00:41 +0000
+Message-Id: <20240729150049.1924352-1-paul.barker.ct@bp.renesas.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240729143011.1920068-1-paul.barker.ct@bp.renesas.com>
-References: <20240729143011.1920068-1-paul.barker.ct@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 29 Jul 2024 14:30:48 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16643
+ <cip-dev@lists.cip-project.org>; Mon, 29 Jul 2024 15:00:58 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16645
 
-commit def52db470df28d6f43cacbd21137f03b9502073 upstream.
+This series includes the performance improvements present in Linux
+v6.11-rc1 along with dependencies.
 
-The units of "work done" in the RX path should be packets instead of
-descriptors.
+The patch commit messages have not been changed as part of this
+backport, so they refer to performance achieved during testing with the
+upstream kernel.
 
-Descriptors which are used by the hardware to record error conditions or
-are empty in the case of a DMA mapping error should not count towards
-our RX work budget.
+The performance improvement achieved by applying this backport series
+on top of v6.1.101-cip25 is as follows, measured using iperf3:
 
-Also make the limit variable unsigned as it can never be negative.
+  RZ/G2L:
+    * Similar TX/RX bandwidth
+    * 50% less CPU usage during TCP RX test
+    * 21% less CPU usage during UDP RX test
+  
+  RZ/G2UL:
+    * 6% increase in TCP TX bandwidth
+    * 34% increase in TCP RX bandwidth
+    * 500% increase in UDP RX bandwidth
+    * 24% loss in UDP TX bandwidth
+  
+  RZ/G3S:
+    * 38% increase in TCP TX bandwidth
+    * 48% increase in TCP RX bandwidth
+    * 481% increase in UDP RX bandwidth
+    * 17% loss in UDP TX bandwidth
+  
+  RZ/Five:
+    * 19% increase in TCP TX bandwidth
+    * 225% increase in TCP RX bandwidth
+    * >10,000% increase in UDP RX bandwidth
+        (UDP RX bandwidth was <100kbps and unstable with v6.1.101-cip25
+         so it's difficult to get an exact figure here)
+    * 6% loss in UDP TX bandwidth
 
-Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
-Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
----
- drivers/net/ethernet/renesas/ravb_main.c | 21 ++++++++-------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
+Small losses in UDP TX bandwidth are considered acceptable to achieve
+the above improvements in other test cases. If UDP TX bandwidth must be
+maximised for a particular use case, NAPI threaded mode can be disabled
+at runtime via sysfs writes.
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 7e87417a1909..eaf99b456166 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -890,29 +890,24 @@ static bool ravb_rx_rcar(struct net_device *ndev, int *quota, int q)
- 	struct ravb_private *priv = netdev_priv(ndev);
- 	const struct ravb_hw_info *info = priv->info;
- 	int entry = priv->cur_rx[q] % priv->num_rx_ring[q];
--	int boguscnt = (priv->dirty_rx[q] + priv->num_rx_ring[q]) -
--			priv->cur_rx[q];
- 	struct net_device_stats *stats = &priv->stats[q];
- 	struct ravb_ex_rx_desc *desc;
-+	unsigned int limit, i;
- 	struct sk_buff *skb;
- 	dma_addr_t dma_addr;
- 	struct timespec64 ts;
-+	int rx_packets = 0;
- 	u8  desc_status;
- 	u16 pkt_len;
--	int limit;
- 
--	boguscnt = min(boguscnt, *quota);
--	limit = boguscnt;
-+	limit = priv->dirty_rx[q] + priv->num_rx_ring[q] - priv->cur_rx[q];
- 	desc = &priv->rx_ring[q].ex_desc[entry];
--	while (desc->die_dt != DT_FEMPTY) {
-+	for (i = 0; i < limit && rx_packets < *quota && desc->die_dt != DT_FEMPTY; i++) {
- 		/* Descriptor type must be checked before all other reads */
- 		dma_rmb();
- 		desc_status = desc->msc;
- 		pkt_len = le16_to_cpu(desc->ds_cc) & RX_DS;
- 
--		if (--boguscnt < 0)
--			break;
--
- 		/* We use 0-byte descriptors to mark the DMA mapping errors */
- 		if (!pkt_len)
- 			continue;
-@@ -958,7 +953,7 @@ static bool ravb_rx_rcar(struct net_device *ndev, int *quota, int q)
- 			if (ndev->features & NETIF_F_RXCSUM)
- 				ravb_rx_csum(skb);
- 			napi_gro_receive(&priv->napi[q], skb);
--			stats->rx_packets++;
-+			rx_packets++;
- 			stats->rx_bytes += pkt_len;
- 		}
- 
-@@ -993,9 +988,9 @@ static bool ravb_rx_rcar(struct net_device *ndev, int *quota, int q)
- 		desc->die_dt = DT_FEMPTY;
- 	}
- 
--	*quota -= limit - (++boguscnt);
--
--	return boguscnt <= 0;
-+	stats->rx_packets += rx_packets;
-+	*quota -= rx_packets;
-+	return *quota == 0;
- }
- 
- /* Packet receive function for Ethernet AVB */
+Heiner Kallweit (1):
+  net: add netdev_sw_irq_coalesce_default_on()
+
+Paul Barker (7):
+  net: ravb: Simplify poll & receive functions
+  net: ravb: Align poll function with NAPI docs
+  net: ravb: Refactor RX ring refill
+  net: ravb: Refactor GbEth RX code path
+  net: ravb: Enable SW IRQ Coalescing for GbEth
+  net: ravb: Use NAPI threaded mode on 1-core CPUs with GbEth IP
+  net: ravb: Allocate RX buffers via page pool
+
+ drivers/net/ethernet/renesas/ravb.h      |  14 +-
+ drivers/net/ethernet/renesas/ravb_main.c | 488 +++++++++++++----------
+ include/linux/netdevice.h                |   1 +
+ net/core/dev.c                           |  16 +
+ 4 files changed, 298 insertions(+), 221 deletions(-)
+
 -- 
 2.25.1
 
