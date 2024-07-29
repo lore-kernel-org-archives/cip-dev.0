@@ -2,71 +2,92 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EEB6C49EA1
-	for <webhook@archiver.kernel.org>; Mon, 29 Jul 2024 15:31:39 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.59154.1722267088428592872
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C3DC3DA4A
+	for <webhook@archiver.kernel.org>; Mon, 29 Jul 2024 15:31:49 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web10.58762.1722267101575259670
  for <cip-dev@lists.cip-project.org>;
- Mon, 29 Jul 2024 08:31:37 -0700
+ Mon, 29 Jul 2024 08:31:41 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.09,246,1716217200"; 
-   d="scan'208";a="217878601"
+   d="scan'208";a="213908975"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 30 Jul 2024 00:31:36 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 30 Jul 2024 00:31:40 +0900
 Received: from localhost.localdomain (unknown [10.226.92.63])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id F3A194006C72;
-	Tue, 30 Jul 2024 00:31:34 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 53CA34006A90;
+	Tue, 30 Jul 2024 00:31:39 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 11/13] dt-bindings: watchdog: dlg,da9062-watchdog: Drop blank space
-Date: Mon, 29 Jul 2024 16:30:50 +0100
-Message-ID: <20240729153109.510325-12-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 13/13] rtc: isl1208: Update correct procedure for clearing alarm
+Date: Mon, 29 Jul 2024 16:30:52 +0100
+Message-ID: <20240729153109.510325-14-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240729153109.510325-1-biju.das.jz@bp.renesas.com>
 References: <20240729153109.510325-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 29 Jul 2024 15:31:39 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16665
+ <cip-dev@lists.cip-project.org>; Mon, 29 Jul 2024 15:31:49 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16667
 
-commit 63d097d46799dc6ab4d1430482cd5ab6a409c4ec upstream.
+commit 43696b3a9e46cf622bfeb70856b9b1cfa5a9fb23 upstream.
 
-Drop unnecessary blank space from binding documentation.
+As per the latest HW manual[1], there is an internal delay(~250 microsec)
+from setting ALME = 0 to disabling the alarm function, so the user must
+add a short delay of greater than 250µs between setting ALME = 0 and
+clearing ALM.
 
-Reported-by: Pavel Machek <pavel@denx.de>
-Closes: https://lore.kernel.org/all/ZpemkYsK6zQgGCF2@duo.ucw.cz/
+Currently setting of ALME = 0 is done after clearing the ALM, so just
+reverse the operation and add a delay of 275 microsec.
+
+[1]https://www.renesas.com/us/en/document/dst/raa215300-datasheet?r=1506351
+
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Link: https://lore.kernel.org/r/20240717115649.131914-1-biju.das.jz@bp.renesas.com
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Link: https://lore.kernel.org/r/20240618152635.48956-3-biju.das.jz@bp.renesas.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- .../devicetree/bindings/watchdog/dlg,da9062-watchdog.yaml       | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/rtc/rtc-isl1208.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/watchdog/dlg,da9062-watchdog.yaml b/Documentation/devicetree/bindings/watchdog/dlg,da9062-watchdog.yaml
-index c8f698120597..64619ba08d40 100644
---- a/Documentation/devicetree/bindings/watchdog/dlg,da9062-watchdog.yaml
-+++ b/Documentation/devicetree/bindings/watchdog/dlg,da9062-watchdog.yaml
-@@ -28,7 +28,7 @@ properties:
-       Add this property to disable the watchdog during suspend.
-       Only use this option if you can't use the watchdog automatic suspend
-       function during a suspend (see register CONTROL_B).
--  
+diff --git a/drivers/rtc/rtc-isl1208.c b/drivers/rtc/rtc-isl1208.c
+index 030573ffca69..5669dbd51d67 100644
+--- a/drivers/rtc/rtc-isl1208.c
++++ b/drivers/rtc/rtc-isl1208.c
+@@ -663,6 +663,13 @@ isl1208_rtc_interrupt(int irq, void *data)
+ 
+ 		rtc_update_irq(isl1208->rtc, 1, RTC_IRQF | RTC_AF);
+ 
++		/* Disable the alarm */
++		err = isl1208_rtc_toggle_alarm(client, 0);
++		if (err)
++			return err;
 +
-   dlg,wdt-sd:
-     $ref: /schemas/types.yaml#/definitions/uint32
-     enum: [0, 1]
++		fsleep(275);
++
+ 		/* Clear the alarm */
+ 		sr &= ~ISL1208_REG_SR_ALM;
+ 		sr = i2c_smbus_write_byte_data(client, ISL1208_REG_SR, sr);
+@@ -671,11 +678,6 @@ isl1208_rtc_interrupt(int irq, void *data)
+ 				__func__);
+ 		else
+ 			handled = 1;
+-
+-		/* Disable the alarm */
+-		err = isl1208_rtc_toggle_alarm(client, 0);
+-		if (err)
+-			return err;
+ 	}
+ 
+ 	if (isl1208->config->has_tamper && (sr & ISL1208_REG_SR_EVT)) {
 -- 
 2.43.0
 
