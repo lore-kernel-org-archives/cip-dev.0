@@ -2,41 +2,42 @@ Return-Path: <ncaidin@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8AE6C52D54
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7267C3DA7F
 	for <webhook@archiver.kernel.org>; Wed, 31 Jul 2024 18:02:30 +0000 (UTC)
 Received: from mout.web.de (mout.web.de [212.227.15.3])
- by mx.groups.io with SMTP id smtpd.web11.48158.1722445293026832242
+ by mx.groups.io with SMTP id smtpd.web10.48037.1722445279333372171
  for <cip-dev@lists.cip-project.org>;
- Wed, 31 Jul 2024 10:01:33 -0700
+ Wed, 31 Jul 2024 10:01:19 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: signature did not verify: crypto/rsa: verification error" header.i=jan.kiszka@web.de header.s=s29768273 header.b=svXayVNd;
+ dkim=fail reason="dkim: signature did not verify: crypto/rsa: verification error" header.i=jan.kiszka@web.de header.s=s29768273 header.b=jY/EArp3;
  spf=pass (domain: web.de, ip: 212.227.15.3, mailfrom: jan.kiszka@web.de)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1722445291; x=1723050091; i=jan.kiszka@web.de;
-	bh=oWYFIHanqUUpw6zIayAN7+2kiNsoqYPPBm88URIgsII=;
+	s=s29768273; t=1722445277; x=1723050077; i=jan.kiszka@web.de;
+	bh=HikiMLiFOWpvP/WQTeHcaqnQmcBAb23026wyj+sPECM=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
 	 References:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding:cc:content-transfer-encoding:
 	 content-type:date:from:message-id:mime-version:reply-to:subject:
 	 to;
-	b=svXayVNd6HxT8wLUn+tw0aVwx+6ssI9fVyFeJ49VuILCJEYFdmQe0wa4UA5EsMHS
-	 smbLeEOubQfgGwPRdlxAML4Yn6J+zhzcxNB1byBeRtp77EIb3zWi4Umrea8bKnVpS
-	 EvcwaSRCtGhJUbhPy1sAXqO/zGj/Qzl0EdgZI6YPj7smWH2LYf+uYBMRWHZDeymDm
-	 sbZp7LjsT8jnoGxHytBzkapYThDtde8q/bPFSIDnH88B1O/OSnRGCnzACBHu2UBnH
-	 55oANGDDGZ6DVD6EiUVwBKD6ovfwj+TfUHrP+fqDuV9znsIa/PVMzU7JzWn49NRmF
-	 0s3g9+voMY+AH3OdHg==
+	b=jY/EArp3b91EsXt97Iumj2OfXJy+r44MSUJGHjGC1KGuWy+jAjA7fe9BL5sk7CU3
+	 S3jGXTDwrYcV+gmO0NyP4rMWmhFbMuce8/A8bEZ+Tlkjd73eqI+uXs2iRAS0Sr0Sw
+	 WVES1z6AGxcfmBuOwQtGpoepgyZS56ITQdhoTlfSXiRtJgfLFpmJTQSolSjH453zA
+	 GJLW9lWc2NUlYNTcAa3gRNtrnDIPa7z5QJlqzAjwx1PvX4nzrYvb/FGbU0YQxLGHJ
+	 JqR7V5gcUDdNL8+PcfnU+hWxMbkUZ3AOSQ3RWCjRWBXFZwfvhCg1DaMeW+6lwKhRX
+	 jgi/ovAqogTkPmyqDQ==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.31] ([82.83.168.54]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N5UkQ-1sAV2e3IFe-012lZj; Wed, 31
- Jul 2024 19:01:30 +0200
-Message-ID: <a3127393-00df-431c-baa1-2d9354d12367@web.de>
-Date: Wed, 31 Jul 2024 19:01:30 +0200
+Received: from [192.168.178.31] ([82.83.168.54]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N7gXO-1sChyR03zW-012GnS; Wed, 31
+ Jul 2024 19:01:17 +0200
+Message-ID: <12d8317a-9510-431b-b24a-9175192e6378@web.de>
+Date: Wed, 31 Jul 2024 19:01:16 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core] IEC_template.yml: Update revision of cip-security-tests
-To: Sai.Sathujoda@toshiba-tsip.com, cip-dev@lists.cip-project.org
-Cc: dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
-References: <20240723175117.2471090-1-Sai.Sathujoda@toshiba-tsip.com>
+Subject: Re: [isar-cip-core] [PATCH v2] classes/squashfs.bbclass: exclude boot dir for efibootguard bootloader
+To: srinuvasan.a@siemens.com, cip-dev@lists.cip-project.org
+Cc: felix.moessbauer@siemens.com
+References: <284ef2098da5aaeff02a565c4316fff854add437.camel@siemens.com>
+ <20240723100631.75683-1-srinuvasan.a@siemens.com>
 From: Jan Kiszka <jan.kiszka@web.de>
 Autocrypt: addr=jan.kiszka@web.de; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
@@ -81,24 +82,24 @@ Autocrypt: addr=jan.kiszka@web.de; keydata=
  JA87Kil/M8083wFhca5FwP5BaUdybDMzZr3sbZDdpDiwgh5MptM8+WN78WmLW1xtsE66ifFq
  ZFiBPEk1IUGvQJHs4LnFze6+rkq81vCEF8QSJ2cBSMgYDNH/388jas04RU9eUDK2FKoYVmX3
  zuD3jSTlGH13R9dwOq21NMusROzpLqGtNRKjYvcqsiwPID4IPw4TqRrSvCqJArHWLE25
-In-Reply-To: <20240723175117.2471090-1-Sai.Sathujoda@toshiba-tsip.com>
-X-Provags-ID: V03:K1:qnxG6zwEuLh7v6HRSkbVdYWx4QKElH5CyjN487NFJEcXny1t729
- /CrdTLygdXlbgpc1KaormcuRovE2vxPYylMJ5B1eCzdbqzmElEhp7JLJa+A3giWMCc1ZEVX
- TDtmRhxMohspxEhsDRszoVXvU9y65IV5gPaol3NdH1MZeIwCrTF4g/+q1xYC/TBRE9/IHtC
- Gz+dnLycSAbECs57+7oIg==
-UI-OutboundReport: notjunk:1;M01:P0:/WQkKfnCU2A=;gUki24ii8vaA2pVQ1ASUMEMnuYO
- TMU+7hG8tboTy/EizvW+b5MkAlz+EI6Mt4FfY6m8tU17GE6gFC14QChz/2u7tYCppuISgsuLC
- 705FRyegyFO22x7NBtEEkObdoJse/6n9EEECqkpUHow/py4Z4gcpNbabvKk357Yi+lGN1KjdA
- OtgTZb/TApClhgeeeL3TnZnUtOrJrSGULR39agaubnU6ngGwjGjk7c7SyVWlAFI5SJsHV67gY
- g/El1Fi1lwL6xgxiuHxHCtnF2ADRIzUsf9BNlpgdzTZjB8hjvpjEZ2IF4V6OmHxQZHWzUCXIe
- Z+G3UbcJW7tzxuM1xd/oNen+k/uUycrKf5hV0MExbRLIyOCS9gEa8Xg3nZ1UNba/OE/89WaAl
- qpisNbnmw9SfbxRSMC1avp7f9Zjd4+MJ2IKjWFB6MKs4BMztrOARGE3wlnPzgiozEBkiY4v7d
- Avza27blBSxaRiWzaFzuwMSm3MEBJk4jwFvNEDfK0xbqmaSwlG4jKwqmWSBlJSgJHK4ZcWPd6
- VkSTQKQu1Tls86ul+ZDe72/5mQS86pT3ucHTgE8yKUVeubs9OjFaHMMa9180GPaIZBBudiKWa
- aL1ql56qnrFk88H2H4pbcOq9qy79XFCqEePzlqP5D/rZkOSmzhs+YsxymHChiBvEP5+todBHR
- /0ZAxDMkV/bpcgXD7Mwm/5WydpslgpyiwawHcE1K25QIKhcJ5fgSZxEqW90ZFR1ddVrM1VwrX
- X5oj1oG2jRhz+Vms7QUkQMSOxcWxdgxFo6Sqs92PTTg2P+ZTn32KgfzAzDyco7m3ZGrOF1VF2
- CbjZy/o2h98aE3WJ9HYyTeFA==
+In-Reply-To: <20240723100631.75683-1-srinuvasan.a@siemens.com>
+X-Provags-ID: V03:K1:TKNlpoHan6x7nouydDkCnbJBYemq8GXapaWf/hTPHmkBkB2eztV
+ +dofMlpUqt7lX0GNovhc2p7sLR+lrJXYUeZD+Tp64VvCYL3pqtx7ESE8nNKNAw4v6J8gog8
+ Bo3fjXZIC8ONGDPb45kRKZ97zrY8lU7GoNOWoy4Wi+Hx2+ZDyvoEfDNNH/xiQYeb0HpNH0F
+ 3RbuTRM8pAtyAPB7eY8dg==
+UI-OutboundReport: notjunk:1;M01:P0:Eb+WixM9dkA=;DlBlNpel1tETqXw75xNgXs8Q8sF
+ E97fMlU/bVrM/UY7j0qbuy72VVF847DTbI9qU0wq06eeIGlI49WAJ6StYRtMTUM0Aq1lhiIN4
+ 6i6mKwSbDd44S7mLff0Cnrw4RhFyUp+K2s1qem0CxQ3UJAsaK4w1ZifbOZpClW9pLXMp6egSt
+ 390VAdjxGqGfwVhaBHLaQNzlTYc4y+6eMynTx5svosDeUBPeJRWyngSO85ivz0Gy8iHb27G+9
+ SrhBNJdhA2MnmGQlv3uCev5YFOfeUeZrSqyOMKLqIduJWZRzO2F1fE8b/K2kCVqM1+SMA8Rsu
+ pagG7Jp5gpIa1S24x/qES/xtWcGuprSSux0M+KK92uP3S3bk0aoRzElAcXCpQkKtme5+Cc3o3
+ 5QYONGcpm4ujpZ2/UKy9WhzK3qFtdGo5ifWr0zrJBIciE8b0gYSg3C59IXfGT5Qwp0wGLA3bq
+ Ms5Hc0ffIRb8aPztkwMJANKhgQE+rLZ5JJS/ABykkEirdwYW6218SIEcIHPjYqGVuxTsM84oK
+ qPD04uegD3kDgFO/tU80soFDG/HfOA3NP6saJt3WvgksHWl+qpNHLLJAcjHmF0Aj2TGSDYS8W
+ Zpl7TZIgNBu/c7sm9+Xw8AXfNJe7YWYoHMQN7LaEPduqIdbam3FD1CKu15YUNqXIAXWML9x1G
+ IN+/CV6nkDGPHzZoimcwiIDViY4ASoMJbGm6j2DnaCw7LMY9jzkj6lQ7TKWQ74xvRTNGrUTlO
+ Nbc0K7Bwt2uFF+iUUOvEObRf4nUnxvxey/+DPRrIgZPh7btkswFYir2iR09FBFbisihipPG9R
+ v4kPh1VOkCyIObxMofYUlzIA==
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -106,47 +107,56 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 31 Jul 2024 18:02:30 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16696
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16697
 
-On 23.07.24 19:51, Sai.Sathujoda@toshiba-tsip.com wrote:
-> From: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
+On 23.07.24 12:06, srinuvasan.a@siemens.com wrote:
+> From: srinuvasan <srinuvasan.a@siemens.com>
 >
-> It is expected for all the test cases to pass with the revision
-> mentioned in this commit.
+> efibootguard based bootloader boot the system using linux.efi (UKI) and =
+it has
+> the necessary boot files to boot the system, hence we added boot dir as =
+the exclude dir
+> in squashfs root file system to remove the contents from the boot dir.
 >
-> Below mentioned test cases are fixed with the updated revision.
->
-> a) TC_CR1.11_2
-> b) TC_CR2.10_1
-> c) TC_CR2.9-RE1_1
-> d) TC_CR2.9_2
-> e) TC_CR3.4-RE2_1,
-> f) TC_CR6.2_1
-> g) TC_CR7.1_1
->
-> Signed-off-by: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
+> Signed-off-by: srinuvasan <srinuvasan.a@siemens.com>
 > ---
->  tests/templates/IEC_template.yml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  classes/squashfs.bbclass | 3 +++
+>  1 file changed, 3 insertions(+)
 >
-> diff --git a/tests/templates/IEC_template.yml b/tests/templates/IEC_temp=
-late.yml
-> index 1d46791..a196bb5 100644
-> --- a/tests/templates/IEC_template.yml
-> +++ b/tests/templates/IEC_template.yml
-> @@ -64,7 +64,7 @@ actions:
->       definitions:
->       - repository: https://gitlab.com/cip-project/cip-testing/cip-secur=
-ity-tests.git
->         from: git
-> -       revision: 07021c3b7455ed354a00f4de0f1a7267788c414a
-> +       revision: 064a92b98127b0001ca527a83b175521bea4b626
->         path: iec-security-tests/Singlenode-TestDefinition.yaml
->         name: Security-Testcases
+> diff --git a/classes/squashfs.bbclass b/classes/squashfs.bbclass
+> index b39be0c..2582ce2 100644
+> --- a/classes/squashfs.bbclass
+> +++ b/classes/squashfs.bbclass
+> @@ -23,6 +23,7 @@ def get_free_mem():
+>  IMAGER_INSTALL:squashfs +=3D "squashfs-tools"
 >
+>  SQUASHFS_EXCLUDE_DIRS ?=3D ""
+> +SQUASHFS_EXCLUDE_DIRS_EFI ?=3D "boot"
+>  SQUASHFS_CONTENT ?=3D "${PP_ROOTFS}"
+>  SQUASHFS_CREATION_ARGS ?=3D ""
+>
+> @@ -31,6 +32,8 @@ SQUASHFS_MEMLIMIT ?=3D "${@int(get_free_mem() * 3/4)}"
+>  SQUASHFS_CREATION_LIMITS =3D "-mem ${SQUASHFS_MEMLIMIT} -processors ${S=
+QUASHFS_THREADS}"
+>
+>  python __anonymous() {
+> +    if (d.getVar('SWUPDATE_BOOTLOADER') =3D=3D 'efibootguard'):
+> +        d.setVar('SQUASHFS_EXCLUDE_DIRS', '${SQUASHFS_EXCLUDE_DIRS_EFI}=
+')
 
-Thanks, applied.
+I still don't get why we should carry this knowledge here. It is also
+mixing up "EFI" with "efibootguard" - there is no efibootguard without
+EFI, but the other way around is possible.
+
+And then it is the image recipe or - even closer - the wks file that
+brings it all together, the fact that squashfs is used for rootfs (and
+only for that?!?), that there is some boot folder that is not needed twice=
+.
 
 Jan
+
+>      exclude_directories =3D d.getVar('SQUASHFS_EXCLUDE_DIRS').split()
+>      if len(exclude_directories) =3D=3D 0:
+>          return
 
 
