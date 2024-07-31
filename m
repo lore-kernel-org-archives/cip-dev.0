@@ -2,42 +2,41 @@ Return-Path: <ncaidin@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7267C3DA7F
-	for <webhook@archiver.kernel.org>; Wed, 31 Jul 2024 18:02:30 +0000 (UTC)
-Received: from mout.web.de (mout.web.de [212.227.15.3])
- by mx.groups.io with SMTP id smtpd.web10.48037.1722445279333372171
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90BB9C3DA7F
+	for <webhook@archiver.kernel.org>; Wed, 31 Jul 2024 18:02:40 +0000 (UTC)
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+ by mx.groups.io with SMTP id smtpd.web10.48044.1722445289711290873
  for <cip-dev@lists.cip-project.org>;
- Wed, 31 Jul 2024 10:01:19 -0700
+ Wed, 31 Jul 2024 10:01:30 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: signature did not verify: crypto/rsa: verification error" header.i=jan.kiszka@web.de header.s=s29768273 header.b=jY/EArp3;
- spf=pass (domain: web.de, ip: 212.227.15.3, mailfrom: jan.kiszka@web.de)
+ dkim=fail reason="dkim: signature did not verify: crypto/rsa: verification error" header.i=jan.kiszka@web.de header.s=s29768273 header.b=Mi/UWqn3;
+ spf=pass (domain: web.de, ip: 212.227.15.4, mailfrom: jan.kiszka@web.de)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1722445277; x=1723050077; i=jan.kiszka@web.de;
-	bh=HikiMLiFOWpvP/WQTeHcaqnQmcBAb23026wyj+sPECM=;
+	s=s29768273; t=1722445287; x=1723050087; i=jan.kiszka@web.de;
+	bh=kn5F2x8C6/UAEzXBWuYkV+ZRa6OdfCiGUXD4PJ9EESU=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
 	 References:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding:cc:content-transfer-encoding:
 	 content-type:date:from:message-id:mime-version:reply-to:subject:
 	 to;
-	b=jY/EArp3b91EsXt97Iumj2OfXJy+r44MSUJGHjGC1KGuWy+jAjA7fe9BL5sk7CU3
-	 S3jGXTDwrYcV+gmO0NyP4rMWmhFbMuce8/A8bEZ+Tlkjd73eqI+uXs2iRAS0Sr0Sw
-	 WVES1z6AGxcfmBuOwQtGpoepgyZS56ITQdhoTlfSXiRtJgfLFpmJTQSolSjH453zA
-	 GJLW9lWc2NUlYNTcAa3gRNtrnDIPa7z5QJlqzAjwx1PvX4nzrYvb/FGbU0YQxLGHJ
-	 JqR7V5gcUDdNL8+PcfnU+hWxMbkUZ3AOSQ3RWCjRWBXFZwfvhCg1DaMeW+6lwKhRX
-	 jgi/ovAqogTkPmyqDQ==
+	b=Mi/UWqn3Q1F+fL2XSvqkLZkUUSU/ZQX9GGlGVNXS11Zdh7qtaYw9LpdQJOeTWeip
+	 sCGW9ioTksFqbWxaYUEM+rQax9/E+H0oGIbGrQuZZF3LhomF1kc9K3BqpahUUub2O
+	 DuxGrSPbjFDBWqfM4cSHgXF0FI6w0K9wSywgFBD7sf7pyQNq1h7WbVa/sfTBvOMKv
+	 1TraTjIr0o1VRvXnkUKpOXoksuOTUL0nG3UDbRPvQjkOGohMx2KLIE8kKUEgNSB1v
+	 QcizYTRTOibyiF/LT7FCaMBn/QOTrokBB8hQg63PprZVUmVNPxKfFLgTldcgX9UHR
+	 1vvA+Rp4NdPsUhXxTg==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.31] ([82.83.168.54]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N7gXO-1sChyR03zW-012GnS; Wed, 31
- Jul 2024 19:01:17 +0200
-Message-ID: <12d8317a-9510-431b-b24a-9175192e6378@web.de>
-Date: Wed, 31 Jul 2024 19:01:16 +0200
+Received: from [192.168.178.31] ([82.83.168.54]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MyO0u-1sKydv22ai-00uYdB; Wed, 31
+ Jul 2024 19:01:27 +0200
+Message-ID: <50add61f-23b5-4feb-9187-acc48049f12e@web.de>
+Date: Wed, 31 Jul 2024 19:01:27 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core] [PATCH v2] classes/squashfs.bbclass: exclude boot dir for efibootguard bootloader
-To: srinuvasan.a@siemens.com, cip-dev@lists.cip-project.org
-Cc: felix.moessbauer@siemens.com
-References: <284ef2098da5aaeff02a565c4316fff854add437.camel@siemens.com>
- <20240723100631.75683-1-srinuvasan.a@siemens.com>
+Subject: Re: [cip-dev] [isar-cip-core][PATCH v5] initramfs-overlay-hook: Check file system of INITRAMFS_OVERLAY_STORAGE_DEVICE
+To: Clara Kowalsky <clara.kowalsky@siemens.com>, cip-dev@lists.cip-project.org
+Cc: quirin.gylstorff@siemens.com
+References: <20240723125925.1253022-1-clara.kowalsky@siemens.com>
 From: Jan Kiszka <jan.kiszka@web.de>
 Autocrypt: addr=jan.kiszka@web.de; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
@@ -82,81 +81,176 @@ Autocrypt: addr=jan.kiszka@web.de; keydata=
  JA87Kil/M8083wFhca5FwP5BaUdybDMzZr3sbZDdpDiwgh5MptM8+WN78WmLW1xtsE66ifFq
  ZFiBPEk1IUGvQJHs4LnFze6+rkq81vCEF8QSJ2cBSMgYDNH/388jas04RU9eUDK2FKoYVmX3
  zuD3jSTlGH13R9dwOq21NMusROzpLqGtNRKjYvcqsiwPID4IPw4TqRrSvCqJArHWLE25
-In-Reply-To: <20240723100631.75683-1-srinuvasan.a@siemens.com>
-X-Provags-ID: V03:K1:TKNlpoHan6x7nouydDkCnbJBYemq8GXapaWf/hTPHmkBkB2eztV
- +dofMlpUqt7lX0GNovhc2p7sLR+lrJXYUeZD+Tp64VvCYL3pqtx7ESE8nNKNAw4v6J8gog8
- Bo3fjXZIC8ONGDPb45kRKZ97zrY8lU7GoNOWoy4Wi+Hx2+ZDyvoEfDNNH/xiQYeb0HpNH0F
- 3RbuTRM8pAtyAPB7eY8dg==
-UI-OutboundReport: notjunk:1;M01:P0:Eb+WixM9dkA=;DlBlNpel1tETqXw75xNgXs8Q8sF
- E97fMlU/bVrM/UY7j0qbuy72VVF847DTbI9qU0wq06eeIGlI49WAJ6StYRtMTUM0Aq1lhiIN4
- 6i6mKwSbDd44S7mLff0Cnrw4RhFyUp+K2s1qem0CxQ3UJAsaK4w1ZifbOZpClW9pLXMp6egSt
- 390VAdjxGqGfwVhaBHLaQNzlTYc4y+6eMynTx5svosDeUBPeJRWyngSO85ivz0Gy8iHb27G+9
- SrhBNJdhA2MnmGQlv3uCev5YFOfeUeZrSqyOMKLqIduJWZRzO2F1fE8b/K2kCVqM1+SMA8Rsu
- pagG7Jp5gpIa1S24x/qES/xtWcGuprSSux0M+KK92uP3S3bk0aoRzElAcXCpQkKtme5+Cc3o3
- 5QYONGcpm4ujpZ2/UKy9WhzK3qFtdGo5ifWr0zrJBIciE8b0gYSg3C59IXfGT5Qwp0wGLA3bq
- Ms5Hc0ffIRb8aPztkwMJANKhgQE+rLZ5JJS/ABykkEirdwYW6218SIEcIHPjYqGVuxTsM84oK
- qPD04uegD3kDgFO/tU80soFDG/HfOA3NP6saJt3WvgksHWl+qpNHLLJAcjHmF0Aj2TGSDYS8W
- Zpl7TZIgNBu/c7sm9+Xw8AXfNJe7YWYoHMQN7LaEPduqIdbam3FD1CKu15YUNqXIAXWML9x1G
- IN+/CV6nkDGPHzZoimcwiIDViY4ASoMJbGm6j2DnaCw7LMY9jzkj6lQ7TKWQ74xvRTNGrUTlO
- Nbc0K7Bwt2uFF+iUUOvEObRf4nUnxvxey/+DPRrIgZPh7btkswFYir2iR09FBFbisihipPG9R
- v4kPh1VOkCyIObxMofYUlzIA==
+In-Reply-To: <20240723125925.1253022-1-clara.kowalsky@siemens.com>
+X-Provags-ID: V03:K1:mC4q7zz3F/Nz4AjPBOfwLInJil+DLrEZYKoVOs6ffIHljBSSGGr
+ gKzf2Sb3xKBFcam/dhidAUSc/jh9MD3qwNqZJrK5x0lOKnObEcb+ElW5yBo94G8qG0UZlPC
+ 3os+YjtQt/yVnak15L3/ROUARaO6HSi7UUN2jo8myoJj4NHSKG7NFHHs5WdGfHDv97HD2o2
+ 9XEsGwL8TN/tA3sk9gr+w==
+UI-OutboundReport: notjunk:1;M01:P0:F1qap0ZnWGw=;g0sQe8bBfNuM8Zt2LkSmH9ujYDZ
+ liQSuGU60YdD3DGSHx2HtsHplGyS0BIMfaxxfc6DKRUrJdjb7DrXGnMbNUS5BfZ9q1dZDMVv/
+ MGIxxj7gm918mjUs8Y7JsaA23HNyFwb2heRA5+HpxFTx1LeQLsBENijwAqWA1qs/mZJVLEHkL
+ isskFa4IMAaqB7FxZCRTWdFtKlbG9HXQSgzeVTayaeccICrO3+gkvk6V2fp3eaimgoVAGIqsv
+ W/fbDC6Juc0Ihne/7AmL/rStGH1FnRoxpzevhrdEmFEXaSQqG3ysZkoIZ+Fso/lbogym1AgOt
+ Bq+GpiXP1ZVIYMeGeOh2jOqu80BD68ZOXj+OUu9ZFe9/8HNN/H0PVzwIMAYjwMegP+N0ySN0b
+ TTz2LBMm2c0eHZ1JjsWWy/i7qhkt76Vd7qr7ZIfRAec9H6YuFdC8ytzuwSX4WZIiEy5+Z7Dfu
+ +5DmrLvumnX4iD5fZWN2axPT8YAaDk5ywL5EUsUcrDzopdPokZ998t4WGrtImg6o/DaSdjDFL
+ 0FKFxQNKuaTq2SeYo/mBRG69dM8paXEicrhvHQ+IwbQCZtTxckVOuq+Vyf71gelc5XhxYydxm
+ 0M/0NhJ0hqirTkNLbYgftPHAzW6fHyz7NuZMgSPgL2pKUz6R6tnDGNLUafDD+zJO5u1FvDpXn
+ zdb0yk9tfxKxja2hZ/6LKAtM0XpcWzbu5cg/+gf7f2gGfdyZadyYhOoWqGxub43oJW04qMxI2
+ KwxrOjow+q/xu2sFzqI5SJGo1nmd1m57azXqT8mRkj3o88D/tJ/NECQy4o7dLFKcDl+mC4v8p
+ B4TQOG0qNkAolyW5MmBNfcWA==
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 31 Jul 2024 18:02:30 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16697
+ <cip-dev@lists.cip-project.org>; Wed, 31 Jul 2024 18:02:40 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16698
 
-On 23.07.24 12:06, srinuvasan.a@siemens.com wrote:
-> From: srinuvasan <srinuvasan.a@siemens.com>
+On 23.07.24 14:59, Clara Kowalsky wrote:
+> In case of ext*, this detects and fixes file system errors in the
+> partition device before doing the partition mount.
+> If the partition turns out to be broken, the factory state is recovered.
 >
-> efibootguard based bootloader boot the system using linux.efi (UKI) and =
-it has
-> the necessary boot files to boot the system, hence we added boot dir as =
-the exclude dir
-> in squashfs root file system to remove the contents from the boot dir.
->
-> Signed-off-by: srinuvasan <srinuvasan.a@siemens.com>
+> Signed-off-by: Clara Kowalsky <clara.kowalsky@siemens.com>
 > ---
->  classes/squashfs.bbclass | 3 +++
->  1 file changed, 3 insertions(+)
+>  .../initramfs-overlay-hook/files/overlay.hook      | 11 +++++++++--
+>  .../files/overlay.script.tmpl                      | 11 ++++++++++-
+>  .../files/overlay_recovery_action.script           | 14 ++++++++++++++
+>  .../initramfs-overlay-hook_0.1.bb                  |  8 +++++++-
+>  4 files changed, 40 insertions(+), 4 deletions(-)
+>  create mode 100644 recipes-initramfs/initramfs-overlay-hook/files/overl=
+ay_recovery_action.script
 >
-> diff --git a/classes/squashfs.bbclass b/classes/squashfs.bbclass
-> index b39be0c..2582ce2 100644
-> --- a/classes/squashfs.bbclass
-> +++ b/classes/squashfs.bbclass
-> @@ -23,6 +23,7 @@ def get_free_mem():
->  IMAGER_INSTALL:squashfs +=3D "squashfs-tools"
+> diff --git a/recipes-initramfs/initramfs-overlay-hook/files/overlay.hook=
+ b/recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
+> index 8b00ecf..6f634c5 100644
+> --- a/recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
+> +++ b/recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
+> @@ -22,6 +22,13 @@ esac
 >
->  SQUASHFS_EXCLUDE_DIRS ?=3D ""
-> +SQUASHFS_EXCLUDE_DIRS_EFI ?=3D "boot"
->  SQUASHFS_CONTENT ?=3D "${PP_ROOTFS}"
->  SQUASHFS_CREATION_ARGS ?=3D ""
+>  . /usr/share/initramfs-tools/hook-functions
 >
-> @@ -31,6 +32,8 @@ SQUASHFS_MEMLIMIT ?=3D "${@int(get_free_mem() * 3/4)}"
->  SQUASHFS_CREATION_LIMITS =3D "-mem ${SQUASHFS_MEMLIMIT} -processors ${S=
-QUASHFS_THREADS}"
->
->  python __anonymous() {
-> +    if (d.getVar('SWUPDATE_BOOTLOADER') =3D=3D 'efibootguard'):
-> +        d.setVar('SQUASHFS_EXCLUDE_DIRS', '${SQUASHFS_EXCLUDE_DIRS_EFI}=
-')
+> +hook_error() {
+> +    echo "(ERROR): $1" >&2
+> +    exit 1
+> +}
+> +
+>  manual_add_modules overlay
+> -copy_exec /usr/bin/mountpoint
+> -copy_exec /usr/bin/awk
+> +copy_exec /usr/bin/mountpoint || hook_error "/usr/bin/mountpoint not fo=
+und"
+> +copy_exec /usr/bin/awk || hook_error "/usr/bin/awk not found"
+> +copy_exec /usr/sbin/e2fsck || hook_error "/usr/sbin/e2fsck not found"
+> +copy_exec /usr/sbin/mke2fs || hook_error "/usr/sbin/mke2fs not found"
 
-I still don't get why we should carry this knowledge here. It is also
-mixing up "EFI" with "efibootguard" - there is no efibootguard without
-EFI, but the other way around is possible.
+Is there no "copy_exec_and_complain+fail_if_missing"? This pattern looks
+like it does not scale very well across all our scripts (including isar
+upstream).
 
-And then it is the image recipe or - even closer - the wks file that
-brings it all together, the fact that squashfs is used for rootfs (and
-only for that?!?), that there is some boot folder that is not needed twice=
-.
+> diff --git a/recipes-initramfs/initramfs-overlay-hook/files/overlay.scri=
+pt.tmpl b/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tm=
+pl
+> index 42eb59c..c6f69b9 100644
+> --- a/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
+> +++ b/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
+> @@ -31,12 +31,21 @@ ovl_partition_device=3D"${INITRAMFS_OVERLAY_STORAGE_=
+DEVICE}"
+>  ovl_storage_path=3D"${INITRAMFS_OVERLAY_STORAGE_PATH}"
+>  ovl_lower_dirs=3D"${INITRAMFS_OVERLAY_PATHS}"
+>  ovl_mount_option=3D"${INITRAMFS_OVERLAY_MOUNT_OPTION}"
+> +ovl_recovery_script=3D"/scripts/${INITRAMFS_OVERLAY_RECOVERY_SCRIPT}"
+>
+>  root_mount_storage=3D${rootmnt}${ovl_storage_path}
+>  storage_mount_point=3D"$(echo "${ovl_storage_path}" | awk -F/ '{print F=
+S$2}' )"
+> +partition_fstype=3D$(get_fstype "${ovl_partition_device}")
+>
+>  if ! mountpoint -q "${rootmnt}${storage_mount_point}"; then
+> -	if ! mount -t $(get_fstype ${ovl_partition_device}) \
+> +	case $partition_fstype in
+> +	ext*)
+> +		if ! e2fsck -p -f "$ovl_partition_device" && [ -f "$ovl_recovery_scri=
+pt" ] && [ -x "$ovl_recovery_script" ]; then
+
+Why testing both -f and -x?
+
+> +			"$ovl_recovery_script" "$partition_fstype" "$ovl_partition_device"
+> +		fi
+> +		;;
+> +	esac
+> +	if ! mount -t ${partition_fstype} \
+>  		 -o ${ovl_mount_option} \
+>  		 ${ovl_partition_device} \
+>  		 ${rootmnt}${storage_mount_point}; then
+> diff --git a/recipes-initramfs/initramfs-overlay-hook/files/overlay_reco=
+very_action.script b/recipes-initramfs/initramfs-overlay-hook/files/overla=
+y_recovery_action.script
+> new file mode 100644
+> index 0000000..d13111d
+> --- /dev/null
+> +++ b/recipes-initramfs/initramfs-overlay-hook/files/overlay_recovery_ac=
+tion.script
+> @@ -0,0 +1,14 @@
+> +#!/bin/sh
+> +#
+> +# CIP Core, generic profile
+> +#
+> +# Copyright (c) Siemens AG, 2024
+> +#
+> +# Authors:
+> +#  Clara Kowalsky <clara.kowalsky@siemens.com>
+> +#
+> +
+> +partition_fstype=3D"$1"
+> +ovl_partition_device=3D"$2"
+> +
+> +mke2fs -t "$partition_fstype" "$ovl_partition_device"
+> diff --git a/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-=
+hook_0.1.bb b/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-h=
+ook_0.1.bb
+> index 955748f..7097130 100644
+> --- a/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.=
+1.bb
+> +++ b/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.=
+1.bb
+> @@ -12,9 +12,12 @@
+>
+>  inherit dpkg-raw
+>
+> +INITRAMFS_OVERLAY_RECOVERY_SCRIPT ??=3D "overlay_recovery_action.script=
+"
+> +
+>  SRC_URI +=3D " \
+>      file://overlay.hook \
+>      file://overlay.script.tmpl \
+> +    file://${INITRAMFS_OVERLAY_RECOVERY_SCRIPT} \
+>      "
+>
+>  # The variable INITRAMFS_OVERLAY_PATHS contains the directories which a=
+re
+> @@ -35,7 +38,8 @@ TEMPLATE_FILES =3D "overlay.script.tmpl"
+>  TEMPLATE_VARS +=3D " INITRAMFS_OVERLAY_STORAGE_PATH \
+>      INITRAMFS_OVERLAY_PATHS \
+>      INITRAMFS_OVERLAY_STORAGE_DEVICE \
+> -    INITRAMFS_OVERLAY_MOUNT_OPTION"
+> +    INITRAMFS_OVERLAY_MOUNT_OPTION \
+> +    INITRAMFS_OVERLAY_RECOVERY_SCRIPT"
+>
+>  DEBIAN_DEPENDS =3D "initramfs-tools, awk, coreutils, util-linux"
+>
+> @@ -48,4 +52,6 @@ do_install() {
+>          "${D}/usr/share/initramfs-tools/hooks/overlay"
+>      install -m 0755 "${WORKDIR}/overlay.script" \
+>          "${D}/usr/share/initramfs-tools/scripts/local-bottom/overlay"
+> +    install -m 0755 "${WORKDIR}/${INITRAMFS_OVERLAY_RECOVERY_SCRIPT}" \
+> +        "${D}/usr/share/initramfs-tools/scripts"
+>  }
+
+Looks good otherwise.
 
 Jan
-
->      exclude_directories =3D d.getVar('SQUASHFS_EXCLUDE_DIRS').split()
->      if len(exclude_directories) =3D=3D 0:
->          return
 
 
