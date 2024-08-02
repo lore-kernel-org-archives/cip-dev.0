@@ -2,43 +2,41 @@ Return-Path: <ncaidin@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4837BC3DA4A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49298C52D6F
 	for <webhook@archiver.kernel.org>; Fri,  2 Aug 2024 11:31:33 +0000 (UTC)
-Received: from mout.web.de (mout.web.de [212.227.15.14])
- by mx.groups.io with SMTP id smtpd.web11.90204.1722596432418127157
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+ by mx.groups.io with SMTP id smtpd.web11.90232.1722596569959994248
  for <cip-dev@lists.cip-project.org>;
- Fri, 02 Aug 2024 04:00:32 -0700
+ Fri, 02 Aug 2024 04:02:50 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: signature did not verify: crypto/rsa: verification error" header.i=jan.kiszka@web.de header.s=s29768273 header.b=pe5pDitH;
- spf=pass (domain: web.de, ip: 212.227.15.14, mailfrom: jan.kiszka@web.de)
+ dkim=fail reason="dkim: signature did not verify: crypto/rsa: verification error" header.i=jan.kiszka@web.de header.s=s29768273 header.b=oLI6SLjz;
+ spf=pass (domain: web.de, ip: 212.227.15.4, mailfrom: jan.kiszka@web.de)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1722596429; x=1723201229; i=jan.kiszka@web.de;
-	bh=LMjiNXEP4Qgy488aWfV1gAzIaGr9JF5h4rRSGtr7Zhs=;
+	s=s29768273; t=1722596567; x=1723201367; i=jan.kiszka@web.de;
+	bh=mR9pwmu3/4h0k1BuY9dHHzv9AuyUOGiFx1ZVfONoJBM=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
 	 References:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding:cc:content-transfer-encoding:
 	 content-type:date:from:message-id:mime-version:reply-to:subject:
 	 to;
-	b=pe5pDitHdO3v7ka/UdX+4vLJ7y57jBkjK+hPXJIRMmAIaBT8zXEXUdhgErAFO7ec
-	 7oWhQFNepjhDR23Yy5ANV6flvQCySBBHdm/KzfDH3/Eoxvguq+U93SoJo7jky71td
-	 4dXcReH15gI6tAp4Jty2v3CUdHTiQSX143E7FDp4wGZMRO1ALWPNzuZ9/Fip0xyaA
-	 K3FHtuowlj8YITPpFeCNxPhACGBPfK5DzL1R8hBcAtXDg1W7dN18NqmJtiCBeSyAl
-	 gKLcq+rK+LIIaM6nEFJex0kW52S40YI/LcwQd7Hw/jGgY7xwnLGEswEfyJprVJsoP
-	 xIOIwrp6hBmpGc586w==
+	b=oLI6SLjzSvXelyPCPo5/HIkv0YDEGKxdQ4SpYEMeVjxDVJhwH5ubkrdv8IfBxXze
+	 WLFuPiodtBYUBYyT9giwgaf9Ib2/GZlbKDDwqxjdrRSwIzgXlbPm+VhZjvA7t6G2B
+	 /IXnFROkIpes/NVfttJYDp9k7UqF08kv4DODATPAEPtDm6lMstTv3wleTTgXBKehv
+	 a+oEEiJ9IVNPSQvq0pD8umirXVJLAy48WIqR5at9u1GxQ0gC9sObOyfTVZd8b2j5G
+	 Czyyyo0aET1AgRenHj87rRRqDdAOYJ9osDWHbe2LkTa0J7DJPTQiorCYdkVSH0kVI
+	 ZjgOCVOhZAg7QUozTA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.31] ([82.83.168.54]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N0Igl-1sMHFb3pfr-00uGYu; Fri, 02
- Aug 2024 13:00:28 +0200
-Message-ID: <307bf040-06cb-49f7-84eb-e1a06447fc53@web.de>
-Date: Fri, 2 Aug 2024 13:00:27 +0200
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MZB49-1snKZb3bvd-00TCgn; Fri, 02
+ Aug 2024 13:02:47 +0200
+Message-ID: <904fd42c-374f-4e84-92dd-8e5576ec5237@web.de>
+Date: Fri, 2 Aug 2024 13:02:45 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev] [isar-cip-core][PATCH v5] initramfs-overlay-hook: Check file system of INITRAMFS_OVERLAY_STORAGE_DEVICE
-To: Clara Kowalsky <clara.kowalsky@siemens.com>, cip-dev@lists.cip-project.org
-Cc: quirin.gylstorff@siemens.com
-References: <20240723125925.1253022-1-clara.kowalsky@siemens.com>
- <50add61f-23b5-4feb-9187-acc48049f12e@web.de>
- <f640d73c-8882-4267-ac13-715947002c5c@siemens.com>
+Subject: Re: [isar-cip-core] submit_lava.sh: Modify environment slug in SQUAD
+To: Sai.Sathujoda@toshiba-tsip.com, cip-dev@lists.cip-project.org
+Cc: dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
+References: <20240802062317.3333603-1-Sai.Sathujoda@toshiba-tsip.com>
 From: Jan Kiszka <jan.kiszka@web.de>
 Autocrypt: addr=jan.kiszka@web.de; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
@@ -83,24 +81,24 @@ Autocrypt: addr=jan.kiszka@web.de; keydata=
  JA87Kil/M8083wFhca5FwP5BaUdybDMzZr3sbZDdpDiwgh5MptM8+WN78WmLW1xtsE66ifFq
  ZFiBPEk1IUGvQJHs4LnFze6+rkq81vCEF8QSJ2cBSMgYDNH/388jas04RU9eUDK2FKoYVmX3
  zuD3jSTlGH13R9dwOq21NMusROzpLqGtNRKjYvcqsiwPID4IPw4TqRrSvCqJArHWLE25
-In-Reply-To: <f640d73c-8882-4267-ac13-715947002c5c@siemens.com>
-X-Provags-ID: V03:K1:9PWpoxoFCeQunbCVW7C4mLV/D/8dGrWCuxmueWrV5JNjhdiU7qq
- SPow+fWSDMZRGORBSpJnez+wDUjQScNs30KNOsx27FD4Gf6St60+EmAMmkpKUn2EEVhdxl6
- 960/WMjkofWGPwFA0Yk8FKRidF17RhspqlIKaKmMoEte/LpLOvNWAI3Ggd1aghKiqtPXq0l
- sSKJmJF8qv/P2QLr1GIJA==
-UI-OutboundReport: notjunk:1;M01:P0:MIkzqoNgmRI=;vk6xgLQvcpENsD64e3uCbl/oeCp
- VRX96oW5YPGx2HDnVEsP1P1SP6grQHbsLhfcSAdqvc6zVQ6sncvUqUMJME2KMuxmGjoU+oZGM
- sSEVmHmMbHKsWTsm+5FmwsXO2qcZ9rEx/AuxrVTKJWcppCymCwxgEQE52aKf5sX0ucvQRHNwW
- R6rLiJrQPcqZ0sAOIL3DdAnTvzb09W6l3wXdSCJ3+LxjcJSBXbCHJXtt9uSGM+jx66ZBn3U6t
- TQd/7FnGOlTFvLBDSpFSJYISBZrYjpcGp9ZaojUf6jHlgh/7SMVA9NbqfR5KSWmKH/3ggpqxu
- zNq7r0aOiKUnuJ+EVmK4c6lcg7FO3FA+KyscRYaeNCvRjheUW7aJTB553Vc7pdWtyk63Ye5XK
- GEwCpkY+rp/BcyPKcjNkXMrabP06sk/QL6Qn7NjRAOtHr2/zy8xtFDonc3WD2IwOTEO4p608A
- SGnoq1ElVj38ctSoBWyxyd6KGDWE2679yoGXRIyjXNJixh9pyfiJTgNJO4Ma6kvtGrQcSeAtW
- hURSHCz9om2pegxuJmGO0laoesJCyrF1fLthj5PuiUFU8pkilcKYnGCVWEH3ZqDyHItfrZAkR
- difwKfGa7kBcC0xT72A7hGX6CJFS98u/h4xXCp0IuYxHuNk0Mq6Ps5WLgAmsKG5LsLPgSgod+
- 7x1dtADJAERNuSTNdC51k4tXMr220DMFqjJzB5v8vUWq61Vbm7x0OfZddG/KljwisiUdqY67P
- 6VTR0grKQnlURww9U3+mH+ZMioE5zc0Tbx/mrcCKFReh31HSLGFL2NHr/KRdt9RCH8bv/EEiR
- yAW1Xcsfm7A3myW1YAvqgu7Q==
+In-Reply-To: <20240802062317.3333603-1-Sai.Sathujoda@toshiba-tsip.com>
+X-Provags-ID: V03:K1:+RDqhpj530Ep55UwiQ9s/orlczP25Cu1WcsG6v9vkmDFWUWJblO
+ kMn1SgX5jWdvWHi5XC23bW4UYhnFtQ5YsYxc6oA8RM7hM5bbALjEoosUTgv5mOQNyrv3LMr
+ V2ZkVX0N6kzcwyPJS1GbrU/TanMVlCnulKZPbB29cwqw05uFhhhF3OD6QUpusJRSNGuyi6m
+ xzcIgXC66y6aitW1RQ5gg==
+UI-OutboundReport: notjunk:1;M01:P0:/ePLOcQkeKo=;coC5Fm5jCrjtznM9rEMxtwFRAM2
+ HgygQbxV6FO1zNwRfk5YO1ijma/4hyy3fRwq8sqmU+gxxz8ql1HQwXkklMEyNLwxoHULG7LC7
+ 2sKlGdoFJuGBA110FUwqrk6t4zcLvSutiV3LdVVyTjHN5fH2N2cp9dwUEgT+Q6/wl0mIV56d1
+ AtOkU0ElDylrMrftTyKkUbbGGeK2E3ExIc66PpiakHqXVIDWryY4osm33D3TuPSLHsZ9ZKQr7
+ GE7E+UnwmOvXh4Juoh9wv41IQMMdsQfzQa/TOVQKvM+3DtKHC7A3kz3cOv6F7r8vwhLdpbhyM
+ 2JQvUvxJmYEYx6T86rXh0u/CE/CC5ufx5RHIY5Wn+UdorPGpsTncPZRXWbXY15n5y2M/ehWjj
+ c3pNqfRX+7tI5EW/jwLb61BgOFaoh7JfpnBSFV7Sj0uGru3k374P1yVvLi2cIOHJ7nJQSWgoM
+ XLtlKwSPJQDuuZEFw5VB0ZWnqXqwxZyelUsYAhS7z2fIoZevpDyxZwmoGbE7yfY7LWSaiwFLF
+ p+OVcJQZ5tNt203k1Ag4cIBoLAVdZiTi/q4NIX+sIuXNnyNPaus+8jNmRkq1Z63SOtE5oe/BA
+ SbppCkJMiCh8Ru93xhuzlR4TFJXpBTyBf/OqLcmHGEeBAEG61vuvAfvVof0qhVrt7W3c41I9m
+ qtC2HUOUXwZ/O4guIIqjfUQXEUthTy20dmgRscnjUHAqLG30YhnfqqA5d3N0TqTgLybcScbMu
+ Apx3v4l80WU5Nb3OyIovQzCt26T1pzzqFko8Yo9PaEV4M8N5G6Olo1I85to4KZXfhD3PRd5Rs
+ YyUiYP5MChyT15/LGPcyQT7g==
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -108,105 +106,74 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 02 Aug 2024 11:31:33 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16710
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16709
 
-On 01.08.24 09:26, Clara Kowalsky wrote:
+On 02.08.24 08:23, Sai.Sathujoda@toshiba-tsip.com wrote:
+> From: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
 >
+> This commit modifies environment slug for test results hosted in SQUAD.
+> Currently the slug includes device name which keeps varying as that depe=
+nds
+> on assigned device in LAVA Lab. Ex: "qemu-cip-siemens-muc", "qemu-renesa=
+s-01"
+> etc.
 >
-> On 31.07.24 19:01, Jan Kiszka wrote:
->> On 23.07.24 14:59, Clara Kowalsky wrote:
->>> In case of ext*, this detects and fixes file system errors in the
->>> partition device before doing the partition mount.
->>> If the partition turns out to be broken, the factory state is recovere=
-d.
->>>
->>> Signed-off-by: Clara Kowalsky <clara.kowalsky@siemens.com>
->>> ---
->>> =C2=A0 .../initramfs-overlay-hook/files/overlay.hook=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 11 +++++++++--
->>> =C2=A0 .../files/overlay.script.tmpl=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 | 11 ++++++++++-
->>> =C2=A0 .../files/overlay_recovery_action.script=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 14 ++++++++++++++
->>> =C2=A0 .../initramfs-overlay-hook_0.1.bb=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
-=C2=A0 8 +++++++-
->>> =C2=A0 4 files changed, 40 insertions(+), 4 deletions(-)
->>> =C2=A0 create mode 100644
->>> recipes-initramfs/initramfs-overlay-hook/files/overlay_recovery_action=
-.script
->>>
->>> diff --git
->>> a/recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
->>> b/recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
->>> index 8b00ecf..6f634c5 100644
->>> --- a/recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
->>> +++ b/recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
->>> @@ -22,6 +22,13 @@ esac
->>>
->>> =C2=A0 . /usr/share/initramfs-tools/hook-functions
->>>
->>> +hook_error() {
->>> +=C2=A0=C2=A0=C2=A0 echo "(ERROR): $1" >&2
->>> +=C2=A0=C2=A0=C2=A0 exit 1
->>> +}
->>> +
->>> =C2=A0 manual_add_modules overlay
->>> -copy_exec /usr/bin/mountpoint
->>> -copy_exec /usr/bin/awk
->>> +copy_exec /usr/bin/mountpoint || hook_error "/usr/bin/mountpoint not
->>> found"
->>> +copy_exec /usr/bin/awk || hook_error "/usr/bin/awk not found"
->>> +copy_exec /usr/sbin/e2fsck || hook_error "/usr/sbin/e2fsck not found"
->>> +copy_exec /usr/sbin/mke2fs || hook_error "/usr/sbin/mke2fs not found"
->>
->> Is there no "copy_exec_and_complain+fail_if_missing"? This pattern look=
-s
->> like it does not scale very well across all our scripts (including isar
->> upstream).
->>
-> I have not found anything like this that covers both in one command.
+> Environment slug should denote the test suite as well as the target on w=
+hich
+> tests are executed. So it needs target information as part of it instead=
+ of
+> device allocated. This also helps in fetching the results from SQUAD usi=
+ng
+> squad-client while generating test reports.
 >
->>> diff --git
->>> a/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
->>> b/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
->>> index 42eb59c..c6f69b9 100644
->>> --- a/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tm=
-pl
->>> +++ b/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tm=
-pl
->>> @@ -31,12 +31,21 @@
->>> ovl_partition_device=3D"${INITRAMFS_OVERLAY_STORAGE_DEVICE}"
->>> =C2=A0 ovl_storage_path=3D"${INITRAMFS_OVERLAY_STORAGE_PATH}"
->>> =C2=A0 ovl_lower_dirs=3D"${INITRAMFS_OVERLAY_PATHS}"
->>> =C2=A0 ovl_mount_option=3D"${INITRAMFS_OVERLAY_MOUNT_OPTION}"
->>> +ovl_recovery_script=3D"/scripts/${INITRAMFS_OVERLAY_RECOVERY_SCRIPT}"
->>>
->>> =C2=A0 root_mount_storage=3D${rootmnt}${ovl_storage_path}
->>> =C2=A0 storage_mount_point=3D"$(echo "${ovl_storage_path}" | awk -F/ '=
-{print
->>> FS$2}' )"
->>> +partition_fstype=3D$(get_fstype "${ovl_partition_device}")
->>>
->>> =C2=A0 if ! mountpoint -q "${rootmnt}${storage_mount_point}"; then
->>> -=C2=A0=C2=A0=C2=A0 if ! mount -t $(get_fstype ${ovl_partition_device}=
-) \
->>> +=C2=A0=C2=A0=C2=A0 case $partition_fstype in
->>> +=C2=A0=C2=A0=C2=A0 ext*)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if ! e2fsck -p -f "$ovl_pa=
-rtition_device" && [ -f
->>> "$ovl_recovery_script" ] && [ -x "$ovl_recovery_script" ]; then
->>
->> Why testing both -f and -x?
+> Signed-off-by: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
+> ---
+>  scripts/submit_lava.sh | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
 >
-> I was thinking, what if someone sets INITRAMFS_OVERLAY_RECOVERY_SCRIPT
-> to an empty string? Then ovl_recovery_script would be a directory and
-> the next line would give a permission denied.
+> diff --git a/scripts/submit_lava.sh b/scripts/submit_lava.sh
+> index b9015f3..1f55c3b 100755
+> --- a/scripts/submit_lava.sh
+> +++ b/scripts/submit_lava.sh
+> @@ -104,19 +104,18 @@ submit_squad_watch_job(){
+>  	fi
 >
+>  	if [ "$TEST" =3D "swupdate" ] || [ "$TEST" =3D "kernel-panic" ] || [ "=
+$TEST" =3D "initramfs-crash" ]; then
+> -		squad_project=3D"swupdate-testing"
+> +		SQUAD_PROJECT=3D"swupdate-testing"
+>  	elif [ "$TEST" =3D "secure-boot" ]; then
+> -		squad_project=3D"secure-boot-testing"
+> +		SQUAD_PROJECT=3D"secure-boot-testing"
+>  	elif [ "$TEST" =3D "IEC" ]; then
+> -		squad_project=3D"iec-layer-testing"
+> +		SQUAD_PROJECT=3D"iec-layer-testing"
+>  	else
+>  		echo "Unable to host results in available CIP Core SQUAD projects"
+>  		return 1
+>  	fi
+>
+> -	local DEVICE=3D$2
+> -	local ENV=3D"${DEVICE}_${squad_project}"
+> -	local squad_url=3D"$SQUAD_WATCH_JOBS_URL/${SQUAD_GROUP}/${squad_projec=
+t}/${COMMIT_REF}/${ENV}"
+> +	local ENV=3D"${SQUAD_PROJECT}_${TARGET}"
+> +	local squad_url=3D"$SQUAD_WATCH_JOBS_URL/${SQUAD_GROUP}/${SQUAD_PROJEC=
+T}/${COMMIT_REF}/${ENV}"
+>  	ret=3D$(curl -s \
+>  		--header "Authorization: token $CIP_SQUAD_LAB_TOKEN" \
+>  		--form backend=3D"$SQUAD_LAVA_BACKEND" \
+> @@ -165,7 +164,7 @@ submit_job() {
+>  				| cut -d ":" -f 2 \
+>  				| awk '{$1=3D$1};1')
+>
+> -			submit_squad_watch_job "${ret}" "${DEVICE}"
+> +			submit_squad_watch_job "${ret}"
+>
+>  			lavacli $LAVACLI_ARGS jobs logs "${ret}"
+>  			lavacli $LAVACLI_ARGS results "${ret}"
 
-OK - but in that case, "file://${INITRAMFS_OVERLAY_RECOVERY_SCRIPT}"
-will make things fail much earlier.
+Thanks, applied.
 
 Jan
 
