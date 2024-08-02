@@ -1,113 +1,97 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <sai.sathujoda@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03BFEC3DA4A
-	for <webhook@archiver.kernel.org>; Thu,  1 Aug 2024 19:48:58 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
- by mx.groups.io with SMTP id smtpd.web10.77654.1722541727408364454
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D6E8C3DA7F
+	for <webhook@archiver.kernel.org>; Fri,  2 Aug 2024 06:23:21 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
+ by mx.groups.io with SMTP id smtpd.web10.87277.1722579798519664014
  for <cip-dev@lists.cip-project.org>;
- Thu, 01 Aug 2024 12:48:47 -0700
+ Thu, 01 Aug 2024 23:23:19 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id A789A1C008E; Thu,  1 Aug 2024 21:48:43 +0200 (CEST)
-Date: Thu, 1 Aug 2024 21:48:43 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Paul Barker <paul.barker.ct@bp.renesas.com>
-Cc: Pavel Machek <pavel@denx.de>, cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 6.1.y cip 0/8] Backport ravb driver performance
- improvements
-Message-ID: <Zqvmmy93WNzvezGB@duo.ucw.cz>
-References: <20240729150049.1924352-1-paul.barker.ct@bp.renesas.com>
- <ZqntqGYravYHauM1@duo.ucw.cz>
- <ac9dbdc6-ef2f-453a-bc0a-94db12e95414@bp.renesas.com>
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.134, mailfrom: sai.sathujoda@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 4726NGf5108261; Fri, 2 Aug 2024 15:23:17 +0900
+X-Iguazu-Qid: 2yAb5mQqVWSiuhfJQ7
+X-Iguazu-QSIG: v=2; s=0; t=1722579796; q=2yAb5mQqVWSiuhfJQ7; m=3gbIuPeukzw51UdnHeZHSoC1OyENvpxl+kZpqJn9h1c=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1800) id 4726NFgX1709862
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 2 Aug 2024 15:23:16 +0900
+From: Sai.Sathujoda@toshiba-tsip.com
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Cc: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>,
+        dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
+Subject: [isar-cip-core] submit_lava.sh: Modify environment slug in SQUAD
+Date: Fri,  2 Aug 2024 11:53:17 +0530
+X-TSB-HOP2: ON
+Message-Id: <20240802062317.3333603-1-Sai.Sathujoda@toshiba-tsip.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="FS8l9KcwPPm+kn0G"
-Content-Disposition: inline
-In-Reply-To: <ac9dbdc6-ef2f-453a-bc0a-94db12e95414@bp.renesas.com>
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 02 Aug 2024 06:23:13.0789 (UTC) FILETIME=[744E02D0:01DAE4A4]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 01 Aug 2024 19:48:58 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16707
+ <cip-dev@lists.cip-project.org>; Fri, 02 Aug 2024 06:23:21 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16708
+
+From: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
+
+This commit modifies environment slug for test results hosted in SQUAD.
+Currently the slug includes device name which keeps varying as that depends
+on assigned device in LAVA Lab. Ex: "qemu-cip-siemens-muc", "qemu-renesas-01"
+etc.
+
+Environment slug should denote the test suite as well as the target on which
+tests are executed. So it needs target information as part of it instead of
+device allocated. This also helps in fetching the results from SQUAD using
+squad-client while generating test reports.
+
+Signed-off-by: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
+---
+ scripts/submit_lava.sh | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/scripts/submit_lava.sh b/scripts/submit_lava.sh
+index b9015f3..1f55c3b 100755
+--- a/scripts/submit_lava.sh
++++ b/scripts/submit_lava.sh
+@@ -104,19 +104,18 @@ submit_squad_watch_job(){
+ 	fi
+ 
+ 	if [ "$TEST" = "swupdate" ] || [ "$TEST" = "kernel-panic" ] || [ "$TEST" = "initramfs-crash" ]; then
+-		squad_project="swupdate-testing"
++		SQUAD_PROJECT="swupdate-testing"
+ 	elif [ "$TEST" = "secure-boot" ]; then
+-		squad_project="secure-boot-testing"
++		SQUAD_PROJECT="secure-boot-testing"
+ 	elif [ "$TEST" = "IEC" ]; then
+-		squad_project="iec-layer-testing"
++		SQUAD_PROJECT="iec-layer-testing"
+ 	else
+ 		echo "Unable to host results in available CIP Core SQUAD projects"
+ 		return 1
+ 	fi
+ 
+-	local DEVICE=$2
+-	local ENV="${DEVICE}_${squad_project}"
+-	local squad_url="$SQUAD_WATCH_JOBS_URL/${SQUAD_GROUP}/${squad_project}/${COMMIT_REF}/${ENV}"
++	local ENV="${SQUAD_PROJECT}_${TARGET}"
++	local squad_url="$SQUAD_WATCH_JOBS_URL/${SQUAD_GROUP}/${SQUAD_PROJECT}/${COMMIT_REF}/${ENV}"
+ 	ret=$(curl -s \
+ 		--header "Authorization: token $CIP_SQUAD_LAB_TOKEN" \
+ 		--form backend="$SQUAD_LAVA_BACKEND" \
+@@ -165,7 +164,7 @@ submit_job() {
+ 				| cut -d ":" -f 2 \
+ 				| awk '{$1=$1};1')
+ 
+-			submit_squad_watch_job "${ret}" "${DEVICE}"
++			submit_squad_watch_job "${ret}"
+ 
+ 			lavacli $LAVACLI_ARGS jobs logs "${ret}"
+ 			lavacli $LAVACLI_ARGS results "${ret}"
+-- 
+2.30.2
 
 
---FS8l9KcwPPm+kn0G
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> >> This series includes the performance improvements present in Linux
-> >> v6.11-rc1 along with dependencies.
-> >=20
-> > That's a bit aggressive timing, is it? -rc1 does not really get much
-> > testing.
->=20
-> Hi Pavel,
->=20
-> Please feel free to delay merging these patches for a couple of rc
-> cycles if you need to.
-
-I'm getting:
-
-drivers/net/ethernet/renesas/ravb_main.c: In function 'ravb_rx_gbeth':
-2534
-drivers/net/ethernet/renesas/ravb_main.c:869:33: error: implicit declaratio=
-n of function 'skb_mark_for_recycle' [-Werror=3Dimplicit-function-declarati=
-on]
-2535
-  869 |                                 skb_mark_for_recycle(skb);
-2536
-      |                                 ^~~~~~~~~~~~~~~~~~~~
-2537
-
-https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/7484664109
-https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/1397249930
-
-When attempting to test this. Fix is probably as simple as:
-
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/etherne=
-t/renesas/ravb_main.c
-index 2a48ffc08464f..25a15cda707a0 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -31,6 +31,7 @@
- #include <linux/sys_soc.h>
- #include <linux/reset.h>
- #include <linux/math64.h>
-+#include <linux/skbuff.h>
- #include <net/ip.h>
- #include <net/page_pool.h>
-
-But... what about this:
-
-In about two weeks, you submit new version with blank line replaced by
-Reviewed-by: Pavel Machek <pavel@denx.de>
-
-?
-
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---FS8l9KcwPPm+kn0G
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZqvmmwAKCRAw5/Bqldv6
-8iwzAJ9YAdGjy2BxLyf7aRNYxuIh1XmWzQCgxMdI++G3PJxLxjuXorph9HyAgOs=
-=IDo3
------END PGP SIGNATURE-----
-
---FS8l9KcwPPm+kn0G--
 
