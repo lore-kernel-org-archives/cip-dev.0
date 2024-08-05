@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5198CC3DA7F
-	for <webhook@archiver.kernel.org>; Mon,  5 Aug 2024 16:43:58 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.12741.1722876226641507271
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7920FC3DA4A
+	for <webhook@archiver.kernel.org>; Mon,  5 Aug 2024 16:44:08 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web11.12748.1722876240195022094
  for <cip-dev@lists.cip-project.org>;
- Mon, 05 Aug 2024 09:43:49 -0700
+ Mon, 05 Aug 2024 09:44:06 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.09,265,1716217200"; 
-   d="scan'208";a="214739873"
+   d="scan'208";a="218711307"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Aug 2024 01:43:49 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 06 Aug 2024 01:44:06 +0900
 Received: from localhost.localdomain (unknown [10.226.92.197])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id B108D4020F32;
-	Tue,  6 Aug 2024 01:43:47 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 85F7640213E1;
+	Tue,  6 Aug 2024 01:44:04 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 02/30] media: i2c: ov5645: Use runtime PM
-Date: Mon,  5 Aug 2024 17:42:55 +0100
-Message-ID: <20240805164342.211857-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 10/30] clk: renesas: r9a07g043: Add clock and reset entries for CRU
+Date: Mon,  5 Aug 2024 17:43:03 +0100
+Message-ID: <20240805164342.211857-11-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240805164342.211857-1-biju.das.jz@bp.renesas.com>
 References: <20240805164342.211857-1-biju.das.jz@bp.renesas.com>
@@ -34,297 +34,104 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 05 Aug 2024 16:43:58 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16724
+ <cip-dev@lists.cip-project.org>; Mon, 05 Aug 2024 16:44:08 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16732
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+commit 78ed252953e5bdd0b3b0dd689502d5213cb6348b upstream.
 
-commit b504503954c7c3741112d4260fbfc9214c66de9b upstream.
+Add CRU clock and reset entries to CPG driver.
 
-Switch to using runtime PM for power management.
+CRU_SYSCLK and CRU_VCLK clocks need to be turned ON/OFF in particular
+sequence for the CRU block hence add these clocks to
+r9a07g043_no_pm_mod_clks[] array and pass it as part of CPG data for
+RZ/G2UL SoCs.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20240123114415.290918-1-biju.das.jz@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/media/i2c/ov5645.c | 133 +++++++++++++++++++------------------
- 1 file changed, 68 insertions(+), 65 deletions(-)
+ drivers/clk/renesas/r9a07g043-cpg.c | 31 +++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
-index 47451238ca05..2e6135d0a31a 100644
---- a/drivers/media/i2c/ov5645.c
-+++ b/drivers/media/i2c/ov5645.c
-@@ -27,6 +27,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_graph.h>
-+#include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
- #include <linux/slab.h>
- #include <linux/types.h>
-@@ -108,7 +109,6 @@ struct ov5645 {
- 	u8 timing_tc_reg21;
- 
- 	struct mutex power_lock; /* lock to protect power state */
--	int power_count;
- 
- 	struct gpio_desc *enable_gpio;
- 	struct gpio_desc *rst_gpio;
-@@ -635,8 +635,24 @@ static int ov5645_set_register_array(struct ov5645 *ov5645,
- 	return 0;
- }
- 
--static int ov5645_set_power_on(struct ov5645 *ov5645)
-+static int ov5645_set_power_off(struct device *dev)
- {
-+	struct v4l2_subdev *sd = dev_get_drvdata(dev);
-+	struct ov5645 *ov5645 = to_ov5645(sd);
-+
-+	ov5645_write_reg(ov5645, OV5645_IO_MIPI_CTRL00, 0x58);
-+	gpiod_set_value_cansleep(ov5645->rst_gpio, 1);
-+	gpiod_set_value_cansleep(ov5645->enable_gpio, 0);
-+	clk_disable_unprepare(ov5645->xclk);
-+	regulator_bulk_disable(OV5645_NUM_SUPPLIES, ov5645->supplies);
-+
-+	return 0;
-+}
-+
-+static int ov5645_set_power_on(struct device *dev)
-+{
-+	struct v4l2_subdev *sd = dev_get_drvdata(dev);
-+	struct ov5645 *ov5645 = to_ov5645(sd);
- 	int ret;
- 
- 	ret = regulator_bulk_enable(OV5645_NUM_SUPPLIES, ov5645->supplies);
-@@ -658,57 +674,19 @@ static int ov5645_set_power_on(struct ov5645 *ov5645)
- 
- 	msleep(20);
- 
--	return 0;
--}
--
--static void ov5645_set_power_off(struct ov5645 *ov5645)
--{
--	gpiod_set_value_cansleep(ov5645->rst_gpio, 1);
--	gpiod_set_value_cansleep(ov5645->enable_gpio, 0);
--	clk_disable_unprepare(ov5645->xclk);
--	regulator_bulk_disable(OV5645_NUM_SUPPLIES, ov5645->supplies);
--}
--
--static int ov5645_s_power(struct v4l2_subdev *sd, int on)
--{
--	struct ov5645 *ov5645 = to_ov5645(sd);
--	int ret = 0;
--
--	mutex_lock(&ov5645->power_lock);
--
--	/* If the power count is modified from 0 to != 0 or from != 0 to 0,
--	 * update the power state.
--	 */
--	if (ov5645->power_count == !on) {
--		if (on) {
--			ret = ov5645_set_power_on(ov5645);
--			if (ret < 0)
--				goto exit;
--
--			ret = ov5645_set_register_array(ov5645,
--					ov5645_global_init_setting,
-+	ret = ov5645_set_register_array(ov5645, ov5645_global_init_setting,
- 					ARRAY_SIZE(ov5645_global_init_setting));
--			if (ret < 0) {
--				dev_err(ov5645->dev,
--					"could not set init registers\n");
--				ov5645_set_power_off(ov5645);
--				goto exit;
--			}
--
--			usleep_range(500, 1000);
--		} else {
--			ov5645_write_reg(ov5645, OV5645_IO_MIPI_CTRL00, 0x58);
--			ov5645_set_power_off(ov5645);
--		}
-+	if (ret < 0) {
-+		dev_err(ov5645->dev, "could not set init registers\n");
-+		goto exit;
- 	}
- 
--	/* Update the power count. */
--	ov5645->power_count += on ? 1 : -1;
--	WARN_ON(ov5645->power_count < 0);
-+	usleep_range(500, 1000);
- 
--exit:
--	mutex_unlock(&ov5645->power_lock);
-+	return 0;
- 
-+exit:
-+	ov5645_set_power_off(dev);
- 	return ret;
- }
- 
-@@ -795,7 +773,7 @@ static int ov5645_s_ctrl(struct v4l2_ctrl *ctrl)
- 	int ret;
- 
- 	mutex_lock(&ov5645->power_lock);
--	if (!ov5645->power_count) {
-+	if (!pm_runtime_get_if_in_use(ov5645->dev)) {
- 		mutex_unlock(&ov5645->power_lock);
- 		return 0;
- 	}
-@@ -827,6 +805,8 @@ static int ov5645_s_ctrl(struct v4l2_ctrl *ctrl)
- 		break;
- 	}
- 
-+	pm_runtime_mark_last_busy(ov5645->dev);
-+	pm_runtime_put_autosuspend(ov5645->dev);
- 	mutex_unlock(&ov5645->power_lock);
- 
- 	return ret;
-@@ -991,6 +971,10 @@ static int ov5645_s_stream(struct v4l2_subdev *subdev, int enable)
- 	int ret;
- 
- 	if (enable) {
-+		ret = pm_runtime_resume_and_get(ov5645->dev);
-+		if (ret < 0)
-+			return ret;
-+
- 		ret = ov5645_set_register_array(ov5645,
- 					ov5645->current_mode->data,
- 					ov5645->current_mode->data_size);
-@@ -998,22 +982,22 @@ static int ov5645_s_stream(struct v4l2_subdev *subdev, int enable)
- 			dev_err(ov5645->dev, "could not set mode %dx%d\n",
- 				ov5645->current_mode->width,
- 				ov5645->current_mode->height);
--			return ret;
-+			goto err_rpm_put;
- 		}
- 		ret = v4l2_ctrl_handler_setup(&ov5645->ctrls);
- 		if (ret < 0) {
- 			dev_err(ov5645->dev, "could not sync v4l2 controls\n");
--			return ret;
-+			goto err_rpm_put;
- 		}
- 
- 		ret = ov5645_write_reg(ov5645, OV5645_IO_MIPI_CTRL00, 0x45);
- 		if (ret < 0)
--			return ret;
-+			goto err_rpm_put;
- 
- 		ret = ov5645_write_reg(ov5645, OV5645_SYSTEM_CTRL0,
- 				       OV5645_SYSTEM_CTRL0_START);
- 		if (ret < 0)
--			return ret;
-+			goto err_rpm_put;
- 	} else {
- 		ret = ov5645_write_reg(ov5645, OV5645_IO_MIPI_CTRL00, 0x40);
- 		if (ret < 0)
-@@ -1023,14 +1007,17 @@ static int ov5645_s_stream(struct v4l2_subdev *subdev, int enable)
- 				       OV5645_SYSTEM_CTRL0_STOP);
- 		if (ret < 0)
- 			return ret;
-+
-+		pm_runtime_mark_last_busy(ov5645->dev);
-+		pm_runtime_put_autosuspend(ov5645->dev);
- 	}
- 
- 	return 0;
--}
- 
--static const struct v4l2_subdev_core_ops ov5645_core_ops = {
--	.s_power = ov5645_s_power,
--};
-+err_rpm_put:
-+	pm_runtime_put_sync(ov5645->dev);
-+	return ret;
-+}
- 
- static const struct v4l2_subdev_video_ops ov5645_video_ops = {
- 	.s_stream = ov5645_s_stream,
-@@ -1046,7 +1033,6 @@ static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
+diff --git a/drivers/clk/renesas/r9a07g043-cpg.c b/drivers/clk/renesas/r9a07g043-cpg.c
+index 9ad7ceb3ab1b..cf0827d84af6 100644
+--- a/drivers/clk/renesas/r9a07g043-cpg.c
++++ b/drivers/clk/renesas/r9a07g043-cpg.c
+@@ -48,6 +48,7 @@ enum clk_ids {
+ 	CLK_SEL_PLL3_3,
+ 	CLK_DIV_PLL3_C,
+ #ifdef CONFIG_ARM64
++	CLK_M2_DIV2,
+ 	CLK_PLL5,
+ 	CLK_PLL5_500,
+ 	CLK_PLL5_250,
+@@ -142,6 +143,10 @@ static const struct cpg_core_clk r9a07g043_core_clks[] __initconst = {
+ 		   mtable_sdhi, 0, rzg2l_cpg_sd_clk_mux_notifier),
+ 	DEF_FIXED("SD0_DIV4", CLK_SD0_DIV4, R9A07G043_CLK_SD0, 1, 4),
+ 	DEF_FIXED("SD1_DIV4", CLK_SD1_DIV4, R9A07G043_CLK_SD1, 1, 4),
++#ifdef CONFIG_ARM64
++	DEF_FIXED("M2", R9A07G043_CLK_M2, CLK_PLL3_533, 1, 2),
++	DEF_FIXED("M2_DIV2", CLK_M2_DIV2, R9A07G043_CLK_M2, 1, 2),
++#endif
  };
  
- static const struct v4l2_subdev_ops ov5645_subdev_ops = {
--	.core = &ov5645_core_ops,
- 	.video = &ov5645_video_ops,
- 	.pad = &ov5645_subdev_pad_ops,
+ static struct rzg2l_mod_clk r9a07g043_mod_clks[] = {
+@@ -195,6 +200,16 @@ static struct rzg2l_mod_clk r9a07g043_mod_clks[] = {
+ 				0x554, 6),
+ 	DEF_MOD("sdhi1_aclk",	R9A07G043_SDHI1_ACLK, R9A07G043_CLK_P1,
+ 				0x554, 7),
++#ifdef CONFIG_ARM64
++	DEF_MOD("cru_sysclk",   R9A07G043_CRU_SYSCLK, CLK_M2_DIV2,
++				0x564, 0),
++	DEF_MOD("cru_vclk",     R9A07G043_CRU_VCLK, R9A07G043_CLK_M2,
++				0x564, 1),
++	DEF_MOD("cru_pclk",     R9A07G043_CRU_PCLK, R9A07G043_CLK_ZT,
++				0x564, 2),
++	DEF_MOD("cru_aclk",     R9A07G043_CRU_ACLK, R9A07G043_CLK_M0,
++				0x564, 3),
++#endif
+ 	DEF_MOD("ssi0_pclk",	R9A07G043_SSI0_PCLK2, R9A07G043_CLK_P0,
+ 				0x570, 0),
+ 	DEF_MOD("ssi0_sfr",	R9A07G043_SSI0_PCLK_SFR, R9A07G043_CLK_P0,
+@@ -290,6 +305,11 @@ static struct rzg2l_reset r9a07g043_resets[] = {
+ 	DEF_RST(R9A07G043_SPI_RST, 0x850, 0),
+ 	DEF_RST(R9A07G043_SDHI0_IXRST, 0x854, 0),
+ 	DEF_RST(R9A07G043_SDHI1_IXRST, 0x854, 1),
++#ifdef CONFIG_ARM64
++	DEF_RST(R9A07G043_CRU_CMN_RSTB, 0x864, 0),
++	DEF_RST(R9A07G043_CRU_PRESETN, 0x864, 1),
++	DEF_RST(R9A07G043_CRU_ARESETN, 0x864, 2),
++#endif
+ 	DEF_RST(R9A07G043_SSI0_RST_M2_REG, 0x870, 0),
+ 	DEF_RST(R9A07G043_SSI1_RST_M2_REG, 0x870, 1),
+ 	DEF_RST(R9A07G043_SSI2_RST_M2_REG, 0x870, 2),
+@@ -340,6 +360,13 @@ static const unsigned int r9a07g043_crit_mod_clks[] __initconst = {
+ 	MOD_CLK_BASE + R9A07G043_DMAC_ACLK,
  };
-@@ -1188,11 +1174,9 @@ static int ov5645_probe(struct i2c_client *client)
- 		goto free_ctrl;
- 	}
  
--	ret = ov5645_s_power(&ov5645->sd, true);
--	if (ret < 0) {
--		dev_err(dev, "could not power up OV5645\n");
-+	ret = ov5645_set_power_on(dev);
-+	if (ret)
- 		goto free_entity;
--	}
- 
- 	ret = ov5645_read_reg(ov5645, OV5645_CHIP_ID_HIGH, &chip_id_high);
- 	if (ret < 0 || chip_id_high != OV5645_CHIP_ID_HIGH_BYTE) {
-@@ -1233,20 +1217,30 @@ static int ov5645_probe(struct i2c_client *client)
- 		goto power_down;
- 	}
- 
--	ov5645_s_power(&ov5645->sd, false);
-+	pm_runtime_set_active(dev);
-+	pm_runtime_get_noresume(dev);
-+	pm_runtime_enable(dev);
- 
- 	ret = v4l2_async_register_subdev(&ov5645->sd);
- 	if (ret < 0) {
- 		dev_err(dev, "could not register v4l2 device\n");
--		goto free_entity;
-+		goto err_pm_runtime;
- 	}
- 
-+	pm_runtime_set_autosuspend_delay(dev, 1000);
-+	pm_runtime_use_autosuspend(dev);
-+	pm_runtime_mark_last_busy(dev);
-+	pm_runtime_put_autosuspend(dev);
-+
- 	ov5645_entity_init_cfg(&ov5645->sd, NULL);
- 
- 	return 0;
- 
-+err_pm_runtime:
-+	pm_runtime_disable(dev);
-+	pm_runtime_put_noidle(dev);
- power_down:
--	ov5645_s_power(&ov5645->sd, false);
-+	ov5645_set_power_off(dev);
- free_entity:
- 	media_entity_cleanup(&ov5645->sd.entity);
- free_ctrl:
-@@ -1264,6 +1258,10 @@ static void ov5645_remove(struct i2c_client *client)
- 	v4l2_async_unregister_subdev(&ov5645->sd);
- 	media_entity_cleanup(&ov5645->sd.entity);
- 	v4l2_ctrl_handler_free(&ov5645->ctrls);
-+	pm_runtime_disable(ov5645->dev);
-+	if (!pm_runtime_status_suspended(ov5645->dev))
-+		ov5645_set_power_off(ov5645->dev);
-+	pm_runtime_set_suspended(ov5645->dev);
- 	mutex_destroy(&ov5645->power_lock);
- }
- 
-@@ -1279,10 +1277,15 @@ static const struct of_device_id ov5645_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, ov5645_of_match);
- 
-+static const struct dev_pm_ops ov5645_pm_ops = {
-+	SET_RUNTIME_PM_OPS(ov5645_set_power_off, ov5645_set_power_on, NULL)
++#ifdef CONFIG_ARM64
++static const unsigned int r9a07g043_no_pm_mod_clks[] = {
++	MOD_CLK_BASE + R9A07G043_CRU_SYSCLK,
++	MOD_CLK_BASE + R9A07G043_CRU_VCLK,
 +};
++#endif
 +
- static struct i2c_driver ov5645_i2c_driver = {
- 	.driver = {
- 		.of_match_table = ov5645_of_match,
- 		.name  = "ov5645",
-+		.pm = &ov5645_pm_ops,
- 	},
- 	.probe_new = ov5645_probe,
- 	.remove = ov5645_remove,
+ const struct rzg2l_cpg_info r9a07g043_cpg_info = {
+ 	/* Core Clocks */
+ 	.core_clks = r9a07g043_core_clks,
+@@ -356,6 +383,10 @@ const struct rzg2l_cpg_info r9a07g043_cpg_info = {
+ 	.num_mod_clks = ARRAY_SIZE(r9a07g043_mod_clks),
+ #ifdef CONFIG_ARM64
+ 	.num_hw_mod_clks = R9A07G043_TSU_PCLK + 1,
++
++	/* No PM Module Clocks */
++	.no_pm_mod_clks = r9a07g043_no_pm_mod_clks,
++	.num_no_pm_mod_clks = ARRAY_SIZE(r9a07g043_no_pm_mod_clks),
+ #endif
+ #ifdef CONFIG_RISCV
+ 	.num_hw_mod_clks = R9A07G043_IAX45_PCLK + 1,
 -- 
 2.43.0
 
