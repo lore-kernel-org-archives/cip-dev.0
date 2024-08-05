@@ -1,161 +1,85 @@
-Return-Path: <clara.kowalsky@siemens.com>
+Return-Path: <ncaidin@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16973C3DA7F
-	for <webhook@archiver.kernel.org>; Mon,  5 Aug 2024 09:19:16 +0000 (UTC)
-Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
- by mx.groups.io with SMTP id smtpd.web10.4009.1722849554814311340
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F85C52D6D
+	for <webhook@archiver.kernel.org>; Mon,  5 Aug 2024 11:37:56 +0000 (UTC)
+Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
+ by mx.groups.io with SMTP id smtpd.web10.3992.1722849465879241674
  for <cip-dev@lists.cip-project.org>;
- Mon, 05 Aug 2024 02:19:15 -0700
+ Mon, 05 Aug 2024 02:17:46 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=clara.kowalsky@siemens.com header.s=fm1 header.b=iTUdxcFu;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228, mailfrom: fm-1047747-20240805091912918e4f22820b8db50a-6k79dd@rts-flowmailer.siemens.com)
-Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 20240805091912918e4f22820b8db50a
+ dkim=pass header.i=felix.moessbauer@siemens.com header.s=fm1 header.b=CmZn/1lo;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-1321639-202408050917427ad3e329f0f9229c88-hmamui@rts-flowmailer.siemens.com)
+Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 202408050917427ad3e329f0f9229c88
         for <cip-dev@lists.cip-project.org>;
-        Mon, 05 Aug 2024 11:19:12 +0200
+        Mon, 05 Aug 2024 11:17:43 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=clara.kowalsky@siemens.com;
+ d=siemens.com; i=felix.moessbauer@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=EQPePYyTDQ5jDSK/KlFAZJAqnwxWHVcBjJC025rXOKs=;
- b=iTUdxcFuGH5bUiqcWysKwi/yTHnUoj9X9pAZqrwnqUE+lZ7vR38R6qZvB2wnYMgOmGZK5e
- kAtV5Jx5z6RvEEeg3mtM6LOjqNaf39g3/PVYGt05PDcazESggQ+5SHMn4x6/DARHMwVATNf5
- MngKbrxxDcAWKSioO8Gt9LE+SABi4o/hm2hGicr4PveEVijIDoi/eci/4rLl0Cw92XgqchVV
- 8l5tY3hyyDYK1yxCV+J5IQ5j9oDXgSGEo2EwdiKLZ8BLO3hh/OFRM7vPP0AgaPA8kcyxz4gu
- iOV57Ztvar3NsfBm+KBV10UYgjgYXwHyf0ffThbNZu14+CQSFs0MqGDQ==;
-From: Clara Kowalsky <clara.kowalsky@siemens.com>
-To: jan.kiszka@siemens.com,
-	cip-dev@lists.cip-project.org
-Cc: quirin.gylstorff@siemens.com,
-	Clara Kowalsky <clara.kowalsky@siemens.com>
-Subject: [cip-dev] [isar-cip-core][PATCH v6] initramfs-overlay-hook: Check file system of INITRAMFS_OVERLAY_STORAGE_DEVICE
-Date: Mon,  5 Aug 2024 11:19:05 +0200
-Message-Id: <20240805091905.1818691-1-clara.kowalsky@siemens.com>
+ bh=9qDzGPZK0KRNuwsuLLWsW7dMYyIlCrC1pgbePkPRT/A=;
+ b=CmZn/1lowmcB5AOE0hyntWUfkAb59Sv59KVjsLxhq5x8eoBJCyq8b1l1fq6fwJEH6zr7CC
+ BIOju0tSaOFTOICtEK33SnQODmrU3RuXBtP/WbdQsr+jS0oOasP6YkPiNPwsz11B7cXnpSsm
+ PeB4f8BI4WVuLkkP0dug/PNDjTr2SnLJ+FJT/UhaNOSrowz4A5Fmna8z2UdXcd3kc/DJOztx
+ oGhrUgvoSvgQReaFta4ya06c/ZM/SdFwY9U+3ND4mHK9ZGpkI7vv57Bx5g2Ea8M1mXtJdvnj
+ j31PKuFlWkvG+0gBiVVJs1WPyWDkCIq9iYn86uCFA6y5WuaZJMgxNukw==;
+From: Felix Moessbauer <felix.moessbauer@siemens.com>
+To: cip-dev@lists.cip-project.org
+Cc: jan.kiszka@siemens.com,
+	quirin.gylstorff@siemens.com,
+	Felix Moessbauer <felix.moessbauer@siemens.com>
+Subject: [isar-cip-core][PATCH 1/1] fix(PREEMPT_RT): disable CONFIG_RT_GROUP_SCHED
+Date: Mon,  5 Aug 2024 11:17:22 +0200
+Message-Id: <20240805091722.6871-1-felix.moessbauer@siemens.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1047747:519-21489:flowmailer
+Feedback-ID: 519:519-1321639:519-21489:flowmailer
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 05 Aug 2024 09:19:16 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16714
+ <cip-dev@lists.cip-project.org>; Mon, 05 Aug 2024 11:37:56 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16715
 
-In case of ext*, this detects and fixes file system errors in the
-partition device before doing the partition mount.
-If the partition turns out to be broken, the factory state is recovered.
+This feature is simply broken on RT kernels that use cgroup2, as the
+cpu controller features rt_period_us and rt_runtime_us are not
+exposed, which are needed to configure things in a way that allows to
+run tasks under RT/DL scheduling policies. It further seems to be
+incompatible with the nohz_full option.
 
-Signed-off-by: Clara Kowalsky <clara.kowalsky@siemens.com>
+This patch just disables the feature, similar to upstream Debian.
+
+Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
 ---
- .../initramfs-overlay-hook/files/overlay.hook      | 11 +++++++++--
- .../files/overlay.script.tmpl                      | 11 ++++++++++-
- .../files/overlay_recovery_action.script           | 14 ++++++++++++++
- .../initramfs-overlay-hook_0.1.bb                  |  8 +++++++-
- 4 files changed, 40 insertions(+), 4 deletions(-)
- create mode 100644 recipes-initramfs/initramfs-overlay-hook/files/overlay_recovery_action.script
+I'm wondering a bit how that was not discovered earlier in our RT tests.
+Maybe Quirin can have a look if the cyclictest also shows errors that
+the scheduling policy cannot be set. But maybe it simply did not show up
+there, as the setup was to simplistic and did not enable the cgroup2 cpu
+controller.
 
-diff --git a/recipes-initramfs/initramfs-overlay-hook/files/overlay.hook b/recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
-index 8b00ecf..6f634c5 100644
---- a/recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
-+++ b/recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
-@@ -22,6 +22,13 @@ esac
+Note: This was discovered while tracing down kernel bugs around
+timer slack on RT/DL tasks.
+
+Best regards,
+Felix Moessbauer
+Siemens AG
+
+ recipes-kernel/linux/files/preempt-rt.cfg | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/recipes-kernel/linux/files/preempt-rt.cfg b/recipes-kernel/linux/files/preempt-rt.cfg
+index 4afe1bf..ea37556 100644
+--- a/recipes-kernel/linux/files/preempt-rt.cfg
++++ b/recipes-kernel/linux/files/preempt-rt.cfg
+@@ -1,6 +1,7 @@
+ # >= 5.10
+ CONFIG_EXPERT=y
+ CONFIG_PREEMPT_RT=y
++CONFIG_RT_GROUP_SCHED=n
+ # <= 4.19
+ CONFIG_PREEMPT_RT_FULL=y
  
- . /usr/share/initramfs-tools/hook-functions
- 
-+hook_error() {
-+    echo "(ERROR): $1" >&2
-+    exit 1
-+}
-+
- manual_add_modules overlay
--copy_exec /usr/bin/mountpoint
--copy_exec /usr/bin/awk
-+copy_exec /usr/bin/mountpoint || hook_error "/usr/bin/mountpoint not found"
-+copy_exec /usr/bin/awk || hook_error "/usr/bin/awk not found"
-+copy_exec /usr/sbin/e2fsck || hook_error "/usr/sbin/e2fsck not found"
-+copy_exec /usr/sbin/mke2fs || hook_error "/usr/sbin/mke2fs not found"
-diff --git a/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl b/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
-index 42eb59c..c655a4f 100644
---- a/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
-+++ b/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
-@@ -31,12 +31,21 @@ ovl_partition_device="${INITRAMFS_OVERLAY_STORAGE_DEVICE}"
- ovl_storage_path="${INITRAMFS_OVERLAY_STORAGE_PATH}"
- ovl_lower_dirs="${INITRAMFS_OVERLAY_PATHS}"
- ovl_mount_option="${INITRAMFS_OVERLAY_MOUNT_OPTION}"
-+ovl_recovery_script="/scripts/${INITRAMFS_OVERLAY_RECOVERY_SCRIPT}"
- 
- root_mount_storage=${rootmnt}${ovl_storage_path}
- storage_mount_point="$(echo "${ovl_storage_path}" | awk -F/ '{print FS$2}' )"
-+partition_fstype=$(get_fstype "${ovl_partition_device}")
- 
- if ! mountpoint -q "${rootmnt}${storage_mount_point}"; then
--	if ! mount -t $(get_fstype ${ovl_partition_device}) \
-+	case $partition_fstype in
-+	ext*)
-+		if ! e2fsck -p -f "$ovl_partition_device" && [ -x "$ovl_recovery_script" ]; then
-+			"$ovl_recovery_script" "$partition_fstype" "$ovl_partition_device"
-+		fi
-+		;;
-+	esac
-+	if ! mount -t ${partition_fstype} \
- 		 -o ${ovl_mount_option} \
- 		 ${ovl_partition_device} \
- 		 ${rootmnt}${storage_mount_point}; then
-diff --git a/recipes-initramfs/initramfs-overlay-hook/files/overlay_recovery_action.script b/recipes-initramfs/initramfs-overlay-hook/files/overlay_recovery_action.script
-new file mode 100644
-index 0000000..d13111d
---- /dev/null
-+++ b/recipes-initramfs/initramfs-overlay-hook/files/overlay_recovery_action.script
-@@ -0,0 +1,14 @@
-+#!/bin/sh
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2024
-+#
-+# Authors:
-+#  Clara Kowalsky <clara.kowalsky@siemens.com>
-+#
-+
-+partition_fstype="$1"
-+ovl_partition_device="$2"
-+
-+mke2fs -t "$partition_fstype" "$ovl_partition_device"
-diff --git a/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb b/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb
-index 955748f..7097130 100644
---- a/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb
-+++ b/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb
-@@ -12,9 +12,12 @@
- 
- inherit dpkg-raw
- 
-+INITRAMFS_OVERLAY_RECOVERY_SCRIPT ??= "overlay_recovery_action.script"
-+
- SRC_URI += " \
-     file://overlay.hook \
-     file://overlay.script.tmpl \
-+    file://${INITRAMFS_OVERLAY_RECOVERY_SCRIPT} \
-     "
- 
- # The variable INITRAMFS_OVERLAY_PATHS contains the directories which are
-@@ -35,7 +38,8 @@ TEMPLATE_FILES = "overlay.script.tmpl"
- TEMPLATE_VARS += " INITRAMFS_OVERLAY_STORAGE_PATH \
-     INITRAMFS_OVERLAY_PATHS \
-     INITRAMFS_OVERLAY_STORAGE_DEVICE \
--    INITRAMFS_OVERLAY_MOUNT_OPTION"
-+    INITRAMFS_OVERLAY_MOUNT_OPTION \
-+    INITRAMFS_OVERLAY_RECOVERY_SCRIPT"
- 
- DEBIAN_DEPENDS = "initramfs-tools, awk, coreutils, util-linux"
- 
-@@ -48,4 +52,6 @@ do_install() {
-         "${D}/usr/share/initramfs-tools/hooks/overlay"
-     install -m 0755 "${WORKDIR}/overlay.script" \
-         "${D}/usr/share/initramfs-tools/scripts/local-bottom/overlay"
-+    install -m 0755 "${WORKDIR}/${INITRAMFS_OVERLAY_RECOVERY_SCRIPT}" \
-+        "${D}/usr/share/initramfs-tools/scripts"
- }
 -- 
-2.46.0
+2.39.2
 
 
