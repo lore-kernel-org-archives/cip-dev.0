@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C196CC3DA7F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA0C6C52D73
 	for <webhook@archiver.kernel.org>; Mon,  5 Aug 2024 16:44:38 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.12833.1722876276339708400
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web10.12824.1722876257681924282
  for <cip-dev@lists.cip-project.org>;
- Mon, 05 Aug 2024 09:44:36 -0700
+ Mon, 05 Aug 2024 09:44:32 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.09,265,1716217200"; 
-   d="scan'208";a="214739940"
+   d="scan'208";a="218711347"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Aug 2024 01:44:35 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 06 Aug 2024 01:44:31 +0900
 Received: from localhost.localdomain (unknown [10.226.92.197])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 342394021738;
-	Tue,  6 Aug 2024 01:44:33 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 199CF40213EE;
+	Tue,  6 Aug 2024 01:44:29 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 24/30] arm64: dts: renesas: r9a07g044: Add CSI and CRU nodes
-Date: Mon,  5 Aug 2024 17:43:17 +0100
-Message-ID: <20240805164342.211857-25-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 22/30] media: dt-bindings: renesas,rzg2l-csi2: Document Renesas RZ/G2UL CSI-2 block
+Date: Mon,  5 Aug 2024 17:43:15 +0100
+Message-ID: <20240805164342.211857-23-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240805164342.211857-1-biju.das.jz@bp.renesas.com>
 References: <20240805164342.211857-1-biju.das.jz@bp.renesas.com>
@@ -35,113 +35,38 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 05 Aug 2024 16:44:38 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16746
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16744
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+commit 77b023ba4f45ce2bf26edb095b4a81829c9e621b upstream.
 
-commit 95c91e77664866517a999abdb246ffb207882c30 upstream.
+Document the CSI-2 block which is part of CRU found in Renesas RZ/G2UL
+SoC.
 
-Add CSI and CRU nodes r9a07g044 (RZ/G2L) SoC DTSI.
+The CSI-2 block on the RZ/G2UL SoC is identical to one found on the
+RZ/G2L SoC.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20230322125648.24948-2-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20240605154115.263447-2-biju.das.jz@bp.renesas.com
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 79 ++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
+ Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-index 94867568f46b..ba87cd424a25 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-@@ -687,6 +687,85 @@ sbc: spi@10060000 {
- 			status = "disabled";
- 		};
- 
-+		cru: video@10830000 {
-+			compatible = "renesas,r9a07g044-cru", "renesas,rzg2l-cru";
-+			reg = <0 0x10830000 0 0x400>;
-+			clocks = <&cpg CPG_MOD R9A07G044_CRU_VCLK>,
-+				 <&cpg CPG_MOD R9A07G044_CRU_PCLK>,
-+				 <&cpg CPG_MOD R9A07G044_CRU_ACLK>;
-+			clock-names = "video", "apb", "axi";
-+			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "image_conv", "image_conv_err", "axi_mst_err";
-+			resets = <&cpg R9A07G044_CRU_PRESETN>,
-+				 <&cpg R9A07G044_CRU_ARESETN>;
-+			reset-names = "presetn", "aresetn";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <0>;
-+					cruparallel: endpoint@0 {
-+						reg = <0>;
-+					};
-+				};
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+					crucsi2: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&csi2cru>;
-+					};
-+				};
-+			};
-+		};
-+
-+		csi2: csi2@10830400 {
-+			compatible = "renesas,r9a07g044-csi2", "renesas,rzg2l-csi2";
-+			reg = <0 0x10830400 0 0xfc00>;
-+			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD R9A07G044_CRU_SYSCLK>,
-+				 <&cpg CPG_MOD R9A07G044_CRU_VCLK>,
-+				 <&cpg CPG_MOD R9A07G044_CRU_PCLK>;
-+			clock-names = "system", "video", "apb";
-+			resets = <&cpg R9A07G044_CRU_PRESETN>,
-+				 <&cpg R9A07G044_CRU_CMN_RSTB>;
-+			reset-names = "presetn", "cmn-rstb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					csi2cru: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&crucsi2>;
-+					};
-+				};
-+			};
-+		};
-+
- 		dsi: dsi@10850000 {
- 			compatible = "renesas,r9a07g044-mipi-dsi",
- 				     "renesas,rzg2l-mipi-dsi";
+diff --git a/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml b/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
+index 67eea2ac1d22..7faa12fecd5b 100644
+--- a/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
++++ b/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
+@@ -19,6 +19,7 @@ properties:
+   compatible:
+     items:
+       - enum:
++          - renesas,r9a07g043-csi2       # RZ/G2UL
+           - renesas,r9a07g044-csi2       # RZ/G2{L,LC}
+           - renesas,r9a07g054-csi2       # RZ/V2L
+       - const: renesas,rzg2l-csi2
 -- 
 2.43.0
 
