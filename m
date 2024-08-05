@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C2FC52D71
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88475C52D6F
 	for <webhook@archiver.kernel.org>; Mon,  5 Aug 2024 16:44:08 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.12805.1722876236021140179
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web11.12748.1722876240195022094
  for <cip-dev@lists.cip-project.org>;
- Mon, 05 Aug 2024 09:44:02 -0700
+ Mon, 05 Aug 2024 09:44:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.09,265,1716217200"; 
-   d="scan'208";a="214739892"
+   d="scan'208";a="218711303"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Aug 2024 01:44:01 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 06 Aug 2024 01:44:04 +0900
 Received: from localhost.localdomain (unknown [10.226.92.197])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2BD3D40213D2;
-	Tue,  6 Aug 2024 01:43:59 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5981040213E1;
+	Tue,  6 Aug 2024 01:44:02 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 08/30] media: dt-bindings: Document Renesas RZ/G2L CRU block
-Date: Mon,  5 Aug 2024 17:43:01 +0100
-Message-ID: <20240805164342.211857-9-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 09/30] clk: renesas: r9a07g044: Add clock and reset entries for CRU
+Date: Mon,  5 Aug 2024 17:43:02 +0100
+Message-ID: <20240805164342.211857-10-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240805164342.211857-1-biju.das.jz@bp.renesas.com>
 References: <20240805164342.211857-1-biju.das.jz@bp.renesas.com>
@@ -35,188 +35,100 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 05 Aug 2024 16:44:08 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16730
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16731
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit a18004173a087573628ddc9910f0665a3829f48f upstream.
+commit a278d0c92be9d90307114b05c3edb1e7354d8412 upstream.
 
-Document the CRU block found on Renesas RZ/G2L (and alike) SoCs.
+Add CRU clock and reset entries to CPG driver.
+
+CRU_SYSCLK and CRU_VCLK clocks need to be turned ON/OFF in particular
+sequence for the CRU block hence add these clocks to
+r9a07g044_no_pm_mod_clks[] array and pass it as part of CPG data for
+both RZ/G2L and RZ/V2L SoCs.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20221221212703.348278-1-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- .../bindings/media/renesas,rzg2l-cru.yaml     | 157 ++++++++++++++++++
- 1 file changed, 157 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/renesas,rzg2l-cru.yaml
+ drivers/clk/renesas/r9a07g044-cpg.c | 26 +++++++++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,rzg2l-cru.yaml b/Documentation/devicetree/bindings/media/renesas,rzg2l-cru.yaml
-new file mode 100644
-index 000000000000..7dde7967c886
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/renesas,rzg2l-cru.yaml
-@@ -0,0 +1,157 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+# Copyright (C) 2022 Renesas Electronics Corp.
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/media/renesas,rzg2l-cru.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
+index 22c03c8d4636..bc822b9fd7ce 100644
+--- a/drivers/clk/renesas/r9a07g044-cpg.c
++++ b/drivers/clk/renesas/r9a07g044-cpg.c
+@@ -197,7 +197,7 @@ static const struct {
+ };
+ 
+ static const struct {
+-	struct rzg2l_mod_clk common[75];
++	struct rzg2l_mod_clk common[79];
+ #ifdef CONFIG_CLK_R9A07G054
+ 	struct rzg2l_mod_clk drp[0];
+ #endif
+@@ -265,6 +265,14 @@ static const struct {
+ 					0x558, 1),
+ 		DEF_MOD("gpu_ace_clk",	R9A07G044_GPU_ACE_CLK, R9A07G044_CLK_P1,
+ 					0x558, 2),
++		DEF_MOD("cru_sysclk",   R9A07G044_CRU_SYSCLK, CLK_M2_DIV2,
++					0x564, 0),
++		DEF_MOD("cru_vclk",     R9A07G044_CRU_VCLK, R9A07G044_CLK_M2,
++					0x564, 1),
++		DEF_MOD("cru_pclk",     R9A07G044_CRU_PCLK, R9A07G044_CLK_ZT,
++					0x564, 2),
++		DEF_MOD("cru_aclk",     R9A07G044_CRU_ACLK, R9A07G044_CLK_M0,
++					0x564, 3),
+ 		DEF_MOD("dsi_pll_clk",	R9A07G044_MIPI_DSI_PLLCLK, R9A07G044_CLK_M1,
+ 					0x568, 0),
+ 		DEF_MOD("dsi_sys_clk",	R9A07G044_MIPI_DSI_SYSCLK, CLK_M2_DIV2,
+@@ -383,6 +391,9 @@ static struct rzg2l_reset r9a07g044_resets[] = {
+ 	DEF_RST(R9A07G044_GPU_RESETN, 0x858, 0),
+ 	DEF_RST(R9A07G044_GPU_AXI_RESETN, 0x858, 1),
+ 	DEF_RST(R9A07G044_GPU_ACE_RESETN, 0x858, 2),
++	DEF_RST(R9A07G044_CRU_CMN_RSTB, 0x864, 0),
++	DEF_RST(R9A07G044_CRU_PRESETN, 0x864, 1),
++	DEF_RST(R9A07G044_CRU_ARESETN, 0x864, 2),
+ 	DEF_RST(R9A07G044_MIPI_DSI_CMN_RSTB, 0x868, 0),
+ 	DEF_RST(R9A07G044_MIPI_DSI_ARESET_N, 0x868, 1),
+ 	DEF_RST(R9A07G044_MIPI_DSI_PRESET_N, 0x868, 2),
+@@ -427,6 +438,11 @@ static const unsigned int r9a07g044_crit_mod_clks[] __initconst = {
+ 	MOD_CLK_BASE + R9A07G044_DMAC_ACLK,
+ };
+ 
++static const unsigned int r9a07g044_no_pm_mod_clks[] = {
++	MOD_CLK_BASE + R9A07G044_CRU_SYSCLK,
++	MOD_CLK_BASE + R9A07G044_CRU_VCLK,
++};
 +
-+title: Renesas RZ/G2L (and alike SoC's) Camera Data Receiving Unit (CRU) Image processing
+ #ifdef CONFIG_CLK_R9A07G044
+ const struct rzg2l_cpg_info r9a07g044_cpg_info = {
+ 	/* Core Clocks */
+@@ -444,6 +460,10 @@ const struct rzg2l_cpg_info r9a07g044_cpg_info = {
+ 	.num_mod_clks = ARRAY_SIZE(mod_clks.common),
+ 	.num_hw_mod_clks = R9A07G044_TSU_PCLK + 1,
+ 
++	/* No PM Module Clocks */
++	.no_pm_mod_clks = r9a07g044_no_pm_mod_clks,
++	.num_no_pm_mod_clks = ARRAY_SIZE(r9a07g044_no_pm_mod_clks),
 +
-+maintainers:
-+  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+ 	/* Resets */
+ 	.resets = r9a07g044_resets,
+ 	.num_resets = R9A07G044_TSU_PRESETN + 1, /* Last reset ID + 1 */
+@@ -469,6 +489,10 @@ const struct rzg2l_cpg_info r9a07g054_cpg_info = {
+ 	.num_mod_clks = ARRAY_SIZE(mod_clks.common) + ARRAY_SIZE(mod_clks.drp),
+ 	.num_hw_mod_clks = R9A07G054_STPAI_ACLK_DRP + 1,
+ 
++	/* No PM Module Clocks */
++	.no_pm_mod_clks = r9a07g044_no_pm_mod_clks,
++	.num_no_pm_mod_clks = ARRAY_SIZE(r9a07g044_no_pm_mod_clks),
 +
-+description:
-+  The CRU image processing module is a data conversion module equipped with pixel
-+  color space conversion, LUT, pixel format conversion, etc. An MIPI CSI-2 input and
-+  parallel (including ITU-R BT.656) input are provided as the image sensor interface.
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - renesas,r9a07g044-cru       # RZ/G2{L,LC}
-+          - renesas,r9a07g054-cru       # RZ/V2L
-+      - const: renesas,rzg2l-cru
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 3
-+
-+  interrupt-names:
-+    items:
-+      - const: image_conv
-+      - const: image_conv_err
-+      - const: axi_mst_err
-+
-+  clocks:
-+    items:
-+      - description: CRU Main clock
-+      - description: CRU Register access clock
-+      - description: CRU image transfer clock
-+
-+  clock-names:
-+    items:
-+      - const: video
-+      - const: apb
-+      - const: axi
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  resets:
-+    items:
-+      - description: CRU_PRESETN reset terminal
-+      - description: CRU_ARESETN reset terminal
-+
-+  reset-names:
-+    items:
-+      - const: presetn
-+      - const: aresetn
-+
-+  ports:
-+    $ref: /schemas/graph.yaml#/properties/ports
-+
-+    properties:
-+      port@0:
-+        $ref: /schemas/graph.yaml#/$defs/port-base
-+        unevaluatedProperties: false
-+        description:
-+          Input port node, single endpoint describing a parallel input source.
-+
-+        properties:
-+          endpoint:
-+            $ref: video-interfaces.yaml#
-+            unevaluatedProperties: false
-+
-+            properties:
-+              hsync-active: true
-+              vsync-active: true
-+              bus-width: true
-+              data-shift: true
-+
-+      port@1:
-+        $ref: /schemas/graph.yaml#/properties/port
-+        description:
-+          Input port node, describing the Image Processing module connected to the
-+          CSI-2 receiver.
-+
-+    required:
-+      - port@0
-+      - port@1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - interrupt-names
-+  - clocks
-+  - clock-names
-+  - resets
-+  - reset-names
-+  - power-domains
-+
-+additionalProperties: false
-+
-+examples:
-+  # Device node example with CSI-2
-+  - |
-+    #include <dt-bindings/clock/r9a07g044-cpg.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    cru: video@10830000 {
-+        compatible = "renesas,r9a07g044-cru", "renesas,rzg2l-cru";
-+        reg = <0x10830000 0x400>;
-+        interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
-+        interrupt-names = "image_conv", "image_conv_err", "axi_mst_err";
-+        clocks = <&cpg CPG_MOD R9A07G044_CRU_VCLK>,
-+                 <&cpg CPG_MOD R9A07G044_CRU_PCLK>,
-+                 <&cpg CPG_MOD R9A07G044_CRU_ACLK>;
-+        clock-names = "video", "apb", "axi";
-+        power-domains = <&cpg>;
-+        resets = <&cpg R9A07G044_CRU_PRESETN>,
-+                 <&cpg R9A07G044_CRU_ARESETN>;
-+        reset-names = "presetn", "aresetn";
-+
-+        ports {
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+
-+            port@0 {
-+                #address-cells = <1>;
-+                #size-cells = <0>;
-+                reg = <0>;
-+
-+                cru_parallel_in: endpoint@0 {
-+                    reg = <0>;
-+                    remote-endpoint= <&ov5642>;
-+                    hsync-active = <1>;
-+                    vsync-active = <1>;
-+                };
-+            };
-+
-+            port@1 {
-+                #address-cells = <1>;
-+                #size-cells = <0>;
-+                reg = <1>;
-+
-+                cru_csi_in: endpoint@0 {
-+                    reg = <0>;
-+                    remote-endpoint= <&csi_cru_in>;
-+                };
-+            };
-+        };
-+    };
+ 	/* Resets */
+ 	.resets = r9a07g044_resets,
+ 	.num_resets = R9A07G054_STPAI_ARESETN + 1, /* Last reset ID + 1 */
 -- 
 2.43.0
 
