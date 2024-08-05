@@ -2,49 +2,49 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F315C3DA7F
-	for <webhook@archiver.kernel.org>; Mon,  5 Aug 2024 14:24:47 +0000 (UTC)
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.51])
- by mx.groups.io with SMTP id smtpd.web11.9241.1722867879952340851
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F0EC3DA4A
+	for <webhook@archiver.kernel.org>; Mon,  5 Aug 2024 15:04:07 +0000 (UTC)
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.66])
+ by mx.groups.io with SMTP id smtpd.web10.10176.1722870244063145690
  for <cip-dev@lists.cip-project.org>;
- Mon, 05 Aug 2024 07:24:40 -0700
+ Mon, 05 Aug 2024 08:04:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=YnXLbKpq;
- spf=pass (domain: siemens.com, ip: 40.107.22.51, mailfrom: jan.kiszka@siemens.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=gc6OV0tY;
+ spf=pass (domain: siemens.com, ip: 40.107.22.66, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sgjPTPWz64aR97CBaFWDZDCGi3iOFIaK/DuKgY/HI+tM6hNtXDR+SZIGGnomu+6kMZ5f3QuBmkH9fJ0WhwAp6w3lijGuZHupJFUXDbiAQ+qz/SCMWc1ua3GHncy34cPC+vcGPT6mIfigLt2A6UR2JdvfGo9Rmo3D6TBcCy5GyoWLaIWDRrT+w+xZJ2rV6IbVEJUTEPzLelrzk2DslOHPuAIMU2Yv8pCvrK56kBpilCv3RhPFLbUDjR315+bmBPiG7nnt66Ts63vUPXtP+Dy3HktalbeUm8HRc6x9eImusI//7xpY+SWZbP/W+Zst1SBzENFMZ7YxpAFxCzPFpxzAgw==
+ b=F8Lf/W9KKaJArnPa2QHwDoxentXxjpfNUTGTeJNwQ1C24pMAN+OeMEaKXk+ZK369Vr4EJyEWQBa2xKhJ694mOfd+SSd7mcSYUxPr/TDsHSIJWI2EQwyugXb/vn1vlpYB960GeRdTNpU8+aZPUQOJCY3mVjHB9Zg+sUN4Jk2bTkZ0sqCDoaoRsnxFEl2xrHYyfIRerEDJ9BM6HmfIsx6Xiv5bV4Vqp2nig4J56QNvytSx0rCJ6sATaGcKaQlNavADk6ohzJgbHhUKd+ji9/RhHmL86isMxMOWhXMwRNkIMocJVYCC/5b2qxkW147Uaqu7t5h2ONBqfTwyOXC5xAjV4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=24Mnu9tsYfz8RxIILYc6YzCcn952Vh+dWuV1jx40MTY=;
- b=NHq9g6s11aZU0nwosaydtZ87S8dLSvO+xNPvX9a1Jv+Hek8ayD5htW9IbtNnDauTNEVhZdVEcN6fMYMjZXgYgfeM/qSpg2uch8mMIpsnd0VRxDbupPtmFnFI6TNlbt+lKINH5Du3lhpK6NeG3oUr/feC5qvuEVZs1TOMum20SmOVgY+4OjXJEzUQVWJMZg40v9ctC05UASLS5fts4mtKJ5lZTenjowztwuRFrC5WnA1faJMmrb2JKHlj7z4NAMMnIWkJ4AlXnyPc9S4ncHNBt23PDQggu1ZckCGcP0BQNlC7zl5kRB6JkC2oXt/rVO5UJIKZu6PEtx3aRPMWtu6bTg==
+ bh=ZU7CL9KV6XV1kwNv8h5PwHzI+7OBOcIUbBEcZd1qJcY=;
+ b=LyjvvpHtzgHQwhWBVPykdHEp0PJfUGMXTkFM1Ng3OmBthlB+VTDEc4yMqPkbsH8uRu/zSgsJohDzLhPTjOW916X2yKrOJHpRKB6WYCrrT59EINDi/M8CkthjijFdSuu1J4RTx/Jlp3iqrYhzmdaAXqSoyLVet9dqm8gWCG0kaqXFo8/kDnVhyNwlsXNWxwPx0swzKkkU08xms4GUom8awad5ObZxnwySk+QkcjrABKxZ/lP6tmDTXsAOpeGwuqFOEZ75LDN5LiRBSBod79uljwMp7dbfxwwZYXFGEA46pT9Tk61mbDA+crBy4UdeN/Br8aOMWRN9BvdqoFh0zk32mQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=24Mnu9tsYfz8RxIILYc6YzCcn952Vh+dWuV1jx40MTY=;
- b=YnXLbKpqH8WqWORCQSicBZj56aY9T36LxIYyed0BSvCpeh/Q2xRESx52NmbuZqz+9f4koiR8hx/93NdzPjfqyXMer9WBdTuGoI7asmISAPAq9YCfjOfWDfRgwfMBKIq1+DmvsBoWlwEdfqDKKJC+yw7m+Goad+Em+e8YV0YLTyaYj1BT5eou0MLaDQFtexzJfwCitu6b+uJwd2QYe5Scdm47TVfOVE5wNQIdF5iBUdRUqg3Awz406PHZIK5gIfrdAOY9h7ux0CkxT4Emimqa1nXR9DTJaMoOQeTg8vVG9CDngpXUmUmoUxoHDs8/jhY9R7jwWughriEAvt5+gERrgg==
+ bh=ZU7CL9KV6XV1kwNv8h5PwHzI+7OBOcIUbBEcZd1qJcY=;
+ b=gc6OV0tYGyEhoSB91mfYjMuwaa4X7M/Tt3nVObvrmeyAzugQ+SPwqgyV+jwik8XdOlCgtpccg+VeCdUupAxAioEJpV1hCgqHHVF0DYdNTbO9zKsoiLjo2jwNdb50z9ETx6bRjcjyyMz7Tx1GoHHJj7JTBaOi/VBnBJp3E3S0kNh7GN71QOY2GrKyMg/xbu1Z+Pc7/et9bMMMWFhpcVvzUNmxtF15WAunDZgqhCLGFsx0ghmyxEinwbBeqo2f3LUxmNAjvWF9l4FTwlneyCc7PIXdi73rySr+peJ1rRq7KFJIZVPS2krsxrYvfRdIyRhvbia4MB2BUxvo9PybmqFTQQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by GV1PR10MB8025.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:a7::12) with
+ by DB9PR10MB5931.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:39b::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.24; Mon, 5 Aug
- 2024 14:24:35 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.25; Mon, 5 Aug
+ 2024 15:04:00 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408%4]) with mapi id 15.20.7828.023; Mon, 5 Aug 2024
- 14:24:35 +0000
-Message-ID: <55a5a063-2e29-4549-933e-88e9f6e27b7a@siemens.com>
-Date: Mon, 5 Aug 2024 16:24:33 +0200
+ 15:03:59 +0000
+Message-ID: <38219e54-0ecd-4a5e-86d3-3d90b2c2a09f@siemens.com>
+Date: Mon, 5 Aug 2024 17:03:55 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev] [isar-cip-core][PATCH v6] initramfs-overlay-hook: Check
- file system of INITRAMFS_OVERLAY_STORAGE_DEVICE
-To: Clara Kowalsky <clara.kowalsky@siemens.com>, cip-dev@lists.cip-project.org
-Cc: quirin.gylstorff@siemens.com
-References: <20240805091905.1818691-1-clara.kowalsky@siemens.com>
+Subject: Re: [PATCH] README.m-com-x86.md: Add hardware details
+To: "Schilling, Benjamin" <schilling.benjamin@siemens.com>,
+ "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+References: <17E052EC654FA61F.30444@lists.cip-project.org>
+ <GVXPR10MB58372AC0B85BE9E5DF0E0D3588B72@GVXPR10MB5837.EURPRD10.PROD.OUTLOOK.COM>
 From: Jan Kiszka <jan.kiszka@siemens.com>
 Content-Language: en-US
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
@@ -90,231 +90,455 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
  8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
-In-Reply-To: <20240805091905.1818691-1-clara.kowalsky@siemens.com>
+In-Reply-To: <GVXPR10MB58372AC0B85BE9E5DF0E0D3588B72@GVXPR10MB5837.EURPRD10.PROD.OUTLOOK.COM>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR0P281CA0207.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:ad::12) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: CH0PR04CA0004.namprd04.prod.outlook.com
+ (2603:10b6:610:76::9) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GV1PR10MB8025:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8ecfc3fd-8e59-4e62-3e5f-08dcb55a547e
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB9PR10MB5931:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7987bce2-38ba-465e-50eb-08dcb55fd5fd
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?SlNyclN2MzBmaEhpK2prNlo5ZmJzOEhUODB0Q09VZEdUU090cTl5MWlaNEFB?=
- =?utf-8?B?OVRNSVpXWkFOZWUxcHFHVzE3c1dBUTVyV01FZngzUWV6cjYyYXVUUXVIbmY0?=
- =?utf-8?B?a3BQSk82b01TenVKdGp2YnZQQXQ4cnJKcDlGZERJYVRJREFKMHZDY2JWMVEy?=
- =?utf-8?B?b2RXMDFRcEhXTVFqaVNjN3UxUjJjNmJYWnNVcTcvN1ZnZ1VHbGlOTmFneGE0?=
- =?utf-8?B?WXZJWlBZZklmNEIyNWxCOXJSQmsxME1GdnhLYWg0aCtJUU9JeE1jWE4rVXhC?=
- =?utf-8?B?a3Q4NzRGZktYUWJEYmlCVFFhWDlSbGlSc2tOZWJHellwMTlYWHB3azJ6NTRk?=
- =?utf-8?B?V054TkdRVXhZcnV6OGtKOGRYeFJFV1ZIcUhjbWJJTUxhNHlQVmNTVnJhYjVm?=
- =?utf-8?B?SkVURnBJMGd5Qjh0eDFjQXZKcmhNT1NRMkNwVU9yekhvMDZBMGtEa2NsKzMv?=
- =?utf-8?B?TFFuL0pEZGVRZDRwb0Q0Y3VITXp2dnhycFFPZE4zQUdXckxQcUp1MExCTit6?=
- =?utf-8?B?MExhaVNGMU1mRDlFVG9hejRmNjQ3c3QzbUhpR3VBL0NIbHM3eTlFTXk3Q054?=
- =?utf-8?B?ZmRrTGFoaUF0ME5EbzVLL2VZNkowVkRHZjhuSG0rbWlKa3AwZzdGUDdxTldM?=
- =?utf-8?B?UGlwTHM5WG45dGVuRC9CTUNhTnhTK1luT21EY3pvSVpSYzUzRUNFWXAwQ1hM?=
- =?utf-8?B?VmxsMGZLVWVMSFFQNWQ1UjVteFFpVFZTbVdtREFMQm9jSVM5bStPYkxZb29s?=
- =?utf-8?B?bnZSYkFvNTIwUTYyUjdHRmhVRWZEVFNJMnZwZU0wemxDK2R2eUZPNzZWYnVK?=
- =?utf-8?B?eXI2V3ZGbnVlTjZuUHA5dEU4bGdZdldEVThpeW1UYkVVeWtNUU4zemlxRlZl?=
- =?utf-8?B?SU1TR21YUSs3d24wYTBNVHNYTGFRaVd4WDhqalFPbitURGJxS2s0dnFWYXNz?=
- =?utf-8?B?dXhQUVg2bndGQTBhMXhrMXZhSUxyelgwQUtEb21zNU9PR2V2eU9CREJGOHNJ?=
- =?utf-8?B?aThNUmIrNXlmMFRkSjlVRWNJOGo5K0t1NHppbWxob3d2M0NSQzhyNXB2eFI0?=
- =?utf-8?B?MWpUVmd4L3ZBOU5SYkIrWGhwb0MyU1g5MzZMRjQ1RStaK0NQdUxWR3hxeThj?=
- =?utf-8?B?UGNPQ1ptNWpWTERzVytRU1FoUVg4N1dtSm82ZHZYSmVIb29CUUhiTnkwbGJm?=
- =?utf-8?B?VEJKTGU0TUYzTE81UVowVGtYQy9wUG9kMEpzbldudnF1bXdSdXBSTm12akw1?=
- =?utf-8?B?cVlwN2FqNmxRRWFQOUQ4STNLdkc0R2JOdWFrVll2cHkyVkYxYnFBaVlySWtZ?=
- =?utf-8?B?M29IL3dCOVNhazN2UWI1L1o5Vms1NlJDc09ZbFNocE85QlZxeGhid3ROZXdx?=
- =?utf-8?B?OFBneDRPbjRXSWFROFpOalZvT21OY2IzUkkrdGdFTTBHblFnbkUrZmx3MUQ5?=
- =?utf-8?B?bDZWY0hJUWJvVm1hTFUvZFppeWVKTWxqcTY0Qnl2Z3JWQ2todm92cCtmMVBR?=
- =?utf-8?B?dDJBV2U2K0U4ZDdNTEllNmJ2ZHZjek1mN0wxUTNVWmw1KzNGejdyTm1oNjVa?=
- =?utf-8?B?Z2dwR0NQTjFFZ09ZOVFYWitKNFROdlVadFF5aVBEV25FaUNCbGJQajZFUmt5?=
- =?utf-8?B?TFpyTjdrSS9YZUhWeUJlcWlmUWtyZGNYVU02aWVndkNiY3krU2ZuQ0NHSFdt?=
- =?utf-8?B?NWtDdThheGVadTYxZ0tXUGlZME82R2dQY0lyZXhKY1k3TVA1QVVQRXZjY3FX?=
- =?utf-8?B?ZnBVSytwWVpaY285SGJnY1dKUmY5WWxUWVM5c0tmOEF4TUY4RHJSL1lsdkV1?=
- =?utf-8?B?bjk5QzNGcFI4aEwvQkFSZz09?=
+	=?us-ascii?Q?2murwoEgHoD9xRuSZjrtqUYwKTmOc2n0hEmU7hcsWIV1VaAUQmJFK6zMuvUc?=
+ =?us-ascii?Q?OaiYysMQNbgM0p+2MgYst7sqEdRTfSSOryYcSPg3F5LHlRhAB/d+J69oN8zS?=
+ =?us-ascii?Q?t+UhhB3nFGZL6DTwYNsHQQMKU+xce1HvhRDRaGZ+6ThOdR6+B6V09biWX8/B?=
+ =?us-ascii?Q?dZoy7wgbyHjxAe328FGh6ivoiuYdWNS0Eh4aqaNC75gv4JsyIo7gGIVT4oMc?=
+ =?us-ascii?Q?bBz5nXQAZOSoBA7Xljz9k3aj4R9pIc65zEVMn85ZEua5ndeZLwcBfm0Aa6qg?=
+ =?us-ascii?Q?/RhxsSgLeFpubHC+OiYrQldspAC4+FpkBt6Em3PyPNpXIy4KxaAMKwJmfuB5?=
+ =?us-ascii?Q?h5tiXPW50CZlzvRuxwGft+qjyYV+LfkYHGLXGrGAbKj7CqMCaOTlnQUmIiK2?=
+ =?us-ascii?Q?JWJNlm+94xkwXoajSAEfdR75XS4PxjF0jvAMjXB5w/YvO42fTacmqaCm4l+y?=
+ =?us-ascii?Q?9tmxxaLqKYgooqdUnQRI663L9yku3i+tFo/KX5Fu9GgopMWxHJWLQMqmvTY4?=
+ =?us-ascii?Q?JXIvJIH4Zfejnatedzkplpx4pkKseLf9v5ntVKpif4Dj2tlVf87X9iZqzErM?=
+ =?us-ascii?Q?SPk13tZ7Zd39TX7Wqkd5C9xvdhVL4XGgX/YusSy3H2ptWc4EDjvEl+s+iwxe?=
+ =?us-ascii?Q?soUyYGca4DmtFjI+hHvuBoOZn8G2RoPhkX3symGb1oHDxr80znP7+jtFewOX?=
+ =?us-ascii?Q?Y1VKx/8ydNMKuhW+/7/WCvMGU/niAPGsFIUyHsILl3s0Fd7WakR5oLhtGqUZ?=
+ =?us-ascii?Q?5+1exu6lR5Oo0WgEWTByfC5/WReiopmRHZ2W4f2BfrWBmPvlZ2zLSQJgkSaO?=
+ =?us-ascii?Q?7Bf3CYX22GhjX/neRIzvwQHmBiKeRTG1AJ1hgNYBe84IlzA78nzdBf6OfgUv?=
+ =?us-ascii?Q?O42ub76NwdFlLnouA3mfY5JM0UIt/dIxuoQGme4riJDyeJ9+ok+HZ+ccTb6u?=
+ =?us-ascii?Q?J2fphvL3lx2T5IMT/0G34VduK/h1HQYWD7zhqU0zSCQMPeRdiCLpCXkiWzrI?=
+ =?us-ascii?Q?uQ+qZwtWCvM7g04qHtdxsawfMJ9NKWoM513cGf9CokT4qyaetzSjMExwcg9x?=
+ =?us-ascii?Q?1m4oF67F88qCi6JrL3ONdnZf6hpdd0HMuKpWmfbGferqYMQwgIqfgbTKdcVl?=
+ =?us-ascii?Q?Tw0ERIJIa0LAVOtRwClaj2JQcPpRZuuC0wijXS4OMFbV5FvNFMMb1ycSA+xP?=
+ =?us-ascii?Q?TCrmbuzTXhlP/439nzLhW57r0UbInRquSr9dSMlFBOM6oeHaj82/qvQXfV8x?=
+ =?us-ascii?Q?7+6Z5JbVB/ga/yWaKgwkEype6hfhT6PFCZBT83cS3UR/M55iwWr9xkRoiXFh?=
+ =?us-ascii?Q?enyHouT96cT3RtxOl7HPRBskqRrxYkLy5rFoYoqcFcw1kA=3D=3D?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?VUVNcFl0MWk3RU5xNGZJNkhxRm5lWENMWGtxVTNKSU5ZbWdJYnd6bnAxeFNM?=
- =?utf-8?B?ZDF3T0lLMVpkOTRXbkRyRjkrK21KWkFUbERtSkRWN3NCSlVQamgyTCt2SitG?=
- =?utf-8?B?cERnN01XTGdOR1FqVjFRQ0ZXdzB5ODZmMjZrM0RvZ2hPWVlhZW5URzNGekJn?=
- =?utf-8?B?Q1hsSG9pNFlHQzRLQUxRSUxiNU9sT29acWxudXpzUGJlV1RUNWZzRjdQelJF?=
- =?utf-8?B?eDVSUWFlWU1JLy9vQ3RRdnYyRzQzdWsyWmJaN3pOMktwbUlOMzJHUTZVdFFJ?=
- =?utf-8?B?dDcwUDFZYlhMejZJTmVDamswN2ZRUVNGRjg1MHFtekp2WDRUaWFHOWtnZHRr?=
- =?utf-8?B?KzFka2NraEtqbE10Y0pMR09JTlc3WjE3dzkxZG5CS2YzK2w4UGFIVVk3RjMr?=
- =?utf-8?B?dWtVcXRSSUFZN0hGRDZoM2hES2hjSE1EV2hXUUNrRSsyQW15Y2J3MmRRYUlD?=
- =?utf-8?B?SzNVdDNlYXlVMkQ1NlVDZW9NRTZmazE2WHg2L1crRkw2Y3AwbThtV2ZpbHFZ?=
- =?utf-8?B?cGFUakc1ZVJoNUhDQVlSR0hLbi9RcTZwdTlZWEI4MzVvSVV1dXhyUENZMlRD?=
- =?utf-8?B?VmtndUZlK0psTC9uaG5GM1h4SjA4dUlvUHVwc0k2YTZOcVF2dENaUmpoQ0U0?=
- =?utf-8?B?a2xlYnJ6RHpzbUQzc2QyV1RFMnVUOEp0R0hTNWtqQWdMdUxDZyt4VG1pSTA4?=
- =?utf-8?B?S2d2ejFPSTB1aUNIck5JSmNNb1lRYmNRMlBHMy9nZHNUSUVtRWJSLzFsZUdR?=
- =?utf-8?B?a3RHdmdQYVF1ZnRqVS9SOEhpZTE4VzRBM1A3ZGQvUlpMSHNkcGJYNGFQQ0lH?=
- =?utf-8?B?cDB6OGszR29FdG9wc2lCaTVSaWNaTm93NExUMXhTZEZWRkc5N3VidklYUG1N?=
- =?utf-8?B?dnJyakdZOUI1SGFpSWt4Ti9QTStZdUI5NTB0aDFBaVZ2SitTTGRtNDRJQVBn?=
- =?utf-8?B?UkY5VndBTzFYU0pVLzdCWlZsWnRJQzFIdkRJWk1DcFVJNWF0eWNEZ1RrS3BE?=
- =?utf-8?B?VlBlNjdJOEt1d1IrdGRhdWg4K2UwdGRKOEdoMkd2SElDUFFWTXAwMVVpb2l1?=
- =?utf-8?B?UzlPS1R1bFRFTkJyMy9EZnYxUWJVQ3A1OVdMWWMwYkhSd3J6K1M2MXgwNVgw?=
- =?utf-8?B?bkdjbGtyM0NVV09UMjk5dVBINTJpc1ZYYlRpZzJSa0Z0RGxUemNubldpaWo0?=
- =?utf-8?B?cFdCK3g4akkwbG0vbGlBZEczYmw3dmRObzhKUlNWb3RaclIxbkdTVCt6V1dN?=
- =?utf-8?B?czR1STIvcFFVTkI1V1pkbXNLOG9lUmZIYnBhUGQyQnlnODdFT2MvWXBYQ2Jv?=
- =?utf-8?B?SnZaWEVaQktaL2xiSG11QndVMnpsaUxidFovUW56UitQa2pCdnQ2U2NsRUJB?=
- =?utf-8?B?aVhWR0ZLYVhEMzJKQ2M0Z2ttbEhQeGVOK0hwUmxyQlRFdjhqR1o0NGltVlNr?=
- =?utf-8?B?NnBSNkMvc2FPQVhGd0ZHcStHbEdLYVZyK2lwa0hKSjVQemVQMVd5aTQyME95?=
- =?utf-8?B?Q1VvcnhCNDlmOGJxZDhoVVluYW5rYWREREZlU3FFd1VHbEFxeEV1c1BvZG9v?=
- =?utf-8?B?akp5U1dScmc3NnBOVWtQVS9ra3p4RHpYWm1BZEp3OHBsbVZRbWppcXpXYXpW?=
- =?utf-8?B?Mit0bWdLYk4yQkFoaXV0K3dncTBsWW0ycnM0ZlgrV1czZ2taR3U1bVJyUits?=
- =?utf-8?B?ZmxoVFJuYmFSUUJoUEVCblpXTFR6L3JtTGkvVzFkaGRWNjdpQzFjb2ErdlJr?=
- =?utf-8?B?MUhUVTAyamQrTm9GS0VTSHNwMThqNjJ3aDVtNmlnWTUwTXUrN2xadzEyaS9Q?=
- =?utf-8?B?UUR4SGE4ZHJCcWtlVU9WVWZyL1RKeUdHVFdGdzB1MC9qdmY5L2RNQndNUXZH?=
- =?utf-8?B?S0U5RFRURFdITEV2aXhEcjZoRFpYV3A5bTdvczh6eStBejZIanlOMTUwb0VC?=
- =?utf-8?B?MWlxdUpVeGF2SFZWZ0wzSS9FUlc4SlN3WTJYMnVDRXFCZEtEazRQWU5PL3Qz?=
- =?utf-8?B?STJxYlFBdm5vWDhsMCtieDFiTFYvNER6OGllaG1ObXRZNm55bTdDOHR1WlVK?=
- =?utf-8?B?dWxNOVJLNjdHT3lONXRpcUkzNDNxL2xoanQ5YXpCUTJtcUdzZzZjSWNPcGFx?=
- =?utf-8?B?WUtKYmJFOUlSMThCSlZ5RzBrN2tzTnRnOE5uWGx5OUVNZ1lDWEVpM0QzZVRX?=
- =?utf-8?B?SVE9PQ==?=
+	=?us-ascii?Q?jXwre44yKNjkn/hn8Iy5JLgbY2J73zin32L2y41w0mMIGFzhIfxgawsrgQL7?=
+ =?us-ascii?Q?l8/baQD2GDUBVM06Zoy3LtUkk00BJIkkyoJjCREUlTFlD3ApOX3gUGndA11i?=
+ =?us-ascii?Q?4WQJyO5orVRe97ALcvY6URPU8sIpHZ9KzFpUcTKyGOgIqvf6jh3uz9bV9OdY?=
+ =?us-ascii?Q?OjESnJ16AQ39jMQqAvudmWrQ/rhhUzGPvGiYhJxIaj9LSe/Vsi0gd+i+RIeL?=
+ =?us-ascii?Q?gft/IZ5rtMYc5gVSTncK8eWv00wn+keLNLvCeBQIOO83OQQNOafQntrS8ZVO?=
+ =?us-ascii?Q?dPZsWU3RI7FY/WJ4OVk0Dd4G5JkEmog8QGHJEuYCXabkCrE5ZJHKW+FFGoaD?=
+ =?us-ascii?Q?d6zkKR+Gwyah5JhYwCBGYQHTH8sNd50byfr804coqnO/AQGVW36o91tMWEtR?=
+ =?us-ascii?Q?GKduaSzAbJek5zj7azLE4rzgolFChP3MgaovJUt4A7zp6x6Axub3rPZldcff?=
+ =?us-ascii?Q?g8cPxLgK+NZtLprSw7R4AAm6KFSL6e9o1KrznlyDtselM9YZrjS5WaJZHY1o?=
+ =?us-ascii?Q?6DzV7sSCjj1dfOasW9OIxcqTHWTMNI/55hYk/pCy4aKMeDmXfDPcSDgfgUs/?=
+ =?us-ascii?Q?oMIvh1MDWA7pBQ/fYIMRp5jpwlj9+au+YtFH/8sPQbFV/wLXR2VSDk2mEd1Q?=
+ =?us-ascii?Q?e+0sVFCo+QQLnEL/U2CFe+RoL55xMLDcYyo4LjsbPLeCU9+GcmrGu2HFQnEJ?=
+ =?us-ascii?Q?/ZSjF6ej8DW7tHxShUjVFrV7q2llE/TzO0GUqQKgkeWszN4lmBOgHRnfWXqG?=
+ =?us-ascii?Q?GomV9AJdzSJgvJKgEJ568AL1WrSZL3LbBzgsorBHanZ30oltaXuRmaxB6ldG?=
+ =?us-ascii?Q?xM6yseKKsKmKN2CA4nLqhQ/UIVDwt8UNecvMAbTdqCBpzGqOrINCFbg+0COS?=
+ =?us-ascii?Q?KtJfJ8pnrFrOJxzzG4I0OYL+6CPTcIe5Z6uxw6XqkGLTBlvo32cgPbtLZun8?=
+ =?us-ascii?Q?VHx0WysAtKcpYfyq9YHtzYpNenFSVdABleloqxhIo4nnsPPTOdv7HVCE4wGP?=
+ =?us-ascii?Q?Mg2metZz23MLwUkHkCV5V7mCbl2Lo5JnIqarLC2FammTSJ/zWyPZPK4ktU67?=
+ =?us-ascii?Q?WOnugSJEQuOTvEmsXNqmo+S4zcvAuE7aDX4hX+OnkmzrpoSQmZts4lva1k3m?=
+ =?us-ascii?Q?0GF9OaTc+SZKuojT0iyQaGfZDkD26ivYMBk0+S1r3KPvJ+7/idu6mRx2UwoT?=
+ =?us-ascii?Q?r4ldJNwpR0y+8RJ6lxxeJDCuXhRZWHzJrTTYdvjePTLyyU8kSH+onuxT6zzy?=
+ =?us-ascii?Q?VcdBo2JaYPhsbzpf6mvmd17jaCgRYgp6uCN7PHS5syfqcFP7k6+jFUY68tLX?=
+ =?us-ascii?Q?Loquo91Roio99VFD8aoDFwt16G2NCxG14bqkYjiOg6GEmzzSE5ut+yFvVL8M?=
+ =?us-ascii?Q?A4tlqM1aquF5QdLBB/zmtDvZmLxJL/JmCfvNwRZQai6LosfC873lMcLRaFW1?=
+ =?us-ascii?Q?15DPyCzsoz7wiWHjogM4YsCqxbeHfRcOT9DZMxOP16TWfGOLj7NuOgvfWsXn?=
+ =?us-ascii?Q?o5mPT52QnQjssbiPknLjjCxla+YsqYlmlxl+A6oYhAXc+ovPzZysTxzuUxdy?=
+ =?us-ascii?Q?Bib063htyzpjMazY4aGCGcBGR8xpzEs3SAokidJDIV+cc3oaEle+hsgEAfQc?=
+ =?us-ascii?Q?BA=3D=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ecfc3fd-8e59-4e62-3e5f-08dcb55a547e
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7987bce2-38ba-465e-50eb-08dcb55fd5fd
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2024 14:24:34.9836
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2024 15:03:59.9246
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YPmHYkPFhuD0gRcomi/OPemE/rOfNML9KujxuuS5Pby0hrMVGIMTBNagF4ayVjP4fSlvIAhPJdnaiYjcmV/Jng==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB8025
+X-MS-Exchange-CrossTenant-UserPrincipalName: XjACVdapR2c/4UzxZ+Y8O4BS1lvIVKD4ws6ynyAmBTvE/BlcSdXU2NvDMbIm5k88aywfH1bavDIkDDFwWxx6kQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB5931
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 05 Aug 2024 14:24:47 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16718
+ <cip-dev@lists.cip-project.org>; Mon, 05 Aug 2024 15:04:07 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16719
 
-On 05.08.24 11:19, Clara Kowalsky wrote:
-> In case of ext*, this detects and fixes file system errors in the
-> partition device before doing the partition mount.
-> If the partition turns out to be broken, the factory state is recovered.
-> 
-> Signed-off-by: Clara Kowalsky <clara.kowalsky@siemens.com>
-> ---
->  .../initramfs-overlay-hook/files/overlay.hook      | 11 +++++++++--
->  .../files/overlay.script.tmpl                      | 11 ++++++++++-
->  .../files/overlay_recovery_action.script           | 14 ++++++++++++++
->  .../initramfs-overlay-hook_0.1.bb                  |  8 +++++++-
->  4 files changed, 40 insertions(+), 4 deletions(-)
->  create mode 100644 recipes-initramfs/initramfs-overlay-hook/files/overlay_recovery_action.script
-> 
-> diff --git a/recipes-initramfs/initramfs-overlay-hook/files/overlay.hook b/recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
-> index 8b00ecf..6f634c5 100644
-> --- a/recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
-> +++ b/recipes-initramfs/initramfs-overlay-hook/files/overlay.hook
-> @@ -22,6 +22,13 @@ esac
->  
->  . /usr/share/initramfs-tools/hook-functions
->  
-> +hook_error() {
-> +    echo "(ERROR): $1" >&2
-> +    exit 1
-> +}
-> +
->  manual_add_modules overlay
-> -copy_exec /usr/bin/mountpoint
-> -copy_exec /usr/bin/awk
-> +copy_exec /usr/bin/mountpoint || hook_error "/usr/bin/mountpoint not found"
-> +copy_exec /usr/bin/awk || hook_error "/usr/bin/awk not found"
-> +copy_exec /usr/sbin/e2fsck || hook_error "/usr/sbin/e2fsck not found"
-> +copy_exec /usr/sbin/mke2fs || hook_error "/usr/sbin/mke2fs not found"
-> diff --git a/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl b/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
-> index 42eb59c..c655a4f 100644
-> --- a/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
-> +++ b/recipes-initramfs/initramfs-overlay-hook/files/overlay.script.tmpl
-> @@ -31,12 +31,21 @@ ovl_partition_device="${INITRAMFS_OVERLAY_STORAGE_DEVICE}"
->  ovl_storage_path="${INITRAMFS_OVERLAY_STORAGE_PATH}"
->  ovl_lower_dirs="${INITRAMFS_OVERLAY_PATHS}"
->  ovl_mount_option="${INITRAMFS_OVERLAY_MOUNT_OPTION}"
-> +ovl_recovery_script="/scripts/${INITRAMFS_OVERLAY_RECOVERY_SCRIPT}"
->  
->  root_mount_storage=${rootmnt}${ovl_storage_path}
->  storage_mount_point="$(echo "${ovl_storage_path}" | awk -F/ '{print FS$2}' )"
-> +partition_fstype=$(get_fstype "${ovl_partition_device}")
->  
->  if ! mountpoint -q "${rootmnt}${storage_mount_point}"; then
-> -	if ! mount -t $(get_fstype ${ovl_partition_device}) \
-> +	case $partition_fstype in
-> +	ext*)
-> +		if ! e2fsck -p -f "$ovl_partition_device" && [ -x "$ovl_recovery_script" ]; then
-> +			"$ovl_recovery_script" "$partition_fstype" "$ovl_partition_device"
-> +		fi
-> +		;;
-> +	esac
-> +	if ! mount -t ${partition_fstype} \
->  		 -o ${ovl_mount_option} \
->  		 ${ovl_partition_device} \
->  		 ${rootmnt}${storage_mount_point}; then
-> diff --git a/recipes-initramfs/initramfs-overlay-hook/files/overlay_recovery_action.script b/recipes-initramfs/initramfs-overlay-hook/files/overlay_recovery_action.script
-> new file mode 100644
-> index 0000000..d13111d
-> --- /dev/null
-> +++ b/recipes-initramfs/initramfs-overlay-hook/files/overlay_recovery_action.script
-> @@ -0,0 +1,14 @@
-> +#!/bin/sh
-> +#
-> +# CIP Core, generic profile
-> +#
-> +# Copyright (c) Siemens AG, 2024
-> +#
-> +# Authors:
-> +#  Clara Kowalsky <clara.kowalsky@siemens.com>
-> +#
-> +
-> +partition_fstype="$1"
-> +ovl_partition_device="$2"
-> +
-> +mke2fs -t "$partition_fstype" "$ovl_partition_device"
-> diff --git a/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb b/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb
-> index 955748f..7097130 100644
-> --- a/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb
-> +++ b/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.1.bb
-> @@ -12,9 +12,12 @@
->  
->  inherit dpkg-raw
->  
-> +INITRAMFS_OVERLAY_RECOVERY_SCRIPT ??= "overlay_recovery_action.script"
-> +
->  SRC_URI += " \
->      file://overlay.hook \
->      file://overlay.script.tmpl \
-> +    file://${INITRAMFS_OVERLAY_RECOVERY_SCRIPT} \
->      "
->  
->  # The variable INITRAMFS_OVERLAY_PATHS contains the directories which are
-> @@ -35,7 +38,8 @@ TEMPLATE_FILES = "overlay.script.tmpl"
->  TEMPLATE_VARS += " INITRAMFS_OVERLAY_STORAGE_PATH \
->      INITRAMFS_OVERLAY_PATHS \
->      INITRAMFS_OVERLAY_STORAGE_DEVICE \
-> -    INITRAMFS_OVERLAY_MOUNT_OPTION"
-> +    INITRAMFS_OVERLAY_MOUNT_OPTION \
-> +    INITRAMFS_OVERLAY_RECOVERY_SCRIPT"
->  
->  DEBIAN_DEPENDS = "initramfs-tools, awk, coreutils, util-linux"
->  
-> @@ -48,4 +52,6 @@ do_install() {
->          "${D}/usr/share/initramfs-tools/hooks/overlay"
->      install -m 0755 "${WORKDIR}/overlay.script" \
->          "${D}/usr/share/initramfs-tools/scripts/local-bottom/overlay"
-> +    install -m 0755 "${WORKDIR}/${INITRAMFS_OVERLAY_RECOVERY_SCRIPT}" \
-> +        "${D}/usr/share/initramfs-tools/scripts"
->  }
+On 29.07.24 11:09, Schilling, Benjamin wrote:
+> Hi all,
+>=20
+> what=E2=80=99s the status here? Anything I should change before it being =
+merged?
+>=20
 
-Thanks, applied.
+Yeah, there were/are multiple issues:
+ - missing [isar-cip-core] tag in subject made me miss this
+ - you sent the patch as html - please don't, use git send-email or some
+   suitable(!) email client (*)
 
 Jan
 
--- 
+(*) If you have Siemens-specific SMTP issues, drop me a note, there are
+    solutions.
+
+> =C2=A0
+>=20
+> Best regards
+>=20
+> Benjamin
+>=20
+> =C2=A0
+>=20
+> *Von: *cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> im
+> Auftrag von Benjamin Schilling via lists.cip-project.org
+> <schilling.benjamin=3Dsiemens.com@lists.cip-project.org>
+> *Datum: *Montag, 8. Juli 2024 um 21:17
+> *An: *cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org>
+> *Betreff: *[cip-dev] [PATCH] README.m-com-x86.md: Add hardware details
+>=20
+> From 4e6b957569e0a4dd617cc1f4fd716c769681f6dc Mon Sep 17 00:00:00 2001
+>=20
+> From: Benjamin Schilling <schilling.benjamin@siemens.com>
+>=20
+> Date: Mon, 8 Jul 2024 21:00:14 +0200
+>=20
+> Subject: [PATCH] README.m-com-x86.md: Add hardware details
+>=20
+> =C2=A0
+>=20
+> Signed-off-by: Benjamin Schilling <schilling.benjamin@siemens.com>
+>=20
+> ---
+>=20
+> doc/boards/README.m-com-x86.md | 131 ++++++++++++++++++++++++++++++++-
+>=20
+> 1 file changed, 130 insertions(+), 1 deletion(-)
+>=20
+> =C2=A0
+>=20
+> diff --git a/doc/boards/README.m-com-x86.md b/doc/boards/README.m-com-x86=
+.md
+>=20
+> index cbd74ad..d677b76 100644
+>=20
+> --- a/doc/boards/README.m-com-x86.md
+>=20
+> +++ b/doc/boards/README.m-com-x86.md
+>=20
+> @@ -1,4 +1,73 @@
+>=20
+> -# ISAR CIP Core: Instructions for M-COM RT X86 V1
+>=20
+> +ISAR CIP Core: Instructions for the Siemens Mobility GmbH M-COM RT X86 V=
+1
+>=20
+> +
+>=20
+> +## About the M-COM RT X86 V1
+>=20
+> +
+>=20
+> +The M-COM RT X86 V1 is an industrial grade PC.
+>=20
+> +It is designed to be installed on-board of trains and can be used for
+> communication and processing purposes or as a security gateway.
+>=20
+> +
+>=20
+> +## Hardware Specifications
+>=20
+> +
+>=20
+> +- Intel Atom E3950 CPU
+>=20
+> +- 8GB DDR3 DRAM soldered, ECC
+>=20
+> +- Trusted Platform Module V2.0
+>=20
+> +- 3 Gigabit Ethernet ports (M12 X-coded)
+>=20
+> +- 1 USB 3.0 on front
+>=20
+> +- -40=C2=B0C to +70=C2=B0C, fanless
+>=20
+> +- EN 50155 compliant (railways)
+>=20
+> +- 16 GB eMMC storage
+>=20
+> +- Input voltage range: 24 - 110 V DC EN50155
+>=20
+> +
+>=20
+> +### Power Plug Pinout
+>=20
+> +
+>=20
+> +M12 B-coded Plug
+>=20
+> +
+>=20
+> +| Column 1 | Column 2=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
+>=20
+> +| -------- | --------------------------- |
+>=20
+> +| 24-110V=C2=A0 | Edge triggered power on |
+>=20
+> +| GND=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | Not connected=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
+>=20
+> +
+>=20
+> +#### Powering the device
+>=20
+> +
+>=20
+> +The device must be connected to a powersupply providing 24V to 110V
+> output voltage at the "+" and "-" pins.
+>=20
+> +The "switch" pin is used for edge triggered power on.
+>=20
+> +It can be hardwired to the power supply 24V to 110V to trigger power on
+> of the device.
+>=20
+> +
+>=20
+> +### LED Matrix:
+>=20
+> +
+>=20
+> +| Column 1=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | Column 2=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 | Column 3=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | Colu=
+mn 4=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
+>=20
+> +| -------------- | -------------- | -------------- | ------------- |
+>=20
+> +| Power STBY=C2=A0=C2=A0=C2=A0=C2=A0 | Power ON=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | WD-Trigger=C2=A0=C2=A0=C2=A0=C2=A0 | Error 1=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 |
+>=20
+> +| ETH0 Link/Data | ETH1 Link/Data | ETH2 Link/Data | RS232/RS422=C2=A0=
+=C2=A0 |
+>=20
+> +| Module1=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | Module1=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | F1=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | M.2 Used/Data |
+>=20
+> +
+>=20
+> +Power STBY (Yellow):
+>=20
+> +- Standby: on
+>=20
+> +- Powering down: flashing
+>=20
+> +
+>=20
+> +Power ON (Green):
+>=20
+> +- Operation: on
+>=20
+> +- Powering up: flashing
+>=20
+> +
+>=20
+> +WD-Trigger (Yellow):
+>=20
+> +- Trigger pulses: flashing per pulse
+>=20
+> +
+>=20
+> +Error 1 (Red):
+>=20
+> +- WD-Permanent-Reset: flashing 4 Hz
+>=20
+> +- WD-Disabled: flashing 2 Hz
+>=20
+> +
+>=20
+> +ETHx (Yellow/Green):
+>=20
+> +- Link: on
+>=20
+> +- Data transfer: flashing
+>=20
+> +
+>=20
+> +Module1 (Yellow/Green):
+>=20
+> +- Module-specific
+>=20
+> +
+>=20
+> +F1 (Yellow):
+>=20
+> +- Controlled via Software
+>=20
+> +
+>=20
+> +M.2 (Green):
+>=20
+> +- Module installed:on
+>=20
+> +- Data transfer: flashing
+>=20
+> =C2=A0## Build the CIP Core image
+>=20
+> @@ -100,3 +169,63 @@ After boot, check the dmesg for Secure Boot status
+> like below:
+>=20
+> root@demo:~# dmesg | grep Secure
+>=20
+> [=C2=A0=C2=A0=C2=A0 0.008368] Secure boot enabled
+>=20
+> ```
+>=20
+> +
+>=20
+> +## Internal interfaces
+>=20
+> +
+>=20
+> +The M-COM contains an internal serial port that can be used to access
+> the devices kernel console for debug purposes.
+>=20
+> +
+>=20
+> +To access it, the backside of the device has to be unscrewed.
+>=20
+> +Afterwards it can be connected using a Mini-USB cable.
+>=20
+> +Make sure to have the appropriate FTDI driver installed.
+>=20
+> +
+>=20
+> +## Software Interfaces
+>=20
+> +
+>=20
+> +The following chapter describes interfaces accessible from software leve=
+l.
+>=20
+> +
+>=20
+> +### Controlling the watchdogs
+>=20
+> +
+>=20
+> +The M-COM RT x86 contains two watchdogs:
+>=20
+> +
+>=20
+> +- Custom Hardware Watchdog
+>=20
+> +- UEFI watchdog of efibootguard
+>=20
+> +
+>=20
+> +The UEFI watchdog is controlled via efibootguard variables.
+>=20
+> +It can be configured for both partition sets using `bg_setenv -p
+> <partition number> -w <timeout in seconds>`.
+>=20
+> +To confirm the new watchdog configuration use `bg_setenv -c`.
+>=20
+> +To disable the watchdog set the timeout to 0.
+>=20
+> +The watchdog is fed via `/dev/wdog`.
+>=20
+> +
+>=20
+> +The custom watchdog is controlled via I2C.
+>=20
+> +The following scripts can be used to control it.
+>=20
+> +
+>=20
+> +Enable watchdog:
+>=20
+> +```bash
+>=20
+> +#!/bin/bash
+>=20
+> +
+>=20
+> +# i2cset <i2cbus> <chip-address> <data-address> <value> <mode>
+>=20
+> +
+>=20
+> +# i2cbus=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =3D 2
+>=20
+> +# chip-address =3D 0x3c
+>=20
+> +# data-address =3D 0x00 (Status Register)
+>=20
+> +# value =3D 0x8000
+>=20
+> +# mode =3D w
+>=20
+> +
+>=20
+> +# enable watchdog
+>=20
+> +i2cset -y 2 -m 0x8000 0x3c 0x00 0x8000 w
+>=20
+> +```
+>=20
+> +
+>=20
+> +Disable watchdog:
+>=20
+> +```bash
+>=20
+> +#!/bin/bash
+>=20
+> +
+>=20
+> +# i2cset <i2cbus> <chip-address> <data-address> <value> <mode>
+>=20
+> +
+>=20
+> +# i2cbus=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =3D 2
+>=20
+> +# chip-address =3D 0x3c
+>=20
+> +# data-address =3D 0x00 (Status Register)
+>=20
+> +# value =3D 0x0000
+>=20
+> +# mode =3D w
+>=20
+> +
+>=20
+> +# disable watchdog
+>=20
+> +i2cset -y 2 -m 0x8000 0x3c 0x00 0x0000 w
+>=20
+> +```
+>=20
+> \ No newline at end of file
+>=20
+> --=20
+>=20
+> 2.45.2
+>=20
+> =C2=A0
+>=20
+
+--=20
 Siemens AG, Technology
 Linux Expert Center
 
