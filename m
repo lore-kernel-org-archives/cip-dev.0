@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00F9CC52D72
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E1F0C52D71
 	for <webhook@archiver.kernel.org>; Mon,  5 Aug 2024 16:44:49 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.12833.1722876276339708400
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web10.12824.1722876257681924282
  for <cip-dev@lists.cip-project.org>;
- Mon, 05 Aug 2024 09:44:44 -0700
+ Mon, 05 Aug 2024 09:44:42 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.09,265,1716217200"; 
-   d="scan'208";a="214739955"
+   d="scan'208";a="218711364"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Aug 2024 01:44:44 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 06 Aug 2024 01:44:41 +0900
 Received: from localhost.localdomain (unknown [10.226.92.197])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 861DE40213EE;
-	Tue,  6 Aug 2024 01:44:42 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 643A940213EE;
+	Tue,  6 Aug 2024 01:44:40 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 28/30] arm64: dts: renesas: rzg2lc-smarc: Enable CRU, CSI support
-Date: Mon,  5 Aug 2024 17:43:21 +0100
-Message-ID: <20240805164342.211857-29-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 27/30] arm64: dts: renesas: rzg2l-smarc: Enable CRU, CSI support
+Date: Mon,  5 Aug 2024 17:43:20 +0100
+Message-ID: <20240805164342.211857-28-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240805164342.211857-1-biju.das.jz@bp.renesas.com>
 References: <20240805164342.211857-1-biju.das.jz@bp.renesas.com>
@@ -35,53 +35,145 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 05 Aug 2024 16:44:49 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16750
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16749
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 0c63a51990872d3396f144fea41155c89a0f1a93 upstream.
+commit 3d52973db7457362e54b5b62242671eee80b2c14 upstream.
 
-Enable CRU, CSI on RZ/G2LC SMARC EVK and tie the CSI to the OV5645 sensor
-using Device Tree overlay.
+Enable CRU, CSI on RZ/G2L SMARC EVK and tie the CSI to OV5645 sensor
+using Device Tree overlay. rz-smarc-cru-csi-ov5645.dtsi is created so
+that RZ/G2L alike EVKs can make use of it.
 
 DT overlay changes are different compared to mainline. So ported the
 changes without using overlay.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20230413114016.16068-1-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/r/20230322125648.24948-3-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[Biju: Dropped r9a07g044c2-smarc-cru-csi-ov5645.dtso file ]
+[Biju: Squashed the commit 3cf6b4c685e6("arm64: dts: renesas: rzv2l-smarc:
+       Enable CRU, CSI support")
+       Dropped r9a07g0{4,5}4l2-smarc-cru-csi-ov5645.dtso files and updated
+       the Makefile]
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ .../dts/renesas/rz-smarc-cru-csi-ov5645.dtsi  | 80 +++++++++++++++++++
+ arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi  |  8 ++
+ 2 files changed, 88 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/rz-smarc-cru-csi-ov5645.dtsi
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
-index f21508640b6e..969153a86510 100644
---- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
-@@ -11,6 +11,9 @@
- #include "rzg2lc-smarc-pinfunction.dtsi"
- #include "rz-smarc-common.dtsi"
+diff --git a/arch/arm64/boot/dts/renesas/rz-smarc-cru-csi-ov5645.dtsi b/arch/arm64/boot/dts/renesas/rz-smarc-cru-csi-ov5645.dtsi
+new file mode 100644
+index 000000000000..c5bb63c63b47
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/rz-smarc-cru-csi-ov5645.dtsi
+@@ -0,0 +1,80 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Common Device Tree for the RZ/G2L SMARC EVK (and alike EVKs) with
++ * OV5645 camera connected to CSI and CRU enabled.
++ *
++ * Copyright (C) 2023 Renesas Electronics Corp.
++ */
++
++&{/} {
++	ov5645_vdddo_1v8: 1p8v {
++		compatible = "regulator-fixed";
++		regulator-name = "camera_vdddo";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-always-on;
++	};
++
++	ov5645_vdda_2v8: 2p8v {
++		compatible = "regulator-fixed";
++		regulator-name = "camera_vdda";
++		regulator-min-microvolt = <2800000>;
++		regulator-max-microvolt = <2800000>;
++		regulator-always-on;
++	};
++
++	ov5645_vddd_1v5: 1p5v {
++		compatible = "regulator-fixed";
++		regulator-name = "camera_vddd";
++		regulator-min-microvolt = <1500000>;
++		regulator-max-microvolt = <1500000>;
++		regulator-always-on;
++	};
++
++	ov5645_fixed_clk: osc25250-clk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <24000000>;
++	};
++};
++
++&cru {
++	status = "okay";
++};
++
++&csi2 {
++	status = "okay";
++
++	ports {
++		port@0 {
++			csi2_in: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <1 2>;
++				remote-endpoint = <&ov5645_ep>;
++			};
++		};
++	};
++};
++
++&OV5645_PARENT_I2C {
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	ov5645: camera@3c {
++		compatible = "ovti,ov5645";
++		reg = <0x3c>;
++		clocks = <&ov5645_fixed_clk>;
++		clock-frequency = <24000000>;
++		vdddo-supply = <&ov5645_vdddo_1v8>;
++		vdda-supply = <&ov5645_vdda_2v8>;
++		vddd-supply = <&ov5645_vddd_1v5>;
++
++		port {
++			ov5645_ep: endpoint {
++				clock-lanes = <0>;
++				data-lanes = <1 2>;
++				remote-endpoint = <&csi2_in>;
++			};
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+index 887dffe14910..ebb41ad5e93e 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+@@ -8,6 +8,9 @@
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
  
 +#define OV5645_PARENT_I2C i2c0
 +#include "rz-smarc-cru-csi-ov5645.dtsi"
 +
  / {
  	aliases {
- 		serial1 = &scif1;
-@@ -155,6 +158,11 @@ &spi1 {
+ 		serial1 = &scif2;
+@@ -146,6 +149,11 @@ &spi1 {
  };
- #endif
+ #endif /* PMOD_MTU3 */
  
 +&ov5645 {
-+	enable-gpios = <&pinctrl RZG2L_GPIO(0, 1) GPIO_ACTIVE_HIGH>;
-+	reset-gpios = <&pinctrl RZG2L_GPIO(5, 2) GPIO_ACTIVE_LOW>;
++	enable-gpios = <&pinctrl RZG2L_GPIO(2, 0) GPIO_ACTIVE_HIGH>;
++	reset-gpios = <&pinctrl RZG2L_GPIO(40, 2) GPIO_ACTIVE_LOW>;
 +};
 +
  /*
-  * To enable SCIF1 (SER0) on PMOD1 (CN7), On connector board
+  * To enable SCIF2 (SER0) on PMOD1 (CN7)
   * SW1 should be at position 2->3 so that SER0_CTS# line is activated
 -- 
 2.43.0
