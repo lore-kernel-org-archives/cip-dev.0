@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1934C3DA4A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C196CC3DA7F
 	for <webhook@archiver.kernel.org>; Mon,  5 Aug 2024 16:44:38 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.12769.1722876265945965968
+ by mx.groups.io with SMTP id smtpd.web10.12833.1722876276339708400
  for <cip-dev@lists.cip-project.org>;
- Mon, 05 Aug 2024 09:44:30 -0700
+ Mon, 05 Aug 2024 09:44:36 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.09,265,1716217200"; 
-   d="scan'208";a="214739932"
+   d="scan'208";a="214739940"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Aug 2024 01:44:29 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 06 Aug 2024 01:44:35 +0900
 Received: from localhost.localdomain (unknown [10.226.92.197])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id F410B40213EE;
-	Tue,  6 Aug 2024 01:44:27 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 342394021738;
+	Tue,  6 Aug 2024 01:44:33 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 21/30] media: platform: rzg2l-cru: rzg2l-video: Fix start reception procedure
-Date: Mon,  5 Aug 2024 17:43:14 +0100
-Message-ID: <20240805164342.211857-22-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 24/30] arm64: dts: renesas: r9a07g044: Add CSI and CRU nodes
+Date: Mon,  5 Aug 2024 17:43:17 +0100
+Message-ID: <20240805164342.211857-25-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240805164342.211857-1-biju.das.jz@bp.renesas.com>
 References: <20240805164342.211857-1-biju.das.jz@bp.renesas.com>
@@ -35,158 +35,113 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 05 Aug 2024 16:44:38 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16743
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16746
 
-commit 6bcff5f958e45a21f74d140c58e061999e97cd50 upstream.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-As per section 35.3.1 Starting Reception for the MIPI CSI-2 Input on the
-latest hardware manual (R01UH0914EJ0145 Rev.1.45) we need to supply all
-the clocks and then release the CRU resets. Currently we are releasing
-the resets and then supplying the clocks. So, fix the start reception
-procedure.
+commit 95c91e77664866517a999abdb246ffb207882c30 upstream.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20240213181233.242316-6-biju.das.jz@bp.renesas.com
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Add CSI and CRU nodes r9a07g044 (RZ/G2L) SoC DTSI.
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20230322125648.24948-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 59 +++++++++----------
- 1 file changed, 28 insertions(+), 31 deletions(-)
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 79 ++++++++++++++++++++++
+ 1 file changed, 79 insertions(+)
 
-diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-index c2038face539..96ccc0edfa70 100644
---- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-+++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-@@ -489,39 +489,24 @@ static int rzg2l_cru_set_stream(struct rzg2l_cru_dev *cru, int on)
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+index 94867568f46b..ba87cd424a25 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+@@ -687,6 +687,85 @@ sbc: spi@10060000 {
+ 			status = "disabled";
+ 		};
  
- 		video_device_pipeline_stop(&cru->vdev);
- 
--		pm_runtime_put_sync(cru->dev);
--		clk_disable_unprepare(cru->vclk);
--
- 		return stream_off_ret;
- 	}
- 
--	ret = pm_runtime_resume_and_get(cru->dev);
--	if (ret)
--		return ret;
--
--	ret = clk_prepare_enable(cru->vclk);
--	if (ret)
--		goto err_pm_put;
--
- 	ret = rzg2l_cru_mc_validate_format(cru, sd, pad);
- 	if (ret)
--		goto err_vclk_disable;
-+		return ret;
- 
- 	pipe = media_entity_pipeline(&sd->entity) ? : &cru->vdev.pipe;
- 	ret = video_device_pipeline_start(&cru->vdev, pipe);
- 	if (ret)
--		goto err_vclk_disable;
-+		return ret;
- 
- 	ret = v4l2_subdev_call(sd, video, pre_streamon, 0);
--	if (ret == -ENOIOCTLCMD)
--		ret = 0;
--	if (ret)
-+	if (ret && ret != -ENOIOCTLCMD)
- 		goto pipe_line_stop;
- 
- 	ret = v4l2_subdev_call(sd, video, s_stream, 1);
--	if (ret == -ENOIOCTLCMD)
--		ret = 0;
--	if (ret)
-+	if (ret && ret != -ENOIOCTLCMD)
- 		goto err_s_stream;
- 
- 	return 0;
-@@ -532,12 +517,6 @@ static int rzg2l_cru_set_stream(struct rzg2l_cru_dev *cru, int on)
- pipe_line_stop:
- 	video_device_pipeline_stop(&cru->vdev);
- 
--err_vclk_disable:
--	clk_disable_unprepare(cru->vclk);
--
--err_pm_put:
--	pm_runtime_put_sync(cru->dev);
--
- 	return ret;
- }
- 
-@@ -636,25 +615,33 @@ static int rzg2l_cru_start_streaming_vq(struct vb2_queue *vq, unsigned int count
- 	struct rzg2l_cru_dev *cru = vb2_get_drv_priv(vq);
- 	int ret;
- 
-+	ret = pm_runtime_resume_and_get(cru->dev);
-+	if (ret)
-+		return ret;
++		cru: video@10830000 {
++			compatible = "renesas,r9a07g044-cru", "renesas,rzg2l-cru";
++			reg = <0 0x10830000 0 0x400>;
++			clocks = <&cpg CPG_MOD R9A07G044_CRU_VCLK>,
++				 <&cpg CPG_MOD R9A07G044_CRU_PCLK>,
++				 <&cpg CPG_MOD R9A07G044_CRU_ACLK>;
++			clock-names = "video", "apb", "axi";
++			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "image_conv", "image_conv_err", "axi_mst_err";
++			resets = <&cpg R9A07G044_CRU_PRESETN>,
++				 <&cpg R9A07G044_CRU_ARESETN>;
++			reset-names = "presetn", "aresetn";
++			power-domains = <&cpg>;
++			status = "disabled";
 +
-+	ret = clk_prepare_enable(cru->vclk);
-+	if (ret)
-+		goto err_pm_put;
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
 +
- 	/* Release reset state */
- 	ret = reset_control_deassert(cru->aresetn);
- 	if (ret) {
- 		dev_err(cru->dev, "failed to deassert aresetn\n");
--		return ret;
-+		goto err_vclk_disable;
- 	}
- 
- 	ret = reset_control_deassert(cru->presetn);
- 	if (ret) {
- 		reset_control_assert(cru->aresetn);
- 		dev_err(cru->dev, "failed to deassert presetn\n");
--		return ret;
-+		goto assert_aresetn;
- 	}
- 
- 	ret = request_irq(cru->image_conv_irq, rzg2l_cru_irq,
- 			  IRQF_SHARED, KBUILD_MODNAME, cru);
- 	if (ret) {
- 		dev_err(cru->dev, "failed to request irq\n");
--		goto assert_resets;
-+		goto assert_presetn;
- 	}
- 
- 	/* Allocate scratch buffer. */
-@@ -686,10 +673,18 @@ static int rzg2l_cru_start_streaming_vq(struct vb2_queue *vq, unsigned int count
- free_image_conv_irq:
- 	free_irq(cru->image_conv_irq, cru);
- 
--assert_resets:
-+assert_presetn:
- 	reset_control_assert(cru->presetn);
++				port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
 +
-+assert_aresetn:
- 	reset_control_assert(cru->aresetn);
- 
-+err_vclk_disable:
-+	clk_disable_unprepare(cru->vclk);
++					reg = <0>;
++					cruparallel: endpoint@0 {
++						reg = <0>;
++					};
++				};
 +
-+err_pm_put:
-+	pm_runtime_put_sync(cru->dev);
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
 +
- 	return ret;
- }
- 
-@@ -704,9 +699,11 @@ static void rzg2l_cru_stop_streaming_vq(struct vb2_queue *vq)
- 			  cru->scratch, cru->scratch_phys);
- 
- 	free_irq(cru->image_conv_irq, cru);
--	reset_control_assert(cru->presetn);
--
- 	return_unused_buffers(cru, VB2_BUF_STATE_ERROR);
++					reg = <1>;
++					crucsi2: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&csi2cru>;
++					};
++				};
++			};
++		};
 +
-+	reset_control_assert(cru->presetn);
-+	clk_disable_unprepare(cru->vclk);
-+	pm_runtime_put_sync(cru->dev);
- }
- 
- static const struct vb2_ops rzg2l_cru_qops = {
++		csi2: csi2@10830400 {
++			compatible = "renesas,r9a07g044-csi2", "renesas,rzg2l-csi2";
++			reg = <0 0x10830400 0 0xfc00>;
++			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD R9A07G044_CRU_SYSCLK>,
++				 <&cpg CPG_MOD R9A07G044_CRU_VCLK>,
++				 <&cpg CPG_MOD R9A07G044_CRU_PCLK>;
++			clock-names = "system", "video", "apb";
++			resets = <&cpg R9A07G044_CRU_PRESETN>,
++				 <&cpg R9A07G044_CRU_CMN_RSTB>;
++			reset-names = "presetn", "cmn-rstb";
++			power-domains = <&cpg>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++				};
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++
++					csi2cru: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&crucsi2>;
++					};
++				};
++			};
++		};
++
+ 		dsi: dsi@10850000 {
+ 			compatible = "renesas,r9a07g044-mipi-dsi",
+ 				     "renesas,rzg2l-mipi-dsi";
 -- 
 2.43.0
 
