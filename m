@@ -1,158 +1,204 @@
-Return-Path: <uli@fpond.eu>
+Return-Path: <ncaidin@linuxfoundation.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 375D1C3DA7F
-	for <webhook@archiver.kernel.org>; Wed,  7 Aug 2024 12:03:19 +0000 (UTC)
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [85.215.255.22])
- by mx.groups.io with SMTP id smtpd.web10.31652.1723032178010849145
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 258D0C3DA7F
+	for <webhook@archiver.kernel.org>; Wed,  7 Aug 2024 12:04:49 +0000 (UTC)
+Received: from ss11.sbt-mailgate.jp (ss11.sbt-mailgate.jp [202.241.206.55])
+ by mx.groups.io with SMTP id smtpd.web11.21620.1722988127867552146
  for <cip-dev@lists.cip-project.org>;
- Wed, 07 Aug 2024 05:02:58 -0700
+ Tue, 06 Aug 2024 16:48:48 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=jXGSn9ir;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=p3IyU1qs;
- spf=none, err=permanent DNS error (domain: fpond.eu, ip: 85.215.255.22, mailfrom: uli@fpond.eu)
-ARC-Seal: i=1; a=rsa-sha256; t=1723032160; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=Qts59lgFskxalgw6oncDbGUXLgsoFaBkCXBsl60H6lStX8A3feRJPdOmswHFwdvNH3
-    SoXJ093YRoI/uAcEJcOi7nnW+/9LMCgl+79chB6X33IFCR1h2JC6OHI09/kuJ2WHrrxy
-    uPfkWCBfzcivtaG8tGCY9TTIbY0vCgHIMmXuHvlHa8egC+2HCGrgkNdAFa6sAvaMbkp/
-    Nm+86KyzRx5VwmdfgBzO9m0vkYwDWaIFmJv3KPb4lFNtmOAnATn/M30T5YmzVPrsIalW
-    c2Q96IlUwtapk9LvjkyTaKJFIf98VfOI/L4TB/00i+cw2D/VbsZeyhP9CHdvVmGp85AA
-    Y3Ew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1723032160;
-    s=strato-dkim-0002; d=strato.com;
-    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
-    bh=+3VJ/aXIQzdjzqwNuUnCpfr0Shi+4b0PtaTYxai9Zx0=;
-    b=EdjjKfh8b33yc5TNIs+lgiwdX8eu74EvneO2pK6FtBJkOiqwXlemTe1pvcj+/rA/gO
-    TFwCCCAUNmHQ9faXtiGtSLvhjXxaFzXbWPsWWAE2PZXK1dDSCwJQr1iNg63RjbwZAxXG
-    Y3DJ+zENUP39KHVgrnjNGSgEqh2uvhjP1+4moMXcsN1feM5CdNs8LWvlegv3KA8TJpV6
-    eoUkg7D3eek62EGxzdweDlvc6VDT4Tnt7iZk+231XfWY1sSXXu/9PeX7O+pScDAvweHn
-    47br48AaGpGpGDWxdRscdT0D+UksQQcQzyW0wQlgC8RE/FwHU46GeW6D83gROaF1qjyf
-    eHuA==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1723032160;
-    s=strato-dkim-0002; d=fpond.eu;
-    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
-    bh=+3VJ/aXIQzdjzqwNuUnCpfr0Shi+4b0PtaTYxai9Zx0=;
-    b=jXGSn9irARYyFydIAuc3cZzxv6T7Wcyw/vSoAlpiyr87fHJ4WiKyEK4RDbvNTm8Y9K
-    Domf1qM5SY/8Brrqqw82DfOywEFmWtnd3WpZzpIgKERfPn8dKvDGvtdvMdIdyHMxzSOk
-    tnRxHWYxlxFDiNl7r1RlNG2gPHMrr8aP7vuwCjIv4BJ07jY9Ad0qVs3PvwCQtz8TWaGk
-    xwjQnFWhOmLOPq1M9TpSVCF+7t3LCwuD4jTH4fu9NGKkw3fQYPV9BqZpKF+e5eAbigoy
-    NRGP4GdKKh+ieQorWJrsJfDkPH8XsB2U46BwUvlFKdTISuhiyjV+n/A5nQS7JEzMWSa5
-    Mncg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1723032160;
-    s=strato-dkim-0003; d=fpond.eu;
-    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
-    bh=+3VJ/aXIQzdjzqwNuUnCpfr0Shi+4b0PtaTYxai9Zx0=;
-    b=p3IyU1qsbHH+Mto+za0AtzCMH3QDkAr2tcIvrpSCnNQw8aPOvHRdtZa2YMxGfwGUfj
-    C1C3GGDZjGvEBofZNSAg==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzstnjV5GU9c7oKNYMuRfGHqdez7mZQjqCOMPS13Ww2eFsaIxefx6BY"
-Received: from ox-live-app104.back.ox.d0m.de
-    by smtp-ox.front (RZmta 51.1.0 AUTH)
-    with ESMTPSA id z5d8cb077C2e3vL
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Wed, 7 Aug 2024 14:02:40 +0200 (CEST)
-Date: Wed, 7 Aug 2024 14:02:39 +0200 (CEST)
-From: Ulrich Hecht <uli@fpond.eu>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"pavel@denx.de" <pavel@denx.de>,
-	"jan.kiszka@siemens.com" <jan.kiszka@siemens.com>,
-	"masami.ichikawa@cybertrust.co.jp" <masami.ichikawa@cybertrust.co.jp>,
-	"chris.paterson2@renesas.com" <chris.paterson2@renesas.com>,
-	"nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>
-Message-ID: <1159690395.3858009.1723032159983@webmail.strato.com>
-Subject: [ANNOUNCE] Release v4.4.302-cip90
+ dkim=none (message not signed); spf=pass (domain: cybertrust.co.jp, ip: 202.241.206.55, mailfrom: masami.ichikawa@cybertrust.co.jp)
+Authentication-Results: ss11.sbt-mailgate.jp; dkim=fail(No signature) header.d=cybertrust.co.jp
+Received: from mail.sbt-mailgate.jp (sagproxy-out11.sbt-mailgate.jp [10.16.47.41]) (envelope sender: <masami.ichikawa@cybertrust.co.jp>)
+	(not using TLS) by ss11.sbt-mailgate.jp (Active!gate) with ESMTP id HIuk17111A;
+	Wed,  7 Aug 2024 08:46:36 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LplTXwCk8AMrjuCGsS7dOvGNHPYcBUXU/CsJWYkM3PCe5n2UofTbJGsZntK7ruFB9In0IuYTN7coeW59zY0P2N0IGN98EYStt1YS0XikGeOKxfTmWFAw/IRgYuyfTWcuhjJdu51c/uv41MKOS9maMfxADPEkb7r9fmpaP1konhmIHyvdG6gDRdRQ/2FJbWaEDhVyJOnY2QRASfCRttA/ynDO2ltE1aZlNacwl2MdlAIICeFP6cG+bVtTT8bTmp1zx/irh/xWw2D7d6koDTyAxnIREQ8dNmfL75td+rHBb30ALm6oNMSITKxTkKUDcITUy7TmafpWYfPj2EaqaexmzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FaSJrsqDPlCbaYBmQZha8DWN+6gwxqbxUra+mXlFn+0=;
+ b=i4imD3Q11O/lu1ZrBRG51bU4Z/tfoVNjcuG/Jh8l8MiGWfL+jcc+YZGXEE2NZz13nnHRYXPShPDeoLY5N8xlR2VxylD4rHg5I5E6RBYlPuM4tUBRCNcUBN3khy+GgwFdpdWGmNYRYWTd01EzqMJuemrqz1u0IMpCmJzsjfRUuSObd3rxa2o/lxqCOFzi8SdF0G+FgecRE8snaQCncmvdVB56Eh0SyxmniU8y1vmEr6AdxsoYyMh9JSBriSIwqOdedXDSoVTKJV9yctTomNrj1srJWkT8WGcSKPkumVc0ov5N3DROw7B8np/73+PbU5YSzpIfjFiWgfh11s4L7zR/Ig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cybertrust.co.jp; dmarc=pass action=none
+ header.from=cybertrust.co.jp; dkim=pass header.d=cybertrust.co.jp; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cybertrust.co.jp;
+Received: from TY2PR01MB4044.jpnprd01.prod.outlook.com (2603:1096:404:d7::19)
+ by OS3PR01MB5895.jpnprd01.prod.outlook.com (2603:1096:604:c7::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.13; Tue, 6 Aug
+ 2024 23:46:33 +0000
+Received: from TY2PR01MB4044.jpnprd01.prod.outlook.com
+ ([fe80::e364:f999:3bdb:ccec]) by TY2PR01MB4044.jpnprd01.prod.outlook.com
+ ([fe80::e364:f999:3bdb:ccec%6]) with mapi id 15.20.7849.008; Tue, 6 Aug 2024
+ 23:46:33 +0000
+X-Gm-Message-State: AOJu0Yx8SKFyEPs0DMavR+F4xM5fWhb9tWPdWtdh3qS6C8xBdYPcbSnb
+	AFGNZ3l4JXF8Y/+cM9YZUDXfuwC7lBVz/+faD1AL37Pj0lP4Z+fjfYD6S5T6P2GoAhpTotUB9zP
+	0R9aUNJTtpYT3V4vVmvoZlwodg/0U9wQy7u7pHQ==
+X-Google-Smtp-Source: AGHT+IHiBM/hShfEvqusDc1LMqZpQ2RuUgMruCvF7dKr2hxkFCtI8NahGa4h+ljtzUBlWSfm+PaGnAPqPDX3Cjl3/IE=
+X-Received: by 2002:a05:6512:696:b0:52c:9f9e:d8e3 with SMTP id
+ 2adb3069b0e04-530bb385bbcmr9924041e87.31.1722987983336; Tue, 06 Aug 2024
+ 16:46:23 -0700 (PDT)
+References: <TYYPR01MB124023222835A195286BCC954B7BF2@TYYPR01MB12402.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYYPR01MB124023222835A195286BCC954B7BF2@TYYPR01MB12402.jpnprd01.prod.outlook.com>
+From: Masami Ichikawa <masami.ichikawa@cybertrust.co.jp>
+Date: Wed,  7 Aug 2024 08:48:42 +0900
+X-Gmail-Original-Message-ID: <CAODzB9qZWCvX3oTx0AsV2SwLUm1LNTULYJbzTvh2Cu+as4vsaA@mail.gmail.com>
+Message-ID: <CAODzB9qZWCvX3oTx0AsV2SwLUm1LNTULYJbzTvh2Cu+as4vsaA@mail.gmail.com>
+Subject: Re: [cip-dev] CVE-2023-35827 tracking
+To: cip-dev@lists.cip-project.org
+X-ClientProxiedBy: MM0P280CA0015.SWEP280.PROD.OUTLOOK.COM
+ (2603:10a6:190:a::20) To TY2PR01MB4044.jpnprd01.prod.outlook.com
+ (2603:1096:404:d7::19)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.6-Rev67
-X-Originating-Client: open-xchange-appsuite
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY2PR01MB4044:EE_|OS3PR01MB5895:EE_
+X-MS-Office365-Filtering-Correlation-Id: c831d6e4-a151-421a-cd9b-08dcb672007d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|4022899009|366016|52116014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?eFAvQktyQjJ3T0hiS0JLelZEQ2ZmT0VZK0I0bUE2VlFhaUlIRnZpSGF5eXhj?=
+ =?utf-8?B?YllNaENRREdyaGtsN04yWHlmRTVjU2FPcGdVZjJWTG1tQnJXM2RlWnRMNndG?=
+ =?utf-8?B?SnpFdmRVcmt4WGxoY2J3T3dpSXFVSFlxc01HU00xUGtBMTA2RHhuR2FucHVO?=
+ =?utf-8?B?S09nYWNLcyt6RHNKQW9FMFVIa1ExNHFGQjNXd2Nnejl2QlFkKzdxbkRtL3Yv?=
+ =?utf-8?B?ck1Xd3l1M1IwWDJSQjhGaWlJQVlnU0trdjRMQXowTTRWSzRhN3h3L2hTR25I?=
+ =?utf-8?B?NVlPZWVYMmxpRUdhN2ErREZCNk1Uall2N1g2RkpTckk5NjZBS2x0aThyWGpw?=
+ =?utf-8?B?TzZ5bUoweXpaUG1JUWpYR3BTbFVmb0lETy8rOUh5dktkQXo3QUx6WXBTMko3?=
+ =?utf-8?B?c1V5NXU4OElDdWJRY3lMWWFUU1NJUmNZR2VSZE9YVENMUVR2MWQrNmk4WUd5?=
+ =?utf-8?B?MzlCZDExb0FrUnZReHJsSnpMVWN5b2FwOXVkaWI3SnJockJ2YmJhTklLbjY0?=
+ =?utf-8?B?WUNnWlY2Zlg2a1g0eTc1SG5HK3pZYnh6c3VkcGtpSGkyVmlIRElVQ091T2lZ?=
+ =?utf-8?B?OHd5SEFkM1g0SUVsNC9LVGg2d1llVHdGNTFPSDkxektZd1BvV3VMSHBnVHV4?=
+ =?utf-8?B?QU5CRHlJYlc4WS9mcWpIeGRYOWxWMjZhV3locWI4VmR1TDVjR0FvSEUwblBt?=
+ =?utf-8?B?Tk5vWHc0Ylo3enY4d3NHY0lkOUl2UWhDL0MvZWNGQkhrYVp2elp2NVF4djhS?=
+ =?utf-8?B?UzcvNFpROWJuTlBoVVV2K1FIbHB0T2g2ZklmaG9sYXBMN24yUjNBRWYxRWpW?=
+ =?utf-8?B?dk9zdzdpbDN5RysxdzlBQWs1NjNoaDNBbGVhQzZkV1VmRTBHYU1WbXkyaGRn?=
+ =?utf-8?B?S3l6aXJQMlZ3MEwrb2RrVDUrcHBTQlFZa0x5K3NNY01HVFhwbEFMNHRaTU5p?=
+ =?utf-8?B?Y25wbTBib3l2WFp3dlpvQmFYaURuYnArdVdROEVQRFVVWTZnczUwcUdCc2RI?=
+ =?utf-8?B?S3pqL1NOK0NrUVlSZ2JhY3FuRjlVaXJUT3o1Ni83c3NWckM5bUVSZlJsMFB3?=
+ =?utf-8?B?TnlybzVvLzJQVitTRzBDRURUSW1YWlAyYWEva1IxL3FUN3Q1L1VNZXlpL2pn?=
+ =?utf-8?B?TmVzOG5YbGxDMUltY3ZVNENoWndrcHpMMnlnYlJFbExPaFcxVDVrcFFQZlhW?=
+ =?utf-8?B?VGR4MEN4Ty9yVVBHZGZjL2RlQmNHeTM3MmdGS0pEVGtiNkM4aFgrc1pobFVY?=
+ =?utf-8?B?L0xFdlVwOEM4YU9SNEJjaVRFWm9zT3lFQW5ndkdKQ1JROGhOckNnQWZydWN6?=
+ =?utf-8?B?NEZTWUl1TmdkbldENXZsSUl2WjdOTm91djhWYzMzbVNTQjcwRnRreE51RHBI?=
+ =?utf-8?B?Vm82emxkRGtyRmkrR0hneUJwcjVCUVc0ZXdBeFh2Vk00VHVRYWt2bXZYbUEz?=
+ =?utf-8?B?ekJaY1FETS9RWjkrTFhCVW9GWHBybVQxcUU4QlQ2UzFFallUYnd0akwrN0J2?=
+ =?utf-8?B?dXZUckd3WnBQQURlZTdjK2tOdnQ5TWhCWG9nYXArdFhGN1AxNHZDQ0NEd1Rm?=
+ =?utf-8?B?UjlaUGFPZ05DQVNVMXJvRFExWkxtRTNTUmNMcjVkTzc0OXdXQUVZVlFYM09M?=
+ =?utf-8?B?YVkwbUpsc2NteXRxSDBhY3NWa05ReUI2ZkpYaEZCS1cvclhXeWpaUjBqTFUv?=
+ =?utf-8?B?ZG81NGdrZmlkUkpjS3lGUmh4TUVtVGJLRWZERy9GR0JUekwyVE03RHZYb0xR?=
+ =?utf-8?B?KzhwK0JMdk4wemdXNDk0RDkwU1Yydy9mR01qdy9XR3FDQWozTGlTaXg0MXlV?=
+ =?utf-8?B?aUlwbURkY3ZYSkJuYVM2UT09?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR01MB4044.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(4022899009)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?ay9vaDdFenlVWk0raHZMQUhheXhOTmdNYTQva1N2V2hUUDJtN3JEczZwRjhO?=
+ =?utf-8?B?bUE2OHIvaFRrR3ZJMFZuU0V0dCs1dHczQTZ6M0tjNU1uaEFjNU0wR3BZUERa?=
+ =?utf-8?B?YUMrdjNmd0hGZm9PZS9HYlQvOWdQUG5LbkFhYnUyNDFsc2kwNUd1YTNzeSsy?=
+ =?utf-8?B?TnZRWEY5bG5rZ2l3dnZCQU91MWRYOE1wVFhvRG1WYXozYVZwY0NDdlJlKzcx?=
+ =?utf-8?B?SkVqSUtwa0JhcFNqYzNNK1V1MHluTjE4dEw0R3lLMkVndkVjVTFXN2lnTEds?=
+ =?utf-8?B?TFl4cEw2THRveUZKU09BbTEyWWdhYzBRa3BPNmJ4cDZKR2plTmdEZGh0V0M1?=
+ =?utf-8?B?aFZlRVNibHVNMkVJaHNhUEswUzhyb0krSFMxVjRhVHlSZng0UVZ3c3QrZTE4?=
+ =?utf-8?B?U1M3MHg2N0FwT3JiQVZEQUprOWVrNDVkcTlaODIvZ3diWnlSanJSdG82UEw4?=
+ =?utf-8?B?UmUxZVJvL3ZoMm1YUE1YYmhvVUhDSGhubnBHL2ZDTEtoQUFEV0pZVERmRmNT?=
+ =?utf-8?B?aFlaU05OZG1ueFRWMlFSeTFrM3hWdCt6RHZKRHZnbHJOSTVsOGVYRkRtYTZn?=
+ =?utf-8?B?QTNGdzVxa2EvbFczMGoxdnB5YTdrMjkwVGdUc2d1N3A2MS9GdFdVbXdkYkpQ?=
+ =?utf-8?B?K0N0VzhrdENESDRBTWxGNjN2Z1RyWkxHNFc3cjYvZElQZEZpNXBKbzFTV256?=
+ =?utf-8?B?aktiTTBTdkwxU0s5MnJsZ1NzbWVoVGtZMllrQ0ZlRkcwTHhGcDBacE5mMGFK?=
+ =?utf-8?B?cHRnOElrRkhjS0Q1cVdpcVJiRHgzTGNDM28xMXVsZnpkZTZjUG9xWHNGTEFO?=
+ =?utf-8?B?VEZhSHJRdkxNanFTVi80R0plSkw0NlBxTjREbFBKc01lN09EV2Q3cW9BOFh3?=
+ =?utf-8?B?OEFDdGk1YjFTMGxxRjJhYkh4MjhiVzFvd3JkUWR5WVl4cWJneGFqVG1VWTZY?=
+ =?utf-8?B?MVFubjlESXViS0ZRSEZDeGxxUG9WQmlXWVg2K1VVSnplZUxsMlcvN00vKzdS?=
+ =?utf-8?B?bVM3Zjk4MEZ3S1MzN1R5L3FjRHpUWDZkTWkrUWVUVVZvcnYzT05heDl5QmFQ?=
+ =?utf-8?B?azM3azFOSTJ0VStVbnVITXhnbzUzNnc3QXdMVjZObHcyWEgwR1djbHorUEJB?=
+ =?utf-8?B?WUZRYUR0WklBSC95TzdreitvSzN0YXpOK2JZdXdrOTE1dEFndTByV0p6eHNT?=
+ =?utf-8?B?TWREaFBiUDg4MXhCNENhTHB4NjA5SUFuanVjcXJpQ3N1NnpsQThscFo4RzFG?=
+ =?utf-8?B?NEVvU3BIaXVmaWdOTW5wZzQ3U20rTmJRbElMdnZyeGFQMzRvU0VnSmlqSGxi?=
+ =?utf-8?B?clQ1MWlZS2lUU1RkaUhtc040TXRoM2pvdlFuSVNPalNGOWN5VEplaFV1MFJp?=
+ =?utf-8?B?b3JoRHd3dTYvZ2J3TFBMYmdOTnR6RlY2cWd3K2xsdytDTTBzMk9hRjlDWHE3?=
+ =?utf-8?B?WWx1OURQM2ZQVDBiTXREQ1M2V1lhZmJlb3grN0p5ZUVlaUJRRFlDdWEweWRM?=
+ =?utf-8?B?TVdSYy9MV0pWWm9EUGNveWgrUGhyRHAvcnFITEY4Z1ZmQ0p0RGtWNDMvMFBQ?=
+ =?utf-8?B?NnJuaXlpNzZUamxQMTFXMEJHWFA1aDdJaStyM1pNak1Yb1VDWkRwcHNBOVdQ?=
+ =?utf-8?B?d2tSamtDQkt2djhsT0tuV3E3M3RzZkFpT3k1RGdNazNWWEdPbFAxZTlJczZL?=
+ =?utf-8?B?N25YekF0eWRuWGY1WExNTjRtUjdscDNibVpnREoweG5wWTNuWGVjRmhJa1o2?=
+ =?utf-8?B?WDBEdEtWMXRoMEdLb0NhVW9ENkVjL2N0VEZRaG03R1FlaXdrNitkUk9weUc5?=
+ =?utf-8?B?WjhsVGNIZjdIZEFJYmYyYjVkZEpnSjdMeG9aRmRmVU53U05HWEdSNGVUekdx?=
+ =?utf-8?B?U0hsMjVxMk5LY00vM1dndjc0SXFkdGdKY244ZzQySGlQNTRPN2hoa2lpZVQv?=
+ =?utf-8?B?LzIyVEd0N01DTzlJcWMwZDROUlNYNzNoVWxwSFlWVzVpS3lIWGgvTEgzR3Yy?=
+ =?utf-8?B?ME8zaTN0NGVJNjlTRDBkSkR6aW51VTJEaS9seGZxK1FMRlZIMHFxUCtJZE1T?=
+ =?utf-8?B?a3Jyc1MzVUsrQ0xNL1krVmdscHBPQzFybVpSamdVUCtrb2xsT1FaSmc5elQr?=
+ =?utf-8?B?YnR6S1lLQ3lVNlMyRi91enB1NkcwanliU3Y1NjVaQkxKYTVIVlF4Sll0TTVI?=
+ =?utf-8?Q?DxXD7yDDuyDlf0ifxZPO4U0=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	VQm/tklbJgXSKlvo7vcvpleG7zGJlKPcIXRW6oowhl2B2muvDfq2eP0OrUkHJz0pa+zyrOPuCpkIFxGMuUtnhvFo9Z/WQlvJrwEJHHECA3lYJcyb6Ac7bJfg+QECW+se8MDw9bTRMG85GLxFcb8jqgLeCqjSbJlb0GQ9FHHqAtkhO5Br1798FjTrmw8u4uk3IZ6HQDFR0QRIzr5DaUdQshTfVZrX4RvNagf4iLQ1WCKvW8YwwGBBvQbh8ig7KocuZRUg2B3uVdcqMYeCfh5zxFfTFHXRIHJ2nPSv3OE68EZ8ouOE6KxDjL7xyYxVY/8GfTJe7ss2kIKOqvCt4HFTOObCNaDjLizcVP+WKIYgT5oD/Ln9ag0psP4XCFPB0yMUFe16FfiJIEpzYXOtg37sfDJXkUf5lSaLvb0iG1lIfUB7K2G6e+QAla+PSD93UsPKO4Y8XNdQyXN99cZcnvbOUjeq6Ij3V1PMgYmaRh5cDVvS+TC/SmbC8GCZDs9T4BBaIkhSUBYkKjNe2n3mmCpz693LYGsqYcZPVzUuNSYnAmKinaUepQ5kHwMwZuN0eA1y8Ui4yaRyRGXuMB4jgFIMjsBdKXSNVxyvmivuQT1qy9z/XKrbelHMNV2MArzsIlj7
+X-OriginatorOrg: cybertrust.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: c831d6e4-a151-421a-cd9b-08dcb672007d
+X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB4044.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2024 23:46:33.3674
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 72cc4624-32b4-4dab-b80a-8563e559bd82
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 37BjnPgB5uBGwnhey1IQrVtvOETqzabCXJMTlU3zOvJTz/sRYOQq6e4sGwEtLdcDMpPyIvhkcMJAHGCM02S3rrbTtdABLVbRCly1GQxpWHaxeERFgdGLFpGUDsg2df+e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB5895
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 07 Aug 2024 12:03:19 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16756
+ <cip-dev@lists.cip-project.org>; Wed, 07 Aug 2024 12:04:49 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16757
 
-Hi,
+Hi Chris-san,
 
-the CIP kernel team has released Linux kernel v4.4.302-cip90. The linux-4.4.y-cip tree's base version has been updated to v4.4-st55. The trees are up-to-date with kernel 4.19.319.
+Thank you for reporting this.
+I think I made a mistake when checking kernel configs. I confirmed
+that CONFIG_RAVB is enabled on defconfigs in cip-kernel-config
+repogistry.
+So, I removed the ignore block from the CVE-2023-35827.yml.
 
-You can get this release via the git tree or as a tarball from https://mirrors.edge.kernel.org/pub/linux/kernel/projects/cip/4.4/
+On Tue, Aug 6, 2024 at 4:29=E2=80=AFPM Chris Paterson via
+lists.cip-project.org
+<chris.paterson2=3Drenesas.com@lists.cip-project.org> wrote:
+>
+> Hello Ichikawa-san,
+>
+> I was just looking at CVE-2023-35827 in more detail.
+> According to our tracking[0], the issue is already fixed in mainline and =
+CIP 5.10/6.1, but not in the older versions.
+>
+> For some of the CIP versions there is an "ignore" for this CVE labelled "=
+No CIP member enables Renesas Ethernet AVB driver".
+> However, looking at the cip-kernel-config repo[1] all the Renesas configu=
+rations enable CONFIG_RAVB.
+>
+> Do you know why this "ignore" was added[2] for this CVE?
+> Note that I haven't checked any others.
+>
+>
+> [0] https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/-/blob/maste=
+r/issues/CVE-2023-35827.yml
+> [1] https://gitlab.com/cip-project/cip-kernel/cip-kernel-config
+> [2] https://gitlab.com/cip-project/cip-kernel/cip-kernel-sec/-/commit/004=
+2abd91f2dd701c89c5a0bf681268df8a5c5bb
+>
+> Thanks, Chris
+>
+>=20
+>
 
-  v4.4.302-cip90:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-4.4.y-cip
-    commit hash:
-      1c0b45a5d75c157a5d6fddc34a587ff83d924b1f
-    Fixed CVEs:
-      CVE-2022-3566: tcp: Fix data races around icsk->icsk_af_ops.
-      CVE-2022-3567: ipv6: Fix data races around sk->sk_prot.
-      CVE-2024-36894: usb: gadget: f_fs: Fix race between aio_cancel() and AIO request complete
-      CVE-2024-37078: nilfs2: fix potential kernel bug due to lack of writeback flag waiting
-      CVE-2024-38619: usb-storage: alauda: Check whether the media is initialized
-      CVE-2024-39469: nilfs2: fix nilfs_empty_dir() misjudgment and long loop on I/O errors
-      CVE-2024-39499: vmci: prevent speculation leaks by sanitizing event in event_deliver()
-      CVE-2024-39501: drivers: core: synchronize really_probe() and dev_uevent()
-      CVE-2024-39509: HID: core: remove unnecessary WARN_ON() in implement()
-      CVE-2024-40902: jfs: xattr: fix buffer overflow for invalid xattr
-      CVE-2024-40904: USB: class: cdc-wdm: Fix CPU lockup caused by excessive log messages
-      CVE-2024-40912: wifi: mac80211: Fix deadlock in ieee80211_sta_ps_deliver_wakeup()
-      CVE-2024-40932: drm/exynos/vidi: fix memory leak in .get_modes()
-      CVE-2024-40942: wifi: mac80211: mesh: Fix leak of mesh_preq_queue objects
-      CVE-2024-40943: ocfs2: fix races between hole punching and AIO+DIO
-      CVE-2024-40959: xfrm6: check ip6_dst_idev() return value in xfrm6_get_saddr()
-      CVE-2024-40968: MIPS: Octeon: Add PCIe link status check
-      CVE-2024-40974: powerpc/pseries: Enforce hcall result buffer validity and size
-      CVE-2024-40981: batman-adv: bypass empty buckets in batadv_purge_orig_ref()
-      CVE-2024-40984: ACPICA: Revert "ACPICA: avoid Info: mapping multiple BARs. Your kernel is fine."
-      CVE-2024-40987: drm/amdgpu: fix UBSAN warning in kv_dpm.c
-      CVE-2024-40988: drm/radeon: fix UBSAN warning in kv_dpm.c
-      CVE-2024-41006: netrom: Fix a memory leak in nr_heartbeat_expiry()
-      CVE-2024-41089: drm/nouveau/dispnv04: fix null pointer dereference in nv17_tv_get_hd_modes
-      CVE-2024-41095: drm/nouveau/dispnv04: fix null pointer dereference in nv17_tv_get_ld_modes
-      CVE-2024-41097: usb: atm: cxacru: fix endpoint checking in cxacru_bind()
-      CVE-2024-42070: netfilter: nf_tables: fully validate NFT_DATA_VALUE on store to data registers
-      CVE-2024-42084: ftruncate: pass a signed offset
-      CVE-2024-42089: ASoC: fsl-asoc-card: set priv->pdev before using it
-      CVE-2024-42090: pinctrl: fix deadlock in create_pinctrl() when handling -EPROBE_DEFER
-      CVE-2024-42096: x86: stop playing stack games in profile_pc()
-      CVE-2024-42097: ALSA: emux: improve patch ioctl data validation
-      CVE-2023-52803: SUNRPC: Fix RPC client cleaned up the freed pipefs dentries
-      CVE-2024-39487: bonding: Fix out-of-bounds read in bond_option_arp_ip_targets_set()
-      CVE-2024-41035: USB: core: Fix duplicate endpoint bug by clearing reserved bits in the descriptor
-      CVE-2024-41044: ppp: reject claimed-as-LCP but actually malformed packets
-      CVE-2024-41046: net: ethernet: lantiq_etop: fix double free in detach
-      CVE-2024-42101: drm/nouveau: fix null pointer dereference in nouveau_connector_get_modes
-      CVE-2024-42102: Revert "mm/writeback: fix possible divide-by-zero in wb_dirty_limits(), again"
-      CVE-2024-42104: nilfs2: add missing check for inode numbers on directory entries
-      CVE-2024-42105: nilfs2: fix inode number range checks
-      CVE-2024-42106: inet_diag: Initialize pad field in struct inet_diag_req_v2
-      CVE-2024-42115: jffs2: Fix potential illegal address access in jffs2_free_inode
-      CVE-2024-42145: IB/core: Implement a limit on UMAD receive List
-      CVE-2024-42148: bnx2x: Fix multiple UBSAN array-index-out-of-bounds
-      CVE-2024-42153: i2c: pnx: Fix potential deadlock warning from del_timer_sync() call in isr
-      CVE-2024-42154: tcp_metrics: validate source addr length
-      CVE-2024-42223: media: dvb-frontends: tda10048: Fix integer overflow
-      CVE-2024-26720: mm/writeback: fix possible divide-by-zero in wb_dirty_limits(), again
-      CVE-2024-36484: net: relax socket state check at accept time.
-      CVE-2024-41012: filelock: Remove locks reliably when fcntl/close race is detected
-      CVE-2024-41015: ocfs2: add bounds checking to ocfs2_check_dir_entry()
-      CVE-2024-41017: jfs: don't walk off the end of ealist
-      CVE-2024-41020: filelock: Fix fcntl/close race recovery compat path
-      CVE-2024-41059: hfsplus: fix uninit-value in copy_name
-      CVE-2024-41063: Bluetooth: hci_core: cancel all works upon hci_unregister_dev()
-      CVE-2024-41068: s390/sclp: Fix sclp_init() cleanup on failure
-      CVE-2024-41072: wifi: cfg80211: wext: add extra SIOCSIWSCAN data check
+Regards,
+--=20
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
 
-Best regards,
-Ulrich Hecht
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
