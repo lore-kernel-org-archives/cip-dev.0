@@ -2,158 +2,106 @@ Return-Path: <iwamatsu@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE3A6C3DA7F
-	for <webhook@archiver.kernel.org>; Thu, 15 Aug 2024 10:46:48 +0000 (UTC)
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
- by mx.groups.io with SMTP id smtpd.web10.120042.1723718801893938107
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D0BC3DA7F
+	for <webhook@archiver.kernel.org>; Thu, 15 Aug 2024 10:51:08 +0000 (UTC)
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+ by mx.groups.io with SMTP id smtpd.web11.120342.1723719064329849433
  for <cip-dev@lists.cip-project.org>;
- Thu, 15 Aug 2024 03:46:42 -0700
+ Thu, 15 Aug 2024 03:51:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=RiftsIiq;
- spf=pass (domain: gmail.com, ip: 209.85.222.173, mailfrom: iwamatsu@gmail.com)
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a1d7a544e7so49913385a.3
-        for <cip-dev@lists.cip-project.org>; Thu, 15 Aug 2024 03:46:41 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=Y2pI9vmE;
+ spf=pass (domain: gmail.com, ip: 209.85.160.171, mailfrom: iwamatsu@gmail.com)
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-44fee8813c3so4729051cf.2
+        for <cip-dev@lists.cip-project.org>; Thu, 15 Aug 2024 03:51:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723718801; x=1724323601; darn=lists.cip-project.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=gmail.com; s=20230601; t=1723719063; x=1724323863; darn=lists.cip-project.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7l3LOJtWeNnCUDLSEfLOMIly421dE4iYHu9UhJugU+4=;
-        b=RiftsIiqk9D0wYNKA2qzgGyCNWjFHgqYUKV1n6ZB+VTZCWfliDbCF6vUZ2Q4Dix0G+
-         lGsnAadqvulmRS+Hoqhwf9/myb1Oc/XLGg7um6TM4vM6UOH1M03vwo3Dl7sWFayYN5z7
-         uTP3AN1IfMpFh84j4OoFpPKxlIhj+dfhfNAwePkN5FZVv7xmBO8x3CVSQZq13IPbmvhW
-         EY/DuHubVsHYe+XwaBpr+rcnt8MZ2fDDZW+1SFnrqiGwg3HIlf8EnQ+M2XVtQGh+coMY
-         1vl+Vbjp+546ZzuhjlreyU3p6kl6j7n/3emL4wzfw8cGa9p/1xT5OoYNgRcHMpFKTTGt
-         b33w==
+        bh=skVR4iPsbPTcHmSNlZk+t90iOkdIgnckM1k7OtfmUyE=;
+        b=Y2pI9vmEeK6Qn6IZt036e5kbtxe1gtEd1trgtQKYv76hoiHSzYRRFCUKi0ZyvVbb65
+         jOZ0tgRI0Z6MLCmPVcopa2+wST++VHQMJywZ4dBjNPPwCt2spGfUH7HA9XFsKmz0/oGY
+         CdoHB1QnkhZtHmHA1fbCRbkLzpeGzxJkFFQQuauBn/9IKim4RHj+h4rqHXY3rH5+JIze
+         1SAUyXxz6VOvjwNrQRJXRHSrHd/ZU1N/WIYD1+ww/hVqqe9QYDpOTslT20IKZ879Sa3x
+         nUBobQ5aWWfH8sg2wYP9jVTWA37lVPY0zsgTeZDpYr+UNEpFBHsbU7mO81mNMYKVQJ1/
+         zzrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723718801; x=1724323601;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1723719063; x=1724323863;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7l3LOJtWeNnCUDLSEfLOMIly421dE4iYHu9UhJugU+4=;
-        b=eCt/x8gP1kGx27Yg78vPf8zELuyl6OU+Sh4np/5lU2G+5+N3d6qJxDewN0VMr/bGjT
-         AlqNjWs0wRii74eYa3WBlXWsnO695t8z9RGIDqbjwbY9zcQ2wPUp08hxGT0T77gbbsNv
-         zQn9W1VCakhNt8Y/eZZdbqmdhj3RWnOFMr+fVoK/mUKUySM0NCvWEMO0Vlb/eWEVf0sd
-         PNVISjK0JXwTX5uwszncbaOJW4IyOeEJmshnjiW4x0t0yRu1qvpEMRRMSR/Fb72lz9AF
-         CMa4IkNgvFmfypuiZ8cWNTE5UIUbaF2oxee7RuJ1ABxKMmmwXkm4KnnNs6xX8sVIhPpK
-         anvg==
-X-Gm-Message-State: AOJu0Yz6RLVlTV2wSr3cWDuwwXfEMApnmyn8zPeTESvgr3p8c2WkR0vy
-	CBCL8y1Lqnu9iONHlBbSEekXPifM+lZD/q/BSGNyM3JbGX1CyBjvwfYHJtHp72LWKfJyEK1S0L+
-	Qbr3IEVe0ViEROzt8dafHRDRzCDdPIPfu
-X-Google-Smtp-Source: AGHT+IGgUNWFRcvyYaJ0K0aW4I+or/Gd5HIHKkktv0jRcjuVzJF1ffIL8eaBFjsTJijAY6aIN1gSuCAZsNMFmZ69w0A=
-X-Received: by 2002:a05:622a:418c:b0:451:b7b6:3573 with SMTP id
- d75a77b69052e-4535bbaccb7mr70896111cf.50.1723718800502; Thu, 15 Aug 2024
- 03:46:40 -0700 (PDT)
+        bh=skVR4iPsbPTcHmSNlZk+t90iOkdIgnckM1k7OtfmUyE=;
+        b=lkFa4PjdhjEiAFwIW8eoTG0/7o6Spd/bOb++PBQ2/1HCmU05/smlFiLOQXxdJIYWIt
+         0OfADv3B8R9bajFcuLx8kDxvqTxDfEVeinY1Iphtc7eckX8yHX3yUtAE0kZlxLv6vQqF
+         zhUmQRtpvOOE11ByaXhf3B286LDtuFYBwZHk19BhkNZToEwZcqcacP0g9H1FN+3ZKa13
+         SxfOvk7vn6+cYPFmQusUTX7Gk7D1kDz/93ePN+WDAI2q7nJYhgAbpMbPtKjjHsi7Ajm/
+         Oz8iqCWL8/pM6FJ1x20cnegKfasuL85NaAmNIdiDqxpoNq+76Pjt5Ij/6JmK2qnoOuK0
+         IBlQ==
+X-Gm-Message-State: AOJu0YxtAXybBqlb8MlTbHV5qEa3yKYHL5CJNi5muIPmQh2F56k+xkaY
+	qfXdkBzL4SKkyRpotntRLZkfsodPUB3lQr9m1NTTmWhXvrlXOLqOVBC1SdIfnj4cEci7ij/jTQP
+	yMB5u+TOSE/X3X1WYVQ6hH/GNFqiHZ2/c
+X-Google-Smtp-Source: AGHT+IEQPLRo+4du6+QyMwVms9+h/UqHIc63fgBjjmO4KfzUtu9arElc8dUQWEqDS9mXlBfxh6TC9CN3IkWgx++X4L4=
+X-Received: by 2002:a05:622a:4c05:b0:453:4b39:c740 with SMTP id
+ d75a77b69052e-4535ba9b35emr63119481cf.5.1723719063129; Thu, 15 Aug 2024
+ 03:51:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <d9534eed-0fec-43a8-a245-6e5edbf62c68@siemens.com>
-In-Reply-To: <d9534eed-0fec-43a8-a245-6e5edbf62c68@siemens.com>
+References: <OS0PR01MB63887DCF9F2F6CB68BFD718E92BA2@OS0PR01MB6388.jpnprd01.prod.outlook.com>
+ <ZrfMq6o3hhYAzfLQ@duo.ucw.cz>
+In-Reply-To: <ZrfMq6o3hhYAzfLQ@duo.ucw.cz>
 From: Nobuhiro Iwamatsu <iwamatsu@gmail.com>
-Date: Thu, 15 Aug 2024 19:46:29 +0900
-Message-ID: <CACe6DC49FtrUyQF3qEaRtx+9T3zZ+yS=sSidv3C+P_WQevkZ4A@mail.gmail.com>
-Subject: Re: [cip-dev] CIP IRC weekly meeting today on libera.chat
+Date: Thu, 15 Aug 2024 19:50:52 +0900
+Message-ID: <CACe6DC6Z4n_jSSneCjiSLv+-9ru7_YhUdueKuhauc4+mmGe15A@mail.gmail.com>
+Subject: Re: [cip-dev] [ANNOUNCE] Release v5.10.223-cip51
 To: cip-dev@lists.cip-project.org
+Cc: nobuhiro1.iwamatsu@toshiba.co.jp, pavel@denx.de, jan.kiszka@siemens.com, 
+	masami.ichikawa@cybertrust.co.jp, uli@fpond.eu, Chris.Paterson2@renesas.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 15 Aug 2024 10:46:48 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16790
+ <cip-dev@lists.cip-project.org>; Thu, 15 Aug 2024 10:51:08 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16791
 
-HI all,
+Hi Pavel,
 
-I can not join today's meeting because I am on vacation.
-
-> * Action items
->   - prepare blog entry on SLTS kernel state and challenges [Jan]
->   - look into CVE triage tool [iwamatsu-san]
-  No update.
-
-> linux-4.19.y-cip: interval 30 day
->   latest version release date: Wed Jul 10 07:05:27 AM UTC 2024
->   limit date: Fri Aug  9 07:05:27 AM UTC 2024
->   Status: Late
-
-I will be releasing it next Monday.
+I was not aware of this email due to vacation.
+Thank you for the 6.1y-cip release.
 
 Best regards,
   Nobuhiro
 
 
+2024=E5=B9=B48=E6=9C=8811=E6=97=A5(=E6=97=A5) 5:25 Pavel Machek via lists.c=
+ip-project.org
+<pavel=3Ddenx.de@lists.cip-project.org>:
 
-2024=E5=B9=B48=E6=9C=8815=E6=97=A5(=E6=9C=A8) 16:19 Jan Kiszka via lists.ci=
-p-project.org
-<jan.kiszka=3Dsiemens.com@lists.cip-project.org>:
 >
-> Hi all,
+> Hi!
 >
-> Kindly be reminded to attend the weekly meeting through IRC to discuss
-> technical topics with CIP kernel today. Our channel is the following:
+> > CIP kernel team has released Linux kernel v5.10.223-cip51.
+> > The linux-5.10.y-cip tree has been updated base version from v5.10.221 =
+to v5.10.223.
+> > And this release includes patches for Renesas SoC and its reference
+> > board.
 >
->     irc:irc.libera.chat:6667/cip
+> Thanks a lot!
 >
-> The IRC meeting is scheduled to UTC (GMT) 13:00:
+> Next due is 6.1-cip-rt. We do have v6.1.102-rt37, but v6.1 is at
+> v6.1.101-cip25. So, unless 6.1-rt is released, soon, my plan is to
+> release v6.1.102-cip26, then do -rt release on top of that.
 >
-> https://www.timeanddate.com/worldclock/meetingdetails.html?year=3D2024&mo=
-nth=3D8&day=3D15&hour=3D13&min=3D0&sec=3D0&p1=3D224&p2=3D179&p3=3D136&p4=3D=
-37&p5=3D241&p6=3D248
->
-> USWest    USEast    UK        DE        TW        JP
-> 06:00     09:00     14:00     15:00     21:00     22:00
->
-> Last meeting minutes:
-> https://ircbot.wl.linuxfoundation.org/meetings/cip/2024/08/cip.2024-08-08=
--13.03.log.html
->
-> * Action items
->   - prepare blog entry on SLTS kernel state and challenges [Jan]
->   - look into CVE triage tool [iwamatsu-san]
-> * Kernel maintenance updates
-> * Kernel release status [*]
-> * Kernel testing
-> * AOB
->
-> Jan
->
-> [*]
-> linux-4.4.y-cip: interval 30 day
->   latest version release date: Wed Aug  7 09:06:02 AM UTC 2024
->   limit date: Fri Sep  6 09:06:02 AM UTC 2024
->   Status: On track
-> linux-4.4.y-cip-rt: interval 60 day
->   latest version release date: Wed Jul 17 01:30:36 PM UTC 2024
->   limit date: Sun Sep 15 01:30:36 PM UTC 2024
->   Status: On track
-> linux-4.19.y-cip: interval 30 day
->   latest version release date: Wed Jul 10 07:05:27 AM UTC 2024
->   limit date: Fri Aug  9 07:05:27 AM UTC 2024
->   Status: Late
-> linux-4.19.y-cip-rt: interval 60 day
->   latest version release date: Fri Jul 12 03:18:17 PM UTC 2024
->   limit date: Tue Sep 10 03:18:17 PM UTC 2024
->   Status: On track
-> linux-5.10.y-cip: interval 30 day
->   latest version release date: Fri Aug  9 01:12:59 AM UTC 2024
->   limit date: Sun Sep  8 01:12:59 AM UTC 2024
->   Status: On track
-> linux-5.10.y-cip-rt: interval 60 day
->   latest version release date: Fri Aug  9 05:08:44 PM UTC 2024
->   limit date: Tue Oct  8 05:08:44 PM UTC 2024
->   Status: On track
-> linux-6.1.y-cip: interval 15 day
->   latest version release date: Sun Aug 11 09:13:17 AM UTC 2024
->   limit date: Mon Aug 26 09:13:17 AM UTC 2024
->   Status: On track
-> linux-6.1.y-cip-rt: interval 30 day
->   latest version release date: Sun Aug 11 07:14:28 PM UTC 2024
->   limit date: Tue Sep 10 07:14:28 PM UTC 2024
->   Status: On track
+> Best regards,
+>                                                                 Pavel
+> --
+> DENX Software Engineering GmbH,        Managing Director: Erika Unter
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 >
 > -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 > Links: You receive all messages sent to this group.
-> View/Reply Online (#16789): https://lists.cip-project.org/g/cip-dev/messa=
-ge/16789
-> Mute This Topic: https://lists.cip-project.org/mt/107909979/4520494
+> View/Reply Online (#16767): https://lists.cip-project.org/g/cip-dev/messa=
+ge/16767
+> Mute This Topic: https://lists.cip-project.org/mt/107804929/4520494
 > Group Owner: cip-dev+owner@lists.cip-project.org
 > Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/13258555/45204=
 94/222682861/xyzzy [iwamatsu@gmail.com]
@@ -161,6 +109,6 @@ ge/16789
 >
 
 
---=20
+--
 Nobuhiro Iwamatsu
 
