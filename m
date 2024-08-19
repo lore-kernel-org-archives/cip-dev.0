@@ -2,27 +2,27 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 631E7C3DA4A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D24C5320E
 	for <webhook@archiver.kernel.org>; Mon, 19 Aug 2024 12:51:47 +0000 (UTC)
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
- by mx.groups.io with SMTP id smtpd.web10.209513.1724071903153208439
+Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
+ by mx.groups.io with SMTP id smtpd.web11.209676.1724071903243660940
  for <cip-dev@lists.cip-project.org>;
  Mon, 19 Aug 2024 05:51:44 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=d2Ay8Goi;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-51332-2024081912513967f9afa80b8e837025-xefgat@rts-flowmailer.siemens.com)
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 2024081912513967f9afa80b8e837025
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=I5IARKVh;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-51332-202408191251402ed276e2f0975e0d52-crxygp@rts-flowmailer.siemens.com)
+Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 202408191251402ed276e2f0975e0d52
         for <cip-dev@lists.cip-project.org>;
         Mon, 19 Aug 2024 14:51:40 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
- bh=Ya/jrS7lvTby42RfXnlhaHNfrRBilifGUGL6JT+7HGY=;
- b=d2Ay8GoilRyfloCFaEZ12JG6U6xbK+qQoIRvLVHPNRfyje3h+sA7+EYMdWBT3ye4E3vypx
- 5st3QMPQqd85l7ORDOeSsvN/+tmwffqOZk8Ly84E/oqP63uMTroedKB7E0DeE5eoVE3N8zZq
- neZnMP6Ua5qVaL6IoaPC/d0Aje41L6jATgb2Vm0ZWWlQicAjz4C0LVFqqmZn9Ztzercg25eN
- bfBWznLJbR9+nr6beJ6lccVL5CHU95FuJ1te2v2a5EBn2NuIfnuE2qabkExR7NZsaYRmrnDx
- h2q2wzTE/AauX6IrtNycJoAMFS+FGfMsuKJw6Uevvc5lfEzRTiPoUCgg==;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
+ bh=sYGAf7trV+W2c30/QR4GsTGldsB111ffs+BSo5Y4EXw=;
+ b=I5IARKVh7d4JZi1U28RP7Kr4Kn7+jQjShWP9lg4UeAjFaMeesyfpHsiigRD0V7fOBxSP47
+ ol0a3+Dj7pFKjufU7ieVwHvbqEF/Y4+zDb0X++AKX52A/LRky3CqMlT4nIjY1ZxTqNS0xsDA
+ czfxN0uIEa5sLX7sey5fEAJjaELO0F/DHc1dnF2nGd+maBVRpb7gvyJBMWTCNzMVZSB8fy8y
+ InrNYuIEuNWAjKjlZ5lXhd8hODc/MSv0S+igCt4sPRvkEDnQF40714xYMALz49YXBNGn2JZN
+ 9Xk0/SP5Htj/SczSDHXmFFCUkL14OQbNZ27VB2uoQRDnR8raoMqA81JA==;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org,
 	dinesh.kumar@toshiba-tsip.com,
@@ -30,9 +30,11 @@ To: cip-dev@lists.cip-project.org,
 	Sai.Sathujoda@toshiba-tsip.com,
 	florian.bezdeka@siemens.com,
 	jan.kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH v2 0/2] fixes overlay with
-Date: Mon, 19 Aug 2024 14:51:24 +0200
-Message-ID: <20240819125138.1543399-1-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v2 2/2] fix: force mke2fs in overlay recovery action
+Date: Mon, 19 Aug 2024 14:51:26 +0200
+Message-ID: <20240819125138.1543399-3-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20240819125138.1543399-1-Quirin.Gylstorff@siemens.com>
+References: <20240819125138.1543399-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
@@ -41,28 +43,32 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 19 Aug 2024 12:51:47 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16804
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16803
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-This series checks for a e2fsck return value greater than 1 to avoid
-recovery in case of a repaired file system[1].
-Also it remove the interactive mode in case the recovery script is
-triggered.
+If mke2fs detects an existing file system, it enters interactive mode
+avoid interactive mode by forcing the creation of a new filesystem.
 
-This fixes issue
-https://gitlab.com/cip-project/cip-core/isar-cip-core/-/issues/113.
+The issue was introduced with:
 
-[1]: https://man7.org/linux/man-pages/man8/e2fsck.8.html#EXIT_CODE
+8644fb1 initramfs-overlay-hook: Check file system of INITRAMFS_OVERLAY_STORAGE_DEVICE
 
-Quirin Gylstorff (2):
-  fix: Check return code value of e2fsck
-  fix: force mke2fs in overlay recovery action
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ .../initramfs-overlay-hook/files/overlay_recovery_action.script | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- .../initramfs-overlay-hook/files/overlay.script.tmpl        | 6 +++++-
- .../files/overlay_recovery_action.script                    | 2 +-
- 2 files changed, 6 insertions(+), 2 deletions(-)
-
+diff --git a/recipes-initramfs/initramfs-overlay-hook/files/overlay_recovery_action.script b/recipes-initramfs/initramfs-overlay-hook/files/overlay_recovery_action.script
+index d13111d..0cd084b 100644
+--- a/recipes-initramfs/initramfs-overlay-hook/files/overlay_recovery_action.script
++++ b/recipes-initramfs/initramfs-overlay-hook/files/overlay_recovery_action.script
+@@ -11,4 +11,4 @@
+ partition_fstype="$1"
+ ovl_partition_device="$2"
+ 
+-mke2fs -t "$partition_fstype" "$ovl_partition_device"
++mke2fs -q -FF -t "$partition_fstype" "$ovl_partition_device"
 -- 
 2.43.0
 
