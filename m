@@ -1,197 +1,229 @@
-Return-Path: <srinuvasan.a@siemens.com>
+Return-Path: <paul.barker.ct@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 030F3C54734
-	for <webhook@archiver.kernel.org>; Tue, 27 Aug 2024 13:35:03 +0000 (UTC)
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (APC01-PSA-obe.outbound.protection.outlook.com [40.107.255.81])
- by mx.groups.io with SMTP id smtpd.web11.77880.1724765697238437550
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1774EC5472F
+	for <webhook@archiver.kernel.org>; Tue, 27 Aug 2024 13:45:53 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web10.78825.1724766344619296188
  for <cip-dev@lists.cip-project.org>;
- Tue, 27 Aug 2024 06:34:57 -0700
+ Tue, 27 Aug 2024 06:45:45 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=vb4t5K9d;
- spf=pass (domain: siemens.com, ip: 40.107.255.81, mailfrom: srinuvasan.a@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wxYhS4PwWj/Yka1LM2Bka67Yzx+CJxo//8Uv9OPDVQ3YjiIHGIUuk+6b/KBCahnBX387mCPaAT5LyYhb2uBpgp4uKblr86nFeMCoxq8F75scG4HVg6HC3bTwQyWFIesIdIyhaGvAj6tIA99FA4dME7NVicyElo41glgQYCjz/cRJ4ML59iJaVhDNZkzw9TAE/Mg1oro26GwGOpz6YF4R9NiLHPDXH5eGXLg0P0hDumVR311NFUVjYPhD9GPlgBsulJWo0kZhtIhGPP6rMEV3Dbd0KP2U3tJe6L3AWvyKqMD12FdOuDRQJlnAADXfN6+a/mq2c3h58zAmrAzJI9QUww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=S1CFbq4t19RyZ627EXk1IjaqB0BcfXjTrsABmAwlqAM=;
- b=rKJIBgpFl7dgSQRFiXaNG0zdWxgC7hfG2eKmbXtzPRVTXPZgnLj/nedD57ec5BfJM+Nrt+QgQL5pkhydxarLP+mpNH/YL1eP/2kBtiEGHp228+WjIjt63jG8lmxHGKNMay8A42d56IKkV4y/pVllZGAUM5HRLKwzVk0vbD4n7wdagC6KqumuxUNiMZ8pk6TaHqZ/TPCONdvYcd6HZOz0TUEGujQ+v9l4ZBAtzTlXlv+M6hhivnOL9mkO8QvcVSDPl5wPdxutaABw2P4o1KqDHlzafODnSr554KAoII7nQUxC8z4wbVtGPWLSE/0f8hX/OhxLO1lM85aO9yT2SXhzdw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S1CFbq4t19RyZ627EXk1IjaqB0BcfXjTrsABmAwlqAM=;
- b=vb4t5K9ddgZs6hwBTT+/TxZuCZoLkQxfSI5NYf9mVUr918DOe7AFVtv/mNaUdb5WGWIYR9bPYRYyAMcWLl7FPfqpwmx7Q8PlvIeCGs21oB0JyXpWWzxnOBreDouZmZQwG7w+0fLv6PtIhVf/pjjdlTL0hOG/+fefphVAcgY1VHAVHQWOyng/4GqSzPPDxAU+0qnschCuBtfOtvXlT3GytYjNaWCVvHeeJXEPbUpF9aAAktTfyPRKHhkVfYZuto9dc3avy0nUXTxF1meDi59jORuauk3penu54npeOunQ8QCJrWXT/Zh3Bq/7MzBwPWYpxynqJl47giEytcpw2R6mKQ==
-Received: from PUZPR06MB5747.apcprd06.prod.outlook.com (2603:1096:301:f4::12)
- by TYZPR06MB5637.apcprd06.prod.outlook.com (2603:1096:400:28b::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Tue, 27 Aug
- 2024 13:34:52 +0000
-Received: from PUZPR06MB5747.apcprd06.prod.outlook.com
- ([fe80::d3a4:b94e:29d0:29e5]) by PUZPR06MB5747.apcprd06.prod.outlook.com
- ([fe80::d3a4:b94e:29d0:29e5%4]) with mapi id 15.20.7897.021; Tue, 27 Aug 2024
- 13:34:52 +0000
-From: "Arjunan, Srinu" <srinuvasan.a@siemens.com>
-To: "Kiszka, Jan" <jan.kiszka@siemens.com>, "cip-dev@lists.cip-project.org"
-	<cip-dev@lists.cip-project.org>
-Subject: RE: [PATCH][isar-cip-core] recipes-core/images/cip-core-image.bb:
- install cryptsetup package
-Thread-Topic: [PATCH][isar-cip-core] recipes-core/images/cip-core-image.bb:
- install cryptsetup package
-Thread-Index: AQHa+H7MGIC8Eg8TRUmnQMk5MKFby7I7GcsAgAAAt1A=
-Date: Tue, 27 Aug 2024 13:34:51 +0000
-Message-ID: 
- <PUZPR06MB574715A2A2BAFDC2D54463F888942@PUZPR06MB5747.apcprd06.prod.outlook.com>
-References: <20240827124407.810136-1-srinuvasan.a@siemens.com>
- <3d0967bb-328f-4d15-a9e6-d57f84e595f3@siemens.com>
-In-Reply-To: <3d0967bb-328f-4d15-a9e6-d57f84e595f3@siemens.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=true;
- MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2024-08-27T13:34:50Z;
- MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;
- MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=restricted;
- MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;
- MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ActionId=5e11207a-8dd5-48c6-8e47-19e3e389a600;
- MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PUZPR06MB5747:EE_|TYZPR06MB5637:EE_
-x-ms-office365-filtering-correlation-id: 56c0d622-ad9e-41f6-5e36-08dcc69d07b3
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info: 
- =?us-ascii?Q?G8ursPkXpDEjAkrP8Z/EntI6KI/fZGoiYa8h2aeDR5f7jbJ224ebBXOi0ZEw?=
- =?us-ascii?Q?pdzwE7Hg3g+2Gr24kMW3imLAwuh2jBjlmjVmhW6ZRFsd65hyYnKG+0i+0yvr?=
- =?us-ascii?Q?XCZ4J2uiJDpEjFHa22imwhTcOd5yVmUSj0wjphijDy+VQHlqFw3FNa2632yz?=
- =?us-ascii?Q?sKUnpatJMYr8jM/u8g2YShTeiAmcldU6DMaTS2Qu5iQU/SUhUjIa2IR48Fjv?=
- =?us-ascii?Q?4S1iDGiJEXvoof2WoiwjZeYzPkuqTo3pRtc+60sjnLp1ZABqKDsEEkXHG9ho?=
- =?us-ascii?Q?TlbmzR7qtLuV5kFROBMBaREm7ZNC1eHgPca8yPhaD29c8QM9UNE/KoshDKMa?=
- =?us-ascii?Q?7WTFypTQsHETmmI3+Rm6nanheGimaUUPrDFIy1eHBRrcPZzf6GtFr0tlZ7l4?=
- =?us-ascii?Q?BNof5q1Thb9Ph5LsXFWJg1yeOPMOQMtNdsUUFnwPQ3h1rClNn+eW0sqcqOlb?=
- =?us-ascii?Q?NXx/m+t69E7Vlh3PmMyrBqeaaXTDByY+ocrL6lZeDYkEfYzw31Wt0D81OXAo?=
- =?us-ascii?Q?rclCdE4dA8wx6RrIuaOJMJS9vl64U+BnJEnbSpRvsjmsOWJ9EuH6thm0CMuV?=
- =?us-ascii?Q?H4QCANnGw9WU5enz+mPppXb+dwKWXiSauQLhxcYqvThqptBm7drMl1zzzjQz?=
- =?us-ascii?Q?CWY2vqkd/ZxajlfyrTMtW/DurAtmMP9xlYOOrxjrccvCEs3cwiXOlE5cPrJW?=
- =?us-ascii?Q?CA7PWPh9TLydyNsftAVLuyvDY3vjubG55hE07ff72ZGtr9grIlUUEv+QrSTc?=
- =?us-ascii?Q?/Fg9odRfduBPTuf4784hbhATGEhaJSMcxsu9ItiDJiK33b1szPlMixF01/XX?=
- =?us-ascii?Q?x1Qfns8lToHNP4eaSu4vkA+D0QR919FHofeeV6SjYuQ7D6tsv05dtgtMeU3I?=
- =?us-ascii?Q?9gYrjbbtOZGsFN4GcAtKEgJiVF1r2f6nTkVI3twwE46KxOnTro7HA/uxM4i+?=
- =?us-ascii?Q?k5MuYRCxhv2UqvDI7zDwbCNtd2M1q64pjONiqBLHu/7Sz6SZtt1GspfRCZcI?=
- =?us-ascii?Q?T3h8crKLQaZFDYuw4GMfnogYRwycysHa5Z+/enQSJrBArEp2+JNope7MfANq?=
- =?us-ascii?Q?9fjT7kBjKYOmzfdA2brRut5TKq38hMOuRzzM3J+nY3d77Edk4ExGMkpNCjba?=
- =?us-ascii?Q?V+ge7kwzUFPL9muMCOdsOEKyriUlc5Z84qrKjeIUzf7u1TR6wQ2XyoMc5Szy?=
- =?us-ascii?Q?FTddcqbOc55yJl/MnkYuHbSN/eA4/l1mYC4yMkkAi7irtSciQgk7x9S0jzn2?=
- =?us-ascii?Q?OoZyeMpx1QE1pKtt9HFbFxUZ5V65ubDQzfPF84065pJW/vg7xz05EbKftzC9?=
- =?us-ascii?Q?xArPcqPYRhZl0zAj2LymE/vODGEZYgpbSnzxFnYHQA4Xdm+/UDKnh5IXd55l?=
- =?us-ascii?Q?J3bXuWc=3D?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5747.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?a8a5d6d4rmQYzv2M6QwEJ5yDUq4qi8WY2AmbuhjHzt+JJFBrhgROVlKJhFNF?=
- =?us-ascii?Q?OY1/iB8QZFS/6/xPhDcX+ji4WMqTXHDHiu3BI74YJLQRjel3ym1hiC5TDcpa?=
- =?us-ascii?Q?KD0MD+l/JbC4wtj2r39EukHmwioSEtyyPNmT2jxaRapebMXevOsqssFzJXcg?=
- =?us-ascii?Q?fHioTrqM6lU8jFkDBrS1+0S9q8qPhCX2FIW9biAiMaYEmmsCKnAnbyKqI2uu?=
- =?us-ascii?Q?0vzg7wRFhO4W7DCdx5j3vrQrHErLyCm8opUEJtapt/+hOY6alTfdNr76XSeJ?=
- =?us-ascii?Q?wuTL2HtAQiYtTFAPABKLkCWACwkUMsucLT6RgtY/Wl79DBPZKPenIO/lWI8T?=
- =?us-ascii?Q?x6ZSPgyk8oKi3CCK4hJfxot11c4jKlz1Um7CUzYdqtXwG0p+3oj4+0VKTcpp?=
- =?us-ascii?Q?NVDAfWgICE1Lo4C8P5GqTB59ZIZAZtEd+IHPhsuANVU1yhyyOiFFZ8sLKQ82?=
- =?us-ascii?Q?st0JBdIEXFElrYLO2w5hnU7RqZh68nIFtkn9ccCXOJjEY9IJtVYkCCprzz6v?=
- =?us-ascii?Q?XFO9pTYrEjEp28o1RxbbV2iB2DKMPGvgOfbwppknxsz3p97xM2PGVf2k2BAF?=
- =?us-ascii?Q?XXTu6z/w2suSMVJkdLjNgVIA8IfUN7eCiVqeBggfvYmTwImVPEIH2UhmqxRy?=
- =?us-ascii?Q?JD8oZLEOykbRpbNwX2wVWxvzkvrypDJRQ8UdCQnWRkZbegvFEVKQswFsC8kv?=
- =?us-ascii?Q?klrg0YcGQZ4JqF2UxjerVxRrsw7XxGil0U5jAPVAqFjKkkEKCe6m2LvDL7OM?=
- =?us-ascii?Q?PXufkBS/N1atah5j6UALBqpfYo4W9h/osEQjb42x4bKu9haozaPnE74EludJ?=
- =?us-ascii?Q?QIjsNoFwEmBzQn1Cz73UJUXdEeMJTHvjHi8hF0klVPXWWLQKrlqglhJ/hOQM?=
- =?us-ascii?Q?ELbi9tt3V+ICgzy1zALu7VfXUTy+4KxefumRaBJ198ysF3mLlSBdBJ+XO0V2?=
- =?us-ascii?Q?dp0kHOOO3X6aTn5uHEgCov3Q4PphEMYzDi/ItYUj2vY5TcahB14d2hc6z+i8?=
- =?us-ascii?Q?I7br41A2WEf09i+sOF0Imn7j/im/X4Z6B6zedfg98zrMWeBKsg6VBx/j46+7?=
- =?us-ascii?Q?RamqGMDNb2IctdKW/XQPAV8HsXQbFf02bqlTBebsPsf9F6acpY4lfGhKkidL?=
- =?us-ascii?Q?a+HH+36OvhV49t4kwUt6DnshekdIsOsVotJSpS2hxAcCWhCNjF4dMIkWtcCX?=
- =?us-ascii?Q?BBDnp7oA/pmzPSaIBryPzUsCVesFFctCo7L4z6C7/gaQPI7vguTVneniv+0m?=
- =?us-ascii?Q?J/ju5UJnkjyuA6/6PGMzji0TrdjD86U6rn40OpSGbadqaXkC3NSQSB2xsAhw?=
- =?us-ascii?Q?cTtlE4LSYPf3dzDkjrQ+pTa4BL71Vlp79R/lsY5XSKnlN4EVkrjwd07ervqf?=
- =?us-ascii?Q?f8YOzNkMmtnxsTzOAIGnXcZFVKP7cmWOvuAc/JHce9OgGy+ZjPHnYRged+X+?=
- =?us-ascii?Q?3FBV9dwz8+ZQBoS9211qN8aINuiBOJgmyfI30KTSYlIisRvtJ4NEWFY1MrqV?=
- =?us-ascii?Q?+boEMNJ61+5v8jYCndbhz9n98/Hnz4plB1nvXVxI+S+vG6a4Cw8Eh3UcsEmP?=
- =?us-ascii?Q?BwUxq/gWHkJ829HLR4erQORTUnbfrFRR3mC8dHFi?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: paul.barker.ct@bp.renesas.com)
+X-IronPort-AV: E=Sophos;i="6.10,180,1719846000"; 
+   d="asc'?scan'208";a="220699550"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 27 Aug 2024 22:45:42 +0900
+Received: from [10.226.93.135] (unknown [10.226.93.135])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 97AE643871A2;
+	Tue, 27 Aug 2024 22:45:40 +0900 (JST)
+Message-ID: <f1ec7931-9519-47b1-ac0e-293046613057@bp.renesas.com>
+Date: Tue, 27 Aug 2024 14:45:39 +0100
 MIME-Version: 1.0
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5747.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 56c0d622-ad9e-41f6-5e36-08dcc69d07b3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2024 13:34:52.0624
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: lzngNvLwvWAe1vVp+bBYNhlXx4/MruUsZlZgZ2Y802qUNET9MONW2NEiWVEO3P5S3GUJpQrxZSEYr9ZEnxB4OcvgsK3PrRz9q9/LRtN3RXA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5637
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1.y cip 0/8] Backport ravb driver performance
+ improvements
+Content-Language: en-GB
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+To: Pavel Machek <pavel@denx.de>
+Cc: cip-dev@lists.cip-project.org,
+ Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240729150049.1924352-1-paul.barker.ct@bp.renesas.com>
+ <ZqntqGYravYHauM1@duo.ucw.cz>
+ <ac9dbdc6-ef2f-453a-bc0a-94db12e95414@bp.renesas.com>
+ <Zqvmmy93WNzvezGB@duo.ucw.cz>
+ <0bced308-a420-4664-8b21-bf24dae17664@bp.renesas.com>
+Organization: Renesas Electronics Corporation
+In-Reply-To: <0bced308-a420-4664-8b21-bf24dae17664@bp.renesas.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------qcnjz37Gy6vS151UB5WqGzKR"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 27 Aug 2024 13:35:03 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16817
+ <cip-dev@lists.cip-project.org>; Tue, 27 Aug 2024 13:45:53 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16818
 
-Okay, thanks for pointing the patch.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------qcnjz37Gy6vS151UB5WqGzKR
+Content-Type: multipart/mixed; boundary="------------EEvgFZ0uyyLCGx2eln5X6ZBo";
+ protected-headers="v1"
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+To: Pavel Machek <pavel@denx.de>
+Cc: cip-dev@lists.cip-project.org,
+ Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Message-ID: <f1ec7931-9519-47b1-ac0e-293046613057@bp.renesas.com>
+Subject: Re: [PATCH 6.1.y cip 0/8] Backport ravb driver performance
+ improvements
+References: <20240729150049.1924352-1-paul.barker.ct@bp.renesas.com>
+ <ZqntqGYravYHauM1@duo.ucw.cz>
+ <ac9dbdc6-ef2f-453a-bc0a-94db12e95414@bp.renesas.com>
+ <Zqvmmy93WNzvezGB@duo.ucw.cz>
+ <0bced308-a420-4664-8b21-bf24dae17664@bp.renesas.com>
+In-Reply-To: <0bced308-a420-4664-8b21-bf24dae17664@bp.renesas.com>
 
-Many thanks,
-Srinu
+--------------EEvgFZ0uyyLCGx2eln5X6ZBo
+Content-Type: multipart/mixed; boundary="------------gwqZEFzoahFLywDEfagBMh29"
 
------Original Message-----
-From: Kiszka, Jan (T CED) <jan.kiszka@siemens.com>
-Sent: 27 August 2024 19:01
-To: Arjunan, Srinu (DI CTO FDS CES LX PBU 2) <srinuvasan.a@siemens.com>; ci=
-p-dev@lists.cip-project.org
-Subject: Re: [PATCH][isar-cip-core] recipes-core/images/cip-core-image.bb: =
-install cryptsetup package
+--------------gwqZEFzoahFLywDEfagBMh29
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 27.08.24 14:44, srinuvasan.a@siemens.com wrote:
-> From: srinuvasan <srinuvasan.a@siemens.com>
->
-> When we validate expand-on-first-boot with encrypted partition, the
-> last encrypted partition is not expanded due to cryptsetup package not
-> availabe, hence added the package in the rootfs.
->
-> Signed-off-by: srinuvasan <srinuvasan.a@siemens.com>
-> ---
->  recipes-core/images/cip-core-image.bb | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/recipes-core/images/cip-core-image.bb
-> b/recipes-core/images/cip-core-image.bb
-> index 4a9cea9..28f5f3c 100644
-> --- a/recipes-core/images/cip-core-image.bb
-> +++ b/recipes-core/images/cip-core-image.bb
-> @@ -15,5 +15,7 @@ DESCRIPTION =3D "CIP Core image"
->
->  IMAGE_INSTALL +=3D "customizations"
->
-> +IMAGE_PREINSTALL:append:encrypt-partitions =3D " cryptsetup"
-> +
->  CIP_IMAGE_OPTIONS ?=3D ""
->  require ${CIP_IMAGE_OPTIONS}
+On 27/08/2024 13:54, Paul Barker wrote:
+> On 01/08/2024 20:48, Pavel Machek wrote:
+>> Hi!
+>>
+>>>>> This series includes the performance improvements present in Linux
+>>>>> v6.11-rc1 along with dependencies.
+>>>>
+>>>> That's a bit aggressive timing, is it? -rc1 does not really get much=
 
-Please see this thread:
-https://lore.kernel.org/cip-dev/20240823161906.1168642-1-alexander.heinisch=
-@siemens.com/
+>>>> testing.
+>>>
+>>> Hi Pavel,
+>>>
+>>> Please feel free to delay merging these patches for a couple of rc
+>>> cycles if you need to.
+>>
+>> I'm getting:
+>>
+>> drivers/net/ethernet/renesas/ravb_main.c: In function 'ravb_rx_gbeth':=
 
-Jan
+>> 2534
+>> drivers/net/ethernet/renesas/ravb_main.c:869:33: error: implicit decla=
+ration of function 'skb_mark_for_recycle' [-Werror=3Dimplicit-function-de=
+claration]
+>> 2535
+>>   869 |                                 skb_mark_for_recycle(skb);
+>> 2536
+>>       |                                 ^~~~~~~~~~~~~~~~~~~~
+>> 2537
+>>
+>> https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/7484664109
+>> https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/139724=
+9930
+>>
+>> When attempting to test this. Fix is probably as simple as:
+>>
+>> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/et=
+hernet/renesas/ravb_main.c
+>> index 2a48ffc08464f..25a15cda707a0 100644
+>> --- a/drivers/net/ethernet/renesas/ravb_main.c
+>> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+>> @@ -31,6 +31,7 @@
+>>  #include <linux/sys_soc.h>
+>>  #include <linux/reset.h>
+>>  #include <linux/math64.h>
+>> +#include <linux/skbuff.h>
+>>  #include <net/ip.h>
+>>  #include <net/page_pool.h>
+>=20
+> Hi Pavel,
+>=20
+> I've left this for a while, to my knowledge no issues have been reporte=
+d
+> with these changes in the v6.11-rc series so far.
+>=20
+> The issue above is not due to a missing include, it's due to the
+> skb_mark_for_recycle() function only being defined when CONFIG_PAGE_POO=
+L
+> is enabled. I'll open a merge request to enable that in the relevant
+> configs in cip-kernel-config. Once that is merged, we can proceed with
+> this backport.
 
---
-Siemens AG, Technology
-Linux Expert Center
+Actually, the solution is to backport commit 721478fe6a5c [1], then
+PAGE_POOL is enabled whenever RAVB is enabled. I'll send a v2 series
+with that included.
 
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/c=
+ommit/?id=3D721478fe6a5cd243e289105e3fdd0ecdd9d39ac3
+
+--=20
+Paul Barker
+--------------gwqZEFzoahFLywDEfagBMh29
+Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
+Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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3D
+=3DsIIN
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------gwqZEFzoahFLywDEfagBMh29--
+
+--------------EEvgFZ0uyyLCGx2eln5X6ZBo--
+
+--------------qcnjz37Gy6vS151UB5WqGzKR
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZs3YgwUDAAAAAAAKCRDbaV4Vf/JGvfl7
+AQD9t88t4ViFfyFv9/YuujmwmcHyZzdBZX2fw4YqsVsqVQEAyWUMlyZ8wnXdR3jmFwErlxhiujJw
+pRNxAHwAizvt5Qg=
+=RPAj
+-----END PGP SIGNATURE-----
+
+--------------qcnjz37Gy6vS151UB5WqGzKR--
 
