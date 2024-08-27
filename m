@@ -1,69 +1,104 @@
-Return-Path: <srinuvasan.a@siemens.com>
+Return-Path: <paul.barker.ct@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE9E3C54734
-	for <webhook@archiver.kernel.org>; Tue, 27 Aug 2024 12:44:12 +0000 (UTC)
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
- by mx.groups.io with SMTP id smtpd.web10.77511.1724762642554475755
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC517C54734
+	for <webhook@archiver.kernel.org>; Tue, 27 Aug 2024 12:54:22 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web11.76975.1724763258237439454
  for <cip-dev@lists.cip-project.org>;
- Tue, 27 Aug 2024 05:44:03 -0700
+ Tue, 27 Aug 2024 05:54:18 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=srinuvasan.a@siemens.com header.s=fm1 header.b=KW3h3IN3;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-1324425-202408271243596493fd196e6f9aaaeb-ddovpq@rts-flowmailer.siemens.com)
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 202408271243596493fd196e6f9aaaeb
-        for <cip-dev@lists.cip-project.org>;
-        Tue, 27 Aug 2024 14:43:59 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=srinuvasan.a@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=SNYJuyFS6IrOabTvEIcmaAVmVanMc6D7x1karJRLFWY=;
- b=KW3h3IN382li+h8UlB91hhKBRWR3XUiMtRLs57OrbT9gw68jSdKRZ0r3L98Z0tAFCH/zj5
- qkJU3diQp+x9PfCCB9uUzg8xwtxTBiN3WMaBVdoYyiVcW7OPP9LSoeMegaWD1cyDVNbn89XB
- dMmfO1felTCE+zZC6RuDe87WuTbzstImsSqDauwbzwMObB3V4LnxmYhLdp+6oMV5rnPUcu7u
- ALXwduM1O+hN1hkWpul+j/HnYYIaF1AD6v4BfMxadcDYSK1cbFHt3cOW+cjZoAtjoZVi+hEz
- QVT0OZ3ndy5eA8C9+WJM/tGV2/0Cv9tO0mau+8vV2eqScJriVpAxPm9g==;
-From: srinuvasan.a@siemens.com
-To: cip-dev@lists.cip-project.org
-Cc: jan.kiszka@siemens.com,
-	srinuvasan <srinuvasan.a@siemens.com>
-Subject: [PATCH][isar-cip-core] recipes-core/images/cip-core-image.bb: install cryptsetup package
-Date: Tue, 27 Aug 2024 18:14:07 +0530
-Message-Id: <20240827124407.810136-1-srinuvasan.a@siemens.com>
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: paul.barker.ct@bp.renesas.com)
+X-IronPort-AV: E=Sophos;i="6.10,180,1719846000"; 
+   d="scan'208";a="216724300"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 27 Aug 2024 21:54:16 +0900
+Received: from [10.226.93.135] (unknown [10.226.93.135])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id E4D0F4007202;
+	Tue, 27 Aug 2024 21:54:14 +0900 (JST)
+Message-ID: <0bced308-a420-4664-8b21-bf24dae17664@bp.renesas.com>
+Date: Tue, 27 Aug 2024 13:54:13 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1324425:519-21489:flowmailer
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1.y cip 0/8] Backport ravb driver performance
+ improvements
+Content-Language: en-GB
+To: Pavel Machek <pavel@denx.de>
+Cc: cip-dev@lists.cip-project.org,
+ Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240729150049.1924352-1-paul.barker.ct@bp.renesas.com>
+ <ZqntqGYravYHauM1@duo.ucw.cz>
+ <ac9dbdc6-ef2f-453a-bc0a-94db12e95414@bp.renesas.com>
+ <Zqvmmy93WNzvezGB@duo.ucw.cz>
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+Organization: Renesas Electronics Corporation
+In-Reply-To: <Zqvmmy93WNzvezGB@duo.ucw.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 27 Aug 2024 12:44:12 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16814
+ <cip-dev@lists.cip-project.org>; Tue, 27 Aug 2024 12:54:22 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16815
 
-From: srinuvasan <srinuvasan.a@siemens.com>
+On 01/08/2024 20:48, Pavel Machek wrote:
+> Hi!
+> 
+>>>> This series includes the performance improvements present in Linux
+>>>> v6.11-rc1 along with dependencies.
+>>>
+>>> That's a bit aggressive timing, is it? -rc1 does not really get much
+>>> testing.
+>>
+>> Hi Pavel,
+>>
+>> Please feel free to delay merging these patches for a couple of rc
+>> cycles if you need to.
+> 
+> I'm getting:
+> 
+> drivers/net/ethernet/renesas/ravb_main.c: In function 'ravb_rx_gbeth':
+> 2534
+> drivers/net/ethernet/renesas/ravb_main.c:869:33: error: implicit declaration of function 'skb_mark_for_recycle' [-Werror=implicit-function-declaration]
+> 2535
+>   869 |                                 skb_mark_for_recycle(skb);
+> 2536
+>       |                                 ^~~~~~~~~~~~~~~~~~~~
+> 2537
+> 
+> https://gitlab.com/cip-project/cip-kernel/linux-cip/-/jobs/7484664109
+> https://gitlab.com/cip-project/cip-kernel/linux-cip/-/pipelines/1397249930
+> 
+> When attempting to test this. Fix is probably as simple as:
+> 
+> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> index 2a48ffc08464f..25a15cda707a0 100644
+> --- a/drivers/net/ethernet/renesas/ravb_main.c
+> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> @@ -31,6 +31,7 @@
+>  #include <linux/sys_soc.h>
+>  #include <linux/reset.h>
+>  #include <linux/math64.h>
+> +#include <linux/skbuff.h>
+>  #include <net/ip.h>
+>  #include <net/page_pool.h>
 
-When we validate expand-on-first-boot with encrypted partition, the last
-encrypted partition is not expanded due to cryptsetup package not availabe,
-hence added the package in the rootfs.
+Hi Pavel,
 
-Signed-off-by: srinuvasan <srinuvasan.a@siemens.com>
----
- recipes-core/images/cip-core-image.bb | 2 ++
- 1 file changed, 2 insertions(+)
+I've left this for a while, to my knowledge no issues have been reported
+with these changes in the v6.11-rc series so far.
 
-diff --git a/recipes-core/images/cip-core-image.bb b/recipes-core/images/cip-core-image.bb
-index 4a9cea9..28f5f3c 100644
---- a/recipes-core/images/cip-core-image.bb
-+++ b/recipes-core/images/cip-core-image.bb
-@@ -15,5 +15,7 @@ DESCRIPTION = "CIP Core image"
- 
- IMAGE_INSTALL += "customizations"
- 
-+IMAGE_PREINSTALL:append:encrypt-partitions = " cryptsetup"
-+
- CIP_IMAGE_OPTIONS ?= ""
- require ${CIP_IMAGE_OPTIONS}
+The issue above is not due to a missing include, it's due to the
+skb_mark_for_recycle() function only being defined when CONFIG_PAGE_POOL
+is enabled. I'll open a merge request to enable that in the relevant
+configs in cip-kernel-config. Once that is merged, we can proceed with
+this backport.
+
+Thanks,
+
 -- 
-2.39.2
-
+Paul Barker
 
