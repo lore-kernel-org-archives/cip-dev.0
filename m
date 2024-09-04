@@ -1,319 +1,332 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <srinuvasan.a@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4698ACA0ED3
-	for <webhook@archiver.kernel.org>; Wed,  4 Sep 2024 13:22:48 +0000 (UTC)
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (EUR02-AM0-obe.outbound.protection.outlook.com [40.107.247.87])
- by mx.groups.io with SMTP id smtpd.web10.50022.1725456158221293627
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82FFCCD37B4
+	for <webhook@archiver.kernel.org>; Wed,  4 Sep 2024 14:32:18 +0000 (UTC)
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (APC01-PSA-obe.outbound.protection.outlook.com [40.107.255.52])
+ by mx.groups.io with SMTP id smtpd.web10.51702.1725460331919809458
  for <cip-dev@lists.cip-project.org>;
- Wed, 04 Sep 2024 06:22:39 -0700
+ Wed, 04 Sep 2024 07:32:12 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=oMf70Jjo;
- spf=pass (domain: siemens.com, ip: 40.107.247.87, mailfrom: quirin.gylstorff@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=y8n/5SLw;
+ spf=pass (domain: siemens.com, ip: 40.107.255.52, mailfrom: srinuvasan.a@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KXIwUWRDpPjzuXPYJ6d1tWoUYK6tEXPYlFyB05YGdyMOemD+isp7oTSRbbEZTOfi345BV7p14cTaS4NYW8Bh2yK1UFkifwAxlLaQbZyFqEsNCIIsf4T5y0PGVPtYlRQT4OnPj4PWpLko3Q3ooz8OIPKGIBLLwACR4WZIbxcHtaRhTOSDFO/nkjozaB6QgNvjcooYRQ/phz/6mlWQYpMlV1dFDiQRiTWPkqno+wE9b8YJ2x9SK12reP4bkRvGXMcd2lIor6Pfea8hUtAg7+aZbP8TcajrJvLp9rzXSt1LNuLbjdBkx6PpEzjfkFlW9y4NY/7xptW1+V44rdGyTGYbtg==
+ b=DNy/JKrOJcZgQJpMnP4lDXaXxQhle3UFTInKGLRzn5XUSRPqC9BkKyq8r6S1PUTFiiyumRl0fhOU2S9SSErMR6X3LB3bAKVOIUnIBth6Z8zLTriEAg4qi9TS9rTZO4jQKZK7puhvktLr6HKSXV8InBJRs5OIwlWJNtwhhCM+XjGpE3FNPOojGGzAXxkT6swrzoZpcbLZDTzc1a6VdlnQoGl/FNSfSftcErFathBfioPgiAByD27XmuXueXs77gdZ4j60Fed0BLA5kMuRU3vlJt8Yrn18CZP0CV5ij0anJqp5JHmsA72JHw0NytRgBVZrFVVUCKdvPOaPv8GG9bbg1g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WhLLWiwhKVPInRy5fCDqJ8nUegMumEgEDBjThoB/DDo=;
- b=MtcMjB429XRi5oKP8aXSiIArNmrIy7MhrgPOyIWAzKG8d7BImeBOYToaPUxHb/+wgm8BxCzjInvRjCTXnowz896mtUwErMh/QfnXqi0N0tkl8/oWUo+ZXt4LLhVZh2UyO4rudV/H3jN/j7WOkBvrCFs8DcFiYYfM6SKMBRHYtUzXq05gjZhMnhBAqR8JsWTMu5YMdtwMm4eg7qqrW7hFaPS8WmnA8gr6Aryg34o8JdoQNiXB/I3qWjhMg1242RWzfl3i38pXCCGAXB7AGtf01Tg67xn8HiK8po8UnfOgauE4aDty4/fT+3xu9938MAvvv0s4NQFD5W4w0UkTNBMvtg==
+ bh=j45Ny9bsgxrWWfFkZHVgyPG+EyXeTZNRm+KQvmGFQSM=;
+ b=yO7grjy8IsLMzP/NZmGzcamAqvlYTu7uB0JATyV+tGfDJwgTEEWqjUfak1GWZzRGRh62mgKEyD8LuMfriaJUIg45SB+CRQfYctbRYEFrwTE+w6RLz7tMMVHIrbziWm1XL0eKEObN4Q6Tj5od4b3xCw2u9b3Jn5STg87M5mOi/GAW9lPwWA2YAgPa/lXJi5Ns073sU/nwJB/q3OS+eXEhTWdA28n/LzEpR58vuVISmRxuTPR4B17ggV41mIPwtKKMiN2ZfIVjx/8X8v3FCGSoRX1lA+2oEDUw6MQRdaTKkArBggXTHVFYOaSFft5ykhXcbXaqPjIemTev596j6SeLww==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WhLLWiwhKVPInRy5fCDqJ8nUegMumEgEDBjThoB/DDo=;
- b=oMf70JjoWCc1tGSSbtpNzId9iTAt5rTU8mYoaMRVVQNsJIOg2Bm83/sEp0fanMAXNBtwzBHhwKbvM/QvQJQKrRAUTMyIk14yYQGIlmwMzBUzemtjAHqs9c0ixijHyVcocOKwMOGqc7qKWCBlxh72umh9cvg7dUsmPQCm8H/fr8Y7s2koKDjSI6TLfuYqswvIr81huhF1sxs0ElZ58l8BDBk84/uI0Ovta+WuT+2n31oxxCNFUj9w8wpm7oBztq+zqMG05iHlOUc5HQm4KQ5vrlvG3zuEsDdIpebZRWerI6mhrAApDgebycpA/LO44V2ooaJF2BPS+rTTvEvKIjKiqw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1f9::22)
- by PA4PR10MB5563.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:260::8) with
+ bh=j45Ny9bsgxrWWfFkZHVgyPG+EyXeTZNRm+KQvmGFQSM=;
+ b=y8n/5SLwcVfHW2so8VZOjomiOAsNI3V171MjUOlp3Qp/IHM3LlSTENLEhZoSRNMPzrhZYF5u11K0t8Q6Um778MrZMOejmjQ95WejVRtm0ZnXlf860p8nMjPcjVncwGHvaYAIolPMWuSvsnuLvv4fjIhqWi0Hr9vHkXoZ0Oz68KshQ9MKnqmCHfofbm0J7nGv8yduj3CCO0jehNd37WWkwXefaDsAhiQqMu9ill4bttLbLSz0eQOIqUdBbl8w2dOei3aZi6gjGZO9I2HhrKZ4KtJdpxmdVWVD0sOOM1b5BM2/s59KwZ7k4Mzyohm/4p43luzb4933/L9uBsiwCo3lvg==
+Received: from PUZPR06MB5747.apcprd06.prod.outlook.com (2603:1096:301:f4::12)
+ by SEYPR06MB5112.apcprd06.prod.outlook.com (2603:1096:101:58::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.25; Wed, 4 Sep
- 2024 13:22:29 +0000
-Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::3087:c116:dfed:1ca2]) by AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::3087:c116:dfed:1ca2%6]) with mapi id 15.20.7918.024; Wed, 4 Sep 2024
- 13:22:29 +0000
-Message-ID: <f7a92fdc-894c-417e-b999-16f0c3b1c405@siemens.com>
-Date: Wed, 4 Sep 2024 15:22:25 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev] [PATCH][isar-cip-core] scripts/lib/wic/plugins/source:
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Wed, 4 Sep
+ 2024 14:32:05 +0000
+Received: from PUZPR06MB5747.apcprd06.prod.outlook.com
+ ([fe80::d3a4:b94e:29d0:29e5]) by PUZPR06MB5747.apcprd06.prod.outlook.com
+ ([fe80::d3a4:b94e:29d0:29e5%4]) with mapi id 15.20.7918.024; Wed, 4 Sep 2024
+ 14:32:05 +0000
+From: "Arjunan, Srinu" <srinuvasan.a@siemens.com>
+To: "quirin.gylstorff@siemens.com" <quirin.gylstorff@siemens.com>,
+	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+CC: "Kiszka, Jan" <jan.kiszka@siemens.com>
+Subject: RE: [cip-dev] [PATCH][isar-cip-core] scripts/lib/wic/plugins/source:
  Use F-string instead of traditional .format() method
-To: cip-dev@lists.cip-project.org
-Cc: jan.kiszka@siemens.com, srinuvasan <srinuvasan.a@siemens.com>
+Thread-Topic: [cip-dev] [PATCH][isar-cip-core] scripts/lib/wic/plugins/source:
+ Use F-string instead of traditional .format() method
+Thread-Index: AQHa/pWQyTCz2m7pJ0WOr7v0H9Tf3rJHncuAgAATPnA=
+Date: Wed, 4 Sep 2024 14:32:05 +0000
+Message-ID: 
+ <PUZPR06MB57474F628AA2AB635E61BE59889C2@PUZPR06MB5747.apcprd06.prod.outlook.com>
 References: <20240904064223.869919-1-srinuvasan.a@siemens.com>
-Content-Language: en-US, de-DE
-From: Gylstorff Quirin <quirin.gylstorff@siemens.com>
-Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
- 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
- XSdq0hnpafc1V+voPJq3LMxUvLNrwg==
-In-Reply-To: <20240904064223.869919-1-srinuvasan.a@siemens.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0425.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:d1::12) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:1f9::22)
+ <f7a92fdc-894c-417e-b999-16f0c3b1c405@siemens.com>
+In-Reply-To: <f7a92fdc-894c-417e-b999-16f0c3b1c405@siemens.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=true;
+ MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2024-09-04T14:32:03Z;
+ MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;
+ MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=restricted;
+ MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;
+ MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ActionId=578d87e0-f85a-454e-9813-70deb53cb21a;
+ MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PUZPR06MB5747:EE_|SEYPR06MB5112:EE_
+x-ms-office365-filtering-correlation-id: 4d709651-99fc-4033-9398-08dcccee5942
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|1800799024|4022899009|366016|376014|38070700018;
+x-microsoft-antispam-message-info: 
+ =?us-ascii?Q?4yAdbGzNQkXkevXD7sno5uTPGFE/I1tX3ljuDZF6TUPIoatVkejm2XdwQ90F?=
+ =?us-ascii?Q?P2c4qikzt087D1NrRh/BVJJJUbM02TBAfSuNIUXkfJTSkfZImQi+hJnY5tSa?=
+ =?us-ascii?Q?YttlLTmGws7OyWQgj8mYv13KU1QcidfDYdhelXZlrsb7E2jKhSv0jZ2JnAAx?=
+ =?us-ascii?Q?S1951n7dPWZSQjZ+b4/sdQrpPGpC9p76lVHurUzHHrPl/fnEJnM8wHTtTlKC?=
+ =?us-ascii?Q?Qmbc3RmtgW1+A2XtLONAILf6H4VoiyYk11tIf1byYPM7lxO1fUX7eyziBAf8?=
+ =?us-ascii?Q?qGaGlLBS2SUh6gMBRznpQY6AEVmHpZ2iPW53n8106F6Zhu83YLxgJeL40qoe?=
+ =?us-ascii?Q?FFka9uuMeuLkiImA+SpOQAKL4TUMpD+GustrJILE+y7glFCmTG5NjstN/Ra3?=
+ =?us-ascii?Q?d04hoVqmDWgHp9+dQmmeCIbv7wl2z1yL7S9f+CjrpDQoRP5uQlCT7haEby4J?=
+ =?us-ascii?Q?0wa2S6Lq8vQcgvmcaEG9p0NDUpz0nj/PrKTE8+nYdnbmeJIuWyRnI/w+BICy?=
+ =?us-ascii?Q?hiol3DPByrNoJhevOZgJ06wJiSNNe5zNWFpJcWiPFBAS3GnTLuMsS5t4FyGq?=
+ =?us-ascii?Q?DNrFTKaiYCYHzovi+1fMRFZBk9OLv9Rz1kXhkgqWme+wZE5l6uAiSet4CV5W?=
+ =?us-ascii?Q?nTbN0L5Ge9we6ph8kCQIqrpc5E059dqXoN7jScIj3tzzL1Hb8hspJIghxBbc?=
+ =?us-ascii?Q?Bln5Y7hMxLoJ52MgKMZuK95ODeqf91B5D7H1sUvsUlFG4dHG9cOSIPeprNsr?=
+ =?us-ascii?Q?XutDnU15DFZIpuVtS+I2tF71PBuEA4QMbjGEXkGt5DPVGMA+JV79+/PfZk4J?=
+ =?us-ascii?Q?D4nPnQpK9kKxc+wPKx9fxds2RY9JWac6DTIGgQz9BQdP6grHdgGRsIhpVq/6?=
+ =?us-ascii?Q?60rsLkGqmJgo51CgDutxglalLVswoGAiiCUaei9Y/k3lOwjyryo0Ct0mO7z6?=
+ =?us-ascii?Q?1mfoBQhqemf5tf8QcqjZY+84Ugpx4CXFQGJANnOnzXL0Pz2WCz9VLV+lb/87?=
+ =?us-ascii?Q?TPUfaWuHCYRC/aXjG3TRk9uTmiWXLwEMonVlNXBaiM0nY/lwHjqNlGBRo3CX?=
+ =?us-ascii?Q?jcKiAADndj4La/0pByUm0PMDyoQu8QDGyd1ciQMBSIymSh5e8dv4/kUrw+cV?=
+ =?us-ascii?Q?2TB8QlGfwS7LWwCU3Jbqks58XUnMLFIQHfOsWzfQsO2v8l29l1VKHSz/u/RG?=
+ =?us-ascii?Q?4Bo9XC2Q7POfyoEih9neEfXSuYprjnsPV8nUT6LX8+JKH321DkFZ4uHBxz7k?=
+ =?us-ascii?Q?Rr5skTcIevWwgjyN8eD6X/pt9rCWbD19TZglOl8HkPYqbwn66D+p3bRzhArd?=
+ =?us-ascii?Q?GMy/NuI8hgPMEBGR77Bvnrv0Hl8RwXVpH4ugJeGQjaJdNqNDGfaWarcEXBEH?=
+ =?us-ascii?Q?zlUctQzxuG4aid6K0dtHyKz8bJOVf4LOXG2wj6udWKrwLpRr7A=3D=3D?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5747.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(4022899009)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?us-ascii?Q?PKSpVyTtc/x/xz3kCd3wwFpfS6ZbO9O+byHAiC7Z4yl2z4DW9aEDi/KIYdMu?=
+ =?us-ascii?Q?bqWFNN8d2q22uE9v+3rBHZmq+CFKSvhQVIShFEq1ZxxuFHGKjcl37PQ4Z78a?=
+ =?us-ascii?Q?8417HzTdjib7I2QfWcoUF2GgrgGVpooXaWH7k9qEqIqaTH//efTx2F+qRO1V?=
+ =?us-ascii?Q?40UStcT2Qm1eDJS6cFvQO5YsFSuU76u52irRqu1Y1k/086KvHX8WFVKZPLVd?=
+ =?us-ascii?Q?11QEQlOh1oHGXABwNHfG+dIWeJAaMGUe0cUxJCBcrHjWS/PoTeDg8ynI3H/x?=
+ =?us-ascii?Q?H+8GmkYZ+anpvzPPrkuH9w7pa6njXoERCM5awpPOl0DL8SlUJ5R3UaAQJp50?=
+ =?us-ascii?Q?z/0WPyHXod+T3PW5KXisToVwWXpaCnEQcc7gP3CT7dof+11+SrkiXp20n5c4?=
+ =?us-ascii?Q?+oYbXr5LWX0VM/Z4ko3u4bAbhpJyOC2gHOFj+7ns6A1yperunrBbWC937Rme?=
+ =?us-ascii?Q?ixeF/OqeepqTfQShn4qz2Ks7MYm4uTAZYxXqZA1ZQNAoOmNngWsA16rnHvhQ?=
+ =?us-ascii?Q?sORhRsC8jRkGd9IsofOH9XlSuFSOwIk2HmhuhQlfQvJ13AyMVOiX9YZWpDFt?=
+ =?us-ascii?Q?KtUBPaPxweay+rUOC3RrF67LzB3EUJ91thsLeMxaAtS9LLposfWYYLm/6qXS?=
+ =?us-ascii?Q?Ik0gfjohADEQ5dF1UlPx2J9wkISzWFGTOhX33EoyRnLZZv7erY/CJITgs4hq?=
+ =?us-ascii?Q?v0zoiWGuaowDqGFfOgW4E1gOI03n2lNiI+pqxCDsFNineyutz4wWmSTxIhq7?=
+ =?us-ascii?Q?uefLVHpQLiIrfaF5QpJfaqmyeThUmWUNEDtjXYtyAQEIwKN9Ug0olKu34ZbC?=
+ =?us-ascii?Q?UPGTiKNCEcgsYVZyiRiYpU7gQ/B2aCv5ox/9Ct4PXzxsT4jyITr6WePPPEGS?=
+ =?us-ascii?Q?MEE1oBjZrm3uy+8XaOBuJdyhN9dOb3VKaNhR4893D5hvbx+qOl4ndKoPA2jy?=
+ =?us-ascii?Q?8+wHvuxwg6kf32K/s8QViQjo0bUSs515fVoSrO6T2BKYspcXxcjr5sdEZKqA?=
+ =?us-ascii?Q?YJWb25P9x6ZMJ4ny5n5Scbi3HeAGhYwp1JyNzy6hHh51gy1ZaBfIeAzX+wgS?=
+ =?us-ascii?Q?ZUVSQZB5N7nJf3ILAh7IgCJdgU/87Kd8llQvhWxETPhPCeIWrQW6HWv9NTka?=
+ =?us-ascii?Q?P8Qhj2vh2ocb2nVmp43QSxxi5u7jyRv+wOJTcFxIbUHEA/P9c/GF5hZVRbBb?=
+ =?us-ascii?Q?wuqyR05c9pmiPgfGnP1ruoKeIOE3N6LTizglYx7svXy+KUPkcbqk23dhO0A9?=
+ =?us-ascii?Q?UYTcYayKoKn1Av9HC5lt41vKA4watykJiHVkQxb56LWSwlQzay1lntc348oR?=
+ =?us-ascii?Q?mREUkWjG1LpDsqk/PH+20MzHqsXemLoTwyyBQ+tF18VR+6JzJFOigSaITjYi?=
+ =?us-ascii?Q?LWjRg+57wo3BQ6Wt/HyQCnN2SccWujjMZTkBZHtiQErzVE568WydFfgqfv5M?=
+ =?us-ascii?Q?lfbkxu2K+DW1YQeQuSL72jNeIcunb1j5f0wLqfQyGxQYSfyhO5Q6rNkNHmGR?=
+ =?us-ascii?Q?KpncF9jbKYKHNSO9vQuWSF/p4Zthwzpurd2EmbM2Z7AR1XLkDOUM+aJhaAYe?=
+ =?us-ascii?Q?K32oY29nlIQIFQELKNCXC+pyQeQApCgkwOvcGflO?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|PA4PR10MB5563:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2b791d8d-80fb-409a-5888-08dccce49fee
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|4022899009;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?ekwzMlEyOGtybllQRlhieGVtM3lieTBRR2pObm9UODVlTkZkQ3dFbjRxRlFq?=
- =?utf-8?B?UEFoU1NKZjdLS0dUVWVkMDZnM2pKdGxwT0Z5MFRiNHlzdmI1Tkpwb05GM3oy?=
- =?utf-8?B?VHRUVVdqVXZ4WDdLQmFmZFBPd3NyZFdvWDJlaDRscG8wUGVBSzdHbXNnejFv?=
- =?utf-8?B?WkZWQ1cwUHdzRjVncmVVUGs4V2g5OHFRdFZ3MGg5SHplZU9qcGhHdnlQTnNC?=
- =?utf-8?B?ejRBZEJNWGFlZlVrTUZrMmVwQmsrc3Q2TXR5a0RIbU9CVkF5ZHNZeUQ2a0ZC?=
- =?utf-8?B?aENveTl1UWp4RXpJeUZHUW0xZ2dJVWpQeGJBcGxWMTIzSjFkSmdGWXhPU3d1?=
- =?utf-8?B?L201TllRaU9DdUJ2Ty92TVdCYy9DNjBqNDZieDZTZnE5c0hiUjYvNDR0ckdX?=
- =?utf-8?B?QTVwaE9SMWs0NkU1ZDZxUThaYmNvYktPeldDWktMUHdoam9FUm5iWmJMTnRO?=
- =?utf-8?B?QitueEdVaVZyTC9zRm5oRThPZGNIMU82SFI3T0Z3ZlpkRDY3N3JYd2NPSith?=
- =?utf-8?B?aGx6RjVEL3F3ckZHM29SV3V6QWJwYnV6N0xDYjFhSnhWY1lRa1Z0emFqbXJK?=
- =?utf-8?B?YTlwWkRKUTVXVWk1NUxkQi9zTFo1NHVzbzJuWlJHTmlUa0JUR3BaUWpzRWxS?=
- =?utf-8?B?empFVmV6Qmw0T2c3UUJ6MW9EdVhyaEV3alp4MmNhd0hGQUFQMlpDOVIvdHFm?=
- =?utf-8?B?VnppWjRLaVpYb08zbSt4b0hYTUlVOGxNVU4zbHU0Rnp3aTJUN3YwUXl2ZG1N?=
- =?utf-8?B?RHFSR0o1SzRLMGlKYWc4cGxZY1VoTU1CNWkyNFA3SS9sTlc5RkZmY1VrUElt?=
- =?utf-8?B?TTZiZVIwWTFWQjdqR1ZwSWJVNVZybVBiMnFJVnVmb0xzU0drNTlZVm1uc1Bz?=
- =?utf-8?B?YTQ5RUJqUExUVWtVVWs0WllUNWN2dkVHS0IycTh6MzQzR1dwOVZDYWJNc05s?=
- =?utf-8?B?b3NmVmw4NzhXZTZna0dXY01YNS9NenBPNGEyS2RSY21VaGRGaitTelkrLzBK?=
- =?utf-8?B?WnB5NE5DcGw3OXB0SytCVVRDbjlJVUJ1SWd5THNVdU1DN24wd1BMenlBQ01i?=
- =?utf-8?B?K3l1MThIVWtXOE95ZDZ6WkhSVzIzaCs4ZUVEaHBMSmJxTWVQbHhjUlJtbkdZ?=
- =?utf-8?B?RkhIaGNZb0hJbTdlZGhSc082RjltTEFXcjA0bjkxVm5aSDBhMHBMUHZUWU5X?=
- =?utf-8?B?cXJ4d01rL2tYZHFGR2RxWlJabkw2M2hveld1NlgwdGZ1UkN2NjA4UnBFNkpl?=
- =?utf-8?B?MWdpcU5qUTRVQ1E4SVJvRjBJcnFuUnVGZFZ5dmQydkR2UVNBS1Q3RUFIck1n?=
- =?utf-8?B?YkZGS21PbC9hcGQzQTdiZ215dkNtOVA5S3ZiSHF2ODloZEpraUV4cTlEYUNF?=
- =?utf-8?B?NVZJa2R6S1dqSXRuVmZTTFRrazhndXJGcWN5V0ZqV1hKY0dEd2VSZDhXN25L?=
- =?utf-8?B?bXQrLzB5cWJuTVVmb1d1ZVJibS9ablZGbzROcTVBZTRUTllzcnZvSlg1S29x?=
- =?utf-8?B?OEN6b1pyRXAwb2pXaWtuTTRRMHp6YnV1aFFLQTUra1VJZDk2am5YemppeVAz?=
- =?utf-8?B?Sk5PQUhORWdEcVhmVERSanJBanpmaXRwMjNNMFpkWnlZWlBLazUzcENCZVQw?=
- =?utf-8?B?KzJLSHNrZityNnNqdnNkRDdMVjBkTWNoRDI1anRUd0R3a3lHSE5tM08xYmhG?=
- =?utf-8?B?UGJDVGZ5VFdiQS9kdWhSQzJ4azU3MU5Lc0dwbG9DYjBybGJ2Y095bnN4Zmxm?=
- =?utf-8?Q?CVJmvfVXMF+Dz0r6oI=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(4022899009);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?WnAvUU82ZDFhZWIxN045WTlnTVBVSUZJeExxK0ZSYkpsYXNGeG0vNStjTkU4?=
- =?utf-8?B?OGF4ZGVjYUdNQ0tOa1c0ZHRTMEluZ3VPT2tsKzMzSExENkNGLzhZZmdCRitI?=
- =?utf-8?B?MjdNVi9sOGs3NFZhSGVoNGpURWE5d1RPZkUwVVY5M3RPM2JwbHl2RFNDd1dh?=
- =?utf-8?B?akNRektNSFdHNEhBNDMyWkhQNVhYTU9RZ055dTZOTlZOZEVtUSt4NjNvb0Rt?=
- =?utf-8?B?T09XcUoxVHJ4NUVwRnRsZEw1QXUwSFNUT1E3RU5xRjM0T1dXV3pvSDgzUEh0?=
- =?utf-8?B?SG5OTGJTaFFaeDdRaUwyTDNlbXo2Q1dhYzc5d1dreEtaZTZORXRwZ2pOa2NL?=
- =?utf-8?B?SUtrT0EwWnVXbnNSY2RrUjhVSHVOenpFZzNwdlNrazdEcHVLYnM3NFBGeXd4?=
- =?utf-8?B?bUNKa1oyRW9oSDhKWWtmdGFRekRudHowUVNYbUVndUhFT09ScnZ4ZVhHbUE4?=
- =?utf-8?B?RVlWajJ6OTY5RmtseHU1OGxVTXR6eEF0L1BEeGpHQUpkYnhiYi9hU25TM0JZ?=
- =?utf-8?B?cWVkYnQ4NWtpdmdBMVJ3SWZlSEdYNW1FMHFLZmp1RXV2UFQxT2lUMkoyYWFZ?=
- =?utf-8?B?WUd2LzgyTE8zWUtMMzU3SXVHNHFJZ2F1K1hVQ2VDODBla1NzRG5hQVFmRE5E?=
- =?utf-8?B?MFNwU1k0eWRtVjA0bk11RFFZQ2RBSzZ2UmxuMk96Zk9NZC9ZT0FuQi9lbWF4?=
- =?utf-8?B?SW51L2ZSeGorZzlVT05OL2lpWWh5QUMzVVYyMDJMZFgydXJnNWNGekpMQlV2?=
- =?utf-8?B?ZEptTURpd0NjclV5K1Y5UlArbjhSR0lWWCtlYThsa3VtWG9yOU1CWnVZbEls?=
- =?utf-8?B?WlZEemFLK3ZycXp4cXJ2Tys2emt2YUhyd3JJSlFyNGQzMGdMV2xrM0tibkxx?=
- =?utf-8?B?dlROYVpTNXl4bkFCZ0grSWFBV1FhNEpQZC9TcFJsZGJNOGdlR0lKbSttcEx6?=
- =?utf-8?B?VGFadzR3ME5iYmJZWWNyVW5YcHdkaUxXellGQzFQdXlMZGszUXk2US8wajlZ?=
- =?utf-8?B?NWZZMUZ5VE5OSXhsS1ZvbVVqanlnclFneGlmUGdObjVJcm9HV3BINlh0QmNQ?=
- =?utf-8?B?VE1vQWs1cGlITVUrbFlWYW1lUTdnSThnOFdlc01TcjlvaFcvRnhkSTJ5Q1BT?=
- =?utf-8?B?ME10VWtoZS95NFZtTFFJUk45OXd5ZTNkUFZDMnNzS1RjY01GMHdFRGF0RlY4?=
- =?utf-8?B?QXVRY2VGMkR1cm5HYnVmazBVYlB5bkJiaTVpZWdZcG5QTTluMTlZT2V1SSts?=
- =?utf-8?B?andLTHRhb2paTE1reXJVQXRiQW04aEZLaHlVSzJ2WEFOMjlhcEFwQWJVbTI2?=
- =?utf-8?B?STVUREM4UTUyQndZUWtsbzZraFUvNzBXaHdJbUs4Tng0am1oOE9oS0oycTFv?=
- =?utf-8?B?SXJmTnMwVG9zejlUMkFOL3dYYTlScU5MSytOdC9pakpwNGdDSGRUV2pNeDBx?=
- =?utf-8?B?eFZ0ZUVoY0JtNERVaHdMNkRXKzJ2Q1lKRmM4VThjSDkwbHRyZ2RzUzIrbG93?=
- =?utf-8?B?dlZ0TnVXT0VNQWs1VE15c012c2xzakNGRDliUVF6R2VZcGoveEtKL0puWjJJ?=
- =?utf-8?B?SHBQaEVFVHlvV2lScUQ3YTV4TVJrNW0vSEFhdnNNZ25TRlRDS0xCMWp0R0Ja?=
- =?utf-8?B?eDhnaHk5OVhYZ3EyL0tqcVVBNVhkdFBoV2psZFpIS3dmOTloYkRGOHQ4KzZy?=
- =?utf-8?B?TE1GUE5LbmRPM3kzaXJ0eXk0Y0U3WFArTStCWnB0Wk5mSEV2Y3ZLVHltQm12?=
- =?utf-8?B?Zmk1YmlMMFR3dVNQUGtsWnlsdytyd0xuNElla1FERGdjdDllNHljRVAyZ2JC?=
- =?utf-8?B?bEN4cm9kQWRyOHFnN3MxNzlxRmpSNTFLaUcrcmtaK2ZXU2RFN3UyTlBzSUpL?=
- =?utf-8?B?NjJMVXhGSHlzQ1QxTTV5V3dyK2FOQkNuL1BnM2ZWUGQyV0ZPOXF4eXBpMmFy?=
- =?utf-8?B?R2FVQmJhenU2UThtQ3Z3RCsyRkM4ZWJSR2xTbUtQS2dWdzYxSks0REQ4OVBR?=
- =?utf-8?B?bzJ3eDRpMmJnaGIzNGQ0U3FOZmJ6NElQMi9wTnp0RWxQT3hyUE95OWlVNS93?=
- =?utf-8?B?cm02MVpKT0ZENmJSZ1NNS0M1QWREVThSV2pnWFZDQ2pOeUlHdHFWR2NqSEkv?=
- =?utf-8?B?eGxHMWpGMWp0RkROUWhCMzJXT0tia3pTS3haWVJJQ2FjQWtyVmwrQkhTbzhZ?=
- =?utf-8?B?WXc9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2b791d8d-80fb-409a-5888-08dccce49fee
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2024 13:22:29.1029
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5747.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4d709651-99fc-4033-9398-08dcccee5942
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Sep 2024 14:32:05.1528
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rVPj2PLaO/iwSpWA3jHwChGdR+TsEseIZk9essA+ZcfTqc8i8Cvu8Mj9IfL0DBUv/NBEihIoYfK5+mgPZFItNB+EPkhW4f4+Sur4wCb1FYo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR10MB5563
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: EkZhvp34Ruew9P6Z7YNFBT4E+2+eNBHk82DftnjKvSPJre0iLp9ch5sTyukKWDJJdEFYWM0nlvSLXjC5PF2/+Spro09GwuTPLRHIQeIvr/I=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5112
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 04 Sep 2024 13:22:48 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16847
+ <cip-dev@lists.cip-project.org>; Wed, 04 Sep 2024 14:32:18 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16848
+
+Let me check and replace that as well, thanks for the suggestion.
+
+Many thanks,
+Srinu
+
+-----Original Message-----
+From: Gylstorff, Quirin (T CED OES-DE) <quirin.gylstorff@siemens.com>=20
+Sent: 04 September 2024 18:52
+To: cip-dev@lists.cip-project.org
+Cc: Kiszka, Jan (T CED) <jan.kiszka@siemens.com>; Arjunan, Srinu (DI CTO FD=
+S CES LX PBU 2) <srinuvasan.a@siemens.com>
+Subject: Re: [cip-dev] [PATCH][isar-cip-core] scripts/lib/wic/plugins/sourc=
+e: Use F-string instead of traditional .format() method
 
 Hi,
 
 On 9/4/24 8:42 AM, Srinuvasan A via lists.cip-project.org wrote:
 > From: srinuvasan <srinuvasan.a@siemens.com>
-> 
-> Use f string for string interpolation and formatting instead of traditional .format()
-> method.
-> 
-> f-strings are generally preferred due to their readability,simplicity and efficiency,
-> and moreover there is no functional changes apart from the optimization.
-> 
+>=20
+> Use f string for string interpolation and formatting instead of=20
+> traditional .format() method.
+>=20
+> f-strings are generally preferred due to their readability,simplicity=20
+> and efficiency, and moreover there is no functional changes apart from th=
+e optimization.
+>=20
 > Signed-off-by: srinuvasan <srinuvasan.a@siemens.com>
 > ---
 >   .../wic/plugins/source/efibootguard-boot.py   | 31 +++++--------------
 >   .../wic/plugins/source/efibootguard-efi.py    | 17 +++-------
 >   2 files changed, 12 insertions(+), 36 deletions(-)
-> 
-> diff --git a/scripts/lib/wic/plugins/source/efibootguard-boot.py b/scripts/lib/wic/plugins/source/efibootguard-boot.py
+>=20
+> diff --git a/scripts/lib/wic/plugins/source/efibootguard-boot.py=20
+> b/scripts/lib/wic/plugins/source/efibootguard-boot.py
 > index 2b06fd1..ad749fb 100644
 > --- a/scripts/lib/wic/plugins/source/efibootguard-boot.py
 > +++ b/scripts/lib/wic/plugins/source/efibootguard-boot.py
 > @@ -170,29 +170,16 @@ class EfibootguardBootPlugin(SourcePlugin):
->               msger.error("Bitbake variable 'EFI_LIB_ARCH' not set, exiting\n")
+>               msger.error("Bitbake variable 'EFI_LIB_ARCH' not set, exiti=
+ng\n")
 >               exit(1)
->   
-> -        efistub = "{rootfs_path}/usr/lib/{libpath}/efibootguard/kernel-stub{efiarch}.efi"\
-> -            .format(rootfs_path=rootfs_path,
-> -                    libpath=libarch,
-> -                    efiarch=efiarch)
-> +        efistub = f'{rootfs_path}/usr/lib/{libarch}/efibootguard/kernel-stub{efiarch}.efi'
->           uefi_kernel_name = "linux.efi"
-> -        uefi_kernel_file = "{deploy_dir}/{uefi_kernel_name}"\
-> -            .format(deploy_dir=deploy_dir, uefi_kernel_name=uefi_kernel_name)
-> -        kernel = "{deploy_dir}/{kernel_image}"\
-> -            .format(deploy_dir=deploy_dir, kernel_image=kernel_image)
-> -        initrd = "{deploy_dir}/{initrd_image}"\
-> -            .format(deploy_dir=deploy_dir, initrd_image=initrd_image)
-> -        cmd = 'bg_gen_unified_kernel {efistub} {kernel} {uefi_kernel_file} \
+>  =20
+> -        efistub =3D "{rootfs_path}/usr/lib/{libpath}/efibootguard/kernel=
+-stub{efiarch}.efi"\
+> -            .format(rootfs_path=3Drootfs_path,
+> -                    libpath=3Dlibarch,
+> -                    efiarch=3Defiarch)
+> +        efistub =3D f'{rootfs_path}/usr/lib/{libarch}/efibootguard/kerne=
+l-stub{efiarch}.efi'
+>           uefi_kernel_name =3D "linux.efi"
+> -        uefi_kernel_file =3D "{deploy_dir}/{uefi_kernel_name}"\
+> -            .format(deploy_dir=3Ddeploy_dir, uefi_kernel_name=3Duefi_ker=
+nel_name)
+> -        kernel =3D "{deploy_dir}/{kernel_image}"\
+> -            .format(deploy_dir=3Ddeploy_dir, kernel_image=3Dkernel_image=
+)
+> -        initrd =3D "{deploy_dir}/{initrd_image}"\
+> -            .format(deploy_dir=3Ddeploy_dir, initrd_image=3Dinitrd_image=
+)
+> -        cmd =3D 'bg_gen_unified_kernel {efistub} {kernel} {uefi_kernel_f=
+ile} \
 > -            -c "{cmdline}" -i {initrd}'.format(
-> -                cmdline=cmdline,
-> -                kernel=kernel,
-> -                initrd=initrd,
-> -                efistub=efistub,
-> -                uefi_kernel_file=uefi_kernel_file)
-> +        uefi_kernel_file = f'{deploy_dir}/{uefi_kernel_name}'
-> +        kernel = f'{deploy_dir}/{kernel_image}'
-> +        initrd = f'{deploy_dir}/{initrd_image}'
-> +        cmd = f'bg_gen_unified_kernel {efistub} {kernel} {uefi_kernel_file} -c "{cmdline}" -i {initrd}'
+> -                cmdline=3Dcmdline,
+> -                kernel=3Dkernel,
+> -                initrd=3Dinitrd,
+> -                efistub=3Defistub,
+> -                uefi_kernel_file=3Duefi_kernel_file)
+> +        uefi_kernel_file =3D f'{deploy_dir}/{uefi_kernel_name}'
+> +        kernel =3D f'{deploy_dir}/{kernel_image}'
+> +        initrd =3D f'{deploy_dir}/{initrd_image}'
+> +        cmd =3D f'bg_gen_unified_kernel {efistub} {kernel} {uefi_kernel_=
+file} -c "{cmdline}" -i {initrd}'
 >           if dtb_files:
 >               for dtb in dtb_files:
-> -                cmd += ' -d {deploy_dir}/{dtb_file}'.format(
-> -                    deploy_dir=deploy_dir,
-> -                    dtb_file=os.path.basename(dtb))
-> +                dtb_file=os.path.basename(dtb)
-> +                cmd += f' -d {deploy_dir}/{dtb_files}'
->           exec_cmd(cmd, as_shell=True)
->   
->           cls._sign_file(signee=uefi_kernel_file, source_params=source_params)
-> @@ -206,9 +193,7 @@ class EfibootguardBootPlugin(SourcePlugin):
+> -                cmd +=3D ' -d {deploy_dir}/{dtb_file}'.format(
+> -                    deploy_dir=3Ddeploy_dir,
+> -                    dtb_file=3Dos.path.basename(dtb))
+> +                dtb_file=3Dos.path.basename(dtb)
+> +                cmd +=3D f' -d {deploy_dir}/{dtb_files}'
+>           exec_cmd(cmd, as_shell=3DTrue)
+>  =20
+>           cls._sign_file(signee=3Duefi_kernel_file,=20
+> source_params=3Dsource_params) @@ -206,9 +193,7 @@ class EfibootguardBoot=
+Plugin(SourcePlugin):
 >               msger.info("sign with script %s", sign_script)
->               orig_signee = signee + ".unsigned"
+>               orig_signee =3D signee + ".unsigned"
 >               os.rename(signee, orig_signee)
-> -            sign_cmd = "{sign_script} {orig_signee} {signee}"\
-> -                .format(sign_script=sign_script, orig_signee=orig_signee,
-> -                        signee=signee)
-> +            sign_cmd = f'{sign_script} {orig_signee} {signee}'
+> -            sign_cmd =3D "{sign_script} {orig_signee} {signee}"\
+> -                .format(sign_script=3Dsign_script, orig_signee=3Dorig_si=
+gnee,
+> -                        signee=3Dsignee)
+> +            sign_cmd =3D f'{sign_script} {orig_signee} {signee}'
 >               exec_cmd(sign_cmd)
 >           elif sign_script and not os.path.exists(sign_script):
->               msger.error("Could not find script %s", sign_script)
-> diff --git a/scripts/lib/wic/plugins/source/efibootguard-efi.py b/scripts/lib/wic/plugins/source/efibootguard-efi.py
+>               msger.error("Could not find script %s", sign_script)=20
+> diff --git a/scripts/lib/wic/plugins/source/efibootguard-efi.py=20
+> b/scripts/lib/wic/plugins/source/efibootguard-efi.py
 > index 48f7523..c443d14 100644
 > --- a/scripts/lib/wic/plugins/source/efibootguard-efi.py
 > +++ b/scripts/lib/wic/plugins/source/efibootguard-efi.py
 > @@ -73,16 +73,14 @@ class EfibootguardEFIPlugin(SourcePlugin):
->           creator.deploy_dir = deploy_dir
->   
->           distro_arch = get_bitbake_var("DISTRO_ARCH")
-> -        bootloader = "/usr/lib/{libpath}/efibootguard/efibootguard{efiarch}.efi".format(
-> -                        libpath=libarch,
-> -                        efiarch=efiarch)
-> +        bootloader = f'/usr/lib/{libarch}/efibootguard/efibootguard{efiarch}.efi'
->           part_rootfs_dir = "%s/disk/%s.%s" % (cr_workdir,
+>           creator.deploy_dir =3D deploy_dir
+>  =20
+>           distro_arch =3D get_bitbake_var("DISTRO_ARCH")
+> -        bootloader =3D "/usr/lib/{libpath}/efibootguard/efibootguard{efi=
+arch}.efi".format(
+> -                        libpath=3Dlibarch,
+> -                        efiarch=3Defiarch)
+> +        bootloader =3D f'/usr/lib/{libarch}/efibootguard/efibootguard{ef=
+iarch}.efi'
+>           part_rootfs_dir =3D "%s/disk/%s.%s" % (cr_workdir,
 >                                                part.label,
 >                                                part.lineno)
 
-Why did you not replace the old string format in this patch? I see only 
-the str.format calls replaced.
+Why did you not replace the old string format in this patch? I see only the=
+ str.format calls replaced.
 
 Quirin
->           create_dir_cmd = "install -d %s/EFI/BOOT" % part_rootfs_dir
+>           create_dir_cmd =3D "install -d %s/EFI/BOOT" % part_rootfs_dir
 >           exec_cmd(create_dir_cmd)
->   
-> -        name = "boot{}.efi".format(efiarch)
-> +        name = f'boot{efiarch}.efi'
->   
->           signed_bootloader = cls._sign_file(name,
->                                              bootloader,
-> @@ -116,11 +114,7 @@ class EfibootguardEFIPlugin(SourcePlugin):
->           sign_script = source_params.get("signwith")
+>  =20
+> -        name =3D "boot{}.efi".format(efiarch)
+> +        name =3D f'boot{efiarch}.efi'
+>  =20
+>           signed_bootloader =3D cls._sign_file(name,
+>                                              bootloader, @@ -116,11=20
+> +114,7 @@ class EfibootguardEFIPlugin(SourcePlugin):
+>           sign_script =3D source_params.get("signwith")
 >           if sign_script and os.path.exists(sign_script):
->               work_name = name.replace(".efi", ".signed.efi")
-> -            sign_cmd = "{sign_script} {signee} \
-> -            {cr_workdir}/{work_name}".format(sign_script=sign_script,
-> -                                             signee=signee,
-> -                                             cr_workdir=cr_workdir,
-> -                                             work_name=work_name)
-> +            sign_cmd = f'{sign_script} {signee} {cr_workdir}/{work_name}'
+>               work_name =3D name.replace(".efi", ".signed.efi")
+> -            sign_cmd =3D "{sign_script} {signee} \
+> -            {cr_workdir}/{work_name}".format(sign_script=3Dsign_script,
+> -                                             signee=3Dsignee,
+> -                                             cr_workdir=3Dcr_workdir,
+> -                                             work_name=3Dwork_name)
+> +            sign_cmd =3D f'{sign_script} {signee} {cr_workdir}/{work_nam=
+e}'
 >               exec_cmd(sign_cmd)
 >           elif sign_script and not os.path.exists(sign_script):
->               msger.error("Could not find script %s", sign_script)
-> @@ -128,9 +122,6 @@ class EfibootguardEFIPlugin(SourcePlugin):
+>               msger.error("Could not find script %s", sign_script) @@=20
+> -128,9 +122,6 @@ class EfibootguardEFIPlugin(SourcePlugin):
 >           else:
 >               # if we do nothing copy the signee to the work directory
->               work_name = name
-> -            cp_cmd = "cp {signee} {cr_workdir}/{work_name}".format(
-> -                signee=signee,
-> -                cr_workdir=cr_workdir,
-> -                work_name=work_name)
-> +            cp_cmd = f'cp {signee} {cr_workdir}/{work_name}'
+>               work_name =3D name
+> -            cp_cmd =3D "cp {signee} {cr_workdir}/{work_name}".format(
+> -                signee=3Dsignee,
+> -                cr_workdir=3Dcr_workdir,
+> -                work_name=3Dwork_name)
+> +            cp_cmd =3D f'cp {signee} {cr_workdir}/{work_name}'
 >               exec_cmd(cp_cmd)
 >           return work_name
-> 
-> 
-> 
-> -=-=-=-=-=-=-=-=-=-=-=-
+>=20
+>=20
+>=20
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
 > Links: You receive all messages sent to this group.
-> View/Reply Online (#16844): https://lists.cip-project.org/g/cip-dev/message/16844
-> Mute This Topic: https://lists.cip-project.org/mt/108260811/1753640
-> Group Owner: cip-dev+owner@lists.cip-project.org
-> Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129121/1753640/1405269326/xyzzy [quirin.gylstorff@siemens.com]
-> -=-=-=-=-=-=-=-=-=-=-=-
-> 
+> View/Reply Online (#16844):=20
+> https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Flist
+> s.cip-project.org%2Fg%2Fcip-dev%2Fmessage%2F16844&data=3D05%7C02%7Csrinu
+> vasan.a%40siemens.com%7C2b791d8d80fb409a588808dccce49fee%7C38ae3bcd957
+> 94fd4addab42e1495d55a%7C1%7C0%7C638610529547457682%7CUnknown%7CTWFpbGZ
+> sb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3
+> D%7C0%7C%7C%7C&sdata=3Dw0S9%2Fzn3oLOjcZuru1osrrlqdvroI3bXwRK%2Fi7B0ers%3
+> D&reserved=3D0 Mute This Topic:=20
+> https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Flist
+> s.cip-project.org%2Fmt%2F108260811%2F1753640&data=3D05%7C02%7Csrinuvasan
+> .a%40siemens.com%7C2b791d8d80fb409a588808dccce49fee%7C38ae3bcd95794fd4
+> addab42e1495d55a%7C1%7C0%7C638610529547465838%7CUnknown%7CTWFpbGZsb3d8
+> eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0
+> %7C%7C%7C&sdata=3DwHajkf9omQfI%2BQ9s80G1KD2vT7kZaBdotW28aXQh0zQ%3D&reser
+> ved=3D0 Group Owner: cip-dev+owner@lists.cip-project.org
+> Unsubscribe:=20
+> https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Flist
+> s.cip-project.org%2Fg%2Fcip-dev%2Fleave%2F8129121%2F1753640%2F14052693
+> 26%2Fxyzzy&data=3D05%7C02%7Csrinuvasan.a%40siemens.com%7C2b791d8d80fb409
+> a588808dccce49fee%7C38ae3bcd95794fd4addab42e1495d55a%7C1%7C0%7C6386105
+> 29547471543%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMz
+> IiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=3DyUF8iqhVghchVMDdKf
+> zKlJ5J1eAfvomgFH3ty%2FSNVJg%3D&reserved=3D0=20
+> [quirin.gylstorff@siemens.com]
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+>=20
 
