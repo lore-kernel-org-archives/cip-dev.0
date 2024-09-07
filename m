@@ -1,369 +1,421 @@
-Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20FF1E6FE49
-	for <webhook@archiver.kernel.org>; Sat,  7 Sep 2024 03:13:45 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
- by mx.groups.io with SMTP id smtpd.web11.968.1725678823215090770
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16715E6FE57
+	for <webhook@archiver.kernel.org>; Sat,  7 Sep 2024 09:45:17 +0000 (UTC)
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.87])
+ by mx.groups.io with SMTP id smtpd.web11.4293.1725702308117506479
  for <cip-dev@lists.cip-project.org>;
- Fri, 06 Sep 2024 20:13:44 -0700
+ Sat, 07 Sep 2024 02:45:08 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=nobuhiro1.iwamatsu@toshiba.co.jp header.s=key2.smx header.b=NyzCVO8O;
- spf=pass (domain: toshiba.co.jp, ip: 210.130.202.134, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
-DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=toshiba.co.jp;h=From:To:CC
-	:Subject:Date:Message-ID:Content-Type:Content-Transfer-Encoding:MIME-Version;
-	i=nobuhiro1.iwamatsu@toshiba.co.jp;s=key2.smx;t=1725678804;x=1726888404;bh=9Q
-	lilo53pi50CsDV37X0ce+x0LjgCuaWAcjr86Zm4os=;b=NyzCVO8O5/t8OBctNGCa2oKoCemkzMA5
-	14+8l3xT35fH5osGKG3OIUBO8FTZm6ICVs+Zar3sOr3ViIOVJ7kYlUEpyaW0CupXGwlHL7gl6ntvn
-	3JJ66eAEt9L/z8dc8hK+PEWW4y+Bu+o4mQ/Ra6frtsDZCqI5//AhfwU2JO/Fb9Lv+NPww4cgPKDU6
-	HBxPwwHLr14uDGWE0eP7FXAAvYdN7vKcxBTwS9+ZCK2g5aEsCvattAIXVkOk/ZO62sVLRZrWGBdAR
-	gcxEnfKHsOSjARd+Rzc16aLWuJwpo4xg859zWvqDUbLiy4JjGfjPuSbQofkMETqHX+USYt0wNYODj
-	jw==;
-Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 4873DN6w590616; Sat, 7 Sep 2024 12:13:23 +0900
-X-Iguazu-Qid: 2yAb2N10Z8NlVbP2jg
-X-Iguazu-QSIG: v=2; s=0; t=1725678802; q=2yAb2N10Z8NlVbP2jg; m=wvvz3vTE3W8Izu4FNYpFN6XFLOyXTVjEAo1HJ60ovgw=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1803) id 4873DKlR3359095
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Sat, 7 Sep 2024 12:13:20 +0900
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=uTasv7O4;
+ spf=pass (domain: siemens.com, ip: 40.107.22.87, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Kae9GegjAvZPnYYvr8Xu6IyY+hEOAJsD+WelScEQOsN/yvrWQVxemJmMXQWvC1wwScynat3O1sibaZhI3Xolb9vvSODwCY4viMetPAoeOnMOXGeNISF5MuYF/H6tfh3ylwWQDne9MqARapfK3cYvjrjIM72kly+kZvh8mqyhFG32TDa3boCNJDklBHvax0YqcEcV+wWcr7s78HBMiBc13f6u1ZWqwIyqKSqKQx0e5jUyXrK6hzZp8TmdUZjQnMZq4vixkOUdY6s0cbVWEPJN2abS2qdzkziryNkX24r5kqMJyPcIKn8xx1q+lfFR2F/zjAO3LO3YUa72N6NS1167dA==
+ b=X9E3gU0dj2Dq7tdeq1ozuibi5gxmCTXxkuCBeGZzh3+05qh8IJ1gMGfGK3fnehXSEJekTzadoIY1T+w+gP3d8HmJkN8vZ91V9G+AeTz1izTzsL5eEFWroXfJbh/OVx2fWETsy/MB+RmPNKbKuvRMAnzDalYABmlup01Ec/9CnbFejYsD083U1l+WYutY67VgkS+4FBXvyVKpnKKrxKmVDklL5r4SSq6za1H2cu4z0qKs5bMu2bEV1+xQ+ZwEj0ryrN4p2YBLEzhL2diP4ue9JVHcXF72WQjlmnovs6nlisqV+/TQwKePkyJ0qiEuxyJi2B7FJLqgLfENAz7c6PSc2g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ynz3PVP62VLTj0hHuCKy59pve8aiTVP0IhcxKJXcd54=;
- b=olCznL1EcToHo7EqzDzuvWSTzJtztGkv9C15ODENhM5c5AJc7goeiLfMK//rJ7yvdx7Wcrj3guOkiDlOxkwfec3O4mUOVNsGOyhmLidva8DiORix2C811F7BQrAYYu9fTmeqkYXXNwnomQPnoSfG6/z5mQJNg1AhVVBHFhoEB05nAtk4MolTkpl1+892jUBCG2KJTlnYLHfiSOHdijQ3XLv1bwU/kg3IkV4dwhYYc6AzjYiI5jGx4/og7BtP1xHTBikb6HT9QKly0fP31dvoH4s6Kx+A6JOx3MThL26NKVonf85SU1IZ0wz2Kg7HWGxU8MZwMtNAdOZKuufWdIUgwg==
+ bh=L6hGLUqEvHVMDM0F1D9vM1qA0RbA/crs/ZjdbFjP1lE=;
+ b=rNiREy+njsBoyz5hsB8cOft5ef0UXfWWobuu9lDNI13vXnYuXXqXPCFbu8b7jHOhEPhr/rZp7PU1eaxf9LGH7kCF6M/hW64JZpf5p9RV997xOYmL7mF/TR18bvKZYHz+BRmBS3MdZT9wcscrWvOv1etcr/BLaFJLI6AnUA0zbLRSqPP58wQuB6/SgNjVegUXpUDxGq4rJikkvkBX6VNhuhX0r+1yzbirbyfTK0csplxXpSMCwxub0bGCZKu4zh32ZZ1RwjwjEgNlfHQ7RCnTcnM1Gfg77S9DvDShz2JgEpya/2UbTaVj+D7yiLfmwuJC/H0BX1ltIcEKWGfUWXsrkQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From: <nobuhiro1.iwamatsu@toshiba.co.jp>
-To: <cip-dev@lists.cip-project.org>
-CC: <pavel@denx.de>, <jan.kiszka@siemens.com>,
-        <masami.ichikawa@cybertrust.co.jp>, <Chris.Paterson2@renesas.com>,
-        <uli@fpond.eu>
-Subject: [ANNOUNCE] Release v5.10.224-cip52 and v6.1.107-cip28
-Thread-Topic: [ANNOUNCE] Release v5.10.224-cip52 and v6.1.107-cip28
-Thread-Index: AdsA03iYdMrJk+YDQ/e87b9DhLhcYA==
-Date: Sat, 7 Sep 2024 03:13:18 +0000
-X-TSB-HOP2: ON
-Message-ID: 
- <OS0PR01MB638811FB38FD6C58E090A532929F2@OS0PR01MB6388.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS0PR01MB6388:EE_|OS9PR01MB13150:EE_
-x-ms-office365-filtering-correlation-id: 347e2724-5cdd-42b8-33bd-08dcceeb054c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|376014|366016|1800799024|38070700018|95630200002;
-x-microsoft-antispam-message-info: 
- =?iso-2022-jp?B?amh6VWM0TmpMTUFia3F4TGxWb2t2eUFQVnNNd3lrVkhMdkM1aUdDQ014?=
- =?iso-2022-jp?B?b2F2NEl1Ti9TK01sa1lGbnI3TTlXa2wrMkRmUXMwQzBZajVWb0lyOEQ2?=
- =?iso-2022-jp?B?V1Y4aXhlMTdSRGllOUgyVC9vZGtqN2FCRkZiOWIrN0lTZlFOVVpLR3BE?=
- =?iso-2022-jp?B?OW9EeHEvSVN3Uk04RDdVUXYzVHJCNXZqbWIzK3MwVVp5OExIZXF2azgy?=
- =?iso-2022-jp?B?Y2hheDQvL0t2dDRwTjlCdzZoRm9LZHVscHFRbUtHaVI2Y3hKWjRhL1lX?=
- =?iso-2022-jp?B?YUNiYm1mTDU3V1ZPR1dIMUFnQWxHWEg3RloxRm12ekc5OGZqQzlKWXZO?=
- =?iso-2022-jp?B?OHQzcmNKL01sdUpNeDRueFVSazFqQUhGNVpzVENSc1BiVjNQdXJ3aGlU?=
- =?iso-2022-jp?B?bG9QbVZTZnNzVlpNb1d6TVo3SENLWGR1VW5sRFlZbUdVYXBkanplRTgx?=
- =?iso-2022-jp?B?eWg2MFBoemJZL1FHZzdicjJTekNKMTFmQm1ORnJkQXU1T2VEMHFaUkhR?=
- =?iso-2022-jp?B?SXNxOWdUS0lWMXlBYjdSSmJ6TTZiMW4zMEJaOGNhaFBCSE5sRm1vS29t?=
- =?iso-2022-jp?B?UmErbmJDaGpPOTlsbHJTbm5OOFdxSWZQMVhQdFU1NGt6MjFLdFJZMDdZ?=
- =?iso-2022-jp?B?aXVBc2Z1YUMyQmNWQlRDZ2pEWVE1N0ZzbXJSNS9VYUpqdmsvWDBDVU5k?=
- =?iso-2022-jp?B?S1JHTy81cUJMRG5EeW5XekJtNXduOUsvZzc2cWVNVDZCVmx3blV6cTRs?=
- =?iso-2022-jp?B?VkNOdXkwVU1mZjYxRWNUaVZuZUJ3RmJvbVVUUDV3L2tibURJVVNNUUdW?=
- =?iso-2022-jp?B?WkJaanpqRWdYeTRabHd4amg0QktOWjYrdC9jNStlZllRem9wcGJPMzRN?=
- =?iso-2022-jp?B?VHVtYUJ0YzkvTUlKYTZ5M251RFZGL1FCWkVEZUE0SHFoaDgzb0lKSWpE?=
- =?iso-2022-jp?B?Ui9qVHF3eitEOVc5NHlEb1diK1R0RUprTmpWa0diWUpkRDh2K2lySGZR?=
- =?iso-2022-jp?B?TWw4UVU4dWkya28zUHhoY2tTRmVGVi9CbE5IQ05yVjZBMko1d01kMEVw?=
- =?iso-2022-jp?B?SGZFT3RvMEI0SkphTitJeDg1azF0QXZNWGhGL0wwVXNyaFY4WENvVDV2?=
- =?iso-2022-jp?B?Q2lqZ2w5N2NCckMxeGlvTXFzWnJoMkpYaDNXZEZEMGR6MGJOVVhPcWRv?=
- =?iso-2022-jp?B?TEppUTdoOXBENVc3SlZPb1NGakhvb0hONVdVZVNKcG1sYlUvRHZnYjR1?=
- =?iso-2022-jp?B?aVhVNzV3Y2NRelBScUI2cHA5dmlmVEhid0h1Tzdqb05xOVFlTDBTNlA5?=
- =?iso-2022-jp?B?NXlyK2N1MFZaeFQrcTU5M1ZSOE1wNFlkQVpFQUNpdHgzN0NNTFdVNVJi?=
- =?iso-2022-jp?B?bW9JRlJrMlNYZmVuLzlIVUVMYkhFREtIejVhSUxPUVFHVnF4dWM2VkhE?=
- =?iso-2022-jp?B?cVUwditnZ085NTJURG1NbVdkZ1RjWUxydmwxbHFseTV3WnJvVzNjMWpI?=
- =?iso-2022-jp?B?L1l2K0RkaTdXZkVSMzYrK0NQcEhveGJScFRPOXlIS1VrZmNMWVBWSld4?=
- =?iso-2022-jp?B?dWt1UmRMRGRmS2tQRmlMSU9PMzhFZzVQSkdJUnlCcWgxd1hFdGNNNFg3?=
- =?iso-2022-jp?B?NHBFV0VXTFRSMlg1a01zSGpuQklNQzVadEl3SDBqS0plR1dBcDlUU3NX?=
- =?iso-2022-jp?B?SVgvamJreExQaE9PdEhPeTRWeFZzMHNzdFA4RzV6SEpkY2podGJXS0da?=
- =?iso-2022-jp?B?NWlFems3Nm5menRmRjF5Q0x2QXA5eDRXZzdKYlJscGFyMmpDY1l3Z2Zy?=
- =?iso-2022-jp?B?OHovOE5lc0pSa2I2SVZ6SHNRUVBzYlc2R1FHS0tJMnEvSnRHb0s2WldO?=
- =?iso-2022-jp?B?MjYxYjJta3dxaVZuM0RrYU1Wbjk2M3kwUzhQUUNSeTRveHBFaFNVV3Zx?=
- =?iso-2022-jp?B?QWNmdUJqUlZqUWZ2bDVJaDZDUW5pWk4wampibzRYOFhaZmxRL1pIamtY?=
- =?iso-2022-jp?B?QUcvS296YjN1OFRCVVZSdEp1K2c0OFRodk1yTmo2TitUcUU0NUNzOFps?=
- =?iso-2022-jp?B?cUE1SndMS0dzcHpsTmdtK25SUExvSGh0VXo3WDlCQmxIeTJXeGNQMEhF?=
- =?iso-2022-jp?B?QkI=?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB6388.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018)(95630200002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?MklYMVBlSkJ0elpOQm1ibVYxbVMzRHJSVlRUY04yRWhWdTBlV3E4Wm9x?=
- =?iso-2022-jp?B?cUthMHV0QnFQT1N5bjFFT3lPc0d4ZFJMS3lkeEtybHhZZEgzeHFrVEIw?=
- =?iso-2022-jp?B?aGxKV0Y1a2F5a0xIa0NuNkRSY0g0YTBrc1BLUHNoUUduMnQ0a0ZqT28v?=
- =?iso-2022-jp?B?T01BN0FBYnFjQ1lFRmtEL0lUeks1djRWWnVYbnkwZ0tVYUlNTEFEMzJr?=
- =?iso-2022-jp?B?cjJybFVpeW5HUnFrcmRBSFZmL3VNeVZiYWhjR3RySjFsV1dGa3FRNUJh?=
- =?iso-2022-jp?B?SUFFU1paK3dDZWt4YWhNQlh4WXdjUDJDOFhJOWVQZlpsenUxcnExRG1m?=
- =?iso-2022-jp?B?VXdDdHpzSUFldFF4V05lWGpXcnRtRjVjcE8zcmVQTVFMWUF2R05wYTNs?=
- =?iso-2022-jp?B?RGJ0YWRpb3JIQkcwdlp5clhzVFFZZHk3YTl1aktvVGdvSExSNk9iV3c3?=
- =?iso-2022-jp?B?TUxLUmpyR1gzV2plRGptU3Z6V1VPRXBTc1E3SUNaamlYZHlSc0xLWVJx?=
- =?iso-2022-jp?B?Z0gzeHNVZlFtbGIzQ1ZTb29jVitKUlJNMDFxbmxEemh1TGxWd2wwNHpZ?=
- =?iso-2022-jp?B?VGVyWllRdkxYSTVyR1U0WjFCdFdMVmRRYjBCTUhjRklaYnVCNmtGM3JK?=
- =?iso-2022-jp?B?UjNjdnpiWjg0eGhhMGt4U3hZWXUyd0VVV0Nva2w1RXA1RHVoZ1Z3WElQ?=
- =?iso-2022-jp?B?R2ZDS1BDaitlM0txSTBQSFZGVXhrcC9pbVpIQjZsanNveXM4RVE3QURG?=
- =?iso-2022-jp?B?RktEelNWOWZmOXh3VktyTUZiWkNNK1ZHWGdPSElvaUdGR2dwQVhxMlI0?=
- =?iso-2022-jp?B?VmNWNXlkc3BwdlhPYmF4czlWRTN5UUthZGR0ZUUzVFlWTzkyTW03d3VG?=
- =?iso-2022-jp?B?QWRwOXN0b1RoUWMwYm02amxXS3gyOUlvSk1PMDRsZERRWkxaRDlDWkF0?=
- =?iso-2022-jp?B?cUJ4S01SdTdNeHNucVhnck94MjRML1hzNjJ6NzBPdWhoUTZHcWttUnV2?=
- =?iso-2022-jp?B?M0sza3pSOHkyTnN5TUtuSTgrcDlrUnRYRlpTVWRsdUhwZFh3cXd1dmNm?=
- =?iso-2022-jp?B?QU9nbU9OMVdNOU51THZsYmp0d3NISGcyVFg2MXdRbngySGY4SjY1THQ1?=
- =?iso-2022-jp?B?bEhUZWptWkQvUXdYRG9KanQ5bjFtQklqWmpGU1d6QmR4M1dXRmRVOUZp?=
- =?iso-2022-jp?B?My9mUTBNNFZCbXQ0aEk2emtQdVdkbUUzRzI2NzErMjlTV1l3bzc0SmV0?=
- =?iso-2022-jp?B?c0s5bTg5K2htU3AvQm85bVRzVHgrOGNkRmNESHBBeTNPSzRRZWx1OFE5?=
- =?iso-2022-jp?B?eDh3UUMvYWhQQXVub1JmLytMbUhmNUxYeHBjUnh3UGRBVlc3ZzdkeC9W?=
- =?iso-2022-jp?B?bGthMFl4cWg5UHBvUklxaStvN2FGWU50eW1KcHVoVkdDVG43V08zcVJW?=
- =?iso-2022-jp?B?Y0tOQWZwTy92ZjIrUHFqUEVDYkVodUlISXpZbko4M2ZVekd5aERQZWRa?=
- =?iso-2022-jp?B?WlprMzJpeVZEK0h0UmxpeUZyOVAvaDFrc01SdURUL005MkJ5TzFvd2NI?=
- =?iso-2022-jp?B?NzhiamlBSDZsU2VUTDRjNThzWEg2UUJJUjZmWmdMdjFPVVUzU2xYTWNz?=
- =?iso-2022-jp?B?T3JRaU9ZT1MzemZJQjlXcTNoMVdGcWpzNHBWV1l3QUxIU0VIUWFUWmRw?=
- =?iso-2022-jp?B?YnlZNFFzQ3pPUm5rVmxsUVJSTWhRSzgwKzF1REMwdnloUzBadlA0cFlP?=
- =?iso-2022-jp?B?R1JtK2JnR0RwVWVYRzB2WnZKdCtnelJpUjFWRjBsRTNLcWFFUzhTYzZV?=
- =?iso-2022-jp?B?S3N5WDQyVmlpb3NXWFNBdndIdWwvUXRQNVhrOTVsZ1dZaCtqbVllSW1H?=
- =?iso-2022-jp?B?VGtQdGZuNURpQklqdDY0MHZtQ2lhc3VSUDllM1ZKOGtyandsT3BQR0lU?=
- =?iso-2022-jp?B?NzlKaE1jaGtDbzNuZ3hGbjVWcEZBWXhBSSt2ZXVCYUdpUS9HcExRVW1P?=
- =?iso-2022-jp?B?aEFJYUd2bFVNS0taWk1TUmFEK0hCUlZtWFdYdUtwcWxnT3lnU1VnalJy?=
- =?iso-2022-jp?B?UzBpT2NaNG0zL04xNWhRbEpvQ0hQYnM3K2FpSlE3TENRYmx0YWRKWVk3?=
- =?iso-2022-jp?B?bVJ4V1VCdnFWR1NrOWFkVkJwMVZ6L2VxUXFEcnpHTVNWbTV1TXVBMXBr?=
- =?iso-2022-jp?B?UzkzR1NKUlZjbnVLUGFQM0I2bStFeUt1WTZ0aTRabm1Lb2V2bStodkNU?=
- =?iso-2022-jp?B?b3hJK25Pc1VQWHZYTDlvTm56WlVYdklHa3A4d1hyM2tLWFNZVjgzaGhQ?=
- =?iso-2022-jp?B?dGZxbkt2bzRCSjlqbmZhWjRYbXVpRktxZmc9PQ==?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=L6hGLUqEvHVMDM0F1D9vM1qA0RbA/crs/ZjdbFjP1lE=;
+ b=uTasv7O4hn4VSc/w3YfC6e40oLLnN1GrJvD5V54aFj4RcrQwbOIuuVfNu+6PJYtXoCM0BIfZ9SsgrI5Jo9Qz9VNlIS2k+aTQbebWeaLZXCmMJYZTVHmVE3Q3UGHA+JC0zyX2VdFcYpfp5Oe0Iw8cvl1o1V9DtEbOfXStEqjxoKhOC3IQ+i6U04tpLixhIS44DaOjBo1Luro7wauZ/WpLckaNDkyZXwrqWfxY+31xxz1Zi3bnSEWHaU8Iy7j/lojsM74OvYeDrcOfdlGiNPt+isgb3LWcbtpF+zHQ60l5/vk0Dm038SgppORgZ+WwaMBTlLW+WmSy9QFH8OFJg47vBA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by PAVPR10MB7140.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:312::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.17; Sat, 7 Sep
+ 2024 09:45:02 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408%3]) with mapi id 15.20.7939.017; Sat, 7 Sep 2024
+ 09:45:01 +0000
+Message-ID: <7d88ba27-c520-4636-963f-94feef36567f@siemens.com>
+Date: Sat, 7 Sep 2024 11:45:00 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1][isar-cip-core] scripts/lib/wic/plugins/source: Use
+ F-string instead of traditional .format() and modulo(%) methods
+To: srinuvasan.a@siemens.com, cip-dev@lists.cip-project.org
+Cc: quirin.gylstorff@siemens.com
+References: <f7a92fdc-894c-417e-b999-16f0c3b1c405@siemens.com>
+ <20240905114529.876340-1-srinuvasan.a@siemens.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Content-Language: en-US
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ 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
+In-Reply-To: <20240905114529.876340-1-srinuvasan.a@siemens.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR0P281CA0257.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:b5::20) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
-X-OriginatorOrg: toshiba.co.jp
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PAVPR10MB7140:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4c524209-70c0-4a31-7cc7-08dccf21be98
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?Z3pweERkN1hsL2lSNTJ5aExLL0hwMURuRjUzcndVQjVDWkEwNnR2aElSL21s?=
+ =?utf-8?B?eE5GZHRGeUFjZzNrdzM5bW9mU0xQWXJZVnJoVW94WEp3OXFOeHlHQUxtTUxs?=
+ =?utf-8?B?dXFaTnkvOTQ2cUVJcUVNeklOODV6YWpiUTZ6MmF1dDUyK2NBSjBrZ21tckNr?=
+ =?utf-8?B?emNRQnhxZmI4TS9hTFZXWXZpK3dpU3Bvbm5UdkpJUTJGd3c0ME84SGF1RUUz?=
+ =?utf-8?B?NU8vYWt4L21yMmtXN3VLYzRINFVKaHRLL0hPejNTUVdOam9PZU9tb0NMY0tH?=
+ =?utf-8?B?N2d6eUhwbTRFeHR4SlhrMEQ3bWFUUmthODQzY1FEWlNRUHo5VXVpbDRBZjVF?=
+ =?utf-8?B?c1RwMnAydEk3Rkw5dnFwenR5K0ZxU0J0SEkydXY4a00rT254M0tkQk45SzND?=
+ =?utf-8?B?Sjhndzg1N1FxVzJWSDNLYkgxcm9HTEZRRFpZU0pmWWJnU0wzZUZiYm5CR2lM?=
+ =?utf-8?B?ZDhid2lCVE5QRW1LSlZ2b1h0amoyWUpwWnBENEJ0emNndHRrRnFtRE03T2dz?=
+ =?utf-8?B?dWllWmZZOWdpRkhZaDcvNlVBMk1SL05maTlKa0JBMmtEVmxDM3hoeTFiWEE3?=
+ =?utf-8?B?dFFaQUhSUy8rclRZNUxVSVdvc0JXZkNwZ2lrUkVCS3NGY3BmQzNUNzNOZlpH?=
+ =?utf-8?B?OTgwallOd1hxUWcwdzdJZk1WWmd2R2RxU1JaMmdlcVFzZkl5bkdHVGtYelAr?=
+ =?utf-8?B?WGRqd3hxTW82NlgvbXNpNVI3OExNV0hjRUk4QXFCaVNpZUxvYlBNcC9meWJM?=
+ =?utf-8?B?OG9nQkhtZmZhRlVTamVyRXF6WUhHdmlDeG9nMXJjRHQ1QUhxY3NyNnRiRVdt?=
+ =?utf-8?B?cUdBeC9ob0g1eWdRNkNmVWJ5OGxxZFVGRm1acVVIckR1RzhuWHAzV2cxTUlx?=
+ =?utf-8?B?UDgvWjBac2llaFhnaDh2cnpraHNvYkJvOXpRb2hteXdhdGNWbXBHSU5KVFYv?=
+ =?utf-8?B?bS94SWlMT3ROa3YxNjQ5S0JoU1JzUkNkTXoya1lyUUFZZ3ZpU0JhSHJrU3ZK?=
+ =?utf-8?B?Z1gxNDRKeFh4T3dsOVZOZi9QVnhTMFk4ZEhtRHhxaUVXK0l5ZkIyN1FjaUZX?=
+ =?utf-8?B?NERJckZlNU5rdTRBRkRNUjZRWTlXNE01dnNYRFBEby9TMDZDNVkrZzg3ZWlj?=
+ =?utf-8?B?bXRPc0FPMkQwMHc1eUliNTVQbXVhL29zNm5TOCtFUzJKUm1Gbk1jS2VVQTNj?=
+ =?utf-8?B?a1kybjA5bzhuODhNNEh6SkhqVUU3d3d2ajRBZVlyekpJMFpTYnI5d3JvcWZp?=
+ =?utf-8?B?bUJCY1FteXVncE5oeXhYYmV6ZmFTdDV4dW5CVVpUZ0tZSUpPdjFRSi83SHpB?=
+ =?utf-8?B?L3RiSGRpOVJrZ0x4VEtHNXl6Um9sQWFnRVNIZGp6NHZnR0hIWmRWUjVzUkR6?=
+ =?utf-8?B?NjVnTEhoWkRzcGN5MnhwRmwrdGVjbWZZM21Pbkp6TXBJZFh1b1hkRnhDYXpG?=
+ =?utf-8?B?WU1ZVXJmWFZ4R1NnVllGL1ZsUkN6L0g2YUJXQklXSWJMd3Y2L3k5cDdkMHhQ?=
+ =?utf-8?B?MisyYjY5aWtzcmNIYWljK0VFQnEwZk4xRjhma3U4UEVZZGU5K1NSdHBHUTRx?=
+ =?utf-8?B?bWxTc0lCamQvOG5aZ3JweFRzenc3OEJpdlZCWmpRQ2k3NWRqd3Y3ckRLSXNS?=
+ =?utf-8?B?c1VhMllJYU1wSXpMcnRRSXpxN1VEQmFSalBmanR4RTVnUSt0N0Z5OVJZdlVK?=
+ =?utf-8?B?WDJ0bFAwZ0JVSEJSVXZ0bFNsSHVsUkdSeTZxb1dCVGJNYnBXcGJZandYNjNo?=
+ =?utf-8?B?UFY2aGYzOGplNlNvUG5neU1FVlpEdHVsOFdONFBpdDMzMnJzL0FWT2k3MUFh?=
+ =?utf-8?B?OW5NUTdJVzdWUHRyTE5ydz09?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?RC9pS0N5Y1k3bXJOQmJnc3lPRmNNQVZuam5Eamt2azBnSUhrU2JrV2dPck5H?=
+ =?utf-8?B?SFJhcXR5SWN4a3p1ZUxhcURadUl6Smp4SHk5QWtGL1lyQ2toY3NCWVYwclVL?=
+ =?utf-8?B?QjhUZ1k4ZHpIK2wzTm55SE8wY3JEMTR6ZWwrMmlZVDBSNW9XVWNoK2x5TkZm?=
+ =?utf-8?B?alVBTHNCK2pVUFoyL01pWkFBRXZyMElNTkRlQlFrVkRZaGNXdDRDWmJta3h0?=
+ =?utf-8?B?V1N2ekIvcTFPTitMbXRTNGIzelYzMHlLc25YaWFnajhSZjd3SmRpR3hkR3Ax?=
+ =?utf-8?B?UEd5ZG9ZR3JoTVdDMDZMMzlYQ3d0OHRHL1RNYWRRTFU4QUcvOVMwbE84MGM3?=
+ =?utf-8?B?MUhVUjRSZDdza1hnVlYrLzZqempORlk1YVpxNjI2ZXVKZlJST3M4KzZWSTNN?=
+ =?utf-8?B?Ly9JR1RVZm9ZeUtxVDQxVnVjTVJvWmZFWWFWUEhVTzZRRnNISk1EYzN1b0JX?=
+ =?utf-8?B?aXh2VzlTQU4yM1pGZ2crd1B5Z2ovbDFEUmRHZ0NBMDZGUHZlNVdIZmNnYy9r?=
+ =?utf-8?B?NVdRZmhZMWt0OFJ1VEJTWEpJNEUyT1hoVDJmSW1kb0oxTkw3N29uMW5scGcv?=
+ =?utf-8?B?UE9lWUhqZjVObktnUEJpd1o2TTZscm9hY3FpRG9laWpIWUo3cWpTUXl2aTRx?=
+ =?utf-8?B?d3F2SllrOVBQdGt4NEZrV0wvY0l6bm1DU24yOTFISkxsVXUzQzZDQTd0SnI1?=
+ =?utf-8?B?R0FYSDRCcU1HeUlobTNveEtROXdwejhRSDdYUDBSTmN4S0VQN1VUdWx4MmFJ?=
+ =?utf-8?B?RHFFQ0MrVWVrVDVKQ0hjc1FlZTN0alhzOGlVcVVxZGxDSEJYbk9yWi9hdWZv?=
+ =?utf-8?B?YXo3V2ZUbUNuckJ6OEFJYjlieUwrZ0FOR0hVVnBkZGNvb2JXZzZVVHJNMWE5?=
+ =?utf-8?B?Q3RRT3BIWDRKNUc4Vzk4UlFWdGZvVjdlQkdHNEZDQktWWkQ1eCtaRndpNDIy?=
+ =?utf-8?B?bkExL2ExT00wM2t1VEV4Z0d6aTJCUlplNEQva1kyaXFJaEZFdXpWcTBsQlhk?=
+ =?utf-8?B?QWNHMzM2OHlzai9QME9mcEZjTy92K0R5T2ozWVBYZjF1VVlyK21Ka3I0b1VW?=
+ =?utf-8?B?MXQyQ3hBWjJUMFd3NHdsdDVDNTZJc0k0UGVlT2FLZDdKbEpFVmMrK040Wjlj?=
+ =?utf-8?B?eFVCd1JwRzlvYTdJTjh5aFMwZDM2T1NYZ3UwczhsTU5jb1BDYjJ6OUY4bnJt?=
+ =?utf-8?B?Tmw3MFRMVEcveUtZc0t6Slg3dm56QVhqVlJDM2VXQ05sQzRrT0t4OXdFYUJ4?=
+ =?utf-8?B?SlVGRDN1dlk3MnBzZjhSejN4dE92c1QrWTZ3ZEpCeWpWYlFvbGVCZWZ3c0dS?=
+ =?utf-8?B?dTMzdWgrS3RGZ0N6aUFLME9oUGdjeUZTQzVuMXVWZm1OQjZSdWhuNUNGSEVI?=
+ =?utf-8?B?T0RmZzRWZTlnNjZQcU5rUnpGc1JNeDFScEZOUTJoMUgrVG5EQ3FPUm03cWZp?=
+ =?utf-8?B?U3gvRnRpSWw2R2tYcTl1emtsUWgzNGg1NGFGOFlJRmJRNHJ0Z2FET2VueVNy?=
+ =?utf-8?B?cXM2cElkeEYrUmRCNGxqb1JnTVNMNWRHUXA1T0hheEYvN3ZXeFp3cDZlbE1P?=
+ =?utf-8?B?Yk8wMHhtUURDdjV2UDNjSmlRdGtRMC9KN0EwY3ZHMmlWWlo1d0R0S29yak5k?=
+ =?utf-8?B?WFJ0Uit6UmdYdEVaRW9reVBJYmFETXFiRTdFS3k2L3ptSjB4a1hTb0xiMGxs?=
+ =?utf-8?B?UG9jNjB4VzRhS3MxUVZVaFVVb3pKdTM3V0R1TXVLakptRW90TXRmRWM0dEVQ?=
+ =?utf-8?B?ZnE0bEVaWUZJeDQ4dWdic3NkVkM5ZFhFSkZDN3RaQTBLUlE3V3p3eXRrVEVX?=
+ =?utf-8?B?d1NzWUd3c1NWNXZUdXRTYk80WWhtK3hnQlVWa1R2WXpBVG1BWUFVR0Q0R3U4?=
+ =?utf-8?B?K2d6RlFNVm1UZGh4aEZUQkJ6eUlUZnR6aWk0Tll0VWVkVjBiQXJJdHV6S3pY?=
+ =?utf-8?B?bnR4c0REd2lZMmlydWNyU0l4N3poeUZMYTN1eDFPaVI5aXB4WGNuRndzMzJ5?=
+ =?utf-8?B?YVlycU9sWFlGSE9aVytpbTdIZUFhQjlFL21xaDhTeGlWRlVvYUhBUndYVDI4?=
+ =?utf-8?B?ckNuYnVOa1VLNG1YOFBZQXBCTVRia0t4aXFXc25uTkd2RkdJMm05RTBrRlY5?=
+ =?utf-8?Q?OfKi2y+maqTytC9nv/TvQ/ueO?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c524209-70c0-4a31-7cc7-08dccf21be98
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB6388.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 347e2724-5cdd-42b8-33bd-08dcceeb054c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2024 03:13:18.1249
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2024 09:45:01.9311
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rX9GavJPZmXL88LoOqjtjr6L8GBc+Up22J7CztiEQmx5Lz/7lkqANYgJXICyE7/CCUOeu0cyo10bqrA35dZYOhdATQUG+284eX/69lIhnfs2gz2QkkJb/wzUqYVyn5oj
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB13150
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JnN+NVy/di6x8bda30zL9e7V/jpa7A4KNVhwWseOqeDL58vadaH4CoV2fuT9X1QhCJHyibDzFJrrF1nVQBP0ig==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAVPR10MB7140
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Sat, 07 Sep 2024 03:13:45 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16860
+ <cip-dev@lists.cip-project.org>; Sat, 07 Sep 2024 09:45:17 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16861
 
-Hi all,
+This is v2, not v1.
 
-CIP kernel team has released Linux kernel v5.10.224-cip52 and v6.1.107-cip2=
-8.
-The linux-5.10.y-cip tree has been updated base version from v5.10.223 to v=
-5.10.224.
-and the linux-6.1.y-cip tree has been updated base version from v6.1.106 to=
- v6.1.107.
+On 05.09.24 13:45, srinuvasan.a@siemens.com wrote:
+> From: srinuvasan <srinuvasan.a@siemens.com>
+> 
+> Use f string for string interpolation and formatting instead of traditional .format() and modulo (%)
+> method.
+> 
+> f-strings are generally preferred due to their readability,simplicity and efficiency,
+> and moreover there is no functional changes apart from the optimization.
+> 
+> Signed-off-by: srinuvasan <srinuvasan.a@siemens.com>
+> ---
+>  .../wic/plugins/source/efibootguard-boot.py   | 62 ++++++-------------
+>  .../wic/plugins/source/efibootguard-efi.py    | 37 +++--------
+>  2 files changed, 29 insertions(+), 70 deletions(-)
+> 
+> diff --git a/scripts/lib/wic/plugins/source/efibootguard-boot.py b/scripts/lib/wic/plugins/source/efibootguard-boot.py
+> index 2b06fd1..079fef5 100644
+> --- a/scripts/lib/wic/plugins/source/efibootguard-boot.py
+> +++ b/scripts/lib/wic/plugins/source/efibootguard-boot.py
+> @@ -103,34 +103,26 @@ class EfibootguardBootPlugin(SourcePlugin):
+>                  exit(1)
+>              root_dev = root_dev.replace(":", "=")
+>  
+> -            cmdline += " root=%s rw " % root_dev
+> +            cmdline += f' root={root_dev} rw'
+>              boot_files.append(kernel_image)
+>              boot_files.append(initrd_image)
+> -            cmdline += "initrd=%s" % initrd_image if initrd_image else ""
+> +            cmdline += f'initrd={initrd_image}' if initrd_image else ""
+>  
+> -        part_rootfs_dir = "%s/disk/%s.%s" % (cr_workdir,
+> -                                             part.label, part.lineno)
+> -        create_dir_cmd = "install -d %s" % part_rootfs_dir
+> +        part_rootfs_dir = f'{cr_workdir}/disk/{part.label}.{part.lineno}'
+> +        create_dir_cmd = f'install -d {part_rootfs_dir}'
+>          exec_cmd(create_dir_cmd)
+>  
+>          cwd = os.getcwd()
+>          os.chdir(part_rootfs_dir)
+> -        config_cmd = '/usr/bin/bg_setenv -f . -k "C:%s:%s" %s -r %s -w %s' \
+> -            % (
+> -                part.label.upper(),
+> -                boot_image,
+> -                '-a "%s"' % cmdline if unified_kernel != 'y' else '',
+> -                source_params.get("revision", 1),
+> -                wdog_timeout
+> -            )
+> +        cmdline = f'-a "{cmdline}"' if unified_kernel != 'y' else ''
+> +        config_cmd = f'/usr/bin/bg_setenv -f . -k "C:{part.label.upper()}:{boot_image}" {cmdline} -r {source_params.get("revision", 1)} -w {wdog_timeout}'
 
-NOTE: This release is a special one to release the cip-rt tree.
+Please keep a reasonable line length, normally 80 chars, but if it makes
+the line more readable, a bit more is fine as exception. This one is
+clearly off.
 
-You can get this release via the git tree at:
+>          exec_cmd(config_cmd, True)
+>          os.chdir(cwd)
+>  
+>          boot_files = list(filter(None, boot_files))
+>          for boot_file in boot_files:
+> -            if os.path.isfile("%s/%s" % (kernel_dir, kernel_image)):
+> -                install_cmd = "install -m 0644 %s/%s %s/%s" % \
+> -                    (kernel_dir, boot_file, part_rootfs_dir, boot_file)
+> +            if os.path.isfile(f'{kernel_dir}/{kernel_image}'):
+> +                install_cmd = f'install -m 0644 {kernel_dir}/{boot_file} {part_rootfs_dir}/{boot_file}'
 
-  v5.10.224-cip52:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-5.10.y-cip
-    commit hash:
-      a73978e16f87d704893e4b3a637be257420d43f3=20
-    Fixed CVEs:
-      CVE-2024-42287: scsi: qla2xxx: Complete command early within lock
-      CVE-2024-43828: ext4: fix infinite loop when replaying fast_commit
-      CVE-2024-42295: nilfs2: handle inconsistent state in nilfs_btnode_cre=
-ate_block()
-      CVE-2024-42289: scsi: qla2xxx: During vport delete send async logout =
-explicitly
-      CVE-2024-42310: drm/gma500: fix null pointer dereference in cdv_intel=
-_lvds_get_modes
-      CVE-2024-42297: f2fs: fix to don't dirty inode for readonly filesyste=
-m
-      CVE-2024-44952: driver core: Fix uevent_show() vs driver detach race
-      CVE-2024-41042: netfilter: nf_tables: prefer nft_chain_validate
-      CVE-2024-44965: x86/mm: Fix pti_clone_pgtable() alignment assumption
-      CVE-2024-43880: mlxsw: spectrum_acl_erp: Fix object nesting warning
-      CVE-2024-43908: drm/amdgpu: Fix the null pointer dereference to ras_m=
-anager
-      CVE-2024-43914: md/raid5: avoid BUG_ON() while continue reshape after=
- reassembling
-      CVE-2024-43871: devres: Fix memory leakage caused by driver API devm_=
-free_percpu()
-      CVE-2024-44948: x86/mtrr: Check if fixed MTRRs exist before saving th=
-em
-      CVE-2024-42292: kobject_uevent: Fix OOB access within zap_modalias_en=
-v()
-      CVE-2024-42284: tipc: Return non-zero value from tipc_udp_addr2str() =
-on error
-      CVE-2024-42281: bpf: Fix a segment issue when downgrading gso_size
-      CVE-2024-42286: scsi: qla2xxx: validate nvme_local_port correctly
-      CVE-2024-43890: tracing: Fix overflow in get_free_elt()
-      CVE-2024-42306: udf: Avoid using corrupted block bitmap buffer
-      CVE-2024-43841: wifi: virt_wifi: avoid reporting connection success w=
-ith wrong SSID
-      CVE-2024-43889: padata: Fix possible divide-by-0 panic in padata_mt_h=
-elper()
-      CVE-2024-42276: nvme-pci: add missing condition check for existence o=
-f mapped data
-      CVE-2024-43879: wifi: cfg80211: handle 2x996 RU allocation in cfg8021=
-1_calculate_bitrate_he()
-      CVE-2024-44971: net: dsa: bcm_sf2: Fix a possible memory leak in bcm_=
-sf2_mdio_register()
-      CVE-2024-43839: bna: adjust 'name' buf size of bna_tcb and bna_ccb st=
-ructures
-      CVE-2024-42285: RDMA/iwcm: Fix a use-after-free related to destroying=
- CM IDs
-      CVE-2024-42305: ext4: check dot and dotdot of dx_root before making d=
-ir indexed
-      CVE-2024-43858: jfs: Fix array-index-out-of-bounds in diFree
-      CVE-2024-42304: ext4: make sure the first directory block is not a ho=
-le
-      CVE-2024-42271: net/iucv: fix use after free in iucv_sock_close()
-      CVE-2024-43883: usb: vhci-hcd: Do not drop references before new refe=
-rences are gained
-      CVE-2024-43893: serial: core: check uartclk for zero to avoid divide =
-by zero
-      CVE-2024-42265: protect the fetch of ->fd[fd] in do_dup2() from mispr=
-edictions
-      CVE-2024-42259: drm/i915/gem: Fix Virtual Memory mapping boundaries c=
-alculation
-      CVE-2024-42126: powerpc: Avoid nmi_enter/nmi_exit in real mode interr=
-upt.
-      CVE-2024-43861: net: usb: qmi_wwan: fix memory leak for not ip packet=
-s
-      CVE-2024-44969: s390/sclp: Prevent release of buffer in I/O
-      CVE-2024-43834: xdp: fix invalid wait context of page_pool_destroy()
-      CVE-2024-42313: media: venus: fix use after free in vdec_close
-      CVE-2024-43867: drm/nouveau: prime: fix refcount underflow
-      CVE-2024-42312: sysctl: always initialize i_uid/i_gid
-      CVE-2024-43882: exec: Fix ToCToU between perm check and set-uid/gid u=
-sage
-      CVE-2024-42288: scsi: qla2xxx: Fix for possible memory corruption
-      CVE-2024-43829: drm/qxl: Add check for drm_cvt_mode
-      CVE-2024-44968: tick/broadcast: Move per CPU pointer access into the =
-atomic section
-      CVE-2024-43894: drm/client: fix null pointer dereference in drm_clien=
-t_modeset_probe
-      CVE-2023-52889: apparmor: Fix null pointer deref when receiving skb d=
-uring sock creation
-      CVE-2024-42308: drm/amd/display: Check for NULL pointer
-      CVE-2024-42267: riscv/mm: Add handling for VM_FAULT_SIGSEGV in mm_fau=
-lt_error()
-      CVE-2024-42283: net: nexthop: Initialize all fields in dumped nexthop=
-s
-      CVE-2024-42309: drm/gma500: fix null pointer dereference in psb_intel=
-_lvds_get_modes
-      CVE-2024-43849: soc: qcom: pdr: protect locator_addr with the main mu=
-tex
-      CVE-2024-27397: netfilter: nf_tables: use timestamp to check for set =
-element timeout
-      CVE-2024-42301: dev/parport: fix the array out-of-bounds risk
-      CVE-2024-43856: dma: fix call order in dmam_free_coherent
-      CVE-2024-42311: hfs: fix to initialize fields of hfs_inode_info after=
- hfs_alloc_inode()
-      CVE-2024-42114: wifi: cfg80211: restrict NL80211_ATTR_TXQ_QUANTUM val=
-ues
-      CVE-2024-43830: leds: trigger: Unregister sysfs attributes before cal=
-ling deactivate()
-      CVE-2024-44954: ALSA: line6: Fix racy access to midibuf
-      CVE-2024-42302: PCI/DPC: Fix use-after-free on concurrent DPC and hot=
--removal
-      CVE-2024-44935: sctp: Fix null-ptr-deref in reuseport_add_sock().
-      CVE-2024-42280: mISDN: Fix a use after free in hfcmulti_tx()
-      CVE-2024-44944: netfilter: ctnetlink: use helper function to calculat=
-e expect ID
-      CVE-2024-42290: irqchip/imx-irqsteer: Handle runtime power management=
- correctly
-      CVE-2024-43846: lib: objagg: Fix general protection fault
-      CVE-2024-43860: remoteproc: imx_rproc: Skip over memory region when n=
-ode value is NULL
-      CVE-2024-43907: drm/amdgpu/pm: Fix the null pointer dereference in ap=
-ply_state_adjust_rules
-      CVE-2024-44960: usb: gadget: core: Check for unset descriptor
-      CVE-2024-42272: sched: act_ct: take care of padding in struct zones_h=
-t_key
-    added commits:
-      CIP: Bump version suffix to -cip52 after merge from stable
+This as well.
 
-  v6.1.107-cip28:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-6.1.y-cip
-    commit hash:
-      d5cc54849a0b793a2413dcd5f31b45d9907066ab=20
-    Fixed CVEs:
-      CVE-2024-43845: udf: Fix bogus checksum computation in udf_rename()
-      CVE-2024-44986: ipv6: fix possible UAF in ip6_finish_output2()
-      CVE-2024-45006: xhci: Fix Panther point NULL pointer deref at full-sp=
-eed re-enumeration
-      CVE-2024-44947: fuse: Initialize beyond-EOF page contents before sett=
-ing uptodate
-      CVE-2024-44983: netfilter: flowtable: validate vlan header
-      CVE-2024-43884: Bluetooth: MGMT: Add error handling to pair_device()
-      CVE-2024-44988: net: dsa: mv88e6xxx: Fix out-of-bound access
-      CVE-2024-45003: vfs: Don't evict inode under the inode lru traversing=
- context
-      CVE-2024-44987: ipv6: prevent UAF in ip6_send_skb()
-      CVE-2024-44938: jfs: Fix shift-out-of-bounds in dbDiscardAG
-      CVE-2024-44977: drm/amdgpu: Validate TA binary size
-      CVE-2024-44939: jfs: fix null ptr deref in dtInsertEntry
-      CVE-2024-35937: wifi: cfg80211: check A-MSDU format more carefully
-      CVE-2024-45000: fs/netfs/fscache_cookie: add missing "n_accesses" che=
-ck
-      CVE-2024-35966: Bluetooth: RFCOMM: Fix not validating setsockopt user=
- input
-      CVE-2024-45007: char: xillybus: Don't destroy workqueue from work ite=
-m running on it
-      CVE-2024-44982: drm/msm/dpu: cleanup FB if dpu_format_populate_layout=
- fails
-      CVE-2023-31083: BUG: general protection fault in hci_uart_tty_ioctl
-      CVE-2024-44991: tcp: prevent concurrent execution of tcp_sk_exit_batc=
-h
-      CVE-2024-44999: gtp: pull network headers in gtp_dev_xmit()
-      CVE-2024-44995: net: hns3: fix a deadlock problem when config TC duri=
-ng resetting
-      CVE-2024-44940: fou: remove warn in gue_gro_receive on unsupported pr=
-otocol
-      CVE-2024-44990: bonding: fix null pointer deref in bond_ipsec_offload=
-_ok
-      CVE-2024-45002: rtla/osnoise: Prevent NULL dereference in error handl=
-ing
-      CVE-2024-40972: ext4: do not create EA inode under buffer lock
-      CVE-2024-44998: atm: idt77252: prevent use after free in dequeue_rx()
-      CVE-2024-44985: ipv6: prevent possible UAF in ip6_xmit()
-      CVE-2024-45008: Input: MT - limit max slots
-      CVE-2024-44989: bonding: fix xfrm real_dev null pointer dereference
-      CVE-2024-43897: net: drop bad gso csum_start and offset in virtio_net=
-_hdr
-      CVE-2024-44946: kcm: Serialise kcm_sendmsg() for the same socket.
-    added commits:
-      CIP: Bump version suffix to -cip28 after merge from stable
-      ravb: RAVB should select PAGE_POOL
-      net: ravb: Allocate RX buffers via page pool
-      net: ravb: Use NAPI threaded mode on 1-core CPUs with GbEth IP
-      net: ravb: Enable SW IRQ Coalescing for GbEth
-      net: add netdev_sw_irq_coalesce_default_on()
-      net: ravb: Refactor GbEth RX code path
-      net: ravb: Refactor RX ring refill
-      net: ravb: Align poll function with NAPI docs
-      net: ravb: Simplify poll & receive functions
+>                  exec_cmd(install_cmd)
+>              else:
+>                  msger.error("file %s not found in directory %s",
+> @@ -143,14 +135,13 @@ class EfibootguardBootPlugin(SourcePlugin):
+>      def _create_img(cls, part_rootfs_dir, part, cr_workdir,
+>                      native_sysroot, oe_builddir):
+>          # Write label as utf-16le to EFILABEL file
+> -        with open("%s/EFILABEL" % part_rootfs_dir, 'wb') as filedescriptor:
+> +        with open(f'{part_rootfs_dir}/EFILABEL', 'wb') as filedescriptor:
+>              filedescriptor.write(part.label.upper().encode("utf-16le"))
+> -
+> -        bootimg = "%s/%s.%s.img" % (cr_workdir, part.label, part.lineno)
+> +        bootimg = f'{cr_workdir}/{part.label}.{part.lineno}.img'
+>  
+>          part.prepare_rootfs_msdos(bootimg, cr_workdir, oe_builddir,
+>                                    part_rootfs_dir, native_sysroot, None)
+> -        du_cmd = "du -Lbks %s" % bootimg
+> +        du_cmd = f'du -Lbks {bootimg}'
+>          bootimg_size = int(exec_cmd(du_cmd).split()[0])
+>  
+>          part.size = bootimg_size
+> @@ -170,29 +161,16 @@ class EfibootguardBootPlugin(SourcePlugin):
+>              msger.error("Bitbake variable 'EFI_LIB_ARCH' not set, exiting\n")
+>              exit(1)
+>  
+> -        efistub = "{rootfs_path}/usr/lib/{libpath}/efibootguard/kernel-stub{efiarch}.efi"\
+> -            .format(rootfs_path=rootfs_path,
+> -                    libpath=libarch,
+> -                    efiarch=efiarch)
+> +        efistub = f'{rootfs_path}/usr/lib/{libarch}/efibootguard/kernel-stub{efiarch}.efi'
+>          uefi_kernel_name = "linux.efi"
+> -        uefi_kernel_file = "{deploy_dir}/{uefi_kernel_name}"\
+> -            .format(deploy_dir=deploy_dir, uefi_kernel_name=uefi_kernel_name)
+> -        kernel = "{deploy_dir}/{kernel_image}"\
+> -            .format(deploy_dir=deploy_dir, kernel_image=kernel_image)
+> -        initrd = "{deploy_dir}/{initrd_image}"\
+> -            .format(deploy_dir=deploy_dir, initrd_image=initrd_image)
+> -        cmd = 'bg_gen_unified_kernel {efistub} {kernel} {uefi_kernel_file} \
+> -            -c "{cmdline}" -i {initrd}'.format(
+> -                cmdline=cmdline,
+> -                kernel=kernel,
+> -                initrd=initrd,
+> -                efistub=efistub,
+> -                uefi_kernel_file=uefi_kernel_file)
+> +        uefi_kernel_file = f'{deploy_dir}/{uefi_kernel_name}'
+> +        kernel = f'{deploy_dir}/{kernel_image}'
+> +        initrd = f'{deploy_dir}/{initrd_image}'
+> +        cmd = f'bg_gen_unified_kernel {efistub} {kernel} {uefi_kernel_file} -c "{cmdline}" -i {initrd}'
 
-Best regards,
-   Nobuhiro
+Here, you could easily wrap around after the last positional parameter.
+
+>          if dtb_files:
+>              for dtb in dtb_files:
+> -                cmd += ' -d {deploy_dir}/{dtb_file}'.format(
+> -                    deploy_dir=deploy_dir,
+> -                    dtb_file=os.path.basename(dtb))
+> +                dtb_file=os.path.basename(dtb)
+> +                cmd += f' -d {deploy_dir}/{dtb_files}'
+>          exec_cmd(cmd, as_shell=True)
+>  
+>          cls._sign_file(signee=uefi_kernel_file, source_params=source_params)
+> @@ -206,9 +184,7 @@ class EfibootguardBootPlugin(SourcePlugin):
+>              msger.info("sign with script %s", sign_script)
+>              orig_signee = signee + ".unsigned"
+>              os.rename(signee, orig_signee)
+> -            sign_cmd = "{sign_script} {orig_signee} {signee}"\
+> -                .format(sign_script=sign_script, orig_signee=orig_signee,
+> -                        signee=signee)
+> +            sign_cmd = f'{sign_script} {orig_signee} {signee}'
+>              exec_cmd(sign_cmd)
+>          elif sign_script and not os.path.exists(sign_script):
+>              msger.error("Could not find script %s", sign_script)
+> diff --git a/scripts/lib/wic/plugins/source/efibootguard-efi.py b/scripts/lib/wic/plugins/source/efibootguard-efi.py
+> index 48f7523..5d65ffc 100644
+> --- a/scripts/lib/wic/plugins/source/efibootguard-efi.py
+> +++ b/scripts/lib/wic/plugins/source/efibootguard-efi.py
+> @@ -73,38 +73,28 @@ class EfibootguardEFIPlugin(SourcePlugin):
+>          creator.deploy_dir = deploy_dir
+>  
+>          distro_arch = get_bitbake_var("DISTRO_ARCH")
+> -        bootloader = "/usr/lib/{libpath}/efibootguard/efibootguard{efiarch}.efi".format(
+> -                        libpath=libarch,
+> -                        efiarch=efiarch)
+> -        part_rootfs_dir = "%s/disk/%s.%s" % (cr_workdir,
+> -                                             part.label,
+> -                                             part.lineno)
+> -        create_dir_cmd = "install -d %s/EFI/BOOT" % part_rootfs_dir
+> +        bootloader = f'/usr/lib/{libarch}/efibootguard/efibootguard{efiarch}.efi'
+> +        part_rootfs_dir = f'{cr_workdir}/disk/{part.label}.{part.lineno}'
+> +        create_dir_cmd = f'install -d {part_rootfs_dir}/EFI/BOOT'
+>          exec_cmd(create_dir_cmd)
+>  
+> -        name = "boot{}.efi".format(efiarch)
+> +        name = f'boot{efiarch}.efi'
+>  
+>          signed_bootloader = cls._sign_file(name,
+>                                             bootloader,
+>                                             cr_workdir,
+>                                             source_params)
+> -        cp_cmd = "cp %s/%s %s/EFI/BOOT/%s" % (cr_workdir,
+> -                                              signed_bootloader,
+> -                                              part_rootfs_dir,
+> -                                              name)
+> +        cp_cmd = f'cp {cr_workdir}/{signed_bootloader} {part_rootfs_dir}/EFI/BOOT/{name}'
+>          exec_cmd(cp_cmd, True)
+>  
+> -        cp_to_deploy_cmd = "cp %s/%s %s/%s" % (cr_workdir,
+> -                                               signed_bootloader,
+> -                                               deploy_dir,
+> -                                               name)
+> +        cp_to_deploy_cmd = f'cp {cr_workdir}/{signed_bootloader} {deploy_dir}/{name}'
+>          exec_cmd(cp_to_deploy_cmd, True)
+>  
+> -        efi_part_image = "%s/%s.%s.img" % (cr_workdir, part.label, part.lineno)
+> +        efi_part_image = f'{cr_workdir}/{part.label}.{part.lineno}.img'
+>          part.prepare_rootfs_msdos(efi_part_image, cr_workdir, oe_builddir,
+>                                    part_rootfs_dir, native_sysroot, None)
+>  
+> -        du_cmd = "du -Lbks %s" % efi_part_image
+> +        du_cmd = f'du -Lbks {efi_part_image}'
+>          efi_part_image_size = int(exec_cmd(du_cmd).split()[0])
+>  
+>          part.size = efi_part_image_size
+> @@ -116,11 +106,7 @@ class EfibootguardEFIPlugin(SourcePlugin):
+>          sign_script = source_params.get("signwith")
+>          if sign_script and os.path.exists(sign_script):
+>              work_name = name.replace(".efi", ".signed.efi")
+> -            sign_cmd = "{sign_script} {signee} \
+> -            {cr_workdir}/{work_name}".format(sign_script=sign_script,
+> -                                             signee=signee,
+> -                                             cr_workdir=cr_workdir,
+> -                                             work_name=work_name)
+> +            sign_cmd = f'{sign_script} {signee} {cr_workdir}/{work_name}'
+>              exec_cmd(sign_cmd)
+>          elif sign_script and not os.path.exists(sign_script):
+>              msger.error("Could not find script %s", sign_script)
+> @@ -128,9 +114,6 @@ class EfibootguardEFIPlugin(SourcePlugin):
+>          else:
+>              # if we do nothing copy the signee to the work directory
+>              work_name = name
+> -            cp_cmd = "cp {signee} {cr_workdir}/{work_name}".format(
+> -                signee=signee,
+> -                cr_workdir=cr_workdir,
+> -                work_name=work_name)
+> +            cp_cmd = f'cp {signee} {cr_workdir}/{work_name}'
+>              exec_cmd(cp_cmd)
+>          return work_name
+
+Thanks,
+Jan
+
+-- 
+Siemens AG, Technology
+Linux Expert Center
 
 
