@@ -1,53 +1,44 @@
-Return-Path: <chris.paterson2@renesas.com>
+Return-Path: <sai.sathujoda@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4295FC369D3
-	for <webhook@archiver.kernel.org>; Wed, 25 Sep 2024 11:43:57 +0000 (UTC)
-Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.59])
- by mx.groups.io with SMTP id smtpd.web11.13824.1727264628353263141
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57322C369D6
+	for <webhook@archiver.kernel.org>; Wed, 25 Sep 2024 12:11:17 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
+ by mx.groups.io with SMTP id smtpd.web11.14407.1727266269553652030
  for <cip-dev@lists.cip-project.org>;
- Wed, 25 Sep 2024 04:43:49 -0700
+ Wed, 25 Sep 2024 05:11:10 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@renesas.com header.s=selector1 header.b=WSUG35OH;
- spf=pass (domain: renesas.com, ip: 52.101.229.59, mailfrom: chris.paterson2@renesas.com)
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.134, mailfrom: sai.sathujoda@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 48PCB7rP2486649; Wed, 25 Sep 2024 21:11:08 +0900
+X-Iguazu-Qid: 2yAa7nzfb1jzKSzNR6
+X-Iguazu-QSIG: v=2; s=0; t=1727266267; q=2yAa7nzfb1jzKSzNR6; m=bbbtM9p8kMqMXvwATTOa4teMmQV+Z6N944khZns0CUU=
+Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
+	by relay.securemx.jp (mx-mr1801) id 48PCB6mQ2062689
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 25 Sep 2024 21:11:06 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=c5VG4+UGXSv8jPxwz0m2dduGmNdv600ZlCGRnfPelCp/zTR31hVXqz8lZ33FheHpxL0evnmem9RETjpAhJSVOlcRPGGznSoWMGjI5oKyr5ZTGSnRQMvPX7FOn+ezqxTV9LdvWGfOM5woKCyCO+Hw/GRgE2huLFAeZimcTWTGMd+AnWDf17nabTsZrS7RMaS6uRixLV9EieoLEjTfEQVdQ1N/vdX24NwSYIRrGfdWoj0J/m0hNiDmnm/OjS1nYQTZj5sSWy/Iv3shfoGIGqK83x1mOuUL1fNvDGWdANYu4l0AtjjPzex49XS6lFbxUelECuqLkQ8ayzMO15pNXo4OIQ==
+ b=dubCsG/RYtw89BMhoHIoeDlK27JkIoYdSwTaBZQXYBm/pPCfZoN2SYgZlquaKB5hhGuuQ2twIGrsf4h6Hm5eJluo5pXAs/FLiFhil8WORHDUAaNT2biaYacsQIHb2jlTWPSJKOQCsFWxlGJvQBnZWIr374bqWwppZsZ/UstkAQgcCCRglEuJBrayXNTW6B+VBP7C1qHpG8UDhRQVAqNrnqidMCMQB8di+1k9ZxODvNmt1Pp4864DtySKkJhNfLvmlpSRLZPRQ0pZR7iq5E4ZH+D2EPQ6SHElmdZoZaPxUqjh0MfBEkPl3Gb68+1D4DATbprNNY+ubVAF2jKQjhGwXQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2hb95JbVcknJ7yixevea3OkhjJ9XqMoA5eXSHplLEEc=;
- b=nQD36YVL9eyZhzWslMYrFHmbId2vuTCuhuyQRrJ0V1KhKm8KwAsIGgOH6eDNoiZvLCtv2iRR37+oe0o0ww2aAan1ak7JRKHiVJOXF5cMVLDn6GVwFGTuaEv/9DY6YLiAVy3Zp+aitqPXIsYz1jUBXf+wXf//HniGkVbQVoL1LNvRNxOgKYXY8vIbTm98bttnOZLuyNXGny0aYnPTD75xsYcSBpqafouogZ8iBcRYVke9/QwV4CCx6fgyJTZ3Z6zn+ZsuI/ClwC/lHdEomRJR+i9MxS0JmidHvmDgv7J3xdgUFyasdgdfT/j4xsRvT4FzsRZy7moyIp+jhkyolEKeuA==
+ bh=YMDR8qTyrUHb9w6k5o5HaRwHFXkEi8NBw9zUNxkQq44=;
+ b=etF11VOBO79P4sYbmNR/8KeoNqfBr+pb6K09qLdTyyGEIw2umw2UoJuer1uVlJ9WHyFrBRKJn8lTLRVomQraatftzQ2EwyYkts+j/4i3RMStuv0lsek+/nt1OMmHReKC5Y0Jq83goYUeBuesP+M/rO4zlT+TGGG1bmusuludx7ADZOfFNCgfcz/C45xPFvXNY8ATWVytoDZPNSNo265Q8TonOHV/JmlgQPBhoDR5d2Ai1ydNIdpXBucD3aXU0tm6jJgxPkZaDHBtX0uz5uOdTu/rLOw46+xQH0EIxuNAcWMPnxAJloM7X9nfV0FFfLDQcEziOA8CLjwrUu2Q0YfcBA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2hb95JbVcknJ7yixevea3OkhjJ9XqMoA5eXSHplLEEc=;
- b=WSUG35OHgHlQL9Io7qTqUjPV5L1Biz4u/03sQY3pkKT9gsCCQXsdfbQYqdtVFb+cfrOzEL7MYNxu6pWX+BvUfDBHDb+3UKWDIsK1YokmsZQkJ4vkv7HRhZdWzLTyvSPfFPu1hbf1ZhpvyUFhO0TzzuW/HJ918FOPwP5wP2HfzSc=
-Received: from OS9PR01MB12389.jpnprd01.prod.outlook.com
- (2603:1096:604:2e2::10) by TY3PR01MB9776.jpnprd01.prod.outlook.com
- (2603:1096:400:229::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.28; Wed, 25 Sep
- 2024 11:43:43 +0000
-Received: from OS9PR01MB12389.jpnprd01.prod.outlook.com
- ([fe80::d85d:3169:70e9:6a3f]) by OS9PR01MB12389.jpnprd01.prod.outlook.com
- ([fe80::d85d:3169:70e9:6a3f%4]) with mapi id 15.20.7982.022; Wed, 25 Sep 2024
- 11:43:43 +0000
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-To: "Sai.Sathujoda@toshiba-tsip.com" <Sai.Sathujoda@toshiba-tsip.com>,
-	"michael.adler@siemens.com" <michael.adler@siemens.com>
-CC: "kazuhiro3.hayashi@toshiba.co.jp" <kazuhiro3.hayashi@toshiba.co.jp>,
-	"dinesh.kumar@toshiba-tsip.com" <dinesh.kumar@toshiba-tsip.com>,
-	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Subject: RE: [cip-dev] Issue with 'small' Gitlab runners
+ smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
+ header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
+From: <Sai.Sathujoda@toshiba-tsip.com>
+To: <Chris.Paterson2@renesas.com>, <michael.adler@siemens.com>
+CC: <kazuhiro3.hayashi@toshiba.co.jp>, <dinesh.kumar@toshiba-tsip.com>,
+        <cip-dev@lists.cip-project.org>
+Subject: Re: [cip-dev] Issue with 'small' Gitlab runners
 Thread-Topic: [cip-dev] Issue with 'small' Gitlab runners
 Thread-Index: 
- Adr6EQ3RL8rQAtQSSy+tF4/i30H+FAACvaEwAB6AvfAAoAnrAABqrZEQBBtW1XAAAKEVoQAAz0Ww
-Date: Wed, 25 Sep 2024 11:43:43 +0000
+ Adr6EQ3RL8rQAtQSSy+tF4/i30H+FAACvaEwAB6AvfAAoAnrAABqrZEQBBtW1XAAAKEVoQAAz0WwAAOVntU=
+Date: Wed, 25 Sep 2024 12:11:03 +0000
+X-TSB-HOP2: ON
 Message-ID: 
- <OS9PR01MB12389DB1E8371D5A1747C9094B7692@OS9PR01MB12389.jpnprd01.prod.outlook.com>
+ <OS3PR01MB6103F8BD30E6848284A4C0C4C2692@OS3PR01MB6103.jpnprd01.prod.outlook.com>
 References: 
  <OS3PR01MB6103DA72FFDEBC407A5900A6C2962@OS3PR01MB6103.jpnprd01.prod.outlook.com>
  <TYYPR01MB12402CF459412685A6824CB45B7962@TYYPR01MB12402.jpnprd01.prod.outlook.com>
@@ -56,140 +47,176 @@ References:
  <OS3PR01MB61035250A83977730E393D70C29C2@OS3PR01MB6103.jpnprd01.prod.outlook.com>
  <OS9PR01MB12389D4A1AC2973E4C3AF27FDB7692@OS9PR01MB12389.jpnprd01.prod.outlook.com>
  <OS3PR01MB610365D7958F2829214B6BF1C2692@OS3PR01MB6103.jpnprd01.prod.outlook.com>
+ <OS9PR01MB12389DB1E8371D5A1747C9094B7692@OS9PR01MB12389.jpnprd01.prod.outlook.com>
 In-Reply-To: 
- <OS3PR01MB610365D7958F2829214B6BF1C2692@OS3PR01MB6103.jpnprd01.prod.outlook.com>
-Accept-Language: en-US, en-GB
+ <OS9PR01MB12389DB1E8371D5A1747C9094B7692@OS9PR01MB12389.jpnprd01.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 msip_labels: 
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
+ header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS9PR01MB12389:EE_|TY3PR01MB9776:EE_
-x-ms-office365-filtering-correlation-id: 4903a2df-ecef-47fb-8ff7-08dcdd574ed5
+x-ms-traffictypediagnostic: OS3PR01MB6103:EE_|TYYPR01MB12982:EE_
+x-ms-office365-filtering-correlation-id: f5f384b6-b5f7-4b62-9109-08dcdd5b2053
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
 x-microsoft-antispam-message-info: 
- =?iso-2022-jp?B?b2dYbUFqT25oN045U0EyZmlaNXRqUDJsRmIzVXlqb0lZeGdMWTVxajcv?=
- =?iso-2022-jp?B?N2FwcUFlcnZIY3NReSs1V29udkJVMnFzVWUwU05ZZVlrNkJaTVhiRkto?=
- =?iso-2022-jp?B?RzJLYzNlZ0hCaGhUeWZ1dUFROG5RTGJLbHVtS1lQZXpCWHQ5NnZZRmVQ?=
- =?iso-2022-jp?B?TXhXdXF2WU54aSs2MEY5ZTZZbENlSjlTRDFwYU8yUXkrUjVEMjBkcUw2?=
- =?iso-2022-jp?B?OXIrMUU0dVk2S0haNXhSV3c3ZHBiRE9XY09zRU5NckhwaXRwd3A0Q0do?=
- =?iso-2022-jp?B?YytYekNQQ2prOXJkMzFKWWltMGtpbkFVMGI2RjFzMmk3UWsyWGpja0ti?=
- =?iso-2022-jp?B?cnAxejloclNraTdhV1Z5Sm9yK1VWb2xHb0JOSWhJc3ZRaDdOb1lrMTBp?=
- =?iso-2022-jp?B?ZHVYQy82WDR4QXhqMkNKMnFXVmN5ajZ2NTNwcWZZbEFuRjVNYXdBSzdV?=
- =?iso-2022-jp?B?ZnhRM1UyZ3FnTTFtajlERXNBOWpXNlVYdUlXUEFUOE0yUEgwTDMvcUUx?=
- =?iso-2022-jp?B?N0JsbjZSbUtnc1BRSHZpMXQ1eDVGL1J2ZXpDUkRuY2xjZjVZdUVnbkFZ?=
- =?iso-2022-jp?B?a0hpcG83OElWSUlRWUNzWWpSdlFHR2dyZnJuVUEwTnZHZGZPaU54V3F1?=
- =?iso-2022-jp?B?UFRHa1lINXJsMjJMbDNWdUYzU2k0RHZWRHI4cUNLWWcwUkJBRVZwQ2pV?=
- =?iso-2022-jp?B?ZGd2aU11ZlZjQ3dEMnFKSmtlM3gvWE1vbGRYK3l5SUtROVRUdVAzR3g2?=
- =?iso-2022-jp?B?aGRzd3ovWi9iVXZIQUhNb0UyczV1bVJuTndNVFdPN0VaZjE0QXVyNGZT?=
- =?iso-2022-jp?B?L2UvYkhxNWdsdjBjNjJ1dVgxdDJJKzM0ZTgxMW5Ka2NvQmtvdVNxLyto?=
- =?iso-2022-jp?B?cDRib3ZYZUJtRlNJWWxuNktoZ3QxNGF3ZC9xZkhMcUV2bjducjhFbnVQ?=
- =?iso-2022-jp?B?Sk92ckVJS1dzeUNSSEd5OWZDckFxSVNRTVkybzN6Zi9meG9aN1I5dTlU?=
- =?iso-2022-jp?B?NkNJOVVmbS9JYmVTZFRUK1NDbnJhakZZZ2lOSTJnRFlNMVE2bEdsUnli?=
- =?iso-2022-jp?B?bXNDVkw2VUFvNkEyQ0t0TWZ0SjdCVzlpNlJQZE9jREVhemROcTlBUDgx?=
- =?iso-2022-jp?B?bWg0b0o2RFJMK0NYVkJVbVFmQndMeGV5RDhrTU0yV0gvOW1ONXo0MURL?=
- =?iso-2022-jp?B?Y3BQYUNxZ2YwZGtNaHZDSFFtRlkxL0NyMW4wS200YnQ5SVFHRm9CaVhL?=
- =?iso-2022-jp?B?TnZValdMU2hyVEZPaG42c1ZjR3hQUTgvd0piOENyZ21ITWYreHlnS0hZ?=
- =?iso-2022-jp?B?eE1JTDBaVEZJL2ZidnlQZEdDc29PUkNPSFdpK2thL1VKVzNDbnRZenVN?=
- =?iso-2022-jp?B?ZUZQOXpsYklQK3BEeW1IVVZXZ3hDakduVWxkTGJLdGFDR2YxdXJwOFYx?=
- =?iso-2022-jp?B?RW1nS2thZXVKL0dyWHltQnU5a2NrRE9KdkpUN2x5OE1BY0I1OE9OcXNh?=
- =?iso-2022-jp?B?U3FXOGZOVWFnQ0VCZmxWTkNpaFdnZFdJRE1BZUFvWXdsS1Bkai9aenJl?=
- =?iso-2022-jp?B?RWhQT2pYNm8zVE54VjI2OGpMUnJ1ZGJteU83Q2ZkTGlzclRkSnNwQ3lo?=
- =?iso-2022-jp?B?aHhZTXZ3cjIxVm1VeGRiRWQ5VXpwZURocmhNZ3BRT2F5WFFwOTYzOExS?=
- =?iso-2022-jp?B?dnczcVFUMFFlTFlqeGp5MFJxaUIraGx2L3VBSnU5V0Y5WFhyaHZ2Qmww?=
- =?iso-2022-jp?B?akF4VEdYR0VWOGRLTHpMTytMSE56Vzg5U2h4N1IwUnRCODlNSEdTRlhv?=
- =?iso-2022-jp?B?NzNzd2tEbmhuTmUvUkdNTUJMSU4vM2NvamVicmk2Tkl6eVhVOVROT3NM?=
- =?iso-2022-jp?B?UWVrTEJ5c3ZQNEVwRkQvcm9NWFpFPQ==?=
+ =?iso-2022-jp?B?U1YxeFhLcE9USENBZE05OTFWczBIZ2pQOVhBSExQRENWREYrN21oQ1lO?=
+ =?iso-2022-jp?B?R0hFQjgxSk4zNmVhVWZJOGJTOW5BN3RJZnFLc0d6Nm5YVjNLZ0UxeE1l?=
+ =?iso-2022-jp?B?Z0x3RnZvMEIvUzRlMXZIZzJaeEdockpxVitvSHpDTmtVUjRwUUtvL1Fy?=
+ =?iso-2022-jp?B?UW9VTktRUTJDZ2M2Q2Fpb1VpYVV6MmRUb21Jdkt4cjlWa0ViNGlpSFJM?=
+ =?iso-2022-jp?B?VEQ0ZFo1UlJ0aTY5WStDN0pESU5Dd2c5eUpTVTQvTkttczI0cnZJRkpZ?=
+ =?iso-2022-jp?B?S1dvNzVWdkF6VFhOM0YvMjlmOXZET1EzM1V2QndlZnNIV281TkxxanFX?=
+ =?iso-2022-jp?B?Y081bU5hY1ZZZ3E2VVZKM0N2QXRMaEkzRVJSV1ZLMzhiSjZucStSUmZz?=
+ =?iso-2022-jp?B?MldDdUpBeHhUc3ZMMUlpbFUvNEJwTEllVkdreFU2MUIyMWMxY0lBb2hv?=
+ =?iso-2022-jp?B?NzkvUUh1bWcvanRsalZqL2trWGJmTjJMeXBGUWljRkNTQzVnWGY0Mm9X?=
+ =?iso-2022-jp?B?b3h5eEFvWkRtTFVZU011SHl1YkNORVJKVUkxQ3hjbElTemVVK1B2RlJk?=
+ =?iso-2022-jp?B?alg0NmNDeWV5S2Fic3dTOGF2NURITitjbTE5K0tFUXdJZGpXeDhkWSs3?=
+ =?iso-2022-jp?B?T0w5aWgyVWRsOE85M2R5aG9oY1l6NmtkYmNrMlhIeTg0KzhCeCtvZHlG?=
+ =?iso-2022-jp?B?elk5N25yTHh1YmRCK0d6VCtyY3BhNHRQTWlseXhQVGEybzM4NVFXd1Fp?=
+ =?iso-2022-jp?B?U1lmdGp1MW5nNXlEbDJaK0I2TzNta1RmMlZ3UE9EUUtaM3k5dk1aN2pJ?=
+ =?iso-2022-jp?B?UHNBUE9hZFV6c2ZVUTdMaDFmdEtrbm1LL09pNXdJMnNzVS9Gb2Zhb3VX?=
+ =?iso-2022-jp?B?aVEwQUhZWFlYSjk0bnNGb0RERVdSZ0RIQUkrVmVpVlpQM1FvT1lUYTVi?=
+ =?iso-2022-jp?B?UVVRaDhramgxTThCclV1b2ZlKzJpQk1iNnVHUEhlZEZ1c1VtL1pNZ05B?=
+ =?iso-2022-jp?B?UkE0N3NpN3hVdGJkSWd4TTFNQzBYaUtIck5iZlJkVjhpdEtVUWtXcUlT?=
+ =?iso-2022-jp?B?VjE3VXV4NkU0QUlXbENQOWlNTDBOc3czZ1ZyNG11Ykx4ZkpEb0tTNitw?=
+ =?iso-2022-jp?B?ZUo5a3BRWGEzM0NUdGZtT0x2Y3ZrWWVjQ3E0M0NzZmt5eEJqUWY4MWNk?=
+ =?iso-2022-jp?B?SUdRQjlYV2RFRC9uTG1WRDZtRjF0YVFhZ3pXdHBTcTZFc2F0cUZyQVBt?=
+ =?iso-2022-jp?B?K1MxNmFaSXZOWGl6YUx4Nm5lcmh6L3BVTnhWSTlxRmpuWWpMVlBOaDJo?=
+ =?iso-2022-jp?B?cW42eG9LbTZmV2hoRWp2ZVB3YlB5S0FEWEt2YkxPTng0UExCc0oxM3J0?=
+ =?iso-2022-jp?B?OWVQc3YvMVBydWllZHl2VmljbWxkaGZ6SnVkclc4ek5tRjNqRnNrTHE1?=
+ =?iso-2022-jp?B?MnZzdGIrZnZUZFhqcHd6SitvODc5dHNCclVJRk5sOFBtRW9UZVlWa2ZW?=
+ =?iso-2022-jp?B?bGtuQ3kycGdJTFd3V3JBN1p5dm5RVFhxRHBhR1ZleWMvQmpGQnRUaEl0?=
+ =?iso-2022-jp?B?NkVTUnJwUDRLWTMxWC81bU1jaHVMQW1PcUhDdy9sVmJlcnhjaFEyOUZz?=
+ =?iso-2022-jp?B?SThhejdra2hvQWFrcEM1WFBWNnluRXRTUXZwTVlCUWo2M0p0elFjRGMx?=
+ =?iso-2022-jp?B?emhDWlNMdm5RYlBZZ3NzQUZNTGtXcG4xNmluSDNUbG5xUm1MaVpmSVFE?=
+ =?iso-2022-jp?B?Qjk4UnhvTGxqOUZxVVI1ZWxXeHRaTmFoQlhZNUtYMU5sZTNJTHBNN2N2?=
+ =?iso-2022-jp?B?ekQwb0tvZjMwRk10bDFCcEg3T3lvOW5LbHZaZkZkNGJHUEZHOUZ2QmU2?=
+ =?iso-2022-jp?B?MzE4dmxBYTlZT2VNSmd4VnY3TUp3PQ==?=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS9PR01MB12389.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB6103.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?N242THhxZ2JwNmUwSllFWllLaitVbVpRRFZWVXZrNk11VmpNb0xJcUNM?=
- =?iso-2022-jp?B?eWZtN3RUT1lWV1c0cE9LUVJnNVR1QjAydDREQUhaZHE5aHlEbzVUQnp2?=
- =?iso-2022-jp?B?RnNkMmVJRFBoRVRXbGs3Z0ZUMUk3Nk1oMHhBYjJRd3BKWjhuU2tZTDZU?=
- =?iso-2022-jp?B?MThTQ3NWc1FlMVVnK2huZ1gzaHptd3M5bGtLeHd5ZmZoajBXNFpPb09j?=
- =?iso-2022-jp?B?RTBEa1JoSk1xZDM4R3lqdzlPeDdLTytNS3VhZTNKRWJJSXk4QjNjOE1Z?=
- =?iso-2022-jp?B?UkhyYW1kdmlMSG9XbGxTS3Y0SlRPM1dPUTI1U3NQKzZUcHZWWDU4QnI0?=
- =?iso-2022-jp?B?bG9jWmF0cnB5TWR4ZHE0c0Y1SmJPeDU0WE5jdFhaakRjY3Y3SDhXK3NL?=
- =?iso-2022-jp?B?c2FrMkZ5ZCs3bGt5a1ZuRkJtT2h3MXhCL2s4dFpCSzB6Y1M0UWx5eE9H?=
- =?iso-2022-jp?B?QlRWa3dmY2xwdUZEbjBiUlppNWNBRmUyeW0wdGhsQW8wSlhCb2VIWHhW?=
- =?iso-2022-jp?B?QkpHM2liYWwyejdFV0tVQUFkdGxRTy80alVCRCtmVWhXOGZmZXhCT2dL?=
- =?iso-2022-jp?B?OWFPalFMNTFVUG5TZjNGalE0VmgzNEpzOWVkdDNlVjdDQ1FJVDdiZzE1?=
- =?iso-2022-jp?B?YXBuN0Njd1p4bEwwcjloeTczdXF3dEl6K1phcnRmd2Q2RnpKajVoNno4?=
- =?iso-2022-jp?B?RWdvT2ZWZ0U3MnJPeU1PTnlkVERQQTVqUFh4S2x6Y0tuMXJXWkt2eStv?=
- =?iso-2022-jp?B?dHgxRmZOejBXRXBRenNJc2sxamZ5SlNEa0g0eUFCa1RyZW5XbTVOeG1G?=
- =?iso-2022-jp?B?OU9Fa2tsUTQ4OFhjVGFpbDA1bjZUaXdIZ2M3RGpZOEZhcHBqNFZMU2dn?=
- =?iso-2022-jp?B?ZFdUUGVCeXhodU1GbnpkMkhGZFlnM1VjK2JLQXpxejB0RkdNdXdObnVW?=
- =?iso-2022-jp?B?WkZqL2VLM3JHWDhuOEYyYmhpQnJCRGJoSUF6enNSUCtsandSZmp0aVpj?=
- =?iso-2022-jp?B?cklTZFNrN3plNjVGTmpJL3RFN05TMEdHWG9QVS9tazY2MDNlWVBkSFJL?=
- =?iso-2022-jp?B?bTR2WTh3MndKT3R5WXRLdUltRXpaeE9YeVpMcFJ2VUZGVXh3YzAwWU42?=
- =?iso-2022-jp?B?SUdnNkhEOFNoL1JMREhOOGRHNExCdFdRWG1VTHRqR2NSd1lzaTBTYTk0?=
- =?iso-2022-jp?B?ZmQ2RVp6dWRVS2p0eldpUi9TRG41ZFU5NDJLUlFnUkpWNkxqZ2xUK3l5?=
- =?iso-2022-jp?B?eHFBNFRBNEtPaS85dXhDTXJYdnplU2h4cEVTWFpSdjF6QUdHYkhVOXpX?=
- =?iso-2022-jp?B?dVQ0TG8ybldodnd2RlN5RVlXRUFVM3JJcjB2dVRmcWRPQzNVcXgwQmNT?=
- =?iso-2022-jp?B?cS8yZDF3ekNGSkJ4Rk1nRHpLM2pycW5BZ2gzb1hCbFlGVkhBQklsQ1dH?=
- =?iso-2022-jp?B?UFVoSnNKOGh4dEh1MERGc09MTXczQlRVZ3BzOUpJcDQzcWZ5VDdrZ2Qy?=
- =?iso-2022-jp?B?ejNnWFJUY2NyK2t4OFFqQ1VlbEVEdk8yQXBCZUtLQ1JtSmRKSkErdVVz?=
- =?iso-2022-jp?B?Rld6MzlnZTh1UStDbHI4aHNCTlhpcXFIVC9Fa2tWdjhMVmdGbkE0S1Z6?=
- =?iso-2022-jp?B?RmNhQW1iem83VlFOLzV5MjBzRlhENXU2UWpXM3pXM1JmT0d0N2FKWTl0?=
- =?iso-2022-jp?B?b2dSTWk4K0x4aWtYYWVJMUpXeHhRSjd6aUp6c0ttSkxseE14Q091VkVW?=
- =?iso-2022-jp?B?YW9VaVlDYVBOTUJZbnhtS00vNmFOVFZCd2xUbGNoQ0s0SzkvbXppZmNM?=
- =?iso-2022-jp?B?dkdOam9xdVJhMkxYM3FqRkdDT1dxbXVmK09EamVZMG42TXdRbmljWDRm?=
- =?iso-2022-jp?B?S3k2MmdrQWppMUNIZ0hDbjNRdTVTTkc2Y3g0R1Ria3g3YUxvNUFURWlw?=
- =?iso-2022-jp?B?OGJrQ29sa1JKcEVTd3dSMXlPYXhPWEh2M0FQOGVsVnNHNFYwSjlkWi9G?=
- =?iso-2022-jp?B?TXRZMTNpNC9tWElOZG56b0tiQzZxQ0g1RkZRWE9LTnpGaTRmZjBEaWY0?=
- =?iso-2022-jp?B?L0J0YmovZndnMjd0RHJCQUx4RHdzTEdIUytHQXhmTG9DMDRTQU9OcU1j?=
- =?iso-2022-jp?B?bXIvZHNPT1F6dU9HRjN3cnJDZUtXNU1nMDJGejNYcUhMNTVsYUQyeVlw?=
- =?iso-2022-jp?B?L2ZZNWlqYmJkV0d0SUJsbktiRHYvUWxlWE9qMk14NlNBdWZHM0tXYk5l?=
- =?iso-2022-jp?B?ODhSa2FxZ3l2S2NVVmd1ZWJBTVZSTUJiQ05CbjlXZ2FnT0VnVzRPc054?=
- =?iso-2022-jp?B?a25pc3h5VWRTaU5wOGljOUpuM2p6ejUwb0E9PQ==?=
+ =?iso-2022-jp?B?NDZHQUNTSzRuZE5Uei9TVUVjb0txWE9MdjNKNFZ4NHc3MTVFUWF0YlRE?=
+ =?iso-2022-jp?B?cWExV1kzWlhnQk9yUWVrWkwwM0dVV2sxSjl1cDI4ZTZBbEpsdzFoemFS?=
+ =?iso-2022-jp?B?OW5FcUVVZkpHblB5VEJmMHUwcDVwdldRVlJyRXJNQnNqcm9RVDNrMXpu?=
+ =?iso-2022-jp?B?ODN0blBvMlBYbXpQQTdoMUJQNTFTZjRkUWJQL2lnaVJWUjgrSnBmQzlZ?=
+ =?iso-2022-jp?B?RWhMNTR5TDB1WHhIb3ZYTlJQQytxeWxiTnE1SXZvVkN0c1ZadHRUR3Nk?=
+ =?iso-2022-jp?B?M05pbExncm5Pd0k3SlNhZDd6UUsxWlBSTlc3bWRYVjFoa3BSRlVXKzBW?=
+ =?iso-2022-jp?B?dVVtSkYxVDhIbkozcDlLMWY4UDIwZXUydmVvRzFaRWU5M2hnYnZ2U3Rx?=
+ =?iso-2022-jp?B?L3FiamxsWDg5dzRacWxKaVBIZDNZWXNwdHFxRTlpMkp6ZDNmQjFSaGN5?=
+ =?iso-2022-jp?B?M01iQlN0TFFRRTZCU3lmdXE4SE9MK1hkWms2TzdoT1lDejROaXVkeXI5?=
+ =?iso-2022-jp?B?cHpEbTFIclFqeVkyR0gyK2ptK2Q3dTV1cm0xUXlNdlMrZkhOd1Z4bWdo?=
+ =?iso-2022-jp?B?ZUNqNVUyVi9FdUsrZGEweVFyZHE3QnJWT0RCZTVLUGNuTnNYbkRvbmRD?=
+ =?iso-2022-jp?B?RjhEdHQ3ak92YUJZb0dDTkdWRk9tbHp1Z3JGa0VNYTlrUTlYbHZ6akwr?=
+ =?iso-2022-jp?B?RDh5Mnp5THlYR29MajcwOWNqNEhVNE9QZnVmMUF5UStwaEdQajVDVGhY?=
+ =?iso-2022-jp?B?WWM2Rm8vb3cvY0pWK3lsUXZHK3RwTWVSZWs0NW42SVdFMzJRRC8yUjIz?=
+ =?iso-2022-jp?B?VTFFQmFXUk1aVC9wQnhQZ3V5bVZoeWpsUzZ2NXowNTFaanBiZnV3bXJw?=
+ =?iso-2022-jp?B?UlNmeGU2V2o1T1d4TlJ2MDhKT2hMbVRJWHliRkM0NnFFYVFUTFlQR2NN?=
+ =?iso-2022-jp?B?OURPMnp3cmllditJOWpiYmdHMlNtcFJBeXlVenNzQTU3QUF5Tzdrd0M5?=
+ =?iso-2022-jp?B?WmJWRDdOK2FiNlFBZ21Xa0FRdWwxZ2w5RVpFOGpaNlpEendzUHdSVFht?=
+ =?iso-2022-jp?B?WTA1R2duaHdidlJDa2NzOWc1djA2YytxRi9Db1dTVW9pVXNUMVZ2OVR1?=
+ =?iso-2022-jp?B?MXZ5Zi8vWTNLbjdWbzk1U1gvRjJZMjU2VjR0TFZmSE9MVC9CcXN0S09n?=
+ =?iso-2022-jp?B?eHNFbGNqc1lPd29WVkZCOFVuWXhjK3IrK1I5OCtkNFNVU2ZWZE1DUlU5?=
+ =?iso-2022-jp?B?MnpDc2ozVEt2ZnhVZ2dKdk9oSlIrWU8rRXYyWjlsaXZ6Nk05SHV0QlEv?=
+ =?iso-2022-jp?B?VnVNVTgzYkxzMjV3Ym96YVYrbkNTTmc3c2Rwd1JFR3BYQVA5ZE5EZkkz?=
+ =?iso-2022-jp?B?UkJqaDJaejgyOWN4VXBwOTdMTFRyL1JxY3A5YmVld1FnSUFLaGdiS05q?=
+ =?iso-2022-jp?B?dm5nMFF0RjRGOVdSNjl5eXlxV3ZLaGt6SEFuYkRsWTlwWjJ5NXRRS05J?=
+ =?iso-2022-jp?B?TTBDOVAzWUFkOXZxWmJqSUZtQXNXRUV6VDhHMEFVYU4rejI2bGg0NDFK?=
+ =?iso-2022-jp?B?ejJ2S1F4eVdOMWE3YlBTbmxrZmdLdktxc3QxcWw5clFmTmZzbmc5d0c2?=
+ =?iso-2022-jp?B?SnlvdHRXZW5XZnMzcE5oUVVHQ0NoTTZZUTM3dmNyS0hGODYrUVdpYUx1?=
+ =?iso-2022-jp?B?WFJEZTVuVzJ4V3FNTFVuUWMwM3VnelAzYzlSN0xLcEhKdlFlOVdwUHFU?=
+ =?iso-2022-jp?B?MGREZlBmdEF0VXhrZElSdXk0UEcyTGt0dlhreFVidE85V1p2djVLQWw5?=
+ =?iso-2022-jp?B?RmRyenJmTzkxTmw2d3o3aWdZK1JTMDlvemtBQm85bnVLaVYxZlV1OXhP?=
+ =?iso-2022-jp?B?M01rWTdtOW1oQ3IyNk5sUnJZRXA3OWhxcS9oL0NqNTBHd0hBbU15T0lR?=
+ =?iso-2022-jp?B?Y1d4czAva1VjOFBjQWt5NFZBNEdZWFlGR3BKVkpPK2Vxc2hkQm5NZDg2?=
+ =?iso-2022-jp?B?Q3JLRkJDRjJFb21XWmpxQ0FGUVR4TWZZQkJrM2c4aldWeVNZcFdYaFpR?=
+ =?iso-2022-jp?B?UVB0VlZldFU4dVBxS0VQWXhEY1pUaGkrc1lVNlJGRVQrWkRHVDdrUnRt?=
+ =?iso-2022-jp?B?aFc1bTRkd0tyMUxsbk9HUU5zWnRQTVh4OUxMZk1ucUFmTjVEajVnbkxE?=
+ =?iso-2022-jp?B?cTZ6TGo5eXdvbkF1VVI3UHFoSkNrK1dSK1gxcHNGVHRlUEhnbmF4emVU?=
+ =?iso-2022-jp?B?U3dDemF2eHZVUEd0a2RmMjhxR1czU0pCT25ES3lzcmxIVXNjTElKZ3hE?=
+ =?iso-2022-jp?B?d2h3cU9QWHl6STZxbGR5Y1l3ZDJSU3hYMnc9PQ==?=
 Content-Type: multipart/alternative;
-	boundary="_000_OS9PR01MB12389DB1E8371D5A1747C9094B7692OS9PR01MB12389jp_"
+	boundary="_000_OS3PR01MB6103F8BD30E6848284A4C0C4C2692OS3PR01MB6103jpnp_"
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
+X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB12389.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4903a2df-ecef-47fb-8ff7-08dcdd574ed5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2024 11:43:43.4056
+X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB6103.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f5f384b6-b5f7-4b62-9109-08dcdd5b2053
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2024 12:11:03.3639
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: cpaEjgqm7EUcQ06QIOwbtHSwPLAe7CAFMh4hRqsy1zyryLgMMJ6azb6iiaVyOigU9BFuU65mdYJgBPvDJVbd+qxwcTbVFow+KT7d/6DzUe4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB9776
+X-MS-Exchange-CrossTenant-userprincipalname: 3AW2yJRbgBmC4e3RtaJsd/iA38pM+/iUGh/XWftookekmuqvf2azHnwZQnWs35cpbgoFHzCE9MuxQ5MfqduQKIWrejUEVUuReM6mXOX/3d8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB12982
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 25 Sep 2024 11:43:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16916
+ <cip-dev@lists.cip-project.org>; Wed, 25 Sep 2024 12:11:17 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16917
 
---_000_OS9PR01MB12389DB1E8371D5A1747C9094B7692OS9PR01MB12389jp_
+--_000_OS3PR01MB6103F8BD30E6848284A4C0C4C2692OS3PR01MB6103jpnp_
 Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
 
+Hello Chris,
+
+Currently I am not sure about the level of tasks which can be run in small =
+runners. But based on our continuous tries done from last month, it seems g=
+enerating cve reports for 18 targets is intensive for small runners.
+
+Then it is better to use large runners for this job.
+
+Regards,
+Sai Ashrith Sathujoda
+________________________________
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+Sent: Wednesday, September 25, 2024 5:13 PM
+To: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com>; micha=
+el.adler@siemens.com <michael.adler@siemens.com>
+Cc: hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D=
+#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp>; dinesh kumar(=
+=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshiba-tsip.com>; cip-=
+dev@lists.cip-project.org <cip-dev@lists.cip-project.org>
+Subject: RE: [cip-dev] Issue with 'small' Gitlab runners
+
+
 Hello Sai,
 
+
+
 Do you know how long the cve checks normally take?
+
 I=1B$B!G=1B(Bve set up my own branch for some debugging and the =1B$B!H=1B(=
 BChecking hihope-rzg2m-buster.dpkg_status=1B$B!I=1B(B line seems to take an=
  extremely long time.
+
 Either that or it=1B$B!G=1B(Bs done, and now it=1B$B!G=1B(Bs doing the aws =
 s3 sync that=1B$B!G=1B(Bs done afterwards, and this is the step that is tak=
 ing forever.
 
+
+
 Indeed, looking at your job linked below, it took 49 minutes to the point w=
 here it failed.
 
+
+
 How long does it take to run the cve-check script locally?
+
 Outside of the specific issue you=1B$B!G=1B(Bre seeing, if it=1B$B!G=1B(Bs =
 very CPU intensive then perhaps we=1B$B!G=1B(Bre better to use the =1B$B!H=
 =1B(Blarge=1B$B!I=1B(B runners?
 
+
+
 Kind regards, Chris
+
+
 
 From: Sai.Sathujoda@toshiba-tsip.com <Sai.Sathujoda@toshiba-tsip.com>
 Sent: Wednesday, September 25, 2024 10:57 AM
@@ -198,18 +225,29 @@ Cc: kazuhiro3.hayashi@toshiba.co.jp; dinesh.kumar@toshiba-tsip.com; cip-dev=
 @lists.cip-project.org
 Subject: Re: [cip-dev] Issue with 'small' Gitlab runners
 
+
+
 Hello Chris,
+
+
 
 This issue is still present in small runners. I ran the cve-checks job toda=
 y. https://gitlab.com/cip-project/cip-core/isar-cip-core/-/jobs/7885795173#=
 L655
 
+
+
 It still shows 'Job failed (system failure): pods "runner-zwslwy9eu-project=
 -10191315-concurrent-0-ulyylb1h" not found'.
 
+
+
 Thanks and regards,
+
 Sai Ashrith Sathujoda
+
 ________________________________
+
 From: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@re=
 nesas.com>>
 Sent: Wednesday, September 25, 2024 3:06 PM
@@ -222,6 +260,8 @@ Cc: hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D=
 3.hayashi@toshiba.co.jp>>; dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Portin=
 g) <dinesh.kumar@toshiba-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>>
 Subject: RE: [cip-dev] Issue with 'small' Gitlab runners
+
+
 
 Hello Sai,
 
@@ -295,229 +335,248 @@ try again.=1B$B!I=1B(B
 > Berlin-Charlottenburg, HRB 12300, Munich, HRB 6684; WEEE-Reg.-No. DE
 > 23691322
 
---_000_OS9PR01MB12389DB1E8371D5A1747C9094B7692OS9PR01MB12389jp_
+--_000_OS3PR01MB6103F8BD30E6848284A4C0C4C2692OS3PR01MB6103jpnp_
 Content-Type: text/html; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
 
-<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
-osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
-xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
-//www.w3.org/TR/REC-html40">
+<html>
 <head>
 <meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
 jp">
-<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
-<!--[if !mso]><style>v\:* {behavior:url(#default#VML);}
-o\:* {behavior:url(#default#VML);}
-w\:* {behavior:url(#default#VML);}
-.shape {behavior:url(#default#VML);}
-</style><![endif]--><style><!--
-/* Font Definitions */
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Hello Chris,</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Currently I am not sure about the level of tasks which can be run in small =
+runners. But based on our continuous tries done from last month, it seems g=
+enerating cve reports for 18 targets is intensive for small runners.</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Then it is better to use large runners for this job.</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Regards,</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Sai Ashrith Sathujoda</div>
+<div id=3D"appendonsend"></div>
+<hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
+<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
+yle=3D"font-size:11pt" color=3D"#000000"><b>From:</b> Chris Paterson &lt;Ch=
+ris.Paterson2@renesas.com&gt;<br>
+<b>Sent:</b> Wednesday, September 25, 2024 5:13 PM<br>
+<b>To:</b> ashrith sai(=1B$B#T#S#I#P=1B(B) &lt;Sai.Sathujoda@toshiba-tsip.c=
+om&gt;; michael.adler@siemens.com &lt;michael.adler@siemens.com&gt;<br>
+<b>Cc:</b> hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =
+=1B$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) &lt;kazuhiro3.hayashi@toshiba.co.jp&gt;=
+; dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) &lt;dinesh.kumar@toshi=
+ba-tsip.com&gt;; cip-dev@lists.cip-project.org &lt;cip-dev@lists.cip-projec=
+t.org&gt;<br>
+<b>Subject:</b> RE: [cip-dev] Issue with 'small' Gitlab runners</font>
+<div>&nbsp;</div>
+</div>
+<style>
+<!--
 @font-face
-	{font-family:"Cambria Math";
-	panose-1:2 4 5 3 5 4 6 3 2 4;}
+	{font-family:"Cambria Math"}
 @font-face
-	{font-family:Calibri;
-	panose-1:2 15 5 2 2 2 4 3 2 4;}
+	{font-family:Calibri}
 @font-face
-	{font-family:Aptos;}
+	{font-family:Aptos}
 @font-face
-	{font-family:"MS PGothic";
-	panose-1:2 11 6 0 7 2 5 8 2 4;}
-@font-face
-	{font-family:"\@MS PGothic";}
-/* Style Definitions */
-p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{font-family:"MS PGothic"}
+p.x_MsoNormal, li.x_MsoNormal, div.x_MsoNormal
 	{margin:0cm;
 	font-size:12.0pt;
-	font-family:"MS PGothic",sans-serif;
-	mso-fareast-language:JA;}
-a:link, span.MsoHyperlink
-	{mso-style-priority:99;
-	color:blue;
-	text-decoration:underline;}
-span.EmailStyle20
-	{mso-style-type:personal-reply;
-	font-family:"Calibri",sans-serif;
+	font-family:"MS PGothic",sans-serif}
+a:link, span.x_MsoHyperlink
+	{color:blue;
+	text-decoration:underline}
+span.x_EmailStyle20
+	{font-family:"Calibri",sans-serif;
 	color:#7030A0;
 	font-weight:normal;
 	font-style:normal;
-	text-decoration:none none;}
-.MsoChpDefault
-	{mso-style-type:export-only;
-	font-size:10.0pt;
-	mso-ligatures:none;}
+	text-decoration:none none}
+.x_MsoChpDefault
+	{font-size:10.0pt}
 @page WordSection1
-	{size:612.0pt 792.0pt;
-	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
-div.WordSection1
-	{page:WordSection1;}
---></style><!--[if gte mso 9]><xml>
-<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
-</xml><![endif]--><!--[if gte mso 9]><xml>
-<o:shapelayout v:ext=3D"edit">
-<o:idmap v:ext=3D"edit" data=3D"1" />
-</o:shapelayout></xml><![endif]-->
-</head>
-<body lang=3D"EN-GB" link=3D"blue" vlink=3D"purple" style=3D"word-wrap:brea=
-k-word">
-<div class=3D"WordSection1">
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
-libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Hello Sai,=
-<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
-libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp=
-;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
-libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Do you kno=
-w how long the cve checks normally take?<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
-libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">I=1B$B!G=
-=1B(Bve set up my own branch for some debugging and the =1B$B!H=1B(BCheckin=
-g hihope-rzg2m-buster.dpkg_status=1B$B!I=1B(B line seems to take an extreme=
-ly long
- time.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
-libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Either tha=
-t or it=1B$B!G=1B(Bs done, and now it=1B$B!G=1B(Bs doing the aws s3 sync th=
-at=1B$B!G=1B(Bs done afterwards, and this is the step that is taking foreve=
-r.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
-libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp=
-;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
-libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Indeed, lo=
-oking at your job linked below, it took 49 minutes to the point where it fa=
-iled.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
-libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp=
-;</o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
-libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">How long d=
-oes it take to run the cve-check script locally?<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
-libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Outside of=
- the specific issue you=1B$B!G=1B(Bre seeing, if it=1B$B!G=1B(Bs very CPU i=
-ntensive then perhaps we=1B$B!G=1B(Bre better to use the =1B$B!H=1B(Blarge=
-=1B$B!I=1B(B runners?<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
-libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp=
-;</o:p></span></p>
+	{margin:72.0pt 72.0pt 72.0pt 72.0pt}
+div.x_WordSection1
+	{}
+-->
+</style>
+<div lang=3D"EN-GB" link=3D"blue" vlink=3D"purple" style=3D"word-wrap:break=
+-word">
+<div class=3D"x_WordSection1">
+<p class=3D"x_MsoNormal"><span style=3D"font-size:11.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:#7030A0">Hello Sai,</span></p>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:11.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:#7030A0">&nbsp;</span></p>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:11.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:#7030A0">Do you know how long the cve chec=
+ks normally take?</span></p>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:11.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:#7030A0">I=1B$B!G=1B(Bve set up my own bra=
+nch for some debugging and the =1B$B!H=1B(BChecking hihope-rzg2m-buster.dpk=
+g_status=1B$B!I=1B(B line seems to take an extremely long time.</span></p>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:11.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:#7030A0">Either that or it=1B$B!G=1B(Bs do=
+ne, and now it=1B$B!G=1B(Bs doing the aws s3 sync that=1B$B!G=1B(Bs done af=
+terwards, and this is the step that is taking forever.</span></p>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:11.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:#7030A0">&nbsp;</span></p>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:11.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:#7030A0">Indeed, looking at your job linke=
+d below, it took 49 minutes to the point where it failed.</span></p>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:11.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:#7030A0">&nbsp;</span></p>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:11.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:#7030A0">How long does it take to run the =
+cve-check script locally?</span></p>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:11.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:#7030A0">Outside of the specific issue you=
+=1B$B!G=1B(Bre seeing, if it=1B$B!G=1B(Bs very CPU intensive then perhaps w=
+e=1B$B!G=1B(Bre better to use the =1B$B!H=1B(Blarge=1B$B!I=1B(B runners?</s=
+pan></p>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:11.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:#7030A0">&nbsp;</span></p>
 <div>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ap=
-tos&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-GB">Kind regards=
-, Chris<o:p></o:p></span></p>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:11.0pt; font-family:&quot=
+;Aptos&quot;,sans-serif; color:#7030A0">Kind regards, Chris</span></p>
 </div>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
-libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp=
-;</o:p></span></p>
-<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0cm 0cm 0cm =
-4.0pt">
+<p class=3D"x_MsoNormal"><span style=3D"font-size:11.0pt; font-family:&quot=
+;Calibri&quot;,sans-serif; color:#7030A0">&nbsp;</span></p>
+<div style=3D"border:none; border-left:solid blue 1.5pt; padding:0cm 0cm 0c=
+m 4.0pt">
 <div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
-0cm 0cm">
-<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"font-size:11.0pt;fo=
-nt-family:&quot;Calibri&quot;,sans-serif">From:</span></b><span lang=3D"EN-=
-US" style=3D"font-size:11.0pt;font-family:&quot;Calibri&quot;,sans-serif"> =
-Sai.Sathujoda@toshiba-tsip.com &lt;Sai.Sathujoda@toshiba-tsip.com&gt;
+<div style=3D"border:none; border-top:solid #E1E1E1 1.0pt; padding:3.0pt 0c=
+m 0cm 0cm">
+<p class=3D"x_MsoNormal"><b><span lang=3D"EN-US" style=3D"font-size:11.0pt;=
+ font-family:&quot;Calibri&quot;,sans-serif">From:</span></b><span lang=3D"=
+EN-US" style=3D"font-size:11.0pt; font-family:&quot;Calibri&quot;,sans-seri=
+f"> Sai.Sathujoda@toshiba-tsip.com &lt;Sai.Sathujoda@toshiba-tsip.com&gt;
 <br>
 <b>Sent:</b> Wednesday, September 25, 2024 10:57 AM<br>
 <b>To:</b> Chris Paterson &lt;Chris.Paterson2@renesas.com&gt;; michael.adle=
 r@siemens.com<br>
 <b>Cc:</b> kazuhiro3.hayashi@toshiba.co.jp; dinesh.kumar@toshiba-tsip.com; =
 cip-dev@lists.cip-project.org<br>
-<b>Subject:</b> Re: [cip-dev] Issue with 'small' Gitlab runners<o:p></o:p><=
-/span></p>
+<b>Subject:</b> Re: [cip-dev] Issue with 'small' Gitlab runners</span></p>
 </div>
 </div>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"x_MsoNormal">&nbsp;</p>
 <div>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;color:black">Hello Chris,<o:p></o:p></span></p>
-</div>
-<div>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;color:black"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"x_MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-=
+serif; color:black">Hello Chris,</span></p>
 </div>
 <div>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;color:black">This issue is still present in small runners. I ran the cv=
-e-checks job today.
+<p class=3D"x_MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-=
+serif; color:black">&nbsp;</span></p>
+</div>
+<div>
+<p class=3D"x_MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-=
+serif; color:black">This issue is still present in small runners. I ran the=
+ cve-checks job today.
 <a href=3D"https://gitlab.com/cip-project/cip-core/isar-cip-core/-/jobs/788=
 5795173#L655">
 https://gitlab.com/cip-project/cip-core/isar-cip-core/-/jobs/7885795173#L65=
-5</a><o:p></o:p></span></p>
+5</a></span></p>
 </div>
 <div>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;color:black"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"x_MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-=
+serif; color:black">&nbsp;</span></p>
 </div>
 <div>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;color:black">It still shows '<b>Job failed (system failure): pods &quot=
-;runner-zwslwy9eu-project-10191315-concurrent-0-ulyylb1h&quot; not found'.<=
-/b><o:p></o:p></span></p>
+<p class=3D"x_MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-=
+serif; color:black">It still shows '<b>Job failed (system failure): pods &q=
+uot;runner-zwslwy9eu-project-10191315-concurrent-0-ulyylb1h&quot; not found=
+'.</b></span></p>
 </div>
 <div>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;color:black"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"x_MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-=
+serif; color:black">&nbsp;</span></p>
 </div>
 <div>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;color:black">Thanks and regards,<o:p></o:p></span></p>
+<p class=3D"x_MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-=
+serif; color:black">Thanks and regards,</span></p>
 </div>
 <div>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;color:black">Sai Ashrith Sathujoda<o:p></o:p></span></p>
+<p class=3D"x_MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-=
+serif; color:black">Sai Ashrith Sathujoda</span></p>
 </div>
-<div class=3D"MsoNormal" align=3D"center" style=3D"text-align:center">
+<div class=3D"x_MsoNormal" align=3D"center" style=3D"text-align:center">
 <hr size=3D"2" width=3D"98%" align=3D"center">
 </div>
-<div id=3D"divRplyFwdMsg">
-<p class=3D"MsoNormal"><b><span style=3D"font-size:11.0pt;font-family:&quot=
-;Calibri&quot;,sans-serif;color:black">From:</span></b><span style=3D"font-=
-size:11.0pt;font-family:&quot;Calibri&quot;,sans-serif;color:black"> Chris =
-Paterson &lt;<a href=3D"mailto:Chris.Paterson2@renesas.com">Chris.Paterson2=
-@renesas.com</a>&gt;<br>
+<div id=3D"x_divRplyFwdMsg">
+<p class=3D"x_MsoNormal"><b><span style=3D"font-size:11.0pt; font-family:&q=
+uot;Calibri&quot;,sans-serif; color:black">From:</span></b><span style=3D"f=
+ont-size:11.0pt; font-family:&quot;Calibri&quot;,sans-serif; color:black"> =
+Chris Paterson &lt;<a href=3D"mailto:Chris.Paterson2@renesas.com">Chris.Pat=
+erson2@renesas.com</a>&gt;<br>
 <b>Sent:</b> Wednesday, September 25, 2024 3:06 PM<br>
-<b>To:</b> ashrith sai(</span><span lang=3D"JA" style=3D"font-size:11.0pt;c=
-olor:black">=1B$B#T#S#I#P=1B(B</span><span style=3D"font-size:11.0pt;font-f=
-amily:&quot;Calibri&quot;,sans-serif;color:black">) &lt;<a href=3D"mailto:S=
-ai.Sathujoda@toshiba-tsip.com">Sai.Sathujoda@toshiba-tsip.com</a>&gt;;
+<b>To:</b> ashrith sai(</span><span lang=3D"JA" style=3D"font-size:11.0pt; =
+color:black">=1B$B#T#S#I#P=1B(B</span><span style=3D"font-size:11.0pt; font=
+-family:&quot;Calibri&quot;,sans-serif; color:black">) &lt;<a href=3D"mailt=
+o:Sai.Sathujoda@toshiba-tsip.com">Sai.Sathujoda@toshiba-tsip.com</a>&gt;;
 <a href=3D"mailto:michael.adler@siemens.com">michael.adler@siemens.com</a> =
 &lt;<a href=3D"mailto:michael.adler@siemens.com">michael.adler@siemens.com<=
 /a>&gt;<br>
 <b>Cc:</b> hayashi kazuhiro(</span><span lang=3D"JA" style=3D"font-size:11.=
-0pt;color:black">=1B$BNS=1B(B</span><span lang=3D"JA" style=3D"font-size:11=
-.0pt;font-family:&quot;Calibri&quot;,sans-serif;color:black">
-</span><span lang=3D"JA" style=3D"font-size:11.0pt;color:black">=1B$BOB9(=
-=1B(B</span><span lang=3D"JA" style=3D"font-size:11.0pt;font-family:&quot;C=
-alibri&quot;,sans-serif;color:black">
-</span><span lang=3D"JA" style=3D"font-size:11.0pt;color:black">=1B$B#D#M#E=
-=1B(B</span><span style=3D"font-size:11.0pt;font-family:&quot;Calibri&quot;=
-,sans-serif;color:black"> =1B$B!{=1B(B</span><span lang=3D"JA" style=3D"fon=
-t-size:11.0pt;color:black">=1B$B#D#I#G=1B(B</span><span style=3D"font-size:=
-11.0pt;font-family:&quot;Calibri&quot;,sans-serif;color:black">=1B$B""=1B(B=
-</span><span lang=3D"JA" style=3D"font-size:11.0pt;color:black">=1B$B#M#P#S=
-=1B(B</span><span style=3D"font-size:11.0pt;font-family:&quot;Calibri&quot;=
-,sans-serif;color:black">=1B$B!{=1B(B</span><span lang=3D"JA" style=3D"font=
--size:11.0pt;color:black">=1B$B#M#P#4=1B(B</span><span style=3D"font-size:1=
-1.0pt;font-family:&quot;Calibri&quot;,sans-serif;color:black">)
+0pt; color:black">=1B$BNS=1B(B</span><span lang=3D"JA" style=3D"font-size:1=
+1.0pt; font-family:&quot;Calibri&quot;,sans-serif; color:black">
+</span><span lang=3D"JA" style=3D"font-size:11.0pt; color:black">=1B$BOB9(=
+=1B(B</span><span lang=3D"JA" style=3D"font-size:11.0pt; font-family:&quot;=
+Calibri&quot;,sans-serif; color:black">
+</span><span lang=3D"JA" style=3D"font-size:11.0pt; color:black">=1B$B#D#M#=
+E=1B(B</span><span style=3D"font-size:11.0pt; font-family:&quot;Calibri&quo=
+t;,sans-serif; color:black"> =1B$B!{=1B(B</span><span lang=3D"JA" style=3D"=
+font-size:11.0pt; color:black">=1B$B#D#I#G=1B(B</span><span style=3D"font-s=
+ize:11.0pt; font-family:&quot;Calibri&quot;,sans-serif; color:black">=1B$B"=
+"=1B(B</span><span lang=3D"JA" style=3D"font-size:11.0pt; color:black">=1B$=
+B#M#P#S=1B(B</span><span style=3D"font-size:11.0pt; font-family:&quot;Calib=
+ri&quot;,sans-serif; color:black">=1B$B!{=1B(B</span><span lang=3D"JA" styl=
+e=3D"font-size:11.0pt; color:black">=1B$B#M#P#4=1B(B</span><span style=3D"f=
+ont-size:11.0pt; font-family:&quot;Calibri&quot;,sans-serif; color:black">)
  &lt;<a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.jp">kazuhiro3.hayashi@t=
 oshiba.co.jp</a>&gt;; dinesh kumar(</span><span lang=3D"JA" style=3D"font-s=
-ize:11.0pt;color:black">=1B$B#T#S#I#P=1B(B</span><span style=3D"font-size:1=
-1.0pt;font-family:&quot;Calibri&quot;,sans-serif;color:black"> TMIEC ODG
- Porting) &lt;<a href=3D"mailto:dinesh.kumar@toshiba-tsip.com">dinesh.kumar=
-@toshiba-tsip.com</a>&gt;<br>
-<b>Subject:</b> RE: [cip-dev] Issue with 'small' Gitlab runners</span> <o:p=
-></o:p></p>
+ize:11.0pt; color:black">=1B$B#T#S#I#P=1B(B</span><span style=3D"font-size:=
+11.0pt; font-family:&quot;Calibri&quot;,sans-serif; color:black"> TMIEC
+ ODG Porting) &lt;<a href=3D"mailto:dinesh.kumar@toshiba-tsip.com">dinesh.k=
+umar@toshiba-tsip.com</a>&gt;<br>
+<b>Subject:</b> RE: [cip-dev] Issue with 'small' Gitlab runners</span> </p>
 <div>
-<p class=3D"MsoNormal">&nbsp;<o:p></o:p></p>
+<p class=3D"x_MsoNormal">&nbsp;</p>
 </div>
 </div>
 <div>
 <div>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt">Hello Sai,<br>
+<p class=3D"x_MsoNormal"><span style=3D"font-size:11.0pt">Hello Sai,<br>
 <br>
 &gt; From: <a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com">Sai.Sathujoda@=
 toshiba-tsip.com</a> &lt;<a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com">=
@@ -606,7 +665,8 @@ al<br>
 &gt; registries:<br>
 &gt; Berlin-Charlottenburg, HRB 12300, Munich, HRB 6684; WEEE-Reg.-No. DE<b=
 r>
-&gt; 23691322<o:p></o:p></span></p>
+&gt; 23691322</span></p>
+</div>
 </div>
 </div>
 </div>
@@ -614,5 +674,6 @@ r>
 </body>
 </html>
 
---_000_OS9PR01MB12389DB1E8371D5A1747C9094B7692OS9PR01MB12389jp_--
+--_000_OS3PR01MB6103F8BD30E6848284A4C0C4C2692OS3PR01MB6103jpnp_--
+
 
