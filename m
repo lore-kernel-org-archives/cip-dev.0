@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D0C6CF6D52
-	for <webhook@archiver.kernel.org>; Wed,  2 Oct 2024 17:07:23 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.1130.1727888840918302443
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3AA5CF6D53
+	for <webhook@archiver.kernel.org>; Wed,  2 Oct 2024 17:07:32 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web11.1137.1727888849299391325
  for <cip-dev@lists.cip-project.org>;
- Wed, 02 Oct 2024 10:07:21 -0700
+ Wed, 02 Oct 2024 10:07:29 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.11,172,1725289200"; 
-   d="scan'208";a="224579753"
+   d="scan'208";a="220602759"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 03 Oct 2024 02:07:20 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 03 Oct 2024 02:07:28 +0900
 Received: from localhost.localdomain (unknown [10.226.92.106])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id BBB5140071FC;
-	Thu,  3 Oct 2024 02:07:18 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8D6164006191;
+	Thu,  3 Oct 2024 02:07:16 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 02/15] pinctrl: renesas: rzg2l: Use dev_err_probe()
-Date: Wed,  2 Oct 2024 18:06:51 +0100
-Message-ID: <20241002170712.655449-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 01/15] arm64: dts: renesas: r9a07g0{43,44,54}: Move regulator-vbus device node
+Date: Wed,  2 Oct 2024 18:06:50 +0100
+Message-ID: <20241002170712.655449-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241002170712.655449-1-biju.das.jz@bp.renesas.com>
 References: <20241002170712.655449-1-biju.das.jz@bp.renesas.com>
@@ -34,91 +34,85 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 02 Oct 2024 17:07:23 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16965
+ <cip-dev@lists.cip-project.org>; Wed, 02 Oct 2024 17:07:32 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16969
 
-commit f73f63b24491fa43641daf3b6162d2a451bd8481 upstream.
+commit bdfa062d14b22e36207c219206b2bf770d5363b3 upstream.
 
-Replace dev_err()->dev_err_probe() to simpilfy probe
-helper functions.
+Move regulator-vbus device node from common to the usbphy-ctrl device node
+of the individual SoC dtsi's as it embeds the vbus regulator.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20240728090421.7136-1-biju.das.jz@bp.renesas.com
+Link: https://lore.kernel.org/20240715140705.334183-1-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 37 +++++++++----------------
- 1 file changed, 13 insertions(+), 24 deletions(-)
+ arch/arm64/boot/dts/renesas/r9a07g043.dtsi       | 4 ++++
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi       | 4 ++++
+ arch/arm64/boot/dts/renesas/r9a07g054.dtsi       | 4 ++++
+ arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi | 3 ---
+ 4 files changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index c4d9bcb6f80f..7306a100153f 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -2200,16 +2200,13 @@ static int rzg2l_gpio_register(struct rzg2l_pinctrl *pctrl)
- 		return -EPROBE_DEFER;
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
+index 6212ee550f33..7b07bcb3be88 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g043.dtsi
+@@ -725,6 +725,10 @@ phyrst: usbphy-ctrl@11c40000 {
+ 			power-domains = <&cpg>;
+ 			#reset-cells = <1>;
+ 			status = "disabled";
++
++			usb0_vbus_otg: regulator-vbus {
++				regulator-name = "vbus";
++			};
+ 		};
  
- 	ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0, &of_args);
--	if (ret) {
--		dev_err(pctrl->dev, "Unable to parse gpio-ranges\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(pctrl->dev, ret, "Unable to parse gpio-ranges\n");
+ 		ohci0: usb@11c50000 {
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+index f05e27a90979..267fbfcccc2b 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+@@ -1050,6 +1050,10 @@ phyrst: usbphy-ctrl@11c40000 {
+ 			power-domains = <&cpg>;
+ 			#reset-cells = <1>;
+ 			status = "disabled";
++
++			usb0_vbus_otg: regulator-vbus {
++				regulator-name = "vbus";
++			};
+ 		};
  
- 	if (of_args.args[0] != 0 || of_args.args[1] != 0 ||
--	    of_args.args[2] != pctrl->data->n_port_pins) {
--		dev_err(pctrl->dev, "gpio-ranges does not match selected SOC\n");
--		return -EINVAL;
--	}
-+	    of_args.args[2] != pctrl->data->n_port_pins)
-+		return dev_err_probe(pctrl->dev, -EINVAL,
-+				     "gpio-ranges does not match selected SOC\n");
+ 		ohci0: usb@11c50000 {
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
+index 994cc88e6e3e..a5c3a68c1e01 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
+@@ -1058,6 +1058,10 @@ phyrst: usbphy-ctrl@11c40000 {
+ 			power-domains = <&cpg>;
+ 			#reset-cells = <1>;
+ 			status = "disabled";
++
++			usb0_vbus_otg: regulator-vbus {
++				regulator-name = "vbus";
++			};
+ 		};
  
- 	chip->names = pctrl->data->port_pins;
- 	chip->request = rzg2l_gpio_request;
-@@ -2241,10 +2238,8 @@ static int rzg2l_gpio_register(struct rzg2l_pinctrl *pctrl)
- 	pctrl->gpio_range.name = chip->label;
- 	pctrl->gpio_range.gc = chip;
- 	ret = devm_gpiochip_add_data(pctrl->dev, chip, pctrl);
--	if (ret) {
--		dev_err(pctrl->dev, "failed to add GPIO controller\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(pctrl->dev, ret, "failed to add GPIO controller\n");
+ 		ohci0: usb@11c50000 {
+diff --git a/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi b/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi
+index 90b20324c5d1..111c5f0ecec0 100644
+--- a/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/rz-smarc-common.dtsi
+@@ -131,9 +131,6 @@ &ohci1 {
  
- 	dev_dbg(pctrl->dev, "Registered gpio controller\n");
+ &phyrst {
+ 	status = "okay";
+-	usb0_vbus_otg: regulator-vbus {
+-		regulator-name = "vbus";
+-	};
+ };
  
-@@ -2325,22 +2320,16 @@ static int rzg2l_pinctrl_register(struct rzg2l_pinctrl *pctrl)
- 
- 	ret = devm_pinctrl_register_and_init(pctrl->dev, &pctrl->desc, pctrl,
- 					     &pctrl->pctl);
--	if (ret) {
--		dev_err(pctrl->dev, "pinctrl registration failed\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(pctrl->dev, ret, "pinctrl registration failed\n");
- 
- 	ret = pinctrl_enable(pctrl->pctl);
--	if (ret) {
--		dev_err(pctrl->dev, "pinctrl enable failed\n");
--		return ret;
--	}
-+	if (ret)
-+		dev_err_probe(pctrl->dev, ret, "pinctrl enable failed\n");
- 
- 	ret = rzg2l_gpio_register(pctrl);
--	if (ret) {
--		dev_err(pctrl->dev, "failed to add GPIO chip: %i\n", ret);
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(pctrl->dev, ret, "failed to add GPIO chip\n");
- 
- 	return 0;
- }
+ &scif0 {
 -- 
 2.43.0
 
