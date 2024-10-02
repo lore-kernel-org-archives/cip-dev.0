@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04BA1CF6D57
-	for <webhook@archiver.kernel.org>; Wed,  2 Oct 2024 17:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F361CEB2E0
+	for <webhook@archiver.kernel.org>; Wed,  2 Oct 2024 17:07:53 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web11.1143.1727888860684620014
  for <cip-dev@lists.cip-project.org>;
- Wed, 02 Oct 2024 10:07:40 -0700
+ Wed, 02 Oct 2024 10:07:49 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.11,172,1725289200"; 
-   d="scan'208";a="224579767"
+   d="scan'208";a="224579779"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 03 Oct 2024 02:07:40 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 03 Oct 2024 02:07:49 +0900
 Received: from localhost.localdomain (unknown [10.226.92.106])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id AAEE740065CF;
-	Thu,  3 Oct 2024 02:07:29 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 63001400941C;
+	Thu,  3 Oct 2024 02:07:38 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 07/15] media: dt-bindings: media: renesas,fcp: Document RZ/{G2L,V2L} FCPVD bindings
-Date: Wed,  2 Oct 2024 18:06:56 +0100
-Message-ID: <20241002170712.655449-8-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 11/15] drm: renesas: rz-du: Add RZ/G2UL DU Support
+Date: Wed,  2 Oct 2024 18:07:00 +0100
+Message-ID: <20241002170712.655449-12-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241002170712.655449-1-biju.das.jz@bp.renesas.com>
 References: <20241002170712.655449-1-biju.das.jz@bp.renesas.com>
@@ -34,97 +34,102 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 02 Oct 2024 17:07:43 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16973
+ <cip-dev@lists.cip-project.org>; Wed, 02 Oct 2024 17:07:53 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16979
 
-commit 81442e3e6c0f7de9df64addc53d49079b8045b05 upstream.
+commit b330f148017251810fc1f0c297f51b3039b796e0 upstream.
 
-Document FCPVD found in RZ/G2L alike SoCs. FCPVD block is similar to
-FCP for VSP found on R-Car SoC's . It has 3 clocks compared to 1
-clock on fcpv. Introduce new compatibles renesas,r9a07g044-fcpvd
-for RZ/G2{L,LC} and renesas,r9a07g054-fcpvd for RZ/V2L to handle this
-difference.
+The LCD controller is composed of Frame Compression Processor (FCPVD),
+Video Signal Processor (VSPD), and Display Unit (DU).
 
-The 3 clocks are shared between du, vspd and fcpvd. No driver changes
-are required as generic compatible string "renesas,fcpv" will be used
-as a fallback.
+It has DPI interface and supports a maximum resolution of WXGA along
+with 2 RPFs to support the blending of two picture layers and raster
+operations (ROPs).
+
+The DU module is connected to VSPD. Add RZ/G2UL DU support.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20240822162320.5084-3-biju.das.jz@bp.renesas.com
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- .../bindings/media/renesas,fcp.yaml           | 45 ++++++++++++++++---
- 1 file changed, 40 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c |  8 +++++++-
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c  | 11 +++++++++++
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c  |  3 ++-
+ 3 files changed, 20 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,fcp.yaml b/Documentation/devicetree/bindings/media/renesas,fcp.yaml
-index 43f2fed8cd33..c6abe719881b 100644
---- a/Documentation/devicetree/bindings/media/renesas,fcp.yaml
-+++ b/Documentation/devicetree/bindings/media/renesas,fcp.yaml
-@@ -21,15 +21,22 @@ description: |
+diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
+index 95ef31b58e55..a022a30018b1 100644
+--- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
++++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
+@@ -29,6 +29,7 @@
+ #include "rzg2l_du_vsp.h"
  
- properties:
-   compatible:
--    enum:
--      - renesas,fcpv # FCP for VSP
--      - renesas,fcpf # FCP for FDP
-+    oneOf:
-+      - enum:
-+          - renesas,fcpv # FCP for VSP
-+          - renesas,fcpf # FCP for FDP
-+      - items:
-+          - enum:
-+              - renesas,r9a07g044-fcpvd # RZ/G2{L,LC}
-+              - renesas,r9a07g054-fcpvd # RZ/V2L
-+          - const: renesas,fcpv         # Generic FCP for VSP fallback
+ #define DU_MCR0			0x00
++#define DU_MCR0_DPI_OE		BIT(0)
+ #define DU_MCR0_DI_EN		BIT(8)
  
-   reg:
-     maxItems: 1
+ #define DU_DITR0		0x10
+@@ -217,9 +218,14 @@ static void rzg2l_du_crtc_put(struct rzg2l_du_crtc *rcrtc)
  
--  clocks:
--    maxItems: 1
-+  clocks: true
+ static void rzg2l_du_start_stop(struct rzg2l_du_crtc *rcrtc, bool start)
+ {
++	struct rzg2l_du_crtc_state *rstate = to_rzg2l_crtc_state(rcrtc->crtc.state);
+ 	struct rzg2l_du_device *rcdu = rcrtc->dev;
++	u32 val = DU_MCR0_DI_EN;
+ 
+-	writel(start ? DU_MCR0_DI_EN : 0, rcdu->mmio + DU_MCR0);
++	if (rstate->outputs & BIT(RZG2L_DU_OUTPUT_DPAD0))
++		val |= DU_MCR0_DPI_OE;
 +
-+  clock-names: true
++	writel(start ? val : 0, rcdu->mmio + DU_MCR0);
+ }
  
-   iommus:
-     maxItems: 1
-@@ -49,6 +56,34 @@ required:
+ static void rzg2l_du_crtc_start(struct rzg2l_du_crtc *rcrtc)
+diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
+index 01ae5a5dffde..062d2341af2f 100644
+--- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
++++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
+@@ -26,6 +26,16 @@
+  * Device Information
+  */
  
- additionalProperties: false
- 
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - renesas,r9a07g044-fcpvd
-+              - renesas,r9a07g054-fcpvd
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: Main clock
-+            - description: Register access clock
-+            - description: Video clock
-+        clock-names:
-+          items:
-+            - const: aclk
-+            - const: pclk
-+            - const: vclk
-+      required:
-+        - clock-names
-+    else:
-+      properties:
-+        clocks:
-+          maxItems: 1
-+        clock-names: false
++static const struct rzg2l_du_device_info rzg2l_du_r9a07g043u_info = {
++	.channels_mask = BIT(0),
++	.routes = {
++		[RZG2L_DU_OUTPUT_DPAD0] = {
++			.possible_outputs = BIT(0),
++			.port = 0,
++		},
++	},
++};
 +
- examples:
-   # R8A7795 (R-Car H3) FCP for VSP-D1
-   - |
+ static const struct rzg2l_du_device_info rzg2l_du_r9a07g044_info = {
+ 	.channels_mask = BIT(0),
+ 	.routes = {
+@@ -41,6 +51,7 @@ static const struct rzg2l_du_device_info rzg2l_du_r9a07g044_info = {
+ };
+ 
+ static const struct of_device_id rzg2l_du_of_table[] = {
++	{ .compatible = "renesas,r9a07g043u-du", .data = &rzg2l_du_r9a07g043u_info },
+ 	{ .compatible = "renesas,r9a07g044-du", .data = &rzg2l_du_r9a07g044_info },
+ 	{ /* sentinel */ }
+ };
+diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c
+index 3c32ecfbe56a..d1250fe5e974 100644
+--- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c
++++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c
+@@ -184,7 +184,8 @@ static int rzg2l_du_encoders_init(struct rzg2l_du_device *rcdu)
+ 
+ 		/* Find the output route corresponding to the port number. */
+ 		for (i = 0; i < RZG2L_DU_OUTPUT_MAX; ++i) {
+-			if (rcdu->info->routes[i].port == ep.port) {
++			if (rcdu->info->routes[i].possible_outputs &&
++			    rcdu->info->routes[i].port == ep.port) {
+ 				output = i;
+ 				break;
+ 			}
 -- 
 2.43.0
 
