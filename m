@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22058CF319E
-	for <webhook@archiver.kernel.org>; Wed,  2 Oct 2024 17:07:53 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.1145.1727888864956687856
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E20ECEACF3
+	for <webhook@archiver.kernel.org>; Wed,  2 Oct 2024 17:08:03 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web10.1170.1727888879616918780
  for <cip-dev@lists.cip-project.org>;
- Wed, 02 Oct 2024 10:07:45 -0700
+ Wed, 02 Oct 2024 10:07:59 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.11,172,1725289200"; 
-   d="scan'208";a="220602780"
+   d="scan'208";a="224579785"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 03 Oct 2024 02:07:44 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 03 Oct 2024 02:07:59 +0900
 Received: from localhost.localdomain (unknown [10.226.92.106])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 387534007533;
-	Thu,  3 Oct 2024 02:07:35 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 27CF540071FC;
+	Thu,  3 Oct 2024 02:07:46 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 10/15] drm: renesas: Move RZ/G2L MIPI DSI driver to rz-du
-Date: Wed,  2 Oct 2024 18:06:59 +0100
-Message-ID: <20241002170712.655449-11-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 15/15] arm64: dts: renesas: r9a07g043u11-smarc: Enable DU
+Date: Wed,  2 Oct 2024 18:07:04 +0100
+Message-ID: <20241002170712.655449-16-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241002170712.655449-1-biju.das.jz@bp.renesas.com>
 References: <20241002170712.655449-1-biju.das.jz@bp.renesas.com>
@@ -34,98 +34,174 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 02 Oct 2024 17:07:53 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16976
+ <cip-dev@lists.cip-project.org>; Wed, 02 Oct 2024 17:08:03 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16980
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+commit cc49fcd0bc2db23489a87f6fa17119a76b70ec6b upstream.
 
-commit 1b5dfd1881dbe303536d4167500b94549ff2f6a7 upstream.
+Enable the Display Unit and link with the HDMI add-on board connected
+to the parallel connector on the RZ/G2UL SMARC EVK by using a Device
+Tree overlay.
 
-All the RZ/G2L DU specific components are located under the rz-du folder,
-so it makes sense to move the RZ/G2L MIPI DSI driver there instead of
-keeping it in the rcar-du folder. This change improves the organization
-and modularity of the driver configuration by grouping related settings together.
+DT overlay changes are different compared to mainline. So ported the
+changes without using overlay.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Acked-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20240625123244.200533-1-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/20240826101648.176647-1-biju.das.jz@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[Biju: Dropped r9a07g043u11-smarc-du-adv7513.dtso file ]
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/gpu/drm/renesas/rcar-du/Kconfig                   | 8 --------
- drivers/gpu/drm/renesas/rcar-du/Makefile                  | 2 --
- drivers/gpu/drm/renesas/rz-du/Kconfig                     | 8 ++++++++
- drivers/gpu/drm/renesas/rz-du/Makefile                    | 2 ++
- .../gpu/drm/renesas/{rcar-du => rz-du}/rzg2l_mipi_dsi.c   | 0
- .../drm/renesas/{rcar-du => rz-du}/rzg2l_mipi_dsi_regs.h  | 0
- 6 files changed, 10 insertions(+), 10 deletions(-)
- rename drivers/gpu/drm/renesas/{rcar-du => rz-du}/rzg2l_mipi_dsi.c (100%)
- rename drivers/gpu/drm/renesas/{rcar-du => rz-du}/rzg2l_mipi_dsi_regs.h (100%)
+ .../boot/dts/renesas/r9a07g043u11-smarc.dts   | 50 ++++++++++++
+ .../boot/dts/renesas/rz-smarc-du-adv7513.dtsi | 76 +++++++++++++++++++
+ 2 files changed, 126 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/rz-smarc-du-adv7513.dtsi
 
-diff --git a/drivers/gpu/drm/renesas/rcar-du/Kconfig b/drivers/gpu/drm/renesas/rcar-du/Kconfig
-index 929930b4b516..3e588ddba245 100644
---- a/drivers/gpu/drm/renesas/rcar-du/Kconfig
-+++ b/drivers/gpu/drm/renesas/rcar-du/Kconfig
-@@ -45,14 +45,6 @@ config DRM_RCAR_LVDS
- 	select OF_FLATTREE
- 	select OF_OVERLAY
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts
+index 2c69128a9ae3..a748a89c64f9 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts
++++ b/arch/arm64/boot/dts/renesas/r9a07g043u11-smarc.dts
+@@ -35,7 +35,57 @@
+ #include "rzg2ul-smarc-som.dtsi"
+ #include "rzg2ul-smarc.dtsi"
  
--config DRM_RZG2L_MIPI_DSI
--	tristate "RZ/G2L MIPI DSI Encoder Support"
--	depends on DRM && DRM_BRIDGE && OF
--	depends on ARCH_RENESAS || COMPILE_TEST
--	select DRM_MIPI_DSI
--	help
--	  Enable support for the RZ/G2L Display Unit embedded MIPI DSI encoders.
--
- config DRM_RCAR_VSP
- 	bool "R-Car DU VSP Compositor Support" if ARM
- 	default y if ARM64
-diff --git a/drivers/gpu/drm/renesas/rcar-du/Makefile b/drivers/gpu/drm/renesas/rcar-du/Makefile
-index 377540b9353e..4d1187ccc3e5 100644
---- a/drivers/gpu/drm/renesas/rcar-du/Makefile
-+++ b/drivers/gpu/drm/renesas/rcar-du/Makefile
-@@ -26,5 +26,3 @@ DTC_FLAGS_rcar_du_of_lvds_r8a7791 += -Wno-graph_endpoint
- DTC_FLAGS_rcar_du_of_lvds_r8a7793 += -Wno-graph_endpoint
- DTC_FLAGS_rcar_du_of_lvds_r8a7795 += -Wno-graph_endpoint
- DTC_FLAGS_rcar_du_of_lvds_r8a7796 += -Wno-graph_endpoint
--
--obj-$(CONFIG_DRM_RZG2L_MIPI_DSI)	+= rzg2l_mipi_dsi.o
-diff --git a/drivers/gpu/drm/renesas/rz-du/Kconfig b/drivers/gpu/drm/renesas/rz-du/Kconfig
-index 156ff3bcc554..5df58df689cf 100644
---- a/drivers/gpu/drm/renesas/rz-du/Kconfig
-+++ b/drivers/gpu/drm/renesas/rz-du/Kconfig
-@@ -11,3 +11,11 @@ config DRM_RZG2L_DU
- 	help
- 	  Choose this option if you have an RZ/G2L alike chipset.
- 	  If M is selected the module will be called rzg2l-du-drm.
++#define ADV7513_PARENT_I2C i2c1
++#include "rz-smarc-du-adv7513.dtsi"
 +
-+config DRM_RZG2L_MIPI_DSI
-+	tristate "RZ/G2L MIPI DSI Encoder Support"
-+	depends on DRM && DRM_BRIDGE && OF
-+	depends on ARCH_RENESAS || COMPILE_TEST
-+	select DRM_MIPI_DSI
-+	help
-+	  Enable support for the RZ/G2L Display Unit embedded MIPI DSI encoders.
-diff --git a/drivers/gpu/drm/renesas/rz-du/Makefile b/drivers/gpu/drm/renesas/rz-du/Makefile
-index 663b82a2577f..2987900ea6b6 100644
---- a/drivers/gpu/drm/renesas/rz-du/Makefile
-+++ b/drivers/gpu/drm/renesas/rz-du/Makefile
-@@ -6,3 +6,5 @@ rzg2l-du-drm-y := rzg2l_du_crtc.o \
- 
- rzg2l-du-drm-$(CONFIG_VIDEO_RENESAS_VSP1)	+= rzg2l_du_vsp.o
- obj-$(CONFIG_DRM_RZG2L_DU)		+= rzg2l-du-drm.o
+ / {
+ 	model = "Renesas SMARC EVK based on r9a07g043u11";
+ 	compatible = "renesas,smarc-evk", "renesas,r9a07g043u11", "renesas,r9a07g043";
+ };
 +
-+obj-$(CONFIG_DRM_RZG2L_MIPI_DSI)	+= rzg2l_mipi_dsi.o
-diff --git a/drivers/gpu/drm/renesas/rcar-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-similarity index 100%
-rename from drivers/gpu/drm/renesas/rcar-du/rzg2l_mipi_dsi.c
-rename to drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-diff --git a/drivers/gpu/drm/renesas/rcar-du/rzg2l_mipi_dsi_regs.h b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h
-similarity index 100%
-rename from drivers/gpu/drm/renesas/rcar-du/rzg2l_mipi_dsi_regs.h
-rename to drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h
++&pinctrl {
++	du_pins: du {
++		data {
++			pinmux = <RZG2L_PORT_PINMUX(11, 2, 6)>,
++				 <RZG2L_PORT_PINMUX(13, 1, 6)>,
++				 <RZG2L_PORT_PINMUX(13, 0, 6)>,
++				 <RZG2L_PORT_PINMUX(13, 4, 6)>,
++				 <RZG2L_PORT_PINMUX(13, 3, 6)>,
++				 <RZG2L_PORT_PINMUX(12, 1, 6)>,
++				 <RZG2L_PORT_PINMUX(13, 2, 6)>,
++				 <RZG2L_PORT_PINMUX(14, 0, 6)>,
++				 <RZG2L_PORT_PINMUX(14, 2, 6)>,
++				 <RZG2L_PORT_PINMUX(14, 1, 6)>,
++				 <RZG2L_PORT_PINMUX(16, 0, 6)>,
++				 <RZG2L_PORT_PINMUX(15, 0, 6)>,
++				 <RZG2L_PORT_PINMUX(16, 1, 6)>,
++				 <RZG2L_PORT_PINMUX(15, 1, 6)>,
++				 <RZG2L_PORT_PINMUX(15, 3, 6)>,
++				 <RZG2L_PORT_PINMUX(18, 0, 6)>,
++				 <RZG2L_PORT_PINMUX(15, 2, 6)>,
++				 <RZG2L_PORT_PINMUX(17, 0, 6)>,
++				 <RZG2L_PORT_PINMUX(17, 2, 6)>,
++				 <RZG2L_PORT_PINMUX(17, 1, 6)>,
++				 <RZG2L_PORT_PINMUX(18, 1, 6)>,
++				 <RZG2L_PORT_PINMUX(18, 2, 6)>,
++				 <RZG2L_PORT_PINMUX(17, 3, 6)>,
++				 <RZG2L_PORT_PINMUX(18, 3, 6)>;
++			drive-strength = <2>;
++		};
++
++		sync {
++			pinmux = <RZG2L_PORT_PINMUX(11, 0, 6)>, /* HSYNC */
++				 <RZG2L_PORT_PINMUX(12, 0, 6)>; /* VSYNC */
++			drive-strength = <2>;
++		};
++
++		de {
++			pinmux = <RZG2L_PORT_PINMUX(11, 1, 6)>; /* DE */
++			drive-strength = <2>;
++		};
++
++		clk {
++			pinmux = <RZG2L_PORT_PINMUX(11, 3, 6)>; /* CLK */
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/renesas/rz-smarc-du-adv7513.dtsi b/arch/arm64/boot/dts/renesas/rz-smarc-du-adv7513.dtsi
+new file mode 100644
+index 000000000000..36707576030d
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/rz-smarc-du-adv7513.dtsi
+@@ -0,0 +1,76 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Common Device Tree for the RZ/G2UL SMARC EVK (and alike EVKs) with
++ * ADV7513 transmitter connected to DU enabled.
++ *
++ * Copyright (C) 2024 Renesas Electronics Corp.
++ */
++
++&{/} {
++	hdmi-out {
++		compatible = "hdmi-connector";
++		type = "d";
++
++		port {
++			hdmi_con_out: endpoint {
++				remote-endpoint = <&adv7513_out>;
++			};
++		};
++	};
++};
++
++&du {
++	pinctrl-0 = <&du_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++
++	ports {
++		port@0 {
++			du_out_rgb: endpoint {
++				remote-endpoint = <&adv7513_in>;
++			};
++		};
++	};
++};
++
++&ADV7513_PARENT_I2C {
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	adv7513: adv7513@39 {
++		compatible = "adi,adv7513";
++		reg = <0x39>;
++
++		adi,input-depth = <8>;
++		adi,input-colorspace = "rgb";
++		adi,input-clock = "1x";
++
++		avdd-supply = <&reg_1p8v>;
++		dvdd-supply = <&reg_1p8v>;
++		pvdd-supply = <&reg_1p8v>;
++		dvdd-3v-supply = <&reg_3p3v>;
++		bgvdd-supply = <&reg_1p8v>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++
++				adv7513_in: endpoint {
++					remote-endpoint = <&du_out_rgb>;
++				};
++			};
++
++			port@1 {
++				reg = <1>;
++
++				adv7513_out: endpoint {
++					remote-endpoint = <&hdmi_con_out>;
++				};
++			};
++		};
++	};
++};
 -- 
 2.43.0
 
