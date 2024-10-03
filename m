@@ -1,273 +1,284 @@
-Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
+Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D1DCF6D2A
-	for <webhook@archiver.kernel.org>; Thu,  3 Oct 2024 06:02:51 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
- by mx.groups.io with SMTP id smtpd.web11.5131.1727935365570662548
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7ECFCF855A
+	for <webhook@archiver.kernel.org>; Thu,  3 Oct 2024 06:16:01 +0000 (UTC)
+Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.25])
+ by mx.groups.io with SMTP id smtpd.web11.5266.1727936156779946239
  for <cip-dev@lists.cip-project.org>;
- Wed, 02 Oct 2024 23:02:46 -0700
+ Wed, 02 Oct 2024 23:15:57 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=nobuhiro1.iwamatsu@toshiba.co.jp header.s=key2.smx header.b=c27Gfxyr;
- spf=pass (domain: toshiba.co.jp, ip: 210.130.202.134, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
-DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=toshiba.co.jp;h=From:To:CC
-	:Subject:Date:Message-ID:References:In-Reply-To:Content-Type:
-	Content-Transfer-Encoding:MIME-Version;i=nobuhiro1.iwamatsu@toshiba.co.jp;s=
-	key2.smx;t=1727935358;x=1729144958;bh=Y6k5d4k+Ky/re0zym9Q/4o/c9+rLLG+4oTV1OvY
-	X/Zc=;b=c27GfxyrYyzs5EnZFL2uviPCXFs+rgvw9OS1yoPRHsDcPur0vm4ccm0aGNVvwZSOWe4b7
-	2whEpj5GOsfqGzYQYYnfTM7rmDcBcK1AuQjhjMy4s4R7oBmav33EdWh2DyPF5s5VMqqvcVs4hw4hm
-	w4eGaD+yFWWQCj/9RQzhNXBda47itAF7flw6l5Z5+WOIFhmWeB2emWsaHCjFDNf2eKbpe8cNalj6R
-	HiHsap8rwLlZCEsZ7CT0SMzGGMEKNcxifrMNyzS29/8bWBV00NMiSmowpAGozZkByvIhCGP3U2Cro
-	MFEwQlIIRDjVVIyjRXCytH9lkntzxIZfL8hp2VRrwQ==;
-Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 49362bhu2674344; Thu, 3 Oct 2024 15:02:37 +0900
-X-Iguazu-Qid: 2yAb2N10ZqlrXARnG1
-X-Iguazu-QSIG: v=2; s=0; t=1727935356; q=2yAb2N10ZqlrXARnG1; m=MoKoAP17x5bSsnz5uVI146ZLOzk2iQLs/7ux5su1eX4=
-Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1800) id 49362Z3k3904178
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Thu, 3 Oct 2024 15:02:35 +0900
+ dkim=pass header.i=@bp.renesas.com header.s=selector1 header.b=NqG5RLQR;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.229.25, mailfrom: biju.das.jz@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZuGC/rMU+YZvxhDNrghXXsSvOoiQMEeLevv2+1vUsEOpWiqNlVPRPbRVvBtyD2+Eu59eQIZys8ZglxBHYQTMApFjBUd0U1+q8QswBNMjwMbMkIen1vthhmNP2orejd9WWtFXkcSkQBZfdyvl+115r1rEpx8b/uiIynNIshR6z/IFpT/eTqjCm0oCQ8tHAdIictL5sljZiwnOP65729NQTdyNhQe+HLi1/yclk85t4T5Q690oBJouA0i3fRnrzA3MAlJ/zJZbakcB176+HOTzsy5UBrsGEkhWbt0Mv4mb7xoGhi5UFsIzB/N5NrQB0qVufz7Dni7RFNJ7F5z36cFqlA==
+ b=SLr70kWBp1fyb/jKCZ7+B4M5J8il4sPDwMA2gKbUD3NHm9PP3yvbSwOeVXtYwKCC+EtfiTkb8F25IvE1Rut0c+ha1RtGt0JIQSLRfvrhCC9H0LmsOhkEtIJICyaWW5nW/MrIGBblH/1O4GIr+ZSeW7brROzuBH14UjyyB4NxYEA6TS0nCQvighfX/MxFtq8UTmAP/hO0rjvaFisEhaaiZ01UPFMh+hOQQ7C1GjNXENYuPwg8WFdKdMFKqlfitBvnSfSp4fAVMZEUzCoctQvaOcrmxid5PQcJWcS7EJNB+VXrbpnIT9mebJy0gNKaKzweTlvSUIFSMsU7CKZLsxitUg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hyumpTiO2GebgzlwWs57M/i5vjPjEr5q/EhHD+6ympE=;
- b=nYkAnwqz67PJHa3Z3HBmyeWKylS9eNt7zsJzB5fzdVb775pwgbFFeb6d9HA9mAv30iSsslEqBSxBjsxH7LJCcaE8awUJnhqHZgMD9IQitVZQfnnae8FQcve0DSld8EQnQrrl/QwFosgzgxouN8VPBPxyEjkNVrnmotJUnu2IqM/7QvDr31RDRUiw8XZEJvvysTlWtNoLkRLJUMtaItkizMHOetHCb8M8iE2zs+N+s6ugZjcOysChM2zhSDxvlybzCMmnSvAGOapfnJELTxvZhr07tByRfGtCllFwjkTpo/tOyhM5RX/Xo5l92qFQRN4KD6ES4niwYY+NGVXgFgflVA==
+ bh=oKVH0NP3DrtzrzzfSUewHmXHNtBTw4YX3ZsXwPcRCYM=;
+ b=S1nw3Z33dmgqUXQRLggrpX9Di8awqlmONO5roq2QWWeF1+IMMEAsTL+wqJpFQ1KXswvmXp91qUOvWdhkLVy9ppiKoeoX/gx3qDwNG+fgrxwU7By/n1uOigxd9lLNdexvMk1bGPDuz5lr0IEqMYHDRiPytNbdtuLpz69VwOHcdKurds8EF4VcsgPDUHGsPYjwnj0kV3BZi1wkUIHydLdKBXRCp/vi+37b7bJs/dHKHsl7lXG0dVWbEKVcj+6ulvdAnit2OgtK4pPrksq3fORLqb94nfKJhqN/J1dUYhYOS+1BAADOHZ+33tMy2MiLSRYXHZDqO66j1UF6JhvURmq2Lw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From: <nobuhiro1.iwamatsu@toshiba.co.jp>
-To: <biju.das.jz@bp.renesas.com>, <cip-dev@lists.cip-project.org>,
-        <pavel@denx.de>
-CC: <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH 5.10.y-cip 02/15] pinctrl: renesas: rzg2l: Use
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oKVH0NP3DrtzrzzfSUewHmXHNtBTw4YX3ZsXwPcRCYM=;
+ b=NqG5RLQRr8JE6dKDIN2QC/WVCjNfvtYHVxQexJXrj9UgT6EJ3w1RNUc61G3UyJpYHvHKn26X0JE1Q4MOv6JevE8MNTI+MDl8St/PiQ+uZMF6F+G1XLzhDCAh6u1DTxermBqStmhqwwT2Tnary7lM/vlwigy2C8egydcYMv69fGU=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by TYWPR01MB8461.jpnprd01.prod.outlook.com (2603:1096:400:176::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.16; Thu, 3 Oct
+ 2024 06:15:52 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1%5]) with mapi id 15.20.8026.016; Thu, 3 Oct 2024
+ 06:15:49 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: "nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"pavel@denx.de" <pavel@denx.de>
+CC: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: RE: [PATCH 6.1.y-cip 02/16] pinctrl: renesas: rzg2l: Use
  dev_err_probe()
-Thread-Topic: [PATCH 5.10.y-cip 02/15] pinctrl: renesas: rzg2l: Use
+Thread-Topic: [PATCH 6.1.y-cip 02/16] pinctrl: renesas: rzg2l: Use
  dev_err_probe()
-Thread-Index: AQHbFO2SKWzNr7RhIk6LzGZWXt+VObJ0iZ8g
-Date: Thu, 3 Oct 2024 06:02:33 +0000
-X-TSB-HOP2: ON
+Thread-Index: AQHbFO0oFhZ4e4Daa0moi4dWCw9YgbJ0fs8QgAAON8A=
+Date: Thu, 3 Oct 2024 06:15:48 +0000
 Message-ID: 
- <OS0PR01MB638837327E5487B71D88A70392712@OS0PR01MB6388.jpnprd01.prod.outlook.com>
-References: <20241002170712.655449-1-biju.das.jz@bp.renesas.com>
- <20241002170712.655449-3-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20241002170712.655449-3-biju.das.jz@bp.renesas.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
+ <TY3PR01MB11346B82A77D4896757114AD486712@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20241002170417.655339-1-biju.das.jz@bp.renesas.com>
+ <20241002170417.655339-3-biju.das.jz@bp.renesas.com>
+ <OS0PR01MB63884F86BC0E7A6D2E3F980092712@OS0PR01MB6388.jpnprd01.prod.outlook.com>
+In-Reply-To: 
+ <OS0PR01MB63884F86BC0E7A6D2E3F980092712@OS0PR01MB6388.jpnprd01.prod.outlook.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS0PR01MB6388:EE_|TYWPR01MB9775:EE_
-x-ms-office365-filtering-correlation-id: 74696378-23b7-4399-22fe-08dce370f8fe
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYWPR01MB8461:EE_
+x-ms-office365-filtering-correlation-id: fe230340-a9c0-4cec-abee-08dce372d345
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|376014|1800799024|366016|38070700018|95630200002;
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
 x-microsoft-antispam-message-info: 
- =?iso-2022-jp?B?TEREbWxxVjErcEZuTWZwdDBuTFVpZ2FOQWp6MzYwWHg5bzdSSmxjL3E4?=
- =?iso-2022-jp?B?c2lqejZBQWpXOFhjS09jRHpjS2Foam1NVjhWZVhLM0VYcHZVS25NS2x6?=
- =?iso-2022-jp?B?MzBaQlZlVjMzT1J3REg0Z1dUdU8zODh0N1hScFdSeTVHMndHZ09rdVZp?=
- =?iso-2022-jp?B?SWUxLzFVQWZBeDJmOGdHQjBDMmY3MWE0Y09ROVg2bUt6cHJYTS8xMGRm?=
- =?iso-2022-jp?B?SmY3ekpMUEU2OGZvb1RVU3FlYlBkVVR4N1pJQzg1bkZ2V2R1bTdPYmVR?=
- =?iso-2022-jp?B?RUt1bjBvSWFuY01uTWJ6ejFUY2pPeUpnZ1E3dVdDWmprQ1g3cnpUWmgr?=
- =?iso-2022-jp?B?ZHZ4T2tKa1VSTkVoNC9VdTNqZ3FJaXFCS0Q5OXJWOXJsTEVjSVlOcUdj?=
- =?iso-2022-jp?B?clVvWmJGa0p4RzRJbjA1WllHSWRWV0JPNCs1ejB1ZnZ4b0htSUdodFFr?=
- =?iso-2022-jp?B?dkpBUFFDNXJ5VkdLWmp1WllTZjRrRFg1QnljM0ltd05iT281aFJnSXlB?=
- =?iso-2022-jp?B?ekR6dUJJRXFROWMxdVE2aUlWRi9PL1ZzelBhcVI3MmhkcnZYd0phV0lB?=
- =?iso-2022-jp?B?OTFIeFRIcGpwQlByWVV1SWt1MVZGRnhjbXlYVGJlUzl2L2NxZnVDcU9a?=
- =?iso-2022-jp?B?VStYeDY1NG5hSC9hcXdIU0lTZGU5Q0IzUUFWeGdZbWkydzA4bWEvU0Vp?=
- =?iso-2022-jp?B?K2tHNHZWenprRitvVXNSV3F1MlpCVTlOSzBQeTdLNnZ2UDNkZ1BhODgx?=
- =?iso-2022-jp?B?VVY1K0VkSHJma2NHSk1uM1FhbCttQ3RjS1RHNWwvSUM1TWVDZHVkMlFG?=
- =?iso-2022-jp?B?RGJVR3BRS2MyU0QwNmhpVFNmYjJpakZoKzhXV3lHcGNrdWFTbXJRWSti?=
- =?iso-2022-jp?B?Qyt6emlzTnVlRDY2cXZDZzJjSnJjamFUaDJlNlQxMFVkenZMZ0d5TGxN?=
- =?iso-2022-jp?B?a2lTYm5JUEl2Zmg0NXVrZWZFeXh1R1Y1NWNCWDB0U1RIWDNOd1RlTk52?=
- =?iso-2022-jp?B?UEZYU2VqNGZMQXRGdkVzK0JqS2NvMm16QkJPWlhKbkc0di9XWExyWmor?=
- =?iso-2022-jp?B?V3U5RTRwNVgrZE43MVBUWXA2cm9Zc0lvTGVyZHNjVko2VlRJSUthV1pY?=
- =?iso-2022-jp?B?REdIbEF0N0hlblR4UEFEbldLQVp0TGNDWC8zbmxHWXZ1MEhiQTZTenF3?=
- =?iso-2022-jp?B?MjEwd3lmSEFkQVpjcGIxLy8wMkphZzJacHdlVVA1bm1VNE9VbkZEbUdS?=
- =?iso-2022-jp?B?ZFltWDZQeUlkM0h3UzEzSVZtNzlOYmtHdzhiN21BUlNkUDkwL1Z0Ui92?=
- =?iso-2022-jp?B?dnBPc211S25vZEVOeU53LzBnVlFEZWVjS0JJZmx4UmdJQ3E2M2d4aG81?=
- =?iso-2022-jp?B?UjJwZUtvemdrT1htYWhneEh3K1dnd1BnaitXa09KdUdmeDRIZkNNUjFv?=
- =?iso-2022-jp?B?dHJkdDJNN0toL0NkcXg3WGtKT0xVWTAxTUt3Y1pKNjNlQ29nb3JKc0Fm?=
- =?iso-2022-jp?B?VzhTVjFBVnJRTlNDRUptU1U4MzRjenZPTlNpMFdqY0hDaVZCcFRhYXVM?=
- =?iso-2022-jp?B?WWpCclBHRU9YR1VwbmxFVWRPZVM0cmx1QUptMnBpcC9RUFV0Q1VtNUw0?=
- =?iso-2022-jp?B?TitENTdXRWZ1YVdjTVV3RFZDM05ScFFoOERjbU1QZzA4ejBjUkhiNUxP?=
- =?iso-2022-jp?B?TFpDQnZWMFFuQ3B5d1VMZzZZcjl5R09oY3lRY1J1SWFVZTFNb0ZoMFhk?=
- =?iso-2022-jp?B?L09samNaalM3OFpTOWpsQzd1ZWIwNkV3bWxNZ2g5cU1EaDM0R2NGSTRz?=
- =?iso-2022-jp?B?bHZ2Sm5mcHJUZ1E0cnNra0dMOWpnWFAydm8rMGxybklwbW8vdVdkcmdR?=
- =?iso-2022-jp?B?K1FVQWFwL0wvU012SjNYblNtbEx4SVBqNEJxRmNWN0RKcjBhenV2TjNj?=
- =?iso-2022-jp?B?ekt1ZHI5c2lod3p2U3ljMEZPanRVcXRGRTVINEg5TWlIVlFCbDdHYW5n?=
- =?iso-2022-jp?B?YkJ6MkRISDNUM091VjgrS2dseDBheA==?=
+ =?iso-2022-jp?B?ZmdGMmJsRWtDRWk1bndleUlzV2dEMEZCWXVDSitVYm4vSmlnY0dyWTl5?=
+ =?iso-2022-jp?B?MW1MUVF6THdFbVM4VytwMTVYRGhCZWlHamhvNHpaSFgrM0c5ZndNMDBu?=
+ =?iso-2022-jp?B?S1laWHFTbzBtbzVndjcvRCtxZEYvVmhpY2M1L1RqRWc4ZG9yWWlIa1FK?=
+ =?iso-2022-jp?B?aUhNNkZ6b0JtSUtuM2kvc2cvQi9UQkNaeHI0K2dyUzZ4ODM1bitkVTFO?=
+ =?iso-2022-jp?B?dDRERTdpSEo3TzNjN1BZWlppYmpCWXJKNS9MQ0I1cTR3VGFoSmFuanB5?=
+ =?iso-2022-jp?B?YklSOVZ5cExCcHhVWGdabC9Ja1B4U0xjNzVva3VibDF5cmJkVWxpcFBZ?=
+ =?iso-2022-jp?B?dTY0bmdTb0xpTU5LNU9ZV0d3bllRa1dobXE4NGhhZk85UWEwNjVvRjR2?=
+ =?iso-2022-jp?B?WnZWdjRmMXZMaVRpUDhoNFRmT0dFQTVyRHoxelhIamxtMkhSWmxQNDBW?=
+ =?iso-2022-jp?B?SStsMGl0R1FDS00ybE1RRmRYMlZwV3hTOTVOZjRLUTQ4b2hUOThrUW9E?=
+ =?iso-2022-jp?B?VWQ4OFhOU2tIMFk5cndUdUlJYjRaUitHeFlaYzNuY2ZNYitzN3M3azJj?=
+ =?iso-2022-jp?B?ZXR0RDNUYkZ5ZUp3SGd6ZWlhVmhwTjBXbFVTbGM1eGFhK0xtL2ZUZ3F5?=
+ =?iso-2022-jp?B?UnpZdFJSL2ZVUDdPQm01SExBV0tEbyt1Y2RZZytmVnRTblNmZk5hZDBo?=
+ =?iso-2022-jp?B?R29rUTJpSXUwVW96VmhneWlPL09IY2dkK1F3TFV0UmR0WGlkU095cHkx?=
+ =?iso-2022-jp?B?am9QKzNBT0p0S1BwUndOajMxOVVuWUk2T2V6ZHZtU3NQOGtDNVR5YXBK?=
+ =?iso-2022-jp?B?SHl0MU52b3dKTTBQTXBBUWNsUjRZcXkyZ1BTSFVZVjRKTy9MWks2TkN0?=
+ =?iso-2022-jp?B?MmN4dEFNTzhtM0VEL1JFVnFpSkFWOGNUdW9YZ254WEZQSGpFbEFTN3FX?=
+ =?iso-2022-jp?B?ZVJGbWtKdVpHZTF5RnFLZ3hYY0R5VGRPbW52RmhheWc1T1ZGVHlMSFJh?=
+ =?iso-2022-jp?B?OHlKK0F1SDBPd0N5RTVXMlVpQW1zUjlnT3BkbUU3ZEV5Y0IwaU1BZHBU?=
+ =?iso-2022-jp?B?Y28xeVcxK3dUcmVVUWZUT2ppVnN5S292blk5TCtCckpKdVUzMW1POEpu?=
+ =?iso-2022-jp?B?Sk45aVJGQkgvSXovSDE1VXdlVVh0b3R0KzVGckhpeGdyUFdlL0RUSHow?=
+ =?iso-2022-jp?B?dmFQd3FFSnYzRFlLdks1cVpyZE10RUlKQm5RTjQ0OVR4aUxmTUhaMDRr?=
+ =?iso-2022-jp?B?ZlZSdFh1NXZub2dRYmxPMWRBOXN5TjI5VmhyVGF4N2IrK1BYZlY1UnVn?=
+ =?iso-2022-jp?B?ZktiblFOeEJVN3pkY0k4aWlYcUMwcGI1dW5jRE5ESDBDQlhFbGVLSzhU?=
+ =?iso-2022-jp?B?dDdRajIvMWUvc3hRQUUvNlBvQjBBNzFMZURyS1BLTWJLc01HQ3ZKZ1Bj?=
+ =?iso-2022-jp?B?aDdXNEhDZ3J5M2hiam9oRVR1V05pVmtGNGJaWnN2Z2dtWGZqbGV5VW0v?=
+ =?iso-2022-jp?B?RTdMdGduU2tRdkJSWFJUT3l1VTNQZG56eHdYSGFFZm12UGVmSGNXL2gv?=
+ =?iso-2022-jp?B?LzN1M3JvSGQxRFN2TWhjWmtRQmFMZWZyUytGcmZmWWpOOHNLL2VoWG5O?=
+ =?iso-2022-jp?B?QTh5TlZrR3AvOVJaQzRRK01tUWlZaVpYM1RkaEdNZjMzZHArNWhvNjZH?=
+ =?iso-2022-jp?B?UU5OWlVlNGxWaWIzVXFVaGZBRXF5U3d4YWRpNW1HU2ZzMVNnZ0JvRjlD?=
+ =?iso-2022-jp?B?YjBsMDRTTE5TMW10QndsYVR6dDhwd0pDaTRhclVxUGgrRFpiRHE1VzRL?=
+ =?iso-2022-jp?B?bXR1aDhNblJjUnM1eWlyOHhOb3I0S2owT0JuVldSR01aVE1HZFM5bGht?=
+ =?iso-2022-jp?B?SjNxSUNLM2ZEb0dFM2t4V09xOUJ5TlVZbVFtV21CbkJiRDRVRGFBcjlK?=
+ =?iso-2022-jp?B?SWFSN0lpM1B4ZXpva09EcEZ3cURZdz09?=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB6388.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018)(95630200002);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?dndmb3hFUm1Od09GOGZHL1IvVzE4WWI2QUFjaVg1RmhFY1hENkRXZVk2?=
- =?iso-2022-jp?B?dzFtL1g2OHBtaFd0cUNiYnNhK2hrYTJYcll4Vlh2L0RGUmRmZFZERVhr?=
- =?iso-2022-jp?B?dFBITDgvQndJVzNITXhYTXNRRG1IbEd4TC9hT0RIZUNpU1V4RnhxdTYw?=
- =?iso-2022-jp?B?NkNIaDhia3dOdGY2NEhscGdFTklpUmdTYmxZV2Fkckl4RDhMOFZjMU5z?=
- =?iso-2022-jp?B?YW52R3d6V0ZxQUludHNCVHFSazJVOWU0bExmejNmU2xJOFl0eUdzSVR0?=
- =?iso-2022-jp?B?ZlJaUjBMTFkyTDM0S01GdnBwQWVpYkRoL1NESVdjSklhemFzcmkrQW5G?=
- =?iso-2022-jp?B?WnRLbitVT0g1RTFMOVhCdW5uc2RsaWxnd2JzckdxWldIbnZFZVR5bG1l?=
- =?iso-2022-jp?B?ZVlmb2hsdVZjRnpjMWFLTEgvTTFMTlNVQzZUZjlMN1A4ZzNGNEtLWkQ3?=
- =?iso-2022-jp?B?YVNXaHBIbWM0L1MweXZjMFBSeDV3ZmNmMU5BdVk0a0hrQjY0TzY2TFZI?=
- =?iso-2022-jp?B?V1hOWUZSc1NTdlUzMVJBcmYyUDZGckY5YXlodE9XTSt1WC9wVDBFVU5F?=
- =?iso-2022-jp?B?NWwzdWVqbzZOQVpiTG1YMFBPbWlQVG5iLzJsM3BycS9ZSkJhU1FGU3NU?=
- =?iso-2022-jp?B?dlZWRnpNTmd0ZnBVOWFvdnU2L0lodk44eHZtN1dwcFd4MWpVNk5wVVo5?=
- =?iso-2022-jp?B?SlQvZi9icXlTV0lHbVBtcDFaKzk0VjEwb3FGcTR4VklrNmJlc3U3Sk05?=
- =?iso-2022-jp?B?V0FzdDUzaTNSRjcva0hqSnFsdG9mOUExdHQ5TDNYNmRaT0lSdFNEZTlD?=
- =?iso-2022-jp?B?NEl0eDJ4UmMxOWxUd29JQjliV1hNeGJrQThMQnZqL3hnYmFRTWx1Yi93?=
- =?iso-2022-jp?B?MzVNdFdibUJEQ3RmNHJPWGFTVldUbWxDZG5iNUYvOGdVb0hRdUNPMUJw?=
- =?iso-2022-jp?B?cWZPK21KQ2xOd05BYWRqbnl6V0kvTWNvTTNncGZqY3ZpeW1YRHVRZitr?=
- =?iso-2022-jp?B?K091bjFWdUFYQUlodmFrT1k3dW5ydDVsZloyb2g3ZUdleEJNT2ZjWVZ3?=
- =?iso-2022-jp?B?VnhUbFJOV2NORllSd2gyVmFEL0FkNlAyVWdRM0U0MnZSLzlmWU9NVGxF?=
- =?iso-2022-jp?B?ZTgraHBlN1AwMkxFaEtPenh2NFVHYzh2Q3JNUGlLSnUrZjRTMHZKMjhI?=
- =?iso-2022-jp?B?Q3BVQTRYell3Y1hoK0Flc2JMSUJZNWtXN2tSZUVZRm84WGtsSjd3cVBQ?=
- =?iso-2022-jp?B?ckFCOXNYRmdnUmttRHJLVjQ0emxMUUpuZWJzb3g3Nm1LY2R5K1luYnEz?=
- =?iso-2022-jp?B?WXczMU1PMVJDYi9FSnZzb3diN1NLd2VVRStTWkVUTXZNVis5NThzRzFD?=
- =?iso-2022-jp?B?eERoVGxLeXRLRnhDZW9yeWxYYmtMQ0UzRjNjanorWXFBYmp6aTIraTdi?=
- =?iso-2022-jp?B?TysyWWMvVG52Uk9HY2R3VUZldnpXZU1aaFl3dEZWZXIvUmdRUkN0OGdZ?=
- =?iso-2022-jp?B?RU5FUzNGZnV2OEhYSkJhYzdGM1NYbDNtSlNlb0o3NmJqdUIxRWtURTNY?=
- =?iso-2022-jp?B?WUVYNWIycWN1aEsrRXlDL0F2SzNubHNXVlJLUTFubWd2M1JaQ0F1UEg5?=
- =?iso-2022-jp?B?bUwrSk0xZVhmT1pNZ2JpZzF6WHNYVTU5VGt4RjRlV0pIOTRUU1kyLzcv?=
- =?iso-2022-jp?B?VVpzcGlEbElSNndMdytMUlJSOHZSdEsvNjVaOVJPRmt5aGNpZHNZeHIv?=
- =?iso-2022-jp?B?Q1ZHcVFycW5kemkxeGxYa0JscjZyeFAyMGl6VEFMS1htY1pxVVpYVnM4?=
- =?iso-2022-jp?B?dmlST25YUjlDQWxaVjZRWU5QVFVBRnk3REFPcjcrS0VoKzJDZ2JIeGNE?=
- =?iso-2022-jp?B?TEZia3JpZVV4OVQzNUd4cHAzclpmek8wY0JKV1pvTGV3RzdZc2crY2xX?=
- =?iso-2022-jp?B?YklDbFF4N0d2TjJYc3V2WkhadmM0dmVhSW9uOUFETGFiNk8wajU4NWVD?=
- =?iso-2022-jp?B?TENWbXA2SVZHeS8zVmk0MDZDbkxTZ0ZPb0FqOWg2NGpQd29ldmtjbEVL?=
- =?iso-2022-jp?B?N3kwdlhwTGpsWU1DQmJ4NFVoVHg2alg2dDZUaU5kemRMU3lYQXdCbjNW?=
- =?iso-2022-jp?B?NXBIWHlmcy9LbjBTeGRFamM1b0I2Q2twQmxPeUZwajRVQXNsVnRVeHRK?=
- =?iso-2022-jp?B?QjdYZkQ4UG5wZXRpK3NqYUloVEpDclZsYVUxYTEyM2RRZUxYQjVXNDRO?=
- =?iso-2022-jp?B?am0wNWVKSVY5M3dORXZ2V0Y2aVZ2ejRQR0RQbGdlVmllOThoNGYrT29V?=
- =?iso-2022-jp?B?MG1mSUNlZ1dlNm14TUc2QmUzMWlFNWxHZVE9PQ==?=
+ =?iso-2022-jp?B?Ny9RNmVaQnRDNkpXVlUyMFAwV0ZkMkZKK055Ry9ZMlY4OFpFUWZUQUgz?=
+ =?iso-2022-jp?B?V3ErUEhCSjZQMFJyUm9wNHdRbTdUdmRBMmZoM2xEWVROYUNwSmNydTEx?=
+ =?iso-2022-jp?B?RFpnenNrenVDYXRFMENKbHVobllyVWZNVkFmWUVXYzNCR3RTUndwNlEw?=
+ =?iso-2022-jp?B?Sk9wYS9RNmNldVd4K2JIZXJESnJsMjNmSDY2UFJ1eGF4V0Y4T1ZRdmVj?=
+ =?iso-2022-jp?B?eDk0bzUxTnVMSzBIcWVTbHFIbGNXd1VlNXcxUUE5d1NnY2M2dGRGSHBy?=
+ =?iso-2022-jp?B?azJPclQvUzg2bTJJdjY5SVJFVzMxdjhHTUdrM1ZHRW1jRmxoZ0dqRVJV?=
+ =?iso-2022-jp?B?UEM2cDhvUlIyQUpxMjRCSkQwM2dGc3ZNejNYVUN6MTNWYm1jZ21mVEdL?=
+ =?iso-2022-jp?B?WFdJNzdsekI4Y1BHS0JETFByd1dzMHYrenV4YS90aHJ0MytCR2NadnpV?=
+ =?iso-2022-jp?B?TElSSlo3TjNsZllWMG1QTVpJeUtIWVZlU0M2dnk0QXp2c2piS1B4MVd0?=
+ =?iso-2022-jp?B?N0tMT25BSHVsZFlydENYL01BdEg3UFRaVE9hMklTSzhxa2pzY1Q0TGFj?=
+ =?iso-2022-jp?B?SGpvcWdTRjBjNmlCcWNhMlQ3b2RSdWdjUEZKQkNoUW5nQzEwYndTdExM?=
+ =?iso-2022-jp?B?aERKREFnL2tCL3htSm9MdFpxSmhCZFVoTzN5b2tpeXpaUUxmY2pTMjRa?=
+ =?iso-2022-jp?B?L05Eb3pZK1g0YWdhOGdGZUZvaTdkQjdGdkUyS3JTMVBEUEl1MCtQc2Zk?=
+ =?iso-2022-jp?B?Y05JZkwxYncyRk1MRno5VFhLdWNNSEdDeFRZMENDSWhuRmRGL3NwVXBZ?=
+ =?iso-2022-jp?B?R3hsd2dydE51ellRdFZUcXFzalNCWjNjVUNpanZJaU9icnc0cTl0ZDMv?=
+ =?iso-2022-jp?B?UG1kOVJ4R012NkRWR2RNYkRiZ0I4ZCtOUmZnWk5paGx1aHp5VmszeFY4?=
+ =?iso-2022-jp?B?VFdWaTNadDJSWjFlTS9IM1k1UmdZR2pyRk92Zk1vVmJKRHBjYnh0Vmtp?=
+ =?iso-2022-jp?B?ZWNBZHpXaThwaTZSQlBhTDFNRUt0U2JreEFBOXNnYzdpZFFsV0loZHo4?=
+ =?iso-2022-jp?B?OENKNVZVQ29aWEdud2ZFMUI0OFo0d3BwSGxUY3J3T3ZVV0tVY0ZXNkRK?=
+ =?iso-2022-jp?B?VE8wbGwzcy9TRVc2VXV5RVhIK3E2UXpHZDNuTy9EUVdoQjRLcC9zbFJm?=
+ =?iso-2022-jp?B?WkkyQUo3NVpnbUU4Qk5ML0dvR09XRlhuK25xK2laU2VIaFN5bTlhK01C?=
+ =?iso-2022-jp?B?YWFKSzV0OXFrRWtwdHBKU2hVdzNwaXROOUxxQS8rT0s0dkowb1QydWky?=
+ =?iso-2022-jp?B?cDlpUisrRVY1dE9VczI0OUFncFBhVnN2dDRnN2M2SjcvOERwdGQyZUlk?=
+ =?iso-2022-jp?B?SFVNVWtBcEovT21BbEFIUWxMZStqcTkzZmpJM1d4K0EzRGt3SWd2b1Fo?=
+ =?iso-2022-jp?B?Y2lESEdqYnU4dFU0dFRMY05hZFl6endpVnFiQWVlUGJZOEF3UXBLMUJi?=
+ =?iso-2022-jp?B?NXVqQjNtUlVvMHB5TkNWb1ZNUFlreVBxdGI4MThzc3BRMFNmMTlNSFZs?=
+ =?iso-2022-jp?B?dTRQcWJBd2lMZ3ZmYWZtZDNkYldiMUFJcGVXR2ZVdzgwZ0htOENzV1ll?=
+ =?iso-2022-jp?B?V1l2d3BJUW1RYXZ2dm5OOGwzbzhiOElYYUZvTUY0OEJIZlZDOSsyMm1Q?=
+ =?iso-2022-jp?B?QUREbXdKK29NdEgrYXNJUzRlRGxGSmMyOStKeUNxZjVoNEpvUTA0czVD?=
+ =?iso-2022-jp?B?NXpIczkvMmdFNWlIOHdwdWZ0WkVDaHlvbWxjblJCT0FEOGVQUnlIV0wv?=
+ =?iso-2022-jp?B?M09NUDJmbWdCbFgrb1VRUlBBZjBBMnhQWVNIUnBiaFBlMStFV09hS1NL?=
+ =?iso-2022-jp?B?WUwyZGxPWGtqa2lXN00vbDI0OWpoVk5zcEhORWJDbjlQZlBSTVpzdnJo?=
+ =?iso-2022-jp?B?SkRzYkg1b25jUUJ4QUdObmY5VjBMVzcvU0UwNVhrS0tNWTlQRXdCVldt?=
+ =?iso-2022-jp?B?N2ZHSzVHcFdtbW1JS3M2eWxRVVRDTUV2MUZuaUswRXh4OHIzWlB4Q3l0?=
+ =?iso-2022-jp?B?dS9zbm9ZYjZiUnVEdTlEN0pabllHejlyNGFlamtTMlRnYnVUZ0dwbDBH?=
+ =?iso-2022-jp?B?OENFZjBvUHZsNVliSjlLODVuNXZsaThQVW5Fc05Zdm9VUVVIQTVIMzY1?=
+ =?iso-2022-jp?B?Q080bWp4WVRZRzBkcUlFQjkwZFFReVY4dkhDcFNMODJVV1c4OVIrdDBj?=
+ =?iso-2022-jp?B?MG8zOXN0amxUcXdLS0d0dEpUcHdPVnNNdW9DU2xmaUdtOEZhS3lyTEY4?=
+ =?iso-2022-jp?B?eFQ1NDdkcW9Kbk83aE9kcjMrU21LUE01L2c9PQ==?=
 Content-Type: text/plain; charset="iso-2022-jp"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: toshiba.co.jp
+X-OriginatorOrg: bp.renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB6388.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 74696378-23b7-4399-22fe-08dce370f8fe
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Oct 2024 06:02:33.2895
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe230340-a9c0-4cec-abee-08dce372d345
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Oct 2024 06:15:48.9678
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 7hz++PccLmNj+8934f783FdpMWowUKKI2yeSufUnyEiojeAI4QI1dWEhitgVSAW2iGK7aT26XC++PFszsESv89LARuoMD/BJbtjTc0ytLHsJtkuFRx1/zSPJgN20n7ee
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB9775
+X-MS-Exchange-CrossTenant-userprincipalname: /Xci43O49PbdlnNARXEQkTF2j9Hk+rPgU5TKqlfUOrFRyU+G4cqzFFzBpvxx8pJ7RM0Lg1e2UhDwrREVvfwKFKtaCsqa2Bwq9GN1vN74QKw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB8461
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 03 Oct 2024 06:02:51 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16984
+ <cip-dev@lists.cip-project.org>; Thu, 03 Oct 2024 06:16:01 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/16985
 
-Hi Biju Das,
+Hi Nobuhiro-San,
+
+Thanks for the feedback.
 
 > -----Original Message-----
-> From: Biju Das <biju.das.jz@bp.renesas.com>
-> Sent: Thursday, October 3, 2024 2:07 AM
-> To: cip-dev@lists.cip-project.org; iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B=
-?.MN=1B(B =1B$B!{#D#I#T#C""=1B(B
-> =1B$B#D#I#T!{#O#S#T=1B(B) <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Mache=
-k
-> <pavel@denx.de>
-> Cc: Biju Das <biju.das.jz@bp.renesas.com>; Lad Prabhakar
-> <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Subject: [PATCH 5.10.y-cip 02/15] pinctrl: renesas: rzg2l: Use dev_err_pr=
-obe()
+> From: nobuhiro1.iwamatsu@toshiba.co.jp <nobuhiro1.iwamatsu@toshiba.co.jp>
+> Subject: RE: [PATCH 6.1.y-cip 02/16] pinctrl: renesas: rzg2l: Use dev_err=
+_probe()
 >=20
-> commit f73f63b24491fa43641daf3b6162d2a451bd8481 upstream.
+> Hi Biju Das,
 >=20
-> Replace dev_err()->dev_err_probe() to simpilfy probe helper functions.
+> > -----Original Message-----
+> > From: Biju Das <biju.das.jz@bp.renesas.com>
+> > Sent: Thursday, October 3, 2024 2:04 AM
+> > To: cip-dev@lists.cip-project.org; iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B=
+$B?.MN=1B(B =1B$B!{#D#I#T#C""=1B(B
+> > =1B$B#D#I#T!{#O#S#T=1B(B) <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Mac=
+hek
+> > <pavel@denx.de>
+> > Cc: Biju Das <biju.das.jz@bp.renesas.com>; Lad Prabhakar
+> > <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Subject: [PATCH 6.1.y-cip 02/16] pinctrl: renesas: rzg2l: Use
+> > dev_err_probe()
+> >
+> > commit f73f63b24491fa43641daf3b6162d2a451bd8481 upstream.
+> >
+> > Replace dev_err()->dev_err_probe() to simpilfy probe helper functions.
+> >
+> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Link:
+> > https://lore.kernel.org/20240728090421.7136-1-biju.das.jz@bp.renesas.c
+> > om
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > ---
+> >  drivers/pinctrl/renesas/pinctrl-rzg2l.c | 37
+> > +++++++++----------------
+> >  1 file changed, 13 insertions(+), 24 deletions(-)
+> >
+> > diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> > b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> > index 6f49da4bd327..0cae3e75b26a 100644
+> > --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> > +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> > @@ -2200,16 +2200,13 @@ static int rzg2l_gpio_register(struct
+> > rzg2l_pinctrl
+> > *pctrl)
+> >  		return -EPROBE_DEFER;
+> >
+> >  	ret =3D of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0,
+> > &of_args);
+> > -	if (ret) {
+> > -		dev_err(pctrl->dev, "Unable to parse gpio-ranges\n");
+> > -		return ret;
+> > -	}
+> > +	if (ret)
+> > +		return dev_err_probe(pctrl->dev, ret, "Unable to parse
+> > +gpio-ranges\n");
+> >
+> >  	if (of_args.args[0] !=3D 0 || of_args.args[1] !=3D 0 ||
+> > -	    of_args.args[2] !=3D pctrl->data->n_port_pins) {
+> > -		dev_err(pctrl->dev, "gpio-ranges does not match selected
+> > SOC\n");
+> > -		return -EINVAL;
+> > -	}
+> > +	    of_args.args[2] !=3D pctrl->data->n_port_pins)
+> > +		return dev_err_probe(pctrl->dev, -EINVAL,
+> > +				     "gpio-ranges does not match selected
+> > SOC\n");
+> >
+> >  	chip->names =3D pctrl->data->port_pins;
+> >  	chip->request =3D rzg2l_gpio_request;
+> > @@ -2241,10 +2238,8 @@ static int rzg2l_gpio_register(struct
+> > rzg2l_pinctrl
+> > *pctrl)
+> >  	pctrl->gpio_range.name =3D chip->label;
+> >  	pctrl->gpio_range.gc =3D chip;
+> >  	ret =3D devm_gpiochip_add_data(pctrl->dev, chip, pctrl);
+> > -	if (ret) {
+> > -		dev_err(pctrl->dev, "failed to add GPIO controller\n");
+> > -		return ret;
+> > -	}
+> > +	if (ret)
+> > +		return dev_err_probe(pctrl->dev, ret, "failed to add GPIO
+> > +controller\n");
+> >
+> >  	dev_dbg(pctrl->dev, "Registered gpio controller\n");
+> >
+> > @@ -2325,22 +2320,16 @@ static int rzg2l_pinctrl_register(struct
+> > rzg2l_pinctrl
+> > *pctrl)
+> >
+> >  	ret =3D devm_pinctrl_register_and_init(pctrl->dev, &pctrl->desc, pctr=
+l,
+> >  					     &pctrl->pctl);
+> > -	if (ret) {
+> > -		dev_err(pctrl->dev, "pinctrl registration failed\n");
+> > -		return ret;
+> > -	}
+> > +	if (ret)
+> > +		return dev_err_probe(pctrl->dev, ret, "pinctrl registration
+> > +failed\n");
+> >
+> >  	ret =3D pinctrl_enable(pctrl->pctl);
+> > -	if (ret) {
+> > -		dev_err(pctrl->dev, "pinctrl enable failed\n");
+> > -		return ret;
+> > -	}
+> > +	if (ret)
+> > +		dev_err_probe(pctrl->dev, ret, "pinctrl enable failed\n");
 >=20
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Link:
-> https://lore.kernel.org/20240728090421.7136-1-biju.das.jz@bp.renesas.com
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
->  drivers/pinctrl/renesas/pinctrl-rzg2l.c | 37 +++++++++----------------
->  1 file changed, 13 insertions(+), 24 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> index c4d9bcb6f80f..7306a100153f 100644
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> @@ -2200,16 +2200,13 @@ static int rzg2l_gpio_register(struct rzg2l_pinct=
-rl
-> *pctrl)
->  		return -EPROBE_DEFER;
->=20
->  	ret =3D of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0,
-> &of_args);
-> -	if (ret) {
-> -		dev_err(pctrl->dev, "Unable to parse gpio-ranges\n");
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		return dev_err_probe(pctrl->dev, ret, "Unable to parse
-> +gpio-ranges\n");
->=20
->  	if (of_args.args[0] !=3D 0 || of_args.args[1] !=3D 0 ||
-> -	    of_args.args[2] !=3D pctrl->data->n_port_pins) {
-> -		dev_err(pctrl->dev, "gpio-ranges does not match selected
-> SOC\n");
-> -		return -EINVAL;
-> -	}
-> +	    of_args.args[2] !=3D pctrl->data->n_port_pins)
-> +		return dev_err_probe(pctrl->dev, -EINVAL,
-> +				     "gpio-ranges does not match selected
-> SOC\n");
->=20
->  	chip->names =3D pctrl->data->port_pins;
->  	chip->request =3D rzg2l_gpio_request;
-> @@ -2241,10 +2238,8 @@ static int rzg2l_gpio_register(struct rzg2l_pinctr=
-l
-> *pctrl)
->  	pctrl->gpio_range.name =3D chip->label;
->  	pctrl->gpio_range.gc =3D chip;
->  	ret =3D devm_gpiochip_add_data(pctrl->dev, chip, pctrl);
-> -	if (ret) {
-> -		dev_err(pctrl->dev, "failed to add GPIO controller\n");
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		return dev_err_probe(pctrl->dev, ret, "failed to add GPIO
-> +controller\n");
->=20
->  	dev_dbg(pctrl->dev, "Registered gpio controller\n");
->=20
-> @@ -2325,22 +2320,16 @@ static int rzg2l_pinctrl_register(struct rzg2l_pi=
-nctrl
-> *pctrl)
->=20
->  	ret =3D devm_pinctrl_register_and_init(pctrl->dev, &pctrl->desc, pctrl,
->  					     &pctrl->pctl);
-> -	if (ret) {
-> -		dev_err(pctrl->dev, "pinctrl registration failed\n");
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		return dev_err_probe(pctrl->dev, ret, "pinctrl registration
-> +failed\n");
->=20
->  	ret =3D pinctrl_enable(pctrl->pctl);
-> -	if (ret) {
-> -		dev_err(pctrl->dev, "pinctrl enable failed\n");
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		dev_err_probe(pctrl->dev, ret, "pinctrl enable failed\n");
->=20
+> return dev_err_probe ?
 
-return dev_err_probe ?
+Good catch. Please drop this patch. I will fix it in mainline and then back=
+port.
 
-Best regards,
-  Nobuhiro
-
+Cheers,
+Biju
 
