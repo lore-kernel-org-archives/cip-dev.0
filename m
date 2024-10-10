@@ -1,348 +1,360 @@
-Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E2C0CEDDA3
-	for <webhook@archiver.kernel.org>; Wed,  9 Oct 2024 23:29:15 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
- by mx.groups.io with SMTP id smtpd.web11.31555.1728516546052110033
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD372CEDDA9
+	for <webhook@archiver.kernel.org>; Thu, 10 Oct 2024 01:03:35 +0000 (UTC)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+ by mx.groups.io with SMTP id smtpd.web11.33271.1728522212481032352
  for <cip-dev@lists.cip-project.org>;
- Wed, 09 Oct 2024 16:29:07 -0700
+ Wed, 09 Oct 2024 18:03:32 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=nobuhiro1.iwamatsu@toshiba.co.jp header.s=key2.smx header.b=F4jeoaf+;
- spf=pass (domain: toshiba.co.jp, ip: 210.130.202.158, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
-DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=toshiba.co.jp;h=From:To:CC
-	:Subject:Date:Message-ID:Content-Type:Content-Transfer-Encoding:MIME-Version;
-	i=nobuhiro1.iwamatsu@toshiba.co.jp;s=key2.smx;t=1728516524;x=1729726124;bh=6C
-	iRKvNO+iWZGW/EK9aQ9OksdOygv0MTDKxL7+U3kvU=;b=F4jeoaf+nfnj6w68wLHa4FoJCQPElwiR
-	2bPMZgQuelSZOScX3xVbPnIXWf1tbX5j+tBckKd0eQZdBXW2r8K/vwPvodZHM1qocZdAChAY2J07u
-	WxuzavyUXlziCMsykqBCRpatgTD3tmt/Z+ViY8TCijrGfMR6aZtV/34K1+ot3Yei1fBvnbyZJaLZD
-	qSpPdKVgBefOLv+0Zaku0OtNJw8Nv+CGq/vZQbsa8+HT6LRteIYIsbZJQFYrssVFPhsrHHW5UI0ga
-	uX9e2Znib5u08G47EhlO+wlg0tbIPkkHVjpF6CIKSJo1USi77sEp6aMa0onVAG/uoNaZ8ezD+Rlm5
-	jQ==;
-Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 499NSg562595522; Thu, 10 Oct 2024 08:28:42 +0900
-X-Iguazu-Qid: 2rWg67yesnDDfUUbab
-X-Iguazu-QSIG: v=2; s=0; t=1728516521; q=2rWg67yesnDDfUUbab; m=Xjn+cz+Eeq6+wAafmGBCyMHUiDVlvwnLwcEVUYJrZhk=
-Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1122) id 499NScvA176331
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 08:28:38 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hgywj49mAfJCQRxfFwowP2ZBnuqjJqnTlfwg16zaMn1CDwpNI7u7Yk5ICa73XQas568PGFuZEXBOw9/yC5AJM/xs0ZCpYANVIpTplod/+HGF9XU+b9uFkjfAdg7wp8/qLTOiM8ZPt2DeHtl5jdt32a6LJzlSca426QNOHskl8YWFFZaCorZxPwrB1MjXZ2Q4FTIabV4eydKm30pU/pLFPDv6ckURenddCjp24mSwLNQn9J4+bIKGuyIYnoDKvDiMCYn59H+gO72bMor+pMpDe5SbcrJbO6i2w6YTIUpIdIpptAkqflfTJ6HnqQWECcOEFJzYK+S3GILpV8dtHfBJ3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KWkvQy9B4U/lNp7OSUdmNPp58GN3JiL8mfLvbUh5/J8=;
- b=xV3/y/R7yhyI7SGHILRop9FgDurc5n6EO8GIKVaU9eUQcleeORDLZ9toWv3ntk+W8ztkEiESZgv9wr1sYaJewune4gtBUiF2/6Wmsd0bC9nhgdC/Ifwvt4/xo3qflf4oEAiPCD91qj28dKtcNRdtNefQgOdcq4+rsRYPXie2szqlcFG7nKbYJMdA1cSOQ7imZBVNNvoXR2hZJF04o3NYyKzDU2bW/o2bZ1CuY8MpkFZgREMS5TVq1CEt3F2ivEaB3s4I+aJuXdHFELBRSprvs8LPg7XN87NEBuaajbHFWt9lIHAT91r5LV1Xj/9nju5fqXZRNsZdAgBMPj+E5xok8Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From: <nobuhiro1.iwamatsu@toshiba.co.jp>
-To: <cip-dev@lists.cip-project.org>
-CC: <jan.kiszka@siemens.com>, <Chris.Paterson2@renesas.com>, <uli@fpond.eu>,
-        <masami.ichikawa@cybertrust.co.jp>, <pavel@denx.de>
-Subject: [ANNOUNCE] Release v5.10.226-cip53
-Thread-Topic: [ANNOUNCE] Release v5.10.226-cip53
-Thread-Index: Adsaor+61xE3HnjOSF+xhNW+Plcu5Q==
-Date: Wed, 9 Oct 2024 23:28:36 +0000
-X-TSB-HOP2: ON
-Message-ID: 
- <OS0PR01MB6388F21E050E5DF0E466881B927F2@OS0PR01MB6388.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS0PR01MB6388:EE_|TYCPR01MB9602:EE_
-x-ms-office365-filtering-correlation-id: 8f3184fa-8d73-48b2-13ef-08dce8ba190e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|376014|366016|1800799024|38070700018|95630200002;
-x-microsoft-antispam-message-info: 
- =?iso-2022-jp?B?SGV5MnVWaEZ4S2hlaWx6dTJHcnVvTXlaNnFzaFlpbDNvT2NWS1V1VEdQ?=
- =?iso-2022-jp?B?eGpka2IxN0pHMGlueXhmdSt5b25iNkF0Y1RFaitSVGwveUZZbnJNc0tw?=
- =?iso-2022-jp?B?SmRLWWlNa2gyRitKT3UrOTM5d0taM2IxSkdRZi95Z2hxODhoKzNYU1h5?=
- =?iso-2022-jp?B?c280cHhLc0RaUkg5Q0RYcVY0QXEwUlFpQmswZ3NiMXlmM1ZFS3VFOS9w?=
- =?iso-2022-jp?B?Q29iQkhTU3RSMmxLRXJpa1RNaEpBNFhzcUJQeVIwNEdkNk9KbFdtblUw?=
- =?iso-2022-jp?B?TUdWQm1IRGo4ZzFnQmhiQUxyQVc3NVFOUnBlSWVvazhzaDBKRUFJM0dJ?=
- =?iso-2022-jp?B?QkdQWUR4MFEvYnp4QURqVDdaMU9OYnRNaHVpTmhWNTR0dHdmdW5jcytI?=
- =?iso-2022-jp?B?L2JYUWFYMVd3N1NoRmFGZVJEdVVGVmhUV2Q2TVB0YXlqUEJoaEZxeXc4?=
- =?iso-2022-jp?B?N1dZTGVsSXpjYzNLS1B5blBUQmlzNVBWZFphRFZQd1NYVlFxN2podVJ0?=
- =?iso-2022-jp?B?QUhOcDN3N21yTmJtMTNEa3BKUkhnZ0hUc21GRlJaQk1EUDVPdlp4YkJr?=
- =?iso-2022-jp?B?MGZTUVZmazNnZ1VjWVkwQUczd0xKamVWc0ZleElCNFYyOCt4SjZkYmF4?=
- =?iso-2022-jp?B?QzYvc1RYY25KVi9VSWN2TVFKcTNLeGt2WXhjd2NxUTExcllCc29wS1ll?=
- =?iso-2022-jp?B?azg3TzhOVDFMSm9zSWVxaWJVekdGNE4rS3hrRDFOa1dDR1B1S05ZeFEw?=
- =?iso-2022-jp?B?aEh6MVRneTR4VW1LRUo1cEp0UG9lSm80MVFudUlZT0xKTElXV1o2RTJL?=
- =?iso-2022-jp?B?alBaT0gxUXBwRWU3ME5ONEdOaGR4OTQ2RWkrZzhzdnZOelZCY0oxcFNi?=
- =?iso-2022-jp?B?Y1BXWnJmY052ekUyRlhvSFZhL1FCU3AzM2J3enhPNTZWc243a3RIWnVH?=
- =?iso-2022-jp?B?Wm9QalMwUEllays1ajdZQzR3N2NVMzMyNFpjMW5jRUUyL1M5TFhPbXNH?=
- =?iso-2022-jp?B?RHlXQzVSckxWKzVibERUb25EWFBBekk0dTNrM29zbi83WnRXUHRXRGpq?=
- =?iso-2022-jp?B?UGplN3FDYmZNTENDcFE4RkU2NW11OFJ0U3NCellEM0Fwb2phMEpQajZr?=
- =?iso-2022-jp?B?dWg2MHBCSG9YZHo5SzhUUUdKa2dNcXVFWmxxbFJ1YzY1eUhqdmpBRkRm?=
- =?iso-2022-jp?B?K1Y1eTRKTnhjVDdmcVN4VldJQ283S1RWYkVPT3gwYmE4WWx6ZTJpWmF1?=
- =?iso-2022-jp?B?TVhvOHRUcEhoSVNuN2kvZlRsWlhRZEUrSllPZTFhYVBzQi9sYnpXUHRF?=
- =?iso-2022-jp?B?RVhiQytXWDRLaExqNVVWYU1wR2p0Wk42eHc5Tnd6N0JvcTMxNGwrdGxs?=
- =?iso-2022-jp?B?TXVtcVpWeU8zUFQvZkd1eElXTC9wcS9QQzBOR01PM1h1QjIzS000Zm5j?=
- =?iso-2022-jp?B?RGUrNXBQWDVobnlwR1h3dmtDVm8zbXRyQkM5cWhrTjNqcllwRFNNY3pq?=
- =?iso-2022-jp?B?WUtEYUNDMW1uTmJ5dDFqQXQzUGxHMklJZjBhTjFjWGM2NzUxRHJEdFBr?=
- =?iso-2022-jp?B?S1haVXpxRm8vWW1jWVhac0NieStHN2FjUVdBSTBsL21RSkZsT2dqSDln?=
- =?iso-2022-jp?B?TzZrSWw2ZU9rRVN3eHg0Rk5UNzBDWVNmRzk0SnAzVmR6dzczQXE4R08x?=
- =?iso-2022-jp?B?MCttd2I1eHlKb1VIYnhCempNa1Joc2RvQ0tiMXlPblc2bmp3M3JUVmhE?=
- =?iso-2022-jp?B?dGw5cEk3T0huYTZFRmpTWUpxOEVIL2NmMnNCL2ljakZVNFoyN0Z2SmRU?=
- =?iso-2022-jp?B?aFp6UkpNV2M0Z0NqUjNmNEljM25yKzdEODlva0ZyeGRLb0FxU2xMbEpn?=
- =?iso-2022-jp?B?eGl6alMvVFNMd1JZQ0tGYVI0TXFSZ1VMNVp4dThVYTgvVGNkMDhDTGtT?=
- =?iso-2022-jp?B?bDZYTUJxZ1JZNDFCWHE1YmhKS2JlOXM5REdubUZsYXl5b2ZLeUpVSFE3?=
- =?iso-2022-jp?B?Yz0=?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB6388.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018)(95630200002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?QXNJcytZMDZIcUNrZmVINWpTVzN0NmNPS2M0UjRiRDFlYmk3Z1ZteUxy?=
- =?iso-2022-jp?B?eGlFS1paY0EzQmlWM09mVjFzZW92SjF4T1lFcW1OaStteHdXMGthL243?=
- =?iso-2022-jp?B?aFdKVzQwV1VWQ1BBYzkvRUFNWHo2bGphd3ZoRm5IdnBaMnZBSk5LUUt3?=
- =?iso-2022-jp?B?ai9DdFJXVVFmQTR0NGpMK1orYTUyV3JYTFFuazNxcHplZ1FEekpLZzRR?=
- =?iso-2022-jp?B?ZUxTWGNKMWRvRXNTK2xxUDNhWjlDWFFwU1l0WlhhOGdNRHBWcVM3dmta?=
- =?iso-2022-jp?B?aXZnYmVWOWVpZEtRcmVjS1d3WU9PUHppNktERGpCZHlEQXVYb3NacTFz?=
- =?iso-2022-jp?B?RTliaHBJL0t5R3JNVU4yVUZCeEFJRlpKQVRuNVU5UWdNb1RtQnhobDNZ?=
- =?iso-2022-jp?B?b2hOcHFxZ3dMMWZRSTNDUTNuSWMwY3hsSlgxUmxreE95cXVVY0J5czkz?=
- =?iso-2022-jp?B?bTNTZmNNUnc2c25ETmxRTkZjYmF5L1lFZVpVSU8zT2Y3SlNkNW1OR2x5?=
- =?iso-2022-jp?B?QTdlWkR2TmFva1NVK2RtUkRIUGpxWUdmMG03bVF4YTBVQU1DYjgxYXFQ?=
- =?iso-2022-jp?B?SUpPTldIQUd0cGVsbVB5Qy8zTGN6ZVd4b0NHbkkwWk5GcXJpS1RqUFp3?=
- =?iso-2022-jp?B?MUE5TFZKMEhaaTVZbHJ3cVQrQ0Z0dWp5QlBKTitZVFVqMGtDd2lFb2N2?=
- =?iso-2022-jp?B?N29tL2xGMFlKUDQyYmhnMkpSM1JqRXdzb0RGbTNlWE1tSFZXb0dHZXEz?=
- =?iso-2022-jp?B?bWhLNjdFQlkveFBFeG5wRGZRUWIrWitYQnJJRkxSMHhvcGR1TjNzVi83?=
- =?iso-2022-jp?B?bGZqU21mcDFjVC9GODFGMHU3a2ZuYUwxZVA0TUppVjI3a0dFL0ZSRVp3?=
- =?iso-2022-jp?B?NEo4VWdMU2JDZUtsdnZHTHVyYVkzVXNmQ1hpUzRibHppcGVTTmF2bVN2?=
- =?iso-2022-jp?B?VDE4ZjcrcnRSV1NCV2Q5WHl4Z3ROZjZLYm5yR3IxV3dxVnkvTHlzNUEw?=
- =?iso-2022-jp?B?MytWUU5iNUhXbXlaV3FCVHVpdG0xWGVRc2hhcUFEbHd1M2UxY0orSS8v?=
- =?iso-2022-jp?B?WjVPVXY1RWJyUUU3K1NqVXQxSlNxK2dicEFnSjNOYWU4bGNWNlg3QTVu?=
- =?iso-2022-jp?B?cHhhdWVEM3pZSG9yQVgzeFloVURWQVB4VWFmZzlRTkx0Nks1UHhXejZl?=
- =?iso-2022-jp?B?eFdVaDcwd0xDSkJqZXdCazlzVjlKQmpoUWdibjJLUEF6c1dpdmNvT1ly?=
- =?iso-2022-jp?B?RWxWSE0vYytaUExYd2p1Tm96RForaUpneXV6amE3VFk2RWExMFNwMjZt?=
- =?iso-2022-jp?B?Sk5rYU1zdnJGZzY1WExYMGdRbUYwbDBmM2g5T0l6aDNSYnhyN1h2UHQ4?=
- =?iso-2022-jp?B?ZjZDYjBTa1pGemZPWncxM1RzWWxQakljWGxQLzgxOXdkR3JSL0NpbjdQ?=
- =?iso-2022-jp?B?WVFoU1FtSFRYeXovWVluejJ4bEhxZEdUc3ZLT3FEaGYyeUJsbnRrbUdR?=
- =?iso-2022-jp?B?QVZtQVdPVGduNWsrVWpKbFJmRFhxY2F0VHV6c0FSYkluZ3VUMVMxdkZu?=
- =?iso-2022-jp?B?U3pmV1pDTDlqcmp2b0NoQVZYWUNkVUxmdHhPTUJicC8wajVwdjduOGxn?=
- =?iso-2022-jp?B?T2FIdUI0UnFPSjdkUk9CM0dXd0hrM2htOFFrSEVKM05MV0lnVnlMRlpJ?=
- =?iso-2022-jp?B?eHFFRzVxYkpFbmdWd1BBL0xuYUdta1F0eXhhUzFuZU0waGtib3NxVWdZ?=
- =?iso-2022-jp?B?dmhXeldRcmVJbFNQUzRhZVBZWmpnMzlDS0VNZHltZ0Y2blFtUm5yQVZx?=
- =?iso-2022-jp?B?R1VBMmx4aWFHRW1hUDFQTTRkZVA4UmlDYmVCa0NNWWlXN3JUaFh2YWtP?=
- =?iso-2022-jp?B?dDdZTTEvbGdZVWtObHJLQ3lmNkU4dmhRaE1GRmw2WGk3V3ZvQ0NZdlg3?=
- =?iso-2022-jp?B?dFBJOVRrWTBrNWcyaHh0dzlzUEg3cEF2c2J6OThnWGJZN2haSFhiMVhk?=
- =?iso-2022-jp?B?a09zd1ZPaGsvYlB1ZGx4N0VoV0FOSmROQ0ZLZlp4Q0UvTlVRWGE2ZFpJ?=
- =?iso-2022-jp?B?cEJxU0dvUC9wVDRKQitMNTZIcEJxdDRYeUJMa05kOHVXMlZSV2tNODNZ?=
- =?iso-2022-jp?B?OVRNMHVnUjR5U2ZkS1d6NXM5RitSZVF6azV4RUNIR1JSeHg1d2hnV0FR?=
- =?iso-2022-jp?B?MDV5enNZWDRxUUNlQUNwRmZwSzZEa1hpUGRrbXh0eThucHZpcHduQjl1?=
- =?iso-2022-jp?B?QnNreEhDWVBoaHRTMW0vajZ1UzJYSUxISitpWXcxR3R5Mjl6MkUzb3Zw?=
- =?iso-2022-jp?B?a0N5QnpQWDJvQVp2Z0hwczVGRm1JR1c5S2c9PQ==?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+ dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=cBX9Db3D;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.128.181, mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6dde476d3dfso4142447b3.3
+        for <cip-dev@lists.cip-project.org>; Wed, 09 Oct 2024 18:03:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1728522211; x=1729127011; darn=lists.cip-project.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FQ3MlaQVHj9JrI7X9IAjckKpKbSU8tjYtU26+17/Sgs=;
+        b=cBX9Db3DZ/iXUl344OfE9e4OCxG1PnhX5u2F82chlQGroIGRtwtlU2JPwHkbSRsF5N
+         Ro/K/FGq8x+kvAnvF3TJBMF5msPNoAFLm/bxz4CaZt7L/A/ulYN0TENF91GzUZtSasjE
+         Hm4iuBS0b/CGvhobC0wVJt5rOaZS2bD3iU+U6bN/X57WZwJkjlzIP4ldNh3i8sjSFMBn
+         D3MdP6hleFfUtDIhlbmUqpjzoNnNvx74FBdiKTepRJL20kqigA5wFcrROvpAY/DMsT1t
+         /4MdpJu05Ld35EIFt3buwEmklaY+woz9WP/QhWSBiGGIPCRFnOXz4/Rxe4B8mKNe2kxu
+         Fxow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728522211; x=1729127011;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FQ3MlaQVHj9JrI7X9IAjckKpKbSU8tjYtU26+17/Sgs=;
+        b=EeiOQOdOjJqQsWAGX0XWzSYT3niTjbZjX3bnO+KD3XnzPkigLAZcDhQsDTwv68kJdT
+         IqBetHOc58FYA59dYvhF04xU9xOrGoeyd5FxcdOiuapm0J+iItxYr4T29Rz9PZnG9VFf
+         sjbVPzeUl/z/mToa6PTK7OmUaXdeFAGAF6OSYcsnImKKhgw9FUhAzze0NUyok3m/tejM
+         /eXgKf/EnSXsBb2PuYfCjP6DWiGVqw7hcPpl7MWLF/0Niv0isCFajchLNHZWcfJbN2JP
+         Ynls+2i2Z2vT/i2YSx4Uad1Fdq83lcY8WO4H90olaM2IvmanceBe+AAT6AHyjxITLHtm
+         mNAg==
+X-Gm-Message-State: AOJu0YwdkWW2OARTcqedF+kAwB2Ga6vfU73GyI0jyDw+BbYd08FEmbW1
+	mdFnyj8ZxgGL8815UE3nZmSRp0f6kOtAVzJV5PC9raxgIXsyUAgXFe7q8j+GoFkxOGKLp3ZbB+l
+	xFRD2sp99Q1IKIUHfcxEcKLEnQ80vmpgSPFcyWZB+DIlIaa0Z2EQ=
+X-Google-Smtp-Source: AGHT+IH/EvjIoLiXHju7arzZ5JTVDgVgYT/ENb/58tjRtdrnx1Cfxjt2dWuwJve1wmA8dMayNMwvtxloBxwxrB0QYug=
+X-Received: by 2002:a05:690c:7106:b0:6e2:e3d:4dda with SMTP id
+ 00721157ae682-6e32214af01mr51429417b3.17.1728522211191; Wed, 09 Oct 2024
+ 18:03:31 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: toshiba.co.jp
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB6388.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8f3184fa-8d73-48b2-13ef-08dce8ba190e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2024 23:28:36.1429
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CQtTNBrORBO8uxlVB6TPE6FfU9ps4jYh4gHs7gBruITf2dofbuxw9VhDZw7TC7WcwaCmb8TNes6FvoGUA0+2hlPpwSFGlYk0HPN9kAoX4QhnYvbDIOEv/gH23P02HYTr
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB9602
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 10 Oct 2024 10:02:55 +0900
+Message-ID: <CAODzB9o_BucpcFUB9EFqwgtpq5MY=ua4LQQh7ABtS1XLVyTkKQ@mail.gmail.com>
+Subject: [kernel-cve-report] New CVE entries this week
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 09 Oct 2024 23:29:15 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17021
+ <cip-dev@lists.cip-project.org>; Thu, 10 Oct 2024 01:03:35 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17022
 
-Hi all,
+Hi!
 
-CIP kernel team has released Linux kernel v5.10.226-cip53.
-The linux-5.10.y-cip tree has been updated base version from v5.10.224 to
-v5.10.226. And this release includes the clock, DU, and DTS patches for the
-Renesas ARM64 SoC.
+It's this week's CVE report.
 
-You can get this release via the git tree at:
+This week reported 18 new CVEs and 2 updated CVEs.
 
-  v5.10.226-cip53:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-5.10.y-cip
-    commit hash:
-      d6d2e910ede61a28e3de9ccfd7e8bce9093b7c6d
-    fixed CVEs:
-      CVE-2021-3669: reading /proc/sysvipc/shm does not scale with large sh=
-ared memory segment counts
-      CVE-2022-48733: btrfs: fix use-after-free after failure to create a s=
-napshot
-      CVE-2023-31083: BUG: general protection fault in hci_uart_tty_ioctl
-      CVE-2024-38577: rcu-tasks: Fix show_rcu_tasks_trace_gp_kthread buffer=
- overflow
-      CVE-2024-41011: drm/amdkfd: don't allow mapping the MMIO HDP page wit=
-h large pages
-      CVE-2024-41098: ata: libata-core: Fix null pointer dereference on err=
-or
-      CVE-2024-42228: drm/amdgpu: Using uninitialized value *size when call=
-ing amdgpu_vce_cs_reloc
-      CVE-2024-42246: net, sunrpc: Remap EPERM in case of connection failur=
-e in xs_tcp_setup_socket
-      CVE-2024-43835: virtio_net: Fix napi_skb_cache_put warning
-      CVE-2024-43853: cgroup/cpuset: Prevent UAF in proc_cpuset_show()
-      CVE-2024-43854: block: initialize integrity buffer to zero before wri=
-ting it to media
-      CVE-2024-43884: Bluetooth: MGMT: Add error handling to pair_device()
-      CVE-2024-43892: memcg: protect concurrent access to mem_cgroup_idr
-      CVE-2024-43905: drm/amd/pm: Fix the null pointer dereference for vega=
-10_hwmgr
-      CVE-2024-44946: kcm: Serialise kcm_sendmsg() for the same socket.
-      CVE-2024-44947: fuse: Initialize beyond-EOF page contents before sett=
-ing uptodate
-      CVE-2024-44974: mptcp: pm: avoid possible UaF when selecting endp
-      CVE-2024-44987: ipv6: prevent UAF in ip6_send_skb()
-      CVE-2024-44988: net: dsa: mv88e6xxx: Fix out-of-bound access
-      CVE-2024-44989: bonding: fix xfrm real_dev null pointer dereference
-      CVE-2024-44990: bonding: fix null pointer deref in bond_ipsec_offload=
-_ok
-      CVE-2024-44995: net: hns3: fix a deadlock problem when config TC duri=
-ng resetting
-      CVE-2024-44998: atm: idt77252: prevent use after free in dequeue_rx()
-      CVE-2024-44999: gtp: pull network headers in gtp_dev_xmit()
-      CVE-2024-45003: vfs: Don't evict inode under the inode lru traversing=
- context
-      CVE-2024-45006: xhci: Fix Panther point NULL pointer deref at full-sp=
-eed re-enumeration
-      CVE-2024-45008: Input: MT - limit max slots
-      CVE-2024-45016: netem: fix return value if duplicate enqueue fails
-      CVE-2024-45018: netfilter: flowtable: initialise extack before use
-      CVE-2024-45021: memcg_write_event_control(): fix a user-triggerable o=
-ops
-      CVE-2024-45025: fix bitmap corruption on close_range() with CLOSE_RAN=
-GE_UNSHARE
-      CVE-2024-45026: s390/dasd: fix error recovery leading to data corrupt=
-ion on ESE devices
-      CVE-2024-45028: mmc: mmc_test: Fix NULL dereference on allocation fai=
-lure
-      CVE-2024-46673: scsi: aacraid: Fix double-free on probe failure
-      CVE-2024-46674: usb: dwc3: st: fix probed platform device ref count o=
-n probe error path
-      CVE-2024-46675: usb: dwc3: core: Prevent USB core invalid event buffe=
-r address access
-      CVE-2024-46676: nfc: pn533: Add poll mod list filling check
-      CVE-2024-46677: gtp: fix a potential NULL pointer dereference
-      CVE-2024-46679: ethtool: check device is present when getting link se=
-ttings
-      CVE-2024-46685: pinctrl: single: fix potential NULL dereference in pc=
-s_get_function()
-      CVE-2024-46689: soc: qcom: cmd-db: Map shared memory as WC, not WB
-      CVE-2024-46702: thunderbolt: Mark XDomain as unplugged when router is=
- removed
-      CVE-2024-46707: KVM: arm64: Make ICC_*SGI*_EL1 undef in the absence o=
-f a vGICv3
-      CVE-2024-46713: perf/aux: Fix AUX buffer serialization
-      CVE-2024-46714: drm/amd/display: Skip wbscl_set_scaler_filter if filt=
-er is null
-      CVE-2024-46719: usb: typec: ucsi: Fix null pointer dereference in tra=
-ce
-      CVE-2024-46721: apparmor: fix possible NULL pointer dereference
-      CVE-2024-46722: drm/amdgpu: fix mc_data out-of-bounds read warning
-      CVE-2024-46723: drm/amdgpu: fix ucode out-of-bounds read warning
-      CVE-2024-46724: drm/amdgpu: Fix out-of-bounds read of df_v1_7_channel=
-_number
-      CVE-2024-46725: drm/amdgpu: Fix out-of-bounds write warning
-      CVE-2024-46731: drm/amd/pm: fix the Out-of-bounds read warning
-      CVE-2024-46737: nvmet-tcp: fix kernel crash if commands allocation fa=
-ils
-      CVE-2024-46738: VMCI: Fix use-after-free when removing resource in vm=
-ci_resource_remove()
-      CVE-2024-46739: uio_hv_generic: Fix kernel NULL pointer dereference i=
-n hv_uio_rescind
-      CVE-2024-46740: binder: fix UAF caused by offsets overwrite
-      CVE-2024-46743: of/irq: Prevent device address out-of-bounds read in =
-interrupt map walk
-      CVE-2024-46744: Squashfs: sanity check symbolic link size
-      CVE-2024-46745: Input: uinput - reject requests with unreasonable num=
-ber of slots
-      CVE-2024-46747: HID: cougar: fix slab-out-of-bounds Read in cougar_re=
-port_fixup
-      CVE-2024-46750: PCI: Add missing bridge lock to pci_bus_lock()
-      CVE-2024-46755: wifi: mwifiex: Do not return unused priv in mwifiex_g=
-et_priv_by_id()
-      CVE-2024-46756: hwmon: (w83627ehf) Fix underflows seen when writing l=
-imit attributes
-      CVE-2024-46757: hwmon: (nct6775-core) Fix underflows seen when writin=
-g limit attributes
-      CVE-2024-46758: hwmon: (lm95234) Fix underflows seen when writing lim=
-it attributes
-      CVE-2024-46759: hwmon: (adc128d818) Fix underflows seen when writing =
-limit attributes
-      CVE-2024-46761: pci/hotplug/pnv_php: Fix hotplug driver crash on Powe=
-rnv
-      CVE-2024-46763: fou: Fix null-ptr-deref in GRO.
-      CVE-2024-46771: can: bcm: Remove proc entry when dev is unregistered.
-      CVE-2024-46777: udf: Avoid excessive partition lengths
-      CVE-2024-46780: nilfs2: protect references to superblock parameters e=
-xposed in sysfs
-      CVE-2024-46781: nilfs2: fix missing cleanup on rollforward recovery e=
-rror
-      CVE-2024-46782: ila: call nf_unregister_net_hooks() sooner
-      CVE-2024-46783: tcp_bpf: fix return value of tcp_bpf_sendmsg()
-      CVE-2024-46791: can: mcp251x: fix deadlock if an interrupt occurs dur=
-ing mcp251x_open
-      CVE-2024-46798: ASoC: dapm: Fix UAF for snd_soc_pcm_runtime object
-      CVE-2024-46800: sch/netem: fix use after free in netem_dequeue
-      CVE-2024-46804: drm/amd/display: Add array index check for hdcp ddc a=
-ccess
-      CVE-2024-46814: drm/amd/display: Check msg_id before processing trans=
-cation
-      CVE-2024-46815: drm/amd/display: Check num_valid_sets before accessin=
-g reader_wm_sets[]
-      CVE-2024-46817: drm/amd/display: Stop amdgpu_dm initialize when strea=
-m nums greater than 6
-      CVE-2024-46818: drm/amd/display: Check gpio_id before used as array i=
-ndex
-      CVE-2024-46819: drm/amdgpu: the warning dereferencing obj for nbio_v7=
-_4
-      CVE-2024-46822: arm64: acpi: Harden get_cpu_for_acpi_id() against mis=
-sing CPU entry
-      CVE-2024-46828: sched: sch_cake: fix bulk flow accounting logic for h=
-ost fairness
-      CVE-2024-46829: rtmutex: Drop rt_mutex::wait_lock before scheduling
-      CVE-2024-46832: MIPS: cevt-r4k: Don't call get_c0_compare_int if time=
-r irq is installed
-      CVE-2024-46840: btrfs: clean up our handling of refs =3D=3D 0 in snap=
-shot delete
-      CVE-2024-46844: um: line: always fill *error_out in setup_one_line()
-    added commits:
-      CIP: Bump version suffix to -cip53 after merge from stable
-      arm64: dts: renesas: rzg2lc-smarc: Enable HDMI audio
-      arm64: dts: renesas: rzg2l-smarc: Enable HDMI audio
-      ASoC: dt-bindings: renesas,rz-ssi: Document port property
-      arm64: dts: renesas: r9a07g043u11-smarc: Enable DU
-      arm64: dts: renesas: r9a07g043u: Add DU node
-      arm64: dts: renesas: r9a07g043u: Add VSPD node
-      arm64: dts: renesas: r9a07g043u: Add FCPVD node
-      drm: renesas: rz-du: Add RZ/G2UL DU Support
-      drm: renesas: Move RZ/G2L MIPI DSI driver to rz-du
-      dt-bindings: display: renesas,rzg2l-du: Document RZ/G2UL DU bindings
-      media: dt-bindings: media: renesas,fcp: Document RZ/G2UL FCPVD bindin=
-gs
-      media: dt-bindings: media: renesas,fcp: Document RZ/{G2L,V2L} FCPVD b=
-indings
-      media: dt-bindings: media: renesas,vsp1: Document RZ/G2UL VSPD bindin=
-gs
-      clk: renesas: r9a07g043: Add LCDC clock and reset entries
-      clk: renesas: r9a07g043: Add clock and reset entries for CRU
-      ASoC: sh: rz-ssi: Add full duplex support
-      arm64: dts: renesas: r9a07g0{43,44,54}: Move regulator-vbus device no=
-de
+* New CVEs
+CVE-2024-46870: drm/amd/display: Disable DMCUB timeout for DCN35
 
-Best regards,
-   Nobuhiro
+Announce: https://lore.kernel.org/linux-cve-announce/2024100958-CVE-2024-46870-f347@gregkh/
+
+There is no mention of the commit that introduced the bug in the CVE
+announcement.Fixed in v6.11-rc1.
+
+Fixed status
+mainline: [7c70e60fbf4bff1123f0e8d5cb1ae71df6164d7f]
+
+CVE-2024-46871: drm/amd/display: Correct the defined value for
+AMDGPU_DMUB_NOTIFICATION_MAX
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024100958-CVE-2024-46871-15f4@gregkh/
+
+There is no mention of the commit that introduced the bug in the CVE
+announcement.Fixed in v6.11-rc1.
+It seems as if this bug was introduced by commit e27c41
+("drm/amd/display: Support
+for DMUB HPD interrupt handling") in 5.16-rc1.
+Bug introduced commit was backported to following branches.
+stable/5.15
+
+Fixed status
+mainline: [ad28d7c3d989fc5689581664653879d664da76f0]
+stable/6.1: [9f404b0bc2df3880758fb3c3bc7496f596f347d7]
+stable/6.6: [800a5ab673c4a61ca220cce177386723d91bdb37]
+
+CVE-2024-47658: crypto: stm32/cryp - call finalize with bh disabled
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024100959-CVE-2024-47658-0b23@gregkh/
+
+There is no mention of the commit that introduced the bug in the CVE
+announcement.Fixed in v6.11-rc1.
+It seems as if this bug was introduced by commit 4b898d5c ("crypto: stm32/cryp -
+fix bugs and crash in tests") in 5.17-rc1.
+Bug introduced commit was backported to following branches.
+cip/5.10 cip/5.10-rt stable/5.10 stable/5.15
+
+Fixed status
+mainline: [56ddb9aa3b324c2d9645b5a7343e46010cf3f6ce]
+stable/6.6: [d93a2f86b0a998aa1f0870c85a2a60a0771ef89a]
+
+CVE-2024-47659: smack: tcp: ipv4, fix incorrect labeling
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024100959-CVE-2024-47659-03a8@gregkh/
+
+There is no mention of the commit that introduced the bug in the CVE
+announcement.Fixed in v6.11-rc1.
+
+Fixed status
+cip/4.4: [40ade4973a204eb111cdf183bc02d46d7b9cd213]
+cip/4.4-st: [40ade4973a204eb111cdf183bc02d46d7b9cd213]
+mainline: [2fe209d0ad2e2729f7e22b9b31a86cc3ff0db550]
+stable/4.19: [d3f56c653c65f170b172d3c23120bc64ada645d8]
+stable/5.10: [a948ec993541db4ef392b555c37a1186f4d61670]
+stable/5.15: [0aea09e82eafa50a373fc8a4b84c1d4734751e2c]
+stable/5.4: [5b4b304f196c070342e32a4752e1fa2e22fc0671]
+stable/6.1: [0776bcf9cb6de46fdd94d10118de1cf9b05f83b9]
+stable/6.6: [4be9fd15c3c88775bdf6fa37acabe6de85beebff]
+
+CVE-2024-47660: fsnotify: clear PARENT_WATCHED flags lazily
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024100959-CVE-2024-47660-2d61@gregkh/
+
+There is no mention of the commit that introduced the bug in the CVE
+announcement.Fixed in v6.11-rc1.
+
+Fixed status
+mainline: [172e422ffea20a89bfdc672741c1aad6fbb5044e]
+stable/5.10: [3f3ef1d9f66b93913ce2171120d9226b55acd41d]
+stable/5.15: [f9a48bc3dd9099935751458a5bbbea4b7c28abc8]
+stable/6.1: [d8c42405fc3507cc43ba7e4986a773c3fc633f6e]
+stable/6.6: [fc1b1e135c3f72382f792e6c319fc088d5523ad5]
+
+CVE-2024-47661: drm/amd/display: Avoid overflow from uint32_t to uint8_t
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024100930-CVE-2024-47661-a6c1@gregkh/
+
+There is no mention of the commit that introduced the bug in the CVE
+announcement.Fixed in v6.11-rc1.
+Bug in the drivers/gpu/drm/amd/display/dc/hwss/dcn21/dcn21_hwseq.c was
+introduced by
+commit 16012806 ("drm/amd/display: Add ABM driver implementation") in 5.8-rc1.
+Bug in the drivers/gpu/drm/amd/display/dc/dce/dmub_abm_lcd.c was introduced by
+commit b8fe56375 ("drm/amd/display: Refactor ABM feature") in 6.5-rc1.
+
+Fixed status
+mainline: [d6b54900c564e35989cf6813e4071504fa0a90e0]
+
+CVE-2024-47662: drm/amd/display: Remove register from DCN35 DMCUB
+diagnostic collection
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024100931-CVE-2024-47662-74f4@gregkh/
+
+There is no mention of the commit that introduced the bug in the CVE
+announcement.Fixed in v6.11-rc1.
+It seems as if this bug was introduced by commit 65138eb ("drm/amd/display:
+Add DCN35 DMUB") in 6.7-rc1.
+
+Fixed status
+mainline: [466423c6dd8af23ebb3a69d43434d01aed0db356]
+
+CVE-2024-47663: staging: iio: frequency: ad9834: Validate frequency
+parameter value
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024100904-CVE-2024-47663-9bdc@gregkh/
+
+Introduced by commit 12b9d5b ("Staging: IIO: DDS: AD9833 / AD9834
+driver") in v2.6.38-rc1.
+Fixed in v6.11-rc7.
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [b48aa991758999d4e8f9296c5bbe388f293ef465]
+stable/5.10: [41cc91e3138fe52f8da92a81bebcd0e6cf488c53]
+stable/5.15: [d8b09a5edc4a634373158c1a405491de3c52e58a]
+stable/5.4: [0e727707a239d5c519fc9abc2f0fd913516a7e47]
+stable/6.1: [3ba9abfcaa9e16bb91ed7e0e2b42e94a157a953e]
+stable/6.6: [dc12e49f970b08d8b007b8981b97e2eb93c0e89d]
+
+CVE-2024-47664: spi: hisi-kunpeng: Add verification for the
+max_frequency provided by the firmware
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024100904-CVE-2024-47664-f6bd@gregkh/
+
+There is no mention of the commit that introduced the bug in the CVE
+announcement.Fixed in v6.11-rc3.
+It seems as if this bug was introduced by commit c770d863 ("spi: Add HiSilicon
+SPI Controller Driver for Kunpeng SoCs") in 5.13-rc1.
+
+Fixed status
+mainline: [5127c42c77de18651aa9e8e0a3ced190103b449c]
+stable/6.6: [16ccaf581da4fcf1e4d66086cf37263f9a656d43]
+
+CVE-2024-47665: i3c: mipi-i3c-hci: Error out instead on BUG_ON() in
+IBI DMA setup
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024100905-CVE-2024-47665-901e@gregkh/
+
+There is no mention of the commit that introduced the bug in the CVE
+announcement.Fixed in v6.11-rc1.
+It seems as if this bug was introduced by commit 9ad9a52 ("i3c/master: introduce
+the mipi-i3c-hci driver") in 5.11-rc1.
+
+Fixed status
+mainline: [8a2be2f1db268ec735419e53ef04ca039fc027dc]
+stable/5.15: [cacb76df247a7cd842ff29755a523b1cba6c0508]
+stable/6.1: [2666085335bdfedf90d91f4071490ad3980be785]
+stable/6.6: [5a022269abb22809f2a174b90f200fc4b9526058]
+
+CVE-2024-47666: scsi: pm80xx: Set phy->enable_completion only when we
+wait for it
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024100905-CVE-2024-47666-0015@gregkh/
+
+There is no mention of the commit that introduced the bug in the CVE
+announcement.Fixed in v6.11-rc1.
+
+Fixed status
+mainline: [e4f949ef1516c0d74745ee54a0f4882c1f6c7aea]
+stable/6.6: [7b1d779647afaea9185fa2f150b1721e7c1aae89]
+
+CVE-2024-47667: PCI: keystone: Add workaround for Errata #i2037 (AM65x SR 1.0)
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024100905-CVE-2024-47667-2d01@gregkh/
+
+There is no mention of the commit that introduced the bug in the CVE
+announcement.Fixed in v6.11-rc1.
+
+Fixed status
+mainline: [86f271f22bbb6391410a07e08d6ca3757fda01fa]
+stable/5.10: [ebbdbbc580c1695dec283d0ba6448729dc993246]
+stable/5.15: [135843c351c08df72bdd4b4ebea53c8052a76881]
+stable/5.4: [cfb006e185f64edbbdf7869eac352442bc76b8f6]
+stable/6.1: [af218c803fe298ddf00abef331aa526b20d7ea61]
+stable/6.6: [576d0fb6f8d4bd4695e70eee173a1b9c7bae9572]
+
+CVE-2024-47668: lib/generic-radix-tree.c: Fix rare race in
+__genradix_ptr_alloc()
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024100906-CVE-2024-47668-6b53@gregkh/
+
+There is no mention of the commit that introduced the bug in the CVE
+announcement.Fixed in v6.11-rc4.
+It seems as if this bug was introduced by commit b2f11c6f ("generic
+radix trees")
+in 5.1-rc1.
+
+Fixed status
+mainline: [b2f11c6f3e1fc60742673b8675c95b78447f3dae]
+stable/5.10: [99418ec776a39609f50934720419e0b464ca2283]
+stable/5.15: [ad5ee9feebc2eb8cfc76ed74a2d6e55343b0e169]
+stable/5.4: [0f27f4f445390cb7f73d4209cb2bf32834dc53da]
+stable/6.1: [ebeff038744c498a036e7a92eb8e433ae0a386d7]
+stable/6.6: [d942e855324a60107025c116245095632476613e]
+
+CVE-2024-47669: nilfs2: fix state management in error path of log
+writing function
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024100906-CVE-2024-47669-135c@gregkh/
+
+Introduced by commit a694291 ("nilfs2: separate wait function from
+nilfs_segctor_write") in v2.6.33-rc1.
+Fixed in v6.11-rc7.
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+cip/4.4: [d6e58f47af1ba487156d469e6ed5b2bdd6c34328]
+cip/4.4-st: [d6e58f47af1ba487156d469e6ed5b2bdd6c34328]
+mainline: [6576dd6695f2afca3f4954029ac4a64f82ba60ab]
+stable/4.19: [40a2757de2c376ef8a08d9ee9c81e77f3c750adf]
+stable/5.10: [efdde00d4a1ef10bb71e09ebc67823a3d3ad725b]
+stable/5.15: [3e349d7191f0688fc9808ef24fd4e4b4ef5ca876]
+stable/5.4: [036441e8438b29111fa75008f0ce305fb4e83c0a]
+stable/6.1: [30562eff4a6dd35c4b5be9699ef61ad9f5f20a06]
+stable/6.6: [0a1a961bde4351dc047ffdeb2f1311ca16a700cc]
+
+CVE-2024-47670: ocfs2: add bounds checking to ocfs2_xattr_find_entry()
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024100919-CVE-2024-47670-53f3@gregkh/
+
+There is no mention of the commit that introduced the bug in the CVE
+announcement.Fixed in v6.11-rc1.
+
+Fixed status
+mainline: [9e3041fecdc8f78a5900c3aa51d3d756e73264d6]
+stable/6.1: [9b32539590a8e6400ac2f6e7cf9cbb8e08711a2f]
+stable/6.6: [1f6e167d6753fe3ea493cdc7f7de8d03147a4d39]
+
+CVE-2024-47671: USB: usbtmc: prevent kernel-usb-infoleak
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024100922-CVE-2024-47671-6c52@gregkh/
+
+Introduced by commit 4ddc645 ("usb: usbtmc: Add ioctl for vendor
+specific write") in v4.20-rc1.
+Fixed in v6.12-rc1.
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [625fa77151f00c1bd00d34d60d6f2e710b3f9aad]
+stable/6.1: [ba6269e187aa1b1f20faf3c458831a0d6350304b]
+stable/6.6: [51297ef7ad7824ad577337f273cd092e81a9fa08]
+
+CVE-2024-47672: wifi: iwlwifi: mvm: don't wait for tx queues if firmware is dead
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024100922-CVE-2024-47672-9bef@gregkh/
+
+There is no mention of the commit that introduced the bug in the CVE
+announcement.Fixed in v6.11-rc6.
+
+Fixed status
+mainline: [3a84454f5204718ca5b4ad2c1f0bf2031e2403d1]
+stable/6.1: [1b0cd832c9607f41f84053b818e0b7908510a3b9]
+stable/6.6: [4d0a900ec470d392476c428875dbf053f8a0ae5e]
+
+CVE-2024-47673: wifi: iwlwifi: mvm: pause TCM when the firmware is stopped
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024100922-CVE-2024-47673-9110@gregkh/
+
+There is no mention of the commit that introduced the bug in the CVE
+announcement.Fixed in v6.11-rc6.
+
+Fixed status
+mainline: [0668ebc8c2282ca1e7eb96092a347baefffb5fe7]
+stable/6.1: [5948a191906b54e10f02f6b7a7670243a39f99f4]
+stable/6.6: [2c61b561baf92a2860c76c2302a62169e22c21cc]
+
+* Updated CVEs
+
+CVE-2024-27060: thunderbolt: Fix NULL pointer dereference in
+tb_port_update_credits()
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [440fba897c5ae32d7df1f1d609dbb19e2bba7fbb]
+stable/6.8: [d3d17e23d1a0d1f959b4fa55b35f1802d9c584fa]
+
+CVE-2024-46710: drm/vmwgfx: Prevent unmapping active read buffers
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.10: [d5228d158e4c0b1663b3983044913c15c3d0135e]
+stable/6.6: [0851b1ec650adadcaa23ec96daad95a55bf966f0]
 
 
+Regards,
+-- 
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
+
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
