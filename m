@@ -1,360 +1,249 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD372CEDDA9
-	for <webhook@archiver.kernel.org>; Thu, 10 Oct 2024 01:03:35 +0000 (UTC)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
- by mx.groups.io with SMTP id smtpd.web11.33271.1728522212481032352
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B80A3CF07BB
+	for <webhook@archiver.kernel.org>; Thu, 10 Oct 2024 07:15:27 +0000 (UTC)
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.69])
+ by mx.groups.io with SMTP id smtpd.web10.37801.1728544521576339579
  for <cip-dev@lists.cip-project.org>;
- Wed, 09 Oct 2024 18:03:32 -0700
+ Thu, 10 Oct 2024 00:15:21 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=cBX9Db3D;
- spf=pass (domain: miraclelinux.com, ip: 209.85.128.181, mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6dde476d3dfso4142447b3.3
-        for <cip-dev@lists.cip-project.org>; Wed, 09 Oct 2024 18:03:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1728522211; x=1729127011; darn=lists.cip-project.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FQ3MlaQVHj9JrI7X9IAjckKpKbSU8tjYtU26+17/Sgs=;
-        b=cBX9Db3DZ/iXUl344OfE9e4OCxG1PnhX5u2F82chlQGroIGRtwtlU2JPwHkbSRsF5N
-         Ro/K/FGq8x+kvAnvF3TJBMF5msPNoAFLm/bxz4CaZt7L/A/ulYN0TENF91GzUZtSasjE
-         Hm4iuBS0b/CGvhobC0wVJt5rOaZS2bD3iU+U6bN/X57WZwJkjlzIP4ldNh3i8sjSFMBn
-         D3MdP6hleFfUtDIhlbmUqpjzoNnNvx74FBdiKTepRJL20kqigA5wFcrROvpAY/DMsT1t
-         /4MdpJu05Ld35EIFt3buwEmklaY+woz9WP/QhWSBiGGIPCRFnOXz4/Rxe4B8mKNe2kxu
-         Fxow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728522211; x=1729127011;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FQ3MlaQVHj9JrI7X9IAjckKpKbSU8tjYtU26+17/Sgs=;
-        b=EeiOQOdOjJqQsWAGX0XWzSYT3niTjbZjX3bnO+KD3XnzPkigLAZcDhQsDTwv68kJdT
-         IqBetHOc58FYA59dYvhF04xU9xOrGoeyd5FxcdOiuapm0J+iItxYr4T29Rz9PZnG9VFf
-         sjbVPzeUl/z/mToa6PTK7OmUaXdeFAGAF6OSYcsnImKKhgw9FUhAzze0NUyok3m/tejM
-         /eXgKf/EnSXsBb2PuYfCjP6DWiGVqw7hcPpl7MWLF/0Niv0isCFajchLNHZWcfJbN2JP
-         Ynls+2i2Z2vT/i2YSx4Uad1Fdq83lcY8WO4H90olaM2IvmanceBe+AAT6AHyjxITLHtm
-         mNAg==
-X-Gm-Message-State: AOJu0YwdkWW2OARTcqedF+kAwB2Ga6vfU73GyI0jyDw+BbYd08FEmbW1
-	mdFnyj8ZxgGL8815UE3nZmSRp0f6kOtAVzJV5PC9raxgIXsyUAgXFe7q8j+GoFkxOGKLp3ZbB+l
-	xFRD2sp99Q1IKIUHfcxEcKLEnQ80vmpgSPFcyWZB+DIlIaa0Z2EQ=
-X-Google-Smtp-Source: AGHT+IH/EvjIoLiXHju7arzZ5JTVDgVgYT/ENb/58tjRtdrnx1Cfxjt2dWuwJve1wmA8dMayNMwvtxloBxwxrB0QYug=
-X-Received: by 2002:a05:690c:7106:b0:6e2:e3d:4dda with SMTP id
- 00721157ae682-6e32214af01mr51429417b3.17.1728522211191; Wed, 09 Oct 2024
- 18:03:31 -0700 (PDT)
-MIME-Version: 1.0
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 10 Oct 2024 10:02:55 +0900
-Message-ID: <CAODzB9o_BucpcFUB9EFqwgtpq5MY=ua4LQQh7ABtS1XLVyTkKQ@mail.gmail.com>
-Subject: [kernel-cve-report] New CVE entries this week
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=lBwhZCGe;
+ spf=pass (domain: siemens.com, ip: 40.107.22.69, mailfrom: jan.kiszka@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kHGczmRc5Y40/qh1GK7XnnKURtUN1cXKH/zWNhYTKSEi3XFem4I9WahvDjf9we4GDrDjSpvIxH61++XZVyNECxQDj0880USvK3y3IOPFMoTlsUm6Gb9j7cw3PveOzj5ajc5kHc27w62OcpAzA4jkGfW4y+jsWG8iDY/IuAaEpv/i9zM4JWU0zrbNvw1SRLDbrebRoBhfr1XdZju5Fq2Dsflo3Zyed52t1ekbGCWTFhcCG9i4KoYQ9Yze6r4fn/HYMhP2tIj4vNc3bbxIDLsOaHhaPyOTmz1kmQ6O630sBGqZoc8/ZutBW352/5aXWFGTkjRTxJ2RI8PacLEvGGlp6w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2yFM9lMYlHYYsfaRH5AjUDWHJkcMyNpdNQ5TtKv8hLQ=;
+ b=m7vqHtnOkNUHEzzR6lTrnCayB8EoAN8F9bqC9cwXhuRDu0A5dWqDnkGbrl/Po12iVIPT34BH6JyOWtDNUcxK0EglzH3xmi1h8xU8S+Ot7jBwLti5LZIcJIyXbn1vt2u8bB40tn9MXHJsndyOz2U1ZBNeVDyrvUpiybzJ4mpoh82nt9sJJlbWzE/6XZ8J1vJBYPpQlNxPeI6sguFvL4dNu7AMAobLE+frh2G1FiBjXli+sDSQa+SO/6ozBwmWzGCr6NwLKkJjkpcnXj14ZGeg29JMZWLPhPjZ5G6AEHA3Kar1uEwdKxIeJqs6MypwQwj5IcjiBKZN+pDAQi/ki2UTLQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2yFM9lMYlHYYsfaRH5AjUDWHJkcMyNpdNQ5TtKv8hLQ=;
+ b=lBwhZCGeZc4PIH1hxo15aXxkWXPcw3578Jt09HC+WjcHSMuiC8PoNiUwFnSkz+hxFgoSkL5x0VsJIn42xhwx3ncGHDrlGIXQLckgShLVcKIvBTL3Pb79Hs6veEdYsnSIljRjMAbgZX/usSBK0zGoTQ0Tto2HE9cNzStRVtSKtE85HjZbDVf+sKXcBSamqORz8VEk4aF96+JFdRvU86FNjqsJPSOu7jklYgeAtuUU8cwTAQeBri6psq3aC0Avl3szfvF2XT57nQ2W2sVcdbFnX7OLw6N0HHIpR4fEYKipvnH54aRzXeO6etM6uVqgFhL6SoAqNROq/FY0zYKBTCDIuw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by AS8PR10MB7230.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:61a::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.17; Thu, 10 Oct
+ 2024 07:15:17 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408%3]) with mapi id 15.20.8048.013; Thu, 10 Oct 2024
+ 07:15:17 +0000
+Message-ID: <114a7d54-edf6-482f-a5de-434108c27174@siemens.com>
+Date: Thu, 10 Oct 2024 09:15:16 +0200
+User-Agent: Mozilla Thunderbird
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: CIP IRC weekly meeting today on libera.chat
 To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Language: en-US
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ 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
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR3P281CA0039.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:4a::11) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS8PR10MB7230:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9daf6c44-75b8-4644-6a7f-08dce8fb4b04
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?UEFQN2xHTzYwSVlRSEJhWWlkdS95OExpSktxSiswRkhSSE9HUXozeVhNY0N6?=
+ =?utf-8?B?QzBlNFdWU2NWMjI3S05JWm5lazVZUGQ0bURNYmVwUnRBVFZ5aSs4SjNvMmc3?=
+ =?utf-8?B?UXA3VFhLUkVkM0pGSG84aWJsRjB2TXQvWFpwRzZ4UXgrTC9vc0tPYzQ4bnFZ?=
+ =?utf-8?B?Zko1QmJwR0FqR3ViMEt1Vk9QTHV6U3lDdmVUWHFXWXBlL2ZBNzEvdWIrYnhL?=
+ =?utf-8?B?MFBDb0pmMWU0VzRXNFA5elJNS09XQlg0STB1MGc2K01xa08yN21uaFRaQUxG?=
+ =?utf-8?B?eE1LT0dsUjF6MzNDVjB5QTA4NFhuVjBaWEcyRWdLNXNzc1Zzd1JGUkZEMEJS?=
+ =?utf-8?B?ZVM1czNpYjNscjlid2dFd2xSM1FsVCtrbjhvWFRnd1YwTnp5bmtWYkhOYk94?=
+ =?utf-8?B?RmtVcFZwNC9RU1hIYkVWVTkvSUIwWFQ4cGNVL2ZaQUJTNzJKU2ZWaEVnWFdK?=
+ =?utf-8?B?c1MycnZaRCsvN3pTbGNySmZNWTkwcTl4WjMzWERmcXduNXVzaHNKMDhVY1Bj?=
+ =?utf-8?B?cng2YUwxazVKb1JlbUdyb3hJdERCMk5SQ3RvRXpuQ0VwMzFUclA1Rnd5cHB3?=
+ =?utf-8?B?Skx5ZXdrODRYOTc4NisvSDQyZFJzMVN5Uk91NjdrNlc1aXZZQ1ozNFFxQWNW?=
+ =?utf-8?B?VCtFNHN1SGZFQ0FwSXBQckU0bllWUEp3UVNjL0Z6ZThOQm1PbVRLK01QTWhq?=
+ =?utf-8?B?cTl2dnBHczhWcUtjdkEvN1hqaG0zVzRCT2JjMDk1WmVWb1FzTFNzaG1tMzBW?=
+ =?utf-8?B?Q2xaRHZvM0h5TmtRdy9jOXg3TGtvSUNDUHdselhWWkExNFVmSDdGb0ErV3dS?=
+ =?utf-8?B?c0crV0RlRG83djVHeG1udlgwN0tMT2ZWem1CblFDVFE3M2hoeFhrS280N0Fs?=
+ =?utf-8?B?Zk5MQWxaREVobUZBekROK2gyZ2RYQThLYjVKWGFqY2F3VGVIYjIyUUlCYXRK?=
+ =?utf-8?B?MExYTXdvRWZiNkk5NlRlZzVqb3BFRFpYcDhJR0ljdG40bGhrRy8rRERCUWZ4?=
+ =?utf-8?B?Z1VEU0VtNERPMzZpbklJTlJJMlhsWlp2bG1WTzFqTlRYbUhzaXJncFFOUGVk?=
+ =?utf-8?B?K0k5ZTFGaUk2RWlWbExlSkM1YzY5K1VtWkE1Q29EdHE5eXR4akkyMFBSRWp4?=
+ =?utf-8?B?SitsQ21sNkVCU0RwU3NlYW1GbW9YWFRnVHlVY2VqaUlkMklhUklmSUZhU0I5?=
+ =?utf-8?B?UXZZSHNwdGN6SFBLenEyekRBV1ZlaFg1c0FlRi9BSU9hdDllKzQvYmRpV1Bn?=
+ =?utf-8?B?T3ppV1Rra0ZaNlJPaTZWVlJBTWF2WUw1dzl3aERvbk5ibmFEUWpMMndTUng4?=
+ =?utf-8?B?N2oydlhTR0ZiS2lLSFcxd0YyVVN2R2M5V0tIbzFjem93ZnJEZGg2TmR5VWNI?=
+ =?utf-8?B?VitlN0hnQ0FsbHZBRmhKTEV0SWxpRXdwTDZ0NmtYdEtXTjR3VWZOWUdZVFFk?=
+ =?utf-8?B?WngyWFZ6YU1jSmFVSGJvV2hPNVE0eXJnWERUQXNabVBoVFhvZi95bXlTYUVP?=
+ =?utf-8?B?dWRRYy84OGFIRlAzbFcvOFJuT0thWGIybW92Z1BPejJmTm9za09XMlhWa3oz?=
+ =?utf-8?B?YlF6NHR2d2N3N1FoclZRY1lieG1DTkZad2tDam9pMmYzeElGelQzL0orWHJy?=
+ =?utf-8?Q?81nBh/Hfa5JnYEUVTPFQcTgC+CaxKFz4LO9/vlZlj7CA=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?cG5NR3p0RnNkMkZXRlNETk85Y1pmQVd5NjY0aDlmZTJKR2JLSU1jWm9WaGll?=
+ =?utf-8?B?T0lXOUJXR2JNSUpLVmRYeDUxa21nSWEyY0UyVDdiVUJpdENHRlhNT1RhSlRq?=
+ =?utf-8?B?QXYyK1RtN2ZUZUxNNFgyNG02RDhVNUh4WUhTaUVVUlkzMzZNTXNIWWg0a2s3?=
+ =?utf-8?B?aHd6MGVkV29jZUZGaW01UkIvR0lxNlBsRWJCTUhhaS9XNW5pNmFxYXlzbTNa?=
+ =?utf-8?B?V3pPU0xVdHZZQVk4S2lMNW1GdG5tVVNlcElmSXFpTTFXVG8zT1VCQ0Jaa1Zs?=
+ =?utf-8?B?Q3hZNFdRNnMwbUVkWXhwNTd1Ym4reXhzdTl4NDE4eVJjRTNKZzBnb0pCWjNW?=
+ =?utf-8?B?VjNVcytydGkwYnpFdFZvdTV0eUpja1NCdkZqMHQvb2VNSjdWNnVpOVpGSTly?=
+ =?utf-8?B?NW9JaHlSZklIOHMrNE9qdVJ6bm9XbEhGOU9ZNW0zSDk1Uk1ZWTIzbWtSSTVM?=
+ =?utf-8?B?Mkk5MzRPdnVNNGFLckErbWtVaTlPOXArb2VHaFpxblRnUDFCakNBdFVTY0hs?=
+ =?utf-8?B?ZnZ2TXNTRXlVUnBiZFptRktma2w5VzlzQVR2bS84OGJVdXBydkovTUFJV1FF?=
+ =?utf-8?B?VkZnMWZUVlUwTytGN3QreTM3TElxSVk5SWhxUEp2MGNHU3JudHJhVlBVZDlV?=
+ =?utf-8?B?QU9WU2RybU5LUXVBemo4SW00RlRtWVVCNVFGemoyZnRBeWE5UzlONzJHL3ZQ?=
+ =?utf-8?B?TGl6VS9ER2R6a25VbkcyT2pXeGQ5eE5PQTlGQWIvb3liMlNpRmF2c3FsSEpC?=
+ =?utf-8?B?NmZHaFVqNjdTT0RMaWRBbjNqb0NuUndkRWNPZUdERDl5RzlJWFdwVG9QaWlz?=
+ =?utf-8?B?MkdYN2ZaTTl0SkNCckVjcWhqVTRPWGRHM3B4aHU1ck1GRDNENlBMSklndW03?=
+ =?utf-8?B?ekUycjdBZDU0Y2JrODdpam15ckRGN1pzK2EwYzZOWlFBalZWUzV3Uk04dncr?=
+ =?utf-8?B?Yk01akhNeWx3cXZPcll5RzNnRmFGeXVHNFpoNmJITDZMRk5RM0UyenVUdWt2?=
+ =?utf-8?B?MTNCSWhXWGh6VjcrQWUvVndBdXhLeG9yYkhPTFVOcjRvb3YyTjBIM0ZPcXNO?=
+ =?utf-8?B?SHY0S0xLN253SmV4TGJkNEx3T2dWaHh4VitVZnFycklBRGpHVEFGZlJxMWN3?=
+ =?utf-8?B?Q2ZlNzZpbFZ0TE5ScnRQYnBBVll5RnFmdHRmVldmVG5qSGgrNU9vek9LcDVB?=
+ =?utf-8?B?dFNVZnB1YUFHZWRkYmdPenZaek91RkVxdzVLL0t5bHE1SGp3WDhEY21mRUNp?=
+ =?utf-8?B?QjZmVXo2SWZWeDlndVRTbTRKcFhKYkNJZTJxc3NzS0hmZTFrMXBxbTlGOCs4?=
+ =?utf-8?B?eXB2QkFGQUYvV0Z2a3U2eTVZelJXUi9vbGxETTY1K1ZuWFRlZlR1QTNIeHdK?=
+ =?utf-8?B?NTdQVTNsOXl2cFE2VjVIRnh1bEJlQ090OC9YODhkUkZFSE42cmhsMm83QkFP?=
+ =?utf-8?B?WHZIUmdzUERTNnFkdXBOSGoyQmRaSGdMR3kzMGpFZFlvd2R1T3hWaHZLVDdM?=
+ =?utf-8?B?L3NVUUc0eDQyeEpOdjlDbXpHbG5hOFF0TDdoWHNOV2t4ZGFLTnRKb0lvSUVK?=
+ =?utf-8?B?cE8ybW5jNVRzMW9EQmc2NFVrYTVQREZNNGtYb2c2MzVxTG9XOW5KL1hCQjRa?=
+ =?utf-8?B?eWFXOWVFSWVsdEVaKys5Umo2bG1YanRibGJXenlPZlI2cWYxQUtMZExiK1BR?=
+ =?utf-8?B?d0RVRFNiSDBSOThsOThPRXhEL0hSYWlEZEQwUGV5TEFHZUg1VEpEZ216Wkwy?=
+ =?utf-8?B?bGdZNjlrckZ0aUZHRTZXayszdXdNc3ArWjJjckRycDlQWmEraXowemo3aUZp?=
+ =?utf-8?B?SER0YVRFWU1rdFArMnZ1UE5vUE14QVBkUHc5ajhlWkdaejdLdVhGL2I4S0Yr?=
+ =?utf-8?B?QnhTOHBvTDl2alM1MUpYV3Nsb1ptaFk4bHlBVlFlanZNSUthUTZhMlc5U1Fv?=
+ =?utf-8?B?MHFuZGlGdC83TTNyM2NKKzFXUExJVHBaaUtCR1ZXanJLS2VnMGFOR1ZaMUNi?=
+ =?utf-8?B?dFd0eVJlNVdLWFBkQXpNbExBMXRlUVIwdksrLzY3RTN2b2JOTzlFd1VPeklT?=
+ =?utf-8?B?UEgrcWs5Q2J0aGpxWTNHUlhzVFNnakQwZ0VDUnVqRGNnQUhSK2tMVHEyRmVJ?=
+ =?utf-8?Q?yXvc7kAsqZBcHiyzsI+ROXVY9?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9daf6c44-75b8-4644-6a7f-08dce8fb4b04
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 07:15:17.4240
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9VkP2Eq3bnOQ85Nmn3n2GXpZA2DPYGHsiFcxa+m6QfnPufqMiQoiQkrfKK/aBO5zxmtYB9sOb4UENkw4I3ZhBw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB7230
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 10 Oct 2024 01:03:35 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17022
-
-Hi!
-
-It's this week's CVE report.
-
-This week reported 18 new CVEs and 2 updated CVEs.
-
-* New CVEs
-CVE-2024-46870: drm/amd/display: Disable DMCUB timeout for DCN35
-
-Announce: https://lore.kernel.org/linux-cve-announce/2024100958-CVE-2024-46870-f347@gregkh/
-
-There is no mention of the commit that introduced the bug in the CVE
-announcement.Fixed in v6.11-rc1.
-
-Fixed status
-mainline: [7c70e60fbf4bff1123f0e8d5cb1ae71df6164d7f]
-
-CVE-2024-46871: drm/amd/display: Correct the defined value for
-AMDGPU_DMUB_NOTIFICATION_MAX
-
-Announce: https://lore.kernel.org/linux-cve-announce/2024100958-CVE-2024-46871-15f4@gregkh/
-
-There is no mention of the commit that introduced the bug in the CVE
-announcement.Fixed in v6.11-rc1.
-It seems as if this bug was introduced by commit e27c41
-("drm/amd/display: Support
-for DMUB HPD interrupt handling") in 5.16-rc1.
-Bug introduced commit was backported to following branches.
-stable/5.15
-
-Fixed status
-mainline: [ad28d7c3d989fc5689581664653879d664da76f0]
-stable/6.1: [9f404b0bc2df3880758fb3c3bc7496f596f347d7]
-stable/6.6: [800a5ab673c4a61ca220cce177386723d91bdb37]
-
-CVE-2024-47658: crypto: stm32/cryp - call finalize with bh disabled
-
-Announce: https://lore.kernel.org/linux-cve-announce/2024100959-CVE-2024-47658-0b23@gregkh/
-
-There is no mention of the commit that introduced the bug in the CVE
-announcement.Fixed in v6.11-rc1.
-It seems as if this bug was introduced by commit 4b898d5c ("crypto: stm32/cryp -
-fix bugs and crash in tests") in 5.17-rc1.
-Bug introduced commit was backported to following branches.
-cip/5.10 cip/5.10-rt stable/5.10 stable/5.15
-
-Fixed status
-mainline: [56ddb9aa3b324c2d9645b5a7343e46010cf3f6ce]
-stable/6.6: [d93a2f86b0a998aa1f0870c85a2a60a0771ef89a]
-
-CVE-2024-47659: smack: tcp: ipv4, fix incorrect labeling
-
-Announce: https://lore.kernel.org/linux-cve-announce/2024100959-CVE-2024-47659-03a8@gregkh/
-
-There is no mention of the commit that introduced the bug in the CVE
-announcement.Fixed in v6.11-rc1.
-
-Fixed status
-cip/4.4: [40ade4973a204eb111cdf183bc02d46d7b9cd213]
-cip/4.4-st: [40ade4973a204eb111cdf183bc02d46d7b9cd213]
-mainline: [2fe209d0ad2e2729f7e22b9b31a86cc3ff0db550]
-stable/4.19: [d3f56c653c65f170b172d3c23120bc64ada645d8]
-stable/5.10: [a948ec993541db4ef392b555c37a1186f4d61670]
-stable/5.15: [0aea09e82eafa50a373fc8a4b84c1d4734751e2c]
-stable/5.4: [5b4b304f196c070342e32a4752e1fa2e22fc0671]
-stable/6.1: [0776bcf9cb6de46fdd94d10118de1cf9b05f83b9]
-stable/6.6: [4be9fd15c3c88775bdf6fa37acabe6de85beebff]
-
-CVE-2024-47660: fsnotify: clear PARENT_WATCHED flags lazily
-
-Announce: https://lore.kernel.org/linux-cve-announce/2024100959-CVE-2024-47660-2d61@gregkh/
-
-There is no mention of the commit that introduced the bug in the CVE
-announcement.Fixed in v6.11-rc1.
-
-Fixed status
-mainline: [172e422ffea20a89bfdc672741c1aad6fbb5044e]
-stable/5.10: [3f3ef1d9f66b93913ce2171120d9226b55acd41d]
-stable/5.15: [f9a48bc3dd9099935751458a5bbbea4b7c28abc8]
-stable/6.1: [d8c42405fc3507cc43ba7e4986a773c3fc633f6e]
-stable/6.6: [fc1b1e135c3f72382f792e6c319fc088d5523ad5]
-
-CVE-2024-47661: drm/amd/display: Avoid overflow from uint32_t to uint8_t
-
-Announce: https://lore.kernel.org/linux-cve-announce/2024100930-CVE-2024-47661-a6c1@gregkh/
-
-There is no mention of the commit that introduced the bug in the CVE
-announcement.Fixed in v6.11-rc1.
-Bug in the drivers/gpu/drm/amd/display/dc/hwss/dcn21/dcn21_hwseq.c was
-introduced by
-commit 16012806 ("drm/amd/display: Add ABM driver implementation") in 5.8-rc1.
-Bug in the drivers/gpu/drm/amd/display/dc/dce/dmub_abm_lcd.c was introduced by
-commit b8fe56375 ("drm/amd/display: Refactor ABM feature") in 6.5-rc1.
-
-Fixed status
-mainline: [d6b54900c564e35989cf6813e4071504fa0a90e0]
-
-CVE-2024-47662: drm/amd/display: Remove register from DCN35 DMCUB
-diagnostic collection
-
-Announce: https://lore.kernel.org/linux-cve-announce/2024100931-CVE-2024-47662-74f4@gregkh/
-
-There is no mention of the commit that introduced the bug in the CVE
-announcement.Fixed in v6.11-rc1.
-It seems as if this bug was introduced by commit 65138eb ("drm/amd/display:
-Add DCN35 DMUB") in 6.7-rc1.
-
-Fixed status
-mainline: [466423c6dd8af23ebb3a69d43434d01aed0db356]
-
-CVE-2024-47663: staging: iio: frequency: ad9834: Validate frequency
-parameter value
-
-Announce: https://lore.kernel.org/linux-cve-announce/2024100904-CVE-2024-47663-9bdc@gregkh/
-
-Introduced by commit 12b9d5b ("Staging: IIO: DDS: AD9833 / AD9834
-driver") in v2.6.38-rc1.
-Fixed in v6.11-rc7.
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [b48aa991758999d4e8f9296c5bbe388f293ef465]
-stable/5.10: [41cc91e3138fe52f8da92a81bebcd0e6cf488c53]
-stable/5.15: [d8b09a5edc4a634373158c1a405491de3c52e58a]
-stable/5.4: [0e727707a239d5c519fc9abc2f0fd913516a7e47]
-stable/6.1: [3ba9abfcaa9e16bb91ed7e0e2b42e94a157a953e]
-stable/6.6: [dc12e49f970b08d8b007b8981b97e2eb93c0e89d]
-
-CVE-2024-47664: spi: hisi-kunpeng: Add verification for the
-max_frequency provided by the firmware
-
-Announce: https://lore.kernel.org/linux-cve-announce/2024100904-CVE-2024-47664-f6bd@gregkh/
-
-There is no mention of the commit that introduced the bug in the CVE
-announcement.Fixed in v6.11-rc3.
-It seems as if this bug was introduced by commit c770d863 ("spi: Add HiSilicon
-SPI Controller Driver for Kunpeng SoCs") in 5.13-rc1.
-
-Fixed status
-mainline: [5127c42c77de18651aa9e8e0a3ced190103b449c]
-stable/6.6: [16ccaf581da4fcf1e4d66086cf37263f9a656d43]
-
-CVE-2024-47665: i3c: mipi-i3c-hci: Error out instead on BUG_ON() in
-IBI DMA setup
-
-Announce: https://lore.kernel.org/linux-cve-announce/2024100905-CVE-2024-47665-901e@gregkh/
-
-There is no mention of the commit that introduced the bug in the CVE
-announcement.Fixed in v6.11-rc1.
-It seems as if this bug was introduced by commit 9ad9a52 ("i3c/master: introduce
-the mipi-i3c-hci driver") in 5.11-rc1.
-
-Fixed status
-mainline: [8a2be2f1db268ec735419e53ef04ca039fc027dc]
-stable/5.15: [cacb76df247a7cd842ff29755a523b1cba6c0508]
-stable/6.1: [2666085335bdfedf90d91f4071490ad3980be785]
-stable/6.6: [5a022269abb22809f2a174b90f200fc4b9526058]
-
-CVE-2024-47666: scsi: pm80xx: Set phy->enable_completion only when we
-wait for it
-
-Announce: https://lore.kernel.org/linux-cve-announce/2024100905-CVE-2024-47666-0015@gregkh/
-
-There is no mention of the commit that introduced the bug in the CVE
-announcement.Fixed in v6.11-rc1.
-
-Fixed status
-mainline: [e4f949ef1516c0d74745ee54a0f4882c1f6c7aea]
-stable/6.6: [7b1d779647afaea9185fa2f150b1721e7c1aae89]
-
-CVE-2024-47667: PCI: keystone: Add workaround for Errata #i2037 (AM65x SR 1.0)
-
-Announce: https://lore.kernel.org/linux-cve-announce/2024100905-CVE-2024-47667-2d01@gregkh/
-
-There is no mention of the commit that introduced the bug in the CVE
-announcement.Fixed in v6.11-rc1.
-
-Fixed status
-mainline: [86f271f22bbb6391410a07e08d6ca3757fda01fa]
-stable/5.10: [ebbdbbc580c1695dec283d0ba6448729dc993246]
-stable/5.15: [135843c351c08df72bdd4b4ebea53c8052a76881]
-stable/5.4: [cfb006e185f64edbbdf7869eac352442bc76b8f6]
-stable/6.1: [af218c803fe298ddf00abef331aa526b20d7ea61]
-stable/6.6: [576d0fb6f8d4bd4695e70eee173a1b9c7bae9572]
-
-CVE-2024-47668: lib/generic-radix-tree.c: Fix rare race in
-__genradix_ptr_alloc()
-
-Announce: https://lore.kernel.org/linux-cve-announce/2024100906-CVE-2024-47668-6b53@gregkh/
-
-There is no mention of the commit that introduced the bug in the CVE
-announcement.Fixed in v6.11-rc4.
-It seems as if this bug was introduced by commit b2f11c6f ("generic
-radix trees")
-in 5.1-rc1.
-
-Fixed status
-mainline: [b2f11c6f3e1fc60742673b8675c95b78447f3dae]
-stable/5.10: [99418ec776a39609f50934720419e0b464ca2283]
-stable/5.15: [ad5ee9feebc2eb8cfc76ed74a2d6e55343b0e169]
-stable/5.4: [0f27f4f445390cb7f73d4209cb2bf32834dc53da]
-stable/6.1: [ebeff038744c498a036e7a92eb8e433ae0a386d7]
-stable/6.6: [d942e855324a60107025c116245095632476613e]
-
-CVE-2024-47669: nilfs2: fix state management in error path of log
-writing function
-
-Announce: https://lore.kernel.org/linux-cve-announce/2024100906-CVE-2024-47669-135c@gregkh/
-
-Introduced by commit a694291 ("nilfs2: separate wait function from
-nilfs_segctor_write") in v2.6.33-rc1.
-Fixed in v6.11-rc7.
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-cip/4.4: [d6e58f47af1ba487156d469e6ed5b2bdd6c34328]
-cip/4.4-st: [d6e58f47af1ba487156d469e6ed5b2bdd6c34328]
-mainline: [6576dd6695f2afca3f4954029ac4a64f82ba60ab]
-stable/4.19: [40a2757de2c376ef8a08d9ee9c81e77f3c750adf]
-stable/5.10: [efdde00d4a1ef10bb71e09ebc67823a3d3ad725b]
-stable/5.15: [3e349d7191f0688fc9808ef24fd4e4b4ef5ca876]
-stable/5.4: [036441e8438b29111fa75008f0ce305fb4e83c0a]
-stable/6.1: [30562eff4a6dd35c4b5be9699ef61ad9f5f20a06]
-stable/6.6: [0a1a961bde4351dc047ffdeb2f1311ca16a700cc]
-
-CVE-2024-47670: ocfs2: add bounds checking to ocfs2_xattr_find_entry()
-
-Announce: https://lore.kernel.org/linux-cve-announce/2024100919-CVE-2024-47670-53f3@gregkh/
-
-There is no mention of the commit that introduced the bug in the CVE
-announcement.Fixed in v6.11-rc1.
-
-Fixed status
-mainline: [9e3041fecdc8f78a5900c3aa51d3d756e73264d6]
-stable/6.1: [9b32539590a8e6400ac2f6e7cf9cbb8e08711a2f]
-stable/6.6: [1f6e167d6753fe3ea493cdc7f7de8d03147a4d39]
-
-CVE-2024-47671: USB: usbtmc: prevent kernel-usb-infoleak
-
-Announce: https://lore.kernel.org/linux-cve-announce/2024100922-CVE-2024-47671-6c52@gregkh/
-
-Introduced by commit 4ddc645 ("usb: usbtmc: Add ioctl for vendor
-specific write") in v4.20-rc1.
-Fixed in v6.12-rc1.
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [625fa77151f00c1bd00d34d60d6f2e710b3f9aad]
-stable/6.1: [ba6269e187aa1b1f20faf3c458831a0d6350304b]
-stable/6.6: [51297ef7ad7824ad577337f273cd092e81a9fa08]
-
-CVE-2024-47672: wifi: iwlwifi: mvm: don't wait for tx queues if firmware is dead
-
-Announce: https://lore.kernel.org/linux-cve-announce/2024100922-CVE-2024-47672-9bef@gregkh/
-
-There is no mention of the commit that introduced the bug in the CVE
-announcement.Fixed in v6.11-rc6.
-
-Fixed status
-mainline: [3a84454f5204718ca5b4ad2c1f0bf2031e2403d1]
-stable/6.1: [1b0cd832c9607f41f84053b818e0b7908510a3b9]
-stable/6.6: [4d0a900ec470d392476c428875dbf053f8a0ae5e]
-
-CVE-2024-47673: wifi: iwlwifi: mvm: pause TCM when the firmware is stopped
-
-Announce: https://lore.kernel.org/linux-cve-announce/2024100922-CVE-2024-47673-9110@gregkh/
-
-There is no mention of the commit that introduced the bug in the CVE
-announcement.Fixed in v6.11-rc6.
-
-Fixed status
-mainline: [0668ebc8c2282ca1e7eb96092a347baefffb5fe7]
-stable/6.1: [5948a191906b54e10f02f6b7a7670243a39f99f4]
-stable/6.6: [2c61b561baf92a2860c76c2302a62169e22c21cc]
-
-* Updated CVEs
-
-CVE-2024-27060: thunderbolt: Fix NULL pointer dereference in
-tb_port_update_credits()
-
-stable/6.6 was fixed.
-
-Fixed status
-stable/6.6: [440fba897c5ae32d7df1f1d609dbb19e2bba7fbb]
-stable/6.8: [d3d17e23d1a0d1f959b4fa55b35f1802d9c584fa]
-
-CVE-2024-46710: drm/vmwgfx: Prevent unmapping active read buffers
-
-stable/6.6 was fixed.
-
-Fixed status
-stable/6.10: [d5228d158e4c0b1663b3983044913c15c3d0135e]
-stable/6.6: [0851b1ec650adadcaa23ec96daad95a55bf966f0]
-
-
-Regards,
--- 
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
-
-Email :masami.ichikawa@cybertrust.co.jp
-          :masami.ichikawa@miraclelinux.com
+ <cip-dev@lists.cip-project.org>; Thu, 10 Oct 2024 07:15:27 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17023
+
+Hi all,
+
+Kindly be reminded to attend the weekly meeting through IRC to discuss
+technical topics with CIP kernel today. Our channel is the following:
+
+    irc:irc.libera.chat:6667/cip
+
+The IRC meeting is scheduled to UTC (GMT) 13:00:
+
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2024&month=10&day=10&hour=13&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
+
+USWest    USEast    UK        DE        TW        JP
+06:00     09:00     14:00     15:00     21:00     22:00
+
+Last meeting minutes:
+https://ircbot.wl.linuxfoundation.org/meetings/cip/2024/10/cip.2024-10-03-13.13.log.html
+
+* Action items
+  - prepare blog entry on SLTS kernel state and challenges [Jan]
+* Kernel maintenance updates
+* Kernel release status [*]
+* Kernel testing
+* AOB
+  - meeting host for 10/17/2024
+
+Jan
+
+[*]
+linux-4.4.y-cip: interval 30 day
+  latest version release date: Wed Oct  9 04:23:37 AM UTC 2024
+  limit date: Fri Nov  8 04:23:37 AM UTC 2024
+  Status: On track
+linux-4.4.y-cip-rt: interval 60 day
+  latest version release date: Mon Sep 30 09:48:28 AM UTC 2024
+  limit date: Fri Nov 29 09:48:28 AM UTC 2024
+  Status: On track
+linux-4.19.y-cip: interval 30 day
+  latest version release date: Tue Sep 24 09:32:37 AM UTC 2024
+  limit date: Thu Oct 24 09:32:37 AM UTC 2024
+  Status: On track
+linux-4.19.y-cip-rt: interval 60 day
+  latest version release date: Tue Sep 24 10:34:04 AM UTC 2024
+  limit date: Sat Nov 23 10:34:04 AM UTC 2024
+  Status: On track
+linux-5.10.y-cip: interval 30 day
+  latest version release date: Wed Oct  9 10:54:23 PM UTC 2024
+  limit date: Fri Nov  8 10:54:23 PM UTC 2024
+  Status: On track
+linux-5.10.y-cip-rt: interval 60 day
+  latest version release date: Sat Sep  7 01:56:36 PM UTC 2024
+  limit date: Wed Nov  6 01:56:36 PM UTC 2024
+  Status: On track
+linux-6.1.y-cip: interval 15 day
+  latest version release date: Fri Sep 27 09:03:28 AM UTC 2024
+  limit date: Sat Oct 12 09:03:28 AM UTC 2024
+  Status: On track
+linux-6.1.y-cip-rt: interval 30 day
+  latest version release date: Sat Sep  7 01:00:42 PM UTC 2024
+  limit date: Mon Oct  7 01:00:42 PM UTC 2024
+  Status: *Late*
 
