@@ -1,153 +1,201 @@
-Return-Path: <iwamatsu@gmail.com>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8018CD2F7D1
-	for <webhook@archiver.kernel.org>; Wed, 16 Oct 2024 22:08:20 +0000 (UTC)
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
- by mx.groups.io with SMTP id smtpd.web11.36173.1729116497338667933
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF04D2F7D2
+	for <webhook@archiver.kernel.org>; Wed, 16 Oct 2024 22:49:30 +0000 (UTC)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+ by mx.groups.io with SMTP id smtpd.web10.36342.1729118960106559339
  for <cip-dev@lists.cip-project.org>;
- Wed, 16 Oct 2024 15:08:17 -0700
+ Wed, 16 Oct 2024 15:49:20 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=Z/WJcr/G;
- spf=pass (domain: gmail.com, ip: 209.85.160.179, mailfrom: iwamatsu@gmail.com)
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4603d3e456bso2542851cf.2
-        for <cip-dev@lists.cip-project.org>; Wed, 16 Oct 2024 15:08:17 -0700 (PDT)
+ dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=s9cZt0Vs;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.128.176, mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6e33c65d104so4027857b3.3
+        for <cip-dev@lists.cip-project.org>; Wed, 16 Oct 2024 15:49:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729116496; x=1729721296; darn=lists.cip-project.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BnXrg2PuT9/nSGSesShPC2ZMOfkzmmHgTHIYn9OuiwQ=;
-        b=Z/WJcr/GpTZDGqrTAsSPi0KrU8OV7/GOfo9seqoqcSQk+YK7Gzg/4pVrpgt015jQT4
-         H3ddA7DpWsJ010H5xwjKwMU6/GHf7BDSEXz2t2TOiqqeAj8Xrtn/1+E423PDg+hGQqk6
-         b1bHXqpyWQwAg1jCvPTNmhcOptf2bSzsnI0Ozmn1v9AG6h+i9T8idflHiVYxDDSGgDZJ
-         1s7fOWAK062pKqLP/5DJa4fNqEJLItMpU3XIlc1D+sAl/lCsP4kiRvlnSlPWSmjs2zug
-         5X7DX9WXaTOTt0jc4NIes2bXFdnh4J41XuXQfb+B5lGqY3w1lk4SbtVF5z3Jfn/6VI5Y
-         huNg==
+        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1729118959; x=1729723759; darn=lists.cip-project.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ywQxHwC9U2KfZhInp3PoE528tZTqk4jHE6UYiFe6YW0=;
+        b=s9cZt0VsGZ59KWELoDClOZ4pPhSnGs4Ejr0We1TDoT62aF7CAnDWR5GUjJGN614kCm
+         ohRCobdm4bNktCMyME4t0L/xh4PZSTpc7ZSnTAW6I6pksUQiqYvtZHcocUD7TUDy6hwB
+         DQx4FggSgit0ObgI268E+MZFoaxLFQIO03Mrh2iE9EVOFXdh9ySHwVR7jo8RXLeFCcDM
+         cY3d72lQLAaULHUd/QjAxS1qDSND6T9vYzzVQXd/M7/HuD5e+59Jb70irIS1JwWpNJWF
+         mBF9170nc5w9K6uV2WBkjRdenD2x6VtNXxfruf3E6ON6r7wWGQcAz6tE5zJ/8mx1BPQX
+         37aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729116496; x=1729721296;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BnXrg2PuT9/nSGSesShPC2ZMOfkzmmHgTHIYn9OuiwQ=;
-        b=sihMLJyW7sK/Yn92E+04w9+DDK4hVamyY5cBG74S5kExmJLrJ6opyxbqvAnPHefRSU
-         VOaGOVJzBqi6knkG1elqqY1Z7+YwoomVjpQHE/O608c84dB5GiFQkfHd+0AE+CKzECH2
-         X6kO8vVHj/7UWQpClE7SEL1RmcGWKBcnSBFfvjrlIXuGDIL8jBoTkMvNTtXH8l94//on
-         P65OnSY2jptsAoM/5Od5vmWmcwl0GVY5KZpfrsKgTQ22+LRjHl7OkpOHHfk7KGjhYSM2
-         wbCx5It4HwXkhrnP9Zw561hW+Mnu6lyvVzqtyHWKKGJRk2Vzs2vtL/O2IuY/rzLLdqgM
-         rSgQ==
-X-Gm-Message-State: AOJu0Yxc+4py7yxFVf9WP30KhgnPZgJ/dpDtmGw+sGrouvT2uPKPx2iv
-	si954OM/uexF1p81o+fnFJBT4cF9BSn8y37OUbzHbTFIMU5t6hV67I3DegSb8jnwhASZvxDdB/i
-	Ef6OdSDBLay620swyY1zSCOkyyLD+B2dc0mE=
-X-Google-Smtp-Source: AGHT+IFlmFFvvzOEGqD3zZggS9+BV6Myy305bT6x5k9dHpIH9uxS64HHIpb2b1bZ2jX4ijZYUsK3W/JSAAahe7Vvf4c=
-X-Received: by 2002:ac8:5a46:0:b0:460:3a44:2587 with SMTP id
- d75a77b69052e-4604bbda53cmr291252231cf.34.1729116496082; Wed, 16 Oct 2024
- 15:08:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729118959; x=1729723759;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ywQxHwC9U2KfZhInp3PoE528tZTqk4jHE6UYiFe6YW0=;
+        b=aXgx4ufcV7FAWBo+nUtiHUUgWr5s9Tk+Y9pakbMfFLWdMsanyrYGydEx/GOngDO+01
+         Q+b9ijbok3Tmu/ga2cwBVVTyfX3w7wdJP1pejJJRw6BkJX0TzEOD2iF5oVfJ9tSi7kNu
+         11JQGNca6F7FBT1960K2TD3jnbL2kno79Y45dq927NJh3frv2A6UZQfjXfWhkvlj6OcT
+         QLf4Cn8yImVPximF9U73WX+U4TutSgJGdcxk0NwbxyaLgknabhyDGDHTeCMc2czG/0hv
+         JmM0pfcVQLNONuUlyA3asWRmYv5IKo1I+M9xBPCn/FwsfaZdhHtjJTjXWqLYiu0Ba6XN
+         L0OA==
+X-Gm-Message-State: AOJu0YzSz/lXBPVvCQtHQzARi1BXaR7t4htICWWkXXgnbCViKIcsR/52
+	ugEVMMSZ67ZqhKn4DQEfNUlaaBu6VWvK8cKnUlcrP9Mv6dCbSb3XJN8cbPazJYp3oaCjP6NRxPW
+	MPzOLsRvU7EqRxA9u6BLTlgNGVPUwnPy5/+cGPIz1GVtCMM1m7Ko=
+X-Google-Smtp-Source: AGHT+IFfWXVAQH1NDfi3QzAkTAXn/5qGdKUfZmGHzdKTPE2Zb0RGo2z7oK6Vujtd2n4pGcCyMenxiEHqhY31g1sFZoo=
+X-Received: by 2002:a05:690c:7004:b0:6dd:76ce:d6c9 with SMTP id
+ 00721157ae682-6e3d41e8da5mr59941397b3.42.1729118958998; Wed, 16 Oct 2024
+ 15:49:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <17FCBD68B18E5703.22523@lists.cip-project.org> <OS9PR01MB1238945B29EF3F4A00C31B355B77F2@OS9PR01MB12389.jpnprd01.prod.outlook.com>
- <Zw4uFWi6kWekKeCd@duo.ucw.cz> <OS9PR01MB123893C05CD686E7DE75B14C7B7452@OS9PR01MB12389.jpnprd01.prod.outlook.com>
-In-Reply-To: <OS9PR01MB123893C05CD686E7DE75B14C7B7452@OS9PR01MB12389.jpnprd01.prod.outlook.com>
-From: Nobuhiro Iwamatsu <iwamatsu@gmail.com>
-Date: Thu, 17 Oct 2024 07:08:05 +0900
-Message-ID: <CACe6DC6p+G47ET8XSrk4X+WpjuKKqQZkC8p+jj8WUg80At2XqQ@mail.gmail.com>
-Subject: Re: [cip-dev] lab-cip-renesas offline
-To: cip-dev@lists.cip-project.org
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 17 Oct 2024 07:48:43 +0900
+Message-ID: <CAODzB9pEx-ZYaaHq8c+mNG2vAxj-RZ678EsUTj1=8z8oL4oJWA@mail.gmail.com>
+Subject: [kernel-cve-report] New CVE entries this week
+To: cip-dev <cip-dev@lists.cip-project.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 16 Oct 2024 22:08:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17045
+ <cip-dev@lists.cip-project.org>; Wed, 16 Oct 2024 22:49:30 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17046
 
-Hi all,
+Hi!
 
-> [0] https://lava.ciplatform.org/scheduler/device/de0-nano-soc-03?recent_s=
-earch=3D&recent_length=3D100#recent_
-> [1] https://lava.ciplatform.org/scheduler/job/1205245
-> [2] https://lava.ciplatform.org/scheduler/job/1206169
+It's this week's CVE report.
 
-https://lava.ciplatform.org/scheduler/job/1206169#L394
-```
-[...]
-bootz 0x01000000 - 0x02000000
-SOCFPGA_CYCLONE5 # bootz 0x01000000 - 0x02000000
-[...]
-```
+This week reported 1 new CVEs and 14 updated CVEs.
 
-load address of DTB is wrong.
+* New CVEs
+CVE-2024-47674: mm: avoid leaving partial pfn mappings around in error case
 
-Does that worker use old lava-docker?
-  https://gitlab.com/cip-project/cip-testing/lava-docker/-/commit/517737f75=
-c556b4d204d0fe2445c23dacbd494c2
+Announce: https://lore.kernel.org/linux-cve-announce/2024101538-CVE-2024-47674-ba1f@gregkh/
 
-Best regards,
-  Nobuhiro
+There is no mention of the commit that introduced the bug in the CVE
+announcement.Fixed in v6.11.
 
-2024=E5=B9=B410=E6=9C=8815=E6=97=A5(=E7=81=AB) 22:46 Chris Paterson via lis=
-ts.cip-project.org
-<chris.paterson2=3Drenesas.com@lists.cip-project.org>:
->
-> Hello Pavel,
->
-> > From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
-> > Behalf Of Pavel Machek via lists.cip-project.org
-> > Sent: 15 October 2024 09:56
-> >
-> > Hi!
-> >
-> > > > lab-cip-renesas is currently offline (since last night) due to some
-> > power
-> > > > issues.
-> > > > Hopefully it'll be back online later today or tomorrow.
-> > >
-> > > All back online now :)
-> >
-> > I still see failures like this:
-> >
-> > https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-
-> > /jobs/8086067433
->
-> lab-cip-renesas doesn't have any de0-nano-soc boards.
-> We were seeing some issues with other labs, but now we have 2x de0-nano-s=
-oc available from lab-cip-denx.
->
-> >
-> > Other branches show test:arm_multi_v7_defconfig_de0nanosoc failures,
-> > too.
->
-> Interesting.
-> The de0-nano-soc device seems to be working from a LAVA point of view, it=
-'s just the kernel that isn't loading.
->
-> If you look at the job history [0] for one of the de0-nano-soc devices yo=
-u can see that it's booting okay for various kernels, but not all of them.
-> multi_v7_defconfig seemed to boot okay with 6.12.0-rc2_d3d155669 [1], but=
- not since 6.12.0-rc3_6485cf5ea [2].
->
->
->
-> [0] https://lava.ciplatform.org/scheduler/device/de0-nano-soc-03?recent_s=
-earch=3D&recent_length=3D100#recent_
-> [1] https://lava.ciplatform.org/scheduler/job/1205245
-> [2] https://lava.ciplatform.org/scheduler/job/1206169
->
->
-> Kind regards, Chris
->
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#17040): https://lists.cip-project.org/g/cip-dev/messa=
-ge/17040
-> Mute This Topic: https://lists.cip-project.org/mt/108905694/4520494
-> Group Owner: cip-dev+owner@lists.cip-project.org
-> Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/13258555/45204=
-94/222682861/xyzzy [iwamatsu@gmail.com]
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
->
+Fixed status
+mainline: [79a61cc3fc0466ad2b7b89618a6157785f0293b3]
+stable/6.1: [65d0db500d7c07f0f76fc24a4d837791c4862cd2]
+stable/6.6: [a95a24fcaee1b892e47d5e6dcc403f713874ee80]
+
+* Updated CVEs
+
+CVE-2024-26596: net: dsa: fix netdev_priv() dereference before check
+on non-DSA netdevice events
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [69a1e2d938dbbfcff0e064269adf60ad26dbb102]
+stable/6.7: [dbd909c20c11f0d29c0054d41e0d1f668a60e8c8]
+
+CVE-2024-26785: iommufd: Fix protection fault in iommufd_test_syz_conv_iova
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [fd4d5cd7a2e8f08357c9bfc0905957cffe8ce568]
+stable/6.7: [fc719ecbca45c9c046640d72baddba3d83e0bc0b]
+
+CVE-2024-26836: platform/x86: think-lmi: Fix password opcode ordering
+for workstations
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [2deb10a99671afda30f834e95e5b992a805bba6a]
+
+CVE-2024-26876: drm/bridge: adv7511: fix crash on irq during probe
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [50f4b57e9a9db4ede9294f39b9e75b5f26bae9b7]
+stable/6.8: [28a94271bd50e4cf498df0381f776f8ea40a289e]
+
+CVE-2024-26972: ubifs: ubifs_symlink: Fix memleak of inode->i_link in error path
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [b9077897329384b92435f9cafd7ee3c11a3eaa70]
+stable/6.8: [62b5ae00c2b835639002ce898ccb5d82c51073ae]
+
+CVE-2024-27011: netfilter: nf_tables: fix memleak in map from abort path
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [a1bd2a38a1c6388fc8556816dc203c3e9dc52237]
+stable/6.8: [49d0e656d19dfb2d4d7c230e4a720d37b3decff6]
+
+CVE-2024-27012: netfilter: nf_tables: restore set elements when delete set fails
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [164936b2fc88883341fe7a2d9c42b69020e5cafd]
+stable/6.8: [86658fc7414d4b9e25c2699d751034537503d637]
+
+CVE-2024-27072: media: usbtv: Remove useless locks in usbtv_video_free()
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [dea46e246ef0f98d89d59a4229157cd9ffb636bf]
+stable/6.8: [3e7d82ebb86e94643bdb30b0b5b077ed27dce1c2]
+
+CVE-2024-35963: Bluetooth: hci_sock: Fix not validating setsockopt user input
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [0c18a64039aa3f1c16f208d197c65076da798137]
+stable/6.8: [50173882bb187e70e37bac01385b9b114019bee2]
+
+CVE-2024-35964: Bluetooth: ISO: Fix not validating setsockopt user input
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [6a6baa1ee7a9df33adbf932305053520b9741b35]
+stable/6.8: [0c4a89f4690478969729c7ba5f69d53d8516aa12]
+
+CVE-2024-35965: Bluetooth: L2CAP: Fix not validating setsockopt user input
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.1: [9d42f373391211c7c8af66a3a316533a32b8a607]
+stable/6.6: [28234f8ab69c522ba447f3e041bbfbb284c5959a]
+stable/6.8: [8ee0c132a61df9723813c40e742dc5321824daa9]
+
+CVE-2024-36478: null_blk: fix null-ptr-dereference while configuring
+'power' and 'submit_queues'
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [aaadb755f2d684f715a6eb85cb7243aa0c67dfa9]
+stable/6.9: [5d0495473ee4c1d041b5a917f10446a22c047f47]
+
+CVE-2024-36936: efi/unaccepted: touch soft lockup during memory accept
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [e115c1b5de55a105c75aba8eb08301c075fa4ef4]
+
+CVE-2024-38594: net: stmmac: move the EST lock to struct stmmac_priv
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [b538fefeb1026aad9dcdcbb410c42b56dff8aae9]
+stable/6.9: [6f476aff2d8da1a189621c4c16a76a6c534e4312]
 
 
---=20
-Nobuhiro Iwamatsu
+Regards,
+-- 
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
+
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
