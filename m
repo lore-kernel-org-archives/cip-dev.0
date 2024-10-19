@@ -2,48 +2,50 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB06D3E1BC
-	for <webhook@archiver.kernel.org>; Sat, 19 Oct 2024 07:12:11 +0000 (UTC)
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (EUR02-VI1-obe.outbound.protection.outlook.com [40.107.241.64])
- by mx.groups.io with SMTP id smtpd.web10.2206.1729321929952015033
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D14D3E1BD
+	for <webhook@archiver.kernel.org>; Sat, 19 Oct 2024 07:44:51 +0000 (UTC)
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (EUR02-VI1-obe.outbound.protection.outlook.com [40.107.241.83])
+ by mx.groups.io with SMTP id smtpd.web10.2391.1729323881418973260
  for <cip-dev@lists.cip-project.org>;
- Sat, 19 Oct 2024 00:12:10 -0700
+ Sat, 19 Oct 2024 00:44:42 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=kckXh/1E;
- spf=pass (domain: siemens.com, ip: 40.107.241.64, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=TsXSZUfc;
+ spf=pass (domain: siemens.com, ip: 40.107.241.83, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Lrc6iwJFgZz7C4C5t/5fzhlZsHmE6CIJbz3UwUEVZCMDXRJXE9o/kPCPKudxA3qMWoNt0oGLss0axw1ypE42+fOCt1qp1FHoY4vPn2Up7yOkNB7FTN3NbjaVZwYOLcawKMVnzy8tCQHOXr9ceSn33Q00zYTMcMrEYpYZl1VfShMAUZ34Wh+N7VpormkCpRZlzMIxvjttZuI3aimnDjgReamQPoLr3Z5I8n0Ens0K+Gjo5pN+zpjVJaMNO3pOVBa9m512CXCjcL5bX66qFjdkBiRPwkTarFzQxXP0Dt1R4zbtWhQvF6cLIxWPSiZDdnBdBP67GWtuKqM1vJRHVz+ITw==
+ b=OJTg45NZ+eth8HfqVPIo1msQoGHK95hz//RZUE1gSPnJ25gKpAGWB8X964ISr/rH4K5hbiAuovh4t/r/qKMHkIEgdcKkvAClH295OfEy425WUD3IEM/tX9ODUwg0ybYiALh1jtJkpHy1xSQ02iE8hvZvTgDFy0ts2kmNHJcHnc/RWy3vAXi6URg+S2TuVJLSp4PURaUZ5P/5nYXJN1NPOjJVCwytwJh45TIr837T78rTkb9l476Od2EV+uglIJQMGHbLUTcA7Y8AOw8VhBb69v4b1bje2QBdPR4SKUXFH6zJ+SWpdQxqMJ7js40c1GlQ9RVtgU0Bab6D9moq/G3P5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PHJcGT0t/Fezn9XMP1dEpdvc6z7JoKyLsM/MRJHIv7A=;
- b=ieu06cjy60//2RtbWlPYIRMXl22knknNU9VLAMyki4GxR/kJUg4Bjun88E/8E82WDtCuKMq3Kv2KPfaR9jAhzDHl9M5gDoBs6Ro7qr8EJYjvlq7rwtO5jrsIGlCPkIEEbeQtEh9Lw4ee3VPUoRj5NWeihgKcmcqB9BC1zee+ZVuLlKZvfR97LBLRImoJ7ppuVgfXlqT9zRAhWJYkqz5KZToPqmQENPBRfLfHdacGo9TUgWGDw7aaHt/F5MFtYTSvK2i7aVUvNnFErURu8gwXDJ7am/0S7IVKk+UHRfxkklC0s5dKxW0Iz9ql63eKmAwn+BJ86dT3e7nOdRXAosa9Zw==
+ bh=NL8ec2oCdtFolAEfMjwHqqu6bUL3jhHC7PZZ4rnLJuc=;
+ b=iKJxmFUCD3hJ4dwQ8VIUpmMFrg0wgRVTBFy4+Z6KEdSuIuJeTxPjlfNQDGYqNV9TP9vZnsv2IGx6kCtaPrmPjE0HXf5rO2pE3uq5Ug75+vZC82QRp9vcowM+aOv9YXy++yqVACUO7xB5M1FFxzkMP7yTZfJZpB9lwz5RSBQsulf3U6alzQfvf3wXgm3V3NSaMYrwz40N7QA4aERkqrZxHHAY+u4N74Ym+VJHIuV6JUz/033YxIg+tubiMklojpxEy/KwU61H+sM1zoJAy3jhFuY4aWk+JlVO9+5nTyWhOj2TUa2+yNampWCkn4u+MiM8vZz/flgodaspURUfWh+c+A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PHJcGT0t/Fezn9XMP1dEpdvc6z7JoKyLsM/MRJHIv7A=;
- b=kckXh/1EBTvfM0xsoWvWFA1qRhIOVDddbs6XDqox2I4luuz0O63EzbxrmSV3Si5MXEVY5A2WejNepohLgTXdMn/qWomYuoyCauUHG6Y34/rVAN7XVctIUYO0UTTJjwL8y32h5tTxYVwmcZVrHxirvzUYSbwdUNw5K7GaGaSRUkPO08UhGbpPd3/W7097/Pm4f5qZfYod+mIui6YQjbRCpQkp5O0pcx/jw04dB7wG4pkkS0V/HE3Br3MX1X+wsi02MZM9WJ8EKlkEXpzoswm5FvLAq8UsK09oo5d4XddLYaAfYKTgakQGlEWalzw3YfQBTjFEgYIOY0A9Ihd5YF27iQ==
+ bh=NL8ec2oCdtFolAEfMjwHqqu6bUL3jhHC7PZZ4rnLJuc=;
+ b=TsXSZUfcQTeckrz918ZfII2RP9ZaiW7MJCOAFA/3qUdRygYctvdvNtktI3rCp5QtN7IkADJOe0aX5NjWddutXCNGrSQfhgKfoYTX1CGrsBP75e55S4U3bACJVt04gykKXvjKEfcpPrUnVS+cLY/GpU7AWuU0bLpuKlvHoNY2oQxxia8JefdNp51gihOOOCbY/3gHhCDTFwlTTwtoEsPx+qgZSTj+MCEpTn6JKWrgMCOYs0esjFjJYAJ3OntMrueHYzXvz7mMRBufj+3qK6h1BkT2ZNSy5uvvcalPb0IFod8zVwxFlJnBz508Uo5XD4wUC6OAo8QL892K5cYBXClhOA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by AS2PR10MB6398.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:556::6) with
+ by PA2PR10MB8327.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:41c::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.10; Sat, 19 Oct
- 2024 07:12:05 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.13; Sat, 19 Oct
+ 2024 07:44:36 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408%3]) with mapi id 15.20.8093.011; Sat, 19 Oct 2024
- 07:12:05 +0000
-Message-ID: <d6bf0fe1-77b1-4726-8584-0736e006e430@siemens.com>
-Date: Sat, 19 Oct 2024 09:12:03 +0200
+ 07:44:35 +0000
+Message-ID: <88ea7ac6-a855-4b2e-92ae-0698a91928d1@siemens.com>
+Date: Sat, 19 Oct 2024 09:44:34 +0200
 User-Agent: Mozilla Thunderbird
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: cip-dev <cip-dev@lists.cip-project.org>
-Subject: [isar-cip-core][PATCH] Update isar revision
 Content-Language: en-US
+From: Jan Kiszka <jan.kiszka@siemens.com>
+To: Chris Paterson <Chris.Paterson2@renesas.com>,
+ cip-dev <cip-dev@lists.cip-project.org>,
+ Sai Sathujoda <Sai.Sathujoda@toshiba-tsip.com>
+Subject: cip-core: Something fishy with qemu devices?
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
  uNUqthIkgLGWzKugodvkcCK8Wbyw+1vxcl4Lw56WezLsOTfu7oi7Z0vp1XkrLcM0tofTbClW
@@ -89,450 +91,122 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0181.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:9f::17) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR2P281CA0050.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:92::13) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS2PR10MB6398:EE_
-X-MS-Office365-Filtering-Correlation-Id: e9cfcbbf-1630-44db-c2dd-08dcf00d5612
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PA2PR10MB8327:EE_
+X-MS-Office365-Filtering-Correlation-Id: c7f5f9ae-ca11-4e19-be64-08dcf011e08b
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?MFlCamVwc3ViSE0waFI4QnNtWllEQ201cjhncnE3ZHpvMWJSeFJ4dGhpUERq?=
- =?utf-8?B?VkZFMVlYMWRXR05VWHBWbGYwcDIzSEY5TjZyMUZ0RVRRSkhHVmNLZTduQ25K?=
- =?utf-8?B?UWlpVTJ6MU8weU5QZnpQRDl5aEVsMW93Vk5TanNMVHRKUmVUTW14YlY5SkVq?=
- =?utf-8?B?TjNGM0xXOHhZUmJDOFFRK0gzYyt0dytxMy9TTWdhc3FLYy82SUFNM1pBTSsz?=
- =?utf-8?B?TzRFcGpZTElhMkF5YVlIczRjME1aUUF6MGxDQU5Pa3lkNmFGWDJYL2V6VWJm?=
- =?utf-8?B?K1QyaXd0LzkyenJXUzk1QklxbTBqT0dnNW50b1ZNWEZjUmVqM3ZyTlFhLzBr?=
- =?utf-8?B?azlFa3duL25XYy82ZlhoQkh0K1NzZkpvbEI4U0hnQ2tTakFyNHhiWGJpemto?=
- =?utf-8?B?dytURzc0UWxsZFJqR2hNMmw5dmRaUStURThCdkZnQ1JmaTMraFpJODRTZm1Q?=
- =?utf-8?B?UGdScGNucFhNR2I4U0NUVXkxRXN5dDJZMHMzbDVxVmlSRnNpYU5TZHhMa0F3?=
- =?utf-8?B?N3d3MGdSenlHWVlWVHRLdmV0S1ZzVmNYRU9CSWx3bWJzQjh6OXRNRnFPOE5y?=
- =?utf-8?B?WHQ1azB5L0lxZ2tEWFdxUm01TjRsd21VUXB3aEljTDJIWHBTajIrLzc3bnVs?=
- =?utf-8?B?MUhMZG9JS091dmZWOWJpNThLTktFM0tJaitjaGpKdFpwUDdaT0h6Q1N4NmVx?=
- =?utf-8?B?MFJkL1g0RHgySDN5TE9tdDloUUIybXI0dW1iaE5rNWp2ZDRIZ3M4YThGK2Rq?=
- =?utf-8?B?eXlxOHptS0lOaHEvM09SUXRqREYwdjJXODhYUWVRWmVweXFvN2VVMVZHOFZ0?=
- =?utf-8?B?UUtIcWliTGRUK1FlVkJQY3ZTY0NzTEpqeTJIZTNLVi9mVnFpTGl5REtzMkdy?=
- =?utf-8?B?SUR2MWQ1bWZYSm9kMlBhaERDK0NSSE0vNU1pRGtRRnNJaHBqR0Q4T2FtUlY3?=
- =?utf-8?B?bUw4T1NzN21Pc3p2ckFMWjAyajY3N1ozWk0yUXhQNjhzaVU1Y1RzQSt6Y3c2?=
- =?utf-8?B?L2dYQUpVbThYa2k1cjhhOWxRV25BVzVMK2drUXYweG1ROEJIN0ZkdWZBS0VD?=
- =?utf-8?B?NlplT1lmM1BMUDBsRVhGWGMvRjhjamUrOGZhU2Q1R2p6L1VOenpLT0c3NVJj?=
- =?utf-8?B?M1BWUEg3cTNnNXIwa1RwaVBZVktHR3pta2FxTzBrNDhzbGcvaVZDL2xCbTZ5?=
- =?utf-8?B?ekF3M24yS3pJVXh0Z2hhTVh5dnoxT1UxTzRNM3c4eEY0VEdrNldLZFBqemVZ?=
- =?utf-8?B?MUZMNTJvL21BcUVaM2w0cVZ4R1J2VnVoTmx5dkdiN0szVHVURGVMSDFMMzY3?=
- =?utf-8?B?bkNoNXZEVDhMaFhzUzEzZWwvd3g4TDhtMUNwV29OeXVOcmZqZ3d6SmNJZ24w?=
- =?utf-8?B?WmhLbHNQdlZDeGoyM0ZjYVAyWWJyTUZzcWN1TnRJeGREQnpWd204d0N5aUJs?=
- =?utf-8?B?eHAxODJOcFVqZGRKVnEyRC9XY2JkOVc0dXJvRzdMbE8yT2tLMGQySThIaTRW?=
- =?utf-8?B?SUF6a2JqSEMxRlovTnBaODYrdGFRSFJJYU1IN0lNRUNDU01FRVZjakszRmNp?=
- =?utf-8?B?YnBVeGJ2VWV4OHVyc3VYcGt5QVRRVlZidU5qdkVjTERWVEVTYUdFYy9yMk5j?=
- =?utf-8?B?Ulg4VXFTNitObkxubVQ3R1pqcTlWQXRWOXVqcFB3UlQ2OXppM1ZXSHJOK2ox?=
- =?utf-8?B?d3YrWXNNUmZXcU9MRGthZWtCQnJiUlpyVGhwbFErLzFlVWRHb2YxdUk2QXVZ?=
- =?utf-8?Q?6c6zaggtV6DzoiVruxv1eWtrYf/258aU3H0zvUS?=
+	=?utf-8?B?Q3FGalhOZlk5S3lYcG8rdTVRbVFNSmZ0RHJYSlJiaTBDdlVXQ3pmc25kTGxj?=
+ =?utf-8?B?ZUpkbGUrM0s1QUlHcnhrb2NRWGE1RE9VTjd4ZkhrdzNDNDVmTCtzb09yMUZk?=
+ =?utf-8?B?dHFUZjZhUDBERVhJMU4vc1VIZy9VejNzSFI5aXJReTlwQkZkMCtyUy9UbVV0?=
+ =?utf-8?B?TzBrakZDMDdsUktreHJUTWJzTnBIbHd2d3lhSXZrbjlOZ3RIMFBIemR4SUtk?=
+ =?utf-8?B?YUhlTWJiZDFzQjVXVmRvUzZDOHB4VGk5eTFDVE9aUUlZUWp3bHZVeFloVFdu?=
+ =?utf-8?B?cC9HM3p0T0JuLzFoMnBzQ00raGttSDEyVkU5cnNRWDVna0lwaFZPQ2lmWmJw?=
+ =?utf-8?B?UTErWGt5VkpzV1AvZzk2T2tQYmlrYUdQL2tTTWZtTGJmdW5JRGY5MmJZVHpk?=
+ =?utf-8?B?TjFYNjg5TEY1V1hmZGFBTWErQUxGbVR2dmpqVnlPRWR6NVNjd0w1djBDdER5?=
+ =?utf-8?B?V1NvYjhFcW1LeVBuZmpWVFlabkI4OTVQR2ZvTEhJUERrZlovZnJaYXdtc1lR?=
+ =?utf-8?B?QnEzNWp5Q3QxeFA0S2gyd1Jub2R6M3pHT2RxZXl0VFlVamQzSTJ2bUxJcFNV?=
+ =?utf-8?B?OWJRZTZHVWdOMWNkbmh4RzAvQWphT3dRc3FmZ0w4cVFFcXhKOGJXOEp2MXhJ?=
+ =?utf-8?B?UTg4SkhieFp0M3dQK05UOXV0UzRqakQrc0RuZEF6cDgzQ2xBK0IvbWhmcFZ3?=
+ =?utf-8?B?K2dmbVpneGJVeG1JTDRNcEFxVDAxZ00wUDhVdGRJcC92VHNiWlNDOFFxejdZ?=
+ =?utf-8?B?OE9oMVBHd1lNMFk5VERoK01aRVR5SDgwRWFqKy9pNzVDWklHODQxUkhQZG5h?=
+ =?utf-8?B?Q2ErbnpXcTduekJXazI5dTVGNUE1NUtpSUZjWi9kcDhSaFhXbUVscmFnOEVk?=
+ =?utf-8?B?REExemF4R1MxSUxkUFFHUDk4WkRPSXZiZFpzckdrU3kvVTAyMWxjSFZkOFZ4?=
+ =?utf-8?B?ZHhBWG8wemthSnJ6RFlRWG83VGdzdmxGcUxKY2hsUTRtMTJUeW5qYVJySUFa?=
+ =?utf-8?B?ZHR5NHpZZUM4OGM3cUtIYUtqZWtNNEpEQkIvcE0wN0ttcFpnci9tVng3V3d0?=
+ =?utf-8?B?ZmFmb2JrbGtQTmY0ZjZ5THFQSnlranlhMngxOGZDa1lDSGcrQU1GbXlwS2RU?=
+ =?utf-8?B?TlVEWWY2UTdrdmFyOTNTNlpUZXJqUC9lUnBYejEvcGY0OVc5ZGIyYXhBRm05?=
+ =?utf-8?B?V3FzdmlaK0RlV2pqTTZJL2xsMDdneGR2RmtxU0xYTHBmSWJZdjlUY1BTaktZ?=
+ =?utf-8?B?b0crbkkwZU1TeDhXRmhGMFdUcEx0UGh2L2tKaWp3WDMyU0xJZ1pPcERWd1pr?=
+ =?utf-8?B?SlpVbS9haUFWRUpFTGcwMDBOUXA5NzdoMEFlMTlLRlBwMjJqQUc4THZ2ay9p?=
+ =?utf-8?B?dnZlV1g5VkVjOWxKNWNYSWp1SkNFR1FBbkZSaHp0TFJaMEhkczhjVDBRS3o5?=
+ =?utf-8?B?OEM0N2hpK2hIa3o3WUhrRkZDU1dzeXJsK0x4dU0vZlVGU1dYd2gwQmJmOWh3?=
+ =?utf-8?B?NzV1T2xLdUhWRm43K2RJWGl5RHp5dTU3Vk1BZWM2QmxWbHdZZHlVZ012TWlq?=
+ =?utf-8?B?anFyNHR6cnR0a1V2LzBhWElCb2xvbmFBTFQvNDNjUW5wbEFIZnIwNUhoNWhq?=
+ =?utf-8?B?VTd4SEEwalcyYWNFNXFWTEpOZFhmWk5rbmJxSzBPb1NIMGhST2FWTzZEUHk0?=
+ =?utf-8?B?RURpZXFDQVVrdEJMdHVuYW9yTmYweTU4MWkrNWdvUHFOWmVuUnd4U3BTaGxa?=
+ =?utf-8?Q?klQ379E1N5M04P63e24Hmx1Jbz8O1zR32q2hUSM?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?WDZWTjdNMllFYldtUU1EMGI2eHdQNXNTK1VxQUVFZUFDQnMzT29WcnFDVHRq?=
- =?utf-8?B?Umk3K282ZWJNZFU5WkhBZU9FS09vV2h3bjRTMVpBQXF3dTZaZXNzbUJybTAy?=
- =?utf-8?B?Tkx2VjRUVG5IU1NXRENnNHlUZzNuMWlGaWxmQXprYytkZ2ZzMXdjcVZkSTU1?=
- =?utf-8?B?d0dsTkJkOEV6OFAreWNzQU4yWUVEUExNYmdkN09hSTVrUUh3dEpKZ2FMN1pm?=
- =?utf-8?B?QVNteGIrMUloSWFyLzIzaG5uSXZZRWU0YXYvazRJVXZONThWd0t1Vks4cWpE?=
- =?utf-8?B?Z0cyV2FzN1RJMGlaa3NiT01jS3JmQVpZVWhqblVndzU5bmFZVzU4NjYrc1Vn?=
- =?utf-8?B?eHFpcnVqcGJBRlBua0E3NEZJTHQ1T3VuMkRGemtJL2tkNFFPRW5GQzVKQmUz?=
- =?utf-8?B?WHZoOS9Na1NvVVFWZno3cnd3YnFJOG5uelFSRlhhZmpEVC84NWdndEVHMnRL?=
- =?utf-8?B?ZzZ2blM1KytDM2Nka0xkSm9TbzJFWE5mbVlWUU1pU0kwcGxVSkxUQmxZTk9U?=
- =?utf-8?B?VlZVRW54U0xnbDd1NGdKOUhOdGlpOG5rVXZmdmZCR0U4LzNiQnl3RTQrcUtj?=
- =?utf-8?B?dlFKYm8waXJ1MURXV01mVE1IOE1BMWFxNWkvdURnaDZUQjZidDZqcnBtT0VI?=
- =?utf-8?B?OXl0ZDBGYy9sUlh0bFNKRnFmcDFwL3lkdmZQSThpVFd0cmF0d0JORUxQeDVB?=
- =?utf-8?B?a0w4TFlNRHByY3ZOUEMrNWc1NWJxS2pITUVOcmlyMlhZYk9hV0NnNWFadnpl?=
- =?utf-8?B?QjVjMGdra3pnUGNsbkZPOCsvRTJNV1hWQVlPY0VGWGswRFVzSktzN0NDRzFV?=
- =?utf-8?B?dEhzdGV4VEVhSFYydDVLRVZYN3hnZ3NSeVZuTWpUSzJraVRlWnV6Sm1WaG1P?=
- =?utf-8?B?T21wM1JqZUtvYU05V0dIbm1TeHZKVTlOSmVtYnFzWWszRjFZR3dXWnFJaldm?=
- =?utf-8?B?Y1FvdFN3Tzhwb0dSOVNpOEUvaEhLcmpJSk9vNkNSM28yUGpYS2VzaVdHb21v?=
- =?utf-8?B?Z0k0YmR0Ly9hanZDWVZkZnNMVk84STlUNWhTSVloY0hESEQ5TVRPYmsvZ21S?=
- =?utf-8?B?aWJCZDRRT2NOYTlsYnpkVjl0VmhlUm95eHhRc21ucmMvZVFUQXNCcGhpdDVM?=
- =?utf-8?B?Sk5GL2k4M21OQ2VIS1VJZzV0TUFNSUlVcmRvbkVHMk5ZRFN6MGx3S2ZxYlNt?=
- =?utf-8?B?ZmtEM0tLUGEwNm1xRWgzV0hNUDNOY2pBbXJXbDZNQy94a3orM3lQR3RQZ3Zx?=
- =?utf-8?B?UHYvdzA3RTBEajdNbWxXWVJpeHM3UlFpN280QTVmc2xZUzh0TzlnTnBuMFdy?=
- =?utf-8?B?UVA2Qno5aktyTnd2Vy9EcW5YWVhMRTFIVWtNOHNUYlpES2hRQzVZMXdXYkRl?=
- =?utf-8?B?Y3E4a1Y5T09VU1RmTlJYei8wY3FlVlpKWFJEcE04ZUI4U2s4UkZiU3RmblFR?=
- =?utf-8?B?cnFsY1plZXAvM0RMaFZDZisycFdNSnVQa1NQTmNzVW14T0dkZlc5dm5oRXdm?=
- =?utf-8?B?MnA5Wkw5Mkg2WGxlUTM0SE5JRzdpNElhb3ZmS2J0V05MOE1DN0Z5YUluejBV?=
- =?utf-8?B?TjhCOUlLWnBpVW5sTEYyZ3lpM0xWQTdSdWJFa3I0bzl0ckdWbCtLeE1lOEFm?=
- =?utf-8?B?a25tYklQblI0N1U1cnBNaTdZb0IveTh2Tk5ObmZCSVIxV2N3TzgxUml2MTNO?=
- =?utf-8?B?cVJKWE9IS3RIYUova21sTnN4dWlxSlhsY0RWSytUVytkL1NSU0lhVjF1YVI5?=
- =?utf-8?B?MkdVb1hHeFkrM3NYNWp4QmxRS21FSktvMEdsa3hPTSthUVU5bVJyaDlvSHNP?=
- =?utf-8?B?S1RJTEJBTHVUb1U4Z3JudjBrRWxRbE5pU2NsZlFzb09ZNi9leDluQmpWTXNI?=
- =?utf-8?B?L3RiRFJya05JY0orVXBSUmk2Z1FYMjQ0dlk2aDFlTEZFRzhKQXRiaUd5a29y?=
- =?utf-8?B?amtoZlUzN2lTZnZJRHFqcEFRQlAvQ0xpS2NjSmZKeXRrVFZqN1ZwdkJ5Uk5u?=
- =?utf-8?B?WDIyMFFEeHJYUUZPQkxMZ0hlSmV1VXpzWVlBUHdvci9wcmVIT1BYY2hxZmND?=
- =?utf-8?B?T1hDNlhNZnFGV2RwNjJWdm4yQ1pIMlNNNkhtSXRNTk8vcTBzaStJdGhVWUh5?=
- =?utf-8?Q?a2xV9kP0srkHvi918Fazzxrpl?=
+	=?utf-8?B?cXB4ZUE2WjNjQlBhUndYclVkM3c5SHBMSmRwZzVOeGphanRGdEErS0RVV1lS?=
+ =?utf-8?B?eVN6WDZaRE9TNHBwckNYZHpiOC9uU28yZ0dFUXh6Zm9tb3pLUGs5UDFXdFBV?=
+ =?utf-8?B?RERZbFVHY1VLNGszLytucGgzbmJSMFoyQUdsN2NIVXc1c2RWRFkxK2lUODFH?=
+ =?utf-8?B?c01ZeDZyU0xodjY2OC9FK1ZBeW9tY2U2MUtVRGN2L1c2ZnZkZW1aVGJMSmRE?=
+ =?utf-8?B?WGNxcUdZUGxRVWJTaXdrckJ3b3RpdFVTa1MzQk55R3RsejkvQWN0OS9WRzdY?=
+ =?utf-8?B?ZS9YNFRhUWo2NnladnRSUzZOR2UyTUlyeEViQnVMbStoL1RnOVJmRFBZaFVJ?=
+ =?utf-8?B?Y09OQS9mR3NTbGt0UjZCdjROWlpEWE5ZWi92cXk0SkdXVklhZjRLUEhMQzBa?=
+ =?utf-8?B?cnM0bzF5OW1RZFFpb3IwekNwaFZiU2Y0VUEvcUtQdDlqdmJHaDVFMVY3ZFRm?=
+ =?utf-8?B?NlhxSG85NVBpcWxLNVIrQ2VHMmhvQ0NOSnVzUFRMVzZKUzBCdkoyZU5FWDVv?=
+ =?utf-8?B?WktTWVR4aHdHR01Xb0l0dXJ4UmovdDV6cDFBS0Q5bjRzRUgyZTk3alZETHUz?=
+ =?utf-8?B?d3pCckNZdHRGclBYSzJENWQ4TGFvZDlxS2h1b0VkV3pXRmwwYk1wVGhEU0Zi?=
+ =?utf-8?B?N3NMU3Nyb1ZScW5NNDRNRisreVJBRVovaXJPVUJyYjZyTjJlWHpzN1RiOGJ6?=
+ =?utf-8?B?bXNqZklmZlBGa2gxdlN4dU42aUs1cklMQWhoRGpsUHNpUFBQWDZaZDViTTRv?=
+ =?utf-8?B?WEpUZTdYY2d2TmNMMzFvbVpteGNRYU1WNHFWa2pHYTA3Y2JySm52UEJzMHhQ?=
+ =?utf-8?B?M2xZZWV6MFlhbit2NVIxN1h1VE9LbFcxNWw5bnlrbk8wME5iTjdTa0FaTm9K?=
+ =?utf-8?B?RHQweFJYWlRjTWw1Q3ZDL08zKzdkU0VIU1VJRDRZcFNMb01MdmVPVG51bmJq?=
+ =?utf-8?B?d0NESDJzT3NYRkxOT2o2cHBVMnM0UkttOFVvV3F2aVl0c1ROWGJad0hFeitn?=
+ =?utf-8?B?dTNubzB2UHR3RzhjWGpyWktpaW0yTEVHUmRPM0dTb2xaQ0FLSmxhTExsblhp?=
+ =?utf-8?B?cTY5eGNPVDR6bUl6a1RTRDhMd0NwNyt2Vy9CS3BwS1A4NWRuZ1BRY2VVenFy?=
+ =?utf-8?B?MmVtYUppYTVQYVMrNW9tM1owbmpHMVJ6cVNkSmNLL3RyZFNhVnlhek0wRjk2?=
+ =?utf-8?B?alZOZDBlUE5iS1Bsb25JcFMyczFyNmNhOGhBKzBjVlh0ZUxqSnAyNWpLSmtT?=
+ =?utf-8?B?UjI0bXh3N1VIRUY0NWwyQTJuTlY5MkplczBCMXVDRzg3bDJYZkNYMlFJbDVP?=
+ =?utf-8?B?MDErV25yQTRYbCs1dUpTaEhhRmlzcjArdnJaS3RCb1B5S2JlYU0xbVd2bWdq?=
+ =?utf-8?B?bDJTbzMzMjJlUGxrbzZobTVCVHh1R1RTSHhwbjhIak5MWXg0SUZUSlJsQVQz?=
+ =?utf-8?B?YXBCbmdVam9LQkZBVFo5RHBxMWdyaHc3S3hjQkxlNXRaTHpnOXlzWlBQUkRK?=
+ =?utf-8?B?YmoyL0p6VGR2MWU1Tk9UVDdjSXBWMkwxVEk5Y1U1K09mWW5BUlRqOWFjazhj?=
+ =?utf-8?B?RkFJcWYvNzI2bWtCTjdkZHdNZVdrdU9UbWUxdGF4ZzdJRExtaElYZG5iUG91?=
+ =?utf-8?B?ZnZOSWF2RHk4aEs2TDlUMHJidGJWVTVnSHlMWWtzZFNUeFB4aElJOVNtZHVu?=
+ =?utf-8?B?UVAxektmQ0VzTm1ZbklVc2x5bloyd3VQR21VT1pYVnh4Vm1vNEMvVk1hbnpl?=
+ =?utf-8?B?bkcrbE12QTdBODRQRThVb0dEc3Z5dVpQd2VnZm0zVDlqbGZoS0RBY1JEMkJN?=
+ =?utf-8?B?d1MwMGhIMkNuZ0hubE9WaVVFUThIVXk0d1dNOWsxd011NlNvN0RZMWNrNWY5?=
+ =?utf-8?B?R01yeGV3SmI1UHMyVVNyNm1Ram5VWDZ5VEp3dUpCQTJ1bUZFcDMrOGpKU3dn?=
+ =?utf-8?B?TklzdytYT1RUZGpydVhiMnhsQnRjTlZ2T2FBdnpTVjlaN0lvb0s4K3V0VTlq?=
+ =?utf-8?B?a3MrdDN2SW1pZGJHZkZmbjlZRnNBZEhyQWN0WURjWkdBc1U0VlcxZUxRc05j?=
+ =?utf-8?B?VG5EUzFhV0ZnVkVKZ0VCV3hPdXNOMUZxMDFINi9IczQ0STUyY0Nkc3Q4LzhO?=
+ =?utf-8?Q?mIoKKQoAP0UkS258Zw8f51wgt?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e9cfcbbf-1630-44db-c2dd-08dcf00d5612
+X-MS-Exchange-CrossTenant-Network-Message-Id: c7f5f9ae-ca11-4e19-be64-08dcf011e08b
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2024 07:12:05.0031
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2024 07:44:35.2802
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Kyordn4zT3dZ00UMxQD6H5TIp4en/Z0CdNsxOqNeOSaNwR2HeioyzW5RNMJl0ax+s/4v8s+yZoU5JYft01jUeg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR10MB6398
+X-MS-Exchange-CrossTenant-UserPrincipalName: AYa1uBEQ+huZb8E2AuDXfrcAsAd4am0ZXg7EOBUnTA7ajRHQSzsz/Qg5uKLdFHWqXsn5Jp2Q7bFfnZ7AgJVAbA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR10MB8327
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Sat, 19 Oct 2024 07:12:11 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17053
+ <cip-dev@lists.cip-project.org>; Sat, 19 Oct 2024 07:44:51 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17054
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+Hi all,
 
-Allows the drop the meanwhile merged patches.
+I had countless errors with qemu targets while trying to test the latest
+cip-core image, see e.g.
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- ...king-the-build-when-mounts-are-no-lo.patch |  64 -----------
- ...002-rootfs-Provide-rootfs_do_umounts.patch | 105 ------------------
- ...Add-missing-umounts-after-generation.patch |  29 -----
- ...ng-umounts-in-rootfs_postprocess-and.patch |  74 ------------
- kas-cip.yml                                   |  16 +--
- 5 files changed, 1 insertion(+), 287 deletions(-)
- delete mode 100644 isar-patches/0001-image-Avoid-breaking-the-build-when-mounts-are-no-lo.patch
- delete mode 100644 isar-patches/0002-rootfs-Provide-rootfs_do_umounts.patch
- delete mode 100644 isar-patches/0003-initramfs-Add-missing-umounts-after-generation.patch
- delete mode 100644 isar-patches/0004-rootfs-Add-missing-umounts-in-rootfs_postprocess-and.patch
+https://gitlab.com/cip-project/cip-core/isar-cip-core/-/jobs/8129814767
+https://gitlab.com/cip-project/cip-core/isar-cip-core/-/jobs/8129786943
+https://gitlab.com/cip-project/cip-core/isar-cip-core/-/jobs/8129777118
 
-diff --git a/isar-patches/0001-image-Avoid-breaking-the-build-when-mounts-are-no-lo.patch b/isar-patches/0001-image-Avoid-breaking-the-build-when-mounts-are-no-lo.patch
-deleted file mode 100644
-index 8e650445..00000000
---- a/isar-patches/0001-image-Avoid-breaking-the-build-when-mounts-are-no-lo.patch
-+++ /dev/null
-@@ -1,64 +0,0 @@
--From 84fdccc3223d31bded29dd5adf86948f6cf83e81 Mon Sep 17 00:00:00 2001
--From: Jan Kiszka <jan.kiszka@siemens.com>
--Date: Tue, 1 Oct 2024 16:52:26 +0200
--Subject: [PATCH 1/4] image: Avoid breaking the build when mounts are no longer
-- present on umount
--
--This does not seem to trigger yet because we always have those
--mountpoints present. But if that is no longer the case, we will bail out
--when mountpoint fails due to the set -e.
--
--Fixes: 165519a7b314 ("sudo: Fail on the first error")
--Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-----
-- meta/classes/image.bbclass | 25 ++++++++++++++++---------
-- 1 file changed, 16 insertions(+), 9 deletions(-)
--
--diff --git a/meta/classes/image.bbclass b/meta/classes/image.bbclass
--index 0c162aa3..9d5b782a 100644
----- a/meta/classes/image.bbclass
--+++ b/meta/classes/image.bbclass
--@@ -418,24 +418,31 @@ do_rootfs_finalize() {
--                 -maxdepth 1 -name 'qemu-*-static' -type f -delete
--         fi
-- 
---        mountpoint -q '${ROOTFSDIR}/isar-apt' && \
---            umount '${ROOTFSDIR}/isar-apt' && \
--+        if mountpoint -q '${ROOTFSDIR}/isar-apt'; then
--+            umount '${ROOTFSDIR}/isar-apt'
--             rmdir --ignore-fail-on-non-empty ${ROOTFSDIR}/isar-apt
--+        fi
-- 
---        mountpoint -q '${ROOTFSDIR}/base-apt' && \
---            umount '${ROOTFSDIR}/base-apt' && \
--+        if mountpoint -q '${ROOTFSDIR}/base-apt'; then
--+            umount '${ROOTFSDIR}/base-apt'
--             rmdir --ignore-fail-on-non-empty ${ROOTFSDIR}/base-apt
--+        fi
-- 
---        mountpoint -q '${ROOTFSDIR}/dev/pts' && \
--+        if mountpoint -q '${ROOTFSDIR}/dev/pts'; then
--             umount '${ROOTFSDIR}/dev/pts'
---        mountpoint -q '${ROOTFSDIR}/dev/shm' && \
--+        fi
--+        if mountpoint -q '${ROOTFSDIR}/dev/shm'; then
--             umount '${ROOTFSDIR}/dev/shm'
---        mountpoint -q '${ROOTFSDIR}/dev' && \
--+        fi
--+        if mountpoint -q '${ROOTFSDIR}/dev'; then
--             umount '${ROOTFSDIR}/dev'
---        mountpoint -q '${ROOTFSDIR}/proc' && \
--+        fi
--+        if mountpoint -q '${ROOTFSDIR}/proc'; then
--             umount '${ROOTFSDIR}/proc'
---        mountpoint -q '${ROOTFSDIR}/sys' && \
--+        fi
--+        if mountpoint -q '${ROOTFSDIR}/sys'; then
--             umount '${ROOTFSDIR}/sys'
--+        fi
-- 
--         if [ -e "${ROOTFSDIR}/etc/apt/sources-list" ]; then
--             mv "${ROOTFSDIR}/etc/apt/sources-list" \
---- 
--2.43.0
--
-diff --git a/isar-patches/0002-rootfs-Provide-rootfs_do_umounts.patch b/isar-patches/0002-rootfs-Provide-rootfs_do_umounts.patch
-deleted file mode 100644
-index 6ac2af36..00000000
---- a/isar-patches/0002-rootfs-Provide-rootfs_do_umounts.patch
-+++ /dev/null
-@@ -1,105 +0,0 @@
--From 79155ddf156e073a98315bf2f35f7ca0f5ba3a77 Mon Sep 17 00:00:00 2001
--From: Jan Kiszka <jan.kiszka@siemens.com>
--Date: Tue, 1 Oct 2024 17:08:24 +0200
--Subject: [PATCH 2/4] rootfs: Provide rootfs_do_umounts
--
--This will be used more frequently soon to avoid dangling mounts.
--
--Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-----
-- meta/classes/image.bbclass  | 28 ++--------------------------
-- meta/classes/rootfs.bbclass | 32 ++++++++++++++++++++++++++++++++
-- 2 files changed, 34 insertions(+), 26 deletions(-)
--
--diff --git a/meta/classes/image.bbclass b/meta/classes/image.bbclass
--index 9d5b782a..1eb974e8 100644
----- a/meta/classes/image.bbclass
--+++ b/meta/classes/image.bbclass
--@@ -405,6 +405,8 @@ def apt_list_files(d):
-- IMAGE_LISTS = "${@ ' '.join(apt_list_files(d)) }"
-- 
-- do_rootfs_finalize() {
--+    rootfs_do_umounts
--+
--     sudo -s <<'EOSUDO'
--         set -e
-- 
--@@ -418,32 +420,6 @@ do_rootfs_finalize() {
--                 -maxdepth 1 -name 'qemu-*-static' -type f -delete
--         fi
-- 
---        if mountpoint -q '${ROOTFSDIR}/isar-apt'; then
---            umount '${ROOTFSDIR}/isar-apt'
---            rmdir --ignore-fail-on-non-empty ${ROOTFSDIR}/isar-apt
---        fi
---
---        if mountpoint -q '${ROOTFSDIR}/base-apt'; then
---            umount '${ROOTFSDIR}/base-apt'
---            rmdir --ignore-fail-on-non-empty ${ROOTFSDIR}/base-apt
---        fi
---
---        if mountpoint -q '${ROOTFSDIR}/dev/pts'; then
---            umount '${ROOTFSDIR}/dev/pts'
---        fi
---        if mountpoint -q '${ROOTFSDIR}/dev/shm'; then
---            umount '${ROOTFSDIR}/dev/shm'
---        fi
---        if mountpoint -q '${ROOTFSDIR}/dev'; then
---            umount '${ROOTFSDIR}/dev'
---        fi
---        if mountpoint -q '${ROOTFSDIR}/proc'; then
---            umount '${ROOTFSDIR}/proc'
---        fi
---        if mountpoint -q '${ROOTFSDIR}/sys'; then
---            umount '${ROOTFSDIR}/sys'
---        fi
---
--         if [ -e "${ROOTFSDIR}/etc/apt/sources-list" ]; then
--             mv "${ROOTFSDIR}/etc/apt/sources-list" \
--                 "${ROOTFSDIR}/etc/apt/sources.list.d/bootstrap.list"
--diff --git a/meta/classes/rootfs.bbclass b/meta/classes/rootfs.bbclass
--index f0abd795..ef40cbdf 100644
----- a/meta/classes/rootfs.bbclass
--+++ b/meta/classes/rootfs.bbclass
--@@ -65,6 +65,38 @@ rootfs_do_mounts() {
-- EOSUDO
-- }
-- 
--+rootfs_do_umounts() {
--+    sudo -s <<'EOSUDO'
--+        set -e
--+        if mountpoint -q '${ROOTFSDIR}/isar-apt'; then
--+            umount '${ROOTFSDIR}/isar-apt'
--+            rmdir --ignore-fail-on-non-empty ${ROOTFSDIR}/isar-apt
--+        fi
--+
--+        if mountpoint -q '${ROOTFSDIR}/base-apt'; then
--+            umount '${ROOTFSDIR}/base-apt'
--+            rmdir --ignore-fail-on-non-empty ${ROOTFSDIR}/base-apt
--+        fi
--+
--+        if mountpoint -q '${ROOTFSDIR}/dev/pts'; then
--+            umount '${ROOTFSDIR}/dev/pts'
--+        fi
--+        if mountpoint -q '${ROOTFSDIR}/dev/shm'; then
--+            umount '${ROOTFSDIR}/dev/shm'
--+        fi
--+        if mountpoint -q '${ROOTFSDIR}/dev'; then
--+            umount '${ROOTFSDIR}/dev'
--+        fi
--+        if mountpoint -q '${ROOTFSDIR}/proc'; then
--+            umount '${ROOTFSDIR}/proc'
--+        fi
--+        if mountpoint -q '${ROOTFSDIR}/sys'; then
--+            umount '${ROOTFSDIR}/sys'
--+        fi
--+
--+EOSUDO
--+}
--+
-- rootfs_do_qemu() {
--     if [ '${@repr(d.getVar('ROOTFS_ARCH') == d.getVar('HOST_ARCH'))}' = 'False' ]
--     then
---- 
--2.43.0
--
-diff --git a/isar-patches/0003-initramfs-Add-missing-umounts-after-generation.patch b/isar-patches/0003-initramfs-Add-missing-umounts-after-generation.patch
-deleted file mode 100644
-index 0f2770aa..00000000
---- a/isar-patches/0003-initramfs-Add-missing-umounts-after-generation.patch
-+++ /dev/null
-@@ -1,29 +0,0 @@
--From 78e8ecbaab9dcf887e46e52d220647ad838b4d4b Mon Sep 17 00:00:00 2001
--From: Jan Kiszka <jan.kiszka@siemens.com>
--Date: Mon, 30 Sep 2024 20:46:50 +0200
--Subject: [PATCH 3/4] initramfs: Add missing umounts after generation
--
--Failing to unmount what was mounted via rootfs_do_mounts can cause
--troubles on rebuilds.
--
--Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-----
-- meta/classes/initramfs.bbclass | 2 ++
-- 1 file changed, 2 insertions(+)
--
--diff --git a/meta/classes/initramfs.bbclass b/meta/classes/initramfs.bbclass
--index 6886b95a..42013356 100644
----- a/meta/classes/initramfs.bbclass
--+++ b/meta/classes/initramfs.bbclass
--@@ -45,6 +45,8 @@ do_generate_initramfs() {
--           update-initramfs -u -v ;  \
--         fi'
-- 
--+    rootfs_do_umounts
--+
--     if [ ! -e "${INITRAMFS_ROOTFS}/initrd.img" ]; then
--         bberror "No initramfs was found after generation!"
--     fi
---- 
--2.43.0
--
-diff --git a/isar-patches/0004-rootfs-Add-missing-umounts-in-rootfs_postprocess-and.patch b/isar-patches/0004-rootfs-Add-missing-umounts-in-rootfs_postprocess-and.patch
-deleted file mode 100644
-index 2f6b9d09..00000000
---- a/isar-patches/0004-rootfs-Add-missing-umounts-in-rootfs_postprocess-and.patch
-+++ /dev/null
-@@ -1,74 +0,0 @@
--From 55d8292d600e1d29fdf3f7eecc36f7c2ad6b0671 Mon Sep 17 00:00:00 2001
--From: Florian Bezdeka <florian.bezdeka@siemens.com>
--Date: Wed, 2 Oct 2024 22:31:55 +0200
--Subject: [PATCH 4/4] rootfs: Add missing umounts in rootfs_postprocess() and
-- rootfs_install()
--
--Calls to rootfs_do_mounts should always be paired with calls to
--rootfs_do_umounts.
--
--In case there was an exception thrown within the try blocks they will be
--re-raised after the finally block has been processed. This way we try to
--avoid leaking mounts but unmounting might still fail. In any case we
--tried our best to clean up.
--
--Signed-off-by: Florian Bezdeka <florian.bezdeka@siemens.com>
-----
-- meta/classes/rootfs.bbclass | 31 +++++++++++++++++++------------
-- 1 file changed, 19 insertions(+), 12 deletions(-)
--
--diff --git a/meta/classes/rootfs.bbclass b/meta/classes/rootfs.bbclass
--index ef40cbdf..c7011508 100644
----- a/meta/classes/rootfs.bbclass
--+++ b/meta/classes/rootfs.bbclass
--@@ -248,18 +248,21 @@ python do_rootfs_install() {
--     progress_reporter = bb.progress.MultiStageProgressReporter(d, stage_weights)
--     d.rootfs_progress = progress_reporter
-- 
---    for cmd in cmds:
---        progress_reporter.next_stage()
--+    try:
--+        for cmd in cmds:
--+            progress_reporter.next_stage()
-- 
---        if (d.getVarFlag(cmd, 'isar-apt-lock') or "") == "acquire-before":
---            lock = bb.utils.lockfile(d.getVar("REPO_ISAR_DIR") + "/isar.lock",
---                                     shared=True)
--+            if (d.getVarFlag(cmd, 'isar-apt-lock') or "") == "acquire-before":
--+                lock = bb.utils.lockfile(d.getVar("REPO_ISAR_DIR") + "/isar.lock",
--+                                         shared=True)
-- 
---        bb.build.exec_func(cmd, d)
--+            bb.build.exec_func(cmd, d)
-- 
---        if (d.getVarFlag(cmd, 'isar-apt-lock') or "") == "release-after":
---            bb.utils.unlockfile(lock)
---    progress_reporter.finish()
--+            if (d.getVarFlag(cmd, 'isar-apt-lock') or "") == "release-after":
--+                bb.utils.unlockfile(lock)
--+            progress_reporter.finish()
--+    finally:
--+        bb.build.exec_func('rootfs_do_umounts', d)
-- }
-- addtask rootfs_install before do_rootfs_postprocess after do_unpack
-- 
--@@ -379,9 +382,13 @@ python do_rootfs_postprocess() {
--     if cmds is None or not cmds.strip():
--         return
--     cmds = cmds.split()
---    for i, cmd in enumerate(cmds):
---        bb.build.exec_func(cmd, d)
---        progress_reporter.update(int(i / len(cmds) * 100))
--+
--+    try:
--+        for i, cmd in enumerate(cmds):
--+            bb.build.exec_func(cmd, d)
--+            progress_reporter.update(int(i / len(cmds) * 100))
--+    finally:
--+        bb.build.exec_func('rootfs_do_umounts', d)
-- }
-- addtask rootfs_postprocess before do_rootfs after do_unpack
-- 
---- 
--2.43.0
--
-diff --git a/kas-cip.yml b/kas-cip.yml
-index 7e9ece38..73c467ed 100644
---- a/kas-cip.yml
-+++ b/kas-cip.yml
-@@ -17,26 +17,12 @@ target: cip-core-image
- 
- build_system: isar
- 
--defaults:
--  repos:
--    patches:
--      repo: cip-core
--
- repos:
-   cip-core:
- 
-   isar:
-     url: https://github.com/ilbers/isar.git
--    commit: 36b04737a07baafc5af64cdc8aa61fad13fb494a
--    patches:
--      01:
--        path: isar-patches/0001-image-Avoid-breaking-the-build-when-mounts-are-no-lo.patch
--      02:
--        path: isar-patches/0002-rootfs-Provide-rootfs_do_umounts.patch
--      03:
--        path: isar-patches/0003-initramfs-Add-missing-umounts-after-generation.patch
--      04:
--        path: isar-patches/0004-rootfs-Add-missing-umounts-in-rootfs_postprocess-and.patch
-+    commit: 8c9bdd3cb0ac93aa46552d4554bafaea5d1d7d13
-     layers:
-       meta:
- 
+After hitting retry often enough, this pipeline now seems to pass.
+
+Any ideas what is going on there?
+
+Jan
+
 -- 
-2.43.0
+Siemens AG, Technology
+Linux Expert Center
+
 
