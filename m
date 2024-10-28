@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D93FD5B143
-	for <webhook@archiver.kernel.org>; Mon, 28 Oct 2024 20:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27DBED5B143
+	for <webhook@archiver.kernel.org>; Mon, 28 Oct 2024 20:05:05 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.2588.1730145889181522298
+ by mx.groups.io with SMTP id smtpd.web10.2570.1730145900677548138
  for <cip-dev@lists.cip-project.org>;
- Mon, 28 Oct 2024 13:04:49 -0700
+ Mon, 28 Oct 2024 13:05:00 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.11,239,1725289200"; 
-   d="scan'208";a="223233488"
+   d="scan'208";a="223233498"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 29 Oct 2024 05:04:48 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 29 Oct 2024 05:05:00 +0900
 Received: from Ubuntu-22.. (unknown [10.226.93.179])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4B149408D907;
-	Tue, 29 Oct 2024 05:04:38 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0AE44408CD1D;
+	Tue, 29 Oct 2024 05:04:41 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 25/27] arm64: dts: renesas: r9a07g044: Add CSI and CRU nodes
-Date: Mon, 28 Oct 2024 20:03:47 +0000
-Message-ID: <20241028200349.9620-26-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 27/27] arm64: defconfig: Enable RZ/G2L MIPI CSI-2 and CRU support
+Date: Mon, 28 Oct 2024 20:03:49 +0000
+Message-ID: <20241028200349.9620-28-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241028200349.9620-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20241028200349.9620-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -33,113 +33,38 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 28 Oct 2024 20:04:55 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17108
+ <cip-dev@lists.cip-project.org>; Mon, 28 Oct 2024 20:05:05 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17110
 
-commit 95c91e77664866517a999abdb246ffb207882c30 upstream.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add CSI and CRU nodes r9a07g044 (RZ/G2L) SoC DTSI.
+commit 3ad69c496d488cd1b6c3a20b2f7945b45a0f7f18 upstream.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20230322125648.24948-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Increase build and test coverage by enabling support for the Renesas
+RZ/G2L MIPI CSI-2 Receiver and the RZ/G2L Camera Receiving Unit, as used
+on the RZ/G2L SMARC EVK development board.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/32098bf6a5e78a4bcc6398ccb5db0b01f1afc9b9.1672747428.git.geert+renesas@glider.be
 [PL: manually applied the patch]
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 79 ++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
+ arch/arm64/configs/defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-index 267fbfcccc2b7..327e7bf983a7d 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-@@ -687,6 +687,85 @@ sbc: spi@10060000 {
- 			status = "disabled";
- 		};
- 
-+		cru: video@10830000 {
-+			compatible = "renesas,r9a07g044-cru", "renesas,rzg2l-cru";
-+			reg = <0 0x10830000 0 0x400>;
-+			clocks = <&cpg CPG_MOD R9A07G044_CRU_VCLK>,
-+				 <&cpg CPG_MOD R9A07G044_CRU_PCLK>,
-+				 <&cpg CPG_MOD R9A07G044_CRU_ACLK>;
-+			clock-names = "video", "apb", "axi";
-+			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "image_conv", "image_conv_err", "axi_mst_err";
-+			resets = <&cpg R9A07G044_CRU_PRESETN>,
-+				 <&cpg R9A07G044_CRU_ARESETN>;
-+			reset-names = "presetn", "aresetn";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <0>;
-+					cruparallel: endpoint@0 {
-+						reg = <0>;
-+					};
-+				};
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+					crucsi2: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&csi2cru>;
-+					};
-+				};
-+			};
-+		};
-+
-+		csi2: csi2@10830400 {
-+			compatible = "renesas,r9a07g044-csi2", "renesas,rzg2l-csi2";
-+			reg = <0 0x10830400 0 0xfc00>;
-+			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD R9A07G044_CRU_SYSCLK>,
-+				 <&cpg CPG_MOD R9A07G044_CRU_VCLK>,
-+				 <&cpg CPG_MOD R9A07G044_CRU_PCLK>;
-+			clock-names = "system", "video", "apb";
-+			resets = <&cpg R9A07G044_CRU_PRESETN>,
-+				 <&cpg R9A07G044_CRU_CMN_RSTB>;
-+			reset-names = "presetn", "cmn-rstb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					csi2cru: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&crucsi2>;
-+					};
-+				};
-+			};
-+		};
-+
- 		dsi: dsi@10850000 {
- 			compatible = "renesas,r9a07g044-mipi-dsi",
- 				     "renesas,rzg2l-mipi-dsi";
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 8a2f7a67cdacd..297d671306ce7 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -627,6 +627,8 @@ CONFIG_USB_VIDEO_CLASS=m
+ CONFIG_V4L_PLATFORM_DRIVERS=y
+ CONFIG_VIDEO_RCAR_CSI2=m
+ CONFIG_VIDEO_RCAR_VIN=m
++CONFIG_VIDEO_RZG2L_CSI2=m
++CONFIG_VIDEO_RZG2L_CRU=m
+ CONFIG_VIDEO_SUN6I_CSI=m
+ CONFIG_V4L_MEM2MEM_DRIVERS=y
+ CONFIG_VIDEO_SAMSUNG_S5P_JPEG=m
 -- 
 2.43.0
 
