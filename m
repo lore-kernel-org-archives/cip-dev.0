@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1229FD3E2DA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20827D3E2DE
 	for <webhook@archiver.kernel.org>; Mon, 28 Oct 2024 20:04:45 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.2576.1730145879125009277
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web10.2556.1730145879123798506
  for <cip-dev@lists.cip-project.org>;
- Mon, 28 Oct 2024 13:04:40 -0700
+ Mon, 28 Oct 2024 13:04:39 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.11,239,1725289200"; 
-   d="scan'208";a="223233482"
+   d="scan'208";a="227219319"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 29 Oct 2024 05:04:38 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 29 Oct 2024 05:04:38 +0900
 Received: from Ubuntu-22.. (unknown [10.226.93.179])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6EDD0408CD1D;
-	Tue, 29 Oct 2024 05:04:36 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id A95F7408D1FF;
+	Tue, 29 Oct 2024 05:04:28 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 24/27] clk: renesas: r9a07g044: Add clock and reset entries for CRU
-Date: Mon, 28 Oct 2024 20:03:46 +0000
-Message-ID: <20241028200349.9620-25-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 20/27] media: platform: rzg2l-cru: rzg2l-video: Fix image processing initialization
+Date: Mon, 28 Oct 2024 20:03:42 +0000
+Message-ID: <20241028200349.9620-21-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241028200349.9620-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20241028200349.9620-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -34,98 +34,59 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 28 Oct 2024 20:04:45 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17107
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17104
 
-commit a278d0c92be9d90307114b05c3edb1e7354d8412 upstream.
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Add CRU clock and reset entries to CPG driver.
+commit 276739485501e61096034ec036337feab4c07dc5 upstream.
 
-CRU_SYSCLK and CRU_VCLK clocks need to be turned ON/OFF in particular
-sequence for the CRU block hence add these clocks to
-r9a07g044_no_pm_mod_clks[] array and pass it as part of CPG data for
-both RZ/G2L and RZ/V2L SoCs.
+As per section 35.3.1 Starting Reception for the MIPI CSI-2 Input on the
+latest hardware manual (R01UH0914EJ0140 Rev.1.40) it is mentioned that
+initialize the AXI master first and then initialize the image processing.
+Fix the start procedure as per the hardware manual.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20221221212703.348278-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Link: https://lore.kernel.org/r/20240213181233.242316-4-biju.das.jz@bp.renesas.com
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a07g044-cpg.c | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+ .../media/platform/renesas/rzg2l-cru/rzg2l-video.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index 22c03c8d46362..bc822b9fd7ce6 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -197,7 +197,7 @@ static const struct {
- };
+diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+index 1ab0cc741c05b..f8632481cdb82 100644
+--- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
++++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+@@ -432,13 +432,6 @@ int rzg2l_cru_start_image_processing(struct rzg2l_cru_dev *cru)
  
- static const struct {
--	struct rzg2l_mod_clk common[75];
-+	struct rzg2l_mod_clk common[79];
- #ifdef CONFIG_CLK_R9A07G054
- 	struct rzg2l_mod_clk drp[0];
- #endif
-@@ -265,6 +265,14 @@ static const struct {
- 					0x558, 1),
- 		DEF_MOD("gpu_ace_clk",	R9A07G044_GPU_ACE_CLK, R9A07G044_CLK_P1,
- 					0x558, 2),
-+		DEF_MOD("cru_sysclk",   R9A07G044_CRU_SYSCLK, CLK_M2_DIV2,
-+					0x564, 0),
-+		DEF_MOD("cru_vclk",     R9A07G044_CRU_VCLK, R9A07G044_CLK_M2,
-+					0x564, 1),
-+		DEF_MOD("cru_pclk",     R9A07G044_CRU_PCLK, R9A07G044_CLK_ZT,
-+					0x564, 2),
-+		DEF_MOD("cru_aclk",     R9A07G044_CRU_ACLK, R9A07G044_CLK_M0,
-+					0x564, 3),
- 		DEF_MOD("dsi_pll_clk",	R9A07G044_MIPI_DSI_PLLCLK, R9A07G044_CLK_M1,
- 					0x568, 0),
- 		DEF_MOD("dsi_sys_clk",	R9A07G044_MIPI_DSI_SYSCLK, CLK_M2_DIV2,
-@@ -383,6 +391,9 @@ static struct rzg2l_reset r9a07g044_resets[] = {
- 	DEF_RST(R9A07G044_GPU_RESETN, 0x858, 0),
- 	DEF_RST(R9A07G044_GPU_AXI_RESETN, 0x858, 1),
- 	DEF_RST(R9A07G044_GPU_ACE_RESETN, 0x858, 2),
-+	DEF_RST(R9A07G044_CRU_CMN_RSTB, 0x864, 0),
-+	DEF_RST(R9A07G044_CRU_PRESETN, 0x864, 1),
-+	DEF_RST(R9A07G044_CRU_ARESETN, 0x864, 2),
- 	DEF_RST(R9A07G044_MIPI_DSI_CMN_RSTB, 0x868, 0),
- 	DEF_RST(R9A07G044_MIPI_DSI_ARESET_N, 0x868, 1),
- 	DEF_RST(R9A07G044_MIPI_DSI_PRESET_N, 0x868, 2),
-@@ -427,6 +438,11 @@ static const unsigned int r9a07g044_crit_mod_clks[] __initconst = {
- 	MOD_CLK_BASE + R9A07G044_DMAC_ACLK,
- };
+ 	spin_lock_irqsave(&cru->qlock, flags);
  
-+static const unsigned int r9a07g044_no_pm_mod_clks[] = {
-+	MOD_CLK_BASE + R9A07G044_CRU_SYSCLK,
-+	MOD_CLK_BASE + R9A07G044_CRU_VCLK,
-+};
+-	/* Initialize image convert */
+-	ret = rzg2l_cru_initialize_image_conv(cru, fmt);
+-	if (ret) {
+-		spin_unlock_irqrestore(&cru->qlock, flags);
+-		return ret;
+-	}
+-
+ 	/* Select a video input */
+ 	rzg2l_cru_write(cru, CRUnCTRL, CRUnCTRL_VINSEL(0));
+ 
+@@ -452,6 +445,13 @@ int rzg2l_cru_start_image_processing(struct rzg2l_cru_dev *cru)
+ 	/* Initialize the AXI master */
+ 	rzg2l_cru_initialize_axi(cru);
+ 
++	/* Initialize image convert */
++	ret = rzg2l_cru_initialize_image_conv(cru, fmt);
++	if (ret) {
++		spin_unlock_irqrestore(&cru->qlock, flags);
++		return ret;
++	}
 +
- #ifdef CONFIG_CLK_R9A07G044
- const struct rzg2l_cpg_info r9a07g044_cpg_info = {
- 	/* Core Clocks */
-@@ -444,6 +460,10 @@ const struct rzg2l_cpg_info r9a07g044_cpg_info = {
- 	.num_mod_clks = ARRAY_SIZE(mod_clks.common),
- 	.num_hw_mod_clks = R9A07G044_TSU_PCLK + 1,
+ 	/* Enable interrupt */
+ 	rzg2l_cru_write(cru, CRUnIE, CRUnIE_EFE);
  
-+	/* No PM Module Clocks */
-+	.no_pm_mod_clks = r9a07g044_no_pm_mod_clks,
-+	.num_no_pm_mod_clks = ARRAY_SIZE(r9a07g044_no_pm_mod_clks),
-+
- 	/* Resets */
- 	.resets = r9a07g044_resets,
- 	.num_resets = R9A07G044_TSU_PRESETN + 1, /* Last reset ID + 1 */
-@@ -469,6 +489,10 @@ const struct rzg2l_cpg_info r9a07g054_cpg_info = {
- 	.num_mod_clks = ARRAY_SIZE(mod_clks.common) + ARRAY_SIZE(mod_clks.drp),
- 	.num_hw_mod_clks = R9A07G054_STPAI_ACLK_DRP + 1,
- 
-+	/* No PM Module Clocks */
-+	.no_pm_mod_clks = r9a07g044_no_pm_mod_clks,
-+	.num_no_pm_mod_clks = ARRAY_SIZE(r9a07g044_no_pm_mod_clks),
-+
- 	/* Resets */
- 	.resets = r9a07g044_resets,
- 	.num_resets = R9A07G054_STPAI_ARESETN + 1, /* Last reset ID + 1 */
 -- 
 2.43.0
 
