@@ -1,230 +1,383 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A685D5CCB1
-	for <webhook@archiver.kernel.org>; Wed, 30 Oct 2024 13:56:34 +0000 (UTC)
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (EUR02-VI1-obe.outbound.protection.outlook.com [40.107.241.83])
- by mx.groups.io with SMTP id smtpd.web10.15486.1730296588409867545
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF0F8D6B6DD
+	for <webhook@archiver.kernel.org>; Wed, 30 Oct 2024 22:13:11 +0000 (UTC)
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+ by mx.groups.io with SMTP id smtpd.web10.27809.1730326383668942178
  for <cip-dev@lists.cip-project.org>;
- Wed, 30 Oct 2024 06:56:28 -0700
+ Wed, 30 Oct 2024 15:13:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=LGqVQ0e2;
- spf=pass (domain: siemens.com, ip: 40.107.241.83, mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=w+5HFrTj/0/tnGlsJjHtMihipOUZPNbDtU0HnyJc8ZtIq/nUQHMnHnaUQPvEwUvJ9Vp7E6ExUBwbVRmX849/2vmFNbO7lNrYz4V2PQaWvwZJgqFqFI5v91PJsw2esHt8uy5kYSCFA8cQtwO+qrzoydjJ1PVZ0d1crMGzfoYsULMxwtJEl2Wa5c7DyNr/kkGqnskLXFqzQ4MmQ9uhAK5zJcZtAqRuJHHA/5CO6m7Pma7ErP8ypkTJpac2wTn1MSgtqz+bKD2JB551IaBVw4ANO8tsCSkEPnOi3dELj/TaeTsw7uK/oT9g3w1tAWFba32WxW7NQOgRzSfRoBH34uULNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VxD7X2mbr9hPSCQPXjr7SRmRQqM7GDirqR89PuszYxs=;
- b=r5o91DJwhhS4Dta3GZBV3SROTqR8xpSPJ7AydYxm15IVFxcTZrUa4vz0NRxg7OjOQILOp0g2BwUrQGfJrQanPYCx4F+K7kMxjrAjX0nPM0uFZUFJHu8m3EwBJ1lj+RDFDVbRccSV9QGwNfRkqoBZa/vuPq+vqBqIBSSwjzc9NIxTT3vTon0+pe01BvS8LSkroHywtBXg88TCJ1LK+4BJCZ8NifnGmLfSSqp7CDZjNltOBqPKpHFtI1aEDPoMwt/1QfDp8K9hPdmJKW1JwJedmcSokCVYlJDF3A5cmD4x1WYJ3L76R1kZyoQt4U+24l7scASChx28K9OPJXhtJFFwgQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VxD7X2mbr9hPSCQPXjr7SRmRQqM7GDirqR89PuszYxs=;
- b=LGqVQ0e2tsBx+c3IIsvaHhqCj6mgQC88heVuapinyu1S3Tjki/P9sNVzMlm/yuYgPWUnRc5qLuMucTtOVbzGf+ZEOokzJ9gSOhqm3ihbnnvcAOwB/odKWLX7jgyU7/QaYFwZvDvliZ7L5lQ7QT0poIvHV/KWB3/hmL1mM8SMr9wXrktt/q6eGkSKFc4ewzl/vbCA1GBMXzFN+CfZobFkulY436rOiuS0dALEIUnhFsAE+cRU5HqB/5PHPlZFkz2C0UQEwpP+M1TL2Q2DLmfdR2AZWQV6N49B2TArzrh3NB6AQ86eknmo2c3yOx6ZmEshAvcKqECJET0RT/9hC4z/zg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by AS4PR10MB5800.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:507::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.20; Wed, 30 Oct
- 2024 13:56:25 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408%3]) with mapi id 15.20.8114.015; Wed, 30 Oct 2024
- 13:56:25 +0000
-Message-ID: <81187e79-ff31-43b1-a556-824db4a41a7c@siemens.com>
-Date: Wed, 30 Oct 2024 14:56:22 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core][PATCH 5/6] linux-cip: Update cip-kernel-config
- revision
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: cip-dev@lists.cip-project.org
-References: <cover.1730289107.git.jan.kiszka@siemens.com>
- <90a003078be88c2b963a7ace4ad7841639c8effd.1730289107.git.jan.kiszka@siemens.com>
-Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-In-Reply-To: <90a003078be88c2b963a7ace4ad7841639c8effd.1730289107.git.jan.kiszka@siemens.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0120.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:9d::13) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+ dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=QeAOpxin;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.219.171, mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e28fd83b5bbso364897276.0
+        for <cip-dev@lists.cip-project.org>; Wed, 30 Oct 2024 15:13:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1730326383; x=1730931183; darn=lists.cip-project.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vRmqpND7K6AC75Kmv6/fxKHMCJSDkRT2HGj0hcMXcgE=;
+        b=QeAOpxinuBIZK0G5/RBp5sty73CsYbzpexIGpUeZUoL17p3+gDl3O8qZrFSrUc9tV8
+         A8ina6QdkeMIGrwXF0xXswi+LrekqJXNmCWLxuHyRs/HO1dGyxdvnc0F345jIqmpvFbC
+         X5NYBR3VAHQP2HNNcBtgUAfRUwuG+xpCq194jMOXOj1ivvbu8b95a074T+WJzIpWx+ch
+         1ulI3dLA2f9dLEtUZp2mO/AFE6BC9dHpkq7llOPDjfRcG/o8VI+hdj4E3g10DpqT5KiP
+         NqXaXTkn1ADGdVhVpxZlm9pBxThtRek+fdoZhpHalCj9grlkXkfwm4w0/G+D5kJUmIDp
+         yAtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730326383; x=1730931183;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vRmqpND7K6AC75Kmv6/fxKHMCJSDkRT2HGj0hcMXcgE=;
+        b=Ijot0VOD1Ac6ONIbI2C0BW33yTEWYPU7FC/oskPG4MVfLKLpt8JWLKBH+lECfBXH7U
+         4DdPkiS5IpweazGWeyleIAzW7AQnmGpyJv2+hH3vu47e37sI7ez0W20YeMpMoO+qaSBq
+         s0gZcHDGkB8uDqLjJMIqvEQbkIbfxroWWrvmPhzmVByflDo/17yQ32R2C+zS8n5BZdsd
+         u66EpchKSOdDJJgTbh8k1trNTQsGdOt0vdVV+KN7gTV0RtWGo+ZBFXgNfGyjvvaMHtfo
+         zxLRTiVoNELw0B0US5ei2TmBwIqctLv2JMpyuuLiovmjCjCq8wBitRqKkb4Dtq5aFXvE
+         c55w==
+X-Gm-Message-State: AOJu0YwCdCebAOfwzTLMKq82vLQt0d7vOzbcAy2ZcCjOFAIrhyb1pxOl
+	+vE7/GfVvd9Di6zDvn23xKxhMfbv8ZtgzKHqpPqUNBnSNG38ntpL/QZyObkM10z2WscZaL44p9T
+	tpVtPzhshf7u6WV/gte6zNx0Ion492Ay0lpjSeldDoCqkRFTxdR0=
+X-Google-Smtp-Source: AGHT+IEU5Kk4nhjKs8jRjJ1l+3plFx0ROvUNPjnKZ/TVgkMzamqWgBOqOwOTfu+mJ88KOFkKFOPz1p/MS/BawLpd1Gg=
+X-Received: by 2002:a05:6902:708:b0:e29:699:3ca5 with SMTP id
+ 3f1490d57ef6-e3087b83840mr15900933276.22.1730326382385; Wed, 30 Oct 2024
+ 15:13:02 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS4PR10MB5800:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8652628e-f711-4488-086e-08dcf8eaa4ac
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?WmUva2cvUFo1L2d6clY0Y3p3YzI3RDJPZnQzYzdHSTBjbjExVVRVN3B4OSsz?=
- =?utf-8?B?YU84QUlSQ2gwdHkrOXNML2FtcnZZU3U1VWw0a0JBdUNtT1htMkRuOHo2ekVW?=
- =?utf-8?B?R0RxTHBQdFQ4ejl5ODBkQ3hZMzBzSnBGMG5HWVIrZDhhNlZaSlRabE9BYTlO?=
- =?utf-8?B?dTBkQ01KdTg2eFlMMXJNTjBLbEtTMExESHZCZ0EzbEE4RDk5R011NzZRQTJi?=
- =?utf-8?B?azhqQ3lTOUR5UGZ1MUNldGZpRVVSYWNTSk1SNHliV2pWdXR3UzY2Q2VDZXdy?=
- =?utf-8?B?RC9kNFlvWWpGaXpaTEcwQjZKMjNMUnBRQ2VRZjRSSzk2YWNMOHRmNUxlQkZM?=
- =?utf-8?B?STBqTHF5S1RLSzR2dTBKb3VNOEEwcGV1MGYzWUYyaktOTlFMMFJwT2Z0Wkor?=
- =?utf-8?B?QmdrU0lPcXNrZjhLN25KclEveStNY2thczlVcXF2MGNWOEt1REFGcGhqMWls?=
- =?utf-8?B?NTFCSjhuRWFVT3FpdCsxSmJvTUx1NVU3Q1lUQkNuMFZEeHIxNHFQRFhTaTdv?=
- =?utf-8?B?Nnc4NExFQlVsN0RnMGZJc1ZVeFdMMlJQSFdZdGFjK0pWZEZ6ZVlMTjUxa3RN?=
- =?utf-8?B?TWFVcEQxMDB4U0MzVmtkWXVqZ3ZZdEREM25ETVo3SGo5Y05rMjZ4aFJPbUt5?=
- =?utf-8?B?aC9uSENaRGlhSWhpSjNRTnExOHhseVQxNnRHUTJ3ZTRCT0w4T0xBYVFJSGt3?=
- =?utf-8?B?Y0FEaDJ1SDFlL0hoalF2ZGY3dWxqWDlOZU5FYXF4aDg5UzNLS25PTkNTM1N0?=
- =?utf-8?B?NzVzc25uakhydkR6cGFLOXNocStGSTJxRVRCcEpoUFRRN1ZQNjEwMlpaSzdG?=
- =?utf-8?B?dHg3QUQ5L2VFa1RZZTExb1BCa2lkano0bjdISkhaV1dxeHNKb3doTG8zYW1X?=
- =?utf-8?B?TGw1MW5LVWtJeGNSM0puWkRHazhhQlNXb2k4ZnNxMEhNZ2IwenF0YWJBU3Zm?=
- =?utf-8?B?VFlOR1hoeStjMDB2QlMwTlZBWU5TNFhIdDVwYStndVpFSS9EaTZoMEQ1QTBk?=
- =?utf-8?B?bTMxZ0ZzSVNSbktzb0xqWTNjZVhGY2p6Q1BjWkI1eGJYc2dXRmVQclE2U1Jv?=
- =?utf-8?B?Ky93OVE2VXNWZDkrL1pCNC9CRjROd3ZxOW1JNVdkWXFEeVYvcDVMM20xcEtX?=
- =?utf-8?B?aCtxeStHUEhHSlpELy9odnFwZ2gzYlZKRzFHdE1VSWk4bnBVV3ZiYlo3Wklq?=
- =?utf-8?B?a2FjNENBRU55WEE3T1g5cTNIUnZwckhSaW1VZExwempzZ3VBNmdSSUU3bUxt?=
- =?utf-8?B?OFhSWisyRklOREdJd3ZFU3NQdTNkcUlRWHFwbGZsalFKQUhtanF0U1dnaUk5?=
- =?utf-8?B?V1FDclFwblVJTjlBZGs1MzRuaFpxQzNPVEt2c0pEL0ozRVJKZXpNWllVb2JT?=
- =?utf-8?B?ejdBSjdsODNHWWNpN3VVY2pFZEJaWkJSU3ZDTXpCVTVYLzZPQTZCTTB3aFRl?=
- =?utf-8?B?OUFmNEwyOG1YK1dMV3Z4ZVRBS3U1WGJJSVc1cU90TTRRcGxqbkt5a2orUWJS?=
- =?utf-8?B?cWVpVkE5cVRKVHlBZ1FTRzk3cFBZTmY5ZW5OZGxrNnhsaHF0bk5ieEx0eVhX?=
- =?utf-8?B?RnZBeXVtM3Frc3hNNFVRRlB0RGoxMkgvVUhYQUFneHMwOTBxSm95RFh6UHdm?=
- =?utf-8?B?UlhHNU81WXJXWDg4YmVZbVBuSTY4eWw3cjhucGJhZDVFRWhUZUpYekd5WGxr?=
- =?utf-8?B?Q2hDNHMvU1EvUWpsdmUvQTZiSmVQZUloZS9mVEY1eUU4bGszNys5bHQwM2FI?=
- =?utf-8?Q?62U8IqIjC5HnVHA8hK35LwvjnzUkBX+4gACEpO9?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?Y1dpQUxzbFkzTGFiWENFYTcyUHNsRU5VTEx6MjhsQnkyTjNBZW9NZmFDUEsx?=
- =?utf-8?B?ODhucEpmTm50VytrYmM1Sk9hOG1vQTg3TEhKZWdGdzZpb3N4M2piQWxvbWpB?=
- =?utf-8?B?L2ZIYWJqbkdmNzFaNFVCQVpBa3lVVjdPRzZibDBzdWZtSnFaTFlEYjJ6RHBO?=
- =?utf-8?B?TjA0S0dnNjJwa3FjUmZ1dDF1ZzdFRHZNSEwvNk9xK1lqSWtjdUJZQXRvRmlJ?=
- =?utf-8?B?RkdnNzBqT2ZFNktaQU9OQW5waHJrVlkzR2xEeVNhakJoMzgyMDVyTXhtbi9F?=
- =?utf-8?B?azFWVUZ4ZlJFT1Z1N2hBa25jeUptZEdiTzNrQVc5UTJ0VWpxbERVNzc1ZWZ3?=
- =?utf-8?B?Y25oUHRJUHVTczZCVm5kUG5BVFRwN1o2TDVNdFFFeHpmZzhOcU1DN0hJV0dV?=
- =?utf-8?B?TFhIZlBBbjBzNi9xQSt1VWhzUEpLb0pvbU5oK281RmtSdEFVKzhRbjhQSVky?=
- =?utf-8?B?OHhwMEgrc1hPSXRXSzdlTzZxN1ZDS0dBL2tGYk1mU2h1cmYrTXU4bWRsNnZW?=
- =?utf-8?B?ckM5WHlRcDV0Y01ITjI4Ti9zZSs5dWtidk1haWRVc3VuNkxPNm9SUnQ0S1Zs?=
- =?utf-8?B?TWR5YzdqZVpkRitwVzQrT1pFUTJIU1R6S0trcmllbXR6YWMwU0k1VnczYVY5?=
- =?utf-8?B?dWxWWldYMXZIdEVqWXBKdGRCa0RHcDZZL2FQZWY1M3htVFVFVUdDUlczZnh1?=
- =?utf-8?B?UmdFSmE2WTdNaTRKYmR2VElUT0xFajhzQWZNY2Y1dHZYQWl1T3hkLzJSOWFh?=
- =?utf-8?B?dlJ2SXMvZ3ZidzR6cThoamVENjVaVkhYYzJHbkU4bUJRb3RrZmpJQmZPZG95?=
- =?utf-8?B?UFJYS1Q3OCtXaUtvNzkwUjVESUl1MW5jdVdjL1kwNUtyRTNPSzRGNGJJSU55?=
- =?utf-8?B?UjNFMUhWSnMxNXFubVBrNXh4UWlUZzNnWjUxa1JPUnd5Q1h1a3pEZ3ZMREtP?=
- =?utf-8?B?NmdUcjQwS2dVNzJpOTIvRTJVTkpTeGtlSERZMFV1SEdna1RrYnpSZjZVdTFI?=
- =?utf-8?B?b1JvMXJSVmw2YkVLUzB2RE5vNk5kM1cxREVCa2lLMys1anlmaHRFODZlWDhC?=
- =?utf-8?B?V053RjR0Rk1Ra0ZNWEtTdC9XQU9RSi9NMEJBOXA1TEkzTE5FR2ZQM1hxMk9P?=
- =?utf-8?B?YzdRMHEyMThFZHgzbGFtQWZFeWRMdmpkOFU1M3g1d1B2TlhSSmhmOWE2VWhB?=
- =?utf-8?B?NTFVS3ZUZ1l1QXZpb3dTTEU1dDFIa3hsMDg5YjB1clM5SGVRc3JTdzNZbE9D?=
- =?utf-8?B?NjZodFNabm9GbnV0YjJZZndqSFN3Y3BBSWZ5L240UEMyeFRYNDJuOHRpRWtY?=
- =?utf-8?B?VVRUY1ozWUhIcUNuT09seG1CSkI3MjR1RFpyT2gycXF5NTBBSWRPcGFRK2Jp?=
- =?utf-8?B?eGMyVjJudVVrWlZtTXBtTVVRaVdiUzNPZFVTdmsxeWFGbmdUVjlkYjhEc0FB?=
- =?utf-8?B?RUFRRDhGQlU2N01TMGNBNldkZlgxTk1QWlJVZEdVczRwUmdYUXdPN3IyNkFp?=
- =?utf-8?B?US9UY0N3a3dNVnh3bklnWExQaTdlek45ckFEMmNOR2M0N3J3NE5sT3BwT3Nj?=
- =?utf-8?B?S24yM29RNnVxSmNVNmkvRFc3R1Jkb04yZGt1NWRiVEpXcTc0ZE9waGhPTE82?=
- =?utf-8?B?UlhWK1dkNFhwQ3hrTmRzNWU4cnppKy9RVENEWCtMd3BwOWJYZ2Zjb09kYnYr?=
- =?utf-8?B?VWlLdUpSTmFpM2JmTkFwWGkwWmNocGRONE94eHFRZ3hxaVZ1YVF6dUZWTS83?=
- =?utf-8?B?bi9vOEdFMjBMVW52dzZFVVdsV0dKNVQxbTN4NzhaVnBZelVnTUh0NktyTFhm?=
- =?utf-8?B?ajJEWkhnNFRrQUJGZlhVbm84MWVLTkw5NmJnTHhvNXBIQXR1bmI4dVFsUERw?=
- =?utf-8?B?aDhnUE5ZS2JSQlVjdlA5S3VyWVJWYnowdXBWaUJEenduQ2JNOFBLeGFyNFEw?=
- =?utf-8?B?cFFBRzlUdHRFRUtoNjRBYVZhRFZMK2NCbXQrbm0yRnFYNmpidFZJK3pmdmhx?=
- =?utf-8?B?MFNFejdiNkpwZm0xM1NZbC9RZTJmNFJPUENMamUwR0dsZHNJT0I1a3dDUmtL?=
- =?utf-8?B?aVl0MkFBcmZwdjRSa2NWVWUzQlhHQXp4YkNJY2YwdHJFZDFoZFlQL3JkL3lZ?=
- =?utf-8?Q?w0ZzizAMtrVkldmsVtp5OUy+t?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8652628e-f711-4488-086e-08dcf8eaa4ac
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 13:56:25.0076
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GIiLi38MYrGnkgJ5aHXZOKNfVxTgumHCdtWQBlZeYdytKL0UGLmNGOIz8jG9Yx+eHd6UY3bSMCK8tCzN/0rsng==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR10MB5800
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 31 Oct 2024 07:12:26 +0900
+Message-ID: <CAODzB9qN+Y+AKu++xg8zaOSoHnsfgp2rtiaYtaWMogipx+gPhQ@mail.gmail.com>
+Subject: [kernel-cve-report] New CVE entries this week
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 30 Oct 2024 13:56:34 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17123
+ <cip-dev@lists.cip-project.org>; Wed, 30 Oct 2024 22:13:11 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17124
 
-On 30.10.24 12:51, Jan Kiszka wrote:
-> From: Jan Kiszka <jan.kiszka@siemens.com>
-> 
-> This brings support for EROFS and PID namespaces for 6.1 and also fixes
-> Ethernet configuration on BeagleBone Black.
-> 
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> ---
->  recipes-kernel/linux/cip-kernel-config.inc | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/recipes-kernel/linux/cip-kernel-config.inc b/recipes-kernel/linux/cip-kernel-config.inc
-> index 9c1ab946..4e1cacc2 100644
-> --- a/recipes-kernel/linux/cip-kernel-config.inc
-> +++ b/recipes-kernel/linux/cip-kernel-config.inc
-> @@ -14,6 +14,6 @@ SRC_URI:append = " ${@ \
->      if d.getVar('USE_CIP_KERNEL_CONFIG') == '1' else '' \
->      }"
->  
-> -SRCREV_cip-kernel-config ?= "f6b7018cb6845f34f8a03c126bf4f823ce10d637"
-> +SRCREV_cip-kernel-config ?= "c3c5f08d24dc05f7dd20d29d6337e00aad190093"
->  
->  do_fetch[vardeps] += "SRCREV_cip-kernel-config"
+Hi!
 
-Ok, this will need a v2 once [1] is merged. Or [2] is resolved so that 
-it can be merged.
+It's this week's CVE report.
 
-Jan
+This week reported 22 new CVEs and 0 updated CVEs.
 
-[1] https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/-/merge_requests/106
-[2] https://lore.kernel.org/cip-dev/cd17b322-28c8-46c7-9876-22cd3f32033d@siemens.com/
+* New CVEs
+CVE-2024-50067: uprobe: avoid out-of-bounds memory access of fetching args
 
+Announce: https://lore.kernel.org/linux-cve-announce/2024102859-CVE-2024-50067-f7c0@gregkh/
+
+Introduced by commit dcad1a2 ("tracing/uprobes: Fetch args before
+reserving a ring buffer") in v3.14-rc1.
+Fixed in v6.12-rc5.
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [373b9338c9722a368925d83bc622c596896b328e]
+
+CVE-2024-50068: mm/damon/tests/sysfs-kunit.h: fix memory leak in
+damon_sysfs_test_add_targets()
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024102930-CVE-2024-50068-2e3c@gregkh/
+
+Introduced by commit b8ee557 ("mm/damon/sysfs-test: add a unit test
+for damon_sysfs_set_targets()") in v6.7-rc1.
+Fixed in v6.12-rc4.
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [2d6a1c835685de3b0c8e8dc871f60f4ef92ab01a]
+
+CVE-2024-50069: pinctrl: apple: check devm_kasprintf() returned value
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024102933-CVE-2024-50069-fe0a@gregkh/
+
+Introduced by commit a0f160f ("pinctrl: add pinctrl/GPIO driver for
+Apple SoCs") in v5.16-rc1.
+Fixed in v6.12-rc4.
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [665a58fe663ac7a9ea618dc0b29881649324b116]
+stable/6.1: [0a4d4dbef622ac8796a6665e0080da2685f9220a]
+stable/6.6: [fad940e2dd789155f99ecafa71a7baf6f96530bc]
+
+CVE-2024-50070: pinctrl: stm32: check devm_kasprintf() returned value
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024102934-CVE-2024-50070-1cc7@gregkh/
+
+Introduced by commit 32c170f ("pinctrl: stm32: set default gpio line
+names using pin names") in v6.6-rc1.
+Fixed in v6.12-rc4.
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [b0f0e3f0552a566def55c844b0d44250c58e4df6]
+stable/6.6: [3b36bb1fca2b87f6292ca2a8593f297c5e9fab41]
+
+CVE-2024-50071: pinctrl: nuvoton: fix a double free in
+ma35_pinctrl_dt_node_to_map_func()
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024102934-CVE-2024-50071-6dd6@gregkh/
+
+Introduced by commit f805e35 ("pinctrl: nuvoton: Add ma35d1 pinctrl
+and GPIO driver") in v6.11-rc1.
+Fixed in v6.12-rc4.
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [3fd976afe9743110f20a23f93b7ff9693f2be4bf]
+
+CVE-2024-50072: x86/bugs: Use code segment selector for VERW operand
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024102934-CVE-2024-50072-14b5@gregkh/
+
+Introduced by commit a0e2dab ("x86/entry_32: Add VERW just before
+userspace transition") in v6.8-rc6.
+Fixed in v6.12-rc4.
+Bug introduced commit was backported to following branches.
+cip/5.10 cip/5.10-rt cip/6.1 cip/6.1-rt stable/5.10 stable/5.15
+stable/6.1 stable/6.6
+
+Fixed status
+mainline: [e4d2102018542e3ae5e297bc6e229303abff8a0f]
+stable/6.6: [481b477ab63c7245715a3e57ba79eb87c2dc0d02]
+
+CVE-2024-50073: tty: n_gsm: Fix use-after-free in gsm_cleanup_mux
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024102935-CVE-2024-50073-307b@gregkh/
+
+There is no mention of the commit that introduced the bug in the CVE
+announcement.Fixed in v6.12-rc4.
+
+Fixed status
+mainline: [9462f4ca56e7d2430fdb6dcc8498244acbfc4489]
+stable/6.1: [bf171b5e86e41de4c1cf32fb7aefa275c3d7de49]
+stable/6.6: [c29f192e0d44cc1cbaf698fa1ff198f63556691a]
+
+CVE-2024-50074: parport: Proper fix for array out-of-bounds access
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024102935-CVE-2024-50074-d44d@gregkh/
+
+Introduced by commit ab11dac ("dev/parport: fix the array
+out-of-bounds risk") in v6.11-rc1.
+Fixed in v6.12-rc4.
+Bug introduced commit was backported to following branches.
+cip/4.19 cip/4.19-rt cip/5.10 cip/5.10-rt cip/6.1 cip/6.1-rt
+stable/4.19 stable/5.10 stable/5.15 stable/5.4 stable/6.1 stable/6.6
+
+Fixed status
+mainline: [02ac3a9ef3a18b58d8f3ea2b6e46de657bf6c4f9]
+stable/5.10: [1826b6d69bbb7f9ae8711827facbb2ad7f8d0aaa]
+stable/5.15: [440311903231c6e6c9bcf8acb6a2885a422e00bc]
+stable/6.1: [fca048f222ce9dcbde5708ba2bf81d85a4a27952]
+stable/6.6: [66029078fee00646e2e9dbb8f41ff7819f8e7569]
+
+CVE-2024-50075: xhci: tegra: fix checked USB2 port number
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024102935-CVE-2024-50075-81b7@gregkh/
+
+Introduced by commit a30951d ("xhci: tegra: USB2 pad power controls")
+in v6.3-rc1.
+Fixed in v6.12-rc4.
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [7d381137cb6ecf558ef6698c7730ddd482d4c8f2]
+stable/6.6: [9c696bf4ab54c7cec81221887564305f0ceeac0a]
+
+CVE-2024-50076: vt: prevent kernel-infoleak in con_font_get()
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024102936-CVE-2024-50076-43f7@gregkh/
+
+Introduced by commit 05e2600 ("VT: Bump font size limitation to 64x128
+pixels") in v6.3-rc1.
+Fixed in v6.12-rc4.
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [f956052e00de211b5c9ebaa1958366c23f82ee9e]
+stable/6.6: [dc2d5f02636c7587bdd6d1f60fc59c55860b00a4]
+
+CVE-2024-50077: Bluetooth: ISO: Fix multiple init when debugfs is disabled
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024102936-CVE-2024-50077-2940@gregkh/
+
+Introduced by commit ccf74f2 ("Bluetooth: Add BTPROTO_ISO socket
+type") in v6.0-rc1.
+Fixed in v6.12-rc4.
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [a9b7b535ba192c6b77e6c15a4c82d853163eab8c]
+stable/6.1: [fa4b832c5a6ec35023a1b997cf658c436619c752]
+stable/6.6: [8fb8e912afb4c47dec12ea9a5853e7a8db95816f]
+
+CVE-2024-50078: Bluetooth: Call iso_exit() on module unload
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024102936-CVE-2024-50078-cfe9@gregkh/
+
+Introduced by commit ccf74f2 ("Bluetooth: Add BTPROTO_ISO socket
+type") in v6.0-rc1.
+Fixed in v6.12-rc4.
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [d458cd1221e9e56da3b2cc5518ad3225caa91f20]
+stable/6.1: [4af7ba39a1a02e16ee8cd0d3b6c6657f51b8ad7a]
+stable/6.6: [05f84d86169b2ebac185c5736a256823d42c425b]
+
+CVE-2024-50079: io_uring/sqpoll: ensure task state is TASK_RUNNING
+when running task_work
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024102936-CVE-2024-50079-47af@gregkh/
+
+Introduced by commit af5d68f ("io_uring/sqpoll: manage task_work
+privately") in v6.9-rc1.
+Fixed in v6.12-rc4.
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [8f7033aa4089fbaf7a33995f0f2ee6c9d7b9ca1b]
+
+CVE-2024-50080: ublk: don't allow user copy for unprivileged device
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024102936-CVE-2024-50080-72ba@gregkh/
+
+Introduced by commit 1172d5b ("ublk: support user copy") in v6.5-rc1.
+Fixed in v6.12-rc4.
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [42aafd8b48adac1c3b20fe5892b1b91b80c1a1e6]
+stable/6.6: [6414ab5c9c9c068eca6dc4fd3a036bc4b83164dc]
+
+CVE-2024-50081: blk-mq: setup queue ->tag_set before initializing hctx
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024102937-CVE-2024-50081-f8d6@gregkh/
+
+Introduced by commit 7b81581 ("blk-mq: add helper for checking if one
+CPU is mapped to specified hctx") in v6.10-rc1.
+Fixed in v6.12-rc4.
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [c25c0c9035bb8b28c844dfddeda7b8bdbcfcae95]
+
+CVE-2024-50082: blk-rq-qos: fix crash on rq_qos_wait vs.
+rq_qos_wake_function race
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024102937-CVE-2024-50082-c5b1@gregkh/
+
+Introduced by commit 38cfb5a ("blk-wbt: improve waking of tasks") in v4.19-rc2.
+Fixed in v6.12-rc4.
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [e972b08b91ef48488bae9789f03cfedb148667fb]
+stable/5.10: [3bc6d0f8b70a9101456cf02ab99acb75254e1852]
+stable/5.15: [455a469758e57a6fe070e3e342db12e4a629e0eb]
+stable/6.1: [b5e900a3612b69423a0e1b0ab67841a1fb4af80f]
+stable/6.6: [4c5b123ab289767afe940389dbb963c5c05e594e]
+
+CVE-2024-50083: tcp: fix mptcp DSS corruption due to large pmtu xmit
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024102937-CVE-2024-50083-539c@gregkh/
+
+Introduced by commit 8571248 ("tcp: coalesce/collapse must respect
+MPTCP extensions") in v5.6-rc1.
+Fixed in v6.12-rc3.
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [4dabcdf581217e60690467a37c956a5b8dbc6bd9]
+stable/5.10: [c38add9ac0e4d4f418e6443a688491499021add9]
+stable/5.15: [9729010a0ac5945c1bf6847dd0778d8a1a4b72ac]
+stable/6.1: [ba8e65814e519eeb17d086952bce7de93f7a40da]
+stable/6.6: [229dfdc36f31a8d47433438bc0e6e1662c4ab404]
+
+CVE-2024-50084: net: microchip: vcap api: Fix memory leaks in
+vcap_api_encode_rule_test()
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024102937-CVE-2024-50084-daf1@gregkh/
+
+Introduced by commit a3c1e45 ("net: microchip: vcap: Fix
+use-after-free error in kunit test") in v6.11-rc7.
+Fixed in v6.12-rc4.
+Bug introduced commit was backported to following branches.
+stable/6.6
+
+Fixed status
+mainline: [217a3d98d1e9891a8b1438a27dfbc64ddf01f691]
+stable/6.6: [20b5342de51bda794791e013b90754774003a515]
+
+CVE-2024-50085: mptcp: pm: fix UaF read in mptcp_pm_nl_rm_addr_or_subflow
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024102938-CVE-2024-50085-7800@gregkh/
+
+Introduced by commit 1c1f721 ("mptcp: pm: only decrement
+add_addr_accepted for MPJ req") in v6.11-rc5.
+Fixed in v6.12-rc4.
+Bug introduced commit was backported to following branches.
+cip/6.1 cip/6.1-rt stable/5.15 stable/6.1 stable/6.6
+
+Fixed status
+mainline: [7decd1f5904a489d3ccdcf131972f94645681689]
+stable/5.15: [35301636439138b821f1f6169bd00d348ebd388a]
+stable/6.1: [da3343bc0839b180fd9af9c27fa456d8231409f9]
+stable/6.6: [7b2e478abab0b3a33515433a6af563aebba773c1]
+
+CVE-2024-50086: ksmbd: fix user-after-free from session log off
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024102938-CVE-2024-50086-8134@gregkh/
+
+There is no mention of the commit that introduced the bug in the CVE
+announcement.Fixed in v6.12-rc4.
+
+Fixed status
+mainline: [7aa8804c0b67b3cb263a472d17f2cb50d7f1a930]
+stable/6.1: [a9839c37fd813b432988f58a9d9dd59253d3eb2c]
+stable/6.6: [5511999e9615e4318e9142d23b29bd1597befc08]
+
+CVE-2024-50087: btrfs: fix uninitialized pointer free on
+read_alloc_one_name() error
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024102938-CVE-2024-50087-dd58@gregkh/
+
+Introduced by commit e43eec8 ("btrfs: use struct qstr instead of name
+and namelen pairs") in v6.2-rc1.
+Fixed in v6.12-rc4.
+Bug introduced commit was backported to following branches.
+cip/6.1 cip/6.1-rt stable/6.1
+
+Fixed status
+mainline: [2ab5e243c2266c841e0f6904fad1514b18eaf510]
+stable/6.1: [b37de9491f140a0ff125c27dd1050185c3accbc1]
+stable/6.6: [7fc7c47b9ba0cf2d192f2117a64b24881b0b577f]
+
+CVE-2024-50088: btrfs: fix uninitialized pointer free in add_inode_ref()
+
+Announce: https://lore.kernel.org/linux-cve-announce/2024102938-CVE-2024-50088-848b@gregkh/
+
+Introduced by commit e43eec8 ("btrfs: use struct qstr instead of name
+and namelen pairs") in v6.2-rc1.
+Fixed in v6.12-rc4.
+Bug introduced commit was backported to following branches.
+cip/6.1 cip/6.1-rt stable/6.1
+
+Fixed status
+mainline: [66691c6e2f18d2aa4b22ffb624b9bdc97e9979e4]
+stable/6.1: [12cf028381aa19bc38465341512c280256e8d82d]
+stable/6.6: [e11ce03b58743bf1e096c48fcaa7e6f08eb75dfa]
+
+* Updated CVEs
+
+No updated CVEs this week.
+
+Regards,
 -- 
-Siemens AG, Technology
-Linux Expert Center
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
+
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
