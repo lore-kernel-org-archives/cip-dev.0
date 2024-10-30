@@ -1,71 +1,71 @@
-Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27DBED5B143
-	for <webhook@archiver.kernel.org>; Mon, 28 Oct 2024 20:05:05 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.2570.1730145900677548138
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22441D5CC90
+	for <webhook@archiver.kernel.org>; Wed, 30 Oct 2024 10:52:32 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web10.12170.1730285549952860074
  for <cip-dev@lists.cip-project.org>;
- Mon, 28 Oct 2024 13:05:00 -0700
+ Wed, 30 Oct 2024 03:52:30 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-IronPort-AV: E=Sophos;i="6.11,239,1725289200"; 
-   d="scan'208";a="223233498"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 29 Oct 2024 05:05:00 +0900
-Received: from Ubuntu-22.. (unknown [10.226.93.179])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0AE44408CD1D;
-	Tue, 29 Oct 2024 05:04:41 +0900 (JST)
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: cip-dev@lists.cip-project.org,
+ dkim=none (message not signed); spf=neutral (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 884CA1C00A3; Wed, 30 Oct 2024 11:52:27 +0100 (CET)
+Date: Wed, 30 Oct 2024 11:52:27 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@denx.de>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 27/27] arm64: defconfig: Enable RZ/G2L MIPI CSI-2 and CRU support
-Date: Mon, 28 Oct 2024 20:03:49 +0000
-Message-ID: <20241028200349.9620-28-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241028200349.9620-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	Pavel Machek <pavel@denx.de>, Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH 5.10.y-cip 17/27] media: platform: rzg2l-cru: rzg2l-csi2:
+ Enclose the macro in parentheses
+Message-ID: <ZyIP69IkF3ZrE4Jf@duo.ucw.cz>
 References: <20241028200349.9620-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20241028200349.9620-18-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Qpfd619NcOyk/RmT"
+Content-Disposition: inline
+In-Reply-To: <20241028200349.9620-18-prabhakar.mahadev-lad.rj@bp.renesas.com>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 28 Oct 2024 20:05:05 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17110
+ <cip-dev@lists.cip-project.org>; Wed, 30 Oct 2024 10:52:32 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17111
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 3ad69c496d488cd1b6c3a20b2f7945b45a0f7f18 upstream.
+--Qpfd619NcOyk/RmT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Increase build and test coverage by enabling support for the Renesas
-RZ/G2L MIPI CSI-2 Receiver and the RZ/G2L Camera Receiving Unit, as used
-on the RZ/G2L SMARC EVK development board.
+Hi!
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/32098bf6a5e78a4bcc6398ccb5db0b01f1afc9b9.1672747428.git.geert+renesas@glider.be
-[PL: manually applied the patch]
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+> commit e5f29bb9c4350dd9692f3b98eb8538dbbebccbaf upstream.
+>=20
+> Fix the below error reported by checkpatch:
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 8a2f7a67cdacd..297d671306ce7 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -627,6 +627,8 @@ CONFIG_USB_VIDEO_CLASS=m
- CONFIG_V4L_PLATFORM_DRIVERS=y
- CONFIG_VIDEO_RCAR_CSI2=m
- CONFIG_VIDEO_RCAR_VIN=m
-+CONFIG_VIDEO_RZG2L_CSI2=m
-+CONFIG_VIDEO_RZG2L_CRU=m
- CONFIG_VIDEO_SUN6I_CSI=m
- CONFIG_V4L_MEM2MEM_DRIVERS=y
- CONFIG_VIDEO_SAMSUNG_S5P_JPEG=m
--- 
-2.43.0
+I don't see this one in 6.1-cip. Can you submit it for that branch,
+too?
 
+(Are there others that are missing from 6.1?)
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--Qpfd619NcOyk/RmT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZyIP6wAKCRAw5/Bqldv6
+8mVvAJ4n0C9eNF58oBMHaOC+Kza6IrJsnQCcCU66SHcApUFqvnnriUPR8KEEMyU=
+=BvR0
+-----END PGP SIGNATURE-----
+
+--Qpfd619NcOyk/RmT--
 
