@@ -2,143 +2,85 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56CEBE6B277
-	for <webhook@archiver.kernel.org>; Fri,  1 Nov 2024 12:58:55 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.36928.1730465925329956404
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB37EE674A9
+	for <webhook@archiver.kernel.org>; Fri,  1 Nov 2024 14:15:55 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web10.39016.1730470552520763213
  for <cip-dev@lists.cip-project.org>;
- Fri, 01 Nov 2024 05:58:46 -0700
+ Fri, 01 Nov 2024 07:15:53 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-IronPort-AV: E=Sophos;i="6.11,249,1725289200"; 
-   d="scan'208";a="223655356"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 01 Nov 2024 21:58:44 +0900
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+X-IronPort-AV: E=Sophos;i="6.11,250,1725289200"; 
+   d="scan'208";a="227647411"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 01 Nov 2024 23:15:51 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.182])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B9A184009F99;
-	Fri,  1 Nov 2024 21:58:37 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5882442147B8;
+	Fri,  1 Nov 2024 23:15:41 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH v2 5.10.y-cip 26/28] arm64: dts: renesas: r9a07g054: Add CSI and CRU nodes
-Date: Fri,  1 Nov 2024 12:57:44 +0000
-Message-ID: <20241101125746.33222-27-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 1/2] media: rzg2l-cru: Remove unneeded semicolon
+Date: Fri,  1 Nov 2024 14:15:37 +0000
+Message-ID: <20241101141538.34849-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241101125746.33222-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20241101125746.33222-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20241101141538.34849-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20241101141538.34849-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 01 Nov 2024 12:58:55 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17161
+ <cip-dev@lists.cip-project.org>; Fri, 01 Nov 2024 14:15:55 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17165
 
-commit a3c95a54727a81a4f3bd65b05c2e8542b2821ec3 upstream.
+From: Yang Li <yang.lee@linux.alibaba.com>
 
-Add CSI and CRU nodes to r9a07g054 (RZ/V2L) SoC DTSI.
+commit 7206fcc59399729667260d58c63e3db4503ac511 upstream.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20230412185608.64628-2-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+./drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c:409:2-3: Unneeded semicolon
+./drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c:407:2-3: Unneeded semicolon
+
+Link: https://bugzilla.openanolis.cn/show_bug.cgi?id=3273
+
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a07g054.dtsi | 79 ++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
+ drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c  | 2 +-
+ drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
-index a5c3a68c1e011..4417135c51342 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g054.dtsi
-@@ -692,6 +692,85 @@ sbc: spi@10060000 {
- 			status = "disabled";
- 		};
+diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+index e1668a4d12561..3f16058dc6365 100644
+--- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
++++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+@@ -411,7 +411,7 @@ static int rzg2l_csi2_mipi_link_disable(struct rzg2l_csi2 *csi2)
+ 		if (!(rzg2l_csi2_read(csi2, CSI2nRTST) & CSI2nRTST_VSRSTS))
+ 			break;
+ 		usleep_range(100, 200);
+-	};
++	}
  
-+		cru: video@10830000 {
-+			compatible = "renesas,r9a07g054-cru", "renesas,rzg2l-cru";
-+			reg = <0 0x10830000 0 0x400>;
-+			clocks = <&cpg CPG_MOD R9A07G054_CRU_VCLK>,
-+				 <&cpg CPG_MOD R9A07G054_CRU_PCLK>,
-+				 <&cpg CPG_MOD R9A07G054_CRU_ACLK>;
-+			clock-names = "video", "apb", "axi";
-+			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "image_conv", "image_conv_err", "axi_mst_err";
-+			resets = <&cpg R9A07G054_CRU_PRESETN>,
-+				 <&cpg R9A07G054_CRU_ARESETN>;
-+			reset-names = "presetn", "aresetn";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <0>;
-+					cruparallel: endpoint@0 {
-+						reg = <0>;
-+					};
-+				};
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+					crucsi2: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&csi2cru>;
-+					};
-+				};
-+			};
-+		};
-+
-+		csi2: csi2@10830400 {
-+			compatible = "renesas,r9a07g054-csi2", "renesas,rzg2l-csi2";
-+			reg = <0 0x10830400 0 0xfc00>;
-+			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD R9A07G054_CRU_SYSCLK>,
-+				 <&cpg CPG_MOD R9A07G054_CRU_VCLK>,
-+				 <&cpg CPG_MOD R9A07G054_CRU_PCLK>;
-+			clock-names = "system", "video", "apb";
-+			resets = <&cpg R9A07G054_CRU_PRESETN>,
-+				 <&cpg R9A07G054_CRU_CMN_RSTB>;
-+			reset-names = "presetn", "cmn-rstb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					csi2cru: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&crucsi2>;
-+					};
-+				};
-+			};
-+		};
-+
- 		dsi: dsi@10850000 {
- 			compatible = "renesas,r9a07g054-mipi-dsi",
- 				     "renesas,rzg2l-mipi-dsi";
+ 	if (!timeout)
+ 		dev_err(csi2->dev, "Clearing CSI2nRTST.VSRSTS timed out\n");
+diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+index 96ccc0edfa702..33a38528dbc0c 100644
+--- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
++++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+@@ -404,7 +404,7 @@ void rzg2l_cru_stop_image_processing(struct rzg2l_cru_dev *cru)
+ 			break;
+ 
+ 		usleep_range(10, 20);
+-	};
++	}
+ 
+ 	/* Notify that AXI bus can not stop here */
+ 	if (!retries)
 -- 
 2.43.0
 
