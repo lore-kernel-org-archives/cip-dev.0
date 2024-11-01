@@ -2,7 +2,7 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51048E6B271
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57CD4E6B26A
 	for <webhook@archiver.kernel.org>; Fri,  1 Nov 2024 12:58:45 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web10.37252.1730465918609604898
@@ -11,20 +11,20 @@ Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.1
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.11,249,1725289200"; 
-   d="scan'208";a="227643718"
+   d="scan'208";a="227643716"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 01 Nov 2024 21:58:38 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 01 Nov 2024 21:58:37 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.182])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id BF9E6400A66A;
-	Fri,  1 Nov 2024 21:58:35 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id D04984009F93;
+	Fri,  1 Nov 2024 21:58:33 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH v2 5.10.y-cip 25/28] arm64: dts: renesas: r9a07g044: Add CSI and CRU nodes
-Date: Fri,  1 Nov 2024 12:57:43 +0000
-Message-ID: <20241101125746.33222-26-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 5.10.y-cip 24/28] clk: renesas: r9a07g044: Add clock and reset entries for CRU
+Date: Fri,  1 Nov 2024 12:57:42 +0000
+Message-ID: <20241101125746.33222-25-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241101125746.33222-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20241101125746.33222-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -34,112 +34,98 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 01 Nov 2024 12:58:45 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17159
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17158
 
-commit 95c91e77664866517a999abdb246ffb207882c30 upstream.
+commit a278d0c92be9d90307114b05c3edb1e7354d8412 upstream.
 
-Add CSI and CRU nodes r9a07g044 (RZ/G2L) SoC DTSI.
+Add CRU clock and reset entries to CPG driver.
+
+CRU_SYSCLK and CRU_VCLK clocks need to be turned ON/OFF in particular
+sequence for the CRU block hence add these clocks to
+r9a07g044_no_pm_mod_clks[] array and pass it as part of CPG data for
+both RZ/G2L and RZ/V2L SoCs.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20230322125648.24948-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/r/20221221212703.348278-1-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[PL: manually applied the patch]
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 79 ++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
+ drivers/clk/renesas/r9a07g044-cpg.c | 26 +++++++++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-index 267fbfcccc2b7..327e7bf983a7d 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-@@ -687,6 +687,85 @@ sbc: spi@10060000 {
- 			status = "disabled";
- 		};
+diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
+index 22c03c8d46362..bc822b9fd7ce6 100644
+--- a/drivers/clk/renesas/r9a07g044-cpg.c
++++ b/drivers/clk/renesas/r9a07g044-cpg.c
+@@ -197,7 +197,7 @@ static const struct {
+ };
  
-+		cru: video@10830000 {
-+			compatible = "renesas,r9a07g044-cru", "renesas,rzg2l-cru";
-+			reg = <0 0x10830000 0 0x400>;
-+			clocks = <&cpg CPG_MOD R9A07G044_CRU_VCLK>,
-+				 <&cpg CPG_MOD R9A07G044_CRU_PCLK>,
-+				 <&cpg CPG_MOD R9A07G044_CRU_ACLK>;
-+			clock-names = "video", "apb", "axi";
-+			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "image_conv", "image_conv_err", "axi_mst_err";
-+			resets = <&cpg R9A07G044_CRU_PRESETN>,
-+				 <&cpg R9A07G044_CRU_ARESETN>;
-+			reset-names = "presetn", "aresetn";
-+			power-domains = <&cpg>;
-+			status = "disabled";
+ static const struct {
+-	struct rzg2l_mod_clk common[75];
++	struct rzg2l_mod_clk common[79];
+ #ifdef CONFIG_CLK_R9A07G054
+ 	struct rzg2l_mod_clk drp[0];
+ #endif
+@@ -265,6 +265,14 @@ static const struct {
+ 					0x558, 1),
+ 		DEF_MOD("gpu_ace_clk",	R9A07G044_GPU_ACE_CLK, R9A07G044_CLK_P1,
+ 					0x558, 2),
++		DEF_MOD("cru_sysclk",   R9A07G044_CRU_SYSCLK, CLK_M2_DIV2,
++					0x564, 0),
++		DEF_MOD("cru_vclk",     R9A07G044_CRU_VCLK, R9A07G044_CLK_M2,
++					0x564, 1),
++		DEF_MOD("cru_pclk",     R9A07G044_CRU_PCLK, R9A07G044_CLK_ZT,
++					0x564, 2),
++		DEF_MOD("cru_aclk",     R9A07G044_CRU_ACLK, R9A07G044_CLK_M0,
++					0x564, 3),
+ 		DEF_MOD("dsi_pll_clk",	R9A07G044_MIPI_DSI_PLLCLK, R9A07G044_CLK_M1,
+ 					0x568, 0),
+ 		DEF_MOD("dsi_sys_clk",	R9A07G044_MIPI_DSI_SYSCLK, CLK_M2_DIV2,
+@@ -383,6 +391,9 @@ static struct rzg2l_reset r9a07g044_resets[] = {
+ 	DEF_RST(R9A07G044_GPU_RESETN, 0x858, 0),
+ 	DEF_RST(R9A07G044_GPU_AXI_RESETN, 0x858, 1),
+ 	DEF_RST(R9A07G044_GPU_ACE_RESETN, 0x858, 2),
++	DEF_RST(R9A07G044_CRU_CMN_RSTB, 0x864, 0),
++	DEF_RST(R9A07G044_CRU_PRESETN, 0x864, 1),
++	DEF_RST(R9A07G044_CRU_ARESETN, 0x864, 2),
+ 	DEF_RST(R9A07G044_MIPI_DSI_CMN_RSTB, 0x868, 0),
+ 	DEF_RST(R9A07G044_MIPI_DSI_ARESET_N, 0x868, 1),
+ 	DEF_RST(R9A07G044_MIPI_DSI_PRESET_N, 0x868, 2),
+@@ -427,6 +438,11 @@ static const unsigned int r9a07g044_crit_mod_clks[] __initconst = {
+ 	MOD_CLK_BASE + R9A07G044_DMAC_ACLK,
+ };
+ 
++static const unsigned int r9a07g044_no_pm_mod_clks[] = {
++	MOD_CLK_BASE + R9A07G044_CRU_SYSCLK,
++	MOD_CLK_BASE + R9A07G044_CRU_VCLK,
++};
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
+ #ifdef CONFIG_CLK_R9A07G044
+ const struct rzg2l_cpg_info r9a07g044_cpg_info = {
+ 	/* Core Clocks */
+@@ -444,6 +460,10 @@ const struct rzg2l_cpg_info r9a07g044_cpg_info = {
+ 	.num_mod_clks = ARRAY_SIZE(mod_clks.common),
+ 	.num_hw_mod_clks = R9A07G044_TSU_PCLK + 1,
+ 
++	/* No PM Module Clocks */
++	.no_pm_mod_clks = r9a07g044_no_pm_mod_clks,
++	.num_no_pm_mod_clks = ARRAY_SIZE(r9a07g044_no_pm_mod_clks),
 +
-+				port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
+ 	/* Resets */
+ 	.resets = r9a07g044_resets,
+ 	.num_resets = R9A07G044_TSU_PRESETN + 1, /* Last reset ID + 1 */
+@@ -469,6 +489,10 @@ const struct rzg2l_cpg_info r9a07g054_cpg_info = {
+ 	.num_mod_clks = ARRAY_SIZE(mod_clks.common) + ARRAY_SIZE(mod_clks.drp),
+ 	.num_hw_mod_clks = R9A07G054_STPAI_ACLK_DRP + 1,
+ 
++	/* No PM Module Clocks */
++	.no_pm_mod_clks = r9a07g044_no_pm_mod_clks,
++	.num_no_pm_mod_clks = ARRAY_SIZE(r9a07g044_no_pm_mod_clks),
 +
-+					reg = <0>;
-+					cruparallel: endpoint@0 {
-+						reg = <0>;
-+					};
-+				};
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					reg = <1>;
-+					crucsi2: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&csi2cru>;
-+					};
-+				};
-+			};
-+		};
-+
-+		csi2: csi2@10830400 {
-+			compatible = "renesas,r9a07g044-csi2", "renesas,rzg2l-csi2";
-+			reg = <0 0x10830400 0 0xfc00>;
-+			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD R9A07G044_CRU_SYSCLK>,
-+				 <&cpg CPG_MOD R9A07G044_CRU_VCLK>,
-+				 <&cpg CPG_MOD R9A07G044_CRU_PCLK>;
-+			clock-names = "system", "video", "apb";
-+			resets = <&cpg R9A07G044_CRU_PRESETN>,
-+				 <&cpg R9A07G044_CRU_CMN_RSTB>;
-+			reset-names = "presetn", "cmn-rstb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <1>;
-+
-+					csi2cru: endpoint@0 {
-+						reg = <0>;
-+						remote-endpoint = <&crucsi2>;
-+					};
-+				};
-+			};
-+		};
-+
- 		dsi: dsi@10850000 {
- 			compatible = "renesas,r9a07g044-mipi-dsi",
- 				     "renesas,rzg2l-mipi-dsi";
+ 	/* Resets */
+ 	.resets = r9a07g044_resets,
+ 	.num_resets = R9A07G054_STPAI_ARESETN + 1, /* Last reset ID + 1 */
 -- 
 2.43.0
 
