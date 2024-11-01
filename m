@@ -2,29 +2,29 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C161E6B25E
-	for <webhook@archiver.kernel.org>; Fri,  1 Nov 2024 12:58:25 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.36911.1730465904326430753
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3270DE6B26B
+	for <webhook@archiver.kernel.org>; Fri,  1 Nov 2024 12:58:35 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web10.37242.1730465904903412014
  for <cip-dev@lists.cip-project.org>;
- Fri, 01 Nov 2024 05:58:24 -0700
+ Fri, 01 Nov 2024 05:58:25 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 X-IronPort-AV: E=Sophos;i="6.11,249,1725289200"; 
-   d="scan'208";a="227643684"
+   d="scan'208";a="223655326"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 01 Nov 2024 21:58:23 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 01 Nov 2024 21:58:24 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.182])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 62E104006DF8;
-	Fri,  1 Nov 2024 21:58:14 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 023C1400A640;
+	Fri,  1 Nov 2024 21:58:19 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH v2 5.10.y-cip 14/28] media: rzg2l-cru: Fix missing error code in rzg2l_cru_start_streaming_vq()
-Date: Fri,  1 Nov 2024 12:57:32 +0000
-Message-ID: <20241101125746.33222-15-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 5.10.y-cip 17/28] media: platform: rzg2l-cru: rzg2l-csi2: Enclose the macro in parentheses
+Date: Fri,  1 Nov 2024 12:57:35 +0000
+Message-ID: <20241101125746.33222-18-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241101125746.33222-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20241101125746.33222-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -33,40 +33,43 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 01 Nov 2024 12:58:25 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17148
+ <cip-dev@lists.cip-project.org>; Fri, 01 Nov 2024 12:58:35 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17151
 
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+commit e5f29bb9c4350dd9692f3b98eb8538dbbebccbaf upstream.
 
-commit e54334cdf86960cc781a6d457fbad1277ca4267c upstream.
+Fix the below error reported by checkpatch:
 
-Failed to allocate scratch buffer, add the error code '-ENOMEM' to the
-return value 'ret'.
+ERROR: Macros with complex values should be enclosed in parentheses
+					CSIDPHYSKW0_UTIL_DL1_SKW_ADJ(1) | \
+					CSIDPHYSKW0_UTIL_DL2_SKW_ADJ(1) | \
+					CSIDPHYSKW0_UTIL_DL3_SKW_ADJ(1)
 
-drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c:676 rzg2l_cru_start_streaming_vq() warn: missing error code 'ret'.
-
-Link: https://bugzilla.openanolis.cn/show_bug.cgi?id=3275
-
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-index b837050d9591e..0f50dcc713217 100644
---- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-+++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-@@ -675,6 +675,7 @@ static int rzg2l_cru_start_streaming_vq(struct vb2_queue *vq, unsigned int count
- 	if (!cru->scratch) {
- 		return_unused_buffers(cru, VB2_BUF_STATE_QUEUED);
- 		dev_err(cru->dev, "Failed to allocate scratch buffer\n");
-+		ret = -ENOMEM;
- 		goto free_image_conv_irq;
- 	}
+diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+index b413ad7ff6388..3f874edcabed8 100644
+--- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
++++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+@@ -81,10 +81,10 @@
+ #define CSIDPHYSKW0_UTIL_DL1_SKW_ADJ(x)	(((x) & 0x3) << 4)
+ #define CSIDPHYSKW0_UTIL_DL2_SKW_ADJ(x)	(((x) & 0x3) << 8)
+ #define CSIDPHYSKW0_UTIL_DL3_SKW_ADJ(x)	(((x) & 0x3) << 12)
+-#define CSIDPHYSKW0_DEFAULT_SKW		CSIDPHYSKW0_UTIL_DL0_SKW_ADJ(1) | \
+-					CSIDPHYSKW0_UTIL_DL1_SKW_ADJ(1) | \
+-					CSIDPHYSKW0_UTIL_DL2_SKW_ADJ(1) | \
+-					CSIDPHYSKW0_UTIL_DL3_SKW_ADJ(1)
++#define CSIDPHYSKW0_DEFAULT_SKW		(CSIDPHYSKW0_UTIL_DL0_SKW_ADJ(1) | \
++					 CSIDPHYSKW0_UTIL_DL1_SKW_ADJ(1) | \
++					 CSIDPHYSKW0_UTIL_DL2_SKW_ADJ(1) | \
++					 CSIDPHYSKW0_UTIL_DL3_SKW_ADJ(1))
+ 
+ #define VSRSTS_RETRIES			20
  
 -- 
 2.43.0
