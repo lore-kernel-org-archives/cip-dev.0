@@ -2,56 +2,56 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD9C9D1268F
-	for <webhook@archiver.kernel.org>; Tue,  5 Nov 2024 11:35:38 +0000 (UTC)
-Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.6])
- by mx.groups.io with SMTP id smtpd.web11.15640.1730806529171129855
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A8CD1269B
+	for <webhook@archiver.kernel.org>; Tue,  5 Nov 2024 12:22:28 +0000 (UTC)
+Received: from TYVP286CU001.outbound.protection.outlook.com (TYVP286CU001.outbound.protection.outlook.com [52.101.125.62])
+ by mx.groups.io with SMTP id smtpd.web11.16563.1730809346890039718
  for <cip-dev@lists.cip-project.org>;
- Tue, 05 Nov 2024 03:35:30 -0800
+ Tue, 05 Nov 2024 04:22:27 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bp.renesas.com header.s=selector1 header.b=AWmLWLiP;
- spf=pass (domain: bp.renesas.com, ip: 52.101.228.6, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+ dkim=pass header.i=@bp.renesas.com header.s=selector1 header.b=eiqUWchY;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.125.62, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QffGkcEpDmeGS7NjUte9+yO2OBQmts1WK8Vj/prn0l6/Usd5MW56DLngl9iyP/4Buhh0ljLoUkzdaNUf6XSY4fl5UUMnhq/bnIQghVeUhLvWRy0TvuW01Be3KBZwRG+pWzv0EwvRp0sfwMPnI+4rMyKlvDscy6+ki28QTf5W6y9ey4Q18wSuIqrMF27mEuButHZrdehOlXvqVbNC1MN6l/j28IYOcNrftyX/zy2RREGkPHYBWYutmbiKcw3vWOstN6Fe3sfIfmctdPwhES7q7VXMly3Qyz3v9OZxrcAU8qb2FPiIVPtxVtj1wUh0BWW7722QNIPd2yHKsfz4KqpGDA==
+ b=cBKX0RX/08O0eBN1u3FpSe9k/iAfuNLf2/8FG1TwU6iQ7YudVWJkU9DKL7c1wMRKajFxlWW/8mYf92RT+gnuaHsLYN0Q+15hWcsWLhE/bzl5Y4BXaP469plzaDRwcvThOT1K8UBOTS0NpaKRvbMoaDWV9i6DOSn0cfpUJzYOgzmx+dRv97/lk5BKoU8jR69ZiWD5U6mGDRmCRYepjp8aNSvhLbtMMEl2GWfd1k+iPS1CkuOTD5gv7Ki5NItcKihd68LHN0yZsJ5ciww+VZosLlA7g55S7EapGX3OKcIaL+ob8ukJka6XwUpSwOhqD6oifVqI8jBxDynsAS7G00d+VA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Gi/eA+kqQ7PszJ1EuTCe/fEZ17UiyFvjgq1Vl5rvyCw=;
- b=iI+EpcJW/QWiTvsRPXfY+GYXYZMX67eepqcLm1eHueDrQUoQGl6dw/C5mHg3FUS1yGGMqKhLXLXvo7AWVcyb3jtUlyHoKMXEP/U52FE/XVcGu5+8NFtwk+30857UdTT8uxLOdVMTHOFCrqdqSk6wF0UVCwGsNkp6exSx77mC+4ajzghrbK16qGb/p72MUylaVCsydmsdyqpIb/0mC2/7BhKjzYkTf1pGwIkU9rGhZwI0N6ka9eziZlCne/BGdzFRJQWKsuPBDHntMUKxBC5ahGA5tWzErbtxVQn6x7MftKU0jtre2WYrHvZ0u3NQdSi7E9vuuJ6Ufnt8WO0f48tKTw==
+ bh=RF8keD2obBSFxLd1UGibDiKv/Jvgb3xSGmz1oSoZekk=;
+ b=RnRris4W0/7FlQULvWNth3V2ZWhqqhZTmTPwSAyrmYZRuvxbRidNiY4VSw9SE5jJdO1nK1dWG/XXOoZZ0Xinon6EbG3ysWNV1qcuiSe4oibwamPjWPv5qlQAqVAPeqf8XEHl7tIBtSNdbPmsg7FWAtfoubAqNkhvV/pqt6B4RD6Z3INjD6mIxuOPozMVz+rlBMez5bpydKTTFVIS2tvNRAJjT0aMwHSCo2U/NdrlTilotUbU1M0x29N31qWFQ9IiaS5N2XG24931AnPt7oYc2aizJb26o+CmDIFQBMPD9+iY7h+a82H/4+C7BrjBFl5oHocUnORrh782nnGxtGQT7w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Gi/eA+kqQ7PszJ1EuTCe/fEZ17UiyFvjgq1Vl5rvyCw=;
- b=AWmLWLiPLNBg17KCThROo5PrqWvUivUpFW49YWUypRFSlufz4PeE3E1OS2zhQXLYHySzoMEjXa83bRVqpezBHhIZdNGcFiKzezOS3zFi4VMYr2nhTvUT8jwTKWLW7aKdGSOlikBAs84q/shfYk+xtScOW7KOkfIcMkKK3ZJUGrc=
+ bh=RF8keD2obBSFxLd1UGibDiKv/Jvgb3xSGmz1oSoZekk=;
+ b=eiqUWchYuz/wIYuRt0vz7eIUREjsoTbUwTRjChZc4JRhwaE4mTICzroph4kuwfb87yaEt2veK2cvASnVq5AWgRNd+88d8AZrL7JbpQsC3IZWa9sGGpF5QIJUQMmWO9t6kaavxNNlJbnK3o42pVeHy33/yReP/eX/NqrBuRXQzII=
 Received: from OSZPR01MB7019.jpnprd01.prod.outlook.com (2603:1096:604:13c::8)
- by OSYPR01MB5446.jpnprd01.prod.outlook.com (2603:1096:604:88::15) with
+ by TYCPR01MB8868.jpnprd01.prod.outlook.com (2603:1096:400:18f::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.31; Tue, 5 Nov
- 2024 11:35:24 +0000
+ 2024 12:22:21 +0000
 Received: from OSZPR01MB7019.jpnprd01.prod.outlook.com
  ([fe80::8a27:ee0d:d7a4:9d10]) by OSZPR01MB7019.jpnprd01.prod.outlook.com
  ([fe80::8a27:ee0d:d7a4:9d10%7]) with mapi id 15.20.8114.031; Tue, 5 Nov 2024
- 11:35:24 +0000
+ 12:22:21 +0000
 From: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Pavel Machek <pavel@denx.de>
 CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>, Nobuhiro
  Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Biju Das
 	<biju.das.jz@bp.renesas.com>
-Subject: RE: [PATCH v2 5.10.y-cip 10/28] media: platform: Add Renesas RZ/G2L
- MIPI CSI-2 receiver driver
-Thread-Topic: [PATCH v2 5.10.y-cip 10/28] media: platform: Add Renesas RZ/G2L
- MIPI CSI-2 receiver driver
-Thread-Index: AQHbL3W23WfEHtM5f0ebhGWQUdVNwrKojegg
-Date: Tue, 5 Nov 2024 11:35:24 +0000
+Subject: RE: [PATCH v2 5.10.y-cip 11/28] media: platform: Add Renesas RZ/G2L
+ CRU driver
+Thread-Topic: [PATCH v2 5.10.y-cip 11/28] media: platform: Add Renesas RZ/G2L
+ CRU driver
+Thread-Index: AQHbL3Zv7ncxLLxG30OJN8zkQyOAPrKomz0w
+Date: Tue, 5 Nov 2024 12:22:21 +0000
 Message-ID: 
- <OSZPR01MB70197A019A251CC5F96274BEAA522@OSZPR01MB7019.jpnprd01.prod.outlook.com>
+ <OSZPR01MB7019EE3CDE21CF7E4E3A14F5AA522@OSZPR01MB7019.jpnprd01.prod.outlook.com>
 References: <20241101125746.33222-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241101125746.33222-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <ZyoBIAONV1wUteVt@duo.ucw.cz>
-In-Reply-To: <ZyoBIAONV1wUteVt@duo.ucw.cz>
+ <20241101125746.33222-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <ZyoCV4ZzNVrcO3rg@duo.ucw.cz>
+In-Reply-To: <ZyoCV4ZzNVrcO3rg@duo.ucw.cz>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -59,169 +59,204 @@ X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OSZPR01MB7019:EE_|OSYPR01MB5446:EE_
-x-ms-office365-filtering-correlation-id: 903b0296-8df3-4438-cf68-08dcfd8df084
+x-ms-traffictypediagnostic: OSZPR01MB7019:EE_|TYCPR01MB8868:EE_
+x-ms-office365-filtering-correlation-id: 9fea8a93-c646-450e-84a6-08dcfd947f8b
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
 x-microsoft-antispam-message-info: 
- =?us-ascii?Q?AvDPbUx9jAAg5xDzbdCrhm4+mZEbaeX1XlPpN3u2RPheA4389K6iY0fTGI5m?=
- =?us-ascii?Q?1MBqWQX1NS//MXD3ulYAGrVft1WzTm7lHzToz8SaruEWGsECxiGyIDDuKF0S?=
- =?us-ascii?Q?xtgbYN9Se5AQHITO/1VzLmunbfExglGmjOaiEpPtK4bboI7C1IGSsgkJvYHp?=
- =?us-ascii?Q?lLarxyTYmfuXMR4o1Zgri/NizMvcCM2MWPBdRN7gvqWblS2uQf5rLtUGpyQB?=
- =?us-ascii?Q?k9DTmXD1kQqfyDeIbMwUaG7aflW3cX3dioe+/dp4n/Wg7Kc5x0KpWDhIjYWG?=
- =?us-ascii?Q?RjKuu/hnFG8Zz25teZcREpepj5Wlr7r4Aw7Tle3ffY14TJIP5VBZFs1VOF3j?=
- =?us-ascii?Q?o3T+fM+V/yYsFnYUekQmicqNpVnNl/VLr3PxBpXMtHA2nvgsAqFTn75hD8hi?=
- =?us-ascii?Q?mXpj3V6SDu1r1Bu8RfFmWnFkNiCKrjV2nP4RP+cyaHRgqLY60CCxDdlc+Q59?=
- =?us-ascii?Q?qFrqkyPUKhzU0xpe7mVhKloTtz2euyL2ZgGNjZhY/+JOF0oCrLSwac7HwLMv?=
- =?us-ascii?Q?ZDdQ/DAoG1gJmqmUav10I5FcbVl2RSnhZHcFuvsyTwXqQsM7O3UK6MZJVnhD?=
- =?us-ascii?Q?sK3oVqJ/ogMFAXNDmdE2LtYfr6/riep+jEyMAIQFXlHXOd9tm8icolH3GF/P?=
- =?us-ascii?Q?n4fZJKQo0riKL44RclHrqOtCEZCfJp0M6YiekvgAvyHoWjdtXynOlPO226fG?=
- =?us-ascii?Q?X8xaF/qdczHBfb+mVi0r9/N+VmiwYF599m6IDbG40ldlll2KQAKcb8WTyr0a?=
- =?us-ascii?Q?6y+C2s/4if+ODHCEgyJU09iTg7jYpwsYoX6KL04rUG6RLb5iwmg+QUXZWrH5?=
- =?us-ascii?Q?/zDPWzCqSp2gBuoJ9xvYkc93kjkHYQV3L40ia5/+b5M8dSHwQqPIpBuuRCjq?=
- =?us-ascii?Q?2fp88mGmqjOCM3g70H70RlRtlt62ZXJ1e9L+SkOHT5NdyUMEYp3anDp05Okn?=
- =?us-ascii?Q?w3np/vofwdAYfSOvPACAUCKvrPoWpMwle3qh/pXdFVw8uDjqQzmczryz02ZC?=
- =?us-ascii?Q?mebKkoprqjq5n3vxK9zk4oKCiAlh4Wp2eh8OYE6ds791L891vqRzC8PgQYcB?=
- =?us-ascii?Q?AQUdnHiUOBEeSNJFQH+49+LJ84KCGzNrkQ2bCgxGaXVhJY0QavkY2ksRs/rH?=
- =?us-ascii?Q?eVVWq3Kq8ajF3QOll5GTPPQjRBzbqzYME33sxDYI4vu4PDIEe8ob/cCaS0J2?=
- =?us-ascii?Q?WnC7MltK2x/YkXUp0OlS8f/VrQwM0C/cHssaVj4lhrawHUDSJpaQIRk5UuKa?=
- =?us-ascii?Q?2BVaJFHZ6T100Zb3qXkGTGUaUEXJpZlgv7+TzndzLpe4G9dqZkTpjqKBNjaY?=
- =?us-ascii?Q?FsGpfe+ipgxyqC+wV3XYrCGw04IFwJLiURruvxim2zWgAGM2wb15aqJ+6Bpm?=
- =?us-ascii?Q?3VMZ4nA=3D?=
+ =?us-ascii?Q?6DCb0Or1Yd6DHcWMO3SDqArweC35H8FwVYfYncSMAezraCmBgNCYhRhp/k2O?=
+ =?us-ascii?Q?OhCBq36IN3kCmzLABXkKmXiX5PUDEFIGGWCQgcv62SU8eOerAqmWYLmgDEZA?=
+ =?us-ascii?Q?mpP8MT5Xuyc19q4wynh51dQOvMj8tZ6xfifSYovPyU/zkBMtjo+xzVkB+Ogh?=
+ =?us-ascii?Q?Q96gB5ceX/VTYY+/ryWNtSgVhaBsG7vijHnPdLnPgzFVX7D05+5uPpg6G7Z8?=
+ =?us-ascii?Q?J0KIBfp+qu/0n/t1kAxIkoYovJSaxGX9k3Sa6dZdeuEBHlR2vYL22//3Qogj?=
+ =?us-ascii?Q?KjP+FqD6THIGujLOM6uOdwAHAa1GXY0IvcAvQ8aHQy6CqzwTnOdk0vDXcBko?=
+ =?us-ascii?Q?3t+FllNzzS+uxphLotFwEH3ts+ElHTO5VU9mSCughhoLSEbOVlV8DgxfMR8k?=
+ =?us-ascii?Q?6bXZog5wGEbS4h8M87pQxQ463Ob7ZFE2JS55aPlJYTJur0FA94fB19sjLRMc?=
+ =?us-ascii?Q?vqwiPwK1MjU1fSUrFWKCFAL3YoTwVRAJf6phb7ZRol+gcvCKJ9Ofv+6B0/Bh?=
+ =?us-ascii?Q?DIQ95KI2a6wEUHYAFfFqHPq3DPmZBzJESnK+nFf48+G6ud4xCdWcD0zN7v/+?=
+ =?us-ascii?Q?tNwnMEAV6z/y4PxE8HvdmEXf8hzQ01zihY9LI7OHvhITl/hfHlYwVgeBKdvp?=
+ =?us-ascii?Q?zNYAu2GLQiOSi4snZkTKdo+N3b1KtNc/DiV4l5eIbp27fxohYWxsxI0NN9o3?=
+ =?us-ascii?Q?hbbAh1PtBNLytD3fWdVAy3r3hwrrCdv122/JGbXZ8+JjTRUf2SydW8rDWaiy?=
+ =?us-ascii?Q?8vuxx/n2RO+xDpzLKgtEyc8aCdUY1Q3Tokm+ykCyW21tgy2dBK42qvB+4bcM?=
+ =?us-ascii?Q?xF2GDwXKe8i53icwnKy2rcadFkdNOoENWrAMgBIKJeS/8J3S0T6ZQoPSjZ5e?=
+ =?us-ascii?Q?8VbeGhPysU3VzceMqlQt+DueN+ET4kz6hQ9KGCqAqPbQzs9bCu2n0CRoOvCS?=
+ =?us-ascii?Q?qbHFxjm1td7uwpdM72+d82/9k1HJpA2q1gS3/L+AihpAFH8yEmjMj3JO+MF9?=
+ =?us-ascii?Q?g13mJSSfbqlXIB2gbTSBDB6NvHIx96/r1Dt+9UV771qS7pB6ab2woWifdsLE?=
+ =?us-ascii?Q?9v0xyh1G4+BDVwyu3zdWAqTjrUOUS/r9ffl/Fg9DKUgGEn14qxwcbAiV5biu?=
+ =?us-ascii?Q?EdKbCNOG7vlyzcN6GX7vCPphh0fulO/ZVRBbJlC3ZkNbj2Tc2pwAQ1rszpF4?=
+ =?us-ascii?Q?2rliEYnOxXQlOcEEf7zwthd3UCnbnSsnLnJmSD+RPGuBQ7Q0xmFhRaCy4qxS?=
+ =?us-ascii?Q?sqZmMjK59UjU1gpQcDvd0udhUV/MNC73uQ6e9uaSUKZV7RmBgLWxgaZTxqZk?=
+ =?us-ascii?Q?NM6I6DXuuU/nWcC0B/Z4fiYpkivvoCacJOIjG03L4XR2KOqFIIhKSmQCvnjc?=
+ =?us-ascii?Q?xt6bl8o=3D?=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB7019.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB7019.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?cixZSVgO7268BtSxIrN6pgRk3JHSJaLWIq0iPJjB+zmjW1Rf7iMJItrZHpy8?=
- =?us-ascii?Q?5trjmgzcKkQyTREjBqsSuG5i72m+3hm98sg5w+aM2JaOFs51p5UTaNMWnql1?=
- =?us-ascii?Q?c/W9z9xZg3Dp3H6azDPJxwxNasxgwCBNxl1jaiiJCQIoyxdsERZqPEvgD5zv?=
- =?us-ascii?Q?4P8VVTipFxmChrP92y+62AaVAqeN9dKIWorEl5B5QhmkddbmAdfhPHPyoFb9?=
- =?us-ascii?Q?MNl7PtKgN0v6GDHUMgerGE2glYAZzPbg7GwnqipI/ik+Vb+NrMWS7Kh7n3DJ?=
- =?us-ascii?Q?D+yGSYHFrqmHBOG5cbzUFUueTZ0gvVnJRVB0TwBQMyJIcbMciWVPp/nxQDmE?=
- =?us-ascii?Q?jsur7LcigNng6zN4vjWGMtEMq4KCJ2PpBaFRhvKXm/mtOVg7JRcFuq1+68Ra?=
- =?us-ascii?Q?/asWWK2lx4a5kZM9DFslSExxCTfeFHG5aEl18vcn2tc04IrCFvYE463+Jcq3?=
- =?us-ascii?Q?cVarcfdyaKeowXDZ5//ehXJEGPHwwbnljf6TR57110sDG+8rnpGzIU1fNlRI?=
- =?us-ascii?Q?o2/B5hpoXvnkBQopLOergnCU1nNEYoRsP3TVLr7WdGzE4rqFO6SS3FxSVKry?=
- =?us-ascii?Q?pQcjAugKKIYP/vtcRTBz3hgVLdDtjYgcMihJDTgkUNr2kMcGQHhwi0KZ/HBj?=
- =?us-ascii?Q?KsZ9bGQ17dQpGJHTuRKoulCLl6x4ovX51Rtf+XLSX0c8qyjTdeROk9zBEXWp?=
- =?us-ascii?Q?iT0jMA8BDP1TPc+OVhKRZm3oZZ9GdgRLuXwgMdVRQ+WKBmEQwkLD9QsUDIy+?=
- =?us-ascii?Q?+qZ67SH1fig7jJasZhlPFgcOWX9Pm7EcjojfMW3uQ0iLKFcIaefBmlNSr4jB?=
- =?us-ascii?Q?dDyQ/fmqLyTWmRzTV91Rehsf4p4q7rlJL8AA6xValhmTmIJYYNEgIKsuBn1v?=
- =?us-ascii?Q?UdZ0qQURVB1kObnhB08XEIWOYpg26LvofUOYHQ3/TQXbPVaMp+M9bDYV91zH?=
- =?us-ascii?Q?/NY/87eGUxX0QUoa7x1f4s1Dj4A9AObxM90QgV1N9TbnlWha02wnZNbqBaav?=
- =?us-ascii?Q?mic8pEMOl5dMgeDE1gwpKjQvaaIl7Rzwu/BlqmAiAoJQc0uwFPcDJTJtUCjL?=
- =?us-ascii?Q?F4bCol6RcKPUZglalofVoh5brZ/M+qvMNzaprgACo3ltMsP79/UuVRuFhY0s?=
- =?us-ascii?Q?bgDDViQQe3/mJyg2r77n044CwFEZc+Yk7+Mpcp4VA2ZS4ethSFyBx1evvUAC?=
- =?us-ascii?Q?vIUPonc1kFHahF1abv7HzrCZyYJn+CSZZlJkZ/geIoVtdd7Eg9t3qvEpqZkc?=
- =?us-ascii?Q?UZKLGCA++LM6qwALSn+NhgoBTGtP+KWkGMnIkSa+VlBtUZP5B2sCHrXcr/Vx?=
- =?us-ascii?Q?dLcQbie24ruXpEs00kSNMKLxR9tSUyAi7CA21y65TuBk9o40YBsD+q+CZgvo?=
- =?us-ascii?Q?pryJvjJvxj1B57qewfNI3U1MHynDyrc7e9guiUgGMK9vxiwT1a6GFxNrV9QJ?=
- =?us-ascii?Q?9GUF6sYzbVz98aZPxA4XjsPYGHiCu8rk4qLFb/OgjTKdo6y4Y13J9sHStIr3?=
- =?us-ascii?Q?7UZdDXprirEM7Pa9haQLuraASbqxFUrLaXHDBBOWKiikCcy4sum6MlmmvXaL?=
- =?us-ascii?Q?UjGKZ/dsK59Yz0KwEG4Pr0UY4U2Y6GFU1SuREFG5zrtvbOJ9FqpjK2EK+h9a?=
- =?us-ascii?Q?kNZJmKHu7bG+I1f3iLoYl6E=3D?=
+ =?us-ascii?Q?jp9xwgP0m6qIJVpx2wU+IuOq52Q0fpmAWunv67LrP1+y7LYaI/QRtEx80GnH?=
+ =?us-ascii?Q?hxNfJazBVgOCgix6xTFbSfpmHJb1v2OtPgeL/WJW/gNcizA4BlGDfiwcA5rp?=
+ =?us-ascii?Q?VyGKsMb/oA+aM03PHYEnOefitfbXKLM5noEtfr/MQL3/jXRixM+1fKENrsPB?=
+ =?us-ascii?Q?cu5S51VRcCGYAgpQKXu6avPACaIDuLgHpVY6zVIluDStVVLzbcLumaHV7/gK?=
+ =?us-ascii?Q?fdXhR5YNtTy8DdsxKjIlEkHaINkMDNRI4LU33ZlxPGvv7XFdyhHThtZTmhD+?=
+ =?us-ascii?Q?UrYTs/70+vgsOAGNhn2VvjAKcyZBjWUvHn04X+88AW1sQ109NhFE4F01vfpu?=
+ =?us-ascii?Q?HF2pJ4BSQ4cU3zmx+TT11Rsaep8mx3LE9OBPtTz2nqzaiciIV/dqN/kt1Phu?=
+ =?us-ascii?Q?S66LMu/936YnEHoCCuuoXa02Lsg0uh0WEpCn+JnTuQD7fXozMtP4sgwVpW7l?=
+ =?us-ascii?Q?FohiGHdWR7kf/zRQ1ZVQiit1sFcpGTfaRJzf1O/ctcRmSGe8G/6zgPKl5gY5?=
+ =?us-ascii?Q?p7yceqs1218vV5lGIHNYr+cb9HPUA+JNHynizC0Pxa4UZM4p2K7iy0cBxvDg?=
+ =?us-ascii?Q?nC4koh4k+DACDi7eaR8LKPpEUGIgJGrEYM9YHLD1Lqr8r0fMSSCPuFvaugLq?=
+ =?us-ascii?Q?r6h4mYtBtXJk4fRAaeoSuII5yyLLyw5tXYfuHpdHvU7xWTagCBqbzdek+vdK?=
+ =?us-ascii?Q?JQIFot1T8HRXjhwhAXKiXmmS4wSOS83Sb98HzDHWi0SVyXNKvJqX2lnr+Yyd?=
+ =?us-ascii?Q?oIEWNPTxgXqt+qWLvGbLDJuyqZL92leT6olXiOupNcCGkPD3AyOVvecc3osd?=
+ =?us-ascii?Q?zY7joxCaFQbR1fn8FyAEN5ZHmB8RaTWaezkfyf80AYsOb+Js0aK19eT0Hso+?=
+ =?us-ascii?Q?WLYw2fLxlyZOLEYmpG5XsSb0G+a/+jZFSfes82rlavD+SB8VFtdgIGMj4uUG?=
+ =?us-ascii?Q?b5RwIZ9xtpnA0IXxbkratEjNNtKVjw440spzET5qc1A2D62qEDOItZCHd/Dl?=
+ =?us-ascii?Q?m5tK9rc+Laoyo8ZRt2MDJXr93WuNN3Xztw/1/1vN5mDnV35dOzoaM4frPTni?=
+ =?us-ascii?Q?BNgnyxOnlDJBgUs/htK4IRvKEDuGR6z79P2LZ4sO3Zc81uaT7V9KMh/Dw7jT?=
+ =?us-ascii?Q?tNmx1b9UBULXdEIx5fxswqwD/4rCoi83mS5hdnFyiDpluE/AvcS/Kg5XZ3Q+?=
+ =?us-ascii?Q?lKWwghljN81Nl8xMUcGr52QHo5GKVQogJ70Y1BW0/43gAVRG/k0SlaP67aBc?=
+ =?us-ascii?Q?orGWKThwyRE0+ffVKc9YEUNbWVIvWpXf/HbYAYkb2711uTKb9rbWczUGoyjI?=
+ =?us-ascii?Q?0ZZeJ5jkuv3DqkoMGwdb/Rb/j47Czid9uw8kutPoL7Kp2eqPPD6Ip+wsfjJ8?=
+ =?us-ascii?Q?7YY7dhSmUVbU7Oa5DYsDCvFzK4JWoU6K+HiFK7N1/PdiROPSO326qLfx0gKg?=
+ =?us-ascii?Q?AbE91N/rVt+p6LgdGlCTOAQSuBdNaIFdhiT1hjtolDmXI1LolHvmo4ekgmX2?=
+ =?us-ascii?Q?A7C1PNkrGYPPldbsNnS4GX2jY738N8pewArjXXhvs7gxKuXbfIAM+1AwFKAt?=
+ =?us-ascii?Q?rXVGPYCbTnQ5nnTZ+R9812S+CTwgYkkFS2QtkEYgWugSucJ9yGfbUfqVtz1X?=
+ =?us-ascii?Q?5sU/aT2HKr2YYFG4vEp6NY0=3D?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: bp.renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB7019.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 903b0296-8df3-4438-cf68-08dcfd8df084
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Nov 2024 11:35:24.6675
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9fea8a93-c646-450e-84a6-08dcfd947f8b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Nov 2024 12:22:21.6211
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Lf8ZZz4DW2d0o19IYzS3kokzFSuoPkYhwl9+JoKnyExQ2ETDXdPNvmAvlyr1QWK3BWV2PiTJGa0NopjQApRnl2Y07TEWBRB8Dhe9rGTlLlyV+QNL4awztY8EFNrrufIY
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSYPR01MB5446
+X-MS-Exchange-CrossTenant-userprincipalname: 9L5jMxlSBO0/iWGmn2evdOW7wZIxdXxA9RMuWu8jDQtcP1n3RWiHFfO9VD5UClKRAM1kr2TrJ61cH0FC6ojhA1J/rdehhy9ONOAHC8/m7HedJDjSy2APxsUpGIkn1mzJ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB8868
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 05 Nov 2024 11:35:38 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17174
+ <cip-dev@lists.cip-project.org>; Tue, 05 Nov 2024 12:22:28 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17175
 
 Hi Pavel,
 
 Thank you for the review.
 
 > From: Pavel Machek <pavel@denx.de>
-> Sent: 05 November 2024 11:27
+> Sent: 05 November 2024 11:33
 > To: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > Cc: cip-dev@lists.cip-project.org; Nobuhiro Iwamatsu
 > <nobuhiro1.iwamatsu@toshiba.co.jp>; Pavel Machek <pavel@denx.de>; Biju Da=
 s
 > <biju.das.jz@bp.renesas.com>
-> Subject: Re: [PATCH v2 5.10.y-cip 10/28] media: platform: Add Renesas
-> RZ/G2L MIPI CSI-2 receiver driver
+> Subject: Re: [PATCH v2 5.10.y-cip 11/28] media: platform: Add Renesas
+> RZ/G2L CRU driver
 >=20
 > Hi!
 >=20
-> > commit 51e8415e39a962db2a753940fca18e9710c24902 upstream.
+> > commit 07fc05bd0a797dcc34620869933993e1cbf56b98 upstream.
 > >
-> > Add MIPI CSI-2 receiver driver for Renesas RZ/G2L. The MIPI
-> > CSI-2 is part of the CRU module found on RZ/G2L family.
+> > Add v4l driver for Renesas RZ/G2L Camera data Receiving Unit.
 > >
 > > Based on a patch in the BSP by Hien Huynh <hien.huynh.px@renesas.com>
 >=20
-> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+> > +/**
+> > + * struct rzg2l_cru_dev - Renesas CRU device structure
+> > + * @dev:		(OF) device
+> > + * @base:		device I/O register space remapped to virtual
+> memory
+> > + * @info:		info about CRU instance
+> > + *
+> ...
+> > + * @num_buf:		Holds the current number of buffers enabled
+> > + * @ip:			Image processing subdev info
 >=20
-> > +static int rzg2l_csi2_notify_bound(struct v4l2_async_notifier
-> *notifier,
-> > +				   struct v4l2_subdev *subdev,
-> > +				   struct v4l2_async_subdev *asd) {
-> > +	struct rzg2l_csi2 *csi2 =3D notifier_to_csi2(notifier);
-> > +
-> > +	csi2->remote_source =3D subdev;
-> > +
-> > +	dev_dbg(csi2->dev, "Bound subdev: %s pad\n", subdev->name);
-> > +
-> > +	return media_create_pad_link(&subdev->entity, RZG2L_CSI2_SINK,
-> > +				     &csi2->subdev.entity, 0,
-> > +				     MEDIA_LNK_FL_ENABLED |
-> > +				     MEDIA_LNK_FL_IMMUTABLE);
-> > +}
-> > +
-> > +static void rzg2l_csi2_notify_unbind(struct v4l2_async_notifier
-> *notifier,
-> > +				     struct v4l2_subdev *subdev,
-> > +				     struct v4l2_async_subdev *asd) {
-> > +	struct rzg2l_csi2 *csi2 =3D notifier_to_csi2(notifier);
-> > +
-> > +	csi2->remote_source =3D NULL;
-> > +
-> > +	dev_dbg(csi2->dev, "Unbind subdev %s\n", subdev->name); }
+> Holds-> holds, Image->image, for consistency with the rest.
 >=20
-> Are the dev_dbgs still needed?
->=20
-Yes, as the probing of subdevices is async it is better to have dev_dbgs.
+Agreed, I will update it while I'm making significant changes to the driver=
+ upstream.
 
-> > +static int rzg2l_csi2_parse_dt(struct rzg2l_csi2 *csi2) {
-> > +	struct v4l2_fwnode_endpoint v4l2_ep =3D {
-> > +		.bus_type =3D V4L2_MBUS_CSI2_DPHY
-> > +	};
-> > +	struct v4l2_async_subdev *asd;
-> > +	struct fwnode_handle *fwnode;
-> > +	struct fwnode_handle *ep;
+> > +void rzg2l_cru_stop_image_processing(struct rzg2l_cru_dev *cru) {
+> > +	u32 amnfifopntr, amnfifopntr_w, amnfifopntr_r_y;
+> > +	unsigned int retries =3D 0;
+> > +	unsigned long flags;
+> > +	u32 icnms;
+> > +
+> > +	spin_lock_irqsave(&cru->qlock, flags);
+> > +
+> > +	/* Disable and clear the interrupt */
+> > +	rzg2l_cru_write(cru, CRUnIE, 0);
+> > +	rzg2l_cru_write(cru, CRUnINTS, 0x001F0F0F);
+> ...
+> > +	/* Wait until the FIFO becomes empty */
+> > +	for (retries =3D 5; retries > 0; retries--) {
+> > +		amnfifopntr =3D rzg2l_cru_read(cru, AMnFIFOPNTR);
+> > +
+> > +		amnfifopntr_w =3D amnfifopntr & AMnFIFOPNTR_FIFOWPNTR;
+> > +		amnfifopntr_r_y =3D
+> > +			(amnfifopntr & AMnFIFOPNTR_FIFORPNTR_Y) >> 16;
+> > +		if (amnfifopntr_w =3D=3D amnfifopntr_r_y)
+> > +			break;
+> > +
+> > +		usleep_range(10, 20);
+>=20
+> We are running with interrupts disabled here, we should use udelay(), not
+> sleep.
+>=20
+Agreed.
+
+> > +	}
+> > +
+> > +	/* Notify that FIFO is not empty here */
+> > +	if (!retries)
+> > +		dev_err(cru->dev, "Failed to empty FIFO\n");
+> > +
+> > +	/* Stop AXI bus */
+> > +	rzg2l_cru_write(cru, AMnAXISTP, AMnAXISTP_AXI_STOP);
+> > +
+> > +	/* Wait until the AXI bus stop */
+> > +	for (retries =3D 5; retries > 0; retries--) {
+> > +		if (rzg2l_cru_read(cru, AMnAXISTPACK) &
+> > +			AMnAXISTPACK_AXI_STOP_ACK)
+> > +			break;
+> > +
+> > +		usleep_range(10, 20);
+>=20
+> Same here.
+>=20
+Agreed.
+
+> > +static int rzg2l_cru_open(struct file *file) {
+> > +	struct rzg2l_cru_dev *cru =3D video_drvdata(file);
 > > +	int ret;
 > > +
-> > +	ep =3D fwnode_graph_get_endpoint_by_id(dev_fwnode(csi2->dev), 0, 0,
-> 0);
-> > +	if (!ep) {
-> > +		dev_err(csi2->dev, "Not connected to subdevice\n");
-> > +		return -EINVAL;
-> > +	}
+> > +	ret =3D mutex_lock_interruptible(&cru->lock);
+> > +	if (ret)
+> > +		return ret;
 > > +
-> > +	ret =3D v4l2_fwnode_endpoint_parse(ep, &v4l2_ep);
-> > +	if (ret) {
-> > +		dev_err(csi2->dev, "Could not parse v4l2 endpoint\n");
-> > +		fwnode_handle_put(ep);
-> > +		return -EINVAL;
-> > +	}
+> > +	file->private_data =3D cru;
+> > +	ret =3D v4l2_fh_open(file);
+> > +	if (ret)
+> > +		goto err_unlock;
+> > +
+> > +	mutex_unlock(&cru->lock);
+> > +
+> > +	return 0;
+> > +
+> > +err_unlock:
+> > +	mutex_unlock(&cru->lock);
+> > +
+> > +	return ret;
+> > +}
 >=20
-> Would it be better to propagate error (return ret) here?
+> This can be simplified. You already have "ret =3D 0" in the normal path, =
+so
+> this can be deleted:
 >=20
-Agreed, I will fix this upstream and then backport.
+Agreed.
 
 Cheers,
 Prabhakar
