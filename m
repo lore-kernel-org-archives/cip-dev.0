@@ -1,283 +1,233 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <alexander.heinisch@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A112D5E15A
-	for <webhook@archiver.kernel.org>; Fri,  8 Nov 2024 11:42:44 +0000 (UTC)
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (EUR02-AM0-obe.outbound.protection.outlook.com [40.107.247.56])
- by mx.groups.io with SMTP id smtpd.web11.11024.1731066157416918325
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6496CD5C0D3
+	for <webhook@archiver.kernel.org>; Fri,  8 Nov 2024 14:53:55 +0000 (UTC)
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.86])
+ by mx.groups.io with SMTP id smtpd.web11.14490.1731077627344546881
  for <cip-dev@lists.cip-project.org>;
- Fri, 08 Nov 2024 03:42:37 -0800
+ Fri, 08 Nov 2024 06:53:48 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=VBByTS+6;
- spf=pass (domain: siemens.com, ip: 40.107.247.56, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=gA6qW+gu;
+ spf=pass (domain: siemens.com, ip: 40.107.22.86, mailfrom: alexander.heinisch@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=S+zsxbrzw861L6ciYKE2FotWDENIHUw5bCw9pxbN9y/BAAARYZ9YNyirwtPqYXOqNTz3xVcD3Us/8TQa7hlphHq/8az8zhZ74n5OSlfM43YdfluOdFB2aJD0KEgvUrjAlUq6Z8ZheAXh5BbcvrTzhTkOSDaGIudeTUFc/GMJbSeRE2tA/DbrAPb5zzqM6uKDCzsbSnqdQlq6/MvOY+aIDpsxsois747ht4GvKqrquYQ9YRWFnzFzv/NhLwa0AJ0kEVlw+n5aG1GdHDbL+bKKtrBnn6xMxf6hodrxVfp6AzEbJObQf0yeoZo/OXSYcMFdhCxHQtmWr4V5UEoPrNpOxg==
+ b=jwZErmrv7RMok5pxOFNwDy8tLdQLg0cBNdB+DnhqRPke3gn8qYPONs3OYS2TqW+ZkT0J9D6I06jsNx7AZNdOi3JenB6fwf9omUsVnS/QRPfj/HVmqYmt2KdI+aDkDXSHEH2FoVae3WRY0+vu5WcYkcuf6et0mz07jAumBW4HgRtvNkd/lmAH+kqUr1YDIErXa12YFtnVy0ujU+PG4uoEYio0AWLmk1h0yPWyi6hmrROIRtn0cfJ1SkP76c5B6xLgG3K7cCSY22xeeAFEsHKYdjjxLE4haQ5sto4ZuxIZpI70JrBl6IWMgjfSwO+elysFCFWUkRhHUc9Q5+ueqEviiQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=P3kvtT4iiLqWRcEIHysAw3QwRkR4i3ggvFP838rCIvQ=;
- b=GmNO4N22cnSN6MCXmTXiD+gsXc4v8K5ecUWWDGIb4GaGObHwICUJBywIp2TH22Wzdb5Xi4jwSXRMLFwVLZEgU7Rp8sVy+rg1sD1z8hiKDCBDj26N7awNJUlryEUP2DJN63oLXKCN+DP6fuOMmyT/UAMLnO127MS2HPuiFETHRlG/+qPPJm89K4LkqqcVfmB1YnzuqlHriSByz0BUxiGW7Uyo2vSFzkneD3yhI+8kcP+7MCJLuK6owmF8BnyGKXZ0zeTmu5HyGd3rsUhms96IYtjsU6p7vziYoAlxUz7ScIcVEe6cV0A8Yhz+FoYqZPGRAgfxLL7KsKlVFSBjZag9fA==
+ bh=QKOkLlhvboMrUbJ2i2kaOtK4AAgB15+SpnPLwzuYty0=;
+ b=pYhEgP+rSbSWeAfHT7e1Ot/hhb+H4ByjAdXs5g5rlSONHFOL9417GpDB9mXWdMHsAGpWMV9J8U1UR5B6KJVqMWzLUN4yHamfohaot2iWbjgpPfkyMZUqBlHnfJasCWLLaVTKspIkuwXh4SATzZ8x8jESbYyh9Aq690i5rCXgQNOmFlaYdJETMN8ThdpCIGICq6OfTeH9l35e3IGO2juFklrz4iA7hiEAfCXzCkkHhHoTzdZYGsLvm+Uyx42PuefqeacbtOxyFUmiKDPVUa15OwMi+5z/zvFwF8PKnnAP6ecSjdayjKqs2GlawACBolP4u8nXuKHEZDNTi6TK7QDo2g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=P3kvtT4iiLqWRcEIHysAw3QwRkR4i3ggvFP838rCIvQ=;
- b=VBByTS+6wVtDeHv2tpO2U8I49AUGG8w5mm95GuPRJbTL23opQouobwJKfgcXZKhEsloLvC6HsauapOEP37ZGL9WPfVDjeG3KLl6bQA22sCtXhjyqOvkDo7c1Blke7DluxSYZ3zRv9/viVPDRFBx64mgvwLoIMRmpV9nuznDiPwnwgrG6Jap2sAwRyMCOQOwHWPRU+N496t6RsjqtYM22aW9neeHZw9IDc9XXLGBCI2An8XHCa1k2bWpmuEi04/UXQMK5QGDXOou6tz0/43XqRo6g4GclADuTG+vJEkcUj8rw8QBs7R/0u9G/PU7YGynJQcGgYIyZr8GUtXEfXeXIaQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by DU4PR10MB9069.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:56c::21) with
+ bh=QKOkLlhvboMrUbJ2i2kaOtK4AAgB15+SpnPLwzuYty0=;
+ b=gA6qW+guAO3cWZSHeITN9CQ5o4k2FkEf0GjwD+IFJ7UdC5rrm5qadpXf/quhwictc01dy/9TGBiDtCxA4DLguvAogdstc0ykqZe+LFxUTMR3ov2P1PwBTXj9kZcB5zoue6Vtn6QVyD/jJ3oionjl7Z49ZdzhgeLN4GyHV5EaVPxek3P1OnYcmOPoAB/KCe0se+L0tU1MtyRL64ADw7YgETJhOLXNDUROCD7o6ZT/pxp1OCVM1NwZjdQ0SpBArtsygjl2l3DIWxdkdcXNzPVlfKfM0oyDDE3IJx1TYMkCW0/X/djHEyoMS9qAr7cdpiHSz+Qgsm2knbEa08bVw9G+Dg==
+Received: from AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:10c::13)
+ by VI1PR10MB7669.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:1c2::7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.18; Fri, 8 Nov
- 2024 11:42:32 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408%5]) with mapi id 15.20.8137.018; Fri, 8 Nov 2024
- 11:42:32 +0000
-Message-ID: <07bacbe5-4716-4dd8-88e1-f9fc3175b9f1@siemens.com>
-Date: Fri, 8 Nov 2024 12:42:31 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core][PATCH v2 1/2] Fixing dependency of package
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19; Fri, 8 Nov
+ 2024 14:53:42 +0000
+Received: from AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::3a6d:95dc:3ce2:6da0]) by AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::3a6d:95dc:3ce2:6da0%7]) with mapi id 15.20.8137.018; Fri, 8 Nov 2024
+ 14:53:42 +0000
+From: "Heinisch, Alexander" <alexander.heinisch@siemens.com>
+To: "Kiszka, Jan" <jan.kiszka@siemens.com>, "quirin.gylstorff@siemens.com"
+	<quirin.gylstorff@siemens.com>, "cip-dev@lists.cip-project.org"
+	<cip-dev@lists.cip-project.org>
+Subject: RE: [isar-cip-core][PATCH v2 1/2] Fixing dependency of package
  expand-on-first-boot on cryptsetup and tss2 (tpm2) libraries when building
  with disk encryption enabled. (for bookworm)
-To: "Heinisch, Alexander (FT RPD CED SES-AT)"
- <alexander.heinisch@siemens.com>,
- "Gylstorff, Quirin (FT RPD CED OES-DE)" <quirin.gylstorff@siemens.com>,
- "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+Thread-Topic: [isar-cip-core][PATCH v2 1/2] Fixing dependency of package
+ expand-on-first-boot on cryptsetup and tss2 (tpm2) libraries when building
+ with disk encryption enabled. (for bookworm)
+Thread-Index: 
+ AQHbI+q4NaXgEhKYgkiz6PQsKD/HorKWEKyAgAAP2hCAFHuKAIABX72ggAFi9ICAAC5OgA==
+Date: Fri, 8 Nov 2024 14:53:42 +0000
+Message-ID: 
+ <AM7PR10MB332087B9AFC5DC69CEAEFE46865D2@AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM>
 References: <20241021185359.927395-1-alexander.heinisch@siemens.com>
  <20241021185359.927395-2-alexander.heinisch@siemens.com>
  <d4932ec9-d4c3-4be4-acac-b3957b710627@siemens.com>
  <AM7PR10MB33202B3696E06E47C3520679864E2@AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM>
  <47553bc7-816e-4f42-8745-d5992b6e650e@siemens.com>
  <AM7PR10MB3320E21C3DD427C0C85A3556865C2@AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM>
-From: Jan Kiszka <jan.kiszka@siemens.com>
+ <07bacbe5-4716-4dd8-88e1-f9fc3175b9f1@siemens.com>
+In-Reply-To: <07bacbe5-4716-4dd8-88e1-f9fc3175b9f1@siemens.com>
+Accept-Language: de-AT, en-US
 Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-In-Reply-To: <AM7PR10MB3320E21C3DD427C0C85A3556865C2@AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0268.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e8::13) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+ MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ActionId=9b2a1a94-a89e-4ea4-84b5-f8b61a3f45f6;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=true;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=restricted;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2024-11-08T14:28:14Z;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM7PR10MB3320:EE_|VI1PR10MB7669:EE_
+x-ms-office365-filtering-correlation-id: b40329d1-de96-4396-b36e-08dd00052387
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info: 
+ =?us-ascii?Q?znuRcZVwrh4lxM1M13VjeCgzAP8JEq5QihjTuU5X+fDmhijKKu2H1RUljR0A?=
+ =?us-ascii?Q?AUFKY9gNidjLE0eufuo5HfDpjNWF2J6Nkxe2VELd66Snsl61PrXJl1d2FGgp?=
+ =?us-ascii?Q?7xasfRe2ncuDSXOIQvb0klqrr98y2jVzNaZ+Nwm9jemoyC6B/nFlvnaA2W7j?=
+ =?us-ascii?Q?jviLu+yz9YzLEvtLXymuafKAysATZVHZOILaehi7qZ/PNLF4THwhQjMqlIID?=
+ =?us-ascii?Q?BO3MwYWLaCvCMdluJBTIbS6IhEZ3xJ9vqgd6up+7s0+OhpQ84Px91/Rtm+sI?=
+ =?us-ascii?Q?M8t2EuRrsu/wSGGV0vQu4y/aN85314anQgdeCG1psBjcSoWpBzlTW67cLgl5?=
+ =?us-ascii?Q?6FdTygFfCLsv3GuZWjeZKzFNIzz57RkcbQ/5IUVC/VgUHWTzkr33mrJX3Iy9?=
+ =?us-ascii?Q?jkpdZiVS/AA10V3eMJ41gKe416krnuRTYmMhG842daSbvdPy+Fo56dzjLgMu?=
+ =?us-ascii?Q?IsmYTukIU1gCFmE8IXrVqu2gOukTKenv5qR6gJLSJYCMRR/RXuRM5ROKNc6o?=
+ =?us-ascii?Q?Wrcr5seMbTbDc+EqPS0ziF1xHQMSVPxKI3tRuzSXX0xYlXBFwHFOr22hvHwU?=
+ =?us-ascii?Q?K0/D3Sz5QXTGRYJk+rNlOm1GjyJUH1BrCSkcweKDj+XoNwN8Tfn3d8ItPqUt?=
+ =?us-ascii?Q?PeKe52cVMrM0rjT5djeShReKsKmsff5jTFPvgwja2fL4Y43WcW9XoPcwUWRe?=
+ =?us-ascii?Q?IUPaDECm9wyPqIy7Vd9tvn6HxR03toW1I0zbeKk03Y6km5cVH3DXZy4RXwhy?=
+ =?us-ascii?Q?DRG8bISh/Uy83DGYgAL6+p58Cp0Z20N16gdY4P42QjpxODDBsjfEv9wghAor?=
+ =?us-ascii?Q?Gaa+7MZ2pxkQZSLxBpQSLOJ1S9XyrMfkjoRSipUYyih0BqP2D6q5P1gUAy0Z?=
+ =?us-ascii?Q?+OVukDDljQI5hBPYxSkMVN7kQCH3QNeB2OIyxTit41UdpQEfnE5vuNJNy0n0?=
+ =?us-ascii?Q?CPRAEfnwPtGcwuX91XeVcqR1W7QLWqhUv5dNCcrFK/7PCFUCOo7HWkMIHgXs?=
+ =?us-ascii?Q?FV9cLCY+5yQdznrLo8XOxf2bVicFaqIPFm6yCNR8x3UzeAM5ECHD4+ASMsmF?=
+ =?us-ascii?Q?P4g/jTvQCuEOPA1GipthpsbnJ+5YG+4CyrB3QqCWrPP/nicLT3xlfqLBqL3y?=
+ =?us-ascii?Q?lSnemXpx1CgMssmzdNAs0Q5V6P7UsIhYyA8NS8Ol9j4CKf4azFNXsuOfT/ff?=
+ =?us-ascii?Q?jBhymQ/+djirH93WjU+JQOZRF4wkfYd5RoSG7Ukegp+bgU5LX670IN8HJMd1?=
+ =?us-ascii?Q?i6pzNyP0gMqN7VO8L5J5fqbAfLKHOeL1uQytaFtP2Eei1icVpcqLSq3kyn64?=
+ =?us-ascii?Q?lc3K+hujcBAuDKR7/5bg2ERX8T3LaumYE1CqOZkOFQiJuhJOlzHA4RVZSifN?=
+ =?us-ascii?Q?zXPvpCw=3D?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?us-ascii?Q?A9D1QClKv9AOG8WVnMFu2bz2XsGPlAHPtGL9K1AXAT1k2gfmhCqsH9ALnXYH?=
+ =?us-ascii?Q?AqIw04blOLscKT9EST77yhY9NBi55n235eh25tOfaV3oEwt5BlxppbcydU6p?=
+ =?us-ascii?Q?zdhSJMYSIEkr02gugKl4I5WkxfZg9aJR7HvfBEfkbD4GvoTp9PTwCD96XHB7?=
+ =?us-ascii?Q?fHv0sjbC7O61K18XCw73IszipVqvlB5MFp8N8F7NCP6CblIyGs7wzb947vf+?=
+ =?us-ascii?Q?tF6nf5NZRbAsD92/oj0A92GVwbpgLP21AbfcX5KLBscvK9JigP6MZgfBNoiL?=
+ =?us-ascii?Q?Xnn+4JL66kT/x67ur/coL1dmSOdGtXv3b1TDKr8fTfd2DJUOz74R/s7HwhKX?=
+ =?us-ascii?Q?4hJ9G+OX/IlAjRvwULzxZZeKm1dySOFE9R+7Wda1yNLaQcuNQKXbbVCakukg?=
+ =?us-ascii?Q?VOWQZoBEkHC6NCg8ujZMeueQcAeQHyoKpnP2ROLSZ47/dYdIdr1b6szBuGH5?=
+ =?us-ascii?Q?gNLuZtdzWHgTVBFLBLlIOsH0iCWaeV3IWkDs/n25b2aO79ObQ6dHxTXDPlnX?=
+ =?us-ascii?Q?mcdbd3k/Oivx6dDQW+LhIPyGiyiq2LY34MlvVPhRr0WTORM2mgCSG7NG+kc5?=
+ =?us-ascii?Q?WcqPv7Qh/Ttv6CVB/R3SCjIYD3KQBl8G0fSJRBZVZg4FLvayffoQDh/NEowP?=
+ =?us-ascii?Q?fXF7/cNKMmIUPjIFocgSD39/rkvjLrBiBWoIS4LrIW99xWIvBBRq8oebAC6R?=
+ =?us-ascii?Q?1UiDanp2q8Fhhbprp/hoMqp8XFEhBY1WUY76vV8TrTgsxka29ZjLKwcDlVYi?=
+ =?us-ascii?Q?I/bqkuboAWY2xReYNgykPvVYyenJOYU6qjfaDgO3Y5xo7NKOx4FQ2n7t+l2g?=
+ =?us-ascii?Q?Hm2o11wASaZDjrwqqMdCbQHscdbKwhJH8hONLALFdPQCjyZ+mjemAuHp+9pV?=
+ =?us-ascii?Q?k8X8eaM4ekG2Fi3RqXcfkBkGogK5hRqCnRNkqk5nJu+m+CHFfFu+SIgR5RIP?=
+ =?us-ascii?Q?/5jXiJA2zStTIUuRHzKssCwDQUR2Amxf0vkrNdA7HoHOnMR9XuYW/jnlidfw?=
+ =?us-ascii?Q?r1FW2EGieL1fqn92UsVceNUCQ6dLzRNCu/JDqSL7oYeJC2ymfAMm+jfmqwwX?=
+ =?us-ascii?Q?LZVK/hBy/RvNzEbvGZqmMPUoYAaUEhHWZpOKuv62e0VnWQcsYnsE0a6wdrXM?=
+ =?us-ascii?Q?goDvNYD5GTOcc76ix5Jvs5Wn2CQdDlZmjc6bnYZQ8Ob4cAGERDEF1qYcbJpF?=
+ =?us-ascii?Q?eoK42pHNeYAzl6jz1DPYTuPVHD546IB2T7bE4B/b92IHBauG4fsyGaFgYTno?=
+ =?us-ascii?Q?NwmH4IvfRPsq4Kdtjlnegk1PnsV0MDa+FGEmyY3eQPgsT+QG2zwZRkNNtu6g?=
+ =?us-ascii?Q?5eu5PaYyagBnhHKu5W8r+/pSUi2wUySlcW0iy24rPqUv5GZ0PRMuLVwmfJpw?=
+ =?us-ascii?Q?95UDviGcOI+OrbQAz/rnK+i8JT2MmyDYfeNYuwXHxOVzSWAP36niIvuY/89v?=
+ =?us-ascii?Q?r5fizdH7iWGo9X0S8Gxs5dP3GWY09vfAZsGS65C7c1q8FX1VcaCkQNaIhyth?=
+ =?us-ascii?Q?7s1XJAi1vO3Yte79+tsU3Viq7GMlR1Jx/afNQ88JNEEexZPsI8597SGQaJuh?=
+ =?us-ascii?Q?XtwY81EiS9YfHcpzG/V77S7VknQpcKPS1N7Fnm785PzpLndDexNhVsy9Edwx?=
+ =?us-ascii?Q?gw=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DU4PR10MB9069:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0f5b2307-1ab7-42b9-6aa1-08dcffea6e96
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?L1VXL0lmTnN3dFRvc1BFZTdlZC9MYkxGdFRYT0NBTlBQNFRhYnNmYk1Hei9U?=
- =?utf-8?B?Z2dSYjc5YlA3Sk9Rb2FDUjZqZ2R4YzZycjArZldqT01SWXdGWTNZQ1hSckVj?=
- =?utf-8?B?K29OUXlxbm1xNmlSSFdWYTBKWTh2c3JIZng5NTAyZUQwbm5UZHZkWW5sbEdS?=
- =?utf-8?B?M3FlczIwTUduTFhTSG1ldmpsNHlGRVV4LzNTSTNjQ1pQSjBnNnhvaG5hY1ZD?=
- =?utf-8?B?L3VQOTduM1Q0TTA2SmtRV0VXdjBZVFRtaXBZSXBjbzRXbitscjljcXJWVHVQ?=
- =?utf-8?B?OC8vbURCN2lnNkVmMFV4VGhzWmpqWFh4dng4dlVtNlAwMkRSd0NHNnRYbXAw?=
- =?utf-8?B?UUlnc2VQeFhPY1Jyb0NVYkNkMTJiNm1CditRRkx0Y3EzQm4ranlKMVVmcE9w?=
- =?utf-8?B?QnkrYVc5Q3d1dkh5R1NYVEJ3MCs0am80VjU5NWxTUlFNMjJpcG9SOFdycW1j?=
- =?utf-8?B?SjFhb1AzSjI3bTUxTy85a2xETzNJazJHRXBTT29oV3N2bmxvd05RdnpQemhL?=
- =?utf-8?B?Sm5xMjl3R1NkV29VNWFubUY0WnJ5V0huTGFnRGM0ejNtOHhJN2lHMHBmS04y?=
- =?utf-8?B?bUFqd3grL1lsZmpqZHp0RFFBeXFHVWRLbk11QXAyYVc5cXdMdUZhQ1VqSnZ3?=
- =?utf-8?B?c0FEQzZHWVpLYlFURWJFcU15ZUlDaTBDdmsvN29oZ2pxc0RRajE2M1gzRXBN?=
- =?utf-8?B?M29Wd0NUaVlFbU1YV0IyN2J3VTRuZGlNWUVBWmdGRkFRSjZIMlJhS3hyb3pz?=
- =?utf-8?B?R3VOU1VHSlhESXJHaXk2Z01Ec2RDZ1dxOEU4L1dLSUhZeHl6aWZLaW9xa2Vo?=
- =?utf-8?B?ZUlPNXZvdU05dCtTQVp5WlM3WFViQVdoS3dIeDR3ZGRJK1dLZFg2QkhDT1lj?=
- =?utf-8?B?aHdvVXNDNDdDcVJLZ1JvOURjMjJRTzFEY0x1YUZKM2NBbi9yMmhZYTFyd1g2?=
- =?utf-8?B?UC8xMndvdis3RU9MYU1wYVpEYjlzZXN6V0E1SnVUNElnUXUxaGhzelVIZXpC?=
- =?utf-8?B?UEx2aHlXMllMQkgwcEJSRGFKY0RIdTRDc2ZMNnpPZjB6ZFZEVWFPaXBnTjRM?=
- =?utf-8?B?VnYyMDFWRlRERnlUY3plc1pUOTBkRDk4cEsxZ3hPbVpHc0NxRWNNeWQwQXdV?=
- =?utf-8?B?OFk3Ri9vQmx5MFZ3bTNnWlZxQTkxNWZieXFOV2QyQzV4NjM2UmVPZ2poVFR0?=
- =?utf-8?B?N05SZ3k1bkJNZmVDTEUxRkpaMnV6Uk5obmh2RUxXeUMxMEZPais2WGtNemNK?=
- =?utf-8?B?cDcxcHhxV3FhOWhidk4rUDIvVHlkaW12aU85MThUcENGOUdzRU9ZWmRtZk83?=
- =?utf-8?B?WVhXdHZVcXM4WFVYSjJKSmh3cUJ1TjMrVVRJZmFLL3NNWDgwWGxmNmxsOXZT?=
- =?utf-8?B?NEpCZ2d3ZUxSdGhZMThSM1JUOUN3TEhvbzNVMHBDa1N4NVJaV3YvNlBleHNw?=
- =?utf-8?B?akU3Y0dQeHNZVEsyT0NZMUduaUlLS0JmU3pLNmZOSUZaK1NxSVBQU0NZU2l6?=
- =?utf-8?B?MFdoZGdXOWxrY2x5eXNXU1ZwQmdFMFkvcGJjc0RsMjhXMWFrVXIvbjgwT0N1?=
- =?utf-8?B?M2Frd3dseWN1NVdPdzZUSmRhR2JqRlJtb3lSWVo2ZjVNMGJ4R29XWHVIREpS?=
- =?utf-8?B?SS9ZbnB2cG9VZzNVQWJOcmhNajJycHB5N05weFNGT01UTFNhMHVMcXA0UjNG?=
- =?utf-8?Q?El+ZEY5fMQhiZkjE9CyE?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?OHRsY3I1bTdaeWFUWFJiUzh5Wms2c3BlUE5ZWmkzMXp5RkQ1OU9JU2ZFQjk1?=
- =?utf-8?B?SFdoZXJyVFRDMUZQREMvM0M4RWtqQ3RSbFBOQjNSeVN4b21Vb0MvVjM4Mk04?=
- =?utf-8?B?NVVBWnU4MDJ1WElYa1ppSGFRWkR3bGJtMjJXYVhBQ1FhVXJ4NEdrQkEzRTZl?=
- =?utf-8?B?VkE3SkdLWit5UmQ2bW9oanJpRWV4MFBqWnFGTWk4RWVQQU5EbmliYk9HU21H?=
- =?utf-8?B?QnJERnN3YTVuSUtub1ZzdTYrUXFxVlhuNFpLSHVEMGNrQ0NFZ2prNFpKa3JX?=
- =?utf-8?B?Q0lpVU5EbHpPNWZiYlZMWEhBbWY0OFkvWXBXR1Jpdmo0S0NPcUp6QjNEek9u?=
- =?utf-8?B?VVNxc21TR3d4UFZibWwzRFZtdUJkNWUxWHk2K1BnVXJZQlZvZVZxWDF5bkNO?=
- =?utf-8?B?VERaeGNZVS9WajJheitQczFXL0I1VmMySVdYS2x4ak9WSi9VdGFzQ05jVnFY?=
- =?utf-8?B?VlZDMjRxVldob08rckxVR1ZPd3hhdExwdE10cFFLN2NyOXBtYnJDbnRDdGxP?=
- =?utf-8?B?RDhFZTZBUWFkOWZuTFRSV0wweW4vZG83TXVFNHgxSTJaTE1rZ0tLaGF0KzFr?=
- =?utf-8?B?MVduNkdaS0V6djRCWTRHdFZVMXpZd2RkUk8zMDA0blZQMDhFSmtQZkxiTm9z?=
- =?utf-8?B?SUl3V2RxTUtVZnJzeC8zYU9CeVhRUjloZEkzSXlBTnNXZHRSNzd3OXYzcTNt?=
- =?utf-8?B?Z2ZEL2dpRWZpT3FHMklZeXY3L0lPV2xCbDZOaVBtL1pYREFGQmZDQ2hpNHZt?=
- =?utf-8?B?Qm9qWDhENVVBN3B3cENMd1FocStENlpvTXVuaDRKTy8zVVh2Y3dUdTNIdjgx?=
- =?utf-8?B?Z0JwalJEbEoxTmlsTEdSMjhLVUZLeis3bUhUeXRZcnd0MWlDZlBadW5EeGkr?=
- =?utf-8?B?WlQzUmo3OHBTZlRFWDQ4NG81Y0lKY21EZnVoM1grNDJ2empnMEZhS2JCdkFo?=
- =?utf-8?B?aFkvbXFlM1g1dFFMUVNYTDdMMTRJRlcvK3E1bFl0S2tqajZ2V2I2QVYyNkE3?=
- =?utf-8?B?ODRBcFozQTFFRTBEdDVNR09CNkkyOUI0eG5ZY3BhcTRuNlVLb2lzeDNVNTZv?=
- =?utf-8?B?cEdGL0FTaFd5SlAzUVB0OFNhbXVIZHlLVy9SV1N2My9OY080VGx6VlJQUjVh?=
- =?utf-8?B?R1JIcTNxVTEwRDFzZ1V4ZjZvckN6UnRoMFdLeEVZRkxtejNOQmJIWk0vWGlE?=
- =?utf-8?B?N284TTViMUErMVBZSWVzelV5K3B3NWtPUFJ3WVhkd3VkcEpvZm9CK0wyMWN4?=
- =?utf-8?B?UVA4MDVmSm5hV1ZtZkNyUmVmWmhLSUtCQm5NL1RCcUZKWHB0alEyTnhGQTFl?=
- =?utf-8?B?eUNraGZTV0QxMUlURitKNWcvalVycE1nNGlmOVVXS0hiSEpBVjhTTU5lekNm?=
- =?utf-8?B?QkRKTWhVdTlib0tWZ1VSWlFTWVZQNVlWcld5VEZCRE1Hd0tlamFoelNXa2Zp?=
- =?utf-8?B?TTJIcEFZTmh0dVZmVm1xYXNBaUpOc0hpYndwZnpkdERnUy8yOVJCQXV6UUJz?=
- =?utf-8?B?YU9KcVZNS2JUVVVGUHBKMHY3WkdEZHJKK0gyeDEvc0k3RUVsZk5XWllxcGRs?=
- =?utf-8?B?NGlaM0dsUVNPNmgxZ1k4VWo5Q2Y5a3JVV2VHUS90bkxocDg5ZnhCQ25yK0JM?=
- =?utf-8?B?R09GMjJjZnFCNGlWbnVDNjVCaE5UTU5xbGRiYk1WbytQdkhaeGFXZVl3MElS?=
- =?utf-8?B?NDI2MGhCb1c3WWJvL29TK0NRc0l4cHFLMTB6eWYxRGFTME13UXdrUGRIMklQ?=
- =?utf-8?B?SGNPNUROd2dTN1phcEE5NWEvN3J0QVFNZzN6Y0duWGRJVXhiTTl2WVFHWTNX?=
- =?utf-8?B?eUpNZ1BEYnNQTjcyQ2FvN3d0eGpBRGhidW1XalBJYnNpckhBWlpTWUt1U1Fl?=
- =?utf-8?B?dnczOXQ1WHI3U3kzSWdUQVBYT0UrUkVKSFBTZ2J2N3ZpNWc4T3Bac0VUSWcx?=
- =?utf-8?B?ZTZicG8vR2NVWFpFUnN5YmxGVll6eDE2SjVkNXQxV2J1ZEpNcDQ5ek9mbTRO?=
- =?utf-8?B?SUZQVWQ1VkxYWjhTV2EyQXZoRGxsWlZXUVFDcXE0NDNTM0c1b04zd2pKZ2o0?=
- =?utf-8?B?UERyY1ZScm9rNWFTNnhhWDl0YWp4Vjdob3hpMEFsWlRTRXZJazhSMmJxNHc3?=
- =?utf-8?B?QVVpU1MrUm9xbUlsQWtuWXVvbC82NHJORXRNb0dGbzE4VEdWZjgzcTlFSWdn?=
- =?utf-8?B?UVE9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0f5b2307-1ab7-42b9-6aa1-08dcffea6e96
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2024 11:42:32.3950
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: b40329d1-de96-4396-b36e-08dd00052387
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Nov 2024 14:53:42.7334
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PzBhsABzxVnc28l67xih5ycur8v1pnIp6t8hkyS+thBAX4KAr1pywAYFChe4UDkX6QytVpgj/k2wXIGkviJidQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR10MB9069
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: eXD9fdNUECnZpSDTRfsWBu6SRBVFTPQFxg7IMMxergWA7RE5PvVUrKandI3BFUv9HDOIyqf+hhhWxyaUMYFGPhicLdIi6QMU52+y+UckbDA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB7669
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 08 Nov 2024 11:42:44 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17225
+ <cip-dev@lists.cip-project.org>; Fri, 08 Nov 2024 14:53:55 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17226
 
-On 07.11.24 15:32, Heinisch, Alexander (FT RPD CED SES-AT) wrote:
->> On 24.10.24 18:58, Heinisch, Alexander (FT RPD CED SES-AT) wrote:
->>>>>    Unfortunately, I could not find such library anywhere! - Therefore, expand on first boot and similar,
->>>>>    still won't work for current disk encryption implementations for buster and bullseye.
->>>>
->>>> There is no clevis library as clevis is more or less a bunch of shell scripts. If you want use expand-on-first boot with clevis a solution would be to extract the passphrase, see [1],  from the tpm2 partition enter it via a environment variable.
->>>>
->>>> [1]:
->>>> https://git
->>>> lab.com%2Fcip-project%2Fcip-core%2Fisar-cip-core%2F-%2Fblob%2Fmaster%
->>>> 2Fdoc%2FREADME.tpm2.encryption.md%3Fref_type%3Dheads%23steps-to-conve
->>>> rt-clevis-to-systemd&data=05%7C02%7Calexander.heinisch%40siemens.com%
->>>> 7Ca83978638b104123b3a108dcfe891659%7C38ae3bcd95794fd4addab42e1495d55a
->>>> %7C1%7C0%7C638665111935069295%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGk
->>>> iOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoy
->>>> fQ%3D%3D%7C0%7C%7C%7C&sdata=ynIFg7PJa3BefAF9GN7s7rB0E2TeP6%2F4G%2BHDA
->>>> vNBRxA%3D&reserved=0
->>>>
->>>
->>> That means a bigger effort on `expand-on-first-boot` script than just 
->>> setting the correct package dependencies!
->>>
->>> Currently, we are using systemd based cryptenroll in our project.
->>> So there is not too much motivation digging into clevis for that use case.
->>>
->>> Still, I think fixing the issue for bookworm (systemd-tmp2) is better than not fixing it at all.
->>>
->>
->> Quirin and I discussed this a bit longer today: We actually should remove the need of expand-on-first-boot to access the key again. And that is also due to an idea I picked up yesterday to lock the tpm secret after initramfs so that we reduce the risk of leaking it via the main OS.
->>
->> Our plan is now to convert expand-on-first-boot into an initramfs hook that would then come before the crypt-hook, thus would only work against the unencrypted blank filesystem - problem solved, just differently.
->>
-> 
-> Actually that's a good idea!
->  
->> For now, also for trixie, we will just make the dependencies of initramfs-crypt-hook release-dependent in isar-cip-core.
-> 
-> I guess this is the patch [1] you are referring to?
-> 
+> >>
+> >> Quirin and I discussed this a bit longer today: We actually should rem=
+ove the need of expand-on-first-boot to access the key again. And that is a=
+lso due to an idea I picked up yesterday to lock the tpm secret after initr=
+amfs so that we reduce the risk of leaking it via the main OS.
+> >>
+> >> Our plan is now to convert expand-on-first-boot into an initramfs hook=
+ that would then come before the crypt-hook, thus would only work against t=
+he unencrypted blank filesystem - problem solved, just differently.
+> >>
+> >=20
+> > Actually that's a good idea!
+> > =20
+> >> For now, also for trixie, we will just make the dependencies of initra=
+mfs-crypt-hook release-dependent in isar-cip-core.
+> >=20
+> > I guess this is the patch [1] you are referring to?
+> >=20
+>=20
+> Correct.
+>=20
+> > Just to be sure, still, the implementation of the initramfs hook for ex=
+pansion will be in isar?
+> >=20
+>=20
+> Nope, this ideas fell apart after trying to convert the current systemd u=
+nit into an early initramfs hook. We will need to split things:
+>=20
+>  - expansion for already or to-be encrypted partitions needs to go into
+>    the crypt-hook of cip-core
 
-Correct.
+ad "expansion for already encrypted": I guess that covers cases like in VM/=
+Cloud infra,
+where disks can be expanded after first-boot / installation?
+---
 
-> Just to be sure, still, the implementation of the initramfs hook for expansion will be in isar?
-> 
+In many use cases resizing the partition should be required during=20
+installation / or first boot only.
+That's why, I'd prefer having those steps separated and opting in for eithe=
+r!=20
+Although package dependencies might be tempting to combine those and reduce=
+ recipes + initramfs hooks,
+the use cases and options on combining those justify a split.
 
-Nope, this ideas fell apart after trying to convert the current systemd
-unit into an early initramfs hook. We will need to split things:
+As an example to point out the combinatorial complexity of just those two r=
+ecipes=20
+and probably there are even more combinations to come when keeping the syst=
+emd expand from isar.=20
+(which probably also makes sense for non (customized) initramfs use cases):
+My current approach to streamline that (downstream) is by utilizing a=20
+target-bootstrapper (kind of next-gen isar-installer).
+That means, expansion is not a use case after installation for me when runn=
+ing on
+target hardware, still, when deploying on vm! Similar combinations apply fo=
+r encryption,
+not necessarily mapping the ones for expansion.
+I am aware of the target-bootstrapping/installer approach is not desired fo=
+r many other scenarios=20
+(e.g. vm, sd-card based installs, ...) but it already shows a good amount o=
+f combinations.
 
- - expansion for already or to-be encrypted partitions needs to go into
-   the crypt-hook of cip-core
- - filesystem expansion may be doable via the existing
-   expand-on-first-boot if we teach it to skip partition expansion if
-   the disk is already full (currently, it bails out early in that case)
+Apart from that, not related to the initial problem, but maybe something to=
+ keep in mind when refactoring/reviewing
+the existing implementation: The current implementation will potentially br=
+eak the rollback capability
+on upgrades from systems without encryption yet in case of full disk encryp=
+tion.
+To mitigate such for upgrades of unencrypted systems to use encryption, we =
+must
+encrypt the partition relating to the current initramfs only!
 
-> [1] https://lists.cip-project.org/g/cip-dev/topic/isar_cip_core_patch_5_9/109441764
-> 
-> 
-> I am currently using parts of the expand-on-first-boot scripts in a 
-> device bootstrapping [2] utility in isar-installer-image
-> Unfortunately, that utility is under heavy development right now, so there are 
-> no patches ready to upstream at the moment.
-> 
-> Nevertheless, to reuse as much of the functionality I provided [3]
-> back then to reuse the image deploy scripts as much as possible in the bootstrapper.
-> 
-> [2]: https://groups.google.com/g/isar-users/c/ta0G_KGS_yU/m/5HnEK09BCQAJ
-> [3]: https://github.com/ilbers/isar/commit/8a170f9d634b56fc1445b4e9674d73c99257a9f4 
-> 
-> Similar will apply to the expand on first boot scripts (among others)
-> 
-> If you agree on that, I can provide a patch for expand on first boot before switching
-> to initramfs as well!
 
-As written above, the architecture will look a bit different in the end.
+>  - filesystem expansion may be doable via the existing
+>    expand-on-first-boot if we teach it to skip partition expansion if
+>    the disk is already full (currently, it bails out early in that case)
 
-Jan
+and also skip partition expansion if it is already encrypted.
 
--- 
-Siemens AG, Technology
-Linux Expert Center
+
+BR Alexander
 
