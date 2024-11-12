@@ -1,361 +1,404 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <sai.sathujoda@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCD03D41D57
-	for <webhook@archiver.kernel.org>; Tue, 12 Nov 2024 06:13:04 +0000 (UTC)
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.47])
- by mx.groups.io with SMTP id smtpd.web11.80690.1731391977553925916
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B633ED41D58
+	for <webhook@archiver.kernel.org>; Tue, 12 Nov 2024 06:18:54 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.131])
+ by mx.groups.io with SMTP id smtpd.web10.80552.1731392333262395033
  for <cip-dev@lists.cip-project.org>;
- Mon, 11 Nov 2024 22:12:58 -0800
+ Mon, 11 Nov 2024 22:18:54 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=qVkx33Jk;
- spf=pass (domain: siemens.com, ip: 40.107.22.47, mailfrom: jan.kiszka@siemens.com)
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.131, mailfrom: sai.sathujoda@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1120) id 4AC6IoFZ2098934; Tue, 12 Nov 2024 15:18:51 +0900
+X-Iguazu-Qid: 2rWgZF6BV1IlKr4f7z
+X-Iguazu-QSIG: v=2; s=0; t=1731392330; q=2rWgZF6BV1IlKr4f7z; m=cCLkPpvq5JnwiMAs8LCctDuEPq5sILQcKamUdUbBFuU=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1120) id 4AC6Imu51239010
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 15:18:50 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NYoy9cjzz7ZqeovobPi47oxDerMJInlQc1E/kWngWD2Hf4pEnYYqnwJjunjBRqhP34ZNILHCtg232bBJNGiQC9U3HyHEudBhUdhSLPMebVr3XOAhLNN7onh4CaCHdBMuQAHj8fVUT+ArOCS60w6iSj9T2adq+0wn9w60erxdE3TwEPoc4/0feCYlteP6AKxzJu0v2dfx2P1T41E/gxqM77KW4ccigjoXZ6Q9frj+S1hqaNfqyCC5wIzn0tdYPEfyeLsoWXDbU2orDm+HyKyBZwI7Gt7Cc3AJ2uVwQfZ9RfuXXuBizCsofVMr+X+S1YoB4JuQ3aWmQeMRO9LyreKviQ==
+ b=ddXeboCiKU97/bd68IJ3fFTYXmSSnQ5lqs++z1pFD7ooxI7UA4SWxMsILwZgYdfsxNxP33ktJZXxwQerW+vX87LBhyevpq5qIuJmOkgWpCy1kHrBxykr8jQmWjQMTgyDA6DkTHwyTr9/vcpdb5XooY218BX2JwxfG/q9cEEh/1yWIxG0gxwBD3T3y35GdP8oUhaEKJXgMzIYc8ARfnguHI0vizDhzlcnrku2y4ioyN0swfJfdPsUiVE6UXv81PZgvxDkKAFB8vQwwdi1CuJubzEmE26Bw2H4F/+sNpmQJPFAPtxCw4DOx2CNt+d06lmqhEGGkbNXOi8MFI41h2Q4RQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LvWIwojvpmtFM+IjCa5m+maCIchdHF3hQkMRn9eTqPw=;
- b=ZyRYsSQlYZV4I8avJPEpJSHdslnTFht9KZ8gBPGjDa9KcW0nIjkPFuCoeysqbBJfKJ6CcIcOgbgJfDUyuL894AmvDU8j0w0CUqEs9PKRmLjnwsv9AvnZhHGMplKolJc7s/0XUwZYM051gdmB2Zfnv0O0h0VH2qXxIf47CReloSnjhX9ASqostd/1ycIKGFzDEs2W38/F4j60BPWCxIVvGIuMQgmFGpo1oD80FSkn7ryQsSw408PIgXc8SrazTN5OrbIValXm5LK5P5CIUSGm6wdLOmnHvApS5AGzXmaCYfxxY+QmibLzay7PPM25T7E0nOnTVhfu4OZvgVEzFA6oCg==
+ bh=E1PpMmgYmFgNXTBdWCVe4g0yCtt89H0JMpXeL0bFEXM=;
+ b=tw8RgnkXHn22rE60FAkKvjx6zURpYBkAHLAq5kBLxXmHxrMcM2FsySqSQplUMjLJj5cWqzCEyh+JXoOF/XCxbqpigMcmQjt+RsTmugoZrvny5O9Oee+g1BegKy/J9tSsQC/ywSBaZ1VnMXWJFS7dwpB3A2UVDmzWWAwY2BwU8Y7ipD05eJJmxwdGqoybnqMsItoF9B6wLA8DfHlR5/lSCQoJyexcEnblv/lPc2h9MngMb0NII3rVmaDWwG0Wbz6vSimc9pjDidimGzfqYshmdxD+rLdcFoXYQ+a9qCDzcRz1ycQt0U0zn+lX6rVc8Va6VDNhxDmz+75vqa13ClgeeA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LvWIwojvpmtFM+IjCa5m+maCIchdHF3hQkMRn9eTqPw=;
- b=qVkx33JkLJKMnbJGyp/p4bQfy+O7B4Pe+zzc3iEJ2BG8Bp8/y0XaBg3Q5Qgxv1anMxozd/6hNm+ey7te5CDKDT98KAMwXcV9ppGundXuolyprn5qQ9i99OVHJLDg8GHxlhdHSDb+nGxa7BxzrZrYUa8O8+7nRhdXXXl4bbehJSP6JyrBPw2eMNrxalCxilAEg2riLWHkXu8TLPFfLmfFQHt6iR72+Nho/O4/oTzqI2CYABu8sQHlUjKDVy8A6y2aAFE2Q2M1nEoy+hQOPsVVfzouaK5/4AFPU3b9Fk9/pL+KtKWLH92KSlLv1/IoaDQGw0qba63IZqPgEhJGUQcqeA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by DU0PR10MB5533.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:311::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.16; Tue, 12 Nov
- 2024 06:12:53 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408%6]) with mapi id 15.20.8158.013; Tue, 12 Nov 2024
- 06:12:53 +0000
-Content-Type: multipart/alternative;
- boundary="------------Gj00Q75eGmQQnSLMVuNgwmfr"
-Message-ID: <59bd0258-8092-4988-80db-e8f5a14a5104@siemens.com>
-Date: Tue, 12 Nov 2024 07:12:52 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-security] Manually run Kernel and IEC tests on M-COM x86 and
- generate results
-To: cip-security@lists.cip-project.org, Chris.Paterson2@renesas.com
-Cc: cip-dev@lists.cip-project.org, kazuhiro3.hayashi@toshiba.co.jp,
- dinesh.kumar@toshiba-tsip.com
-References: <OS3PR01MB6103AC4F03F328776A6DFBCBC2592@OS3PR01MB6103.jpnprd01.prod.outlook.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
+ smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
+ header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
+From: <Sai.Sathujoda@toshiba-tsip.com>
+To: <jan.kiszka@siemens.com>
+CC: <kazuhiro3.hayashi@toshiba.co.jp>, <dinesh.kumar@toshiba-tsip.com>,
+        <cip-dev@lists.cip-project.org>, <cip-security@lists.cip-project.org>,
+        <Chris.Paterson2@renesas.com>
+Subject: Re: [cip-dev] [cip-security] Manually run Kernel and IEC tests on
+ M-COM x86 and generate results
+Thread-Topic: [cip-dev] [cip-security] Manually run Kernel and IEC tests on
+ M-COM x86 and generate results
+Thread-Index: AQHbNLcv3vC8deZB0Ua07zkQ6b5nXrKzKmEAgAAAV+k=
+Date: Tue, 12 Nov 2024 06:18:46 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <OS3PR01MB61035F246D6307C5F03F2421C2592@OS3PR01MB6103.jpnprd01.prod.outlook.com>
+References: 
+ <OS3PR01MB6103AC4F03F328776A6DFBCBC2592@OS3PR01MB6103.jpnprd01.prod.outlook.com>
+ <59bd0258-8092-4988-80db-e8f5a14a5104@siemens.com>
+In-Reply-To: <59bd0258-8092-4988-80db-e8f5a14a5104@siemens.com>
+Accept-Language: en-US
 Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-In-Reply-To: <OS3PR01MB6103AC4F03F328776A6DFBCBC2592@OS3PR01MB6103.jpnprd01.prod.outlook.com>
-X-ClientProxiedBy: FR2P281CA0085.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:9b::12) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS3PR01MB6103:EE_|TYYPR01MB7072:EE_
+x-ms-office365-filtering-correlation-id: 797f649a-2e10-4609-d60c-08dd02e1ddb5
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|1800799024|366016|376014|8096899003|38070700018;
+x-microsoft-antispam-message-info: 
+ =?iso-2022-jp?B?NTBxSGtIYllHWG1aUVhrRjlmL2xDemkzKzJpMDdiZXk3b0UwQmxDbUl5?=
+ =?iso-2022-jp?B?RkUzbEdKMlp2amdrSEF5VkEwcTBueVBxUEc0OVVGOXFobXRBNC93NGk5?=
+ =?iso-2022-jp?B?TTNtR1lNRWtONGtZSmNzNXd2Zm4zR1duWE1abXFHRTlXVkpkNCtMUW5t?=
+ =?iso-2022-jp?B?WFlDVDFSbW40ZXdjblVDQ01BOTQ5YUlGcmk5dlhXOERjLzk5bWROdmto?=
+ =?iso-2022-jp?B?S2Z0aVZSeDRxdFBNMENKRG8vU2J4KzEyMG10dmNxMW1rMFFsMFprektT?=
+ =?iso-2022-jp?B?ZGk5bjFXci9WcGZoMW1Fd2R2Z1psWTNiM0F4WVdPKzI2NVdkNTlpWGhR?=
+ =?iso-2022-jp?B?L0Y0YU15ZmVFMHZyR0lhRk5PYkZzRFNYTXVpTkw0dXNkbUpKYlFuTFRm?=
+ =?iso-2022-jp?B?Skcyc3h3bmNqZ09uSTVYWE93YzUybjNyTk9aYjk0N3N6QVp3cDRkbVlH?=
+ =?iso-2022-jp?B?Sm5ZYUwrSUc1Sno3QTJWQ2k4ZXAvcGo4blArMFluUFZ5SkRBeFJnUnRh?=
+ =?iso-2022-jp?B?eXU1dVJiTzNNWGRBZzNHdFpRN0pqVXJWYkNVTDg5K3YvSnlmVkRaYmpJ?=
+ =?iso-2022-jp?B?a0lNNWYyd1dIZFJZczB0bDF1VVd5Kzk4QTlMNStDM01JdlJJR1k5eGlt?=
+ =?iso-2022-jp?B?UGNCTnkrSUVKK1FsRnpWUXNlSE1ZL2c4cGpLZE1ZV0hHcGV6RWpJQlda?=
+ =?iso-2022-jp?B?Rlh2SFN2RWhxOTZNaUY2eVZBSGkzRUJuVDZPcHNFSmNwcjZkTDIvR3J1?=
+ =?iso-2022-jp?B?eTg1WnRwamhrVG8rRHNwUTRUVkRZTXlocFhrUmR2a1pKNkhlUmNhK0hR?=
+ =?iso-2022-jp?B?cFFtWG5BSXFlQTN1dmlQeHZyMnovVGk1Wm9hdHFtenJudjFuU2NLdEtO?=
+ =?iso-2022-jp?B?ZWpUZ1JQRjJBYVdSZmg4clZ3U0UzT0R3SDAvT09YYzZsWmplMTE4TXVD?=
+ =?iso-2022-jp?B?L1BiUDZHOTE0Q3FFWDZMWm5NRHFINnllc21jZ3pRc1E0bjZ0MlRCejNI?=
+ =?iso-2022-jp?B?eVFULzZvbms1UldwVVpWYnJOZW52S08wUzlvd1NRSlpHSUNkMm1Ddlpa?=
+ =?iso-2022-jp?B?TzR5R3J2U202R0JkY21IMEhTVUJBQzUrdVErL2E5N2ZsZmw0ekdvNDFo?=
+ =?iso-2022-jp?B?cFAxTUJhb2VzQkxucUIzNS9XVFVEampOa2d1VTlWblZxb3dsSElXM1R2?=
+ =?iso-2022-jp?B?bnhjNzVSc1NUays0ekhML2ZGajI1RTJybWZDMXo5cDBXaHY5NlAyOTNi?=
+ =?iso-2022-jp?B?MEo0WGNUNFlaaVpBNlIxdXU1UFJwNmFKZ2xWekNsTjJiSjRvSEwybVJn?=
+ =?iso-2022-jp?B?ZEJObnZYNW1renJCa0RhMWoxS2o1Qy9ETHZUSEp5dDBIdXczRmF4YmZB?=
+ =?iso-2022-jp?B?cUJZaTRxMlZEbzVuc1JPQkVLSWNvMXQ3aVdkUGVVMU1iWG9GY0hEUjZC?=
+ =?iso-2022-jp?B?Z0dFdlZjUTZLcVRzaS9xblJUNEZhYlFMeWNBUURhQWFyY2FUY1dlTkdJ?=
+ =?iso-2022-jp?B?TzB6cXVNR0p6RUZjNFZ2T1llczhlMGEzaUdoNkJDRThBb0VPZnFjRXE0?=
+ =?iso-2022-jp?B?K25Tb1B5Z3dRWlh4eTF3VnlkbklTNXYwQ3MyTW9JWDBscU0xVkdPWTI5?=
+ =?iso-2022-jp?B?SUJ3Z1hKR205NXBsd21oSDFLV3k5MXJucmpjNTJpOUMzdTE1ME9XQVlJ?=
+ =?iso-2022-jp?B?RDIyT1VZNVJMZzJYNVBVa0hOcHNwQkM5MUhjdFhzMXRKRkg3U005Y0Nm?=
+ =?iso-2022-jp?B?SkczNDZqdHl0Znd1Rm1VaU5mb2ZmY3ROWTZyNjlHeFdubmswdmFSNmZh?=
+ =?iso-2022-jp?B?dVpHMmNtVkZSclNuNUdQb0NOWlM5REJoK21NRkNKbCtMcnpGVjNwSXpE?=
+ =?iso-2022-jp?B?TjRLT0JiY3ZMWUpuNjM5c01ZZDNkdzVJclhOVy81VUgvNXpTU0ZlWGp5?=
+ =?iso-2022-jp?B?b2lxRGI2ekQ2d2FEeXdNM0tzM1JtZz09?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB6103.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(8096899003)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?SDdiN0RtUWQrOWJNd010R0VGRGpKVW55OGhkSEFNNVFJYlJzNmNrZE5G?=
+ =?iso-2022-jp?B?UUorRzN2ZExTSml2ZTJJbGl6KzJ1TjZOQ012Z2JPU25QTU5nbHJCK3VW?=
+ =?iso-2022-jp?B?Tmw1NXVYN1I1RUd2OVpQdTdRYXVDT0srelR5VWRoNzNqREpDK01NSnFD?=
+ =?iso-2022-jp?B?cEZYQmpERFVwMWUvV3cvdUVFK0pRRU1Pd0J5ZjI0cFc5N0JZem5LN3hl?=
+ =?iso-2022-jp?B?SDZHOElkL0xNb2dsVjFoYzFxajRidGdlT1NCaXlrUkNKR1ZtRG9RY3py?=
+ =?iso-2022-jp?B?dXQ1eVNJYU54K3JTRmEyUFR0YWdhcjRjZktkS0pXYXIzSGxLUFM4K3BO?=
+ =?iso-2022-jp?B?a2hpa1dQOXNKMWZjcHFoUk83cnlOOFo3RkRkOElmdHZqZ0M0MlN4MVJK?=
+ =?iso-2022-jp?B?ZjE0R0xvRHdPNHM3UjRSQithUWIzcmlrVXBvTFN2S2daT1RiWS85NHB2?=
+ =?iso-2022-jp?B?VWZuaENPRmFsSWIzd0hKNWtnTHNrOEdvS1RzSkhKcnZLMzBOMkZVYy9Z?=
+ =?iso-2022-jp?B?RjBLWm1yVmhxSThzY0hhZUVUY0szdnk3alBERUgzMVJKMlhVOXc2TXV1?=
+ =?iso-2022-jp?B?VmRJQmtBRnk5dllwdjFLVUV4RUovV25WeDQvVk42cm1SMWlMMmc2SGxn?=
+ =?iso-2022-jp?B?dkxnc2phaFBuaXVoVCtDdGw2VFBJU1AzSEsrWFE0TjdMNjZsZkpJYjY3?=
+ =?iso-2022-jp?B?cm5yMUhFemhLcFJyUzZuTGhkeWZtb1N1WDdHTnM2blF6R2krZzNVVGY1?=
+ =?iso-2022-jp?B?amFKY3E0WS9rRGJHcHlDLzlvdTk0RU55NGo5dFNaVTRGclBIWEd0KzVZ?=
+ =?iso-2022-jp?B?eG03SkxmVFFRVm14bUJFWWs4ODFuRjdmZCtJSjIzMVFCb3BDdkdmTDN5?=
+ =?iso-2022-jp?B?ZzhmcWRlNTlTUEFSVmRnZi9JZTdnenZlRzNvMUM4YVpTeVJNU3ptOVVv?=
+ =?iso-2022-jp?B?U2oxMnoyYk5zY09HWnI5SjMzTGpUdXFRMGZ4M1F5NGlDVkUraDR5WUlm?=
+ =?iso-2022-jp?B?ZG5GTWx3U0VJWW5FM0RFZHQxT2cwbjVHbndSdysxWitIUnFQR2wvM3A4?=
+ =?iso-2022-jp?B?aUxsN3Z5YmNzL2lGQWFVUzlTQVdVMmEzaEpYbW45MVVaRXA4eGxrdW41?=
+ =?iso-2022-jp?B?ZDZOREtUTUxrdXErdTVleVFLZ2NmK1R1RWxiRFl2Y2t1WkRZODlBaENn?=
+ =?iso-2022-jp?B?clNidmpOaFh0OXFva2l1YzF0OXlXUVZkVDBCdmQ1OFNPRHdMMlNFcnQ1?=
+ =?iso-2022-jp?B?bGd1ZGVMQ1I4blRjMGt6VkVMTnZXVzVMOEFzNWh0Z1FXY25uVHNPMzZR?=
+ =?iso-2022-jp?B?ODljdmlmaUpWYmxPTlZNSnVMLzUxYkU2ZUY4czNURzhId05vS2J6c200?=
+ =?iso-2022-jp?B?WjMrczlLSlZTWGVXL0FVYTZWK2lGOTI4bEFPTzA3U3ZmYy9KY3pYU1NF?=
+ =?iso-2022-jp?B?Z2h5SGJBSm5KRHMvM3VWTlo3dHc4bDMvOElWWWliSjRET0pYVDhUK3Mx?=
+ =?iso-2022-jp?B?NzRpelJJZUErc3U1TDdBODNIYmZMUUNPcFhHbXppamJpSlpZNjN2SThG?=
+ =?iso-2022-jp?B?b0MwR0pUL0dPdFFqWk95TnJVVWlJK1NUcXJBK1BGdUxzSG96bTVlVXNn?=
+ =?iso-2022-jp?B?V1NPZFZ4NjN1Y3RyVVV3eGZnc010YzRUaEUrZkRsZEdmWEFZUksyd2g2?=
+ =?iso-2022-jp?B?RFlMelVleXdZOFMvSkNZYSt4M1NheHU4dCtPREt2NFVXUkpxTDlreHdP?=
+ =?iso-2022-jp?B?ZkRDczlHRmJZbXYxdTlWaC91YUs4dVJkOWJkWDJTeDZEZExhQW85bXpq?=
+ =?iso-2022-jp?B?MC9kUmNVQ3REQ1FBN2oxL2RWRHE0WFdwaEQyNS9lL2RpVncvQVhBMjRK?=
+ =?iso-2022-jp?B?cGd3dUFaZktFck1LNWt5cFF6MExKTWpsYzU2V1lsRzlVSm9DOU41VGs3?=
+ =?iso-2022-jp?B?NkgySDJTUHZYbEtiNXNxUURvWjlxNjIvQlEzM1RDVUJqSlROaWhzZ2l4?=
+ =?iso-2022-jp?B?STVraS9wd3ZwOFo4TFdoZStnZ3ltZEwzQStQRmZra284dzVtS2ptMmZU?=
+ =?iso-2022-jp?B?MjNCSGtaMEE3elBNak1GNk9zVFNrYVcwL3lEUnpGM3h4WWN0Ym9XV3Zj?=
+ =?iso-2022-jp?B?Ym5lcDJXeWxoWTlpRmQ4VGRaRE90ZDBHRTdDZ1FJdVg3NGtETFdyMXZi?=
+ =?iso-2022-jp?B?ZllORUtEQW82c2dxMzhuT0lFT3l4MitJNmtMU3BwODg1ekdWVG5XYmMx?=
+ =?iso-2022-jp?B?RG1NTHQ5c0Y1Y1ovSEtZNHpnbFZZQlRiUzFhQnpoKzhnM3lValRrNktO?=
+ =?iso-2022-jp?B?MHZrL2FLYnRhYTFZYkFWWjdIMVJ5azRNM3c9PQ==?=
+Content-Type: multipart/alternative;
+	boundary="_000_OS3PR01MB61035F246D6307C5F03F2421C2592OS3PR01MB6103jpnp_"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DU0PR10MB5533:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9cf87409-6fe1-47b3-ea6a-08dd02e10b29
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|1800799024|4022899009|376014|366016|8096899003;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?L2xmNG9sa09lYUFzSVp0WkFEdHljeGZ3RW5DODRrL2NQWFJoQzdwVE1WbTVo?=
- =?utf-8?B?b3ZLK1JDR3JxQjlKY3BmWnVPQXZwRmNhTEg5RVBhTnZtdk9jRmVWNFZ1WllU?=
- =?utf-8?B?YlhFWUFDYXZZKzBPbjM4L2RINzNuTEhVOEZKWHpObkxmQWE5cmc3UXMwQ3Fr?=
- =?utf-8?B?RVBxSE1MNVQ2SHhHRUR6RUpnYmk1dEV6c3dhTHpYTkFFVVBEQmVWOHRTV3p2?=
- =?utf-8?B?Qms3WHFQZDgwMCtFOFdGbXZwVyt6QjhndmRJWjR1YkZodkZPbkg2cWlid2R0?=
- =?utf-8?B?OGhyZTl4YktsTGUyYVQrZWtGQzJsR2duVmhDWHY4dVZwZUNFMUgxeTROZzdC?=
- =?utf-8?B?UXM1Ky9hZ2puZFREZEYvSVkrUmliUTMybEF1aGNNNFVLdkU4bldKUzEwUFo0?=
- =?utf-8?B?cVBLNkc0YXdVSFpuM24yUEw3NDVBRFRVV3FQOXRFK0Z4K21xYWNTRkhPMVZD?=
- =?utf-8?B?Wm5xeUloZUdsU3RKN3pGUjhDWXJHMW5LcVJSUjlwZDJ5WEVjTEpaT2xGWEZ0?=
- =?utf-8?B?eDVlYmh1QzFGZXRycUw5SHVkSTF3WGFQbjRkVERlS0NRTWdmMGR0eVpmc1VG?=
- =?utf-8?B?anpLbmlmRG5BK3RaRHVXQ3dzU3ovSEdVTUJ1L0daK3B2N0J1MWZjVHVET1d4?=
- =?utf-8?B?STJBT0xiOEFuT3VEMEFhNDh0Umw0N25UN2pxRHFRalNMQ2tuQ2FuVTVLdlA1?=
- =?utf-8?B?ZnlYZmM2RjNzazZLTzQ3VE15cFVDVHRZc2liekVjcUFZMGpwUlNCNHJaYzdG?=
- =?utf-8?B?cWdhOW9jUGFnTk9UM2oxaWlGa2JhVVZGOGVvYy93Ukx1R2w2WDZYVzhZR25q?=
- =?utf-8?B?VE9XWFRWV0ZveHZCVDdzNkt3WllNdXlMT2gwZTM1MWNGemMxMmZpSlExLytG?=
- =?utf-8?B?REN2bmx4dzhwaHVvME9yeEp0NHRCUE9uRzA5akFrVHZRRmV1MnNrbWcya05J?=
- =?utf-8?B?ZFYwTXVyWG9mM3BWNGYzbWc0UGJEZVp3dGFLM3g4ZWVPL3RHcDUxZndSQ0hY?=
- =?utf-8?B?bWxxdFNXNXNyZis3MjJzcE1WREhndzlLZk0wa09JYkVPVk9mUU5LOEk1c053?=
- =?utf-8?B?NWhTaFA4N2daZHArazM3ZExXclZkM3NkRlM1aTZwUndEUVc0SjJyaDdrQkw3?=
- =?utf-8?B?K0RYcmloSXUzaFVPMlIzNStkVEJOTmdqS0NOYy9QdHdoT2NuZ2NjYUIzTXhC?=
- =?utf-8?B?aUtaNzEvcjczRWh5RVRyYytVVTdOUWpxbjVoOEVWVjF3Mi83R04rNzZYNjF0?=
- =?utf-8?B?K0J6azZBdVJIK01FNm8vOExzd2tETmFwdURVVWM3TFlYbHNYRDI2aDk5V1ZC?=
- =?utf-8?B?MVVXaDNsdDNUZGRxZDdjOHFDT1YxOUNLZzBwQmNiS3ZLd2V5bWdLLy9XeXlv?=
- =?utf-8?B?SDcrWUNpM3c2c1ZxeWQzbFM3WWlMekVDd0lUY0dNaHpvTnhFUU13YW1HMWpr?=
- =?utf-8?B?dENIZkZoUENCQThoeTM1VWFlRlNuVVJ2M2hKelM4UFJqbkpiMS9VWERBMncy?=
- =?utf-8?B?NTRIRmF6cFh3aUpIdVlCckVwUU93V3BlSVNHQm1VS2MvZVE0SFVTaVoyRGt5?=
- =?utf-8?B?c0FZM21tbVAyMVpxVVI2ZkljM0lqTFZHdmdjZlBvaFNqcmtud092VXZDRzky?=
- =?utf-8?B?a28vSDd3RGNNc2ovd1JIMzFNa3pzbVJaQ2IzclJudFZPMDBKcDR6ek1jZ0d5?=
- =?utf-8?Q?SHeSBtpdTP3oMFd/Jhf1?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(4022899009)(376014)(366016)(8096899003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?L2J6RXdsczB4VzNFWFpWdGhkQm9kVlZtNUFuS29sYjYvRklvN29HcVdsK3Vp?=
- =?utf-8?B?YVJLTHRENHBZNHdUbkFocitiS3lUU3BNQis3d2pRUFpGb1cwaThtTmlJekl4?=
- =?utf-8?B?T0JWUXFRSzZzai80c0M4MjdRRXY0MHFLbjd5UXljbmgraEJpclJBRVJGczJi?=
- =?utf-8?B?aVhIeERSdGt6Z2xWbE9JQjEzc251WkVzUGk2UkhDdnIzdmVYMTdVb1JYTUN5?=
- =?utf-8?B?di9vUTRjWVp2dFZmaXJDQys1bW5HQmtOTEp0OFJpMFFwUVpCY3VCSldwZWhY?=
- =?utf-8?B?NG5NTzUvQ3hzNHFyTlZaYWtRV1FZMFNndXA4WHo4L2pocnFYdnZMZkN6Z1lj?=
- =?utf-8?B?aTlQcHo2cGd3WEdkV1dTSlpIbE5ENDhrdXJFOXpkRGVZODU1SWZiaVFnUld1?=
- =?utf-8?B?aFdjL01HblVrT3RITU9UdGpkL1JZVks0ZCtyN2pWU3E4UlJRSjFXcCticlNM?=
- =?utf-8?B?dUZTV3JobXNhdVRhdktyanZYbXE3R0wzZVNLazVvNWNJSDRqaDBVck1yNlVw?=
- =?utf-8?B?Y0hRK096RHJIcnV2U1FRalJTK0NYbEJJQ1lhVUQ4NnhQbUVPRFlhaGh2NlhX?=
- =?utf-8?B?VkhDWmJCeW83L1FXTGxtUmJ4OGwyc1BMeHc0Wmt5eFRNSE5lRzk1WEpZZlZT?=
- =?utf-8?B?TnhvT25kMXBEOVg4Y2JtT1BSVWEzN2RncHFBL0dVdkRvVTk0Q2xHc1Nwdks1?=
- =?utf-8?B?TFAwSExRS1FrT2xhYy9WY0ZRZmpjNGp5MVB2c3BCc0VkNW1ZOXhQYk9sdG5J?=
- =?utf-8?B?SnVsS1Y1ZCtaU0xtaXU3dFFTT1ZBVWZQNGY2ZitSV2J6V2lPcHFRSnZaN01x?=
- =?utf-8?B?YW5ScnBzUzY4dFZVTTBNQkJVdXdvd2RPQ2ViRW90L2MwN000UlVwV2MyeHRU?=
- =?utf-8?B?ejdpdHhmS3ZjQmo2L2phd3JQUmhCb2FKREZYSWRQZlFjd04reHdsTWE5WmZB?=
- =?utf-8?B?L21Ra1h0L3I0YTVSWm5qOHNVeUpwbXlKRlpiZVg1clQ0a1k5N1BtVnRsYXlR?=
- =?utf-8?B?ZG8vakpTRUJYTFJpQTVRVFRub01RbkEwR01jLy81S29iY3BwNlRkL1dSMmRS?=
- =?utf-8?B?RXZoTXdrRGkwM0VFZkZhRk85TnkxOWQ4UU8xNC9CNUE0Z0xOOW45QWZjSDl0?=
- =?utf-8?B?Q2FZNWJmM281TEFZelRPNjFyUmtRWXFUYkxHQ0VydGVvbzduWTRKY3dOZVhx?=
- =?utf-8?B?M2hNWXU3TVlFc0VSZGwvdmJ0K1pjRjRZdEVCOU96TytaTXBZLytYeHFtSHBE?=
- =?utf-8?B?d0JCM0xyNktZd1JYazdCeFFodTgvby9IMjE5YTFqaHBROUFmbW1nQ2s2cVl3?=
- =?utf-8?B?ay8xaW9VQXR6WFZJbTZPN3NtUzFNbmF0MmNvZ3VpMXBZM0FYT3dQUXgrMUhn?=
- =?utf-8?B?aHQ4QjRWcDRYc0hrMHI2bk82ekdacVdLeDFrZHZFYWRxRkF5S1g1NE1kcXVK?=
- =?utf-8?B?RFNWRFUvSStJdnJHOVZTRDZXamgyMEtpcDJEOXpTM2l6dUExT0swdC9sVVF6?=
- =?utf-8?B?U0xrY2tycnMyWVlIaXFzbE1CeHNMWmV3aW1ndzNPRlkrTEI0NTZZYTA0UjRR?=
- =?utf-8?B?K2Z4dmxCdXBvOWVhbEszSTR5S0NCQ3RqNlh6NzFQYkc4a1NTUjNJMFloOVV5?=
- =?utf-8?B?ZmtmckNJa29MMW1rcWlBOXplMlMzZU5JZW1WV1ZsM2hpaUZiTEIyVUorS05R?=
- =?utf-8?B?TTFudVNiNkhHSFplOVIrUmR2SkZWV1o0YitiVjJSaUljR2o0SlhwdTUvdnIr?=
- =?utf-8?B?K1A1azZDT3FYdk9wVmsxb2tzdDYzNG1qTkJtTW8xb3lodlBoWDRlQytLNk1B?=
- =?utf-8?B?cGh6SXlSdmp0cWhHOUdSamdqem85YkhISDhXNTkzT09KSGhwVVdIcEpCZmVx?=
- =?utf-8?B?cVJpYjc0ajQ5Wmk3bEgrb2xiYklacldKR3QwZ1U1SDlmMEMrazBiMXZMZnly?=
- =?utf-8?B?MmpldzFyL3NpYTZocTR4Z3A2NkNuamRiOGhKb09WaWx1dDcxQ1JycHNER3FO?=
- =?utf-8?B?K093WWxyMWFHQUg5b2Fzb2dqWXNnb01VeFRxeW9EZm1yUlYzQnNmOWh3TnNv?=
- =?utf-8?B?SHlzUkxFL1loZXlFcU1teTM5N3FtVzdYRi9JRm82L2NYT3VrWUUwc3hOcW9p?=
- =?utf-8?Q?bJjqXhdQd8wDmY3X7MF2nhno/?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9cf87409-6fe1-47b3-ea6a-08dd02e10b29
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 06:12:53.5687
+X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB6103.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 797f649a-2e10-4609-d60c-08dd02e1ddb5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2024 06:18:46.6662
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: y2xsOfE2NMxBT5HeLAO49eTHzF99ZLvcKjzBbpvezx1CnN/n/+Od6h59cihXppFd2m/SD40SEHUrTRnJwsNPFw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB5533
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ykW6IVQ5ZBXN0RCrpxT6eQqFftMZaaHiQPo2KF8zl8SZvslVVb4Z3g6O8ZKJzkM6umZs5yzAidk7ndjJNAeBb3HzXiMk4v9eEvA5YhYFDVk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB7072
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 12 Nov 2024 06:13:04 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17238
+ <cip-dev@lists.cip-project.org>; Tue, 12 Nov 2024 06:18:54 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17239
 
---------------Gj00Q75eGmQQnSLMVuNgwmfr
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+--_000_OS3PR01MB61035F246D6307C5F03F2421C2592OS3PR01MB6103jpnp_
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+Hello Jan,
+
+Sorry I did not notice. Thank you so much.
+
+Regards,
+Sai Ashrith
+
+________________________________
+From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> on beha=
+lf of Jan Kiszka via lists.cip-project.org <jan.kiszka=3Dsiemens.com@lists.=
+cip-project.org>
+Sent: Tuesday, November 12, 2024 11:42 AM
+To: cip-security@lists.cip-project.org <cip-security@lists.cip-project.org>=
+; Chris.Paterson2@renesas.com <Chris.Paterson2@renesas.com>
+Cc: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org>; hayashi =
+kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D#I#G""#M#P#S=
+!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp>; dinesh kumar(=1B$B#T#S#I#=
+P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshiba-tsip.com>
+Subject: Re: [cip-dev] [cip-security] Manually run Kernel and IEC tests on =
+M-COM x86 and generate results
 
 On 12.11.24 05:14, sai ashrith sathujoda via lists.cip-project.org wrote:
-> Hello Chris,
->
-> Hope you are doing well.
->
-> Regarding IEC 62443-4-2 certification, the certification body has
-> asked for Kernel and IEC test results on M-COM device. Based on my
-> current knowldege, I believe that the test suites mentioned here
-> https://gitlab.com/cip-project/cip-testing/linux-cip-ci/-/blob/master/submit_tests.sh?ref_type=heads#L55 shall
-> run for every updated kernel image on different CIP reference hardware
-> in LAVA.
->
-> Since availability of M-COM device on CIP LAVA Lab still needs some
-> time, we are manually running each test suite i.e SMC, Smoke, LTP etc.
-> from https://github.com/kernelci/test-definitions
+Hello Chris,
+
+Hope you are doing well.
+
+Regarding IEC 62443-4-2 certification, the certification body has asked for=
+ Kernel and IEC test results on M-COM device. Based on my current knowldege=
+, I believe that the test suites mentioned here https://gitlab.com/cip-proj=
+ect/cip-testing/linux-cip-ci/-/blob/master/submit_tests.sh?ref_type=3Dheads=
+#L55 shall run for every updated kernel image on different CIP reference ha=
+rdware in LAVA.
+
+Since availability of M-COM device on CIP LAVA Lab still needs some time, w=
+e are manually running each test suite i.e SMC, Smoke, LTP etc. from https:=
+//github.com/kernelci/test-definitions
 
 https://lava.ciplatform.org/scheduler/device/mcom
 
 Jan
 
->
-> There are no issues with running SMC, Smoke tests but while running
-> LTP tests it is trying to install some dependency packages to the root
-> file system. Currently it shows it is a network issue but even if it
-> gets resolved, the packages cannot be installed because the security
-> image has read-only root file system.
->
-> Another idea which needs to be discussed is, since Kernel tests by
-> name means focusing on testing only the Kernel, we can try to use a
-> different root file system to run these tests. But this is just an
-> idea, this needs to internally be discussed within SWG and with
-> Certification body.
->
-> I request you to provide any suggestions regarding the attached LTP
-> issues.
->
-> Thanks and regards,
-> Sai Ashrith (T S I P)
-> _._,_._,_
-> ------------------------------------------------------------------------
-> Links:
->
-> You receive all messages sent to this group.
->
-> View/Reply Online (#2295)
-> <https://lists.cip-project.org/g/cip-security/message/2295> | Reply to
-> Group
-> <mailto:cip-security@lists.cip-project.org?subject=Re:%20%5Bcip-security%5D%20Manually%20run%20Kernel%20and%20IEC%20tests%20on%20M-COM%20x86%20and%20generate%20results>
-> | Reply to Sender
-> <mailto:sai.sathujoda@toshiba-tsip.com?subject=Private:%20Re:%20%5Bcip-security%5D%20Manually%20run%20Kernel%20and%20IEC%20tests%20on%20M-COM%20x86%20and%20generate%20results>
-> | Mute This Topic <https://lists.cip-project.org/mt/109529918/1050698>
-> | New Topic <https://lists.cip-project.org/g/cip-security/post>
-> Your Subscription
-> <https://lists.cip-project.org/g/cip-security/editsub/1050698> |
-> Contact Group Owner <mailto:cip-security+owner@lists.cip-project.org>
-> | Unsubscribe
-> <https://lists.cip-project.org/g/cip-security/leave/11905283/1050698/1444493412/xyzzy>
-> [jan.kiszka@siemens.com]
->
-> _._,_._,_
 
---------------Gj00Q75eGmQQnSLMVuNgwmfr
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+There are no issues with running SMC, Smoke tests but while running LTP tes=
+ts it is trying to install some dependency packages to the root file system=
+. Currently it shows it is a network issue but even if it gets resolved, th=
+e packages cannot be installed because the security image has read-only roo=
+t file system.
 
-<!DOCTYPE html><html><head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  </head>
-  <body>
-    <div class="moz-cite-prefix">On 12.11.24 05:14, sai ashrith
-      sathujoda via lists.cip-project.org wrote:<br>
-    </div>
-    <blockquote type="cite" cite="mid:OS3PR01MB6103AC4F03F328776A6DFBCBC2592@OS3PR01MB6103.jpnprd01.prod.outlook.com">
-      
-      <style type="text/css" style="display:none;">P {margin-top:0;margin-bottom:0;}</style>
-      <div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-        Hello Chris,</div>
-      <div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-        <br>
-      </div>
-      <div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-        Hope you are doing&nbsp;well.</div>
-      <div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-        <br>
-      </div>
-      <div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-        Regarding IEC 62443-4-2 certification, the certification body
-        has asked for Kernel and IEC test results on M-COM device. Based
-        on my current knowldege, I believe that the test suites
-        mentioned here
-        <a href="https://gitlab.com/cip-project/cip-testing/linux-cip-ci/-/blob/master/submit_tests.sh?ref_type=heads#L55" id="LPlnk500022" moz-do-not-send="true" class="moz-txt-link-freetext">
-https://gitlab.com/cip-project/cip-testing/linux-cip-ci/-/blob/master/submit_tests.sh?ref_type=heads#L55</a>&nbsp;shall
-        run for every updated kernel image on different CIP reference
-        hardware in LAVA.</div>
-      <div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-        <br>
-      </div>
-      <div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-        Since availability of M-COM device on CIP LAVA Lab still needs
-        some time, we are manually running each test suite i.e SMC,
-        Smoke, LTP etc. from
-        <a href="https://github.com/kernelci/test-definitions" id="LPlnk743732" moz-do-not-send="true" class="moz-txt-link-freetext">https://github.com/kernelci/test-definitions</a></div>
-    </blockquote>
-    <br>
-    <a class="moz-txt-link-freetext" href="https://lava.ciplatform.org/scheduler/device/mcom">https://lava.ciplatform.org/scheduler/device/mcom</a><br>
-    <br>
-    Jan<br>
-    <br>
-    <blockquote type="cite" cite="mid:OS3PR01MB6103AC4F03F328776A6DFBCBC2592@OS3PR01MB6103.jpnprd01.prod.outlook.com">
-      <div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-        <br>
-      </div>
-      <div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-        There are no issues with running SMC, Smoke tests but while
-        running LTP tests it is trying to install some dependency
-        packages to the root file system. Currently it shows it is a
-        network issue but even if it gets resolved, the packages cannot
-        be installed because the security image has read-only root file
-        system.</div>
-      <div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-        <br>
-      </div>
-      <div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-        Another idea which needs to be discussed is, since Kernel tests
-        by name means focusing on testing only the Kernel, we can try to
-        use a different root file system to run these tests. But this is
-        just an idea, this needs to internally be discussed within SWG
-        and with Certification body.</div>
-      <div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-        <br>
-      </div>
-      <div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-        I request you to provide any suggestions regarding the attached
-        LTP issues.</div>
-      <div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-        <br>
-      </div>
-      <div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-        Thanks and regards,</div>
-      <div class="elementToProof" style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-        Sai Ashrith (T S I P)</div>
-      <div width="1" style="color:white;clear:both">_._,_._,_</div>
-      <hr>
-      Links:
-      <p> You receive all messages sent to this group. </p>
-      <p>
-        <a target="_blank" href="https://lists.cip-project.org/g/cip-security/message/2295" moz-do-not-send="true">View/Reply Online (#2295)</a> | <a target="_blank" href="mailto:cip-security@lists.cip-project.org?subject=Re:%20%5Bcip-security%5D%20Manually%20run%20Kernel%20and%20IEC%20tests%20on%20M-COM%20x86%20and%20generate%20results" moz-do-not-send="true">Reply to Group</a> | <a target="_blank" href="mailto:sai.sathujoda@toshiba-tsip.com?subject=Private:%20Re:%20%5Bcip-security%5D%20Manually%20run%20Kernel%20and%20IEC%20tests%20on%20M-COM%20x86%20and%20generate%20results" moz-do-not-send="true">Reply to Sender</a> | <a target="_blank" href="https://lists.cip-project.org/mt/109529918/1050698" moz-do-not-send="true">Mute This Topic</a>
-        | <a href="https://lists.cip-project.org/g/cip-security/post" moz-do-not-send="true">New Topic</a>
-        <br>
-        <a href="https://lists.cip-project.org/g/cip-security/editsub/1050698" moz-do-not-send="true">Your Subscription</a> |
-        <a href="mailto:cip-security+owner@lists.cip-project.org" moz-do-not-send="true">Contact Group Owner</a> |
-        <a href="https://lists.cip-project.org/g/cip-security/leave/11905283/1050698/1444493412/xyzzy" moz-do-not-send="true">Unsubscribe</a>
-        [<a class="moz-txt-link-abbreviated" href="mailto:jan.kiszka@siemens.com">jan.kiszka@siemens.com</a>]<br>
-      </p>
-      <div width="1" style="color:white;clear:both">_._,_._,_</div>
-    </blockquote>
-    <br>
-  </body>
+Another idea which needs to be discussed is, since Kernel tests by name mea=
+ns focusing on testing only the Kernel, we can try to use a different root =
+file system to run these tests. But this is just an idea, this needs to int=
+ernally be discussed within SWG and with Certification body.
+
+I request you to provide any suggestions regarding the attached LTP issues.
+
+Thanks and regards,
+Sai Ashrith (T S I P)
+
+
+--_000_OS3PR01MB61035F246D6307C5F03F2421C2592OS3PR01MB6103jpnp_
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Hello Jan,</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Sorry I did not notice. Thank you so much.&nbsp;</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Regards,</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Sai Ashrith</div>
+<div id=3D"appendonsend"></div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif; font-size:12pt; color:rgb(0,0,0)">
+<br>
+</div>
+<hr tabindex=3D"-1" style=3D"display:inline-block; width:98%">
+<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" co=
+lor=3D"#000000" style=3D"font-size:11pt"><b>From:</b> cip-dev@lists.cip-pro=
+ject.org &lt;cip-dev@lists.cip-project.org&gt; on behalf of Jan Kiszka via =
+lists.cip-project.org &lt;jan.kiszka=3Dsiemens.com@lists.cip-project.org&gt=
+;<br>
+<b>Sent:</b> Tuesday, November 12, 2024 11:42 AM<br>
+<b>To:</b> cip-security@lists.cip-project.org &lt;cip-security@lists.cip-pr=
+oject.org&gt;; Chris.Paterson2@renesas.com &lt;Chris.Paterson2@renesas.com&=
+gt;<br>
+<b>Cc:</b> cip-dev@lists.cip-project.org &lt;cip-dev@lists.cip-project.org&=
+gt;; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B!{#=
+D#I#G""#M#P#S!{#M#P#4=1B(B) &lt;kazuhiro3.hayashi@toshiba.co.jp&gt;; dinesh=
+ kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) &lt;dinesh.kumar@toshiba-tsip.=
+com&gt;<br>
+<b>Subject:</b> Re: [cip-dev] [cip-security] Manually run Kernel and IEC te=
+sts on M-COM x86 and generate results</font>
+<div>&nbsp;</div>
+</div>
+<div>
+<div class=3D"x_moz-cite-prefix">On 12.11.24 05:14, sai ashrith sathujoda v=
+ia lists.cip-project.org wrote:<br>
+</div>
+<blockquote type=3D"cite"><style type=3D"text/css" style=3D"display:none">
+<!--
+p
+	{margin-top:0;
+	margin-bottom:0}
+-->
+</style>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:=
+rgb(0,0,0)">
+Hello Chris,</div>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:=
+rgb(0,0,0)">
+<br>
+</div>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:=
+rgb(0,0,0)">
+Hope you are doing&nbsp;well.</div>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:=
+rgb(0,0,0)">
+<br>
+</div>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:=
+rgb(0,0,0)">
+Regarding IEC 62443-4-2 certification, the certification body has asked for=
+ Kernel and IEC test results on M-COM device. Based on my current knowldege=
+, I believe that the test suites mentioned here
+<a href=3D"https://gitlab.com/cip-project/cip-testing/linux-cip-ci/-/blob/m=
+aster/submit_tests.sh?ref_type=3Dheads#L55" data-auth=3D"NotApplicable" id=
+=3D"LPlnk500022" class=3D"x_moz-txt-link-freetext">
+https://gitlab.com/cip-project/cip-testing/linux-cip-ci/-/blob/master/submi=
+t_tests.sh?ref_type=3Dheads#L55</a>&nbsp;shall run for every updated kernel=
+ image on different CIP reference hardware in LAVA.</div>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:=
+rgb(0,0,0)">
+<br>
+</div>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:=
+rgb(0,0,0)">
+Since availability of M-COM device on CIP LAVA Lab still needs some time, w=
+e are manually running each test suite i.e SMC, Smoke, LTP etc. from
+<a href=3D"https://github.com/kernelci/test-definitions" data-auth=3D"NotAp=
+plicable" id=3D"LPlnk743732" class=3D"x_moz-txt-link-freetext">
+https://github.com/kernelci/test-definitions</a></div>
+</blockquote>
+<br>
+<a href=3D"https://lava.ciplatform.org/scheduler/device/mcom" data-auth=3D"=
+NotApplicable" class=3D"x_moz-txt-link-freetext">https://lava.ciplatform.or=
+g/scheduler/device/mcom</a><br>
+<br>
+Jan<br>
+<br>
+<blockquote type=3D"cite">
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:=
+rgb(0,0,0)">
+<br>
+</div>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:=
+rgb(0,0,0)">
+There are no issues with running SMC, Smoke tests but while running LTP tes=
+ts it is trying to install some dependency packages to the root file system=
+. Currently it shows it is a network issue but even if it gets resolved, th=
+e packages cannot be installed because
+ the security image has read-only root file system.</div>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:=
+rgb(0,0,0)">
+<br>
+</div>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:=
+rgb(0,0,0)">
+Another idea which needs to be discussed is, since Kernel tests by name mea=
+ns focusing on testing only the Kernel, we can try to use a different root =
+file system to run these tests. But this is just an idea, this needs to int=
+ernally be discussed within SWG
+ and with Certification body.</div>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:=
+rgb(0,0,0)">
+<br>
+</div>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:=
+rgb(0,0,0)">
+I request you to provide any suggestions regarding the attached LTP issues.=
+</div>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:=
+rgb(0,0,0)">
+<br>
+</div>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:=
+rgb(0,0,0)">
+Thanks and regards,</div>
+<div class=3D"x_elementToProof" style=3D"font-family:Aptos,Aptos_EmbeddedFo=
+nt,Aptos_MSFontService,Calibri,Helvetica,sans-serif; font-size:12pt; color:=
+rgb(0,0,0)">
+Sai Ashrith (T S I P)</div>
+</blockquote>
+<br>
+</div>
+</body>
 </html>
 
---------------Gj00Q75eGmQQnSLMVuNgwmfr--
+--_000_OS3PR01MB61035F246D6307C5F03F2421C2592OS3PR01MB6103jpnp_--
+
 
