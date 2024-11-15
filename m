@@ -2,25 +2,25 @@ Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75BA9D5809C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74CB1D5809B
 	for <webhook@archiver.kernel.org>; Mon, 25 Nov 2024 13:01:34 +0000 (UTC)
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
- by mx.groups.io with SMTP id smtpd.web11.13957.1731650134880296333
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+ by mx.groups.io with SMTP id smtpd.web10.15128.1731655133366683135
  for <cip-dev@lists.cip-project.org>;
- Thu, 14 Nov 2024 21:55:35 -0800
+ Thu, 14 Nov 2024 23:18:53 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linux.alibaba.com header.s=default header.b=PEl2Ufiz;
- spf=pass (domain: linux.alibaba.com, ip: 115.124.30.97, mailfrom: hsiangkao@linux.alibaba.com)
+ dkim=pass header.i=@linux.alibaba.com header.s=default header.b=j3sbWXDv;
+ spf=pass (domain: linux.alibaba.com, ip: 115.124.30.99, mailfrom: hsiangkao@linux.alibaba.com)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1731650133; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=A1cnNyqzTetEOPcvUDheDjk7oKXQ7j0dDICZQiPpi8Y=;
-	b=PEl2UfizIDZ6fdPf+LiFadrih8laLgPEwE4pdZceUqRxqHIjXN/xxBFXMEK4rduvZsr+XCTEaQBP35A1/ZVxfqidFbGfsyAXaKoSA6rZYlBkV5KVMa/uXt3FDikKOeZAyEFG8s3OfC9Jgv+vXepPYW/xOXtb3Ncry7GZRGwZJF0=
-Received: from 30.221.128.182(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WJRbroL_1731650131 cluster:ay36)
+	t=1731655131; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=ALe12dh+sRHMNsXc3uAzSGkKn8ZW1MLZ0jMesRKk75o=;
+	b=j3sbWXDvkRqLTbbA4zniRwc7gFLFCxYqiIGfVzK2uZmO/JjNJDKdTyA2NgeLqKjwLT4/G4qi43+e+uL7oJ2PCaP6LfNqY2TnGJyETDX4kyemdTush/Nl5DPG+QB+8uW1U3RWZTtKxvfSNqXvnyNZ4VuRhpI/a7GWBJokPsvv7t0=
+Received: from 30.221.128.182(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WJRt6L6_1731655130 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Fri, 15 Nov 2024 13:55:32 +0800
-Message-ID: <4e3b38a4-55b2-4f0d-81c3-347f6406ed7f@linux.alibaba.com>
-Date: Fri, 15 Nov 2024 13:55:30 +0800
+          Fri, 15 Nov 2024 15:18:50 +0800
+Message-ID: <6c0bedba-dd13-432c-87df-f72f1eb639ff@linux.alibaba.com>
+Date: Fri, 15 Nov 2024 15:18:48 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [isar-cip-core][PATCH v3 6/6] kas: Add option for selecting read-only rootfs type
@@ -28,34 +28,64 @@ To: Jan Kiszka <jan.kiszka@siemens.com>, cip-dev@lists.cip-project.org
 References: <cover.1730829273.git.jan.kiszka@siemens.com>
  <12bc32044317b4afd31a97d5eb14c38b997a89be.1730829273.git.jan.kiszka@siemens.com>
  <bcb07e33-2ee6-4b9c-a57d-07125662c7f3@siemens.com>
+ <4e3b38a4-55b2-4f0d-81c3-347f6406ed7f@linux.alibaba.com>
+ <21235547-960c-47b1-9ed6-cd78cdd67bf3@siemens.com>
 From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <bcb07e33-2ee6-4b9c-a57d-07125662c7f3@siemens.com>
+In-Reply-To: <21235547-960c-47b1-9ed6-cd78cdd67bf3@siemens.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 25 Nov 2024 13:01:34 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17274
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17275
 
-Hi Jan,
 
-On 2024/11/7 14:31, Jan Kiszka wrote:
-> From: Jan Kiszka <jan.kiszka@siemens.com>
+
+On 2024/11/15 15:01, Jan Kiszka wrote:
+> On 15.11.24 06:55, Gao Xiang wrote:
+>> Hi Jan,
+>>
+>> On 2024/11/7 14:31, Jan Kiszka wrote:
+>>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>>
+>>> This allows to select EROFS as alternative to squashfs. The option is
+>>> limited to 6.1 kernels, older ones will no longer be enabled. Debian
+>>> buster lacked the required erofs-utils package, and bullseye seems to
+>>> generate filesystems that are not detected by kernel 6.1. Therefore,
+>>
+>> Thanks for the effort!
+>>
+>> Could you give some hints of this case? Is there some reproduce
+>> steps so I could look into that?
 > 
-> This allows to select EROFS as alternative to squashfs. The option is
-> limited to 6.1 kernels, older ones will no longer be enabled. Debian
-> buster lacked the required erofs-utils package, and bullseye seems to
-> generate filesystems that are not detected by kernel 6.1. Therefore,
+> $ kas-container shell kas-cip.yml:kas/opt/bullseye.yml:kas/opt/6.1.yml:kas/opt/ebg-swu.yml:kas/opt/erofs.yml:kas/board/qemu-amd64.yml
+> $ DISTRO_RELEASE=bullseye ./start-qemu.sh amd64 -global ICH9-LPC.noreboot=on
+> 
+>>
+>> bullseye uses erofs-utils 1.2, and I think kernel 6.1 supports
+>> all images generated by old userspace versions.
+>>
+> 
+> I've looked into the issue again, and it is related to our abroot
+> selection script. That one does
+> 
+> blkid -p /dev/sda4 -s USAGE -o value
+> 
+> [1] and does not get "filesystem" back with bullseye for erofs. Given
+> that bullseye is in maintenance and erofs is a new feature, I see not
+> much value in addressing that. But thanks for your interest!
 
-Thanks for the effort!
-
-Could you give some hints of this case? Is there some reproduce
-steps so I could look into that?
-
-bullseye uses erofs-utils 1.2, and I think kernel 6.1 supports
-all images generated by old userspace versions.
+Ok, good to hear that as long as it's not an image compatibility
+issue!
 
 Thanks,
 Gao Xiang
+
+> 
+> Jan
+> 
+> [1] https://gitlab.com/cip-project/cip-core/isar-cip-core/-/blob/master/recipes-initramfs/initramfs-abrootfs-hook/files/abrootfs.script?ref_type=heads#L36
+> 
+
 
