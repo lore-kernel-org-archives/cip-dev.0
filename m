@@ -1,68 +1,70 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56CEFD3B9A8
-	for <webhook@archiver.kernel.org>; Tue, 26 Nov 2024 15:18:03 +0000 (UTC)
-Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
- by mx.groups.io with SMTP id smtpd.web10.48227.1732634276194984196
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DEBAD6552E
+	for <webhook@archiver.kernel.org>; Tue, 26 Nov 2024 17:02:14 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+ by mx.groups.io with SMTP id smtpd.web11.51533.1732640530918784017
  for <cip-dev@lists.cip-project.org>;
- Tue, 26 Nov 2024 07:17:56 -0800
+ Tue, 26 Nov 2024 09:02:11 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm2 header.b=g48Ri+Wr;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.225, mailfrom: fm-51332-2024112615175344a35de8319358e4de-wznaqu@rts-flowmailer.siemens.com)
-Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 2024112615175344a35de8319358e4de
-        for <cip-dev@lists.cip-project.org>;
-        Tue, 26 Nov 2024 16:17:53 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=/kJOkce8H9G3JPAxyqqQ0BFdo6VyJzNnZaBG0qDr+bw=;
- b=g48Ri+Wr5vcXIOYZZG7yy5HS3BRQLnLYifcjyxcHj5SVFmyrz31CcAe4dZEcvcBmaIDtHB
- pfkAdnKoAzsH16unfRPg34po6YkegFh7pJ+LvSOo6phGoWZIh2cjiL5DIQ52fsQLiRln5won
- qWao0CXyaX7a63RjyBnk5HPOJ0FyO6aBwSeReqJpnPkl2vTyhlL2qS5CrTp16HQPlAgvI2+I
- RIk/RAsQNoPLGkDkBLWA3Dtc64RpgWoXo1OH73oU0hZ30rpAnNyOC48rGAk0Rtqer3e/B/6M
- k0H3w81STVzsgDQLbAEcIWPf7MsxQLZt9ddVv8NtXcSXUS0xVDFFB/bA==;
-From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: cip-dev@lists.cip-project.org,
-	Jan.kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH 1/2] update cip-kernel-defconfig to lastest version
-Date: Tue, 26 Nov 2024 16:16:27 +0100
-Message-ID: <20241126151751.1747275-2-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20241126151751.1747275-1-Quirin.Gylstorff@siemens.com>
-References: <20241126151751.1747275-1-Quirin.Gylstorff@siemens.com>
+ dkim=none (message not signed); spf=fail (domain: denx.de, ip: 46.255.230.98, mailfrom: pavel@denx.de)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 5E5F71C00A0; Tue, 26 Nov 2024 18:02:08 +0100 (CET)
+Date: Tue, 26 Nov 2024 18:02:07 +0100
+From: Pavel Machek <pavel@denx.de>
+To: jan.kiszka@siemens.com, cip-dev@lists.cip-project.org,
+	Chris.Paterson2@renesas.com
+Subject: [ANNOUNCE] v5.10.229-cip54-rt23 (rt121)
+Message-ID: <Z0X/D0AQ9vrLz6Zv@duo.ucw.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Sp5eXxk7Xfmy4dAy"
+Content-Disposition: inline
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 26 Nov 2024 15:18:03 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17279
+ <cip-dev@lists.cip-project.org>; Tue, 26 Nov 2024 17:02:14 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17281
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-This contains fixes for the cip_merged_defconfig for arm targets.
+--Sp5eXxk7Xfmy4dAy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- recipes-kernel/linux/cip-kernel-config.inc | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi!
 
-diff --git a/recipes-kernel/linux/cip-kernel-config.inc b/recipes-kernel/linux/cip-kernel-config.inc
-index 1682131..57c352c 100644
---- a/recipes-kernel/linux/cip-kernel-config.inc
-+++ b/recipes-kernel/linux/cip-kernel-config.inc
-@@ -14,6 +14,6 @@ SRC_URI:append = " ${@ \
-     if d.getVar('USE_CIP_KERNEL_CONFIG') == '1' else '' \
-     }"
- 
--SRCREV_cip-kernel-config ?= "9b1b425c87248ba476e3a3aff3c9f905abdb3982"
-+SRCREV_cip-kernel-config ?= "bb2485db01c5ce14ec571b9fb9e03f90c686a69f"
- 
- do_fetch[vardeps] += "SRCREV_cip-kernel-config"
--- 
-2.46.1
+New realtime trees should be available at kernel.org.
 
+Trees are available at
+
+https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=3D=
+linux-5.10.y-cip-rt
+https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/log/?h=3D=
+linux-5.10.y-cip-rt-rebase
+
+And their content should be identical. There are also tar archives, at:
+
+https://mirrors.edge.kernel.org/pub/linux/kernel/projects/cip/
+
+Best regards,
+                                                                Pavel
+
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--Sp5eXxk7Xfmy4dAy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ0X/DwAKCRAw5/Bqldv6
+8p9KAKC8wzS6EkuT6yCRi8L7hJsFrsxR+gCgvXi7eWR0Hx5V8A+mAaFGYu3Y8Cg=
+=/xf5
+-----END PGP SIGNATURE-----
+
+--Sp5eXxk7Xfmy4dAy--
 
