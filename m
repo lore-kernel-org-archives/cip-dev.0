@@ -1,279 +1,225 @@
-Return-Path: <chris.paterson2@renesas.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C297D6ACCC
-	for <webhook@archiver.kernel.org>; Wed, 27 Nov 2024 12:59:50 +0000 (UTC)
-Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.54])
- by mx.groups.io with SMTP id smtpd.web11.71295.1732712386710044309
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A8CFD6ACDB
+	for <webhook@archiver.kernel.org>; Wed, 27 Nov 2024 14:10:00 +0000 (UTC)
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (EUR02-AM0-obe.outbound.protection.outlook.com [40.107.247.82])
+ by mx.groups.io with SMTP id smtpd.web10.72457.1732716594543134025
  for <cip-dev@lists.cip-project.org>;
- Wed, 27 Nov 2024 04:59:46 -0800
+ Wed, 27 Nov 2024 06:09:55 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@renesas.com header.s=selector1 header.b=ELyhhwz3;
- spf=pass (domain: renesas.com, ip: 52.101.229.54, mailfrom: chris.paterson2@renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=W3cZjLh3;
+ spf=pass (domain: siemens.com, ip: 40.107.247.82, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=V+BkVIAckPUbSBp3ICr6lMkr3B8Mbp54pLuceR+7cVRFaRkf5Zole5nvCuQg/+WUYddvkrsX66mFzdszKSzBh9GMV9e6v7IYyE/+k9pSDATz+7HjmqbX37YBq4S+EqC92XoRUPUPMjSbWoQ9H3BNT3k0DIM4KJ2IexOK4jWuj0vE0GWcL7zyNqw38LKzxmc0kWzDfDnz8rUsWWBS/8BmsrA9XJmgpjySgJYhjxfsoiwtan86+3pYQ2AKSSjXM3l9uAVhOonV1m4+c1wXeIgJuQauEv+jsBRj9HUa7LX2E8uBFLjv+bVTs+3RvTue+UN4x8nOg/E2Ka63Yzgqc/GCyQ==
+ b=oMnj1IHWzvnUvH/oSjARCjbCT8vNYtKgRQPaY4u5cbPvzeyC1gI9DluLU486X2XtPxmUp3viW23bnGKskh/dXbDY5xdnGejkF7gdL1zdz1zhYLeLiMqB3wrRphOhCOsOmmNaOlQWoE7fDF1TTi0hUtC0jL98JA+PiWV7DMkUWpTJ+TAXc9q97c+ThHIGFH6I4qnSfYpFAOe+Uk5wGwRhiccAV5H2YHQRYrIHCa6rDJxw+elEXSLLOhX5fHHlAn1X0EFARon+sc8HUdnhkm2Ti51f08U5Qsacv0DZppoDMlt6xfUCJ7wqoSN2uMg1ysaZyse2FqYSGNyW+CwH6HECyQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GKy8XDt8hRl/adHupa6Bm9G5tYpTCM211hFCAgSGTEk=;
- b=ogWOaG6QgB/HWl46DzqoGvXh1FuxyC0CKecl7vFrXiHyQu1EeAwVFQfk4doDPfIET2k4EdcFJ3NTTvJAIxMy6yBpOgVkgdQqhjarr8qdHFe7Q6QTrnCy1+iDO35+KEQBE/T/q10HRKYJ1XwHNXTc5xoflS0FcjOUGvtuVO8D9iTg+ErIHP3yMT77y+REoiwWdH7spLlUFAPfZjEurFV/U09F8YKMz+JIpZwQ9kdsg4QMqO+K1zM/3mknhSKP8lAVyhgCA1KKGL5TDQAPw+Q8Nkpn3dafauPrd2Q0awsAg1x6digBItrWccd9qXN016+Y1F1yaeD/Q4HO5HaJHKVzQA==
+ bh=xxG7OOV//vTSuP9229r/V6ngcB+TkD86QssdIHR+w20=;
+ b=LzPfJIuzh7MC63y0kuKlLRzJOZctulPfYnX2VY8AWIJuC0ANAIDMtzooHvl7hRTClFvp51XO6LgVQN0BGpPSdRs3RjrvzI7VFxH22kY4Dhkk3cTIqSSunX4km8MYCvsnCZzz8LaBPRUfRygYbve9rnPEK+ik7JN3ZoeIp7XvBLnyVny04WaqHMsI9eaBWBAY1cInyxP3sytNAhc+WygVeiqDBwrPrg145L85qpS61dn6RyVbAffbFQzGaXw8LsWdugnb8eFj+9meH/NuhrgJoDdvPi4jAMGDFb2sWov4xBdm4ywYeZPWvz1Zj0CWbSKU3JyzyJKcTWM26jIpQc/nJQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GKy8XDt8hRl/adHupa6Bm9G5tYpTCM211hFCAgSGTEk=;
- b=ELyhhwz35zzDfl6i+H4JsbO+Pm9VNQhn1hnSgj7sDgoQqQil1ybPsrw8qTzBKBLEA5JM1Hj/K9E2h93comUYO08gJ9HllR95ibQxPa0RpmP8o3E5saSaja+o+GxN8ddywgrqxFJ1oif9WwGKhUx+3xHts/ACVa26NQqQicf0FrE=
-Received: from TYYPR01MB12402.jpnprd01.prod.outlook.com (2603:1096:405:f7::12)
- by TY3PR01MB10254.jpnprd01.prod.outlook.com (2603:1096:400:1d8::11) with
+ bh=xxG7OOV//vTSuP9229r/V6ngcB+TkD86QssdIHR+w20=;
+ b=W3cZjLh3/J0yO7lBf3+BWjP9NbgQqia9sQlyGM4MepTCeRgLixvx0UviBMBDOwSnuf+KLfLMB+B4ish8ARCC+r0Zo/UAiLS4/PC+xefdYFPcE9xNf1qcmXKqxNSbjIQ8j2ris0jVEMrMgBGU5CkR7dfx9Dq6WqIsj3AHUMyUK3w/aI04FbOtnmLGsUGy3zA4mg6x5vbAHrsx7V+1GEExnm3J8A9grMpvEXQm/BatOCrQVpcVu7kChdHlgJsNy6QvKRp0JEj3uYsvtx27CKXLrjFLePGWb/T+NXyMBgGu602/5LVLHgzzqTV9GLy9OImOLP4R397xiJmRCpd3OfHzPQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1f9::22)
+ by DB8PR10MB3768.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:148::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.12; Wed, 27 Nov
- 2024 12:59:44 +0000
-Received: from TYYPR01MB12402.jpnprd01.prod.outlook.com
- ([fe80::64e8:dbea:c288:5e87]) by TYYPR01MB12402.jpnprd01.prod.outlook.com
- ([fe80::64e8:dbea:c288:5e87%4]) with mapi id 15.20.8207.010; Wed, 27 Nov 2024
- 12:59:44 +0000
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"Sai.Sathujoda@toshiba-tsip.com" <Sai.Sathujoda@toshiba-tsip.com>
-CC: "kazuhiro3.hayashi@toshiba.co.jp" <kazuhiro3.hayashi@toshiba.co.jp>
-Subject: RE: [cip-dev] Booting security image (.wic) on M-COM x86 in LAVA
-Thread-Topic: [cip-dev] Booting security image (.wic) on M-COM x86 in LAVA
-Thread-Index: AQHbQLwTUaTAYoFsNEu+W9FEgwfyArLLAK5wgAAWMGA=
-Date: Wed, 27 Nov 2024 12:59:44 +0000
-Message-ID: 
- <TYYPR01MB1240204190923E866C03D6A3DB7282@TYYPR01MB12402.jpnprd01.prod.outlook.com>
-References: 
- <OS3PR01MB6103FB47A8576B2CFA3275F6C2282@OS3PR01MB6103.jpnprd01.prod.outlook.com>
- <180BD4AFAEBFC264.18476@lists.cip-project.org>
-In-Reply-To: <180BD4AFAEBFC264.18476@lists.cip-project.org>
-Accept-Language: en-US, en-GB
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.14; Wed, 27 Nov
+ 2024 14:09:49 +0000
+Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::3087:c116:dfed:1ca2]) by AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::3087:c116:dfed:1ca2%6]) with mapi id 15.20.8207.010; Wed, 27 Nov 2024
+ 14:09:49 +0000
+Message-ID: <434bc0cc-a0b6-4095-834c-ddd6a3fb2b09@siemens.com>
+Date: Wed, 27 Nov 2024 15:09:45 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cip-dev] Booting security image (.wic) on M-COM x86 in LAVA
+To: cip-dev@lists.cip-project.org, Chris.Paterson2@renesas.com
+CC: kazuhiro3.hayashi@toshiba.co.jp
+References: <OS3PR01MB6103FB47A8576B2CFA3275F6C2282@OS3PR01MB6103.jpnprd01.prod.outlook.com>
 Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYYPR01MB12402:EE_|TY3PR01MB10254:EE_
-x-ms-office365-filtering-correlation-id: 01139a3c-b541-4f18-cfee-08dd0ee35d8a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|1800799024|366016|376014|7053199007|38070700018;
-x-microsoft-antispam-message-info: 
- =?iso-2022-jp?B?U3ltVlprYTZEM0RtekJ1VU80SVhPaDBYOGI4enp3SldJblR5dUExUDQ3?=
- =?iso-2022-jp?B?c0dTZCthUEc5Mmc4ZGdEdEFieTN3VkFzSmtLUWkvRTZZZzk3UFlqbm4w?=
- =?iso-2022-jp?B?d0o5V0pGbUZGSzNENHUxY2REYXh0clBKTzl0WmtrcExvWVJUdzVLcXR4?=
- =?iso-2022-jp?B?YklQUklXaFd5SE5RUjFneml6c2NId0VyTkhWQUpiS3REUWgxYTRLRzFU?=
- =?iso-2022-jp?B?a2RyZW5kajdqSytoWGNEYlNmUjF0MC9lUUR6Y0FxSVNHc2YvT3hKT1Ur?=
- =?iso-2022-jp?B?eG1ydGF5M0Y1UWlscXVwUEx1SldONGRINHM4eGNIRU5wemFvbVR0VW9U?=
- =?iso-2022-jp?B?VWFGT2VVU3ZEaGczaDhQYWxKRGQ3anU3YVNESU11Q1p5ZHZTN0txU1Ez?=
- =?iso-2022-jp?B?RGRwSWtTRjZiMUlQREExeTJ4blZxNGpHRlpFeDFrQVNGZk1BbU01RjN0?=
- =?iso-2022-jp?B?UWFzTkpYWVRiQy9vSzE2Z1liV3o1MHhXLzdwWHo2ZDk0S1RiZXJXM1c5?=
- =?iso-2022-jp?B?VU1RTDM0Nm9VakJwci9WdUJWRWhDK1pFTHVkcXZMdVFrdmgyL1FSWlBQ?=
- =?iso-2022-jp?B?OUVxcGtDakN2WGNyVTBhR1dFNVAxTEkzN0RUNmxSa2dNWHRJVXE5REha?=
- =?iso-2022-jp?B?OU04NUxwZUxMSk9jV3VzYmZxSSs3KzAxM1c2Q2xKV1dUR1R1akVvb2NK?=
- =?iso-2022-jp?B?bFhhMFlqcTYzc0oxOW9CQ2Y1VTZ2d0JoUzlSSnk4c0t4VkN3S2duaTRJ?=
- =?iso-2022-jp?B?Z0txejk5cFdKTURRajM0S1ptVnYxQUZqR1hXYzA4dWdJTmNiODljcDZ3?=
- =?iso-2022-jp?B?bVR4cjg4TVRveTFtbmpFTXo5STEvT3NQWS9LcFd1dnV2eWtLRXRFcGM4?=
- =?iso-2022-jp?B?RGFremwyVmliSmtTUTlEVEVSeEVmQ29XbENwQVhmNitzZzlUSTNSZFNV?=
- =?iso-2022-jp?B?OFlHZWtqMWhMVnBkd1VDUmpqUFoxQ0tjcUxIMlVWY0diN0lyTzh4WlJ4?=
- =?iso-2022-jp?B?UHZ1NmlnVTVtNnZuUG85T3luNzNHNzBoVjlOUlVjQXArbXgxM20xVjVE?=
- =?iso-2022-jp?B?UUo0bTdRZTFSTWc4RmZTTTFBRFZYU3FVRWhDS0lReFFsQUpMVDcxVHgw?=
- =?iso-2022-jp?B?T1kybXBxRk9pa0VNN0taMmNpT3hrY1BaWWRBMW43QjREbWE2MitKSjM5?=
- =?iso-2022-jp?B?eTZ5ZXFqYkNpcitUcDJUaERjRytFQkRWTFl6bktENXd5OXhON3hQb2tG?=
- =?iso-2022-jp?B?Yllrem1YMVNMVG1Ja1dVcGh3WUpzQk5IdFNYWnN1aFBjS2tWNEUrcVpU?=
- =?iso-2022-jp?B?TnE4dXJwS25uRGNSSm56ZjcwckczazU3RmNFYXhnY2V2Tjl2eklXTTh6?=
- =?iso-2022-jp?B?MjJXL1REQUQ2blN2SkhwSUVMVGEvRjhOZVVJaXU5QmFsdUlJeG9lb3BG?=
- =?iso-2022-jp?B?cWpja1lNUUY4b2x5ZjlodDFObHdDRUxmbHUwTDlRbDZNQzZvdVdMTVV1?=
- =?iso-2022-jp?B?amoxdHVuZ1RaVC9vOHl2ZXBCejJtcE41eE5xcXNJdHhvMVdLd3VuY2oz?=
- =?iso-2022-jp?B?eFo0ZzZUVVk0VkdyTUpTdFFwQ2Y2WjluOWp0cllsZmEyRjcvVUhvYThG?=
- =?iso-2022-jp?B?cU03UWN3SzZBQzBXKzFIdGtreUIyTlFQVDJOMklhNTU3bW41NlludHdG?=
- =?iso-2022-jp?B?ZGpoMDdPL0RISUxOdmh2aUgyU0I4ejRPVVVORFMxOHYwQVlxSWxkLy9y?=
- =?iso-2022-jp?B?dVRKU0pZeEJhdVhZczJ1dVJNY1N1dytHNTU1akFZZzJyTHpSbjNuZXo3?=
- =?iso-2022-jp?B?NVdwandwVEpDWkF5ZzMvT0tEeFJSMkhHMTdPUWRmY1lSSG9QVURoN2Y4?=
- =?iso-2022-jp?B?QWFCQXZEWnZDb1FJNTlhMFVjSmlYcDk1WXUzU0s3aVlrcWRYWFRtRHgy?=
- =?iso-2022-jp?B?Rjl6amxZS1pLUTA2Nm5CM0NuSE1scGZiSXRuQTFERGpKYzd6R0xidnI0?=
- =?iso-2022-jp?B?az0=?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYYPR01MB12402.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?TXVCd0NUWUxLckgrU05ROUxMMHovMVV1eS91WTVIeUhRaU5vOVRNczcy?=
- =?iso-2022-jp?B?MXNzSzRkdkU1SDhPVFkydUVmMTlyVmJjZnZlNmh4akZ2dWxIS3FhemZt?=
- =?iso-2022-jp?B?aVQrcTExMWNmUTNxM0VkK2xWV1BGWi90Q09WdDVNR0tBQVB1emM1b1E2?=
- =?iso-2022-jp?B?QlpMY1MwZUJqZU1iNXpJR3JiT0xqZkl5YVVlMjlkOFp0TFBSTzd0cW9h?=
- =?iso-2022-jp?B?K0VSbHkwazVHQ203SmVXanVDSWlnTTAvNVFmT1lDNGY2c0Z5UTJPOTdq?=
- =?iso-2022-jp?B?UnY5c1NreXZhRlg0OWc4NjZ3T3djYmFMaFdKNjRqb3RYZ1NBSXo5VGNm?=
- =?iso-2022-jp?B?b1BDQVFuSnB3UWFIcWFTZzREbk1RaFVMZkthNy8yQVlvZXFMcnlScmlv?=
- =?iso-2022-jp?B?Smc2WWlHT3Z6MTJaUXhPMkdEa2tva3MxZVVrd1BvdTdQUnNKZys1UkVU?=
- =?iso-2022-jp?B?QVhILy9TSUV5SG1JY0VnSG1UaUVsQkRTOGZaOHZwOHRaa3NDSFNjQ2ht?=
- =?iso-2022-jp?B?WkNXZ1BNVlFpc09jYStmVTVnSERlK3R4RHRRYkRyV3FqclBPNUlSNXZ1?=
- =?iso-2022-jp?B?dC8zeUtVMmNJbjV0Ymx0NFdwNmxZRUNtUVdQQm5GSktLcWlUS0cvWnlT?=
- =?iso-2022-jp?B?YjdKQ01aNUVUZzZmbTUyd0J3TlpXUjdKTzZQeTNqUGhCb3Vjekx2Z3Iy?=
- =?iso-2022-jp?B?aTdlZCtNMFk2akpYdG1ycktMS2RqNDdCNUVaWVp5VDA4NVhSNFpKOWp3?=
- =?iso-2022-jp?B?Vnh4cGFTV0tjcFBMOXlsQTl4SVFjcXhmSmlvRVM2VVNiTHNRNzZEK1NH?=
- =?iso-2022-jp?B?MnJTb0l5TmhUdVhFZGMwWnlsVWF4NFU5cUFYYzFFVSsrSWMrS0RKdGhQ?=
- =?iso-2022-jp?B?SWxZYlZMSDUxdEUvTnU5a2VNc2ZObndtVndUVnNiR1NBd0hpeFJaZjRF?=
- =?iso-2022-jp?B?Z01hK3lVbzVxMlFjNklkUjFpaHdQcjZXSmlzRGk4NTFhWGwwU3RaczZQ?=
- =?iso-2022-jp?B?U0lESHFmc1ZXWDBTT0txVytzdm4vWTg3UnlOa3RyY2RwRDNyTTdicTMz?=
- =?iso-2022-jp?B?Vi9tSjd3amxNOUUvVzlWNjNXWm9CVHZYcEZERnhsbS9JaVU5enNPd29C?=
- =?iso-2022-jp?B?Z24zMjgvR2lsMEhHZmZCTEkxNkRDUWlxTzVaWVhkdzg2K3B3YmFhSXJW?=
- =?iso-2022-jp?B?bmFWcVUvbUlqQ0o1cUZWZTBKY0wzSDd1c3JMOW1DVEdyd09SVTRkQ003?=
- =?iso-2022-jp?B?VEo3azNVNEVEd0ZUVXZRNmpSWXlNZ0x0a1BaaVI1V1U3R2Q2OVdMTjNm?=
- =?iso-2022-jp?B?S09LcEdwdERuWFZqY0M2VUZxVm5CQ0tyUXRBaGhLUFNlUFdSYjJQdThP?=
- =?iso-2022-jp?B?REI5TjkxNzY2T2lkYU8yd1F5aGo1b2xTY25DaHFkV1ZKOXg5TG5hK0Y4?=
- =?iso-2022-jp?B?RmlWVmdvRDMrbWYzK2ZpZVByaXEvMzlsUjh2aXEwRDRGTEI5bFd4emow?=
- =?iso-2022-jp?B?MjFrRkJKMFNYYU5jcERibGxobi9pVnlJZ3NESVpmTFJ1MXJvK2ZTZ2d1?=
- =?iso-2022-jp?B?Q21YNzE2WFJMQ1ZhdWZ5Rk5VUFJvVmg3N0p4ZklBN3RONGxkL3VtUGFz?=
- =?iso-2022-jp?B?NEM2OWJRb1Y2UWpoQ2FwbDY0eWh3K1FHSWV4bkt2b3dVRFd2RDlYR0JZ?=
- =?iso-2022-jp?B?aDJ0ZTQ3aDg0ODc2NXFxL3dGRmxFRkF2RXBZcFdUSldWUFJlMnZzcFdV?=
- =?iso-2022-jp?B?NjlXbFJJV3ZjdzNZWkxkZVN4MWovSk41WHlBWi8vOThvWFNtOU96dEZB?=
- =?iso-2022-jp?B?Q0VRU1VqTG5HYUttSG1oaGNIUVdJaExSNjQrWUxoZWFSYmFoTk9raVRW?=
- =?iso-2022-jp?B?cmNTVnZITk8zQ1djZzZ5SFNKcXdCbWY2ZFU2RWVtWlNpWXVkR0NvSGox?=
- =?iso-2022-jp?B?YlBwOUhCc1JhRWs0VlFiUFpuUkE5MHBCa1ZLOVFSN0hkYVpqNjFhZHpv?=
- =?iso-2022-jp?B?cVNKc0xkczkxblhTTWhERFN6RmMvRFBHaUt5Mm5keTJjbFI3VWRjVzUx?=
- =?iso-2022-jp?B?NUFZZVhvN2RZaXk2Wk9mSE13V0lmMmxGRUhIdHdXL2NvVFFLV0VSQklm?=
- =?iso-2022-jp?B?d2RiQ1VUU21kRmE5RkZYRy9UMWs2RUdnc09YQUhPUEsvVHpKMTVlR2FL?=
- =?iso-2022-jp?B?S1FteUsvcWk1V08zYWg4MGJLWW9DbVdCUFl3MUhncHI4cGpybG14RTV0?=
- =?iso-2022-jp?B?b01jVURha0RyQS84blBsRXF2bXBFQXdGUFlCSDcyL2pkdkY3NERCZHZ6?=
- =?iso-2022-jp?B?VDR1ZkZHV09OTFZNSVhSUFp5WjgwaTJSQmc9PQ==?=
-Content-Type: text/plain; charset="iso-2022-jp"
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+In-Reply-To: <OS3PR01MB6103FB47A8576B2CFA3275F6C2282@OS3PR01MB6103.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: CH2PR11CA0003.namprd11.prod.outlook.com
+ (2603:10b6:610:54::13) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:1f9::22)
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|DB8PR10MB3768:EE_
+X-MS-Office365-Filtering-Correlation-Id: e49fa5e0-2a8a-4393-992a-08dd0eed27d0
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|4022899009|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?dgWmzUOvIzLzy+rpRCT7XtIgvP90B9PMiY/R5NhG8Qhh2f4BpNNNGW8YKHfj?=
+ =?us-ascii?Q?16v9l+LtnAec45PX+pwt9De0tUcVHfDKjsz/uMWPnQemkpafz6jXLe4+Kay0?=
+ =?us-ascii?Q?GcojTPJn2SJHEd0nVtLObBbwfvCuq1rRVcA7H7XszgVAPIruOsGrJodHZp85?=
+ =?us-ascii?Q?duMvid187fLPamENfFWWEtvSYXLzeNLjN/HtQYDzjdUksnMiuTfq9gXvYbvB?=
+ =?us-ascii?Q?vLNiCtPvitDvbkiWE2CX7Eutp+stt2tzpha3HfOS+BadFF9wJ9/bjNELlVe2?=
+ =?us-ascii?Q?rUNg56F5ORGS/aXpgnwSRoYCNYAbRA+hs0Wu7Vfu0Dm++55fg0cQS1w8khNB?=
+ =?us-ascii?Q?P8VnOTCCVbnMQ4f06UvtAtkGkBiWEnsWrIyoGwfBmQonDb2a9OM4wj+L884h?=
+ =?us-ascii?Q?LLMQT+ECnEtV5ncKKIVCFfNzLmAWl1XrIFB+wBQ0D1xUvlcQbWfF/wSr3Ub3?=
+ =?us-ascii?Q?IX1eAs/czIOuZXW+Tx9N6ShvyuEBppt23ht0OPbfq/yBerAjeQuLdiOCpppZ?=
+ =?us-ascii?Q?PbB6pstCoYb1c7krsTtJX+5KjOxABBL9Uk6WqjiJEprloUZTNOJosIvOnwSc?=
+ =?us-ascii?Q?miUNZHz+AgoTsloT13dqz0gcVn9aga+P48HdlOp+sbRWanhNgT/qLeI5DNNk?=
+ =?us-ascii?Q?guG+sZTK6A9/I9dPOtJbLzGjvnXxr67GU+HVKu/nfcNY7aQlguRxOeKRs4q5?=
+ =?us-ascii?Q?3m92pbmJjI+jF31E+XljR2ftIzbLTic0cm7M8f2lX4z3rxCehi6QjV6jE5Er?=
+ =?us-ascii?Q?ET+ednmjG/Tu46s59RCtoF6bdxAgDPgDLYeGx48HHapAM5//kgpqB2CMTxiG?=
+ =?us-ascii?Q?0wh0cgf4fJxHyZ7SrK2/6kBNr99HC88aj95efm9hbXSg9bxu43rzaE8TRZ2Q?=
+ =?us-ascii?Q?8dz/b8nERR4v7h9cbb3WJlCs37ixSm/8pzfceUxqnQ1NjeF5BLCj51RkPkXD?=
+ =?us-ascii?Q?KpKmySxDGKBX3GqxeNqgbeeDViHVe2sZ5Pmi5kC/jB1lZSQlhYgapR/f3AvY?=
+ =?us-ascii?Q?hlqVdTY5vJHAHZ1vvqBAEfqhmOtDFmrgLiO5LwFncpArIsWoi1b/v6kwKGNK?=
+ =?us-ascii?Q?FkAeyjaMbfV/Jm66YeM0f71OnOClavqpqs3wwTateeBr2WxPACfm3wWGO01m?=
+ =?us-ascii?Q?PImQy8INcVFGS+GoCNQz050GPbJmxUs2VwRKhhlFRm51RgD+OyQoSihpHe64?=
+ =?us-ascii?Q?dudYHRhAYfKLB2i9Up4S7sHMI7/hJTkjclaAjnKGeObWd6YgYbhPjEuXriai?=
+ =?us-ascii?Q?/7e8m26+/Ncm5i6bk7cZFaqh5QQMadclyBh2M+GSgqKGkembr1x581GLuBXR?=
+ =?us-ascii?Q?x/8=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(4022899009)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?Aq6pnsROeUNP8y0nWjeSRzwop6A0YlLhUcMQp3qI/jZV1pfDVbZKMpZJSuwI?=
+ =?us-ascii?Q?IifOtepMfKOZms19r8pZh2sKR51RKopzWDBKpKGDE7mbOA9eKxMP4FsIzwTN?=
+ =?us-ascii?Q?jSCOE4eZbtukZ+JPgq3xWy8Ld528fIlIteIlSKEPe3atRiSY/CC1pR6ezdhl?=
+ =?us-ascii?Q?gWs/VqcBVeX9F9CUqfQcvBhEKWd0k3YnmGq0FxWbVH+DI0k0w19+DqUsODlD?=
+ =?us-ascii?Q?IqmiUXFfaDdSzh+0j84VzqVwgX9lSiUK7UDwxhuj9PgiSp01c8nSabC3DnID?=
+ =?us-ascii?Q?yjHZG01kYFGe+aFE0QWy/x3HNgKpCYU5Ucb59wnw8LHeCs++OqqDP7IYnjp9?=
+ =?us-ascii?Q?9JDD57rNxoav/9ruqknrggPFE/vsc4CtueFm7BAhPRzegUfjPC/c3cZg2wMD?=
+ =?us-ascii?Q?e86X/3J5lPTC1ZKXG+DvenrgzRm1BVt6P2caemfAP2RJ7BIQPmfPUZOpQXiI?=
+ =?us-ascii?Q?+j6aPLY2GsM/zyWYxCHntysrM3lRl440OU+hWyU8mgfujN/a/I43kYbJYX7w?=
+ =?us-ascii?Q?fe5ch9K5Mfv7MXxDeM4qMhDY/bng/5jpxNUD3FHr53yv8AjXmn634deHTG2g?=
+ =?us-ascii?Q?g900mEFEAdFi+lCiBMl1ool/v5n/FJaqTO4XXulIcpI3eB2zmpeaykValrcq?=
+ =?us-ascii?Q?nbXe3bQzfjeR8wnxMPDT1yfYl5L4YujzC+xW9XzEu5R1dpU2H+dk66dS7JCG?=
+ =?us-ascii?Q?tt79ttoUPQMktJniTRVfAN3De+v/TA276P1e7dbdj1X+GJcMTwBpmf6b5qGi?=
+ =?us-ascii?Q?4lv4hPHVp+R32BUjV8oOYSxWIMHVPlRkFZeLlwWzBmovBtaMzRl9Wbj9G5h+?=
+ =?us-ascii?Q?/djBAuP1KfNrHnp3DX2ffAfGc9InWQVlE2CC/OP8Qrr+F7iEu15GYuUB4O5y?=
+ =?us-ascii?Q?uPWcFaPVkX1SNYe0BddRh1z1tbiyhuO1dpm3PrMzlXxobCJcwuCEM+O+TnwR?=
+ =?us-ascii?Q?TSJ9eQqr1aRzTJljIBeVRYZjjVz8yNJ4eGc7yDcp4df1OI6DS/oGNgWN9l0y?=
+ =?us-ascii?Q?2GpHUoTZ9TMgXZM7N+DbCL1tVzXTw2sB12swKaV+e2PNUJ1Yl0984R6T4ZoQ?=
+ =?us-ascii?Q?MsghQAmO7zh9kp3mXoyzmORPQs5TVHgAyglYe6mzmyCjW7ZM6P9ZGehZUP5o?=
+ =?us-ascii?Q?0nuDwQIrY67UMlvcf6aN1VE8oQbbk+cy8/8agond9au9MlWUrmMCLEs8ul5J?=
+ =?us-ascii?Q?W5pMVINeas4Cx/uQBFzPypz1nwxX1u56dpQPHtJ5imiBdp0k3zutc1dt7xzj?=
+ =?us-ascii?Q?C5eTd1sYkpALO4S5tWgTi73lEzSgS1GFRKGl7gU0DdnzN6M4Hvo1HbB3GEpM?=
+ =?us-ascii?Q?a/0epQ6bd/5TXW07MVEbjwnBnWLAhaau4xMIM5F7UiYrnKPd3xK4g1uEwPL8?=
+ =?us-ascii?Q?W7fVOLpBsaDSE93Vv4mFN1CQpl3Ep6eUClYHmZe1Q4mKKYQyFhjb9VMrQACF?=
+ =?us-ascii?Q?jShbzPvhyj2Fhl4Um+QXj+7u51bbEg8Eu4pHRcofAeUJI+L1MxzRBz1FKHAI?=
+ =?us-ascii?Q?frbS34Qri8rG8rzvAjVUn8y+mCUK+/dL5UKxy38c8WnGQ0FR3MeEbL6Els4L?=
+ =?us-ascii?Q?cpB7wAdqYUZUb6gCaJs4U87PsgnozRSVTolyN9G2jC+Xr3ZHAWpUKRPkc71h?=
+ =?us-ascii?Q?qQ=3D=3D?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e49fa5e0-2a8a-4393-992a-08dd0eed27d0
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYYPR01MB12402.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01139a3c-b541-4f18-cfee-08dd0ee35d8a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2024 12:59:44.5927
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2024 14:09:49.6011
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: msCX3nFZuaLUJMR8LMf+Eo/t+eYcgPfdDsESDC2biqSGdNlm8sK6ZCgIdgOMGZGySqusqydSGGkQkM2xwiLUzAbqAfhDIWGZXjnhv7BLl7c=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB10254
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SjclcuAxKUiO1tJRZVPZSEXI7qlTQ0/jBZyjl+wojkDWriUTzwA05eKMuKgOwHDMxCxiQlVjiAQecq/B8rk3Ae+LeZhNUxZ9f4shlAaVlkM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR10MB3768
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 27 Nov 2024 12:59:50 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17292
+ <cip-dev@lists.cip-project.org>; Wed, 27 Nov 2024 14:10:00 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17293
 
-> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
-> Behalf Of Chris Paterson via lists.cip-project.org
-> Sent: 27 November 2024 12:59
->=20
-> Hello Sai,
->=20
-> > From: Sai.Sathujoda@toshiba-tsip.com <Sai.Sathujoda@toshiba-tsip.com>
-> > Sent: 27 November 2024 11:08
-> >
-> > Hello Chris,
-> >
-> > We are planning to run software update, secure boot verification and IE=
-C
-> > layer tests on M-COM x86 device in CIP LAVA.  To achieve this we believ=
-e
-> > there are two main challenges.
-> >
-> > Booting a disk image (.wic) on M-COM x86 in LAVA
-> >
-> > We went through the existing job definitions running on CIP reference
-> > hardware on LAVA to re-use if any disk image is being booted on them bu=
-t
-> > did not find any. In every job definition, the root file system tarball
-> > and kernel image are deployed separately to tftp. We are going through
-> > LAVA documentation to figure out proper method to boot   entire disk
-> > images on LAVA.
-> >
-> > Can you please provide your suggestions on how to do this, if you have
-> any
-> > ?
->=20
-> Where do you plan to flash the wic image?
-> What does it include? (bootloader/kernel/rfs etc.)
->=20
-> If you are flashing the wic image into some sort of permanent storage I
-> guess you could boot into a "normal" system using tftp/nfs etc., flash th=
-e
-> wic image into some sort of permanent storage and then boot again using
-> the newly flashed storage?
->=20
-> Maybe the USB or SATA deploy methods could be utilised?
-> http://10.226.36.177:55555/static/docs/v2/actions-deploy.html
-Sorry, wrong link.
-Try https://lava.ciplatform.org/static/docs/v2/actions-deploy.html
 
-Kind regards, Chris
 
+On 11/27/24 12:07, sai.sathujoda via lists.cip-project.org wrote:
+> Hello Chris,
 >=20
-> Perhaps this use case could be of interest to others and new deploy/boot
-> methods could be integrated into LAVA.
+> We are planning to run software update, secure boot verification and IEC=
+=20
+> layer tests on M-COM x86 device in CIP LAVA.=C2=A0 To achieve this we bel=
+ieve=20
+> there are two main challenges.
 >=20
-> If an SD card can be used as the boot medium, another option is to use a
-> tool like SDMux. This allows flashing to the SD card whilst it's connecte=
-d
-> to the LAVA worker, and then switch the SD card to be connected to the
-> MCOM. I think there are also USB versions available.
+> *Booting a disk image (.wic) on M-COM x86 in LAVA*
 >=20
-> > Once we are able to boot a disk image, then next task is to boot a
-> > security image.
-> >
-> > Configuration of BIOS settings on the device's firmware to boot a
-> security
-> > image
-> >
-> >
-> > Basically, CIP security image has secure boot feature enabled, so befor=
-e
-> > booting such image there are some settings that need to be done in BIOS
-> > such as:
-> >
-> >
-> > 1.
-> > 	Enabling secure boot option
-> > 2.
-> > 	Adding secure boot keys in EFI storage.
-> >
-> > Only after these steps, a security image can be booted on M-COM x86
-> > hardware. I am mentioning these steps based on our current experience
-> with
-> > local setup. But I am not sure how to achieve this on LAVA.
-> >
-> > One idea is to pre-configure the above-mentioned settings in the device
-> > present in lab-cip-siemens-prag but in that case I believe health-check=
-s
-> > and all other tests running on M-COM x86 can boot only secure images.
+> We went through the existing job definitions running on CIP reference=20
+> hardware on LAVA to re-use if any disk image is being booted on them but=
+=20
+> did not find any. In every job definition, the root file system tarball=20
+> and kernel image are deployed separately to tftp. We are going through=20
+> LAVA documentation to figure out proper method to boot=C2=A0 =C2=A0entire=
+ disk=20
+> images on LAVA.
 >=20
-> This is one option.
-> We could duplicate the amount of hardware so that we have some permanentl=
-y
-> configured in secure boot mode, and some in "normal" boot mode.
+> Can you please provide your suggestions on how to do this, if you have an=
+y ?
+> Once we are able to boot a disk image, then next task is to boot a=20
+> security image.
+>
+
+
+I would suggest that you check out https://github.com/siemens/mtda. This=20
+provides
+  the necessary tools to flash a device over USB/SD.
+
+We would need to adjust the lab setup for this.
+
+> *Configuration of BIOS settings on the device's firmware to boot a=20
+> security image*
+> *
+> *
+> Basically, CIP security image has secure boot feature enabled, so before=
+=20
+> booting such image there are some settings that need to be done in BIOS=20
+> such as:
 >=20
-> >
-> > Is there a way to change the bios settings through some arguments in th=
-e
-> > LAVA job definition ? If not, then can you please provide your opinion
-> on
-> > the above-mentioned approach.
+>  1.
+>     Enabling secure boot option
+>  2.
+>     Adding secure boot keys in EFI storage.
 >=20
-> To be honest my history is almost 100% with Arm devices, so BIOS isn't my
-> strong suit.
-> If there is a way to remotely configure the BIOS over seral then it
-> _should_ be possible for LAVA to do this configuration. It may just need
-> some customisation work done.
+> Only after these steps, a security image can be booted on M-COM x86=20
+> hardware. I am mentioning these steps based on our current experience=20
+> with local setup. But I am not sure how to achieve this on LAVA.
+
+You don't need to enable secure boot for testing - an image with secure=20
+boot will also boot on a device which has secure boot disabled as the=20
+image does not check the state of secure boot.
+
+Best regards
+
+Quirin
+
+> One idea is to pre-configure the above-mentioned settings in the device=20
+> present in *lab-cip-siemens-prag *but in that case I believe health-=20
+> checks and all other tests running on M-COM x86 can boot only secure=20
+> images.
 >=20
-> Perhaps see if anyone on the lava-users mailing list has any suggestions
-> for either topic?
+> Is there a way to change the bios settings through some arguments in the=
+=20
+> LAVA job definition ? If not, then can you please provide your opinion=20
+> on the above-mentioned approach.
 >=20
-> Kind regards, Chris
+> Thanks and regards,
+> Sai Ashrith (T S I P)
 >=20
-> >
-> > Thanks and regards,
-> > Sai Ashrith (T S I P)
-> >
-> >
+>=20
+>=20
+>=20
+>=20
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#17287): https://lists.cip-project.org/g/cip-dev/messa=
+ge/17287
+> Mute This Topic: https://lists.cip-project.org/mt/109804627/1753640
+> Group Owner: cip-dev+owner@lists.cip-project.org
+> Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129121/175364=
+0/1405269326/xyzzy [quirin.gylstorff@siemens.com]
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+>=20
 
 
