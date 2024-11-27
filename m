@@ -1,220 +1,397 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <sai.sathujoda@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C57D609A6
-	for <webhook@archiver.kernel.org>; Wed, 27 Nov 2024 06:52:58 +0000 (UTC)
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (EUR05-DB8-obe.outbound.protection.outlook.com [40.107.20.49])
- by mx.groups.io with SMTP id smtpd.web10.66373.1732690374281316315
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2ECD609D5
+	for <webhook@archiver.kernel.org>; Wed, 27 Nov 2024 11:07:49 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
+ by mx.groups.io with SMTP id smtpd.web10.69465.1732705664655580777
  for <cip-dev@lists.cip-project.org>;
- Tue, 26 Nov 2024 22:52:54 -0800
+ Wed, 27 Nov 2024 03:07:45 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=k8eTiIv3;
- spf=pass (domain: siemens.com, ip: 40.107.20.49, mailfrom: jan.kiszka@siemens.com)
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.134, mailfrom: sai.sathujoda@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 4ARB7g2M2231762; Wed, 27 Nov 2024 20:07:42 +0900
+X-Iguazu-Qid: 2yAa5GSxJAHeIDcuPo
+X-Iguazu-QSIG: v=2; s=0; t=1732705662; q=2yAa5GSxJAHeIDcuPo; m=tnj/ug80BUuZ7/AKccHaWFj8He/bAJB75skfJPE8hH4=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1800) id 4ARB7fDm1126027
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 27 Nov 2024 20:07:42 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IJTJPyS9yA3o7bMncm1kmigPSQsUnEC2npHzDA8azeowuAl5HfQWn4wH3LIjk5LpkEI2HgCe+lI0JflvkVaxBpdYbJ+PUegAeNqhD8CHNyZ/0dhBoHV1gTAqDMa/svkotDXyomCqSQoXmLUsa6WXBSckkttgn3M/j1Rz5+hApg/JGJ2nbaamej+wgfgF3WFXUtvrm43XNpg8xHtoJ0dUr10mjJuSeX9tfdSNLokHymyLL/QqTlRphaYmbAA0TFaL4Ub750/a2Fhhwgskc73lVDkxJ2CUhK8y5xhkpUd+vEbpW574X+7n/rrrEnqsFkyQiyQvHe4bSXNJXJkD96YGhQ==
+ b=tKDf3fLqTKrgYGMJa4rIBr+sJ5tKQu9d+5Ycy/tx6TcCrKa7Inx/RIsWLJgBOy4Qu3G7HeYfl4LZEwytHA37xBAKICTyShacKAcvOCkkw88eACToMjYSbQBxUVviRgddbs02V5AzsODpCCY1qIlPfK82bsTjTnT43YNz54yurJ9P2gtf2LuSGtWvi3u60BY+X7Hf+5z9CILzSS03/wFrIFUrawRerZYmb24opSRo/olfumjsesalbzLt9ryC1A7j8k7hMWL0VVNh/qphWjZMJS9Mzh6ryzP9rzt13/HzYph7/BEMwLgAuV8fNOpSvkUpnsDhlM7cI7OzBtj1zKD/cg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mBcX+JrY1NM7WCQzJU4cCSm1KP+JkSOpDvVHVZIgloE=;
- b=ZvU6dtpdUNaEF71aXAVeiOjl+A2raPYfILEu9KhXcbqhl4+T5Cc7YXEexbK7wGIekWLla4TQydvV4Ajyp9QvZ7/0iyqSbchnpwy6ORpWvDxO1MEt1T5T5Q7PiyqV4P13AVTJ2HWu7q28sDJaTK/5JOWjd0+Dp/ui81e1sukY7BelObC9bcA7uqzqA4hGZFBr7x/okVVdnlyOUHE4qqXg+sPsSIBKPqEfiGCS9V2diKHdlsvGUGT7++tTTYxheUFv0OaY3wOj4JVENBqA94++ivlxKZ6R9/yWPU7lB6e7FG2wOhlhwDa8DmdEUuPVxMrDIVTyPGrpOMmnRQpweU9aFA==
+ bh=h/MFHLIaJWewau7DLgpOcSGt1UH46249JuT8O2qf8W8=;
+ b=jpV3iYI2OxZa8Xz1F6bayvZTnhhUz75BH0kfsmbUqj7x9kI3AE9w9n5uzvH35n5eJTJD0VxsQUCqXPP4B6890pBVwp/R9KQ9QSCmwFxStJLYWpfO2ns1QfUbYihXuDt+SC+3y+U7mFmKP3u9NwxTjkiF8Lro3/A04n0mymSM6AitZ3ebW00+v22ntnKFHN4PTGnYIxMy0YyXe8sfc3sXGNo8ARR3dIvpo25Z+i/byiOaPwCManEvhBX3BtrCQhhTwsj1G5i0gUEbvdUWBzxmqgYkoIxn3+PwhqK60+4Dokq97Y/mMdqrcZHdeHH8y9OFpqHqWfbwtvuwO1XZT2VeyA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mBcX+JrY1NM7WCQzJU4cCSm1KP+JkSOpDvVHVZIgloE=;
- b=k8eTiIv3XbwEvZimPuDkcm/VhOGoihLHvedLFXkqIF8zvYic4cn3JNxazis/Sq7kJVSvZGl0RZwxHTGnPEVx93AavAE1RX+ebP/NBSWJd6iNZ0C4D0YV9OAZ5o9Tb8LIn/eux4lxbt5s/3TiavqRgnObTIk2VcL5MeQxC+8kVeC99AXPyjBRPCFI9emaYvxLUTs0SmYZS9oUej6hq5YmusHq6z5n2ueu6jlvoJGEcd/Og07LWhzj3DotgSoHbUOyNcKenlwoZ+TLOvIazPcJFoKm8E6OdluGGR4NGjuOYynG33Y/vnUT/Exks/P10v4+Rwcj8SYnxhsW1QnMqiFdvg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by AS8PR10MB6650.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:564::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.11; Wed, 27 Nov
- 2024 06:52:48 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408%6]) with mapi id 15.20.8207.009; Wed, 27 Nov 2024
- 06:52:48 +0000
-Message-ID: <150e80bb-129f-4393-9967-e025d847c494@siemens.com>
-Date: Wed, 27 Nov 2024 14:52:37 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev][isar-cip-core][PATCH 0/2] Switch qemu-targets to
-To: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>,
- cip-dev@lists.cip-project.org
-References: <20241126151751.1747275-1-Quirin.Gylstorff@siemens.com>
+ smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
+ header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
+From: <Sai.Sathujoda@toshiba-tsip.com>
+To: <Chris.Paterson2@renesas.com>
+CC: <kazuhiro3.hayashi@toshiba.co.jp>, <cip-dev@lists.cip-project.org>
+Subject: Booting security image (.wic) on M-COM x86 in LAVA
+Thread-Topic: Booting security image (.wic) on M-COM x86 in LAVA
+Thread-Index: AQHbQLwTUaTAYoFsNEu+W9FEgwfyAg==
+Date: Wed, 27 Nov 2024 11:07:38 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <OS3PR01MB6103FB47A8576B2CFA3275F6C2282@OS3PR01MB6103.jpnprd01.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-In-Reply-To: <20241126151751.1747275-1-Quirin.Gylstorff@siemens.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR3P281CA0120.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a3::18) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS3PR01MB6103:EE_|TYRPR01MB12773:EE_
+x-ms-office365-filtering-correlation-id: ecfab606-5b84-4e72-e8c2-08dd0ed3b4a1
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|376014|1800799024|366016|8096899003|38070700018;
+x-microsoft-antispam-message-info: 
+ =?iso-2022-jp?B?NVcrYjFENDAxYzhUV0hEOVQ0dXV0Z3M3SXlTamRmOWNDNDg3dHB3ZWtq?=
+ =?iso-2022-jp?B?RHRzUUNYMEVHNjBxL3lmSytiNnBYdG5wa0s2Q3JFb1JJcjdnYUxQL2Jy?=
+ =?iso-2022-jp?B?OWZac2RheWdxWmtRcHNRbUN6RHo2QXZ0WjlRZmJOa001L0ZuSUZUdVNl?=
+ =?iso-2022-jp?B?QXNXQmQ4SzA5N2xGa1ZmTksyTTltZ2pXVHpFeHg3RnlqS05raUxoY2pN?=
+ =?iso-2022-jp?B?clM2M0VJeTVGemFpV2t6N0dUejlZcTY5NkhBdnBnQU1wS3RzRDMzZUY0?=
+ =?iso-2022-jp?B?T1g1VTN2MDY0SFliQm1tYktDV2UvaDB6ZjZXYmxBMjE2RGptWFFnc1lI?=
+ =?iso-2022-jp?B?RWNyNzhVaytab09PczRBNDVUKzNPSkZ3ZGZ6K3lqRVF2clhXUm5ReWxl?=
+ =?iso-2022-jp?B?Rm41RlF5SkF5SllBclBCOWJ1ZXB1S3I4cHdNRDlTRTZYVFl0b1pXTVFV?=
+ =?iso-2022-jp?B?Wi9Bcms5TXk0TUYzRW5OUSt2anBIbktZMjVMYlFSaHI3RzhFWnFLeGNu?=
+ =?iso-2022-jp?B?ZzhPdFRJN0ZUcldUdTNsNnBtejlXbVc0ajlyUkpuYVBaRFNwbzdVMkMx?=
+ =?iso-2022-jp?B?bWZBQi9ad0NhQjh3eGZOSDhCeGZpT1Z6dnZHM1VnMTd3T3QxN0FsTlN4?=
+ =?iso-2022-jp?B?ZUxIN2tmQjNQTHc2bHd1aktsd2lDcG9TeUNXUi9FL1AvYVdiL21tc3JD?=
+ =?iso-2022-jp?B?WmpGT3ByemhGbWN4M0R6RzlodUk0eVBGZExuOFM4RVlWRjN6d2oyRjh3?=
+ =?iso-2022-jp?B?V0hSbEhFdFkyd3MzVjJLTnB3c1FBZGU3QTFRV0JmQVpyYUlvakU5RDAz?=
+ =?iso-2022-jp?B?R1kxT21FLzRCSWJkcTZZZUVMckxYdklJN0pTdmk3eHo0OVpoWE90SjUy?=
+ =?iso-2022-jp?B?QjVnVWN5L256azcxZElvdjgyMnBNenlNU2NYLzV2MDE1YzFKVFQ1R2I4?=
+ =?iso-2022-jp?B?eWNzVEZLditjSG1POEorU3dXd2tCK0dXVUorUXoxR3lRZGZMMEN5SXRp?=
+ =?iso-2022-jp?B?NUczTEFMcXhwUzNSaHVGbnpnRkhhYXRnWEZpZ2VzOEVuSnBoWWFIUlBN?=
+ =?iso-2022-jp?B?WmlXTDhuMTZ0ZkpTU21xTENKNmRHOUZ6ZEhucGc4UDYxUmU1bzJrT3Fu?=
+ =?iso-2022-jp?B?S3B2a05CeEVvaGFDWkhYRHZJdEhQV3B0dWhTYkJIUExLVFFWMHQ2M2dl?=
+ =?iso-2022-jp?B?TzE5SU9hbkh2OXJyekNrQ3VLQ2RXWjZXelpSNVAwTHdESEpxSmx0cnl6?=
+ =?iso-2022-jp?B?bFlsUy9wTVZxQ3duVmNDVDEza21hcVduM1MxNWJwYlR6N0tCdFhTNmZS?=
+ =?iso-2022-jp?B?S0NwalZiSUx1WFVhMXhMTWRZYTI5YkpzYTRXYzliN3dSYnZsUEdnK1o5?=
+ =?iso-2022-jp?B?ZHZkbzZyQUxDSWJyeDJ6RHJEVzNCQ0lqVFZ5SVVWbDhVeXhwWllYS2Rn?=
+ =?iso-2022-jp?B?eWY0VHMxQTIxL25MZ1Zqenk0R3FaamI1SUJJcm1iSy8xUUpRV3pGdEN0?=
+ =?iso-2022-jp?B?TjJXSXVYaUxCTXBsRFhEUXVYU0l2YjFGR3dEUHQxd1BDVGpvMkorb1dx?=
+ =?iso-2022-jp?B?OEdxaDdOMnJwQXZSeWxVazBxU3FHclZpSE4rMXRrd09Bdm5vT1JiQWsz?=
+ =?iso-2022-jp?B?NWlWeXplOGQ4Tm9KaEZiNVNnUUw5VWMzbGNjaVNTYWRrOUNQQ1laL01Q?=
+ =?iso-2022-jp?B?V1hYWCtSb2JhdjkrelBsRy9HZnZqQW9DUlhDbW1YWHd0Yk5rS2pTeTB4?=
+ =?iso-2022-jp?B?a1kzWkhzb3plc3A1SEFuQjZ5M2NMS3FKSngySDBXaVJ4MkRBWk1GYlhw?=
+ =?iso-2022-jp?B?eVVGeGo2ZjJqY1RETUhZYllZcmxWV0xSZ2hEU2Z3aGRxSmRyYllLalI3?=
+ =?iso-2022-jp?B?cVlHZSttTFUzVzQxdDBTb1pIdjhZcG5jYVVQYm5YbXFxWHEyNmVwZHJ3?=
+ =?iso-2022-jp?B?YlI4QnlpZGxwTVlFVk4vWGprNDFoaEpFTmtWTTR6M05vbDJnZlhPeGs4?=
+ =?iso-2022-jp?B?aFFQTnJLQ25sVGVSaWtIZHZTMGVMajkvZVkvb1ptWG1zeEhrcmRWSFhi?=
+ =?iso-2022-jp?B?cEE9PQ==?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB6103.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(8096899003)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?Y1JFbmtqWFVjRTJ1WkVzYWJBUzlXMmoybG9MTGZTUUR2WFZzajlvWDZX?=
+ =?iso-2022-jp?B?QzFIemRyY25wZHBGbFY1TExSdXhTVzlZR1VpYlpWRFdSMHAveVpJdTJI?=
+ =?iso-2022-jp?B?RXRaSzhlUjVLdnAxa29VL3I0ZG1XUlBodHJWNzhhZjhJbHpFZG5PZno5?=
+ =?iso-2022-jp?B?bUNtRUpDbENNMTBtVE5kLzJwcTR3R0NubWNQWlVpOVVWUUFONnhGODU0?=
+ =?iso-2022-jp?B?dXZvUWZYTEJSYXNIU0RWMW56QVkwRTVQVFFMK0lwbGZDS0F4dzdieTgv?=
+ =?iso-2022-jp?B?UEgwUDUvZmc4QURueWhkNVpNWVlJQmRzaVErL2VrRFcyQ2ozNXNaT2tn?=
+ =?iso-2022-jp?B?aDZ4N2V5b1I3TmhwUHhOZFRLQ2dZNXBpT0EzTzc1MUcrbjM3UWwrc1A1?=
+ =?iso-2022-jp?B?dWw5TzZ6cXE5RURVSzRVVnRFbXZ6YnN1ejlZM29WV1VyOG9TTHluOVhW?=
+ =?iso-2022-jp?B?VVJKckNZQWJNKzk1eEhsNE15NnJxaERLQWRTelRMMnJpa0MwTDF0SFk2?=
+ =?iso-2022-jp?B?azh1SW5JZVBHdlpXTFRBNGxOeGY4alhIMmY0RFEvakl3d1MyZTNuUzJw?=
+ =?iso-2022-jp?B?SnV5a2EzOE9xL3pzdm9YOW5NZ0VEVUhBUVBVUTJ2WU5LazlXa0d3VWNk?=
+ =?iso-2022-jp?B?cWUzVWI2ZlFNM2N3d3lvV2JTNXArS1dncU9GY1pVU2V5MjRFSW1EWGxl?=
+ =?iso-2022-jp?B?eFdQWCtRSTJvSXNlTldJUnpxMzRZbkUyclV0WEtacXNnQjBmZWtXYmFH?=
+ =?iso-2022-jp?B?WmtFUnZ4WXM0aFNQR0RURmdzRzdvUnhsTEJ6di8xUzVESndadlNhQVp5?=
+ =?iso-2022-jp?B?ZFlISUxnSmtCME8wZGQwSk94RE8vUXJhUnA1NGkxMFJwWDU1RXpjcUZa?=
+ =?iso-2022-jp?B?NTlZcXk0VWhxaytvVFYwRUU1M0t4L1FWZmlMcFdIaC84ak9WRkdNK1Qx?=
+ =?iso-2022-jp?B?QU1YWWd6Zi9wMlBKVGpCWlhDVXdYdFg3RXNkVllPOHNWR2UwSUcweHN6?=
+ =?iso-2022-jp?B?L0M4YTFQOFdmZTFya2tJVUQ4RUJ0WGlydGRLV3ZTVlVoRFJ3R3hlaWt6?=
+ =?iso-2022-jp?B?cjNsU2daSTJWTWtwcVpaOXhTek5UTW9tV0VaeVB0YXliTzlrTDVEZFJY?=
+ =?iso-2022-jp?B?Y2VFUW5HNjNsdTErL2FlNEIwOWVxOGJEK1hWSGIwbVlEbkxTNDRlOUg2?=
+ =?iso-2022-jp?B?anZEaXlCa2xKZEltODJJQmNrSU9TZFliRjJSLzlneEwzZnBqVmMyUkRo?=
+ =?iso-2022-jp?B?UzZ2aGQ5Z2w1Y2EzbHVBS1plQ0tDNzdHa0JmbUIyUzhUME0yMCs4a2Mv?=
+ =?iso-2022-jp?B?YVNneFhYam10dFdOdWZxNk85YmdQYWhYOUJZVEdHTlVBN21tMlNRanhX?=
+ =?iso-2022-jp?B?YkdQU3M0V1VOU0t1U1c5ZVpITFZ3NWJ4QU41ZHJrZXdnOSswUFV5VnZ2?=
+ =?iso-2022-jp?B?WU9aZy83cnNtOG1WQVQvUnVIMUprd2JlcEwza0RUTlNzd1o3RU5rMnYr?=
+ =?iso-2022-jp?B?YXYyVjhuU0ljSHBWT25TeTFXdERRUFlQcVVKeDltRy9YTUMwTHNJTHR2?=
+ =?iso-2022-jp?B?Q0JYc09FR0FmVTI2L3FWNjZhK3ZoeWNwVFdvSW5NTzZuODNCQjNTeTNE?=
+ =?iso-2022-jp?B?QVNRTzh6K3BxZ3lDQ0U2TFh5TWRldXlOTzVCM2NkTWNrZEREdFY0ek1S?=
+ =?iso-2022-jp?B?NnEvamlKZmZFRExwS3Zib0NSa2tZQk5MS2JTK3RkTjc3RHRKWnoyWnJ6?=
+ =?iso-2022-jp?B?WnBwd2NJTHcxSVM1dmIwaUdyNWJhZUtnYUVUQ0w1dXJMRTE5cnZvUGdY?=
+ =?iso-2022-jp?B?RGxoTjkwc3lGNWJWTkowL2JyNkdBSEVOcWU0b3pFN1lSMVVtTUE1OUll?=
+ =?iso-2022-jp?B?aWhwN3RUSDZmMnBjK00rQmxPMUQ1UlFmTjZaVzM4QXREck1Ka2pnczJW?=
+ =?iso-2022-jp?B?Q0o3cmxURmlpY25kVHdvY1kvMTdjbTNnaFk5eDM2bE5MNGRiNzJXajNm?=
+ =?iso-2022-jp?B?aVBkMFpUWTIvbnkzMnl2QS8rOVhMbUZ1aW8rSytJWjM4UWRKbi96dU1h?=
+ =?iso-2022-jp?B?T1Yyam0wRjBvdXFxNlJBUEVEK3RTSnlOQVM1SG02QkhGZHJNOEk0cGNh?=
+ =?iso-2022-jp?B?RVNEdzRiUmRFb2ovazE1elpQYWh0T3dPR01ZZ1liVEVGZUhSUW4yNzBT?=
+ =?iso-2022-jp?B?c3FVYUk1UlAyVXNRdmEzUFhDY245QXdzdzgyb2FTVlgySm96U0hoVWUv?=
+ =?iso-2022-jp?B?Rng3em93bFZHc3lwaFRVOWY4NXhkQlpNSkR2cWkzVnRXaG9HR1paL0Y3?=
+ =?iso-2022-jp?B?NWY5dWc0S1VqZjZRdXhMODJKMWRhSTZBWWc9PQ==?=
+Content-Type: multipart/alternative;
+	boundary="_000_OS3PR01MB6103FB47A8576B2CFA3275F6C2282OS3PR01MB6103jpnp_"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS8PR10MB6650:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2ed8d7c0-c82e-4aa0-f1d3-08dd0eb01afe
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?bTN0MXFYcDBsUGNBZDh3bEZxZnZrYkkrcTVEMjNYcXFCaEV5N0dsdVcva05J?=
- =?utf-8?B?bjRUTEZzaG5zQkpaaFRKRVBLVktWZ0hsTFVJT21TRmZMOCtibzRTcXBVUmJ6?=
- =?utf-8?B?SnpXQWw1cFdKdXVRa3FFUG5MYThPRkFjOE1hZDUxU1FJZTRqSmMwZ2JhUkZT?=
- =?utf-8?B?L05wZzFadHpHZlFKTDlyalJpckE0WERkUW5JOC9ON3dhRFJHSDJkR2hsclZN?=
- =?utf-8?B?ZFZtc25sckhHR1lZWjNJQkF6SlRoN3pGUTdqN2RqVlpvS2k3ZEFENmpFeVhr?=
- =?utf-8?B?QTNFV01uVXVaTENiQU5qQ0dhajNvYkJhcFZJZmNEaDRQQUhxdEpJZUtTVGp5?=
- =?utf-8?B?bnFpajRqZlFaZFN1RXlhMXE4UlhDdTBlSVZqYWJad2lRbGlmTnc0RXEwZFR0?=
- =?utf-8?B?bS9yVDFESTZUWHFlWjl5bzc1RUFPRXdlcHpOcDU2VEhRYTZMZFc1Z3FoczBu?=
- =?utf-8?B?YTF0bm1tcFUxZkh0NnljSzM0Q3picWsvZTlwRHE2d29sRDI5eXJOeWM2U3ZY?=
- =?utf-8?B?N0h2VnFmak5haDcxdjd2R09hcUNlSm53UEl3bzkyOHBkVE1SVU5NZ0F2WGo1?=
- =?utf-8?B?QjNzVlNlWkZKUW5FL2ZwZEdjdVB2aUNLNUhGWkNjL1JNUzg3c1BNK2pwNUVl?=
- =?utf-8?B?L3UyZmRqTzExbkhrQTR6WmVGalNnUUxtcEdvQ2ZweHBQRzRVU0hEQVFScXI1?=
- =?utf-8?B?SmdjODFrN1lUVzJxUFVUWkpucEQrUzY3amN3TE5MVW1vU0ZTM3QwUmVyNzRK?=
- =?utf-8?B?Z092L2ZDaDBpcDRReFF3MTQ4cHoxa0dLYXBmd1EwaFlQZ24rdVQxelRsak9s?=
- =?utf-8?B?eGsvOEJSUUwxS2lROEk1UzBrSjVXcm9tYU1nZ0VwLzkyTzlQSzlmUER1RHNQ?=
- =?utf-8?B?NVhURnFhNGM0YkZVZHhaVk5ubGdKUHVVVVdNOEFOb1RCU2FLcCtFWHJkT3Zz?=
- =?utf-8?B?M1lUeE1Fa1dvd2dzTmE4YVJBVlV1VnJFbjZrMExBclJCTlpaMXgrZ3JSU3VB?=
- =?utf-8?B?amt0S2tNampmbGNJL2JKU1JXejBHNVdjakRHeGRYU0lKZmlnVnZLdXhRUFJT?=
- =?utf-8?B?MmJTRGl5MzhXdnFicG5IcDBnTWU5YnkvS0tJN0dpekJPUGJvR1Q1NDdYSENZ?=
- =?utf-8?B?Z3Nyd3c1c1JPTnVVYlpZLzFvb3cvTm5GTXpzT25JTXBjOTNDaTNyLzZHUmZR?=
- =?utf-8?B?T2xObXJydVBaMjR3cnk5bTVGUVlEWTN5dlQ3YXdZT1lqcjVXNFJHYlpIazN6?=
- =?utf-8?B?emdrQ3RKMjR0NWhCVnVPbjJkeXZodlM1dS9MQkdXdm5KWnptdGNWelNYYnRi?=
- =?utf-8?B?cXR5WWdqV1VCRGNsYWhrNmZHVWtZYzRvUHAwaitvZU9lYWlINDFLdUVHN2Vo?=
- =?utf-8?B?aE05YnlnOU5vS2REWi84WXh1eFFxOGxZejJ5dkVTenpucUo1V09vaThDWWZP?=
- =?utf-8?B?Vk9lTWJYR1FiaVJPNnNCRVBUYzNYajN1SEZDYkhoUXlvMEdpNmJtNmZTaENn?=
- =?utf-8?B?UUp3ZTN4VXFuNjlzdUZjc1R6c0llRy9JanRrN0lobmloNWJaTVAxNXY0OXBv?=
- =?utf-8?B?cG82Y1Q1dkpVZ0NZc3NxcWorRkdHTUp6YnROd1ZLWEtYNjdLUHdwT0IrM3Zo?=
- =?utf-8?B?a2toVVZMWC9lV0hHckR4d3JWU3htWHVxbkdxNFdXT29nU3VPQWR5WkVHc1Ra?=
- =?utf-8?B?K1hhVW4yS2F1MVVzamVzMUpiWG9DdGc0UWtROGwrUW5HNkNldG1JdWppRHY3?=
- =?utf-8?Q?91q6KR/T3eLBfObF4c=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?ZGgwcUU5aXI2ekZtQ0hpZU12bjgyOHlQSkJwbSt1YmNJNURrY1dISXpLWFNs?=
- =?utf-8?B?VVNCeTBFcmlLTGs2QUFFUGxWR1RkODZoYkVtSXBRV2dURDl0dHVVRDRXZ0tU?=
- =?utf-8?B?RXpRcjV6MzRWWVVlVkpDeWJuQlk0TGZrSE9TT1p3MHZXTi9mcVYvUVdtZkpa?=
- =?utf-8?B?eGREd2MxZFlmT2dlYmhGRFpZcU5CRXNRa3JLeE92VW9NRVM5TXd5VHppQkli?=
- =?utf-8?B?U2JXZC83cE44eDIvRHlOaXdHWkFxVUtncUY2UkhMUVQrTmt4RmZudzVZd0ZU?=
- =?utf-8?B?bkxPK1RRVXZUUGkxdzkwYUpNaWNjM2ZiZktmalNEQmt2ZEZzN1QyODlDR00r?=
- =?utf-8?B?QWdFMkNWNjJrT01GeFFkeGl2cGJkclEweEZFa1JyN1A4Z2ZDdFcxU3BOOERW?=
- =?utf-8?B?eGlWZHlqUU5TMldRS0JIakhZbWtRNEVFVEZvRXRkWHlwTlB0N1JUZDVpSTJm?=
- =?utf-8?B?UjZQZ1h4Z1gvMG1aZkNjdmlRRWFXOTYzRHlST2lSKzJIb1FlR0JndStva3A0?=
- =?utf-8?B?cGtvZG5SYUMweVMzQ2dIcyswa2JiSmRaWW8waEhaa0xhOGpWY3JNcUtOQ2Jl?=
- =?utf-8?B?dU4yVUlQZEwrbFordEtOcEFpcCtHYmo4aUduR3A0SFZMVEViQ1IySkplYWc3?=
- =?utf-8?B?YThiMDVDN1ZVUFgyQnM5VjdvZjIyTXkyczRCQ1N4MWJJZEk1SmlrZDBsVitL?=
- =?utf-8?B?MlY0clI0NU9vYUpVVjMwY2dNYUdUQ0Rmekw1Mm1PaVlNcjB1NE5tLzRpZkQy?=
- =?utf-8?B?dEVnTE1QbnFMSGRKOFVxcno3d3N0ZGF5cWFxNEpFalpRM0I1REw5bTVZVVBa?=
- =?utf-8?B?NVl6dy9sNVp2RjdHc1A2anhBQXNDazJCL0ZXK1BnSGFYSjZKbFJ3V0xmeXRq?=
- =?utf-8?B?WjVZLzN2LytGelFyL1UwdXBBS1VoNUlpY1dJaWdNellHaWVZQy9kODNKQmJL?=
- =?utf-8?B?R24rNUhZR1N0azlyTVM1d1d6Qkk3anp3M1AzVjRWT01qTldzeUpQcENMeVl1?=
- =?utf-8?B?NVJkTzZ6WS9qUVhsYXdESllLM2dPajBxeG9qajAvUUxwRGdUdkdOaVhRQlpX?=
- =?utf-8?B?L1hQNXRCYnZwVlExTTh6WGg0Z014UzY5bS9nL3l6RTRSMU4rRWwrUDlSRHNh?=
- =?utf-8?B?Z01hNjR6VmFlYlYwL1NVWTRNekpnQjRCTFhVcFQ4NlZhOFAxaDVNamVRZTdr?=
- =?utf-8?B?VHo2Y1lZazBuOTFXZWRNcEJuRXE0V0NackcwQXhnYTlCQWdSU0YrUTZpUTJO?=
- =?utf-8?B?MGdTWXdwb2U5NUhUMlR5bXRnSFhETHlWZ1dmWXVMTnBidWRWZlBlZHU2WWhW?=
- =?utf-8?B?aXdrdXozYWg1VTNseTBJUlc3K3VhZkJ3ZmxQS2VFNU9GZUpvL3lxWGd3OG5m?=
- =?utf-8?B?WmVSVjlMSlYrdzBVVnVoSnBROTR5Mk1KN0VZY0lYdWxFTGJhNDB6VWpJUjB6?=
- =?utf-8?B?N2J0dy9ncnphSGVPL0hBN3RLNHZXWVYzQllOQUVzdmEvNkNBZDVtSEoyQnJX?=
- =?utf-8?B?RDRkcUp6M0xCb2kvNmNpNkpSeGE0ekk5cWlwdHNnQlFNdXllOVRBOS9OaUpl?=
- =?utf-8?B?dVJZMzJNUExvS3Q4ZmNpUGltK0dHSStUU21jbnpKQ0tveGZROE5ybFpTRWxV?=
- =?utf-8?B?cDBtOFZQZ1dOWTAvWk9hdnpKLzd1NE9pWHllVXdnSHFzaTBsNGQ4UjNSV0lK?=
- =?utf-8?B?dWhibEhZazQ3V2R3VlVHTlFabkloTTNDMk9IRnRTdzk1SlFoeEE0ZUM5bzBW?=
- =?utf-8?B?ZmtYQ2dVNE1qMUNBbDd2OTJyWGs0Q2Y0RklOeUhkYmRxcWI1WW1WaDBBTmFP?=
- =?utf-8?B?eS9COFhWOFZYK3JDQlhwR00xR3pEVWJ1TUF3a3I5clNkV2FIL3JMTXRyMWZ3?=
- =?utf-8?B?bnpFenhVeFhHNXFiSTA4NUtSMm45b2poVEcxb0NFN3pXU2NIRitJUnRiQkFx?=
- =?utf-8?B?ZlhrM0VSODgyTGY5c04wS2NkTzYxZW1LRjNldyt1dCs3OGFRSUk2YjMwbmJF?=
- =?utf-8?B?bUw0eTNSa3pJNHlYMG5FTGZpL3d0NWlYZ2VpNFFNUmxneFNCTUV2ZVphYUJP?=
- =?utf-8?B?WkxtaGM2azFNZTlRWGtkVys5K2JnRGFZcVpmZ0ZzVUh2TFJZYTZBZEQ2eDRy?=
- =?utf-8?Q?v/eld64LlpFczpPV2k5nLO/CH?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ed8d7c0-c82e-4aa0-f1d3-08dd0eb01afe
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2024 06:52:48.7480
+X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB6103.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ecfab606-5b84-4e72-e8c2-08dd0ed3b4a1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Nov 2024 11:07:38.7451
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +FhWf1ddJt6AtRm73xkoDIhu2comHcYx+wZqg4A9F/F2kF+9JEr57A88C410fgwWEP0CfhPfaPT68K+3TuFzUA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB6650
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Vo6cUIL6N7jvdz5SvVkcaLjmU8bnbUXqOwApyBOVXioCWq5+BQWCV2RX2GkZ7aHjfxY43BO965EJaGufJeqkdDEIpuXt6KJudxHChHye7Qs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB12773
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 27 Nov 2024 06:52:58 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17286
+ <cip-dev@lists.cip-project.org>; Wed, 27 Nov 2024 11:07:49 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17287
 
-On 26.11.24 23:16, Quirin Gylstorff wrote:
-> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> 
-> This enables the cip_merged_defconfig for all qemu targets to reduce
-> the number defconfig under test. This is a followup from https://patchwork.kernel.org/project/cip-dev/patch/fa83e565-8950-4ca7-837b-1c513a119bfa@siemens.com/
-> 
-> 
-> Quirin Gylstorff (2):
->   update cip-kerne-defconfig to lastest version
->   use cip_merged_defconfig for qemu_*
-> 
->  conf/machine/qemu-arm.conf                 | 2 +-
->  conf/machine/qemu-arm64.conf               | 2 +-
->  conf/machine/qemu-riscv64.conf             | 2 +-
->  recipes-kernel/linux/cip-kernel-config.inc | 2 +-
->  4 files changed, 4 insertions(+), 4 deletions(-)
-> 
+--_000_OS3PR01MB6103FB47A8576B2CFA3275F6C2282OS3PR01MB6103jpnp_
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, applied (after
-https://lore.kernel.org/cip-dev/14e07f5b-e464-4a7d-89d6-b53d5d7630b5@siemens.com/T/#u).
+Hello Chris,
 
-Jan
+We are planning to run software update, secure boot verification and IEC la=
+yer tests on M-COM x86 device in CIP LAVA.  To achieve this we believe ther=
+e are two main challenges.
 
--- 
-Siemens AG, Technology
-Linux Expert Center
+Booting a disk image (.wic) on M-COM x86 in LAVA
+
+We went through the existing job definitions running on CIP reference hardw=
+are on LAVA to re-use if any disk image is being booted on them but did not=
+ find any. In every job definition, the root file system tarball and kernel=
+ image are deployed separately to tftp. We are going through LAVA documenta=
+tion to figure out proper method to boot   entire disk images on LAVA.
+
+Can you please provide your suggestions on how to do this, if you have any =
+?
+Once we are able to boot a disk image, then next task is to boot a security=
+ image.
+
+Configuration of BIOS settings on the device's firmware to boot a security =
+image
+
+Basically, CIP security image has secure boot feature enabled, so before bo=
+oting such image there are some settings that need to be done in BIOS such =
+as:
+
+
+  1.
+Enabling secure boot option
+  2.
+Adding secure boot keys in EFI storage.
+
+Only after these steps, a security image can be booted on M-COM x86 hardwar=
+e. I am mentioning these steps based on our current experience with local s=
+etup. But I am not sure how to achieve this on LAVA.
+
+One idea is to pre-configure the above-mentioned settings in the device pre=
+sent in lab-cip-siemens-prag but in that case I believe health-checks and a=
+ll other tests running on M-COM x86 can boot only secure images.
+
+Is there a way to change the bios settings through some arguments in the LA=
+VA job definition ? If not, then can you please provide your opinion on the=
+ above-mentioned approach.
+
+Thanks and regards,
+Sai Ashrith (T S I P)
+
+
+
+
+--_000_OS3PR01MB6103FB47A8576B2CFA3275F6C2282OS3PR01MB6103jpnp_
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div class=3D"elementToProof" style=3D"direction: ltr; text-align: left; te=
+xt-indent: 0px; background-color: rgb(255, 255, 255); margin: 0px; font-fam=
+ily: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sa=
+ns-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+Hello Chris,</div>
+<div style=3D"direction: ltr; text-align: left; text-indent: 0px; backgroun=
+d-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Aptos_Embedde=
+dFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt=
+; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"direction: ltr; text-align: left; text-indent: 0px; backgroun=
+d-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Aptos_Embedde=
+dFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt=
+; color: rgb(0, 0, 0);">
+We are planning to run software update, secure boot verification and IEC la=
+yer tests on M-COM x86 device in CIP LAVA.&nbsp; To achieve this we believe=
+ there are two main challenges.</div>
+<div style=3D"direction: ltr; text-align: left; text-indent: 0px; backgroun=
+d-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Aptos_Embedde=
+dFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt=
+; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"direction: ltr; text-align: left; text-indent: 0px; backgroun=
+d-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Aptos_Embedde=
+dFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 14pt=
+; color: rgb(0, 0, 0);">
+<b>Booting a disk image (.wic) on M-COM x86 in LAVA</b></div>
+<div style=3D"direction: ltr; text-align: left; text-indent: 0px; backgroun=
+d-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Aptos_Embedde=
+dFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt=
+; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"direction: ltr; text-align: left; text-indent: 0px; backgroun=
+d-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Aptos_Embedde=
+dFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt=
+; color: rgb(0, 0, 0);">
+We went through the existing job definitions running on CIP reference hardw=
+are on LAVA to re-use if any disk image is being booted on them but did not=
+ find any. In every job definition, the root file system tarball and kernel=
+ image are deployed separately to
+ tftp. We are going through LAVA documentation to figure out proper method =
+to boot&nbsp; &nbsp;entire disk images on LAVA.</div>
+<div style=3D"direction: ltr; text-align: left; text-indent: 0px; backgroun=
+d-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Aptos_Embedde=
+dFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt=
+; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"direction: ltr; text-align: left; text-indent: 0px; backgroun=
+d-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Aptos_Embedde=
+dFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt=
+; color: rgb(0, 0, 0);">
+Can you please provide your suggestions on how to do this, if you have any =
+?</div>
+<div style=3D"direction: ltr; text-align: left; text-indent: 0px; backgroun=
+d-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Aptos_Embedde=
+dFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt=
+; color: rgb(0, 0, 0);">
+Once we are able to boot a disk image, then next task is to boot a security=
+ image.</div>
+<div style=3D"direction: ltr; text-align: left; text-indent: 0px; backgroun=
+d-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Aptos_Embedde=
+dFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt=
+; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"direction: ltr; text-align: left; text-indent: 0px; backgroun=
+d-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Aptos_Embedde=
+dFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 14pt=
+; color: rgb(0, 0, 0);">
+<b>Configuration of BIOS settings on the device's firmware to boot a securi=
+ty image</b></div>
+<div style=3D"direction: ltr; text-align: left; text-indent: 0px; backgroun=
+d-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Aptos_Embedde=
+dFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 14pt=
+; color: rgb(0, 0, 0);">
+<b><br>
+</b></div>
+<div style=3D"direction: ltr; text-align: left; text-indent: 0px; backgroun=
+d-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Aptos_Embedde=
+dFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt=
+; color: rgb(0, 0, 0);">
+Basically, CIP security image has secure boot feature enabled, so before bo=
+oting such image there are some settings that need to be done in BIOS such =
+as:</div>
+<div style=3D"direction: ltr; text-align: left; text-indent: 0px; backgroun=
+d-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Aptos_Embedde=
+dFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt=
+; color: rgb(0, 0, 0);">
+<br>
+</div>
+<ol start=3D"1" data-editing-info=3D"{&quot;applyListStyleFromLevel&quot;:f=
+alse,&quot;orderedStyleType&quot;:1}" style=3D"direction: ltr; text-align: =
+left; list-style-type: decimal; background-color: rgb(255, 255, 255);">
+<li style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, C=
+alibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+<div style=3D"direction: ltr; margin: 0px;">Enabling secure boot option</di=
+v>
+</li><li style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontServi=
+ce, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+<div style=3D"direction: ltr; margin: 0px;">Adding secure boot keys in EFI =
+storage.</div>
+</li></ol>
+<div style=3D"direction: ltr; text-align: left; text-indent: 0px; backgroun=
+d-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Aptos_Embedde=
+dFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt=
+; color: rgb(0, 0, 0);">
+Only after these steps, a security image can be booted on M-COM x86 hardwar=
+e. I am mentioning these steps based on our current experience with local s=
+etup. But I am not sure how to achieve this on LAVA.</div>
+<div style=3D"direction: ltr; text-align: left; text-indent: 0px; backgroun=
+d-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Aptos_Embedde=
+dFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt=
+; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"direction: ltr; text-align: left; text-indent: 0px; backgroun=
+d-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Aptos_Embedde=
+dFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt=
+; color: rgb(0, 0, 0);">
+One idea is to pre-configure the above-mentioned settings in the device pre=
+sent in
+<b>lab-cip-siemens-prag </b>but in that case I believe health-checks and al=
+l other tests running on M-COM x86 can boot only secure images.&nbsp;</div>
+<div style=3D"direction: ltr; text-align: left; text-indent: 0px; backgroun=
+d-color: rgb(255, 255, 255); margin: 0px; font-family: Aptos, Aptos_Embedde=
+dFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt=
+; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"direction: ltr; text-align: left; te=
+xt-indent: 0px; background-color: rgb(255, 255, 255); margin: 0px; font-fam=
+ily: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sa=
+ns-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+Is there a way to change the bios settings through some arguments in the LA=
+VA job definition ? If not, then can you please provide your opinion on the=
+ above-mentioned approach.</div>
+<div class=3D"elementToProof" style=3D"direction: ltr; text-align: left; te=
+xt-indent: 0px; background-color: rgb(255, 255, 255); margin: 0px; font-fam=
+ily: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sa=
+ns-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"direction: ltr; text-align: left; te=
+xt-indent: 0px; background-color: rgb(255, 255, 255); margin: 0px; font-fam=
+ily: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sa=
+ns-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+Thanks and regards,</div>
+<div class=3D"elementToProof" style=3D"direction: ltr; text-align: left; te=
+xt-indent: 0px; background-color: rgb(255, 255, 255); margin: 0px; font-fam=
+ily: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sa=
+ns-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+Sai Ashrith (T S I P)</div>
+<div class=3D"elementToProof" style=3D"direction: ltr; text-align: left; te=
+xt-indent: 0px; background-color: rgb(255, 255, 255); margin: 0px; font-fam=
+ily: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sa=
+ns-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"direction: ltr; text-align: left; te=
+xt-indent: 0px; background-color: rgb(255, 255, 255); margin: 0px; font-fam=
+ily: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sa=
+ns-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+</body>
+</html>
+
+--_000_OS3PR01MB6103FB47A8576B2CFA3275F6C2282OS3PR01MB6103jpnp_--
+
 
