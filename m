@@ -1,544 +1,334 @@
-Return-Path: <sai.sathujoda@toshiba-tsip.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C14CD78320
-	for <webhook@archiver.kernel.org>; Mon,  2 Dec 2024 13:33:29 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
- by mx.groups.io with SMTP id smtpd.web10.172941.1733146405832525086
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B25D78321
+	for <webhook@archiver.kernel.org>; Mon,  2 Dec 2024 13:38:59 +0000 (UTC)
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (EUR02-AM0-obe.outbound.protection.outlook.com [40.107.247.61])
+ by mx.groups.io with SMTP id smtpd.web11.173902.1733146729996778950
  for <cip-dev@lists.cip-project.org>;
- Mon, 02 Dec 2024 05:33:26 -0800
+ Mon, 02 Dec 2024 05:38:50 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.158, mailfrom: sai.sathujoda@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 4B2DXNJk439296; Mon, 2 Dec 2024 22:33:24 +0900
-X-Iguazu-Qid: 2rWgWTQ5o3WzeW4qXI
-X-Iguazu-QSIG: v=2; s=0; t=1733146403; q=2rWgWTQ5o3WzeW4qXI; m=2JyxiHsYo0QBIJA/D4p2XEVdf/K8/lPjPSXn1niXbp0=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1120) id 4B2DXMHs3421189
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Mon, 2 Dec 2024 22:33:22 +0900
+ dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=QZTERH4R;
+ spf=pass (domain: siemens.com, ip: 40.107.247.61, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JPMJVQ5hmALMA3rCNfraogsuZi/5WiH9zNOCgP48D0ssRdmcnhmDMWpk7Djd0vs/hq+XznQ3cP3fHCDBI/8XyWGe+q3xzlJe+/4KXNh4VmF1SlqkT/HCBQvT+dSpO7i9uDK+N8teqbqh/u4UpXTqXrgtauoXse4G2md9JyCEtoVRHlPQL3qPeaCpzxmNpLCHs//P415d5/PhoWY1Keq/EvKAhqF9IRmitfv+SEKb7EZtR2To2jKkPyuav/V146gwRCOivLZisEDdhKJOtbzl/gRQwCvVVnXqWQtwHvwjgqcB80i6wX87rlyyr6lw4Jq8gpVt3xbPpftfQPL2nYtrhA==
+ b=XZM+3AWF7lRU3/ne0oI2L7Op4k8A+fGggDZGUomt6o9gouXAnwjfW3baAj43Up5SB0slzIo74mAkwlzJ2189PrsqPPGZ8BJ4YhFo3FialIhdVUmZwbm2wUsQIdoD9X/hCSz7o2EQ5FBMAJEXnnjKBHrDwJWOC/+Y2YHkF5WZJRDesfsWFG1mgCA4usMEJbIXr/3oH5myqttnHQXcctMmGsePs3lnk1KAwzZ56YDbAJ3M6zq6pCT1fyVo6BcyZNw/9GMsNauoC6D3GP9weDX+OimLe+0EC6UbRAfHNFWNnwG/w+OqFSHk7kny0Ht031ZcvvOvtzqIkxetrVL1Ic6QKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ivk+PmDSZ/EEtiiMJlDeg7KLwcl2jDTBc4/TGJ7rY9I=;
- b=SFj6vbgXXhrhtysqNzf/VWon1zcqxidR/jfd5xFJ6QcRwf8TDoZYLOr5p01oz/ZyKrZMc9AOxVOR74rS5lJi/9sYhuZHHSdmftph/gR0HEV70tUNIuApaNcyjN2hgPBRogtFLgaldJdAROfjKq51rfisZRRub4JDyF4MZz959UUv81xUOtg5/zuu0uw3M3IBOAARhj4f6CDy1TgipYmK50NEkS6i5CbvEMznLljr8nEBC5TnoqtTSABF1+YOS0E8wcBn+9Skrr05jOARs2uThPmLlZV/CzEK/Rys/PyoByeKP70oV6jo7eAowWDXMtS+HKogSwr4UQmlHlPJpoNRAg==
+ bh=EXU/6QumLsThZ4q1SwahozjD1TWMWW5yg2ni8YhgM+8=;
+ b=kVEIvgClUl3vV3nJ7bW6rBcedSHe5YJ73fvrxDCgG22QluXIpdkrQod+V/XliDYWDAg8nkEnYWf9H5kpefIjGLmIWLlcycQOEd7SY0IJ7c1pbfgQHM1zjY2utB7dE4QM0tDicFTcPUvYBY7KplKvs65GDFlkB75U3NV7Dz9Z8EI+4+gcumL5dsiJSssSfIQxC4d/TUDIWDYekJfpW+tCV+3eIHsn5KVYXcCBAHeKhg3vlsBrmPbhE0SIGUHVkDonGSU5EI10R6oJad6WqLGIkfUEYAa/s8hkehO7n9fG7FDk0iWowdkNNTsADgG40HP3yrrIaJJaYAWerIQ7tQ6oKw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
- header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
-From: <Sai.Sathujoda@toshiba-tsip.com>
-To: <cip-dev@lists.cip-project.org>, <quirin.gylstorff@siemens.com>
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EXU/6QumLsThZ4q1SwahozjD1TWMWW5yg2ni8YhgM+8=;
+ b=QZTERH4RcwPFNQWXo72HfBu+Wztc+WLilbasxVzQ4x7u3N1wgyL0qsZlTRszWPtMDR4oTQMNFdWbq07ioG6dc8p+i1Cd6OrHa6Dd5knCMdFmFaxoIZCemPhx2npAcHs1iGkSLOg2fkg/NRZJmQrjzuObfIPPv1IYASFYz4x9KtGL4Gl8L0UPVJJiE3Gxri7SZXZRt+qeAaHhBpxrDscS4AkGetydpNlwBQQJ9Zip85KIr8HP/0RU5xlIC44b8pfy3P4rwEzbFedtztWjv6oODu4qBhNmLe1FZWe7dtQjCAUlGXUti0DZOStDUHUwsY1LrvMyvf4HchF2LvLXZUeJaw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1f9::22)
+ by AM9PR10MB4134.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1fe::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.8; Mon, 2 Dec
+ 2024 13:38:46 +0000
+Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::3087:c116:dfed:1ca2]) by AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::3087:c116:dfed:1ca2%7]) with mapi id 15.20.8230.008; Mon, 2 Dec 2024
+ 13:38:46 +0000
+Message-ID: <b23ea3ed-d394-4ff9-bed0-61d4c6257971@siemens.com>
+Date: Mon, 2 Dec 2024 14:38:44 +0100
+User-Agent: Mozilla Thunderbird
 Subject: Re: [cip-dev] Booting security image (.wic) on M-COM x86 in LAVA
-Thread-Topic: [cip-dev] Booting security image (.wic) on M-COM x86 in LAVA
-Thread-Index: AQHbQLwTUaTAYoFsNEu+W9FEgwfyArLLKo2AgAfBa0mAAA2vgIAAAafR
-Date: Mon, 2 Dec 2024 13:33:20 +0000
-X-TSB-HOP2: ON
-Message-ID: 
- <OS0PR01MB6100597A316A2139498736C6C2352@OS0PR01MB6100.jpnprd01.prod.outlook.com>
-References: 
- <OS3PR01MB6103FB47A8576B2CFA3275F6C2282@OS3PR01MB6103.jpnprd01.prod.outlook.com>
+To: cip-dev@lists.cip-project.org
+References: <OS3PR01MB6103FB47A8576B2CFA3275F6C2282@OS3PR01MB6103.jpnprd01.prod.outlook.com>
  <434bc0cc-a0b6-4095-834c-ddd6a3fb2b09@siemens.com>
  <OS0PR01MB6100E150797AAB51AD72A3B9C2352@OS0PR01MB6100.jpnprd01.prod.outlook.com>
  <15dbcfce-757a-46d5-9d08-d4a8298348fb@siemens.com>
-In-Reply-To: <15dbcfce-757a-46d5-9d08-d4a8298348fb@siemens.com>
-Accept-Language: en-US
+ <OS0PR01MB6100597A316A2139498736C6C2352@OS0PR01MB6100.jpnprd01.prod.outlook.com>
 Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS0PR01MB6100:EE_|TYAPR01MB5883:EE_
-x-ms-office365-filtering-correlation-id: 4234003f-7c74-4a4c-8628-08dd12d5e355
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|1800799024|366016|10070799003|376014|8096899003|7053199007|38070700018;
-x-microsoft-antispam-message-info: 
- =?iso-2022-jp?B?blBNUDF4Q0lVa1dTcGQxcXIrZ3oxU2xIeW1zWk9VNmx1c3k0aExLWXZS?=
- =?iso-2022-jp?B?OG9PNVRSYy9JaXZ0cWlJUUlncEZPUXhvNGtFV1ZENUhzVTFrL0J5aHd3?=
- =?iso-2022-jp?B?MVRCcEpydWtVUVhtcGNiL2dkR08zSWd1anF1akRqS1JGSDNPTGtpZ0VZ?=
- =?iso-2022-jp?B?L01RUjFpY2hIWjJKUituWmluclpiQXNNWEtObDI0M1pkbUNRMFZMZjQr?=
- =?iso-2022-jp?B?NkVQSXVYd1FXZnZHQ1Q3SW81a09JcmhER25JTStVcWE3eGJiN3VoWENR?=
- =?iso-2022-jp?B?M1dxUGc2MHE4dzRyU0VzWG9DbkJEallmTGYxREg1SkkrNUMzb1BaZ3NI?=
- =?iso-2022-jp?B?eWlmdVJpSmlKTHVyTXU2TmZGQ1RxUnJVQSt0TFlYeGpUemc4RTMxc1hk?=
- =?iso-2022-jp?B?eW1ZeldRQ2JWQzVXYzgyRVFycVk4SEZWZ0k4WWo1bnNHM25Ga0h6YVZN?=
- =?iso-2022-jp?B?NURmckQ2L296RkdiT0lBZlN4UTN5ZFVXcnpKYnhkQVNwZmE3YkR0NU15?=
- =?iso-2022-jp?B?a0phYXpjeFBXb0RKRVNJODZsTTZ2VGJ0Vk12b0FWWTBQdExLUUVVK3V1?=
- =?iso-2022-jp?B?M3k4V1M3VWNzZ0twcm9ReXlQSUtDMTdJN1RRb0RuSnlmNzhpMm1RK3Q5?=
- =?iso-2022-jp?B?MW9NNUpNWnpBbjZrclhDa2d0LzV1ZEEzZTZXbGRiek5CM0FNQ0dLVHQv?=
- =?iso-2022-jp?B?MHZONjJGZFVBeDV4S0pZV0JXNjgveUZ5U1hyTzIydXRBUVBkRU9hZExh?=
- =?iso-2022-jp?B?Ry9VVG5wL0FuWEtLR1lWWUdjWVhlbHBUTnZja3V4NVFlNWwxUDZZUDlm?=
- =?iso-2022-jp?B?QllGZ0xabTJNTUtTK25BeUNvL2ZDSW8zQ1FtWjdSMW1CUy9VYnpsejM3?=
- =?iso-2022-jp?B?NFV5cGxrNFdGWHRKUFhJcEQwRFhYYzc5QlIxWFdvdWxoVVhVZTF0dXk1?=
- =?iso-2022-jp?B?UEJLSWdtRHh1aS9rcCtIUkJoK1JDaGM4SXJORFBlOXEwY2JiMk1IZUxp?=
- =?iso-2022-jp?B?YVl4bXlLZTlRRG5xSkpTcWFNdzV1WVI0dFQ5T3l1VWg4QWMwZXVXbTVO?=
- =?iso-2022-jp?B?T3AxNFR6QmhyVXhrbTVpQU1sZUJFc3U1OC9jSG1SOXpuRTdoQmQ5QmVx?=
- =?iso-2022-jp?B?M1ExaWJ3cFRuM3FKRU5iNFhRbE5jai9INnU5eGZMSjlsYVd5aDIvdTZl?=
- =?iso-2022-jp?B?NlhKZHpoTUVuVlh2dDBXY0Jia1N2R1NOVDEyY1hmbUVOb0JzWmdMSGJn?=
- =?iso-2022-jp?B?L0lySVBzYnlsZDBXMy9kUDBxQkxhaExyOGZrOW1ncWJ3UmdVNWh4ODg4?=
- =?iso-2022-jp?B?Q3NyNU9vUGpVTDdFeGtVbUlTRnl1ZHRhYVAra2hBR2wrdnJCdlU2SWNq?=
- =?iso-2022-jp?B?TDluMWpJWGhXbWg5R2c3bmVNMTRRNmZkZ2tNNVpUZ2Jlc2JHQ3JXaGQx?=
- =?iso-2022-jp?B?QllQTGJWbm1Gd3JvdytWQmFHRUdIV2dyazRxVW4xMzVmaWhhMXNMMGJG?=
- =?iso-2022-jp?B?aFAvTUVQVlRWcE1DckNYd3BjU0c3Rkw0akRabUl1MmFrZlFkRUFVUUg0?=
- =?iso-2022-jp?B?M1RRbXhXUHRiVE9XQk5DOXBUbnlhNzlveUxoYS9OY3hYQU1naklKY3hV?=
- =?iso-2022-jp?B?QjNYZ0VTMEhUdnhOUytsUTcyVE1tRU9TYjd6OUFzQllQMXUrcm9WVlU2?=
- =?iso-2022-jp?B?ekE0OUJQeVRQaWJuM3ZGa0Jzai9jRTJJR3RaWExKQXhjeW01OFZrRmd6?=
- =?iso-2022-jp?B?b0VyaHRlQ05aTUhFZlNHUDB1UDg0UG9HZ3Jsc0JuN29LSkRnTG1TcERB?=
- =?iso-2022-jp?B?L1VvSEFwQkw2YUd6RHVQQUNjWXJXUlovMUpwK3oyNGxtVGlCRVJNSUY1?=
- =?iso-2022-jp?B?dFZnWDNPOUJHWDVTQWJuU3prTkR2MFphY2J4dXIvTDRQNVBxaFd2N2lv?=
- =?iso-2022-jp?B?ZExzbEwxOEN6SFU4QlZlSTUzaGlqam96RzIxck1helN4OVRGVEs4aXor?=
- =?iso-2022-jp?B?blNJNGw3Y1drZUVKVkVxTkR2ZFJYczJieDVPb2N1aHpJNFVjdGhFVGFv?=
- =?iso-2022-jp?B?Zmc9PQ==?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB6100.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(10070799003)(376014)(8096899003)(7053199007)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?S2hTZXJvZHYvTG5MN2dQNnE0eXJkanJrbzVhNTh4WngweVhOUmw1OUtQ?=
- =?iso-2022-jp?B?enlWSCtpMXZtTms3V1UzSWV0YkhoZ25JZ3lmbis3dUR5UE1pOHcyQ1JL?=
- =?iso-2022-jp?B?WHh6UktMR3h3REtmblgyOXBTYlFRaUdFVEFWUm5zU213YnpUWmw2cENL?=
- =?iso-2022-jp?B?OThlMjZ3UDBvNnVZU0FMS1pHcDdTbk0ybmgrcFk4OE9QT0lRS0dkR0h4?=
- =?iso-2022-jp?B?VUJWbzlUay9vamtwaDlIMFN2SVU2cExhcWNtU3BHTDU5WXJKdjFBNGlh?=
- =?iso-2022-jp?B?eHNlOG44UEdDdGtwS2JYNGp3dWhBYlpnNjZrc2RXSm0yV2lZRkpGSFNs?=
- =?iso-2022-jp?B?Y1g0YkZlY3diS3BaQVEvK1Q0SnhreDNzaXEzOW56VGdWYXZDU3Z5ZXgx?=
- =?iso-2022-jp?B?NnRIcGVneHd2Tmoxc1FndXczaFFTbXRNR3J0NjhTaUwzSTloc0ErN3NF?=
- =?iso-2022-jp?B?ek5VTkxxUW5sc29vUzR3emRZOXMwVmVzSFRtN3ZJSW5Xa1RjSmk0TWI2?=
- =?iso-2022-jp?B?eFA0elJhUVF0TVFiVVVmVnRycVBoRkhlMy9XWGw3bzV3VGZBVDNDSjda?=
- =?iso-2022-jp?B?Ulg2bmwzanFUZkwvWUtrQzNIbE9ybjFjUmo0KzFhWmpqQitUUGI5aFBl?=
- =?iso-2022-jp?B?alpqUndMOW1LV2RXZWViaWZsSithVkF6RXZ6emdBYm9Ld25lT0JQYU1M?=
- =?iso-2022-jp?B?RC9wREx3enNqcEhnOHNBSHQ5RCtyRnlkUWZKQXplYkkzM0FFSzl3bE1T?=
- =?iso-2022-jp?B?N05FTFdsQm54eEtMTEpBcWdCM3BKbENDcHhOQXFaZVV1WVRvd2c1QjJJ?=
- =?iso-2022-jp?B?VFhKbnVxT2QzZ1piV1UvSDI3d2NTQmRtT1MvNmdldmd4bTV5Z21HdC9l?=
- =?iso-2022-jp?B?Y1B5M24xc3pGN1hTOVZhL2tvcENjUHBGWHliUTR2TEdRZGZPVUJCTGdO?=
- =?iso-2022-jp?B?N0loQnh2ZkVua0t5UFVPQ2RpdnVRc0ViU0FxQS9wRG5SUzh6aG5pNVpZ?=
- =?iso-2022-jp?B?bEg5eCt6c2xvT3kwSDcwNTN0a1hQOUZlcmovRmMwTWZGeTVnc0hGbHI1?=
- =?iso-2022-jp?B?eUFRb0pBTURIRmNFVkZrTEx1eHhNdGIvMTdUV2FBcUJkQkIycVgvcHJi?=
- =?iso-2022-jp?B?RDVidFJrWEV0MW5GbmdHVEVqZjlxWStsNGhGSTV3OWRVaFN4aHhvSG1J?=
- =?iso-2022-jp?B?VHhkQm5OMnNJRXREV3duVEFIa3g2aG4vUnpvVE5Qd05rekJpaHo5WUla?=
- =?iso-2022-jp?B?THl5T2dkWUYvWUMwMVQ0ZlVhL1VZL0F2TGFZVlN5ckV0RmtkeUVCdndB?=
- =?iso-2022-jp?B?bHJ3ZmNCOUorOXZoNzlTZHhYQndwQ1dPMUVJdzI5bkx2bExzNmQ3S1ZP?=
- =?iso-2022-jp?B?UW53STd2aWhYQmROY2MrTDYvQmMwUDRjWkFNem4rdFhCbDVMK0x0UkxW?=
- =?iso-2022-jp?B?eTBwajkxeUhnMGJidmtMTFR4V1draGpvMzBkWkY2ME0xZmJQTjNncmcy?=
- =?iso-2022-jp?B?eVJ3empRVS9MelpKQkFZWkZrTjlLZWpackJ6d1RQVTBNVWUrZTU1MUov?=
- =?iso-2022-jp?B?dHk0UHBiR0ljeUFReWQ0YmNvaUF0aFpGL1B5OEFyZ1BYTmczR01LdmRI?=
- =?iso-2022-jp?B?MUFoVjZiV20wR3hPNHovQjlCQ01yOGdWR2U5OUM1eE93WGo0UGZwUlRI?=
- =?iso-2022-jp?B?QUgxdnpqQ01xcTZKb254UHJ1RmlkY0lYTW1vSjFPNzBwSkdTRXdvZm5S?=
- =?iso-2022-jp?B?SmJoM1BrV29PZDhyRUdka1R0OFplNE9OS3dQMzVGeEJuaVZJYUpCWVVB?=
- =?iso-2022-jp?B?eGRQSndUWTYybXJPN1pobC9LSUNCNFI2cDh4TVpneWMyWUJ1anpwbGZv?=
- =?iso-2022-jp?B?UjB4R050ci9GOUQxNEhDVG11K284dXQ5NG9PcFZCdFl4ZjN6cGtJL291?=
- =?iso-2022-jp?B?MTZmdHZ5M0hWdkxpb2JKNENPaDVKbWpRLzdPbS84VGdvYTh0OXFkWnN6?=
- =?iso-2022-jp?B?dllBWXQ2QU4va0VBYWNnNGNRSUp2NGcrZy93dFpkMVRUc2I1bG81QkJu?=
- =?iso-2022-jp?B?M0Y4M0p2VEhFd2NVUlI2K2ZIK1kzSnVWQytHM1dacDhXYmlOWE94bytX?=
- =?iso-2022-jp?B?elU4VENnSzZTUjNja1lFU0doSkxmdVd3NjJWUXRBSHV0NXVlTkhUQk1u?=
- =?iso-2022-jp?B?anBQWFQxSDRxUE00NUcrWmtSZFZ3L0h3Y2ZOaW03QnNLeVgrbThQTllJ?=
- =?iso-2022-jp?B?MDh1U3h6aktvbzdJOFVyNDNqU1BNa0VsOU1OdUFYTzlHOERWT3cwQUxq?=
- =?iso-2022-jp?B?RS9FRTBGbHYzckM3UHkvdUN1eU10Sm8wRXpIOEdHWWc1THZxYy9ieVd4?=
- =?iso-2022-jp?B?cmU4bmQ4RUhYLzlHdjFZcENrTzJsbFNHOWl3ME1XRDVMaktEalNPemNa?=
- =?iso-2022-jp?B?T3BiMWVBPT0=?=
-Content-Type: multipart/alternative;
-	boundary="_000_OS0PR01MB6100597A316A2139498736C6C2352OS0PR01MB6100jpnp_"
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+In-Reply-To: <OS0PR01MB6100597A316A2139498736C6C2352@OS0PR01MB6100.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: FR0P281CA0130.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:97::17) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:1f9::22)
 MIME-Version: 1.0
-X-OriginatorOrg: toshiba-tsip.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|AM9PR10MB4134:EE_
+X-MS-Office365-Filtering-Correlation-Id: e50f1d4c-c5ee-4a5b-dad1-08dd12d6a513
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|376014|4022899009|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?/ZKunfE7bBlhRV8YCIKqzT6nOF3089S8ym8+nD6cZLoKfqZrla5R6OVvXE3L?=
+ =?us-ascii?Q?kl01cffbXe9M6yhNnH2n2AS9rLxO3simdZuX5uXE8RtNCR+4jRKpvqK267lv?=
+ =?us-ascii?Q?e2Ljp7mktfjletjzCl2qmmKfMVx3I5fiXe9rZxPhM2K5adYOcHkBsQknTd6M?=
+ =?us-ascii?Q?THZNJcozHu6ijnl8jjN0lnJ3ZyE2hM0AsUWekFbxi40IJFuLWAzeivQYfN+i?=
+ =?us-ascii?Q?2W/5NpZ0EtR2gC+p86Ks96wjQC6IrlC0mbuOkeyOyRw3TCFRD3QmuZdOsqO0?=
+ =?us-ascii?Q?OD4JXYxylPYOJ+rFGm3EMx4m/pfzzDrUcKyGIpAEByz0qb4jHPksy52Cs8MQ?=
+ =?us-ascii?Q?3zgNJrhCWIvKgGpaHJUerULvkiCrVgnlxsce+gpEgdTcAUBYPtLvFwBp6WWL?=
+ =?us-ascii?Q?Ix4m3yE+BzbCNb1EGtIMsj5zLiQCPoL8djKVY4uprEX7Ys82AncvgcWpOJSI?=
+ =?us-ascii?Q?DDXou9GLRppF+Vza69U9bTygabmVNchaZp6V95B67SRZcP65h0frGyf+41zs?=
+ =?us-ascii?Q?cHdmd7lao4CEdRfBq9CiZGYX7JcFYGFtwncrB46dibwcmjZmUm7FnmpHuFvN?=
+ =?us-ascii?Q?WphGqP9sPPm76bFjcNbw92nJoV5sB71wa2PUCZovREZzkMxg++BnDD+aSgfz?=
+ =?us-ascii?Q?PCcSxD+jSf3H0BNWoVXKXeoP6RE/4phmNnKe5s4Op7v7wglaz4UgYmgN9WY7?=
+ =?us-ascii?Q?G7oT1o072IfobBYl8Di/UFmCGhwuBcrp1rcb0VHkPMMiTw0IehCX2PEttlZf?=
+ =?us-ascii?Q?8EbdWB1IhYFmT6WvFeJ4a+cQLP0vrenyBcmJT5fEyiOrrYY/ETwEpLz9W+tk?=
+ =?us-ascii?Q?xb0UxjJ4YmgafBETQZXVHqbwxgLhlb77OFZ8i+Lrrq0OIHqaDAtfXKutYWvz?=
+ =?us-ascii?Q?WNq4hW7d4/ZDb5G8ML075Oh+HZ1Pd+9cIpmTeBPrufbNYb8kVosyxT5NIBy0?=
+ =?us-ascii?Q?OtbJHYYif6KuJXWGduipUdGTOLfpdjWVCq6efC9v5ucUiQuFu3yFIx7vbJqx?=
+ =?us-ascii?Q?F7yXPVM5uCcu+mhs2zyscPaRxPqOzjUcGHRLmNUU6q/MFx4GqarH07iD0D/Z?=
+ =?us-ascii?Q?UBewk9jkg759cC9d/NKiWdBoLx7yITVhI1XupFeT4K940nXhdSks7VWUKQ2O?=
+ =?us-ascii?Q?mtudwKleTzVV8PUSe9iRFR3Jeb+9xKr3908wQTNbsyAmq1xeWUN0oApiLt9O?=
+ =?us-ascii?Q?EmAHDjVBfDYT4kl2inNt8eH3hyatwgsrKQD1D7mNzAB5E6XPJm9Vktz6bbc2?=
+ =?us-ascii?Q?PIQ1WAkNqoWv5P5qKDZud63QRGVQopLBiYdfb2bduortn+WNvX6XZ7It6MrR?=
+ =?us-ascii?Q?tjA=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(4022899009)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?6KZvJlARnvB8SHCWiCo17E8oSucTdL3WAIVB7Q+mteSxVCQI1Edo9jAiFph2?=
+ =?us-ascii?Q?d1xkIydGx4Ar8TNfiJPS52Q7OkkJH2+roYfcJ8Kb0hWHFra7vvBFmMJfXxN7?=
+ =?us-ascii?Q?5w41IS026i7KPDP/bAmvdVkDCKWcV5ZgYX/EQIE32lQkrA2N+BpiDISTmBV0?=
+ =?us-ascii?Q?WTvpIY5mKKf3Z4ALAsUtAoUYV93nRAaQYV/vbdIIoVlvq8yKIq6wkwyHqx7k?=
+ =?us-ascii?Q?GU4z7WEL1u9h4t6w/pnw4bfeMcZ5a1ZbhN4aMNLKdjK6+lduq+Hqf7gZ+L0d?=
+ =?us-ascii?Q?3vgKzbgzcldNSJxg2/4EzJTRJiZX+l5S3SAalOMMwGMxSLJtYIgp+/n7PSSR?=
+ =?us-ascii?Q?nnuizTk/UnVqxgkxcSPNUSH6Thv19lHCWZUH1AGlasmufnuSlyNufXcuI/Pe?=
+ =?us-ascii?Q?GLyBB5qQWcoAWTnVLOBR/rzl69fPBVW9TCfEQxZp6LW3SlQNDfX5QlME7dRO?=
+ =?us-ascii?Q?0N0dfemepGRvQ4BuWPlGn8bU0HqynS6n35IiDhMNOj9YPC/w9iJVuYw8lC6L?=
+ =?us-ascii?Q?H3L8ojiWdnQUavAxCtr6AjuBpscYSm7rp32URQ6V3NjNgKcHJsmy1ulFqGqp?=
+ =?us-ascii?Q?6FmvY5vBDUxI/jvzR2zBrP7nZMheVXzTexrRLwsTaWQvt/v1er/zOehrhMd1?=
+ =?us-ascii?Q?7Uy6TESKr5FMr6nbtosbVYRbiKlKB7J4Bo5z5ZezOa6uOLdwMpiih37q8wS5?=
+ =?us-ascii?Q?HJmTiC3vwUEVK4tAHqCT6uHiB4ohgNeEjIVbR3hUgkeQvpPsXl0lt2ffvF+U?=
+ =?us-ascii?Q?FJ/4r2f9meKzmahF4kDANQgi7PziwU7Pqu5hadYDnDAO/xrKcQoVYpkFg9LR?=
+ =?us-ascii?Q?MCaDJsNOQ2WPDAG4HOD/QKWPlMymVcylIvxBZwnxXXZnAh6DW35tqUuCl25V?=
+ =?us-ascii?Q?gzSpdloUqfoS3HKw42XzH/bQDbldfIr/Kv3+FWdiXFjOMr2/fMqibz1+U2xA?=
+ =?us-ascii?Q?wgnHQjoRnmS2lSy/0W5hB+Fn4eYfxZ/JEFGg5B6/59QAVVlLQCbRUrjw9Pt2?=
+ =?us-ascii?Q?+RTQOad9bVSDpcC0nc0sbD+0Ry+vJLAxbs4ugFCNf3dk0cyBU2onTVIUIDd5?=
+ =?us-ascii?Q?WVciOTAX1FhPo8R2QDzHrxBOqa4TvuNM0TM/J8295HhhP1dNmKRWScfNzGUu?=
+ =?us-ascii?Q?nw2EGj2XbgisnSykHlj0Io2t92txhRz/NzHKyTK9qgjhOIhfEQ2uudNOd3Nk?=
+ =?us-ascii?Q?howXvGtr0x5Qar4vhWgzLcojY3cAprsoib951nw5wbo258y0tdMximO1QaYO?=
+ =?us-ascii?Q?fIpEfVNPQATinDLYNTg38zvv2loxinbn9lzxk35eUFzV48EBOZ5GQM8U2CiB?=
+ =?us-ascii?Q?BuSpUTZiD/vephT6Fq5cILwjypKG5bynup2caAlO3+9gOmj+apXUc21R7Txd?=
+ =?us-ascii?Q?yYidAqie2YOLoRBngjUZQzd1uYDVCJiWeIdb9rvxtYxN3f1K6Su0feT/8UEH?=
+ =?us-ascii?Q?UlRJNtUaizppcfK+oNl9thwNt7TjcDMaD2HUjmK2S836xtWLoDxRhDqA3itN?=
+ =?us-ascii?Q?uNGIE9T/yipb5EkJMc+ndFMrMkOkdALoa++zaQUR3Mvq9xLc6gXrpEfbcmIx?=
+ =?us-ascii?Q?9b+GtnyJ1VNVrSoYKJTLMrGY5726/sOeo/byDJptCRaO5/sGFpLepi38TVMZ?=
+ =?us-ascii?Q?tg=3D=3D?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e50f1d4c-c5ee-4a5b-dad1-08dd12d6a513
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB6100.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4234003f-7c74-4a4c-8628-08dd12d5e355
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Dec 2024 13:33:20.7474
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Dec 2024 13:38:46.2974
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Llej5/ub83LlZX60+g3EfqK48fENYGkF9Ykpy2boa2Tdzc7GD67drg+fEH6ijeNug6tyG2IaNhdYUYzer7bd+o2cd4OthMcCpmkF9NhFHCM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB5883
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yQiin4wZUN/pCoGE/D4YaFq5pavH6kUMDAoZJMHjw2Fm3cLLp27RA5qpbkZUGurFppXPfY79JZn0oCC8Kx8sotm4DzE5eEgJcmwn/c3d9sc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR10MB4134
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 02 Dec 2024 13:33:29 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17307
+ <cip-dev@lists.cip-project.org>; Mon, 02 Dec 2024 13:38:59 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17308
 
---_000_OS0PR01MB6100597A316A2139498736C6C2352OS0PR01MB6100jpnp_
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+Hi Sai Ashrith,
 
-Hi Quirin,
+can we separate the testcases which require secure-boot or wic images?
+So that we have a test base which we can test now. In the mean time we
+can check how to get secure boot and image based testing for the mcom=20
+into the lab.
 
-Currently we have only one test case where we verify the secure boot enable=
-d message in the boot logs.
-
-Regards,
-Sai Ashrith
-
-________________________________
-From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> on beha=
-lf of Quirin Gylstorff via lists.cip-project.org <quirin.gylstorff=3Dsiemen=
-s.com@lists.cip-project.org>
-Sent: Monday, December 2, 2024 6:54 PM
-To: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org>; Chris.Pa=
-terson2@renesas.com <Chris.Paterson2@renesas.com>
-Cc: hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D=
-#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp>
-Subject: Re: [cip-dev] Booting security image (.wic) on M-COM x86 in LAVA
-
-
-
-On 12/2/24 14:09, sai.sathujoda via lists.cip-project.org wrote:
-> Hello Quirin,
->
-> Thanks for your help. We will go through https://github.com/siemens/mtda
-> <https://github.com/siemens/mtda> to understand how this can be used
-> with LAVA to flash and boot the WIC image.
->
-> As you said, the secure boot image can be booted on a device with
-> "Secure boot disabled" in the BIOS but we have a requirement to automate
-> secure boot testing as well, so we need to figure out if there is a way
-> to configure BIOS through LAVA before booting the image.
->
->   If there were multiple devices, then this could have been handled
-> using tags where security image related testing can be directed to a
-> certain device with all secure boot related pre-configurations done in
-> BIOS where as the non-secure images testing can be done on the other devi=
-ce.
->
-How many test case really require secure-boot enabled? Most test case
-should be written in a way that the don't require secure-boot enabled.
-
+Best regards,
 Quirin
 
-> We can start a discussion thread in lava-users mailing list to check the
-> possibility to implement this.
->
-> Thanks and regards,
+On 12/2/24 14:33, sai.sathujoda via lists.cip-project.org wrote:
+> Hi Quirin,
+>=20
+> Currently we have only one test case where we verify the secure boot=20
+> enabled message in the boot logs.
+>=20
+> Regards,
 > Sai Ashrith
->
->
->
+>=20
 > ------------------------------------------------------------------------
-> *From:* cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> on
-> behalf of Quirin Gylstorff via lists.cip-project.org
+> *From:* cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> on=
+=20
+> behalf of Quirin Gylstorff via lists.cip-project.org=20
 > <quirin.gylstorff=3Dsiemens.com@lists.cip-project.org>
-> *Sent:* Wednesday, November 27, 2024 7:39 PM
-> *To:* cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org>;
+> *Sent:* Monday, December 2, 2024 6:54 PM
+> *To:* cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org>;=20
 > Chris.Paterson2@renesas.com <Chris.Paterson2@renesas.com>
-> *Cc:* hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B=
-!{#D#I#G""#M#P#S!{#M#P#4=1B(B)
+> *Cc:* hayashi kazuhiro(=E6=9E=97 =E5=92=8C=E5=AE=8F =EF=BC=A4=EF=BC=AD=EF=
+=BC=A5 =E2=97=8B=EF=BC=A4=EF=BC=A9=EF=BC=A7=E2=96=A1=EF=BC=AD=EF=BC=B0=EF=
+=BC=B3=E2=97=8B=EF=BC=AD=EF=BC=B0=EF=BC=94)=20
 > <kazuhiro3.hayashi@toshiba.co.jp>
 > *Subject:* Re: [cip-dev] Booting security image (.wic) on M-COM x86 in LA=
 VA
->
->
-> On 11/27/24 12:07, sai.sathujoda via lists.cip-project.org wrote:
->> Hello Chris,
->>
->> We are planning to run software update, secure boot verification and IEC
->> layer tests on M-COM x86 device in CIP LAVA.  To achieve this we believe
->> there are two main challenges.
->>
->> *Booting a disk image (.wic) on M-COM x86 in LAVA*
->>
->> We went through the existing job definitions running on CIP reference
->> hardware on LAVA to re-use if any disk image is being booted on them but
->> did not find any. In every job definition, the root file system tarball
->> and kernel image are deployed separately to tftp. We are going through
->> LAVA documentation to figure out proper method to boot   entire disk
->> images on LAVA.
->>
->> Can you please provide your suggestions on how to do this, if you have a=
-ny ?
->> Once we are able to boot a disk image, then next task is to boot a
->> security image.
->>
->
->
-> I would suggest that you check out https://github.com/siemens/mtda
-> <https://github.com/siemens/mtda>. This
-> provides
->    the necessary tools to flash a device over USB/SD.
->
-> We would need to adjust the lab setup for this.
->
->> *Configuration of BIOS settings on the device's firmware to boot a
->> security image*
->> *
->> *
->> Basically, CIP security image has secure boot feature enabled, so before
->> booting such image there are some settings that need to be done in BIOS
->> such as:
->>
->>  1.
->>     Enabling secure boot option
->>  2.
->>     Adding secure boot keys in EFI storage.
->>
->> Only after these steps, a security image can be booted on M-COM x86
->> hardware. I am mentioning these steps based on our current experience
->> with local setup. But I am not sure how to achieve this on LAVA.
->
-> You don't need to enable secure boot for testing - an image with secure
-> boot will also boot on a device which has secure boot disabled as the
-> image does not check the state of secure boot.
->
-> Best regards
->
+>=20
+>=20
+> On 12/2/24 14:09, sai.sathujoda via lists.cip-project.org wrote:
+>> Hello Quirin,
+>>=20
+>> Thanks for your help. We will go through https://github.com/siemens/mtda=
+ <https://github.com/siemens/mtda>
+>> <https://github.com/siemens/mtda <https://github.com/siemens/mtda>>=C2=
+=A0to=20
+> understand how this can be used
+>> with LAVA to flash and boot the WIC image.
+>>=20
+>> As you said, the secure boot image can be booted on a device with=20
+>> "Secure boot disabled" in the BIOS but we have a requirement to automate=
+=20
+>> secure boot testing as well, so we need to figure out if there is a way=
+=20
+>> to configure BIOS through LAVA before booting the image.
+>>=20
+>>=C2=A0 =C2=A0If there were multiple devices, then this could have been ha=
+ndled=20
+>> using tags where security image related testing can be directed to a=20
+>> certain device with all secure boot related pre-configurations done in=20
+>> BIOS where as the non-secure images testing can be done on the other dev=
+ice.
+>>=20
+> How many test case really require secure-boot enabled? Most test case
+> should be written in a way that the don't require secure-boot enabled.
+>=20
 > Quirin
->
->> One idea is to pre-configure the above-mentioned settings in the device
->> present in *lab-cip-siemens-prag *but in that case I believe health-
->> checks and all other tests running on M-COM x86 can boot only secure
->> images.
->>
->> Is there a way to change the bios settings through some arguments in the
->> LAVA job definition ? If not, then can you please provide your opinion
->> on the above-mentioned approach.
->>
+>=20
+>> We can start a discussion thread in lava-users mailing list to check the=
+=20
+>> possibility to implement this.
+>>=20
 >> Thanks and regards,
->> Sai Ashrith (T S I P)
->>
->>
->>
->>
->>
->>
->>
->
->
->
->
->
-
-
---_000_OS0PR01MB6100597A316A2139498736C6C2352OS0PR01MB6100jpnp_
-Content-Type: text/html; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
-jp">
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Hi Quirin,</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Currently we have only one test case where we verify the secure boot enable=
-d message in the boot logs.</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Regards,</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Sai Ashrith</div>
-<div id=3D"appendonsend"></div>
-<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
-bri,Helvetica,sans-serif; font-size:12pt; color:rgb(0,0,0)">
-<br>
-</div>
-<hr tabindex=3D"-1" style=3D"display:inline-block; width:98%">
-<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" co=
-lor=3D"#000000" style=3D"font-size:11pt"><b>From:</b> cip-dev@lists.cip-pro=
-ject.org &lt;cip-dev@lists.cip-project.org&gt; on behalf of Quirin Gylstorf=
-f via lists.cip-project.org &lt;quirin.gylstorff=3Dsiemens.com@lists.cip-pr=
-oject.org&gt;<br>
-<b>Sent:</b> Monday, December 2, 2024 6:54 PM<br>
-<b>To:</b> cip-dev@lists.cip-project.org &lt;cip-dev@lists.cip-project.org&=
-gt;; Chris.Paterson2@renesas.com &lt;Chris.Paterson2@renesas.com&gt;<br>
-<b>Cc:</b> hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =
-=1B$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) &lt;kazuhiro3.hayashi@toshiba.co.jp&gt;=
-<br>
-<b>Subject:</b> Re: [cip-dev] Booting security image (.wic) on M-COM x86 in=
- LAVA</font>
-<div>&nbsp;</div>
-</div>
-<div class=3D"BodyFragment"><font size=3D"2"><span style=3D"font-size:11pt"=
->
-<div class=3D"PlainText"><br>
-<br>
-On 12/2/24 14:09, sai.sathujoda via lists.cip-project.org wrote:<br>
-&gt; Hello Quirin,<br>
-&gt; <br>
-&gt; Thanks for your help. We will go through <a href=3D"https://github.com=
-/siemens/mtda" data-auth=3D"NotApplicable">
-https://github.com/siemens/mtda</a> <br>
-&gt; &lt;<a href=3D"https://github.com/siemens/mtda" data-auth=3D"NotApplic=
-able">https://github.com/siemens/mtda</a>&gt;&nbsp;to understand how this c=
-an be used
-<br>
-&gt; with LAVA to flash and boot the WIC image.<br>
-&gt; <br>
-&gt; As you said, the secure boot image can be booted on a device with <br>
-&gt; &quot;Secure boot disabled&quot; in the BIOS but we have a requirement=
- to automate <br>
-&gt; secure boot testing as well, so we need to figure out if there is a wa=
-y <br>
-&gt; to configure BIOS through LAVA before booting the image.<br>
-&gt; <br>
-&gt;&nbsp; &nbsp;If there were multiple devices, then this could have been =
-handled <br>
-&gt; using tags where security image related testing can be directed to a <=
-br>
-&gt; certain device with all secure boot related pre-configurations done in=
- <br>
-&gt; BIOS where as the non-secure images testing can be done on the other d=
-evice.<br>
-&gt; <br>
-How many test case really require secure-boot enabled? Most test case <br>
-should be written in a way that the don't require secure-boot enabled.<br>
-<br>
-Quirin<br>
-<br>
-&gt; We can start a discussion thread in lava-users mailing list to check t=
-he <br>
-&gt; possibility to implement this.<br>
-&gt; <br>
-&gt; Thanks and regards,<br>
-&gt; Sai Ashrith<br>
-&gt; <br>
-&gt; <br>
-&gt; <br>
-&gt; ----------------------------------------------------------------------=
---<br>
-&gt; *From:* cip-dev@lists.cip-project.org &lt;cip-dev@lists.cip-project.or=
-g&gt; on <br>
-&gt; behalf of Quirin Gylstorff via lists.cip-project.org <br>
-&gt; &lt;quirin.gylstorff=3Dsiemens.com@lists.cip-project.org&gt;<br>
-&gt; *Sent:* Wednesday, November 27, 2024 7:39 PM<br>
-&gt; *To:* cip-dev@lists.cip-project.org &lt;cip-dev@lists.cip-project.org&=
-gt;; <br>
-&gt; Chris.Paterson2@renesas.com &lt;Chris.Paterson2@renesas.com&gt;<br>
-&gt; *Cc:* hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =
-=1B$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) <br>
-&gt; &lt;kazuhiro3.hayashi@toshiba.co.jp&gt;<br>
-&gt; *Subject:* Re: [cip-dev] Booting security image (.wic) on M-COM x86 in=
- LAVA<br>
-&gt; <br>
-&gt; <br>
-&gt; On 11/27/24 12:07, sai.sathujoda via lists.cip-project.org wrote:<br>
-&gt;&gt; Hello Chris,<br>
-&gt;&gt; <br>
-&gt;&gt; We are planning to run software update, secure boot verification a=
-nd IEC <br>
-&gt;&gt; layer tests on M-COM x86 device in CIP LAVA.&nbsp; To achieve this=
- we believe <br>
-&gt;&gt; there are two main challenges.<br>
-&gt;&gt; <br>
-&gt;&gt; *Booting a disk image (.wic) on M-COM x86 in LAVA*<br>
-&gt;&gt; <br>
-&gt;&gt; We went through the existing job definitions running on CIP refere=
-nce <br>
-&gt;&gt; hardware on LAVA to re-use if any disk image is being booted on th=
-em but <br>
-&gt;&gt; did not find any. In every job definition, the root file system ta=
-rball <br>
-&gt;&gt; and kernel image are deployed separately to tftp. We are going thr=
-ough <br>
-&gt;&gt; LAVA documentation to figure out proper method to boot&nbsp; &nbsp=
-;entire disk <br>
-&gt;&gt; images on LAVA.<br>
-&gt;&gt; <br>
-&gt;&gt; Can you please provide your suggestions on how to do this, if you =
-have any ?<br>
-&gt;&gt; Once we are able to boot a disk image, then next task is to boot a=
- <br>
-&gt;&gt; security image.<br>
-&gt;&gt;<br>
-&gt; <br>
-&gt; <br>
-&gt; I would suggest that you check out <a href=3D"https://github.com/sieme=
-ns/mtda" data-auth=3D"NotApplicable">
-https://github.com/siemens/mtda</a> <br>
-&gt; &lt;<a href=3D"https://github.com/siemens/mtda" data-auth=3D"NotApplic=
-able">https://github.com/siemens/mtda</a>&gt;. This<br>
-&gt; provides<br>
-&gt;&nbsp; &nbsp; the necessary tools to flash a device over USB/SD.<br>
-&gt; <br>
-&gt; We would need to adjust the lab setup for this.<br>
-&gt; <br>
-&gt;&gt; *Configuration of BIOS settings on the device's firmware to boot a=
- <br>
-&gt;&gt; security image*<br>
-&gt;&gt; *<br>
-&gt;&gt; *<br>
-&gt;&gt; Basically, CIP security image has secure boot feature enabled, so =
-before <br>
-&gt;&gt; booting such image there are some settings that need to be done in=
- BIOS <br>
-&gt;&gt; such as:<br>
-&gt;&gt; <br>
-&gt;&gt;&nbsp; 1.<br>
-&gt;&gt;&nbsp;&nbsp;&nbsp;&nbsp; Enabling secure boot option<br>
-&gt;&gt;&nbsp; 2.<br>
-&gt;&gt;&nbsp;&nbsp;&nbsp;&nbsp; Adding secure boot keys in EFI storage.<br=
->
-&gt;&gt; <br>
-&gt;&gt; Only after these steps, a security image can be booted on M-COM x8=
-6 <br>
-&gt;&gt; hardware. I am mentioning these steps based on our current experie=
-nce <br>
-&gt;&gt; with local setup. But I am not sure how to achieve this on LAVA.<b=
-r>
-&gt; <br>
-&gt; You don't need to enable secure boot for testing - an image with secur=
-e<br>
-&gt; boot will also boot on a device which has secure boot disabled as the<=
-br>
-&gt; image does not check the state of secure boot.<br>
-&gt; <br>
-&gt; Best regards<br>
-&gt; <br>
-&gt; Quirin<br>
-&gt; <br>
-&gt;&gt; One idea is to pre-configure the above-mentioned settings in the d=
-evice <br>
-&gt;&gt; present in *lab-cip-siemens-prag *but in that case I believe healt=
-h- <br>
-&gt;&gt; checks and all other tests running on M-COM x86 can boot only secu=
-re <br>
-&gt;&gt; images.<br>
-&gt;&gt; <br>
-&gt;&gt; Is there a way to change the bios settings through some arguments =
-in the <br>
-&gt;&gt; LAVA job definition ? If not, then can you please provide your opi=
-nion <br>
-&gt;&gt; on the above-mentioned approach.<br>
-&gt;&gt; <br>
-&gt;&gt; Thanks and regards,<br>
-&gt;&gt; Sai Ashrith (T S I P)<br>
-&gt;&gt; <br>
-&gt;&gt; <br>
-&gt;&gt; <br>
-&gt;&gt; <br>
-&gt;&gt; <br>
-&gt;&gt; <br>
-&gt;&gt; <br>
-&gt; <br>
-&gt; <br>
-&gt; <br>
-&gt; <br>
-&gt; <br>
-<br>
-</div>
-</span></font></div>
-</body>
-</html>
-
---_000_OS0PR01MB6100597A316A2139498736C6C2352OS0PR01MB6100jpnp_--
+>> Sai Ashrith
+>>=20
+>>=20
+>>=20
+>> ------------------------------------------------------------------------
+>> *From:* cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> on=
+=20
+>> behalf of Quirin Gylstorff via lists.cip-project.org=20
+>> <quirin.gylstorff=3Dsiemens.com@lists.cip-project.org>
+>> *Sent:* Wednesday, November 27, 2024 7:39 PM
+>> *To:* cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org>;=20
+>> Chris.Paterson2@renesas.com <Chris.Paterson2@renesas.com>
+>> *Cc:* hayashi kazuhiro(=E6=9E=97 =E5=92=8C=E5=AE=8F =EF=BC=A4=EF=BC=AD=
+=EF=BC=A5 =E2=97=8B=EF=BC=A4=EF=BC=A9=EF=BC=A7=E2=96=A1=EF=BC=AD=EF=BC=B0=
+=EF=BC=B3=E2=97=8B=EF=BC=AD=EF=BC=B0=EF=BC=94)=20
+>> <kazuhiro3.hayashi@toshiba.co.jp>
+>> *Subject:* Re: [cip-dev] Booting security image (.wic) on M-COM x86 in L=
+AVA
+>>=20
+>>=20
+>> On 11/27/24 12:07, sai.sathujoda via lists.cip-project.org wrote:
+>>> Hello Chris,
+>>>=20
+>>> We are planning to run software update, secure boot verification and IE=
+C=20
+>>> layer tests on M-COM x86 device in CIP LAVA.=C2=A0 To achieve this we b=
+elieve=20
+>>> there are two main challenges.
+>>>=20
+>>> *Booting a disk image (.wic) on M-COM x86 in LAVA*
+>>>=20
+>>> We went through the existing job definitions running on CIP reference=20
+>>> hardware on LAVA to re-use if any disk image is being booted on them bu=
+t=20
+>>> did not find any. In every job definition, the root file system tarball=
+=20
+>>> and kernel image are deployed separately to tftp. We are going through=
+=20
+>>> LAVA documentation to figure out proper method to boot=C2=A0 =C2=A0enti=
+re disk=20
+>>> images on LAVA.
+>>>=20
+>>> Can you please provide your suggestions on how to do this, if you have =
+any ?
+>>> Once we are able to boot a disk image, then next task is to boot a=20
+>>> security image.
+>>>
+>>=20
+>>=20
+>> I would suggest that you check out https://github.com/siemens/mtda <http=
+s://github.com/siemens/mtda>
+>> <https://github.com/siemens/mtda <https://github.com/siemens/mtda>>. Thi=
+s
+>> provides
+>>=C2=A0 =C2=A0 the necessary tools to flash a device over USB/SD.
+>>=20
+>> We would need to adjust the lab setup for this.
+>>=20
+>>> *Configuration of BIOS settings on the device's firmware to boot a=20
+>>> security image*
+>>> *
+>>> *
+>>> Basically, CIP security image has secure boot feature enabled, so befor=
+e=20
+>>> booting such image there are some settings that need to be done in BIOS=
+=20
+>>> such as:
+>>>=20
+>>>=C2=A0 1.
+>>>=C2=A0=C2=A0=C2=A0=C2=A0 Enabling secure boot option
+>>>=C2=A0 2.
+>>>=C2=A0=C2=A0=C2=A0=C2=A0 Adding secure boot keys in EFI storage.
+>>>=20
+>>> Only after these steps, a security image can be booted on M-COM x86=20
+>>> hardware. I am mentioning these steps based on our current experience=20
+>>> with local setup. But I am not sure how to achieve this on LAVA.
+>>=20
+>> You don't need to enable secure boot for testing - an image with secure
+>> boot will also boot on a device which has secure boot disabled as the
+>> image does not check the state of secure boot.
+>>=20
+>> Best regards
+>>=20
+>> Quirin
+>>=20
+>>> One idea is to pre-configure the above-mentioned settings in the device=
+=20
+>>> present in *lab-cip-siemens-prag *but in that case I believe health-=20
+>>> checks and all other tests running on M-COM x86 can boot only secure=20
+>>> images.
+>>>=20
+>>> Is there a way to change the bios settings through some arguments in th=
+e=20
+>>> LAVA job definition ? If not, then can you please provide your opinion=
+=20
+>>> on the above-mentioned approach.
+>>>=20
+>>> Thanks and regards,
+>>> Sai Ashrith (T S I P)
+>>>=20
+>>>=20
+>>>=20
+>>>=20
+>>>=20
+>>>=20
+>>>=20
+>>=20
+>>=20
+>>=20
+>>=20
+>>=20
+>=20
+>=20
+>=20
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+> Links: You receive all messages sent to this group.
+> View/Reply Online (#17307): https://lists.cip-project.org/g/cip-dev/messa=
+ge/17307
+> Mute This Topic: https://lists.cip-project.org/mt/109804627/1753640
+> Group Owner: cip-dev+owner@lists.cip-project.org
+> Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129121/175364=
+0/1405269326/xyzzy [quirin.gylstorff@siemens.com]
+> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
+>=20
 
 
