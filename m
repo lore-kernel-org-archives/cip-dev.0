@@ -2,31 +2,31 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E0A9E7717B
-	for <webhook@archiver.kernel.org>; Fri,  6 Dec 2024 09:11:39 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.33050.1733476291732809043
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD428E7717B
+	for <webhook@archiver.kernel.org>; Fri,  6 Dec 2024 09:11:49 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web10.33197.1733476301806921318
  for <cip-dev@lists.cip-project.org>;
- Fri, 06 Dec 2024 01:11:39 -0800
+ Fri, 06 Dec 2024 01:11:42 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: Z3ZaW5pkTwWHL6Q98zyGCA==
-X-CSE-MsgGUID: 3D4wHaieQKS7Pih1HgHl3g==
-X-IronPort-AV: E=Sophos;i="6.12,212,1728918000"; 
-   d="scan'208";a="227108875"
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+X-CSE-ConnectionGUID: b1lRTT/AQBSdp2QfaAtiHg==
+X-CSE-MsgGUID: upAe2EofQDuzdTjnUojluA==
+X-IronPort-AV: E=Sophos;i="6.12,213,1728918000"; 
+   d="scan'208";a="231085690"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Dec 2024 18:11:38 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 06 Dec 2024 18:11:42 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.1])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4CB8541F514D;
-	Fri,  6 Dec 2024 18:11:37 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id ABC1441F5140;
+	Fri,  6 Dec 2024 18:11:31 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 07/16] spi: rpc-if: differentiate between unsupported and invalid requests
-Date: Fri,  6 Dec 2024 09:11:13 +0000
-Message-ID: <20241206091122.67133-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 04/16] mtd: spi-nor: fix select_uniform_erase to skip 0 erase size
+Date: Fri,  6 Dec 2024 09:11:10 +0000
+Message-ID: <20241206091122.67133-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241206091122.67133-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20241206091122.67133-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -35,68 +35,41 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 06 Dec 2024 09:11:39 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17347
+ <cip-dev@lists.cip-project.org>; Fri, 06 Dec 2024 09:11:49 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17351
 
-From: Miquel Raynal <miquel.raynal@bootlin.com>
+From: Michael Walle <michael@walle.cc>
 
-commit 615725a9a8c8aa0976a1469b88a1e5d696e25eb0 upstream.
+commit 39eece67a3cf027aa5b39d7da5feadc4711504e6 upstream.
 
-If the request is out of range, returning -EINVAL seems a better pick
-than -ENOTSUPP.
+4bait will set the erase size to 0 if there is no corresponding
+opcode for the 4byte erase. Fix spi_nor_select_uniform_erase to skip
+the 0 erase size to avoid mtd device registration failure cases.
 
->From a caller (and reviewer) point of view, distinguising between the
-two may be helpful because somehow one can be "fixed" while the other
-will always be refused no matter how hard we try.
-
-As part of a wider work to bring spi-nand continuous reads, it was
-useful to easily catch the upper limit direct mapping boundaries for
-each controller, with the idea of enlarging this area from a page to an
-eraseblock, without risking too many regressions.
-
-In all other cases, as part of a wider work towards using -EOPNOTSUP
-rather than -ENOTSUPP (which is not a SUSV4 code), let's change the
-error code to be uniform across spi-mem controller drivers.
-
-Finally, reword a little bit the conditions to clarify what is intended
-(ie. checking for the presence of a direct mapping, and also ensuring we
-create a dirmap only on DATA_IN flows).
-
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Link: https://msgid.link/r/20240522145255.995778-4-miquel.raynal@bootlin.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Reported-by: Jae Hyun Yoo <quic_jaehyoo@quicinc.com>
+Signed-off-by: Michael Walle <michael@walle.cc>
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Link: https://lore.kernel.org/r/20220810220654.1297699-6-michael@walle.cc
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/spi/spi-rpc-if.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/mtd/spi-nor/core.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/spi/spi-rpc-if.c b/drivers/spi/spi-rpc-if.c
-index 24ec1c83f379..5467e917d9ff 100644
---- a/drivers/spi/spi-rpc-if.c
-+++ b/drivers/spi/spi-rpc-if.c
-@@ -95,16 +95,16 @@ static int rpcif_spi_mem_dirmap_create(struct spi_mem_dirmap_desc *desc)
- 		spi_controller_get_devdata(desc->mem->spi->controller);
+diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
+index 75c1ef19352b..4dba8dc989b5 100644
+--- a/drivers/mtd/spi-nor/core.c
++++ b/drivers/mtd/spi-nor/core.c
+@@ -2132,6 +2132,10 @@ spi_nor_select_uniform_erase(struct spi_nor_erase_map *map,
  
- 	if (desc->info.offset + desc->info.length > U32_MAX)
--		return -ENOTSUPP;
-+		return -EINVAL;
+ 		tested_erase = &map->erase_type[i];
  
- 	if (!rpcif_spi_mem_supports_op(desc->mem, &desc->info.op_tmpl))
--		return -ENOTSUPP;
-+		return -EOPNOTSUPP;
- 
--	if (!rpc->dirmap && desc->info.op_tmpl.data.dir == SPI_MEM_DATA_IN)
--		return -ENOTSUPP;
-+	if (!rpc->dirmap)
-+		return -EOPNOTSUPP;
- 
--	if (desc->info.op_tmpl.data.dir == SPI_MEM_DATA_OUT)
--		return -ENOTSUPP;
-+	if (desc->info.op_tmpl.data.dir != SPI_MEM_DATA_IN)
-+		return -EOPNOTSUPP;
- 
- 	return 0;
- }
++		/* Skip masked erase types. */
++		if (!tested_erase->size)
++			continue;
++
+ 		/*
+ 		 * If the current erase size is the one, stop here:
+ 		 * we have found the right uniform Sector Erase command.
 -- 
 2.43.0
 
