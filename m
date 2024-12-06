@@ -2,80 +2,175 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 617FBE77179
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FCECE77173
 	for <webhook@archiver.kernel.org>; Fri,  6 Dec 2024 09:05:49 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web11.32981.1733475934872725095
  for <cip-dev@lists.cip-project.org>;
- Fri, 06 Dec 2024 01:05:35 -0800
+ Fri, 06 Dec 2024 01:05:36 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: LLmdEaHXQKeVdBANfo51IQ==
-X-CSE-MsgGUID: 7WIqI3jxSfSP8LCUTyT9dA==
+X-CSE-ConnectionGUID: 12jp5Gc4Tw+Nr4OqUZEOzg==
+X-CSE-MsgGUID: BI0g4aZzRIW9+PpE+7ZqtQ==
 X-IronPort-AV: E=Sophos;i="6.12,212,1728918000"; 
-   d="scan'208";a="227108023"
+   d="scan'208";a="227108048"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Dec 2024 18:05:33 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 06 Dec 2024 18:05:34 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.1])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 88C394009437;
-	Fri,  6 Dec 2024 18:05:25 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 44FFE4009F62;
+	Fri,  6 Dec 2024 18:05:33 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 0/8] Add RPC-IF support for RZ/G2UL SoC
-Date: Fri,  6 Dec 2024 09:05:16 +0000
-Message-ID: <20241206090524.66639-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 4/8] memory: renesas-rpc-if: Fix PHYCNT.STRTIM setting
+Date: Fri,  6 Dec 2024 09:05:20 +0000
+Message-ID: <20241206090524.66639-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241206090524.66639-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20241206090524.66639-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 06 Dec 2024 09:05:49 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17334
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17338
 
-Hi All,
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-This patch series aims to add RPC-IF support for RZ/G2UL SoC and enable
-it on SMARC platform, along with enabling tx width to 4 on RZ/G2L SMARC
-platforms.
+commit 3d56c7364389fce14547803fef56d6f2cab5d366 upstream.
 
-All the patches have been cherry picked from upstream kernel apart from
-patch 1/8.
+According to the datasheets, the Strobe Timing Adjustment bit (STRTIM)
+setting is different on R-Car SoCs, i.e.
 
-Cheers,
-Prabhakar
+R-Car M3 ES1.*  : STRTIM[2:0] is set to 0x6
+other R-Car Gen3: STRTIM[2:0] is set to 0x7
+other R-Car Gen4: STRTIM[3:0] is set to 0xf
 
-Biju Das (5):
-  spi: rpc-if: Add missing MODULE_DEVICE_TABLE
-  memory: renesas-rpc-if: Use Hi-Z state as the default setting for IOVF
-    pins
-  arm64: dts: renesas: rzg2lc-smarc-som: Enable 4-bit tx support
-  arm64: dts: renesas: rz{g2l,g2lc}-smarc-som: Update partition table
-    for spi-nor flash
-  arm64: dts: renesas: rzg2ul-smarc-som: Enable serial NOR flash
+To fix this issue, a DT match data was added to specify the setting
+for special use cases.
 
-Lad Prabhakar (1):
-  mtd: spi-nor: atmel: Add support for AT25QL128A serial NOR flash
+Signed-off-by: Cong Dang <cong.dang.xn@renesas.com>
+Signed-off-by: Hai Pham  <hai.pham.ud@renesas.com>
+[wsa: rebased, restructured, added Gen4 support]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20230419130234.44321-1-wsa+renesas@sang-engineering.com
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+[PL: dropped R-Car Gen4 changes]
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/memory/renesas-rpc-if.c | 27 +++++++++++++++++++--------
+ include/memory/renesas-rpc-if.h |  7 ++++++-
+ 2 files changed, 25 insertions(+), 9 deletions(-)
 
-Miquel Raynal (1):
-  spi: rpc-if: differentiate between unsupported and invalid requests
-
-Wolfram Sang (1):
-  memory: renesas-rpc-if: Fix PHYCNT.STRTIM setting
-
- .../boot/dts/renesas/rzg2l-smarc-som.dtsi     | 15 +++++--
- .../boot/dts/renesas/rzg2lc-smarc-som.dtsi    | 16 +++++--
- .../boot/dts/renesas/rzg2ul-smarc-som.dtsi    | 45 +++++++++++++++++++
- .../boot/dts/renesas/rzfive-smarc-som.dtsi    |  4 ++
- drivers/memory/renesas-rpc-if.c               | 29 ++++++++----
- drivers/mtd/spi-nor/atmel.c                   |  1 +
- drivers/spi/spi-rpc-if.c                      | 19 +++++---
- include/memory/renesas-rpc-if.h               |  7 ++-
- 8 files changed, 112 insertions(+), 24 deletions(-)
-
+diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
+index 2e5a0117585f..9fa577bb3d32 100644
+--- a/drivers/memory/renesas-rpc-if.c
++++ b/drivers/memory/renesas-rpc-if.c
+@@ -7,6 +7,7 @@
+  * Copyright (C) 2019-2020 Cogent Embedded, Inc.
+  */
+ 
++#include <linux/bitops.h>
+ #include <linux/clk.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+@@ -162,6 +163,15 @@ static const struct regmap_access_table rpcif_volatile_table = {
+ 	.n_yes_ranges	= ARRAY_SIZE(rpcif_volatile_ranges),
+ };
+ 
++static const struct rpcif_info rpcif_info_gen3 = {
++	.type = RPCIF_RCAR_GEN3,
++	.strtim = 7,
++};
++
++static const struct rpcif_info rpcif_info_rz_g2l = {
++	.type = RPCIF_RZ_G2L,
++	.strtim = 7,
++};
+ 
+ /*
+  * Custom accessor functions to ensure SM[RW]DR[01] are always accessed with
+@@ -278,7 +288,7 @@ int rpcif_sw_init(struct rpcif *rpc, struct device *dev)
+ 		return PTR_ERR(rpc->dirmap);
+ 	rpc->size = resource_size(res);
+ 
+-	rpc->type = (uintptr_t)of_device_get_match_data(dev);
++	rpc->info = of_device_get_match_data(dev);
+ 	rpc->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+ 
+ 	return PTR_ERR_OR_ZERO(rpc->rstc);
+@@ -305,7 +315,7 @@ int rpcif_hw_init(struct rpcif *rpc, bool hyperflash)
+ 
+ 	pm_runtime_get_sync(rpc->dev);
+ 
+-	if (rpc->type == RPCIF_RZ_G2L) {
++	if (rpc->info->type == RPCIF_RZ_G2L) {
+ 		int ret;
+ 
+ 		ret = reset_control_reset(rpc->rstc);
+@@ -321,9 +331,10 @@ int rpcif_hw_init(struct rpcif *rpc, bool hyperflash)
+ 	/* DMA Transfer is not supported */
+ 	regmap_update_bits(rpc->regmap, RPCIF_PHYCNT, RPCIF_PHYCNT_HS, 0);
+ 
+-	if (rpc->type == RPCIF_RCAR_GEN3)
+-		regmap_update_bits(rpc->regmap, RPCIF_PHYCNT,
+-				   RPCIF_PHYCNT_STRTIM(7), RPCIF_PHYCNT_STRTIM(7));
++	regmap_update_bits(rpc->regmap, RPCIF_PHYCNT,
++			   /* create mask with all affected bits set */
++			   RPCIF_PHYCNT_STRTIM(BIT(fls(rpc->info->strtim)) - 1),
++			   RPCIF_PHYCNT_STRTIM(rpc->info->strtim));
+ 
+ 	regmap_update_bits(rpc->regmap, RPCIF_PHYOFFSET1, RPCIF_PHYOFFSET1_DDRTMG(3),
+ 			   RPCIF_PHYOFFSET1_DDRTMG(3));
+@@ -334,7 +345,7 @@ int rpcif_hw_init(struct rpcif *rpc, bool hyperflash)
+ 		regmap_update_bits(rpc->regmap, RPCIF_PHYINT,
+ 				   RPCIF_PHYINT_WPVAL, 0);
+ 
+-	if (rpc->type == RPCIF_RCAR_GEN3)
++	if (rpc->info->type == RPCIF_RCAR_GEN3)
+ 		regmap_update_bits(rpc->regmap, RPCIF_CMNCR,
+ 				   RPCIF_CMNCR_MOIIO(3) | RPCIF_CMNCR_BSZ(3),
+ 				   RPCIF_CMNCR_MOIIO(3) |
+@@ -672,8 +683,8 @@ static int rpcif_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id rpcif_of_match[] = {
+-	{ .compatible = "renesas,rcar-gen3-rpc-if", .data = (void *)RPCIF_RCAR_GEN3 },
+-	{ .compatible = "renesas,rzg2l-rpc-if", .data = (void *)RPCIF_RZ_G2L },
++	{ .compatible = "renesas,rcar-gen3-rpc-if", .data = &rpcif_info_gen3 },
++	{ .compatible = "renesas,rzg2l-rpc-if", .data = &rpcif_info_rz_g2l },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, rpcif_of_match);
+diff --git a/include/memory/renesas-rpc-if.h b/include/memory/renesas-rpc-if.h
+index 9c0ad64b8d29..01cb3ac220cf 100644
+--- a/include/memory/renesas-rpc-if.h
++++ b/include/memory/renesas-rpc-if.h
+@@ -62,6 +62,11 @@ enum rpcif_type {
+ 	RPCIF_RZ_G2L,
+ };
+ 
++struct rpcif_info {
++	enum rpcif_type type;
++	u8 strtim;
++};
++
+ struct rpcif {
+ 	struct device *dev;
+ 	void __iomem *base;
+@@ -69,7 +74,7 @@ struct rpcif {
+ 	struct regmap *regmap;
+ 	struct reset_control *rstc;
+ 	size_t size;
+-	enum rpcif_type type;
++	const struct rpcif_info *info;
+ 	enum rpcif_data_dir dir;
+ 	u8 bus_size;
+ 	u8 xfer_size;
 -- 
 2.43.0
 
