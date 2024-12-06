@@ -2,31 +2,31 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 889BCE77179
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 916C6E7717D
 	for <webhook@archiver.kernel.org>; Fri,  6 Dec 2024 09:11:39 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web11.33050.1733476291732809043
  for <cip-dev@lists.cip-project.org>;
- Fri, 06 Dec 2024 01:11:31 -0800
+ Fri, 06 Dec 2024 01:11:37 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: qk7ih8FhRBaKeQ8vIgGpJw==
-X-CSE-MsgGUID: dW468edNSmeaonjD69i/RQ==
+X-CSE-ConnectionGUID: vd0w+aQ5So+obcmJISm+/A==
+X-CSE-MsgGUID: 9etC0GUcQUyPUV3dlO2LUA==
 X-IronPort-AV: E=Sophos;i="6.12,212,1728918000"; 
-   d="scan'208";a="227108846"
+   d="scan'208";a="227108869"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Dec 2024 18:11:31 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 06 Dec 2024 18:11:36 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.1])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id C990741F1B71;
-	Fri,  6 Dec 2024 18:11:29 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6C93F41F54F6;
+	Fri,  6 Dec 2024 18:11:35 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 03/16] mtd: spi-nor: move function declaration out of sfdp.h
-Date: Fri,  6 Dec 2024 09:11:09 +0000
-Message-ID: <20241206091122.67133-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 06/16] mtd: spi-nor: sysfs: print JEDEC ID for generic flash driver
+Date: Fri,  6 Dec 2024 09:11:12 +0000
+Message-ID: <20241206091122.67133-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241206091122.67133-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20241206091122.67133-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -36,49 +36,50 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 06 Dec 2024 09:11:39 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17344
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17346
 
 From: Michael Walle <michael@walle.cc>
 
-commit fa06bb26a40ca08fa0d653b04d8ce92d243aa2ce upstream.
+commit 0a92de16b61b5d7a52d2910f81325f0506b2fc3b upstream.
 
-sfdp.h should only contain constants related to the JEDEC SFDP
-specification(s).
+We don't have a database entry for the generic SPI-NOR flash driver and
+thus we don't have a JEDEC ID to print. Print the (cached) JEDEC ID
+instead.
 
 Signed-off-by: Michael Walle <michael@walle.cc>
 Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 Reviewed-by: Takahiro Kuwano <Takahiro.Kuwano@infineon.com>
-Link: https://lore.kernel.org/r/20220810220654.1297699-5-michael@walle.cc
+Link: https://lore.kernel.org/r/20220810220654.1297699-8-michael@walle.cc
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/mtd/spi-nor/core.h | 2 ++
- drivers/mtd/spi-nor/sfdp.h | 2 --
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/mtd/spi-nor/sysfs.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mtd/spi-nor/core.h b/drivers/mtd/spi-nor/core.h
-index 290613fd63ae..b688dc3637a4 100644
---- a/drivers/mtd/spi-nor/core.h
-+++ b/drivers/mtd/spi-nor/core.h
-@@ -708,6 +708,8 @@ int spi_nor_controller_ops_read_reg(struct spi_nor *nor, u8 opcode,
- int spi_nor_controller_ops_write_reg(struct spi_nor *nor, u8 opcode,
- 				     const u8 *buf, size_t len);
+diff --git a/drivers/mtd/spi-nor/sysfs.c b/drivers/mtd/spi-nor/sysfs.c
+index 20563c1926f4..c09bb832b3b9 100644
+--- a/drivers/mtd/spi-nor/sysfs.c
++++ b/drivers/mtd/spi-nor/sysfs.c
+@@ -35,8 +35,10 @@ static ssize_t jedec_id_show(struct device *dev,
+ 	struct spi_device *spi = to_spi_device(dev);
+ 	struct spi_mem *spimem = spi_get_drvdata(spi);
+ 	struct spi_nor *nor = spi_mem_get_drvdata(spimem);
++	const u8 *id = nor->info->id_len ? nor->info->id : nor->id;
++	u8 id_len = nor->info->id_len ?: SPI_NOR_MAX_ID_LEN;
  
-+int spi_nor_parse_sfdp(struct spi_nor *nor);
-+
- static inline struct spi_nor *mtd_to_spi_nor(struct mtd_info *mtd)
- {
- 	return container_of(mtd, struct spi_nor, mtd);
-diff --git a/drivers/mtd/spi-nor/sfdp.h b/drivers/mtd/spi-nor/sfdp.h
-index bbf80d2990ab..c1969f0a2f46 100644
---- a/drivers/mtd/spi-nor/sfdp.h
-+++ b/drivers/mtd/spi-nor/sfdp.h
-@@ -107,6 +107,4 @@ struct sfdp_parameter_header {
- 	u8		id_msb;
- };
+-	return sysfs_emit(buf, "%*phN\n", nor->info->id_len, nor->info->id);
++	return sysfs_emit(buf, "%*phN\n", id_len, id);
+ }
+ static DEVICE_ATTR_RO(jedec_id);
  
--int spi_nor_parse_sfdp(struct spi_nor *nor);
--
- #endif /* __LINUX_MTD_SFDP_H */
+@@ -76,7 +78,7 @@ static umode_t spi_nor_sysfs_is_visible(struct kobject *kobj,
+ 
+ 	if (attr == &dev_attr_manufacturer.attr && !nor->manufacturer)
+ 		return 0;
+-	if (attr == &dev_attr_jedec_id.attr && !nor->info->id_len)
++	if (attr == &dev_attr_jedec_id.attr && !nor->info->id_len && !nor->id)
+ 		return 0;
+ 
+ 	return 0444;
 -- 
 2.43.0
 
