@@ -2,82 +2,97 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70812E77173
-	for <webhook@archiver.kernel.org>; Fri,  6 Dec 2024 09:05:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5893E77173
+	for <webhook@archiver.kernel.org>; Fri,  6 Dec 2024 09:11:29 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web10.33140.1733475949344712509
+ by mx.groups.io with SMTP id smtpd.web11.33049.1733476286198683087
  for <cip-dev@lists.cip-project.org>;
- Fri, 06 Dec 2024 01:05:49 -0800
+ Fri, 06 Dec 2024 01:11:26 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: txQhjWgKRf2bdsqbHNik0A==
-X-CSE-MsgGUID: 6hxgh2kPQcexIdg4dLUx9w==
+X-CSE-ConnectionGUID: GUjejRO2STmUNWSKnDGYJw==
+X-CSE-MsgGUID: enKvjEYrQWmRVJ1SmbPZag==
 X-IronPort-AV: E=Sophos;i="6.12,213,1728918000"; 
-   d="scan'208";a="231084888"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 06 Dec 2024 18:05:48 +0900
+   d="scan'208";a="231085654"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 06 Dec 2024 18:11:25 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.1])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 357424005459;
-	Fri,  6 Dec 2024 18:05:34 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 25C7E41F3D94;
+	Fri,  6 Dec 2024 18:11:23 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 5/8] memory: renesas-rpc-if: Use Hi-Z state as the default setting for IOVF pins
-Date: Fri,  6 Dec 2024 09:05:21 +0000
-Message-ID: <20241206090524.66639-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 00/16] Add RPC-IF support for RZ/G2UL SoC
+Date: Fri,  6 Dec 2024 09:11:06 +0000
+Message-ID: <20241206091122.67133-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241206090524.66639-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20241206090524.66639-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 06 Dec 2024 09:05:59 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17339
+ <cip-dev@lists.cip-project.org>; Fri, 06 Dec 2024 09:11:29 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17343
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+Hi All,
 
-commit 84d1078af52f6a099267fccfb1dda602ac8b66d0 upstream.
+This patch series aims to add RPC-IF support for RZ/G2UL SoC and enable it
+on SMARC platform, along with enabling tx width to 4 on RZ/G2L SMARC
+platforms.
 
-The RZ/{G2L,G2LC,V2L} SMARC EVK uses Micron MT25QU412A flash and RZ/G2UL
-SMARC EVK uses Renesas AT25QL128A flash. With current pin setting for
-IOVF pin, 4-bit flash write fails for AT25QL128A flash. Use Hi-Z state
-as the default for IOVF pin, so that spi controller driver in linux will
-be independent of flash type.
+All the patches have been cherry picked from upstream kernel.
 
-To support this, during board production, the bit 4 of the NV config
-register must be cleared by the bootloader for Micron flash.
+Cheers,
+Prabhakar
 
-Output from u-boot after clearing bit4 of NVCR register.
-=> renesas_micron_flash_nvcr
-SF: Detected mt25qu512a with page size 256 Bytes, erase size 64 KiB, total 64 MiB
-NVCR=0xef
+Biju Das (5):
+  spi: rpc-if: Add missing MODULE_DEVICE_TABLE
+  memory: renesas-rpc-if: Use Hi-Z state as the default setting for IOVF
+    pins
+  arm64: dts: renesas: rzg2ul-smarc-som: Enable serial NOR flash
+  arm64: dts: renesas: rzg2lc-smarc-som: Enable 4-bit tx support
+  arm64: dts: renesas: rz{g2l,g2lc}-smarc-som: Update partition table
+    for spi-nor flash
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20240830203014.199326-2-biju.das.jz@bp.renesas.com
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-[PL: manually applied the patch]
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/memory/renesas-rpc-if.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Cong Dang (1):
+  memory: renesas-rpc-if: Remove redundant division of dummy
 
-diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
-index 9fa577bb3d32..5a074e6b75b3 100644
---- a/drivers/memory/renesas-rpc-if.c
-+++ b/drivers/memory/renesas-rpc-if.c
-@@ -354,7 +354,7 @@ int rpcif_hw_init(struct rpcif *rpc, bool hyperflash)
- 		regmap_update_bits(rpc->regmap, RPCIF_CMNCR,
- 				   RPCIF_CMNCR_MOIIO(3) | RPCIF_CMNCR_IOFV(3) |
- 				   RPCIF_CMNCR_BSZ(3),
--				   RPCIF_CMNCR_MOIIO(1) | RPCIF_CMNCR_IOFV(2) |
-+				   RPCIF_CMNCR_MOIIO(1) | RPCIF_CMNCR_IOFV(3) |
- 				   RPCIF_CMNCR_BSZ(hyperflash ? 1 : 0));
- 
- 	/* Set RCF after BSZ update */
+Geert Uytterhoeven (2):
+  memory: renesas-rpc-if: Always use dev in rpcif_probe()
+  memory: renesas-rpc-if: Improve Runtime PM handling
+
+Michael Walle (6):
+  mtd: spi-nor: sysfs: hide manufacturer if it is not set
+  mtd: spi-nor: remember full JEDEC flash ID
+  mtd: spi-nor: move function declaration out of sfdp.h
+  mtd: spi-nor: fix select_uniform_erase to skip 0 erase size
+  mtd: spi-nor: add generic flash driver
+  mtd: spi-nor: sysfs: print JEDEC ID for generic flash driver
+
+Miquel Raynal (1):
+  spi: rpc-if: differentiate between unsupported and invalid requests
+
+Wolfram Sang (1):
+  memory: renesas-rpc-if: Fix PHYCNT.STRTIM setting
+
+ .../ABI/testing/sysfs-bus-spi-devices-spi-nor |  3 +
+ .../boot/dts/renesas/rzg2l-smarc-som.dtsi     | 15 ++--
+ .../boot/dts/renesas/rzg2lc-smarc-som.dtsi    | 16 +++--
+ .../boot/dts/renesas/rzg2ul-smarc-som.dtsi    | 45 ++++++++++++
+ .../boot/dts/renesas/rzfive-smarc-som.dtsi    |  4 ++
+ drivers/memory/renesas-rpc-if.c               | 70 ++++++++++++-------
+ drivers/mtd/spi-nor/core.c                    | 35 +++++++++-
+ drivers/mtd/spi-nor/core.h                    |  3 +
+ drivers/mtd/spi-nor/debugfs.c                 |  2 +-
+ drivers/mtd/spi-nor/sfdp.c                    | 27 +++++++
+ drivers/mtd/spi-nor/sfdp.h                    |  2 -
+ drivers/mtd/spi-nor/sysfs.c                   |  8 ++-
+ drivers/spi/spi-rpc-if.c                      | 19 +++--
+ include/linux/mtd/spi-nor.h                   |  3 +
+ 14 files changed, 207 insertions(+), 45 deletions(-)
+
 -- 
 2.43.0
 
