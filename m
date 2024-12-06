@@ -2,31 +2,31 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FCECE77173
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62589E7717B
 	for <webhook@archiver.kernel.org>; Fri,  6 Dec 2024 09:05:49 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web11.32981.1733475934872725095
  for <cip-dev@lists.cip-project.org>;
- Fri, 06 Dec 2024 01:05:36 -0800
+ Fri, 06 Dec 2024 01:05:35 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: 12jp5Gc4Tw+Nr4OqUZEOzg==
-X-CSE-MsgGUID: BI0g4aZzRIW9+PpE+7ZqtQ==
+X-CSE-ConnectionGUID: zA7/jwkJQZWPzNL1hwMTlw==
+X-CSE-MsgGUID: tNbIz+dmThe1xLVuLp+9lw==
 X-IronPort-AV: E=Sophos;i="6.12,212,1728918000"; 
-   d="scan'208";a="227108048"
+   d="scan'208";a="227108031"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Dec 2024 18:05:34 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 06 Dec 2024 18:05:33 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.1])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 44FFE4009F62;
-	Fri,  6 Dec 2024 18:05:33 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 62BD6400C4DD;
+	Fri,  6 Dec 2024 18:05:29 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5.10.y-cip 4/8] memory: renesas-rpc-if: Fix PHYCNT.STRTIM setting
-Date: Fri,  6 Dec 2024 09:05:20 +0000
-Message-ID: <20241206090524.66639-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 2/8] spi: rpc-if: differentiate between unsupported and invalid requests
+Date: Fri,  6 Dec 2024 09:05:18 +0000
+Message-ID: <20241206090524.66639-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241206090524.66639-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20241206090524.66639-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -36,141 +36,67 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 06 Dec 2024 09:05:49 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17338
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17336
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Miquel Raynal <miquel.raynal@bootlin.com>
 
-commit 3d56c7364389fce14547803fef56d6f2cab5d366 upstream.
+commit 615725a9a8c8aa0976a1469b88a1e5d696e25eb0 upstream.
 
-According to the datasheets, the Strobe Timing Adjustment bit (STRTIM)
-setting is different on R-Car SoCs, i.e.
+If the request is out of range, returning -EINVAL seems a better pick
+than -ENOTSUPP.
 
-R-Car M3 ES1.*  : STRTIM[2:0] is set to 0x6
-other R-Car Gen3: STRTIM[2:0] is set to 0x7
-other R-Car Gen4: STRTIM[3:0] is set to 0xf
+>From a caller (and reviewer) point of view, distinguising between the
+two may be helpful because somehow one can be "fixed" while the other
+will always be refused no matter how hard we try.
 
-To fix this issue, a DT match data was added to specify the setting
-for special use cases.
+As part of a wider work to bring spi-nand continuous reads, it was
+useful to easily catch the upper limit direct mapping boundaries for
+each controller, with the idea of enlarging this area from a page to an
+eraseblock, without risking too many regressions.
 
-Signed-off-by: Cong Dang <cong.dang.xn@renesas.com>
-Signed-off-by: Hai Pham  <hai.pham.ud@renesas.com>
-[wsa: rebased, restructured, added Gen4 support]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20230419130234.44321-1-wsa+renesas@sang-engineering.com
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-[PL: dropped R-Car Gen4 changes]
+In all other cases, as part of a wider work towards using -EOPNOTSUP
+rather than -ENOTSUPP (which is not a SUSV4 code), let's change the
+error code to be uniform across spi-mem controller drivers.
+
+Finally, reword a little bit the conditions to clarify what is intended
+(ie. checking for the presence of a direct mapping, and also ensuring we
+create a dirmap only on DATA_IN flows).
+
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Link: https://msgid.link/r/20240522145255.995778-4-miquel.raynal@bootlin.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/memory/renesas-rpc-if.c | 27 +++++++++++++++++++--------
- include/memory/renesas-rpc-if.h |  7 ++++++-
- 2 files changed, 25 insertions(+), 9 deletions(-)
+ drivers/spi/spi-rpc-if.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
-index 2e5a0117585f..9fa577bb3d32 100644
---- a/drivers/memory/renesas-rpc-if.c
-+++ b/drivers/memory/renesas-rpc-if.c
-@@ -7,6 +7,7 @@
-  * Copyright (C) 2019-2020 Cogent Embedded, Inc.
-  */
+diff --git a/drivers/spi/spi-rpc-if.c b/drivers/spi/spi-rpc-if.c
+index 0f8096d7d7b0..b71d8d8f7f50 100644
+--- a/drivers/spi/spi-rpc-if.c
++++ b/drivers/spi/spi-rpc-if.c
+@@ -95,16 +95,16 @@ static int rpcif_spi_mem_dirmap_create(struct spi_mem_dirmap_desc *desc)
+ 		spi_controller_get_devdata(desc->mem->spi->controller);
  
-+#include <linux/bitops.h>
- #include <linux/clk.h>
- #include <linux/io.h>
- #include <linux/module.h>
-@@ -162,6 +163,15 @@ static const struct regmap_access_table rpcif_volatile_table = {
- 	.n_yes_ranges	= ARRAY_SIZE(rpcif_volatile_ranges),
- };
+ 	if (desc->info.offset + desc->info.length > U32_MAX)
+-		return -ENOTSUPP;
++		return -EINVAL;
  
-+static const struct rpcif_info rpcif_info_gen3 = {
-+	.type = RPCIF_RCAR_GEN3,
-+	.strtim = 7,
-+};
-+
-+static const struct rpcif_info rpcif_info_rz_g2l = {
-+	.type = RPCIF_RZ_G2L,
-+	.strtim = 7,
-+};
+ 	if (!rpcif_spi_mem_supports_op(desc->mem, &desc->info.op_tmpl))
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
  
- /*
-  * Custom accessor functions to ensure SM[RW]DR[01] are always accessed with
-@@ -278,7 +288,7 @@ int rpcif_sw_init(struct rpcif *rpc, struct device *dev)
- 		return PTR_ERR(rpc->dirmap);
- 	rpc->size = resource_size(res);
+-	if (!rpc->dirmap && desc->info.op_tmpl.data.dir == SPI_MEM_DATA_IN)
+-		return -ENOTSUPP;
++	if (!rpc->dirmap)
++		return -EOPNOTSUPP;
  
--	rpc->type = (uintptr_t)of_device_get_match_data(dev);
-+	rpc->info = of_device_get_match_data(dev);
- 	rpc->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+-	if (desc->info.op_tmpl.data.dir == SPI_MEM_DATA_OUT)
+-		return -ENOTSUPP;
++	if (desc->info.op_tmpl.data.dir != SPI_MEM_DATA_IN)
++		return -EOPNOTSUPP;
  
- 	return PTR_ERR_OR_ZERO(rpc->rstc);
-@@ -305,7 +315,7 @@ int rpcif_hw_init(struct rpcif *rpc, bool hyperflash)
- 
- 	pm_runtime_get_sync(rpc->dev);
- 
--	if (rpc->type == RPCIF_RZ_G2L) {
-+	if (rpc->info->type == RPCIF_RZ_G2L) {
- 		int ret;
- 
- 		ret = reset_control_reset(rpc->rstc);
-@@ -321,9 +331,10 @@ int rpcif_hw_init(struct rpcif *rpc, bool hyperflash)
- 	/* DMA Transfer is not supported */
- 	regmap_update_bits(rpc->regmap, RPCIF_PHYCNT, RPCIF_PHYCNT_HS, 0);
- 
--	if (rpc->type == RPCIF_RCAR_GEN3)
--		regmap_update_bits(rpc->regmap, RPCIF_PHYCNT,
--				   RPCIF_PHYCNT_STRTIM(7), RPCIF_PHYCNT_STRTIM(7));
-+	regmap_update_bits(rpc->regmap, RPCIF_PHYCNT,
-+			   /* create mask with all affected bits set */
-+			   RPCIF_PHYCNT_STRTIM(BIT(fls(rpc->info->strtim)) - 1),
-+			   RPCIF_PHYCNT_STRTIM(rpc->info->strtim));
- 
- 	regmap_update_bits(rpc->regmap, RPCIF_PHYOFFSET1, RPCIF_PHYOFFSET1_DDRTMG(3),
- 			   RPCIF_PHYOFFSET1_DDRTMG(3));
-@@ -334,7 +345,7 @@ int rpcif_hw_init(struct rpcif *rpc, bool hyperflash)
- 		regmap_update_bits(rpc->regmap, RPCIF_PHYINT,
- 				   RPCIF_PHYINT_WPVAL, 0);
- 
--	if (rpc->type == RPCIF_RCAR_GEN3)
-+	if (rpc->info->type == RPCIF_RCAR_GEN3)
- 		regmap_update_bits(rpc->regmap, RPCIF_CMNCR,
- 				   RPCIF_CMNCR_MOIIO(3) | RPCIF_CMNCR_BSZ(3),
- 				   RPCIF_CMNCR_MOIIO(3) |
-@@ -672,8 +683,8 @@ static int rpcif_remove(struct platform_device *pdev)
+ 	return 0;
  }
- 
- static const struct of_device_id rpcif_of_match[] = {
--	{ .compatible = "renesas,rcar-gen3-rpc-if", .data = (void *)RPCIF_RCAR_GEN3 },
--	{ .compatible = "renesas,rzg2l-rpc-if", .data = (void *)RPCIF_RZ_G2L },
-+	{ .compatible = "renesas,rcar-gen3-rpc-if", .data = &rpcif_info_gen3 },
-+	{ .compatible = "renesas,rzg2l-rpc-if", .data = &rpcif_info_rz_g2l },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, rpcif_of_match);
-diff --git a/include/memory/renesas-rpc-if.h b/include/memory/renesas-rpc-if.h
-index 9c0ad64b8d29..01cb3ac220cf 100644
---- a/include/memory/renesas-rpc-if.h
-+++ b/include/memory/renesas-rpc-if.h
-@@ -62,6 +62,11 @@ enum rpcif_type {
- 	RPCIF_RZ_G2L,
- };
- 
-+struct rpcif_info {
-+	enum rpcif_type type;
-+	u8 strtim;
-+};
-+
- struct rpcif {
- 	struct device *dev;
- 	void __iomem *base;
-@@ -69,7 +74,7 @@ struct rpcif {
- 	struct regmap *regmap;
- 	struct reset_control *rstc;
- 	size_t size;
--	enum rpcif_type type;
-+	const struct rpcif_info *info;
- 	enum rpcif_data_dir dir;
- 	u8 bus_size;
- 	u8 xfer_size;
 -- 
 2.43.0
 
