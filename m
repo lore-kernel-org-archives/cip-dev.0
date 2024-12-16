@@ -2,56 +2,55 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD0AE7717F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE8D5E77186
 	for <webhook@archiver.kernel.org>; Mon, 16 Dec 2024 13:06:29 +0000 (UTC)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
- by mx.groups.io with SMTP id smtpd.web10.56094.1734354385302277748
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+ by mx.groups.io with SMTP id smtpd.web11.55906.1734354383360327435
  for <cip-dev@lists.cip-project.org>;
- Mon, 16 Dec 2024 05:06:25 -0800
+ Mon, 16 Dec 2024 05:06:23 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=YDH/rqlI;
- spf=pass (domain: tuxon.dev, ip: 209.85.221.41, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-388cae9eb9fso1059380f8f.3
-        for <cip-dev@lists.cip-project.org>; Mon, 16 Dec 2024 05:06:25 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=lk16J3K1;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.54, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43621d27adeso27873815e9.2
+        for <cip-dev@lists.cip-project.org>; Mon, 16 Dec 2024 05:06:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1734354384; x=1734959184; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jx5ysSmZoGIWzAkovcFbgV8YILFrZUEHkRYUUn/vqqg=;
-        b=YDH/rqlIbcLeowt1M49h0S5QeL/pGbtpQUWnB2isdJvYkrP0wPgBAAGpCLpJtsRPFZ
-         f19oTd4oGTZNHv2kEVudzDZ76QYQ/mmeimT+X+MrEqgcoIGO1fLpKJnMZOVilY32esAU
-         8b1qxKr8HhUAs1Rb9OUIBdBxNEfZ+mQo5bN5gBYjA2EW/HCwujksPEM+B4dQSr2iBkvC
-         iT3lLsSeJ3caszjWOAMafNQJAYReC+bx2jzfdy/39NZTeS/4xVw9NDbpxAPj7q2Hn6Wa
-         6WsFUccOC3VCkvyHJrQn2yShWkhzuVP61Yf6XcQLRZbKJMSZ3nrNcYNs868KNij0Bshg
-         KaFQ==
+        d=tuxon.dev; s=google; t=1734354381; x=1734959181; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KomaiRhKj1ptGCHjfFHPLh+RsFLmezh+4ygK3Jgn/yg=;
+        b=lk16J3K1ntTc7NfMmFj9+EHDZb0HDyjGdZuvrn9diyBTSzNeF4PzqTiLYZJa/Uw4R9
+         Mn3u4KLdXJLCdXskD7ManAT5Ae84eZ7cqDhufUrtXhIb9ievnLfr8BWlBZgGn8F5jwSx
+         NZ5Lko40qUm4IAYWArG+rkKLtwy7nqyuhiiSDKuW1uO3Oh8cPaj5+TXpaH55UXcE9TT4
+         z+u9nekxhD4woin5ncH744CbUTHWFVsxtz0IbCd6yHJigRtR+b2OObPTkfkHIW/1GW4V
+         /nHaxxE0CW+aBOtSs8Pa7iB2WBiA8Hvmbkn4IrrelKs2i/TyJdSfj7PQVtjz9t21kUFz
+         +Zlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734354384; x=1734959184;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jx5ysSmZoGIWzAkovcFbgV8YILFrZUEHkRYUUn/vqqg=;
-        b=F+d4ZPiDbiJcqKkYwoPn9ttCKmpptPnfveAXUgWbzdtdeAaLg1EhdziT4N+Cw17HOJ
-         USV0O6f2MWCgLw/sN18EhMYWtxnSLxTosVTrEJfraOF553ducSsBocYywBAB7G7xRuzE
-         AQloXY/35eE/iF0uaNlCScB8ArJBvaQd3WHp88xyIbUX86x3EvEFQn9igAAGxFai3PrE
-         N0dbBaQzQNZQ/m6QocPO+Wc+Xaa1QiWZBA0pMC3IG73rEb1kuqS5gcVDCU0MTrdxyhPk
-         MgP9FPbSwiBOUEfE7Xz2GZBxgTZtNJHbROg3ToxyFLr1AD5t5EslG81o5oc30jYGIUBG
-         XXQg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+NrzMlWNEsmX3s4d4yu/JgHM3SeJC4J05Br9OlmOJ4P6v3tG1wbNUjljIQCyZCUkR0HhJdDmA@lists.cip-project.org
-X-Gm-Message-State: AOJu0YznaqUNyirrVDOyUGwA1fZwPWfBLSm9X96vcejLpucpimYPW5a3
-	KrHvd6Iwai9AGi8aA0s+zPpcdBxcGx6GHFrWkBCl2gcFk+7UkODi/J5Q6g0lekE=
-X-Gm-Gg: ASbGncu9ODELw3u6c30j4iExJnQJcHLo3SNViiOEvke4BYLp7agc7VXzzpksgc036LR
-	2EchDm3J83m3elomQLigcYNVzutsblIPGACqUfl2xZsn9M0wRM2PwEhkqi/9QJjZyZommWLqVfy
-	ZuVzgGFp+5dK0Bjn8W5ULdO9RXA2BYsw/JsVS3xId5yFh+ha2tx4RVY8URROhosI0Fvbs8MT1ye
-	Da60VUVDmelYvdsVpuZSWg06af61UsevDhF6IZJeMWAVFnbapbl22USZoFAwIUvxhCDYedth0Zr
-	joC5KHQnJpU=
-X-Google-Smtp-Source: AGHT+IHJd2Sb5fVrBv4TmG9SD93ozLgSAb3rYgdFxBp+CcEGutnqfVRjGLUt5X6eNhwNd+NnWuKKrA==
-X-Received: by 2002:a5d:610f:0:b0:388:caf4:e909 with SMTP id ffacd0b85a97d-388caf4e9c5mr5853559f8f.25.1734354383636;
-        Mon, 16 Dec 2024 05:06:23 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734354381; x=1734959181;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KomaiRhKj1ptGCHjfFHPLh+RsFLmezh+4ygK3Jgn/yg=;
+        b=NXnJu3k+rZ5HWQdhd6YJL1ZcA2W1fLqQPl8gxm6VAt5mFHA9qo1KEdJNyFOcditd44
+         zN3cydjN6R8KElUtIa8SBRYCYXM2gLFQC/RQcwNeLCUpEx4cdtPqgcSMUzQKvwCuFCeg
+         anxBm2N6Nd3t41CT5slq7Os1pV8w3cNcDRpX1+A8dcsbuELB7DUcumqfa45D9JUFpldp
+         eTJxo5DsXsBYfl0hNb2r7RqTq+OORY0AK+MIr5/+j+Ck1X7LAYk4BncMauE2iKrh6jUr
+         891TdEV1sZViz8dkf1DUFSn3SOJPntzskL1TCCk6/X0IYvOGBYW/WVMKQktrJ0/W6ULF
+         t9mw==
+X-Forwarded-Encrypted: i=1; AJvYcCXhS+nj6hehpng4lc/P2C9LXrFv1gdm0aftg74265PLSbWvmVbW3bJ70VB/4qcUhwVTiq68Q6qy@lists.cip-project.org
+X-Gm-Message-State: AOJu0YwwQTx7FDtnQwPinzjjNShMUeCmTl5sRX3seSdLNZPQEUhIIKPf
+	+3fBnNywOLZ7GHBzzvKOPQ4SwdnjiQGSl3mnU/JO+LJ1t4bKPuKzv9iJqvZvbiY=
+X-Gm-Gg: ASbGncus2PKAfe3gnEfnnVPP+uF+xD820advQM/aGJAJU8yuW5DvAUK9tz+cjrGGB1d
+	n7QsOVmOUVElLY7Ql5OzazInuPwJaIb/mAoaa8ArTLGVaMS3bbiNN5FFJmw3JaoAFWwxj6dOgCk
+	Fok5mS1Hf31ooS7RLgMxkHb4olRzlDlFXfFzdmgV1QcTP5BX+sIvW2nGW1aVIRrh+RFDvJT6+vW
+	XYxLtGkHwMPxfUNlFbN8ToS/tXSlSzYtoltM7H2AKiLqkHjYSDCHnVg9bGl2igmwqDtz8IhWVX8
+	7Cje6J8bXE0=
+X-Google-Smtp-Source: AGHT+IGMGbFfrC3Z22HJurGDWHeQjYf8GtoOUTPjHKkwqk7Xn5FaI9l+8sE7pgzAbclWxjuafOAb6Q==
+X-Received: by 2002:adf:f545:0:b0:385:f409:b42 with SMTP id ffacd0b85a97d-3888e0c0831mr8465371f8f.53.1734354381174;
+        Mon, 16 Dec 2024 05:06:21 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.102])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c801233asm8346252f8f.9.2024.12.16.05.06.22
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c801233asm8346252f8f.9.2024.12.16.05.06.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 05:06:23 -0800 (PST)
+        Mon, 16 Dec 2024 05:06:20 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
@@ -60,86 +59,37 @@ Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org,
 	biju.das.jz@bp.renesas.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com
-Subject: [cip dev][PATCH 6.1.y-cip 2/3] pinctrl: renesas: rzg2l: Configure the interrupt type on resume
-Date: Mon, 16 Dec 2024 15:06:18 +0200
-Message-ID: <20241216130619.321397-3-claudiu.beznea.uj@bp.renesas.com>
+Subject: [cip dev][PATCH 6.1.y-cip 0/3] pinctrl: renesas: rzg2l: Fixes for suspend to RAM
+Date: Mon, 16 Dec 2024 15:06:16 +0200
+Message-ID: <20241216130619.321397-1-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241216130619.321397-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20241216130619.321397-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 16 Dec 2024 13:06:29 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17425
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17423
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 02cd2d3be1c31a3fd328ee83e576340d34bc57d9 upstream.
+Hi,
 
-Commit dce0919c83c3 ("irqchip/renesas-rzg2l: Do not set TIEN and TINT
-source at the same time") removed the setup of TINT from
-rzg2l_irqc_irq_enable().  To address the spurious interrupt issue the
-setup of TINT has been moved in rzg2l_tint_set_edge() through
-rzg2l_disable_tint_and_set_tint_source().  With this, the interrupts are
-not properly re-configured after a suspend-to-RAM cycle.  To address
-this issue and avoid spurious interrupts while resumming set the
-interrupt type before enabling it.
+This series backports suspend to RAM fixes for the rzgl2 pinctrl
+driver.
 
-Fixes: dce0919c83c3 ("irqchip/renesas-rzg2l: Do not set TIEN and TINT source at the same time")
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20240419063822.3467424-1-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+Thank you,
+Claudiu Beznea
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index c2a0340ca945..517868e4c289 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -2044,7 +2044,9 @@ static void rzg2l_gpio_irq_restore(struct rzg2l_pinctrl *pctrl)
- 
- 	for (unsigned int i = 0; i < RZG2L_TINT_MAX_INTERRUPT; i++) {
- 		struct irq_data *data;
-+		unsigned long flags;
- 		unsigned int virq;
-+		int ret;
- 
- 		if (!pctrl->hwirq[i])
- 			continue;
-@@ -2062,17 +2064,18 @@ static void rzg2l_gpio_irq_restore(struct rzg2l_pinctrl *pctrl)
- 			continue;
- 		}
- 
--		if (!irqd_irq_disabled(data)) {
--			unsigned long flags;
--
--			/*
--			 * This has to be atomically executed to protect against a concurrent
--			 * interrupt.
--			 */
--			raw_spin_lock_irqsave(&pctrl->lock.rlock, flags);
-+		/*
-+		 * This has to be atomically executed to protect against a concurrent
-+		 * interrupt.
-+		 */
-+		raw_spin_lock_irqsave(&pctrl->lock.rlock, flags);
-+		ret = rzg2l_gpio_irq_set_type(data, irqd_get_trigger_type(data));
-+		if (!ret && !irqd_irq_disabled(data))
- 			rzg2l_gpio_irq_enable(data);
--			raw_spin_unlock_irqrestore(&pctrl->lock.rlock, flags);
--		}
-+		raw_spin_unlock_irqrestore(&pctrl->lock.rlock, flags);
-+
-+		if (ret)
-+			dev_crit(pctrl->dev, "Failed to set IRQ type for virq=%u\n", virq);
- 	}
- }
- 
+Claudiu Beznea (3):
+  pinctrl: renesas: rzg2l: Execute atomically the interrupt
+    configuration
+  pinctrl: renesas: rzg2l: Configure the interrupt type on resume
+  pinctrl: renesas: rzg2l: Use spin_{lock,unlock}_irq{save,restore}
+
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
 -- 
 2.43.0
 
