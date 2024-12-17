@@ -1,118 +1,118 @@
-Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
+Return-Path: <johnxw@amazon.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97334E77186
-	for <webhook@archiver.kernel.org>; Tue, 17 Dec 2024 02:03:33 +0000 (UTC)
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
- by mx.groups.io with SMTP id smtpd.web10.8733.1733916743529574112
- for <cip-dev@lists.cip-project.org>;
- Wed, 11 Dec 2024 03:32:23 -0800
-Authentication-Results: mx.groups.io;
- dkim=pass header.i=felix.moessbauer@siemens.com header.s=fm2 header.b=Phz5KDhR;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-1321639-20241211113219e4360ac089d9514aee-ad5_ty@rts-flowmailer.siemens.com)
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20241211113219e4360ac089d9514aee
-        for <cip-dev@lists.cip-project.org>;
-        Wed, 11 Dec 2024 12:32:20 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
- d=siemens.com; i=felix.moessbauer@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=lb5MIBBrWrbGRWGhtLgOQtQynn8mDet2qR/PR0NCn2E=;
- b=Phz5KDhRvLayYVWdMbhOhlN+hJ3mwoIfvDWPNqh7n8y656OwmE+caphRlXTVxftjWIVo0I
- Ko66qIiIWlTiFQL2qAMdOaA8aTKbO2h5oQNywyKN5g2AKGDUOZZ/u4QiLJ7aRdk/i/12mJBH
- vJhuFhqdB9PUJ1bULRAUv6QKsCwm4d8duGu9KKbfYDZS8FTUaVr+E3dwKigNzu+Oql0ZowlP
- +h4+NyfXVR98KEvFcIpjCVr934X0ozquA25Xz6XHkBQse8myHSW3UTEcp2YDF7oeZpbKBe3P
- B34JVQAImFgr55NFZnDeaep4yjPGfKC3NLXwAjmBLZVDotBi2p/K+I3w==;
-From: Felix Moessbauer <felix.moessbauer@siemens.com>
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A4E2E7717F
+	for <webhook@archiver.kernel.org>; Tue, 17 Dec 2024 17:23:19 +0000 (UTC)
+Subject: Re: Issue with the latest commit from master regarding initramfs-hook
 To: cip-dev@lists.cip-project.org
-Cc: jan.kiszka@siemens.com,
-	Felix Moessbauer <felix.moessbauer@siemens.com>
-Subject: [isar-cip-core][PATCH v3 1/1] define RO_ROOTFS_TYPE before using
-Date: Wed, 11 Dec 2024 12:32:13 +0100
-Message-Id: <20241211113213.2743931-1-felix.moessbauer@siemens.com>
+From: "JohnW" <johnxw@amazon.com>
+X-Originating-Location: Puyallup, Washington, US (174.21.60.212)
+X-Originating-Platform: Mac Firefox 132
+User-Agent: GROUPS.IO Web Poster
 MIME-Version: 1.0
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1321639:519-21489:flowmailer
-Content-Transfer-Encoding: 8bit
+Date: Tue, 17 Dec 2024 09:23:14 -0800
+References: <2bbf9009-2fe9-4227-bc1f-829fed0c1042@siemens.com>
+In-Reply-To: <2bbf9009-2fe9-4227-bc1f-829fed0c1042@siemens.com>
+Message-ID: <4730.1734456194616280646@lists.cip-project.org>
+Content-Type: multipart/alternative; boundary="QtOOeC0zq7BbJCFhRxmD"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 17 Dec 2024 02:03:33 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17438
+ <cip-dev@lists.cip-project.org>; Tue, 17 Dec 2024 17:23:19 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17439
 
-When including isar-cip-core in another layer and not using the cip-core
-distribution, the RO_ROOTFS_TYPE is undefined. This results in parsing
-errors.
+--QtOOeC0zq7BbJCFhRxmD
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-We now provide a weak default in the verity and squashfs recipes to not
-break the parsing in downstream layers. As we no longer need the
-definition in the distro file, we remove it there.
+Thanks for the insight. I see the updated isar reference now.
 
-Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
----
-Changes since v2:
-- add missing definition in swupdate.yml (used to control which
-  initrd is build).
+However I do see some issue when updating the isar version in my builds. I =
+am seeing the following
 
-Changes since v1:
-- remove RO_ROOTFS_TYPE from distro file
+>=20
+> ERROR: Task
+> (mc:installer-target:/home/ubuntu/workspace/john-sandbox/build/../meta-te=
+st/recipes-core/images/test-image-base.bb:do_rootfs_install)
+> failed with exit code '1'
+> NOTE: Tasks Summary: Attempted 298 tasks of which 235 didn't need to be
+> rerun and 1 failed.
+> WARNING:
+> /home/ubuntu/workspace/john-sandbox/build/tmp/work/debian-bookworm-amd64/=
+test-image-base-x86_64-sb/1.0-r0/rootfs/sys
+> left mounted, unmounting...
+> WARNING:
+> /home/ubuntu/workspace/john-sandbox/build/tmp/work/debian-bookworm-amd64/=
+test-image-base-x86_64-sb/1.0-r0/rootfs/proc
+> left mounted, unmounting...
+> ERROR: Command 'sudo umount
+> /home/ubuntu/workspace/john-sandbox/build/tmp/work/debian-bookworm-amd64/=
+test-image-base-x86_64-sb/1.0-r0/rootfs/proc'
+> returned non-zero exit status 32.
+> WARNING:
+> /home/ubuntu/workspace/john-sandbox/build/tmp/work/debian-bookworm-amd64/=
+test-image-base-x86_64-sb/1.0-r0/rootfs/dev/shm
+> left mounted, unmounting...
+> ERROR: Command 'sudo umount
+> /home/ubuntu/workspace/john-sandbox/build/tmp/work/debian-bookworm-amd64/=
+test-image-base-x86_64-sb/1.0-r0/rootfs/dev/shm'
+> returned non-zero exit status 32.
+> WARNING:
+> /home/ubuntu/workspace/john-sandbox/build/tmp/work/debian-bookworm-amd64/=
+test-image-base-x86_64-sb/1.0-r0/rootfs/dev
+> left mounted, unmounting...
+> ERROR: Command 'sudo umount
+> /home/ubuntu/workspace/john-sandbox/build/tmp/work/debian-bookworm-amd64/=
+test-image-base-x86_64-sb/1.0-r0/rootfs/dev'
+> returned non-zero exit status 32.
+>=20
+>=20
 
- classes/swupdate.bbclass        | 1 +
- classes/verity.bbclass          | 1 +
- conf/distro/cip-core-common.inc | 2 --
- kas/opt/swupdate.yml            | 1 +
- 4 files changed, 3 insertions(+), 2 deletions(-)
+I think I've seen previous message in the email list about this issue but c=
+an't recall if there's a resolution.
 
-diff --git a/classes/swupdate.bbclass b/classes/swupdate.bbclass
-index 5bf021a..3243f67 100644
---- a/classes/swupdate.bbclass
-+++ b/classes/swupdate.bbclass
-@@ -12,6 +12,7 @@
- 
- inherit template
- 
-+RO_ROOTFS_TYPE ??= "squashfs"
- SWU_ROOTFS_TYPE ?= "${RO_ROOTFS_TYPE}"
- SWU_ROOTFS_NAME ?= "${IMAGE_FULLNAME}"
- # compression type as defined by swupdate (zlib or zstd). Set to empty string to disable compression
-diff --git a/classes/verity.bbclass b/classes/verity.bbclass
-index 231d172..c3b89ec 100644
---- a/classes/verity.bbclass
-+++ b/classes/verity.bbclass
-@@ -12,6 +12,7 @@
- IMAGE_TYPEDEP:verity = "${VERITY_IMAGE_TYPE}"
- IMAGER_INSTALL:verity += "cryptsetup"
- 
-+RO_ROOTFS_TYPE ??= "squashfs"
- VERITY_IMAGE_TYPE ?= "${RO_ROOTFS_TYPE}"
- VERITY_INPUT_IMAGE ?= "${IMAGE_FULLNAME}.${VERITY_IMAGE_TYPE}"
- VERITY_OUTPUT_IMAGE ?= "${IMAGE_FULLNAME}.verity"
-diff --git a/conf/distro/cip-core-common.inc b/conf/distro/cip-core-common.inc
-index 3323dd0..d06eef0 100644
---- a/conf/distro/cip-core-common.inc
-+++ b/conf/distro/cip-core-common.inc
-@@ -15,8 +15,6 @@ WKS_FILE ?= "${MACHINE}.wks"
- 
- CIP_IMAGE_OPTIONS ?= ""
- 
--RO_ROOTFS_TYPE ?= "squashfs"
--
- IMAGER_BUILD_DEPS:append = " dosfstools-native"
- IMAGER_BUILD_DEPS:remove:buster = "dosfstools-native"
- 
-diff --git a/kas/opt/swupdate.yml b/kas/opt/swupdate.yml
-index 837efa7..38dc390 100644
---- a/kas/opt/swupdate.yml
-+++ b/kas/opt/swupdate.yml
-@@ -20,6 +20,7 @@ local_conf_header:
-     OVERRIDES .= ":swupdate"
- 
-   wic-swu: |
-+    RO_ROOTFS_TYPE ??= "squashfs"
-     IMAGE_TYPEDEP:wic += "${RO_ROOTFS_TYPE}"
-     IMAGE_FSTYPES:append = " swu"
-     # input is already compressed
--- 
-2.39.5
+Thanks,
+John
 
+--QtOOeC0zq7BbJCFhRxmD
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div>Thanks for the insight. I see the updated isar reference now.</div>
+<div>&nbsp;</div>
+<div>However I do see some issue when updating the isar version in my build=
+s. I am seeing the following</div>
+<div>&nbsp;</div>
+<blockquote>
+<div>ERROR: Task (mc:installer-target:/home/ubuntu/workspace/john-sandbox/b=
+uild/../meta-test/recipes-core/images/test-image-base.bb:do_rootfs_install)=
+ failed with exit code '1'<br />NOTE: Tasks Summary: Attempted 298 tasks of=
+ which 235 didn't need to be rerun and 1 failed.<br />WARNING: /home/ubuntu=
+/workspace/john-sandbox/build/tmp/work/debian-bookworm-amd64/test-image-bas=
+e-x86_64-sb/1.0-r0/rootfs/sys left mounted, unmounting...<br />WARNING: /ho=
+me/ubuntu/workspace/john-sandbox/build/tmp/work/debian-bookworm-amd64/test-=
+image-base-x86_64-sb/1.0-r0/rootfs/proc left mounted, unmounting...<br />ER=
+ROR: Command 'sudo umount /home/ubuntu/workspace/john-sandbox/build/tmp/wor=
+k/debian-bookworm-amd64/test-image-base-x86_64-sb/1.0-r0/rootfs/proc' retur=
+ned non-zero exit status 32.<br />WARNING: /home/ubuntu/workspace/john-sand=
+box/build/tmp/work/debian-bookworm-amd64/test-image-base-x86_64-sb/1.0-r0/r=
+ootfs/dev/shm left mounted, unmounting...<br />ERROR: Command 'sudo umount =
+/home/ubuntu/workspace/john-sandbox/build/tmp/work/debian-bookworm-amd64/te=
+st-image-base-x86_64-sb/1.0-r0/rootfs/dev/shm' returned non-zero exit statu=
+s 32.<br />WARNING: /home/ubuntu/workspace/john-sandbox/build/tmp/work/debi=
+an-bookworm-amd64/test-image-base-x86_64-sb/1.0-r0/rootfs/dev left mounted,=
+ unmounting...<br />ERROR: Command 'sudo umount /home/ubuntu/workspace/john=
+-sandbox/build/tmp/work/debian-bookworm-amd64/test-image-base-x86_64-sb/1.0=
+-r0/rootfs/dev' returned non-zero exit status 32.</div>
+<div>&nbsp;</div>
+</blockquote>
+<div>&nbsp;</div>
+<div>I think I've seen previous message in the email list about this issue =
+but can't recall if there's a resolution.</div>
+<div>&nbsp;</div>
+<div>Thanks,</div>
+<div>John</div>
+
+--QtOOeC0zq7BbJCFhRxmD--
 
