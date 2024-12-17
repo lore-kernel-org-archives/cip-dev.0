@@ -1,118 +1,79 @@
-Return-Path: <johnxw@amazon.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A4E2E7717F
-	for <webhook@archiver.kernel.org>; Tue, 17 Dec 2024 17:23:19 +0000 (UTC)
-Subject: Re: Issue with the latest commit from master regarding initramfs-hook
-To: cip-dev@lists.cip-project.org
-From: "JohnW" <johnxw@amazon.com>
-X-Originating-Location: Puyallup, Washington, US (174.21.60.212)
-X-Originating-Platform: Mac Firefox 132
-User-Agent: GROUPS.IO Web Poster
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D818E77187
+	for <webhook@archiver.kernel.org>; Tue, 17 Dec 2024 20:30:10 +0000 (UTC)
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+ by mx.groups.io with SMTP id smtpd.web11.91328.1734467400517385621
+ for <cip-dev@lists.cip-project.org>;
+ Tue, 17 Dec 2024 12:30:00 -0800
+Authentication-Results: mx.groups.io;
+ dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=TfXvu2CL;
+ spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 84BB11048AF6C;
+	Tue, 17 Dec 2024 21:29:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1734467398;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5JUYF5wQQJoCps9mhfgCyi1dVgJDngezdqWs7X/5n+E=;
+	b=TfXvu2CLiSj2P2eiYLHTdLWolkOeU3hIn6U5nOlXi7ixM/vHjYgdwL0ffAWshMZjs1RJr9
+	ty/+gFbf5hFxd0fe2/isA2wMb546M1B6JJ88od2kYZV2AWV1XyP9jfgcGT/+PU/NZoZmnr
+	Et7UHr7Hkt9SEgWhk2Xzyeo4a4tdGgKwzZ+ZjrcipD6vkKmtns+/QWDy2YisxqCFi+toR8
+	OUDEoWsgh0kBuh3JPHY76hvu6wiUX/VNKciMfrBs/AUIY/OY7RHNZZGvdW32rPVAjLEMmi
+	uOtB9JlKlfD5hBbHcMg/Oit3AQ19EuvD4z49CTtTcnxE9hYgWNbhzy6cMydzYA==
+Date: Tue, 17 Dec 2024 21:29:53 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: nobuhiro1.iwamatsu@toshiba.co.jp, pavel@denx.de,
+	cip-dev@lists.cip-project.org, biju.das.jz@bp.renesas.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com
+Subject: Re: [cip dev][PATCH 6.1.y-cip 0/3] pinctrl: renesas: rzg2l: Fixes
+ for suspend to RAM
+Message-ID: <Z2HfQYAgp7rIVp1N@duo.ucw.cz>
+References: <20241216130619.321397-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
-Date: Tue, 17 Dec 2024 09:23:14 -0800
-References: <2bbf9009-2fe9-4227-bc1f-829fed0c1042@siemens.com>
-In-Reply-To: <2bbf9009-2fe9-4227-bc1f-829fed0c1042@siemens.com>
-Message-ID: <4730.1734456194616280646@lists.cip-project.org>
-Content-Type: multipart/alternative; boundary="QtOOeC0zq7BbJCFhRxmD"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Cs7qUoGrITmrGQhA"
+Content-Disposition: inline
+In-Reply-To: <20241216130619.321397-1-claudiu.beznea.uj@bp.renesas.com>
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 17 Dec 2024 17:23:19 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17439
+ <cip-dev@lists.cip-project.org>; Tue, 17 Dec 2024 20:30:10 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17440
 
---QtOOeC0zq7BbJCFhRxmD
-Content-Type: text/plain; charset="utf-8"
+
+--Cs7qUoGrITmrGQhA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Thanks for the insight. I see the updated isar reference now.
+Hi!
 
-However I do see some issue when updating the isar version in my builds. I =
-am seeing the following
+> This series backports suspend to RAM fixes for the rzgl2 pinctrl
+> driver.
 
->=20
-> ERROR: Task
-> (mc:installer-target:/home/ubuntu/workspace/john-sandbox/build/../meta-te=
-st/recipes-core/images/test-image-base.bb:do_rootfs_install)
-> failed with exit code '1'
-> NOTE: Tasks Summary: Attempted 298 tasks of which 235 didn't need to be
-> rerun and 1 failed.
-> WARNING:
-> /home/ubuntu/workspace/john-sandbox/build/tmp/work/debian-bookworm-amd64/=
-test-image-base-x86_64-sb/1.0-r0/rootfs/sys
-> left mounted, unmounting...
-> WARNING:
-> /home/ubuntu/workspace/john-sandbox/build/tmp/work/debian-bookworm-amd64/=
-test-image-base-x86_64-sb/1.0-r0/rootfs/proc
-> left mounted, unmounting...
-> ERROR: Command 'sudo umount
-> /home/ubuntu/workspace/john-sandbox/build/tmp/work/debian-bookworm-amd64/=
-test-image-base-x86_64-sb/1.0-r0/rootfs/proc'
-> returned non-zero exit status 32.
-> WARNING:
-> /home/ubuntu/workspace/john-sandbox/build/tmp/work/debian-bookworm-amd64/=
-test-image-base-x86_64-sb/1.0-r0/rootfs/dev/shm
-> left mounted, unmounting...
-> ERROR: Command 'sudo umount
-> /home/ubuntu/workspace/john-sandbox/build/tmp/work/debian-bookworm-amd64/=
-test-image-base-x86_64-sb/1.0-r0/rootfs/dev/shm'
-> returned non-zero exit status 32.
-> WARNING:
-> /home/ubuntu/workspace/john-sandbox/build/tmp/work/debian-bookworm-amd64/=
-test-image-base-x86_64-sb/1.0-r0/rootfs/dev
-> left mounted, unmounting...
-> ERROR: Command 'sudo umount
-> /home/ubuntu/workspace/john-sandbox/build/tmp/work/debian-bookworm-amd64/=
-test-image-base-x86_64-sb/1.0-r0/rootfs/dev'
-> returned non-zero exit status 32.
->=20
->=20
+Thank you, applied and pushed out.
 
-I think I've seen previous message in the email list about this issue but c=
-an't recall if there's a resolution.
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
-Thanks,
-John
+--Cs7qUoGrITmrGQhA
+Content-Type: application/pgp-signature; name="signature.asc"
 
---QtOOeC0zq7BbJCFhRxmD
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+-----BEGIN PGP SIGNATURE-----
 
-<div>Thanks for the insight. I see the updated isar reference now.</div>
-<div>&nbsp;</div>
-<div>However I do see some issue when updating the isar version in my build=
-s. I am seeing the following</div>
-<div>&nbsp;</div>
-<blockquote>
-<div>ERROR: Task (mc:installer-target:/home/ubuntu/workspace/john-sandbox/b=
-uild/../meta-test/recipes-core/images/test-image-base.bb:do_rootfs_install)=
- failed with exit code '1'<br />NOTE: Tasks Summary: Attempted 298 tasks of=
- which 235 didn't need to be rerun and 1 failed.<br />WARNING: /home/ubuntu=
-/workspace/john-sandbox/build/tmp/work/debian-bookworm-amd64/test-image-bas=
-e-x86_64-sb/1.0-r0/rootfs/sys left mounted, unmounting...<br />WARNING: /ho=
-me/ubuntu/workspace/john-sandbox/build/tmp/work/debian-bookworm-amd64/test-=
-image-base-x86_64-sb/1.0-r0/rootfs/proc left mounted, unmounting...<br />ER=
-ROR: Command 'sudo umount /home/ubuntu/workspace/john-sandbox/build/tmp/wor=
-k/debian-bookworm-amd64/test-image-base-x86_64-sb/1.0-r0/rootfs/proc' retur=
-ned non-zero exit status 32.<br />WARNING: /home/ubuntu/workspace/john-sand=
-box/build/tmp/work/debian-bookworm-amd64/test-image-base-x86_64-sb/1.0-r0/r=
-ootfs/dev/shm left mounted, unmounting...<br />ERROR: Command 'sudo umount =
-/home/ubuntu/workspace/john-sandbox/build/tmp/work/debian-bookworm-amd64/te=
-st-image-base-x86_64-sb/1.0-r0/rootfs/dev/shm' returned non-zero exit statu=
-s 32.<br />WARNING: /home/ubuntu/workspace/john-sandbox/build/tmp/work/debi=
-an-bookworm-amd64/test-image-base-x86_64-sb/1.0-r0/rootfs/dev left mounted,=
- unmounting...<br />ERROR: Command 'sudo umount /home/ubuntu/workspace/john=
--sandbox/build/tmp/work/debian-bookworm-amd64/test-image-base-x86_64-sb/1.0=
--r0/rootfs/dev' returned non-zero exit status 32.</div>
-<div>&nbsp;</div>
-</blockquote>
-<div>&nbsp;</div>
-<div>I think I've seen previous message in the email list about this issue =
-but can't recall if there's a resolution.</div>
-<div>&nbsp;</div>
-<div>Thanks,</div>
-<div>John</div>
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ2HfQQAKCRAw5/Bqldv6
+8mzYAJ9b0crC61nZ7gMI7ydq9rszby2tkACfVPhjRn/tLeYkAWmxX9bHJTMYjzo=
+=OXvL
+-----END PGP SIGNATURE-----
 
---QtOOeC0zq7BbJCFhRxmD--
+--Cs7qUoGrITmrGQhA--
 
