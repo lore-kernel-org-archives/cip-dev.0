@@ -2,56 +2,56 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D2DE7718D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28E76E7718B
 	for <webhook@archiver.kernel.org>; Wed, 18 Dec 2024 12:22:55 +0000 (UTC)
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
- by mx.groups.io with SMTP id smtpd.web10.104173.1734524573041231026
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+ by mx.groups.io with SMTP id smtpd.web11.104357.1734524570694238707
  for <cip-dev@lists.cip-project.org>;
- Wed, 18 Dec 2024 04:22:53 -0800
+ Wed, 18 Dec 2024 04:22:51 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=l40opJr4;
- spf=pass (domain: tuxon.dev, ip: 209.85.221.49, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-385e06af753so3313321f8f.2
-        for <cip-dev@lists.cip-project.org>; Wed, 18 Dec 2024 04:22:52 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=eSZn5LXj;
+ spf=pass (domain: tuxon.dev, ip: 209.85.221.47, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-385e27c75f4so4899889f8f.2
+        for <cip-dev@lists.cip-project.org>; Wed, 18 Dec 2024 04:22:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1734524571; x=1735129371; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1734524569; x=1735129369; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yXMNAESOXHqTAoAF8i42CNtySnBQQXTbd8Cyrt6OENY=;
-        b=l40opJr4QmcXAkzOelPb8KHazYOFmkl5xWlHSVcG+aaM6+02yQflhFytfYHY02uOrg
-         eXmSHUkgY2+pJqIOYCC9xXbqjrcAauyx/VBflve5qGU3rV24yz+qSTjndH1O5n4AeuMy
-         5waFbcC4yIi8km8QvvXvh4S6slHx0yBzMIn4pJAfIk4Buc+wrfzsQxBQMH9x/ibowhz9
-         k1T/m9z8ZVdJAzD2gi46fE1hKmFtcRGwaE7d0g2PgXza4hZ1K40nKBg3fHES4QYOzT10
-         Ire3FmQ+GKYEOTVbt4xJCpcuh9zOZlojWtTNVf++a/ZVwWFIi/cBuVeroHrNic+EmnTr
-         zyVw==
+        bh=11AoqFUKSWD3zMs2LLxkh6xVkPrdT/9gMNfkIPFCQXU=;
+        b=eSZn5LXjwds2SHY4wMcvuo3LcexFC+1e8p3E61y9YAV4Lp2aqID/xOhf//5KEiGBCR
+         IDyIHXkuZB58ae5iaMDkmp+OdsK66g9/ALI/jRuevQl2k89VdmSlKM1UU1HScaTabCEV
+         ZgwOBj1kQ5UQw0FcKrPfNNP2y4Ni0CfeS+f7icBSVQ6/oblBnaRunip0Buc0JWN//F0g
+         O9KgvYy4CuBcKdEBGTLqxshV98jdWU8Gmv8Oqx8AxFt31jdVVQz1C5GAK1Xl90oKfDF/
+         y8CADClU3y4AN+zQx1rK0wJJziBRy2jZ2qPyqdb7TgIYFCwKwUjg1zBR4H++e0VHRz1y
+         dvHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734524571; x=1735129371;
+        d=1e100.net; s=20230601; t=1734524569; x=1735129369;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yXMNAESOXHqTAoAF8i42CNtySnBQQXTbd8Cyrt6OENY=;
-        b=Umr8mTfnanNKaSvf/INO5Sm6o4+pXnNic2ybU1y5ORyBx5eAcoitLNNqcvYNOBvbn/
-         jECtC9vO+2QL44yEcpzykyne2Tedr+94eS88IR5qYuPrz3RzU7DgjdiwVpRJ5pHsG4iz
-         j0Tkok+cEK743wcrSAvqkDGXb2Bs94RgkvcLPNP+qpBd34iQdGeXGXhf+A5vlv9sqzkA
-         3YVV7J3m/kmuJ/BJAMwxHwmKffG/7/Q08aY2wu68NQzc1j/qa4RgYBT2zk6o3mGIAZOF
-         4PzXrI6Nh9HN9n29dV1S9XA7Fj20P56tnEi3nQxvfFA2vfivN48ypmJ47+mSSP4WKcnk
-         b0Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgpw92GRdchvDSKsZuEVIGJ8hFhZ0XO8i3XVlYD16ZjM0G9+xAT7swDY6L8X514PCXt6gd/4KE@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yw9Rn0I36ASzqH3xulGhxtJppdFseGbOPKM+Yf0NEdqAdz4hAi4
-	BbdI/A5Es1XElfUeMAvHTfbGt4k6/q0Wi2b8LpElcEgPrYdZjbCREIbuBPTlZzU=
-X-Gm-Gg: ASbGncv90sqmkSoDWh96e4XB+jEP803xcALwmX6YmBnMceet0j84Ca36cX/sSgJVOpf
-	cUXgNzihA07x+h9LRWA68NTvO6kfjqU86G/63VzeYXNm+PMEaOgdIdml97xiSqjbhpVPBuCKana
-	fOrVgQEyuV4cdoxk8dxFksz0rdOt3yKCg2AavZmbVUqvgnmZfWtUaIpXrHblvt5EsCWZBq7GIwT
-	lqz2QtcQbv2KtdTMwvquH80js6JHlM/Spi9rBpIpXM8dC2QFLWfcJHqdy4ggYOhqCcSqgSho0oy
-	xsun3CqBAws=
-X-Google-Smtp-Source: AGHT+IF4NtSaE2Zj2VhDIMZB6OxC8qNJYaUHfPg5xPO3HF1hZL2H7huGdUMuQmQWAbupzAGxvS+HxQ==
-X-Received: by 2002:a5d:5986:0:b0:382:30a5:c38e with SMTP id ffacd0b85a97d-388e4d8b38emr2482602f8f.31.1734524571459;
-        Wed, 18 Dec 2024 04:22:51 -0800 (PST)
+        bh=11AoqFUKSWD3zMs2LLxkh6xVkPrdT/9gMNfkIPFCQXU=;
+        b=OAN8E5Z+ZbC/RDlgBKbXQvnyQF+uMbQxAk6JtFvC8LA1vrqlCl45VXNGjNjEylKUTv
+         teAVUfbWbXwgBu/Bg6mXkZVzzE69fA7oSM674pLvIu+GGW6FYjBD7uMin1sbsUIwLHJX
+         cm/62ghDpCIFbXwrnIClwBMxlGamizlBlw73ADnLBn3WwREaus+pNTZ0uM7dJayBHp04
+         n1p1CGAjppIAHj0A4yif3icEGba+1+4Gbr7n3gtSiGspwif6k6JviyuoANhOi/H5UVhl
+         FCXLx+pC3AvKWb2WzAwoot2DCKi4IltxPIT2KJOVd4VhzfkM/9i8OfEiDE6A+JXd+V0W
+         D+uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2zqBk4GwwXOI1hmKvJNVF1GYjpIDauCJnY/ptmI+0OvVEXwvQZpFpvtq0ht5v/6A/nhQsFj3A@lists.cip-project.org
+X-Gm-Message-State: AOJu0Ywz/KpY1bYqoZl6nLIbn5n4Hjb3FAt9BZIgUOtQlbr/A2xJtjH8
+	gX1cuG59JbKOhci6Wlag4AjAqy0LGpLOfAfus/eqFw+6st477tid67ku8OldI2k=
+X-Gm-Gg: ASbGncv4TI/HElcVCzEX6SYKGCcd1Jv8qgpAr8jsCYf6SvqKHWPVJfC7Ydsu2hecc0S
+	PPHaP9Kw3Ij6JpNV+ajNkUr3VA/y7DYJtuYtPj0p0Z/ICs8jHyILN571FIXgdInTfRhgb8kF3ca
+	avi3a+NdBvRyGywbRY5JSV7NqDCtDXrgGjCi8FsEAEq9HdpUTdVbhScKQ7I5NHWRzbOEeg+gX2s
+	uh2YFv3hwejr23yPfh+gPfVSPA3TsxzV/4wCTCUUgXdFPXHF2sA4jsseSFtgvMcGQIxCCC22/ET
+	S6PeywgSMfI=
+X-Google-Smtp-Source: AGHT+IG9D8nZhX2vOavSsotKZiYwwqMUgdZ4NYVz4rSz4wtlyBtyLhbZ5xDJbxq+BnnFAqobDJQ5XQ==
+X-Received: by 2002:a5d:6c63:0:b0:385:eb85:f111 with SMTP id ffacd0b85a97d-388e4d49ff7mr2936724f8f.14.1734524569067;
+        Wed, 18 Dec 2024 04:22:49 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.102])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656b01b2dsm18790365e9.12.2024.12.18.04.22.50
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656b01b2dsm18790365e9.12.2024.12.18.04.22.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2024 04:22:50 -0800 (PST)
+        Wed, 18 Dec 2024 04:22:48 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
@@ -60,9 +60,9 @@ Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org,
 	biju.das.jz@bp.renesas.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com
-Subject: [cip dev][PATCH 6.1.y-cip 3/8] watchdog: rzg2l_wdt: Remove comparison with zero
-Date: Wed, 18 Dec 2024 14:22:41 +0200
-Message-ID: <20241218122246.2365189-4-claudiu.beznea.uj@bp.renesas.com>
+Subject: [cip dev][PATCH 6.1.y-cip 1/8] clk: renesas: r9a08g045: Add clock and reset support for watchdog
+Date: Wed, 18 Dec 2024 14:22:39 +0200
+Message-ID: <20241218122246.2365189-2-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241218122246.2365189-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20241218122246.2365189-1-claudiu.beznea.uj@bp.renesas.com>
@@ -72,38 +72,45 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 18 Dec 2024 12:22:55 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17447
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17445
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 900b938335f7fbd401dcba14c8069dbf38ed1f28 upstream.
+commit 292d3079abf333540fef06c1533d7c21c6d21390 upstream.
 
-devm_add_action_or_reset() could return -ENOMEM or zero. Thus, remove
-comparison with zero of the returning value to make code simpler.
+RZ/G3S has a watchdog module accessible by the Cortex-A core. Add clock
+and reset support for it.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Link: https://lore.kernel.org/r/20240531065723.1085423-7-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20240122111115.2861835-2-claudiu.beznea.uj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/watchdog/rzg2l_wdt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/renesas/r9a08g045-cpg.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
-index a473de5ff886..2c50e4c76131 100644
---- a/drivers/watchdog/rzg2l_wdt.c
-+++ b/drivers/watchdog/rzg2l_wdt.c
-@@ -318,7 +318,7 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
- 
- 	watchdog_set_drvdata(&priv->wdev, priv);
- 	ret = devm_add_action_or_reset(&pdev->dev, rzg2l_wdt_pm_disable, &priv->wdev);
--	if (ret < 0)
-+	if (ret)
- 		return ret;
- 
- 	watchdog_set_nowayout(&priv->wdev, nowayout);
+diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
+index 2582ba95256e..c3e6da2de197 100644
+--- a/drivers/clk/renesas/r9a08g045-cpg.c
++++ b/drivers/clk/renesas/r9a08g045-cpg.c
+@@ -193,6 +193,8 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
+ 	DEF_MOD("ia55_pclk",		R9A08G045_IA55_PCLK, R9A08G045_CLK_P2, 0x518, 0),
+ 	DEF_MOD("ia55_clk",		R9A08G045_IA55_CLK, R9A08G045_CLK_P1, 0x518, 1),
+ 	DEF_MOD("dmac_aclk",		R9A08G045_DMAC_ACLK, R9A08G045_CLK_P3, 0x52c, 0),
++	DEF_MOD("wdt0_pclk",		R9A08G045_WDT0_PCLK, R9A08G045_CLK_P0, 0x548, 0),
++	DEF_MOD("wdt0_clk",		R9A08G045_WDT0_CLK, R9A08G045_OSCCLK, 0x548, 1),
+ 	DEF_MOD("sdhi0_imclk",		R9A08G045_SDHI0_IMCLK, CLK_SD0_DIV4, 0x554, 0),
+ 	DEF_MOD("sdhi0_imclk2",		R9A08G045_SDHI0_IMCLK2, CLK_SD0_DIV4, 0x554, 1),
+ 	DEF_MOD("sdhi0_clk_hs",		R9A08G045_SDHI0_CLK_HS, R9A08G045_CLK_SD0, 0x554, 2),
+@@ -219,6 +221,7 @@ static const struct rzg2l_reset r9a08g045_resets[] = {
+ 	DEF_RST(R9A08G045_GIC600_GICRESET_N, 0x814, 0),
+ 	DEF_RST(R9A08G045_GIC600_DBG_GICRESET_N, 0x814, 1),
+ 	DEF_RST(R9A08G045_IA55_RESETN, 0x818, 0),
++	DEF_RST(R9A08G045_WDT0_PRESETN, 0x848, 0),
+ 	DEF_RST(R9A08G045_SDHI0_IXRST, 0x854, 0),
+ 	DEF_RST(R9A08G045_SDHI1_IXRST, 0x854, 1),
+ 	DEF_RST(R9A08G045_SDHI2_IXRST, 0x854, 2),
 -- 
 2.43.0
 
