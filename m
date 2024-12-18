@@ -2,56 +2,56 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04F52E77188
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D2DE7718D
 	for <webhook@archiver.kernel.org>; Wed, 18 Dec 2024 12:22:55 +0000 (UTC)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
- by mx.groups.io with SMTP id smtpd.web11.104360.1734524574103414869
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+ by mx.groups.io with SMTP id smtpd.web10.104173.1734524573041231026
  for <cip-dev@lists.cip-project.org>;
- Wed, 18 Dec 2024 04:22:54 -0800
+ Wed, 18 Dec 2024 04:22:53 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=TW2f+ld+;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.53, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-432d86a3085so42825785e9.2
-        for <cip-dev@lists.cip-project.org>; Wed, 18 Dec 2024 04:22:53 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=l40opJr4;
+ spf=pass (domain: tuxon.dev, ip: 209.85.221.49, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-385e06af753so3313321f8f.2
+        for <cip-dev@lists.cip-project.org>; Wed, 18 Dec 2024 04:22:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1734524572; x=1735129372; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1734524571; x=1735129371; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jkJG4Bqf1RF27OjiKI0iUzCClliQfuwI+suFdV7UrVo=;
-        b=TW2f+ld+fXhhMXeUh4HXFo4wm1ADkWIitnvCjSqvDlqfc091uITNaOYzWfvNgN/S22
-         +EWqOVKLBBmHWmsqqx609HbUp/Dou14znLyKbRu2p8SR61Hte/bFcnAoA5XPWp0PJiv5
-         HsKQa/xP8CLE0++3wvNsaX04/mK3ZLxpZdvNHjUmJoTzojc/vR+6GBE0WWA/48EEV8pP
-         sb9DZ9HTV+8gEu03yxbsosgOrWp78Nj4YEAANKr6GWRJf9CmhK6GxFKnhdkJgYXcUjN5
-         Turo5XHAYM5IoymbuAEnht76hTcQNki1xM9VdfHZ7RSrSMevP69YMh+o49CGHFIK2vf5
-         ziww==
+        bh=yXMNAESOXHqTAoAF8i42CNtySnBQQXTbd8Cyrt6OENY=;
+        b=l40opJr4QmcXAkzOelPb8KHazYOFmkl5xWlHSVcG+aaM6+02yQflhFytfYHY02uOrg
+         eXmSHUkgY2+pJqIOYCC9xXbqjrcAauyx/VBflve5qGU3rV24yz+qSTjndH1O5n4AeuMy
+         5waFbcC4yIi8km8QvvXvh4S6slHx0yBzMIn4pJAfIk4Buc+wrfzsQxBQMH9x/ibowhz9
+         k1T/m9z8ZVdJAzD2gi46fE1hKmFtcRGwaE7d0g2PgXza4hZ1K40nKBg3fHES4QYOzT10
+         Ire3FmQ+GKYEOTVbt4xJCpcuh9zOZlojWtTNVf++a/ZVwWFIi/cBuVeroHrNic+EmnTr
+         zyVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734524572; x=1735129372;
+        d=1e100.net; s=20230601; t=1734524571; x=1735129371;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jkJG4Bqf1RF27OjiKI0iUzCClliQfuwI+suFdV7UrVo=;
-        b=efYY0XE3nBpj9vFFFUx1Jkm3oZflXf2CiFcLW+rDEYlGFXFmwVVCywDnfvUxaSRhIj
-         zViD8iRbxtxtQtDxZ0uPCqENtO399RkPPf0u9woPlmAn/PRChOwXfKM15lyLGlvwW949
-         EcrEVR1syRFWcEe8d3gvqQwhLVlDA5fKRD0iq7BOx7ARtU5yiievP4wBFH1yaTvhkPXC
-         DBR5A0uzmQaeCilStuvTi98IpnZZ/QdPtdrHSGn5+/7Xp/0CS7etjqqpb5nh76W9DU+d
-         6H0vWemfXOqZcVv9wVRK1RInIVNNM4YvqkAGwI3fYgRBn0TgVR1gn7mQwrmdBTOimM4L
-         Kigg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyqC+RL4As3r7BrTJwT4HG6SCMBf/N+kVW+rEoK3UlEowC2Evzz9di8Z8WH9yogWjC1grEVWnQ@lists.cip-project.org
-X-Gm-Message-State: AOJu0YzDRdOweCufAGkp9ruGTRgJKhM2ulw7mLEbq/SbKLJ0NTiL1dZM
-	PayTU6bwOo8iSmrsBRaqeUcWUxWpi5qLrgp7YkkvlyMQs5Ksnd5SkKwu4Hw49Oo=
-X-Gm-Gg: ASbGncuDlm6VOXGoUca8uvrnS8Yej6UoXygf/miLEBlLP9c2E8FA7q9FlN6AMlE8rtS
-	3ewxdWbeRyO9Kn3sPixCjCeevBR+bsonDO7PNAv+IUZizbmtuYGv3MkFNFW9Svdq4G5bhFPOpIH
-	z32DQ7kf0aCXVM/KpiyIZm5/OKfinkG8tlDbWFsC5lf+HTZk8XlDN84ECbSXmQRC2Gzl3p9/CzP
-	rWxmnTi2Xa+pjKEDnWQui+XXlDL9ovK2/RCNGvFcaGX5OZUh45GqkmIvDqVOKzgeh1xhNCJHVmj
-	LtDtRhZXZfQ=
-X-Google-Smtp-Source: AGHT+IHYwmIqW+SVFwvVVrbCJZq33ezEV0R9MmgHTS0fYz4zYf3Ft2HAnLrNXUCsPXcmyI/e1IUCwA==
-X-Received: by 2002:a05:6000:188d:b0:386:62f:cf18 with SMTP id ffacd0b85a97d-388e4db7e91mr2127734f8f.49.1734524572517;
-        Wed, 18 Dec 2024 04:22:52 -0800 (PST)
+        bh=yXMNAESOXHqTAoAF8i42CNtySnBQQXTbd8Cyrt6OENY=;
+        b=Umr8mTfnanNKaSvf/INO5Sm6o4+pXnNic2ybU1y5ORyBx5eAcoitLNNqcvYNOBvbn/
+         jECtC9vO+2QL44yEcpzykyne2Tedr+94eS88IR5qYuPrz3RzU7DgjdiwVpRJ5pHsG4iz
+         j0Tkok+cEK743wcrSAvqkDGXb2Bs94RgkvcLPNP+qpBd34iQdGeXGXhf+A5vlv9sqzkA
+         3YVV7J3m/kmuJ/BJAMwxHwmKffG/7/Q08aY2wu68NQzc1j/qa4RgYBT2zk6o3mGIAZOF
+         4PzXrI6Nh9HN9n29dV1S9XA7Fj20P56tnEi3nQxvfFA2vfivN48ypmJ47+mSSP4WKcnk
+         b0Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgpw92GRdchvDSKsZuEVIGJ8hFhZ0XO8i3XVlYD16ZjM0G9+xAT7swDY6L8X514PCXt6gd/4KE@lists.cip-project.org
+X-Gm-Message-State: AOJu0Yw9Rn0I36ASzqH3xulGhxtJppdFseGbOPKM+Yf0NEdqAdz4hAi4
+	BbdI/A5Es1XElfUeMAvHTfbGt4k6/q0Wi2b8LpElcEgPrYdZjbCREIbuBPTlZzU=
+X-Gm-Gg: ASbGncv90sqmkSoDWh96e4XB+jEP803xcALwmX6YmBnMceet0j84Ca36cX/sSgJVOpf
+	cUXgNzihA07x+h9LRWA68NTvO6kfjqU86G/63VzeYXNm+PMEaOgdIdml97xiSqjbhpVPBuCKana
+	fOrVgQEyuV4cdoxk8dxFksz0rdOt3yKCg2AavZmbVUqvgnmZfWtUaIpXrHblvt5EsCWZBq7GIwT
+	lqz2QtcQbv2KtdTMwvquH80js6JHlM/Spi9rBpIpXM8dC2QFLWfcJHqdy4ggYOhqCcSqgSho0oy
+	xsun3CqBAws=
+X-Google-Smtp-Source: AGHT+IF4NtSaE2Zj2VhDIMZB6OxC8qNJYaUHfPg5xPO3HF1hZL2H7huGdUMuQmQWAbupzAGxvS+HxQ==
+X-Received: by 2002:a5d:5986:0:b0:382:30a5:c38e with SMTP id ffacd0b85a97d-388e4d8b38emr2482602f8f.31.1734524571459;
+        Wed, 18 Dec 2024 04:22:51 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.102])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656b01b2dsm18790365e9.12.2024.12.18.04.22.51
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656b01b2dsm18790365e9.12.2024.12.18.04.22.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2024 04:22:52 -0800 (PST)
+        Wed, 18 Dec 2024 04:22:50 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
@@ -60,9 +60,9 @@ Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org,
 	biju.das.jz@bp.renesas.com,
 	prabhakar.mahadev-lad.rj@bp.renesas.com
-Subject: [cip dev][PATCH 6.1.y-cip 4/8] watchdog: rzg2l_wdt: Rely on the reset driver for doing proper reset
-Date: Wed, 18 Dec 2024 14:22:42 +0200
-Message-ID: <20241218122246.2365189-5-claudiu.beznea.uj@bp.renesas.com>
+Subject: [cip dev][PATCH 6.1.y-cip 3/8] watchdog: rzg2l_wdt: Remove comparison with zero
+Date: Wed, 18 Dec 2024 14:22:41 +0200
+Message-ID: <20241218122246.2365189-4-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241218122246.2365189-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20241218122246.2365189-1-claudiu.beznea.uj@bp.renesas.com>
@@ -72,117 +72,38 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 18 Dec 2024 12:22:55 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17448
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17447
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit d8997ed79ed7c7c32b2ae571e0d99a58bbfd01fe upstream.
+commit 900b938335f7fbd401dcba14c8069dbf38ed1f28 upstream.
 
-The reset driver has been adapted in commit da235d2fac21
-("clk: renesas: rzg2l: Check reset monitor registers") to check the reset
-monitor bits before declaring reset asserts/de-asserts as
-successful/failure operations. With that, there is no need to keep the
-reset workaround for RZ/V2M in place in the watchdog driver.
+devm_add_action_or_reset() could return -ENOMEM or zero. Thus, remove
+comparison with zero of the returning value to make code simpler.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Link: https://lore.kernel.org/r/20240531065723.1085423-8-claudiu.beznea.uj@bp.renesas.com
+Link: https://lore.kernel.org/r/20240531065723.1085423-7-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/watchdog/rzg2l_wdt.c | 39 ++++--------------------------------
- 1 file changed, 4 insertions(+), 35 deletions(-)
+ drivers/watchdog/rzg2l_wdt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
-index 2c50e4c76131..ea535739f8b6 100644
+index a473de5ff886..2c50e4c76131 100644
 --- a/drivers/watchdog/rzg2l_wdt.c
 +++ b/drivers/watchdog/rzg2l_wdt.c
-@@ -8,7 +8,6 @@
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/io.h>
--#include <linux/iopoll.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/of_device.h>
-@@ -54,35 +53,11 @@ struct rzg2l_wdt_priv {
- 	struct reset_control *rstc;
- 	unsigned long osc_clk_rate;
- 	unsigned long delay;
--	unsigned long minimum_assertion_period;
- 	struct clk *pclk;
- 	struct clk *osc_clk;
- 	enum rz_wdt_type devtype;
- };
+@@ -318,7 +318,7 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
  
--static int rzg2l_wdt_reset(struct rzg2l_wdt_priv *priv)
--{
--	int err, status;
--
--	if (priv->devtype == WDT_RZV2M) {
--		/* WDT needs TYPE-B reset control */
--		err = reset_control_assert(priv->rstc);
--		if (err)
--			return err;
--		ndelay(priv->minimum_assertion_period);
--		err = reset_control_deassert(priv->rstc);
--		if (err)
--			return err;
--		err = read_poll_timeout(reset_control_status, status,
--					status != 1, 0, 1000, false,
--					priv->rstc);
--	} else {
--		err = reset_control_reset(priv->rstc);
--	}
--
--	return err;
--}
--
- static void rzg2l_wdt_wait_delay(struct rzg2l_wdt_priv *priv)
- {
- 	/* delay timer when change the setting register */
-@@ -189,13 +164,12 @@ static int rzg2l_wdt_restart(struct watchdog_device *wdev,
- 			     unsigned long action, void *data)
- {
- 	struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
-+	int ret;
+ 	watchdog_set_drvdata(&priv->wdev, priv);
+ 	ret = devm_add_action_or_reset(&pdev->dev, rzg2l_wdt_pm_disable, &priv->wdev);
+-	if (ret < 0)
++	if (ret)
+ 		return ret;
  
- 	clk_prepare_enable(priv->pclk);
- 	clk_prepare_enable(priv->osc_clk);
- 
- 	if (priv->devtype == WDT_RZG2L) {
--		int ret;
--
- 		ret = reset_control_deassert(priv->rstc);
- 		if (ret)
- 			return ret;
-@@ -207,7 +181,9 @@ static int rzg2l_wdt_restart(struct watchdog_device *wdev,
- 		rzg2l_wdt_write(priv, PEEN_FORCE, PEEN);
- 	} else {
- 		/* RZ/V2M doesn't have parity error registers */
--		rzg2l_wdt_reset(priv);
-+		ret = reset_control_reset(priv->rstc);
-+		if (ret)
-+			return ret;
- 
- 		wdev->timeout = 0;
- 
-@@ -299,13 +275,6 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
- 
- 	priv->devtype = (uintptr_t)of_device_get_match_data(dev);
- 
--	if (priv->devtype == WDT_RZV2M) {
--		priv->minimum_assertion_period = RZV2M_A_NSEC +
--			3 * F2CYCLE_NSEC(pclk_rate) + 5 *
--			max(F2CYCLE_NSEC(priv->osc_clk_rate),
--			    F2CYCLE_NSEC(pclk_rate));
--	}
--
- 	pm_runtime_enable(&pdev->dev);
- 
- 	priv->wdev.info = &rzg2l_wdt_ident;
+ 	watchdog_set_nowayout(&priv->wdev, nowayout);
 -- 
 2.43.0
 
