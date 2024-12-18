@@ -2,79 +2,65 @@ Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF9BE77187
-	for <webhook@archiver.kernel.org>; Wed, 18 Dec 2024 15:52:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA10E77187
+	for <webhook@archiver.kernel.org>; Wed, 18 Dec 2024 19:58:57 +0000 (UTC)
 Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web10.108698.1734537165836490577
+ by mx.groups.io with SMTP id smtpd.web10.114270.1734551935503899647
  for <cip-dev@lists.cip-project.org>;
- Wed, 18 Dec 2024 07:52:46 -0800
+ Wed, 18 Dec 2024 11:58:55 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=b1eK382Q;
+ dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=dWHv2Afd;
  spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8BC90104811D1;
-	Wed, 18 Dec 2024 16:52:40 +0100 (CET)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 020C51048559C;
+	Wed, 18 Dec 2024 20:58:49 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1734537163;
+	t=1734551933;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gKE0F+7IHFruhbDtMB4U4BijFlp8pCkDcB6Y9KjIork=;
-	b=b1eK382QFw/5rjqh4ZTTNQyPGDkYw7fbm/U5Js7eTb+PVX5jT3BTXc1lF5e8Stly23jfdn
-	5PoQ7VqdHmP6Ox92SBNBieWlJcCDY38Vm24BGJcHOF9yFnQmCiX2fgyMycqXAEOGebND2L
-	YNv56RoNPMXsBh8KMOIE3JR6YpcFTdJPsCfrCkgJf20s0lgGDd0W2CV/xaJmsbq9sHC3vB
-	u3F+aQZLwiyZVBLep86ryhmnM38eFweALm43HjngP4m61YRJPv4XbZaSM/lmHF/i3P9f44
-	vcKr03JQi+tKvIVsO590oTahSmLuqVUPnp49+w4nKXuZ4PAD6hM0fyqlChUAxg==
-Date: Wed, 18 Dec 2024 16:52:39 +0100
+	bh=zsEads+Fg2jQKI6wrcEGYEo+n4lxs8h85ILeK3aFcfI=;
+	b=dWHv2AfdwRXdk8JI9ugV5rUXqZzvSuc8lZoT4erYcCDfOilTfkAbRACnihpq7EQlAKgNdk
+	kJ+1DIMjbS+tIemkgzOcKRZXW6ufdmG8RfdUhP6r8lLiSWvSUtkIqEActzbKle3qmT2bMo
+	XGSYn27p+fkCqfZl0ObwUolceiUCWf/9TW+XGhEHEnFEwixQwQwQ+3xwZ3m1zucJZfj1ry
+	c9JuPVVDG/X8EAYcaHBIzPBQzmkLwwGdP3kEvMicwUW3veOH8J10ENqlapwVwcZ8lCTYX5
+	BtwNW2VPWa7tdaVX7zjJj1CIjX+VAF7/cut33ohGT3TtJGL1npKx2pgu07XvmQ==
+Date: Wed, 18 Dec 2024 20:58:47 +0100
 From: Pavel Machek <pavel@denx.de>
-To: Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@denx.de>, Biju Das <biju.das.jz@bp.renesas.com>
-Subject: Re: [cip-dev] [PATCH 5.10.y-cip] clk: renesas: rzg2l: Fix
- FOUTPOSTDIV clk
-Message-ID: <Z2Lvx+d6NOE0VHRx@duo.ucw.cz>
-References: <181032168C715C4E.8579@lists.cip-project.org>
- <OSZPR01MB701902FE30A554F6C65B52F7AA052@OSZPR01MB7019.jpnprd01.prod.outlook.com>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: nobuhiro1.iwamatsu@toshiba.co.jp, pavel@denx.de,
+	cip-dev@lists.cip-project.org, biju.das.jz@bp.renesas.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com
+Subject: Re: [cip dev][PATCH 5.10.y-cip 00/10] watchdog: rzg2l_wdt: Backport
+ RZ/G3S support
+Message-ID: <Z2Mpdy+fmmzZejIp@duo.ucw.cz>
+References: <20241218122317.2365272-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3VM4HRZwW35TC0vr"
+	protocol="application/pgp-signature"; boundary="pi9241judzDrQbeV"
 Content-Disposition: inline
-In-Reply-To: <OSZPR01MB701902FE30A554F6C65B52F7AA052@OSZPR01MB7019.jpnprd01.prod.outlook.com>
+In-Reply-To: <20241218122317.2365272-1-claudiu.beznea.uj@bp.renesas.com>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 18 Dec 2024 15:52:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17467
+ <cip-dev@lists.cip-project.org>; Wed, 18 Dec 2024 19:58:57 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17468
 
 
---3VM4HRZwW35TC0vr
+--pi9241judzDrQbeV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> > While computing foutpostdiv_rate, the value of params->pl5_fracin is
-> > discarded, which results in the wrong refresh rate. Fix the formula for
-> > computing foutpostdiv_rate.
-> >=20
-> > Fixes: 1561380ee72f ("clk: renesas: rzg2l: Add FOUTPOSTDIV clk support")
-> > Signed-off-by: Hien Huynh <hien.huynh.px@renesas.com>
-> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Link: https://lore.kernel.org/20241024134236.315289-1-
-> > biju.das.jz@bp.renesas.com
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> >  drivers/clk/renesas/rzg2l-cpg.c | 11 ++++++-----
-> >  1 file changed, 6 insertions(+), 5 deletions(-)
-> >
-> Gentle ping for review.
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> Series backports the watchdog support for the Renesas RZ/G3S SoC.
 
-Again, sorry for the delay. Should we have similar patch for 6.1? I
-can't seem to find that in my mailbox...
+I still don't believe you got error handling right, but I guess we can
+apply this (and 6.1 version) if it passes testing and there are no
+other comments.
 
 Best regards,
 								Pavel
@@ -82,15 +68,15 @@ Best regards,
 DENX Software Engineering GmbH,        Managing Director: Erika Unter
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---3VM4HRZwW35TC0vr
+--pi9241judzDrQbeV
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ2LvxwAKCRAw5/Bqldv6
-8lUMAJ98CcNimpUoLCVALI1tumWyegODnQCePozjHp7Ehw+K+B30hspIHNsfiTY=
-=YdJt
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ2MpdwAKCRAw5/Bqldv6
+8rQCAJ9K0UTziEAVitU7nZdSE3xETQ3aMgCffBWVNRFo/catopXp+A+TlzHkj+s=
+=cVYP
 -----END PGP SIGNATURE-----
 
---3VM4HRZwW35TC0vr--
+--pi9241judzDrQbeV--
 
