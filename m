@@ -1,403 +1,162 @@
-Return-Path: <dinesh.kumar@toshiba-tsip.com>
+Return-Path: <chris.paterson2@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8B61E77188
-	for <webhook@archiver.kernel.org>; Fri, 20 Dec 2024 16:56:33 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
- by mx.groups.io with SMTP id smtpd.web10.156431.1734713791129496343
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1911E77188
+	for <webhook@archiver.kernel.org>; Fri, 20 Dec 2024 18:07:11 +0000 (UTC)
+Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.21])
+ by mx.groups.io with SMTP id smtpd.web11.1360.1734718021560898655
  for <cip-dev@lists.cip-project.org>;
- Fri, 20 Dec 2024 08:56:31 -0800
+ Fri, 20 Dec 2024 10:07:02 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.134, mailfrom: dinesh.kumar@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 4BKGuS5U2676670; Sat, 21 Dec 2024 01:56:29 +0900
-X-Iguazu-Qid: 2yAbAvUQJwYTzdbJmk
-X-Iguazu-QSIG: v=2; s=0; t=1734713788; q=2yAbAvUQJwYTzdbJmk; m=TM1o1gdix8aVEki5Twr+ZeMXroxS/eVornRP+vioBZk=
-Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1802) id 4BKGuRPw1649437
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Sat, 21 Dec 2024 01:56:28 +0900
+ dkim=pass header.i=@renesas.com header.s=selector1 header.b=IIbsrYfB;
+ spf=pass (domain: renesas.com, ip: 52.101.229.21, mailfrom: chris.paterson2@renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=soht9xU1kmgkFjCQOXmDM6S8L5mzkwLa/qxsK/S+m/CWPvP9Mx4mr0tDG7CgmExU4s79ufkq8/nIcJYbCuAalSpkPvGHlvpu/8sMXpBIT+O4A9wUjl5J9hCa7NiDmHiXygClKdcgcvjctxYk6Sk63mM8QEQqprkkUMMP6eDGttQUKX9A3OSCLujag+FYkBXXBNs9i7tGYRCK2sQEA6809df65qTxsOWWKwwffRIxrcpk7whXP4zI0p1jueJyb8iQ2M/vr6VGJJEBZHtNJSZaTk/FNQqBWPjjhEO6RoqimZ3Wb34VKxhY7vOa1mR91x0Bbw16QxUaeqVDXwFKr0rONg==
+ b=cWjUhDR+MhvQMmzbLzCcUnloZKn1LnK+6XQ6OawtpB6gPXuAJ54XTyoTP9Wwhox4AIhbEDOKLk2xlNQFOXNtZNVDS5Y0YJSNuMR8JXtXjtvlPBwZlv1mV8AHu3k2ElKhl6QjM81yeprVMn+5qN5UfSvYIAl/WJyS5/2dgfWzHoyU+Ft1xL6TtFSmDNGVXcbkpYZTUUjXBNfIbTiZGN4+ly4EhEUN3PAbTQS/Y2Vln8S1sghefWgrZczuCYFWnRTpQAnhn+d6t0GJDn6CAPbzGRdb7ydYwUP7QVJBtf8XPLEI+9FxCVBJB6uekwtDfGQ6oQ5r6csltpyKRA0a+yN39Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iT8upIr3ys4n+sgNvsgUGhpDgqAtDA42XgCiVi4o9Zw=;
- b=Lg1EXEOYNt5E3XAEk9dLl9ICvovqPcW/imzGp3jJh06Om8ZKor2q5sXNZNug4J+uFA/ygv5FAoIHIq4cyjd4GIIoBsXnMKtW4xmpcqdzcADUNouF7IwzOr8zCaabKwoLv2jPgfzzl+fN6ufU2viIaNHizzrXgzeX1oo5oRPL592H56wHNehsu+/31M0fV4HkZUbZi8Cl9l7Tx9zAAL3WqBfxVNaeGwjhjT1xfQ7sldcO84CLV7QbWMuvDZYxEjw/D8oiC8NESrOaXoPPRHSb+XJ9QyUoVPrryl3elLzY2Al7t7p6Ed5vTQYTXZUc6dcqsxuF7Seu64cocRn3TMwCmg==
+ bh=mZSTL1t9GH6heYf1NgyZikJV/Ni8RCFust8W/JB4RBg=;
+ b=yeXgFnqwkSUnyj1ZBCE3vU0bU1dAJW4Y8IY3NpuKrOEx3a+w7zbpEmeBudqWryQuZtmr/2HiVUSk4gBi4eLNPiPypcr89jpbmP6JTG4q8IWIKkzmCYuS8w1fcEL92VmZgXmRupi69PmUKwlNvqjBtEOhRuTmcoz+fS/qpw1oMTU0I6CkqCVZfKIeZsXGPumADpv8h3OMhaQxa0YcF26INo86SsehTos7Eep8Ra/r8L3E7f+/sEhGeuvD6CK253ke6mGzlo+EKTXy5Oth5PJ3/reFb+snbf9wbhS+rt+OCjIdhS9evuVybAyp//iAtXLBjzSooD46+r1GgeBebLZR+w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
- header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
-From: <dinesh.kumar@toshiba-tsip.com>
-To: <Chris.Paterson2@renesas.com>
-CC: <kazuhiro3.hayashi@toshiba.co.jp>, <cip-dev@lists.cip-project.org>,
-        <Sai.Sathujoda@toshiba-tsip.com>
-Subject: RE: ltp (syscall) failed test in CIP Security image with
- isar-cip-core v1.6 on M-COM
-Thread-Topic: ltp (syscall) failed test in CIP Security image with
- isar-cip-core v1.6 on M-COM
-Thread-Index: AQHbUuTAhee4QvOabkGKuX6gapV/KLLvWeRw
-Date: Fri, 20 Dec 2024 16:56:25 +0000
-X-TSB-HOP2: ON
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mZSTL1t9GH6heYf1NgyZikJV/Ni8RCFust8W/JB4RBg=;
+ b=IIbsrYfBdRRDPGGkSDifXLmw/2o+FiSaejRe4W4LRUNBTJtFnh5weGIA+JpxTJpkdxPsuuhzlgf6dlNh1DD8ecs2zG3uW2zq08FAL5xxpt9eXlt5JLr7NJ1JFm/XdBEzh0yaC9nAOhA4novoFOhBC+BXdDWJpAARzx0DaO+0LOk=
+Received: from OSZPR01MB8401.jpnprd01.prod.outlook.com (2603:1096:604:16f::7)
+ by TYCPR01MB5696.jpnprd01.prod.outlook.com (2603:1096:400:44::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8272.16; Fri, 20 Dec
+ 2024 18:06:56 +0000
+Received: from OSZPR01MB8401.jpnprd01.prod.outlook.com
+ ([fe80::c9a:aa8b:f8ea:998b]) by OSZPR01MB8401.jpnprd01.prod.outlook.com
+ ([fe80::c9a:aa8b:f8ea:998b%5]) with mapi id 15.20.8272.005; Fri, 20 Dec 2024
+ 18:06:56 +0000
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+Subject: RE: lab-cip-renesas planned maintenance this Friday
+Thread-Topic: lab-cip-renesas planned maintenance this Friday
+Thread-Index: AdtRSwqPcaYpZoAjTv6ENBovlM7z/wBvq++A
+Date: Fri, 20 Dec 2024 18:06:56 +0000
 Message-ID: 
- <OSZPR01MB85159B1B29203FFAC3458D6ABF072@OSZPR01MB8515.jpnprd01.prod.outlook.com>
-References: 
- <OS3PR01MB6103AAC4C7533384E6C3CE8CC2072@OS3PR01MB6103.jpnprd01.prod.outlook.com>
-In-Reply-To: 
- <OS3PR01MB6103AAC4C7533384E6C3CE8CC2072@OS3PR01MB6103.jpnprd01.prod.outlook.com>
-Accept-Language: en-US
+ <OSZPR01MB840119ED307670AA71BCC1FAB7072@OSZPR01MB8401.jpnprd01.prod.outlook.com>
+References: <18124646D13AE908.23577@lists.cip-project.org>
+In-Reply-To: <18124646D13AE908.23577@lists.cip-project.org>
+Accept-Language: en-US, en-GB
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: 
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
+ header.d=none;dmarc=none action=none header.from=renesas.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OSZPR01MB8515:EE_|TYAPR01MB5628:EE_
-x-ms-office365-filtering-correlation-id: 2d64068c-4868-4f40-f3e4-08dd21173d81
+x-ms-traffictypediagnostic: OSZPR01MB8401:EE_|TYCPR01MB5696:EE_
+x-ms-office365-filtering-correlation-id: d841ea09-3e3c-43ba-f0b0-08dd21211765
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: 
- BCL:0;ARA:13230040|1800799024|366016|376014|7053199007|8096899003|38070700018;
+ BCL:0;ARA:13230040|366016|1800799024|376014|7053199007|38070700018;
 x-microsoft-antispam-message-info: 
- =?iso-2022-jp?B?ZkVqSGtHVzZaTXpYL3doUHlaYnNXeGdHNFFxdEhiSjlHcXNsRE45Tlcr?=
- =?iso-2022-jp?B?aFhka05sTGdsNDNadUlSRG53dnRFWWx1cDFha1pCNUY0S3RwQlUwYnUw?=
- =?iso-2022-jp?B?WkR2dnc1UGFtZzBFMWJvaTBjTFZiZzJCVHlLTXVEdHdab2V4Y2dacUdo?=
- =?iso-2022-jp?B?OFF5cWVpUEgrNDFUMzVmNVFMVkJYdFhlWnNFaStqK3NCMkZzNGhrSEhl?=
- =?iso-2022-jp?B?SXF6dmFTTTEzOTVPNlB0NzZKemFPWC9zUjAwR0ZRVkRLeVJzbE9NTHhS?=
- =?iso-2022-jp?B?MTlEMFc4blRURUZ6SjZIZ2swODFzdU5iOGRwdytBM2pzbFFCZnJGajM4?=
- =?iso-2022-jp?B?dlloWmVMc3hZbFUzUjUzMGw4ZjhYQXdtcG9LVXE3cmF1QndQNU9lWWlO?=
- =?iso-2022-jp?B?QVI3YUJLY1kzdnpRcnpYV2FiQ0NjQWsrbTkrdFdkNEJOaHhLOWNFdENI?=
- =?iso-2022-jp?B?U1Q1dytSVDhRcmRqb1RmdEwwejJZdnZnQXlTYloySVFMellYdUxMTmhC?=
- =?iso-2022-jp?B?YmpFRTNzSWpLcFB6YVVaYVRnOUN6L280YmZXRi9CMTA4bW9ZSkRJNWlx?=
- =?iso-2022-jp?B?TDdHcVRSNFlndjBKRUJCNXJwMTd1M1pkamNLSDZad2YyUU42Tm14WGhE?=
- =?iso-2022-jp?B?TUJPUkRsSDRZNWVjWkE4emw2WXVmOWIrSElBd0Z4NzUvZUhXTnd6TUN1?=
- =?iso-2022-jp?B?dHozdEczcSt0TWFSc3dOZ2dmQi85cmo3SC9LNGZpMTIzUWd0OGxyR0R0?=
- =?iso-2022-jp?B?R2o3Q2FESHdONjZjNDNjd3ptbno0ZDlNT0lXTlBsRUpoQkNFVk1yR3Rl?=
- =?iso-2022-jp?B?YjdBQmdEK1BLcU1ydDhyNUpDR2hJSmplY2FyZHBkdUNrQXYrUzhZbkVR?=
- =?iso-2022-jp?B?RVlaNHZaaXVHK3Q4SVhxaEIweFdoVVppWGtoQnkwSmZJV1NTSloyMkY4?=
- =?iso-2022-jp?B?NGxzazgvWVVXT212U21xMm0vYUt4aW4yODVheStxNjc4Q1NWRVR5bml1?=
- =?iso-2022-jp?B?UlRsZ1RMWGIwTjNtcHp0bW8zcjV2VnFqQm5iU3lhVllaTGNRTlV6alV5?=
- =?iso-2022-jp?B?RnNnT2FWNlZYR0s3QU1kS1RmK1lhb0wwYURjbjZ1WWlTU2Irc1p5TUNB?=
- =?iso-2022-jp?B?SUZ3Zm9DRlRCTWtZWnRHank5MFd5KzJKUzdPY1haZ1lXZ1lDeU5zSmQ1?=
- =?iso-2022-jp?B?MUE4cHo3UERsb3E0YnFzLzAwdVYyY1UvL3RaWTdoQTVQV2V4a29JRUpV?=
- =?iso-2022-jp?B?NG9zaGo1ODltZ3p6RTN2bm1lc1ZocGMxVWNYMlQvVUd4SWY0VW42MHQ4?=
- =?iso-2022-jp?B?OUw4VEROWTVXNnVoSlpkeEMra1FVVmdLWllRU0xwQ0N5TWMwdmpKV1lJ?=
- =?iso-2022-jp?B?Q201bzViU0NGRzRjcThRaHFFVm9MTnFkanFkcXJmS1hUcFY2WHFqNGpk?=
- =?iso-2022-jp?B?NDFETDU3SHEvcjdDN0VNN0dzeTdxNERNOUc3bnhPRHZXUWN1QlVmbUNC?=
- =?iso-2022-jp?B?bVFOZmZ5RVhiMUJHaU9hQmtZWEM2OUVSNHhkajBrL1hxVktSLzZuNGVD?=
- =?iso-2022-jp?B?eGNlWU5YR2J3a0hjZ25iV3BMczRQY29JRXBETVpIaWl5Uzc1alRjOG1N?=
- =?iso-2022-jp?B?SldwUU5NQzZaSlUwYnNLV0tKeUJhZVphM2xQb0h0V0VndDBSajBnaDY0?=
- =?iso-2022-jp?B?VC9zTjR2ZVJXOHZNQVBwUWpjU25sQ2pUaDlhLzRlL3JTeDJTcnRWYUNu?=
- =?iso-2022-jp?B?c242NjZ1S2UvdnZJaitLWVZmSnNEV2dSSjBLakJZQkpwQ2I3U1pyTzE4?=
- =?iso-2022-jp?B?MEg2Q2o3QkNQTzNlV1RvdEgzM0Z6b2NGOUhEaWVqL0ViRlBjZE1CSHJr?=
- =?iso-2022-jp?B?VE1kLzlsaFB6eEdRN2Zuak1SQk1nQ0M4UXp5V08zb3ZGMS8yTm5abmRN?=
- =?iso-2022-jp?B?bGNVMTcydUVoZC9ZL2FQbHpDYzBHaTN5RXFETzIvMXRuY0ZsN2MzckRl?=
- =?iso-2022-jp?B?T3AxNG5QQkJJdCs5TDgvY2cvdkQ1aTcydlZZR2JYNTRVOFhiT3RFSW94?=
- =?iso-2022-jp?B?M0llUGx2LysxaXhkaFpEQUhnM2s0blFVcVprbm1tSFZWeFpRNjJNZ0E5?=
- =?iso-2022-jp?B?eW8=?=
+ =?Windows-1252?Q?Lg5gDho+5vcvRBX3ajTpGow9uDV1K7dDL7bl/VGletKyxhLcfPjGueo2?=
+ =?Windows-1252?Q?Aildu5S/UlqsaNBI9X3yZxFkABo3l8gIGM6x5wSk8ZcLofesXVFyU1/v?=
+ =?Windows-1252?Q?p/H3P/+EAMq+jXCoEIbs1vFerxsogZaZ7rgxGSR1P6cwkZgvpOAbn11Q?=
+ =?Windows-1252?Q?hOW9lR2bhGW/jv8cBO0fdvd/HIOCMcYF9m1GEYjKJWaVAAROhzgfjHdw?=
+ =?Windows-1252?Q?j1t+PZqlrv2e5xY4Kgaoi3qfmpCxh4qQ8pFgUwS9roxQYum3xhs6mGss?=
+ =?Windows-1252?Q?gAP2XnXAmFUQHZp7yoL6agn2kCn0zAFiT9FBWzbk2bHEvJvovnB8mBdF?=
+ =?Windows-1252?Q?fijBIJYlkZte47LwRz4LhbIN/vHs+7kNOxfo/c2xzzjglQbTdBycjSHb?=
+ =?Windows-1252?Q?lUPB/bz5z358zvfOmZaUPS7EFBn3LpBJsZwDlO0u+AaVpy5vtH7D8aVS?=
+ =?Windows-1252?Q?b9LmZBY2fRqHwSA5TTVmcTHsJyW6WYY9/MKfWnzXSXaWiDjHZL5ce2PS?=
+ =?Windows-1252?Q?TVIAn4k0+EFZeF8Q8VHNpaM/nBGdwAAcIItLFYFUVSHOjrFhNdxMuejk?=
+ =?Windows-1252?Q?geGBl6HqsNm630A9M6XH4fTqmgy1eqKMqReYf7o3hVfieILvDNwmWg35?=
+ =?Windows-1252?Q?byPrR0ZoVik9liGvHZbs50/IQjhhXgOQMfAbcfR5E5x8/2TIotXUzu5N?=
+ =?Windows-1252?Q?16KaKl1zF8X5qkxU9Ax9eJq+5k1qV+uDXh3dplAAnbmCugpszp5EELUk?=
+ =?Windows-1252?Q?ERTaskNhUaV9SLVllZLF6njJQr+vuyg9ISkk48jVoq/ky1f9TBoLikf1?=
+ =?Windows-1252?Q?98/8CeknUm7v25WyBY19ZbFNfEbfrnvbBpGkRizLdnAi7/16mOHL7VGn?=
+ =?Windows-1252?Q?H+r2OXxTqwfjjjEvW9LtyBAWnoEuXIsiepYE8h6GLzJUdPdUqyKjPe8C?=
+ =?Windows-1252?Q?jw0Lj3HNk+X6g19z/RZTLXodcYpZ0EauMXvpkyjsrddKCGrKpznoyYxV?=
+ =?Windows-1252?Q?qBcEMUmIU5G7QJx8ZyW0tD3hPm6o9d86Kys3D8JefTdDE+MAgvdobIPm?=
+ =?Windows-1252?Q?a0oy9H1O1BYOuYb327RiyuxjmYxeHFYmfio5bRTQGPUz4iHaxc7WR6jl?=
+ =?Windows-1252?Q?UlEUmANKwnGUWuUsKM9aA/AD/B8CnEIRwnw8UzAjaMmYIImdF3rYSc5d?=
+ =?Windows-1252?Q?wHmOfM7SJV0HFYEK1DtNZu4wTLG/E0S0U/8FIS32t8KAFODHARsGjplj?=
+ =?Windows-1252?Q?jgWvFgCx+1GSNzPDms4I8O7nvV8x/4s+zeaZv212E7upqRKOg5SOcgDm?=
+ =?Windows-1252?Q?6fTHMim43ohq51uJgl+IFYW/mOfFLZpAKFdBdHBTmRf343vAjU5BoWVk?=
+ =?Windows-1252?Q?oeKde4jv33wRyNRiCMbLmRQYqYwOqqTiw1o4UbNovtTXX4jQDuB0wqJU?=
+ =?Windows-1252?Q?PAcLI3fW6Off+vEQC5289OSJQxEbui7304vxeZGzb6AjhSbs97WKpCIa?=
+ =?Windows-1252?Q?upx37YigqnV3UsucccvuekAM1Op4tn6C+cfZxmWN2Oclxjxf/kj6jj8z?=
+ =?Windows-1252?Q?KT7D0pYcmwGp7aI0?=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB8515.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007)(8096899003)(38070700018);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB8401.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007)(38070700018);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?MGxzbkw4TjI1OFdlSWFuZzBKVFBIdE8zRTc1SHFjazJuajR2akdMSU1t?=
- =?iso-2022-jp?B?S2xUS2NIOW96YkptM0NHTlpCWmxBUE13ekJPcUJUdnE4ZW9mSDhLRjVa?=
- =?iso-2022-jp?B?aUZ1NmlSUUZuYkVScmJWbkgyZHlKalQrblZ6UW1tS0c2WUlxNzRvdzR0?=
- =?iso-2022-jp?B?UnVCUWYwQjdRYW9GeFFCTlQrKzhaWG5DTnVaM0o2d1VQOXphK2dEbEJS?=
- =?iso-2022-jp?B?K1dqNS8wbkZ1U0FOVWoxZndieUZna3BVblFtcDJRMVNMak1DTnhOMjJs?=
- =?iso-2022-jp?B?M0NRYXdjUmRHNFcyenp6L1hBckZSK2UyWDdzeUdTMzZHZ1l1UTVzRjBY?=
- =?iso-2022-jp?B?STlqODJibzJCNXZ5eTJjajN1VXk0VUVvWWp3dUNlUXJxMlI1K3E0WFFH?=
- =?iso-2022-jp?B?MkhSK0hrQ0pZWnk0SXhmVHRESktNSmQ2VHdLNjhZVzAwam0vNTR4UVNn?=
- =?iso-2022-jp?B?TFFaR2prc1l5TXR2c3hESk8rUDBGbk11UUJQbGduRGkxZDBydkpMV1Ft?=
- =?iso-2022-jp?B?eExrdm5JT3lGOUZFT1JXMjAxZG5zRDZQOUYvcUZrdVoyWmhpNFVUSzNM?=
- =?iso-2022-jp?B?Q0t6aHF5anpheWxYcmpLbHptTUlHbGVDRFg5Q3I2NXNNcG8vQlA3RmhU?=
- =?iso-2022-jp?B?UXB5R1IraXphKzBoK3dkV2NCdm5GYW9kRW43UXNGbENEMGx6OUxjSWtT?=
- =?iso-2022-jp?B?amtKWHU1R3Q2RTlqV01GQUxCVXRjYU1tdHhoVGFpRFVEc3NvNER0ZDJ4?=
- =?iso-2022-jp?B?cmVrUktQdW9MTFVTVXlZeHRqYU5pUnZxSnJILzZKYXhqWkdvbWtzZ05X?=
- =?iso-2022-jp?B?ZGNKbkNFTDZ5TGkrWHVSd2EyWmpXWEd3cnNOQnlzUDA3eVJ1SzZhdFE0?=
- =?iso-2022-jp?B?WTBDTXdPaFlDQkk5QUxBY0Y2eE04NE5vSHlJVjdWUWg3TUVScHNodkhJ?=
- =?iso-2022-jp?B?czZvV1U0MS8yUVFJWC95SW1HUFkrT1JlUDhjRUl2WFY0dVVka0dvWW03?=
- =?iso-2022-jp?B?ZjQxb0Noek9yMUxrcGhsamlLYXdZeE1ySzJYcDgzY2FPZnhLdndhK3pz?=
- =?iso-2022-jp?B?UWQxOFh4UUtNSFRTMHVHdUphOGpTeUs5Y0U0R0trU2FNWUxiRW9CRjY5?=
- =?iso-2022-jp?B?bU0zODEzREpxTk1MQks3YnNncWFkRzhyYkt6RmV5TkRwSXBtbUthR2Jq?=
- =?iso-2022-jp?B?VWNPdUszZWIwcG9iK0xKdTV3SjVtNU9BYzZPTm96YTM4NTd4T0dUYVRr?=
- =?iso-2022-jp?B?MFRXY1F2T2ZRWnJZUE1JRUNFQjQ0eENINVFqUHFFZ0lidlN5WnFVVEdD?=
- =?iso-2022-jp?B?TXVSWUdiekFUc3pOL0RMakxhODBOcmhUN25DZTBJaDBGTWtuR09ZOC94?=
- =?iso-2022-jp?B?SFB2cld1YlJpWk13OFIwOVJtWUdMUWczcGRrNHhlek5GQTZYZ3JVbFJv?=
- =?iso-2022-jp?B?d0JTRGl3dDJYL3c2ME5EQ3Vua2taeVlYM2k4NTNaYzBlZzMwWHh4WS9i?=
- =?iso-2022-jp?B?NkJQUFRsWnJ1OC9lanhlRzFQVzdhN1dHVFdFZkNWRGlwYXpJVTMrK2JN?=
- =?iso-2022-jp?B?a0NpTDQvTUJXa0VmYzkwbGtVblVMN001K25laEdEZW9yYllLZis1dXdY?=
- =?iso-2022-jp?B?aWNPbFNRaStTcFNtR0s3U0lxc2krWjZJMDBEVlNVcWtzT3hhVmFnUW5j?=
- =?iso-2022-jp?B?aUpZUEpzN1dxSGsvNithc3Q4eE5ETmRhNFVYeHE4MHM3MnhyVENGVDlQ?=
- =?iso-2022-jp?B?WTF3cTZ2QVdoWnhjSVdWMXZHMEVqR0o2N25td3M4L3pLMFN1TDdqV2VU?=
- =?iso-2022-jp?B?VnRINzBzRjRIaytjYkFrdkdGQWRRYkRMUVU3Vk43Mmo1MzJJc2JwSmph?=
- =?iso-2022-jp?B?UEhtZU5iSFUzbkNOU25wR2FyV0RiMnY2RUxrSUZyUXM3VXZ6UEpnd0dp?=
- =?iso-2022-jp?B?QWc0aFp5bFF2RUk5dEpweEhXTFZuOVZhbVpRcnlBRytGM3JvU3Znb2xT?=
- =?iso-2022-jp?B?MEZxME1jRm1Na3VuZnllWU9HQ05MZ2FnWU5ySUtJUkhLUk1YSUdqb2c3?=
- =?iso-2022-jp?B?RG5HR3RjNDhzWlNRZlplSEpFUCs4MWpzbUNUTS9VZUdJNmNUMU1PRDNq?=
- =?iso-2022-jp?B?VlRqS1djK3FZamwyMDJHNXczdldmNTNzZ3ErWE4zWktyK0RXTEV1SzZD?=
- =?iso-2022-jp?B?SEhHL2RlcS9qUk4rMXk2R05idzRpQWh1Nmx3OCtodFdxZWJqUXVURkJZ?=
- =?iso-2022-jp?B?WkdobzF4WmxOWGIwcFlTT1V0aFRsdTk2Tjh6OFVoTXltUERLcnRWNVZq?=
- =?iso-2022-jp?B?dmJ1cXVOcXAya0UwSjh3NUxocXlJT3ZLTnc9PQ==?=
-Content-Type: multipart/alternative;
-	boundary="_000_OSZPR01MB85159B1B29203FFAC3458D6ABF072OSZPR01MB8515jpnp_"
+ =?Windows-1252?Q?87qITg/MhdFM3oEGxnylqXTKkPPYQsAplfBkCs9qNzYDF4VHJLhXojE7?=
+ =?Windows-1252?Q?C3NNTeoUxcVTfOgC5E7FWncLszuRD1BOV4zLtVg39KZSi+9aS5VcOSRh?=
+ =?Windows-1252?Q?sYlMqdKi894cEOIL5X1PoJPTif+eLFy2L31snNbjtT79lriAlzd1TxUX?=
+ =?Windows-1252?Q?Vw8KM+tiaXNbWedfbKxA0QZZQTiayjUipXSPrcp4sbGh4dbUQ1RrqHJu?=
+ =?Windows-1252?Q?nP3g9G0M3nO22ZD5iRUvyxDOUWbSzCw1EjGifzv4gBSsv5TjtDQoAp8m?=
+ =?Windows-1252?Q?eB6kwYfHYEvgW6aeiNovXaeRoqI5VpcK37qyh6xDYbjYf6lRsiuUeMoA?=
+ =?Windows-1252?Q?DxY7JT40LqIB9zmqMwN6FBZtHK2sZoGJXUbD4bx1FehS1n6mBCCRtQZh?=
+ =?Windows-1252?Q?Uq4jtKWIpNW8Y7yYpRN3O6ebcjLd6lsFw6HHQuHbFonNt9gVVaan5c/5?=
+ =?Windows-1252?Q?YLs1GDV0sJkH87Gly/ERMxDDuCOzSCGKDOIv1DWFMweX4jPx+l7E0oIe?=
+ =?Windows-1252?Q?tCUHDw8HOb4fsggMnC4Bo780qbJWyQ9hIsx/X0p0p3FcMOjntvI150N4?=
+ =?Windows-1252?Q?4TFL/nD801X1l5E9ZXb2JWNcfrEGumK4fG4qqXoLURwp7kh2lOu7Kn41?=
+ =?Windows-1252?Q?7uq6kAC8QClpA3yMRNK6JOh7kndpaU9l12mbO3OfgQa7oPtE0luc7ij5?=
+ =?Windows-1252?Q?pJjPIJY/LmAyV+UAY3U1MSHtBN562Xlx38zTwRrkp0CKN05R+VSl8A59?=
+ =?Windows-1252?Q?pLDv8dTktumcQFjkIHUwXfBzpM0e276AgiV4+ey/ZYWy/bSH9KcIsk03?=
+ =?Windows-1252?Q?wYhnsc4rbz0uCr46psZzM8EaPxXCRT2TmJCf8hhfz4DBeeAp8t+oUXdn?=
+ =?Windows-1252?Q?XiyL5s1fN7EZoXI8kVIcGBw1l3emcZ27/f6mJNnhLdp6/doEg4meHbH9?=
+ =?Windows-1252?Q?dn5TCyTpheNatalyTQFATGtvAOrBoDOuIdWFfe7SSaVO0F6QcjRl2QLh?=
+ =?Windows-1252?Q?bj+BgNY8gBr6Vb1Kq4/KH3lPDsdQWPgm9ZuHrLkDMe9dI+cCggR7QkSs?=
+ =?Windows-1252?Q?92sCKBPpCZCLY9E/yzXPYeXWvHqlgkGwDOouYX0+DkzessDyfKcaEWp4?=
+ =?Windows-1252?Q?MIDZ/MIbbmRzOtDlrF4ljMbg7nlXiDwjoKtk8KYgfNcLkNHREROl1UgP?=
+ =?Windows-1252?Q?csxxjXdqN122bsvJXYM6L7WEtg+YzlpKn6qZTCoVPCS9UA8eCvkbeRG+?=
+ =?Windows-1252?Q?xV0/9nb4JN6+j3anMJ2faNuNykp1B/oc8jHmac6OzIcD48UvNaC4Ilt9?=
+ =?Windows-1252?Q?MU/7QsWcc8yVHTKYfwWb70z7Ola9aqY4N4yfkHkDPlYKwNOhHKY3K0Dw?=
+ =?Windows-1252?Q?O9COUiiynoVfmIrgYmp6pOXo+i8YPOCiLxlaLHO1qUb0OQkZIjTLKdZE?=
+ =?Windows-1252?Q?0gn++kB5+f51yhwQhNPhN13LICTjebytVSL7LzovPtNyIJuLBA03MzFz?=
+ =?Windows-1252?Q?BFnuhaeFhzCvyp8A/NoVqZ3rsrk3IYN8mrk+yk9SzhJXNphUK2pnfqMt?=
+ =?Windows-1252?Q?ghhhy1xHCyxaJOM8XUJm9ER6xH9wYpL+baA9O2iB283rdQXpr/feE2K+?=
+ =?Windows-1252?Q?QBKiXaI1V0xPt1vc2Y4Sq4sFNVLNSsPyZbuaNU8M+PHeO7/l/9KrXzz2?=
+ =?Windows-1252?Q?SLFeroeUDLLAscautc+9haBzrWE3S4+OBbSxw+A0rsosF+5o5GA2/A?=
+ =?Windows-1252?Q?=3D=3D?=
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: toshiba-tsip.com
+X-OriginatorOrg: renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB8515.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2d64068c-4868-4f40-f3e4-08dd21173d81
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Dec 2024 16:56:25.6005
+X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB8401.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d841ea09-3e3c-43ba-f0b0-08dd21211765
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Dec 2024 18:06:56.6129
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zBRndLvhdtY/Uvp8u3hJf21pcrXb4VQ1aObYB8yITLNNKHObbM3PE2o11MoK41oLbpxjdfL+H5NggUh+M1nbX58uNT8vkpRJ34FxUt8pnn0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB5628
+X-MS-Exchange-CrossTenant-userprincipalname: KYGu4besvYxaTEnbupezMFXTymLx4hGpndDw+j9dWvPGKDLwjSG8fahsXIgsQ1+OUERN/JYX9/L8hDS8B/xAAmSfMTkigz/T8uf70EPmR5M=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB5696
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 20 Dec 2024 16:56:33 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17487
+ <cip-dev@lists.cip-project.org>; Fri, 20 Dec 2024 18:07:11 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17488
 
---_000_OSZPR01MB85159B1B29203FFAC3458D6ABF072OSZPR01MB8515jpnp_
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Chris,
+> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
+> Behalf Of Chris Paterson via lists.cip-project.org
+> Sent: 18 December 2024 12:48
+>=20
+> Hi all,
+>=20
+> Just a heads up that lab-cip-renesas will be offline for most of the day
+> on the 20th Dec as it's being moved to a new home.
+> Hopefully this won't cause any major issues.
 
-Please reply to this email as by mistake Ashrit included SWG.
+I've finished moving the lab and it's all back online again \o/
 
-Regards,
-Dinesh Kumar
+Kind regards, Chris
 
-From: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com>
-Sent: Friday, December 20, 2024 7:43 PM
-To: Chris Paterson <Chris.Paterson2@renesas.com>; cip-members@lists.cip-pro=
-ject.org
-Cc: hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D=
-#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp>; dinesh kumar(=
-=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshiba-tsip.com>; cip-=
-security@lists.cip-project.org; cip-dev@lists.cip-project.org
-Subject: ltp (syscall) failed test in CIP Security image with isar-cip-core=
- v1.6 on M-COM
-
-Hello Chris,
-
-Hope you are doing great.
-
-SWG locally executed LTP tests on M-COM x86 device booted with CIP security=
- image. The kernel used in this image is built with cip x86 merged defconfi=
-g<https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/-/blob/master=
-/6.1.y-cip/x86/cip_merged_defconfig?ref_type=3Dheads>. After generating the=
- results, we found some failed tests in the syscalls suite.
-
-We wanted to compare them with kernel test results in LAVA and noticed that=
- cip x86 merged  defconfig<https://gitlab.com/cip-project/cip-kernel/cip-ke=
-rnel-config/-/blob/master/6.1.y-cip/x86/cip_merged_defconfig?ref_type=3Dhea=
-ds> is not being used to run LTP tests on x86 targets. Can you please look =
-into that ?
-
-I am attaching a document with the results summary of LTP tests when run on=
- M-COM x86 device with v1.6 security image. Please have a look at it. I am =
-also attaching the failed test cases in syscalls suite.
-
-We need opinion from members if we need to hold back from sharing the v1.6 =
-x86 generic isar-cip-core evaluation to BV members in case those LTP test f=
-ailures are effective.
-
-Thanks and regards,
-Sai Ashrith
-
-
---_000_OSZPR01MB85159B1B29203FFAC3458D6ABF072OSZPR01MB8515jpnp_
-Content-Type: text/html; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
-
-<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
-osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
-xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
-//www.w3.org/TR/REC-html40">
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
-jp">
-<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
-<style><!--
-/* Font Definitions */
-@font-face
-	{font-family:"Cambria Math";
-	panose-1:2 4 5 3 5 4 6 3 2 4;}
-@font-face
-	{font-family:Calibri;
-	panose-1:2 15 5 2 2 2 4 3 2 4;}
-@font-face
-	{font-family:"MS PGothic";
-	panose-1:2 11 6 0 7 2 5 8 2 4;}
-@font-face
-	{font-family:"\@MS PGothic";}
-@font-face
-	{font-family:Aptos;}
-/* Style Definitions */
-p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{margin:0cm;
-	font-size:12.0pt;
-	font-family:"MS PGothic",sans-serif;
-	mso-fareast-language:JA;}
-a:link, span.MsoHyperlink
-	{mso-style-priority:99;
-	color:blue;
-	text-decoration:underline;}
-span.EmailStyle19
-	{mso-style-type:personal-reply;
-	font-family:"Calibri",sans-serif;
-	color:windowtext;}
-.MsoChpDefault
-	{mso-style-type:export-only;
-	font-size:10.0pt;
-	mso-ligatures:none;}
-@page WordSection1
-	{size:612.0pt 792.0pt;
-	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
-div.WordSection1
-	{page:WordSection1;}
---></style><!--[if gte mso 9]><xml>
-<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
-</xml><![endif]--><!--[if gte mso 9]><xml>
-<o:shapelayout v:ext=3D"edit">
-<o:idmap v:ext=3D"edit" data=3D"1" />
-</o:shapelayout></xml><![endif]-->
-</head>
-<body lang=3D"EN-IN" link=3D"blue" vlink=3D"purple" style=3D"word-wrap:brea=
-k-word">
-<div class=3D"WordSection1">
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
-libri&quot;,sans-serif;mso-fareast-language:EN-US">Hi Chris,<o:p></o:p></sp=
-an></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
-libri&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
-libri&quot;,sans-serif;mso-fareast-language:EN-US">Please reply to this ema=
-il as by mistake Ashrit included SWG.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
-libri&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span>=
-</p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
-libri&quot;,sans-serif;mso-fareast-language:EN-US">Regards,<o:p></o:p></spa=
-n></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
-libri&quot;,sans-serif;mso-fareast-language:EN-US">Dinesh Kumar<o:p></o:p><=
-/span></p>
-<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
-libri&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span>=
-</p>
-<div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
-0cm 0cm">
-<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"font-size:11.0pt;fo=
-nt-family:&quot;Calibri&quot;,sans-serif">From:</span></b><span lang=3D"EN-=
-US" style=3D"font-size:11.0pt;font-family:&quot;Calibri&quot;,sans-serif"> =
-ashrith sai(</span><span lang=3D"JA" style=3D"font-size:11.0pt">=1B$B#T#S#I=
-#P=1B(B</span><span lang=3D"EN-US" style=3D"font-size:11.0pt;font-family:&q=
-uot;Calibri&quot;,sans-serif">)
- &lt;Sai.Sathujoda@toshiba-tsip.com&gt; <br>
-<b>Sent:</b> Friday, December 20, 2024 7:43 PM<br>
-<b>To:</b> Chris Paterson &lt;Chris.Paterson2@renesas.com&gt;; cip-members@=
-lists.cip-project.org<br>
-<b>Cc:</b> hayashi kazuhiro(</span><span lang=3D"JA" style=3D"font-size:11.=
-0pt">=1B$BNS=1B(B</span><span lang=3D"JA" style=3D"font-size:11.0pt;font-fa=
-mily:&quot;Calibri&quot;,sans-serif">
-</span><span lang=3D"JA" style=3D"font-size:11.0pt">=1B$BOB9(=1B(B</span><s=
-pan lang=3D"JA" style=3D"font-size:11.0pt;font-family:&quot;Calibri&quot;,s=
-ans-serif">
-</span><span lang=3D"JA" style=3D"font-size:11.0pt">=1B$B#D#M#E=1B(B</span>=
-<span lang=3D"EN-US" style=3D"font-size:11.0pt;font-family:&quot;Calibri&qu=
-ot;,sans-serif"> =1B$B!{=1B(B</span><span lang=3D"JA" style=3D"font-size:11=
-.0pt">=1B$B#D#I#G=1B(B</span><span lang=3D"EN-US" style=3D"font-size:11.0pt=
-;font-family:&quot;Calibri&quot;,sans-serif">=1B$B""=1B(B</span><span lang=
-=3D"JA" style=3D"font-size:11.0pt">=1B$B#M#P#S=1B(B</span><span lang=3D"EN-=
-US" style=3D"font-size:11.0pt;font-family:&quot;Calibri&quot;,sans-serif">=
-=1B$B!{=1B(B</span><span lang=3D"JA" style=3D"font-size:11.0pt">=1B$B#M#P#4=
-=1B(B</span><span lang=3D"EN-US" style=3D"font-size:11.0pt;font-family:&quo=
-t;Calibri&quot;,sans-serif">)
- &lt;kazuhiro3.hayashi@toshiba.co.jp&gt;; dinesh kumar(</span><span lang=3D=
-"JA" style=3D"font-size:11.0pt">=1B$B#T#S#I#P=1B(B</span><span lang=3D"EN-U=
-S" style=3D"font-size:11.0pt;font-family:&quot;Calibri&quot;,sans-serif"> T=
-MIEC ODG Porting) &lt;dinesh.kumar@toshiba-tsip.com&gt;; cip-security@lists=
-.cip-project.org;
- cip-dev@lists.cip-project.org<br>
-<b>Subject:</b> ltp (syscall) failed test in CIP Security image with isar-c=
-ip-core v1.6 on M-COM<o:p></o:p></span></p>
-</div>
-</div>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<div>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;color:black">Hello Chris,<o:p></o:p></span></p>
-</div>
-<div>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;color:black"><o:p>&nbsp;</o:p></span></p>
-</div>
-<div>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;color:black">Hope you are doing great.<o:p></o:p></span></p>
-</div>
-<div>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;color:black"><o:p>&nbsp;</o:p></span></p>
-</div>
-<p class=3D"MsoNormal" style=3D"background:white"><span style=3D"font-famil=
-y:&quot;Aptos&quot;,sans-serif;color:black">SWG locally executed LTP tests =
-on M-COM x86 device booted with CIP security image. The kernel used in this=
- image is built with
-<a href=3D"https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/-/bl=
-ob/master/6.1.y-cip/x86/cip_merged_defconfig?ref_type=3Dheads" title=3D"htt=
-ps://gitlab.com/cip-project/cip-kernel/cip-kernel-config/-/blob/master/6.1.=
-y-cip/x86/cip_merged_defconfig?ref_type=3Dheads">
-cip x86 merged defconfig</a>. After generating the results, we found some f=
-ailed tests in the
-<b>syscalls </b>suite.&nbsp;<o:p></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"background:white"><span style=3D"font-famil=
-y:&quot;Aptos&quot;,sans-serif;color:black"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal" style=3D"background:white"><span style=3D"font-famil=
-y:&quot;Aptos&quot;,sans-serif;color:black">We wanted to compare them with =
-kernel test results in LAVA and noticed that
-<a href=3D"https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/-/bl=
-ob/master/6.1.y-cip/x86/cip_merged_defconfig?ref_type=3Dheads" title=3D"htt=
-ps://gitlab.com/cip-project/cip-kernel/cip-kernel-config/-/blob/master/6.1.=
-y-cip/x86/cip_merged_defconfig?ref_type=3Dheads">
-cip x86 merged&nbsp; defconfig</a>&nbsp;is not being used to run LTP tests =
-on x86 targets. Can you please look into that ?<o:p></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"background:white"><span style=3D"font-famil=
-y:&quot;Aptos&quot;,sans-serif;color:black"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal" style=3D"background:white"><span style=3D"font-famil=
-y:&quot;Aptos&quot;,sans-serif;color:black">I am attaching a document with =
-the results summary of LTP tests when run on M-COM x86 device with v1.6 sec=
-urity image<b>.</b>&nbsp;Please have a look&nbsp;at it. I
- am also attaching the failed test cases in syscalls suite.<o:p></o:p></spa=
-n></p>
-<p class=3D"MsoNormal" style=3D"background:white"><span style=3D"font-famil=
-y:&quot;Aptos&quot;,sans-serif;color:black"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal" style=3D"background:white"><span style=3D"font-famil=
-y:&quot;Aptos&quot;,sans-serif;color:black">We need opinion from members if=
- we need to hold back from sharing the v1.6 x86 generic isar-cip-core evalu=
-ation to BV members in case those LTP test failures
- are effective.<o:p></o:p></span></p>
-<p class=3D"MsoNormal" style=3D"background:white"><span style=3D"font-famil=
-y:&quot;Aptos&quot;,sans-serif;color:black"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal" style=3D"background:white"><span style=3D"font-famil=
-y:&quot;Aptos&quot;,sans-serif;color:black">Thanks and regards,<o:p></o:p><=
-/span></p>
-<p class=3D"MsoNormal" style=3D"background:white"><span style=3D"font-famil=
-y:&quot;Aptos&quot;,sans-serif;color:black">Sai Ashrith<o:p></o:p></span></=
-p>
-<div>
-<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Aptos&quot;,sans-se=
-rif;color:black"><o:p>&nbsp;</o:p></span></p>
-</div>
-</div>
-</body>
-</html>
-
---_000_OSZPR01MB85159B1B29203FFAC3458D6ABF072OSZPR01MB8515jpnp_--
+>=20
+> Kind regards, Chris
 
 
