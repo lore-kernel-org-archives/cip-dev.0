@@ -1,122 +1,92 @@
-Return-Path: <claudiu.beznea@tuxon.dev>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9347FE77188
-	for <webhook@archiver.kernel.org>; Fri, 20 Dec 2024 09:05:10 +0000 (UTC)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
- by mx.groups.io with SMTP id smtpd.web11.148385.1734685503884791111
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECFE8E7718A
+	for <webhook@archiver.kernel.org>; Fri, 20 Dec 2024 10:39:30 +0000 (UTC)
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
+ by mx.groups.io with SMTP id smtpd.web10.149455.1734691163015808969
  for <cip-dev@lists.cip-project.org>;
- Fri, 20 Dec 2024 01:05:04 -0800
+ Fri, 20 Dec 2024 02:39:24 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=qhFatsIn;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.51, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43625c4a50dso11315345e9.0
-        for <cip-dev@lists.cip-project.org>; Fri, 20 Dec 2024 01:05:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1734685502; x=1735290302; darn=lists.cip-project.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lNZoOCA0FZqxObBLXQVATJj1w0u0Y5qBmYv40kXfmrI=;
-        b=qhFatsInIFzZBQOB40ViO+WxYCUmaUffs/5Hpj1sIuBIL4S5lgDdytaJNOgSIYXOaE
-         aKES16lbPEzdEB7iqH/oiHGUTNnIQVgCiT0BRX/AjWy+R9XJltlTAtEEDfnfjY2SCUbY
-         ojwzgLlEWwHinOM24nulaHt95qQIeOL2RAaUUAZr1OJNKUUwyppzx4aRgyfVyLE9QCp+
-         80xDHS5/QJlTw/ArxfNKscAS2s/DFWSs/6fZdmWB4bbEWo5fa/N3pVx0W+GTWXPcZc/2
-         fr6CmrUE2QrbN0sM4YFAiEO6ekNgZO0vwPCwTmCBS2kj4hVcXApFiU2cd6gGOT5EHMt/
-         NBhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734685502; x=1735290302;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lNZoOCA0FZqxObBLXQVATJj1w0u0Y5qBmYv40kXfmrI=;
-        b=T9OOQMxIAlS268eXjTVviN5ATjwzCsPlTkSZar7bUw0/NvXuKYKzmjqq6fCQxwXgsw
-         QVNkuQpvmv3yza2C1rlyZxZfpzsQrf20Hp1W0xcno1cQpMt/ZsI8oPNQBVokdP/8Jji1
-         xloXsQeS3UV6TdugYukAKdggOabxh4w3F9p5wzCE/0ChGo3z8hJXCXBpPGdlzVp8UUuq
-         EEEA2958VhGwjPK+ud0vVJnKFitMajjS6SAevXyiygUjKB0NpvL5xVv+6HfECiox+Olh
-         L0lOX8UvSZ6ey4/pGFTJ1lsVE9MhO1a7E0xLcjfyFqjxsKRZmpQO2AalB7evS2UwsLRR
-         n2hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWpy5P5wHF5mMdYQAZBfUbdkrIm7Iz0q1gnui3Vn0HXfY4//e/RGi1VSd6LmGcfZhFmHD9ntnh@lists.cip-project.org
-X-Gm-Message-State: AOJu0YxeP5VKbLNHxyCwe1QPGF/tJuTDGEGelRFCRcSgCwc89IuMif4z
-	Qw9ntkTfwm3KzZZalHT4aFU2WaAxpQZf2bpZUt9jPxV8ivhuwPecSUm5F7Ei+R8=
-X-Gm-Gg: ASbGncs8Kxs/L8oFsSnGuIZxW0dJa2wjnUGzp0g7phYuk20Qr3i3K5T47EcCmF4cRj/
-	+CuXPBn4jjBEV1QbXJrOqVOCc440XtavJW6gHnIvWrnHwPn9FR7oRl6Bv0b0qU6obzZy0JSDZNw
-	PJYizimddvrOGhkeOlgyqrY7MGPiYlPsFvdZ490fFE+UhiCyCFCxjwQozIVFtf8ve3pQPXwwji2
-	BBa2ZxVvSSRwTRPFo0I1ZDEa1Iyy5nWOcAZlS6sImF6hvoIRKtyYfVuNzF2WpSkeQ==
-X-Google-Smtp-Source: AGHT+IEU1L3fwFxEn3XJvUcCwiHcCErPH+/KxoTkB84Q2FefjDk3gdIn+SFmPLFrk30FuI/nYrC3cQ==
-X-Received: by 2002:a05:600c:5488:b0:431:5863:4240 with SMTP id 5b1f17b1804b1-43668b498a3mr13366075e9.24.1734685501997;
-        Fri, 20 Dec 2024 01:05:01 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.102])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43661219611sm40433385e9.23.2024.12.20.01.05.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Dec 2024 01:05:01 -0800 (PST)
-Message-ID: <d24257b0-c506-4c08-b6cc-3ee40a7b50fa@tuxon.dev>
-Date: Fri, 20 Dec 2024 11:05:00 +0200
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=uZXTHszl;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-51332-202412201039196c92642e54d4c92b9c-reepmh@rts-flowmailer.siemens.com)
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 202412201039196c92642e54d4c92b9c
+        for <cip-dev@lists.cip-project.org>;
+        Fri, 20 Dec 2024 11:39:19 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ bh=IBHzrSiPxYG24XYpVPLmWStKJvrHtpMgdxtw+QAZqVY=;
+ b=uZXTHszlYUOV9ZDXxZLHln2MfaI4UX5k22105VZ8aOvZTN2GtbrpciFR6SIWycgOcA9lgj
+ 6Pn/iC32id4gtMaRtYvXu2DIdOpl81W/TsqJViTTZX2g2ZoThAXJnwAcMF9b26i0Fk9QBLgW
+ o6A0mrOMeBrxGbY7BMJqDArPf6dfvJRZoVSUwJMUfK9z7zhnTSkK+5MZA5D7HYFpm+qhta7n
+ En/2dez5OvwD2WyHBDIUW8+v0IBKbWms5GymDl6SK6wTsTJX9omMBlolxzHwdN6TFzTEsDtv
+ Z91XF7V9aDcPPAOB8yCEas3UQVClh0KWEAhXNuPnhOfY+h/wzrZdI4Pw==;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: cip-dev@lists.cip-project.org,
+	jan.kiszka@siemens.com
+Subject: [cip-dev][isar-cip-core][RFC] continue boot if not enough disk space for encryption is available.
+Date: Fri, 20 Dec 2024 11:38:37 +0100
+Message-ID: <20241220103918.1165341-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cip dev][PATCH 6.1.y-cip 0/8] watchdog: rzg2l_wdt: Backport
- RZ/G3S support
-To: Pavel Machek <pavel@denx.de>
-Cc: nobuhiro1.iwamatsu@toshiba.co.jp, cip-dev@lists.cip-project.org,
- biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com
-References: <20241218122246.2365189-1-claudiu.beznea.uj@bp.renesas.com>
- <Z2RlIUU0vCUjnmTF@duo.ucw.cz>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <Z2RlIUU0vCUjnmTF@duo.ucw.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 20 Dec 2024 09:05:10 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17483
+ <cip-dev@lists.cip-project.org>; Fri, 20 Dec 2024 10:39:30 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17484
 
-Hi, Pavel,
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-On 19.12.2024 20:25, Pavel Machek wrote:
-> Hi!
-> 
->> Series backports the watchdog support for the Renesas RZ/G3S SoC.
-> 
-> Applied, but there may be more work to do there.
-> 
-> rzg2l_wdt.c:
-> rzg2l_wdt_start
-> /* Enable watchdog timer*/
-> ->                "timer */"
-> 
-> static int rzg2l_wdt_stop(struct watchdog_device *wdev)
-> 
-> We can now fail to stop the watchdog.. not sure how well core can
-> handle that. If pm_runtime_put fails, we return error, but we already
-> toggled the reset control. Should we undo that? 
+Encrypting a existing system with a full partition will lead to a panic
+during resizing. To ensure the availability of the system continue booting
+if the flag `CRYPT_ENCRYPTION_OPTIONAL` is set to true.
 
-You're right! That should be undone. I remember I noticed it in one of the
-versions I've published upstream, but it seems I failed to adjust the
-patches for it. Thank you for pointing it!
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ .../initramfs-crypt-hook/files/local-top-complete     | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-> Does error handling
-> here make sense at all?
-
-The stop API (where rzg2l_wdt_stop() is called) can return int. It think it
-worth having it.
-
-> 
-> rzg2l_wdt_restart:
-> Similar problem. If reset_control_deassert() fails, we should probably
-> do pm_runtime_put().
-
-For code simplicity, I chose to not undo anything in rzg2l_wdt_restart() as
-if that happens the system will not be able to recover anyway unless
-restarted.
-
-Thank you,
-Claudiu
-
-> 
-> Thanks and best regards,
-> 								Pavel
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
+index 834dea2..f86cade 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
++++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
+@@ -79,7 +79,11 @@ reencrypt_existing_partition() {
+ EOF
+ 		e2fsck -p -f "$1"
+ 		if ! resize2fs "$1" "${reduced_size_in_kb}"; then
+-			panic "reencryption of filesystem $1 cannot continue!"
++			if [ "$tpm_encryption_optional" = "true" ]; then
++				return 1
++			else
++				panic "reencryption of filesystem $1 cannot continue!"
++			fi
+ 		fi
+ 		;;
+ 	squashfs|swap|erofs|"")
+@@ -94,6 +98,7 @@ EOF
+ 	else
+ 		/usr/sbin/cryptsetup reencrypt --encrypt --reduce-device-size "$reduce_device_size"k "$1" < "$2"
+ 	fi
++	return 0
+ }
+ 
+ expand_partition() {
+@@ -236,7 +241,9 @@ for partition_set in $partition_sets; do
+ 	case "${partition_format}" in
+ 		"reencrypt")
+ 			log_begin_msg "Encryption of ${part_device}"
+-			reencrypt_existing_partition "$part_device" "$tmp_key"
++			if ! reencrypt_existing_partition "$part_device" "$tmp_key"; then
++				continue
++			fi
+ 			enroll_tpm2_token "$part_device" "$tmp_key" "$tpm_device" "$tpm_key_algorithm" "$pcr_bank_hash_type"
+ 			open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
+ 			log_end_msg
+-- 
+2.46.1
 
 
