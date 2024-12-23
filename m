@@ -2,41 +2,40 @@ Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C691E77188
-	for <webhook@archiver.kernel.org>; Mon, 23 Dec 2024 00:25:10 +0000 (UTC)
-Received: from mout.web.de (mout.web.de [212.227.15.14])
- by mx.groups.io with SMTP id smtpd.web10.731.1734738834361395463
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E9E3E7718B
+	for <webhook@archiver.kernel.org>; Mon, 23 Dec 2024 22:52:47 +0000 (UTC)
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+ by mx.groups.io with SMTP id smtpd.web10.14940.1734966357813431974
  for <cip-dev@lists.cip-project.org>;
- Fri, 20 Dec 2024 15:53:54 -0800
+ Mon, 23 Dec 2024 07:05:58 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: signature did not verify: crypto/rsa: verification error" header.i=jan.kiszka@web.de header.s=s29768273 header.b=QYR8VoE8;
- spf=pass (domain: web.de, ip: 212.227.15.14, mailfrom: jan.kiszka@web.de)
+ dkim=fail reason="dkim: signature did not verify: crypto/rsa: verification error" header.i=jan.kiszka@web.de header.s=s29768273 header.b=mpg4LaKn;
+ spf=pass (domain: web.de, ip: 217.72.192.78, mailfrom: jan.kiszka@web.de)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1734738829; x=1735343629; i=jan.kiszka@web.de;
-	bh=cib8T44dWplpY5iO38jtDn7+V/VSOZTCrr5uITdY92U=;
+	s=s29768273; t=1734966354; x=1735571154; i=jan.kiszka@web.de;
+	bh=o29tpZXm2Uu3Sv57wyDhWEAEWxZ0efGoMBtKpey5VQg=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
 	 References:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding:cc:content-transfer-encoding:
 	 content-type:date:from:message-id:mime-version:reply-to:subject:
 	 to;
-	b=QYR8VoE8ChdRiZsiuB2YxFrz4lVu6UAF3ozqOL2Upj6JXkb+EBkG96xQFRD0BvCI
-	 RJ6eK8B5NN+ajMCTNgAuUjjXnYVvvkKNuEi3TW6d5DjQ6fZ2LDUzTqsjrwxgdXiQQ
-	 9LZxfqa55GoBL4IwECf0p5YtIaPvb0tdMrLbKgpSs+9bcf8TNiW212uOyaXqQIngY
-	 2gsLE/ktrFxFCMqmhg9AfRRhL2yGz8raSBnpBRhtoTDF1y7Ahx3W+hkGL3asPFv9c
-	 qr6x1pa5VNel1+8VjrV4mfN0LT3qrNZ7WFEljeKGgrT/OrOm5zrtBnimLKE+A7XTb
-	 pOV+5zSX2vtor6Kh2g==
+	b=mpg4LaKnswDFhzItoFoDXnXWnofjV7lS4OdnH9BvRk4dtLGrLNROzBd5P+1V4il2
+	 9Ppz8KHxbiaI/Q9V61jk8WoPN7N6cj2LzHa/6LUaWcEHHCIzk1pcpfUayZvhIKdpe
+	 JItlGISlzuuxKQjibkHf930eSKVQapZy9dc0s7MEGet4jrDRYFJrc5XllBdzYuS7s
+	 rLVE+aCLM4C0tGJkhxkRu5YmNld7YyICpjnU/R8OlnLDuoMn4v08sz9eBUERUVqc/
+	 w4S9GI6cuMm011TJFqi5agb0tqLRDNpL1t8VjqTJNlPyks0KCw5xlBEKrnDwPZm+H
+	 zQ2EkRaMTIfwW/9ERw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.31] ([82.83.18.165]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MAtwr-1tIVIC3FOr-009spd; Sat, 21
- Dec 2024 00:53:49 +0100
-Message-ID: <36d0a371-8c51-499e-a7af-ea5a3c1b6255@web.de>
-Date: Sat, 21 Dec 2024 00:53:49 +0100
+Received: from [192.168.178.31] ([82.83.18.165]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M2xrq-1tOd0o1VRE-003JiV; Mon, 23
+ Dec 2024 16:05:54 +0100
+Message-ID: <3a577e36-3b0c-48cf-b628-9234e2cbe48a@web.de>
+Date: Mon, 23 Dec 2024 16:05:53 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Issue with the latest commit from master regarding initramfs-hook
-To: JohnW <johnxw@amazon.com>, cip-dev@lists.cip-project.org
-References: <473d7ab6-eb73-44d8-8611-ea7bb0aa3026@siemens.com>
- <734.1734728634993110433@lists.cip-project.org>
+Subject: Re: Efibootguard & empty fstab in initramfs
+To: Stephen Ecker <stephenecker240@gmail.com>, cip-dev@lists.cip-project.org
+References: <CAK9C7GBFw=nN8mZWB_aC00QFYDxF19-4__1RPf_5kbKyuNmrPA@mail.gmail.com>
 From: Jan Kiszka <jan.kiszka@web.de>
 Autocrypt: addr=jan.kiszka@web.de; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
@@ -81,68 +80,45 @@ Autocrypt: addr=jan.kiszka@web.de; keydata=
  JA87Kil/M8083wFhca5FwP5BaUdybDMzZr3sbZDdpDiwgh5MptM8+WN78WmLW1xtsE66ifFq
  ZFiBPEk1IUGvQJHs4LnFze6+rkq81vCEF8QSJ2cBSMgYDNH/388jas04RU9eUDK2FKoYVmX3
  zuD3jSTlGH13R9dwOq21NMusROzpLqGtNRKjYvcqsiwPID4IPw4TqRrSvCqJArHWLE25
-In-Reply-To: <734.1734728634993110433@lists.cip-project.org>
-X-Provags-ID: V03:K1:iaahCFUYE+tuIC8HQ20Fa2+HRzyndyTITQ0/1fScpMtDYy6epro
- 08fwW7TmTsYmota5T3/nCkA5UI11AnCnh3GKCFhCzfOT3MbPZXb81ncCUA69dXf4fhuliOV
- Tx2xePAqnO1Yfyd0Su5hNhschojR0OvJHPCv+Znj8Lq9G2VlzNu/QWnqwT79Dr2jdeQj7/j
- 4C/NH43Xb4D4nNFlvNGRQ==
-UI-OutboundReport: notjunk:1;M01:P0:XiE0/OH/OqA=;YSjZccQEGUivze7LbIMYq3TXWDW
- knoR1e5+whJZ1ZCJG3tGgBW3qoue2I9iIWfeWhDy/9umw0fEAOWe2CNocTTJeC3PNJzM6syR1
- D1WOpEVFONOJNIqKWLO5PLam66TglKYp+0a5ekzAKRJM3FQ60f/Sxnq/Ivk9wtLt9conPgO+S
- n0I576Rswcwt2cvz8Oq30fLSrtKaPLSkTv1qMi2jyIoHWtcGCnSAmBgo8Bdg2/XlKEc2XRx21
- 48m39428FBmKr2vRDnYp2Fhjpo/flBAlfLSRDKkE4VCjV90WQ2f9eEA9SfULfivloIi5RtXEr
- XslFFTEeIQnYMszhMFcsgiKCUf/+dOT4CyMEVLtjcwJ9F70ssvgFdS2AsaxTUdR1dbrrVgTot
- +n/JmOlFMQz1KJ8wX62l+wApglYQMJfXB+3hTe5MrvoBpcXnqV1UdxB1CcV9ZwubHhxSId6AE
- knl+5mt1+Lr53mg4unU/Q+FTOfmfm/ggTBRHLZ/dOrTSXJ871K+LHBXa+w0KZlBCvlpu8u00o
- n0eAWU/nf/IGt6sxd/K+KsFnmUBouuLRKvKqlv/vW++gxbl0bvmw1DppW2Bz1PDWIs4Y6FTPO
- f2TiB+yq1rt0Z4n2DnBMnfApruXaJq5nViYvVPXMmmVQngLkciFFEwvzAw9lIk6ygoyjHvwnJ
- g97RbsS3JkbyF2uElXEC97Ed0envOj8y7aHUoYX7coloLEuOzralST9tWeFaYZbvr18ARJJcV
- D59F7j4qbhh2EBfGq8WOMhV4T2ZC2iSC125CSTrokznKUdppwoEs/WZ2vms8NDYm01hZIMw1e
- VfMpohUl7yUb3ewzeOWDqaUWmzK00sRT5QygR4LWjU+CZE42KT/1uMZvuVBTu10uVVdAfN+Sn
- yWb90SWTzQDjLar/wqCBAxci+WJ/vUf4se6gfNV7p3Q8LFwuZkdpjDhDH9posmudiYfdaZjAe
- x8fNihOhNdqD4YynUX7yVV0/5QEJS5gWbsA9ws2EEJq2LIP8WuTUUAuE4bD1PWTCYmu16HwDT
- FBMzfiV0nVdhgX3ZUrDUsfWWPKYdc1QxCC30QoXXA4S28MlGTgDdiT2b/RpJauO2k1z4vhkYL
- KHtEwIYx219HhCKYt4Sa/hWvJlh+uA/hKGi58Xzgvjk99MMZ7fVg==
+In-Reply-To: <CAK9C7GBFw=nN8mZWB_aC00QFYDxF19-4__1RPf_5kbKyuNmrPA@mail.gmail.com>
+X-Provags-ID: V03:K1:UwV/p7pr6R9iwHCujQEWkKY62Nyfajx+keLTL7xDkaLlHrSsxCq
+ xlT7TTRcfivM2mspH9BCH64RhZuTvGeXug9Lj2SrmY01kcGiNuPxzAn1aM1lFehnumPbV/8
+ U5PBmLshcPSy9KtHaRmzaeWeYaea3oVzlMQyyImTcwOBJQZ53xHQ2HExbtZxMNbX9pl7mZ/
+ +67s9qENCHPmIt9blr6HA==
+UI-OutboundReport: notjunk:1;M01:P0:Gt9mniFvhDA=;kMGueRWZ7ak/GuUZARGgMZeCmaP
+ P9UcJrnTf8VR9EZ99w3RSRfbERRgpb70ZJwe+/t1WzoAClh6bcPsS94wIufxDxDGHuqQpQaFg
+ DuTEZFdPYyXiAn02IVee36xKn968GOlUUlGWKrZfRrHQgYhDdO3Qsdj71kkFrtmALhcaYJwI1
+ pfrk3wQr2nJZl9+hXdFL6OdEFL9Ae8SYOx/UBq1DH8C3K4sBT+rwy1WCvFqjwV1+z0QrjhNUX
+ 1clqzwc5t3bw3sOOsFUYuyaomIsP3dvIzQgyT21TjuaF4tLJGQgyE30dDtrh9nJNP8DScJVGl
+ iW3lIab2SYwGUvXX9zcPZiy6WhxgDCMBryS7pIZg7zV1NPM3b17YEcKyfElG+76OKe/e2+29R
+ Ox3UL4ph4RJ+YLSpuemQuEMeVZzqXhMz5hbEPg3/WfNXfIck72Brzrg7MgoR7OWXSeiie/1l+
+ tm+6nmh7MV+tDzC70yMWtxQaZmXE9EIB6Uzt5JOzb14TbMOqrITzhz38vrgOhReCxdkCQpZRK
+ GVQ2p6dyCan8iXk/+y5ErqGT9vbYsv/nzB3UtS2DnlXKQM/7024RiYOYr8RFyWoBlVA7vHzTF
+ Yr7n0HYdWJwO340AyLB/NFVv8Ln8ycjJmcSbtyctRR8gH2FeS0wdHNkU1ChNnrWk3cRqX/KJC
+ rmD1+9T76fM+qiu15aYPSL0ePxxeH/19OOncix+b8wYTnXuzjOzpN4OV0/9IVK//Eo10hoAwC
+ LqJc7RIM3uKTykp4q3zbTGx2Lpn7Qn6HyFP0ZiSZXYR6A/zenxNvKeWBGX68FVKDDLpztZVaj
+ OLcvF35yZJxvSBj7yi36gkP0VeRBQEqjlHJ5kRKc0kR9v6d1tkIcpQUk71Wjh5QsKbN5d8ilE
+ DjTyJoKYJu4yGf84r00GmSTkpUwivg+yvXkxzf4Wc6BxOsINdxrsiJcbcqnOA10j+/obQhatm
+ nWcwjfCiscXe7rbZ3YYBdu0l4abdHdMQqE3jORv3EgR6SlZJ85/4O/ZB+gQK53M8v0A9NMUal
+ KsZs1yU+D05ffJQZiDALFVOhTy1VIifqygST7hr2YPJ7zp7jdRfOtWaIPH58O3Y3ANYsFwgMO
+ CiADQQiI0=
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 23 Dec 2024 00:25:10 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17491
+ <cip-dev@lists.cip-project.org>; Mon, 23 Dec 2024 22:52:47 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17492
 
-On 20.12.24 22:03, JohnW wrote:
-> Hi Quirin,
-> =C2=A0
-> I just tried to build with a clean start by removing the build directory
-> as well as the isar/ and isar-cip-core/ layers that I use in my build.
-> =C2=A0
->
->     isar-cip-core:
->     url: https://gitlab.com/cip-project/cip-core/isar-cip-core.git
->     #commit: 75593f244100cc726e7e337298f54f2e80b82a6d
->     branch: master
->
->     isar:
->     url: https://github.com/ilbers/isar.git
->     #commit: a7c4f4040b24dd5414a93ec7beb9e47bfaabca73
->     branch: master
->     layers:
->     meta:
->     meta-isar:
->     =C2=A0
->
-> =C2=A0
-> I use branch: master for both of them and I ran into the same issue.
-> =C2=A0
+On 21.12.24 00:50, Stephen Ecker wrote:
+> Hello, I am using efibootguard with the swupdate recipes and the image
+> cannot boot as the fstab is empty.=C2=A0 Any ideas on where to look rega=
+rding
+> how the initramfs is created, for debugging this issue?=C2=A0
 
-This doesn't tell use yet which revision you were actually using for
-isar. I suspect it was one older than
-eae54341ecc46987a5b72b79220ed140304aeca7 which fixed an issue
-suspiciously similar to the one you are seeing.
-
-If that is not the reason, please share a simple reproduction case.
+How are you generating your image? What is the difference to a reference
+image generated by isar-cip-core?
 
 Jan
 
