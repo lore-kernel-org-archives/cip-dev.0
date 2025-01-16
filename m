@@ -1,253 +1,663 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <adithya.balakumar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE1BC02180
-	for <webhook@archiver.kernel.org>; Thu, 16 Jan 2025 06:36:48 +0000 (UTC)
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (EUR05-DB8-obe.outbound.protection.outlook.com [40.107.20.89])
- by mx.groups.io with SMTP id smtpd.web11.43142.1737009405594749618
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0554BC02180
+	for <webhook@archiver.kernel.org>; Thu, 16 Jan 2025 11:20:00 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
+ by mx.groups.io with SMTP id smtpd.web10.45989.1737026390107058463
  for <cip-dev@lists.cip-project.org>;
- Wed, 15 Jan 2025 22:36:45 -0800
+ Thu, 16 Jan 2025 03:19:50 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=OPU1xlkA;
- spf=pass (domain: siemens.com, ip: 40.107.20.89, mailfrom: jan.kiszka@siemens.com)
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.152, mailfrom: adithya.balakumar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 50GBJkUh2814781; Thu, 16 Jan 2025 20:19:47 +0900
+X-Iguazu-Qid: 2yAbUt1VDEVfwdWNe4
+X-Iguazu-QSIG: v=2; s=0; t=1737026386; q=2yAbUt1VDEVfwdWNe4; m=EZ/W3ERM3YIrsVum3a/y0kRSsON5QVbWRhMaC0swJXQ=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1802) id 50GBJjID1657754
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 16 Jan 2025 20:19:45 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gMzvl9QYVeREIx8aq1iH7pXP0E4KOksxamBJYHSPmV7QxQkA9H+DswDTCtvEmN3fWf50ZuAw50TAQpsF6LTVC7H3ie2ZPA1LmINKvrDkxlXhEOUEoUr749uXNPqAlDt83iRQhnW3u1xJgIjwPqvQI2ljr+aqSdCwa37qoRMhJve/8xredAF5C/DDAH4r/W79UbM/URHf/Xl6VjyBWqx+e/3yeoUluyD3DYt38ktLw/1l1trpw7gKKHvTjPRRM1V3Jo1sEg2KJNTaAb+M/G26qXo5XqTOk/r+4BvGzvQAQ/7xBrjGvlhipZewIjEZ6495mAxTGV1WIaHMla6RQGNTCw==
+ b=fx/xMC8nJTS2FktX17iVgVWX83GPINslhWnH9GjwWARUxv6E+agrSj5oCJCva+4UoOqqp2gnyJbkTEsk4EW+r4M+ppukaikgOBbmq4maFiZ2HjDYqNfR1fM7w/jxlJgnSR8X1P+YD5V1wRiEf4Q3FX+sIO0EYCjClepuxzS51suGI2YH0ji0eNxDv0MURLOCfyIlM84/r4Gth/0+PFrnLSwAV83nOvjXYp2ssHDjeyU//dkArDgJ0+bqN0C42m+ACxOWxRXZXWRmR5CXAuTgfcPUQ/Lan4NkB2U68rwhNu41xFEcVly4kdUneQ2oI7Qk8Q5VtlCwGqHAcxi9Es7vGg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lATtyieKibuRJitcsqtL3m9wO8zzIRKOqvRn8946quU=;
- b=n7QWNdkDaN04+fpkDOLU+/wgHfMsoj1BqzfZwhpgXgOyRnLdOrhgUEf+QBc3maxDs3Tmz5EPsEzaVLJZ9xhqZXLYpFllG1PdJJTUgJRiLwbRxc+OC7hMjfpRk7yEJYlSxlqQczt9PBPWkTkiH8Rf6t9QQGBcx1avVYQ7hoJWWXlTpdFSwsrY5BVd/ZqnajycwNUAA+7DHpZW6GkcaLtYZHgIMTZejdtKBIbXrRapd2yDKI/ly4c4RCPoLRTFR4Fk5tqVhX2i5oZI04buXwsuv+3Pzs2LAg9RC47i9XHBfVs3k6GQQ7AJA693kO3d+VXW0wAYH8HW+wtjbLw2+bmwcg==
+ bh=/WLeKvssaQkpsK++LUuqeQh7UZeag0J5YG9LY6Ah6Zs=;
+ b=KcKqLW+DauIOrIRl07xt2kaN3v7hZH3n6GfvZf7J3te3PrKheyQVfF7uS78J4fOSaqEmWGQjQhUb0WGxonbOy8L8JcebpRx8iGBaUeHOIqmOR0sIFXsjqhgiUS9JwFcQrmC/dSDbM690gDGD9S4lO/u0hmytH6rcCayFMJr7oolWiIXN3+DrduGWOLIY9+MKCN7PQMXDN6CUIPtKRVi9GmDuw7gUJQKLoMNtVb8xjGTYP/3D/n0VnlK2CNyaB0e8qq6kuAMjKQd1nsyTpof/ZCLU7MXITTdncmVxvVAUDWwgrOhJuTSPqoiMPPdo8zPWhxonG7mU89K3awoInFMfQw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lATtyieKibuRJitcsqtL3m9wO8zzIRKOqvRn8946quU=;
- b=OPU1xlkAgeOKdHjuv8vKr11rkcFoZopneZqb2mnE6aWr37hvkyolETH6qw8yGjZNw3PA0hMxXDU3RsnJpJCRNlPP1caRKlQN+aaoi7hvx5JrLmKkztQKXcGIZTutuxUN38ivsk2oPjCYMOKdL2ERV/lbvJgJ8TJAxG6cAnCSW0DgjBNTlY6kPEN/gENOL6k3r2qKdhlONJWj6QJ1KVTEG2VMhhS1hz/yolStX1PM0rKfwoDSe61iZFmxVj6DyKlbZiXkSP//V3qjgajEFA2B1+4y7yzoYrvgAOrZvTZLBhrmBOjktSFviiKLtulfFRKp99CLQajlYbr1XFYDCA66Ww==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by DU0PR10MB6320.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:3b2::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8356.11; Thu, 16 Jan
- 2025 06:36:42 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408%4]) with mapi id 15.20.8356.010; Thu, 16 Jan 2025
- 06:36:42 +0000
-Message-ID: <b72bff34-ee63-4b3d-8383-c4d8de52e5bf@siemens.com>
-Date: Thu, 16 Jan 2025 07:36:40 +0100
-User-Agent: Mozilla Thunderbird
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: CIP IRC weekly meeting today on libera.chat
-To: cip-dev <cip-dev@lists.cip-project.org>
+ smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
+ header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
+From: <Adithya.Balakumar@toshiba-tsip.com>
+To: <christian.storm@siemens.com>
+CC: <dinesh.kumar@toshiba-tsip.com>, <Shivanand.Kunijadar@toshiba-tsip.com>,
+        <Sai.Sathujoda@toshiba-tsip.com>, <kazuhiro3.hayashi@toshiba.co.jp>,
+        <jan.kiszka@siemens.com>, <cip-dev@lists.cip-project.org>,
+        <koshiro1.onuki@toshiba.co.jp>
+Subject: Re: [cip-dev] Regarding support for WFX backend for software updates
+ in CIP Images
+Thread-Topic: [cip-dev] Regarding support for WFX backend for software updates
+ in CIP Images
+Thread-Index: 
+ AdrC1ksCFU48h0ptQR+cT3Q7rfn9dAALvlaAAS1PbFAAEtUdAAERYfYQAAUzvoAm6f/SaQ==
+Date: Thu, 16 Jan 2025 11:19:43 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <TYCPR01MB9669FD137BC7D188F1D7558EC41A2@TYCPR01MB9669.jpnprd01.prod.outlook.com>
+References: 
+ <TYCPR01MB9669288BB5107DAC76CE3DF7C4C82@TYCPR01MB9669.jpnprd01.prod.outlook.com>
+ <561f6fd4-a66f-40a3-adb4-b94eb2c35ce0@siemens.com>
+ <TYCPR01MB9669740DA683EAE4C6E8ADBFC4D62@TYCPR01MB9669.jpnprd01.prod.outlook.com>
+ <6FC4E265-2F94-4144-A714-784FAC157CBD@siemens.com>
+ <TYCPR01MB96699778EBAC2E3FA6E11FF4C4DC2@TYCPR01MB9669.jpnprd01.prod.outlook.com>
+ <5A591B53-A5CA-4F84-B055-1C9843037F36@siemens.com>
+In-Reply-To: <5A591B53-A5CA-4F84-B055-1C9843037F36@siemens.com>
+Accept-Language: en-US
 Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM0P190CA0004.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:208:190::14) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCPR01MB9669:EE_|OSZPR01MB9393:EE_
+x-ms-office365-filtering-correlation-id: bf7c357d-5e70-46af-6442-08dd361fad2b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|1800799024|376014|366016|8096899003|38070700018;
+x-microsoft-antispam-message-info: 
+ =?iso-2022-jp?B?Qi9ycnVFbm1nVU84dFgzUDkrT0hvQ1M1dDBVSmJZU283bkVYRHNxeWRZ?=
+ =?iso-2022-jp?B?bzRKQXpaaDlmb1AxTDhyVzdjZmFHWk9RQW9EVy9uVVpjVGhTZVQ5NEFW?=
+ =?iso-2022-jp?B?elQzai9NZS96QTZyaEZKaHdmQ25URnpQV0U3ODFzalpnWVpYMnd6c3hT?=
+ =?iso-2022-jp?B?RVRmdEpsWFVSajkxVU8zK0txRDlTNFE3dUduckFubCswRVJrZzdNSnFw?=
+ =?iso-2022-jp?B?cHBzYnZuellGMzFZTlM1ZUNjNSt2Um8rRWEvNWJaOUpIcnorMFVRVlN3?=
+ =?iso-2022-jp?B?QXRzd2JqRXFiSGZ0Um9ZTzY3eldhMnk3dWJpd0s2bU1TMTRYUUlYZ2tz?=
+ =?iso-2022-jp?B?SjYvRjNLRWlXOVVydVBvbElhU0hHT0ZITEkvZUJPdk5yRWFXaVdhYU5l?=
+ =?iso-2022-jp?B?L25paVRQNGlKM2czVEkrdHJIVmJybWx4Y2VKM1ExSElZTG4xVURpUGZu?=
+ =?iso-2022-jp?B?ZXJqcEJZWDJhbXpwTnUyb0tVUTRQYUUxb0FaUnpBMTM2a256ZXV0ZjQ2?=
+ =?iso-2022-jp?B?MkZJY3BFRHMwNk5iUWlsV3Q3dlFETnl0dnVlZFBXU2R2UzZCUjVJTm5X?=
+ =?iso-2022-jp?B?b1E2emdpRGJFSEdGODNIWmxnZEUwNUlETzNrU3F1RE83dllOUExFZGdx?=
+ =?iso-2022-jp?B?WFVISEZwSEYxZnpSOTQvWWtycTgrRE82Z2RjUW1nU082QmFqS29BWDBm?=
+ =?iso-2022-jp?B?cE5SenQydGRFNUwveTJ0LzcwTEJaV1hHaTdDOFZoak9NdURXTEIrbTJQ?=
+ =?iso-2022-jp?B?K09QQjMrMVlOQWpHaHc0aTZGd2tlOVdpUENyS2pPeU1PRHRxQURlbFZU?=
+ =?iso-2022-jp?B?YnFDTVlyOGZtWFp5c3Z1enJlZU1QSFdDemgySmZrZWs5bmZUTjE0K0sv?=
+ =?iso-2022-jp?B?ZHNOUmNaNU5hbUJNYVhEVmx4SmsvaERyanhtcm9keGVsTm43MTZoNmFJ?=
+ =?iso-2022-jp?B?aGhYcUxaMzFyWHVqaEQ0bUNkYmkvdk52S01XUS81Ni9COUhwdXBUSDk4?=
+ =?iso-2022-jp?B?M1YrVnBXNGtVcDVNalRtVE5CTTRRN054VEVGRTZoMXFoMlBwREhUQ0tR?=
+ =?iso-2022-jp?B?dWY5ejJ6Z0JyUVQ4TkFEMDhqbnhOQUJReUNvNzFjNTk3T0RZSG0vR2xC?=
+ =?iso-2022-jp?B?c0lFY3RxbTlwcUM1Sk1GMHE0bm5oNjIxbHM2aDcwLy9Mc1FKTVNiazdk?=
+ =?iso-2022-jp?B?SlVHcUVEYVFLNFZBb0w0Mm13M1F0QzQrcWIzY0Y1alVqYy9pMktYZWhL?=
+ =?iso-2022-jp?B?MktRNlRaNjU0aHB4S2s0L3V1ajVOUWpQNEJ4R09LVnAzbXZFY0Y3UDZk?=
+ =?iso-2022-jp?B?WktXQldWRUZESkRKTWtMZE5tTEttSE9wQ2c2bWdSTVZsWENVWXJhV2JH?=
+ =?iso-2022-jp?B?cEFTVENJcGpkb3JNM05zTFVVM1RsSjY3TkU3WUFsbHloeDM1WU5sRmxU?=
+ =?iso-2022-jp?B?bEFHb1JMVVBPUWVvVHRyUkovVjhuZE16aWpJczZaWk9zL3JhbGFQekdk?=
+ =?iso-2022-jp?B?YTcrMFYyTmZreXFyWHlwcUg2YUN6Zit1S0o4bTRyZEx6M0YzaGVLbzdM?=
+ =?iso-2022-jp?B?cDZDUERmWjNaRHJ3QVlTS0x1YUk2aTBUbHpsWE9ZQXRVQXV3NmxKYVZi?=
+ =?iso-2022-jp?B?U1FXZ3JoSXpKOWw3VUxzdzZuT2lBSzdjMDFyU1l3L0FBMDFsc09JSFJ6?=
+ =?iso-2022-jp?B?Unl2RnJ0MzJEMkRheHJ0RmhlWlVid2dNdXdNQkM4b0RNby9BQ0VJSkp4?=
+ =?iso-2022-jp?B?SnFLZHlOS2FGNXFyYThPM0NPK2lHNnFjaDN2bVVCQS9NNzZWcTVzbGZq?=
+ =?iso-2022-jp?B?Mnk1bkhlb0V1RXZRRXBOaWxudXY2V0w3S29KYnpIN1UwSjR6MVA3S3M4?=
+ =?iso-2022-jp?B?bnNyY1dpWjZST0JtWWJVbVN4amdlSnllK25UNzc4OGcrak1aTU1ncVFF?=
+ =?iso-2022-jp?B?bEFVaVk2ZDFNTWVYQ2d4WkxWVGZpR09OcDExMUtjS0RmbmV1SGRMbEp0?=
+ =?iso-2022-jp?B?cHZlNnZaVDlRRWhkRDFOUURsRUZpZE5GU3dwK2wyVE5sUDFTRkUzalJu?=
+ =?iso-2022-jp?B?VEE9PQ==?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB9669.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(8096899003)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?Vk9ic2ZRU3E5WGtkR0hXU2gyN3locFVocERlSmJVV2dTZ0JCM1ZwTzlz?=
+ =?iso-2022-jp?B?akxHZm03aXJLQ0t3azc3ME1sV0Y3TmRHbmhVMzc0L1JGeUNnREk3QlU5?=
+ =?iso-2022-jp?B?cHhKSHlVTVN2emhNY0J0Tm1vLzlCMUZsditzM3FjUWc5VU9tRWIzUzc1?=
+ =?iso-2022-jp?B?TDNpMkR0L2ZTTXNXZUxrWE1kQnQxUUFzallvSWlPUHFHOTk0YmxuK2dC?=
+ =?iso-2022-jp?B?OURrTmpxUlo3OVBxeDZLOEkxNC9lNjZaWElDb3lkbTBxZURzTUE0TUhw?=
+ =?iso-2022-jp?B?eTR4ekpmdFNhZ3IwOWVFR0s3NkdpOXVpTWpIMVF6SUxwa1RDZ1V4WGcz?=
+ =?iso-2022-jp?B?M013N1JRVFROVjZDdE9nNVNWOGJhZkFtZHN2V29KS2dFdDVLSFF0UjNi?=
+ =?iso-2022-jp?B?dTVOLzRXdHJDeDVteU1HOHpkNWZmOEJINW1kOGdyRGJ6TzVFcllrbDVT?=
+ =?iso-2022-jp?B?NWNsWjM2OTlSbDhKaWF2SjcvQ1FZc0RSNVltaGJQL01Wc0VpSVdRSEQy?=
+ =?iso-2022-jp?B?Tk1jb2xEcDdZYnVwdiswRGN6dkhoMElHV29aY3J3YTdUU01WL3NNbjQ3?=
+ =?iso-2022-jp?B?WUQxMlNDYWc1V0d0KzVEWktEcW1Jcll3YjlxZlpHeDVZcVRhQ1h1TEtF?=
+ =?iso-2022-jp?B?djFaVEtHL0tqaHgwZy9jbER0N3pnY1RzcGdxbEF6cXlHYmNkMkZuMlVM?=
+ =?iso-2022-jp?B?TE15V1c4T1JaSnQ2RVlCc0kxR3VRMTAvSjc3REZFSGNMaEo1bGg5eFJR?=
+ =?iso-2022-jp?B?VXh0NnZtR2EzUDZ2NC85M3R1R2xxNlVIZkdmR2tzcWp2UTgyQzI4UUo0?=
+ =?iso-2022-jp?B?anp4NW1GNnFvRmViY1hDTlZoMW82NmEvQ3A2Y3AxTWlDcEIxc056alpx?=
+ =?iso-2022-jp?B?d2xXWThWblZpY3R3TysvNVRTK29kQkszUlZkRDYzRjVOM2E2YmNldCsr?=
+ =?iso-2022-jp?B?a2c1Z1ZUMENXNEY3Yi9Tb042bW1hMHRPbmdmdGtJeWthQnRaYklqcVlz?=
+ =?iso-2022-jp?B?WmtCU0dTcnRITlRpamhTMWkvc1FBSmhOREpteEduVVFobUNFanA0KzI1?=
+ =?iso-2022-jp?B?SlRjRzQ1ZEJwN3FpWUZTdFdTaVNrVEs3Njd2dmoweDVlY3k3dE5OM1Fu?=
+ =?iso-2022-jp?B?azBNejlKTFJwVTIyOEpSWjZzT29FK0hLVDNsVDI2dmhCSEdSNDllRG0w?=
+ =?iso-2022-jp?B?UWpuZDRDWnZSZmVleHoreEtYeFgwUzZYQ285QmVaM0NFY1pUM2dQa1NX?=
+ =?iso-2022-jp?B?RHBub2VhZy9MdEVBUVAzTEJ1akpPdkpZRHFSZkFUcHVWak1FZkdHOGRk?=
+ =?iso-2022-jp?B?R3BodXg2ejQ5dW01akZ1TnpXNENSaktRb1lZVHZXZlFqcWI3T2VUZjly?=
+ =?iso-2022-jp?B?bisvV2xxZktLUXI3MUh6c2FkYllwNmd6Zy9QWnpvUUFvQzVyQXVuampm?=
+ =?iso-2022-jp?B?Z0VoUW5YUmkrQ3gvM3dTZUpaTWpiZWRVeEpYT0tZcGhZRkVqVEUzRUlx?=
+ =?iso-2022-jp?B?S1hQWVRNNXlxclVpbS9DMVp6NzZrZWlIMVFrbEI5WXdrMWVsVUZ3ZXlr?=
+ =?iso-2022-jp?B?TzBzSnlWQS9kbjhzVmt3NnVxeHdBRlNzc1IrL20zMXlOeDNYaklrY0V6?=
+ =?iso-2022-jp?B?d1RFcW4zVjZVUVNXVVpPbjd2am9hbEJpYTZwSFoxTnozY1JzSmY1RFB2?=
+ =?iso-2022-jp?B?dWkyaXFGNTJBMjFVeUZoc2hkaWEyWlJEcjdKRExSRzRnSXZwQ1N2R1hk?=
+ =?iso-2022-jp?B?QkNrRlAvMytEMnA1azNML25GaVRMTHlrRXZHZUVrZ2dscE1VaGRqZXpE?=
+ =?iso-2022-jp?B?aHYyVWtqUWpEQi9nVmwrU1JJRnEyd0oxMHhESzJIWTFhYmRMUld0WGVJ?=
+ =?iso-2022-jp?B?cnFJTU9HNGZoUkFxZmFVZkVCVEZSMmtONjVVV256ejBkbUo3ZkIyUE9t?=
+ =?iso-2022-jp?B?bVp2TGs0aUt5dEtHTno1YTdQaThFdHgreFJJU0VoNFU2VFRpcWNFamh2?=
+ =?iso-2022-jp?B?T0RVUzJFUk9xbDRlWFhVTkJjV28rVTFuYmtHakpybDcybVMycDA3R2Zj?=
+ =?iso-2022-jp?B?SUE5b1pXckI2SDlFRGhyN0xpcjJ6NlNrVHdzUnc3YW9vbVU5N2hNYTRr?=
+ =?iso-2022-jp?B?eDM4SHdCUkFaUUtaR1lHczBENHRGdzZKcTFSV0pTYlpQYnFGVXdYaml4?=
+ =?iso-2022-jp?B?MC96a1ZYV3Y3bVhjbnJFS2kzNGFXUWJFclphMWkvQ0VSZWZFK0V2R0Vq?=
+ =?iso-2022-jp?B?TzlYZEJhS044aCtMR1BHRXlmWFF3ZDVjTDBkc0Znd0k5djJlcUxmV0U1?=
+ =?iso-2022-jp?B?UFJQYjJuYjhDV09VOUV0Y1FTNkZVRmxsTVE9PQ==?=
+Content-Type: multipart/alternative;
+	boundary="_000_TYCPR01MB9669FD137BC7D188F1D7558EC41A2TYCPR01MB9669jpnp_"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DU0PR10MB6320:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7978c78a-2a61-46ab-af99-08dd35f82387
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?QW8rTkU1MENxOTBEdXRqMFgxV0FKMkNKWlo0RWhWU1BoeEdYNjhlZzc3bDlD?=
- =?utf-8?B?bllPZkQ3cHh5a2dJM2JPQU55c0lBSXROWUY0Y1l4b1FQU3M4UHlWNkpNT1RK?=
- =?utf-8?B?NDkwUi94dENaRDdJa0ZnZUoyMzQvblpaQjZyUDFiUzhIZFJncFM5VHFXblRh?=
- =?utf-8?B?a1VGMWs3OG1SYTBMSE1YVmtUUkhmdTZBQXcyKy9yVnJ3WmExV2JpTjRiellY?=
- =?utf-8?B?NFR0UHg0RTJhMHcrc2orVGYxaG0zRlBTVU4xQVRrTWZxWFgvZGpJUHF6cFBM?=
- =?utf-8?B?YmtEYzFaaVcyTjQ3THQ0d2lJeGs0YVpURXBvOWFScUJTbWVQeDRaeDBVNUpz?=
- =?utf-8?B?T3RHcFp3SFUrOElzcE9nZWVsU2FGZWp6aUhqbk1wSHcrL3Qyd1FvOWJ2Q0ps?=
- =?utf-8?B?NkErWjlpQU4rUFpHN1MzbHkyNDlJTThZRmxvUnc4U0RYQzNsSlNnR3RZNlN6?=
- =?utf-8?B?RjQ2RC9oeVNYRTZZNGpDK0hVYnNhSG9hVmVYS1AzSXo2L2EwS2xZdkM0djIw?=
- =?utf-8?B?bUdTVDhlVENnQU4yZDNrT3NTcitaL08yQ09KTC9Rbmx1bEQxdkROZ1hqcHZ6?=
- =?utf-8?B?T0NYbmFpUjdtK25ZWlNLU0thcFJ1U0hZUCtma1NSRlJRN201VEY3YUhZdzlU?=
- =?utf-8?B?blB6MUVPdUwxNk54Wm43MWlpbEMxTldNZzY0cGd5RnpLODY0djgrS2JzN2NM?=
- =?utf-8?B?clk3ekY5MEFvR2RWVXN0NmxkUmZrTU1kNytpOEU0VlNlZzAxZXpWMm9ORks4?=
- =?utf-8?B?VlVJNERuZjdvUUVPQmhPU1VkeklRK3A4Q21GTk1URmozcS9ielZKL2lBZTAy?=
- =?utf-8?B?ZEpLQzNiTCtIM0p3MWU2TEVUelEweklNOHQrb0pqZkpGSEYxYVdGRVdoeVJo?=
- =?utf-8?B?U3JEellDQ1o2Q0NvNHZDdGxMbHlDY1hoZ1l1YXc4QWQ5dG9TT2ovR05HWm5T?=
- =?utf-8?B?QzdpeWgyaUVSaEhBalNaYzlYQWRranVkay9abnR1cHRQMUlLOW9HUkFVdFdN?=
- =?utf-8?B?QjhjcjFTZ0xFWFA0djVsTXQ4UUdiQklsTG5JMkV5ZmJPWExpMUNaWXp3Z3Zu?=
- =?utf-8?B?d2g1Mi91WVozMHRoRi9CaWpSQUJ6Z1pPdXRWVitmY2psL2w1RTVaWVp0VFJP?=
- =?utf-8?B?TEUwbitIbFFGek9SOTgvVmZNSVNsVGpzWkp4YkJEVnBjc1U0VTVLQTVIM1Jn?=
- =?utf-8?B?a2VkRnRDRW8xSjVjdmo1L2gyNHFNYlhlNVVKSWp2Z0RUSy9nbEIzNnVBeFNt?=
- =?utf-8?B?aDgzaDVGOFFnNFRnVVdlMG5UWGMranRhUlVvZk5RTlYvV0JNOURUU1NnT1JE?=
- =?utf-8?B?M2E1UHFoRDBZRjNkS0RuT3hmbFVtVjI3QjA5RXJGdzBjNlJ3K1BMUFZqSTJq?=
- =?utf-8?B?b3dzQ3FNVFhYRjA1aVNxT2c5VjNzQm55T2FqZ2ZwUElsYzlLajI4T1Fkc0lB?=
- =?utf-8?B?MHNNZmZHTGxZenYrWGs3ZFhBSCtPY1g5ZEVSSk5XMy90ZUZlMHU2V2drWC9J?=
- =?utf-8?B?a1dDYnNtTVE1enkydHlFZFlMOG5UV1ZyZ1Qra1dMemJLMzhiT0IrL0ozT3B0?=
- =?utf-8?B?Q0VKa2tET3dmZzBiSUFCcGxadjcraEw0Z3pkRllXaVlDdCs4YlV3UEtXSWV2?=
- =?utf-8?B?NnNmanplWnRBd3l2cThwSFFWSDR5TnJqYXZMMURPUmFXcllHTS9MYjRDOFV5?=
- =?utf-8?B?U1BjTzBZbkRsOW1vSDRWcUt2blJJcW1nSVIvWm5YZVJkMGdCOWtSeGJhYjdY?=
- =?utf-8?B?eUpEdmk5L1VVeERqNXFxQzNCVmRsOXA1amhXNG1DY1BaVjRlMDNzNHhFcEEv?=
- =?utf-8?B?S2FDbi9NSzdYRjhOWnRQUT09?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?aUdydWFCR1NSZFpzNkpBQkg2cWNtc0Z6SklFMHoyWUczQVMvRHRzQXZvR0Q0?=
- =?utf-8?B?SEZtWVZiczJGT256VWViK1NaWEhPaUNKcmJrbnBNczZ5NFNHTmJFOEREczhZ?=
- =?utf-8?B?VG82d2VieTEvRlpqd1dOOHc2ZlBwOVFjNC9CTmlDY00yQWR0c2VKVzZpaVpP?=
- =?utf-8?B?NEF6L0lJbFpFbjJ1dmwzTDdZYm95N1pmZkFwVm1kMkFvajFrbmZMVkhYemlY?=
- =?utf-8?B?RFNGc0dRTGxJdE9MOVpZMEtnajJQd0xMc2xNZFBrSlcyNWN6TkNVdzlvcHBj?=
- =?utf-8?B?aktDaGFBdjRDNUNaN1dxVzZnYkRzbzRaVHlQcmVRcFZHcGZ4Y0tKN1IxQmF4?=
- =?utf-8?B?K0txdm1IUnREVzVZSFFuUU55UHpxczA0OVp4NllqL1I5eHBJVWN0a2RtSm9z?=
- =?utf-8?B?Z1hMZkpKUW1mcERuQlBYd2lTeEJGUEtra2ozZWl1cWlLa3J3WUhiZXYvc3Ar?=
- =?utf-8?B?RFZiTVNzbjYreXQxYXR5STBXb2NlL00wVVBpQW5OODRBcEllOVpLNEVFdldW?=
- =?utf-8?B?THJKVDAxQVFDMkRXOWJ5cGJSejZXcHo1c0IrZCt4U0xJZGlJYlR4QTJVbllD?=
- =?utf-8?B?MWFOWUQ4MGRkdnAvWllDeFhXTGdHSm5zYWJmeU4wYUY2OFE2NDVIdjluRmpL?=
- =?utf-8?B?QTA1bTkwd3ByOXd4SVNwZ1QzSmhYMUFxejNONURzOWZXVm5TRWVkS1VWc3Rn?=
- =?utf-8?B?cHFYb04vR0loZ3JnYVFPZW5EY3p6b25wRE5UMHhOa2V6UjF6SmVMcEIwTUU5?=
- =?utf-8?B?UXRqMERyeTM3NnFyME9ac0ExNm9jL2ErYTJDSXZvelNUeXRMcHRXVW8zRUk1?=
- =?utf-8?B?NkNpWDlsd1gzdW9XR3MvUFJkVk56ODBPamdjSW00eFgyK0xqR1orWVNqRmtF?=
- =?utf-8?B?ZmFlVWR2YlRuczJNRHQ5a2F2c0JXaG1qbllJTnJhSUhJTmZZK0dRK0thaFZh?=
- =?utf-8?B?UENBNWNHa1Iyek9ocllEcGlOYittRm5UZklVN2E1NXdUQVdHT2VqOHpXQ09a?=
- =?utf-8?B?MVRGNkRzQXpmalBTV0tSRTlFNXgwVzlNUERDakdHcmVsWnpRMmRJTnJITmI1?=
- =?utf-8?B?QUl0bmxRMjV5YUhSUENwbGxXMG5KRzB3V0ZzQ3d6QWV4TWkzQWJNamxZUW5n?=
- =?utf-8?B?eFJ0ZGd1YkIrdFlPWXFBQ0hJN2txd2VpZUplS01PTTZ5K21wWDBUendiSGlv?=
- =?utf-8?B?NW0vSXZRdVRHblhUZEZ4YzkwWndQMFFhWjhiQnhVUDVMdEJ4RWhYdDJoYzA1?=
- =?utf-8?B?c282MThNZWQyZWxHMVdBSU5QK3FOSVh3MU93cHVHU1Y4UytVOE9PbHF6L1k5?=
- =?utf-8?B?djNxaHpCYkY4MjJleDQ1V09vRUxhcHNWTS93VXdpYU5PZmdQbndDWVhDSDZQ?=
- =?utf-8?B?VFNGdU9PZW9Uclk3ZzEwLzFSZENad2ZmcGRmenNkMFFmQkFBN3RKQ3ZxNTY5?=
- =?utf-8?B?Ky9HdlRKOGNOQjF0MHNOenVPdXFEaFJLdXBUVDFueXQyVkRqc0ZFbDRnVFJR?=
- =?utf-8?B?SjVVZG9NT2R2cjZjTTRLcDN4ak1OZE0zeXFhcGdrSzBMMjN6QmlOcFdwM0Nt?=
- =?utf-8?B?OWpxWloydzdEOThTU1E2cVcxVmZuOWZnM1FINlZDWGpEbVo2NytNNU5uMXhm?=
- =?utf-8?B?T2lDVlhwVitISDhRaWVYcGNQK0hmdC9WQlNFcWFjS29iNllqMUREbGNuM29t?=
- =?utf-8?B?cVJ1R09nTk83R1c5NXZ1TEZUc0xFNFM0ZFFManlFZDl0azVhZHE3L1dFUzVH?=
- =?utf-8?B?Tk1OcnFEbmNIaW1XdVJpb1hKOXFNY2hlSzVTS2lmdllHT2c0aE5zYzhTVHo4?=
- =?utf-8?B?WTlwcGFHR3BNOWUrdnppMmR1Q1NFeFJoRm9tTVhuLzgyUVpqUlRkd3NXR2VP?=
- =?utf-8?B?VmJmWVQ0YlcvZU5vM1JNMWRyWm9XdWp0WmxVNEhicVp3K3JmSURETk9ZdURV?=
- =?utf-8?B?U2xsUktwREVDYWQrOWxmZ1ordzkzWTAzRUxEOElhTWo4czBLcWdNSDlhRE5i?=
- =?utf-8?B?RnJjeHEyajJiNk9JYnR0WmVxbnQ1MmZwcThCbnJkWkw0c3ladXZOT2hVMWtQ?=
- =?utf-8?B?eWJmV3NiT251MUtTQzJSS3ZtdGYwU0xGQXNvaHNnaVlsdlI5YkhhWUpDRXNl?=
- =?utf-8?B?OXdpdmFvVlkzK0YvandUdTdpVHFoajRTTld5MkFRR3JKYXd0eXNzR09wdUVu?=
- =?utf-8?B?TFE9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7978c78a-2a61-46ab-af99-08dd35f82387
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jan 2025 06:36:42.1751
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB9669.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf7c357d-5e70-46af-6442-08dd361fad2b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2025 11:19:43.3120
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: afa2nYm7kCIRcme2yjOAIsTnquc651V4R+SXEC420/obKSozLgQDKmwUh2ACQ5xi2c8SGX8Fn5rApx8JFUZqNQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB6320
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: XiHnQqjTkQCXO60YOz77TLipyFgtEav9dqeXnUycAevgpnm/RPk/cVCcaf2qR1COpPh5zrQ9HLtwFrq5Kuj2ql1LyppG7wwTyeBAgAv9qGqXOEnfy1VSJEBOO9joQaOO
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB9393
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 16 Jan 2025 06:36:48 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17542
+ <cip-dev@lists.cip-project.org>; Thu, 16 Jan 2025 11:20:00 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17543
 
-Hi all,
+--_000_TYCPR01MB9669FD137BC7D188F1D7558EC41A2TYCPR01MB9669jpnp_
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss
-technical topics with CIP kernel today. Our channel is the following:
+Hello Christian,
 
-    irc:irc.libera.chat:6667/cip
+Hope this message finds you well.
 
-The IRC meeting is scheduled to UTC (GMT) 13:00:
+I was referring back to a few ideas suggested by you on how we can integrat=
+e WFX backend support for isar-cip-core.
 
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=2025&month=1&day=16&hour=13&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
+In the previous mail (Apologies, the conversation was quite some time ago),=
+ you had suggested to use an onboarding wfx client which applies the config=
+uration recorded (ex: client-id for software update use case) in the wfx jo=
+b created for a particular device. Now, for the onboarding wfx client to fe=
+tch a job, the onboarding client must also have a client-id because  wfx jo=
+bs are linked to a client.
 
-USWest    USEast    UK        DE        TW        JP
-06:00     09:00     13:00     14:00     21:00     22:00
+You had suggested to use plugins inside wfx to route the request based on t=
+he information in the onboarding request's HTTP header (ex: serial number).
+Is the idea to use the plugins to return a response with the client-id and =
+onboarding job id to be used by the onboarding client? Or am I mistaken in =
+my understanding here?
 
-Last meeting minutes:
-https://ircbot.wl.linuxfoundation.org/meetings/cip/2025/01/cip.2025-01-09-13.03.log.html
+Thanks and Regards,
+Adithya
 
-* Action items
-  - prepare blog entry on SLTS kernel state and challenges [Jan]
-* Kernel maintenance updates
-* Kernel release status [*]
-* Kernel testing
-* AOB
-  - security contact for CIP kernel (alternative to security@kernel.org)
+________________________________
+From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> on beha=
+lf of Christian Storm via lists.cip-project.org <christian.storm=3Dsiemens.=
+com@lists.cip-project.org>
+Sent: Tuesday, July 2, 2024 2:44 PM
+To: balakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) <Adithya.Balakumar@toshiba-t=
+sip.com>
+Cc: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org>; dinesh k=
+umar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshiba-tsip.com>;=
+ kunijadar shivanand(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <Shivanand.Kunij=
+adar@toshiba-tsip.com>; ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@tosh=
+iba-tsip.com>; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(=
+B =1B$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp>; Ki=
+szka, Jan <jan.kiszka@siemens.com>
+Subject: Re: [cip-dev] Regarding support for WFX backend for software updat=
+es in CIP Images
 
-Jan
+Hi Adithya,
 
-[*]
-linux-4.4.y-cip: interval 30 day
-  latest version release date: Sun Dec 29 08:41:22 AM UTC 2024
-  limit date: Tue Jan 28 08:41:22 AM UTC 2025
-  Status: On track
-linux-4.4.y-cip-rt: interval 60 day
-  latest version release date: Thu Dec 12 10:45:41 AM UTC 2024
-  limit date: Mon Feb 10 10:45:41 AM UTC 2025
-  Status: On track
-linux-4.19.y-cip: interval 30 day
-  latest version release date: Tue Jan 14 02:33:46 AM UTC 2025
-  limit date: Thu Feb 13 02:33:46 AM UTC 2025
-  Status: On track
-linux-4.19.y-cip-rt: interval 60 day
-  latest version release date: Tue Jan 14 11:41:15 AM UTC 2025
-  limit date: Sat Mar 15 11:41:15 AM UTC 2025
-  Status: On track
-linux-5.10.y-cip: interval 30 day
-  latest version release date: Tue Jan 14 02:41:29 AM UTC 2025
-  limit date: Thu Feb 13 02:41:29 AM UTC 2025
-  Status: On track
-linux-5.10.y-cip-rt: interval 60 day
-  latest version release date: Tue Nov 26 03:12:05 PM UTC 2024
-  limit date: Sat Jan 25 03:12:05 PM UTC 2025
-  Status: On track
-linux-6.1.y-cip: interval 15 day
-  latest version release date: Tue Jan 14 03:04:39 AM UTC 2025
-  limit date: Wed Jan 29 03:04:39 AM UTC 2025
-  Status: On track
-linux-6.1.y-cip-rt: interval 30 day
-  latest version release date: Thu Dec 12 10:20:12 AM UTC 2024
-  limit date: Sat Jan 11 10:20:12 AM UTC 2025
-  Status: *Late*
+Based on what you explained, my understanding is that there would be some s=
+ervice / script that would run upon image boot (probably first boot), to co=
+mmunicate
+with the backend (on-boarding) server. The on-boarding server would respond=
+ with the details like device-id etc. upon successful registration of the d=
+evice.
+
+Yes, that is one option. You power on the device and, once it's connected, =
+it securely fetches its configuration data from an on-boarding backend serv=
+ice, probably with the device being authenticated by some human in the loop=
+ close to the machine. Or this technician plugs in a trusted USB Stick or .=
+.. There are many options with some better/worse than the others depending =
+on your use case and demands. All of those are deployed in the field, for s=
+ure :)
+
+Anyway, all of them have in common that the device gets its configuration d=
+ata somehow and from thereon is registered and can make authenticated use o=
+f the (other) backend services, ignoring re-authentication.
+
+
+So, to achieve a meaningful integration of WFX with CIP Images, we have to =
+now support this on-boarding process as well (which would mean having an on=
+-boarding server etc.)? Or is there another way to achieve this integration=
+?  Would like to understand your opinion on this.
+
+Well, the problem is that there are so many ways to onboard devices and eve=
+n standards, e.g., https://fidoalliance.org/device-onboarding/ + Secure Dev=
+ice Onboarding (SDO). So, one way of doing this is to bless some solution a=
+s CIP standard and integrate that (including having a running service for d=
+emoing the solution). However, I think it's better to side-step the problem=
+: showcase the integration of an =1B$B!=3D=1B(B even contrived =1B$B!=3D=1B=
+(B onboarding mechanism into which real ones can be hooked into easily.
+
+So, assuming we do onboarding supported by an onboarding backend service, w=
+e need to know/define how this onboarding service can be reached by the dev=
+ice and what configuration data is to be put where on the device =1B$B!=3D=
+=1B(B the latter is to be done custom anyway, regardless of what solution w=
+e choose. This means, we bake a (default, e.g., defined by a bitbake variab=
+le) backend service IP address/DNS name into the CIP image. This may be ove=
+rridden manually in the field but we need to have a sane default. Probably,=
+ you would want to bake in other credential data to enable secure/trusted c=
+ommunication but let's ignore that for now. Then, on onboarding, the device=
+ fetches the configuration data from the backend service in whatever format=
+ and a custom code snippet places this configuration information on the dev=
+ice where appropriate (read: /etc/swupdate.cfg, /etc/<whatever>, ...).
+
+This can be perfectly modeled with an onboarding workflow in the existing w=
+fx we use for firmware updates :) =1B$B!=3D=1B(B we just need an onboarding=
+ wfx client that talks to the wfx reachable under the (default or adapted) =
+IP/DNS name and applies the configuration recorded in the wfx job created f=
+or a particular device. Granted, one can bolt on security measures but for =
+demoing this, we can keep it simple initially. Now, how does this onboardin=
+g-wfx-client know what job (ID) to ask the wfx for? One could imagine anoth=
+er service that returns the wfx job ID for a particular device depending on=
+ the data it sends with the first onboarding request to this service (e.g.,=
+ serial number, ..., i.e., anything that is individual to a device). To kee=
+p it simple, and sparing the extra service, you can send that information i=
+n the onboarding-wfx-client request's HTTP header and use plugins ( https:/=
+/github.com/siemens/wfx/blob/main/docs/operations.md#plugins) to (re-)route=
+ accordingly.
+his way, you're not urged to create individual CIP images but they get thei=
+r "identity" while onboarding with just providing the canonical fallback IP=
+/DNS name for the onboarding server.
+
+Now, all that can be done in SWUpdate as well so that onboarding can be han=
+dled just like a firmware update. Then, however, hooking existing solutions=
+ into this mechanism becomes a bit harder....
+
+
+Apologies if my understanding is wrong.
+
+Thanks for reading this longish answer... and I hope this has helped? :)
+
+
+-----Original Message-----
+From: Storm, Christian <christian.storm@siemens.com>
+Sent: Thursday, June 27, 2024 1:47 AM
+To: balakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) <Adithya.Balakumar@toshiba-t=
+sip.com>
+Cc: cip-dev@lists.cip-project.org; dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC OD=
+G Porting) <dinesh.kumar@toshiba-tsip.com>; kunijadar shivanand(=1B$B#T#S#I=
+#P=1B(B TMIEC ODG Porting) <Shivanand.Kunijadar@toshiba-tsip.com>; ashrith =
+sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com>; hayashi kazuhiro(=
+=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D#I#G""#M#P#S!{#M#P#4=
+=1B(B) <kazuhiro3.hayashi@toshiba.co.jp>; Kiszka, Jan <jan.kiszka@siemens.c=
+om>
+Subject: Re: [cip-dev] Regarding support for WFX backend for software updat=
+es in CIP Images
+
+Hi,
+
+The mandatory configs that are required are the wfx server (backend) URL an=
+d the client-id. As per your suggestion, for the backend URL, providing a k=
+config variable so that users could enter that value before the build seems=
+ a like good approach.
+
+This would be the hardwired default for the upstream wfx server [see below]=
+.
+
+
+However, Currently I am not clear about setting the client-id. The client-i=
+d is required by wfx while creating the jobs for the specific clients and a=
+lso to monitor the status of each client device (like update status etc.)
+
+Yes.
+
+
+Setting a client-id also via a kconfig variable would mean be to build a ne=
+w image for every new client-id which doesn't seem like a reasonable soluti=
+on for production.
+
+Exactly.
+
+
+I am not very familiar with how such device registration / identification r=
+equirements are handled in a production environment. Do you have any pointe=
+rs in this regard?
+
+Usually, you have engraved in the "golden image" sane defaults that you wou=
+ld want to roll-out to all your devices. Then, individualizing the device i=
+s done by onboarding it to some device management backend. While this proce=
+ss, the device gets an ID and is henceforth known to the device management.=
+ Also while this process, you can do further things that are device-specifi=
+c, i.e., configuring SWUpdate to use an individual client-id for wfx. Note =
+that there are many ways of how to actually onboard a device but the princi=
+ple remains.
+
+
+Kind regards,
+  Christian
+
+--
+Dr. Christian Storm
+Siemens AG, Technology, T CED OES-DE
+Friedrich-Ludwig-Bauer-Str. 3, 85748 Garching, Germany
+
+
+--_000_TYCPR01MB9669FD137BC7D188F1D7558EC41A2TYCPR01MB9669jpnp_
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
+olor: rgb(0, 0, 0);">
+Hello Christian,</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
+olor: rgb(0, 0, 0);">
+Hope this message finds you well.</div>
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
+I was referring back to a few ideas suggested by you on how we can integrat=
+e WFX backend support for isar-cip-core.</div>
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
+In the previous mail (Apologies, the conversation was quite some time ago),=
+ you had suggested to use an onboarding wfx client which applies the config=
+uration recorded (ex: client-id for software update use case) in the wfx jo=
+b created for a particular device.
+ Now, for the onboarding wfx client to fetch a job, the onboarding client m=
+ust also have a client-id because &nbsp;wfx jobs are linked to a client.</d=
+iv>
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
+You had suggested to use plugins inside wfx to route the request based on t=
+he information in the onboarding request's HTTP header (ex: serial number).=
+</div>
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
+Is the idea to use the plugins to return a response with the client-id and =
+onboarding job id to be used by the onboarding client? Or am I mistaken in =
+my understanding here?</div>
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
+Thanks and Regards,</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
+olor: rgb(0, 0, 0);">
+Adithya</div>
+<div id=3D"appendonsend"></div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif; font-size:11pt; color:rgb(0,0,0)">
+<br>
+</div>
+<hr tabindex=3D"-1" style=3D"display:inline-block; width:98%">
+<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" co=
+lor=3D"#000000" style=3D"font-size:11pt"><b>From:</b> cip-dev@lists.cip-pro=
+ject.org &lt;cip-dev@lists.cip-project.org&gt; on behalf of Christian Storm=
+ via lists.cip-project.org &lt;christian.storm=3Dsiemens.com@lists.cip-proj=
+ect.org&gt;<br>
+<b>Sent:</b> Tuesday, July 2, 2024 2:44 PM<br>
+<b>To:</b> balakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) &lt;Adithya.Balakumar=
+@toshiba-tsip.com&gt;<br>
+<b>Cc:</b> cip-dev@lists.cip-project.org &lt;cip-dev@lists.cip-project.org&=
+gt;; dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) &lt;dinesh.kumar@to=
+shiba-tsip.com&gt;; kunijadar shivanand(=1B$B#T#S#I#P=1B(B TMIEC ODG Portin=
+g) &lt;Shivanand.Kunijadar@toshiba-tsip.com&gt;; ashrith sai(=1B$B#T#S#I#P=
+=1B(B) &lt;Sai.Sathujoda@toshiba-tsip.com&gt;;
+ hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D#I#=
+G""#M#P#S!{#M#P#4=1B(B) &lt;kazuhiro3.hayashi@toshiba.co.jp&gt;; Kiszka, Ja=
+n &lt;jan.kiszka@siemens.com&gt;<br>
+<b>Subject:</b> Re: [cip-dev] Regarding support for WFX backend for softwar=
+e updates in CIP Images</font>
+<div>&nbsp;</div>
+</div>
+<div style=3D"line-break:after-white-space">Hi Adithya,
+<div><br>
+<div>
+<blockquote type=3D"cite">
+<div>
+<div>Based on what you explained, my understanding is that there would be s=
+ome service / script that would run upon image boot (probably first boot), =
+to communicate
+<br>
+with the backend (on-boarding) server. The on-boarding server would respond=
+ with the details like device-id etc. upon successful registration of the d=
+evice.<br>
+</div>
+</div>
+</blockquote>
+<div><br>
+</div>
+<div>Yes, that is one option. You power on the device and, once it's connec=
+ted, it securely fetches its configuration data from an on-boarding backend=
+ service, probably with the device being authenticated by some human in the=
+ loop close to the machine. Or this
+ technician plugs in a trusted USB Stick or ... There are many options with=
+ some better/worse than the others depending on your use case and demands. =
+All of those are deployed in the field, for sure :)</div>
+<div><br>
+</div>
+<div>Anyway, all of them have in common that the device gets its configurat=
+ion data somehow and from thereon is registered and can make authenticated =
+use of the (other) backend services, ignoring re-authentication.</div>
+<div><br>
+</div>
+<br>
+<blockquote type=3D"cite">
+<div>
+<div>So, to achieve a meaningful integration of WFX with CIP Images, we hav=
+e to now support this on-boarding process as well (which would mean having =
+an on-boarding server etc.)? Or is there another way to achieve this integr=
+ation? &nbsp;Would like to understand
+ your opinion on this.<br>
+</div>
+</div>
+</blockquote>
+<div><br>
+</div>
+<div>Well, the problem is that there are so many ways to onboard devices an=
+d even standards, e.g.,&nbsp;<a href=3D"https://fidoalliance.org/device-onb=
+oarding/" data-auth=3D"NotApplicable">https://fidoalliance.org/device-onboa=
+rding/</a>&nbsp;+ Secure Device Onboarding (SDO).
+ So, one way of doing this is to bless some solution as CIP standard and in=
+tegrate that (including having a running service for demoing the solution).=
+ However, I think it's better to side-step the problem: showcase the integr=
+ation of an =1B$B!=3D=1B(B even contrived =1B$B!=3D=1B(B onboarding
+ mechanism into which real ones can be hooked into easily.&nbsp;</div>
+<div><br>
+</div>
+<div>So, assuming we do onboarding supported by an onboarding backend servi=
+ce, we need to know/define how this onboarding service can be reached by th=
+e device and what configuration data is to be put where on the device =1B$B=
+!=3D=1B(B the latter is to be done custom anyway,
+ regardless of what solution we choose. This means, we bake a (default, e.g=
+., defined by a bitbake variable) backend service IP address/DNS name into =
+the CIP image. This may be overridden manually in the field but we need to =
+have a sane default. Probably, you
+ would want to bake in other credential data to enable secure/trusted commu=
+nication but let's ignore that for now. Then, on onboarding, the device fet=
+ches the configuration data from the backend service in whatever format and=
+ a custom code snippet places this
+ configuration information on the device where appropriate (read: /etc/swup=
+date.cfg, /etc/&lt;whatever&gt;, ...).</div>
+<div><br>
+</div>
+<div>This can be perfectly modeled with an onboarding workflow in the exist=
+ing wfx we use for firmware updates :) =1B$B!=3D=1B(B we just need an onboa=
+rding wfx client that talks to the wfx reachable under the (default or adap=
+ted) IP/DNS name and applies the configuration
+ recorded in the wfx job created for a particular device. Granted, one can =
+bolt on security measures but for demoing this, we can keep it simple initi=
+ally. Now, how does this onboarding-wfx-client know what job (ID) to ask th=
+e wfx for? One could imagine another
+ service that returns the wfx job ID for a particular device depending on t=
+he data it sends with the first onboarding request to this service (e.g., s=
+erial number, ..., i.e., anything that is individual to a device). To keep =
+it simple, and sparing the extra
+ service, you can send that information in the onboarding-wfx-client reques=
+t's HTTP header and use plugins (&nbsp;<a href=3D"https://github.com/siemen=
+s/wfx/blob/main/docs/operations.md#plugins" data-auth=3D"NotApplicable">htt=
+ps://github.com/siemens/wfx/blob/main/docs/operations.md#plugins</a>)&nbsp;=
+to
+ (re-)route accordingly.&nbsp;</div>
+<div>his way, you're not urged to create individual CIP images but they get=
+ their &quot;identity&quot; while onboarding with just providing the canoni=
+cal fallback IP/DNS name for the onboarding server.</div>
+<div><br>
+</div>
+<div>Now, all that can be done in SWUpdate as well so that onboarding can b=
+e handled just like a firmware update. Then, however, hooking existing solu=
+tions into this mechanism becomes a bit harder....</div>
+<div><br>
+</div>
+<div><br>
+</div>
+<blockquote type=3D"cite">
+<div>
+<div>Apologies if my understanding is wrong.<br>
+</div>
+</div>
+</blockquote>
+<div><br>
+</div>
+<div>Thanks for reading this longish answer... and I hope this has helped? =
+:)</div>
+<div><br>
+</div>
+<br>
+<blockquote type=3D"cite">
+<div>
+<div>-----Original Message-----<br>
+From: Storm, Christian &lt;christian.storm@siemens.com&gt; <br>
+Sent: Thursday, June 27, 2024 1:47 AM<br>
+To: balakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) &lt;Adithya.Balakumar@toshib=
+a-tsip.com&gt;<br>
+Cc: cip-dev@lists.cip-project.org; dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC OD=
+G Porting) &lt;dinesh.kumar@toshiba-tsip.com&gt;; kunijadar shivanand(=1B$B=
+#T#S#I#P=1B(B TMIEC ODG Porting) &lt;Shivanand.Kunijadar@toshiba-tsip.com&g=
+t;; ashrith sai(=1B$B#T#S#I#P=1B(B) &lt;Sai.Sathujoda@toshiba-tsip.com&gt;;=
+ hayashi kazuhiro(=1B$BNS=1B(B
+ =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) &lt;ka=
+zuhiro3.hayashi@toshiba.co.jp&gt;; Kiszka, Jan &lt;jan.kiszka@siemens.com&g=
+t;<br>
+Subject: Re: [cip-dev] Regarding support for WFX backend for software updat=
+es in CIP Images<br>
+<br>
+Hi,<br>
+<br>
+<blockquote type=3D"cite">The mandatory configs that are required are the w=
+fx server (backend) URL and the client-id. As per your suggestion, for the =
+backend URL, providing a kconfig variable so that users could enter that va=
+lue before the build seems a like
+ good approach.<br>
+</blockquote>
+<br>
+This would be the hardwired default for the upstream wfx server [see below]=
+.<br>
+<br>
+<br>
+<blockquote type=3D"cite">However, Currently I am not clear about setting t=
+he client-id. The client-id is required by wfx while creating the jobs for =
+the specific clients and also to monitor the status of each client device (=
+like update status etc.)<br>
+</blockquote>
+<br>
+Yes.<br>
+<br>
+<br>
+<blockquote type=3D"cite">Setting a client-id also via a kconfig variable w=
+ould mean be to build a new image for every new client-id which doesn't see=
+m like a reasonable solution for production.<br>
+</blockquote>
+<br>
+Exactly.<br>
+<br>
+<br>
+<blockquote type=3D"cite">I am not very familiar with how such device regis=
+tration / identification requirements are handled in a production environme=
+nt. Do you have any pointers in this regard?<br>
+</blockquote>
+<br>
+Usually, you have engraved in the &quot;golden image&quot; sane defaults th=
+at you would want to roll-out to all your devices. Then, individualizing th=
+e device is done by onboarding it to some device management backend. While =
+this process, the device gets an ID and is
+ henceforth known to the device management. Also while this process, you ca=
+n do further things that are device-specific, i.e., configuring SWUpdate to=
+ use an individual client-id for wfx. Note that there are many ways of how =
+to actually onboard a device but
+ the principle remains.<br>
+</div>
+</div>
+</blockquote>
+</div>
+<div>
+<div dir=3D"auto" style=3D"color:rgb(0,0,0); letter-spacing:normal; text-al=
+ign:start; text-indent:0px; text-transform:none; white-space:normal; word-s=
+pacing:0px; text-decoration:none; line-break:after-white-space">
+<div dir=3D"auto" style=3D"color:rgb(0,0,0); letter-spacing:normal; text-al=
+ign:start; text-indent:0px; text-transform:none; white-space:normal; word-s=
+pacing:0px; text-decoration:none; line-break:after-white-space">
+<div dir=3D"auto" style=3D"color:rgb(0,0,0); letter-spacing:normal; text-al=
+ign:start; text-indent:0px; text-transform:none; white-space:normal; word-s=
+pacing:0px; text-decoration:none; line-break:after-white-space">
+<div><br>
+<br>
+Kind regards,<br>
+&nbsp;&nbsp;Christian<br>
+<br>
+--&nbsp;<br>
+Dr. Christian Storm<br>
+Siemens AG, Technology, T CED OES-DE</div>
+<div><span class=3D"x_ui-provider x_a x_b x_c x_d x_e x_f x_g x_h x_i x_j x=
+_k x_l x_m x_n x_o x_p x_q x_r x_s x_t x_u x_v x_w x_x x_y x_z x_ab x_ac x_=
+ae x_af x_ag x_ah x_ai x_aj x_ak" dir=3D"ltr">Friedrich-Ludwig-Bauer-Str. 3=
+,&nbsp;85748 Garching,<span class=3D"x_Apple-converted-space">&nbsp;</span>=
+Germany</span><br>
+</div>
+</div>
+</div>
+</div>
+</div>
+<br>
+</div>
+</div>
+</body>
+</html>
+
+--_000_TYCPR01MB9669FD137BC7D188F1D7558EC41A2TYCPR01MB9669jpnp_--
+
 
