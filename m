@@ -1,48 +1,57 @@
-Return-Path: <adithya.balakumar@toshiba-tsip.com>
+Return-Path: <christian.storm@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0554BC02180
-	for <webhook@archiver.kernel.org>; Thu, 16 Jan 2025 11:20:00 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
- by mx.groups.io with SMTP id smtpd.web10.45989.1737026390107058463
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50607C02183
+	for <webhook@archiver.kernel.org>; Thu, 16 Jan 2025 15:35:31 +0000 (UTC)
+Received: from EUR03-DBA-obe.outbound.protection.outlook.com (EUR03-DBA-obe.outbound.protection.outlook.com [40.107.104.55])
+ by mx.groups.io with SMTP id smtpd.web10.52015.1737041729644649673
  for <cip-dev@lists.cip-project.org>;
- Thu, 16 Jan 2025 03:19:50 -0800
+ Thu, 16 Jan 2025 07:35:30 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.152, mailfrom: adithya.balakumar@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 50GBJkUh2814781; Thu, 16 Jan 2025 20:19:47 +0900
-X-Iguazu-Qid: 2yAbUt1VDEVfwdWNe4
-X-Iguazu-QSIG: v=2; s=0; t=1737026386; q=2yAbUt1VDEVfwdWNe4; m=EZ/W3ERM3YIrsVum3a/y0kRSsON5QVbWRhMaC0swJXQ=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1802) id 50GBJjID1657754
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Thu, 16 Jan 2025 20:19:45 +0900
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=yoWJiC0f;
+ spf=pass (domain: siemens.com, ip: 40.107.104.55, mailfrom: christian.storm@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fx/xMC8nJTS2FktX17iVgVWX83GPINslhWnH9GjwWARUxv6E+agrSj5oCJCva+4UoOqqp2gnyJbkTEsk4EW+r4M+ppukaikgOBbmq4maFiZ2HjDYqNfR1fM7w/jxlJgnSR8X1P+YD5V1wRiEf4Q3FX+sIO0EYCjClepuxzS51suGI2YH0ji0eNxDv0MURLOCfyIlM84/r4Gth/0+PFrnLSwAV83nOvjXYp2ssHDjeyU//dkArDgJ0+bqN0C42m+ACxOWxRXZXWRmR5CXAuTgfcPUQ/Lan4NkB2U68rwhNu41xFEcVly4kdUneQ2oI7Qk8Q5VtlCwGqHAcxi9Es7vGg==
+ b=ZaYhvEKnSFQhcwDTK8YZRr9+3XBbRktIeORdlr5XDQwfDM6QhI3MXWPOTAEjLI+5U/MbZg9sTqYSIlwX/RJVVYhVqKfWeZcyghq4KEgtCia1e6YteJu/xIfge0iMsYyV/Pra9JlPqB2RetgNx3MvTnmmKyv4P6JC3ShL0RZ1avdyX/4jndJULJxGXogT2pkf0qhkPP2B4tSeXpWdo5KNWYct9IyA2RzlUcf2fka9QsxO0qgEFEDLkXm3OC+ZahJE6U7BambLBRN9QUUjx2aOY8b3zHhjCdkYkZoMM/LdgBFoz4dt991KL2nTI4U5mxqYpp3cnIjd5ZVk1i9U3cpp5g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/WLeKvssaQkpsK++LUuqeQh7UZeag0J5YG9LY6Ah6Zs=;
- b=KcKqLW+DauIOrIRl07xt2kaN3v7hZH3n6GfvZf7J3te3PrKheyQVfF7uS78J4fOSaqEmWGQjQhUb0WGxonbOy8L8JcebpRx8iGBaUeHOIqmOR0sIFXsjqhgiUS9JwFcQrmC/dSDbM690gDGD9S4lO/u0hmytH6rcCayFMJr7oolWiIXN3+DrduGWOLIY9+MKCN7PQMXDN6CUIPtKRVi9GmDuw7gUJQKLoMNtVb8xjGTYP/3D/n0VnlK2CNyaB0e8qq6kuAMjKQd1nsyTpof/ZCLU7MXITTdncmVxvVAUDWwgrOhJuTSPqoiMPPdo8zPWhxonG7mU89K3awoInFMfQw==
+ bh=rC1V95wcyJRglDgHhJiuUsXs/LBQc7y1Av/KkuegW/8=;
+ b=DkSV92SsZ3hntT9qdOawe0AHOXzM+EfSsTfHuNjhdt3iTu6TMrMVeHVDLf3g+A8OmtYC4sTHhWLOHG7A193AB4WLn019HaQY7hWyZK84NUABTuh5HHlDnNaZv9tGuN1IPvesXvE9KuY3JuCK3Ab9bwP+K2TNHLpyKxLN1PgR4wJ45r4u2SY6l0GVV7avr/vowD3v6ZQ9KGv5D6pcqNnVOfyfSOreDPl6pdT0xsQtkLWIUNFXD5CEfD9jR9gVfdTPzCjoTpHSdz3YWLW5XQz7tv8U75SueW41r4oXM3IBvZ87CUOSH67cFRO8SjF9VQ4owld3bUJLL8AbHhPaFd3m9Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
- header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
-From: <Adithya.Balakumar@toshiba-tsip.com>
-To: <christian.storm@siemens.com>
-CC: <dinesh.kumar@toshiba-tsip.com>, <Shivanand.Kunijadar@toshiba-tsip.com>,
-        <Sai.Sathujoda@toshiba-tsip.com>, <kazuhiro3.hayashi@toshiba.co.jp>,
-        <jan.kiszka@siemens.com>, <cip-dev@lists.cip-project.org>,
-        <koshiro1.onuki@toshiba.co.jp>
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rC1V95wcyJRglDgHhJiuUsXs/LBQc7y1Av/KkuegW/8=;
+ b=yoWJiC0fqN68glnTRd4YhwVSgFNhQR+kwOL4saiCvh8ER4Wg/6MY59yCJnA4ctW1cuzxFmqdzHrTo9LA7hAXTke8jBmvK5JkWpOhGl8S7+WIPLKsLBir9FNA9gatXlKQD/QxfZHUWp52T33hALNuP9LjiUFdhTk4xVwyLMy0I6DhnG/6oei7tDAXDqXoX2igwZFzo1uCjxXmO8S1XE+JJVGeVCs9FGwEXq9WCuJ9GH/WMJFXJxk8FhvlxtVKPQssVRr3NJwbSNnOOw8qur2k2XBK6bqdtEsnroKYE+VzmZkf6z0IvFhuDrOIp3qTz22kxrV8fz2t6PwQSb86PggOoQ==
+Received: from DB9PR10MB5404.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:333::17)
+ by AS8PR10MB7562.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:53e::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8377.6; Thu, 16 Jan
+ 2025 15:35:26 +0000
+Received: from DB9PR10MB5404.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::e659:e46:3b99:a440]) by DB9PR10MB5404.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::e659:e46:3b99:a440%5]) with mapi id 15.20.8377.004; Thu, 16 Jan 2025
+ 15:35:26 +0000
+From: "Storm, Christian" <christian.storm@siemens.com>
+To: "Adithya.Balakumar@toshiba-tsip.com" <Adithya.Balakumar@toshiba-tsip.com>
+CC: "dinesh.kumar@toshiba-tsip.com" <dinesh.kumar@toshiba-tsip.com>,
+	"Shivanand.Kunijadar@toshiba-tsip.com"
+	<Shivanand.Kunijadar@toshiba-tsip.com>, "Sai.Sathujoda@toshiba-tsip.com"
+	<Sai.Sathujoda@toshiba-tsip.com>, "kazuhiro3.hayashi@toshiba.co.jp"
+	<kazuhiro3.hayashi@toshiba.co.jp>, "Kiszka, Jan" <jan.kiszka@siemens.com>,
+	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"koshiro1.onuki@toshiba.co.jp" <koshiro1.onuki@toshiba.co.jp>
 Subject: Re: [cip-dev] Regarding support for WFX backend for software updates
  in CIP Images
 Thread-Topic: [cip-dev] Regarding support for WFX backend for software updates
  in CIP Images
 Thread-Index: 
- AdrC1ksCFU48h0ptQR+cT3Q7rfn9dAALvlaAAS1PbFAAEtUdAAERYfYQAAUzvoAm6f/SaQ==
-Date: Thu, 16 Jan 2025 11:19:43 +0000
-X-TSB-HOP2: ON
-Message-ID: 
- <TYCPR01MB9669FD137BC7D188F1D7558EC41A2@TYCPR01MB9669.jpnprd01.prod.outlook.com>
+ AdrC1ksCFU48h0ptQR+cT3Q7rfn9dAALvlaAAS1PbFAAEtUdAAERYfYQAAUzvoAm6f/SaQAJBZyA
+Date: Thu, 16 Jan 2025 15:35:25 +0000
+Message-ID: <0D555EDC-271E-4EAE-A67B-7A02D9CF021B@siemens.com>
 References: 
  <TYCPR01MB9669288BB5107DAC76CE3DF7C4C82@TYCPR01MB9669.jpnprd01.prod.outlook.com>
  <561f6fd4-a66f-40a3-adb4-b94eb2c35ce0@siemens.com>
@@ -50,614 +59,618 @@ References:
  <6FC4E265-2F94-4144-A714-784FAC157CBD@siemens.com>
  <TYCPR01MB96699778EBAC2E3FA6E11FF4C4DC2@TYCPR01MB9669.jpnprd01.prod.outlook.com>
  <5A591B53-A5CA-4F84-B055-1C9843037F36@siemens.com>
-In-Reply-To: <5A591B53-A5CA-4F84-B055-1C9843037F36@siemens.com>
+ <TYCPR01MB9669FD137BC7D188F1D7558EC41A2@TYCPR01MB9669.jpnprd01.prod.outlook.com>
+In-Reply-To: 
+ <TYCPR01MB9669FD137BC7D188F1D7558EC41A2@TYCPR01MB9669.jpnprd01.prod.outlook.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: 
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
+ header.d=none;dmarc=none action=none header.from=siemens.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYCPR01MB9669:EE_|OSZPR01MB9393:EE_
-x-ms-office365-filtering-correlation-id: bf7c357d-5e70-46af-6442-08dd361fad2b
+x-ms-traffictypediagnostic: DB9PR10MB5404:EE_|AS8PR10MB7562:EE_
+x-ms-office365-filtering-correlation-id: a7bb6977-5620-4cc0-53c5-08dd36436616
+x-ms-exchange-atpmessageproperties: SA
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: 
- BCL:0;ARA:13230040|1800799024|376014|366016|8096899003|38070700018;
+ BCL:0;ARA:13230040|376014|366016|1800799024|38070700018|8096899003;
 x-microsoft-antispam-message-info: 
- =?iso-2022-jp?B?Qi9ycnVFbm1nVU84dFgzUDkrT0hvQ1M1dDBVSmJZU283bkVYRHNxeWRZ?=
- =?iso-2022-jp?B?bzRKQXpaaDlmb1AxTDhyVzdjZmFHWk9RQW9EVy9uVVpjVGhTZVQ5NEFW?=
- =?iso-2022-jp?B?elQzai9NZS96QTZyaEZKaHdmQ25URnpQV0U3ODFzalpnWVpYMnd6c3hT?=
- =?iso-2022-jp?B?RVRmdEpsWFVSajkxVU8zK0txRDlTNFE3dUduckFubCswRVJrZzdNSnFw?=
- =?iso-2022-jp?B?cHBzYnZuellGMzFZTlM1ZUNjNSt2Um8rRWEvNWJaOUpIcnorMFVRVlN3?=
- =?iso-2022-jp?B?QXRzd2JqRXFiSGZ0Um9ZTzY3eldhMnk3dWJpd0s2bU1TMTRYUUlYZ2tz?=
- =?iso-2022-jp?B?SjYvRjNLRWlXOVVydVBvbElhU0hHT0ZITEkvZUJPdk5yRWFXaVdhYU5l?=
- =?iso-2022-jp?B?L25paVRQNGlKM2czVEkrdHJIVmJybWx4Y2VKM1ExSElZTG4xVURpUGZu?=
- =?iso-2022-jp?B?ZXJqcEJZWDJhbXpwTnUyb0tVUTRQYUUxb0FaUnpBMTM2a256ZXV0ZjQ2?=
- =?iso-2022-jp?B?MkZJY3BFRHMwNk5iUWlsV3Q3dlFETnl0dnVlZFBXU2R2UzZCUjVJTm5X?=
- =?iso-2022-jp?B?b1E2emdpRGJFSEdGODNIWmxnZEUwNUlETzNrU3F1RE83dllOUExFZGdx?=
- =?iso-2022-jp?B?WFVISEZwSEYxZnpSOTQvWWtycTgrRE82Z2RjUW1nU082QmFqS29BWDBm?=
- =?iso-2022-jp?B?cE5SenQydGRFNUwveTJ0LzcwTEJaV1hHaTdDOFZoak9NdURXTEIrbTJQ?=
- =?iso-2022-jp?B?K09QQjMrMVlOQWpHaHc0aTZGd2tlOVdpUENyS2pPeU1PRHRxQURlbFZU?=
- =?iso-2022-jp?B?YnFDTVlyOGZtWFp5c3Z1enJlZU1QSFdDemgySmZrZWs5bmZUTjE0K0sv?=
- =?iso-2022-jp?B?ZHNOUmNaNU5hbUJNYVhEVmx4SmsvaERyanhtcm9keGVsTm43MTZoNmFJ?=
- =?iso-2022-jp?B?aGhYcUxaMzFyWHVqaEQ0bUNkYmkvdk52S01XUS81Ni9COUhwdXBUSDk4?=
- =?iso-2022-jp?B?M1YrVnBXNGtVcDVNalRtVE5CTTRRN054VEVGRTZoMXFoMlBwREhUQ0tR?=
- =?iso-2022-jp?B?dWY5ejJ6Z0JyUVQ4TkFEMDhqbnhOQUJReUNvNzFjNTk3T0RZSG0vR2xC?=
- =?iso-2022-jp?B?c0lFY3RxbTlwcUM1Sk1GMHE0bm5oNjIxbHM2aDcwLy9Mc1FKTVNiazdk?=
- =?iso-2022-jp?B?SlVHcUVEYVFLNFZBb0w0Mm13M1F0QzQrcWIzY0Y1alVqYy9pMktYZWhL?=
- =?iso-2022-jp?B?MktRNlRaNjU0aHB4S2s0L3V1ajVOUWpQNEJ4R09LVnAzbXZFY0Y3UDZk?=
- =?iso-2022-jp?B?WktXQldWRUZESkRKTWtMZE5tTEttSE9wQ2c2bWdSTVZsWENVWXJhV2JH?=
- =?iso-2022-jp?B?cEFTVENJcGpkb3JNM05zTFVVM1RsSjY3TkU3WUFsbHloeDM1WU5sRmxU?=
- =?iso-2022-jp?B?bEFHb1JMVVBPUWVvVHRyUkovVjhuZE16aWpJczZaWk9zL3JhbGFQekdk?=
- =?iso-2022-jp?B?YTcrMFYyTmZreXFyWHlwcUg2YUN6Zit1S0o4bTRyZEx6M0YzaGVLbzdM?=
- =?iso-2022-jp?B?cDZDUERmWjNaRHJ3QVlTS0x1YUk2aTBUbHpsWE9ZQXRVQXV3NmxKYVZi?=
- =?iso-2022-jp?B?U1FXZ3JoSXpKOWw3VUxzdzZuT2lBSzdjMDFyU1l3L0FBMDFsc09JSFJ6?=
- =?iso-2022-jp?B?Unl2RnJ0MzJEMkRheHJ0RmhlWlVid2dNdXdNQkM4b0RNby9BQ0VJSkp4?=
- =?iso-2022-jp?B?SnFLZHlOS2FGNXFyYThPM0NPK2lHNnFjaDN2bVVCQS9NNzZWcTVzbGZq?=
- =?iso-2022-jp?B?Mnk1bkhlb0V1RXZRRXBOaWxudXY2V0w3S29KYnpIN1UwSjR6MVA3S3M4?=
- =?iso-2022-jp?B?bnNyY1dpWjZST0JtWWJVbVN4amdlSnllK25UNzc4OGcrak1aTU1ncVFF?=
- =?iso-2022-jp?B?bEFVaVk2ZDFNTWVYQ2d4WkxWVGZpR09OcDExMUtjS0RmbmV1SGRMbEp0?=
- =?iso-2022-jp?B?cHZlNnZaVDlRRWhkRDFOUURsRUZpZE5GU3dwK2wyVE5sUDFTRkUzalJu?=
- =?iso-2022-jp?B?VEE9PQ==?=
+ =?utf-8?B?dWNFeUZnQ2ZvcTFRQWxiRjlpRU9sVlhyT2FjcFFGaU5SSFA0RURKTDRRaGhw?=
+ =?utf-8?B?NnRZWFFoWWpKRXcvVjRxNkRlaXZTTU5kTlhZLzVBZ0I4NTZNV2Q4TkFNbGJu?=
+ =?utf-8?B?K08rMDRnNXJ5ZDdqb2cvdVZOMUJRdkwxUmJuTTN3NzZ6eUxRRzBWYmo5NVlY?=
+ =?utf-8?B?RDc1aXBNU3NIb0VHams2dWpkWHpsT2l2Zk1ObEIrZWJ2RE1GbDNJbHh6ekF4?=
+ =?utf-8?B?SE1mUTVjV0l5dmluQVVJUk8rOU0vZ2tyZExBbGJTajV6NWZxRmRNY2YyVklF?=
+ =?utf-8?B?clllK1lyTVg0dnZ3bko0T0pjclczOVltNnhYa0xlWkNSck1CdW9ETnRNZTNx?=
+ =?utf-8?B?ZjNwbUpvUzJTSXhSYy9NZ0hTOU01UU1ET2R6UjZOWlZrWG5UNGZtdENVU01h?=
+ =?utf-8?B?b01WbHNtVmVtMTNibkgvNWgrb3FQM0NwdDZYUWxPNzJzczdkSktaRFkrYkFL?=
+ =?utf-8?B?ZUIxeTJYVlZoZHI2bGZLNEVtNS9oYmtQUldtYVZuWVk0L3FrQ1g5aEIrSjBm?=
+ =?utf-8?B?d2JmNWZyRm9ZaC90aDdCODZFbmwxVk1PbnRrZFpJZTR6U1MrTkpmMkt3ckds?=
+ =?utf-8?B?eHJ2b0pONVJLK1lLeDNYOXQ5WDZzVWFOa1A4ZXY5MStycHY5UVhLdWk2TTNP?=
+ =?utf-8?B?R0VzUTRWVnFsQ2ROcXVucVdDTVh6RU5QTWV6STRQcExXTnJ1RE9IczBxZjgx?=
+ =?utf-8?B?bk5xa1hwTzJDRkFvZXBoeFNHcXJVYjduaGZVb2tsSzkxdUtoZTJ1UitycG5q?=
+ =?utf-8?B?UXFheFNUL2l1L0VUZlBURlBjand2ai9JdnozVldWTkRKNFdTWDNxV0dESE9h?=
+ =?utf-8?B?eGpBN0EwZXFuNDVYTUhLUDFRb0l4d21jODdzVWFVTC9ZMWdzc2JDcWcvVWFX?=
+ =?utf-8?B?QnZRakV3QUQ1R3Jwenl2S1BvMGRJVFN6blJPUEpFcDRWYUlaOFZCMlBWVUpL?=
+ =?utf-8?B?dkxNRDFtdDVaN1prS3dYZzlmSzMvazMzcXdqVmszQVdEU1J5ejZESjVsakFN?=
+ =?utf-8?B?UisxeVFVeENNVm9tK1I0a2ZlTzJuNjdWVUJKdGZRTFkzOW02ODVybEV3TXBB?=
+ =?utf-8?B?a1JyOGJ5bEYvZDNHOU4rSU44MmVBckZBM2Z0STY1SmlNUDZTTG9sRnFySHNy?=
+ =?utf-8?B?ZzI0WjdaSmJ3N2p4eU5TVUdzNWU0dWNuSHFUL3lWM2MrMUZ3N2tIWE8raEVi?=
+ =?utf-8?B?NkRjU09BRDNwY3BUQlA4SWI5T2hJaFkxWFZvMnJKckdrN0RYbUtzeE9wUysr?=
+ =?utf-8?B?K0NucXV3N21aS2MxZ1BjQWNwT0kveUV3QThlR01jMHFMWkdQNExoTGkvdTlh?=
+ =?utf-8?B?aTlzeE1heWJlcXJLdVpHbjFXOTZPN2IwRkJsVTdWSWI3M3Z2ejhHUEQ4TUpn?=
+ =?utf-8?B?L0F5SmV1TWJkZ3RvWVJYaWdXU2hPbXFpWHl6WlIxV1p1TjRyK1BtZmpnQ1Fh?=
+ =?utf-8?B?YkcvY0o1TmQ3bXpZVmVqMmhndjd2WlVXS0NWVzROWHY5TjdDMkRkVFAzWSs0?=
+ =?utf-8?B?MDVxOWhZVC9aZk51cnkxdFBUL0ZTM3RmTXMvWlVka2VEc0tISjJORnkxbkRL?=
+ =?utf-8?B?YWYxa1cveFk0VU40Wmd6N1ZUcmpTV2hMdEdpMFZOWEVQTlFVNXJyaWlEYXBh?=
+ =?utf-8?B?ak82VHVHSkdsdTVOaWR6QjlPV0FmSTI5ZlZkdHh6NzNtVzZXSzNUMmowbTZO?=
+ =?utf-8?B?WXUrZHFlSDVESDEyZFZ1VjZKM0RuSC9TOTJXREtnOGVRQzIxdE9meGJGV0pF?=
+ =?utf-8?B?Q1o0MVhwQ3NDbS9WWURWMmdPaXowRElUTTF1NGFnM1ozMWVOaEJaTUE5WlVy?=
+ =?utf-8?B?VmJ0K2l3N3g3Ty9tWXJPWGNrT3g5UDlXYjNiSHhoWTdibnd2QkEvcFAzY1F6?=
+ =?utf-8?Q?u8kkStk3t/aCU?=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB9669.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(8096899003)(38070700018);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR10MB5404.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018)(8096899003);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?Vk9ic2ZRU3E5WGtkR0hXU2gyN3locFVocERlSmJVV2dTZ0JCM1ZwTzlz?=
- =?iso-2022-jp?B?akxHZm03aXJLQ0t3azc3ME1sV0Y3TmRHbmhVMzc0L1JGeUNnREk3QlU5?=
- =?iso-2022-jp?B?cHhKSHlVTVN2emhNY0J0Tm1vLzlCMUZsditzM3FjUWc5VU9tRWIzUzc1?=
- =?iso-2022-jp?B?TDNpMkR0L2ZTTXNXZUxrWE1kQnQxUUFzallvSWlPUHFHOTk0YmxuK2dC?=
- =?iso-2022-jp?B?OURrTmpxUlo3OVBxeDZLOEkxNC9lNjZaWElDb3lkbTBxZURzTUE0TUhw?=
- =?iso-2022-jp?B?eTR4ekpmdFNhZ3IwOWVFR0s3NkdpOXVpTWpIMVF6SUxwa1RDZ1V4WGcz?=
- =?iso-2022-jp?B?M013N1JRVFROVjZDdE9nNVNWOGJhZkFtZHN2V29KS2dFdDVLSFF0UjNi?=
- =?iso-2022-jp?B?dTVOLzRXdHJDeDVteU1HOHpkNWZmOEJINW1kOGdyRGJ6TzVFcllrbDVT?=
- =?iso-2022-jp?B?NWNsWjM2OTlSbDhKaWF2SjcvQ1FZc0RSNVltaGJQL01Wc0VpSVdRSEQy?=
- =?iso-2022-jp?B?Tk1jb2xEcDdZYnVwdiswRGN6dkhoMElHV29aY3J3YTdUU01WL3NNbjQ3?=
- =?iso-2022-jp?B?WUQxMlNDYWc1V0d0KzVEWktEcW1Jcll3YjlxZlpHeDVZcVRhQ1h1TEtF?=
- =?iso-2022-jp?B?djFaVEtHL0tqaHgwZy9jbER0N3pnY1RzcGdxbEF6cXlHYmNkMkZuMlVM?=
- =?iso-2022-jp?B?TE15V1c4T1JaSnQ2RVlCc0kxR3VRMTAvSjc3REZFSGNMaEo1bGg5eFJR?=
- =?iso-2022-jp?B?VXh0NnZtR2EzUDZ2NC85M3R1R2xxNlVIZkdmR2tzcWp2UTgyQzI4UUo0?=
- =?iso-2022-jp?B?anp4NW1GNnFvRmViY1hDTlZoMW82NmEvQ3A2Y3AxTWlDcEIxc056alpx?=
- =?iso-2022-jp?B?d2xXWThWblZpY3R3TysvNVRTK29kQkszUlZkRDYzRjVOM2E2YmNldCsr?=
- =?iso-2022-jp?B?a2c1Z1ZUMENXNEY3Yi9Tb042bW1hMHRPbmdmdGtJeWthQnRaYklqcVlz?=
- =?iso-2022-jp?B?WmtCU0dTcnRITlRpamhTMWkvc1FBSmhOREpteEduVVFobUNFanA0KzI1?=
- =?iso-2022-jp?B?SlRjRzQ1ZEJwN3FpWUZTdFdTaVNrVEs3Njd2dmoweDVlY3k3dE5OM1Fu?=
- =?iso-2022-jp?B?azBNejlKTFJwVTIyOEpSWjZzT29FK0hLVDNsVDI2dmhCSEdSNDllRG0w?=
- =?iso-2022-jp?B?UWpuZDRDWnZSZmVleHoreEtYeFgwUzZYQ285QmVaM0NFY1pUM2dQa1NX?=
- =?iso-2022-jp?B?RHBub2VhZy9MdEVBUVAzTEJ1akpPdkpZRHFSZkFUcHVWak1FZkdHOGRk?=
- =?iso-2022-jp?B?R3BodXg2ejQ5dW01akZ1TnpXNENSaktRb1lZVHZXZlFqcWI3T2VUZjly?=
- =?iso-2022-jp?B?bisvV2xxZktLUXI3MUh6c2FkYllwNmd6Zy9QWnpvUUFvQzVyQXVuampm?=
- =?iso-2022-jp?B?Z0VoUW5YUmkrQ3gvM3dTZUpaTWpiZWRVeEpYT0tZcGhZRkVqVEUzRUlx?=
- =?iso-2022-jp?B?S1hQWVRNNXlxclVpbS9DMVp6NzZrZWlIMVFrbEI5WXdrMWVsVUZ3ZXlr?=
- =?iso-2022-jp?B?TzBzSnlWQS9kbjhzVmt3NnVxeHdBRlNzc1IrL20zMXlOeDNYaklrY0V6?=
- =?iso-2022-jp?B?d1RFcW4zVjZVUVNXVVpPbjd2am9hbEJpYTZwSFoxTnozY1JzSmY1RFB2?=
- =?iso-2022-jp?B?dWkyaXFGNTJBMjFVeUZoc2hkaWEyWlJEcjdKRExSRzRnSXZwQ1N2R1hk?=
- =?iso-2022-jp?B?QkNrRlAvMytEMnA1azNML25GaVRMTHlrRXZHZUVrZ2dscE1VaGRqZXpE?=
- =?iso-2022-jp?B?aHYyVWtqUWpEQi9nVmwrU1JJRnEyd0oxMHhESzJIWTFhYmRMUld0WGVJ?=
- =?iso-2022-jp?B?cnFJTU9HNGZoUkFxZmFVZkVCVEZSMmtONjVVV256ejBkbUo3ZkIyUE9t?=
- =?iso-2022-jp?B?bVp2TGs0aUt5dEtHTno1YTdQaThFdHgreFJJU0VoNFU2VFRpcWNFamh2?=
- =?iso-2022-jp?B?T0RVUzJFUk9xbDRlWFhVTkJjV28rVTFuYmtHakpybDcybVMycDA3R2Zj?=
- =?iso-2022-jp?B?SUE5b1pXckI2SDlFRGhyN0xpcjJ6NlNrVHdzUnc3YW9vbVU5N2hNYTRr?=
- =?iso-2022-jp?B?eDM4SHdCUkFaUUtaR1lHczBENHRGdzZKcTFSV0pTYlpQYnFGVXdYaml4?=
- =?iso-2022-jp?B?MC96a1ZYV3Y3bVhjbnJFS2kzNGFXUWJFclphMWkvQ0VSZWZFK0V2R0Vq?=
- =?iso-2022-jp?B?TzlYZEJhS044aCtMR1BHRXlmWFF3ZDVjTDBkc0Znd0k5djJlcUxmV0U1?=
- =?iso-2022-jp?B?UFJQYjJuYjhDV09VOUV0Y1FTNkZVRmxsTVE9PQ==?=
+ =?utf-8?B?eFBMTHkvV2xhNTBHdG5HdDFyeG5Ed3VlaTdXaG16OUZxMStNMW1kY0dCSTVV?=
+ =?utf-8?B?WjV5V1dBUjIzMUJnUmFhTkJWSXFBck5mVDNZWnFiTzJKWjQwa3pNN0gwdzVF?=
+ =?utf-8?B?b0JrS0NHd1lmYnpTNWI0ZTZucWxmRy9HU3VnOWd4SmlGa2xTR3RobWNGTkJ2?=
+ =?utf-8?B?VlpFN1BBdjdoWDh5c3FnS3VMZnZtYkFEN2xNZFdDV3kzNlZVS3ZoQTlkS1Z0?=
+ =?utf-8?B?dWdkdzdKcmx3UEZWa21rQmh3RzVSZXJsem0yNmVDbk9XWnlvZVdzdndKREdJ?=
+ =?utf-8?B?TjQvSi9xL0FWc1FsRkZ5T3hqRVRqUGFZWE1HVFN6V0o4ZGtvLzFpY2JNMG1I?=
+ =?utf-8?B?bDNjWkM5Um94dUNBd2NsOHR1VExoTFJtN1pJekJ0eExCR3AweUpOZE5YOXoy?=
+ =?utf-8?B?dTZkUzVKT2U1RWJUWUlseWFNZmlxYnRRQkE2RTFjM1RFb1hwWW5PY3hKTGlD?=
+ =?utf-8?B?T0IvZ2xQQ1JaWkVkVGpUNTRaQ3BxTkpPcG9OOTNaOXU5TmVFMzlhd3NUb2xy?=
+ =?utf-8?B?THpXZUVyY3ZRTGphR2EzWmRVUWxZVXJWVEVmMTdwekdUVmprVDIwTWMzOVhB?=
+ =?utf-8?B?ZVhzaEVFc3dnMGE4cFJ4YVluMUZNRTZTd2pENWpzTnZZNXRzMmJENTc0T0tp?=
+ =?utf-8?B?bXBnZjN2OTBzRS9aSXZYeHlnOUNvbkRmVzVuZGU2TkJaNHZzekpFMk1HbFRG?=
+ =?utf-8?B?VkxjRXJEOWN3bE9uMXhpZ09CNkxnc1RyNTJzUVVNaXp6bE04Zm1pYkhvN2pw?=
+ =?utf-8?B?Ri9MQmRLVFFNTm9zd1RwMWNaclBvcjNPMDdsYkIyN01QZWJ3Mm4vVTc2MGFx?=
+ =?utf-8?B?S2REOVBBVk9sU1dnb2VjMmQ3SjVNbnJBckkxV3diWjUwZVJQdm96NFg1T3lx?=
+ =?utf-8?B?dUlxZ0x5bUtSdEk2TGs3WTA0SU4yWElwYUh6QXVvVjVYVDdSMUVFelUzS1h0?=
+ =?utf-8?B?cEhYWG0vWHBNWHBMZ2x1VE1kWjhaQzdVVFNpOGYvYnVJMWc2UFlkRWxXUVEz?=
+ =?utf-8?B?Qm15NGFOTXo5K1F0bGg0WVJtZCsySFk2UlJ2NE0rOVlPWVRTWXFVU0F3Sndn?=
+ =?utf-8?B?OHF6NFVWd2MxSmFmakpkV25WK3JRVjhqd2N0STFZeDl2OURTeVJTaHk0MHpu?=
+ =?utf-8?B?V2Mwc0tEcnhOUlpqcStCMXBOaEd4QWhNS0hnT3NIQlNwTzN5RWk3anNLWm9y?=
+ =?utf-8?B?UVBlMUVTWm8xOWl4NlVhb0xXOEUybk02UjVYa3pqdkVJakdxbGs4a2RnRVpR?=
+ =?utf-8?B?cko3K3BsbW9Xbm1iSkdzU0MrU3RjNi9TS3VJLzVKMnU5dmtvTWxLTHcxL0Rw?=
+ =?utf-8?B?NWRQcW1vOGRtYk5PeU9QYUZ1N2N1UFF5VDNud1NmWldhMFpXRFVUL240dW9u?=
+ =?utf-8?B?UFVWVmFTekloVi8yWEFyb3VSdnJ5dFJPVEVZTjNxdHZzUDlabGhwQTVGYkpY?=
+ =?utf-8?B?Y29SbHdyS2N0S2k1bHVxcXA5cFVSZElwdWJHNDlFYUgyMmhnSzJVZWw1dzJa?=
+ =?utf-8?B?VWIvTjhPd1BrTGcvYlR3VFRtbXNEbndYU0NBbU15U0JPTDBqUTY0WXg1dWNY?=
+ =?utf-8?B?cnBmZ0ZDWVgxeEhIRzRBZ0NaK240WHhYbG43M0J6STllaWpXUnd5dWxhdmpY?=
+ =?utf-8?B?L25sS3M2ZXdXemNkbFBnclJqVGdrMnJmR2xyNzhmcU1nWm5tZ21xRlFuTHhG?=
+ =?utf-8?B?VFJzV0o4ejlVcnZSK0NHcTN6WC8rYU1PbktIT21kWCt3aGtTSkRpbmo5WlB3?=
+ =?utf-8?B?VjRRdWZ5dVM3aTdITkY0ZVMyMXpPRWRyT1BnbHoyOGw3bXBnMWdNdFRDanBz?=
+ =?utf-8?B?MURISXNvYUl3NlZ4dVFIQ2VsNDhKaElKWXNtbUg0clAzUld2bkl3djdiU2ZC?=
+ =?utf-8?B?b3FDdXN5MC94N202cjJFSGZqTGcwKzg5U3dkbVI3a1VDS0FydnVaTzJic0dp?=
+ =?utf-8?B?bUxrSmFzNVdmL0ErN0d4bStPSjExanlzK3VHSnN3WkFrMmVldlJqQkRRamds?=
+ =?utf-8?B?WmUwUjJROTMwMjNXbmJiSVhGci9rMGZoZ2ZYTFU3ZkFEWW1pbjlLUjZZak9Q?=
+ =?utf-8?B?K3ZEaEtHZTY5cjA4VTNxWmdPVzdvUi8zUXg5SFkvc2tlOHFxdXNTcFVlSXpL?=
+ =?utf-8?B?YU45Vzh0WmRaUURQd0lweXlzU1NLNHllRjdjbTRFN2NXL1AwYjJyMWhTSEQr?=
+ =?utf-8?Q?ehosWnxtyDYDwVu5vs8gRgY=3D?=
 Content-Type: multipart/alternative;
-	boundary="_000_TYCPR01MB9669FD137BC7D188F1D7558EC41A2TYCPR01MB9669jpnp_"
+	boundary="_000_0D555EDC271E4EAEA67B7A02D9CF021Bsiemenscom_"
 MIME-Version: 1.0
-X-OriginatorOrg: toshiba-tsip.com
+X-OriginatorOrg: siemens.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB9669.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf7c357d-5e70-46af-6442-08dd361fad2b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2025 11:19:43.3120
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR10MB5404.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: a7bb6977-5620-4cc0-53c5-08dd36436616
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2025 15:35:25.9760
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: XiHnQqjTkQCXO60YOz77TLipyFgtEav9dqeXnUycAevgpnm/RPk/cVCcaf2qR1COpPh5zrQ9HLtwFrq5Kuj2ql1LyppG7wwTyeBAgAv9qGqXOEnfy1VSJEBOO9joQaOO
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB9393
+X-MS-Exchange-CrossTenant-userprincipalname: 357FwBE91ObHH94cDl1+QWsSgSjDc0V+/9Ffi/Mt62lcb7f51jknf97tlM1RdWG/vw04kvSVMGROmKKQE+QeF1W5l5HWMtLqn2kX4yqqt1k=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB7562
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 16 Jan 2025 11:20:00 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17543
+ <cip-dev@lists.cip-project.org>; Thu, 16 Jan 2025 15:35:31 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17544
 
---_000_TYCPR01MB9669FD137BC7D188F1D7558EC41A2TYCPR01MB9669jpnp_
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+--_000_0D555EDC271E4EAEA67B7A02D9CF021Bsiemenscom_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-Hello Christian,
+SGkgQWRpdGh5YSwNCg0KSSB3YXMgcmVmZXJyaW5nIGJhY2sgdG8gYSBmZXcgaWRlYXMgc3VnZ2Vz
+dGVkIGJ5IHlvdSBvbiBob3cgd2UgY2FuIGludGVncmF0ZSBXRlggYmFja2VuZCBzdXBwb3J0IGZv
+ciBpc2FyLWNpcC1jb3JlLg0KDQpJbiB0aGUgcHJldmlvdXMgbWFpbCAoQXBvbG9naWVzLCB0aGUg
+Y29udmVyc2F0aW9uIHdhcyBxdWl0ZSBzb21lIHRpbWUgYWdvKSwgeW91IGhhZCBzdWdnZXN0ZWQg
+dG8gdXNlIGFuIG9uYm9hcmRpbmcgd2Z4IGNsaWVudCB3aGljaCBhcHBsaWVzIHRoZSBjb25maWd1
+cmF0aW9uIHJlY29yZGVkIChleDogY2xpZW50LWlkIGZvciBzb2Z0d2FyZSB1cGRhdGUgdXNlIGNh
+c2UpIGluIHRoZSB3Znggam9iIGNyZWF0ZWQgZm9yIGEgcGFydGljdWxhciBkZXZpY2UuIE5vdywg
+Zm9yIHRoZSBvbmJvYXJkaW5nIHdmeCBjbGllbnQgdG8gZmV0Y2ggYSBqb2IsIHRoZSBvbmJvYXJk
+aW5nIGNsaWVudCBtdXN0IGFsc28gaGF2ZSBhIGNsaWVudC1pZCBiZWNhdXNlICB3Znggam9icyBh
+cmUgbGlua2VkIHRvIGEgY2xpZW50Lg0KDQpZZXMsIGluIHNvIGZhciBhcyBjbGllbnRzIHF1ZXJ5
+ICJ0aGVpciIgd29ya2Zsb3cgaW5zdGFuY2VzICg9IGpvYnMpIG9uIHRoZSB3ZngsIGkuZS4sIHRo
+ZSBjbGllbnQgSUQgaXMgYSBkaXNjcmltaW5hdG9yIGZvciBhbGwgam9icyBhY3RpdmUgb24gd2Z4
+LiBUaGVyZSBpcyDigJMgYnkgaW50ZW50aW9uIOKAkyBubyBidWlsdC1pbiBtZWNoYW5pc20gaW4g
+d2Z4IHRoYXQgd291bGQgcHJldmVudCBhIGNsaWVudCBBIGZyb20gInRvdWNoaW5nIiBjbGllbnQg
+QidzIGpvYnMgYXMgdGhpcyBpcyB3aGF0IHlvdSB3b3VsZCBoYXZlIHRvIHdyaXRlIGEgcGx1Z2lu
+IGZvciB0aGF0IHByZXZlbnRzIHN1Y2ggYmVoYXZpb3IsIGJhc2VkLCBlLmcuLCBvbiBjbGllbnQg
+Y3JlZGVudGlhbHMgc2VudCB0byB3Znggd2l0aGluIHRoZSByZXF1ZXN0cy4NCg0KWW91IGhhZCBz
+dWdnZXN0ZWQgdG8gdXNlIHBsdWdpbnMgaW5zaWRlIHdmeCB0byByb3V0ZSB0aGUgcmVxdWVzdCBi
+YXNlZCBvbiB0aGUgaW5mb3JtYXRpb24gaW4gdGhlIG9uYm9hcmRpbmcgcmVxdWVzdCdzIEhUVFAg
+aGVhZGVyIChleDogc2VyaWFsIG51bWJlcikuDQpJcyB0aGUgaWRlYSB0byB1c2UgdGhlIHBsdWdp
+bnMgdG8gcmV0dXJuIGEgcmVzcG9uc2Ugd2l0aCB0aGUgY2xpZW50LWlkIGFuZCBvbmJvYXJkaW5n
+IGpvYiBpZCB0byBiZSB1c2VkIGJ5IHRoZSBvbmJvYXJkaW5nIGNsaWVudD8gT3IgYW0gSSBtaXN0
+YWtlbiBpbiBteSB1bmRlcnN0YW5kaW5nIGhlcmU/DQoNCk5vLCBhbG1vc3QgdGhlcmUgOikgV2hh
+dCBJIHN1Z2dlc3RlZCBpcyB0byBoYXZlIGFuIG9uYm9hcmRpbmcgd29ya2Zsb3csIGxldCdzIGNh
+bGwgaXQgIm9uYm9hcmRpbmciLiBOb3csIGEgZnJlc2ggY2xpZW50IGNvbm5lY3RzIHRvIHRoZSB3
+ZnggKCoxKSBhbmQgcXVlcmllcyBmb3Igam9icyB3aXRoIGRldmljZSBJRCA9PSAib25ib2FyZGlu
+Z19uZXdfZGV2aWNlIiAoKjIpLCBzZW5kaW5nIHdpdGggdGhpcyByZXF1ZXN0IGNsaWVudCBjcmVk
+ZW50aWFscywgaWRlbnRpZmllcnMsIHNlcmlhbCBudW1iZXJzLCB5b3UgbmFtZSBpdC4gVGhlIOKA
+kyB0byBiZSB3cml0dGVuIOKAkyB3ZnggcGx1Z2luIGludGVyY2VwdHMgdGhpcyByZXF1ZXN0LA0K
+KDEpIGNvbWVzIHVwIHdpdGggdGhlIGRldmljZSdzIGFjdHVhbCBkZXZpY2UgSUQgKGUuZy4sIGJ5
+IHF1ZXJ5aW5nIGFub3RoZXIgc3lzdGVtKSwNCigyKSBjcmVhdGVzIGFuIGluc3RhbmNlIG9mIHRo
+ZSAib25ib2FyZGluZyIgd29ya2Zsb3cgZm9yIHRoaXMgbmV3IGRldmljZSBJRCwgYW5kDQooMykg
+c2VuZHMgYmFjayB0aGUgbmV3L2FjdHVhbCBkZXZpY2UgSUQgaW4gaXRzIHJlc3BvbnNlIGJvZHks
+IHRoZXJlYnkgdGVybWluYXRpbmcgdGhlIHJlcXVlc3QgdG8gd2Z4LCBpLmUuLCB0aGlzIHF1ZXJ5
+IGRvZXNuJ3QgcmVhY2ggdGhlIHdmeCwgaS5lLiwgaXQncyBhbnN3ZXJlZCBhbmQgdGVybWluYXRl
+ZCBieSB0aGUgcGx1Z2luLg0KTm93LCB0aGUgZGV2aWNlLCBnZXR0aW5nIGl0cyBhY3R1YWwgZGV2
+aWNlIElEIGluIHRoZSByZXNwb25zZSwgY2FuIHF1ZXJ5IHRoZSB3ZnggZm9yIGl0cyByZWFsIG9u
+Ym9hcmRpbmcgam9iIHRoYXQgd2FzIGp1c3QgY3JlYXRlZCBieSB0aGUgcGx1Z2luLiBXaXRoaW4g
+dGhpcyB3b3JrZmxvdywgeW91IGNhbiBkbyB3aGF0ZXZlciBpcyBuZWNlc3NhcnkgdG8gYWN0dWFs
+bHkgb25ib2FyZCB0aGUgbmV3IGRldmljZS4NCg0KSW5zdGVhZCBvZiAoMSkgeW91IGNhbiBhbHNv
+IGdlbmVyYXRlLCBlLmcuLCBhIFVVSUQgYW5kIGRvIHRoZSBhY3R1YWwgZGV2aWNlIElEIGluZm9y
+bWF0aW9uIGdhdGhlcmluZyBpbiB0aGUgd29ya2Zsb3csIFlNTVYsIGJ1dCB0aGlzIGlzIHRoZSBn
+ZW5lcmFsIHByb2NlZHVyZSBob3cgdG8gcmVhbGl6ZSB0aGlzIHdpdGggd2Z4Lg0KDQooKjEpIFlv
+dSBjb3VsZCBmb3IgZXhhbXBsZSByZWdpc3RlciBhIEROUyB1cGRhdGUuY2lwLXByb2plY3Qub3Jn
+PGh0dHA6Ly91cGRhdGUuY2lwLXByb2plY3Qub3JnPiB0aGF0IHBvaW50cyB0byB0aGUgd2Z4IGlu
+c3RhbmNlIHRoaXMgZGV2aWNlIHNob3VsZCBpbml0aWFsbHkgY29ubmVjdCB0by4gVGhpcyBpbmZv
+cm1hdGlvbiBpcyB0aGVuIGJ1cm5lZCBpbnRvIHRoZSByb290ZnMgYW5kIGRlcGVuZGluZyBvbiBu
+ZXR3b3JrL0ROUyBzZXR1cCwgeW91IGNhbiBwb2ludCBkZXZpY2VzIHRvIGRpZmZlcmVudCB3Zngg
+aW5zdGFuY2VzIGJ5IHRoZSBETlMgcmVzb2x1dGlvbiB0byBJUC4NCigqMikgVGhlIG5hbWluZyBp
+cyByYW5kb20gYnV0IHNob3VsZCBiZSB1bmlxdWUsIGkuZS4sIHlvdSBuZWVkIHRvIG1ha2Ugc3Vy
+ZSBhIGRldmljZSBjYW5ub3QgaGF2ZSB0aGlzIGFzIGFjdHVhbCBkZXZpY2UgSUQsIHNlZSBteSBh
+bnN3ZXIgb24gQSBhbmQgQiBhYm92ZSBmb3IgdGhlIHJlYXNvbmluZy4NCg0KDQpLaW5kIHJlZ2Fy
+ZHMsDQpDaHJpc3RpYW4NCg0KDQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw0KRnJv
+bTogY2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmcgPGNpcC1kZXZAbGlzdHMuY2lwLXByb2pl
+Y3Qub3JnPiBvbiBiZWhhbGYgb2YgQ2hyaXN0aWFuIFN0b3JtIHZpYSBsaXN0cy5jaXAtcHJvamVj
+dC5vcmcgPGNocmlzdGlhbi5zdG9ybT1zaWVtZW5zLmNvbUBsaXN0cy5jaXAtcHJvamVjdC5vcmc+
+DQpTZW50OiBUdWVzZGF5LCBKdWx5IDIsIDIwMjQgMjo0NCBQTQ0KVG86IGJhbGFrdW1hciBhZGl0
+aHlhKO+8tO+8s++8qe+8sCBURVVSKSA8QWRpdGh5YS5CYWxha3VtYXJAdG9zaGliYS10c2lwLmNv
+bT4NCkNjOiBjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZyA8Y2lwLWRldkBsaXN0cy5jaXAt
+cHJvamVjdC5vcmc+OyBkaW5lc2gga3VtYXIo77y077yz77yp77ywIFRNSUVDIE9ERyBQb3J0aW5n
+KSA8ZGluZXNoLmt1bWFyQHRvc2hpYmEtdHNpcC5jb20+OyBrdW5pamFkYXIgc2hpdmFuYW5kKO+8
+tO+8s++8qe+8sCBUTUlFQyBPREcgUG9ydGluZykgPFNoaXZhbmFuZC5LdW5pamFkYXJAdG9zaGli
+YS10c2lwLmNvbT47IGFzaHJpdGggc2FpKO+8tO+8s++8qe+8sCkgPFNhaS5TYXRodWpvZGFAdG9z
+aGliYS10c2lwLmNvbT47IGhheWFzaGkga2F6dWhpcm8o5p6XIOWSjOWujyDvvKTvvK3vvKUg4peL
+77yk77yp77yn4pah77yt77yw77yz4peL77yt77yw77yUKSA8a2F6dWhpcm8zLmhheWFzaGlAdG9z
+aGliYS5jby5qcD47IEtpc3prYSwgSmFuIDxqYW4ua2lzemthQHNpZW1lbnMuY29tPg0KU3ViamVj
+dDogUmU6IFtjaXAtZGV2XSBSZWdhcmRpbmcgc3VwcG9ydCBmb3IgV0ZYIGJhY2tlbmQgZm9yIHNv
+ZnR3YXJlIHVwZGF0ZXMgaW4gQ0lQIEltYWdlcw0KDQpIaSBBZGl0aHlhLA0KDQpCYXNlZCBvbiB3
+aGF0IHlvdSBleHBsYWluZWQsIG15IHVuZGVyc3RhbmRpbmcgaXMgdGhhdCB0aGVyZSB3b3VsZCBi
+ZSBzb21lIHNlcnZpY2UgLyBzY3JpcHQgdGhhdCB3b3VsZCBydW4gdXBvbiBpbWFnZSBib290IChw
+cm9iYWJseSBmaXJzdCBib290KSwgdG8gY29tbXVuaWNhdGUNCndpdGggdGhlIGJhY2tlbmQgKG9u
+LWJvYXJkaW5nKSBzZXJ2ZXIuIFRoZSBvbi1ib2FyZGluZyBzZXJ2ZXIgd291bGQgcmVzcG9uZCB3
+aXRoIHRoZSBkZXRhaWxzIGxpa2UgZGV2aWNlLWlkIGV0Yy4gdXBvbiBzdWNjZXNzZnVsIHJlZ2lz
+dHJhdGlvbiBvZiB0aGUgZGV2aWNlLg0KDQpZZXMsIHRoYXQgaXMgb25lIG9wdGlvbi4gWW91IHBv
+d2VyIG9uIHRoZSBkZXZpY2UgYW5kLCBvbmNlIGl0J3MgY29ubmVjdGVkLCBpdCBzZWN1cmVseSBm
+ZXRjaGVzIGl0cyBjb25maWd1cmF0aW9uIGRhdGEgZnJvbSBhbiBvbi1ib2FyZGluZyBiYWNrZW5k
+IHNlcnZpY2UsIHByb2JhYmx5IHdpdGggdGhlIGRldmljZSBiZWluZyBhdXRoZW50aWNhdGVkIGJ5
+IHNvbWUgaHVtYW4gaW4gdGhlIGxvb3AgY2xvc2UgdG8gdGhlIG1hY2hpbmUuIE9yIHRoaXMgdGVj
+aG5pY2lhbiBwbHVncyBpbiBhIHRydXN0ZWQgVVNCIFN0aWNrIG9yIC4uLiBUaGVyZSBhcmUgbWFu
+eSBvcHRpb25zIHdpdGggc29tZSBiZXR0ZXIvd29yc2UgdGhhbiB0aGUgb3RoZXJzIGRlcGVuZGlu
+ZyBvbiB5b3VyIHVzZSBjYXNlIGFuZCBkZW1hbmRzLiBBbGwgb2YgdGhvc2UgYXJlIGRlcGxveWVk
+IGluIHRoZSBmaWVsZCwgZm9yIHN1cmUgOikNCg0KQW55d2F5LCBhbGwgb2YgdGhlbSBoYXZlIGlu
+IGNvbW1vbiB0aGF0IHRoZSBkZXZpY2UgZ2V0cyBpdHMgY29uZmlndXJhdGlvbiBkYXRhIHNvbWVo
+b3cgYW5kIGZyb20gdGhlcmVvbiBpcyByZWdpc3RlcmVkIGFuZCBjYW4gbWFrZSBhdXRoZW50aWNh
+dGVkIHVzZSBvZiB0aGUgKG90aGVyKSBiYWNrZW5kIHNlcnZpY2VzLCBpZ25vcmluZyByZS1hdXRo
+ZW50aWNhdGlvbi4NCg0KDQpTbywgdG8gYWNoaWV2ZSBhIG1lYW5pbmdmdWwgaW50ZWdyYXRpb24g
+b2YgV0ZYIHdpdGggQ0lQIEltYWdlcywgd2UgaGF2ZSB0byBub3cgc3VwcG9ydCB0aGlzIG9uLWJv
+YXJkaW5nIHByb2Nlc3MgYXMgd2VsbCAod2hpY2ggd291bGQgbWVhbiBoYXZpbmcgYW4gb24tYm9h
+cmRpbmcgc2VydmVyIGV0Yy4pPyBPciBpcyB0aGVyZSBhbm90aGVyIHdheSB0byBhY2hpZXZlIHRo
+aXMgaW50ZWdyYXRpb24/ICBXb3VsZCBsaWtlIHRvIHVuZGVyc3RhbmQgeW91ciBvcGluaW9uIG9u
+IHRoaXMuDQoNCldlbGwsIHRoZSBwcm9ibGVtIGlzIHRoYXQgdGhlcmUgYXJlIHNvIG1hbnkgd2F5
+cyB0byBvbmJvYXJkIGRldmljZXMgYW5kIGV2ZW4gc3RhbmRhcmRzLCBlLmcuLCBodHRwczovL2Zp
+ZG9hbGxpYW5jZS5vcmcvZGV2aWNlLW9uYm9hcmRpbmcvICsgU2VjdXJlIERldmljZSBPbmJvYXJk
+aW5nIChTRE8pLiBTbywgb25lIHdheSBvZiBkb2luZyB0aGlzIGlzIHRvIGJsZXNzIHNvbWUgc29s
+dXRpb24gYXMgQ0lQIHN0YW5kYXJkIGFuZCBpbnRlZ3JhdGUgdGhhdCAoaW5jbHVkaW5nIGhhdmlu
+ZyBhIHJ1bm5pbmcgc2VydmljZSBmb3IgZGVtb2luZyB0aGUgc29sdXRpb24pLiBIb3dldmVyLCBJ
+IHRoaW5rIGl0J3MgYmV0dGVyIHRvIHNpZGUtc3RlcCB0aGUgcHJvYmxlbTogc2hvd2Nhc2UgdGhl
+IGludGVncmF0aW9uIG9mIGFuIOKAlCBldmVuIGNvbnRyaXZlZCDigJQgb25ib2FyZGluZyBtZWNo
+YW5pc20gaW50byB3aGljaCByZWFsIG9uZXMgY2FuIGJlIGhvb2tlZCBpbnRvIGVhc2lseS4NCg0K
+U28sIGFzc3VtaW5nIHdlIGRvIG9uYm9hcmRpbmcgc3VwcG9ydGVkIGJ5IGFuIG9uYm9hcmRpbmcg
+YmFja2VuZCBzZXJ2aWNlLCB3ZSBuZWVkIHRvIGtub3cvZGVmaW5lIGhvdyB0aGlzIG9uYm9hcmRp
+bmcgc2VydmljZSBjYW4gYmUgcmVhY2hlZCBieSB0aGUgZGV2aWNlIGFuZCB3aGF0IGNvbmZpZ3Vy
+YXRpb24gZGF0YSBpcyB0byBiZSBwdXQgd2hlcmUgb24gdGhlIGRldmljZSDigJQgdGhlIGxhdHRl
+ciBpcyB0byBiZSBkb25lIGN1c3RvbSBhbnl3YXksIHJlZ2FyZGxlc3Mgb2Ygd2hhdCBzb2x1dGlv
+biB3ZSBjaG9vc2UuIFRoaXMgbWVhbnMsIHdlIGJha2UgYSAoZGVmYXVsdCwgZS5nLiwgZGVmaW5l
+ZCBieSBhIGJpdGJha2UgdmFyaWFibGUpIGJhY2tlbmQgc2VydmljZSBJUCBhZGRyZXNzL0ROUyBu
+YW1lIGludG8gdGhlIENJUCBpbWFnZS4gVGhpcyBtYXkgYmUgb3ZlcnJpZGRlbiBtYW51YWxseSBp
+biB0aGUgZmllbGQgYnV0IHdlIG5lZWQgdG8gaGF2ZSBhIHNhbmUgZGVmYXVsdC4gUHJvYmFibHks
+IHlvdSB3b3VsZCB3YW50IHRvIGJha2UgaW4gb3RoZXIgY3JlZGVudGlhbCBkYXRhIHRvIGVuYWJs
+ZSBzZWN1cmUvdHJ1c3RlZCBjb21tdW5pY2F0aW9uIGJ1dCBsZXQncyBpZ25vcmUgdGhhdCBmb3Ig
+bm93LiBUaGVuLCBvbiBvbmJvYXJkaW5nLCB0aGUgZGV2aWNlIGZldGNoZXMgdGhlIGNvbmZpZ3Vy
+YXRpb24gZGF0YSBmcm9tIHRoZSBiYWNrZW5kIHNlcnZpY2UgaW4gd2hhdGV2ZXIgZm9ybWF0IGFu
+ZCBhIGN1c3RvbSBjb2RlIHNuaXBwZXQgcGxhY2VzIHRoaXMgY29uZmlndXJhdGlvbiBpbmZvcm1h
+dGlvbiBvbiB0aGUgZGV2aWNlIHdoZXJlIGFwcHJvcHJpYXRlIChyZWFkOiAvZXRjL3N3dXBkYXRl
+LmNmZywgL2V0Yy88d2hhdGV2ZXI+LCAuLi4pLg0KDQpUaGlzIGNhbiBiZSBwZXJmZWN0bHkgbW9k
+ZWxlZCB3aXRoIGFuIG9uYm9hcmRpbmcgd29ya2Zsb3cgaW4gdGhlIGV4aXN0aW5nIHdmeCB3ZSB1
+c2UgZm9yIGZpcm13YXJlIHVwZGF0ZXMgOikg4oCUIHdlIGp1c3QgbmVlZCBhbiBvbmJvYXJkaW5n
+IHdmeCBjbGllbnQgdGhhdCB0YWxrcyB0byB0aGUgd2Z4IHJlYWNoYWJsZSB1bmRlciB0aGUgKGRl
+ZmF1bHQgb3IgYWRhcHRlZCkgSVAvRE5TIG5hbWUgYW5kIGFwcGxpZXMgdGhlIGNvbmZpZ3VyYXRp
+b24gcmVjb3JkZWQgaW4gdGhlIHdmeCBqb2IgY3JlYXRlZCBmb3IgYSBwYXJ0aWN1bGFyIGRldmlj
+ZS4gR3JhbnRlZCwgb25lIGNhbiBib2x0IG9uIHNlY3VyaXR5IG1lYXN1cmVzIGJ1dCBmb3IgZGVt
+b2luZyB0aGlzLCB3ZSBjYW4ga2VlcCBpdCBzaW1wbGUgaW5pdGlhbGx5LiBOb3csIGhvdyBkb2Vz
+IHRoaXMgb25ib2FyZGluZy13ZngtY2xpZW50IGtub3cgd2hhdCBqb2IgKElEKSB0byBhc2sgdGhl
+IHdmeCBmb3I/IE9uZSBjb3VsZCBpbWFnaW5lIGFub3RoZXIgc2VydmljZSB0aGF0IHJldHVybnMg
+dGhlIHdmeCBqb2IgSUQgZm9yIGEgcGFydGljdWxhciBkZXZpY2UgZGVwZW5kaW5nIG9uIHRoZSBk
+YXRhIGl0IHNlbmRzIHdpdGggdGhlIGZpcnN0IG9uYm9hcmRpbmcgcmVxdWVzdCB0byB0aGlzIHNl
+cnZpY2UgKGUuZy4sIHNlcmlhbCBudW1iZXIsIC4uLiwgaS5lLiwgYW55dGhpbmcgdGhhdCBpcyBp
+bmRpdmlkdWFsIHRvIGEgZGV2aWNlKS4gVG8ga2VlcCBpdCBzaW1wbGUsIGFuZCBzcGFyaW5nIHRo
+ZSBleHRyYSBzZXJ2aWNlLCB5b3UgY2FuIHNlbmQgdGhhdCBpbmZvcm1hdGlvbiBpbiB0aGUgb25i
+b2FyZGluZy13ZngtY2xpZW50IHJlcXVlc3QncyBIVFRQIGhlYWRlciBhbmQgdXNlIHBsdWdpbnMg
+KCBodHRwczovL2dpdGh1Yi5jb20vc2llbWVucy93ZngvYmxvYi9tYWluL2RvY3Mvb3BlcmF0aW9u
+cy5tZCNwbHVnaW5zKSB0byAocmUtKXJvdXRlIGFjY29yZGluZ2x5Lg0KaGlzIHdheSwgeW91J3Jl
+IG5vdCB1cmdlZCB0byBjcmVhdGUgaW5kaXZpZHVhbCBDSVAgaW1hZ2VzIGJ1dCB0aGV5IGdldCB0
+aGVpciAiaWRlbnRpdHkiIHdoaWxlIG9uYm9hcmRpbmcgd2l0aCBqdXN0IHByb3ZpZGluZyB0aGUg
+Y2Fub25pY2FsIGZhbGxiYWNrIElQL0ROUyBuYW1lIGZvciB0aGUgb25ib2FyZGluZyBzZXJ2ZXIu
+DQoNCk5vdywgYWxsIHRoYXQgY2FuIGJlIGRvbmUgaW4gU1dVcGRhdGUgYXMgd2VsbCBzbyB0aGF0
+IG9uYm9hcmRpbmcgY2FuIGJlIGhhbmRsZWQganVzdCBsaWtlIGEgZmlybXdhcmUgdXBkYXRlLiBU
+aGVuLCBob3dldmVyLCBob29raW5nIGV4aXN0aW5nIHNvbHV0aW9ucyBpbnRvIHRoaXMgbWVjaGFu
+aXNtIGJlY29tZXMgYSBiaXQgaGFyZGVyLi4uLg0KDQoNCkFwb2xvZ2llcyBpZiBteSB1bmRlcnN0
+YW5kaW5nIGlzIHdyb25nLg0KDQpUaGFua3MgZm9yIHJlYWRpbmcgdGhpcyBsb25naXNoIGFuc3dl
+ci4uLiBhbmQgSSBob3BlIHRoaXMgaGFzIGhlbHBlZD8gOikNCg0KDQotLS0tLU9yaWdpbmFsIE1l
+c3NhZ2UtLS0tLQ0KRnJvbTogU3Rvcm0sIENocmlzdGlhbiA8Y2hyaXN0aWFuLnN0b3JtQHNpZW1l
+bnMuY29tPg0KU2VudDogVGh1cnNkYXksIEp1bmUgMjcsIDIwMjQgMTo0NyBBTQ0KVG86IGJhbGFr
+dW1hciBhZGl0aHlhKO+8tO+8s++8qe+8sCBURVVSKSA8QWRpdGh5YS5CYWxha3VtYXJAdG9zaGli
+YS10c2lwLmNvbT4NCkNjOiBjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZzsgZGluZXNoIGt1
+bWFyKO+8tO+8s++8qe+8sCBUTUlFQyBPREcgUG9ydGluZykgPGRpbmVzaC5rdW1hckB0b3NoaWJh
+LXRzaXAuY29tPjsga3VuaWphZGFyIHNoaXZhbmFuZCjvvLTvvLPvvKnvvLAgVE1JRUMgT0RHIFBv
+cnRpbmcpIDxTaGl2YW5hbmQuS3VuaWphZGFyQHRvc2hpYmEtdHNpcC5jb20+OyBhc2hyaXRoIHNh
+aSjvvLTvvLPvvKnvvLApIDxTYWkuU2F0aHVqb2RhQHRvc2hpYmEtdHNpcC5jb20+OyBoYXlhc2hp
+IGthenVoaXJvKOaelyDlkozlro8g77yk77yt77ylIOKXi++8pO+8qe+8p+KWoe+8re+8sO+8s+KX
+i++8re+8sO+8lCkgPGthenVoaXJvMy5oYXlhc2hpQHRvc2hpYmEuY28uanA+OyBLaXN6a2EsIEph
+biA8amFuLmtpc3prYUBzaWVtZW5zLmNvbT4NClN1YmplY3Q6IFJlOiBbY2lwLWRldl0gUmVnYXJk
+aW5nIHN1cHBvcnQgZm9yIFdGWCBiYWNrZW5kIGZvciBzb2Z0d2FyZSB1cGRhdGVzIGluIENJUCBJ
+bWFnZXMNCg0KSGksDQoNClRoZSBtYW5kYXRvcnkgY29uZmlncyB0aGF0IGFyZSByZXF1aXJlZCBh
+cmUgdGhlIHdmeCBzZXJ2ZXIgKGJhY2tlbmQpIFVSTCBhbmQgdGhlIGNsaWVudC1pZC4gQXMgcGVy
+IHlvdXIgc3VnZ2VzdGlvbiwgZm9yIHRoZSBiYWNrZW5kIFVSTCwgcHJvdmlkaW5nIGEga2NvbmZp
+ZyB2YXJpYWJsZSBzbyB0aGF0IHVzZXJzIGNvdWxkIGVudGVyIHRoYXQgdmFsdWUgYmVmb3JlIHRo
+ZSBidWlsZCBzZWVtcyBhIGxpa2UgZ29vZCBhcHByb2FjaC4NCg0KVGhpcyB3b3VsZCBiZSB0aGUg
+aGFyZHdpcmVkIGRlZmF1bHQgZm9yIHRoZSB1cHN0cmVhbSB3Znggc2VydmVyIFtzZWUgYmVsb3dd
+Lg0KDQoNCkhvd2V2ZXIsIEN1cnJlbnRseSBJIGFtIG5vdCBjbGVhciBhYm91dCBzZXR0aW5nIHRo
+ZSBjbGllbnQtaWQuIFRoZSBjbGllbnQtaWQgaXMgcmVxdWlyZWQgYnkgd2Z4IHdoaWxlIGNyZWF0
+aW5nIHRoZSBqb2JzIGZvciB0aGUgc3BlY2lmaWMgY2xpZW50cyBhbmQgYWxzbyB0byBtb25pdG9y
+IHRoZSBzdGF0dXMgb2YgZWFjaCBjbGllbnQgZGV2aWNlIChsaWtlIHVwZGF0ZSBzdGF0dXMgZXRj
+LikNCg0KWWVzLg0KDQoNClNldHRpbmcgYSBjbGllbnQtaWQgYWxzbyB2aWEgYSBrY29uZmlnIHZh
+cmlhYmxlIHdvdWxkIG1lYW4gYmUgdG8gYnVpbGQgYSBuZXcgaW1hZ2UgZm9yIGV2ZXJ5IG5ldyBj
+bGllbnQtaWQgd2hpY2ggZG9lc24ndCBzZWVtIGxpa2UgYSByZWFzb25hYmxlIHNvbHV0aW9uIGZv
+ciBwcm9kdWN0aW9uLg0KDQpFeGFjdGx5Lg0KDQoNCkkgYW0gbm90IHZlcnkgZmFtaWxpYXIgd2l0
+aCBob3cgc3VjaCBkZXZpY2UgcmVnaXN0cmF0aW9uIC8gaWRlbnRpZmljYXRpb24gcmVxdWlyZW1l
+bnRzIGFyZSBoYW5kbGVkIGluIGEgcHJvZHVjdGlvbiBlbnZpcm9ubWVudC4gRG8geW91IGhhdmUg
+YW55IHBvaW50ZXJzIGluIHRoaXMgcmVnYXJkPw0KDQpVc3VhbGx5LCB5b3UgaGF2ZSBlbmdyYXZl
+ZCBpbiB0aGUgImdvbGRlbiBpbWFnZSIgc2FuZSBkZWZhdWx0cyB0aGF0IHlvdSB3b3VsZCB3YW50
+IHRvIHJvbGwtb3V0IHRvIGFsbCB5b3VyIGRldmljZXMuIFRoZW4sIGluZGl2aWR1YWxpemluZyB0
+aGUgZGV2aWNlIGlzIGRvbmUgYnkgb25ib2FyZGluZyBpdCB0byBzb21lIGRldmljZSBtYW5hZ2Vt
+ZW50IGJhY2tlbmQuIFdoaWxlIHRoaXMgcHJvY2VzcywgdGhlIGRldmljZSBnZXRzIGFuIElEIGFu
+ZCBpcyBoZW5jZWZvcnRoIGtub3duIHRvIHRoZSBkZXZpY2UgbWFuYWdlbWVudC4gQWxzbyB3aGls
+ZSB0aGlzIHByb2Nlc3MsIHlvdSBjYW4gZG8gZnVydGhlciB0aGluZ3MgdGhhdCBhcmUgZGV2aWNl
+LXNwZWNpZmljLCBpLmUuLCBjb25maWd1cmluZyBTV1VwZGF0ZSB0byB1c2UgYW4gaW5kaXZpZHVh
+bCBjbGllbnQtaWQgZm9yIHdmeC4gTm90ZSB0aGF0IHRoZXJlIGFyZSBtYW55IHdheXMgb2YgaG93
+IHRvIGFjdHVhbGx5IG9uYm9hcmQgYSBkZXZpY2UgYnV0IHRoZSBwcmluY2lwbGUgcmVtYWlucy4N
+Cg0KDQotLQ0KRHIuIENocmlzdGlhbiBTdG9ybQ0KU2llbWVucyBBRywgRlQgUlBEIENFRA0KRnJp
+ZWRyaWNoLUx1ZHdpZy1CYXVlci1TdHIuIDMsIDg1NzQ4IEdhcmNoaW5nLCBHZXJtYW55DQoNCg==
 
-Hope this message finds you well.
+--_000_0D555EDC271E4EAEA67B7A02D9CF021Bsiemenscom_
+Content-Type: text/html; charset="utf-8"
+Content-ID: <3B198B82D4ABE94EA7066DDBB389E53B@EURPRD10.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 
-I was referring back to a few ideas suggested by you on how we can integrat=
-e WFX backend support for isar-cip-core.
+PGh0bWw+DQo8aGVhZD4NCjxtZXRhIGh0dHAtZXF1aXY9IkNvbnRlbnQtVHlwZSIgY29udGVudD0i
+dGV4dC9odG1sOyBjaGFyc2V0PXV0Zi04Ij4NCjwvaGVhZD4NCjxib2R5IHN0eWxlPSJvdmVyZmxv
+dy13cmFwOiBicmVhay13b3JkOyAtd2Via2l0LW5ic3AtbW9kZTogc3BhY2U7IGxpbmUtYnJlYWs6
+IGFmdGVyLXdoaXRlLXNwYWNlOyI+DQpIaSBBZGl0aHlhLDxicj4NCjxkaXY+PGJyPg0KPGJsb2Nr
+cXVvdGUgdHlwZT0iY2l0ZSI+DQo8ZGl2PjxzcGFuIHN0eWxlPSJmb250LWZhbWlseTogQXB0b3Ms
+IEFwdG9zX0VtYmVkZGVkRm9udCwgQXB0b3NfTVNGb250U2VydmljZSwgQ2FsaWJyaSwgSGVsdmV0
+aWNhLCBzYW5zLXNlcmlmOyBmb250LXNpemU6IDExcHQ7Ij5JIHdhcyByZWZlcnJpbmcgYmFjayB0
+byBhIGZldyBpZGVhcyBzdWdnZXN0ZWQgYnkgeW91IG9uIGhvdyB3ZSBjYW4gaW50ZWdyYXRlIFdG
+WCBiYWNrZW5kIHN1cHBvcnQgZm9yIGlzYXItY2lwLWNvcmUuPC9zcGFuPjwvZGl2Pg0KPGRpdj4N
+CjxkaXYgc3R5bGU9ImZvbnQtc3R5bGU6IG5vcm1hbDsgZm9udC12YXJpYW50LWNhcHM6IG5vcm1h
+bDsgZm9udC13ZWlnaHQ6IDQwMDsgbGV0dGVyLXNwYWNpbmc6IG5vcm1hbDsgdGV4dC1hbGlnbjog
+c3RhcnQ7IHRleHQtaW5kZW50OiAwcHg7IHRleHQtdHJhbnNmb3JtOiBub25lOyB3aGl0ZS1zcGFj
+ZTogbm9ybWFsOyB3b3JkLXNwYWNpbmc6IDBweDsgLXdlYmtpdC10ZXh0LXN0cm9rZS13aWR0aDog
+MHB4OyB0ZXh0LWRlY29yYXRpb246IG5vbmU7IGZvbnQtZmFtaWx5OiBBcHRvcywgQXB0b3NfRW1i
+ZWRkZWRGb250LCBBcHRvc19NU0ZvbnRTZXJ2aWNlLCBDYWxpYnJpLCBIZWx2ZXRpY2EsIHNhbnMt
+c2VyaWY7IGZvbnQtc2l6ZTogMTFwdDsiPg0KPGJyPg0KPC9kaXY+DQo8ZGl2IHN0eWxlPSJmb250
+LXN0eWxlOiBub3JtYWw7IGZvbnQtdmFyaWFudC1jYXBzOiBub3JtYWw7IGZvbnQtd2VpZ2h0OiA0
+MDA7IGxldHRlci1zcGFjaW5nOiBub3JtYWw7IHRleHQtYWxpZ246IHN0YXJ0OyB0ZXh0LWluZGVu
+dDogMHB4OyB0ZXh0LXRyYW5zZm9ybTogbm9uZTsgd2hpdGUtc3BhY2U6IG5vcm1hbDsgd29yZC1z
+cGFjaW5nOiAwcHg7IC13ZWJraXQtdGV4dC1zdHJva2Utd2lkdGg6IDBweDsgdGV4dC1kZWNvcmF0
+aW9uOiBub25lOyBmb250LWZhbWlseTogQXB0b3MsIEFwdG9zX0VtYmVkZGVkRm9udCwgQXB0b3Nf
+TVNGb250U2VydmljZSwgQ2FsaWJyaSwgSGVsdmV0aWNhLCBzYW5zLXNlcmlmOyBmb250LXNpemU6
+IDExcHQ7Ij4NCkluIHRoZSBwcmV2aW91cyBtYWlsIChBcG9sb2dpZXMsIHRoZSBjb252ZXJzYXRp
+b24gd2FzIHF1aXRlIHNvbWUgdGltZSBhZ28pLCB5b3UgaGFkIHN1Z2dlc3RlZCB0byB1c2UgYW4g
+b25ib2FyZGluZyB3ZnggY2xpZW50IHdoaWNoIGFwcGxpZXMgdGhlIGNvbmZpZ3VyYXRpb24gcmVj
+b3JkZWQgKGV4OiBjbGllbnQtaWQgZm9yIHNvZnR3YXJlIHVwZGF0ZSB1c2UgY2FzZSkgaW4gdGhl
+IHdmeCBqb2IgY3JlYXRlZCBmb3IgYSBwYXJ0aWN1bGFyIGRldmljZS4NCiBOb3csIGZvciB0aGUg
+b25ib2FyZGluZyB3ZnggY2xpZW50IHRvIGZldGNoIGEgam9iLCB0aGUgb25ib2FyZGluZyBjbGll
+bnQgbXVzdCBhbHNvIGhhdmUgYSBjbGllbnQtaWQgYmVjYXVzZSAmbmJzcDt3Znggam9icyBhcmUg
+bGlua2VkIHRvIGEgY2xpZW50LjwvZGl2Pg0KPC9kaXY+DQo8L2Jsb2NrcXVvdGU+DQo8ZGl2Pjxi
+cj4NCjwvZGl2Pg0KPGRpdj5ZZXMsIGluIHNvIGZhciBhcyBjbGllbnRzIHF1ZXJ5ICZxdW90O3Ro
+ZWlyJnF1b3Q7IHdvcmtmbG93IGluc3RhbmNlcyAoPSBqb2JzKSBvbiB0aGUgd2Z4LCBpLmUuLCB0
+aGUgY2xpZW50IElEIGlzIGEgZGlzY3JpbWluYXRvciBmb3IgYWxsIGpvYnMgYWN0aXZlIG9uIHdm
+eC4gVGhlcmUgaXMg4oCTIGJ5IGludGVudGlvbiDigJMgbm8gYnVpbHQtaW4gbWVjaGFuaXNtIGlu
+IHdmeCB0aGF0IHdvdWxkIHByZXZlbnQgYSBjbGllbnQgQSBmcm9tICZxdW90O3RvdWNoaW5nJnF1
+b3Q7IGNsaWVudA0KIEIncyBqb2JzIGFzIHRoaXMgaXMgd2hhdCB5b3Ugd291bGQgaGF2ZSB0byB3
+cml0ZSBhIHBsdWdpbiBmb3IgdGhhdCBwcmV2ZW50cyBzdWNoIGJlaGF2aW9yLCBiYXNlZCwgZS5n
+Liwgb24gY2xpZW50IGNyZWRlbnRpYWxzIHNlbnQgdG8gd2Z4IHdpdGhpbiB0aGUgcmVxdWVzdHMu
+PC9kaXY+DQo8YnI+DQo8YmxvY2txdW90ZSB0eXBlPSJjaXRlIj4NCjxkaXY+DQo8ZGl2IHN0eWxl
+PSJmb250LXN0eWxlOiBub3JtYWw7IGZvbnQtdmFyaWFudC1jYXBzOiBub3JtYWw7IGZvbnQtd2Vp
+Z2h0OiA0MDA7IGxldHRlci1zcGFjaW5nOiBub3JtYWw7IHRleHQtYWxpZ246IHN0YXJ0OyB0ZXh0
+LWluZGVudDogMHB4OyB0ZXh0LXRyYW5zZm9ybTogbm9uZTsgd2hpdGUtc3BhY2U6IG5vcm1hbDsg
+d29yZC1zcGFjaW5nOiAwcHg7IC13ZWJraXQtdGV4dC1zdHJva2Utd2lkdGg6IDBweDsgdGV4dC1k
+ZWNvcmF0aW9uOiBub25lOyBmb250LWZhbWlseTogQXB0b3MsIEFwdG9zX0VtYmVkZGVkRm9udCwg
+QXB0b3NfTVNGb250U2VydmljZSwgQ2FsaWJyaSwgSGVsdmV0aWNhLCBzYW5zLXNlcmlmOyBmb250
+LXNpemU6IDExcHQ7Ij4NCllvdSBoYWQgc3VnZ2VzdGVkIHRvIHVzZSBwbHVnaW5zIGluc2lkZSB3
+ZnggdG8gcm91dGUgdGhlIHJlcXVlc3QgYmFzZWQgb24gdGhlIGluZm9ybWF0aW9uIGluIHRoZSBv
+bmJvYXJkaW5nIHJlcXVlc3QncyBIVFRQIGhlYWRlciAoZXg6IHNlcmlhbCBudW1iZXIpLjwvZGl2
+Pg0KPGRpdiBzdHlsZT0iZm9udC1zdHlsZTogbm9ybWFsOyBmb250LXZhcmlhbnQtY2Fwczogbm9y
+bWFsOyBmb250LXdlaWdodDogNDAwOyBsZXR0ZXItc3BhY2luZzogbm9ybWFsOyB0ZXh0LWFsaWdu
+OiBzdGFydDsgdGV4dC1pbmRlbnQ6IDBweDsgdGV4dC10cmFuc2Zvcm06IG5vbmU7IHdoaXRlLXNw
+YWNlOiBub3JtYWw7IHdvcmQtc3BhY2luZzogMHB4OyAtd2Via2l0LXRleHQtc3Ryb2tlLXdpZHRo
+OiAwcHg7IHRleHQtZGVjb3JhdGlvbjogbm9uZTsgZm9udC1mYW1pbHk6IEFwdG9zLCBBcHRvc19F
+bWJlZGRlZEZvbnQsIEFwdG9zX01TRm9udFNlcnZpY2UsIENhbGlicmksIEhlbHZldGljYSwgc2Fu
+cy1zZXJpZjsgZm9udC1zaXplOiAxMXB0OyI+DQpJcyB0aGUgaWRlYSB0byB1c2UgdGhlIHBsdWdp
+bnMgdG8gcmV0dXJuIGEgcmVzcG9uc2Ugd2l0aCB0aGUgY2xpZW50LWlkIGFuZCBvbmJvYXJkaW5n
+IGpvYiBpZCB0byBiZSB1c2VkIGJ5IHRoZSBvbmJvYXJkaW5nIGNsaWVudD8gT3IgYW0gSSBtaXN0
+YWtlbiBpbiBteSB1bmRlcnN0YW5kaW5nIGhlcmU/PC9kaXY+DQo8L2Rpdj4NCjwvYmxvY2txdW90
+ZT4NCjxkaXY+PGJyPg0KPC9kaXY+DQo8ZGl2Pk5vLCBhbG1vc3QgdGhlcmUgOikgV2hhdCBJIHN1
+Z2dlc3RlZCBpcyB0byBoYXZlIGFuIG9uYm9hcmRpbmcgd29ya2Zsb3csIGxldCdzIGNhbGwgaXQg
+JnF1b3Q7b25ib2FyZGluZyZxdW90Oy4gTm93LCBhIGZyZXNoIGNsaWVudCBjb25uZWN0cyB0byB0
+aGUgd2Z4ICgqMSkgYW5kIHF1ZXJpZXMgZm9yIGpvYnMgd2l0aCBkZXZpY2UgSUQgPT0gJnF1b3Q7
+b25ib2FyZGluZ19uZXdfZGV2aWNlJnF1b3Q7ICgqMiksIHNlbmRpbmcgd2l0aCB0aGlzIHJlcXVl
+c3QgY2xpZW50IGNyZWRlbnRpYWxzLA0KIGlkZW50aWZpZXJzLCBzZXJpYWwgbnVtYmVycywgeW91
+IG5hbWUgaXQuIFRoZSDigJMgdG8gYmUgd3JpdHRlbiDigJMgd2Z4IHBsdWdpbiBpbnRlcmNlcHRz
+IHRoaXMgcmVxdWVzdCwmbmJzcDs8L2Rpdj4NCjxkaXY+KDEpIGNvbWVzIHVwIHdpdGggdGhlIGRl
+dmljZSdzIGFjdHVhbCBkZXZpY2UgSUQgKGUuZy4sIGJ5IHF1ZXJ5aW5nIGFub3RoZXIgc3lzdGVt
+KSw8L2Rpdj4NCjxkaXY+KDIpIGNyZWF0ZXMgYW4gaW5zdGFuY2Ugb2YgdGhlICZxdW90O29uYm9h
+cmRpbmcmcXVvdDsgd29ya2Zsb3cgZm9yIHRoaXMgbmV3IGRldmljZSBJRCwgYW5kPC9kaXY+DQo8
+ZGl2PigzKSBzZW5kcyBiYWNrIHRoZSBuZXcvYWN0dWFsIGRldmljZSBJRCBpbiBpdHMgcmVzcG9u
+c2UgYm9keSwgdGhlcmVieSB0ZXJtaW5hdGluZyB0aGUgcmVxdWVzdCB0byB3ZngsIGkuZS4sIHRo
+aXMgcXVlcnkgZG9lc24ndCByZWFjaCB0aGUgd2Z4LCBpLmUuLCBpdCdzIGFuc3dlcmVkIGFuZCB0
+ZXJtaW5hdGVkIGJ5IHRoZSBwbHVnaW4uPC9kaXY+DQo8ZGl2Pk5vdywgdGhlIGRldmljZSwgZ2V0
+dGluZyBpdHMgYWN0dWFsIGRldmljZSBJRCBpbiB0aGUgcmVzcG9uc2UsIGNhbiBxdWVyeSB0aGUg
+d2Z4IGZvciBpdHMgcmVhbCBvbmJvYXJkaW5nIGpvYiB0aGF0IHdhcyBqdXN0IGNyZWF0ZWQgYnkg
+dGhlIHBsdWdpbi4gV2l0aGluIHRoaXMgd29ya2Zsb3csIHlvdSBjYW4gZG8gd2hhdGV2ZXIgaXMg
+bmVjZXNzYXJ5IHRvIGFjdHVhbGx5IG9uYm9hcmQgdGhlIG5ldyBkZXZpY2UuPC9kaXY+DQo8ZGl2
+Pjxicj4NCjwvZGl2Pg0KPGRpdj5JbnN0ZWFkIG9mICgxKSB5b3UgY2FuIGFsc28gZ2VuZXJhdGUs
+IGUuZy4sIGEgVVVJRCBhbmQgZG8gdGhlIGFjdHVhbCBkZXZpY2UgSUQgaW5mb3JtYXRpb24gZ2F0
+aGVyaW5nIGluIHRoZSB3b3JrZmxvdywgWU1NViwgYnV0IHRoaXMgaXMgdGhlIGdlbmVyYWwgcHJv
+Y2VkdXJlIGhvdyB0byByZWFsaXplIHRoaXMgd2l0aCB3ZnguPC9kaXY+DQo8ZGl2Pjxicj4NCjwv
+ZGl2Pg0KPGRpdj4oKjEpIFlvdSBjb3VsZCBmb3IgZXhhbXBsZSByZWdpc3RlciBhIEROUyA8YSBo
+cmVmPSJodHRwOi8vdXBkYXRlLmNpcC1wcm9qZWN0Lm9yZyI+DQp1cGRhdGUuY2lwLXByb2plY3Qu
+b3JnPC9hPiZuYnNwO3RoYXQgcG9pbnRzIHRvIHRoZSB3ZnggaW5zdGFuY2UgdGhpcyBkZXZpY2Ug
+c2hvdWxkIGluaXRpYWxseSBjb25uZWN0IHRvLiBUaGlzIGluZm9ybWF0aW9uIGlzIHRoZW4gYnVy
+bmVkIGludG8gdGhlIHJvb3RmcyBhbmQgZGVwZW5kaW5nIG9uIG5ldHdvcmsvRE5TIHNldHVwLCB5
+b3UgY2FuIHBvaW50IGRldmljZXMgdG8gZGlmZmVyZW50IHdmeCBpbnN0YW5jZXMgYnkgdGhlIERO
+UyByZXNvbHV0aW9uIHRvDQogSVAuPC9kaXY+DQo8ZGl2Pg0KPGRpdj4oKjIpIFRoZSBuYW1pbmcg
+aXMgcmFuZG9tIGJ1dCBzaG91bGQgYmUgdW5pcXVlLCBpLmUuLCB5b3UgbmVlZCB0byBtYWtlIHN1
+cmUgYSBkZXZpY2UgY2Fubm90IGhhdmUgdGhpcyBhcyBhY3R1YWwgZGV2aWNlIElELCBzZWUgbXkg
+YW5zd2VyIG9uIEEgYW5kIEIgYWJvdmUgZm9yIHRoZSByZWFzb25pbmcuPC9kaXY+DQo8ZGl2Pjxi
+cj4NCjwvZGl2Pg0KPC9kaXY+DQo8ZGl2Pjxicj4NCjwvZGl2Pg0KPGRpdj5LaW5kIHJlZ2FyZHMs
+PC9kaXY+DQo8ZGl2PjxzcGFuIGNsYXNzPSJBcHBsZS10YWItc3BhbiIgc3R5bGU9IndoaXRlLXNw
+YWNlOnByZSI+PC9zcGFuPkNocmlzdGlhbjwvZGl2Pg0KPGRpdj48YnI+DQo8L2Rpdj4NCjxkaXY+
+PGJyPg0KPC9kaXY+DQo8YmxvY2txdW90ZSB0eXBlPSJjaXRlIj4NCjxkaXY+DQo8aHIgdGFiaW5k
+ZXg9Ii0xIiBzdHlsZT0iZm9udC1mYW1pbHk6IFNGUHJvVGV4dC1SZWd1bGFyOyBmb250LXNpemU6
+IDE0cHg7IGZvbnQtc3R5bGU6IG5vcm1hbDsgZm9udC12YXJpYW50LWNhcHM6IG5vcm1hbDsgZm9u
+dC13ZWlnaHQ6IDQwMDsgbGV0dGVyLXNwYWNpbmc6IG5vcm1hbDsgb3JwaGFuczogYXV0bzsgdGV4
+dC1hbGlnbjogc3RhcnQ7IHRleHQtaW5kZW50OiAwcHg7IHRleHQtdHJhbnNmb3JtOiBub25lOyB3
+aGl0ZS1zcGFjZTogbm9ybWFsOyB3aWRvd3M6IGF1dG87IHdvcmQtc3BhY2luZzogMHB4OyAtd2Vi
+a2l0LXRleHQtc3Ryb2tlLXdpZHRoOiAwcHg7IHRleHQtZGVjb3JhdGlvbjogbm9uZTsgZGlzcGxh
+eTogaW5saW5lLWJsb2NrOyB3aWR0aDogNjM4Ljk1MzEyNXB4OyI+DQo8c3BhbiBzdHlsZT0iY2Fy
+ZXQtY29sb3I6IHJnYigwLCAwLCAwKTsgZm9udC1mYW1pbHk6IFNGUHJvVGV4dC1SZWd1bGFyOyBm
+b250LXNpemU6IDE0cHg7IGZvbnQtc3R5bGU6IG5vcm1hbDsgZm9udC12YXJpYW50LWNhcHM6IG5v
+cm1hbDsgZm9udC13ZWlnaHQ6IDQwMDsgbGV0dGVyLXNwYWNpbmc6IG5vcm1hbDsgdGV4dC1hbGln
+bjogc3RhcnQ7IHRleHQtaW5kZW50OiAwcHg7IHRleHQtdHJhbnNmb3JtOiBub25lOyB3aGl0ZS1z
+cGFjZTogbm9ybWFsOyB3b3JkLXNwYWNpbmc6IDBweDsgLXdlYmtpdC10ZXh0LXN0cm9rZS13aWR0
+aDogMHB4OyB0ZXh0LWRlY29yYXRpb246IG5vbmU7IGZsb2F0OiBub25lOyBkaXNwbGF5OiBpbmxp
+bmUgIWltcG9ydGFudDsiPjwvc3Bhbj4NCjxkaXYgaWQ9ImRpdlJwbHlGd2RNc2ciIGRpcj0ibHRy
+IiBzdHlsZT0iY2FyZXQtY29sb3I6IHJnYigwLCAwLCAwKTsgZm9udC1mYW1pbHk6IFNGUHJvVGV4
+dC1SZWd1bGFyOyBmb250LXNpemU6IDE0cHg7IGZvbnQtc3R5bGU6IG5vcm1hbDsgZm9udC12YXJp
+YW50LWNhcHM6IG5vcm1hbDsgZm9udC13ZWlnaHQ6IDQwMDsgbGV0dGVyLXNwYWNpbmc6IG5vcm1h
+bDsgdGV4dC1hbGlnbjogc3RhcnQ7IHRleHQtaW5kZW50OiAwcHg7IHRleHQtdHJhbnNmb3JtOiBu
+b25lOyB3aGl0ZS1zcGFjZTogbm9ybWFsOyB3b3JkLXNwYWNpbmc6IDBweDsgLXdlYmtpdC10ZXh0
+LXN0cm9rZS13aWR0aDogMHB4OyB0ZXh0LWRlY29yYXRpb246IG5vbmU7Ij4NCjxmb250IGZhY2U9
+IkNhbGlicmksIHNhbnMtc2VyaWYiIHN0eWxlPSJmb250LXNpemU6IDExcHQ7Ij48Yj5Gcm9tOjwv
+Yj48c3BhbiBjbGFzcz0iQXBwbGUtY29udmVydGVkLXNwYWNlIj4mbmJzcDs8L3NwYW4+Y2lwLWRl
+dkBsaXN0cy5jaXAtcHJvamVjdC5vcmcgJmx0O2NpcC1kZXZAbGlzdHMuY2lwLXByb2plY3Qub3Jn
+Jmd0OyBvbiBiZWhhbGYgb2YgQ2hyaXN0aWFuIFN0b3JtIHZpYSBsaXN0cy5jaXAtcHJvamVjdC5v
+cmcgJmx0O2NocmlzdGlhbi5zdG9ybT1zaWVtZW5zLmNvbUBsaXN0cy5jaXAtcHJvamVjdC5vcmcm
+Z3Q7PGJyPg0KPGI+U2VudDo8L2I+PHNwYW4gY2xhc3M9IkFwcGxlLWNvbnZlcnRlZC1zcGFjZSI+
+Jm5ic3A7PC9zcGFuPlR1ZXNkYXksIEp1bHkgMiwgMjAyNCAyOjQ0IFBNPGJyPg0KPGI+VG86PC9i
+PjxzcGFuIGNsYXNzPSJBcHBsZS1jb252ZXJ0ZWQtc3BhY2UiPiZuYnNwOzwvc3Bhbj5iYWxha3Vt
+YXIgYWRpdGh5YSjvvLTvvLPvvKnvvLAgVEVVUikgJmx0O0FkaXRoeWEuQmFsYWt1bWFyQHRvc2hp
+YmEtdHNpcC5jb20mZ3Q7PGJyPg0KPGI+Q2M6PC9iPjxzcGFuIGNsYXNzPSJBcHBsZS1jb252ZXJ0
+ZWQtc3BhY2UiPiZuYnNwOzwvc3Bhbj5jaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZyAmbHQ7
+Y2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmcmZ3Q7OyBkaW5lc2gga3VtYXIo77y077yz77yp
+77ywIFRNSUVDIE9ERyBQb3J0aW5nKSAmbHQ7ZGluZXNoLmt1bWFyQHRvc2hpYmEtdHNpcC5jb20m
+Z3Q7OyBrdW5pamFkYXIgc2hpdmFuYW5kKO+8tO+8s++8qe+8sCBUTUlFQyBPREcgUG9ydGluZykg
+Jmx0O1NoaXZhbmFuZC5LdW5pamFkYXJAdG9zaGliYS10c2lwLmNvbSZndDs7DQogYXNocml0aCBz
+YWko77y077yz77yp77ywKSAmbHQ7U2FpLlNhdGh1am9kYUB0b3NoaWJhLXRzaXAuY29tJmd0Ozsg
+aGF5YXNoaSBrYXp1aGlybyjmnpcg5ZKM5a6PIO+8pO+8re+8pSDil4vvvKTvvKnvvKfilqHvvK3v
+vLDvvLPil4vvvK3vvLDvvJQpICZsdDtrYXp1aGlybzMuaGF5YXNoaUB0b3NoaWJhLmNvLmpwJmd0
+OzsgS2lzemthLCBKYW4gJmx0O2phbi5raXN6a2FAc2llbWVucy5jb20mZ3Q7PGJyPg0KPGI+U3Vi
+amVjdDo8L2I+PHNwYW4gY2xhc3M9IkFwcGxlLWNvbnZlcnRlZC1zcGFjZSI+Jm5ic3A7PC9zcGFu
+PlJlOiBbY2lwLWRldl0gUmVnYXJkaW5nIHN1cHBvcnQgZm9yIFdGWCBiYWNrZW5kIGZvciBzb2Z0
+d2FyZSB1cGRhdGVzIGluIENJUCBJbWFnZXM8L2ZvbnQ+DQo8ZGl2PiZuYnNwOzwvZGl2Pg0KPC9k
+aXY+DQo8ZGl2IHN0eWxlPSJjYXJldC1jb2xvcjogcmdiKDAsIDAsIDApOyBmb250LWZhbWlseTog
+U0ZQcm9UZXh0LVJlZ3VsYXI7IGZvbnQtc2l6ZTogMTRweDsgZm9udC1zdHlsZTogbm9ybWFsOyBm
+b250LXZhcmlhbnQtY2Fwczogbm9ybWFsOyBmb250LXdlaWdodDogNDAwOyBsZXR0ZXItc3BhY2lu
+Zzogbm9ybWFsOyB0ZXh0LWFsaWduOiBzdGFydDsgdGV4dC1pbmRlbnQ6IDBweDsgdGV4dC10cmFu
+c2Zvcm06IG5vbmU7IHdoaXRlLXNwYWNlOiBub3JtYWw7IHdvcmQtc3BhY2luZzogMHB4OyAtd2Vi
+a2l0LXRleHQtc3Ryb2tlLXdpZHRoOiAwcHg7IHRleHQtZGVjb3JhdGlvbjogbm9uZTsgbGluZS1i
+cmVhazogYWZ0ZXItd2hpdGUtc3BhY2U7Ij4NCkhpIEFkaXRoeWEsDQo8ZGl2Pjxicj4NCjxkaXY+
+DQo8YmxvY2txdW90ZSB0eXBlPSJjaXRlIj4NCjxkaXY+DQo8ZGl2PkJhc2VkIG9uIHdoYXQgeW91
+IGV4cGxhaW5lZCwgbXkgdW5kZXJzdGFuZGluZyBpcyB0aGF0IHRoZXJlIHdvdWxkIGJlIHNvbWUg
+c2VydmljZSAvIHNjcmlwdCB0aGF0IHdvdWxkIHJ1biB1cG9uIGltYWdlIGJvb3QgKHByb2JhYmx5
+IGZpcnN0IGJvb3QpLCB0byBjb21tdW5pY2F0ZTxzcGFuIGNsYXNzPSJBcHBsZS1jb252ZXJ0ZWQt
+c3BhY2UiPiZuYnNwOzwvc3Bhbj48YnI+DQp3aXRoIHRoZSBiYWNrZW5kIChvbi1ib2FyZGluZykg
+c2VydmVyLiBUaGUgb24tYm9hcmRpbmcgc2VydmVyIHdvdWxkIHJlc3BvbmQgd2l0aCB0aGUgZGV0
+YWlscyBsaWtlIGRldmljZS1pZCBldGMuIHVwb24gc3VjY2Vzc2Z1bCByZWdpc3RyYXRpb24gb2Yg
+dGhlIGRldmljZS48YnI+DQo8L2Rpdj4NCjwvZGl2Pg0KPC9ibG9ja3F1b3RlPg0KPGRpdj48YnI+
+DQo8L2Rpdj4NCjxkaXY+WWVzLCB0aGF0IGlzIG9uZSBvcHRpb24uIFlvdSBwb3dlciBvbiB0aGUg
+ZGV2aWNlIGFuZCwgb25jZSBpdCdzIGNvbm5lY3RlZCwgaXQgc2VjdXJlbHkgZmV0Y2hlcyBpdHMg
+Y29uZmlndXJhdGlvbiBkYXRhIGZyb20gYW4gb24tYm9hcmRpbmcgYmFja2VuZCBzZXJ2aWNlLCBw
+cm9iYWJseSB3aXRoIHRoZSBkZXZpY2UgYmVpbmcgYXV0aGVudGljYXRlZCBieSBzb21lIGh1bWFu
+IGluIHRoZSBsb29wIGNsb3NlIHRvIHRoZSBtYWNoaW5lLiBPciB0aGlzDQogdGVjaG5pY2lhbiBw
+bHVncyBpbiBhIHRydXN0ZWQgVVNCIFN0aWNrIG9yIC4uLiBUaGVyZSBhcmUgbWFueSBvcHRpb25z
+IHdpdGggc29tZSBiZXR0ZXIvd29yc2UgdGhhbiB0aGUgb3RoZXJzIGRlcGVuZGluZyBvbiB5b3Vy
+IHVzZSBjYXNlIGFuZCBkZW1hbmRzLiBBbGwgb2YgdGhvc2UgYXJlIGRlcGxveWVkIGluIHRoZSBm
+aWVsZCwgZm9yIHN1cmUgOik8L2Rpdj4NCjxkaXY+PGJyPg0KPC9kaXY+DQo8ZGl2PkFueXdheSwg
+YWxsIG9mIHRoZW0gaGF2ZSBpbiBjb21tb24gdGhhdCB0aGUgZGV2aWNlIGdldHMgaXRzIGNvbmZp
+Z3VyYXRpb24gZGF0YSBzb21laG93IGFuZCBmcm9tIHRoZXJlb24gaXMgcmVnaXN0ZXJlZCBhbmQg
+Y2FuIG1ha2UgYXV0aGVudGljYXRlZCB1c2Ugb2YgdGhlIChvdGhlcikgYmFja2VuZCBzZXJ2aWNl
+cywgaWdub3JpbmcgcmUtYXV0aGVudGljYXRpb24uPC9kaXY+DQo8ZGl2Pjxicj4NCjwvZGl2Pg0K
+PGJyPg0KPGJsb2NrcXVvdGUgdHlwZT0iY2l0ZSI+DQo8ZGl2Pg0KPGRpdj5TbywgdG8gYWNoaWV2
+ZSBhIG1lYW5pbmdmdWwgaW50ZWdyYXRpb24gb2YgV0ZYIHdpdGggQ0lQIEltYWdlcywgd2UgaGF2
+ZSB0byBub3cgc3VwcG9ydCB0aGlzIG9uLWJvYXJkaW5nIHByb2Nlc3MgYXMgd2VsbCAod2hpY2gg
+d291bGQgbWVhbiBoYXZpbmcgYW4gb24tYm9hcmRpbmcgc2VydmVyIGV0Yy4pPyBPciBpcyB0aGVy
+ZSBhbm90aGVyIHdheSB0byBhY2hpZXZlIHRoaXMgaW50ZWdyYXRpb24/ICZuYnNwO1dvdWxkIGxp
+a2UgdG8gdW5kZXJzdGFuZA0KIHlvdXIgb3BpbmlvbiBvbiB0aGlzLjxicj4NCjwvZGl2Pg0KPC9k
+aXY+DQo8L2Jsb2NrcXVvdGU+DQo8ZGl2Pjxicj4NCjwvZGl2Pg0KPGRpdj5XZWxsLCB0aGUgcHJv
+YmxlbSBpcyB0aGF0IHRoZXJlIGFyZSBzbyBtYW55IHdheXMgdG8gb25ib2FyZCBkZXZpY2VzIGFu
+ZCBldmVuIHN0YW5kYXJkcywgZS5nLiwmbmJzcDs8YSBocmVmPSJodHRwczovL2ZpZG9hbGxpYW5j
+ZS5vcmcvZGV2aWNlLW9uYm9hcmRpbmcvIiBkYXRhLWF1dGg9Ik5vdEFwcGxpY2FibGUiPmh0dHBz
+Oi8vZmlkb2FsbGlhbmNlLm9yZy9kZXZpY2Utb25ib2FyZGluZy88L2E+Jm5ic3A7KyBTZWN1cmUg
+RGV2aWNlIE9uYm9hcmRpbmcgKFNETykuDQogU28sIG9uZSB3YXkgb2YgZG9pbmcgdGhpcyBpcyB0
+byBibGVzcyBzb21lIHNvbHV0aW9uIGFzIENJUCBzdGFuZGFyZCBhbmQgaW50ZWdyYXRlIHRoYXQg
+KGluY2x1ZGluZyBoYXZpbmcgYSBydW5uaW5nIHNlcnZpY2UgZm9yIGRlbW9pbmcgdGhlIHNvbHV0
+aW9uKS4gSG93ZXZlciwgSSB0aGluayBpdCdzIGJldHRlciB0byBzaWRlLXN0ZXAgdGhlIHByb2Js
+ZW06IHNob3djYXNlIHRoZSBpbnRlZ3JhdGlvbiBvZiBhbiDigJQgZXZlbiBjb250cml2ZWQg4oCU
+IG9uYm9hcmRpbmcNCiBtZWNoYW5pc20gaW50byB3aGljaCByZWFsIG9uZXMgY2FuIGJlIGhvb2tl
+ZCBpbnRvIGVhc2lseS4mbmJzcDs8L2Rpdj4NCjxkaXY+PGJyPg0KPC9kaXY+DQo8ZGl2PlNvLCBh
+c3N1bWluZyB3ZSBkbyBvbmJvYXJkaW5nIHN1cHBvcnRlZCBieSBhbiBvbmJvYXJkaW5nIGJhY2tl
+bmQgc2VydmljZSwgd2UgbmVlZCB0byBrbm93L2RlZmluZSBob3cgdGhpcyBvbmJvYXJkaW5nIHNl
+cnZpY2UgY2FuIGJlIHJlYWNoZWQgYnkgdGhlIGRldmljZSBhbmQgd2hhdCBjb25maWd1cmF0aW9u
+IGRhdGEgaXMgdG8gYmUgcHV0IHdoZXJlIG9uIHRoZSBkZXZpY2Ug4oCUIHRoZSBsYXR0ZXIgaXMg
+dG8gYmUgZG9uZSBjdXN0b20gYW55d2F5LA0KIHJlZ2FyZGxlc3Mgb2Ygd2hhdCBzb2x1dGlvbiB3
+ZSBjaG9vc2UuIFRoaXMgbWVhbnMsIHdlIGJha2UgYSAoZGVmYXVsdCwgZS5nLiwgZGVmaW5lZCBi
+eSBhIGJpdGJha2UgdmFyaWFibGUpIGJhY2tlbmQgc2VydmljZSBJUCBhZGRyZXNzL0ROUyBuYW1l
+IGludG8gdGhlIENJUCBpbWFnZS4gVGhpcyBtYXkgYmUgb3ZlcnJpZGRlbiBtYW51YWxseSBpbiB0
+aGUgZmllbGQgYnV0IHdlIG5lZWQgdG8gaGF2ZSBhIHNhbmUgZGVmYXVsdC4gUHJvYmFibHksIHlv
+dQ0KIHdvdWxkIHdhbnQgdG8gYmFrZSBpbiBvdGhlciBjcmVkZW50aWFsIGRhdGEgdG8gZW5hYmxl
+IHNlY3VyZS90cnVzdGVkIGNvbW11bmljYXRpb24gYnV0IGxldCdzIGlnbm9yZSB0aGF0IGZvciBu
+b3cuIFRoZW4sIG9uIG9uYm9hcmRpbmcsIHRoZSBkZXZpY2UgZmV0Y2hlcyB0aGUgY29uZmlndXJh
+dGlvbiBkYXRhIGZyb20gdGhlIGJhY2tlbmQgc2VydmljZSBpbiB3aGF0ZXZlciBmb3JtYXQgYW5k
+IGEgY3VzdG9tIGNvZGUgc25pcHBldCBwbGFjZXMgdGhpcw0KIGNvbmZpZ3VyYXRpb24gaW5mb3Jt
+YXRpb24gb24gdGhlIGRldmljZSB3aGVyZSBhcHByb3ByaWF0ZSAocmVhZDogL2V0Yy9zd3VwZGF0
+ZS5jZmcsIC9ldGMvJmx0O3doYXRldmVyJmd0OywgLi4uKS48L2Rpdj4NCjxkaXY+PGJyPg0KPC9k
+aXY+DQo8ZGl2PlRoaXMgY2FuIGJlIHBlcmZlY3RseSBtb2RlbGVkIHdpdGggYW4gb25ib2FyZGlu
+ZyB3b3JrZmxvdyBpbiB0aGUgZXhpc3Rpbmcgd2Z4IHdlIHVzZSBmb3IgZmlybXdhcmUgdXBkYXRl
+cyA6KSDigJQgd2UganVzdCBuZWVkIGFuIG9uYm9hcmRpbmcgd2Z4IGNsaWVudCB0aGF0IHRhbGtz
+IHRvIHRoZSB3ZnggcmVhY2hhYmxlIHVuZGVyIHRoZSAoZGVmYXVsdCBvciBhZGFwdGVkKSBJUC9E
+TlMgbmFtZSBhbmQgYXBwbGllcyB0aGUgY29uZmlndXJhdGlvbg0KIHJlY29yZGVkIGluIHRoZSB3
+Znggam9iIGNyZWF0ZWQgZm9yIGEgcGFydGljdWxhciBkZXZpY2UuIEdyYW50ZWQsIG9uZSBjYW4g
+Ym9sdCBvbiBzZWN1cml0eSBtZWFzdXJlcyBidXQgZm9yIGRlbW9pbmcgdGhpcywgd2UgY2FuIGtl
+ZXAgaXQgc2ltcGxlIGluaXRpYWxseS4gTm93LCBob3cgZG9lcyB0aGlzIG9uYm9hcmRpbmctd2Z4
+LWNsaWVudCBrbm93IHdoYXQgam9iIChJRCkgdG8gYXNrIHRoZSB3ZnggZm9yPyBPbmUgY291bGQg
+aW1hZ2luZSBhbm90aGVyDQogc2VydmljZSB0aGF0IHJldHVybnMgdGhlIHdmeCBqb2IgSUQgZm9y
+IGEgcGFydGljdWxhciBkZXZpY2UgZGVwZW5kaW5nIG9uIHRoZSBkYXRhIGl0IHNlbmRzIHdpdGgg
+dGhlIGZpcnN0IG9uYm9hcmRpbmcgcmVxdWVzdCB0byB0aGlzIHNlcnZpY2UgKGUuZy4sIHNlcmlh
+bCBudW1iZXIsIC4uLiwgaS5lLiwgYW55dGhpbmcgdGhhdCBpcyBpbmRpdmlkdWFsIHRvIGEgZGV2
+aWNlKS4gVG8ga2VlcCBpdCBzaW1wbGUsIGFuZCBzcGFyaW5nIHRoZSBleHRyYQ0KIHNlcnZpY2Us
+IHlvdSBjYW4gc2VuZCB0aGF0IGluZm9ybWF0aW9uIGluIHRoZSBvbmJvYXJkaW5nLXdmeC1jbGll
+bnQgcmVxdWVzdCdzIEhUVFAgaGVhZGVyIGFuZCB1c2UgcGx1Z2lucyAoJm5ic3A7PGEgaHJlZj0i
+aHR0cHM6Ly9naXRodWIuY29tL3NpZW1lbnMvd2Z4L2Jsb2IvbWFpbi9kb2NzL29wZXJhdGlvbnMu
+bWQjcGx1Z2lucyIgZGF0YS1hdXRoPSJOb3RBcHBsaWNhYmxlIj5odHRwczovL2dpdGh1Yi5jb20v
+c2llbWVucy93ZngvYmxvYi9tYWluL2RvY3Mvb3BlcmF0aW9ucy5tZCNwbHVnaW5zPC9hPikmbmJz
+cDt0bw0KIChyZS0pcm91dGUgYWNjb3JkaW5nbHkuJm5ic3A7PC9kaXY+DQo8ZGl2PmhpcyB3YXks
+IHlvdSdyZSBub3QgdXJnZWQgdG8gY3JlYXRlIGluZGl2aWR1YWwgQ0lQIGltYWdlcyBidXQgdGhl
+eSBnZXQgdGhlaXIgJnF1b3Q7aWRlbnRpdHkmcXVvdDsgd2hpbGUgb25ib2FyZGluZyB3aXRoIGp1
+c3QgcHJvdmlkaW5nIHRoZSBjYW5vbmljYWwgZmFsbGJhY2sgSVAvRE5TIG5hbWUgZm9yIHRoZSBv
+bmJvYXJkaW5nIHNlcnZlci48L2Rpdj4NCjxkaXY+PGJyPg0KPC9kaXY+DQo8ZGl2Pk5vdywgYWxs
+IHRoYXQgY2FuIGJlIGRvbmUgaW4gU1dVcGRhdGUgYXMgd2VsbCBzbyB0aGF0IG9uYm9hcmRpbmcg
+Y2FuIGJlIGhhbmRsZWQganVzdCBsaWtlIGEgZmlybXdhcmUgdXBkYXRlLiBUaGVuLCBob3dldmVy
+LCBob29raW5nIGV4aXN0aW5nIHNvbHV0aW9ucyBpbnRvIHRoaXMgbWVjaGFuaXNtIGJlY29tZXMg
+YSBiaXQgaGFyZGVyLi4uLjwvZGl2Pg0KPGRpdj48YnI+DQo8L2Rpdj4NCjxkaXY+PGJyPg0KPC9k
+aXY+DQo8YmxvY2txdW90ZSB0eXBlPSJjaXRlIj4NCjxkaXY+DQo8ZGl2PkFwb2xvZ2llcyBpZiBt
+eSB1bmRlcnN0YW5kaW5nIGlzIHdyb25nLjxicj4NCjwvZGl2Pg0KPC9kaXY+DQo8L2Jsb2NrcXVv
+dGU+DQo8ZGl2Pjxicj4NCjwvZGl2Pg0KPGRpdj5UaGFua3MgZm9yIHJlYWRpbmcgdGhpcyBsb25n
+aXNoIGFuc3dlci4uLiBhbmQgSSBob3BlIHRoaXMgaGFzIGhlbHBlZD8gOik8L2Rpdj4NCjxkaXY+
+PGJyPg0KPC9kaXY+DQo8YnI+DQo8YmxvY2txdW90ZSB0eXBlPSJjaXRlIj4NCjxkaXY+DQo8ZGl2
+Pi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tPGJyPg0KRnJvbTogU3Rvcm0sIENocmlzdGlhbiAm
+bHQ7Y2hyaXN0aWFuLnN0b3JtQHNpZW1lbnMuY29tJmd0OzxzcGFuIGNsYXNzPSJBcHBsZS1jb252
+ZXJ0ZWQtc3BhY2UiPiZuYnNwOzwvc3Bhbj48YnI+DQpTZW50OiBUaHVyc2RheSwgSnVuZSAyNywg
+MjAyNCAxOjQ3IEFNPGJyPg0KVG86IGJhbGFrdW1hciBhZGl0aHlhKO+8tO+8s++8qe+8sCBURVVS
+KSAmbHQ7QWRpdGh5YS5CYWxha3VtYXJAdG9zaGliYS10c2lwLmNvbSZndDs8YnI+DQpDYzogY2lw
+LWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmc7IGRpbmVzaCBrdW1hcijvvLTvvLPvvKnvvLAgVE1J
+RUMgT0RHIFBvcnRpbmcpICZsdDtkaW5lc2gua3VtYXJAdG9zaGliYS10c2lwLmNvbSZndDs7IGt1
+bmlqYWRhciBzaGl2YW5hbmQo77y077yz77yp77ywIFRNSUVDIE9ERyBQb3J0aW5nKSAmbHQ7U2hp
+dmFuYW5kLkt1bmlqYWRhckB0b3NoaWJhLXRzaXAuY29tJmd0OzsgYXNocml0aCBzYWko77y077yz
+77yp77ywKSAmbHQ7U2FpLlNhdGh1am9kYUB0b3NoaWJhLXRzaXAuY29tJmd0OzsgaGF5YXNoaSBr
+YXp1aGlybyjmnpcNCiDlkozlro8g77yk77yt77ylIOKXi++8pO+8qe+8p+KWoe+8re+8sO+8s+KX
+i++8re+8sO+8lCkgJmx0O2thenVoaXJvMy5oYXlhc2hpQHRvc2hpYmEuY28uanAmZ3Q7OyBLaXN6
+a2EsIEphbiAmbHQ7amFuLmtpc3prYUBzaWVtZW5zLmNvbSZndDs8YnI+DQpTdWJqZWN0OiBSZTog
+W2NpcC1kZXZdIFJlZ2FyZGluZyBzdXBwb3J0IGZvciBXRlggYmFja2VuZCBmb3Igc29mdHdhcmUg
+dXBkYXRlcyBpbiBDSVAgSW1hZ2VzPGJyPg0KPGJyPg0KSGksPGJyPg0KPGJyPg0KPGJsb2NrcXVv
+dGUgdHlwZT0iY2l0ZSI+VGhlIG1hbmRhdG9yeSBjb25maWdzIHRoYXQgYXJlIHJlcXVpcmVkIGFy
+ZSB0aGUgd2Z4IHNlcnZlciAoYmFja2VuZCkgVVJMIGFuZCB0aGUgY2xpZW50LWlkLiBBcyBwZXIg
+eW91ciBzdWdnZXN0aW9uLCBmb3IgdGhlIGJhY2tlbmQgVVJMLCBwcm92aWRpbmcgYSBrY29uZmln
+IHZhcmlhYmxlIHNvIHRoYXQgdXNlcnMgY291bGQgZW50ZXIgdGhhdCB2YWx1ZSBiZWZvcmUgdGhl
+IGJ1aWxkIHNlZW1zIGEgbGlrZQ0KIGdvb2QgYXBwcm9hY2guPGJyPg0KPC9ibG9ja3F1b3RlPg0K
+PGJyPg0KVGhpcyB3b3VsZCBiZSB0aGUgaGFyZHdpcmVkIGRlZmF1bHQgZm9yIHRoZSB1cHN0cmVh
+bSB3Znggc2VydmVyIFtzZWUgYmVsb3ddLjxicj4NCjxicj4NCjxicj4NCjxibG9ja3F1b3RlIHR5
+cGU9ImNpdGUiPkhvd2V2ZXIsIEN1cnJlbnRseSBJIGFtIG5vdCBjbGVhciBhYm91dCBzZXR0aW5n
+IHRoZSBjbGllbnQtaWQuIFRoZSBjbGllbnQtaWQgaXMgcmVxdWlyZWQgYnkgd2Z4IHdoaWxlIGNy
+ZWF0aW5nIHRoZSBqb2JzIGZvciB0aGUgc3BlY2lmaWMgY2xpZW50cyBhbmQgYWxzbyB0byBtb25p
+dG9yIHRoZSBzdGF0dXMgb2YgZWFjaCBjbGllbnQgZGV2aWNlIChsaWtlIHVwZGF0ZSBzdGF0dXMg
+ZXRjLik8YnI+DQo8L2Jsb2NrcXVvdGU+DQo8YnI+DQpZZXMuPGJyPg0KPGJyPg0KPGJyPg0KPGJs
+b2NrcXVvdGUgdHlwZT0iY2l0ZSI+U2V0dGluZyBhIGNsaWVudC1pZCBhbHNvIHZpYSBhIGtjb25m
+aWcgdmFyaWFibGUgd291bGQgbWVhbiBiZSB0byBidWlsZCBhIG5ldyBpbWFnZSBmb3IgZXZlcnkg
+bmV3IGNsaWVudC1pZCB3aGljaCBkb2Vzbid0IHNlZW0gbGlrZSBhIHJlYXNvbmFibGUgc29sdXRp
+b24gZm9yIHByb2R1Y3Rpb24uPGJyPg0KPC9ibG9ja3F1b3RlPg0KPGJyPg0KRXhhY3RseS48YnI+
+DQo8YnI+DQo8YnI+DQo8YmxvY2txdW90ZSB0eXBlPSJjaXRlIj5JIGFtIG5vdCB2ZXJ5IGZhbWls
+aWFyIHdpdGggaG93IHN1Y2ggZGV2aWNlIHJlZ2lzdHJhdGlvbiAvIGlkZW50aWZpY2F0aW9uIHJl
+cXVpcmVtZW50cyBhcmUgaGFuZGxlZCBpbiBhIHByb2R1Y3Rpb24gZW52aXJvbm1lbnQuIERvIHlv
+dSBoYXZlIGFueSBwb2ludGVycyBpbiB0aGlzIHJlZ2FyZD88YnI+DQo8L2Jsb2NrcXVvdGU+DQo8
+YnI+DQpVc3VhbGx5LCB5b3UgaGF2ZSBlbmdyYXZlZCBpbiB0aGUgJnF1b3Q7Z29sZGVuIGltYWdl
+JnF1b3Q7IHNhbmUgZGVmYXVsdHMgdGhhdCB5b3Ugd291bGQgd2FudCB0byByb2xsLW91dCB0byBh
+bGwgeW91ciBkZXZpY2VzLiBUaGVuLCBpbmRpdmlkdWFsaXppbmcgdGhlIGRldmljZSBpcyBkb25l
+IGJ5IG9uYm9hcmRpbmcgaXQgdG8gc29tZSBkZXZpY2UgbWFuYWdlbWVudCBiYWNrZW5kLiBXaGls
+ZSB0aGlzIHByb2Nlc3MsIHRoZSBkZXZpY2UgZ2V0cyBhbiBJRCBhbmQgaXMNCiBoZW5jZWZvcnRo
+IGtub3duIHRvIHRoZSBkZXZpY2UgbWFuYWdlbWVudC4gQWxzbyB3aGlsZSB0aGlzIHByb2Nlc3Ms
+IHlvdSBjYW4gZG8gZnVydGhlciB0aGluZ3MgdGhhdCBhcmUgZGV2aWNlLXNwZWNpZmljLCBpLmUu
+LCBjb25maWd1cmluZyBTV1VwZGF0ZSB0byB1c2UgYW4gaW5kaXZpZHVhbCBjbGllbnQtaWQgZm9y
+IHdmeC4gTm90ZSB0aGF0IHRoZXJlIGFyZSBtYW55IHdheXMgb2YgaG93IHRvIGFjdHVhbGx5IG9u
+Ym9hcmQgYSBkZXZpY2UgYnV0DQogdGhlIHByaW5jaXBsZSByZW1haW5zLjxicj4NCjwvZGl2Pg0K
+PC9kaXY+DQo8L2Jsb2NrcXVvdGU+DQo8L2Rpdj4NCjwvZGl2Pg0KPC9kaXY+DQo8L2Rpdj4NCjwv
+YmxvY2txdW90ZT4NCjwvZGl2Pg0KPGRpdj4NCjxkaXYgZGlyPSJhdXRvIiBzdHlsZT0iY2FyZXQt
+Y29sb3I6IHJnYigwLCAwLCAwKTsgY29sb3I6IHJnYigwLCAwLCAwKTsgbGV0dGVyLXNwYWNpbmc6
+IG5vcm1hbDsgdGV4dC1hbGlnbjogc3RhcnQ7IHRleHQtaW5kZW50OiAwcHg7IHRleHQtdHJhbnNm
+b3JtOiBub25lOyB3aGl0ZS1zcGFjZTogbm9ybWFsOyB3b3JkLXNwYWNpbmc6IDBweDsgLXdlYmtp
+dC10ZXh0LXN0cm9rZS13aWR0aDogMHB4OyB0ZXh0LWRlY29yYXRpb246IG5vbmU7IG92ZXJmbG93
+LXdyYXA6IGJyZWFrLXdvcmQ7IC13ZWJraXQtbmJzcC1tb2RlOiBzcGFjZTsgbGluZS1icmVhazog
+YWZ0ZXItd2hpdGUtc3BhY2U7Ij4NCjxkaXYgZGlyPSJhdXRvIiBzdHlsZT0iY2FyZXQtY29sb3I6
+IHJnYigwLCAwLCAwKTsgY29sb3I6IHJnYigwLCAwLCAwKTsgbGV0dGVyLXNwYWNpbmc6IG5vcm1h
+bDsgdGV4dC1hbGlnbjogc3RhcnQ7IHRleHQtaW5kZW50OiAwcHg7IHRleHQtdHJhbnNmb3JtOiBu
+b25lOyB3aGl0ZS1zcGFjZTogbm9ybWFsOyB3b3JkLXNwYWNpbmc6IDBweDsgLXdlYmtpdC10ZXh0
+LXN0cm9rZS13aWR0aDogMHB4OyB0ZXh0LWRlY29yYXRpb246IG5vbmU7IG92ZXJmbG93LXdyYXA6
+IGJyZWFrLXdvcmQ7IC13ZWJraXQtbmJzcC1tb2RlOiBzcGFjZTsgbGluZS1icmVhazogYWZ0ZXIt
+d2hpdGUtc3BhY2U7Ij4NCjxkaXYgZGlyPSJhdXRvIiBzdHlsZT0iY2FyZXQtY29sb3I6IHJnYigw
+LCAwLCAwKTsgY29sb3I6IHJnYigwLCAwLCAwKTsgbGV0dGVyLXNwYWNpbmc6IG5vcm1hbDsgdGV4
+dC1hbGlnbjogc3RhcnQ7IHRleHQtaW5kZW50OiAwcHg7IHRleHQtdHJhbnNmb3JtOiBub25lOyB3
+aGl0ZS1zcGFjZTogbm9ybWFsOyB3b3JkLXNwYWNpbmc6IDBweDsgLXdlYmtpdC10ZXh0LXN0cm9r
+ZS13aWR0aDogMHB4OyB0ZXh0LWRlY29yYXRpb246IG5vbmU7IG92ZXJmbG93LXdyYXA6IGJyZWFr
+LXdvcmQ7IC13ZWJraXQtbmJzcC1tb2RlOiBzcGFjZTsgbGluZS1icmVhazogYWZ0ZXItd2hpdGUt
+c3BhY2U7Ij4NCjxkaXYgZGlyPSJhdXRvIiBzdHlsZT0iY2FyZXQtY29sb3I6IHJnYigwLCAwLCAw
+KTsgY29sb3I6IHJnYigwLCAwLCAwKTsgbGV0dGVyLXNwYWNpbmc6IG5vcm1hbDsgdGV4dC1hbGln
+bjogc3RhcnQ7IHRleHQtaW5kZW50OiAwcHg7IHRleHQtdHJhbnNmb3JtOiBub25lOyB3aGl0ZS1z
+cGFjZTogbm9ybWFsOyB3b3JkLXNwYWNpbmc6IDBweDsgLXdlYmtpdC10ZXh0LXN0cm9rZS13aWR0
+aDogMHB4OyB0ZXh0LWRlY29yYXRpb246IG5vbmU7IG92ZXJmbG93LXdyYXA6IGJyZWFrLXdvcmQ7
+IC13ZWJraXQtbmJzcC1tb2RlOiBzcGFjZTsgbGluZS1icmVhazogYWZ0ZXItd2hpdGUtc3BhY2U7
+Ij4NCjxkaXY+PGJyPg0KPC9kaXY+DQo8ZGl2Pjxicj4NCi0tJm5ic3A7PGJyPg0KRHIuIENocmlz
+dGlhbiBTdG9ybTxicj4NClNpZW1lbnMgQUcsIEZUIFJQRCBDRUQ8L2Rpdj4NCjxkaXY+PHNwYW4g
+Y2xhc3M9InVpLXByb3ZpZGVyIGEgYiBjIGQgZSBmIGcgaCBpIGogayBsIG0gbiBvIHAgcSByIHMg
+dCB1IHYgdyB4IHkgeiBhYiBhYyBhZSBhZiBhZyBhaCBhaSBhaiBhayIgZGlyPSJsdHIiPkZyaWVk
+cmljaC1MdWR3aWctQmF1ZXItU3RyLiAzLCZuYnNwOzg1NzQ4IEdhcmNoaW5nLDxzcGFuIGNsYXNz
+PSJBcHBsZS1jb252ZXJ0ZWQtc3BhY2UiPiZuYnNwOzwvc3Bhbj5HZXJtYW55PC9zcGFuPjxicj4N
+CjwvZGl2Pg0KPC9kaXY+DQo8L2Rpdj4NCjwvZGl2Pg0KPC9kaXY+DQo8L2Rpdj4NCjxicj4NCjwv
+Ym9keT4NCjwvaHRtbD4NCg==
 
-In the previous mail (Apologies, the conversation was quite some time ago),=
- you had suggested to use an onboarding wfx client which applies the config=
-uration recorded (ex: client-id for software update use case) in the wfx jo=
-b created for a particular device. Now, for the onboarding wfx client to fe=
-tch a job, the onboarding client must also have a client-id because  wfx jo=
-bs are linked to a client.
-
-You had suggested to use plugins inside wfx to route the request based on t=
-he information in the onboarding request's HTTP header (ex: serial number).
-Is the idea to use the plugins to return a response with the client-id and =
-onboarding job id to be used by the onboarding client? Or am I mistaken in =
-my understanding here?
-
-Thanks and Regards,
-Adithya
-
-________________________________
-From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> on beha=
-lf of Christian Storm via lists.cip-project.org <christian.storm=3Dsiemens.=
-com@lists.cip-project.org>
-Sent: Tuesday, July 2, 2024 2:44 PM
-To: balakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) <Adithya.Balakumar@toshiba-t=
-sip.com>
-Cc: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org>; dinesh k=
-umar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshiba-tsip.com>;=
- kunijadar shivanand(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <Shivanand.Kunij=
-adar@toshiba-tsip.com>; ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@tosh=
-iba-tsip.com>; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(=
-B =1B$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp>; Ki=
-szka, Jan <jan.kiszka@siemens.com>
-Subject: Re: [cip-dev] Regarding support for WFX backend for software updat=
-es in CIP Images
-
-Hi Adithya,
-
-Based on what you explained, my understanding is that there would be some s=
-ervice / script that would run upon image boot (probably first boot), to co=
-mmunicate
-with the backend (on-boarding) server. The on-boarding server would respond=
- with the details like device-id etc. upon successful registration of the d=
-evice.
-
-Yes, that is one option. You power on the device and, once it's connected, =
-it securely fetches its configuration data from an on-boarding backend serv=
-ice, probably with the device being authenticated by some human in the loop=
- close to the machine. Or this technician plugs in a trusted USB Stick or .=
-.. There are many options with some better/worse than the others depending =
-on your use case and demands. All of those are deployed in the field, for s=
-ure :)
-
-Anyway, all of them have in common that the device gets its configuration d=
-ata somehow and from thereon is registered and can make authenticated use o=
-f the (other) backend services, ignoring re-authentication.
-
-
-So, to achieve a meaningful integration of WFX with CIP Images, we have to =
-now support this on-boarding process as well (which would mean having an on=
--boarding server etc.)? Or is there another way to achieve this integration=
-?  Would like to understand your opinion on this.
-
-Well, the problem is that there are so many ways to onboard devices and eve=
-n standards, e.g., https://fidoalliance.org/device-onboarding/ + Secure Dev=
-ice Onboarding (SDO). So, one way of doing this is to bless some solution a=
-s CIP standard and integrate that (including having a running service for d=
-emoing the solution). However, I think it's better to side-step the problem=
-: showcase the integration of an =1B$B!=3D=1B(B even contrived =1B$B!=3D=1B=
-(B onboarding mechanism into which real ones can be hooked into easily.
-
-So, assuming we do onboarding supported by an onboarding backend service, w=
-e need to know/define how this onboarding service can be reached by the dev=
-ice and what configuration data is to be put where on the device =1B$B!=3D=
-=1B(B the latter is to be done custom anyway, regardless of what solution w=
-e choose. This means, we bake a (default, e.g., defined by a bitbake variab=
-le) backend service IP address/DNS name into the CIP image. This may be ove=
-rridden manually in the field but we need to have a sane default. Probably,=
- you would want to bake in other credential data to enable secure/trusted c=
-ommunication but let's ignore that for now. Then, on onboarding, the device=
- fetches the configuration data from the backend service in whatever format=
- and a custom code snippet places this configuration information on the dev=
-ice where appropriate (read: /etc/swupdate.cfg, /etc/<whatever>, ...).
-
-This can be perfectly modeled with an onboarding workflow in the existing w=
-fx we use for firmware updates :) =1B$B!=3D=1B(B we just need an onboarding=
- wfx client that talks to the wfx reachable under the (default or adapted) =
-IP/DNS name and applies the configuration recorded in the wfx job created f=
-or a particular device. Granted, one can bolt on security measures but for =
-demoing this, we can keep it simple initially. Now, how does this onboardin=
-g-wfx-client know what job (ID) to ask the wfx for? One could imagine anoth=
-er service that returns the wfx job ID for a particular device depending on=
- the data it sends with the first onboarding request to this service (e.g.,=
- serial number, ..., i.e., anything that is individual to a device). To kee=
-p it simple, and sparing the extra service, you can send that information i=
-n the onboarding-wfx-client request's HTTP header and use plugins ( https:/=
-/github.com/siemens/wfx/blob/main/docs/operations.md#plugins) to (re-)route=
- accordingly.
-his way, you're not urged to create individual CIP images but they get thei=
-r "identity" while onboarding with just providing the canonical fallback IP=
-/DNS name for the onboarding server.
-
-Now, all that can be done in SWUpdate as well so that onboarding can be han=
-dled just like a firmware update. Then, however, hooking existing solutions=
- into this mechanism becomes a bit harder....
-
-
-Apologies if my understanding is wrong.
-
-Thanks for reading this longish answer... and I hope this has helped? :)
-
-
------Original Message-----
-From: Storm, Christian <christian.storm@siemens.com>
-Sent: Thursday, June 27, 2024 1:47 AM
-To: balakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) <Adithya.Balakumar@toshiba-t=
-sip.com>
-Cc: cip-dev@lists.cip-project.org; dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC OD=
-G Porting) <dinesh.kumar@toshiba-tsip.com>; kunijadar shivanand(=1B$B#T#S#I=
-#P=1B(B TMIEC ODG Porting) <Shivanand.Kunijadar@toshiba-tsip.com>; ashrith =
-sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com>; hayashi kazuhiro(=
-=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D#I#G""#M#P#S!{#M#P#4=
-=1B(B) <kazuhiro3.hayashi@toshiba.co.jp>; Kiszka, Jan <jan.kiszka@siemens.c=
-om>
-Subject: Re: [cip-dev] Regarding support for WFX backend for software updat=
-es in CIP Images
-
-Hi,
-
-The mandatory configs that are required are the wfx server (backend) URL an=
-d the client-id. As per your suggestion, for the backend URL, providing a k=
-config variable so that users could enter that value before the build seems=
- a like good approach.
-
-This would be the hardwired default for the upstream wfx server [see below]=
-.
-
-
-However, Currently I am not clear about setting the client-id. The client-i=
-d is required by wfx while creating the jobs for the specific clients and a=
-lso to monitor the status of each client device (like update status etc.)
-
-Yes.
-
-
-Setting a client-id also via a kconfig variable would mean be to build a ne=
-w image for every new client-id which doesn't seem like a reasonable soluti=
-on for production.
-
-Exactly.
-
-
-I am not very familiar with how such device registration / identification r=
-equirements are handled in a production environment. Do you have any pointe=
-rs in this regard?
-
-Usually, you have engraved in the "golden image" sane defaults that you wou=
-ld want to roll-out to all your devices. Then, individualizing the device i=
-s done by onboarding it to some device management backend. While this proce=
-ss, the device gets an ID and is henceforth known to the device management.=
- Also while this process, you can do further things that are device-specifi=
-c, i.e., configuring SWUpdate to use an individual client-id for wfx. Note =
-that there are many ways of how to actually onboard a device but the princi=
-ple remains.
-
-
-Kind regards,
-  Christian
-
---
-Dr. Christian Storm
-Siemens AG, Technology, T CED OES-DE
-Friedrich-Ludwig-Bauer-Str. 3, 85748 Garching, Germany
-
-
---_000_TYCPR01MB9669FD137BC7D188F1D7558EC41A2TYCPR01MB9669jpnp_
-Content-Type: text/html; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
-jp">
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-Hello Christian,</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-Hope this message finds you well.</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
-I was referring back to a few ideas suggested by you on how we can integrat=
-e WFX backend support for isar-cip-core.</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
-In the previous mail (Apologies, the conversation was quite some time ago),=
- you had suggested to use an onboarding wfx client which applies the config=
-uration recorded (ex: client-id for software update use case) in the wfx jo=
-b created for a particular device.
- Now, for the onboarding wfx client to fetch a job, the onboarding client m=
-ust also have a client-id because &nbsp;wfx jobs are linked to a client.</d=
-iv>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
-You had suggested to use plugins inside wfx to route the request based on t=
-he information in the onboarding request's HTTP header (ex: serial number).=
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
-Is the idea to use the plugins to return a response with the client-id and =
-onboarding job id to be used by the onboarding client? Or am I mistaken in =
-my understanding here?</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
-Thanks and Regards,</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
-olor: rgb(0, 0, 0);">
-Adithya</div>
-<div id=3D"appendonsend"></div>
-<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
-bri,Helvetica,sans-serif; font-size:11pt; color:rgb(0,0,0)">
-<br>
-</div>
-<hr tabindex=3D"-1" style=3D"display:inline-block; width:98%">
-<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" co=
-lor=3D"#000000" style=3D"font-size:11pt"><b>From:</b> cip-dev@lists.cip-pro=
-ject.org &lt;cip-dev@lists.cip-project.org&gt; on behalf of Christian Storm=
- via lists.cip-project.org &lt;christian.storm=3Dsiemens.com@lists.cip-proj=
-ect.org&gt;<br>
-<b>Sent:</b> Tuesday, July 2, 2024 2:44 PM<br>
-<b>To:</b> balakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) &lt;Adithya.Balakumar=
-@toshiba-tsip.com&gt;<br>
-<b>Cc:</b> cip-dev@lists.cip-project.org &lt;cip-dev@lists.cip-project.org&=
-gt;; dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) &lt;dinesh.kumar@to=
-shiba-tsip.com&gt;; kunijadar shivanand(=1B$B#T#S#I#P=1B(B TMIEC ODG Portin=
-g) &lt;Shivanand.Kunijadar@toshiba-tsip.com&gt;; ashrith sai(=1B$B#T#S#I#P=
-=1B(B) &lt;Sai.Sathujoda@toshiba-tsip.com&gt;;
- hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D#I#=
-G""#M#P#S!{#M#P#4=1B(B) &lt;kazuhiro3.hayashi@toshiba.co.jp&gt;; Kiszka, Ja=
-n &lt;jan.kiszka@siemens.com&gt;<br>
-<b>Subject:</b> Re: [cip-dev] Regarding support for WFX backend for softwar=
-e updates in CIP Images</font>
-<div>&nbsp;</div>
-</div>
-<div style=3D"line-break:after-white-space">Hi Adithya,
-<div><br>
-<div>
-<blockquote type=3D"cite">
-<div>
-<div>Based on what you explained, my understanding is that there would be s=
-ome service / script that would run upon image boot (probably first boot), =
-to communicate
-<br>
-with the backend (on-boarding) server. The on-boarding server would respond=
- with the details like device-id etc. upon successful registration of the d=
-evice.<br>
-</div>
-</div>
-</blockquote>
-<div><br>
-</div>
-<div>Yes, that is one option. You power on the device and, once it's connec=
-ted, it securely fetches its configuration data from an on-boarding backend=
- service, probably with the device being authenticated by some human in the=
- loop close to the machine. Or this
- technician plugs in a trusted USB Stick or ... There are many options with=
- some better/worse than the others depending on your use case and demands. =
-All of those are deployed in the field, for sure :)</div>
-<div><br>
-</div>
-<div>Anyway, all of them have in common that the device gets its configurat=
-ion data somehow and from thereon is registered and can make authenticated =
-use of the (other) backend services, ignoring re-authentication.</div>
-<div><br>
-</div>
-<br>
-<blockquote type=3D"cite">
-<div>
-<div>So, to achieve a meaningful integration of WFX with CIP Images, we hav=
-e to now support this on-boarding process as well (which would mean having =
-an on-boarding server etc.)? Or is there another way to achieve this integr=
-ation? &nbsp;Would like to understand
- your opinion on this.<br>
-</div>
-</div>
-</blockquote>
-<div><br>
-</div>
-<div>Well, the problem is that there are so many ways to onboard devices an=
-d even standards, e.g.,&nbsp;<a href=3D"https://fidoalliance.org/device-onb=
-oarding/" data-auth=3D"NotApplicable">https://fidoalliance.org/device-onboa=
-rding/</a>&nbsp;+ Secure Device Onboarding (SDO).
- So, one way of doing this is to bless some solution as CIP standard and in=
-tegrate that (including having a running service for demoing the solution).=
- However, I think it's better to side-step the problem: showcase the integr=
-ation of an =1B$B!=3D=1B(B even contrived =1B$B!=3D=1B(B onboarding
- mechanism into which real ones can be hooked into easily.&nbsp;</div>
-<div><br>
-</div>
-<div>So, assuming we do onboarding supported by an onboarding backend servi=
-ce, we need to know/define how this onboarding service can be reached by th=
-e device and what configuration data is to be put where on the device =1B$B=
-!=3D=1B(B the latter is to be done custom anyway,
- regardless of what solution we choose. This means, we bake a (default, e.g=
-., defined by a bitbake variable) backend service IP address/DNS name into =
-the CIP image. This may be overridden manually in the field but we need to =
-have a sane default. Probably, you
- would want to bake in other credential data to enable secure/trusted commu=
-nication but let's ignore that for now. Then, on onboarding, the device fet=
-ches the configuration data from the backend service in whatever format and=
- a custom code snippet places this
- configuration information on the device where appropriate (read: /etc/swup=
-date.cfg, /etc/&lt;whatever&gt;, ...).</div>
-<div><br>
-</div>
-<div>This can be perfectly modeled with an onboarding workflow in the exist=
-ing wfx we use for firmware updates :) =1B$B!=3D=1B(B we just need an onboa=
-rding wfx client that talks to the wfx reachable under the (default or adap=
-ted) IP/DNS name and applies the configuration
- recorded in the wfx job created for a particular device. Granted, one can =
-bolt on security measures but for demoing this, we can keep it simple initi=
-ally. Now, how does this onboarding-wfx-client know what job (ID) to ask th=
-e wfx for? One could imagine another
- service that returns the wfx job ID for a particular device depending on t=
-he data it sends with the first onboarding request to this service (e.g., s=
-erial number, ..., i.e., anything that is individual to a device). To keep =
-it simple, and sparing the extra
- service, you can send that information in the onboarding-wfx-client reques=
-t's HTTP header and use plugins (&nbsp;<a href=3D"https://github.com/siemen=
-s/wfx/blob/main/docs/operations.md#plugins" data-auth=3D"NotApplicable">htt=
-ps://github.com/siemens/wfx/blob/main/docs/operations.md#plugins</a>)&nbsp;=
-to
- (re-)route accordingly.&nbsp;</div>
-<div>his way, you're not urged to create individual CIP images but they get=
- their &quot;identity&quot; while onboarding with just providing the canoni=
-cal fallback IP/DNS name for the onboarding server.</div>
-<div><br>
-</div>
-<div>Now, all that can be done in SWUpdate as well so that onboarding can b=
-e handled just like a firmware update. Then, however, hooking existing solu=
-tions into this mechanism becomes a bit harder....</div>
-<div><br>
-</div>
-<div><br>
-</div>
-<blockquote type=3D"cite">
-<div>
-<div>Apologies if my understanding is wrong.<br>
-</div>
-</div>
-</blockquote>
-<div><br>
-</div>
-<div>Thanks for reading this longish answer... and I hope this has helped? =
-:)</div>
-<div><br>
-</div>
-<br>
-<blockquote type=3D"cite">
-<div>
-<div>-----Original Message-----<br>
-From: Storm, Christian &lt;christian.storm@siemens.com&gt; <br>
-Sent: Thursday, June 27, 2024 1:47 AM<br>
-To: balakumar adithya(=1B$B#T#S#I#P=1B(B TEUR) &lt;Adithya.Balakumar@toshib=
-a-tsip.com&gt;<br>
-Cc: cip-dev@lists.cip-project.org; dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC OD=
-G Porting) &lt;dinesh.kumar@toshiba-tsip.com&gt;; kunijadar shivanand(=1B$B=
-#T#S#I#P=1B(B TMIEC ODG Porting) &lt;Shivanand.Kunijadar@toshiba-tsip.com&g=
-t;; ashrith sai(=1B$B#T#S#I#P=1B(B) &lt;Sai.Sathujoda@toshiba-tsip.com&gt;;=
- hayashi kazuhiro(=1B$BNS=1B(B
- =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) &lt;ka=
-zuhiro3.hayashi@toshiba.co.jp&gt;; Kiszka, Jan &lt;jan.kiszka@siemens.com&g=
-t;<br>
-Subject: Re: [cip-dev] Regarding support for WFX backend for software updat=
-es in CIP Images<br>
-<br>
-Hi,<br>
-<br>
-<blockquote type=3D"cite">The mandatory configs that are required are the w=
-fx server (backend) URL and the client-id. As per your suggestion, for the =
-backend URL, providing a kconfig variable so that users could enter that va=
-lue before the build seems a like
- good approach.<br>
-</blockquote>
-<br>
-This would be the hardwired default for the upstream wfx server [see below]=
-.<br>
-<br>
-<br>
-<blockquote type=3D"cite">However, Currently I am not clear about setting t=
-he client-id. The client-id is required by wfx while creating the jobs for =
-the specific clients and also to monitor the status of each client device (=
-like update status etc.)<br>
-</blockquote>
-<br>
-Yes.<br>
-<br>
-<br>
-<blockquote type=3D"cite">Setting a client-id also via a kconfig variable w=
-ould mean be to build a new image for every new client-id which doesn't see=
-m like a reasonable solution for production.<br>
-</blockquote>
-<br>
-Exactly.<br>
-<br>
-<br>
-<blockquote type=3D"cite">I am not very familiar with how such device regis=
-tration / identification requirements are handled in a production environme=
-nt. Do you have any pointers in this regard?<br>
-</blockquote>
-<br>
-Usually, you have engraved in the &quot;golden image&quot; sane defaults th=
-at you would want to roll-out to all your devices. Then, individualizing th=
-e device is done by onboarding it to some device management backend. While =
-this process, the device gets an ID and is
- henceforth known to the device management. Also while this process, you ca=
-n do further things that are device-specific, i.e., configuring SWUpdate to=
- use an individual client-id for wfx. Note that there are many ways of how =
-to actually onboard a device but
- the principle remains.<br>
-</div>
-</div>
-</blockquote>
-</div>
-<div>
-<div dir=3D"auto" style=3D"color:rgb(0,0,0); letter-spacing:normal; text-al=
-ign:start; text-indent:0px; text-transform:none; white-space:normal; word-s=
-pacing:0px; text-decoration:none; line-break:after-white-space">
-<div dir=3D"auto" style=3D"color:rgb(0,0,0); letter-spacing:normal; text-al=
-ign:start; text-indent:0px; text-transform:none; white-space:normal; word-s=
-pacing:0px; text-decoration:none; line-break:after-white-space">
-<div dir=3D"auto" style=3D"color:rgb(0,0,0); letter-spacing:normal; text-al=
-ign:start; text-indent:0px; text-transform:none; white-space:normal; word-s=
-pacing:0px; text-decoration:none; line-break:after-white-space">
-<div><br>
-<br>
-Kind regards,<br>
-&nbsp;&nbsp;Christian<br>
-<br>
---&nbsp;<br>
-Dr. Christian Storm<br>
-Siemens AG, Technology, T CED OES-DE</div>
-<div><span class=3D"x_ui-provider x_a x_b x_c x_d x_e x_f x_g x_h x_i x_j x=
-_k x_l x_m x_n x_o x_p x_q x_r x_s x_t x_u x_v x_w x_x x_y x_z x_ab x_ac x_=
-ae x_af x_ag x_ah x_ai x_aj x_ak" dir=3D"ltr">Friedrich-Ludwig-Bauer-Str. 3=
-,&nbsp;85748 Garching,<span class=3D"x_Apple-converted-space">&nbsp;</span>=
-Germany</span><br>
-</div>
-</div>
-</div>
-</div>
-</div>
-<br>
-</div>
-</div>
-</body>
-</html>
-
---_000_TYCPR01MB9669FD137BC7D188F1D7558EC41A2TYCPR01MB9669jpnp_--
-
+--_000_0D555EDC271E4EAEA67B7A02D9CF021Bsiemenscom_--
 
