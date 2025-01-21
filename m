@@ -1,309 +1,794 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <chris.paterson2@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 774BDC02181
-	for <webhook@archiver.kernel.org>; Mon, 20 Jan 2025 15:47:14 +0000 (UTC)
-Received: from PA4PR04CU001.outbound.protection.outlook.com (PA4PR04CU001.outbound.protection.outlook.com [40.107.162.24])
- by mx.groups.io with SMTP id smtpd.web10.39369.1737388032029603727
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F08C02182
+	for <webhook@archiver.kernel.org>; Tue, 21 Jan 2025 11:37:12 +0000 (UTC)
+Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.55])
+ by mx.groups.io with SMTP id smtpd.web10.14164.1737459429876142740
  for <cip-dev@lists.cip-project.org>;
- Mon, 20 Jan 2025 07:47:12 -0800
+ Tue, 21 Jan 2025 03:37:10 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=k0QbsioW;
- spf=pass (domain: siemens.com, ip: 40.107.162.24, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@renesas.com header.s=selector1 header.b=jWOKlNDa;
+ spf=pass (domain: renesas.com, ip: 52.101.229.55, mailfrom: chris.paterson2@renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=l1cwcvdNl7FmvNFMydQW1wLnuwSbRKYrAliVbVV3+f5bgIuuHTy/B38/pOZ2hpwXyHAemhuExx1yMSDpPsEPBPkGKqk1M69WmuBxVH81Ac5rNivvGtgx/1YqfIDrvBMBK5B/hKkgq+wrdSvOqlF1QYIyYeBlrkV9B9Y57OxX0+BRyJ8UvzU9flHlqhFQ3kc6pMhIYmHjzHmiZVMl3iSYHaMjJdb+mgjvSqOFVQkuF13vHMNS5hDHf703VMefp6wgK5kmObEldCRI9u9Su9/AzOJNwV0pgwc7nYkQ0Cu4ZriqrxwpBP/19Mk7b4NR6Whid9fO8WyhAkZRugGPN2cD9g==
+ b=BB3MAUjzDp4hOz4bL4OEFxmCiDinnNnvHPfxy0Xik8/P6aqTXox4tPUIipzk6DRaHmbDXZTc+Ukjxjoz7kVtSTd8Zyv7myS61ud4i3IHt9oVMMBynmR7QeiHLJMQ4g+aBLboFptrqxRdep+3pFtdrjwZwYbLUIzO5aHvNm6jQ9kHM34ZpW8UxNp3SThhtldDwlgi8R129mpBkHWGM1XrM87qdlWIHxUw5xuDiOCWHmH7JMxeb0lkIvLDlsQq91wSaIe2uE6ZvFtPzGfnH62LZ5HSp9HdLDcmiFbBE3PSN5KJhcrERf30yJNHeEBeQXMVtzA9xwagsfgipuhO9gYyTg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2dpGBeD5ISim21eKajIWmV9mfTQ6o4k8ITdkHvxOgfU=;
- b=hfRBN+WOho/E1tjnI/Nwl4XBiBIYbdSmvQLl41zFeg49x/MVHkgEPqgwal+CB/qglgjJqJ7x8bANv7cKPsTZ+fzDWHDd4K1rb3xABNVuIeGXGKWuFXDQgzNi6GoWBy+uNvrPF9wgzmEMEMn8R2lXkOHs4CHA+8Dxqsg6Wen57I0mS88lsbcuOjZ14hQpVbkihRzXKEGoopCPQGHLzvXZDyinhG4p399Bvbw1dQ3Ui63cM7nUznuhDNw4PDJZ1h9JGxW9xeuKPPiP8kjHH6RtRre3RSitSpGi0X6szM17PBnctYMBthS43SzLOLicWui0TlgW46WWNklD0YCCEK0A2w==
+ bh=P1EdRwGmxYqsVZFQzAFS8ISGd3DwwpOVsQRNkrrvokI=;
+ b=Yvwf4dWm+z+Hr7IiObOmEQ5ub/HNEUAxo8t0MPb5xSIAUKsRjIaqk5BPrm4zqssbZHQOB3C2ruojBbVcjO8zWBNQIS+SNGB9qNeNF4eEtBv79sKuEqq3aFReEstzZb1tOTS27BdP63nokM6ur/2bDOzaCvKtww5J1A3ssnm1hhzpvj6aTkbzwC6oGugy41/g6AvORcGlf4owhmu/C5qH7R9MbMIr60RkFTSw9SyhkMr4vQqnKxnwesitRuQ7VA5ywDJKNQRjWiUcfKqMl6eU0JEXBVH9Be5qmRAnbPnyyx0Qc3UrX7hJKRZQNqpWiQlB/3tE0/+HFGUZa9CtqTpC3g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2dpGBeD5ISim21eKajIWmV9mfTQ6o4k8ITdkHvxOgfU=;
- b=k0QbsioWKmNdQlMIxtYScXFxRI6K2f3Prcmxq/cL2gBWvs+huszH+WASKJ0pOuzTvy4d8FFbQIyi8AvcsAETx6lR4CyKQb+ijBk30L0PVdlq4NZo1hELzVUK2XHnQN7g6oxihpb21NytB1n1ab6AorsAwg41RCImbKFFH1opy+rD/TnsK99Nvl3j7tJc8bN0h9nlLqXgyz7LJ666tVuG9TVRuHduzcPesh5hvYmUar2GaxEbUf5+isAijJFqL5gdYFSZ4k8ScwW9fLebjY/6s9EWmIrB1Om9OqHPka7O8VpPirocCWPjY1JCv5r4ThtNDih5Zhri7BBLqcNNF4dCgg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by GV2PR10MB6258.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:74::15) with
+ bh=P1EdRwGmxYqsVZFQzAFS8ISGd3DwwpOVsQRNkrrvokI=;
+ b=jWOKlNDaqx4ug69S5ay+WKFLE9fSCe67pOQb4JFmwcNtc3xktPuxTd65T6BS2Lxhno0uk8Ca5nFRMdKoMn6RVZCfcqHXlT/PKq0gsaNwqKiUTRGF83m7IAvvepOKLPXgE9PJwNSKJVzcx4TB+AHqXo8UNAGhBLMdK6ej4IkPnIQ=
+Received: from OSZPR01MB8401.jpnprd01.prod.outlook.com (2603:1096:604:16f::7)
+ by TY1PR01MB10688.jpnprd01.prod.outlook.com (2603:1096:400:327::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8377.16; Mon, 20 Jan
- 2025 15:47:08 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408%6]) with mapi id 15.20.8377.009; Mon, 20 Jan 2025
- 15:47:07 +0000
-Message-ID: <9321a0a0-ec04-48d3-a0c6-e70a65035c92@siemens.com>
-Date: Mon, 20 Jan 2025 16:47:06 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core][PATCH] initramfs-crypt-hook: Optimize disk
- encryption in combination with expansion of last partition
-To: alexander.heinisch@siemens.com, cip-dev@lists.cip-project.org
-Cc: quirin.gylstorff@siemens.com
-References: <20250120123425.79292-1-alexander.heinisch@siemens.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8356.21; Tue, 21 Jan
+ 2025 11:37:06 +0000
+Received: from OSZPR01MB8401.jpnprd01.prod.outlook.com
+ ([fe80::c9a:aa8b:f8ea:998b]) by OSZPR01MB8401.jpnprd01.prod.outlook.com
+ ([fe80::c9a:aa8b:f8ea:998b%5]) with mapi id 15.20.8356.020; Tue, 21 Jan 2025
+ 11:37:06 +0000
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: "Sai.Sathujoda@toshiba-tsip.com" <Sai.Sathujoda@toshiba-tsip.com>,
+	Gylstorff Quirin <quirin.gylstorff@siemens.com>
+CC: "kazuhiro3.hayashi@toshiba.co.jp" <kazuhiro3.hayashi@toshiba.co.jp>,
+	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"dinesh.kumar@toshiba-tsip.com" <dinesh.kumar@toshiba-tsip.com>
+Subject: RE: ltp (syscall) failed test in CIP Security image with
+ isar-cip-core v1.6 on M-COM
+Thread-Topic: ltp (syscall) failed test in CIP Security image with
+ isar-cip-core v1.6 on M-COM
+Thread-Index: AQHbUuTAhee4QvOabkGKuX6gapV/KLLvWeRwgCiiEZCAAvIAEIAGXZKg
+Date: Tue, 21 Jan 2025 11:37:05 +0000
+Message-ID: 
+ <OSZPR01MB8401759CA7B581E1C8D0BE2AB7E62@OSZPR01MB8401.jpnprd01.prod.outlook.com>
+References: 
+ <OS3PR01MB6103AAC4C7533384E6C3CE8CC2072@OS3PR01MB6103.jpnprd01.prod.outlook.com>
+ <OSZPR01MB85159B1B29203FFAC3458D6ABF072@OSZPR01MB8515.jpnprd01.prod.outlook.com>
+ <OSZPR01MB84010B4C962BC73DD1466779B7192@OSZPR01MB8401.jpnprd01.prod.outlook.com>
+ <OSZPR01MB85158D80663768F0ECD9D96CBF1B2@OSZPR01MB8515.jpnprd01.prod.outlook.com>
+In-Reply-To: 
+ <OSZPR01MB85158D80663768F0ECD9D96CBF1B2@OSZPR01MB8515.jpnprd01.prod.outlook.com>
+Accept-Language: en-US, en-GB
 Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-In-Reply-To: <20250120123425.79292-1-alexander.heinisch@siemens.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AS4PR10CA0028.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:5d8::13) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OSZPR01MB8401:EE_|TY1PR01MB10688:EE_
+x-ms-office365-filtering-correlation-id: 9733a0f2-ec64-4ca4-9cb0-08dd3a0feecc
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|366016|1800799024|376014|38070700018|13003099007|7053199007|8096899003;
+x-microsoft-antispam-message-info: 
+ =?iso-2022-jp?B?SnUvWStuOVI5enNEVmxwOXRSU1pEWEVFbW1mTVdWb0ErY2NiOWgreGVF?=
+ =?iso-2022-jp?B?TEhPZUhiYm9QZFBQYXJUL24wSFJ3cGlHL0NDVzNURjhHMEsvSnhvZ0Z6?=
+ =?iso-2022-jp?B?ZEE3RDErbDVyNi8weVNvWkpqTjUvREs0VW1FdTdrS3pmTXI5SzNDdFgy?=
+ =?iso-2022-jp?B?VENvaWpIa3FjOHFobDRmaFc0VXR2R1hjc251WENmVEhlL0lJZTFlZ0tp?=
+ =?iso-2022-jp?B?bHprVklYMldMNEk1MzFleGRyM0c1R3ZxTmxDZnl0THNKeEU2N0V6THFv?=
+ =?iso-2022-jp?B?WmVoRFlNakdDMTBySmVZQ1UvRnNZOTV2ZjVTR0s3QlV4TnZaMHRTdjBH?=
+ =?iso-2022-jp?B?ZEQwTThrZE91TFhYM3h0TlNmL1g3UmVaVXVvVmZ2bitaSlBwTGp5VUd3?=
+ =?iso-2022-jp?B?ck90Q3lLV0YyNHVZcVR3K2wxV1RJQUF1VmZZMjYxSHYxTkVnZks2c0dq?=
+ =?iso-2022-jp?B?K3dqOGxzMkRYV0F5N2JTbWJRMURMRUplQVdJRzBSdU1qcGdSbnVSM2hi?=
+ =?iso-2022-jp?B?TzRwTFlyUFQ2Tm52bXlLNDdmZlQxUTFsbXRid3FhTkFRRFB6S2Y2WWxz?=
+ =?iso-2022-jp?B?REthVHdtWnVBMWIrRkNOVG5HNklXR0JZYzRPSkNDTGhqU1M2cmlCOVNl?=
+ =?iso-2022-jp?B?emJlQWJ3Y3NnR2JLSk5qVDcrYjkyRUdDRjhsOUFvOUQ2b25FZDczdGVq?=
+ =?iso-2022-jp?B?NHVkbEsrRVkwbW5zeStwQnFOWUxDaEhDcUlzcHZxSFdCVFVvamh5R0g4?=
+ =?iso-2022-jp?B?M01hTlBFRXFPaCt2VkZDQkJTS1lrRDJURER6UWxobTBFaWZvWGdJaVhs?=
+ =?iso-2022-jp?B?dnp2SXQweWFFVnE3QksvMWlSdDR0dXZwQTNtdVJHaDZkdGRnWUw1VGlK?=
+ =?iso-2022-jp?B?OFdXS3dySW5JRDQ1QUIrczNnUDBqZzBOYnFmZTRvRytYU0Y3d21zWkNZ?=
+ =?iso-2022-jp?B?VWdUdmNDaW9GeUZzdUdDK0JvY0pJRCtIUWxMRlNoWHphL1hzVGZxbWtu?=
+ =?iso-2022-jp?B?bjVybTNaQ3VTNE1CbHE0azVNYk1QS3BySlovUzNmNEQ5MlBLZ1c1c3dD?=
+ =?iso-2022-jp?B?c0ErRTY1T0RUa0Yxa0pYS04vbCtORFd2UVdMWW95TVRiTnBsR2tSdG1O?=
+ =?iso-2022-jp?B?all0aFJjRmE5VVJjWUpoOEU2Q1BjR0k3RnN2aHZxbjdaUHRYQ0tvL2RU?=
+ =?iso-2022-jp?B?V0hYb0p1ZzlyTjN2V2NObWdGeE42NlV3cjg4SjBielZQanQxUkhDb09M?=
+ =?iso-2022-jp?B?dWF4OEZtVzNxYXE1U29nZ3NKaWhTN3NIdkh6QTQ2VmpZdVhCU3ZTaFdo?=
+ =?iso-2022-jp?B?KzgrWERWbGRaejVjcHNnZ2owU3NEWG83N1FOTUJ4dTNucHo4bXdEYUtB?=
+ =?iso-2022-jp?B?bXFyMnNFRmdtZEVZUjdUV1pGT2YrY0dicWQ4MEVkQ0luaTVxRE02Y0VG?=
+ =?iso-2022-jp?B?aXBFWHRDQjQxU0djQzZCM1VjQUNmaDRrYThGakxxZFZ4a0lyWWRMc2VP?=
+ =?iso-2022-jp?B?VDFzam40aXd3M2Y4bzUwcnUwTlgwZk15S2hwYm14emJRV281SjgvNVFK?=
+ =?iso-2022-jp?B?ekJzRm1YV0RlcXV1a2hxcjVtMmN4V1ljRDdRRW82azVvUVZhQ1VsSXds?=
+ =?iso-2022-jp?B?RTBWdlRVYUtweW5GbFhWclRTTVVrWFRQQUE0ekE2MDJCUWtFdVJMcUZR?=
+ =?iso-2022-jp?B?Y3RySzJpaXpnYlFFZDY5ZEV4MW1CMWhmVmRlejhEd2JvRVBjRUY2WU9k?=
+ =?iso-2022-jp?B?cGUvZklmOFB0NXQ3Wm84cFJUbURZZ1pzNGo3VVIvT1JLZUNrOGhnQzV2?=
+ =?iso-2022-jp?B?OUhyRlFUQ2Q2aXhDMWZiNXhjYkJWV1VZckpTcXJXdGNCNDh5Sk1pTnBC?=
+ =?iso-2022-jp?B?cXF1Y05WaVM1bU85RitZcnVGd1A4WnpyZERLeGsvYWtGc3hSZDlKOHBX?=
+ =?iso-2022-jp?B?eUJnR0hGZUYrTWtydHpBelBHN2hocHNhR3diYXYrRHg2bHFLR05ERk1s?=
+ =?iso-2022-jp?B?eHNGSXJvMk13bjI4dXJuZVlzOXF6UE9PUG8zOSt5T1h6T2ZtSk1CazF3?=
+ =?iso-2022-jp?B?L0E9PQ==?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB8401.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018)(13003099007)(7053199007)(8096899003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?a0JCZXZ5dXNHem1hcERjVEorKzZMT1lhbThCdEdraWNZdUVMVEk5c1cv?=
+ =?iso-2022-jp?B?SzhnNDJNRFMrK3ZoZmdPQWNGOWc2YWVMOUg2VWpVcHMveUhwRTBWVmdW?=
+ =?iso-2022-jp?B?SEtzYUtMYzdUOE1nSHRhOHFuMmRldHd3ZkFMZjNtNUpGS0t6cWlOTHY1?=
+ =?iso-2022-jp?B?Nmhxb2dTaS9pZXZyaExUUHJ1akpoMlVMTFF5Ty9HUWorcDdTN0dTRk5I?=
+ =?iso-2022-jp?B?R2NDd1lTdVoyVUpwT0J5MnM4aCtEQ0ZvcWFGUWlvaXZGVmRIOXJZenFY?=
+ =?iso-2022-jp?B?TEhUWnl4c0VQKzJVVXFvc1NsaDJqY2hyMVg0R2ZEVURqOGx4MWFHbHRZ?=
+ =?iso-2022-jp?B?T2RZTEJqZzF1bDZRK3ZGTDVvUFBYMFFLZGdDdjIxakprR2syU3JQeU9Z?=
+ =?iso-2022-jp?B?Q2hPSllYL05Ob1E2WW52b1FROUtrcm5XckRtRmsvREtycWI2SjllVEZu?=
+ =?iso-2022-jp?B?MGJrbjdYcTlYTFZ1NVFwUk5yTjFLdElvR2xWejJVM2txem1OU2kxSVJ6?=
+ =?iso-2022-jp?B?MkhUKzVQSkZPaksrSUlVT0ozQnkvaTJseFZQY1MycksxSFhnT2V0ZTcy?=
+ =?iso-2022-jp?B?UDhXYjRuV0VWQzUzSUp0eUhZRzg4U1VIeTVrUDliY3dITWVpOFdDRCtG?=
+ =?iso-2022-jp?B?SVIranIrQTl6dmlRU1lyZ1lpbmVaT2c3UlNDOTJsYzU4ZU9VZS9BY0Zq?=
+ =?iso-2022-jp?B?SXh1TFQ3M0pLdUNIS1NYTG4rZldPQmpGcDhUWWRDVDFBZjk0Y0Fla3ZU?=
+ =?iso-2022-jp?B?eWN3L214eC9uNU45WWp5RXZGazBYWkt6d2NwNkNiUzZ3a0o2MStGUURZ?=
+ =?iso-2022-jp?B?cU5ZSnF2SWYycElURDZ0YjB2SllTWHJYRnd4MldTZmxqcENFUzQ1ZGFU?=
+ =?iso-2022-jp?B?L2hMRktPeStFb1dxa2F2Wm1WcWcvUlBpTzBrcG5YR05hb3RmL0IvQWxv?=
+ =?iso-2022-jp?B?eTFnb215OFNCUk5HdFMwUzJsVStLY0hyb1FhSmdWeU05UVdqb3ZOay9P?=
+ =?iso-2022-jp?B?bUVJOUlaNFhTMU9KQktxRk5hSzh2Ym1RU1JRaUZDY3JsT3NjM0RFTVYx?=
+ =?iso-2022-jp?B?RjdON3NJb1pPTEc2cm5maDFHNm9oMWJxcVpHMHkrSk9ETC9zb2FnSEF2?=
+ =?iso-2022-jp?B?S3BONnBzSUJOVkFubFd5M3V5blQwSmZOYi8vL0lQQzd2cm5MeW5QMHBB?=
+ =?iso-2022-jp?B?Skg2dC8yc1NOYnVDbjhSc1EvaGZsUGZpSmdXZ1Z2Zk9CbytZeUxnb3Fa?=
+ =?iso-2022-jp?B?LzlvQ2JHT0R3SHZhZk54QjVhM1hsb1htY2FzNFEyTkxKSlE3OEw0Qmxk?=
+ =?iso-2022-jp?B?L3JHRWdUOGZ4b1pZS2gyaGZKTGJUbUFHS1Z2QnFzeGE0NGhzaVNkTEhP?=
+ =?iso-2022-jp?B?ZW1XSHhkZzl2ZUNwRnF1TUFUb0xPRVlJQnBVVFJKSEF5T0xEMXkreGFp?=
+ =?iso-2022-jp?B?L0JtTEtqbkl0aGJwQ1VUWmN3aG1CTlZkR2hkWVRhdXZSKytBa3dxajVD?=
+ =?iso-2022-jp?B?ZGVsczFocHczeWZLdHpUTUtOb2cyOUhVTHEvNlhrMGRibzdBbkg5a1NF?=
+ =?iso-2022-jp?B?NTREY2FROEhvODlZUkd0aFkzZUJ6RFJDVUFqYmZrWWx3TTNoWSs4RVAw?=
+ =?iso-2022-jp?B?N1dNaUY3cjdxV1A2TEwwMHY2b1Fld1B0a2NRVmFvazVXQnVzeFBhdXE1?=
+ =?iso-2022-jp?B?dTZCa1ZIanBiSlFDaDZOazJUSnlsWnpOVHAxeGMwZ0xqMHhjN2hMUTVl?=
+ =?iso-2022-jp?B?aG1reFpmZW93Y0ZZRGFMOVZlTVUvei9CVzIzMmZaUEw2U1RhSlB6OE15?=
+ =?iso-2022-jp?B?QlZwcnpLWStseERYOFFXZXQ4bkVPVE5WWTBTV2FDbUZOeHUza3V3SkR4?=
+ =?iso-2022-jp?B?VkFxV0NYZUFyeXVPTkZJeTNNZmZCSkdjN004Q042RTI3cU1MbHMxdjJR?=
+ =?iso-2022-jp?B?ZHRUS0J0WUFLL3VuelUyZW5Mbi85ZlVJV1dUVUNYb29aSURrWFhwbnZ0?=
+ =?iso-2022-jp?B?STN5WGdIdzhnM2RzRXRQUSszMCtuWituSTRDeEliVFYxWUlBZDBNYnNB?=
+ =?iso-2022-jp?B?V0g5YS9TZ2IzWlhicERwQmIzaXFRU1o5S0gySTFxSmlZUHUzRjcwbWJK?=
+ =?iso-2022-jp?B?R1cyU3FCNWdXTkFjSUIvNmtHNXpST3pCYlhmRDNOK2htdWFBNXFmT3lj?=
+ =?iso-2022-jp?B?Z2cvTWdIVzYwZS9jRXRDUmc5czlnMlJDTUtWbm5wb29UR2hQMkY3c1BM?=
+ =?iso-2022-jp?B?RDZyZWZ4dnBFUFkzL1p6bEk0SFdNL05xNFNDN28rRkoydUp0U2ZyYkY4?=
+ =?iso-2022-jp?B?UW5OVHV4dytLK213YzJYM25kTVQxZVFpaHc9PQ==?=
+Content-Type: multipart/alternative;
+	boundary="_000_OSZPR01MB8401759CA7B581E1C8D0BE2AB7E62OSZPR01MB8401jpnp_"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GV2PR10MB6258:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6b008435-f06d-49c1-54f1-08dd3969b1d5
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?Y0U3dmFUVWFvMCt0N0Q2SC9qTUc1M0h0eWpNdVp3UEx6YzlZUktqb1Y2N3Bx?=
- =?utf-8?B?YTNxcEZwdXhoaGVrZitUNkt3dWt5aHNNdWRhSE5XQXNLVUViNmNGNFc5d1BH?=
- =?utf-8?B?TlJaL0lNV2dzQk10UXh5RzNMYi8xblIrcFRtcDd6eXhwRDByam5lS1c1K0N6?=
- =?utf-8?B?YncyaDg1VmNqeS9sSGcvZlYzVFFrNnJaSmRsYTh0aEZBTTF1ZU9JbUthNFhW?=
- =?utf-8?B?YTFCZzhVa2xNT0QvMXppT2RzM0hKa1JjVnkvOVdhbGVNeGp6aFNFdkxvQlNU?=
- =?utf-8?B?SWpZaitDVkNRUWR5Ulg4UFBjTlJTaG5tTW9LWGx4WFdYZGdqRzFvMzFwNS9s?=
- =?utf-8?B?aWpYam5UeW03WFZoRGtLa3RPYjBBS3JvYjEyd3M2Q2owMmh4NHVjMkNMSElm?=
- =?utf-8?B?WE9adlpGVUpHM3JWKzUrK0pZTW5FcUkyeDA1NXFYa252bEIwUVBYSTFiUFAx?=
- =?utf-8?B?RVhqYWEvbjM1bUVJOE1mMXd6TWFkY1RFWFNoSHEvcFhJcGphTE11dk9WL3d0?=
- =?utf-8?B?UDcxOUVtM1FxbGRVTGxPeTZNRTJDdlExMUQrd1laeURabEtMc0NoRlNpNHdK?=
- =?utf-8?B?M2gvb3drNHNCTlNhWnlyUmxJK3VOMlRFbnJnZzlGMUlCdER3N2tFelYzKzZP?=
- =?utf-8?B?T0dBeG9ya01tR1U2dDV6YXhzVWNhYy9KUXpIN0lJOWVPTmgwNUo3Ly94OU9B?=
- =?utf-8?B?QWhjUG83enFIRU84T3BHWS9WV1JqZ0l6RjFqdW8yanZRbU1JeUYxNmdlS0xY?=
- =?utf-8?B?cWJ2eXhjV1JsTk9KeW5aeGo3anZVMGJsZCswbmFJY2MydnZIYmJycWFZU3BR?=
- =?utf-8?B?THIzTmFlcDBsZEJlRngyRnRxOHdnTU9IVlVMZ2dseXpWV3VRZlcrb21WTHBC?=
- =?utf-8?B?eGg4cWtiSk1BN3lxa0ZZYmoyZkd2RGpud2w5akNETWEwS2xiQU1aOUVVMTdF?=
- =?utf-8?B?VDd5TWZXb3RQbGJEYldzUkVZTVlOR2VveWtLZ21sY0Z0cTlmS0hVWFp4ZTQx?=
- =?utf-8?B?SW4vM004dTJ1MkNnVEdubHFLVVAvRkZGMGt6ZFZ5ek5lU2NnbGdxV21sQXRI?=
- =?utf-8?B?RlIzZGVHT1FrdmQ0VTlkQ3c0RVh6b1BDWTN2Z1F3WFZHY0lzeDk2b0dFUFdY?=
- =?utf-8?B?QXEzVUxqcjA5bnRZdGxCZmV4RjhPV1B0aXNocHhrOEppNlNLdjdpSC91VUxE?=
- =?utf-8?B?ajhyVlZTb3MyeFQwUm5TUDhuaDB0enhyNU80RmlFUXRHN0I1QWc4eTJhcnNK?=
- =?utf-8?B?QSsvMzhReUxETGY4czVPcmdjWDJUK0pRL1UxRHkrZmVpMC9lRTBmWWcrR0ZU?=
- =?utf-8?B?cFZ5Sm1KSWJhdU5lcFEwZFpQWTVxbDJDVzBEdHRhbFhKUkNFenN3d3R2N0FJ?=
- =?utf-8?B?eDZDSWxYK1B6cFVpRDBEVHI0TEVVbU1zU3dWb2hDd1pHM2ROZzA4YUtNOGI4?=
- =?utf-8?B?NHlGWTZ2L1Q2NmNSbUFJakFPQTBEbmZqdVBNcW1TQkdFeGR1Z0cyVjg1UlRY?=
- =?utf-8?B?ZGpLenhUNW9pNGxLQmtTa2tEMUVkMjVNbkZ1ektYNjA5azBVQ2dtcjdRWDVp?=
- =?utf-8?B?Qk50eUwrUThmWldPNktxb3gzVnZHOVNNSWJEc09mSThoRWg0aDZUWXJXd21i?=
- =?utf-8?B?cGtkN2pPNy9Sbk14SkxpQTZ0RjBIajFoTU1DZHNieWRRd0NoL3NGTURCN2dP?=
- =?utf-8?B?THU2MnFvS3I3aVkyYnk0UVlCSXR1ZzE1K3E1ZVVVM0d2T1RUZUtkSzdZdklK?=
- =?utf-8?B?Z1JnVDBNMWdTWjYyRFd6SEZNV25aNGltVEQzclVNaXp0clhyTGhRS2duY3Jh?=
- =?utf-8?B?NncyMXNRY3BVdmtONVlaM0xPTHJMT2laRTNTSXFRa3JtVzh2U2pXVW1QQ3pC?=
- =?utf-8?Q?a7UfI9SJpiur+?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?Z1hzVFBuYjNQellCS3lxTnVpdkNtWVEwU0R1eTBuYVMveGFKWEFjbkJkNTNh?=
- =?utf-8?B?RllqakZRTkRkRkxqOFNzUEdBOUZ0WUd3RTgrd0pJUkhIMEFQUWIwaDVJcGxo?=
- =?utf-8?B?dm5jRnJmcFgvZStOOTlnblZLQ2lpTEpFVHEwTW1EdEhFYUFiL2RZMUxxWVhG?=
- =?utf-8?B?U0RzOHViS2srN0NJckN2U0JPTDhUZG0zR3ZXL3FmQi9Pc01GYXkzaEVrVzJS?=
- =?utf-8?B?VjlOamhOdnhxd0pvdW1oQVFGYWpmWG92NGRCM2NCV3VkMlZnbEVXNGcxci9G?=
- =?utf-8?B?UmNnVGt2OGxKVlkwYitnNEU2TjV1b0dDNG1XQzA2OU8wb1ZqNTg3TGF5Vlhm?=
- =?utf-8?B?RmFOR0s4V2ppR05uTDl1NkNyVHJQcS9qeE5RMUw3SzRPc1UwbEZaeDJra2hC?=
- =?utf-8?B?U0lLNEU5RHlodldSZ2tXN1Z1TzFsbHJJTjk1bStnby9xblBHOFdxQmJSQkQy?=
- =?utf-8?B?dTFIVERyV01jZ1Z3RnJsaGE1aGlDRmxvZnRzOVEyMGJWYllOTDY5anJoZEFW?=
- =?utf-8?B?VEVxVkVuVkRTcjBLSFYrT3JXaXZkdkdkUjQwZmdCT2NPdVc1eW03YmtOSjRN?=
- =?utf-8?B?RTBMWmVvMlpBbjNBeGp0OUFCWkkrcVJPMGlzVE1tZ0tqejlXeDh4UGYvTS9P?=
- =?utf-8?B?cjVmVktlKzJJcG9zdUdhTW1zQ0FRMmc1YnNZb1h0SThrcE9wZG5VclZhVlRP?=
- =?utf-8?B?SWZOV2pkbktmbGorZkk0WHB1VzdZQTBud3VhN3p1YmVJbEpnaHo3bkR3dysx?=
- =?utf-8?B?b3lRaUtTOWcxcWIwekdBTGMyMit6cXJrSWJ4VkJGMUY2UnQxRCs3YVdUckJC?=
- =?utf-8?B?eEgxcWhHUHg2ZndGQ0ZyRDZva3dXSkU4KzdudldLZEpwZU5Yc2pEbUNXK3Nm?=
- =?utf-8?B?ekdmVDg1dFk0SmlvelpRejhYalpQYkhSbCtZenhsaUVaOUYrbDVJZC9WWUFt?=
- =?utf-8?B?Tnh5eDJQdlg5V2ZuRDJCa2ZFc0FrWjFGM3h2UldTMU92bUxPZ2VmOHpIblhU?=
- =?utf-8?B?dUpibzBla1NxYUJUQzJUMGJPQ3k3OGdHaWVJTjl1djRZOWVIK0xTejdlVm15?=
- =?utf-8?B?M2Z0OFRYeW9meEpyTGdhTk0xZGx0c2NnbW92LzhvKytrVEl5NXorbUthOVJV?=
- =?utf-8?B?cm5WZDlYVFhDS2ZwWisrU3VJcW1ONDR5aExVb21odWxWOFBxZzUzbWJvdkgx?=
- =?utf-8?B?ZE5jOTlaSzM0cjI4bmxrYzRTekZCb0M5cllYcE1mVG0veWNwS29YR2RPbS9J?=
- =?utf-8?B?QXJQUW8vcGZZTnFzMytnOERKY25Rd3pkLzYwUldxcE1XSE9KVGJiSFZyTkNW?=
- =?utf-8?B?cjFveVFXcTBkWHp3RWV5NjI3TXMwYUI2NDBSeWhiaUJBQjV0Uk00NWF2bkdy?=
- =?utf-8?B?ZlFxYzJpdWFIckNJVGVJc0hIMGx6LzlnQkthS1NEckNSM1NWSU4wVkdGbXJV?=
- =?utf-8?B?ZURkTC9lVk9uNkpzUXlkNGZVTVFSOGtzdC8wa3o4WnZNYTlPY0VXSGRjc0tP?=
- =?utf-8?B?a2ZjVHhUNTRJUFFkS1BBTUM0MVc5c0x5UkpGWWZyQWtHK3E0NXZMYmozUlRZ?=
- =?utf-8?B?UmM5MHZtdHVweFNhVk1TckVDMUE4ZHhVZ1B3VzIzLzN3dHNtZHh3dERVV2xm?=
- =?utf-8?B?VENNOERQMEh6UTZtZHFYQzJqbHFrSmE4eXRrTEc3ajhHZmRWeWsvV0o2NFRt?=
- =?utf-8?B?a1NLL0FNbnc2WlU2bDdHTWIvT2FERytVaVJCQWZNYmVMMkdMRmY0Q3IvQU1F?=
- =?utf-8?B?V28vTVJFaXB5cyt0ZGpGUWk0am1BcTIxRTRSNTZuWnNhcmFJcFhFQjl5d0h5?=
- =?utf-8?B?aHV4TTlRaTdiYXhzNmVDUDROTHVqY1hXMG9ZODB0dTdMbUZLdjQ1aGk4N0RL?=
- =?utf-8?B?R2ZxUXdLUTg0L1VRZFI0WnpLYWRROVR2bDNwTkNCSXNYaFRwenI0ZHcvNkNI?=
- =?utf-8?B?UndUZG5wYU4zK0NmdHNsa0JmejdNVjUreTJFVGVOMFVCZm8wb2hkcmR1UExJ?=
- =?utf-8?B?R2g4QUVaVEJVSHR0dVZPT1M3K25DNGNuRHJBMXVxUTRtTk4xYlhGcmU1RDFp?=
- =?utf-8?B?aEdic3lVRlNuNGdPazNYRlRYSTBKejY3aUFrNDArVG1lOW1RZDREOUpwREhG?=
- =?utf-8?B?ekcvQ3BvR1ZqNWlnb0NvTW1OMFMzOGY2SXZqaEVBVE9JcXBvUGFDMCszUXp3?=
- =?utf-8?B?V1E9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6b008435-f06d-49c1-54f1-08dd3969b1d5
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-OriginatorOrg: renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jan 2025 15:47:07.5310
+X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB8401.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9733a0f2-ec64-4ca4-9cb0-08dd3a0feecc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jan 2025 11:37:06.1408
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HmimZbRGrbnw4+sBalbufna552REU+dGqbyud2VTKZqnwahbqxbTG1qNlIqSCYsFLWf8jaBxE9DL5AgZS9etBg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR10MB6258
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: rk2CtmC3mMIVsRo1ZD1MNF/LOOIOMAN8Eht43iTvOvEqoW4K9cU3JFJjjqt4aqd/exOq8vARPXV3kBfkc/Mbk5q+Lvbae46udWqFY0AukPk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB10688
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 20 Jan 2025 15:47:14 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17556
+ <cip-dev@lists.cip-project.org>; Tue, 21 Jan 2025 11:37:12 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17557
 
-On 20.01.25 13:34, alexander.heinisch@siemens.com wrote:
-> From: Alexander Heinisch <alexander.heinisch@siemens.com>
-> 
-> In the current implementation (since: 284175c3) disk expansion logic
-> is done before the actual disk encryption.
-> 
-> This results in reencrypting the full expanded size of the disk, instead
-> of only reencrypting the sections containing the actual data. This results
-> in a drastic increase of time (approx 20x on our systems ) needed for reencryption!
-> 
-> Since relevant disk contents are only available in the sections of the disk
-> available before the expansion, it is sufficient to reencrypt them only.
-> 
-> This patch changes order of encryption and disk expansion resulting in
-> faster encryption (since only the necessary parts are encrypted).
-> The resize operation does not reencrypt the added disk parts but just
-> extends the LUKS container (cryptsetup resize) to reflect the maximum
-> available disk space.
-> 
-> Signed-off-by: Alexander Heinisch <alexander.heinisch@siemens.com>
-> ---
->  .../files/local-top-complete                  | 37 +++++++++++++++++--
->  1 file changed, 33 insertions(+), 4 deletions(-)
-> 
-> diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-> index 8adc4e5..c4135c3 100644
-> --- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-> +++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-> @@ -153,6 +153,35 @@ expand_partition() {
->  	# Inform the kernel about the partitioning change
->  	partx -u "${last_part}"
->  
-> +	last_part_device_name=${last_part#\/dev/}
-> +
-> +	mount_point=$(mktemp -d -p "" "$(basename "$0").XXXXXXXXXX")
+--_000_OSZPR01MB8401759CA7B581E1C8D0BE2AB7E62OSZPR01MB8401jpnp_
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 
-New binary (except for clevis) - would have to be listed in
-HOOK_COPY_EXECS to ensure its actually available.
+Hello Sai, Quirin,
 
-But we are working here against a temporary rootfs in RAM, thus could
-simply use a static name derived from the hook name as well.
+Currently there are two MCOM =1B$B!H=1B(Bdevice-types=1B$B!I=1B(B in LAVA: =
+x86-siemens-mcom [0] and mcom-mtda [1].
+It looks like the latter is being used for the SWG testing.
 
-> +
-> +	mapping_name=$(cat /sys/class/block/"$last_part_device_name"/holders/*/dm/name)
-> +	cryptsetup resize "$mapping_name"
-> +	mount /dev/mapper/"$mapping_name" "${mount_point}"
-> +	fs_type=$(findmnt -fno FSTYPE "${mount_point}" )
+Is there a physical difference that means =1B$B!H=1B(Bstandard=1B$B!I=1B(B =
+testing cannot be run on the mtda-4-mcom device?
 
-New binary findmnt. But why not using get_fstype like the rest?
+Ideally, I=1B$B!G=1B(Bd like us to move to having a single =1B$B!H=1B(Bx86-=
+siemens-mcom=1B$B!I=1B(B device-type for all MCOM devices, and if specific =
+SWG jobs can only run on the mtda-4-mcom [2] device then we make use of =1B=
+$B!H=1B(Btags=1B$B!I=1B(B in the LAVA job definition.
 
-> +	last_part=/dev/mapper/"$mapping_name"
-> +
-> +	case ${fs_type} in
-> +	ext*)
-> +
-> +		# Do not fail resize2fs if no mtab entry is found, e.g.,
-> +		# when using systemd mount units.
-> +		export EXT2FS_NO_MTAB_OK=1
-> +		resize2fs "${last_part}"
-> +		;;
-> +	btrfs)
-> +		btrfs filesystem resize max "${mount_point}"
-> +		;;
-> +	*)
-> +		log_warning_msg "Unrecognized filesystem type ${fs_type} - no resize performed"
-> +		;;
-> +	esac
-> +
-> +	umount "${mount_point}"
-> +	rmdir "${mount_point}"
+[0] https://lava.ciplatform.org/scheduler/device_type/x86-siemens-mcom
+[1] https://lava.ciplatform.org/scheduler/device_type/mcom-mtda
 
-rmdir does not exist by default. You could use rm -r instead.
+Thanks, Chris
 
-But we don't need that strictly spoken. The initrd rootfs will get
-dropped anyway.
+From: dinesh.kumar@toshiba-tsip.com <dinesh.kumar@toshiba-tsip.com>
+Sent: 17 January 2025 10:42
+To: Chris Paterson <Chris.Paterson2@renesas.com>
+Cc: kazuhiro3.hayashi@toshiba.co.jp; cip-dev@lists.cip-project.org; Sai.Sat=
+hujoda@toshiba-tsip.com
+Subject: RE: ltp (syscall) failed test in CIP Security image with isar-cip-=
+core v1.6 on M-COM
 
-> +
->  	log_end_msg
->  }
->  
-> @@ -215,10 +244,6 @@ for partition_set in $partition_sets; do
->  		echo "ROOT=$decrypted_part" >/conf/param.conf
->  	fi
->  
-> -	if [ "$partition_expand" = "expand" ]; then
-> -		expand_partition $part_device
-> -	fi
-> -
->  	if /usr/sbin/cryptsetup luksDump --batch-mode "$part_device" \
->  			| grep -q "luks2"; then
->  		open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
-> @@ -259,6 +284,10 @@ for partition_set in $partition_sets; do
->  	esac
->  
->  	finalize_tpm2_encryption "$part_device"
-> +
-> +	if [ "$partition_expand" = "expand" ]; then
-> +		expand_partition $part_device
-> +	fi
->  done
->  
->  if [ -n "$watchdog_pid" ]; then
+Hi Chris,
 
-Hehe, I was waiting for something like that from you already. I was too
-lazy adding these extra bits without having the pressure myself.
+Thanks for your response.
 
-Jan
+Sai has added comments in the MR. Please review them.
 
--- 
-Siemens AG, Foundational Technologies
-Linux Expert Center
+Please refer my response inline.
+
+Thanks & Regards,
+Dinesh Kumar
+
+From: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@re=
+nesas.com>>
+Sent: Wednesday, January 15, 2025 7:27 PM
+To: dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshib=
+a-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>>
+Cc: hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D=
+#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp<mailto:kazuhiro=
+3.hayashi@toshiba.co.jp>>; cip-dev@lists.cip-project.org<mailto:cip-dev@lis=
+ts.cip-project.org>; ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba=
+-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>>
+Subject: RE: ltp (syscall) failed test in CIP Security image with isar-cip-=
+core v1.6 on M-COM
+
+Hello Dinesh, Sai,
+
+I=1B$B!G=1B(Bve created a MR that adds build/test support for the x86 merge=
+d config [0]. Please look for exactly what=1B$B!G=1B(Bs been done.
+Currently it adds support to all the CIP kernels.
+Do you also want support added for the stable kernel versions?
+[Dinesh] I have reviewed the changes you have made. It=1B$B!G=1B(Bs good no=
+w merged configs are being tested at least on some targets.
+                As of now can you please also enable running ltp tests on x=
+86-siemens-mcom target? With kernel 6.1
+               At the moment our primary focus is from IEC perspective so r=
+unning only 6.1 kernel is sufficient, but if other CIP members have require=
+ments to run other stable kernel versions that can should be discussed in T=
+SC meeting,
+
+               However, please note that as this setup is not running CIP s=
+ecurity image so we will explore options to run ltp tests on M-COM device w=
+ith merged config with kernel 6.1 via isar-cip-core pipeline. (This is stil=
+l not discussed with all members)
+               But this setup is also important in case if we want to compa=
+re any failure cases etc.
+               If you have any ideas how to run ltp tests on security image=
+s on M-COM using Linux-cip-ci pipeline please let us know.
+
+I=1B$B!G=1B(Bve kicked off various pipelines to test these changes. Links c=
+an be found in [1].
+
+[0] https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines/-/merge_=
+requests/65
+[1] https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines/-/merge_=
+requests/65#note_2298307207
+
+Kind regards, Chris
+
+From: dinesh.kumar@toshiba-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com> <=
+dinesh.kumar@toshiba-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>>
+Sent: 20 December 2024 16:56
+To: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@rene=
+sas.com>>
+Cc: kazuhiro3.hayashi@toshiba.co.jp<mailto:kazuhiro3.hayashi@toshiba.co.jp>=
+; cip-dev@lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>; Sai.=
+Sathujoda@toshiba-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>
+Subject: RE: ltp (syscall) failed test in CIP Security image with isar-cip-=
+core v1.6 on M-COM
+
+Hi Chris,
+
+Please reply to this email as by mistake Ashrit included SWG.
+
+Regards,
+Dinesh Kumar
+
+From: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com<mailt=
+o:Sai.Sathujoda@toshiba-tsip.com>>
+Sent: Friday, December 20, 2024 7:43 PM
+To: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@rene=
+sas.com>>; cip-members@lists.cip-project.org<mailto:cip-members@lists.cip-p=
+roject.org>
+Cc: hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D=
+#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp<mailto:kazuhiro=
+3.hayashi@toshiba.co.jp>>; dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Portin=
+g) <dinesh.kumar@toshiba-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>>; c=
+ip-security@lists.cip-project.org<mailto:cip-security@lists.cip-project.org=
+>; cip-dev@lists.cip-project.org<mailto:cip-dev@lists.cip-project.org>
+Subject: ltp (syscall) failed test in CIP Security image with isar-cip-core=
+ v1.6 on M-COM
+
+Hello Chris,
+
+Hope you are doing great.
+
+SWG locally executed LTP tests on M-COM x86 device booted with CIP security=
+ image. The kernel used in this image is built with cip x86 merged defconfi=
+g<https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/-/blob/master=
+/6.1.y-cip/x86/cip_merged_defconfig?ref_type=3Dheads>. After generating the=
+ results, we found some failed tests in the syscalls suite.
+
+We wanted to compare them with kernel test results in LAVA and noticed that=
+ cip x86 merged  defconfig<https://gitlab.com/cip-project/cip-kernel/cip-ke=
+rnel-config/-/blob/master/6.1.y-cip/x86/cip_merged_defconfig?ref_type=3Dhea=
+ds> is not being used to run LTP tests on x86 targets. Can you please look =
+into that ?
+
+I am attaching a document with the results summary of LTP tests when run on=
+ M-COM x86 device with v1.6 security image. Please have a look at it. I am =
+also attaching the failed test cases in syscalls suite.
+
+We need opinion from members if we need to hold back from sharing the v1.6 =
+x86 generic isar-cip-core evaluation to BV members in case those LTP test f=
+ailures are effective.
+
+Thanks and regards,
+Sai Ashrith
+
+
+--_000_OSZPR01MB8401759CA7B581E1C8D0BE2AB7E62OSZPR01MB8401jpnp_
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
+osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
+//www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
+<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
+<style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:Aptos;}
+@font-face
+	{font-family:"MS PGothic";
+	panose-1:2 11 6 0 7 2 5 8 2 4;}
+@font-face
+	{font-family:"\@MS PGothic";}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	font-size:12.0pt;
+	font-family:"MS PGothic",sans-serif;
+	mso-fareast-language:JA;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:blue;
+	text-decoration:underline;}
+span.EmailStyle20
+	{mso-style-type:personal-reply;
+	font-family:"Calibri",sans-serif;
+	color:#7030A0;
+	font-weight:normal;
+	font-style:normal;
+	text-decoration:none none;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-size:10.0pt;
+	mso-ligatures:none;}
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
+div.WordSection1
+	{page:WordSection1;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]-->
+</head>
+<body lang=3D"EN-GB" link=3D"blue" vlink=3D"purple" style=3D"word-wrap:brea=
+k-word">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Hello Sai,=
+ Quirin,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp=
+;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Currently =
+there are two MCOM =1B$B!H=1B(Bdevice-types=1B$B!I=1B(B in LAVA: x86-siemen=
+s-mcom [0] and mcom-mtda [1].<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">It looks l=
+ike the latter is being used for the SWG testing.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp=
+;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Is there a=
+ physical difference that means =1B$B!H=1B(Bstandard=1B$B!I=1B(B testing ca=
+nnot be run on the mtda-4-mcom device?<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp=
+;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Ideally, I=
+=1B$B!G=1B(Bd like us to move to having a single =1B$B!H=1B(Bx86-siemens-mc=
+om=1B$B!I=1B(B device-type for all MCOM devices, and if specific SWG jobs c=
+an only
+ run on the mtda-4-mcom [2] device then we make use of =1B$B!H=1B(Btags=1B$=
+B!I=1B(B in the LAVA job definition.
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp=
+;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">[0]
+<a href=3D"https://lava.ciplatform.org/scheduler/device_type/x86-siemens-mc=
+om">https://lava.ciplatform.org/scheduler/device_type/x86-siemens-mcom</a><=
+o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">[1]
+<a href=3D"https://lava.ciplatform.org/scheduler/device_type/mcom-mtda">htt=
+ps://lava.ciplatform.org/scheduler/device_type/mcom-mtda</a><o:p></o:p></sp=
+an></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp=
+;</o:p></span></p>
+<div>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ap=
+tos&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-GB">Thanks, Chri=
+s<o:p></o:p></span></p>
+</div>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp=
+;</o:p></span></p>
+<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0cm 0cm 0cm =
+4.0pt">
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"font-size:11.0pt;fo=
+nt-family:&quot;Calibri&quot;,sans-serif">From:</span></b><span lang=3D"EN-=
+US" style=3D"font-size:11.0pt;font-family:&quot;Calibri&quot;,sans-serif"> =
+dinesh.kumar@toshiba-tsip.com &lt;dinesh.kumar@toshiba-tsip.com&gt;
+<br>
+<b>Sent:</b> 17 January 2025 10:42<br>
+<b>To:</b> Chris Paterson &lt;Chris.Paterson2@renesas.com&gt;<br>
+<b>Cc:</b> kazuhiro3.hayashi@toshiba.co.jp; cip-dev@lists.cip-project.org; =
+Sai.Sathujoda@toshiba-tsip.com<br>
+<b>Subject:</b> RE: ltp (syscall) failed test in CIP Security image with is=
+ar-cip-core v1.6 on M-COM<o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-size:11.0pt;font-=
+family:&quot;Calibri&quot;,sans-serif;mso-fareast-language:EN-US">Hi Chris,=
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-size:11.0pt;font-=
+family:&quot;Calibri&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-size:11.0pt;font-=
+family:&quot;Calibri&quot;,sans-serif;mso-fareast-language:EN-US">Thanks fo=
+r your response.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-size:11.0pt;font-=
+family:&quot;Calibri&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-size:11.0pt;font-=
+family:&quot;Calibri&quot;,sans-serif;mso-fareast-language:EN-US">Sai has a=
+dded comments in the MR. Please review them.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-size:11.0pt;font-=
+family:&quot;Calibri&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-size:11.0pt;font-=
+family:&quot;Calibri&quot;,sans-serif;mso-fareast-language:EN-US">Please re=
+fer my response inline.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-size:11.0pt;font-=
+family:&quot;Calibri&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-size:11.0pt;font-=
+family:&quot;Calibri&quot;,sans-serif;mso-fareast-language:EN-US">Thanks &a=
+mp; Regards,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-size:11.0pt;font-=
+family:&quot;Calibri&quot;,sans-serif;mso-fareast-language:EN-US">Dinesh Ku=
+mar<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-size:11.0pt;font-=
+family:&quot;Calibri&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"font-size:11.0pt;fo=
+nt-family:&quot;Calibri&quot;,sans-serif">From:</span></b><span lang=3D"EN-=
+US" style=3D"font-size:11.0pt;font-family:&quot;Calibri&quot;,sans-serif"> =
+Chris Paterson &lt;<a href=3D"mailto:Chris.Paterson2@renesas.com">Chris.Pat=
+erson2@renesas.com</a>&gt;
+<br>
+<b>Sent:</b> Wednesday, January 15, 2025 7:27 PM<br>
+<b>To:</b> dinesh kumar(</span><span lang=3D"JA" style=3D"font-size:11.0pt"=
+>=1B$B#T#S#I#P=1B(B</span><span lang=3D"EN-US" style=3D"font-size:11.0pt;fo=
+nt-family:&quot;Calibri&quot;,sans-serif"> TMIEC ODG Porting) &lt;<a href=
+=3D"mailto:dinesh.kumar@toshiba-tsip.com">dinesh.kumar@toshiba-tsip.com</a>=
+&gt;<br>
+<b>Cc:</b> hayashi kazuhiro(</span><span lang=3D"JA" style=3D"font-size:11.=
+0pt">=1B$BNS=1B(B</span><span lang=3D"JA" style=3D"font-size:11.0pt;font-fa=
+mily:&quot;Calibri&quot;,sans-serif">
+</span><span lang=3D"JA" style=3D"font-size:11.0pt">=1B$BOB9(=1B(B</span><s=
+pan lang=3D"JA" style=3D"font-size:11.0pt;font-family:&quot;Calibri&quot;,s=
+ans-serif">
+</span><span lang=3D"JA" style=3D"font-size:11.0pt">=1B$B#D#M#E=1B(B</span>=
+<span lang=3D"EN-US" style=3D"font-size:11.0pt;font-family:&quot;Calibri&qu=
+ot;,sans-serif"> =1B$B!{=1B(B</span><span lang=3D"JA" style=3D"font-size:11=
+.0pt">=1B$B#D#I#G=1B(B</span><span lang=3D"EN-US" style=3D"font-size:11.0pt=
+;font-family:&quot;Calibri&quot;,sans-serif">=1B$B""=1B(B</span><span lang=
+=3D"JA" style=3D"font-size:11.0pt">=1B$B#M#P#S=1B(B</span><span lang=3D"EN-=
+US" style=3D"font-size:11.0pt;font-family:&quot;Calibri&quot;,sans-serif">=
+=1B$B!{=1B(B</span><span lang=3D"JA" style=3D"font-size:11.0pt">=1B$B#M#P#4=
+=1B(B</span><span lang=3D"EN-US" style=3D"font-size:11.0pt;font-family:&quo=
+t;Calibri&quot;,sans-serif">)
+ &lt;<a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.jp">kazuhiro3.hayashi@t=
+oshiba.co.jp</a>&gt;;
+<a href=3D"mailto:cip-dev@lists.cip-project.org">cip-dev@lists.cip-project.=
+org</a>; ashrith sai(</span><span lang=3D"JA" style=3D"font-size:11.0pt">=
+=1B$B#T#S#I#P=1B(B</span><span lang=3D"EN-US" style=3D"font-size:11.0pt;fon=
+t-family:&quot;Calibri&quot;,sans-serif">) &lt;<a href=3D"mailto:Sai.Sathuj=
+oda@toshiba-tsip.com">Sai.Sathujoda@toshiba-tsip.com</a>&gt;<br>
+<b>Subject:</b> RE: ltp (syscall) failed test in CIP Security image with is=
+ar-cip-core v1.6 on M-COM<o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Hello Dine=
+sh, Sai,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp=
+;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">I=1B$B!G=
+=1B(Bve created a MR that adds build/test support for the x86 merged config=
+ [0]. Please look for exactly what=1B$B!G=1B(Bs been done.<o:p></o:p></span=
+></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Currently =
+it adds support to all the CIP kernels.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">Do you als=
+o want support added for the stable kernel versions?<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;mso-fareast-language:EN-US">[Dinesh] I have reviewed=
+ the changes you have made. It=1B$B!G=1B(Bs good now merged configs are bei=
+ng tested at least on some targets.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;mso-fareast-language:EN-US">&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; As of no=
+w can you please also enable running ltp tests on x86-siemens-mcom target? =
+With kernel 6.1<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;mso-fareast-language:EN-US">&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; At the moment =
+our primary focus is from IEC perspective so running only 6.1 kernel is suf=
+ficient, but if other CIP members have requirements
+ to run other stable kernel versions that can should be discussed in TSC me=
+eting,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbsp;</o:p></span>=
+</p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;mso-fareast-language:EN-US">&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; However, pleas=
+e note that as this setup is not running CIP security image so we will expl=
+ore options to run ltp tests on M-COM device
+ with merged config with kernel 6.1 via isar-cip-core pipeline. (This is st=
+ill not discussed with all members)<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;mso-fareast-language:EN-US">&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; But this setup=
+ is also important in case if we want to compare any failure cases etc.<o:p=
+></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;mso-fareast-language:EN-US">&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If you have an=
+y ideas how to run ltp tests on security images on M-COM using Linux-cip-ci=
+ pipeline please let us know.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp=
+;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">I=1B$B!G=
+=1B(Bve kicked off various pipelines to test these changes. Links can be fo=
+und in [1].<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp=
+;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">[0]
+<a href=3D"https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines/-=
+/merge_requests/65">
+https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines/-/merge_requ=
+ests/65</a><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US">[1]
+<a href=3D"https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines/-=
+/merge_requests/65#note_2298307207">
+https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines/-/merge_requ=
+ests/65#note_2298307207</a><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp=
+;</o:p></span></p>
+<div>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ap=
+tos&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-GB">Kind regards=
+, Chris<o:p></o:p></span></p>
+</div>
+<p class=3D"MsoNormal"><span style=3D"font-size:11.0pt;font-family:&quot;Ca=
+libri&quot;,sans-serif;color:#7030A0;mso-fareast-language:EN-US"><o:p>&nbsp=
+;</o:p></span></p>
+<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0cm 0cm 0cm =
+4.0pt">
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"font-size:11.0pt;fo=
+nt-family:&quot;Calibri&quot;,sans-serif">From:</span></b><span lang=3D"EN-=
+US" style=3D"font-size:11.0pt;font-family:&quot;Calibri&quot;,sans-serif">
+<a href=3D"mailto:dinesh.kumar@toshiba-tsip.com">dinesh.kumar@toshiba-tsip.=
+com</a> &lt;<a href=3D"mailto:dinesh.kumar@toshiba-tsip.com">dinesh.kumar@t=
+oshiba-tsip.com</a>&gt;
+<br>
+<b>Sent:</b> 20 December 2024 16:56<br>
+<b>To:</b> Chris Paterson &lt;<a href=3D"mailto:Chris.Paterson2@renesas.com=
+">Chris.Paterson2@renesas.com</a>&gt;<br>
+<b>Cc:</b> <a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.jp">kazuhiro3.hay=
+ashi@toshiba.co.jp</a>;
+<a href=3D"mailto:cip-dev@lists.cip-project.org">cip-dev@lists.cip-project.=
+org</a>;
+<a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com">Sai.Sathujoda@toshiba-tsi=
+p.com</a><br>
+<b>Subject:</b> RE: ltp (syscall) failed test in CIP Security image with is=
+ar-cip-core v1.6 on M-COM<o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-size:11.0pt;font-=
+family:&quot;Calibri&quot;,sans-serif;mso-fareast-language:EN-US">Hi Chris,=
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-size:11.0pt;font-=
+family:&quot;Calibri&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-size:11.0pt;font-=
+family:&quot;Calibri&quot;,sans-serif;mso-fareast-language:EN-US">Please re=
+ply to this email as by mistake Ashrit included SWG.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-size:11.0pt;font-=
+family:&quot;Calibri&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-size:11.0pt;font-=
+family:&quot;Calibri&quot;,sans-serif;mso-fareast-language:EN-US">Regards,<=
+o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-size:11.0pt;font-=
+family:&quot;Calibri&quot;,sans-serif;mso-fareast-language:EN-US">Dinesh Ku=
+mar<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-size:11.0pt;font-=
+family:&quot;Calibri&quot;,sans-serif;mso-fareast-language:EN-US"><o:p>&nbs=
+p;</o:p></span></p>
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"font-size:11.0pt;fo=
+nt-family:&quot;Calibri&quot;,sans-serif">From:</span></b><span lang=3D"EN-=
+US" style=3D"font-size:11.0pt;font-family:&quot;Calibri&quot;,sans-serif"> =
+ashrith sai(</span><span lang=3D"JA" style=3D"font-size:11.0pt">=1B$B#T#S#I=
+#P=1B(B</span><span lang=3D"EN-US" style=3D"font-size:11.0pt;font-family:&q=
+uot;Calibri&quot;,sans-serif">)
+ &lt;<a href=3D"mailto:Sai.Sathujoda@toshiba-tsip.com">Sai.Sathujoda@toshib=
+a-tsip.com</a>&gt;
+<br>
+<b>Sent:</b> Friday, December 20, 2024 7:43 PM<br>
+<b>To:</b> Chris Paterson &lt;<a href=3D"mailto:Chris.Paterson2@renesas.com=
+">Chris.Paterson2@renesas.com</a>&gt;;
+<a href=3D"mailto:cip-members@lists.cip-project.org">cip-members@lists.cip-=
+project.org</a><br>
+<b>Cc:</b> hayashi kazuhiro(</span><span lang=3D"JA" style=3D"font-size:11.=
+0pt">=1B$BNS=1B(B</span><span lang=3D"JA" style=3D"font-size:11.0pt;font-fa=
+mily:&quot;Calibri&quot;,sans-serif">
+</span><span lang=3D"JA" style=3D"font-size:11.0pt">=1B$BOB9(=1B(B</span><s=
+pan lang=3D"JA" style=3D"font-size:11.0pt;font-family:&quot;Calibri&quot;,s=
+ans-serif">
+</span><span lang=3D"JA" style=3D"font-size:11.0pt">=1B$B#D#M#E=1B(B</span>=
+<span lang=3D"EN-US" style=3D"font-size:11.0pt;font-family:&quot;Calibri&qu=
+ot;,sans-serif"> =1B$B!{=1B(B</span><span lang=3D"JA" style=3D"font-size:11=
+.0pt">=1B$B#D#I#G=1B(B</span><span lang=3D"EN-US" style=3D"font-size:11.0pt=
+;font-family:&quot;Calibri&quot;,sans-serif">=1B$B""=1B(B</span><span lang=
+=3D"JA" style=3D"font-size:11.0pt">=1B$B#M#P#S=1B(B</span><span lang=3D"EN-=
+US" style=3D"font-size:11.0pt;font-family:&quot;Calibri&quot;,sans-serif">=
+=1B$B!{=1B(B</span><span lang=3D"JA" style=3D"font-size:11.0pt">=1B$B#M#P#4=
+=1B(B</span><span lang=3D"EN-US" style=3D"font-size:11.0pt;font-family:&quo=
+t;Calibri&quot;,sans-serif">)
+ &lt;<a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.jp">kazuhiro3.hayashi@t=
+oshiba.co.jp</a>&gt;; dinesh kumar(</span><span lang=3D"JA" style=3D"font-s=
+ize:11.0pt">=1B$B#T#S#I#P=1B(B</span><span lang=3D"JA" style=3D"font-size:1=
+1.0pt;font-family:&quot;Calibri&quot;,sans-serif">
+</span><span lang=3D"EN-US" style=3D"font-size:11.0pt;font-family:&quot;Cal=
+ibri&quot;,sans-serif">TMIEC ODG Porting) &lt;<a href=3D"mailto:dinesh.kuma=
+r@toshiba-tsip.com">dinesh.kumar@toshiba-tsip.com</a>&gt;;
+<a href=3D"mailto:cip-security@lists.cip-project.org">cip-security@lists.ci=
+p-project.org</a>;
+<a href=3D"mailto:cip-dev@lists.cip-project.org">cip-dev@lists.cip-project.=
+org</a><br>
+<b>Subject:</b> ltp (syscall) failed test in CIP Security image with isar-c=
+ip-core v1.6 on M-COM<o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN"><o:p>&nbsp;</o:p></span></p>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;color:black">Hello Chris,<o:p></o:p></span></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;color:black"><o:p>&nbsp;</o:p></span></p>
+</div>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;color:black">Hope you are doing great.<o:p></o:p></span>=
+</p>
+</div>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;color:black"><o:p>&nbsp;</o:p></span></p>
+</div>
+<p class=3D"MsoNormal" style=3D"background:white"><span lang=3D"EN-IN" styl=
+e=3D"font-family:&quot;Aptos&quot;,sans-serif;color:black">SWG locally exec=
+uted LTP tests on M-COM x86 device booted with CIP security image. The kern=
+el used in this image is built with
+<a href=3D"https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/-/bl=
+ob/master/6.1.y-cip/x86/cip_merged_defconfig?ref_type=3Dheads" title=3D"htt=
+ps://gitlab.com/cip-project/cip-kernel/cip-kernel-config/-/blob/master/6.1.=
+y-cip/x86/cip_merged_defconfig?ref_type=3Dheads">
+cip x86 merged defconfig</a>. After generating the results, we found some f=
+ailed tests in the
+<b>syscalls </b>suite.&nbsp;<o:p></o:p></span></p>
+<p class=3D"MsoNormal" style=3D"background:white"><span lang=3D"EN-IN" styl=
+e=3D"font-family:&quot;Aptos&quot;,sans-serif;color:black"><o:p>&nbsp;</o:p=
+></span></p>
+<p class=3D"MsoNormal" style=3D"background:white"><span lang=3D"EN-IN" styl=
+e=3D"font-family:&quot;Aptos&quot;,sans-serif;color:black">We wanted to com=
+pare them with kernel test results in LAVA and noticed that
+<a href=3D"https://gitlab.com/cip-project/cip-kernel/cip-kernel-config/-/bl=
+ob/master/6.1.y-cip/x86/cip_merged_defconfig?ref_type=3Dheads" title=3D"htt=
+ps://gitlab.com/cip-project/cip-kernel/cip-kernel-config/-/blob/master/6.1.=
+y-cip/x86/cip_merged_defconfig?ref_type=3Dheads">
+cip x86 merged&nbsp; defconfig</a>&nbsp;is not being used to run LTP tests =
+on x86 targets. Can you please look into that ?<o:p></o:p></span></p>
+<p class=3D"MsoNormal" style=3D"background:white"><span lang=3D"EN-IN" styl=
+e=3D"font-family:&quot;Aptos&quot;,sans-serif;color:black"><o:p>&nbsp;</o:p=
+></span></p>
+<p class=3D"MsoNormal" style=3D"background:white"><span lang=3D"EN-IN" styl=
+e=3D"font-family:&quot;Aptos&quot;,sans-serif;color:black">I am attaching a=
+ document with the results summary of LTP tests when run on M-COM x86 devic=
+e with v1.6 security image<b>.</b>&nbsp;Please have a look&nbsp;at
+ it. I am also attaching the failed test cases in syscalls suite.<o:p></o:p=
+></span></p>
+<p class=3D"MsoNormal" style=3D"background:white"><span lang=3D"EN-IN" styl=
+e=3D"font-family:&quot;Aptos&quot;,sans-serif;color:black"><o:p>&nbsp;</o:p=
+></span></p>
+<p class=3D"MsoNormal" style=3D"background:white"><span lang=3D"EN-IN" styl=
+e=3D"font-family:&quot;Aptos&quot;,sans-serif;color:black">We need opinion =
+from members if we need to hold back from sharing the v1.6 x86 generic isar=
+-cip-core evaluation to BV members in case those LTP
+ test failures are effective.<o:p></o:p></span></p>
+<p class=3D"MsoNormal" style=3D"background:white"><span lang=3D"EN-IN" styl=
+e=3D"font-family:&quot;Aptos&quot;,sans-serif;color:black"><o:p>&nbsp;</o:p=
+></span></p>
+<p class=3D"MsoNormal" style=3D"background:white"><span lang=3D"EN-IN" styl=
+e=3D"font-family:&quot;Aptos&quot;,sans-serif;color:black">Thanks and regar=
+ds,<o:p></o:p></span></p>
+<p class=3D"MsoNormal" style=3D"background:white"><span lang=3D"EN-IN" styl=
+e=3D"font-family:&quot;Aptos&quot;,sans-serif;color:black">Sai Ashrith<o:p>=
+</o:p></span></p>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN" style=3D"font-family:&quot;Apto=
+s&quot;,sans-serif;color:black"><o:p>&nbsp;</o:p></span></p>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
+
+--_000_OSZPR01MB8401759CA7B581E1C8D0BE2AB7E62OSZPR01MB8401jpnp_--
 
