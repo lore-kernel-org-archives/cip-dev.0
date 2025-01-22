@@ -2,65 +2,65 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94AE9C02191
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BC66C0218D
 	for <webhook@archiver.kernel.org>; Wed, 22 Jan 2025 11:52:50 +0000 (UTC)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
- by mx.groups.io with SMTP id smtpd.web11.41715.1737546769254663018
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+ by mx.groups.io with SMTP id smtpd.web10.41909.1737546765161151298
  for <cip-dev@lists.cip-project.org>;
- Wed, 22 Jan 2025 03:52:49 -0800
+ Wed, 22 Jan 2025 03:52:45 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=YYx37m08;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.53, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4361f65ca01so69948825e9.1
-        for <cip-dev@lists.cip-project.org>; Wed, 22 Jan 2025 03:52:49 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=W6wMJNm/;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.44, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4361dc6322fso47324905e9.3
+        for <cip-dev@lists.cip-project.org>; Wed, 22 Jan 2025 03:52:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1737546768; x=1738151568; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1737546763; x=1738151563; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QpY6aUw8jKaqqqyJQi/haLQ/BQuR2SB2uD3rtboN7og=;
-        b=YYx37m08zsAojfr0B50yzex9guNJz7Au9YEY3ntDRjhsBGcykjZ5BSd5ArlBQKZMZO
-         qhuWnnNKMwX0SLMmrnz8mO9WGU2s7ufKBzaWZ4lKtEWrYx5lryuVHBhy5WIPgxaadlTU
-         luAnaKl3++IhgkkDPaDwesyNd7b6lQIbCrywfwnN0BQ2L69xtwq3np3KzTX4A6nY6XvY
-         vav6aMXux3pr9CyFjyRAmAWHKutP4mdndk2cUT+iFJW9kC2G88gFFseRrnrVksSLhCCS
-         pOXDZ2rMkiSdo3ptXUdviwL/9OemoFEPC7bbdYQ7Aax+FuR5htPVueZAT1ilkVbMjDUA
-         vbAA==
+        bh=OjtRyfTgZS3PaUggTQ0LoCLu4U5xv/Jge0GwFBL9qQY=;
+        b=W6wMJNm/Zr7Xi9IMRw9FZaGaYlJziOS77LF4S1tNYJNsKhw+d5zBrTw6bJf8kLS20M
+         hlm4jV17J8WIQJPXi04iaJr0g/t670/lYhPXJxWRoYXynKIT0UdInfxVUl2Q8gbXc1aU
+         rSmXwt5IncetHTuZANJIXFki2NF7N6JicWkNWQUQ9oebZ9fSR05vm5vnk3q6o/J51Ekk
+         sPBtvX8F8OMELV77Kv5xC/8ZkS0THJSVEGg5+ZTN81q86IZ8o6T0lq82TxuggSSF9phV
+         3fnJA4fdGhi3Ud1u+7dFUv/OvyJ8EIdVx6ctxT91jPqzWBVDHAU0KaXvOXVI+FiZ7blo
+         zB8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737546768; x=1738151568;
+        d=1e100.net; s=20230601; t=1737546763; x=1738151563;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QpY6aUw8jKaqqqyJQi/haLQ/BQuR2SB2uD3rtboN7og=;
-        b=Y591lufUmuelDOF/y77h4faELahr2hvzacvMBE39IQ+dlBh0YNj3JH94kFqakHP5pn
-         YLJ0HvBbhSTK6hHMpB5Z9y4QnZ9Kv5C/GIYjnoE/DAgZG4gbF0T6HQ8u6g3skx6Hxdo0
-         VFlQg+vaYNqhjjU0oc4u8poZTdfQKOSMmp5CK+A7s/gXpm6Y8vXgquVScPHeY1UNP4d6
-         /VKiDAe4k8vkikjF5RTU5lc302X0B0lY3BLPZnG6uutn/5kPuQdvwB3z4O/PpGzA4O4G
-         i1bZWNIr9dRNMLzqtCR+iE+PbNmnAACl+FlRkVIJja6ScI34p+o0kXGjkq3YNK0aCt76
-         kZCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQlAwY6d5lsGgDSwLXXqf4SjIYVDYD1P09wd6yavxKZAiuS7XLmoBQxRuexqQ6HxV6CRn5/lS0@lists.cip-project.org
-X-Gm-Message-State: AOJu0YxEnRd4sozUg7A9EZ3z4iEv9jMEplQyNhMgbhLPgR1ISDlVm4gU
-	AHWzugew3l6Tbnf/bFJ5DfrxVkVWhcBkLlYNVWT+A49c/LDts8bUDWolW9JtXvE=
-X-Gm-Gg: ASbGncuzm5y0lzSlCFFIqz6kpjX++3OXRN96A0VEFix25nnmpwEYZGKw1bgQdsOzcDD
-	+Yz8ZrmlCChFJKjuSrW9BYjnZ2HgOLuRcGbu+4D5inLR/n08glRGkGodF6bqvb0ywVnrSF0rxW5
-	GY9np0boUtHzwozY3S32LPRZxKj3VmanioknQlbGfizx+WfVEcApW4JZBJmYwpejTMg3fzGxIEx
-	L5qilE5HpOkrg+cvxp07tyoGpmWSOmWEMkKx/oVfM2+nrJ5mGL4GWU+kApBMZOio8XZSEe0DKSe
-	fnfTPwC8MJ9L6ILwhSCIgDw=
-X-Google-Smtp-Source: AGHT+IHoUUzh+AXlXW7p+NbZPU9DIygm5ewpfqaU1xmoznJU/kidY41T/nGWikXA5P/yCz9V7V0hNQ==
-X-Received: by 2002:a05:600c:8a4:b0:438:a240:c63 with SMTP id 5b1f17b1804b1-438a2400e95mr139249775e9.2.1737546767676;
-        Wed, 22 Jan 2025 03:52:47 -0800 (PST)
+        bh=OjtRyfTgZS3PaUggTQ0LoCLu4U5xv/Jge0GwFBL9qQY=;
+        b=Lxue+3F8+6kQEhZeRuq4lIYRchEtsAmc+pfSOmvkX3eAg5UFr/sQL40S8cGCwNbUt6
+         d72f9uQx/fz1MR1r22spPoIvZsi0chmUkNNMv77wPoWI3mZMBJh/pwW0Cxg+RpFoz3JW
+         PoB+yCCsbiW+66cEdq6q8O24TQpFZMLFtzE4eCJ78p3JiMTvR/Vip8c6I0fxsLyuAcfD
+         t4YVEPrpzhQH+uSn7zqgDiSUymrjelw5Bbzs5KSOG28rxLYeFhTOwrPokjgioGxka7vT
+         kTcdUy0oICEO7m7/bAPmoTz9LR/RjdY5hQ079zspScYsOx+trWrs9l92tso2rzdz5XCH
+         0pHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCz8KlG7G+C8IzBw5MNjPJkOcrEPSCXlgAeQTMHrQRAhfZmEriPCoU0XIbV3HoFGjZAulsevEM@lists.cip-project.org
+X-Gm-Message-State: AOJu0YzipIaBZvpW8vrUrOVfB5Caw0+JX/Rb8KzbKF2K94WDd8m24prF
+	hkP0adi94xzDpGLrSzoxleOARgsltvMAYw7Gc0s6GPUCxPzOcIDDeDS6/7tfE0w=
+X-Gm-Gg: ASbGncuB/AyucaHw4wA+yG6bNhc3WkWKZ6Gg6dnqSa8lO6u3YaryCZ9GvxEJyOj5TZo
+	dm9pAnlSbXNICmklsWLQuElxXaVh/2pz7X5J8bgDx3hCNdwRYhoRE/ehjUNfWZsiE9py6aiMdHt
+	BEB/r4SAH9TJdN56pT4DKMSggtqu3Sp4Q6qrRh6JDR2/3HkPGKxGkzIR7GGi29Zn36YHbQOEkxj
+	ke+o+v+f42B+livPtzq6Zt77Nu+z/1x+DfpT8Sk0XTa87kyYuMC4aKn60/m6HEiVg8lpNS0KXJs
+	3rP82almsfUIQXH8a4CQRU4=
+X-Google-Smtp-Source: AGHT+IHkGoSnVwHPLEr4UKyS0eMUACjt9+/RQztSb8FS4Gk5vDuJmKG2FsjsdglG5HBxhMjBQoy/CA==
+X-Received: by 2002:a05:600c:1e23:b0:434:f335:83b with SMTP id 5b1f17b1804b1-4389fa653e9mr183992365e9.5.1737546763623;
+        Wed, 22 Jan 2025 03:52:43 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.35])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438b318990esm22887415e9.7.2025.01.22.03.52.46
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438b318990esm22887415e9.7.2025.01.22.03.52.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2025 03:52:47 -0800 (PST)
+        Wed, 22 Jan 2025 03:52:42 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH v5.10.y-cip 12/16] arm64: dts: renesas: r9a08g045: Add VBATTB node
-Date: Wed, 22 Jan 2025 13:52:26 +0200
-Message-ID: <20250122115230.2885344-13-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v5.10.y-cip 09/16] dt-bindings: rtc: renesas,rzg3s-rtc: Document the Renesas RTCA-3 IP
+Date: Wed, 22 Jan 2025 13:52:23 +0200
+Message-ID: <20250122115230.2885344-10-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250122115230.2885344-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250122115230.2885344-1-claudiu.beznea.uj@bp.renesas.com>
@@ -70,62 +70,120 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 22 Jan 2025 11:52:50 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17590
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17587
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 23c44956bce5aa79c060fc3e5d51843735e6eda6 upstream.
+commit 71c61a45c951eca67dd2cbc4de9cdd687ece4ead upstream.
 
-Add the DT node for the VBATTB IP along with DT bindings for the clock
-it provides.
+Document the RTC IP (RTCA-3) available on the Renesas RZ/G3S SoC.
+The RTC IP available on Renesas RZ/V2H is almost identical with the
+one found on Renesas RZ/G3S (it misses the time capture functionality
+which is not yet implemented on proposed driver). For this, added also a
+generic compatible that will be used at the moment as fallback for both
+RZ/G3S and RZ/V2H.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://lore.kernel.org/20241101095720.2247815-6-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[claudiu.beznea: the backported patch has references for i2c nodes;
- the i2c nodes are not available in v5.10 cip, thus fixed conflict by
- dropping the i2c nodes]
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20241030110120.332802-5-claudiu.beznea.uj@bp.renesas.com
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ .../bindings/rtc/renesas,rz-rtca3.yaml        | 84 +++++++++++++++++++
+ 1 file changed, 84 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rtc/renesas,rz-rtca3.yaml
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-index f5f3f4f4c8d6..7bc8969a7b5a 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-@@ -72,6 +72,18 @@ scif0: serial@1004b800 {
- 			status = "disabled";
- 		};
- 
-+		vbattb: clock-controller@1005c000 {
-+			compatible = "renesas,r9a08g045-vbattb";
-+			reg = <0 0x1005c000 0 0x1000>;
-+			interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&vbattb_xtal>;
-+			clock-names = "bclk", "rtx";
-+			#clock-cells = <1>;
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A08G045_VBAT_BRESETN>;
-+			status = "disabled";
-+		};
+diff --git a/Documentation/devicetree/bindings/rtc/renesas,rz-rtca3.yaml b/Documentation/devicetree/bindings/rtc/renesas,rz-rtca3.yaml
+new file mode 100644
+index 000000000000..e70eeb66aa64
+--- /dev/null
++++ b/Documentation/devicetree/bindings/rtc/renesas,rz-rtca3.yaml
+@@ -0,0 +1,84 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/rtc/renesas,rz-rtca3.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- 		cpg: clock-controller@11010000 {
- 			compatible = "renesas,r9a08g045-cpg";
- 			reg = <0 0x11010000 0 0x10000>;
-@@ -296,4 +308,11 @@ timer {
- 				      <&gic GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
- 				      <&gic GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
- 	};
++title: Renesas RTCA-3 Real Time Clock
 +
-+	vbattb_xtal: vbattb-xtal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
- };
++maintainers:
++  - Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
++
++allOf:
++  - $ref: rtc.yaml#
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - renesas,r9a08g045-rtca3 # RZ/G3S
++      - const: renesas,rz-rtca3
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    items:
++      - description: Alarm interrupt
++      - description: Periodic interrupt
++      - description: Carry interrupt
++
++  interrupt-names:
++    items:
++      - const: alarm
++      - const: period
++      - const: carry
++
++  clocks:
++    items:
++      - description: RTC bus clock
++      - description: RTC counter clock
++
++  clock-names:
++    items:
++      - const: bus
++      - const: counter
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    items:
++      - description: VBATTB module reset
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-names
++  - clocks
++  - clock-names
++  - power-domains
++  - resets
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r9a08g045-cpg.h>
++    #include <dt-bindings/clock/renesas,r9a08g045-vbattb.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    rtc@1004ec00 {
++        compatible = "renesas,r9a08g045-rtca3", "renesas,rz-rtca3";
++        reg = <0x1004ec00 0x400>;
++        interrupts = <GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH>;
++        interrupt-names = "alarm", "period", "carry";
++        clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&vbattclk VBATTB_VBATTCLK>;
++        clock-names = "bus", "counter";
++        power-domains = <&cpg>;
++        resets = <&cpg R9A08G045_VBAT_BRESETN>;
++    };
 -- 
 2.43.0
 
