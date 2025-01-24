@@ -2,66 +2,65 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D975C0218B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8040BC0218D
 	for <webhook@archiver.kernel.org>; Fri, 24 Jan 2025 09:01:01 +0000 (UTC)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
- by mx.groups.io with SMTP id smtpd.web10.7447.1737709251853211047
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+ by mx.groups.io with SMTP id smtpd.web10.7451.1737709256218906779
  for <cip-dev@lists.cip-project.org>;
- Fri, 24 Jan 2025 01:00:52 -0800
+ Fri, 24 Jan 2025 01:00:56 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=hwfkHA5l;
- spf=pass (domain: tuxon.dev, ip: 209.85.208.51, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5da12292b67so3099030a12.3
-        for <cip-dev@lists.cip-project.org>; Fri, 24 Jan 2025 01:00:51 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=He/ULYp8;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.47, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-436341f575fso19245845e9.1
+        for <cip-dev@lists.cip-project.org>; Fri, 24 Jan 2025 01:00:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1737709250; x=1738314050; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1737709254; x=1738314054; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1WUbikmmdFs6DqjBocKLpWYwpo+iLOaUCsX5Gpawot4=;
-        b=hwfkHA5lae0z6BR4pcCIMUGR9EdXKVsPbCrE9VYQo8bjNC2uDC+Uk1LzwMYbhS+Hpe
-         hSEYSRqRKBYJovfu4+tqks8zpW4XkmQFC4h9ZyDiVh66Zgpgztd53bdecoQPczHK8M84
-         puPj2jchgSu4DaLYJVKfJd/sbUqx41LpZpFQ7Gn20yBUs2fEssxOVHgvJED/2y+t5V93
-         EmnKbLo557mIoiChXWn2XOK9e5FY0LbkrS1t9FDLvQ5ATFGRjIjnbyj+pIXgY47VODWK
-         K1+rKHWoxKnpnu0MNfqV9memqsGCIihcGY6q0OrTx0kE7I8tOi2vAEzy3ZDRAjQTL9aL
-         Zh7g==
+        bh=hIIr0bO0+UWuUzDS7v7znuMUqL8P+aoL2of9cURa/us=;
+        b=He/ULYp8cQH2oshs+JTVdRciSanLfwYfFWm2fua7RW6UGDxhJ9YDnOaRq9AXWKB+JW
+         VPddvXarroYYMD4+etKN0IKNpO9FFVxCLkNUifOn+A4zoMs5M1o86lDoUaJFoam+BdeF
+         FxKXunax57egQDRRKRWtIk/XL/SANrNb78+ieIqF1KaCs9p68NMAIAP9VCQjskTUgmLT
+         h9zCfVyL5moJCdL4P0T2/vLeBKmEZlMT9jRHshbOJGVqjG5A72LGCwWb12lufl06OP8r
+         2LGz4gC4egWtp46kXXGKGGhZT9Ynx0h+J+k3F1IA7lVSXt2t2yaQDF0aNJBDoz8I22ck
+         PO/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737709250; x=1738314050;
+        d=1e100.net; s=20230601; t=1737709254; x=1738314054;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1WUbikmmdFs6DqjBocKLpWYwpo+iLOaUCsX5Gpawot4=;
-        b=FiNsdDjXHCnx8cpF73wGzJHGy6uNXsJRbazw8Aq2+ey7hMB3Dso7mDEQNu6IY3wWmF
-         vJvb/t2fFPT15W1rhxXAXpYvrSukvz+cL+HFbeL5LMOzxdJsqApCbjr8b0ci+IvdKzdb
-         tY4mh1OE+Y5qBqll6M7Ews2U/A45oqKKzLXZq0h4g90S/NHddce0TsZB186H3YSdgejo
-         WyZgdyO14T+162bXqAfVd434E20rqBirsgYDaoHUHZrIPRArVh+YepV2HrlU5iwknIdC
-         iJ8SaSTY4/emP4wGeET6C7bTtJM6H/pf70MyCE6o036jwTFliGTIgeFQpO8Aspy0y9JJ
-         nBgg==
-X-Forwarded-Encrypted: i=1; AJvYcCUaWvutj7Dq8IsQDL729uUA61JLDUH32FVUPlBmTjmDMHSbJUlGkDJoZ5I/VV01ALZhZqPTBpMK@lists.cip-project.org
-X-Gm-Message-State: AOJu0YwbdLYzeD7qiZHQqDrflg1laNWygXaSI3jTrvgnM+bX1oARwmK8
-	ifzyZQhLtlUyrl8fmI2J3qOJ63GTMoKfHzaMqVuJT/mSoaY7dir58klTYFooa62nID/KOKI+FTP
-	D
-X-Gm-Gg: ASbGnctmcP1zzpmiEqkrPZZnAhCQN/RBuKzpmXpQbtOUAxgYQzKQiA7H2BA+AMJonBZ
-	eCaO67JRrC5lhAczLOHS1gVqM8PoO3r429a3iNM+rQgZLVrL/sgIaEReiRLRMU12oUeGdfjz+Rh
-	H4f2kdrnz7csO8xVu+2io1MfVpXEj31BLTRbmuOuUwCmWf6LliCMOU5KQ+UCAx3FW/BVF5wWqY6
-	Zx16TjnS7Swx2q/L6xqTpFTrIssYwWuOkatNoCyIlioBzaYlk5dcdNyrSA8QMwgPfrqRY1YMVj+
-	0SCMz63xtWDDRaRUfZNOfZy5qXEHvHAVUQ==
-X-Google-Smtp-Source: AGHT+IFivPr5/JAwE1TYS6xdPNkEMCkNmIqZroOjx2ZZD9UeGcHzvaXt1hCaRM1b0pFtWtVigev0Pw==
-X-Received: by 2002:a05:6402:524b:b0:5d0:9054:b119 with SMTP id 4fb4d7f45d1cf-5db7db07787mr63196152a12.21.1737709250169;
-        Fri, 24 Jan 2025 01:00:50 -0800 (PST)
+        bh=hIIr0bO0+UWuUzDS7v7znuMUqL8P+aoL2of9cURa/us=;
+        b=oTTIGLh5QwIGI7V4WWrA46K7gXwc+6vl/OpDA76Y9s/Kav36CjJF/NbbOsMBRYipO9
+         cNq0ppQLvo+CIz6MIw2dY8KbAAHCYaLVCaDUtzskZ/WXbydatF374n1Q1M6jyRH92io2
+         +r+Sa5affzeeESMrZHWHi892g0NfAdX9LkwmBu7xgbzwojbZe8TtkU0stXnBCwp5RgX7
+         jsraatZVnleLAtii/9lRZkA3IRKsesaClI9NZaMJlrgz+Q78t43hCZ7m0ybQcvp4mGP5
+         SruZlEQ0iXrgytpXJFw6th6jkjKqBGpWxm9iC38NnTtDwQYvvctNJDzXxvHQveiNlXhu
+         O0+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUXRepU4knZG43SFTBFhUrBeNq3XD8K/M60uKkOtX/IFSvUlAhVs3FpVulSY7Noiztb6WDpl1ca@lists.cip-project.org
+X-Gm-Message-State: AOJu0Yw9EeOkztDf1TePpTp2KjoDrx7GOeMKPtZS3Mx7nsaZBIJxAc33
+	3pyvF3CL9RcvbyhjXhzjaOwgkGGBE+LcpZxWOd5/tZmdlU49tRlGSWW6866xTyU=
+X-Gm-Gg: ASbGncsJnwDCbB0ABIPwOTLx0cYNFtPrk4drZNmVhB9H0kn0DH/H62zoIeVwG9vn2Gm
+	dKu9Ybj5mx7hHp1/KRM7VZjKoA0hSxJmOwv9Cbh8j3zBENgKJepj1JFg1fcYbZQ5JKozN9y5pIP
+	EyfO1eIpd0/hQmPeXF/BhvkwCSi4cpEdRh109GMtSqpmNgSPIMNLwdg7FpmtxqBkCmAGEwGiKMq
+	wfvhuxUpgyJagc7q9QYbm11+TT1qB1N3fn62oCzgXIWsXj/MHVMNzMHSZwK4fdJ8x6yC2p+ZgjQ
+	T/XIJcVbwToo+CeXzl5XhXq8jQlzbdahLA==
+X-Google-Smtp-Source: AGHT+IHR+2Ljn5hyBWOrNMc5adD8LyfMVc14OM7STVxHruGm7sdkNZs17ckgswqsrhYtwkr9DyRKhw==
+X-Received: by 2002:a05:600c:1c1e:b0:436:6460:e67a with SMTP id 5b1f17b1804b1-43891452899mr235219945e9.25.1737709254621;
+        Fri, 24 Jan 2025 01:00:54 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.35])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6760fbce4sm92200766b.127.2025.01.24.01.00.49
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6760fbce4sm92200766b.127.2025.01.24.01.00.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2025 01:00:49 -0800 (PST)
+        Fri, 24 Jan 2025 01:00:53 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH v5.10.y-cip v2 05/16] clk: mux: Introduce devm_clk_hw_register_mux_parent_hws()
-Date: Fri, 24 Jan 2025 11:00:30 +0200
-Message-ID: <20250124090041.1401132-6-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v5.10.y-cip v2 08/16] clk: renesas: r9a08g045: Add clock, reset and power domain support for the VBATTB IP
+Date: Fri, 24 Jan 2025 11:00:33 +0200
+Message-ID: <20250124090041.1401132-9-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250124090041.1401132-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250124090041.1401132-1-claudiu.beznea.uj@bp.renesas.com>
@@ -71,43 +70,55 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 24 Jan 2025 09:01:01 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17642
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17645
 
-From: Marijn Suijten <marijn.suijten@somainline.org>
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit df63af17f3375239e0be124844f304b4a4b60665 upstream.
+commit c8bd9bd6446fa034a1877b553bf118606b37c025 upstream.
 
-Add the devres variant of clk_hw_register_mux_hws() for registering a
-mux clock with clk_hw parent pointers instead of parent names.
+The Renesas RZ/G3S SoC has an IP named Battery Backup Function (VBATTB)
+that generates the RTC clock. Add clock, reset and power domain support
+for it.
 
-Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Link: https://lore.kernel.org/r/20220629225331.357308-3-marijn.suijten@somainline.org
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/20240614071932.1014067-2-claudiu.beznea.uj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Pavel Machek <pavel@denx.de>
+[claudiu.beznea: dropped PM domain part as it is not ready yet]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- include/linux/clk-provider.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/clk/renesas/r9a08g045-cpg.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 9f34b4268e6a..50eaf1946009 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -988,6 +988,13 @@ struct clk *clk_register_mux_table(struct device *dev, const char *name,
- 			      (parent_names), NULL, NULL, (flags), (reg),     \
- 			      (shift), BIT((width)) - 1, (clk_mux_flags),     \
- 			      NULL, (lock))
-+#define devm_clk_hw_register_mux_parent_hws(dev, name, parent_hws,	      \
-+					    num_parents, flags, reg, shift,   \
-+					    width, clk_mux_flags, lock)       \
-+	__devm_clk_hw_register_mux((dev), NULL, (name), (num_parents), NULL,  \
-+				   (parent_hws), NULL, (flags), (reg),        \
-+				   (shift), BIT((width)) - 1,		      \
-+				   (clk_mux_flags), NULL, (lock))
+diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
+index c3e6da2de197..55e7d42dc472 100644
+--- a/drivers/clk/renesas/r9a08g045-cpg.c
++++ b/drivers/clk/renesas/r9a08g045-cpg.c
+@@ -215,6 +215,7 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
+ 	DEF_MOD("eth1_refclk",		R9A08G045_ETH1_REFCLK, R9A08G045_CLK_HP, 0x57c, 9),
+ 	DEF_MOD("scif0_clk_pck",	R9A08G045_SCIF0_CLK_PCK, R9A08G045_CLK_P0, 0x584, 0),
+ 	DEF_MOD("gpio_hclk",		R9A08G045_GPIO_HCLK, R9A08G045_OSCCLK, 0x598, 0),
++	DEF_MOD("vbat_bclk",		R9A08G045_VBAT_BCLK, R9A08G045_OSCCLK, 0x614, 0),
+ };
  
- int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flags,
- 			 unsigned int val);
+ static const struct rzg2l_reset r9a08g045_resets[] = {
+@@ -231,6 +232,7 @@ static const struct rzg2l_reset r9a08g045_resets[] = {
+ 	DEF_RST(R9A08G045_GPIO_RSTN, 0x898, 0),
+ 	DEF_RST(R9A08G045_GPIO_PORT_RESETN, 0x898, 1),
+ 	DEF_RST(R9A08G045_GPIO_SPARE_RESETN, 0x898, 2),
++	DEF_RST(R9A08G045_VBAT_BRESETN, 0x914, 0),
+ };
+ 
+ static const unsigned int r9a08g045_crit_mod_clks[] __initconst = {
+@@ -238,6 +240,7 @@ static const unsigned int r9a08g045_crit_mod_clks[] __initconst = {
+ 	MOD_CLK_BASE + R9A08G045_IA55_PCLK,
+ 	MOD_CLK_BASE + R9A08G045_IA55_CLK,
+ 	MOD_CLK_BASE + R9A08G045_DMAC_ACLK,
++	MOD_CLK_BASE + R9A08G045_VBAT_BCLK,
+ };
+ 
+ const struct rzg2l_cpg_info r9a08g045_cpg_info = {
 -- 
 2.43.0
 
