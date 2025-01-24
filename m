@@ -2,65 +2,65 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FC27C0218B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FBF6C02181
 	for <webhook@archiver.kernel.org>; Fri, 24 Jan 2025 09:01:11 +0000 (UTC)
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
- by mx.groups.io with SMTP id smtpd.web10.7457.1737709262639073443
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+ by mx.groups.io with SMTP id smtpd.web10.7458.1737709266520475636
  for <cip-dev@lists.cip-project.org>;
- Fri, 24 Jan 2025 01:01:02 -0800
+ Fri, 24 Jan 2025 01:01:06 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=d1zI1KQy;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.50, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ab39f84cbf1so351061366b.3
-        for <cip-dev@lists.cip-project.org>; Fri, 24 Jan 2025 01:01:02 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=IlRvjxEV;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.41, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ab633d9582aso332243266b.1
+        for <cip-dev@lists.cip-project.org>; Fri, 24 Jan 2025 01:01:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1737709261; x=1738314061; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1737709265; x=1738314065; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3vvR9nVgFLP1C+uBrhg2+HXv6HH+PsmPNjlZ0WNrWs8=;
-        b=d1zI1KQyMRWQBO1YclGgWx0nU6H7LzaIlG8QgkTV+hwy77yEDla+d8MihT7gHEHiuu
-         rcipB6ZBkjIKi/I057ls/hWSupJIfP4+s//HqrrbudFg3dwlzPJbY50F9U1dMjf0VEy1
-         YIEThDFzFnnYgcPA6AlWHkQEmawqURvuD7OvTs6/SThl48uBhA7B3Zl+TKnpdWSygVWl
-         2/REi2eF2m7Fdt+s8Zo1PFRZ9a53g6YEWZzbRvjNhgDlK+1PXNUzs4Yh87odk0dD9HN3
-         pxGgUQyRpN6DjnC7ug7FyRoEOMtDovxQCG1KY7ja2OdWpgFJ7zoS1VhWPIP8/Sc/qksg
-         3uHQ==
+        bh=s/YNikkkxhG5IDAJLIfsvzBE/9wz3dlXvplx+eyQvZg=;
+        b=IlRvjxEVZotnU7rYe3BUXO55w4CRFoFbKHY70mYIY7IClb3XgcY7/YEFagaMiYxpbW
+         xUDF02ubnAvVlUA+9WvNTXpBq22vQcPBh1oEVSYkNVOXOcsm8HnqrRJo7339Y4wkIH1S
+         YEZ8EVlmlLiCG6jcEAHfQ1FNYm2ATvqqz7dKZTcWVN9eVVJDWc+tG0z7yO601VcdsdQ0
+         AYQQ0pEDlXw2CMUe0476AItY2WqUf1sFzAJLDdL41003BaRgEHibofxwDi7FVYJgifHg
+         u0mqKnnHhyuTW0a7NqDcYTmanwaLhCQMJ5z4sDf3vA9SNhDJcgUkXWGBtAoGO6tw9Fp6
+         iNKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737709261; x=1738314061;
+        d=1e100.net; s=20230601; t=1737709265; x=1738314065;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3vvR9nVgFLP1C+uBrhg2+HXv6HH+PsmPNjlZ0WNrWs8=;
-        b=nHqZJc4FiUl26F3zErwp1cf9Br6SP6tTiXNGam+ruJbXVVgbbWy251UazK40reFWs0
-         EKH1Lfr0iHXuXC9QQB2fvR7bqn4z+u0ngwHu4uyPxkvGxPVfIuoMQPVmiwHwKdm8AcEA
-         B9BOwHb5ie5hDmqMgiXMA2QYeQr0JrM/JFAAHKJN+ihPnuzRteMPcUCtM+83kXOKHMyo
-         SaU/9OwEVO1wEe4RCi9h3sWcWJD+wyEHPl929xOIwPwy+EjPjf6kgfbdGuvFPBxFSKxq
-         vrWXpecBKUkSZBjeEWy1KxXfT71sFmj4NUnqXSmMx/GbCKsjlWMw5G9HPAmZTv48zgyt
-         ROGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOFIAOItY1y+OUB+P9AL7t4V7G0Yh3rq0LuaskT6aQF1Zi99AG6egpUp0o18EuxfwzAFc8b4gj@lists.cip-project.org
-X-Gm-Message-State: AOJu0YzZMhfkw/7ECHMWicFmgiUn6saEn5tsWe7aLOv6OtZH/MoYgrK9
-	UgwqNnWgMOFN0CHBzF+tFIzSyEfn5Ad6cerHEXHzZFq54B8EnEZbh1lzMh3K8xA=
-X-Gm-Gg: ASbGncuaEnUB+a7ALT57mPbe6jG8mhkwjWlPAZ37mcZikHM64+nKyUg54fbrz1Ric3U
-	P9CkxgRgUBIo8WaUhirBZARmEWPR4mTVa6NqykIV7iJDzHkJ22pWcs3/ZkhzerRbnzk5jM2vYdy
-	y9iw2aglDMXTTUV+2QGlFqFTfNX/Uj76izzyTGSEbpVlbeBxXjfhaMdnFSdmDxVtZ+DVliBVmzm
-	xMC+Xt6OAdDPDD58stHqKzHFUW44onB3NXuvgr4A1qXPevqGO+PMMg/e3VR9eO23MtjlXUUOA1o
-	qCFWwbPG0PfK4PlvurIcKuYfnU3mJjsSOw==
-X-Google-Smtp-Source: AGHT+IEGrDBiVEN2DZSwQwZOwd30lN/RTeaMkJzoz9RANctjkasG8H/LCWwCa2UOYmV0Z/qNQV4Hrw==
-X-Received: by 2002:a17:906:1ec5:b0:ab6:37c3:381d with SMTP id a640c23a62f3a-ab637c344e2mr1182276866b.24.1737709260651;
-        Fri, 24 Jan 2025 01:01:00 -0800 (PST)
+        bh=s/YNikkkxhG5IDAJLIfsvzBE/9wz3dlXvplx+eyQvZg=;
+        b=u3ISTphFhegsPKUgq4j9L+0krWNuQ/iyppd4PGQUIiNzNJ48C7vC7DwY2HPUVvoF07
+         3zM5wOWkx37U49V890SPWlgKw9E+M5cgyApljOtXDOnHTG9RGU+o3waEJVPkUD/xQ7kZ
+         hGChEkOiH1yD1GNm2Q8kFcp1dJrYDZ357BQk5o1dgvNCIsDXy1duqXfgk1bhtLoWAAV/
+         o+qkgrVp+3cu55STK752bT290VlsXjr75f3Uq48y49mamEZpt+KCf1qMdb04vEfrK1C3
+         V/Usk/3GfR2BFzddAlWfztwiDlom4VaAknsxuRiO/0B6Is56+HSQqhsaEcIwq3vj4DN6
+         Odlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMND3DkipPUvZtRw2icS+LKrU0HfVkMh9Zwl1YRq4KopWmiUmd7b/CdLQbaOaFJ+LrPRbKFvq9@lists.cip-project.org
+X-Gm-Message-State: AOJu0YxZHd+ZcewhhHZ0K5sBI5SrNuSaBEpi8p1PM469TSBXVNI6tH0e
+	I3cU4J6tJssVQ+KFCmuiE75CbJkdhjK22L7s/h35kBHPCgcBqc9JdRm3LhNzgOw=
+X-Gm-Gg: ASbGncsCLemQ7dgQ1gsfxs4F3862UFIFk6OYthqaeaidVuUe3PHZ6+mJ8x/3YW++GA4
+	MsgSOp1Dnlyij4ZToE+7mQQdCX/0xmgBPXwklZeDV0N9gzhuZE3r6vJNVUMRHXQdEayqqRvgclK
+	vOEwMnwo+N6C1ncVTNW+a8JCNTw0SORd5C5FfFMBsAazZ+/ptZ9viLxjYGsaTAMBRhayVzc0Qmj
+	QzQIrLaZlHaWf/uVIiUga7dFe5mfVD4fAkuKEbnlX/TbmTwaxu+jmQyBizrpksYfyrExcYsCj7p
+	UlaScmPh29uafLbouKlow3iZmOyMXqPb9w==
+X-Google-Smtp-Source: AGHT+IHn25fbCHRiCesnjDjzGD8EYp7MEaNjSu6RkbnzXbFaVJ8gD8N5WdWrz4jsDn1RwLj095mYIQ==
+X-Received: by 2002:a17:906:1e4a:b0:ab6:4faa:bc82 with SMTP id a640c23a62f3a-ab64faabd04mr803071566b.25.1737709264560;
+        Fri, 24 Jan 2025 01:01:04 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.35])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6760fbce4sm92200766b.127.2025.01.24.01.00.59
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6760fbce4sm92200766b.127.2025.01.24.01.01.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2025 01:00:59 -0800 (PST)
+        Fri, 24 Jan 2025 01:01:04 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH v5.10.y-cip v2 12/16] arm64: dts: renesas: r9a08g045: Add VBATTB node
-Date: Fri, 24 Jan 2025 11:00:37 +0200
-Message-ID: <20250124090041.1401132-13-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v5.10.y-cip v2 15/16] arm64: dts: renesas: rzg3s-smarc-som: Enable RTC
+Date: Fri, 24 Jan 2025 11:00:40 +0200
+Message-ID: <20250124090041.1401132-16-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250124090041.1401132-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250124090041.1401132-1-claudiu.beznea.uj@bp.renesas.com>
@@ -70,63 +70,39 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 24 Jan 2025 09:01:11 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17649
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17652
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 23c44956bce5aa79c060fc3e5d51843735e6eda6 upstream.
+commit 0cd647cd53db0315361e41056e10739a5ee1e668 upstream.
 
-Add the DT node for the VBATTB IP along with DT bindings for the clock
-it provides.
+Enable RTC.
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://lore.kernel.org/20241101095720.2247815-6-claudiu.beznea.uj@bp.renesas.com
+Link: https://lore.kernel.org/20241101095720.2247815-9-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Pavel Machek <pavel@denx.de>
-[claudiu.beznea: the backported patch has references for i2c nodes;
- the i2c nodes are not available in v5.10 cip, thus fixed conflict by
- dropping the i2c nodes]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-index f5f3f4f4c8d6..7bc8969a7b5a 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-@@ -72,6 +72,18 @@ scif0: serial@1004b800 {
- 			status = "disabled";
- 		};
- 
-+		vbattb: clock-controller@1005c000 {
-+			compatible = "renesas,r9a08g045-vbattb";
-+			reg = <0 0x1005c000 0 0x1000>;
-+			interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&vbattb_xtal>;
-+			clock-names = "bclk", "rtx";
-+			#clock-cells = <1>;
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A08G045_VBAT_BRESETN>;
-+			status = "disabled";
-+		};
-+
- 		cpg: clock-controller@11010000 {
- 			compatible = "renesas,r9a08g045-cpg";
- 			reg = <0 0x11010000 0 0x10000>;
-@@ -296,4 +308,11 @@ timer {
- 				      <&gic GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
- 				      <&gic GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
+diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+index 67178d8c4108..b07d9251d182 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+@@ -342,6 +342,10 @@ mux {
  	};
-+
-+	vbattb_xtal: vbattb-xtal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
  };
+ 
++&rtc {
++	status = "okay";
++};
++
+ &vbattb {
+ 	assigned-clocks = <&vbattb VBATTB_MUX>;
+ 	assigned-clock-parents = <&vbattb VBATTB_XC>;
 -- 
 2.43.0
 
