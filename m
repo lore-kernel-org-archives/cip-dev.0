@@ -2,120 +2,102 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B10FBC0218B
-	for <webhook@archiver.kernel.org>; Fri, 24 Jan 2025 07:42:20 +0000 (UTC)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
- by mx.groups.io with SMTP id smtpd.web10.6718.1737704539245422534
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2709C02181
+	for <webhook@archiver.kernel.org>; Fri, 24 Jan 2025 07:44:00 +0000 (UTC)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+ by mx.groups.io with SMTP id smtpd.web10.6730.1737704624979603859
  for <cip-dev@lists.cip-project.org>;
- Thu, 23 Jan 2025 23:42:19 -0800
+ Thu, 23 Jan 2025 23:43:45 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=TMi9kWjq;
- spf=pass (domain: tuxon.dev, ip: 209.85.208.54, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5d3bdccba49so3326344a12.1
-        for <cip-dev@lists.cip-project.org>; Thu, 23 Jan 2025 23:42:18 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=CDlcy7f5;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.47, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aa6a92f863cso375631466b.1
+        for <cip-dev@lists.cip-project.org>; Thu, 23 Jan 2025 23:43:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1737704537; x=1738309337; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1737704623; x=1738309423; darn=lists.cip-project.org;
         h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=wmg/m4lfKrk+PzLvi7kEJ1k14iy48CyIxpk20f9BJok=;
-        b=TMi9kWjqlun+vGIy+kT2B7iJQb6ijI3xVyT9nQjOajGn0F4XXZyOgyjPPmxdGPOUnH
-         juwuFhy+cXdKcuhFSqP43qq0+RRhsokBPucP9JjNhUMUvp/2u10aDvmLfzvcxUE/cjm5
-         Xp++9XHk38pDX9VdfF/e4uIkWApwbZyZV8zw8OF63ZcGRcCqYN9c8hiFnEONZnJx+Vt1
-         r0K0/i4Q2WZlJnuncVQtGzNrO1knns5tM6/9SmvX2sUulNiVy01kqujBIIsYLn12/U1Z
-         68yWhaNN041qSxV+DiGXUTNEtRxn0mvuVWAfGgqoNIKCsiZkkUWT665HDaxIV06JPcxu
-         gIpw==
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7fZKRvDVQM9HlxYWaX0VTCLszctaSPhpXrUBNc+KQSg=;
+        b=CDlcy7f5O4Iu0aUvPlkuYZB80lD3so/dU8JinAB/9gypsNNu4xS0srXRDwV1d2bVFT
+         8AIfegc8ykbwsGx9sdfFtydDz43KLo1x6deRQKLq6+5Eqob+8ZpfpeV5Un6jjlsMhIrP
+         w2rr6/9sfcHE8kpOGwMRW2JxyKAlG4jza+NmdDyG1F3KRF3dARXVQOeU4Df/KiaM2LmR
+         uP0yadujXqS+IH51LNvjXkWsR/rm+bIotUdv4UMpKwqJkTNj7xbmXzDFoXTXCr899H8H
+         XHIASLa6h+JUaL1bQTjH3vrdZNiUFhwsm0cIA0DzxOWT5JYHrA6Y7itnHneJiSlqqvba
+         WfWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737704537; x=1738309337;
+        d=1e100.net; s=20230601; t=1737704623; x=1738309423;
         h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:to:subject:user-agent:mime-version:date:message-id
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wmg/m4lfKrk+PzLvi7kEJ1k14iy48CyIxpk20f9BJok=;
-        b=Bw8foMSMs+wdUlaseXbhMfAidfDYa4fLs1SbcKM6a4ywNKIjYdNY4DW1NdfLkG9vN2
-         EtZ/v6yXT6Ofm9r/MPrJpjMUhXQLhPOshMxjS91z4rJz6GOJxt/aXbmChemaRP087aIv
-         436qk/FTkBOGoUfmJuZKZklxPqVnoSZpqeGZcGMigrGky6nv2x+A/5MvXdG1ZMCOFHXS
-         snOt5bgY3mmNPXvuCS2pqDlvCCj/dh6hCi9p6zw541CuNgB2Mkgozufpxld7ntJlp+jV
-         N9SzWakVEvWDDN9F1JO0cYggpe1J72mdcbFpDwxnogZVVxi/UJEPNxFo1oAs3AEaV/un
-         Hr5w==
-X-Gm-Message-State: AOJu0Ywq5M92tNXXqrPgivE+J7D+/wXnpQrcHijz64VQrjkGb+lMIp1Q
-	2Qh3L0oc8FSDdut4NGWbMx73Xs8XFL5TPbww4V0KzZv9sijC1zm/PViNq2+zTSid4CF1sf6ShIJ
-	X
-X-Gm-Gg: ASbGncudJcAT11+Myn3l1tU5T6LbM1Mnv+oLXoV0SRbgMg1+c4Jbme9kYQpZJ1uphs0
-	YPid4vsDmc6e5gAur4OivjUxMZ/reyfZnZPmnl8Up1dJj5aa0ASdDLpbHGiBBYQEyPhmqqQWPQc
-	ASeNRWrTl7GRUuBcH8ljQROVH4KQcnIH2M9ib6h2N/K5NB0BCxnkqMATpSp2ONC+Z9DNuVavTfx
-	Llg1llY39bQ8lsOg2V4OQju4C/02y8Eety/hr7hYvBVOtsuoD3eS3IAV1JFdnwVEoLNln8TC3D3
-	ETsk1Iwrcp2l
-X-Google-Smtp-Source: AGHT+IFmz0ysK1EA9kvWPTo+Ly3Xw5wyn7fKA2jiXTd7LwH5REnZ8AMKxqnVn3bivPUrI/26OsPPPA==
-X-Received: by 2002:a05:6402:254a:b0:5d2:8f70:75f6 with SMTP id 4fb4d7f45d1cf-5db7db12d0fmr28038180a12.30.1737704536819;
-        Thu, 23 Jan 2025 23:42:16 -0800 (PST)
+        bh=7fZKRvDVQM9HlxYWaX0VTCLszctaSPhpXrUBNc+KQSg=;
+        b=OBK6qAq+nGo49YGFOfxKhzGgXswFUM3KKrUMoel9jyaWEaSUF5i0KVWmfgZsmf8/w5
+         ZvvLx8CmNviUBQVLjQAwv+6T2/fpxaSMOGFIyMkZ3F0gHx/MRy5jNGLS5WH7a6R7Bj//
+         ogGSg8XhJhtMs5gbG/WUFqMAiLp7SadEMX8PHuDt4OUz5fZtR7YL2tYLDFm0N2KMvroE
+         DG6I1xiMxdQu2f9ZztvPYLLGx+KzEYGTdtbaYMPVofg4UesN2/CEk7bwEXmJggeQbKY7
+         EBZAzJ3rwwcN1FuygBAZFgismB6KlyZ1ILRc7ej8oXtJ5FOR+eVoUksdpJqeP/4lP30q
+         71kg==
+X-Gm-Message-State: AOJu0YziUs74Q/a6hQubHDnZ8LCYfua+jgA4LpaUve3xYPkWNUOZ1Uv9
+	OBbe4U3YzTt7GVCa5iBzYEn5kfRe3B2mewqk27WgkCoFrjG1Uw2j/2Kv3JMiOethaCnfWf8i8z5
+	3
+X-Gm-Gg: ASbGncsfV8PrxqISD6X5ILlsi0g4/e3265SsjOokt86PEcvvC0yrZA1/T5ODMBAYse1
+	dmZfl7hS65f1m62JmMUue2VP526T6WkRKW8QNWknVkl+4noclV4r9JNsIjjAwhsSdQYvzIV6cSW
+	n6wT1z8m6mEfoqsJO/yEOgDkIOQLti8IkRgbfn4kfqM4UwVLw89c3yE+b6DpQh8CJ4ekzRmed6Z
+	E1i5H1lNodVVB6o0E0wpvGvQG9eN/0S70HeHV6Dua5WGEXby1pCLfcBYwAKihWkNlQXTwuYuWkG
+	qtJ6UYlNaZBh
+X-Google-Smtp-Source: AGHT+IFV+qFCVdpiCbi/m+uXEcpllWFJORgz4FDxZW99IJEDFDOmaGxq3Fz9ypKNmF8JZSl6voLGYg==
+X-Received: by 2002:a17:906:c781:b0:ab6:4fa6:71e2 with SMTP id a640c23a62f3a-ab64fa6724amr791131566b.22.1737704623261;
+        Thu, 23 Jan 2025 23:43:43 -0800 (PST)
 Received: from [192.168.50.4] ([82.78.167.35])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dc18638ed2sm788952a12.36.2025.01.23.23.42.14
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab675e62970sm84526666b.44.2025.01.23.23.43.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Jan 2025 23:42:15 -0800 (PST)
-Message-ID: <70a94e7c-6ce3-4c09-a3fc-2e59fd64113a@tuxon.dev>
-Date: Fri, 24 Jan 2025 09:42:14 +0200
+        Thu, 23 Jan 2025 23:43:42 -0800 (PST)
+Message-ID: <48c70eef-f489-49f8-a7e7-02fc24a51913@tuxon.dev>
+Date: Fri, 24 Jan 2025 09:43:41 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev] [PATCH v6.1.y-cip 00/14] renesas: rzg3s: backport the
- RTC support
-To: cip-dev@lists.cip-project.org, pavel@denx.de
+Subject: Re: [cip-dev] [PATCH v6.1.y-cip 01/14] clk: Add Sunplus SP7021 clock
+ driver
+To: Pavel Machek <pavel@denx.de>
+Cc: cip-dev@lists.cip-project.org
 References: <20250122115120.2885015-1-claudiu.beznea.uj@bp.renesas.com>
- <OS0PR01MB6388E136F89EFE42C5D4D43C92E02@OS0PR01MB6388.jpnprd01.prod.outlook.com>
- <9a4bf2e6-2b5c-4e33-b8b7-98756f544895@tuxon.dev>
- <OS0PR01MB6388D3CC612EC167DE317C6E92E32@OS0PR01MB6388.jpnprd01.prod.outlook.com>
+ <20250122115120.2885015-2-claudiu.beznea.uj@bp.renesas.com>
+ <OS0PR01MB6388CDA2AEED05007496E31892E02@OS0PR01MB6388.jpnprd01.prod.outlook.com>
+ <00ac7a78-c715-4027-864f-15433cafa129@tuxon.dev>
+ <Z5Jhe0daf2R/nH0j@duo.ucw.cz>
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
-In-Reply-To: <OS0PR01MB6388D3CC612EC167DE317C6E92E32@OS0PR01MB6388.jpnprd01.prod.outlook.com>
+In-Reply-To: <Z5Jhe0daf2R/nH0j@duo.ucw.cz>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 24 Jan 2025 07:42:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17614
+ <cip-dev@lists.cip-project.org>; Fri, 24 Jan 2025 07:44:00 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17615
 
-Hi, Nobuhiro,
+Hi, Pavel,
 
-On 24.01.2025 07:56, Nobuhiro Iwamatsu via lists.cip-project.org wrote:
-> Hi Claudiu,
+On 23.01.2025 17:34, Pavel Machek wrote:
+> Hi!
 > 
->>> I reviewed this and for 5.10.y-cip series, LGTM.
->>> But regarding "clk: Add Sunplus SP7021 clock driver", as I commented, I
->> think we should consider it.
+>>> I understand that the SP7021 driver itself is unrelated to Renesas SoCs or this patch series.
+>>> However, would you consider applying the patch as is without deleting the driver?
 >>
->> For v5.10.y-cip only: this driver is selected by ARM/SUNPLUS SP7021 SOC.
->> There is no SUNPLUS SP7021 SoC support in v5.10. With this, do you want me
->> to backport the full patch (along with the fixes you mentioned) as well?
+>> Sure!
 > 
-> I didn't check 5.10.y. Thank you for checking.
-> If you want to manage the same patch for 6.1.y-cip and 5.10.y-cip, Pavel's suggestion seems good.
-> Would you consider this?
+> That would be one option. Another would be to apply just the
+> include/linux/clk-provider.h with different title/changelog,
+> explaining this adds only generic function and where it is originally
+> from.
 
-Yes, I prefer going with Pavel's suggestion as it involves backporting less
-code.
+I'll go with this.
 
 Thank you,
 Claudiu
 
 > 
-> Pavel’s comment:
->   That would be one option. Another would be to apply just the
->   include/linux/clk-provider.h with different title/changelog,
->   explaining this adds only generic function and where it is originally
->   from.
-> 
 > Best regards,
->   Nobuhiro
-> 
-> 
-> 
-> -=-=-=-=-=-=-=-=-=-=-=-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#17612): https://lists.cip-project.org/g/cip-dev/message/17612
-> Mute This Topic: https://lists.cip-project.org/mt/110751142/8377987
-> Group Owner: cip-dev+owner@lists.cip-project.org
-> Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/13165139/8377987/1773116124/xyzzy [claudiu.beznea@tuxon.dev]
-> -=-=-=-=-=-=-=-=-=-=-=-
-> 
+> 								Pavel
 
 
