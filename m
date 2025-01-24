@@ -2,123 +2,145 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ABADC0218E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B43C0218B
 	for <webhook@archiver.kernel.org>; Fri, 24 Jan 2025 09:00:21 +0000 (UTC)
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
- by mx.groups.io with SMTP id smtpd.web10.7425.1737709215747363814
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+ by mx.groups.io with SMTP id smtpd.web10.7422.1737709212047346213
  for <cip-dev@lists.cip-project.org>;
- Fri, 24 Jan 2025 01:00:16 -0800
+ Fri, 24 Jan 2025 01:00:12 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=M+TLbbOS;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.49, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4361b6f9faeso11920025e9.1
-        for <cip-dev@lists.cip-project.org>; Fri, 24 Jan 2025 01:00:15 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=Su0FVR3e;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.48, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4361815b96cso12214325e9.1
+        for <cip-dev@lists.cip-project.org>; Fri, 24 Jan 2025 01:00:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1737709214; x=1738314014; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pyh/eCeUAKyxfgbv4E+U4BbnwMoXJ6eA0t8m+1CZZmQ=;
-        b=M+TLbbOSgCieHURNGNB7YRvEEbeXCJyze8psbII0Uym714hSPEEAH0Cw+WxoYPNvFo
-         wTJ9J0h+FjCMeX047sx72+o8+5zWhgGP9pd/XNeWhcVcuSrpAWdIvn/XAAeHkQ2gZbUS
-         02R7bjwE3l0TcRghqu8EJU47kYnRlYKoTGaQ6qXNgN4zbsawnGpzBNHOv/CDpNxHAdl5
-         hKBzw5Gr+0jzFfPbkwgzP0DOsi6JAUSdz9oBwoQ+uU158Dkab/lXfxdKdgyiOG0E+R+3
-         vfSDema+a5e9P1rcmFMu1pfdQCg8Cby/i5aODks2fch/ZexDM3guexPYNWl6nFjx47eB
-         I7TA==
+        d=tuxon.dev; s=google; t=1737709210; x=1738314010; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BSwNf19Qou7nM7wSKGPHcusBPehB83fjBKTzzY4qbz4=;
+        b=Su0FVR3eR9DGW/LdN3mrIfPGlqfO1120I54E3up9yPb9Qvn2ZAyzKQHbd03gK09JCJ
+         r2dZ0LbYv7hn9tw+Fq9mU64KxZbRGwOvosFaFvJewP3muM9BQT/BEjWc1FrhXoWNexi7
+         s4F/JuQb4fQXrYckeHAkxI9uetFX9tHIshR7qbeuQpnBFb0vW1FmjKvGnmX5MJ/IW7P0
+         mcq79XhUWrYAjPqnRhuBS9McgLKBelfkoE8m1BU0LW+8imGl86GnDuuuQW/BE+gKeyDn
+         SpKb6veYM03Ej950FHHg/JkWH5GboiKEH/roRH0/Zr8xMvFMTwu0W3S2/I4cYyO2IK0M
+         Cqiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737709214; x=1738314014;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Pyh/eCeUAKyxfgbv4E+U4BbnwMoXJ6eA0t8m+1CZZmQ=;
-        b=fzjn036eeZIJ924cT/R90q041FLp3YJpbK3XNDjgGyWqajRlDIusJpaS7+JR/MAEXb
-         pDv2lHp18XscL7Fd2TSUVkr8441clCX9EKQqbb6RCZZGYh+fl7lvCPS71DiVx95ulWO+
-         2+kXoB5FkIDTPFQowA9Vpm+8YxOZvzCZNphP2Y5b1ShvM8UStVbjHpLrLp5iiGtI2aWg
-         A9fVEiM6dGq1E1LdzwVu4fNPWMRzSdjOGYVLYPDh5zVI5DAUd1hZLS3/rXiPASvSVV8J
-         90YjszlNq0kXiHs9Xr5VnNap1z5+Z7JKud7ZRCrESSDRb+dlpmxQXqGNwISHrVCwPvpi
-         sxVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXRN/6Rxr3Q9xlNjNa0N2vd349L9lIQvlbWao8f98kLzCdtVxCfKSCyPEAwi1r3bp45iPvquEf1@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yypj17J4lT3GqXPcyLmEVPfyn0Hmt+jA/L/s5Z6LfIQG+OY9kfU
-	kv2O8EfyLnEFfmnW5zYEt+erX8Dg0GPreYrzFUgrsyMPJYiPvfJ+ntp3B7zbqLL3lMXEDzMwW3U
-	j
-X-Gm-Gg: ASbGnctDDLNr5evfsQ7QEMwKAJ8aWcOY4Oodda087ZqJ0ow7vTFxkqw4ZXQtiMJtlbj
-	NtH01un+zA0h6sPqsDVE2GTItRQQbisjvum3XY5Zsms8qVh4gOEMO6JE1ouGqRBSl4S0uKq/yiU
-	C8gxH3K/p0Uc6GgYMXdUCe5sO2iKKVuvkyGhHDee3F7XfFFCSOI1MPIiFvV0aUSS5jCXUXfu2Cl
-	oBaVf9G0tttOjl+OFNV577pD3/giMYmJOmFuYaSzvcy75BoIEA0sWEvhtMXR7pxvIsDZPVhlvbb
-	9MfGFvGFlhY6Su9OvN9Nks0nHT+Z/eN1VA==
-X-Google-Smtp-Source: AGHT+IFe7KKJlE/8pIQktghnMMYR3CdDjrylsYfEnNGeU5lYi2D/Uf7s/gXBp+k76Fwf762yB1Ox2w==
-X-Received: by 2002:a05:600c:1c14:b0:434:fddf:5c06 with SMTP id 5b1f17b1804b1-438b8841d5amr58998875e9.1.1737709214147;
-        Fri, 24 Jan 2025 01:00:14 -0800 (PST)
+        d=1e100.net; s=20230601; t=1737709210; x=1738314010;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BSwNf19Qou7nM7wSKGPHcusBPehB83fjBKTzzY4qbz4=;
+        b=PcXr2aHj+X8vOHaSs1/ETy0XLE4QQJcMaQXsa/28pMsL4KgnPLYyspOf/kfYGZHB0O
+         OWH59ol+afHrGwEFKIA/+syWEa78+NrMjKJbIS1rnZKuVqrqcZK6dS4iTdL+qkuOd8n/
+         8OTmv5noB2NSIMfhZ28UtSlnZ51+cZW/+2ArfnjpzOZw4VsW3OyQSjqglVNdkSTO5+r1
+         LcBMvY+9s2CV72+PFUZ48y1ZXkdsqumbdsg+BnY9PAN/SOsRRu3p3g6E9vhNdhBGRFLD
+         a1K4oNp87YeNzBIn0iTJrBUdUROhuH+dw+9+To/8UcSWjGOun58JNM1qkCdZX9OYiId2
+         Ei/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWZqJWwvWi/sFPzAZDVFXOHlZZogm6IHSEzw7D8HldDsXbsokQ8Eje1b2XgZuSkhjDCO5K3aNKW@lists.cip-project.org
+X-Gm-Message-State: AOJu0Yzwh3fOmvpsrfvCFxGNgWwxI1rJNGxXMiLFFXg7eX8mEMJhrXoH
+	CgnH5ITD+xuYRJsLGkwnlvIUkaBSBtmsuFwid6yMCfJe2bj1TOHZwIN7XkNCEhY=
+X-Gm-Gg: ASbGncumndIXhwEPUdMuoBp2TScB0Wo7XL5PsJOlJRqbZWZ1IAJqx5eq40mzoHMBjNg
+	ISAEVcbjyvbNH3qBLHdp8enxAhqmaLf9DE3wZpha2hL+SjigdMWhbXwcsws1j+bTLn8pvUebGqF
+	9NHkrAPiIktrsRwdsuBQ4BLmYZk6OTWPSrfB/vTFxFVtnvibCOkjfw5fKlPJJfjg7VEZx6ZvQqr
+	KP1rYsJ2R3kRiB83eGJiZILQVtMiLcQVPbuL1jrs/MKcV8SMwiFGqL1KfQ+H0/Ltq26KkIX9xCL
+	2ceJ4GKV6zCHO2EAWioTeeV2BZAjQ1hMAQ==
+X-Google-Smtp-Source: AGHT+IEQcXfdLzlnpDmpbrWdBiIxcDADZ0nYlVeynGrYCoAqSsYB+Da/eYljCWszjX65tVm0KuZdkQ==
+X-Received: by 2002:a05:600c:4f93:b0:436:6160:5b81 with SMTP id 5b1f17b1804b1-438913dbf79mr294850385e9.14.1737709210380;
+        Fri, 24 Jan 2025 01:00:10 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.35])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438bd47f25csm19410935e9.1.2025.01.24.01.00.13
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438bd47f25csm19410935e9.1.2025.01.24.01.00.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2025 01:00:13 -0800 (PST)
+        Fri, 24 Jan 2025 01:00:09 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH v6.1.y-cip v2 03/14] clk: Add devm_clk_hw_register_gate_parent_hw()
-Date: Fri, 24 Jan 2025 10:59:54 +0200
-Message-ID: <20250124090008.1401077-4-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v6.1.y-cip v2 00/14] renesas: rzg3s: backport the RTC support
+Date: Fri, 24 Jan 2025 10:59:51 +0200
+Message-ID: <20250124090008.1401077-1-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250124090008.1401077-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20250124090008.1401077-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 24 Jan 2025 09:00:21 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17625
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17622
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit e1ef630c56d36770e180f0d0bf7b61b5289f5c48 upstream.
+Hi,
 
-Add devm_clk_hw_register_gate_parent_hw() macro to allow registering
-devres managed gate clocks providing struct clk_hw object as parent.
+Series backports the RTC support for the Renesas RZ/G3S SoC.
+Along with a clock driver for the clock provided the VBATTB
+is included as this is critical for the RTC to work, as it feeds
+the RTC counter.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://lore.kernel.org/20241101095720.2247815-3-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
- include/linux/clk-provider.h | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+For the VBATTB clock driver the following patches were also
+backported:
+- clk: gate: Add devm_clk_hw_register_gate()
+- clk: mux: Introduce devm_clk_hw_register_mux_parent_hws()
+- clk: fixed-factor: add fwname-based constructor functions
 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 19bd0ad70b08..a0c7ff8d8928 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -606,6 +606,24 @@ struct clk *clk_register_gate(struct device *dev, const char *name,
- 	__devm_clk_hw_register_gate((dev), NULL, (name), (parent_name), NULL, \
- 			       NULL, (flags), (reg), (bit_idx),		      \
- 			       (clk_gate_flags), (lock))
-+/**
-+ * devm_clk_hw_register_gate_parent_hw - register a gate clock with the clock
-+ * framework
-+ * @dev: device that is registering this clock
-+ * @name: name of this clock
-+ * @parent_hw: pointer to parent clk
-+ * @flags: framework-specific flags for this clock
-+ * @reg: register address to control gating of this clock
-+ * @bit_idx: which bit in the register controls gating of this clock
-+ * @clk_gate_flags: gate-specific flags for this clock
-+ * @lock: shared register lock for this clock
-+ */
-+#define devm_clk_hw_register_gate_parent_hw(dev, name, parent_hw, flags,      \
-+					    reg, bit_idx, clk_gate_flags,     \
-+					    lock)			      \
-+	__devm_clk_hw_register_gate((dev), NULL, (name), NULL, (parent_hw),   \
-+				    NULL, (flags), (reg), (bit_idx),	      \
-+				    (clk_gate_flags), (lock))
- /**
-  * devm_clk_hw_register_gate_parent_data - register a gate clock with the
-  * clock framework
+and adjusted accordingly, if needed.
+
+For the same VBATTB clock driver the
+devm_clk_hw_register_gate_parent_data() was backported from the upstream
+commit d54c1fd4a51e ("Add clock driver for Sunplus SP7021 SoC") in
+the patch "clk: Add devm_clk_hw_register_gate_parent_data()".
+
+Thank you,
+Claudiu Beznea
+
+Changes in v2:
+- adjusted the patch title and description for patch 1/1
+
+Claudiu Beznea (13):
+  clk: Add devm_clk_hw_register_gate_parent_data()
+  clk: Add devm_clk_hw_register_gate_parent_hw()
+  clk: renesas: r9a08g045: Add clock, reset and power domain support for
+    the VBATTB IP
+  dt-bindings: clock: renesas,r9a08g045-vbattb: Document VBATTB
+  clk: renesas: vbattb: Add VBATTB clock driver
+  dt-bindings: rtc: renesas,rzg3s-rtc: Document the Renesas RTCA-3 IP
+  rtc: renesas-rtca3: Add driver for RTCA-3 available on Renesas RZ/G3S
+    SoC
+  rtc: renesas-rtca3: Fix compilation error on RISC-V
+  arm64: dts: renesas: r9a08g045: Add VBATTB node
+  arm64: dts: renesas: rzg3s-smarc-som: Enable VBATTB
+  arm64: dts: renesas: r9a08g045: Add RTC node
+  arm64: dts: renesas: rzg3s-smarc-som: Enable RTC
+  arm64: defconfig: Enable VBATTB clock and Renesas RTCA-3
+
+Théo Lebrun (1):
+  clk: fixed-factor: add fwname-based constructor functions
+
+ .../clock/renesas,r9a08g045-vbattb.yaml       |  84 ++
+ .../bindings/rtc/renesas,rz-rtca3.yaml        |  84 ++
+ MAINTAINERS                                   |   8 +
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  34 +
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |  16 +
+ arch/arm64/configs/defconfig                  |   2 +
+ drivers/clk/clk-fixed-factor.c                |  59 +-
+ drivers/clk/renesas/Kconfig                   |   5 +
+ drivers/clk/renesas/Makefile                  |   1 +
+ drivers/clk/renesas/clk-vbattb.c              | 205 ++++
+ drivers/clk/renesas/r9a08g045-cpg.c           |   3 +
+ drivers/rtc/Kconfig                           |  10 +
+ drivers/rtc/Makefile                          |   1 +
+ drivers/rtc/rtc-renesas-rtca3.c               | 902 ++++++++++++++++++
+ .../clock/renesas,r9a08g045-vbattb.h          |  13 +
+ include/linux/clk-provider.h                  |  43 +
+ 16 files changed, 1456 insertions(+), 14 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a08g045-vbattb.yaml
+ create mode 100644 Documentation/devicetree/bindings/rtc/renesas,rz-rtca3.yaml
+ create mode 100644 drivers/clk/renesas/clk-vbattb.c
+ create mode 100644 drivers/rtc/rtc-renesas-rtca3.c
+ create mode 100644 include/dt-bindings/clock/renesas,r9a08g045-vbattb.h
+
 -- 
 2.43.0
 
