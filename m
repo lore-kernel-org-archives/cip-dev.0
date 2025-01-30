@@ -1,239 +1,435 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <sai.sathujoda@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF7A9C0218A
-	for <webhook@archiver.kernel.org>; Thu, 30 Jan 2025 09:20:48 +0000 (UTC)
-Received: from DU2PR03CU002.outbound.protection.outlook.com (DU2PR03CU002.outbound.protection.outlook.com [52.101.66.13])
- by mx.groups.io with SMTP id smtpd.web11.11866.1738228840414217895
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE9A3C0218A
+	for <webhook@archiver.kernel.org>; Thu, 30 Jan 2025 09:29:08 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.131])
+ by mx.groups.io with SMTP id smtpd.web11.11952.1738229343878781545
  for <cip-dev@lists.cip-project.org>;
- Thu, 30 Jan 2025 01:20:40 -0800
+ Thu, 30 Jan 2025 01:29:04 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=QCZgeX3T;
- spf=pass (domain: siemens.com, ip: 52.101.66.13, mailfrom: jan.kiszka@siemens.com)
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.131, mailfrom: sai.sathujoda@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1120) id 50U9T1Vj349719; Thu, 30 Jan 2025 18:29:02 +0900
+X-Iguazu-Qid: 2rWhqikycUxWsze3Ax
+X-Iguazu-QSIG: v=2; s=0; t=1738229341; q=2rWhqikycUxWsze3Ax; m=ETDV5VEx5L63xuiNodxPE37op8ESzJoa1F76Sgls2G4=
+Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
+	by relay.securemx.jp (mx-mr1123) id 50U9T0Mf1190098
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 30 Jan 2025 18:29:01 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SS2hHbEZA3hjj+oDyupE8AcnvK8CPeuUM0i67mEsLdTei2eQUbsfwfP5HKpz0M9eQMXOz/q2tY3Gvt9rFvES/u1Edc0WFhS1bEldZYlO4O12raYTs6WbErlKb5NffK19oXYKKm+LuMlh9QmfWYPnuP27sfhkfemy0AFDaFs7lXB4tx1oY1qrRlw+Jb6+YyeBE7V1hzMaGKWw8gga0JLqD1/y/RP6b3zbTCXBKBkgeQYmXfor1sQ0f2mAI2bAMQWX1/9xta4Em/gvVavi69kOC2pnVcLLF4Ej8atFtWHQ3YVTQQyKuIjEQKwwkgKBHaS3z6enePktPtIAca390JZRXQ==
+ b=wV0HFvtjY+N5LmNMvfv3tSW2bUXprTIJbvm86l7xt4NOmcZI01UFJDRFqlR+MH7s2aTKf/N/qYRaN9bjfzJavcB2Hpzb2eoG0Fq+pWRoSCe55TASf1CE9J6yGE34U4mz0ytW9/XivEaYW8aOI92wny3FAyzew4+v4Zhjw5TT8nbn89g21wTkGF9YjyJSX2K7XoXENlFnDPjxQJ5q03RH0onH8G2qKH1OpE3fvb0vPsE8bqiqqiahHYVeMjG7nCfeWcsbmJ+wUYlYB+INCjlyRBsmtoALm+8gYbBLN2E0L/69DEfzf1/TE5rqXGNSYp/BJeiIN1eFMeJzj+sSTUndCA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=R30x/vx+HY9asLGjPnaOmsawlKhiZmPFDkG6h34Su8c=;
- b=IfXqHNPKXt1w9Nmg4r182r1ganJHwPE8LDhHa9I4HagY/JuTSQiZVSNwQGUsAbxlAONgN1eoNHC3KbppjaH4ojhZvpnl8nprVW/IRhEvo4bDNWsHW/NUIqu7Hf6Fk7Yua+ALXTWFkfvMJ2Iyn51L1dqilg9oiIUcsxSfwd1vCi08XMweToodI2LDWDyy0wd2R3WFDpm4dkV6uM+jrgU+h4CTANDVsQ7LrDQqoSdkUvl/MYDX15tIZ0313pmbMMdFikwFVrIh/TS9rLDMPw1LWA1HD/e6qj/o+5F+sKja8UW2/mMRSmx2N4M61LO1+7s5MfL7l+/oeEAV6icixPGYAQ==
+ bh=jAIi8NIYI7vUHXdEBUTzfJEpQPbCn7urnXbsHDixUOo=;
+ b=xKu1NLdzH2M/mzZrAMHhqftanULw1GJjTNDMKP+jsYWCFZqonxTHY1SFe6wdjU8Xshwg4j4CXz7VGDlBLo+y+3ukjVnkcXCtO/cEYuiu5H/Q4TuGK8P45DfNh5Io94gLqJqbInThhT2lVCIRSHh9+x6FIs59sylFSENdBrse0SbNhNBIWCKlykjvJzzpCeTHgPGdgoP04YY5Vq8Bil2ugRQ8fR4y6qc0bjD+Ptbnp96Gh4c+iS5orq3Xd4Ye6+PxMrgTdA3DvaOoWYduSYzsU5HUJNxpADs94xpgxjslzphcGsPghw3Zzk26RPZtocjgwPq/ck0hkPDEsjBnkqeJEA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R30x/vx+HY9asLGjPnaOmsawlKhiZmPFDkG6h34Su8c=;
- b=QCZgeX3Tlee5TGfRb1sKbpNaPXbx4r2gZufha7y6oe23ryf/kodzInPAK2dixSgARSuErHxLIeHOi/6jnDY30Dd1ilKC03IkGrf2tWHZrRLqj0AkuQ1No6rnd5AgZPrzCaf1hobqVZZ5XjTQrYRQfjJrwEDVGRKMYfgx2S51BTuGnN3yYxQxPYbqatqXFTtg5N4Fo94kZg9MlCHPN68B5VhxXJGb0Ltuw4FAdtWR6QnOg5UiAjzEN4FTAhakpPUHCu77ct1UWiHFmzb3KhbBDNSgHpvmgsq3IJHV0P53tlkxlFiwTL9iWNlcXzrDYl+a5hWFtN6PnkN40SJKPoeuFg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by GV2PR10MB6360.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:b7::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.5; Thu, 30 Jan
- 2025 09:20:34 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408%6]) with mapi id 15.20.8422.005; Thu, 30 Jan 2025
- 09:20:34 +0000
-Message-ID: <13e252ee-f99b-451b-848e-ec918aeddd6d@siemens.com>
-Date: Thu, 30 Jan 2025 10:20:33 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev][isar-cip-core][PATCH v2 1/3] build x86-uefi with secure
- boot
-To: Quirin Gylstorff <quirin.gylstorff@siemens.com>,
- Sai.Sathujoda@toshiba-tsip.com, cip-dev@lists.cip-project.org
+ smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
+ header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
+From: <Sai.Sathujoda@toshiba-tsip.com>
+To: <cip-dev@lists.cip-project.org>, <quirin.gylstorff@siemens.com>
+CC: <jan.kiszka@siemens.com>
+Subject: Re: [cip-dev][isar-cip-core][PATCH v2 3/3] customizations-security:
+ add curl to download LAVA overlay
+Thread-Topic: [cip-dev][isar-cip-core][PATCH v2 3/3] customizations-security:
+ add curl to download LAVA overlay
+Thread-Index: AQHbbmMZtzjdjBI/2kaUtODthJ5QdrMvCeIzgAAF54CAAAC14w==
+Date: Thu, 30 Jan 2025 09:28:58 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <OS3PR01MB6103A66703C3CAE0FB077BC9C2E92@OS3PR01MB6103.jpnprd01.prod.outlook.com>
 References: <20250124132246.64738-1-Quirin.Gylstorff@siemens.com>
- <20250124132246.64738-2-Quirin.Gylstorff@siemens.com>
- <38e3b2ea-9dad-4f14-8e73-9dc8f4c05f9d@siemens.com>
- <a57c6f8f-47ce-4202-9fb8-fab2c33fbe7c@siemens.com>
- <OS3PR01MB61030247E8AE7BCFBDA4ECDBC2E92@OS3PR01MB6103.jpnprd01.prod.outlook.com>
- <dc53e50c-3901-4051-9414-1a1c9067c519@siemens.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
+ <20250124132246.64738-4-Quirin.Gylstorff@siemens.com>
+ <OS3PR01MB61036828512A1860892182A5C2E92@OS3PR01MB6103.jpnprd01.prod.outlook.com>
+ <dbdeebd3-056d-4cb9-894c-543fefc01c6c@siemens.com>
+In-Reply-To: <dbdeebd3-056d-4cb9-894c-543fefc01c6c@siemens.com>
+Accept-Language: en-US
 Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-In-Reply-To: <dc53e50c-3901-4051-9414-1a1c9067c519@siemens.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR3P281CA0177.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a0::14) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS0PR01MB6100:EE_|OSZPR01MB7795:EE_
+x-ms-office365-filtering-correlation-id: 5621970b-bc7d-4eb4-e6ef-08dd41108611
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|376014|366016|1800799024|8096899003|13003099007|38070700018|7053199007;
+x-microsoft-antispam-message-info: 
+ =?iso-2022-jp?B?WmtGYXY2QUxFNGRGQ1hVcmRJQ25oem9lRG9NU0hMQStzaDdsMGZuWk95?=
+ =?iso-2022-jp?B?SGl3eTdIQk9mZHJ4ZlhkOForVitCdTVIdEFjbzVjUW5lY09xWGo1UGFq?=
+ =?iso-2022-jp?B?djgvWWp2ckNDcTRlTkFWeDY2cFFpeVUwOEFHREpEVFVMKzJMNTVkV2Nh?=
+ =?iso-2022-jp?B?bVVEdFFRZlVOdU5IMjRLbEp2Z2RmaVNrbWNRNzVWNTVvZUlXbStwNk1R?=
+ =?iso-2022-jp?B?ZDFCdlNtQjUrZFROTDd1dU9NVVVCUmRISk10dldkblRPeXcyVjVUQ005?=
+ =?iso-2022-jp?B?bVZvV1VIaXZqTG4yWEgrMzlQaDlYNmQ5RVF4YnNoWktqWVI1a0FRRDVn?=
+ =?iso-2022-jp?B?K3pmM2M4QlEyM296cHFhZWhBd1NxdEJWZG1mK0Q1clFFeFNKUHk1NHBT?=
+ =?iso-2022-jp?B?UHFoS2RuMjJzV0FDUVlGOGh4Y2ovdGhuTlZCUmNvS09HdDhnc0VDcm9z?=
+ =?iso-2022-jp?B?KzVzVXQzdWxneXMxc3R2ZEd5eW1xVko0VkVBUzJXU2hEc2l4d2Q4R0xJ?=
+ =?iso-2022-jp?B?SUhQVzZXckhvbzJEU2g5ZGFJa2VyT1FCSFBvV3Nod3dKZG0rT2ZQK2xw?=
+ =?iso-2022-jp?B?V3ZHTS9JZmhWR3FQYWlBVlFwL2hBQ2UxMWVxa2JXNGhCc3ZDZTQ0c3B6?=
+ =?iso-2022-jp?B?eGYxcHVXNUtNcXo0bXRWbk9pZUNBTjNiUVBlVlhURXFxVGN6YXN1SVR4?=
+ =?iso-2022-jp?B?andUZDg5dVhQQXpyT3pUak1sYTF0Skg0TXMzU08yU2F1ZEJzRUxMRCta?=
+ =?iso-2022-jp?B?R2MyOG5zalVTWStiVTl2c0ZMZjhYeDUxTDlxcGRabGpkYTQ2VndTWElV?=
+ =?iso-2022-jp?B?cFdIbFErUHBGdm9zMCtzT3Nlb0E5ZE5vYWE5eWR3UzJGRHUzcDVMNUlo?=
+ =?iso-2022-jp?B?Z2NTOUppSTU4bkh4K3pPT1ZGNGl3Z05lUlEvZmZKcjRjeXZjaWtFcmJq?=
+ =?iso-2022-jp?B?U2pHYUpKU3BabC8zeVJWa1VKaDdVUFNVeVcyTTYyeDFJSkxBSmd5OUla?=
+ =?iso-2022-jp?B?WlVJU29vUitNZGx3eFl5OWVNYjlnSzhia0w5UmFTb0pwREVxQ1RCVC9S?=
+ =?iso-2022-jp?B?c3pRWTE1MlFScTdROG10N0F2R0FETktqMXJ3TTIzTXlzRVF1YlM2K004?=
+ =?iso-2022-jp?B?VUQ2QzNrQitQSDBoc0tEdi9reHV3R200KzIvekZ1eE5VQnZmejFCQTZ2?=
+ =?iso-2022-jp?B?OEtITE14UlUyUEk0Y25HQnJsOEFESU5DS2pqZjhpaW9NdE5iamNXRjFi?=
+ =?iso-2022-jp?B?elc4b0padzJndGxtM0c0cjZZbkhJVXRUWG5PT3hnejlwSDdkTlcrNS9n?=
+ =?iso-2022-jp?B?aUxQUEQ4V1F6VVRQQ29lblE2UURDZ0dVOUwyT1VRUE4wQzFsWDRsaGVJ?=
+ =?iso-2022-jp?B?dTdGbytyYmc2dm9ucUdxWmNoNkJURFhuMGZ3bFVtMTY3TXl4VHhGTWM1?=
+ =?iso-2022-jp?B?MnpaYUhxRGZ6UVQ4S2FyNVVzU09vNmYrM3FWUzBkOXJPS1E5a05xckht?=
+ =?iso-2022-jp?B?dUNYQ2d3c3F4VWgwWkFsV0hmWlp3UHZUb1VvWEhXaUcyRDBhclBMT1lL?=
+ =?iso-2022-jp?B?QUdhOWk0Q1M1R3BJMWN0V0R6aGI4VjRTYk4xL1VjTmVCSGFEL25STElp?=
+ =?iso-2022-jp?B?NXFLOWdyNkF2QkVBTlF6a1pQVXBtdEhPTE4yUWhuTmdrT3JCUzNBbzBC?=
+ =?iso-2022-jp?B?R01zU3Yvc2NIWjlYOW16QXlJNG1kdjRLWi9TY2VhWktEUE1mTmgzVlVF?=
+ =?iso-2022-jp?B?aVJwRmY1RFU3MGM2d3R0b0xMODVUOVhLbVp2MzVVcnUvUlBYM09BSkJ0?=
+ =?iso-2022-jp?B?TmNpdlYxb01WZUl3S0hhNWs2elV6SUZOenNCdFZObEZRL3dMVndmS3lD?=
+ =?iso-2022-jp?B?RFZZT0FPRVF5TWtsNG1CVkM3UnQ1WXJhMmNsZTVkcG91UDhseU9ITzlE?=
+ =?iso-2022-jp?B?am1NWDNxNTFUQ2JPUEpxMHptUUdhT0FOYldXT3NkZkFJbHNkbVhRcXVM?=
+ =?iso-2022-jp?B?THhTZWNGTk9aUmZLNmR1N3k1aDdZdW9GTi9LOXNOTk1aMEFCUmVFTy9Z?=
+ =?iso-2022-jp?B?UEE9PQ==?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB6100.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(8096899003)(13003099007)(38070700018)(7053199007);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?dmM1OWJDZ2daaEN3QTZnL3ErdGR5SWxHNDk2a01wTzMwbXZPaFlFeG44?=
+ =?iso-2022-jp?B?dlFidmo0eHBrYUxML3N0U3pyeU04alNEY1BJeGZxNVlxek5GaTMweG9u?=
+ =?iso-2022-jp?B?WmJjYTVEQmZzLy9RUUsyb05RaUFJQ0RrWGVWejIvL1pMVzVlOU5Ody9K?=
+ =?iso-2022-jp?B?elRpalpXRmcrb04zdGduSVE1RXFZT2wwWVJLdlAraHo0RXQyUXJsRm5w?=
+ =?iso-2022-jp?B?UG9mVC9oanc5QmZhSE1LOFI1Wkx3K1o4WHA3V0EvYWdwTjF4WStUZjhu?=
+ =?iso-2022-jp?B?Y2drYVdlakFpY2FtMXVwVTN0b1g0SjVIR2RDWlhpVkwyYVViYUtEN0tJ?=
+ =?iso-2022-jp?B?WDlKeitySDNMUGYxZ3BjNUp5Y2E0Nmg1OWFNaFpDTldFbnMveDdOYkhV?=
+ =?iso-2022-jp?B?bS9nQzRocDdEb2krNDhFMVlPZXRXVDdPY2FEZ2FKKy9kYTJUOWV4VEM4?=
+ =?iso-2022-jp?B?V1FnK2ZNaVFFYVRvOU5uTDlmSVQwWkF2RGJCd2RhU1A1TW14TEoxYWZu?=
+ =?iso-2022-jp?B?MGZ2WjhQV3cvZ09jMy91czJjaDJGZ2UxS3YxMkJLUzJ6bHZ5TWlIMGR5?=
+ =?iso-2022-jp?B?cytwRk5CSEVnK0t5MnlLNlhNcGhpY0RLTzdnTGw5UmRCMyt3TDlrNWt4?=
+ =?iso-2022-jp?B?dnFPSnU4VG5zMHZ5c1ZTV2xaQWZic2V3azRMZS9tVjBFdWs0VVJJeEFp?=
+ =?iso-2022-jp?B?Wjc4UmRSRWVxcktraEx5WjAvaTVGbi9QRlpLWHE1cTFJSFhpckkva3Fa?=
+ =?iso-2022-jp?B?cGZ4YjI0TWVHckV3Ym5wN2gvWjM5ZGhZeWFLQkVxeUxXQjdzMFN6M1NC?=
+ =?iso-2022-jp?B?dHR2cEhYdytlTklibVNIUzhIWnlJQ0xjMWl3dnU4RmQrczQxc2g1N0FW?=
+ =?iso-2022-jp?B?Z1FpNDRzeUVjanFCa1d4L0R6RjB5Yy84NGlPQmdGRklxbFA5MlJxem1Y?=
+ =?iso-2022-jp?B?bE9tN2VEV08zZmRwWm9CUnhXR3E3RXZLc1FMY295cGwzb1NidS84UGV6?=
+ =?iso-2022-jp?B?OHFhWkJKNjJsSTdkN283V1ZPd3BNaExQbHRPamYzTGVZZE5NNDJmRllP?=
+ =?iso-2022-jp?B?dEtTWnJIUjdWSzRRb2tFT1RnNUFHTXlxd05tQVhEN2NZZ1Y3Tk1PRDAx?=
+ =?iso-2022-jp?B?bDlUWDRWQlpHYld2ZXNlSUgrQ1h1emc3Y2FJWEtBTGVDSzRxbmxKODBK?=
+ =?iso-2022-jp?B?c3FSaS9QWkVoU1o1NmlKOXF5SCthR0Y5STNOdW9oL1IvRHU1eDY4YWdl?=
+ =?iso-2022-jp?B?U1ZiQkVTbFFrMnRMTjNIVjN3Q2QySTZMNlZBcGN5ZVhUN2FhdTdlUWEy?=
+ =?iso-2022-jp?B?YzBNTlR4U0F5Tm9UMnI0b3FzR2hhN3lndzR5YnFFVE8vS2ZBd0V2RUtH?=
+ =?iso-2022-jp?B?dFF4R28vNkZ0SVgzWUZPNDdzQzExQ1lBckxYN1pNV2dFU3RRc2V3RWYy?=
+ =?iso-2022-jp?B?VkFKS2hQclY0WkNFNFBSVjlQTTRjK1Q0VmFBenl4emVsZkhxUExGZkpi?=
+ =?iso-2022-jp?B?WFlKM2pEWHJHdjNJLzhTY2kzNjBJanpvbnVJUUxvMFUrY3hTSU11a0d3?=
+ =?iso-2022-jp?B?OTNIaHVmbjRuQ0R6ZFNoQTlZZmZhdG95YVR6RkxCczd4NFZZUWVKMkds?=
+ =?iso-2022-jp?B?Qk9mNG9kdzVpSzgxWHNJdkFRUnB5bk11ekxpbWhMY0hYdGs1T2htbjdo?=
+ =?iso-2022-jp?B?ZjlWWVlVTi9WYmxFcnMrOGNKYUJqenNtQ2dCM3Jmc2NML21HRHkyZXVl?=
+ =?iso-2022-jp?B?VTRJUG9vaks4Z1prRnBHdVRzSmFwbjJPUmRUSDl6QXRlM2FxdDlLZE5h?=
+ =?iso-2022-jp?B?L05Xdzh0UDQzY3B5YXh5enNqNzJwVmZpYnFjVWNOVG9OUU9lRWdWdGlq?=
+ =?iso-2022-jp?B?MG1mcTdYRlhzdmhhZXROUVIyRmpFbWtSQ2dmOVNIc1pNdGFadFRtZDNT?=
+ =?iso-2022-jp?B?Yi9yRW1HMVhaSGpFdTlMSTNLOE92ak1JNGd1VnZjOCtQM0NzZ0pJc3Vx?=
+ =?iso-2022-jp?B?UUE3dnI2Zm80elNkWDJqTS9TbzZTWHhHWlFYUlR1Uk52b3dib2hOR2hL?=
+ =?iso-2022-jp?B?NlNnWWx6M3R0NTNUdm1GU1B0alVGTUpXdlhGSUxKcDJVd2tVeVhERzd6?=
+ =?iso-2022-jp?B?b0dReWlhLzRWd0hXYkNENXJWVnE1NkUwY0VqMEJERkRuaEZZNk1JRERv?=
+ =?iso-2022-jp?B?dkZtbFBpbHZ3c1BsdHYwZml6NElUYmVtbEF3Qmwrc0EzVDhWZG11b0lv?=
+ =?iso-2022-jp?B?ZmZRU21kTFdEUitudHhhK1UwWXBXQjAvZUtPRkhKR2V2SXNaMUVhNDJF?=
+ =?iso-2022-jp?B?VVpIQkVlT2tVQW5qVTFPSGIzZkwrUUtzdVE9PQ==?=
+Content-Type: multipart/alternative;
+	boundary="_000_OS3PR01MB6103A66703C3CAE0FB077BC9C2E92OS3PR01MB6103jpnp_"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GV2PR10MB6360:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1b47eb7e-6530-46eb-1540-08dd410f5996
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?aHkxeldDRGhMVHpYc1JsdzQ0K3V4L2JpelNSb1VrcGh4QlZNZEVCTDVpRFdq?=
- =?utf-8?B?NTZ1N091YUdqL2tiL0t6SklGOHhPRjBLVkpZMWpIVzBlZStTWC9FQmhRMWpD?=
- =?utf-8?B?YjNEaG1qRHlUOC9keG1YYVRtZWJVdTQvdFZTQ1JGY0xKKzhlUDFwUmNkV3My?=
- =?utf-8?B?OXBRZXZMUlJhdFFudFpZNlpMaUxCaDU3VVRRZFNHM0pWTG01clR0OHBHSHlW?=
- =?utf-8?B?UDF2MXZvbURoRXNPUGdxMXN0MjhyZ0VUZ1JnTzd2cHd2b2kxUC80SWtDUVIw?=
- =?utf-8?B?NmxXVE9TekVPN1Nwa2RxTVU3ZENWbjBKdnBjSHB3dUpmYjNVMDVXRnl4WkdN?=
- =?utf-8?B?cXVuV29wa3hGeUl0YTNPQWhvZWdRajFrYi90dU1VYW1XK1lKTUVweU5XSW80?=
- =?utf-8?B?cG9uUzRFb1dJWGJBUFRSei9td2FBUDhvRHd1Qno5WFBOcXBTb1VSc2VLdDZs?=
- =?utf-8?B?NEpwbVNsd1pkVGpWRUZSV0lVRUNJUjdlQnJ4dXlhbG1sK1l4S2dzZDhCemds?=
- =?utf-8?B?Z1hLOGNHbjlwUlBQQlIrREdhUXlrMXFkVWwvazdkWC9uK1pRaW0zWTAvOWl1?=
- =?utf-8?B?eTRjMVRqejltclRmaS8wc3pobnpKdElLZUd6aEdsYUUyWkdBUGJuemFHV0Ex?=
- =?utf-8?B?NmNQTlFicE9oSnJQd3RQbHZqcFhXdFd2VGpRNERHY2gzL2VDYVg1b2orQ29H?=
- =?utf-8?B?SHRhc21BWmY0Tmo5cXgzc0psZW1MbURRTDJ6VUZNUVI2blJOejBNcm1qbTRV?=
- =?utf-8?B?THBpb3YrSGt1UjNBajEzTmhWdW5QamhEb25iaXhhUTkyQUcwMFAvMlRVK2FG?=
- =?utf-8?B?cmxpU283WTJqaUZ2VW9zenljUE5XWUMyZmRXeVNGN0tpcjdvcTRaVXBUbjFq?=
- =?utf-8?B?c09jWkdNU3VUSmlaZklQT0tDM0JCd0FhOXpFSjBOV09XWGV4SWFWbG5vdXl6?=
- =?utf-8?B?RGpkcDFyYkgyVldyNVVKTnlweGhONXk1V015UnQ3clVqeTlpeVZUS2ZFRURR?=
- =?utf-8?B?Q3Y0eUl5c2VDeFJwN3FUVWswSTBIN0VGSzhkZm8rcU1DRFZ0czk4NkMxSUR2?=
- =?utf-8?B?K2ErQWkzNGx5NEhJZ001TEZhR0s3WTFwSjdja25Yc24ySlNvQ0ZBbm8xTzBZ?=
- =?utf-8?B?R3pyMEVDbEhqUU1ERkxvdDRLd2g5dUd6VVFwV0RLUzZYUGsvRUFibjFOODVr?=
- =?utf-8?B?QUVEdEU3eStPZElGM3NwT2ZUSHQ3UzZuQis2NEhCVXVLYjNRZ2MyR2tLVkZM?=
- =?utf-8?B?VjFmMGN4OHR6VUlsYlFQMStseWh4bVpiNUxXbjJJdmQwK2RyR2Z3b3dmYkFO?=
- =?utf-8?B?NFlGeVQvd2ZYdUc1bGovdVl4U1RRTldZZktWVllnZENPRnpUOTNVaGVFYk5H?=
- =?utf-8?B?eDhJWjVnbXZjelhybk12T3luTEhVZUIxcnI5c2ZKczNOZGJ0ekdkazZydW9l?=
- =?utf-8?B?VEdzRE9nN1BGRDBBZFdFWUlPY1g4MWlMRE5RVlFFRitrRDJWd3Z0QnJlTkdV?=
- =?utf-8?B?Sld4V29RMmhtRXgzeEpxU1NSQUpEcjgvUXRsTndlMDF3TGtBeEcvTlhmdmgr?=
- =?utf-8?B?a2h2aUtndThSa21hNUNKL3U0RTZ4Q2VPU1JtYWxIZVFKNlNlYlpjNjg5TXdL?=
- =?utf-8?B?V1R4ZHJkV1g1NzdoZk1rT3JaQ2Z5SGNNaGozRFJzVlhXYTFSTGkxM1o5VWRL?=
- =?utf-8?B?cGJ0VnlSUGRaaDFwd3MxTzZUd3hFSnIySkxSTXA4SDkxSjhjeTRacjI3OE9u?=
- =?utf-8?B?VWs1WlNSZmc3aXR5ay9Fb21zRmVlZHllM1JWNnluSWdaNldFMCtvMzNkeGlN?=
- =?utf-8?B?b01jTytRYlFBcVorbUJ1c2ZxUlBEWEZHYVhyQ2o2aDlPK3NNaTlwMThRblRT?=
- =?utf-8?Q?gmnRR9rQXIh11?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?QVFvZzFQMnlHS3liemhEeFNGREhBQmpVbE4vREtneU82SkNlSDN1aUROZkh5?=
- =?utf-8?B?dEUvMmtubkZXK01RZ3RvVW1GVlB3OEJ4SnduRE9YaDZoM2xONFlERWpTOXVt?=
- =?utf-8?B?amFJQkNsdHE5dTFqdXAvaWtPZXJOY2RtUzQ2WjdZczFKZ3ZlL1l2Z1dQZjdz?=
- =?utf-8?B?UXN5c0hPRUtHckpVOFMzZ3ZIN1JVYlpYNWxYOWhQMlVIcStkR0JZT0tEUTc4?=
- =?utf-8?B?Lzl2REZIelpmZVhySEh6NGI1VE44U01sU3EyRklRdmtVZGtNT2ppT29BMGFV?=
- =?utf-8?B?bHN0NkNMT2pxWjhpdkNVWUF6ZXk0YjR6VFh1aTZJaURFVUlwRWNQVHo4NGd2?=
- =?utf-8?B?MS9rSXY1S1NrZUxXUFZ2K2JSNVQzQk02TUxmdklHdER1TTRVMkEyYzVoMGc3?=
- =?utf-8?B?RE1DamozNXA3azhYdEd5NW5xQVFJM0I4YnZPRUN5blIycFYyR2ttZDRUWUhh?=
- =?utf-8?B?cXo0S0ZWU2ZISFk5VWJoNk9nTjBNWTBVSnRjS1B6LzN3ZmExbjFwM3plRDFK?=
- =?utf-8?B?UGpZcnp5a1lDSFNXNHczZW5pTkJUZU5pQnU1eGRQWCtQRlhOcFJqVC8xd3Rq?=
- =?utf-8?B?cWF5L0RaYkpYalJ5UjRhRVBCZ1hiYTNxSDZnMkJ5TnAzUjdmVm5BUGF3RmRw?=
- =?utf-8?B?SDd2bFRhbjQ3ZkNVUnFuWkpuMDFmK0UrNVlZTnhvcTlNeVUyeWNZcEhQZEs0?=
- =?utf-8?B?dVJ4OHJKdVpTR284WmllK1pyamltSDlxNlhXTmNhaWNTUUlVaUMyS2hVbGNl?=
- =?utf-8?B?NE9rQXZtT1BmWXhxeXgvdCtuMFZlNlY1V2lrVlVCQXR5TjNDaDNlNXhqQXhF?=
- =?utf-8?B?QnlrWjBBd0xWZlVrT0lXZjF3Y0NWbGd6aUZhQ1FCV1ltWXJkaEllNE11cnI0?=
- =?utf-8?B?dFpVb0VHWjVsNVJxV0NJNDNwUFVicUxSaUNiaEZVL0x0dmxxK0kyM2dCaVFH?=
- =?utf-8?B?TG9QNVlrcTlXU3owLzc5RlNHRWpsNE9HRlFlT29SUEdReWJpcVBpM1dhVUFJ?=
- =?utf-8?B?UGtFbWFFR2w4QVBvME1hTTRxMFgxeGdzT2YweXlEUThiZ21HQWxNcmVVRWhH?=
- =?utf-8?B?UGhhSGt0QUVqeUxjL3BuRE03SXJKV3N2YStSQ28zNlYwMExOR3psZUtydm16?=
- =?utf-8?B?Znp4Y3hycytQT0FldUR2SDJqRHhuQWQzR0V6dXFlVVVtVDUzUmxxa2dIY3ow?=
- =?utf-8?B?MWZ0Z29kY0lnZlRQbWtXKzlXcXhhVDlhUzVSSGN3aHpXRDdGd25PcExaUW9k?=
- =?utf-8?B?T3NoVnk3TGZ1WmErMmxTVE9sbEdPbVpGZkZ0Ync1QjdUdUFKZXlzRWp2N0pu?=
- =?utf-8?B?WTFGZml6Q1U4U0NXQnhBdCtLRHVGMTBxaHFMVXVvTW9GTWNjRUhwSFFMWXdQ?=
- =?utf-8?B?b0JWQmRVbTFRaVUwL3dNejhIYzZKckxmQzVZVlByTTB4bTgxRUNmYUVsRTVG?=
- =?utf-8?B?b0xXUDFsSXJ4NlNhKzhzMlREekRQZmI3QjRxeFlvUnoxTWJXRyswaGI5eEo4?=
- =?utf-8?B?RjEwV1VZVUdrTXlTdHhDdGVkM21MN3dOTmJVbitjVVFaVDVtV09IWTBSYXFy?=
- =?utf-8?B?dWZOQkpaZngxZ1VhdUxQQ3JLcGx2aFhwZm5QMWlnRVU0cHFILzNLN0ppRlBE?=
- =?utf-8?B?VGRDWmViaklieUFZNmx3dnB0c0kvV25tOWl2TTE5V0pFTXBhSmxpVE9Paytu?=
- =?utf-8?B?clBaS1p6U0NxWTVLVGR3V3BldkpTUGNCc3FKMGllbGkvaXpOQi8rb0tnREtl?=
- =?utf-8?B?bzJ5OWdoc2pCelBUZFIxY3lrd0hNKzZlYjJzWXhnaVZBV1Ztc05BSjRMbHpq?=
- =?utf-8?B?SkNLR0hmTkd3cjNtaXlvQXRESWN0bjQ1YmJaOHVEait4NHpZKzFHUkZScFZm?=
- =?utf-8?B?bXNUK0NIUnc0NVNXVW1WT0RVejNSdTRUVXROQWsyQ1Frb3FnM3FGNjNWNUhB?=
- =?utf-8?B?WmxrTS9GNUdzQXNKYmU5djJsMDZKaG43OGpBTHJpZk5abXJ2dVdsT0UySDcw?=
- =?utf-8?B?eFJGRW9kWmFCdGZMNlFIVlpkR3NnZkg3VVNXdHpUcGtVVlZBRFd6NFNTblhh?=
- =?utf-8?B?aW1BdVRzTXZ2MjZmWlhqMTlXQWdXa3AyZnJaUS9kNXQyL2gvUTZQV2tzWUp2?=
- =?utf-8?B?Y2NSNFY3SU9jMEVvNzFFQjNaQ2JxU2lQdk1vWFpWN2o1U3g2SUlPNEVLUk5J?=
- =?utf-8?B?T1E9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b47eb7e-6530-46eb-1540-08dd410f5996
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jan 2025 09:20:34.2071
+X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB6100.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5621970b-bc7d-4eb4-e6ef-08dd41108611
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2025 09:28:58.0538
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2FOFstGZ/OeyE9azjRwoZImG81g6xmrc/4Ca3n8BRruLgWW5o8GkP9IEP+dWzbjXxt/jmgFClgreC3xPgYt4lw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR10MB6360
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zaaMyYb0r4IwedScLN56yVMKAg+f7kLmZusGY/8B4oTIcOTB2B35ci5f/f6v4iJCfuz9XRcBad/VvdCBM5+HIPt8pX9kNIy9AMHjBLWIB88=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB7795
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 30 Jan 2025 09:20:48 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17694
+ <cip-dev@lists.cip-project.org>; Thu, 30 Jan 2025 09:29:08 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17695
 
-On 30.01.25 10:01, Quirin Gylstorff wrote:
-> 
-> 
-> On 1/30/25 09:45, Sai.Sathujoda@toshiba-tsip.com wrote:
->> Hello Quirin,
->>
->> I believe we can drop qemu-amd64-secure-boot-encrypt, as we are not
->> testing that image in LAVA.
->>
->> The target being tested in build:qemu-amd64-base, is very similar to
->> the prior one. The only difference is build:qemu-amd64-base
->> additionally has security packages.
-> 
-> Then we can drop
-> 
-> - build:qemu-amd64-secure-boot:
-> - build:qemu-amd64-secure-boot-encrypt:
-> - build:qemu-arm64-secure-boot:
-> - build:qemu-arm-secure-boot:
-> 
-> because the all use the qemu-<arch>-base which enables secureboot and
-> encryption.
-> 
+--_000_OS3PR01MB6103A66703C3CAE0FB077BC9C2E92OS3PR01MB6103jpnp_
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 
-Confusing how "base" could become "full featured". I guess that happened
-when we started to enable secure boot and encryption via the security
-extension.
+I think dropping '-test' itself can affect pure test targets like build:qem=
+u-amd64-test, build:x86-uefi-test etc. The user cannot know what kind of ta=
+rgets they are without a '-test' at the end of the artifact's name.
 
-Looking forward to a cleanup! Please also consider if "base" is still
-the right name then.
+Regards,
+Sai Ashrith
 
-Jan
 
--- 
-Siemens AG, Foundational Technologies
-Linux Expert Center
+________________________________
+From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> on beha=
+lf of Quirin Gylstorff via lists.cip-project.org <quirin.gylstorff=3Dsiemen=
+s.com@lists.cip-project.org>
+Sent: Thursday, January 30, 2025 2:36 PM
+To: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com>
+Cc: jan.kiszka@siemens.com <jan.kiszka@siemens.com>; cip-dev@lists.cip-proj=
+ect.org <cip-dev@lists.cip-project.org>
+Subject: Re: [cip-dev][isar-cip-core][PATCH v2 3/3] customizations-security=
+: add curl to download LAVA overlay
+
+
+
+On 1/30/25 09:52, Sai.Sathujoda@toshiba-tsip.com wrote:
+> Hi Quirin,
+>
+> Including test extensions to security shall make the artifact name cip-co=
+re-image-security-cip-core-bookworm-x86-uefi-test.wic. So, the artifact's u=
+pload to s3 shall fail<https://gitlab.com/cip-project/cip-core/isar-cip-cor=
+e/-/jobs/8943849473#L2128> due to current logic mentioned here<https://gitl=
+ab.com/cip-project/cip-core/isar-cip-core/-/blob/master/scripts/deploy-cip-=
+core.sh?ref_type=3Dheads#L22>.
+
+Do we need that `-test` or can we drop it?
+
+Best regards,
+Quirin
+>
+> Regards,
+> Sai Ashrith
+>
+> ________________________________
+> From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+> Sent: Friday, January 24, 2025 6:52 PM
+> To: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com>; jan=
+.kiszka@siemens.com <jan.kiszka@siemens.com>; cip-dev@lists.cip-project.org=
+ <cip-dev@lists.cip-project.org>
+> Subject: [cip-dev][isar-cip-core][PATCH v2 3/3] customizations-security: =
+add curl to download LAVA overlay
+>
+> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+>
+> Lava generates an directory, in LAVA called overlay, which contains
+> all scripts and tests of the test stage. The Device-under-test
+> needs to be instrumented with with this overlay.  LAVA provides the
+> possibility to download the overlay via http or NFS. We use curl
+> to download to the overlay from a http server.
+>
+> Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> ---
+>   .gitlab-ci.yml   | 3 ++-
+>   kas/opt/test.yml | 3 +++
+>   2 files changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+> index 686ce48..d63ef2e 100644
+> --- a/.gitlab-ci.yml
+> +++ b/.gitlab-ci.yml
+> @@ -65,6 +65,7 @@ default:
+>       - if [ "${release}" =3D "trixie" ]; then base_yaml=3D"${base_yaml}:=
+kas/opt/trixie.yml"; fi
+>       - if [ "${encrypt}" =3D "enable" ]; then base_yaml=3D"${base_yaml}:=
+kas/opt/encrypt-data.yml"; fi
+>       - if [ "${watchdog}" =3D "disable" ]; then base_yaml=3D"${base_yaml=
+}:kas/opt/disable-watchdog.yml"; fi
+> +    - if [ "${test}" =3D "enable" ]; then base_yaml=3D"${base_yaml}:kas/=
+opt/test.yml"; fi
+>       - if [ "${swupdate_version}" =3D "2022.12" ]; then base_yaml=3D"${b=
+ase_yaml}:kas/opt/swupdate-2022.12.yaml"; fi
+>       - echo "Building ${base_yaml}"
+>       - kas build ${base_yaml}
+> @@ -250,8 +251,8 @@ build:x86-uefi-secure-boot:
+>       extension: security
+>       use_rt: disable
+>       targz: disable
+> -    encrypt: disable
+>       watchdog: disable
+> +    test: enable
+>
+>   build:qemu-amd64-swupdate:
+>     extends:
+> diff --git a/kas/opt/test.yml b/kas/opt/test.yml
+> index 4a60ad4..b23f437 100644
+> --- a/kas/opt/test.yml
+> +++ b/kas/opt/test.yml
+> @@ -17,3 +17,6 @@ local_conf_header:
+>       IMAGE_PREINSTALL +=3D "rt-tests stress-ng"
+>       DESCRIPTION:append =3D " with test packages"
+>       IMAGE_FULLNAME:append =3D "-test"
+> +  lava-testing-add-curl: |
+> +    IMAGE_PREINSTALL +=3D "curl"
+> +
+> --
+> 2.47.0
+>
+
+
+--_000_OS3PR01MB6103A66703C3CAE0FB077BC9C2E92OS3PR01MB6103jpnp_
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+I think dropping '-test' itself can affect pure test targets like build:qem=
+u-amd64-test, build:x86-uefi-test etc. The user cannot know what kind of ta=
+rgets they are without a '-test' at the end of the artifact's name.</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Regards,</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Sai Ashrith</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div id=3D"appendonsend"></div>
+<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
+bri,Helvetica,sans-serif; font-size:12pt; color:rgb(0,0,0)">
+<br>
+</div>
+<hr tabindex=3D"-1" style=3D"display:inline-block; width:98%">
+<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" co=
+lor=3D"#000000" style=3D"font-size:11pt"><b>From:</b> cip-dev@lists.cip-pro=
+ject.org &lt;cip-dev@lists.cip-project.org&gt; on behalf of Quirin Gylstorf=
+f via lists.cip-project.org &lt;quirin.gylstorff=3Dsiemens.com@lists.cip-pr=
+oject.org&gt;<br>
+<b>Sent:</b> Thursday, January 30, 2025 2:36 PM<br>
+<b>To:</b> ashrith sai(=1B$B#T#S#I#P=1B(B) &lt;Sai.Sathujoda@toshiba-tsip.c=
+om&gt;<br>
+<b>Cc:</b> jan.kiszka@siemens.com &lt;jan.kiszka@siemens.com&gt;; cip-dev@l=
+ists.cip-project.org &lt;cip-dev@lists.cip-project.org&gt;<br>
+<b>Subject:</b> Re: [cip-dev][isar-cip-core][PATCH v2 3/3] customizations-s=
+ecurity: add curl to download LAVA overlay</font>
+<div>&nbsp;</div>
+</div>
+<div class=3D"BodyFragment"><font size=3D"2"><span style=3D"font-size:11pt"=
+>
+<div class=3D"PlainText"><br>
+<br>
+On 1/30/25 09:52, Sai.Sathujoda@toshiba-tsip.com wrote:<br>
+&gt; Hi Quirin,<br>
+&gt; <br>
+&gt; Including test extensions to security shall make the artifact name cip=
+-core-image-security-cip-core-bookworm-x86-uefi-test.wic. So, the artifact'=
+s upload to s3 shall fail&lt;<a href=3D"https://gitlab.com/cip-project/cip-=
+core/isar-cip-core/-/jobs/8943849473#L2128" data-auth=3D"NotApplicable">htt=
+ps://gitlab.com/cip-project/cip-core/isar-cip-core/-/jobs/8943849473#L2128<=
+/a>&gt;
+ due to current logic mentioned here&lt;<a href=3D"https://gitlab.com/cip-p=
+roject/cip-core/isar-cip-core/-/blob/master/scripts/deploy-cip-core.sh?ref_=
+type=3Dheads#L22" data-auth=3D"NotApplicable">https://gitlab.com/cip-projec=
+t/cip-core/isar-cip-core/-/blob/master/scripts/deploy-cip-core.sh?ref_type=
+=3Dheads#L22</a>&gt;.<br>
+<br>
+Do we need that `-test` or can we drop it?<br>
+<br>
+Best regards,<br>
+Quirin<br>
+&gt; <br>
+&gt; Regards,<br>
+&gt; Sai Ashrith<br>
+&gt; <br>
+&gt; ________________________________<br>
+&gt; From: Quirin Gylstorff &lt;Quirin.Gylstorff@siemens.com&gt;<br>
+&gt; Sent: Friday, January 24, 2025 6:52 PM<br>
+&gt; To: ashrith sai(=1B$B#T#S#I#P=1B(B) &lt;Sai.Sathujoda@toshiba-tsip.com=
+&gt;; jan.kiszka@siemens.com &lt;jan.kiszka@siemens.com&gt;; cip-dev@lists.=
+cip-project.org &lt;cip-dev@lists.cip-project.org&gt;<br>
+&gt; Subject: [cip-dev][isar-cip-core][PATCH v2 3/3] customizations-securit=
+y: add curl to download LAVA overlay<br>
+&gt; <br>
+&gt; From: Quirin Gylstorff &lt;quirin.gylstorff@siemens.com&gt;<br>
+&gt; <br>
+&gt; Lava generates an directory, in LAVA called overlay, which contains<br=
+>
+&gt; all scripts and tests of the test stage. The Device-under-test<br>
+&gt; needs to be instrumented with with this overlay.&nbsp; LAVA provides t=
+he<br>
+&gt; possibility to download the overlay via http or NFS. We use curl<br>
+&gt; to download to the overlay from a http server.<br>
+&gt; <br>
+&gt; Signed-off-by: Quirin Gylstorff &lt;quirin.gylstorff@siemens.com&gt;<b=
+r>
+&gt; ---<br>
+&gt;&nbsp;&nbsp; .gitlab-ci.yml&nbsp;&nbsp; | 3 ++-<br>
+&gt;&nbsp;&nbsp; kas/opt/test.yml | 3 +++<br>
+&gt;&nbsp;&nbsp; 2 files changed, 5 insertions(+), 1 deletion(-)<br>
+&gt; <br>
+&gt; diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml<br>
+&gt; index 686ce48..d63ef2e 100644<br>
+&gt; --- a/.gitlab-ci.yml<br>
+&gt; +++ b/.gitlab-ci.yml<br>
+&gt; @@ -65,6 +65,7 @@ default:<br>
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - if [ &quot;${release}&quot; =3D =
+&quot;trixie&quot; ]; then base_yaml=3D&quot;${base_yaml}:kas/opt/trixie.ym=
+l&quot;; fi<br>
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - if [ &quot;${encrypt}&quot; =3D =
+&quot;enable&quot; ]; then base_yaml=3D&quot;${base_yaml}:kas/opt/encrypt-d=
+ata.yml&quot;; fi<br>
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - if [ &quot;${watchdog}&quot; =3D=
+ &quot;disable&quot; ]; then base_yaml=3D&quot;${base_yaml}:kas/opt/disable=
+-watchdog.yml&quot;; fi<br>
+&gt; +&nbsp;&nbsp;&nbsp; - if [ &quot;${test}&quot; =3D &quot;enable&quot; =
+]; then base_yaml=3D&quot;${base_yaml}:kas/opt/test.yml&quot;; fi<br>
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - if [ &quot;${swupdate_version}&q=
+uot; =3D &quot;2022.12&quot; ]; then base_yaml=3D&quot;${base_yaml}:kas/opt=
+/swupdate-2022.12.yaml&quot;; fi<br>
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - echo &quot;Building ${base_yaml}=
+&quot;<br>
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - kas build ${base_yaml}<br>
+&gt; @@ -250,8 +251,8 @@ build:x86-uefi-secure-boot:<br>
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extension: security<br>
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; use_rt: disable<br>
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; targz: disable<br>
+&gt; -&nbsp;&nbsp;&nbsp; encrypt: disable<br>
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; watchdog: disable<br>
+&gt; +&nbsp;&nbsp;&nbsp; test: enable<br>
+&gt; <br>
+&gt;&nbsp;&nbsp; build:qemu-amd64-swupdate:<br>
+&gt;&nbsp;&nbsp;&nbsp;&nbsp; extends:<br>
+&gt; diff --git a/kas/opt/test.yml b/kas/opt/test.yml<br>
+&gt; index 4a60ad4..b23f437 100644<br>
+&gt; --- a/kas/opt/test.yml<br>
+&gt; +++ b/kas/opt/test.yml<br>
+&gt; @@ -17,3 +17,6 @@ local_conf_header:<br>
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IMAGE_PREINSTALL +=3D &quot;rt-tes=
+ts stress-ng&quot;<br>
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DESCRIPTION:append =3D &quot; with=
+ test packages&quot;<br>
+&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IMAGE_FULLNAME:append =3D &quot;-t=
+est&quot;<br>
+&gt; +&nbsp; lava-testing-add-curl: |<br>
+&gt; +&nbsp;&nbsp;&nbsp; IMAGE_PREINSTALL +=3D &quot;curl&quot;<br>
+&gt; +<br>
+&gt; --<br>
+&gt; 2.47.0<br>
+&gt; <br>
+<br>
+</div>
+</span></font></div>
+</body>
+</html>
+
+--_000_OS3PR01MB6103A66703C3CAE0FB077BC9C2E92OS3PR01MB6103jpnp_--
+
 
