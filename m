@@ -2,54 +2,53 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C32B6C0218A
-	for <webhook@archiver.kernel.org>; Thu, 30 Jan 2025 15:38:30 +0000 (UTC)
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.89])
- by mx.groups.io with SMTP id smtpd.web10.18090.1738251501575368486
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ADDAC0218A
+	for <webhook@archiver.kernel.org>; Thu, 30 Jan 2025 16:10:41 +0000 (UTC)
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.47])
+ by mx.groups.io with SMTP id smtpd.web10.18950.1738253431427468761
  for <cip-dev@lists.cip-project.org>;
- Thu, 30 Jan 2025 07:38:21 -0800
+ Thu, 30 Jan 2025 08:10:31 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=OIQsXX0N;
- spf=pass (domain: siemens.com, ip: 40.107.21.89, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=guIyzzIh;
+ spf=pass (domain: siemens.com, ip: 40.107.22.47, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VHii6vZziSHVfSrkTRQ+aecPcyYmnr7bi02kkBeU7/10xj/WYuzclKlOxxN2+UyFmNh1Rw9es1jHxQjG/tDLg0ff6rdCDDHVAJplJCBgOu4i3DShmpHtnhKJ1XF1JKPnY2RcQqRg4irWMZ+ixnkQ0iZQmyUiZPBpKN8QN0BEU/xc9di9KX+GRhQ542Tpc5tGK9niXQvyN/bT+Rm8v0VhHhJZ17TrCurS2ED8VUL+psDyWZ0mlJ58DXAifI2hDKySAS2eOWKj1B+4eOWbgAbwwzhIQdi3dFdPJGYVl0b4shSr4A9Xlhb3M8tQ48fLAvIQMnakkF3ZBEZGHB3PZ2k3/g==
+ b=mPQDVzMO4rGodzkwZQUybaVT9h9ex8ZlK3imjn8MYcVPlvVN9fQkk2xf54zTBVB057AN2OzUo/nxHonp73490zdW+wLLAdeESJLLOPrRXH+jqN9DSc3rTrmro/FWzAMPAPmOzSi55aOck46BwtbWXXhYpJXF8LE8GWBvBBuOzHVE07630hsrqCZeoVHB0GO1BrjguRepCcL73GzRKwXtCjCRLDOtWWL5rRBgKEwQ+Eu6lpAQLDX2qTKprZZSAjDihNA6ycj8pKrsQ0uZf2t4uPItZinq7BW604KhBYUCgC+3bVqXD8MM9HE2I+Ih2xq/+5GoYVmUUT7KzVkhJMPztQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ukEjpqZhsgoDEBvnL7S/n4b4zOtxuAdU7q3xm3TDZk4=;
- b=rCG59QSCkmrpfXjYZGwhE90fj4Y2oO6ZxraoVgzKqkSumRq8oijAREc05MPTJz9OCScDOo9GKKNNJAaBtSt9hpP9TEmYdmwGWTbZUvZKf5df+hST6NLlQWzoYcvEWnPhS2hjB1yNEeOjQMZAhXmRz8VEGVLpEd6ZKUmSMPIIur86WvxMbjbvhq44C2nOmS1pgb+FoD7u8L4swENx+WL/tLPnXatnjnFHPW5WFwuyo07YHyMwGykLuNORhl4yrYK1dapfwpwl/uxXqWoWUxa2OINw48YhOojjsC5n8JJAvkUBZEBxcqb0YUsdHg4Vrzll+ZFuOr+LmPkx9JZCIBOfjg==
+ bh=mICbhbXCpGXMtYV1TiLnst7NZA0ZzEp2TUc7UTzVozQ=;
+ b=C8IDUKKC8u7b1aeLP0V3Suqm5mZ8idsuijKyvka/2vaw2yr4+h/fGq9cZ/qOj9YVAnnFS3LaNr3/EAV2WAPRmrst8bG9emfNmIshb9Z4mBFbeazSkh4jb6u+/Ft//P8MWkDnAg6YamsDhlzVjtSG/I7n75ic4cJFTF+gSdcIxlwVxQtxyolfoa1pv3N0lEW5FouqokNowOTflLVq1Rb/hZoZCUs9YhdlpnnK2eZpKp+ETFPNE6Tx7Yj2j5zzPnLg0D32fO8iBrCMZtgMGFcEj/HG785PgjaYR9q1pX+uZ91OM/PPA17VDuPrT0RSz+GTcBkQ2VfKgXMxLyP6TvJUiw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ukEjpqZhsgoDEBvnL7S/n4b4zOtxuAdU7q3xm3TDZk4=;
- b=OIQsXX0NLoPfuEj/9ZlXtIAl5hZ2Z3kwmj2+YnQcxM7oCYH9E7x7mM0QZ5IgrNZ4Y1KzLZCqj4FeT93hxsHOMnHtZgIb/MliZQ3KTjD+EqO/pi4AZjVYkXqBy/okXo8LPqi1keQfkyNKazwLMG24MaWp8PV4sZmPLSnug5QAGsILLqW87A2WznsRyvDo3HnNC9l476m/MagoPC53UOUAOOa90AK7LYUtxCXbTPdGw1xC8bdYS7CAG4Cxk4A9DemqtwjmzL0gW1mqhNKnOSEka81kuHProWb2xm5QmyfvSskV+zjFSHPviT9nyMqKb48fmAmBvIIpbBR7ONfUFo4nLg==
+ bh=mICbhbXCpGXMtYV1TiLnst7NZA0ZzEp2TUc7UTzVozQ=;
+ b=guIyzzIhDvSIKPGriL3X8fQnOWogMibJUeroBjPdQl3UYyFRYeznR+CvDoK1se3UcIYiKdm7S2WwORbrT+X9o0At+35oDDSSkRmJUTaPOxOLDC/FZz9qRUyzQfosObriYDOgL7HLwH3IFS/0WlFz4ISN8ci6qVVvqzNKG2s88Npi/pV2asaJpwmY6MKwRgYUZ/vLlFkTrADe3l8jlwhqqKeJXFGRfC/negluiNAj5kfd7FCleGQHjOIKdHkmMKfqIdfjA8jO0olgzErNvLrKHSXEn9zu4TD3kK/k0OcEPzfZGcZtQAPHpKbNlNAtM7ZPEu6YXQuGeDnnKk9llLtYbA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by VE1PR10MB3824.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:167::20) with
+ by PAXPR10MB5544.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:242::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8398.18; Thu, 30 Jan
- 2025 15:38:15 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8398.12; Thu, 30 Jan
+ 2025 16:10:28 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408%6]) with mapi id 15.20.8422.005; Thu, 30 Jan 2025
- 15:38:15 +0000
-Message-ID: <2977e475-7bde-44f1-bff6-82b2953b6acc@siemens.com>
-Date: Thu, 30 Jan 2025 16:38:14 +0100
+ 16:10:28 +0000
+Message-ID: <42476d3a-e59a-4dc8-8e88-fc379d2d963e@siemens.com>
+Date: Thu, 30 Jan 2025 17:10:23 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core][RFC][PATCH 10/10] Enable A/B snapshot for /var on
- x86 and qemu-arm64
-To: "Moessbauer, Felix (FT RPD CED OES-DE)" <felix.moessbauer@siemens.com>,
- "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Cc: "Storm, Christian (FT RPD CED)" <christian.storm@siemens.com>,
- "Gylstorff, Quirin (FT RPD CED OES-DE)" <quirin.gylstorff@siemens.com>
-References: <cover.1738229957.git.jan.kiszka@siemens.com>
- <39b2a0d2ec39701f76a2b6b800f34ba3c123b0e8.1738229957.git.jan.kiszka@siemens.com>
- <96b0e4ca59368ace7192648c5db288db0ebc9610.camel@siemens.com>
+Subject: Re: [isar-cip-core][RFC][PATCH 03/10] initramfs: Add hook for
+ managing /var in A/B fashion
 From: Jan Kiszka <jan.kiszka@siemens.com>
+To: cip-dev@lists.cip-project.org
+Cc: Christian Storm <christian.storm@siemens.com>,
+ Quirin Gylstorff <quirin.gylstorff@siemens.com>,
+ Felix Moessbauer <felix.moessbauer@siemens.com>
+References: <cover.1738229957.git.jan.kiszka@siemens.com>
+ <37b9560989414bfd128bfe7e1d5afec53a148179.1738229957.git.jan.kiszka@siemens.com>
 Content-Language: en-US
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
@@ -94,137 +93,274 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
  8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
-In-Reply-To: <96b0e4ca59368ace7192648c5db288db0ebc9610.camel@siemens.com>
+In-Reply-To: <37b9560989414bfd128bfe7e1d5afec53a148179.1738229957.git.jan.kiszka@siemens.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0049.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:cc::13) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: CH2PR14CA0007.namprd14.prod.outlook.com
+ (2603:10b6:610:60::17) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|VE1PR10MB3824:EE_
-X-MS-Office365-Filtering-Correlation-Id: 51fc2c28-9ffb-4667-5e08-08dd41441ce5
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PAXPR10MB5544:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2a53accd-29f1-463c-df24-08dd41489cc5
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?cWtyOVdSU2YwMnpZNFNZdkVsMVJzQkdXVjZiK052TGNWZFRSMFFTQlVBNWFw?=
- =?utf-8?B?UllGSm9TL2czaVlJRzhtWHNVdXo2U2ZSSmtBKytNZ1Q0dzk0ektKSTEwNWlM?=
- =?utf-8?B?UTNpTzRkaGo1ei95eGJXUjRYL2dvS1NSSzQ4SHZJaUpkZTlLaCt5d0FUQ3VD?=
- =?utf-8?B?di82aUcyUklDRFFRY2lvUmM4NmEzTk0vNWdzekF0NSs1T29MVkpSWEVVdlZo?=
- =?utf-8?B?WDhaNHJvUzc5VHFpSDRSUklBaWFqRGtnSEpQeHp3a3JlR29nR1VUSVkxV1VK?=
- =?utf-8?B?V3BiQ1FVVG5CQVJ6SGVleHhuazJka2ZXc0RBbGlQMjZaQThKZ2xMRWwwZU5H?=
- =?utf-8?B?alY2NWVOZHZlLyszUHlLNFY2bStxYjcxSDc2ZmI5bFk2K2Q0b25TZDFXQVlz?=
- =?utf-8?B?c2N6UFlWUzJZWjBXK1cwdlVRV2tRbEdJaE5uaUxvUW9yMXdDNnR5STRqSnpi?=
- =?utf-8?B?UXcrcmZyWTJabjI1Qld2R2hLVlNuTE91MjZtUnpWaTlBUjIzaUo2UWhkaHc3?=
- =?utf-8?B?dU1yaFVvLzlyNkQzd250ZnJZT244T2VSQUFXdDRydmNFQU52MENIM2I0MTBZ?=
- =?utf-8?B?YkRCbmlEcUo0ZzJWSXA0OFZCOWRCdWNXUUZTSVBRVWlHV00xcGpqa2xXMEg0?=
- =?utf-8?B?bUR0WVpUTlpKcS9YSk44eTRUYklOYTdzT0NRWWx1MFhlQzBZQU83SHlkOVYz?=
- =?utf-8?B?cVh4ZGV1aDVPOTJFUmtMMTRaOEw3WjVZcGJTWVRYWHdSU3VsOCtqV0kyUUlI?=
- =?utf-8?B?bDhzbng5KysvS000ZGtkTXEwR3d2cVkwS1Y5TlZQRmxsYUpiMUp0NVNxV2hH?=
- =?utf-8?B?cy9JUm9rR1JLaktFbkpidVcwWTdMLzVsamNRWlJoRDV1YlZMcWtaWjdKeHc4?=
- =?utf-8?B?NkZLejVZREJyVER6Q0F1MVBwUkVWT3RaUEdnUjc0MjJGYWxjaTlJOUtIeFVn?=
- =?utf-8?B?WGU1Y05BWUUvNEY3R2RzU1M1dDZZVUVyL1g1eUYzdU8rM3l4R1c5RFBneStp?=
- =?utf-8?B?WXJIUVIrYlVXN0NyMTJkZitEaTlONFBQVUV4bVNNY0xaT3ZHOWFXOENJTDZQ?=
- =?utf-8?B?YzkzUjgrKzkvZzJ3TG9vZ0U5UlpRbTBjQmVIUHptdXpYMGNZQk5PcXYvQjB5?=
- =?utf-8?B?YXhEQ0NHTVJOS2U0d29rOWxJdlJrbitDb01ITC9Oc0dMRjNCMStLVHNGazVX?=
- =?utf-8?B?dWo5aU5xaU9EcEtSbHZqMFFtbjhnYW42elI3KzluQjB2NE9jc2FPUVgzM0d6?=
- =?utf-8?B?Q3BQSlZyNi9GbS8yNXhUdW5rajdxZ1B1bVFtSGs4RzRaYnd4c0N0VEt2WnFN?=
- =?utf-8?B?ZUxaWUE3QjlveFpBckF0SmZWaXpmUERVT05DajVabVFudDA4cUJJem1yWlIx?=
- =?utf-8?B?clBnN25SbVVjYkx2b2VoU2xqL3JOdVZMZEVscGxYbGxnQmQ5TmZlSWpoaGtO?=
- =?utf-8?B?cXp2Z0V5MTA0OStPSTFkRnhOeXhnYXovYW05L0ptamg2MWpRbk8wZDZYano5?=
- =?utf-8?B?SXdWOHNUNWUyeVJDeXpIVkVYOFN2RlloaG9LRmNTUTM5bVNjcDZEUTRMWWpm?=
- =?utf-8?B?OFM5L2I4bUhmZVJSL1JDMVZEZGRtcHZ1ZHlDbWYxRUo5S09qVmxtR3NYd0FH?=
- =?utf-8?B?Y0xsK0paaGNrZFBuV2wwYmI0UjlQQmlmTGJzOW1KYUp1cXFPZ0l6bEpieWhK?=
- =?utf-8?B?VHNrYkU0K0NMcDlJdVlIRDJkeTVpVzV5WGxJRWRpaStlVzFOalVNNkQxWWpR?=
- =?utf-8?B?MFJwRXlqTXoxUmsvUnVsMVNJTEgvK2hIajBtSERXNWJjTHhmYTdPNitNM0Rl?=
- =?utf-8?B?SDZuWVk1em1qRHRHUlpyaVRYcDVSMjFIblBTbERZVFBLcUVaTGFCUGVqbDhI?=
- =?utf-8?Q?nzvKlVD0q8nhJ?=
+	=?utf-8?B?TndXL2IyTm5tOFhBWnJVUjVmSGdVTFJnSGlyZXQxdklvNnFqUDBDdmRwMTF0?=
+ =?utf-8?B?MnNtWE5hMkg4NFJEdzVERG54ZjJTS2RPaGl1ZnRiNFJUOWg0UHNhSkExTkhM?=
+ =?utf-8?B?bmtDV3VUMHNyWG9LbUN1UmZPNmNIM3pVREwzSS8rTzh0dlgyOXU0VXZzelc0?=
+ =?utf-8?B?ZzFRRUhtUnppTW5WVVVxWkF2ZTdTMVFZeUtCYVNmMXFWUzluaGRxRVV0L2cv?=
+ =?utf-8?B?bmF1bmgzdXhPQm5iVG5TVXROVmg0UDFGbC85VU5qMG1hRVNzZWc0VnNvdmlz?=
+ =?utf-8?B?bzZJTmhiL1pmMkllbUFyVFlHM2VUU1Uya1ZEL1gxMUxxdUJOY0FyRkgvVnBl?=
+ =?utf-8?B?Z2JGTWc3b0VtV3NWZTRmVkYxdE1vdmNIYkx5SkZkQU82dDRYZi9IRGphRnYy?=
+ =?utf-8?B?dkFoOUszdUtkSE9JZ2IwYUFYUFF4K0w0a0RCMnlScmRJSUg2WTlYbk1VaG1o?=
+ =?utf-8?B?RVlBM3ZWU3J3bUtFVEVQeWVjSFhpNjQyNTd5ak8xOFNrNDVTbHFYNnZIaWNY?=
+ =?utf-8?B?OERBb3BDSkROMFkveTZ5c0pmUGNQaHdiT1o2ZzBJdWJEMllDS2FKMGNBVEtS?=
+ =?utf-8?B?Z2p3cXdJaW5RWEc3MFZmRDFqTjlKcjEzcVhrWVpHYjRqNFhzOWxXdHNzaTlz?=
+ =?utf-8?B?L0hRWFd6ZmdWOFBlbkF6Y0cxUm43bUU1YklBZWQwblREOTVpWEl4dDBvT09X?=
+ =?utf-8?B?RUdTZE1tYlBBSzlOVVdlR2x2ZUtncmdUd1BieTdXeWFiWTNRNlVVcjd6K2Ja?=
+ =?utf-8?B?SzdVVE5yaDJZUEorNmxPemtzT0pXVFNta1RkVzYrNmZLRFg0dExpZExKZmEw?=
+ =?utf-8?B?Z25KdjNLVVhsNjJyc2tQTktUa2dpd21rcWdkcG9UZFBYNFh3MU1WYWQ0Q1Q0?=
+ =?utf-8?B?TGFYcEF1emNaUlJQaGlnL3Jxa0V2eEdycDk5TVdqWm12akdNTkhQcVdmRU1L?=
+ =?utf-8?B?SmtDemJPUTBaSzNNdnJXalc0cjgyS29wbktmWktEQWMydDlOVHdYZlJMOC9B?=
+ =?utf-8?B?cStBdElrVDNFaFpBd0tPVitVM1grYzc1NndOcVVPY0dFR2Ztc1EyYS8vT05u?=
+ =?utf-8?B?VGtRK3JOQnIxN1NpUWpMN044dXNpY3F5VFYyVU1nTzFjNTRVZzRmODU4L05n?=
+ =?utf-8?B?eWVQSGs2TG8zNVNmVEpIVkxKWXpQdnRqcys5VXZwV0xmK1FldXNNRXdsTkwy?=
+ =?utf-8?B?aUFNS2lLekpQOTBlTnc1THZoTkdPdlNKL2MvQVZ2RXRZbnhFbjB3c1dpd0V0?=
+ =?utf-8?B?RDdLeU82eVVXZlZLYjh1Z0NsUExPb0NJTmRaQXBJNlJlSklIem9GZlUweU80?=
+ =?utf-8?B?SmJYZ3dFdGJydG1CblVKYmE1NjY1cUl1MnZKcHZTcmlIT3ZNMmV0eEV5MkFr?=
+ =?utf-8?B?bkZSTnpUeTlNbDA2SGYxYkxhaUVIbXpFS2JWNDZYaHhXM3BmWnpldUdta1hI?=
+ =?utf-8?B?NU1ENDhFMTBYWDM2QStZWjJjWk1GVCtYVFRuWFh4NzE5TUhtNkc0Mk0rQkQr?=
+ =?utf-8?B?Z3BZSHJ6c09vaTdndWdtVkVMV05uQmxmRnFUbjUrYWROcVNJd1BSVkRVdTR1?=
+ =?utf-8?B?NE1HRUZaTHRoc3RBSFZTZHRNQnlMeVR1cW5INlRnRHJnL0NBdWp4bjdwWDJq?=
+ =?utf-8?B?MHMrUThYM1EwQXJ5TWpTL1dJRmhGOElrVUNuYzBrcGpYL0FISEE2em1SSE9m?=
+ =?utf-8?B?VEFIVkVCeVk2WnlqNFVmVnB0bDYxcXB1emFyYXJzc3BUYm9IR04zWHZrdktY?=
+ =?utf-8?B?anBJczBacG5FcEtkUkwzTjJYUzFUOTAwdHdsTHN3VjM4dVRaTXVka3AvSFAw?=
+ =?utf-8?B?YUFGMit4RlYzY0xSNnRsazN6ZEdiQWJBdC95V1N3T2JWdFpiRkQrSG8yckN3?=
+ =?utf-8?Q?EUbfidJfI8lMU?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?Y2VZWUptTk1pOTVPQ3c3ZU5lOVZXSmV2QWNIZ1FXVlNMNjdMcU5sZTRVaS9P?=
- =?utf-8?B?Q2NHTEl0blhkT0tpNlorenJkK01YTWFpNW03SS91OWpHNU5JeUx0dmVzVVNW?=
- =?utf-8?B?V245UzBOeCt4UVVrRjJyOTkzSENvcUV5Y2VMS1RBR3N2UzFKWUhnNkpkUjB5?=
- =?utf-8?B?cmtWVm02dGpqSWhOVkowdmx2QUdmNk1FRUlielFmZEpzNmtmK2Y2VkQ5Qmt6?=
- =?utf-8?B?RVJ0ZVZJeHZ1ZDBvc2JTMW9sbmhyRkw3Qk8wdFNQY2ZkYTVoenlUWkY4RGFr?=
- =?utf-8?B?SG5Zd21PbS9EbkozaHZXWStoMjRlQTFXeDFJSStrYi9ESnYrdFFTWVRpaWZW?=
- =?utf-8?B?UGc3WXRUelpZSjhiNzM2VUtOaVZILzdvaS92aG9IeEVXSldjeXRjVXR0VDJK?=
- =?utf-8?B?cFpNSFk4QkRnZEpnYVVsalZLbm5HdjBjUnpyVFp6OHZtQ203Zml3MG5tVW5Y?=
- =?utf-8?B?SXFGRGlDeHA5RHRpV2I0d1NIRmJzY1NsQlkxUCsrS2E2OXp0OWNNUG5qR05P?=
- =?utf-8?B?L1I1bUZmRFJJQzFuWklQc2hjUVp2anZyRmEwbFBxZ3lQUHBOalFXU3pCSjNI?=
- =?utf-8?B?dlpzcm16OXowWlNyQ2U1WnFEREgxajhVWmJZQ1dKS0JXYndCUEREZUlYbjEv?=
- =?utf-8?B?MnRqN0F3VmVLMXhvcEViSldyZkFsc0R0b0FwZzVyZmk4KzMvVmE0cDhIKzln?=
- =?utf-8?B?ZE9vMUNhUjE0UUlmcDFCNTdjVDI4RXptN0IyanA0bmNjcDJXck5kZmdta0hB?=
- =?utf-8?B?YXp5RHZtOHRvMG1ZZkswWE8xaFRqckRqU0N6N2JaMGxmVCt6T3Bxa0tyUGwz?=
- =?utf-8?B?MWZNd0tvU0N3RFhJWmdoL0tvdXVNL3BGcXRWOVBWVUt4clhWdXhpRXJPUit4?=
- =?utf-8?B?M2x6R3E0bWVrQXZNZTF0THk1YmFSNk5UT2JmVGlEWisrK0tSQkhETDl0dFlz?=
- =?utf-8?B?enF2aUVhUWlKMmtGWkhqSXZhQm16b3VqOWl0TkVJMEs1aVpXVXBnclZha3dk?=
- =?utf-8?B?enp2SXdSWTZLb3ExK2tpUkhYbG9sa2J1d1owZzZPZzB4Z2ZiWUp4Ukd4a0R5?=
- =?utf-8?B?M0hrMFNsTmlwUlVtZU1FUVNDVitPakhKcGlpclBnaEpkSklSbXJwTmN3L1RI?=
- =?utf-8?B?YlYzTzZBVk1uV3MwRjRkelRtSmE1U1ZjQzZkUjRjQjZ2N2duVnlxRWplK1J2?=
- =?utf-8?B?U3Q5bUs3VHZTSGllbVNFYmRjaDdqcDkvRSt1ODVWUXgreWN5Y2lRM1dzUWpH?=
- =?utf-8?B?NklRSzhOenZjMXg1clovVDY5UGtuS1BqR0gralVkR2VUVjEySlNwa3BvQkJV?=
- =?utf-8?B?Z2pvRmJqcFRUUEc2bnhNYnFyUlh5R1hxTStZQTUydzhsdjF5eVJFdDE5Z3Vh?=
- =?utf-8?B?a1NXRjJIdkFxblBQVE5zT2lQZzV2V3dTQ0JoTWFQZ05WeUR0MzM5bHpyVDN1?=
- =?utf-8?B?aFJVVG1IZXhsaS9EdGJkRllXYUlSeVF4TEtRTUF0Y2grY1MzVkxudXRXV3BC?=
- =?utf-8?B?dk0xUExGY1FzK2xBdkh3UW45NGlkMHZJNUNrUDNyTHNIWFBCSllPaWlja2U1?=
- =?utf-8?B?NDhkV0N6anR4eitqanFDOE5US2NtVTE1bjlBR2NMM2RQU25LRVg0ai84ZXVh?=
- =?utf-8?B?SS9pYXdrOXVSWmsyeGpZS2JmcFU1Mit0NEUzcCtCakNTdjRvSXV4dHE5ci9n?=
- =?utf-8?B?T3poYzFMZDk5RlQxYnllZ1ppOXJRdmNoWHNZcVJsOFR2UHRNM1hUbDEwaHZY?=
- =?utf-8?B?TDZ1WWpwdXJsVkVqUml3YkpaSXlwaUpxMHJqaFg1SGtIcXpyUVc4WkpFZE4y?=
- =?utf-8?B?SnhhcUJiR0VWckQ4WVp0ajY2L3hkRlBTZDFyL0ZadDI2YUx5eCsrQUxhakRn?=
- =?utf-8?B?Yml0SlpDR1JRMkZTZ2RLbXl2WlNwQUd3U2VocTdYcExSZ1Y4ajYvdElYK0d1?=
- =?utf-8?B?UHRaSnF5UWNvUEFxWkc2RHRncXE2SmNXbE16WllYOTQ4dFFvVCtaMlRJM1JX?=
- =?utf-8?B?Q0c1WkIyRktlaU1raWY0UVcrRkxWTFhuZS9MaTdFSDZ6ZGlVU2VPRkE0MVd4?=
- =?utf-8?B?MXZucW1jZTFQMURDMnV6TjJYOCtTMlpTUGI4eWppUFk1ekJibThxYzkyc3Fw?=
- =?utf-8?B?cU91Q0xmOUkwQlg3R1I2U25IUWFNd2FHU0JXcjFPb1BEQ05oZjQvaitYbThN?=
- =?utf-8?B?UUE9PQ==?=
+	=?utf-8?B?dGFQT2tKc1BnN2w0eXU5WHJBdUlLRkQwSnJHbHVhQWxQZUpSUWxsTzlHZTFF?=
+ =?utf-8?B?dDNaN2kyQnlDM282YU9iOGt3VG1QSFcwdXpXWVpIY3dTZmVuQ3d4Z0lramFx?=
+ =?utf-8?B?Nm1zTU96cnVJNUs4RXcwMzU3STJtTU5jN2pIMUIyVUNxcXBGOHpTbThmTDZx?=
+ =?utf-8?B?cWZSdFdtMXJNSTFoRWJjS0lEM21nMVA4a2lZbVVjcy9iZS9HdFFzalVIN2dZ?=
+ =?utf-8?B?V05PUzBtOXdZVGUvbjVEVndSTEZFYW1FZk03eFBTbktpV2FLTms5dVJlaXB4?=
+ =?utf-8?B?dklNYU9nVG14T29aK3BRejFHRG43VEt0M2poa2R1aFIwYXlUMGxMQTEyc0x1?=
+ =?utf-8?B?VWdFamllVE1mT1RLc3pFVXRUKzl5ZHEzN3ArODl5YnpxNnEzZXF1MmZ6QUR5?=
+ =?utf-8?B?TzJObWZDL0xTNXZJaHRta0FwZnREQTd1K0s5bGR2RlErSkVlUUczT2FrQWlw?=
+ =?utf-8?B?Yjk1a3MxVWJXUUtnRVlVVHU1NWplT2xpUnJhaHh4UHVvSnpVVmVOZWFSRnN4?=
+ =?utf-8?B?dmFNbURwSVUvWkUwanAyMERtRlhpTTA4L0Zyck1rOVpHc0h2TTV4UDRQa2hy?=
+ =?utf-8?B?VWtha29tN0ExS2NOZkU2Q293OGJLTkYvYUZ6Y05CT0JoV05XeTdwQ1FmY29D?=
+ =?utf-8?B?eFF3VjRWZ05yVE9lOGo2QTZKTDlKRW9CbzNHV3BYWGdxL0haa25YajhTajBX?=
+ =?utf-8?B?Nkt1aE4xaExWREhHR2hPaWtJTEp0cXYzQ3RrOXptVkJHMGlwNWdyUkFtcFBU?=
+ =?utf-8?B?S2NSeFVWRWdTWGxra0MyMGhOT092UHZDMmsxeG93RXlkUXhMbndRcUUvaGhV?=
+ =?utf-8?B?V2VUZlFtNlRVSXUwNFdZRG1qbU5TdjFjcldtVHRaQlZ1elZidEV3dXd3dmxN?=
+ =?utf-8?B?cHFtWXdIeWJ4NjNiRFd1cUhoTzJ5QTc1MVNBcFF3bU1IaTU3QzdCSFdXcFlF?=
+ =?utf-8?B?WEt0ajBvY3lIRjB0UU5mZi94N3NSSVVTd0p5bUdrTDFVb2VMVE1pNXp0L1pJ?=
+ =?utf-8?B?ZWhrVTR6bGgvSllOZzJMbE92ZlFFeXlqamxOK2RySk5BcWYwNHVJWThoL1pJ?=
+ =?utf-8?B?dG5nalQrM01VWkRuR1haVFRhcjNHNTc0RG9IT2w4NG15ZnNDMDZPL2E4b0V6?=
+ =?utf-8?B?QlppcnptYzQzWDExbjVPdTRsOEdyL3dCOWlNelRQZU5zWEIwU1FxcTlwNFlr?=
+ =?utf-8?B?RGVVZFAveU5UZXpDK2lJQityaktBWnV6UFIvODlYanorOUFFNWpybXlhNmRP?=
+ =?utf-8?B?OXRHenUxT040dU1JaHJxUHZjNEpNNXZzNXF2dEVnM2hmc0FvdjBLVW1rbXBU?=
+ =?utf-8?B?bFVxSmRucE9qYWRaNGR6Z24rUkpFclQzSXh6dmZGTGhrUkp5RVp5K05mMHlW?=
+ =?utf-8?B?V2huQkxKYXBMM2JxN0MxUzRvQ2FIdlNGSyt4L2p5K25wdkUyV2Jxdk5LYWJH?=
+ =?utf-8?B?dWdWTG01eEwrdVQwY0diOFA1L0Q1aTZndHdCRlNoWTZVWm5qMDlpZHVHb2FB?=
+ =?utf-8?B?YTgxNktoL2FBdmtzcnhOenlKSzZqRGxMVlNvZFFOTUpMck9mMzhFWjFlYm52?=
+ =?utf-8?B?R2NyVHpxUElGemJuRFk1OS90L0VoaFduNTVmZ3QzSEoxNVVnck5XNkpDekNx?=
+ =?utf-8?B?Vld4V3FEQkVtOWRkenFOU2lkdHJ2MldEQzR4bjQwQ2VBNk03SVlqYzlBWFBl?=
+ =?utf-8?B?aXZuc2FhZjBkbXF0dkQ4R20rbm5RUUhRQ3pkd09lNmpLNy9QeUVlYVdzYnVS?=
+ =?utf-8?B?emZVMWZ5WDg2NVlSempyVS9iRVFRNlhJcEk5eFgyeEZneWxqUFQ5U3lqRzBB?=
+ =?utf-8?B?SVZnKzJJNXR2SWoyNHgxRXFzQkVYamVDTWhRekJHOXBiUWcwSXBUZDY0NkdC?=
+ =?utf-8?B?aForaWZtWEpNY1lUd0xzc2Ywc3FaMElWdGNlRDlBZ3FHK1ZhSW5PeVVMSWlO?=
+ =?utf-8?B?emQvVXRCZHJ1TmJabzJzNTF1VVZjSSt0R2JmU0NlMUszZysyUUMyMm5JYm9p?=
+ =?utf-8?B?dWZyNDA0SXZBdEFUTjZtR1luMnZHbFRoV3ozSFpMK3ZmYnZMdlAvRWVSUkJr?=
+ =?utf-8?B?WUJIYjhJMDFRaENORDVhWVc1WFpJc2ttV2g1TlBZbWF0dWhZSzlTamRIZ3Zx?=
+ =?utf-8?B?TURJUHFBK0RkYmt0aStSRVlsdTRSNHEvVzNFcHBMMHdKTkFrL040YWM5Uitx?=
+ =?utf-8?B?WEE9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51fc2c28-9ffb-4667-5e08-08dd41441ce5
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2a53accd-29f1-463c-df24-08dd41489cc5
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jan 2025 15:38:15.6257
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jan 2025 16:10:28.3302
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vodKzTEBN2FG9LdkPznDV1XRh/uW9o4G+j0GZ5Y0SIW3XOUYRS/f0GMsZzx2R/AsPokiZnndJWbnCR1ltQgudg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR10MB3824
+X-MS-Exchange-CrossTenant-UserPrincipalName: ya7zkzIRGi0HsizVVJ6UiHgxiliPeXzcXCtliywaHtf/7nzhrMIoAW+ysz2lsMgHBJEjXY9/8nVJBO+o5eiLTg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR10MB5544
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 30 Jan 2025 15:38:30 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17711
+ <cip-dev@lists.cip-project.org>; Thu, 30 Jan 2025 16:10:41 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17712
 
-On 30.01.25 15:06, Moessbauer, Felix (FT RPD CED OES-DE) wrote:
-> On Thu, 2025-01-30 at 10:39 +0100, Jan Kiszka wrote:
->> From: Jan Kiszka <jan.kiszka@siemens.com>
->>
->> Other targets still need testing, some even kernel config tuning.
+On 30.01.25 10:39, Jan Kiszka wrote:
+> From: Jan Kiszka <jan.kiszka@siemens.com>
 > 
-> Hi,
+> This hook manages snapshots of the filesystem backing /var in an A/B
+> way, aligned with rootfs instances. That means when an new version is
+> first booted in testing mode (EFI Boot Guard ustate=2), a snapshot of
+> the current version is taken before that snapshot is mounted as /var.
+> On rollback, the previous version will still be available and will be
+> used again. After committing a new version, garbage collection of the
+> previous snapshot is happening on next boot.
 > 
-> do we have a target that uses docker / podman? The containers are
-> usually stored on /var and this is not necessarily compatible with
-> BTRFS OOTB. In general, docker does not play nicely with a COW
-> filesystem. That's one of the reasons the docker-btrfs driver was
-> invented. However, I'm unsure how that works together with our A/B
-> logic.
+> This first version of the hook is written around EFI Boot Guard as A/B
+> boot manager and btrfs as mechanism (here in form of a filesystem) to
+> create and manage snapshots with low overhead. Other implementations
+> are imaginable and would only require small refactorings to enable them
+> as configurable alternatives.
 > 
-> For details, please also see
-> https://docs.docker.com/engine/storage/drivers/btrfs-driver/
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> ---
+>  .../files/local-bottom.tmpl                   | 86 +++++++++++++++++++
+>  .../initramfs-abvar-hook_0.1.bb               | 31 +++++++
+>  2 files changed, 117 insertions(+)
+>  create mode 100644 recipes-initramfs/initramfs-abvar-hook/files/local-bottom.tmpl
+>  create mode 100644 recipes-initramfs/initramfs-abvar-hook/initramfs-abvar-hook_0.1.bb
 > 
+> diff --git a/recipes-initramfs/initramfs-abvar-hook/files/local-bottom.tmpl b/recipes-initramfs/initramfs-abvar-hook/files/local-bottom.tmpl
+> new file mode 100644
+> index 00000000..91b8d017
+> --- /dev/null
+> +++ b/recipes-initramfs/initramfs-abvar-hook/files/local-bottom.tmpl
+> @@ -0,0 +1,86 @@
+> +#
+> +# CIP Core, generic profile
+> +#
+> +# Copyright (c) Siemens, 2025
+> +#
+> +# Authors:
+> +#  Jan Kiszka <jan.kiszka@siemens.com>
+> +#
+> +
+> +var_device="${INITRAMFS_VAR_DEVICE}"
+> +var_opts="${INITRAMFS_VAR_MOUNT_OPTIONS}"
+> +btrfs_mnt="/.var-btrfs"
+> +snap_prefix="abvar-"
+> +
+> +. "${rootmnt}/etc/os-release"
+> +
+> +get_default_subvolume()
+> +{
+> +	subvol=$(btrfs subvolume get-default "$1" | grep path || true)
+> +	echo "${subvol##*path }"
+> +}
+> +
+> +ustate_val=$(bg_printenv -c -r -o ustate)
+> +
+> +# when in testing state or on first boot, create new snapshot
+> +if [ "$ustate_val" = "USTATE=2" ] ||
+> +    ! mount -t btrfs -o "$var_opts,subvol=/$snap_prefix$IMAGE_UUID" \
+> +	"$var_device" "${rootmnt}/var" 2>/dev/null; then
+> +	log_begin_msg "Creating new /var snapshot for image $IMAGE_UUID"
+> +
+> +	mkdir "$btrfs_mnt"
+> +	mount -t btrfs -o subvol=/ "$var_device" "$btrfs_mnt"
+> +
+> +	# delete any dangling previous snapshot
+> +	btrfs subvolume delete "$btrfs_mnt/$snap_prefix$IMAGE_UUID" \
+> +		2>/dev/null || true
+> +
+> +	default_subvol=$(get_default_subvolume "$btrfs_mnt")
+> +	btrfs subvolume snapshot "$btrfs_mnt/$default_subvol" \
+> +		"$btrfs_mnt/$snap_prefix$IMAGE_UUID"
+> +
+> +	umount "$btrfs_mnt"
+> +	rmdir "$btrfs_mnt"
+> +
+> +	log_end_msg
+> +
+> +	mount -t btrfs -o "$var_opts,subvol=/$snap_prefix$IMAGE_UUID" \
+> +		"$var_device" "${rootmnt}/var"
+> +else
+> +	default_subvol=$(get_default_subvolume "${rootmnt}/var")
+> +fi
+> +
+> +active_entry=$(btrfs subvolume list -a "${rootmnt}/var" |
+> +	grep "<FS_TREE>/$snap_prefix$IMAGE_UUID")
+> +active_id="${active_entry#ID }"
+> +active_id="${active_id%% *}"
+> +
+> +# adjust default subvolume to the active one
+> +if [ "$default_subvol" != "$snap_prefix$IMAGE_UUID" ]; then
+> +	log_begin_msg "Adjusting /var subvolume default to $IMAGE_UUID"
+> +	btrfs subvolume set-default "$active_id" "${rootmnt}/var"
+> +	log_end_msg
+> +fi
+> +
+> +if [ "$(bg_printenv -c -r -o ustate)" != "USTATE=0" ]; then
+> +	# still testing the current version, skip cleanup
+> +	exit 0
+> +fi
+> +
+> +# get rid of obsolete snapshots, ie. everything but the active one
+> +log_begin_msg "Performing /var snapshot housekeeping"
+> +
+> +IFS="
+> +"
+> +for entry in $(btrfs subvolume list -aqu "${rootmnt}/var" |
+> +		grep "<FS_TREE>/$snap_prefix"); do
+> +	entry_id="${entry#ID }"
+> +	entry_id="${entry_id%% *}"
+> +
+> +	if [ "$entry_id" != "$active_id" ]; then
+> +		btrfs subvolume delete -i "$entry_id" "${rootmnt}/var"
+> +	fi
+> +done
+> +unset IFS
+> +
+> +log_end_msg
+> diff --git a/recipes-initramfs/initramfs-abvar-hook/initramfs-abvar-hook_0.1.bb b/recipes-initramfs/initramfs-abvar-hook/initramfs-abvar-hook_0.1.bb
+> new file mode 100644
+> index 00000000..c7b58243
+> --- /dev/null
+> +++ b/recipes-initramfs/initramfs-abvar-hook/initramfs-abvar-hook_0.1.bb
+> @@ -0,0 +1,31 @@
+> +#
+> +# CIP Core, generic profile
+> +#
+> +# Copyright (c) Siemens, 2025
+> +#
+> +# Authors:
+> +#  Jan Kiszka <jan.kiszka@siemens.com>
+> +#
+> +# SPDX-License-Identifier: MIT
+> +
+> +require recipes-initramfs/initramfs-hook/hook.inc
+> +
+> +SRC_URI += " \
+> +    file://local-bottom.tmpl"
+> +
+> +# override this to switch to UUID or PARTUUID based mounts
+> +INITRAMFS_VAR_DEVICE ??= "/dev/disk/by-label/var"
+> +
+> +INITRAMFS_VAR_MOUNT_OPTIONS ??= "defaults,nodev,nosuid,noexec"
+> +
+> +TEMPLATE_FILES += "local-bottom.tmpl"
+> +TEMPLATE_VARS += "\
+> +    INITRAMFS_VAR_DEVICE \
+> +    INITRAMFS_VAR_MOUNT_OPTIONS"
+> +
+> +HOOK_ADD_MODULES = "btrfs"
+> +HOOK_COPY_EXECS = "btrfs grep rmdir bg_printenv"
+> +
+> +DEBIAN_DEPENDS .= ", btrfs-progs, efibootguard"
+> +
+> +SCRIPT_PREREQ = "crypt"
 
-Yes, there is more to think about when it comes to production use. E.g.,
-you may also not want to rollback your logs in /var/log on failed
-updates. That pattern we may address later on by creating a carveout
-from var on a separate partition again.
+This prereq is actually wrong because crypt tries to mount the partition
+as well, but that would happen without the logic of this hook. Happens
+to work because crypt pushes itself to the end of the list and wins so far.
 
-In the end, this here is just a proposal that may need further tuning
-when further requirements need to be fulfilled.
+We generally do not need to wait on crypt bottom because also the top
+script unlocks the partition AND updates by-xxx links as well. We just
+need to use only those for the abvar hook. Next version should therefore
+enforce the usage of labels or fs UUIDs.
 
 Jan
 
