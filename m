@@ -1,121 +1,62 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <sai.sathujoda@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E7EC02196
-	for <webhook@archiver.kernel.org>; Fri, 31 Jan 2025 15:26:02 +0000 (UTC)
-Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
- by mx.groups.io with SMTP id smtpd.web11.21432.1738337157534066047
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D99C02196
+	for <webhook@archiver.kernel.org>; Mon,  3 Feb 2025 11:56:48 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
+ by mx.groups.io with SMTP id smtpd.web10.86147.1738583799660804874
  for <cip-dev@lists.cip-project.org>;
- Fri, 31 Jan 2025 07:25:58 -0800
+ Mon, 03 Feb 2025 03:56:40 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm2 header.b=YsP3Q71S;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-51332-20250131152555f6dc902eb78023d794-a9elyf@rts-flowmailer.siemens.com)
-Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20250131152555f6dc902eb78023d794
-        for <cip-dev@lists.cip-project.org>;
-        Fri, 31 Jan 2025 16:25:55 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=kvBxFGNKavrI+wbyUNiG7zXSi5d1HhnJXlbwN9o04S8=;
- b=YsP3Q71S94xP0w0WsKXvEQn5fE/zSCCfdVK8xaey0WV+r40O74SEmRACpBWvxPB1Ow51/q
- n/WSqO28ICpvxaZclT5IpRi29wlZA4xfWD0FUse1dFpnj3EAJpWA5ImN72onPd4etEngyDJX
- KwqibatLYlKWFuQ8YEFJNxMpeUnqJoLZPa3RSlIeODQGUjEhBxUCj02I7gJ8xcs5/3us34Ly
- eWg3X9QHJDzZZV68haQVOEnFckKkSSSV1zRPHwyciM5t4KTVpGz49UUudD3yP+FIItglPn/V
- Vy8f9sWy7KHudra0eGOotSMxqP8hl5SZVfPZhixD3xkelH2kmLJSa6Xg==;
-From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: Sai.Sathujoda@toshiba-tsip.com,
-	jan.kiszka@siemens.com,
-	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH v3 4/4] .gitlab-ci.yml: Remove unused build jobs
-Date: Fri, 31 Jan 2025 16:25:32 +0100
-Message-ID: <20250131152553.270393-5-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20250131152553.270393-1-Quirin.Gylstorff@siemens.com>
-References: <20250131152553.270393-1-Quirin.Gylstorff@siemens.com>
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.134, mailfrom: sai.sathujoda@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 513Bubnq835578; Mon, 3 Feb 2025 20:56:37 +0900
+X-Iguazu-Qid: 2yAbuzQy0YtzT6qWyO
+X-Iguazu-QSIG: v=2; s=0; t=1738583797; q=2yAbuzQy0YtzT6qWyO; m=pUptw+YNbLbZ9FVXlqTjAFFeJhr3/P+y+174KQzMqpk=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1801) id 513Bua8c880620
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Mon, 3 Feb 2025 20:56:36 +0900
+From: Sai.Sathujoda@toshiba-tsip.com
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Cc: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>,
+        dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
+Subject: [isar-cip-core v1 0/3] Make LTP installation path configurable
+Date: Mon,  3 Feb 2025 17:23:18 +0530
+X-TSB-HOP2: ON
+Message-Id: <20250203115321.3589084-1-Sai.Sathujoda@toshiba-tsip.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+X-OriginalArrivalTime: 03 Feb 2025 11:56:34.0650 (UTC) FILETIME=[AC2AF3A0:01DB7632]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 31 Jan 2025 15:26:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17725
+ <cip-dev@lists.cip-project.org>; Mon, 03 Feb 2025 11:56:48 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17726
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+From: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
 
-These jobs are not used for further testing. qemu-<arch>-base
-builds similar targets as the used security extensions contains
-secure boot and disk encryption.
+This series of patches makes the LTP installation path configurable so
+that pure test targets can have /opt/ltp path as default. The path shall
+be changed only in case of security image due to it's read-only rootfs.
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- .gitlab-ci.yml | 44 --------------------------------------------
- 1 file changed, 44 deletions(-)
+sai ashrith sathujoda (3):
+  security.yml: Set new LTP installation path in case of security
+    target.
+  rules.tmpl: Make ltp rules file as template to make installation path
+    configurable
+  ltp.inc: Set default ltp install path and include template files and
+    variables
 
-diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-index d7055f2..36f14db 100644
---- a/.gitlab-ci.yml
-+++ b/.gitlab-ci.yml
-@@ -221,28 +221,6 @@ build:qemu-arm-test:
-     target:  qemu-arm
-     extension: test
- 
--# secure boot images
--build:qemu-amd64-secure-boot:
--  extends:
--    - .build_base
--  variables:
--    target: qemu-amd64
--    extension: ebg-secure-boot-snakeoil
--    use_rt: disable
--    targz: disable
--    deploy: disable
--
--build:qemu-amd64-secure-boot-encrypt:
--  extends:
--    - .build_base
--  variables:
--    target: qemu-amd64
--    extension: ebg-secure-boot-snakeoil
--    use_rt: disable
--    targz: disable
--    deploy: disable
--    encrypt: enable
--
- build:x86-uefi-secure-boot:
-   extends:
-     - .build_base
-@@ -264,28 +242,6 @@ build:qemu-amd64-swupdate:
-     targz: disable
-     deploy: disable
- 
--# secure boot images arm64
--build:qemu-arm64-secure-boot:
--  extends:
--    - .build_base
--  variables:
--    target: qemu-arm64
--    extension: ebg-secure-boot-snakeoil
--    use_rt: disable
--    targz: disable
--    deploy: disable
--
--# secure boot images arm
--build:qemu-arm-secure-boot:
--  extends:
--    - .build_base
--  variables:
--    target: qemu-arm
--    extension: ebg-secure-boot-snakeoil
--    use_rt: disable
--    targz: disable
--    deploy: disable
--
- # bullseye images
- build:iwg20m-bullseye:
-   extends:
+ kas/opt/security.yml                                | 2 ++
+ recipes-core/ltp/files/debian/{rules => rules.tmpl} | 2 +-
+ recipes-core/ltp/ltp.inc                            | 4 ++++
+ 3 files changed, 7 insertions(+), 1 deletion(-)
+ rename recipes-core/ltp/files/debian/{rules => rules.tmpl} (80%)
+
 -- 
-2.47.0
+2.30.2
+
 
 
