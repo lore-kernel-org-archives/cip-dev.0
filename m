@@ -2,43 +2,43 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15379C02192
-	for <webhook@archiver.kernel.org>; Mon,  3 Feb 2025 17:18:02 +0000 (UTC)
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (EUR03-VI1-obe.outbound.protection.outlook.com [40.107.103.83])
- by mx.groups.io with SMTP id smtpd.web11.93385.1738603078260269198
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30029C02192
+	for <webhook@archiver.kernel.org>; Mon,  3 Feb 2025 17:29:22 +0000 (UTC)
+Received: from AM0PR83CU005.outbound.protection.outlook.com (AM0PR83CU005.outbound.protection.outlook.com [52.101.69.6])
+ by mx.groups.io with SMTP id smtpd.web10.94042.1738603757480032465
  for <cip-dev@lists.cip-project.org>;
- Mon, 03 Feb 2025 09:17:58 -0800
+ Mon, 03 Feb 2025 09:29:18 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=lJUaBbQr;
- spf=pass (domain: siemens.com, ip: 40.107.103.83, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=pXEe6JzM;
+ spf=pass (domain: siemens.com, ip: 52.101.69.6, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=STrZH9AVyPkS6MDqYWrTX4cOZ/l370VaXm5uN3bP2Dn+bGhV5qeBuRJaHmPP1cjN6BMo0hmpPoVyghsLtj4twYE7izrySIckNTJW7VtqbVcyy4O6e06GGZzmAKNp+t/zT0eq/PAIE5WHeRPVl4wciHv3XrrneMbtZZprR8DtpR3BARDSKavB7/rWmSY6wNPtg/vB5OX5pUCOoMv3MoYIvm7LrWWGvK+E9ceSnMmDj4VsYqbZz5pt9X4PYqF8O+XDqLj0v5UjQF9VW9zfwpkFM8ptZxfWZfIbivXWPslGrzxJZQrgZfJ6HyAuyJ8xxXZkk+p5O1BIPcF2lfcpPHZfdw==
+ b=XlYI8GRu/vvpmt2VdlnPrJkD/tWNuJ/FPlUMiIG78ZLR0fI6bn1BVjcr/AWZMrouAYysbfZ1VPOrvhfR+IKXUNJr37mLa6dc+loYo3R86CUI18DStFG+MSZfYO718qHSYmLp68Oeq7K8aZ2OW34qX7+Z27R29TBg+yEXj8JbRBOrzwJN6oSU4jcOBN083aaIDoOYErvFILOHpn80/Q5Pyprtt6DBe/r5+KlrVIFl3/IjaynPfIHCvl7IB4AXuDHYCk6eUVxql9o4TnZCGqwZU1njgjv7XH37/6ieHE1E1jCH3t/Y2VG9Pkmv4utKHhkVHtq0m7fRBBdIPt2IkeSjQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gJk5yhwgrmjzh0gmdUX5WPxHzoQdmHMnleS+v3u25O8=;
- b=UJXSSzEu+sZdD1EuTnQ3e9O54l8KNLlFbyK679f8EY2pqHq4NDawP8pGVIpSIa4FXFSclpwJfmj8dB8+BPg33GJtb9FMJNYMEGLf4X1DZnxgNRiDCDoOI8jSehcksR+zN0oqhwV6W4pTAZc9NmcEjdVNJGyCKp0H8yXFsOFTwDx6lSq0Z96N/cS7vxljh/D/zvL37MGg5a+5qgbvJyslKHs9DO7YAFg/tPz4bz8iEL477KjOMj8s3PcDtiYV5el+R+qyyILhVFz8HYfUsn5hDLT71XwfK2EDOgWgOB0MSCulIkT/l5Hgw8hk23dukCvqseNuiuNS6n61GnDvdQgVXA==
+ bh=7H2pClNE4d+hjRki07OOzT4K+yCbFam5CiU4NZ/KeHc=;
+ b=cAG/zxJlBI3L0+Njcj9/vFCAGSZ1iW9eBcj5VWQoLF8OjCer0pDzakRDnTWwIKr3wVLKfxv+P2ZPQEV1Qf6VnaAgBX2JumSGuBF861iw+Yuj6KEou6LKz5bIEo0x9Fk8OiS24iNrj7NadrVZGHyuPsiQpiMzYju+WfG0jVPX61LtCcZpShGNlC+ts2ggDjN0pmupJY7L0HqwAWxlqyPFqIo2/PkrzKSsBuli19hW+TMibZemgkX/f6vHL27ssZvuWFgUz64+sVar8a47rodDCkH/TwN3fsZVsAuJzM3Zjb/Eq+OWBcxohf0hvs0nZtMA3jwxwmIaeBYyynO7JN+Xkg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gJk5yhwgrmjzh0gmdUX5WPxHzoQdmHMnleS+v3u25O8=;
- b=lJUaBbQrgR9EPCtOmmb5Fr3WI+zZ9uyA1mn+OD3NEOERcIW5ym49A2F0X78zTk88PcMGNJ8GkhsKxilDFQHjyvtqAF/EAXbxJzoEPvnETtqAdT8m6I/ElqGy+mRb0iA+gq5MgjxwqOk3oNlnrWrVPEfTUJ22OVFfAOVFTJdXxtrPZ4oJjqfDaOaBawr7cNZ5rwSLewtpjr5MMbrqnIMWrCLknqUhS8KBZdmN7V5wDl9D8RJhtksbKl+7Z5T0Exe/yj8JHuz5qE+/YBNh3flndNon/wxJbK2Lb84I125OgjtNP/uueRRogROH3kMRfb6AkpVmSE8EqDPuVCPuJfgyCg==
+ bh=7H2pClNE4d+hjRki07OOzT4K+yCbFam5CiU4NZ/KeHc=;
+ b=pXEe6JzMRUPTrBaP0RruHAw8t8157nvKMH9WZL1iNRABS09WLOIJXwkEJwZ8HiQdaiConW2xBkl7X71/WbW2FBIvjhompf/chgRz6wINB80ZTUoI3Jg37d1QLcqH3cDQvFbdZmTTd8Nv8G9CMsWy7pNzcdHxGICWO52tdpslnhT5L237L1lmHgr86Rjrw6DAUKBiJ7qycBV/9rb0nDOULiySxu+gtGJivktgvX7Y4aSISzuMuSgUCSGgKQKpVSPjpCPkpfHNLIOQj6eRwgFUNZhX5Vh35xIZeeoU9H07ZR6WKfEJBv97u0BirEwxkWYc53NUJsZyXe8EwFejW77pFA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by AM8PR10MB4114.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1c9::15) with
+ by AM7PR10MB3876.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:175::24) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.9; Mon, 3 Feb
- 2025 17:17:54 +0000
+ 2025 17:29:14 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408%6]) with mapi id 15.20.8422.005; Mon, 3 Feb 2025
- 17:17:54 +0000
-Message-ID: <13624aed-827f-4b4c-930c-b75a38eb2e9c@siemens.com>
-Date: Mon, 3 Feb 2025 18:17:37 +0100
+ 17:29:14 +0000
+Message-ID: <5ea46f54-9a0a-4045-abdf-001d0005fcea@siemens.com>
+Date: Mon, 3 Feb 2025 18:29:12 +0100
 User-Agent: Mozilla Thunderbird
 Subject: Re: [isar-cip-core][RFC][PATCH 00/10] Provide A/B snapshot support
  for persistent /var
@@ -48,6 +48,7 @@ Cc: Christian Storm <christian.storm@siemens.com>,
  Quirin Gylstorff <quirin.gylstorff@siemens.com>,
  Felix Moessbauer <felix.moessbauer@siemens.com>
 References: <cover.1738229957.git.jan.kiszka@siemens.com>
+ <13624aed-827f-4b4c-930c-b75a38eb2e9c@siemens.com>
 Content-Language: en-US
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
@@ -92,176 +93,190 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
  8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
-In-Reply-To: <cover.1738229957.git.jan.kiszka@siemens.com>
+In-Reply-To: <13624aed-827f-4b4c-930c-b75a38eb2e9c@siemens.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR3P281CA0047.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:4a::10) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR3P281CA0100.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a1::18) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AM8PR10MB4114:EE_
-X-MS-Office365-Filtering-Correlation-Id: 11da39e0-1c10-440f-917d-08dd4476b1e6
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AM7PR10MB3876:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2dbd656d-a222-4ba9-d692-08dd44784758
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|376014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?dFlNeGswSk8xdklLTFkyNWhHOEJqekt5cDBUTzdibStUcitYcWdyTDgvM256?=
- =?utf-8?B?Y1RWaEFHZ1ZFV1puU0ZmU2NlemkvUFdMZ1I0QkZmWGZSY2twUll5RVM2ZWRL?=
- =?utf-8?B?UWVTZERlZ3BrSEpjRHN3c2NPemZucGlLWDhHVGEwME9NcnR5dFdkQTBqV2tW?=
- =?utf-8?B?QkgzL3M1bnFEUkVzdDlxQ0pRSkl0VThNYWVEb0hNajVQazE2TEIxaW1lMFhB?=
- =?utf-8?B?TFpJZ2VRcVcrbGY4MHNzekROK04vV0VDMWNtN2RCaWVocCtqZU5LRW5UdGZs?=
- =?utf-8?B?bURhenpiNUVnWU43T0VCWFNVSFB6dUJObUhOUzZxSng2TCtYa1VSODRiTXRC?=
- =?utf-8?B?cDNkM2ZjT1N2WVJhTUNSSGc5eTRSQXM1NTBKendmUFpieFZmUWp1bVJVVUZ6?=
- =?utf-8?B?Y093VVRDa3ZZWFloQUVuM2lJUWhNMHMwbWxCNjFUZDJMZVI1OTFSMDhWOFBX?=
- =?utf-8?B?dkViOEE3cFJMYUFkOEpnRkJrUlJJYlo2OCtIdFdYTHh2Y2Y3M21CT1FYb0xJ?=
- =?utf-8?B?TVJ4YnNmVTZCY1k4MFlIdGJWYnI0MGNmMU03YTYxeTBKWVhxMEVQUUtTWU5M?=
- =?utf-8?B?bzJOQ21vcWhEekRWU2UvcWxIRjArWi9xczRsUmZOQXpmRkNWcUJuSXRsK3RD?=
- =?utf-8?B?ZTZ4SHlkMFlUbzhJQkl3WWRKZmErMDhGbXM5Y2pZMkpQUjd3Yys4ekNHdXlH?=
- =?utf-8?B?dEExOWY3MVo5WCtoMGhMckNHNDU2QzM5Qks2QjJaM05BV1E4SG93RWxqM1E3?=
- =?utf-8?B?SmxVNnluSEh6YW9OczMxSkJlalM1ZDdob05EMHd6cjRJOG5lZXZYRmJTK3ll?=
- =?utf-8?B?bnNGdEYzV0lxaWk2UkhMSU1lQUUvT3ZtSXBRU3lqVG1kK3dHVndtWmlUYU9v?=
- =?utf-8?B?RDdlVW5tdEttcmJNRm1aZkNuTHYwK0RFWndTRVhYMzl6SlErWEpzRmJjNmI1?=
- =?utf-8?B?b1B0a3ZpSm9YOXFYd2VvTDlKaXpuODhzeEhNOUZLM2xkdkVSeE9jN1ErdUEx?=
- =?utf-8?B?Y3ZwKzBhL0V0N1NCUFczUzhxUjZLZGxnbHNmR0lCNzVmNGpQNGZHVGxSMEQw?=
- =?utf-8?B?RWtsZUlDT0pQQ29nblNkeWxjaVBYTkpmb29YN2owN0FnaWZMWlFLaktiamlM?=
- =?utf-8?B?bFhPR2hVWjMxczhXZVd2elIvckkzK3Q1elE1ejR0VjNCUktlRm9EcHZkM3JQ?=
- =?utf-8?B?SzBkWmJoNmNYNlFQdENiUHZkTUd0K3dMRHJwUllma2lWZkwvd3pmTXp0SGNW?=
- =?utf-8?B?ZGN4cTlZV2N1T1phSmNIQjJJNGlhL1ZuVU11KzJjbGE2TmxWRFFMZWdaMUhr?=
- =?utf-8?B?VFgvRmhJWW9DUlI3N0dlb2M4cXNQQ0E4ZjZtNlZBWUtjaDdraVZiTVd4aGh5?=
- =?utf-8?B?emwweXdzZCt5NXphWlA5SmM2eC9SbWlnV0g5dzdYdTVmU2s1aW4xeE1aV3p4?=
- =?utf-8?B?emNkUkNlT21zaytEbU9sMXFQaTZtdmpRMTFlaHplblBmUEc0bUtpZGE5Qjgr?=
- =?utf-8?B?U0ZrUTJndXJNeWE5d0g0Y1VHK3VHdlJsOW50cSs4U2FUZmFwL245VnNEUkd4?=
- =?utf-8?B?NU0zblp4VHdLeGtWL2lBQzZRMkFZcEtsMFpyMTI5UGNIWnZKRnBQTWxyVHlo?=
- =?utf-8?B?dzNMdFArWURiUFREbEZKcUFVYVQyWDY5TGdVa3lqZkdXc1hpeHZ6OWRCdVhy?=
- =?utf-8?B?VzhuakQ0RW5RNitwc2VUTWNNL01PUFFhZ0g3WTRBZUhEZkZZbGkzUmRON2F6?=
- =?utf-8?B?THV2T1Nxd09hK2hLcUE2bGkyZjJxbVhOcmdRcDluZTVGam1uQWRad0d4UllB?=
- =?utf-8?B?TXlva3poSFM2Vk5weWJSZmNIWmo1c0htcGkxeDVzT2xiWmlFTzByOXBETlky?=
- =?utf-8?Q?xUTgbzFcx+3Ch?=
+	=?utf-8?B?MjhDL29taWtqdEtaZHBacEg3ZU5zOHJIREx6L0JGMTBKY1JFNkJENXBXazN1?=
+ =?utf-8?B?RlYwOGFnTXd0MXBpOU1qY1V2WXNYakl0ekUveDB0eUFGRkxKc2kzRzUrQVdj?=
+ =?utf-8?B?UzlrRlE5cU1ldTdONVpkTkl5cnZibE56Qms0YWdvaE4xOUh3cUlWbUVzMU4v?=
+ =?utf-8?B?UW9uOHg5dGlGdEpSdkFLVlVHdkRrZmpad043WHIzRWlHaDUxaFhsM0h3Z2xG?=
+ =?utf-8?B?MzhDVkZPMGh1alhIaG50VmphcnVSOXpMU3hJU2l2aDFzZjg0L2EyM3ZPdDBs?=
+ =?utf-8?B?bVYzOWkrR1JFQ1dva1pyN3R5S0RURXdWZ1M3NlE1elBjQzdjQS82OC9YUVRF?=
+ =?utf-8?B?VHRzZnRIeVg2OUdmNmdMNkJoMGlSMnVXMVRlOE9HcVBvaG5hc01RWE43ZUg0?=
+ =?utf-8?B?d0cxQnZyUndHUU45RCtKZjZkeG5EdG00OXJpdGJmTHc2K1hHY0N4ZGJyOTZ6?=
+ =?utf-8?B?NjliVThQVDRYK0lkbFN4TlcvL21Yc1dWRHBTdGxpSlMvNy9lWll3Vkh3RTZm?=
+ =?utf-8?B?WVk2ZnlHSWpKZXBBOER6dFRHSFVQVnZDSXB1RlJNZzJMb0g3ZFkxVnhaYjEv?=
+ =?utf-8?B?Y2laVUc2UjBFcjNwNm15SEJqY0toZitMbmRvVXNtRm9LVnB6clNoQ1BRVEQ1?=
+ =?utf-8?B?V0c3WkpyL1RmRUhxYmJVRVduaGhaWnFmcWpLcGpCbGFJVHRqeGEvUTJRcVJ1?=
+ =?utf-8?B?bUMvdzZWcHB4N2YzbkxvcGdDeldRVGlmSlNTbFovNDRYQzQ4eGZqRTdGbGZO?=
+ =?utf-8?B?SDF3bHNNSGduVThoSmVXS2RqUWNkY2hjTFBBeFJVazJNYVpJTmFIYU5QcEdD?=
+ =?utf-8?B?bjVVVExtM2UyTjkyZWxlbTZKSlZxdzQybzQ4aU1IZG1vY21LUjhZbDF5YmFW?=
+ =?utf-8?B?ZWdheDRhOXF1WDN1ZVB2N1crZkFiZEdRazZWTGRlVGYxQitVUlVpL2d0dVA5?=
+ =?utf-8?B?TGRBazdUdVRWRmQ2ODEwclQyTzAyVEhOYU9wajYxNmxmYkdJWkRMVDFyVXNt?=
+ =?utf-8?B?VEptNCtud0o2RHRFVWN1UjVHa0UvWGJUbjY0NXpzRko0b1IxOGRxRnhBNlZO?=
+ =?utf-8?B?MUorMUhxM2lNOXVZL09sZDdmcHFpWG5xTUppbnRHNVNmVmNyQnVkb0FFeDV4?=
+ =?utf-8?B?ZEZBSEFETkkrS1VaR3F2OWdpN0M5Q0gxaHR6NFByMkNUMnhmSm90WFY1dzBq?=
+ =?utf-8?B?NmxwaTd3VjEwamlmUTV2bndadzJCdWRLZk9jY0VQMVdQY3crRkJRbEw1cGw5?=
+ =?utf-8?B?TmpOOUNmQk5nb1paM2dPT1R0SHdzSERyUlBvSmNqWlVIODRZN1llbHB6dzRt?=
+ =?utf-8?B?RUdGNEY3ZVYyY1FOUlBCL1lUZ05JMU1aODNyay9TN0lKbzhoR2lDYVNqUmkr?=
+ =?utf-8?B?ZVZsWWRBOUdqcmdvL05QL1R1dSs4NGhRVTNRdHk1WXE5WVNwdlFWcmFvcVlR?=
+ =?utf-8?B?ZDBZV1JuVURpbVEvQkY2cGVjRjdHSXl4emVPdzc4dkNsZEpsQUdWUHFyS2Nz?=
+ =?utf-8?B?YkNRM1IxT0pveU04WXZWVGFXWkI2akZOelNSLzNxTjFPbWtuSkNaMWR3Rlho?=
+ =?utf-8?B?U3p4emJINzFaUUJ5TFNQZWZHaU9XVXAzeFRlRFE0UDg0QVA3b01GbkJHQ0dt?=
+ =?utf-8?B?VlYrdXpCOGY0L0JmV096dWRDZmNUTHF6U01EbExOT1lSdVh1dEloYkRFMVAz?=
+ =?utf-8?B?VzdMcDcyZjJabHNqdjZkbXM3c3gwcEFUWUVTSmJ1bGNUZUlES08xOVBldmFo?=
+ =?utf-8?B?WktvYSs2ajJzZ1ZDNW92NmJuZHdyUHhiWXQwT0ZqZ2lCM2pQako0akVxRkN1?=
+ =?utf-8?B?U1J1ODhxRjdnYktyZ1RvMytkUmllcnNXUzRnVUptMHRrdU5DWDVsSzF3dDhO?=
+ =?utf-8?Q?LTUQqLkgm/d6y?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?MEgrank4TlFnSkpjNkcxblBETkszTktFbUdQUW9XNk5WUUJHYm1HZWRaNlZB?=
- =?utf-8?B?UktpaGJXV1hDMUtBUVdFMmgwUWMvc1cydGwxZXBCT3llbSs0aUQ5Vm9zR0lm?=
- =?utf-8?B?Y0Y0MHN2NGN2M0U0V1E2SHRWSjdIeGg1KzA1RlhtOTFETjl2TUs5VXp6cUhM?=
- =?utf-8?B?ejFhRlQ3WkxGeVgxUEpDZlhGVk9qbE1wbXdHV2crRjVpeUZiZklWNFpoKzJr?=
- =?utf-8?B?V1YyaFFEakd3REJpV3hOTEVlSEswc1JpN1FnUUNWQ2k3bkJoTGIzSU02WXhz?=
- =?utf-8?B?OWlWWWF0Q0xZclF2dlhGSWFmWFNpejVnaDNnUzRkQjF3ME5BMFVQV1I0dW9k?=
- =?utf-8?B?R2xSaGtKVXdqNm5RMU5IZklUQU5GdmpkclEvRFBVdkdRQk5pa292dk04eStN?=
- =?utf-8?B?RWdHSEIvWlA3UUFxOEp1TEZKeFgyMHk3Sml0TUhHVW1GYWNLWEJPQm1RcjNL?=
- =?utf-8?B?UUpJM2ZNVEluM2t1WExYcGpXbm1vOGhUMFRIZ0hleVI1ZVZFUlIwOXk3bWI5?=
- =?utf-8?B?ZXF4YkFIeHkwVXEwV01vdlo5SEdTZHR3d1U5U0R2N0RhTlQzelRwRlpEQm5M?=
- =?utf-8?B?cDc1b3p0cDFpZ25IWnZkeFZFSFhid1JXWEpkVWFHY0pBNzltWVZWNU9IN2I4?=
- =?utf-8?B?NTZUY3pFdjJYdTVucE11U3FzSnpnRVZ0cW05WGlOcXpmd0F3c2k0KzRMWnlm?=
- =?utf-8?B?eFN6b09xK205eHRwL3hYU1NiY0h1TGptNGpEeldxRmEyaWIraDZ4UGdUUTI5?=
- =?utf-8?B?amhvdEJMUU94TU14TkFzWVJ4ZWZhUU5zeHhPckNpUDNLWTRMTDA5VkRDWE5a?=
- =?utf-8?B?Sm5nZ1JmMm5QQ01rT1dvRWdpU0JMZmFuK010QjErR0NsSnNtZW1uWFBuNldN?=
- =?utf-8?B?V1d2cDI2SklIK0J2WEhJRFlPb05RVHg3TnJGWTcrYnRpRDUxM1A2WFVHN1o4?=
- =?utf-8?B?NUdNdllhT1lWZVNyN0l0MjA1N1h2NlBpa0pXUW9aOFVCUm9Jd0J2V1I4ejk5?=
- =?utf-8?B?OXdUY3p6L05QZDFZZlphL1MxS1Qrd3dOYmhUL2ZnM1NKcUZJVWZvSmtsOWJ3?=
- =?utf-8?B?VU9VenlBQ1JzWG5lU0xFQ3ZNSHNWK0psT21LbCsxR0RFU3Y3djlVK05ZdTQ5?=
- =?utf-8?B?ekRNMTV6WXczQnYxZUk1TWppME9pSzB6VmdkWG9WNzlma2dIa2hsNWQxR0Rw?=
- =?utf-8?B?d3ZqTndFblVEeThqellpTWRYTm9WMzlDckFMMitnTndCa2U5My9ZZHM0TCtB?=
- =?utf-8?B?ODlZeUdnRzBIYzhqdUtkSXVCeTZXQVZYakhkd2NqaGdKdUordVh2b3BsQmNE?=
- =?utf-8?B?eDZNYmM0Yk81Z3d1eGkrZVZqNGRWMElkSEJWWTFZYjNkUFVuVzlSLzYvZU5q?=
- =?utf-8?B?TCtaaXJ1NUFYby9yLzlBZW5ZUHQydTBEQ3k0Q3BhcFFvaHRiZTd4YUE5ZHcr?=
- =?utf-8?B?dTJiVzVvejlQeXRWYnVWbnZJd3RzNnVwKzR5Tm9BM2hhUkZEaFkzRjNTUzJD?=
- =?utf-8?B?amQwOThRczJld1RZNTVqT0VieVV2b3RSOUI0dFcyeGlLV09ZYmlYUHd2cmZO?=
- =?utf-8?B?NlphYkpKejZZN1BpU1RwYllHOXFwbXdxdHVMNjFVVVhDNFlzSTJpWGhERkNH?=
- =?utf-8?B?a3dINWVCWnNBUXluZHE1cERmcFk1TERYTnBFK3ZRZVp2MVdKMEtlZGlYUjZW?=
- =?utf-8?B?Vi8yRU94SXZISnB1TUo2T3ZTc3RGQmlLcFpINHE2a1lDYzRLQWZ4allDQ0Uw?=
- =?utf-8?B?eHJiayttVnhCQ0M5S1AyS20wUUpsdHBic0xOYy94cTJpNEJuQk5tU0dkRlRa?=
- =?utf-8?B?ZDIzaCtLVG4vd2I1Z0cvU1hLSTZZbnN0ZWJIcGh6NGI0Q2xFbkJpU2RVM2gx?=
- =?utf-8?B?TGR2WHIzTzhMMkM0WERyS0JZNGJ0WGRJM2JDZ0Y5ZWg3QkIvN05tNE0xLzUy?=
- =?utf-8?B?U0pqN1MzVVhTbENvc3BKMjZYN2YzSTA5YWNJVVpkeHFxZ2lBNjdYcTFseHpL?=
- =?utf-8?B?WnI3YjJRWGlMd0JXQWk1bE1WYjYzVm5ZRzlFTmdLZzR6RVVhWDBSVWZmZVlj?=
- =?utf-8?B?MTY1cGpNeDJHS3dHZkxkTUQwVUlsaDl6VFJ6K2NRNVFsZ2ZJVE4rZGxDVHZi?=
- =?utf-8?Q?WNMEII2E7Wk7EImZ6ZQK/P4Ls?=
+	=?utf-8?B?cUhLWmxFbmFuSFg0SGJNTzNCbjY3K3VjbUlLUU52RmI3eG9nSExsanI1S01Y?=
+ =?utf-8?B?ZitIZENjaTJLZVVBd1N0UTZaMXhGeVJha0N1K0ZNcDA5N0V4Vzhub05KUXFm?=
+ =?utf-8?B?ak1YYmZYWlFmVlRkRHBIY09aeDVzQlJzRzBxRWZwS1pyUDBCOHY2VEdFaTRz?=
+ =?utf-8?B?VWNlMVR0MWNST25KWUVwQ1VVU3FwQ2k4Y1p4K2xTdU5maXlQYXZpWmpSOGN5?=
+ =?utf-8?B?STlKRWpwVk5GUmd0SGFrM0xWYVlWT1Zhd1UxZS95aW1CQlEzRjlMQmZteTBO?=
+ =?utf-8?B?QXNDRStDYnNYNFN5TjdyZFdWNGNXbUo1ZWVIYk90aHFtZ0EyM3pxQng3c0pr?=
+ =?utf-8?B?dFpjazBqcTJmSGZkemtMY0lyUnJ0bDBkYTJhUVNmYnluekI1K3ZPQXdYSkRu?=
+ =?utf-8?B?d0JHaGNxLzZqN1grd09wYVE4NVZ2WnJPYjNUUUdEeWN5Y3BoQUt3RWNna01z?=
+ =?utf-8?B?N25nZGJSODdoaExIVEh2WDY3ZDdFVi9QeWFzcEw3NFoySTBnbmpQbmZmVktP?=
+ =?utf-8?B?SVhmL0REUWZPN1d1MjhoTy9pcUwyMDZZZlR6aWdjTlpwMEZYNnFRTWhhTmhO?=
+ =?utf-8?B?THdtNngyVlVleFJYbFJNZ05pRnRoWFlTempTdDFmZ0tBVTFYZXZ6MlpDWmVj?=
+ =?utf-8?B?d29hbkVMbysvZFBiVk9KNDl1cGtjOWZLRnFIQ0JEbVowMW0zQ2ZnMWdjRFR1?=
+ =?utf-8?B?WGdtY3BqZXFud0d3bDZwVVN0WkdiZ2hVWWtPUWZjaWhjbk5mRjZzeDBDbEQ1?=
+ =?utf-8?B?M1dkMTlna21xS3NYUE1OMXBaZjdROUhZblZkNzYrRklTRURMbmVrdUpPTzl0?=
+ =?utf-8?B?U0NyVmkzNjkzYlY5R3dtNm90Ulc0QTFrak9JQmhFSGxOUGpYem01M3ROWHNM?=
+ =?utf-8?B?eFpiWU80SEVNdEhDUWJGT0F3em9XbytuSjlVT0ZwUXRXUmtjZDE1WW4xSzVi?=
+ =?utf-8?B?ZjlsOG5IbG91Q25rOG8vaXdSM1U5amxOSm9TWEpUWG1OWGRuL1ExTjdaZDhp?=
+ =?utf-8?B?M3lUMmJjc1pCQmRHMHdLZkNRSFVSRUZwTjRCa3RkcW5yQ3d5SWpqWkdWbHRw?=
+ =?utf-8?B?eDN6bVljQ3huYUt0OElQdllVSFNtdzN0ci96bGhRQUFRWTBMWEVQWHowWFVX?=
+ =?utf-8?B?aEZoV0U5UnNGTEwrTFNMbmdLUVVFRHRCaXZ0VVZZNC91d1hwT3NTQU1TQTFR?=
+ =?utf-8?B?aU54OUpBQzFVYThZUkFQQ0Faa3dBZTdZemJwamNUQk5VLy9ZdkordnNOdnJn?=
+ =?utf-8?B?dk9IV2ZnWlEwTWpWSTdIQkx4d2FuTGdWc2lENld2QXdjeWxla2NpTWV1Vlc2?=
+ =?utf-8?B?WisrNFVacVQ5Rzd0Q3VRcG0rbVg4MHRRSWpQVk1Pazk4OHRMYVlwMjZ3YU56?=
+ =?utf-8?B?ZXowa2VXUk9ML1NGeHlwRXFjS3k2NExMTmk2cVd5V2pMRlV6N0lueUhtYjlN?=
+ =?utf-8?B?R3RmalN3WDlXVG5XSGhhN3pGQmFjcGFLUVBWTHYwems2VTRuaXhuREJqOG01?=
+ =?utf-8?B?eDQyV0RybFpTdWdsQlR6WjhHa0ljTU82aWxmRHRybWplQXBYWUxxNlA1OXBy?=
+ =?utf-8?B?WkV0VmgrNkJSMlc1L0x2Ym56b3U1OWZ4UFR3d0JXcTV6TmZRNWl3dFA2ckt5?=
+ =?utf-8?B?Zy9iZlg4Rlo2ZXJwejBPWHdnSk5HTGx3cUdTVnRyRjZmbnBuOGZMMmY4blFB?=
+ =?utf-8?B?bXhwK2huWTNWY0NGcjFneDhQVVNGRFV2Qnp0Ym84ZHRNckJkdEJiZEZRNSt1?=
+ =?utf-8?B?cG9XK1VxdzBBNFc3VFZPU2VyV2RMalRMdFRWS3ltOHZHUFRQSFhCcHl3R3pz?=
+ =?utf-8?B?S3QwajlzSGI0Q2t6VWlmV1EyVHlja01Ea2o3bWtYcGhzTG5jNDl1cjRGSjcr?=
+ =?utf-8?B?bCtSZjA4dVBUWlJBcWFvaVhhRW1lS1VWMXVEZGJ0OVV4SjBLa2xJcy9UMnZ5?=
+ =?utf-8?B?d1J0VndUNXhYQ2dET0lEd0RWVW1UOUUxcHNTRUl0OVJkS0k0aSs3WTFHK3VN?=
+ =?utf-8?B?K3BGYXRtSGFFYkZmNUVpb2J3WDhDcE5mdGxkcGEyckFxbmZ0WFpKWkQxVmtu?=
+ =?utf-8?B?TnZNakNPOENRRU1iQU84QkxCSm1PY25YN3FONG8vSjN0bDF0aHJLL3ZPNk5q?=
+ =?utf-8?B?anVpNFRreitjR1R4ZFpBQlJlUlhXZk5wYUZyandPcFdJekFZdllrRVRpZE9Z?=
+ =?utf-8?B?aVVVZ3pZdDRIVkhUODZ1UC9hNmFFYnNQWCtpelJZc3pjM3dzRlByVllQb0xW?=
+ =?utf-8?B?cDUzWjhYWjhHZUZMdzB0MGdLNjlBPT0=?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 11da39e0-1c10-440f-917d-08dd4476b1e6
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2dbd656d-a222-4ba9-d692-08dd44784758
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Feb 2025 17:17:54.0715
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Feb 2025 17:29:14.2362
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0H7WWobYbKEonjhp2DuV6cKhoD+ENsAWxzOLYy6EYT/rJFezMyNrs6vLy1kxtiJwN4HequBrjx1aMHGk8lrnzw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR10MB4114
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0NrLffFma4xEFeRidxJTs6nZFAdK4YBW0FUu2jiuAIvsjDlcb1z9oFomH+H9fo+nMiRHXHclpqqXxV0VSghC1g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3876
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 03 Feb 2025 17:18:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17733
+ <cip-dev@lists.cip-project.org>; Mon, 03 Feb 2025 17:29:22 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17734
 
-On 30.01.25 10:39, Jan Kiszka wrote:
-> This is a first attempt to provide a pattern and reusable recipes for
-> saving and rolling back the persistent data during A/B updates. The
-> obvious approach is using a filesystem that supports snapshots and
-> linking those to the rootfs revision that is being booted. As first
-> implementation, we are using btrfs. While the current implementation is
-> built around btrfs, the concept should not. It may even work with
-> device mapper snapshots.
+On 03.02.25 18:17, Jan Kiszka wrote:
+> On 30.01.25 10:39, Jan Kiszka wrote:
+>> This is a first attempt to provide a pattern and reusable recipes for
+>> saving and rolling back the persistent data during A/B updates. The
+>> obvious approach is using a filesystem that supports snapshots and
+>> linking those to the rootfs revision that is being booted. As first
+>> implementation, we are using btrfs. While the current implementation is
+>> built around btrfs, the concept should not. It may even work with
+>> device mapper snapshots.
+>>
+>> That said, the devil is always in the details. And even this "simple",
+>> btrfs-only implementation took some rounds to find a logic that neither
+>> piles up obsolete snapshots or deletes them prematurely. Still, careful
+>> review is highly welcome, specifically of patch 3.
+>>
+>> As we are currently having split /var and /home partitions, this does
+>> not cover anything in home directories. However, this will automatically
+>> change when [1] is addressed.
+>>
+>> Jan
+>>
+>> [1] https://gitlab.com/cip-project/cip-core/isar-cip-core/-/issues/123
+>>
+>> Jan Kiszka (10):
+>>   initramfs-crypt-hook: Add support for btrfs
+>>   initramfs-crypt-hook: Bump revision
+>>   initramfs: Add hook for managing /var in A/B fashion
+>>   initramfs-overlay-hook: Optimize variable initialization
+>>   initramfs-overlay-hook: Tune the parameter documentation
+>>   initramfs-overlay-hook: Add awareness for abvar hook
+>>   initramfs-overlay-hook: Bump revision
+>>   swupdate: Make var filesystem type configurable for update images
+>>   swupdate: Activate abvar initramfs hook when VAR_FS_TYPE is set to
+>>     btrfs
+>>   Enable A/B snapshot for /var on x86 and qemu-arm64
+>>
+>>  classes/swupdate.bbclass                      |  1 +
+>>  conf/machine/qemu-amd64.conf                  |  5 +-
+>>  conf/machine/qemu-arm64.conf                  |  5 +-
+>>  conf/machine/x86-uefi.conf                    |  5 +-
+>>  kas/opt/ebg-swu.yml                           |  6 +-
+>>  kas/opt/swupdate.yml                          |  1 +
+>>  .../cip-core-initramfs/cip-core-initramfs.bb  |  3 +-
+>>  .../files/local-bottom.tmpl                   | 86 +++++++++++++++++++
+>>  .../initramfs-abvar-hook_0.1.bb               | 31 +++++++
+>>  .../files/local-top-complete                  |  7 ++
+>>  ...ook_0.5.bb => initramfs-crypt-hook_0.6.bb} |  6 ++
+>>  .../files/local-bottom.tmpl                   | 10 ++-
+>>  ...k_0.2.bb => initramfs-overlay-hook_0.3.bb} |  8 +-
+>>  wic/bbb-efibootguard.wks.in                   |  2 +-
+>>  wic/hihope-rzg2m-efibootguard.wks.in          |  2 +-
+>>  wic/qemu-arm64-efibootguard-secureboot.wks.in |  2 +-
+>>  wic/qemu-arm64-efibootguard.wks.in            |  2 +-
+>>  wic/qemu-riscv64-efibootguard.wks.in          |  2 +-
+>>  wic/x86-uefi-efibootguard-secureboot.wks.in   |  2 +-
+>>  wic/x86-uefi-efibootguard.wks.in              |  2 +-
+>>  20 files changed, 168 insertions(+), 20 deletions(-)
+>>  create mode 100644 recipes-initramfs/initramfs-abvar-hook/files/local-bottom.tmpl
+>>  create mode 100644 recipes-initramfs/initramfs-abvar-hook/initramfs-abvar-hook_0.1.bb
+>>  rename recipes-initramfs/initramfs-crypt-hook/{initramfs-crypt-hook_0.5.bb => initramfs-crypt-hook_0.6.bb} (93%)
+>>  rename recipes-initramfs/initramfs-overlay-hook/{initramfs-overlay-hook_0.2.bb => initramfs-overlay-hook_0.3.bb} (87%)
+>>
 > 
-> That said, the devil is always in the details. And even this "simple",
-> btrfs-only implementation took some rounds to find a logic that neither
-> piles up obsolete snapshots or deletes them prematurely. Still, careful
-> review is highly welcome, specifically of patch 3.
-> 
-> As we are currently having split /var and /home partitions, this does
-> not cover anything in home directories. However, this will automatically
-> change when [1] is addressed.
-> 
-> Jan
-> 
-> [1] https://gitlab.com/cip-project/cip-core/isar-cip-core/-/issues/123
-> 
-> Jan Kiszka (10):
->   initramfs-crypt-hook: Add support for btrfs
->   initramfs-crypt-hook: Bump revision
->   initramfs: Add hook for managing /var in A/B fashion
->   initramfs-overlay-hook: Optimize variable initialization
->   initramfs-overlay-hook: Tune the parameter documentation
->   initramfs-overlay-hook: Add awareness for abvar hook
->   initramfs-overlay-hook: Bump revision
->   swupdate: Make var filesystem type configurable for update images
->   swupdate: Activate abvar initramfs hook when VAR_FS_TYPE is set to
->     btrfs
->   Enable A/B snapshot for /var on x86 and qemu-arm64
-> 
->  classes/swupdate.bbclass                      |  1 +
->  conf/machine/qemu-amd64.conf                  |  5 +-
->  conf/machine/qemu-arm64.conf                  |  5 +-
->  conf/machine/x86-uefi.conf                    |  5 +-
->  kas/opt/ebg-swu.yml                           |  6 +-
->  kas/opt/swupdate.yml                          |  1 +
->  .../cip-core-initramfs/cip-core-initramfs.bb  |  3 +-
->  .../files/local-bottom.tmpl                   | 86 +++++++++++++++++++
->  .../initramfs-abvar-hook_0.1.bb               | 31 +++++++
->  .../files/local-top-complete                  |  7 ++
->  ...ook_0.5.bb => initramfs-crypt-hook_0.6.bb} |  6 ++
->  .../files/local-bottom.tmpl                   | 10 ++-
->  ...k_0.2.bb => initramfs-overlay-hook_0.3.bb} |  8 +-
->  wic/bbb-efibootguard.wks.in                   |  2 +-
->  wic/hihope-rzg2m-efibootguard.wks.in          |  2 +-
->  wic/qemu-arm64-efibootguard-secureboot.wks.in |  2 +-
->  wic/qemu-arm64-efibootguard.wks.in            |  2 +-
->  wic/qemu-riscv64-efibootguard.wks.in          |  2 +-
->  wic/x86-uefi-efibootguard-secureboot.wks.in   |  2 +-
->  wic/x86-uefi-efibootguard.wks.in              |  2 +-
->  20 files changed, 168 insertions(+), 20 deletions(-)
->  create mode 100644 recipes-initramfs/initramfs-abvar-hook/files/local-bottom.tmpl
->  create mode 100644 recipes-initramfs/initramfs-abvar-hook/initramfs-abvar-hook_0.1.bb
->  rename recipes-initramfs/initramfs-crypt-hook/{initramfs-crypt-hook_0.5.bb => initramfs-crypt-hook_0.6.bb} (93%)
->  rename recipes-initramfs/initramfs-overlay-hook/{initramfs-overlay-hook_0.2.bb => initramfs-overlay-hook_0.3.bb} (87%)
+> Patch 1 and 2 look ready enough to me now while the rest needs a bit
+> more time. Therefore, I will keep the first two in next and push the
+> others into a wip/abvar staging branch so that we can move forward with
+> other pending patches.
 > 
 
-Patch 1 and 2 look ready enough to me now while the rest needs a bit
-more time. Therefore, I will keep the first two in next and push the
-others into a wip/abvar staging branch so that we can move forward with
-other pending patches.
+Actually, patches 4, 5 and 7 fall into the same category and are kept in
+next, too. Makes:
+
+- initramfs-crypt-hook: Add support for btrfs
+- initramfs-crypt-hook: Bump revision
+- initramfs-overlay-hook: Optimize variable initialization
+- initramfs-overlay-hook: Tune the parameter documentation
+- initramfs-overlay-hook: Add awareness for abvar hook
+- initramfs-overlay-hook: Bump revision
 
 Jan
 
