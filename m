@@ -1,68 +1,78 @@
-Return-Path: <sai.sathujoda@toshiba-tsip.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A91C02192
-	for <webhook@archiver.kernel.org>; Mon,  3 Feb 2025 11:56:48 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
- by mx.groups.io with SMTP id smtpd.web10.86151.1738583802902832164
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C658C02192
+	for <webhook@archiver.kernel.org>; Mon,  3 Feb 2025 15:52:30 +0000 (UTC)
+Received: from mta-65-228.siemens.flowmailer.net (mta-65-228.siemens.flowmailer.net [185.136.65.228])
+ by mx.groups.io with SMTP id smtpd.web11.90886.1738597946599228036
  for <cip-dev@lists.cip-project.org>;
- Mon, 03 Feb 2025 03:56:43 -0800
+ Mon, 03 Feb 2025 07:52:26 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.158, mailfrom: sai.sathujoda@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 513BudiY3082679; Mon, 3 Feb 2025 20:56:40 +0900
-X-Iguazu-Qid: 2rWhWAeBjLVrkxQ5Ku
-X-Iguazu-QSIG: v=2; s=0; t=1738583799; q=2rWhWAeBjLVrkxQ5Ku; m=7VYXzHyOdumxLxHqpXwHD9ukcmrZbnCtCc1e2CjoSeE=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1120) id 513BucaK764692
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Mon, 3 Feb 2025 20:56:39 +0900
-From: Sai.Sathujoda@toshiba-tsip.com
-To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
-Cc: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>,
-        dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
-Subject: [isar-cip-core v1 2/3] rules.tmpl: Make ltp rules file as template to make installation path configurable
-Date: Mon,  3 Feb 2025 17:23:20 +0530
-X-TSB-HOP2: ON
-Message-Id: <20250203115321.3589084-3-Sai.Sathujoda@toshiba-tsip.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20250203115321.3589084-1-Sai.Sathujoda@toshiba-tsip.com>
-References: <20250203115321.3589084-1-Sai.Sathujoda@toshiba-tsip.com>
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm2 header.b=c8tLZ6wh;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.228, mailfrom: fm-51332-20250203155222dd3813df3cfa96e1fa-lil3si@rts-flowmailer.siemens.com)
+Received: by mta-65-228.siemens.flowmailer.net with ESMTPSA id 20250203155222dd3813df3cfa96e1fa
+        for <cip-dev@lists.cip-project.org>;
+        Mon, 03 Feb 2025 16:52:23 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ bh=9UX5+Gp26NxsLRfbengIuk2MiBctLd7RV9YU3Fd1IO0=;
+ b=c8tLZ6whZk9PcITSc1MOHIf8ynQwXzRZ25VSZsWMaD7tzu4ZXWhogDGh2M7H1B1u/as96n
+ TOoLgEZx9aJOiA0YnmPXbDro2hFgmMCFL2zIr5DouQCPUk0pVjH76WslvJx+ZpBKXLALeMVe
+ bcCktXUnA50H7DnDU5YUgh6Zckaxy0yaIBDncfmEmMsUSpctgh5rqDVMOqgdZ0PBraQ5L3HO
+ koWEmJpDPrxUC6TAr5P305owSPFnWHb52nITvrrgvMKXE4v2Z5eqV3vvTJq7qSClDnW4RgCH
+ Y4uiC1rUZ7WE9m+gl01MIwRne3OukHlz5gTb9CmmnoSXygZc6+rm6V3w==;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: cip-dev@lists.cip-project.org,
+	jan.kiszka@siemens.com
+Subject: [cip-dev][isar-cip-core][PATCH] initramfs-crypt-hook: allow to run before mounting all overlays
+Date: Mon,  3 Feb 2025 09:47:00 +0100
+Message-ID: <20250203155221.342136-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 03 Feb 2025 11:56:34.0806 (UTC) FILETIME=[AC42C160:01DB7632]
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 03 Feb 2025 11:56:48 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17729
+ <cip-dev@lists.cip-project.org>; Mon, 03 Feb 2025 15:52:30 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17730
 
-From: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Signed-off-by: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
+The overlay hook does not work with encrypted partitions
+therefore it must run after the crypt mount script.
+
+The crypt mount script run last to mount all encrypted partitions
+which are not mount by other scripts.
+
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- recipes-core/ltp/files/debian/{rules => rules.tmpl} | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
- rename recipes-core/ltp/files/debian/{rules => rules.tmpl} (80%)
+ .../initramfs-crypt-hook/files/local-bottom-complete        | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/recipes-core/ltp/files/debian/rules b/recipes-core/ltp/files/debian/rules.tmpl
-similarity index 80%
-rename from recipes-core/ltp/files/debian/rules
-rename to recipes-core/ltp/files/debian/rules.tmpl
-index 06b9070..918b443 100755
---- a/recipes-core/ltp/files/debian/rules
-+++ b/recipes-core/ltp/files/debian/rules.tmpl
-@@ -1,7 +1,7 @@
- #!/usr/bin/make -f
- export DEB_CFLAGS_MAINT_APPEND  = -Wall  -Wno-format-security
- 
--LTP_CONFIGURE_FLAGS = --prefix=/opt/ltp
-+LTP_CONFIGURE_FLAGS = --prefix=${LTP_INSTALL_PATH}
- 
- %:
- 	dh $@  --with autoreconf
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete b/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
+index f47219b..b991cb4 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
++++ b/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
+@@ -12,10 +12,14 @@
+ prereqs()
+ {
+ 	# Make sure that this script is run last in local-top
++	# but before overlay
++	# This script mounts all encrypted partition, which are
++	# not mounted previously
+ 	local req
+ 	for req in "${0%/*}"/*; do
+ 		script="${req##*/}"
+-		if [ "$script" != "${0##*/}" ]; then
++		if [ "$script" != "${0##*/}" ] &&
++			[ "$script" != "overlay" ] ; then
+ 			printf '%s\n' "$script"
+ 		fi
+ 	done
 -- 
-2.30.2
-
+2.47.0
 
 
