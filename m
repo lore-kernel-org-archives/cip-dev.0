@@ -1,132 +1,93 @@
-Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACA99C0218F
-	for <webhook@archiver.kernel.org>; Tue,  4 Feb 2025 09:04:46 +0000 (UTC)
-Received: from galois.linutronix.de (galois.linutronix.de [193.142.43.55])
- by mx.groups.io with SMTP id smtpd.web10.111610.1738657097792805065
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4676C0218F
+	for <webhook@archiver.kernel.org>; Tue,  4 Feb 2025 09:19:26 +0000 (UTC)
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+ by mx.groups.io with SMTP id smtpd.web10.112385.1738660756551614540
  for <cip-dev@lists.cip-project.org>;
- Tue, 04 Feb 2025 00:18:18 -0800
+ Tue, 04 Feb 2025 01:19:17 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@linutronix.de header.s=2020 header.b=tbjYr4/4;
- dkim=pass header.i=@linutronix.de header.s=2020e header.b=NmZRulOG;
- spf=pass (domain: linutronix.de, ip: 193.142.43.55, mailfrom: bigeasy@linutronix.de)
-Date: Tue, 4 Feb 2025 09:18:13 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1738657095;
+ dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=YAM4Gq0d;
+ spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3500010382D08
+	for <cip-dev@lists.cip-project.org>; Tue,  4 Feb 2025 10:19:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1738660754;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=E/o4cd1+sS1V8YVI6C37SoZJBCljbNtuj8oie5yQkUQ=;
-	b=tbjYr4/4eQo//S+bpmmMk45KwHZAXZON1bPv+Ppb0wA7UF+nr0LWMW5+N4n2x3t23/08sh
-	bRUJz1GlYvjfEEJmWcJzdbiWtZlxtagDkFUc7JJWsbGWeHkV7QcFp20ZKpzF2UbM6xT55o
-	30ydTlrkp2a3ygYemNTw1tNCk3uNE66PFhKnCIESMqDkfNnTrKtYETnGjsFa41sCb1x2wm
-	d6P5jSlC4hHa0JuFfoQC0mJJqh66nmYO/WUJRDJhpLT4lm8jvlDdq+0WyQIyGW2F5jEPNW
-	X96ft+kOaj48xreegCAd7LX4Ch85wUp6lUDqpJVmvACc3iSW0EZu8kQnr206Ig==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1738657095;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E/o4cd1+sS1V8YVI6C37SoZJBCljbNtuj8oie5yQkUQ=;
-	b=NmZRulOGoc4wQzv0gG2ye7TpghyQedqNYfTOsZQhuydD+5x32vLPMGVq5QMSOLBhhtCFWS
-	KFqtexfiILjfuxDA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Kazuhiro Hayashi <kazuhiro3.hayashi@toshiba.co.jp>
-Cc: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	cip-dev@lists.cip-project.org, tglx@linutronix.de,
-	rostedt@goodmis.org, linux-rt-users@vger.kernel.org, pavel@denx.de
-Subject: Re: [PATCH 4.4 4.9 v1 2/2] mm: slub: allocate_slab() enables IRQ right after scheduler starts
-Message-ID: <20250204081813.7qsvLFsU@linutronix.de>
-References: <1738629964-11977-1-git-send-email-kazuhiro3.hayashi@toshiba.co.jp>
- <1738629964-11977-3-git-send-email-kazuhiro3.hayashi@toshiba.co.jp>
+	bh=gOP5RZWuV95x5vOfIDLcASOjUdgc0/zT2ggDxLoC6hQ=;
+	b=YAM4Gq0dS0LkZJwynKYPFfkRhzRR7kUod/ovvcfktcruAwsFYgeU6li/LRwuqQSqjZ6Mg7
+	8zUSLRQONoAxJ6PKou6409us4ngkPxIuz7piDrGptO2AHqpmgTUQDKsfqPPr6FZJbtDypW
+	vB72ekL8KOOw3XbAHO66oK5KEM1Ctfd685zt32MjV1Wub0OzAUY5uIgnMajZoETcCcQLJW
+	UC4xzxYV1S7mGlJby7JGt86t/g2hX/0Kc3vXVIklB7k5Pl3BypXuCCd32tDzid17+xNZWF
+	u3yN/hilfBpOVGE7rHJMu7OP6kTjRTtB81aS/uvQu8pTF3QdwSDR/iiqXvIWug==
+Date: Tue, 4 Feb 2025 10:19:10 +0100
+From: Pavel Machek <pavel@denx.de>
+To: cip-dev@lists.cip-project.org
+Subject: Re: [cip-dev] [4.4.y-cip-rt][RFC] Repeated WARNINGs in
+ unpin_current_cpu()
+Message-ID: <Z6HbjqSOkmJeLb7w@duo.ucw.cz>
+References: <TYCPR01MB11385C6C2D03D46AF20294DF3E13B2@TYCPR01MB11385.jpnprd01.prod.outlook.com>
+ <TYCPR01MB11385C4C5CA765090E66944FFE1052@TYCPR01MB11385.jpnprd01.prod.outlook.com>
+ <Z4o+Ue8yk1aDpmoC@duo.ucw.cz>
+ <TYCPR01MB11385BAF7D5C56CC8CC378440E1E12@TYCPR01MB11385.jpnprd01.prod.outlook.com>
+ <Z5FPtY4aUHqMoL4w@duo.ucw.cz>
+ <181D46DD0F426F98.25327@lists.cip-project.org>
+ <TYCPR01MB1138502709ED426B37B76CAD4E1E82@TYCPR01MB11385.jpnprd01.prod.outlook.com>
+ <Z5zP3BaPnG5x/d6/@duo.ucw.cz>
+ <1820DE7A882DDE50.15786@lists.cip-project.org>
+ <TYCPR01MB11385FD70540FAF1AB43F8FD3E1F42@TYCPR01MB11385.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <1738629964-11977-3-git-send-email-kazuhiro3.hayashi@toshiba.co.jp>
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="K9Kq2PzVQFpwdxDo"
 Content-Disposition: inline
+In-Reply-To: <TYCPR01MB11385FD70540FAF1AB43F8FD3E1F42@TYCPR01MB11385.jpnprd01.prod.outlook.com>
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 04 Feb 2025 09:04:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17744
+ <cip-dev@lists.cip-project.org>; Tue, 04 Feb 2025 09:19:26 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17745
 
-On 2025-02-04 09:46:04 [+0900], Kazuhiro Hayashi wrote:
-> On PREEMPT_RT kernels < v4.14-rt, after __slab_alloc() disables
-> IRQ with local_irq_save(), allocate_slab() is responsible for
-> re-enabling IRQ only under the specific conditions:
-> 
-> (1) gfpflags_allow_blocking(flags) OR
-> (2) system_state == SYSTEM_RUNNING
->
-> The problem happens when (1) is false AND system_state == SYSTEM_BOOTING,
-> caused by the following scenario:
-> 
-> 1. Some kernel codes invokes the allocator without __GFP_DIRECT_RECLAIM
->    bit (i.e. blocking not allowed) while SYSTEM_BOOTING
-> 2. allocate_slab() calls the following functions with IRQ disabled
-> 3. buffered_rmqueue() invokes local_[spin_]lock_irqsave(pa_lock) which
->    might call schedule() and enable IRQ, if it failed to get pa_lock
-> 4. The migrate_disable counter, which is not intended to be updated with
->    IRQs disabled, is accidentally updated after schedule() then
->    migrate_enable() raises WARN_ON_ONCE(p->migrate_disable <= 0)
-> 5. The unpin_current_cpu() WARNING is raised eventually because the
->    refcount counter is linked to the migrate_disable counter
 
-I think the problem is that system_state _is_ SYSTEM_BOOTING but
-scheduling and/or an additional CPU is already enabled. This is why the
-lock is contended. Otherwise you wouldn't get that far. 
+--K9Kq2PzVQFpwdxDo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> The behavior 2-5 above has been obsereved[1] using ftrace.
-> The condition (2) above intends to make the memory allocator fully
-> preemptible on PREEMPT_RT kernels[2], so the lock function in the
-> step 3 above should work if SYSTEM_RUNNING but not if SYSTEM_BOOTING.
-> 
-> [How this is resolved in newer RT kernels]
-> 
-> A patch series in the mainline (v4.13) introduces SYSTEM_SCHEDULING[3].
-> On top of this, v4.14-rt (6cec8467) changes the condition (2) above:
-> 
-> -	if (system_state == SYSTEM_RUNNING)
-> +	if (system_state > SYSTEM_BOOTING)
-> 
-> This avoids the problem by enabling IRQ after SYSTEM_SCHEULDING.
+Hi!
 
-Yes. Once scheduling is enabled any sleeping lock might be contended so
-interrupts must be enabled. This is not done done unconditionally
-because early boot code expects to run with disabled interrupts.
-This "system_state == SYSTEM_RUNNING" looked like a sane state in
-between. However, once the scheduler is up and running, interrupts in
-the system are enabled and so the slub allocator needs to always enable
-interrupts.
+> > However, I could not find the posts in archives except cip-dev.
+> > [...]
+> > https://lore.kernel.org/linux-rt-devel/
+> > https://lore.kernel.org/linux-rt-users/
+> > https://lore.kernel.org/linux-kernel/
+>=20
+> Now the posts are visible.
+> It seems to take several hours to appear in archives.
+> Sorry for the noise.
 
-> Thus, the conditions that allocate_slab() enables IRQ are like:
-> 
-> (2)system_state   v4.9-rt or before  v4.14-rt or later
-> SYSTEM_BOOTING        (1)==true          (1)==true
->                           :                  :
->                           :                  v
-> SYSTEM_SCHEDULING         : < Problem      Always
->                           v < occurs here    |
-> SYSTEM_RUNNING          Always               |
->                           |                  |
->                           v                  v
-> 
-> [How this patch works]
-> 
-> An simple option would be to backport the series[3], which is possible
-> and has been verified[4]. However, that series pulls functional
-> changes like SYSTEM_SCHEDULING and adjustments for it,
-> early might_sleep() and smp_processor_id() supports, etc.
-> Therefore, this patch uses an extra (but not mainline) flag
-> "system_scheduling" provided by the prior patch instead of
-> introducing SYSTEM_SCHEDULING, then uses the same condition as
-> newer RT kernels in allocate_slab().
+It may be there are moderated for non-subscribers or something. Thanks
+for doing that!
 
-The proposal looks okay. However the verified upstream version not only
-addresses your issue but also makes smp_processor_id() and might_sleep()
-work in the early phase. I would prefer the upstream solution for those
-two reasons.
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
-Sebastian
+--K9Kq2PzVQFpwdxDo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ6HbjgAKCRAw5/Bqldv6
+8pFTAJ979hRm99wlHEq+YkgKgvVgcbI0rwCggI8I8VP9tGjrQcb9k0gaqvHSTFA=
+=QdMB
+-----END PGP SIGNATURE-----
+
+--K9Kq2PzVQFpwdxDo--
 
