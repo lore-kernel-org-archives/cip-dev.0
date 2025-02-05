@@ -1,393 +1,212 @@
-Return-Path: <sai.sathujoda@toshiba-tsip.com>
+Return-Path: <dinesh.kumar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2477BC02192
-	for <webhook@archiver.kernel.org>; Wed,  5 Feb 2025 13:22:58 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.131])
- by mx.groups.io with SMTP id smtpd.web11.11715.1738761767417406379
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 316A6C02192
+	for <webhook@archiver.kernel.org>; Wed,  5 Feb 2025 13:30:18 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.web11.11850.1738762210247632408
  for <cip-dev@lists.cip-project.org>;
- Wed, 05 Feb 2025 05:22:48 -0800
+ Wed, 05 Feb 2025 05:30:10 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.131, mailfrom: sai.sathujoda@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1120) id 515DMiTI531963; Wed, 5 Feb 2025 22:22:45 +0900
-X-Iguazu-Qid: 2rWhEqwpifmAcDsPJZ
-X-Iguazu-QSIG: v=2; s=0; t=1738761764; q=2rWhEqwpifmAcDsPJZ; m=+yJBIhFNbpqu4GzoLAcLv6osv6Yp5kTc59qvKGIPkvo=
-Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1123) id 515DMhPA4115579
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.158, mailfrom: dinesh.kumar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 515DU8CT1745555; Wed, 5 Feb 2025 22:30:08 +0900
+X-Iguazu-Qid: 2rWhMjEQIBoeUwYugb
+X-Iguazu-QSIG: v=2; s=0; t=1738762207; q=2rWhMjEQIBoeUwYugb; m=DHQxoa59TgOa25+vy7snDb2nYI3Rr4F6XR7YxU7ZVvw=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1122) id 515DU7KQ585871
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 5 Feb 2025 22:22:43 +0900
+	Wed, 5 Feb 2025 22:30:07 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oZPnkfuIlR3HfqM5NyfWREPuNRVpz6cjiuOSYG4N/fdbE20Dbxzryd1guGgA4BoWwyPllcN2YipnLIsol/g+QvxyZ4znHFIKVZ28skVhmtrXvL8tTYdxu2yI+mjm6jg6F8jzezcc7SEGYuZZgkNbf2vS0abZpLdTNZ6SIEWci2RIuQm0uBSrhcRfRk/UVzkfk2IytYr/IHJ8G2nHfrkl+IVBcgGuz2Qwth4ttFOygf2l+bMBp5Rg+rR1Lz+YPJfO+pOVXkOhThx/0d8xTublKtB9Ji0DhaGP4ij8X/s7laCUlEOxHFFnwSaxy8FeSgJdUzw0EZvdkJOS2IMAo0SeAA==
+ b=AiNt1oQpCXLrMmJKD1XsUmarTgrLa0B84vB1b3w0XVlc4RXppVo0cdFGquutfQRFpTOOH0678f+Hmcu0QGTPz3JzHHtLC9459TSFZ5ZZfh7n6LJRqRWaIQTKeSy7rxYHn5YjTLovhNNo+9kyE7BD8ErSRipD0HYR0lbux3aUS7X6amjhyBhL8wEGIZEJPqN+ADFNbw0s72TNyje8R9xnlAuH+sEoESM5nx2eIjfz5lPa1ndUy87QHURUuV3zS/gAF63JmEobLbm+1x3d5kwlkOjWUqemBDgDl1j/4XGg8jeYxQuNiFI2bVAc1+kQTwd+1N0dkVxwqt1WOCes7q0JAw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0kDstGXVQ13U/ud9RszimhFyDeCSSbQaX/FUfvsqr0M=;
- b=IuAz88K8oVthMUrDxMVxC6wocQNikafcONx7gMcba9CXdlfksM91/yQYpbXPjwOwl/A969BV7i3Ybqbx6PJeQ4lscdfb7puIKXVwaHezx2prZbzDzeXxU/k5hvYw3a4ZafKyayPMb3QHjP9GahQDNK0GXZYiTYgKkYuvKeIiE3ZLeEaf/3E35CQFl2JEaWMAdEOwCI5xKs7VuiugINUVi16O1vQAkteH5reUzdKmiS7grtN21P8mgvT1/B105CkAZZpvmkRDTXze1dJDf4NjOvnt6Bkl9n9hIFAalPKZw14rhaTX48LDJemIms3omxMrG/63oVxO2iQFQvx23JJlOA==
+ bh=2SbBAxlz/HJREUroH/nmWOmJRfgMemjJsY+/bxWcL00=;
+ b=HZxLoe5a60xUE1j0IadDlPZyzxQ4pX36la8a75/UiRC/vaeLNzQ02ESPYu9YApGFAlc7IbvLkXxqzOWE1sgvAt8VCMHEe4k+rjMQ9lOdJW+S6q1Bf39ynitzGUjV0aTEBeXhqLj44brCAk3J2qgY+9CcSL02d3tBKfhb1F959ef4OKfgHUP7r5tfWwSL5xy196+cpT1DvBGdww1kjWLDU5dCQZQ8D9juOzYpa1KG55MuRP083YAkoZpc4wQAeepnOuGYCXq0M5/sFdp0CrFRMH+ZDaU8cRtuodLv+PrT7IfRrcdC9HpBLBaT/yPlRMZPzumvj+GPXGrX/WfQlfDbKw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
  header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
-From: <Sai.Sathujoda@toshiba-tsip.com>
-To: <jan.kiszka@siemens.com>
-CC: <dinesh.kumar@toshiba-tsip.com>, <kazuhiro3.hayashi@toshiba.co.jp>,
+From: <dinesh.kumar@toshiba-tsip.com>
+To: <quirin.gylstorff@siemens.com>
+CC: <jan.kiszka@siemens.com>, <Sai.Sathujoda@toshiba-tsip.com>,
         <cip-dev@lists.cip-project.org>
-Subject: Re: [isar-cip-core v1 2/3] rules.tmpl: Make ltp rules file as
- template to make installation path configurable
-Thread-Topic: [isar-cip-core v1 2/3] rules.tmpl: Make ltp rules file as
- template to make installation path configurable
-Thread-Index: AQHbdjKwedw02Qj0V0OVnTdmNNMZ6bM3IucAgAGLah8=
-Date: Wed, 5 Feb 2025 13:22:38 +0000
+Subject: RE: [cip-dev][isar-cip-core][PATCH v4] kas/opt: add new option for
+ security testing
+Thread-Topic: [cip-dev][isar-cip-core][PATCH v4] kas/opt: add new option for
+ security testing
+Thread-Index: AQHbdvwAtSQqoRjE/Uib2widvcAXrLM3IjIAgAE3hoCAAFvxMA==
+Date: Wed, 5 Feb 2025 13:30:04 +0000
 X-TSB-HOP2: ON
 Message-ID: 
- <OS0PR01MB6100B7D4C183871F0E47D056C2F72@OS0PR01MB6100.jpnprd01.prod.outlook.com>
-References: <20250203115321.3589084-1-Sai.Sathujoda@toshiba-tsip.com>
- <20250203115321.3589084-3-Sai.Sathujoda@toshiba-tsip.com>
- <578c7f2c-ef52-492f-9dc8-054d6bed958b@siemens.com>
-In-Reply-To: <578c7f2c-ef52-492f-9dc8-054d6bed958b@siemens.com>
+ <OSZPR01MB851557B67FBBA474F11C593EBFF72@OSZPR01MB8515.jpnprd01.prod.outlook.com>
+References: <20250131152553.270393-4-Quirin.Gylstorff@siemens.com>
+ <20250204115722.48815-1-Quirin.Gylstorff@siemens.com>
+ <40f39bdb-3ca3-4918-8bfe-8bb77e750fcb@siemens.com>
+ <36fb2001-6886-42c4-8d06-995193d67405@siemens.com>
+In-Reply-To: <36fb2001-6886-42c4-8d06-995193d67405@siemens.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: 
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS3PR01MB6103:EE_|OS7PR01MB11778:EE_
-x-ms-office365-filtering-correlation-id: 9de37fa7-022c-4793-96d1-08dd45e82996
+x-ms-traffictypediagnostic: OSZPR01MB8515:EE_|OS7PR01MB11601:EE_
+x-ms-office365-filtering-correlation-id: 8899e47c-6147-48a5-04e0-08dd45e9337a
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|376014|366016|1800799024|38070700018|7053199007|8096899003;
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
 x-microsoft-antispam-message-info: 
- =?iso-2022-jp?B?TzVBc2pxNjZGcTRhNTRoS2pnOUl2eE1uSjh5RXVHNmh1MzQ1dldQNUJp?=
- =?iso-2022-jp?B?Z0ZreTR3eDEwSERtRkw2bzN0bFlZSEI2WWZscVZXQUN0eTErRHJvaW1v?=
- =?iso-2022-jp?B?UjN6Q1o5NFVsZWF1bW5HbG40Um5oQmhabUVYUDdoYlFqVDk1RGYvMzl3?=
- =?iso-2022-jp?B?b3Q4eldIbll2ZVp3Zmwyb0YrYUFtWmNneG14ZGVQMnQ2UzdCc3VDdEhl?=
- =?iso-2022-jp?B?Qi9RcWFhUG9MUXcvN2c4WTRONEEyTGZ1Yzgyb2xGVmlISllrbTZmSkk3?=
- =?iso-2022-jp?B?MnhOYytCU2l3NjZ1NEdmcXdqZG5BQVdtdS9VeFZGNWN2dGlWYXRqL2hT?=
- =?iso-2022-jp?B?U0J0VEx4K0RUTFk1ZGJKMUIvNHhkSnNycVZINFl4V2wxakpuZnFNMkVO?=
- =?iso-2022-jp?B?Wk1XRDA1cFA0emovK3YySks3SXFYbXc0MWc2a3B5dDNIU3Z2YkxBT2py?=
- =?iso-2022-jp?B?NEt6NjZJMWpGRm5MVHovdGpsbWNaZ3prN0JPUlIramxKYVNzZEk3V0Zj?=
- =?iso-2022-jp?B?OGM3ZW0veXpReHhGWXQ3WVl3REdpY0RZQkZ2UUQ0QytneTh3eXdTa2Mz?=
- =?iso-2022-jp?B?YWZ1NGh0eFVLQkRqOTNVNGYyNjc3VlFYN1RvTXFhWllUL2x0VWVETThj?=
- =?iso-2022-jp?B?YjdEVWZaTzBaa3o4UmQ2dVVveEZQNWRNZmcrejhQbjNIWXdTSzVSUEVB?=
- =?iso-2022-jp?B?MWRaNUVScjV4aHIwQ2p2S1RHU3JaTVRLcm8rU2VtRlV4c2xnNituODNk?=
- =?iso-2022-jp?B?bVZGL0RKVDZOcktqa2lVRzBFSy9LSXZjSDVoOHdHYXJURGFrSEYwRXRa?=
- =?iso-2022-jp?B?OWRPUlRIWGtEZEhQYmhrczd2S05aMWVyM01WeDBNWG9xZFcwTU9YZHov?=
- =?iso-2022-jp?B?eWpLQWdvb2F5c1lWSFQ4cCs3dS9Ec2YxZGhPUTgwMi92eVY3RmpMME5H?=
- =?iso-2022-jp?B?MmdEWjVBOXlhYXVKYU9WMkJhTXRDbTVrY2RMY0ZDZk1BanNoSXdvSWtV?=
- =?iso-2022-jp?B?NkhzQk1rck43VmZRb1FVV0tNWlJ5WFpLK0RsUTBHYlJLTGhmU0NRUUZ0?=
- =?iso-2022-jp?B?a2NWSXZVYzlrcjc4clFSS3plYklITkFzQmVCWVBOaTF4N1dRV293MjR5?=
- =?iso-2022-jp?B?WmFLcEJKaUYxS0ZHa0dETlQ0Q24vL1NmVGZneHUvK0VkaktxVVl4S1gv?=
- =?iso-2022-jp?B?OU1tdE1odjcrMXNUYzRJb21wRmp3SlJPV2p4aVp2Tko1S0pOSnE5V0lh?=
- =?iso-2022-jp?B?d044bGVXVTdhaFM1cGhmUlNJTWpPb2czRUJaZHNMT1ZVc1dNRkFDUWY3?=
- =?iso-2022-jp?B?MTZqbktqTjB1V3VhVzhrM3d5LzhPVjJmUnZrMXF2Tks0czhobXZCSHMw?=
- =?iso-2022-jp?B?SHl2Y0lnSCtOS0xUeVZXR0dzVThQVlNOUkFzRnB4YmpHcGw3RTJDRWo5?=
- =?iso-2022-jp?B?UEZEN2QyR0VhY0YxSDhjYWpLWHA4T0ZSOUx6OU0xcWUrUGZhTnBQa1B5?=
- =?iso-2022-jp?B?TzdGUVZ2MmtWM0p0WmJjQUVIV09yYlhrU1dhM1RVNVdFbTZ6SXQxZDlU?=
- =?iso-2022-jp?B?NFdjYmx5ODVodGdDeFZNZ3Z2OVBpczVpbUhiQ1BQeWhiK2lwN25VN2hW?=
- =?iso-2022-jp?B?YUZjQU5ZL0YzTGI0MEZUMGVnY3V0Nm83SjVuVTFIY2g5UllTVzRYcGlo?=
- =?iso-2022-jp?B?NVNoY3lMUFNId3dkZzhXcExkZ0xqTkVsMk9WWXNkdDRWSVVzeUwwMEMx?=
- =?iso-2022-jp?B?RlZnN1UvWkdtenhXWGFDU094V1UwWVR4RjcwSlhaRC9mQ0hPWENOSkxP?=
- =?iso-2022-jp?B?c1Y1UTAwNUVuWWF1d1JMU3lGRkFDMTExS21ab1BGL3FsNVhmdXdSejRr?=
- =?iso-2022-jp?B?dTRtMmpkOG11VjdFMS9WdW1LNTlxekxMSEo4QzZiK0xEUFF4bjVwR0dD?=
- =?iso-2022-jp?B?WXJJN0o2R1c0d3RTL200YUowUXRuMmVwYkxsenJBcy9vL1g1am05enc4?=
- =?iso-2022-jp?B?bmM1SUd1RnJDNEtJY0N1emY5OVdlU3A0c0oxSlV5L2JJY3BBQVNHSlNy?=
- =?iso-2022-jp?B?ZnM4bnluZ3ZTZ0c0SXZaM1ZHbkIzSnIrRmhjUUZuNnF4cTMyN3g2Wk1n?=
- =?iso-2022-jp?B?Sm8=?=
+ =?utf-8?B?QUM5eU9hTEhqbkkyUU9jVDF1MW51bmJEKzh2S1pRNTRKRk42bGVjeFdTc2lE?=
+ =?utf-8?B?UWVrK1pHeTU4K295aDk4R1RqbW05YVBpdDBPbW9mdy9uTzc5U3gwcnEvUmpI?=
+ =?utf-8?B?SWVQVzFwaGtQY1NsMlgxSFJSbmlUdzVuK3lVNW92dHV2c20rUlhkN2ZQNnJw?=
+ =?utf-8?B?Qm8waDdRWTJWVHJaNDhrMWNvb0tFWmQyL0RoWnAzYmEzTzRzQ0Nza0lwMzRl?=
+ =?utf-8?B?TFA3SEZKRnViVGtPOHhUL3BMTVk3c1hTOUNoRlYvQmkzVWxWTUN3TWpZQ2dh?=
+ =?utf-8?B?RXBoTTVaUkUzWm9TV21Na21sYU9LcG9SOG1LS1lGdVdUMERoM0lRVmlXY2p4?=
+ =?utf-8?B?TW0rNkgrUzZ5YkhMcmY5dGF5THEraEl4cWJzZEcrN1ZtY21LUjlBYlZRNCtC?=
+ =?utf-8?B?RnFEanBMQUovVjYxMjdxQlh5UTN5UlRmeitxQTI0R2RNamI0bzhZVWEyS3Uw?=
+ =?utf-8?B?V1I5WCtUbURwcFlDS3V4d0NWK2J0aHJ0SGh0WGtWeEpJQy95ZmQzVUhwZG91?=
+ =?utf-8?B?UEJyTzVQU090YTNkVW9OR0xJeTdjUkRlUFNzeU54ZFZpMFFEeHIyazhhZ1lB?=
+ =?utf-8?B?SDduYVB6L0hsaEREN3Q5NmQwNDNCc1RQdEtLUHhPTXBGdEN5RW9qMVFRVkgr?=
+ =?utf-8?B?TEFMTkNzc2FHdGNGenc5S1NvaFJhQytNTFRudDRpS0FUVEliNFQ0cWlBMmJ6?=
+ =?utf-8?B?L0dvUFNPVENrNk5GL0xsY3FoRDRBK2t4cjlxMVBPVTNMQUdXUVFIUE54WnZH?=
+ =?utf-8?B?TkxrTGhhclV6SFZBMFFMcmZ4RjF0OTNPVS8relVKK3VNZm12ZzlDZ1l3ZkRm?=
+ =?utf-8?B?dVRGdE1ib3Evc09oYWJOOWVCZkwxeCtnclozQU1XSkVBOXpuZUlPV2ptWFlS?=
+ =?utf-8?B?Z2pHTzE3WVFIZEFzK09LUWdNN0p6RmhJNXVOL2pmYWRsMGlLeVFJOUxZNHE0?=
+ =?utf-8?B?WENtQnh4U01qZTJFeVhvb0lEaEJPNEdHTmo0WVRjeVlmemdvdWEyOU1xbmJO?=
+ =?utf-8?B?amdwZC91VDN2ekZGMzVBQ3VsT0w3cUZMTnI2NHluZlBmNHNWWk94VzZMeTR2?=
+ =?utf-8?B?dGY4MzlkSEI1TG42YTlpWFYrT052SGlueFJTNGFkZ2VQUi9tbTMyZGR0akhF?=
+ =?utf-8?B?VkIvR2xHTjVMb2VEL1FiUzZRc09uNEtKbnRuWGVDNmd6aEVVd0ZLa3Zyd21j?=
+ =?utf-8?B?UGJ4NWZVVTRDWVhGQjVFVFd3MlNVRmV5UUlEK3NINGt1SWw3ODNLd3FiNzhB?=
+ =?utf-8?B?SFRMUkxDa1JaenNadWJZTmRzbUdUSHg4U0plM1A5RWxZVUMrU2c0WVMralM0?=
+ =?utf-8?B?YWVjdlprRFJNcXJpeUhxS2I0TW1zeWw0TVVFYVhNSmFqODZPckZPWlZZTmc2?=
+ =?utf-8?B?Tk5rSTZ1Sk9IckEreCtJdlJaSlR3U2loaWFkRDR2YVloRUJYTGVrMmZJcUNP?=
+ =?utf-8?B?cVRXMmNoeDRZeUdGZXpKY2pEa0tUd3QvenY2YzI1UWQrS2w5bVgrVWRmTUdj?=
+ =?utf-8?B?dWJvWS8vQ3B1ekJPWE9FQ3NxSkpjck9nUzF5UW1YUjYzMGgxQlhlTDZYNisr?=
+ =?utf-8?B?dStOVEtSRDJOQ2JSRzlYMEhiYUNlVG1DazNMRHRVSFgvWkxyQVpTVE5lZkpJ?=
+ =?utf-8?B?ZWVQTmdtUGJkdFBhOFhtNnppejZwQ0tZcThlck1SbGNwNUNDK1V2QmVxSmdj?=
+ =?utf-8?B?NHQ2Q01rVTQzdTl1R0NTbldyeHRCODhFWEEvMkloNG0zOTc1UmhzaUs4M01S?=
+ =?utf-8?B?cVFkSlpiYmpEMnpjNFZFbWV5SkhROXVoMzVrOEtWemd1T0JpcXRla3ZUTXpI?=
+ =?utf-8?B?Nmd5YXlDYUtWMWc3QzNtZTNnd2F3VkU2TkxyZFFNU2h2YkRnNzJlTUhqTWc3?=
+ =?utf-8?B?T1N1NzVvSHpMNFhDVXJyU2lHV01mWVpoN2cwai9hZlA2MlJ0dEE1VlJ0eEtM?=
+ =?utf-8?Q?20VllzVLlu4968PX3OzMK/e0Yy5DgwzA?=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB6103.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018)(7053199007)(8096899003);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB8515.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?cGlsR1VGNExoTTczaTlTZ0MrZDM3ZEZPUHZ0M0llTlRuNXQrQ3kwMEdx?=
- =?iso-2022-jp?B?WDU1VDVuT2wyeHNTbUx0Q2c4RUNCT2xaSURoMWh5aHBLd2puSjRzck1n?=
- =?iso-2022-jp?B?WWlhUURNSS91aHRsTlNLRmZQUmpkTlhFWC92cis2Z0I4TVZvUGhTWkxE?=
- =?iso-2022-jp?B?bjVCTm13bTFtWCtRQmVRRmZQUGxmWmlJeDNnc0JQRHQyRUZhYTVGUElH?=
- =?iso-2022-jp?B?RzlTV3Zqc2dWUFE2Q2sxWTl1SlZ2a3NwaG5lTkZpWThHZDhBVGxMbmoy?=
- =?iso-2022-jp?B?VUhkeDdpZzR2QnV1cGNLcDRmcktPVE5NZDUwOFJNcmV2aGVROWRESTlS?=
- =?iso-2022-jp?B?OUg1SHJOd3F0UEt0UnRvQi9aY3VZY3lLRDI3VEZUcUdhTlR1enl1ZmZn?=
- =?iso-2022-jp?B?U01hWXBOVFA1bWpFRjM5VElBZW9FSHdxeXdQMCtaWk50NW44cnR5ZnR3?=
- =?iso-2022-jp?B?OGhPQTcwYTNlekQrM2VxTmhIUWZNL0tKaWQwTjk0aUc5Wkw0N24xQVdr?=
- =?iso-2022-jp?B?enNkcytqNGt4V3JHOTQ5T09QOHAwOFB2clZqQUJ4UW5kbTRDS0hzZ1pa?=
- =?iso-2022-jp?B?N21jRXhVLzVjWThhVFBPRXExUHV1OWFzbWk1VXAwOVkwb2JlL1BRUXVj?=
- =?iso-2022-jp?B?NDFCeWVuUkJrYVZQZk10NFlkREx2Y1Fhb0RuYitMaWZSSjU3aHZlZy9P?=
- =?iso-2022-jp?B?MWxvaEFFZTZrR0JkYXNxVlMydjdVNUFTay9ycGlCKzdPT3RHcCtNVUll?=
- =?iso-2022-jp?B?MTNMTThYdmN2dit2dW53ZENaMkoyZnp6bkhGYlpmMlg4NDVQTytEeGZa?=
- =?iso-2022-jp?B?Q1FFaW1LcFIzdzY2aGluNm1UVkVzblBSaEliK3lyRkc4M2xmemZEZkZC?=
- =?iso-2022-jp?B?Q0pHOXRNQ3FSdUpqbUtHZFBPdEJIejVjZnRuRGtxL0Q0MC9PZ3hkQktu?=
- =?iso-2022-jp?B?KzJIb1hmSzBYR0dCTzl5cDhKd3hrb040ZlFzNFcwVVVlcmdmMERIOUkz?=
- =?iso-2022-jp?B?emNjOFlQbXRZT2J0OWZ0UExKSFp1NUxHUkdUb3daV05GUnJQbnBsbDhO?=
- =?iso-2022-jp?B?cGpZSGhXbDE2WUQ5R2FRcnBML3VjeHI4eWVpL2xvY1dxdVNCTXJGQkRT?=
- =?iso-2022-jp?B?RmNEcmlFaXc4QTRPbUJ2Q1gwb05xM2R2SGo1eTJxdk4wMjgxWE40RXJp?=
- =?iso-2022-jp?B?Z3pDODRWd25qdTFrM3UwMytVdGVpRDZPYmJJRU9kczIxcWhPS3Jib2Za?=
- =?iso-2022-jp?B?eE15UjhxYlV3M2R5a0JOUmVkOVBtQXFrL0pJYmRVOXhISW5na0Jac2Zp?=
- =?iso-2022-jp?B?YkV3enZlcjVYNXhDWVNXbXhIdjNSWE8vV0dUMGNrajNVWEtsUEtXZCtu?=
- =?iso-2022-jp?B?WFNTNUp3d1ZiWWtwZjhCQlhGYStMS3djcUJ5aGJaTU4yRDVXU3Zhd2Va?=
- =?iso-2022-jp?B?M2JoSHRaTUZXOFJsc2NvU2hFWDhEOU1vRzBuVHdaZkxUYXJDUEErOW41?=
- =?iso-2022-jp?B?aWM4V2VJNU9CVmw1UFE3Z2ZCQ255ZW1lMGs4MnpOMVZPd2dGQVM2eTE2?=
- =?iso-2022-jp?B?V2V2aUZCUTd0NHppeUJiS2xvdGI3R2kxOHRySklkcXFGOWM5ZGFqTGc2?=
- =?iso-2022-jp?B?VThYam1nUEdobHJsZ01WNzJGVTZPbU1kd3F5R25rcllEYjBUYk53Z2w4?=
- =?iso-2022-jp?B?VzZEMTBSSGthdGZLSjRVUDVQRDZIYmlQZ1NCa1BiaStGUm5BWnlSVDVB?=
- =?iso-2022-jp?B?WEw2ZGVDckRCT3RzcndYMno5ZlNSVUlOUlBBaytzSm15M3Vvb290engy?=
- =?iso-2022-jp?B?OWdmalVGTldFbWRZY0V1M2ZsaDVyVGpGTkovKzgyUzhnSWpDRVFvR2gz?=
- =?iso-2022-jp?B?elBSNnpMalA0ajJKWG9DNWIwMVo1MWpRdFhROEhTU1ZaUU0rS21hd3RP?=
- =?iso-2022-jp?B?cHNyUmNLejdnYXU1QmdRRTV4OHIwTU9NcVFpMi8zakU0MXRjMEVmejFW?=
- =?iso-2022-jp?B?RVIrZU9EcE54T1BLQjAzMkJESUVVU2ovcllZR3VmdlljQjZtSnhhcXVH?=
- =?iso-2022-jp?B?YlpGZWlKQ2pXOTUySlFZYmpIR2hScnlkK0dtS1k0RUxsWjlmMmlCa29G?=
- =?iso-2022-jp?B?WXJYNG1CN1FocHBVZFJ1UGVmbG52cTlieXJRaGNzYlZuUkNDMjRQVXV4?=
- =?iso-2022-jp?B?QTlOeEhPSFpkamMvdE1BNzRmSXRRODZhYjVtUVNwUUR2c1EvRm9ZMmR1?=
- =?iso-2022-jp?B?Sk9Nbmk5MHdVejBYNEVoWmlFQ0RzZmIySTZFU2g5TkJmUkdTUEsrcHYy?=
- =?iso-2022-jp?B?Zm1vaE12OFhyaCs4UGdWMVlGdXRRWGRQWmc9PQ==?=
-Content-Type: multipart/alternative;
-	boundary="_000_OS0PR01MB6100B7D4C183871F0E47D056C2F72OS0PR01MB6100jpnp_"
+ =?utf-8?B?NzBkbmJzdldoTmg2VDZiRGN4VlMvbGttdWZVdnNkMjhCM2JKQVlsaXhGVWlQ?=
+ =?utf-8?B?OEQ2TFNGMkRsYm5mK0xMYWZaRkJLeldMSGQyZnlkUm9TRzZIdGUweTdRS0ph?=
+ =?utf-8?B?MlNzeGkzWjNvc2w1SjdqVzdyV3dFQ3hlc3ZJZ3NDbnVValFOUFFnQ3ltY3Ir?=
+ =?utf-8?B?cUpwbWx2bDE1RTYxQlFodHllUjl1L1VkWll3NDRURkpkb3ZMakVybnExaWdB?=
+ =?utf-8?B?cFlOZ3QxbkR3amY3VjIwUkpHUEUxTE12Y3JodmlUNzhCdTAvS0dURm5SbXpB?=
+ =?utf-8?B?d00yaGVpOXFodVVvTW9IUHQ1NWxKMWR1STRwelNMdUV0eVRsZEt0TnZ0NDhY?=
+ =?utf-8?B?WEtzRHdUMkxKRWFEYjlaRW9vdit1SWJFM09jdVVzVlYrMEtlUzJGY3FyeDNQ?=
+ =?utf-8?B?QkQyUTdxWmFGQ25iL2dUd1QzRzAwM3RSN0tzd3hlbXYyUnE4a2NJMTZFYUpP?=
+ =?utf-8?B?TktiMlhzWDhJbEVlZkIzenV6M2FuMWhTVjhHZkl6UnRhRVJFUGR2bTFCN05r?=
+ =?utf-8?B?cG1DSnRTU2NNa1JHdDdGWW1IdWR5elc3SitESjBOTGFvSnNLaUxiY0VXNGlY?=
+ =?utf-8?B?NEdLcUR5WUdqVnF5WDRWZEhtTjROVU5wcHBLdVpLUVFJd3JTOU52ZW8rUVVi?=
+ =?utf-8?B?dTN1QlFnUkxZMkxsSGYzT3h1cE40UWxEeStZNk9XS1l6ZjNJWVJKQWJ6TVBZ?=
+ =?utf-8?B?SEdqK1JDbVBPZkE5dSttVGpRTWc2dWRCa1B2VmdLS0pUZ0lLVzVGWmlteWR2?=
+ =?utf-8?B?ZnJjM2hmSzEwQnhNNktZakNRMG1vd3JkOXQ4bDJUeEpNQkZ3dE5RamZubFZh?=
+ =?utf-8?B?S2d0M2xrOWhObmd5RzhxeEFReGlWbzdSUWNkNk90U2xpSmNVK0pFLzlHbGVO?=
+ =?utf-8?B?THovaHN1ZFVxaGVxa0VXK05PNXJoUFNDYnZnUzNxTXpDeE9HVFpjWHpsZHJs?=
+ =?utf-8?B?NmhDVEhmaG1CbFNyc1RNdWNGc21jdkxUN2huZXAwT0p1OTFLVHhhTnJqa214?=
+ =?utf-8?B?akNQRm9MKzNGdlBNTklNU1JEdlFmTm9DUXlRZXI3cVMzVzRUZ2lTKzl0clRX?=
+ =?utf-8?B?MkVNTi9hUkdENnFEMGxMeDVsZEpvaUNHRUZldldsNzZrb2Rselo2Ly9xOEc1?=
+ =?utf-8?B?aEhSMWxueXJtbEl2RlZjRDJBWWtnRitldThmSytIWXdBTTZqZUZMa0JYZWdC?=
+ =?utf-8?B?RjRsN0ZlS2hteTNmbUxtZHdhWjFJdGZMZG1LZVh2UTBmWnNMRUlZOHdHenhP?=
+ =?utf-8?B?V2Z3Tk8zMFNWQjl2SVB1YmF0Y2NSamltanQ5UUpJR3BkRGdXUUowZ3doOWtZ?=
+ =?utf-8?B?QjJyYlY4Ris5VFFib1hZaGZFMCswaTYrVDdJYjgrcm9KQXBWYkl3aEc5ZnNL?=
+ =?utf-8?B?RG9oTXRvZUJBR1ZJUFFlZ0hIMTdaemxjbWNxWEtKaHltZTBmNjBkS28wZXM4?=
+ =?utf-8?B?L0lsdkxMWjduMHpReGRNUXFEZ1c2WDdxeGhONlpoci9wQzFIVXZhTGp6Yzl2?=
+ =?utf-8?B?V21rcGxSWjZvNkExaldsRmQzWG9oYzV3SjNUSDI1UE1rQ3dVVU11SHNxNWxZ?=
+ =?utf-8?B?Q0dEbHQzMTYvRjVlOWt1b3BNNmRNVWxLejB3MmhwVDdOYUlPSWROcGtZZFFJ?=
+ =?utf-8?B?SjFicTkyNWJ5S1BSaFNxWS8vMVpwMisvU0Q5MXo3N2Z1Z1hUcmlTZnZRUElh?=
+ =?utf-8?B?Wlp4NzEyVFF1cVBiWSttYngvN0pTNUNnU2VaYXYwYjlsWmlDUDM2cmtIVVM3?=
+ =?utf-8?B?cHpkVFI3YVFjay9ZRXF6L3prU0VjMlB1d09rZnVML21rR2hFbXU0OS90NUdv?=
+ =?utf-8?B?Zlp4eTNncExWOXg5ejM0UmhVTFd4MW5aemRrY2ZnQk9ZNWdmMTVXdFd2NEFN?=
+ =?utf-8?B?a1VsbFB3WmhJcmw3czJveERvV2EvTk8xOGFFRFhTUVJMNXNZdXN4cnpJL3BX?=
+ =?utf-8?B?TWhGU3VUSlNaNzFGR0Flcm9ZVWtTb0JrdGtMRmZKaWdTeWlDWWNUZ3JlSWdI?=
+ =?utf-8?B?VUR1NXpERkZpdmZVRkJTT3dOK1ZNNXcyNjY1b0pMbGwyZlVlZGNmVXZtbWdv?=
+ =?utf-8?B?a1VkSUwzV0FlTEsxUnRaWCtVTy91T1Urbko2WnJqcXZicUVQUVQ0amVMSWht?=
+ =?utf-8?B?dmZQZG1xcHZXUmcxNkZ3RHVaTTBWTnNkbDQ5R2NENG1XOGp1V0tvTEVaUjQ4?=
+ =?utf-8?B?YVE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB6103.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9de37fa7-022c-4793-96d1-08dd45e82996
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Feb 2025 13:22:38.8316
+X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB8515.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8899e47c-6147-48a5-04e0-08dd45e9337a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Feb 2025 13:30:04.9781
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CLwcaZO0t22pUpPrNTpiKfjMW+wvWQDU4U8iZKEVc6bSPMX720STcFeyHSQxFcMOZEjGhKKm5moFmHQOMS/1NiciVcmNJQiXqcmdm0xbfaQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS7PR01MB11778
+X-MS-Exchange-CrossTenant-userprincipalname: +DAQVnGXxUxdTsfPOfa9neop2wh8ya0K2Y0dlljRktaFQcHusAxhmiNbBgG8+Bb0rmmJo9kFfyHz7MX8Y5Fswk9nuhNrFhFEMeuW/SXYCTo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS7PR01MB11601
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 05 Feb 2025 13:22:58 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17753
+ <cip-dev@lists.cip-project.org>; Wed, 05 Feb 2025 13:30:18 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17754
 
---_000_OS0PR01MB6100B7D4C183871F0E47D056C2F72OS0PR01MB6100jpnp_
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
-
-Hi Jan,
-
-We did not want to touch the install path being /opt/ltp in all our test im=
-ages except the case where the security image comes in to picture.
-
-To answer your question about fixing ltp to separate installation from work=
-dir,  I believe the LTPROOT variable is basically the install path in runlt=
-p<https://github.com/linux-test-project/ltp/blob/master/runltp> script and =
-in many areas, it works from the install path to access test scripts and cr=
-eate results there. So, I think configuring the install path in our recipes=
- during build time can help us handle our read-only rootfs case.
-Since the workdir is basically the install path, ltp installed on tmpfs is =
-cleared out after boot.
-
-Please correct me if I am wrong. After your confirmation I will re-order th=
-e v1 patches and send v2.
-
-Thanks and regards,
-Sai Ashrith
-
-
-________________________________
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Sent: Tuesday, February 4, 2025 6:51 PM
-To: ashrith sai(=1B$B#T#S#I#P=1B(B) <Sai.Sathujoda@toshiba-tsip.com>; cip-d=
-ev@lists.cip-project.org <cip-dev@lists.cip-project.org>
-Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) <dinesh.kumar@toshib=
-a-tsip.com>; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =
-=1B$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp>
-Subject: Re: [isar-cip-core v1 2/3] rules.tmpl: Make ltp rules file as temp=
-late to make installation path configurable
-
-On 03.02.25 12:53, Sai.Sathujoda@toshiba-tsip.com wrote:
-> From: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
->
-> Signed-off-by: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
-> ---
->  recipes-core/ltp/files/debian/{rules =3D> rules.tmpl} | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->  rename recipes-core/ltp/files/debian/{rules =3D> rules.tmpl} (80%)
->
-> diff --git a/recipes-core/ltp/files/debian/rules b/recipes-core/ltp/files=
-/debian/rules.tmpl
-> similarity index 80%
-> rename from recipes-core/ltp/files/debian/rules
-> rename to recipes-core/ltp/files/debian/rules.tmpl
-> index 06b9070..918b443 100755
-> --- a/recipes-core/ltp/files/debian/rules
-> +++ b/recipes-core/ltp/files/debian/rules.tmpl
-> @@ -1,7 +1,7 @@
->  #!/usr/bin/make -f
->  export DEB_CFLAGS_MAINT_APPEND  =3D -Wall  -Wno-format-security
->
-> -LTP_CONFIGURE_FLAGS =3D --prefix=3D/opt/ltp
-> +LTP_CONFIGURE_FLAGS =3D --prefix=3D${LTP_INSTALL_PATH}
->
-
-Missing default value for LTP_INSTALL_PATH - comes with patch 3. The
-whole series is in inverse order, in fact.
-
-But making this a build-time configuration will mean that there might be
-two binary packages called "ltp-full" that are actually not the same
-anymore. Can't we select a path that is writable for all our images? Or,
-even better, can't we fix ltp to separate installation from workdir?
-BTW, does it matter where this workdir is located, on persistent storage
-or on tmpfs?
-
-Jan
-
---
-Siemens AG, Foundational Technologies
-Linux Expert Center
-
---_000_OS0PR01MB6100B7D4C183871F0E47D056C2F72OS0PR01MB6100jpnp_
-Content-Type: text/html; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
-jp">
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Hi Jan,</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-We did not want to touch the install path being<b>&nbsp;/opt/ltp </b>in all=
- our test images except the case where the security image comes in to pictu=
-re.</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-To answer your question about fixing ltp to separate installation from work=
-dir,&nbsp; I believe the LTPROOT variable is basically the install path in
-<a href=3D"https://github.com/linux-test-project/ltp/blob/master/runltp" id=
-=3D"LPlnk" class=3D"OWAAutoLink" title=3D"https://github.com/linux-test-pro=
-ject/ltp/blob/master/runltp">
-runltp</a>&nbsp;script and in many areas, it works from the install path to=
- access test scripts and create results there. So, I think configuring the =
-install path in our recipes during build time can help us handle our read-o=
-nly rootfs case.</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Since the workdir is basically the install path, ltp installed on tmpfs is =
-cleared out after boot.&nbsp;</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Please correct me if I am wrong. After your confirmation I will re-order th=
-e v1 patches and send v2.</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Thanks and regards,</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Sai Ashrith</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div id=3D"appendonsend"></div>
-<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
-bri,Helvetica,sans-serif; font-size:12pt; color:rgb(0,0,0)">
-<br>
-</div>
-<hr tabindex=3D"-1" style=3D"display:inline-block; width:98%">
-<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" co=
-lor=3D"#000000" style=3D"font-size:11pt"><b>From:</b> Jan Kiszka &lt;jan.ki=
-szka@siemens.com&gt;<br>
-<b>Sent:</b> Tuesday, February 4, 2025 6:51 PM<br>
-<b>To:</b> ashrith sai(=1B$B#T#S#I#P=1B(B) &lt;Sai.Sathujoda@toshiba-tsip.c=
-om&gt;; cip-dev@lists.cip-project.org &lt;cip-dev@lists.cip-project.org&gt;=
-<br>
-<b>Cc:</b> dinesh kumar(=1B$B#T#S#I#P=1B(B TMIEC ODG Porting) &lt;dinesh.ku=
-mar@toshiba-tsip.com&gt;; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$=
-B#D#M#E=1B(B =1B$B!{#D#I#G""#M#P#S!{#M#P#4=1B(B) &lt;kazuhiro3.hayashi@tosh=
-iba.co.jp&gt;<br>
-<b>Subject:</b> Re: [isar-cip-core v1 2/3] rules.tmpl: Make ltp rules file =
-as template to make installation path configurable</font>
-<div>&nbsp;</div>
-</div>
-<div class=3D"BodyFragment"><font size=3D"2"><span style=3D"font-size:11pt"=
->
-<div class=3D"PlainText">On 03.02.25 12:53, Sai.Sathujoda@toshiba-tsip.com =
-wrote:<br>
-&gt; From: sai ashrith sathujoda &lt;sai.sathujoda@toshiba-tsip.com&gt;<br>
-&gt; <br>
-&gt; Signed-off-by: sai ashrith sathujoda &lt;sai.sathujoda@toshiba-tsip.co=
-m&gt;<br>
-&gt; ---<br>
-&gt;&nbsp; recipes-core/ltp/files/debian/{rules =3D&gt; rules.tmpl} | 2 +-<=
-br>
-&gt;&nbsp; 1 file changed, 1 insertion(+), 1 deletion(-)<br>
-&gt;&nbsp; rename recipes-core/ltp/files/debian/{rules =3D&gt; rules.tmpl} =
-(80%)<br>
-&gt; <br>
-&gt; diff --git a/recipes-core/ltp/files/debian/rules b/recipes-core/ltp/fi=
-les/debian/rules.tmpl<br>
-&gt; similarity index 80%<br>
-&gt; rename from recipes-core/ltp/files/debian/rules<br>
-&gt; rename to recipes-core/ltp/files/debian/rules.tmpl<br>
-&gt; index 06b9070..918b443 100755<br>
-&gt; --- a/recipes-core/ltp/files/debian/rules<br>
-&gt; +++ b/recipes-core/ltp/files/debian/rules.tmpl<br>
-&gt; @@ -1,7 +1,7 @@<br>
-&gt;&nbsp; #!/usr/bin/make -f<br>
-&gt;&nbsp; export DEB_CFLAGS_MAINT_APPEND&nbsp; =3D -Wall&nbsp; -Wno-format=
--security<br>
-&gt;&nbsp; <br>
-&gt; -LTP_CONFIGURE_FLAGS =3D --prefix=3D/opt/ltp<br>
-&gt; +LTP_CONFIGURE_FLAGS =3D --prefix=3D${LTP_INSTALL_PATH}<br>
-&gt;&nbsp; <br>
-<br>
-Missing default value for LTP_INSTALL_PATH - comes with patch 3. The<br>
-whole series is in inverse order, in fact.<br>
-<br>
-But making this a build-time configuration will mean that there might be<br=
->
-two binary packages called &quot;ltp-full&quot; that are actually not the s=
-ame<br>
-anymore. Can't we select a path that is writable for all our images? Or,<br=
->
-even better, can't we fix ltp to separate installation from workdir?<br>
-BTW, does it matter where this workdir is located, on persistent storage<br=
->
-or on tmpfs?<br>
-<br>
-Jan<br>
-<br>
--- <br>
-Siemens AG, Foundational Technologies<br>
-Linux Expert Center<br>
-</div>
-</span></font></div>
-</body>
-</html>
-
---_000_OS0PR01MB6100B7D4C183871F0E47D056C2F72OS0PR01MB6100jpnp_--
+SGkgUXVpcmluZSwNCg0KV2UgYXJlIHByZXBhcmluZyBwYXRjaCB0byB1cGRhdGUgUkVBRE1FLg0K
+DQpSZWdhcmRzLA0KRGluZXNoIEt1bWFyDQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpG
+cm9tOiBRdWlyaW4gR3lsc3RvcmZmIDxxdWlyaW4uZ3lsc3RvcmZmQHNpZW1lbnMuY29tPiANClNl
+bnQ6IDA1IEZlYnJ1YXJ5IDIwMjUgMTM6MjkNClRvOiBKYW4gS2lzemthIDxqYW4ua2lzemthQHNp
+ZW1lbnMuY29tPjsgYXNocml0aCBzYWko77y077yz77yp77ywKSA8U2FpLlNhdGh1am9kYUB0b3No
+aWJhLXRzaXAuY29tPjsgY2lwLWRldkBsaXN0cy5jaXAtcHJvamVjdC5vcmc7IGRpbmVzaCBrdW1h
+cijvvLTvvLPvvKnvvLAgVE1JRUMgT0RHIFBvcnRpbmcpIDxkaW5lc2gua3VtYXJAdG9zaGliYS10
+c2lwLmNvbT4NClN1YmplY3Q6IFJlOiBbY2lwLWRldl1baXNhci1jaXAtY29yZV1bUEFUQ0ggdjRd
+IGthcy9vcHQ6IGFkZCBuZXcgb3B0aW9uIGZvciBzZWN1cml0eSB0ZXN0aW5nDQoNCg0KDQpPbiAy
+LzQvMjUgMTQ6MjQsIEphbiBLaXN6a2Egd3JvdGU6DQo+IE9uIDA0LjAyLjI1IDEyOjU2LCBRdWly
+aW4gR3lsc3RvcmZmIHdyb3RlOg0KPj4gRnJvbTogUXVpcmluIEd5bHN0b3JmZiA8cXVpcmluLmd5
+bHN0b3JmZkBzaWVtZW5zLmNvbT4NCj4+DQo+PiBMYXZhIGdlbmVyYXRlcyBhIGRpcmVjdG9yeSwg
+aW4gTEFWQSBjYWxsZWQgb3ZlcmxheSwgd2hpY2ggY29udGFpbnMgDQo+PiBhbGwgc2NyaXB0cyBh
+bmQgdGVzdHMgb2YgdGhlIHRlc3Qgc3RhZ2UuIFRoZSBkZXZpY2UtdW5kZXItdGVzdCBuZWVkcyAN
+Cj4+IHRvIGJlIGluc3RydW1lbnRlZCB3aXRoIHRoaXMgb3ZlcmxheS4gIExBVkEgcHJvdmlkZXMg
+dGhlIHBvc3NpYmlsaXR5IA0KPj4gdG8gZG93bmxvYWQgdGhlIG92ZXJsYXkgdmlhIGh0dHAgb3Ig
+TkZTLiBXZSB1c2UgY3VybCB0byBkb3dubG9hZCB0aGUgDQo+PiBvdmVybGF5IGZyb20gYSBodHRw
+IHNlcnZlciBvbnRvIHRoZSB0YXJnZXQuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogUXVpcmluIEd5
+bHN0b3JmZiA8cXVpcmluLmd5bHN0b3JmZkBzaWVtZW5zLmNvbT4NCj4+IC0tLQ0KPj4gQ2hhbmdl
+cyB2NDoNCj4+ICAgLSBmaXhlZCBkZXNjcmlwdGlvbg0KPiANCj4gVGhpcyBkb2VzIG5vdCB5ZXQg
+YWRkcmVzcyBteSBvdGhlciBjb21tZW50cyBhdCB0aGUgZW5kIG9mIHYzLg0KDQpJIGNhbm5vdCBh
+bnN3ZXIgdGhhdCBwYXJ0IDstcCBUaGUgYXV0b21hdGljIHRlc3RpbmcgZGlkbid0IHJlcXVpcmUg
+aXQgYXMgZmFyIGFzIEkga25vdy4gU28gSSB3b3VsZCBzdXNwZWN0IHRoYXQgdGhlIFJFQURNRSBu
+ZWVkcyB0byBiZSBhZGFwdGVkLg0KDQoNCkBTYWksIEBEaW5lc2ggLSBEb2VzIHNlY3VyaXR5IHRl
+c3Rpbmcgc3RpbGwgbmVlZCBzc2hwYXNzIGFuZCBhIHJvb3RmcyBzaXplIG9mIGF0IGxlYXN0IDVH
+Pw0KDQpRdWlyaW4NCj4gDQo+IEphbg0KPiANCj4+ICAgLmdpdGxhYi1jaS55bWwgICAgICAgICAg
+ICB8ICAyICsrDQo+PiAgIGthcy9vcHQvc2VjdXJpdHlfdGVzdC55bWwgfCAxNiArKysrKysrKysr
+KysrKysrDQo+PiAgIDIgZmlsZXMgY2hhbmdlZCwgMTggaW5zZXJ0aW9ucygrKQ0KPj4gICBjcmVh
+dGUgbW9kZSAxMDA2NDQga2FzL29wdC9zZWN1cml0eV90ZXN0LnltbA0KPj4NCj4+IGRpZmYgLS1n
+aXQgYS8uZ2l0bGFiLWNpLnltbCBiLy5naXRsYWItY2kueW1sIGluZGV4IGRkNGJhZjQuLmQ3MDU1
+ZjIgDQo+PiAxMDA2NDQNCj4+IC0tLSBhLy5naXRsYWItY2kueW1sDQo+PiArKysgYi8uZ2l0bGFi
+LWNpLnltbA0KPj4gQEAgLTY1LDYgKzY1LDcgQEAgZGVmYXVsdDoNCj4+ICAgICAgIC0gaWYgWyAi
+JHtyZWxlYXNlfSIgPSAidHJpeGllIiBdOyB0aGVuIGJhc2VfeWFtbD0iJHtiYXNlX3lhbWx9Omth
+cy9vcHQvdHJpeGllLnltbCI7IGZpDQo+PiAgICAgICAtIGlmIFsgIiR7ZW5jcnlwdH0iID0gImVu
+YWJsZSIgXTsgdGhlbiBiYXNlX3lhbWw9IiR7YmFzZV95YW1sfTprYXMvb3B0L2VuY3J5cHQtZGF0
+YS55bWwiOyBmaQ0KPj4gICAgICAgLSBpZiBbICIke3dhdGNoZG9nfSIgPSAiZGlzYWJsZSIgXTsg
+dGhlbiANCj4+IGJhc2VfeWFtbD0iJHtiYXNlX3lhbWx9Omthcy9vcHQvZGlzYWJsZS13YXRjaGRv
+Zy55bWwiOyBmaQ0KPj4gKyAgICAtIGlmIFsgIiR7c2VjdXJpdHlfdGVzdH0iID0gImVuYWJsZSIg
+XTsgdGhlbiANCj4+ICsgYmFzZV95YW1sPSIke2Jhc2VfeWFtbH06a2FzL29wdC9zZWN1cml0eV90
+ZXN0LnltbCI7IGZpDQo+PiAgICAgICAtIGlmIFsgIiR7c3d1cGRhdGVfdmVyc2lvbn0iID0gIjIw
+MjIuMTIiIF07IHRoZW4gYmFzZV95YW1sPSIke2Jhc2VfeWFtbH06a2FzL29wdC9zd3VwZGF0ZS0y
+MDIyLjEyLnlhbWwiOyBmaQ0KPj4gICAgICAgLSBlY2hvICJCdWlsZGluZyAke2Jhc2VfeWFtbH0i
+DQo+PiAgICAgICAtIGthcyBidWlsZCAke2Jhc2VfeWFtbH0NCj4+IEBAIC0yNTEsNiArMjUyLDcg
+QEAgYnVpbGQ6eDg2LXVlZmktc2VjdXJlLWJvb3Q6DQo+PiAgICAgICB1c2VfcnQ6IGRpc2FibGUN
+Cj4+ICAgICAgIHRhcmd6OiBkaXNhYmxlDQo+PiAgICAgICB3YXRjaGRvZzogZGlzYWJsZQ0KPj4g
+KyAgICBzZWN1cml0eV90ZXN0OiBlbmFibGUNCj4+ICAgDQo+PiAgIGJ1aWxkOnFlbXUtYW1kNjQt
+c3d1cGRhdGU6DQo+PiAgICAgZXh0ZW5kczoNCj4+IGRpZmYgLS1naXQgYS9rYXMvb3B0L3NlY3Vy
+aXR5X3Rlc3QueW1sIGIva2FzL29wdC9zZWN1cml0eV90ZXN0LnltbCANCj4+IG5ldyBmaWxlIG1v
+ZGUgMTAwNjQ0IGluZGV4IDAwMDAwMDAuLjczZDIyZWINCj4+IC0tLSAvZGV2L251bGwNCj4+ICsr
+KyBiL2thcy9vcHQvc2VjdXJpdHlfdGVzdC55bWwNCj4+IEBAIC0wLDAgKzEsMTYgQEANCj4+ICsj
+DQo+PiArIyBDb3B5cmlnaHQgKGMpIFNpZW1lbnMgQUcsIDIwMjUNCj4+ICsjDQo+PiArIyBBdXRo
+b3JzOg0KPj4gKyMgIFF1aXJpbiBHeWxzdG9yZmYgPHF1aXJpbi5neWxzdG9yZmZAc2llbWVucy5j
+b20+ICMgIyANCj4+ICtTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogTUlUICMNCj4+ICsNCj4+ICto
+ZWFkZXI6DQo+PiArICB2ZXJzaW9uOiAxNA0KPj4gKw0KPj4gK2xvY2FsX2NvbmZfaGVhZGVyOg0K
+Pj4gKyAgbGF2YS10ZXN0aW5nLWFkZC1jdXJsOiB8DQo+PiArICAgIElNQUdFX1BSRUlOU1RBTEwg
+Kz0gImN1cmwiDQo+PiArDQo+IA0K
 
 
