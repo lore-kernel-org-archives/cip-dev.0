@@ -2,53 +2,48 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A20C02196
-	for <webhook@archiver.kernel.org>; Fri,  7 Feb 2025 10:08:11 +0000 (UTC)
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.57])
- by mx.groups.io with SMTP id smtpd.web10.66117.1738922882571422301
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EEFDC02196
+	for <webhook@archiver.kernel.org>; Fri,  7 Feb 2025 10:11:51 +0000 (UTC)
+Received: from OSPPR02CU001.outbound.protection.outlook.com (OSPPR02CU001.outbound.protection.outlook.com [40.107.159.35])
+ by mx.groups.io with SMTP id smtpd.web10.66165.1738923102554135112
  for <cip-dev@lists.cip-project.org>;
- Fri, 07 Feb 2025 02:08:03 -0800
+ Fri, 07 Feb 2025 02:11:43 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=L9dzLE3N;
- spf=pass (domain: siemens.com, ip: 40.107.22.57, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=EGHtyYfu;
+ spf=pass (domain: siemens.com, ip: 40.107.159.35, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VPCjK5A6EG3FzOGUW5cX6/UAxsHWVhV7TtVMbxQLlYkvz1hPW3NdC5AarRZbq09mpWu8QNCzfGHXvalq0vozxjHaU3vuK1iTETMV4NF5rRc/MpUW4u+b6rAlMG5lHdxdswI1Z9cQRUvH1Y7qJm8iHFAryeWRK55oTYANQZ679uDsolii/9Ez6xv4ZWxI7CegIs9bgprxLmxndFrsL24Dko+cQ4q1vnerQiXuqaM25+RCcFoTV8Fx2JLMM5dodizaCfwUtAShqlUpd+827Q43ZfkimnGTc7uObXPyW7IW3UAX3eBQKoEJsXJH4YMz078/dBvyhXjMh2TO5KwsEsOzaA==
+ b=HYXDN0EcicZuZJsLFzT3jot9Vv7SeA4vP4Bh1Lmol4N8uRF51AlIgM5FuPOPfRdbflje6CwQqH94mkUd+k2VJ5iaRplssQdf4EUXtzVTGfclMUxWT9ZJrDBkDvqbAsnp3QO+A2k6HXOHeHwjc5ViXA93YHz/lN0SIS2hrtDR2iXpcQL//5Wmr4HLywXBiz+dO5sERSlJqMggVCYUzOnnrwGM1rz0ycOA5efxwSvP8/0OA6EYmensWZSDlntd+nzDHokjsQhYYQyUCZ4q1SupYpsb69iHzJ/+QWaKnW4UA2sOHe89LSY9laYbPR5Z9yc14m9U313E5njJirglUqzXSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e+ROO2ZVDO1ZxjvvsXsy+BJAnkPzyhkUyIfgWIT6I8M=;
- b=Tcdovf++KKcHGjyfFcRVeXzp+RMVTN2cz7LJyN9R3fnK/h7FtWiq2j/igHloydw/BvzPUa1C3kVttoR4/5EYSkFBZmbMjT0hQsEtnEf1tPcMNb6668YQvat1ZYzo7qebVBJkrhed7CGXouPYh1CbgDspl2myScJvhbYZoYM8tD+ugExKSG94VuisU0m8KgWq2EEFZwLmZ6hLqsQlxACHKQWEaSqP/4a12LBI6fOrUJWoRWKmktPk2r5HdY4dlYoolAiJTBbt+d3PlK6O9aE++2gMpY/eS47EkxGqaKOG0kv8R7TXWmsMFp8F9PH4vJAVMw6wVPiXKJR2J3LWwconww==
+ bh=CcOnOsXGYaQjYVGOybxTIpcmDW1yU0CH9MCm2aUH8nk=;
+ b=X0AVO+nxmjmJ4gHDA2eJysPPSkLUDPsaasPA6Ux0qNNWbIP4vNpBwb93yr+ST9tvexROBHgkQTfQ702MkJn5aoEX0XDx/v8H8GBotlngye8Pe3OPEMh0EO2nwk5zX14aX9sAuE+YJXZUa1Tx/+Xymn/iOtAw/WARTgGe6wnlqc284aAZlHwBSG0Z/tzRQQQgIEOE52o8JzLoHyg8uzHvyP7xC7VdE30MMcI4sB7sNFmUfAXLqexhwDVNf3kipYHMu2fJrMXec/b7H++dSpXXBZ+an3f9JR61DWRt3Bx9co5UR/dSCkQr3427vIrBNbwBCf51u1thfVeCiey8T80lEw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e+ROO2ZVDO1ZxjvvsXsy+BJAnkPzyhkUyIfgWIT6I8M=;
- b=L9dzLE3N4MHyuxIVBN2UW8UcztTZiepuOIOKYSwHFVA5FZL4KbpSr9jOx/dv3aMC6vydXRalJPxSRkg7+TZ5vay8Y4/loWRUVk/t5K8YCtQuLErc7Z6GiKH79/jB6HXNX0UwVNXv9MgBGXnCbHHXDCtTJsMGWj7dAxCsjjPwDsHUNB97olGaRXgi7ViwVW9XOvsDu//5Ktc+fkFcw88r+X65VdYsFvUmRLmCExrRr3SzPsYO7hh8catjTiV9qvE0uP8cZr9yL7CS7D91VUBs3nVWW6j/MwZR5jhc6ANQOHGrFWC+XLp7n/cdwgtfHYvGxTeTQhYNta1xDcWXY6rIDw==
+ bh=CcOnOsXGYaQjYVGOybxTIpcmDW1yU0CH9MCm2aUH8nk=;
+ b=EGHtyYfu/9AnKTInf9cpxBtWSWqLrWJhjXFkGtLqoWpqwkYfOkYdNNi4AW6vxXQwrgxY/+DIt0ANxHrzLjw/xUy7mBsN5i4uUTCLBJ1wnlFT40FUYS6RxULYYwO+p3GQsKKs49n/7Il3Y4rdnn5dzjjP+Iv3rRVVyXBBxmByvOuA/75oG43C84fQWtZ7mvQY4PqZ2UH643aezzDmGk2YzVWd2gi97p5AR9k/iUlLxO3xuTJaGPk9SLP6gdQBTDoCjjfgzWrxAXgPKRy5XV7jxat4Ho8dbiwT6HKhexBcoSptVSH9d2wZKv3JtplYcietkS06ItsTcGXirnHRHsJWdA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by PR3PR10MB4062.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:a2::11) with
+ by AS8PR10MB6222.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:54f::6) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.7; Fri, 7 Feb
- 2025 10:07:58 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.6; Fri, 7 Feb
+ 2025 10:11:39 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408%6]) with mapi id 15.20.8445.005; Fri, 7 Feb 2025
- 10:07:58 +0000
-Message-ID: <00d82dde-4ec6-4a1c-88fa-b91019250c8e@siemens.com>
-Date: Fri, 7 Feb 2025 11:07:56 +0100
+ 10:11:38 +0000
+Message-ID: <df4181d3-2452-434f-a31e-4d9c821e0390@siemens.com>
+Date: Fri, 7 Feb 2025 11:11:37 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core v1 2/3] rules.tmpl: Make ltp rules file as
- template to make installation path configurable
-To: Sai.Sathujoda@toshiba-tsip.com
-CC: dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp,
- cip-dev@lists.cip-project.org
-References: <20250203115321.3589084-1-Sai.Sathujoda@toshiba-tsip.com>
- <20250203115321.3589084-3-Sai.Sathujoda@toshiba-tsip.com>
- <578c7f2c-ef52-492f-9dc8-054d6bed958b@siemens.com>
- <OS0PR01MB6100B7D4C183871F0E47D056C2F72@OS0PR01MB6100.jpnprd01.prod.outlook.com>
+Subject: Re: [PATCH v2 2/2] kas: Update to release 4.7
+To: Michael Adler <michael.adler@siemens.com>, cip-dev@lists.cip-project.org
+References: <20250206132546.177943-1-michael.adler@siemens.com>
+ <20250206132546.177943-2-michael.adler@siemens.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
 Content-Language: en-US
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
@@ -94,187 +89,350 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
  8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
-In-Reply-To: <OS0PR01MB6100B7D4C183871F0E47D056C2F72@OS0PR01MB6100.jpnprd01.prod.outlook.com>
+In-Reply-To: <20250206132546.177943-2-michael.adler@siemens.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: FR2P281CA0135.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:9e::19) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR0P281CA0079.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:1e::19) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PR3PR10MB4062:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0368d08e-80c8-413e-bd41-08dd475f4c47
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS8PR10MB6222:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5e39eff8-0b42-43fb-c6fd-08dd475fcf5c
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?qlkSoJ2Beu0QNUlDlhYTpwRCSxd4wct2/2s90ETzoYWBB2xae2INkLOHOl8o?=
- =?us-ascii?Q?AgiAlwuW5NiOrOzBceFO6+e2ez1Et2RXBH6R0JD967/LgtzvpHGMbqSTwQPw?=
- =?us-ascii?Q?h5414JaeA+F2J+ASlF5yELlxQ0NiSN/hu7moQMppPkcIKV1kkrtkQ1F6mmNC?=
- =?us-ascii?Q?t7sg/oehPvySLNO1zeN3ecLW7OY7ovISk5S4sbfPSb4GgySIeOdgNUVRoI64?=
- =?us-ascii?Q?mhOeRWEHJ2CkVVLW2oGl1viIVHB4X14TszAbX3CC3u8og44CWioYyaB2inVK?=
- =?us-ascii?Q?CNLkmmFNN1Aa4x9lPY0G/MmTcvF2x+b1iaTCPCXgsSktKf4geYGNCCdXdfD6?=
- =?us-ascii?Q?9qF8pZLY9E8NVVFL3HvqCHxOGlgtk02URScTvM9MzlZQPRwckVkH4MER8N4E?=
- =?us-ascii?Q?LoIzhFTYp3PauTQZ+3eirA7jragK5QIcgJHtVmSjU3Um7re60SOC8xZWu0IN?=
- =?us-ascii?Q?dJDD5pDHvthXBHBaVx9LfOScKvj89x0jVVHEoDQFXRvDZADF7CcrRx++eK4T?=
- =?us-ascii?Q?rmBgeY9Hg1tunCOWnXPJHt995j7y9wAhuR35HZTNPx8JEnZRBNPwCPxRNIBo?=
- =?us-ascii?Q?kXHlG2KPBraSXHn0bEm5VnRguQX1HGGDuJ48eCo2n+mizFVECXMnGMAKmaK0?=
- =?us-ascii?Q?z2203EVdNscfk/rCPEb1ECNgqPnPSmUDbzbIPJgH0GXJprkB9l3MYfipaAdS?=
- =?us-ascii?Q?YDbNiVpIv58mgDHRszKoxYUP3ZOdz5WCVpkopX+P/KjZQumfJdUVjnSeA9q3?=
- =?us-ascii?Q?6ZzOUPntPVhSiYH1S2cgqDx4Yaa2rdniPvAGGDH6wBu9HPUykrCUC8YBX9Hp?=
- =?us-ascii?Q?cu8vr0sjKl+EL5vyPdmDgGeRIfZflaZ9RgQnDiwZTuLcRaFvSJBVCJANsPKu?=
- =?us-ascii?Q?5PKO1DoLRqrVb4abMQ5t8+tnik4bM5nmPhjgn29629B0ywcSzawFyQ4bHMWB?=
- =?us-ascii?Q?1NKVHFzd3lT54pkNbzaNQ0v8fntqW8bSFnYxOt4mQKWhXfUjQSkwcXMLkuGG?=
- =?us-ascii?Q?SLjVlU+qplO0nJxBX9i8qbt/HgL9E1Tcnuqt58Ia1Dl1JH5Cn6jM4gy3/+KN?=
- =?us-ascii?Q?uWnuqUuLMhwgLW1xye51NyUYBBiTdNk87MwD+f4NInyKJL06cThbA0EeJ7nk?=
- =?us-ascii?Q?2lIbA25EZ6juAriLlJHr2YKDlFnk/g0r45H7PlR3kgNAxR4HHjDoC9SEHtk0?=
- =?us-ascii?Q?98Dy190Px/bVHz9oVV9W/eT7/eND9KM7vc3PqXv/5BfHs87kv1KykHjri/SC?=
- =?us-ascii?Q?xESpO7okFQSiANFdv7KbUazJGhV2aaBK6x4Chny/8QDm8vCj2eezJm4YfE4G?=
- =?us-ascii?Q?ncw3a5M0pTSY6zDHVt6g/zRse33wlTizD2FfHKXrhDkOIyhDGQtE6oE6Bf5r?=
- =?us-ascii?Q?cZhhTNtAmhxozY1mms0ethiWRQ/G?=
+	=?utf-8?B?c3ZhY0NqdUgwRHBJcEtLaXo4YUk3Mlg0aG5valBUeHYva1JHVGlObExCeFJo?=
+ =?utf-8?B?MEk0VldCMUJkU1l6V3VNbytnaFJ0UXQ4Mk9sMk1IOUxpRkhwNDB4TitoU0FW?=
+ =?utf-8?B?WTdqM0xVYzZ4bDBLWlBtR0h2dlB0RmtldlBnL0VmTHo5RDc4L211NC9Kejhl?=
+ =?utf-8?B?NVRWSHFlOWQyV2dFVlVrSUVxbjhQRzl2MzkwWjRyL2xhWTZpU1BvdFl3blZU?=
+ =?utf-8?B?MzNTbjF5ODdTK2YwMDZyOUszMlRxRnRjUDlmYWFTeGVDd2ZWQ1R6UWhDVE51?=
+ =?utf-8?B?T2lWYWdac21NM3BvVzFwYm5BMkpRVlFSZWNxUk9kNXFxeGZoZHhXV1dEWE04?=
+ =?utf-8?B?QzVQRkI4Y3NEL0R1NXkzNzFqWXk1b1FFTmNzY1dFMzJ1VXZQWVVyU3NJZlQr?=
+ =?utf-8?B?dmFTMjdBZ09rWWpjUGp4WTJNK2hIQm9IOVZrdktNNFh5Q05IRm1pVzh1STNK?=
+ =?utf-8?B?K2x4VklOTFN1aHgwZjVHaGNGUmNkWTJuNUhwY3VKcTJHQWYvVWhDMTNYcURF?=
+ =?utf-8?B?a2VOQlZ5bmloRE1vaGNmdXNxR0RnQ1FUbEJaS3dZZVRKQlpDTEdWYWZVekRp?=
+ =?utf-8?B?cWlPS2VUbm9EV2lTN0dVS0tFelQxZTRzMFByV003WDMxUkJPdnEyOGFjVW5X?=
+ =?utf-8?B?aFlCbm1XK2lDaXlxMkRSOEJLcXhWMndHWmJBTHE4bnpEbXYzTzF6bDZaZW0r?=
+ =?utf-8?B?UUk5QnNuWk9KZjlvUGphMVBZWVdDbkZOekFmNUYvSkVkaE11VUM2M0tJWkYy?=
+ =?utf-8?B?aVVQZ0tSSiswbzZ4RDZvMGJmL3lJTjkxNHpRdExpRG9UakVEd29ydDBOaFAx?=
+ =?utf-8?B?djJ0MDI2UUprSGVDL2x1VUhjNDJQY0VXYjRqVExrMXJBMUczZTRIM0g5RWpM?=
+ =?utf-8?B?RzdrWnRwRU45c01wQm1PbmtyeHl0WW40TEx5Tyt6ZXZiSXorRnBVdXBtb2Z2?=
+ =?utf-8?B?TzV6dHQ5VkFNcTk4RkR5Uk5NditsOGlHNVB2NGtaaS93VUtVVnkrM0FiazJv?=
+ =?utf-8?B?Q3dXWjBoRnZkdmQ2dDFPZzdQL3N5TklVYnBUY1RDN2FtOVBkNG9vNDN6cEwv?=
+ =?utf-8?B?QkdoTWQyZjhQQXRCYjllV1dpR2VKVmIxaGUyVXZ2OUZSM1B1bEZid2xtZEdW?=
+ =?utf-8?B?RDNDblVSZmZnYWxpWjZGZkt3c1FYRWNYTmFtQVFaR1YxUTNPbUROTm9Tc3J5?=
+ =?utf-8?B?V1p6NFRxQXU2OXZYQVFXU2FzUktPcmxZTVQwd0g0dCtlZ1kvRWVkQ25PSFcr?=
+ =?utf-8?B?UE1SZWRkcmNlSWNWeWdDSE81ZFNNcjRUeDhrejhGMDVNZkFWSnVObUVjOFEw?=
+ =?utf-8?B?S0MxdmRXZmRmNDZNSEtPQVFqSm1HaTVXUG9reFFYMUoySlpFZWErNUNPWjBj?=
+ =?utf-8?B?NUhPQlNSU2tmelNLOUplN3VmMmFqWTc2WnB6d1Z2SUwrQzgrcVkxaGtjYXlO?=
+ =?utf-8?B?UkxJRVA0UEdWa2tBRTFQQzIzTWNVSzl2d2VDL242dDBCQW5lN3RKaVQvZUVD?=
+ =?utf-8?B?L2V5a2dKNWY2VHQwT3NvWWZYZ09vNThBZUI1UVhtUHNXcllyd1VYT0srNHN2?=
+ =?utf-8?B?UmNzTlhzbVE4THZ0amcrQUJiR1dqWlk1eEV4V1JxS2Z2eTJOY0trMUphOHF5?=
+ =?utf-8?B?NjlITHJKUmI3VlEraHpDb2VGam1tWXJhMjZ4ZndiVHJtdVJyc3pWRDczWjE0?=
+ =?utf-8?B?WDhBRlhzMDFZaVhyYlExcENDVnhCSUEyR3NWVldMQTgxei9TU3dYQmREN0Fr?=
+ =?utf-8?B?NWhmWmRmTzROKzZtZzNtQUFIRWRmMjFWVlF2NHJ0TStBVFd4TTNWZUtRSENS?=
+ =?utf-8?B?MFlpQ1pNTWViMzBXZ2t5UT09?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?2+Z8eHX9r00G2jSiIzD4pPUlY5GmG4twO777oWQf6E8fJu7U3wJ59GHuI0UQ?=
- =?us-ascii?Q?WPKU1kECPDSFcB+V8NbNH0dhnH0HCmEqWSD2y8j7oMgFSYqJ4/axpgY++H43?=
- =?us-ascii?Q?kuoH5XKQpu5iVzBJvnh/Gc35lNLNEblTq1fOVvkjNCLPS9xMBKREa8GttkMe?=
- =?us-ascii?Q?y5yhKqPvW++3KoFXe/Y2UQbARwsKYcs4j8s8ynJpSBy/IvZOVOVC7pjmO8bU?=
- =?us-ascii?Q?cyRzyh0lZMF2z+nRVS+zNQkUBWRDcl6kJxNHo1EVsC3iKR3BppVDs279zc5w?=
- =?us-ascii?Q?K5VN4v8yY7uLtLkA434AkgDsld2Qq8w9ngqxKvWgzrkVRNyCIt4qKv2d+cdH?=
- =?us-ascii?Q?OO/2KLOBsPafJd6DSayXDaX/NK+OaF1fCJfhzB0ihubZqTFuPsiXRzzYUzDd?=
- =?us-ascii?Q?7Q6GtXGzWYo4LYEPNXj9SqyD6uCtOSuJUfLan3IRESSaXN+sFTld2p7OtA9p?=
- =?us-ascii?Q?wyjUzH6pKg5ChwneA8XsdULpowwoRE+stS7Ag2lRkh8e21FkXIhSJwoskZ1Q?=
- =?us-ascii?Q?kCZTgi8HnVJgweLz4W10CDrqdSJCeva77FHBscQGKs0gL/6mHcfyCYh76XTS?=
- =?us-ascii?Q?Arta/4NIFXp/QZrGq9aAtyfB5qPpHGduFC4ZKUNXBvkNyzwGh28HfBsoqhxq?=
- =?us-ascii?Q?raq+gqhvodSkOV2kaZ8bpI3pS7Yzv2TeFaadVKzbkxfox1Gadis+8dB+iJo2?=
- =?us-ascii?Q?SRkJB8cvQIwWUpgVkaQFVU7WAwtIpy/OLcF0qddQwDLCxgtjK5qcKc3eTfj8?=
- =?us-ascii?Q?IPnBEMhpeqMsfv3PP5TRdW8UzsaJ1EG+cUHcFywat1h5vYrEhKuzALEKqxRE?=
- =?us-ascii?Q?RIUivH2Cb+0n9zqEVzRYPg6dZuLuiu74jV0oZkq5iROCrb/D+iLRVY6k2bln?=
- =?us-ascii?Q?6CgNN+Dar6yctu8ItLZL54UolVA7dacI8coCjoAPBOdjXXB8LA5nRlB9rOcE?=
- =?us-ascii?Q?NLC3H1xx9FtZzyJwYQEaOepdzYOtw/O5PWYArF0HVHCIxbhLGwDTcbnaSnui?=
- =?us-ascii?Q?6KeFCOfAkBoUBJZEKI5+xmKs9hjd7ciabDtylbGuE69EEyfvZb11r5M+bxPw?=
- =?us-ascii?Q?x2utrc3pMwg6Pq2u0ds/yM7t/dfNHdd1i9450twlzTt/9B3XRlCrmUAGkDPr?=
- =?us-ascii?Q?KBbcib7ojSBHvehpiTe3bpB/LAFp5Mj/dra1sQp59bZawqFzZOoMJohSOLK1?=
- =?us-ascii?Q?AgJ/uCqs4lF7dMhXMjRr33/84BnZcuAlZa1HR3UfjQXherN/WZw7uEohlG9S?=
- =?us-ascii?Q?LXOmiqv8MMxfpC+jXTzk5l30CFwi0tOT3KMu43vj2OnE4JUvLWgLRU9Y1EO1?=
- =?us-ascii?Q?FT/u88hQecYxDKZDkERo6oPUgn7ElQ4Ie7RJwLUTLs37iWDIb1EyaoFSm1Zg?=
- =?us-ascii?Q?tAnPUoeogL41V13lbCZLEBJ8z8RBj3eIj9lQoZjHtQJGqL64yUxuPBCjPlua?=
- =?us-ascii?Q?vba4zzltXVDf41GxRcAwo5iqBe+5nLEgh/07KD4/bg0dFKGm/NuTxvQbY51D?=
- =?us-ascii?Q?7KlgvnrP6smnkE9A1Iujj1dfuGzhDRMDurLG6sTtK/ZzeO6wVvmCwywSJ+oF?=
- =?us-ascii?Q?lDhEysNni/82j5oI4OM/HJz+vN/Uf7STlw48hM0cfO6VQzvz5eihaqWIUAb+?=
- =?us-ascii?Q?GA=3D=3D?=
+	=?utf-8?B?NTBMYXB1SWNSVlFSOHRpVi9hbnJLTFdUM09heHgra1QwcktKL2RHQTUwSnBB?=
+ =?utf-8?B?d1BIMzVwZlBoZmR4V1hXWXFZc1FjVXJibGVTR2greFFhZkVRczBMbnNyUC9v?=
+ =?utf-8?B?K3dDZnVYOWdaT3MwaHpKdnFKMmQ5dmxRYXZxdE92Q1hxUUVMQVkvQzBrSmpN?=
+ =?utf-8?B?VG1HL0FXRERTZnR0WGw2ajZIVlVvOHhTSVdxRVBmM0JsTEhPNjk1cFNUaHRq?=
+ =?utf-8?B?RDR1ZXNrUktZbEhQOXA1Y0pYaUx6TEhtL1ZUWjUyRHVacFBKSjc4Tlo2UWNQ?=
+ =?utf-8?B?R0xBd05aNDY1aGhzRUEva0ZRVnhLQTJzUGxpQVRBMjd1TWNhTEJRN2U1NUUy?=
+ =?utf-8?B?b0EvcUZFTkFyd3NsdUlQQmlsUnhqSlF6TjkwRE13VzBPN05uTUR2UkhmUlRO?=
+ =?utf-8?B?SFo1WnY1NkZuZDJtVXY3aUNCTGlmc0hQMUFxWmsyWmlEcTdGM28zTExGY2NC?=
+ =?utf-8?B?Ni9xL3ZJR3U5WEE3OGhjdVd0Wk5mc3F4Mk1CQTIra3lrQzBIWE9PL1hKOEh6?=
+ =?utf-8?B?MHJGM1BmUEZwSjJybnE2eWhaVHFJdSsyWVczeSsxTGczTWpoQXhLV2l1bGlS?=
+ =?utf-8?B?dEJPa3BlU1RyVU9zQzdkZHp3ZWc3WkxXUlh6N0Vhc0tnelk5b09xU2w0eFQ3?=
+ =?utf-8?B?ZlNvWHdkcnA1c0haRXd2V05GdHJqWkJwaE00azJnSjNheWNjaG5WUGRqNW5v?=
+ =?utf-8?B?aWZka0NXTVRIOGE2cTExNExwYzlkY05waUM4dzZwUWE1a25PNG5QSkxKa0lm?=
+ =?utf-8?B?SXV3dzZCR04vd05QckFTUUcvekdzTndBWmpDQ3RLVnRMeENoYmhwVGl6Tmp5?=
+ =?utf-8?B?Vmh0eTU0eXNuQW4xdGV3VWdKSXR0L00xZlV3OFljRHVIcTNROVQwdDJxbmdE?=
+ =?utf-8?B?NjhVRjRuNTZhTlkzSEdYSTdMWnA3WTFoS1pxTzVTUnIxMmplSUFvKzRwdGtH?=
+ =?utf-8?B?YUVZMWJDdmttR0hYcjdpL3pya1crcEtPTTlncEVzMDRla082eVhJaldFc1U3?=
+ =?utf-8?B?UWFmSEE1NzJYRW10MmtPeVNndVhUZXV2NUJlNVFjbmhrOGh0UWtYNzYxMldS?=
+ =?utf-8?B?K3FnTXMvcmUzc0J2Y0hpUUg2TWpFSUp2bjRJTVJreFVnTExVRWJ0OXE5QUdl?=
+ =?utf-8?B?eVRCN2RLYlRYQUFOblh4V04vZ1hsVTZWdlVrOGZ0ekVRbXNGQnZoMnRieDIv?=
+ =?utf-8?B?U2t4RCtzZ3llN05oaEp1UFVoVnRGNHQyTUZpa2dhbDBqNDQ5aS9BdW1nR3ky?=
+ =?utf-8?B?ZnhKdlloQjJrcy9lMHZXcGhpUnM4MVRXR0dZL0dRdU8wakFqeFFEZ0s1NG01?=
+ =?utf-8?B?QU1qM28zSE8vZTlIcnRkYzJ4TnZUemFEZ3NGZEdvWHBhNkl3KzQ4UGs5V3VS?=
+ =?utf-8?B?QzJNbDBiaS9DSDVyd3ZMZDVIeCtic085L25TSlFwWEE3WGJMWm5iUVRFc2dD?=
+ =?utf-8?B?UTVEekRtY2VIenJUMGJqRE52UVh3Q0gyQnQweXFUdmRkekQ0YTdFbFE2b0RS?=
+ =?utf-8?B?RnVTcWpoOHk3NXFXcmU0SDRMbmJWYUk3QlVqMVp4UkhtMEVVSGNNQVFYUEJK?=
+ =?utf-8?B?OER3YzhvWVVETUFrNVVZZjkxR2pUUmV3ekoxeFpBbzZINEx6a1p5c0xzNlJk?=
+ =?utf-8?B?YldxQkxKMGNBMktJUW1hOFl0cDkzbkhuZUNVYlpjcjhCdDR6Q1pLRGV4MFI3?=
+ =?utf-8?B?WjNsbVNsbGgvTVB4cmhkYkkxb1I4eFNaOWdvRkhIYnF6U0NXc2FmMVJwVk1B?=
+ =?utf-8?B?b1FydS95K25HSytjUENsVkZaelJwUzdyL1p1eEtGVXBKVWx3eFJRaUI1cUt4?=
+ =?utf-8?B?QTFwdUl4YURyQ2JzelhGY1BiaHQ4b0ovM2FLLzR3WEl6bjZrRE0xbVhWdmhF?=
+ =?utf-8?B?ZlBEMW1uZm8zR0MwSTVVUDVpN2VQUUl2Y1VFVEtsZ1lLNnhIOEJNTURyTFpN?=
+ =?utf-8?B?RU9DRW93dEd2MExncXJHRUF4WGxBWkV4b2ZTU3lkK1VLc1BtVk9IUTlDRU9R?=
+ =?utf-8?B?QVFzSU9FaGw4akFRQ0xxcmtzdlo0UW5icE9pa1A1dmk2WDdKUWZhdDV4cVdx?=
+ =?utf-8?B?K3pvMUZwVlhlK093ZkY1ZjBNK3V6T1AwQjZUOERER1dyMmxTR1NMQ1huQlhm?=
+ =?utf-8?B?YnlXRVFabUJmdTZjMjVnSk9WbzJlK04xaTljRFpPbDd5Rnk2dUVzYUlrb2Ns?=
+ =?utf-8?B?YUE9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0368d08e-80c8-413e-bd41-08dd475f4c47
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e39eff8-0b42-43fb-c6fd-08dd475fcf5c
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Feb 2025 10:07:58.4786
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Feb 2025 10:11:38.5022
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dnkbFeR/6N03uoFWOD9EtCua+vqU1dyVmuKLSpsyOaJ0zMRM8ua/iVbSm4HwmqzK/SVA+YsEtP+RFkxr1czh6Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR10MB4062
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7k86/Bva9jN6Eh0rTPoOCDBLeio0shjZiZ9RubNl3gO42Gt4cpQtf15ZixBUrgEGqFyBttsSc9oHODGAKuYfNA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB6222
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 07 Feb 2025 10:08:11 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17769
+ <cip-dev@lists.cip-project.org>; Fri, 07 Feb 2025 10:11:51 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17770
 
-On 05.02.25 14:22, Sai.Sathujoda@toshiba-tsip.com wrote:
-> Hi Jan,
->=20
-> We did not want to touch the install path being*=C2=A0/opt/ltp *in all ou=
-r
-> test images except the case where the security image comes in to picture.
->=20
-> To answer your question about fixing ltp to separate installation from
-> workdir,=C2=A0 I believe the LTPROOT variable is basically the install pa=
-th
-> in runltp <https://github.com/linux-test-project/ltp/blob/master/
-> runltp>=C2=A0script and in many areas, it works from the install path to
-> access test scripts and create results there. So, I think configuring
-> the install path in our recipes during build time can help us handle our
-> read-only rootfs case.
-> Since the workdir is basically the install path, ltp installed on tmpfs
-> is cleared out after boot.=C2=A0
+On 06.02.25 14:25, Michael Adler wrote:
+> Signed-off-by: Michael Adler <michael.adler@siemens.com>
+> ---
+>  kas-container | 99 ++++++++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 78 insertions(+), 21 deletions(-)
+> 
+> diff --git a/kas-container b/kas-container
+> index 6b2131c..d6118b9 100755
+> --- a/kas-container
+> +++ b/kas-container
+> @@ -27,24 +27,28 @@
+>  
+>  set -e
+>  
+> -KAS_IMAGE_VERSION_DEFAULT="4.5"
+> +KAS_IMAGE_VERSION_DEFAULT="4.7"
+>  KAS_CONTAINER_IMAGE_PATH_DEFAULT="ghcr.io/siemens/kas"
+>  KAS_CONTAINER_IMAGE_NAME_DEFAULT="kas"
+>  KAS_CONTAINER_SELF_NAME="$(basename "$0")"
+>  
+> +# usage [exit_code]
+>  usage()
+>  {
+> +	EXIT_CODE="$1"
+>  	SELF="${KAS_CONTAINER_SELF_NAME}"
+> +
+>  	printf "%b" "Usage: ${SELF} [OPTIONS] { build | shell } [KASOPTIONS] [KASFILE]\n"
+> -	printf "%b" "       ${SELF} [OPTIONS] { checkout | dump } [KASOPTIONS] [KASFILE]\n"
+> +	printf "%b" "       ${SELF} [OPTIONS] { checkout | dump | lock } [KASOPTIONS] [KASFILE]\n"
+>  	printf "%b" "       ${SELF} [OPTIONS] for-all-repos [KASOPTIONS] [KASFILE] COMMAND\n"
+> -	printf "%b" "       ${SELF} [OPTIONS] { clean | cleansstate | cleanall} [KASFILE]\n"
+> +	printf "%b" "       ${SELF} [OPTIONS] { clean | cleansstate | cleanall } [KASFILE]\n"
+>  	printf "%b" "       ${SELF} [OPTIONS] menu [KCONFIG]\n"
+>  	printf "%b" "\nPositional arguments:\n"
+>  	printf "%b" "build\t\t\tCheck out repositories and build target.\n"
+>  	printf "%b" "checkout\t\tCheck out repositories but do not build.\n"
+>  	printf "%b" "dump\t\t\tCheck out repositories and write flat version\n"
+>  	printf "%b" "    \t\t\tof config to stdout.\n"
+> +	printf "%b" "lock\t\t\tCreate and update kas project lockfiles\n"
+>  	printf "%b" "shell\t\t\tRun a shell in the build environment.\n"
+>  	printf "%b" "for-all-repos\t\tRun specified command in each repository.\n"
+>  	printf "%b" "clean\t\t\tClean build artifacts, keep sstate cache and " \
+> @@ -63,9 +67,7 @@ usage()
+>  	printf "%b" "--runtime-args\t\tAdditional arguments to pass to the " \
+>  			"container runtime\n"
+>  	printf "%b" "\t\t\tfor running the build.\n"
+> -	printf "%b" "-d\t\t\tPrint debug output (deprecated, use -l debug).\n"
+>  	printf "%b" "-l, --log-level\t\tSet log level (default=info).\n"
+> -	printf "%b" "-v\t\t\tSame as -d (deprecated).\n"
+>  	printf "%b" "--version\t\tprint program version.\n"
+>  	printf "%b" "--ssh-dir\t\tDirectory containing SSH configurations.\n"
+>  	printf "%b" "\t\t\tAvoid \$HOME/.ssh unless you fully trust the " \
+> @@ -80,28 +82,39 @@ usage()
+>  		    "\t\t\t(default for build command)\n"
+>  	printf "%b" "--repo-rw\t\tMount current repository writeable\n" \
+>  		    "\t\t\t(default for shell command)\n"
+> +	printf "%b" "-h, --help\t\tShow this help message and exit.\n"
+>  	printf "%b" "\n"
+>  	printf "%b" "You can force the use of podman over docker using " \
+>  		    "KAS_CONTAINER_ENGINE=podman.\n"
+> -	exit 1
+> +
+> +	exit "${EXIT_CODE:-1}"
+>  }
+>  
+> -fatal_error(){
+> +fatal_error()
+> +{
+>  	echo "${KAS_CONTAINER_SELF_NAME}: Error: $*" >&2
+>  	exit 1
+>  }
+>  
+> -warning(){
+> +warning()
+> +{
+>  	echo "${KAS_CONTAINER_SELF_NAME}: Warning: $*" >&2
+>  }
+>  
+> +debug(){
+> +	if [ -n "${KAS_VERBOSE}" ]; then
+> +		echo "${KAS_CONTAINER_SELF_NAME}: Debug: $*" >&2
+> +	fi
+> +}
+> +
+>  trace()
+>  {
+>  	[ -n "${KAS_VERBOSE}" ] && echo "+ $*" >&2
+>  	"$@"
+>  }
+>  
+> -enable_isar_mode() {
+> +enable_isar_mode()
+> +{
+>  	if [ -n "${ISAR_MODE}" ]; then
+>  		return
+>  	fi
+> @@ -118,7 +131,8 @@ enable_isar_mode() {
+>  	fi
+>  }
+>  
+> -enable_oe_mode() {
+> +enable_oe_mode()
+> +{
+>  	if [ "${KAS_CONTAINER_ENGINE}" = "podman" ]; then
+>  		# The container entry point expects that the current userid
+>  		# calling "podman run" has a 1:1 mapping
+> @@ -126,7 +140,23 @@ enable_oe_mode() {
+>  	fi
+>  }
+>  
+> -run_clean() {
+> +enable_unpriv_userns_docker()
+> +{
+> +	if [ -f /etc/os-release ] && grep -q 'NAME="Ubuntu"' /etc/os-release &&
+> +	   [ -f /proc/sys/kernel/apparmor_restrict_unprivileged_userns ] &&
+> +	   [ "$(cat /proc/sys/kernel/apparmor_restrict_unprivileged_userns)" = "1" ]; then
+> +		if [ -f /etc/apparmor.d/rootlesskit ]; then
+> +			debug "AppArmor restricts unprivileged userns, using \"rootlesskit\" profile"
+> +			KAS_RUNTIME_ARGS="${KAS_RUNTIME_ARGS} --security-opt apparmor=rootlesskit"
+> +		else
+> +			warning "AppArmor restricts unprivileged userns but no suitable apparmor " \
+> +			        "profile found. Consider setting apparmor_restrict_unprivileged_userns=0"
+> +		fi
+> +	fi
+> +}
+> +
+> +run_clean()
+> +{
+>  	if [ -n "${KAS_ISAR_ARGS}" ]; then
+>  		# SC2086: Double quote to prevent globbing and word splitting.
+>  		# shellcheck disable=2086
+> @@ -149,7 +179,17 @@ run_clean() {
+>  	fi
+>  }
+>  
+> -set_container_image_var() {
+> +KAS_GIT_OVERLAY_FILE=""
+> +kas_container_cleanup()
+> +{
+> +	if [ -f "${KAS_GIT_OVERLAY_FILE}" ]; then
+> +		trace rm -f "${KAS_GIT_OVERLAY_FILE}"
+> +	fi
+> +}
+> +trap kas_container_cleanup EXIT INT TERM
+> +
+> +set_container_image_var()
+> +{
+>  	KAS_IMAGE_VERSION="${KAS_IMAGE_VERSION:-${KAS_IMAGE_VERSION_DEFAULT}}"
+>  	KAS_CONTAINER_IMAGE_NAME="${KAS_CONTAINER_IMAGE_NAME:-${KAS_CONTAINER_IMAGE_NAME_DEFAULT}}"
+>  	KAS_CONTAINER_IMAGE_PATH="${KAS_CONTAINER_IMAGE_PATH:-${KAS_CONTAINER_IMAGE_PATH_DEFAULT}}"
+> @@ -158,8 +198,10 @@ set_container_image_var() {
+>  }
+>  
+>  KAS_WORK_DIR=$(readlink -fv "${KAS_WORK_DIR:-$(pwd)}")
+> -# KAS_WORK_DIR needs to exist for the subsequent code
+> -trace mkdir -p "${KAS_WORK_DIR}"
+> +if ! [ -d "${KAS_WORK_DIR}" ]; then
+> +	fatal_error "KAS_WORK_DIR '${KAS_WORK_DIR}' is not a directory"
+> +fi
+> +
+>  KAS_BUILD_DIR=$(readlink -fv "${KAS_BUILD_DIR:-${KAS_WORK_DIR}/build}")
+>  trace mkdir -p "${KAS_BUILD_DIR}"
+>  
+> @@ -192,6 +234,7 @@ KAS_RUNTIME_ARGS="--log-driver=none --user=root"
+>  case "${KAS_CONTAINER_ENGINE}" in
+>  docker)
+>  	KAS_CONTAINER_COMMAND="docker"
+> +	enable_unpriv_userns_docker
+>  	;;
+>  podman)
+>  	KAS_CONTAINER_COMMAND="podman"
+> @@ -269,11 +312,6 @@ while [ $# -gt 0 ]; do
+>  		KAS_REPO_MOUNT_OPT="rw"
+>  		shift 1
+>  		;;
+> -	-v | -d)
+> -		KAS_VERBOSE=1
+> -		KAS_OPTIONS_DIRECT="${KAS_OPTIONS_DIRECT} -d"
+> -		shift 1
+> -		;;
+>  	-l | --log-level)
+>  		if [ "$2" = "debug" ]; then
+>  			KAS_VERBOSE=1
+> @@ -285,6 +323,9 @@ while [ $# -gt 0 ]; do
+>  		echo "${KAS_CONTAINER_SELF_NAME} $KAS_IMAGE_VERSION_DEFAULT"
+>  		exit 0
+>  		;;
+> +	-h | --help)
+> +		usage 0
+> +		;;
+>  	--*)
+>  		usage
+>  		;;
+> @@ -293,7 +334,7 @@ while [ $# -gt 0 ]; do
+>  		shift 1
+>  		break
+>  		;;
+> -	shell)
+> +	shell|lock)
+>  		KAS_REPO_MOUNT_OPT_DEFAULT="rw"
+>  		KAS_CMD=$1
+>  		shift 1
+> @@ -459,6 +500,22 @@ set -- "$@" -v "${KAS_REPO_DIR}:/repo:${KAS_REPO_MOUNT_OPT}" \
+>  	-e KAS_BUILD_DIR=/build \
+>  	-e USER_ID="$(id -u)" -e GROUP_ID="$(id -g)" --rm --init
+>  
+> +if git_com_dir=$(git -C "${KAS_REPO_DIR}" rev-parse --git-common-dir 2>/dev/null) \
+> +	&& [ "$git_com_dir" != "$(git -C "${KAS_REPO_DIR}" rev-parse --git-dir)" ]; then
+> +	# If (it's a git repo) and the common dir isn't the git-dir, it is shared worktree and
+> +	# we have to mount the common dir in the container to make git work
+> +	# The mount path inside the container is different from the host path. Hence, we over-mount
+> +	# the .git file to point to the correct path.
+> +	KAS_GIT_OVERLAY_FILE=$(mktemp)
+> +	sed "s|gitdir: ${git_com_dir}/|gitdir: /repo-common/|" "${KAS_REPO_DIR}/.git" > "${KAS_GIT_OVERLAY_FILE}"
+> +	set -- "$@" -v "${git_com_dir}:/repo-common:${KAS_REPO_MOUNT_OPT}" \
+> +		-v "${KAS_GIT_OVERLAY_FILE}:/repo/.git:ro"
+> +	# if the workdir is the same as the repo dir, it is the same shared worktree
+> +	if [ "${KAS_WORK_DIR}" = "${KAS_REPO_DIR}" ]; then
+> +		set -- "$@" -v "${KAS_GIT_OVERLAY_FILE}:/work/.git:ro"
+> +	fi
+> +fi
+> +
+>  if [ -n "${KAS_SSH_DIR}" ] ; then
+>  	if [ ! -d "${KAS_SSH_DIR}" ]; then
+>  		fatal_error "passed KAS_SSH_DIR '${KAS_SSH_DIR}' is not a directory"
+> @@ -484,7 +541,7 @@ if [ -n "${KAS_AWS_DIR}" ] ; then
+>  fi
+>  if [ -n "${AWS_WEB_IDENTITY_TOKEN_FILE}" ] ; then
+>  	if [ ! -f "${AWS_WEB_IDENTITY_TOKEN_FILE}" ]; then
+> -		echo "Passed AWS_WEB_IDENTITY_TOKEN_FILE '${AWS_WEB_IDENTITY_TOKEN_FILE}' is not a directory"
+> +		echo "Passed AWS_WEB_IDENTITY_TOKEN_FILE '${AWS_WEB_IDENTITY_TOKEN_FILE}' is not a file"
+>  		exit 1
+>  	fi
+>  	set -- "$@" -v "$(readlink -fv "${AWS_WEB_IDENTITY_TOKEN_FILE}")":/var/kas/userdata/.aws/web_identity_token:ro \
 
-It looks to me like you can customize the output folders via various
-command line options when calling ltp (-g, -l, -C, -T, ...). If that
-becomes too unhandy or if the script is not consistent in this regard,
-we could package LTPROOT/output and LTPROOT/result as link to a writable
-folders.
+Thanks, applied both as one patch to keep the update atomic as in the past.
 
 Jan
 
->=20
-> Please correct me if I am wrong. After your confirmation I will re-order
-> the v1 patches and send v2.
->=20
-> Thanks and regards,
-> Sai Ashrith
->=20
->=20
-> ------------------------------------------------------------------------
-> *From:* Jan Kiszka <jan.kiszka@siemens.com>
-> *Sent:* Tuesday, February 4, 2025 6:51 PM
-> *To:* ashrith sai(=EF=BC=B4=EF=BC=B3=EF=BC=A9=EF=BC=B0) <Sai.Sathujoda@to=
-shiba-tsip.com>; cip-
-> dev@lists.cip-project.org <cip-dev@lists.cip-project.org>
-> *Cc:* dinesh kumar(=EF=BC=B4=EF=BC=B3=EF=BC=A9=EF=BC=B0 TMIEC ODG Porting=
-) <dinesh.kumar@toshiba-
-> tsip.com>; hayashi kazuhiro(=E6=9E=97 =E5=92=8C=E5=AE=8F =EF=BC=A4=EF=BC=
-=AD=EF=BC=A5 =E2=97=8B=EF=BC=A4=EF=BC=A9=EF=BC=A7=E2=96=A1=EF=BC=AD=EF=BC=
-=B0=EF=BC=B3=E2=97=8B=EF=BC=AD=EF=BC=B0=EF=BC=94)
-> <kazuhiro3.hayashi@toshiba.co.jp>
-> *Subject:* Re: [isar-cip-core v1 2/3] rules.tmpl: Make ltp rules file as
-> template to make installation path configurable
-> =C2=A0
-> On 03.02.25 12:53, Sai.Sathujoda@toshiba-tsip.com wrote:
->> From: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
->>=20
->> Signed-off-by: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
->> ---
->>=C2=A0 recipes-core/ltp/files/debian/{rules =3D> rules.tmpl} | 2 +-
->>=C2=A0 1 file changed, 1 insertion(+), 1 deletion(-)
->>=C2=A0 rename recipes-core/ltp/files/debian/{rules =3D> rules.tmpl} (80%)
->>=20
->> diff --git a/recipes-core/ltp/files/debian/rules b/recipes-core/ltp/file=
-s/debian/rules.tmpl
->> similarity index 80%
->> rename from recipes-core/ltp/files/debian/rules
->> rename to recipes-core/ltp/files/debian/rules.tmpl
->> index 06b9070..918b443 100755
->> --- a/recipes-core/ltp/files/debian/rules
->> +++ b/recipes-core/ltp/files/debian/rules.tmpl
->> @@ -1,7 +1,7 @@
->>=C2=A0 #!/usr/bin/make -f
->>=C2=A0 export DEB_CFLAGS_MAINT_APPEND=C2=A0 =3D -Wall=C2=A0 -Wno-format-s=
-ecurity
->>=C2=A0=20
->> -LTP_CONFIGURE_FLAGS =3D --prefix=3D/opt/ltp
->> +LTP_CONFIGURE_FLAGS =3D --prefix=3D${LTP_INSTALL_PATH}
->>=C2=A0=20
->=20
-> Missing default value for LTP_INSTALL_PATH - comes with patch 3. The
-> whole series is in inverse order, in fact.
->=20
-> But making this a build-time configuration will mean that there might be
-> two binary packages called "ltp-full" that are actually not the same
-> anymore. Can't we select a path that is writable for all our images? Or,
-> even better, can't we fix ltp to separate installation from workdir?
-> BTW, does it matter where this workdir is located, on persistent storage
-> or on tmpfs?
->=20
-> Jan
->=20
-> --=20
-> Siemens AG, Foundational Technologies
-> Linux Expert Center
-
-
---=20
+-- 
 Siemens AG, Foundational Technologies
 Linux Expert Center
 
