@@ -1,485 +1,285 @@
-Return-Path: <clara.kowalsky@siemens.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD49AC02192
-	for <webhook@archiver.kernel.org>; Fri,  7 Feb 2025 07:39:00 +0000 (UTC)
-Received: from DUZPR83CU001.outbound.protection.outlook.com (DUZPR83CU001.outbound.protection.outlook.com [52.101.67.30])
- by mx.groups.io with SMTP id smtpd.web11.64375.1738913931872451964
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E33C02196
+	for <webhook@archiver.kernel.org>; Fri,  7 Feb 2025 09:37:11 +0000 (UTC)
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.63])
+ by mx.groups.io with SMTP id smtpd.web11.65716.1738921026916222560
  for <cip-dev@lists.cip-project.org>;
- Thu, 06 Feb 2025 23:38:52 -0800
+ Fri, 07 Feb 2025 01:37:07 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=IWVU8/Er;
- spf=pass (domain: siemens.com, ip: 52.101.67.30, mailfrom: clara.kowalsky@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=vDr7ABlr;
+ spf=pass (domain: siemens.com, ip: 40.107.22.63, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=i2HdLrRA7n8PYoIS5cwhTaDWM1lq8Eb1z+bf9Bo0DyQtMyaKBJHaNqDL5f6e2bwvs11+88yovmpM4GjeyqbG/Gpx/HiaHNM54RPBu0O62QAQEhi/BZPZIqj7NV0ga3WvSPDQQZ5a1BKO/jDEZ6gW7p2fLqm5mK5h/vx9VQpQGc77TDyHisIVlxoc+un6BT9qZcalEPRKaytCp9YfK7IX7ArVojpw7w6L1VePDdEC/DQxQOSvSfIWZKCoxKzPVK86XOMn2Sh6HhjkOBscMUWich5WEK4nlRd4H/9+8Dyfh3NcXZSgTTV8Ffv5ivBYrLaJZ2Pwa8FqDar6zZVxwL8MuA==
+ b=GdPq+5PGMt3s8VGhQ4fbnAL7S8BhZ6BaF7MWqARm92jianedVSKb7JJgd9ZmKre/11428A5qfT+u9/2XE1x4Z+43Ybq263z7dWpFo30ssrktB/RMDB31YzibOsfCkMCz6Elx3cJPxPpgiUIt2FcTG0T3IomuA5IZVJkzEb3oBrIjHixxNPEpupEeydZcYwkmfOQ/w6ZlItMmBLqeqpk/SrmLDiJI15ShlO/iQuzH3yEkmD/DVxbpt1O0xfJsjLPBA9+dIgCpf8zS7atxAiPI+OGYksd7j1DWlXklMm71gQOG3Udb+OVvy2oGLZxe6ugZOO8fuQm50d/7U/NWIQsIoQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5haJot7C3ZJCQiZ0FtPycZYwPOEghGb2xUr5LxSLMg4=;
- b=xEwncWAXOtQUmzcd/Tvz4IXqMcCoPXz4WAY+eTzpIf23vfwFmsuqiSaFvZbPqAXdsxqMbI330z7hPD2M6L0RHc0pTSimJg1FO0NZHOQSqZdkOjmb2iC5cN6GLezpax9puemvo3hoRxk0orXN10tjeQqFsRKE69vTh/gJ0Bu7z0wZKHDrfFlW0JS6yClesGLEgAdRCzAklJyxfYSgmrIjdX319BayWPESUuYS+UU7KWh7GC5K3n1bNT32I/8mPLyN/LbiVzDY3vuWYDfHUrKLkwHYB7RhqSybyJRQ01xGFViI1+30FYsqmjx4FXzsleuvMcNNPn1ssKj+m6GxUp0Lvg==
+ bh=k8kWGVkST3LJaWYecrh14/oyy/yMH4J0XUJnDSx+tN0=;
+ b=O2VYV2JwH1J4dKp4TUKZ8XaCrUX4cqqs3SQPDOQB5OY33+Llbwkl9gaNa0UKHVxbCk68mkbpw7Qvqy6C9kVWisFK9zTh+Jt6pkMK190Ex00PDPYnXxbdP1iEmTjbw1rJusmrf1mjNzuHTl9wUPAJwn9m1YSdH9au/NTL53FaHg9TGYKxugzI5lZJqV0DS9SIIAMX7FhenQgVUYCfOpCKCv+B18a6tTB2xNYn/JX2oEoJO7rbrZA7Hb4lu0oN6t6QrFq7jqQVNMyyiwzKsIMBLj7uurVLlmoKMDHbHZ53z/geKGZ0dQecYO4qkoBLhV+sds/lZpr1uYCNzFgHp2yxRw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5haJot7C3ZJCQiZ0FtPycZYwPOEghGb2xUr5LxSLMg4=;
- b=IWVU8/EraZzO7tNPYSFQ444+tVH22+ByYxhTS4BSPeB7VJ2jfjxlmdsX+8j92UbtYG9tuyaV9eJxYCjPdq41SySFL0bCeaI2STFrxFJwoYZJb3hptLY1LLXFv8G5mC1hXvh8gM3rgL0DXT46NkNXz0u2AUdIdObEMessCgvqusZtzKnY5QvIqetIaHWNvDq1G+HQ1szp75Nw30XSIJvcnkhd1n7fbVgg6EnrK4k77w/EiOSzQL+QNeuXMbvmaG7kWGBMRf0pq31HXtPEQJp4PsFAD6Hc0YC+UVc5KLmIEVfdL5H5yqjlar2z9GufsJ0nkuZfWHdWI07Knst0CuQ/eg==
+ bh=k8kWGVkST3LJaWYecrh14/oyy/yMH4J0XUJnDSx+tN0=;
+ b=vDr7ABlrXIT6c1jLF8kZMUbyezWEB9rsRUyCe8Yz4GVpMuoglbruycBIrP+1pLbJkNo6PVOJcsGZHjlDocDpbtSc1kaUoMtWx/pJa9t3NOI0pc3vy93QSVnmLCg8OGAbR4VRu6ga18X3p2yd9wkEhWqzdL6WMYfgMzM9k9BdsrvIwCbrOHnTMRre3STdMizZkE7Pc6zDmO5ryiAfHcuSY/kBjBwjifnEx2fLthX4P3RwKVZbikfaFNlCesjq2oPyn8PEibxtc36aIcEITvzeXoHQJo8J7xylo29rGYvwiQ/F7otjwWkbBMSlHMETpcI7UVqztV7Hn08DQDmRksa49Q==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS5PR10MB8173.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:672::17)
- by PRAPR10MB7621.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:294::14) with
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by PA2PR10MB8618.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:41b::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.8; Fri, 7 Feb
- 2025 07:38:47 +0000
-Received: from AS5PR10MB8173.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::184c:3bea:5551:1c43]) by AS5PR10MB8173.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::184c:3bea:5551:1c43%5]) with mapi id 15.20.8422.010; Fri, 7 Feb 2025
- 07:38:47 +0000
-Message-ID: <110d17f1-40e0-4fca-8006-5eef478695ee@siemens.com>
-Date: Fri, 7 Feb 2025 08:38:46 +0100
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.9; Fri, 7 Feb
+ 2025 09:37:03 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408%6]) with mapi id 15.20.8445.005; Fri, 7 Feb 2025
+ 09:37:03 +0000
+Message-ID: <f830f7a5-dfc5-4949-be13-4183bde0f4a1@siemens.com>
+Date: Fri, 7 Feb 2025 10:37:02 +0100
 User-Agent: Mozilla Thunderbird
-From: Clara Kowalsky <clara.kowalsky@siemens.com>
-Subject: Re: [cip-dev] [isar-cip-core][PATCH] initramfs-crypt-hook: Optimize
- disk encryption in combination with expansion of last partition
-To: "Heinisch, Alexander (FT RPD CED SES-AT)"
- <alexander.heinisch@siemens.com>,
- "Kiszka, Jan (FT RPD CED)" <jan.kiszka@siemens.com>,
- "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-References: <20250120123425.79292-1-alexander.heinisch@siemens.com>
- <305c5d01-8f9d-4bb3-b23e-330c6322eebd@siemens.com>
- <f8eb2635-8b20-4fac-b933-b80fa9ba404c@siemens.com>
- <AM7PR10MB33204CA0865C72F2B159B64A86EC2@AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM>
+Subject: Re: [isar-cip-core] README.security-testing.md: Update steps to
+ verify IEC layer on security image
+To: Sai.Sathujoda@toshiba-tsip.com, cip-dev@lists.cip-project.org
+Cc: dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
+References: <20250205133415.72913-1-Sai.Sathujoda@toshiba-tsip.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
 Content-Language: en-US
-In-Reply-To: <AM7PR10MB33204CA0865C72F2B159B64A86EC2@AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: FR3P281CA0111.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a3::14) To AS5PR10MB8173.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:672::17)
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ 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
+In-Reply-To: <20250205133415.72913-1-Sai.Sathujoda@toshiba-tsip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0153.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:ba::14) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS5PR10MB8173:EE_|PRAPR10MB7621:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2241b244-8183-4b0e-d313-08dd474a7512
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PA2PR10MB8618:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3e49afb2-b109-45b0-d10a-08dd475afa64
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|376014|1800799024|366016|7053199007|13003099007;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?zh1Wllcm6NBjRqzJDhNelSmWhhkD2MB2co3uUfrDl1IEq7gWjBZ1a24cnkx6?=
- =?us-ascii?Q?auCIxZn3d8K+3ehoe+DUy+KSydtgXB3P5bcK/a44cYJZNECdJjKYxhyz/w8U?=
- =?us-ascii?Q?NeUnLAr714TFLJ0q9s3ay9QBclh6sAp6uRhYYFppP2aqnfQeg0Ku/8kFvJnK?=
- =?us-ascii?Q?Ni85cgAexTtSAEcihvNe2WQZftOvQiDGOhR4+mE8TQrUSnSTu5m3zPyiOkLb?=
- =?us-ascii?Q?YIt0vdHbpgjWIbohlJv2cIyO7PvwQWN0iPtVUFE09LG7RJ9Q/1uV17iCZXij?=
- =?us-ascii?Q?Ai9aLrDlKMXwmhoeWSO6QckBvFVidDQHOGJGCLpFxLA5cGMOAGUMYVmR8bzX?=
- =?us-ascii?Q?j0X1Mf8QbRs8cdQgNez9UX2GGMflEiFlN5UlTtaFETgoeoj5NTeue9AwItpn?=
- =?us-ascii?Q?o/t2yUO/6YQK1syYk7ocLfiR3eIbm7MDnP5Fltrz1vIS0ciq2Q8weFpib13s?=
- =?us-ascii?Q?P/8ualSxBPTKn68W4HzEegby559kI+yzBSW1NNzw1wSUDELASgGGrovQYpj8?=
- =?us-ascii?Q?bNec/Fs30wtwDBIOPmuu+eOFgIEaSOqytRQpk095xR1jH40vvL5RpIUkF9ha?=
- =?us-ascii?Q?U8mZlJUvmchBiuM+IrZ7dAAb++Vn3j9GejmebVuS2AM34xGizXQGYM6vqeWq?=
- =?us-ascii?Q?9h8DTGeEf99qmU+tG1Dscb+pVicTIzidewBw3lnUNWPOpso5rifMJSxJwFS2?=
- =?us-ascii?Q?tCvdztGmMHM5lTGMX+83sRMR0KyxJcyMwm2xNcYjUy6F8IXFeGZfCJmA0R3Y?=
- =?us-ascii?Q?xgcTkGZe/CMsAyX3DiTHdatnypajBzsJPkOR9Y3k4VcvPjrEzOUE0AUTxfJ4?=
- =?us-ascii?Q?0bH1DNeRJJWDC7G3DdWJ88l+z0CBQBWtMww6d6aWoHxuMHKOkCC4r0vXH9a0?=
- =?us-ascii?Q?vZPLKNwHOJKFHvNWHh6tzngxCXwTzWPmDBbSkNvGkUmbAtW2LupyeZz2olcv?=
- =?us-ascii?Q?k7IseJvKN2a49kH2WY0H/VeiNNirSNjNj9PTB6e6W5sZPjOnF+xKGJgb1J+k?=
- =?us-ascii?Q?u/1NIARW36/80WgBVb/qXRspW90ELbhgNHYSySmA4bG9o+HvRiO/cXLz2TTz?=
- =?us-ascii?Q?SeIOIyP5FJMj5OjI5L6EEx5Ok6ITh0ytjQ9hvMmfPwhdKSmM5TmtbEFlK9E5?=
- =?us-ascii?Q?xxZiHTub7+Y5lOqWVY6Z8S5vjXo/CEqNO0iaqheZ02YC6dRra9Pa0pVPd6at?=
- =?us-ascii?Q?wsSyAZDfKJDmIRVyhCw+zZiEBUp23Sc2EaHf5fWNN79YJDtpaDvZqrzK00eb?=
- =?us-ascii?Q?ON0fQlFF0hS8SczhyKf+6ODjrNFSriPM48FgtwbQq0Ix9/RYNY4B/Tf1rnnn?=
- =?us-ascii?Q?UQa2AKB0UO37Q8W6kQXdIUpbmLaTszom0ET2qr6u922Sffwx/H9Ow3SYp7Jk?=
- =?us-ascii?Q?EX7eB/fh1Qig/+EoBFuJhBnF9lx1?=
+	=?utf-8?B?TEVVU2FJVkJFTTRUL1I1OHVxaFUzeFhha2lWeHlpcUFrL1RsQTZXSGlMVGtm?=
+ =?utf-8?B?ZTJzblRpMU1sMXNKV0kwZGtmUG5CcklxdURHSDBmZGtNNWpwVHdTWVF3NFV4?=
+ =?utf-8?B?QTdSK2xoVEI1UEthY1pWdUE5Z2RtdmM1ZWNzbzhHMzBXM2w4cVpVYnhnN0Jy?=
+ =?utf-8?B?RlVMYnNkTlpoKytKYVQ3MDRDOXVpSHdtZTBVVUxlTFlpKzVUdllsVFFnNUFp?=
+ =?utf-8?B?TGJVaU5vRWZSRGRjNW00TUpSenk1VXd5RDlUdHB3ek5mMUVwdUZzU08wNTlk?=
+ =?utf-8?B?TXFkSXhZb2M4aDF2RWJVZzErWmc1ZjROYTF4UXlDcVJVeHk5Z2xCVWdqTUl4?=
+ =?utf-8?B?Z3ltNGtrN01nZmhZSnhIOEhtc2pTV0lCZWZFWjJHa2JwZkxMNjk5cmt1eERv?=
+ =?utf-8?B?djVSV1JWQmxlMG53Um9TY1AzNmNsV25taTkyU1hmRnN0Ym0rM0Jab29sR3Bv?=
+ =?utf-8?B?Z2RhR29Vakd2TDdrSzcwYStuUThMOERuSEJ2L0NsNHU0b2dJMTZoUldtcTNM?=
+ =?utf-8?B?QkoyOTQ3VVNPcXZpZUExQ29Tcm5WMmFMM0VRZDNCQkpTb1p6bGk1a2IzMENC?=
+ =?utf-8?B?eVYrVU1VMDNGZFp5Q3Z6RWxvK0J4UTFTa1AvTDBOMlVGTWtOdDdJb3pjdEFQ?=
+ =?utf-8?B?U0RnaGpUUnBjMVJSN3hhZncxZWpYTm4rdkd3aVJXNUEzWG5KRjByUGx4L2NF?=
+ =?utf-8?B?YmhEeWdxMXdOQ09rZkQraWNTcjMwOTEySkJzaG1CVS81aHhhTUY3Nk5WanJh?=
+ =?utf-8?B?YmMzTXdKeVRJeEpDL01IZkRpQ2tpSWlZcXgyTW1xZGNyeVROSTBXWUFYVWgy?=
+ =?utf-8?B?b1BwWXJzcVBDd0lTcmVsRmFVV0VuNERiV1pWM01kREtpOW5oeFA2V1hlaSta?=
+ =?utf-8?B?dDV3N2RLQk93RU15eTVBZGlJaGlITWVpUHpHYlJpMDdaMmlXRzNVdjdhVTBD?=
+ =?utf-8?B?TURHMDY5NXlYVlg1d3lFRmF1MFdvVFo3ZTcyMzZHQ1lVY2RBVmxacmQvMkFD?=
+ =?utf-8?B?dEJwSThWY0d6RXJPTDFIbVdRYll4VVd5b0V5a3RIUFJEbVBpbTJjMnZzNEpx?=
+ =?utf-8?B?T3gwaWdUbTRmUWdaWUlQK3hDdFJiWjBPRGJvcmI0SlFDaUVHdVhTdDdnbkVz?=
+ =?utf-8?B?NWprRlBMK291VWJwUUpIOTFXV0VyeW00aXR6TGF1WUIzKzRVK3lQQ21pbmda?=
+ =?utf-8?B?NEFvNlN4aWNaS2o5dllVbXRaMjNvM0liVGd3ZDMybGN4a2xnMU55U0kvT2Vz?=
+ =?utf-8?B?N2ljVzU3ZFNtdlZiWmRscXJuajQ2YlZETXhENUlJVDRIbnF1UWw4YmNEcXl4?=
+ =?utf-8?B?d1k5K3c1QnVuMnJDWlVZN29ZVzdxbDRrQjg1czBOeTI2NmZJUGYrWlpxdG42?=
+ =?utf-8?B?c1BRUHBVcTVITCsxMmJhMlpmUGVSL1dGVmdmVzZTMHoyZlpBVEZYN3ZCRndT?=
+ =?utf-8?B?Mi9wOGp1c2hxT1pzcXBsejR1bTdmbWs1b29LYzFMS0FhNGx3Z0dYVGZRVDNH?=
+ =?utf-8?B?dmV0ZDZpOG15Z2hNcmgyWGVONW5qRTNHU1lwNEl1T09yeEtFLzlMeklmS2dS?=
+ =?utf-8?B?Y0EzWjduWkZKM1dCS0Q3U25DeUtuQ3cwQndBZjIxdmF2K0xYNjBLTGoyZjZR?=
+ =?utf-8?B?YzVocHh0MGxpNWkrQUwraDVLUTY5RHFVL0lvTjNMWW95aElYMkJOL0ZOc0NW?=
+ =?utf-8?B?d2lKNmg5VnhqWVNwQUlyRTVJMytGYU5HcXI3UDFnRlNhZ21aSmVRSFRsM3BL?=
+ =?utf-8?B?MVo0UHNiQXdhbEFlR3E1QVJJaTdNdmsrcHNvRlArQVlQQVpJM1RpQ1ZrdGhw?=
+ =?utf-8?B?cUtYYk5jblpQc3phZ1dpYVJibmlka29xcjZqYnFGeDloRkFPRnc4cnB3K0xR?=
+ =?utf-8?Q?VuTLAEI7OzmF6?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS5PR10MB8173.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007)(13003099007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?fPt2ftzXgPz7CQQh7N/SQ2a4YWCHPG8iuX7MwQGu1O5f5TdaR0N1SuSM45Yo?=
- =?us-ascii?Q?1KDabA1gPfYPIQvsB6guCBB2xbZwd6Hwq7YDaqqEfibXyt6HG91oURYe2ngM?=
- =?us-ascii?Q?DSHWkG0Iq272b0JKNWtCqjNpfDP9riuVB0xYbjM5HQWU5PP0MjO+Hvn15R4V?=
- =?us-ascii?Q?Z7NGKYmHDGqLFtlGl5uKh2fIByBalL8pryLzsiOu4Gcq7pubIvi8AmHcmz66?=
- =?us-ascii?Q?L5yS52d2SHDPvEO/OKqL95GzLuy5UGXiiQqDP565u5BPc6aIHg8dF9/zqC0h?=
- =?us-ascii?Q?EN5fEnPqZWTZo841/H4yu3gG6b6rCWxUnw09IPUvOXSJnJEYz5iqkNX/Ds4I?=
- =?us-ascii?Q?5Uma/mSaB096w3cTji9lBW2mDhrdEr8rFDiD26yXv19JzYG08jn+tb1NBhx5?=
- =?us-ascii?Q?NzUoDJkYuhRk7p2ZzYaeApdeZCpzeuv/3e1SG4jMuQEwAixi7OrgNfhVZNgX?=
- =?us-ascii?Q?4sY6PonmaofvV+PZVmUUspnkxeaCwZLIqybJJBMm50fTA0uSNQWo4wyH6UF+?=
- =?us-ascii?Q?SVA4ozFuCWuQ+I6AISDyT5ildpXQqjNNCglfdmOwD/07GsJt7g5EpK/6N3cC?=
- =?us-ascii?Q?jZ6aEePdbwT2kfDVHfc/LtH9XQDRmWU3uvI5zGSQM3oF+1/DyfikQELaH5dq?=
- =?us-ascii?Q?UaCRPDOsJr0qDmiMtNy1KoAz071XTR1Fp1eJPvkWCHRpKnIeKWbQdAoltpQv?=
- =?us-ascii?Q?yn8tixSuNR/bL5s4pSDDC0IGxml+3JYEtrmpaAL3SBTSurg+YkYOjY031J+l?=
- =?us-ascii?Q?doUrpqBTL5JGa7zpDalq0XMv3UuTxjSfEAg2UssyL3SYuPH5dM4rjF3Av9XW?=
- =?us-ascii?Q?+VMbWKumV8kMeqvDJJYDXBr6WnA08gOyK1/2X+Ssd4ntSxm/PLNlmW3FQLW5?=
- =?us-ascii?Q?DWaJ36sb9XOJ+VLmAxovWQhjAdZ7ulbGbBXRJSJ23c1xMY2Zrw3sKYtrxCOz?=
- =?us-ascii?Q?fsXfeegf+TrQbq1GlUkolv5SXfHgmGnI9wzU7lD2wIO1RjE14coyOjCqd19J?=
- =?us-ascii?Q?+URRlhQO5RsUD4cycCQw1Q4OmtjMZTIKC2YL9tFvHqFf0ZiQwb87f8auDIhg?=
- =?us-ascii?Q?6wXe+DpI85EEM6UMCmcKhpn9vIeEmYkG3Ar/3oiB7qduvGjzNKciFUjdsjdB?=
- =?us-ascii?Q?a1mG7wl0cF8C96FypGET3UVUytibppBfLLO19JTxW0sLltdWytPzwfbE3VUj?=
- =?us-ascii?Q?0RAsuqVfkTSSUeKTgEiJqIGF5CdZDyxhR0a1udcdWZCl/z/rlqpS88gn0pOi?=
- =?us-ascii?Q?4pYv9AFfXd+DzGbYMslwsV4dLaEdWIjzeWmT5LYghvG7JjkioHi44+KBEn37?=
- =?us-ascii?Q?0DxQMsHZsfLzLxbqnM0CwBHarngt+VA5FYNNYwmhdDpEN7MvdhmwwVjyhJZF?=
- =?us-ascii?Q?yEh5Lac4qm7tJ1GO9NKmEb0WZqe3xzomW/R0oQkaiGSk2sYmYR/m5gQsiuL+?=
- =?us-ascii?Q?otRTtyxSeQytH6jykUhMnY9grlq7h/3Gh2dD3BczogIJIHHhaUfGigKCsZI6?=
- =?us-ascii?Q?RI7u7vBLdn2vBWJi3XspaxfLOmspUkh5nMHm5Xqi1ps2HntY3BGe+/PDe9MF?=
- =?us-ascii?Q?b8vLg/N8UUIKuA1kro6nM+d79SqILzEmbgx31ubCCIfYfwMMcDrFPWxwLiTu?=
- =?us-ascii?Q?Nw=3D=3D?=
+	=?utf-8?B?WUNoK1VaK3FaSjlYM01uanFNTnVNaXhGKy95Qk01eUkzS2xoeU1ETkN3Qk42?=
+ =?utf-8?B?Uzd1elZ0ZWh5N05zSEpkSnM3aWlqWFNDUlBjcXRIVlhxSHU4Rlc5eUxET21a?=
+ =?utf-8?B?bzVPZW9OSWNkR3kzdHpCMERVTFRlRFhwMnZ4dE5nQWNkdjhBRno0UVYreU9l?=
+ =?utf-8?B?TVV2OXJZOHYxL1ltcnpPOXNyWDNCeGRZeUtKTWpod3BKVU9hVXNGT2hMeXJW?=
+ =?utf-8?B?SnhTWTJiWEZzYmhKZ0pqMFVQTlo2Nm5UUE9JbW16UjJXUGxrMFcrU24vSmVY?=
+ =?utf-8?B?RUFzNTd2Y1BtZVZYVm1UQlZ6NUtrcTAxN0pyeTd3d3JlMVhvdzB5ZG55UnJt?=
+ =?utf-8?B?R1oraTZNcCt4ZkplbURvWlNJakFvQkh1azZLSnpyVTd6cCtjTlZtdFpDbkpX?=
+ =?utf-8?B?NnlXdWtJbXFJVmsrNWpqdDhacGNnaHFCU1ZiWnp2REVuS092U01lQlkvRnVj?=
+ =?utf-8?B?N2w1U0RxRGdJZmNsVU03dU9FcXVXMFJqZlNtRnE1bWJnR2JGRjZvQ3lGNkJq?=
+ =?utf-8?B?UFlkTEozcC84MjQ4dk5Cb0JLOFZEZFJUTmJLeHEyRC9zRGd3akxoNVoxMWsx?=
+ =?utf-8?B?ZkJzRGZSZlBhcUxBSlhvZ2I1TnhvWUNtRXlXSlhRVS8wTFVXcHAwL21vMmVx?=
+ =?utf-8?B?MXM3V3U4bkJXUXdqM0trNGtjaHptOS9vRnQveGtXbGw0QWxyMGxSeUQvZTh4?=
+ =?utf-8?B?ZG5LTWJ0U2pMY2RMWlE1Y1RJRjgwMWpWTnV4SllnL3EyUFVlVkVLNE9ZNzc4?=
+ =?utf-8?B?Z2FjYnlTczM3WmlnSzh2eDhxc0N5MmNwWkJGYWhkYWNDNEJBNFM4Mkk2dFp3?=
+ =?utf-8?B?Z3V2NHRpNXJqRU91eSswb1llMkdvMThkNDUzdG5RZEVkVmVGVGl3Wm8wQUt6?=
+ =?utf-8?B?ZkpXM0JidkNza3JRZmlRYWw5WFB0Z3R6Uk9KTTByMkRoQWh2bXFZOENUaU5a?=
+ =?utf-8?B?bmFNR0I5cjZheDVlalVyVzg3QVV5WjZGaFp1WVo1VERuc3JMRXRtdVNMdGdv?=
+ =?utf-8?B?NlovUXEwcVNFR0NSVlFzQVgvcWIyb3FZMG0vR2piRkFRSzh3ZTM1Nk00T1ly?=
+ =?utf-8?B?TUtwaVFzYzZDazBmdUZNZTlkUEJqTFlqTHBJOUJFOWxOSE8yNmNGZmVNZWp3?=
+ =?utf-8?B?SnRINHJNNFNka0pDS2tzVWZ0eHdEaWVrc0QyaThab09ZZXRIWHdtQk8rb1ZN?=
+ =?utf-8?B?K0hnL0MxZU4vY1h3YlpyV094MlIvaTJZVmM4Q3RoQWRsTXc0MTg1VFN0U0Vw?=
+ =?utf-8?B?d2VpdVF6L00reHl3VnhtSHl4WjBxdEYwV0hENFZHM09pUDB3bG5nOHY0a2VW?=
+ =?utf-8?B?L0kzTllVUnVadXlUa3NEa2Q5RXJZUlJmbnhMK0xwYy9Ma205WlNaM3N5cnRH?=
+ =?utf-8?B?WVYyYVIxTkxTRVh4VTdyQ01uWWFXRkt4dmIvSmMxRTNvREVXODVFWVk5T3c4?=
+ =?utf-8?B?aFM0RWx0RW95UkpmUG1VdzFNZWpnS1dUS3pXWnlEeHBlcllJaGRxdXQwZ1hM?=
+ =?utf-8?B?NFR3RmRHT015TVVRZE5uYWx5SEJSZldxVS82SVNIK0k3QXRYZ0NqYlRhRU9W?=
+ =?utf-8?B?SHN5ay83dEJGWkVTWjBWbzZNSVBZUk96ZGY0aThZR0hNLzdyQXBjRHorODZr?=
+ =?utf-8?B?a2Z5QjEwS1o2eFE4UEpndjZ4ZFMxMS90SDR2dU8zQSt0RHJqWHNTeVg4UTdC?=
+ =?utf-8?B?NUlYZHFnbFM3bko3M3lmTE02NzM5MkxjQUxIT2ZCRUZDbHhtNGkwN3lNK3lV?=
+ =?utf-8?B?SVREZXJYdVhHdVh5RVB3QSs5eFJLV1JkNnBBN2dSU29NNFZ0cjNHR3pMNzhx?=
+ =?utf-8?B?MitjZWVDWldIUnZad3kyWFRzenhPWnI0eDhlUWVTZjNNYkxycTI4Mk54cmNQ?=
+ =?utf-8?B?UHExSHNiL29zZFZhUGxHaVBQMWFWeGdDclJnN09GMnpFRGdPYTIzbytObzBM?=
+ =?utf-8?B?N2IydHRSWDZtTEtpSWc5SVZ3a1BGai9FZjI2cjhvN2p4emNwTjh1bXBFNXNo?=
+ =?utf-8?B?VjZoRGJjVDVjYXVoYktIcW1odmVaSjFwL0NzUlQ2QnlPTEpNSExEdnltNis1?=
+ =?utf-8?B?Z3JnWENlMSttL0dNOGxqK2Nud2g3REpIdStqYkNBdllwdzcyUkxHUTNVQm0r?=
+ =?utf-8?Q?KEQuQFUp40/zuLl+SXz8dyJwM?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2241b244-8183-4b0e-d313-08dd474a7512
-X-MS-Exchange-CrossTenant-AuthSource: AS5PR10MB8173.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e49afb2-b109-45b0-d10a-08dd475afa64
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Feb 2025 07:38:47.5257
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Feb 2025 09:37:03.1334
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: N+OK3SIKCq3wA9yMrHqHu5ZmAxETP+BV762HQO3HMYWeBUfaqDea4Z3r79ameg9cXqISEy1WS7d8p6nMExMt4VYJwkouOwivX6rPXDEuFoY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PRAPR10MB7621
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1Mo3T6qPcqJzUk23y7bv6USdjXRXP8I+kQ7HuLBFcImJ2CMDXne8jj8kU/dPSdG5kaHuid/wl1L0pQ8pp09v5A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR10MB8618
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 07 Feb 2025 07:39:00 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17766
+ <cip-dev@lists.cip-project.org>; Fri, 07 Feb 2025 09:37:11 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17767
 
+On 05.02.25 14:34, Sai.Sathujoda@toshiba-tsip.com wrote:
+> From: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
+> 
+> Signed-off-by: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
+> ---
+>  doc/README.security-testing.md | 28 +++++++++-------------------
+>  1 file changed, 9 insertions(+), 19 deletions(-)
+> 
+> diff --git a/doc/README.security-testing.md b/doc/README.security-testing.md
+> index c9540be..213fc82 100644
+> --- a/doc/README.security-testing.md
+> +++ b/doc/README.security-testing.md
+> @@ -1,34 +1,24 @@
+>  # CIP security testing
+>  This document explains how to verify basic implementations of [CIP security requirements](https://gitlab.com/cip-project/cip-documents/-/blob/master/security/security_requirements.md) in the isar-cip-core security image using [cip-security-tests](https://gitlab.com/cip-project/cip-testing/cip-security-tests).
+>  
+> -# Pre-requisite
+> +# Pre-requisites
+>  - Necessary debian packages to implement CIP security requirements, include them in the recipe [cip-core-image-security.bb](recipes-core/images/cip-core-image-security.bb)
+>  
+>  - Pre configurations in the image, should be added in the `postinst` script of security-customizations [security-customizations/files/postinst](recipes-core/security-customizations/files/postinst)
+>  
+> -- To run `cip-security-tests` the image should need additional package `sshpass` and rootfs size should need atleast 5GB, add the below configuration in kas/opt/security.yml file
+> -    ```
+> -    local_conf_header:
+> -        security_testing: |
+> -            IMAGE_PREINSTALL:append=" sshpass"
+> -            ROOTFS_EXTRA="5120"
+> -    ```
+> -
+> -
+>  # Build CIP security Linux image
+>  Clone isar-cip-core repository
+>  ```
+>  host$ git clone https://gitlab.com/cip-project/cip-core/isar-cip-core.git
+>  host$ cd isar-cip-core
+>  ```
+> -Build Security Linux image by selecting necessary options
+> +Build Security Linux image by selecting necessary options. The board, Kernel version and Debian release options chosen below are shown as an example.
+>  ```
+>  host$ ./kas-container menu
+>      Select QEMU AMD64 (x86-64) as Target Board
+> -    Select Kernel 5.10.x-cip as Kernel Options
+> +    Select Kernel 5.10.x-cip as CIP Kernel version
+>      Select bullseye (11) as Debian Release
+> -    Select Flashable image as Image formats
+> -    Select Security extensions Options
+> +    Select Security extensions Option under Image features
+>  Save & Build
+>  ```
+>  # Boot the Linux image
+> @@ -41,22 +31,22 @@ host$ ./start-qemu.sh x86
+>  ```
+>  host$ git clone https://gitlab.com/cip-project/cip-testing/cip-security-tests
+>  ```
+> -- Add test user in Linux image to use while scp the `cip-security-tests`
+> +- Add test user in Linux image to scp and run the `cip-security-tests`
+>  ```
+>  image$ adduser test
+>  ```
+>  - Copy `cip-security-tests` to Linux image using scp command
+>  ```
+> -host$  scp -r -P 22222 TCs/ test@127.0.0.1:/home/test/
+> +host$ scp -r -P 22222 cip-security-tests/ test@127.0.0.1:/home/test/
+>  ```
+>  
+> -# Run the test in Linux image
+> +# Run the tests in Linux image
+>  - Go to following directory and execute IEC Layer test
+>  ```
+> -image$ cd /home/test/TCs/cip-security-tests/iec-security-tests/singlenode-testcases/
+> +image$ cd /home/test/cip-security-tests/iec-security-tests/singlenode-testcases/
+>  image$ ./run_all.sh
+>  ```
+> -`run_all.sh` generates the test result in file `result_file.txt`, and output look like below.
+> +`run_all.sh` generates the test result in file `result_file.txt`, and the output looks like below.
+>  ```
+>  TC_CR1.1-RE1_1+pass+11
+>  TC_CR1.11_1+pass+22
 
+Thanks, applied.
 
-On 27.01.25 10:59, Heinisch, Alexander (FT RPD CED SES-AT) wrote:
->> On 23.01.25 09:26, Clara Kowalsky wrote:
->>>
->>>
->>> On 20.01.25 13:34, Heinisch, Alexander via lists.cip-project.org wrote:
->>>> From: Alexander Heinisch <alexander.heinisch@siemens.com>
->>>>
->>>> In the current implementation (since: 284175c3) disk expansion logic
->>>> is done before the actual disk encryption.
->>>>
->>>> This results in reencrypting the full expanded size of the disk,
->>>> instead of only reencrypting the sections containing the actual data.
->>>> This results in a drastic increase of time (approx 20x on our systems
->>>> ) needed for reencryption!
->>>>
->>>> Since relevant disk contents are only available in the sections of
->>>> the disk available before the expansion, it is sufficient to
->>>> reencrypt them only.
->>>>
->>>> This patch changes order of encryption and disk expansion resulting
->>>> in faster encryption (since only the necessary parts are encrypted).
->>>> The resize operation does not reencrypt the added disk parts but just
->>>> extends the LUKS container (cryptsetup resize) to reflect the maximum
->>>> available disk space.
->>>>
->>>> Signed-off-by: Alexander Heinisch <alexander.heinisch@siemens.com>
->>>> ---
->>>>    .../files/local-top-complete                  | 37
->>>> +++++++++++++++++--
->>>>    1 file changed, 33 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-
->>>> complete b/recipes-initramfs/initramfs-crypt-hook/files/local-top-
->>>> complete
->>>> index 8adc4e5..c4135c3 100644
->>>> --- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
->>>> +++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
->>>> @@ -153,6 +153,35 @@ expand_partition() {
->>>>        # Inform the kernel about the partitioning change
->>>>        partx -u "${last_part}"
->>>>    +    last_part_device_name=3D${last_part#\/dev/}
->>>> +
->>>> +    mount_point=3D$(mktemp -d -p "" "$(basename "$0").XXXXXXXXXX")
->>>> +
->>>> +    mapping_name=3D$(cat /sys/class/block/"$last_part_device_name"/
->>>> holders/*/dm/name)
->>>> +    cryptsetup resize "$mapping_name"
->>>
->>> I tried out your patch and cryptsetup is here asking for a passphrase.
->>> As the passphrase is stored in tmp_key, I think we need to hand it
->>> over
->>> via:
->>> cryptsetup resize --key-file=3D"$tmp_key" "$mapping_name"
->=20
-> Thank you for testing the patch!
->=20
-> Don't know why this happens in V1 -
->=20
-> After the initial cryptsetup + enroll_tpm2_token the info needed to decry=
-pt
-> is stored in the luks header (metadata) + tpm (key). Thus, the $tmp_key f=
-ile is not
-> needed anymore, and probably it was a good advice to remove it at that st=
-age, so
-> other initramfs hooks cannot access it.
->=20
-> @Clara: Since I missed some dependencies for V1 the initramfs in V1 error=
-s. Did you patch that before?
-> What was your configuration?
->=20
+Jan
 
-Hi Alexander, sorry for the delay, just tested v2 and received the same=20
-error of cryptsetup asking for a passphrase for resizing the last=20
-partition. See my configuration below.
-
->>>
->>
->> I assume that this applies to v2 as well. Good that I still didn't merge=
- it. Alex, please have a look and come up with some v3.
->=20
-> For V2 - we tested the patch with isar-cip-core upstream applied on 32fcd=
-e2c
-> against bookworm using the following .config.yaml:
->=20
-> ```
-> #
-> # Automatically generated by kas 4.5
-> #
-> _source_dir: /repo
-> build_system: isar
-> header:
->    includes:
->    - kas-cip.yml
->    - kas/board/qemu-amd64.yml
->    - kas/opt/6.1.yml
->    - kas/opt/bookworm.yml
->    - kas/opt/expand-on-first-boot.yml
->    - kas/opt/ebg-secure-boot-snakeoil.yml
->    - kas/opt/encrypt-data.yml
->    - kas/opt/encrypt-all.yml
->    version: 17
-> local_conf_header:
->    __menu_config_vars: WDOG_TIMEOUT =3D "60"
-> menu_configuration:
->    DEBIAN_BOOKWORM: true
->    DEBIAN_BULLSEYE: false
->    DEBIAN_BUSTER: false
->    DEBIAN_TRIXIE: false
->    EXPAND_ON_FIRST_BOOT: true
->    IMAGE_COMPLETE_SWUPDATE: true
->    IMAGE_DATA_ENCRYPTION: true
->    IMAGE_DELTA_SWUPDATE: false
->    IMAGE_FULL_ENCRYPTION: true
->    IMAGE_RO_ROOTFS_EROFS: false
->    IMAGE_RO_ROOTFS_SQUASHFS: true
->    IMAGE_SECURE_BOOT: true
->    IMAGE_SECURITY: false
->    IMAGE_SWUPDATE: true
->    IMAGE_TESTING: false
->    KERNEL_4_19: false
->    KERNEL_4_4: false
->    KERNEL_5_10: false
->    KERNEL_6_1: true
->    KERNEL_RT: false
->    TARGET_BBB: false
->    TARGET_HIHOPE_RZG2M: false
->    TARGET_IWG20D: false
->    TARGET_QEMU_AMD64: true
->    TARGET_QEMU_ARM: false
->    TARGET_QEMU_ARM64: false
->    TARGET_QEMU_RISCV64: false
->    TARGET_X86_UEFI: false
->    WDOG_TIMEOUT: 60
-> ```
->=20
-> The initial disk size was expanded to 15GB:
->=20
-> ```
-> qemu-img resize cip-core-image-cip-core-bookworm-qemu-amd64.wic 15G
-> ```
->=20
-> and started using the upstream `./start-qemu`
->=20
-> The relevant outputs in the initramfs:
->=20
-> ```
-> Device /dev/sda7 is not a valid LUKS device.
-> Begin: Encryption of /dev/sda7 ... var: 11/262144 files (0.0% non-contigu=
-ous), 34348/524288 blocks
-> resize2fs 1.47.0 (5-Feb-2023)
-> Resizing the filesystem on /dev/sda7 to 516096 (4k) blocks.
-> The filesystem on /dev/sda7 is now 516096 (4k) blocks long.
->=20
-> Warning: keyslot operation could fail as it requires more than available =
-memory.Finished, time 00m17s, 2032 MiB written, speed 112.1 MiB/s
-> New TPM2 token enrolled as key slot 1.
-> done.
-> Wiped slot 0.
-> Begin: Expanding partition /dev/sda7 ... resize2fs 1.47.0 (5-Feb-2023)
-> Resizing the filesystem on /dev/mapper/encrypted_var to 3024128 (4k) bloc=
-ks.
-> The filesystem on /dev/mapper/encrypted_var is now 3024128 (4k) blocks lo=
-ng.
->=20
-> done.
-> ```
->=20
-> Further checks done on rootfs, after first boot:
->=20
-> ```
-> root@demo:~# lsblk
-> NAME                                     MAJ:MIN RM   SIZE RO TYPE  MOUNT=
-POINTS
-> sda                                        8:0    0    15G  0 disk
-> =E2=94=9C=E2=94=80sda1                                     8:1    0  20.8=
-M  0 part
-> =E2=94=9C=E2=94=80sda2                                     8:2    0    64=
-M  0 part
-> =E2=94=9C=E2=94=80sda3                                     8:3    0    64=
-M  0 part
-> =E2=94=9C=E2=94=80sda4                                     8:4    0     1=
-G  0 part
-> =E2=94=82 =E2=94=94=E2=94=80fedcba98-7654-3210-cafe-5e0710000001 252:0   =
- 0  1008M  0 crypt
-> =E2=94=82   =E2=94=94=E2=94=80verityroot                         252:4   =
- 0 125.5M  1 crypt /
-> =E2=94=9C=E2=94=80sda5                                     8:5    0     1=
-G  0 part
-> =E2=94=82 =E2=94=94=E2=94=80fedcba98-7654-3210-cafe-5e0710000002 252:1   =
- 0  1008M  0 crypt
-> =E2=94=9C=E2=94=80sda6                                     8:6    0   1.3=
-G  0 part
-> =E2=94=82 =E2=94=94=E2=94=80encrypted_home                       252:2   =
- 0   1.3G  0 crypt /home
-> =E2=94=94=E2=94=80sda7                                     8:7    0  11.6=
-G  0 part
->    =E2=94=94=E2=94=80encrypted_var                        252:3    0  11.=
-5G  0 crypt /var
-> root@demo:~# df -h
-> Filesystem                  Size  Used Avail Use% Mounted on
-> udev                        455M     0  455M   0% /dev
-> tmpfs                       500M  6.8M  494M   2% /run
-> /dev/dm-4                   126M  126M     0 100% /
-> /dev/mapper/encrypted_home  1.2G   40K  1.2G   1% /home
-> /dev/mapper/encrypted_var    12G  172K   11G   1% /var
-> overlay                      12G  172K   11G   1% /etc
-> tmpfs                       475M     0  475M   0% /dev/shm
-> tmpfs                       5.0M     0  5.0M   0% /run/lock
-> tmpfs                       475M     0  475M   0% /tmp
-> ```
->=20
-> BR Alexander
->=20
->>
->> Jan
->>
->> --
->> Siemens AG, Foundational Technologies
->> Linux Expert Center
-
-I tested it with my current bullseye setup and with bookworm. I=20
-installed the image via the isar-image-installer to real hardware,=20
-didn't try it out in QEMU. On bullseye, after unsuccessful resizing of=20
-the last partition (cryptsetup asking for the passphrase), I can login=20
-and lsblk shows that the encryption worked for/home and /var, but not=20
-the resizing for /var.
-On bookworm, I am stuck in an endless loop of initramfs trying to=20
-encrypt and resize.
-
-This is the used config for bookworm:
-
-#
-# Automatically generated by kas 4.7
-#
-_source_dir: /repo
-build_system: isar
-header:
-   includes:
-   - kas-cip.yml
-   - kas/board/qemu-amd64.yml
-   - kas/opt/6.1.yml
-   - kas/opt/bookworm.yml
-   - kas/opt/expand-on-first-boot.yml
-   - kas/opt/ebg-swu.yml
-   - kas/opt/encrypt-data.yml
-   - kas/opt/encrypt-all.yml
-   version: 18
-local_conf_header:
-   __menu_config_vars: WDOG_TIMEOUT =3D "60"
-menu_configuration:
-   DEBIAN_BOOKWORM: true
-   DEBIAN_BULLSEYE: false
-   DEBIAN_BUSTER: false
-   DEBIAN_TRIXIE: false
-   EXPAND_ON_FIRST_BOOT: true
-   IMAGE_COMPLETE_SWUPDATE: true
-   IMAGE_DATA_ENCRYPTION: true
-   IMAGE_DELTA_SWUPDATE: false
-   IMAGE_FULL_ENCRYPTION: true
-   IMAGE_RO_ROOTFS_EROFS: false
-   IMAGE_RO_ROOTFS_SQUASHFS: true
-   IMAGE_SECURE_BOOT: false
-   IMAGE_SECURITY: false
-   IMAGE_SWUPDATE: true
-   IMAGE_TESTING: false
-   KERNEL_4_19: false
-   KERNEL_4_4: false
-   KERNEL_5_10: false
-   KERNEL_6_1: true
-   KERNEL_RT: false
-   TARGET_BBB: false
-   TARGET_HIHOPE_RZG2M: false
-   TARGET_IWG20D: false
-   TARGET_QEMU_AMD64: true
-   TARGET_QEMU_ARM: false
-   TARGET_QEMU_ARM64: false
-   TARGET_QEMU_RISCV64: false
-   TARGET_X86_UEFI: false
-   WDOG_TIMEOUT: 60
-
-And yes, when this part was still in isar, I patched it following the=20
-doc/README.tpm2.encryption.md. My patch was this, feeding the LUKS=20
-password to cryptsetup resize:
-
----
-  .../files/local-top-complete                  | 30 +++++++++++++------
-  1 file changed, 21 insertions(+), 9 deletions(-)
-
-diff --git=20
-a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete=20
-b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-index c4135c3..dfda787 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-@@ -153,15 +153,27 @@ expand_partition() {
-  	# Inform the kernel about the partitioning change
-  	partx -u "${last_part}"
-
--	last_part_device_name=3D${last_part#\/dev/}
--
--	mount_point=3D$(mktemp -d -p "" "$(basename "$0").XXXXXXXXXX")
--
--	mapping_name=3D$(cat=20
-/sys/class/block/"$last_part_device_name"/holders/*/dm/name)
--	cryptsetup resize "$mapping_name"
--	mount /dev/mapper/"$mapping_name" "${mount_point}"
--	fs_type=3D$(findmnt -fno FSTYPE "${mount_point}" )
--	last_part=3D/dev/mapper/"$mapping_name"
-+	fs_type=3D$(blkid --output value --match-tag TYPE "${last_part}" )
-+	if [ "$fs_type" =3D "crypto_LUKS" ]; then
-+		if [ ! -x /usr/sbin/cryptsetup ]; then
-+			echo "'cryptsetup' is missing cannot resize last partition as it is=20
-from type 'crypto_LUKS'"
-+			exit 1
-+		fi
-+		last_part_device_name=3D${last_part#\/dev/}
-+
-+		mapping_name=3D$(cat=20
-/sys/class/block/"$last_part_device_name"/holders/*/dm/name)
-+		keyslot=3D"$(cryptsetup luksDump "$last_part" | awk=20
-'/Tokens:/,/Digests:/' | awk '/Keyslot:/ {print $2}' | head -n 1)"
-+		if [ -n "$keyslot" ]; then
-+			clevis luks pass -d "$last_part" -s"$keyslot" | cryptsetup resize=20
-"$mapping_name"
-+		else
-+			cryptsetup resize "$mapping_name"
-+		fi
-+		echo "Resized the LUKS partition." >&2
-+		exit 0
-+	else
-+		mount_point=3D$(mktemp -d -p "" "$(basename "$0").XXXXXXXXXX")
-+		mount "${last_part}" "${mount_point}"
-+	fi
-
-  	case ${fs_type} in
-  	ext*)
---=20
-2.48.1
-
-BR, Clara
+-- 
+Siemens AG, Foundational Technologies
+Linux Expert Center
 
