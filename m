@@ -1,106 +1,146 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <kazuhiro3.hayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04FDDC02198
-	for <webhook@archiver.kernel.org>; Sat,  8 Feb 2025 18:37:04 +0000 (UTC)
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web10.15090.1739039817058383953
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 618F1C0219B
+	for <webhook@archiver.kernel.org>; Mon, 10 Feb 2025 06:56:45 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
+ by mx.groups.io with SMTP id smtpd.web10.45358.1739170599520027763
  for <cip-dev@lists.cip-project.org>;
- Sat, 08 Feb 2025 10:36:57 -0800
+ Sun, 09 Feb 2025 22:56:40 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=UZHHOay9;
- spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 632121047DC14;
-	Sat,  8 Feb 2025 19:36:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1739039814;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rrkQ3D0e648sAU/0AdmuSKPGqqmuyhGVZ+VVoGxNZvc=;
-	b=UZHHOay92kVfoYyUTvFkKRefyl0wKaq2bims/A+Ah2lhCxoho03CN7/JheQxkTvxxY4Iyt
-	y3EqxwLRAfbEF2JaZ2ynRqjUeR5mUzpubsdQcamyoo2RqlNl/JQfKQC8iZz2RUgOugwZH/
-	m6viMzyelDjqYnsoe+cC0kVKOL+YZF/ITFx55e1Biqrdl9DoQ477UJC9AOzbYRYkwJ9Hkl
-	mG4ODnS5NG2vZZ96QNELerKCmungkWdVps8oroSopmkYrcL6k9yuJ6IR1SLXdFohBJyjJh
-	BUs0C+FBXBMlJAAR+bAHIJ6OflKP37RmOohXepfW14jzdfKwT5f78JEGsEM3EQ==
-Date: Sat, 8 Feb 2025 19:36:49 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Ulrich Hecht <uli@fpond.eu>
-Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"pavel@denx.de" <pavel@denx.de>,
-	"nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: Re: Request for reviews for 4.19-st1, 4.19-cip117
-Message-ID: <Z6ekQYeCM1sVg3Zu@duo.ucw.cz>
-References: <1939235882.106210.1738897032804@webmail.strato.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="POye8yMdTW/Eo+4h"
-Content-Disposition: inline
-In-Reply-To: <1939235882.106210.1738897032804@webmail.strato.de>
-X-Last-TLS-Session-Version: TLSv1.3
+ dkim=pass header.i=kazuhiro3.hayashi@toshiba.co.jp header.s=key2.smx header.b=oCh85SuA;
+ spf=pass (domain: toshiba.co.jp, ip: 210.130.202.134, mailfrom: kazuhiro3.hayashi@toshiba.co.jp)
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=toshiba.co.jp;h=From:To:Cc
+	:Subject:Date:Message-Id:In-Reply-To:References;i=
+	kazuhiro3.hayashi@toshiba.co.jp;s=key2.smx;t=1739170573;x=1740380173;bh=acPjB
+	02nKz+0L18N0R0yI4XNLgXwOw2WtMq2MiY7VZo=;b=oCh85SuAg7YVFGfhwBDQyajbrpY9Z052Zbz
+	nC8RRvcCoEC8HPQTRbJGylco1CGX39SovF12k2wPQuHqlnHiTIcPt8EWA8oJ/DiKsATa+D8ls2ssz
+	DU5d4yQtJAiPZ8TrPQnjtzssFmONlfjhPpXnI2OgXoK8rcghYTEwX8zCK0ic2OagRuXz4f76c5ieZ
+	/FQ0GyGw11rhDkSRorOndM1rkbhMdH20sfItoMehwfv3gwWIVn8EATmSvwuS3BwHPvB0CIe38Y/Le
+	eSr0D+F7f/9AqCuxe1wgTE7RhXwRGGZTs6w5OqljHfS+IpmLMGypaMmy9MjG3iB2oUU9D4ng+YNw=
+	=;
+Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 51A6uDV7789623; Mon, 10 Feb 2025 15:56:13 +0900
+X-Iguazu-Qid: 2yAbAvUQLMDyrOXXCz
+X-Iguazu-QSIG: v=2; s=0; t=1739170569; q=2yAbAvUQLMDyrOXXCz; m=hT5YGyOoxk8Q0nj+TSNNp3ULzx5+5kOpNb8kwhatOo4=
+Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
+	by relay.securemx.jp (mx-mr1802) id 51A6u8lC482935
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Mon, 10 Feb 2025 15:56:08 +0900
+From: Kazuhiro Hayashi <kazuhiro3.hayashi@toshiba.co.jp>
+To: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+        cip-dev@lists.cip-project.org
+Cc: bigeasy@linutronix.de, tglx@linutronix.de, rostedt@goodmis.org,
+        linux-rt-users@vger.kernel.org, pavel@denx.de
+Subject: [PATCH 4.4 v1 17/17] mm: slub: allocate_slab() enables IRQ right after scheduler starts
+Date: Mon, 10 Feb 2025 15:55:45 +0900
+X-TSB-HOP2: ON
+Message-Id: <1739170545-25011-18-git-send-email-kazuhiro3.hayashi@toshiba.co.jp>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1739170545-25011-1-git-send-email-kazuhiro3.hayashi@toshiba.co.jp>
+References: <1739170545-25011-1-git-send-email-kazuhiro3.hayashi@toshiba.co.jp>
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Sat, 08 Feb 2025 18:37:04 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17777
+ <cip-dev@lists.cip-project.org>; Mon, 10 Feb 2025 06:56:45 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17778
+
+This patch resolves problem in 4.4 (& 4.9) PREEMPT_RT kernels that
+the following WARNING happens repeatedly due to broken context
+caused by running slab allocation with IRQ disabled by mistake.
+
+WARNING: CPU: * PID: ** at */kernel/cpu.c:197 unpin_current_cpu+0x60/0x70()
+
+The system is almost unresponsive and the boot stalls once it occurs.
+This repeated WARNING only happens while kernel is booting
+(before reaches the userland) with a quite low reproducibility:
+Only one time in around 1,000 ~ 10,000 reboots.
+
+[Problem details]
+
+On PREEMPT_RT kernels < v4.14-rt, after __slab_alloc() disables
+IRQ with local_irq_save(), allocate_slab() is responsible for
+re-enabling IRQ only under the specific conditions:
+
+(1) gfpflags_allow_blocking(flags) OR
+(2) system_state == SYSTEM_RUNNING
+
+The problem happens when (1) is false AND system_state == SYSTEM_BOOTING,
+caused by the following scenario:
+
+1. Some kernel codes invokes the allocator without __GFP_DIRECT_RECLAIM
+   bit (i.e. blocking not allowed) while SYSTEM_BOOTING
+2. allocate_slab() calls the following functions with IRQ disabled
+3. buffered_rmqueue() invokes local_[spin_]lock_irqsave(pa_lock) which
+   might call schedule() and enable IRQ, if it failed to get pa_lock
+4. The migrate_disable counter, which is not intended to be updated with
+   IRQs disabled, is accidentally updated after schedule() then
+   migrate_enable() raises WARN_ON_ONCE(p->migrate_disable <= 0)
+5. The unpin_current_cpu() WARNING is raised eventually because the
+   refcount counter is linked to the migrate_disable counter
+
+The behavior 2-5 above has been obsereved[1] using ftrace.
+The condition (2) above intends to make the memory allocator fully
+preemptible on PREEMPT_RT kernels[2], so the lock function in the
+step 3 above should work if SYSTEM_RUNNING but not if SYSTEM_BOOTING.
+
+[How this is resolved in newer RT kernels]
+
+A patch series in the mainline (v4.13) introduces SYSTEM_SCHEDULING[3].
+On top of this, v4.14-rt (6cec8467) changes the condition (2) above:
+
+-	if (system_state == SYSTEM_RUNNING)
++	if (system_state > SYSTEM_BOOTING)
+
+This avoids the problem by enabling IRQ after SYSTEM_SCHEULDING.
+Thus, the conditions that allocate_slab() enables IRQ are like:
+
+(2)system_state   v4.9-rt or before  v4.14-rt or later
+SYSTEM_BOOTING        (1)==true          (1)==true
+                          :                  :
+                          :                  v
+SYSTEM_SCHEDULING         : < Problem      Always
+                          v < occurs here    |
+SYSTEM_RUNNING          Always               |
+                          |                  |
+                          v                  v
+
+[How this patch works]
+
+The series[3] that introduces SYSTEM_SCHEULDING is already backported
+by the prior patches. Using the state, this patch applies the same
+fix as v4.14-rt (6cec8467) to system_state check in allocate_slab().
+With those changes, the unpin_current_cpu() WARNING has not occured
+in more than 20,000 reboots on multiple environments[4].
+
+As a side effect, all other codes which does not know SYSTEM_SCHEULDING
+yet needs to be adjusted like commits in the series[3].
+
+[1] https://lore.kernel.org/all/TYCPR01MB11385E3CDF05544B63F7EF9C1E1622@TYCPR01MB11385.jpnprd01.prod.outlook.com/
+[2] https://docs.kernel.org/locking/locktypes.html#raw-spinlock-t-on-rt
+[3] https://lore.kernel.org/all/20170516184231.564888231@linutronix.de/T/
+[4] https://lore.kernel.org/all/TYCPR01MB1138579CA7612B568BB880652E1272@TYCPR01MB11385.jpnprd01.prod.outlook.com/
+
+Signed-off-by: Kazuhiro Hayashi <kazuhiro3.hayashi@toshiba.co.jp>
+---
+ mm/slub.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/slub.c b/mm/slub.c
+index fd23ff951395..3db76fd92861 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -1412,7 +1412,7 @@ static struct page *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
+ 	if (gfpflags_allow_blocking(flags))
+ 		enableirqs = true;
+ #ifdef CONFIG_PREEMPT_RT_FULL
+-	if (system_state == SYSTEM_RUNNING)
++	if (system_state > SYSTEM_BOOTING)
+ 		enableirqs = true;
+ #endif
+ 	if (enableirqs)
+-- 
+2.30.2
 
 
---POye8yMdTW/Eo+4h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> Here's the manual backports for the first self-maintained 4.19 kernel rel=
-ease. They can be found in https://git.kernel.org/pub/scm/linux/kernel/git/=
-cip/linux-cip.git/log/?h=3Dlinux-4.19.y-st-rc
->=20
-
-a > 17758948061a2 RDMA/bnxt_re: Fix max_qp_wrs reported
-a > 60f86dfde2f27 net/sched: netem: account for backlog updates from child =
-qdisc
-a > e3f9d1479533a net/sched: cbs: Fix integer overflow in cbs_set_port_rate=
-()
-a > 60a6e1e938430 netfilter: nft_set_hash: skip duplicated elements pending=
- gc run
-a > db3db8b23fc26 drm/etnaviv: flush shader L1 cache after user commandstre=
-am
-a not a minimum fix, that driver is ....  > a31241e036c2e usb: yurex:
-make waiting on yurex_write interruptible
-
-The yurex patch is two changes in one and that driver is not up to
-usual standards, but the patch should be okay.
-
-a > b1463eec3417a perf trace: Avoid garbage when not printing a syscall's a=
-rguments
-a > 49d9f78101f9b scsi: qedf: Fix a possible memory leak in qedf_alloc_and_=
-init_sb()
-a > 86a1a175bdd56 mfd: intel_soc_pmic_bxtwc: Use IRQ domain for TMU device
-a > 65f2a31dfeec1 ALSA: hda/realtek: Set PCBeep to default value for ALC274
-
-Ok, so this solves pop in speakers. Well, I guess we can take it,
-but... one day I'd really like to see stable kernel rules to be
-updated to match the reality.
-
-Thanks for patches. They look good to me.
-
-Best regards,
-									Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---POye8yMdTW/Eo+4h
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ6ekQQAKCRAw5/Bqldv6
-8tEiAJ935tqUQ58b1b9khbd+SytYzZm9NwCeNP3wM5gde2EWorogB63NqRqdFw0=
-=0SYe
------END PGP SIGNATURE-----
-
---POye8yMdTW/Eo+4h--
 
