@@ -2,29 +2,29 @@ Return-Path: <kazuhiro3.hayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 618F1C0219B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F3C0C02198
 	for <webhook@archiver.kernel.org>; Mon, 10 Feb 2025 06:56:45 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
- by mx.groups.io with SMTP id smtpd.web10.45358.1739170599520027763
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.131])
+ by mx.groups.io with SMTP id smtpd.web11.45207.1739170602736699265
  for <cip-dev@lists.cip-project.org>;
- Sun, 09 Feb 2025 22:56:40 -0800
+ Sun, 09 Feb 2025 22:56:43 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=kazuhiro3.hayashi@toshiba.co.jp header.s=key2.smx header.b=oCh85SuA;
- spf=pass (domain: toshiba.co.jp, ip: 210.130.202.134, mailfrom: kazuhiro3.hayashi@toshiba.co.jp)
+ dkim=pass header.i=kazuhiro3.hayashi@toshiba.co.jp header.s=key2.smx header.b=FB4WGqTG;
+ spf=pass (domain: toshiba.co.jp, ip: 210.130.202.131, mailfrom: kazuhiro3.hayashi@toshiba.co.jp)
 DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=toshiba.co.jp;h=From:To:Cc
 	:Subject:Date:Message-Id:In-Reply-To:References;i=
-	kazuhiro3.hayashi@toshiba.co.jp;s=key2.smx;t=1739170573;x=1740380173;bh=acPjB
-	02nKz+0L18N0R0yI4XNLgXwOw2WtMq2MiY7VZo=;b=oCh85SuAg7YVFGfhwBDQyajbrpY9Z052Zbz
-	nC8RRvcCoEC8HPQTRbJGylco1CGX39SovF12k2wPQuHqlnHiTIcPt8EWA8oJ/DiKsATa+D8ls2ssz
-	DU5d4yQtJAiPZ8TrPQnjtzssFmONlfjhPpXnI2OgXoK8rcghYTEwX8zCK0ic2OagRuXz4f76c5ieZ
-	/FQ0GyGw11rhDkSRorOndM1rkbhMdH20sfItoMehwfv3gwWIVn8EATmSvwuS3BwHPvB0CIe38Y/Le
-	eSr0D+F7f/9AqCuxe1wgTE7RhXwRGGZTs6w5OqljHfS+IpmLMGypaMmy9MjG3iB2oUU9D4ng+YNw=
+	kazuhiro3.hayashi@toshiba.co.jp;s=key2.smx;t=1739170571;x=1740380171;bh=SP2mN
+	CJCWYP+Y8goXQCeNQj3FziYLaCpbQI4pkMOXBI=;b=FB4WGqTGxABJX41b7PK+dmsKpIBRvW+6Kzj
+	99ixaMXem2disaIHMGI9isPF5p9TwTCFV6TeqCFDwrV2hOY6ST0d8fkktEzL6LzmP24Nd0wv/1kTJ
+	KS/Gq6o6uWP4b1kEjowRhhllOPtcNBMZ3IwHBU8lWWXA1avtrYr1jieMD2cnvW7HFCpV43+tV+1O8
+	ZZhSZKqNhnN1VVAzasqwhbBGlArKDE+TEHFFmLsGo/fSvPCimugl83pThVxhYLCvTFuocCju8O1KN
+	078Muj6az4Ed1UbZJKf7OusByAabtqPQDE7WendcBs/4qBJCRJFmDF2CQP5TQpoBN85ffo5UiZYw=
 	=;
-Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 51A6uDV7789623; Mon, 10 Feb 2025 15:56:13 +0900
-X-Iguazu-Qid: 2yAbAvUQLMDyrOXXCz
-X-Iguazu-QSIG: v=2; s=0; t=1739170569; q=2yAbAvUQLMDyrOXXCz; m=hT5YGyOoxk8Q0nj+TSNNp3ULzx5+5kOpNb8kwhatOo4=
-Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1802) id 51A6u8lC482935
+Received: by mo-csw.securemx.jp (mx-mo-csw1120) id 51A6uAe23587313; Mon, 10 Feb 2025 15:56:10 +0900
+X-Iguazu-Qid: 2rWhqikycnTS8B6ZlP
+X-Iguazu-QSIG: v=2; s=0; t=1739170569; q=2rWhqikycnTS8B6ZlP; m=Pln8YCdW3FRyGMFqByHrpv+NATtDA2H3XU8IdDMV1k0=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1120) id 51A6u8RL859203
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
 	Mon, 10 Feb 2025 15:56:08 +0900
 From: Kazuhiro Hayashi <kazuhiro3.hayashi@toshiba.co.jp>
@@ -32,10 +32,10 @@ To: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
         cip-dev@lists.cip-project.org
 Cc: bigeasy@linutronix.de, tglx@linutronix.de, rostedt@goodmis.org,
         linux-rt-users@vger.kernel.org, pavel@denx.de
-Subject: [PATCH 4.4 v1 17/17] mm: slub: allocate_slab() enables IRQ right after scheduler starts
-Date: Mon, 10 Feb 2025 15:55:45 +0900
+Subject: [PATCH 4.4 v1 16/17] sched/core: Enable might_sleep() and smp_processor_id() checks early
+Date: Mon, 10 Feb 2025 15:55:44 +0900
 X-TSB-HOP2: ON
-Message-Id: <1739170545-25011-18-git-send-email-kazuhiro3.hayashi@toshiba.co.jp>
+Message-Id: <1739170545-25011-17-git-send-email-kazuhiro3.hayashi@toshiba.co.jp>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1739170545-25011-1-git-send-email-kazuhiro3.hayashi@toshiba.co.jp>
 References: <1739170545-25011-1-git-send-email-kazuhiro3.hayashi@toshiba.co.jp>
@@ -43,102 +43,87 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 10 Feb 2025 06:56:45 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17778
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17794
 
-This patch resolves problem in 4.4 (& 4.9) PREEMPT_RT kernels that
-the following WARNING happens repeatedly due to broken context
-caused by running slab allocation with IRQ disabled by mistake.
+From: Thomas Gleixner <tglx@linutronix.de>
 
-WARNING: CPU: * PID: ** at */kernel/cpu.c:197 unpin_current_cpu+0x60/0x70()
+commit 1c3c5eab171590f86edd8d31389d61dd1efe3037 upstream.
 
-The system is almost unresponsive and the boot stalls once it occurs.
-This repeated WARNING only happens while kernel is booting
-(before reaches the userland) with a quite low reproducibility:
-Only one time in around 1,000 ~ 10,000 reboots.
+might_sleep() and smp_processor_id() checks are enabled after the boot
+process is done. That hides bugs in the SMP bringup and driver
+initialization code.
 
-[Problem details]
+Enable it right when the scheduler starts working, i.e. when init task and
+kthreadd have been created and right before the idle task enables
+preemption.
 
-On PREEMPT_RT kernels < v4.14-rt, after __slab_alloc() disables
-IRQ with local_irq_save(), allocate_slab() is responsible for
-re-enabling IRQ only under the specific conditions:
-
-(1) gfpflags_allow_blocking(flags) OR
-(2) system_state == SYSTEM_RUNNING
-
-The problem happens when (1) is false AND system_state == SYSTEM_BOOTING,
-caused by the following scenario:
-
-1. Some kernel codes invokes the allocator without __GFP_DIRECT_RECLAIM
-   bit (i.e. blocking not allowed) while SYSTEM_BOOTING
-2. allocate_slab() calls the following functions with IRQ disabled
-3. buffered_rmqueue() invokes local_[spin_]lock_irqsave(pa_lock) which
-   might call schedule() and enable IRQ, if it failed to get pa_lock
-4. The migrate_disable counter, which is not intended to be updated with
-   IRQs disabled, is accidentally updated after schedule() then
-   migrate_enable() raises WARN_ON_ONCE(p->migrate_disable <= 0)
-5. The unpin_current_cpu() WARNING is raised eventually because the
-   refcount counter is linked to the migrate_disable counter
-
-The behavior 2-5 above has been obsereved[1] using ftrace.
-The condition (2) above intends to make the memory allocator fully
-preemptible on PREEMPT_RT kernels[2], so the lock function in the
-step 3 above should work if SYSTEM_RUNNING but not if SYSTEM_BOOTING.
-
-[How this is resolved in newer RT kernels]
-
-A patch series in the mainline (v4.13) introduces SYSTEM_SCHEDULING[3].
-On top of this, v4.14-rt (6cec8467) changes the condition (2) above:
-
--	if (system_state == SYSTEM_RUNNING)
-+	if (system_state > SYSTEM_BOOTING)
-
-This avoids the problem by enabling IRQ after SYSTEM_SCHEULDING.
-Thus, the conditions that allocate_slab() enables IRQ are like:
-
-(2)system_state   v4.9-rt or before  v4.14-rt or later
-SYSTEM_BOOTING        (1)==true          (1)==true
-                          :                  :
-                          :                  v
-SYSTEM_SCHEDULING         : < Problem      Always
-                          v < occurs here    |
-SYSTEM_RUNNING          Always               |
-                          |                  |
-                          v                  v
-
-[How this patch works]
-
-The series[3] that introduces SYSTEM_SCHEULDING is already backported
-by the prior patches. Using the state, this patch applies the same
-fix as v4.14-rt (6cec8467) to system_state check in allocate_slab().
-With those changes, the unpin_current_cpu() WARNING has not occured
-in more than 20,000 reboots on multiple environments[4].
-
-As a side effect, all other codes which does not know SYSTEM_SCHEULDING
-yet needs to be adjusted like commits in the series[3].
-
-[1] https://lore.kernel.org/all/TYCPR01MB11385E3CDF05544B63F7EF9C1E1622@TYCPR01MB11385.jpnprd01.prod.outlook.com/
-[2] https://docs.kernel.org/locking/locktypes.html#raw-spinlock-t-on-rt
-[3] https://lore.kernel.org/all/20170516184231.564888231@linutronix.de/T/
-[4] https://lore.kernel.org/all/TYCPR01MB1138579CA7612B568BB880652E1272@TYCPR01MB11385.jpnprd01.prod.outlook.com/
-
+Tested-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Link: http://lkml.kernel.org/r/20170516184736.272225698@linutronix.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Kazuhiro Hayashi <kazuhiro3.hayashi@toshiba.co.jp>
 ---
- mm/slub.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ init/main.c            | 10 ++++++++++
+ kernel/sched/core.c    |  4 +++-
+ lib/smp_processor_id.c |  2 +-
+ 3 files changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/mm/slub.c b/mm/slub.c
-index fd23ff951395..3db76fd92861 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -1412,7 +1412,7 @@ static struct page *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
- 	if (gfpflags_allow_blocking(flags))
- 		enableirqs = true;
- #ifdef CONFIG_PREEMPT_RT_FULL
--	if (system_state == SYSTEM_RUNNING)
-+	if (system_state > SYSTEM_BOOTING)
- 		enableirqs = true;
- #endif
- 	if (enableirqs)
+diff --git a/init/main.c b/init/main.c
+index 6c745aff6669..0db97f4e2090 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -412,6 +412,16 @@ static noinline void __init_refok rest_init(void)
+ 	rcu_read_lock();
+ 	kthreadd_task = find_task_by_pid_ns(pid, &init_pid_ns);
+ 	rcu_read_unlock();
++
++	/*
++	 * Enable might_sleep() and smp_processor_id() checks.
++	 * They cannot be enabled earlier because with CONFIG_PRREMPT=y
++	 * kernel_thread() would trigger might_sleep() splats. With
++	 * CONFIG_PREEMPT_VOLUNTARY=y the init task might have scheduled
++	 * already, but it's stuck on the kthreadd_done completion.
++	 */
++	system_state = SYSTEM_SCHEDULING;
++
+ 	complete(&kthreadd_done);
+ 
+ 	/*
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index c3e7d115d93d..d8dd1408943c 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -7966,8 +7966,10 @@ void ___might_sleep(const char *file, int line, int preempt_offset)
+ 	rcu_sleep_check(); /* WARN_ON_ONCE() by default, no rate limit reqd. */
+ 	if ((preempt_count_equals(preempt_offset) && !irqs_disabled() &&
+ 	     !is_idle_task(current)) ||
+-	    system_state != SYSTEM_RUNNING || oops_in_progress)
++	    system_state == SYSTEM_BOOTING || system_state > SYSTEM_RUNNING ||
++	    oops_in_progress)
+ 		return;
++
+ 	if (time_before(jiffies, prev_jiffy + HZ) && prev_jiffy)
+ 		return;
+ 	prev_jiffy = jiffies;
+diff --git a/lib/smp_processor_id.c b/lib/smp_processor_id.c
+index 11fa431046a8..3fc9a5b0ce48 100644
+--- a/lib/smp_processor_id.c
++++ b/lib/smp_processor_id.c
+@@ -28,7 +28,7 @@ notrace static unsigned int check_preemption_disabled(const char *what1,
+ 	/*
+ 	 * It is valid to assume CPU-locality during early bootup:
+ 	 */
+-	if (system_state != SYSTEM_RUNNING)
++	if (system_state < SYSTEM_SCHEDULING)
+ 		goto out;
+ 
+ 	/*
 -- 
 2.30.2
 
