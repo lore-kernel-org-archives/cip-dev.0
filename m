@@ -2,35 +2,37 @@ Return-Path: <alexander.heinisch@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19AFCC021A1
-	for <webhook@archiver.kernel.org>; Mon, 17 Feb 2025 10:01:29 +0000 (UTC)
-Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
- by mx.groups.io with SMTP id smtpd.web10.47989.1739786484630316067
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A0FC0219E
+	for <webhook@archiver.kernel.org>; Mon, 17 Feb 2025 10:02:08 +0000 (UTC)
+Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
+ by mx.groups.io with SMTP id smtpd.web10.47995.1739786518734494207
  for <cip-dev@lists.cip-project.org>;
- Mon, 17 Feb 2025 02:01:25 -0800
+ Mon, 17 Feb 2025 02:01:59 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=alexander.heinisch@siemens.com header.s=fm2 header.b=eOGzZv5H;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-1326448-202502171001213b5971dea92af1f32b-uoyb81@rts-flowmailer.siemens.com)
-Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 202502171001213b5971dea92af1f32b
+ dkim=pass header.i=alexander.heinisch@siemens.com header.s=fm2 header.b=XaJWXaPv;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-1326448-20250217100156943ccd959b8ba78b89-plno_w@rts-flowmailer.siemens.com)
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20250217100156943ccd959b8ba78b89
         for <cip-dev@lists.cip-project.org>;
-        Mon, 17 Feb 2025 11:01:22 +0100
+        Mon, 17 Feb 2025 11:01:56 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
  d=siemens.com; i=alexander.heinisch@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=BUBU7QImDMuFNFi7bnslonuzYhruJ5Mg3RbKFAgA+lM=;
- b=eOGzZv5HpAq7jft0OXKfR0tR3azr/9mccE921pusufEyMH81U5nxGNzuQeMhHU/1nnXlaD
- h+wCukL8Npss0Bgz/g3VRE7Ih5ctzLLLyqfUjjL2hlxxgxzyOmdqumqTKS8mHUMjyxQJ3C/1
- iaWHhf8E9ROS79hHlYiHn37NTWMF/ffolO2IzJQiHGSND4N9HGdloK8Eqi7fTIP2rF52Oxl0
- 1yfUpjiFjXGvJsMLuxAVYZLXctZtIR71kL2g3r267uMUmnDECwgSVWd1k99jf8VMks2Sg1r+
- 9NZHdh6LkBwxiOM71FrQG5SWn2bjQSnJR1jYDwzzN/GuLBJJJQG/VwKw==;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=H2mQBGyAWWGAIa2mmtvr+MjrVL2hg7bWxg1+/8FEKl0=;
+ b=XaJWXaPvmZMw/vIqPUO+1IJ4On6mljdjTAwH9+YSVdIaUct+aLtrwGJCAZPKPBLRPD/edJ
+ +WLu+TSBKib+q42BIys4HCv6RWx8VAHNJ/M+hbsZ9wR36yzcpRfUIycxjD3z2iE2qOhOwY5O
+ a6keF/OtXg+6HIxysz6IyMJzRuvu3lhmJtH9/qL1PMgVUFjhxJqQ8AR38XirF+oLxnaV+nEO
+ HRH1Xr/MIBo46T1r1UHDhlNT8/ATbReorMMbDG90ZfyJJHKnmntWRjozHAPT7zj4yB13Yqy0
+ SHrYbfTBVm0b9knHUvG7F+Z+mOkdEiFo+npc5dzNfeD5jkxlZFck0w1g==;
 From: alexander.heinisch@siemens.com
 To: cip-dev@lists.cip-project.org
 Cc: jan.kiszka@siemens.com,
 	quirin.gylstorff@siemens.com,
 	Alexander Heinisch <alexander.heinisch@siemens.com>
-Subject: [isar-cip-core][PATCH 0/3] Added support for rootfs-overlay (for development).
-Date: Mon, 17 Feb 2025 11:00:21 +0100
-Message-ID: <20250217100024.42995-1-alexander.heinisch@siemens.com>
+Subject: [isar-cip-core][PATCH 1/3] Removed "ro" option from read-only-rootfs's fstab.
+Date: Mon, 17 Feb 2025 11:00:22 +0100
+Message-ID: <20250217100024.42995-2-alexander.heinisch@siemens.com>
+In-Reply-To: <20250217100024.42995-1-alexander.heinisch@siemens.com>
+References: <20250217100024.42995-1-alexander.heinisch@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
@@ -38,41 +40,33 @@ Feedback-ID: 519:519-1326448:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 17 Feb 2025 10:01:29 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17855
+ <cip-dev@lists.cip-project.org>; Mon, 17 Feb 2025 10:02:08 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17856
 
 From: Alexander Heinisch <alexander.heinisch@siemens.com>
 
-Updateable images based on isar-cip-core come with immutable rootfs
-out of the box. During development this oftentimes comes with the penalty
-of having to either rebuild images with additional files, packages aso.
-to accomplish development and debugging tasks or derive from the production
-image in a way that some fundamental features like verity, squashfs, swupdate, aso.
-are not part of such.
+Since we only support erofs and squashfs this option is not needed
+any more. Further, it causes potential overlay rootfs variants
+to be remounted read-only.
 
-Both cases are far from optimal. With this patch series we want to share
-our attempt to streamline development by staying as close as possible to
-our production image by overlaying the squashfs or erofs based ro filesystem
-with an overlay. To make changes redundant accross reboots, we decided
-to use a persistent storage option in favour of a tmpfs based approach.
-(Although, technically there is no limitation on doing so)
+Signed-off-by: Alexander Heinisch <alexander.heinisch@siemens.com>
+---
+ classes/read-only-rootfs.bbclass | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Keep in mind, support for the root overlay is thought as a development
-feature! Thus, it is not thought for production, as it invalidates many
-of the properties we have from ro-filesystems. Also, keep in mind that
-changes on the overlay may partially hide updates or lead to "unexpected"
-results after applying updates.
-
-Alexander Heinisch (3):
-  Removed "ro" option from read-only-rootfs's fstab.
-  Fix return value handling on filesystem check
-  Added support for rootfs-overlay.
-
- classes/read-only-rootfs.bbclass              |  2 +-
- .../files/local-bottom.tmpl                   | 97 ++++++++++++++++---
- .../initramfs-overlay-hook_0.3.bb             |  2 +-
- 3 files changed, 87 insertions(+), 14 deletions(-)
-
+diff --git a/classes/read-only-rootfs.bbclass b/classes/read-only-rootfs.bbclass
+index 35a3ab3..83ddc33 100644
+--- a/classes/read-only-rootfs.bbclass
++++ b/classes/read-only-rootfs.bbclass
+@@ -41,7 +41,7 @@ SQUASHFS_EXCLUDE_DIRS = "${RO_ROOTFS_EXCLUDE_DIRS}"
+ image_configure_fstab() {
+     sudo tee '${IMAGE_ROOTFS}/etc/fstab' << EOF
+ # Begin /etc/fstab
+-/dev/root	/		auto		defaults,ro			0	0
++/dev/root	/		auto		defaults			0	0
+ LABEL=var	/var		auto		defaults			0	0
+ proc		/proc		proc		nosuid,noexec,nodev		0	0
+ sysfs		/sys		sysfs		nosuid,noexec,nodev		0	0
 -- 
 2.39.5
 
