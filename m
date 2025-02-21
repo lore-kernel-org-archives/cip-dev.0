@@ -2,35 +2,36 @@ Return-Path: <paul.barker.ct@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA11EC021B3
-	for <webhook@archiver.kernel.org>; Fri, 21 Feb 2025 16:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B393AC021B5
+	for <webhook@archiver.kernel.org>; Fri, 21 Feb 2025 16:56:55 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.28053.1740156931335066601
+ by mx.groups.io with SMTP id smtpd.web11.28080.1740157005833027649
  for <cip-dev@lists.cip-project.org>;
- Fri, 21 Feb 2025 08:55:31 -0800
+ Fri, 21 Feb 2025 08:56:46 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: paul.barker.ct@bp.renesas.com)
-X-CSE-ConnectionGUID: PTFuChJTSeeDsHNdBEo/KQ==
-X-CSE-MsgGUID: CMChn2rARPWADgcwh1WA7Q==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 22 Feb 2025 01:55:30 +0900
+X-CSE-ConnectionGUID: qrNwVKGERhOiYpsdFR97Tg==
+X-CSE-MsgGUID: TYixoKxDQhqlVppxQooj9g==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 22 Feb 2025 01:56:45 +0900
 Received: from rz-ub2404.betafive.net (unknown [10.226.93.173])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id E10ED400F723;
-	Sat, 22 Feb 2025 01:55:28 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 85F3B4043061;
+	Sat, 22 Feb 2025 01:56:43 +0900 (JST)
 From: Paul Barker <paul.barker.ct@bp.renesas.com>
-To: Ulrich Hecht <uli@kernel.org>
+To: Pavel Machek <pavel@denx.de>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 4.4.y-st] ravb: Fix use-after-free issue in ravb_tx_timeout_work()
-Date: Fri, 21 Feb 2025 16:55:17 +0000
-Message-ID: <20250221165517.357768-1-paul.barker.ct@bp.renesas.com>
+Subject: [PATCH 4.19.y-st] ravb: Fix use-after-free issue in ravb_tx_timeout_work()
+Date: Fri, 21 Feb 2025 16:56:28 +0000
+Message-ID: <20250221165628.357818-1-paul.barker.ct@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2025 16:55:35 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17879
+ <cip-dev@lists.cip-project.org>; Fri, 21 Feb 2025 16:56:55 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17880
 
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
@@ -62,14 +63,13 @@ Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 Link: https://lore.kernel.org/r/20231005011201.14368-3-yoshihiro.shimoda.uh@renesas.com
 Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[adjusted to apply to linux-4.4.y-st]
 Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
 ---
 
-This patch has been tested on RZ/G1M using the linux-4.4.y-cip tree, but
-I'm sending it for linux-4.4.y-st as the issue is also present there. I
-currently have no way to test the -st tree without the corresponding
-cip patches.
+This patch has been tested on RZ/G2H using the linux-4.19.y-cip tree,
+but I'm sending it for linux-4.19.y-st as the issue is also present
+there. I currently have no way to test the -st tree without the
+corresponding cip patches.
 
 This patch addresses CVE-2023-35827.
 
@@ -77,18 +77,18 @@ This patch addresses CVE-2023-35827.
  1 file changed, 2 insertions(+)
 
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 46280e3bfdfc..259c1794d173 100644
+index 3cfcc9e3c35d..2e5a109655c9 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1544,6 +1544,8 @@ static int ravb_close(struct net_device *ndev)
- 		priv->phydev = NULL;
+@@ -1714,6 +1714,8 @@ static int ravb_close(struct net_device *ndev)
+ 			of_phy_deregister_fixed_link(np);
  	}
  
 +	cancel_work_sync(&priv->work);
 +
- 	if (priv->chip_id == RCAR_GEN3)
- 		free_irq(priv->emac_irq, ndev);
- 	free_irq(ndev->irq, ndev);
+ 	if (priv->chip_id != RCAR_GEN2) {
+ 		free_irq(priv->tx_irqs[RAVB_NC], ndev);
+ 		free_irq(priv->rx_irqs[RAVB_NC], ndev);
 -- 
 2.43.0
 
