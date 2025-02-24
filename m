@@ -2,59 +2,51 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDBE5C021A4
-	for <webhook@archiver.kernel.org>; Mon, 24 Feb 2025 13:18:36 +0000 (UTC)
-Received: from AS8PR04CU009.outbound.protection.outlook.com (AS8PR04CU009.outbound.protection.outlook.com [52.101.70.1])
- by mx.groups.io with SMTP id smtpd.web10.88417.1740403112943680334
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5973C021A4
+	for <webhook@archiver.kernel.org>; Mon, 24 Feb 2025 13:25:16 +0000 (UTC)
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.65])
+ by mx.groups.io with SMTP id smtpd.web10.88545.1740403510764948030
  for <cip-dev@lists.cip-project.org>;
- Mon, 24 Feb 2025 05:18:33 -0800
+ Mon, 24 Feb 2025 05:25:11 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=g11VTGHK;
- spf=pass (domain: siemens.com, ip: 52.101.70.1, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=NVAW6deX;
+ spf=pass (domain: siemens.com, ip: 40.107.21.65, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=E7+i3ZJaT12hv/OH2UbcvUpHZOiQ3AGYopwy3+kgMIlLnnWb21VNNmQXvOPEdj1Q4X5VlY7rRB0Yymm7JQ/ea6DP67xqeDacTvlRkzGP9exizZ0KQ6h89L8Lp8B9PSnVYrpJTtKcXWlB/EZ3KVtff34bdKbzaxu4a2aidozdbYc6yIo7bDf6DzCbTUGX/ki+xjw+Lbb6wKbqM5aHru3CEiGbBvyAwSLYaa2WGAFTGjjyw/R8P+gRbzspExWKL1/pHQoMlbtpAGCRaRw/Q5X09nV4eRM7oFOyDM5adXYwxYQaqkG9KCN3CQMjBi5R98GJw6OS0xYd1yOf2ncFcsVw8Q==
+ b=V7Tf/3ruzwGf5j1r2A+PlPThim7sQvO5PndzgTosCdSxQ44p8KVorutVlDnGhgi8pfMr0btqRWsiOgNOVEkwlBjPpiOxeq3IQUahiwTRyS0oM+4YzLZp5MY0Atg5dQSCW9YEKUidu+TeF+AMQgVqSMh9OeA4DR7qh5E/+rOqMVHePa07LVH91Hs+pu4bOCg3rVAHRBxrO5R20qY7DlJeyvD1Fd8gmwqEljtLGwPaRe6LSw6YPKE+GrzjAjBi516pWRtixlI7RUevBUtvg+m1M0oSEYUxy8pAbRy0s13v/hUiw8q3KLVSdXjFMizdKgYCSgeH3GlkED6qCaznmdk62A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PKuezO2fh8hkdpztAcwf+KqrQjKHUD2BC4JuFNdyCMU=;
- b=TJyATdZ+erdsg6RMYVwCMGjcYAmXrVUjMr7Xry94V9ViKjwyvbfU394l/8DNze0omcgNXjI9WOHiHk8cI0IBhye+P1S8y3W82bYg1E2VAE6cz+rBr5dBs3oLhRrXxsOoCShW8lBm3Bofx4HpDSFSsKTI9f8SE5Y2MnHsi98saDZ2w6W1VN3wtcEnVMsLGly4n93sk6N7aOlfKE2JbF8fENLKxzeZT4WHUnRZXbJGT0nquu+dS9f8Aam8zsJiwOWtzRZMs+GcPq1QqBCsdBE5606BUT6/we3oiMaJTYeAVsBVAEWDvh3pL94Hrljsv76PqorsyQlQP7sAwdy9cayjMg==
+ bh=rjoBiAyegHU412pth2ITD39NwxYANvRcPoXxawRhuBY=;
+ b=bHZkcxpw3hCiQtZXJC46EtxF9MqhLAQo3Vm0FVyFblANmneazKW9THIzImdZRVU52OmZrrfMWKG1SQmG0IUsf7vy/EW2tF0EH2obzXeF4Xjww8uBqULklDpudtafjYY5MWRnKVfoBZMWATAp97iW7N9GYk08A2vpdDqNDIoTeugT8UwPU59K2gsodw4EwuyVqCLHeKv6FZhtZWq+eRpaYNrh5ws4uvLiNnQ+eCmvWLbjjACzPxIMqnM+aEPlUuEEXOiMHEodQNh1KoCZz2Z+nAIJqZksD21ZPMEoOJSfYj8YGdAsvAKoKpdOj7SK7pzYvj83zMRgaDJKEERojgqjEQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PKuezO2fh8hkdpztAcwf+KqrQjKHUD2BC4JuFNdyCMU=;
- b=g11VTGHKk+ypoiQC70kQc6EKZE7GecZgDKyjL4PtwWcPQMxWsr0tSU3/0+nIP96NkRZ+UZW9uYVAbpEx+HxyCAkdHCRNIERkgS1ONluR3Nv4m4Yx8cXLFIplZ3DNud6SXT9esduaFgn7ed0GKWSAgQ8K/AaCwD1FxAKWLAl7ubIIegkgRMwkbUKRtkRo0KMuNlGtE6gQC1eLkmSLeAQX/h1X5GeWKuA0jg0HUGvVuvGyDDklMkktmpQuZ7pxkFf1uuPbPIX0MvN9EtsF8rXRuMq0+E/Y0mhPf6hPfZdTxppSWhbKpf9im4yDbf9Oshlc+z/kO6VZTFsIcrJ92mc/SA==
+ bh=rjoBiAyegHU412pth2ITD39NwxYANvRcPoXxawRhuBY=;
+ b=NVAW6deXhmoP6QoA2q3Y/UPx3hm0o6YMyl6inld9rjXJm4YArxIHTjnuSVfyUnOVw/vGNJjmojRu2WCvPtj6to+KA2hjfiW0mmi0EJQczMXnM41BhcemtaSRjAOPRhROF0RwXiQn088T1VvXYBabIvAldJWj5hyOVdYd/sccKBKqYGl988v2k4hD+UFUWeAM0paPsCw1gIXqj2mvrE9RaLJiuTHZ5hzbFC9UuWrBWRNegyq572Z2jrpyVZoiKwG57VAbe3tADxwIPnxDrG1Iq42CykMiWmt+jXpRbM3uBshHBicNRGaO4TpGhuYG+ot6lUZLqFy1GJMeZdRqZzouWQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by PRAPR10MB5180.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:278::7) with
+ by GV1PR10MB7597.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:87::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.17; Mon, 24 Feb
- 2025 13:18:29 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Mon, 24 Feb
+ 2025 13:25:07 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408%4]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
- 13:18:29 +0000
-Message-ID: <5218fe69-939c-460b-b1db-ea8a48a292ef@siemens.com>
-Date: Mon, 24 Feb 2025 14:18:27 +0100
+ 13:25:06 +0000
+Message-ID: <3807cd22-d5d5-4cac-88ab-09643573c527@siemens.com>
+Date: Mon, 24 Feb 2025 14:25:06 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev] [isar-cip-core][PATCH 1/3] Removed "ro" option from
- read-only-rootfs's fstab.
-To: "Heinisch, Alexander (FT RPD CED SES-AT)"
- <alexander.heinisch@siemens.com>,
- "Gylstorff, Quirin (FT RPD CED OES-DE)" <quirin.gylstorff@siemens.com>,
- "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-References: <20250217100024.42995-1-alexander.heinisch@siemens.com>
- <1824F69F112B9158.31881@lists.cip-project.org>
- <AM7PR10MB33205157A04B7C1290C1B6CB86C72@AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM>
- <6fce5303-59b6-4aee-b60d-d0d25c8a3a2a@siemens.com>
- <2010c1c9-c33d-48fe-911c-4d4dfdf46d0f@siemens.com>
- <f05430e8-0a36-42bb-9c67-d6ccf60c0ddc@siemens.com>
- <AM7PR10MB3320A04B717DF98709A7F9C086C02@AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM>
 From: Jan Kiszka <jan.kiszka@siemens.com>
+To: cip-dev <cip-dev@lists.cip-project.org>
+Subject: [isar-cip-core][PATCH] Revert "Removed "ro" option from
+ read-only-rootfs's fstab."
 Content-Language: en-US
+Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>,
+ "Heinisch, Alexander (T CED SES-AT)" <alexander.heinisch@siemens.com>
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
  uNUqthIkgLGWzKugodvkcCK8Wbyw+1vxcl4Lw56WezLsOTfu7oi7Z0vp1XkrLcM0tofTbClW
@@ -98,263 +90,143 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
  8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
-In-Reply-To: <AM7PR10MB3320A04B717DF98709A7F9C086C02@AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: FR2P281CA0156.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:98::13) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR2P281CA0185.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:9f::18) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PRAPR10MB5180:EE_
-X-MS-Office365-Filtering-Correlation-Id: 99558cd8-7491-4b62-139b-08dd54d5bab8
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GV1PR10MB7597:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4eb77b8c-6507-4a74-1ec1-08dd54d6a797
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?6qiRdInbHoHpebZKYbEQ/qbSzqpkIG136wUbS+05sAWy/8WEszUWsulUj7mU?=
- =?us-ascii?Q?5z+byQ6SEAmVShAweJUPRvda/e02o4+QCvcX9ccUn3lVbp0lO4iAuWkchBzD?=
- =?us-ascii?Q?tCsQN880NTCLyMB2Z9NFOZZg9RAvuTmgTPAkjr/aDiWPw62gYS2rSSR0n7nI?=
- =?us-ascii?Q?clZszIc3wNvpuSg6bT3N3Nqxg+RNefTS46ML+Bwysa+o5eLjJ7wSovY7+HSH?=
- =?us-ascii?Q?W5IBwly2QlP5FIfiX/XaymUl/4wnP82a7B/VA9+/kiWcS+A4qf7HKTbXSu8S?=
- =?us-ascii?Q?YmMdUPIAVGrMtJ5YT33CmbtBXgt+r81smqZqAkLCg3bukanJFCoSacjXiNd4?=
- =?us-ascii?Q?8ysiDM3qV/e0+/Q74jQUuhWvktXJKSwXTKDS84kydu7D0eUDvp7ImxcvkrS5?=
- =?us-ascii?Q?Ad2WvBCz54sY3sLGeHUJfBVs5gnnR8bEdGAp/u/TwDo/D5T6Lee3NYAyLhEV?=
- =?us-ascii?Q?V6fHrDOarOEUPsE0/3+ftYnB6UVVLb5+pL76weMmMQOJZYI82hGt/r+DkCdS?=
- =?us-ascii?Q?7HXoRQVelJhbAdHezzRgdrzwYGdwqrsKduOOhv69bbI3HFymoddYoXOjN4ts?=
- =?us-ascii?Q?gBvXNf0mPktU18ZUBYbNczMGd6z+1ZRvmt2xfb7qPlonlAIKnHS38OmtjAOA?=
- =?us-ascii?Q?kLXQBtlESp6p7oiRJ5iJP21ixXvvsk79Emc6qMgCbV10dcyC0B7lJ+V5DL2x?=
- =?us-ascii?Q?czmoulzEBX2BB7I47lYguelt4iIbeT+IzRFXtP3zJmHClzzIuijPxuwBYTrE?=
- =?us-ascii?Q?Eb3u9zWs2RUdsB/5LlTjC6MRRGxzw9BcA6Hb5MnfMF4N1jFGmTad7JJL88tW?=
- =?us-ascii?Q?+nB6ifGntyAVRdH50nLt4OPO7zryshwF+CIqkSpDk8cy9zKYPzxwBDbGIsjS?=
- =?us-ascii?Q?cUmBhfDllVbVx4edcGmuPCsE+XvfHXlXx8p5MdYctS3Jy4koFv6vhTkZOvt5?=
- =?us-ascii?Q?6bPAe6hZP3IhlHxgU8HFVUQWAhbDTH4mykFhatUEeTNC4LKKvnRe/ZoYQIBi?=
- =?us-ascii?Q?M5wvXTG/4VOHwYws5MXyBK8ohGp0/Qc+yjJWMgub5wbme+xsPioqUGgs3VId?=
- =?us-ascii?Q?YwxIVvbtmXc+JFnM3iZm2Rku4mZMSA4IYSkjzGWhSvWDkGDm9wg5uqMFy1LJ?=
- =?us-ascii?Q?1G1RLZTOzoHhlU5pWxajS8Kw+OP3TptRsNyz0d3c//mI4uLM/WfY/5cJm4+j?=
- =?us-ascii?Q?l6hWokUkt1YNOXz2DXQEUAH5VCC6ur1J0B33/3VumcJOuIGjxDUzsWMjOFSa?=
- =?us-ascii?Q?IcIZJDUR1/HfXKma5kJJPF65jynJyuKJkd/9QFhAYuVS6qEPkNwCt0BscONI?=
- =?us-ascii?Q?IVrjRQgExJ/SplG+0VUhL/RA6mCS2w2++jti+zp0ullLERjJWlpVlBHgynDQ?=
- =?us-ascii?Q?Si3kjqCgFqgsU1liDRQQptlJQv7r?=
+	=?utf-8?B?SzdnWTRHZ0JYQnNUeTBrT0V6akR6S0tJNkpyYXBraEFCSnhGY2ZEcUFDZTl5?=
+ =?utf-8?B?Y0o3clpTNDJWVXZ2OVBNcjgrK09aaFVteWRGZzZLOXVucHhFMUxCUDlpMHFj?=
+ =?utf-8?B?VEUyRk51cytWV1NVdGRWTTFLQlZHR1BaNCs5VWsrRDlHNkVTV3VDQ1lZR05Q?=
+ =?utf-8?B?dWNaRVRhZXFJYjdKakl0aVAxQllKbDB4eVhzZjB4RWNSd3hJWWJuWnBlYkhD?=
+ =?utf-8?B?VFV4K1FDcVAxa0FRdDdHeGJndFBYdUdPOHlzK2t3T3BNVHcvM21IazJPWUVW?=
+ =?utf-8?B?bWVRMGdVSkJPdHE5bit4V05ESERCUzVXeEM5bXZBMCtGUGJkeWlCZkF1bk96?=
+ =?utf-8?B?dC9ySSsyWFROWTQ1ZVQwTWl1b2tNRmw3YzRkNzRTRnRZdHQ4VTREQUxJbXdy?=
+ =?utf-8?B?MGlQcWtGcER4Rk9vWEVTYWY2bFc0SFovOXJ6UG92cXhSVVQ5WnRrOEZnOThX?=
+ =?utf-8?B?U3lRNnFyQ1RyRTJFbU04TWRTNGphNWpXRjkrZDVCWG1aaGZpUUQrT21jaGEr?=
+ =?utf-8?B?ZHJTTm9aNU5YN3ExU0pnbnhxbFJPTUR2d1VNNzhISTk0aEdEeG5FVGN1dFU1?=
+ =?utf-8?B?VEZpSm4wbGdobTZNQUdGS0RJSVlKalFxcGlHQ0dGd1FhUkxaUUk1Mm9HaXUw?=
+ =?utf-8?B?MmpRbTU2czF4bzgzajlseUkrYUJMSy9rdDRBYXlzUzViQ0hHMVVLa0d4Y1kx?=
+ =?utf-8?B?RUZUVFlQSkRKOUYyVGRFYTJJbG9sU09iNWlvMnQzc2dRVnVWWUh4bWQ0bUtr?=
+ =?utf-8?B?WTJ1Tjh0eUMzc1hrekJPaFN5cW5KaWcxcHIwZ0ZxRWZueWlubmVoVVpSSk9n?=
+ =?utf-8?B?ZkpJajB6MmE1alZhUGFscyswbHZETnpJT05SRW91UVcvOGV3K3NHUWRxbjk5?=
+ =?utf-8?B?bkc0MTlWWDVQUERiUkg3eGk5YUl0citBYTVnY3hVTEFocENkVFBqS1dFQnJa?=
+ =?utf-8?B?VXVZSExzNXlkaG1yVmdkTVBwL2RjTmV5RUJsekxzMkl3aFFkR2F0SlE0eFh6?=
+ =?utf-8?B?dTFKU1ZBR2JFRU9tR1ZMZ28wMXB6Qy9OVVVzSnkxN1hMa2FkK2swek1YSVE4?=
+ =?utf-8?B?YzV3eXpaVjlMSFJ1UFRjU0hPOWxGWlZwMnV4ekF4TlpSVmZLWFBNS0RKS1dC?=
+ =?utf-8?B?VlVFTlBNL0ZhQUhMN0dhVDhHL1RyWnlFWWpiVk02aDdqcGk2aUt2WFcwZThV?=
+ =?utf-8?B?MkdLZXdxdm9tVFA0VXJnMitSTU43Mm5TVi9VK0tzalVBL3B6b254WThHbFJB?=
+ =?utf-8?B?c2NvRC9iYzRvUUpwWEcvbW0vL21teWV6SVhPOFVEK0gvZVFyNFV6TnZtNEkr?=
+ =?utf-8?B?UVdLb3l3SDhoNjVlV1RMSXN1VGp3eURPSHBEbmVoVUMvYmlrTTRQRTVCdktO?=
+ =?utf-8?B?VVBJa2Nma2RoeDc3MUZmTjhNOGl2NFlOc3NOTU1DVmk5b1I4dm9lRWlLUnlo?=
+ =?utf-8?B?Q1F1bDFQaUJ5MHd1NStKbWRSMGJuV1RqSEZFSmtxZDREZ3h6ZUttWkI0bXQy?=
+ =?utf-8?B?OGZFWlZnR05zaWVvV1FCZi8wUWVsY0VyK3hQdFhyTHoveFM5ZmFTUUk1cEp4?=
+ =?utf-8?B?NmFzcG8rZFIyT2k5czdKVkpqRXhSbHZUa2RQRXNPQW1sWXdzelRqKzdkOGVX?=
+ =?utf-8?B?QW5xKzhiQ0h2Y2tsMVdXeENOZ3pKVk4vM29Jcjd2QU5kNkZ5QklEU25LbzI1?=
+ =?utf-8?B?NlIyMC9rUWk0cDhJb3g0c2JBcWtob0pTQTNweWx5L2NWOXlDVXJnSDE3RVJI?=
+ =?utf-8?B?TE5jRktSM1ZDRDg5ZStzSTNMejlWcGozR0FFdU1XN3RZaUpvWUQ1YjFUU25j?=
+ =?utf-8?B?NVZDSllVT1dzNWJQV3B5TFQvaEFoRDNwMStJa2czRlBkTk9xaFZXWFkyQVFx?=
+ =?utf-8?Q?5jaTQnJbE0Fcj?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?q0BsCNdchZ2/9kp8QXmC3ZjLrT5UaR0KI+QVZH4Ggw5NPrVNkumNIZP7QFks?=
- =?us-ascii?Q?WVzZMwhiDQPD8B745n3BqPjX68gv609zcU/OWrODxnMYuM7Y9KuSvjJT6+dd?=
- =?us-ascii?Q?n8m88QPTSBUh1p17OyJw+29UbU6z6GM0oxUQXxqmHqhUFfqpg9wyz+Le945B?=
- =?us-ascii?Q?vGblGceeXOzVC4+0GjXFx0nIZ4OPflmxjDdc4TuRpiAEO+IHH9DTycmF3Ea5?=
- =?us-ascii?Q?5BiC6btsB+XXL7UETHZZDXdVfEnq51DhuPaVbWxoB3jOZg7/lq0Mqhiy2sWP?=
- =?us-ascii?Q?djA0vLZjSYYhPSqptwgrXp7lXgZ7d1nY811+AQEZG19FQOv1ThzF3OAJRFWA?=
- =?us-ascii?Q?/MVWzYHeTiMFo0sqXZZuAQ8tUF6NrNNFqqwjC11ftvDe/zzAajRU8eO7mcTy?=
- =?us-ascii?Q?lC29IHA49pVhnc8bLD//e1q71hEuflmwK1/ccBxOXeO5Kkch0A4/5es2AiOi?=
- =?us-ascii?Q?FtNVt0m9ZktYuWgDmZ5h9GIdQRnVk9XzWzuYBCbm5EEkH2uPgK75F2iJBPtQ?=
- =?us-ascii?Q?bnGYGBpVEjihWUSB3PioXwziZSk7D2eFx0VkW8GTT5gqoel4BxseQFZoeUTz?=
- =?us-ascii?Q?8qURIIXAQEQcqjqMxafd6zBkE2OezQ98vF6XtO9M/7L0VItoYirlLItJxi0x?=
- =?us-ascii?Q?w/j/BjLTaEc1AHVpPnSG0fNbh9KgUNW7W6u7Jk01SW8+ihSCHgH+LFXYLvNR?=
- =?us-ascii?Q?9gLMo4xTn4jufqLSTrBZbxwVSwmVtZ02ZpxYnRXptUVXDiIRCE/0AjQwBBJV?=
- =?us-ascii?Q?4r+UOuF7Qnk3VzxsGG/gdDb0KKgfbqrGlakzcK0vYyFkicv2M9sjHiKCmTZ0?=
- =?us-ascii?Q?OGahV8/wQR5LdjHV9q6tuUfpAqpUAbYalkKmrcvdXMxLdLkIuliRNkgbFDRU?=
- =?us-ascii?Q?Ss0NjTHctZnmHd/vBZiFG7qeh5shbK3eOR2pl1GoEb6HN5eJtW/ffSrDvrl6?=
- =?us-ascii?Q?I9sOlDSPvMn4BzoHyC23wUzO+LF7oFfvX/IZMpUnqy4tetYRLiAmUpyhXgug?=
- =?us-ascii?Q?V8t4olqghPyiww+o4tN3J0nI8YKUmWUNZryRdOYg69TsYWo3+6rNBtTeFmR6?=
- =?us-ascii?Q?Mk2vDkWRE43IMDrUAikRL7YwlwBsxyAxB2miA/qH9uXD9BUu7zWr5ZDO1Tt+?=
- =?us-ascii?Q?phcTRd/Eq0dAzdWjwrisaiz3LukflLp/VdgtpjlzdhHvOjaLyi3pW3+97pul?=
- =?us-ascii?Q?Z6mXVTKnMtqXndps2xD3HqL1/DumTehJuwjg/PR6ILrqoXbaK8EMATbD6/1i?=
- =?us-ascii?Q?yTf1MDL1Zi66Wt+CwOM6o2GSoynZDVPWFLt9Fpf2trkkAt1xYSvhGEdJMMde?=
- =?us-ascii?Q?/a85LL4sYZff3D7pdFrjIS4r3UQ5WeIHYPY63zmz1CR9s3SbgYw3u2vl3uho?=
- =?us-ascii?Q?BAxJqQdbyosP0TH/FgA8cKnElwxqItxgPrqrL6VtCDcUCMbWTxySGcDaONwq?=
- =?us-ascii?Q?oOT99HMD7LU77gRxZCma+wKeG2+vPuOvOxd+pOlFJZ02gbO/M/wyd6lLXXG+?=
- =?us-ascii?Q?ndlgmqaslgS60WNiN2c12frGfEMtEf5xCw0kgRl4URiPNv5QmdiAPvLXSfCU?=
- =?us-ascii?Q?DRL6kVVyEgBn5a/su8jDJJIrTIaRmvx5Y2nWKqzmG937QVaYZTvOjQt6pVaj?=
- =?us-ascii?Q?AA=3D=3D?=
+	=?utf-8?B?U2tKeTJoZmp2S1UyeFFSM3RJVjU0bDNZNUtnb1NETkthNm1PU2tUeStzd3pj?=
+ =?utf-8?B?RTB3c2h3emxIWFI3MkE0U0piMUwzTWM0ZXlPWG9QV2FVLzhXcFU0cEhZeGFY?=
+ =?utf-8?B?KzJrK3l5bm83T2QwbEJLSVBGQUZLbHlhMlFETHNvWG5VQys4b0JCSERkd05B?=
+ =?utf-8?B?OVpKT0ZEOWNjZGhyVkVFMFlxZG5zWmV5SlBsTnpaRTNTWnBXY0xEN203SWFO?=
+ =?utf-8?B?NkhmVGEyMVVzTlltUXhhTXlwRFBqaUZweXdCZTkrR1pRdVZ3RXRTNEk3Tnk1?=
+ =?utf-8?B?V0RBQWRDZGJFOXc1SHduTVh0dUUySUtqRWcvdUNGRS93QlBscy9ybjNubnZI?=
+ =?utf-8?B?Nm8zZC9YM1RkNzdaRG04Rk9Qcm5yS0xNQ2thOTRvM1RySnBpYzB1RTRmR1R2?=
+ =?utf-8?B?c0gxMHJIQi9tYWs4UjNjQURaWDlkZjU2YlZPT1VCaExCazNLaFkzdzZDdmxJ?=
+ =?utf-8?B?SXovd1BvQUVmdm5pS2pDT2YzZkY0VWw5NHZ3Vnc4aEJ2Q2JRaXYwS0gxczc0?=
+ =?utf-8?B?MjZCWVR6ZDk1STZxcENiSE9HcnpMVmwzdjMvbjVXdXBYcFZ3RzhTNktrQlNM?=
+ =?utf-8?B?UVQxZ2h2cWRpUkxoTnBvOTZLSzkzMDZ0WUtwdGRuS3hRejhZNFdaVUM3QmFa?=
+ =?utf-8?B?a2Q2OXd5WTExQWRQQ2NkbXI1MlBTZjd5SzRKK3ZJc1lsam5aV0JEbWVvb2k5?=
+ =?utf-8?B?WkROaHJROEVoTXprVzU2d2lNbzYwWGxkYUJGbXJuUG55YmxFQzBkSG9UNU5i?=
+ =?utf-8?B?dmwwQzNZazZyYmVJWno4VTdHNm9JWlRPSCs4VWtwQ2NabWx1NFczbmZQRHFN?=
+ =?utf-8?B?azVZQ1RVdVVHK2YxK085MmlieDRRRDFGSS8xQS9lRm44QlF0K0NCditPOGlY?=
+ =?utf-8?B?ZWJtNFRxT1U1VVo3OUcwc2tvM1VJejJueE5lTEFNT2JhVjZ5UmM4UW1rRXhk?=
+ =?utf-8?B?YkxQOE4xUGhkeGRRekhMdE0zTE1qT0tiTWczN0JuclIrNW5zUFlYc2t4MkJj?=
+ =?utf-8?B?cUEvblFxblpGa1ptZWg5anlqZS9DN0tBcXVTSDg4MzEwSmV6aERIOU1GUHJC?=
+ =?utf-8?B?NXg0Mml4a1k5Z1huMCtlUkNDSHRDUDhZL1NybFF0RitOYnl4enl6UmhoWlBZ?=
+ =?utf-8?B?b2lKUHpnN3FQaTBhWDlueXp2OUc2QUx6Q3VFTklId01KTTBDWlI4Qzh1aUFR?=
+ =?utf-8?B?N2hhMHBzb0QrVTVSeWlZRS9zWnp1MGM5UG56UGt1OWRrWFllQU8xeGdWcTd6?=
+ =?utf-8?B?ejdnZzU5NWZVclFaTmxRcDZoY2ZNb2tSM1dsWit3M05PZWdrdHRxcHBvcHh2?=
+ =?utf-8?B?VzhGNUpIZ0dHWk9qK2JHMGpsZzhjWW42bFNEUlZZN29LZ1RWTDViT3kyaHJB?=
+ =?utf-8?B?bThSa1E4S2pId2tSNDdwVW9nUERZclMyMHRpVFJFcVFQRXRuUjUvZXZrbGph?=
+ =?utf-8?B?ZW9hRGRtYnVicE82OTc0NGN3MjZpOEh4Tk10RXpwcjdkNmp4TkpWTmhUVXNP?=
+ =?utf-8?B?TlFtWlltR1FLaUkzQW9zVFJERSsreC8xSXpsd05wL0MvYXVNYjl5YjA0UFRH?=
+ =?utf-8?B?ZVhjMFNpNjFuTFYzODdTYWRReXBQcHRLV2xEUFQ0UXRWWk5TaStLQWJISklU?=
+ =?utf-8?B?Wk0vTVVhaEdORGQ0MHZKS3ZxbDg5WmQrU1g2ZkMvYXdrbUFXYXdUZzNmZVd5?=
+ =?utf-8?B?bENjV3dHb3BZbE83TXlVdzdvUnpwYVk2ZHRSenNaWk1Db1FJbVRYdVBVNzZ4?=
+ =?utf-8?B?dHlkZzNEVHFXdndpWU9IRUJkakM4ZGZGcFlCbE5uYkpOTTJ1RmUxRTM0V0pY?=
+ =?utf-8?B?WStxbVN4TlFJQnZzZkcrTE83Sld0WFdZZEhJWUpvbXRlYWEvQ0ViOXNYdzB4?=
+ =?utf-8?B?OStxaVRwakZrSGtEUWZlcmx6WkVJQVlUcGh2cjluSjc0NHNQVCtWcUdRSkxM?=
+ =?utf-8?B?WVd0eGIxclhndmM5MnpRUDg1bmwrbkExU3JjU1p2elRzR25lUlVDa2crS2NB?=
+ =?utf-8?B?RzU1eUlLbWRPZjdtakZwSmNKTTJSbWsxSDFsR0tOT3ZMbWtnTnhwdCt2UG9E?=
+ =?utf-8?B?aTNqSDhhUDViUWZuTEpld1lsdHltb1hPd1BGUUo0OFo2ODFBM3V4dXVBcW5X?=
+ =?utf-8?B?LytmMXpkdUh3Z2VXM3hyOUFPcGoxRWpBV2MySE9oM09VMHJkSHZJek5FUnBU?=
+ =?utf-8?B?SWc9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 99558cd8-7491-4b62-139b-08dd54d5bab8
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4eb77b8c-6507-4a74-1ec1-08dd54d6a797
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 13:18:29.5344
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 13:25:06.9229
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CWPPA94+BzPi0WF7ehiCEerWgEDmR2O056cJjp1lcxphE2lTM6KBylAWA1/j40BR50TzaqHVwoVyAQVzV0nlgg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PRAPR10MB5180
+X-MS-Exchange-CrossTenant-UserPrincipalName: dG2MbdvT+fPUtSP7PNk2GKMItg2g/+JclfILjlhqffSwdBzllj1sPUs3GOL3dSz1Lm5QJSYBlw+haXCJuBTHmg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB7597
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 24 Feb 2025 13:18:36 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17898
+ <cip-dev@lists.cip-project.org>; Mon, 24 Feb 2025 13:25:16 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17899
 
-On 24.02.25 14:03, Heinisch, Alexander (FT RPD CED SES-AT) wrote:
->> On 24.02.25 13:17, Quirin Gylstorff wrote:
->>>
->>>
->>> On 2/24/25 07:09, Jan Kiszka wrote:
->>>> On 21.02.25 13:31, Heinisch, Alexander (FT RPD CED SES-AT) wrote:
->>>>>> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org>=
-=20
->>>>>> On Behalf Of Heinisch, Alexander via lists.cip-project.org
->>>>>> Sent: Montag, 17. Februar 2025 11:00
->>>>>> To: cip-dev@lists.cip-project.org
->>>>>> Cc: Kiszka, Jan (FT RPD CED) <jan.kiszka@siemens.com>; Gylstorff,=20
->>>>>> Quirin (FT RPD CED OES-DE) <quirin.gylstorff@siemens.com>;=20
->>>>>> Heinisch, Alexander (FT RPD CED SES-AT)=20
->>>>>> <alexander.heinisch@siemens.com>
->>>>>> Subject: [cip-dev] [isar-cip-core][PATCH 1/3] Removed "ro" option=20
->>>>>> from read-only-rootfs's fstab.
->>>>>>
->>>>>> From: Alexander Heinisch <alexander.heinisch@siemens.com>
->>>>>>
->>>>>> Since we only support erofs and squashfs this option is not needed=20
->>>>>> any more. Further, it causes potential overlay rootfs variants to=20
->>>>>> be remounted read-only.
->>>>>>
->>>>>> Signed-off-by: Alexander Heinisch <alexander.heinisch@siemens.com>
->>>>>> ---
->>>>>>   classes/read-only-rootfs.bbclass | 2 +-
->>>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/classes/read-only-rootfs.bbclass b/classes/read-only-=20
->>>>>> rootfs.bbclass index 35a3ab3..83ddc33 100644
->>>>>> --- a/classes/read-only-rootfs.bbclass
->>>>>> +++ b/classes/read-only-rootfs.bbclass
->>>>>> @@ -41,7 +41,7 @@ SQUASHFS_EXCLUDE_DIRS =3D "${RO_ROOTFS_EXCLUDE_DIR=
-S}"
->>>>>>   image_configure_fstab() {
->>>>>>       sudo tee '${IMAGE_ROOTFS}/etc/fstab' << EOF  # Begin=20
->>>>>> /etc/fstab -/dev/root    /        auto        defaults,ro           =
-=20
->>>>>> 0    0
->>>>>> +/dev/root    /        auto        defaults            0    0
->>>>>>   LABEL=3Dvar    /var        auto        defaults            0    0
->>>>>>   proc        /proc        proc        nosuid,noexec,nodev
->>>>>> 0    0
->>>>>>   sysfs        /sys        sysfs        nosuid,noexec,nodev
->>>>>> 0    0
->>>>>> --
->>>>>> 2.39.5
->>>>>
->>>>> We observed `systemd-remount-fs` failing in a downstream layer.
->>>>> (using a ro squashfs and apply full disk encryption on top)=20
->>>>> Although, the service is executed in isar-cip-core as well,=20
->>>>> upstream, the service can be executed successfully.
->>>>>
->>>>> In essence what happens is that, the `systemd-remount-fs` remounts=20
->>>>> various mountpoints based on their settings in `/etc/fstab`
->>>>>
->>>>> ```
->>>>> root@device-mgmt:~# cat /etc/fstab
->>>>> # Begin /etc/fstab
->>>>> /dev/root    /        auto        defaults            0    0=20
->>>>> LABEL=3Dvar    /var        auto        defaults            0    0 pro=
-c       =20
->>>>> /proc        proc        nosuid,noexec,nodev        0    0 sysfs     =
-  =20
->>>>> /sys        sysfs        nosuid,noexec,nodev        0    0 devpts    =
-   =20
->>>>> /dev/pts    devpts        gid=3D5,mode=3D620            0    0 tmpfs =
-      =20
->>>>> /run        tmpfs
->>>>> nodev,nosuid,size=3D500M,mode=3D755    0    0 devtmpfs    /dev       =
-=20
->>>>> devtmpfs    mode=3D0755,nosuid        0    0 # End /etc/fstab ```
->>>>>
->>>>> Since `defaults` in fstab renders to:
->>>>> `rw,suid,dev,exec,auto,nouser,async`
->>>>> the service fails trying to remount the `squashfs` as `rw` as shown
->>>>> below:
->>>>>
->>>>> ```
->>>>> root@device-mgmt:~# systemctl status systemd-remount-fs =C3=97=20
->>>>> systemd-remount-fs.service - Remount Root and Kernel File Systems
->>>>>       Loaded: loaded=20
->>>>> (/lib/systemd/system/systemd-remount-fs.service;
->>>>> enabled-ru>
->>>>>       Active: failed (Result: exit-code) since Fri 2025-02-21
->>>>> 08:55:39 UTC; 5min>
->>>>>         Docs: man:systemd-remount-fs.service(8)
->>>>>              =20
->>>>> https://ww
->>>>> w.freedesktop.org%2Fwiki%2FSoftware%2Fsystemd%2F&data=3D05%7C02%7Cale=
-x
->>>>> ander.heinisch%40siemens.com%7Cde0b4a7d3b494f87bd1a08dd54d0ac65%7C38
->>>>> ae3bcd95794fd4addab42e1495d55a%7C1%7C0%7C638759977392750433%7CUnknow
->>>>> n%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJX
->>>>> aW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3DX5%2BBY=
-i
->>>>> WGiccJJ8qUcawdQ40DExa71H3avr0h15jJaU4%3D&reserved=3D0
->>>>> APIFileSystems
->>>>>      Process: 7530 ExecStart=3D/lib/systemd/systemd-remount-fs
->>>>> (code=3Dexited, statu>
->>>>>     Main PID: 7530 (code=3Dexited, status=3D1/FAILURE)
->>>>>          CPU: 15ms
->>>>> ```
->>>>>
->>>>> ```
->>>>> root@device-mgmt:~# journalctl --no-pager -u systemd-remount-fs Feb=20
->>>>> 21 08:55:39 device-mgmt.local systemd[1]: Starting systemd-=20
->>>>> remount-fs.service - Remount Root and Kernel File Systems...
->>>>> Feb 21 08:55:39 device-mgmt.local systemd-remount-fs[7531]: mount: /:
->>>>> cannot remount /dev/root read-write, is write-protected.
->>>>> Feb 21 08:55:39 device-mgmt.local systemd-remount-fs[7531]:
->>>>> dmesg(1) may have more information after failed mount system call.
->>>>> Feb 21 08:55:39 device-mgmt.local systemd-remount-fs[7530]: /bin/=20
->>>>> mount for / exited with exit status 32.
->>>>> Feb 21 08:55:39 device-mgmt.local systemd[1]: systemd-remount-
->>>>> fs.service: Main process exited, code=3Dexited, status=3D1/FAILURE Fe=
-b=20
->>>>> 21 08:55:39 device-mgmt.local systemd[1]: systemd-remount-
->>>>> fs.service: Failed with result 'exit-code'.
->>>>> Feb 21 08:55:39 device-mgmt.local systemd[1]: Failed to start=20
->>>>> systemd-remount-fs.service - Remount Root and Kernel File Systems.
->>>>> ```
->>>>>
->>>>> The rootfs is mounted as follows:
->>>>>
->>>>> ```
->>>>> root@device-mgmt:~# mount | grep " / "
->>>>> /dev/mapper/verityroot on / type squashfs=20
->>>>> (ro,relatime,errors=3Dcontinue) ```
->>>>>
->>>>> I understand why this happens on our system, but could not clarify=20
->>>>> why it does not happen upstream! So any idea, welcome!
->>>>>
->>>>
->>>> The same issue happens in upstream: secure boot on, data partition
->>>> encrypted, remount-fs fails. Which makes me wonder if our boot tests
->>>> should check for failing system services...
->=20
-> Such check for failing services definitely makes sense!
->=20
-> The good thing, I could reproduce using the config you described.
-> The bad news, it still works with a slightly different config.
->=20
-> TLDR:
-> In the failing setup we use dm-verity and in
-> the working setup we use the A/B-rootfs.
->=20
-> In both cases the filesystem is a squashfs=20
-> (once mounted directly and once via dm-verity mapping)
-> Thus, in both cases it cannot be mounted rw.
-> Options used to remount are similar.
->=20
->=20
-> Details:
->=20
-> In my isar-cip-core setup this does not happen!
->=20
-> I did a clean build using ./kas-container build using following config:
->=20
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-<snip>
+This reverts commit a36d28e946e6edb7fb27883e6ecb398001269f92.
 
-Disable full disk encryption and also exand-on-first-boot to get the
-error with upstream.
+It turned out that systemd-remount-fs dislikes it when "defaults" or
+even spelled-out "defaults" without rw suggests it should mount /
+writable. Result is a failing service and degraded boot.
 
-Jan
+If some future use case actually needs rw due to adding some overlay for
+root again, that will have to address the issue differently.
 
---=20
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ classes/read-only-rootfs.bbclass | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/classes/read-only-rootfs.bbclass b/classes/read-only-rootfs.bbclass
+index 83ddc336..35a3ab3d 100644
+--- a/classes/read-only-rootfs.bbclass
++++ b/classes/read-only-rootfs.bbclass
+@@ -41,7 +41,7 @@ SQUASHFS_EXCLUDE_DIRS = "${RO_ROOTFS_EXCLUDE_DIRS}"
+ image_configure_fstab() {
+     sudo tee '${IMAGE_ROOTFS}/etc/fstab' << EOF
+ # Begin /etc/fstab
+-/dev/root	/		auto		defaults			0	0
++/dev/root	/		auto		defaults,ro			0	0
+ LABEL=var	/var		auto		defaults			0	0
+ proc		/proc		proc		nosuid,noexec,nodev		0	0
+ sysfs		/sys		sysfs		nosuid,noexec,nodev		0	0
+-- 
+2.43.0
+
+-- 
 Siemens AG, Foundational Technologies
 Linux Expert Center
 
