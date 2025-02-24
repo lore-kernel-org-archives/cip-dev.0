@@ -1,158 +1,160 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <adithya.balakumar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E182C021B2
-	for <webhook@archiver.kernel.org>; Sat, 22 Feb 2025 09:42:22 +0000 (UTC)
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web11.43558.1740217333913022014
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C46C021B3
+	for <webhook@archiver.kernel.org>; Mon, 24 Feb 2025 04:39:04 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
+ by mx.groups.io with SMTP id smtpd.web11.82506.1740371938452023226
  for <cip-dev@lists.cip-project.org>;
- Sat, 22 Feb 2025 01:42:14 -0800
+ Sun, 23 Feb 2025 20:38:59 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=OZn16iMN;
- spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0A17E10382D37;
-	Sat, 22 Feb 2025 10:42:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1740217331;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FcDOPF+IOHTP8Zszlw+5Q1yQ4fD2yJTF+2USdZFRXkw=;
-	b=OZn16iMNzQPZzvTBp1zg7l3LKqWtEPwd6LEXenP1K/IuZxde48G7htbRMG/H2PxCZZlc1K
-	t8XFtzskUBVze+dxvHiTcYyYkSUE78m3pi9EvJR2TsU9uptCeLsEZw13pkNfQs06OBW0bg
-	S5wl+ekF+5dG1/9mQiYtzQ+ga6nRlWAtqyv88bLzcxI2Y8AgLWASSZTkSYgsaBdWurJx4G
-	jXXbMxYk/4E6+mMLFlBB/T3j75xNv6Rj3+YxKSTbTBz0S1l57CCVCrHy2Mc/Eatgq1cUNc
-	czTwt+auD4+7ao3VamD3HlF9ihIzRLGHuCY5jmSasM89L9xDRYWbRzOQA/Z9ow==
-Date: Sat, 22 Feb 2025 10:42:07 +0100
-From: Pavel Machek <pavel@denx.de>
-To: cip-dev@lists.cip-project.org
-Cc: Finn Thain <fthain@linux-m68k.org>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Michael Schmitz <schmitzmic@gmail.com>,
-	linux-m68k@lists.linux-m68k.org
-Subject: Re: [cip-dev] [PATCH 4.4.y-cip] signal/m68k: Use
- force_sigsegv(SIGSEGV) in fpsp040_die
-Message-ID: <Z7mb7+BXBDSD4a5G@duo.ucw.cz>
-References: <72a512bd5463ee04f4840f49cee2f3c3@linux-m68k.org>
- <960544762.1079819.1739441787128@webmail.strato.de>
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.134, mailfrom: adithya.balakumar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 51O4ctva3789293; Mon, 24 Feb 2025 13:38:55 +0900
+X-Iguazu-Qid: 2yAbJ3LJ2K1zBycxXe
+X-Iguazu-QSIG: v=2; s=0; t=1740371935; q=2yAbJ3LJ2K1zBycxXe; m=Z2zINMncdv4dzJGDQXt6QT55A7BzagulTBPLlHZpTeA=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1802) id 51O4csaX3402970
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Mon, 24 Feb 2025 13:38:55 +0900
+From: Adithya.Balakumar@toshiba-tsip.com
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Cc: Adithya Balakumar <adithya.balakumar@toshiba-tsip.com>,
+        shivanand.kunijadar@toshiba-tsip.com, sai.sathujoda@toshiba-tsip.com,
+        dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
+Subject: [isar-cip-core][PATCH v1] wic: Set partition UUID for reproducibility
+Date: Sun, 23 Feb 2025 23:45:49 -0500
+X-TSB-HOP2: ON
+Message-Id: <20250224044549.2233331-1-Adithya.Balakumar@toshiba-tsip.com>
+X-Mailer: git-send-email 2.39.5
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="6sZ5btrWbNoOlMKR"
-Content-Disposition: inline
-In-Reply-To: <960544762.1079819.1739441787128@webmail.strato.de>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 24 Feb 2025 04:38:52.0698 (UTC) FILETIME=[017FD7A0:01DB8676]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Sat, 22 Feb 2025 09:42:22 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17883
+ <cip-dev@lists.cip-project.org>; Mon, 24 Feb 2025 04:39:04 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17884
+
+From: Adithya Balakumar <adithya.balakumar@toshiba-tsip.com>
+
+This was previously handled with a patch[1], but the uuid assignment
+for some of the wic targets were removed by a subsequent patch[2] (probably by mistake)
+
+[1] https://gitlab.com/cip-project/cip-core/isar-cip-core/-/commit/38703cb8e44f0dcdb3a1d7adccd765b861cf1273
+[2] https://gitlab.com/cip-project/cip-core/isar-cip-core/-/commit/1eb0748ac1c7290775a6235f1ff7498d8397c03f
+
+Signed-off-by: Adithya Balakumar <adithya.balakumar@toshiba-tsip.com>
+---
+ wic/bbb-efibootguard.wks.in                   | 4 ++--
+ wic/hihope-rzg2m-efibootguard.wks.in          | 4 ++--
+ wic/qemu-arm64-efibootguard-secureboot.wks.in | 4 ++--
+ wic/qemu-arm64-efibootguard.wks.in            | 4 ++--
+ wic/qemu-riscv64-efibootguard.wks.in          | 4 ++--
+ wic/x86-uefi-efibootguard-secureboot.wks.in   | 4 ++--
+ wic/x86-uefi-efibootguard.wks.in              | 4 ++--
+ 7 files changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/wic/bbb-efibootguard.wks.in b/wic/bbb-efibootguard.wks.in
+index e6c3e15..6c30a8a 100644
+--- a/wic/bbb-efibootguard.wks.in
++++ b/wic/bbb-efibootguard.wks.in
+@@ -15,7 +15,7 @@ part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}"
+ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
+ 
+ # home and var are extra partitions
+-part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
+-part /var --fstype=ext4 --label var --align 1024  --size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
++part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid c07d5e8f-3448-46dc-9c0f-58904f369524
++part /var --fstype=ext4 --label var --align 1024  --size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 9947ed57-102f-4038-880c-9cf5cacaf153
+ 
+ bootloader --ptable gpt --append="rootwait console=ttyO0,115200 omap_wdt.early_enable=1 omap_wdt.nowayout=1 watchdog.handle_boot_enabled=0"
+diff --git a/wic/hihope-rzg2m-efibootguard.wks.in b/wic/hihope-rzg2m-efibootguard.wks.in
+index fb3f090..311fbd0 100644
+--- a/wic/hihope-rzg2m-efibootguard.wks.in
++++ b/wic/hihope-rzg2m-efibootguard.wks.in
+@@ -8,7 +8,7 @@ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}
+ 
+ # home and var are extra partitions
+ 
+-part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --extra-space=100M --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
+-part /var --fstype=ext4 --label var --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
++part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --extra-space=100M --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid 43a29d19-005f-49d9-9108-51ad0861d724
++part /var --fstype=ext4 --label var --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 7e20a7d5-5578-4ced-a7f1-5ee494dbaf72
+ 
+ bootloader --ptable gpt --append="console=tty0 console=ttySC0,115200 rootwait earlyprintk"
+diff --git a/wic/qemu-arm64-efibootguard-secureboot.wks.in b/wic/qemu-arm64-efibootguard-secureboot.wks.in
+index 00d627d..955a6b6 100644
+--- a/wic/qemu-arm64-efibootguard-secureboot.wks.in
++++ b/wic/qemu-arm64-efibootguard-secureboot.wks.in
+@@ -4,7 +4,7 @@ part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 102
+ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
+ 
+ # home and var are extra partitions
+-part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024 --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
+-part /var  --fstype=ext4 --label var  --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
++part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024 --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid e869413d-dc84-4822-b50d-00c5aab7d6fc
++part /var  --fstype=ext4 --label var  --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 815406da-387f-4e89-a0fb-6e617605c8c3
+ 
+ bootloader --ptable gpt --append="panic=5"
+diff --git a/wic/qemu-arm64-efibootguard.wks.in b/wic/qemu-arm64-efibootguard.wks.in
+index 17434d1..ce6253e 100644
+--- a/wic/qemu-arm64-efibootguard.wks.in
++++ b/wic/qemu-arm64-efibootguard.wks.in
+@@ -7,7 +7,7 @@ part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}"
+ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
+ 
+ # home and var are extra partitions
+-part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
+-part /var --fstype=ext4 --label var --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
++part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid 7346faa7-d6d4-49fa-a03e-82ee469cb1e5
++part /var --fstype=ext4 --label var --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 423f0a2e-b9b3-4615-85be-2a4261fa32d9
+ 
+ bootloader --ptable gpt
+diff --git a/wic/qemu-riscv64-efibootguard.wks.in b/wic/qemu-riscv64-efibootguard.wks.in
+index 1a2291e..1166ea1 100644
+--- a/wic/qemu-riscv64-efibootguard.wks.in
++++ b/wic/qemu-riscv64-efibootguard.wks.in
+@@ -7,7 +7,7 @@ part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}"
+ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
+ 
+ # home and var are extra partitions
+-part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
+-part /var --fstype=ext4 --label var --align 1024  --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
++part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid e578254c-bd99-4442-bc51-4935cd0ef522
++part /var --fstype=ext4 --label var --align 1024  --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 0209689d-672f-4254-8b92-566d6d9fd1ae
+ 
+ bootloader --ptable gpt
+diff --git a/wic/x86-uefi-efibootguard-secureboot.wks.in b/wic/x86-uefi-efibootguard-secureboot.wks.in
+index 0f4d637..71b0103 100644
+--- a/wic/x86-uefi-efibootguard-secureboot.wks.in
++++ b/wic/x86-uefi-efibootguard-secureboot.wks.in
+@@ -4,7 +4,7 @@ part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 102
+ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
+ 
+ # home and var are extra partitions
+-part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024 --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
+-part /var  --fstype=ext4 --label var  --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
++part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024 --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid 94593121-6f5f-4b04-98db-39aace692682
++part /var  --fstype=ext4 --label var  --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 686a2e06-7f96-495b-beac-1731cb98eb0e
+ 
+ bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait earlyprintk watchdog.handle_boot_enabled=0 iTCO_wdt.nowayout=1 panic=5"
+diff --git a/wic/x86-uefi-efibootguard.wks.in b/wic/x86-uefi-efibootguard.wks.in
+index 9d344f8..962eaac 100644
+--- a/wic/x86-uefi-efibootguard.wks.in
++++ b/wic/x86-uefi-efibootguard.wks.in
+@@ -8,7 +8,7 @@ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}
+ 
+ # home and var are extra partitions
+ 
+-part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --extra-space=100M --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002
+-part /var --fstype=ext4 --label var --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002
++part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --extra-space=100M --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid f12faa7c-a9ef-4b3f-b63d-1c74bd5c2b1c
++part /var --fstype=ext4 --label var --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid be5ae5e0-91d3-46ec-a7f7-c1ebfc0a7c28
+ 
+ bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait earlyprintk watchdog.handle_boot_enabled=0 iTCO_wdt.nowayout=1 "
+-- 
+2.39.5
 
 
---6sZ5btrWbNoOlMKR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> Sorry, I saw these five minutes too late. Applied for the next release.
-
-I guess these should go to 4.4-st, but I don't see them there. Did you
-forget to push?
-
-Best regards,
-								Pavel
-
-> > From: "Eric W. Biederman" <ebiederm@xmission.com>
-> >=20
-> > [ Upstream commit a3616a3c02722d1edb95acc7fceade242f6553ba ]
-> >=20
-> > In the fpsp040 code when copyin or copyout fails call
-> > force_sigsegv(SIGSEGV) instead of do_exit(SIGSEGV).
-> >=20
-> > This solves a couple of problems.  Because do_exit embeds the ptrace
-> > stop PTRACE_EVENT_EXIT a complete stack frame needs to be present for
-> > that to work correctly.  There is always the information needed for a
-> > ptrace stop where get_signal is called.  So exiting with a signal
-> > solves the ptrace issue.
-> >=20
-> > Further exiting with a signal ensures that all of the threads in a
-> > process are killed not just the thread that malfunctioned.  Which
-> > avoids confusing userspace.
-> >=20
-> > To make force_sigsegv(SIGSEGV) work in fpsp040_die modify the code to
-> > save all of the registers and jump to ret_from_exception (which
-> > ultimately calls get_signal) after fpsp040_die returns.
-> >=20
-> > v2: Updated the branches to use gas's pseudo ops that automatically
-> >     calculate the best branch instruction to use for the purpose.
-> >=20
-> > v1: https://lkml.kernel.org/r/87a6m8kgtx.fsf_-_@disp2133
-> > Link: https://lkml.kernel.org/r/87tukghjfs.fsf_-_@disp2133
-> > Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> > [ Pass 'current' to force_sigsegv() as was done prior to v5.3 ]
-> > Signed-off-by: Finn Thain <fthain@linux-m68k.org>
-> > ---
-> >  arch/m68k/fpsp040/skeleton.S | 3 ++-
-> >  arch/m68k/kernel/traps.c     | 2 +-
-> >  2 files changed, 3 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/arch/m68k/fpsp040/skeleton.S b/arch/m68k/fpsp040/skeleton.S
-> > index 31a9c634c81e..081922c72daa 100644
-> > --- a/arch/m68k/fpsp040/skeleton.S
-> > +++ b/arch/m68k/fpsp040/skeleton.S
-> > @@ -502,7 +502,8 @@ in_ea:
-> >  	.section .fixup,"ax"
-> >  	.even
-> >  1:
-> > -	jbra	fpsp040_die
-> > +	jbsr	fpsp040_die
-> > +	jbra	.Lnotkern
-> > =20
-> >  	.section __ex_table,"a"
-> >  	.align	4
-> > diff --git a/arch/m68k/kernel/traps.c b/arch/m68k/kernel/traps.c
-> > index 35f706d836c5..c6f18dc5884b 100644
-> > --- a/arch/m68k/kernel/traps.c
-> > +++ b/arch/m68k/kernel/traps.c
-> > @@ -1155,7 +1155,7 @@ asmlinkage void set_esp0(unsigned long ssp)
-> >   */
-> >  asmlinkage void fpsp040_die(void)
-> >  {
-> > -	do_exit(SIGSEGV);
-> > +	force_sigsegv(SIGSEGV, current);
-> >  }
-> > =20
-> >  #ifdef CONFIG_M68KFPU_EMU
-
->=20
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-> Links: You receive all messages sent to this group.
-> View/Reply Online (#17828): https://lists.cip-project.org/g/cip-dev/messa=
-ge/17828
-> Mute This Topic: https://lists.cip-project.org/mt/111159546/4520429
-> Group Owner: cip-dev+owner@lists.cip-project.org
-> Unsubscribe: https://lists.cip-project.org/g/cip-dev/leave/8129118/452042=
-9/629823354/xyzzy [pavel@denx.de]
-> -=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
->=20
-
-
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---6sZ5btrWbNoOlMKR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ7mb7wAKCRAw5/Bqldv6
-8g0dAJsEGzwMUI7bRHyBHG9FKPfCY/B2YwCgjOa145RAANiVX0xZsMEFg2DIBDo=
-=LeLN
------END PGP SIGNATURE-----
-
---6sZ5btrWbNoOlMKR--
 
