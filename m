@@ -1,265 +1,670 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <alexander.heinisch@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9139C021A4
-	for <webhook@archiver.kernel.org>; Mon, 24 Feb 2025 12:53:56 +0000 (UTC)
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (EUR03-VI1-obe.outbound.protection.outlook.com [40.107.103.86])
- by mx.groups.io with SMTP id smtpd.web11.88522.1740401635851681511
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D69C021A4
+	for <webhook@archiver.kernel.org>; Mon, 24 Feb 2025 13:03:36 +0000 (UTC)
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (EUR03-AM7-obe.outbound.protection.outlook.com [40.107.105.84])
+ by mx.groups.io with SMTP id smtpd.web11.88737.1740402207445646149
  for <cip-dev@lists.cip-project.org>;
- Mon, 24 Feb 2025 04:53:56 -0800
+ Mon, 24 Feb 2025 05:03:28 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=KaTs9Au0;
- spf=pass (domain: siemens.com, ip: 40.107.103.86, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=vCa4Yi15;
+ spf=pass (domain: siemens.com, ip: 40.107.105.84, mailfrom: alexander.heinisch@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=reFFo5KuAEO5vRI0rmWmlNB9cy8UA2BfnXdnpNKBqHRXHo6QZpVOh069zGSln5zlF2omDpJd+u7rIQVIsz9nT3+m6dbDGB3v/Q54bkLDpwp8bNfv2mYTEAHLtgj78bwLagMldYWPUwr9GR/uFxuJTslYpFnj7fdNIYg+/6kCzkMI3L5BHb04tMBKJuyzEiGwn+hWmytvWiwsyxZBgnW+FFp/PiaS6QhK8Hs/4on1oBVfC5Dkn76FppF3BT3SQACqK3NYTUYunlo3S4X8Sx887gV8g6/jT2/J+ONMU33VVyji0SxKsCtcS+nGUPwaOIlQ7zXEK03STSUM1/7lebtHJA==
+ b=XW7dyQNAMTdtrCX20HldQnvm0Gv2FTBrNlUxeWDq2xBDnFN7j9+8ekEO7jLC3F6E4Mo+CC0C8f9RWdbZayNm4E95dQ1qAmep9Akvu0PZwsa0FcBlJyYsEk8eYIDMxCEwH4wbK67NtzMZe1DV5VzhPJJb7ctjkXrlNl1/Qh5WKMMDJWvKu/Lt/xOpDmnsnelKAf/T0TguysndcwS9h54MKS7ZRAYOf20ym5ey2PB63PWHO+xyuf31lRRlhRmPgRMeqcYp6uzMhOIo1kX+kjFA7ZPzvYi4LzJKAjMjdLMR5idNKeapz64sfPvVwndPusYXUZBk0Zfi/TkuEyyyYfrBhA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QHzpqat5rqNEysAo5BCjuRj9hKjlBDw1TEHAOthsShY=;
- b=JZmRp/xmSdPLaYXmy+otOCTXwK40KYyLPjJ0ldtOZtkDtioD5fCO6Uecnsbecqf4BHTne+JJFmtiOzVRWcelSY/wQBLb/nQDnEEirh3DAgmiD+8oogAXYzAGiesT9y06fqwn50KUXK8fV9G87BBnuuAhDuNi03ZZ7O13MSqQzUL9gp2d975yqKWfrasWMezwcjYdp/ZeNl1nafWz3kP1P92cuA1vvub5eG8Mn9vktRiBZS1ojQ51oZcp0kl2TcOhwnOsg2KpKz03Bljx6Uoy3FTOKR2irbAyn5RNtJb/re18xlbtHKdeCDrjGH89gj31lwiSA12j38xXwf3Ui0KtlQ==
+ bh=6UlT+GIiKgciovVLposMo8YIdQu9HYdqd4mbDwjFq8c=;
+ b=Fa1dW4BB91yYZ+0ERDcxipyAgI1cS21APPl0nihzsHJjUXMVO4YhzesWj81EnS5RLgnEBN667Boc8Jh+EvE8QAFbwMiKIpevqG8WAAqShj79R/cv0Givko+sbc0ZJZqgyZycbBljLo78Bv4Ig0Xf6kmgFITW2l/l/1UKorGhqxuox2o30xbowG3MqF/cwqUIcfiYxDJiO59xHRdKe1uv+DljTsh93faSgoJKXQLkZW/PGjcPo9rLBsBRx9KvCgw8TaHRaeSq+p8D0uysFVdt8DgePmL39Q+/XW1XPxgNwA0WuoxOh0Lc6HFFeF8pVS0oblXPaRGYh7ECfk1lzT5tag==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QHzpqat5rqNEysAo5BCjuRj9hKjlBDw1TEHAOthsShY=;
- b=KaTs9Au0yjcTsicsG9DHavkZSFmZ5CUwqLjYIALHmnoBKXQCpCacYtjUpesgWqK6FbYgUjjWDxUGG3j36XZkJu3zFtxIi8rh8tVKz+QIkeZKProZElh1fxmG1tS6W5v5BO7G7LZlBMZJ2qbe2kOmCR0OY4TFlkvS08LTOn6/by+ZQc3QrwV68pHO8Xawo4xBkPx9P5eWPwKUE715bFyXPXDtwXxSRhUVgO5LfeNTct1mmqB+0Q7ccWqxp0Pl0K9PBSdZboUEpBEZxFO4L/yLSvBZvK1jf05Nx4ghq926GbaKL3UgFvLZGoYjq8llgI2j3kbslEKNacMlmmnasF7uzA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by AS2PR10MB7154.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:60e::11) with
+ bh=6UlT+GIiKgciovVLposMo8YIdQu9HYdqd4mbDwjFq8c=;
+ b=vCa4Yi15YmbAR2Z4Kl3SCNO/wgAMdag7hev3ueCKrnWC0XsUUAOwwtTmUblnA8YX3JgATJ4ArZUf04N0wnROdDvw4Sxl2hLeThHcrx4u0Sub3uC0jQ0GE1Dc38vPCxaWcK4qXM3R32a9Zv2ZLDnzKRztiS6tqYCgi3fyj3Qyu5KNh680V907Qn4QMkCg1DbBL2DtqIcEBl3F+Q8T9ux2G8768UzzFqtLOk1KSj9x4ub3D9PKnO+LXyMpGf72Kd0EEgE3wrc9tX4inPlrMfpo9FHTKvapZ7EgagDIYN0zWhOyva7+3fKJUBuNDjGSHXQMYgSsisl/ze2orBDmmdbToQ==
+Received: from AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:10c::13)
+ by VI1PR10MB7782.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:1be::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Mon, 24 Feb
- 2025 12:53:52 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408%4]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
- 12:53:52 +0000
-Message-ID: <3455372e-70c8-4524-9d99-116d991c5221@siemens.com>
-Date: Mon, 24 Feb 2025 13:53:48 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core][PATCH 3/3] Added support for rootfs-overlay.
-To: "Heinisch, Alexander (FT RPD CED SES-AT)"
- <alexander.heinisch@siemens.com>,
- "Gylstorff, Quirin (FT RPD CED OES-DE)" <quirin.gylstorff@siemens.com>,
- "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Mon, 24 Feb
+ 2025 13:03:23 +0000
+Received: from AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::3a6d:95dc:3ce2:6da0]) by AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::3a6d:95dc:3ce2:6da0%4]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
+ 13:03:23 +0000
+From: "Heinisch, Alexander" <alexander.heinisch@siemens.com>
+To: "Kiszka, Jan" <jan.kiszka@siemens.com>, "quirin.gylstorff@siemens.com"
+	<quirin.gylstorff@siemens.com>, "cip-dev@lists.cip-project.org"
+	<cip-dev@lists.cip-project.org>
+Subject: RE: [cip-dev] [isar-cip-core][PATCH 1/3] Removed "ro" option from
+ read-only-rootfs's fstab.
+Thread-Topic: [cip-dev] [isar-cip-core][PATCH 1/3] Removed "ro" option from
+ read-only-rootfs's fstab.
+Thread-Index: AQHbgSMFS4oMVoV72Emqa3dVE8borLNRsACwgARTFICAAGbbgIAABtoAgAAFZWA=
+Date: Mon, 24 Feb 2025 13:03:23 +0000
+Message-ID: 
+ <AM7PR10MB3320A04B717DF98709A7F9C086C02@AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM>
 References: <20250217100024.42995-1-alexander.heinisch@siemens.com>
- <20250217100024.42995-4-alexander.heinisch@siemens.com>
- <715da9f1-ec6d-4a90-9d32-674d7fea0d86@siemens.com>
- <AM7PR10MB33207EA44EE03D94AF84B79A86C42@AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM>
- <c4af6328-d4b6-4bfa-ba32-0d66b2abb1e6@siemens.com>
- <AM7PR10MB332040EB4740B51F543A8D3586C02@AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM>
-From: Jan Kiszka <jan.kiszka@siemens.com>
+ <1824F69F112B9158.31881@lists.cip-project.org>
+ <AM7PR10MB33205157A04B7C1290C1B6CB86C72@AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM>
+ <6fce5303-59b6-4aee-b60d-d0d25c8a3a2a@siemens.com>
+ <2010c1c9-c33d-48fe-911c-4d4dfdf46d0f@siemens.com>
+ <f05430e8-0a36-42bb-9c67-d6ccf60c0ddc@siemens.com>
+In-Reply-To: <f05430e8-0a36-42bb-9c67-d6ccf60c0ddc@siemens.com>
+Accept-Language: de-AT, en-US
 Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-In-Reply-To: <AM7PR10MB332040EB4740B51F543A8D3586C02@AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CH0PR03CA0203.namprd03.prod.outlook.com
- (2603:10b6:610:e4::28) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+ MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ActionId=13715c89-f371-4306-a614-3d703a16a141;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=true;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=restricted;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2025-02-24T13:01:32Z;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Tag=10,
+ 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM7PR10MB3320:EE_|VI1PR10MB7782:EE_
+x-ms-office365-filtering-correlation-id: eda98959-2425-465c-e9d1-08dd54d39ea2
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|366016|1800799024|376014|13003099007|38070700018|7053199007;
+x-microsoft-antispam-message-info: 
+ =?iso-2022-jp?B?RUJaTWMwejZjT2k1TUJvWS9IaVZNdE8rOTVWakkva3ZXRjJrdG5kd3h3?=
+ =?iso-2022-jp?B?d2I2bm9zVGU0RkZ2Z3pMZ1BBUHV1VnRQYytXNXBPekMzRDRzNy9yeDlo?=
+ =?iso-2022-jp?B?UkkzY0JxdHE5QlNDRVEvZDN6L1U5WVRqc3lFNjE4WDVYSFFDSXB5ZWVv?=
+ =?iso-2022-jp?B?NDJCZWxMejdtSWwxVkVYL2t1RWk3R2JMZWZWMWpXd0E4dVI3Rktqc3F3?=
+ =?iso-2022-jp?B?VkwyUjlLWThjOG1yTm9oQnl3NTIxM2VMekZzL3dRdHlkdm4yYlZzT3NF?=
+ =?iso-2022-jp?B?UmNsdGpBWXB0aTgyZ3JJVDYxOER4Z0FzZW9mRWUrM1hwUWJWaExlSVVs?=
+ =?iso-2022-jp?B?L3FSN25Zd0hndGVqMm10MDdqUkdFNEJ5cmw0VFI0bjRWQmJwbnpDdWdC?=
+ =?iso-2022-jp?B?YTZuRC92NXdPZjZtYVFkUzA5a1lCcWNUSEZWZlI2MFNZYnc4WHM4YlFn?=
+ =?iso-2022-jp?B?YVZsZFA1UTFHQkhabThwSHFUVmhTaW1CYmYxMjNPclNWSVY1cHBZVUZC?=
+ =?iso-2022-jp?B?ZitWL2wyWVUzak0vbHBGeFBFVjlCaTlEUEsvVU5QeTRad2cwSEJKYUoz?=
+ =?iso-2022-jp?B?RUQ2MW13WXYyTldld05KNHVManE2SHBPcVNnaHVRakJMbVdSWnp4bTlq?=
+ =?iso-2022-jp?B?c1VZdWdnTDJGRUxreHBuQWV2Z042cU1KZFdZWjNoa1BjeGlzN0xhMXhn?=
+ =?iso-2022-jp?B?d2lsbS9LYmw4QmZXc042bDVJd2VtS3BjWGxQMVQ4MmdiRGFvdmFIV2dS?=
+ =?iso-2022-jp?B?K293TVhZUFpSNmRiSDdXaFRsalc0eTFDRkZtZUx2RUdTU3krVWllc2Qr?=
+ =?iso-2022-jp?B?TjB2Y3hyMzZUZGdTTmxoQTZSY2hWNUlrMnBwdG9WMXdmUDdLNmdTRWNr?=
+ =?iso-2022-jp?B?LzBFMzJlc1dQYm90U3BiZkQxNWluVGhMdDFTT3Jjb0FHYy93MXhYREE0?=
+ =?iso-2022-jp?B?Tk5hVW40SzhqRlgzVzZMTWQzdkZpbE1GRjN3WTllVHB1R09WRTM4aVVp?=
+ =?iso-2022-jp?B?SG5tS3hIa3Vqc2QrRVhzSTlpcDdOek96SW1oWTNnNldiZHNXM1g4VWNX?=
+ =?iso-2022-jp?B?cUxqekJpOGU4Lyt2bUFQSlJZNVJSQWxVVmRNL0ROdmlUYjNJYm5oVlFy?=
+ =?iso-2022-jp?B?d3poRGFSS2NjWCtpWlIwZW1nRndRMkhmL2tscHppempZNTV3dTlEVHdr?=
+ =?iso-2022-jp?B?b3RvcnpVTWVHUHhQTm1lWlAyR2NobjMvOExYSENVaVlhMDZ2cklSMUpV?=
+ =?iso-2022-jp?B?RUJBYUVDVVpFbVNaY2lqMVI5YnB4cWVyTUhLNkpUSDVrM2xXVGpEbGhs?=
+ =?iso-2022-jp?B?L3JJVjVlZlBneHNhRm1qY3FsMHVhcUVnWm84djZoMEpya2ZSdlkzaTBi?=
+ =?iso-2022-jp?B?aFlnMnd5NUVhQ1c1MEtleldGdnBFL1JmNEZkakJCSFVOVXZHbHkrc0N1?=
+ =?iso-2022-jp?B?dDNaS05uOVIvemdNb0FUYmtjaEhpMHJYUGYzUFhDbE1US1E5ZTZsZ1pI?=
+ =?iso-2022-jp?B?RVRvWXczVUxxcWFDcFBmQjFYeDFyQ0JTK3hjdTdmV2pNdjZtS0NYWUxZ?=
+ =?iso-2022-jp?B?eXNyV3drR1RROUJ2dlFmYVFYRHpsdFIvMUFRb01JU084ZC84VTA3MVVq?=
+ =?iso-2022-jp?B?OVowUStIRlJXd0kxcWt0YmE0TWlHS3BjaU9NT25rMk8vMCtJdjBMQkl5?=
+ =?iso-2022-jp?B?eGpZaDRrTStaRU5nWVJBUk10UmIrblRaTHJZU3pCQ29TczlUaDd6RzUx?=
+ =?iso-2022-jp?B?WnB0ZEdWTkRLZFRsTFhDQmlmK1Y3NGRYUWhMSWhxNTZMYVpmdkRzOGpn?=
+ =?iso-2022-jp?B?NTdjT25oeDFWS3pLd3J5QUs1d0Vub2hsejFua0pGS3pzZXpvZWNPcVdJ?=
+ =?iso-2022-jp?B?VXYyMWFHejljSXpYVy9mQUVoTkJocUphN1VLY05MdDZOVlBZWGZDV3lP?=
+ =?iso-2022-jp?B?b1JmTXErOVBHeWMzMnBNZVVzM2twVXZkYkZ1cVRvZEhaSFJENEpIS29J?=
+ =?iso-2022-jp?B?K2RqS1BUbkZTN0l4dVZoc3IxOEI4Ng==?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(13003099007)(38070700018)(7053199007);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?NHJ5TXJqcEpHenNBTDY5cTg5VzgxN0tZOW9td1J6SW1od2o2ZHRHQmp1?=
+ =?iso-2022-jp?B?d1QzdmFaZW42bWg0OGR1UUZYYXFKdXBidWN3RVZjWWhJQzhMTmRhZkdx?=
+ =?iso-2022-jp?B?a21JdStNay90dFhJL3Q2OTVScDFocDRyYjZ5T0Foc0x6Njh3TC9hQ0hT?=
+ =?iso-2022-jp?B?RXVKaWxyNXE4enNmQ2tFK2tTdG5KM1N0YS9oTHhUSFB0Z0VUUE1iQU5Q?=
+ =?iso-2022-jp?B?TjNPQjllN1ZKaFFUeVJOZXhJblJQRmN1dWtKL2NZRXlISnU4emNrTlhR?=
+ =?iso-2022-jp?B?dGNuS0huSmxlU3ZsbXhhd2tuNk1HY04yaW5NeG9TYjhYMzdvOTQ2a3Z6?=
+ =?iso-2022-jp?B?R0RTU0JucmM0dkhRNCsvenF4ZlVyWVVIVDFDM0RHZXRMZjJvK0h4UURq?=
+ =?iso-2022-jp?B?WFV6aThhUU5PWmdBVXRYRHZpZnBGNllFUHZsNHVHbEYwMUhhT04wUXQ0?=
+ =?iso-2022-jp?B?cHlnVmlvc0NJRFpYZHJjeXJmcDBRY1JBUWFwL3BzZGVXVm5JYWJRNEVI?=
+ =?iso-2022-jp?B?WUhyRzVmRVhTd1creGZpaEtLT2dETlV0KzVrWTgreEJxdzducDE3akRa?=
+ =?iso-2022-jp?B?YzNGcjRIa3ZoTHEzYStreVhmemZYR3JwbGt0Yy9WVFRNQWJ4QXJwQ0Vl?=
+ =?iso-2022-jp?B?bGhHTkpxcWpUdVJvMlFpVGpXWUR3K1RlTG1XMldoT25IMEM2SXNBVVlQ?=
+ =?iso-2022-jp?B?bDJvM3doVytxdkl2aDlHRGpKaVE4M2E4MCsvaTIzR1R2dGhqZ1VFZSta?=
+ =?iso-2022-jp?B?Y2xpUTYwaExENkxtK0swMHdsckxXVDQzYXlYZU5LcElpcXNUayszYUxT?=
+ =?iso-2022-jp?B?dlVGV056Q0kyTm90OXhBV2dlOUZqYXpWa0xNdHhkZUpublV2K2Fra3dh?=
+ =?iso-2022-jp?B?UjkxQVozenZsRFVrNWxkcGRGeGdEeFdTeEMxY1doQXNaUGpSWUUzd0Q4?=
+ =?iso-2022-jp?B?WE8zUnlVbFRQMFNaNmtoR0hlSW5zTzlKMXRRYVRCdlh2T2Q2Qmk0NElL?=
+ =?iso-2022-jp?B?WFN3S2J1aCs3aXViNzBqNUM1VlNxYVZ1TU5qcUo4enJVZlFqR3gzQXFl?=
+ =?iso-2022-jp?B?d0pNYUxDS25WL3Z3SExRQ0VERmw5SzhxS0l2NHhnUUUrSzgyY2srM2dh?=
+ =?iso-2022-jp?B?L28rNG0wL1BXVUo1dktVNTQ0NnVYZG5MYU5GYnFoMkdjNlN2V2hEYWoz?=
+ =?iso-2022-jp?B?SVZjMDRiK1lpd0J1cFpTUU11Kzd5ZENDOG1lZEJyWUUzZEVjNVVnb29k?=
+ =?iso-2022-jp?B?cm9YL2p0MUY5SGxDYUpoWGN6RWxFRkhVOVlkMFloN2VsZU5UVUovSU5B?=
+ =?iso-2022-jp?B?K1p3dS83KzdMVXA5QzJMY2ZuMjdPTnhyak55WWtQWHZPc21pRmszemRs?=
+ =?iso-2022-jp?B?S1QyNmNDVWpNSkt6UjJQdjVFa05FODZBSVhXQ3NuWit4UGVLYjF2Nlo1?=
+ =?iso-2022-jp?B?OElmekc5Zk5DKzNZUVdLZlBQQ0Z5Slpnc3lHQWlVc2tKY0NPSFFjRGpa?=
+ =?iso-2022-jp?B?NVdIa0xXdjlnQkkrTXdpY3N2TzhVU3RwbkF5cGY2OTRNTGdBMFV3UTQ2?=
+ =?iso-2022-jp?B?bldDK2JsLzNlY0hYME0wazNhT3BvZlZjK3FMcTNGVXlqMCs4MTZGeWJr?=
+ =?iso-2022-jp?B?b01hRWkwM2VFaktSZ3NZSjVZZG1KUzNpcGhZc2tGcUpGajZKS25ReHQx?=
+ =?iso-2022-jp?B?T2FFaGhMVlhva3hLeThLd3JQcnEwMlpvSEtvU3F0Um5RUVg1bXY4Yjls?=
+ =?iso-2022-jp?B?emRmZmhHdTBZb2VRcVVuWUkrZU44allhRnJlQ2REQXBldDBScmR4cU5X?=
+ =?iso-2022-jp?B?WXBBSDdaVXZMV25PSVRteUNzR2UxUTc3YzhLNzZvTnBSUTA2ZGdyNXhX?=
+ =?iso-2022-jp?B?WldDS0ZLUzhkb0ZaQmhnNmVvZWR1cFdYNDRTZFFraEFRd05hZXFLZ01U?=
+ =?iso-2022-jp?B?cVd6MFRLYXo1ZkFVS3hEb0EyMGZLam15MkVFc3FPb3lsUkdWZzJUS2lM?=
+ =?iso-2022-jp?B?L2RUWWFqcDN3MVphR3U3Ky9nakFYQW0wbDc0NUhXMVMxUFVIRHBQMEdq?=
+ =?iso-2022-jp?B?a2hScjFxY1FOMUpTSnl1b0ZqQndQOFQxQy80dG14QWVOc0JIN0M2VzZj?=
+ =?iso-2022-jp?B?Mk9qK2lUMklybUJTTWJIRGQ4M3FXdmlGTnpjbzYvcldRRmtTV2U5OWMy?=
+ =?iso-2022-jp?B?VmN6NXBBQzdUZzVhQTBqTktvcFFlenNKR1FXN1ozVXVMazFUUHJlNS9q?=
+ =?iso-2022-jp?B?U1Q1alZicnJsaVYvWGFKSUFCTnRMOVFSRWYyUGY0Q1BSUlJKNHlKKzZJ?=
+ =?iso-2022-jp?B?LzYyeWpGTExBaVQ3b0lHSVpIVnlRbGVPMGc9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS2PR10MB7154:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8f24f9a4-d485-4170-f3bf-08dd54d24a4c
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?NW1mcnVBZi9seG9Hb1Q2QzIvM3JqYkRWKyszaEpzSjVmSUZZL3lRQk5ZbjZ0?=
- =?utf-8?B?dnFzakl5VzN0d3QwWWZFUnJnZUI4M1ZFYnExQmx2YjVuRmxiOXJlT0JsZTlG?=
- =?utf-8?B?bnF0RldKQzIvYkhEK01zbnl2U25sUVp0b09qRmhJN2ZkTmxNenpiTFh1Rjh4?=
- =?utf-8?B?KzB3L0dCTFZnRjlVYkxacDJjSlRVQnd4OS9jOGM2R21WaFVhUGV3UEwxTU9y?=
- =?utf-8?B?UUpHVG1vdk1SemZKTGFvNmFmdkthUks5MjcrQVBMOVk5M2grRVlOSTF4S0V4?=
- =?utf-8?B?b3B0QVlobURleU93Uzg3ZXl4dnpPdmw1Vm9UemNCYlI2M0h1WGcvQTNZUGpt?=
- =?utf-8?B?WHYvaU1JcnpSR0NnbHNMK29mT2NWU3FBczZtbnAxQ0EvRzgvYkpqWC83aFJo?=
- =?utf-8?B?SWVoU0tXWXV6Sm53RkRSejBMRXN0Z3VLR0lDbHcvQmZibm9WeSt1TlZWOHZj?=
- =?utf-8?B?ZEQ4aEpxSFBMd2R5U2hMQjJDZlFlUWtPdCtLY3ROYXphYm5kcVR1M2dYOU1U?=
- =?utf-8?B?WVRpNDhxVVR2TVJRRXE5WnBxcmZneE40VmorbzlLMEJ2c2ZNRGxka2dMRFhH?=
- =?utf-8?B?aE5TNlZMdnJFS1hsaldJT1o1WG03WHVSUmw5ODIycHBuUjYrWExZbUZEY1pV?=
- =?utf-8?B?anljN1UxWVdPelppa1B3YXZ3NW9mbCtwaGVseW9qUkFJOG9tTEZacUhVeFFD?=
- =?utf-8?B?eUR1Wi90WGNGNmVqTGdYNktBWlI1SGlncVFvd3Zja09IMm42bWkwV25ZcWZj?=
- =?utf-8?B?RWEzUmd6dVpBcnV0NlQzdkVkanh2UXRkVTMzQ1pPZHhJMThOZyttWWs5c21D?=
- =?utf-8?B?cXlNN09wS2NVYVhHdytrczV4aEIrSnJvOGxnSmxWVXg4cVNLRHRKU2o3VXgw?=
- =?utf-8?B?bHZtTHZEYkc0TG5iQ1pyNVc3QTczM3lRVG5zVm80UjI2UkRodStuZndDTFVH?=
- =?utf-8?B?YThEYTFoS1daTDZLZG42QXpSeTNJVTkvMzAwVlkwUE5tS2VXUzhQdGFqZnNa?=
- =?utf-8?B?OWllVFVxVWRFRjRtUStGYkdzK2ZQa2lZLzFObEFwS2RoSk9uWjJrV1doRDFk?=
- =?utf-8?B?Q1l3eGRobGRDSTVHR3FsZVRPTDVHdk9icXJoY1hqTzA5U05mSjVQQkVQRERz?=
- =?utf-8?B?R25pYkFlSWxXd1RMZ3VFWCtneG5IT2N6WFBZMlh0ZytMZlV0TTJtVndoOGhw?=
- =?utf-8?B?eVJGT01IazFRbURad2QwM2VNY0V2MDBLcG1qc0Q1OGlVY3V4dDRibkFNRXAx?=
- =?utf-8?B?SjR3bjJFeFkyaVJFdldNcjRRYmM3KzdIOThKZGtzLytZM1gvRk5VVzR3R0xJ?=
- =?utf-8?B?UW9UV1lRS0NyYWZOVCtqemdlNXRzMzJIUkwxV3JsTmcva0Q5emtMSHh5WUdH?=
- =?utf-8?B?Q1FYMjE5QU1HSE9rZzFlQW4zT2QzQWlvcU9ib0hyMEh4UFhNZ3J5d1VNRG1I?=
- =?utf-8?B?S2NEbEd6M3hPc2VuSVBNWWxFZXFJalJGNUVDOGVZTWduRnNRSC9VYjZpVG1M?=
- =?utf-8?B?TW9ZVjBHN0wvcW9UamRESytFR0ZZM0JxY1VVTkU2Q0p0SkJ4YnVWZXlET1hF?=
- =?utf-8?B?QW94d2NQZWZRWTZWZ0ZoZGo5NWxYc25EcE51cnhtUHJDaFFuU0NCOXlpYkhx?=
- =?utf-8?B?NVJWUmxuNUFralhKYjFkWHVKUzV5Y21SUjIrbGQ1Ym5LUzFrYmh1VVg5UmJF?=
- =?utf-8?B?VVM5bTVhQ0VHTFBvMTNVeDFIOG5QNlZYaGU3SzgyMFIzazRoRU9oQjNHa3Jy?=
- =?utf-8?B?YUdXeE5IQXJaaFdoRGQxU1c1eUg5bHdCbFNTVkI4NFA2ZFk5R1pTeVpySEhK?=
- =?utf-8?B?VDd5UW1XbjhaY3BBemNPVjArVjNpejE4MFVLaHFVSkFTbk5lcHJieG04U1Mv?=
- =?utf-8?Q?qkP6gWZvBU08U?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?VVRZZGEyYUZRUXpRMTJST2xIWTRyRUMxSElhVjRyQjJTNnowVVo0WWtCWnpi?=
- =?utf-8?B?YWNBVm9wMDcwM2dvMHNXM3J0L01IdU8vQ1BGQkJiRXUvdVk4dVl2aXYrS3E1?=
- =?utf-8?B?QnNhK3YxRnpGSHpqZ1AvUXA2SEFjSGJxRytLdWNEaHlTVVY5QnVBb1VaN3I5?=
- =?utf-8?B?V001S0ZhN20yMjFnUWE4NTVQQnp6M2dpT211K2F6ZEFNb0F5WjFPQlJCeUI1?=
- =?utf-8?B?Y29tOGczQitLNkphbnpDVUl2MUcySHhFVlJmQ1hLT3AwQkNkaDFRc0pra1Q3?=
- =?utf-8?B?VktaRU1lYmRqY3FyUXU0akJHMUNaOHk0WE9aS3UzeVZHRGVmVkk0SmpmMVJG?=
- =?utf-8?B?VStpU1lyc3hYT1VVOWsveFE1eWswNWlsNkZjYlF1ODFTblE1WEVBTEFISFJX?=
- =?utf-8?B?Tm9xQ0ppcDI3TGtnQ2JZWHk3cUptb1ZiRmlxYzYvdFZLS3I4UFFEYzRxb2dM?=
- =?utf-8?B?UlNUaHJOL25MYTRUSVkrOUV1WmRyVFovY1VqSE9nYW9nSVVVRno0NFRSR0ZP?=
- =?utf-8?B?aGM4bFVmU0s0dmp2TVNSTjhsUHY4djlLYXZLWEc5aHRVR09tN0VTNFNLWXhE?=
- =?utf-8?B?NWljL3czZ29EdlBPbVQ4dCtrRGFneUZod1VqVU1HMURVeCt5d3dBUVRpcTVI?=
- =?utf-8?B?VjFOcmRETEc5UnNTcmZ0L1JQSU5TYkxRaytTNkVROGxYTUtWKzdud2s1L1Ri?=
- =?utf-8?B?czdteW9qRWdWRWF0N3BHVGU3Ny92VGdwWjd4Sy9BUDZRQ0pRWTV4K1VQWm1j?=
- =?utf-8?B?M0dMVE9SWUI0T3JYL3BhdEdHQU5aMGhqb0JsMm9Eby9tQ3dGUXpkM1ppR3pT?=
- =?utf-8?B?WW9PZDcyVWxFMlljVHZkN1JMbTJLUjhucURKY2JEYmcrcWxDdjlvSmVtSnpw?=
- =?utf-8?B?MHF6b0FUckh3ZnlxbmdSaEdId3drU0w0R1g3dTRlT21ZYjI1bFUyMHVUR0Vr?=
- =?utf-8?B?VlowWWh4T2FiOFJHNmRLN3lEajBzTnhrQkxsWnduRXZtancycTdvZWFudVpX?=
- =?utf-8?B?Z3FNdERvKzZIcHVsR2t3MU1YODkxelRRckxOZ3Q5bUZnQXQxWDVuZEdYOHRI?=
- =?utf-8?B?M2lienVKLzUvMTF0WjVNeHZ5SFh2L3VCeTdkZDJLRHZwN0h6Vkl1UCtmUXlt?=
- =?utf-8?B?R2Q4NlNNRGthUmN0bGQyRzZKQXN6dy9pOXJ2N2cxT0x6anYyeUphWHF1YTZk?=
- =?utf-8?B?ZzZKRDBsd0J4YUZZK1JnbHpTRk5Rd3VJQjd3bTJjUEVBcTFNUU9lMEgwMzZx?=
- =?utf-8?B?KzM0Uk1CV2VRLzFIdnloTkV2UkVGK1VoZTNoZVF3VmI3MTJpVit6cFNCckI4?=
- =?utf-8?B?a2xUMUJuN2VQNHRhTFU4TGYvakhjY1NSOEtTR2RSUGJxeEUwei9TSnNQd29l?=
- =?utf-8?B?SXFuMWdPa0w1c2VVNFZZdXkxWHhxVm9WSUNuYnBOcjJ0a3NzU28zenROSG1X?=
- =?utf-8?B?NmF0SkxjaklvUTN2RlRiRW5sN0lXbXk1eFg5ZjYrZDN5UXloWmVxRTVjUnpa?=
- =?utf-8?B?ZGpNcVhieEc1eUtEWGZtZlpzcklEeDYzQmdJeWdreFZKTmJ3Znl2Snp2aFdC?=
- =?utf-8?B?Tnp6c0JtWGxkeGlmcHVISk12YTZHbVNPZW55VjdTWno0VWxCYzZPRU9URStt?=
- =?utf-8?B?ZWxaU2N5QmVlUkpqb3ZENldtSlZKVzdKb3Qzd3RLLzExTVZDZVY4NXNKaER6?=
- =?utf-8?B?d0c4UEpTSXFEZDlpVkdKM3dxcC9hYnRWVmJ6RHpNUDFkS0hqeG5IVUVVOU9j?=
- =?utf-8?B?cmJ5SzIydEZncEZkY2t5NXNpVlVBcWU0RWNxOUhQdXdBS1VEcUxYd0UwMGcv?=
- =?utf-8?B?Sld4UHZsNXVKODRoT2ZwczJmWi9tak1lMHp4V3VsZng2WHRNcVpKSTQ0VXpF?=
- =?utf-8?B?TEp1SWV6ZTFzWlV6TFcwUHkydkcrb1hOdmUxUjZJd2NlZnUrVFVFVlBMOWlt?=
- =?utf-8?B?SmJMS24zR3h5Mnh4SC9iMGpORm9UV0tUUVhrRG4wdUhQdjlPd1VPRTdHMFlj?=
- =?utf-8?B?OENpRjQ0MW1VeW9PMDVtTS80WmtIL01iQUhZVXNmcmNpK0hvUXB5VmdxOUxj?=
- =?utf-8?B?M0Fxa0V3dEl1UFJUZlJJMVVGZTFDZG5sUVAreURPc2RBdlhzY2JqSXphendD?=
- =?utf-8?B?M1h6RVNock1KNU9ETEhoek1JWmhNVXNQNkhBQUxKVkE3VDZxcnVKTndMemZj?=
- =?utf-8?B?eWc9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8f24f9a4-d485-4170-f3bf-08dd54d24a4c
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 12:53:52.5573
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR10MB3320.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: eda98959-2425-465c-e9d1-08dd54d39ea2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Feb 2025 13:03:23.2455
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 965XfQXZrQs7hKDNhj7fAj4n1FDyGAsFmmdprsXVBHGWvsopujGzKkalvV1HyTROmDepAgwhnXSpX3mehlSDNw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR10MB7154
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Pn5y6BUa48b78siV91BKYF/i4M/VFcESOMF6oH8sdiXaw+cq1Abl3jC0VI8h9ohq+sh319BTg80y/l41V68PzNYZ8gytrM8QpRYcnrRZv7c=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB7782
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 24 Feb 2025 12:53:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17895
+ <cip-dev@lists.cip-project.org>; Mon, 24 Feb 2025 13:03:36 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17896
 
-On 24.02.25 13:49, Heinisch, Alexander (FT RPD CED SES-AT) wrote:
->> On 2/20/25 14:00, Heinisch, Alexander (FT RPD CED SES-AT) wrote:
->>>> On 2/17/25 11:00, alexander.heinisch@siemens.com wrote:
+>On 24.02.25 13:17, Quirin Gylstorff wrote:
+>>=20
+>>=20
+>> On 2/24/25 07:09, Jan Kiszka wrote:
+>>> On 21.02.25 13:31, Heinisch, Alexander (FT RPD CED SES-AT) wrote:
+>>>>> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org>=20
+>>>>> On Behalf Of Heinisch, Alexander via lists.cip-project.org
+>>>>> Sent: Montag, 17. Februar 2025 11:00
+>>>>> To: cip-dev@lists.cip-project.org
+>>>>> Cc: Kiszka, Jan (FT RPD CED) <jan.kiszka@siemens.com>; Gylstorff,=20
+>>>>> Quirin (FT RPD CED OES-DE) <quirin.gylstorff@siemens.com>;=20
+>>>>> Heinisch, Alexander (FT RPD CED SES-AT)=20
+>>>>> <alexander.heinisch@siemens.com>
+>>>>> Subject: [cip-dev] [isar-cip-core][PATCH 1/3] Removed "ro" option=20
+>>>>> from read-only-rootfs's fstab.
+>>>>>
 >>>>> From: Alexander Heinisch <alexander.heinisch@siemens.com>
 >>>>>
->>>>> In addition to the overlays for e.g. /etc we now support persistent 
->>>>> overlays for rootfs as well.
->>>>> To enable this behaviour you can either set INITRAMFS_OVERLAY_PATHS = "/"
->>>>> or extend your existing config INITRAMFS_OVERLAY_PATHS = "/ /etc"
+>>>>> Since we only support erofs and squashfs this option is not needed=20
+>>>>> any more. Further, it causes potential overlay rootfs variants to=20
+>>>>> be remounted read-only.
 >>>>>
+>>>>> Signed-off-by: Alexander Heinisch <alexander.heinisch@siemens.com>
+>>>>> ---
+>>>>>   classes/read-only-rootfs.bbclass | 2 +-
+>>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/classes/read-only-rootfs.bbclass b/classes/read-only-=20
+>>>>> rootfs.bbclass index 35a3ab3..83ddc33 100644
+>>>>> --- a/classes/read-only-rootfs.bbclass
+>>>>> +++ b/classes/read-only-rootfs.bbclass
+>>>>> @@ -41,7 +41,7 @@ SQUASHFS_EXCLUDE_DIRS =3D "${RO_ROOTFS_EXCLUDE_DIRS=
+}"
+>>>>>   image_configure_fstab() {
+>>>>>       sudo tee '${IMAGE_ROOTFS}/etc/fstab' << EOF  # Begin=20
+>>>>> /etc/fstab -/dev/root    /        auto        defaults,ro           =
+=20
+>>>>> 0    0
+>>>>> +/dev/root    /        auto        defaults            0    0
+>>>>>   LABEL=3Dvar    /var        auto        defaults            0    0
+>>>>>   proc        /proc        proc        nosuid,noexec,nodev
+>>>>> 0    0
+>>>>>   sysfs        /sys        sysfs        nosuid,noexec,nodev
+>>>>> 0    0
+>>>>> --
+>>>>> 2.39.5
 >>>>
->>>> I would like to avoid that anti pattern of creating an overlay over the complete rootfs. What are the debug case you need a full overlay?
+>>>> We observed `systemd-remount-fs` failing in a downstream layer.
+>>>> (using a ro squashfs and apply full disk encryption on top)=20
+>>>> Although, the service is executed in isar-cip-core as well,=20
+>>>> upstream, the service can be executed successfully.
 >>>>
->>> To be very clear: This is not meant for debugging in the field! Never, ever.
+>>>> In essence what happens is that, the `systemd-remount-fs` remounts=20
+>>>> various mountpoints based on their settings in `/etc/fstab`
+>>>>
+>>>> ```
+>>>> root@device-mgmt:~# cat /etc/fstab
+>>>> # Begin /etc/fstab
+>>>> /dev/root    /        auto        defaults            0    0=20
+>>>> LABEL=3Dvar    /var        auto        defaults            0    0 proc=
+       =20
+>>>> /proc        proc        nosuid,noexec,nodev        0    0 sysfs      =
+ =20
+>>>> /sys        sysfs        nosuid,noexec,nodev        0    0 devpts     =
+  =20
+>>>> /dev/pts    devpts        gid=3D5,mode=3D620            0    0 tmpfs  =
+     =20
+>>>> /run        tmpfs
+>>>> nodev,nosuid,size=3D500M,mode=3D755    0    0 devtmpfs    /dev       =
+=20
+>>>> devtmpfs    mode=3D0755,nosuid        0    0 # End /etc/fstab ```
+>>>>
+>>>> Since `defaults` in fstab renders to:
+>>>> `rw,suid,dev,exec,auto,nouser,async`
+>>>> the service fails trying to remount the `squashfs` as `rw` as shown
+>>>> below:
+>>>>
+>>>> ```
+>>>> root@device-mgmt:~# systemctl status systemd-remount-fs =1B$B!_=1B(B=20
+>>>> systemd-remount-fs.service - Remount Root and Kernel File Systems
+>>>>       Loaded: loaded=20
+>>>> (/lib/systemd/system/systemd-remount-fs.service;
+>>>> enabled-ru>
+>>>>       Active: failed (Result: exit-code) since Fri 2025-02-21
+>>>> 08:55:39 UTC; 5min>
+>>>>         Docs: man:systemd-remount-fs.service(8)
+>>>>              =20
+>>>> https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fww
+>>>> w.freedesktop.org%2Fwiki%2FSoftware%2Fsystemd%2F&data=3D05%7C02%7Calex
+>>>> ander.heinisch%40siemens.com%7Cde0b4a7d3b494f87bd1a08dd54d0ac65%7C38
+>>>> ae3bcd95794fd4addab42e1495d55a%7C1%7C0%7C638759977392750433%7CUnknow
+>>>> n%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJX
+>>>> aW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3DX5%2BBYi
+>>>> WGiccJJ8qUcawdQ40DExa71H3avr0h15jJaU4%3D&reserved=3D0
+>>>> APIFileSystems
+>>>>      Process: 7530 ExecStart=3D/lib/systemd/systemd-remount-fs
+>>>> (code=3Dexited, statu>
+>>>>     Main PID: 7530 (code=3Dexited, status=3D1/FAILURE)
+>>>>          CPU: 15ms
+>>>> ```
+>>>>
+>>>> ```
+>>>> root@device-mgmt:~# journalctl --no-pager -u systemd-remount-fs Feb=20
+>>>> 21 08:55:39 device-mgmt.local systemd[1]: Starting systemd-=20
+>>>> remount-fs.service - Remount Root and Kernel File Systems...
+>>>> Feb 21 08:55:39 device-mgmt.local systemd-remount-fs[7531]: mount: /:
+>>>> cannot remount /dev/root read-write, is write-protected.
+>>>> Feb 21 08:55:39 device-mgmt.local systemd-remount-fs[7531]:
+>>>> dmesg(1) may have more information after failed mount system call.
+>>>> Feb 21 08:55:39 device-mgmt.local systemd-remount-fs[7530]: /bin/=20
+>>>> mount for / exited with exit status 32.
+>>>> Feb 21 08:55:39 device-mgmt.local systemd[1]: systemd-remount-
+>>>> fs.service: Main process exited, code=3Dexited, status=3D1/FAILURE Feb=
+=20
+>>>> 21 08:55:39 device-mgmt.local systemd[1]: systemd-remount-
+>>>> fs.service: Failed with result 'exit-code'.
+>>>> Feb 21 08:55:39 device-mgmt.local systemd[1]: Failed to start=20
+>>>> systemd-remount-fs.service - Remount Root and Kernel File Systems.
+>>>> ```
+>>>>
+>>>> The rootfs is mounted as follows:
+>>>>
+>>>> ```
+>>>> root@device-mgmt:~# mount | grep " / "
+>>>> /dev/mapper/verityroot on / type squashfs=20
+>>>> (ro,relatime,errors=3Dcontinue) ```
+>>>>
+>>>> I understand why this happens on our system, but could not clarify=20
+>>>> why it does not happen upstream! So any idea, welcome!
+>>>>
 >>>
->>> The intention of having a root-overlay for us was to have an easy way 
->>> to develop and extend recipes based on our existing images. That 
->>> means, we wanted to have the possibility to install packages with apt, 
->>> or copy additional binaries, services, configs on the device without 
->>> having to rebuild our image all the time, still maintaining to have a 
->>> working environment as close as possible to the production image.
->>> That enables us to develop features in a debian native environment, 
->>> still being close to the features present in the final target image.
->>> After being confident, the steps done and changes reflected on the 
->>> overlay can be transferred fairly easy to a recipe and end up in a production image (image without the overlay).
->>
->> Ok, this still does not explain why
->> Overlaying `/usr` should be enough for these use cases ?
-> 
-> I explained that in the thread with Ludwig: 
-> "
-> Probably that's the case for most partitionings. Still having a complete 
-> root overlay is more generic imo.
-> But I am open for that!
-> "
-> 
->>
->> Also this kind of testing  ensures that you will not find issues realated to read only rootfs in your packages during development.
-> 
-> Same holds true for overlaying /usr. Once I have fundamental parts of the
-> ro filesystem overlayed, issues may be hidden during that time.
-> Anyhow, as said, this is only a feature we enable when developing new recipes.
-> Once the recipe is done we rebuild an image without root-overlay and 
-> testing is done without such overlay!
-> 
-> TLDR: I am also fine with overlaying just /usr to simplify the setup.
-> The initial idea was to have a generic solution for a full overlay
-> including custom downstream partitionings / mountpoints for external storage.
-> 
-> But I have to admit, it brings additional complexity and if we decide against
-> such generic approach I am also fine with that!
-> 
+>>> The same issue happens in upstream: secure boot on, data partition
+>>> encrypted, remount-fs fails. Which makes me wonder if our boot tests
+>>> should check for failing system services...
 
-Should we simply revert patch 1 until it is clear if we still need it
-(in a different form then)?
+Such check for failing services definitely makes sense!
 
-Jan
+The good thing, I could reproduce using the config you described.
+The bad news, it still works with a slightly different config.
 
--- 
-Siemens AG, Foundational Technologies
-Linux Expert Center
+TLDR:
+In the failing setup we use dm-verity and in
+the working setup we use the A/B-rootfs.
+
+In both cases the filesystem is a squashfs=20
+(once mounted directly and once via dm-verity mapping)
+Thus, in both cases it cannot be mounted rw.
+Options used to remount are similar.
+
+
+Details:
+
+In my isar-cip-core setup this does not happen!
+
+I did a clean build using ./kas-container build using following config:
+
+```
+$ cat .config.yaml
+#
+# Automatically generated by kas 4.7
+#
+_source_dir: /repo
+build_system: isar
+header:
+  includes:
+  - kas-cip.yml
+  - kas/board/qemu-amd64.yml
+  - kas/opt/6.1.yml
+  - kas/opt/bookworm.yml
+  - kas/opt/expand-on-first-boot.yml
+  - kas/opt/ebg-swu.yml
+  - kas/opt/encrypt-data.yml
+  - kas/opt/encrypt-all.yml
+  version: 18
+local_conf_header:
+  __menu_config_vars: WDOG_TIMEOUT =3D "60"
+menu_configuration:
+  DEBIAN_BOOKWORM: true
+  DEBIAN_BULLSEYE: false
+  DEBIAN_BUSTER: false
+  DEBIAN_TRIXIE: false
+  EXPAND_ON_FIRST_BOOT: true
+  IMAGE_COMPLETE_SWUPDATE: true
+  IMAGE_DATA_ENCRYPTION: true
+  IMAGE_DELTA_SWUPDATE: false
+  IMAGE_FULL_ENCRYPTION: true
+  IMAGE_RO_ROOTFS_EROFS: false
+  IMAGE_RO_ROOTFS_SQUASHFS: true
+  IMAGE_SECURE_BOOT: false
+  IMAGE_SECURITY: false
+  IMAGE_SWUPDATE: true
+  IMAGE_TESTING: false
+  KERNEL_4_19: false
+  KERNEL_4_4: false
+  KERNEL_5_10: false
+  KERNEL_6_1: true
+  KERNEL_RT: false
+  TARGET_BBB: false
+  TARGET_HIHOPE_RZG2M: false
+  TARGET_IWG20D: false
+  TARGET_QEMU_AMD64: true
+  TARGET_QEMU_ARM: false
+  TARGET_QEMU_ARM64: false
+  TARGET_QEMU_RISCV64: false
+  TARGET_X86_UEFI: false
+  WDOG_TIMEOUT: 60
+```
+
+VM Setup: `./start-qemu.sh`
+
+During bootup:
+```
+...
+[  441.107438] systemd[1]: Finished systemd-remount-fs.service - Remount Ro=
+ot and Kernel File Systems.
+[  OK  ] Finished systemd-remount-f=1B$B!D=1B(Bount Root and Kernel File Sy=
+stems.
+...
+```
+
+```
+# systemctl list-units --failed
+  UNIT LOAD ACTIVE SUB DESCRIPTION
+0 loaded units listed.
+
+# systemctl status systemd-remount-fs
+=1B$B!|=1B(B systemd-remount-fs.service - Remount Root and Kernel File Syst=
+ems
+     Loaded: loaded (/lib/systemd/system/systemd-remount-fs.service; enable=
+d-runtime; preset: enabled)
+     Active: active (exited) since Mon 2025-02-24 10:16:29 UTC; 3min 5s ago
+       Docs: man:systemd-remount-fs.service(8)
+             https://www.freedesktop.org/wiki/Software/systemd/APIFileSyste=
+ms
+    Process: 472 ExecStart=3D/lib/systemd/systemd-remount-fs (code=3Dexited=
+, status=3D0/SUCCESS)
+   Main PID: 472 (code=3Dexited, status=3D0/SUCCESS)
+        CPU: 868ms
+```
+
+```
+# cat /etc/fstab=20
+# Begin /etc/fstab
+/dev/root	/		auto		defaults			0	0
+LABEL=3Dvar	/var		auto		defaults			0	0
+proc		/proc		proc		nosuid,noexec,nodev		0	0
+sysfs		/sys		sysfs		nosuid,noexec,nodev		0	0
+devpts		/dev/pts	devpts		gid=3D5,mode=3D620			0	0
+tmpfs		/run		tmpfs		nodev,nosuid,size=3D500M,mode=3D755	0	0
+devtmpfs	/dev		devtmpfs	mode=3D0755,nosuid		0	0
+# End /etc/fstab
+```
+
+```
+# mount | grep " / "
+/dev/mapper/fedcba98-7654-3210-cafe-5e0710000001 on / type squashfs (ro,rel=
+atime,errors=3Dcontinue)
+```
+
+-------------
+-------------
+-------------
+
+But I can confirm in a setup like you mentioned it is reproducible (for a r=
+easons
+I don't understand yet):
+
+```
+$ cat .config.yaml
+#
+# Automatically generated by kas 4.7
+#
+_source_dir: /repo
+build_system: isar
+header:
+  includes:
+  - kas-cip.yml
+  - kas/board/qemu-amd64.yml
+  - kas/opt/6.1.yml
+  - kas/opt/bookworm.yml
+  - kas/opt/expand-on-first-boot.yml
+  - kas/opt/ebg-secure-boot-snakeoil.yml
+  - kas/opt/encrypt-data.yml
+  - kas/opt/encrypt-all.yml
+  version: 18
+local_conf_header:
+  __menu_config_vars: WDOG_TIMEOUT =3D "60"
+menu_configuration:
+  DEBIAN_BOOKWORM: true
+  DEBIAN_BULLSEYE: false
+  DEBIAN_BUSTER: false
+  DEBIAN_TRIXIE: false
+  EXPAND_ON_FIRST_BOOT: true
+  IMAGE_COMPLETE_SWUPDATE: true
+  IMAGE_DATA_ENCRYPTION: true
+  IMAGE_DELTA_SWUPDATE: false
+  IMAGE_FULL_ENCRYPTION: true
+  IMAGE_RO_ROOTFS_EROFS: false
+  IMAGE_RO_ROOTFS_SQUASHFS: true
+  IMAGE_SECURE_BOOT: true
+  IMAGE_SECURITY: false
+  IMAGE_SWUPDATE: true
+  IMAGE_TESTING: false
+  KERNEL_4_19: false
+  KERNEL_4_4: false
+  KERNEL_5_10: false
+  KERNEL_6_1: true
+  KERNEL_RT: false
+  TARGET_BBB: false
+  TARGET_HIHOPE_RZG2M: false
+  TARGET_IWG20D: false
+  TARGET_QEMU_AMD64: true
+  TARGET_QEMU_ARM: false
+  TARGET_QEMU_ARM64: false
+  TARGET_QEMU_RISCV64: false
+  TARGET_X86_UEFI: false
+  WDOG_TIMEOUT: 60
+```
+
+```
+[FAILED] Failed to start systemd-re=1B$B!D=1B(Bount Root and Kernel File Sy=
+stems.
+See 'systemctl status systemd-remount-fs.service' for details.
+```
+
+```
+# systemctl list-units --failed
+  UNIT                       LOAD   ACTIVE SUB    DESCRIPTION              =
+          =20
+=1B$B!|=1B(B systemd-remount-fs.service loaded failed failed Remount Root a=
+nd Kernel File Systems
+
+LOAD   =3D Reflects whether the unit definition was properly loaded.
+ACTIVE =3D The high-level unit activation state, i.e. generalization of SUB=
+.
+SUB    =3D The low-level unit activation state, values depend on unit type.
+1 loaded units listed.
+```
+
+```
+# systemctl status systemd-remount-fs
+=1B$B!_=1B(B systemd-remount-fs.service - Remount Root and Kernel File Syst=
+ems
+     Loaded: loaded (/lib/systemd/system/systemd-remount-fs.service; enable=
+d-runtime; preset: enabled)
+     Active: failed (Result: exit-code) since Mon 2025-02-24 11:47:05 UTC; =
+1min 35s ago
+       Docs: man:systemd-remount-fs.service(8)
+             https://www.freedesktop.org/wiki/Software/systemd/APIFileSyste=
+ms
+    Process: 2665 ExecStart=3D/lib/systemd/systemd-remount-fs (code=3Dexite=
+d, status=3D1/FAILURE)
+   Main PID: 2665 (code=3Dexited, status=3D1/FAILURE)
+        CPU: 794ms
+
+Feb 24 11:47:05 demo systemd-remount-fs[2665]: /bin/mount for / exited with=
+ exit status 32.
+Feb 24 11:47:05 demo systemd-remount-fs[2668]: mount: /: cannot remount /de=
+v/root read-write, is write-protected.
+Feb 24 11:47:05 demo systemd-remount-fs[2668]:        dmesg(1) may have mor=
+e information after failed mount system call.
+Feb 24 11:47:05 demo systemd[1]: systemd-remount-fs.service: Main process e=
+xited, code=3Dexited, status=3D1/FAILURE
+Feb 24 11:47:05 demo systemd[1]: systemd-remount-fs.service: Failed with re=
+sult 'exit-code'.
+Feb 24 11:47:05 demo systemd[1]: Failed to start systemd-remount-fs.service=
+ - Remount Root and Kernel File Systems.
+Notice: journal has been rotated since unit was started, output may be inco=
+mplete.
+
+# journalctl -u systemd-remount-fs
+Feb 24 11:47:05 demo systemd-remount-fs[2665]: /bin/mount for / exited with=
+ exit status 32.
+Feb 24 11:47:05 demo systemd-remount-fs[2668]: mount: /: cannot remount /de=
+v/root read-write, is write-protected.
+Feb 24 11:47:05 demo systemd-remount-fs[2668]:        dmesg(1) may have mor=
+e information after failed mount system call.
+Feb 24 11:47:05 demo systemd[1]: systemd-remount-fs.service: Main process e=
+xited, code=3Dexited, status=3D1/FAILURE
+Feb 24 11:47:05 demo systemd[1]: systemd-remount-fs.service: Failed with re=
+sult 'exit-code'.
+Feb 24 11:47:05 demo systemd[1]: Failed to start systemd-remount-fs.service=
+ - Remount Root and Kernel File Systems.
+```
+
+```
+# cat /etc/fstab=20
+# Begin /etc/fstab
+/dev/root	/		auto		defaults			0	0
+LABEL=3Dvar	/var		auto		defaults			0	0
+proc		/proc		proc		nosuid,noexec,nodev		0	0
+sysfs		/sys		sysfs		nosuid,noexec,nodev		0	0
+devpts		/dev/pts	devpts		gid=3D5,mode=3D620			0	0
+tmpfs		/run		tmpfs		nodev,nosuid,size=3D500M,mode=3D755	0	0
+devtmpfs	/dev		devtmpfs	mode=3D0755,nosuid		0	0
+# End /etc/fstab
+```
+
+```
+# mount | grep " / "
+/dev/mapper/verityroot on / type squashfs (ro,relatime,errors=3Dcontinue)
+```
+
+>>>
+>>>> Nevertheless, after rethinking this patch. Maybe it was advisible to
+>>>> not use
+>>>> `default` here and either use a options like
+>>>> `suid,dev,exec,auto,nouser,async`
+>>>> or drop the line for `/dev/root` at all, keeping the mounts as they
+>>>> were setup
+>>>> in the initramfs.
+>>>>
+>>>> Any opinions, recommendations, hints, ...?
+>>>>
+>>>
+>>> According to the man pages, a left-out rw/ro means that mount will firs=
+t
+>>> try rw and then, if it fails, ro. That would give us the desired
+>>> flexibility. Hard-coding the other values of "defaults" is the downside=
+.
+>>>
+>> Will no also lead to error of systemd-remount?
+>>=20
+>
+>It does not help, yes, just tried in vain.
+>
+
+
+From: https://man7.org/linux/man-pages/man8/mount.8.html
+```
+ Note that the real set of all default mount options depends on
+           the kernel and filesystem type. See the beginning of this
+           section for more details.
+```
+
+So having "defaults" kind of depends on multiple factors, so it seems to be
+a better fit to specify the options we actually want leaving out the ro and=
+ rw parts,
+so fallback-behaviour as described above applies.
+
+
+>>> On the other hand, what would be the mount options that the initramfs
+>>> will use? We do not have direct control over them as well, do we?
+>>=20
+>> The initramfs in standard Debian contains the fstab - so it would/could
+>> use the options from there.
+>>>
+>>> Quirin, other reasons why we want / in our fstab?
+>>=20
+>> The fstab of the readonly rootfs is an evolution of the original fstab
+>> from ISAR. It is also there as we disabled the fstab generation from
+>> wic.
+>>=20
+>>>
+>>> Another option: "ro" a parameter of read-only-rootfs.bbclass so that
+>>> your scenario can override the default.
+>>=20
+>> I would make it to option for all the fstab options.
+>>=20
+>
+>Ok, let's go for some config variable then.
+
+Would not like to set another option for something which is obvious by the =
+filessystem type already.
+
+Short term: Since fstab has no real use in most of the configurations=20
+(except for mounting `/var` when using unencrypted data partitions)
+I'd simply drop the `/` entry in fstab.
+
+But before, I would like to understand, why this happens at all!
+
+
+
+---
+Offtopic: Long term we should reconsolidate usage of fstab / cryptab, but p=
+robably that
+goes along with a broader discussion on systemd based initramfs hooks / dra=
+cut / ...:
+For fstab there are primarily 2 options,
+1.) rely on fstab, then we or some (systemd) generator tool should put ever=
+ything=20
+    we mount in fstab (incl. encryption setup via `/etc/crypttab`) or=20
+2.) not rely on fstab at all, thus dropping the `/` entry and probably also
+    put `/var` for unencrypted setups to initramfs (also with focus for A/B=
+=20
+	data partitions).
+---
+
+>
+>Jan
+>
+>--=20
+>Siemens AG, Foundational Technologies
+>Linux Expert Center
+
+Sry for the long post,
+
+BR Alexander
 
