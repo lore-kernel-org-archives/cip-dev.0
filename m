@@ -2,75 +2,74 @@ Return-Path: <uli@fpond.eu>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66788C021A4
-	for <webhook@archiver.kernel.org>; Tue, 25 Feb 2025 02:28:43 +0000 (UTC)
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.50])
- by mx.groups.io with SMTP id smtpd.web10.2536.1740450513704372701
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B0FC021A4
+	for <webhook@archiver.kernel.org>; Tue, 25 Feb 2025 02:32:33 +0000 (UTC)
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.51])
+ by mx.groups.io with SMTP id smtpd.web10.2605.1740450745079823897
  for <cip-dev@lists.cip-project.org>;
- Mon, 24 Feb 2025 18:28:34 -0800
+ Mon, 24 Feb 2025 18:32:25 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=CvlWDmC1;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=j8+CFnyf;
- spf=none, err=permanent DNS error (domain: fpond.eu, ip: 85.215.255.50, mailfrom: uli@fpond.eu)
-ARC-Seal: i=1; a=rsa-sha256; t=1740450495; cv=none;
+ dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=IYIkhHDO;
+ dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=npa4EBj7;
+ spf=none, err=permanent DNS error (domain: fpond.eu, ip: 85.215.255.51, mailfrom: uli@fpond.eu)
+ARC-Seal: i=1; a=rsa-sha256; t=1740450731; cv=none;
     d=strato.com; s=strato-dkim-0002;
-    b=MIUYEaZOWWo7Ma+fvpwYQwJ1so9aQ6GHPOqgu7FTZvvaJmTLqq015WsPHy780N4FVS
-    2uWe3T0Q3a/+cOdqpFTv6q05H3U0dXZ0i4SFF5lx3gRaRI4J2GPWAa73I3cnSRKgH1xs
-    WWyBJR+LhEBv3r/QWusUl9nSpWE9HPw1fd3QUfNZCHW+VP0RV2lmYn4BCVJn0Gpx385F
-    Mt61OYLxQVNZAlNWYDv7rX+VojBnhrXG699T0pzAHj+VVxnvQdD0CM/Y1jKn+ghcjE+i
-    gVaN1y7Qg/DKnfTbhiOrDH5V8WeNlmIsBc17GcI3Kkwrhu+yTmtqKTO14A9NNl2V7mjc
-    KI8Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1740450495;
+    b=Qn+GemYL1XP6PxpYYY07nXgSq+5Esd5QsiK9iT15WIcVskP1Qb3+TV0XdFHqY6SOMA
+    /qsEhE+QqD/y0KKdGdtHfaDRNSJcoKr9DkZq5MP3BqcBih8KWCYdeob0Q+G2hFDJOqSF
+    G304Bogr788AZgw2zHZr4USft14YV9032j44sXi0U3yKHOHWEdzg4VXntA2oWYpWbw5F
+    vdE0vnivB+m82R+X+9RtaeOL9F1iU/4hlptZGdtPIkjSVvk274iY07e8IDG7c7dIqpPM
+    yDGBXb5WMCNZCsURC9BxgarkTGQNgldjI5FeLXbLP9nq/mkLB7r56vkJbD21Iw4qKUAr
+    i9aw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1740450731;
     s=strato-dkim-0002; d=strato.com;
     h=Subject:References:In-Reply-To:Message-ID:To:From:Date:Cc:Date:From:
     Subject:Sender;
-    bh=apQ12e0GfYBgGKVyFcimNlpWW8lKeUscNcLN6vYb2u8=;
-    b=LXiBYVYHSglBV0vTA6CT20Ijogy2CKnS5nn8SWqm9R/Jit+1Z876fA4LE46RydWyAv
-    q1c632oY6ljOEqnpaTDm/PJZX4uZtlmvuMmguf+rexjo9TrAIo7m/DS1SueD0epqq2bM
-    jK0SwSLdXqSIRPIIHD6YoWyn4/dNen8HNsXmjKMkXRYceClrVITSoHY4Qh9R6lqu9xB0
-    F28kQurUoIBZw5hJm75XjDZKjjoIkKe6iMrydTqzN8CzYH17Uhg1xXvjSkQKyDxLtLuv
-    NGYnetq8Dmu6Z6VNRKy8PJ4FvmLqxlWAJmQVEx1Re/Kp5GLe69eiNVT6k+LM0dvoC17M
-    +sJQ==
+    bh=GzNHkvYI0TK9nk1VN5IKFd9w8YkwJAFUEfWYx4QR244=;
+    b=myKBn6nmcpu2ok50LaFzD5HmheEU2e4Sy3b45k+3+MNqP/oXVtKuyn//C90xAeCncg
+    qnZu5VfdzG5eT4nNU8+7h9WU34WIO+Hv+KnMdwDFx/aXg8s1Xtd7jQpYuIgg7uMj7Vnq
+    +k7W+hfdvv8VEt25AB5iQJwEwNoAufmBm4RMsqqvWUSU9fs4K7vru6EY151dG7AM74+F
+    30MvWQMvhl7POvmF0ltqs0plhpCFfSmIBa3WvnkojlIw4DdTYBA77YW4yAkLX9AGQo77
+    dk7ussAeMq/90OQXl8eTGgXcHwHQjSxEr+zmGRT88eoHTsd7p3Bz8A5BEnqiBg4m+TKa
+    lPOA==
 ARC-Authentication-Results: i=1; strato.com;
     arc=none;
     dkim=none
 X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1740450494;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1740450731;
     s=strato-dkim-0002; d=fpond.eu;
     h=Subject:References:In-Reply-To:Message-ID:To:From:Date:Cc:Date:From:
     Subject:Sender;
-    bh=apQ12e0GfYBgGKVyFcimNlpWW8lKeUscNcLN6vYb2u8=;
-    b=CvlWDmC18I8gIWBgJsViN0iOxdYhpSX1Yz+K5HxigMP3P1GFBy0rtSbZlRLwD9ZqA/
-    uXHDpMgzeZxjtJmaFbShgfmHE7jJyb3eySjBRIrJzKzkWtnmDv/vKUuU2KCY3WOTC+lV
-    mbjNdqrhm4/Ae5V/31Z1yxjU+95s9FMdLTKl88ebQunIryUCTABTUtLNkA7r+hRU9oNM
-    gXA1ikti49+zTN+FQyjEYkzsOqZVsk/4xMOF/CU/oSQBgavk7f+lGwiu58b078pIl3XG
-    Dl/VHRlVoxx3qNHal7UnvlQTBij9pj8jeAr4WwpzB7REwBDwtgmGKnlg+CcAboxtHWlW
-    MHbQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1740450494;
+    bh=GzNHkvYI0TK9nk1VN5IKFd9w8YkwJAFUEfWYx4QR244=;
+    b=IYIkhHDOH2rHlEcm6ZILR13RN7WB3Uc0sFesHEPOV3DQLU0lprnFk26Ttzx6UNFz0J
+    cUuV8xGdog6LOqQ+UU+6C9SKQENnG1tV+qry2OCKbNpDxpRH/yahjMwc3gZa9c6g5EMX
+    yw63bYrN+hGcuO4eLb4vOUM5gMMLRTWhbTHJmyYpYQz0sAbINyuVwAUlNroj0eNq3ikL
+    /M/yNjiRa4fGB4nblnCDUI7wa7TXnktXMQwMiOrhTXCb4jwWYFKxHqslYYf5saH5V+zq
+    EVOUuF9dfMuIceC+u5AcJoTm8B7Kq0F66+scb3R+Sjs8koKg+a3y+Otrbk6fi8VCXZiN
+    OgqQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1740450731;
     s=strato-dkim-0003; d=fpond.eu;
     h=Subject:References:In-Reply-To:Message-ID:To:From:Date:Cc:Date:From:
     Subject:Sender;
-    bh=apQ12e0GfYBgGKVyFcimNlpWW8lKeUscNcLN6vYb2u8=;
-    b=j8+CFnyfjGUHM7DivVx8qDQuAasU6Plslcv2Ddyd/oJBdAKtNf3dnJwQ9SVesz38Ju
-    CfY52jbcBP7OD5PYs3Cw==
+    bh=GzNHkvYI0TK9nk1VN5IKFd9w8YkwJAFUEfWYx4QR244=;
+    b=npa4EBj7dHEfLFbNeaxCDI7i14j+2C4oXa2+g3yOYWtW7k8cvLIrSOCwDu5s6pQzuq
+    s3drFRr9WdknYf4ewPCw==
 X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvtHhj3fsqaR1GvSyJdw=="
 Received: from ox-live-app301.back.ox.d0m.de
     by smtp-ox.front (RZmta 51.2.23 AUTH)
-    with ESMTPSA id z0a38411P2SEB4d
+    with ESMTPSA id z0a38411P2WBB4p
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
 	(Client did not present a certificate);
-    Tue, 25 Feb 2025 03:28:14 +0100 (CET)
-Date: Tue, 25 Feb 2025 03:28:14 +0100 (CET)
+    Tue, 25 Feb 2025 03:32:11 +0100 (CET)
+Date: Tue, 25 Feb 2025 03:32:11 +0100 (CET)
 From: Ulrich Hecht <uli@fpond.eu>
 To: cip-dev@lists.cip-project.org,
 	"Paul Barker via lists.cip-project.org" <paul.barker.ct@bp.renesas.com>,
-	Pavel Machek <pavel@denx.de>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Message-ID: <1074551120.2807839.1740450494914@webmail.strato.de>
-In-Reply-To: <20250221165755.357838-1-paul.barker.ct@bp.renesas.com>
-References: <20250221165755.357838-1-paul.barker.ct@bp.renesas.com>
-Subject: Re: [cip-dev] [PATCH 4.19.y-cip] watchdog: renesas_wdt: support
- handover from bootloader
+	Ulrich Hecht <uli@kernel.org>
+Message-ID: <1375087749.2807871.1740450731121@webmail.strato.de>
+In-Reply-To: <20250221164929.357460-1-paul.barker.ct@bp.renesas.com>
+References: <20250221164929.357460-1-paul.barker.ct@bp.renesas.com>
+Subject: Re: [cip-dev] [PATCH 4.4.y-st] posix-clock: Fix backported
+ timespec64 check
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
@@ -81,26 +80,48 @@ X-Originating-Client: open-xchange-appsuite
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 25 Feb 2025 02:28:43 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17903
+ <cip-dev@lists.cip-project.org>; Tue, 25 Feb 2025 02:32:33 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17904
 
 
-> On 02/21/2025 5:57 PM CET Paul Barker via lists.cip-project.org <paul.barker.ct=bp.renesas.com@lists.cip-project.org> wrote:
+> On 02/21/2025 5:49 PM CET Paul Barker via lists.cip-project.org <paul.barker.ct=bp.renesas.com@lists.cip-project.org> wrote:
 > 
 >  
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> The backported check calls timespec64_valid_strict(ts), but in
+> linux-4.4.y-st the `ts` argument is not a timespec64 instance. This
+> leads to the following warning:
 > 
-> commit 962085a2bb823d8c88c6bc706c654648407e6408 upstream.
+>     kernel/time/posix-clock.c: In function 'pc_clock_settime':
+>     kernel/time/posix-clock.c:345:31: warning: passing argument 1 of 'timespec64_valid_strict' from incompatible pointer type [-Wincompatible-pointer-types]
+>       if (!timespec64_valid_strict(ts))
+>                                    ^~
+>     In file included from include/linux/time.h:7:0,
+>                      from include/linux/ktime.h:24,
+>                      from include/linux/rcupdate.h:47,
+>                      from include/linux/idr.h:18,
+>                      from include/linux/kernfs.h:14,
+>                      from include/linux/sysfs.h:15,
+>                      from include/linux/kobject.h:21,
+>                      from include/linux/device.h:17,
+>                      from kernel/time/posix-clock.c:20:
+>     include/linux/time64.h:181:20: note: expected 'const struct timespec64 *' but argument is of type 'const struct timespec *'
+>      static inline bool timespec64_valid_strict(const struct timespec64 *ts)
+>                         ^~~~~~~~~~~~~~~~~~~~~~~
 > 
-> Support an already running watchdog by checking its enable bit and set
-> up the status accordingly before registering the device.
+> As struct timespec64 is larger than struct timespec, this could result
+> in out-of-bounds memory access.
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> Link: https://lore.kernel.org/r/20200908095615.31376-1-wsa+renesas@sang-engineering.com
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+> Fix this by passing the converted timespec64 instance to
+> timespec64_valid_strict().
+> 
+> Fixes: 40ec979c6d01 ("posix-clock: Fix missing timespec64 check in pc_clock_settime()")
 > Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+> ---
+> 
+> This patch has been tested on RZ/G1M using the linux-4.4.y-cip tree, but
+> I'm sending it for linux-4.4.y-st as the issue is also present there. I
+> currently have no way to test the -st tree without the corresponding
+> cip patches.
 
 Thanks, applied.
 
