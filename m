@@ -1,155 +1,152 @@
-Return-Path: <ch@denx.de>
+Return-Path: <alexander.heinisch@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F825C19777
-	for <webhook@archiver.kernel.org>; Wed, 26 Feb 2025 09:59:39 +0000 (UTC)
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web11.2487.1740563973107301887
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D4AC021B8
+	for <webhook@archiver.kernel.org>; Wed, 26 Feb 2025 23:28:44 +0000 (UTC)
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+ by mx.groups.io with SMTP id smtpd.web11.19793.1740612520662405980
  for <cip-dev@lists.cip-project.org>;
- Wed, 26 Feb 2025 01:59:33 -0800
+ Wed, 26 Feb 2025 15:28:41 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@denx.de header.s=mx-20241105 header.b=Ue0ChJkd;
- spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: ch@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5A22B10382D2E;
-	Wed, 26 Feb 2025 10:59:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1740563971;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nz/5EGwKwI0PGEuTPIc5979bd4BCxVtjjzyWakKRvdg=;
-	b=Ue0ChJkdiQyhVHg8kpopnR9qA19JUc4Qlx7xISe0lrksYneEiYMhKTyAQen9xLkaoq+yW3
-	DXRl+FW5BcnTFA02chltjdl0agHVle4wUz8a5tIA/ukNrPrH92ORzmAVXnRxPr2fHk2Prt
-	9VHknSsKRJmev2zzvlPO3QCWzOztVSpphMHXUut2kp9TTsWisiMNRQ4XDVOUrZKBj2E/qh
-	hbCaTX/eSsXVN7tus3dLthhSLoEkGqwrc78vkI6huF8Og92hFvX4qbLXH4PuPhJ7N1svi9
-	jyFZCqU7ZRAf3VAqTkonOR+L6i5HNEsE0AH8QmX4H4OQK0TRU8hnuZI5XmXd9A==
-From: Claudius Heine <ch@denx.de>
+ dkim=pass header.i=alexander.heinisch@siemens.com header.s=fm1 header.b=MbUOk0BT;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-1326448-20250226232837be96d1832208b5c50b-9p6raw@rts-flowmailer.siemens.com)
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20250226232837be96d1832208b5c50b
+        for <cip-dev@lists.cip-project.org>;
+        Thu, 27 Feb 2025 00:28:37 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=alexander.heinisch@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=AY/OqTCOoHWVMqzVIbK/OvmZZx6c69NHw+TydkSAHjQ=;
+ b=MbUOk0BTJRlHUK/GuAMM/XVOl2FJaulvfC5znsqgt0wSA6KorWTGow/6kOuD0WkXqnyo/8
+ MXxPqydxt4U/BoSyyCLpiSwQoP5VEoEabHpLb0I0Xh6se9oeryjcantUhpUq4H/Ct8RNyxjq
+ qDrwtnk0CRS3tpo8C1TKdl8oEkAKiFbrauCk+/tkKH0nMj0BXGhzqwNnJkd+5bQGO5cg7zMS
+ M5VaGAnCt9K3bEc/alFmHTvCREaWZGB9m5mwZOMlpabqmkHKjNKJVYL9d8CZSa0vXY+AFdE/
+ dOWrhkVLMAXACSxPAGdIgOKE60G6z5TNGiPjgAYXw1v7NGRsw3hgGmAw==;
+From: alexander.heinisch@siemens.com
 To: cip-dev@lists.cip-project.org
-Cc: Claudius Heine <ch@denx.de>
-Subject: [PATCH 5/5] initramfs-crypt-hook: add 'format-if-empty' feature
-Date: Wed, 26 Feb 2025 10:59:21 +0100
-Message-ID: <20250226095921.168962-6-ch@denx.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250226095921.168962-1-ch@denx.de>
-References: <20250226095921.168962-1-ch@denx.de>
+Cc: quirin.gylstorff@siemens.com,
+	jan.kiszka@siemens.com,
+	clara.kowalsky@siemens.com,
+	Alexander Heinisch <alexander.heinisch@siemens.com>
+Subject: [isar-cip-core][PATCH v3] initramfs-crypt-hook: Optimize disk encryption in combination with expansion of last partition
+Date: Thu, 27 Feb 2025 00:28:12 +0100
+Message-ID: <20250226232812.374892-1-alexander.heinisch@siemens.com>
 MIME-Version: 1.0
-X-Last-TLS-Session-Version: TLSv1.3
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1326448:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 26 Feb 2025 09:59:39 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17923
+ <cip-dev@lists.cip-project.org>; Wed, 26 Feb 2025 23:28:44 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17924
 
-When encryption is enabled from one update to the next there is a
-difference between flashing a fresh factory image to a empty storage
-device, which contains an empty fallback partition set and updating it,
-where the fallback partition contains the actual fallback partitions.
+From: Alexander Heinisch <alexander.heinisch@siemens.com>
 
-In the update case, the update case, the fallback system should be left
-alone and unencrypted.
+In the current implementation (since: 284175c3) disk expansion logic
+is done before the actual disk encryption.
 
-When doing a factory flash, the fallback partitions can be encrypted.
+This results in reencrypting the full expanded size of the disk, instead
+of only reencrypting the sections containing the actual data. This results
+in a drastic increase of time (approx 20x on our systems ) needed for reencryption!
 
-The best marker on in which case the system is booted is, if the
-partition is empty or not. The 'format-if-empty' option will format the
-partition with a luks format in case the first 10MiB are empty.
+Since relevant disk contents are only available in the sections of the disk
+available before the expansion, it is sufficient to reencrypt them only.
 
-Signed-off-by: Claudius Heine <ch@denx.de>
+This patch changes order of encryption and disk expansion resulting in
+faster encryption (since only the necessary parts are encrypted).
+The resize operation does not reencrypt the added disk parts but just
+extends the LUKS container (cryptsetup resize) to reflect the maximum
+available disk space.
+
+Signed-off-by: Alexander Heinisch <alexander.heinisch@siemens.com>
 ---
- doc/README.tpm2.encryption.md                    |  3 ++-
- .../files/local-top-complete                     | 16 ++++++++++++++++
- .../initramfs-crypt-hook_0.6.bb                  |  2 +-
- 3 files changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/doc/README.tpm2.encryption.md b/doc/README.tpm2.encryption.m=
-d
-index 515348a..5fe195d 100644
---- a/doc/README.tpm2.encryption.md
-+++ b/doc/README.tpm2.encryption.md
-@@ -42,12 +42,13 @@ The initramfs-crypt-hook recipe has the following var=
-iables which can be overwri
- ### CRYPT_PARTITIONS
-=20
- The variable `CRYPT_PARTITIONS` contains the information which partition=
- shall be encrypted where to mount it.
--Each entry uses the schema `<partition-identifier>:<mountpoint>:<reencry=
-pt | format | noencrypt>`.
-+Each entry uses the schema `<partition-identifier>:<mountpoint>:<reencry=
-pt | format | noencrypt | format-if-empty>`.
- - The `partition-idenitifer` is used to identify the partition on the di=
-sk, it can contain a partition label, partition UUID or absolute path to =
-the partition device, e.g. `/dev/sda`.
- - The `mountpoint` is used mount the decrypted partition in the root fil=
-e system
- - `reencrypt` uses `cryptsetup reencrypt` to encrypt the exiting content=
- of the partition. This reduces the partition by 32MB and the file system=
- by a similar amount
- - `format` creates a empty LUKS partition and creates a file system defi=
-ned with the shell command given in `CRYPT_CREATE_FILE_SYSTEM_CMD`
- - `noencrypt` will not try to encrypt the partition, it it isn't encrypt=
-ed already, but will open it if it is. This makes it possible for an imag=
-e to support encrypted systems, while not encrypting anything on their ow=
-n. Useful when updating from a system that is unencrypted to one that is,=
- while supporting a fallback system.
-+- `format-if-empty` will create a empty LUKS partition and formats it, l=
-ike the `format` option, but only if the first 10MiB are empty (contain o=
-nly 0x00). This makes it possible to differenciate if a partition is empt=
-y and can be encrypted, because it was freshly flashed via a factory imag=
-e, or if it might contain an unencrypted fallback system and should be le=
-ft alone.
-=20
- #### Encrypted root file system
-=20
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-compl=
-ete b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-index 1214a63..41598c4 100644
+Changes v3:
+- Provide key to cryptsetup resize for clevis based setups.
+- removed export of EXT2FS_NO_MTAB_OK=1
+- Added support to expand partitions with btrfs
+
+Changes v2:
+- Reuse get_fstype from mkinitramfs scripts/functions. 
+  Therefore, we could also get rid of mounting the partition
+- Dropped support for btrfs (compared to v1) since crypt hook
+  does not support btrfs anyways
+
+ .../files/local-top-complete                  | 37 +++++++++++++++++--
+ 1 file changed, 33 insertions(+), 4 deletions(-)
+
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
+index 5ef7ca4..fac6db6 100644
 --- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
 +++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-@@ -279,6 +279,22 @@ for partition_set in $partition_sets; do
- 			eval "${create_file_system_cmd} ${decrypted_part}"
- 			log_end_msg
- 		;;
-+		"format-if-empty")
-+			# Check if first 10MiB contain only zeros
-+			if cmp -s -n "$(( 10 * 1024 * 1024 ))" "${part_device}" /dev/zero
-+			then
-+				log_begin_msg "Encryption of ${part_device}"
-+				/usr/sbin/cryptsetup luksFormat --batch-mode \
-+					 --type luks2 "$part_device" < "$tmp_key"
-+				enroll_tpm2_token "$part_device" "$tmp_key" "$tpm_device" "$tpm_key_=
-algorithm" "$pcr_bank_hash_type"
-+				open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
-+				eval "${create_file_system_cmd} ${decrypted_part}"
-+				log_end_msg
-+			else
-+				# If not empty, leave it alone.
-+				continue
-+			fi
+@@ -102,6 +102,8 @@ reencrypt_existing_partition() {
+ }
+ 
+ expand_partition() {
++	key_file="$2"
++
+ 	boot_device="$(echo "${part_device}" | sed 's/p\?[0-9]*$//')"
+ 	last_part="$(sfdisk -d "${boot_device}" 2>/dev/null | \
+ 		     tail -1 | cut -d ' ' -f 1)"
+@@ -155,6 +157,33 @@ expand_partition() {
+ 	# Inform the kernel about the partitioning change
+ 	partx -u "${last_part}"
+ 
++	last_part_device_name=${last_part#\/dev/}
++
++	mapping_name=$(cat /sys/class/block/"$last_part_device_name"/holders/*/dm/name)
++	# systemd based systems do not need to have the
++	# key_file provided since systemd backend for 
++	# cryptsetup resolves the passphrase directly
++	cat $key_file | cryptsetup resize "$mapping_name"
++
++	last_part_mapped=/dev/mapper/"$mapping_name"
++	fs_type=$(get_fstype ${last_part_mapped})
++
++	case ${fs_type} in
++	ext*)
++		resize2fs "${last_part_mapped}"
 +		;;
- 		*)
- 			panic "Unknown value ${partition_format}. Cannot create a encrypted p=
-artition !"
- 		;;
-diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_=
-0.6.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.6.=
-bb
-index df335c9..c9a7f89 100644
---- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.6.bb
-+++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.6.bb
-@@ -41,7 +41,7 @@ HOOK_ADD_MODULES =3D " \
-=20
- HOOK_COPY_EXECS =3D " \
-     openssl mke2fs grep awk expr seq sleep basename uuidparse mountpoint=
- \
--    e2fsck resize2fs cryptsetup \
-+    e2fsck resize2fs cryptsetup cmp \
-     tpm2_pcrread tpm2_testparms tpm2_flushcontext \
-     /usr/lib/*/libgcc_s.so.1"
-=20
---=20
-2.39.5
++	btrfs)
++		mkdir /.mnt-tmp
++		mount -t btrfs "${last_part_mapped}" /.mnt-tmp
++		btrfs filesystem resize max /.mnt-tmp
++		umount /.mnt-tmp
++		rmdir /.mnt-tmp
++		;;
++	*)
++		log_warning_msg "Unrecognized filesystem type ${fs_type} - no resize performed"
++		;;
++	esac
++
+ 	log_end_msg
+ }
+ 
+@@ -217,10 +246,6 @@ for partition_set in $partition_sets; do
+ 		echo "ROOT=$decrypted_part" >/conf/param.conf
+ 	fi
+ 
+-	if [ "$partition_expand" = "expand" ]; then
+-		expand_partition $part_device
+-	fi
+-
+ 	if /usr/sbin/cryptsetup luksDump --batch-mode "$part_device" \
+ 			| grep -q "luks2"; then
+ 		open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
+@@ -260,6 +285,10 @@ for partition_set in $partition_sets; do
+ 		 ;;
+ 	esac
+ 
++	if [ "$partition_expand" = "expand" ]; then
++		expand_partition $part_device $tmp_key
++	fi
++
+ 	finalize_tpm2_encryption "$part_device"
+ done
+ 
+-- 
+2.43.0
 
 
