@@ -1,120 +1,335 @@
-Return-Path: <paul.barker.ct@bp.renesas.com>
+Return-Path: <ch@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 466E0C19F2E
-	for <webhook@archiver.kernel.org>; Thu, 27 Feb 2025 14:58:00 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.12486.1740668248506296267
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7752BC19F2E
+	for <webhook@archiver.kernel.org>; Thu, 27 Feb 2025 15:03:30 +0000 (UTC)
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+ by mx.groups.io with SMTP id smtpd.web10.12673.1740668604792443860
  for <cip-dev@lists.cip-project.org>;
- Thu, 27 Feb 2025 06:57:50 -0800
+ Thu, 27 Feb 2025 07:03:25 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: paul.barker.ct@bp.renesas.com)
-X-CSE-ConnectionGUID: exkkLIGzQB2gGgmec7nG6g==
-X-CSE-MsgGUID: 6n6MnG3STbe5sfzwYOBRdw==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 27 Feb 2025 23:57:50 +0900
-Received: from rz-ub2404.betafive.net (unknown [10.226.93.138])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 86253434774C;
-	Thu, 27 Feb 2025 23:57:48 +0900 (JST)
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-To: Pavel Machek <pavel@denx.de>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Cc: cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 11/11] net: ravb: Add VLAN checksum support
-Date: Thu, 27 Feb 2025 14:57:20 +0000
-Message-ID: <20250227145720.229324-12-paul.barker.ct@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250227145720.229324-1-paul.barker.ct@bp.renesas.com>
-References: <20250227145720.229324-1-paul.barker.ct@bp.renesas.com>
+ dkim=fail reason="dkim: body hash did not verify" header.i=@denx.de header.s=mx-20241105 header.b=A2Bj74FK;
+ spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: ch@denx.de)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2E25A10382D2E;
+	Thu, 27 Feb 2025 16:03:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1740668602;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+lkBj1Hs9Cee7cjxhyv1aYEJMbcGQ5uqb6BkfB/hTRk=;
+	b=A2Bj74FKQMpd6V9j/lD6UerbRL2KrF/6Wm6vM/BXIgi2NaFUfQV4MWPf4uoGjS/6bwgCkt
+	kRagZLrcfKNiIhpB/vbMbaVNfM5CvfJbRa9P9o4ZMp8ff8ZvWIaQNOj/9CfF/kNp/dTMHR
+	R9jDASGvHW+d9akdz6pjeihWKRU5S2RgLK+lV+Zo8e54Z0ljs9JJPzh7LJ9j7M4Ng6qU1l
+	8poiU5nEbs16Hz3RPyevHi8/U0VsYTsfvhJ/QAU/o3XdaGAceVXOzb6aClneAhaUFSfDtI
+	CIIJ45aj7AC/63PkWgPPyJ0NPAFTDJXIxIDXIIHTB0JyPldgB+5NEGpBZkHkkg==
+Message-ID: <d5a41dbb-8805-4028-8d3b-a3c50e1cb373@denx.de>
+Date: Thu, 27 Feb 2025 16:03:21 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] initramfs-crypt-hook: add re-encryption recovery
+To: Quirin Gylstorff <quirin.gylstorff@siemens.com>,
+ cip-dev@lists.cip-project.org, Jan Kiszka <jan.kiszka@siemens.com>
+References: <20250227143022.323950-1-ch@denx.de>
+ <20250227143022.323950-5-ch@denx.de>
+ <8f3bbc52-69e3-4187-a229-8d9356b22fd0@siemens.com>
+ <49f3a657-5c55-41bd-be89-5f40ffb0e87a@denx.de>
+ <533e3699-7ad7-4f5e-82f8-d69a075a7b11@siemens.com>
+Content-Language: en-US
+From: Claudius Heine <ch@denx.de>
+Organization: Denx Software Engineering
+In-Reply-To: <533e3699-7ad7-4f5e-82f8-d69a075a7b11@siemens.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 27 Feb 2025 14:58:00 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17962
+ <cip-dev@lists.cip-project.org>; Thu, 27 Feb 2025 15:03:30 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17963
 
-commit 546875ccba938ba4f7b5c616a1a1e334c5f2903f upstream.
 
-The GbEth IP supports offloading checksum calculation for VLAN-tagged
-packets, provided that the EtherType is 0x8100 and only one VLAN tag is
-present.
 
-Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
----
- drivers/net/ethernet/renesas/ravb.h      |  1 +
- drivers/net/ethernet/renesas/ravb_main.c | 24 ++++++++++++++++++++----
- 2 files changed, 21 insertions(+), 4 deletions(-)
+On 2025-02-27 3:56 pm, Quirin Gylstorff wrote:
+>=20
+>=20
+> On 2/27/25 15:46, Claudius Heine wrote:
+>> Hi Quirin,
+>>
+>> On 2025-02-27 3:37 pm, Quirin Gylstorff wrote:
+>>>
+>>>
+>>> On 2/27/25 15:30, Claudius Heine wrote:
+>>>> Integrate detection and recovery of power failures while a partition=
+ is
+>>>> being encrypted.
+>>>>
+>>>> There are possible scenarios:
+>>>> 1. Power-fail happens while the partition is reencrypted:
+>>>> =C2=A0=C2=A0 - The LUKS header contains `online-reencrypt-v2` and ne=
+eds to be
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0 repaired with `cryptsetup repair` before it=
+ can continue.
+>>>> =C2=A0=C2=A0 - Also no resizing of the file system is necessary
+>>>> 2. Power-fail happens before the systemd-tpm2 token can be installed
+>>>> =C2=A0=C2=A0 - The LUKS header does not contain 'systemd-tpm2', thus=
+ it needs=20
+>>>> to be
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0 registered and the temporary encryption key=
+ needs to be removed
+>>>>
+>>>> In both scenarios the system after the reboot needs to have access t=
+o
+>>>> the temporary encryption key that was initially used. So using a ran=
+dom
+>>>> one, generated via `openssl rand` is not possible. Since it is only =
+a
+>>>> temporary key and gets removed after the systemd-tpm2 token was
+>>>> installed, a known password can be used.
+>>>>
+>>>> The list of these scenarios is not complete, there might be other
+>>>> instances where a sudden power-fail could be fatal to the system, bu=
+t
+>>>> these where the most obvious and risky ones.
+>>>>
+>>>> Signed-off-by: Claudius Heine <ch@denx.de>
+>>>> ---
+>>>> =C2=A0 .../files/local-top-complete=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 3=
+3 ++++++++++++++=20
+>>>> +----
+>>>> =C2=A0 .../initramfs-crypt-hook_0.6.bb=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 5 ++-
+>>>> =C2=A0 2 files changed, 29 insertions(+), 9 deletions(-)
+>>>>
+>>>> diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-=
+=20
+>>>> complete b/recipes-initramfs/initramfs-crypt-hook/files/local-top-=20
+>>>> complete
+>>>> index 4b6451a..6034175 100644
+>>>> --- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complet=
+e
+>>>> +++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complet=
+e
+>>>> @@ -72,6 +72,9 @@ reencrypt_existing_partition() {
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reduced_size=3D"$(expr "$part_size_bl=
+ocks" - 65536 )"
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reduced_size_in_byte=3D"$(expr "$redu=
+ced_size" \* 512)"
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reduced_size_in_kb=3D"$(expr "$reduce=
+d_size_in_byte" / 1024)K"
+>>>> +
+>>>> +=C2=A0=C2=A0=C2=A0 CRYPTSETUP_PARAMS=3D"--reduce-device-size ${redu=
+ce_device_size}k"
+>>>> +
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 case $partition_fstype in
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ext*)
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 # reduce the =
+filesystem and partition by 32M to fit the=20
+>>>> LUKS header
+>>>> @@ -90,14 +93,25 @@ reencrypt_existing_partition() {
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 squashfs|swap|erofs|"")
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 [ "$debug" =3D=
+ "y" ] && echo "skip disk resize as it is not=20
+>>>> supported or unnecessary for fstype: '$partition_fstype'"
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ;;
+>>>> +=C2=A0=C2=A0=C2=A0 luks)
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 # Check if reencrypt was=
+ aborted
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if /usr/sbin/cryptsetup =
+luksDump --batch-mode "$1" \
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 | grep -q "online-reencrypt-v2"; then
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+/usr/sbin/cryptsetup repair --batch-mode "$1" < "$2" || \
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 panic "cryptsetup repair was not successful"
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 fi
+>>>> +
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 # already luks partition=
+, don't resize
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CRYPTSETUP_PARAMS=3D""
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ;;
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *)
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 panic "cannot=
+ resize partition, unsupported fstype:=20
+>>>> '$partition_fstype'"
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ;;
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 esac
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if [ -x /usr/sbin/cryptsetup-reencryp=
+t ]; then
+>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /usr/sbin/cryptsetup-ree=
+ncrypt --new --reduce-device-size=20
+>>>> "$reduce_device_size"k "$1" < "$2"
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /usr/sbin/cryptsetup-ree=
+ncrypt --new ${CRYPTSETUP_PARAMS}=20
+>>>> "$1" < "$2"
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 else
+>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /usr/sbin/cryptsetup ree=
+ncrypt --encrypt --reduce-device-=20
+>>>> size "$reduce_device_size"k "$1" < "$2"
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /usr/sbin/cryptsetup ree=
+ncrypt --encrypt=20
+>>>> ${CRYPTSETUP_PARAMS} "$1" < "$2"
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 fi
+>>>> =C2=A0 }
+>>>> @@ -219,7 +233,7 @@ for partition_set in $partition_sets; do
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 # If partition is already encrypted, =
+decrypt and continue with=20
+>>>> next partition:
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 decrypted_part=3D/dev/mapper/"$crypt_=
+mount_name"
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if /usr/sbin/cryptsetup luksDump --ba=
+tch-mode "$part_device" \
+>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+| grep -q "luks2"; then
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+| grep -q "systemd-tpm2"; then
+>>> This should break encryption with clevis.
+>>
+>> I don't have a test setup for clevis, so any input on how to fix this,=
+=20
+>> would be great.
+>=20
+>=20
+> If you set `CRYPT_BACKEND =3D "clevis" ` in the kas configuration of is=
+ar-=20
+> cip-core. You directly use clevis instead of systemd.
+>=20
+> https://gitlab.com/cip-project/cip-core/isar-cip-core/-/blob/master/=20
+> recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.6.bb?=20
+> ref_type=3Dheads#L25
 
-diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index bc0b0eca6efd..7dc6e79e34d7 100644
---- a/drivers/net/ethernet/renesas/ravb.h
-+++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -1053,6 +1053,7 @@ struct ravb_hw_info {
- 	size_t gstrings_size;
- 	netdev_features_t net_hw_features;
- 	netdev_features_t net_features;
-+	netdev_features_t vlan_features;
- 	int stats_len;
- 	u32 tccr_mask;
- 	u32 tx_max_frame_size;
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 54e001a00f46..e980c6db54ad 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -2041,13 +2041,27 @@ static void ravb_tx_timeout_work(struct work_struct *work)
- 
- static bool ravb_can_tx_csum_gbeth(struct sk_buff *skb)
- {
-+	u16 net_protocol = ntohs(skb->protocol);
- 	u8 inner_protocol;
- 
--	/* TODO: Need to add support for VLAN tag 802.1Q */
--	if (skb_vlan_tag_present(skb))
--		return false;
-+	/* GbEth IP can calculate the checksum if:
-+	 * - there are zero or one VLAN headers with TPID=0x8100
-+	 * - the network protocol is IPv4 or IPv6
-+	 * - the transport protocol is TCP, UDP or ICMP
-+	 * - the packet is not fragmented
-+	 */
-+
-+	if (net_protocol == ETH_P_8021Q) {
-+		struct vlan_hdr vhdr, *vh;
-+
-+		vh = skb_header_pointer(skb, ETH_HLEN, sizeof(vhdr), &vhdr);
-+		if (!vh)
-+			return false;
-+
-+		net_protocol = ntohs(vh->h_vlan_encapsulated_proto);
-+	}
- 
--	switch (ntohs(skb->protocol)) {
-+	switch (net_protocol) {
- 	case ETH_P_IP:
- 		inner_protocol = ip_hdr(skb)->protocol;
- 		break;
-@@ -2708,6 +2722,7 @@ static const struct ravb_hw_info gbeth_hw_info = {
- 	.gstrings_size = sizeof(ravb_gstrings_stats_gbeth),
- 	.net_hw_features = NETIF_F_RXCSUM | NETIF_F_HW_CSUM,
- 	.net_features = NETIF_F_RXCSUM | NETIF_F_HW_CSUM,
-+	.vlan_features = NETIF_F_RXCSUM | NETIF_F_HW_CSUM,
- 	.stats_len = ARRAY_SIZE(ravb_gstrings_stats_gbeth),
- 	.tccr_mask = TCCR_TSRQ0,
- 	.tx_max_frame_size = 1522,
-@@ -2848,6 +2863,7 @@ static int ravb_probe(struct platform_device *pdev)
- 
- 	ndev->features = info->net_features;
- 	ndev->hw_features = info->net_hw_features;
-+	ndev->vlan_features = info->vlan_features;
- 
- 	error = reset_control_deassert(rstc);
- 	if (error)
--- 
-2.43.0
+I can look into it. I suppose there might be some other marker that can=20
+be used.
+
+>=20
+> Quirin
+>>
+>>>
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 open_tpm2_par=
+tition "$part_device" "$crypt_mount_name"=20
+>>>> "$tpm_device"
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 # check if we=
+ are trying to mount root, set ROOT to=20
+>>>> decrypted partition:
+>>>> @@ -230,6 +244,12 @@ for partition_set in $partition_sets; do
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 continue
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 fi
+>>>> +=C2=A0=C2=A0=C2=A0 # If partition contains an aborted reencrypt luk=
+s header,=20
+>>>> switch to reencrypt mode:
+>>>> +=C2=A0=C2=A0=C2=A0 if /usr/sbin/cryptsetup luksDump --batch-mode "$=
+{part_device}" \
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+| grep -q "online-reencrypt-v2"; then
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 partition_format=3D"reen=
+crypt"
+>>>> +=C2=A0=C2=A0=C2=A0 fi
+>>>> +
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 # If partition should not be encrypte=
+d, continue with next=20
+>>>> partition:
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if [ "$partition_format" =3D "noencry=
+pt" ]
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 then
+>>>> @@ -247,10 +267,11 @@ for partition_set in $partition_sets; do
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 watchdog_pid=3D=
+$!
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 fi
+>>>> -=C2=A0=C2=A0=C2=A0 # create random password for initial encryption
+>>>> -=C2=A0=C2=A0=C2=A0 # this will be dropped after reboot
+>>>> +=C2=A0=C2=A0=C2=A0 # use partuuid of the partition for initial encr=
+yption=20
+>>>> password, this key
+>>>> +=C2=A0=C2=A0=C2=A0 # will be removed after the reencryption has fin=
+ished and the=20
+>>>> TPM2 token is
+>>>> +=C2=A0=C2=A0=C2=A0 # registered:
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tmp_key=3D/tmp/"$(basename "$part_dev=
+ice")-lukskey"
+>>>> -=C2=A0=C2=A0=C2=A0 openssl rand -base64 32 > "$tmp_key"
+>>>> +=C2=A0=C2=A0=C2=A0 lsblk -no partuuid "$part_device" > "$tmp_key"
+>>>
+>>> This has the security implication that until the tpm key is used the=20
+>>> device is insecure.
+
+Also, there is a security implication already with this implementation,=20
+even before applying this patch, that until the device is booted and the=20
+re-encryption process is started, the storage is completely unencrypted=20
+and thus the device is insecure. :P
+
+I assume that the people that actually need to deploy images in factory,=20
+will take care of letting the re-encryption process properly finish.
+
+An in-field the device before the re-encryption process is about the=20
+same insecure as a device in the middle of the reencryption process with=20
+a known key.
+
+regards,
+Claudius
+
+>>
+>> Yes. As I noted in the commit message.
+>>
+>> The other method, I thought about was using the tpm2, where I am=20
+>> encrypting a known key, like the partuuid with an internal tpm2 key,=20
+>> and using the resulting encrypted blob as a hexstring for the password=
+.
+>>
+>> But I am not very familiar with TPM2 on how to properly do that.
+>>
+>> Other options would be to create a password and store it in the TPM2=20
+>> NVRAM, but that would not be very secure as well.
+>>
+>> So any suggestions for improvment here would be great.
+>>
+>> regards,
+>> Claudius
+>>
+>>>
+>>> Quirin
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 case "${partition_format}" in
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "reencrypt")
+>>>> diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-=
+=20
+>>>> hook_0.6.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-=20
+>>>> crypt- hook_0.6.bb
+>>>> index c9a7f89..5e82521 100644
+>>>> --- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-=20
+>>>> hook_0.6.bb
+>>>> +++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-=20
+>>>> hook_0.6.bb
+>>>> @@ -14,7 +14,6 @@ require recipes-initramfs/initramfs-hook/hook.inc
+>>>> =C2=A0 DEBIAN_DEPENDS .=3D ", \
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cryptsetup, \
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 awk, \
+>>>> -=C2=A0=C2=A0=C2=A0 openssl, \
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 e2fsprogs, \
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tpm2-tools, \
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 coreutils, \
+>>>> @@ -40,8 +39,8 @@ HOOK_ADD_MODULES =3D " \
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ecb aes_generic xts"
+>>>> =C2=A0 HOOK_COPY_EXECS =3D " \
+>>>> -=C2=A0=C2=A0=C2=A0 openssl mke2fs grep awk expr seq sleep basename =
+uuidparse=20
+>>>> mountpoint \
+>>>> -=C2=A0=C2=A0=C2=A0 e2fsck resize2fs cryptsetup cmp \
+>>>> +=C2=A0=C2=A0=C2=A0 mke2fs grep awk expr seq sleep basename uuidpars=
+e mountpoint \
+>>>> +=C2=A0=C2=A0=C2=A0 e2fsck resize2fs cryptsetup cmp lsblk \
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tpm2_pcrread tpm2_testparms tpm2_flus=
+hcontext \
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /usr/lib/*/libgcc_s.so.1"
+>>>
+>>
+>=20
+
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-54 Fax: (+49)-8142-66989-80 Email: ch@denx.de
 
 
