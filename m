@@ -2,295 +2,245 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 324D4C19F32
-	for <webhook@archiver.kernel.org>; Thu, 27 Feb 2025 14:37:50 +0000 (UTC)
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.65.57])
- by mx.groups.io with SMTP id smtpd.web11.11830.1740667067472777208
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3754DC19F32
+	for <webhook@archiver.kernel.org>; Thu, 27 Feb 2025 14:42:50 +0000 (UTC)
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.79])
+ by mx.groups.io with SMTP id smtpd.web10.12049.1740667368801200499
  for <cip-dev@lists.cip-project.org>;
- Thu, 27 Feb 2025 06:37:47 -0800
+ Thu, 27 Feb 2025 06:42:49 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=Q47La1AI;
- spf=pass (domain: siemens.com, ip: 52.101.65.57, mailfrom: quirin.gylstorff@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=YDx9D5OV;
+ spf=pass (domain: siemens.com, ip: 40.107.21.79, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kW6+o1QMR3l29juSMETLjUyvhdDZz6qq09mRgUd+6idKYV/oPOHM+XYg81C+wpdMmfhm11iQ1LsR/fUX7aftFduk/pc1ew+cNYbpLlC7cjZxo69U3YmVF3Oox5VnhnlEN5wGfoVwr31QWeG8C+y5cw4/dcMzCA5BuLGfeuhjDi3uLzmPyy5uPlZDw6QFIELqlGtAkIpUDHDEsjZPKCOw3RCCOPLOLGEhcVCVbhhXKnhTIuZ4hwkIp4yDuVdt0ivjY9Iw9dO1no6uxxWS7Ympq8pLqAtdUplmJtn24NpcA9OnT3WWdhE08ovYNpnIrfchtICFw2ETr4XnnCX1Nu2cwg==
+ b=jkSPKgCh7WA6/MjJ8F1nHY/n67MvmTYcyIewhuM2H6ap6a0oR1V5JRn6YiVu0MtF+0OeLnOWQPqz/Ba25c+icQG6VAwGRFzmGp7CxnHX93H+q50p425ehAbqT6Ptx3T59gF2dZ984dkJIpOBvL8Q5AlDmYwOXpxYniypkwQ1lhL+es/cRdh6HmZf96PIgr5Gnaf0xOBxlYeMMtx+ffffHaavySa70OzNyO0OEb2ar4E6QbnkNEF8fezFnzguONlBwKRPwYyVW6atmArZT8evmWpG4NrS+IR63QzuKckX8Ba6js0QjUX6t/VzQczO5KYJdXrN+/OPF6xiSjqfJ1Ppcw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Cgreb57dUB68QPfVpGvXgEBMkTvwdAv594oSiq1vLZw=;
- b=UidUBBuU+nraxs8Z8kSDQL3y1LN/UhSQfO7C1FoDXHVtytUQwsVWstTFAQSPezenf19wicrLnbdj5vdKQGS2b7B3WK7cgHy3H6Z9vpHZpWkhCELYQ1fUpo/Y+XdntdrcX7iWkwyaI8YeVPugMXMzCAip16S4JGtlrUCZbVtlskly7xhhqalxTxClyzVp84xioZ9gup8dNP1j9JWDsR20NYCCW4+teiM3ypRazoKRjEkpwkhHJew723wk53LjC9CbfXwmKxHebY3bTvq5GznGO85f5kEIJCdp9iwKjnQAMvNkRzZFNYY/S9jOeEZbDqHgQUQH4Y37GOSdAkaGDnGQJg==
+ bh=vLZ3gTc2+kd0fBjKRDCAZC7ABWtet7R0C7GtC92cOZM=;
+ b=lfNt7LnpLWM8vqHM3vf/29VF+qNJZuMeJg5Uc+twpdsdGUOyR1MyVcK0gdSxcaytqZtXm767aIQAAJGMKXsji9JPWPKrFPJsv29i5RjRE3/JcTC7eD85pX+it7AyZyFIPuSryC5Y/x8sakmO0MwafvuDuXAeTT8poNzfUG50So1bqwX7EJ7kGSpcpCKvtKUN3X8Fo5Hkam9XpqnpQz/5SfH9flFeRrxx77crd9Sh540x7yK0qjnE/8Pj/UyuT2c18qvjVrQ7vC0F4n+y+FMV5dEOq3A/f6F/8MZ4vwYyIaxLewJt4hNWY4JWUKfiEwlpsPIaTee5DVzwhEp9p0L69A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Cgreb57dUB68QPfVpGvXgEBMkTvwdAv594oSiq1vLZw=;
- b=Q47La1AIxI0MoBugV+0iVzcGIPNwi5p37q2aiQTpxM/xGyateJGDNJ6QftwqNLNw+ahEXMbBC47qK/bQTrIuaTYky1PkAIRMBMlKMxc9l0GKK06GJAUwPkpe4q0ILWWC64BelDXxAeE7NT8b46z0Yo0k26YYhTrB5D4siVEidsZ9p8JyNFFdrK8Y/Di7fWlAfvd0wVxMnmW9pTpphrW5pIs2Tcl5pBLw+IyhbVTtxaFCUaBQjSYCuQxDUHXDdStCkExa1KWgaiyqtoXJrQlKOLyQA9wT9nyk1+65J8V9NRTbMa2n9QEr0FEcmkBrEoModT4kukNetaAz1DwItMHR9Q==
+ bh=vLZ3gTc2+kd0fBjKRDCAZC7ABWtet7R0C7GtC92cOZM=;
+ b=YDx9D5OVBK8A8JXKHuFKdTC05unMLU7ZkN7Ldhpb9WwIJ/cvDjCOoVMsVwVgNXclxXRrhzdMiEloTTFio/Q1RBITY9lLSoL/XuykMilmZk6tL538W2bdUfC20aSBReoTplqCqRTfGSnxjopbW6FsyYVT4q8O2w3jUKmbKLbWZcAgvVSEIZBb4aOBMPnSAHFJgMV4pD68jbIac3pLzxBYp/MtM6glyXamcwZfl5QfnhCO6REMxbvI7ADEOwAmndsnRPw3rWfPCBI/qt8DdytgUy3SkuJBSO8QppuXhSfYDXvcABxDOMEFPvQkDLwGlfGeOIsUOwAcS9k426BqRD72fQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1f9::22)
- by GV1PR10MB5867.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:56::15) with
+ by AS4PR10MB5547.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:4cd::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Thu, 27 Feb
- 2025 14:37:43 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.22; Thu, 27 Feb
+ 2025 14:42:44 +0000
 Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::3087:c116:dfed:1ca2]) by AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::3087:c116:dfed:1ca2%5]) with mapi id 15.20.8489.018; Thu, 27 Feb 2025
- 14:37:43 +0000
-Message-ID: <8f3bbc52-69e3-4187-a229-8d9356b22fd0@siemens.com>
-Date: Thu, 27 Feb 2025 15:37:39 +0100
+ 14:42:44 +0000
+Message-ID: <56a7a225-2213-49b4-980e-0c288b1e8874@siemens.com>
+Date: Thu, 27 Feb 2025 15:42:43 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] initramfs-crypt-hook: add re-encryption recovery
+Subject: Re: [PATCH v2 2/4] initramfs-crypt-hook: implement 'noencrypt' option
 To: Claudius Heine <ch@denx.de>, cip-dev@lists.cip-project.org,
  Jan Kiszka <jan.kiszka@siemens.com>
 References: <20250227143022.323950-1-ch@denx.de>
- <20250227143022.323950-5-ch@denx.de>
+ <20250227143022.323950-3-ch@denx.de>
 Content-Language: en-US
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-In-Reply-To: <20250227143022.323950-5-ch@denx.de>
+In-Reply-To: <20250227143022.323950-3-ch@denx.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CH0PR03CA0061.namprd03.prod.outlook.com
- (2603:10b6:610:cc::6) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR3P281CA0028.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:1c::19) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:1f9::22)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|GV1PR10MB5867:EE_
-X-MS-Office365-Filtering-Correlation-Id: 40f756ec-74c9-48ff-28da-08dd573c4bb2
+X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|AS4PR10MB5547:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2096a40e-16b7-47f1-a980-08dd573cfee0
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?QWtmb0RDbmNpV0NRWnEycnhoSEdoRHRIc3lOUGxIYzlaRXZYd0l1S1l4ZVow?=
- =?utf-8?B?TWIxY2d2Vms1dXVqU0tQL0MyTnJ6amt1bGE2UGVPekN0c09aVU93eGZ3enVK?=
- =?utf-8?B?NDlGdnZIWGIwWW0rVXRWR0NXUnpnUUxQK2s3L3RPV2ZkL2oza1FBMkUzQ3ZJ?=
- =?utf-8?B?K2tNTnBycUpMLzNRYlZQeHNObEVuUXVDNmxBNkVudjk3eTdRWTB5TjVQaGdt?=
- =?utf-8?B?WjBXQnhJaWtoVVNQVGdKaGFkWHBYcXk2cjA0U2VSYjQ3aWV5ZHRvd2lOUUMv?=
- =?utf-8?B?KzNDWGI5K2NBdk52bTMwVXNPRFdPdWpVTHpIam4yVGx6WE5NV0tWTkRMZUNp?=
- =?utf-8?B?a1B1SDdIMmZsMEMxSXBhVVBJMEd6YWcwSjJhVkVMK0ZoZys2cDNCNDBQZWdv?=
- =?utf-8?B?a0pyeU9pbFVZQjZGYUYwOW5xTDZTQVlyMHR0bHdOSkpXVEVNbHVXa044MHZN?=
- =?utf-8?B?SFg0eXZGY0VHV0dudXRCNFRxWGJaRks0OExiaG5CdituYW4vQnBlMmRUTkRB?=
- =?utf-8?B?NS9yZDcrb2IwRXdmUW1VVTJlblpuei9vdURRUUQ1ZkxJeXZNd1NGMWFBMndC?=
- =?utf-8?B?SngvdlYrWWJFR2pBZ2NhenljcDlwUDNlajY4YUhYaUdpY2NEOE5Ic3BLMW5O?=
- =?utf-8?B?aTlOUTVZOS93Y2xnaUdvSERYOHpYVWFSSDJKbTQ0TlFJaXN1ejgrb2FaK3JG?=
- =?utf-8?B?bUdqempXTk5oQm8yajRBeFNEaTRVQjVVRzFscVRQYkJoUW4veXlhMXQwRzZ6?=
- =?utf-8?B?bENPam1JNHIyVk4vS05sTHhhOHhqUiszQU1Gd2JZS3NBZEVwQm4xTFNjN2N4?=
- =?utf-8?B?aVBocCtLSDcvTmlWOVk3b1BCUkxjUUlWeEVYaUk5cks1Ni9ZamNBYXB5bUEy?=
- =?utf-8?B?Rkt6bU1PTlVja250OSs0L1kzRU9kWUc5OVhZZXVGOG42LzN2Ty9OSFArazZC?=
- =?utf-8?B?ei83YXdBbUxobUZwM2xnaFRTL2pTS3ZpV0kxa3ltS28vY1YydXBZaENvTVps?=
- =?utf-8?B?T0xVZUJGc3h1N3loZGJvWSs1NHF1NStNQmdYblFDUnQrTXY3SXU4OURxdGRH?=
- =?utf-8?B?SVhBaVZ5KzVveVMxR0diM0w0MWZDUXU5dkk0VHZUd2VnY3o3YUlvakdadjd2?=
- =?utf-8?B?QURhT1dvTWgzcVIwNVJRUGdWZW9qQVB2SG9ZTEJBcjVzR1pjNTNpY2tna2gv?=
- =?utf-8?B?eG54QVlnNnVVM25WMG50b1VGdnBJZmc1ZlU1QTYzTExQMWg0WjdZSW5qUld0?=
- =?utf-8?B?R2ZEVjBaaUV1WUZkVGJNU2tucEhCVFRhWGdtejZxVmdaejBjL2ZnMkc1VS9D?=
- =?utf-8?B?RFVOS0hKTmxjNXAwYXcrbktUNGNUdUNXZmw4dy83dTlVNGFjODhOS1ZnTkRG?=
- =?utf-8?B?Ykd2VmhmdjNwb0NoNTlkNFRpZHRhZGJRZXkyZVlubVRBMllocEROK21oeTBh?=
- =?utf-8?B?M3V4LzdHRDRDcDdZQkp0WnFRSkRKMXFESm05b0NQanVySTVWZUdLYkZieTB2?=
- =?utf-8?B?TFg4M2cvUmNWaTlkWnNjR0FNR0tCOUtnaVR2bGovZW4xbC83dXlSZ3o1dFZP?=
- =?utf-8?B?RHA2SDBCdE00QmZMZW5GcVErWkJMbVEyaGI5dWtVRDF4NUxrWFR6aTRraUd5?=
- =?utf-8?B?OGRPa2svZnFJVHlZcU5RdGZ6TUl1RzhRWnU0TU9zV2JyVUlRaWZCTzlLTEJX?=
- =?utf-8?B?Ylhydit2K1lqeHN0OEVEQSsrV3dVejJCZm5CVFc1ZFBjbnVTY09FOWdTMzBu?=
- =?utf-8?B?eGROeWVnYWxjTnR4bTdRZ2tZT1JncEtRakJWckZOY0FsdEM1V29MYk82MlNS?=
- =?utf-8?B?NjFGcEp5Z3Q4UVJNdVc3YkF2VEpkQnZWNlJ5ZUg2Y211NTU3Sk43VEFrTmhW?=
- =?utf-8?Q?/ZVH7ZB+ZJT3y?=
+	=?utf-8?B?a0JSeXNyN2FaTDhQUjVnMGtlQWlPNjFscWltd1lZMG9kdm80bU5mZTlLaXFZ?=
+ =?utf-8?B?Y0o5MmFCamJYZFp5Ty9ZbW9ySXJBV0g3dnZ0TmdZNy9xbXZjWWwrN203SkVI?=
+ =?utf-8?B?MVJXSjlrQ0pUdXdEN2dEU1JOaVp2R1lHS0RybE1XNXU4cVRZNUEybXJieTRC?=
+ =?utf-8?B?NW5HczBxM01ZUUtNeG91UUFTeXpVZk5JMEN2QUVXYXBBMGtKeDNoWTdPZU1X?=
+ =?utf-8?B?TDVlREh1WUhxYkc0TUs2c2tWMnkvOTZ2WEE2Zkd2MFc3dll1Si9RRE5tZGxS?=
+ =?utf-8?B?VUViVGVDdCswdWdrMnlOS2ZJdGFOcE9GVFZQNUxjejlsYktUOU5BVW1lWUFx?=
+ =?utf-8?B?b0ozWW1TWnRzbzBCMkh1RU1HVkdJSkVIYjZCa1lYQWEyMmt6aFRJOEl0RTBt?=
+ =?utf-8?B?Y3BxYmZkdUU0enNrb0pNa0VXTTIyT0IzUm9TZ1ZjRjNualA5RnJJRmRhcWQ1?=
+ =?utf-8?B?MVMvNVp5VW4yTEd2Z2F2TWlqT3VxZHc0TnVhanRDZk16L3NJNWtpS0tEUE1S?=
+ =?utf-8?B?dlVIV09PWW5qV0xxd2I0RmovcG1aUnl5UUVEZ1pRdHlETU8xMTNrR1hDN3ZS?=
+ =?utf-8?B?dXBXVEJjSndZeUNxNXFHV2twS3daS0xwQnIwVGRZalNOWGJGcVNDemxUanQx?=
+ =?utf-8?B?dTI4KyszSUN0dXlRRlc1QTZTaTJOTTFlNklwdFBpMS9nZzFSOWM0VEdXN1Q4?=
+ =?utf-8?B?NHZGc0hkZlo0d204V1loOUp5SU1wZVByNFJwOHhsTmxvcitJSGxGb2xpV1Iz?=
+ =?utf-8?B?bTV4R25YN1ZRUXBqVGZ3T2FlWGM0eWhveGJOdXZERUNBVFdvaVVPMzNUbnll?=
+ =?utf-8?B?RTZyL2c2d01WTmNLU0luTVErTFdNNTNTWGVSQWFhTk5DR21WQnU1YnAycVpj?=
+ =?utf-8?B?T250VVExeCtJdmtRMW9aS3BBYWtJZ0srUGI3R2F3Q0srVGNSandYbGdORlpr?=
+ =?utf-8?B?bTBDQ0x1RHpGRkExRSs4Y1YvSTBEZVJmNmlsK2tHSlNuL1o1NHVpNVZuOWpt?=
+ =?utf-8?B?My9La3ZuUFN6S0MvUnQzL0x6bm1UMXdFWnM5OUVHSFJVUVYrMDcwclg5MnFL?=
+ =?utf-8?B?cUs2KzYxVTRUNVpaR1p0amNSbzcxcGQ0ckJVTVpUaThybEx3UVM3M3lPRTN2?=
+ =?utf-8?B?Y1FHMVphQm5RUSt5eExBRHpwaWxXNi9QS1BEV0Q1QkVLdmtGRnFlbUVqeFFj?=
+ =?utf-8?B?TytmckhEdWxPRjUzK2l4OUpRYVdIVzFwYVVJa1NYNUQ1K2w5OVYwazUzWmpo?=
+ =?utf-8?B?dkR0Q3gvUzVaTXBtbzlMeENqSWI5dGsxZ0k4cnNTR25qejdGd0RRUkFjanFk?=
+ =?utf-8?B?TUUxd2tjcjBLNWM2all4V3J1QkxSZytCNm5rRTFxZ1U4R28xY0gzT1ZIeWRn?=
+ =?utf-8?B?c2prUG9ZM0hERUM4TXpiWVlUNFEyTmZmQUxzTGdRYVFHZjRIeU9EK3BKWkFX?=
+ =?utf-8?B?RWpqODFabHFHM1RhY2Jzc2FYS3M5a0F1UUtxY1RLSERTd284Rks1TTZNZmVB?=
+ =?utf-8?B?Vy90Rk1lajZyczR3ZFByRVNvYTh5d3pCTGpjMkpXVjd4dDNaVnI2WU9tK3ZQ?=
+ =?utf-8?B?N3FndEd1Kys5L3g1cWpxbnlFWTNUM3R1VS9jTnNxcUFHV2VjWjdHREwyM2E1?=
+ =?utf-8?B?Mm44RDdSWmQ4VHlWQklrY0VpUVVFQjEzNUpwZGF0MDVINVJueTFRWFhEZHNP?=
+ =?utf-8?B?QmxnV0s1R0RpWStBbXhQamhaYVZYZGZ4UWdQY1NpKyt6UndZU3Z0U3plWjV0?=
+ =?utf-8?B?Y083aDZvR2crbllGOU9CaWNLMFZGMkVnWW1uOFh3YlUwYVVMRmpiVk5VYUcx?=
+ =?utf-8?B?SjNMQjRKZGF4cWl0WFRwQnUvaUlFeWZud1JLT04zS2NrR2NwMEZ4bTd1OUFT?=
+ =?utf-8?Q?eeq2EQ9PDSNw2?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?MENYUDJ3SDJ2b1FNTThlV0FGM0FDK2lXV1NVUzdSM0tKbFB1OHpnZjc5dVJv?=
- =?utf-8?B?c0p0Lyt6RURHT0NiSTlVVlFFOWJZRjgyTkdvWHY1YThWd1NsNzVESE1Za1Jz?=
- =?utf-8?B?aHV4eitYUG94dTZHc1lMZkJQVlFJSG5lRHM1MzNEQ1RxRlF3a05MelhqZUV2?=
- =?utf-8?B?R2ZJbmNLMHFCREVaWlNEVXoxbk9IbG1CMCtKaTIwU1R6bFZ1YjRqZTVYN1FV?=
- =?utf-8?B?a05ONE8wek9tbk9mT3ZUd0xOQW51end2OHJQM0IzMUFYWVliSnJ1Zkx3RjdN?=
- =?utf-8?B?TG5mUjVvSFp2dkpCZDI1ZFhQZzF6Q0R4TGRtcnBrb051dzNNZlk4Z0lreklD?=
- =?utf-8?B?Rjc2U2RaVlhPd0tKNTRlUEpuTDMxaFM2WGVtZkNncDVPeVg4ZUFyTkN2VFhW?=
- =?utf-8?B?OWJWbGZ3M2NicXd5QmN3YitHR3dERVBjMDVJRGlPK3NOQTk2dUw5bmo2N1U3?=
- =?utf-8?B?STUyQVBMWHl3ZW5PREJtMkUvdWM0SXRjUmJwSWFHMW1TeitFeE9vaWhBTGpN?=
- =?utf-8?B?ME8vcUF5VlNNR2VheEoybUVZaXVwWnJQMmdpZTNTVzN5eE1KWVgxbW41bUlu?=
- =?utf-8?B?bE9WbE4xRXlNR0lxU2NIb1grTGZqVkQ3UlBmTGFyTzJNUkp4ejFkR25Tb1hy?=
- =?utf-8?B?UU5jVWVhanAwbmEwbE5naWEzNkgzV2JaMjhScCtvekZVQVdBQno2d0svK3JZ?=
- =?utf-8?B?bjYxSVNkUnMwak43NlFhSzZGOHdqRHk0OUtkd2RsZFowSkhjazFaVVFLNzNs?=
- =?utf-8?B?Y1BRdHRWZVIwL3dPNUlYbldVeFN3cTEySG83dnhiazc3Q2lpREt1NVhmWnpW?=
- =?utf-8?B?c2cxV0dYNjliMUFLRlRERmF1b0lSeDFsdUozN240aGQzeWcwOEVpR3lmN3RF?=
- =?utf-8?B?YUdsczFHUzdTeU5yU0JOMndQa1gzTzhrYzJGcUZIT215WU5kYXh5eG5oU1Nx?=
- =?utf-8?B?SjlSTkppZDB6cUgrZ25XaEwvWG9vT1ViWVYrR3BaNGg1MTdxZXJMT3VyMzc0?=
- =?utf-8?B?YlVYNUZ3eFpDV2pGVjBvV0ZlWVFOaVBteDRmOWJvcm01VWE3OUt1a0hyWEZ1?=
- =?utf-8?B?eEs4dVowcmtxODNJSXo0djNzSmZCRUZ2eTNLYnN5OE9NWjRCL1YvV3FRaDBM?=
- =?utf-8?B?VU5XRlR0UTZvRlBvaG5JclJjVjBQd2hQa3R2bXpWaW8zRGs1WW1HZU5TSEZI?=
- =?utf-8?B?T0hRejl6SHAzWEFRN1QrVCtXVFZ1WGVyOUpyZVhUelJnSVo4RFRQRk1rNU5j?=
- =?utf-8?B?aXFKb3JNMXFEMnozL05qbzBQc1ZBYlBOUThkVzNrNllzY2xTSkNHanJHWlN1?=
- =?utf-8?B?TGxlMjc3SXhKMElkUzVTVll1a09KUHdtZXRZS1Z5UjhIRWp4K0pGK0J6V1VG?=
- =?utf-8?B?bTE5NVdNQjcrWVcyQXFDQWI1ai9UNGhlRjI3dW1LdEdZa0Y3d3RIVk9GTnlF?=
- =?utf-8?B?N0lPTGNNeXhKYUlWTURlT1JJR0lHdTVjeGRyL0VwNjFacm54M2ZTUXc4R2d3?=
- =?utf-8?B?RW1DZ2d1TGh0MU8xT2tRUlBveWxFc1pNcFRpYllTaTF6a3ZnTFNPU29tSXp3?=
- =?utf-8?B?MlZPL29KaHpJSmZPNExnd0NMV2N2OGIvRUQ0VFIxZ2xsNVo0YWtyT3QwV0tS?=
- =?utf-8?B?Ris0RUNabHIzRHlZdm1SbVlUUmE4WDhIZE9kL3ZGUlA4SGIwTmlKdTJIQVM1?=
- =?utf-8?B?cWFFTkY5TTBrY3RFMnRzRW94b0tOVDVWU25jTWtwRk5zT0tTMERlT2JoUHla?=
- =?utf-8?B?NWdjei9BOFoxWUNXLzFXMlVJVnp0U21ndG5HVDBkK0RudGdQdWVBWnZTRnJR?=
- =?utf-8?B?eDhhWUp5ZnRtWjBRQTRHRHRzbkg0aVJ6bzY2bGtMLzNCYWYxeGY3TWJib1B3?=
- =?utf-8?B?ckZXczZWOFFhVE1weUFRbGtwVEozVWZTUFd5N1Vva01SeENpemRhUE1KUnNM?=
- =?utf-8?B?c1FkWFp0OXRKSjRvUExoWEJEWEdKUEEvVlJUbUx0SDhhaEhzYkNwRGNsNzlr?=
- =?utf-8?B?ZnAyZlBYeW5ZNnd2bTdLTDNnWVFPU2RDVWJyVG12YmMzRks0SzJ0NFk3TDJ4?=
- =?utf-8?B?QmRhTmxOVUJHRkptaHdWcjZPQStzM2xJaFBOb0pWUjJQMmFtUHU4bEdvbnN6?=
- =?utf-8?B?SjA1Qkw4Q0xJeUtxbVdoTlNJWnMwM01HUjJoWHdFOFBsSm9wWlJ4dU80S3BI?=
- =?utf-8?Q?Z1qJj+1BCd8i08EyqAAz82c=3D?=
+	=?utf-8?B?SHJMOVJEdUFhSzJNT09vSUYwQWVSc2prbjdJc05PQlFKVjMwVjBTdVlkQ29D?=
+ =?utf-8?B?d0RwMkZSUFR5ekN1dzdtTmFtc3RKYUxjSG1obkpJYlhXbW5HQ3NvMVU5ZFE1?=
+ =?utf-8?B?TGcvUGhBK3FGdWc3QjFHRDhST2l3Z3dvZWg3NmZBNUtzdmxyTEJhRTZUSXZK?=
+ =?utf-8?B?dXk5bVdod2E2b3Z5Tk9zMUs5OWZqMFlNSFdUMVBRNHFrRW5GYUJ0S2ZyelUr?=
+ =?utf-8?B?c2dBV25sQ1pKS0FzSDlCVmtWak04TU9KdXgwbXd4aXdiVFVMYUlZVGcxL0pE?=
+ =?utf-8?B?eTUwcVVKc1BwM2l6OHI3R0Fibmo4c2g0V29DdVhSMDB6eW00VUpTQnltMmhU?=
+ =?utf-8?B?MEI2bkVPS2lYVWJsSExPZkUrR0hINU9Yb0phaU51aUIvZ3M5SUpHSjB4MGFZ?=
+ =?utf-8?B?dWRTUm82allOZUJDbDJEYnBwRW1JTmhTdy8yZ0ZkNENCNWNFYXBTMmt3c3Mx?=
+ =?utf-8?B?WFJPUzczRWJDTjBjTVU3bG5Jb2xpcGE4VHFtaHNlbXJiei9Rc3hSdHRHdzF0?=
+ =?utf-8?B?ZmVUcUl1Z3gzN0JUbHVId0svK090TWhzc1M4WUV2cElsdk5VQ01lVHRHYkZr?=
+ =?utf-8?B?Wko3R09WaEVjVWEyblh0TjZaTjVDVnplRVl6NjYvRy9KN3l1VkduS1I3SUxR?=
+ =?utf-8?B?WGdZcXhPNXRaemJSdmsyVjkwcDk1U2pFUVNDcEhrL0QvT1VQUWhOeWZ2SUpY?=
+ =?utf-8?B?ZnJkQnlTdEJPREJNaUs0SHM4Z3R3UEkyc0cybDdlaHIrSG0zMGUwQ0tDVngy?=
+ =?utf-8?B?bVZJMHVmSldhSEJvTURKSW0xM3RFZGFmWDlrVkNrVmlXc0VvUHJURjFPVlBT?=
+ =?utf-8?B?MHFkV29hMSsyVSszUmtQMzJWeTg5TjBNUUF2bU1vdm1HZWlGTS9jQzB6STFQ?=
+ =?utf-8?B?bjVaY3U4bFVlU1NMMFBYZzZrVFhSNkZKY0twaHppNW1ITGVSdE1aZW9CR0k1?=
+ =?utf-8?B?SkpURlhqeXVnQXJnS1g2VmkySHk1SGZ0NzVuSkxkUlNHMU9Yd2NlL0lramRy?=
+ =?utf-8?B?V1FnRGFjUmNjY1ZjMlVOaHBkdmZ2YkhTRW41QUJqSm5xTk5WaXJ0cVdRdGhv?=
+ =?utf-8?B?ampWRU9BVGM2RlVnbFN2TS9SbUFtWVhxR2hrWGpIMWdneUNHRWRZLzNQaUM0?=
+ =?utf-8?B?dGdCNUtpK1NDOGVEaGxiTkEySnFaUm5zK256QlhsdWFGZFp3U3M5NGIycjJB?=
+ =?utf-8?B?cjYzRDdLZjRPNWNqd3FMazJjN2VZakZBN1VuMU5ROEhyRm9WdDR3empyK3pv?=
+ =?utf-8?B?aHFrdFpWdDRQaFFndmRKN3duelZrZmtqMWg0Q0dYSGoreWd4TVlDZ2p2eDMy?=
+ =?utf-8?B?dWZSSWFxUlJWSzN3YU9PSExPQ3VoaUJueVlsOWo2UGpmZUE1YkZ0QnEwcXpm?=
+ =?utf-8?B?RGdMVFZ2QzVzMVR5WTIwMitIQ2RrWjZRUHpuVGtoQkhyUis3QmVaclJBRit1?=
+ =?utf-8?B?azhNajMvcUM4a1FkTFd3eUpyQk94c3lFK3BoZmR5ZHMza1czRlFya3BXbkhH?=
+ =?utf-8?B?Ym95Qi9kQ3JScXU4RGtZNWMxZXVKZ21pbTNsMUtVY0hRSitkcDhMZFJmb05R?=
+ =?utf-8?B?RVEwV2ZtUENLT201VjZnQ2M2MFVRUy9Db1ZLbFE5a1Z4YzlWS3FEZGpCMVRT?=
+ =?utf-8?B?UUNQMGcrVllDKzEwUUVVUXZLcmk1UUlia2U3d3JhREdUeFN6RUxHb3RiUUly?=
+ =?utf-8?B?dW1uNW4ySkZUbHFaYUpIcitiZzFobityQi93eXQxSGFSdDBxRWRJMmkxRmdv?=
+ =?utf-8?B?ZkZYOFlzR2FIZzlaNDNJdGNTSFkxVjhqUFVoK1RyaEl5QUtOS1hHSW82Q0RC?=
+ =?utf-8?B?VzlUTmpOd3VFRFpmK1hwTEJKZGQvWUVjUzZTbXFadURDTW44NTZXMHp3Mklu?=
+ =?utf-8?B?VEVjRmJvMHBkMkxrWnRZa252bDh3d3dRZkFIcVdPdnBHWjJWd04wYzFhV25Z?=
+ =?utf-8?B?MXI1ck5GdFJ6RUlpck5KdHFpd0NQTkR6amZreGxvNm9RTzFKR1VES0NIZU9I?=
+ =?utf-8?B?LzVzZ0VOcFdSWk1GL0EzSGdWUi9rWmljbFVWK1dvWUJGV2FqUlBBemo1SEhQ?=
+ =?utf-8?B?LzMzZW1iSm9paXNGUmVHU0g3RTBmYm8wSFVNaWVzenk2WVFGMVY5MzZZZ0NG?=
+ =?utf-8?B?NWlkbFN4akEzeFBpQWZNcVM3TW5JQWJRWE55Lzg3MEJuU1k0NDRjTVJCa3Rh?=
+ =?utf-8?Q?mOVuGGg7phb9+mRL5+OoCRk=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 40f756ec-74c9-48ff-28da-08dd573c4bb2
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2096a40e-16b7-47f1-a980-08dd573cfee0
 X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2025 14:37:43.7142
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2025 14:42:44.3289
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yMEiUj3H+FpVcj9v3udNwlWtQjBD6PHD3Xyo3EeyT7qkG1+fzk5B0VsnsAvkt67LdrbwNys9v+Ntrbn4awODuZSrMFwUkxEQgoIEHo2hUns=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB5867
+X-MS-Exchange-CrossTenant-UserPrincipalName: xF5WM+EydwJ4DFcBUjXvIIfIveq/DNYx2Om4o+vUDB/ajjNgZpoysixx+S/XXIM7rU3GXvRYGdKDg/McPd7AI8hYXl1o6SveUenmJsQ7k04=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR10MB5547
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 27 Feb 2025 14:37:50 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17946
+ <cip-dev@lists.cip-project.org>; Thu, 27 Feb 2025 14:42:50 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17947
 
 
 
 On 2/27/25 15:30, Claudius Heine wrote:
-> Integrate detection and recovery of power failures while a partition is
-> being encrypted.
+> In case encryption needs to be enabled via an update, while still
+> allowing the update fall back to work. One update step where encryption
+> is supported, but no reencryption is taking place if the device is not
+> encrypted.
+
+The scenario this patch tries to solve is update from A to B:
+- Update is not confirmed
+- the encryption was successful
+-  Error occurs and we fallback to Partition A
+
+Is that correct?
+
+Quirin
 > 
-> There are possible scenarios:
-> 1. Power-fail happens while the partition is reencrypted:
->    - The LUKS header contains `online-reencrypt-v2` and needs to be
->      repaired with `cryptsetup repair` before it can continue.
->    - Also no resizing of the file system is necessary
-> 2. Power-fail happens before the systemd-tpm2 token can be installed
->    - The LUKS header does not contain 'systemd-tpm2', thus it needs to be
->      registered and the temporary encryption key needs to be removed
-> 
-> In both scenarios the system after the reboot needs to have access to
-> the temporary encryption key that was initially used. So using a random
-> one, generated via `openssl rand` is not possible. Since it is only a
-> temporary key and gets removed after the systemd-tpm2 token was
-> installed, a known password can be used.
-> 
-> The list of these scenarios is not complete, there might be other
-> instances where a sudden power-fail could be fatal to the system, but
-> these where the most obvious and risky ones.
+> For this the `noencrypt` hook is implemented, which requires some
+> restructure/reordering of the `local-top-complete` script.
 > 
 > Signed-off-by: Claudius Heine <ch@denx.de>
 > ---
->   .../files/local-top-complete                  | 33 +++++++++++++++----
->   .../initramfs-crypt-hook_0.6.bb               |  5 ++-
->   2 files changed, 29 insertions(+), 9 deletions(-)
+>   doc/README.tpm2.encryption.md                 |  3 ++-
+>   .../files/local-top-complete                  | 24 +++++++++++++++----
+>   2 files changed, 21 insertions(+), 6 deletions(-)
 > 
+> diff --git a/doc/README.tpm2.encryption.md b/doc/README.tpm2.encryption.md
+> index 3f7e89f..a503095 100644
+> --- a/doc/README.tpm2.encryption.md
+> +++ b/doc/README.tpm2.encryption.md
+> @@ -42,11 +42,12 @@ The initramfs-crypt-hook recipe has the following variables which can be overwri
+>   ### CRYPT_PARTITIONS
+>   
+>   The variable `CRYPT_PARTITIONS` contains the information which partition shall be encrypted where to mount it.
+> -Each entry uses the schema `<partition-identifier>:<mountpoint>:<reencrypt or format>`.
+> +Each entry uses the schema `<partition-identifier>:<mountpoint>:<reencrypt | format | noencrypt>`.
+>   - The `partition-idenitifer` is used to identify the partition on the disk, it can contain a partition label, partition UUID or absolute path to the partition device, e.g. `/dev/sda`.
+>   - The `mountpoint` is used mount the decrypted partition in the root file system
+>   - `reencrypt` uses `cryptsetup reencrypt` to encrypt the exiting content of the partition. This reduces the partition by 32MB and the file system by a similar amount
+>   - `format` creates a empty LUKS partition and creates a file system defined with the shell command given in `CRYPT_CREATE_FILE_SYSTEM_CMD`
+> +- `noencrypt` will not try to encrypt the partition, if it isn't encrypted already, but will open it if it is. This makes it possible for an system to support encrypted partitions, while not encrypting anything on their own. Useful when updating from a system that is unencrypted to one that is, while supporting a fallback system. For example, with a shared data partition, the fallback system would have the `noencrypt` option, while the encrypted system would have the `reencrypt` option set for it. Now the fallback system can still open the data partition if the update to the encrypted system failed.
+>   
+>   #### Encrypted root file system
+>   
 > diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-> index 4b6451a..6034175 100644
+> index 502fcc1..67722fc 100644
 > --- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
 > +++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-> @@ -72,6 +72,9 @@ reencrypt_existing_partition() {
->   	reduced_size="$(expr "$part_size_blocks" - 65536 )"
->   	reduced_size_in_byte="$(expr "$reduced_size" \* 512)"
->   	reduced_size_in_kb="$(expr "$reduced_size_in_byte" / 1024)K"
+> @@ -211,22 +211,36 @@ for partition_set in $partition_sets; do
+>   	if [ ! -e  "$part_device" ]; then
+>   		panic "Could not find device  mapped to '$partition' cannot be encrypted!"
+>   	fi
+> -	decrypted_part=/dev/mapper/"$crypt_mount_name"
+> -	# check if we are trying to mount root
+> -	if [ "$partition_mountpoint" = "/" ]; then
+> -		echo "ROOT=$decrypted_part" >/conf/param.conf
+> -	fi
+>   
+>   	if [ "$partition_expand" = "expand" ]; then
+>   		expand_partition $part_device
+>   	fi
+>   
+> +	# If partition is already encrypted, decrypt and continue with next partition:
+> +	decrypted_part=/dev/mapper/"$crypt_mount_name"
+>   	if /usr/sbin/cryptsetup luksDump --batch-mode "$part_device" \
+>   			| grep -q "luks2"; then
+>   		open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
 > +
-> +	CRYPTSETUP_PARAMS="--reduce-device-size ${reduce_device_size}k"
-> +
->   	case $partition_fstype in
->   	ext*)
->   		# reduce the filesystem and partition by 32M to fit the LUKS header
-> @@ -90,14 +93,25 @@ reencrypt_existing_partition() {
->   	squashfs|swap|erofs|"")
->   		[ "$debug" = "y" ] && echo "skip disk resize as it is not supported or unnecessary for fstype: '$partition_fstype'"
->   		;;
-> +	luks)
-> +		# Check if reencrypt was aborted
-> +		if /usr/sbin/cryptsetup luksDump --batch-mode "$1" \
-> +				| grep -q "online-reencrypt-v2"; then
-> +			/usr/sbin/cryptsetup repair --batch-mode "$1" < "$2" || \
-> +				panic "cryptsetup repair was not successful"
+> +		# check if we are trying to mount root, set ROOT to decrypted partition:
+> +		if [ "$partition_mountpoint" = "/" ]; then
+> +			echo "ROOT=$decrypted_part" >/conf/param.conf
 > +		fi
 > +
-> +		# already luks partition, don't resize
-> +		CRYPTSETUP_PARAMS=""
-> +		;;
->   	*)
->   		panic "cannot resize partition, unsupported fstype: '$partition_fstype'"
->   		;;
->   	esac
->   	if [ -x /usr/sbin/cryptsetup-reencrypt ]; then
-> -		/usr/sbin/cryptsetup-reencrypt --new --reduce-device-size "$reduce_device_size"k "$1" < "$2"
-> +		/usr/sbin/cryptsetup-reencrypt --new ${CRYPTSETUP_PARAMS} "$1" < "$2"
->   	else
-> -		/usr/sbin/cryptsetup reencrypt --encrypt --reduce-device-size "$reduce_device_size"k "$1" < "$2"
-> +		/usr/sbin/cryptsetup reencrypt --encrypt ${CRYPTSETUP_PARAMS} "$1" < "$2"
->   	fi
->   }
->   
-> @@ -219,7 +233,7 @@ for partition_set in $partition_sets; do
->   	# If partition is already encrypted, decrypt and continue with next partition:
->   	decrypted_part=/dev/mapper/"$crypt_mount_name"
->   	if /usr/sbin/cryptsetup luksDump --batch-mode "$part_device" \
-> -			| grep -q "luks2"; then
-> +			| grep -q "systemd-tpm2"; then
-This should break encryption with clevis.
-
->   		open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
->   
->   		# check if we are trying to mount root, set ROOT to decrypted partition:
-> @@ -230,6 +244,12 @@ for partition_set in $partition_sets; do
 >   		continue
 >   	fi
 >   
-> +	# If partition contains an aborted reencrypt luks header, switch to reencrypt mode:
-> +	if /usr/sbin/cryptsetup luksDump --batch-mode "${part_device}" \
-> +			| grep -q "online-reencrypt-v2"; then
-> +		partition_format="reencrypt"
+> +	# If partition should not be encrypted, continue with next partition:
+> +	if [ "$partition_format" = "noencrypt" ]
+> +	then
+> +		continue
 > +	fi
 > +
->   	# If partition should not be encrypted, continue with next partition:
->   	if [ "$partition_format" = "noencrypt" ]
->   	then
-> @@ -247,10 +267,11 @@ for partition_set in $partition_sets; do
->   		watchdog_pid=$!
->   	fi
->   
-> -	# create random password for initial encryption
-> -	# this will be dropped after reboot
-> +	# use partuuid of the partition for initial encryption password, this key
-> +	# will be removed after the reencryption has finished and the TPM2 token is
-> +	# registered:
->   	tmp_key=/tmp/"$(basename "$part_device")-lukskey"
-> -	openssl rand -base64 32 > "$tmp_key"
-> +	lsblk -no partuuid "$part_device" > "$tmp_key"
-
-This has the security implication that until the tpm key is used the 
-device is insecure.
-
-Quirin
->   
->   	case "${partition_format}" in
->   		"reencrypt")
-> diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.6.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.6.bb
-> index c9a7f89..5e82521 100644
-> --- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.6.bb
-> +++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.6.bb
-> @@ -14,7 +14,6 @@ require recipes-initramfs/initramfs-hook/hook.inc
->   DEBIAN_DEPENDS .= ", \
->       cryptsetup, \
->       awk, \
-> -    openssl, \
->       e2fsprogs, \
->       tpm2-tools, \
->       coreutils, \
-> @@ -40,8 +39,8 @@ HOOK_ADD_MODULES = " \
->       ecb aes_generic xts"
->   
->   HOOK_COPY_EXECS = " \
-> -    openssl mke2fs grep awk expr seq sleep basename uuidparse mountpoint \
-> -    e2fsck resize2fs cryptsetup cmp \
-> +    mke2fs grep awk expr seq sleep basename uuidparse mountpoint \
-> +    e2fsck resize2fs cryptsetup cmp lsblk \
->       tpm2_pcrread tpm2_testparms tpm2_flushcontext \
->       /usr/lib/*/libgcc_s.so.1"
->   
+> +	# check if we are trying to mount root, set ROOT to decrypted partition:
+> +	if [ "$partition_mountpoint" = "/" ]; then
+> +		echo "ROOT=$decrypted_part" >/conf/param.conf
+> +	fi
+> +
+>   	# service watchdog in the background during lengthy re-encryption
+>   	if [ -z "$watchdog_pid" ]; then
+>   		service_watchdog &
 
 
