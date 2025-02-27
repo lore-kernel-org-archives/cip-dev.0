@@ -2,37 +2,37 @@ Return-Path: <ch@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E14C6C1B0FF
-	for <webhook@archiver.kernel.org>; Thu, 27 Feb 2025 14:30:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B4A5C282C5
+	for <webhook@archiver.kernel.org>; Thu, 27 Feb 2025 14:30:50 +0000 (UTC)
 Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web11.11649.1740666644430691816
+ by mx.groups.io with SMTP id smtpd.web11.11653.1740666646670078645
  for <cip-dev@lists.cip-project.org>;
- Thu, 27 Feb 2025 06:30:44 -0800
+ Thu, 27 Feb 2025 06:30:47 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@denx.de header.s=mx-20241105 header.b=AZ4kd4VM;
+ dkim=fail reason="dkim: body hash did not verify" header.i=@denx.de header.s=mx-20241105 header.b=JzF1m/Ge;
  spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: ch@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6644410382F1A;
-	Thu, 27 Feb 2025 15:30:42 +0100 (CET)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E540810382F1A;
+	Thu, 27 Feb 2025 15:30:44 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1740666642;
+	t=1740666645;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XgZYliBAkeADOjOHyzGWqeuOgVeufj5+wQZjZF2fIIg=;
-	b=AZ4kd4VMQ6EIpLLkE9tKyISsCStGAg35Pq0UeGo9PQGlHtel77cZndLG+iV3r0aaQpBCOj
-	hVlt9G42ojhAUfcoWE7ebdSEHoYeMbP0uad9ygcIux1S+25mNStSWB7TSAEOzQhq3PQF7G
-	tOyjuI3WzND6SAf9vck5Vh564qs18vrwpvapta90YSbLPcplJ/J3qmDlmMCGZs/xgO7hcC
-	3lLNbrg9KkpaAnY2JPePhQdOjMtDJhzgGYFpZV2G05EWzMggJgJ39AmRZb9k9nwfEFUc0J
-	SK34OorRfQhbkORiD7zEaSMAdxW+3RWh2lkjeQIDGvhGynMA82piJpK8/KrX4w==
+	bh=TyCGvOMMsrEezKfnuWMGQWvyRy1cz1zc0PuVpSSRR6w=;
+	b=JzF1m/GeHDK1ngkq+VlsLJOHEtc8OXcZP5mQ77EIPZW/tneyS/FxpbBBNkgsCobQUImFxr
+	Q/ovDMBmEY8tJsfGcKE4dhGcKAeHi7gRN/91XbiMSHgfxv00EL/N40WBCd1NJ7KcnB8mB7
+	HRgI9hV6uLSLJT/NZLp+GHXZs0xiY8AHvEqLB5PrHdweQVP3kR3v7ZWxjOYRJt3TEcFu52
+	2JrLRtgDK7rRHlW4vQY1//SjvyyIPJSWb3bN+/1eWty6TzEZxDvClA7qWyUwURjJK0rdEG
+	N3sQJKKl6SL/IrGJkEoQswltunnzrWPYk9GEAWfw7wLrPPfhOC2poKgqa76LhQ==
 From: Claudius Heine <ch@denx.de>
 To: cip-dev@lists.cip-project.org,
 	Jan Kiszka <jan.kiszka@siemens.com>,
 	Quirin Gylstorff <quirin.gylstorff@siemens.com>
 Cc: Claudius Heine <ch@denx.de>
-Subject: [PATCH v2 1/4] initramfs-crypt-hook: make sure that mount path exists
-Date: Thu, 27 Feb 2025 15:30:19 +0100
-Message-ID: <20250227143022.323950-2-ch@denx.de>
+Subject: [PATCH v2 3/4] initramfs-crypt-hook: add 'format-if-empty' feature
+Date: Thu, 27 Feb 2025 15:30:21 +0100
+Message-ID: <20250227143022.323950-4-ch@denx.de>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250227143022.323950-1-ch@denx.de>
 References: <20250227143022.323950-1-ch@denx.de>
@@ -42,43 +42,119 @@ Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 27 Feb 2025 14:30:49 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17942
+ <cip-dev@lists.cip-project.org>; Thu, 27 Feb 2025 14:30:50 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17944
 
-Wherever or not the mount directory (and their parents) gets created
-seem to be inconsistent; mentioning a missing mount point in the
-`/etc/fstab` might cause the boot to fail, while using systemd `.mount`
-units will just create the mount point.
+When encryption is enabled from one update to the next there is a
+difference between flashing a fresh factory image to a empty storage
+device, which contains an empty fallback partition set and updating it,
+where the fallback partition contains the actual fallback partitions.
 
-Wic creates missing mount points that where mentioned in the `.wks`
-file; so moving from such a setup to letting `initramfs-crypt-hook`
-mount the file system at boot inside the ramdisk, the mount would
-suddenly fail.
+In the update case, the update case, the fallback system should be left
+alone and unencrypted.
 
-Therefore creating the mount point for your, if it doesn't exists seem to
-provide a smoother transition.
+When doing a factory flash, the fallback partitions can be encrypted.
+
+The best marker on in which case the system is booted is, if the
+partition is empty or not. The 'format-if-empty' option will format the
+partition with a luks format in case the first 10MiB are empty.
 
 Signed-off-by: Claudius Heine <ch@denx.de>
 ---
- .../initramfs-crypt-hook/files/local-bottom-complete             | 1 +
- 1 file changed, 1 insertion(+)
+ doc/README.tpm2.encryption.md                    |  3 ++-
+ .../files/local-top-complete                     | 16 ++++++++++++++++
+ .../initramfs-crypt-hook_0.6.bb                  |  2 +-
+ 3 files changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-co=
-mplete b/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-comple=
-te
-index b991cb4..80553d1 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
-@@ -41,6 +41,7 @@ mount_partition() {
- 	partition_mountpoint=3D$2
- 	[ "$debug" =3D "y" ] && echo "mount device: '$partition_dev_path' to '$=
-partition_mountpoint'"
- 	if ! mountpoint -q "${partition_mountpoint}"; then
-+		mkdir -p "${partition_mountpoint}"
- 		if ! mount -t "$(get_fstype "${partition_dev_path}")" "${partition_dev=
-_path}" \
- 			 "${partition_mountpoint}"; then
- 			panic "Can't mount partition '${partition_dev_path}'!"
+diff --git a/doc/README.tpm2.encryption.md b/doc/README.tpm2.encryption.m=
+d
+index a503095..01b6033 100644
+--- a/doc/README.tpm2.encryption.md
++++ b/doc/README.tpm2.encryption.md
+@@ -42,12 +42,13 @@ The initramfs-crypt-hook recipe has the following var=
+iables which can be overwri
+ ### CRYPT_PARTITIONS
+=20
+ The variable `CRYPT_PARTITIONS` contains the information which partition=
+ shall be encrypted where to mount it.
+-Each entry uses the schema `<partition-identifier>:<mountpoint>:<reencry=
+pt | format | noencrypt>`.
++Each entry uses the schema `<partition-identifier>:<mountpoint>:<reencry=
+pt | format | noencrypt | format-if-empty>`.
+ - The `partition-idenitifer` is used to identify the partition on the di=
+sk, it can contain a partition label, partition UUID or absolute path to =
+the partition device, e.g. `/dev/sda`.
+ - The `mountpoint` is used mount the decrypted partition in the root fil=
+e system
+ - `reencrypt` uses `cryptsetup reencrypt` to encrypt the exiting content=
+ of the partition. This reduces the partition by 32MB and the file system=
+ by a similar amount
+ - `format` creates a empty LUKS partition and creates a file system defi=
+ned with the shell command given in `CRYPT_CREATE_FILE_SYSTEM_CMD`
+ - `noencrypt` will not try to encrypt the partition, if it isn't encrypt=
+ed already, but will open it if it is. This makes it possible for an syst=
+em to support encrypted partitions, while not encrypting anything on thei=
+r own. Useful when updating from a system that is unencrypted to one that=
+ is, while supporting a fallback system. For example, with a shared data =
+partition, the fallback system would have the `noencrypt` option, while t=
+he encrypted system would have the `reencrypt` option set for it. Now the=
+ fallback system can still open the data partition if the update to the e=
+ncrypted system failed.
++- `format-if-empty` will create a empty LUKS partition and formats it, l=
+ike the `format` option, but only if the first 10MiB are empty (contain o=
+nly 0x00). This makes it possible to differentiate if a partition is empt=
+y and can be encrypted, because it was freshly flashed via a factory imag=
+e, or if it might contain an unencrypted fallback system and should be le=
+ft alone.
+=20
+ #### Encrypted root file system
+=20
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-compl=
+ete b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
+index 67722fc..4b6451a 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
++++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
+@@ -269,6 +269,22 @@ for partition_set in $partition_sets; do
+ 			eval "${create_file_system_cmd} ${decrypted_part}"
+ 			log_end_msg
+ 		;;
++		"format-if-empty")
++			# Check if first 10MiB contain only zeros
++			if cmp -s -n "$(( 10 * 1024 * 1024 ))" "${part_device}" /dev/zero
++			then
++				log_begin_msg "Encryption of ${part_device}"
++				/usr/sbin/cryptsetup luksFormat --batch-mode \
++					 --type luks2 "$part_device" < "$tmp_key"
++				enroll_tpm2_token "$part_device" "$tmp_key" "$tpm_device" "$tpm_key_=
+algorithm" "$pcr_bank_hash_type"
++				open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
++				eval "${create_file_system_cmd} ${decrypted_part}"
++				log_end_msg
++			else
++				# If not empty, leave it alone.
++				continue
++			fi
++		;;
+ 		*)
+ 			panic "Unknown value ${partition_format}. Cannot create a encrypted p=
+artition !"
+ 		;;
+diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_=
+0.6.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.6.=
+bb
+index df335c9..c9a7f89 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.6.bb
++++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.6.bb
+@@ -41,7 +41,7 @@ HOOK_ADD_MODULES =3D " \
+=20
+ HOOK_COPY_EXECS =3D " \
+     openssl mke2fs grep awk expr seq sleep basename uuidparse mountpoint=
+ \
+-    e2fsck resize2fs cryptsetup \
++    e2fsck resize2fs cryptsetup cmp \
+     tpm2_pcrread tpm2_testparms tpm2_flushcontext \
+     /usr/lib/*/libgcc_s.so.1"
+=20
 --=20
 2.47.2
 
