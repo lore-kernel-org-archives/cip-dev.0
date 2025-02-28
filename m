@@ -1,330 +1,376 @@
-Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 037B3C282C5
-	for <webhook@archiver.kernel.org>; Fri, 28 Feb 2025 13:19:49 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
- by mx.groups.io with SMTP id smtpd.web10.15134.1740748785584382898
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2432C282C1
+	for <webhook@archiver.kernel.org>; Fri, 28 Feb 2025 15:40:29 +0000 (UTC)
+Received: from AS8PR03CU001.outbound.protection.outlook.com (AS8PR03CU001.outbound.protection.outlook.com [52.101.71.21])
+ by mx.groups.io with SMTP id smtpd.web11.18756.1740757225415598494
  for <cip-dev@lists.cip-project.org>;
- Fri, 28 Feb 2025 05:19:46 -0800
+ Fri, 28 Feb 2025 07:40:25 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=nobuhiro1.iwamatsu@toshiba.co.jp header.s=key3.smx header.b=RsGdDN6N;
- spf=pass (domain: toshiba.co.jp, ip: 210.130.202.152, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
-DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=toshiba.co.jp;h=From:To:CC
-	:Subject:Date:Message-ID:References:In-Reply-To:Content-Type:
-	Content-Transfer-Encoding:MIME-Version;i=nobuhiro1.iwamatsu@toshiba.co.jp;s=
-	key3.smx;t=1740748783;x=1741958383;bh=WRkZLhrPhi2leo90RwgsTKA3rZCnSnFCB8/2Cxz
-	61vM=;b=RsGdDN6N5KOavImFHSx5/yduAD8pIOfdT09q92zcHvuGOyY2RonzdEzyUYuRr/MTm23dE
-	ejtWcVt4wchtqiryy8xpDrIFdLs3Rvf6daRs1hyNUeVRcdkN98/BVGFHTGzbGQOFqLKOtXzO5FZNf
-	xXa6PizQ3dpci2Ea2MnKqwxX4ZJKU1A5UXLHFu5xAw/5I8bzb9AVLFwWjduTinOuw8VClM+/bXk/l
-	+kdPDD5Xd2WsrWjpvzF6M73HdOD0CbGVZWK7KUYzY2ZP2q8n5Va9D3AMcw2ZHITvYTvB4BlGJ0QiT
-	R9N3q3+dM90qo/iTIEkADqASdyOpFJozmE5H3ll8Gg==;
-Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 51SDJgl12753300; Fri, 28 Feb 2025 22:19:43 +0900
-X-Iguazu-Qid: 2yAbJ3LJ2RRaatVMoL
-X-Iguazu-QSIG: v=2; s=0; t=1740748782; q=2yAbJ3LJ2RRaatVMoL; m=l2URG3x9AkHR9HfSazT7oFayJRS9idTWk0933TGm9B4=
-Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1801) id 51SDJe15552902
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 28 Feb 2025 22:19:41 +0900
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=zHVowriC;
+ spf=pass (domain: siemens.com, ip: 52.101.71.21, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=a+MhizqIXZC1AHS0gmCnOlwP69Jq/0SUSVscuPM02lX9KmwSlkhmqeyAJS6AGYC5c3/eSHEt9HAQEAzYNtxer8wmOvFJrX3Qpq2oFOfelLjVByLTl3/NL84MWBlEDSpoOPXF6oN60xnMesxfS1y6AUTJX4+G2N3eZYi+XYZXAgEMofjxdMYM7CCuXaLgGvCT7vCf9vHBJ0frgJIr8q9O9J51dTaIE9uQD2fIL2fl1mQXvCmKtyEAcGEpiow6Tfew+vX8mBji4l4It2JGUwVLnKSWD7G6aR+VUz+/qXP/d/c9V5japbreUmbZtaXqzWlGYv+4xirFCl3X/X0oUK8Z9A==
+ b=b3P4nXjL/xAort6See3S4dsO65R4ikl/A/keFGs7e9lPf+PQfIqJGyq1q/tuZJ8G38mghkqeblOXSlYoQGUO2Da2zphf2ZX4RRJucQgbrW211K6UAlqw1MPqWhJoSObD/+/H23+sP9iEhF95W8uIfQZ1n2FLOyyTs0J+2PPXSwhu9aXt+N1xGN020UVBk5SI7pvRhqqhqywZgUFUFzmQ5s7ZPwFv2oa4ElJNNrT1nF9GTyvIcShw+tU89P6AZ8Vu1CwarHFCTJkNjQjVlo4qdLU0MBO12yemhNoL+T05Hy+wjvNaQjZuu1ko5KW/tmGzrtLzw3EJN7HSeFHLLjbhAQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bFBLsHP+GYIOiIMrYKIJlpNfrjK37YHdQR62GTRI9+U=;
- b=MKz611pIPLCjfxyFiISHLkJXgS0lkJACpauGE0VeihHIXfW3XcFtxLYSgT0Phtjyp6eNegQJhdWYWSfjRaWpATrNSSKa6HLhk8vqePX29UBQ2onvZG3qdbz89PkNArDWgJkH/LZIfVqBsHdubGLo7yrz5YynIwNPZl6i7sz3Z9qFfYEX45X0uBnMQZm5jg/fXexDTarxscd6+oLfwy8Gu3zl5nC3FSUItevEiZNkp5rdh6BoTChoSGzATsgeWRjqjTqKfSN2WE3gNQ692ADTQ0a2NFGdVFbacEkLheb2S7OVt5ub0Ao5YcH0aqI+trJHec9BKNw2ppMXQn9C1erqZQ==
+ bh=HA2ldzuhyCb9ihJI7ssSebbe/HwVE/ymfZHzV4Phg8Q=;
+ b=FG+keaWG3sBN4UbfGIf/Qc02cjhQZnx4I0ivMmV5F3La5ZQdh8MMVpfEFAqbPEREfEU2nkCwoRUWnCOR3rKXunqLqBaFxyFihkZPCDIDFo9soPhZVuLNEwo39yvo5RcPg4GWqgx+uUY9pCu080NlZT9mvj7HC2I54aC8JFLXaYnX1cH3qBYOkhBmcjfaLh+kSRjhbvT+6U5z91lSh4fu3mGeUpwuXfQF3u9RklVcskGtkxTWD9Do+GacBpI3o91Q57p3LsVdPZ2HibkZtvgOhiw1Mmpa2kR+4esBOt2YONDwvN/OvuOMC8mYxr5v5VZcR3f4f69DEErgunE3GQtuAw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
- header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
-From: <nobuhiro1.iwamatsu@toshiba.co.jp>
-To: <Sai.Sathujoda@toshiba-tsip.com>, <cip-dev@lists.cip-project.org>,
-        <Chris.Paterson2@renesas.com>
-CC: <jan.kiszka@siemens.com>, <kazuhiro3.hayashi@toshiba.co.jp>,
-        <dinesh.kumar@toshiba-tsip.com>
-Subject: RE: [cip-dev] Updating root file system used for kernel testing
-Thread-Topic: [cip-dev] Updating root file system used for kernel testing
-Thread-Index: AQHbiAY0k37sypfPYkK+BZ6qIlAP7bNcrpRwgAACZGKAAAMGgA==
-Date: Fri, 28 Feb 2025 13:19:37 +0000
-X-TSB-HOP2: ON
-Message-ID: 
- <TY7PR01MB148183EC423793A8EF2008B3092CC2@TY7PR01MB14818.jpnprd01.prod.outlook.com>
-References: 
- <OSCPR01MB1483816E3365201CB54911E2FC2C22@OSCPR01MB14838.jpnprd01.prod.outlook.com>
- <TY7PR01MB14818C4E6A1A2A38D174182D892CC2@TY7PR01MB14818.jpnprd01.prod.outlook.com>
- <OSCPR01MB1483865B76B07B5A0450B0CC9C2CC2@OSCPR01MB14838.jpnprd01.prod.outlook.com>
-In-Reply-To: 
- <OSCPR01MB1483865B76B07B5A0450B0CC9C2CC2@OSCPR01MB14838.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|OS0PR01MB5716:EE_
-x-ms-office365-filtering-correlation-id: ac8248a7-dc69-4b8f-57f9-08dd57fa8d1c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|366016|1800799024|376014|38070700018|7053199007|13003099007|95630200002;
-x-microsoft-antispam-message-info: 
- =?iso-2022-jp?B?dG5hTk1BQTI4d1E1ZjF2aWVyZllySVRsU00rS0xFYzExVkpjOEhXNWhv?=
- =?iso-2022-jp?B?c1VhRjBTb3V2cTRrKzVsV2tKa294UUVxMjc1SjV6NWxnMGtpdnFhTXV1?=
- =?iso-2022-jp?B?bkdORUFwMExYYVBKN3NPMFFxYUlBMi9tSUpNTjg3ajRzSjNRSkthZE5w?=
- =?iso-2022-jp?B?MW1lOFNGRGZFenYxSVFwTDZzNFJqcVhwR2F2b215OERvcG5RUDE5TWxk?=
- =?iso-2022-jp?B?QmRpTklUU0wrOXpYbmhRQi9ZcXNFblN0VmM0NGN1NjJmT2RFcUt6S0tF?=
- =?iso-2022-jp?B?c3E0dGkvMGZSd2VXcHJVWUM2TFZ5T3F3RURvaXlkbmE5YjBwV2FZbGpy?=
- =?iso-2022-jp?B?Qk04cDdiTjJndTZJbmtqQ2lGUjdpeGI3UEFydE9OeTRXeGduQWdhOVVJ?=
- =?iso-2022-jp?B?S2V4U1pKS3piblZMYSt5OWsybFoyejYvYzZCYWlNZDluQjB6dzlhYkdp?=
- =?iso-2022-jp?B?aXpqbFkwK0JDOUFFdTNVbFF4UkJNTVlCelRSVXVmMURId0J2SVZ3SUk1?=
- =?iso-2022-jp?B?eVJEZkVrOS9WbFh4MkdjM3VUZTN5OVhhdUUyNHVnTGsxZ1R0SExDK0VR?=
- =?iso-2022-jp?B?Yk5aM1hrc2x1cEE0MFJaTlpLeWhlZitXRnRnVldaN0tkYmp3T0FpSnR3?=
- =?iso-2022-jp?B?ZlFwUFUzMmFTMTdYMkk5ZTJPUU13OWVnT3RZVWRaM1NBMHlWcjdVVnFD?=
- =?iso-2022-jp?B?V0x3dVBDOGRtZ0F3TGFCVXpicWpVOFVlQXBQbXkrV0l0MmFWLzFJcVJt?=
- =?iso-2022-jp?B?WlRtaEJJZHgwZjhHUlIrZ0drd2E2UG5NWnlGM25kRnV1WkpCc2RMTmcw?=
- =?iso-2022-jp?B?NFhqYlpISVFCc3I4Z09naWxlSGxGK2dDZUNQVkFjTjAwR2E3RDVRRHNG?=
- =?iso-2022-jp?B?RUl2bG1vaVhhQjdOU2taMzZybm1pbUZkemp3V1NacFBZOTM3aGU3NEM3?=
- =?iso-2022-jp?B?dnBrQnRjNU02cVdteVZZUkswVG15Ty9oZEx2ZWNLSkQ0OWowZWhHTnNQ?=
- =?iso-2022-jp?B?dXkzNlBSWGw1Z0s5b2VlUW1wemVVYjFzQ1hqWFhOSS8vVWVGakxqWUhK?=
- =?iso-2022-jp?B?ZFNxV2JJbGRVbUFhWnRkS2F0REdkZWFxblhjMmpYU1N4clBKOGVVR0RP?=
- =?iso-2022-jp?B?cGdPVjQyYkpKREljbzRwSk5aRG5Sd2tTL0IrSDFya1VhQzZFNERDcUFw?=
- =?iso-2022-jp?B?RVVxMWRyUGhTc3FBc21YU3hVRTBWUXRaMXVMbndGd2U0SlllRDhVdWJR?=
- =?iso-2022-jp?B?MS93c2tybytXMXhUS3hXcTRjVEtwTnZoNW5seHlqY0l6RjBFOGJlM1dD?=
- =?iso-2022-jp?B?Nkw5WWhuSTJPcjRXVlo4bGx6Tithd1BkNWp4MEtuZjUzZVhHc2Q0UUFn?=
- =?iso-2022-jp?B?YmFKQzZuZTJxVXJpaVY4Q3NHTDNXelZYakYrUFQ5NVNvTEpoQzRLRGFV?=
- =?iso-2022-jp?B?ZU5zMFhjb2pXNzk5UjJQOUx3em9qYWJUdkptR2I4bzIrbnY4K2ppQTNn?=
- =?iso-2022-jp?B?SnRsUmNmTDlwQlBiM0UxY05yM2U0UDA2V2JQSDZCTmpwVEM3UzZZdTI1?=
- =?iso-2022-jp?B?UmhSZ1Y3emlvNnNNV2JMQmRYejlXcm1xT1ZySTk0TG5kOXU1NjhCUDIv?=
- =?iso-2022-jp?B?bWF3ZG9LcmVZWnVWWUZqdHAxb0hnOXBHWEZ2eWhEQjNmU3RXbDBqNHVT?=
- =?iso-2022-jp?B?WHdYTVFEdFBiWEtrZkZMK3I1cnpDczYzbmRCT2Z4U3ZGOTdJOUxxWGJh?=
- =?iso-2022-jp?B?SDB0eEtvcEV0clJ1MEZxdGNjRFFnNnJUY3dZM2F4bUpBQjlONkRQUW11?=
- =?iso-2022-jp?B?a0ZTQjN2bU1CVHZ4VWZrK3h3R0FrN0RTNTgxUC9kaFhNU2FYV2xma01K?=
- =?iso-2022-jp?B?ckNIRTNPOVZvTG1zVHR3YXB4YWlON1hFUGprbk1zbHFCV3VsaTVoUC9q?=
- =?iso-2022-jp?B?dmluaHJmdldJSW5wVVBjdnd0T1VGZkRNZEI4cTRtVFZ6eEZEVWlPNEpO?=
- =?iso-2022-jp?B?VzNFalAvMnFwWEt5NEZWcjJoNWhseVkrQXNVaUkyS0txb2xqV0E5WUgx?=
- =?iso-2022-jp?B?ekppbFdWTHFESzlGb2w3TmhEajNtRWs9?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018)(7053199007)(13003099007)(95630200002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?RFVmVld5dDJQSTVvWDNYSksxNFd2bjVxVEVuL1ZtTEM0cWo3bDNkeWZD?=
- =?iso-2022-jp?B?ZnJQUi9GZXZLdUdLL3pWNzN1KzgwbFBZd1RCL2hLQU1CbG5ONjAvN3cz?=
- =?iso-2022-jp?B?STJ5c3hpR055QXY0MjVockdhdUF5TnljczJuYVlWaExVR2JRQjB1L3NI?=
- =?iso-2022-jp?B?am4xcWpxZmlsTVQwbUhYcDlGRjY0bUU5RjJNNW5EZkF6WXNLRm44MUhS?=
- =?iso-2022-jp?B?NmZSbVFidHJ3VU9CTDB6bzZ4R3FNaGtzUnM5OFViWEtETDcrUXNSNGlI?=
- =?iso-2022-jp?B?UTRKNmdzbzlBcHJsOUp6eHlXK0d3cGxhdjJiNUdnVmpmOVp3SmFwUm9n?=
- =?iso-2022-jp?B?QXJnc2dzblhXWlhyZFJmSXhodk5OMEVoLy9hWFk4UU5hRU8ydVNlbEo4?=
- =?iso-2022-jp?B?UERBTzVJNEgzUlB5cEVIeGJnc3hUeXlNVDAyNUJ0YjgvTzdMSmNQb05k?=
- =?iso-2022-jp?B?Sm1Ta0M5VTFuVUJmNmdBZklWVHJJb1EzQkVtN1E5KzlRdm9xZ1RRdElt?=
- =?iso-2022-jp?B?ZTQybjltWjJoNmlMN3RlOXc1NlFCajNQYmpReWE3VWNqT2d2MVU1VURF?=
- =?iso-2022-jp?B?TE9Sc3JmWURPbGZCdTh3cDZLWDVjRlFGUEdzNk5wT1FKaW5KTWZiU1Nm?=
- =?iso-2022-jp?B?cm1qcHdaQlY2N3p6T0xXTzc3Y3R2WlhDUVFjMmRmOU1WZTZkZ204RTNw?=
- =?iso-2022-jp?B?OWxhdndtYUxjUjgzdWFvNGFQbzhET1dRSnEyVFFtRUVNclZGY3BqVldF?=
- =?iso-2022-jp?B?eHNnU3VkSTcwY0lTaFFTYkl6WTBjckkyWjJrSFdqaUFhcTJ3WFR5aEkw?=
- =?iso-2022-jp?B?VitscnJKYUNDSW9yaHY5dFJ5YXlrdVMwbTRtb1RQemNPNC9hTklpQlNy?=
- =?iso-2022-jp?B?WmU4bk5tcGFncFZ3SFBncitKY2ZRdTBLbGMzRmlNT1VMdW5pekRpb1BN?=
- =?iso-2022-jp?B?QjZnTDFHQWszWndFV085MVlLeVV5akx0cnJzWnlvb3B6c3YzTWFBaXl1?=
- =?iso-2022-jp?B?d0NyMXozNXcwZFBDWVpMUUl4TGw1NHZFQ2s5OUFuN2RaM1ZyS2ErdmVq?=
- =?iso-2022-jp?B?TDArOExsWHRGZGZCM01nekpQdCtZamdsTHNiZEJkRWViQ1ZseU94aEVs?=
- =?iso-2022-jp?B?b1Q2ZzJmYzB2RTlVb3pMQ2JDdjBQZE1tWDVLVlI5N0dnVHlYSjNlYU1m?=
- =?iso-2022-jp?B?U0hIQzdPQUY3d0d3RWVEY1M3WVZ4NHRVa21vQjNUaXorSlYzSTF4aklm?=
- =?iso-2022-jp?B?SmZOSHR0alBGNG4wQ2Q5T3hzYysybVFwYTdZSklIZUsvUHpyQzYrUllU?=
- =?iso-2022-jp?B?bVJpc09ZeVo0OTgrOUc2UGdoY0ZVRlYxV3lXZCtGTWJYMjlXaUhIaHNj?=
- =?iso-2022-jp?B?RldHZ1ZYL1BXSlpxQWlYK0xGcmJWQk05WjdRRjZHWXZBWURFemxvN0Zx?=
- =?iso-2022-jp?B?aForQmZSM3I2ODJtZSt6aEl5c0lDZlJDazUrUkZUUmVrZmxLYWxmZy9T?=
- =?iso-2022-jp?B?aGM3MXRwUWk5UTV1TjZpbTcra1h0WmU3UzJHMjBiS1M1S3RUa0prTUxN?=
- =?iso-2022-jp?B?UkwwVFBVL09FQTFsbEtLUVdCb1pLc25ZQ0hSSXlicW1tdjZLZnNvSml5?=
- =?iso-2022-jp?B?S1p5NmFiUWpyNjJpc1BqdlBJRGdMSFZ4d2pnL1hHa29YU3pxcHdjTTZl?=
- =?iso-2022-jp?B?L3A5MjBiNlYzNlB6Q2hFbm1aaUJWZTdqRm5oeFdvOTAwV1dPbFNoVXBl?=
- =?iso-2022-jp?B?WlFKS0xaSm1rVXZJVWxFQ3dhMnc0eWF0ZTZJTVNraWhndkk4YjhZN0J6?=
- =?iso-2022-jp?B?Y2E4UGdleFc4MEhOSDhBVnlsY1hNTVNSTXIveTZMaXZ3QzlkM3podXph?=
- =?iso-2022-jp?B?RVVGV0ZOTGFkMFI3VGQwdVZ5RW5qNWZ5d0pYdC9HZ2dCa0VjMXpacUdz?=
- =?iso-2022-jp?B?Y01wVmtGNDJFb0IxL1k3MGlETEdUdWpGQ1Q3Tmo3aVJvaW9RYkxMY3Q5?=
- =?iso-2022-jp?B?cEd6ZE9QclorVXNXN0hUUElKcFlhZllWdGJRczZSY3lxdGZNanQ5Z3Zw?=
- =?iso-2022-jp?B?UEM4di8wbVUvTFhYb05Pd3dOMTFJZGV6YzJIdXl2OCsrQWh6dThIbHBN?=
- =?iso-2022-jp?B?bmdoaytaaWlXTkhyaE9FT3VRYldiZmRuWS85Rm1YWStzWkZOekRRcFNn?=
- =?iso-2022-jp?B?RXVrc0lkME1XdC9QVjI4VXkxSnJBZlVCcTVpa0dEMndvWUo1VDRaOWU5?=
- =?iso-2022-jp?B?QzRDaDlRQ3FxbDBpRU51NjhhakR1bm9KeTNTZENPeUtvei9iYks5WW1l?=
- =?iso-2022-jp?B?Y3JvVGU1blZCNW9ERmw2MnNTNFZ3UGFRSWc9PQ==?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HA2ldzuhyCb9ihJI7ssSebbe/HwVE/ymfZHzV4Phg8Q=;
+ b=zHVowriCmnhNGjC3N13RZYcDz07kb9vf9x69F93j+wCUiZ6u2hXoKDzs6ZebMErzkB4BYQkS7KJgE4IfnA4wK2UfjhT4FmJ39q9AnzGLH6+p7r3VMZG9Up0Lz9RhpaMCOrKogYQ+DvzEE0PgY42cFMNuONbOO1c+gBK2RC4PGa5iWF+lRwcTeydZI+sbOzfMvxO/ULRN6mOotw0jHe+4Xh+hFGOaGjPFdx2IrjDuXI9NYY/wjDQ66+haPtjq1r22t9OLip+qG0D5Lg+3b7BItDndUavApLlPVCUE/GCPo/JpmyJlXIEh0swbjYER5iPamY54Cy2mJ5fZisLCVlJL1A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by DB5PR10MB7841.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:4a6::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.20; Fri, 28 Feb
+ 2025 15:40:22 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408%4]) with mapi id 15.20.8466.016; Fri, 28 Feb 2025
+ 15:40:21 +0000
+Message-ID: <95dd9e49-59bf-44e4-bc62-6e0195d11300@siemens.com>
+Date: Fri, 28 Feb 2025 16:40:20 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [isar-cip-core][PATCH 1/2] kas/opt: Add option for not install
+ kernel
+To: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+ cip-dev@lists.cip-project.org
+References: <1740746806-6557-1-git-send-email-nobuhiro1.iwamatsu@toshiba.co.jp>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Content-Language: en-US
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ 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
+In-Reply-To: <1740746806-6557-1-git-send-email-nobuhiro1.iwamatsu@toshiba.co.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR3P281CA0041.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:4a::17) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
-X-OriginatorOrg: toshiba.co.jp
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB5PR10MB7841:EE_
+X-MS-Office365-Filtering-Correlation-Id: 15ad4e29-1e25-4088-fcbe-08dd580e35b5
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?eHlhN1QrRGRyMXk0YVQwd1UvQzFDVzR1cEFWeGwwSlRWNVV2VWhva2s2OTM1?=
+ =?utf-8?B?djBrOFUyWis4UUptMncrS0lxWjY0cHZaSy83Yy9MRGVWUjQ4eG0rWG1DWmFj?=
+ =?utf-8?B?QUpyTGVYUzdOdU13cGxLVkZvaWtLN0xZZTNseDZMZjgvNUNrWFhqY2NkeGp2?=
+ =?utf-8?B?Y0RIcFpqWHNpODhZS0FyaEpsMFR4NUtHWWp3Nld4QmJxUHVIL2xKbEtvS1ZD?=
+ =?utf-8?B?ZWpZdTlIbEpTQkwzT0svYkExMVRLVlRzZXJmZUt1YUFPM0MrOVFHaUNEQVR1?=
+ =?utf-8?B?N3hINUE1c3lXd0s2U09hakNjQlc1N1JpSTd1ZVpUY0FjMldUM010QjAzZGRL?=
+ =?utf-8?B?UkkvTURjSWloMUZnSkg0VFphTlVUNkNPOVFTdlc2eUQwdmgzRGtqYVJ0b1FY?=
+ =?utf-8?B?T09SejdGcnZ3YzZtOFQxMFZVSkVjVG9GOHVoV201K2FtdGg0UFRGQnVrWmhV?=
+ =?utf-8?B?ZHVBM2VVQzFQaUdKWUFhMk5neDhuMG5PQlNJT25WKzJ6anlTNTI0VkNFL0xi?=
+ =?utf-8?B?dDJVaWlxRm1vdUhLRjlTRW9lZmhRQ2RMTmFOMzRzWXZzWU5KanhiclRFcWtz?=
+ =?utf-8?B?OFl3YnA1MDRmVVpqSTVhU21rWTcvVkE0VzlWQlM1TjZxMjZCMDkrWnhGck9D?=
+ =?utf-8?B?bElQWjN6djhvNlYzVUNDbHZxNHFMTUlyRWlrWVJTSHVEQnBpYkdsU3YyZTl1?=
+ =?utf-8?B?Q3ZNZi9TQit0aFk5a1JmakJaci9kb0ZhOGlaUzM3dlZ2NjVQQm9jOU1maVR6?=
+ =?utf-8?B?a0JMYWtmUGpva0l6RG9PVjdITDd2REdBaTFVOXNhejV2ekcwTmhpazVkVS9r?=
+ =?utf-8?B?dVFSbFRiMFMyZTMxU0F2cDFiM25VRE1Ya05HbzlaZm9vN3VJNXlZNDhUSkRy?=
+ =?utf-8?B?bFN5aG1rWGtjVHg4L1k4ZmQzNFFFSmFCdXN6b1FLNnZIem0rK0FMODR0NFFp?=
+ =?utf-8?B?d1pZUUlMRmlHRWZmdEc4T3Z6SDdzNlQ2SEU4YkNXdVVxVkZ5ZGhTMnc4cW5K?=
+ =?utf-8?B?SlM2TXZjUUUwSG5KcGcrcGQ0c1hVRTJaOGwyYW1jalJUUTRCTU4vSEhrdEFL?=
+ =?utf-8?B?VU9qT0YyMllZMFFoYXdXMWdUaFluWjgvbUdmdUwzSnJ2SWU0Z1d2M0ZxOWth?=
+ =?utf-8?B?dEtZS2EzTnpkbUg4NG5oU3NEVm1UZDhpQ3FWS1o2N0hEQkg2SHJBaEtyTHox?=
+ =?utf-8?B?Y2xORGZPZ0tEbGdORU8vUjJnV3N6d2dJS01LZ3QxZkN2NjNKaGVybXIrYTNy?=
+ =?utf-8?B?VWdza3FFaUNjdkRDWkRSMS9nMzgxYVNUaCt3dVVSb2tIMXY3aytDVlk0dlhZ?=
+ =?utf-8?B?ZFhhcWNEei8xUWFSRkpZNjJ2bTRPSTQ3cnFhNXAvQjhvUmhzOWgydnNZMHBh?=
+ =?utf-8?B?M09jUE5hK0RHWU1jWGV2MCs5RGd0VmVpa1V4OHppMEIrNzlvSTBMWlZHVlV2?=
+ =?utf-8?B?RVFnQzBjVXhsVzFQdVBqUjJZcjNnYytlcEc3MlZuK0ZuQ3AycDVPTUxsL3pN?=
+ =?utf-8?B?OW9oTnJLRmlsQzFNc0JneVRoSC9hNmpZeWRNWVgxdk0vYkZNc2h2NVoxd3Rr?=
+ =?utf-8?B?LzBPdjREM3BtOVp6d3RhVFZhelhtUU8zSmtMRzdEK2ZhKzh3UGx2dlQxcUor?=
+ =?utf-8?B?WEt2cFNhRFl6RHpnVWJBdlBwa2NWa1ZSVmgrb054ZkExaVF4elNKUDRaSDVF?=
+ =?utf-8?B?Y2Vqb1JGNVpZdUJFSCtNQnNNd3dpekNGOG1NTys4TkxJNnNjSTJYWExlQUlT?=
+ =?utf-8?B?YXdSQkdMOGZVT3Q5cjFQOS9HS1BGQVl1d0N3a3ZZUGRMeWdFR3I5elFKN1pZ?=
+ =?utf-8?B?NXNsWFcxUFhGVXpaOXBubE9KY3E1SUlUd0E3Q2JRcDA4ejFFT2huYXVGSmdV?=
+ =?utf-8?Q?5um3iDAg8tt6H?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?bC9uZG1KK0JHRjg0UGNsTCtuSkluc3VNaE8vcDVQZUw1UjdSdWNnaktlOUJQ?=
+ =?utf-8?B?WDd4Y24yVmpTLzExZk1WcHI0ZlpRSGF1d2VydHlQQkZuOUlQWm5kdm84OFNV?=
+ =?utf-8?B?YU1BWmkraUJLSE1GcW5GUUZsNDQ5d0pzSzRXUDg3K0ZqZkZucEJRSE9rL2FB?=
+ =?utf-8?B?THdZMXl0eUxaOG83T1RMZGRQSmhQUXZkOFo5bU53RUZXNS8yQUJNWTV0UjM4?=
+ =?utf-8?B?RmVnTkd6WFYrL1NOTTF1UElhQk5OQVRXTkhMNUZkNmFjcjNQSm1aWURZSGNI?=
+ =?utf-8?B?M2R3NE9MUllOdXNTRWRJQmtlT0dSQk1nczVmbHQ3a2Nld0VrMHpQYmhIb1JO?=
+ =?utf-8?B?OXhCcjQwR0V1WXlpbDMwY2pMSVFiMExydnBnZ1ZFU3VsNnF0RTMrRmJDQUZa?=
+ =?utf-8?B?WFdLcENMcGVRdm1PVjdrRkpwWjhjRmlmeFFZOWVzRk5NdXBIcWgrREhocDV2?=
+ =?utf-8?B?em9DOTMyL0h0bzlTNGU1MG5udWxzZVdpSW1uWVAvajUrd21idVU0R20vV0t0?=
+ =?utf-8?B?TXhUZVQxMFl5U1hyVkZsVG02WmtpQlp6cnhBNWg5QWYvcGs1VTNUZHJWVFlp?=
+ =?utf-8?B?K3pmaVpGbzBGa2pxL3M1TXZuN292NXNEMnoxdWVqSEExL3hyV3QwbGx4V1VH?=
+ =?utf-8?B?R1hDazR2OG9ROW5ZRnZ0ZjhJcXpZMEtWRjVmbkVJeG5lejRaOWJYdHhPWkJN?=
+ =?utf-8?B?NEdCbzU5N0ErYlZSY2psK0gxOVNORDZhK2JLVDlrYVllQ1BXZDJCMUh0Rm91?=
+ =?utf-8?B?NXdYT24rR0xDWkZqYXVnZStyVW4wQjBIMGVjWHk2bGVkMFBWWURseEJoQnpC?=
+ =?utf-8?B?OVZLT200bGxPQUI3RXBtVmJyOGFKNGd0eGlFU0FkZnFLaFpDQWh2V1lpMEQr?=
+ =?utf-8?B?VnJzclA2UGZoUHJGQUdpdDhVOElyUS9NVHJaYk1kaHFhazE4aXFiOHN2VGVv?=
+ =?utf-8?B?b0JzdURDQnV1a0drbkFocXRIcHkxV0pvWDRheTRoc01HaWlBa1VkbFQycEdy?=
+ =?utf-8?B?MHlyUWFCK3JZa0VUTlRDR2FybUhxSVFWaCtUWnNkZGpnMVRvN0V3ZU90SmZW?=
+ =?utf-8?B?V0NoVFgvQ2E5WVhHa1M2VkphMTM5RzdTeWZWKzAwaGRzNjdXMWV4MFhzMU4y?=
+ =?utf-8?B?MTkremYyZlFrenoydFRGb3lWWmh1MVFEalB1dDN0TExQaXZDRGNoRmhjMHQ4?=
+ =?utf-8?B?T0pmT1Zva2tJSnpxN3g5bHAwQ1o2MTRFUTZwdnZUeHRiM1I5Y0pZSnFIVnNk?=
+ =?utf-8?B?dFlLWHBGdVVHem0zS1Z1T1BTeHVrdVRmWGVFZmZDa2FFa2cwK0Q1NmZSY1Qz?=
+ =?utf-8?B?UE5MRXpOMGwxdVBGRHFIOTNDSHZ2Q1JheDFidmJKTzlEd3kzeFhGZHQ3TnRE?=
+ =?utf-8?B?akhPWktFUE9oWlkxWFFGU0k5QnhBODNkVmxzSzFpcVBSUFp2bkptUUh3bWNB?=
+ =?utf-8?B?NlR0bVRzTXJIV0NzNlh6MjhwbmtkR0pOZzMyQWIyYVpjMnlCVHNVRVZzOWJm?=
+ =?utf-8?B?WnRkYi9sRC9VWDJaM0pKcHJ6c3ZzZ2pJY2w5dnJqVG9VS3BOQVZZRTZhWGFS?=
+ =?utf-8?B?ZVRBZEhNWkxOTDd4c0FPTW9OVkdNVCtFTlVSa1hEUmVOSTQ0Q3E5QUhlUHM0?=
+ =?utf-8?B?K1M4WWJTT2RNMVh0VGQwVXJLRjE1M1I3aXdqN2hib01LUVlaMEdjaDZ6Rk50?=
+ =?utf-8?B?UmR4SXhjRjV2RFNVbGozdGRGUENQUHNUbUVJQjJ3aVU4WHBQeGY2WXNjRERr?=
+ =?utf-8?B?b1gvYmNZdXVSNHNzU3lmQkQ1MHZhVkxIVGRjVnVOWlFES0hGeVJWWnpoZDhy?=
+ =?utf-8?B?dCtKaFBxcm9QVm0xTkNOb3A4b1daazkyd1BKNnhrbktTelp6clhUbWltSHZm?=
+ =?utf-8?B?N3NUVzBuMTBaQTcwZkF3NU15Z3VuV2xaOHpBYTk3Q29RQXVuT2VkVktYR2xx?=
+ =?utf-8?B?Y1RncTIrNWRveHF0TUFIM3FMRWJ5NGZrZitZVU1SN1JnMjJEK0JWMFlpQ2tK?=
+ =?utf-8?B?WURxTjJzYzkxWnlTN0lHZ3ZPdSs2MXIwZTdLWktoZHE0UGVBUmpqUGZpSERu?=
+ =?utf-8?B?TzliekJCcEE3U09Zei91TU1ESGRCcHJ4NzJxR2VGY0MyRTkxUEIrTmVBM0Vv?=
+ =?utf-8?B?ZjJuTFBTbzJTWDBnMkY0ek1hTDVpUjBzWnB4UXBzLzl1UzdUMTNCMm5JS1E3?=
+ =?utf-8?B?ZlE9PQ==?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15ad4e29-1e25-4088-fcbe-08dd580e35b5
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac8248a7-dc69-4b8f-57f9-08dd57fa8d1c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Feb 2025 13:19:37.6846
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2025 15:40:21.2706
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 7X2+4H4HEyFyfcY/tpei5ZTRSmgJ/MengsBrgpBDySodwQCNvKV6G/FLKI1D16h6dfXMMvNB34XUmAdtg1WdC/C2DoxGDakmBqJ3JTLT2yV9ztuDRoWgH93PnmlVLeGV
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS0PR01MB5716
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tIont6Ew34Hjq7FrWdXlnuE8N8p3pNPOWlNXLsBvwg4aaPldWkdJSjZeUO+3PvXkBg91co2jz+lHk+Rn5k10rg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR10MB7841
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 28 Feb 2025 13:19:49 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17988
+ <cip-dev@lists.cip-project.org>; Fri, 28 Feb 2025 15:40:29 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/17989
 
-Hi,
+On 28.02.25 13:46, Nobuhiro Iwamatsu wrote:
+> This adds an option to create an image that does not contain the kernel.
+> 
 
-Thanks for sharing the information.
+What is the use case? How does this relate to kas/opt/kernelci.yml?
 
-> I just wanted to mention that we tried some things in the past few days. =
-Targets
-> like [1] if deployed shall push the rootfs (ltp installed) images to s3. =
-I have
+> Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+> ---
+>  .gitlab-ci.yml             | 28 ++++++++++++++++++++++-
+>  kas/opt/no_kernel.yml      | 17 ++++++++++++++
+>  scripts/deploy-cip-core.sh | 47 +++++++++++++++++++++++++++-----------
+>  3 files changed, 78 insertions(+), 14 deletions(-)
+>  create mode 100644 kas/opt/no_kernel.yml
+> 
+> diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+> index 4df521b..a09eedd 100644
+> --- a/.gitlab-ci.yml
+> +++ b/.gitlab-ci.yml
+> @@ -27,6 +27,7 @@ variables:
+>    build_swu_v2: disable
+>    swupdate_version: default
+>    test_function: swupdate
+> +  no_kernel: disable
+>  
+>  stages:
+>    - build
+> @@ -67,9 +68,10 @@ default:
+>      - if [ "${watchdog}" = "disable" ]; then base_yaml="${base_yaml}:kas/opt/disable-watchdog.yml"; fi
+>      - if [ "${security_test}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/security_test.yml"; fi
+>      - if [ "${swupdate_version}" = "2022.12" ]; then base_yaml="${base_yaml}:kas/opt/swupdate-2022.12.yaml"; fi
+> +    - if [ "${no_kernel}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/no_kernel.yml"; fi
+>      - echo "Building ${base_yaml}"
+>      - kas build ${base_yaml}
+> -    - if [ "${deploy}" = "enable" ]; then scripts/deploy-cip-core.sh ${release} ${target} ${extension} ${dtb} ${CI_COMMIT_REF_SLUG} wic; fi
+> +    - if [ "${deploy}" = "enable" ]; then scripts/deploy-cip-core.sh ${release} ${target} ${extension} ${no_kernel} ${dtb} ${CI_COMMIT_REF_SLUG} wic; fi
+>      - if [ "${build_swu_v2}" = "enable" ]; then
+>            mkdir build/previous-image;
+>            if [ "${extension}" = "security" ] || [ "${extension}" = "ebg-secure-boot-snakeoil" ]; then
+> @@ -221,6 +223,30 @@ build:qemu-arm-test:
+>      target:  qemu-arm
+>      extension: test
+>  
+> +build:qemu-amd64-test-nokernel:
+> +  extends:
+> +    - .build_base
+> +  variables:
+> +    target:  qemu-amd64
+> +    extension: test
+> +    no_kernel: enable
+> +
+> +build:qemu-arm64-test-nokernel:
+> +  extends:
+> +    - .build_base
+> +  variables:
+> +    target:  qemu-arm64
+> +    extension: test
+> +    no_kernel: enable
+> +
+> +build:qemu-arm-test-nokernel:
+> +  extends:
+> +    - .build_base
+> +  variables:
+> +    target:  qemu-arm
+> +    extension: test
+> +    no_kernel: enable
+> +
 
-As far as I can see in .gitlab-ci.yml, the deploy variable is normally 'ena=
-ble', so images created
-by jobs such as qemu-amd64-test are always uploaded.
+Do we always need to build and deploy those extra images?
 
-> modified the following job LAVA | Scheduler | Jobs | 1250098
-> <https://lava.ciplatform.org/scheduler/job/1250098>  to use the rootfs
-> image from cip-core instead of legacy ones and the LTP tests are running =
-fine
-> of reference hardware.
+>  build:x86-uefi-secure-boot:
+>    extends:
+>      - .build_base
+> diff --git a/kas/opt/no_kernel.yml b/kas/opt/no_kernel.yml
+> new file mode 100644
+> index 0000000..2338177
+> --- /dev/null
+> +++ b/kas/opt/no_kernel.yml
+> @@ -0,0 +1,17 @@
+> +#
+> +# CIP Core, generic profile
+> +#
+> +# Copyright (c) Toshiba Corporation 2025
+> +#
+> +# Authors:
+> +#  Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+> +#
+> +# SPDX-License-Identifier: MIT
+> +#
+> +
+> +header:
+> +  version: 14
+> +
+> +local_conf_header:
+> +  kernel-version: |
+> +    IMAGE_INSTALL:remove = "linux-image-cip linux-image-cip-rt"
 
-Yes, as you mentioned, what we need to do is modify the LAVA YAML. I am wor=
-king on this.
+KERNEL_NAME = "", that will also disable the now pointless build of the
+kernel.
 
-Also, the image for kernel testing contains the Linux kernel binary. This i=
-s not necessary for kernel
-testing. I also created a rootfs that does not contain the Linux kernel[0].
+> diff --git a/scripts/deploy-cip-core.sh b/scripts/deploy-cip-core.sh
+> index 6e4dfd7..6cb4968 100755
+> --- a/scripts/deploy-cip-core.sh
+> +++ b/scripts/deploy-cip-core.sh
+> @@ -13,9 +13,10 @@ fi
+>  RELEASE=$1
+>  TARGET=$2
+>  EXTENSION=$3
+> -DTB=$4
+> -REF=$5
+> -DEPLOY=$6
+> +NO_KERNEL=$4
+> +DTB=$5
+> +REF=$6
+> +DEPLOY=$7
+>  
+>  BASE_FILENAME=cip-core-image-cip-core-$RELEASE-$TARGET
+>  if [ "${EXTENSION}" != "none" ]; then
+> @@ -29,6 +30,23 @@ fi
+>  BASE_PATH=build/tmp/deploy/images/$TARGET/$BASE_FILENAME
+>  S3_TARGET=s3://download2.cip-project.org/cip-core/$REF/$TARGET/
+>  
+> +if [ "${NO_KERNEL}" = "enable" ]; then
+> +	__BASE_PATH=${BASE_PATH}
+> +	BASE_PATH="${BASE_PATH}-nokernel"
+> +
+> +	echo "Rename from ${BASE_FILENAME}.* to ${BASE_FILENAME}-nokernel.*"
+> +
+> +	if [ -f "${__BASE_PATH}.tar.gz" ]; then
+> +		mv "${__BASE_PATH}.tar.gz" "${BASE_PATH}.tar.gz"
+> +	fi
+> +	if [ -f "${__BASE_PATH}.swu" ]; then
+> +		mv "${__BASE_PATH}.swu" "${BASE_PATH}.swu"
+> +	fi
+> +	if [ -f "${__BASE_PATH}.wic" ]; then
+> +		mv "${__BASE_PATH}.wic" "${BASE_PATH}.wic"
+> +	fi
+> +fi
+> +
+>  if [ -f "${BASE_PATH}.wic" ]; then
+>  	echo "Uploading artifacts..."
+>  	if [ "$DEPLOY" = "swu" ]; then
+> @@ -48,17 +66,20 @@ else
+>  		aws s3 cp --no-progress --acl public-read "${BASE_PATH}.tar.gz" "${S3_TARGET}"
+>  	fi
+>  
+> -	KERNEL_IMAGE="$BASE_PATH-vmlinu[xz]"
+> -	# iwg20m workaround
+> -	if [ -f "build/tmp/deploy/images/$TARGET/zImage" ]; then
+> -		KERNEL_IMAGE=build/tmp/deploy/images/$TARGET/zImage
+> -	fi
+> -	# shellcheck disable=SC2086
+> -	aws s3 cp --no-progress --acl public-read $KERNEL_IMAGE "${S3_TARGET}"
+> -	aws s3 cp --no-progress --acl public-read "${BASE_PATH}-initrd.img" "${S3_TARGET}"
+> +	if [ "$NO_KERNEL" = "false" ]; then
+> +		KERNEL_IMAGE="$BASE_PATH-vmlinu[xz]"
+> +		# iwg20m workaround
+> +		if [ -f "build/tmp/deploy/images/$TARGET/zImage" ]; then
+> +			KERNEL_IMAGE=build/tmp/deploy/images/$TARGET/zImage
+> +		fi
+>  
+> -	if [ "$DTB" != "none" ]; then
+> -		aws s3 cp --no-progress --acl public-read build/tmp/deploy/images/*/"$DTB" "${S3_TARGET}"
+> +		# shellcheck disable=SC2086
+> +		aws s3 cp --no-progress --acl public-read $KERNEL_IMAGE "${S3_TARGET}"
+> +		aws s3 cp --no-progress --acl public-read "${BASE_PATH}-initrd.img" "${S3_TARGET}"
+> +
+> +		if [ "$DTB" != "none" ]; then
+> +			aws s3 cp --no-progress --acl public-read build/tmp/deploy/images/*/"$DTB" "${S3_TARGET}"
+> +		fi
+>  	fi
+>  fi
+>  
 
-Best regards,
-  Nobuhiro
+Jan
 
-[0]: https://lore.kernel.org/cip-dev/1740746806-6557-1-git-send-email-nobuh=
-iro1.iwamatsu@toshiba.co.jp/
-
->=20
-> -----Original Message-----
-> From: ashrith sai(=1B$B#T#S#I#P=1B(B DITC_DIT-OST)
-> <Sai.Sathujoda@toshiba-tsip.com>
-> Sent: Friday, February 28, 2025 10:06 PM
-> To: iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B?.MN=1B(B =1B$B!{#D#I#T#C""#D#I=
-#T!{#O#S#T=1B(B)
-> <nobuhiro1.iwamatsu@toshiba.co.jp>; cip-dev@lists.cip-project.org;
-> Chris.Paterson2@renesas.com
-> Cc: jan.kiszka@siemens.com; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =
-=1B$B#D#M#E=1B(B =1B$B!{#D#I#G""#M=1B(B
-> =1B$B#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp>; dinesh kumar(=
-=1B$B#T#S#I#P=1B(B
-> DITC_DIT-OST) <dinesh.kumar@toshiba-tsip.com>
-> Subject: Re: [cip-dev] Updating root file system used for kernel testing
->=20
-> Hello Iwamatsu-san,
->=20
-> Thank you so much for your response.
->=20
-> I just wanted to mention that we tried some things in the past few days. =
-Targets
-> like [1] if deployed shall push the rootfs (ltp installed) images to s3. =
-I have
-> modified the following job LAVA | Scheduler | Jobs | 1250098
-> <https://lava.ciplatform.org/scheduler/job/1250098>  to use the rootfs
-> image from cip-core instead of legacy ones and the LTP tests are running =
-fine
-> of reference hardware.
->=20
-> [1]
-> https://gitlab.com/cip-project/cip-core/isar-cip-core/-/blob/master/.gitl=
-ab-
-> ci.yml?ref_type=3Dheads#L203
-> <https://gitlab.com/cip-project/cip-core/isar-cip-core/-/blob/master/.git=
-lab
-> -ci.yml?ref_type=3Dheads#L203>
->=20
-> Thanks and regards,
-> Sai Ashrith
->=20
-> ________________________________
->=20
-> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> on be=
-half
-> of Nobuhiro Iwamatsu via lists.cip-project.org
-> <nobuhiro1.iwamatsu=3Dtoshiba.co.jp@lists.cip-project.org>
-> Sent: Friday, February 28, 2025 6:26 PM
-> To: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org>;
-> Chris.Paterson2@renesas.com <Chris.Paterson2@renesas.com>
-> Cc: jan.kiszka@siemens.com <jan.kiszka@siemens.com>; hayashi
-> kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B!{#D#I#G""#M#P=
-#S!{#M#P#4=1B(B)
-> <kazuhiro3.hayashi@toshiba.co.jp>; dinesh kumar(=1B$B#T#S#I#P=1B(B DITC_D=
-IT-OST)
-> <dinesh.kumar@toshiba-tsip.com>
-> Subject: Re: [cip-dev] Updating root file system used for kernel testing
->=20
-> Hi Sai,
->=20
-> > Do you have any plan to keep these rootfs tarballs updated with the
-> > latest version of LTP through CI ? If not immediately then we want to
-> > make changes so TWG always uses latest rootfs tarballs for kernel testi=
-ng.
->=20
-> We had talk about this at the kernel team meeting. I'll take care of it.
-> As Kaz wrote in another email, I am looking into how to make the cip-core=
- image
-> available for kernel testing. I am also working on doing this.
->=20
-> Best regards,
->   Nobuhiro
->=20
-> > -----Original Message-----
-> > From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
-> > Behalf Of sai.sathujoda@toshiba-tsip.com
-> > Sent: Wednesday, February 26, 2025 1:28 PM
-> > To: Chris.Paterson2@renesas.com
-> > Cc: jan.kiszka@siemens.com; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(=
-B =1B$B#D#M#E=1B(B =1B$B!{#D#I#G""#M=1B(B
-> > =1B$B#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp>; dinesh kumar=
-(=1B$B#T#S#I#P=1B(B
-> > DITC_DIT-OST) <dinesh.kumar@toshiba-tsip.com>;
-> > cip-dev@lists.cip-project.org
-> > Subject: [cip-dev] Updating root file system used for kernel testing
-> >
-> > Hi Chris,
-> >
-> > Hope you are doing good.
-> >
-> > We noticed that the LTP version being used in the following rootfs
-> > tarballs used for kernel testing are not recent ones.
-> >
-> >
-> > 1.
-> >
-> > https://s3-eu-central-1.amazonaws.com/download2.cip-project.org/
-> > <https://s3-eu-central-1.amazonaws.com/download2.cip-project.org/>
-> > cip-testing/lava-healthchecks/rfs/cip-core-image-cip-core-bullseye-qem
-> > u-
-> > arm64.ext4.xz
-> > 2.
-> >
-> > https://s3-eu-central-1.amazonaws.com/download2.cip-project.org/
-> > <https://s3-eu-central-1.amazonaws.com/download2.cip-project.org/>
-> > cip-testing/lava-healthchecks/rfs/cip-core-image-cip-core-bullseye-qem
-> > u-
-> > arm.ext4.xz
-> > 3.
-> >
-> > https://s3-eu-central-1.amazonaws.com/download2.cip-project.org/
-> > <https://s3-eu-central-1.amazonaws.com/download2.cip-project.org/>
-> > cip-testing/lava-healthchecks/rfs/core-image-minimal-qemux86-64.ext4.x
-> > z
-> >
-> >
-> > Do you have any plan to keep these rootfs tarballs updated with the
-> > latest version of LTP through CI ? If not immediately then we want to
-> > make changes so TWG always uses latest rootfs tarballs for kernel testi=
-ng.
-> >
-> > Thanks and regards,
-> > Sai Ashrith
->=20
->=20
-
-
+-- 
+Siemens AG, Foundational Technologies
+Linux Expert Center
 
