@@ -2,34 +2,34 @@ Return-Path: <ch@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17660C021B8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1919AC282D0
 	for <webhook@archiver.kernel.org>; Tue,  4 Mar 2025 13:08:05 +0000 (UTC)
 Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web11.21271.1741093676621249586
+ by mx.groups.io with SMTP id smtpd.web11.21270.1741093675033308779
  for <cip-dev@lists.cip-project.org>;
- Tue, 04 Mar 2025 05:07:57 -0800
+ Tue, 04 Mar 2025 05:07:55 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@denx.de header.s=mx-20241105 header.b=bOquabGb;
+ dkim=fail reason="dkim: body hash did not verify" header.i=@denx.de header.s=mx-20241105 header.b=Z8+KDU5A;
  spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: ch@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B8BCA10382C18;
-	Tue,  4 Mar 2025 14:07:54 +0100 (CET)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 356B210381918;
+	Tue,  4 Mar 2025 14:07:53 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1741093674; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1741093673; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=gSqnfpSon9/1xTdMsEMwHAutXfXBC5goxjDg9okQREs=;
-	b=bOquabGb9sQzBYTsvephdD4GJnjg8WbKZ7xKuqmtIpSROeB+s/uqaaB0O5mAksCDmFe5Cf
-	srD1XS0v6r4EQFAMJ/JRxbYJNfvP1oMtFjAKaUmB1McAsSAWoytUKW5RfyrBV/ANONeO8p
-	huUh1V5Npsy6bVGjZ8dQheHO0qvtpYDTM2TYQadSX7p8eeMAbZ4SQ5/0r0IMHKZ2Af5flt
-	zm0K6h42Eo8cvX+BTGeub3Or+vpTgwPSnxVKogC7/PIrRTY+YBo/s7vLpud+CxGwPLxMqb
-	i6vAYYgiLq/YtlBZuT0LUgoNek3nUFAFEVmFuefsdX8TT1yM8sVdCLf+oc5zQQ==
+	bh=R3L3mqbP73AH+6fVfMiFLchovg8147vR3PSNwqm4sPQ=;
+	b=Z8+KDU5ANkywOgjyMUT5JUBSFXdc2j3Ec6JhX/X7tfXexa/JpL30KIij04kN6O+eJFj+HY
+	dDC8CSbJI2ae8kyQ/4m7I1L4/fPM5lbW97iSTh0D8i1tfjh50S3peuj92+b5YXSnmnw8kq
+	LqjWBshFuOAK2ch+Mgc5H1xkteKtFUhng6MQIvKpkkLC84e6T3A50kldDjxPTWyMqt0rIn
+	fq1OXaUZ0hLW7WuM+/UAM8dMXOlRrBjKme2Gsw6raQTMpWhiaPIjkNhnHF1yggAifeFllI
+	GLS1K4dPMZdR6Zq0TelIueiksN2GVKwZ3/TRVOZVXNpM/eZ2duljbV3plDrHow==
 From: Claudius Heine <ch@denx.de>
 To: cip-dev@lists.cip-project.org,
 	Jan Kiszka <jan.kiszka@siemens.com>,
 	Quirin Gylstorff <quirin.gylstorff@siemens.com>
 Cc: Claudius Heine <ch@denx.de>
-Subject: [PATCH v3 4/4] initramfs-crypt-hook: add re-encryption recovery
-Date: Tue,  4 Mar 2025 14:07:43 +0100
-Message-ID: <20250304130743.2812183-5-ch@denx.de>
+Subject: [PATCH v3 3/4] initramfs-crypt-hook: add 'format-if-empty' feature
+Date: Tue,  4 Mar 2025 14:07:42 +0100
+Message-ID: <20250304130743.2812183-4-ch@denx.de>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250304130743.2812183-1-ch@denx.de>
 References: <20250304130743.2812183-1-ch@denx.de>
@@ -40,151 +40,110 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 04 Mar 2025 13:08:05 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18019
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18018
 
-Integrate detection and recovery of power failures while a partition is
-being encrypted.
+When encryption is enabled from one update to the next there is a
+difference between flashing a fresh factory image to a empty storage
+device, which contains an empty fallback partition set and updating it,
+where the fallback partition contains the actual fallback partitions.
 
-There are possible scenarios:
-1. Power-fail happens while the partition is reencrypted:
-  - The LUKS header contains `online-reencrypt-v2` and needs to be
-    repaired with `cryptsetup repair` before it can continue.
-  - Also no resizing of the file system is necessary
-2. Power-fail happens before the systemd-tpm2/clevis token can be install=
-ed
-  - The LUKS header does not contain 'systemd-tpm2'/'clevis', thus it
-    needs to be registered and the temporary encryption key needs to be
-    removed
+In the update case, the update case, the fallback system should be left
+alone and unencrypted.
 
-In both scenarios the system after the reboot needs to have access to
-the temporary encryption key that was initially used. So using a random
-one, generated via `openssl rand` is not possible. Since it is only a
-temporary key and gets removed after the systemd-tpm2/clevis token was
-installed, a known password can be used.
+When doing a factory flash, the fallback partitions can be encrypted.
 
-The list of these scenarios is not complete, there might be other
-instances where a sudden power-fail could be fatal to the system, but
-these where the most obvious and risky ones.
+The best marker on in which case the system is booted is, if the
+partition is empty or not. The 'format-if-empty' option will format the
+partition with a luks format in case the first 10MiB are empty.
 
 Signed-off-by: Claudius Heine <ch@denx.de>
 ---
- .../files/local-top-complete                  | 33 +++++++++++++++----
- .../initramfs-crypt-hook_0.6.bb               |  5 ++-
- 2 files changed, 29 insertions(+), 9 deletions(-)
+ doc/README.tpm2.encryption.md                    |  3 ++-
+ .../files/local-top-complete                     | 16 ++++++++++++++++
+ .../initramfs-crypt-hook_0.6.bb                  |  2 +-
+ 3 files changed, 19 insertions(+), 2 deletions(-)
 
+diff --git a/doc/README.tpm2.encryption.md b/doc/README.tpm2.encryption.m=
+d
+index a97425c..84e6cfe 100644
+--- a/doc/README.tpm2.encryption.md
++++ b/doc/README.tpm2.encryption.md
+@@ -42,12 +42,13 @@ The initramfs-crypt-hook recipe has the following var=
+iables which can be overwri
+ ### CRYPT_PARTITIONS
+=20
+ The variable `CRYPT_PARTITIONS` contains the information which partition=
+ shall be encrypted where to mount it.
+-Each entry uses the schema `<partition-identifier>:<mountpoint>:<reencry=
+pt | format | noencrypt>`.
++Each entry uses the schema `<partition-identifier>:<mountpoint>:<reencry=
+pt | format | noencrypt | format-if-empty>`.
+ - The `partition-idenitifer` is used to identify the partition on the di=
+sk, it can contain a partition label, partition UUID or absolute path to =
+the partition device, e.g. `/dev/sda`.
+ - The `mountpoint` is used mount the decrypted partition in the root fil=
+e system
+ - `reencrypt` uses `cryptsetup reencrypt` to encrypt the exiting content=
+ of the partition. This reduces the partition by 32MB and the file system=
+ by a similar amount
+ - `format` creates a empty LUKS partition and creates a file system defi=
+ned with the shell command given in `CRYPT_CREATE_FILE_SYSTEM_CMD`
+ - `noencrypt` will not try to encrypt the partition, if it isn't encrypt=
+ed already, but will open it if it is. See the section [Encrypting the sh=
+ared partition via an update](#### Encrypting the shared partition via an=
+ update) for more information
++- `format-if-empty` will create a empty LUKS partition and formats it, l=
+ike the `format` option, but only if the first 10MiB are empty (contain o=
+nly 0x00). This makes it possible to differentiate if a partition is empt=
+y and can be encrypted, because it was freshly flashed via a factory imag=
+e, or if it might contain an unencrypted fallback system and should be le=
+ft alone.
+=20
+ #### Encrypted root file system
+=20
 diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-compl=
 ete b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-index 47533b5..e67f26f 100644
+index 1ef784d..47533b5 100644
 --- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
 +++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-@@ -72,6 +72,9 @@ reencrypt_existing_partition() {
- 	reduced_size=3D"$(expr "$part_size_blocks" - 65536 )"
- 	reduced_size_in_byte=3D"$(expr "$reduced_size" \* 512)"
- 	reduced_size_in_kb=3D"$(expr "$reduced_size_in_byte" / 1024)K"
-+
-+	CRYPTSETUP_PARAMS=3D"--reduce-device-size ${reduce_device_size}k"
-+
- 	case $partition_fstype in
- 	ext*)
- 		# reduce the filesystem and partition by 32M to fit the LUKS header
-@@ -90,14 +93,25 @@ reencrypt_existing_partition() {
- 	squashfs|swap|erofs|"")
- 		[ "$debug" =3D "y" ] && echo "skip disk resize as it is not supported =
-or unnecessary for fstype: '$partition_fstype'"
+@@ -294,6 +294,22 @@ for partition_set in $partition_sets; do
+ 			eval "${create_file_system_cmd} ${decrypted_part}"
+ 			log_end_msg
  		;;
-+	luks)
-+		# Check if reencrypt was aborted
-+		if /usr/sbin/cryptsetup luksDump --batch-mode "$1" \
-+				| grep -q "online-reencrypt-v2"; then
-+			/usr/sbin/cryptsetup repair --batch-mode "$1" < "$2" || \
-+				panic "cryptsetup repair was not successful"
-+		fi
-+
-+		# already luks partition, don't resize
-+		CRYPTSETUP_PARAMS=3D""
++		"format-if-empty")
++			# Check if first 10MiB contain only zeros
++			if cmp -s -n "$(( 10 * 1024 * 1024 ))" "${part_device}" /dev/zero
++			then
++				log_begin_msg "Encryption of ${part_device}"
++				/usr/sbin/cryptsetup luksFormat --batch-mode \
++					 --type luks2 "$part_device" < "$tmp_key"
++				enroll_tpm2_token "$part_device" "$tmp_key" "$tpm_device" "$tpm_key_=
+algorithm" "$pcr_bank_hash_type"
++				open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
++				eval "${create_file_system_cmd} ${decrypted_part}"
++				log_end_msg
++			else
++				# If not empty, leave it alone.
++				continue
++			fi
 +		;;
- 	*)
- 		panic "cannot resize partition, unsupported fstype: '$partition_fstype=
-'"
+ 		*)
+ 			panic "Unknown value ${partition_format}. Cannot create a encrypted p=
+artition !"
  		;;
- 	esac
- 	if [ -x /usr/sbin/cryptsetup-reencrypt ]; then
--		/usr/sbin/cryptsetup-reencrypt --new --reduce-device-size "$reduce_dev=
-ice_size"k "$1" < "$2"
-+		/usr/sbin/cryptsetup-reencrypt --new ${CRYPTSETUP_PARAMS} "$1" < "$2"
- 	else
--		/usr/sbin/cryptsetup reencrypt --encrypt --reduce-device-size "$reduce=
-_device_size"k "$1" < "$2"
-+		/usr/sbin/cryptsetup reencrypt --encrypt ${CRYPTSETUP_PARAMS} "$1" < "=
-$2"
- 	fi
- }
-=20
-@@ -244,7 +258,7 @@ for partition_set in $partition_sets; do
- 	# If partition is already encrypted, decrypt and continue with next par=
-tition:
- 	decrypted_part=3D/dev/mapper/"$crypt_mount_name"
- 	if /usr/sbin/cryptsetup luksDump --batch-mode "$part_device" \
--			| grep -q "luks2"; then
-+			| grep -q "systemd-tpm2\|clevis"; then
- 		open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
-=20
- 		# check if we are trying to mount root, set ROOT to decrypted partitio=
-n:
-@@ -255,6 +269,12 @@ for partition_set in $partition_sets; do
- 		continue
- 	fi
-=20
-+	# If partition contains an aborted reencrypt luks header, switch to ree=
-ncrypt mode:
-+	if /usr/sbin/cryptsetup luksDump --batch-mode "${part_device}" \
-+			| grep -q "online-reencrypt-v2"; then
-+		partition_format=3D"reencrypt"
-+	fi
-+
- 	# If partition should not be encrypted, continue with next partition:
- 	if [ "$partition_format" =3D "noencrypt" ]
- 	then
-@@ -272,10 +292,11 @@ for partition_set in $partition_sets; do
- 		watchdog_pid=3D$!
- 	fi
-=20
--	# create random password for initial encryption
--	# this will be dropped after reboot
-+	# use partuuid of the partition for initial encryption password, this k=
-ey
-+	# will be removed after the reencryption has finished and the TPM2 toke=
-n is
-+	# registered:
- 	tmp_key=3D/tmp/"$(basename "$part_device")-lukskey"
--	openssl rand -base64 32 > "$tmp_key"
-+	lsblk -no partuuid "$part_device" > "$tmp_key"
-=20
- 	case "${partition_format}" in
- 		"reencrypt")
 diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_=
 0.6.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.6.=
 bb
-index c9a7f89..5e82521 100644
+index df335c9..c9a7f89 100644
 --- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.6.bb
 +++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.6.bb
-@@ -14,7 +14,6 @@ require recipes-initramfs/initramfs-hook/hook.inc
- DEBIAN_DEPENDS .=3D ", \
-     cryptsetup, \
-     awk, \
--    openssl, \
-     e2fsprogs, \
-     tpm2-tools, \
-     coreutils, \
-@@ -40,8 +39,8 @@ HOOK_ADD_MODULES =3D " \
-     ecb aes_generic xts"
+@@ -41,7 +41,7 @@ HOOK_ADD_MODULES =3D " \
 =20
  HOOK_COPY_EXECS =3D " \
--    openssl mke2fs grep awk expr seq sleep basename uuidparse mountpoint=
+     openssl mke2fs grep awk expr seq sleep basename uuidparse mountpoint=
  \
--    e2fsck resize2fs cryptsetup cmp \
-+    mke2fs grep awk expr seq sleep basename uuidparse mountpoint \
-+    e2fsck resize2fs cryptsetup cmp lsblk \
+-    e2fsck resize2fs cryptsetup \
++    e2fsck resize2fs cryptsetup cmp \
      tpm2_pcrread tpm2_testparms tpm2_flushcontext \
      /usr/lib/*/libgcc_s.so.1"
 =20
