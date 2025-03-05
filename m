@@ -1,184 +1,81 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <ch@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CFC0C282EC
-	for <webhook@archiver.kernel.org>; Wed,  5 Mar 2025 10:28:12 +0000 (UTC)
-Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
- by mx.groups.io with SMTP id smtpd.web11.10349.1741170491075705358
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE7CEC19F32
+	for <webhook@archiver.kernel.org>; Wed,  5 Mar 2025 12:00:32 +0000 (UTC)
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+ by mx.groups.io with SMTP id smtpd.web10.11600.1741176027158394964
  for <cip-dev@lists.cip-project.org>;
- Wed, 05 Mar 2025 02:28:11 -0800
+ Wed, 05 Mar 2025 04:00:27 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=BWY9zcos;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-51332-20250305102808af467bc1d041239cf4-jut411@rts-flowmailer.siemens.com)
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 20250305102808af467bc1d041239cf4
-        for <cip-dev@lists.cip-project.org>;
-        Wed, 05 Mar 2025 11:28:08 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=fnd2eu8pbRAuhnLyLrlbeVkxG2hZ9AO74XiA5WEtXM8=;
- b=BWY9zcosIhXoG6gD88kVb4bgkEqyBkRTV+fL8UUInsmOHGzv9Ha2Mhw26qq99DJoyIRUN+
- v85meVKYfwPi9X21bZtjubC/w2MA4an/tKKGImmKKMbmLMVL1gZiMzjTuTpdJAO7hbrWIuTw
- eI3RRjdU0+KVHhnuZZMq/TntgtCG+G42ZpcFbw/3CFsS0Oq7K2ehUmweIOwIQE1rfrqmw9OQ
- X1JX0Yc2o/snLiwd1SC7fZE/ctWshuazyRAmXapHd/qAs7S0Se844rmGPpFAz2lIoyNrvA96
- Mh7T/1Q00xQ8Qi9aEXs2Hd4H/gXm1QbKFLAg+9tLm/l6S80ZK7hQGiVA==;
-From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: jan.kiszka@siemens.com,
-	felix.moessbauer@siemens.com,
-	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH v3 2/6] read-only-rootfs: add home partition with a variable
-Date: Wed,  5 Mar 2025 11:27:41 +0100
-Message-ID: <20250305102807.2614514-3-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20250305102807.2614514-1-Quirin.Gylstorff@siemens.com>
-References: <20250305102807.2614514-1-Quirin.Gylstorff@siemens.com>
+ dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=eoOqhr0L;
+ spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: ch@denx.de)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5A9C610381917;
+	Wed,  5 Mar 2025 13:00:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1741176025; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=0GlwVKv11gA9qDnee0LQP54AxnuVIYBEB4M4WRqYeQI=;
+	b=eoOqhr0LCcWgrd94qNVTc0T93LvP6Qk7rvLwMlIkmlZPB3XHwKBzUa/lDwwh3E4JJFjl+G
+	R9DIXrKB9WWtXjC4pqr5u9MlUL1GBgYlw4M9JsIAe5bKyLB8U3NU4/6gVxrV5Oy1kBq22b
+	/5dpV47WGGqrDw75J9gdjMHJ7Pjv8/RSNkqcLhLbjcpm12v71cYhEuxPhtOdEyt/r1bwh/
+	wPnv1ONKtlvzZu35PePYIlp9UkgGIvvCU/LJ4t46sNrrSXz+Kcx4Op3P6MQCdWq0C88tdN
+	VfAVBJImOQVc2idVnUfQ0iqLbO5Y0dhWvu7YoUGWsDv3OpJ00ELhoBUZKjoeUw==
+From: Claudius Heine <ch@denx.de>
+Date: Wed, 05 Mar 2025 13:00:19 +0100
+Subject: [PATCH v4 1/5] initramfs-crypt-hook: make sure that mount path
+ exists
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250305-initramfs-crypt-hook-patches-2-v4-1-4170912e5261@denx.de>
+References: <20250305-initramfs-crypt-hook-patches-2-v4-0-4170912e5261@denx.de>
+In-Reply-To: <20250305-initramfs-crypt-hook-patches-2-v4-0-4170912e5261@denx.de>
+To: cip-dev@lists.cip-project.org
+Cc: Jan Kiszka <jan.kiszka@siemens.com>, 
+ Quirin Gylstorff <quirin.gylstorff@siemens.com>, 
+ Claudius Heine <ch@denx.de>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 05 Mar 2025 10:28:12 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18038
+ <cip-dev@lists.cip-project.org>; Wed, 05 Mar 2025 12:00:32 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18042
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+Wherever or not the mount directory (and their parents) gets created
+seem to be inconsistent; mentioning a missing mount point in the
+`/etc/fstab` might cause the boot to fail, while using systemd `.mount`
+units will just create the mount point.
 
-This allows the user to disable the home partition to simplify
-the partition layout.
+Wic creates missing mount points that where mentioned in the `.wks`
+file; so moving from such a setup to letting `initramfs-crypt-hook`
+mount the file system at boot inside the ramdisk, the mount would
+suddenly fail.
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+Therefore creating the mount point for your, if it doesn't exists seem to
+provide a smoother transition.
+
+Signed-off-by: Claudius Heine <ch@denx.de>
 ---
- classes/read-only-rootfs.bbclass              | 1 +
- wic/bbb-efibootguard.wks.in                   | 4 ++--
- wic/hihope-rzg2m-efibootguard.wks.in          | 5 ++---
- wic/qemu-arm64-efibootguard-secureboot.wks.in | 4 ++--
- wic/qemu-arm64-efibootguard.wks.in            | 4 ++--
- wic/qemu-riscv64-efibootguard.wks.in          | 4 ++--
- wic/x86-uefi-efibootguard-secureboot.wks.in   | 4 ++--
- wic/x86-uefi-efibootguard.wks.in              | 4 ++--
- 8 files changed, 15 insertions(+), 15 deletions(-)
+ recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/classes/read-only-rootfs.bbclass b/classes/read-only-rootfs.bbclass
-index 0db398f..0c8ae24 100644
---- a/classes/read-only-rootfs.bbclass
-+++ b/classes/read-only-rootfs.bbclass
-@@ -15,6 +15,7 @@ INITRD_IMAGE = "${INITRAMFS_RECIPE}-${DISTRO}-${MACHINE}.initrd.img"
- do_image_wic[depends] += "${INITRAMFS_RECIPE}:do_build"
- 
- IMAGE_INSTALL += "home-fs"
-+WIC_HOME_PARTITION = "part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid c07d5e8f-3448-46dc-9c0f-58904f369524"
- 
- IMAGE_INSTALL:append:buster   = " tmp-fs"
- IMAGE_INSTALL:append:bullseye = " tmp-fs"
-diff --git a/wic/bbb-efibootguard.wks.in b/wic/bbb-efibootguard.wks.in
-index 6c30a8a..c623623 100644
---- a/wic/bbb-efibootguard.wks.in
-+++ b/wic/bbb-efibootguard.wks.in
-@@ -14,8 +14,8 @@ include ebg-sysparts.inc
- part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
- part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
- 
--# home and var are extra partitions
--part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid c07d5e8f-3448-46dc-9c0f-58904f369524
-+# var and optional home are extra partitions
-+${WIC_HOME_PARTITION}
- part /var --fstype=ext4 --label var --align 1024  --size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 9947ed57-102f-4038-880c-9cf5cacaf153
- 
- bootloader --ptable gpt --append="rootwait console=ttyO0,115200 omap_wdt.early_enable=1 omap_wdt.nowayout=1 watchdog.handle_boot_enabled=0"
-diff --git a/wic/hihope-rzg2m-efibootguard.wks.in b/wic/hihope-rzg2m-efibootguard.wks.in
-index 311fbd0..9df0de5 100644
---- a/wic/hihope-rzg2m-efibootguard.wks.in
-+++ b/wic/hihope-rzg2m-efibootguard.wks.in
-@@ -6,9 +6,8 @@ include ebg-sysparts.inc
- part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
- part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
- 
--# home and var are extra partitions
--
--part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --extra-space=100M --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid 43a29d19-005f-49d9-9108-51ad0861d724
-+# var and optional home are extra partitions
-+${WIC_HOME_PARTITION}
- part /var --fstype=ext4 --label var --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 7e20a7d5-5578-4ced-a7f1-5ee494dbaf72
- 
- bootloader --ptable gpt --append="console=tty0 console=ttySC0,115200 rootwait earlyprintk"
-diff --git a/wic/qemu-arm64-efibootguard-secureboot.wks.in b/wic/qemu-arm64-efibootguard-secureboot.wks.in
-index 955a6b6..7ff7068 100644
---- a/wic/qemu-arm64-efibootguard-secureboot.wks.in
-+++ b/wic/qemu-arm64-efibootguard-secureboot.wks.in
-@@ -3,8 +3,8 @@ include ebg-signed-sysparts.inc
- part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
- part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
- 
--# home and var are extra partitions
--part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024 --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid e869413d-dc84-4822-b50d-00c5aab7d6fc
-+# var and optional home are extra partitions
-+${WIC_HOME_PARTITION}
- part /var  --fstype=ext4 --label var  --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 815406da-387f-4e89-a0fb-6e617605c8c3
- 
- bootloader --ptable gpt --append="panic=5"
-diff --git a/wic/qemu-arm64-efibootguard.wks.in b/wic/qemu-arm64-efibootguard.wks.in
-index ce6253e..38db84b 100644
---- a/wic/qemu-arm64-efibootguard.wks.in
-+++ b/wic/qemu-arm64-efibootguard.wks.in
-@@ -6,8 +6,8 @@ include ebg-sysparts.inc
- part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
- part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
- 
--# home and var are extra partitions
--part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid 7346faa7-d6d4-49fa-a03e-82ee469cb1e5
-+# var and optional home are extra partitions
-+${WIC_HOME_PARTITION}
- part /var --fstype=ext4 --label var --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 423f0a2e-b9b3-4615-85be-2a4261fa32d9
- 
- bootloader --ptable gpt
-diff --git a/wic/qemu-riscv64-efibootguard.wks.in b/wic/qemu-riscv64-efibootguard.wks.in
-index 1166ea1..6423bf4 100644
---- a/wic/qemu-riscv64-efibootguard.wks.in
-+++ b/wic/qemu-riscv64-efibootguard.wks.in
-@@ -6,8 +6,8 @@ include ebg-sysparts.inc
- part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
- part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
- 
--# home and var are extra partitions
--part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid e578254c-bd99-4442-bc51-4935cd0ef522
-+# var and optional home are extra partitions
-+${WIC_HOME_PARTITION}
- part /var --fstype=ext4 --label var --align 1024  --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 0209689d-672f-4254-8b92-566d6d9fd1ae
- 
- bootloader --ptable gpt
-diff --git a/wic/x86-uefi-efibootguard-secureboot.wks.in b/wic/x86-uefi-efibootguard-secureboot.wks.in
-index 71b0103..d7b5cbd 100644
---- a/wic/x86-uefi-efibootguard-secureboot.wks.in
-+++ b/wic/x86-uefi-efibootguard-secureboot.wks.in
-@@ -3,8 +3,8 @@ include ebg-signed-sysparts.inc
- part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
- part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
- 
--# home and var are extra partitions
--part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024 --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid 94593121-6f5f-4b04-98db-39aace692682
-+# var and optional home are extra partitions
-+${WIC_HOME_PARTITION}
- part /var  --fstype=ext4 --label var  --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 686a2e06-7f96-495b-beac-1731cb98eb0e
- 
- bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait earlyprintk watchdog.handle_boot_enabled=0 iTCO_wdt.nowayout=1 panic=5"
-diff --git a/wic/x86-uefi-efibootguard.wks.in b/wic/x86-uefi-efibootguard.wks.in
-index 962eaac..380e828 100644
---- a/wic/x86-uefi-efibootguard.wks.in
-+++ b/wic/x86-uefi-efibootguard.wks.in
-@@ -6,9 +6,9 @@ include ebg-sysparts.inc
- part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
- part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
- 
--# home and var are extra partitions
- 
--part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --extra-space=100M --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid f12faa7c-a9ef-4b3f-b63d-1c74bd5c2b1c
-+# var and optional home are extra partitions
-+${WIC_HOME_PARTITION}
- part /var --fstype=ext4 --label var --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid be5ae5e0-91d3-46ec-a7f7-c1ebfc0a7c28
- 
- bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait earlyprintk watchdog.handle_boot_enabled=0 iTCO_wdt.nowayout=1 "
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete b/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
+index b991cb49fbdfdc4b2ffc81c1424fb3c695a973cd..80553d1cd8ccde7a6cc9b324c6e5faba8d8f3579 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
++++ b/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
+@@ -41,6 +41,7 @@ mount_partition() {
+ 	partition_mountpoint=$2
+ 	[ "$debug" = "y" ] && echo "mount device: '$partition_dev_path' to '$partition_mountpoint'"
+ 	if ! mountpoint -q "${partition_mountpoint}"; then
++		mkdir -p "${partition_mountpoint}"
+ 		if ! mount -t "$(get_fstype "${partition_dev_path}")" "${partition_dev_path}" \
+ 			 "${partition_mountpoint}"; then
+ 			panic "Can't mount partition '${partition_dev_path}'!"
+
 -- 
-2.47.0
+2.47.2
 
 
