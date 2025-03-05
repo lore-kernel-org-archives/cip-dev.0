@@ -2,36 +2,37 @@ Return-Path: <ch@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE7CEC19F32
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1945C282E3
 	for <webhook@archiver.kernel.org>; Wed,  5 Mar 2025 12:00:32 +0000 (UTC)
 Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web10.11600.1741176027158394964
+ by mx.groups.io with SMTP id smtpd.web10.11598.1741176026270937000
  for <cip-dev@lists.cip-project.org>;
- Wed, 05 Mar 2025 04:00:27 -0800
+ Wed, 05 Mar 2025 04:00:26 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=eoOqhr0L;
+ dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=f2dz8kYa;
  spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: ch@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5A9C610381917;
-	Wed,  5 Mar 2025 13:00:25 +0100 (CET)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3346310382C18;
+	Wed,  5 Mar 2025 13:00:23 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1741176025; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=0GlwVKv11gA9qDnee0LQP54AxnuVIYBEB4M4WRqYeQI=;
-	b=eoOqhr0LCcWgrd94qNVTc0T93LvP6Qk7rvLwMlIkmlZPB3XHwKBzUa/lDwwh3E4JJFjl+G
-	R9DIXrKB9WWtXjC4pqr5u9MlUL1GBgYlw4M9JsIAe5bKyLB8U3NU4/6gVxrV5Oy1kBq22b
-	/5dpV47WGGqrDw75J9gdjMHJ7Pjv8/RSNkqcLhLbjcpm12v71cYhEuxPhtOdEyt/r1bwh/
-	wPnv1ONKtlvzZu35PePYIlp9UkgGIvvCU/LJ4t46sNrrSXz+Kcx4Op3P6MQCdWq0C88tdN
-	VfAVBJImOQVc2idVnUfQ0iqLbO5Y0dhWvu7YoUGWsDv3OpJ00ELhoBUZKjoeUw==
+	t=1741176024; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=W2K5CNfcmrdLb9iyr4Qsm2asLgwrAQsTt20B97SLWXc=;
+	b=f2dz8kYacrq2oZ9mLXUxKLWj5MfIxoKuN1XdAU2w+XkjOWfycvRgGwX27ORp8z7tFFZ3Ew
+	bCPHLN+KLaavrlc+ZtqxBxp8lRcby5KbfdMq6REJri+/2CzrIYL0XRBKSLjDtfvt2yEjyP
+	N+MvcMuwHUYu4V8ZttS376Z6zcDsDEV/XifL1nIpvWty5PHBoBkjDh7OdPkLpu5TQlx4MO
+	yTgXmv6Wh+hzapPV2FUF0/f0dxavkWL9GiGQh/zxdpeSpD6c4VrODo9VXLaP9wrO92gQb9
+	Wm6hvXlEdYStdqHk7Z4FKcth7oPgqVLtSNcnx+pGQNCpMuOymAdIL5tUIJEiiA==
 From: Claudius Heine <ch@denx.de>
-Date: Wed, 05 Mar 2025 13:00:19 +0100
-Subject: [PATCH v4 1/5] initramfs-crypt-hook: make sure that mount path
- exists
+Subject: [PATCH v4 0/5] initramfs-crypt-hook patch
+Date: Wed, 05 Mar 2025 13:00:18 +0100
+Message-Id: <20250305-initramfs-crypt-hook-patches-2-v4-0-4170912e5261@denx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250305-initramfs-crypt-hook-patches-2-v4-1-4170912e5261@denx.de>
-References: <20250305-initramfs-crypt-hook-patches-2-v4-0-4170912e5261@denx.de>
-In-Reply-To: <20250305-initramfs-crypt-hook-patches-2-v4-0-4170912e5261@denx.de>
+X-B4-Tracking: v=1; b=H4sIANM8yGcC/03NTQqDMBBA4atI1h3Jn6hd9R6lixAnzVBMZBKKR
+ bx7Q1ddfpv3DlGQCYu4dodgfFOhnBrspRM+uvREoKVZaKkHaeQAlKiyW0MBz5+tQsz5BZurPmI
+ BDbP31kk9+ml2okU2xkD7b3B/NAfOK9TI6P6zVhk5WtPrSWk1GVDg423BtPcLivP8Am/HjimmA
+ AAA
+X-Change-ID: 20250305-initramfs-crypt-hook-patches-2-9cc4a027c89a
 To: cip-dev@lists.cip-project.org
 Cc: Jan Kiszka <jan.kiszka@siemens.com>, 
  Quirin Gylstorff <quirin.gylstorff@siemens.com>, 
@@ -42,40 +43,49 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 05 Mar 2025 12:00:32 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18042
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18041
 
-Wherever or not the mount directory (and their parents) gets created
-seem to be inconsistent; mentioning a missing mount point in the
-`/etc/fstab` might cause the boot to fail, while using systemd `.mount`
-units will just create the mount point.
+Hi,
 
-Wic creates missing mount points that where mentioned in the `.wks`
-file; so moving from such a setup to letting `initramfs-crypt-hook`
-mount the file system at boot inside the ramdisk, the mount would
-suddenly fail.
+here is v4 of my patchset.
 
-Therefore creating the mount point for your, if it doesn't exists seem to
-provide a smoother transition.
+Changes from v3:
+ - improve documentation and commit messages
+ - reorder commits, to put re-encryption recovery up front
+ - extract static temporary encryption key patch into its own
+ - switch from lsblk to blkid
 
-Signed-off-by: Claudius Heine <ch@denx.de>
+Changes from v2:
+ - Rebase on current next
+ - Extended `noencrypt` documentation
+ - support clevis tokens for re-encryption recovery
+
+Changes from v1:
+ - Added more descriptive commit message
+ - Added more descriptive documentation about noencrypt option
+ - Fixed typos in documentation
+ - removed unecessary setting of /conf/param.conf in initramfs-crypt-hook
+ - added re-encryption recovery patch
+
 ---
- recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete | 1 +
- 1 file changed, 1 insertion(+)
+Claudius Heine (5):
+      initramfs-crypt-hook: make sure that mount path exists
+      initramfs-crypt-hook: use static temporary encryption key
+      initramfs-crypt-hook: add re-encryption recovery
+      initramfs-crypt-hook: implement 'noencrypt' option
+      initramfs-crypt-hook: add 'format-if-empty' feature
 
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete b/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
-index b991cb49fbdfdc4b2ffc81c1424fb3c695a973cd..80553d1cd8ccde7a6cc9b324c6e5faba8d8f3579 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/local-bottom-complete
-@@ -41,6 +41,7 @@ mount_partition() {
- 	partition_mountpoint=$2
- 	[ "$debug" = "y" ] && echo "mount device: '$partition_dev_path' to '$partition_mountpoint'"
- 	if ! mountpoint -q "${partition_mountpoint}"; then
-+		mkdir -p "${partition_mountpoint}"
- 		if ! mount -t "$(get_fstype "${partition_dev_path}")" "${partition_dev_path}" \
- 			 "${partition_mountpoint}"; then
- 			panic "Can't mount partition '${partition_dev_path}'!"
+ doc/README.tpm2.encryption.md                      | 25 +++++++-
+ .../files/local-bottom-complete                    |  1 +
+ .../initramfs-crypt-hook/files/local-top-complete  | 73 ++++++++++++++++++----
+ .../initramfs-crypt-hook_0.6.bb                    |  5 +-
+ 4 files changed, 89 insertions(+), 15 deletions(-)
+---
+base-commit: 6f702e8af81ca12b9f4b37a0b853f987c35a1405
+change-id: 20250305-initramfs-crypt-hook-patches-2-9cc4a027c89a
 
+Best regards,
 -- 
-2.47.2
+Claudius Heine <ch@denx.de>
 
 
