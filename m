@@ -2,34 +2,34 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41BB2C19F32
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48029C282E3
 	for <webhook@archiver.kernel.org>; Wed,  5 Mar 2025 10:28:12 +0000 (UTC)
-Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
- by mx.groups.io with SMTP id smtpd.web11.10353.1741170491589976520
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
+ by mx.groups.io with SMTP id smtpd.web11.10352.1741170491347955657
  for <cip-dev@lists.cip-project.org>;
  Wed, 05 Mar 2025 02:28:11 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=bRgvFFsF;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-51332-2025030510280935a26166f0f3ddb9f2-3gdp7x@rts-flowmailer.siemens.com)
-Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 2025030510280935a26166f0f3ddb9f2
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=GWjWRhIb;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-51332-202503051028098623b9e296d82d5974-30f8dc@rts-flowmailer.siemens.com)
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 202503051028098623b9e296d82d5974
         for <cip-dev@lists.cip-project.org>;
         Wed, 05 Mar 2025 11:28:09 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=ChgNhI75iMWBUuVZq7Vqv8F55jjFE0fX9jyhiCRLcWY=;
- b=bRgvFFsFGFEwzrdF8HNZcflaZI2AF1JF1DHS4OGeUHZNZeNOEsT6fh+fUnWgV7SMJxQFmz
- 2e9uPEAW7fClF1KwDFeiwhEPunhgZ/jYUzUr4DojZ9k8TcA7bKrbNthX3o6KJKB95hFRlBDu
- SIchsHflqRZFPRpuZFCrRs3uM4PIGAnBkxCXJ3KmGIwc5FVvM8XOS8dyzVu01aAAxXKx/AAR
- wwTcb6F4YuYPtfZNVUZEqNsGCjMahXi1TXfrGT+iU7WSk5+XG+sAQSfT+G2vbfJNrEScmqsw
- jw6KfRazIFTfx/QOpfip7sYfADqAzFiN1deY4ahsAEpOMpK9FdSH9rvw==;
+ bh=9pc9QZZQMSQa7lOYFyJM6LfH3ztkuRZUeWsEgyn7DcA=;
+ b=GWjWRhIblKcZ+V8pyAGqsXytP0swT4+ofJXyHM9Dj7OQYoSlXssR/WzvqLeDHmxKIXbe6x
+ YMay51NgjWlkDw7FHinCDdzjG43ivP+Fbw+7cqDkjqGdL5W4jNyZIiiT05XpwfUivN76Brti
+ hl+QgYpop56Svd2XaBBYifwNmnjN7qb4vomB7CoH80RTLgbowqgxfakYekUaDi/pMU/+b6R1
+ huzDI7xi0BC4Cu+c78vIgFh5Ln9D/2ojvxtoDpTHcGdBRt59yBLkwUznOoV/24Gt8L5vLrOu
+ TegD4oQ6feTzNdw6v43NU/c5Hhe3kdj4pK17GQ7gv9XT4vfVwF5DwgRQ==;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: jan.kiszka@siemens.com,
 	felix.moessbauer@siemens.com,
 	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH v3 4/6] Move content of home to IMMUTABLE_DATA_DIR
-Date: Wed,  5 Mar 2025 11:27:43 +0100
-Message-ID: <20250305102807.2614514-5-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v3 6/6] add ci variable for separate home partition
+Date: Wed,  5 Mar 2025 11:27:45 +0100
+Message-ID: <20250305102807.2614514-7-Quirin.Gylstorff@siemens.com>
 In-Reply-To: <20250305102807.2614514-1-Quirin.Gylstorff@siemens.com>
 References: <20250305102807.2614514-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
@@ -40,120 +40,43 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 05 Mar 2025 10:28:12 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18039
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18035
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-This reduces the amount of necessary partitions. It also
-simplifies possible update strategies for the persistent
-partitions, e.g. for the `A/B snapshot support for persistent /var`
-[1].
-
-This fixes issue #123.
-
-[1]: https://lists.cip-project.org/g/cip-dev/message/17703.
-
-https://gitlab.com/cip-project/cip-core/isar-cip-core/-/issues/123
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- classes/read-only-rootfs.bbclass              | 19 +++++++++++++++--
- kas/opt/encrypt-all.yml                       |  2 +-
- kas/opt/separate-home-partition.yml           | 21 +++++++++++++++++++
- ...ook_0.6.bb => initramfs-crypt-hook_0.7.bb} |  2 +-
- 4 files changed, 40 insertions(+), 4 deletions(-)
- create mode 100644 kas/opt/separate-home-partition.yml
- rename recipes-initramfs/initramfs-crypt-hook/{initramfs-crypt-hook_0.6.bb => initramfs-crypt-hook_0.7.bb} (98%)
+ .gitlab-ci.yml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/classes/read-only-rootfs.bbclass b/classes/read-only-rootfs.bbclass
-index 0c8ae24..4e70d81 100644
---- a/classes/read-only-rootfs.bbclass
-+++ b/classes/read-only-rootfs.bbclass
-@@ -14,8 +14,12 @@ INITRD_IMAGE = "${INITRAMFS_RECIPE}-${DISTRO}-${MACHINE}.initrd.img"
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index 4df521b..72d3af8 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -27,6 +27,7 @@ variables:
+   build_swu_v2: disable
+   swupdate_version: default
+   test_function: swupdate
++  separate_home_partition: disable
  
- do_image_wic[depends] += "${INITRAMFS_RECIPE}:do_build"
+ stages:
+   - build
+@@ -59,6 +60,7 @@ default:
+     - if [ "${use_rt}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/rt.yml"; fi
+     - if [ "${extension}" != "none" ]; then base_yaml="${base_yaml}:kas/opt/${extension}.yml"; fi
+     - if [ "${targz}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/targz.yml"; fi
++    - if [ "${separate_home_partition}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/separate-home-partition.yml"; fi
+     - if [ "${release}" = "buster" ]; then base_yaml="${base_yaml}:kas/opt/buster.yml"; fi
+     - if [ "${release}" = "bullseye" ]; then base_yaml="${base_yaml}:kas/opt/bullseye.yml"; fi
+     - if [ "${release}" = "bookworm" ]; then base_yaml="${base_yaml}:kas/opt/bookworm.yml"; fi
+@@ -232,6 +234,7 @@ build:x86-uefi-secure-boot:
+     watchdog: disable
+     security_test: enable
+     build_swu_v2: enable
++    separate_home_partition: enable
  
--IMAGE_INSTALL += "home-fs"
--WIC_HOME_PARTITION = "part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid c07d5e8f-3448-46dc-9c0f-58904f369524"
-+WIC_HOME_PARTITION:separate-home-part = "part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid c07d5e8f-3448-46dc-9c0f-58904f369524"
-+
-+WIC_HOME_PARTITION = ""
-+IMAGE_INSTALL += " move-homedir-var"
-+IMAGE_INSTALL:append:separate-home-part = " home-fs"
-+IMAGE_INSTALL:remove:separate-home-part = " move-homedir-var"
- 
- IMAGE_INSTALL:append:buster   = " tmp-fs"
- IMAGE_INSTALL:append:bullseye = " tmp-fs"
-@@ -37,6 +41,17 @@ copy_dpkg_state() {
-     sudo cp -a ${ROOTFSDIR}/var/lib/dpkg "$IMMUTABLE_VAR_LIB/"
- }
- 
-+ROOTFS_POSTPROCESS_COMMAND:append = " copy_home_to_immutable_data"
-+ROOTFS_POSTPROCESS_COMMAND:remove:separate-home-part = " copy_home_to_immutable_data"
-+copy_home_to_immutable_data() {
-+    IMMUTABLE_HOME_DIR="${ROOTFSDIR}${IMMUTABLE_DATA_DIR}/"
-+    sudo mkdir -p "$IMMUTABLE_HOME_DIR"
-+    sudo mv ${ROOTFSDIR}/home "$IMMUTABLE_HOME_DIR/"
-+    # as the rootfs is read-only we need to create the link
-+    # between /var/home and /home during creation.
-+    sudo chroot ${IMAGE_ROOTFS} ln -s /var/home /home
-+}
-+
- RO_ROOTFS_EXCLUDE_DIRS ??= ""
- EROFS_EXCLUDE_DIRS = "${RO_ROOTFS_EXCLUDE_DIRS}"
- SQUASHFS_EXCLUDE_DIRS = "${RO_ROOTFS_EXCLUDE_DIRS}"
-diff --git a/kas/opt/encrypt-all.yml b/kas/opt/encrypt-all.yml
-index b6d4041..faf7206 100644
---- a/kas/opt/encrypt-all.yml
-+++ b/kas/opt/encrypt-all.yml
-@@ -20,4 +20,4 @@ local_conf_header:
-     # As we use a weak default assignment in the intramfs-crypt-hook recipe we need
-     # to set all partitions
-     CRYPT_PARTITIONS = "${ABROOTFS_PART_UUID_A}::reencrypt ${ABROOTFS_PART_UUID_B}::reencrypt \
--                         home:/home:reencrypt var:/var:reencrypt"
-+                         var:/var:reencrypt"
-diff --git a/kas/opt/separate-home-partition.yml b/kas/opt/separate-home-partition.yml
-new file mode 100644
-index 0000000..194b132
---- /dev/null
-+++ b/kas/opt/separate-home-partition.yml
-@@ -0,0 +1,21 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2025
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+# This kas file adds a separate home partition an image.
-+# This provide backward compability to the previous isar-cip-core
-+# versions.
-+header:
-+  version: 14
-+
-+local_conf_header:
-+  separate-home-partition: |
-+    OVERRIDES .= ":separate-home-part"
-+  add-home-partition-to-crypt: |
-+    CRYPT_PARTITIONS:append:separate-home-part = " home:/home:reencrypt"
-diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.6.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.7.bb
-similarity index 98%
-rename from recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.6.bb
-rename to recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.7.bb
-index df335c9..80a4755 100644
---- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.6.bb
-+++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.7.bb
-@@ -70,7 +70,7 @@ SRC_URI += "file://encrypt_partition.env.tmpl \
-             file://pwquality.conf"
- 
- # CRYPT_PARTITIONS elements are <partition-label>:<mountpoint>:<reencrypt or format>[:expand]
--CRYPT_PARTITIONS ??= "home:/home:reencrypt var:/var:reencrypt"
-+CRYPT_PARTITIONS ??= "var:/var:reencrypt"
- # CRYPT_CREATE_FILE_SYSTEM_CMD contains the shell command to create the filesystem
- # in a newly formatted LUKS Partition
- CRYPT_CREATE_FILE_SYSTEM_CMD ??= "/usr/sbin/mke2fs -t ext4"
+ build:qemu-amd64-swupdate:
+   extends:
 -- 
 2.47.0
 
