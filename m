@@ -2,34 +2,34 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 687FDC28B22
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CFC0C282EC
 	for <webhook@archiver.kernel.org>; Wed,  5 Mar 2025 10:28:12 +0000 (UTC)
-Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
- by mx.groups.io with SMTP id smtpd.web10.10445.1741170491179514611
+Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
+ by mx.groups.io with SMTP id smtpd.web11.10349.1741170491075705358
  for <cip-dev@lists.cip-project.org>;
- Wed, 05 Mar 2025 02:28:12 -0800
+ Wed, 05 Mar 2025 02:28:11 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=OWEsxdov;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-51332-202503051028084583d8a8c45407a6ad-krie_6@rts-flowmailer.siemens.com)
-Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 202503051028084583d8a8c45407a6ad
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=BWY9zcos;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-51332-20250305102808af467bc1d041239cf4-jut411@rts-flowmailer.siemens.com)
+Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 20250305102808af467bc1d041239cf4
         for <cip-dev@lists.cip-project.org>;
         Wed, 05 Mar 2025 11:28:08 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=ybGc/jMJ37jlEN0Iz4Q9OTgDghwOVjLn3UkN3xc3wmA=;
- b=OWEsxdov0sv3HEtui9MF5Y04usHeD4XOU2W5mPeQNDG0xQezpWXHflT5jUB5Yh7u6ruISI
- 4CBnS/IFRQk75iUxElU1Y1VQJOw3UgwY/q2rgVE+yMcVtqddMHAjT3AJM20el9gTTD408m5G
- FFz7uTDDfvG1lW01cbYbdS5LSJmB9zKkQgNaEp2P0JEd1LRkzitYoFN6QRxY5xvFpEfxZLV/
- 3Tr9JVE+Y+WhkA/rj/qfp8pY38R2SOAIPT8XVElABL21bkGSynCxy6+M8rms782kg5oApDNB
- QVCqKUmqw1WZMfnk9mpndnatMiZW5gGR9YD7kr3eEVmBbyxsFeuxHrTA==;
+ bh=fnd2eu8pbRAuhnLyLrlbeVkxG2hZ9AO74XiA5WEtXM8=;
+ b=BWY9zcosIhXoG6gD88kVb4bgkEqyBkRTV+fL8UUInsmOHGzv9Ha2Mhw26qq99DJoyIRUN+
+ v85meVKYfwPi9X21bZtjubC/w2MA4an/tKKGImmKKMbmLMVL1gZiMzjTuTpdJAO7hbrWIuTw
+ eI3RRjdU0+KVHhnuZZMq/TntgtCG+G42ZpcFbw/3CFsS0Oq7K2ehUmweIOwIQE1rfrqmw9OQ
+ X1JX0Yc2o/snLiwd1SC7fZE/ctWshuazyRAmXapHd/qAs7S0Se844rmGPpFAz2lIoyNrvA96
+ Mh7T/1Q00xQ8Qi9aEXs2Hd4H/gXm1QbKFLAg+9tLm/l6S80ZK7hQGiVA==;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: jan.kiszka@siemens.com,
 	felix.moessbauer@siemens.com,
 	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH v3 3/6] add move-homedir-var package
-Date: Wed,  5 Mar 2025 11:27:42 +0100
-Message-ID: <20250305102807.2614514-4-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v3 2/6] read-only-rootfs: add home partition with a variable
+Date: Wed,  5 Mar 2025 11:27:41 +0100
+Message-ID: <20250305102807.2614514-3-Quirin.Gylstorff@siemens.com>
 In-Reply-To: <20250305102807.2614514-1-Quirin.Gylstorff@siemens.com>
 References: <20250305102807.2614514-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
@@ -40,65 +40,144 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 05 Mar 2025 10:28:12 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18040
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18038
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-This creates a tmpfiles to copy /usr/share/immutable-data/home to /var.
+This allows the user to disable the home partition to simplify
+the partition layout.
 
-Also the recipe moves /home to /var/home and creates a symbolic link
-between them.
-
-This is prerequisite to move the home partition to /var as requested
-by issue #123.
-
-https://gitlab.com/cip-project/cip-core/isar-cip-core/-/issues/123
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- .../files/move-homedir-var.tmpfiles.tmpl      |  3 +++
- .../move-homedir-var/move-homedir-var_0.1.bb  | 23 +++++++++++++++++++
- 2 files changed, 26 insertions(+)
- create mode 100644 recipes-core/move-homedir-var/files/move-homedir-var.tmpfiles.tmpl
- create mode 100644 recipes-core/move-homedir-var/move-homedir-var_0.1.bb
+ classes/read-only-rootfs.bbclass              | 1 +
+ wic/bbb-efibootguard.wks.in                   | 4 ++--
+ wic/hihope-rzg2m-efibootguard.wks.in          | 5 ++---
+ wic/qemu-arm64-efibootguard-secureboot.wks.in | 4 ++--
+ wic/qemu-arm64-efibootguard.wks.in            | 4 ++--
+ wic/qemu-riscv64-efibootguard.wks.in          | 4 ++--
+ wic/x86-uefi-efibootguard-secureboot.wks.in   | 4 ++--
+ wic/x86-uefi-efibootguard.wks.in              | 4 ++--
+ 8 files changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/recipes-core/move-homedir-var/files/move-homedir-var.tmpfiles.tmpl b/recipes-core/move-homedir-var/files/move-homedir-var.tmpfiles.tmpl
-new file mode 100644
-index 0000000..8a3e535
---- /dev/null
-+++ b/recipes-core/move-homedir-var/files/move-homedir-var.tmpfiles.tmpl
-@@ -0,0 +1,3 @@
-+L /home - - - - /var/home
-+C /var/home - - - - ${IMMUTABLE_DATA_DIR}/home
-+
-diff --git a/recipes-core/move-homedir-var/move-homedir-var_0.1.bb b/recipes-core/move-homedir-var/move-homedir-var_0.1.bb
-new file mode 100644
-index 0000000..8848df6
---- /dev/null
-+++ b/recipes-core/move-homedir-var/move-homedir-var_0.1.bb
-@@ -0,0 +1,23 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2025
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+
-+inherit dpkg-raw
-+
-+DEBIAN_CONFLICTS = "home-fs"
-+SRC_URI = "file://${BPN}.tmpfiles.tmpl"
-+DPKG_ARCH = "all"
-+
-+IMMUTABLE_DATA_DIR ??= "/usr/share/immutable-data"
-+TEMPLATE_VARS = "IMMUTABLE_DATA_DIR"
-+TEMPLATE_FILES += "${BPN}.tmpfiles.tmpl"
-+
-+do_prepare_build:append() {
-+    cp ${WORKDIR}/${BPN}.tmpfiles ${S}/debian/
-+}
+diff --git a/classes/read-only-rootfs.bbclass b/classes/read-only-rootfs.bbclass
+index 0db398f..0c8ae24 100644
+--- a/classes/read-only-rootfs.bbclass
++++ b/classes/read-only-rootfs.bbclass
+@@ -15,6 +15,7 @@ INITRD_IMAGE = "${INITRAMFS_RECIPE}-${DISTRO}-${MACHINE}.initrd.img"
+ do_image_wic[depends] += "${INITRAMFS_RECIPE}:do_build"
+ 
+ IMAGE_INSTALL += "home-fs"
++WIC_HOME_PARTITION = "part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid c07d5e8f-3448-46dc-9c0f-58904f369524"
+ 
+ IMAGE_INSTALL:append:buster   = " tmp-fs"
+ IMAGE_INSTALL:append:bullseye = " tmp-fs"
+diff --git a/wic/bbb-efibootguard.wks.in b/wic/bbb-efibootguard.wks.in
+index 6c30a8a..c623623 100644
+--- a/wic/bbb-efibootguard.wks.in
++++ b/wic/bbb-efibootguard.wks.in
+@@ -14,8 +14,8 @@ include ebg-sysparts.inc
+ part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
+ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
+ 
+-# home and var are extra partitions
+-part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid c07d5e8f-3448-46dc-9c0f-58904f369524
++# var and optional home are extra partitions
++${WIC_HOME_PARTITION}
+ part /var --fstype=ext4 --label var --align 1024  --size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 9947ed57-102f-4038-880c-9cf5cacaf153
+ 
+ bootloader --ptable gpt --append="rootwait console=ttyO0,115200 omap_wdt.early_enable=1 omap_wdt.nowayout=1 watchdog.handle_boot_enabled=0"
+diff --git a/wic/hihope-rzg2m-efibootguard.wks.in b/wic/hihope-rzg2m-efibootguard.wks.in
+index 311fbd0..9df0de5 100644
+--- a/wic/hihope-rzg2m-efibootguard.wks.in
++++ b/wic/hihope-rzg2m-efibootguard.wks.in
+@@ -6,9 +6,8 @@ include ebg-sysparts.inc
+ part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
+ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
+ 
+-# home and var are extra partitions
+-
+-part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --extra-space=100M --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid 43a29d19-005f-49d9-9108-51ad0861d724
++# var and optional home are extra partitions
++${WIC_HOME_PARTITION}
+ part /var --fstype=ext4 --label var --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 7e20a7d5-5578-4ced-a7f1-5ee494dbaf72
+ 
+ bootloader --ptable gpt --append="console=tty0 console=ttySC0,115200 rootwait earlyprintk"
+diff --git a/wic/qemu-arm64-efibootguard-secureboot.wks.in b/wic/qemu-arm64-efibootguard-secureboot.wks.in
+index 955a6b6..7ff7068 100644
+--- a/wic/qemu-arm64-efibootguard-secureboot.wks.in
++++ b/wic/qemu-arm64-efibootguard-secureboot.wks.in
+@@ -3,8 +3,8 @@ include ebg-signed-sysparts.inc
+ part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
+ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
+ 
+-# home and var are extra partitions
+-part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024 --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid e869413d-dc84-4822-b50d-00c5aab7d6fc
++# var and optional home are extra partitions
++${WIC_HOME_PARTITION}
+ part /var  --fstype=ext4 --label var  --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 815406da-387f-4e89-a0fb-6e617605c8c3
+ 
+ bootloader --ptable gpt --append="panic=5"
+diff --git a/wic/qemu-arm64-efibootguard.wks.in b/wic/qemu-arm64-efibootguard.wks.in
+index ce6253e..38db84b 100644
+--- a/wic/qemu-arm64-efibootguard.wks.in
++++ b/wic/qemu-arm64-efibootguard.wks.in
+@@ -6,8 +6,8 @@ include ebg-sysparts.inc
+ part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
+ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
+ 
+-# home and var are extra partitions
+-part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid 7346faa7-d6d4-49fa-a03e-82ee469cb1e5
++# var and optional home are extra partitions
++${WIC_HOME_PARTITION}
+ part /var --fstype=ext4 --label var --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 423f0a2e-b9b3-4615-85be-2a4261fa32d9
+ 
+ bootloader --ptable gpt
+diff --git a/wic/qemu-riscv64-efibootguard.wks.in b/wic/qemu-riscv64-efibootguard.wks.in
+index 1166ea1..6423bf4 100644
+--- a/wic/qemu-riscv64-efibootguard.wks.in
++++ b/wic/qemu-riscv64-efibootguard.wks.in
+@@ -6,8 +6,8 @@ include ebg-sysparts.inc
+ part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
+ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
+ 
+-# home and var are extra partitions
+-part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid e578254c-bd99-4442-bc51-4935cd0ef522
++# var and optional home are extra partitions
++${WIC_HOME_PARTITION}
+ part /var --fstype=ext4 --label var --align 1024  --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 0209689d-672f-4254-8b92-566d6d9fd1ae
+ 
+ bootloader --ptable gpt
+diff --git a/wic/x86-uefi-efibootguard-secureboot.wks.in b/wic/x86-uefi-efibootguard-secureboot.wks.in
+index 71b0103..d7b5cbd 100644
+--- a/wic/x86-uefi-efibootguard-secureboot.wks.in
++++ b/wic/x86-uefi-efibootguard-secureboot.wks.in
+@@ -3,8 +3,8 @@ include ebg-signed-sysparts.inc
+ part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
+ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
+ 
+-# home and var are extra partitions
+-part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024 --size 1G --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid 94593121-6f5f-4b04-98db-39aace692682
++# var and optional home are extra partitions
++${WIC_HOME_PARTITION}
+ part /var  --fstype=ext4 --label var  --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 686a2e06-7f96-495b-beac-1731cb98eb0e
+ 
+ bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait earlyprintk watchdog.handle_boot_enabled=0 iTCO_wdt.nowayout=1 panic=5"
+diff --git a/wic/x86-uefi-efibootguard.wks.in b/wic/x86-uefi-efibootguard.wks.in
+index 962eaac..380e828 100644
+--- a/wic/x86-uefi-efibootguard.wks.in
++++ b/wic/x86-uefi-efibootguard.wks.in
+@@ -6,9 +6,9 @@ include ebg-sysparts.inc
+ part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.${RO_ROOTFS_TYPE}" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
+ part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
+ 
+-# home and var are extra partitions
+ 
+-part /home --source rootfs --change-directory=home --fstype=ext4 --label home --align 1024  --size 1G --extra-space=100M --fsuuid 1f55d66a-40d8-11ee-be56-0242ac120002 --uuid f12faa7c-a9ef-4b3f-b63d-1c74bd5c2b1c
++# var and optional home are extra partitions
++${WIC_HOME_PARTITION}
+ part /var --fstype=ext4 --label var --align 1024 --fixed-size 2G --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid be5ae5e0-91d3-46ec-a7f7-c1ebfc0a7c28
+ 
+ bootloader --ptable gpt --append="console=tty0 console=ttyS0,115200 rootwait earlyprintk watchdog.handle_boot_enabled=0 iTCO_wdt.nowayout=1 "
 -- 
 2.47.0
 
