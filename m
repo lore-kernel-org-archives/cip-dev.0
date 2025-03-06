@@ -1,480 +1,229 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5AFC282D1
-	for <webhook@archiver.kernel.org>; Thu,  6 Mar 2025 11:44:42 +0000 (UTC)
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (EUR05-VI1-obe.outbound.protection.outlook.com [40.107.21.49])
- by mx.groups.io with SMTP id smtpd.web10.11043.1741261475406647738
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 753B1C282D1
+	for <webhook@archiver.kernel.org>; Thu,  6 Mar 2025 11:48:12 +0000 (UTC)
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (EUR05-DB8-obe.outbound.protection.outlook.com [40.107.20.50])
+ by mx.groups.io with SMTP id smtpd.web11.11080.1741261683665936228
  for <cip-dev@lists.cip-project.org>;
- Thu, 06 Mar 2025 03:44:36 -0800
+ Thu, 06 Mar 2025 03:48:03 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=lE4+en+Z;
- spf=pass (domain: siemens.com, ip: 40.107.21.49, mailfrom: quirin.gylstorff@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=y1Up11y3;
+ spf=pass (domain: siemens.com, ip: 40.107.20.50, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kOnxfCj4ifkgLgnBukOnJlbEaa6jpR3fBcJqCBlU0CKTEV/bEX+LAy5hvqJoYaRR+zkSQG2Hc+bniCTnYFm6TupPNhB3tsTWD5Z3Hn/lcc9zt0NK+r+8kOXOfguof5M6Qc50k5A4NP0aG8N9fxz3h8C29ZSJK+/lK4cSWwdkVtzH11Df87ipPxfVDJlzW1diWHMwIbJOz6I8E4Rtrwxv54T8BruTllca7LpsA6zwxrM3LZpW8FWhCNotmWVO5462mwmcCRUlH5Fh/uPu8ASM34pizmQ/as8Jc5jVXTMBhciVGCbhOH/INomleC/dpHL7bY/y4McCyLHBmghzkt2Iiw==
+ b=bPvkwwTOEMsM9xJNTXOZOQEKhT6S4Qog02Kzu3QTbk3BmRsuS0KiZXDIDJ34ZPwAmfhi33Y3BC1Cs/SUKz85KaOAaNtAlQcEp7xBAywKb7U+kH75Ck7feziyhJHY43i5AXaASL9H5nJfMHNNd4GzZLhVh8ZXFhxDJQkLfgVWn9gXZFTi2O210N5IaPhCjGs0kL4zSB7wIZvx/TzBX3nZ3HkYZSWKAlk2XMDLxyFeve5C4Jxs2JRRsAZVBDrJRdGBnnHAbkichmsUelCdK7T4FygvPYCT/NQSFrXcF/BKDDVxdZp67z7V2IZGPzdAfPjvTQEBAZmmZLH8g0f0/t8HZA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pgE5x9HPpntwMc2s7gRa/zc5njzp1z9yYj09+8UkXUg=;
- b=AINzTdtQOR18Pvd0dcdYfzLNJVAWuyF+v3diiQP/MSOqgAW6MXE3NANG/sBF0RyFcj536wrqYKmQsgHBwJak4RmrRf5asuApCD4jJlXvJr+7dRIZCQTiLTwM5rw1jAzv60eMaCMXcAMgQ0LfZE7m8CEbdaJ5/KbHP771CTiHb1kI0B4yT+N/h9XKoxW95EYPbkwmyqlnw38IPTmzPUOGk6I3cAq7SpssSOpf3kzZJHWc8Yt6FsLkLSP27T5o5gs5glbJluXURU8dMzRoHu7HI6SN3Ipz8s0SERchI3xGKGnOKuVM4KWeLIECq7HT4zE+H0n+sML2pTr38Ad0TJ4uDw==
+ bh=dHyVUBJcTkbYugrSFuibav0KKtzkqcGZWjN00hsGk7g=;
+ b=qrtZxWIWJk4Zw5AYP3o9B375+5yYal6e1AkZ3gavfwpCHWmkQlnkL7AdKQK7S2Yb4Ud/FYU+E4EGE6LZMnOWbzfycQYlv6RpBwQ5iDDFnFgmkrEbqT1mbppYslsu1x2dTGzpNQp5DNV1CMtkytxYygucKV9UG/swXMwIZuXHnnWShBXw4SFDAYipY0aGEO72FvqiMI1i8vsSNOQgXwRbn0/ZMC6q0QnLshfPCqpUZwjsJTKUW5GOiYGylf5ZZjtB0jYiCkkfU3oP0DfZ1DZPIrY1hG+wqMta7aIRBs8rD0UZ3ZsK0QBcgepd0IHtmN3WEMd3Xwk9YaTA0ZVmICkyXw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pgE5x9HPpntwMc2s7gRa/zc5njzp1z9yYj09+8UkXUg=;
- b=lE4+en+Zo+I5FkSJoSBmA17z1ZFswhYiQIBrWR6BcI2TEhkWMzN86E0VRFWFw//AHVgz/GkzdY9v/p84VjZln+QX7Hjvl6fXb2jqWvBppzgd3gIstOTDviHkBpI6VLbmP5iKm9uC1jLCCr4SABKlU6aiQbyi+zdXR/VR2sdbQuZJghFqViN3bTD6im1GOOyyP5RN6jQV7krYSj2VoG3bjeWM5uqnERJp9+u/jhPMhaBJWAAA/mdpA8ypI0X5NUT+62zaVeJ58BNUk2V19cRhxOL74DDq2KBYTZIiSOISiLxGOhaQ7O+RMFIVSd5VSG3SXY7ENGy2iFhT5qxwOoyoog==
+ bh=dHyVUBJcTkbYugrSFuibav0KKtzkqcGZWjN00hsGk7g=;
+ b=y1Up11y3RntartPVX6gake6Hfg0Ox+rADFXS9oyxPAWfuXltm6E1AEIr3i+Qoxre/KHgBLNjFtOOlBFbzHYsLSbu61Hz7TDofHoXM1J5I1LLwemfqOr2R3XnQksyf9zAr1rdHPV5R59QaBtm3roGI3WqsIeHdbmOhrKdB/GUWNyKuzFBio4zNFU/6IV92TRZEfj7WSVY5htyO+gAv9hidb0yBNsKmI+7d06eFLggo2qTpmf8VUMxw250hwVthICVIpbcHFOYYpmomQgI5HTUW9JmlIkZZYT0Q+KXUUq+ZVLuoGDJEMNbvYeeQ+wp90yIPoEPtgApHXJ6uRIs4z0Hfw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1f9::22)
- by AS8PR10MB7158.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:61e::19) with
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by AS1PR10MB5165.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:4ad::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Thu, 6 Mar
- 2025 11:44:32 +0000
-Received: from AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::3087:c116:dfed:1ca2]) by AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::3087:c116:dfed:1ca2%5]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
- 11:44:32 +0000
-Message-ID: <3f756d50-aa21-484e-aa52-f91531451dc0@siemens.com>
-Date: Thu, 6 Mar 2025 12:44:30 +0100
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Thu, 6 Mar
+ 2025 11:48:01 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408%4]) with mapi id 15.20.8511.015; Thu, 6 Mar 2025
+ 11:48:01 +0000
+Message-ID: <87b88c83-3fce-4038-b8b6-cfe83056fb9a@siemens.com>
+Date: Thu, 6 Mar 2025 12:47:57 +0100
 User-Agent: Mozilla Thunderbird
 Subject: Re: [isar-cip-core][PATCH] ebg-secure-boot-signer: convert to signer
  provider that hooks sign-secure-image
-To: Gokhan Cetin <gokhan.cetin@siemens.com>, cip-dev@lists.cip-project.org
-Cc: jan.kiszka@siemens.com
+To: Quirin Gylstorff <quirin.gylstorff@siemens.com>,
+ Gokhan Cetin <gokhan.cetin@siemens.com>, cip-dev@lists.cip-project.org
 References: <20250306093516.3232063-1-gokhan.cetin@siemens.com>
+ <3f756d50-aa21-484e-aa52-f91531451dc0@siemens.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
 Content-Language: en-US
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-In-Reply-To: <20250306093516.3232063-1-gokhan.cetin@siemens.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ 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
+In-Reply-To: <3f756d50-aa21-484e-aa52-f91531451dc0@siemens.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0425.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:d1::12) To AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:1f9::22)
+X-ClientProxiedBy: CH2PR16CA0018.namprd16.prod.outlook.com
+ (2603:10b6:610:50::28) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM9PR10MB4085:EE_|AS8PR10MB7158:EE_
-X-MS-Office365-Filtering-Correlation-Id: fefdf1bf-eb7f-4a29-e0ab-08dd5ca442b5
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS1PR10MB5165:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1d67956b-61ac-41c8-4f38-08dd5ca4bf38
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?eUVDR2xsN2FLdS84L3N5NVZQeGd3R2NkS21hOHkvNUNXZXdpaWRPYUR5NzhX?=
- =?utf-8?B?dDE2NjdWdXdKZ3E1eXVuT1FBbkJhVWdwLzVxSXZVUXBnRjg1Sy9KUExMUWdS?=
- =?utf-8?B?MzVMZnBrQTVNSVkwMzFLanV4a3pkK2NyZEtsWE02elAvSHRmcngzNFFYTHFu?=
- =?utf-8?B?ME43ZFlXZ0ROMzJuMUlxcEplVWdHb2N1akhwUnVGQ1hOSklXTWwzN2NtNXg4?=
- =?utf-8?B?SHl0TVN6WkdneE81WEcxVERsUVczbmhFL0ZoelU0Z2N5WFJDdU1QOUJzZk1y?=
- =?utf-8?B?bzBFVVFXK0VQa1Q4QmVlUEZpb3FQQnpKZFRwNUFGbFdyVngrNUVXM3BCTzJO?=
- =?utf-8?B?U2sxdWNIRWZISjVxa2hCVjNSRFBRdWFqb1hrMWovY2VzdDF4SHlFR3BKVHBl?=
- =?utf-8?B?dHdYcEFDTnpiOWZURldtOVNKVUZzeTRQZUE0UzhOVWR6OEtNUlhDdVErb3VF?=
- =?utf-8?B?VHZhS2EzYjBMemR0TjA0Wm5GODg4ckJ5QS9kQ1ozbzBvT2xodWpYT2UvTGV1?=
- =?utf-8?B?RTRxN0swa2lmMjNlY0xPaEhzWkVnb0ZUVmpIbnp5dG4xczlzY1YzZzgzM0Fw?=
- =?utf-8?B?MERJamV1cXBFZ1F3cFFsenErT1NSNmh4aGM4SHFOdUtzU1IwdEFlWUhhTkpp?=
- =?utf-8?B?Z3k1blMraVJvcTdLdG1YcnoyeGh6LzhNVHpGam1GdW5IUjFuZVlEYXBodFJt?=
- =?utf-8?B?VjhaQ0Uzc1N2WUxuSjAxY3RjK3BBL3p4ajFpQytrV3p1VFF1WGN4by9tWkU3?=
- =?utf-8?B?OVNROW02dHU3aitJKytFL2g0WUozR3k1Qkxsa2VGME5ydEpRK0ljRjhCMFgw?=
- =?utf-8?B?aW0weDRzVTUvR2pvL29QbjQxYzRBRkJKWjlvVGw3MExJN1RKOGR1WlJwNmdn?=
- =?utf-8?B?WjdPbGNJb1NiaUxMWDIxblE5clBGTDNyczJ5eUZ2VGw3cXVwaHhHM0dMdm5w?=
- =?utf-8?B?ckRqdGJOeFlBR3JiRmdtSVdvMzh5Tmd0UjdxeHM3ejM3bVUyVnFld2xZVXV4?=
- =?utf-8?B?dWpTVlY3N1d2UVV4TnNCVjVsbHN1QVZzV2JJYUFpZlpVWGpjRS9mNnU3Tnd1?=
- =?utf-8?B?OWVUYW1iR29STmlndDMzbjdkWldDaXZGcjZjQTFFUzdCc0ZSRDRaTjVDUmNP?=
- =?utf-8?B?SEhQb3dpTExLRFVQa1BvTlhYTFNHdVNTTjYxV00xU2VCOVU0Qklsd3FJcDV3?=
- =?utf-8?B?TnY1VEhvVTY3MkJpU2g1VWNEZmF5SmVpcUtHd0lDejB3VFBQcVQvRkJWSGEz?=
- =?utf-8?B?aXVlcnU1VFBWYkJ3cGNKWVd2cHpQcWhEQVhGTzE1dDRsc1N0bm5SbFExQ08w?=
- =?utf-8?B?TWMzdWR0akYwb2xMeDFjNXlvS2diMVVOTUtnL21GTFhHNkR0amtIUWNjSXk1?=
- =?utf-8?B?eVRmTjFsYWFGdDNnbUhaNkdleVpOSU55UXd2cWtnbjVrNG9Dd1lDck95WXor?=
- =?utf-8?B?eW5OMjBhaXhnQjZCazNXcWFtSnVxTmpNeXI2cW9ISGlrQ1lTVmNuQjRYUjI2?=
- =?utf-8?B?YUJ5VERYM0QrS2Zwcys4OWVJNXovaEFvaWxBNkZ3dlRLYm10NWUxc2JWWm5P?=
- =?utf-8?B?SEx5SEVlTFBaRDFNNExjNFdDVU1MSklyZ3puK2JIblpaKzhwSmtZaUFqVnlO?=
- =?utf-8?B?TmRHWXJNNUZyYnhOMW1aSUlIWStGeTVOc1kwUm1nOFNPc1JvS29aTnJxd3ls?=
- =?utf-8?B?TlRPL3FPSFVKaTA0UTVnRHR5bWdyKzVrOUJuWFRYZWxqUDN5OHc1Z2JhWEMx?=
- =?utf-8?B?andqV3ZGa3VDU0RCcUFtcVVLSHQ0bDlLSHZ1VUdETGw3dEUwNGVZS21mQjRC?=
- =?utf-8?B?amtGcy8yQ1RVc3NLTGJLZmNWVCtWQTZidDgvdkthR1ZRMWpkSldMTHBYNHBw?=
- =?utf-8?Q?+Hy4HA4RqXzOc?=
+	=?utf-8?B?emZsbjNKZUtqcS80TXpJYlZjeVVtMTJzeVRrQkducmlOaTRSUzVud2I4Q1Yr?=
+ =?utf-8?B?cmZzSVEyZHlBN0JYa0pDM0lLa1lUZStKWDYxT3dzMk5wVjV6cUNrdzJ1NnRy?=
+ =?utf-8?B?cGRvS3gzV1EvNkJHN0NaZTFuQTh0ZlFWU2x6aUxnQm5zVnk2WUdsL3ljai9N?=
+ =?utf-8?B?U21acHFOMWl2S3BnUXlueVNYQ0NvNC9LaUc4YWo4Uzk4SjdraTcyV3ZkalVz?=
+ =?utf-8?B?OWV6c1dRQTNvR3cyb2NLVFhDSFpCZW5BbWNPMlQ3RE8zSktSWjVmR0FJbm8r?=
+ =?utf-8?B?aVdtbzdSbWdxTG9ZS3UrTndQenBjM2Vpcjl1U1VQSmFHcmZNWGt6OWpBY2dm?=
+ =?utf-8?B?bjdOWHYxUis2Wis4WFVVOWJSd0txcDJYK3UxRldEVUwrS0hxTy82OE5sanFK?=
+ =?utf-8?B?RGxQeG5DbUJ6d2VWdm14bHZmUnRkNzFmRU9NRGxmRjM4V29IR2puY3NGNlpG?=
+ =?utf-8?B?bGU3bTM3dHBoRExxRHFjSDhseEVsWTNpb1FsaWFLc2NjWnBjZ3dIWmxKQTBp?=
+ =?utf-8?B?Z280bjkzbjNveWhtTDdOazYvSUxFa1dzMHJVUG9MbjczUkJBblVsclRBcUlJ?=
+ =?utf-8?B?Q1Zab1ROS1VSUFc2THBPc2ZDVE1vVDg1dFVSdUFCWE5FdjZLY3d1cHZxcThW?=
+ =?utf-8?B?UnA5STIvVU9jUVBmbkZvTWZkcE0xakF0QTIvNTVwYjdYYzJGR0FCbk81UEhy?=
+ =?utf-8?B?U0tFM0E1d2h5KzZJQTZQelo2Wk1CSjcxeDRPaGtROXFjZ2lOUUtDRGdRakdv?=
+ =?utf-8?B?cHhXWHZva3A4RFIvRTN1MTlTbExBVGpONU02YjE1NUlDeTFXbkNSN3JJQzdz?=
+ =?utf-8?B?Z1NxUlcxN2NtZFlxZ3ZlNk1BaUxYVm1lN1BleUFMY2lpNGZjdS84dElSNzZC?=
+ =?utf-8?B?a0hteDNrT3ZQUzhIaWFtVmNra1hTMzE0WC92WFhnd1JiUnlMaEl2SG00Uk1B?=
+ =?utf-8?B?R2JxdytQSmlQVmg2QjJ0RVFtSXU2UDBKRjdaQjFaTGJpNE5kZGMxWEhOTGdN?=
+ =?utf-8?B?eElUTjdBTWRXaXAwQ09RYzhaNmJBazR3ZG01bE1HTlhwdXdUcXJGUExXZy9v?=
+ =?utf-8?B?SlVYRUhuUndOZ0NhaThaZ201RU1JbGpiNkhsKzdFMHhMWXBGNTlUYkNDMFVy?=
+ =?utf-8?B?cjVWbFNWdGd4czQzdlpCb2ZOZE5neHZVMmZnNXRjenhhYjE2d3g1Q2g2SVNw?=
+ =?utf-8?B?Q3MyU3FuY1NxLzdvQnYvaUlhTHpmbnBkMEJFN0t4SnBkaWVxUWpLZi81dlRT?=
+ =?utf-8?B?a0VGQkFlTW11U2lYL1lKMUcxKzAya2tvM1FjTjlYKzl3aFJXMnVjaXRFSTRt?=
+ =?utf-8?B?UkUwd0tXMjIzNTVhWHZTbG8zS3M1cFpzUVFJd2ltNGphQVRhOUJaNkQ1WWVZ?=
+ =?utf-8?B?czg3ZmdQeFcreThRdmIwZzlZc3VWVGgxS0ZUbUxxSVRJRnhIVVFIR1hkaENw?=
+ =?utf-8?B?Q1lBYWZqbEZraFpnQjgwWXg5emhYZWprVjIwTmYvWk1SWnV6YWo4c2l4NDlJ?=
+ =?utf-8?B?K3U0NTRiVFRSOThOSzAxRnU4QkdCMGhGRVp3WWsrOHlHVkd6UlJyYlV4VjMw?=
+ =?utf-8?B?bm1lY3BFMDFDR09pMkNhYkpUaWQzSWg4ZEVFVG1qL2tvWDZpMEZkTkZ1L3M3?=
+ =?utf-8?B?bkVuelVUbEk5NUNOMjJ5R28rTnFNcU11cjhjUkIrNmp2V0YrOE42allZVm00?=
+ =?utf-8?B?UUx1YVF0WkcwTUdSM2szcmJmYzEvV3lta0FGNnp3TDFzcmtXMUNaMUFzL2Y5?=
+ =?utf-8?B?ZFJXYXIwdWNqUm12QWJjZnpqYmpBUWdSM1NIU3RIMDJGQW41TG9oeWFpMldG?=
+ =?utf-8?B?V0Q2SEErb1loQmRsNkdEemxNWnlRUU1CVkxlUFY3M0orZzc5MFBQUWgzcWc0?=
+ =?utf-8?Q?CYTJ/ugQC61LJ?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?aUI5dmZRREU3bTFhSXdicFFsM29Zc1BtT3ZURHYrSmRGMzQzMG9ieGF2RHRM?=
- =?utf-8?B?VTY0NFNOaEZadlNTR1VleE5IVnM2SFU2SzJxUlZRTWl6QTY2N0c5QUw4OTNa?=
- =?utf-8?B?MW44YXg5WlphckJ5Q3hLNHhRSWhIQ2J2UklvYU5QalFaYkRGSGFIelpTRHRG?=
- =?utf-8?B?UHhKZVB4dlJhY2RpczI1YlMwVzJPVmc1OVlDKzZwS1YyUStvTENyay9IaUZX?=
- =?utf-8?B?TmN2S0JZV2ZFV1dqaUk5OHU4Tzg4WFJDUmJvSTdwOUJPZ0hCYXFLUGNycTl2?=
- =?utf-8?B?TjRoWm1Sc2lKL2hWU1VTYnA4REk5clFaRkhjaXdLOXRScCt1UXV1bHB3Uytr?=
- =?utf-8?B?eGZ1eHNPTVhUMnZ1bitPUHppclZpSzhRdHBLMTg2KzJWTmZ2ekRVd3M0Mitp?=
- =?utf-8?B?Ryt5clBEb0VrQU5EZTdFVXZPcm1aYnNyMm1yUDV6MHZqM0t3VDIxT29BbS92?=
- =?utf-8?B?dGVmTURPNUtqYmhtWXNwMGxxUmtiaXlqeWpjbjBZNDl5K0FrVWtVaVBmVmMz?=
- =?utf-8?B?aEFKMHJHbHp6a1lMY0pUMzA2aElxc2VGcDVHTXJ1ZlB5bG1XVkl0Q0Z6ZktW?=
- =?utf-8?B?M3NyMkc1djhxTENNUElSTmFNTHE4Z2NOMEZTbHhLZVBkRmhaYURRcThvTEF3?=
- =?utf-8?B?SGlrVWQ2eGdrVXJmSTJEMnJ5OUxYM0hVWFptUmhMNS9aOVVDZUhOOERKLy9U?=
- =?utf-8?B?Z1N2aWoxakFrTURvcG03KzFocWJta3phUW91Vis3Y3ZpeWUzV3hMaUJkMTlh?=
- =?utf-8?B?NXpzcjlDa1ArUVpDNXNVUWVZVEtlY0RNSmN2d3ExOTBzRDlkd1BVcXhCUkVx?=
- =?utf-8?B?Q1BtVEI4Sm1kb0JLS21lb0pBNE1UcVBtTytmY1l2YXRnQ1pyVWVMMVhieGRU?=
- =?utf-8?B?T0x0S0tIL0U5SVdlZDZRUGdPMHdUME84bzBvcUlrQmlIdlE1WmorakduL3FR?=
- =?utf-8?B?YmhLcXIvMnIxbDZaK3k5VFZhTFY0MXYrTXhGOVY2RXJJOTA5bGN2L2p5cURX?=
- =?utf-8?B?WmJ2QmFsZ2lJNHVTbk00R3YzZDg5a29PNEVVMHRBYUNKOGIvMmhRdTUxUnBE?=
- =?utf-8?B?WHVBRnpwWnU1OEpGRHJQWjZvbFRsZWsxV0ZacFFGOUp3azVDVGtvYitVT2ti?=
- =?utf-8?B?bnNkNnNsSS9nL2JIVkZ4akhVTEE1d0J6a0J0ay9DM0JSQXoxOUVxME5JajNu?=
- =?utf-8?B?L0JQRFRHenQ0Q2ZnUllGYm05QzJEZFUweTdvTUtET0JPSXFMeXhHRGNQT3dy?=
- =?utf-8?B?L0RkV0FVR1kyMmwwRCtVMkY3dnRJeXZZMnE1WGNJOU1OTGV6TGI3aEJ6OHF5?=
- =?utf-8?B?ODZucFcrR25IdisrSTlUMWpTWXZlRnFBTFlodUxGajlWTzBUM3hYYjJpUUd6?=
- =?utf-8?B?T0J1dWlqcTJzanhmMG5PbStvcUVWc0UxeDI2VHN6OGFISVNkcGFaR2FFcEdo?=
- =?utf-8?B?VFVRWkxsOTIyNW1pOG8rYlJpV2JFT2Nsak1rbmJyUERuVFM1TnV1NE1UeTM4?=
- =?utf-8?B?c1NpV0l4MDJXZElOQnpGQThOVHV6S3A3YkxneldRSXBvN3ZRUm1HZDZCOUtG?=
- =?utf-8?B?NUg5SDA4cTJ1Z3o5OEVsalJ4UE1XQzdxR3gyUmdwWVQxTWdkSWRoZzZXQkMx?=
- =?utf-8?B?V1gxYjIyd0t1WiszRUZ1bVlxQm9sUFhQNytWRHNuMCtTMTB6SzJwZFZRNUtB?=
- =?utf-8?B?VWVoYzN1VDVIWCtNSXQxV0FFOHhidC9BZDMvR0xCSmpYSDFPbzFiSWtKMFV0?=
- =?utf-8?B?NStkNVROL1k5cDNydDNvUDRKanhWREhMSUdoS0ErY083K1lpMzRWNUlJYzZE?=
- =?utf-8?B?UXRkZEtaYk8vSzlib2Yzc25PRnRGMnpXVHg1UExQY2JQcndEc0taNFhaZ0N3?=
- =?utf-8?B?akRqZE45NGFacHE5cWttdUdBTmwzV1RBejhNc2FKZEo1MVhXNTRoV1p6R0Ja?=
- =?utf-8?B?QWFUVno4allNMFI2MDNvYmlnbnNEbnljT3lMUXNadXRvTlVGUFk3THdOSUhk?=
- =?utf-8?B?YVc2M00xRzVCK3hFSjJ0Q0s0WXVhWUV6QmJSUDZyQzdaQzN3U0hLdDQwK001?=
- =?utf-8?B?ak1kcjNNV2IxZjJUaWdiR0tybUV3M2dGZFFNQ2tFbHlKT2Vodnh3cVJsWXho?=
- =?utf-8?B?MzJEMWdzVDJ1bllCZHpZNXNzTWtJV1hSRHprU2gzZktkelZnY2hFazNGNk9N?=
- =?utf-8?B?b3c9PQ==?=
+	=?utf-8?B?eWhQb3JLeFRwM3RLY3ZkOGh3WU5Ya1o5VmVDVFpGbWh0enRJUFN3c2JUSHla?=
+ =?utf-8?B?QytEZ3dobGNkRnUwbXl4N0wzaWhIelkwSncrRi91cGxwM093WWUzb2FzNWp0?=
+ =?utf-8?B?K1NRV2piN0hxMWhnNXE1WjBuTHNibVZoSlpRRHc4OWI1V1dJb2NwZFBJcGQv?=
+ =?utf-8?B?emhOVVpxQ1p4a3QvR3QwQjVjTUtUUk9aanpJUXozQ0pFdlAyQjlpRzBVK0tV?=
+ =?utf-8?B?OU9PWlh0MmIzYnNGS0FpQ1lyRU9ZSXJlYTh1aGVCcGViNnR5aFlvWWtRNUpw?=
+ =?utf-8?B?Zmt4ZzJtQ2pkR1dEWUk0ZEtmbko0ZWpjSVFTdnFXdExYejZDZWlFdjVIRWZv?=
+ =?utf-8?B?bXl4eW1ycDh6WVJzd3B5bGhuVXQ3WDBKMEc3R1I5TkJCME1aOHZoYmxhK3JT?=
+ =?utf-8?B?aXd3UGU1UXA3d3J2RHRiR0JNeGFhYTlXT3R1ZzFHV3NvMEkvcUZJQ0NaRWVX?=
+ =?utf-8?B?eXdpamx1VU92d1FpSmtIMU55Nm1TYXpiWXUvR3RjOHdjb2x5bU1uUWlBM1l2?=
+ =?utf-8?B?RlhsRFVSaWNlb0FndWYvMHVLbHZiaDBLMnozRUZTTmRTb1ljVVRiS3M5eGho?=
+ =?utf-8?B?eEJTLzVPUndBVHFKTUxDeUN4bFJFTWI5L1QyV3BrUUduU3ZNc0xtQUZObFhS?=
+ =?utf-8?B?ZU1kVjhENW1vSG40eG4vLzMwK3Y0Nnd2citFSk5qNTV0Q0FDVFdBZHZJMHJi?=
+ =?utf-8?B?SjFzb3M2ZGlhenIra1BNYlRTeU5jdTR3TVZ6SzVCQ1B2Ym0rN244QVE5RVU2?=
+ =?utf-8?B?ZUVFUlkzUzY2WkxLaVpkWUY0dGZCZHdpWDRRRmV1NWhJNTVkdXFYZUxEN1Zx?=
+ =?utf-8?B?cXQxN054b2VaM1N4aHNCMUJlRStZTWJJcmF6UWthSHFiTStoRngzd043MXFy?=
+ =?utf-8?B?SkNac1RWNGZPa08vLzloY1Y2RjZwM1NYVmd0REZNMGtCU25JVGhxbDhtdXRM?=
+ =?utf-8?B?VkNJSkRNTXlzUUV6TkVGbTRCRnNsOTh4MkM5b3plWnd1bjRNSytzbGZ5VGZH?=
+ =?utf-8?B?eTBEMGFlMXNERGRqV2pCMlppRlhZcHpFMXIybXk3c2JDbkxuVmU5RmR3cDV0?=
+ =?utf-8?B?NlNrdnFZaThLZ0Z1OEl2SW92TERyOUNBVHFJdVRrT2FhMXRNbTdKbm1hL2E3?=
+ =?utf-8?B?WDh3QXhTa2ZoYmJXZWVOTHg2K09SNW9sblAxRmdiajd3eXV5THp1UmR4dVhz?=
+ =?utf-8?B?MGVlbnRPbDd0M2Rid283RkxiUHQyTGk0MmM2Y2xKb0F2bzN0akc1QmNnYXdv?=
+ =?utf-8?B?WVFxNWsxb0V2ZWYzTHI0VmM3anRURmRCL0lPaU4vYUdJL2M4Y2dxVitVUVox?=
+ =?utf-8?B?bDdpOFZ6V0hZdzF4WEgrUXV3M0JMVWN6WUwrSnZRdGJrbEJFSk1Ma1R4SlEz?=
+ =?utf-8?B?WFhkWnJndHk2NDlLL3ZrVVh5bCs0RnJnQ0lNaEV6UWlVTmxYM0hLdHExM2Jy?=
+ =?utf-8?B?QVlYR2w4QmtCclllMFVHTzJVZXZXSnJNcGZWdzc3SGoramkvRFVxaHV5MENN?=
+ =?utf-8?B?UXEzRTRtK09JTUIwYTRybStjZmhQZDNhWFRrL3l5QWtRdGUrMks1RU5kYy9n?=
+ =?utf-8?B?ZDR5V1d4OXMxZDdSUnlmS0xBbmZKMHlmTEFsQnhQL3Nzc1I5ZkNSakhqNkFZ?=
+ =?utf-8?B?b3ZaT3AvbWxTZXF0STduNnliL21WN2VoOTBYNmNaSHVveHVIS1VlN0ZyV1B4?=
+ =?utf-8?B?RktyZjl6dGt1TVlNaFV4a3oyT1ZNU3hnMWluY3M1V0N6VHZJNm0xajk3cXho?=
+ =?utf-8?B?dGJuL2tsTEI0VTJ2OERsYWV0RGMwRkhNZm4zcDMvSTdlVjVCNWJDZ2dueUEz?=
+ =?utf-8?B?eTVQMWt4YUhvL2lIdzBiYlZDWWNnWnZxMldEL2dMMDl1bnVkNGdURnp6UTRw?=
+ =?utf-8?B?anRWUXk1UFJOTGJlOGNGZlpyZWZ6cUgvNUw5d0hWTXQxRTZrS2FUem5wbGFu?=
+ =?utf-8?B?ZXVYOC85c0lrQXBSZkVqc0lUVFpLL2pTL1MvRW5mR2pWaUxEZDNDYU9Zcktn?=
+ =?utf-8?B?cGdVTFdzdWpUSFd5OGYrRHVrN3JZa09wZUZYbm9LTW51K2MyUFFoQlNZbnJs?=
+ =?utf-8?B?UEdMRWxhWFBac3U1dGxoMHduMjdPYzFXcVIvUWJqUkhqUjJycU82ckxtTnkr?=
+ =?utf-8?B?QXUvaUE3eThLK3ViSld4RnBnWDY2UFh1blE3ZXVZaDl3djljcmY3ZFFOOWM5?=
+ =?utf-8?B?YlE9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fefdf1bf-eb7f-4a29-e0ab-08dd5ca442b5
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR10MB4085.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1d67956b-61ac-41c8-4f38-08dd5ca4bf38
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 11:44:32.1368
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 11:48:01.1076
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xkIRxJwB9822bFnjwzysJj82WLaXVUjzXJrXXP5p6lreg6HhtK0GWf8oDJxeKyxo6+3nYPCzWPsggw7GLQ00Vv7rdu853ueGXn+w8RSDM5U=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB7158
+X-MS-Exchange-CrossTenant-UserPrincipalName: Czkjh7S5haBKxNONG8ACufW6ZkyycnuQRVgsLRA6XfTZhOOJQ5SQkdrN4WN+keAmUzTIzNIePLBAqZNWK881Gw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR10MB5165
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 06 Mar 2025 11:44:42 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18055
+ <cip-dev@lists.cip-project.org>; Thu, 06 Mar 2025 11:48:12 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18056
 
-
-
-On 3/6/25 10:35, Gokhan Cetin wrote:
-> These changes split the signing process into two stages.
-> In the first stage, the `sign-secure-image` script called by the efibootguard wic
-> plugin now uses a hook to create a detached signature.
+On 06.03.25 12:44, Quirin Gylstorff wrote:
 > 
-> This allows downstream layers to provide their own signer scripts in a similar manner
-> for the second stage, without having to overwrite signer script or partition's source parameter.
 > 
-
-This patch does two steps at once:
-- switch to pesign
-- split the signing process
-
-Please separate this steps into two patchsets. Also you need justify the 
-switch to pesign.
-
-Quirin
-> Signed-off-by: Gokhan Cetin <gokhan.cetin@siemens.com>
-> ---
->   doc/README.secureboot.md                      | 37 +++++++++----
->   kas/opt/ebg-secure-boot-snakeoil.yml          |  4 +-
->   ...r_0.2.bb => ebg-secure-boot-signer_0.3.bb} | 16 +++---
->   .../ebg-secure-boot-signer/files/sign-ebg.sh  | 34 ++++++++++++
->   .../files/sign_secure_image.sh                | 38 -------------
->   .../files/sign_secure_image.sh                | 55 +++++++++++++++++++
->   .../sign-secure-image_0.1.bb                  | 27 +++++++++
->   7 files changed, 154 insertions(+), 57 deletions(-)
->   rename recipes-devtools/ebg-secure-boot-signer/{ebg-secure-boot-signer_0.2.bb => ebg-secure-boot-signer_0.3.bb} (51%)
->   create mode 100644 recipes-devtools/ebg-secure-boot-signer/files/sign-ebg.sh
->   delete mode 100644 recipes-devtools/ebg-secure-boot-signer/files/sign_secure_image.sh
->   create mode 100644 recipes-devtools/sign-secure-image/files/sign_secure_image.sh
->   create mode 100644 recipes-devtools/sign-secure-image/sign-secure-image_0.1.bb
+> On 3/6/25 10:35, Gokhan Cetin wrote:
+>> These changes split the signing process into two stages.
+>> In the first stage, the `sign-secure-image` script called by the
+>> efibootguard wic
+>> plugin now uses a hook to create a detached signature.
+>>
+>> This allows downstream layers to provide their own signer scripts in a
+>> similar manner
+>> for the second stage, without having to overwrite signer script or
+>> partition's source parameter.
+>>
 > 
-> diff --git a/doc/README.secureboot.md b/doc/README.secureboot.md
-> index 8ab67a8..a7dcb6c 100644
-> --- a/doc/README.secureboot.md
-> +++ b/doc/README.secureboot.md
-> @@ -166,8 +166,8 @@ local_conf_header:
->       INITRAMFS_INSTALL:remove = "initramfs-abrootfs-hook"
->   
->     secure-boot: |
-> -    IMAGER_BUILD_DEPS += "ebg-secure-boot-signer"
-> -    IMAGER_INSTALL:wic += "ebg-secure-boot-signer"
-> +    IMAGER_BUILD_DEPS += "sign-secure-image"
-> +    IMAGER_INSTALL:wic += "sign-secure-image"
->   
->       # Use user-generated keys
->       PREFERRED_PROVIDER_secure-boot-secrets = "secure-boot-key"
-> @@ -347,13 +347,30 @@ host$ sudo umount /mnt
->   ```
->   Launch KeyTool.efi binary from the built in EFI shell and follow step-4 from the section [Add Keys to OVMF](#add-keys-to-ovmf) to inject Secure Boot keys. Otherwise, consult the manual of the specific UEFI Firmware.
->   
-> -Use the recipes [secure-boot-key](###secure-boot-key) to provided the keys
-> -to the signing script contained in
-> -[ebg-secure-boot-signer](###ebg-secure-boot-signer).
-> +### Signing efibootguard and Unified Kernel Image
->   
-> -### [ebg-secure-boot-signer](./recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.2.bb)
-> +Use the recipes
-> +[secure-boot-secrets](###./recipes-devtools/sign-secure-image/secure-boot-secrets)
-> +to provide the secure boot keys to the signing script
-> +[sign-secure-image](./recipes-devtools/sign-secure-image/sign-secure-image_0.1.bb).
-> +`sign-secure-image` exports the attributes from the efi to be signed and requests signature from provided
-> +`ebg-secure-boot-signer` package. Then it imports the signature into the efi and verifies the signed efi with
-> +public key installed by `secure-boot-secrets`.
->   
-> -During building a efibootguard based wic image the scripts contained in
-> -the recipe ebg-secure-boot-signer can be used to sign the bootloader and
-> -unified kernel image(UKI). If the keys are stored in a HSM the script can
-> -be exchanged to sign the artifacts in a more secure way.
-> +This layer provides a signer package
-> +[ebg-secure-boot-signer](./recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.3.bb)
-> +to be used in cases where both public and private keys are accessible at the project directory level.
-> +
-> +If there is a scenario where the private key cannot be accessed, such as HSM based signing or
-> +server side signing, `secure-boot-secrets` and `ebg-secure-boot-signer` can be provided from
-> +downstream layers for project specific requirements.
-> +
-> +```
-> +PREFERRED_PROVIDER_secure-boot-secrets = "<own secure boot secrets>"
-> +PREFERRED_PROVIDER_ebg-secure-boot-signer = "<own secure boot signer>"
-> +```
-> +
-> +The package `ebg-secure-boot-signer` must install its signing executable on `/usr/bin/sign-ebg`.
-> +This package may depend `secure-boot-signer` if it needs access to secure boot keys as done in this layer
-> +for signing or verification purposes. In such cases, secure boot keys should always be searched
-> +in designated locations as `secure-boot.pem` and `secure-boot.key` located in `/usr/share/secure-boot-secrets`.
-> diff --git a/kas/opt/ebg-secure-boot-snakeoil.yml b/kas/opt/ebg-secure-boot-snakeoil.yml
-> index 7d8ce65..f1eb782 100644
-> --- a/kas/opt/ebg-secure-boot-snakeoil.yml
-> +++ b/kas/opt/ebg-secure-boot-snakeoil.yml
-> @@ -25,8 +25,8 @@ local_conf_header:
->       INITRAMFS_INSTALL:remove = "initramfs-abrootfs-hook"
->   
->     secure-boot: |
-> -    IMAGER_BUILD_DEPS += "ebg-secure-boot-signer"
-> -    IMAGER_INSTALL:wic += "ebg-secure-boot-signer"
-> +    IMAGER_BUILD_DEPS += "sign-secure-image"
-> +    IMAGER_INSTALL:wic += "sign-secure-image"
->       # Use snakeoil keys
->       PREFERRED_PROVIDER_secure-boot-secrets = "secure-boot-snakeoil"
->   
-> diff --git a/recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.2.bb b/recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.3.bb
-> similarity index 51%
-> rename from recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.2.bb
-> rename to recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.3.bb
-> index 83289d4..3c002e6 100644
-> --- a/recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.2.bb
-> +++ b/recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.3.bb
-> @@ -1,7 +1,7 @@
->   #
->   # CIP Core, generic profile
->   #
-> -# Copyright (c) Siemens AG, 2020-2022
-> +# Copyright (c) Siemens AG, 2020-2025
->   #
->   # Authors:
->   #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> @@ -11,17 +11,19 @@
->   #
->   
->   inherit dpkg-raw
-> +DPKG_ARCH = "all"
-> +
-> +PROVIDES = "ebg-secure-boot-signer"
-> +DEBIAN_PROVIDES = "ebg-secure-boot-signer"
->   
->   DESCRIPTION = "Signing script for EFI Boot Guard setups"
->   
->   DEPENDS = "secure-boot-secrets"
-> -DEBIAN_DEPENDS = "sbsigntool, secure-boot-secrets, faketime"
-> -DPKG_ARCH = "all"
-> +DEBIAN_DEPENDS = "secure-boot-secrets, openssl"
->   
-> -SRC_URI = "file://sign_secure_image.sh"
-> +SRC_URI = "file://sign-ebg.sh"
->   
-> +do_install[cleandirs] = "${D}/usr/bin/"
->   do_install() {
-> -    TARGET=${D}/usr/bin
-> -    install -d ${TARGET}
-> -    install -m 755 ${WORKDIR}/sign_secure_image.sh ${TARGET}/sign_secure_image.sh
-> +    install -m 0755 ${WORKDIR}/sign-ebg.sh ${D}/usr/bin/sign-ebg
->   }
-> diff --git a/recipes-devtools/ebg-secure-boot-signer/files/sign-ebg.sh b/recipes-devtools/ebg-secure-boot-signer/files/sign-ebg.sh
-> new file mode 100644
-> index 0000000..9139165
-> --- /dev/null
-> +++ b/recipes-devtools/ebg-secure-boot-signer/files/sign-ebg.sh
-> @@ -0,0 +1,34 @@
-> +#!/bin/sh
-> +#
-> +# CIP Core, generic profile
-> +#
-> +# Copyright (c) Siemens AG, 2020-2025
-> +#
-> +# Authors:
-> +#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> +#  Jan Kiszka <jan.kiszka@siemens.com>
-> +#
-> +# SPDX-License-Identifier: MIT
-> +#
-> +
-> +set -e
-> +
-> +signee=$1
-> +signature=$2
-> +
-> +usage(){
-> +    echo "sign image attributes with secure boot keys"
-> +    echo "$0 signee signature"
-> +    echo "signee: path to the image attributes to be signed"
-> +    echo "signature: path to store the signature"
-> +}
-> +
-> +if [ -z "$signee" ] || [ -z "$signature" ]; then
-> +    usage
-> +    exit 1
-> +fi
-> +
-> +keydir=/usr/share/secure-boot-secrets
-> +
-> +openssl dgst -binary -sha256 "${signee}" > "${signee}.digest"
-> +openssl pkeyutl -sign -in "${signee}.digest" -inkey "${keydir}/secure-boot.key" -pkeyopt digest:sha256 -keyform PEM -out "${signature}"
-> diff --git a/recipes-devtools/ebg-secure-boot-signer/files/sign_secure_image.sh b/recipes-devtools/ebg-secure-boot-signer/files/sign_secure_image.sh
-> deleted file mode 100644
-> index 213cf8a..0000000
-> --- a/recipes-devtools/ebg-secure-boot-signer/files/sign_secure_image.sh
-> +++ /dev/null
-> @@ -1,38 +0,0 @@
-> -#!/bin/sh
-> -#
-> -# CIP Core, generic profile
-> -#
-> -# Copyright (c) Siemens AG, 2020-2022
-> -#
-> -# Authors:
-> -#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> -#  Jan Kiszka <jan.kiszka@siemens.com>
-> -#
-> -# SPDX-License-Identifier: MIT
-> -#
-> -
-> -set -e
-> -
-> -signee=$1
-> -signed=$2
-> -
-> -usage(){
-> -    echo "sign with image keys"
-> -    echo "$0 signee signed"
-> -    echo "signee: path to the image to be signed"
-> -    echo "signed: path to store the signed image"
-> -}
-> -
-> -if [ -z "$signee" ] || [ -z "$signed" ]; then
-> -    usage
-> -    exit 1
-> -fi
-> -
-> -keydir=/usr/share/secure-boot-secrets
-> -
-> -faketime_cmd=""
-> -if [ -n "$SOURCE_DATE_EPOCH" ]; then
-> -    faketime_cmd="faketime -f \"$(TZ=UTC date -d @$SOURCE_DATE_EPOCH +'%Y-%m-%d %H:%M:%S')\""
-> -fi
-> -
-> -eval $faketime_cmd sbsign --key ${keydir}/secure-boot.key --cert ${keydir}/secure-boot.pem --output $signed $signee
-> diff --git a/recipes-devtools/sign-secure-image/files/sign_secure_image.sh b/recipes-devtools/sign-secure-image/files/sign_secure_image.sh
-> new file mode 100644
-> index 0000000..8456867
-> --- /dev/null
-> +++ b/recipes-devtools/sign-secure-image/files/sign_secure_image.sh
-> @@ -0,0 +1,55 @@
-> +#!/bin/sh
-> +#
-> +# CIP Core, generic profile
-> +#
-> +# Copyright (c) Siemens AG, 2025
-> +#
-> +# Authors:
-> +#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> +#  Jan Kiszka <jan.kiszka@siemens.com>
-> +#  Gokhan Cetin <gokhan.cetin@siemens.com>
-> +#
-> +# SPDX-License-Identifier: MIT
-> +#
-> +
-> +set -e
-> +
-> +signee=$1
-> +signed=$2
-> +
-> +usage(){
-> +    echo "sign image with secure boot signer"
-> +    echo "$0 signee signed"
-> +    echo "signee: path to the image to be signed"
-> +    echo "signed: path to store the signed image"
-> +}
-> +
-> +if [ -z "$signee" ] || [ -z "$signed" ]; then
-> +    usage
-> +    exit 1
-> +fi
-> +
-> +keydir=/usr/share/secure-boot-secrets
-> +
-> +tmpdir=$(mktemp -d)
-> +
-> +mkdir "${tmpdir}/certdb"
-> +certutil -d "${tmpdir}/certdb" cert.db -A -n cert -t ,,u -i "${keydir}/secure-boot.pem"
-> +
-> +pesign -i "$signee" -E "${tmpdir}/elf.sattrs"
-> +
-> +if [ ! -x /usr/bin/sign-ebg ]; then
-> +    echo "Could not find the executable '/usr/bin/sign-ebg'" 1>&2
-> +    exit 1
-> +fi
-> +
-> +if ! /usr/bin/sign-ebg "${tmpdir}/elf.sattrs" "${tmpdir}/elf.sattrs.sig" ; then
-> +    echo "Could not create signature file for '${signee}'" 1>&2
-> +    exit 1
-> +fi
-> +
-> +pesign -c cert -n "${tmpdir}/certdb" -R "${tmpdir}/elf.sattrs.sig" -I "${tmpdir}/elf.sattrs" -i "$signee" -o "$signed"
-> +
-> +rm -rf "${tmpdir}"
-> +
-> +sbverify "$signed" --cert "${keydir}/secure-boot.pem"
-> diff --git a/recipes-devtools/sign-secure-image/sign-secure-image_0.1.bb b/recipes-devtools/sign-secure-image/sign-secure-image_0.1.bb
-> new file mode 100644
-> index 0000000..cdc2d16
-> --- /dev/null
-> +++ b/recipes-devtools/sign-secure-image/sign-secure-image_0.1.bb
-> @@ -0,0 +1,27 @@
-> +#
-> +# CIP Core, generic profile
-> +#
-> +# Copyright (c) Siemens AG, 2025
-> +#
-> +# Authors:
-> +#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-> +#  Jan Kiszka <jan.kiszka@siemens.com>
-> +#  Gokhan Cetin <gokhan.cetin@siemens.com>
-> +#
-> +# SPDX-License-Identifier: MIT
-> +#
-> +
-> +inherit dpkg-raw
-> +DPKG_ARCH = "all"
-> +
-> +DESCRIPTION = "Signing script wrapper for EFI Boot Guard"
-> +
-> +DEPENDS = "secure-boot-secrets ebg-secure-boot-signer"
-> +DEBIAN_DEPENDS = "secure-boot-secrets, ebg-secure-boot-signer, pesign, sbsigntool"
-> +
-> +SRC_URI = "file://sign_secure_image.sh"
-> +
-> +do_install[cleandirs] = "${D}/usr/bin/"
-> +do_install() {
-> +    install -m 755 ${WORKDIR}/sign_secure_image.sh ${D}/usr/bin/sign_secure_image.sh
-> +}
+> This patch does two steps at once:
+> - switch to pesign
+> - split the signing process
+> 
+> Please separate this steps into two patchsets. Also you need justify the
+> switch to pesign.
 
+We went for sbsign for very strong reasons like its broad usage in
+distros and the support for OpenSSL which enables e.g. HSM-backed signing.
+
+Jan
+
+-- 
+Siemens AG, Foundational Technologies
+Linux Expert Center
 
