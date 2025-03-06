@@ -2,205 +2,358 @@ Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB9FC19F32
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38BEFC28B23
 	for <webhook@archiver.kernel.org>; Fri,  7 Mar 2025 03:48:46 +0000 (UTC)
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.65.62])
- by mx.groups.io with SMTP id smtpd.web10.13616.1741268817241104060
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
+ by mx.groups.io with SMTP id smtpd.web11.8954.1741253783701973781
  for <cip-dev@lists.cip-project.org>;
- Thu, 06 Mar 2025 05:46:57 -0800
+ Thu, 06 Mar 2025 01:36:25 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=x5i3OURy;
- spf=pass (domain: siemens.com, ip: 52.101.65.62, mailfrom: gokhan.cetin@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=m4El6Es/HItYOu87WiDdOgpOJXr6xR4ph7IaSefuLLtD7Gol06LIb3nFi+86VoqyuBJ3qJC11avZwQqvJgvQep5+aEui91w38AzU85M667XZVJvSWz31AVCrXVhhUqT5P7CR0zwvi0dzgfbNYzfRvQlQ/tPdxNo3I+l3bxfUa4ev/NMysqpGFJx/K5VS85A4kz3JrQq7cUMyQMLzfNQArcHvzQQp9T0Z8mf/ErYkBf4wF9B7GSbIfXJ/me9vx+40hkS98I9SaoGQvvbpZE0wx7Kg2EcSVpBhlNoXZU68POCJd6gwNdmN32EsMbGJILNKoyOD0i4gPX3C5gSdQAXaFg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lTHNqFiPhpMi4CJ7SEAwid/7wsuPAG+J68JK1Jpq8hc=;
- b=jFM76to84YTiGH3PIeV8eD7+V5/G9gKHEwI0WdB6hwe99pS6LqK3OonJU076CypJHKx+j6DI5Q3eD33MMjKauP8Xao1FXUatNbAERxwvKb9rxVMui4s8yPIiJMYdUGa9pwuVGUUmFObJLVYen86/SE6TlhCh3RBFQk29mcJwM4VF6ND4RNBgiF2XRRiWJAq+AiLc66rTUuO5beRDrmqd4LmJiR7zeHkBx6sEWQ/DUwwQo221X4XvEFgyq6YCjPNPMz2jGUiheUxW3ZIpMHAxzLys/nRkr5D3eWzJ3O3DRsR8BYlUBj8UGoOo5+Zrm12ZLyA38bWAQcZKvAk8hShwiw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lTHNqFiPhpMi4CJ7SEAwid/7wsuPAG+J68JK1Jpq8hc=;
- b=x5i3OURywsLndwPccQe8KRU1TP0dJlZ7C2zVhqtYv+amqKEsY87E2fZtPc5bDrV+MPPjxz+2Ppe53aTeck6HVPO4YKqlkOizsa7rDVBA1mYmMOHgKVVH40byo7NDOd35byx7NXVuUl13q0vnwzAHKxsBIOBS5x67hxXI4B+Cktlqx1TuDR23xgaW2Eu1w47WcVeKEs6Ou3fPZOZNtPDrtWScK6eLQSJgtnkAWDan6XMhZ9vExR1YWNYJWxOJFsmpKFiHBatlqyzGUbOrzLaXg1e2FtPBZsWUyc2VHkfl6RrU7eKNinLDcYENpVHB1E/reN9CEMqbTQ9B2fr7rUCq2Q==
-Received: from PRAPR10MB5422.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:27a::6)
- by DU4PR10MB8513.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:561::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.18; Thu, 6 Mar
- 2025 13:46:54 +0000
-Received: from PRAPR10MB5422.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::1432:b18b:182c:9158]) by PRAPR10MB5422.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::1432:b18b:182c:9158%7]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
- 13:46:54 +0000
-From: "Cetin, Gokhan" <gokhan.cetin@siemens.com>
-To: "Kiszka, Jan" <jan.kiszka@siemens.com>, "cip-dev@lists.cip-project.org"
-	<cip-dev@lists.cip-project.org>
-CC: "quirin.gylstorff@siemens.com" <quirin.gylstorff@siemens.com>
-Subject: Re: [isar-cip-core][PATCH] ebg-secure-boot-signer: convert to signer provider that hooks sign-secure-image
-Thread-Topic: [isar-cip-core][PATCH] ebg-secure-boot-signer: convert to signer
- provider that hooks sign-secure-image
-Thread-Index: AQHbjns5YmpFem/SVkKzaVXtmh0o6LNl/UcAgAAA94CAABsI8A==
-Date: Thu, 6 Mar 2025 13:46:54 +0000
-Message-ID: 
- <PRAPR10MB54225595622204A578B7E92880CA2@PRAPR10MB5422.EURPRD10.PROD.OUTLOOK.COM>
-References: <20250306093516.3232063-1-gokhan.cetin@siemens.com>
- <3f756d50-aa21-484e-aa52-f91531451dc0@siemens.com>
- <87b88c83-3fce-4038-b8b6-cfe83056fb9a@siemens.com>
-In-Reply-To: <87b88c83-3fce-4038-b8b6-cfe83056fb9a@siemens.com>
-Accept-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
- MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ActionId=63d00a2a-ec41-453c-9427-e516070484c5;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=true;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=restricted;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2025-03-06T13:24:42Z;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PRAPR10MB5422:EE_|DU4PR10MB8513:EE_
-x-ms-office365-filtering-correlation-id: 15842fa3-72a5-42ee-d268-08dd5cb55b3b
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|366016|1800799024|376014|7053199007|38070700018;
-x-microsoft-antispam-message-info: 
- =?iso-8859-1?Q?xOi8bQsixnwb32Vu3h5AM4afDa6MyzuzIO/XEPcg1iGCdo7QWmjZ34WfaT?=
- =?iso-8859-1?Q?qjf4sqCBAEU6iCz5YCMlGO/VNtK3/4eCnxDLyLwxb3EovFWVxiF4TmJj4M?=
- =?iso-8859-1?Q?sQ8TtN2i1dP97h5KQeTjRsetgyyOCmIJuhrxv4p+735u6qZbcnFj0zKiQ8?=
- =?iso-8859-1?Q?kjWmjAK5eq29vJ4n9lqhb4Dit7CvBqj4u7df+/oNXCXdDR0CLgeg2ezS9x?=
- =?iso-8859-1?Q?r0gujTpTApxYjf2byz7jFBrZ2Z3swSdX2zYNKvocyISUH23C7F6YherQef?=
- =?iso-8859-1?Q?JBBeHESRncQLZq6M2VENolNXlHSh+53dy/GSyW/QdnsSb4DyXh6Hs2nG60?=
- =?iso-8859-1?Q?a92KCx7oDceN9c0U+l94RGteXjfz9Y9QZNEkaRcMSp2TVXsl7Nlwutfjpj?=
- =?iso-8859-1?Q?1uN3prN5o28ymGEDwZw1WK1VZRVVR/dwll43+xrzROOLKgH8HF+8xMyM0z?=
- =?iso-8859-1?Q?OUzY5GF+kiC139gCCl1Lf62NIzQy7J+rCDg/PMj679JOMAridS+HT7Lovm?=
- =?iso-8859-1?Q?izXLEzRMxgxwQI8ZdokVm8wlNN+xRn6yTz6GAtcQ3cq9JeMF1bBr4Wu3PR?=
- =?iso-8859-1?Q?Uds4vC2bZv/w1wlWew8pQamkFeJzub3mAsE+dv7ZRH0iX3mzqK5ywvKb65?=
- =?iso-8859-1?Q?1sCx4QukCJS1NCE0+VEfVIVLuz7FArWLes3LnhwifLONp1luUrCSCNemOt?=
- =?iso-8859-1?Q?Ck1a0h8HsDDMJmC96HRq6CT6BxoAsIMPeFWogH9haHKTP/Eadw4j8VDMJm?=
- =?iso-8859-1?Q?+xDUiptWf/M1Y1OA9ZrlO6mXlbd00pOiHbAkfGcwIiXjU4sBDG5npYU4hh?=
- =?iso-8859-1?Q?1n07aAGtBIux1ds0FGFj0++Em2i4aicRiIvDR4ocztSIFj+epyFsElTQc5?=
- =?iso-8859-1?Q?OFYEMzh5YEiHzwRfzhlNZiB2HSKfZWchQ3Kas3XxVo6i6zY8rpqWs/NdLY?=
- =?iso-8859-1?Q?IcpDYHBLrW/5kGRtfJjJDwHIT2ZYotIDZpfUHWGzhckYW+pVwSMH09zZyV?=
- =?iso-8859-1?Q?vmdFzcIHj2atdOmR642z09NV7ys4drDPwYqbZPHBEa3kpnarnwiZYoVFZO?=
- =?iso-8859-1?Q?oyeNLqovN/em5bNNv5eBjDrCvQjnYy1uNBrpTndwBWTZOgN+nx4qF/Ooxz?=
- =?iso-8859-1?Q?ACPT+pDuxAcLgzqOY1cwCHy0LkJ0Udlt5oHSQpTZfZfqNqwSPlFwWRwLaf?=
- =?iso-8859-1?Q?gGyHX8t4rrfVBexuHMfsxznS3/gElnLvQVqrzwtlONjN6GnJKFeZhFJqv/?=
- =?iso-8859-1?Q?qkFfsMUnbTjooE16M18CwO0ebVutZ/7tRwqJYpBUD46uliDdafDH2d7Pwb?=
- =?iso-8859-1?Q?C+UeOfUGeiT2njf5XaafLd/0dqFSCnA7cyK2P46nYUMV+53CBZVMvbAJp4?=
- =?iso-8859-1?Q?yFvXqxGbDQOS66nJWyNh+6bmtqxj4Ky1WNWbd5mg1m2Vm1vhwmYvm41kIa?=
- =?iso-8859-1?Q?usid91eF4qDwEIyrvUjKO61YlAYa/dyHNac/2RCw8SNwz3dRH/MTWjcJ78?=
- =?iso-8859-1?Q?58xqeqgFTdjQJhI1lzSzLI?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PRAPR10MB5422.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-8859-1?Q?5XvDu7yELqgypxqNwwAlhKaTR6aeZp2OtWHHsG8JCbtO+MUX49uqfVN7x2?=
- =?iso-8859-1?Q?HAnI1MYeWgwk1A/XLwEfGmu0OLnsywURFz0jPbZPNiJltQm6asfjMZ8lsy?=
- =?iso-8859-1?Q?UrT8t5hO1wo7LRMf0y4PTVYpyk65lB7fSZaXnAtBHq8HSwbyWYI1GeRM4p?=
- =?iso-8859-1?Q?X9fZqledjr1/vbcUDYl3OmfKjf9tKsbfp8kd3uJMK5oYh9k8y6/PObSodF?=
- =?iso-8859-1?Q?kycF7H5wvYUPZrKU0nZEf26qHWt4I093RWerZ9jMLEJ08BoaTtRHgX1yr1?=
- =?iso-8859-1?Q?PfeYu8l1ElDFkMWSbR3MWtkWGACNRCDX9Gv701upBFShGKzaLeXaQY6jBI?=
- =?iso-8859-1?Q?la3EYMbcdoZVcRigvOmcQN4JFtL4kDiLY/2Dv5/o3FdlNNXNwjBVMCrwGS?=
- =?iso-8859-1?Q?VI/txg0O6p1UwOL24FLtUW1OTT62UzLAk+JoUW3YSMHkx5kowjK0+RpCUu?=
- =?iso-8859-1?Q?V1GwRDBE2p/NemkeyR+txVFYdxl8ss6sCTZYSRxKBtAw1KsHSPdJ+4DLh6?=
- =?iso-8859-1?Q?Ag5608gTNe//JzTqhOA4Lp9HXBpBOdyfBM7S31G3Eeo/kW51j6QQlGwsTD?=
- =?iso-8859-1?Q?Y2H42U77f8XOlUkqHVEfZKEhb9mcFUZX+/HwaYwNhojuuRMn3FDArkj1P8?=
- =?iso-8859-1?Q?884IuhRYuYkj3McYITAN5PgEgdxuLV+f84a1qBLzwq2qW2XaiQOwe1sSLO?=
- =?iso-8859-1?Q?Jj4VOXREebsJlWxhXEDO67qwu07nDVpFkzdPzJ8+CuJI8IYatSQWu7WVoE?=
- =?iso-8859-1?Q?xWZ+35uJLMl4D/PESMtMoCfk1iVub4WHuthk+2mXLHyGuc900uCzaIM/wx?=
- =?iso-8859-1?Q?IahKe4lmCa+E/FTZ421CSmNBJMveFfiRQTsCaPhIHLpr6GEEKS1NDq984T?=
- =?iso-8859-1?Q?J8UrtgW8375XUseMoXcewbyGITHnVHC5Rd1QTcYqovsXIZuaCsvCbDbSEm?=
- =?iso-8859-1?Q?bJ0MwmYc6VHG4gwonY7AosEw23ohHyH1dgICkqrKKy0ISk9JpjIm6ITBqI?=
- =?iso-8859-1?Q?K/uTSJcbdZTNDDKPWiMqNJrCQdohYxKiyGCeDLPqvEYcO+w0YeyHXmzLN6?=
- =?iso-8859-1?Q?k1fNNtiaYC4lgKZJSkMAvxiksQu46hts/TCDSUFvCVVYMmeyqUttFAtuwk?=
- =?iso-8859-1?Q?pbLYPeifBDfRqMPkZtR5t1dEEdR4x0kHQc3ub2/N1QD6Y6Gkl3BIOR3Hwi?=
- =?iso-8859-1?Q?6pIagD3CHWiB8LNdo0s8BfIP9Hjr5gJlfVtPDIvu7RI+qklTn3PR/whCOc?=
- =?iso-8859-1?Q?HWedAc22mQcgXg1C1Ry0NrmkidoVtVYyCblk6OJL4//GJthK5C9hJrA4gh?=
- =?iso-8859-1?Q?VqYnsBdBPQ5gblaKqhFOzM+aCzD+D83opgk5xPvLc8ERDnEbPFRICiOnQU?=
- =?iso-8859-1?Q?GforR2iauKJ1vmnWb7o8DznuIEVoD91e8XSF2vmi9qGpHHs6oJlDuQJb2W?=
- =?iso-8859-1?Q?yCD5orROmXAN0eeBcHb3z2xt61IAby/RfYjRgY91+XXiTIymNAYBabBP4P?=
- =?iso-8859-1?Q?/6LsxWemR7MiqiX83Y3PG8OcF7wKedMLnrYuDAYl2rmWt1FypeKgJ0w7WY?=
- =?iso-8859-1?Q?ROTth8Al1KBvx96FYiQB/VOQZxwh3nfoql2n+x9cSdx4fuB2zpOj3tOkqR?=
- =?iso-8859-1?Q?PtFeucSKk02sNWi8dLN22VEUwAzl4+cj+K?=
+ dkim=pass header.i=gokhan.cetin@siemens.com header.s=fm1 header.b=fxzTqnWE;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-1328731-20250306093620d6a3ee3f74b2b91243-dsl3fx@rts-flowmailer.siemens.com)
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20250306093620d6a3ee3f74b2b91243
+        for <cip-dev@lists.cip-project.org>;
+        Thu, 06 Mar 2025 10:36:20 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=gokhan.cetin@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=Tdke5kwAHjpabYkg0pMpAct7WtEb8NntNq+7Ik5xkTM=;
+ b=fxzTqnWEJ2zlTyajIL2fEX3x61vqbhQite26woyv7M0s3WJe6gYjjJMR7GJW1GVAQu8zmk
+ 8x0/jV7HqB9lkElh2pckvec763iRYNmPrhcjw/WN+layIdp91coeryP12rJysigWoILq+75R
+ dYBRNQDCVg9egoTZRu3DvaRCt5W+3gSwpN3RLy557LQTjGfibkoNNj9ww+yb1PwOFwtgw0Z5
+ 51Hu1+19EvaXZQxeyU7kxRsxoBM2jtCpQnbHxqeypbVfT1l+yoH5XuVdrwHB/bu0cFsb5OFi
+ L0ik4vCfGcx+SAWbXjNeDszoNZGnUuKNz4av9VVyGf/VHHIlpxCs4sRQ==;
+From: Gokhan Cetin <gokhan.cetin@siemens.com>
+To: cip-dev@lists.cip-project.org
+Cc: gokhan.cetin@siemens.com,
+	quirin.gylstorff@siemens.com,
+	jan.kiszka@siemens.com
+Subject: [isar-cip-core][PATCH] ebg-secure-boot-signer: convert to signer provider that hooks sign-secure-image
+Date: Thu,  6 Mar 2025 10:35:16 +0100
+Message-Id: <20250306093516.3232063-1-gokhan.cetin@siemens.com>
 MIME-Version: 1.0
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PRAPR10MB5422.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 15842fa3-72a5-42ee-d268-08dd5cb55b3b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Mar 2025 13:46:54.5711
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: HljLA3RtFGhZqcqLtjG0svYciwmzPMagpAUNtFT8oURg/MOzm+Kk2UTECK+91tNTCA7d91xgC1coLuDVGfCJdUfEj15a0aXl3PecUA+4Tg8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR10MB8513
-Content-Language: en-US
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1328731:519-21489:flowmailer
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 07 Mar 2025 03:48:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18064
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18063
 
-Hi Jan,
+These changes split the signing process into two stages.
+In the first stage, the `sign-secure-image` script called by the efibootguard wic
+plugin now uses a hook to create a detached signature.
 
-I haven't had a chance to try it directly, but past complaints about using =
-OpenSSL provider/engine together with sbsign's OpenSSL3 support have held u=
-s back from maintaining/implementing an custom OpenSSL provider for server =
-side signing.
+This allows downstream layers to provide their own signer scripts in a similar manner
+for the second stage, without having to overwrite signer script or partition's source parameter.
 
-In this scenario, pesign is used only for import/export of attributes/signa=
-ture and this feature makes integration with other tools much easier.
+Signed-off-by: Gokhan Cetin <gokhan.cetin@siemens.com>
+---
+ doc/README.secureboot.md                      | 37 +++++++++----
+ kas/opt/ebg-secure-boot-snakeoil.yml          |  4 +-
+ ...r_0.2.bb => ebg-secure-boot-signer_0.3.bb} | 16 +++---
+ .../ebg-secure-boot-signer/files/sign-ebg.sh  | 34 ++++++++++++
+ .../files/sign_secure_image.sh                | 38 -------------
+ .../files/sign_secure_image.sh                | 55 +++++++++++++++++++
+ .../sign-secure-image_0.1.bb                  | 27 +++++++++
+ 7 files changed, 154 insertions(+), 57 deletions(-)
+ rename recipes-devtools/ebg-secure-boot-signer/{ebg-secure-boot-signer_0.2.bb => ebg-secure-boot-signer_0.3.bb} (51%)
+ create mode 100644 recipes-devtools/ebg-secure-boot-signer/files/sign-ebg.sh
+ delete mode 100644 recipes-devtools/ebg-secure-boot-signer/files/sign_secure_image.sh
+ create mode 100644 recipes-devtools/sign-secure-image/files/sign_secure_image.sh
+ create mode 100644 recipes-devtools/sign-secure-image/sign-secure-image_0.1.bb
 
-Since I observed similar signing patterns and toolsets being repeated in di=
-fferent projects, I thought we could upstream it. It is still possible hook=
- different signer recipes/scripts in downstream layers by configuring it on=
- partition's source parameters or installing a different signer recipe so t=
-his is not blocker for us and could stay in downstream.
+diff --git a/doc/README.secureboot.md b/doc/README.secureboot.md
+index 8ab67a8..a7dcb6c 100644
+--- a/doc/README.secureboot.md
++++ b/doc/README.secureboot.md
+@@ -166,8 +166,8 @@ local_conf_header:
+     INITRAMFS_INSTALL:remove = "initramfs-abrootfs-hook"
+ 
+   secure-boot: |
+-    IMAGER_BUILD_DEPS += "ebg-secure-boot-signer"
+-    IMAGER_INSTALL:wic += "ebg-secure-boot-signer"
++    IMAGER_BUILD_DEPS += "sign-secure-image"
++    IMAGER_INSTALL:wic += "sign-secure-image"
+ 
+     # Use user-generated keys
+     PREFERRED_PROVIDER_secure-boot-secrets = "secure-boot-key"
+@@ -347,13 +347,30 @@ host$ sudo umount /mnt
+ ```
+ Launch KeyTool.efi binary from the built in EFI shell and follow step-4 from the section [Add Keys to OVMF](#add-keys-to-ovmf) to inject Secure Boot keys. Otherwise, consult the manual of the specific UEFI Firmware.
+ 
+-Use the recipes [secure-boot-key](###secure-boot-key) to provided the keys
+-to the signing script contained in
+-[ebg-secure-boot-signer](###ebg-secure-boot-signer).
++### Signing efibootguard and Unified Kernel Image
+ 
+-### [ebg-secure-boot-signer](./recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.2.bb)
++Use the recipes
++[secure-boot-secrets](###./recipes-devtools/sign-secure-image/secure-boot-secrets)
++to provide the secure boot keys to the signing script
++[sign-secure-image](./recipes-devtools/sign-secure-image/sign-secure-image_0.1.bb).
++`sign-secure-image` exports the attributes from the efi to be signed and requests signature from provided
++`ebg-secure-boot-signer` package. Then it imports the signature into the efi and verifies the signed efi with
++public key installed by `secure-boot-secrets`.
+ 
+-During building a efibootguard based wic image the scripts contained in
+-the recipe ebg-secure-boot-signer can be used to sign the bootloader and
+-unified kernel image(UKI). If the keys are stored in a HSM the script can
+-be exchanged to sign the artifacts in a more secure way.
++This layer provides a signer package
++[ebg-secure-boot-signer](./recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.3.bb)
++to be used in cases where both public and private keys are accessible at the project directory level.
++
++If there is a scenario where the private key cannot be accessed, such as HSM based signing or
++server side signing, `secure-boot-secrets` and `ebg-secure-boot-signer` can be provided from
++downstream layers for project specific requirements.
++
++```
++PREFERRED_PROVIDER_secure-boot-secrets = "<own secure boot secrets>"
++PREFERRED_PROVIDER_ebg-secure-boot-signer = "<own secure boot signer>"
++```
++
++The package `ebg-secure-boot-signer` must install its signing executable on `/usr/bin/sign-ebg`.
++This package may depend `secure-boot-signer` if it needs access to secure boot keys as done in this layer
++for signing or verification purposes. In such cases, secure boot keys should always be searched
++in designated locations as `secure-boot.pem` and `secure-boot.key` located in `/usr/share/secure-boot-secrets`.
+diff --git a/kas/opt/ebg-secure-boot-snakeoil.yml b/kas/opt/ebg-secure-boot-snakeoil.yml
+index 7d8ce65..f1eb782 100644
+--- a/kas/opt/ebg-secure-boot-snakeoil.yml
++++ b/kas/opt/ebg-secure-boot-snakeoil.yml
+@@ -25,8 +25,8 @@ local_conf_header:
+     INITRAMFS_INSTALL:remove = "initramfs-abrootfs-hook"
+ 
+   secure-boot: |
+-    IMAGER_BUILD_DEPS += "ebg-secure-boot-signer"
+-    IMAGER_INSTALL:wic += "ebg-secure-boot-signer"
++    IMAGER_BUILD_DEPS += "sign-secure-image"
++    IMAGER_INSTALL:wic += "sign-secure-image"
+     # Use snakeoil keys
+     PREFERRED_PROVIDER_secure-boot-secrets = "secure-boot-snakeoil"
+ 
+diff --git a/recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.2.bb b/recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.3.bb
+similarity index 51%
+rename from recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.2.bb
+rename to recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.3.bb
+index 83289d4..3c002e6 100644
+--- a/recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.2.bb
++++ b/recipes-devtools/ebg-secure-boot-signer/ebg-secure-boot-signer_0.3.bb
+@@ -1,7 +1,7 @@
+ #
+ # CIP Core, generic profile
+ #
+-# Copyright (c) Siemens AG, 2020-2022
++# Copyright (c) Siemens AG, 2020-2025
+ #
+ # Authors:
+ #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+@@ -11,17 +11,19 @@
+ #
+ 
+ inherit dpkg-raw
++DPKG_ARCH = "all"
++
++PROVIDES = "ebg-secure-boot-signer"
++DEBIAN_PROVIDES = "ebg-secure-boot-signer"
+ 
+ DESCRIPTION = "Signing script for EFI Boot Guard setups"
+ 
+ DEPENDS = "secure-boot-secrets"
+-DEBIAN_DEPENDS = "sbsigntool, secure-boot-secrets, faketime"
+-DPKG_ARCH = "all"
++DEBIAN_DEPENDS = "secure-boot-secrets, openssl"
+ 
+-SRC_URI = "file://sign_secure_image.sh"
++SRC_URI = "file://sign-ebg.sh"
+ 
++do_install[cleandirs] = "${D}/usr/bin/"
+ do_install() {
+-    TARGET=${D}/usr/bin
+-    install -d ${TARGET}
+-    install -m 755 ${WORKDIR}/sign_secure_image.sh ${TARGET}/sign_secure_image.sh
++    install -m 0755 ${WORKDIR}/sign-ebg.sh ${D}/usr/bin/sign-ebg
+ }
+diff --git a/recipes-devtools/ebg-secure-boot-signer/files/sign-ebg.sh b/recipes-devtools/ebg-secure-boot-signer/files/sign-ebg.sh
+new file mode 100644
+index 0000000..9139165
+--- /dev/null
++++ b/recipes-devtools/ebg-secure-boot-signer/files/sign-ebg.sh
+@@ -0,0 +1,34 @@
++#!/bin/sh
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2020-2025
++#
++# Authors:
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#  Jan Kiszka <jan.kiszka@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++#
++
++set -e
++
++signee=$1
++signature=$2
++
++usage(){
++    echo "sign image attributes with secure boot keys"
++    echo "$0 signee signature"
++    echo "signee: path to the image attributes to be signed"
++    echo "signature: path to store the signature"
++}
++
++if [ -z "$signee" ] || [ -z "$signature" ]; then
++    usage
++    exit 1
++fi
++
++keydir=/usr/share/secure-boot-secrets
++
++openssl dgst -binary -sha256 "${signee}" > "${signee}.digest"
++openssl pkeyutl -sign -in "${signee}.digest" -inkey "${keydir}/secure-boot.key" -pkeyopt digest:sha256 -keyform PEM -out "${signature}"
+diff --git a/recipes-devtools/ebg-secure-boot-signer/files/sign_secure_image.sh b/recipes-devtools/ebg-secure-boot-signer/files/sign_secure_image.sh
+deleted file mode 100644
+index 213cf8a..0000000
+--- a/recipes-devtools/ebg-secure-boot-signer/files/sign_secure_image.sh
++++ /dev/null
+@@ -1,38 +0,0 @@
+-#!/bin/sh
+-#
+-# CIP Core, generic profile
+-#
+-# Copyright (c) Siemens AG, 2020-2022
+-#
+-# Authors:
+-#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+-#  Jan Kiszka <jan.kiszka@siemens.com>
+-#
+-# SPDX-License-Identifier: MIT
+-#
+-
+-set -e
+-
+-signee=$1
+-signed=$2
+-
+-usage(){
+-    echo "sign with image keys"
+-    echo "$0 signee signed"
+-    echo "signee: path to the image to be signed"
+-    echo "signed: path to store the signed image"
+-}
+-
+-if [ -z "$signee" ] || [ -z "$signed" ]; then
+-    usage
+-    exit 1
+-fi
+-
+-keydir=/usr/share/secure-boot-secrets
+-
+-faketime_cmd=""
+-if [ -n "$SOURCE_DATE_EPOCH" ]; then
+-    faketime_cmd="faketime -f \"$(TZ=UTC date -d @$SOURCE_DATE_EPOCH +'%Y-%m-%d %H:%M:%S')\""
+-fi
+-
+-eval $faketime_cmd sbsign --key ${keydir}/secure-boot.key --cert ${keydir}/secure-boot.pem --output $signed $signee
+diff --git a/recipes-devtools/sign-secure-image/files/sign_secure_image.sh b/recipes-devtools/sign-secure-image/files/sign_secure_image.sh
+new file mode 100644
+index 0000000..8456867
+--- /dev/null
++++ b/recipes-devtools/sign-secure-image/files/sign_secure_image.sh
+@@ -0,0 +1,55 @@
++#!/bin/sh
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2025
++#
++# Authors:
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#  Jan Kiszka <jan.kiszka@siemens.com>
++#  Gokhan Cetin <gokhan.cetin@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++#
++
++set -e
++
++signee=$1
++signed=$2
++
++usage(){
++    echo "sign image with secure boot signer"
++    echo "$0 signee signed"
++    echo "signee: path to the image to be signed"
++    echo "signed: path to store the signed image"
++}
++
++if [ -z "$signee" ] || [ -z "$signed" ]; then
++    usage
++    exit 1
++fi
++
++keydir=/usr/share/secure-boot-secrets
++
++tmpdir=$(mktemp -d)
++
++mkdir "${tmpdir}/certdb"
++certutil -d "${tmpdir}/certdb" cert.db -A -n cert -t ,,u -i "${keydir}/secure-boot.pem"
++
++pesign -i "$signee" -E "${tmpdir}/elf.sattrs"
++
++if [ ! -x /usr/bin/sign-ebg ]; then
++    echo "Could not find the executable '/usr/bin/sign-ebg'" 1>&2
++    exit 1
++fi
++
++if ! /usr/bin/sign-ebg "${tmpdir}/elf.sattrs" "${tmpdir}/elf.sattrs.sig" ; then
++    echo "Could not create signature file for '${signee}'" 1>&2
++    exit 1
++fi
++
++pesign -c cert -n "${tmpdir}/certdb" -R "${tmpdir}/elf.sattrs.sig" -I "${tmpdir}/elf.sattrs" -i "$signee" -o "$signed"
++
++rm -rf "${tmpdir}"
++
++sbverify "$signed" --cert "${keydir}/secure-boot.pem"
+diff --git a/recipes-devtools/sign-secure-image/sign-secure-image_0.1.bb b/recipes-devtools/sign-secure-image/sign-secure-image_0.1.bb
+new file mode 100644
+index 0000000..cdc2d16
+--- /dev/null
++++ b/recipes-devtools/sign-secure-image/sign-secure-image_0.1.bb
+@@ -0,0 +1,27 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2025
++#
++# Authors:
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#  Jan Kiszka <jan.kiszka@siemens.com>
++#  Gokhan Cetin <gokhan.cetin@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++#
++
++inherit dpkg-raw
++DPKG_ARCH = "all"
++
++DESCRIPTION = "Signing script wrapper for EFI Boot Guard"
++
++DEPENDS = "secure-boot-secrets ebg-secure-boot-signer"
++DEBIAN_DEPENDS = "secure-boot-secrets, ebg-secure-boot-signer, pesign, sbsigntool"
++
++SRC_URI = "file://sign_secure_image.sh"
++
++do_install[cleandirs] = "${D}/usr/bin/"
++do_install() {
++    install -m 755 ${WORKDIR}/sign_secure_image.sh ${D}/usr/bin/sign_secure_image.sh
++}
+-- 
+2.39.2
 
-Thanks,
-Gokhan
-
------Original Message-----
-From: Kiszka, Jan (FT RPD CED) <jan.kiszka@siemens.com>=20
-Sent: Thursday, March 6, 2025 14:48
-To: Gylstorff, Quirin (FT RPD CED OES-DE) <quirin.gylstorff@siemens.com>; =
-=C7etin, G=F6khan (FT D EU TR C&E) <gokhan.cetin@siemens.com>; cip-dev@list=
-s.cip-project.org
-Subject: Re: [isar-cip-core][PATCH] ebg-secure-boot-signer: convert to sign=
-er provider that hooks sign-secure-image
-
-On 06.03.25 12:44, Quirin Gylstorff wrote:
->=20
->=20
-> On 3/6/25 10:35, Gokhan Cetin wrote:
->> These changes split the signing process into two stages.
->> In the first stage, the `sign-secure-image` script called by the=20
->> efibootguard wic plugin now uses a hook to create a detached=20
->> signature.
->>
->> This allows downstream layers to provide their own signer scripts in=20
->> a similar manner for the second stage, without having to overwrite=20
->> signer script or partition's source parameter.
->>
->=20
-> This patch does two steps at once:
-> - switch to pesign
-> - split the signing process
->=20
-> Please separate this steps into two patchsets. Also you need justify=20
-> the switch to pesign.
-
-We went for sbsign for very strong reasons like its broad usage in distros =
-and the support for OpenSSL which enables e.g. HSM-backed signing.
-
-Jan
-
---
-Siemens AG, Foundational Technologies
-Linux Expert Center
 
