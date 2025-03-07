@@ -1,195 +1,304 @@
-Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
+Return-Path: <Shivanand.Kunijadar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A9E3C282D0
-	for <webhook@archiver.kernel.org>; Fri,  7 Mar 2025 03:49:26 +0000 (UTC)
-Received: from AS8PR03CU001.outbound.protection.outlook.com (AS8PR03CU001.outbound.protection.outlook.com [52.101.71.58])
- by mx.groups.io with SMTP id smtpd.web11.2062.1741287383368831829
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4169FC19F32
+	for <webhook@archiver.kernel.org>; Fri,  7 Mar 2025 07:04:57 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
+ by mx.groups.io with SMTP id smtpd.web11.5578.1741331089623845992
  for <cip-dev@lists.cip-project.org>;
- Thu, 06 Mar 2025 10:56:23 -0800
+ Thu, 06 Mar 2025 23:04:50 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=NaGAHVVs;
- spf=pass (domain: siemens.com, ip: 52.101.71.58, mailfrom: gokhan.cetin@siemens.com)
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.134, mailfrom: shivanand.kunijadar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 52774lBX883106; Fri, 7 Mar 2025 16:04:47 +0900
+X-Iguazu-Qid: 2yAbRDIduBQMt7sxqY
+X-Iguazu-QSIG: v=2; s=0; t=1741331086; q=2yAbRDIduBQMt7sxqY; m=Zh7ualm1oZwX+ZHFr5FO7WcHkY4kioKhOo51tGkkfaU=
+Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
+	by relay.securemx.jp (mx-mr1803) id 52774jUL3505319
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 7 Mar 2025 16:04:46 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dnyNJC+z2d1O5iHCe9D8R385GwXD+lYAuyhf+CZt8fB5bbzcVKlsHR5NlwUsnLzb5vIF+C9pTLsHOJo+ghxdelUVaAKB5CzLY/p8mYZ08FrLGl5anr1GRUTbIyCUK35NJfQPw9XNKiiaaemuqbME9Y8StuZtvx6CdJFqk8Juwj4ywolqbSSeghpMKkrEFEtLmfPDYFZdKzNy41uyCUGGCJMWnjAR49r2HrgGVWSckihmzhGl+MvacPESq1GgDrhChgTEHQl0iQqMXf0stkUS3xvIIj/vgWL+pVgt4izLeI5T0KMOrBrPOSnombZeKtqjSe3HiG2FjeXhuRnvcIlcDg==
+ b=ILwpRL1LHbAhTC+nTBxuFzyOb0BFpWAeUuSP9TQb0NtkB0PIr5zd5bRBJSPLx43bJfN5a0UhUr+OVdetcY75Aaf9ZRrWy5PW6vYD3Ugv5kwmlxWsGyiiPnaEsdo2guRt0M6mX6/hw0vwpTqnDPlM9vG8rR2ei6mZ4+V96iD+dhe1ZvC3aGl18KHC/vbT5SzkDLjqXQ5CowRtfdMd/xxBXjMPfcxIf9uQeMP+dUUvsXnRu2Uu2j7KggbzcbajTLFe59OQ7PPPpl6kj7BJzD6JI6VBe5ATkbtNEn4pNHYfFGLFpJCS0YZaUPdDl3nRI7nXAF2DSGDy1q8KhoOjNcPAEQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TNWv628ryQPRwtgNxTsQuOAj+xwTXZ3JKODjyvyRTTA=;
- b=Sy9AZ16jYH8K1AGYJ7QjMWPrTRhjuG0P+3B5fjD1N7Mh66Bo59Y9Zq0zMxFuNxmexX3vrx52ytNbMCa8NVNqQrGX/xWqT8m8uU4guMsEgm84BFRFPpVkV52c6GJ4GIo6MvBrjRQpiFhG+L7633OBAMH86GDgW3c51EK9L8nLFTcx2AzAylnkUJadmq28A77gtDsmmY4JbYrMCuxL8H5rkoplw+aAHRWTP1CrdmM2gTThi2Tply6OkbkTIL3lzPhWcsQKVPut9SuYAHg11rdWPdskd4aOAMuZIhGVAlUwFNMtNXIkkvRLNffm0TEAWco0KAzc/PmgGTzWAHPn2DneYg==
+ bh=iieS1fDi2r3M5SNxkZFJ/vbsZKJnPWPAvar0+z1HkRo=;
+ b=Zrf9+P+PZL4qseuGmcA8Ud/Hspc8qNJMiWl5g1u7FrNb4r7vnoRcnOkzChYjVL8PnNNh0t0XU96fFgxNdQyIkP+j0Z/ieQbxpd+m5PLIzgyp734DzYw8U3IvguocrnZcidcSXjCnGfnZ+0ucXD5QiwLT0S9V7SqcR7GYsNcYQD3Ke68efTSYO3s4DlEv4lh2fjLlwpJexrDvirBncAgn7ovmSaha/umfcwDyxi2e4UMn/lptFDyRNB7HDGsupa7alJlLeuiKGoHT+jRUdWojCFQnWGhtPjwxRqzSCaTsS8ZwrUVdEvsY5KSYP79hAUc6p/j7Z4Q2Zm5tIWK8AZcFMw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TNWv628ryQPRwtgNxTsQuOAj+xwTXZ3JKODjyvyRTTA=;
- b=NaGAHVVscgqooIZYPsN/6iX3KmiJrWHmdnjBRp7ctgFmHP7vQoKvh6OGP/ZQp9c2Oqs+LP6K1psO3/P91sl6jNhVN8Ayyq55rXsbZHbkEH38+BT2nLPizCjnGQ3ISjL3b82Jbpt92J4MHHdEIYFhaymzgOR5+n2QCyuN+xTcIaAaC2n/EjNFX+zix5aKkZukxfttRBen0LMIcfZzpprMzOdlXbynVn8AWqkRvCBnuUzIPyGjpSD7MnY5HxZA8lKf1GBuPEogEjYNGqKKW2qJg77vabLM7mVVUsxcS+z46IMpvdWR1XGtVIVaOCSM8VXp7P8BDmtqkbhqxQqK/LPu/g==
-Received: from PRAPR10MB5422.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:27a::6)
- by VI0PR10MB8472.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:21a::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Thu, 6 Mar
- 2025 18:56:20 +0000
-Received: from PRAPR10MB5422.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::1432:b18b:182c:9158]) by PRAPR10MB5422.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::1432:b18b:182c:9158%7]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
- 18:56:20 +0000
-From: "Cetin, Gokhan" <gokhan.cetin@siemens.com>
-To: "Kiszka, Jan" <jan.kiszka@siemens.com>, "cip-dev@lists.cip-project.org"
-	<cip-dev@lists.cip-project.org>
-CC: "quirin.gylstorff@siemens.com" <quirin.gylstorff@siemens.com>
-Subject: Re: [isar-cip-core][PATCH] ebg-secure-boot-signer: convert to signer provider that hooks sign-secure-image
-Thread-Topic: [isar-cip-core][PATCH] ebg-secure-boot-signer: convert to signer
- provider that hooks sign-secure-image
-Thread-Index: AQHbjns5YmpFem/SVkKzaVXtmh0o6LNmXE6AgAAX3bA=
-Date: Thu, 6 Mar 2025 18:56:20 +0000
+ smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
+ header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
+From: <Shivanand.Kunijadar@toshiba-tsip.com>
+To: <Chris.Paterson2@renesas.com>
+CC: <dinesh.kumar@toshiba-tsip.com>, <kazuhiro3.hayashi@toshiba.co.jp>,
+        <Sai.Sathujoda@toshiba-tsip.com>, <cip-dev@lists.cip-project.org>
+Subject: Add trixie OVMF keys for testing 
+Thread-Topic: Add trixie OVMF keys for testing 
+Thread-Index: AduPKv1Bhwt2OQq0QKq4V/WtZyorng==
+Date: Fri, 7 Mar 2025 07:04:43 +0000
+X-TSB-HOP2: ON
 Message-ID: 
- <PRAPR10MB5422327E45FCAE49FB7734B580CA2@PRAPR10MB5422.EURPRD10.PROD.OUTLOOK.COM>
-References: <20250306093516.3232063-1-gokhan.cetin@siemens.com>
- <dbdfd4e8-6aee-4c65-9bbb-8c589bcba739@siemens.com>
-In-Reply-To: <dbdfd4e8-6aee-4c65-9bbb-8c589bcba739@siemens.com>
+ <TY3PR01MB1107521441FF10362116BA904C7D52@TY3PR01MB11075.jpnprd01.prod.outlook.com>
 Accept-Language: en-US
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: 
- MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ActionId=3cf5b08d-009d-4f85-81ac-899f424d1b40;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=true;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=restricted;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2025-03-06T18:50:01Z;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Tag=10,
- 3, 0, 1;
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
+ header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PRAPR10MB5422:EE_|VI0PR10MB8472:EE_
-x-ms-office365-filtering-correlation-id: fd6a37d7-85c1-4b06-107e-08dd5ce09522
-x-ms-exchange-atpmessageproperties: SA
+x-ms-traffictypediagnostic: TY3PR01MB11075:EE_|TYCPR01MB9505:EE_
+x-ms-office365-filtering-correlation-id: 206bd89b-d998-4393-3213-08dd5d4656a5
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: 
- BCL:0;ARA:13230040|376014|366016|1800799024|7053199007|38070700018;
+ BCL:0;ARA:13230040|376014|366016|1800799024|8096899003|13003099007|38070700018;
 x-microsoft-antispam-message-info: 
- =?iso-8859-1?Q?2SYexxvV1NN6czID5oxA/XDTtGhoU5S3aIFdOt1kec45GzXxzHlh+wtnzv?=
- =?iso-8859-1?Q?iirQF9PyOn8SiXthtG7r9kztAriC4Inu66wf9Zc7glECs99ZLTaN9YTQ40?=
- =?iso-8859-1?Q?MNd48kJvC5rp7v0p7TsYw0k8eBQv273xecTda8eemov6NTIsVLcLAT8tcU?=
- =?iso-8859-1?Q?3337YyOwPj5RQog4wKbFbD4Tqchr3YujJSmCcmnXJo0OBJa/kp9jDzTAoY?=
- =?iso-8859-1?Q?a9Z2/21tvZ/1q25jJjRgDznlq6WWeWTa+6KQzOG0vwRt4GAwZzDJD1YM/s?=
- =?iso-8859-1?Q?SP5QQCUmnSr5VOphB7g4ej+Td+Sk/REoveuK2YzAGy+Un1hl52EJA57SG/?=
- =?iso-8859-1?Q?ct/U5I5jorTBgSlbGux6NUcqIiXRzuxrzuBmDp2mXj84oo/9Y46UfevICC?=
- =?iso-8859-1?Q?M1FoRLkx45P7BRDSFZiZBlM9cNWuHHRD60lOcOmbI+QNETyxUk8T3BUFlp?=
- =?iso-8859-1?Q?O9xwvNZwkNNwnmtFEE9/5vZbwHDfNGJv4OefbqRnySaTE9kpWxt9kKmKLw?=
- =?iso-8859-1?Q?hbBxnlyQ9VgPATTPHHheQ/ZDZvTfeojA9eEXHHwtZpjPqDP12nLlRDj74V?=
- =?iso-8859-1?Q?patNM5rhXIOvrFMme3fNefNKIT0CHHnHTB+H7agzV7vwvXlYeDYFDzRDzQ?=
- =?iso-8859-1?Q?zQ2NOr2ipgreL2EBBfn2yfFTScsDw6bbNopp/18ypobovBaPA7/qigDpiS?=
- =?iso-8859-1?Q?MilPdD8oGRCHVF1v6pX6x6tYD8S9gIkZxWvL5dx8d/bWzgAQtELesxwLWP?=
- =?iso-8859-1?Q?3vhx9NHnybJVLX/4+zygm7zLtYSq3nJF4BZhoUns+Jn1ZcBjzkMijaKQvx?=
- =?iso-8859-1?Q?sHXAOe7enoV9yVcyEaHTJeh1pBxKLDcg7cczluVsw6k0EqG1nj6/k2wODg?=
- =?iso-8859-1?Q?V80ZWt+6MAw1azrcF+CwZnrzfm3D8gMJB1Tf6xFej+igab5ONXqjttSEYv?=
- =?iso-8859-1?Q?ITL05KWJVwuk87sD6N7O+kqu+VkskyO72icA0s97u54JxoBHf19Qivp02u?=
- =?iso-8859-1?Q?rFM3nz2Mfwam2Tk7ZxrnAZcjMGOXL9r4MeHlTpFj/rYfFkzPjKDsaTUrJN?=
- =?iso-8859-1?Q?I3db3Y9Uh7TGrBy/q/y5sMwTh8K1LhlqRKCmV/tDEyHTytMoAT88uVHog1?=
- =?iso-8859-1?Q?pPvTMJ49SCWTmPURFwaNtSoL58DZvUwzW9DpbQTVzO1FueHRpPISCVxTbw?=
- =?iso-8859-1?Q?kEqWFwG9WR1lm/sAPW0S2XE/la5vjS6jv47AdDuVTpjciJcv4lRDgtpaf/?=
- =?iso-8859-1?Q?Muyvlp/8b+I/q0FSZeXJB52hHrkygdtGdZxhQuyPt7QPdu2uMAzId9sWm0?=
- =?iso-8859-1?Q?JgAAMOPPGMX2MoKKTu2oOdolJwFFIplOKSIFG9Lmn1bZ2wVKpBXx03+uEg?=
- =?iso-8859-1?Q?zKYj3fr/QqBXh46zzMfuAWzJTvPQzQElnUw1CuolVBQZfDkUJNQj5jqyDw?=
- =?iso-8859-1?Q?LEVkuJzMHbDXge9HhTQVx1KFdoq4xD53JnN5pbAwoZjc2YBwHEgukKY8a/?=
- =?iso-8859-1?Q?EvNUGy3H2wSLHhX7/Mk+Ia?=
+ =?iso-2022-jp?B?RndHT1RLSnFPa3JLcklQOFpncGFjSGU5Njh5Wk4zRUdGUDZqODk0UU5z?=
+ =?iso-2022-jp?B?aG02MHZLWU1yRWwyUVBjT0JIdnFsNzg4ZzUycHFvRzdIcC9MYlRMZTg1?=
+ =?iso-2022-jp?B?V0w5eFQ5Ti9PYlpzOE5pRFFvelFkZTV0RHJ5eGtHREhOeCt6TUpxNW5p?=
+ =?iso-2022-jp?B?RWlSUmZZeUdyczlDUXpQc3FPNHJGckNDaE5XUFIrNWZ2Y3ZUOElGRVJ1?=
+ =?iso-2022-jp?B?TGd0SHlxYTZNWVRBQmNqWXVYZDdrRnAzOVFWd29QbmF0aVArSnBzVXoz?=
+ =?iso-2022-jp?B?OENLK0dZemlOR2VobUMxU2M0eDlORVFNcWIyNHpFUWErY25JUjZ5TnVZ?=
+ =?iso-2022-jp?B?VjdQTVV0SElFWC83aHBtSUFSbXBjckVRazFvSStrMHoyR28yRXZkTGVN?=
+ =?iso-2022-jp?B?WFZYOVZxWVJOVUFqK1BWalBqb0tiWFcxeWVmMHFPbG11Q3hlSks2OVE2?=
+ =?iso-2022-jp?B?R2YxTEhwcHhsZ2RHbm1hbG1XMkx0bzR6TjFST1FRNFpqYnZFdnlHL2Vz?=
+ =?iso-2022-jp?B?M3F2WVZsY2tqUkVLMWNpNGpMWERndkJka0ZnOGhXME5jK29WWEJ4YmhV?=
+ =?iso-2022-jp?B?YVFvRy9WYm0vanRueEVRYU54OExzQmg0VlYwL1JwTFVJdUN6cCtWS0Np?=
+ =?iso-2022-jp?B?S0FXaEhYR2FBRTF6Zy90ZDFobmxrYmxsOVdmelVpc1RkMUNiNkM3L0ND?=
+ =?iso-2022-jp?B?OVBKRUhMVDJtNkpCcnNURzBOUUs5VTA4NUFENFFzeVpoYkJ4U3RtL3Q1?=
+ =?iso-2022-jp?B?QkYrSnhtMlV3TEl0SjNpdm0vMGNta3M4eHFwMmgyYUVxazZ0cnRvSlRV?=
+ =?iso-2022-jp?B?SFZHWGRyWW5WYzZaOGFCalp4V0htZDdxcG0xa25LbGQ2b3hZS0FJTTQv?=
+ =?iso-2022-jp?B?ZHBiZkV6bEtPOGxLYlZFNlBpN0ZlbE0yR0RWekpobGtyTHZZOUR3MzlM?=
+ =?iso-2022-jp?B?TTQrQjZNNm5hbGdIelhRbWtHWmljNTVhRkIzMmcyWWpXYjI2R2xpSGVz?=
+ =?iso-2022-jp?B?ZUV3QzdjQ1VpNk1SSHFhQ0RRNlJjUjEwNlVudWNxa2xXS2FGVVc0V0Q0?=
+ =?iso-2022-jp?B?ays4RVRKck1obElSMVZwd1Arb00wTkIvZnZ5bUZPQmFWSXVUZDJnTGNk?=
+ =?iso-2022-jp?B?c0thTHNGMFNzMUNuZW5yNTNuZDBLWEhYYnFIaTd1TVd0N2M3UjNkZ2ZY?=
+ =?iso-2022-jp?B?OTdIV21lWUtKMHNHV2JFV3RCQVBIQlh0bzFVVkVBbzlqR3grWlZEV3JU?=
+ =?iso-2022-jp?B?Sm9MVEFXV3NWdENsbXpiT21FeFA5SUtqTVMzL0d3MnJld3NjaTVPcjVk?=
+ =?iso-2022-jp?B?akxMWUxlMVVxRUVQY3dLTHJKTW5PaFRkNmQrcy8vcC95R2RSMk1maTJJ?=
+ =?iso-2022-jp?B?V0F6K2YyMjBRM0JkZE5SdWh2ZHdvbElsU1UveGZTeWt3K0ZiOEZIaDlV?=
+ =?iso-2022-jp?B?TVNUTTJBMlBhSFpMZmR6S0hFSURncUlBdm8wMkhyT091NHkwdzRkcXd5?=
+ =?iso-2022-jp?B?dHIvVUZPNlRsalB6S2M4cFNQdVA5SCtGQTlvK1BiNXZpeWRkV0RaQ0Fz?=
+ =?iso-2022-jp?B?TXI3NUJtcG12Zk4zc092OXc1ak51enNXKzBMS3FVSXVqSXI4YXpMWkwr?=
+ =?iso-2022-jp?B?UDY3cVJhK3A4T0NEOXY0aUJqNFY4Z05pdWd1NjRoVkZHMFZPa2prbVRW?=
+ =?iso-2022-jp?B?Vm9xTmgvVFZOUVFlVVJIQXVaNEpGN212cEFnYytnL2FSTDBMRjBBdXJk?=
+ =?iso-2022-jp?B?QlZ2dlZjT0d0SXM2am1LanlLNzJTUnBIYnpoUHh5Nkx5Qll4THp1M2sv?=
+ =?iso-2022-jp?B?RjhFNkdKdGw5anlnaE9neE1UaHJzd0VJL29MNUZmUVBSbEFRZVlubTlZ?=
+ =?iso-2022-jp?B?dGYrWXBQdlhOODhUMjhGVzMrcDV2UHVzSjJXa1Z2b1NJbGlsSjdOQnlO?=
+ =?iso-2022-jp?B?d0h2a1E5bW5CY0w2MDJ4OHVVcUU4anBkSlp6L3FpaEtjY08zWUx1ZlhS?=
+ =?iso-2022-jp?B?TW16R2hQOThzdU5TTG5CU2xKS2xDRVFBK2VsZWViakhXUHdjZzNGWmsy?=
+ =?iso-2022-jp?B?b1h4aHJYRFpuRUF4VmRsWElHb29CcEZNcFBDSjBDSnZQQVVKVzZQZXd0?=
+ =?iso-2022-jp?B?eXY=?=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PRAPR10MB5422.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007)(38070700018);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11075.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(8096899003)(13003099007)(38070700018);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?iso-8859-1?Q?sgBY4mIFhuDwUnRcO1tDU/Fa/h6Z9k+Ft1KxcOldFiepjHkxbO4n9uqMro?=
- =?iso-8859-1?Q?DcwtClOxdURlRQtZZ3dbLjVhlstvwt1pKUy+bXhN9teMaMW6CrCWKNz1/w?=
- =?iso-8859-1?Q?FnAv6HS/tYT+9DXFKd/JPsiacJl3TA4IL6XLpLYwCdgRfADNnHTrd2hPKy?=
- =?iso-8859-1?Q?QLwXYg5MfcOgNlL7XajOAfRrteAick6Sp8n70NFqXi+bzI2Sw5kSEMdy5P?=
- =?iso-8859-1?Q?YoYm+YYSuNJEiMvpPZTD+IBx5OjQ188Ey0yrvHVawknj/BTm1X/Pjr1JTs?=
- =?iso-8859-1?Q?YPQsYH/yeEDMUSb8z5NTBxgSfmg/z0hhdMSd0LzcrWwrMHjzX4YPhUlADu?=
- =?iso-8859-1?Q?SYO/EZszttPt/zsclPrTI/7bmuG+n5rkkRdOKZfqAH+C15tMaWQljKJSP5?=
- =?iso-8859-1?Q?kAt5PaIRCrbaL65M142TlZZtSgtQbBZLCQUNdKaQVRs806ugEP1JrPPzQr?=
- =?iso-8859-1?Q?mrinAooLLp8A9oy8m4jBgkrAje7ejIzPl2T3uZA34KdcKP5IKF+3GNXxH0?=
- =?iso-8859-1?Q?Uhg6J3bRX3rZOWWyCUvC6OvKhSzRNzUrHSlBI3Kc0B1YHE0A8SeYKWGHce?=
- =?iso-8859-1?Q?Bu6eHVGM6/rEM/D0B/uEHNXCsgSDdnYXStCmgNQJ8rGHhT/0/n2naYS2Yh?=
- =?iso-8859-1?Q?puFsLrOWY6Q18daXEmQ9dQ966eU21ZW8FnhyaD9ShpE+k2TNPZSm02H1sm?=
- =?iso-8859-1?Q?+ryK3oF780VanbOsswDdISogoQCOBbRgyxz47ErD3lLH01EUwse/TP4yw6?=
- =?iso-8859-1?Q?EuCvJ1DbYyu3kojZCtLZwMMgX6dXh5tJcsBbAcS42rNah5AR99DrbTKRAm?=
- =?iso-8859-1?Q?4SOSX/J4cTzyZLRJ98ygFyoro6g25GZtLHoRBIaF8JQ1CWxDA+Q9lqs0cz?=
- =?iso-8859-1?Q?mIbebpDAplgD+fv4V9wl+0lh1HNe1ToDqizJFtvsimTwCO0wnD21/p4mdM?=
- =?iso-8859-1?Q?aPAEQM8WwZyYcsCTLa/XWmDvZhwEBmZSVGdgjuoJPA9FdW/oFXGL2jsg2q?=
- =?iso-8859-1?Q?xikSfUvNw+sTsZLTl2dYbHstL49n/TWeg9Tvs/DgIYfP/jHnojL8kmxiA+?=
- =?iso-8859-1?Q?fLMbcTmJm30kvRlojYqAGTvW9UxDs8E7zZKxBTE+qsb8119Rc2SUxvJyQR?=
- =?iso-8859-1?Q?O8H7P9GOdtK78J/KV2/esb+ERvtjxbv3EPAIvTWzt7Mo3Ecbi5yzxceMdk?=
- =?iso-8859-1?Q?lNz3Yyyee7ixs7dALY6Ie6wS1W5P5IRrx8Rig4EMLRNhVcatPW8cfERqY8?=
- =?iso-8859-1?Q?POEpuOgUwKrchdsYcu1YR0ix0CSUEyhR8S9np0fFzTncX10/qAk5g+ePG5?=
- =?iso-8859-1?Q?W38/sLdQlOk2GObEvEZo3l+TWnc67LZjq1Mu7qR9WzfEy4IsGZ4lFgqfa0?=
- =?iso-8859-1?Q?OWJ8hmSFNW6aCZyYrgGpNYhv7jOPOlG+IUaU32ekeUGaaVQNhlbZbpvTIg?=
- =?iso-8859-1?Q?XlYGmnNETcugrwWj8MBMLFa2keuyCGiFWXdDgkvN/ykdZxHcwcJOSLBlKk?=
- =?iso-8859-1?Q?WxOaSs5okfui5ItnH0dyyVXNcVSuBIzrAiqRJp8rSGB/chUw64zQTTkmjF?=
- =?iso-8859-1?Q?wU9LJPwU+M7R+jsX8lhQbfeMpDLcRD07OwBiarNOzYedsGLzYb58NOVlZw?=
- =?iso-8859-1?Q?oTgD4NSv9z/GIHGoJ7Y/x34NH3vGNrytfi?=
+ =?iso-2022-jp?B?ekRjdG9wS1p1THFoU1ZzbTVod1JNbjZPTUNNSEZBV3pDL0lqT1hhb1Jj?=
+ =?iso-2022-jp?B?d0orR1NEaXpNWmR5U0taODdGS3lCa1BabVBaY09uRHM3OTRCcklHU3lt?=
+ =?iso-2022-jp?B?cTFzeTBUTWQ5RjBocXJhRTBsUkxDSnVaaXN5bXZxVy9jaDhBNHh4VGpm?=
+ =?iso-2022-jp?B?bHF0cVNGczU3VHl5U0tIRFZMUkJaMGJiRWtBbmhHYWRmTUs3YjJtcmw2?=
+ =?iso-2022-jp?B?UWJ2UnlsanR3aWJDWmJXNldQUCtRdVdRL0RubllvSG5GYS8rejh2VUFC?=
+ =?iso-2022-jp?B?c2pHZmFZU3RaemQxbCs5Wnh0S2hFUjRqaXhGbU9iaTc0NEdmMEUreC9j?=
+ =?iso-2022-jp?B?QnBidlRwY2VacXBraXM1ZjRHWFJISUpYbkFmUGRZQ2t0RzlhelJYUXAz?=
+ =?iso-2022-jp?B?UUYveE1vemJ3YmR5bWZQRVF4dmpsSEI2YXE3cnVBZUgrNDFFRThyVXFt?=
+ =?iso-2022-jp?B?d2RJNUdITG5wejhRYU1GbmhoSTUrNTE0ZmIwZ0NxaWJlRjlRbXJvelBB?=
+ =?iso-2022-jp?B?eU1sb3BOZlROUGhYNmRhdTNHS0JNSDllRmkzN1VjOG5LeXNRalFFRFFq?=
+ =?iso-2022-jp?B?S1pIYjRMOERQRFBOc2MrNHJ4TEJqUGZtbWRsejRTSHZ5dmpGUWJiOXc3?=
+ =?iso-2022-jp?B?cm8xamtMaE9DdGdrR1lCak5janZMeDdud2QyZjBnYUVLc01UaFVzZDh0?=
+ =?iso-2022-jp?B?YlMwMjVlbzVZOFc3eTdOWkxXRGR2MmpnT1ZxMEtHQzN3Sk9LbVY4aVRP?=
+ =?iso-2022-jp?B?Nmo2eGNTSDFNYUtqWGF2TklJVDZKc3Rqem55aURXUjZjRmo1aWU1ZVBT?=
+ =?iso-2022-jp?B?b1VCRHRxWnd1WHRVV0dnZnpIZkhBWlh5dVNjTzM0STVMNWtGN2h2aWNU?=
+ =?iso-2022-jp?B?dGx3Z0hsaG5ZRjZBWFJSdFBXb1NyaEgxWTlQdHBhbVVMdTdGMVZmRlEw?=
+ =?iso-2022-jp?B?SGU2MVBmZXByUlcyR0kxWmhoWUxFU0EyQkx1cGhHV2RaTUcrekwySkM3?=
+ =?iso-2022-jp?B?R2NxQU5NSjBqZVdDeC9Id0pIdWI3VEVnRGZsbFFDRE5MNTUvbHo3UUxQ?=
+ =?iso-2022-jp?B?U2RXRlh4OFZyR1dIcjJ1RVhxdUlZUkQ3UmttbnVTc2dJd3o3U1B4UnF1?=
+ =?iso-2022-jp?B?UHliaU0ybXlya0tOKzgyUUJraW9kemRld2M1aTR2L3B1cEcwNWtHYW5D?=
+ =?iso-2022-jp?B?L0xYc1ZDOWhpQ1dOQnRlWGdab2tPTjJWNzdNZFl1QnJieWFSZk00UEVU?=
+ =?iso-2022-jp?B?T2dNU29NT0hhc1Bub2s0d2hJdXF6OHVzZHBsODRjbEdDZFRrMDFmWUg4?=
+ =?iso-2022-jp?B?YW0xSkgyVFlKWHRsdjJCR0FaVTB2SHJnM2oxM1N3aEQ0c2lJSmxrV3Jq?=
+ =?iso-2022-jp?B?dVhML0t4U1FxK0JGT2JyaTNVTVBXS2FUU2xtMDFHLytDSG1FK1NQZkkw?=
+ =?iso-2022-jp?B?cFN0OHBxOEoyeWpDUjV1anBkd3J0VTVKUm03WkZKQWJvR3lQOGhTRW1K?=
+ =?iso-2022-jp?B?VHJQNFRyVTJrMEo5eXEyc2hqYUNWaWJLcmtKN1E2T01pTVpIandKN25C?=
+ =?iso-2022-jp?B?OW5aVEVsQ2pQdis2azcyOEJ4dlYxb1c3REJnV25ZdVQwdzlCKzhaQWtQ?=
+ =?iso-2022-jp?B?K3JRMkZqdFNsMjRpSElsWGpoajhnY1MvVjhTczZYSndDU213VWYvd1E5?=
+ =?iso-2022-jp?B?cnFWTXoxaEZpcFNSMXg1Q1prT2cra0lJcDNEbXlZQ0NYZzRUZVM5QXh5?=
+ =?iso-2022-jp?B?WEp5SWJkS3pDMEpnTUFMYTMzY2J1SDd3cm50ZEFWckRoYnlxM1VkS3JE?=
+ =?iso-2022-jp?B?MFhTWmRySkRxWXBIaW9LYzFDdEFHa3h4UWRtZzNxVnhtakl6SlYvRnJB?=
+ =?iso-2022-jp?B?VCs3NU1Mb2xpcnUwRk8rYWJqVDZDQ1JtSjc3aXNQZ3E0YlkvK1lwSWxQ?=
+ =?iso-2022-jp?B?Q1VXREdqbE1vdm9SbzNNTHI3bHJXb0w3MEN2N0djdy9vby9idEtwdnlt?=
+ =?iso-2022-jp?B?RkhoRkRXY0pSZnVSN2ZQTGRiM1FNd05sV3dUS1lmeHd1eE9oaUhPZmRO?=
+ =?iso-2022-jp?B?ZTd6MDRYY1BpWWVOZ1pJQlVpVkpxSG5OS3BGWGJoVWs5OUp5SWpMMDJC?=
+ =?iso-2022-jp?B?WVZOa2Q2eTk2RlhBd1JRKzhPNHV5Nko0SXIzUjRqdlU4UFZ6WlkySTZa?=
+ =?iso-2022-jp?B?ejMxWXBBcUY5S1o0SjU5b1NmMVBwOEc3ckY4bW10M0xRMlFsNXdGc2lC?=
+ =?iso-2022-jp?B?ZU16aEx4eVpDSEM2WW5ya3V0Rm9xYTZBclZkTjgyVmVPVGdSSnZIMCt2?=
+ =?iso-2022-jp?B?T291aGpTekFPcWFoU3kxakc3ZnBBRVplSGlRZjhDZ0FzeWdXREtyMlhE?=
+ =?iso-2022-jp?B?a2hrZkU9?=
+Content-Type: multipart/alternative;
+	boundary="_000_TY3PR01MB1107521441FF10362116BA904C7D52TY3PR01MB11075jp_"
 MIME-Version: 1.0
-X-OriginatorOrg: siemens.com
+X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PRAPR10MB5422.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: fd6a37d7-85c1-4b06-107e-08dd5ce09522
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Mar 2025 18:56:20.0400
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11075.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 206bd89b-d998-4393-3213-08dd5d4656a5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Mar 2025 07:04:43.8655
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 2l/oIMS8H5EaOQaWYeoBDFqp/KjGao0DIPy55t3+lhvvEJmQ1aauBaZOUhtwZ80xdNjuBxAFcjiqqCi7Ll7WGsbcXmKuxaW0Z7B3PrXC7kM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR10MB8472
-Content-Language: en-US
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-userprincipalname: qV8xv0QLqL1FdV1S2Vw87r61ImFlkDhBwSTEJpHPxLA3ZJGDSZ8IwyR8PZhf8kszr5wpQQ2oI3cX5Wwg72PTu3OB7TqBNt1zh2uM7wMPskG1LpnJjirmh6Lqdf0YmGmd
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB9505
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 07 Mar 2025 03:49:26 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18065
+ <cip-dev@lists.cip-project.org>; Fri, 07 Mar 2025 07:04:57 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18066
 
-You are absolutely right, I had checked the signing and import sections for=
- reproducibility, but it is unfortunate that the attributes had signingTime=
- in them when they were exported. I will take it into consideration.
+--_000_TY3PR01MB1107521441FF10362116BA904C7D52TY3PR01MB11075jp_
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks.
-Gokhan
+Dear Chris,
 
------Original Message-----
-From: Kiszka, Jan (FT RPD CED) <jan.kiszka@siemens.com>
-Sent: Thursday, March 6, 2025 20:25
-To: =C7etin, G=F6khan (FT D EU TR C&E) <gokhan.cetin@siemens.com>; cip-dev@=
-lists.cip-project.org
-Cc: Gylstorff, Quirin (FT RPD CED OES-DE) <quirin.gylstorff@siemens.com>
-Subject: Re: [isar-cip-core][PATCH] ebg-secure-boot-signer: convert to sign=
-er provider that hooks sign-secure-image
+I hope you are doing good.
 
-On 06.03.25 10:35, Gokhan Cetin wrote:
-> These changes split the signing process into two stages.
-> In the first stage, the `sign-secure-image` script called by the
-> efibootguard wic plugin now uses a hook to create a detached signature.
->
-> This allows downstream layers to provide their own signer scripts in a
-> similar manner for the second stage, without having to overwrite signer s=
-cript or partition's source parameter.
->
-> Signed-off-by: Gokhan Cetin <gokhan.cetin@siemens.com>
-> ---
+This is regarding the improve test coverage for swupdate and secure boot ac=
+tivity[1].
+We have a scenario where we need to verify the secure boot with mismatched =
+keys, for this we plan to use trixie version of OVMF keys to verify the boo=
+kworm secure boot image.
+It is working locally and throwing an error =1B$B!H=1B(BAccess denied=1B$B!=
+I=1B(B as expected.
 
-...
+So, it would be better if we add trixie OVMF keys in any one of the lava sl=
+ave machine for this test scenario. We can use tag option to force the job =
+the to use the specific lava slave machine for this purpose.
 
-> -faketime_cmd=3D""
-> -if [ -n "$SOURCE_DATE_EPOCH" ]; then
-> -    faketime_cmd=3D"faketime -f \"$(TZ=3DUTC date -d @$SOURCE_DATE_EPOCH=
- +'%Y-%m-%d %H:%M:%S')\""
-> -fi
+And also the zchunk based swupdate is only supported in trixie version as o=
+f now so, in order to verify zchunk based swupdate on amd64, the trixie OVM=
+F keys needs to be present in the lava slave machine.
 
-You are also dropping this, breaking reproducibility (see also [1]).
-Another reason to carefully refactor while providing reasons, not just repl=
-ace existing code.
+If we add trixie OVMF keys to any one of the lava slave machine that device=
+ can be used for these two scenarios. What do you think ?
+Please let me know if you have any other idea.
 
-Jan
+Please note that we don=1B$B!G=1B(Bt need install trixie version of OVMF pa=
+ckage, just adding below two files in slave machine is sufficient.
+OVMF_CODE_4M.snakeoil.fd
+OVMF_VARS_4M.snakeoil.fd
 
-[1] https://github.com/rhboot/pesign/issues/125
+If this approach is okay then I will send these files in email.
 
---
-Siemens AG, Foundational Technologies
-Linux Expert Center
+[1] https://gitlab.com/cip-project/cip-core/isar-cip-core/-/issues/120
+
+Thanks  & Regards
+Shivanand K
+
+--_000_TY3PR01MB1107521441FF10362116BA904C7D52TY3PR01MB11075jp_
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
+osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
+//www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
+<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
+<style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Aptos;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	font-size:11.0pt;
+	font-family:"Aptos",sans-serif;
+	mso-ligatures:standardcontextual;
+	mso-fareast-language:EN-US;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:#0563C1;
+	text-decoration:underline;}
+span.EmailStyle17
+	{mso-style-type:personal-compose;
+	font-family:"Aptos",sans-serif;
+	color:windowtext;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-size:11.0pt;
+	mso-fareast-language:EN-US;}
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
+div.WordSection1
+	{page:WordSection1;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]-->
+</head>
+<body lang=3D"EN-IN" link=3D"#0563C1" vlink=3D"#954F72" style=3D"word-wrap:=
+break-word">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal">Dear Chris, <o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">I hope you are doing good. <o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">This is regarding the improve test coverage for swup=
+date and secure boot activity[1].
+<o:p></o:p></p>
+<p class=3D"MsoNormal">We have a scenario where we need to verify the secur=
+e boot with mismatched keys, for this we plan to use trixie version of OVMF=
+ keys to verify the bookworm secure boot image.
+<o:p></o:p></p>
+<p class=3D"MsoNormal">It is working locally and throwing an error =1B$B!H=
+=1B(BAccess denied=1B$B!I=1B(B as expected.
+<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">So, it would be better if we add trixie OVMF keys in=
+ any one of the lava slave machine for this test scenario. We can use tag o=
+ption to force the job the to use the specific lava slave machine for this =
+purpose.
+<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">And also the zchunk based swupdate is only supported=
+ in trixie version as of now so, in order to verify zchunk based swupdate o=
+n amd64, the trixie OVMF keys needs to be present in the lava slave machine=
+.
+<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">If we add trixie OVMF keys to any one of the lava sl=
+ave machine that device can be used for these two scenarios. What do you th=
+ink ?<o:p></o:p></p>
+<p class=3D"MsoNormal">Please let me know if you have any other idea. <o:p>=
+</o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Please note that we don=1B$B!G=1B(Bt need install tr=
+ixie version of OVMF package, just adding below two files in slave machine =
+is sufficient. &nbsp;<o:p></o:p></p>
+<p class=3D"MsoNormal">OVMF_CODE_4M.snakeoil.fd<o:p></o:p></p>
+<p class=3D"MsoNormal">OVMF_VARS_4M.snakeoil.fd<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">If this approach is okay then I will send these file=
+s in email.
+<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">[1] <a href=3D"https://gitlab.com/cip-project/cip-co=
+re/isar-cip-core/-/issues/120">
+https://gitlab.com/cip-project/cip-core/isar-cip-core/-/issues/120</a> <o:p=
+></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Thanks&nbsp; &amp; Regards<o:p></o:p></p>
+<p class=3D"MsoNormal">Shivanand K <o:p></o:p></p>
+</div>
+</body>
+</html>
+
+--_000_TY3PR01MB1107521441FF10362116BA904C7D52TY3PR01MB11075jp_--
+
 
