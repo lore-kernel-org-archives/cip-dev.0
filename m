@@ -2,47 +2,43 @@ Return-Path: <Shivanand.Kunijadar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D62FC19F32
-	for <webhook@archiver.kernel.org>; Fri,  7 Mar 2025 09:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24461C282DE
+	for <webhook@archiver.kernel.org>; Fri,  7 Mar 2025 14:27:00 +0000 (UTC)
 Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
- by mx.groups.io with SMTP id smtpd.web10.7833.1741341397854797021
+ by mx.groups.io with SMTP id smtpd.web11.12206.1741357610871411614
  for <cip-dev@lists.cip-project.org>;
- Fri, 07 Mar 2025 01:56:39 -0800
+ Fri, 07 Mar 2025 06:26:51 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.158, mailfrom: shivanand.kunijadar@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 5279uZOn1127366; Fri, 7 Mar 2025 18:56:35 +0900
-X-Iguazu-Qid: 2rWh5b6vFJWsPJJdtU
-X-Iguazu-QSIG: v=2; s=0; t=1741341394; q=2rWh5b6vFJWsPJJdtU; m=9PGqn/HzthhJ/bbHelovgoOpkjcb7xwUL6AzTIZpzps=
+Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 527EQms21529123; Fri, 7 Mar 2025 23:26:48 +0900
+X-Iguazu-Qid: 2rWhEqwpjUq45Cb4jI
+X-Iguazu-QSIG: v=2; s=0; t=1741357607; q=2rWhEqwpjUq45Cb4jI; m=FFgaSX+s9zOs4J6JUb82+IJLaHEoFY76VzCsuT2iCLo=
 Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1120) id 5279uXhU720423
+	by relay.securemx.jp (mx-mr1123) id 527EQktR3734958
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 7 Mar 2025 18:56:34 +0900
+	Fri, 7 Mar 2025 23:26:47 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Gmxq3fNqn3YtpXJ0u2zTvWTwkBIAjd38WdUf1AdxuV6v913qHkQLBy6+cu+1ojQUC1924h30QbwXf5e7aIFIM58hra5x8agfi8iLGnOj81yKX6LrggC4E5MoDwXfhCMGt1WnD8XO6vo8PkEuWS00a8+s7LsFTYFH7hXc8R8lhR1asOgXc+2k5kmC0DMvSPwqkz5b18+whVgDNXluGrkQXZhMDSRknqbWdhugdjpnp8+kFWFiBj/1kHOfJHmumhP8p5WoZOtRTdfWAmWS1ZctwEmd4hVBKca0iDhiUQrxCiEfKgVa8kjkJH/gFvLInjzWnw4ZbXRn8TiUQPJavsRxHg==
+ b=LzGkiSeHUnfQJ378+5gq8bcU7pg0Y5Fh0YUutcmLCh7sjgVfAr4+5v0eUdHAxzOYMjhMwXwn7gOveaCcVXgerv/rAsF0knUvuiRk11oh0KQQS9nizx2FZpsQnKJjuYaJKXD267aw7dkWlc8CIdiqXvS3FIwqZ9fovwDyyUY1FyUs6EW7mwDcnqXG3uEesnaHa/PHEpXT9Z6A0JF21vHMIU1z4tUHF2wC1jkjet36Nu6SK2+LFk1UwfwW76UgfOGz+5MXgyoIl0T3bxHW6DCptJNdySDwOt/7vTYmOkEmA+T9IvxugOrgt5Bf3kp2dS9VABmtqm2Q5joVRiBK8mqZfw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kNufpClppzQUguKOP7mKbWWdCy5T94g6M1pQ3+rXBis=;
- b=C/BXL9/BxZRxLV9x9iGfN0aYYZQL66ycwiM51K/brgdW/HpnKeztMmmyOUIhX1I0t09F8TJ5KV8XS1KoSBtIp7bjMJH6zjoH2d+xqei5o7K369mZAGytr1Q9IPm+wglryVS8sljw/QnE1aEknPq6xsr/btFWsKFhPLqZBOZjazYPMLkU+bq5TPVPbXhBpHNBlz70FISs7DuwSGTijkipTSbWaEothdVXgbPEbkadJLGI52SYZF1dzxO7Eq5evoZIb3M8Uu6mXovapbTwtBKK5rJ1Kfygpz9rELdDKcqUzk3zMPfnKVundynrkWS7cHIGFjfCZn7BOl+lpOY3raCZNA==
+ bh=e0MVYUDKTHiwZqjW49upg6DLlSqCCQZ8rA4z3DDWLBQ=;
+ b=NkLHbVoe74XhfuM/8Saos4Zazjvv1NPBRbeSMXtrHb7/q2qadMJr21czQVCgj8uLkKQA3BSlQERA4B9BrpAf7VE8+VInjl2x2w/cFoQyevU3VlqIwsHzWz+gxAk+vFdX5WeikGhGAuwn+3SUykwh5rbGuVdi43eaJT3AMA63j06yqtmYs+Vi3y9Km9aKuyL0LW7bl/Ir4e4wNe+GqoPA1kMQMxkDTwAis+ytZLtP8EV5p0DLT4F/n1U479ensfgT454eOr/8i0XrHyzkmzAL8UuSkIWMlFgQ7/vu4Yh4HMnZL6sXthPd1sqVQQMR5yfcP73p6lxZ1hoihPrk7TNqZA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
  header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
 From: <Shivanand.Kunijadar@toshiba-tsip.com>
-To: <Chris.Paterson2@renesas.com>
+To: <chris.paterson2@renesas.com>
 CC: <dinesh.kumar@toshiba-tsip.com>, <kazuhiro3.hayashi@toshiba.co.jp>,
-        <Sai.Sathujoda@toshiba-tsip.com>, <cip-dev@lists.cip-project.org>
-Subject: RE: Add trixie OVMF keys for testing 
-Thread-Topic: Add trixie OVMF keys for testing 
-Thread-Index: AduPKv1Bhwt2OQq0QKq4V/WtZyorngADrqDwAALYFsA=
-Date: Fri, 7 Mar 2025 09:56:30 +0000
+        <jan.kiszka@siemens.com>, <Sai.Sathujoda@toshiba-tsip.com>,
+        <cip-dev@lists.cip-project.org>
+Subject: LAVA templates in isar-cip-core
+Thread-Topic: LAVA templates in isar-cip-core
+Thread-Index: AduPX1w73+S62qd1SRCs5UMrnumWmA==
+Date: Fri, 7 Mar 2025 14:26:42 +0000
 X-TSB-HOP2: ON
 Message-ID: 
- <TY3PR01MB1107527CC89D021A74A759922C7D52@TY3PR01MB11075.jpnprd01.prod.outlook.com>
-References: 
- <TY3PR01MB1107521441FF10362116BA904C7D52@TY3PR01MB11075.jpnprd01.prod.outlook.com>
- <OS3PR01MB5896B41E4172736E3AFCE042B7D52@OS3PR01MB5896.jpnprd01.prod.outlook.com>
-In-Reply-To: 
- <OS3PR01MB5896B41E4172736E3AFCE042B7D52@OS3PR01MB5896.jpnprd01.prod.outlook.com>
+ <TYWPR01MB11063DCBCB8B1B68822A14A84C7D52@TYWPR01MB11063.jpnprd01.prod.outlook.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -50,243 +46,279 @@ X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11075:EE_|OSOPR01MB12347:EE_
-x-ms-office365-filtering-correlation-id: dd93d0e1-2dca-4af7-c43a-08dd5d5e55e5
+x-ms-traffictypediagnostic: TYWPR01MB11063:EE_|OSZPR01MB7083:EE_
+x-ms-office365-filtering-correlation-id: 47650905-35ce-462d-8fb1-08dd5d8414df
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: 
- BCL:0;ARA:13230040|1800799024|366016|376014|13003099007|38070700018;
+ BCL:0;ARA:13230040|10070799003|1800799024|366016|376014|38070700018|13003099007|8096899003;
 x-microsoft-antispam-message-info: 
- =?iso-2022-jp?B?WWFpOC9RQkNlODBGZmlyRlZ2OVVrN0ZIUDl2L25wVEZvZ08wMm9XMXV4?=
- =?iso-2022-jp?B?bmJ4ZmpwZ3hubTJ4S2h4WlhHMHlJRmtYdmQzLzZmbTNuZ1kxcjNOWDEv?=
- =?iso-2022-jp?B?MWZLb1JPWW1adWFyZmFpaTRpaGtzT0RlSTRxL3JFbVY3VDNJZmtQL1NL?=
- =?iso-2022-jp?B?cm5mOXV4aVdteEVraGtNbUFDRHo0U2RZQkQ0ZWxFMXpyeVlhVkJGaW1T?=
- =?iso-2022-jp?B?aS9FTWh2eGxZOTJqa3c2bGlFdmc4aXJPSmJpYTZsbkNaU3hLWE5oMzk5?=
- =?iso-2022-jp?B?eFE1Z3Z4RDZMd05YaUowczlYM0FtNTUrSzlZKzdRNmxDRU9uK1dXMjlT?=
- =?iso-2022-jp?B?WFFVcXp2QXg4RWtJS1B3VUsyQU9DSUNiZjBMbENCTkJoY3Q0TXR5Zk80?=
- =?iso-2022-jp?B?UE9PQnpEK3hjT0Fkck9ZS0xpR05jcVowcDEvdnBDUVZmemp6OGV3UmNW?=
- =?iso-2022-jp?B?c0R6U0hpSEppTGp6RThGWVF3Wk5PU0RXSDNkeVNETlJ1Nk8xQXV2M3ds?=
- =?iso-2022-jp?B?eGxucWQrZ3c4ZnFidk83WFVkemZ5MHV2bmoxbmZIajdMeEJTamtqZ0Nt?=
- =?iso-2022-jp?B?RHdLT0E3elRyNE8xOGw5UE1ma2hhb0hDWlNxdHpVdnJBQlpyeUVSdnYz?=
- =?iso-2022-jp?B?eTJIbDI1K0l5NnpjOXlMS0oxVUUwckFQN3JqdWxjS21RMkxadkFQdy9C?=
- =?iso-2022-jp?B?b3ovdTIzckZ0a21JZG40RnRlMW1lek0yZ1F3b1ZhRHZ1WmNva1RjNkhi?=
- =?iso-2022-jp?B?SlRjbGpXc2cvYkh2QTBEa2hwMnZzVDZWeS90Rm9IQmxabU9xWEh5dTNJ?=
- =?iso-2022-jp?B?aFBvV3pKM2xIbTJJdlBualR1Z3pzd1hyYyswKytVVzdtVHVMc0I4RnM2?=
- =?iso-2022-jp?B?SGNLRU1rMmZaazdYS2hPRUQyU3d2azlWVGI2cVdrRXk0SkhRU0xMZ0dT?=
- =?iso-2022-jp?B?MUhXVnphSXlOajBvWUl2dGlTck96SEx0d1V3dXNKQ3JJbzBsa3dtc0Mv?=
- =?iso-2022-jp?B?VGN0dFJNSFQ2RzBSY0U2bzFpOEVCUWlJc3FvVmZIRTBMdUdGMHhZVXBE?=
- =?iso-2022-jp?B?akF5OUJXTkgrQW1ydG1HV2cxNjh0Y2U4SUZ1OVZwNXRHaHM2QXRoV3ND?=
- =?iso-2022-jp?B?anppQTVVbXJ0L2g1bkp6TXhscW0yYlArdmpsaklBUXpaeHg3enNQN08w?=
- =?iso-2022-jp?B?RmZicTMwRlJyS1hnVTkxYU92aUNFU0xpWTlBdFpwZkVCa3Z1c3oyMkhP?=
- =?iso-2022-jp?B?dnlseDVqeWoxOEQ3R1V4UER5R2RjMWQ1QkZLaGZGT1J5ayt4RUZ3VHNQ?=
- =?iso-2022-jp?B?MVREZTJycWljc0xxdFMwdGgxWXJmYmVrdkZDbVByaURpc1NHMlZqUWcr?=
- =?iso-2022-jp?B?a2wrcldmdG9UYUtjTEtjNzJLakhyQjVZTS83Yno2anFGcGIrUDF1dkVF?=
- =?iso-2022-jp?B?UEh4QW9oTUpHME9PaTA2SlVTaklrbVppM002cHlyNTh1WFd6S0lMOUN2?=
- =?iso-2022-jp?B?Umc0NGFCT1ZIa29ZTXpLRFVadmlQWkFVbC9jQS9BdEhKeDlkYzZiemN5?=
- =?iso-2022-jp?B?b1FOVTFoSFh5S1ZzWTA0SURJYzl6L1dla0xRQkN2N0Z6U0tXY2Q2NDc1?=
- =?iso-2022-jp?B?QUQ3MWZ5R3JCSVNLUHJYSmlkbERDUkkwb2p6MFV2Y2ErUERMaldwQk8v?=
- =?iso-2022-jp?B?azNQd25wYy84ZHVwVzF4dGI1d3hRa25zbnZscDA5Rys1cEQ4NHhuQ2VZ?=
- =?iso-2022-jp?B?L1licDVjajc3eHJSOHIydVpnZDdZMFNwMXRtaDRJbGlFWmJJTWhOWkQ5?=
- =?iso-2022-jp?B?M2M2ZkRjNUFjQS9WZEFadWhwaGdCNUpBSmZDWEJkRkZKRTA2TnQ5SHpI?=
- =?iso-2022-jp?B?dW9Cd0xUSEMvRFBjRmNSU2lGNittaVRBWWVsQ1ZKVngyd1VkSDJTZUNl?=
- =?iso-2022-jp?B?eWZYRHRKYUNZV2hsUWdNc2JaOFdZVTZtK3ZELzg0WlhFL1hyUWd4blNE?=
- =?iso-2022-jp?B?UFdhVEUxTHJiMDJmV1F1OEI3bU9hbGp2b3NZT2o3TzFrNHphRzJDWG8w?=
- =?iso-2022-jp?B?SWc9PQ==?=
+ =?iso-2022-jp?B?YzNRb0p2cXUvNmU4cWNxUXptMzJmaHBqdmxVSnpGRnYySFhHQnNNUURq?=
+ =?iso-2022-jp?B?SlhoUTI4cmlWdCtiT1lma2pma0NRekVQT2xvcDVKR2FZMkVBNG90cVFK?=
+ =?iso-2022-jp?B?SWNKS2RJWDhPRmtGU2JwU2g1UlAxSHR4eE1YNFYrZWVJdTRFZUxhYW9L?=
+ =?iso-2022-jp?B?a0prb0lxU1Nta3JGenJyWlVoenlnWEFhMHNaWW1vUGpsakpPbDhYMGhX?=
+ =?iso-2022-jp?B?NlR3S25xS0p1Q2RzSGZHWG1nUFZSTENlclFuQ2lsYlZmbFYveEZ2TnU3?=
+ =?iso-2022-jp?B?Qi9lZUZYbGlyWjd5bFRKN3FPNGNndjFrQjcrdW1uSGlBYVRMVE9DZE9O?=
+ =?iso-2022-jp?B?SjdLbWFWUGhyam5LbjRkS3BMZDZ2eWV4TWwvNFM4VUlSMFkxL1g3T2Ix?=
+ =?iso-2022-jp?B?SDVrSG91SEhBS0o0SmVpejlIUzJ1N3h6NlRKNUFGQklMdW8yL3o3TTFV?=
+ =?iso-2022-jp?B?dDBSVE4ycVltVmxZNUxHRWdhTVlQNnE4M0s0V2NHTEpnVnYrS241M1RR?=
+ =?iso-2022-jp?B?c0hpUXpQSHNLSVlhY3JjZUNHcWgzM3VrY1NibjZ4R2V6OXdXQ2JoNXgz?=
+ =?iso-2022-jp?B?aXZTeFJIbnhRaHlhSW9UaWYvZjVZY2RXZklWYUExYjV4Umo4L0sreEtN?=
+ =?iso-2022-jp?B?RDFYVkUvYlVkOVdYVWYrVFhlSDYvcVZueWhiQkxESjE2dDJ0Yi9oWEtR?=
+ =?iso-2022-jp?B?UHRJeFM2U29kdUZvRmowbFJpajVNWFd4V2MzUWJzMkwrSk9XQmExTHdI?=
+ =?iso-2022-jp?B?ZkJUS00zamJyQnI2RGJhYmt0c0ZNSHQ4anRqWGgvZE9jNkpSWUJKeDc0?=
+ =?iso-2022-jp?B?bnhySzB3WlJHbkRoMUs5VVBxOFVVUTB3b1JubVFaejlCNUwwdy8wK0NC?=
+ =?iso-2022-jp?B?SUZKODRVaEtUWHpIRThoMkVUWjJRMGU5VjVJWFFvR0F3VUduUFlmT0Jv?=
+ =?iso-2022-jp?B?UXpSZnpYZzdXcHZWd1NQYms5cWsxd2x4d05HS2duNitjbjQxQ01GaDMw?=
+ =?iso-2022-jp?B?bXZkdS9SN3RDc0RQRUdmR3EzYWpCeHNPUFJsUjcrVTkzam1qMkExNWpS?=
+ =?iso-2022-jp?B?anVaNVlIbEZxajFwbG9PTTQ5TEFBdmVxMGZnY0ZCaFBiQWlkeGpoUzZ5?=
+ =?iso-2022-jp?B?ZS9XYS9MdHBGTnYrc0szQjlya1c4VWZZcHZ2NzM2QUlGUk9HSXhYQWpK?=
+ =?iso-2022-jp?B?SVFWanRqOUNCZmk4VU1RcUVPTjZIZkEvdlYwNzhGMitndjBXdGRoSjZt?=
+ =?iso-2022-jp?B?YTFzb0h0ZHR3V3hOanRCQzRYTHpMbUZlR1NyekE4SmpSSnR6cGk3Mm9o?=
+ =?iso-2022-jp?B?M1ZITDJzQmZDMWRLUkdUWkd4cjhkcmVvTTlmUEJUVG9TYlRKbnVDcHV3?=
+ =?iso-2022-jp?B?MXJjSWFDcWtYTUt3SjZ4dzNTRW8yK3VYVFBJRUw5OGMwWEFiTWhtWFBC?=
+ =?iso-2022-jp?B?dWpjcTErclRSaFcvQ2FnWG9Qc01Ya1p2bzdDR21qcmZ4ZGxiaW9NRmIy?=
+ =?iso-2022-jp?B?Qm9BeG1IVkw1bWJKeDdSUXJtN1NPQ0ZEKzVJc0gvcGhpYkllK3UzRlIv?=
+ =?iso-2022-jp?B?OUg4NnVVU2hyR1Vqd3VBc2l2TnZMdThzejc3QVJFL0JoTERvNFcyMjNG?=
+ =?iso-2022-jp?B?WWh0VnpLZU1JZ1FISEtXMFBzeWtmWEVsM2JBcVR3dElQbXRMQjNJbkxx?=
+ =?iso-2022-jp?B?UEpLOXRxNzBaZGY5U3JVa1NUTkFUQkhXUE43OXoyZzRidWNHM2M5amlq?=
+ =?iso-2022-jp?B?UGc1NFNYT1JnTGxoQmlsTGtTY0diVEg1SUdkL0pDOVdwTWxBMm84VnlH?=
+ =?iso-2022-jp?B?RWdmRjd6cW9VN285QmFDM2pTejc4UE43T0hWSWpDczNvRlNrNis3RWgw?=
+ =?iso-2022-jp?B?cXJtQmRMSWhmdllTYjVvZXdncmhYd3BtenQ4M0g5STh4K2U0dXl0cXEv?=
+ =?iso-2022-jp?B?OUhzMzM3T1RoNHd0aVlaTmtGN2JHeTlObEJLVUtnY2g3SEZYbGRBWEJT?=
+ =?iso-2022-jp?B?UEtkNkJNSVVUdHp2Z0VkK2dsWGllbEovbHBsTG4zSDlnSEpsZ2NMbXF5?=
+ =?iso-2022-jp?B?YXZWWFAzTHNvSGk5QWx5NWNudlRoMktjakNjMVdtZ1M4MnVEWi9YZFFz?=
+ =?iso-2022-jp?B?Sm1SckJScmR5NnV2RWZJcjRyWCtWSDBnPT0=?=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11075.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(13003099007)(38070700018);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB11063.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(376014)(38070700018)(13003099007)(8096899003);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?QTlNUFRpQ0tTZU55N2hqcHZHTkRKOHpJU3A4M0NtQ2VnMzFFQzNaSkox?=
- =?iso-2022-jp?B?eEhnVmkvdHRaS1FMdWs0V3QxQkhHV2dMQkpSZ01wSEU0aXVQUm1acDJz?=
- =?iso-2022-jp?B?NzlIZnBJemg0ZGVQVmFFaG9CekJKQlZuNVExd04zT1FtYTV6SmlwKzBR?=
- =?iso-2022-jp?B?VzNOSWJBR2ljZEtuMURoeitzMUcwNHZRTlBTMGtFMzJvTUZUdE1PUFBi?=
- =?iso-2022-jp?B?azd0aTl3NmJGb2pFdzViOFd5VjZKQ1I3MDN3STM4bWJVVG43NFA4VG56?=
- =?iso-2022-jp?B?QzV2WnJ5WC9QUWJWSDNVWGJ0NGFsTWorUTJhRXZpenFLTFc5cE9WNWpj?=
- =?iso-2022-jp?B?YStDR2c5Vk56aWNwb2IxRDdYbitkUGwrS04waGhGQnkxcy9QY1hNa3Rx?=
- =?iso-2022-jp?B?UkRxbzFTclNHTXdLOWpnN3Jva0N3UmdwU1IxRGc2ZUdZMkoxQ3pyNW1y?=
- =?iso-2022-jp?B?alhPTjRxS3RTR09SWFZLd2dwbW5FcjhleXYyMjAzV1k1NmhwR3JHSUhw?=
- =?iso-2022-jp?B?RGRsc0hRek16K0lRYTh0TDgzem5nOGZ6d3IzSlEvQ2Y4WVRIeFg3MzJj?=
- =?iso-2022-jp?B?b1N3K0lhZWJUNWpPVVo5dHBwNXYxQmtjZDR1aE9NaytmRWFlR1AwaTFw?=
- =?iso-2022-jp?B?OVVSc0x5ZmVaTFNVbUV4QnBqMkFpaXNOc0Z0VndOTjBWclNJZExWTkxm?=
- =?iso-2022-jp?B?TXE4bjJsSlFOa09JS2hYbEpGT2RNWVZjNUdYNFNKNGg0OS9DT0tCOE1n?=
- =?iso-2022-jp?B?cTd0UHd4YWFRR0ZtdEZJd1o5SmNxUkJjUXR3Q2hIcmZveUhSOEdCY3VQ?=
- =?iso-2022-jp?B?NTRITTVsbHVnME9Gd2xEZ0x1eENRV25IZ1cxYVRpOCtWV2ZBSmNVTHpL?=
- =?iso-2022-jp?B?R1hYLzg5SithVExBN3J2NzlOZitRQUZGNTJHbi9UdVM5aXQwOUI5MU5L?=
- =?iso-2022-jp?B?bCtrUUlOTVRZNERRV2pUdThra3Q4Y3Q1eDJaa0VrV0w2bDV3UFA3bk5J?=
- =?iso-2022-jp?B?MER1YXdkME5UNXlxYTBoNDlrT3lIQ2pvVTZXTlVaa0dBaWZxRml2c2JB?=
- =?iso-2022-jp?B?M3Z1SEY5bDhzWFloR0UwZ0ZoL09vcHU0RUN4Tzh4M3dxNGZBZWdBL2Q0?=
- =?iso-2022-jp?B?MWJEOUlLSzFvaERBcEZLdGRZM2d2RXFvNFpmQVdPNG90bW9uOENXQ2x0?=
- =?iso-2022-jp?B?SEs3c0h4dm9ZZUdhRVpsdURld1l1NllqRkhvd1JMYjF5UFBmWW05SzUv?=
- =?iso-2022-jp?B?UmdoRDgzV2d2aGIxZk15cCtXcE9PcWxQakpBZ2RCTk9TVnVJTXJaRlls?=
- =?iso-2022-jp?B?dndDWDJtdkVJVjhLK2xhcGJZU2xITDJwaVNRTzh5cDR1MXpuSmVpc1kx?=
- =?iso-2022-jp?B?MnZwck1IYytGSXVVVmlORGZLMEpjc1VnZFdyQ0NocTArbk1wM09FU2Rp?=
- =?iso-2022-jp?B?aEJzVDZVdGNNY0F1NS9OZUJhWlljUjU3dzRqTG5lUEpJbi9GTWpHa1pl?=
- =?iso-2022-jp?B?WXBuTnVDY2lRSzczM0dqeDVBQjg1WmJ1YmRhdFZwaFN4b21MRVFoZXlo?=
- =?iso-2022-jp?B?U0hjd2I1RmRQNVVoWXlPWjUzbTI5YzlaVURpNnN3UExKTjZYNkU2UG50?=
- =?iso-2022-jp?B?bW9mVlFwQ2g4VU1LVzk5ZUZlbmFxcmdOMVQ3RzNXM1BsbGhRZHVlQXhv?=
- =?iso-2022-jp?B?a0hzZk1EZGJ3aStlZTdld2FxU3lOMWhPNWlVR2NCeWp6WXVLZ1RFSXZE?=
- =?iso-2022-jp?B?WWhJZDdwcHNyckJXRHJpRmNrN09JZmxoZ2VKRkdlZHlLbWNtWk1ZekZs?=
- =?iso-2022-jp?B?TkljUUZKL2MzVDFvRkRORzFXT1Z2TC9iMGpLWVpKck15S25pbzFkQ0M5?=
- =?iso-2022-jp?B?SkpxdUhYT0paaldtTGVsZ083YlphYjdmbXpJbTlDMnMrQmFYcWg5ZHlh?=
- =?iso-2022-jp?B?QkVwUHlna3I3aDBNVHV0UFRhWXlnUHozbWpHSi9ZRkxzaktTS3NIZXpp?=
- =?iso-2022-jp?B?NmwvTTFlK014ckxQZkxwd05iZ2pGV1VPbWhUMFkxc1pBL0hJQm5VQ3BJ?=
- =?iso-2022-jp?B?RGRpYWR6dWhxaUVUM05BbmxyRzZib0N6SklhTitTOHl1L1ZhODN4amNL?=
- =?iso-2022-jp?B?b05ESWl4bTUzZFY0d1UrR1oxS3lyZlJGUitUeGhOZStaa1NjMFJqREh2?=
- =?iso-2022-jp?B?VmhGd3pzZkdodGFoOGtGb2drS3g3ck01aHV3WWlIWk83TStWWjRSYkth?=
- =?iso-2022-jp?B?QlowYUtLdlRnTmhnMEt6Ni82dWpMZlpCVjBkK05FR1BxK1Z4b2U1dTRj?=
- =?iso-2022-jp?B?ay95TVJNMkFWMkd4aG92b1ZZeFIxcUtVOHZRbGNWWVQ3cEpHa0tsTnNV?=
- =?iso-2022-jp?B?WHVhU289?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+ =?iso-2022-jp?B?QmttUHlhaDBCVFdTRFZHOGRGbk9ZMXQ2TU9oN0RHamFHbTJMNzNTSTI5?=
+ =?iso-2022-jp?B?RXNySlNMMnBnTTdFSUFJa2NRZzl6TWhWYUtqTEYxRHJ5YkFuOU5vVjFF?=
+ =?iso-2022-jp?B?OVZLeW4wcnp6dDBMenQvbEZTK0xoUEhBZGZIK21ja0lSMTJDUzVMeDFi?=
+ =?iso-2022-jp?B?VFRidTZPTzJSRjNudU1pRUVkc0tUVG03R1E0WnVFeGdWY1dxNGdZS0RQ?=
+ =?iso-2022-jp?B?Z0p2aHlXT1l3RVpyc2RIZXhBT1dHSktlS3J0VlJ6NWx2TVU3bGFkcUtq?=
+ =?iso-2022-jp?B?UCtldUtuZkZjMDlkQWJIdmZzODFnbEtDN3VMbVN0OXpIemRRazRNblNX?=
+ =?iso-2022-jp?B?akVVREZpSEpyaVJmdDNRK20zZmUrMVpnbTM1QUUxU29xNE84eFd3WW1U?=
+ =?iso-2022-jp?B?aG1aMWlDaUF5UG9acmNXUWtPOTlURTdadEUwM3RSZHlTbGNNWjRtbjJa?=
+ =?iso-2022-jp?B?bTZDMUIyNXJmV1VjQkx6OFhmMmdPNnQ0SGpTNk91QXh0b0dRSVpuc2py?=
+ =?iso-2022-jp?B?dVV0TCtxVFdOc0xGeS81RGRIQ2pBOE1QRFA4TldXSktTaStDREZLeUdY?=
+ =?iso-2022-jp?B?VjVFS1l3aU0rbTZUOTN5Q3phZTdMcUdaeDdZOFpmeFBhVGgzM3c3czlk?=
+ =?iso-2022-jp?B?R3hpOTJkenUrc2VqWDZVMG40Y2x4Qlgxc3hnakI2alQ0M3ZXY0ozT3N4?=
+ =?iso-2022-jp?B?cmFTaVdVaXVyMjhxRXNZVUlPWCtVMFhWMkJlZWdsTG9NbU1pdlpHYTVt?=
+ =?iso-2022-jp?B?WnZjZTc1WDZ3d0ZUcHNBM3lFekt4WEZYOUtiZnlFcjlnNU9YYkNyeThk?=
+ =?iso-2022-jp?B?Z3JqU3BhWVlVY2pWdnpXWTdwK1k0WVd2OUdtaTlOK2pxSzlJdXFBRTVY?=
+ =?iso-2022-jp?B?SDNTSmxLZTczVUpLTWFxTmR5dk5FY2JzWUJlVlBZdWJTQkZnUnp0VC9k?=
+ =?iso-2022-jp?B?anpYT0hxNDZXNVVvWXNPM1FzKzFBOFNVMHpnVFBGQkg0Z3VObUFhT3pu?=
+ =?iso-2022-jp?B?aFZDRVhJeUk1bFlQMnBvRC9KZzVkbmIxRnVOamJyY0U1UzBNcWpoekdy?=
+ =?iso-2022-jp?B?Tnl2dmQrd0Z2VDVCRHh2T3p0OUVMTGFkS0c1cWw2OHBZaUg1Uk41ZVlU?=
+ =?iso-2022-jp?B?Q2hZaDJhRnNUU3pUQW9aS290OFJsWllvQlVkNGVPaUgyampzWm5ieFg4?=
+ =?iso-2022-jp?B?OExSTVpNNEZSbmZTc2cvcnY5SnJtOVA2VjFqUWoyWThwZW5LaTdBVko5?=
+ =?iso-2022-jp?B?WVpyK2NmaDBEMXJpZW1CWDNHWi9NZVZWUTdYZlRFT3pyMXpKdVQyVUFB?=
+ =?iso-2022-jp?B?ZDR5Z2dWckhWWFdWY0tjaG9RY3FsdEx1OUtUZEZTNE9nOWYvYWRLQ0Q2?=
+ =?iso-2022-jp?B?eG13ck9zbmZjRVhoaXd5MWNpc0cySC90Ukg2T2tYamxlQlF4Q3hiOHRa?=
+ =?iso-2022-jp?B?TlFiK0cwNEY2Y1BlMU5iL0RhNkYzWEI4V3BNYUNmV0Vub2o4S3kyVTl5?=
+ =?iso-2022-jp?B?Uityak9jM1FVSFc2UkFlQnBwUUZ2TFZabG5vaWRlcTJXU0tLKzBNdzJh?=
+ =?iso-2022-jp?B?NmZNcW1EQ3dRckdkRFM0RDZNeVZkV3RPVlFzd3JUc0t4b3RlMHRNWUdx?=
+ =?iso-2022-jp?B?d21mSGRUeGQ0NU9YVTNreDR0dlptdVJPeDA0S2J6VGNSZnp2ZGsyWjBC?=
+ =?iso-2022-jp?B?U3hOQlR4SitaWTFkaXdVNkc4d0FiWnY2R2VPd1g1cXRZdTJrWWxHU21r?=
+ =?iso-2022-jp?B?WnE2em0vRm11NlpCWWJ5cVJDa2lDYUw0aW5MeWI4bG13SmJ4dkxYWGlz?=
+ =?iso-2022-jp?B?NWp6WlRWVUhWV3lZSmJqT2hOV2x3ZjdGMG10YTVFSU9ISDB6M0dNT0s0?=
+ =?iso-2022-jp?B?RFMvWG1lWUZLWTNSMFZGTjNJdzdobmZNQkpnaGVGdU1pTzRIZTR4OTJ5?=
+ =?iso-2022-jp?B?MFFOeHhRa1RlMHRieGxLWVU3NGowUTJ1eVFWeGh2dnptREVZRDJoeDZr?=
+ =?iso-2022-jp?B?MWNkN3V6ditldjNrdnFoZmxGdy95VndvcVg2a1UranJHMFNtS2krY2FG?=
+ =?iso-2022-jp?B?TEpZa1duc1dpdm9USDdjTE1DOG5yYkIrUjB3eDhoNDNpLzRqMU9OMjRE?=
+ =?iso-2022-jp?B?bkc1NjJZdnlZSXMxNWl0dGpGcmRWM01INFpuZGhrcmIvdFl5VFQxZDYz?=
+ =?iso-2022-jp?B?Z2gzNVdCbVdnaGJnN3hrR0tqaWFJaTJpTThNRElYV2hnd21JbzZUR1Nn?=
+ =?iso-2022-jp?B?blZETjZIZXlwSTJTblgzRng5R0tPZTA2MFF5YXUzVWJtL3RLaHJkTlZo?=
+ =?iso-2022-jp?B?SGRYcmk4Yys3OFJwclRaYmFqUkpFSE8xT1hhc2Z2TTJERjB4VndFVWZw?=
+ =?iso-2022-jp?B?eDZWY1ZDaW1HS0VJSjRkSTJFTEV0ZVRpZjU1SkVZcTZTWUhXMXFHb1NZ?=
+ =?iso-2022-jp?B?NE1OMkt0S2cycDB6V2dtaUIzbFhsTkdycUlZPQ==?=
+Content-Type: multipart/alternative;
+	boundary="_000_TYWPR01MB11063DCBCB8B1B68822A14A84C7D52TYWPR01MB11063jp_"
 MIME-Version: 1.0
 X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11075.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd93d0e1-2dca-4af7-c43a-08dd5d5e55e5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Mar 2025 09:56:30.5783
+X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB11063.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 47650905-35ce-462d-8fb1-08dd5d8414df
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Mar 2025 14:26:42.3280
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xEy0TVmYUyooxoz0mAzfCgFd4/24lLazksO/YKKaHOEwkeno+pwJQ0Br8wvql+EOCSlby5Yv3cEYjwGeuSXLO5Xfs8PItV++HiS7MH8erPFoWT5hGvI2HJ4B48Jvjbhm
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSOPR01MB12347
+X-MS-Exchange-CrossTenant-userprincipalname: Q1aAo4Z44zxXIQrlXb6tVMToOCWtku6tbS1dqhe42DbhaM6kh0jQ3FraaMiLUB3ndemYitGkIl0v0Ae7xB4m7FF9znMOvTqgkqYEXwOAwmfnfh8BHPAHSSq6aVcuw+G9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB7083
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 07 Mar 2025 09:56:48 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18069
+ <cip-dev@lists.cip-project.org>; Fri, 07 Mar 2025 14:27:00 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18070
 
-Hello Chris,=20
+--_000_TYWPR01MB11063DCBCB8B1B68822A14A84C7D52TYWPR01MB11063jp_
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for your prompt reply.=20
+Hello Chris,
 
-> Our LAVA workers all run the same Docker container provided by our fork o=
-f lava-docker[2].
-> So, if you add your keys as part of the lava-slave dockerfile[3] then you=
- won't need special tags etc. - all workers would have what you need.
+This is regarding the LAVA templates and preparation of LAVA job definition=
+s in the gitlab CI.
 
-I understood, thanks. I will send the MR to lava-docker repo.=20
+At the moment, in isar-cip-core repository, the LAVA jobs definitions are g=
+etting prepared by using template files.
+I understand that this is to avoid code duplication. However the template f=
+ile approach doesn=1B$B!G=1B(Bt work well with all the test scenarios.
 
-> One potential issue - are you adding private keys?
-> If yes, would it be an issue if they are made public within our lava-dock=
-er?
-> If it is, we'll have to think of another way to keep them private. =20
+As part of improve test coverage of swupdate/secure boot[1], we identified =
+some test cases and written LAVA job definitions for them.
+Each scenario requires different steps/action block or some other changes b=
+ased on the test scenario. It will be difficult to handle all these changes=
+ using templates approach.
 
-These keys are part of OVMF Debian package[1].
+At present, there is a script in isar-cip-core =1B$B!H=1B(Bsubmit_lava.sh=
+=1B$B!I=1B(B[2] which modifies few things based on the architecture, distri=
+bution(i.e using sed command) even after deriving the job definition from t=
+emplates. If we consider to integrate negative test cases of swupdate and s=
+ecure boot which makes the submit_lava.sh script more complex and also the =
+readability[3].
 
-In fact, in current lava slave machines (tag: swtpm-jobs), the bookworm rel=
-ated OVMF files are already installed (/usr/share/OVMF/*) so, we just need =
-to add trixie OVMF keys as well for our testing purpose.=20
-I don't see any security issues here.    =20
+We may have to add additional test scenarios in future as well so, by consi=
+dering all these things I think It would be better to keep the entire job d=
+efinitions in the repository instead of deriving it from templates.
+Basically we can make use of templates if the changes across multiple jobs =
+definitions are less, otherwise we can keep the entire job definitions(comp=
+lete .yml) itself in the repository for each case.
 
-[1] https://packages.debian.org/sid/all/ovmf/filelist=20
+What do you think about it?  Please provide your opinion.
+
+[1] https://gitlab.com/cip-project/cip-core/isar-cip-core/-/issues/120
+[2] https://gitlab.com/cip-project/cip-core/isar-cip-core/-/blob/master/scr=
+ipts/submit_lava.sh?ref_type=3Dheads
+[3] https://gitlab.com/cip-project/cip-core/isar-cip-core/-/commit/1e8788d5=
+c54ce2eb76048ea2cae11af079a4dbe6
 
 Thanks & Regards
 Shivanand K
 
------Original Message-----
-From: Chris Paterson <Chris.Paterson2@renesas.com>=20
-Sent: 07 March 2025 14:00
-To: kunijadar shivanand(=1B$B#T#S#I#P=1B(B DITC_DIT-OST) <Shivanand.Kunijad=
-ar@toshiba-tsip.com>
-Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B DITC_DIT-OST) <dinesh.kumar@toshiba-tsi=
-p.com>; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B=
-!{#D#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp>; ashrith s=
-ai(=1B$B#T#S#I#P=1B(B DITC_DIT-OST) <Sai.Sathujoda@toshiba-tsip.com>; cip-d=
-ev@lists.cip-project.org
-Subject: RE: Add trixie OVMF keys for testing=20
+--_000_TYWPR01MB11063DCBCB8B1B68822A14A84C7D52TYWPR01MB11063jp_
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Shivanand,
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
+osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
+//www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
+<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
+<style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Aptos;}
+@font-face
+	{font-family:"MS PGothic";
+	panose-1:2 11 6 0 7 2 5 8 2 4;}
+@font-face
+	{font-family:"\@MS PGothic";}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	font-size:11.0pt;
+	font-family:"Aptos",sans-serif;
+	mso-ligatures:standardcontextual;
+	mso-fareast-language:EN-US;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:#0563C1;
+	text-decoration:underline;}
+span.EmailStyle18
+	{mso-style-type:personal-compose;
+	font-family:"Aptos",sans-serif;
+	color:windowtext;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-size:11.0pt;
+	mso-ligatures:none;
+	mso-fareast-language:EN-US;}
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
+div.WordSection1
+	{page:WordSection1;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]-->
+</head>
+<body lang=3D"EN-IN" link=3D"#0563C1" vlink=3D"#954F72" style=3D"word-wrap:=
+break-word">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal">Hello Chris, <o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">This is regarding the LAVA templates and preparation=
+ of LAVA job definitions in the gitlab CI.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">At the moment, in isar-cip-core repository, the LAVA=
+ jobs definitions are getting prepared by using template files.
+<o:p></o:p></p>
+<p class=3D"MsoNormal">I understand that this is to avoid code duplication.=
+ However the template file approach doesn=1B$B!G=1B(Bt work well with all t=
+he test scenarios.
+<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">As part of improve test coverage of swupdate/secure =
+boot[1], we identified some test cases and written LAVA job definitions for=
+ them.<o:p></o:p></p>
+<p class=3D"MsoNormal">Each scenario requires different steps/action block =
+or some other changes based on the test scenario. It will be difficult to h=
+andle all these changes using templates approach.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">At present, there is a script in isar-cip-core =1B$B=
+!H=1B(Bsubmit_lava.sh=1B$B!I=1B(B[2] which modifies few things based on the=
+ architecture, distribution(i.e using sed command) even after deriving the =
+job definition from templates. If we consider to integrate
+ negative test cases of swupdate and secure boot which makes the submit_lav=
+a.sh script more complex and also the readability[3].
+<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">We may have to add additional test scenarios in futu=
+re as well so, by considering all these things I think It would be better t=
+o keep the entire job definitions in the repository instead of deriving it =
+from templates.
+<o:p></o:p></p>
+<p class=3D"MsoNormal">Basically we can make use of templates if the change=
+s across multiple jobs definitions are less, otherwise we can keep the enti=
+re job definitions(complete .yml) itself in the repository for each case.
+<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">What do you think about it? &nbsp;Please provide you=
+r opinion. &nbsp;<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">[1] <a href=3D"https://gitlab.com/cip-project/cip-co=
+re/isar-cip-core/-/issues/120">
+https://gitlab.com/cip-project/cip-core/isar-cip-core/-/issues/120</a><o:p>=
+</o:p></p>
+<p class=3D"MsoNormal">[2] <a href=3D"https://gitlab.com/cip-project/cip-co=
+re/isar-cip-core/-/blob/master/scripts/submit_lava.sh?ref_type=3Dheads">
+https://gitlab.com/cip-project/cip-core/isar-cip-core/-/blob/master/scripts=
+/submit_lava.sh?ref_type=3Dheads</a><o:p></o:p></p>
+<p class=3D"MsoNormal">[3] <a href=3D"https://gitlab.com/cip-project/cip-co=
+re/isar-cip-core/-/commit/1e8788d5c54ce2eb76048ea2cae11af079a4dbe6">
+https://gitlab.com/cip-project/cip-core/isar-cip-core/-/commit/1e8788d5c54c=
+e2eb76048ea2cae11af079a4dbe6</a>
+<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Thanks &amp; Regards<o:p></o:p></p>
+<p class=3D"MsoNormal">Shivanand K<o:p></o:p></p>
+</div>
+</body>
+</html>
 
-> From: Shivanand.Kunijadar@toshiba-tsip.com=20
-> <Shivanand.Kunijadar@toshiba- tsip.com>
-> Sent: 07 March 2025 07:05
->=20
-> Dear Chris,
->=20
->=20
->=20
-> I hope you are doing good.
->=20
->=20
->=20
-> This is regarding the improve test coverage for swupdate and secure=20
-> boot activity[1].
->=20
-> We have a scenario where we need to verify the secure boot with=20
-> mismatched keys, for this we plan to use trixie version of OVMF keys=20
-> to verify the bookworm secure boot image.
->=20
-> It is working locally and throwing an error =1B$B!H=1B(BAccess denied=1B$=
-B!I=1B(B as expected.
->=20
->=20
->=20
-> So, it would be better if we add trixie OVMF keys in any one of the=20
-> lava slave machine for this test scenario. We can use tag option to=20
-> force the job the to use the specific lava slave machine for this purpose=
-.
->=20
->=20
->=20
-> And also the zchunk based swupdate is only supported in trixie version=20
-> as of now so, in order to verify zchunk based swupdate on amd64, the=20
-> trixie OVMF keys needs to be present in the lava slave machine.
->=20
->=20
->=20
-> If we add trixie OVMF keys to any one of the lava slave machine that=20
-> device can be used for these two scenarios. What do you think ?
-
-Our LAVA workers all run the same Docker container provided by our fork of =
-lava-docker[2].
-So, if you add your keys as part of the lava-slave dockerfile[3] then you w=
-on't need special tags etc. - all workers would have what you need.
-
-One potential issue - are you adding private keys?
-If yes, would it be an issue if they are made public within our lava-docker=
-?
-If it is, we'll have to think of another way to keep them private.
-
-
-[2] https://gitlab.com/cip-project/cip-testing/lava-docker
-[3] https://gitlab.com/cip-project/cip-testing/lava-docker/-/blob/cip-lava-=
-docker/lava-slave/Dockerfile
-
->=20
-> Please let me know if you have any other idea.
->=20
->=20
->=20
-> Please note that we don=1B$B!G=1B(Bt need install trixie version of OVMF =
-package,=20
-> just adding below two files in slave machine is sufficient.
->=20
-> OVMF_CODE_4M.snakeoil.fd
->=20
-> OVMF_VARS_4M.snakeoil.fd
->=20
->=20
->=20
-> If this approach is okay then I will send these files in email.
-
-Please could you create a merge request [4] instead?
-
-[4] https://gitlab.com/cip-project/cip-testing/lava-docker/-/merge_requests=
-/new
-
-Kind regards, Chris
-
->=20
->=20
->=20
-> [1] https://gitlab.com/cip-project/cip-core/isar-cip-core/-/issues/120
-> <https://gitlab.com/cip-project/cip-core/isar-cip-core/-/issues/120>
->=20
->=20
->=20
-> Thanks  & Regards
->=20
-> Shivanand K
+--_000_TYWPR01MB11063DCBCB8B1B68822A14A84C7D52TYWPR01MB11063jp_--
 
 
