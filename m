@@ -2,41 +2,41 @@ Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8764C35FF6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9C7FC28B2F
 	for <webhook@archiver.kernel.org>; Thu, 13 Mar 2025 01:33:15 +0000 (UTC)
-Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.50])
- by mx.groups.io with SMTP id smtpd.web10.34471.1741778750358293288
+Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.64])
+ by mx.groups.io with SMTP id smtpd.web10.34467.1741778741795642098
  for <cip-dev@lists.cip-project.org>;
- Wed, 12 Mar 2025 04:25:50 -0700
+ Wed, 12 Mar 2025 04:25:42 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=qFgnWYwZ;
- spf=pass (domain: bp.renesas.com, ip: 40.107.74.50, mailfrom: tommaso.merciai.xr@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=iskGtDxs;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.229.64, mailfrom: tommaso.merciai.xr@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=q4ra7wgZSHRdUz5/dLZgXKtBfxsNZ6Of1ZcqD8VQCxG6pr25yz46ohmfWBk8HiT1mkPbk6S0bRE6PZ6LNSq6zX9sEkQiSk+EWkFb2Ui3SlacWnn8HlernK5cgFFXA7cqyMr6uvHrOz4mTniQF9OHY4t+Od10CMSkKPI8aBmzhhggZfPkriAf2tLongCO7EmaWf9n34q52hMegWk9Gf5G7YeGDwky+qPsM8qj6Aq9F/leX8Kqjm154Iihk1euzo0TGZchW8Nvrkub7hK43REFgvDiqFNHqr3otXKRvog5b+YjgcZ3kvCl46H9KynWnreuH7w/4TgRcXlhElfqFdXR8A==
+ b=pyEILvCU7XGdPvzKEuNE/kb5EDogkJnilpoU7IheIUQ/nO1Bd+5Mxd4AyIkvJfVPS0/+aaF7DbeXde2dDIoED9/GPMrhqRA/IgjpWLYYYVlHNT5VPgh+MlhDOx15HDCssuIURfXoplDezEzQ6DpwxVsAs0cdd29FFXgGw7UMc6s/8EwgmgRML1Icl6Go4fFhWc9KzwcrevfylEH+00nMUnbjN3ZwH1dcDwfF8xToEVUJhgdKrtAzkPmVi5tPKBL4l1nJic5UNVMhdkc4Lvz8tGRob7Kf9Zw41kbHd834pKCMYc5GY+59Zrl+DZk4AJMTt4i9oDbO3dWoOAd3AqMi6A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gyDsecBNFPb0BdVWIZtctHnBTqi3/ookZCJ0tkSdAsY=;
- b=SgmtxzRR5huhzn3K8MjXTzZ0ZzgBh54vrdtdPEZ95C3I69TDBtJUX/saGCRJXRFbdv4hdIozrEVSXu2H6FUSf9mqJhMOqCJuHDuIQxWzqXgrzgL1SzvtCFWXcwJxR3lRfA/v1M76e0Mq/oNCa5UQLD3DPmgyFijunotPMXhHZJz0Mc2XSBsFbfucsJIZGBLZHv/VoMmss7HjR6ldOy7f5IpCF8xNPpuP1wDCAzyRjsW8KYvUnXlrydb7kCWmpk7KWCr2bLSAHehBUyCLDUhCtixC9LXkF4WZCUhHC4JgEvj3wyhoaYUBrq1p+Vndplo3JG/UcIC5KAsHNmOPOwNlXQ==
+ bh=p02ysX2iIIrFdba69E/UzDOW6vErM+V5i3enWnlAZDM=;
+ b=OsIIW+L59NUKhhPnu1bgBkshSjWKWpTxnEb5QMV7+UaJzCR4xrro4+PNIS1juIV6lhLXB/4F2SSZB43FqeRDAeSXK9uf/Iq6QFQgQcXjl+7VZtbzRkwlV0SPoTkuCS6oxFmjZtUUu+sBcbxCaRLvb2KVPPARz6AfFPPvY7Or8wil8PEJyGDf39VRmIM3kVG/vV3pGUnEESAZpIdTw5rvB1WQMp0J1z/VhUZ583qumJOtPG9Rid4RfM6NmYOvlJ1IcvQjj2qEstg3yNpSH4seTchXnISMn1vx/ogF/FhoEbOjAMsmAYQl8DChVtoIPp+N4YOBzCqHiRmlAGk0frnsGA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gyDsecBNFPb0BdVWIZtctHnBTqi3/ookZCJ0tkSdAsY=;
- b=qFgnWYwZ6RSXjGbTiEZY3CVcvCvjnSYY2LqJJgJEtasQVh0fm0i6L2qbvrFfxT+zVouYOcrGEc7FDPJMCQpG2WoZ1Gjym9QQQL/MWXsS1Z1dQCJaYFK/YqSRDsaUMcAdDBX/0Zg79wgNsGvMbiCm3BS9Jt61C84eUMJPQSp4+Hk=
+ bh=p02ysX2iIIrFdba69E/UzDOW6vErM+V5i3enWnlAZDM=;
+ b=iskGtDxscsd70HL/JUhxNI5PUM3XTTr2uxvQ0lHcroZh6myuKMKU0rJ/cdcURIl46jeVwT7KSKNcCX+IBI1Ho+zNn0k8L+brhnYugvDjcP2ARVqCk2DQpBuj97CZjkzDIbbF2AEsfu+hwOTgeKlMqyBQHENiDdvXKZqHs9b9e68=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com (2603:1096:604:35e::5)
  by TYWPR01MB10982.jpnprd01.prod.outlook.com (2603:1096:400:397::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Wed, 12 Mar
- 2025 11:25:48 +0000
+ 2025 11:25:36 +0000
 Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com
  ([fe80::244d:8815:7064:a9f3]) by OS9PR01MB13950.jpnprd01.prod.outlook.com
  ([fe80::244d:8815:7064:a9f3%5]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
- 11:25:48 +0000
+ 11:25:36 +0000
 From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -44,9 +44,9 @@ To: cip-dev@lists.cip-project.org,
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: [PATCH 6.1.y-cip 45/85] pinctrl: renesas: rzg2l: Reorganize variable configuration macro
-Date: Wed, 12 Mar 2025 12:22:22 +0100
-Message-ID: <20250312112302.1605750-46-tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 41/85] pinctrl: renesas: rzg2l: Add support for RZ/V2H SoC
+Date: Wed, 12 Mar 2025 12:22:18 +0100
+Message-ID: <20250312112302.1605750-42-tommaso.merciai.xr@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250312112302.1605750-1-tommaso.merciai.xr@bp.renesas.com>
 References: <20250312112302.1605750-1-tommaso.merciai.xr@bp.renesas.com>
@@ -56,80 +56,80 @@ X-ClientProxiedBy: FR4P281CA0246.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: OS9PR01MB13950:EE_|TYWPR01MB10982:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8563706a-23a2-44f5-0c80-08dd6158a36b
+X-MS-Office365-Filtering-Correlation-Id: 9dad039f-bcb7-4684-6c32-08dd61589c40
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?oDnCSJVPa2ggYdjIetVJTReM88z2vFYxkqc/UYOhJ5oi/jcs30OybqVmlj6t?=
- =?us-ascii?Q?jUOsvDgUSMIzRl3ixTekqCoKXGtkl14nIgHs48MVMmEtp161F+eiyMEdUag5?=
- =?us-ascii?Q?C6iWUm2CrfY39lzoAncuU+U7OhZ5mXjkZL2lx87OvrQct1aeV4+hPZoZeb9w?=
- =?us-ascii?Q?XKePsDZAurgeQkbRO/OTkA2LhvKJkgJs5qFpTE08z0US1oXI2n+DYkBdB/p/?=
- =?us-ascii?Q?W+OVlJT0NI0ckcNHs26A2VuUtsoJT66FpgnyuLnjiV0mxjM7ttwC99J4QrIe?=
- =?us-ascii?Q?fXkVXftVf6J0rFGeF3Pg0tZwki7YbaRioYQO2CvBiEnbeB5xmuE43rob2AEX?=
- =?us-ascii?Q?friBFgKpiQy7hCWSdqPCe3gmReRlcrWRN7AZULpmDz5z+p4qqIWVSNjhchfP?=
- =?us-ascii?Q?Qtgn0V2py4S5roxILjzuhomlSSdjvCZUeQQUEGda5wi6hJU4HwTsK9se0sWp?=
- =?us-ascii?Q?5ko4DfeDn8KsG7buhTRXi2+1M4qfNz0btYutlKxwdr1fLexaJx7glnYltV9/?=
- =?us-ascii?Q?I4kGwIJP1KLZhuMmvdQV2QN6GkSYrRaOAmumGZOScEpS6FhwQtZmysh3zS0e?=
- =?us-ascii?Q?48OReKL8cEbVJHkPbXD2gIwyLj2485ZQT+MrTv6XNfjtPUZODzaXM9Bvn9ME?=
- =?us-ascii?Q?JbU58x3NmMBC0TZtFm+WAaHUdOOMqrYBXVFz6faKrTnwO8v1VdFH3/x0igZT?=
- =?us-ascii?Q?ZPqD/U4/R5Ue1gFvk9G76rSXuPgdZIVbcrkl57TJePuYPavvQQwF1R0DXSaV?=
- =?us-ascii?Q?/ZExGNu7K36oyZSBSXrSHf7CvrUBnLu9qaUOtpqS4Fwx/0my2+2TjaeCjlO8?=
- =?us-ascii?Q?spS3aGkA4THrpwSmeQNARPxXZiWQadLAdH3jAa+XAdTzdbR4lZo8nJspgXiN?=
- =?us-ascii?Q?Dcmtu5CY3JLaKKQj8MdVI6IsUaFM/zOC6XwxbPyDJaSe9JnEx0o4ewa/D2dC?=
- =?us-ascii?Q?lrDyJO0L6Ak3gAnnlTPy9jSh4dIV0o1qqzB7hb/gJDw14pl9qjvJr88sKD3Z?=
- =?us-ascii?Q?yQr8TROIXCDNVqlHaYz3Gjz0GmwiB0J1sB5o1iJfktn1qaidNP1d1pRXVebB?=
- =?us-ascii?Q?UzOfs/M2kILucen6TKEQk0Oy6LFSeQxzZGXzaDGdH6pDiXhewxGOZnIu1MsS?=
- =?us-ascii?Q?aT/SVZ0u+4D4od+wot6hnRjipEYnbyqIFk8gLCdQLgv2IWuGO/mo76BM0b8c?=
- =?us-ascii?Q?zYM3pcT8QjRUkGaUcve4hkMpPodiYDdVkjSs0SA/saDBi9N1vXD4GeW0r/Vz?=
- =?us-ascii?Q?tDYxKl0byEGNBiKJk4VKfeXhnqijuX6m1rVhJrV03WDzmJqYIzlWrKclc4QX?=
- =?us-ascii?Q?S3CJoBviLjxoPdc1Pj1fvqMQ+VOGRvI7syugzU/a0IEIS3QNyEQppNXl+dhV?=
- =?us-ascii?Q?V5CMUKrGrha84eVInYe0E0KQ4TKWkVhmwAI8I0pGj5ILSDen1fNS/j0nZRtO?=
- =?us-ascii?Q?E3ZGTK6CFHe60GpWod+kMTUyJqTiRfAv?=
+	=?us-ascii?Q?k5smabmsOt1a0fBdx3KSaEZ9cFEs9cwE+QKm5NTBj+6HuSRUvRczkaAC+BSX?=
+ =?us-ascii?Q?wY2j4GRE+nLUgcZraWsYZc+bIBXjcih79LRqX1fuT9fcoF27nJkQON4vdxw5?=
+ =?us-ascii?Q?w1WLDSLHUEMv4qJEqEkJKQ0eY40jDncyQ3/SsecxQgLO7Uwkpfi7GsaiPaz8?=
+ =?us-ascii?Q?486W0LqxzYWxiZ2HbvX+g+kDlMZD2XhYqKd9SFbpaHUROiRxjvUgPLtxZog1?=
+ =?us-ascii?Q?b3GTT2ufnVFNjd+iAjuuFmi7fWYAHnX78EFsxsjxJBjHdmqjG2zfQYT1R9IR?=
+ =?us-ascii?Q?QWhedXSv4mw0ewFsbqPnVeOlIyN+WicAJbQCfe37iwLNqRYlpHS5PPvlSQKp?=
+ =?us-ascii?Q?77n4j8jPpwpXA6Aq9Dp6dKnollv4b5smblOZqxtNDsQiXS6aJ9m1adZPcrwi?=
+ =?us-ascii?Q?F5qOdPFrHfIrYUmVukGhPw9VB5Nmfqtb1BW5TR22hb7Ezth/CphBFDpa+foO?=
+ =?us-ascii?Q?qcvDlPbnkigo1sohNHZlSvD7ITm1EzkpBcdkiBlSlM//P+BTrVz4ulIzDrDA?=
+ =?us-ascii?Q?xJSX2NT03f1+6gE6mBD1C5bNhPWT4kWcAdvCTznlVTAzTMQrEMFV6uGCwnyt?=
+ =?us-ascii?Q?cm7ZJVVGfu22ju9RvomniUIVK47V6rW4ns6duFKb6qoBbUIrQWGM48Vf258C?=
+ =?us-ascii?Q?RQdZHzmqM2EXWz44Yd9ckqXHBCktZQXscUsk/JcQ0QogbjNRsc9WnqRIshtz?=
+ =?us-ascii?Q?NXm+qd7KPNOTCEWcUxBuLhMOLPGPg123dGiY/WHnilBuiXI4co/Wjs+e8nfG?=
+ =?us-ascii?Q?j7y+hiTCyM+Nog64xtkNOE2Dcwtspe7thiGdb1oNJHjchtmDECsLMteVq/9Q?=
+ =?us-ascii?Q?fcG8+pcJ9imlDLu2yjfu8Wr/Osg4qz0pM7xXffjcoAA69Ku4YF4GkOjfNpol?=
+ =?us-ascii?Q?RDRZ/ujSkrGfoZ8NrQoaqSdmmmZeV5QPdX+dG3gOXpzn/mvEoPmiWatuT6+I?=
+ =?us-ascii?Q?OR11nwJchX4LVL2Gj35gKpYcmkmPIidn9EDD1e7tF9/LbOxGmvBm0rspHoU5?=
+ =?us-ascii?Q?GzuuXkAnXg+iXC52uSkxPkb8OYq3wq//HZRh6eIkaoIErrbAdodICrCRWzey?=
+ =?us-ascii?Q?iuAxOaVZS8tXZ30gOinZ1maf6zmdh3MEKbTyF9+sm9tZ7o76HLLvt9t3RD5t?=
+ =?us-ascii?Q?jtcfAzqXzaVpRGAxNO8U1Rxi8L58NhDgl8inxNSLJ9BJ5rJPa/P0Y5KXW5IW?=
+ =?us-ascii?Q?S+5UWu0OiKhmvKh67MzhZMAxlzv/slqOXqOyQoFqWvYrqUv11JLg/n/3asmB?=
+ =?us-ascii?Q?s0CDKUgcWci0LHOh55O8gapU9OjgWEZrGzZwJ/7fZfPQ+HuuSJkI2VrkAfhU?=
+ =?us-ascii?Q?frJ5nSQkwtUKQCTyLQ9mXWDJRIxacLblDOSSM0Zc8zphvNTfmQ4azSRPiYak?=
+ =?us-ascii?Q?fmcVe9hOlWC/mHyYm7k+hTBBthOK4rx67R+qVUTByXzitiiaDT63RH6zc4n9?=
+ =?us-ascii?Q?/wz8iIpAj3vMTWjvt0L9RLwQGt7yRQ6T?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS9PR01MB13950.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?ciOLQ9T7KlfFINnlULqRAEatQ97+xVKrHJimQZpJa+HwPTbN5t5KPI4dPD6A?=
- =?us-ascii?Q?Z2WPCWWWAxOa4xwCDNaUsJKnihn+3kSlQkUMSZE992eRmth46gP7f/YpAz11?=
- =?us-ascii?Q?e4yixXXp7zrvq6LwFtIEccfeCOzhJb/USJi0r/ACoOTOe3rw0XSUmQY4FXL4?=
- =?us-ascii?Q?FueIM989BWntpgn2VpXdcvF+bLqSKvsurZheJDG3Gmbg2srlkz1vHqmCdo2C?=
- =?us-ascii?Q?R/Jvt0/0sb/mdAS3worAd5ucQtyGVnfmIGf2FrXTGwZsNxhLAOIe6mIrh9rJ?=
- =?us-ascii?Q?UTMAve+NQAEtlVlxiN4omwo1HZs3nMcR631eaIq1w0z1RCxVwbRi6XNuwLTB?=
- =?us-ascii?Q?pCtHiAo4Brcu+wFru6rn9sxugWicHinHiQeQUD0CNsO5SxaCcqLz1VSM9DMH?=
- =?us-ascii?Q?LYqt4m/aRwPSrECNV3tolP3as8Z06bUGxn3ex/bFtxppHb+EWfRZH6DmO7mE?=
- =?us-ascii?Q?Fdh7qebCAEdVH4BbK24y92m4uFI+gkFHdVOMookEp7ynmp7pzn7d6HUQTBq0?=
- =?us-ascii?Q?tEXEzm+WASBrkyYs/nOM6Er4UzZXBpNGL0tVzEkZV242TJBaHYtKoFG39JBd?=
- =?us-ascii?Q?CaeZkRlRqjbmo0UyQOWtpeidHV9NzOZFlKHixn3DL4ArOyBQ7BFR2AyjFClu?=
- =?us-ascii?Q?cJG9axDzegWxicd/pGQ9Gqusqzq+s5btLnG0BWb0ncDqEqH+VLv0jJbmZSk6?=
- =?us-ascii?Q?OSnfWF7mn6NOpOpHnBfIu3OVLAOsZAVW6nMMXin82hlkwQrk4aomlLuX6Iy3?=
- =?us-ascii?Q?DtZSGji5q6VW/H75wmCN1ayrqwOoFV4CUK9WxkFVYgUhpk16iy7odbkULYfd?=
- =?us-ascii?Q?DreI0KAOxgX4L+us/D4d0gvXXy2MwB3jOkR1m56T7n7WAwR/SgK1PYZm+Yn7?=
- =?us-ascii?Q?jTcVz4r9uV2iDsxKdP/qgKtQ2Gl/bxLCIH7kJOo1hGjodsBCY8V5TdgxnZTM?=
- =?us-ascii?Q?OFvDOOQy2lUg5ZY2tkaPOkcRVD/4l1ldqkrR8bhp2aw8IFrITfD4M2ZXBaZJ?=
- =?us-ascii?Q?lpdCVB75LCnN+6xsW7BkY2z7ZvT3eUFqyAYUSZK21REAyPE+P+F13I/A7Hqv?=
- =?us-ascii?Q?RkaAlvBb6OooLuG13vPZLQxBaaJqTYSB2ZnOwQg+8/s1ldaLtPsXVFXxWVFG?=
- =?us-ascii?Q?LJSJE8u+gA+CES7DyAUIPnTAqLkOYqb/AmXtuJpIFGTDCDzqM6pZ/pMXJVkT?=
- =?us-ascii?Q?39IYndfqb5pwhSx4XzWELdKDuNqgougN9ohRbrySYNXzchEm2UD1GHOe44oY?=
- =?us-ascii?Q?E+jtUry3mGh/bd+GduaqmApIfscYKCLkggm0LQuCCqQo8/7Qncj7KoEwpOZS?=
- =?us-ascii?Q?0DERdOmu1acxyx7uLiO4TRanSrQgTWXICwRy4pL2l+zVnZdwYa7Itc9IuMHL?=
- =?us-ascii?Q?NBWu1A5vvpM9GdPqPEiUkkC//qp4F+7ssh3z71fu6VlAGpH9Kms5W43BNZgA?=
- =?us-ascii?Q?aDhHqY/ptymPEcAG2Qs81wv4Dj2CxpiLfObAMXmr8GBK92K1n6bqZnyZXxmH?=
- =?us-ascii?Q?7ONo6T8zFFsf3612PBK08QTYTqr+awA7PZd+1AIca0unYiebXGmTf6Lm0xF5?=
- =?us-ascii?Q?8yKzOlI8NLUApT2v74G564rAY2DqZ0ESSwM6ZrCC0273OW+dMhTHw8Iyt2ds?=
- =?us-ascii?Q?J8PiubQURtfnL9D8Cji5hr0=3D?=
+	=?us-ascii?Q?XBRV/Qg7xK8g1AIbIoksYcXVIicQnVdK7aJKCYnwnQOsvYfuLvecnHQcLFFg?=
+ =?us-ascii?Q?G7hX4pWCvOW1i5mD2zFb3DwMXuqpahla8JYfAuWlG4Q3rzYtA8RsV8zWuAOC?=
+ =?us-ascii?Q?jr3qh97vRoC0e0/Y5dPGeIwFzMkzEnnBq0UXFI9ZqWi3t9A4qQhDkCgLouOc?=
+ =?us-ascii?Q?A9ac8+SB8tDM+FWnGO5xWRz6Ar+D7/aLeOL+V+RvTwGR/rZ4a13bKN4BTJ9P?=
+ =?us-ascii?Q?RssdWlvmmvOAkhiLkrW7SdrlfWyATdRKMsufTcPbHtLPLWLJ36vQ44n3e0FV?=
+ =?us-ascii?Q?fKrbP4ATslLEIQDzqZ59wJ3SjfLVZsZcToGSSP4AUdlzimuYW5PxsiqVZaoH?=
+ =?us-ascii?Q?EuenYKdqDnThSZaatKwaMbcVA5hpFTvPJGU6Cat/qMoLBI4UwGegIgQSUpeG?=
+ =?us-ascii?Q?YYD9RrDWKc0KHvxpGIJ6+qrQsP58FivLSRSqoC+h5J+TNugSyI4o9mA49XAa?=
+ =?us-ascii?Q?6awFer985cdV2hde0YtE6Mux7oezeLYiAgeuM05XzVO9XMRw/3kcQuqSAzDr?=
+ =?us-ascii?Q?tGUwOCvPoB7Qa/EmJzuK/qVLBGTdggBj5AyW4a85uEXuAvL4zbwGhKWQZNzN?=
+ =?us-ascii?Q?vR+HQJRO5k36vE8lkXABIjnCcyMtwp7p/zCTAW/ngADoZptxMCIBTDGGePW0?=
+ =?us-ascii?Q?SiOAzV9NX8wZq8OCqe/0Qalquh5biuilBFSuG8wpyNEwesfjZWVNz6+nXFrV?=
+ =?us-ascii?Q?RPXRDzD59IYXB8Ne2M847PD9WmToJgjojeGCVgvN5t8vWMSB4kwFE72K4IoD?=
+ =?us-ascii?Q?v47tVBj92DfXLK0MM/0Kf0b9uri7DOZfSBd3Bv/1sCddEDjqacQOMRhAAI4U?=
+ =?us-ascii?Q?+8zBfLxF9vHGv81SQJ9KAsrfE7UOgrAdoqn9bYMpcavQ5RzEHhf88g/pmy3S?=
+ =?us-ascii?Q?3BWwgNhi9P7Sb9j3FLcPIB9eXwZ1lhsHt/S6Wds0zwfi6Co/EGKYNKJiHA5W?=
+ =?us-ascii?Q?KzeGA0KwBBaDJo0HFtmiFKd8AkNGoGHOxRTBk/4288HOEoSQJiCxAOxQMZFF?=
+ =?us-ascii?Q?VoNa6TLS6i1VKT1UMwWNZ4DvkoNjUzbSFmVgjUveTA0dzt6MRJi/jmPwEvQA?=
+ =?us-ascii?Q?Kf4jYgJm1JHUsqbOyYSJp+CE1WgVOttKQYgiZeWt059YeK+Bnqf/2D3Zr/6B?=
+ =?us-ascii?Q?Z7ppQIU97pGU1reaohYZZLDd/6sonFlpgQWJMEPSmhPC2FX8+SPi3n23yA5s?=
+ =?us-ascii?Q?fJA7C/FLq99esXWFYTkcX1FCC9g9jkTwsjUBNRCwHzo80m+xldkYvE3UvizH?=
+ =?us-ascii?Q?bMrSwg6qVzmOAk/Bc8+z82+ynM8ftY9nKnQtqmVCDULnGjSRYndDqy89MXMK?=
+ =?us-ascii?Q?3AbRxsd5DqE3odxz3ay8S6RJsO0qaRWIA68DhFh5gsFsnlQLI+AkvDRY0bt3?=
+ =?us-ascii?Q?t4uhtpMeZE2xjsOd+xFMF+J8AHr0C/CO2HiULdowW746hmB9zj3VliJ5paKE?=
+ =?us-ascii?Q?aFdyg3vzuao/ap+siY13zKrAOG9XUwimjPSydcRKBx/wthsb3dXCZEE4j0w1?=
+ =?us-ascii?Q?fvFDY575SWYMpudx8W6FX3o8MF6ZLpaiKsXcmgUxv0IhxzNdGuI5V1kfZxOy?=
+ =?us-ascii?Q?dXtxQI8KT4ytoAm+UX9IvwB/3X5IZZQMt702NID/NZ8zyLSJ2c9sSU26r6ET?=
+ =?us-ascii?Q?knR+PtC/Zat6oQkPxx2OhL8=3D?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8563706a-23a2-44f5-0c80-08dd6158a36b
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9dad039f-bcb7-4684-6c32-08dd61589c40
 X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB13950.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 11:25:48.4622
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 11:25:36.6519
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: moFvRjuI6wo9pTme3q6uR7P3vn6W8xa8dl7Y+7z16yRwhdXBRxNJY5MDFhAkyeBWO+AHNZOQSP6Em15fk9AXnKnP4vlIuYOd5Yeca4Z8e0MNfTZHKbtLdW/mLiAiSu0T
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5cXcWKlxvOU6+Ci4kMsCvn02kPB/wi+InFSTSZeTrUmh0dq0ElQhuIDzkh7n5w1CZAe5l9vH4ffhPBXyc66Erc4ZJ2OWyPoqOR5IUZrc3tnBd78DLMkCHnri2ex6cbE6
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB10982
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
@@ -137,138 +137,618 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 13 Mar 2025 01:33:15 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18137
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18133
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 87d084bcbf1e8dbe97753e20d30fe9d56a97e6be upstream.
+commit 9bd95ac86e700ab8b1a6c225685e0e5afe426b4e upstream.
 
-The `PIN_CFG_VARIABLE` macro did not indicate the capabilities of a pin
-but served as a flag indicating that the pins of a port have different
-capabilities.
-
-To better reflect its purpose, move the `PIN_CFG_VARIABLE` macro beside
-`RZG2L_SINGLE_PIN` and rename it to `RZG2L_VARIABLE_CFG`. Additionally,
-introduce new macros for packing variable port configurations:
-  - `RZG2L_GPIO_PORT_PACK_VARIABLE(n, a)`: Combines `RZG2L_VARIABLE_CFG`
-    with `RZG2L_GPIO_PORT_PACK` to handle variable pin configurations
-    for a packed port.
-  - `RZG2L_GPIO_PORT_SPARSE_PACK_VARIABLE(m, a)`: Combines
-    `RZG2L_VARIABLE_CFG` with `RZG2L_GPIO_PORT_SPARSE_PACK` to handle
-    variable pin configurations for a sparse port.
-
-Due to the above change the configuration macros have been reorganized
-as follows:
-- Shift the bit positions of `PIN_CFG_NOGPIO_INT`, `PIN_CFG_NOD`,
-  `PIN_CFG_SMT`, `PIN_CFG_ELC`, and `PIN_CFG_IOLH_RZV2H` down by one
-  to accommodate the removal of `PIN_CFG_VARIABLE`.
+Add pinctrl driver support for RZ/V2H(P) SoC.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20240618174831.415583-5-prabhakar.mahadev-l=
-ad.rj@bp.renesas.com
+Link: https://lore.kernel.org/r/20240530173857.164073-16-prabhakar.mahadev-=
+lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 29 +++++++++++++++----------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 374 +++++++++++++++++++++++-
+ 1 file changed, 371 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/rene=
 sas/pinctrl-rzg2l.c
-index d38df51c7118..7d76e0962e5c 100644
+index d42ce90af83a..8c29c8d3c574 100644
 --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
 +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -56,14 +56,14 @@
- #define PIN_CFG_IOLH_C			BIT(13)
- #define PIN_CFG_SOFT_PS			BIT(14)
+@@ -58,6 +58,10 @@
  #define PIN_CFG_OEN			BIT(15)
--#define PIN_CFG_VARIABLE		BIT(16)
--#define PIN_CFG_NOGPIO_INT		BIT(17)
--#define PIN_CFG_NOD			BIT(18)	/* N-ch Open Drain */
--#define PIN_CFG_SMT			BIT(19)	/* Schmitt-trigger input control */
--#define PIN_CFG_ELC			BIT(20)
--#define PIN_CFG_IOLH_RZV2H		BIT(21)
-+#define PIN_CFG_NOGPIO_INT		BIT(16)
-+#define PIN_CFG_NOD			BIT(17)	/* N-ch Open Drain */
-+#define PIN_CFG_SMT			BIT(18)	/* Schmitt-trigger input control */
-+#define PIN_CFG_ELC			BIT(19)
-+#define PIN_CFG_IOLH_RZV2H		BIT(20)
-=20
- #define RZG2L_SINGLE_PIN		BIT_ULL(63)	/* Dedicated pin */
-+#define RZG2L_VARIABLE_CFG		BIT_ULL(62)	/* Variable cfg for port pins */
+ #define PIN_CFG_VARIABLE		BIT(16)
+ #define PIN_CFG_NOGPIO_INT		BIT(17)
++#define PIN_CFG_NOD			BIT(18)	/* N-ch Open Drain */
++#define PIN_CFG_SMT			BIT(19)	/* Schmitt-trigger input control */
++#define PIN_CFG_ELC			BIT(20)
++#define PIN_CFG_IOLH_RZV2H		BIT(21)
 =20
  #define RZG2L_MPXED_COMMON_PIN_FUNCS(group) \
  					(PIN_CFG_IOLH_##group | \
-@@ -99,12 +99,17 @@
- #define RZG2L_GPIO_PORT_SPARSE_PACK(m, a, f)	(FIELD_PREP_CONST(PIN_CFG_PIN=
-_MAP_MASK, (m)) | \
- 						 FIELD_PREP_CONST(PIN_CFG_PIN_REG_MASK, (a)) | \
- 						 FIELD_PREP_CONST(PIN_CFG_MASK, (f)))
-+#define RZG2L_GPIO_PORT_SPARSE_PACK_VARIABLE(m, a)	\
-+						(RZG2L_VARIABLE_CFG | \
-+						 RZG2L_GPIO_PORT_SPARSE_PACK(m, a, 0))
+@@ -72,6 +76,11 @@
+ #define RZG3S_MPXED_PIN_FUNCS(group)	(RZG2L_MPXED_COMMON_PIN_FUNCS(group) =
+| \
+ 					 PIN_CFG_SOFT_PS)
 =20
- /*
-  * n indicates number of pins in the port, a is the register index
-  * and f is pin configuration capabilities supported.
-  */
- #define RZG2L_GPIO_PORT_PACK(n, a, f)	RZG2L_GPIO_PORT_SPARSE_PACK((1ULL <<=
- (n)) - 1, (a), (f))
-+#define RZG2L_GPIO_PORT_PACK_VARIABLE(n, a)	(RZG2L_VARIABLE_CFG | \
-+						 RZG2L_GPIO_PORT_PACK(n, a, 0))
++#define RZV2H_MPXED_PIN_FUNCS		(RZG2L_MPXED_COMMON_PIN_FUNCS(RZV2H) | \
++					 PIN_CFG_NOD | \
++					 PIN_CFG_SR | \
++					 PIN_CFG_SMT)
++
+ #define RZG2L_MPXED_ETH_PIN_FUNCS(x)	((x) | \
+ 					 PIN_CFG_FILONOFF | \
+ 					 PIN_CFG_FILNUM | \
+@@ -134,6 +143,7 @@
+ #define ETH_POC(off, ch)	((off) + (ch) * 4)
+ #define QSPI			(0x3008)
+ #define ETH_MODE		(0x3018)
++#define PFC_OEN			(0x3C40) /* known on RZ/V2H(P) only */
 =20
- #define RZG2L_SINGLE_PIN_INDEX_MASK	GENMASK_ULL(62, 56)
- #define RZG2L_SINGLE_PIN_BITS_MASK	GENMASK_ULL(55, 53)
-@@ -370,7 +375,7 @@ static u64 rzg2l_pinctrl_get_variable_pin_cfg(struct rz=
-g2l_pinctrl *pctrl,
+ #define PVDD_2500		2	/* I/O domain voltage 2.5V */
+ #define PVDD_1800		1	/* I/O domain voltage <=3D 1.8V */
+@@ -141,6 +151,8 @@
 =20
- 		if (FIELD_GET(VARIABLE_PIN_CFG_PORT_MASK, cfg) =3D=3D port &&
- 		    FIELD_GET(VARIABLE_PIN_CFG_PIN_MASK, cfg) =3D=3D pin)
--			return (pincfg & ~PIN_CFG_VARIABLE) | FIELD_GET(PIN_CFG_MASK, cfg);
-+			return (pincfg & ~RZG2L_VARIABLE_CFG) | FIELD_GET(PIN_CFG_MASK, cfg);
+ #define PWPR_B0WI		BIT(7)	/* Bit Write Disable */
+ #define PWPR_PFCWE		BIT(6)	/* PFC Register Write Enable */
++#define PWPR_REGWE_A		BIT(6)	/* PFC and PMC Register Write Enable on RZ/V2=
+H(P) */
++#define PWPR_REGWE_B		BIT(5)	/* OEN Register Write Enable, known only in R=
+Z/V2H(P) */
+=20
+ #define PM_MASK			0x03
+ #define PFC_MASK		0x07
+@@ -159,6 +171,19 @@
+ #define RZG2L_TINT_IRQ_START_INDEX	9
+ #define RZG2L_PACK_HWIRQ(t, i)		(((t) << 16) | (i))
+=20
++/* Custom pinconf parameters */
++#define RENESAS_RZV2H_PIN_CONFIG_OUTPUT_IMPEDANCE	(PIN_CONFIG_END + 1)
++
++static const struct pinconf_generic_params renesas_rzv2h_custom_bindings[]=
+ =3D {
++	{ "renesas,output-impedance", RENESAS_RZV2H_PIN_CONFIG_OUTPUT_IMPEDANCE, =
+1 },
++};
++
++#ifdef CONFIG_DEBUG_FS
++static const struct pin_config_item renesas_rzv2h_conf_items[] =3D {
++	PCONFDUMP(RENESAS_RZV2H_PIN_CONFIG_OUTPUT_IMPEDANCE, "output-impedance", =
+"x", true),
++};
++#endif
++
+ /* Read/write 8 bits register */
+ #define RZG2L_PCTRL_REG_ACCESS8(_read, _addr, _val)	\
+ 	do {						\
+@@ -351,6 +376,15 @@ static u64 rzg2l_pinctrl_get_variable_pin_cfg(struct r=
+zg2l_pinctrl *pctrl,
+ 	return 0;
+ }
+=20
++static const u64 r9a09g057_variable_pin_cfg[] =3D {
++	RZG2L_VARIABLE_PIN_CFG_PACK(11, 0, RZV2H_MPXED_PIN_FUNCS),
++	RZG2L_VARIABLE_PIN_CFG_PACK(11, 1, RZV2H_MPXED_PIN_FUNCS | PIN_CFG_IEN),
++	RZG2L_VARIABLE_PIN_CFG_PACK(11, 2, RZV2H_MPXED_PIN_FUNCS | PIN_CFG_IEN),
++	RZG2L_VARIABLE_PIN_CFG_PACK(11, 3, RZV2H_MPXED_PIN_FUNCS | PIN_CFG_IEN),
++	RZG2L_VARIABLE_PIN_CFG_PACK(11, 4, RZV2H_MPXED_PIN_FUNCS | PIN_CFG_IEN),
++	RZG2L_VARIABLE_PIN_CFG_PACK(11, 5, RZV2H_MPXED_PIN_FUNCS | PIN_CFG_IEN),
++};
++
+ #ifdef CONFIG_RISCV
+ static const u64 r9a07g043f_variable_pin_cfg[] =3D {
+ 	RZG2L_VARIABLE_PIN_CFG_PACK(20, 0, PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_=
+PUPD |
+@@ -401,6 +435,17 @@ static void rzg2l_pmc_writeb(struct rzg2l_pinctrl *pct=
+rl, u8 val, u16 offset)
+ 	writeb(val, pctrl->base + offset);
+ }
+=20
++static void rzv2h_pmc_writeb(struct rzg2l_pinctrl *pctrl, u8 val, u16 offs=
+et)
++{
++	const struct rzg2l_register_offsets *regs =3D &pctrl->data->hwcfg->regs;
++	u8 pwpr;
++
++	pwpr =3D readb(pctrl->base + regs->pwpr);
++	writeb(pwpr | PWPR_REGWE_A, pctrl->base + regs->pwpr);
++	writeb(val, pctrl->base + offset);
++	writeb(pwpr & ~PWPR_REGWE_A, pctrl->base + regs->pwpr);
++}
++
+ static void rzg2l_pinctrl_set_pfc_mode(struct rzg2l_pinctrl *pctrl,
+ 				       u8 pin, u8 off, u8 func)
+ {
+@@ -1041,14 +1086,104 @@ static int rzg2l_bias_param_to_hw(enum pin_config_=
+param param)
+ 	return -EINVAL;
+ }
+=20
++static int rzv2h_hw_to_bias_param(unsigned int bias)
++{
++	switch (bias) {
++	case 0:
++	case 1:
++		return PIN_CONFIG_BIAS_DISABLE;
++	case 2:
++		return PIN_CONFIG_BIAS_PULL_DOWN;
++	case 3:
++		return PIN_CONFIG_BIAS_PULL_UP;
++	default:
++		break;
++	}
++
++	return -EINVAL;
++}
++
++static int rzv2h_bias_param_to_hw(enum pin_config_param param)
++{
++	switch (param) {
++	case PIN_CONFIG_BIAS_DISABLE:
++		return 0;
++	case PIN_CONFIG_BIAS_PULL_DOWN:
++		return 2;
++	case PIN_CONFIG_BIAS_PULL_UP:
++		return 3;
++	default:
++		break;
++	}
++
++	return -EINVAL;
++}
++
++static u8 rzv2h_pin_to_oen_bit(struct rzg2l_pinctrl *pctrl, u32 offset)
++{
++	static const char * const pin_names[] =3D { "ET0_TXC_TXCLK", "ET1_TXC_TXC=
+LK",
++						  "XSPI0_RESET0N", "XSPI0_CS0N",
++						  "XSPI0_CKN", "XSPI0_CKP" };
++	const struct pinctrl_pin_desc *pin_desc =3D &pctrl->desc.pins[offset];
++	unsigned int i;
++
++	for (i =3D 0; i < ARRAY_SIZE(pin_names); i++) {
++		if (!strcmp(pin_desc->name, pin_names[i]))
++			return i;
++	}
++
++	/* Should not happen. */
++	return 0;
++}
++
++static u32 rzv2h_oen_read(struct rzg2l_pinctrl *pctrl, u32 caps, u32 offse=
+t, u8 pin)
++{
++	u8 bit;
++
++	if (!(caps & PIN_CFG_OEN))
++		return 0;
++
++	bit =3D rzv2h_pin_to_oen_bit(pctrl, offset);
++
++	return !(readb(pctrl->base + PFC_OEN) & BIT(bit));
++}
++
++static int rzv2h_oen_write(struct rzg2l_pinctrl *pctrl, u32 caps, u32 offs=
+et, u8 pin, u8 oen)
++{
++	const struct rzg2l_hwcfg *hwcfg =3D pctrl->data->hwcfg;
++	const struct rzg2l_register_offsets *regs =3D &hwcfg->regs;
++	unsigned long flags;
++	u8 val, bit;
++	u8 pwpr;
++
++	if (!(caps & PIN_CFG_OEN))
++		return -EINVAL;
++
++	bit =3D rzv2h_pin_to_oen_bit(pctrl, offset);
++	spin_lock_irqsave(&pctrl->lock, flags);
++	val =3D readb(pctrl->base + PFC_OEN);
++	if (oen)
++		val &=3D ~BIT(bit);
++	else
++		val |=3D BIT(bit);
++
++	pwpr =3D readb(pctrl->base + regs->pwpr);
++	writeb(pwpr | PWPR_REGWE_B, pctrl->base + regs->pwpr);
++	writeb(val, pctrl->base + PFC_OEN);
++	writeb(pwpr & ~PWPR_REGWE_B, pctrl->base + regs->pwpr);
++	spin_unlock_irqrestore(&pctrl->lock, flags);
++
++	return 0;
++}
++
+ static int rzg2l_pinctrl_pinconf_get(struct pinctrl_dev *pctldev,
+ 				     unsigned int _pin,
+ 				     unsigned long *config)
+ {
+ 	struct rzg2l_pinctrl *pctrl =3D pinctrl_dev_get_drvdata(pctldev);
+-	enum pin_config_param param =3D pinconf_to_config_param(*config);
+ 	const struct rzg2l_hwcfg *hwcfg =3D pctrl->data->hwcfg;
+ 	const struct pinctrl_pin_desc *pin =3D &pctrl->desc.pins[_pin];
++	u32 param =3D pinconf_to_config_param(*config);
+ 	u64 *pin_data =3D pin->drv_data;
+ 	unsigned int arg =3D 0;
+ 	u32 off;
+@@ -1159,6 +1294,13 @@ static int rzg2l_pinctrl_pinconf_get(struct pinctrl_=
+dev *pctldev,
+ 		break;
  	}
 =20
- 	return 0;
-@@ -1835,13 +1840,13 @@ static const u64 r9a07g043_gpio_configs[] =3D {
- 	RZG2L_GPIO_PORT_SPARSE_PACK(0x2, 0x06, PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_=
-CFG_PUPD |
- 				    PIN_CFG_FILONOFF | PIN_CFG_FILNUM | PIN_CFG_FILCLKSEL |
- 				    PIN_CFG_IEN | PIN_CFG_NOGPIO_INT),			/* P19 */
--	RZG2L_GPIO_PORT_PACK(8, 0x07, PIN_CFG_VARIABLE),				/* P20 */
-+	RZG2L_GPIO_PORT_PACK_VARIABLE(8, 0x07),						/* P20 */
- 	RZG2L_GPIO_PORT_SPARSE_PACK(0x2, 0x08, PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_=
-CFG_PUPD |
- 				    PIN_CFG_IEN | PIN_CFG_NOGPIO_INT),			/* P21 */
- 	RZG2L_GPIO_PORT_PACK(4, 0x09, PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_CFG_PUPD =
-|
- 			     PIN_CFG_IEN | PIN_CFG_NOGPIO_INT),				/* P22 */
--	RZG2L_GPIO_PORT_SPARSE_PACK(0x3e, 0x0a, PIN_CFG_VARIABLE),			/* P23 */
--	RZG2L_GPIO_PORT_PACK(6, 0x0b, PIN_CFG_VARIABLE),				/* P24 */
-+	RZG2L_GPIO_PORT_SPARSE_PACK_VARIABLE(0x3e, 0x0a),				/* P23 */
-+	RZG2L_GPIO_PORT_PACK_VARIABLE(6, 0x0b),						/* P24 */
- 	RZG2L_GPIO_PORT_SPARSE_PACK(0x2, 0x0c, PIN_CFG_IOLH_B | PIN_CFG_SR | PIN_=
-CFG_FILONOFF |
- 				    PIN_CFG_FILNUM | PIN_CFG_FILCLKSEL |
- 				    PIN_CFG_NOGPIO_INT),				/* P25 */
-@@ -1913,7 +1918,7 @@ static const u64 r9a09g057_gpio_configs[] =3D {
- 				      PIN_CFG_ELC),		/* P8 */
- 	RZG2L_GPIO_PORT_PACK(8, 0x29, RZV2H_MPXED_PIN_FUNCS),	/* P9 */
- 	RZG2L_GPIO_PORT_PACK(8, 0x2a, RZV2H_MPXED_PIN_FUNCS),	/* PA */
--	RZG2L_GPIO_PORT_PACK(6, 0x2b, PIN_CFG_VARIABLE),	/* PB */
-+	RZG2L_GPIO_PORT_PACK_VARIABLE(6, 0x2b),			/* PB */
++	case RENESAS_RZV2H_PIN_CONFIG_OUTPUT_IMPEDANCE:
++		if (!(cfg & PIN_CFG_IOLH_RZV2H))
++			return -EINVAL;
++
++		arg =3D rzg2l_read_pin_config(pctrl, IOLH(off), bit, IOLH_MASK);
++		break;
++
+ 	default:
+ 		return -ENOTSUPP;
+ 	}
+@@ -1178,9 +1320,8 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_d=
+ev *pctldev,
+ 	const struct rzg2l_hwcfg *hwcfg =3D pctrl->data->hwcfg;
+ 	struct rzg2l_pinctrl_pin_settings settings =3D pctrl->settings[_pin];
+ 	u64 *pin_data =3D pin->drv_data;
+-	enum pin_config_param param;
+ 	unsigned int i, arg, index;
+-	u32 off;
++	u32 off, param;
+ 	u64 cfg;
+ 	int ret;
+ 	u8 bit;
+@@ -1285,6 +1426,16 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_=
+dev *pctldev,
+ 			rzg2l_rmw_pin_config(pctrl, IOLH(off), bit, IOLH_MASK, index);
+ 			break;
+=20
++		case RENESAS_RZV2H_PIN_CONFIG_OUTPUT_IMPEDANCE:
++			if (!(cfg & PIN_CFG_IOLH_RZV2H))
++				return -EINVAL;
++
++			arg =3D pinconf_to_config_argument(_configs[i]);
++			if (arg > 3)
++				return -EINVAL;
++			rzg2l_rmw_pin_config(pctrl, IOLH(off), bit, IOLH_MASK, arg);
++			break;
++
+ 		default:
+ 			return -EOPNOTSUPP;
+ 		}
+@@ -1732,6 +1883,39 @@ static const u64 r9a08g045_gpio_configs[] =3D {
+ 	RZG2L_GPIO_PORT_PACK(6, 0x2a, RZG3S_MPXED_PIN_FUNCS(A)),			/* P18 */
  };
 =20
++static const char * const rzv2h_gpio_names[] =3D {
++	"P00", "P01", "P02", "P03", "P04", "P05", "P06", "P07",
++	"P10", "P11", "P12", "P13", "P14", "P15", "P16", "P17",
++	"P20", "P21", "P22", "P23", "P24", "P25", "P26", "P27",
++	"P30", "P31", "P32", "P33", "P34", "P35", "P36", "P37",
++	"P40", "P41", "P42", "P43", "P44", "P45", "P46", "P47",
++	"P50", "P51", "P52", "P53", "P54", "P55", "P56", "P57",
++	"P60", "P61", "P62", "P63", "P64", "P65", "P66", "P67",
++	"P70", "P71", "P72", "P73", "P74", "P75", "P76", "P77",
++	"P80", "P81", "P82", "P83", "P84", "P85", "P86", "P87",
++	"P90", "P91", "P92", "P93", "P94", "P95", "P96", "P97",
++	"PA0", "PA1", "PA2", "PA3", "PA4", "PA5", "PA6", "PA7",
++	"PB0", "PB1", "PB2", "PB3", "PB4", "PB5", "PB6", "PB7",
++};
++
++static const u64 r9a09g057_gpio_configs[] =3D {
++	RZG2L_GPIO_PORT_PACK(8, 0x20, RZV2H_MPXED_PIN_FUNCS),	/* P0 */
++	RZG2L_GPIO_PORT_PACK(6, 0x21, RZV2H_MPXED_PIN_FUNCS),	/* P1 */
++	RZG2L_GPIO_PORT_PACK(2, 0x22, RZG2L_MPXED_COMMON_PIN_FUNCS(RZV2H) |
++				      PIN_CFG_NOD),		/* P2 */
++	RZG2L_GPIO_PORT_PACK(8, 0x23, RZV2H_MPXED_PIN_FUNCS),	/* P3 */
++	RZG2L_GPIO_PORT_PACK(8, 0x24, RZV2H_MPXED_PIN_FUNCS),	/* P4 */
++	RZG2L_GPIO_PORT_PACK(8, 0x25, RZV2H_MPXED_PIN_FUNCS),	/* P5 */
++	RZG2L_GPIO_PORT_PACK(8, 0x26, RZV2H_MPXED_PIN_FUNCS |
++				      PIN_CFG_ELC),		/* P6 */
++	RZG2L_GPIO_PORT_PACK(8, 0x27, RZV2H_MPXED_PIN_FUNCS),	/* P7 */
++	RZG2L_GPIO_PORT_PACK(8, 0x28, RZV2H_MPXED_PIN_FUNCS |
++				      PIN_CFG_ELC),		/* P8 */
++	RZG2L_GPIO_PORT_PACK(8, 0x29, RZV2H_MPXED_PIN_FUNCS),	/* P9 */
++	RZG2L_GPIO_PORT_PACK(8, 0x2a, RZV2H_MPXED_PIN_FUNCS),	/* PA */
++	RZG2L_GPIO_PORT_PACK(6, 0x2b, PIN_CFG_VARIABLE),	/* PB */
++};
++
  static const struct {
-@@ -2637,7 +2642,7 @@ static int rzg2l_pinctrl_register(struct rzg2l_pinctr=
-l *pctrl)
- 		if (i && !(i % RZG2L_PINS_PER_PORT))
- 			j++;
- 		pin_data[i] =3D pctrl->data->port_pin_configs[j];
--		if (pin_data[i] & PIN_CFG_VARIABLE)
-+		if (pin_data[i] & RZG2L_VARIABLE_CFG)
- 			pin_data[i] =3D rzg2l_pinctrl_get_variable_pin_cfg(pctrl,
- 									 pin_data[i],
- 									 j,
+ 	struct rzg2l_dedicated_configs common[35];
+ 	struct rzg2l_dedicated_configs rzg2l_pins[7];
+@@ -1858,6 +2042,138 @@ static const struct rzg2l_dedicated_configs rzg3s_d=
+edicated_pins[] =3D {
+ 						       PIN_CFG_IO_VMC_SD1)) },
+ };
+=20
++static struct rzg2l_dedicated_configs rzv2h_dedicated_pins[] =3D {
++	{ "NMI", RZG2L_SINGLE_PIN_PACK(0x1, 0, (PIN_CFG_FILONOFF | PIN_CFG_FILNUM=
+ |
++						PIN_CFG_FILCLKSEL)) },
++	{ "TMS_SWDIO", RZG2L_SINGLE_PIN_PACK(0x3, 0, (PIN_CFG_IOLH_RZV2H | PIN_CF=
+G_SR |
++						      PIN_CFG_IEN)) },
++	{ "TDO", RZG2L_SINGLE_PIN_PACK(0x3, 2, (PIN_CFG_IOLH_RZV2H | PIN_CFG_SR))=
+ },
++	{ "WDTUDFCA", RZG2L_SINGLE_PIN_PACK(0x5, 0, (PIN_CFG_IOLH_RZV2H | PIN_CFG=
+_SR |
++						     PIN_CFG_PUPD | PIN_CFG_NOD)) },
++	{ "WDTUDFCM", RZG2L_SINGLE_PIN_PACK(0x5, 1, (PIN_CFG_IOLH_RZV2H | PIN_CFG=
+_SR |
++						     PIN_CFG_PUPD | PIN_CFG_NOD)) },
++	{ "SCIF_RXD", RZG2L_SINGLE_PIN_PACK(0x6, 0, (PIN_CFG_IOLH_RZV2H | PIN_CFG=
+_SR |
++						     PIN_CFG_PUPD)) },
++	{ "SCIF_TXD", RZG2L_SINGLE_PIN_PACK(0x6, 1, (PIN_CFG_IOLH_RZV2H | PIN_CFG=
+_SR |
++						     PIN_CFG_PUPD)) },
++	{ "XSPI0_CKP", RZG2L_SINGLE_PIN_PACK(0x7, 0, (PIN_CFG_IOLH_RZV2H | PIN_CF=
+G_SR |
++						      PIN_CFG_PUPD | PIN_CFG_OEN)) },
++	{ "XSPI0_CKN", RZG2L_SINGLE_PIN_PACK(0x7, 1, (PIN_CFG_IOLH_RZV2H | PIN_CF=
+G_SR |
++						      PIN_CFG_PUPD | PIN_CFG_OEN)) },
++	{ "XSPI0_CS0N", RZG2L_SINGLE_PIN_PACK(0x7, 2, (PIN_CFG_IOLH_RZV2H | PIN_C=
+FG_SR |
++						       PIN_CFG_PUPD | PIN_CFG_OEN)) },
++	{ "XSPI0_DS", RZG2L_SINGLE_PIN_PACK(0x7, 3, (PIN_CFG_IOLH_RZV2H | PIN_CFG=
+_SR |
++						     PIN_CFG_PUPD)) },
++	{ "XSPI0_RESET0N", RZG2L_SINGLE_PIN_PACK(0x7, 4, (PIN_CFG_IOLH_RZV2H | PI=
+N_CFG_SR |
++							  PIN_CFG_PUPD | PIN_CFG_OEN)) },
++	{ "XSPI0_RSTO0N", RZG2L_SINGLE_PIN_PACK(0x7, 5, (PIN_CFG_PUPD)) },
++	{ "XSPI0_INT0N", RZG2L_SINGLE_PIN_PACK(0x7, 6, (PIN_CFG_PUPD)) },
++	{ "XSPI0_ECS0N", RZG2L_SINGLE_PIN_PACK(0x7, 7, (PIN_CFG_PUPD)) },
++	{ "XSPI0_IO0", RZG2L_SINGLE_PIN_PACK(0x8, 0, (PIN_CFG_IOLH_RZV2H | PIN_CF=
+G_SR |
++						      PIN_CFG_PUPD)) },
++	{ "XSPI0_IO1", RZG2L_SINGLE_PIN_PACK(0x8, 1, (PIN_CFG_IOLH_RZV2H | PIN_CF=
+G_SR |
++						      PIN_CFG_PUPD)) },
++	{ "XSPI0_IO2", RZG2L_SINGLE_PIN_PACK(0x8, 2, (PIN_CFG_IOLH_RZV2H | PIN_CF=
+G_SR |
++						      PIN_CFG_PUPD)) },
++	{ "XSPI0_IO3", RZG2L_SINGLE_PIN_PACK(0x8, 3, (PIN_CFG_IOLH_RZV2H | PIN_CF=
+G_SR |
++						      PIN_CFG_PUPD)) },
++	{ "XSPI0_IO4", RZG2L_SINGLE_PIN_PACK(0x8, 4, (PIN_CFG_IOLH_RZV2H | PIN_CF=
+G_SR |
++						      PIN_CFG_PUPD)) },
++	{ "XSPI0_IO5", RZG2L_SINGLE_PIN_PACK(0x8, 5, (PIN_CFG_IOLH_RZV2H | PIN_CF=
+G_SR |
++						      PIN_CFG_PUPD)) },
++	{ "XSPI0_IO6", RZG2L_SINGLE_PIN_PACK(0x8, 6, (PIN_CFG_IOLH_RZV2H | PIN_CF=
+G_SR |
++						      PIN_CFG_PUPD)) },
++	{ "XSPI0_IO7", RZG2L_SINGLE_PIN_PACK(0x8, 7, (PIN_CFG_IOLH_RZV2H | PIN_CF=
+G_SR |
++						      PIN_CFG_PUPD)) },
++	{ "SD0CLK", RZG2L_SINGLE_PIN_PACK(0x9, 0, (PIN_CFG_IOLH_RZV2H | PIN_CFG_S=
+R)) },
++	{ "SD0CMD", RZG2L_SINGLE_PIN_PACK(0x9, 1, (PIN_CFG_IOLH_RZV2H | PIN_CFG_S=
+R |
++						   PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	{ "SD0RSTN", RZG2L_SINGLE_PIN_PACK(0x9, 2, (PIN_CFG_IOLH_RZV2H | PIN_CFG_=
+SR)) },
++	{ "SD0DAT0", RZG2L_SINGLE_PIN_PACK(0xa, 0, (PIN_CFG_IOLH_RZV2H | PIN_CFG_=
+SR |
++						    PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	{ "SD0DAT1", RZG2L_SINGLE_PIN_PACK(0xa, 1, (PIN_CFG_IOLH_RZV2H | PIN_CFG_=
+SR |
++						    PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	{ "SD0DAT2", RZG2L_SINGLE_PIN_PACK(0xa, 2, (PIN_CFG_IOLH_RZV2H | PIN_CFG_=
+SR |
++						    PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	{ "SD0DAT3", RZG2L_SINGLE_PIN_PACK(0xa, 3, (PIN_CFG_IOLH_RZV2H | PIN_CFG_=
+SR |
++						    PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	{ "SD0DAT4", RZG2L_SINGLE_PIN_PACK(0xa, 4, (PIN_CFG_IOLH_RZV2H | PIN_CFG_=
+SR |
++						    PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	{ "SD0DAT5", RZG2L_SINGLE_PIN_PACK(0xa, 5, (PIN_CFG_IOLH_RZV2H | PIN_CFG_=
+SR |
++						    PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	{ "SD0DAT6", RZG2L_SINGLE_PIN_PACK(0xa, 6, (PIN_CFG_IOLH_RZV2H | PIN_CFG_=
+SR |
++						    PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	{ "SD0DAT7", RZG2L_SINGLE_PIN_PACK(0xa, 7, (PIN_CFG_IOLH_RZV2H | PIN_CFG_=
+SR |
++						    PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	{ "SD1CLK", RZG2L_SINGLE_PIN_PACK(0xb, 0, (PIN_CFG_IOLH_RZV2H | PIN_CFG_S=
+R)) },
++	{ "SD1CMD", RZG2L_SINGLE_PIN_PACK(0xb, 1, (PIN_CFG_IOLH_RZV2H | PIN_CFG_S=
+R |
++						   PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	{ "SD1DAT0", RZG2L_SINGLE_PIN_PACK(0xc, 0, (PIN_CFG_IOLH_RZV2H | PIN_CFG_=
+SR |
++						    PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	{ "SD1DAT1", RZG2L_SINGLE_PIN_PACK(0xc, 1, (PIN_CFG_IOLH_RZV2H | PIN_CFG_=
+SR |
++						    PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	{ "SD1DAT2", RZG2L_SINGLE_PIN_PACK(0xc, 2, (PIN_CFG_IOLH_RZV2H | PIN_CFG_=
+SR |
++						    PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	{ "SD1DAT3", RZG2L_SINGLE_PIN_PACK(0xc, 3, (PIN_CFG_IOLH_RZV2H | PIN_CFG_=
+SR |
++						    PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	{ "PCIE0_RSTOUTB", RZG2L_SINGLE_PIN_PACK(0xe, 0, (PIN_CFG_IOLH_RZV2H | PI=
+N_CFG_SR)) },
++	{ "PCIE1_RSTOUTB", RZG2L_SINGLE_PIN_PACK(0xe, 1, (PIN_CFG_IOLH_RZV2H | PI=
+N_CFG_SR)) },
++	{ "ET0_MDIO", RZG2L_SINGLE_PIN_PACK(0xf, 0, (PIN_CFG_IOLH_RZV2H | PIN_CFG=
+_SR |
++						     PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	{ "ET0_MDC", RZG2L_SINGLE_PIN_PACK(0xf, 1, (PIN_CFG_IOLH_RZV2H | PIN_CFG_=
+SR |
++						    PIN_CFG_PUPD)) },
++	{ "ET0_RXCTL_RXDV", RZG2L_SINGLE_PIN_PACK(0x10, 0, (PIN_CFG_PUPD)) },
++	{ "ET0_TXCTL_TXEN", RZG2L_SINGLE_PIN_PACK(0x10, 1, (PIN_CFG_IOLH_RZV2H | =
+PIN_CFG_SR |
++							    PIN_CFG_PUPD)) },
++	{ "ET0_TXER", RZG2L_SINGLE_PIN_PACK(0x10, 2, (PIN_CFG_IOLH_RZV2H | PIN_CF=
+G_SR |
++						      PIN_CFG_PUPD)) },
++	{ "ET0_RXER", RZG2L_SINGLE_PIN_PACK(0x10, 3, (PIN_CFG_PUPD)) },
++	{ "ET0_RXC_RXCLK", RZG2L_SINGLE_PIN_PACK(0x10, 4, (PIN_CFG_PUPD)) },
++	{ "ET0_TXC_TXCLK", RZG2L_SINGLE_PIN_PACK(0x10, 5, (PIN_CFG_IOLH_RZV2H | P=
+IN_CFG_SR |
++							   PIN_CFG_PUPD | PIN_CFG_OEN)) },
++	{ "ET0_CRS", RZG2L_SINGLE_PIN_PACK(0x10, 6, (PIN_CFG_PUPD)) },
++	{ "ET0_COL", RZG2L_SINGLE_PIN_PACK(0x10, 7, (PIN_CFG_PUPD)) },
++	{ "ET0_TXD0", RZG2L_SINGLE_PIN_PACK(0x11, 0, (PIN_CFG_IOLH_RZV2H | PIN_CF=
+G_SR |
++						      PIN_CFG_PUPD)) },
++	{ "ET0_TXD1", RZG2L_SINGLE_PIN_PACK(0x11, 1, (PIN_CFG_IOLH_RZV2H | PIN_CF=
+G_SR |
++						      PIN_CFG_PUPD)) },
++	{ "ET0_TXD2", RZG2L_SINGLE_PIN_PACK(0x11, 2, (PIN_CFG_IOLH_RZV2H | PIN_CF=
+G_SR |
++						      PIN_CFG_PUPD)) },
++	{ "ET0_TXD3", RZG2L_SINGLE_PIN_PACK(0x11, 3, (PIN_CFG_IOLH_RZV2H | PIN_CF=
+G_SR |
++						      PIN_CFG_PUPD)) },
++	{ "ET0_RXD0", RZG2L_SINGLE_PIN_PACK(0x11, 4, (PIN_CFG_PUPD)) },
++	{ "ET0_RXD1", RZG2L_SINGLE_PIN_PACK(0x11, 5, (PIN_CFG_PUPD)) },
++	{ "ET0_RXD2", RZG2L_SINGLE_PIN_PACK(0x11, 6, (PIN_CFG_PUPD)) },
++	{ "ET0_RXD3", RZG2L_SINGLE_PIN_PACK(0x11, 7, (PIN_CFG_PUPD)) },
++	{ "ET1_MDIO", RZG2L_SINGLE_PIN_PACK(0x12, 0, (PIN_CFG_IOLH_RZV2H | PIN_CF=
+G_SR |
++						      PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	{ "ET1_MDC", RZG2L_SINGLE_PIN_PACK(0x12, 1, (PIN_CFG_IOLH_RZV2H | PIN_CFG=
+_SR |
++						     PIN_CFG_PUPD)) },
++	{ "ET1_RXCTL_RXDV", RZG2L_SINGLE_PIN_PACK(0x13, 0, (PIN_CFG_PUPD)) },
++	{ "ET1_TXCTL_TXEN", RZG2L_SINGLE_PIN_PACK(0x13, 1, (PIN_CFG_IOLH_RZV2H | =
+PIN_CFG_SR |
++							    PIN_CFG_PUPD)) },
++	{ "ET1_TXER", RZG2L_SINGLE_PIN_PACK(0x13, 2, (PIN_CFG_IOLH_RZV2H | PIN_CF=
+G_SR |
++						       PIN_CFG_PUPD)) },
++	{ "ET1_RXER", RZG2L_SINGLE_PIN_PACK(0x13, 3, (PIN_CFG_PUPD)) },
++	{ "ET1_RXC_RXCLK", RZG2L_SINGLE_PIN_PACK(0x13, 4, (PIN_CFG_PUPD)) },
++	{ "ET1_TXC_TXCLK", RZG2L_SINGLE_PIN_PACK(0x13, 5, (PIN_CFG_IOLH_RZV2H | P=
+IN_CFG_SR |
++							   PIN_CFG_PUPD | PIN_CFG_OEN)) },
++	{ "ET1_CRS", RZG2L_SINGLE_PIN_PACK(0x13, 6, (PIN_CFG_PUPD)) },
++	{ "ET1_COL", RZG2L_SINGLE_PIN_PACK(0x13, 7, (PIN_CFG_PUPD)) },
++	{ "ET1_TXD0", RZG2L_SINGLE_PIN_PACK(0x14, 0, (PIN_CFG_IOLH_RZV2H | PIN_CF=
+G_SR |
++						      PIN_CFG_PUPD)) },
++	{ "ET1_TXD1", RZG2L_SINGLE_PIN_PACK(0x14, 1, (PIN_CFG_IOLH_RZV2H | PIN_CF=
+G_SR |
++						      PIN_CFG_PUPD)) },
++	{ "ET1_TXD2", RZG2L_SINGLE_PIN_PACK(0x14, 2, (PIN_CFG_IOLH_RZV2H | PIN_CF=
+G_SR |
++						      PIN_CFG_PUPD)) },
++	{ "ET1_TXD3", RZG2L_SINGLE_PIN_PACK(0x14, 3, (PIN_CFG_IOLH_RZV2H | PIN_CF=
+G_SR |
++						      PIN_CFG_PUPD)) },
++	{ "ET1_RXD0", RZG2L_SINGLE_PIN_PACK(0x14, 4, (PIN_CFG_PUPD)) },
++	{ "ET1_RXD1", RZG2L_SINGLE_PIN_PACK(0x14, 5, (PIN_CFG_PUPD)) },
++	{ "ET1_RXD2", RZG2L_SINGLE_PIN_PACK(0x14, 6, (PIN_CFG_PUPD)) },
++	{ "ET1_RXD3", RZG2L_SINGLE_PIN_PACK(0x14, 7, (PIN_CFG_PUPD)) },
++};
++
+ static int rzg2l_gpio_get_gpioint(unsigned int virq, struct rzg2l_pinctrl =
+*pctrl)
+ {
+ 	const struct pinctrl_pin_desc *pin_desc =3D &pctrl->desc.pins[virq];
+@@ -2394,6 +2710,9 @@ static int rzg2l_pinctrl_probe(struct platform_device=
+ *pdev)
+ 	BUILD_BUG_ON(ARRAY_SIZE(r9a08g045_gpio_configs) * RZG2L_PINS_PER_PORT >
+ 		     ARRAY_SIZE(rzg2l_gpio_names));
+=20
++	BUILD_BUG_ON(ARRAY_SIZE(r9a09g057_gpio_configs) * RZG2L_PINS_PER_PORT >
++		     ARRAY_SIZE(rzv2h_gpio_names));
++
+ 	pctrl =3D devm_kzalloc(&pdev->dev, sizeof(*pctrl), GFP_KERNEL);
+ 	if (!pctrl)
+ 		return -ENOMEM;
+@@ -2665,6 +2984,22 @@ static void rzg2l_pwpr_pfc_lock_unlock(struct rzg2l_=
+pinctrl *pctrl, bool lock)
+ 	}
+ }
+=20
++static void rzv2h_pwpr_pfc_lock_unlock(struct rzg2l_pinctrl *pctrl, bool l=
+ock)
++{
++	const struct rzg2l_register_offsets *regs =3D &pctrl->data->hwcfg->regs;
++	u8 pwpr;
++
++	if (lock) {
++		/* Set the PWPR register to be write-protected */
++		pwpr =3D readb(pctrl->base + regs->pwpr);
++		writeb(pwpr & ~PWPR_REGWE_A, pctrl->base + regs->pwpr);
++	} else {
++		/* Set the PWPR register to allow PFC and PMC register to write */
++		pwpr =3D readb(pctrl->base + regs->pwpr);
++		writeb(PWPR_REGWE_A | pwpr, pctrl->base + regs->pwpr);
++	}
++}
++
+ static const struct rzg2l_hwcfg rzg2l_hwcfg =3D {
+ 	.regs =3D {
+ 		.pwpr =3D 0x3014,
+@@ -2710,6 +3045,12 @@ static const struct rzg2l_hwcfg rzg3s_hwcfg =3D {
+ 	.oen_max_port =3D 7, /* P7_1 is the maximum OEN port. */
+ };
+=20
++static const struct rzg2l_hwcfg rzv2h_hwcfg =3D {
++	.regs =3D {
++		.pwpr =3D 0x3c04,
++	},
++};
++
+ static struct rzg2l_pinctrl_data r9a07g043_data =3D {
+ 	.port_pins =3D rzg2l_gpio_names,
+ 	.port_pin_configs =3D r9a07g043_gpio_configs,
+@@ -2763,6 +3104,29 @@ static struct rzg2l_pinctrl_data r9a08g045_data =3D =
+{
+ 	.bias_param_to_hw =3D &rzg2l_bias_param_to_hw,
+ };
+=20
++static struct rzg2l_pinctrl_data r9a09g057_data =3D {
++	.port_pins =3D rzv2h_gpio_names,
++	.port_pin_configs =3D r9a09g057_gpio_configs,
++	.n_ports =3D ARRAY_SIZE(r9a09g057_gpio_configs),
++	.dedicated_pins =3D rzv2h_dedicated_pins,
++	.n_port_pins =3D ARRAY_SIZE(r9a09g057_gpio_configs) * RZG2L_PINS_PER_PORT=
+,
++	.n_dedicated_pins =3D ARRAY_SIZE(rzv2h_dedicated_pins),
++	.hwcfg =3D &rzv2h_hwcfg,
++	.variable_pin_cfg =3D r9a09g057_variable_pin_cfg,
++	.n_variable_pin_cfg =3D ARRAY_SIZE(r9a09g057_variable_pin_cfg),
++	.num_custom_params =3D ARRAY_SIZE(renesas_rzv2h_custom_bindings),
++	.custom_params =3D renesas_rzv2h_custom_bindings,
++#ifdef CONFIG_DEBUG_FS
++	.custom_conf_items =3D renesas_rzv2h_conf_items,
++#endif
++	.pwpr_pfc_lock_unlock =3D &rzv2h_pwpr_pfc_lock_unlock,
++	.pmc_writeb =3D &rzv2h_pmc_writeb,
++	.oen_read =3D &rzv2h_oen_read,
++	.oen_write =3D &rzv2h_oen_write,
++	.hw_to_bias_param =3D &rzv2h_hw_to_bias_param,
++	.bias_param_to_hw =3D &rzv2h_bias_param_to_hw,
++};
++
+ static const struct of_device_id rzg2l_pinctrl_of_table[] =3D {
+ 	{
+ 		.compatible =3D "renesas,r9a07g043-pinctrl",
+@@ -2776,6 +3140,10 @@ static const struct of_device_id rzg2l_pinctrl_of_ta=
+ble[] =3D {
+ 		.compatible =3D "renesas,r9a08g045-pinctrl",
+ 		.data =3D &r9a08g045_data,
+ 	},
++	{
++		.compatible =3D "renesas,r9a09g057-pinctrl",
++		.data =3D &r9a09g057_data,
++	},
+ 	{ /* sentinel */ }
+ };
+=20
 --=20
 2.43.0
 
