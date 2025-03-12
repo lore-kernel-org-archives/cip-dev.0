@@ -2,41 +2,41 @@ Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BFA6C3DA4A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 755DFC28B28
 	for <webhook@archiver.kernel.org>; Thu, 13 Mar 2025 01:33:36 +0000 (UTC)
-Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.62])
- by mx.groups.io with SMTP id smtpd.web10.34511.1741778854581734517
+Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.70])
+ by mx.groups.io with SMTP id smtpd.web11.34881.1741778858507888765
  for <cip-dev@lists.cip-project.org>;
- Wed, 12 Mar 2025 04:27:34 -0700
+ Wed, 12 Mar 2025 04:27:38 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=a0dHHk1z;
- spf=pass (domain: bp.renesas.com, ip: 52.101.229.62, mailfrom: tommaso.merciai.xr@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=TBj1Jxk7;
+ spf=pass (domain: bp.renesas.com, ip: 40.107.74.70, mailfrom: tommaso.merciai.xr@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rj0jWYjvK9Jrcl3eHPH3TyrI2GbzuoXls4oBqIMHRYeRGLOr5+6Wesnz8+Nj2sCCEYEhdVAIDGaYMz/YAWtJpX2jjg98yZUcVhIndIsiTOuW2n//GFTh49dPlyFtaO9TEj4rKX7GLZoO/fEOqfi1+YB4jJjCl+fee4i2WKqzz7X9uvIzJ+xveaezCjVQz57eu5zH6kB2h0uNhCc1lo7G2K/15vnVKad9TpHDJI12LIjpA58FewDmYCZpW86DH+3LVj4Lus8Ol9FvL+e2JCDTt/lgYb4yWkgq6i2Ce5VcxcGcYpG0R0eMBWhgO4XBaTwMw+qzmnCVAjHQxY9csID3hA==
+ b=Uvn4T/zwqf+Goa9rzmuQY8tXEWK9pXi6OnIDxH3BEtotSMSgRPa6w84ev/pgP0QfcWUUy3rEiPJhbQbq9wB6jAddhPcgb5+0Mnfe9qSvmr3sQMfd0xtf3icyzNtvbgbDTR69WkZ5XujJh/ZI3+pd6oHdoomlnUV/IlLPEqH626kdUpbiuP+WR41+HbjykGhvdIjRBrqVXvsAyVD5sI7T9hmcwgY7qxJpbU5W6HfGFZv2+qLIlod1kfrkr8pQ+IMaLVg6CEMSmSdoLH9aB0orXG3uoC7et7vHzJRKY6lswIEbMTkfj0Gs/w4A3q3bcBL/iwU6fI0glOO4k7KCmXECCw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LUnKH0hgNjov/pPM2C3aLIw405qcL3gUMifYFIrOEdM=;
- b=CW1f/lsTefYOaPB9KNQrxGG8TFpb453Ret+phoBnjHBh31H1Rju1MIqzGYsFBMJsvJH3L2B0YD1Yea2db5YkKhYX8Kjnl2cSRMHf08+2aTK7IoeuJiORJCWDmU2x0wHJAeR8e+ECwGIpRzZzriRKt8HCH1x2Wg0lCoEdrZoxra+ZsIUffuzsUTDIkmKglmsKTFCULbyb256KwOMypsXViAaOcoJu5RdC04QBrj8nIhVTgR4Z2F6ylrSS2BzH80B+KuRMQe1EDP3cb1ApTdx0+QlFgBqwh1fLhaYrWbvMWR6lQTeQzPJfN7nL0naS3jW5rMGwDZgBXpyQkIYSyvD5sw==
+ bh=ERYROq1ALQnxupXN/o1SB5hrd290JvP1IpvdJCu9BLw=;
+ b=tFNdCeczw8ILlnfR5WD8iNP0KDF6AOONW4S1jRRNHRQ1WznDCa7VlZjeTjFH6iGx/XXGRMdY5JMZvT/54uRRUkKWRxwIamZFboBdIGLfcsOFwFlSPOLWefwSv5FcPFak7iSJUlTKUEEBB5UyTvCUyfj2eJvgpitH7vEj22N468qBOdUc6MBJGuQJt6YLA3XNxKR8uqG5RMlEoR1fiXD4zfuqnfS7wBPGqS8usn0P0Qh/1d5q0hMVcwsPcVqe8zZWF5qpQM1J4l5aDogaRKdpfrrGFzxksgwDB5ftb/oV8IOgoVOkSmWo3l7zIvA+KmiO2FLS4gB3dd2LGmPBlbqzmQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LUnKH0hgNjov/pPM2C3aLIw405qcL3gUMifYFIrOEdM=;
- b=a0dHHk1z7GuCOlHNwPvaF6MNNz5rRJgJFnH6ymf7c/KJrtAJ51ptRj1RC+zqO7DwSsS1we+mT6b/x4mtt9K9Pd0k+Z/kucwtR7QMpCFIWs1IdI0cZcR+rfHgWrrfKqYzFgk+S+yj4qYdjd0mJX5/4u7UwAR1Qkkepv+ZSklLloc=
+ bh=ERYROq1ALQnxupXN/o1SB5hrd290JvP1IpvdJCu9BLw=;
+ b=TBj1Jxk7laCkjf8C6uDHsGqmA+sZ1RvSFn7X1ZSJggJEOouQQZVhPiKBXVZmvkZU0k1dMcgDrWQcQLncOuSMlWFAwRNvARB+brWRO68YFaJ9QdxpS3wX6eZ//69ZmCQVpPn7zvjF/WPbLFKhiqef3Sd4MLZBZuQI0pKbQjAeCqw=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com (2603:1096:604:35e::5)
  by OSCPR01MB14981.jpnprd01.prod.outlook.com (2603:1096:604:3ac::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Wed, 12 Mar
- 2025 11:27:32 +0000
+ 2025 11:27:35 +0000
 Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com
  ([fe80::244d:8815:7064:a9f3]) by OS9PR01MB13950.jpnprd01.prod.outlook.com
  ([fe80::244d:8815:7064:a9f3%5]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
- 11:27:32 +0000
+ 11:27:35 +0000
 From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -44,9 +44,9 @@ To: cip-dev@lists.cip-project.org,
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: [PATCH 6.1.y-cip 81/85] dt-bindings: i2c: renesas,riic: Document the R9A09G047 support
-Date: Wed, 12 Mar 2025 12:22:58 +0100
-Message-ID: <20250312112302.1605750-82-tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 82/85] i2c: riic: Introduce helper functions for I2C read/write operations
+Date: Wed, 12 Mar 2025 12:22:59 +0100
+Message-ID: <20250312112302.1605750-83-tommaso.merciai.xr@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250312112302.1605750-1-tommaso.merciai.xr@bp.renesas.com>
 References: <20250312112302.1605750-1-tommaso.merciai.xr@bp.renesas.com>
@@ -56,80 +56,80 @@ X-ClientProxiedBy: FR4P281CA0246.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: OS9PR01MB13950:EE_|OSCPR01MB14981:EE_
-X-MS-Office365-Filtering-Correlation-Id: dfc26b94-7fcf-4142-a1d2-08dd6158e1aa
+X-MS-Office365-Filtering-Correlation-Id: df1abedc-9787-4fb4-7646-08dd6158e341
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?DOIyQA16Qj40iFNdbjt0OV+fzgDDfiDUInIrdnWeyuDtYUWe3Kb98o0qDK4a?=
- =?us-ascii?Q?cH+pob9tffA81Ct4VV+24Ax2IoKOsQmAkPbEhP7u5ZwwdboNyO8YwAxMZdlq?=
- =?us-ascii?Q?Gu4mRvSTcKYUbXj78m1FQ1Ddq8Z9rwO2smLZ9s/mbJ7Q00klMQAyIuAAZZSr?=
- =?us-ascii?Q?tBWcabA4hpOzFSiQ2bOAVuUub8R1s5WKm50H7jqhaKk6JdRG1NTjF4Jawl23?=
- =?us-ascii?Q?KGlCL7lPSplNv0QHFdxtwCKFCorid3zBQIlikbKg5IsHxfFwGfgvV4cNc5nY?=
- =?us-ascii?Q?eEU83MEgc/1+iDr8kdSAnauU60dgBiLGHdSGz9RBKt98y+HnAOQ2+YhQRDNF?=
- =?us-ascii?Q?2u/4d++C67YPjViFLeFI/WrvzLch5zH9FzzdFk+DWZUJdJPvPAdmpW6Guocv?=
- =?us-ascii?Q?mKKw0uFAEw3yslwn4V0C6/v71iW85yNvCViCIfM/rvCkA6zbVWeGOFLRzSr4?=
- =?us-ascii?Q?V4LXV8B+YuhN7iAPnMH4y90p85weLl5cCJHb18WS9yzPkBeEV4mYHxLucsDN?=
- =?us-ascii?Q?f/T5Nu+pS7E729+5XYGguztuxDSR+spGKzi0c90PXakjAfl3BMFfqYCUrHM+?=
- =?us-ascii?Q?cclLHgrXprJH+FEvi22NlWI09sQX8u3cm1Nwt5UZ5xe9zdiXKf3ULzvV5mda?=
- =?us-ascii?Q?cG9dYyaQucnKoBZ7qwWsCzZ2/pQKAKCerJ65lcqy719KAyIo95wMxj7KaXF6?=
- =?us-ascii?Q?M2aS2MrfkqjW53K6ZMjMlLX+V4AF8XPYllJEiS4fKttIT7SFKcYISZ15kIs6?=
- =?us-ascii?Q?LjBDGDyxpylKqeXFO+gIB2bW9ZGsUtx/BZyvF4Wk011uM9d5StqyTawfkACQ?=
- =?us-ascii?Q?FmsGP8kajm7SQ14dZAuG+RkYonPmTDYrtc6YAu47AfPhaD9Mdd0BZWPS2ON3?=
- =?us-ascii?Q?nq9CYjiF7h9JCioBv14ZFQqDF7N9uBWQ5ufRS9I9+/PgTboahLuKf3InYkIC?=
- =?us-ascii?Q?/RF/wv0ZmTHA95YiCKscjfUgqtSf6gudMv74KSlENzxvM9L1U1hPLXoIUcJz?=
- =?us-ascii?Q?vT9i1t8h01z4r5aZHhTflIGfiA03CxoUV3a/JUI9HAjLKZfJep3oM9SzCeLm?=
- =?us-ascii?Q?920jRyXcEHKLbulL+oPZxk5du0BqTjj/IYJ17IObQTJVwzVXjQHcOIUYNh5R?=
- =?us-ascii?Q?0i+THInf2FbXcHWPkzV2HRgbOwbuX7OHZOz/nE63nuFocQ+yFfdBZkI+QtA7?=
- =?us-ascii?Q?jEY9pdi3ZmQzmt4o6jdvYIvhAC8Hwa1e0uF6OSGhM+ZS36ieo3Az+LGLIAUq?=
- =?us-ascii?Q?y6NF3S+iGvcnJxKjbfGtkUoLBboAeHGM3FYkvE7+Dc1a/cLDPfx9o7yLdMgI?=
- =?us-ascii?Q?KH9QCkEsCvrhqNshKeTpqQCy3cx03Q0UDUCXrrfmmaK1gaLr8KXINnZHbNki?=
- =?us-ascii?Q?aPs2daU/4vsexwg2rhiMoWhUCcsSTls+29+tUVPVA2oLEjtxnWGNgu6olVUL?=
- =?us-ascii?Q?nLijx+qYJWY7D+Ggailgkzp01IazKuVN?=
+	=?us-ascii?Q?Xjg+Ga0sWAUvAK5FIdVFu4lmnae23ylHawS8d1kuGeHJS1hEQypwtvsVD4o5?=
+ =?us-ascii?Q?51c9zQynw6JSzgo1W8uWNVYL5QbJ9Mbfo9Fa27VUmYYT5OU+R1q5nFzmLOO0?=
+ =?us-ascii?Q?VSpRiIoA1+RIZCKpm3Tht2L2YP1SD9Ez+lXx1xUrm/AgZ8cuvnvxKymf6M6w?=
+ =?us-ascii?Q?ZwbmaVhcMoTE9L/AnyBpShxKzB00D3N0OlM5ofJG3rUPfRhACRW2r0tBFBEc?=
+ =?us-ascii?Q?xO3UDWXmYtnc3XWKzr1+QmTzyf7st9YhAxC0U+CVp1t5z/f9uIxJ5GpVYCry?=
+ =?us-ascii?Q?QUZsKlvAUN7G7PIwjpJ+Zao7Yx7ZW8rVAyd2RNZU0hMj5JDpToNmqdCMBPO6?=
+ =?us-ascii?Q?VgSjopcIy5UxYBJC4hkLgXckIRmaj/Hx+GjBkfi75bviG5Phvqrep9mWi8Kp?=
+ =?us-ascii?Q?6KWm4xxXcdHLI4gqhZkcri9ZNnULHDibT+WEXjrpla1l5bIOSsugnlNj3wyt?=
+ =?us-ascii?Q?xJcYSkFxYdBbnkzLU1+5AH5MObtQGdlnxM7d4QJhPKw20Devqia7t+apyJOZ?=
+ =?us-ascii?Q?vI/W8h++KfTzWvfG5Md+NjCyuUQXj4IydZR10x/h6hBM+zCHl6kUnI//bVj6?=
+ =?us-ascii?Q?oc6C4KTaUtMgn3Rw37XoOyP6ndqveSNcmq9vwVX3abKqXW0WEqpIru59YafL?=
+ =?us-ascii?Q?IdYsLJ6BYStTBL/b5NcmuBqW7SGYH/+h7Dgy7XpO+1xI8tnnGR1i40xpnrNX?=
+ =?us-ascii?Q?N56gB1DTIKHjlFfo0p+ziHCLE+nvwcCmbvGAxLCZdqfQV1ATFA6Jk+pyy9f9?=
+ =?us-ascii?Q?IJNOZcW6Mc5INpHXVNvgS8f4uBC66LIN8MwAUZwUSY4vZ9fmBnRHJs/BHgsV?=
+ =?us-ascii?Q?d302aF5rM3iFGe+/KDAYce/9v51I75/3ls3w1QjiRt620XTqF9C7l1aQCZC4?=
+ =?us-ascii?Q?UzGrvVYQX0MmZZY++er6CvXRluRAw37NAvi9j8vMNeb4r/ohW7qbsO10Snnd?=
+ =?us-ascii?Q?l4omO1RXuMFE6EWg/ZnBFobpAAiiI0psFoQs7fLAQB6GXo11rW++J1EtzCgu?=
+ =?us-ascii?Q?xLRyNvsnUXECEJY/kh9CzhX2Pui+rwtug5BDr6g1Jh/l5SIKPoENsD9tpUnt?=
+ =?us-ascii?Q?j3u3MyHkF+zdLEERKXLJceRqTjxdk4qLvuFSQz94VsKwg0AdZwXygQBVIdss?=
+ =?us-ascii?Q?iKrTFI3/NYD8md6WeyOhAnhNHVEF0QbCB/sAYN9cBZLprigiM26oVXy2VcjC?=
+ =?us-ascii?Q?uqt0zjJKhjr+PJAlBXaytbEsRz25cxA3R+bBrPxP8icNVcHvR6oRG8M4rH8V?=
+ =?us-ascii?Q?fYRQehzg7qPHbIuXhtO5eG0xNjybczTas9A/ctVvjEdltxguUBrNV2dWSv4/?=
+ =?us-ascii?Q?b99tpHEWj6y5xI01kHph2PxqgO979WZA7p2WnycLcY0UUU0JxZUx+OH4ijZX?=
+ =?us-ascii?Q?dpJU1U1w4FHcVc3g4uGa69e98RMnff7Myg/4cRPJ9S4FHlIkLoE3l4g6pdhr?=
+ =?us-ascii?Q?9HkVbY5Zhz/nbGGx7UC6cRmuGfq6nr4e?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS9PR01MB13950.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?6YJRoMf96RJTuTp01mqDhUt4Us8O6q4s0aBK9spybIhY/aExEkgZsOAo2Wr9?=
- =?us-ascii?Q?b19U1i7slz4Fq8gABKZEYh0hhyPWceIVKqe4eYIbQ4EUX68j4YcBcmxKmlBp?=
- =?us-ascii?Q?LFzo8CVJRIATrfxxllHwd3HX3S2nOIYg5qbk5uuO09DZGp87kPPYeMtNyhVu?=
- =?us-ascii?Q?S0ygwF9JECAC3/nErRuKPW/i0LmifYlnWsVruvRAk3cnvaNF4LnZNR1l1EbJ?=
- =?us-ascii?Q?7SE/SfASGvkv2vfdoNfixDiaZ+lJ4zachyCo13OosHgtbGug9rtEwcbqssT8?=
- =?us-ascii?Q?H8cSZ3eYLqDx3A8VqknIWotGkCNbDhzX8hlduHs1LetvxVs+6Yd0P5IFTBB1?=
- =?us-ascii?Q?CBDRc9keCYeAsnJt13Zm9XSiC6kc781hxriYcqyuGSLnGKPBmH3KEOvozyn4?=
- =?us-ascii?Q?7hVuGxkgZMKzzPfpNRlNlaIztOP58mA5QKcdEvMU0dxpev8YURibo7nwMRzW?=
- =?us-ascii?Q?x+ebeEVNbLRzSg7KIWO1wjzeEboLOGCDW8lu3erewqmWLjB8oZihy54cNuet?=
- =?us-ascii?Q?BhAxorVdAavnxx0FRBUkENxRJSkxNQW7hZTROYUo/OkjXaHsaM8LYP5bzOy1?=
- =?us-ascii?Q?qagk38VwhTRWrF/D35R/sUlgmhQMT/ewglTtWtpocs0pmz6HZVKJkULypnYC?=
- =?us-ascii?Q?9hgZU2HOQ0uWON08Z9HLjI+g+dRqu4yQvFSYi/ocC9RYscH7+v3FftHiPshR?=
- =?us-ascii?Q?ftVD8+y7OaxU4rkK6KBsJyGbRAwrua9HdlmaJg3iyJkm2/6HXqUkX6ASCgCR?=
- =?us-ascii?Q?/u4kT40Kwqi1ccEWqg0+K1KG5aHcpiDATUJ88eOeTNGz6gJLBBYfh3RWXqF5?=
- =?us-ascii?Q?7XJmY3pGkKCjzG3idKRg5GyrAeJrE/F29CsOTZ/6eZxu6Ptd0V8OazdG+lSB?=
- =?us-ascii?Q?S6lr7VT74OdYccWOrA/+dGS7+GGm6axJ3KGvZymBnqaEpvPXHVAWcYnYqwCD?=
- =?us-ascii?Q?QPQFEYgwq9xgbIVqbD+Lz6qKLIbEx62ZEIg8gtN0s6csLT8NT7OeYlPdL80Z?=
- =?us-ascii?Q?dKT/kdWgeggcqKR19YZ81YfYHKPz+/ZHN3+xjLHcv5S+5avuG7KW/VkU3eIV?=
- =?us-ascii?Q?sEgPtfiaO6FZhafIWgQQhnOKO6WZUdCO55zBNWelaioBgRTl2Z+uFsC5oUqn?=
- =?us-ascii?Q?qS+f4sZpLU7x0JuHHD5/w/18D25DyoVzhoHyT5NNkzmZuK822VYIFvX3Ybiz?=
- =?us-ascii?Q?2U4St387JcPh6ZBgdzZsW5+3hIw4+w1nnxgtZiC9KyBrqE0XDX79mkgsRfbQ?=
- =?us-ascii?Q?02b4KNrYthTd/Vx9+kAM/mqxpba1a57y0syJC6kUXr2n0vXG13LAh4JbPMqO?=
- =?us-ascii?Q?7FzOm5ZWqJRfTMDAAMdiExJAKfeXIvmw03eplaFUw54tWlck6etn/Qz5FZRW?=
- =?us-ascii?Q?VuDRpFAjGhoWZhLVy+nrziqLEHf+3MSfrPEUOlMZ8zDejNRPPDQ9YmVRT/40?=
- =?us-ascii?Q?1tiOfeeG5E4BhAPt27bGbKXuHqKz4+QMngGlbwZpO2E0xNopu7qQCfjUbLsp?=
- =?us-ascii?Q?Soj/DmHUmGEM0LH4In+TtU5ApvlOnd9URU3oN7Nq+J0mtMftD62w504GLcua?=
- =?us-ascii?Q?kIv/8Y9cBXFcu8aFO5C3pZK2MXnlZRXvOv5HvA+sAaWcCA5GrH1Z/latXlnp?=
- =?us-ascii?Q?c9ohfURpNUtScDz9osGl9Ng=3D?=
+	=?us-ascii?Q?Jtwe4/nmpIBt55OWxNoPPQ6nDhSuc0qytukXs6VnrrEG1b1Xwa1aSMcrULKq?=
+ =?us-ascii?Q?jWkDW//EnJlU41Stdoi1YzIE+kkf/tt87jCg1ixj6hb/kwrQhdo0ZLihHtqV?=
+ =?us-ascii?Q?MBJDbfK72B/OQt2B8bz+7n9yXx43dX7cJ5VHlVUL5dwh4D278zXlLW4GGnwJ?=
+ =?us-ascii?Q?UKY0WRZdrbD2l0v8/F8gfPxZL1+RhJlGp4ARbwM9jDK89h2lk1a3cpx/2iu0?=
+ =?us-ascii?Q?MNV7oHIPoEL5JEAEvSs1F8ggqIZtdrP4CIahQw3rZQN1L9YIiKlMDPTsZvJB?=
+ =?us-ascii?Q?hoYLDxcpUNVZGRQQzgJuDKJP5/zcKrvvjcm7ms9T9qKyi4KF+V9J6nsBh9qy?=
+ =?us-ascii?Q?Qlvg7kp1isbp1fcGX2fAfA79oAZoXJw1q0ammx1BvNWuhWipSldKj5IBUOwV?=
+ =?us-ascii?Q?K/iHVVI0mASFRKi8UorlXHuXMuq8yUqB0AbDsCKggSKXRN6pWOLMZN+nMyOO?=
+ =?us-ascii?Q?927zIScdrFdSJQqSdwu/ne+ip2zzMKcT4ZPZz/WBgE5ylblQDVBj5JVSXMCa?=
+ =?us-ascii?Q?rf45nuwdINdTTR4m5bfjyF1q6lUfND5i3v8fMU2Di9LjixH7j21XYYyZ7xGC?=
+ =?us-ascii?Q?E3rWRncLSQ75ZX8e2+GWc7KijJmZpwO2QGJKDLUaFXrICujeq8y7m6c62MAw?=
+ =?us-ascii?Q?mWHoYLJtvqEy89MBeaoWDaOqzRa/3Y5eHYBnksAwUFep3/kIJooySZ5rNd9Q?=
+ =?us-ascii?Q?6BOidYwBZ5eTmrxgvdw1Ie+cAXiBSxY38fHDDlfARbRaRiLxNq/IhLTRoYqt?=
+ =?us-ascii?Q?APM9l6uh2RWernXB3bnJCEy2k6oR7DISKJbKIDD9gMzvGXq5jcJJyWX78Dsn?=
+ =?us-ascii?Q?kBKgm3lDVeFen7R32cKzVTeXi+026JHqdgzMllN12ybQmizz6g1aBFtEMPki?=
+ =?us-ascii?Q?MftUd/UmVbvItL0fLqYxkLoJEXGD5JlPOsN0RotspLnqpdzP0Nk6tr2cBCTA?=
+ =?us-ascii?Q?BWHKJMzSkIXBsO3O+2n3AdBI55OBBHCi7lU0PBOk5DTHRVYgWY/OTAEtxCra?=
+ =?us-ascii?Q?5w3u/ny8wRrKiBzixlQojguTTiUYIr2RwvA83X4IndXBiaWAnlgTtp0q/5gZ?=
+ =?us-ascii?Q?EvYQwGht2ynJau30GBQ36r8Ka80vLCN47qgKjuMD4BQhnbZeeYyNUSzyHxBX?=
+ =?us-ascii?Q?7RwPqfUJkj5tMZMQjfMzb4Xhz5hVbdnUeUWoEauYLVFbaRGAoUZPbEVlsrPa?=
+ =?us-ascii?Q?x7S/VYIbd3xV1YbcQ7WLxj9NHH07b+QXO9GYhu/9D+CUf0c42w+vWv6h50s9?=
+ =?us-ascii?Q?egnhHD6k5db+w13g1dtoFEUELPpqWZ2Vir6+6YR+41INZwKN+6iGbWSaEnqV?=
+ =?us-ascii?Q?o64LxsWAh277UfUKahM6Oi5olXIO+8GyZ3XO7VR5d2mcXNCzGxseWNnFKV2V?=
+ =?us-ascii?Q?u6z/v0XQZ6593PinX0ldAOGIg9jdxND66OuZPdYEpABSesHPT0j2m3gIP5XK?=
+ =?us-ascii?Q?doWgbLxzn1xz3slLcE6XmRUcP+sB74zYF4oym7PLyk1IHbYYvVd1UJYlDf2/?=
+ =?us-ascii?Q?EzGCJBqsqBl2ksioTo46AxHy4RUnlPauBIAWwcvpPV0OBsL9Yb9kWRy5k0lc?=
+ =?us-ascii?Q?uMxGLjJuW6lOM7UCljhzU40z94Jgriy4NrfoWSD0A3pRR4V8GTJuwX1lAMh1?=
+ =?us-ascii?Q?lXWYIH/z4TLJayVe777bCyg=3D?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dfc26b94-7fcf-4142-a1d2-08dd6158e1aa
+X-MS-Exchange-CrossTenant-Network-Message-Id: df1abedc-9787-4fb4-7646-08dd6158e341
 X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB13950.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 11:27:32.8350
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 11:27:35.5374
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RaHMWIj29Gb03OL1NcTLoVUwHQXOSTZLUuz4P/CTVOudmofBL+jpWsqj/Fbu7noI6NH3at6o4RBt3EIJIUUqby69twks+S9D7ruRjWTegqGVddf54Ab/6AkFd99J314+
+X-MS-Exchange-CrossTenant-UserPrincipalName: j5P3PU/XcjTINixnV26IrRIyYXq9ZkSJvsNtiCq7iqJCmrmBoVbb8JXEREIOmxXaZ7Ov/5yogB/Zm5ehV0DUEnjdqCKFObaaJ4SklbVQIurnj+csIHZ6JTnwM3F4cNwz
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB14981
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
@@ -137,50 +137,198 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 13 Mar 2025 01:33:36 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18173
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18174
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 567ef9035f820ecd3e6fcc142003f396848b31f7 upstream.
+commit 26c7871100f2933a2827b217320366e89cef5a4c upstream.
 
-Document support for the I2C Bus Interface (RIIC) found in the Renesas
-RZ/G3E (R9A09G047) SoC. This IP is compatible with Renesas RZ/V2H
-(R9A09G057) RIIC IP.
+Introduce helper functions for performing I2C read and write operations
+in the RIIC driver.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+These helper functions lay the groundwork for adding support for the
+RZ/V2H SoC. This is essential because the register offsets for the RZ/V2H
+SoC differ from those of the RZ/A SoC. By abstracting the read and write
+operations, we can seamlessly adapt the driver to support different SoC
+variants without extensive modifications.
+
+This patch is part of the preparation process for integrating support for
+the RZ/V2H SoC into the RIIC driver.
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20241216202436.185773-1-biju.das.jz@bp.rene=
-sas.com
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Andi Shyti <andi.shyti@kernel.org>
 ---
- Documentation/devicetree/bindings/i2c/renesas,riic.yaml | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-riic.c | 56 +++++++++++++++++++++--------------
+ 1 file changed, 33 insertions(+), 23 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml b/Docu=
-mentation/devicetree/bindings/i2c/renesas,riic.yaml
-index 60578c3ad4b9..7656c6d8ded1 100644
---- a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
-+++ b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
-@@ -26,7 +26,9 @@ properties:
-           - const: renesas,riic-rz      # RZ/A or RZ/G2L
+diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
+index 6f8ce656183c..46fd6c249c7e 100644
+--- a/drivers/i2c/busses/i2c-riic.c
++++ b/drivers/i2c/busses/i2c-riic.c
+@@ -106,9 +106,19 @@ struct riic_irq_desc {
+ 	char *name;
+ };
 =20
-       - items:
--          - const: renesas,riic-r9a08g045   # RZ/G3S
-+          - enum:
-+              - renesas,riic-r9a08g045   # RZ/G3S
-+              - renesas,riic-r9a09g047   # RZ/G3E
-           - const: renesas,riic-r9a09g057   # RZ/V2H(P)
++static inline void riic_writeb(struct riic_dev *riic, u8 val, u8 offset)
++{
++	writeb(val, riic->base + offset);
++}
++
++static inline u8 riic_readb(struct riic_dev *riic, u8 offset)
++{
++	return readb(riic->base + offset);
++}
++
+ static inline void riic_clear_set_bit(struct riic_dev *riic, u8 clear, u8 =
+set, u8 reg)
+ {
+-	writeb((readb(riic->base + reg) & ~clear) | set, riic->base + reg);
++	riic_writeb(riic, (riic_readb(riic, reg) & ~clear) | set, reg);
+ }
 =20
-       - const: renesas,riic-r9a09g057   # RZ/V2H(P)
-@@ -89,6 +91,7 @@ if:
-           - renesas,riic-r9a07g043
-           - renesas,riic-r9a07g044
-           - renesas,riic-r9a07g054
-+          - renesas,riic-r9a09g057
- then:
-   required:
-     - resets
+ static int riic_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int =
+num)
+@@ -120,7 +130,7 @@ static int riic_xfer(struct i2c_adapter *adap, struct i=
+2c_msg msgs[], int num)
+=20
+ 	pm_runtime_get_sync(adap->dev.parent);
+=20
+-	if (readb(riic->base + RIIC_ICCR2) & ICCR2_BBSY) {
++	if (riic_readb(riic, RIIC_ICCR2) & ICCR2_BBSY) {
+ 		riic->err =3D -EBUSY;
+ 		goto out;
+ 	}
+@@ -128,7 +138,7 @@ static int riic_xfer(struct i2c_adapter *adap, struct i=
+2c_msg msgs[], int num)
+ 	reinit_completion(&riic->msg_done);
+ 	riic->err =3D 0;
+=20
+-	writeb(0, riic->base + RIIC_ICSR2);
++	riic_writeb(riic, 0, RIIC_ICSR2);
+=20
+ 	for (i =3D 0, start_bit =3D ICCR2_ST; i < num; i++) {
+ 		riic->bytes_left =3D RIIC_INIT_MSG;
+@@ -136,9 +146,9 @@ static int riic_xfer(struct i2c_adapter *adap, struct i=
+2c_msg msgs[], int num)
+ 		riic->msg =3D &msgs[i];
+ 		riic->is_last =3D (i =3D=3D num - 1);
+=20
+-		writeb(ICIER_NAKIE | ICIER_TIE, riic->base + RIIC_ICIER);
++		riic_writeb(riic, ICIER_NAKIE | ICIER_TIE, RIIC_ICIER);
+=20
+-		writeb(start_bit, riic->base + RIIC_ICCR2);
++		riic_writeb(riic, start_bit, RIIC_ICCR2);
+=20
+ 		time_left =3D wait_for_completion_timeout(&riic->msg_done, riic->adapter=
+.timeout);
+ 		if (time_left =3D=3D 0)
+@@ -192,7 +202,7 @@ static irqreturn_t riic_tdre_isr(int irq, void *data)
+ 	 * value could be moved to the shadow shift register right away. So
+ 	 * this must be after updates to ICIER (where we want to disable TIE)!
+ 	 */
+-	writeb(val, riic->base + RIIC_ICDRT);
++	riic_writeb(riic, val, RIIC_ICDRT);
+=20
+ 	return IRQ_HANDLED;
+ }
+@@ -201,9 +211,9 @@ static irqreturn_t riic_tend_isr(int irq, void *data)
+ {
+ 	struct riic_dev *riic =3D data;
+=20
+-	if (readb(riic->base + RIIC_ICSR2) & ICSR2_NACKF) {
++	if (riic_readb(riic, RIIC_ICSR2) & ICSR2_NACKF) {
+ 		/* We got a NACKIE */
+-		readb(riic->base + RIIC_ICDRR);	/* dummy read */
++		riic_readb(riic, RIIC_ICDRR);	/* dummy read */
+ 		riic_clear_set_bit(riic, ICSR2_NACKF, 0, RIIC_ICSR2);
+ 		riic->err =3D -ENXIO;
+ 	} else if (riic->bytes_left) {
+@@ -212,7 +222,7 @@ static irqreturn_t riic_tend_isr(int irq, void *data)
+=20
+ 	if (riic->is_last || riic->err) {
+ 		riic_clear_set_bit(riic, ICIER_TEIE, ICIER_SPIE, RIIC_ICIER);
+-		writeb(ICCR2_SP, riic->base + RIIC_ICCR2);
++		riic_writeb(riic, ICCR2_SP, RIIC_ICCR2);
+ 	} else {
+ 		/* Transfer is complete, but do not send STOP */
+ 		riic_clear_set_bit(riic, ICIER_TEIE, 0, RIIC_ICIER);
+@@ -231,7 +241,7 @@ static irqreturn_t riic_rdrf_isr(int irq, void *data)
+=20
+ 	if (riic->bytes_left =3D=3D RIIC_INIT_MSG) {
+ 		riic->bytes_left =3D riic->msg->len;
+-		readb(riic->base + RIIC_ICDRR);	/* dummy read */
++		riic_readb(riic, RIIC_ICDRR);	/* dummy read */
+ 		return IRQ_HANDLED;
+ 	}
+=20
+@@ -239,7 +249,7 @@ static irqreturn_t riic_rdrf_isr(int irq, void *data)
+ 		/* STOP must come before we set ACKBT! */
+ 		if (riic->is_last) {
+ 			riic_clear_set_bit(riic, 0, ICIER_SPIE, RIIC_ICIER);
+-			writeb(ICCR2_SP, riic->base + RIIC_ICCR2);
++			riic_writeb(riic, ICCR2_SP, RIIC_ICCR2);
+ 		}
+=20
+ 		riic_clear_set_bit(riic, 0, ICMR3_ACKBT, RIIC_ICMR3);
+@@ -249,7 +259,7 @@ static irqreturn_t riic_rdrf_isr(int irq, void *data)
+ 	}
+=20
+ 	/* Reading acks the RIE interrupt */
+-	*riic->buf =3D readb(riic->base + RIIC_ICDRR);
++	*riic->buf =3D riic_readb(riic, RIIC_ICDRR);
+ 	riic->buf++;
+ 	riic->bytes_left--;
+=20
+@@ -261,10 +271,10 @@ static irqreturn_t riic_stop_isr(int irq, void *data)
+ 	struct riic_dev *riic =3D data;
+=20
+ 	/* read back registers to confirm writes have fully propagated */
+-	writeb(0, riic->base + RIIC_ICSR2);
+-	readb(riic->base + RIIC_ICSR2);
+-	writeb(0, riic->base + RIIC_ICIER);
+-	readb(riic->base + RIIC_ICIER);
++	riic_writeb(riic, 0, RIIC_ICSR2);
++	riic_readb(riic, RIIC_ICSR2);
++	riic_writeb(riic, 0, RIIC_ICIER);
++	riic_readb(riic, RIIC_ICIER);
+=20
+ 	complete(&riic->msg_done);
+=20
+@@ -366,15 +376,15 @@ static int riic_init_hw(struct riic_dev *riic, struct=
+ i2c_timings *t)
+ 		 t->scl_rise_ns / (1000000000 / rate), cks, brl, brh);
+=20
+ 	/* Changing the order of accessing IICRST and ICE may break things! */
+-	writeb(ICCR1_IICRST | ICCR1_SOWP, riic->base + RIIC_ICCR1);
++	riic_writeb(riic, ICCR1_IICRST | ICCR1_SOWP, RIIC_ICCR1);
+ 	riic_clear_set_bit(riic, 0, ICCR1_ICE, RIIC_ICCR1);
+=20
+-	writeb(ICMR1_CKS(cks), riic->base + RIIC_ICMR1);
+-	writeb(brh | ICBR_RESERVED, riic->base + RIIC_ICBRH);
+-	writeb(brl | ICBR_RESERVED, riic->base + RIIC_ICBRL);
++	riic_writeb(riic, ICMR1_CKS(cks), RIIC_ICMR1);
++	riic_writeb(riic, brh | ICBR_RESERVED, RIIC_ICBRH);
++	riic_writeb(riic, brl | ICBR_RESERVED, RIIC_ICBRL);
+=20
+-	writeb(0, riic->base + RIIC_ICSER);
+-	writeb(ICMR3_ACKWP | ICMR3_RDRFS, riic->base + RIIC_ICMR3);
++	riic_writeb(riic, 0, RIIC_ICSER);
++	riic_writeb(riic, ICMR3_ACKWP | ICMR3_RDRFS, RIIC_ICMR3);
+=20
+ 	riic_clear_set_bit(riic, ICCR1_IICRST, 0, RIIC_ICCR1);
+=20
+@@ -482,7 +492,7 @@ static int riic_i2c_remove(struct platform_device *pdev=
+)
+ 	struct riic_dev *riic =3D platform_get_drvdata(pdev);
+=20
+ 	pm_runtime_get_sync(&pdev->dev);
+-	writeb(0, riic->base + RIIC_ICIER);
++	riic_writeb(riic, 0, RIIC_ICIER);
+ 	pm_runtime_put(&pdev->dev);
+ 	i2c_del_adapter(&riic->adapter);
+ 	pm_runtime_disable(&pdev->dev);
 --=20
 2.43.0
 
