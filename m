@@ -2,41 +2,41 @@ Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05AB0C36006
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27971C36007
 	for <webhook@archiver.kernel.org>; Thu, 13 Mar 2025 01:33:16 +0000 (UTC)
-Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.61])
- by mx.groups.io with SMTP id smtpd.web10.34475.1741778759536923358
+Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.69])
+ by mx.groups.io with SMTP id smtpd.web10.34483.1741778783021478400
  for <cip-dev@lists.cip-project.org>;
- Wed, 12 Mar 2025 04:26:00 -0700
+ Wed, 12 Mar 2025 04:26:23 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=MK8t3Tzu;
- spf=pass (domain: bp.renesas.com, ip: 52.101.228.61, mailfrom: tommaso.merciai.xr@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=JgSZ5bJ3;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.228.69, mailfrom: tommaso.merciai.xr@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HhLH0hmT3uTx2MhP236NWPdMbqkmxLxS7R5ITuXIMGUdsFRSNgefGxz3Q9ItLnF4v0678kPDsq8xj29ZiyFb6UNYeJpE/BvKVfOTAF0DOGuU3+cqUnt6bcSZ4/rMTd5f9Ind6jT3JjjRLFcM6sjG5eeCTIxAZV0o8zM4sLk3nGy9ujEchOzvy0QnbJ+yhpr9FJPhhlZ37/9KD9g3W1WWeNQ1ZZ/XVywo7g5q0VdsdTKR6g9TsUU3yeJ6V6PNbmkkTAOYmGmRgnJSDXdFFdHgdgsamHGhyXwFALXP+AtiyKosZ0wjnb5AzUdegMKGMghaT+IEGZRb+pnRhuIwk6OvjQ==
+ b=b/aQxVXDnq62UC6z3HSoQX1Wm+AqoWOXXWCswzHA2Jb63MIJJojvy/nTYM/k7acX7swZWchOKkFhY2wLbjIF+jOrawNBCwQht4CBzquVZ6rC1V3mo9J7nKivaOpsEzMn/h5qGk6IzM6Am9sYui4jglF1NQYlIv9gHfChW1tO5BALAptqKuu1Fpy4WlryT4t40diGaoOmdIOF+ewyl4u/1dH/NJ/z5OYE9GN8YybXERe/+m/WR9ILqeBzZf2dzo7TqYzgZI5vOICVQ7FGImMfAZxuxmU0FlYIP4CdK/d3Ymgzg7XmA1w4vG/cRAn0rvW5sS9DdyE7l9wPRoHZSacTGw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CuMPrWF3NC8RKvxO9HBWIaiRdutUJ6WVn9qvZB3i/4M=;
- b=Ud6YT9D45SJ1KiaxsDYmx7+H3WZwK+D82XEY2O5yifreVqEEvYzbsUsdTftCk+rtWQoFHY3+vi2SM4NiuE+D9smcf+gFCqIGOyBIcGBNAnnW7qlFUWZDsKhKSsTwpJjpnN1K2KAz7IuuXyIVsfoDUMrx8iK5+O1AcJoPPvhKt5TbpUOb7psmZ3OHFiRsWKENu6OxLjMfUNOqVwf8PynkyMAFp7LFcYHQCnDi01rG4oE0kEqLzsrHiOwp9MP0HZSmqV3jkU1pstwwGcUBoPn/IwYprq8lzEdLwiyzW27i/RWetFubhCtiR0m8zYl5M2/ha5hoVtmpa3OmJxO7EDTjgA==
+ bh=BA0INZgx3ZTSXWvHgTCLS2tqlmgWRx1HU3j+MjI6aP4=;
+ b=ffs0Lrk1toikX5NGNkWvaw1sekSPYwcsD/pCSZTJamp0YHIu/2Dss3AGPB/hHqwcWIpEV0BDRSBAUcLKlxxWcDBng+Wrd7WHnko1TnFLvtIEwAjRFHfNHLg3c6jj/2fs2SHk+pgnvyJwcnzfJEUrCULdC0XjfNzOMiXfNaCGECFcvR3UD74JimzPHB8GM7E/uA5ZxC83+X79cKNXnz6YdnyKzm2blVwkd0+FZzbBVNMP3YwBZk/gArZgsr5wDvA3g8v//cEguYmVzhMVtxOY5L6vwHYUlkgD0c1+HmUza3VquVnUaq8iSdaXTiJnB0fdCfABPAa+hK25Tf41D9W1Nw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CuMPrWF3NC8RKvxO9HBWIaiRdutUJ6WVn9qvZB3i/4M=;
- b=MK8t3TzuE2xAM/zmYD//vEQ24gU6UrQS5qg7r6g7Fwb3IVXOo47+5V397w4FBehEQ50ojrTW+mDbdHpQo1vvQEEvOGCnUKH9OuPx+x2dKSDlDHZZ1tZgGKv67GYLNMSxH4m0dE+j1x/UPYprfB68JWO9WXPqqIlqn394o6oscwE=
+ bh=BA0INZgx3ZTSXWvHgTCLS2tqlmgWRx1HU3j+MjI6aP4=;
+ b=JgSZ5bJ3eavqToTaUhOMXDbilRFlVhFxYs3su3A9RYIwt2LBrPduffy6RDcPaI7QC80LMvKXvTkWAa8SzJ+m/eOlXiAAqZHz3p9W+26Gfi1Jm14qH3HApd3aqafZz89LPGyGDsFVgIqu5xq6W3B7T1y3f85LVq4DT6Z0NoXuM3g=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com (2603:1096:604:35e::5)
  by TYWPR01MB10982.jpnprd01.prod.outlook.com (2603:1096:400:397::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Wed, 12 Mar
- 2025 11:25:57 +0000
+ 2025 11:26:21 +0000
 Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com
  ([fe80::244d:8815:7064:a9f3]) by OS9PR01MB13950.jpnprd01.prod.outlook.com
  ([fe80::244d:8815:7064:a9f3%5]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
- 11:25:57 +0000
+ 11:26:21 +0000
 From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -44,9 +44,9 @@ To: cip-dev@lists.cip-project.org,
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: [PATCH 6.1.y-cip 48/85] pinctrl: renesas: rzg2l: Support output enable on RZ/G2L
-Date: Wed, 12 Mar 2025 12:22:25 +0100
-Message-ID: <20250312112302.1605750-49-tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 56/85] pinctrl: renesas: rzg2l: Remove RZG2L_TINT_IRQ_START_INDEX
+Date: Wed, 12 Mar 2025 12:22:33 +0100
+Message-ID: <20250312112302.1605750-57-tommaso.merciai.xr@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250312112302.1605750-1-tommaso.merciai.xr@bp.renesas.com>
 References: <20250312112302.1605750-1-tommaso.merciai.xr@bp.renesas.com>
@@ -56,266 +56,173 @@ X-ClientProxiedBy: FR4P281CA0246.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: OS9PR01MB13950:EE_|TYWPR01MB10982:EE_
-X-MS-Office365-Filtering-Correlation-Id: e0b3da54-9812-4181-4728-08dd6158a8ad
+X-MS-Office365-Filtering-Correlation-Id: 107479f5-d594-4f62-b158-08dd6158b6ba
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?5VlMsgzGXF1+2/tbs7gneIrB64Ihehe6sHpshuJwsUdxI3M1SYD748UhT/zm?=
- =?us-ascii?Q?dkHQ9kMLbY5Ijg/DP7W0zO5vv1gaX3Ew4eDA2wTHyKU04KTKbYKyRHqu4TDC?=
- =?us-ascii?Q?Z35wmqCO8qYwrdz3uRmJgM5CroczWkGqXAgYtSGLuC4S90v0xvGqsxwa68vO?=
- =?us-ascii?Q?iF82GKR2bBfav2p5gp8V6dMoPmmyk/eNBgVG2AqUR8JpzMGA6zkHteox0ZrN?=
- =?us-ascii?Q?ECKpJccAduROXCo/dTAxoJi9wGwhx1Y8IxiDj9i8ubj6SSwoL8hhJ425rGto?=
- =?us-ascii?Q?70JS6mv8RY0Q7G6uCn3qieaUPkvqmRNNkZw8gJF7FlR17Gz1ojeU4w3TI1qO?=
- =?us-ascii?Q?30R8PMrJ03C7rLceykXaHEBbGHzfhKzqFxTXYvWBiB46kN+hhDIrAx0AB9Et?=
- =?us-ascii?Q?p1tk4Jsuiw72mqXleVk/VxVMNblplryFT4bdH6S58QAqnljIjoCUqEsBVmxw?=
- =?us-ascii?Q?ccIcUxcNuKyX3clmjlrmlfC5jQh4n8hIfHEEtnykLxGymGX9DV9tsnZxbL/P?=
- =?us-ascii?Q?KIrMyP5/rS/1Ng4pYmJ/hNrFY/8IyXlXBq5pdFRnZZwhus4eOioj0IMnw0ve?=
- =?us-ascii?Q?vrNLX8JvvneLuP9PJQSspef1dk1205KYdndzm13/Btz5eLuper7qhJGROr0k?=
- =?us-ascii?Q?5bc0oQA3LuTyj/dHYaxgYQ/WXX8stCv8fckLainw1aX3maE3jWEE2P3NykfU?=
- =?us-ascii?Q?50Sw2AeLK29OP0eXpgYCjYgA7EeKbzdk2Nr2nHCUnUuI9ksAgIL7/AZCjEA5?=
- =?us-ascii?Q?H0+6FFqLpb/FJfKahVnZJdgjb2gOzacjgB/I4oAPCpjj81JvI6XDkqkHdVt6?=
- =?us-ascii?Q?5kjK7OoIc7UvqVj2dCGpLhWj73nReMKDz8WyN9prlZhHj0c4uCRAGSTcwuH+?=
- =?us-ascii?Q?x0oI+/DD0F/7Ye0PuIx/n+DW7RsAWKHtQtc92s+tIHfNDR1AUt5bfNLHxhOT?=
- =?us-ascii?Q?o99NS4c27jMGzRLopV4XQvpArJsaCKe0HdEi5VqvnIAU4UX1wXYQuqE3v+vM?=
- =?us-ascii?Q?lk+CKfAJnSOcx+4/P/jTDFTd2PDILXGA0mtGEgfehoEJ2cJgpZlTaOgnYism?=
- =?us-ascii?Q?s5xHFUMLFtDZlsyXXtRP2HIF3PXr27dCJO6tpUHR6gljXV4W3USNZ0Q8vAOU?=
- =?us-ascii?Q?7QenXm+lzUteENpeJ8+C82nmY9BzRDyav5HchNP4HebEghI6+W4jbru6mq65?=
- =?us-ascii?Q?Yc688UnqCMAEkFln9+yporkLU+ModWNHnlP1EF1J2A83Urp3I3DfCIKM5kda?=
- =?us-ascii?Q?gkKmBBUHrMCxTYo/epnTSyEqpBVeP1lBnwczQYhbjKOEDn9GnCiPA7tx6bEf?=
- =?us-ascii?Q?o3qICJ0GJ92+3x9YefiXEGlo9BLgVxLLQjhyF34Kt07G/gutIOnuav9QOuxv?=
- =?us-ascii?Q?l929yBh4i7E8YRB2nwk+/Nwf8ZANe0sHfXcekDrwAa25rJXpbq05ysFHDMov?=
- =?us-ascii?Q?JguuYedFp71H10S5kl0H/EsFtxBPzqPK?=
+	=?us-ascii?Q?30htjhLV1J8v/L6ChusUKX0oUbh9J9jVpFVzeBz9eG6/7eYK9BcfRVKRfVYR?=
+ =?us-ascii?Q?vM6SapUJR7zhNHNU8oObopGOg73sg46n+o8ytny4I4WC4Y9zpMrClI9ZiBr3?=
+ =?us-ascii?Q?5kINohsdQV1DQUPvKbTCh2NpU7lzwOetquxuuP7qMqYa0fdV5vFPFQ44nLfu?=
+ =?us-ascii?Q?AMn3Q2aa7R8Kzyj4f2mOtwfdEIXgb491bF8DJ50ypEqQc+w+QUN6N4acZspN?=
+ =?us-ascii?Q?2SwCCqe4M6EcHnbw+UL1vIx27DnfWKyd12hPakNqjnFQbRLwbc1vOgRVS+y6?=
+ =?us-ascii?Q?UDvuoGk+tkTmnCPDiq+0VWWPRoDOErADMl4cXyc1niGKznZ4xvcGxwRoKIWc?=
+ =?us-ascii?Q?vikfmXAwJNgza5Y5btfOgV7mggVB0KEvyzryORSdbh5jUm82d44+WU+5WBmp?=
+ =?us-ascii?Q?eRm5KuMUQqfakPlLnLLiJ/Htb7GbwgJ8Sbd0aFm0K/nXp6Pv4/t/Igx+FKp7?=
+ =?us-ascii?Q?umXx+1IVcbSCPEFH5FA5T5Xh8CkYjeLDKv1dE5CltPk/a8TLgnF3bRWy2UN5?=
+ =?us-ascii?Q?g468VVUR3KZ2Yr1OsV0d+rVbQToBe9LmLqiP6m4lVkJFRAXMLuh/kIQCHtD7?=
+ =?us-ascii?Q?Ecz6vlYL/U95+zT53iBF94SY4VsSHU73h6s0gIQg/B5yXKe/+lxqsJ+Tbv7l?=
+ =?us-ascii?Q?8JMsGSs6s2PlZvgSGYwsOp34+T4oyyjsMwXN8IaqpjgXuEEBMMQLexLL6Z31?=
+ =?us-ascii?Q?fIprsA3BhnS450z5+F5a4n9tiE47U1V9x6HxYzcqg+g7+4JOoJRXmMMoT6Gg?=
+ =?us-ascii?Q?oUc1VcOJzmGP0lLxFDqG8/Q9mNeZwfIMlTzsKTsafo8ACBbxWLZCAg2X37pw?=
+ =?us-ascii?Q?KNkR747Dearleqobls19mjIub7C1Dmm4GZnTqCBC1excdht/3bQtgindaRlL?=
+ =?us-ascii?Q?L9VODciuPL4XPyl52AeoREm/LqdaTnRA2MPbiUFEQLlk7UIBo5/cW7He5M2o?=
+ =?us-ascii?Q?zuj7qoLP/dlGJEozELhmIYWkKb2ej6UXiGVxJh7AdZY6j4BFkBYJg+GFnoSh?=
+ =?us-ascii?Q?2YBH0w5P0TL62vIEDZTCfmM+w6CaoCYoIhsGCYqGm/rJM/iKy4cT9/J4xcFJ?=
+ =?us-ascii?Q?EkXPeM3fzX+t41oV22cUSWNe47cuwlgIP/PcERNvsxLIjyfdrMFGGffOg/FO?=
+ =?us-ascii?Q?TLuFUalydJbXUMh51rYM1stKdivXtBIGbnbfGPQgeKpZWIoY+69R9G9XL5Ly?=
+ =?us-ascii?Q?XmvYJz3ScCgfLNSw95csu6m+mRMeftmlCASgHeMnqJGOMhI9C1yI+edw0Ain?=
+ =?us-ascii?Q?zRVf62UPL0u+t3AKTb6yDNP0Gm9SrzrSwZ0j2KKkLS2x++6xzAcSNeike2q6?=
+ =?us-ascii?Q?J76Y0qHFY+7C+n9vOn4QTJNme2kPdmpdoxLLACJOF2MvzykyIPHuivsDliIe?=
+ =?us-ascii?Q?6xt2P3svLMsKTXcXkEB/Fkjt93SG0ScjoHUJb5xI1kRnxzGLytr0uhvW7zDm?=
+ =?us-ascii?Q?8Q0G9xv7JddU8W4YXmcp5GPP9T0SwlvO?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS9PR01MB13950.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?xWXezJ6j8lbwRW6FvVHs8pCPLpWiVHBZrpVN/aDrWEMkCAjrh/SBQi9cVVoG?=
- =?us-ascii?Q?yMISmKDkxMv8yjs3ZOXjHk3kffx2pFyqIzucCvYp1wLX8gpPkS+hWKT2NB6w?=
- =?us-ascii?Q?dYJoijdAujPEmunFOLpgW/E314vfw41EhvY8tuho9PwzU3x7e/YAXk3gxbow?=
- =?us-ascii?Q?Cg1C0EXEo7qtqyWWXI04hc2PeS6wCEZZnRRTBnEx1nS4g+uZ6srFdTm0p8aZ?=
- =?us-ascii?Q?Br8uZla2HsG8KS/RWyydZc9zLy0zWkl3tTBWZ/fOaj0mQfzK3PIcDjNNBXn0?=
- =?us-ascii?Q?rxophbE+vLCT83olNGzVeWeWbSm66bpnnXsZu5Scm2iAMjXb2yso6Y0k6Qny?=
- =?us-ascii?Q?etNc2phj80rptqDARIT6mgDfqz9cXxpT3QzYSTlSSHTcravN3ch9+waxH/Vm?=
- =?us-ascii?Q?Locd+9w/ceMuFcqC7JGm7ZAlQeOxz5wHFN0GRr3+mjnQQdMpxF38f3mRtYoA?=
- =?us-ascii?Q?oO31vrAAtENSb23CKgkiLHYWgey1SBLaUSeSjb59XXiEB1kb7VIu6LcMoj1p?=
- =?us-ascii?Q?LykiBYv83JVv6wk4RYUhGfBa8gSFVI9igkbxo/s0mP8CopSOf4T9dVt2ea8A?=
- =?us-ascii?Q?N2FK5S1/MOp4zfkChWD3ywDCQzyaxmPU3V/vJ8GKeP365ybjPcV55GLUuOIa?=
- =?us-ascii?Q?c4uF+VEOT+R5GywX5FB4RVNVQPcqb+eLbxlT9Kq5BA1knBN5e0fKv5EPYcOj?=
- =?us-ascii?Q?I45pzs6v90tjEs40XTxoiEA6WaY8U9W0aKYxJnOI0cQsHe/Zz7MhMpv/aIW3?=
- =?us-ascii?Q?Wlrqza4OCVc702EcamddcbxQ34Z+ftSIRof3Gq/ViySDBfekPO4rqIUnywe2?=
- =?us-ascii?Q?3WRElrKdIpPvtN2ZtNOEWf19HA2cwTOIjiKDyimCA3riR47l02HhnOOUgsKj?=
- =?us-ascii?Q?iOqq+s5emtzYwF0utGyWnk6NvoDHIIvlu96A3OtiK9mnfYlOgJo8c8ds1uCF?=
- =?us-ascii?Q?FmTqn+ugta/kn9lfuXRjnRVg0YcVWqcSlJTUqxh89ZZ+XHSen2nhen1akIzT?=
- =?us-ascii?Q?0wspTaT7v/bZEp3oQ+/zD1HRgKBsc+knir8d6EGgIOr6ss9psPbMPHe2G14S?=
- =?us-ascii?Q?wapI3lT5+AtQjGt1P8d8xvkh4AGY8/5jwIvWFvtaiD6yWc6Vkr772xsU2nmM?=
- =?us-ascii?Q?7qM6f0ZT8WuCXIO+AGdbIHR9yj0CMh4zVoRK/7rUr/f1XISU28td73KXvQB4?=
- =?us-ascii?Q?nnT6sdxzPG9oTA/976ni1+JrhU/c20PGAMmaKgGvaAz8VvRfy7tuSXmKnAzk?=
- =?us-ascii?Q?8ErKa3S1p9SS1413G1OUl0cV2FODk5DbGHs986wqCHJJg3DQmKmRb1XWIeNP?=
- =?us-ascii?Q?jVCBmmbj8E/zg/Ou6do+M8B6DS7Ede+0dKd3V6pqlE5aIBcJw482EaLA6Ci5?=
- =?us-ascii?Q?3pXUCm40R4o65J+MNarR8lMKHeaENhFRIR+BAx29hXjMsIibxvW0Z0VQksyv?=
- =?us-ascii?Q?jVdrVSzak1mPLE/LFsjlEzT/uPULFXtq7FH43mF+yRAfN71GUMPo45Elp9ll?=
- =?us-ascii?Q?SyGQG1YtCFFo8CbZykh39tlhSPR0Oxa4k2Rb7n1OaOGWSK4a0Feu/xNTzSWz?=
- =?us-ascii?Q?zm31YIUmlsKeYBi6ucIpMI/RXleIMj8d3qfvOt8jEUjCf2w0wPEgGHoNvA9Q?=
- =?us-ascii?Q?VJLALWAAeMZVbL8G56uV2KY=3D?=
+	=?us-ascii?Q?OZN4PTqFK0tI4jNUJhmrF6BJtP8oYEVlg61Wklj35LqW+q+kocYsuquIVuj/?=
+ =?us-ascii?Q?ddEIHaqWHitHBwib5NGvQJH/u0LI6PKy0C+gj4y3jWGxRlDufi3eLVGhDIIB?=
+ =?us-ascii?Q?g7wE29aKhrWAQg6eQTMyUqalyiGokCLPWtLlrRlX42uW8cIxIi4sOQdpTJuZ?=
+ =?us-ascii?Q?XhUe/iEVAeTBNsGazS0z7bb9MaQP5PbF+1JrU5/m3L/BkrsB/IDtSIfXI6mZ?=
+ =?us-ascii?Q?mxi7y5FrGAsEd4e5k9d8oepN2/8JARqfjO9GRCCJFYnxf9i4RFiznGwtES0F?=
+ =?us-ascii?Q?lwpeLwChJoNSnwAsXYYA0PYEHy28QHZNczCuHXG22tF2xdQY+5/ENtTS1J6j?=
+ =?us-ascii?Q?fS8j5L9e3Jc6ZJtaOXAft2aPJqrww8jeZBnyCI9GAucj9HXaF/ENRzNCtNHx?=
+ =?us-ascii?Q?kIJnMkmjWzObdgF8vqLifDbMSNSUw/ycOWS06lKPPaWF1Rhtni2XzhSltW6l?=
+ =?us-ascii?Q?p5Af1Py/L1wX1uyZbNA8ZTE9g1TDueCHZvpMyTAW5VfsleJ/NuORKWKUqkzo?=
+ =?us-ascii?Q?x8EnC6kW/mlfV/ksZka4or0u/LBF5U0/XYkYgZZ+HIEvtN3Ul0w3xUDKOElQ?=
+ =?us-ascii?Q?C8gi6noYfyWKpPUXItNUsgN3siRbSDTIbfxQnF/nsRGHFStb9kSaIxe3RLBz?=
+ =?us-ascii?Q?KW862RxIF3T19a0PcYZMyaOSwIDl2v/QaTMMduffVzWUf0/+8UrtV9dzM26N?=
+ =?us-ascii?Q?algUgdNpiOj9IjD3NPtB4KEbRk8P15ZQ/YHatjB+cO/wOkPy9X32VhNVo8Eg?=
+ =?us-ascii?Q?JZXgw3Yng9kK/iEZTbr+9kxLaiNwuaTO1HJ4jO5BjZJWeCJZSHfRDz1jUjXj?=
+ =?us-ascii?Q?k0rrDjoGpIQLDYAKdTv8Xur+XsN2BaHMjdNXrlMlkBxsQWw1rGAePADS08GP?=
+ =?us-ascii?Q?4QLIteFyz5w4cRgwHa8D2g4wENb7LVAY4So4AKDF3I/O2bio06y3TyzUNhUk?=
+ =?us-ascii?Q?Nx7qFDEiOVpA7UiJgh/BobweHU5NvO9ga14Kx4iM/jyqStB5wZWEl8YjAnx7?=
+ =?us-ascii?Q?F8weqgUastn8A9QgJuT6XtTMxUzDZ5Rge0WbXS/gkns0ZZPRF4wAR5Qs+Kmw?=
+ =?us-ascii?Q?21aZFwO7DMYMiZCH17CHFXWVySpKlidfW9Mp+n+gyfio4lswdLcEvYmr1qEf?=
+ =?us-ascii?Q?zjvbDNKt4POaIKqJbGC72sEZ1WeJnPoMIr4PyiCUy8BQcCqrIZEgQEc319IE?=
+ =?us-ascii?Q?VqR1GHMTaMDe6gMFaz9Sn5K8HjSKttwJKLA104jVCqQHaY3NwAKlwII6o2aI?=
+ =?us-ascii?Q?SuC2phdpuB68pUgfNo5eh4J7cWHWHggHrXFKBhLExlCUEgAHhUr9GXcbdtMB?=
+ =?us-ascii?Q?zSJAlm7hwIuYll8SskIXzcljhkw5a98lTsgS7aWUZrbr2HGrZssS+ou9+tPI?=
+ =?us-ascii?Q?Njydn5+hRI4Q3Yr10sMsYC4MMZgRrIiygJpBlPyz0Ack/wIICR0cccRLGIMl?=
+ =?us-ascii?Q?DVTL/fnk0I6PCDGYcXXoU/jovbe9nX0CXf0ue9Cw60Zo6x9y6GucLWVPtPqM?=
+ =?us-ascii?Q?HHZMJRbFaU5nUKsdVQ82sJ7oX7r95OP/mm/EQPmsPUj7dnnwIG2AqKNOmp15?=
+ =?us-ascii?Q?toh6FAxd93UNs7r9/iC6mwc3qFxx4jdelTgWuSEUsnDgfRrL79PpjKtqJ6Ku?=
+ =?us-ascii?Q?geq+NTBVJU1l9/jLwpGh818=3D?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0b3da54-9812-4181-4728-08dd6158a8ad
+X-MS-Exchange-CrossTenant-Network-Message-Id: 107479f5-d594-4f62-b158-08dd6158b6ba
 X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB13950.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 11:25:57.5608
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 11:26:21.0436
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vNUpoeuxUT7IOemHOfbbW2d3ynEyLDyvhNbvZrovA6P16D3MDBLEde7ynZeea03iZ53qKbeCNx2RGyfkuN19ZAgSZquENEPBNy7lRq+zTkZGYiYNbysp5jYzXY5O6/cN
+X-MS-Exchange-CrossTenant-UserPrincipalName: ABMttA+PJi0GtyeXSYlyPRlC3od3/HKAkTvLaQzoN5u2SBL2Xvhppf0ldnbM6bKCNFSUxd5NGs25uAarwTFUHXiugbIysyrjXoKeYoHUjayhf4SYOxa44D6gN5P3ktZ4
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB10982
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 13 Mar 2025 01:33:15 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18140
+ <cip-dev@lists.cip-project.org>; Thu, 13 Mar 2025 01:33:16 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18148
 
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 
-commit 2453e858e945e5e2fa8da9fde8584995e7dd17d1 upstream.
+commit 1d930d4bf8e68c2a7122a6d0899a99f0370c45b1 upstream.
 
-On the RZ/G2L SoC family, the direction of the Ethernet TXC/TX_CLK
-signal is selectable to support an Ethernet PHY operating in either MII
-or RGMII mode. By default, the signal is configured as an input and MII
-mode is supported. The ETH_MODE register can be modified to configure
-this signal as an output to support RGMII mode.
+The RZ/V2H(P) SoC has 16 IRQ interrupts, while every other SoC has 8,
+and this affects the start index of TINT interrupts (1 + 16 =3D 17, rather
+than 1 + 8 =3D 9).
+Macro RZG2L_TINT_IRQ_START_INDEX cannot work anymore, replace it with a
+new member within struct rzg2l_hwcfg.
 
-As this signal is by default an input, and can optionally be switched to
-an output, it maps neatly onto an `output-enable` property in the device
-tree.
-
-Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20240625200316.4282-4-paul.barker.ct@bp.renes=
-as.com
+Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Link: https://lore.kernel.org/20240930145244.356565-2-fabrizio.castro.jz@re=
+nesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 67 +++++++++++++++++++++++--
- 1 file changed, 63 insertions(+), 4 deletions(-)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/rene=
 sas/pinctrl-rzg2l.c
-index 6b383f2baf47..ba0122b46da0 100644
+index 5919a9c441be..4ccdcb145704 100644
 --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
 +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -999,6 +999,60 @@ static bool rzg2l_ds_is_supported(struct rzg2l_pinctrl=
- *pctrl, u32 caps,
- 	return false;
- }
+@@ -167,7 +167,6 @@
+ #define RZG2L_PIN_ID_TO_PIN(id)		((id) % RZG2L_PINS_PER_PORT)
 =20
-+static int rzg2l_pin_to_oen_bit(struct rzg2l_pinctrl *pctrl, unsigned int =
-_pin)
-+{
-+	u64 *pin_data =3D pctrl->desc.pins[_pin].drv_data;
-+	u64 caps =3D FIELD_GET(PIN_CFG_MASK, *pin_data);
-+	u8 pin =3D RZG2L_PIN_ID_TO_PIN(_pin);
-+
-+	if (pin > pctrl->data->hwcfg->oen_max_pin)
-+		return -EINVAL;
-+
-+	/*
-+	 * We can determine which Ethernet interface we're dealing with from
-+	 * the caps.
-+	 */
-+	if (caps & PIN_CFG_IO_VMC_ETH0)
-+		return 0;
-+	if (caps & PIN_CFG_IO_VMC_ETH1)
-+		return 1;
-+
-+	return -EINVAL;
-+}
-+
-+static u32 rzg2l_read_oen(struct rzg2l_pinctrl *pctrl, unsigned int _pin)
-+{
-+	int bit;
-+
-+	bit =3D rzg2l_pin_to_oen_bit(pctrl, _pin);
-+	if (bit < 0)
-+		return 0;
-+
-+	return !(readb(pctrl->base + ETH_MODE) & BIT(bit));
-+}
-+
-+static int rzg2l_write_oen(struct rzg2l_pinctrl *pctrl, unsigned int _pin,=
- u8 oen)
-+{
-+	unsigned long flags;
-+	int bit;
-+	u8 val;
-+
-+	bit =3D rzg2l_pin_to_oen_bit(pctrl, _pin);
-+	if (bit < 0)
-+		return bit;
-+
-+	spin_lock_irqsave(&pctrl->lock, flags);
-+	val =3D readb(pctrl->base + ETH_MODE);
-+	if (oen)
-+		val &=3D ~BIT(bit);
-+	else
-+		val |=3D BIT(bit);
-+	writeb(val, pctrl->base + ETH_MODE);
-+	spin_unlock_irqrestore(&pctrl->lock, flags);
-+
-+	return 0;
-+}
-+
- static int rzg3s_pin_to_oen_bit(struct rzg2l_pinctrl *pctrl, unsigned int =
-_pin)
- {
- 	u64 *pin_data =3D pctrl->desc.pins[_pin].drv_data;
-@@ -1775,7 +1829,7 @@ static const u64 r9a07g044_gpio_configs[] =3D {
- 	RZG2L_GPIO_PORT_PACK(3, 0x21, RZG2L_MPXED_PIN_FUNCS),
- 	RZG2L_GPIO_PORT_PACK(2, 0x22, RZG2L_MPXED_PIN_FUNCS),
- 	RZG2L_GPIO_PORT_PACK(2, 0x23, RZG2L_MPXED_PIN_FUNCS),
--	RZG2L_GPIO_PORT_PACK(3, 0x24, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H0)),
-+	RZG2L_GPIO_PORT_PACK(3, 0x24, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H0) | PIN_CFG_OEN),
- 	RZG2L_GPIO_PORT_PACK(2, 0x25, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H0)),
- 	RZG2L_GPIO_PORT_PACK(2, 0x26, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H0)),
- 	RZG2L_GPIO_PORT_PACK(2, 0x27, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H0)),
-@@ -1784,7 +1838,7 @@ static const u64 r9a07g044_gpio_configs[] =3D {
- 	RZG2L_GPIO_PORT_PACK(2, 0x2a, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H0)),
- 	RZG2L_GPIO_PORT_PACK(2, 0x2b, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H0)),
- 	RZG2L_GPIO_PORT_PACK(2, 0x2c, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H0)),
--	RZG2L_GPIO_PORT_PACK(2, 0x2d, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H1)),
-+	RZG2L_GPIO_PORT_PACK(2, 0x2d, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H1) | PIN_CFG_OEN),
- 	RZG2L_GPIO_PORT_PACK(2, 0x2e, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H1)),
- 	RZG2L_GPIO_PORT_PACK(2, 0x2f, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H1)),
- 	RZG2L_GPIO_PORT_PACK(2, 0x30, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H1)),
-@@ -1808,13 +1862,13 @@ static const u64 r9a07g044_gpio_configs[] =3D {
+ #define RZG2L_TINT_MAX_INTERRUPT	32
+-#define RZG2L_TINT_IRQ_START_INDEX	9
+ #define RZG2L_PACK_HWIRQ(t, i)		(((t) << 16) | (i))
 =20
- static const u64 r9a07g043_gpio_configs[] =3D {
- 	RZG2L_GPIO_PORT_PACK(4, 0x10, RZG2L_MPXED_PIN_FUNCS),
--	RZG2L_GPIO_PORT_PACK(5, 0x11, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H0)),
-+	RZG2L_GPIO_PORT_PACK(5, 0x11, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H0) | PIN_CFG_OEN),
- 	RZG2L_GPIO_PORT_PACK(4, 0x12, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H0)),
- 	RZG2L_GPIO_PORT_PACK(4, 0x13, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H0)),
- 	RZG2L_GPIO_PORT_PACK(6, 0x14, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H0)),
- 	RZG2L_GPIO_PORT_PACK(5, 0x15, RZG2L_MPXED_PIN_FUNCS),
- 	RZG2L_GPIO_PORT_PACK(5, 0x16, RZG2L_MPXED_PIN_FUNCS),
--	RZG2L_GPIO_PORT_PACK(5, 0x17, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H1)),
-+	RZG2L_GPIO_PORT_PACK(5, 0x17, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H1) | PIN_CFG_OEN),
- 	RZG2L_GPIO_PORT_PACK(5, 0x18, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H1)),
- 	RZG2L_GPIO_PORT_PACK(4, 0x19, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H1)),
- 	RZG2L_GPIO_PORT_PACK(5, 0x1a, RZG2L_MPXED_ETH_PIN_FUNCS(PIN_CFG_IO_VMC_ET=
-H1)),
-@@ -3007,6 +3061,7 @@ static const struct rzg2l_hwcfg rzg2l_hwcfg =3D {
+ /* Custom pinconf parameters */
+@@ -246,6 +245,7 @@ enum rzg2l_iolh_index {
+  * @iolh_groupb_ua: IOLH group B uA specific values
+  * @iolh_groupc_ua: IOLH group C uA specific values
+  * @iolh_groupb_oi: IOLH group B output impedance specific values
++ * @tint_start_index: the start index for the TINT interrupts
+  * @drive_strength_ua: drive strength in uA is supported (otherwise mA is =
+supported)
+  * @func_base: base number for port function (see register PFC)
+  * @oen_max_pin: the maximum pin number supporting output enable
+@@ -257,6 +257,7 @@ struct rzg2l_hwcfg {
+ 	u16 iolh_groupb_ua[RZG2L_IOLH_IDX_MAX];
+ 	u16 iolh_groupc_ua[RZG2L_IOLH_IDX_MAX];
+ 	u16 iolh_groupb_oi[4];
++	u16 tint_start_index;
+ 	bool drive_strength_ua;
+ 	u8 func_base;
+ 	u8 oen_max_pin;
+@@ -2379,7 +2380,7 @@ static int rzg2l_gpio_child_to_parent_hwirq(struct gp=
+io_chip *gc,
+=20
+ 	rzg2l_gpio_irq_endisable(pctrl, child, true);
+ 	pctrl->hwirq[irq] =3D child;
+-	irq +=3D RZG2L_TINT_IRQ_START_INDEX;
++	irq +=3D pctrl->data->hwcfg->tint_start_index;
+=20
+ 	/* All these interrupts are level high in the CPU */
+ 	*parent_type =3D IRQ_TYPE_LEVEL_HIGH;
+@@ -3034,6 +3035,7 @@ static const struct rzg2l_hwcfg rzg2l_hwcfg =3D {
  		[RZG2L_IOLH_IDX_3V3] =3D 2000, 4000, 8000, 12000,
  	},
  	.iolh_groupb_oi =3D { 100, 66, 50, 33, },
-+	.oen_max_pin =3D 0,
++	.tint_start_index =3D 9,
+ 	.oen_max_pin =3D 0,
  };
 =20
- static const struct rzg2l_hwcfg rzg3s_hwcfg =3D {
-@@ -3061,6 +3116,8 @@ static struct rzg2l_pinctrl_data r9a07g043_data =3D {
- #endif
- 	.pwpr_pfc_lock_unlock =3D &rzg2l_pwpr_pfc_lock_unlock,
- 	.pmc_writeb =3D &rzg2l_pmc_writeb,
-+	.oen_read =3D &rzg2l_read_oen,
-+	.oen_write =3D &rzg2l_write_oen,
- 	.hw_to_bias_param =3D &rzg2l_hw_to_bias_param,
- 	.bias_param_to_hw =3D &rzg2l_bias_param_to_hw,
+@@ -3063,6 +3065,7 @@ static const struct rzg2l_hwcfg rzg3s_hwcfg =3D {
+ 		/* 3v3 power source */
+ 		[RZG2L_IOLH_IDX_3V3] =3D 4500, 5200, 5700, 6050,
+ 	},
++	.tint_start_index =3D 9,
+ 	.drive_strength_ua =3D true,
+ 	.func_base =3D 1,
+ 	.oen_max_pin =3D 1, /* Pin 1 of P0 and P7 is the maximum OEN pin. */
+@@ -3073,6 +3076,7 @@ static const struct rzg2l_hwcfg rzv2h_hwcfg =3D {
+ 	.regs =3D {
+ 		.pwpr =3D 0x3c04,
+ 	},
++	.tint_start_index =3D 17,
  };
-@@ -3076,6 +3133,8 @@ static struct rzg2l_pinctrl_data r9a07g044_data =3D {
- 	.hwcfg =3D &rzg2l_hwcfg,
- 	.pwpr_pfc_lock_unlock =3D &rzg2l_pwpr_pfc_lock_unlock,
- 	.pmc_writeb =3D &rzg2l_pmc_writeb,
-+	.oen_read =3D &rzg2l_read_oen,
-+	.oen_write =3D &rzg2l_write_oen,
- 	.hw_to_bias_param =3D &rzg2l_hw_to_bias_param,
- 	.bias_param_to_hw =3D &rzg2l_bias_param_to_hw,
- };
+=20
+ static struct rzg2l_pinctrl_data r9a07g043_data =3D {
 --=20
 2.43.0
 
