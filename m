@@ -2,41 +2,41 @@ Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71ED4C35FF9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B8DC36001
 	for <webhook@archiver.kernel.org>; Thu, 13 Mar 2025 01:33:26 +0000 (UTC)
-Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.21])
- by mx.groups.io with SMTP id smtpd.web10.34503.1741778837933434840
+Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.1])
+ by mx.groups.io with SMTP id smtpd.web11.34876.1741778835938162060
  for <cip-dev@lists.cip-project.org>;
- Wed, 12 Mar 2025 04:27:18 -0700
+ Wed, 12 Mar 2025 04:27:16 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=E08kB3iQ;
- spf=pass (domain: bp.renesas.com, ip: 52.101.228.21, mailfrom: tommaso.merciai.xr@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=npjMPd8x;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.229.1, mailfrom: tommaso.merciai.xr@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EUjtKRVJMtKNP2U0PczviMX3IYAkCsWeWKjZffaWi1xKzB2hWKBSyXhYPFmtlv2ySPfpumv9JjBuYnRSQNBkCf2Map4aIjz6kxSiKMB/9stPENFwkvdmpEnV1qYHAMpXtb9NQnf4eQAb0TM8Ku1rsu2FHTTPsUECCbS5/Dxng1KjpP16ltiYcdXS5keGLso4LjVPucd8kiHjYMqUGNfGpaPGh6uLDcjw+SJudc5ZfXblaaCP7Gk3RS2tsVt3O4arYjKZpJ/TfB/He8RL00D2dlOEsTXACzpXrq6RiYgjHAhQXDdovGCRmFhEwrNwP2qj6V4lFPeOfELEhMjjbWidgw==
+ b=BoTXZmMfUtaKnv76eZHCaLnMJyH+UczILqGOgal5yIBW3RWFSkakCIv89Ic97U/fbp8GjKmQHZwr1saoortJl3vUBPEMLLX8Nq6GOzUFXq+aILysO2QLlaj8XZarOembbxgNvFSuwITQay7Ry7Nza1jT+NPnRJiJqpDG1iP7hkkVoi3QPgOES+dxMhEqVEvx9sKxBSGu+J9VT/ixsxkUUgw4BYs+HrHE9jNOsL4URQA7g4+bhYAp4VkrONdO9ahuO7xOOYfmQnDoocV/r6PQk6cOfkSWTkQv8scP7zd14P+qTmkq/sYfY9kBsN4ufASv+pbJhjvu6Jnk8808Qfb/zQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xWGjgrPUCJLQ57u+SpvjJ9ZrjNhB0nEDdZXXU3ECPbU=;
- b=td+nLYHAW2HBUugPgZ2H1gPO08Y0pigCEC2W+FaC8i0eWocvxvUFd7V1wxKydevs44HwKXUR+SRdYHqMk5/XM77kmj17e4HFHIDD0h+TZsxLETaOripzLkao/Yq3HYFv7y9U7Fs4CpH9xWS9QmEPPqeTNtjxNS6JMF5pF0dHkO0CXHFAsYzpBy4evRcQAgYVQasKfWDejiV3JuicKEuTUU2hkRhC850rkj6Kkij5842eR4d3kFZmvN6uSnPw2MyNwtZ4xsa15oisDhYonB9nLw6HB8+RYN5PmiAm0tx4gPi+JuVDex2QzgAHddCSo9X3ZKqpKHiWRQNeCGspmev4Mw==
+ bh=AlYelGc2FaXpWkFWHMxielKQYbvWvy8s5UB73g0DGKU=;
+ b=WPwhrLApV/PWB93dUPXNoE35cgTKex8itR85K7LglptLwlwqNrQqX/5hBHZjZbYF45fk08NUs+k2ILAJwGz2yL4RvtQNkaYOPEEKskYF627jGsIwiTuAZgdGPK+2zcNXcXzzZ6S7QCDCGevqDZFldUL3VUF0ADpz2Jj6Pw2lPqTkSvAf850cC/y6GRix3N433PNIeC4ZUrKkaJBkM8Uy+JudDsVbtnw3pYOHFChHgNUCB4gL/ch4HMav24YhY+teyat6kYyVJ8MHl9/SB2opIy+Fr/gwBxM6y4tMBU7hhYnPiKsHjqCL+l9tcwyfi6FaGWMVr58XJ+1qWTJ4VYNaSA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xWGjgrPUCJLQ57u+SpvjJ9ZrjNhB0nEDdZXXU3ECPbU=;
- b=E08kB3iQIw6VB42LUObCx/r98YXD/iJ8GZyFQPYPmJ2SbOhM1xGkgS64uP4YpefWmnjv1nHf9RNxkcOMUXO3/3rdtbquWLZxbRort87ZIX19dTWGuVSf8J0K4pzeWFrQ2ImheGTTxJC2mhI7Ke7mUdqJ/tdk8Xzqc31c9fCpJ3c=
+ bh=AlYelGc2FaXpWkFWHMxielKQYbvWvy8s5UB73g0DGKU=;
+ b=npjMPd8xEwQzOFEqJNy59mlY8Tc/pQ5zEcSJxmWjnz4/Kj0OZPdDl6h/b78Kh7dn64ZgH6h7I0LyNH/LgCj7hvCv8PrkMq+Rfez0Fld2CL82ldksmJmycEXk3RHiC2p1wg7aY6JKTyWGoMQq8zAf0Dd7QTgCWDa1UDNGQBttva4=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com (2603:1096:604:35e::5)
  by OS9PR01MB13175.jpnprd01.prod.outlook.com (2603:1096:604:30b::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Wed, 12 Mar
- 2025 11:27:15 +0000
+ 2025 11:27:14 +0000
 Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com
  ([fe80::244d:8815:7064:a9f3]) by OS9PR01MB13950.jpnprd01.prod.outlook.com
  ([fe80::244d:8815:7064:a9f3%5]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
- 11:27:15 +0000
+ 11:27:12 +0000
 From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -44,9 +44,9 @@ To: cip-dev@lists.cip-project.org,
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: [PATCH 6.1.y-cip 75/85] serial: sh-sci: Clean sci_ports[0] after at earlycon exit
-Date: Wed, 12 Mar 2025 12:22:52 +0100
-Message-ID: <20250312112302.1605750-76-tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 74/85] serial: sh-sci: Move runtime PM enable to sci_probe_single()
+Date: Wed, 12 Mar 2025 12:22:51 +0100
+Message-ID: <20250312112302.1605750-75-tommaso.merciai.xr@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250312112302.1605750-1-tommaso.merciai.xr@bp.renesas.com>
 References: <20250312112302.1605750-1-tommaso.merciai.xr@bp.renesas.com>
@@ -56,80 +56,80 @@ X-ClientProxiedBy: FR4P281CA0246.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: OS9PR01MB13950:EE_|OS9PR01MB13175:EE_
-X-MS-Office365-Filtering-Correlation-Id: 405c349f-a16a-4a89-6500-08dd6158d75f
+X-MS-Office365-Filtering-Correlation-Id: 5a13c8da-5651-4272-3396-08dd6158d5a0
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?1tt/EEE+zTTlRpqfyRmNxspdO9cHiJqAHSWRIbwUzo1qSMaP+ampurnbe8MM?=
- =?us-ascii?Q?mVjsVlbL3Vs3XXlfHUDgWiFXpDC34EkoSA65ytNEk5fEqPv1E56/L8Jc29kd?=
- =?us-ascii?Q?hJWXNGxC4C6oAKf0QB1EUcZTYjtoxl4RxjXIgYV6jhHnbx+8tRZObmaHH+Vb?=
- =?us-ascii?Q?xOyY4yo6LL3N2R6f+dBmmnOx7uOO5/TcUpLFbvP2R5RfDMQ4ms1RFmAbYRqr?=
- =?us-ascii?Q?r1/QTmrX6XcHny6WvrCH8DlUJX/ozup4U1X+7tGfQRDalTnnxztMemjB2Ad4?=
- =?us-ascii?Q?bv/Ou9rLsfvWeOmdw1BwNxEGF6mEOm+y75a/B3alp4ZzaFuNRJhdHPmPGp57?=
- =?us-ascii?Q?tBRmu7KGMV87iPRtWGVtWwebmFNFszhHOu78Vi9VsFWAIsL791lY3xZe6pZ5?=
- =?us-ascii?Q?1wzBvlYAntQZ11crpjxKQwD8TmIuKXnMXvlDc3j5QsNzfGFuZvTMiHTU8on4?=
- =?us-ascii?Q?chiDn92RHsuNJCmdK96vY69EddB73vdQmylOIUQXakAuUl3XNpiySlCs2jrx?=
- =?us-ascii?Q?pcrCmdbzSSaYFrBBCbhEQUqo+3uE1tKtcSrj0vN6rMmiw6rSYG0vBBAmBGAR?=
- =?us-ascii?Q?e/IZ0afItZoPlTfAvlyvx2SOCGvSO/NXHSj6x0L47plrrS+dtT3COySZEBl/?=
- =?us-ascii?Q?NVMk44c5t4xQYb/g7icSa1pbrRvN75VNBYFvqN/TOwmgqujHpMoL0j80uQlw?=
- =?us-ascii?Q?X72nYw7G2Ou8SALJ7SrHsID+lSR6n/xc/haabexjDLVMZKb3y9E4BehMsTmX?=
- =?us-ascii?Q?16j+vpAHlbUR8RTXmW7HE7qLnjyzJ0Hw6kSg0BV0GAb8pXSLAlgsc2MNY46S?=
- =?us-ascii?Q?IdcJHG0kazQg2PDBYf9E5en17wrw+U8jpejRAP0spZ+SSWk8CDc25etTBZrZ?=
- =?us-ascii?Q?zCJ32MzU1MJX5zWdoxzEfqZYqSxUA1azGcUHAz7+rdiL607t1PTJa0BS39Xa?=
- =?us-ascii?Q?ttEIgAuM1CWMWXu3+JjKJWJ7NrnltQjLGfiEk5EsxI50VhA3KEtJsdFhoPwb?=
- =?us-ascii?Q?LjGvwuSEdkvdxBcFgu+Rv9jyyYcF9vnzMXyGCrSfdJTbkxow8pFbAKsX3QcY?=
- =?us-ascii?Q?N8CPKmD2kXjVo9S5jTg3vRWtqv8nIP6Gpth2ouIR2/wRCY6E95Ze3yKNKWfq?=
- =?us-ascii?Q?X5sJmiVXL626Ca8phSXue8w7JmZelEf6KAiY/qSy69eJYu2Da5VNFfYrajjO?=
- =?us-ascii?Q?wu+YnscS9q8ySjKeYLxLoaQPG/GMYDiRnwvYStN6nOh887i+hs9DjmJisLOh?=
- =?us-ascii?Q?AeC4ygUkR8PdjLp+sh3Mr9trHiUrsowBtI3AkUCb4qlp8Gd7PZfNIbKj1H77?=
- =?us-ascii?Q?JSk9z9L1tDL5do0Zx4TITN8+yczQd00JZjk9BHhfh0cd7AmB9RxktnYobcKN?=
- =?us-ascii?Q?tu0lkzKvf3EIH4DLX+EILQCZZv2U7yjMf0K4liimh8LiqR0+51S51xgtNwRZ?=
- =?us-ascii?Q?B+lkqu16zaQewMQbGL/G9krFJNwagHS4?=
+	=?us-ascii?Q?rLDGU6nJ/y63w//iJK3o6eV7D/WlIrSK7DtXQq2T90ZpthbnquhBspsAQwFl?=
+ =?us-ascii?Q?E6GVqSMOzbe2RZZJwX7UL43pkyI8+XLwcCnbEx0xltNP0AJeR4AIq0roxtsJ?=
+ =?us-ascii?Q?p7/TBH4jd3qsGGKpFBbQ+7FTiNsg1CaILG7gtww/Eb9+yGTyX/9aMZjz/49S?=
+ =?us-ascii?Q?Sp7L5fwEbzJEKdwgZrMWlBVZj2/ZWhrlsAzWMQu3veWyvln5KKWvxV9+LAM9?=
+ =?us-ascii?Q?exXMp9NMXPU+WE9ivIsQjHqOG24/rTNkViQMQ+LNbZGTlTi3k1RknoUCGrj0?=
+ =?us-ascii?Q?ntun37UNPTFEE/FgLtjeCMZI7Wqn1nQJeneoF2MficWOS8ZLOf5iLXJwqfSg?=
+ =?us-ascii?Q?hys2Z8FCl8NqLlCJthJRrF36AbY6PcXtQMzwHBF9OmcYEiKVnE4VpdrzNr1d?=
+ =?us-ascii?Q?AOQ+SBH4POa43JCU/tZf0q2V5vxR7yEVXUMR+FvT9dhz4+GCa8UcnLc0vah9?=
+ =?us-ascii?Q?XJA95GSi5ZUqqG+gAw3cAiJT0IJ4lBsIbVACBt7K9EMlEPBUTQAJ7ZDuCpzb?=
+ =?us-ascii?Q?xYItQ2fbnEwKp1aAYcM77GqA1ifORHb/CD/l5EtXhyAqi4b4BKKhAE7qDJzq?=
+ =?us-ascii?Q?+NPYjIDSvlnrhR7mtplmji09BcL30ItH9wSP1mNJjJc24aa3WlTszbgSoGWI?=
+ =?us-ascii?Q?Je253KZ0UzJc7qjTnGrpQzDBTB9fMte70sQ9PuVlScbuLMkSzdP3nu596N3G?=
+ =?us-ascii?Q?oklee9D2hoT4CQUkfwwzHFGXTmJBrY1jWu6IyzUQWcRP/6fNsJB7+icRmQtM?=
+ =?us-ascii?Q?cM5kajI4KmihiMPFZ7TtIu4ppfgya/OnTBw8SbF0TssRvfyc9hV4UNp4wfb4?=
+ =?us-ascii?Q?ixe4APTFJXivOQh3E7ceqDgP9VHwLkSrYUp8V9IfrFIHnCdBGwM9bkI5JsQY?=
+ =?us-ascii?Q?ABoY7XJsUCe1MaGeQDmRZ/VEQyiLn/wW+6y/x6R144qUIcLth8Fqz3CfevPF?=
+ =?us-ascii?Q?Yt9jewLIorgOT7YYbi1FxAHzJTpXj+NTZ+Cf+1Kv8gMZnSE2r23rXO0wBxOd?=
+ =?us-ascii?Q?HGhrzBU9AfGN2U+EWuWKOkjhadcxQgBTovDT/wL4UE1QwTJf5hT9OMoMTzOA?=
+ =?us-ascii?Q?gpx9op7oClZnhM6EtYT2uTGvoG+1nLlzgTsW6clZGER26sGufQkGGnGlR+ZX?=
+ =?us-ascii?Q?FQvy6UQMBdHuyfFzw/x0VGK3MYgbc0LgZDfQRqJ4/rYnfZWT+AtmxgXTw8/v?=
+ =?us-ascii?Q?PKSGm44hm3uIF+vU+SDsViHH1bzVGlJYB7OfVS3bdGH6Smd2CLyg8Tpm0Irk?=
+ =?us-ascii?Q?aH7yjHRBAS9qyclYS2ku0dwZI9MRVa32Y/PUOaY9NmDbgCRvMzkwNG6xgvWF?=
+ =?us-ascii?Q?TfOvDzEoD5V5oZXmdSOvzsIhByzZnODjuJfW1yqbT1IEVBcOt5sBb26IXqbY?=
+ =?us-ascii?Q?vt3q6lbFdy9i9mNGCNaq2lHnuOV0GRsIkla6wW8pqme195ZBtZeejbyXPv/B?=
+ =?us-ascii?Q?8ZHDAJKda1NJIw73Z5h1uTW34fUYbqg5?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS9PR01MB13950.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?YBXCrmC8kidosIkFGOnDzyxh83rdr6O78njeKO2eoPe1nabrZ+QsKN+UmzQG?=
- =?us-ascii?Q?l/7efl5N2kPBgXYl1dHaknN4T2GtayRx8j9tD0lXYwFEL1gJlfOvIcpsAl2F?=
- =?us-ascii?Q?PJf6A34QNp/EIoZ7GQDqkEDi4uCQFhGqYK8P/CALRB0SZkWUCy+xAP8B6r4E?=
- =?us-ascii?Q?GJ6Fc0mqWsbXhFu55p4Oor0+Z/Nh7TcPO1mK95kEwN4aICjLkXXPxIgieGb+?=
- =?us-ascii?Q?LugH+n3ernwfOpg8KYPmhhaTGmOoUdHUqbG1NcEfyG17PxmpZAVQIBhuUJGq?=
- =?us-ascii?Q?ffb9xmYo0DuLQHNgHhiUGu+CCF5Y+6nnU3dCeZbfupgVvaeXwK60B7X3E9Ml?=
- =?us-ascii?Q?XzzO8yhcYksRjmDXzbzt9ncfrbbubR8xQX3Rl0OQjpRHuns84MmaL8wS3qSz?=
- =?us-ascii?Q?nF7La/106B3SHV/kDT7k2mfXykp/yopRU35UqOsKXJb2QNJaf7Tsh6hLQQGH?=
- =?us-ascii?Q?GeX3Y5oJB9P5bMpmWs0nuDyL/KESiT3Zwx8JUu416HGrAi2UTBtJpKlK9s2+?=
- =?us-ascii?Q?oGSBKowolqtmOehDYkK938VI3tvIeZ9HV23I1B/XwZIHP5+uL1AGCYCvDqVe?=
- =?us-ascii?Q?vKzcxZFc8wVe1N6LDiJJj5t39qzr97GlrW+pDLU2LUXHSt857hSUNj/4xW3W?=
- =?us-ascii?Q?OQIFarxY8xj0YAUM/eoY+IHSXaHvrb9vxSoCGfJ8qOTHgzJZechYQ/cgavbV?=
- =?us-ascii?Q?0Uz2x1qx1mmwxArDLaGi1xxRvbp99rXpVm7BIv7+jy2pqk9xTALenyKWaHhB?=
- =?us-ascii?Q?DCVXX1wHpY+4g+mWsZKribruOkWSNNs1wRIwqDNxv8IGPphaX77pJyYQviBV?=
- =?us-ascii?Q?2S5XVipM218RiwFnEO16wucly7MvnSHItDYMrpNCE1GH9F64L4crPPVwaxpf?=
- =?us-ascii?Q?yrO9yPGhoPkU0Zu4vIrM1DEDitpK4fq5MLQDQsOXODXW8kWwdOgwpz8vjuig?=
- =?us-ascii?Q?glz6iiQZpbs6bP0/4sgzDrFivLnCvuIPs/MMuFYaRLZU6Zl7WHJDx1/QRtjh?=
- =?us-ascii?Q?3e4tlt3aHRHrE8udkeVEj2be3F1RJPddunzlD5lPcw2WgnKT4kwMYabxlpf9?=
- =?us-ascii?Q?R02D/zxLFicGhb+DLln5fbb5E67tdvg8T40VdfMtv1k6QPc+gCJPWlQ13AVp?=
- =?us-ascii?Q?nXpwoeD1eJAsmhw6Fllsiw+hrRxKl3flvsxzLWnOC8Nf9HF1ELyCFZV5IZzS?=
- =?us-ascii?Q?2duvHGcp2EhQ2zZ7A4wzQxg8Um5qjelqHM1MsCDcAuyc4zMM7ALbFYxFebdk?=
- =?us-ascii?Q?nKBkC6g+/pXDgAcB2wHjF6T1jwU6xz2IobYZV4PvWh6KeIWD1hhs+wE0E77L?=
- =?us-ascii?Q?xK/LrkfHouPgItog+qFozDzt43CWNE9nCIvAUlE/Vtvk52UNXR32K375F80M?=
- =?us-ascii?Q?fVfj2KX1DiBm+H+lPywOvY1g13Kcdo0GEahOGe/V11W28k8bcA6beHH1ItzX?=
- =?us-ascii?Q?wpDsWFWaaFNXj3Q14BLmgqzTeLyFtxXGm7QyrpI98UPpZqHhj144BURfsMT2?=
- =?us-ascii?Q?+Atht7NkV6H6o6mXomkkLkpZ7bWfFrEJFHoUBRI+Y2ciWNQhHBit7Bmdr6ZG?=
- =?us-ascii?Q?DLLEbW6WvqfqciN202nRVc6BYm9SFhDSQVOsuSWEW6RTp3FIfYc5bt0GWjmq?=
- =?us-ascii?Q?3mWrlbFoaf0OdeKvge4GDpE=3D?=
+	=?us-ascii?Q?B9ajDzfV0Q64wHlZtVUhphLNA+7DgOtyvd1oTzK4eFNWHJG9oexGn7a5zUkP?=
+ =?us-ascii?Q?noXmzPb5Mm56WBP8lQoswcQrDodMWJRm1mYN79yj97BLjcq9qbk/b5wXSTKS?=
+ =?us-ascii?Q?6mGM6Ygx9fRTV6bObsjAFURMnasF02MOgJCHFbvuqHW6gGi0KmL9PsAU6S9F?=
+ =?us-ascii?Q?Y6Rb/zKaPodSq6YE0eNl7MENfpQ9d4ZpKmDJOQezZgMy1K9GzSUWbEn6VgGp?=
+ =?us-ascii?Q?wJskVKcxJ2K1CgGJ40D3Jp9BDOOlqzzN0ts2GPfmEEvtmy6cHjqDFZAwdWWy?=
+ =?us-ascii?Q?HK5qMiB7xBOOO1O3Lv6TtX0P4rdEIaugbWptAkNS0mIvHqI+zWV7sXYjI8C2?=
+ =?us-ascii?Q?1Mfma4mL+rMalcge9QQbk8mJp2tcUQVOFfX0gPHoGi+3hwwr9m4VcjkeBNRj?=
+ =?us-ascii?Q?/HAWzQGNc4nUR9CoTIKxgmJHHKT3Q127E1Jqe3WaiQmQFmvEWvNueoE5OS2t?=
+ =?us-ascii?Q?qmLTtfFhnPO9WYxyfTUOeBh/tHus12jNN9aqJnDoi48nw/CTSL/okNJ6GJWg?=
+ =?us-ascii?Q?09myxGZLKRlY4EPfSdlzrWMWUc2mQgRJP74Tqa9VQbOtBB+WaC33G/3AbASg?=
+ =?us-ascii?Q?Gkg9KmAsbcAZz8e0ntJo8wSPj4agIXGbwd1Goyl9Io5lsOM2P1iqo9z1fq0c?=
+ =?us-ascii?Q?Uc5mKD594ZUbLlf2hB/IU8/t87bPOGk38lbpa++Lzozg4/mVKuS0/a4CnVkK?=
+ =?us-ascii?Q?8/ZdoBLvEvjfPswTxbPZTGo6mfKh46M2Lbcy9ThKkbB+FH698V4QMJ3nqpsl?=
+ =?us-ascii?Q?ZxTmtLVAt4JuYBLibA47m3g+jIiO2KJpncu6VXiacLBqhSanJ4noBmOY8gzr?=
+ =?us-ascii?Q?ah7pBP7bILrQnk715BNp9aMKR2ma/lJRpgQkrJud0tZmGThYZBfi9AzdtLcr?=
+ =?us-ascii?Q?Q0cb4JvdqmBj0oi7ZAINB4ZMTiJnRVFq53E9IaexRjZXDhuiowdP3vWJor5h?=
+ =?us-ascii?Q?pOq25DZjvNyiojVJa79SaJ5QVHRY4Rb3QEm5uhTv+jGO3yndJ0YbSbQEWXr1?=
+ =?us-ascii?Q?9ILom3gGIf13iY8JE9rWtq3ke7bmiVBarVJv/7vEDnbtHo7P9Da/M8eozuE/?=
+ =?us-ascii?Q?i6a1/33gIAMjoCqsivmcib9551ZjZJszsTRcce4K2rvFPVe6bW8si4UWw7dz?=
+ =?us-ascii?Q?2KqDkA1nWEwjV85weQKAQq5NgGUQWqwPndOWXxZwd6XJjMwXUs1MGMswByo2?=
+ =?us-ascii?Q?0RhrdCF2d5eEXXrjQRt74qlzljs9XUNsIMpy/8Nu7vbOgquf99jUAbHbVu6G?=
+ =?us-ascii?Q?zo99US+xCuqpiS1HYByn75ZTTEq8lmNYoc5Ps4zqmPqQmXlWAvzK8r/qgAqZ?=
+ =?us-ascii?Q?Fj5SuVMvk8XdAqufyWlotpPTnEsMUJg8ZF//KeuSOk+9wRyxf9eblt5BL8mK?=
+ =?us-ascii?Q?Fj84kHj77ZFZjLqD53/XgyD/UQtt0vyxgVFt41bUSVWfI2Th/MLngQ9Z9wC1?=
+ =?us-ascii?Q?fyDuOGlr2C3C+BJQYc/iFEt/GNI6jG15DP6wFAXPAVBsUDrY66tcrUPF6iaA?=
+ =?us-ascii?Q?PMKTihvSgaQajaRV8d9AR5I0XPz1oCefRyc+419wqhQgwZ7a9+04jW4p9Uc/?=
+ =?us-ascii?Q?DVJ2BWazxZl6Bg+ch7BC495UZN6/QT4BDYOIoZgB2Lt94ShASu9CgAQLJ1rs?=
+ =?us-ascii?Q?gmdISfkaIVdjQ3HxTzrROpw=3D?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 405c349f-a16a-4a89-6500-08dd6158d75f
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a13c8da-5651-4272-3396-08dd6158d5a0
 X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB13950.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 11:27:15.8171
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 11:27:12.8770
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: L2P+7s6Xrph9VPcMC8zTqyBp/VD7RgQKv9MOYZYl3evn2e4wAlQZVKzyEPA2vfahjesrADEWGzk5BKL78FtzYSzxnYwx4hFZtpafJ3N+HNTd13/mqOa8YjoFTTBOluWN
+X-MS-Exchange-CrossTenant-UserPrincipalName: /A4NhafHGna/ihFokN3TaSpWU3yqnoMaRz35GvnqIXeJXpBsHdLYypBM1Rs9JE96hd2X/EtxMEx+x9UWVzXYCp+6QPrnDVbWcKZqM2lvXcwiFgi3nwUAid1qmHbVgdmh
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB13175
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
@@ -137,129 +137,98 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 13 Mar 2025 01:33:26 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18167
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18166
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 5f1017069933489add0c08659673443c9905659e upstream.
+commit 239f11209e5f282e16f5241b99256e25dd0614b6 upstream.
 
-The early_console_setup() function initializes sci_ports[0].port with an
-object of type struct uart_port obtained from the struct earlycon_device
-passed as an argument to early_console_setup().
+Relocate the runtime PM enable operation to sci_probe_single(). This change
+prepares the codebase for upcoming fixes.
 
-Later, during serial port probing, the serial port used as earlycon
-(e.g., port A) might be remapped to a different position in the sci_ports[]
-array, and a different serial port (e.g., port B) might be assigned to slot
-0. For example:
+While at it, replace the existing logic with a direct call to
+devm_pm_runtime_enable() and remove sci_cleanup_single(). The
+devm_pm_runtime_enable() function automatically handles disabling runtime
+PM during driver removal.
 
-sci_ports[0] =3D port B
-sci_ports[X] =3D port A
-
-In this scenario, the new port mapped at index zero (port B) retains the
-data associated with the earlycon configuration. Consequently, after the
-Linux boot process, any access to the serial port now mapped to
-sci_ports[0] (port B) will block the original earlycon port (port A).
-
-To address this, introduce an early_console_exit() function to clean up
-sci_ports[0] when earlycon is exited.
-
-To prevent the cleanup of sci_ports[0] while the serial device is still
-being used by earlycon, introduce the struct sci_port::probing flag and
-account for it in early_console_exit().
-
-Fixes: 0b0cced19ab1 ("serial: sh-sci: Add CONFIG_SERIAL_EARLYCON support")
-Cc: stable@vger.kernel.org
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20250116182249.3828577-5-claudiu.beznea.uj@=
+Link: https://lore.kernel.org/r/20250116182249.3828577-3-claudiu.beznea.uj@=
 bp.renesas.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/sh-sci.c | 32 ++++++++++++++++++++++++++++++--
- 1 file changed, 30 insertions(+), 2 deletions(-)
+ drivers/tty/serial/sh-sci.c | 24 ++++++------------------
+ 1 file changed, 6 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 9aa1db20c700..f8e4062d9b4c 100644
+index 19fa3f8f4a6d..9aa1db20c700 100644
 --- a/drivers/tty/serial/sh-sci.c
 +++ b/drivers/tty/serial/sh-sci.c
-@@ -167,6 +167,7 @@ static struct sci_port sci_ports[SCI_NPORTS];
- static unsigned long sci_ports_in_use;
- static struct uart_driver sci_uart_driver;
- static bool sci_uart_earlycon;
-+static bool sci_uart_earlycon_dev_probing;
+@@ -3063,10 +3063,6 @@ static int sci_init_single(struct platform_device *d=
+ev,
+ 		ret =3D sci_init_clocks(sci_port, &dev->dev);
+ 		if (ret < 0)
+ 			return ret;
+-
+-		port->dev =3D &dev->dev;
+-
+-		pm_runtime_enable(&dev->dev);
+ 	}
 =20
- static inline struct sci_port *
- to_sci_port(struct uart_port *uart)
-@@ -3385,7 +3386,8 @@ static struct plat_sci_port *sci_parse_dt(struct plat=
-form_device *pdev,
- static int sci_probe_single(struct platform_device *dev,
- 				      unsigned int index,
- 				      struct plat_sci_port *p,
--				      struct sci_port *sciport)
-+				      struct sci_port *sciport,
-+				      struct resource *sci_res)
- {
- 	int ret;
+ 	port->type		=3D p->type;
+@@ -3096,11 +3092,6 @@ static int sci_init_single(struct platform_device *d=
+ev,
+ 	return 0;
+ }
 =20
-@@ -3432,6 +3434,14 @@ static int sci_probe_single(struct platform_device *=
+-static void sci_cleanup_single(struct sci_port *port)
+-{
+-	pm_runtime_disable(port->port.dev);
+-}
+-
+ #if defined(CONFIG_SERIAL_SH_SCI_CONSOLE) || \
+     defined(CONFIG_SERIAL_SH_SCI_EARLYCON)
+ static void serial_console_putchar(struct uart_port *port, unsigned char c=
+h)
+@@ -3258,8 +3249,6 @@ static int sci_remove(struct platform_device *dev)
+ 	sci_ports_in_use &=3D ~BIT(port->port.line);
+ 	uart_remove_one_port(&sci_uart_driver, &port->port);
+=20
+-	sci_cleanup_single(port);
+-
+ 	if (port->port.fifosize > 1)
+ 		device_remove_file(&dev->dev, &dev_attr_rx_fifo_trigger);
+ 	if (type =3D=3D PORT_SCIFA || type =3D=3D PORT_SCIFB || type =3D=3D PORT_=
+HSCIF)
+@@ -3425,6 +3414,11 @@ static int sci_probe_single(struct platform_device *=
+dev,
+ 	if (ret)
+ 		return ret;
+=20
++	sciport->port.dev =3D &dev->dev;
++	ret =3D devm_pm_runtime_enable(&dev->dev);
++	if (ret)
++		return ret;
++
+ 	sciport->gpios =3D mctrl_gpio_init(&sciport->port, 0);
+ 	if (IS_ERR(sciport->gpios))
+ 		return PTR_ERR(sciport->gpios);
+@@ -3438,13 +3432,7 @@ static int sci_probe_single(struct platform_device *=
 dev,
  		sciport->port.flags |=3D UPF_HARD_FLOW;
  	}
 =20
-+	if (sci_uart_earlycon && sci_ports[0].port.mapbase =3D=3D sci_res->start)=
- {
-+		/*
-+		 * Skip cleanup the sci_port[0] in early_console_exit(), this
-+		 * port is the same as the earlycon one.
-+		 */
-+		sci_uart_earlycon_dev_probing =3D true;
-+	}
-+
- 	return uart_add_one_port(&sci_uart_driver, &sciport->port);
+-	ret =3D uart_add_one_port(&sci_uart_driver, &sciport->port);
+-	if (ret) {
+-		sci_cleanup_single(sciport);
+-		return ret;
+-	}
+-
+-	return 0;
++	return uart_add_one_port(&sci_uart_driver, &sciport->port);
  }
 =20
-@@ -3490,7 +3500,7 @@ static int sci_probe(struct platform_device *dev)
-=20
- 	platform_set_drvdata(dev, sp);
-=20
--	ret =3D sci_probe_single(dev, dev_id, p, sp);
-+	ret =3D sci_probe_single(dev, dev_id, p, sp, res);
- 	if (ret)
- 		return ret;
-=20
-@@ -3573,6 +3583,22 @@ sh_early_platform_init_buffer("earlyprintk", &sci_dr=
-iver,
- #ifdef CONFIG_SERIAL_SH_SCI_EARLYCON
- static struct plat_sci_port port_cfg;
-=20
-+static int early_console_exit(struct console *co)
-+{
-+	struct sci_port *sci_port =3D &sci_ports[0];
-+
-+	/*
-+	 * Clean the slot used by earlycon. A new SCI device might
-+	 * map to this slot.
-+	 */
-+	if (!sci_uart_earlycon_dev_probing) {
-+		memset(sci_port, 0, sizeof(*sci_port));
-+		sci_uart_earlycon =3D false;
-+	}
-+
-+	return 0;
-+}
-+
- static int __init early_console_setup(struct earlycon_device *device,
- 				      int type)
- {
-@@ -3592,6 +3618,8 @@ static int __init early_console_setup(struct earlycon=
-_device *device,
- 		       SCSCR_RE | SCSCR_TE | port_cfg.scscr);
-=20
- 	device->con->write =3D serial_console_write;
-+	device->con->exit =3D early_console_exit;
-+
- 	return 0;
- }
- static int __init sci_early_console_setup(struct earlycon_device *device,
+ static int sci_probe(struct platform_device *dev)
 --=20
 2.43.0
 
