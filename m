@@ -2,41 +2,41 @@ Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17462C36008
-	for <webhook@archiver.kernel.org>; Thu, 13 Mar 2025 01:33:16 +0000 (UTC)
-Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.55])
- by mx.groups.io with SMTP id smtpd.web11.34841.1741778772365524594
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F17DCC36003
+	for <webhook@archiver.kernel.org>; Thu, 13 Mar 2025 01:33:15 +0000 (UTC)
+Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.26])
+ by mx.groups.io with SMTP id smtpd.web11.34838.1741778765288757486
  for <cip-dev@lists.cip-project.org>;
- Wed, 12 Mar 2025 04:26:12 -0700
+ Wed, 12 Mar 2025 04:26:05 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=uySTlQfL;
- spf=pass (domain: bp.renesas.com, ip: 40.107.74.55, mailfrom: tommaso.merciai.xr@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=oid1zZKi;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.229.26, mailfrom: tommaso.merciai.xr@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=keDCMPZIyR2pp1lNYjKPRkwN3QViQCQrG3XhP4K7UJcbTTOCumeFBa37wC2yPe0Ef0x/RBBxHS3L71Zs5VseWEMYhUyj9XPzDg3Kmb2qLz5Pf+w8i7U4+RpDDJOXhy0T6T0Luq6hiW3H+OytGx+Ms3SrbEx4WTycwYTqCAOYhLpDvfLZhXhvewMbmhbV3g9hT9S5UF8JC9OHaiMKqUSfTSZDRUGZOIuSJUJ/HJ4W7YzGBuTYEPhmbUb5q8PH6A6S724Jv7ROtWp72aRIkRbQUSHGOwnEtt9RgxR+Cha5liDyPro85h+SsaZ+W1ee94mjkwXczlT7D0QKpm1OzaH5Yg==
+ b=GGY6O44XjCI0I+IwimhoIlok5Beea6rDwfH6C4V5mc6+h7dvthTvw5PL3oIpdcp0WUo+6DcWHytHwB5vwEg8hq8g7bJvdwpZrkqAvCtqDsvs72NgeXNX59AlT1Ibvtip4muWUnPn/CYhrfBrlPsj6htzpU/7ms0KC/iqpAFCsKFeTgrs95112VnorknvZrA3HN6b8+6dYfxz23DMSUGr6lMpL1UI+wGCwRudxxyeKjX+hs/eEqjNbnkxrXgUp0Wlfcu0wMFP5WlDxh7WXYUZD4OAX7aC8vrcVK4qaSWLjILnUqKZWUrEgZhxPS3mkF8yCazAlZOxiNNv8ARLZYcdYA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=crDAE0ZI6b0+YPVcqrha/Z2ZnfmkKSiRuy1+laohobM=;
- b=vvzbTw4UAY96j0se00BQqYpu+fXX2tRzjaaN1eRg7jaHbb18N4SFnyX/88eaT6F1Cu7TnBkpjoa6S4jU2yxbJCk8Fiu2jv65eFiCNDPmxxbX5jPw3yxQ9LziQ8nOw0rnP27TdQuY94xfzNv4JM+YhVM/Z77ZMFeAmLAfzRfgcZl0gSnQ0Yx5nmZphtjjiR6AknANJrafJiLfB+Rc5Gz1ZIjcu8tuRgu/dxHrUJ3FyabkNkkOuyBvnOHY7RqQpxZ06mFuWLUykLL8a+YF/HWW4F8y71ZHfMYgAWCct7Rjoia5ILTrk93izyMOUcn2Acd4Arv3t1vH7NpAOKjLWTfP9A==
+ bh=tRP5MLCSjNd8tGQSYsKAR5BrRXSPUAWZMb3ITIan0bA=;
+ b=ZwEZOsHhLR0BNcUBk/gajkXEDqAdrVGPMxIONDatRbVBfNkWjs3wMkCN6fK0lYUQXgrTATqFNI+tCwzpRHY1c0z+W3kxL66jVkMUzv4ppbBT78UVxiz0SAMDhA5/ek1+/tMOGe4L9QhUf9hdNPq21Aw3fEo4doGkJVn6P08QY5v3+caoK2wMtUbaDPVJsXmuoG6XDVhGbcJb/ZWuY2TMnjoyR0RsVIJBxHb+j45ZLGOb933OVts9Hi7CJ4fcD6z5THJ2kyvOw08SdtS10Ggtd7xSFRuxyUnyjfOJXOqJxPVeVhcGDk0CHPGzfINzd/1LaLvNVVWIhq9G8EsVnMFk2Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=crDAE0ZI6b0+YPVcqrha/Z2ZnfmkKSiRuy1+laohobM=;
- b=uySTlQfLRch5CuJnwjEApPlEHL23kNT33EDnwmOcJwxS6m5h7CmvUuX8bE3AEGgo5FwNjglU+e0YWwT0P3dI4Y7pN8RAf55A1JOI/a0LQUkvvjoe18KMhfkTM27OmVPl590rcHjAH2XoHHAEsFmnUzj5HGTR14fENqruv2zBa6A=
+ bh=tRP5MLCSjNd8tGQSYsKAR5BrRXSPUAWZMb3ITIan0bA=;
+ b=oid1zZKi8ZAwZ6F/vg5NRlzOHKkPhOjXzvWIvDpGTB2QXxJW80XUUwnzmCd09SsajmB778P14tJakTEQxNTqa+/nZuKUsbqRFuZ65+B/uLnnX+MiHs2KyZ2BpBCcvvuogCxyvyhLON4n4apsJA21+B2fWs150xojNfoeSBUvtjY=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com (2603:1096:604:35e::5)
  by TYWPR01MB10982.jpnprd01.prod.outlook.com (2603:1096:400:397::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Wed, 12 Mar
- 2025 11:26:09 +0000
+ 2025 11:26:03 +0000
 Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com
  ([fe80::244d:8815:7064:a9f3]) by OS9PR01MB13950.jpnprd01.prod.outlook.com
  ([fe80::244d:8815:7064:a9f3%5]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
- 11:26:09 +0000
+ 11:26:03 +0000
 From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -44,9 +44,9 @@ To: cip-dev@lists.cip-project.org,
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: [PATCH 6.1.y-cip 52/85] pinctrl: renesas: Switch to use kmemdup_array()
-Date: Wed, 12 Mar 2025 12:22:29 +0100
-Message-ID: <20250312112302.1605750-53-tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 50/85] pinctrl: renesas: rzg2l: Use dev_err_probe()
+Date: Wed, 12 Mar 2025 12:22:27 +0100
+Message-ID: <20250312112302.1605750-51-tommaso.merciai.xr@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250312112302.1605750-1-tommaso.merciai.xr@bp.renesas.com>
 References: <20250312112302.1605750-1-tommaso.merciai.xr@bp.renesas.com>
@@ -56,152 +56,179 @@ X-ClientProxiedBy: FR4P281CA0246.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: OS9PR01MB13950:EE_|TYWPR01MB10982:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1f165070-5d7f-4194-291b-08dd6158afca
+X-MS-Office365-Filtering-Correlation-Id: 9df0bbf4-5e5a-4c57-ee85-08dd6158ac41
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?QbDAkWdROF07N5QFK8LpUefi/Ey1JJzZyhgKSogKixeq70X+cuSS8EuEcaRz?=
- =?us-ascii?Q?bxlbI8LXt1PzscrfgloqK9XLOOhUmYohtocEVafVGtvqSYMLv/5SxKtHzAr+?=
- =?us-ascii?Q?SHnYuQJVqi7Iv9Wc9/efcsuNznSQvWicHETgyRpSmdwWA/qy3jO8NzYYDPps?=
- =?us-ascii?Q?cdaLi/ro5pU6coGj+729bWnXVWF978eGM/a4gJvdoe5AutUdN80X6VzQtArY?=
- =?us-ascii?Q?nWLa3eG3vKT9KI6OtsrmKelPGGu+FHCiowSHbMAn2XPBq02ScA7W8xUpdega?=
- =?us-ascii?Q?jHKrXa3jFqJi6JYDc7nssjss/uJiGpAbiZyIZMljfZMi1rRIecaTgMf6llkC?=
- =?us-ascii?Q?CIZQwCS9F9eXRZO00yneCDDKUWwIA1MOY8lFqDEeWxgbm838rhQDEfrKNWWg?=
- =?us-ascii?Q?ggwaENVFldVPNIQMxzerpA6Qu5T5ElxAg+mYC8y5+yYbHR6j35BiDwMor3cP?=
- =?us-ascii?Q?LFRxuljzzZAPm9EIzzyKovhWL1JmnZa1yxHZRCR4hap0KiC/oUKzaitAsleL?=
- =?us-ascii?Q?pTuzUn9/buL472jsITf7tX2Q5SbwAwIgaR9HfOC3uAepxQmEBwrWGX5LniPb?=
- =?us-ascii?Q?cooEm1a8MqvhbOmRSNpyNdRvfI6wtHYpGceHuon025ubB/1Z4oxBqxRKocAq?=
- =?us-ascii?Q?8CQbmGaXT0MNptf+xjHmwBemDa1GZ74tq0Is4mgi47Qg+ST2a3V4vKtpqdgD?=
- =?us-ascii?Q?A2Rh16ffov77MV8nY/EUdck86Ypp1cgYHC9yflRZVWIdlY8VSuLEyAx+vC0k?=
- =?us-ascii?Q?wBgonFyIBsxyxykcuhzc5c/WTgtV5AsvDddtKRnM0hd63mof6BmylGYzYFtm?=
- =?us-ascii?Q?Xu4oT+9PbRxRcKRn4IZy48Y7hWGVJIhWVzv4aAAoSr+uF1H/TaEAjND79/ln?=
- =?us-ascii?Q?6Lc4HhC8CTKJtxxxwan/foWJiLaCHJQACpSof1056r0plpCb5IPVBwhguwU9?=
- =?us-ascii?Q?VrHbRXV5TKJ6O1bpKoMqdO7moRL0DPsiKR6Rlev1p1UeHUdJvGyu6EfLuuT+?=
- =?us-ascii?Q?gl0jVIu/H0Vj66oDhtg28h45cbCjYBZeLg8lNorD4d7H+GaEG/C9GLI5xIaC?=
- =?us-ascii?Q?PbQZ5h8eKxIHIGYpBadP6jB9uEYUTPwsWWa0aOS9AcZu7WzbImYbDVimnLiR?=
- =?us-ascii?Q?Nr3UwL6kn6wehoxzDMI4wamUG3zkPNPOKYivrrgPF13+in1BI7Js1BKcR0nm?=
- =?us-ascii?Q?biJ8lTg6BgNZD14bg+QWi3H1IdlYOZRNuo+4JoThtyATMX1x7mH3jiuzWz2y?=
- =?us-ascii?Q?PYobXz0wHjxNyitjwuXSBMcvFyPJbA5RVq1k4C5Q+yJDPLMijsGS9pAhjwzK?=
- =?us-ascii?Q?I9FN511pYg37bMwy7J3wWrHuR0uarv/3BDb1aHPQopcVgBy+90u2CdSh3hVq?=
- =?us-ascii?Q?1qBsHzEtUKSCGmu/uGvF9P+0onkvO12g9vxp1epNmwNhK2R7UnmIP4g5Z1ny?=
- =?us-ascii?Q?XP/fkXY/3nrdacPLUJyrGSeuiWyUoPwE?=
+	=?us-ascii?Q?mCuW0mq8ZRK7i7BrWLVi/Ft+r3Tqvu8uOrfPDcVkAdEyz7Q7vQoTnwXMTHiu?=
+ =?us-ascii?Q?0DNVzugi/yzUMTwhRObMRERiZVy2irF8sjJSm73H35WORGsYU6GKxhCCDnr4?=
+ =?us-ascii?Q?8FazvjDTUfxetoU6AYL3tiNuByNkD7m+swmNOn/lN+f9pSR6nY0+n5A73ZAe?=
+ =?us-ascii?Q?VngndYNHeOpX8/0iHR3p31pGMdxjY8eiATxPfu36M15ikT1K95WC0lftJeKQ?=
+ =?us-ascii?Q?76FA3ClJWVupIqQ+9hd0zQ8zWjdaMou16J7F70jpVxP1z2aDZf8xo0QW2F/h?=
+ =?us-ascii?Q?5g1a55ghgw2RjxKC6Aacb+8+7xQ8tq0mzG08/J5mydOMkjD36s+VTUuJHb09?=
+ =?us-ascii?Q?HF9Uxv0YFakr9KpRakc1mUy1EWqEI8f77W/dkIXZfVsbToPnbz5o4scStLMz?=
+ =?us-ascii?Q?olkZpTdOr/IhsnbEU4aLmoT7TuyUU/0/kTcl1jKJb1p8Y9AaKK++ewcGUb1J?=
+ =?us-ascii?Q?bstE4fgzSoIMSSyV8Z7umGttGIfyPwHcTh4y7ZTHiuK0IwoKw8FRaern0SkY?=
+ =?us-ascii?Q?0q4XygtSfVoMbiD6sa0e/ZmncWnK/KOfKQB1U7wwHhtndvs4BEswIf3Dmfka?=
+ =?us-ascii?Q?Xn3GejOiw9EEi9B+kuyb6Qarkc4UUPC8xax1t+5Khu8OCQM/N1aY0VVDLKeF?=
+ =?us-ascii?Q?wU7eqVlc7+rIgmBTeoCX8nFpRkrW0PlPOZZNwpA0JCQYbQiTsF3b5SHwO2WT?=
+ =?us-ascii?Q?tP1tN++UNop+NpBzzX+tbYcrNW5Vr2QPFJmFYHXusc4p0F4z5CW+x+rbFoxT?=
+ =?us-ascii?Q?QqEnmYaPVKQKee8xpwQ5C+jRQYUGnhLFVaDlk58tQKXiR/DQBInE/iGCnxYY?=
+ =?us-ascii?Q?lqgHeO/NG+jLLv2NG4b1j0C/x9eZW+p9UbcsBGCfobGk9vbom+uDmrhTyIaq?=
+ =?us-ascii?Q?hJYR6HOaky4VuuCpzoxx2LzjnI1+r4WetmivDQTjPHcANMP2hJa9AFC5VebP?=
+ =?us-ascii?Q?z+j6neqdM9de8iyqUpe2g3plFUiTKLyjujgbEK/7Xex9f4uEFcRnZMUWIGUq?=
+ =?us-ascii?Q?sZZmnsovLSiyk9NBcxGJ8jMGvYGlGiyLKt4qV3lN4TFbwFRSirdPXe4sXzcE?=
+ =?us-ascii?Q?l7szd5bxEZPDFZkXfO9z7TEwmDI4M/3Boxra40aKH69RBsSTSVYaqWsae2Qi?=
+ =?us-ascii?Q?BkbaIwQpp4Mh9JSqhG4TOpVn5aiCWJkFA5oQPYJuBWDMl+9xQGONqbSq462R?=
+ =?us-ascii?Q?cfB9T6EKJ8ZYa98eo6qO1fagEnsHmeM6/Y4mYbOri4I20rj1RXepyoQdHmD4?=
+ =?us-ascii?Q?0ltrZVS1+uxEYD7UboZQiBpqrKDt1N7torgABAZjc8lNzlh3vxjPa3tdpA2T?=
+ =?us-ascii?Q?y0h4ceWOY72G5H8Wp5kLSmfUjxZNuW5/v375tPWk7YPaczUdzIRZxqIY4W0M?=
+ =?us-ascii?Q?GsDyCda9aqMO6eq4zTulLd17XnKk8LHMkeSfmE3apqaRjxhh1Ar4zJl8LVje?=
+ =?us-ascii?Q?U8DtxPNfe7Rnj4eN0fGm/3v5kLkb0U50?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS9PR01MB13950.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?Zj5kcPiUrd+HojANCNgO9DA+orxAok3FExXdG8EU86zMKRxsXj6k8Dghgub2?=
- =?us-ascii?Q?FWrdNiXzw/LAUuFHYvGfIXCeo+0RNRKN2jCEglLbV091b79ivpp6fItagE3F?=
- =?us-ascii?Q?uxEZuYDRfD6vwgPuLbWAvyKsuaE73VdFlfXDnIwdnmeSHe26yJQNHgs6oOEz?=
- =?us-ascii?Q?kkitvvfPhU3QograCupOBD2Q2r9TWhUH36g1ow1R6cip8qOhST4KyTQW+tF9?=
- =?us-ascii?Q?VkyL6fVxKHMzfZhgG8dQT8PVtS4iu7+t5hJVzNQvK0TFkFN04dm6lEcoHvhk?=
- =?us-ascii?Q?udxZ8wWqD2d3imxVUFSXUL4zzCEVEBFpT0hoQET+q7S7h75yDwbYA2Vf1UDb?=
- =?us-ascii?Q?wQWyWQwUk2UhMEPAvj4uxo9XdjxWVTQLfGFDE1NF9NVPsKHlwXRQLPCzL4DR?=
- =?us-ascii?Q?v1zj2FWAVaPV4HyDJVdkVazGmTGgezykqftWgsU42e3VxrXoTGxK8SeCsvg2?=
- =?us-ascii?Q?S23gyhIahY5Qr5sWKipXbKXecdAy/xsN1yxgkYo5zcNzxSHkro6Yq9ZNSUGI?=
- =?us-ascii?Q?KY4LSOwRUhQpSSQgkv5Uxc+S+I9TvW8jv9qWnK6xL9yp7Scigsh0rwqomN9w?=
- =?us-ascii?Q?5nZX9be/Bpf3JuSgEOLn+bXoWQI6upF4E1O3r5OnqR5umQQlANtFOSlEdy3x?=
- =?us-ascii?Q?MRFSSxBfD92XdNza4oze/SGWuI5O9XqIS2Dr1b7NDkAjW8h6FSBJ/HgbnvBt?=
- =?us-ascii?Q?Qj+oU+nvAo7jcC6/V/XbfMUPfx7OKznokCQgubS0Ve0tB/NObL+UtYcQb68r?=
- =?us-ascii?Q?UAZmdX6W0P2lKszHKfAEcdk9+yhOiMOxnRls0YtI2KzptcS8qb5d6cNp0EDk?=
- =?us-ascii?Q?lnHax4Fl5pH6ykrlkPV65W7nSHq4YXY4NVSg0RFrv/sZyYqfR00wmNC1XZ4k?=
- =?us-ascii?Q?eoy2CgH1eKv2C+AhPH7xw0u+hLH52urMJjSCQvDl7Bg5hqp1LC6dnHczgEbe?=
- =?us-ascii?Q?fQyb5F0l2Y62A4jsM010G5TJjnLnEpcGiOMj3FYlr2fAVHTSeK6CBoc2aETg?=
- =?us-ascii?Q?o4q8IIBAcbMQFRbn/s0n4BOaKWNG3W6gxOofWUb6XrUannpbeqzhZcuBzDdV?=
- =?us-ascii?Q?8vJFRKwc7VGAficlPRlAYu0oAGWsHXAbxs/2Y5YoTQP6dPS4nit4ragjVNLe?=
- =?us-ascii?Q?v1gjK7WABPPJXNsTEzaYO8DQDkmeBbdx78LmhtKlMLwj+j2JTdVw/oQ0ZqBe?=
- =?us-ascii?Q?2txZl8P3tp6mMn3fXPtWbVC4AyHWXXfA9nJFIgukRU/AQ69EXgxAyYIhGfEA?=
- =?us-ascii?Q?ZfATKATY+f4AUs5PSHEgbVNzwsqPcR5uNaWrglxte6QWaqiHnWdJb1r+fhy/?=
- =?us-ascii?Q?VyRFwRyVI6v80dWbO4mEk1QurqUiGmjHawOo3DEHLHZNZycWPWQw09qjxUYJ?=
- =?us-ascii?Q?udvxhKu9VZDHBPbTK9jOeIYWl+0w6kMQlheAb4XKpw4jkI2YySopP6wUT927?=
- =?us-ascii?Q?phw67vdsJVSs8FMt54ubXyar1AL+ZcMIA6wi9yO4ND+TB0HRuxcRzSUHe61u?=
- =?us-ascii?Q?4RBFstkRIbnkk5GLmrcoL63aD+oomysDN7jb9UR2H258XeS/OAUXdaxkzCIl?=
- =?us-ascii?Q?gW/ad0lLqmAltfoxWnDWVm6wEIMIko8mPsVP4F8bPD7ig1Xts8cfCJ/aK0ba?=
- =?us-ascii?Q?JwP2XJ89R4yaXtkB3+tMtuE=3D?=
+	=?us-ascii?Q?JjhTKuekeOkN5ZOrcDQYNOPlHfkdvjxaq24S66cc4A8s3jYfSaYo/JeCLFs7?=
+ =?us-ascii?Q?o/LzDCp4BuuSkSwFtzXHNLFZln9UrMYwBoqitpqgErwpgy3iI4R17mEbPtUb?=
+ =?us-ascii?Q?SAhg7zFx3gkeZTT2x5REbcirhyNC2hxWNqnLVwNNc8+LIiaIzW7QHHq+deAJ?=
+ =?us-ascii?Q?4V5bVc+RC1yrU40FD6fB3fkpuespfjRVllFqUKk1dbsQ+l1mkoxWSekl2cgW?=
+ =?us-ascii?Q?yK5mhyiHBd2ztffxBunG0U0cgplHdJm2oWb5AW/lg4Bi7b/1f8iXbbQZuxsA?=
+ =?us-ascii?Q?YqB5xo3qfxNY1xbPvlCxYZrnO+Oi+FBcAQn9GKsrKBS+YQrx8Zg0NIt+PhHI?=
+ =?us-ascii?Q?GpXCnYTATaXHFp03MmeJdGYvgS2d/U+lyylsAUBLsDhGg5hSaaU6OZIgjt6u?=
+ =?us-ascii?Q?MQTDWCzqunUUrO0a3vFxrUCEONZm6z6GfLXub0V82VQS9gCfJAjzKUixs/kY?=
+ =?us-ascii?Q?B+ZFvXHfK+vizeZHjqCswF9DCoZixe27JiqOJMwO1AYpJ/6kMo6GeiKhdeSY?=
+ =?us-ascii?Q?f4Lg5IS6wqnt7CdEpVSwbfS4N1/BU0CyJlcNe3WVIDcXyvu6zIEgNTUISSWc?=
+ =?us-ascii?Q?bWfai/IJeuC+7UcJ3D9AcN6oKJ9GR/VcHLAYCUL/tPkk8c1d8GEcLAmAzJCT?=
+ =?us-ascii?Q?rQ8g7cDWOiKt9IsrnJZGsDDrc5RhY1Aowy4dAcj0KKLLN1xCwNQHw/HVXMmu?=
+ =?us-ascii?Q?m1KXTdJ5XlRhhmVTC2AJq9+cWh7hyA1vrOtdVAWeaGXza2icAJTMg8rKgPvM?=
+ =?us-ascii?Q?PsxcfNPx23lSzDRkqn/YPlBcGoV4JCej4uW0kRxFdL6TvKNLf6fGK/6rA2Qj?=
+ =?us-ascii?Q?qI/n842dPdqhwYOZ5qsOQE6/Zb3Td2YdeKJcmlUjugf4ruTT+zXv2zzAU6cH?=
+ =?us-ascii?Q?cYAqbSSMGw/WKTRJq0jbizfS7NHVikg2wkjg2xFQMDm83xpEVyE2Ue5i4aHP?=
+ =?us-ascii?Q?UW8UYD6GgHfVqwLm7vsVEEwFrOVbpQ+evflnZlYLCeRMJOmeECbWKfyhG4CN?=
+ =?us-ascii?Q?r07Yh/gaLSO1nrLbSGnnjsEYsDN3rKFH1D8/oqN2KW0zOAZrNinO/xmlIB4P?=
+ =?us-ascii?Q?t8aLf8xajaxE/lAhVV0XDKk9ju2PhOYV5EDxxX5AqlQ2tLNoEnX+aWAr14N0?=
+ =?us-ascii?Q?05F6+LinPEhUAMLHfHR2DERjF7ftAjZQXRTLhvxWP69rnF3ksHROG/jzwX38?=
+ =?us-ascii?Q?6uF009U02nFhM61NDKcLNWv7kRdf+2co4ZVZrdGGbvtFY3ZogSOaqbvGPgMU?=
+ =?us-ascii?Q?v89tLnrGHZVTMCymMYdp8J6D2pSNwHWNcBHyr8rH4pCKLplziV4r9ISApxJd?=
+ =?us-ascii?Q?ToQHp6q0BTrt5mSYZ99b4FCMsm4DRrxhDv/Ihd5LwOW17F4U+20sivmsiXGv?=
+ =?us-ascii?Q?HPK5AgSFMenxlCeEvWL84vh/YgybVqHPcOvOBQoNNG8hRFOh7lF6+Jp4jQ8Z?=
+ =?us-ascii?Q?FYTLVcJ51tewcsAs4z8fX3DdAhq1xOJ67q6/mFBmeaXFVTHtnnh1gr5d5aSP?=
+ =?us-ascii?Q?nlYZS4+vvmSNyZwDs1/fDEmUE9mkEDX1TWdKHCvbIabY3q8UEvVuCYpAcGy+?=
+ =?us-ascii?Q?/Q5Ep2VFMYYLSyCWtl1bd1eZPQq7tlszmI9HC/lhQddoYzBua7X8P2Z5z2VU?=
+ =?us-ascii?Q?anMtEwixTvs4CX4kS32He3Y=3D?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1f165070-5d7f-4194-291b-08dd6158afca
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9df0bbf4-5e5a-4c57-ee85-08dd6158ac41
 X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB13950.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 11:26:09.4248
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 11:26:03.4924
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bk3YoX7Ztito0AJDEdUCP+HYFvbFWZSV/Y38h5MU8NueR2NeTQy4YMNEKUTHOn5qol8Kdd7ud+XEE72AHxsD2LfY+fkkYZxVGHUCwOd+L3pSTnaAclQ4ki5OEVBYiFR6
+X-MS-Exchange-CrossTenant-UserPrincipalName: kslPnGOVcH7Ad8WmcpuRzDbXP8DHpnmiNrNjn49fhjdca7/eYeVoZfsxD5Y9hmgyeO2bgzuZzBm2NNZ+ycqcVfouLSN6shiZvGNUYQUWpGS5+DBGw4weE4GVNznqgG2o
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB10982
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 13 Mar 2025 01:33:16 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18144
+ <cip-dev@lists.cip-project.org>; Thu, 13 Mar 2025 01:33:15 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18142
 
-From: Shen Lichuan <shenlichuan@vivo.com>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-commit 5e633f572bbae9397ee50347bbe0529894de4137 upstream.
+commit f73f63b24491fa43641daf3b6162d2a451bd8481 upstream.
 
-Let kmemdup_array() take care of multiplication and possible overflow.
+Replace dev_err()->dev_err_probe() to simpilfy probe
+helper functions.
 
-Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20240822061438.14617-1-shenlichuan@vivo.com
+Link: https://lore.kernel.org/20240728090421.7136-1-biju.das.jz@bp.renesas.=
+com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 3 +--
- drivers/pinctrl/renesas/pinctrl-rzv2m.c | 3 +--
- drivers/pinctrl/renesas/pinctrl.c       | 3 +--
- 3 files changed, 3 insertions(+), 6 deletions(-)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 37 +++++++++----------------
+ 1 file changed, 13 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/rene=
 sas/pinctrl-rzg2l.c
-index bc671807bad5..4c111fb27845 100644
+index 7168495da565..bc671807bad5 100644
 --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
 +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -527,8 +527,7 @@ static int rzg2l_map_add_config(struct pinctrl_map *map=
-,
- {
- 	unsigned long *cfgs;
+@@ -2600,16 +2600,13 @@ static int rzg2l_gpio_register(struct rzg2l_pinctrl=
+ *pctrl)
+ 		return -EPROBE_DEFER;
 =20
--	cfgs =3D kmemdup(configs, num_configs * sizeof(*cfgs),
--		       GFP_KERNEL);
-+	cfgs =3D kmemdup_array(configs, num_configs, sizeof(*cfgs), GFP_KERNEL);
- 	if (!cfgs)
- 		return -ENOMEM;
+ 	ret =3D of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0, &of_arg=
+s);
+-	if (ret) {
+-		dev_err(pctrl->dev, "Unable to parse gpio-ranges\n");
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(pctrl->dev, ret, "Unable to parse gpio-ranges\n");
 =20
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzv2m.c b/drivers/pinctrl/rene=
-sas/pinctrl-rzv2m.c
-index c2845f665412..32fa51abc2d3 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzv2m.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzv2m.c
-@@ -196,8 +196,7 @@ static int rzv2m_map_add_config(struct pinctrl_map *map=
-,
- {
- 	unsigned long *cfgs;
+ 	if (of_args.args[0] !=3D 0 || of_args.args[1] !=3D 0 ||
+-	    of_args.args[2] !=3D pctrl->data->n_port_pins) {
+-		dev_err(pctrl->dev, "gpio-ranges does not match selected SOC\n");
+-		return -EINVAL;
+-	}
++	    of_args.args[2] !=3D pctrl->data->n_port_pins)
++		return dev_err_probe(pctrl->dev, -EINVAL,
++				     "gpio-ranges does not match selected SOC\n");
 =20
--	cfgs =3D kmemdup(configs, num_configs * sizeof(*cfgs),
--		       GFP_KERNEL);
-+	cfgs =3D kmemdup_array(configs, num_configs, sizeof(*cfgs), GFP_KERNEL);
- 	if (!cfgs)
- 		return -ENOMEM;
+ 	chip->names =3D pctrl->data->port_pins;
+ 	chip->request =3D rzg2l_gpio_request;
+@@ -2641,10 +2638,8 @@ static int rzg2l_gpio_register(struct rzg2l_pinctrl =
+*pctrl)
+ 	pctrl->gpio_range.name =3D chip->label;
+ 	pctrl->gpio_range.gc =3D chip;
+ 	ret =3D devm_gpiochip_add_data(pctrl->dev, chip, pctrl);
+-	if (ret) {
+-		dev_err(pctrl->dev, "failed to add GPIO controller\n");
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(pctrl->dev, ret, "failed to add GPIO controller\n")=
+;
 =20
-diff --git a/drivers/pinctrl/renesas/pinctrl.c b/drivers/pinctrl/renesas/pi=
-nctrl.c
-index b74147800319..0cbeb70c1d7b 100644
---- a/drivers/pinctrl/renesas/pinctrl.c
-+++ b/drivers/pinctrl/renesas/pinctrl.c
-@@ -87,8 +87,7 @@ static int sh_pfc_map_add_config(struct pinctrl_map *map,
- {
- 	unsigned long *cfgs;
+ 	dev_dbg(pctrl->dev, "Registered gpio controller\n");
 =20
--	cfgs =3D kmemdup(configs, num_configs * sizeof(*cfgs),
--		       GFP_KERNEL);
-+	cfgs =3D kmemdup_array(configs, num_configs, sizeof(*cfgs), GFP_KERNEL);
- 	if (cfgs =3D=3D NULL)
- 		return -ENOMEM;
+@@ -2730,22 +2725,16 @@ static int rzg2l_pinctrl_register(struct rzg2l_pinc=
+trl *pctrl)
 =20
+ 	ret =3D devm_pinctrl_register_and_init(pctrl->dev, &pctrl->desc, pctrl,
+ 					     &pctrl->pctl);
+-	if (ret) {
+-		dev_err(pctrl->dev, "pinctrl registration failed\n");
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(pctrl->dev, ret, "pinctrl registration failed\n");
+=20
+ 	ret =3D pinctrl_enable(pctrl->pctl);
+-	if (ret) {
+-		dev_err(pctrl->dev, "pinctrl enable failed\n");
+-		return ret;
+-	}
++	if (ret)
++		dev_err_probe(pctrl->dev, ret, "pinctrl enable failed\n");
+=20
+ 	ret =3D rzg2l_gpio_register(pctrl);
+-	if (ret) {
+-		dev_err(pctrl->dev, "failed to add GPIO chip: %i\n", ret);
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(pctrl->dev, ret, "failed to add GPIO chip\n");
+=20
+ 	return 0;
+ }
 --=20
 2.43.0
 
