@@ -2,41 +2,41 @@ Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B423C35FF1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24968C35FF2
 	for <webhook@archiver.kernel.org>; Thu, 13 Mar 2025 01:32:55 +0000 (UTC)
-Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.54])
- by mx.groups.io with SMTP id smtpd.web11.34783.1741778641190208736
+Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.21])
+ by mx.groups.io with SMTP id smtpd.web11.34795.1741778668450271599
  for <cip-dev@lists.cip-project.org>;
- Wed, 12 Mar 2025 04:24:02 -0700
+ Wed, 12 Mar 2025 04:24:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=lTpGQBkp;
- spf=pass (domain: bp.renesas.com, ip: 52.101.229.54, mailfrom: tommaso.merciai.xr@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=TAOuxFbN;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.229.21, mailfrom: tommaso.merciai.xr@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Pv73Hb7xsJZS4Serk2iDO/t2NQ7efOLlJHRbCxz8gHOAyuAHAAmTatjtdWnKj9t0Fc0YxqYntl0rZjuCFj/LE//7PHpA3xXPUSAXexS6ZSMFtrDlBmOjOB3/62YYMUFI+11jH+daEG3yWgyM9D/4GTRrSMjHXerz2+yrJn0yzYwcymKBn3jmLZN5CXVh6njH6af901BVvhnnmHfVUVzkne+xKj3jLfZ7JS7ZXOd2CLBdq3/emmfnlubAuN8ROaudWgdwpW77tRHWOdfve8YwEt1smSn+YatjzR8xu3L08ixp7THqUPqNoTG40hGQqLve2wxWArxey88fZPDFYZt34w==
+ b=ZLwCjzTiODcktPF7wAT2kdnvDEpyZV54kM04wGJVZT+s+lHjsNY1bYUcX24gZPfOPnwdBzHLFPPDk3AdOYc10IdbWjj3mWUnUoibga8P6C6u7M1hPJSekzg4/osHVFf1GF56szmN6Y1TtG0Iv7lA+JDl7QBbDmAIbWBe1rgZzmUIQ1uRQA/NEjTVNYAtedl3N9Fx+khKL+jJGMYDqGgH+wCSh1Q1QBfJkew9u/EZYzK6k1JwDyABJNDDMRKPHUo2iEp7ubF9kAEAZqJbo3Lbekp+NQK1BmIlgXkqNYnTdIFR35NgGMAtreb03pYqFZxV/PEUBvlRtOlbHlaGmdbkFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VbXfSAVyWuar7ER5PGbBpOAJn0ElbtloYu5C4OAoIDE=;
- b=Hz++/GN9RD0g04PudKfvge0NBTIK19AyLeHYVzID47shSVbooEgDa+S4Gg+3/EM+JNY1bVMYcD39ZMrmx4EgF2YXvpcBayHg1KaYD0VevzNpPv5s8PFeW234NeZVfKMnF5MpfTqEbMEkeBg32nPuoxCcBSfBXLPasVqarSNDuHEJC0LulDNZ2zKb3GdZ3dkOO6If3rO61Yh+DSzBat2Jpb6Wt6DLvTUFVavrbGg/N/CBLnbF7/NOsZ00gAhDsJ9jrXXiGl2QNnzWm8xEWeqZqyN2kJVSIayVKYAMJOmjsNz/JY6JmJblBX7/0NGtzZV/T5uroDTPe3v/o5mg3896Xw==
+ bh=c1WzZyE45N4Cao6T8SOpSfXv4EQpwEgQ7EBC0dcwXr8=;
+ b=u4Rx2BnKNJHy9vzo8YO+9o4d0xG7vNVJcPBfog06mMTisfLlZVYKAz6gWDUP9vN36fY8to0o4IYLhfPz+CmZXt/0OgX0OLxW8lzefKnJ3R66LoIcwofF5bh6R7HkrqILkUIMKeIxcGCde2VHUA8repppor0R+woHrNzwIvzRfIaRXW4cLEBtpQ83BoUtyaX8KOCq42t2nbIsOCk0EltPe8a1nK2AscS7uoVySwD6F7Shn434bKdfGJ511+wjE9b4tAso1KLx85NYikXtYHcenrTbBgG9I7PqZkcjUE7uUV/6rlyye8D2I51S/YFaF4Sw0VUYjwsfwZOkMzHz6u4XRQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VbXfSAVyWuar7ER5PGbBpOAJn0ElbtloYu5C4OAoIDE=;
- b=lTpGQBkpff4ORV/SzVl6mB8xnrm2CeVhJIDq37RQZxcmQpNbhrMyhdp+tqQOFY51PEP/5aCwLjURuNN9v3J98NBHJiRam3cKmyNmAhF7BVtn1z2i56UKkiGJ1hum2UG6TvMzSLNKZj9hn792b4+5BK+zAmDbpcRV7DTMHhHlkVs=
+ bh=c1WzZyE45N4Cao6T8SOpSfXv4EQpwEgQ7EBC0dcwXr8=;
+ b=TAOuxFbNYlMWy/hgZZozXSNSo23Sc1TIifqUXcHEU+mlxtu7VnAerqctyTtQKER8927i71nMR93p1CZi5AudPzgm7PWZvGqiVVSxTsAVV3a98p+LOUWcbatVyLUnBEhJMU6K5fDE1t2fla6eUNBgufs5TCtQJgvp+j6QM3+Innc=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com (2603:1096:604:35e::5)
  by OSZPR01MB8767.jpnprd01.prod.outlook.com (2603:1096:604:15a::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Wed, 12 Mar
- 2025 11:24:00 +0000
+ 2025 11:24:26 +0000
 Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com
  ([fe80::244d:8815:7064:a9f3]) by OS9PR01MB13950.jpnprd01.prod.outlook.com
  ([fe80::244d:8815:7064:a9f3%5]) with mapi id 15.20.8511.026; Wed, 12 Mar 2025
- 11:24:00 +0000
+ 11:24:26 +0000
 From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -44,9 +44,9 @@ To: cip-dev@lists.cip-project.org,
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: [PATCH 6.1.y-cip 08/85] clk: renesas: rzv2h: Add selective Runtime PM support for clocks
-Date: Wed, 12 Mar 2025 12:21:45 +0100
-Message-ID: <20250312112302.1605750-9-tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 17/85] arm64: dts: renesas: Add initial DTSI for RZ/G3E SoC
+Date: Wed, 12 Mar 2025 12:21:54 +0100
+Message-ID: <20250312112302.1605750-18-tommaso.merciai.xr@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250312112302.1605750-1-tommaso.merciai.xr@bp.renesas.com>
 References: <20250312112302.1605750-1-tommaso.merciai.xr@bp.renesas.com>
@@ -56,80 +56,80 @@ X-ClientProxiedBy: FR4P281CA0246.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: OS9PR01MB13950:EE_|OSZPR01MB8767:EE_
-X-MS-Office365-Filtering-Correlation-Id: 222c71d8-39fe-4d56-333e-08dd6158631b
+X-MS-Office365-Filtering-Correlation-Id: b968a6d6-3d49-4f00-bea1-08dd6158726f
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?a1CvzRhgKwehXM0/uyzo+Vo2S6EYgoMhLfXIMA7X5+tpyPsSofGo+jy/e/X8?=
- =?us-ascii?Q?n7BmUmvEqnx7RaK9uXerOf15HBu95lkQTlAN2HAVXxJ6Ar9npMbxmBj7FGf3?=
- =?us-ascii?Q?hv7e9K/tUd5i6n17EcGTftD5JtH6A0pzRR6upimEXNc0pl1a4iaDs0nltv6t?=
- =?us-ascii?Q?G/qpqmUBr/t0mu3zZS6xT3Lav1YczTX5nwWkeJb7AIHW7xUXs+ez0Htm/W1q?=
- =?us-ascii?Q?BhuXEE6lhZVtxxvg0rbzZqEfQGeCIc99Hnlazun4uoqibrNuph13cYxkSsB2?=
- =?us-ascii?Q?u1KsTMfr80XmTSVaMMg/YNnKtxoeQjeuf1DP4FRjPb7XSJW8IiY22cWkial9?=
- =?us-ascii?Q?uWhZHM0+0OiKpP0xJXdnVHQgjt7j7qMUdQcus501kWHtFwTtSgXscq5UXrTo?=
- =?us-ascii?Q?t1XJVsYACy4RyNsV/htC6PC4GJy1rayMjN7pXAlG9EBpQV4DiPkAzK8TkqcJ?=
- =?us-ascii?Q?9Wjd2b+1hxzr65+z7/2357sAnN1tYCm/XWzYp4CVHQSd6PH/LE9BAsXuTJtV?=
- =?us-ascii?Q?6n8yCuUkwp2lcyBd2sPf4P87kLc5m+THkiZ2BZG3xlyGgDM5G0GUySXxj9Dj?=
- =?us-ascii?Q?h3/NlywatkY4nIf+0ytzCAgdVfbhjfUkiQ86hc5T5/7cXxU37KhRElD/Je97?=
- =?us-ascii?Q?9tHtL6sd3YNuTGhB+saqHD82l3cLOoMpRYcfpsHR/sKqV2dnW1b8YgS77rwP?=
- =?us-ascii?Q?Irio/65QY1g6IfKm1BKFAMqrj323UhOgtQKKQXkBAHq2zNW3oPHerDQzg9Oh?=
- =?us-ascii?Q?k2a1G2u58odGqSTiWMHBVg1zqZsEa8pbbc8CJpxJ3pkdkpS+NHGWlHh7Uczd?=
- =?us-ascii?Q?I+nPUneGrcF0iPHS6BCPlpca5AtaKvn9XCnpJ17YXxYhFjVxCfDo1yKZL7Vm?=
- =?us-ascii?Q?+0BUwKkw5faBpoowpq1M7iwXJTVAmT//DYanFbDx4I9yUj/YY3eC5l5EYZCe?=
- =?us-ascii?Q?+xAUCkeAMHvAs0GnOIJAMJtPaTtwMQ3I7fjI3oxTvvgPv8f0Pn2jG9QOwRck?=
- =?us-ascii?Q?GuCJOuZoDXoJqOEEob9KjPUIH/D/Oe41l2TxoUBBK+RUfB0fl+iZrq18mMav?=
- =?us-ascii?Q?zmxmDE8E1PmvWem4JgpUVqOcnEsEYxwQn1xjHMYMrZnl+kPXnJlFd0orWcr/?=
- =?us-ascii?Q?Sng4QUoLZud2z/PQy8ufRp6/ipUqihztKn8LGtuQGPF//m9xHbfzOkCvMy6s?=
- =?us-ascii?Q?jEgynN1I0RdW1S7q7cB8cGDE5lhoVuUf3Dpz7LsoheM6c6PwgRcPAg+aL4RT?=
- =?us-ascii?Q?+sND3ZQCcqoHq7y4S9aEI2gEc7EYYc6/uWodlbno/zFRmrvARm5MuUnSnF5D?=
- =?us-ascii?Q?ex3Uf6COnD62fUpbZ14Gt+RndEEsGtggyhqgcuNhr/M9vrkwIFkN2I7oAG71?=
- =?us-ascii?Q?MTDJf1RdD9yOF7hE4qwiIuVdGoAx8q2f8CybxYCX4HNvWrq4A8bHO7kfwLwZ?=
- =?us-ascii?Q?0RD/j6CB37u1lBJfdttZSwTHnoYfnAfS?=
+	=?us-ascii?Q?Zj0Sxk+hs1FzHZjdAL8/lXwf7E8uE0iX6i9s2u5q+Me6fQ1D/EGpX49jfseC?=
+ =?us-ascii?Q?OSCh3QvMdNKFVylE7Ye7FqyGoW+h6+KxK3mDzuP+Zk7s6V/xeJ2lxL/BQwvK?=
+ =?us-ascii?Q?KDVwsTC4qakSgwqB5iTTHJWGf2srYNvdAZoqTWTmcwqDO0l1ZH5tSuz03jWv?=
+ =?us-ascii?Q?M/Pu5HPq2Mu1E/Q+MsQJ7USfdFZCLa9itsUeZNRR6u4fqghAnhMBHBYzc+uR?=
+ =?us-ascii?Q?E6IX+3J3DcJI9p0icGU8d6n03ZMuhehXQTgtLhiTzYXLEy2r9X0Wao6fTMqr?=
+ =?us-ascii?Q?uyszNgyfQ2A4wMlvBlDuo5AS9Hf8F3WarO8bkO5+dYWJos/SjWhZ9TrgKr37?=
+ =?us-ascii?Q?PVrY8D/C5bMeDTAYsNUdQ5gM4QMrAaJLeQvDE4kSx4WGWq7RivY5FD1rkyve?=
+ =?us-ascii?Q?po71GwwqhmVlb+lhGFW2FLNG3jXBhZVKUyTXgD5H/LEvyVrVJE8cQwuXevfK?=
+ =?us-ascii?Q?mDfFTQ+beST+K+8PZwoHxSecNsa8e0T7yKmjSzpVHsGH4jRLB8ZW4VWi66AK?=
+ =?us-ascii?Q?DF4Xyymh3EhyCVp4hD8Dws7E758lWvXEXToZL+/DyU/LJlndmqoO1MiQdnaC?=
+ =?us-ascii?Q?VB6adVWGapihbZxdgZvVyPW0lgWGBBRepfA1D6GB2QFXRIBguQeqx5HxKjev?=
+ =?us-ascii?Q?v+8/1rxvpW+DFycExSyO/KaCz/5pUSXBHwl4sXk3oRtaH+ARvj4pIGy7UGBV?=
+ =?us-ascii?Q?TOE53pZyUshgNmJGNoQbjuJBqeG5fFzim2n+qO6Uj2GBDR377c4QEjOruDu2?=
+ =?us-ascii?Q?JBEmQUw/mY3b+fiv7ILL4wYPPzyBB9geJiAZOgiFL4uB4y6y1pvT+UVfOLpu?=
+ =?us-ascii?Q?Lll45s5Db48FeOFGFkpveKv4Cbn9EArKhB3dg7B6vLJLsB6wvEbYN57yhCvi?=
+ =?us-ascii?Q?0ZpSxHq26lfgbP0Q1wtviINoYnxDvobWz/Vi8zWliCRTmaEFL7PaeHBP2dfZ?=
+ =?us-ascii?Q?TMjqOESiUmswbPvTygqFRP5BztUR7fuNQVKOf7FwIoy0IU6oJG4uxVcK+ddB?=
+ =?us-ascii?Q?a7d2r7vTYLWcLQlRUS3ARq41uQ1o3fuEgT0mLXjnSI9lIVEEkJqIzkiNcWbe?=
+ =?us-ascii?Q?IhrkjOENqzwGIjTr1KzPxVRLf+CaDNIKLy5eyhkfuXYXtn9FeEB41i0et17F?=
+ =?us-ascii?Q?CiK2Lo2JjkKMOv3oGARCuKVThYKcbbv+BaQ14mK0/If/hvlYgrCbTUil3Lpm?=
+ =?us-ascii?Q?06npLt1JKTgB990/WUxkLQs/t90gZ8FEBMMWC2JO1wZgl0C5H7oyLjBJhTDx?=
+ =?us-ascii?Q?MubhBIbEkNFVkVsfLYOASGncDUopE3bCcUuhQEDH2ZEBdecb+xrJa+1hEa1A?=
+ =?us-ascii?Q?uTI0i0IUaEojvf1PjPDLFef2FH7YQ7ub5hAmgJIn9zIv31x6YDZLIYomzr1U?=
+ =?us-ascii?Q?G07etwIIfKHE18CpKxk/JsE1n1IcYDCjElCNUryLzRkF4iHkJojc6+EgL3z8?=
+ =?us-ascii?Q?pHrUmC9E3YluCwzJRYnPXTWLCgbq4yAF?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS9PR01MB13950.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?QPGF62Owy2SODNOeLNgp0UIOf3N7o8g/mV2s9ZNtwgJCbVOYHiGLelOUD3xp?=
- =?us-ascii?Q?BsscBXxWVF7WvpL3c32IACMJiub29OSEZTRVzkI9xT3qlZzCA74NG67/aIUS?=
- =?us-ascii?Q?zqf5tqCE8tY12hh+NhXZX0DEPzjuIulpQj56ipAXYJ1caGqz1+1BTdmzqnLY?=
- =?us-ascii?Q?4Xgnh6KnOwN0RhRGApOWteHci2lUxKwqNyTtxutNYuMf+TLfPh1XpQDVuTWh?=
- =?us-ascii?Q?3xwBP7BWrklzM4462BGIRxn7uUGM7TEpvBKy7k8qgPEsdm6yWwtF1hqSpgAQ?=
- =?us-ascii?Q?JAqMtJc7ig9gpiq1cC59CJiBlQ4QHxoSgvht5XrZwyrLX5z33McyPcmlpG43?=
- =?us-ascii?Q?+4vjaMrnRq5weLD8ylQycVpcztyudQGvX/SUV6dlD3bWDVGnce4p9bT9aP6t?=
- =?us-ascii?Q?xW9NWwqu/sKmf8eEpIJ22Ov714jgEYLpg4+fOobQILZAaEcBCGcDkUQSiKi7?=
- =?us-ascii?Q?jmOmLtd4EIFTjJDB3AKizh4xLNpWPkXpDAeuNHZLZOiq1D+/l1kS8Zey9wwa?=
- =?us-ascii?Q?sQMzk68AciJEdJqiFl7DlEjKaufVlZMuU30r9BIJMoI67G0DvF908vrxpqnI?=
- =?us-ascii?Q?hYI1yGqPG2tDnghWWlyImYHgPFambRZv6Naov7ClwiWewgfZybKf2DgkIWoH?=
- =?us-ascii?Q?BZUxBx20joPLsJ7ZpBcsMgJxZk55+HyexyIXGay6WluqEEN11FfLQzkSkUfm?=
- =?us-ascii?Q?H5xrN/CIbCbLfM7NGwtfT5WjlLXqXL6SWABiv0EtoEcnWxN4jo1i4brusaJD?=
- =?us-ascii?Q?J++OJFEm8ge2Qf0uVS6l49VAGmLOrqfJCZG7yJCSwd9Qnj38FjZrYuYJO2qj?=
- =?us-ascii?Q?kpUgs3thTImdJBDM1a9noGZPEHi7GcvCf7A8Hwt4aOQ3vJiPQfjGQTbN+tBf?=
- =?us-ascii?Q?MKhCdQvFxR7aXL1KWQcvZqd9ApcAc0xarm7bLmr4Ps8ea2agA66xeAZxZvYZ?=
- =?us-ascii?Q?vuqn/0h5ieKCKiiK6/0H8cHpu8FS1rmLWabRO+mTr9aNTQXuIEMtlYaUdeda?=
- =?us-ascii?Q?lWAjJlkUGAOrCSnoPKFijrxtmeUf12kq2MM8Ji0nLKiK3S/+VeNyVH93WGDF?=
- =?us-ascii?Q?MiWImq7ccsqko/+4jmNDCp2afrmU41Y3HuMRIczpK6rk7SAoqFOiXUeTVBj+?=
- =?us-ascii?Q?RPv/UPEEgvhch31t8EU8/5CNIML/o3cDHRNFJ8J/H6zjflGclCmORjKefKdk?=
- =?us-ascii?Q?kVLGlbglBp7IcmvL/iGyIuloN+fklEc42oO1M/PKBTfrWCiGcygAU8H30Bcq?=
- =?us-ascii?Q?x5QuoaPaDp/NJjPnb4wEAjky6/R2ZheeU7v0UAVdILqBfswXHmnsYQW5xTqX?=
- =?us-ascii?Q?ao0N0ux3sehd/LN++Fhb2UplSDHLW7DoiZZGDLs9lvTgSMjdPGFcd8aNVS12?=
- =?us-ascii?Q?I2M4BpBj54tufQDR4YzquyfYriaaOIfCyjBh74FJCLE6cL8I/eB6LWXIvXNF?=
- =?us-ascii?Q?/cZU+ZNABbCKuxCnTmtSr2qFyRdhh71kNJnsq+hjq1xcTg0bz+11TvUxqSQ/?=
- =?us-ascii?Q?3oliVVrZiyIDES5Ywaf2S3AFvcJffX4WMUGgw0FnMzXq4KQA8fG33wOz/cpc?=
- =?us-ascii?Q?DOnhsaOIdtl1hcydZnTbmBDIFx172GFNEWhAq8RfmnqLVoCwwOtZph/EiKVN?=
- =?us-ascii?Q?/KNSLN3aLPeeAeQMwV3TiPk=3D?=
+	=?us-ascii?Q?MfwAm/M8EkaaRKk+8XNdgt/AGQXTw2IU7tLjzQvCwdrZ9PR35vu5fTlnRpYg?=
+ =?us-ascii?Q?PMbEbg0D65Lh0mE6UAIr79MrAqWmSP/rv/VpE5lWQN6KpRDR31cgCeDiPYw0?=
+ =?us-ascii?Q?wBKzy0eO8OdRF8x+oRWOpkcBDNSmvgD+oQd+d5g43EMhqy/3SdOzxSQ0iAUe?=
+ =?us-ascii?Q?l8jZ5+g8+py+7b8iBCwlbWBuNxWB6rWcdBkPa9b26BNqEqJtyHDG0nTVw+ce?=
+ =?us-ascii?Q?JOKGte2wjUNyyJAfInWDxGJO8ZU0ogzvr5ATtjRTQx54dPKGnFFRUFZMhNVG?=
+ =?us-ascii?Q?OzFXcWd1ydoukwFLx/ahdpKlzLjcEDWgGe2bG09StQLbKHHl6qhHR/vtFueu?=
+ =?us-ascii?Q?mbnqNR6EQ67vJ4TIyk6rCPJk7Y1KnJqC/VwHXB5eQkp7WUr0Lim0QLd+eDKE?=
+ =?us-ascii?Q?jrmRtjWfG7/uBIQR+ri/gebW5SjgDXXtSgzsYpcRAE6OUV4qcNZ3YC+d1+Qb?=
+ =?us-ascii?Q?fznJ3ndBMrX4Ul8Or9hbVVhcwPHsCReLhvNIBLudNkKMzpHtkbw1tl8c6nRY?=
+ =?us-ascii?Q?fK3PnmTVgbwnsyHw89QZk9CFrkty9hpZioTUK63f61/mtnFzc2zs/1trOkHA?=
+ =?us-ascii?Q?xZ9KQMi0JmxIcv4tAZvyhXazCo6LYBQbFK24o4cMYlNb8tjDUHsm+QxDE+6W?=
+ =?us-ascii?Q?ZoTZh7fw7QrY5UoFlWeJjsttNvcyh7Uev0jp4ZuZVsf84aBrYVH5mtuOaHaC?=
+ =?us-ascii?Q?9t4N6ooVkAwaOsNoJ1NCY70utI9mBDVOSU5Dj4xbRPAYkgHoG6Didh0pJ9jy?=
+ =?us-ascii?Q?WBjmPivub1aOFkjEaHS0yjSfuIdYwrE4Auxzx8yZcgQL0fME5gVQ2ZNRzXhh?=
+ =?us-ascii?Q?5QdGdIT6gEXn4Sfp6+MnLMA7OuG5rGXeGrhOQFDBqTBRdrL78KKGef+98mku?=
+ =?us-ascii?Q?QmKvO6s7jP6xPyQZ17sXri+kMJmvCQpzlU+xeOUL/ybUmB5v5b/Styogl/M3?=
+ =?us-ascii?Q?Yp3LG1lfkJA/R347xYp1XoOYWlPrEchA3wg38s2L/8NaDmO0CFL8x4EhjSbY?=
+ =?us-ascii?Q?O8xUJvEAO5hY42zlg2V30i0wZHqehfH3jAZCJhu8IivC957EkREfv9sT6H/s?=
+ =?us-ascii?Q?ZzRYCSetQAa0NJYm/DxyjBaQp9IPsUyixaMchzEyHTUvSn6k1Dipa4Ft3VyL?=
+ =?us-ascii?Q?WFyCX50WsSmh3ewwUyv1CRVQT0DI4IEMt8ooSjVT0cLf/3ln4buZI0LkORVA?=
+ =?us-ascii?Q?PzhxEOjVqvqdT/RSsPyeOwYMfNL/77t+2x/zu4g7PkU9wJ10gkjUaL8+gsxd?=
+ =?us-ascii?Q?R5CH+d2ksUJt4soTRlbVis8T/t7aE7XRTDdFi4y4yIXsniD3r2PAWIP15Zeq?=
+ =?us-ascii?Q?Xei/fdQUEtzckjPOF5cwhL5Yiu9rKOAp9goPMRXX4hnl3nOTRtued2Bhy1rb?=
+ =?us-ascii?Q?+31QGcdpy2GJWwgXYcPyq71TAZkW6er9MBFR9wH5F7HXvrprt4gW9X5omGe0?=
+ =?us-ascii?Q?FA6KDknK0dGVfbkrUcNWNueaxo82tIpqTQwq7ovevjL6Onep5xwCELzmHFDe?=
+ =?us-ascii?Q?loxClIug7PzADFcmAkkMphqXxT1bgLEY4bnuaqohkMCEyD0AXE6j50HU7ygz?=
+ =?us-ascii?Q?qJZVIg2HF2drvg78HP8R6c++1nrczKn/6PNMzsjk31/BslsDsedWMcRrjPFh?=
+ =?us-ascii?Q?ln8dKLkEAsQTXiH0MiJcqbE=3D?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 222c71d8-39fe-4d56-333e-08dd6158631b
+X-MS-Exchange-CrossTenant-Network-Message-Id: b968a6d6-3d49-4f00-bea1-08dd6158726f
 X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB13950.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 11:24:00.7878
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2025 11:24:26.5035
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: d/tk48AKw0K6SZueUUmYtqcZFWetbVE5CpWhfrv9SxPceQeuDFZeCEtp8E16y+WzJ8CqWwbn1c1iMIQE9j1fvRDHphuiB9xGmMoyjRcrh1u3FZ5FF6ak3PwGIeBC6fw1
+X-MS-Exchange-CrossTenant-UserPrincipalName: u32BsPtXVlZyrWDkIJWJJgZXV4pugYq6lNe9f639YD4hXnI+dIN2uQowfFp/F0LO1dGz90wsLcrRrMdBjg8xDo7cPg5rsubINJFqQsE673GmndEIcOPTXU5JCNIvJFyw
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB8767
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
@@ -137,194 +137,228 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 13 Mar 2025 01:32:55 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18100
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18109
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-commit 03108a2614ecab46af6e0d66f9fd61c0d80587f2 upstream.
+commit 9977754eeebed749a071492d98e46700307c0bd1 upstream.
 
-Update `rzv2h_cpg_attach_dev` to prevent external and core clocks not tied
-to the power domain from being managed by Runtime PM. This ensures that
-only clocks originating from the domain are controlled, thereby avoiding
-unintended handling of external and core clocks.
+Add the initial DTSI for the RZ/G3E SoC.
+The files in this commit have the following meaning:
+  - r9a09g047.dtsi:    RZ/G3E family SoC common parts
+  - r9a09g047e57.dtsi: RZ/G3E R0A09G047E{4,5}{7,8} SoC specific parts
+  - r9a09g047e37.dtsi: RZ/G3E R0A09G047E{2,3}{7,8} SoC specific parts
 
-Additionally, introduce a `no_pm` flag in `mod_clock` and `rzv2h_mod_clk`
-structures to exclude specific clocks from Runtime PM when needed. Some
-clocks, such as those in the CRU block, require unique enable/disable
-sequences that are incompatible with standard Runtime PM. For example,
-the CSI-2 D-PHY clock initialization requires toggling individual clocks,
-making Runtime PM unsuitable.
-
-The helper function `rzv2h_cpg_is_pm_clk()` checks whether a clock should
-be managed by Runtime PM based on this `no_pm` flag. New macros, such as
-`DEF_MOD_NO_PM`, allow straightforward declaration of clocks that bypass
-PM.
-
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20241202203916.48668-2-prabhakar.mahadev-lad.=
-rj@bp.renesas.com
+Link: https://lore.kernel.org/20241203105005.103927-10-biju.das.jz@bp.renes=
+as.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/renesas/rzv2h-cpg.c | 44 ++++++++++++++++++++++++++++++---
- drivers/clk/renesas/rzv2h-cpg.h | 12 ++++++---
- 2 files changed, 49 insertions(+), 7 deletions(-)
+ arch/arm64/boot/dts/renesas/r9a09g047.dtsi    | 144 ++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r9a09g047e37.dtsi |  18 +++
+ arch/arm64/boot/dts/renesas/r9a09g047e57.dtsi |  13 ++
+ 3 files changed, 175 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a09g047.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a09g047e37.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a09g047e57.dtsi
 
-diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cp=
-g.c
-index 9fa00f5c1237..bbf0b4ee7b26 100644
---- a/drivers/clk/renesas/rzv2h-cpg.c
-+++ b/drivers/clk/renesas/rzv2h-cpg.c
-@@ -98,6 +98,7 @@ struct pll_clk {
-  *
-  * @priv: CPG private data
-  * @hw: handle between common and hardware-specific interfaces
-+ * @no_pm: flag to indicate PM is not supported
-  * @on_index: register offset
-  * @on_bit: ON/MON bit
-  * @mon_index: monitor register offset
-@@ -106,6 +107,7 @@ struct pll_clk {
- struct mod_clock {
- 	struct rzv2h_cpg_priv *priv;
- 	struct clk_hw hw;
-+	bool no_pm;
- 	u8 on_index;
- 	u8 on_bit;
- 	s8 mon_index;
-@@ -541,6 +543,7 @@ rzv2h_cpg_register_mod_clk(const struct rzv2h_mod_clk *=
-mod,
- 	clock->on_bit =3D mod->on_bit;
- 	clock->mon_index =3D mod->mon_index;
- 	clock->mon_bit =3D mod->mon_bit;
-+	clock->no_pm =3D mod->no_pm;
- 	clock->priv =3D priv;
- 	clock->hw.init =3D &init;
-=20
-@@ -668,17 +671,51 @@ struct rzv2h_cpg_pd {
- 	struct generic_pm_domain genpd;
- };
-=20
-+static bool rzv2h_cpg_is_pm_clk(struct rzv2h_cpg_pd *pd,
-+				const struct of_phandle_args *clkspec)
-+{
-+	if (clkspec->np !=3D pd->genpd.dev.of_node || clkspec->args_count !=3D 2)
-+		return false;
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi b/arch/arm64/boot/d=
+ts/renesas/r9a09g047.dtsi
+new file mode 100644
+index 000000000000..4176b9aa6892
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
+@@ -0,0 +1,144 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * Device Tree Source for the RZ/G3E SoC
++ *
++ * Copyright (C) 2024 Renesas Electronics Corp.
++ */
 +
-+	switch (clkspec->args[0]) {
-+	case CPG_MOD: {
-+		struct rzv2h_cpg_priv *priv =3D pd->priv;
-+		unsigned int id =3D clkspec->args[1];
-+		struct mod_clock *clock;
++#include <dt-bindings/clock/renesas,r9a09g047-cpg.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
 +
-+		if (id >=3D priv->num_mod_clks)
-+			return false;
++/ {
++	compatible =3D "renesas,r9a09g047";
++	#address-cells =3D <2>;
++	#size-cells =3D <2>;
 +
-+		if (priv->clks[priv->num_core_clks + id] =3D=3D ERR_PTR(-ENOENT))
-+			return false;
++	audio_extal_clk: audio-clk {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		/* This value must be overridden by the board */
++		clock-frequency =3D <0>;
++	};
 +
-+		clock =3D to_mod_clock(__clk_get_hw(priv->clks[priv->num_core_clks + id]=
-));
++	cpus {
++		#address-cells =3D <1>;
++		#size-cells =3D <0>;
 +
-+		return !clock->no_pm;
-+	}
++		cpu0: cpu@0 {
++			compatible =3D "arm,cortex-a55";
++			reg =3D <0>;
++			device_type =3D "cpu";
++			next-level-cache =3D <&L3_CA55>;
++			enable-method =3D "psci";
++		};
 +
-+	case CPG_CORE:
-+	default:
-+		return false;
-+	}
-+}
++		cpu1: cpu@100 {
++			compatible =3D "arm,cortex-a55";
++			reg =3D <0x100>;
++			device_type =3D "cpu";
++			next-level-cache =3D <&L3_CA55>;
++			enable-method =3D "psci";
++		};
 +
- static int rzv2h_cpg_attach_dev(struct generic_pm_domain *domain, struct d=
-evice *dev)
- {
-+	struct rzv2h_cpg_pd *pd =3D container_of(domain, struct rzv2h_cpg_pd, gen=
-pd);
- 	struct device_node *np =3D dev->of_node;
- 	struct of_phandle_args clkspec;
- 	bool once =3D true;
- 	struct clk *clk;
-+	unsigned int i;
- 	int error;
--	int i =3D 0;
-=20
--	while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i,
--					   &clkspec)) {
-+	for (i =3D 0; !of_parse_phandle_with_args(np, "clocks", "#clock-cells", i=
-, &clkspec); i++) {
-+		if (!rzv2h_cpg_is_pm_clk(pd, &clkspec)) {
-+			of_node_put(clkspec.np);
-+			continue;
-+		}
++		cpu2: cpu@200 {
++			compatible =3D "arm,cortex-a55";
++			reg =3D <0x200>;
++			device_type =3D "cpu";
++			next-level-cache =3D <&L3_CA55>;
++			enable-method =3D "psci";
++		};
 +
- 		if (once) {
- 			once =3D false;
- 			error =3D pm_clk_create(dev);
-@@ -700,7 +737,6 @@ static int rzv2h_cpg_attach_dev(struct generic_pm_domai=
-n *domain, struct device
- 				error);
- 			goto fail_put;
- 		}
--		i++;
- 	}
-=20
- 	return 0;
-diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cp=
-g.h
-index 1c7a979ab790..99bc08bd7cc1 100644
---- a/drivers/clk/renesas/rzv2h-cpg.h
-+++ b/drivers/clk/renesas/rzv2h-cpg.h
-@@ -91,6 +91,7 @@ enum clk_types {
-  * @name: handle between common and hardware-specific interfaces
-  * @parent: id of parent clock
-  * @critical: flag to indicate the clock is critical
-+ * @no_pm: flag to indicate PM is not supported
-  * @on_index: control register index
-  * @on_bit: ON bit
-  * @mon_index: monitor register index
-@@ -100,17 +101,19 @@ struct rzv2h_mod_clk {
- 	const char *name;
- 	u16 parent;
- 	bool critical;
-+	bool no_pm;
- 	u8 on_index;
- 	u8 on_bit;
- 	s8 mon_index;
- 	u8 mon_bit;
- };
-=20
--#define DEF_MOD_BASE(_name, _parent, _critical, _onindex, _onbit, _moninde=
-x, _monbit) \
-+#define DEF_MOD_BASE(_name, _parent, _critical, _no_pm, _onindex, _onbit, =
-_monindex, _monbit) \
- 	{ \
- 		.name =3D (_name), \
- 		.parent =3D (_parent), \
- 		.critical =3D (_critical), \
-+		.no_pm =3D (_no_pm), \
- 		.on_index =3D (_onindex), \
- 		.on_bit =3D (_onbit), \
- 		.mon_index =3D (_monindex), \
-@@ -118,10 +121,13 @@ struct rzv2h_mod_clk {
- 	}
-=20
- #define DEF_MOD(_name, _parent, _onindex, _onbit, _monindex, _monbit)		\
--	DEF_MOD_BASE(_name, _parent, false, _onindex, _onbit, _monindex, _monbit)
-+	DEF_MOD_BASE(_name, _parent, false, false, _onindex, _onbit, _monindex, _=
-monbit)
-=20
- #define DEF_MOD_CRITICAL(_name, _parent, _onindex, _onbit, _monindex, _mon=
-bit)	\
--	DEF_MOD_BASE(_name, _parent, true, _onindex, _onbit, _monindex, _monbit)
-+	DEF_MOD_BASE(_name, _parent, true, false, _onindex, _onbit, _monindex, _m=
-onbit)
++		cpu3: cpu@300 {
++			compatible =3D "arm,cortex-a55";
++			reg =3D <0x300>;
++			device_type =3D "cpu";
++			next-level-cache =3D <&L3_CA55>;
++			enable-method =3D "psci";
++		};
 +
-+#define DEF_MOD_NO_PM(_name, _parent, _onindex, _onbit, _monindex, _monbit=
-)		\
-+	DEF_MOD_BASE(_name, _parent, false, true, _onindex, _onbit, _monindex, _m=
-onbit)
-=20
- /**
-  * struct rzv2h_reset - Reset definitions
++		L3_CA55: cache-controller-0 {
++			compatible =3D "cache";
++			cache-unified;
++			cache-size =3D <0x100000>;
++			cache-level =3D <3>;
++		};
++	};
++
++	psci {
++		compatible =3D "arm,psci-1.0", "arm,psci-0.2";
++		method =3D "smc";
++	};
++
++	qextal_clk: qextal-clk {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		/* This value must be overridden by the board */
++		clock-frequency =3D <0>;
++	};
++
++	rtxin_clk: rtxin-clk {
++		compatible =3D "fixed-clock";
++		#clock-cells =3D <0>;
++		/* This value must be overridden by the board */
++		clock-frequency =3D <0>;
++	};
++
++	soc: soc {
++		compatible =3D "simple-bus";
++		interrupt-parent =3D <&gic>;
++		#address-cells =3D <2>;
++		#size-cells =3D <2>;
++		ranges;
++
++		cpg: clock-controller@10420000 {
++			compatible =3D "renesas,r9a09g047-cpg";
++			reg =3D <0 0x10420000 0 0x10000>;
++			clocks =3D <&audio_extal_clk>, <&rtxin_clk>, <&qextal_clk>;
++			clock-names =3D "audio_extal", "rtxin", "qextal";
++			#clock-cells =3D <2>;
++			#reset-cells =3D <1>;
++			#power-domain-cells =3D <0>;
++		};
++
++		scif0: serial@11c01400 {
++			compatible =3D "renesas,scif-r9a09g047", "renesas,scif-r9a09g057";
++			reg =3D <0 0x11c01400 0 0x400>;
++			interrupts =3D <GIC_SPI 529 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 532 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 533 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 530 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 534 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 531 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 535 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 536 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 537 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names =3D "eri", "rxi", "txi", "bri", "dri",
++					  "tei", "tei-dri", "rxi-edge", "txi-edge";
++			clocks =3D <&cpg CPG_MOD 0x8f>;
++			clock-names =3D "fck";
++			power-domains =3D <&cpg>;
++			resets =3D <&cpg 0x95>;
++			status =3D "disabled";
++		};
++
++		gic: interrupt-controller@14900000 {
++			compatible =3D "arm,gic-v3";
++			reg =3D <0x0 0x14900000 0 0x20000>,
++			      <0x0 0x14940000 0 0x80000>;
++			#interrupt-cells =3D <3>;
++			#address-cells =3D <0>;
++			interrupt-controller;
++			interrupts =3D <GIC_PPI 9 IRQ_TYPE_LEVEL_LOW>;
++		};
++	};
++
++	timer {
++		compatible =3D "arm,armv8-timer";
++		interrupts-extended =3D <&gic GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
++				      <&gic GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
++				      <&gic GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
++				      <&gic GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>,
++				      <&gic GIC_PPI 12 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-names =3D "sec-phys", "phys", "virt", "hyp-phys", "hyp-virt";
++	};
++};
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g047e37.dtsi b/arch/arm64/boo=
+t/dts/renesas/r9a09g047e37.dtsi
+new file mode 100644
+index 000000000000..e50d9159e832
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r9a09g047e37.dtsi
+@@ -0,0 +1,18 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * Device Tree Source for the RZ/G3E R9A09G047E37 SoC specific parts
++ *
++ * Copyright (C) 2024 Renesas Electronics Corp.
++ */
++
++/dts-v1/;
++#include "r9a09g047.dtsi"
++
++/ {
++	compatible =3D "renesas,r9a09g047e37", "renesas,r9a09g047";
++
++	cpus {
++		/delete-node/ cpu@200;
++		/delete-node/ cpu@300;
++	};
++};
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g047e57.dtsi b/arch/arm64/boo=
+t/dts/renesas/r9a09g047e57.dtsi
+new file mode 100644
+index 000000000000..98a5faebd47a
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r9a09g047e57.dtsi
+@@ -0,0 +1,13 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * Device Tree Source for the RZ/G3E R9A09G047E57 SoC specific parts
++ *
++ * Copyright (C) 2024 Renesas Electronics Corp.
++ */
++
++/dts-v1/;
++#include "r9a09g047.dtsi"
++
++/ {
++	compatible =3D "renesas,r9a09g047e57", "renesas,r9a09g047";
++};
 --=20
 2.43.0
 
