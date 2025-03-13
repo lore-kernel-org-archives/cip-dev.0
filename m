@@ -2,33 +2,34 @@ Return-Path: <ch@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D903C35FF2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08687C3DA4A
 	for <webhook@archiver.kernel.org>; Thu, 13 Mar 2025 12:36:51 +0000 (UTC)
 Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web11.13385.1741869408273519332
+ by mx.groups.io with SMTP id smtpd.web10.13605.1741869407107480354
  for <cip-dev@lists.cip-project.org>;
- Thu, 13 Mar 2025 05:36:48 -0700
+ Thu, 13 Mar 2025 05:36:47 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=LGbWnLP3;
+ dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=c82oR6lP;
  spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: ch@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 64DC51020E4ED;
-	Thu, 13 Mar 2025 13:36:46 +0100 (CET)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1DB251020999D;
+	Thu, 13 Mar 2025 13:36:45 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1741869406; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1741869405; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=smtn76XKyk1UwdRUycmZwPLKGszXF9Fe5VFkXFG99Vo=;
-	b=LGbWnLP3ZGTaP5ZRsF+GWfDVNBIY53Q65DeNyd7kx+QdHvAY16aMxbwQOe/Kebga5DkxCE
-	8P9Pb1jrRJAvU8kO08L5zqGm2x5wJQyrWpqpsXvJnxuh22czS7Y6TcSLkIthnV2xEpifr9
-	5yON/8C4dOmvlkbA1yNwqw1NVo0Pn9HLKPqwmlwwyu0IYZUfcdmcvqhEpQg+Jon8sw251h
-	ERfO09mwKn+z3scL/29esPGdKia0N3MjpvBJTDbFFiMSt9I94pS9oG0xhjfGTvmXxYCwTe
-	092KX5X3JNOmtF0/010Kuqqm/YjUc/qQ6IRPVdlDZsbET/aGRIExIx9e07HDtw==
+	bh=GYOKUtun0AmjAf3+vfTCgvzfpvfCUaumZjH0ChVw7M4=;
+	b=c82oR6lPIjL66B0vfzwYgo/4b65CqPgmHUqa2gQlyqct2iHiFuesV74xNJwEpbqnjptd8U
+	X/l1gCe8GS+eIxvgHn5HI24hdqGOGsV5CpxG7JsAY3QSLFXU1hNSGHRyC85EZno+xwo8eQ
+	ZaTcWRXoH2qu9REGHtMmlph6Od/KJq1Y4utMQ8NuUJRci2EBu8jGAQz8arRK44W1GAtHgr
+	8cqxvDTexAXoDnkD5Mbn/EgidL1xdj5ChiMOSHziHsRzOn6ZzEtsvopJMVXxAPqEMEg6E+
+	prol8QxA/jpNNwHEZLR9fCNAKFBhZaQZBHkXWmS7LNaFTlroDqwzKqAQJuzRJw==
 From: Claudius Heine <ch@denx.de>
-Date: Thu, 13 Mar 2025 13:35:42 +0100
-Subject: [PATCH v5 2/4] initramfs-crypt-hook: add re-encryption recovery
+Date: Thu, 13 Mar 2025 13:35:41 +0100
+Subject: [PATCH v5 1/4] initramfs-crypt-hook: store initial encryption key
+ in TPM2
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250313-initramfs-crypt-hook-patches-2-v5-2-fc62d4a2ad29@denx.de>
+Message-Id: <20250313-initramfs-crypt-hook-patches-2-v5-1-fc62d4a2ad29@denx.de>
 References: <20250313-initramfs-crypt-hook-patches-2-v5-0-fc62d4a2ad29@denx.de>
 In-Reply-To: <20250313-initramfs-crypt-hook-patches-2-v5-0-fc62d4a2ad29@denx.de>
 To: cip-dev@lists.cip-project.org
@@ -41,91 +42,152 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 13 Mar 2025 12:36:51 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18192
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18191
 
-Integrate detection and recovery of power failures while a partition is
-being encrypted.
+cryptsetup and systemd-cryptenroll do not currently support encrypting
+partitions directly with keys stored in the TPM. For that reason a
+temporary random password is used for the initial encryption, which will
+get removed once the TPM2 token is added to the partition.
 
-There are possible scenarios:
-1. Power-fail happens while the partition is reencrypted:
-  - The LUKS header contains `online-reencrypt-v2` and needs to be
-    repaired with `cryptsetup repair` before it can continue.
-  - Also no resizing of the file system is necessary
-2. Power-fail happens before the systemd-tpm2/clevis token can be installed
-  - The LUKS header does not contain 'systemd-tpm2'/'clevis', thus it
-    needs to be registered and the temporary encryption key needs to be
-    removed
+However this process does not allow continuing with the encryption
+process in case of power failure.
 
-The list of these scenarios is not complete, there might be other
-instances where a sudden power-fail could be fatal to the system, but
-these where the most obvious and risky ones.
+For that reason store the initial encryption password in the TPM,
+protected via measured boot based on the TPM2-PCR:7 register, which is
+the default for `systemd-cryptenroll` and load it if it exists.
 
 Signed-off-by: Claudius Heine <ch@denx.de>
 ---
- .../initramfs-crypt-hook/files/local-top-complete  | 26 +++++++++++++++++++---
- 1 file changed, 23 insertions(+), 3 deletions(-)
+ .../initramfs-crypt-hook/files/local-top-complete  | 56 ++++++++++++++++++++--
+ .../initramfs-crypt-hook_0.7.bb                    | 12 ++---
+ 2 files changed, 59 insertions(+), 9 deletions(-)
 
 diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-index e511e8ef2d0bd4f4c8fd2fca248312dee173d224..6df4cccee9c99653fa9869ca2e46ead549d6fc2d 100644
+index ae0dcef4cb62a135beb6d4229237144b6d4edf8b..e511e8ef2d0bd4f4c8fd2fca248312dee173d224 100644
 --- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
 +++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-@@ -73,6 +73,9 @@ reencrypt_existing_partition() {
- 	reduced_size="$(expr "$part_size_blocks" - 65536 )"
- 	reduced_size_in_byte="$(expr "$reduced_size" \* 512)"
- 	reduced_size_in_kb="$(expr "$reduced_size_in_byte" / 1024)K"
-+
-+	CRYPTSETUP_PARAMS="--reduce-device-size ${reduce_device_size}k"
-+
- 	case $partition_fstype in
- 	ext*)
- 		# reduce the filesystem and partition by 32M to fit the LUKS header
-@@ -91,14 +94,25 @@ reencrypt_existing_partition() {
- 	squashfs|swap|erofs|"")
- 		[ "$debug" = "y" ] && echo "skip disk resize as it is not supported or unnecessary for fstype: '$partition_fstype'"
- 		;;
-+	luks)
-+		# Check if reencrypt was aborted
-+		if /usr/sbin/cryptsetup luksDump --batch-mode "$1" \
-+				| grep -q "online-reencrypt-v2"; then
-+			/usr/sbin/cryptsetup repair --batch-mode "$1" < "$2" || \
-+				panic "cryptsetup repair was not successful"
-+		fi
-+
-+		# already luks partition, don't resize
-+		CRYPTSETUP_PARAMS=""
-+		;;
- 	*)
- 		panic "cannot resize partition, unsupported fstype: '$partition_fstype'"
- 		;;
- 	esac
- 	if [ -x /usr/sbin/cryptsetup-reencrypt ]; then
--		/usr/sbin/cryptsetup-reencrypt --new --reduce-device-size "$reduce_device_size"k "$1" < "$2"
-+		/usr/sbin/cryptsetup-reencrypt --new ${CRYPTSETUP_PARAMS} "$1" < "$2"
- 	else
--		/usr/sbin/cryptsetup reencrypt --encrypt --reduce-device-size "$reduce_device_size"k "$1" < "$2"
-+		/usr/sbin/cryptsetup reencrypt --encrypt ${CRYPTSETUP_PARAMS} "$1" < "$2"
- 	fi
- }
+@@ -216,6 +216,54 @@ if [ ! -e "$tpm_device" ]; then
+ 	panic "No tpm device exists or supports pcr_hash '$pcr_bank_hash_type' or '$tpm_key_algorithm' - cannot create a encrypted device!"
+ fi
  
-@@ -296,11 +310,17 @@ for partition_set in $partition_sets; do
- 	fi
- 
- 	if /usr/sbin/cryptsetup luksDump --batch-mode "$part_device" \
--			| grep -q "luks2"; then
-+			| grep -q "systemd-tpm2\|clevis"; then
- 		open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
- 		continue
- 	fi
- 
-+	# If partition contains an aborted reencrypt luks header, switch to reencrypt mode:
-+	if /usr/sbin/cryptsetup luksDump --batch-mode "${part_device}" \
-+			| grep -q "online-reencrypt-v2"; then
-+		partition_format="reencrypt"
++export TPM2TOOLS_TCTI="device:${tpm_device}"
++TPM2_HANDLE="0x81080001"
++tpm2_key_get() {
++	key_file="$1"
++	TPM2_WORKDIR="/tmp/tpm2"
++
++	if ! tpm2_getcap handles-persistent | grep -q "$TPM2_HANDLE"; then
++		mkdir -p "${TPM2_WORKDIR}"
++		# Open session:
++		tpm2_startauthsession -S "${TPM2_WORKDIR}/session.ctx"
++		tpm2_policypcr -Q -S "${TPM2_WORKDIR}/session.ctx" \
++			-l "${HASH_TYPE}:7" \
++			-L "${TPM2_WORKDIR}/pcr7.${HASH_TYPE}.policy"
++		tpm2_flushcontext "${TPM2_WORKDIR}/session.ctx"
++
++		# Add new key to tpm:
++		tpm2_createprimary -Q -C o -c "${TPM2_WORKDIR}/prim.ctx"
++		echo "$(tr -dc 'A-Za-z0-9_' </dev/urandom | head -c 32)" | \
++			tpm2_create -Q -g "sha256" \
++				-u "${TPM2_WORKDIR}/pcr_seal_key.pub" \
++				-r "${TPM2_WORKDIR}/pcr_seal_key.priv" \
++				-i- \
++				-C "${TPM2_WORKDIR}/prim.ctx" \
++				-L "${TPM2_WORKDIR}/pcr7.${HASH_TYPE}.policy"
++		tpm2_load -Q \
++			-C "${TPM2_WORKDIR}/prim.ctx" \
++			-u "${TPM2_WORKDIR}/pcr_seal_key.pub" \
++			-r "${TPM2_WORKDIR}/pcr_seal_key.priv" \
++			-n "${TPM2_WORKDIR}/pcr_seal_key.name" \
++			-c "${TPM2_WORKDIR}/pcr_seal_key.ctx"
++		tpm2_evictcontrol -c "${TPM2_WORKDIR}/pcr_seal_key.ctx" \
++			"$TPM2_HANDLE" -C o
++
++		rm -rf "${TPM2_WORKDIR}"
 +	fi
 +
- 	# service watchdog in the background during lengthy re-encryption
- 	if [ -z "$watchdog_pid" ]; then
- 		service_watchdog &
++	mkdir -p "${TPM2_WORKDIR}"
++	tpm2_startauthsession --policy-session -S "${TPM2_WORKDIR}/session.ctx"
++	tpm2_policypcr -Q -S "${TPM2_WORKDIR}/session.ctx" -l "${HASH_TYPE}:7"
++	tpm2_unseal -p "session:${TPM2_WORKDIR}/session.ctx" -c "$TPM2_HANDLE" >"$key_file"
++	tpm2_flushcontext "${TPM2_WORKDIR}/session.ctx"
++	rm -rf "${TPM2_WORKDIR}"
++}
++
++tpm2_key_del() {
++	tpm2_evictcontrol -C o -c "$TPM2_HANDLE"
++}
++
+ prepare_for_encryption
+ 
+ for partition_set in $partition_sets; do
+@@ -259,16 +307,17 @@ for partition_set in $partition_sets; do
+ 		watchdog_pid=$!
+ 	fi
+ 
+-	# create random password for initial encryption
+-	# this will be dropped after reboot
++	# create random password, store it in the tpm2 encrypted and protected with
++	# PCR:7 registers to allow continuing reencryption in case of power-failure.
+ 	tmp_key=/tmp/"$(basename "$part_device")-lukskey"
+-	openssl rand -base64 32 > "$tmp_key"
++	tpm2_key_get "${tmp_key}"
+ 
+ 	case "${partition_format}" in
+ 		"reencrypt")
+ 			log_begin_msg "Encryption of ${part_device}"
+ 			reencrypt_existing_partition "$part_device" "$tmp_key"
+ 			enroll_tpm2_token "$part_device" "$tmp_key" "$tpm_device" "$tpm_key_algorithm" "$pcr_bank_hash_type"
++			tpm2_key_del
+ 			open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
+ 			log_end_msg
+ 		;;
+@@ -277,6 +326,7 @@ for partition_set in $partition_sets; do
+ 			/usr/sbin/cryptsetup luksFormat --batch-mode \
+ 				 --type luks2 "$part_device" < "$tmp_key"
+ 			enroll_tpm2_token "$part_device" "$tmp_key" "$tpm_device" "$tpm_key_algorithm" "$pcr_bank_hash_type"
++			tpm2_key_del
+ 			open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
+ 			eval "${create_file_system_cmd} ${decrypted_part}"
+ 			log_end_msg
+diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.7.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.7.bb
+index 80a4755e4e0acfc96bb2d0f8e175e2787473e384..cde6582fe07981c78d646fe592e0c53ef46a2fb4 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.7.bb
++++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.7.bb
+@@ -14,7 +14,6 @@ require recipes-initramfs/initramfs-hook/hook.inc
+ DEBIAN_DEPENDS .= ", \
+     cryptsetup, \
+     awk, \
+-    openssl, \
+     e2fsprogs, \
+     tpm2-tools, \
+     coreutils, \
+@@ -40,19 +39,20 @@ HOOK_ADD_MODULES = " \
+     ecb aes_generic xts"
+ 
+ HOOK_COPY_EXECS = " \
+-    openssl mke2fs grep awk expr seq sleep basename uuidparse mountpoint \
+-    e2fsck resize2fs cryptsetup \
+-    tpm2_pcrread tpm2_testparms tpm2_flushcontext \
++    mke2fs grep awk expr seq sleep basename uuidparse mountpoint \
++    e2fsck resize2fs cryptsetup head tr rm \
++    tpm2_pcrread tpm2_testparms tpm2_flushcontext tpm2_startauthsession \
++    tpm2_policypcr tpm2_createprimary tpm2_create tpm2_load tpm2_evictcontrol \
++    tpm2_unseal tpm2_getcap \
+     /usr/lib/*/libgcc_s.so.1"
+ 
+ HOOK_COPY_EXECS:append:clevis = " \
+     clevis clevis-decrypt clevis-encrypt-tpm2 clevis-decrypt-tpm2 \
+     clevis-luks-bind clevis-luks-unlock \
+     clevis-luks-list clevis-luks-common-functions \
+-    tpm2_createprimary tpm2_unseal tpm2_create tpm2_load tpm2_createpolicy \
+     bash luksmeta jose sed tail sort rm mktemp pwmake file"
+ HOOK_COPY_EXECS:append:systemd = " \
+-    systemd-cryptenroll tpm2_pcrread tpm2_testparms \
++    systemd-cryptenroll \
+     /usr/lib/systemd/systemd-cryptsetup \
+     /usr/lib/*/cryptsetup/libcryptsetup-token-systemd-tpm2.so"
+ 
 
 -- 
 2.47.2
