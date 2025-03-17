@@ -2,100 +2,124 @@ Return-Path: <paul.barker.ct@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C8DFC282EC
-	for <webhook@archiver.kernel.org>; Mon, 17 Mar 2025 09:21:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C941AC282EC
+	for <webhook@archiver.kernel.org>; Mon, 17 Mar 2025 09:35:28 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.48106.1742203280170196998
+ by mx.groups.io with SMTP id smtpd.web10.48207.1742204121837502280
  for <cip-dev@lists.cip-project.org>;
- Mon, 17 Mar 2025 02:21:20 -0700
+ Mon, 17 Mar 2025 02:35:22 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: paul.barker.ct@bp.renesas.com)
-X-CSE-ConnectionGUID: XCvR5zDVS8me2jNpVkoR0g==
-X-CSE-MsgGUID: FjZbGaGZQE6lzSUiJI+NKA==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 17 Mar 2025 18:21:18 +0900
+X-CSE-ConnectionGUID: /rJ8eE3oRs2BVSG6vAp73A==
+X-CSE-MsgGUID: j0UbrFDiRDiMF9oA1QWmFw==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 17 Mar 2025 18:35:21 +0900
 Received: from [10.226.93.170] (unknown [10.226.93.170])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2C9374010075;
-	Mon, 17 Mar 2025 18:21:16 +0900 (JST)
-Message-ID: <b3ce7d24-9264-4d00-8c78-2501dc827b7c@bp.renesas.com>
-Date: Mon, 17 Mar 2025 09:21:15 +0000
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id C3A664237F02;
+	Mon, 17 Mar 2025 18:35:19 +0900 (JST)
+Message-ID: <e38f2f2f-e51a-4c4d-95b5-f9f952e5fd09@bp.renesas.com>
+Date: Mon, 17 Mar 2025 09:35:18 +0000
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev] [PATCH 4.19.y-cip] watchdog: renesas_wdt: support
- handover from bootloader
-To: Ulrich Hecht <uli@fpond.eu>, cip-dev@lists.cip-project.org,
- Pavel Machek <pavel@denx.de>,
- Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-References: <20250221165755.357838-1-paul.barker.ct@bp.renesas.com>
- <1074551120.2807839.1740450494914@webmail.strato.de>
+Subject: Re: [cip-dev] Mailing list inventing addresses for people
 Content-Language: en-GB
+To: Pavel Machek <pavel@denx.de>, Michael Adler <michael.adler@siemens.com>
+Cc: cip-dev@lists.cip-project.org, Ulrich Hecht <uli@kernel.org>
+References: <Z9LQ6u3m4LRFTCPM@duo.ucw.cz>
+ <80dca55b-9632-46d5-9dab-74dde8ba4424@siemens.com>
+ <whqvkav5o3ofm2kubxknu4mpctdtce76jiplvg7aemtn2d3q4g@f7ehpky3zjqp>
+ <Z9LkCoI8fcTIPlvq@duo.ucw.cz>
 From: Paul Barker <paul.barker.ct@bp.renesas.com>
-In-Reply-To: <1074551120.2807839.1740450494914@webmail.strato.de>
+In-Reply-To: <Z9LkCoI8fcTIPlvq@duo.ucw.cz>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="------------07mQkHMCUAIi7UaUIBu5pAQU"
+ boundary="------------fMQFdkq9p1Q35QrBuoZ6uq0E"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 17 Mar 2025 09:21:28 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18223
+ <cip-dev@lists.cip-project.org>; Mon, 17 Mar 2025 09:35:28 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18224
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------07mQkHMCUAIi7UaUIBu5pAQU
-Content-Type: multipart/mixed; boundary="------------NotdeDmGo0kgyEsFKaHlYt0U";
+--------------fMQFdkq9p1Q35QrBuoZ6uq0E
+Content-Type: multipart/mixed; boundary="------------WzeVMZ0FIw1dnqtgzRks6EX9";
  protected-headers="v1"
 From: Paul Barker <paul.barker.ct@bp.renesas.com>
-To: Ulrich Hecht <uli@fpond.eu>, cip-dev@lists.cip-project.org,
- Pavel Machek <pavel@denx.de>,
- Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Message-ID: <b3ce7d24-9264-4d00-8c78-2501dc827b7c@bp.renesas.com>
-Subject: Re: [cip-dev] [PATCH 4.19.y-cip] watchdog: renesas_wdt: support
- handover from bootloader
-References: <20250221165755.357838-1-paul.barker.ct@bp.renesas.com>
- <1074551120.2807839.1740450494914@webmail.strato.de>
-In-Reply-To: <1074551120.2807839.1740450494914@webmail.strato.de>
+To: Pavel Machek <pavel@denx.de>, Michael Adler <michael.adler@siemens.com>
+Cc: cip-dev@lists.cip-project.org, Ulrich Hecht <uli@kernel.org>
+Message-ID: <e38f2f2f-e51a-4c4d-95b5-f9f952e5fd09@bp.renesas.com>
+Subject: Re: [cip-dev] Mailing list inventing addresses for people
+References: <Z9LQ6u3m4LRFTCPM@duo.ucw.cz>
+ <80dca55b-9632-46d5-9dab-74dde8ba4424@siemens.com>
+ <whqvkav5o3ofm2kubxknu4mpctdtce76jiplvg7aemtn2d3q4g@f7ehpky3zjqp>
+ <Z9LkCoI8fcTIPlvq@duo.ucw.cz>
+In-Reply-To: <Z9LkCoI8fcTIPlvq@duo.ucw.cz>
 
---------------NotdeDmGo0kgyEsFKaHlYt0U
-Content-Type: multipart/mixed; boundary="------------0wkhxhaM0UfnspKhO0kIWbZk"
+--------------WzeVMZ0FIw1dnqtgzRks6EX9
+Content-Type: multipart/mixed; boundary="------------T8fQf0BiXgjLjhXzjpefrZNp"
 
---------------0wkhxhaM0UfnspKhO0kIWbZk
+--------------T8fQf0BiXgjLjhXzjpefrZNp
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ulrich,
-
-On 25/02/2025 02:28, Ulrich Hecht wrote:
+On 13/03/2025 13:56, Pavel Machek wrote:
+> Hi!
 >=20
->> On 02/21/2025 5:57 PM CET Paul Barker via lists.cip-project.org <paul.=
-barker.ct=3Dbp.renesas.com@lists.cip-project.org> wrote:
+>> maybe it depends on the mail client what is actually being shown to th=
+e user.
+>> For example, I see the following mail headers (and my mail client igno=
+res the Resent-From header):
 >>
->> =20
->> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> ...
+>> From: "Pavel Machek via lists.cip-project.org" <pavel=3Ddenx.de@lists.=
+cip-project.org>
+>> Resent-From: pavel@denx.de
+>> ...
 >>
->> commit 962085a2bb823d8c88c6bc706c654648407e6408 upstream.
->>
->> Support an already running watchdog by checking its enable bit and set=
-
->> up the status accordingly before registering the device.
->>
->> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
->> Link: https://lore.kernel.org/r/20200908095615.31376-1-wsa+renesas@san=
-g-engineering.com
->> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
->> Signed-off-by: Wim Van Sebroeck <wim@linux-watchdog.org>
->> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+>> Do you mean that with "invented address"?
 >=20
-> Thanks, applied.
+> Well -- this one is not my email address: pavel=3Ddenx.de@lists.cip-pro=
+ject.org=20
+>=20
+> This one is: pavel@denx.de
+>=20
+> I don't want people to bookmark pavel=3Ddenx.de@lists.cip-project.org ,=
 
-I don't see this commit in v4.19.325-cip118, is this expected to be
-included in -cip119?
+> for example.
+>=20
+> We talked about it on IRC: http://ircbot.wl.linuxfoundation.org/meeting=
+s/cip/2025/03/cip.2025-03-13-13.01.log.html
+>=20
+> The mangled address + reply-to to the list means that it is impossible
+> to send direct reply to the user, which we agreed is "not
+> optimal". From the irc discussion it looked like address mangling is
+> now common feature due to DMARC/DKIM.
+
+I don't tend to notice these as I fetch messages from lore.kernel.org
+where there is no mangling.
+
+These mangled email addresses seem to be creeping into commits though -
+compare the email on lore [1] with the commit [2]. The email has:
+
+    From: Paul Barker <paul.barker.ct@bp.renesas.com>
+
+But the commit now has:
+
+    Author: Paul Barker via lists.cip-project.org <paul.barker.ct=3Dbp.re=
+nesas.com@lists.cip-project.org>
+
+I think we should be careful with these.
 
 Thanks,
+   =20
+[1]: https://lore.kernel.org/cip-dev/20250221164929.357460-1-paul.barker.=
+ct@bp.renesas.com/
+[2]: https://web.git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.gi=
+t/commit/?id=3D19f5c3971881ce892731b500299be665703586b4
 
 --=20
 Paul Barker
---------------0wkhxhaM0UfnspKhO0kIWbZk
+--------------T8fQf0BiXgjLjhXzjpefrZNp
 Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
 Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
 Content-Description: OpenPGP public key
@@ -159,22 +183,22 @@ ZyZGVsEsOuGCLkekUMF/5dwOhEDXrY42VR/ZxdDTY99dznQkwTt4o7FOmkY=3D
 =3DsIIN
 -----END PGP PUBLIC KEY BLOCK-----
 
---------------0wkhxhaM0UfnspKhO0kIWbZk--
+--------------T8fQf0BiXgjLjhXzjpefrZNp--
 
---------------NotdeDmGo0kgyEsFKaHlYt0U--
+--------------WzeVMZ0FIw1dnqtgzRks6EX9--
 
---------------07mQkHMCUAIi7UaUIBu5pAQU
+--------------fMQFdkq9p1Q35QrBuoZ6uq0E
 Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZ9fpiwUDAAAAAAAKCRDbaV4Vf/JGvSvl
-AQDfvPTT76fI2Kp9LMt8bdweHISPnnRApmm6iU/m0EzGJAD+I4mr5kDIWcUChAb0NiHi/DiY3Ztq
-1qddZ7HuhAQOog8=
-=QFKL
+wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZ9fs1gUDAAAAAAAKCRDbaV4Vf/JGvbC5
+AQCImH0Z6NnC90aN+zTbouXEMFo1q8jyT+dWeyS1b121XwEArlUdQybeTog3c3W3iJZZIRoTHnks
+n56a/3gOhunK5A4=
+=CwVT
 -----END PGP SIGNATURE-----
 
---------------07mQkHMCUAIi7UaUIBu5pAQU--
+--------------fMQFdkq9p1Q35QrBuoZ6uq0E--
 
