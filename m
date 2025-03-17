@@ -1,99 +1,172 @@
-Return-Path: <uli@fpond.eu>
+Return-Path: <paul.barker.ct@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1235C28B28
-	for <webhook@archiver.kernel.org>; Mon, 17 Mar 2025 10:02:48 +0000 (UTC)
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.162])
- by mx.groups.io with SMTP id smtpd.web11.48723.1742205760993881674
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC8A8C282EC
+	for <webhook@archiver.kernel.org>; Mon, 17 Mar 2025 10:13:08 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web10.48816.1742206386044542664
  for <cip-dev@lists.cip-project.org>;
- Mon, 17 Mar 2025 03:02:41 -0700
+ Mon, 17 Mar 2025 03:13:06 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=iUgBWWJn;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=+k90IpnY;
- spf=none, err=permanent DNS error (domain: fpond.eu, ip: 81.169.146.162, mailfrom: uli@fpond.eu)
-ARC-Seal: i=1; a=rsa-sha256; t=1742205750; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=kUP/3VnAvJWtX8erGSxsH2lCEHzggv3q1RxjYYaehICGbyWzSJ0+NoInS3uslRDMZ3
-    keAMoI72SRY8NRYVBG784O5E3sNMnLkGMj0iJGVT6kkA1DdOUU9QpxYXav039bZpcy+E
-    YHeI+ZWG5Enunjr/9vo4EDhYei3EbRnFjc6WUj90cpVqx3apz1L04JgPnTBh5XP4zcV3
-    d+3OVyp0bLQnTJqZStnFfHiaVxuK2ZuywPdqw2i1Yhy0gdI7liCy4IY67JSn9R8VsgxS
-    Vn6sY1Jtl7/xxDDgDSG2pFmkFRUdJZIB6fQu6hewJXDoV29MZ1q7vyVsoNcpjBwDPP5e
-    omCA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1742205750;
-    s=strato-dkim-0002; d=strato.com;
-    h=Subject:References:In-Reply-To:Message-ID:To:From:Date:Cc:Date:From:
-    Subject:Sender;
-    bh=UqdhupULGPu60ZQJMCTL3kZwdsOM4OeqZqNg+XINOP8=;
-    b=VJeWzPX9eQjzz4vDOrfnquEq8i6KuL1jR4BQO7pb7C1BbmBFC10rrbTPpSnPtVmCS9
-    t/bYNKpHqISxaxE9lwIaau7qj8eosm5OcmEjYS5ix3tJihGbX5yVSkd1cAauxVT6pmdZ
-    IUbJXJXxz54LT+bAxzaVhlDLzY/QV7Qwxc/tThM7XGr6bIgnZQ3v+wdjPipX9osL2TMN
-    II97SCE1kAAL3aZjqTnAh8ieboJ5Vt69+h0SXYL2duK8i1OaPR3LL12Bbp5UQ+daW3AP
-    bdhIlNF4p5yv/t23UVMatO9AUj5at0KGwDiZt96+jXTfVboQmP1rcfnxk2jAEEj7apLW
-    Z9/g==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1742205750;
-    s=strato-dkim-0002; d=fpond.eu;
-    h=Subject:References:In-Reply-To:Message-ID:To:From:Date:Cc:Date:From:
-    Subject:Sender;
-    bh=UqdhupULGPu60ZQJMCTL3kZwdsOM4OeqZqNg+XINOP8=;
-    b=iUgBWWJnCPA3M2IH9XvkKTfYeGhYT/j5f7uAhHrBi02vsqA5EoxOdNxwhgxHZmCPgc
-    7ZzYOv79HdCPe1GnpFHD0cwkoKP1LhOhN8YLbgauBj/laqUbYbixXOsQ1XM0QMxFlnNf
-    vZ+rW7iwcbbqn96taGdZckTxM2sVYB6z2a7YlJRMZzSQElG7P7a/XEQlaMuL9pM+hEHM
-    tKlPw3670uVod+LEA9McNvfs0taak+11SlZ08yqIp9KU+qdbEqoKG9zQpzLr+YUOjnV0
-    7QcHlPCpvenMUVcgSNsSPHSim/FlvPeq6BVvSqqEPBHWBDD5VqzV9IEuSG91Vyc5psVG
-    KDuQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1742205750;
-    s=strato-dkim-0003; d=fpond.eu;
-    h=Subject:References:In-Reply-To:Message-ID:To:From:Date:Cc:Date:From:
-    Subject:Sender;
-    bh=UqdhupULGPu60ZQJMCTL3kZwdsOM4OeqZqNg+XINOP8=;
-    b=+k90IpnY0wxLsMPhCiXDJPWojkTEtl2N2BznUM0loYcfI0dYCGgtHsb9OhK8tC98gE
-    sO73cszOF3/s8yi4lCCw==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzotGZsghGuyX3LvXid7Q=="
-Received: from ox-live-app404.back.ox.d0m.de
-    by smtp-ox.front (RZmta 51.3.0 AUTH)
-    with ESMTPSA id z2a34012HA2TqZg
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Mon, 17 Mar 2025 11:02:29 +0100 (CET)
-Date: Mon, 17 Mar 2025 11:02:29 +0100 (CET)
-From: Ulrich Hecht <uli@fpond.eu>
-To: Paul Barker <paul.barker.ct@bp.renesas.com>,
-	cip-dev@lists.cip-project.org, Pavel Machek <pavel@denx.de>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Message-ID: <969782407.3230737.1742205749339@webmail.strato.de>
-In-Reply-To: <b3ce7d24-9264-4d00-8c78-2501dc827b7c@bp.renesas.com>
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: paul.barker.ct@bp.renesas.com)
+X-CSE-ConnectionGUID: q4uGv6TSQwymCgeHaeonFw==
+X-CSE-MsgGUID: Rx8wLn5ATzOMHreh42sAZQ==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 17 Mar 2025 19:13:04 +0900
+Received: from [10.226.93.170] (unknown [10.226.93.170])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 12D194264457;
+	Mon, 17 Mar 2025 19:13:02 +0900 (JST)
+Message-ID: <b84f9dd5-1b4e-46a0-b894-da589c9c3f28@bp.renesas.com>
+Date: Mon, 17 Mar 2025 10:13:01 +0000
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cip-dev] [PATCH 4.19.y-cip] watchdog: renesas_wdt: support
+ handover from bootloader
+Content-Language: en-GB
+To: Ulrich Hecht <uli@fpond.eu>, cip-dev@lists.cip-project.org,
+ Pavel Machek <pavel@denx.de>,
+ Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 References: <20250221165755.357838-1-paul.barker.ct@bp.renesas.com>
  <1074551120.2807839.1740450494914@webmail.strato.de>
  <b3ce7d24-9264-4d00-8c78-2501dc827b7c@bp.renesas.com>
-Subject: Re: [cip-dev] [PATCH 4.19.y-cip] watchdog: renesas_wdt: support
- handover from bootloader
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.6-Rev73
-X-Originating-Client: open-xchange-appsuite
+ <969782407.3230737.1742205749339@webmail.strato.de>
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+In-Reply-To: <969782407.3230737.1742205749339@webmail.strato.de>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------wBavjCtj2PJBN0lGLxgGtUp2"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 17 Mar 2025 10:02:48 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18227
+ <cip-dev@lists.cip-project.org>; Mon, 17 Mar 2025 10:13:08 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18228
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------wBavjCtj2PJBN0lGLxgGtUp2
+Content-Type: multipart/mixed; boundary="------------clr7oQTTiyGofyPQ0gjtsyM0";
+ protected-headers="v1"
+From: Paul Barker <paul.barker.ct@bp.renesas.com>
+To: Ulrich Hecht <uli@fpond.eu>, cip-dev@lists.cip-project.org,
+ Pavel Machek <pavel@denx.de>,
+ Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Message-ID: <b84f9dd5-1b4e-46a0-b894-da589c9c3f28@bp.renesas.com>
+Subject: Re: [cip-dev] [PATCH 4.19.y-cip] watchdog: renesas_wdt: support
+ handover from bootloader
+References: <20250221165755.357838-1-paul.barker.ct@bp.renesas.com>
+ <1074551120.2807839.1740450494914@webmail.strato.de>
+ <b3ce7d24-9264-4d00-8c78-2501dc827b7c@bp.renesas.com>
+ <969782407.3230737.1742205749339@webmail.strato.de>
+In-Reply-To: <969782407.3230737.1742205749339@webmail.strato.de>
 
-> On 03/17/2025 10:21 AM CET Paul Barker <paul.barker.ct@bp.renesas.com> wrote:
-> I don't see this commit in v4.19.325-cip118, is this expected to be
-> included in -cip119?
+--------------clr7oQTTiyGofyPQ0gjtsyM0
+Content-Type: multipart/mixed; boundary="------------TJyMzTYd6I2Bn629Pw0roBph"
 
-Sorry, that was a mistake. This is the first patch that only goes to -cip, not to -st, and I forgot that my merge script dumps all local modifications to the -cip tree before merging -st...
+--------------TJyMzTYd6I2Bn629Pw0roBph
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-It's fixed now, and the commit Will be included in -cip119.
+Hi Ulrich,
 
-CU
-Uli
+On 17/03/2025 10:02, Ulrich Hecht wrote:
+>=20
+>> On 03/17/2025 10:21 AM CET Paul Barker <paul.barker.ct@bp.renesas.com>=
+ wrote:
+>> I don't see this commit in v4.19.325-cip118, is this expected to be
+>> included in -cip119?
+>=20
+> Sorry, that was a mistake. This is the first patch that only goes to -c=
+ip, not to -st, and I forgot that my merge script dumps all local modific=
+ations to the -cip tree before merging -st...
+>=20
+> It's fixed now, and the commit Will be included in -cip119.
+
+That's ok, I just wanted to make sure it didn't get forgotten :)
+
+Thanks,
+
+--=20
+Paul Barker
+--------------TJyMzTYd6I2Bn629Pw0roBph
+Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
+Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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3D
+=3DsIIN
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------TJyMzTYd6I2Bn629Pw0roBph--
+
+--------------clr7oQTTiyGofyPQ0gjtsyM0--
+
+--------------wBavjCtj2PJBN0lGLxgGtUp2
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZ9f1rQUDAAAAAAAKCRDbaV4Vf/JGvYWR
+AP4hh/nUOWvtDI7Z3TmUCO9NUI/eMy83aT1B2K2kaN/qAwEAiYKwjQi5AdQ2kg0WeNG07tBJywhd
+xhNmheYHMFO9FAI=
+=bwZ/
+-----END PGP SIGNATURE-----
+
+--------------wBavjCtj2PJBN0lGLxgGtUp2--
 
