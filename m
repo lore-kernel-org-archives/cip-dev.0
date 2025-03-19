@@ -2,41 +2,41 @@ Return-Path: <tommaso.merciai.xr@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F026C36000
-	for <webhook@archiver.kernel.org>; Wed, 19 Mar 2025 09:48:50 +0000 (UTC)
-Received: from TYVP286CU001.outbound.protection.outlook.com (TYVP286CU001.outbound.protection.outlook.com [52.101.125.39])
- by mx.groups.io with SMTP id smtpd.web10.4024.1742377721047115786
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A238C35FFA
+	for <webhook@archiver.kernel.org>; Wed, 19 Mar 2025 09:49:00 +0000 (UTC)
+Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.52])
+ by mx.groups.io with SMTP id smtpd.web11.4018.1742377735650642023
  for <cip-dev@lists.cip-project.org>;
- Wed, 19 Mar 2025 02:48:42 -0700
+ Wed, 19 Mar 2025 02:48:56 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=wDSW2kNe;
- spf=pass (domain: bp.renesas.com, ip: 52.101.125.39, mailfrom: tommaso.merciai.xr@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=n5N1bpji;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.228.52, mailfrom: tommaso.merciai.xr@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j3nDS2NwJdmCLpk220UTdOScGZ08aoyp8MueuXwh5x1rMmmXAAg6ePzKXBAOITGX5PVe92NU8/4YX/gK1cTXy2vQzUbhSI5FVjozRsAp4VPCwML2ho9XEYr/aWQp2DD0jtD5TvG5pzkChYNJnPntITmJ0ScEex/3nvaGe07OVwGzKTf8YiFNowvaSwstVpTtrJ0UywgNbzjanr4iVvSK0/lelcJvEvwhiHWBcYShOi3JP5NkYXS3NQXhPECaIHQzs7ZSlVGXsjjOozobYyZaOSRYBjuV9FBqXrHk7LTAiokhCQ/muZFRKYB9wTadcvS1gIxc312ksw8WNId9QYCXPA==
+ b=SKxeD10sgs8QcanHcZNiw8RKc+mCQ62gIm7QT1UJzYWoFr1g+V0ui+axet2Mu2GeIovX6RayaiYmU5FC6tFCv3ZrWKZthffVmecwtJb4LS+zOZpgYxCD7IHO74POdKHV/XRh+ZKa6tIef+wgnIhFxG6lbY5Gc0/7bDh6ejJQLuJNafnoaDpFfhAMjJguSwEMUVrDPz1kpDUZtT8cr6xnRjHGpGfm25myXQTwQpv8x9DwnXWVSgG+YY0KCtndQhsyxwbKvzrbllUWSZ9JBD+mOxTdsh0Hi8F94Rgw1XUAS6Qb3Yr/xz7JLFGWkGZTpKW7Sj9u95p6324089AjQ08tKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eJuwVnYQgzMh2nTfrXvAUTrZCndi7ht3Um/aUnT9myo=;
- b=J1/ncR/O83eldS4N6A2nfpVxtnmP3VEf+xZN50X27Cl6327lP53GAublSB3Xiy5dIWX1ehicsuPL4NWrLggaEPBU3R+AYecHHtWt3wYmCZ+de6dkmi19zE5NHmCM7bKEJhqKbKtRHyG44RNZZjdOiP3T9vz7E6f8mUV2liBs9KdU3sIV7jkmWltqJTLE3OnO3FnYd1xWiQyisF4Ed5NESJPTOAW7qbRIJ/7ggvpLbYDYGc432+XNUkcvoLseGrqmGKbhUnkUjAW21W00Lmp/hb/yM6rMGbL/AYYAnUi/q1YdcKeMSk9vlWN/BAihmw40eHHaLdpkXxj0iLwOJ3t22w==
+ bh=yapM+bRRE9x25rmlaH66h/bno/k5aW+kSWO3g3B1zJY=;
+ b=oprzuVnR/3rxpNTGG5sjr3OiI3DZIyCeDTfT3+I5j6ocQXc8n7ZvK7C4NaVM242+EyaV6N5iMp5HJ5KAClWlo6jMgVCrKJhRPn68vRe9P17h1VGA434a6XaroXq9olM99j39FDlsqRGrMHTHYjwX32xAkqjTjJJS2Wqejay+5Y5swJEFfEgOzGaWkyDrjX1QaFD+ZXtpEvJeW4VQSPbf6wCXPiioSPCv9V279f9NJ9AgVgxcChiupYqaa5rezuPC3Gk/QmH1cppdFnhWB+nSuzmhrZkcDVY2S957NqvKINyjsEStXWg0faPOTX6E9taJi7hJ13SJcWLY4ZfcDCnTEQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eJuwVnYQgzMh2nTfrXvAUTrZCndi7ht3Um/aUnT9myo=;
- b=wDSW2kNeexfnN/8AEstfXmLXRskvDf1J8V0plo+W7lFE3I7JRSjBX7nmD4CpIeQsJhJVLFGgti5bk/D0CCPmMLHGeDKN9j/A2OaZxcBYEuyVWHM+EKMzt1iY4A3IqR4QNWSnAWDtztcy97C94kBqh4qBpl1R9hgekHNCQsC/ZHo=
+ bh=yapM+bRRE9x25rmlaH66h/bno/k5aW+kSWO3g3B1zJY=;
+ b=n5N1bpjinWbZRjc+d7nBHrLTByx051/ctEHH+tXShPQC75HrmCNl3Wd+qbFk6FPvg55q+zVBBDou8zHcRJ2h0FzmqyH8bNswI2luyechXIycZwkCR28a3dro5OlrJhxB8mmFWyzwoUb876uIkCSA+xNzhl4dn4CCi4uD7HdxtB8=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com (2603:1096:604:35e::5)
  by TY4PR01MB13904.jpnprd01.prod.outlook.com (2603:1096:405:1fb::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Wed, 19 Mar
- 2025 09:48:39 +0000
+ 2025 09:48:54 +0000
 Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com
  ([fe80::244d:8815:7064:a9f3]) by OS9PR01MB13950.jpnprd01.prod.outlook.com
  ([fe80::244d:8815:7064:a9f3%5]) with mapi id 15.20.8534.034; Wed, 19 Mar 2025
- 09:48:39 +0000
+ 09:48:54 +0000
 From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -44,9 +44,9 @@ To: cip-dev@lists.cip-project.org,
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: [PATCH 6.1.y-cip 04/12] dt-bindings: serial: Add documentation for Renesas RZ/V2H(P) (R9A09G057) SCIF support
-Date: Wed, 19 Mar 2025 10:47:46 +0100
-Message-ID: <20250319094754.2404386-5-tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 09/12] serial: sh-sci: Check if TX data was written to device in .tx_empty()
+Date: Wed, 19 Mar 2025 10:47:51 +0100
+Message-ID: <20250319094754.2404386-10-tommaso.merciai.xr@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250319094754.2404386-1-tommaso.merciai.xr@bp.renesas.com>
 References: <20250319094754.2404386-1-tommaso.merciai.xr@bp.renesas.com>
@@ -58,190 +58,229 @@ X-ClientProxiedBy: FR4P281CA0173.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: OS9PR01MB13950:EE_|TY4PR01MB13904:EE_
-X-MS-Office365-Filtering-Correlation-Id: c7f7e9d4-d3c6-4809-e06d-08dd66cb3a2e
+X-MS-Office365-Filtering-Correlation-Id: 1b3c9255-1a2c-4b95-1feb-08dd66cb42e5
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|1800799024|376014|366016|52116014|38350700014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?Kq1q/YBTluYbJE2oQO8GSKET68WAFIbiKzlzgtjYye2mTO9jrssLH4nCrTBI?=
- =?us-ascii?Q?cpMtrPfmukg10iX22SDDGXX3vc3bCk9dvW/1SF10j/RFT5xcoWWfuK9jUtPC?=
- =?us-ascii?Q?j/fa2Ee5GUPvbbmXeWzaZBoU7ZgHZMY84EUsJZhNXYA1eXI1sAdWFViAS8I4?=
- =?us-ascii?Q?trU2jyuBI3Wmazzsmn/l+XiKmZ18kFVYzP9p2GQXQJGLPlFGfNOE73fq/i0G?=
- =?us-ascii?Q?gAj4PJz553sRhHfGVZrEty3rC1etSworjbqYnZZSZ/SUx0IP78wydas6VJiT?=
- =?us-ascii?Q?X7/rHygLLPDxEY7d2dQED23YBva0pPaU/LcuCq0ZD6dsAYyk/dp208IJauZ7?=
- =?us-ascii?Q?fh0ZngLxApyl3N2Ex7UgOgCMZJKhpx/AHpgtTpUIn/+o4Q4wBB3vU9cDJoYR?=
- =?us-ascii?Q?moAUrqZfUiaFCLh/Mvs8bj7xjgdv+JMrQARn4sUKIgAhBVJebumOKDlK84LW?=
- =?us-ascii?Q?dETanT0qbjaYNCxN77oHZ6BTjvcB946tRwvikDW3BoKRWwBY9esFsIUhBx97?=
- =?us-ascii?Q?+M6Ksco9Fulp5D7AOu6ZFN4eum84fIUZ5+3vnXEFYc50dRMWk5tkprtNKa/a?=
- =?us-ascii?Q?CPLI9SOxFdmJcADNLpv1WYV9k7DYYtGce7eT16ZBNVFSuN4H+amtyWSMnSik?=
- =?us-ascii?Q?u1gSPkvqDSq/g2+csmoaJoteAvKgIerJfXNnU9UbORjghq/1k0K8DykPzRva?=
- =?us-ascii?Q?r2zt0tTHhQfx82miHlL2h0llmVLEBaRiXyeZ60bCMT1ieBz1L96YyarI97h+?=
- =?us-ascii?Q?QIrjvvq94vUX7lzcfVVCcrpF+eS4sl2udGVl+tOkjBhCEUaOwfs6z+9UUu1d?=
- =?us-ascii?Q?XLPE4SNyMVcaBS0rATwviKyev35A4U43Xe4zfUWNYSbXv+A48RRYVwNaoirj?=
- =?us-ascii?Q?/scZEzh+nqo3Fn+GsVmD54NHTNuW7WehPxu/FDlOS3O9LOaLbio+Mvg/c/0l?=
- =?us-ascii?Q?l2bUtxKMcd0WIqMUK+8+efp7PJwW4oi6AC0/MDYcHQvH0VvqbUr5Ptycqkvr?=
- =?us-ascii?Q?f//Uk7iNNlwQcNZ05NY5uyi2j0vDr2BQ6RJRGxEytfCvfiGVzlP+fcLX/3fS?=
- =?us-ascii?Q?CXv9Lz9qnf8uGq67bNkXDi4/nspT1dbxK95/d/yeVUor+U7/lnHLhOK63MXx?=
- =?us-ascii?Q?tSuT3UfZKYCr4YUeA+8ocwyNoIXp7/ybUo83BqhqV+tV87lQ8Z08GDjdGfcU?=
- =?us-ascii?Q?yUIxwqSRZ9uwbOhgI0oeTaukbyKxrIIJ8s5Q4V2cCk62/D73g+Vq97+75jk3?=
- =?us-ascii?Q?JAFLcq0bUjCz5xUdUpdScH+3D4AhhUeq050ewi/1VtswWwLBZnC3AWI6dXv4?=
- =?us-ascii?Q?CHDfuAEKIT5bvbgXI/NQG+BEcZwQG64snrtgobiv81TG661Y4P8fvabpyxXj?=
- =?us-ascii?Q?MWfv7FJvZ8ep3LvvgT9moNPvgSptgARp1y2G1cTWNPokaUsyKHrnzs4OclB3?=
- =?us-ascii?Q?hddsh2MY5dMdipqV84E1UwD7vyJ87H5+?=
+	=?us-ascii?Q?QTBuNdf4+KYPkSc5qam/j5tG9H5fOjy1myIKbsMH8ZznM75xB3PL9njSmb3o?=
+ =?us-ascii?Q?vA22ytk47r9VBzv28lHnhBz1fGGwjsBpmzaKsBlasKnZ2R55ObHx4ExbbwUD?=
+ =?us-ascii?Q?e+0p5EAgA89YNZhSNOMsUHtev976oJvAFc3cxZnEMR4Hbf6WunGQUQA5sLQF?=
+ =?us-ascii?Q?yHdJ7YcQz2kbzfyOQ4nKzi0d80M9p8cmnbx3YhGcrAbQnUw4HETaRebhXmc/?=
+ =?us-ascii?Q?tO+VISqh8dJvmnk/JmiTRSyWjEquxy5VtDgFEGdmkZOAP47Va6i5tiGwW2CB?=
+ =?us-ascii?Q?IUHmvsJnnrybibevMq2R0Jhi9/C82ho3iOeFiVKrnRyeMEzOyXYU9OXIgDCi?=
+ =?us-ascii?Q?JTk0sWEdfE/dVI8qZxivT5xd38plhFnCeQowG0OsvjXsUh8v5Nx2C8cOzlaj?=
+ =?us-ascii?Q?G8EDuP7YYJ7o0kKfEjlcN/N/WYOLz3O0Si5tUU/omGNxuPi79yoHagLcXWhw?=
+ =?us-ascii?Q?/TbcdnCP57sGycT6TdJMiuA+opVNCKlXSwHpUU7YrGtrR43DZhOpp2r4zUnt?=
+ =?us-ascii?Q?+vgyrejs+VlwKwtIe16qLLExolzuA9UXkWIi4RameJy6kboooU7kSEO4LVfX?=
+ =?us-ascii?Q?Bj/CkXQNsxJ4TZI1wC2laKMPopBOsX1+0Ki21PMXKehue7rRoETZ4br653Zo?=
+ =?us-ascii?Q?HKkQBq6spcCDyHGlXuKCXVOBy9dP/sGTvr4BSWDJRfJKTVmPBV+7UZbUZDbc?=
+ =?us-ascii?Q?999+eacGNiHzeW5SsUtTJjeEpFwa9+eKgpHc+snSq4MoHlwPc8BbOeEGUTi7?=
+ =?us-ascii?Q?GErU//kmWkheAczDsmEONTsZ4LNqI3bRjUR3oj5cb0ewJz57Fs3jaomd+wMZ?=
+ =?us-ascii?Q?E4bwPNPanGnlWKUhh/pcsjxhDfG/ethhjaALyOrDPVyWx1o0aLIV/OP3WvMM?=
+ =?us-ascii?Q?GD8X4PLkIIl7Qa0GFOUo8gXOCrCoH2SvKcKeFvxwMLn9Nvg59AfU8MfqgZzT?=
+ =?us-ascii?Q?/tHQJ0NVC/1a4oAECc44dZSr9q9Ld3myEd9jbaOWOtEz/kYFmn0rY95He9vy?=
+ =?us-ascii?Q?ozGTADRhkEvjc8OZNzP6+0YSWRZbixp2MSVRVL8CpTtTvD5kXWO2EzwRPm/A?=
+ =?us-ascii?Q?YdT5U6t13wiZIFJjRI/6yoxd3/z+y2cBOiIzkcTbIPAxkyBPx8BAjNBYcpnH?=
+ =?us-ascii?Q?gnkuuC77U0BkyHhLzE/C+6jPkcPDS8FaYvQ0bqFeLnzCQNyVMpcodDopODE/?=
+ =?us-ascii?Q?p3NAmi83ATitfEfa5Y/kYA9NZ+XnoX8gguoj82QlNKKCYXFMUDF2abdMQlt2?=
+ =?us-ascii?Q?qS2hCr2Xk0/i/K7CzPn8L58TBuw0FsnmVN/Z4nDLzTg9ahXy6XfP4tvAusMY?=
+ =?us-ascii?Q?+9/MwyyEnwCzVGk3MEk9xd/DYOo0BpkO2cPg7CbqX5Q3Rm4IEuwTXf82M6Ju?=
+ =?us-ascii?Q?iTKjhZYc9pnb3APvbskfbvzXsJFHU5MKGUKoB72Zvo6HAqcfL0tvCFIB9ZAG?=
+ =?us-ascii?Q?SoU93lqgszAPZdhDjtheN2G65HP7+LVM?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS9PR01MB13950.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(52116014)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?U3E6aHlWWyCw97P3OUw5EyoUyZUQwaO0LmkOPwDgacmO8nWgfnrHam1fk3PZ?=
- =?us-ascii?Q?dFjYvrRT2X6IHEfrrbNS5yl8T+H/UROtb0iJwF1o0UGKUWohA6tg2+qYBuSp?=
- =?us-ascii?Q?oxJiRP8NcuNk6ZqwrttUZKx4BmGxSt17HS8AVtAvy/Kz953S/Gck1CwdexaW?=
- =?us-ascii?Q?remGA3vfXpyq0IYVeMQrNZtwtv1A2ERxaTvx9dEeYIiJ5PWjAt6iH0ZYh+wm?=
- =?us-ascii?Q?MlzehUvkV5+A+3KOq215AMTkzesefmJDiat07ox2G/zrioPSxAQe4la6jS5b?=
- =?us-ascii?Q?yZx076DskxfzDEUajKjy19eGA2ga+Somx4R59JwLNpJGo2kLjiXwpEMOT05p?=
- =?us-ascii?Q?6/sNSjYxn/+QiQcwSAAcGNjrZKS3JkbAoXpmeGp+/sL1xEyHdtAkNnTa5LJ/?=
- =?us-ascii?Q?Uw5k/n3w5pS+R5MSwWoefNxlLvR+L1vKHBEPWyadwyVfTXI9J8xM4TdzHsAV?=
- =?us-ascii?Q?oaoZ8KYBhqFjHJT7u9Oq3WKhRWbf1dNTK5AgPF0+X1czCqHP7goiAVoYt1kG?=
- =?us-ascii?Q?aT4R2GfQcOB7RE9POdAsOcOMlmJ+j/NzPuuYhwAzRu3ia5yPj9bhU9PoIGDw?=
- =?us-ascii?Q?B0jVBPd8Mta7nblPafk6g9sNeyQkljcEzQMtbWzIhO+nvujfCogxiWCJM50j?=
- =?us-ascii?Q?YOyItxKXYPL44f/moCvxIwvr63RE+9tGmHHnzdi867T8l8Z5BdKzuPNjvlE9?=
- =?us-ascii?Q?87HdkFgYK4GrGO3Aoo7F0pj8WgJmoq4rq7W0szw8zGxjZJ8vpV5Qs8z6H7tx?=
- =?us-ascii?Q?+3n6UnBI/aDWLMC5qAUMq97BJSs9q+LwU9q8xEv3q+0w/qegPOVTwPfomjnc?=
- =?us-ascii?Q?5Qx68wDvwoXkBPL934Y3QrW2+FW7QOrZPrpNS1vVQIveelSZ/oA8v6gfV4BM?=
- =?us-ascii?Q?gwtGgSa+xPpPdvE1tMy9MYrjvgopkFAI3sVaUo1afqzo5DFVv2CDKQdpc68o?=
- =?us-ascii?Q?77wacpwRwesszj7+ZhdzdZGlaPr+85NlCSzkL7QtLrkiw2I6PDKx7fuDWHwk?=
- =?us-ascii?Q?mGbnignYqAwbcAvK2NOFCg3qcbd/0fHhlNhjIascF5A/ckWWlXNMd6pmEjPp?=
- =?us-ascii?Q?dPw6v9/o4JHa4Aj4YsytFEBQZpOFSv/vAeuYg5wb/a1php4c/k965dsvzpA4?=
- =?us-ascii?Q?qls4EGZC/3giKcnfjak6zbDmPvx7SsyI8B//qhLYkIuwyix8Yk5l0ZtK/V3g?=
- =?us-ascii?Q?tNewNqCVc7c5Rf2dNEIZbc6GecSJyxNAvoTAM1OkPThS8mkE3hqIXP+J3+VD?=
- =?us-ascii?Q?lHf7BJFJELMMh3UZCK1JnmoEDHvJTGJLY9k/sJB3RHYLA4hPUaLpEXvKmU4+?=
- =?us-ascii?Q?J4XGVE4bDAHX0XjPDtFYYi7OBSve7Scpk7UUj1FT/Jvsv4mEcIg0daG4FtTs?=
- =?us-ascii?Q?31Pduvcsz8NZ9tbXO/AormslGAQCN7ErdfMka8fb3XQPB9JTCdYRT+AVWXmn?=
- =?us-ascii?Q?PPoIxqQ2X1Z1W7JrtzDhcpAfVqcbjyZNqtY2B4dHQe1HMOVC9J4xsA+abvTe?=
- =?us-ascii?Q?zL5anC90c8awuHoKGsP4/i0tdhHQVkvVscn1InLXgWctfTC9+iO3iWTUkid8?=
- =?us-ascii?Q?qFgcUNQA4PKdNw4G7wxPUtlKAg6zp/z2UZtBOcIfDdxGkUBKXn0lq+N8yClw?=
- =?us-ascii?Q?8lVUBWqDlabvamz+7NqLtc0=3D?=
+	=?us-ascii?Q?i0faSTPRDxWeb5Yah8SdYX0Wxa6RAvj9pcdIhqEmIIDX1ux2AKzlSM+km6jg?=
+ =?us-ascii?Q?sisW6NzJppM5t1WkeJ3Llp/wAOGT2N4+dDwC1YghjCFEH+mLG4oz7VBWDF/P?=
+ =?us-ascii?Q?JqC+aysIhbJ81bp435bjmL4d10sJfeo0oiWk1OMF0huep0XiVR2oV5rrNMZn?=
+ =?us-ascii?Q?lO8byRv86QjGa8+Raxe6ELIRKBfMwhaADfgZb3QvXVqtwChXL68gj/RLvVCS?=
+ =?us-ascii?Q?RatzInPCTXjFAYLRBHpyer2I6m9f06iJ/0ZRrkEFSfteN4SW/ZmTJV2R3mPZ?=
+ =?us-ascii?Q?xmAprhQQPuo5vbfnNNdv3WdHj1qLHL5jLz4R5/JOGc0Ep9XQdbc7NNAVKci7?=
+ =?us-ascii?Q?KCEL1N+RwIPbWd0ntbPOEyqjjcaYJGl5ay16Yl5wzCSePH7spgGRNLOm5kUB?=
+ =?us-ascii?Q?lxyT2nvm9axkaS8q5NfRHs/0nql1KlZ5HzuR5S2N+ZKvkSfkBKk7UGD8bzTz?=
+ =?us-ascii?Q?z5+aEuHfNWjSgZMKzARbJ2tdQGtBKMynCu6Lzqux2Cq+62AXuKyCyS0W8IVA?=
+ =?us-ascii?Q?ObPg+JzI+X/9jvktmT3ToxGPdYGodZYKfuoO97NfF11IemUEe6AOtEvDmuQB?=
+ =?us-ascii?Q?D4PB+hoGPnwPY39DvELWjPtm/FAYGZYdBEPB5jfeD3QG7rGr5IpsJqc8B8Dg?=
+ =?us-ascii?Q?yLtGia/2VZzkDMomb9/VPJA8gYInk4CdJNdpy6Eidlak/TLWwGyJaABlM4Tq?=
+ =?us-ascii?Q?Fa/6j1yDWVTcUEoKycrqANTbRBXzBt6bz4lOjLx/dC96YTKP0VrodhB18eEG?=
+ =?us-ascii?Q?7rYF36eV6bENm2LPiz3cKokZV0Y+N3j0LplhOwj7aiA0n/OvRAxfZFl63frA?=
+ =?us-ascii?Q?ZfzunLXJHuwo3fUY1QPSVI8KWz/olH6NDVRadA//9ghAL3blJpRcVzMxw3AB?=
+ =?us-ascii?Q?1GdCAMDvK/ynrahoJFijbqmvWwaVaeAJIXRTV1iZ58oprVCVibD9c3skjS6y?=
+ =?us-ascii?Q?drtv+5eZJ432wSrELO5icEiqpWoZM18VyNbjIxrlWiUzQOrG3J27GS/myASx?=
+ =?us-ascii?Q?2Rhr8kNAR+zBvYIBGMgJqRbnBvRp+TUiR52u2wHCSf0UJvNAJqcpWY3mrPOo?=
+ =?us-ascii?Q?sgV6XyZX+o2i1aXhuQ2z0TrBpIT9u+e+CBeWmDW/50Q7IyGDZBR8BtINvh0+?=
+ =?us-ascii?Q?V7RnSGmPet8LTwK6OIqCwR9/+U8jH8RHFfRbAUHtOUztrgOnHIqrNg9I1dJZ?=
+ =?us-ascii?Q?C1yLRnrj4sl2w5Bl7zRedIjD/RN14U77yYUmsl90yIqIjmLSS332yjeJyFMc?=
+ =?us-ascii?Q?6kngSOlgjdjHkPAhVBU1G/uHS08W3VHXHYbORtBVC4oFKF/4eEAQVpYQM4DL?=
+ =?us-ascii?Q?IuQIkI50eR7y02Q+0glm2i57HQSC807khVcqLAk2mKSev4Ge6LtwTZkvIkgt?=
+ =?us-ascii?Q?qSuZOTGhW8ANbtZNZgPD02w998c9qupdq7ZzgPv4o1mijACYeOojq1Zpx/CM?=
+ =?us-ascii?Q?ddmtJYh3ET40aZAFhrbKMDctMvG/DAa8xog7+3HOZU2y6B+TSa5WhO6Gl2WJ?=
+ =?us-ascii?Q?0jlGN4DXpcUVoJDcS+c+3/95k6FS3VA4sHbi565huq9QzFlzqpn5XTJx+xW4?=
+ =?us-ascii?Q?HRrr3qhAZjde7OV8zmvEAkVEb5p5G4Gv+otcElvOP1b2EDy4dMVucpnOa3Z6?=
+ =?us-ascii?Q?Ow918qoXb5HDpJbwFIOCP7Y=3D?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c7f7e9d4-d3c6-4809-e06d-08dd66cb3a2e
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b3c9255-1a2c-4b95-1feb-08dd66cb42e5
 X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB13950.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 09:48:39.7939
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 09:48:54.6354
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: S5EOGkW816DfQsMfifh0lZ3jcHUldwfYDe0F4E1/fBLu2qv+c+KG8GvhItCShe6trtYR1Q3hCYFdBuD25jYopBUPNNBi1SIObIyNBygMB7itLEB88feO9BIxGUQyJ0AF
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5PTtU/OUKOKiVP5Arm/BQtgbFhT1r6GfKDhrlRb6CHZD5+S/jO0FlWd0/vg9oCYm3fJjVCy2Ng41LUDk6H7YrHMm8hKyBHLNWMGcCIpmc3jjl9jB78FCSey7L4Qrvz6n
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB13904
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 19 Mar 2025 09:48:50 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18251
+ <cip-dev@lists.cip-project.org>; Wed, 19 Mar 2025 09:49:00 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18256
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 964a80cfbf56f5fa88f09d704c311ed6db0a361f upstream.
+commit 7cc0e0a43a91052477c2921f924a37d9c3891f0c upstream.
 
-Document support for the Serial Communication Interface with FIFO (SCIF)
-available in the Renesas RZ/V2H(P) (R9A09G057) SoC. The SCIF interface in
-the Renesas RZ/V2H(P) is similar to that available in the RZ/G2L
-(R9A07G044) SoC, with the following differences:
+On the Renesas RZ/G3S, when doing suspend to RAM, the uart_suspend_port()
+is called. The uart_suspend_port() calls 3 times the
+struct uart_port::ops::tx_empty() before shutting down the port.
 
-- RZ/V2H(P) SoC has three additional interrupts: one for Tx end/Rx ready
-  and two for Rx and Tx buffer full, all of which are edge-triggered.
-- RZ/V2H(P) supports asynchronous mode, whereas RZ/G2L supports both
-  synchronous and asynchronous modes.
-- There are differences in the configuration of certain registers such
-  as SCSMR, SCFCR, and SCSPTR between the two SoCs.
+According to the documentation, the struct uart_port::ops::tx_empty()
+API tests whether the transmitter FIFO and shifter for the port is
+empty.
 
-To handle these differences in the driver, a new SoC-specific compatible
-string is added, ensuring proper handling of the unique features and
-register configurations of the RZ/V2H(P) SoC.
+The Renesas RZ/G3S SCIFA IP reports the number of data units stored in the
+transmit FIFO through the FDR (FIFO Data Count Register). The data units
+in the FIFOs are written in the shift register and transmitted from there.
+The TEND bit in the Serial Status Register reports if the data was
+transmitted from the shift register.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20240604170513.522631-5-prabhakar.mahadev-l=
-ad.rj@bp.renesas.com
+In the previous code, in the tx_empty() API implemented by the sh-sci
+driver, it is considered that the TX is empty if the hardware reports the
+TEND bit set and the number of data units in the FIFO is zero.
+
+According to the HW manual, the TEND bit has the following meaning:
+
+0: Transmission is in the waiting state or in progress.
+1: Transmission is completed.
+
+It has been noticed that when opening the serial device w/o using it and
+then switch to a power saving mode, the tx_empty() call in the
+uart_port_suspend() function fails, leading to the "Unable to drain
+transmitter" message being printed on the console. This is because the
+TEND=3D0 if nothing has been transmitted and the FIFOs are empty. As the
+TEND=3D0 has double meaning (waiting state, in progress) we can't
+determined the scenario described above.
+
+Add a software workaround for this. This sets a variable if any data has
+been sent on the serial console (when using PIO) or if the DMA callback has
+been called (meaning something has been transmitted). In the tx_empty()
+API the status of the DMA transaction is also checked and if it is
+completed or in progress the code falls back in checking the hardware
+registers instead of relying on the software variable.
+
+Fixes: 73a19e4c0301 ("serial: sh-sci: Add DMA support.")
+Cc: stable@vger.kernel.org
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Link: https://lore.kernel.org/r/20241125115856.513642-1-claudiu.beznea.uj@b=
+p.renesas.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- .../bindings/serial/renesas,scif.yaml         | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ drivers/tty/serial/sh-sci.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,scif.yaml b/D=
-ocumentation/devicetree/bindings/serial/renesas,scif.yaml
-index 252c1e6102a9..7b997adec92f 100644
---- a/Documentation/devicetree/bindings/serial/renesas,scif.yaml
-+++ b/Documentation/devicetree/bindings/serial/renesas,scif.yaml
-@@ -78,6 +78,8 @@ properties:
-               - renesas,scif-r9a08g045      # RZ/G3S
-           - const: renesas,scif-r9a07g044   # RZ/G2{L,LC} fallback
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index d1140fec861b..19fa3f8f4a6d 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -158,6 +158,7 @@ struct sci_port {
 =20
-+      - const: renesas,scif-r9a09g057       # RZ/V2H(P)
+ 	bool has_rtscts;
+ 	bool autorts;
++	bool tx_occurred;
+ };
+=20
+ #define SCI_NPORTS CONFIG_SERIAL_SH_SCI_NR_UARTS
+@@ -853,6 +854,7 @@ static void sci_transmit_chars(struct uart_port *port)
+ {
+ 	struct circ_buf *xmit =3D &port->state->xmit;
+ 	unsigned int stopped =3D uart_tx_stopped(port);
++	struct sci_port *s =3D to_sci_port(port);
+ 	unsigned short status;
+ 	unsigned short ctrl;
+ 	int count;
+@@ -889,6 +891,7 @@ static void sci_transmit_chars(struct uart_port *port)
+ 		}
+=20
+ 		serial_port_out(port, SCxTDR, c);
++		s->tx_occurred =3D true;
+=20
+ 		port->icount.tx++;
+ 	} while (--count > 0);
+@@ -1249,6 +1252,7 @@ static void sci_dma_tx_complete(void *arg)
+ 		uart_write_wakeup(port);
+=20
+ 	if (!uart_circ_empty(xmit)) {
++		s->tx_occurred =3D true;
+ 		s->cookie_tx =3D 0;
+ 		schedule_work(&s->work_tx);
+ 	} else {
+@@ -1738,6 +1742,19 @@ static void sci_flush_buffer(struct uart_port *port)
+ 		s->cookie_tx =3D -EINVAL;
+ 	}
+ }
 +
-   reg:
-     maxItems: 1
-=20
-@@ -92,6 +94,9 @@ properties:
-           - description: Break interrupt
-           - description: Data Ready interrupt
-           - description: Transmit End interrupt
-+          - description: Transmit End/Data Ready interrupt
-+          - description: Receive buffer full interrupt (EDGE trigger)
-+          - description: Transmit buffer empty interrupt (EDGE trigger)
-         minItems: 4
-=20
-   interrupt-names:
-@@ -103,6 +108,9 @@ properties:
-       - const: bri
-       - const: dri
-       - const: tei
-+      - const: tei-dri
-+      - const: rxi-edge
-+      - const: txi-edge
-=20
-   clocks:
-     minItems: 1
-@@ -159,6 +167,7 @@ allOf:
-               - renesas,rcar-gen3-scif
-               - renesas,rcar-gen4-scif
-               - renesas,scif-r9a07g044
-+              - renesas,scif-r9a09g057
-     then:
-       required:
-         - resets
-@@ -208,9 +217,30 @@ allOf:
-       properties:
-         interrupts:
-           minItems: 6
-+          maxItems: 6
-=20
-         interrupt-names:
-           minItems: 6
-+          maxItems: 6
++static void sci_dma_check_tx_occurred(struct sci_port *s)
++{
++	struct dma_tx_state state;
++	enum dma_status status;
 +
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: renesas,scif-r9a09g057
-+    then:
-+      properties:
-+        clocks:
-+          maxItems: 1
++	if (!s->chan_tx)
++		return;
 +
-+        clock-names:
-+          maxItems: 1
-+
-+        interrupts:
-+          minItems: 9
-+
-+        interrupt-names:
-+          minItems: 9
++	status =3D dmaengine_tx_status(s->chan_tx, s->cookie_tx, &state);
++	if (status =3D=3D DMA_COMPLETE || status =3D=3D DMA_IN_PROGRESS)
++		s->tx_occurred =3D true;
++}
+ #else /* !CONFIG_SERIAL_SH_SCI_DMA */
+ static inline void sci_request_dma(struct uart_port *port)
+ {
+@@ -1747,6 +1764,10 @@ static inline void sci_free_dma(struct uart_port *po=
+rt)
+ {
+ }
 =20
- unevaluatedProperties: false
++static void sci_dma_check_tx_occurred(struct sci_port *s)
++{
++}
++
+ #define sci_flush_buffer	NULL
+ #endif /* !CONFIG_SERIAL_SH_SCI_DMA */
 =20
+@@ -2083,6 +2104,12 @@ static unsigned int sci_tx_empty(struct uart_port *p=
+ort)
+ {
+ 	unsigned short status =3D serial_port_in(port, SCxSR);
+ 	unsigned short in_tx_fifo =3D sci_txfill(port);
++	struct sci_port *s =3D to_sci_port(port);
++
++	sci_dma_check_tx_occurred(s);
++
++	if (!s->tx_occurred)
++		return TIOCSER_TEMT;
+=20
+ 	return (status & SCxSR_TEND(port)) && !in_tx_fifo ? TIOCSER_TEMT : 0;
+ }
+@@ -2255,6 +2282,7 @@ static int sci_startup(struct uart_port *port)
+=20
+ 	dev_dbg(port->dev, "%s(%d)\n", __func__, port->line);
+=20
++	s->tx_occurred =3D false;
+ 	sci_request_dma(port);
+=20
+ 	ret =3D sci_request_irq(s);
 --=20
 2.43.0
 
