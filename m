@@ -2,158 +2,69 @@ Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ABDEC28B30
-	for <webhook@archiver.kernel.org>; Thu, 20 Mar 2025 09:03:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C013AC28B30
+	for <webhook@archiver.kernel.org>; Thu, 20 Mar 2025 10:02:47 +0000 (UTC)
 Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web10.2987.1742461382544229161
+ by mx.groups.io with SMTP id smtpd.web11.3794.1742464955492047341
  for <cip-dev@lists.cip-project.org>;
- Thu, 20 Mar 2025 02:03:03 -0700
+ Thu, 20 Mar 2025 03:02:35 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=OoCC0P3A;
+ dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=XYyHIp0h;
  spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0CF00101E91CA;
-	Thu, 20 Mar 2025 10:02:57 +0100 (CET)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6D183101E90CF;
+	Thu, 20 Mar 2025 11:02:29 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1742461380; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=QHg+qTsXE+7llbq0Op26Y1LBt1B8qjStfw7GXw2PBHQ=;
-	b=OoCC0P3Ad45FmUY/I0+u43VXFn/xFGuF3WrdbkuczMI1MHY+jyqaeydDaevTXgGiHHD2+A
-	AKQs0ZUcPg4WzfvvHaETzaACblb212u6Bs7eWD4jcZsLInDazJHUFTqTQXdME8tgemO2aR
-	t/AwVj0vZyNZoVHzmMk+c4KOMynRCjX6rp6EcGZeURzDh+/bcG6aWJZ5iQ7j0SALC1AG2p
-	v1nT3vwNbRddNG0l8nbpno+U/69VxmdGLzSMhrYq0IWpz6MlzuYj4Fn7OGfKZxP7opDMjY
-	abBhxqvmfx3Z/WbW9twKz3nVby0F+KHrJ/V1Q4AHCoI97fiBgq9MvTPydBdbGA==
-Date: Thu, 20 Mar 2025 10:02:55 +0100
+	t=1742464953; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=4Hm5aptyRKr71soy+xBndPuCBn6Flje1nSnLRPkVjcs=;
+	b=XYyHIp0hKhlrS0cscqW5j2uj+wyprr5ATWFj3TfNkD2VT0yipECmN/c0YFDzndipL2OYJO
+	Oboie0nuc++v/FcDCUStKECsgzLyZzphSt0NeTW/X24TVe4WMqSudGBDwNTCJvy9cu5QvB
+	Hxv7yxA176jilHR7pJD5gnyT0/WgIciiCLlAA0LcY6HBbmH9TqrJ21lN/RCOY+5F2k+gg/
+	pb1z2uTSM15W303Dmd5MiOWPbXugxF4DDb6UK5KYqOnDO1R+oB5fDKhbs7wxG4HpQjwzR8
+	lL+ClkBzocKyyCNu29qUQOgBaLhB1SXGpZAWbKQ83jvMVPSjWaiQBjY6nqXAlA==
+Date: Thu, 20 Mar 2025 11:02:27 +0100
 From: Pavel Machek <pavel@denx.de>
 To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: cip-dev@lists.cip-project.org,
+Cc: Pavel Machek <pavel@denx.de>, cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@denx.de>, Biju Das <biju.das.jz@bp.renesas.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: Re: [PATCH 6.1.y-cip 13/85] clk: renesas: rzv2h: Add MSTOP support
-Message-ID: <Z9vZv+yUxREwK8FC@duo.ucw.cz>
-References: <20250312112302.1605750-1-tommaso.merciai.xr@bp.renesas.com>
- <20250312112302.1605750-14-tommaso.merciai.xr@bp.renesas.com>
+Subject: Re: [cip-dev] [PATCH 6.1.y-cip v2 00/12] serial: sh-sci: Add support
+ for RZ/G3E serial driver
+Message-ID: <Z9vns4WDhX0uvZ2N@duo.ucw.cz>
+References: <20250319101629.2407727-1-tommaso.merciai.xr@bp.renesas.com>
+ <182E2D5440856AF6.20726@lists.cip-project.org>
+ <Z9qcRBPx38dI4QtV@duo.ucw.cz>
+ <Z9qdLZ6MSVEaMpj0@tom-desktop>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="OPVODEaHzTVVYbg9"
+	protocol="application/pgp-signature"; boundary="ByHjVEvjxQdf1kuI"
 Content-Disposition: inline
-In-Reply-To: <20250312112302.1605750-14-tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <Z9qdLZ6MSVEaMpj0@tom-desktop>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 20 Mar 2025 09:03:07 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18289
+ <cip-dev@lists.cip-project.org>; Thu, 20 Mar 2025 10:02:47 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18290
 
 
---OPVODEaHzTVVYbg9
+--ByHjVEvjxQdf1kuI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->=20
-> commit 9b6e63a777ea5fb85bf24f9cb5ba902eed4f1f2f upstream.
->=20
-> Add MSTOP support to control buses for the individual units on RZ/V2H.
-> Use per-bit (instead of group-based) configuration and atomic counters,
-> to ensure precise control over individual MSTOP bits, and to prevent
-> issues with shared dependencies between module clocks.
->=20
-> Co-developed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Yup sorry, I forgot to update the cover letter :'(
+> Basically on v1 I missed my SOB.
 
-> +++ b/drivers/clk/renesas/r9a09g057-cpg.c
-> +static void rzv2h_mod_clock_mstop_enable(struct rzv2h_cpg_priv *priv,
-> +					 u32 mstop_data)
-> +{
-> +	unsigned long mstop_mask =3D FIELD_GET(BUS_MSTOP_BITS_MASK, mstop_data);
-> +	u16 mstop_index =3D FIELD_GET(BUS_MSTOP_IDX_MASK, mstop_data);
-> +	unsigned int index =3D (mstop_index - 1) * 16;
-> +	atomic_t *mstop =3D &priv->mstop_count[index];
-> +	unsigned long flags;
-> +	unsigned int i;
-> +	u32 val =3D 0;
-> +
-> +	spin_lock_irqsave(&priv->rmw_lock, flags);
-> +	for_each_set_bit(i, &mstop_mask, 16) {
-> +		if (!atomic_read(&mstop[i]))
-> +			val |=3D BIT(i) << 16;
-> +		atomic_inc(&mstop[i]);
-> +	}
-> +	if (val)
-> +		writel(val, priv->base + CPG_BUS_MSTOP(mstop_index));
-> +	spin_unlock_irqrestore(&priv->rmw_lock, flags);
-> +}
-> +
-> +static void rzv2h_mod_clock_mstop_disable(struct rzv2h_cpg_priv *priv,
-> +					  u32 mstop_data)
-> +{
-> +	unsigned long mstop_mask =3D FIELD_GET(BUS_MSTOP_BITS_MASK, mstop_data);
-> +	u16 mstop_index =3D FIELD_GET(BUS_MSTOP_IDX_MASK, mstop_data);
-> +	unsigned int index =3D (mstop_index - 1) * 16;
-> +	atomic_t *mstop =3D &priv->mstop_count[index];
-> +	unsigned long flags;
-> +	unsigned int i;
-> +	u32 val =3D 0;
-> +
-> +	spin_lock_irqsave(&priv->rmw_lock, flags);
-> +	for_each_set_bit(i, &mstop_mask, 16) {
-> +		if (!atomic_read(&mstop[i]) ||
-> +		    atomic_dec_and_test(&mstop[i]))
-> +			val |=3D BIT(i) << 16 | BIT(i);
-> +	}
-> +	if (val)
-> +		writel(val, priv->base + CPG_BUS_MSTOP(mstop_index));
-> +	spin_unlock_irqrestore(&priv->rmw_lock, flags);
-> +}
+No problem.
 
-> @@ -555,6 +619,41 @@ rzv2h_cpg_register_mod_clk(const struct rzv2h_mod_cl=
-k *mod,
-> =20
->  	priv->clks[id] =3D clock->hw.clk;
-> =20
-> +	/*
-> +	 * Ensure the module clocks and MSTOP bits are synchronized when they a=
-re
-> +	 * turned ON by the bootloader. Enable MSTOP bits for module clocks tha=
-t were
-> +	 * turned ON in an earlier boot stage.
-> +	 */
-> +	if (clock->mstop_data !=3D BUS_MSTOP_NONE &&
-> +	    !mod->critical && rzv2h_mod_clock_is_enabled(&clock->hw)) {
-> +		rzv2h_mod_clock_mstop_enable(priv, clock->mstop_data);
-> +	} else if (clock->mstop_data !=3D BUS_MSTOP_NONE && mod->critical) {
-> +		unsigned long mstop_mask =3D FIELD_GET(BUS_MSTOP_BITS_MASK, clock->mst=
-op_data);
-> +		u16 mstop_index =3D FIELD_GET(BUS_MSTOP_IDX_MASK, clock->mstop_data);
-> +		unsigned int index =3D (mstop_index - 1) * 16;
-> +		atomic_t *mstop =3D &priv->mstop_count[index];
-> +		unsigned long flags;
-> +		unsigned int i;
-> +		u32 val =3D 0;
-> +
-> +		/*
-> +		 * Critical clocks are turned ON immediately upon registration, and the
-> +		 * MSTOP counter is updated through the rzv2h_mod_clock_enable() path.
-> +		 * However, if the critical clocks were already turned ON by the initi=
-al
-> +		 * bootloader, synchronize the atomic counter here and clear the MSTOP=
- bit.
-> +		 */
-> +		spin_lock_irqsave(&priv->rmw_lock, flags);
-> +		for_each_set_bit(i, &mstop_mask, 16) {
-> +			if (atomic_read(&mstop[i]))
-> +				continue;
-> +			val |=3D BIT(i) << 16;
-> +			atomic_inc(&mstop[i]);
-> +		}
-> +		if (val)
-> +			writel(val, priv->base + CPG_BUS_MSTOP(mstop_index));
-> +		spin_unlock_irqrestore(&priv->rmw_lock, flags);
+For some reason, your patches don't seem to hit the cip-dev mailing
+list (?).
 
-If these three could somehow be shared, it would be nice.
+It passed the testing so I applied the series.
 
 Best regards,
 								Pavel
@@ -161,15 +72,15 @@ Best regards,
 DENX Software Engineering GmbH,        Managing Director: Erika Unter
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---OPVODEaHzTVVYbg9
+--ByHjVEvjxQdf1kuI
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ9vZvwAKCRAw5/Bqldv6
-8h28AJ9p8qMxClCvCk3Gf+Xrom66t3syWACgkcKtOv3T88GdOBPQwVjoIImXNYs=
-=S3o0
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ9vnswAKCRAw5/Bqldv6
+8jDOAJ9+E6EWhUwKWKbcgviCC7pAWJ8QOwCeIKxrhpZ8rL9URSd51bUipl6yJBs=
+=HHuc
 -----END PGP SIGNATURE-----
 
---OPVODEaHzTVVYbg9--
+--ByHjVEvjxQdf1kuI--
 
