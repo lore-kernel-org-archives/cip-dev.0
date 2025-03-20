@@ -1,195 +1,114 @@
-Return-Path: <ch@denx.de>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D66AC36002
-	for <webhook@archiver.kernel.org>; Thu, 20 Mar 2025 07:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57134C28B30
+	for <webhook@archiver.kernel.org>; Thu, 20 Mar 2025 08:59:07 +0000 (UTC)
 Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web11.2369.1742456600861965255
+ by mx.groups.io with SMTP id smtpd.web11.3067.1742461146099003928
  for <cip-dev@lists.cip-project.org>;
- Thu, 20 Mar 2025 00:43:21 -0700
+ Thu, 20 Mar 2025 01:59:06 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=TbIn6Qf9;
- spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: ch@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F17DE101E90E2;
-	Thu, 20 Mar 2025 08:43:18 +0100 (CET)
+ dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=VOdg5FRz;
+ spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A0AC1101E91CA;
+	Thu, 20 Mar 2025 09:58:59 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1742456599; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=MSeL0XQp5SDliXMCLkr6D0ZYViPoiJgR5HA5ZuJHgRA=;
-	b=TbIn6Qf9FEB+WQE6d72BqdXZyv9yruVedN3/RXaOuLqy2lunrcEPimYiccC/5cfSLCawRI
-	mCdIfXj8qmSQxOF/Gp50PI6shnIR7ddcAAEoKrkaFfyLlY/tMcJ+z0wmTsFvE8FGuBl/Uc
-	a9+E2pw97AqIhkq7Bl06+NfNCOsk9FbPNAahkxwpvw4TyunK6/1c6bktFyQUNt8XrRApp+
-	r/pU/xlCgXyvzM284fUR56Ig9L59oL2IOO5KcCSHbSEHCFlNmqMJVRjKKfJkjbNKVJs2b/
-	PR5AhNyk1cdnWObUvgmRIy/NFSLvXyn0E0Intf8JgyTDryTXencsE3qxn49CwQ==
-From: Claudius Heine <ch@denx.de>
-Date: Thu, 20 Mar 2025 08:43:05 +0100
-Subject: [PATCH v6 1/4] initramfs-crypt-hook: store initial encryption key
- in TPM2
+	t=1742461144; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=J4J7p56B11qV1r/xoWNwHJrVL8KOcVZuLCWskB2vAvM=;
+	b=VOdg5FRzOnBWVVJ2+3gGf4OQIDpECdVHrZUGxPoM2eMekskaWcBTgprb8+mHCY1Fw31Vt2
+	RAfKQdNo4qQYiPfI0RdHqC/bg15ij6KybtMVLUeNyIc+39YvibVybbeW7u30S3q1OI7fuh
+	x58SxdwFpYM/0Mt35Zufg75WCIx5ZnID3XA2VFEUxvREyUWrFaA2NkirTtuBcwjDqWiWK4
+	7rdQZFaJmhkNLIrd/zSn4frZjgCTwrJe1/lVZaoiIkV5ATSHTabS9LE7Z4Wo4kz4aI4T2G
+	xwvcudX8oWifkZC6H9mzePjjCqJar1tjTL9i23p0SGgxazbr28Pr+CamomykcQ==
+Date: Thu, 20 Mar 2025 09:58:57 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Pavel Machek <pavel@denx.de>, Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	tomm.merciai@gmail.com
+Subject: Re: [PATCH 6.1.y-cip 08/85] clk: renesas: rzv2h: Add selective
+ Runtime PM support for clocks
+Message-ID: <Z9vY0Qu0COR469mD@duo.ucw.cz>
+References: <20250312112302.1605750-1-tommaso.merciai.xr@bp.renesas.com>
+ <20250312112302.1605750-9-tommaso.merciai.xr@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250320-initramfs-crypt-hook-patches-2-v6-1-ef10c11cad94@denx.de>
-References: <20250320-initramfs-crypt-hook-patches-2-v6-0-ef10c11cad94@denx.de>
-In-Reply-To: <20250320-initramfs-crypt-hook-patches-2-v6-0-ef10c11cad94@denx.de>
-To: cip-dev@lists.cip-project.org
-Cc: Jan Kiszka <jan.kiszka@siemens.com>, 
- Quirin Gylstorff <quirin.gylstorff@siemens.com>, 
- Alexander <alexander.heinisch@siemens.com>, Claudius Heine <ch@denx.de>
-X-Mailer: b4 0.14.2
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="JpnRwnX10YYr5F+2"
+Content-Disposition: inline
+In-Reply-To: <20250312112302.1605750-9-tommaso.merciai.xr@bp.renesas.com>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 20 Mar 2025 07:43:26 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18284
+ <cip-dev@lists.cip-project.org>; Thu, 20 Mar 2025 08:59:07 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18288
 
-cryptsetup and systemd-cryptenroll do not currently support encrypting
-partitions directly with keys stored in the TPM. For that reason a
-temporary random password is used for the initial encryption, which will
-get removed once the TPM2 token is added to the partition.
 
-However this process does not allow continuing with the encryption
-process in case of power failure.
+--JpnRwnX10YYr5F+2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For that reason store the initial encryption password in the TPM,
-protected via measured boot based on the TPM2-PCR:7 register, which is
-the default for `systemd-cryptenroll` and load it if it exists.
+Hi!
 
-Signed-off-by: Claudius Heine <ch@denx.de>
----
- .../initramfs-crypt-hook/files/local-top-complete  | 56 ++++++++++++++++++++--
- .../initramfs-crypt-hook_0.7.bb                    | 12 ++---
- 2 files changed, 59 insertions(+), 9 deletions(-)
 
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-index ae0dcef4cb62a135beb6d4229237144b6d4edf8b..e511e8ef2d0bd4f4c8fd2fca248312dee173d224 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-@@ -216,6 +216,54 @@ if [ ! -e "$tpm_device" ]; then
- 	panic "No tpm device exists or supports pcr_hash '$pcr_bank_hash_type' or '$tpm_key_algorithm' - cannot create a encrypted device!"
- fi
- 
-+export TPM2TOOLS_TCTI="device:${tpm_device}"
-+TPM2_HANDLE="0x81080001"
-+tpm2_key_get() {
-+	key_file="$1"
-+	TPM2_WORKDIR="/tmp/tpm2"
-+
-+	if ! tpm2_getcap handles-persistent | grep -q "$TPM2_HANDLE"; then
-+		mkdir -p "${TPM2_WORKDIR}"
-+		# Open session:
-+		tpm2_startauthsession -S "${TPM2_WORKDIR}/session.ctx"
-+		tpm2_policypcr -Q -S "${TPM2_WORKDIR}/session.ctx" \
-+			-l "${HASH_TYPE}:7" \
-+			-L "${TPM2_WORKDIR}/pcr7.${HASH_TYPE}.policy"
-+		tpm2_flushcontext "${TPM2_WORKDIR}/session.ctx"
-+
-+		# Add new key to tpm:
-+		tpm2_createprimary -Q -C o -c "${TPM2_WORKDIR}/prim.ctx"
-+		echo "$(tr -dc 'A-Za-z0-9_' </dev/urandom | head -c 32)" | \
-+			tpm2_create -Q -g "sha256" \
-+				-u "${TPM2_WORKDIR}/pcr_seal_key.pub" \
-+				-r "${TPM2_WORKDIR}/pcr_seal_key.priv" \
-+				-i- \
-+				-C "${TPM2_WORKDIR}/prim.ctx" \
-+				-L "${TPM2_WORKDIR}/pcr7.${HASH_TYPE}.policy"
-+		tpm2_load -Q \
-+			-C "${TPM2_WORKDIR}/prim.ctx" \
-+			-u "${TPM2_WORKDIR}/pcr_seal_key.pub" \
-+			-r "${TPM2_WORKDIR}/pcr_seal_key.priv" \
-+			-n "${TPM2_WORKDIR}/pcr_seal_key.name" \
-+			-c "${TPM2_WORKDIR}/pcr_seal_key.ctx"
-+		tpm2_evictcontrol -c "${TPM2_WORKDIR}/pcr_seal_key.ctx" \
-+			"$TPM2_HANDLE" -C o
-+
-+		rm -rf "${TPM2_WORKDIR}"
-+	fi
-+
-+	mkdir -p "${TPM2_WORKDIR}"
-+	tpm2_startauthsession --policy-session -S "${TPM2_WORKDIR}/session.ctx"
-+	tpm2_policypcr -Q -S "${TPM2_WORKDIR}/session.ctx" -l "${HASH_TYPE}:7"
-+	tpm2_unseal -p "session:${TPM2_WORKDIR}/session.ctx" -c "$TPM2_HANDLE" >"$key_file"
-+	tpm2_flushcontext "${TPM2_WORKDIR}/session.ctx"
-+	rm -rf "${TPM2_WORKDIR}"
-+}
-+
-+tpm2_key_del() {
-+	tpm2_evictcontrol -C o -c "$TPM2_HANDLE"
-+}
-+
- prepare_for_encryption
- 
- for partition_set in $partition_sets; do
-@@ -259,16 +307,17 @@ for partition_set in $partition_sets; do
- 		watchdog_pid=$!
- 	fi
- 
--	# create random password for initial encryption
--	# this will be dropped after reboot
-+	# create random password, store it in the tpm2 encrypted and protected with
-+	# PCR:7 registers to allow continuing reencryption in case of power-failure.
- 	tmp_key=/tmp/"$(basename "$part_device")-lukskey"
--	openssl rand -base64 32 > "$tmp_key"
-+	tpm2_key_get "${tmp_key}"
- 
- 	case "${partition_format}" in
- 		"reencrypt")
- 			log_begin_msg "Encryption of ${part_device}"
- 			reencrypt_existing_partition "$part_device" "$tmp_key"
- 			enroll_tpm2_token "$part_device" "$tmp_key" "$tpm_device" "$tpm_key_algorithm" "$pcr_bank_hash_type"
-+			tpm2_key_del
- 			open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
- 			log_end_msg
- 		;;
-@@ -277,6 +326,7 @@ for partition_set in $partition_sets; do
- 			/usr/sbin/cryptsetup luksFormat --batch-mode \
- 				 --type luks2 "$part_device" < "$tmp_key"
- 			enroll_tpm2_token "$part_device" "$tmp_key" "$tpm_device" "$tpm_key_algorithm" "$pcr_bank_hash_type"
-+			tpm2_key_del
- 			open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
- 			eval "${create_file_system_cmd} ${decrypted_part}"
- 			log_end_msg
-diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.7.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.7.bb
-index 80a4755e4e0acfc96bb2d0f8e175e2787473e384..cde6582fe07981c78d646fe592e0c53ef46a2fb4 100644
---- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.7.bb
-+++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.7.bb
-@@ -14,7 +14,6 @@ require recipes-initramfs/initramfs-hook/hook.inc
- DEBIAN_DEPENDS .= ", \
-     cryptsetup, \
-     awk, \
--    openssl, \
-     e2fsprogs, \
-     tpm2-tools, \
-     coreutils, \
-@@ -40,19 +39,20 @@ HOOK_ADD_MODULES = " \
-     ecb aes_generic xts"
- 
- HOOK_COPY_EXECS = " \
--    openssl mke2fs grep awk expr seq sleep basename uuidparse mountpoint \
--    e2fsck resize2fs cryptsetup \
--    tpm2_pcrread tpm2_testparms tpm2_flushcontext \
-+    mke2fs grep awk expr seq sleep basename uuidparse mountpoint \
-+    e2fsck resize2fs cryptsetup head tr rm \
-+    tpm2_pcrread tpm2_testparms tpm2_flushcontext tpm2_startauthsession \
-+    tpm2_policypcr tpm2_createprimary tpm2_create tpm2_load tpm2_evictcontrol \
-+    tpm2_unseal tpm2_getcap \
-     /usr/lib/*/libgcc_s.so.1"
- 
- HOOK_COPY_EXECS:append:clevis = " \
-     clevis clevis-decrypt clevis-encrypt-tpm2 clevis-decrypt-tpm2 \
-     clevis-luks-bind clevis-luks-unlock \
-     clevis-luks-list clevis-luks-common-functions \
--    tpm2_createprimary tpm2_unseal tpm2_create tpm2_load tpm2_createpolicy \
-     bash luksmeta jose sed tail sort rm mktemp pwmake file"
- HOOK_COPY_EXECS:append:systemd = " \
--    systemd-cryptenroll tpm2_pcrread tpm2_testparms \
-+    systemd-cryptenroll \
-     /usr/lib/systemd/systemd-cryptsetup \
-     /usr/lib/*/cryptsetup/libcryptsetup-token-systemd-tpm2.so"
- 
+> +static bool rzv2h_cpg_is_pm_clk(struct rzv2h_cpg_pd *pd,
+> +				const struct of_phandle_args *clkspec)
+> +{
+> +	if (clkspec->np !=3D pd->genpd.dev.of_node || clkspec->args_count !=3D =
+2)
+> +		return false;
+> +
+> +	switch (clkspec->args[0]) {
+> +	case CPG_MOD: {
+> +		struct rzv2h_cpg_priv *priv =3D pd->priv;
+> +		unsigned int id =3D clkspec->args[1];
+> +		struct mod_clock *clock;
+> +
+> +		if (id >=3D priv->num_mod_clks)
+> +			return false;
+> +
+> +		if (priv->clks[priv->num_core_clks + id] =3D=3D ERR_PTR(-ENOENT))
+> +			return false;
+> +
+> +		clock =3D to_mod_clock(__clk_get_hw(priv->clks[priv->num_core_clks + i=
+d]));
+> +
+> +		return !clock->no_pm;
+> +	}
+> +
+> +	case CPG_CORE:
+> +	default:
+> +		return false;
+> +	}
+> +}
 
--- 
-2.49.0
+Are there more entries likely to be added to the switch? If not, I
+guess this should be
 
+      if (clkspec->args[0] !=3D CPG_MOD)
+      	     return false;
+
+and then getting rid of the switch.
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--JpnRwnX10YYr5F+2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ9vY0QAKCRAw5/Bqldv6
+8rsEAKCU+VzkKjgcHi/hc4gLruxbrlanJgCeLLQcBa4bcCIRdOVl6FUhYOM64Gs=
+=JGX5
+-----END PGP SIGNATURE-----
+
+--JpnRwnX10YYr5F+2--
 
