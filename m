@@ -1,313 +1,309 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <chris.paterson2@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDDFCC28B30
-	for <webhook@archiver.kernel.org>; Thu, 20 Mar 2025 17:38:42 +0000 (UTC)
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (EUR05-DB8-obe.outbound.protection.outlook.com [40.107.20.47])
- by mx.groups.io with SMTP id smtpd.web11.1026.1742492318253316249
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B25C28B30
+	for <webhook@archiver.kernel.org>; Thu, 20 Mar 2025 19:48:05 +0000 (UTC)
+Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.1])
+ by mx.groups.io with SMTP id smtpd.web10.4090.1742500083396182056
  for <cip-dev@lists.cip-project.org>;
- Thu, 20 Mar 2025 10:38:38 -0700
+ Thu, 20 Mar 2025 12:48:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=ZyQSKdB4;
- spf=pass (domain: siemens.com, ip: 40.107.20.47, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@renesas.com header.s=selector1 header.b=JxxubFgj;
+ spf=pass (domain: renesas.com, ip: 40.107.74.1, mailfrom: chris.paterson2@renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AiHSKuVhsrxZt5dwliwN8Cl9gzhzcQzBHhaSV+vce1zI37M7zuP2AEVxor+1dgYtqQ2YVrkcMqL0UUOyEgsNG0AC5DlVS4AwAClF+BvdXaWX7lpg73jUhDroNtyZR5abuknerFMBtqY3hJ0R/3AKxBGoFNiwQM9xYYrl51JU9V7HSVvJGKmsRXueoYP6elZBhGRDr0ORoboNSeUVbGf9pfA9ADI5GkQ0BcjbEcoKeqqYCDbeAvClN5AbnAwixdoz4Usdz2N7kpgUN0tNJRtU4PT0MHO1Q+QgXRorLpl4ht88MGH1Qhp2uJ5cVNiNxQaEbS9SqHVryXdCtc261VelfQ==
+ b=V31E6QKQvoBSQPD9CowOH6OvHsPX/bN2A1nZCZ+LmQWlr0MlW5IQZUIpoFCbWPHsaic32onYLpqxbt06VyMACOUfKeXeMKkTtoVtx0CQ3sgt0FZTinjYk+BtcbTdJfXxfKI0cpGF1jj0ycl2ovHOmr3qwrFNPxu52ePwKqU6tIQ63P1gT11D9ZR5lRys5uMaOGOwdN+S/a82YQW4s8gGyK8s6YxvvmKnohP1Hj0qpv9q3UGfC390NAQsdgfA5at/kg541TlbOSK15JmRI1N9Yh9uzZElgCNGXmuYHYDj1F8eTr0MjJiXeTbgA3igi8He0sVfRgaxVnwFe2PiqwXCGg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MPJBjG8a7RqFSqbKgROtmtRRd8vq6u5+72pxGVCK1Aw=;
- b=UL/RJUMklSN20NDH+V9KDmaucBnPS870Bal3130mXXjL8zQoVA90+mQRc+gRHlFJsyD9AquJJ4z35Ed2MAIqSnJga1ZYSH4J8faocMMgqoYQVBkAqQVxgXucNCmPZ5FgiSO+WUIYSjjS9EBOG+renXE41lhdIY7VFPWQ8K7mqXBeHqWr0wfHCUW2Kt4Gw9jvpJtyc7urKT6Cu1H/69GekoQ5BNPojR3bRzqKXya9Rhor/aGduiPP0GjRXzIDI7B1Dh1HP6OthJjKQjNRtfcKb4YPHJmUpvWFG5oweB/nioE6ETuHvtDbeSXZl5pmU2MdrCd8wd/ZHBdJHgZJfubn5Q==
+ bh=CRbQ5gw23034sdA9u4kC1uc1JqGZXLCag4NRfNNIywQ=;
+ b=ggSqLSzENlaKwCD0rMWjTqiuGbujqJUDuy7cv47geZsGDJZzhiN2627zbceBG6zLPWH5sJhs+TjxOkvEB5a9A+mf32xdA3d4v5kZmAmmveRxQyqqmq+6RzKE7RpbgIIkshAlw4tuTf1WPtgWY9fRXi2A+MymAy6x7v2y5nRAaxa4vHzUvZ78u+fUIl3JQTZD2pGFAA85CFQdWoLNBwJcTeGI/VZGq0x+rK9pswOlf2ZVV88pMUL7dCme/PQafpMvRYGlyeF3z76A1IeGXahzxMuRZj64FZQtnf09uXzd/NqcgonMUGMTo1eyXK0SHiexoEBVxXIkU39sNRFEW+6/Yw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MPJBjG8a7RqFSqbKgROtmtRRd8vq6u5+72pxGVCK1Aw=;
- b=ZyQSKdB4Q7v/KeD2hIW4FqWDaxJfYiXKkDV3/aLvh20mBemZU695NdCpZF5BEU0/zkCLt2aPq25W+hNGy/dpuAL2U8KXS/33iIfz0/bOHOu5C0k+9xESdLlFb5Z1z7fBZqAQK454uiEdYGjFbzW2QcNVSG2oQP59eHBOTTmSy5QZsCt6IoTw0bZlHGQ+LY99qe8XphxDGfco2iFFOB/4w9ZqCITL3XpLCErPblUlIJFHCvdc21C25c7m8xcFXMWcxVoj6DujUe3QtACQ/GASnzR9SD9rBdur6m+XDM6oTgAqruTQX+5+aUP87yEGppSOyL55y8/C2c1gppPzKtHUNQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by DB8PR10MB3626.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:13d::9) with
+ bh=CRbQ5gw23034sdA9u4kC1uc1JqGZXLCag4NRfNNIywQ=;
+ b=JxxubFgjJetd4nRcF9pvz3Rq+AnX5CW+msUwGJPAHJI6ATqQcgNB/ApjxvAo6xB98pS/9/Tkw2DlEjc/fhS7PjKD7kakFEp2Dy1dZ78xDZmSqtuzH7m6/kz0Rl4xN4JZpUkxbshrMzy3nUSkgqW5fXJtzJhnz3h5ytGOdLt+xsU=
+Received: from OS3PR01MB5896.jpnprd01.prod.outlook.com (2603:1096:604:c6::8)
+ by OS9PR01MB15873.jpnprd01.prod.outlook.com (2603:1096:604:3d7::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.35; Thu, 20 Mar
- 2025 17:38:35 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408%4]) with mapi id 15.20.8534.034; Thu, 20 Mar 2025
- 17:38:34 +0000
-Message-ID: <4f11e7c8-7b34-4130-b048-c6bb6052e984@siemens.com>
-Date: Thu, 20 Mar 2025 18:38:32 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core v1] tests/templates: Reconfigure the usage of -smp
- options
-To: Sai.Sathujoda@toshiba-tsip.com, cip-dev@lists.cip-project.org
-Cc: dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
-References: <20250320131429.2161150-1-Sai.Sathujoda@toshiba-tsip.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Thu, 20 Mar
+ 2025 19:47:58 +0000
+Received: from OS3PR01MB5896.jpnprd01.prod.outlook.com
+ ([fe80::1b62:57c6:c2cf:641b]) by OS3PR01MB5896.jpnprd01.prod.outlook.com
+ ([fe80::1b62:57c6:c2cf:641b%5]) with mapi id 15.20.8534.031; Thu, 20 Mar 2025
+ 19:47:56 +0000
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	"jan.kiszka@siemens.com" <jan.kiszka@siemens.com>
+Subject: RE: [cip-dev] Starting 6.12-cip branch
+Thread-Topic: [cip-dev] Starting 6.12-cip branch
+Thread-Index: AQHbmYnFh8702hUy7k6dr3rLiCahALN8a3Cg
+Date: Thu, 20 Mar 2025 19:47:56 +0000
+Message-ID: 
+ <OS3PR01MB5896A5F20C13F5E62925E2DAB7D82@OS3PR01MB5896.jpnprd01.prod.outlook.com>
+References: <Z9v5aLZhun8zwFk2@duo.ucw.cz>
+In-Reply-To: <Z9v5aLZhun8zwFk2@duo.ucw.cz>
+Accept-Language: en-US, en-GB
 Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-In-Reply-To: <20250320131429.2161150-1-Sai.Sathujoda@toshiba-tsip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR0P281CA0221.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:ac::17) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS3PR01MB5896:EE_|OS9PR01MB15873:EE_
+x-ms-office365-filtering-correlation-id: f074b1b7-ca41-455c-da36-08dd67e81cb3
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|1800799024|366016|376014|7053199007|38070700018;
+x-microsoft-antispam-message-info: 
+ =?Windows-1252?Q?WfM3bQoJhsAuowNJfYukvNx6gZJznMm7kbgN0he53XKhPkdU/S77Cu2u?=
+ =?Windows-1252?Q?XX/pDbUO4oeNHV0h5CKSJqDBC2D+fnDDu5tasSLVYBd1LiIU2sCv+7u+?=
+ =?Windows-1252?Q?bqMbEzro6BmfbPEkkXmzZZcxob/UeWeiIzyDyEiTIXoCTkv30bA1bI0a?=
+ =?Windows-1252?Q?BKvVw1DKCbTPwJuUy+wkeEqk89yM2gqH1OjMkWgt1sobtuqcefPVu4uF?=
+ =?Windows-1252?Q?qf/24eJQpXLwsU79J/A3DAJmzbQZT8xoYmwo9iYqYN4CypPCf4KlVEED?=
+ =?Windows-1252?Q?vjmQsh/u8ATJcl3E3cpYZEto17I7LJCRW6hHbdU6BHbcwCiykgrrIQho?=
+ =?Windows-1252?Q?Ui4YgiarwwLICiKrGKerUfEBqzRj90cacbPF4JUxpvI0xApQ4MJYdGvn?=
+ =?Windows-1252?Q?1oa7AS3c53DHULPByW7fHHYJaSTtqDC54yqFw31E0x336I79MPBNve6a?=
+ =?Windows-1252?Q?/K2KZa0cofmD2w8zlDxiy5+7kNFaJ5EcELGQ1Zu/zXVciEMbMk/ZOOax?=
+ =?Windows-1252?Q?qHBY7uZJgFuEy2n1tCG8U/Bix7PqQO4Yd/HIRB4ZxyQR1eEzVuHbsu98?=
+ =?Windows-1252?Q?GoqsIxjpA7HZ4LG6Kcdd2JQdAuChl2cc+0IWL7/IIpQMb9vjMFuHRz0W?=
+ =?Windows-1252?Q?z6ui/MQ0l5GDxCiJKz7FSFscHGRiTPl09Ajtjlo5yeQDGaTTzQW9oQnE?=
+ =?Windows-1252?Q?BNMzl+JLDspHmzc7z9l6ce6Ev2T6TIPqH25S2XV8f1RTHj1KrEHH1zM2?=
+ =?Windows-1252?Q?VySUGFv01rZQXVR34kyfbQ5/20luBVvyhmA4UFFmODSQaIUmeIj6MLCQ?=
+ =?Windows-1252?Q?WYIyv3+fV0NpkroOrzQKsH7BO6tYl0ReJnN9Yi6XdxM35/gDEIFtmxXd?=
+ =?Windows-1252?Q?OjStdDRtlfaOlKbuhDIVXs/86BZa32mK+QjLFQH1MuPUULnPxAkKuFxH?=
+ =?Windows-1252?Q?GejjVrkHx5THeuw7xWUieJPD1NTbfqEiuY0SIjhQeO12kUUp8KvoWLCc?=
+ =?Windows-1252?Q?Rz7ngO3TXLSxBKYkjY//j3Pciu0/lmZ93EMO2PBxbg/cao5cpDnn3NmI?=
+ =?Windows-1252?Q?Okf1TfS332BLHtd+KLc/ThU5FogxrRJhLGTj97R2yQnHXoT1fCGhPDWX?=
+ =?Windows-1252?Q?xAQPcxGt/umM7m4DDtjyaym1C00X0hxLegWUSEMeq26kRibuKKQ1aGEs?=
+ =?Windows-1252?Q?TB8IbpYuvAhZFSDr5zOUN5dVJAefobJo5ysb48okshSBtS37aSyHkSqf?=
+ =?Windows-1252?Q?WMW7pPa/tBJQYtwCt0aie+8cs6qTIhY+yCayjhop1foGNEOc4VxIwFKq?=
+ =?Windows-1252?Q?scuJPLq9xd3twxpVlRKRffuSL2iCZ0cQadbTB+KIRfenalC+N96L9RfA?=
+ =?Windows-1252?Q?inUHLrF/CRLhtPbMYtCq2PFmuyivgmj5zHKkqNVFtcLPofKWI4QqZHmF?=
+ =?Windows-1252?Q?WauWZpmjTbDGjEPSBF0rGeCh1uYX3P9vYv49EwZ9KjDrMzZLkrK0zOZe?=
+ =?Windows-1252?Q?jr0mYQEO?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB5896.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?Windows-1252?Q?v2Dpa4d/b9ySd7JQLIq43b23xdaCAaxVQvuZazzBgKcIptut8QDqmuB0?=
+ =?Windows-1252?Q?nVKUYQeNEFQDd+c8aBg5RtVbHnLESwpdgW+52OHLY6kq8TFsCpJRSvcf?=
+ =?Windows-1252?Q?LuMKqaifIDGXHKExq270iCU6lADKZhjbds94NRkCj2RFnYWrcRuI2H+2?=
+ =?Windows-1252?Q?0e7rvfJOxjVGf8I3lbmQ5ZdQENDUwmDs9tSXEecScFn9hqicJS799BOz?=
+ =?Windows-1252?Q?2T050fZk7kLK97Q7GVocNW/c2zMZToznRi7rIft/CzY/ZsNe7aWjpFU7?=
+ =?Windows-1252?Q?OQdE8tH9A7vW2+mpb+L2xVz3xCi6frwGCB2vDnXSZpz+rOe1h/XCS5zt?=
+ =?Windows-1252?Q?RGj4DOHLGJzq9BOst7YB/xODlKJy/qx0buYANMnVwhKzqtoTQFuFhdtG?=
+ =?Windows-1252?Q?sFTSlYVRE8jVuppBj6rpYheAhspPy0/Jhil2r0JzYBK5B3w1RFSbRgKM?=
+ =?Windows-1252?Q?NZ12Q5OPmyqr+wkFsp5qkDx53Mf4vW+Jd9iIRGRCAKnFh9rpWsBwxPRX?=
+ =?Windows-1252?Q?pfTmfsp9FKYHUKpkbTiajxuaEyAH5X9sU6EVfe4eFB667wYTKuN/indo?=
+ =?Windows-1252?Q?TP0HNOnWif4VT6mgIbtWoc4v2lLwKRqmqjFeQK+Uao043Y4LA2tUeFjr?=
+ =?Windows-1252?Q?gEuRArzipbsSJQ9J4vK0H8ReB42Xrda4S+Q511UInFoBK/iP+hIj1gGn?=
+ =?Windows-1252?Q?8ocoXfAJ83Lat6vTbv8YBKakV3RQhPHumBFfLrm8eDm2i+h6Sldvz1k9?=
+ =?Windows-1252?Q?s36y/njSVNg2nsFkMe1WRCPSKYycW+ffhWYVzmW85Z4LOUPHAPLYcqA9?=
+ =?Windows-1252?Q?lN1aqczVdyFauciDpJt1f2nnBKCIr+dJvsi3vO7HKywXlnWPVDbw99Am?=
+ =?Windows-1252?Q?BixCFXXLlDzrjc+Z3HuexpptPrXFVpiC/E1f1YQIpVqzwqpCvtw8+XRX?=
+ =?Windows-1252?Q?YlVGpTEtwStO3HUQq/qmQsM/P1vAK4fr5/g7UVTSqcWRMXQqiP0wna/R?=
+ =?Windows-1252?Q?PAIjR6ovBMpn9wLmvc5/C2DMSg/EjYwLU1uMBnMxfiswDUxL4DCuIQ4E?=
+ =?Windows-1252?Q?EreNpIjrKtgHib/xdRn1D5smACjMhRyx6Tzh61FWvjL1iYB2EjvGD2RJ?=
+ =?Windows-1252?Q?WY8UXS5bgLm7O+OEYNSOgs1qGxlCyHitc1oaT906jkE9ba2z70mNQgpt?=
+ =?Windows-1252?Q?ywZH+iJy72tFlBuIRqIH6UIxr9p3+eQApSsVTW4q41tTME8QmThInDFJ?=
+ =?Windows-1252?Q?rdhia+iTBzXoKpYU/kCEPR80pJozBZ54gswZWJA0ZL4S4yd7ReyxIBnL?=
+ =?Windows-1252?Q?K+2UgCOs7b6XbfptdJK28nmlWSrOljB4PqsuPlNYH2ERuS67u40v3Lgh?=
+ =?Windows-1252?Q?+bvN2K8Bh4SIi+++TDYYvdGOhQZd89JXtS76n0kCWncXLsiwHrNO5Xnc?=
+ =?Windows-1252?Q?yLvzcSK5tc66GA01lWWC7uJLWD3G2dZRQ/9jDNAFHZ06tM+lkch6lKlu?=
+ =?Windows-1252?Q?iD039FMqTUwQHOsDUabiSRswul4c059/7882VmjjVnzupsGhEAUmlr41?=
+ =?Windows-1252?Q?9ZdCb7bb1h/ej/VSO0CMa/mAd356yZU267A+MWUrcYDkoB10jzFX0tiS?=
+ =?Windows-1252?Q?L476/Nc5vZefrLzQWbhrpO+321HogoBV/vLuU/mm/+M8FLb7e19y+uFR?=
+ =?Windows-1252?Q?qBupll8thW1MjD+DVE/PUafaaIEo3UeHb8kzymqNLGd+tN2coCFv6w?=
+ =?Windows-1252?Q?=3D=3D?=
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB8PR10MB3626:EE_
-X-MS-Office365-Filtering-Correlation-Id: 838b56d4-944f-4c5f-3191-08dd67d60a07
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?MzB0ZWNnNEJWYjVRdHA2U1U5NFJBdFFDMzBSTHpNZzBWWmMxNFRoZjZSYVNz?=
- =?utf-8?B?Rm9yTlFiZXhnc1Bic25uUTJYckZEUkFWeU8xdldZWm9TeHNYZGtBNjJrR3BN?=
- =?utf-8?B?VnMvaldYM0RhK1J0RXZ4T2ViVjlJdzhFMmpnYlZsam9oOGxLMDJhS3JFTmxF?=
- =?utf-8?B?QTB4ZUxzREs0elcrdVFHUnhZSjBWa1h1MWNsNS80a3k0NzMramQyN2xoWHBG?=
- =?utf-8?B?dW1ybFptK3FOcnBZSGw3NngvaGtSdXBPM0RQanhJUEc2ZlgxR1JsZklmODRl?=
- =?utf-8?B?TFY2K1oreWpLRTBuY20yWDVYMG1paVVqdGJMTUFXYThXZEVpNGxmUUxIeEhK?=
- =?utf-8?B?eStpMXRtNGcyZ2pqUHpaRUc0dm5qamxVRndRcm1mNmJURTUxSnAxNVA2WUhz?=
- =?utf-8?B?bHdXS3lWdEZpZWYrOTFzbC8vSkdFRWNzaXExYTRjemlHK3hnNVYvSmpmSnBl?=
- =?utf-8?B?ZTQ0ZXBjL3RNL0xwM1lkcWdBOVZ6c1hRRHNRblFQbGd2OFhySWhiekVNTktE?=
- =?utf-8?B?bnZ3V3BOK2I3TDRLcEhoVEsrZGwzNm5XamtWUU9kNTdmQURpaHFEWDVETDVB?=
- =?utf-8?B?VHpPSmE1NlZQZmxrbG1LYmJPVVhoVlBtaDlTRENYMGgzeWk5eDUvYzU2SlQ3?=
- =?utf-8?B?SnNwRzgyME5EU0ZOeHNWcEJuNnZwMmx0YkJKUko2am5HKzJWVWYwU3Y1UkNV?=
- =?utf-8?B?UithWEZjOUpOeWw3WVBlSEhyQzhTWWFaUlZFbnNxcUNQdnF1eUNEV2tFWUx1?=
- =?utf-8?B?RlJCRVBHQkErZGNESG1EYVNXcjVFVHliQlIvaVFBMUR3a09xM0tscmp1Tnhl?=
- =?utf-8?B?TlZmVWF4UjBvRzhOMjEwdlZ0dkk2b2hoZzhMZ2F6VkgxWGVaL2Zvczkxb2Fn?=
- =?utf-8?B?a1V1YTRUMFNiQktRell3ejArRkhtaE5iQktyT0djbUpjMnhFZU1iR3l0ZTBu?=
- =?utf-8?B?c2xTeVZ1OWZmSllybm9uWHRaRytlNUNUYUQyU1ZWdGMwOGFLeTQrb3JnemdF?=
- =?utf-8?B?QUM0U3paT1h2ZFpsb3FPYUcwODVtTXZ0VTZONWRnZmIrc0M1UEQvYnNueFhR?=
- =?utf-8?B?QnEzb0JEMEhCR29tWVU2cWQ2Vk9CalpHRG1RVHNQTDI3MXF0UWVacjdBV3pI?=
- =?utf-8?B?VGZBdUZqYXVOeTN2RUZyNUpBUFdBSHhDMnArQjJJUzRmQittTXJ1ckwvTUdt?=
- =?utf-8?B?UTdxRFpoaC9TeHh5U3RzekUzVUppMm5TRngyMnB2aFJ4NHNrQUpIZVIxUVN1?=
- =?utf-8?B?SlUwNmNxdnhLLzRTcW5xMDA2NWlITy9jbEd2NFBqYS9BQWliWnFBZnlCNlN3?=
- =?utf-8?B?MkV4WWJMQVlFRmRhdkhIVHorWmdKekZ5clpBRDhCdkZDdWJHZExOVGszd2Rk?=
- =?utf-8?B?dVpldXRPcEp0NWV3VEdWWGhKZW1wMURQWnNGajFEbmd3Vk5mVllOejVGTFVQ?=
- =?utf-8?B?WHdVQkpMZTlRcHQwZW5IMVVuUllBaFZVcmJoa2Y0TmdHTnBvUkE3RDVjTGNG?=
- =?utf-8?B?KzhBeGpHZ1ZqRnMzbGlkRkRSelo0UHpvVG5sTk9FU0J4MTN5U3RrV1gwWitC?=
- =?utf-8?B?Wit3VDdDNklDMVBORUw2MHpSVyt0TXRwOWFUaWJHNXNWcXIxcjIxVXVwd2dG?=
- =?utf-8?B?cWhvUVlHNlNCMGdkQWVrd2VnaFJOTmVnQ0l1QngwbkQycUtBNVR3L0x2Vitl?=
- =?utf-8?B?UGdrWVYzYnZVclRDYlQzNkpBbVZBQS9vR3hFUlRNRFQrK0JlMWdQMDl3ekt0?=
- =?utf-8?B?cjVrRXVVSUxMTmE1S2I0V1dEeG82cC9kLzdoWjdOclRlS2JwN3hCV0NZQXJi?=
- =?utf-8?B?WHVPc2pQb1luVS83STdjRU1kMm5NL3NFeU5naSt1eFlaUXRwMWhSeFRzeXZ5?=
- =?utf-8?Q?U+yfoXrS9DVwT?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?dG4vY04rSjZoSEpsYnM5RUMvbkpKSG1qRUxRL0pSbGRhOVIvcjdHREVhZmVV?=
- =?utf-8?B?c0trN3lBZ2xiV1ozWVhYVzlRTkJpcGo1Zy9ZN3dSQ1oweUplenlncmdpQS9T?=
- =?utf-8?B?V3grcnR2ZGpYdS83QVhVbkxtTmVDVURKSXlwdVkyL1pwV1htUEVQanJkNEVy?=
- =?utf-8?B?d0ZXL2xiN3laa2Q1eFBjMW5NRWF6TllXdGFYWW1icnNoZGxLMExTZVhyNDFI?=
- =?utf-8?B?NzNHRXFna201RFZXYjlHbFY4M2MyUHZqNXoxUkdhTmdTVmJFMWtsQjZCay83?=
- =?utf-8?B?OFpNZG1Nek44WlNpeUlveldON2hPSEQ3blBmUndzMnIrL3FwMkgwS003cWdm?=
- =?utf-8?B?VEZhaXNhVms2ejc0VmVhcDArZW00WmZRTjhuTUZZT3RnM2VvM1BiR1pMaE5K?=
- =?utf-8?B?QXprWEd1dGlQUHAvZjNFRHk5U3VlOHFQSlY5ZnpmVmpPY29mcmR3Uk1LR21J?=
- =?utf-8?B?dlhmS04yQkl5UEJIb2NPSTM1Z3hneGUvTjIzdGlPeXR2TGE2MDJPck5FdzIw?=
- =?utf-8?B?VnNQWlRsbll2S2E1blUwN2Q4aGdFZVhQbHhIRzN2T1pmaUI5T05uVVFSaXFj?=
- =?utf-8?B?U1N2V2VRNXFWcTloL1p2OW9EdTBnaDhNTXJuVlRxRklRekcvWGFQYVVkNWZR?=
- =?utf-8?B?UXEvdjZLUlFMaTV3WDB3TWtHVWtJUEFndHZZWEdqRXk2c2JDeVV5Uks5TkxG?=
- =?utf-8?B?YTQ4c1VLdXM0b0J1Nm5Qdk41dnkzQTNTNEtQZGgvVkt4dnpacEpjbjAvcU9Q?=
- =?utf-8?B?L05IWnFQRnQxZUFZNXhGNnBielRCQXQxczVMNnM5V0cxUnpuOE12cnBGQVNk?=
- =?utf-8?B?R0hHdFlhZzFzL01CenBMZ1JzUThwTnllcDAwcjV5UTQ1dG1XSlp3SXJUM3E0?=
- =?utf-8?B?WHlTQSsxaTNMS25OQTBMdHBweWZoOGlEdEJ2WUZVMFdFTFJqRnRabDZ0NTEy?=
- =?utf-8?B?T2d1d3pGOXpMWU41eHM2d1hVZUZ6NStML0dRbWFIUVVaZUh0ek1oTkV2Mjl3?=
- =?utf-8?B?Z2VkNGhRcEl4aVc2V3FwcTRkckQ0WklLcmZYUGFZOXZiRE1RUVlrTWdEcDZ6?=
- =?utf-8?B?QTkrc2ZJNy9CS3ZYVXlYK004WThTbTc0QnoxN0hmeDczVFdyb2NBdTNkTHJC?=
- =?utf-8?B?UUFZYmltWjVRd2FmVzNrSUVpSFhVUWJxRytQSzhRbzFacnBkU09HRW1sQ1Iy?=
- =?utf-8?B?Q2lRYkwya2FER3BwYk5McmVpY01kV1BsZmhMbmlDZjcycXBGeC9QdVRiYmN0?=
- =?utf-8?B?OXE3dGVHT25DODNkbnFlYW9Wa2I1UGtaUDRaVVZaM0ZtY3FqVUVxRGxrRlMy?=
- =?utf-8?B?OWZjTFpJY3htRDVkWTAzSVg3UFNkcE9yZUxhVnk3a1c2cVY2YzJmTkUrbG5o?=
- =?utf-8?B?MUk1VDdwWVJESXh2NXdQci84dWxQbnpNRnpHVjFtWG5QT1l3cVRzdXgyU2cw?=
- =?utf-8?B?TzA4ZG1WWUY5bGJWc3A5QVd2VFhhNmlZY1kxalM0VFBCSFptNkpFUkJyVFRQ?=
- =?utf-8?B?S2s5WFZhSlNQRnpPV2tNZmcvSXV0OVBpakJLMDh5ODJTNkRTZHhMNDA5WFhJ?=
- =?utf-8?B?aUFSRWh2Q0Q2OHpmRTRPNnpxdEgxRjN0UDVUVldkb0Z5TytvY3prSGNxbjBS?=
- =?utf-8?B?K0pXeWFOd0h5TnNkdGI0dDZ0ZUdkbnFmVldjenlrbXViRWxINE5pTTZKeEJt?=
- =?utf-8?B?Q1RiUjJsYUlEeWFiYWFhZ0xXWE5DZnByVENPb1daS3IxSjBieFgrZjVKSFh4?=
- =?utf-8?B?Q2xWbXVqYmdiT0xBRDRNb0NCczBzNGxJc2FrTWtyMlJTeHh6bnVDZWtRYUZn?=
- =?utf-8?B?Z0tRRTRZODYwZlV1TFBiSEpVWVZyK24rRWJta2RmRWNRa1NKbzNScWwyeTVR?=
- =?utf-8?B?UmtLL2tGNi9PN0xqZEIwZytVUllVK1hRZ3NQcWVGNTlGRVpVOC9RRVdBaGxo?=
- =?utf-8?B?TVljbW1iQVR3NXVUMW4wTTdMVjdvTmM0UnZVTExLK1BwZXJNL0hNWkxxRHUx?=
- =?utf-8?B?MzhNSGNwbGMwYmhFcTVlQkJxOGFOOXJ2Y2tLSWMyK25CWktoNlNDYm1sTllS?=
- =?utf-8?B?WFJqZnB3M2dwYTR3OVBmZ3dhOHY1ZEREbXFEeWZEd0FKTFpRZ2I2bUorQjJO?=
- =?utf-8?B?clR2VmVrQk9wRi9VMVZrVTRXSXhGWTBSVER1MWZnYllXcUFQRUxGQlZneHlt?=
- =?utf-8?B?ZWc9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 838b56d4-944f-4c5f-3191-08dd67d60a07
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-OriginatorOrg: renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 17:38:34.7526
+X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB5896.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f074b1b7-ca41-455c-da36-08dd67e81cb3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Mar 2025 19:47:56.7719
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Fk/bIZf+lcomS/VJNSnNKwz568leftfUaCKl2tdKMeXEZh5Q6oczTuANpRwZ/ZdFSu9A0bjL8d6OKhgMFy3zYw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR10MB3626
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: KXu9X2JIY1Gg8B6uoUP/MYET8Pce2PWqqlzK/ZIDKggTbDdDvF0MGR/fABJiY/fOnCZw0EK7WXzIb+y7mnporgbujeEB9sGG6PvKK7GvBnc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB15873
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 20 Mar 2025 17:38:42 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18300
+ <cip-dev@lists.cip-project.org>; Thu, 20 Mar 2025 19:48:05 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18301
 
-On 20.03.25 14:14, Sai.Sathujoda@toshiba-tsip.com wrote:
-> From: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
-> 
-> Due to the following kernel warning message observed during boot
-> time, the -smp option for arm is set to 2.
-> 
-> [ 0.000000] DT /cpu 3 nodes greater than max cores 2, capping them
-> 
-> The QEMU start arguments declared in the template files are common
-> amongst x86, arm64 and arm. But now the value of smp declared for
-> arm differs from x86 and arm64. So move the -smp option from the
-> functionality template files to the job submit script where the
-> respective architecture specific QEMU start arguments shall be
-> used while preparing job definitions.
-> 
-> Signed-off-by: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
-> ---
->  scripts/submit_lava.sh                       | 6 +++---
->  tests/templates/IEC_template.yml             | 2 +-
->  tests/templates/secureboot_negative_test.yml | 2 +-
->  tests/templates/secureboot_template.yml      | 2 +-
->  tests/templates/swupdate_negative_test.yml   | 2 +-
->  tests/templates/swupdate_template.yml        | 2 +-
->  6 files changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/scripts/submit_lava.sh b/scripts/submit_lava.sh
-> index a9bb011..9da083a 100755
-> --- a/scripts/submit_lava.sh
-> +++ b/scripts/submit_lava.sh
-> @@ -29,9 +29,9 @@ if [ -z "$SUBMIT_ONLY" ]; then SUBMIT_ONLY=false; fi
->  
->  # Create a dictionary to handle image arguments based on architecture
->  declare -A image_args
-> -image_args[qemu-amd64]="-cpu qemu64 -machine q35,accel=tcg  -global ICH9-LPC.noreboot=off -device ide-hd,drive=disk -drive if=pflash,format=raw,unit=0,readonly=on,file=/usr/share/OVMF/OVMF_CODE_4M.secboot.fd -device virtio-net-pci,netdev=net -drive if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF_VARS_4M.snakeoil.fd  -global ICH9-LPC.disable_s3=1 -global isa-fdc.driveA= -device tpm-tis,tpmdev=tpm0"
-> -image_args[qemu-arm64]="-cpu cortex-a57 -machine virt -device virtio-serial-device -device virtconsole,chardev=con -chardev vc,id=con -device virtio-blk-device,drive=disk -device virtio-net-device,netdev=net -device tpm-tis-device,tpmdev=tpm0"
-> -image_args[qemu-arm]="-cpu cortex-a15 -machine virt -device virtio-serial-device -device virtconsole,chardev=con -chardev vc,id=con -device virtio-blk-device,drive=disk -device virtio-net-device,netdev=net -device tpm-tis-device,tpmdev=tpm0"
-> +image_args[qemu-amd64]="-cpu qemu64 -machine q35,accel=tcg -smp 4 -global ICH9-LPC.noreboot=off -device ide-hd,drive=disk -drive if=pflash,format=raw,unit=0,readonly=on,file=/usr/share/OVMF/OVMF_CODE_4M.secboot.fd -device virtio-net-pci,netdev=net -drive if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF_VARS_4M.snakeoil.fd  -global ICH9-LPC.disable_s3=1 -global isa-fdc.driveA= -device tpm-tis,tpmdev=tpm0"
-> +image_args[qemu-arm64]="-cpu cortex-a57 -machine virt -smp 4 -device virtio-serial-device -device virtconsole,chardev=con -chardev vc,id=con -device virtio-blk-device,drive=disk -device virtio-net-device,netdev=net -device tpm-tis-device,tpmdev=tpm0"
-> +image_args[qemu-arm]="-cpu cortex-a15 -machine virt -smp 2 -device virtio-serial-device -device virtconsole,chardev=con -chardev vc,id=con -device virtio-blk-device,drive=disk -device virtio-net-device,netdev=net -device tpm-tis-device,tpmdev=tpm0"
->  
->  set_up (){
->  	echo "Installing dependencies to run this script..."
-> diff --git a/tests/templates/IEC_template.yml b/tests/templates/IEC_template.yml
-> index a196bb5..3c33773 100644
-> --- a/tests/templates/IEC_template.yml
-> +++ b/tests/templates/IEC_template.yml
-> @@ -34,7 +34,7 @@ actions:
->      to: tmpfs
->      images:
->        system:
-> -        image_arg: '-drive file={system},discard=unmap,if=none,id=disk,format=raw -m 1G -serial mon:stdio -smp 4
-> +        image_arg: '-drive file={system},discard=unmap,if=none,id=disk,format=raw -m 1G -serial mon:stdio
->                      -nographic -netdev user,id=net,hostfwd=tcp:127.0.0.1:22222-:22 -chardev socket,id=chrtpm,path=/tmp/qemu-swtpm.sock
->                      -tpmdev emulator,id=tpm0,chardev=chrtpm #imageargs#'
->          url: #project_url#/#branch#/#architecture#/cip-core-image-security-cip-core-#distribution#-#architecture#.wic.xz
-> diff --git a/tests/templates/secureboot_negative_test.yml b/tests/templates/secureboot_negative_test.yml
-> index 568b5b6..2fcdbfa 100644
-> --- a/tests/templates/secureboot_negative_test.yml
-> +++ b/tests/templates/secureboot_negative_test.yml
-> @@ -51,7 +51,7 @@ actions:
->      to: tmpfs
->      images:
->        system:
-> -        image_arg: '-drive file={system},discard=unmap,if=none,id=disk,format=raw -m 1G -serial mon:stdio -smp 4
-> +        image_arg: '-drive file={system},discard=unmap,if=none,id=disk,format=raw -m 1G -serial mon:stdio
->                      -nographic -netdev user,id=net,hostfwd=tcp:127.0.0.1:22222-:22 -chardev socket,id=chrtpm,path=/tmp/qemu-swtpm.sock
->                      -tpmdev emulator,id=tpm0,chardev=chrtpm #imageargs#'
->          url: downloads://cip-core-image-security-cip-core-#distribution#-#architecture#.wic
-> diff --git a/tests/templates/secureboot_template.yml b/tests/templates/secureboot_template.yml
-> index 1b8e882..e29b64a 100644
-> --- a/tests/templates/secureboot_template.yml
-> +++ b/tests/templates/secureboot_template.yml
-> @@ -34,7 +34,7 @@ actions:
->      to: tmpfs
->      images:
->        system:
-> -        image_arg: '-drive file={system},discard=unmap,if=none,id=disk,format=raw -m 1G -serial mon:stdio -smp 4
-> +        image_arg: '-drive file={system},discard=unmap,if=none,id=disk,format=raw -m 1G -serial mon:stdio
->                      -nographic -netdev user,id=net,hostfwd=tcp:127.0.0.1:22222-:22 -chardev socket,id=chrtpm,path=/tmp/qemu-swtpm.sock
->                      -tpmdev emulator,id=tpm0,chardev=chrtpm #imageargs#'
->          url: #project_url#/#branch#/#architecture#/cip-core-image-security-cip-core-#distribution#-#architecture#.wic.xz
-> diff --git a/tests/templates/swupdate_negative_test.yml b/tests/templates/swupdate_negative_test.yml
-> index 42297a8..bb79b07 100644
-> --- a/tests/templates/swupdate_negative_test.yml
-> +++ b/tests/templates/swupdate_negative_test.yml
-> @@ -42,7 +42,7 @@ actions:
->      to: tmpfs
->      images:
->        system:
-> -        image_arg: '-drive file={system},discard=unmap,if=none,id=disk,format=raw -m 1G -serial mon:stdio -smp 4
-> +        image_arg: '-drive file={system},discard=unmap,if=none,id=disk,format=raw -m 1G -serial mon:stdio
->                      -nographic -netdev user,id=net,hostfwd=tcp:127.0.0.1:22222-:22 -chardev socket,id=chrtpm,path=/tmp/qemu-swtpm.sock
->                      -tpmdev emulator,id=tpm0,chardev=chrtpm #imageargs#'
->          url: #project_url#/#branch#/#architecture#/cip-core-image-security-cip-core-#distribution#-#architecture#.wic.xz
-> diff --git a/tests/templates/swupdate_template.yml b/tests/templates/swupdate_template.yml
-> index 67bee03..e1f71a9 100644
-> --- a/tests/templates/swupdate_template.yml
-> +++ b/tests/templates/swupdate_template.yml
-> @@ -34,7 +34,7 @@ actions:
->      to: tmpfs
->      images:
->        system:
-> -        image_arg: '-drive file={system},discard=unmap,if=none,id=disk,format=raw -m 1G -serial mon:stdio -smp 4
-> +        image_arg: '-drive file={system},discard=unmap,if=none,id=disk,format=raw -m 1G -serial mon:stdio
->                      -nographic -netdev user,id=net,hostfwd=tcp:127.0.0.1:22222-:22 -chardev socket,id=chrtpm,path=/tmp/qemu-swtpm.sock
->                      -tpmdev emulator,id=tpm0,chardev=chrtpm #imageargs#'
->          url: #project_url#/#branch#/#architecture#/cip-core-image-security-cip-core-#distribution#-#architecture#.wic.xz
+Hi Pavel,
 
-Thanks, applied.
+> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On
+> Behalf Of Pavel Machek via lists.cip-project.org
+> Sent: 20 March 2025 11:18
+>=20
+> Hi!
+>=20
+> So... I'm starting 6.12-cip branch. It is based on 6.12.19 and I
+> already pushed tree to kernel.org:
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-
+> cip.git/log/?h=3Dlinux-6.12.y-cip
+>=20
+> Next steps should be starting testing the branch. Chris, could you
+> suggest appropriate gitlab-ci file? [Or even better, could we test the
+> branch without the gitlab-ci file, as we are doing for stable trees?]
 
-Jan
+This should _mostly_ work for now as we don't have a localversion file yet.
+Once we have our usual CIP localversion file we'll need to have the relevan=
+t directory added to cip-kernel-configs.
 
--- 
-Siemens AG, Foundational Technologies
-Linux Expert Center
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+new file mode 100644
+index 000000000000..e5e0e4872101
+--- /dev/null
++++ b/.gitlab-ci.yml
+@@ -0,0 +1,3 @@
++include:
++  - https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines/raw/mas=
+ter/linux-cip-pipeline.yml
++  - https://gitlab.com/cip-project/cip-testing/linux-cip-pipelines/raw/mas=
+ter/trees/linux-6.12.y-cip.yml
+
+I had an experiment with GitLab including the "tree" configuration above de=
+pendent on the branch name, but it wasn't playing ball.
+For now, I suggest we just stick with the current approach and drop the .gi=
+tlab-ci.yml file down the line when we stop using it.=20
+
+Kind regards, Chris
+
+>=20
+> This error will need to be investigated:
+>=20
+> fatal: Not a valid commit name be20a73e03e19005cfa5c1c4d6158af1ba02f056
+>=20
+> These commits will need to be ported from 6.1-rebase branch:
+>=20
+> Collecting commits
+> Parsing commits
+> Checking commits not in v6.12
+> 2 546875ccba938ba4f7b5c616a1a1e334c5f2903f
+> a63fe5138f27d91f850abb52f6a0df37991b1e3e net: ravb: Add VLAN checksum
+> support
+> 3 85c171509821af048a45b435e0fac36edba6a0cb
+> a993245cf3ad5d1164a71475eec17fd51e28201f net: ravb: Enable IPv6 TX
+> checksum offload for GbEth
+> 4 59cceae40c67d943687587912483d68226cd04de
+> e7b69b28560bb977a05ab6ff280769b5a2ec1ee4 net: ravb: Enable IPv6 RX
+> checksum offloading for GbEth
+> 5 e63b5fd02a00aab8e79691359e931dafcd9dfd05
+> e8486d788dab19ddc25358196c4859e3dda4456a net: ravb: Simplify UDP TX
+> checksum offload
+> 6 4574ba5b711d7f7968c116521ef58d46fd4f89b1
+> c28d544f32b95153155c94fb7411f2d6fa14bcd1 net: ravb: Disable IP header TX
+> checksum offloading
+> 7 faacdbba01802c89f7043f9a47ad442c1195d307
+> a7548baf2b4f58b75292cddd35830a230c77f9dd net: ravb: Simplify types in RX
+> csum validation
+> 8 5a2d973e36061cbf8d1ba00a9294244522715e53
+> 15053ac983ab9fc781aeaa006c7c8b817b0bbb03 net: ravb: Combine if conditions
+> in RX csum validation
+> 9 8d2109c1a51525c3586c5bf6f78ab1ce3c2908f8
+> a1bdc025b634187d6d7cc462c5839ece8e102934 net: ravb: Drop IP protocol chec=
+k
+> from RX csum verification
+> 10 c4e347a02b14fa2425337473fcb120c62936cbc5
+> ac242a57ad28de613c61b76cb82b7d30a0e70e37 net: ravb: Disable IP header RX
+> checksum offloading
+> 11 8e3037924a36505531999df8f5847a68b9272c41
+> c3aef62f4dd2ce3fe35d45fdc5cfdebc02b22285 net: ravb: Factor out checksum
+> offload enable bits
+> 16 c520bbb523304ba98de9ffeeb0ef289921434125
+> aefdfb4c1c3ff4503caad2c357cab0fc4b910aea arm64: defconfig: Enable VBATTB
+> clock and Renesas RTCA-3
+> 17 0cd647cd53db0315361e41056e10739a5ee1e668
+> 8d96cc36644ab5500f9b48f2f51d9473d77d29af arm64: dts: renesas: rzg3s-smarc=
+-
+> som: Enable RTC
+> 18 2d768aee9f5294d2023e824c0906e2e7d1414629
+> 8b8fef2d3115f20327438e7aae01cb80b0f87ff0 arm64: dts: renesas: r9a08g045:
+> Add RTC node
+> 19 ac948eb8ead1265ff034955bdbbb081744f1e7ed
+> 011c639f99a749cbfc5256f91a5e6b0dc0c7835a arm64: dts: renesas: rzg3s-smarc=
+-
+> som: Enable VBATTB
+> 20 23c44956bce5aa79c060fc3e5d51843735e6eda6
+> b3c797ba7dfe077b81bd521ef94574238f2982e1 arm64: dts: renesas: r9a08g045:
+> Add VBATTB node
+> 21 8f315a5c7376b2bc324d62a8400184da77f25e28
+> d0207ac40f9b01a737a657f19f66294acc70d8aa rtc: renesas-rtca3: Fix
+> compilation error on RISC-V
+> 22 d4488377609e36cd9785533c29ccea4b86c292b9
+> 541924b0a8c2a69974ced3cc9d56d2f4fd056fac rtc: renesas-rtca3: Add driver
+> for RTCA-3 available on Renesas RZ/G3S SoC
+> 23 71c61a45c951eca67dd2cbc4de9cdd687ece4ead
+> e8e3acfa534f32c5d1afc1255ceca88577afa172 dt-bindings: rtc: renesas,rzg3s-
+> rtc: Document the Renesas RTCA-3 IP
+> 24 be20a73e03e19005cfa5c1c4d6158af1ba02f056
+> db7542114675a85d50f8b41b9cf342df7d0a7bf6 clk: renesas: vbattb: Add VBATTB
+> clock driver
+> 25 cdfd5daf90af8363fb1f58e08c829a775b2e2fc5
+> d7ae15b36472510c35f08d5c457e1525fff0d960 dt-bindings: clock:
+> renesas,r9a08g045-vbattb: Document VBATTB
+> 27 e1ef630c56d36770e180f0d0bf7b61b5289f5c48
+> 916eedaa995f67df0b205119649849ea5de83055 clk: Add
+> devm_clk_hw_register_gate_parent_hw()
+> 34 bad201b2ac4e238c6d4b6966a220240e3861640c
+> 8222bfe0e3fe1ffc98a6d8a8e49284b3bb2c3dad watchdog: rzg2l_wdt: Power on th=
+e
+> watchdog domain in the restart handler
+> 45 91dcdfbc5b770d4501b1a30d087affc9ed4fa6e5
+> f6e00b23d92b4cac35a5fcfa654fef1c4d999dd5 arm64: dts: renesas:
+> rz{g2l,g2lc}-smarc-som: Update partition table for spi-nor flash
+> 47 c0f2ec5683160a8604292516de9bb6edc7073226
+> 32f0604028a5cd99f6de6cc3f10dd1040b50c6dd arm64: dts: renesas: rzg2ul-
+> smarc-som: Enable serial NOR flash
+> 151 None 8315d48bdab555e103b02a0a76319cdb351e23c0 Revert "arm64: dts:
+> renesas: rzg2l: Add missing cache-level properties"
+> 517 None b99f83040dd996d328c7eed0d39c5bcc3ba7c23e Add configuration for
+> gitlab-ci.
+>=20
+> And these will need to be forward-ported from 6.1 branch:
+>=20
+> Collecting commits
+> Parsing commits
+> Checking commits not in v6.12
+> 1 651dee03696e1dfde6d9a7e8664bbdcd9a10ea7f
+> d08cad4e6b100c19001d46f85ce913526ddd767f serial: sh-sci: Increment the
+> runtime usage counter for the earlycon device
+> 2 5f1017069933489add0c08659673443c9905659e
+> ea067d976d8b26f4c29c0d626b0ea371cd4ce19c serial: sh-sci: Clean
+> sci_ports[0] after at earlycon exit
+> 3 239f11209e5f282e16f5241b99256e25dd0614b6
+> e526ac9a17969360c770da3f2ebae4b7cf2cfd86 serial: sh-sci: Move runtime PM
+> enable to sci_probe_single()
+> 4 7cc0e0a43a91052477c2921f924a37d9c3891f0c
+> c7e0eea97bbea76d715b9747ab93b22636a90e30 serial: sh-sci: Check if TX data
+> was written to device in .tx_empty()
+> 5 c1117a2fefbcce30cced3a180585e0adebc0fa89
+> 6947ffd86dafa874e841b5a25786d49ea22cf662 serial: sh-sci: Use plain struct
+> copy in early_console_setup()
+> 8 d828c6726fe5642d1c71e9edbc4799c959b471cf
+> c2bc4adb340a59dc45e2d328692ff49f609cc9b6 dt-bindings: serial: renesas:
+> Document RZ/G3E (r9a09g047) scif
+> 13 None 8da62141b20bae3e0cfb12c3537d530d14f02441 CIP: Bump version suffix
+> to -cip38 after merge from stable
+> 14 None f5afe3636e64ff166f857c71488e7de41c1f0e7c Merge tag 'v6.1.129'
+> into linux-6.1.y-cip
+>=20
+> Best regards,
+> 								Pavel
+> --
+> DENX Software Engineering GmbH,        Managing Director: Erika Unter
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
