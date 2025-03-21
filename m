@@ -2,41 +2,41 @@ Return-Path: <tommaso.merciai.xr@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7EC2C36007
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3982C35FFF
 	for <webhook@archiver.kernel.org>; Fri, 21 Mar 2025 11:01:09 +0000 (UTC)
-Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.39])
- by mx.groups.io with SMTP id smtpd.web10.18681.1742554862145207140
+Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.10])
+ by mx.groups.io with SMTP id smtpd.web11.18696.1742554867685240602
  for <cip-dev@lists.cip-project.org>;
- Fri, 21 Mar 2025 04:01:02 -0700
+ Fri, 21 Mar 2025 04:01:08 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=Fjhps9QH;
- spf=pass (domain: bp.renesas.com, ip: 52.101.228.39, mailfrom: tommaso.merciai.xr@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=pS64S+lj;
+ spf=pass (domain: bp.renesas.com, ip: 40.107.74.10, mailfrom: tommaso.merciai.xr@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YBQ2LhcNHQXzxg5oqBqbn7JoCWonJmJDxO8a2gCrGTIqscGxEdgD1dVDSGZOB+ieTUV89ryAQCVwUESMQgIa63kwEqSl1owI3YhOB+tO6uVyBCkgHTnzZuqaOmyBEjJWEXxPfecxVL7/fg3k5YaEBym4t91Yk697smhJNMU7Y9Ix/prWZ2am0y989iEZ2TW0kM1KFxbpdiPPzK7q/pg2Ys0FbtmjZbtdl20vZchnUsCVrvwloFUXJpS7WcqaehuLn5fRA4fSYbX+WZRzINlJ/VflF79noi+blhRIqiwrJCf88rBTr4/SwjHiXDDuwVbfOKO2WZoA4feq/Y/BYBg9RQ==
+ b=fdbuFSc2CBGmizG7Kc0ePXrAkf86mArelvluWgSZmI6ZYWDnZ48MrHXVTZUWfIHyrGgjff26+y2OwrqXoP19Mf3fmWpEXrh+HFd0Ufc9ROKG3qZSuf8Hyne8BSsEqoJoA3BOeh60MSFFaJJttKfxxbyrCBXH+r4OynJFaH6gernP3zkW/XFMjKfi2av7CCzAzsMGOQAhTrK/94kQfdDoUpoMhE3uliXfxlN+rikkOVHvZ5SD1ETavNTOWM8+z6L2aIPZBP9ZPQ33to+6nPdwq1eAWY+cFVk/mTBM1jk41x1Pt8n2sP+xgDhC4x58uRU4ao2V+g+jlBS3c4x5ITa19A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XPnjlWHSLHS3pD2+7IsH6+QbiuRFsybMbbFYPsqcO4M=;
- b=yA2qBs5UsIU5YjPG8w/9XI7DdGMu7H6NPJbA7dm/ECnDvzYyEcH38i5uRK+oVQFHGOTJSydE0U31tLUVbRSvdO4q5KoVWSdyoTiFiN7pOdh0gbqHWQa9WLirgslKlalK4EOqR+XPwQ1+THX3nMh20YUtDGNMFeE2hQbqi7ieLgUWRYThvwXp84096lrGLow/2hKAxcmZOCuJGvIsDsd3PSWsmAwKHDwnTOf0WriWjHZ5ykPdgP7l70SZTzlcEtMcmx8jrPrljJ++ixrtqbCG0t3JEhOQ32l1PWJUVa0HTfJJbkQ/oM8BET+Mebt27JngMddJizDWUu0eR6BA3cjYlA==
+ bh=geOIyPCd1YJP9JDkYFAjGZRw8kj27W5M4DZBrQPSqy4=;
+ b=ygd697cQmxtUOVGxahCs6ZtxtOEaNXOWdXpUdNHNbGqHLC55DEOvKSA9VY/00JqvyqfaCBq3Qau6+DibU0huGbUQUap2yNwdakWRa4YA+vlEPKpeiw7WadR6yWpZHh+1uZ0vEgGkVm2NWoePAy74i5KmluKf7wO+o29AU1oRxWru59x5NfbuVyGIcdFbICagle7P07OXf8NuDew3YAnIRIfBZ2erBcAilunsotVoFZ1mIQ834oW+MOn7W0yaxStlq236X9EahjrKqg6hAqq5P1+vmLjHWcpL2SBpqadlmZwt+YfrRjvJto7WRj56ICi5AYSJIt8OLxX9hQi29IGmTw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XPnjlWHSLHS3pD2+7IsH6+QbiuRFsybMbbFYPsqcO4M=;
- b=Fjhps9QH6S2p0c0wy2uJC8wqp+Z/zMApNB3TEOnCOUN1VqiBuxzZE8/Pbzn0jwLYQGLOTrez8CVrYntKtFTieC70m5ZmxyoXZLvUd5m1ms0SCTrfQldwInaf0k/WJCxmDL3XjOFCiCl+dBKrAB7p+ocerXn7lNJ6rJYflt7l2mI=
+ bh=geOIyPCd1YJP9JDkYFAjGZRw8kj27W5M4DZBrQPSqy4=;
+ b=pS64S+ljrCv1ukV/v706z/fcAahuT8hO3341gOWYnBXXKHJij7HmIlHJlYo++FoX729ygwC6fFevMmvni6sY9GlhzOEVZKghJko982esr3te6amEJFAiXAUZXAi/bxVmKPnieFm86om7NUaFBaXhGnTiTWE2FCzFRmH2LrQudVQ=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com (2603:1096:604:35e::5)
  by OS9PR01MB12437.jpnprd01.prod.outlook.com (2603:1096:604:2e4::7) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.36; Fri, 21 Mar
- 2025 11:00:59 +0000
+ 2025 11:01:04 +0000
 Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com
  ([fe80::244d:8815:7064:a9f3]) by OS9PR01MB13950.jpnprd01.prod.outlook.com
  ([fe80::244d:8815:7064:a9f3%5]) with mapi id 15.20.8534.034; Fri, 21 Mar 2025
- 11:00:59 +0000
+ 11:01:04 +0000
 From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -44,9 +44,9 @@ To: cip-dev@lists.cip-project.org,
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: [PATCH 6.1.y-cip 06/21] clk: renesas: Add RZ/V2H(P) CPG driver
-Date: Fri, 21 Mar 2025 12:00:06 +0100
-Message-ID: <20250321110021.3612805-7-tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 08/21] clk: renesas: rzv2h: Add selective Runtime PM support for clocks
+Date: Fri, 21 Mar 2025 12:00:08 +0100
+Message-ID: <20250321110021.3612805-9-tommaso.merciai.xr@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250321110021.3612805-1-tommaso.merciai.xr@bp.renesas.com>
 References: <20250321110021.3612805-1-tommaso.merciai.xr@bp.renesas.com>
@@ -58,262 +58,274 @@ X-ClientProxiedBy: FR4P281CA0077.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: OS9PR01MB13950:EE_|OS9PR01MB12437:EE_
-X-MS-Office365-Filtering-Correlation-Id: 57dd9442-e35d-4f1e-1863-08dd6867a95c
+X-MS-Office365-Filtering-Correlation-Id: c6bb9119-3ebd-4380-6b8a-08dd6867acb9
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?rmpOs4fyWPb+PqbimFN3AG8taTcO06x0uepb6G0YwuMWS/MJRYNAdh4Q7zgY?=
- =?us-ascii?Q?YnZfR0bhKgupY7MVTi1uJbb6ytOuL9Nv/hD/KYHBy3VzCJZ6pUEt3on7miHn?=
- =?us-ascii?Q?rL4wIxbBYX1xn4KeWK6sTonfBonhpDDb/JIC2e78hkk7Boxlbd3nUHp3Naz9?=
- =?us-ascii?Q?3CH5UEC7kTOTyR0GWJUxK5O4ygW+FuSd6SFwkVRLWd5XsC/5hH2B8dlSq5r4?=
- =?us-ascii?Q?mesK9/ZV5qZtGLHwBPiEWxFf9Yq3tlmiftFJARDV9JQPfHHlM77qgCGr8v2u?=
- =?us-ascii?Q?y6IBuIAvgH3WLC0Vk4MZf/lbbIS+AXJSWsHIUkPvFYBQPaXQl75v/U/3BzPd?=
- =?us-ascii?Q?6CWn/mEgZ+XvhGs3Cp8SZjeLsmYx95IjwmpBn3XTdEwPhHWH1viQgOuWgr+0?=
- =?us-ascii?Q?gYTY5QEmg/2ff4OsyEmFpIjAwaaTs32O2BmHIlmxc8O1KsTFfplLYzaGxqFR?=
- =?us-ascii?Q?sC5M0ICGHoVB9mkWV8JD75ptfO8iS3AxsTCQjcy3xUy06MlJKo4l3EAyGCdX?=
- =?us-ascii?Q?iTJ6FkKX7UaCLlkpWs+/3VCZ3gCOGCfmLc49jmEtpE4HhzzBfSJ2lQEEPHPE?=
- =?us-ascii?Q?OTeZkmNBGm4M3VOlRNBFZKBFIgtXPXsAun6wh2Ubw8FTragMXlwujpXXCv7G?=
- =?us-ascii?Q?36W5mS9yha4KEh3/JBugQh1oezsabfBu+Nv4gQv2DifXta59TmuPurbeUkbw?=
- =?us-ascii?Q?LfXlroHuHumaT9Ak8i/4IgwscW7kfuyqKpuxSA/ApuqNohtN+AN1yZXSECuZ?=
- =?us-ascii?Q?nwSGhZgDJllnBc8oQGjLiC9Bd5MUhohL0tR0oteCBQ+i+DXiibJiR0Q49L5O?=
- =?us-ascii?Q?A5lTcsX4fbkQ1VFF/hLq8vUESH6CrZX+id3u5IJZR5HW/emAJwPjIOZ9QjtE?=
- =?us-ascii?Q?mMtD6/MnYk5OAQ0tPAmR53tXD4/nWXWm2ADN7YfqnpxrG7LQNMA4bfs4WiBq?=
- =?us-ascii?Q?kTrbq5vURz7qeDL5V8gBi7Xezdy3e1JjK8ebK5OV6lYC4HCV3UrSTccUu34G?=
- =?us-ascii?Q?nkSv6PPmVA1WL9w0XSsmIbQhlA97aKatQsAiaQXgFQhqh0pTkZRjWeiQaCRk?=
- =?us-ascii?Q?y6dvRnoDLPShnsHWC9NtB9yQlGpYUbh7wKm2fup9H3V30irG42PnB2y5LV3U?=
- =?us-ascii?Q?MjKAoaX/T1zlg6th+MO8K6ZOBfUV/MoF4vmEy1uPBxIsCYJOKuIKz0IR/cPA?=
- =?us-ascii?Q?jMt6AL29blU26gAccVeT6yu5XMcIoUlVno0gPuEjqLCbLsrNSJ2kJIzal1MA?=
- =?us-ascii?Q?90LJfBXnYm4tp/AQ6r1Ux7+O+sKCoexNlCo7e4uM/GtrOzyhcZmiCkl+9Ol1?=
- =?us-ascii?Q?MdsK9hAOEQ2sGaA/LDEWRwNcwPBEVjWSmeuKWhXoYyz4torv3U87otW9CP01?=
- =?us-ascii?Q?fgRdqWLg05us4fxoTLeF67akFZNU+EsgGNXLyF+8NqLudIEUFrB+ANIbM+d/?=
- =?us-ascii?Q?3Hr5QHMofW3hDgf4YvgHo3k3AooNmT84?=
+	=?us-ascii?Q?5BBjvrZUotplPm2IEpxBYifxg9vX3gQJwwulx6np9ZRmqtizYQGcSaUajmtY?=
+ =?us-ascii?Q?c0yQXqphhh4gHA8K8GHzT5i1o+ujsxmyW00a5zVnUSQVKyKhkcXoFSVl0fB8?=
+ =?us-ascii?Q?NPkCf263NWmJ4Gujjd537yvQTAJ6oaqdUqWi/0XMKwECiSkviEE/OrWa5Ozi?=
+ =?us-ascii?Q?9V5Bjt2CUTwAXyQmAzhhPcx92HKSHLJBxZRreya1z0cYR0X84hMWSHKYbsMG?=
+ =?us-ascii?Q?xx3SpSl/pRk5VIYsbKiYzrgjfH/7cm3KFbRpeTCoe3/HbjNszeVTXJEY85G+?=
+ =?us-ascii?Q?c8+lPSyCJwMyViXlLXVHMJMCatmh1bL9yfH8y87b2TvxLMDcft6bBLxMR519?=
+ =?us-ascii?Q?LX2o9SRXF/+S5fujECQIX1hUJfZ8/nM52PU3G3nc53ZO5ZRWbRzn+6rze3qz?=
+ =?us-ascii?Q?PLJxOsSRDELrMuSD4L9ruCa/nLqiepXVrW4EEI8kiCqDlq3c6zBidmxIKMBF?=
+ =?us-ascii?Q?A2oAtZgfiEh5/+Bm6kM6K/4Xm1lOp6qasPAKNH7MHUEA8r1akmEaqZfTWdCt?=
+ =?us-ascii?Q?Jzw5pdeS/vdvpXZ9842gorbEBNC/CTNe9023gn/0YXEkDxoLMmuTRapCIMnb?=
+ =?us-ascii?Q?c7ySKJAWyRa3UGnTabVHT8bgUX/W0ITc4c+hM5GmB7KO1ZwWDslUnnnnhCGG?=
+ =?us-ascii?Q?aYu8mVhF2DcHFwEu3cHmj9tfxaCpy6CqaMzN7yIvSjkvrZUbGvLH40XQ1txE?=
+ =?us-ascii?Q?FdYtBJLVo4uwPDjr5esMXKrUjzbHZnaV6FdwM9ZSNhB/jTlmR3S5WT4i34Iz?=
+ =?us-ascii?Q?6Gu7N+qe7gG6v8O2hpqwPQNvOy1AdD7en34uPMKr+PrsE3vYPqTUJDO8mRsq?=
+ =?us-ascii?Q?VEfIqH6RJddj532Hb6fECzl/9Sct0wyTp+QQvfcHXhqECkdH2MDVdPD5FUVD?=
+ =?us-ascii?Q?hkUplkiM3tlt/aiv/SJ1zI+jA3wpn/2k2zxxN0r2So0EoMoscXZveqR2lPQk?=
+ =?us-ascii?Q?yfLYZt/asWmb8dK/d1YgFx5b6sVFhqfaQRHVcIpfKOZ5ayFWf/2q54XZijT8?=
+ =?us-ascii?Q?lUAaJvcytTfTUaUjk6COu+a/Sq2SeSu/NTtNjI9MsMvsvYV/WPZqVMY/040s?=
+ =?us-ascii?Q?ZkEFyZr1mgX6UdS/iHzd2sQJyYlCtvIH+EuHJA+ZXCJWQsQOi/x7nkcT4Nl0?=
+ =?us-ascii?Q?wd+aPaqhJnH4FL3eKN7IqwfQQndL+Z0gzMHYQaFxyJZ8Z2qIvIvtrKKaHKox?=
+ =?us-ascii?Q?vSnWUyE0fUbZbJPA03OwPdb92AnAkEX628fbvzLtjaVtMkyzLltwe/u65L6/?=
+ =?us-ascii?Q?hJsmb+Q3+YXKdolu5qtw2KsnCKAvUDifhOteRuj7yqzfnIa+6lc3PUd7CmHt?=
+ =?us-ascii?Q?62FBMPLUJlGCs3oYdaUkVYyvNY/x/XbhDyziT33zq3JQ16lcfX9P7IY3FYIB?=
+ =?us-ascii?Q?5Cqk0An9GBb6KNr1RhMZeTNnKJXWTxtxGiPBvLkxaes1dqthvUYrX99zJypR?=
+ =?us-ascii?Q?Ep2Y2eiwym8giGdp7+udyYBsA/gVOsTC?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS9PR01MB13950.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?V53qRi9qlh/h1ST60fdoSPuCZqYRIBCrTdIV/Fe1E1LytntQFh+nPMkWXR8/?=
- =?us-ascii?Q?v66wtXmLRZX8hrWhMnbmdQODT51dPlhqeCoiTz2cimJu25BGU+B+rSzKlajA?=
- =?us-ascii?Q?FRFts35FIB8AL0aBUTh7VONPqj2orZR9upxjzIJFql1nvz6Z7IbO/D1Ew3j3?=
- =?us-ascii?Q?nQ/4FGicqMGwATB7FweDLnvUGFenAAVbSKewEmB0MOg1CCale5J0/QycMxx0?=
- =?us-ascii?Q?Gy9qsreqtClNz1hxciqyyPDyFmVQ6p1bKY6zEZaPzHVZP9Ll3CY0lNJyWofo?=
- =?us-ascii?Q?+s0ZgKQ59jgg9i8hulf5QgMOkFALNG8rDPvSeJNv55ujSdcDUTcKOc+E90OC?=
- =?us-ascii?Q?sE1+zks8j1PXFVTJ+cIYfUPzSoSKpmzH3CywivgDYMnNy7Gr2qwVQE4DhmO4?=
- =?us-ascii?Q?z6FtuKsyiUakJ1OAF6WX+SctUIlxMOoD+eu/VVLusV47HHWENk9v69+XiZO3?=
- =?us-ascii?Q?CvXDri+9BQLJKGzKW7Q/D4MdkR3TbdcRBdITFJUwvC1uJUQNfGhpl3LVaI3g?=
- =?us-ascii?Q?M96ljo6yNFuFyYfRjmjSFLAZocbGpl/njNj54TT0vTupXQ00xRcyG9V4ztBY?=
- =?us-ascii?Q?O6mvRbdd91k7xp6LI88uPJ+i/135UwILsHiZKVZnSWV16O3cigP2MQGYVD6B?=
- =?us-ascii?Q?mYDMtdzGLEF1hkoJVpbjt619RwnGATre7n+5KyzivBY8XDfUG+vQj0SxO+vh?=
- =?us-ascii?Q?8o+gzWmVkaD0u7+eksxsX0ReWwGEt3/dCtghVqwh+zJNKu8IIR/G0leccSzx?=
- =?us-ascii?Q?7iqE7zaCLVmHOctvawnhtqdDUthbrLTV+S5xoAeQgDr0M0Z8Lk+7dnaJn/8n?=
- =?us-ascii?Q?awasGpjULoyTRF9/zbPD/I0pmvUJpWHoj+ejc1IGq53jY9+Qq/KCf/nLUXqp?=
- =?us-ascii?Q?d/xaLwzencf9hMckOLSkFY4i1FRMpjzecjBA/Uvb657FQILUEyfWjfOb8lXE?=
- =?us-ascii?Q?Ky8NoWqNpBh1jc8CYmqp5hprNMD/lojJeoP+4lXkOVgOF6JB2Avk5EhDncWs?=
- =?us-ascii?Q?oPYtz1jF6svk30rX1a5FTIBPS+jMSDUfGz/e/gySCo8z1CXhBDZBRf6zY2L5?=
- =?us-ascii?Q?AOp66+C8CdY5u5jBqAS8pq5H5/qdagK8z7ObVx5o7lmOaC8IRlqOIHo6p75R?=
- =?us-ascii?Q?F2m4M9j9ku6q6jgRGNQQi7A7rr/VGoWEXNON09yV5+8jPUD9czO22keemf0Y?=
- =?us-ascii?Q?eBmuBNfPw0pMp3NpbOSBPYkvkCDuSjmq1znFnXQW/dLMNVrhDQWQXpVOjcdA?=
- =?us-ascii?Q?bbguyX7GHxzW6tFaR5aCFV3XfB90cgDqD/dXEmfaTkizw5AERGwwm3kFy+pW?=
- =?us-ascii?Q?335IoGLGCJ++267GtgtzKnEEsOea9Amnavw80gw+p+HkFqW7LpV3SoQPCDuk?=
- =?us-ascii?Q?RGF2plKGyheDXa9+zxX2UbpQbG6vExZIKwAzBy/KjaKIXoFG6gRbpXYyo8b1?=
- =?us-ascii?Q?MddNoDk16QMdyk6USWaNij0RMzBBt9GAk6wq7E8toGPGg76RIcSv0L78L/18?=
- =?us-ascii?Q?XGmXuuMK31m/uRHw/2xX7hZ9d6FD2MyD6xCLlGk7C359NphC6hBj1hBc5Ejd?=
- =?us-ascii?Q?0fT/igLh6tNZ1KLssz3QdMJbWvfO762SdArNuvoCrKHUo/gKAqPstwHHGOEh?=
- =?us-ascii?Q?K0joAR/7qdBjOmsDVoZdfgs=3D?=
+	=?us-ascii?Q?uo3BytkX6xgfwubW2pcrk1+NV0K+D2nK8nzxVTFBlYTBefJQ6OmnT3OqnnJi?=
+ =?us-ascii?Q?uS9SDUtfWIFs7D0G9uGK46x/ynMwYdaVqiFAZc3MuNGmoqflRc18f4Ip29+f?=
+ =?us-ascii?Q?Td8Qve5XArmWuNt1Vg0InoT6sksleqGFl6y3hIEfIiFQrp9xYWN1r086ULuh?=
+ =?us-ascii?Q?TgEI/Wg36szsnoWlJwbsDAXWUR2chjapIPkHqIZ6cTs41e4Uokk05XVnGZf2?=
+ =?us-ascii?Q?wLIySJYsVW+DZEyvUEo6nuzKQPMGJIn3boQ1wX7WrgmVZgqdBBYNppHAq8CO?=
+ =?us-ascii?Q?EvknoXr0AFgQj6R+qpb/Rg69kI8z8kxB7FvnkNJglZ2fQuBovJqESik7bxL9?=
+ =?us-ascii?Q?29upwI/A6nZuBAuxVxqCXpmjf1BnogdRScao/rPqQ35XNuUScdW0YkgJNSlh?=
+ =?us-ascii?Q?KVLFxouxLhZPSSAiHvdY9AglFAwECO3SatfXK/qpujVwSrh2wE8xUjt5Hadg?=
+ =?us-ascii?Q?Hzi/Ygw3ajSt2phEFlKCLXJr7vD3waLSOFigPakg1niO5mm8JxmpObE/u3x7?=
+ =?us-ascii?Q?bnby47f2q+Jl3TZ7gk0rENJj2tteL/Uv7FafZ9VWoJ7NMbSB1AoGfYPV9QBJ?=
+ =?us-ascii?Q?bWXPoVA1VLSjkYahl+spLltUHnrOGW88Lwja6nibqpn7hKlA5XB8JktRhFAo?=
+ =?us-ascii?Q?aS9+QGCh47CFPwoc/hnbGT1N+3iPRLg3sSjglRghMoWKvizi1HqlwCu60AcP?=
+ =?us-ascii?Q?nbTTPUbnRn/L0+vBImbmc1eoTIrADMSUa8zUtxtExFDyGf/bEsuOP9uQe2tH?=
+ =?us-ascii?Q?2oXMuay6ogPC2RMC3yPU6EZIq0lt4EXo82y52Kj0UtUloaLt8Ps2adNvB9Vk?=
+ =?us-ascii?Q?Lz4SyoHWN05iBpee72lNkwSMNwgWxi/UXNxkKDHiYGvU7uWqwsfgtlzyfxkX?=
+ =?us-ascii?Q?qjpq1gRiM6K0RsQznJM35A72S98spAJDRKz/ZUnudM5sKQrxo4lVpcQcWdGy?=
+ =?us-ascii?Q?BNbgMKKm3hwo0yVlNFLEiEhFs/N4VoQI3ZXlq3aFIyxXbnBKgOdu5vku+P0o?=
+ =?us-ascii?Q?8Js70YI+8aTKfY7/uPb2REHZIbjOdv6EaqdKlWlD9mNAo4brpjhSWeUuPQQp?=
+ =?us-ascii?Q?ovFKm5karClBBJ9syA+zQgVJCyuqmIDX73wqS/QRZ+3fXsIXribq/hWY2JGY?=
+ =?us-ascii?Q?AGm+Mm4psZ2rZh48rq3Ww0bQS02c1pDs4SdVrbWnZ9FeoVtExqDColOe2nCZ?=
+ =?us-ascii?Q?7NjkLxEKe2VMEojSUF9zz9mYiN6ovdazgAiAA3LiZ1hB0xP3Bexho7s7lYZm?=
+ =?us-ascii?Q?AT1l/YF01wTgyhTKqiDttPnH23BB9Zb/8MwpsQy0+MNSXcmP8AIo5n1DeGQK?=
+ =?us-ascii?Q?FV7Ys4JIz1P37bYQkuq3OFVJPnQxbjlrWGRXWrLehtFie+4cvV2fPqKi1F8F?=
+ =?us-ascii?Q?AGjGGbIrH71NSyOiIT73SVGgEXfsXmLaGCzC9a6KiDd6pQzFkJo/YWdwdhfS?=
+ =?us-ascii?Q?abzmis+hP2eLOfdo7AdBE2W1Om3gbAzhzfb84yQN7J9WMrAQXDjfFA6/eZEE?=
+ =?us-ascii?Q?NCzkKrF3PFC+M/TvV6or4DklnJWZUiRVLtypiPKLrE6n1KLHNL3BOtthQABj?=
+ =?us-ascii?Q?uJMHWlhM332B6VzsZFsUVAOz4BUcpPDkiIFIbFwI30nevEMkuOGJgYaFQMmT?=
+ =?us-ascii?Q?iF1iZpa1ktEeKdrgBIYVWOg=3D?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57dd9442-e35d-4f1e-1863-08dd6867a95c
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6bb9119-3ebd-4380-6b8a-08dd6867acb9
 X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB13950.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 11:00:59.2124
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Mar 2025 11:01:04.8354
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3Ge1GHr935StJbwTHkrOygANAYzA6smsJM4BhVwoBoIXnkefvm0oIfTfoCkEK3e7WcHAsecUd3HS3K2KN/vRwAyLzSJeL2hFe2uzPKX9bPUYb6YdiLhgbZvgyrier5u7
+X-MS-Exchange-CrossTenant-UserPrincipalName: W2v9mF8Q346nE71QQs5KGeIL110K1iXMYH5stu3CGrnyjFKqFtDPF/qMPzjEZzl5IkB+SF2SpxA+T8XWCKAa3r1h9n6Vi9YgVLTPzRM9orSL3B5i9QEYD0cvf+KfmAaE
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB12437
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 21 Mar 2025 11:01:09 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18313
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18315
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 36932cbc3e6cc95a681568c28bfadd72d7c2e7ce upstream.
+commit 03108a2614ecab46af6e0d66f9fd61c0d80587f2 upstream.
 
-Add RZ/V2H(P) CPG driver.
+Update `rzv2h_cpg_attach_dev` to prevent external and core clocks not tied
+to the power domain from being managed by Runtime PM. This ensures that
+only clocks originating from the domain are controlled, thereby avoiding
+unintended handling of external and core clocks.
+
+Additionally, introduce a `no_pm` flag in `mod_clock` and `rzv2h_mod_clk`
+structures to exclude specific clocks from Runtime PM when needed. Some
+clocks, such as those in the CRU block, require unique enable/disable
+sequences that are incompatible with standard Runtime PM. For example,
+the CSI-2 D-PHY clock initialization requires toggling individual clocks,
+making Runtime PM unsuitable.
+
+The helper function `rzv2h_cpg_is_pm_clk()` checks whether a clock should
+be managed by Runtime PM based on this `no_pm` flag. New macros, such as
+`DEF_MOD_NO_PM`, allow straightforward declaration of clocks that bypass
+PM.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20240729202645.263525-4-prabhakar.mahadev-lad=
-.rj@bp.renesas.com
+Link: https://lore.kernel.org/20241202203916.48668-2-prabhakar.mahadev-lad.=
+rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 ---
- drivers/clk/renesas/Kconfig         |  5 ++
- drivers/clk/renesas/Makefile        |  1 +
- drivers/clk/renesas/r9a09g057-cpg.c | 80 +++++++++++++++++++++++++++++
- drivers/clk/renesas/rzv2h-cpg.c     |  6 +++
- drivers/clk/renesas/rzv2h-cpg.h     |  2 +
- 5 files changed, 94 insertions(+)
- create mode 100644 drivers/clk/renesas/r9a09g057-cpg.c
+ drivers/clk/renesas/rzv2h-cpg.c | 44 ++++++++++++++++++++++++++++++---
+ drivers/clk/renesas/rzv2h-cpg.h | 12 ++++++---
+ 2 files changed, 49 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-index 5bb7ce115d74..688c088a68d9 100644
---- a/drivers/clk/renesas/Kconfig
-+++ b/drivers/clk/renesas/Kconfig
-@@ -39,6 +39,7 @@ config CLK_RENESAS
- 	select CLK_R9A07G054 if ARCH_R9A07G054
- 	select CLK_R9A08G045 if ARCH_R9A08G045
- 	select CLK_R9A09G011 if ARCH_R9A09G011
-+	select CLK_R9A09G057 if ARCH_R9A09G057
- 	select CLK_SH73A0 if ARCH_SH73A0
-=20
- if CLK_RENESAS
-@@ -188,6 +189,10 @@ config CLK_R9A09G011
- 	bool "RZ/V2M clock support" if COMPILE_TEST
- 	select CLK_RZG2L
-=20
-+config CLK_R9A09G057
-+       bool "RZ/V2H(P) clock support" if COMPILE_TEST
-+       select CLK_RZV2H
-+
- config CLK_SH73A0
- 	bool "SH-Mobile AG5 clock support" if COMPILE_TEST
- 	select CLK_RENESAS_CPG_MSTP
-diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-index 20fee1e834dc..e7ff58c0a480 100644
---- a/drivers/clk/renesas/Makefile
-+++ b/drivers/clk/renesas/Makefile
-@@ -36,6 +36,7 @@ obj-$(CONFIG_CLK_R9A07G044)		+=3D r9a07g044-cpg.o
- obj-$(CONFIG_CLK_R9A07G054)		+=3D r9a07g044-cpg.o
- obj-$(CONFIG_CLK_R9A08G045)		+=3D r9a08g045-cpg.o
- obj-$(CONFIG_CLK_R9A09G011)		+=3D r9a09g011-cpg.o
-+obj-$(CONFIG_CLK_R9A09G057)		+=3D r9a09g057-cpg.o
- obj-$(CONFIG_CLK_SH73A0)		+=3D clk-sh73a0.o
-=20
- # Family
-diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a0=
-9g057-cpg.c
-new file mode 100644
-index 000000000000..9722b810e027
---- /dev/null
-+++ b/drivers/clk/renesas/r9a09g057-cpg.c
-@@ -0,0 +1,80 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Renesas RZ/V2H(P) CPG driver
-+ *
-+ * Copyright (C) 2024 Renesas Electronics Corp.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+
-+#include <dt-bindings/clock/renesas,r9a09g057-cpg.h>
-+
-+#include "rzv2h-cpg.h"
-+
-+enum clk_ids {
-+	/* Core Clock Outputs exported to DT */
-+	LAST_DT_CORE_CLK =3D R9A09G057_IOTOP_0_SHCLK,
-+
-+	/* External Input Clocks */
-+	CLK_AUDIO_EXTAL,
-+	CLK_RTXIN,
-+	CLK_QEXTAL,
-+
-+	/* PLL Clocks */
-+	CLK_PLLCM33,
-+	CLK_PLLDTY,
-+	CLK_PLLCA55,
-+
-+	/* Internal Core Clocks */
-+	CLK_PLLCM33_DIV16,
-+
-+	/* Module Clocks */
-+	MOD_CLK_BASE,
-+};
-+
-+static const struct cpg_core_clk r9a09g057_core_clks[] __initconst =3D {
-+	/* External Clock Inputs */
-+	DEF_INPUT("audio_extal", CLK_AUDIO_EXTAL),
-+	DEF_INPUT("rtxin", CLK_RTXIN),
-+	DEF_INPUT("qextal", CLK_QEXTAL),
-+
-+	/* PLL Clocks */
-+	DEF_FIXED(".pllcm33", CLK_PLLCM33, CLK_QEXTAL, 200, 3),
-+	DEF_FIXED(".plldty", CLK_PLLDTY, CLK_QEXTAL, 200, 3),
-+	DEF_PLL(".pllca55", CLK_PLLCA55, CLK_QEXTAL, PLL_CONF(0x64)),
-+
-+	/* Internal Core Clocks */
-+	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
-+
-+	/* Core Clocks */
-+	DEF_FIXED("sys_0_pclk", R9A09G057_SYS_0_PCLK, CLK_QEXTAL, 1, 1),
-+	DEF_FIXED("iotop_0_shclk", R9A09G057_IOTOP_0_SHCLK, CLK_PLLCM33_DIV16, 1,=
- 1),
-+};
-+
-+static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst =3D {
-+	DEF_MOD("scif_0_clk_pck",		CLK_PLLCM33_DIV16, 8, 15, 4, 15),
-+};
-+
-+static const struct rzv2h_reset r9a09g057_resets[] __initconst =3D {
-+	DEF_RST(9, 5, 4, 6),		/* SCIF_0_RST_SYSTEM_N */
-+};
-+
-+const struct rzv2h_cpg_info r9a09g057_cpg_info __initconst =3D {
-+	/* Core Clocks */
-+	.core_clks =3D r9a09g057_core_clks,
-+	.num_core_clks =3D ARRAY_SIZE(r9a09g057_core_clks),
-+	.last_dt_core_clk =3D LAST_DT_CORE_CLK,
-+	.num_total_core_clks =3D MOD_CLK_BASE,
-+
-+	/* Module Clocks */
-+	.mod_clks =3D r9a09g057_mod_clks,
-+	.num_mod_clks =3D ARRAY_SIZE(r9a09g057_mod_clks),
-+	.num_hw_mod_clks =3D 25 * 16,
-+
-+	/* Resets */
-+	.resets =3D r9a09g057_resets,
-+	.num_resets =3D ARRAY_SIZE(r9a09g057_resets),
-+};
 diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cp=
 g.c
-index 9a568020f61f..4e10cc835c63 100644
+index 9fa00f5c1237..bbf0b4ee7b26 100644
 --- a/drivers/clk/renesas/rzv2h-cpg.c
 +++ b/drivers/clk/renesas/rzv2h-cpg.c
-@@ -664,6 +664,12 @@ static int __init rzv2h_cpg_probe(struct platform_devi=
-ce *pdev)
- }
+@@ -98,6 +98,7 @@ struct pll_clk {
+  *
+  * @priv: CPG private data
+  * @hw: handle between common and hardware-specific interfaces
++ * @no_pm: flag to indicate PM is not supported
+  * @on_index: register offset
+  * @on_bit: ON/MON bit
+  * @mon_index: monitor register offset
+@@ -106,6 +107,7 @@ struct pll_clk {
+ struct mod_clock {
+ 	struct rzv2h_cpg_priv *priv;
+ 	struct clk_hw hw;
++	bool no_pm;
+ 	u8 on_index;
+ 	u8 on_bit;
+ 	s8 mon_index;
+@@ -541,6 +543,7 @@ rzv2h_cpg_register_mod_clk(const struct rzv2h_mod_clk *=
+mod,
+ 	clock->on_bit =3D mod->on_bit;
+ 	clock->mon_index =3D mod->mon_index;
+ 	clock->mon_bit =3D mod->mon_bit;
++	clock->no_pm =3D mod->no_pm;
+ 	clock->priv =3D priv;
+ 	clock->hw.init =3D &init;
 =20
- static const struct of_device_id rzv2h_cpg_match[] =3D {
-+#ifdef CONFIG_CLK_R9A09G057
-+	{
-+		.compatible =3D "renesas,r9a09g057-cpg",
-+		.data =3D &r9a09g057_cpg_info,
-+	},
-+#endif
- 	{ /* sentinel */ }
+@@ -668,17 +671,51 @@ struct rzv2h_cpg_pd {
+ 	struct generic_pm_domain genpd;
  };
 =20
++static bool rzv2h_cpg_is_pm_clk(struct rzv2h_cpg_pd *pd,
++				const struct of_phandle_args *clkspec)
++{
++	if (clkspec->np !=3D pd->genpd.dev.of_node || clkspec->args_count !=3D 2)
++		return false;
++
++	switch (clkspec->args[0]) {
++	case CPG_MOD: {
++		struct rzv2h_cpg_priv *priv =3D pd->priv;
++		unsigned int id =3D clkspec->args[1];
++		struct mod_clock *clock;
++
++		if (id >=3D priv->num_mod_clks)
++			return false;
++
++		if (priv->clks[priv->num_core_clks + id] =3D=3D ERR_PTR(-ENOENT))
++			return false;
++
++		clock =3D to_mod_clock(__clk_get_hw(priv->clks[priv->num_core_clks + id]=
+));
++
++		return !clock->no_pm;
++	}
++
++	case CPG_CORE:
++	default:
++		return false;
++	}
++}
++
+ static int rzv2h_cpg_attach_dev(struct generic_pm_domain *domain, struct d=
+evice *dev)
+ {
++	struct rzv2h_cpg_pd *pd =3D container_of(domain, struct rzv2h_cpg_pd, gen=
+pd);
+ 	struct device_node *np =3D dev->of_node;
+ 	struct of_phandle_args clkspec;
+ 	bool once =3D true;
+ 	struct clk *clk;
++	unsigned int i;
+ 	int error;
+-	int i =3D 0;
+=20
+-	while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i,
+-					   &clkspec)) {
++	for (i =3D 0; !of_parse_phandle_with_args(np, "clocks", "#clock-cells", i=
+, &clkspec); i++) {
++		if (!rzv2h_cpg_is_pm_clk(pd, &clkspec)) {
++			of_node_put(clkspec.np);
++			continue;
++		}
++
+ 		if (once) {
+ 			once =3D false;
+ 			error =3D pm_clk_create(dev);
+@@ -700,7 +737,6 @@ static int rzv2h_cpg_attach_dev(struct generic_pm_domai=
+n *domain, struct device
+ 				error);
+ 			goto fail_put;
+ 		}
+-		i++;
+ 	}
+=20
+ 	return 0;
 diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cp=
 g.h
-index ab6beaa50296..6df59e041701 100644
+index 1c7a979ab790..99bc08bd7cc1 100644
 --- a/drivers/clk/renesas/rzv2h-cpg.h
 +++ b/drivers/clk/renesas/rzv2h-cpg.h
-@@ -146,4 +146,6 @@ struct rzv2h_cpg_info {
- 	unsigned int num_resets;
+@@ -91,6 +91,7 @@ enum clk_types {
+  * @name: handle between common and hardware-specific interfaces
+  * @parent: id of parent clock
+  * @critical: flag to indicate the clock is critical
++ * @no_pm: flag to indicate PM is not supported
+  * @on_index: control register index
+  * @on_bit: ON bit
+  * @mon_index: monitor register index
+@@ -100,17 +101,19 @@ struct rzv2h_mod_clk {
+ 	const char *name;
+ 	u16 parent;
+ 	bool critical;
++	bool no_pm;
+ 	u8 on_index;
+ 	u8 on_bit;
+ 	s8 mon_index;
+ 	u8 mon_bit;
  };
 =20
-+extern const struct rzv2h_cpg_info r9a09g057_cpg_info;
+-#define DEF_MOD_BASE(_name, _parent, _critical, _onindex, _onbit, _moninde=
+x, _monbit) \
++#define DEF_MOD_BASE(_name, _parent, _critical, _no_pm, _onindex, _onbit, =
+_monindex, _monbit) \
+ 	{ \
+ 		.name =3D (_name), \
+ 		.parent =3D (_parent), \
+ 		.critical =3D (_critical), \
++		.no_pm =3D (_no_pm), \
+ 		.on_index =3D (_onindex), \
+ 		.on_bit =3D (_onbit), \
+ 		.mon_index =3D (_monindex), \
+@@ -118,10 +121,13 @@ struct rzv2h_mod_clk {
+ 	}
+=20
+ #define DEF_MOD(_name, _parent, _onindex, _onbit, _monindex, _monbit)		\
+-	DEF_MOD_BASE(_name, _parent, false, _onindex, _onbit, _monindex, _monbit)
++	DEF_MOD_BASE(_name, _parent, false, false, _onindex, _onbit, _monindex, _=
+monbit)
+=20
+ #define DEF_MOD_CRITICAL(_name, _parent, _onindex, _onbit, _monindex, _mon=
+bit)	\
+-	DEF_MOD_BASE(_name, _parent, true, _onindex, _onbit, _monindex, _monbit)
++	DEF_MOD_BASE(_name, _parent, true, false, _onindex, _onbit, _monindex, _m=
+onbit)
 +
- #endif	/* __RENESAS_RZV2H_CPG_H__ */
++#define DEF_MOD_NO_PM(_name, _parent, _onindex, _onbit, _monindex, _monbit=
+)		\
++	DEF_MOD_BASE(_name, _parent, false, true, _onindex, _onbit, _monindex, _m=
+onbit)
+=20
+ /**
+  * struct rzv2h_reset - Reset definitions
 --=20
 2.43.0
 
