@@ -2,41 +2,41 @@ Return-Path: <tommaso.merciai.xr@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00247C3600C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6584C3600B
 	for <webhook@archiver.kernel.org>; Tue, 25 Mar 2025 14:57:02 +0000 (UTC)
-Received: from TYVP286CU001.outbound.protection.outlook.com (TYVP286CU001.outbound.protection.outlook.com [52.101.125.15])
- by mx.groups.io with SMTP id smtpd.web11.67722.1742914618557834461
+Received: from OS0P286CU011.outbound.protection.outlook.com (OS0P286CU011.outbound.protection.outlook.com [52.101.228.4])
+ by mx.groups.io with SMTP id smtpd.web11.67725.1742914621179211061
  for <cip-dev@lists.cip-project.org>;
- Tue, 25 Mar 2025 07:56:59 -0700
+ Tue, 25 Mar 2025 07:57:01 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=qsE62Sng;
- spf=pass (domain: bp.renesas.com, ip: 52.101.125.15, mailfrom: tommaso.merciai.xr@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=okwjcL0t;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.228.4, mailfrom: tommaso.merciai.xr@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nY5cIr9y+d/vseRPJpZU7yKsgQrifzOdgc6pfqa8A2cKZ5QTXhOAqZga2AooIz13Ovy6UUu7ZfKXHhoNYuvTkeOzwuf3NtCQmFih7/q1zKXXnKZGl5kvZM2yQzczEjoQdu8XCoShwgeapJ6PUr0ZHXL2i5RGoz//hx+MHMGvVgFrQhgAXFyapVVpADtq/HHzgF6WNqmvWabBTSnWbzsHbI9jMEw5z+RfHR31Ve18CXqwFvzp05fpwE7GAP0jOF+Hb2xF7PLFiagsh0Cj6d/InGq1lLmGATsIbKw8qGEB94UTjhj2OpjtUBu68iWzCT+/hOhziRjftMZR6uw2yvdhxQ==
+ b=Z1s8V1DlplEva5jmY7kbeVe/y31i0BhkaNwU+VBo36jVzH3kWWNiKR7pEKo7S9Lh69cVk30lzz0gFcerv8p7p3Gx0yQs+N0sszVgwMbQ1jdxQlz3xvVgd3WEPrQE0d3OkcY+wEcrANQT0dpyQY03lbInke52SIEZdQDaDteQmsM7jahYNA8NGQ77yAXLvior2R9uwU4YVdw+wAPwMwuxxlE823LUILP1YNvTDHWtEPoQSlPFsdPgFgu2lgUV8yYMEIyiu6luAdqKAPr+AldHe1F1m5+p3xW/dIrxx+0JUxUo/XxySSb+QfxSwxCylaiy9TM5W9QhRCfI2yhpaXs7Dg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=T2kMz8XyaQaHLVho0NRFDmkuCQ1EzFvCn0Rp6TkHMjg=;
- b=J6HdRtSOA1t+wa754IHAdsUSEsq8GQr/LMVAo/gTUu65/QZvhfYgaF5+RwuiaP9i/1vjY4WXpq3bUmsF/zFCSYHfASWC+whPXd6Ju63NGrVpy2Wi+19WmW55adbf7DWv/hLNvdSFv7clG7gXDCNi9iseDh5NtSJTN4wNvvETFxlYHvWRxHZzjqYOQSbvoKsbgiWKhL9IrmQGtAkh8+icwtk135U3sopYZi6k/0HfIs/WSXYX+1PQRw2k/OfQzFa8BigLsKCObbhn5k0Jpcmggy3m+B/j8lEPITgYoeREr0Ir60qoDigu5Ec1yIi6D6QYSXoWeNfM5hvjXd6hEJhQqg==
+ bh=FLqa8c37Qi00woZPj87iV3UiNIAga4S5VZt1I7HF5VM=;
+ b=E/IBv18EeqJqIF0+T22CWt5AsUFOW9eMDQ9Iw4ZtTUY8OvGQ4DBIZrcyoHsPh62V/YgePhkjjTnxTHZaGnjAE7ThpWlC6gSKcKYPaT7K6fDRBhBkXrF2Y2uG580qmTXoynJVdblrGYr7COiAYSvXc0g0NZeWoLNsIbidssqv4iP4TWc7F/QrY73BUrnMOsDR0JHRrdNxoPVHqpdfWI/K0gtkjifCVU8a1Zzw9t3/QYBuGWgV+JaHzTlyIfu9CjtgxCJxm/iJ6hcjblUL/ZsQxzoBhRKpRSVD6jrLOsjKfeNoRvpCUhdrK5SUtvphFkP7u4SjKtr78YkGYVDSd4VU6g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=T2kMz8XyaQaHLVho0NRFDmkuCQ1EzFvCn0Rp6TkHMjg=;
- b=qsE62SngV9cv5TND7rtx60Yvzn77hVPzxCmzw/TJydf6J2zB3NS4kGFXLOOd6t71sDQuyQWrpQY2fcsnNpz++Adhn9Ct6titKflZgwbVYazHkNniVIm/46r+7PbMdm68EubcSqUBMSlUnbfGG0iIqV+i1si9aIz5lDUwMIGu4h4=
+ bh=FLqa8c37Qi00woZPj87iV3UiNIAga4S5VZt1I7HF5VM=;
+ b=okwjcL0tl1U0lbQ30WmhFkWL5gYJPFmrBB27fi0PBY0FUfj3pH8QISPh7vssUyB9gP43KEgD0nMGRQadhWlg5k6KUgXn8RSCzVcI8yvZJnou+KxhLcoqkh/RbGQ3bR1wzi+H4wTwtR4FpGt+hbe+jiP++8fSWU7FiaGgQyZ0q5M=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com (2603:1096:604:35e::5)
  by TYRPR01MB13248.jpnprd01.prod.outlook.com (2603:1096:405:117::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.43; Tue, 25 Mar
- 2025 14:56:56 +0000
+ 2025 14:56:59 +0000
 Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com
  ([fe80::244d:8815:7064:a9f3]) by OS9PR01MB13950.jpnprd01.prod.outlook.com
  ([fe80::244d:8815:7064:a9f3%5]) with mapi id 15.20.8534.040; Tue, 25 Mar 2025
- 14:56:56 +0000
+ 14:56:59 +0000
 From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -44,9 +44,9 @@ To: cip-dev@lists.cip-project.org,
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: [PATCH 6.12.y-cip 08/16] clk: renesas: rzv2h: Add MSTOP support
-Date: Tue, 25 Mar 2025 15:56:02 +0100
-Message-ID: <20250325145611.3595454-9-tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 09/16] clk: renesas: rzv2h: Add support for RZ/G3E SoC
+Date: Tue, 25 Mar 2025 15:56:03 +0100
+Message-ID: <20250325145611.3595454-10-tommaso.merciai.xr@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250325145611.3595454-1-tommaso.merciai.xr@bp.renesas.com>
 References: <20250325145611.3595454-1-tommaso.merciai.xr@bp.renesas.com>
@@ -58,650 +58,301 @@ X-ClientProxiedBy: FR0P281CA0113.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: OS9PR01MB13950:EE_|TYRPR01MB13248:EE_
-X-MS-Office365-Filtering-Correlation-Id: 13a189b8-8ca7-4f00-d6d3-08dd6bad495a
+X-MS-Office365-Filtering-Correlation-Id: fcf4a84b-762f-4e87-26ca-08dd6bad4b22
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|38350700014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?WT1AuLUruDZ/HrFNW17UT4iso2h2tkbdHBZFSL/EqzmpdKRuFn/SwWHlQcrZ?=
- =?us-ascii?Q?19Acib/ctLC9EYfXm9PfkG8yzqed2lxmoA3x9P7NINOWdyz06j8806uiGCp/?=
- =?us-ascii?Q?Gy+MC2aLyyxpTr1wV0PKnIfPAPooe6wZ5lkM9U49KEhhHgoQXpHiAJtzx+KX?=
- =?us-ascii?Q?pFI+vNuVv1pB8k3Rx7lVTouZvG2tuTsy9kusIfimKNOiM16TeVP6WFylLb19?=
- =?us-ascii?Q?6Wp4zhM8vTRakfqbg3RO7+7giNgtGajucKOhnz5Tikw8wMbC2dQTPvfjBi+d?=
- =?us-ascii?Q?9Mfug2FVGFn4cpPJ7rwsQ5m0Qp7AR+irGvveU5qH6Bz31F5YpMKx3DBn2dct?=
- =?us-ascii?Q?rz9cd8glqEupzon+qBW7AreYy5rLdVjKjwKsosm41WJL2D0Ee4cXj5wiyZGG?=
- =?us-ascii?Q?EPN96Hy9oCEEszDFLBxMEav4WqimDei6w9aO8YIgf/dxtsVu7TzZgnzwB/yI?=
- =?us-ascii?Q?V99WWFyOlsDRhDuTtYmci5gO3rLISuJleV0P9IqcJ6QmqmL3eBQBQ292jMMo?=
- =?us-ascii?Q?nyHZv9qRNfi2aArLtfC5NK01JXeh4tlp3/oP9YAdUjzNOETQcec2GrK+fqAv?=
- =?us-ascii?Q?DwLyqIF1JfRg7N85pcMbDkKVIQ56j4dnmFm/iSJrRChAX74n3vnZLlfhT74S?=
- =?us-ascii?Q?IUC2LW0wynQFwYCRYNsy9lGif+P77ceR5yC66VbLsoakIQjC1TBJnzGoNbQq?=
- =?us-ascii?Q?+BGTp6RXD1ldvww8Yj33oc6evVSDYi9trfEirmImpnjsUwJVSIAMOom+jtqu?=
- =?us-ascii?Q?p0vWcyo+aDu2FKj0rk/WxywFN4psMF4juKwiIQRo+9sEGbki4o5qLLEr6g/R?=
- =?us-ascii?Q?IlJllzIQWnFVyOVTK8NQKqjqeT6utkou/UK5vuObCVhtG8bl49hpB1qrmwwm?=
- =?us-ascii?Q?+wzY0J+E9wdzBIWEdmloCQxZxaeSXetfJPqJNNaZrlnHwaWEynbiUjAY0N/F?=
- =?us-ascii?Q?mq+sqa/HMwQFX4Qq48D/2KMz/DystNckXuffSeJr6iJsnZcE1KtrNzAPvvqB?=
- =?us-ascii?Q?VjqH5lFnb6/ql09mXhUtyx/XA4bBpifbRhpQL/mOvUJ+oSRRl3Cn1MKf6WPt?=
- =?us-ascii?Q?2n0+Qq30Sfe5lIQVE703zM0TIa5cznMK0r5GLmg3nnz3PVEXR5nenoGiYwR/?=
- =?us-ascii?Q?mhZYwkeY41UYVQwQ7S45Ofb5jx2dUdxJ+riU+Cm/Z/cF83sNnIWU9F1c5slM?=
- =?us-ascii?Q?bfdFVVO6BEGD93lghNzhF9GZW9jhKpAeTQQX+cTKQv9S3XpfA+BBA8aLje9G?=
- =?us-ascii?Q?me+lwwdjCZWU9P0/hVeiSaygT6nuobypIuG6Zrir+MDc2ECt+RxgFm5LjMej?=
- =?us-ascii?Q?hbD5T2y9ju7pvaMeumAjd7NM9zsugwmUd5Zcaqiiu0YGrbtMEgU32XMxS7Xr?=
- =?us-ascii?Q?XBeEWJxJUBjlJ6sM9lWezGcbMl+18MF2dlm2ruvIiQGcuAS4DC1f0aueQIrV?=
- =?us-ascii?Q?4GpFfuFtucAlc7VsicApvnKdmc8uKSIYbCKXm5b7B3J6+TuPAcocRA=3D=3D?=
+	=?us-ascii?Q?cKQWi1s3LOWWB+HhqPKvR36A7M1H45uGJawHf0odi/dQFtoAJcbn5K5bmiIL?=
+ =?us-ascii?Q?eZJqTyil7OU0oIFD7FsAvV06YGoT6dGhKNNmw4bD1wjTiFp3gOoz8TM1O2qa?=
+ =?us-ascii?Q?T658cy38JHoSKikrTkkWfUzXimseawWXlvMoOjTWtN3F9UX20t3hP1G7d9cS?=
+ =?us-ascii?Q?1tgknqWaIPL94I2WLjmFHmBYXEqz4J+BKnHN5yJc2kho60Zm0Qy8YC+DJszV?=
+ =?us-ascii?Q?CK+y5zQ3pZXStpBXIYX5M4wKweDSB0fLQKXFaa9yY5R0keMqKlrjg0sfLrtB?=
+ =?us-ascii?Q?quCYLtLUDG1dK7w6FcDAP9b0oLWGUIthvwUVls2L8A9lNbniTuH8i8zztiiP?=
+ =?us-ascii?Q?wCA+hYsWJJTiyWevfVMlJJ4EpM+orsJgjs9wMx9ApKfguvDY9nmIUHofZXpK?=
+ =?us-ascii?Q?SXpgrPu/zPm51osCzQqHcNUMTcl0ioA7rvrys/jwoRsTMfDnTuQ/vcd6GG/E?=
+ =?us-ascii?Q?DKkSnJT1k4xiMOTcV6ub53ttNqKo6kBVsPaFO6WTgRKSx91dz+JUdAt2D5LW?=
+ =?us-ascii?Q?Cb59CGOkYWQvZLYMEfNj33vGKhzwTG0EkHuvtqxgbfXBBoVJq8E2/gHFE6va?=
+ =?us-ascii?Q?quDmnzq4yndnEWBs5IeLu3jnhKvJupvFunznWWnzcyvxHsZbZap1BW76F7uG?=
+ =?us-ascii?Q?8d5eZk/rllZO/ykBnKBEUVdC8biP3jMNPjqmOxZV8PyzvkotTO2cbOqBbcRM?=
+ =?us-ascii?Q?0MUSvayFEygEjNN12APuPQTUMbzcDlyr8hKOP0C9a3lmTZtjvbNEADzLlxof?=
+ =?us-ascii?Q?54AWFd1HGBu0Ouw0/w8+vIY/ympQ70QB2rFJpTDxXR6/L9AykipVDnUsRRCk?=
+ =?us-ascii?Q?LIo/UK5PIkzdof7oteClktYKStBDhYBLfDIBIcyGpkXA2YeeXRcLvcX27Htx?=
+ =?us-ascii?Q?rcwgKAcFePEz7hb3ukrKtY3SoiX1e0ohOXxrPZfC6fyaNn6RsaZOBvh8z0WH?=
+ =?us-ascii?Q?UW3nhFK5nIOERZAkho8QKNp0RBEqJgRQwOfn/RsFtSeeoe63Idg4dppUh5yi?=
+ =?us-ascii?Q?H45Ec1OqadKDYr+xOTX05KqouVyUXSpWTb540SKstw/5xb2NR9FStFzSXZTm?=
+ =?us-ascii?Q?1Ada5SrT9AN2tCa/w+4hfsdhA9eEvzTk1bGG7hO+DSTBXRyh/U28m1j/pRJq?=
+ =?us-ascii?Q?9HtOaEGIrRCjUJSHzbvN8NSc/5/6kUYKn/nkS3BGz75UQl0BgLTIxBTfNSqu?=
+ =?us-ascii?Q?4m2ZG75O6lA487ERnIuaEl8OFboIEgdxYBi7aBX4mqBoqlbx11NUn9vjjDti?=
+ =?us-ascii?Q?NmvUGTgHCcI5rYLKyTRupAz4aQwEkTDJ/185Qfe9Ym8subS6kWfhY1o+Sra5?=
+ =?us-ascii?Q?6HCLv3Olfh3ZzvBYjBpquPPbDHZf9ZCJZjA1C1bVnUqRhQONJoXm1UtjD4u2?=
+ =?us-ascii?Q?Ku3NEH5K67IaHDLzBDCAPGW2FhnhK0xuo5zlI3vZy0xJKF1VrstoenFPM98h?=
+ =?us-ascii?Q?ZPSRWHZEHolwvvdu8DaAayKYUUNf4YWP?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS9PR01MB13950.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?hLT/auhAMUPZ0difPea/Mdoc3gzm+b/jew7wJMVj506dTkd0cWahi3WACFbW?=
- =?us-ascii?Q?VMZuF3zxPO7/cowz2GvJxNWAZmskg6/ttRvnW4O9Y8E3DivWKcgu75U32pSD?=
- =?us-ascii?Q?v02uWoTqM5FXlzAwAnRFAJOkV6NxM092CFGYizGjHuzJgYRzV036R4VQnL0G?=
- =?us-ascii?Q?mrnWaUhktNqHuO4RPnzJAR7yNMMDWte0BNdkLIvkCkPFEAwBqk1B/nZkpHlr?=
- =?us-ascii?Q?X8/6W3CTYF5OQav8Lfs7QNvKODFz4rHKPkyJpl0ywWRBj5Y0TPJsIg2G8Gcj?=
- =?us-ascii?Q?4H6L/mfmPTLetLsKBquVeQWaikG1r8AUggG2Bk/pu/J4VsLZu2+vUJitiM0H?=
- =?us-ascii?Q?WCGEa1Dwb+u75L3+Xn5OQ2bp56lHzJkb2kqWN0zwSXvGv9exWA9Qakzb+r9I?=
- =?us-ascii?Q?lHwgKkkEcTdaH6iKvxXfOQZqNceb1WKr79E2dSKQwi8gVPSw70lr+cUqgnoo?=
- =?us-ascii?Q?yniaFlhox0C5/bgsqTdHhUaY+uUijrqv1dRSqJp89PWhw4P4gk91wO9JcFRF?=
- =?us-ascii?Q?8Sv5I55rv/Votym1SPj7s/M+jVtogd3MIdSafsB9mFGJ3qb+1dbQf1U0r0Ni?=
- =?us-ascii?Q?7egrAT0f64tBHU4UbAS0o5YHDTQ7O0zYcwsLrhc0FFR2QJzjj0ykYOphR1Ri?=
- =?us-ascii?Q?FY1KbhLbBG99AejXjQyanOaUK7XgXtU/v/+1CgfmMaNlMy/N8xyYN7/TXGJ4?=
- =?us-ascii?Q?KqaY0+nEl8vie7PA9SIcpGOjLHBFzFbrPXF6vc3UM0SAK3TQXQkIAX+vnLEb?=
- =?us-ascii?Q?uTtSvUxq/3QNj0WqyOhdpbUlv4wcgU1BMefxwNfNi4tvA4BvkBGOsCUONmvu?=
- =?us-ascii?Q?MlH651jbCcoRd/g5Z7oLOfrJuihHpF35CSoHU5f5jCWL8RbXc3B69hO5+CTI?=
- =?us-ascii?Q?V/OozzWlVV9lF8W621SoKIn9TctWyVvH9x24nP9DNeCh8LWVGkhAYOeomupn?=
- =?us-ascii?Q?nfvLmNncfV/6bfQXrMjzBYD/ndNAbSq/AckXbdhaxLAgm6xdiwNa82djWhPt?=
- =?us-ascii?Q?L5uDhOctm76A7zPHG0eu/RAR2IDCWmyW5R3TLATPnrv+GVLyza4c75JZRMow?=
- =?us-ascii?Q?oIPkrSGDY/nVQNruMtL4QbBkyyiEA6rUdNPGvTgllm2yeJx+kXc4ZUHCdGIF?=
- =?us-ascii?Q?e/WpjRayu43BEbAP6plDrGXeoNe2pgErkEeWlqUzNXxWlq2fGr/XiSPbLMyv?=
- =?us-ascii?Q?zuEMbbKXQKtB1hTHK0+AjiuWTUxMctzh4O2+Fr6VUGOklM/bm/Q+l1FC4B1T?=
- =?us-ascii?Q?SCwON027F/SV7uDOLTU4eNBTaBAdrfMYGEYFtm2X82VyYkqZHVQtSYFssBc5?=
- =?us-ascii?Q?olpy8rYrSVJKNklP27/N9Nta2JIVLIchEoHx541wH0kadPqsn1pCERPumBqw?=
- =?us-ascii?Q?oXbWEt3oOb60FD6g6eechHUY0pAblv30hQ8wJVIksSW0p6mPuBubxcexibYW?=
- =?us-ascii?Q?wSGTDIX9fzCVHLv1eaICEI8ugQGUGN5xlPu/5Ep4sL4nl0aMC6Un3vbwwdeX?=
- =?us-ascii?Q?lBeavswEe2yuCNeSHGTl55JK3SYcI+5mfw0FiwyfU8IabYBaMah1a71gADH/?=
- =?us-ascii?Q?UvynidaC+U9CyKsph5Q3tRDayhEntv1/pePuzFv5jAiLsOHW78xZiUQ2I0hR?=
- =?us-ascii?Q?SKoN1PVwoUCPQ455t+fbKGg=3D?=
+	=?us-ascii?Q?WjtBtc351G7Q6UZQgZ7oIzXLwYl8stfHM6C5Mopdp6nBffHuwtWST1PlkYeX?=
+ =?us-ascii?Q?CM88/Yfde4DXPV5Ye/oeLdGVWBsUM4YJ5Y4XgdJirpiLDPne9CvcsLI6+bqp?=
+ =?us-ascii?Q?8zp/C4bIDrqf9BVBKzru1+0ner0ahjBWn1F+wreUfpNMnzkkQdvzgBGF5aeY?=
+ =?us-ascii?Q?AdgxpGiFhZX8YfqBeV2+VGyvVdeHWmztnAVpfhM2KA2rIK9x6FIN3VYEnsT2?=
+ =?us-ascii?Q?+X5xDmj/wLOnwD/+V1D+XmWhVWuZZPSY3d/XmsRdp7ed0xPxlIQf9eTDT7/m?=
+ =?us-ascii?Q?Gdonqpu70aUmx6OwTSZZid9OQxXDihfELnn7mEvoWtkhPir372kM6kKT7HJd?=
+ =?us-ascii?Q?6GPjNARpMslA/TCpmLIe1Y00O7Wwt6qvaotcjQt8lsPBlVR7FYmWUvSLy9U4?=
+ =?us-ascii?Q?O6P/q8d7JZqEXOgYnD6uLCbBts+//XWKh9sbmuutnYi2Bg+ceUoaBykDGEFe?=
+ =?us-ascii?Q?j8j/5/zNTT5Eh36qX78x/lWUsSjBO5OC4V9O4mrHFiGmuhwsiB0wmzwPVpY9?=
+ =?us-ascii?Q?817HmpqsLLA5PioHKt4e8LizGm3uJUX6iMs5+7D0xYlli9zG6CaYihLPX4L4?=
+ =?us-ascii?Q?j9HnAhJSjd0RHNbk5op++otcbvwrJF1sBYf09bAhAjWFENfyXZRhQ0UXi1q/?=
+ =?us-ascii?Q?CJ5K/08q5U1AVnYe4kSvoZ6dxvaRVWTAP2W8JdHMUcM6HU0U0GLn45gL9sWA?=
+ =?us-ascii?Q?9jdk77HVcT6jTqDVq3TSo4tDmXpBem5rAqrCCa4G8ANEMXhCs6zgI8osi8Dn?=
+ =?us-ascii?Q?QHE2A/4raMFveUpMw6HGDUYj8oFuO0xRfPtEVGXadPWeQ7d/kS/bKjJ58prX?=
+ =?us-ascii?Q?vyIvm6i5o2sib93vNu1qbn63+tw4nZR/rrDHt13ye+Hkt9/pKPGWadJG8yEL?=
+ =?us-ascii?Q?bKorXqpWCQOa8GaeE7QqcwGAG90nJ+Oc2WtCCnDenUTsEs7WArCDdKI7qjg8?=
+ =?us-ascii?Q?ZdG+AnbF0Qsn3wkrNsOYg8qT9ye0scoi1nv9BxQT2y2/vEDf0I9hp3OdchBw?=
+ =?us-ascii?Q?3M+8qZ1WmSMwukrDaYRh13CqPtehL5KZPOu6ES/l0beB4F0P8YizPsWClwsx?=
+ =?us-ascii?Q?9G3+S5avHc3mAAPbkDEw/8pafjOTVGRD+xLYkWHyT2EqxIqXOb7g5ofPiQnW?=
+ =?us-ascii?Q?jQRTQj06cYiXsgI+wYIe+OodAgaYvy76zdRagkI4q+r1Pg9L5VvfrSFpkH1X?=
+ =?us-ascii?Q?Sx28pKMZNhSGquyG6IrMNiDBCDX44pgTHemowXOYS4ym/3Ri9bcGSKcaxQiG?=
+ =?us-ascii?Q?rbr17rSug2vRQGrgnHYBs4BhIY4gp1vEe7EWzwc1/JfWg6dZcdq54KkIU7Nj?=
+ =?us-ascii?Q?ye0AKDNIBGwjqAWVrdXLD8m5onLDYbT7TF2y5qNScqe/AscRY29Jayxt4+6c?=
+ =?us-ascii?Q?AW9CGR0ywPhG1yWtHXnSZJ1ijAhuzVHzvPanREMoIYJ7qreoC3G8et3fP8WM?=
+ =?us-ascii?Q?iXXtJ7sLVVPFxoWu9jcn4CyIZuXdfWwR/uRhoK5PUlZ89nrGnmgYhuDwjZ2S?=
+ =?us-ascii?Q?N/Ase44/HXfU2xOf/0vMiy1HT2G0J7m5dnuJ73nDuNfm05v+yk8HcurXiSgF?=
+ =?us-ascii?Q?DMh/KkQHcezpIGMT8RjY4BSCXkcFn7jdvVZknfyU4yliicEIRohcmpINtYHf?=
+ =?us-ascii?Q?+ET6aNAFSp1+JYmpwI9Gobo=3D?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 13a189b8-8ca7-4f00-d6d3-08dd6bad495a
+X-MS-Exchange-CrossTenant-Network-Message-Id: fcf4a84b-762f-4e87-26ca-08dd6bad4b22
 X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB13950.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2025 14:56:56.4102
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2025 14:56:59.3771
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6764Zqgmv1LtIbsfpkJTEEQPwZ/VfO54iFFWkfwEj3JSC2BRTGiuxzJfepCABcSr50aZFyhrknsE0OPUPAXgVEZtApAPLb/tBNtGmeEjioJ0UHFojdKKiZhei7nTRuWS
+X-MS-Exchange-CrossTenant-UserPrincipalName: Gfz8Fdt0j/x3I0cAQN5+NFzn6UdJqFGwsEirppTX+rIA/KKYq8+1uDxqH4YWOu5OmSJJMdP0YeNhEEr3EfTnf5lf6v9A1/xQ3GHMoKcVPNHl6do2J0jT7/43032iWSNL
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB13248
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 25 Mar 2025 14:57:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18358
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18359
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-commit 9b6e63a777ea5fb85bf24f9cb5ba902eed4f1f2f upstream.
+commit bb6a9aaf670735d6583c76073ec41190f5404dc5 upstream.
 
-Add MSTOP support to control buses for the individual units on RZ/V2H.
-Use per-bit (instead of group-based) configuration and atomic counters,
-to ensure precise control over individual MSTOP bits, and to prevent
-issues with shared dependencies between module clocks.
+The clock structure for RZ/G3E is almost identical to RZ/V2H SoC with
+more IP blocks compared to RZ/V2H. For eg: VSPI, LVDS, DPI and LCDC1
+are present only on the RZ/G3E SoC.
 
-Co-developed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Co-developed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Add minimal clock and reset entries required to boot the Renesas RZ/G3E
+SMARC EVK and binds it with the RZ/V2H CPG core driver.
+
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20241213123550.289193-2-biju.das.jz@bp.renesa=
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Link: https://lore.kernel.org/20241213123550.289193-3-biju.das.jz@bp.renesa=
 s.com
-Link: https://lore.kernel.org/20250102181839.352599-2-prabhakar.mahadev-lad=
-.rj@bp.renesas.com
-Link: https://lore.kernel.org/20250102181839.352599-3-prabhakar.mahadev-lad=
-.rj@bp.renesas.com
-Link: https://lore.kernel.org/20250102181839.352599-4-prabhakar.mahadev-lad=
-.rj@bp.renesas.com
-Link: https://lore.kernel.org/20250102181839.352599-5-prabhakar.mahadev-lad=
-.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a09g057-cpg.c | 155 +++++++++++++++++++---------
- drivers/clk/renesas/rzv2h-cpg.c     | 146 ++++++++++++++++++++++----
- drivers/clk/renesas/rzv2h-cpg.h     |  30 ++++--
- 3 files changed, 252 insertions(+), 79 deletions(-)
+ drivers/clk/renesas/Kconfig         |   7 +-
+ drivers/clk/renesas/Makefile        |   1 +
+ drivers/clk/renesas/r9a09g047-cpg.c | 102 ++++++++++++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.c     |   6 ++
+ drivers/clk/renesas/rzv2h-cpg.h     |   1 +
+ 5 files changed, 116 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/renesas/r9a09g047-cpg.c
 
-diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a0=
-9g057-cpg.c
-index 5aa9710aa4020..a45b4020996bd 100644
---- a/drivers/clk/renesas/r9a09g057-cpg.c
-+++ b/drivers/clk/renesas/r9a09g057-cpg.c
-@@ -115,57 +115,108 @@ static const struct cpg_core_clk r9a09g057_core_clks=
-[] __initconst =3D {
- };
+diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+index ff01f5f0ed207..5a4bc3f94d49a 100644
+--- a/drivers/clk/renesas/Kconfig
++++ b/drivers/clk/renesas/Kconfig
+@@ -40,6 +40,7 @@ config CLK_RENESAS
+ 	select CLK_R9A07G054 if ARCH_R9A07G054
+ 	select CLK_R9A08G045 if ARCH_R9A08G045
+ 	select CLK_R9A09G011 if ARCH_R9A09G011
++	select CLK_R9A09G047 if ARCH_R9A09G047
+ 	select CLK_R9A09G057 if ARCH_R9A09G057
+ 	select CLK_SH73A0 if ARCH_SH73A0
 =20
- static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst =3D {
--	DEF_MOD_CRITICAL("icu_0_pclk_i",	CLK_PLLCM33_DIV16, 0, 5, 0, 5),
--	DEF_MOD("gtm_0_pclk",			CLK_PLLCM33_DIV16, 4, 3, 2, 3),
--	DEF_MOD("gtm_1_pclk",			CLK_PLLCM33_DIV16, 4, 4, 2, 4),
--	DEF_MOD("gtm_2_pclk",			CLK_PLLCLN_DIV16, 4, 5, 2, 5),
--	DEF_MOD("gtm_3_pclk",			CLK_PLLCLN_DIV16, 4, 6, 2, 6),
--	DEF_MOD("gtm_4_pclk",			CLK_PLLCLN_DIV16, 4, 7, 2, 7),
--	DEF_MOD("gtm_5_pclk",			CLK_PLLCLN_DIV16, 4, 8, 2, 8),
--	DEF_MOD("gtm_6_pclk",			CLK_PLLCLN_DIV16, 4, 9, 2, 9),
--	DEF_MOD("gtm_7_pclk",			CLK_PLLCLN_DIV16, 4, 10, 2, 10),
--	DEF_MOD("wdt_0_clkp",			CLK_PLLCM33_DIV16, 4, 11, 2, 11),
--	DEF_MOD("wdt_0_clk_loco",		CLK_QEXTAL, 4, 12, 2, 12),
--	DEF_MOD("wdt_1_clkp",			CLK_PLLCLN_DIV16, 4, 13, 2, 13),
--	DEF_MOD("wdt_1_clk_loco",		CLK_QEXTAL, 4, 14, 2, 14),
--	DEF_MOD("wdt_2_clkp",			CLK_PLLCLN_DIV16, 4, 15, 2, 15),
--	DEF_MOD("wdt_2_clk_loco",		CLK_QEXTAL, 5, 0, 2, 16),
--	DEF_MOD("wdt_3_clkp",			CLK_PLLCLN_DIV16, 5, 1, 2, 17),
--	DEF_MOD("wdt_3_clk_loco",		CLK_QEXTAL, 5, 2, 2, 18),
--	DEF_MOD("scif_0_clk_pck",		CLK_PLLCM33_DIV16, 8, 15, 4, 15),
--	DEF_MOD("riic_8_ckm",			CLK_PLLCM33_DIV16, 9, 3, 4, 19),
--	DEF_MOD("riic_0_ckm",			CLK_PLLCLN_DIV16, 9, 4, 4, 20),
--	DEF_MOD("riic_1_ckm",			CLK_PLLCLN_DIV16, 9, 5, 4, 21),
--	DEF_MOD("riic_2_ckm",			CLK_PLLCLN_DIV16, 9, 6, 4, 22),
--	DEF_MOD("riic_3_ckm",			CLK_PLLCLN_DIV16, 9, 7, 4, 23),
--	DEF_MOD("riic_4_ckm",			CLK_PLLCLN_DIV16, 9, 8, 4, 24),
--	DEF_MOD("riic_5_ckm",			CLK_PLLCLN_DIV16, 9, 9, 4, 25),
--	DEF_MOD("riic_6_ckm",			CLK_PLLCLN_DIV16, 9, 10, 4, 26),
--	DEF_MOD("riic_7_ckm",			CLK_PLLCLN_DIV16, 9, 11, 4, 27),
--	DEF_MOD("sdhi_0_imclk",			CLK_PLLCLN_DIV8, 10, 3, 5, 3),
--	DEF_MOD("sdhi_0_imclk2",		CLK_PLLCLN_DIV8, 10, 4, 5, 4),
--	DEF_MOD("sdhi_0_clk_hs",		CLK_PLLCLN_DIV2, 10, 5, 5, 5),
--	DEF_MOD("sdhi_0_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 6, 5, 6),
--	DEF_MOD("sdhi_1_imclk",			CLK_PLLCLN_DIV8, 10, 7, 5, 7),
--	DEF_MOD("sdhi_1_imclk2",		CLK_PLLCLN_DIV8, 10, 8, 5, 8),
--	DEF_MOD("sdhi_1_clk_hs",		CLK_PLLCLN_DIV2, 10, 9, 5, 9),
--	DEF_MOD("sdhi_1_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 10, 5, 10),
--	DEF_MOD("sdhi_2_imclk",			CLK_PLLCLN_DIV8, 10, 11, 5, 11),
--	DEF_MOD("sdhi_2_imclk2",		CLK_PLLCLN_DIV8, 10, 12, 5, 12),
--	DEF_MOD("sdhi_2_clk_hs",		CLK_PLLCLN_DIV2, 10, 13, 5, 13),
--	DEF_MOD("sdhi_2_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 14, 5, 14),
--	DEF_MOD("cru_0_aclk",			CLK_PLLDTY_ACPU_DIV2, 13, 2, 6, 18),
--	DEF_MOD_NO_PM("cru_0_vclk",		CLK_PLLVDO_CRU0, 13, 3, 6, 19),
--	DEF_MOD("cru_0_pclk",			CLK_PLLDTY_DIV16, 13, 4, 6, 20),
--	DEF_MOD("cru_1_aclk",			CLK_PLLDTY_ACPU_DIV2, 13, 5, 6, 21),
--	DEF_MOD_NO_PM("cru_1_vclk",		CLK_PLLVDO_CRU1, 13, 6, 6, 22),
--	DEF_MOD("cru_1_pclk",			CLK_PLLDTY_DIV16, 13, 7, 6, 23),
--	DEF_MOD("cru_2_aclk",			CLK_PLLDTY_ACPU_DIV2, 13, 8, 6, 24),
--	DEF_MOD_NO_PM("cru_2_vclk",		CLK_PLLVDO_CRU2, 13, 9, 6, 25),
--	DEF_MOD("cru_2_pclk",			CLK_PLLDTY_DIV16, 13, 10, 6, 26),
--	DEF_MOD("cru_3_aclk",			CLK_PLLDTY_ACPU_DIV2, 13, 11, 6, 27),
--	DEF_MOD_NO_PM("cru_3_vclk",		CLK_PLLVDO_CRU3, 13, 12, 6, 28),
--	DEF_MOD("cru_3_pclk",			CLK_PLLDTY_DIV16, 13, 13, 6, 29),
-+	DEF_MOD_CRITICAL("icu_0_pclk_i",	CLK_PLLCM33_DIV16, 0, 5, 0, 5,
-+						BUS_MSTOP_NONE),
-+	DEF_MOD("gtm_0_pclk",			CLK_PLLCM33_DIV16, 4, 3, 2, 3,
-+						BUS_MSTOP(5, BIT(10))),
-+	DEF_MOD("gtm_1_pclk",			CLK_PLLCM33_DIV16, 4, 4, 2, 4,
-+						BUS_MSTOP(5, BIT(11))),
-+	DEF_MOD("gtm_2_pclk",			CLK_PLLCLN_DIV16, 4, 5, 2, 5,
-+						BUS_MSTOP(2, BIT(13))),
-+	DEF_MOD("gtm_3_pclk",			CLK_PLLCLN_DIV16, 4, 6, 2, 6,
-+						BUS_MSTOP(2, BIT(14))),
-+	DEF_MOD("gtm_4_pclk",			CLK_PLLCLN_DIV16, 4, 7, 2, 7,
-+						BUS_MSTOP(11, BIT(13))),
-+	DEF_MOD("gtm_5_pclk",			CLK_PLLCLN_DIV16, 4, 8, 2, 8,
-+						BUS_MSTOP(11, BIT(14))),
-+	DEF_MOD("gtm_6_pclk",			CLK_PLLCLN_DIV16, 4, 9, 2, 9,
-+						BUS_MSTOP(11, BIT(15))),
-+	DEF_MOD("gtm_7_pclk",			CLK_PLLCLN_DIV16, 4, 10, 2, 10,
-+						BUS_MSTOP(12, BIT(0))),
-+	DEF_MOD("wdt_0_clkp",			CLK_PLLCM33_DIV16, 4, 11, 2, 11,
-+						BUS_MSTOP(3, BIT(10))),
-+	DEF_MOD("wdt_0_clk_loco",		CLK_QEXTAL, 4, 12, 2, 12,
-+						BUS_MSTOP(3, BIT(10))),
-+	DEF_MOD("wdt_1_clkp",			CLK_PLLCLN_DIV16, 4, 13, 2, 13,
-+						BUS_MSTOP(1, BIT(0))),
-+	DEF_MOD("wdt_1_clk_loco",		CLK_QEXTAL, 4, 14, 2, 14,
-+						BUS_MSTOP(1, BIT(0))),
-+	DEF_MOD("wdt_2_clkp",			CLK_PLLCLN_DIV16, 4, 15, 2, 15,
-+						BUS_MSTOP(5, BIT(12))),
-+	DEF_MOD("wdt_2_clk_loco",		CLK_QEXTAL, 5, 0, 2, 16,
-+						BUS_MSTOP(5, BIT(12))),
-+	DEF_MOD("wdt_3_clkp",			CLK_PLLCLN_DIV16, 5, 1, 2, 17,
-+						BUS_MSTOP(5, BIT(13))),
-+	DEF_MOD("wdt_3_clk_loco",		CLK_QEXTAL, 5, 2, 2, 18,
-+						BUS_MSTOP(5, BIT(13))),
+@@ -194,6 +195,10 @@ config CLK_R9A09G011
+ 	bool "RZ/V2M clock support" if COMPILE_TEST
+ 	select CLK_RZG2L
+=20
++config CLK_R9A09G047
++       bool "RZ/G3E clock support" if COMPILE_TEST
++       select CLK_RZV2H
++
+ config CLK_R9A09G057
+        bool "RZ/V2H(P) clock support" if COMPILE_TEST
+        select CLK_RZV2H
+@@ -234,7 +239,7 @@ config CLK_RZG2L
+ 	select RESET_CONTROLLER
+=20
+ config CLK_RZV2H
+-	bool "RZ/V2H(P) family clock support" if COMPILE_TEST
++	bool "RZ/{G3E,V2H(P)} family clock support" if COMPILE_TEST
+ 	select RESET_CONTROLLER
+=20
+ config CLK_RENESAS_VBATTB
+diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
+index 82efaa835ac70..2d6e746939c40 100644
+--- a/drivers/clk/renesas/Makefile
++++ b/drivers/clk/renesas/Makefile
+@@ -37,6 +37,7 @@ obj-$(CONFIG_CLK_R9A07G044)		+=3D r9a07g044-cpg.o
+ obj-$(CONFIG_CLK_R9A07G054)		+=3D r9a07g044-cpg.o
+ obj-$(CONFIG_CLK_R9A08G045)		+=3D r9a08g045-cpg.o
+ obj-$(CONFIG_CLK_R9A09G011)		+=3D r9a09g011-cpg.o
++obj-$(CONFIG_CLK_R9A09G047)		+=3D r9a09g047-cpg.o
+ obj-$(CONFIG_CLK_R9A09G057)		+=3D r9a09g057-cpg.o
+ obj-$(CONFIG_CLK_SH73A0)		+=3D clk-sh73a0.o
+=20
+diff --git a/drivers/clk/renesas/r9a09g047-cpg.c b/drivers/clk/renesas/r9a0=
+9g047-cpg.c
+new file mode 100644
+index 0000000000000..1178335dbed3a
+--- /dev/null
++++ b/drivers/clk/renesas/r9a09g047-cpg.c
+@@ -0,0 +1,102 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Renesas RZ/G3E CPG driver
++ *
++ * Copyright (C) 2024 Renesas Electronics Corp.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/device.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++
++#include <dt-bindings/clock/renesas,r9a09g047-cpg.h>
++
++#include "rzv2h-cpg.h"
++
++enum clk_ids {
++	/* Core Clock Outputs exported to DT */
++	LAST_DT_CORE_CLK =3D R9A09G047_IOTOP_0_SHCLK,
++
++	/* External Input Clocks */
++	CLK_AUDIO_EXTAL,
++	CLK_RTXIN,
++	CLK_QEXTAL,
++
++	/* PLL Clocks */
++	CLK_PLLCM33,
++	CLK_PLLDTY,
++	CLK_PLLCA55,
++
++	/* Internal Core Clocks */
++	CLK_PLLCM33_DIV16,
++	CLK_PLLDTY_ACPU,
++	CLK_PLLDTY_ACPU_DIV4,
++
++	/* Module Clocks */
++	MOD_CLK_BASE,
++};
++
++static const struct clk_div_table dtable_2_64[] =3D {
++	{0, 2},
++	{1, 4},
++	{2, 8},
++	{3, 16},
++	{4, 64},
++	{0, 0},
++};
++
++static const struct cpg_core_clk r9a09g047_core_clks[] __initconst =3D {
++	/* External Clock Inputs */
++	DEF_INPUT("audio_extal", CLK_AUDIO_EXTAL),
++	DEF_INPUT("rtxin", CLK_RTXIN),
++	DEF_INPUT("qextal", CLK_QEXTAL),
++
++	/* PLL Clocks */
++	DEF_FIXED(".pllcm33", CLK_PLLCM33, CLK_QEXTAL, 200, 3),
++	DEF_FIXED(".plldty", CLK_PLLDTY, CLK_QEXTAL, 200, 3),
++	DEF_PLL(".pllca55", CLK_PLLCA55, CLK_QEXTAL, PLL_CONF(0x64)),
++
++	/* Internal Core Clocks */
++	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
++
++	DEF_DDIV(".plldty_acpu", CLK_PLLDTY_ACPU, CLK_PLLDTY, CDDIV0_DIVCTL2, dta=
+ble_2_64),
++	DEF_FIXED(".plldty_acpu_div4", CLK_PLLDTY_ACPU_DIV4, CLK_PLLDTY_ACPU, 1, =
+4),
++
++	/* Core Clocks */
++	DEF_FIXED("sys_0_pclk", R9A09G047_SYS_0_PCLK, CLK_QEXTAL, 1, 1),
++	DEF_FIXED("iotop_0_shclk", R9A09G047_IOTOP_0_SHCLK, CLK_PLLCM33_DIV16, 1,=
+ 1),
++};
++
++static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst =3D {
++	DEF_MOD_CRITICAL("gic_0_gicclk",	CLK_PLLDTY_ACPU_DIV4, 1, 3, 0, 19,
++						BUS_MSTOP(3, BIT(5))),
 +	DEF_MOD("scif_0_clk_pck",		CLK_PLLCM33_DIV16, 8, 15, 4, 15,
 +						BUS_MSTOP(3, BIT(14))),
-+	DEF_MOD("riic_8_ckm",			CLK_PLLCM33_DIV16, 9, 3, 4, 19,
-+						BUS_MSTOP(3, BIT(13))),
-+	DEF_MOD("riic_0_ckm",			CLK_PLLCLN_DIV16, 9, 4, 4, 20,
-+						BUS_MSTOP(1, BIT(1))),
-+	DEF_MOD("riic_1_ckm",			CLK_PLLCLN_DIV16, 9, 5, 4, 21,
-+						BUS_MSTOP(1, BIT(2))),
-+	DEF_MOD("riic_2_ckm",			CLK_PLLCLN_DIV16, 9, 6, 4, 22,
-+						BUS_MSTOP(1, BIT(3))),
-+	DEF_MOD("riic_3_ckm",			CLK_PLLCLN_DIV16, 9, 7, 4, 23,
-+						BUS_MSTOP(1, BIT(4))),
-+	DEF_MOD("riic_4_ckm",			CLK_PLLCLN_DIV16, 9, 8, 4, 24,
-+						BUS_MSTOP(1, BIT(5))),
-+	DEF_MOD("riic_5_ckm",			CLK_PLLCLN_DIV16, 9, 9, 4, 25,
-+						BUS_MSTOP(1, BIT(6))),
-+	DEF_MOD("riic_6_ckm",			CLK_PLLCLN_DIV16, 9, 10, 4, 26,
-+						BUS_MSTOP(1, BIT(7))),
-+	DEF_MOD("riic_7_ckm",			CLK_PLLCLN_DIV16, 9, 11, 4, 27,
-+						BUS_MSTOP(1, BIT(8))),
-+	DEF_MOD("sdhi_0_imclk",			CLK_PLLCLN_DIV8, 10, 3, 5, 3,
-+						BUS_MSTOP(8, BIT(2))),
-+	DEF_MOD("sdhi_0_imclk2",		CLK_PLLCLN_DIV8, 10, 4, 5, 4,
-+						BUS_MSTOP(8, BIT(2))),
-+	DEF_MOD("sdhi_0_clk_hs",		CLK_PLLCLN_DIV2, 10, 5, 5, 5,
-+						BUS_MSTOP(8, BIT(2))),
-+	DEF_MOD("sdhi_0_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 6, 5, 6,
-+						BUS_MSTOP(8, BIT(2))),
-+	DEF_MOD("sdhi_1_imclk",			CLK_PLLCLN_DIV8, 10, 7, 5, 7,
-+						BUS_MSTOP(8, BIT(3))),
-+	DEF_MOD("sdhi_1_imclk2",		CLK_PLLCLN_DIV8, 10, 8, 5, 8,
-+						BUS_MSTOP(8, BIT(3))),
-+	DEF_MOD("sdhi_1_clk_hs",		CLK_PLLCLN_DIV2, 10, 9, 5, 9,
-+						BUS_MSTOP(8, BIT(3))),
-+	DEF_MOD("sdhi_1_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 10, 5, 10,
-+						BUS_MSTOP(8, BIT(3))),
-+	DEF_MOD("sdhi_2_imclk",			CLK_PLLCLN_DIV8, 10, 11, 5, 11,
-+						BUS_MSTOP(8, BIT(4))),
-+	DEF_MOD("sdhi_2_imclk2",		CLK_PLLCLN_DIV8, 10, 12, 5, 12,
-+						BUS_MSTOP(8, BIT(4))),
-+	DEF_MOD("sdhi_2_clk_hs",		CLK_PLLCLN_DIV2, 10, 13, 5, 13,
-+						BUS_MSTOP(8, BIT(4))),
-+	DEF_MOD("sdhi_2_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 14, 5, 14,
-+						BUS_MSTOP(8, BIT(4))),
-+	DEF_MOD("cru_0_aclk",			CLK_PLLDTY_ACPU_DIV2, 13, 2, 6, 18,
-+						BUS_MSTOP(9, BIT(4))),
-+	DEF_MOD_NO_PM("cru_0_vclk",		CLK_PLLVDO_CRU0, 13, 3, 6, 19,
-+						BUS_MSTOP(9, BIT(4))),
-+	DEF_MOD("cru_0_pclk",			CLK_PLLDTY_DIV16, 13, 4, 6, 20,
-+						BUS_MSTOP(9, BIT(4))),
-+	DEF_MOD("cru_1_aclk",			CLK_PLLDTY_ACPU_DIV2, 13, 5, 6, 21,
-+						BUS_MSTOP(9, BIT(5))),
-+	DEF_MOD_NO_PM("cru_1_vclk",		CLK_PLLVDO_CRU1, 13, 6, 6, 22,
-+						BUS_MSTOP(9, BIT(5))),
-+	DEF_MOD("cru_1_pclk",			CLK_PLLDTY_DIV16, 13, 7, 6, 23,
-+						BUS_MSTOP(9, BIT(5))),
-+	DEF_MOD("cru_2_aclk",			CLK_PLLDTY_ACPU_DIV2, 13, 8, 6, 24,
-+						BUS_MSTOP(9, BIT(6))),
-+	DEF_MOD_NO_PM("cru_2_vclk",		CLK_PLLVDO_CRU2, 13, 9, 6, 25,
-+						BUS_MSTOP(9, BIT(6))),
-+	DEF_MOD("cru_2_pclk",			CLK_PLLDTY_DIV16, 13, 10, 6, 26,
-+						BUS_MSTOP(9, BIT(6))),
-+	DEF_MOD("cru_3_aclk",			CLK_PLLDTY_ACPU_DIV2, 13, 11, 6, 27,
-+						BUS_MSTOP(9, BIT(7))),
-+	DEF_MOD_NO_PM("cru_3_vclk",		CLK_PLLVDO_CRU3, 13, 12, 6, 28,
-+						BUS_MSTOP(9, BIT(7))),
-+	DEF_MOD("cru_3_pclk",			CLK_PLLDTY_DIV16, 13, 13, 6, 29,
-+						BUS_MSTOP(9, BIT(7))),
- };
-=20
- static const struct rzv2h_reset r9a09g057_resets[] __initconst =3D {
-@@ -224,4 +275,6 @@ const struct rzv2h_cpg_info r9a09g057_cpg_info __initco=
-nst =3D {
- 	/* Resets */
- 	.resets =3D r9a09g057_resets,
- 	.num_resets =3D ARRAY_SIZE(r9a09g057_resets),
++};
 +
-+	.num_mstop_bits =3D 192,
- };
++static const struct rzv2h_reset r9a09g047_resets[] __initconst =3D {
++	DEF_RST(3, 0, 1, 1),		/* SYS_0_PRESETN */
++	DEF_RST(3, 8, 1, 9),		/* GIC_0_GICRESET_N */
++	DEF_RST(3, 9, 1, 10),		/* GIC_0_DBG_GICRESET_N */
++	DEF_RST(9, 5, 4, 6),		/* SCIF_0_RST_SYSTEM_N */
++};
++
++const struct rzv2h_cpg_info r9a09g047_cpg_info __initconst =3D {
++	/* Core Clocks */
++	.core_clks =3D r9a09g047_core_clks,
++	.num_core_clks =3D ARRAY_SIZE(r9a09g047_core_clks),
++	.last_dt_core_clk =3D LAST_DT_CORE_CLK,
++	.num_total_core_clks =3D MOD_CLK_BASE,
++
++	/* Module Clocks */
++	.mod_clks =3D r9a09g047_mod_clks,
++	.num_mod_clks =3D ARRAY_SIZE(r9a09g047_mod_clks),
++	.num_hw_mod_clks =3D 28 * 16,
++
++	/* Resets */
++	.resets =3D r9a09g047_resets,
++	.num_resets =3D ARRAY_SIZE(r9a09g047_resets),
++
++	.num_mstop_bits =3D 208,
++};
 diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cp=
 g.c
-index 1154493583a70..d4fd52b0a24e9 100644
+index d4fd52b0a24e9..a4c1e92e1fd76 100644
 --- a/drivers/clk/renesas/rzv2h-cpg.c
 +++ b/drivers/clk/renesas/rzv2h-cpg.c
-@@ -23,6 +23,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_clock.h>
- #include <linux/pm_domain.h>
-+#include <linux/refcount.h>
- #include <linux/reset-controller.h>
-=20
- #include <dt-bindings/clock/renesas-cpg-mssr.h>
-@@ -40,6 +41,9 @@
- #define GET_RST_OFFSET(x)	(0x900 + ((x) * 4))
- #define GET_RST_MON_OFFSET(x)	(0xA00 + ((x) * 4))
-=20
-+#define CPG_BUS_1_MSTOP		(0xd00)
-+#define CPG_BUS_MSTOP(m)	(CPG_BUS_1_MSTOP + ((m) - 1) * 4)
-+
- #define KDIV(val)		((s16)FIELD_GET(GENMASK(31, 16), (val)))
- #define MDIV(val)		FIELD_GET(GENMASK(15, 6), (val))
- #define PDIV(val)		FIELD_GET(GENMASK(5, 0), (val))
-@@ -64,6 +68,7 @@
-  * @resets: Array of resets
-  * @num_resets: Number of Module Resets in info->resets[]
-  * @last_dt_core_clk: ID of the last Core Clock exported to DT
-+ * @mstop_count: Array of mstop values
-  * @rcdev: Reset controller entity
-  */
- struct rzv2h_cpg_priv {
-@@ -78,6 +83,8 @@ struct rzv2h_cpg_priv {
- 	unsigned int num_resets;
- 	unsigned int last_dt_core_clk;
-=20
-+	atomic_t *mstop_count;
-+
- 	struct reset_controller_dev rcdev;
- };
-=20
-@@ -97,6 +104,7 @@ struct pll_clk {
-  * struct mod_clock - Module clock
-  *
-  * @priv: CPG private data
-+ * @mstop_data: mstop data relating to module clock
-  * @hw: handle between common and hardware-specific interfaces
-  * @no_pm: flag to indicate PM is not supported
-  * @on_index: register offset
-@@ -106,6 +114,7 @@ struct pll_clk {
-  */
- struct mod_clock {
- 	struct rzv2h_cpg_priv *priv;
-+	unsigned int mstop_data;
- 	struct clk_hw hw;
- 	bool no_pm;
- 	u8 on_index;
-@@ -433,8 +442,71 @@ rzv2h_cpg_register_core_clk(const struct cpg_core_clk =
-*core,
- 		core->name, PTR_ERR(clk));
- }
-=20
-+static void rzv2h_mod_clock_mstop_enable(struct rzv2h_cpg_priv *priv,
-+					 u32 mstop_data)
-+{
-+	unsigned long mstop_mask =3D FIELD_GET(BUS_MSTOP_BITS_MASK, mstop_data);
-+	u16 mstop_index =3D FIELD_GET(BUS_MSTOP_IDX_MASK, mstop_data);
-+	unsigned int index =3D (mstop_index - 1) * 16;
-+	atomic_t *mstop =3D &priv->mstop_count[index];
-+	unsigned long flags;
-+	unsigned int i;
-+	u32 val =3D 0;
-+
-+	spin_lock_irqsave(&priv->rmw_lock, flags);
-+	for_each_set_bit(i, &mstop_mask, 16) {
-+		if (!atomic_read(&mstop[i]))
-+			val |=3D BIT(i) << 16;
-+		atomic_inc(&mstop[i]);
-+	}
-+	if (val)
-+		writel(val, priv->base + CPG_BUS_MSTOP(mstop_index));
-+	spin_unlock_irqrestore(&priv->rmw_lock, flags);
-+}
-+
-+static void rzv2h_mod_clock_mstop_disable(struct rzv2h_cpg_priv *priv,
-+					  u32 mstop_data)
-+{
-+	unsigned long mstop_mask =3D FIELD_GET(BUS_MSTOP_BITS_MASK, mstop_data);
-+	u16 mstop_index =3D FIELD_GET(BUS_MSTOP_IDX_MASK, mstop_data);
-+	unsigned int index =3D (mstop_index - 1) * 16;
-+	atomic_t *mstop =3D &priv->mstop_count[index];
-+	unsigned long flags;
-+	unsigned int i;
-+	u32 val =3D 0;
-+
-+	spin_lock_irqsave(&priv->rmw_lock, flags);
-+	for_each_set_bit(i, &mstop_mask, 16) {
-+		if (!atomic_read(&mstop[i]) ||
-+		    atomic_dec_and_test(&mstop[i]))
-+			val |=3D BIT(i) << 16 | BIT(i);
-+	}
-+	if (val)
-+		writel(val, priv->base + CPG_BUS_MSTOP(mstop_index));
-+	spin_unlock_irqrestore(&priv->rmw_lock, flags);
-+}
-+
-+static int rzv2h_mod_clock_is_enabled(struct clk_hw *hw)
-+{
-+	struct mod_clock *clock =3D to_mod_clock(hw);
-+	struct rzv2h_cpg_priv *priv =3D clock->priv;
-+	u32 bitmask;
-+	u32 offset;
-+
-+	if (clock->mon_index >=3D 0) {
-+		offset =3D GET_CLK_MON_OFFSET(clock->mon_index);
-+		bitmask =3D BIT(clock->mon_bit);
-+	} else {
-+		offset =3D GET_CLK_ON_OFFSET(clock->on_index);
-+		bitmask =3D BIT(clock->on_bit);
-+	}
-+
-+	return readl(priv->base + offset) & bitmask;
-+}
-+
- static int rzv2h_mod_clock_endisable(struct clk_hw *hw, bool enable)
+@@ -972,6 +972,12 @@ static const struct of_device_id rzv2h_cpg_match[] =3D=
  {
-+	bool enabled =3D rzv2h_mod_clock_is_enabled(hw);
- 	struct mod_clock *clock =3D to_mod_clock(hw);
- 	unsigned int reg =3D GET_CLK_ON_OFFSET(clock->on_index);
- 	struct rzv2h_cpg_priv *priv =3D clock->priv;
-@@ -446,11 +518,20 @@ static int rzv2h_mod_clock_endisable(struct clk_hw *h=
-w, bool enable)
- 	dev_dbg(dev, "CLK_ON 0x%x/%pC %s\n", reg, hw->clk,
- 		enable ? "ON" : "OFF");
-=20
-+	if (enabled =3D=3D enable)
-+		return 0;
-+
- 	value =3D bitmask << 16;
--	if (enable)
-+	if (enable) {
- 		value |=3D bitmask;
--
--	writel(value, priv->base + reg);
-+		writel(value, priv->base + reg);
-+		if (clock->mstop_data !=3D BUS_MSTOP_NONE)
-+			rzv2h_mod_clock_mstop_enable(priv, clock->mstop_data);
-+	} else {
-+		if (clock->mstop_data !=3D BUS_MSTOP_NONE)
-+			rzv2h_mod_clock_mstop_disable(priv, clock->mstop_data);
-+		writel(value, priv->base + reg);
-+	}
-=20
- 	if (!enable || clock->mon_index < 0)
- 		return 0;
-@@ -476,24 +557,6 @@ static void rzv2h_mod_clock_disable(struct clk_hw *hw)
- 	rzv2h_mod_clock_endisable(hw, false);
- }
-=20
--static int rzv2h_mod_clock_is_enabled(struct clk_hw *hw)
--{
--	struct mod_clock *clock =3D to_mod_clock(hw);
--	struct rzv2h_cpg_priv *priv =3D clock->priv;
--	u32 bitmask;
--	u32 offset;
--
--	if (clock->mon_index >=3D 0) {
--		offset =3D GET_CLK_MON_OFFSET(clock->mon_index);
--		bitmask =3D BIT(clock->mon_bit);
--	} else {
--		offset =3D GET_CLK_ON_OFFSET(clock->on_index);
--		bitmask =3D BIT(clock->on_bit);
--	}
--
--	return readl(priv->base + offset) & bitmask;
--}
--
- static const struct clk_ops rzv2h_mod_clock_ops =3D {
- 	.enable =3D rzv2h_mod_clock_enable,
- 	.disable =3D rzv2h_mod_clock_disable,
-@@ -546,6 +609,7 @@ rzv2h_cpg_register_mod_clk(const struct rzv2h_mod_clk *=
-mod,
- 	clock->no_pm =3D mod->no_pm;
- 	clock->priv =3D priv;
- 	clock->hw.init =3D &init;
-+	clock->mstop_data =3D mod->mstop_data;
-=20
- 	ret =3D devm_clk_hw_register(dev, &clock->hw);
- 	if (ret) {
-@@ -555,6 +619,41 @@ rzv2h_cpg_register_mod_clk(const struct rzv2h_mod_clk =
-*mod,
-=20
- 	priv->clks[id] =3D clock->hw.clk;
-=20
-+	/*
-+	 * Ensure the module clocks and MSTOP bits are synchronized when they are
-+	 * turned ON by the bootloader. Enable MSTOP bits for module clocks that =
-were
-+	 * turned ON in an earlier boot stage.
-+	 */
-+	if (clock->mstop_data !=3D BUS_MSTOP_NONE &&
-+	    !mod->critical && rzv2h_mod_clock_is_enabled(&clock->hw)) {
-+		rzv2h_mod_clock_mstop_enable(priv, clock->mstop_data);
-+	} else if (clock->mstop_data !=3D BUS_MSTOP_NONE && mod->critical) {
-+		unsigned long mstop_mask =3D FIELD_GET(BUS_MSTOP_BITS_MASK, clock->mstop=
-_data);
-+		u16 mstop_index =3D FIELD_GET(BUS_MSTOP_IDX_MASK, clock->mstop_data);
-+		unsigned int index =3D (mstop_index - 1) * 16;
-+		atomic_t *mstop =3D &priv->mstop_count[index];
-+		unsigned long flags;
-+		unsigned int i;
-+		u32 val =3D 0;
-+
-+		/*
-+		 * Critical clocks are turned ON immediately upon registration, and the
-+		 * MSTOP counter is updated through the rzv2h_mod_clock_enable() path.
-+		 * However, if the critical clocks were already turned ON by the initial
-+		 * bootloader, synchronize the atomic counter here and clear the MSTOP b=
-it.
-+		 */
-+		spin_lock_irqsave(&priv->rmw_lock, flags);
-+		for_each_set_bit(i, &mstop_mask, 16) {
-+			if (atomic_read(&mstop[i]))
-+				continue;
-+			val |=3D BIT(i) << 16;
-+			atomic_inc(&mstop[i]);
-+		}
-+		if (val)
-+			writel(val, priv->base + CPG_BUS_MSTOP(mstop_index));
-+		spin_unlock_irqrestore(&priv->rmw_lock, flags);
-+	}
-+
- 	return;
-=20
- fail:
-@@ -822,6 +921,11 @@ static int __init rzv2h_cpg_probe(struct platform_devi=
-ce *pdev)
- 	if (!clks)
- 		return -ENOMEM;
-=20
-+	priv->mstop_count =3D devm_kcalloc(dev, info->num_mstop_bits,
-+					 sizeof(*priv->mstop_count), GFP_KERNEL);
-+	if (!priv->mstop_count)
-+		return -ENOMEM;
-+
- 	priv->resets =3D devm_kmemdup(dev, info->resets, sizeof(*info->resets) *
- 				    info->num_resets, GFP_KERNEL);
- 	if (!priv->resets)
+ 		.compatible =3D "renesas,r9a09g057-cpg",
+ 		.data =3D &r9a09g057_cpg_info,
+ 	},
++#endif
++#ifdef CONFIG_CLK_R9A09G047
++	{
++		.compatible =3D "renesas,r9a09g047-cpg",
++		.data =3D &r9a09g047_cpg_info,
++	},
+ #endif
+ 	{ /* sentinel */ }
+ };
 diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cp=
 g.h
-index ed8d2cad32604..dcd65e9c09da4 100644
+index dcd65e9c09da4..fd8eb985c75b2 100644
 --- a/drivers/clk/renesas/rzv2h-cpg.h
 +++ b/drivers/clk/renesas/rzv2h-cpg.h
-@@ -8,6 +8,8 @@
- #ifndef __RENESAS_RZV2H_CPG_H__
- #define __RENESAS_RZV2H_CPG_H__
-=20
-+#include <linux/bitfield.h>
-+
- /**
-  * struct ddiv - Structure for dynamic switching divider
-  *
-@@ -46,6 +48,12 @@ struct ddiv {
- #define CDDIV4_DIVCTL1	DDIV_PACK(CPG_CDDIV4, 4, 1, 17)
- #define CDDIV4_DIVCTL2	DDIV_PACK(CPG_CDDIV4, 8, 1, 18)
-=20
-+#define BUS_MSTOP_IDX_MASK	GENMASK(31, 16)
-+#define BUS_MSTOP_BITS_MASK	GENMASK(15, 0)
-+#define BUS_MSTOP(idx, mask)	(FIELD_PREP_CONST(BUS_MSTOP_IDX_MASK, (idx)) =
-| \
-+				 FIELD_PREP_CONST(BUS_MSTOP_BITS_MASK, (mask)))
-+#define BUS_MSTOP_NONE		GENMASK(31, 0)
-+
- /**
-  * Definitions of CPG Core Clocks
-  *
-@@ -104,6 +112,7 @@ enum clk_types {
-  * struct rzv2h_mod_clk - Module Clocks definitions
-  *
-  * @name: handle between common and hardware-specific interfaces
-+ * @mstop_data: packed data mstop register offset and mask
-  * @parent: id of parent clock
-  * @critical: flag to indicate the clock is critical
-  * @no_pm: flag to indicate PM is not supported
-@@ -114,6 +123,7 @@ enum clk_types {
-  */
- struct rzv2h_mod_clk {
- 	const char *name;
-+	u32 mstop_data;
- 	u16 parent;
- 	bool critical;
- 	bool no_pm;
-@@ -123,9 +133,10 @@ struct rzv2h_mod_clk {
- 	u8 mon_bit;
+@@ -218,6 +218,7 @@ struct rzv2h_cpg_info {
+ 	unsigned int num_mstop_bits;
  };
 =20
--#define DEF_MOD_BASE(_name, _parent, _critical, _no_pm, _onindex, _onbit, =
-_monindex, _monbit) \
-+#define DEF_MOD_BASE(_name, _mstop, _parent, _critical, _no_pm, _onindex, =
-_onbit, _monindex, _monbit) \
- 	{ \
- 		.name =3D (_name), \
-+		.mstop_data =3D (_mstop), \
- 		.parent =3D (_parent), \
- 		.critical =3D (_critical), \
- 		.no_pm =3D (_no_pm), \
-@@ -135,14 +146,14 @@ struct rzv2h_mod_clk {
- 		.mon_bit =3D (_monbit), \
- 	}
-=20
--#define DEF_MOD(_name, _parent, _onindex, _onbit, _monindex, _monbit)		\
--	DEF_MOD_BASE(_name, _parent, false, false, _onindex, _onbit, _monindex, _=
-monbit)
-+#define DEF_MOD(_name, _parent, _onindex, _onbit, _monindex, _monbit, _mst=
-op) \
-+	DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _mon=
-index, _monbit)
-=20
--#define DEF_MOD_CRITICAL(_name, _parent, _onindex, _onbit, _monindex, _mon=
-bit)	\
--	DEF_MOD_BASE(_name, _parent, true, false, _onindex, _onbit, _monindex, _m=
-onbit)
-+#define DEF_MOD_CRITICAL(_name, _parent, _onindex, _onbit, _monindex, _mon=
-bit, _mstop) \
-+	DEF_MOD_BASE(_name, _mstop, _parent, true, false, _onindex, _onbit, _moni=
-ndex, _monbit)
-=20
--#define DEF_MOD_NO_PM(_name, _parent, _onindex, _onbit, _monindex, _monbit=
-)		\
--	DEF_MOD_BASE(_name, _parent, false, true, _onindex, _onbit, _monindex, _m=
-onbit)
-+#define DEF_MOD_NO_PM(_name, _parent, _onindex, _onbit, _monindex, _monbit=
-, _mstop) \
-+	DEF_MOD_BASE(_name, _mstop, _parent, false, true, _onindex, _onbit, _moni=
-ndex, _monbit)
-=20
- /**
-  * struct rzv2h_reset - Reset definitions
-@@ -184,6 +195,9 @@ struct rzv2h_reset {
-  *
-  * @resets: Array of Module Reset definitions
-  * @num_resets: Number of entries in resets[]
-+ *
-+ * @num_mstop_bits: Maximum number of MSTOP bits supported, equivalent to =
-the
-+ *		    number of CPG_BUS_m_MSTOP registers multiplied by 16.
-  */
- struct rzv2h_cpg_info {
- 	/* Core Clocks */
-@@ -200,6 +214,8 @@ struct rzv2h_cpg_info {
- 	/* Resets */
- 	const struct rzv2h_reset *resets;
- 	unsigned int num_resets;
-+
-+	unsigned int num_mstop_bits;
- };
-=20
++extern const struct rzv2h_cpg_info r9a09g047_cpg_info;
  extern const struct rzv2h_cpg_info r9a09g057_cpg_info;
+=20
+ #endif	/* __RENESAS_RZV2H_CPG_H__ */
 --=20
 2.43.0
 
