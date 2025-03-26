@@ -1,204 +1,128 @@
-Return-Path: <tommaso.merciai.xr@bp.renesas.com>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8062C36008
-	for <webhook@archiver.kernel.org>; Wed, 26 Mar 2025 13:43:39 +0000 (UTC)
-Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.23])
- by mx.groups.io with SMTP id smtpd.web10.22716.1742996613786125592
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88470C3600E
+	for <webhook@archiver.kernel.org>; Wed, 26 Mar 2025 22:39:53 +0000 (UTC)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+ by mx.groups.io with SMTP id smtpd.web11.37095.1743028784727985920
  for <cip-dev@lists.cip-project.org>;
- Wed, 26 Mar 2025 06:43:34 -0700
+ Wed, 26 Mar 2025 15:39:45 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@bp.renesas.com header.s=selector1 header.b=HGBCO6bb;
- spf=pass (domain: bp.renesas.com, ip: 52.101.229.23, mailfrom: tommaso.merciai.xr@bp.renesas.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=y7d/aQO0NMOiB139yJkqB8T4BbkNvMExeBRigzJC9cusoanWrIOErbEnkqFkcaUbJrJzRtt64ddjwZfAUZXThE3rlPZ4GCysXCzDjoek/6vRvBabog82v0ngc56/5JfATueAM5/eW7rnW+dbXXrye+U5rN2QkPmbBlf6WWasgGJkGbZPBzxdxtvXQWtjQK9TH2VDZQIDFq3zeZ68F/nTS280NXRnI0IoGtJUwPrWSc7g5JkocmAb7u3DttvPv/P7IaQFyRRZB9kER2zErisocKKYjniYFqleavDTLT1e7P+wB9kxzajChFpgGtV6AzmWxaqkBY7K5VuSKziN87U7gw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NWGxDJQt7jYXTi+0m8+fAgh4C2ikqNDTqZxtaQzDyLQ=;
- b=wHto7cfomZJjraDi4Rd8hQaF1wWP4JvN11sM/dLPpj7NFeVFsS1TKAyCJd8lfyAdPVk5/y8Pbwm40nzhvrR/yRbjIbApmnX9NEUeTSNpFtR61lhIOLNWs05hagQGF79pp7h8KAI8GCijIZH+ymjOqeSLteZcYFnfgEoM0jlztiXfTWLPR8UhuqAFLwrpB7yQ6hVTfxSZvJ5Y8/c2YTCCbf7aJ0AZdgIIinLvcIP+4Elr3CWAbnC6y2+G2XwCxLZ7u6Tm6KBZSm4sA3et9O4EtQM+yXLYoQphr18d9ai/8xZdojAVJqY5Ti59Vbq1tpoBiJcsNF85DjDabHiakwxH+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NWGxDJQt7jYXTi+0m8+fAgh4C2ikqNDTqZxtaQzDyLQ=;
- b=HGBCO6bbyGnB2bDOPcXYS/GJz+Vug3s5y4M4cDysEAs5bpxiKJ2vze3redU34OPR8Rza1RW+FSTUFHYyBYXK4tFZx+JEU5OOlXbk156lFKzWZfDr4IPUTm1MB68nJnjqclRrciJLBX/mNscL47BcQOw1ygPWHoW/oUhS520n9bg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com (2603:1096:604:35e::5)
- by TY4PR01MB15710.jpnprd01.prod.outlook.com (2603:1096:405:28d::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Wed, 26 Mar
- 2025 13:43:29 +0000
-Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com
- ([fe80::244d:8815:7064:a9f3]) by OS9PR01MB13950.jpnprd01.prod.outlook.com
- ([fe80::244d:8815:7064:a9f3%5]) with mapi id 15.20.8534.043; Wed, 26 Mar 2025
- 13:43:29 +0000
-Date: Wed, 26 Mar 2025 14:43:13 +0100
-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-To: Pavel Machek <pavel@denx.de>
-Cc: cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	tomm.merciai@gmail.com
-Subject: Re: [PATCH 6.1.y-cip 00/21] Add support for Renesas RZ/G3E SoC and
- SMARC-EVK platform
-Message-ID: <Z-QEcdrAz23PkN7h@tom-desktop>
-References: <20250321110021.3612805-1-tommaso.merciai.xr@bp.renesas.com>
- <Z+P5EcmP5S5leD9O@duo.ucw.cz>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z+P5EcmP5S5leD9O@duo.ucw.cz>
-X-ClientProxiedBy: FR4P281CA0418.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:d0::13) To OS9PR01MB13950.jpnprd01.prod.outlook.com
- (2603:1096:604:35e::5)
+ dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=zGhhfu7R;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.219.172, mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e694601f624so84800276.1
+        for <cip-dev@lists.cip-project.org>; Wed, 26 Mar 2025 15:39:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1743028784; x=1743633584; darn=lists.cip-project.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=mXYs2mi3GOc5UojcQMmi8k3m5VM8uAOV2TiXaNFuZvo=;
+        b=zGhhfu7Ry6/tcDxqpIW5r44dN8cE62hUPBjyMbfnWF9XlwG0bLlv4a6H1hDC9z4vXK
+         h0JqWHA+wiZH7z5DfEdTwPQWtkwiwAYlW83IsbQhNy8yaxClnQqLo/hgT5BSAZd7vnjv
+         GgwJJyw43GyJCOwySNDyfywjS1X1YyMzpF9gvtt9xhzEMBbLtoCpFi8Vg9Pc2lTBKDGS
+         2kYr/V0P3dLgMqKXQ1qn6U6Lam5YPeUJGKyagWDbMlrPkgb2TQIzEMnx1INW2sm2mK99
+         IcV1PtkYEc12E0+nfRcxupE+FQtEEN2n2zOd2CphhzONVAI4kCoyVInQFMkjcrHi/RiY
+         yxgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743028784; x=1743633584;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mXYs2mi3GOc5UojcQMmi8k3m5VM8uAOV2TiXaNFuZvo=;
+        b=YbKQb3yN69bKu04hD/c7Eg+gll4gvcIF8hkb71HwQJNI3JNBmBwtGwcmGSHvVJe6vB
+         CUINXjmul4FaZMwCQRNvxA2juBO196XFsnGxIKLdjvxosPcXNadiB4iwvsQkXjSq2Rf3
+         QxVV9Nm6TGRM5XxKh6N+ZAYq6V3FXADPUNP6DI3Pq5+sB9fPHqlhW7DTSyLHtGMn+eCr
+         KWWMSpwql4PKGvLd86GGH3Z7OngbkybTqf5jgYFTmllWBrOtzC5tPP6Pb6OiGMurDQ71
+         ds6V3qcH+6qOO5UkJQfhF6Tg7IdJ6T6sTqI7lXOYIsapXomDicgyT9OQGLsmMOvxfUb0
+         PQJw==
+X-Gm-Message-State: AOJu0Yw4hbnuGCjIKAWhqRDDp4unvA9RNzr13k6Z1ckwEje+pzwYGrkb
+	59YehVHCJ1Zr33OlX6ClsoRS7d5WCj3QaDB6XT8m1fcVBhDlvSVABxYGgi57TU/P4ujfb0sB4tf
+	Hdc9kUnzeSNpsoG1u0b7V08SNrRD7omK4qpwrvLEwUEjdGVJNN98=
+X-Gm-Gg: ASbGncus9gUdUV+R2wk3byZGpDOI+h1tui9mBH5fdR7UEs4B1hsVlsIIUPgSCgKIwkT
+	z222IIiye8XlyiOAqMEthGE3xgTXbvU8Nyel3Fqq7V7DF5SxNJSWhcU8Fx4gVREXGJYbrzJ7Oy9
+	tzbYcoU+z15JD8BLWS4BV/ijSipyo=
+X-Google-Smtp-Source: AGHT+IE+JFw3bXBUdifr9GBQccI4xfM3uL7/daaI2sgwA0/jgO/XtyABFmPtgqcjspLPdudQClTrBY+xP2e05Mw5l4k=
+X-Received: by 2002:a05:6902:1687:b0:e60:aed6:578d with SMTP id
+ 3f1490d57ef6-e69435b6fe5mr2644980276.27.1743028783370; Wed, 26 Mar 2025
+ 15:39:43 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS9PR01MB13950:EE_|TY4PR01MB15710:EE_
-X-MS-Office365-Filtering-Correlation-Id: 496cbfc0-4128-45b2-1f6a-08dd6c6c30aa
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?Lxmy4HNPUgYIyt0avjub+1A8YPpd6E15xAv1fDvXDVaxtJwTHxeEBZFQKN3T?=
- =?us-ascii?Q?rasxYVABsjWRdV7jCiW1uBKJhCFLWoeLDxCQ+KNHRHfYoNJK14MfxFfCwmiV?=
- =?us-ascii?Q?lE41mupj3AN1wGYHRQnDH//AkRHIsSuZj3qDhp8w02yDDdS58oIPkorqMhhl?=
- =?us-ascii?Q?2ptgF+yfkq+f0k6TvOzf/36Fr4sC+vEEWMwBJkfLplJ17KPxajSkRzhQWSbd?=
- =?us-ascii?Q?GK+LSgct+zuts7vCOgeUbhtPl/9R6jADA+ywNSD5ogQpewh5sMzHcPzRTKO9?=
- =?us-ascii?Q?s8Bf5dFtY7Dm/56RJFmoVfrkyLE6heJKuFz2K58zNGy6ScUCF4v3E0/qSFu2?=
- =?us-ascii?Q?1zaALIK1immh3cU5P0rmemQYTGrLzPSoLJNuYdTqGywqPu4XKOlBzAZaEB/v?=
- =?us-ascii?Q?FBbHts3nBC1NGQZrkjUHkY4+qdaSwVBiV8EgHzgQIf5evRXFbcQdN6+mKYNh?=
- =?us-ascii?Q?c/JJFPE0GzZLYxJa7OB5zygeKMGNltWDWXvSKOtqKZ4TgJmAj/5x7n3Nzf5t?=
- =?us-ascii?Q?Po/2E5zycNnyLO95eFYgFKwVC8DbB7ZcTPNnOVDca5xLNDn0iJlOQ/FUParY?=
- =?us-ascii?Q?ioWuC3GW6WL08ROFyDTuvkt9imX36lDYDN4YYT6QqVojTm8GxaTmBMSEdZHg?=
- =?us-ascii?Q?J4IZ2RvJDNAQHNMB98xJD5CJHuos/abRgmLQD/R7PCcSOAvHrrtuBxRwyywm?=
- =?us-ascii?Q?GmT2SLS5ocRGDsh5xdb52kxF3RH5052Pcg4++edPaMsU+Uu6asUKSKhDGIxK?=
- =?us-ascii?Q?7v/pHcr1IJJqvr53fZWIkXSI6xE6PlFtnRhek/FkyPP3uCgADM+LYcWj+7mH?=
- =?us-ascii?Q?lyMgF4F/ynAwhSuM0NpTQRLu/+1P4/LGYLhA5bsnvcfdz4tMh66XDBRNcOWt?=
- =?us-ascii?Q?E2m6WKAZz3nVaJfbs6A+Z4Rin3pMSegFxFJKImYVVZLkC001z234Gmqa9yZt?=
- =?us-ascii?Q?kptvLIEdX+Y2yT9+aHjXMhKw4LlJt6iAonbFDR5ea7jjOSg02uzCo5T3/HJp?=
- =?us-ascii?Q?yuCloH1+DL7L4VqFjFlQ+x/HAuD1fEyBYeb2kRlcqlmjGJHKsRjIPQm6RwkB?=
- =?us-ascii?Q?RrdqiDZPSXrQzrRy7xR48dSRA8Fet4E/4sdIcbJBhvKB/0E3wOa+HsHDAGGB?=
- =?us-ascii?Q?I/+Ovs1Vm0Gsrv/SCzdUIChJ6Yb/ka9qHVNkRa/GorUbwTodL0YaAjmdk2v4?=
- =?us-ascii?Q?cxfI/vs38WjCrZF/EVkYNAFYGX5wBPT9TxJ+nrJtC2YTMr1a+jDjbza3glPO?=
- =?us-ascii?Q?izBVdAMW3wVw6ISY7ob/PmTtiMtfggif+kD8EYxdwIGHxOgSpfcjR6ENbCzV?=
- =?us-ascii?Q?p+rnkZmMIj8mZTdig8Q96SDUmLI0kGwAShf9DYBNnMmm10RX85vLmYdM5sM4?=
- =?us-ascii?Q?uV9HiL68JA2h5pnma2pY8+m6Xg/tMOqY0nknrmgkFp7TtVkoTtDotaAOiJoW?=
- =?us-ascii?Q?AzbGqSHFho+mjMZDlyYKB7YcnpTOO40N?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS9PR01MB13950.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?MkiQJZyb8iNONa6F+SmaPJWbcHas2eaXcGJIvq/nilVX1HROJVqyRndOya39?=
- =?us-ascii?Q?LMWwqv49X3WDaIRMX0vlR6zHW/owHW4/bSYtTwWiRwUnPTgsHbKpvJC5G+dC?=
- =?us-ascii?Q?p7vwXpGpR5Hxb4+ip9hG1rCEnieP8grUqPA2e3mktK5vYozyU2XQabI/XaME?=
- =?us-ascii?Q?k4JSGZVb7V4+JSWVoekFrCVAuXdtrfRI9jCJ94wUHtqrP9FPyb1rQurbb1bb?=
- =?us-ascii?Q?H0SlprSq1RB3qf0D14FGCTKqYPHfD5PiiIcjx4QLNRZahMIfJMoaXPDXPwMu?=
- =?us-ascii?Q?N/LtiDY/fb53tFULK2ct2psM60B2Fqv51aJp2nvDznUK0F8w+GGo547rXMHr?=
- =?us-ascii?Q?dFp21pJ+SgEdtWypWwRfHtExbvfzKx1P/qgemjgTTy5jLsriH1xoJU1QqmPl?=
- =?us-ascii?Q?9A83Axy6VojTfQjVduh20Cxk2htpfBDCeDAlFYzNvHzsICPWoJmouRc+uxht?=
- =?us-ascii?Q?pLO6TS6aLoZQwXzLu6QJUDj0JSmXMfOWjchi1zxcuRW6zkYZmrwMScGEeIid?=
- =?us-ascii?Q?YBi4jFv9MGipd6+RGqH3+GCnmR50Cs6XSXqVbK5aartTCfGhvJKGeBsnpMOx?=
- =?us-ascii?Q?QdU4QtaSUDWlEXzncDr+Y/SmmShqlcDT3AGnXXWDlkFJsS2QNMKw+CiiauMS?=
- =?us-ascii?Q?ncfzh1/cuCU0V77l/Xqzzq2/ekLqfDRZXSU3fDUcfS+lDbSSFQAWIm5v4vFp?=
- =?us-ascii?Q?Z7KbOMQIlFHKM+5YVx0NR2Xr0L4mPKFqCxGlZeO4bmh8opZJZIHtGIV+5IY2?=
- =?us-ascii?Q?s2bsZsyRkX+ZgTDS6ZQpb9Q7gJtlPtXxJrPGqOkW8lmOF7EvWoC18u7XEQgl?=
- =?us-ascii?Q?42FfFbClTGbwzYCxcsWkVk7s8bpz15PAUO3SMmNZVgK3V/tBl04WQW97Q/J4?=
- =?us-ascii?Q?GEahjVQs+vtlZKs9goQVvIg0i/KvDusYe/GaZ+iQunVlJBguuJHagcb1hD9W?=
- =?us-ascii?Q?TVE8srX0Ibm7vVZwO5YlUE9hfcFTzO7KZnMxZswRzbQbw+fnusLXqIS79MHg?=
- =?us-ascii?Q?UaSv+k5QPlySciF5mDVQz97TXiRx3uu+d1FmB6ZwTdONDIfX/YV3YYLtYqAv?=
- =?us-ascii?Q?e5MQdR/yMzNDLPRJtfPcyYZ5wPsgfIPQSFrMstx7y3a69TjpI+oLZh+2UefF?=
- =?us-ascii?Q?mCPkHwAzJtaD8bQhnjYfOKapvVS0+nuB6zq0ScPBW/DYHPiQHUWbt6swbP/m?=
- =?us-ascii?Q?yddvRto7X3sJc9+V6jfp/auYZEmYCdgXxoZhylaV8At0kCVM9NlPzd2DENXr?=
- =?us-ascii?Q?5XkMYjnphH6GpP3lSk4oieS9zYbExGfojeG7SXWqXY3lz+6g9smQM3FVnkqB?=
- =?us-ascii?Q?bK3pMrAItU9gD6uYDb1ebRNuMu0dH26ozuR7/diWsl2vbQ83mSeV5g0yTFXt?=
- =?us-ascii?Q?yWzTa0GE0NkqaOG9hWdcQ0IUGsq/rp4kRkxGMKELa6cJOpCLsIcM0hE9RFpE?=
- =?us-ascii?Q?Na34WB+0kPkXqLsSPOip+t0lU+Qy6a9irOkL3bKdE73fAl+MfjQZi6beZIOn?=
- =?us-ascii?Q?B7a2XC2kTSDlVzC9wQwaf6DUsi4P4lvS0f92bkRzt1E9Y5PGuWKFELsEZdSP?=
- =?us-ascii?Q?3KsKsHB94SCk4u0QBTnQZP+X8FFizQBhWaiwQC1wQaKogeUiWgZ5HmpoEtXf?=
- =?us-ascii?Q?jAc4VV+vKLGKi7qng6FMNio=3D?=
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 496cbfc0-4128-45b2-1f6a-08dd6c6c30aa
-X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB13950.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2025 13:43:29.2744
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ghjzff6B6pZ0NbqmA5wCv4e0REKE+b3wCK9QBlV5wANGZ2qNAX7fk7wYqlVOWEQ6DODkrOw803Vq+S78ibfOPg03hSa8mzD743unzTcex1P6tlvoMrNWKGR/rKSZFVXz
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB15710
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 27 Mar 2025 07:39:07 +0900
+X-Gm-Features: AQ5f1Jp5By4uaUIRgZz6AAHpNS6yVHECg9yaudmdMevIh3YUL7CdNuXmYVTm5HE
+Message-ID: <CAODzB9r_z-7BO6iPtjAjmLh_7rqyQQz=OOSLv1M9u-mT9pz6JQ@mail.gmail.com>
+Subject: [kernel-cve-report] New CVE entries this week
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 26 Mar 2025 13:43:39 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18371
+ <cip-dev@lists.cip-project.org>; Wed, 26 Mar 2025 22:39:53 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18372
 
-Hi Pavel,
+Hi!
 
-On Wed, Mar 26, 2025 at 01:54:41PM +0100, Pavel Machek wrote:
-> Hi!
-> 
-> > This patch series adds initial support for the Renesas RZ/G3E SoC and
-> > RZ/G3E SMARC EVK platform to linux-6.1.y-cip kernel. The RZ/G3E device is a
-> > general-purpose microprocessor with a quad-core CA-55, single core CM-33,
-> > Ethos-U55 NPU, Mali-G52 3-D Graphics and other peripherals.
-> > 
-> > All patches are cherry-picked from mainline kernel.
-> 
-> Thank you, applied.
+It's this week's CVE report.
 
-Thanks for the update! :)
+This week reported 0 new CVEs and 4 updated CVEs.
 
-Next step will be: pinctrl support
+* New CVEs
 
-This for 6.1.y-cip will be a patchset from:
+No new CVEs this week.
 
-[6.1.y-cip,23/85] dt-bindings: pinctrl: renesas: Add alpha-numerical port support for RZ/V2H
-..
-to
-[6.1.y-cip,64/85] arm64: dts: renesas: r9a09g047: Add pincontrol node
-+
-[6.1.y-cip,77/85] arm64: dts: renesas: r9a09g047e57-smarc: Add SCIF pincontrol
+Fixed status
 
+* Updated CVEs
 
-What do you think?
-Thanks in advance.
+CVE-2024-27397: netfilter: nf_tables: use timestamp to check for set
+element timeout
 
-----
+stable/6.6 was fixed.
 
-I've tested the same on 6.12.y-cip. I can share that a smaller patchset
-is required to bring up the pinctrl support + SCIF pincontrol on RZ/G3E.
+Fixed status
+cip/4.19: [f8dfda798650241c1692058713ca4fef8e429061]
+cip/4.19-rt: [f8dfda798650241c1692058713ca4fef8e429061]
+cip/4.19-st: [f8dfda798650241c1692058713ca4fef8e429061]
+stable/4.19: [f8dfda798650241c1692058713ca4fef8e429061]
+stable/5.10: [7b17de2a71e56c10335b565cc7ad238e6d984379]
+stable/5.15: [0d40e8cb1d1f56a994cdd2e015af622fdca9ed4d]
+stable/5.4: [eaf1a29ea5d7dba8e84e9e9f3b3f47d0cd540bfe]
+stable/6.1: [b45176b869673417ace338b87cf9cdb66e2eeb01]
+stable/6.6: [7fa2e2960fff8322ce2ded57b5f8e9cbc450b967]
 
-21eaffd338902 arm64: dts: renesas: r9a09g047e57-smarc: Add SCIF pincontrol
-60e58e522d319 arm64: dts: renesas: r9a09g047: Add pincontrol node
-e3acc80c6ba8f pinctrl: renesas: rzg2l: Add support for RZ/G3E SoC
-92421d6d2daf2 pinctrl: renesas: rzg2l: Update r9a09g057_variable_pin_cfg table
-ad84e8733dfb2 pinctrl: renesas: rzg2l: Use gpiochip_populate_parent_fwspec_twocell helper
-729b42260235e pinctrl: renesas: rzg2l: Add support for configuring schmitt-trigger
-ec01f77780384 pinctrl: renesas: rzg2l: Add support for enabling/disabling open-drain outputs
-d29a0e1f3a42f pinctrl: renesas: rzg2l: Remove RZG2L_TINT_IRQ_START_INDEX
-64772cc20274c pinctrl: renesas: rzg2l: Move RZG2L_SINGLE_PIN definition to top of the file
-da0cd8ac391d8 dt-bindings: pinctrl: renesas: Document RZ/G3E SoC
-4cbfebe8e22d1 dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Allow schmitt and open drain properties
-63f78eb380bd8 dt-bindings: pinctrl: renesas: Document RZ/V2H(P) SoC
-35cfeaff9607d dt-bindings: pinctrl: renesas: Add alpha-numerical port support for RZ/V2H
+CVE-2024-50138: bpf: Use raw_spinlock_t in ringbuf
 
-I will send the series.
+stable/6.6 was fixed.
 
-> 
-> Best regards,
-> 								Pavel
-> -- 
-> DENX Software Engineering GmbH,        Managing Director: Erika Unter
-> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Fixed status
+stable/6.1: [5eb34999d118e69a20dc0c6556f315fcb0a1f8d3]
+stable/6.11: [ca30e682e5d6de44d12c4610767811c9a21d59ba]
+stable/6.6: [f9543375d9b150b2bcf16bb182e6b62309db0888]
 
-Thanks & Regards,
-Tommmaso
+CVE-2024-53222: zram: fix NULL pointer in comp_algorithm_show()
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.12: [843d366ff19708668d95cda16bb8aba109a93dba]
+stable/6.6: [c7ee791e538537b281f60945298796f0a3971bbd]
+
+CVE-2024-40993: netfilter: ipset: Fix suspicious rcu_dereference_protected()
+
+stable/5.15, stable/5.4 were fixed.
+
+Fixed status
+stable/5.10: [72d9611968867cc4c5509e7708b1507d692b797a]
+stable/5.15: [523bed6489e089dd8040e72453fb79da47b144c2]
+stable/5.4: [3799d02ae4208af08e81310770d8754863a246a1]
+stable/6.1: [788d585e62f487bc4536d454937f737b70d39a33]
+stable/6.6: [94dd411c18d7fff9e411555d5c662d29416501e4]
+stable/6.9: [3fc09e1ca854bc234e007a56e0f7431f5e2defb5]
+
+Regards,
+-- 
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
+
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
