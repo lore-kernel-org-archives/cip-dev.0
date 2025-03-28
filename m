@@ -1,310 +1,363 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <sai.sathujoda@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B5D9C3600B
-	for <webhook@archiver.kernel.org>; Thu, 27 Mar 2025 19:41:58 +0000 (UTC)
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (EUR02-DB5-obe.outbound.protection.outlook.com [40.107.249.43])
- by mx.groups.io with SMTP id smtpd.web11.5404.1743104517616572289
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F5CC28B20
+	for <webhook@archiver.kernel.org>; Fri, 28 Mar 2025 05:07:34 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.132])
+ by mx.groups.io with SMTP id smtpd.web10.4801.1743138449266132932
  for <cip-dev@lists.cip-project.org>;
- Thu, 27 Mar 2025 12:41:58 -0700
+ Thu, 27 Mar 2025 22:07:29 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=f0fmCjcX;
- spf=pass (domain: siemens.com, ip: 40.107.249.43, mailfrom: jan.kiszka@siemens.com)
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.132, mailfrom: sai.sathujoda@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1121) id 52S57OX03802579; Fri, 28 Mar 2025 14:07:25 +0900
+X-Iguazu-Qid: 2rWhBFYKJulPlxzjJD
+X-Iguazu-QSIG: v=2; s=0; t=1743138444; q=2rWhBFYKJulPlxzjJD; m=TYW3+l3WNtUvcElETyej4XiA/SEouSa4mZ4Lgwosth4=
+Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
+	by relay.securemx.jp (mx-mr1122) id 52S57MES1551065
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 28 Mar 2025 14:07:23 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=C4vcKxYLXRl4ZsQlwTSPwrp94AqdQ1/WCCAKYu/Gv84HVpVJe3yAs8/hxUsJ8Z6U7KgNmnYPtKo4bNeRcdxMb5YGs5Y+oBpffQ9flVwa6AhY8X429gkDAjIHucNfFC2vRhhNKvxxMOG86HG6B57bP0sdOsKUjpqwNtblbOWt8Gcd1wGWLEWdEwkAaFdXej5S0bbtxuFk9/7UwCiBLN19lomIYtfEr6qZDuPLpJR+NrhpPp2Wuqm2GetNp1EH5QRCX0QsuAIg7mwMRFg1xbn31szClHonhzFDjV42wsSq+CGXIpOYippIxsN5eNyJLZv04bZLcMsf0K+6nGBOAm1QcA==
+ b=qKWMd3pOndvvokg5gxVB9+H12AG/Np9pHf2xrr7Ohl7GE0bq3F8CNQ1GZOu7BlnKq8qBG9yE6kcnFIKLfTdQBppCqvzuwtgzT9JR/OHk3iJBwV+PqFrhTW83x3T6VAOJJimq084X0c0tW7VOG6RRjatvcRO6GXu6aL2dWe7s5XEoWIiDtUtK6PTxLK4Tu4CRRFQWqB3GoRVKo+YkqnEU1LfQrpAd1z33h5/VEwG/gjirBCbSp/HWCyBYSutDyXYzvnli+pTpvbaRN6rrxIelIyfy3BKat9fcBc4eTVieQFcFVXAnQ8XnM6OQ1nTjFUmJHo246oW4X3ACZs/UgM6Jeg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=avgbVHY8k4HPXRE3wSSd8LnHvtwM7mU1zqVSoEJVMPk=;
- b=EzTSBAbBccaX7h3or9uMv1V3ydVelwWtXSeyqSIebcLo1FEGbfCDlG8Sizfd1LQRwv5k1bKexH5gkxC02+uRGveDZ2kCDExBq9FG93qK9RRJbozD62IQ1Zkiw4UQEhtfyJDVrSktfRkvzAjQLfVw3qNGgJkyOEurAR6oIxVNi9KeaNh5EVGDrB0MaoyYfug64QTEisQRrRCJkfrr62D0GZNHNGwAzXweGVL3CClcS2gFzjeSwOFkBwOkr/49gC4IUdewaBbM0IGvZjhr8Fv8Zy1t19Nah6Kz2h+nA22AEzHsXAZF4lKG2mk5CJGM4WTZ7dF4UFUtNGFBddPRLkNWWg==
+ bh=tNqbJUDJ9hsYtJtGFOHX+ElIzsLZVk4o0Igd7mYN7ik=;
+ b=OUF9qAjf+3X1amZ9EocvqrY/8h1huFTxD0gwTqVPrraddCB3+KbJSuapOSqqbkQA7Rx3YFuq+r8clUG8dJ3tAwHe6R0aCk0wkgiiYhu1dNgydiSN2zDz1fbfQ8xdOvcjlCDEAyY+qnEWSNJyl9Xtz48eWdlstn/0V1aQzrgWrexf/6W+lOqJhzS+MbIUMJy3fvQi4PB8AcFe7RMUSEUCYeOOEGRqNtEiAK+FNyGf5GP1YsxyymvbSu3aM8iKDIFWo/TXBnWTJvpv1x4tdSwjX/fu/sUScE2wIo9Zu4sQH2eDfN6+etVjsa79OiZzUKXtHasmpcGTnaJmgj7K1rOUzA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=avgbVHY8k4HPXRE3wSSd8LnHvtwM7mU1zqVSoEJVMPk=;
- b=f0fmCjcX+FFc3kT6DQC2mfE27hWU1CqcOQn8I7AEa7wIr8Awkuv5gOn4xBOti4sftxP2wtsRjgh34D3MZYdCEXp1BUaGYPO+qsbuL8iSGM8z60G9hXh1KBsWdaYtJ23VEW/fcoIMedrIQ5z9Zf0RpQ//sVFn86bJXG9M0c1KByRBD5BDhDMlA03g1CA0PQMLr7PIdK3UJr1znBFEcxWZnTyKNEtAp7XFtCQ1jifxL1N+2kP5NuyX4sn6GBjvkg4XYJcPlF+kgUtUsnTRODR5wiMsqNV/iSRQ8GnJqThkCjweZD/Z2T2ZRYS0RvoCxoys0b7eFrjef+UDu/z4/2o3lg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:76::15)
- by DB9PR10MB6643.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:3d1::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Thu, 27 Mar
- 2025 19:41:54 +0000
-Received: from GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::7fc:74bb:a781:a286]) by GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::7fc:74bb:a781:a286%6]) with mapi id 15.20.8534.043; Thu, 27 Mar 2025
- 19:41:54 +0000
-Message-ID: <6266bded-096e-411c-91f4-a505c05ee06a@siemens.com>
-Date: Thu, 27 Mar 2025 20:41:52 +0100
-User-Agent: Mozilla Thunderbird
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [ANNOUNCE] isar-cip-core v1.7
-To: cip-dev <cip-dev@lists.cip-project.org>
+ smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
+ header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
+From: <Sai.Sathujoda@toshiba-tsip.com>
+To: <submit@bugs.debian.org>
+CC: <kazuhiro3.hayashi@toshiba.co.jp>, <jan.kiszka@siemens.com>,
+        <dinesh.kumar@toshiba-tsip.com>, <cip-dev@lists.cip-project.org>
+Subject: Bug report for aide
+Thread-Topic: Bug report for aide
+Thread-Index: AQHbn56XeE1yKSPynUiGaNtpIwUXIQ==
+Date: Fri, 28 Mar 2025 05:07:20 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <OSCPR01MB14838867E83A31E2CAD83A275C2A02@OSCPR01MB14838.jpnprd01.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0099.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:cb::17) To GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:150:76::15)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OSCPR01MB14838:EE_|TYWPR01MB9631:EE_
+x-ms-office365-filtering-correlation-id: 887aadc5-1aa8-44d8-262c-08dd6db66b1c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|1800799024|376014|366016|8096899003|38070700018;
+x-microsoft-antispam-message-info: 
+ =?iso-2022-jp?B?WFJ1WUlpRFdUN0p1U25McGJZQ09aMHVmeCt5R1hFNldBVTNzbW5HNkRK?=
+ =?iso-2022-jp?B?NWlxQlFGMi9lcTB5b2tLZjZWS1R1NVlrZHcvZzN3Um80NFFxTm9iWnov?=
+ =?iso-2022-jp?B?dnpCL1NCOE5CbEpmQ0VnbGs4bFBXWDY4RE8yNE1kZ2ZOMENnUXZIb0Rm?=
+ =?iso-2022-jp?B?ZTVQbGRoT1hNREFNQjVJOXRhckNwNHR1SUd1NFVJdyt6d3M3N0NJRFVp?=
+ =?iso-2022-jp?B?RWpsanh0VUo1NFhYdDgwcitMdUZZN21oK2FSSzdHcGN5UmowVTYvanFz?=
+ =?iso-2022-jp?B?REh6b0dadFRseC9MVHJYVHhpdFVkd0I5UDZCMWFIZkF2dlZGem85dVA4?=
+ =?iso-2022-jp?B?S1lMbC9QOHA5NlN5WnhhMFlsbU5reEl1bCtrbjA0bVFtN3d5TlFDNTNs?=
+ =?iso-2022-jp?B?RlJZanB5M3RiZ0orQUJSa2dvRldwZnYycFB1RUlqbHVEbXlUZnVCMm9N?=
+ =?iso-2022-jp?B?OG41MEl2UURFVjZqRVQ3bnk4S1JmTmZkVURvM29jbno0MVJKNFp6Z2di?=
+ =?iso-2022-jp?B?UlFKM0ZvWlhJOVZET0krM01Lem5TV0tsM245KzBhSFJhSWsyTXp4eTJv?=
+ =?iso-2022-jp?B?Z1BXZXZ1ZGVkZHZTdVRpNmxVbFdtTm9zbnZqckM4QXVZd3Q4Vlcxd2dL?=
+ =?iso-2022-jp?B?cWZ6SXFCaFdOWjVObENHcnJ4QmwxMXlSaWtMaENnTmhteUt5VzZPUDZh?=
+ =?iso-2022-jp?B?bmtDempZQTdUd0pDNldXRG9Xb0d6ZkE1NGU1VTArQ1hxUkxNdHk1dXpJ?=
+ =?iso-2022-jp?B?dFRzSWwxaXYxeEZHbmMzMHIrZzQ0QkpIV2FZUXFHVHVGd2I1NDh6bDNj?=
+ =?iso-2022-jp?B?NWpBVkZNbExVNDdDZnd3SzljUS85N2J0cldpUVdzMTNRU0swOHlwTVRL?=
+ =?iso-2022-jp?B?NjV6MXR2emZrZ2FmUEpOcHREOEh2OWg4SzFyTXlwcEROQ0UzQlZzelNy?=
+ =?iso-2022-jp?B?VzBsU0xTYlZqT3ZocXFMSE5BcEdJQkRTUFV6YjVtdFhSbktWQjJEZ1BS?=
+ =?iso-2022-jp?B?MjVoTCtlOWFZVTVFWUU4TlFxZVV5blR4VHRZaGhqZHZpTnFvZWFmTjNZ?=
+ =?iso-2022-jp?B?Y2N1WUttY1Qxa0U0b3BibmhuaGtJbmIyayt6WTRKQjJZT2JvMDVQYjNR?=
+ =?iso-2022-jp?B?bG9hYzdyV1o0V2VrdjZrNVdWKzZvbnJqVWFwRXNyOVA2Rnd0RGpRU3do?=
+ =?iso-2022-jp?B?L0FkRDdTNXFqcnZzd1VtSkJFTUpEcXNhamFsNDNtWjlZRjZ6YjVweFdI?=
+ =?iso-2022-jp?B?VWloOHpUanlWQm5IbzdRSzZBdy95eWc4d1VkSzFNWFRWRFhrTmMxOFdw?=
+ =?iso-2022-jp?B?Y3V3anlGVjlkempOK2tQNW1HWXduNEc5RVdFQUgrY1FTV3EwL1V0NTJ3?=
+ =?iso-2022-jp?B?NlByUVY0UFIyOVlVanBITG5hdG1OUzFqa2JqaUd1WFJhMVpxSGZOSE9O?=
+ =?iso-2022-jp?B?MTVtN200NG44bURSVkdiUHU5c3M3WU9TVmp0ZHdVVU1jQnUzU0diVzBM?=
+ =?iso-2022-jp?B?MjFyRjZmZzFnRTRhcklVWXVFWHE3aXZzMUhoUEplNk1US2NlMFpJay9E?=
+ =?iso-2022-jp?B?QUNLeWo5VFJ1dEY1SGlFYTg1V3RGU3k1UlliMWFsSVF0TzVXL2lzVzYr?=
+ =?iso-2022-jp?B?cjZKd2RFMGNvSFpSYkthSXZpOHpUMzlmZzQ0M3VUeSs4ZVAxVjJxZ1J1?=
+ =?iso-2022-jp?B?a3gzMDdnZXJoRGd4T3AreTVScXRsdk11amNCRUtHOVZLd0xLYUlON3E5?=
+ =?iso-2022-jp?B?LzU5ZTI5QXpzanBsUE14eVlnT2dEWjlWbHR3NzhLVDFONlVjemtwYUY3?=
+ =?iso-2022-jp?B?WUl5QkZHcjVrV3paYVE1RVlWUGFQdVpKNDFaaDhONmVENVZQMWpFWGpk?=
+ =?iso-2022-jp?B?UkVzdVpCeTBhY0dwbTBRMzZoZGlvQzlkWTlnYWM3WXBHdEdYN3h1ZGI0?=
+ =?iso-2022-jp?B?aVlReHNTcTdQekNmeTl4WUZHZ2w1MGlVU2lqVTMzbmlkandOZ1M4eThT?=
+ =?iso-2022-jp?B?b2dwdkFlYTB1czNkUWg1cUdha2lXVE1xbFZrYWRJREIzSE56TzlHSjNy?=
+ =?iso-2022-jp?B?ZFJ4OTNRZXVVaWgzVmJiWDRaYTVKMkU0TGtKYjBPUk9iS2JNYUFNZUNY?=
+ =?iso-2022-jp?B?RFc=?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSCPR01MB14838.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(8096899003)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?NWIzQVV2N0trcHpETTNIZHZrelllMlkyNVA5ZmozdjFWbHE2VktOSmRz?=
+ =?iso-2022-jp?B?aVdQMzdvUFlWUjFCM3c1Zjg0Uk40eG5GUndXOFYrT09HZjVEd3BjQnlH?=
+ =?iso-2022-jp?B?MjhiakhxVWxjVnpvOFFNRGVvVHBxSStScXVxa2wxZUhZcFVJcTNIRm1J?=
+ =?iso-2022-jp?B?cFNUa3VmdW9jQ2dEdGNSU2ZZSTZqdnBxcldWN0NqdzJ0a1Vic0lnSHJB?=
+ =?iso-2022-jp?B?eVFCL2EreHBZSzFGWFEveWZGVU5mb25pTzVXeDFmelAyTHRnOWNOZS9P?=
+ =?iso-2022-jp?B?VkEwa0g3bldaaWF1a1U4QnEvcFg3Tjk3TEtiR05yZkt6MDNQMEFRU0pH?=
+ =?iso-2022-jp?B?NVZaTm8wZmhWT2QwMG5sN3J2N0xOaHJsa1NSZjBEYWdWdi9IbXNRWkwv?=
+ =?iso-2022-jp?B?YjMzYW05Z0g5MVA0K3hRc3J0T09lblo3N3VoUU5lR09mMERCWUhzVTJW?=
+ =?iso-2022-jp?B?MmppN1VZUmRXaDhKcmZjZEhPMWdxMzcyWlN4b0NoVWZYMFJqb1BzZDU1?=
+ =?iso-2022-jp?B?V1dBU1VVb05nZzZCYTRHR3M2b2xtV2lVajlVSldYUExHSnE0bkRENkJv?=
+ =?iso-2022-jp?B?NzJiTE9ETW1ldGhtdGp5QWROaUdWb0RaMmRQVldoWVpyRS9KeS9YS0x2?=
+ =?iso-2022-jp?B?T3orVTQ3WFpOZ0tNUzRqdEVpRFpxNERENmhLV1dHQ1NjTVV1eVZrVFN0?=
+ =?iso-2022-jp?B?VFIzMGZ5cnhEZWljVnhwT3hZN04rVkNXY0JQemQzUVRlQTk0REM3YnBp?=
+ =?iso-2022-jp?B?d1FjU2dxMkNaZFJDd1hoTXhnTXlzVmVkTVUySTRTSUo1UVpMemRyWWhl?=
+ =?iso-2022-jp?B?RWZKdlEycldvcnNIMjM2d24yNEdndkRHUlZpeXpBUm8xQ0N2SzN4ZVlS?=
+ =?iso-2022-jp?B?eHZNbVpheGxpVDVGN2NSQWtLSWI5SWpKSVVWamxlYU5pamZlRmxXMFds?=
+ =?iso-2022-jp?B?a1V4K1FPY0xIaW5heWNvcnhIdldITHNPYUFDaHJ6THhsYnpZL3RWYWcx?=
+ =?iso-2022-jp?B?Z0J2QjIvOVA1b2VPRDROeHNvcHhTd0d2dkQvNGFnSDFpSDFpblR5RndZ?=
+ =?iso-2022-jp?B?YTROMGREcnI1UFRPMnFLRXdEZmNicWxWcFl1eVNqdGVqVnVCYWxnOHJF?=
+ =?iso-2022-jp?B?dVYwOGh2YjEzbEVkcEtmWXp5Z0krU0c0MlJ5c25zZVhiYzN1Nm8zTTJv?=
+ =?iso-2022-jp?B?QmJMb3VYSDA2QUtOVk9hQ0hFUWtFN0lOY1Axa3Fha1FTekhFemJKYWZs?=
+ =?iso-2022-jp?B?citSVEJ2RThFSlJPK1QyRmVBY1BtUWxiNVA4Z2NRMG03dWxRT3RwM0xB?=
+ =?iso-2022-jp?B?bHpLTXFCVkxZSFE2VU0yd2tmTDN4YkRYYXRoN2tOcS9NM3ZXdGJWWUhj?=
+ =?iso-2022-jp?B?RzVqSXl2Szh4VlNtOXVjWHJrMWNyVGZPT3laUHJhY1I4TWQ2N0tlTHZE?=
+ =?iso-2022-jp?B?aDVuN0hoVEZMYXowTS9JWE9nclNLSHBmRzVhTDBrTmlwTHljOGg3dFNS?=
+ =?iso-2022-jp?B?TTYxREtLc2RRazdHdzREUnJTWWNsMTRVdEM4RDdXV3E3MC9KUHNEdk01?=
+ =?iso-2022-jp?B?Q3FVYzZPY2MwVm1qNXBjZ255bm8zc2ZZRjFKSkRIRHFPMENsLzRhdnBT?=
+ =?iso-2022-jp?B?anVXYVNBVjhoZ0YrWExtUElzKzNaNlJNdlp1cmJ6THc0Nmd5TERodHZv?=
+ =?iso-2022-jp?B?Y3RXQ3drQXcxYmdNaUJTc2IwSW4vYUJlK3lOeE9XL2gwVy9hZUFFbWpW?=
+ =?iso-2022-jp?B?VkJUdGg1N3ZWZ2x3ZWlCQmFXTWMzZnRLR1hETVRoK21KNDdOMlBZN0di?=
+ =?iso-2022-jp?B?bi92RXE5SXczSGJ1bUpVVHh2OU1wRW5JL2RjdEhlR05zZnZLSmtSS294?=
+ =?iso-2022-jp?B?ZWZtdk5QaXlLUHA1emxySEFZMWh1VFR5b2lDbHNBWDBhVTNOTHR4TWdy?=
+ =?iso-2022-jp?B?cS9GaEdja0dtbzh3dU91NDVwMWlOQUo3RDk1ZnhMTEFxYW1uVUh3dzE0?=
+ =?iso-2022-jp?B?NEdZRjJ4TTFickFZRHplQVR5aW5odTR2Y0QyYUNGQUdlb3lNTkJaTEpK?=
+ =?iso-2022-jp?B?K0o5UlNHRzhaaFRxOHFNbkhzNkQ4Qmh4NU1xbENZaGdXRXRSSlV1NGxw?=
+ =?iso-2022-jp?B?YUtTQnBZMHdwREJIcVZqN2pvV0RlK3RBV2RsaXhiSUZIMTV0SUFWc2tv?=
+ =?iso-2022-jp?B?MzcwUkxJYjhUZXg3WWVDSXJlN21WclBLRFB5SVlBQ3JIWXA2OUhFZVhs?=
+ =?iso-2022-jp?B?TStNeUQvV0NQKzVvWFJrUE1mbnNROGxsc3l6QzZremtiNFdpTjJwYXFB?=
+ =?iso-2022-jp?B?LzJ1V2drOXVBdTVZNlphR2lUOFdlUk1ZaUE9PQ==?=
+Content-Type: multipart/alternative;
+	boundary="_000_OSCPR01MB14838867E83A31E2CAD83A275C2A02OSCPR01MB14838jp_"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR10MB6186:EE_|DB9PR10MB6643:EE_
-X-MS-Office365-Filtering-Correlation-Id: ac3ae85e-f7cf-443b-778c-08dd6d676d08
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?TXBDVTRtc3h6WWpTVXZJaFA4WmtidGVQOVZRYmU3YThadkw1dSs0SnE3NlRi?=
- =?utf-8?B?ZnhhbG1zbU1TcUU0WGF3MUF2QmJtbzQ5Mm9ZaE5NVHhFV0lZdHBka1NXdjZp?=
- =?utf-8?B?b1pKcEZ0L3ZlTXNrTzUvYTluN3ZWZlhuVHdDeGpibUF6SFBxYXZHMThsNmk2?=
- =?utf-8?B?REMxTzVFVlFCTzNMRWsycG03L3plMGRidGlMenJBKzFFamZlL3NYa3JVb2Za?=
- =?utf-8?B?QnJQKzIyS1hRcHRscjk3ckYxN3lHaEZEZW1WcXFlY2FPMlBLNk9LdnZMVFBR?=
- =?utf-8?B?Q1ZBSDNsY0NEb2l6S1pQQ3hPc25nVGpGVXVFU3ZSMHlKTVJTc2MzZHlCUDh1?=
- =?utf-8?B?aXRhMXlZZFpUU1JCaWhoTXZGdFdpblV6SFVUUGpOWUpyd1dkZHI4TXc0TW41?=
- =?utf-8?B?MGRNWjhVN3FndStWYzk1clVkM1ZVUm12WHVLeUxRYzVuRUkrNTJONTJNNmJY?=
- =?utf-8?B?TUxpNWJubUlBV0djN0h5MzA3SEFTWEQ1Q1p3Q0JRL2FNVGRBL0lGQmFBYXNa?=
- =?utf-8?B?aktrZXN2NWhHMlJhRXZ1T0JLNU1BMlRmRUNUdTNSWU9HeEN5QytGV0ZXK0pY?=
- =?utf-8?B?QitIdE91R29tN1hTcDRFM2cvRXhjYy81M3ZibDJ3WWxFaTJqMGhFOWVHdnRv?=
- =?utf-8?B?K0I3dTVqUlpyNXlhSzhNOEJja1FhM1h5eTBIOFZOdG9xM0RRS081UEpmUlRZ?=
- =?utf-8?B?OEphVlo3aFk2dFJIMzNMZ2J6dFoyYjlrMjExMGsxQmZsZEN6TkxNMnhYbHVY?=
- =?utf-8?B?TmNVS01WalN2NWMreGMyaTc5RUN3YURxa3hvVTlWRFRsdDF6VEZtVFJ5Wm84?=
- =?utf-8?B?cmdCeVF3MEYvV3hUbkpxZXVraHBWV1BGRXlpM2psMUplTWR1ZktkcVY1cUNr?=
- =?utf-8?B?WkRsRTBkN2hMMGF4NC9xTGF5VE9iUTJvN1BZdEZmYW1XUVRZQ3JZcEZPTTR5?=
- =?utf-8?B?TkJhZVY1cWI2aHAwdk9pKzl5cGhueTdFZnpCRnBPVi9vM3J4YndrbWV5YUJs?=
- =?utf-8?B?bWkxNzZsZEhFUzJod2ZlemNVZ0cxa0R1NGZRTVFFVDNhSjFXM1FIem12MnAy?=
- =?utf-8?B?RDZDb1R4UU15Yk0xY29TK1lHQlRUaEV4QVNPTjNRNFZINkJ5aXJpaThKZk5r?=
- =?utf-8?B?TE5UWWRkOWlxcFIrdDQ1WFlPd3d2MzhldVBwTGxiM3pTRTFCZXAyc1RBZE92?=
- =?utf-8?B?L3dhVTRVelFjall3NFVxVUhDZTJncjJrdWVlcG1xdW9rdkN2ZFN6VmQwQ2Zl?=
- =?utf-8?B?Rkh6VWRqNFJMeXhva1FwdWNtTm1CcGJvdVI3TG9QLytqNGs1NFV3bS8rMlFh?=
- =?utf-8?B?U1ZZeTR1VHI0S0ZMZ2hjME5FRUJLTjNnNzRGY3l2dnJJQnhjcnE4b0ZvclZ5?=
- =?utf-8?B?QnBGRFBLZWN6dVlGb2hKbTRyTnhodWMzVW1mb3NGcDRxa1REK3hicDA5by9I?=
- =?utf-8?B?ZEFqOXFuVC9vcVc5UHZmL1JQZFlxaWlnY0d4bVlOYVE2US8zcGg4alc4dUw5?=
- =?utf-8?B?V1hLcWZqb0ViRnpNMWhrSXU2S0t4Zmh5Yzczc1F3K1JvL3ZWaFNBUXlaUVdY?=
- =?utf-8?B?WEk5eU1TQS9oR1g5Z29mOGpnR05UeUtEVHlFYllsdWI1UzZKQmsxNFlzTGZ4?=
- =?utf-8?B?UUlTeER1azdSeFpTT1o4aGhtMmtuTWlSazljZ1hrQzlCTTdYSjVwcVdJR0t3?=
- =?utf-8?B?aDNKM29GT0RSK3h6dXdaSzk5eHYzSnVzcmVWL0lTbHhKenl5Q1VlMnJuU28v?=
- =?utf-8?B?TG1PbXZMcnM1cW13M1U3eU1NUWp3TW1vMHRBSkxIcndhbmFNU2tuVXJ1WUYw?=
- =?utf-8?B?V25pcnVpWjRhMDFqUDVkeks2end1eFJFSGNiSHVjQ0JxUUoyOEE2eHo3L04v?=
- =?utf-8?Q?bZS5DhXwKU0Ab?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?b3hZbU5yNHgxR0FhdUxzcjZoR2VZTWp4aEVCZU5uNVRNMVdhbWU5R3FVa0U4?=
- =?utf-8?B?Q1B6OGRsNllpWkJDTDBSNkxmeXJUUUdaTkVyejVtSlhHakZneUFuUTA1WDJP?=
- =?utf-8?B?cDBpYUdaTVRheHFrbEhNUHB2RHZrUjZPODV2UnVHbFRTQzlKdStoa2l6TUxW?=
- =?utf-8?B?UVRDY1dOa1p3dVkveXgrMVMrdlZZTUlIYnZ2cTlkeDR0SDhYTkozSWlJQU1X?=
- =?utf-8?B?SVluM2VLMk9leTJabkVpcE9SZUlMeTAzeHRnSWF2WUljUzQzZXZtWVVGemJj?=
- =?utf-8?B?Y2ppa0lMT1dtU1AwZW1yaGJiKzJLWlRreHpMbnJPdWZ2Mjdsa2o2WVFabTFw?=
- =?utf-8?B?aTVPK0FqOXg3NnBmTUNnb3VlQzFsZ3lNTXR2MXdXT1k5R3FqUk9ncjJ3U2dT?=
- =?utf-8?B?N3Y2Nmp6am9vWEZHUHI1SVdvMDNwYTQ5dEtSamFRNFQ3MUozeE5vUUFUU1pW?=
- =?utf-8?B?UXplUzUwa29lcVBwZmJzaGNJU2NnT3BvZFBPRkhURFNpL0lkdWJab1N3K0Yr?=
- =?utf-8?B?cmlweGQyeDZrN21SbGt2VXA3dEhyQk40VUpIcCtkK2xEalBPZ2ViQm1TR0ls?=
- =?utf-8?B?SjVrbHhlV29BTDZQUGVCUVB5OWsxR3ZVUmRjR3c5YWNyVksxellPcy8vQm44?=
- =?utf-8?B?NFBKbFJvWUhhZVo3VmV2NVBEa2Fqc2FLUkhYQlNNa0QzR0FkUE1GeGFpYmlP?=
- =?utf-8?B?WmloV1VueVI4N2ZzbXRzSDFMR0JiZkdQTUNHellUWDVGTkJLZ1ROb09vTWFs?=
- =?utf-8?B?cEFnWG5KbkVXMldVcHlpRHdjYnRaOWZqVmU1bTc1WG8xUXV6YnAzYnRtTktl?=
- =?utf-8?B?bFJ2a2xrb213VzdzblE2OTc5SERHRXp5TE5ya1RKT1hTYXBHUGJZajBycUM0?=
- =?utf-8?B?OTdESUE1UVMzL1ZiL040NU5wQndqeS92STRWY24wSkFrbE5NWjFpRy9WOVgv?=
- =?utf-8?B?dmZpWEFqWXltN0lpNGFaYnNuU0YyWXVlNEdUVFdSSy8vdFgrS2Jtc3JtbURR?=
- =?utf-8?B?RW1nZjNKbjFJWDZvUW9JYjl5a2NwdS9odkhUd2RDZU45ZVp4ZmtlTi9rM1Z3?=
- =?utf-8?B?bi90Wkx0M2lvNVJGK3ZGYzNBekIzZ3FKTmt0R1U0dTRVVlAvMTM5aWZxRXFP?=
- =?utf-8?B?aHZ3bW9NSDA2Z3hkRWtpV2IzRlpWNTVlVEdFS1M2dmphUVRscGZtU0w4aXV3?=
- =?utf-8?B?Q3Rxa2lRREs0Q2ZaWk1QempVaURJSkJrdHN6UW81UTFPNy8vY1REUlV1cDk3?=
- =?utf-8?B?cXdSeHJXRWxnSURGdlhTbk40VnhRVkFWLzJoN09GSXVtL0wzaXlDTW90dWR1?=
- =?utf-8?B?Q2ZLU2c2R3FSREUyZngyeDM3UUxHNkhLWUNWdGYyNGVDRUhoR3FQWW04cjg4?=
- =?utf-8?B?RG93ZFIwSGlYWVdBS2x0WXBrOVQrd2gyQVBSSWFOcThaZ3kwMGtNZUNucWFO?=
- =?utf-8?B?ZEJVQ251SFRoazhra05XaDZsTHAvSzIvQXBGeHdnd21EYXUzMENvZzg2MFI4?=
- =?utf-8?B?TGt0VzNhNWQvNnI4eUlJSm1FYjZFZlE0ejcvUmlyQ3VPLzgxQ2UxL1ZadXJU?=
- =?utf-8?B?STFxbjd6QW1SL2prZUtHNnFHajRKMkMzQ2hBV1NhYnF1ditQNnNETjNYOE03?=
- =?utf-8?B?YWtWL1REaXlVcjhBM3dNYlArVER0cUJ3RGJEUW5UaEQ2K0NVTitZMWJzNklk?=
- =?utf-8?B?VndqYzlSSktQNEdyNzVHWEd1WUthSkNUQjJMNFVGVmhhRGZ5am9IZlB2alUr?=
- =?utf-8?B?ampINEliOUNoRW56N2tYbGF0YVFoays5UGNEL3ZGK01McUQ1RzV4ajNseG53?=
- =?utf-8?B?SHhoRGJZYTljeG1yazRyaGtqY1BoTXcvMkt6RmFQUHRxbHQ2TjBXL3dxdmRr?=
- =?utf-8?B?Nm1wQi9zZzFZN3VlcVk4aC8yODZsWWJuMEswQUpkRnFQZjQwUzVUV212cytW?=
- =?utf-8?B?VUJnUklualFEZ2lCdUdTKzRLa2R4ZzZWK2FYS0loVDBMSXRaVG5JSERyS2x3?=
- =?utf-8?B?dDZVNkZoNk1mb0RkQzBhdUNjeWppRVNvNVUyeENOdXRxaWJ3WjFiV2x2YzhL?=
- =?utf-8?B?WGlGM3p6V3VkYUw1WlFUUlZrRWx0eFczZU1HZ00zTkF1Q0gxNEdrWlNSeE45?=
- =?utf-8?Q?M48bUTm2VIubZC1jfAvbkXZNZ?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac3ae85e-f7cf-443b-778c-08dd6d676d08
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM
+X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2025 19:41:53.9502
+X-MS-Exchange-CrossTenant-AuthSource: OSCPR01MB14838.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 887aadc5-1aa8-44d8-262c-08dd6db66b1c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Mar 2025 05:07:20.4368
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wNzDDm0O20EYyf3DVYLBXvVDKZ4lIWSdeJck0k2ez1j3PekjTvH8mlKlnKPqNedJrQwYAcP91AMEZUSf1J/hbw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB6643
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: kNUvKhLhXpEb/9ePPAo+0/D3kpyP3whcSickXNJiRAHAjvC+iUxdvnR/yzN68hWvVGsGEEG9OT9V34nT7AnQ2yzdtJCd1P0kjWEOS7XQdfo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB9631
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 27 Mar 2025 19:41:58 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18383
+ <cip-dev@lists.cip-project.org>; Fri, 28 Mar 2025 05:07:34 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18384
 
-A new release of isar-cip-core is available.
+--_000_OSCPR01MB14838867E83A31E2CAD83A275C2A02OSCPR01MB14838jp_
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 
-72 changeset, 13 contributors, 66 files changed, 986 insertions(+), 305 
-deletions(-), these are the stats for v1.7. While we had a rather small 
-crew on v1.6, this release was plugged together a nicely large group, 
-include 4 (if I counted correctly) first-time contributors!
+Package: aide
+Version: 0.18.3-1+deb12u3
+Severity: normal
 
-https://gitlab.com/cip-project/cip-core/isar-cip-core/-/commits/v1.7?ref_type=tags
+Hello maintainers,
 
-The highlights this time are unified home and var partition (opt-out to 
-have separate ones again), several improvements of our automated testing 
-to ensure IEC 62443 compliance, faster disk encryption on first boot, 
-some hook ordering fixes for the initramfs and once again many version 
-updates, including EFI Boot Guard 0.19.
+In a Debian bookworm based OS which is booted in QEMU without any dedicated=
+ home partition.
 
-Thanks a lot to all the contributors!
+The /home partition is moved under /var and is symlinked to /var/home.
 
-Jan
+I have experimented the following 2 scenarios to verify aide's integrity ch=
+eck after adding "report_url=3Dsyslog" to aide.conf
+
+Scenario A:
 
 
-Adithya Balakumar (4):
-      wic: Set partition UUID for reproducibility
-      .reproducible-check-ci.yml: Upload wic files for reproducibility test
-      scripts/repro-tests.sh: Update script to check wic file reproducibility
-      .reproducible-check-ci.yml: Add x86-uefi target for reproducibility test
+  1.  Created a sample file under /home
+  2.
+Added that sample file to aide configuration file like below:
+     *
+#echo "$SAMPLE_FILE  VarFile" >> /etc/aide/aide.conf
+  3.  Created aide database file
+  4.  Explicitly modified the sample file.
+  5.  Ran aide check and found that aide is unable to report integrity fail=
+ures to syslogs.
 
-Alexander Heinisch (3):
-      Removed "ro" option from read-only-rootfs's fstab.
-      Fix return value handling on filesystem check
-      initramfs-crypt-hook: Optimize disk encryption in combination with expansion of last partition
 
-Badrikesh Prusty (2):
-      efibootguard: update to 0.19
-      linux-cip: Update cip-kernel-config to latest revision
+Scenario B:
 
-Cedric Hombourger (1):
-      swupdate-config: suffix package with -${MACHINE}
 
-Claudius Heine (3):
-      initramfs-crypt-hook: fix inconsistent whitespace
-      initramfs-crypt-hook: use real device path in luksFormat case
-      initramfs-crypt-hook: make sure that mount path exists
+  1.  Repeated Scenario A, but the only difference is in this scenario samp=
+le file is created under /var/home instead of /home.
+  2.  In this case, after modifying the file and running aide check, aide i=
+s able to report the integrity failures to syslogs.
 
-Gokhan Cetin (1):
-      initramfs-squashfs-hook: drop unused hook file
 
-Jan Kiszka (23):
-      initramfs-crypt-hook: Fix ordering with abroofs hook
-      ci: Disable currently broken deployment to KernelCI
-      ci: Drop redundant deploy_kernelci disabling
-      linux-cip: Update to 4.4.302-cip95, 4.19.325-cip116[-rt40], 5.10.233-cip56[-rt24], 6.1.127-cip36[-rt19]
-      initramfs-crypt-hook: Add support for btrfs
-      initramfs-crypt-hook: Bump revision
-      initramfs-overlay-hook: Optimize variable initialization
-      initramfs-overlay-hook: Tune the parameter documentation
-      initramfs-overlay-hook: Bump revision
-      linux-cip: Update to 4.4.302-cip96, 4.19.325-cip117, 5.10.234-cip57, 6.1.128-cip37
-      Update isar revision
-      linux-cip: Update to 4.4.302-cip96-rt53 and 6.1.128-cip37-rt20
-      Revert "Removed "ro" option from read-only-rootfs's fstab."
-      Add isar patch to fix riscv64 builds
-      swupdate: Avoid generating useless ext4 images in qemu configurations
-      initramfs-abrootfs/crypt-hook: Ensure that cryptroot is always last in local-top
-      linux-cip: Update to 6.1.129-cip38
-      submit_lava: Address shellcheck findings
-      linux-cip: Update to 4.19.325-cip118
-      Update isar revision
-      trixie: Use a working snapshot for now
-      Drop unused preferences.bbb.conf
-      linux-cip: Update to 4.4.302-cip97, 4.19.325-cip118-rt41, 5.10.234-cip57-rt25, 6.1.131-cip39
+Is this behaviour expected ?
 
-Ludwig Nussel (1):
-      u-boot-common.inc: fix FILESPATH
 
-Michael Adler (2):
-      cip-kernel-config: Update to latest version
-      Update kas from 4.5 o 4.7
+Thanks and regards,
+Sai Ashrith
 
-Nobuhiro Iwamatsu (2):
-      recipes-core: ltp: Update to 20250130
-      scripts: Add automated recipe updates for LTP
 
-Quirin Gylstorff (16):
-      initramfs-overlay: fix missing scriptpreq
-      initramfs-crypt-hook: clarify resize error
-      swupdate.bbclass: Add check if a swu file is greater than 4GB
-      initramfs-crypt-hook: allow to run before mounting all overlays
-      read-only-rootfs.bbclass: Exclude boot,home and var from the erofs and squashfs
-      .gitlab-ci.yml: Remove unused build jobs
-      build x86-uefi with secure boot
-      x86-uefi: disable watchdog for testing on mcom
-      kas/opt: add new option for security testing
-      crypt: remove e2fsck.config option system_broken_clock
-      read-only-rootfs: Make IMMUTABLE_DATA_DIR configurable
-      read-only-rootfs: add home partition with a variable
-      add move-homedir-var package
-      Move content of home to IMMUTABLE_DATA_DIR
-      Add Kconfig option for separate home partition
-      add ci variable for separate home partition
+--_000_OSCPR01MB14838867E83A31E2CAD83A275C2A02OSCPR01MB14838jp_
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 
-Shivanand Kunijadar (5):
-      Set fixed UUID for EROFS
-      Add additional test cases for swupdate and secure boot in LAVA
-      Update script to generate additional LAVA job defintion
-      .gitlab-ci.yml: Update CI to add additional jobs
-      .gitlab-ci.yml: Enable security_test option for base images
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+Package: aide</div>
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+Version: 0.18.3-1+deb12u3</div>
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+Severity: normal</div>
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+&nbsp;</div>
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+Hello maintainers,</div>
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+&nbsp;</div>
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+In a Debian bookworm based OS which is booted in QEMU without any dedicated=
+ home partition.</div>
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+&nbsp;</div>
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+The /home partition is moved under /var and is symlinked to /var/home.</div=
+>
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+&nbsp;</div>
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+I have experimented the following 2 scenarios to verify aide's integrity ch=
+eck after adding &quot;report_url=3Dsyslog&quot; to aide.conf</div>
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+&nbsp;</div>
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+Scenario A:</div>
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+&nbsp;</div>
+<ol start=3D"1" style=3D"direction: ltr; margin-top: 0in; margin-bottom: 0i=
+n;">
+<li style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, C=
+alibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0); margin=
+-top: 0px; margin-bottom: 0px;">
+Created a sample file under /home</li><li style=3D"font-family: Aptos, Apto=
+s_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-s=
+ize: 12pt; color: rgb(0, 0, 0); margin-top: 0px; margin-bottom: 0px;">
+<div>Added that sample file to aide configuration file like below:</div>
+</li><ol start=3D"1" data-editing-info=3D"{&quot;applyListStyleFromLevel&qu=
+ot;:true}" style=3D"direction: ltr; margin-top: 0in; margin-bottom: 0in; li=
+st-style-type: lower-alpha;">
+<li style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, C=
+alibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0); displa=
+y: block;">
+<div class=3D"elementToProof"><b>#echo &quot;$SAMPLE_FILE&nbsp; VarFile&quo=
+t; &gt;&gt; /etc/aide/aide.conf</b></div>
+</li></ol>
+<li style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, C=
+alibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0); margin=
+-top: 0px; margin-bottom: 0px;">
+Created aide database file</li><li style=3D"font-family: Aptos, Aptos_Embed=
+dedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12=
+pt; color: rgb(0, 0, 0); margin-top: 0px; margin-bottom: 0px;">
+Explicitly modified the sample file.</li><li style=3D"font-family: Aptos, A=
+ptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; fon=
+t-size: 12pt; color: rgb(0, 0, 0); margin-top: 0px; margin-bottom: 0px;">
+Ran aide check and found that aide is unable to report integrity failures t=
+o syslogs.</li></ol>
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+&nbsp;</div>
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+Scenario B:</div>
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+&nbsp;</div>
+<ol start=3D"1" style=3D"direction: ltr; margin-top: 0in; margin-bottom: 0i=
+n;">
+<li style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, C=
+alibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0); margin=
+-top: 0px; margin-bottom: 0px;">
+Repeated Scenario A, but the only difference is in this scenario sample fil=
+e is created under /var/home instead of /home.</li><li style=3D"font-family=
+: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-=
+serif; font-size: 12pt; color: rgb(0, 0, 0); margin-top: 0px; margin-bottom=
+: 0px;">
+In this case, after modifying the file and running aide check, aide is able=
+ to report the integrity failures to syslogs.</li></ol>
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+&nbsp;</div>
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+Is this behaviour expected ?</div>
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+Thanks and regards,</div>
+<div class=3D"elementToProof" style=3D"margin: 0in; font-family: Aptos, Apt=
+os_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-=
+size: 12pt; color: rgb(0, 0, 0);">
+Sai Ashrith</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+</body>
+</html>
 
-sai ashrith sathujoda (9):
-      README.security-testing.md: Update steps to verify IEC layer on security image
-      swupdate_template.yml: Give different names to test actions
-      tests/templates: Add template files required to generate M-COM job defintions
-      submit_lava.sh: Include functionality to prepare M-COM job defintions
-      .gitlab-ci.yml: Enable building v2 x86-uefi target to deploy its swupdate artifact
-      .gitlab-ci.yml: Add test targets for M-COM x86
-      tests/templates: Reconfigure the usage of -smp options
-      .gitlab-ci.yml: Deploy seperate home partition for qemu security targets
-      IEC_template.yml: Update IEC tests to latest revision
+--_000_OSCPR01MB14838867E83A31E2CAD83A275C2A02OSCPR01MB14838jp_--
+
 
