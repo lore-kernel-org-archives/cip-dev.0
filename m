@@ -2,73 +2,51 @@ Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77836C3600C
-	for <webhook@archiver.kernel.org>; Thu,  3 Apr 2025 07:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F48C3600C
+	for <webhook@archiver.kernel.org>; Thu,  3 Apr 2025 08:30:39 +0000 (UTC)
 Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web10.7872.1743665806444302514
+ by mx.groups.io with SMTP id smtpd.web11.8377.1743669035908553872
  for <cip-dev@lists.cip-project.org>;
- Thu, 03 Apr 2025 00:36:47 -0700
+ Thu, 03 Apr 2025 01:30:36 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=PUuLCWQw;
+ dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=DbA0qK1e;
  spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CFDE610298354
-	for <cip-dev@lists.cip-project.org>; Thu,  3 Apr 2025 09:36:43 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1D07910298354;
+	Thu,  3 Apr 2025 10:30:31 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1743665804; h=from:subject:date:message-id:to:mime-version:content-type;
-	bh=tVf8o+dMD31wWhOdZe9fasZCqmVWdsmmnEFpAXnHxk4=;
-	b=PUuLCWQwg2Lgbdc6WsbbP3kXMxV7gHpI2mjYmnXn4S2IT6U+/eLnpoCwAPI0pJ/3CWSPPJ
-	2KNVhUOxgHV7nHSA8zn/v26mMBhCnAr/MnvjWkIqIU7pt3FLJEdYqxWrY+XyHNpjec8vbm
-	aFdV+f1HFa6V63lR78ApBdWHHZ4jtWmX7W/dRByrjNkTz4CmqguaoM0rkJcFYE5XSj47Gt
-	2cd0uQjEQASF+RdBfZgE5mxn+46geTfYDvoq1DU7G7KnqZW6VmsNtZCrW9MmEqef9Eb2dH
-	U1v6FiEvAln0qjPZA5Bb1iklpeCxKa8/pwDj9xdyT44ipcdiUGN+o3fggRqUNg==
-Date: Thu, 3 Apr 2025 09:36:39 +0200
+	t=1743669034; h=from:subject:date:message-id:to:mime-version:content-type;
+	bh=wz03om617WOTw+euUDfObBRyamA09zaTL8qVRlltijs=;
+	b=DbA0qK1eRQ0uEAKzywX/KfhW2b1jRxml65Owo8lqUhYsSq2kqbpsYG14i8kGlKbz43bOkj
+	XzthcqLmGB9G0wy9VphGtvrx0uAkHu+PXi/P0AP6OW2BtiSmg1IYUoZXUepU9KP4DnP/Ww
+	woMrpic6MfVC9DzpZPHiAIwowie50xN9ivE0BOkyOvQO4FmcoXYXu+BeRZb06QncRp4YmE
+	zaO/Wx3g/e1zuLnp/eHg1M9sXFyNrHFMw/OdaQSrqIGHQggmwmrz9gdAnHiA1bAKJ+WUKW
+	W67pS9ppMfYcWebD7Q5sK8ijdOqGDIKgPz1vhzqmIPNbt+R64ZGiqopShA2BbA==
+Date: Thu, 3 Apr 2025 10:30:28 +0200
 From: Pavel Machek <pavel@denx.de>
-To: cip-dev@lists.cip-project.org
-Subject: [cip-dev] CIP IRC weekly meeting today on libera.chat
-Message-ID: <Z+46h0Cto81AMDrH@duo.ucw.cz>
+To: cip-dev@lists.cip-project.org, nobuhiro1.iwamatsu@toshiba.co.jp
+Subject: v6.1.132-based -cip release
+Message-ID: <Z+5HJCi+E6ynObsN@duo.ucw.cz>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="xwNDbKvtQqre6BOb"
+	protocol="application/pgp-signature"; boundary="u0stnQvq+dvbvgXh"
 Content-Disposition: inline
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 03 Apr 2025 07:36:49 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18458
+ <cip-dev@lists.cip-project.org>; Thu, 03 Apr 2025 08:30:39 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18459
 
 
---xwNDbKvtQqre6BOb
+--u0stnQvq+dvbvgXh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi!
 
-Kindly be reminded to attend the weekly meeting through IRC to discuss
-technical topics with CIP kernel today. Our channel is the following:
-
-    irc:irc.libera.chat:6667/cip
-
-The IRC meeting is scheduled to UTC (GMT) 13:00:
-
-https://www.timeanddate.com/worldclock/meetingdetails.html?year=3D2025&mont=
-h=3D4&day=3D3&hour=3D13&min=3D0&sec=3D0&p1=3D224&p2=3D179&p3=3D136&p4=3D37&=
-p5=3D241&p6=3D248
-
-(Warning, there was dst change in parts of world).
-
-Last meeting minutes:
-https://ircbot.wl.linuxfoundation.org/meetings/cip/2025/03/cip.2025-03-27-1=
-3.01.log.html
-
-* Action items
-  - share release scripts/procedures [iwamatsu-san]
-  - ask for adjusting reply-to setting on CIP MLs [jan]
-* Kernel maintenance updates
-* Kernel release status
-* Kernel testing
-* AOB
+6.1.132-based -rt is out, and I really should do -cip-rt
+release. If there are no comments, I'll do 6.1.132-cip release soon.
 
 Best regards,
 								Pavel
@@ -76,15 +54,15 @@ Best regards,
 DENX Software Engineering GmbH,        Managing Director: Erika Unter
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---xwNDbKvtQqre6BOb
+--u0stnQvq+dvbvgXh
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ+46hwAKCRAw5/Bqldv6
-8sqnAJ9pfhli8dMu5yz8MxjuHWxOLKZL6ACeI53HbMTtDUbegxXp1+sQgseaf1c=
-=Qc7E
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ+5HJAAKCRAw5/Bqldv6
+8veQAJ9BZPlG4dnsDpA5nLcLV2NFnaeedACgr6aA+BBd1Dk6hVRRrmbJ6qfNoHc=
+=3S7A
 -----END PGP SIGNATURE-----
 
---xwNDbKvtQqre6BOb--
+--u0stnQvq+dvbvgXh--
 
