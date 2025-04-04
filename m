@@ -1,69 +1,91 @@
-Return-Path: <felix.moessbauer@siemens.com>
+Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9917FC36010
-	for <webhook@archiver.kernel.org>; Fri,  4 Apr 2025 08:01:51 +0000 (UTC)
-Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
- by mx.groups.io with SMTP id smtpd.web10.6339.1743753708531001635
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B64B4C36010
+	for <webhook@archiver.kernel.org>; Fri,  4 Apr 2025 09:58:12 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web10.7562.1743760682219174603
  for <cip-dev@lists.cip-project.org>;
- Fri, 04 Apr 2025 01:01:49 -0700
+ Fri, 04 Apr 2025 02:58:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=felix.moessbauer@siemens.com header.s=fm2 header.b=V54QHiTn;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228, mailfrom: fm-1321639-20250404080141cef22749330b83a153-m_exik@rts-flowmailer.siemens.com)
-Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 20250404080141cef22749330b83a153
-        for <cip-dev@lists.cip-project.org>;
-        Fri, 04 Apr 2025 10:01:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
- d=siemens.com; i=felix.moessbauer@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=fjYiBbAYy+W+s0j5xh6GhjWjwUMqcJWZ00Euxhv/bH8=;
- b=V54QHiTnNt1eAA+QdAYRsooqos2oxHwgynaJIL/vml2lEsDtOeW6SnM9z0VV0OdJNG4DLB
- aCrz816CngUdI8A+efwFpEM3s6c0E57jMFQonDd7lJhNiBvjcz0zD2sU7GQbp4+0LeevnURz
- Hv5ApdbqyRFJrweiAb0p/V4uTzqfdJ801baRKu2HNBhoo9AGtBAljHoh3ORwj6gW4Uuv7PVR
- xWGoE2feuZ4QOPrPVthsHIexRTPnzh1XkhapLkyaoUszGIDdh0gganrRXCbOkA/iMEC1LrVM
- 15rbdxOraUYMoSIupHvnJse7GzcnWg1zkxma5cS83YrXcntpCtbTtsJw==;
-From: Felix Moessbauer <felix.moessbauer@siemens.com>
-To: cip-dev@lists.cip-project.org
-Cc: quirin.gylstorff@siemens.com,
-	Felix Moessbauer <felix.moessbauer@siemens.com>
-Subject: [isar-cip-core][PATCH 1/1] swupdate: add vardep on SWU_HW_COMPAT
-Date: Fri,  4 Apr 2025 10:01:22 +0200
-Message-ID: <20250404080122.855379-1-felix.moessbauer@siemens.com>
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+X-CSE-ConnectionGUID: NcWNM2aSQ3mvEBgzlI4nwg==
+X-CSE-MsgGUID: kSeQxAqPQq+PclwJ1OIYnw==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 04 Apr 2025 18:58:00 +0900
+Received: from Ubuntu-22.. (unknown [10.226.92.14])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id EB2824241EB0;
+	Fri,  4 Apr 2025 18:57:58 +0900 (JST)
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Pavel Machek <pavel@denx.de>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>
+Subject: [PATCH 4.4.y-cip] ARM: shmobile: smp: Enforce shmobile_smp_* alignment
+Date: Fri,  4 Apr 2025 10:57:57 +0100
+Message-ID: <20250404095757.58956-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1321639:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 04 Apr 2025 08:01:51 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18478
+ <cip-dev@lists.cip-project.org>; Fri, 04 Apr 2025 09:58:12 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18479
 
-The generation of the sw-description file depends on this variable, but
-as it is read in a python function, the dependency to its value cannot
-be detected by bitbake. We now explicitly add it to the vardeps of the
-prefunc, as the transitively called function cannot have vardeps.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Fixes: ad089e6 ("make name, version and hw-compat available via bb")
-Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
+commit 379c590113ce46f605439d4887996c60ab8820cc upstream.
+
+When the addresses of the shmobile_smp_mpidr, shmobile_smp_fn, and
+shmobile_smp_arg variables are not multiples of 4 bytes, secondary CPU
+bring-up fails:
+
+    smp: Bringing up secondary CPUs ...
+    CPU1: failed to come online
+    CPU2: failed to come online
+    CPU3: failed to come online
+    smp: Brought up 1 node, 1 CPU
+
+Fix this by adding the missing alignment directive.
+
+Fixes: 4e960f52fce16a3b ("ARM: shmobile: Move shmobile_smp_{mpidr, fn, arg}[] from .text to .bss")
+Closes: https://lore.kernel.org/r/CAMuHMdU=QR-JLgEHKWpsr6SbaZRc-Hz9r91JfpP8c3n2G-OjqA@mail.gmail.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Link: https://lore.kernel.org/c499234d559a0d95ad9472883e46077311051cd8.1741612208.git.geert+renesas@glider.be
+Cc: stable@vger.kernel.org
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- classes/swupdate.bbclass | 1 +
+Hi All,
+
+Note:
+- This issue has been replicated on 4.4-cip with older compilers and
+CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE enabled.
+- The offending commit 4e960f52fce16a3b is not present in v4.4 release
+so this patch wont be backported into 4.4-cip by stable hence just sending
+this for 4.4-cip only. Please note this patch has been cherry-picked v6.14
+release.
+
+Cheers, Prabhakar
+---
+ arch/arm/mach-shmobile/headsmp.S | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/classes/swupdate.bbclass b/classes/swupdate.bbclass
-index 05291ee..61e4fe1 100644
---- a/classes/swupdate.bbclass
-+++ b/classes/swupdate.bbclass
-@@ -74,6 +74,7 @@ IMAGE_TEMPLATE_VARS:swu = " \
- # TARGET_IMAGE_UUID needs to be generated before completing the template
- addtask transform_template after do_generate_image_uuid
+diff --git a/arch/arm/mach-shmobile/headsmp.S b/arch/arm/mach-shmobile/headsmp.S
+index cef8e8c555f8..49df98d8b459 100644
+--- a/arch/arm/mach-shmobile/headsmp.S
++++ b/arch/arm/mach-shmobile/headsmp.S
+@@ -139,6 +139,7 @@ ENDPROC(shmobile_smp_sleep)
+ 	.long	shmobile_smp_arg - 1b
  
-+do_extend_sw_description[vardeps] += "SWU_HW_COMPAT"
- python do_extend_sw_description() {
-     cmds = d.getVar("SWU_EXTEND_SW_DESCRIPTION")
-     if cmds is None or not cmds.strip():
+ 	.bss
++	.align	2
+ 	.globl	shmobile_smp_mpidr
+ shmobile_smp_mpidr:
+ 	.space	NR_CPUS * 4
 -- 
-2.49.0
+2.25.1
 
 
