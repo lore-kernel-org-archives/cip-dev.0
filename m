@@ -1,232 +1,174 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <uli@fpond.eu>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8974CC369A2
-	for <webhook@archiver.kernel.org>; Mon,  7 Apr 2025 13:25:31 +0000 (UTC)
-Received: from MRWPR03CU001.outbound.protection.outlook.com (MRWPR03CU001.outbound.protection.outlook.com [40.107.130.44])
- by mx.groups.io with SMTP id smtpd.web11.46872.1744032321179288459
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC40C3600C
+	for <webhook@archiver.kernel.org>; Tue,  8 Apr 2025 08:02:18 +0000 (UTC)
+Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.220])
+ by mx.groups.io with SMTP id smtpd.web11.69612.1744099334202030356
  for <cip-dev@lists.cip-project.org>;
- Mon, 07 Apr 2025 06:25:21 -0700
+ Tue, 08 Apr 2025 01:02:14 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=ahBtrK55;
- spf=pass (domain: siemens.com, ip: 40.107.130.44, mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cwWbnk9jbRG9wv7w7wMm50e5ePo5DkIw0QBujv3w1zgwp/UcvZA8c+KTdJgtoGhUcpRPyUnNQFvJwlelGmFyZNlIiIuEp88ayfXlWRodZp+BWJMvCjiijy+uiH6qyTgCWn/FKpRIPDf8HYBrs/8iRgjjU+hZ2/yXjoHwCvYOs8VDhJxYImExLWZMWarpGPXsCJWwAc/09MCWFHwymcgIgGhYTRsjFPlFwdTc2iO+ZfQY3twOCUa4V+kjgllMRWdF+CLlsJtTCFx2L/hfvugy+4tUUGFUz5bxQa1bdGAMtakyKLaTGAc2+cGRa+b/cGkWGI/SSglrjEhfcL3NAT2hMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DDxTwLdWM5JkZnbbHziR4kxzLrvQYUdEZYy5kx9rWbM=;
- b=JDRcAAijV+p+lpGZWCw9WQSds8R2QBkOPKY+f8AI605MuIuxQ/K71NsPUHGqq97RPJmiHxEE1Ifb3YxvRkBw4DI//mTKGHIyVvKehKtEZTOFOY2rfjcolRT5Fmg0vOUqTvlCbKSeZHQzq54JnXevoJtl8bj90Rz3kdhkEh26AhklH/NLu39xbTr5XJ2ww5EY4jYZPycGkPpgBKpPEPYTk7pt8N6szM+dJlewg0GHFBBIclNIesrJBajzE8nQH3Cr4pHB8jjYVpMegPVL56dYiwvGw7E67eUNlZsfAUxmVYcPJeIf36F+nQjm4LPhix38ldjz5xsvI/UrvgZe73K19A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DDxTwLdWM5JkZnbbHziR4kxzLrvQYUdEZYy5kx9rWbM=;
- b=ahBtrK55dJuJ9NpLU21PkdsaevcTPNk4y46/0Ys8bQfR84inHGBYwCEc8fllPBk0N6HFLq9PoFSa5MQtOesW8mLDsr4dQSLpVzzqGOc46Iuwo6ineRwuguzqmo8JR4bVm+gTdCx4Ysm3bsIlrDnzH9Ld0vrBAOoN9/Aqf5pku0GZAqlAB4GMPrmaJQo4PHNTzJYpAMfIedmYb1OGn4jvB7q/LueYrc8Xh3pOc0d94NmtyzYwRO/DZkmwuzUwI/SIDz1ZYu9Rh0KdPB5THxEpQTO3xH1QSx2Rsybyq/hsv8t7odRDm6Io7PbyVRYbvsiiW93G1hgMTQ6ePgNX6dLSaA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by AS8PR10MB7828.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:63e::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.31; Mon, 7 Apr
- 2025 13:25:16 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408%4]) with mapi id 15.20.8606.029; Mon, 7 Apr 2025
- 13:25:16 +0000
-Message-ID: <b1ab4d90-48aa-4464-8e76-ec7c0daf5f8a@siemens.com>
-Date: Mon, 7 Apr 2025 15:25:15 +0200
-User-Agent: Mozilla Thunderbird
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: cip-dev <cip-dev@lists.cip-project.org>
-Subject: [isar-cip-core][PATCH] linux-cip: Update to 6.1.132-cip40[-rt21]
-Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
+ dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=H0MG3v6X;
+ dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=RMcxQiG3;
+ spf=none, err=permanent DNS error (domain: fpond.eu, ip: 81.169.146.220, mailfrom: uli@fpond.eu)
+ARC-Seal: i=1; a=rsa-sha256; t=1744099286; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=Pfpr7THxgP4FwRQBk+AnX5rRGqfTx6QVSSjldW3T2RVGGiHAPlQk7qSd4fYxVeP932
+    AtndDImBW2gzOz2MPAK6j5iZ+b0EZirKrV47sh9GnoQNFW4m6ZXX0x9AoYH8TcT+F0YY
+    2AoizZTNqbXJj+ytHXycuEyBfYF7kLuH+2RVxwjvV8oVSdH7+sGnz7l9b2jtujO/Euki
+    8p3Fl25bWUMgvL2xBDUPvPL2LXl81+dBX2L+lkh0BniPxD/JmMCnwPwVv1LImU28Qvnx
+    c/Gxb5EZn5DsgtFz+ZvRCH4QKtG97CqZQ6OQ1g+lcKlWVRxR4tyqtmhAgGDXVUs6ph2k
+    bwTA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1744099286;
+    s=strato-dkim-0002; d=strato.com;
+    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
+    bh=k8jr4mGRDkFy3rW8NQ9/VzwdRFnDHFuThnJHnX2c09A=;
+    b=N6XVMzOmIYqD3wV9m4iWihh8DPpv89Ctvarn5kdrDJPMMfmlm0yLDvgCBt5sgAXF8/
+    AYS8F5aeDE5CkjLLjReVsgs7stGMhdGjylGtdEpAVYEmIApaSmFqhER2P90KaWqusYX4
+    NIwYdRsZG7XvmytFOlUwS/I1t86DxxxCWmxGLt9ICVfufGZhqjW9JS5kHaajXnonde2h
+    IHXjUcEbrcSwC7l5ujKHp5LtYgC//eZYa2jc6sthsBnhGWShE+W9MM8HfsziARqE11YM
+    uVLDLmfjUtqIzWtq33sO3+opca8NbDoiG3NxnX2CqyLqpZ5FH9G0JF+mNMj7QqWOgF64
+    O5JA==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo00
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1744099286;
+    s=strato-dkim-0002; d=fpond.eu;
+    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
+    bh=k8jr4mGRDkFy3rW8NQ9/VzwdRFnDHFuThnJHnX2c09A=;
+    b=H0MG3v6Xa/nPNHNM93O3xqWu1f6c84G+YtXCQJHFigjp3Z/WcRBVfBlM2QCtnQ7l0X
+    bfeo0KLVKA/2biJ4gD5Mh/s+EcSDYIOeP66RQ220ZgHY/FaxNBmnzRFLfa3KV6kyfiXT
+    PxfoQRSniaR3ICrfe4QxxJr36NNY9mVe0CFgymtvrs9au2lSV0WVvaESkxCahRCnGl0G
+    SGmzjJLqxvjMUS1FSoGrcbxeYgLHtJsnuVaHcKEVansTSPmdCee5vt4KJzyiXMwNPbbY
+    My+QoVNQxMPB5YaDEhkFbk9f0QXq4qyrPZ3zVaFP7RENRVl/D5WcCNMHIlbGM2RjN6a8
+    ZAUQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1744099286;
+    s=strato-dkim-0003; d=fpond.eu;
+    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
+    bh=k8jr4mGRDkFy3rW8NQ9/VzwdRFnDHFuThnJHnX2c09A=;
+    b=RMcxQiG3CYSpEZHj+zoBCDs88qrKsxQG5c9O7IeicEhWsG0Z0I8eJUfnoRna3QnQA5
+    lNsKN4gLyX+0/NvNiQAg==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv30UF1hexKbK+LsAASc="
+Received: from ox-live-app401.back.ox.d0m.de
+    by smtp-ox.front (RZmta 51.3.0 AUTH)
+    with ESMTPSA id z2a34013881QJuJ
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+	(Client did not present a certificate);
+    Tue, 8 Apr 2025 10:01:26 +0200 (CEST)
+Date: Tue, 8 Apr 2025 10:01:26 +0200 (CEST)
+From: Ulrich Hecht <uli@fpond.eu>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"pavel@denx.de" <pavel@denx.de>,
+	"jan.kiszka@siemens.com" <jan.kiszka@siemens.com>,
+	"masami.ichikawa@cybertrust.co.jp" <masami.ichikawa@cybertrust.co.jp>,
+	"chris.paterson2@renesas.com" <chris.paterson2@renesas.com>,
+	"nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>
+Message-ID: <981560811.506108.1744099286218@webmail.strato.de>
+Subject: [ANNOUNCE] Release v4.19.325-cip119
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0433.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:d1::15) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS8PR10MB7828:EE_
-X-MS-Office365-Filtering-Correlation-Id: 863d8c6d-a5d9-4a6c-9fdd-08dd75d7a262
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?cVduVG0xTENweWNvb0F3K20zRHpUaE1zWUZLQ1dBNnB4cHhLa1IrVGs2MUp3?=
- =?utf-8?B?dkRIMkNBQU1nbjFOTFp1dm5BTnUrZmQ0eVR6NDFxTFVFazFET1FlU1F5UE51?=
- =?utf-8?B?aGdFcFBXUUYwa2kwa3dDZmg3Ukl6TE5CL2JDbTFQbGNlK0xzejk3NUpyckFu?=
- =?utf-8?B?elc2L01MNXRrYjBFOVI2d0FvVDBGbFRhVk9rRHVob3JYS0U4a3lxWlhRZGFK?=
- =?utf-8?B?aGlONDh6aXFoa0FzUDJhaml6bTRhODNSeWp5ejdOZlhsdGg4d1ZrZTdJVnJp?=
- =?utf-8?B?amlYNXhEbnIreGU5Y1FjOVYwc0RTTm1peEQxQ0d0VjhSRUxseWd5bU4xWFdh?=
- =?utf-8?B?MFBiRUtIejFjcEU3bmtHemlGOWZENHRKbjZDb1pUVUdtUm1kQ2RFYjNyVDhr?=
- =?utf-8?B?ZUlxRVYvV2pmY1lmRGxhOFQ0WDZtZkpRdWFCTXRFeVpjUklnRGUrckt5RUlT?=
- =?utf-8?B?amhub0dXWUxMV2wrRTRFUXc1SjRFOU5yNmtvc0hsR1pMVUVmTUlxV1ZER0pF?=
- =?utf-8?B?VGk0dy9zc1ZCcm5Bc09rYUcxTUQ4K29DVmI2U2FSdXVtMWZycVpPTVc2VFJj?=
- =?utf-8?B?MkRTdmdZN0dsWE1DVWJxSVBndjNwbERsMFFHUFVMWFhTNFVJb1BZaGJET0Ir?=
- =?utf-8?B?TlRndWNYZ1ZZZkdmU2RwcHFxdHpoYURRaDlOK1JqMllyaHJkb2cyRVBLMGVQ?=
- =?utf-8?B?UXduYWw0QUVZQXRWVFo1b3M0N1I0ZkxXY2VrNDJ4QXdzQ2lCdkVGcGUwelZy?=
- =?utf-8?B?c0owSkFKMjE3eUlQdzU2VWR5SmVMT3NGRloxRHJPZkZjUktsc0VhUms2UE16?=
- =?utf-8?B?RnpDbHh4STR3OXo3aDArSUVSNmhINWJJdEYvbC9LOWZrS3ZDM0ZlNmpya3Ro?=
- =?utf-8?B?MUtMN0lzejNMWk5UZ1U2OWFGTllVcVNTRDNtaGRWMjNwWk96bUNSejZPNjBU?=
- =?utf-8?B?eUNlVCtDMy9GenBnK0V1c0o4bUVDSkYzNlVJYUhnQlBLREVYWEU2cjFDU2Jr?=
- =?utf-8?B?QlRHUThPZlZ6dERRdDRUL1EyT3Q3OWlpQjV3VXBhT3A5UU45TGxGcFdOYWUz?=
- =?utf-8?B?OXhtR0RjVUdkNllleStLN2VrWko4U0NVQXc2enZkRmdHcm9QMFNITWl4dG5R?=
- =?utf-8?B?TUFSYUpvZXpoOVRMdXhOMkpNN2RrdnhkMDhzRm5ISzVWOHp4ZVpPdUY5aXZX?=
- =?utf-8?B?TnBjRUVjdEI4YjNkT2tobHpsSjdKL0JIMFAzU0RXWGdRZTdrTnIrVmJSNkYw?=
- =?utf-8?B?ckxjRHZiUW1PVE5GVWl6bjViTHpyZXgvVXhxdU1ZTlR4bEZYTFZ5M2hTOEFh?=
- =?utf-8?B?MENMK0tSTDVzWkZPR2x1Vmw3WmtqbmI3b0Y1d3VRSGRJWEVNcWVUWjdKSTF4?=
- =?utf-8?B?RUFJZEJNOStpQThrMHhmSEluL3RycThoVUxWeTJwSFc5UEE4dUhvbGt1a1kw?=
- =?utf-8?B?VVlPcHUvWDdpcCtFa1JXa0hZSmNqdnpweG5xWGtBd0RacG1LQSs5YW1Kd1dO?=
- =?utf-8?B?aXZFdU1SWEhQSVVGaDUveXk4VnU1U0x1UVJnTHNyNWU4TlRkc25URWlMZkQz?=
- =?utf-8?B?R3d1MyttNVNWa2hmWjFOUFJqS0d5SG1XNXdTalVJWTdQWmdkY3UwcHpLWjU0?=
- =?utf-8?B?RnVwMUYvVjFGTStJQndKOFM0NWxDTDNWeld5dmlJdVZGR3NLVmg3QTVWY2Z0?=
- =?utf-8?B?c1pBalhDdUpMdW40cUJUMWQrZnZCaktlNHluZnVDZDZVWmFQWTk0RVZoUjYx?=
- =?utf-8?B?MXArY1VQazNyMDZtc0xOei9vby9pSlZlZlNXS2NMR0ZVMGhZTVlDcFJpeVRj?=
- =?utf-8?B?NXhMdFI3VzY3a3o4eXBsVG9YVitWZW9zTkxEU2VmSjFrTi92R29vemUvaGN0?=
- =?utf-8?Q?eD3x4pLNYogM4?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?Wm9TZmxreGo1TDRMNzRIajJkanRDWi9ZVit5c3dEeVdyclBDdUdNU1dFYzdL?=
- =?utf-8?B?Ym92TEh2Y0l2ZDR5YVYvQnV2Uit2WjdCd1gzM1crWVcwbGZXS0pqaS9qQzBD?=
- =?utf-8?B?Q01XdUFTc3dJT0Z2dHhRc0c3L1VsSXMyeDROZVduMjkvR0pwR05rZHJDVVZJ?=
- =?utf-8?B?cStjRVdiRDR2b2wraFdPVWkrNHZGL2Z5UnBoS3ZuVEdKNCtLcGJIKzlkbk9P?=
- =?utf-8?B?QUpEcmZSYmVuamphSHlqR1FuZ2RHUW5oM1FrQVpoUE8vcTNBY2Z6R1Q3aWM5?=
- =?utf-8?B?MS8ydlBJZDdNV0NTbnVEajdqb2p6N0JoZjhZdWNJZ1oxQ2lwNmRweUJrZUw2?=
- =?utf-8?B?UW9JZGZ6S3FhZXhjSlkzbVB4WXkxaHNDUkN0ZDVmOWVZeHlOQUZOYWpDZVhz?=
- =?utf-8?B?LzZRNFhENzV5NnlYN1JzQWhydVhWSXZvSHoyTlZLRHo1YUtBem41Q2pHVTlo?=
- =?utf-8?B?cXNkbE8vRDdscStsdE9aWkczTlhhdU4yM05KNFByTU4zZCt1L3l0YkJSNmNj?=
- =?utf-8?B?akpCaVlFRUhraTJKU3I4cjVZMU9NUWZGK24rZjlLZ3Vaa0ZpL3FZQXhwTFcx?=
- =?utf-8?B?K0xUd2pLRFJwRnQwRVRzSnVpLy8zN3d6S1IwZVhhOWRvLzd4M1ArS2phdFlK?=
- =?utf-8?B?NzFDbCtPUUpKVzBwSGFJellheUhtdytqdVRmVC9EK29oRjZHWWNMdFdjSVJy?=
- =?utf-8?B?NkpJbVN2WjhFdFUzMzJoWGZEbkd2cWpCT1YyRzFGTU5HRkp4bi9DR096R3JY?=
- =?utf-8?B?WExRRmpBY0E0Smo2T010aHZhWkxOcGRtNlZjVUt2dDYzSGZXOGk3SFVJTnBN?=
- =?utf-8?B?QmFrNkZuanJHdFlTYjd0YjM4WCtoSDlrVk9IcGVRTWlrVDZrY3hKT3dhZ3M0?=
- =?utf-8?B?NHlaVW1WZ2trRVhjQVcyWmxrZVRPaHpMazl0REg4a1dKM2dGVUNhMUpjWmJV?=
- =?utf-8?B?czZQWkliUTBXK2RBY2FEWXlnT3UwSWgrcWpsUmZhZUpQam1icjczRkpnU29s?=
- =?utf-8?B?S2RPdXZhaEE3cFRNNUVwSDRGS1I0R3RuYzNnQVpWdGxWVlBQSUVDMmRHSmZ0?=
- =?utf-8?B?VUFBZEUzUlVwYWFBVVh5K09uMU9seElWaHhhT3JvQ0tGU3p1YU9YMlBTOHZn?=
- =?utf-8?B?b3RudkM5RTF1MW5tdXJzYUVOTWU3eWZ3Tmhpb1VQMkc1L3hqQy8yTzhydW5v?=
- =?utf-8?B?aXFzZ0xKR1o3bUVESTlCMFduMVU5K29ha0dGa1Y1YkVoQWY3OXBHRVNHWFZs?=
- =?utf-8?B?TCtXeHFkaWozdUFyY3d0SU55NHhMUWJIVWxwK0dLMFIwbE1NSno4bi85QTEr?=
- =?utf-8?B?MC84RzBYcG02M050bVYwTDN3bVhIbTBjUUdqancraFdKR3Q0M1Z3TFFyUyts?=
- =?utf-8?B?bEEwcFVqVTFWa3lESG5PcUgrN3N6Slo3S0hCUWFHY0NXWEpnckVGNHVVdFp5?=
- =?utf-8?B?ZG9VektvU2RObExwcXI0NE9sODFLSVZIc051Y3dsYWRjRjdSVGpQN0ZlaE9w?=
- =?utf-8?B?S3hsRmxiVnNERnBCbnhMQ0tWaU9LQ05nenhTSzIzRWwvMW1XOTBoRVd2Ti9t?=
- =?utf-8?B?aWI5UkpFM2MyTXpSMms0MGZkK21kQlJFbTl3bVlzeXA1b0VGWXhQNG9lZ2N6?=
- =?utf-8?B?YnhIUlpZU01xU3dQaUVwVkVJdEdrODlKY2pBRjVDekp6RU9RektBM3FxSGpl?=
- =?utf-8?B?Z0ZnU0ViOHkzMG4yNHdvc3BKdjBzSllHMnFHOFNmZ3VheUtSREpXcWROTndp?=
- =?utf-8?B?WGxDRTBqTDR3REZ5WU1IRWpUcE8vSE4xdDRxUU5NeVB5ZUFGZDFOLzZYaE9u?=
- =?utf-8?B?NWZ1NHBjeU5XNkJRWnROazh1WU1Ra0RLUU40NERzS2pYUjN4TmRUUXRXWmhs?=
- =?utf-8?B?TUhGNTlVYktTS2dlQWNkQnVOOTJaQmtXbk5ONlNzd25oOWdUdkIwLzErSm9V?=
- =?utf-8?B?MGl2aGpEVkd4MUwxazZpSFc2QlNsV2Y4NGJ1RnZ4UkN3ZVFYd2xNMlhzcHZ3?=
- =?utf-8?B?K0FxZWZkR29Vbldyb2ZZMy84SjFhYkRod2xUSzlTc0ZBb1IrRGZmMXFnakxv?=
- =?utf-8?B?bHNOOCttbkJXczlTWTBSMTFVZkpYV3d2bmxmNzc5S2ZwYWVaREQ2NWN4MWZx?=
- =?utf-8?B?UDg1UjUvUFkwdlhoUkZUejBxemZvb0hvTTNVMEplTzhSSTQwbzl4Ni9SeEJX?=
- =?utf-8?B?R3c9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 863d8c6d-a5d9-4a6c-9fdd-08dd75d7a262
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2025 13:25:16.1421
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0tVXQ7xMaaNt9UvjPy3GQTCQzU1Q6bUwokzmDtKEF7z9r8u88MmFN1Iwpa15RCozqGUZHeLGpNJftqSTNfsv2A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB7828
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.6-Rev75
+X-Originating-Client: open-xchange-appsuite
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 07 Apr 2025 13:25:31 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18491
+ <cip-dev@lists.cip-project.org>; Tue, 08 Apr 2025 08:02:18 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18492
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+Hi,
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- ...6.1.128-cip37-rt20.bb => linux-cip-rt_6.1.132-cip40-rt21.bb} | 2 +-
- .../{linux-cip_6.1.131-cip39.bb => linux-cip_6.1.132-cip40.bb}  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
- rename recipes-kernel/linux/{linux-cip-rt_6.1.128-cip37-rt20.bb => linux-cip-rt_6.1.132-cip40-rt21.bb} (59%)
- rename recipes-kernel/linux/{linux-cip_6.1.131-cip39.bb => linux-cip_6.1.132-cip40.bb} (59%)
+the CIP kernel team has released Linux kernel v4.19.325-cip119. The linux-4.19.y-cip tree's base version has been updated to v4.19-st3. The trees are up-to-date with kernel 5.4.291.
 
-diff --git a/recipes-kernel/linux/linux-cip-rt_6.1.128-cip37-rt20.bb b/recipes-kernel/linux/linux-cip-rt_6.1.132-cip40-rt21.bb
-similarity index 59%
-rename from recipes-kernel/linux/linux-cip-rt_6.1.128-cip37-rt20.bb
-rename to recipes-kernel/linux/linux-cip-rt_6.1.132-cip40-rt21.bb
-index 6c780826..e151c1c8 100644
---- a/recipes-kernel/linux/linux-cip-rt_6.1.128-cip37-rt20.bb
-+++ b/recipes-kernel/linux/linux-cip-rt_6.1.132-cip40-rt21.bb
-@@ -7,4 +7,4 @@
- 
- require linux-cip-common.inc
- 
--SRC_URI[sha256sum] = "45a2eb7cf72faf1ac8ea4a6dfa8891671c74f89e0265cba2737f116fbe7c22a5"
-+SRC_URI[sha256sum] = "788e9169d1b41132ff980a6b6120cca5ae5d951ea9d01c26c6d40a82e0835e83"
-diff --git a/recipes-kernel/linux/linux-cip_6.1.131-cip39.bb b/recipes-kernel/linux/linux-cip_6.1.132-cip40.bb
-similarity index 59%
-rename from recipes-kernel/linux/linux-cip_6.1.131-cip39.bb
-rename to recipes-kernel/linux/linux-cip_6.1.132-cip40.bb
-index 5bb45114..16364537 100644
---- a/recipes-kernel/linux/linux-cip_6.1.131-cip39.bb
-+++ b/recipes-kernel/linux/linux-cip_6.1.132-cip40.bb
-@@ -7,4 +7,4 @@
- 
- require linux-cip-common.inc
- 
--SRC_URI[sha256sum] = "a83a4381dc9d0934bca7a31c6f30fb587e5d89c03ca5d361cd7425a3b92e850e"
-+SRC_URI[sha256sum] = "49a702507398f3ab10d4ad744b4561983fbfa6d92dde9e10a9582d7bddc7f32d"
--- 
-2.43.0
+You can get this release via the git tree or as a tarball from https://mirrors.edge.kernel.org/pub/linux/kernel/projects/cip/4.19/
+
+  v4.19.325-cip119:
+    repository:
+      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+    branch:
+      linux-4.19.y-cip
+    commit hash:
+      c63e0d34ca9af8eb01e494e06579a11141a23715
+    Fixed CVEs:
+      CVE-2022-49636: vlan: fix memory leak in vlan_newlink()
+      CVE-2024-26982: Squashfs: check the inode number is not the invalid value of zero
+      CVE-2024-50055: driver core: bus: Fix double free in driver API bus_register()
+      CVE-2024-57973: rdma/cxgb4: Prevent potential integer overflow on 32bit
+      CVE-2024-57979: pps: Fix a use-after-free
+      CVE-2024-57980: media: uvcvideo: Fix double free in error path
+      CVE-2024-57981: usb: xhci: Fix NULL pointer dereference on certain command aborts
+      CVE-2024-58001: ocfs2: handle a symlink read error correctly
+      CVE-2024-58002: media: uvcvideo: Remove dangling pointers
+      CVE-2024-58009: Bluetooth: L2CAP: handle NULL sock pointer in l2cap_sock_alloc
+      CVE-2024-58010: binfmt_flat: Fix integer overflow bug on 32 bit systems
+      CVE-2024-58014: wifi: brcmsmac: add gain range check to wlc_phy_iqcal_gainparams_nphy()
+      CVE-2024-58017: printk: Fix signed integer overflow when defining LOG_BUF_LEN_MAX
+      CVE-2024-58020: HID: multitouch: Add NULL check in mt_input_configured
+      CVE-2024-58052: drm/amdgpu: Fix potential NULL pointer dereference in atomctrl_get_smc_sclk_range_table
+      CVE-2024-58055: usb: gadget: f_tcm: Don't free command immediately
+      CVE-2024-58058: ubifs: skip dumping tnc tree when zroot is null
+      CVE-2024-58063: wifi: rtlwifi: fix memory leaks and invalid access at probe error path
+      CVE-2024-58071: team: prevent adding a device which is already a team device lower
+      CVE-2024-58083: KVM: Explicitly verify target vCPU is online in kvm_get_vcpu()
+      CVE-2024-58090: sched/core: Prevent rescheduling when interrupts are disabled
+      CVE-2025-21678: gtp: Destroy device along with udp socket's netns dismantle.
+      CVE-2025-21700: net: sched: Disallow replacing of child qdisc from one parent to another
+      CVE-2025-21702: pfifo_tail_enqueue: Drop new packet when sch->limit == 0
+      CVE-2025-21703: netem: Update sch->q.qlen before qdisc_tree_reduce_backlog()
+      CVE-2025-21704: usb: cdc-acm: Check control transfer buffer size before access
+      CVE-2025-21715: net: davicom: fix UAF in dm9000_drv_remove
+      CVE-2025-21718: net: rose: fix timer races against user threads
+      CVE-2025-21721: nilfs2: handle errors that nilfs_prepare_chunk() may return
+      CVE-2025-21722: nilfs2: do not force clear folio if buffer is referenced
+      CVE-2025-21735: NFC: nci: Add bounds checking in nci_hci_create_pipe()
+      CVE-2025-21736: nilfs2: fix possible int overflows in nilfs_fiemap()
+      CVE-2025-21744: wifi: brcmfmac: fix NULL pointer dereference in brcmf_txfinalize()
+      CVE-2025-21749: net: rose: lock the socket in rose_bind()
+      CVE-2025-21753: btrfs: fix use-after-free when attempting to join an aborted transaction
+      CVE-2025-21760: ndisc: extend RCU protection in ndisc_send_skb()
+      CVE-2025-21761: openvswitch: use RCU protection in ovs_vport_cmd_fill_info()
+      CVE-2025-21762: arp: use RCU protection in arp_xmit()
+      CVE-2025-21763: neighbour: use RCU protection in __neigh_notify()
+      CVE-2025-21764: ndisc: use RCU protection in ndisc_alloc_skb()
+      CVE-2025-21765: ipv6: use RCU protection in ip6_default_advmss()
+      CVE-2025-21772: partitions: mac: fix handling of bogus partition table
+      CVE-2025-21776: USB: hub: Ignore non-compliant devices with too many configs or interfaces
+      CVE-2025-21781: batman-adv: fix panic during interface removal
+      CVE-2025-21782: orangefs: fix a oob in orangefs_debug_write
+      CVE-2025-21785: arm64: cacheinfo: Avoid out-of-bounds write to cacheinfo array
+      CVE-2025-21787: team: better TEAM_OPTION_TYPE_STRING validation
+      CVE-2025-21791: vrf: use RCU protection in l3mdev_l3_out()
+      CVE-2025-21811: nilfs2: protect access to buffers with no active references
+      CVE-2025-21814: ptp: Ensure info->enable callback is always set
+      CVE-2025-21823: batman-adv: Drop unmanaged ELP metric worker
+      CVE-2025-21835: usb: gadget: f_midi: fix MIDI Streaming descriptor lengths
+      CVE-2025-21846: acct: perform last write from workqueue
+      CVE-2025-21848: nfp: bpf: Add check for nfp_app_ctrl_msg_alloc()
+      CVE-2025-21858: geneve: Fix use-after-free in geneve_find_dev().
+      CVE-2025-21859: USB: gadget: f_midi: f_midi_complete to call queue_work
+      CVE-2025-21865: gtp: Suppress list corruption splat in gtp_net_exit_batch_rtnl().
+      CVE-2025-21866: powerpc/code-patching: Fix KASAN hit by not flagging text patching area as VM_ALLOC
+      CVE-2025-21871: tee: optee: Fix supplicant wait loop
+      CVE-2025-21877: usbnet: gl620a: fix endpoint checking in genelink_bind()
+      CVE-2025-21898: ftrace: Avoid potential division by zero in function_stat_show()
+      CVE-2025-21904: caif_virtio: fix wrong pointer check in cfv_probe()
+      CVE-2025-21909: wifi: nl80211: reject cooked mode if it is set along with other flags
+      CVE-2025-21910: wifi: cfg80211: regulatory: improve invalid hints checking
+      CVE-2025-21914: slimbus: messaging: Free transaction ID in delayed interrupt scenario
+      CVE-2025-21916: usb: atm: cxacru: fix a flaw in existing endpoint checks
+      CVE-2025-21920: vlan: enforce underlying device type
+      CVE-2025-21922: ppp: Fix KMSAN uninit-value warning with bpf
+      CVE-2025-21925: llc: do not use skb_get() before dev_queue_xmit()
+      CVE-2025-21926: net: gso: fix ownership in __udp_gso_segment
+      CVE-2025-21928: HID: intel-ish-hid: Fix use-after-free issue in ishtp_hid_remove()
+      CVE-2025-21934: rapidio: fix an API misues when rio_add_net() fails
+      CVE-2025-21935: rapidio: add check for rio_add_net() in rio_scan_alloc_net()
+      CVE-2025-21948: HID: appleir: Fix potential NULL dereference at raw event handle
+
+Best regards,
+Ulrich Hecht
 
