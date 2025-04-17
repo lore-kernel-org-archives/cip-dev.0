@@ -1,233 +1,959 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <sai.sathujoda@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB12C369B2
-	for <webhook@archiver.kernel.org>; Thu, 17 Apr 2025 13:22:58 +0000 (UTC)
-Received: from AM0PR83CU005.outbound.protection.outlook.com (AM0PR83CU005.outbound.protection.outlook.com [52.101.69.36])
- by mx.groups.io with SMTP id smtpd.web10.8606.1744896173693453975
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59FD7C369B2
+	for <webhook@archiver.kernel.org>; Thu, 17 Apr 2025 14:06:58 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.135])
+ by mx.groups.io with SMTP id smtpd.web10.9653.1744898816639140549
  for <cip-dev@lists.cip-project.org>;
- Thu, 17 Apr 2025 06:22:54 -0700
+ Thu, 17 Apr 2025 07:06:57 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=iNLQTLoz;
- spf=pass (domain: siemens.com, ip: 52.101.69.36, mailfrom: jan.kiszka@siemens.com)
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.135, mailfrom: sai.sathujoda@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1801) id 53HE6ndV432625; Thu, 17 Apr 2025 23:06:49 +0900
+X-Iguazu-Qid: 2yAbAvUQNAu9UUqJWq
+X-Iguazu-QSIG: v=2; s=0; t=1744898809; q=2yAbAvUQNAu9UUqJWq; m=rkjWUixB6vUjD403SLw5D8K7ZKFbFPfbBcglkBC+E+k=
+Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
+	by relay.securemx.jp (mx-mr1803) id 53HE6m9R3859480
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 17 Apr 2025 23:06:48 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LPQZKy/CwlDBjiOBiizd+aGF1GECtGiAN/Mv0D2V5HsaQpWEU6/x/HijwmI66OtSdorfkzwtCRHohq4GzNtXDy5A64Wcb1ht1VPwqg49vM/de7dnhPM6kBMeOQHn2lk/pmdakR9NHm0NhLxWVVNdDvGDtSOkv69RIAUWTuDpSelHA20q0+yUmHebeJaR8CR6E8SCI/A6HWDVnDCzfILkVuAfkwmPmfDlAALSTrDWU2RidiXUwu2/ZD3ksApjIxCg18PSe0X2Mt4JNvumdYU3tBxxLq6r4aVM4IdaD9r9UCixbzAPBYvkBcGfy8O9XaRc+EMRVf2YlvVdq+/gWsfA0w==
+ b=yAo1wMXlKHfq4cevkjAsh5CZE/Rw1KKgzX2GdyeJsCG1BaRPRkP7G/fA0t5ZZp5y3pg5pR0M4r4FrHMWfvELh9lmwhMoUQ21o0sZnwMTPPN1bM7tcHJDsyEkUtFx37sSyxZVACgPZ9Nlda/JqpKARdGRiPFGljh202+mkl9iPpHB34180C/T0z0QBEBNm5ANcGr1qsmBzqWSm+Vh3phQqKXuypBN5ELJ7lx8Wktd0EmtndNehdRFmf3ptCdgL+BkiFd/hjodWjd69OCaVBqerVEADHJhNPO/IhsuCUNoNCdgVSnE55QXzQgGi4lzzyJkFH9LCv+54+oaw/VB8N5e/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KhyGsh6AzpJlVsH7fglmz/iO3AiqibvGw+S1FCvrCjo=;
- b=J94PAD1gV0jC+9kfjOQojOmNf9RkOx7dz8Ccaw3UDFa0DGkNWlq32WKA9L4AZmVRvEKcC6cG77Rd6crA1MIKfZzTDPrdPNhJlc919HxUOj3RWfq/9ZEVi7mxlfBm7UZjhc39L+X7fpDh4uDlLQXyvVm5R9p40srFZRiYVbSIgGkmpXTTKClRCGYN6GxIIUHvqnuR4pNvx9D/UO+3AbT59r8oYw+iX1ilW3ZN6z0s/wnEkvmHOZ1tcsWBFIg5b1YRFxQEMnUVXdE5aaOI2C3x23P1Z/xm3tyLalqEzbdcvnIiJNbq2Wr9t5jXqKLZCRmDrOd6zzcby/hqczKVZXyjzw==
+ bh=P/S5rXRX0RQTVQB7pFH/bvmcI38XBqQ8ZnHJriBPYvI=;
+ b=w/gZYFUaiuVf6augWJLuk+EouwD0Fd0cnfq6T9h2i3uzXUrmnNLHQ4Gu7DzAXNvWTiXZ0pxxG1Gps17U6NMd5zf9sMhRKSitibCrFRrF0HxWaMi2lEVJoVTXllfZk2sthvqP9EFS6LgiteJyU1WFqmDRX62zz8N8BKC0f+6JrzC9UmITxMXDEiBJX6WdgU4jlQwVhgjAnKu+279PClgtpg8jS0kBXt00C5ORYzdcZT5YNBQJKkecS8KBJC2vdSqaoxYJwtAtCvqgo/6SiG+8eeB7PNNRB/HIvvdvKNDLf8F1iB0hrRjn2pt4Ccc3wVZ1c0YleygpuOZootOxiDBYXA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KhyGsh6AzpJlVsH7fglmz/iO3AiqibvGw+S1FCvrCjo=;
- b=iNLQTLoz+m3CXx8/RO8Td9Xht+iYaa2J/z7StDL1UdIQRhYTTtVtlU7eP+7xMLocOPxJZE2iPYpB7O1rsp/Q/hbSGexkSCQFE3xFBZELXBcOMNNFnOGKx+wISG5s6EDhkyloXyvlV0n8YFNJHbY/x2Ivud5d4GZF5mckaz1kSLybEswGEX3OL4Thyj/RuYEkTD8cP32UdvEYNLkqBnVLEBdhsGqLDKh7V0Bfg8ca55TfTtxu+CzpZr47d5o9GNePKwdrtzwdRIj0uXWIL0mXZCsFb5XDpdw6sd1B3pOF3s6NS+EWT7a7qz381HcFZAaMCxp5OVExYyE0U2OXN93SMA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by AS8PR10MB7110.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5ed::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.36; Thu, 17 Apr
- 2025 13:22:49 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408%4]) with mapi id 15.20.8632.030; Thu, 17 Apr 2025
- 13:22:49 +0000
-Message-ID: <7fb7d0ce-f588-4d85-a01d-ea8678588aa3@siemens.com>
-Date: Thu, 17 Apr 2025 15:22:48 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core v4 2/2] IEC_template.yml: Update IEC layer tests
- revision
-To: Sai.Sathujoda@toshiba-tsip.com, cip-dev@lists.cip-project.org
-Cc: dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
-References: <20250417072708.2757909-1-Sai.Sathujoda@toshiba-tsip.com>
- <20250417072708.2757909-2-Sai.Sathujoda@toshiba-tsip.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
+ smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
+ header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
+From: <Sai.Sathujoda@toshiba-tsip.com>
+To: <submit@bugs.debian.org>
+CC: <jan.kiszka@siemens.com>, <kazuhiro3.hayashi@toshiba.co.jp>,
+        <dinesh.kumar@toshiba-tsip.com>, <cip-dev@lists.cip-project.org>
+Subject: Bug report for aide
+Thread-Topic: Bug report for aide
+Thread-Index: AQHbr6EqYmQziBZNjE2JD4XjCUcucA==
+Date: Thu, 17 Apr 2025 14:06:41 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <OSCPR01MB148381FFFE1BA2C392B96EE60C2BC2@OSCPR01MB14838.jpnprd01.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-In-Reply-To: <20250417072708.2757909-2-Sai.Sathujoda@toshiba-tsip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0123.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:9d::16) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OSCPR01MB14838:EE_|TY3PR01MB10205:EE_
+x-ms-office365-filtering-correlation-id: 8eb5c7cb-bcf9-4427-89ea-08dd7db91430
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|1800799024|376014|366016|38070700018|8096899003;
+x-microsoft-antispam-message-info: 
+ =?iso-2022-jp?B?M2RzTmpzM0hkKzM5TUN6czhObFRiVW1hTHhNNWlXQmkwK2RXeXc2aFRv?=
+ =?iso-2022-jp?B?YXlNYXVMWVkxUHM2MmZ0UnU4dGNNdXZBbTdBWDkxaWlrODh6RUJHVDRY?=
+ =?iso-2022-jp?B?TEFYdDhFSG05WjAvVnh0R3MyM09XTE9NMVpJdVpDcjdHa3ZEWXhrbUpm?=
+ =?iso-2022-jp?B?aXZ6cXlYcm0yeklEcXRON1ZOeE95OG9ud1QyNDNzU05taVFydTljOFBv?=
+ =?iso-2022-jp?B?TFAvbGVYYzZiVWpuT0pXS1dXNkdzNkV2dStVaUpqZkV4U3BjZmJBV2dQ?=
+ =?iso-2022-jp?B?UktmYUNyaXRVaml0SVJnWThSOGQwaDV2eXpGRHA3RjM0WVhaUnNzTXFz?=
+ =?iso-2022-jp?B?N0VQRDkxc2U3dk5YOFVyamk4c3JLeDdsUFFJZnhwajFFUnQ2T0t2ekpH?=
+ =?iso-2022-jp?B?ejhaTVRYNUMzWUtyRGxaN0x2Wk95TkErWjNqYUUyQWw4QnM2dlZQV3Vv?=
+ =?iso-2022-jp?B?aFVibGxFK0w1RzZ4WmtMMlNmZnpkVWpxNkg1RzE1NUhIeVZsQjN0UlM3?=
+ =?iso-2022-jp?B?VXcvUFdZZXIwdmRCUE9wWkxmdkZPQkJ6bnNFbkpGclNIYjMvd1puendP?=
+ =?iso-2022-jp?B?ZWVwaThDamNLMHlYcEdjb0FJY3o2d0N1NndIb3VyQWdTRUMvVzNhQVNw?=
+ =?iso-2022-jp?B?VlR6a1NYRHVZdW9mUTZPeXd4cGdPZlJhSWlxOThwWkU3ZkpqeXZMNU53?=
+ =?iso-2022-jp?B?dDdTTnlJeEk3b1IrZC90OEdLdk1OL3FYaGVpbGJEdDE2aHI3Rzd0NkxV?=
+ =?iso-2022-jp?B?Zy84Rk85YzBibVlPWHpHN0t2RE9QRm9vRUgzZjVJUVZRUEdaVUI3KzB6?=
+ =?iso-2022-jp?B?WGtLMWVNaTY1dnd1bXhreEphUHRLSjZOQ3QzTlAzazNJOEF2Uld1TWti?=
+ =?iso-2022-jp?B?S2txc1VHOFJ0d2R0S25xQmJ4ZzR4aklVSlpoV0MyMGxLMjJxVDRKcURs?=
+ =?iso-2022-jp?B?eWZkV0RUM3Zwa0NsU1MzZXFIaFRLSUlTUG9mQTNaZGhzZlZYcXlOMWxQ?=
+ =?iso-2022-jp?B?WVdycGFHWkRzSHR0c3lEV1FnOExtSzBpalFwdzBFSWgrMm4zS1BrUjVz?=
+ =?iso-2022-jp?B?dVZ2NC95N01idXB2RzRXNXp1Wm1wUVUyWGVwdm1aL1Y2bHMrWjQwRm9m?=
+ =?iso-2022-jp?B?ek9PemR3ejZxWkt6SjM4K1Q1REsvc0s5OWwwUnhkT0oyZEk5b3RpSEhI?=
+ =?iso-2022-jp?B?aGhGc1oxZnVySU04QW1XSkFIa2E4d0xTVmJaazRsenpaL0lmRjBadkFP?=
+ =?iso-2022-jp?B?bWllUmZmSFNlUjVPZnFlNi9rWUs4bksxaHkvNTBMTW9nZlBtVEFSMjhu?=
+ =?iso-2022-jp?B?Mmt5L0lMdnNnSnAzU3VYTDljWGMxT25heDVZSXZGak1obG5uSGF2Q3Bx?=
+ =?iso-2022-jp?B?VWFXZUFUZGRUTGdOWWlVWWxEcnpiV0xNcXZUSTVRZTd0Z2pJWmdBUmto?=
+ =?iso-2022-jp?B?ZzN0WTZBSnFFT0d2dEM3ZGJPVU0rZlZ0Z3BiZDI1N09vcTREc2dxU09w?=
+ =?iso-2022-jp?B?NUVtYlo1cnAwWEVJOTVBcFRFM2JkYTBZU3dEOFpQb29RenhYM2NyTmZ2?=
+ =?iso-2022-jp?B?RVh0UnM5b2pSbmpyRFBudi9qeWphbHBPbDd2c2lYQWxaNGRuakttS1RV?=
+ =?iso-2022-jp?B?VmtFODdyMjVXZU9QWUwzZUNMdWlnWnM0TlRMMnUway9XajdQYk9QTXhp?=
+ =?iso-2022-jp?B?eHpWYjJmK3dORUxLWkdHeVd1OFl6QytRZlJ3U3NaT3R4QVh6UDNuNEVL?=
+ =?iso-2022-jp?B?OElwcC81bGVQOE9jbEZLbUp5ZXQwMWh0QVNFdVlFTmdkSnB0UVVBK2ND?=
+ =?iso-2022-jp?B?MVpJWHJxdkhNcW1SdHRYU0JuN0lpZC94Rm5nb1RzY3J0NGxzM0dvNFUz?=
+ =?iso-2022-jp?B?MzJjYys1MCsrN0pIL05sa3BmRDJDd1hBNjk0M2VENlhVa09kUURuZk5s?=
+ =?iso-2022-jp?B?MXk5QW1Yc3l6dUZWNUdBL29IMkE1dWppNUtJaDlEYWRJYm5JUm5uN21S?=
+ =?iso-2022-jp?B?eUdIYmxvUFc1QTZ1TEliSjlIN2MrS0VjOXZnVnJxTWtMUzNWU1hxM1B0?=
+ =?iso-2022-jp?B?M25NbWtpTnJ6WkRvN1h0YkszMU9SNGxBUDRRRklzV09qWk1OZHkyTk5x?=
+ =?iso-2022-jp?B?OGlHS05UN3l0STYyN2xmZXJFdVBUVUlBPT0=?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSCPR01MB14838.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018)(8096899003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?SnYwbkNIUWlPdTBZRjFTdTNWbE9aNjJFelJ5TENBVTR0YVpENkxjQ2Fm?=
+ =?iso-2022-jp?B?YXpUbHYybmgxcHNDdjB0U1A3V3ZPUHoxUHB2Y1hSRjE0QnNhSlpyVmt4?=
+ =?iso-2022-jp?B?ak5Pck5uU2E0RDdGTitGVVBEVXA4aEJxbU5PakNWYmFlSVJNbis4ZEQ5?=
+ =?iso-2022-jp?B?dk9zZ1QxdGdyVEo4VDEwSllIWERraGZBNEgwSTcxRWp1dlpOTU52dmZV?=
+ =?iso-2022-jp?B?QnZiYXBPZ0JpTlFIdUFLZEpRbFdjNWJ1MktwZms0OHRSbnRRUDkxRVJU?=
+ =?iso-2022-jp?B?enN6dWZuRHcycUJwUWZ5OUQ0bU42WXlUK1c0WDhlUGcyVHQxcUhYdmJJ?=
+ =?iso-2022-jp?B?V0JHTmMxSnJ4aHpNR1dCd1g1anhKZTZkUEdKTXE4N0hJWHkrczlyWHU5?=
+ =?iso-2022-jp?B?QVk1U28veWhnbWR5em93OGY2S1ZLQXJINld3cGdTd1RZa0lCUzk2NVhm?=
+ =?iso-2022-jp?B?djJhTVdsQXBlYlRFNUF3cVQyT0dNVllBTndTTmdDM2NFbVZ0NnRxVVB4?=
+ =?iso-2022-jp?B?Kzl1ZjkvQWNZcWxXWmpURnA1S0ZXNmNaT3ZpTzRYcVdwZFpwc2tjNlgr?=
+ =?iso-2022-jp?B?TnVqc3p6VlZ1bGV3Y0JNYVRvTUYwUGZTbGlyWDRFc3NHSjg1SVY4d3dG?=
+ =?iso-2022-jp?B?cnUzUzRaTi9iZDZZdXdDd0ZIWmZFRjZmL0YyRjI1RzR5dTROWU82SXg3?=
+ =?iso-2022-jp?B?SmNoWm5tVkw5UGdYcW5pRkhicC8vTVNVTlhwVStjYzZyRU9Hd0NsSXh5?=
+ =?iso-2022-jp?B?bHZ6V1RCL0piaTBOZUNsOERBZXJSVWdSSzIxamVYZGt3TGZjYk1WVmRo?=
+ =?iso-2022-jp?B?SW00a2xYclJpNFJtdWlaRlBkTkRLdHNJT2ZWcVRVSG9QQnVEVC9QZTl6?=
+ =?iso-2022-jp?B?cnh1RTgvQVJmS1IwUnJJZzZqd0tjRlYyRnBkamN6SkN1TXg2aVY1M1VW?=
+ =?iso-2022-jp?B?UUJaTTFaYkNpcUFkNkVwMEtvM24zSjdQendaRmJxaTRhV3hLcWQyMjhk?=
+ =?iso-2022-jp?B?azd0TUV0ZWRCUklKcHBtSDYwQlFkN2VkR0tIa3psNHF5dEpUNGZyV2lj?=
+ =?iso-2022-jp?B?RVhHNFdwMm4wT2JTWUw4Nld2ZDdhelgxZVN6eWxwQWtoQ2JsTVdFWXFQ?=
+ =?iso-2022-jp?B?MDFNUFMrcVA4OGRqZEFBbWhmUjdxdmlNWW1ESThwZFVtY0FPSEc1eWJk?=
+ =?iso-2022-jp?B?aDJPY1ZkeDFaUG9EaExxSkFsZnpzSTFUaUF6M0NTYnpZY2JEeTNYZTJ2?=
+ =?iso-2022-jp?B?NEdNa01TQXYyS1BaZm55K1AvK05FY1hPMVZ0ZU1WZ001c0JRY1NrQVVQ?=
+ =?iso-2022-jp?B?ZDIzSGE2VWtqTzZPRkZ5RmhYdzMxT2Vjemp6bXNDM21BbzJsVVZ3T3pG?=
+ =?iso-2022-jp?B?ZHRhOUtpaWQ0Z2szdXVnK3I3VStqOEMvS29CSTR5S3ZGbjRDMjJMSWxj?=
+ =?iso-2022-jp?B?RjNNMjdsS3VsWE5IS0J0SEl2M29yOHR3d29DUG8vQm8rVC9vaVJGK254?=
+ =?iso-2022-jp?B?UDhkd2cza2M0NFUzREtyOFZMamlhNXdyTEFIcm5peUNGM0dCSVI4TVRG?=
+ =?iso-2022-jp?B?SWh2UWE2SE8xT1lONWRCWTY0OTZSTzhVWXlFMHpXbXNZY3BvaWtoTmg4?=
+ =?iso-2022-jp?B?RExCUjJCVGpxSE4yVStCcGQ0ZkhkcjY4eTdwVVRlV0ZGSEc0TStGcGl6?=
+ =?iso-2022-jp?B?L0srQi9XbFY4QlA2SytoNTkvcWJuazAzckl2eG9NVTBXK25SVTBRT3JF?=
+ =?iso-2022-jp?B?WEF0L3RwbWpLTkpWdUxXWG12VVkyWkp6OUlkOWhhTGRqSUdSaHpkRiti?=
+ =?iso-2022-jp?B?SjEzZ1hCM2dRdVVPMXFIRDA5bk00TkNLZllSWjdIRnowMUNYaHZyNHUv?=
+ =?iso-2022-jp?B?NkE2RzBoR0RZTUE4M3FIY2tGK2VuYmE2VzNjSWhHb0Y3WmxNRFNEK2hj?=
+ =?iso-2022-jp?B?eXNFSFBLRkNuTTJHRkxTdThPZFhNRTY1Z3pKemtGWmhzczVRSWE0ODRz?=
+ =?iso-2022-jp?B?K1J5alk0L3UxQXJuZGhMUUhMNWd6YmNaeWh2ckxMQWhVZWRtVG45V2M1?=
+ =?iso-2022-jp?B?NzdjNk9YYW12dWo5a0pYclRnSGZaSjVKZ2FENnc3NlNsZzBydDM4cURp?=
+ =?iso-2022-jp?B?MmVkOXoxV2F5Zlg0N1dQeWM5NDZKWjhhOCtpVnhiaVlUMGdtUURHQk85?=
+ =?iso-2022-jp?B?TG9vR2hFbjJKM0E5eDZ5VXBGRzU3Qm1MSS9rT0t5c2s0cTV2NlcvcUUy?=
+ =?iso-2022-jp?B?dnUvMmxIdTd0ZVZLMEZFZnk2bW9NSGxEWTVrbE1YZmtSc0ZaSzB3SWta?=
+ =?iso-2022-jp?B?UXNaVEZLN1RXT0dkbUZiYllQb2EzTmN6dGc9PQ==?=
+Content-Type: multipart/alternative;
+	boundary="_000_OSCPR01MB148381FFFE1BA2C392B96EE60C2BC2OSCPR01MB14838jp_"
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AS8PR10MB7110:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8ab79523-ca5d-4d78-ccd8-08dd7db2f319
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?cG96Wm16d01BbnB5UUZxZ0dlZ0dKb0ZCWWo1WFY3TWNOb0ZXZGFWUm9Ldjg5?=
- =?utf-8?B?MFNhQXppbHJ0Q1VxOUZjcmZnU1BDQzJwWWtHTkNxcUZKZHJaQms1QkJGMERs?=
- =?utf-8?B?UUNVRlZjMjAzY0paRHdac2s4OHVUa1F0ZHMzNjNUbnFkZ1RoZUF0ajB0MXNw?=
- =?utf-8?B?OG00RGNJVXp5UnVLRjJ5djlDRFVjdm9ZTW4zSWhuMHd1OGM1U093cTFUVXBK?=
- =?utf-8?B?MVdpZHBrTEJyNFhxcUdqd1gwR21wWWJYVndtZ01wRGNUeFFiUzdZTUhXdE5y?=
- =?utf-8?B?VHM1c3ZISHpiaGFiY1N2TU5sd01RR3h0czA5NEtpVW1CbnJPZlBNSTlXYXZ6?=
- =?utf-8?B?TTBoNzBLRTJ3d09yQjVyTWNwTmowYjhBNDVHeXowcmlMdTFOVkN2R1BEUy9B?=
- =?utf-8?B?aStvWGNxR0JpQkJ6OXY2WnkvSUQxb2pJM2dheDc5bmNGNTRPT2pFbXltdjhp?=
- =?utf-8?B?RkdMMkJ5cjdidmV6Vk5PdmJpUGwrWWZXWHE5Qm9jMzNCQTRGTDdZQlI1S1lU?=
- =?utf-8?B?Y2FMNzJVb0tJbDFXTHlNemR1QnFISjJnS3FIblVQdmJXWFgyc01UVFFzMmdO?=
- =?utf-8?B?c0hUa2cyMXRFUVBNMXhSc2h1bk9Vc2lUaWpSRG9YS3M3ZG1HY2pIVmRIRVdN?=
- =?utf-8?B?OWZINmZMTWQ2MnBmUUdvYVNBSzh4TGpkamRLdHNrcDFqWUtaZnZCRFJGRnVN?=
- =?utf-8?B?MUZjdy9DVUFwbVYxTzN6YzIzeHhlK1VUYkFjQVoxMmo5MUFpbVo3c2VscW5X?=
- =?utf-8?B?a3BFbFBTakxBbnZSTWpEaWR2V2RWNkIrSEt2NWs0VWx2S1F2dkJXandUVEY2?=
- =?utf-8?B?VGFtM0gzRFpQamh4ajNGK1A3VldIRStISjdIaXZLYndBOXR0U2lacnJTdE5i?=
- =?utf-8?B?UkJSeURmZDI2QW1uVkNSemVib2xiZWkvVzNXK3V0a0tqek1qTjB5OFJNUk54?=
- =?utf-8?B?Zyt4Q3VXeTY0MHdQcktuSGJkUVdwdHd1OWR3eHM4RjFQODljTm9jZ2NJLzdB?=
- =?utf-8?B?c1JDNFpPMzVCd3NKU0NSc21Td2hpNzJrVGYrbWx5TlZvdkEzYWNPd3RYaWd2?=
- =?utf-8?B?RVZpa3VHNU5qR1dCTVc0RDB2YjBLdVZYa2p2N2ttNlhKSExONGVlQWU3alVh?=
- =?utf-8?B?clpOTlJxd0N5K2lCZUh3M3hjSkwxZGJTSDkvdUJSa01DLzkxajdJQk1wM2V3?=
- =?utf-8?B?anNablZSRHVCSVB2Lzd4cTVWa2k4R21YUzhmMmN4WEtGT2s4K1JDSlUrOEJP?=
- =?utf-8?B?dTFMQnlIcTdnRjYyNGpXc0NwR2tQQVZOUzQxZXhIRjlOc2FzZEdZLzdBRXZW?=
- =?utf-8?B?Y2gzdlZjazNPUUMxcDdlSnJmaHgzSXlmUzBNRUNxZXYrNkdDZWs5bCtYUkRw?=
- =?utf-8?B?YTJZYVplNllja2pTNGk0STU0djBWNDNqaGNwZHl2dDhnVkRhV0tFUG93Yjc4?=
- =?utf-8?B?RU1IWUwzRU9mVE9qZWFzaXYwTWZMMDJvSXBrY2E2cGh6Z0NFT1dhbHFxQkpN?=
- =?utf-8?B?Tlp0MnQrYnYwMm8xV3V5Tzk2eUovZGlJbG53RmdqaWRzbG5aMmg2WGtiemlo?=
- =?utf-8?B?Zm5WSkczZmtBMnRpSldFYTBSNng0UVZJdnVkN2lUZWN5ejhTRnI2UURIcEZK?=
- =?utf-8?B?T3V2aEUybkp4UkdkalJqZmpPc29pdlRmN00vVTV3bVVTNG9KaUdTd29ISHBH?=
- =?utf-8?B?UHd6Z1pXWWtRL2k5Tzhaak1Dd0cyUGt6eDAxbGg1MTNKTy9YMmJnME1ZdlZZ?=
- =?utf-8?B?VGo2WGtYNlluWjc2aC81STNoNjBnNUl0MzFIQVFDeTZUSm9zaGViUzdobHpD?=
- =?utf-8?B?aXRNcVVaQW9MaXB5NFBkaGNVRGVvU3lGTDJ5RlpuRHlBYkhXbFNLZGFiblBm?=
- =?utf-8?B?OXdKR2R4SS9uL3VpT0ErbDYyVEVOU2ZQb3pQbXhJV05ueExjdVZlYjNaamht?=
- =?utf-8?Q?On8tPjIdmSU=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?TDI4UWFwVVhuejg0WXR3bXNNMEh1bUZzKzhmdWVRbXlyN2ZVQjROT1FZY21X?=
- =?utf-8?B?aGVGZEtDZTRlQXZoSjJFSkJOZTZWWTNjbVdwUWQ0eE5Ja0JkUXNuUC9kOENQ?=
- =?utf-8?B?R2ZVQnV6RmZOVGNWVnNIZnhhWkJZYWdxU25hM0N3VE1lMTh4OE1tcjFFdmQz?=
- =?utf-8?B?Y3ZFczAzcGdMTEI3UllrQ2FVWHJ4VEFhaCsvK0lFV295RCtyOFkwN3BLWkIw?=
- =?utf-8?B?VzZINHEvSjJ6UXVESW9weXRtOTNCNGRUM3FRSFR1U1owZmNKVnZvaFYydzdr?=
- =?utf-8?B?ZmF3RVJVcVBack9vR25KMUNYZFJDenRBQ2x3cnBHb05FaHc3NVJpaG9DSVhT?=
- =?utf-8?B?SFN2WFFEUGVMd3hqS3B3dnJFQTVLeEV6MDhyNCttWndwMWh5WHhXTUJ1U3Vo?=
- =?utf-8?B?OEJVa2NRMEdXSHpaUmVsSjRSTE92b3RwYlp3dWlwRStua2lrUjhuc0lHTUNH?=
- =?utf-8?B?dnNMRlIxbG45Tlk2LzZVMjZIU09BOWZSZTQxUnd3b1YxTklKbkhLeGVXWk9X?=
- =?utf-8?B?Z2ZRUkxUVDkzMmZ2VjV6VHhVc2FrM2IrdnNGcVVmL09QQjYyTDJMa0dBaE5C?=
- =?utf-8?B?REczd3A0VGxDRnRLWlRWMzFpRmpiMXlRZlA3NmpjWHVnd3ZYWGZvcjdsOE5W?=
- =?utf-8?B?M1FlbC81MkpvR0RPRnU4eUNGbk5kT1ExbExvUjdGdXFjVEJ4M05ZSHo0Vlhk?=
- =?utf-8?B?ei8wKzZ4dkZ2QlRaalZEd1lwc2JVSFZJQTRGSnJkNmJXcDU0QUVPU1lDTDhW?=
- =?utf-8?B?UjVSTVhYekpROHphc2ZuOHVKNENzYXBjcjVvS0pqTWQxbXp6ZGdCbDJDWGRz?=
- =?utf-8?B?WnR6SllBd3RtOERGSzFPd1A5NDVGbkRiQzZrZjRGMFpGKzZnTTRvdkw3QnZE?=
- =?utf-8?B?cGZraG5wMUE0aWJLSDhFdnRsdHB3MThzLzNvdjEyMHpsNjVoY0FjYjdqcU9w?=
- =?utf-8?B?eFI3SlpxMkVEajZaeG1JUUthYWFHRUl5bDVYajBFOGVCRWZrRjMvNFdGbm9z?=
- =?utf-8?B?YkFnSGwwOWhnendDa0V1VzRPejMyRkhkMGRjMUZYc0R2akwwRmlMWk9MVFpi?=
- =?utf-8?B?K0QreS9IMmN4dmlCbkRUU1hwNDhKVTB4TWRHa2NicGp5K1Vvbmd0UnVNd210?=
- =?utf-8?B?TVFsMVVTMTVoRUNmUm1FNWMrSHN6aWRkNy9maWNiTWZuZzNHTGtDb0N3YndS?=
- =?utf-8?B?Tnd2cWRSQ2JJVFQ5TGZsUm44QmRuQk84dzg2R0FhTVJzbW9mbTFmZVlLcTBF?=
- =?utf-8?B?TFF6c3pJcUxWWThhR1hDcG40TEdyU2NlZ0dUOFQ5QmhmWGFJK2ZtNURpN2pK?=
- =?utf-8?B?eHJkdFVRMTBwRCtKNVoyUFJyb0xCWThSN3JjRmRLczRJakFhRCtQSTlCb1lK?=
- =?utf-8?B?Z1Q3WE1PYUlQejJQMWdDMEIrUFFNZ093MUxMUklJTFVER09qZDlsRzA4ZHRP?=
- =?utf-8?B?SnFuRitHMGtYNnlDTmdDUVRUM0NtckdkR0dJY3ByaG1QRDJkclJCT3FyTits?=
- =?utf-8?B?Mmd1aEdoeUtML2RUU3psa1BPY0pDMUJQM3QxSE1lT3B0UkN3Y25uVlRPTUVL?=
- =?utf-8?B?WTBIckwyTS9FQXhZV3dJNmxCUG02Sk4vMmxzWGlqZHVZYjVLaytrWWNLUjRM?=
- =?utf-8?B?ZldvbHIrQyt4aU0zcVJxdWFqMjVPOVk1TGlqL1dlSDVvOW9uU1dHN1VLSzAw?=
- =?utf-8?B?ZDhlY0dqT2tBUXV0d01PZ3VlMHZpUXlKa2s3RFBqcjJxbXhibzdVUzR1KzVX?=
- =?utf-8?B?L0NCTXNSSlJpSVJGWktrM0tQa3BVSnNxdmJwd3JtK3kxME9vRUpIVHBJNFh0?=
- =?utf-8?B?Rmo0WVRMcW1rRjRhSW56QU8vZnlPS1hzWTNJK1dFZG55b0pBNmlpMjY1cU1u?=
- =?utf-8?B?eUEyekxRSGNNQU5QS3F6Vm9kbFpDampZbUJybkk5SkRLSVZiZVhZOEpzbEly?=
- =?utf-8?B?NDI3dTN0NGpyVitqSFcwVytlTmZuOWoyTWdhK0t2UnJ1aVdjQldsS1owZkZD?=
- =?utf-8?B?L3VqWU9RNDJOczhqaDlUbUtUVHYzd2tDMFNQWHU4UDdNRWpMUG82c2pzbmNs?=
- =?utf-8?B?U1dsRzRxeWg1TmFKVDRYTDM1UlpkMEovc2pld0hvbWp6RXNWL2t6THdzMzVQ?=
- =?utf-8?Q?NK2skipMgMs7w/h7hb2HBg07u?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ab79523-ca5d-4d78-ccd8-08dd7db2f319
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2025 13:22:49.4499
+X-MS-Exchange-CrossTenant-AuthSource: OSCPR01MB14838.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8eb5c7cb-bcf9-4427-89ea-08dd7db91430
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Apr 2025 14:06:41.7421
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: J4SxmGvVsIuwIaCle6euLza2q2PiBrNGNcfwGOQAt8/phxx9EzIGkazE14CKaNFR/iHysq2wbn8GCyOknpG0WQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR10MB7110
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: RC7r0LiLPr639JzdX++FJsR6xek+NdwHc+7JU2L6YjM7pp7giKGu5tI8oTJbWDT1/V380RVGMm+p2Vo1FgiPQNSY34MhtvHE62kPRBGramM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB10205
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 17 Apr 2025 13:22:58 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18522
+ <cip-dev@lists.cip-project.org>; Thu, 17 Apr 2025 14:06:58 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18523
 
-On 17.04.25 09:27, Sai.Sathujoda@toshiba-tsip.com wrote:
-> From: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
-> 
-> Major changes in this update:
-> 
-> 1. Fixed instability of TC_CR2.7_1 (Concurrent session termination)
-> 2. Added TC_CR1.10_1 (Authenticator feedback)
-> 
-> Signed-off-by: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
-> ---
->  tests/templates/IEC_template.yml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tests/templates/IEC_template.yml b/tests/templates/IEC_template.yml
-> index c8efe40..b93ed4b 100644
-> --- a/tests/templates/IEC_template.yml
-> +++ b/tests/templates/IEC_template.yml
-> @@ -64,7 +64,7 @@ actions:
->       definitions:
->       - repository: https://gitlab.com/cip-project/cip-testing/cip-security-tests.git
->         from: git
-> -       revision: 5dbc47f55d4a43449dcbde4363e5d23d6e96344f
-> +       revision: bb19990c2b29ea96eea309e54124c74ea3246f18
->         path: iec-security-tests/Singlenode-TestDefinition.yaml
->         name: Security-Testcases
->  
+--_000_OSCPR01MB148381FFFE1BA2C392B96EE60C2BC2OSCPR01MB14838jp_
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, both applied.
+Subject: aide: Failed to include files added in aide.conf in the aide db wh=
+en it is initialized in case the path of files mentioned in aide.conf are w=
+.r.t symlink directories
+Package: aide
+X-Debbugs-Cc: sai.sathujoda@toshiba-tsip.com
+Version: 0.18.3-1+deb12u3
+Severity: important
 
-Jan
+Dear Maintainer,
 
--- 
-Siemens AG, Foundational Technologies
-Linux Expert Center
+In case of bullseye (17.0.3), when I tried to add a file under a symlink di=
+rectory (/lib) which points to (/usr/lib), and initialized aide database,
+I noticed that in case of bullseye it took that as an entry, you can see th=
+at in number of entries.
+
+root@debian:/lib# aide -c /etc/aide/aide.conf --init
+Start timestamp: 2025-04-11 14:55:06 +0530 (AIDE 0.17.3)
+AIDE initialized database at /var/lib/aide/aide.db.new
+
+Number of entries:      1
+
+---------------------------------------------------
+The attributes of the (uncompressed) database(s):
+---------------------------------------------------
+
+/var/lib/aide/aide.db.new
+ SHA256    : 8QfM4/Mro0bQhMCUinAVdTqs8vnp2RvR
+             gfOdwU81lKg=3D
+ SHA512    : 6vEeABuJ9vc6A8ynl1zE0V69+jwPrY5y
+             POHmNOVSxNbwWY3YCbRmwXOKyoybLKVE
+             pqU8oaHcE4BsvmiLF3MpLQ=3D=3D
+ RMD160    : 3Tk77kKRJWeGOvMjXgEuBUaUJfU=3D
+ TIGER     : K1w+cRPV6jFCuq3cJ8pSfudnOqu36XbL
+ CRC32     : qc830g=3D=3D
+ HAVAL     : WVO2hNph/UhVccxnESrSLNzFiABLdUCg
+             ZI5clgNjQ5Y=3D
+ WHIRLPOOL : hCpWmHis0LPvfmZRVBFAdF09ObwXYCRB
+             f2u6cH38Bv8FFPBOSQ+et4wzlI+05ukS
+             8mJIYMag6JljAZQ3/UjKzw=3D=3D
+ GOST      : 7dxCJCfHe6GOILuDqAnKleB4iIfDSoVX
+             3EPP/wQZKWE=3D
+
+
+End timestamp: 2025-04-11 14:55:06 +0530 (run time: 0m 0s)
+
+And it was able detect changes made to the file (permission change) like be=
+low:
+
+Start timestamp: 2025-04-11 14:57:09 +0530 (AIDE 0.17.3)
+AIDE found differences between database and filesystem!!
+
+Summary:
+  Total number of entries:      1
+  Added entries:                0
+  Removed entries:              0
+  Changed entries:              1
+
+---------------------------------------------------
+Changed entries:
+---------------------------------------------------
+
+f   p..    . A. . : /lib/sample
+
+---------------------------------------------------
+Detailed information about changes:
+---------------------------------------------------
+
+File: /lib/sample
+ Perm      : -rw-r--r--                       | -rwxrwxrwx
+ ACL       : A: user::rw-                     | A: user::rwx
+             A: group::r--                    | A: group::rwx
+             A: other::r--                    | A: other::rwx
+
+
+But when it came to bookworm (18.0.3), when I tried to add a file under a s=
+ymlink directory (/lib) and initialized aide database. The file itself is n=
+ot taken as an entry in the database.
+
+Start timestamp: 2025-04-11 02:10:43 -0700 (AIDE 0.18.3)
+AIDE successfully initialized database.
+New AIDE database written to /var/lib/aide/aide.db.new
+Ignored e2fs attributes: EINV
+
+Number of entries:      0
+
+---------------------------------------------------
+The attributes of the (uncompressed) database(s):
+---------------------------------------------------
+
+/var/lib/aide/aide.db.new
+ MD5       : pl93YpGJN9FrSnoqT0E3dw=3D=3D
+ SHA1      : rPt7WKDC/q2REGf6zvHo5TYRXo8=3D
+ SHA256    : +Vk/YPBigq7YMPdzEAa2BnhQKpKhcDgO
+             ufnUJdXz+ww=3D
+ SHA512    : wJrUxFj+aQ98FXzB3CgL0TuYips7zww6
+             FMMOvSOoReI5C+y5ESPOlwayxtYdFetu
+             ksE3lSPfoZ0XRt0jK6tyUQ=3D=3D
+ RMD160    : Q7t7ldGDvKL1dtkWebY7ADg5rF0=3D
+ TIGER     : Una57HNtE4LT2CtfSQm3/MJJHc0CcMf3
+ CRC32     : Iks/HQ=3D=3D
+ CRC32B    : 9KQcKQ=3D=3D
+ HAVAL     : Ew+OiFudOadA+OXb0OnlLF2dNM7/W3S/
+             GdxH7C3h4lQ=3D
+ WHIRLPOOL : 65MSMeuSnYHCLCgWnMe4C1s8EPylzOVw
+             ty4A+dG1kRseQRQbmT2RqAOwXgd0HOHs
+             ipqJzSjmtcnxf+7Wgkdphg=3D=3D
+ GOST      : jcvRfvMgkH6BaQMTYegf8COtLbaMB/6i
+             TuLy7JXdZPI=3D
+
+End timestamp: 2025-04-11 02:10:43 -0700 (run time: 0m 0s)
+
+And eventually it was not able to detect the change as well.
+
+Is this behavior introduced in aide from bookworm ?
+
+
+-- System Information:
+Debian Release: 12.10
+  APT prefers stable-updates
+  APT policy: (500, 'stable-updates'), (500, 'stable-security'), (500, 'sta=
+ble')
+Architecture: amd64 (x86_64)
+
+Kernel: Linux 6.1.0-32-amd64 (SMP w/8 CPU threads; PREEMPT)
+Locale: LANG=3Den_US.UTF-8, LC_CTYPE=3Den_US.UTF-8 (charmap=3DUTF-8), LANGU=
+AGE not set
+Shell: /bin/sh linked to /usr/bin/dash
+Init: systemd (via /run/systemd/system)
+LSM: AppArmor: enabled
+
+Versions of packages aide depends on:
+ii  libacl1       2.3.1-3
+ii  libaudit1     1:3.0.9-1
+ii  libc6         2.36-9+deb12u10
+ii  libcap2       1:2.66-4
+ii  libext2fs2    1.47.0-2
+ii  libmhash2     0.9.9.9-9
+ii  libpcre2-8-0  10.42-1
+ii  libselinux1   3.4-1+b6
+ii  zlib1g        1:1.2.13.dfsg-1
+
+Versions of packages aide recommends:
+ii  aide-common  0.18.3-1+deb12u3
+
+Versions of packages aide suggests:
+pn  figlet  <none>
+
+-- no debconf information
+
+Thanks and regards,
+Sai Ashrith
+
+
+--_000_OSCPR01MB148381FFFE1BA2C392B96EE60C2BC2OSCPR01MB14838jp_
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<span style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService,=
+ Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">Sub=
+ject: aide: Failed to include files added in aide.conf in the aide db when =
+it is initialized in case the path
+ of files mentioned in aide.conf are w.r.t symlink directories</span>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Package: aide</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+X-Debbugs-Cc: sai.sathujoda@toshiba-tsip.com</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Version: 0.18.3-1+deb12u3</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Severity: important</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Dear Maintainer,</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+In case of bullseye (17.0.3), when I tried to add a file under a symlink di=
+rectory (/lib) which points to (/usr/lib), and initialized aide database,</=
+div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+I noticed that in case of bullseye it took that as an entry, you can see th=
+at in number of entries.</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+root@debian:/lib# aide -c /etc/aide/aide.conf --init</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Start timestamp: 2025-04-11 14:55:06 +0530 (AIDE 0.17.3)</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+AIDE initialized database at /var/lib/aide/aide.db.new</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Number of entries: &nbsp; &nbsp; &nbsp;1</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+---------------------------------------------------</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+The attributes of the (uncompressed) database(s):</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+---------------------------------------------------</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+/var/lib/aide/aide.db.new</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp;SHA256 &nbsp; &nbsp;: 8QfM4/Mro0bQhMCUinAVdTqs8vnp2RvR</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;gfOdwU81lKg=3D</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp;SHA512 &nbsp; &nbsp;: 6vEeABuJ9vc6A8ynl1zE0V69+jwPrY5y</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;POHmNOVSxNbwWY3YCbRmwXOKyoy=
+bLKVE</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;pqU8oaHcE4BsvmiLF3MpLQ=3D=
+=3D</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp;RMD160 &nbsp; &nbsp;: 3Tk77kKRJWeGOvMjXgEuBUaUJfU=3D</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp;TIGER &nbsp; &nbsp; : K1w+cRPV6jFCuq3cJ8pSfudnOqu36XbL</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp;CRC32 &nbsp; &nbsp; : qc830g=3D=3D</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp;HAVAL &nbsp; &nbsp; : WVO2hNph/UhVccxnESrSLNzFiABLdUCg</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ZI5clgNjQ5Y=3D</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp;WHIRLPOOL : hCpWmHis0LPvfmZRVBFAdF09ObwXYCRB</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;f2u6cH38Bv8FFPBOSQ+et4wzlI+=
+05ukS</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;8mJIYMag6JljAZQ3/UjKzw=3D=
+=3D</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp;GOST &nbsp; &nbsp; &nbsp;: 7dxCJCfHe6GOILuDqAnKleB4iIfDSoVX</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;3EPP/wQZKWE=3D</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+End timestamp: 2025-04-11 14:55:06 +0530 (run time: 0m 0s)</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+And it was able detect changes made to the file (permission change) like be=
+low:</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Start timestamp: 2025-04-11 14:57:09 +0530 (AIDE 0.17.3)</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+AIDE found differences between database and filesystem!!</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Summary:</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp; Total number of entries: &nbsp; &nbsp; &nbsp;1</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp; Added entries: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbs=
+p;0</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp; Removed entries: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;0</=
+div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp; Changed entries: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1</=
+div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+---------------------------------------------------</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Changed entries:</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+---------------------------------------------------</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+f &nbsp; p.. &nbsp; &nbsp;. A. . : /lib/sample</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+---------------------------------------------------</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Detailed information about changes:</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+---------------------------------------------------</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+File: /lib/sample</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp;Perm &nbsp; &nbsp; &nbsp;: -rw-r--r-- &nbsp; &nbsp; &nbsp; &nbsp; &nb=
+sp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | -rwxrwxrwx</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp;ACL &nbsp; &nbsp; &nbsp; : A: user::rw- &nbsp; &nbsp; &nbsp; &nbsp; &=
+nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | A: user::rwx</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;A: group::r-- &nbsp; &nbsp;=
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| A: group::rwx</di=
+v>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;A: other::r-- &nbsp; &nbsp;=
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| A: other::rwx</di=
+v>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+But when it came to <b>bookworm (18.0.3)</b>, when I tried to add a file un=
+der a symlink directory (/lib) and initialized aide database. The file itse=
+lf is not taken as an entry in the database.</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Start timestamp: 2025-04-11 02:10:43 -0700 (AIDE 0.18.3)</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+AIDE successfully initialized database.</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+New AIDE database written to /var/lib/aide/aide.db.new</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Ignored e2fs attributes: EINV</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Number of entries: &nbsp; &nbsp; &nbsp;0</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+---------------------------------------------------</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+The attributes of the (uncompressed) database(s):</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+---------------------------------------------------</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+/var/lib/aide/aide.db.new</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp;MD5 &nbsp; &nbsp; &nbsp; : pl93YpGJN9FrSnoqT0E3dw=3D=3D</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp;SHA1 &nbsp; &nbsp; &nbsp;: rPt7WKDC/q2REGf6zvHo5TYRXo8=3D</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp;SHA256 &nbsp; &nbsp;: +Vk/YPBigq7YMPdzEAa2BnhQKpKhcDgO</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ufnUJdXz+ww=3D</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp;SHA512 &nbsp; &nbsp;: wJrUxFj+aQ98FXzB3CgL0TuYips7zww6</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;FMMOvSOoReI5C+y5ESPOlwayxtY=
+dFetu</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ksE3lSPfoZ0XRt0jK6tyUQ=3D=
+=3D</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp;RMD160 &nbsp; &nbsp;: Q7t7ldGDvKL1dtkWebY7ADg5rF0=3D</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp;TIGER &nbsp; &nbsp; : Una57HNtE4LT2CtfSQm3/MJJHc0CcMf3</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp;CRC32 &nbsp; &nbsp; : Iks/HQ=3D=3D</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp;CRC32B &nbsp; &nbsp;: 9KQcKQ=3D=3D</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp;HAVAL &nbsp; &nbsp; : Ew+OiFudOadA+OXb0OnlLF2dNM7/W3S/</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;GdxH7C3h4lQ=3D</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp;WHIRLPOOL : 65MSMeuSnYHCLCgWnMe4C1s8EPylzOVw</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ty4A+dG1kRseQRQbmT2RqAOwXgd=
+0HOHs</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ipqJzSjmtcnxf+7Wgkdphg=3D=
+=3D</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp;GOST &nbsp; &nbsp; &nbsp;: jcvRfvMgkH6BaQMTYegf8COtLbaMB/6i</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;TuLy7JXdZPI=3D</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+End timestamp: 2025-04-11 02:10:43 -0700 (run time: 0m 0s)</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+And eventually it was not able to detect the change as well.</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Is this behavior introduced in aide from bookworm ?</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+-- System Information:</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Debian Release: 12.10</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp; APT prefers stable-updates</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+&nbsp; APT policy: (500, 'stable-updates'), (500, 'stable-security'), (500,=
+ 'stable')</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Architecture: amd64 (x86_64)</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Kernel: Linux 6.1.0-32-amd64 (SMP w/8 CPU threads; PREEMPT)</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Locale: LANG=3Den_US.UTF-8, LC_CTYPE=3Den_US.UTF-8 (charmap=3DUTF-8), LANGU=
+AGE not set</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Shell: /bin/sh linked to /usr/bin/dash</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Init: systemd (via /run/systemd/system)</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+LSM: AppArmor: enabled</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Versions of packages aide depends on:</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+ii &nbsp;libacl1 &nbsp; &nbsp; &nbsp; 2.3.1-3</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+ii &nbsp;libaudit1 &nbsp; &nbsp; 1:3.0.9-1</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+ii &nbsp;libc6 &nbsp; &nbsp; &nbsp; &nbsp; 2.36-9+deb12u10</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+ii &nbsp;libcap2 &nbsp; &nbsp; &nbsp; 1:2.66-4</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+ii &nbsp;libext2fs2 &nbsp; &nbsp;1.47.0-2</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+ii &nbsp;libmhash2 &nbsp; &nbsp; 0.9.9.9-9</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+ii &nbsp;libpcre2-8-0 &nbsp;10.42-1</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+ii &nbsp;libselinux1 &nbsp; 3.4-1+b6</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+ii &nbsp;zlib1g &nbsp; &nbsp; &nbsp; &nbsp;1:1.2.13.dfsg-1</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Versions of packages aide recommends:</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+ii &nbsp;aide-common &nbsp;0.18.3-1+deb12u3</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Versions of packages aide suggests:</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+pn &nbsp;figlet &nbsp;&lt;none&gt;</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+-- no debconf information</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Thanks and regards,</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+Sai Ashrith</div>
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+</body>
+</html>
+
+--_000_OSCPR01MB148381FFFE1BA2C392B96EE60C2BC2OSCPR01MB14838jp_--
+
 
