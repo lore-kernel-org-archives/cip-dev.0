@@ -2,37 +2,37 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B7DC369AB
-	for <webhook@archiver.kernel.org>; Mon, 21 Apr 2025 18:43:39 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web10.22323.1745261010984955650
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA28C369AB
+	for <webhook@archiver.kernel.org>; Mon, 21 Apr 2025 18:47:09 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web10.22392.1745261220721764850
  for <cip-dev@lists.cip-project.org>;
- Mon, 21 Apr 2025 11:43:31 -0700
+ Mon, 21 Apr 2025 11:47:00 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: f3S6A+28QXWxWedRkWEXbw==
-X-CSE-MsgGUID: JAB/W1mAQnGk0Nau56u/DQ==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 22 Apr 2025 03:43:30 +0900
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+X-CSE-ConnectionGUID: HlENOhVBS5OrB/oOC948ag==
+X-CSE-MsgGUID: j9h5Di4iT2+2h9sz53bC+w==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 22 Apr 2025 03:46:59 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.26])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id EC1AD400D0DA;
-	Tue, 22 Apr 2025 03:43:28 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6260D4063656;
+	Tue, 22 Apr 2025 03:46:58 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip] clk: renesas: r9a07g044: Add clock and reset entry for DRP-AI
-Date: Mon, 21 Apr 2025 19:43:27 +0100
-Message-ID: <20250421184327.633182-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip] clk: renesas: r9a07g044: Add clock and reset entry for DRP-AI
+Date: Mon, 21 Apr 2025 19:46:57 +0100
+Message-ID: <20250421184657.633352-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 21 Apr 2025 18:43:39 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18537
+ <cip-dev@lists.cip-project.org>; Mon, 21 Apr 2025 18:47:09 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18538
 
 commit 989d673ff7c461b2abd472227fdb7df69860d23f upstream.
 
