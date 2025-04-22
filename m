@@ -2,34 +2,34 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21BF6C369DE
-	for <webhook@archiver.kernel.org>; Tue, 22 Apr 2025 14:51:07 +0000 (UTC)
-Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
- by mx.groups.io with SMTP id smtpd.web11.41955.1745333458347288879
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1750C369C2
+	for <webhook@archiver.kernel.org>; Tue, 22 Apr 2025 14:51:06 +0000 (UTC)
+Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
+ by mx.groups.io with SMTP id smtpd.web10.41948.1745333458245814875
  for <cip-dev@lists.cip-project.org>;
  Tue, 22 Apr 2025 07:50:59 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm2 header.b=Xcd4VyXd;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.225, mailfrom: fm-51332-202504221450557f8cd2a88d9fdaad35-lqjco0@rts-flowmailer.siemens.com)
-Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 202504221450557f8cd2a88d9fdaad35
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm2 header.b=L6gfMjIF;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-51332-2025042214505691f2cbec611d9de142-zekd_j@rts-flowmailer.siemens.com)
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 2025042214505691f2cbec611d9de142
         for <cip-dev@lists.cip-project.org>;
         Tue, 22 Apr 2025 16:50:56 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=Y3nHEPImeBHxo4+fEvKtpmuaxkWx69h8hp2MCyg/NDQ=;
- b=Xcd4VyXdHkO45ZxNUzbeF/Ux7zu64sri/1/AJnaLlRYnAgfPZJyYfLHI8u8FfeYE4FwAGK
- cPLjR0jW5px5vUXTQW3F/nMvs1EkwgHqVjoxJHEbb5AiZiKHnSNdJtp4OwW4sE0m08wSBtPt
- hPnPJeH7RoaskCJ2WhU/kp1IvK19UuQfw8qGVGNtJOeO4PlrRpEDd+5Z8B5uUAy+c7UJ6BTC
- 5f56rFRZBbAdE+J1Bd6ftHjPSbq2RGv9DnqUSrypSrC9c3FSRgdXGlcjhO+eZiP2aiEGTiz1
- xAhpJojszP/wdrgymLMmGqiSFE4lupXy/N903Y2ghYAVWHhRkHWJNbsQ==;
+ bh=PHld9uSID4e3BCNZfvLVwLcal47ZxFIYQ8hQ7R8RXuY=;
+ b=L6gfMjIF4jvzNJZ6djlu7jyvgH59jhSG+foT4Q1tCEhdL3zSTfSDh+OdryH7Oci8X33MoS
+ pGbfDa2uAHfA34xDYnjnJfqNwoNzrCSzj+5ct1HUDjG8aiKWNCv6jZwhY7XUYnKuKVBYp5zX
+ KLUZM4P4QgJ2TEG6tA2Z748CsbwLUEmVpEf63w1X7ETmPfwI7ggR4ekp+OLATFwp4p9ePs1y
+ v/OeHRfi/b9diDMO1JgE9UQ6eBT40ZmKgTyikFi5tad8LwVy+a9g6IFlLK9W2+AEIjgcKZ2J
+ pnCDGlmHJZATJtXltd0EQA1SWVCsYr+f6XEPBLcAPbGGTTHOP0C8rxRQ==;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org,
 	felix.moessbauer@siemens.com,
 	jan.kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][RFC v2 2/5] port verity env handling to new kernel cmdline infrastructure
-Date: Tue, 22 Apr 2025 16:35:23 +0200
-Message-ID: <20250422145055.1095348-3-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][RFC v2 3/5] wic(ebg): add support to abrootfs env to cmdline
+Date: Tue, 22 Apr 2025 16:35:24 +0200
+Message-ID: <20250422145055.1095348-4-Quirin.Gylstorff@siemens.com>
 In-Reply-To: <20250422145055.1095348-1-Quirin.Gylstorff@siemens.com>
 References: <20250422145055.1095348-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
@@ -39,155 +39,61 @@ Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 22 Apr 2025 14:51:07 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18560
+ <cip-dev@lists.cip-project.org>; Tue, 22 Apr 2025 14:51:06 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18561
 
-From: Felix Moessbauer <felix.moessbauer@siemens.com>
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-Previously the verity env was injected as file into the initrd and then
-sourced at runtime. As we now have infrastructure in place to add the
-verity env to the kernel cmdline, we replace the hard-coded values with
-logic to extract it from the kernel cmdline. By that, we also remove the
-dependency between the initramfs build and the verity creation, which
-reduces the set of dependencies (good for caching), as well as increases
-the parallelism of the build.
+This adds support similar to the verity environment
 
-Once widely supported, the initrd scripts can be completely replaced by
-the systemd-veritysetup-generator (identical syntax).
-
-Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- kas/opt/security.yml                          |  1 -
- .../initramfs-verity-hook/files/hook          |  1 -
- .../files/local-top-complete.tmpl             | 41 ++++++++++++++++++-
- .../initramfs-verity-hook_0.2.bb              | 24 +----------
- wic/ebg-signed-sysparts.inc                   |  4 +-
- 5 files changed, 43 insertions(+), 28 deletions(-)
+ .../wic/plugins/source/efibootguard-boot.py   | 25 +++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/kas/opt/security.yml b/kas/opt/security.yml
-index 4aa40e0..317af85 100644
---- a/kas/opt/security.yml
-+++ b/kas/opt/security.yml
-@@ -23,6 +23,5 @@ local_conf_header:
-     USER_root[flags] = "clear-text-password"
-   adjust-swupdate: |
-     ABROOTFS_IMAGE_RECIPE = "cip-core-image-security"
--    VERITY_IMAGE_RECIPE = "cip-core-image-security"
-   security-override: |
-     OVERRIDES .= ":security"
-diff --git a/recipes-initramfs/initramfs-verity-hook/files/hook b/recipes-initramfs/initramfs-verity-hook/files/hook
-index 1550daf..557e4f3 100644
---- a/recipes-initramfs/initramfs-verity-hook/files/hook
-+++ b/recipes-initramfs/initramfs-verity-hook/files/hook
-@@ -2,4 +2,3 @@
- # Copyright (c) Siemens AG, 2021-2024
+diff --git a/scripts/lib/wic/plugins/source/efibootguard-boot.py b/scripts/lib/wic/plugins/source/efibootguard-boot.py
+index aa093e2..941634a 100644
+--- a/scripts/lib/wic/plugins/source/efibootguard-boot.py
++++ b/scripts/lib/wic/plugins/source/efibootguard-boot.py
+@@ -91,6 +91,9 @@ class EfibootguardBootPlugin(SourcePlugin):
+         if source_params.get("verity_root") == 'y':
+             cmdline += " cip.verity_root_options=panic-on-corruption,%s" \
+                 % cls._get_verity_opts()
++        if source_params.get("abrootfs_root") == 'y':
++            cmdline += " cip.abrootfs_root_options=%s" \
++                % cls._get_abrootfs_opts()
+         if unified_kernel == 'y':
+             boot_image = cls._create_unified_kernel_image(rootfs_dir,
+                                                           cr_workdir,
+@@ -172,6 +175,28 @@ class EfibootguardBootPlugin(SourcePlugin):
+         sd_opts = {k: v for k, v in opts.items() if k in verity_sd_keys}
+         return ",".join(["%s=%s" % (k, v) for k, v in sd_opts.items()])
  
- copy_file library /lib/cryptsetup/functions /lib/cryptsetup/functions
--copy_file library /usr/share/verity-env/verity.env /usr/share/verity-env/verity.env
-diff --git a/recipes-initramfs/initramfs-verity-hook/files/local-top-complete.tmpl b/recipes-initramfs/initramfs-verity-hook/files/local-top-complete.tmpl
-index 8865b0f..991178c 100644
---- a/recipes-initramfs/initramfs-verity-hook/files/local-top-complete.tmpl
-+++ b/recipes-initramfs/initramfs-verity-hook/files/local-top-complete.tmpl
-@@ -32,7 +32,44 @@ esac
- 
- . /scripts/functions
- . /lib/cryptsetup/functions
--. /usr/share/verity-env/verity.env
++    @classmethod
++    def _get_abrootfs_opts(cls):
++        abrootfs_sd_keys = ["target-image-uuid"]
++        deploy_dir = get_bitbake_var("DEPLOY_DIR_IMAGE")
++        image_basename = get_bitbake_var("IMAGE_BASENAME")
++        abrootfsenv = None
++        opts = {}
++        for file in os.listdir(deploy_dir):
++            if fnmatch.fnmatch(file, f'{image_basename}*.uuid.env'):
++                abrootfsenv = os.path.join(deploy_dir, file)
++                break
++        if not abrootfsenv:
++            msger.error("abrootfs env file '%s.uuid.env' not found  in directory %s", image_basename, deploy_dir)
++            exit(1)
++        with open(abrootfsenv, "r") as venv:
++            for line in venv:
++                k, v = line.strip().split("=")
++                sd_key = k.replace("_", "-").lower()
++                opts[sd_key] = v
++        sd_opts = {k: v for k, v in opts.items() if k in abrootfs_sd_keys}
++        return ",".join(["%s=%s" % (k, v) for k, v in sd_opts.items()])
 +
-+load_verity_env_from_cmdline()
-+{
-+    local verity_opts
-+    local key
-+    local val
-+    local opt
-+    verity_opts=$(cat /proc/cmdline | sed -n 's/.*cip.verity_root_options=\([^ ]*\).*/\1/p' | sed 's/,/ /g')
-+    for opt in $verity_opts; do
-+        key=$(echo $opt | sed 's/=.*//')
-+        val=$(echo $opt | sed 's/^[^=]*=//')
-+        case "$key" in
-+            uuid)
-+                UUID="$val"
-+                ;;
-+            salt)
-+                SALT="$val"
-+                ;;
-+            data-blocks)
-+                DATA_BLOCKS="$val"
-+                ;;
-+            data-block-size)
-+                DATA_BLOCK_SIZE="$val"
-+                ;;
-+            hash-block-size)
-+                HASH_BLOCK_SIZE="$val"
-+                ;;
-+            hash-offset)
-+                HASH_OFFSET="$val"
-+                ;;
-+            hash)
-+                ROOT_HASH="$val"
-+                ;;
-+            *)
-+                ;;
-+        esac
-+    done
-+}
- 
- find_root_via_image_uuid()
- {
-@@ -63,6 +100,8 @@ find_root_via_image_uuid()
- echo "ROOT=/dev/null" >/conf/param.conf
- wait_for_udev 10
- 
-+load_verity_env_from_cmdline
-+
- case "$ROOT" in
-     PART*)
-         # Root was given as PARTUUID= or PARTLABEL=.
-diff --git a/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.2.bb b/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.2.bb
-index a6c4666..668419e 100644
---- a/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.2.bb
-+++ b/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.2.bb
-@@ -25,26 +25,4 @@ DEBIAN_DEPENDS .= ", cryptsetup"
- DEBIAN_CONFLICTS = "initramfs-abrootfs-hook"
- 
- HOOK_ADD_MODULES = "dm_mod dm_verity"
--HOOK_COPY_EXECS = "veritysetup dmsetup"
--
--VERITY_IMAGE_RECIPE ?= "cip-core-image"
--
--# This is defined in image.bbclass which cannot be used in a package recipe.
--# However, we need to use IMAGE_FULLNAME to pick up any extensions of it.
--IMAGE_FULLNAME ??= "${VERITY_IMAGE_RECIPE}-${DISTRO}-${MACHINE}"
--
--VERITY_ENV_FILE = "${DEPLOY_DIR_IMAGE}/${IMAGE_FULLNAME}.verity.env"
--
--do_install[depends] += "${VERITY_IMAGE_RECIPE}:do_image_verity"
--do_install[cleandirs] += "${D}/usr/share/verity-env"
--
--do_install:append() {
--    # Insert the veritysetup commandline into the script
--    if [ -f "${VERITY_ENV_FILE}" ]; then
--        install -m 0600 "${VERITY_ENV_FILE}" "${D}/usr/share/verity-env/verity.env"
--    else
--        bberror "Did not find ${VERITY_ENV_FILE}. initramfs will not be build correctly!"
--    fi
--}
--
--addtask install after do_transform_template
-+HOOK_COPY_EXECS = "veritysetup dmsetup sed"
-diff --git a/wic/ebg-signed-sysparts.inc b/wic/ebg-signed-sysparts.inc
-index 9292eee..b888239 100644
---- a/wic/ebg-signed-sysparts.inc
-+++ b/wic/ebg-signed-sysparts.inc
-@@ -4,5 +4,5 @@
- part --source efibootguard-efi  --size 16M --label efi   --align 1024 --part-type=EF00 --active --sourceparams "signwith=/usr/bin/sign_secure_image.sh" --fsuuid 0x4321dcba --uuid d1360f76-b09a-4bcc-b923-8195088cbe02
- 
- # EFI Boot Guard environment/config partitions plus Kernel files
--part --source efibootguard-boot --fixed-size 64M --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2,signwith=/usr/bin/sign_secure_image.sh" --fsuuid 0x4321dcbb --uuid f870258b-706f-4a66-8d58-b5a75ce61b8b
--part --source efibootguard-boot --fixed-size 64M --label BOOT1 --align 1024 --part-type=0700 --sourceparams "revision=1,signwith=/usr/bin/sign_secure_image.sh" --fsuuid 0x4321dcbc --uuid 6e41f2a7-e3eb-403f-8637-b111e4482ee9
-+part --source efibootguard-boot --fixed-size 64M --label BOOT0 --align 1024 --part-type=0700 --sourceparams "revision=2,signwith=/usr/bin/sign_secure_image.sh,verity_root=y" --fsuuid 0x4321dcbb --uuid f870258b-706f-4a66-8d58-b5a75ce61b8b
-+part --source efibootguard-boot --fixed-size 64M --label BOOT1 --align 1024 --part-type=0700 --sourceparams "revision=1,signwith=/usr/bin/sign_secure_image.sh,verity_root=y" --fsuuid 0x4321dcbc --uuid 6e41f2a7-e3eb-403f-8637-b111e4482ee9
+     @classmethod
+     def _create_img(cls, part_rootfs_dir, part, cr_workdir,
+                     native_sysroot, oe_builddir):
 -- 
 2.47.0
 
