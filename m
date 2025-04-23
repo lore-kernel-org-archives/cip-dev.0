@@ -2,30 +2,30 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 166D7C369D7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A592C369D8
 	for <webhook@archiver.kernel.org>; Wed, 23 Apr 2025 18:14:27 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.1783.1745432064862998004
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web10.1721.1745432058496503170
  for <cip-dev@lists.cip-project.org>;
- Wed, 23 Apr 2025 11:14:25 -0700
+ Wed, 23 Apr 2025 11:14:18 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: OAu3uMGgS/2Aig4wDNQDIw==
-X-CSE-MsgGUID: emhUswHORLyhg1XKqvPpCA==
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+X-CSE-ConnectionGUID: 8bAXkf2cQ7iHW7BEF0Wn9A==
+X-CSE-MsgGUID: AI28BdfiSwO5IQgKYTCbeA==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 24 Apr 2025 03:14:24 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 24 Apr 2025 03:14:17 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.43])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id BAB7540071EF;
-	Thu, 24 Apr 2025 03:14:22 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 636E6401143E;
+	Thu, 24 Apr 2025 03:14:16 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 6.12.y-cip 10/10] arm64: dts: renesas: r9a09g057: Add OPP table
-Date: Wed, 23 Apr 2025 19:14:00 +0100
-Message-ID: <20250423181400.13960-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 07/10] soc: renesas: r9a09g057-sys: Add a callback to print SoC-specific extra features
+Date: Wed, 23 Apr 2025 19:13:57 +0100
+Message-ID: <20250423181400.13960-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250423181400.13960-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20250423181400.13960-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -35,101 +35,91 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 23 Apr 2025 18:14:27 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18578
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18575
 
-commit 9ddc07404cbab0aee36b076b627ad9ecb7bb2290 upstream.
+From: John Madieu <john.madieu.xa@bp.renesas.com>
 
-Add OPP table for RZ/V2H(P) SoC.
+commit 25a5246b0e564d238e917b5a3684171718c950fd upstream.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Some RZ/V2H SoC variants feature a Mali-G31 (GPU) and/or a Mali-C55
+(ISP) IP(s).  Detect and inform about their presence during SoC
+identification.  Also detect PLL frequency and warn in case of mismatch.
+
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20241008164935.335043-1-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+Link: https://lore.kernel.org/20250128031342.52675-6-john.madieu.xa@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 41 ++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+ drivers/soc/renesas/r9a09g057-sys.c | 42 +++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-index b1ddd9c7570a..3a433f1e940c 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-@@ -20,6 +20,39 @@ audio_extal_clk: audio-clk {
- 		clock-frequency = <0>;
- 	};
+diff --git a/drivers/soc/renesas/r9a09g057-sys.c b/drivers/soc/renesas/r9a09g057-sys.c
+index 49a92de581b4..4c21cc29edbc 100644
+--- a/drivers/soc/renesas/r9a09g057-sys.c
++++ b/drivers/soc/renesas/r9a09g057-sys.c
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2025 Renesas Electronics Corp.
+  */
  
-+	/*
-+	 * The default cluster table is based on the assumption that the PLLCA55 clock
-+	 * frequency is set to 1.7GHz. The PLLCA55 clock frequency can be set to
-+	 * 1.7/1.6/1.5/1.1 GHz based on the BOOTPLLCA_0/1 pins (and additionally can be
-+	 * clocked to 1.8GHz as well). The table below should be overridden in the board
-+	 * DTS based on the PLLCA55 clock frequency.
-+	 */
-+	cluster0_opp: opp-table-0 {
-+		compatible = "operating-points-v2";
++#include <linux/bitfield.h>
+ #include <linux/bits.h>
+ #include <linux/device.h>
+ #include <linux/init.h>
+@@ -12,12 +13,53 @@
+ 
+ #include "rz-sysc.h"
+ 
++/* Register Offsets */
++#define SYS_LSI_MODE		0x300
++/*
++ * BOOTPLLCA[1:0]
++ *	    [0,0] => 1.1GHZ
++ *	    [0,1] => 1.5GHZ
++ *	    [1,0] => 1.6GHZ
++ *	    [1,1] => 1.7GHZ
++ */
++#define SYS_LSI_MODE_STAT_BOOTPLLCA55	GENMASK(12, 11)
++#define SYS_LSI_MODE_CA55_1_7GHZ	0x3
 +
-+		opp-1700000000 {
-+			opp-hz = /bits/ 64 <1700000000>;
-+			opp-microvolt = <900000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-850000000 {
-+			opp-hz = /bits/ 64 <850000000>;
-+			opp-microvolt = <800000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-425000000 {
-+			opp-hz = /bits/ 64 <425000000>;
-+			opp-microvolt = <800000>;
-+			clock-latency-ns = <300000>;
-+		};
-+		opp-212500000 {
-+			opp-hz = /bits/ 64 <212500000>;
-+			opp-microvolt = <800000>;
-+			clock-latency-ns = <300000>;
-+			opp-suspend;
-+		};
-+	};
++#define SYS_LSI_PRR			0x308
++#define SYS_LSI_PRR_GPU_DIS		BIT(0)
++#define SYS_LSI_PRR_ISP_DIS		BIT(4)
 +
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -30,6 +63,8 @@ cpu0: cpu@0 {
- 			device_type = "cpu";
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
-+			clocks = <&cpg CPG_CORE R9A09G057_CA55_0_CORE_CLK0>;
-+			operating-points-v2 = <&cluster0_opp>;
- 		};
++static void rzv2h_sys_print_id(struct device *dev,
++				void __iomem *sysc_base,
++				struct soc_device_attribute *soc_dev_attr)
++{
++	bool gpu_enabled, isp_enabled;
++	u32 prr_val, mode_val;
++
++	prr_val = readl(sysc_base + SYS_LSI_PRR);
++	mode_val = readl(sysc_base + SYS_LSI_MODE);
++
++	/* Check GPU and ISP configuration */
++	gpu_enabled = !(prr_val & SYS_LSI_PRR_GPU_DIS);
++	isp_enabled = !(prr_val & SYS_LSI_PRR_ISP_DIS);
++
++	dev_info(dev, "Detected Renesas %s %s Rev %s%s%s\n",
++		 soc_dev_attr->family, soc_dev_attr->soc_id, soc_dev_attr->revision,
++		 gpu_enabled ? " with GE3D (Mali-G31)" : "",
++		 isp_enabled ? " with ISP (Mali-C55)" : "");
++
++	/* Check CA55 PLL configuration */
++	if (FIELD_GET(SYS_LSI_MODE_STAT_BOOTPLLCA55, mode_val) != SYS_LSI_MODE_CA55_1_7GHZ)
++		dev_warn(dev, "CA55 PLL is not set to 1.7GHz\n");
++}
++
+ static const struct rz_sysc_soc_id_init_data rzv2h_sys_soc_id_init_data __initconst = {
+ 	.family = "RZ/V2H",
+ 	.id = 0x847a447,
+ 	.devid_offset = 0x304,
+ 	.revision_mask = GENMASK(31, 28),
+ 	.specific_id_mask = GENMASK(27, 0),
++	.print_id = rzv2h_sys_print_id,
+ };
  
- 		cpu1: cpu@100 {
-@@ -38,6 +73,8 @@ cpu1: cpu@100 {
- 			device_type = "cpu";
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
-+			clocks = <&cpg CPG_CORE R9A09G057_CA55_0_CORE_CLK1>;
-+			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
- 		cpu2: cpu@200 {
-@@ -46,6 +83,8 @@ cpu2: cpu@200 {
- 			device_type = "cpu";
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
-+			clocks = <&cpg CPG_CORE R9A09G057_CA55_0_CORE_CLK2>;
-+			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
- 		cpu3: cpu@300 {
-@@ -54,6 +93,8 @@ cpu3: cpu@300 {
- 			device_type = "cpu";
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
-+			clocks = <&cpg CPG_CORE R9A09G057_CA55_0_CORE_CLK3>;
-+			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
- 		L3_CA55: cache-controller-0 {
+ const struct rz_sysc_init_data rzv2h_sys_init_data = {
 -- 
 2.43.0
 
