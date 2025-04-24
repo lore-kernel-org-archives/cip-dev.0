@@ -1,529 +1,251 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E69C369CB
-	for <webhook@archiver.kernel.org>; Wed, 23 Apr 2025 22:46:09 +0000 (UTC)
-Received: from mail-yb1-f194.google.com (mail-yb1-f194.google.com [209.85.219.194])
- by mx.groups.io with SMTP id smtpd.web11.2437.1745448367349803991
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D9DC369AB
+	for <webhook@archiver.kernel.org>; Thu, 24 Apr 2025 06:03:01 +0000 (UTC)
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (EUR05-AM6-obe.outbound.protection.outlook.com [40.107.22.62])
+ by mx.groups.io with SMTP id smtpd.web11.8677.1745474576287832540
  for <cip-dev@lists.cip-project.org>;
- Wed, 23 Apr 2025 15:46:08 -0700
+ Wed, 23 Apr 2025 23:02:56 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=A8eyAbci;
- spf=pass (domain: miraclelinux.com, ip: 209.85.219.194, mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-yb1-f194.google.com with SMTP id 3f1490d57ef6-e6405e4ab4dso1385959276.0
-        for <cip-dev@lists.cip-project.org>; Wed, 23 Apr 2025 15:46:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1745448366; x=1746053166; darn=lists.cip-project.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=zO3AO0r7BtIlqYq8K/QEocYjCmM25/7IIc0q1+CI+H0=;
-        b=A8eyAbcitND+NkVsL/tNEHApmMscpsipU1QDPWjQ5OXs9dA1c+hfBZA+jMzfsOwHFW
-         I8Xe7ePOiU9BDI65SdoZ9h5qerLEs75aVgAr+G4nlngtdiPYRzCswLECfmuaHwWNGTb4
-         HHPDCELStiQ2qRhBPkj53UuuRguez1690KundANSEVVx50WUnDtW2KIFlnsMl5OZ/Ch+
-         KT/igLpaTHpncvovRjJfrjIl1dTZ+NEPZA/rzRgFm1xBOLfN2ClxbjfmWyNwAYZ1fUCf
-         lPQoF8AFtYWWvBGJo04QlXXDs6/HVT3ukIz0k9U5HnjGdvXGWWPnsLdRoDZ6f2sSv286
-         6TAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745448366; x=1746053166;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zO3AO0r7BtIlqYq8K/QEocYjCmM25/7IIc0q1+CI+H0=;
-        b=nL69qWjo8Zr4oSkKizdB4oUFv3tTLHnPPSC6TUyEw2ehXhP7/DJylz4GwdIX9B7nox
-         FeStDVVO11yiobgO+xQsWXz7ZF/2GgueRfwaEPIEeh12/PShU2XJbE6dRMvwIfh3FltR
-         k/kqbzookcTdNaHW4FESMH5csKQE9qU5FjtTQO25q2lLr6dheMMnLPyEmoRtMnVnsfAO
-         lmSj3oNdfMmNqVWvoPIgA3kfZPeyEjNvbG7dT8hPJd9AlrlMuc7hDUk9ZZ9YwNx3AcUi
-         rPqh3QlZ1cgDx3BSPevK2m5TWsESF0OpjdVxHJcAWcLUcbboPE0ezWD0jnOEIX6E3nZi
-         U+NQ==
-X-Gm-Message-State: AOJu0Yxpvi5WuQCsklEZCMJkw445x0QQ9qofQSX+0Fzua90ux/TrRX4L
-	2XF0gf6awNmOJ/fGiGbs4MEh0WtwwKbsgaKWq5fz5GuqPBWPA2vGPGCupjyQSq2a9iZ3+fpU+3B
-	JHsHdnERiD8eLvOQw8mXCJBrowEYg52W7+upkVSiB2swkp9n3eK4E2r9Z
-X-Gm-Gg: ASbGncvQGh0t1i10txf1nc4QLGvyZA9pv/7K5uKQmvKeRjHszFnvVas0erosfxkBbZI
-	17xyjjb6s90fophuypVJ7IERXW+0CLPMkvnTmPR23RefkfnJ3JMWa4r+PKB4ZD6k8QZC13v8LUh
-	TuFoEphQ5BTyPll8k8LJgmW8I=
-X-Google-Smtp-Source: AGHT+IFDPSqzihZ77k7jpdwb0UbHA3JIh1Hh3v9D2BG3CXCWsWnAigdfiyMxNXLjpUq1l6UEnq9T4Atc9KQrCCLHG7w=
-X-Received: by 2002:a05:6902:e11:b0:e73:27b:a829 with SMTP id
- 3f1490d57ef6-e73051c54dfmr136968276.11.1745448366088; Wed, 23 Apr 2025
- 15:46:06 -0700 (PDT)
-MIME-Version: 1.0
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 24 Apr 2025 07:45:30 +0900
-X-Gm-Features: ATxdqUHOVKy8KGxCyPk6-wcgxXHJd4RxbNwDAhVejZBY-PQ3oUPp1E05A82dBFk
-Message-ID: <CAODzB9roW_ObEa8K8kowbfQ4bL3w4R78v2b_yBU4BQL4bpXrWw@mail.gmail.com>
-Subject: [kernel-cve-report] New CVE entries this week
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=E9PfTMds;
+ spf=pass (domain: siemens.com, ip: 40.107.22.62, mailfrom: jan.kiszka@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NXDXJif0Q3edFpTclxDiyKrPQx4ccd28EEdEgfdEadGQafQKk/ilP0zjugv9yH89kqk3fd7iQNcL+SB1LgaBJ5i8daGsfuTq9Ji+ZruhEdU46hnNlSzs2XS3GvWvOvVFixtNUtFeQIUpcrILZxkuuQeGQjkUAqXRAtOAUE1eQHzWf25G4heq2nD9fulPgJx3jSs9eA3WdqV9ScIaQRK3uJmm9kjDF13ISyODEoWS/7xdFYkOFINCAkeXfpCHw/JbCt46KFKByUM4NuQNfQTXzKY0Psx8qd8qI+gFxGL+9yrL4S9diZYb9I2xN1oq0Xk59KlZsjq1rh20vIVlyVeSyA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bow08mR6I1A6l0C1gK3tbKhbvRI8WCLNse5V12gf4bQ=;
+ b=uE1hX8XeeKYyDlTchHVEQ4Luotg36tJHjWysJtyTi0eoam2TEY4wd1hiX1gLK9MRUnejazTNwBOO3xW3t/u76E2IlsAyRpCY3cIfTLUodHm9F3r7dubUgcu0WU6xzpT5QPOEMkKTDAi1G9ge0kVJjoBBFKW0SKk9GZhXRlCTRsSxhTh6CHi7VIA7AMvbzUnB4MbtjYBGskTQG5UCiGZF5iFL3agTdOPBDwZvt4W5fmbPpKPC/m9Nn5hnS6gQVEYzzhhKpOdphMU7CbO5WJvbwwKFrWdvz6299rE0sMaJJANQsb4/TrkWCyQ+BAdI4XuP64y+SxdVHxPIl021VbY8bQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bow08mR6I1A6l0C1gK3tbKhbvRI8WCLNse5V12gf4bQ=;
+ b=E9PfTMdsoF0Aj/oN6WVGhIbdW0mb9La/+fm+bArBrno1c8nhCScBLtES0CwCHwH0laHwzBojxgSrXRR3gni1Vn+CJQFtvFwcN90m6MbSEkQQapbPZAnSMlm1cDb/gfhd6ASBV7bfpdby8iN9UfDphUUxKPoDvZ9yPD438gnbj3FVTzzbfmWbTln4zmKSAPYbZMK7S5AY2BMtrhFSM7NRB6zaq1GQT9VYs+Q8YUksF62h2UeOj9EzInvEShX9kDATp2HMwi86dA5KXpxutqSdhmDaFanZ03WC5r9lQ4pEWZ3LDSWDwxh5yCfiHgkm3oWf8NA+2CWFobagREx/esWcpw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by DB8PR10MB3627.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:139::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.22; Thu, 24 Apr
+ 2025 06:02:53 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408%4]) with mapi id 15.20.8678.021; Thu, 24 Apr 2025
+ 06:02:53 +0000
+Message-ID: <700258ee-195e-40e9-a77e-be4f1ae338a4@siemens.com>
+Date: Thu, 24 Apr 2025 08:02:52 +0200
+User-Agent: Mozilla Thunderbird
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: CIP IRC weekly meeting today on libera.chat
 To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Language: en-US
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ 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
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0014.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:c8::12) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB8PR10MB3627:EE_
+X-MS-Office365-Filtering-Correlation-Id: b7e94c28-5a4f-4046-198f-08dd82f5a6a4
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?RHR3dWNXZzhuQ2xGS0YxSWNBM0NJc2xzTERTaU1DdEU1UWd1cXUydEdYaG1Z?=
+ =?utf-8?B?THZOQVlaUjBZRk96UFhaOGV6UFZsWXJqVFM5NDd1c1l0bkV1UWplZ3dYc2JD?=
+ =?utf-8?B?SDNGVDNIZXpKUEt5Y1RTS051ZHhNTkRYRlF5cmlTQ2VyRVRPd0VLcEpHZWdH?=
+ =?utf-8?B?eU1mQk5NOVFITFR5dWtyZ1M3L3pIb3pqK0JBZ3ZiQnlkT1ZnQWw3dmFjaE5z?=
+ =?utf-8?B?NDgyZE1XWFlrRUVxa0lyYkRvb1ltWEJUdHJPOTBOTndDZlZmS013Sy9PSFpp?=
+ =?utf-8?B?Q3BvUkhLSlZkR3dkRFozOWhRaUFsVTdBUGd1OER4NHQ2RHU2blhOcWk3Vjli?=
+ =?utf-8?B?bHZBN2haMGhEdEs2azFHblRIR0U0TE5YNHQ5THhqRUdYeDduSSsrczV2U0U4?=
+ =?utf-8?B?eWhreCtXSWtNcGxWMEtlNFViRGhZMDNrWUk4Nitkcm5DNWQ5OThSWkZlMWdx?=
+ =?utf-8?B?RlVXVHVTSTkzSUJnQlJSSDBYbmFYVkQ5SnlkUytxTVo2OCtkV0lETythNGpD?=
+ =?utf-8?B?bDZ5eGdvblhGd0NXSmJUM09ZSmRPUlExcU0xR2V3K0hPa2wrV3NJVm9oaG5m?=
+ =?utf-8?B?dURMZTZ0NXFIWjdScFliT01jai9ZM0ZhM050Y1paUDFUTkJKTUppTzNxTXox?=
+ =?utf-8?B?M0xzdXN4ZURlR3ZoRXdDTjVNWmQzV0ZNdVIrNW5SYllkSU5NVld0eWtiSnMz?=
+ =?utf-8?B?N2hyVEVlWHU1eXdveWZ3c0lrdWhFS1VMaHh6dEF0RHBZZ1d5Rk56ZVN3YVYz?=
+ =?utf-8?B?NzcwRXlWUWtkRzg0WXdGR3g0SnNmMGlmdnFMY1VvaWpQenIyeEJLcGpQZ25t?=
+ =?utf-8?B?T2F0VjF1OGN4dldOT2xkLy90TWdsTVp2Mk5rb2l1Zno3MmRIVGcvM1FpMUpR?=
+ =?utf-8?B?RHE3eTIya29acS9xUFBNaHpuZzROcjEvUGJGQm5hU2s5eXhodkk1OHB3UjI3?=
+ =?utf-8?B?M2I4c2JuSFdJc2dpd0RIQmF4YUIwSmxOSkFsS1d4UTdyU2tnckdFQjJTTXgv?=
+ =?utf-8?B?TDB0WWVvUm0yUks1bzVjVjl6RExHaWI0NG4rMWg0eXpvcGVzMjdVMDJNT2sy?=
+ =?utf-8?B?OFR6UkpUeCtuMStVOG5rcUFaTGxIVlV3cUtsZmN5VWtkWXhUcDA5Wi9BV3Bj?=
+ =?utf-8?B?aGQvZU1wS2llMDNBYmhqTUVPbkRqdThXRmx4ZkxxTlhpMVBENVFzYlNrMFR0?=
+ =?utf-8?B?a3paZE1xUjVvUG1lVTdpZFZtenZyZzRtTGg2N2VZdy8rZVVuZ3NPTHIvYitV?=
+ =?utf-8?B?Q2tWU0NuenJBY1EvK1JPa2VYOTkveWVzR2dZeGl1ZTMyUCs1SktScGxVRFpO?=
+ =?utf-8?B?YlNDM1NsQTlvY1JSeExlb1B6ZUNiWWNPN28xVDNEQXlQN0ZJSGxrYUxTaGI2?=
+ =?utf-8?B?SDQzQnlESzVuZ0JOVVd1UVArWDkzeC8vdmZERjhGSVJ4TGlXbUFGd2l6dWVI?=
+ =?utf-8?B?cWNTQVJ5YW8yZC9RdkRLMFYyR01OTDZuYnhJc1BtTlpoUUZ2QUx4QXExOGlS?=
+ =?utf-8?B?MFUxZXJIeGFnRjZsN2FxQ3VKczN6TElBS3BjU1VmTjA3L1B6b2NBKy9ZL09a?=
+ =?utf-8?B?bFppS2lNU0I4NnRxK1ZuYmxaMXdFSmp1blFrWnB0UEtMcitFYVZOU3VwZU5i?=
+ =?utf-8?B?K2NiQVNBUm9JU2ZaQlpxemZMMVZjWG1RUitCTlUxei9NKzErRmlQTkVBZEg3?=
+ =?utf-8?B?UUV2a3FoNk84c2hlVURqUHFieEtsYVpuc2RrOXVYb0lrMGd5TXF2TE1rdDhn?=
+ =?utf-8?B?S3ROTmhHeE1YN0xvYk0xKytoOFpaaFhCVndJODlEZ2RsZldJdmJteHdzd2lP?=
+ =?utf-8?Q?PvV+6WkF3nPB/HHKCgGi/v6ngTIWGEnTAC5YM=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?dGw3VzMyZDdEYUVScUNnT24vdkREdUFWVEJHaGcxajlEeHkxYkt1UGI5UlV4?=
+ =?utf-8?B?TXpTWXUzV1h0MWhDWWU3OTlkSzBMbWh5d1dEVGN5NGZodFEySEFTTDhSODZr?=
+ =?utf-8?B?cFBSU0dKWlFzc2RpOUFrT3hKNHk2NElnU1NvZ2lGR1Q0RUFGY0tFdXhnTW1S?=
+ =?utf-8?B?SERWYURMNGJQVVgrclhoZUpLNHZyTGd4UXhhVEZHcnNnbi9XZkJsSUQxZVhn?=
+ =?utf-8?B?NkRrZDhCRTk5ck9FWVJ2ZGhBNUdwQ3JCcEFqVGEyL0tvK0gvOUZjVGo2cnFv?=
+ =?utf-8?B?Y0d1V055T2svdk1qbDRTWGJtRmdFdklhZ0c0TGFEOFZ2dlhsQnAxNGIzSFJq?=
+ =?utf-8?B?R3hHMzI0WnVTeUNGV0hzcGhVZ3JabFlvMFNMc1JscTM0RHNBdENKMlNuek5s?=
+ =?utf-8?B?SjYrOXQrSEg5VHMveHRKK3VnMEJTelpWZEt6cC9UMzd5UTljZVE5RXE1Z0tL?=
+ =?utf-8?B?MTBwSVgzanRHUU5ubG5zRmpIOXN2RWpFc3NzVUxUODI2TnJkYVBnb0piTlRn?=
+ =?utf-8?B?a25zd2lTUGdxc0tXNCtmZm1hblN0V3ZhZVBoWWhLbGtKcG1kbVJTNENCeUZy?=
+ =?utf-8?B?NTNXRzdJSFUvWnYwUzdOUHhremFsOFBjSXNMOU1vdnh3N2FPTXZ0YTlqZWhQ?=
+ =?utf-8?B?a1FQUnR6WkNvYWNVcUJqV2liYjFSeWlGR0JuK09lcEdqQzRlZjRmY3dYbFZw?=
+ =?utf-8?B?V1NHanZqNDM1alBKZk5GSDFxOUF1L3FESWt5TXJQdVlKUTZYN203L1J4ZHFL?=
+ =?utf-8?B?M25sbXJqZnAxWFhIdHhva3lwRkVUUlZOVXE2MlRHelNMei9HMS96ZHRybnJq?=
+ =?utf-8?B?aG1FQXlybTUwQ0lVR3FyOE5MViswblpEZ1hyTWNYZ2xqems5Mk5helU4anJD?=
+ =?utf-8?B?QlRubDQwaTlrSXh2UUVjOXI3WWdxMmZtUXAyVm9YelJ6ZWhQN2hDZk1wdFAx?=
+ =?utf-8?B?RWtiVm5lZGpuR2s4ZWlhOU16SmRyYlpQWUE2ZHVGMVpaN1RsQ0JKVjhpbkpi?=
+ =?utf-8?B?STMwb0R1K09qL0ZvSEZCU0s2aGRYUXdjYm9YRFAzcEt2Nm9lbjNoRzNMTTcy?=
+ =?utf-8?B?WkNubmlENllZMGxYT3JIaFZlc1Jza1IzUVV5NUdtYjdYYXlXK0V2aUxNT2lK?=
+ =?utf-8?B?MmhOTWlJc0JLanR3eklOUTkxZ3hGTVJteWd4V2RyOXNPRVBVQkR2RlpQM3py?=
+ =?utf-8?B?MWFRbDJNTWN0OE4zblV0VDdqc2F1SUVJcVZQUUJTWnZ4YVNCc25WWFpXKzdF?=
+ =?utf-8?B?VkU0bVRJYUt4Mm1VWVlPRkFJOGZObDByRHAxOXBZVmJxV1lmVCtNT2x1Q0ZN?=
+ =?utf-8?B?SG1lcTcrcWYrbkV6OURsVnR5M2RpYXhhSzVIbmRsWEptdGppbEhHNFp2aHVI?=
+ =?utf-8?B?VGtIZ3BXekJmaXJkR0dGNk9OMnBFNHA1WUxKVzRVNC9USTUxY1JTYWs4amJj?=
+ =?utf-8?B?dzJKUU1EOGM5VFJvWlQ5QkV2WmwwbVF0MTNJM0JRY1RISVhYVzJVRkRlOFZC?=
+ =?utf-8?B?MWJ6aUpvYWFzQmhscXRLV0JjTVMzQ2FxeHJJU2JEL1pYclJrUnZCMmhyZlV0?=
+ =?utf-8?B?dlBzWC8yRHp6RFlzakF4OWdHTFVVdDNPcTVRdzRsMjZyYkowZlB1eTJOOFFS?=
+ =?utf-8?B?dlAwVFNLb0hVV1ZXY29SbmFFN2VmdnZGVG9wajhpWElKb2dacTZmZndxQ1Bl?=
+ =?utf-8?B?QWN3N0JzTEY5ZDVZN1oxbzdCWm5SRGw4YVExWEg2UmhaLzU1Wnl2aFVKWE5a?=
+ =?utf-8?B?RndxU0ttUXk3eWFHQnRTSUhOS3BJd0NtU3p5VGd2ekx6ZUwyZWNxV2dYbVpz?=
+ =?utf-8?B?V3gyY3djVHpWSnl3U3BId1lhcWpHcGF4eHl6MmZNN1o4bHkrR3IvejZOSEpI?=
+ =?utf-8?B?QXdnUGFiS3piTG8vMDBIR1FkRmF4RzNIcGhybm5jZjFwSUhiOUxuMU1sS0pV?=
+ =?utf-8?B?M1hJeHlvZTJMdyt1dXk5QkRTRldLMHpWOWVHTWJ2Z2JSdTVRRE5mVWtNbXdk?=
+ =?utf-8?B?TTZYWkpNOVNuTlZSTmdEZE1HMStHWjNBT3UvTUl0NVlOWmdqWlIzdkhsZ21u?=
+ =?utf-8?B?TmhDTC9USUphM3ZNUm55N0hsMGtWRCtsOGd6Mms1RmJQcDFQeGdQUVZOY0dI?=
+ =?utf-8?Q?67+BAblm3LSRmRQkh3jAAzEDB?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b7e94c28-5a4f-4046-198f-08dd82f5a6a4
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2025 06:02:53.2685
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FUTZisO1q6GIWp1RrtGzBWgjc+VWLVvOATHP8sowBLKm6seL94S8T78F+9vJdbTqZGsQbtIXCDuy9j+iUiuHiA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR10MB3627
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 23 Apr 2025 22:46:09 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18592
-
-Hi!
-
-It's this week's CVE report.
-
-This week reported 28 new CVEs and 4 updated CVEs.
-
-* New CVEs
-CVE-2020-36789: can: dev: can_get_echo_skb(): prevent call to
-kfree_skb() in hard IRQ context
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2020-36789
-
-Introduced by commit 39549ee ("can: CAN Network device driver and
-Netlink interface") in v2.6.31-rc1.
-Fixed in v5.10-rc3.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-cip/4.19-st: [7e4cf2ec0ca236c3e5f904239cec6efe1f3baf22]
-cip/4.4-st: [248b71ce92d4f3a574b2537f9838f48e892618f4]
-mainline: [2283f79b22684d2812e5c76fc2280aae00390365]
-stable/4.19: [7e4cf2ec0ca236c3e5f904239cec6efe1f3baf22]
-stable/5.10: [2283f79b22684d2812e5c76fc2280aae00390365]
-stable/5.4: [ab46748bf98864f9c3f5559060bf8caf9df2b41e]
-
-CVE-2021-47668: can: dev: can_restart: fix use after free bug
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2021-47668
-
-Introduced by commit 39549ee ("can: CAN Network device driver and
-Netlink interface") in v2.6.31-rc1.
-Fixed in v5.11-rc5.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-cip/4.19-st: [08ab951787098ae0b6c0364aeea7a8138226f234]
-cip/4.4-st: [260925a0b7d2da5449f8ecfd02c1405e0c8a45b8]
-mainline: [03f16c5075b22c8902d2af739969e878b0879c94]
-stable/4.19: [08ab951787098ae0b6c0364aeea7a8138226f234]
-stable/5.10: [593c072b7b3c4d7044416eb039d9ad706bedd67a]
-stable/5.4: [ac48ef15826e83f4206c47add61072e8fc76d328]
-
-CVE-2021-47669: can: vxcan: vxcan_xmit: fix use after free bug
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2021-47669
-
-Introduced by commit a8f820a ("can: add Virtual CAN Tunnel driver
-(vxcan)") in v4.12-rc1.
-Fixed in v5.11-rc5.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-cip/4.19-st: [9b820875a32a3443d67bfd368e93038354e98052]
-mainline: [75854cad5d80976f6ea0f0431f8cedd3bcc475cb]
-stable/4.19: [9b820875a32a3443d67bfd368e93038354e98052]
-stable/5.10: [e771a874076115df8bff27d325edfd2340e4ec69]
-stable/5.4: [a24476b37167816e6352ca1a2cf3769847774f70]
-
-CVE-2021-47670: can: peak_usb: fix use after free bugs
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2021-47670
-
-Introduced by commit 0a25e1f ("can: peak_usb: add support for PEAK new
-CANFD USB adapters") in v4.0-rc1.
-Fixed in v5.11-rc5.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-cip/4.19-st: [5408824636fa0dfedb9ecb0d94abd573131bfbbe]
-mainline: [50aca891d7a554db0901b245167cd653d73aaa71]
-stable/4.19: [5408824636fa0dfedb9ecb0d94abd573131bfbbe]
-stable/5.10: [ec939c13c3fff2114479769c8380b7f1a54feca9]
-stable/5.4: [ddd1416f44130377798c1430b76503513b7497c2]
-
-CVE-2021-47671: can: etas_es58x: es58x_rx_err_msg(): fix memory leak
-in error path
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2021-47671
-
-Introduced by commit 8537257 ("can: etas_es58x: add core support for
-ETAS ES58X CAN USB interfaces") in v5.13-rc1.
-Fixed in v5.16-rc1.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [d9447f768bc8c60623e4bb3ce65b8f4654d33a50]
-stable/5.15: [7eb0881aec26099089f12ae850aebd93190b1dfe]
-
-CVE-2025-37785: ext4: fix OOB read when checking dotdot dir
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-37785
-
-Introduced by commit ac27a0e ("[PATCH] ext4: initial copy of files
-from ext3") in v2.6.20.16.
-Fixed in v6.15-rc1.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [d5e206778e96e8667d3bde695ad372c296dc9353]
-stable/5.10: [e47f472a664d70a3d104a6c2a035cdff55a719b4]
-stable/5.15: [b7531a4f99c3887439d778afaf418d1a01a5f01b]
-stable/6.1: [89503e5eae64637d0fa2218912b54660effe7d93]
-stable/6.6: [52a5509ab19a5d3afe301165d9b5787bba34d842]
-
-CVE-2025-37860: sfc: fix NULL dereferences in ef100_process_design_param()
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-37860
-
-Introduced by commit 98ff4c7 ("sfc: Separate netdev probe/remove from
-PCI probe/remove") in v6.0-rc1.
-Fixed in v6.15-rc1.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [8241ecec1cdc6699ae197d52d58e76bddd995fa5]
-
-CVE-2025-37893: LoongArch: BPF: Fix off-by-one error in build_prologue()
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-37893
-
-Introduced by commit 5dc6155 ("LoongArch: Add BPF JIT support") in v6.1-rc1.
-Introduced by commit bb035ef ("LoongArch: BPF: Support mixing bpf2bpf
-and tailcalls") in v6.4-rc1.
-Fixed in v6.15-rc1.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [7e2586991e36663c9bc48c828b83eab180ad30a9]
-stable/6.1: [e9ccb262b39ab01a5ac2e485b7996b8498e7b373]
-stable/6.6: [b3ffad2f02db4aace6799fe0049508b8925eae45]
-
-CVE-2025-37925: jfs: reject on-disk inodes of an unsupported type
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-37925
-
-Introduced by commit 79ac5a4 ("jfs_lookup(): don't bother with . or
-..") in v3.1-rc1.
-Fixed in v6.15-rc1.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [8c3f9a70d2d4dd6c640afe294b05c6a0a45434d9]
-
-CVE-2025-38049: x86/resctrl: Fix allocation of cleanest CLOSID on
-platforms with no monitors
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-38049
-
-Introduced by commit 6eac36b ("x86/resctrl: Allocate the cleanest
-CLOSID by searching closid_num_dirty_rmid") in v6.9-rc1.
-Fixed in v6.15-rc1.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [a121798ae669351ec0697c94f71c3a692b2a755b]
-
-CVE-2025-38104: drm/amdgpu: Replace Mutex with Spinlock for RLCG
-register access to avoid Priority Inversion in SRIOV
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-38104
-
-Introduced by commit e864180 ("drm/amdgpu: Add lock around VF RLCG
-interface") in v6.11-rc1.
-Fixed in v6.15-rc1.
-
-Bug introduced commit was backported to following branches.
-cip/6.1 cip/6.1-rt stable/6.1 stable/6.6
-
-Fixed status
-mainline: [dc0297f3198bd60108ccbd167ee5d9fa4af31ed0]
-
-CVE-2025-38152: remoteproc: core: Clear table_sz when rproc_shutdown
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-38152
-
-Introduced by commit 9dc9507 ("remoteproc: Properly deal with the
-resource table when detaching") in v5.13-rc1.
-Fixed in v6.15-rc1.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [efdde3d73ab25cef4ff2d06783b0aad8b093c0e4]
-stable/5.15: [6e66bca8cd51ebedd5d32426906a38e4a3c69c5f]
-stable/6.1: [e6015ca453b82ec54aec9682dcc38773948fcc48]
-stable/6.6: [7c6bb82a6f3da6ab2d3fbea03901482231708b98]
-
-CVE-2025-38240: drm/mediatek: dp: drm_err => dev_err in HPD path to
-avoid NULL ptr
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-38240
-
-Introduced by commit 7eacba9 ("drm/mediatek: dp: Add
-.wait_hpd_asserted() for AUX bus") in v6.6-rc1.
-Fixed in v6.15-rc1.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [106a6de46cf4887d535018185ec528ce822d6d84]
-stable/6.6: [13ec849fd2eab808ee8eba2625df7ebea3b85edf]
-
-CVE-2025-38479: dmaengine: fsl-edma: free irq correctly in remove path
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-38479
-
-Introduced by commit 44eb827 ("dmaengine: fsl-edma: request
-per-channel IRQ only when channel is allocated") in v6.11-rc1.
-Fixed in v6.15-rc1.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [fa70c4c3c580c239a0f9e83a14770ab026e8d820]
-
-CVE-2025-38575: ksmbd: use aead_request_free to match aead_request_alloc
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-38575
-
-Introduced by commit e2f3448 ("cifsd: add server-side procedures for
-SMB3") in v5.15-rc1.
-Fixed in v6.15-rc1.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [6171063e9d046ffa46f51579b2ca4a43caef581a]
-stable/5.15: [571b342d4688801fc1f6a1934389dac09425dc93]
-stable/6.1: [a6b594868268c3a7bfaeced912525cd2c445529a]
-stable/6.6: [1de7fec4d3012672e31eeb6679ea60f7ca010ef9]
-
-CVE-2025-38637: net_sched: skbprio: Remove overly strict queue assertions
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-38637
-
-Introduced by commit aea5f65 ("net/sched: add skbprio scheduler") in v4.19-rc1.
-Fixed in v6.15-rc1.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [ce8fe975fd99b49c29c42e50f2441ba53112b2e8]
-stable/5.10: [1284733bab736e598341f1d3f3b94e2a322864a8]
-stable/5.15: [32ee79682315e6d3c99947b3f38b078a09a66919]
-stable/5.4: [7abc8318ce0712182bf0783dcfdd9a6a8331160e]
-stable/6.1: [1dcc144c322a8d526b791135604c0663f1af9d85]
-stable/6.6: [864ca690ff135078d374bd565b9872f161c614bc]
-
-CVE-2025-39688: nfsd: allow SC_STATUS_FREEABLE when searching via
-nfs4_lookup_stateid()
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-39688
-
-Introduced by commit 8dd91e8 ("nfsd: fix race between laundromat and
-free_stateid") in v6.12-rc5.
-Fixed in v6.15-rc1.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [d1bc15b147d35b4cb7ca99a9a7d79d41ca342c13]
-
-CVE-2025-39728: clk: samsung: Fix UBSAN panic in samsung_clk_init()
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-39728
-
-Introduced by commit e620a1e ("drivers/clk: convert VL struct to
-struct_size") in v5.5-rc1.
-Fixed in v6.15-rc1.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [d19d7345a7bcdb083b65568a11b11adffe0687af]
-stable/5.10: [00307934eb94aaa0a99addfb37b9fe206f945004]
-stable/5.15: [d974e177369c034984cece9d7d4fada9f8b9c740]
-stable/6.1: [0fef48f4a70e45a93e73c39023c3a6ea624714d6]
-stable/6.6: [4d29a6dcb51e346595a15b49693eeb728925ca43]
-
-CVE-2025-39735: jfs: fix slab-out-of-bounds read in ea_get()
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-39735
-
-Introduced by commit d9f9d96 ("jfs: xattr: check invalid xattr size
-more strictly") in v6.13-rc1.
-Fixed in v6.15-rc1.
-
-Bug introduced commit was backported to following branches.
-cip/4.19 cip/4.19-rt cip/4.19-st cip/4.4 cip/4.4-rt cip/4.4-st
-cip/5.10 cip/5.10-rt cip/6.1 cip/6.1-rt stable/5.10 stable/5.15
-stable/5.4 stable/6.1 stable/6.12 stable/6.6
-
-Fixed status
-mainline: [fdf480da5837c23b146c4743c18de97202fcab37]
-stable/5.10: [50afcee7011155933d8d5e8832f52eeee018cfd3]
-stable/5.15: [78c9cbde8880ec02d864c166bcb4fe989ce1d95f]
-stable/5.4: [3d6fd5b9c6acbc005e53d0211c7381f566babec1]
-stable/6.1: [46e2c031aa59ea65128991cbca474bd5c0c2ecdb]
-stable/6.6: [a8c31808925b11393a6601f534bb63bac5366bab]
-
-CVE-2025-39755: staging: gpib: Fix cb7210 pcmcia Oops
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-39755
-
-Introduced by commit e9dc699 ("staging: gpib: Add Computer Boards GPIB
-driver") in v6.13-rc1.
-Fixed in v6.15-rc1.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [c1baf6528bcfd6a86842093ff3f8ff8caf309c12]
-
-CVE-2025-39778: objtool, nvmet: Fix out-of-bounds stack access in
-nvmet_ctrl_state_show()
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-39778
-
-Introduced by commit 649fd41 ("nvmet: add debugfs support") in v6.11-rc1.
-Fixed in v6.15-rc1.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [107a23185d990e3df6638d9a84c835f963fe30a6]
-
-CVE-2025-39930: ASoC: simple-card-utils: Don't use __free(device_node)
-at graph_util_parse_dai()
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-39930
-
-Introduced by commit 419d191 ("ASoC: simple-card-utils: use
-__free(device_node) for device node") in v6.14-rc1.
-Fixed in v6.15-rc1.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [de74ec718e0788e1998eb7289ad07970e27cae27]
-
-CVE-2025-39989: x86/mce: use is_copy_from_user() to determine
-copy-from-user context
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-39989
-
-Introduced by commit 4c132d1 ("x86/futex: Remove .fixup usage") in v5.17-rc1.
-Fixed in v6.15-rc1.
-
-Bug introduced commit was backported to following branches.
-stable/5.15
-
-Fixed status
-mainline: [1a15bb8303b6b104e78028b6c68f76a0d4562134]
-
-CVE-2025-40014: objtool, spi: amd: Fix out-of-bounds stack access in
-amd_set_spi_freq()
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-40014
-
-Introduced by commit 3fe2612 ("spi: amd: Configure device speed") in v6.1-rc1.
-Fixed in v6.15-rc1.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [76e51db43fe4aaaebcc5ddda67b0807f7c9bdecc]
-
-CVE-2025-40114: iio: light: Add check for array bounds in
-veml6075_read_int_time_ms
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-40114
-
-Introduced by commit 3b82f43 ("iio: light: add VEML6075 UVA and UVB
-light sensor driver") in v6.8-rc1.
-Fixed in v6.15-rc1.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [ee735aa33db16c1fb5ebccbaf84ad38f5583f3cc]
-
-CVE-2025-40325: md/raid10: wait barrier before returning discard
-request with REQ_NOWAIT
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-40325
-
-Introduced by commit c9aa889 ("md: raid10 add nowait support") in v5.17-rc1.
-Fixed in v6.15-rc1.
-
-Bug introduced commit was backported to following branches.
-stable/5.15
-
-Fixed status
-mainline: [3db4404435397a345431b45f57876a3df133f3b4]
-
-CVE-2025-37838: HSI: ssi_protocol: Fix use after free vulnerability in
-ssi_protocol Driver Due to Race Condition
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-37838
-
-There is no mention of the commit that introduced the bug in the CVE
-announcement.Fixed in v6.15-rc1.
-
-
-Fixed status
-mainline: [e3f88665a78045fe35c7669d2926b8d97b892c11]
-stable/6.12: [ae5a6a0b425e8f76a9f0677e50796e494e89b088]
-stable/6.13: [834e602d0cc7c743bfce734fad4a46cefc0f9ab1]
-stable/6.14: [4b4194c9a7a8f92db39e8e86c85f4fb12ebbec4f]
-
-CVE-2025-40364: io_uring: fix io_req_prep_async with provided buffers
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-40364
-
-This CVE announce does not contain fixed commit in the mainline.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [b85ea95d086471afb4ad062012a4d73cd328fa86]
-stable/6.1: [a1b17713b32c75a90132ea2f92b1257f3bbc20f3]
-stable/6.6: [a94592ec30ff67dc36c424327f1e0a9ceeeb9bd3]
-
-* Updated CVEs
-
-CVE-2024-53204: phy: realtek: usb: fix NULL deref in rtk_usb3phy_probe
-
-stable/6.6 was fixed.
-
-Fixed status
-stable/6.12: [776f13ad1f88485206f1dca5ef138553106950e5]
-stable/6.6: [e27877990e54bfe4246dd850f7ec8646c999ce58]
-
-CVE-2024-53205: phy: realtek: usb: fix NULL deref in rtk_usb2phy_probe
-
-stable/6.6 was fixed.
-
-Fixed status
-stable/6.12: [fb83c9a08324e37f321ffb400809aa4310387d65]
-stable/6.6: [7e2cde1813418b39b5e95d86e10d6701dccf18af]
-
-CVE-2025-22026: nfsd: don't ignore the return code of svc_proc_register()
-
-stable/6.12, stable/6.13 were fixed.
-
-Fixed status
-stable/6.12: [6a59b70fe71ec66c0dd19e2c279c71846a3fb2f0]
-stable/6.13: [e31957a819e60cf0bc9a49408765e6095fd3d046]
-stable/6.14: [9d9456185fd5f1891c74354ee297f19538141ead]
-
-Regards,
--- 
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
-
-Email :masami.ichikawa@cybertrust.co.jp
-          :masami.ichikawa@miraclelinux.com
+ <cip-dev@lists.cip-project.org>; Thu, 24 Apr 2025 06:03:01 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18593
+
+Hi all,
+
+Kindly be reminded to attend the weekly meeting through IRC to discuss
+technical topics with CIP kernel today. Our channel is the following:
+
+    irc:irc.libera.chat:6667/cip
+
+The IRC meeting is scheduled to UTC (GMT) 13:00:
+
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=2025&month=4&day=24&hour=13&min=0&sec=0&p1=224&p2=179&p3=136&p4=37&p5=241&p6=248
+
+USWest    USEast    UK        DE        TW        JP
+06:00     09:00     14:00     15:00     21:00     22:00
+
+Last meeting minutes:
+https://ircbot.wl.linuxfoundation.org/meetings/cip/2025/04/cip.2025-04-17-13.01.log.html
+
+* Action items
+  - write docs for release scripts [iwamatsu-san]
+* Kernel maintenance updates
+* Kernel release status [*]
+* Kernel testing
+* AOB
+
+Jan
+
+[*]
+linux-4.4.y-cip: interval 30 day
+  latest version release date: Wed Apr 23 09:15:22 AM UTC 2025
+  limit date: Fri May 23 09:15:22 AM UTC 2025
+  Status: On track
+linux-4.4.y-cip-rt: interval 60 day
+  latest version release date: Wed Apr 23 11:10:00 AM UTC 2025
+  limit date: Sun Jun 22 11:10:00 AM UTC 2025
+  Status: On track
+linux-4.19.y-cip: interval 30 day
+  latest version release date: Mon Apr  7 12:49:49 PM UTC 2025
+  limit date: Wed May  7 12:49:49 PM UTC 2025
+  Status: On track
+linux-4.19.y-cip-rt: interval 60 day
+  latest version release date: Wed Mar 19 01:02:44 PM UTC 2025
+  limit date: Sun May 18 01:02:44 PM UTC 2025
+  Status: On track
+linux-5.10.y-cip: interval 30 day
+  latest version release date: Fri Apr 18 04:57:16 AM UTC 2025
+  limit date: Sun May 18 04:57:16 AM UTC 2025
+  Status: On track
+linux-5.10.y-cip-rt: interval 60 day
+  latest version release date: Mon Mar 17 09:54:04 PM UTC 2025
+  limit date: Fri May 16 09:54:04 PM UTC 2025
+  Status: On track
+linux-6.1.y-cip: interval 15 day
+  latest version release date: Fri Apr 18 12:23:18 AM UTC 2025
+  limit date: Sat May  3 12:23:18 AM UTC 2025
+  Status: On track
+linux-6.1.y-cip-rt: interval 30 day
+  latest version release date: Thu Apr  3 11:32:00 AM UTC 2025
+  limit date: Sat May  3 11:32:00 AM UTC 2025
+  Status: On track
 
