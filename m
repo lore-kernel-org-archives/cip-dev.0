@@ -2,30 +2,30 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58BECC369D7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58BB4C369D5
 	for <webhook@archiver.kernel.org>; Fri, 25 Apr 2025 09:11:27 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web10.2723.1745572277578265580
  for <cip-dev@lists.cip-project.org>;
- Fri, 25 Apr 2025 02:11:21 -0700
+ Fri, 25 Apr 2025 02:11:23 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: /uU4impITOWneL5189mpZA==
-X-CSE-MsgGUID: L6bdXLqmQKSdrAuPYmlTjQ==
+X-CSE-ConnectionGUID: xl2n/csiRsWlsIRFItrmQg==
+X-CSE-MsgGUID: erKAmHkMRWOeWedRssyCCA==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 25 Apr 2025 18:11:21 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 25 Apr 2025 18:11:23 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.1])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id B673241FE01A;
-	Fri, 25 Apr 2025 18:11:19 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id D696241FE015;
+	Fri, 25 Apr 2025 18:11:21 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 6.1.y-cip 10/15] i2c: riic: Use dev_err_probe in probe and riic_init_hw functions
-Date: Fri, 25 Apr 2025 10:10:52 +0100
-Message-ID: <20250425091057.33752-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 11/15] i2c: riic: Use BIT macro consistently
+Date: Fri, 25 Apr 2025 10:10:53 +0100
+Message-ID: <20250425091057.33752-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250425091057.33752-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20250425091057.33752-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -35,18 +35,11 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 25 Apr 2025 09:11:27 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18614
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18615
 
-commit e2aa2502e8067527e36dd7a3cad81b2004614a6c upstream.
+commit 0094d6b70d6b4eb5084e3b7dd99ebfc94d3ca58d upstream.
 
-Refactor error handling in the riic_i2c_probe() and riic_init_hw()
-functions by replacing multiple dev_err() calls with dev_err_probe().
-
-Additionally, update the riic_init_hw() function to use a local `dev`
-pointer instead of `riic->adapter.dev` for dev_err_probe(), as the I2C
-adapter is not initialized at this stage. Drop the cast to (unsigned long)
-in the riic_init_hw() function when printing the bus frequency, and update
-the error message to display the frequency in Hz, improving clarity.
+Easier to read and ensures proper types.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -58,56 +51,72 @@ Reviewed-by: Andy Shevchenko <andy@kernel.org>
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/i2c/busses/i2c-riic.c | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+ drivers/i2c/busses/i2c-riic.c | 37 ++++++++++++++++++-----------------
+ 1 file changed, 19 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
-index 4fb910e0b3df3..ee48ec2f54cce 100644
+index ee48ec2f54cce..5f67891cf4695 100644
 --- a/drivers/i2c/busses/i2c-riic.c
 +++ b/drivers/i2c/busses/i2c-riic.c
-@@ -357,11 +357,9 @@ static int riic_init_hw(struct riic_dev *riic)
- 		rate /= 2;
- 	}
+@@ -34,6 +34,7 @@
+  * Also check the comments in the interrupt routines for some gory details.
+  */
  
--	if (brl > (0x1F + 3)) {
--		dev_err(&riic->adapter.dev, "invalid speed (%lu). Too slow.\n",
--			(unsigned long)t->bus_freq_hz);
--		return -EINVAL;
--	}
-+	if (brl > (0x1F + 3))
-+		return dev_err_probe(dev, -EINVAL, "invalid speed (%uHz). Too slow.\n",
-+				     t->bus_freq_hz);
++#include <linux/bits.h>
+ #include <linux/clk.h>
+ #include <linux/completion.h>
+ #include <linux/err.h>
+@@ -47,32 +48,32 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/reset.h>
  
- 	brh = total_ticks - brl;
+-#define ICCR1_ICE	0x80
+-#define ICCR1_IICRST	0x40
+-#define ICCR1_SOWP	0x10
++#define ICCR1_ICE	BIT(7)
++#define ICCR1_IICRST	BIT(6)
++#define ICCR1_SOWP	BIT(4)
  
-@@ -446,10 +444,9 @@ static int riic_i2c_probe(struct platform_device *pdev)
- 		return PTR_ERR(riic->base);
+-#define ICCR2_BBSY	0x80
+-#define ICCR2_SP	0x08
+-#define ICCR2_RS	0x04
+-#define ICCR2_ST	0x02
++#define ICCR2_BBSY	BIT(7)
++#define ICCR2_SP	BIT(3)
++#define ICCR2_RS	BIT(2)
++#define ICCR2_ST	BIT(1)
  
- 	riic->clk = devm_clk_get(dev, NULL);
--	if (IS_ERR(riic->clk)) {
--		dev_err(dev, "missing controller clock");
--		return PTR_ERR(riic->clk);
--	}
-+	if (IS_ERR(riic->clk))
-+		return dev_err_probe(dev, PTR_ERR(riic->clk),
-+				     "missing controller clock");
+ #define ICMR1_CKS_MASK	0x70
+-#define ICMR1_BCWP	0x08
++#define ICMR1_BCWP	BIT(3)
+ #define ICMR1_CKS(_x)	((((_x) << 4) & ICMR1_CKS_MASK) | ICMR1_BCWP)
  
- 	riic->rstc = devm_reset_control_get_optional_exclusive(dev, NULL);
- 	if (IS_ERR(riic->rstc))
-@@ -473,10 +470,9 @@ static int riic_i2c_probe(struct platform_device *pdev)
+-#define ICMR3_RDRFS	0x20
+-#define ICMR3_ACKWP	0x10
+-#define ICMR3_ACKBT	0x08
++#define ICMR3_RDRFS	BIT(5)
++#define ICMR3_ACKWP	BIT(4)
++#define ICMR3_ACKBT	BIT(3)
  
- 		ret = devm_request_irq(dev, irq, riic_irqs[i].isr,
- 				       0, riic_irqs[i].name, riic);
--		if (ret) {
--			dev_err(dev, "failed to request irq %s\n", riic_irqs[i].name);
--			return ret;
--		}
-+		if (ret)
-+			return dev_err_probe(dev, ret, "failed to request irq %s\n",
-+					     riic_irqs[i].name);
- 	}
+-#define ICFER_FMPE	0x80
++#define ICFER_FMPE	BIT(7)
  
- 	riic->info = of_device_get_match_data(dev);
+-#define ICIER_TIE	0x80
+-#define ICIER_TEIE	0x40
+-#define ICIER_RIE	0x20
+-#define ICIER_NAKIE	0x10
+-#define ICIER_SPIE	0x08
++#define ICIER_TIE	BIT(7)
++#define ICIER_TEIE	BIT(6)
++#define ICIER_RIE	BIT(5)
++#define ICIER_NAKIE	BIT(4)
++#define ICIER_SPIE	BIT(3)
+ 
+-#define ICSR2_NACKF	0x10
++#define ICSR2_NACKF	BIT(4)
+ 
+ #define ICBR_RESERVED	0xe0 /* Should be 1 on writes */
+ 
 -- 
 2.43.0
 
