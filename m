@@ -2,30 +2,30 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D26C369D5
-	for <webhook@archiver.kernel.org>; Fri, 25 Apr 2025 12:15:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27258C369C2
+	for <webhook@archiver.kernel.org>; Fri, 25 Apr 2025 12:15:29 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web11.5125.1745583308658722051
  for <cip-dev@lists.cip-project.org>;
- Fri, 25 Apr 2025 05:15:10 -0700
+ Fri, 25 Apr 2025 05:15:19 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: JaP0u6C9Tz2GMCHzIU5jzw==
-X-CSE-MsgGUID: 8MdW5hUeSMey9CTIglSIEw==
+X-CSE-ConnectionGUID: ir9zJ5ACQSuBSY9efcZWeQ==
+X-CSE-MsgGUID: 9Y4Hjm6PSw2BjzraYeCGig==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 25 Apr 2025 21:15:10 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 25 Apr 2025 21:15:18 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.1])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9D9E242D7EED;
-	Fri, 25 Apr 2025 21:15:08 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 34B7842D7EC8;
+	Fri, 25 Apr 2025 21:15:16 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 6.1.y-cip 10/21] soc: renesas: r9a09g057-sys: Add a callback to print SoC-specific extra features
-Date: Fri, 25 Apr 2025 13:14:34 +0100
-Message-ID: <20250425121445.62818-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 14/21] dt-bindings: mmc: renesas,sdhi: Document RZ/G2L family compatibility
+Date: Fri, 25 Apr 2025 13:14:38 +0100
+Message-ID: <20250425121445.62818-15-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250425121445.62818-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20250425121445.62818-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -34,92 +34,81 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 25 Apr 2025 12:15:19 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18632
+ <cip-dev@lists.cip-project.org>; Fri, 25 Apr 2025 12:15:29 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18636
 
-From: John Madieu <john.madieu.xa@bp.renesas.com>
+commit d640af49b65c6d260a5154dfb822e8371b502707 upstream.
 
-commit 25a5246b0e564d238e917b5a3684171718c950fd upstream.
+- RZ/G2UL and RZ/Five ("r9a07g043")
+- RZ/G2L(C) ("r9a07g044")
+- RZ/V2L ("r9a07g054")
+- RZ/G3S ("r9a08g045")
+- RZ/V2M ("r9a09g011")
 
-Some RZ/V2H SoC variants feature a Mali-G31 (GPU) and/or a Mali-C55
-(ISP) IP(s).  Detect and inform about their presence during SoC
-identification.  Also detect PLL frequency and warn in case of mismatch.
+The SD/MMC Interface in the above listed SoCs is not identical to that of
+R-Car Gen3. These SoCs have HS400 disabled and use fixed address mode.
+Therefore, we need to apply fixed_addr_mode and hs400_disabled quirks.
 
+Document 'renesas,rzg2l-sdhi' as a generic compatible string for the
+above SoCs.
+
+Also now use the 'renesas,rzg2l-sdhi' string in the if check for making
+sure the required clocks are present.
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
-Link: https://lore.kernel.org/20250128031342.52675-6-john.madieu.xa@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20240430145937.133643-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+[PL: manually applied the changes]
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/soc/renesas/r9a09g057-sys.c | 42 +++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ .../devicetree/bindings/mmc/renesas,sdhi.yaml | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/soc/renesas/r9a09g057-sys.c b/drivers/soc/renesas/r9a09g057-sys.c
-index 49a92de581b4c..4c21cc29edbc3 100644
---- a/drivers/soc/renesas/r9a09g057-sys.c
-+++ b/drivers/soc/renesas/r9a09g057-sys.c
-@@ -5,6 +5,7 @@
-  * Copyright (C) 2025 Renesas Electronics Corp.
-  */
+diff --git a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+index 3b7f057bf294d..6b692a86900c7 100644
+--- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
++++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+@@ -51,17 +51,20 @@ properties:
+               - renesas,sdhi-r8a77980  # R-Car V3H
+               - renesas,sdhi-r8a77990  # R-Car E3
+               - renesas,sdhi-r8a77995  # R-Car D3
+-              - renesas,sdhi-r9a07g043 # RZ/G2UL and RZ/Five
+-              - renesas,sdhi-r9a07g044 # RZ/G2{L,LC}
+-              - renesas,sdhi-r9a07g054 # RZ/V2L
+-              - renesas,sdhi-r9a08g045 # RZ/G3S
+-              - renesas,sdhi-r9a09g011 # RZ/V2M
+           - const: renesas,rcar-gen3-sdhi # R-Car Gen3 or RZ/G2
+       - items:
+           - enum:
+               - renesas,sdhi-r8a779a0  # R-Car V3U
+               - renesas,sdhi-r8a779f0  # R-Car S4-8
+           - const: renesas,rcar-gen4-sdhi # R-Car Gen4
++      - items:
++          - enum:
++              - renesas,sdhi-r9a07g043 # RZ/G2UL and RZ/Five
++              - renesas,sdhi-r9a07g044 # RZ/G2{L,LC}
++              - renesas,sdhi-r9a07g054 # RZ/V2L
++              - renesas,sdhi-r9a08g045 # RZ/G3S
++              - renesas,sdhi-r9a09g011 # RZ/V2M
++          - const: renesas,rzg2l-sdhi
  
-+#include <linux/bitfield.h>
- #include <linux/bits.h>
- #include <linux/device.h>
- #include <linux/init.h>
-@@ -12,12 +13,53 @@
- 
- #include "rz-sysc.h"
- 
-+/* Register Offsets */
-+#define SYS_LSI_MODE		0x300
-+/*
-+ * BOOTPLLCA[1:0]
-+ *	    [0,0] => 1.1GHZ
-+ *	    [0,1] => 1.5GHZ
-+ *	    [1,0] => 1.6GHZ
-+ *	    [1,1] => 1.7GHZ
-+ */
-+#define SYS_LSI_MODE_STAT_BOOTPLLCA55	GENMASK(12, 11)
-+#define SYS_LSI_MODE_CA55_1_7GHZ	0x3
-+
-+#define SYS_LSI_PRR			0x308
-+#define SYS_LSI_PRR_GPU_DIS		BIT(0)
-+#define SYS_LSI_PRR_ISP_DIS		BIT(4)
-+
-+static void rzv2h_sys_print_id(struct device *dev,
-+				void __iomem *sysc_base,
-+				struct soc_device_attribute *soc_dev_attr)
-+{
-+	bool gpu_enabled, isp_enabled;
-+	u32 prr_val, mode_val;
-+
-+	prr_val = readl(sysc_base + SYS_LSI_PRR);
-+	mode_val = readl(sysc_base + SYS_LSI_MODE);
-+
-+	/* Check GPU and ISP configuration */
-+	gpu_enabled = !(prr_val & SYS_LSI_PRR_GPU_DIS);
-+	isp_enabled = !(prr_val & SYS_LSI_PRR_ISP_DIS);
-+
-+	dev_info(dev, "Detected Renesas %s %s Rev %s%s%s\n",
-+		 soc_dev_attr->family, soc_dev_attr->soc_id, soc_dev_attr->revision,
-+		 gpu_enabled ? " with GE3D (Mali-G31)" : "",
-+		 isp_enabled ? " with ISP (Mali-C55)" : "");
-+
-+	/* Check CA55 PLL configuration */
-+	if (FIELD_GET(SYS_LSI_MODE_STAT_BOOTPLLCA55, mode_val) != SYS_LSI_MODE_CA55_1_7GHZ)
-+		dev_warn(dev, "CA55 PLL is not set to 1.7GHz\n");
-+}
-+
- static const struct rz_sysc_soc_id_init_data rzv2h_sys_soc_id_init_data __initconst = {
- 	.family = "RZ/V2H",
- 	.id = 0x847a447,
- 	.devid_offset = 0x304,
- 	.revision_mask = GENMASK(31, 28),
- 	.specific_id_mask = GENMASK(27, 0),
-+	.print_id = rzv2h_sys_print_id,
- };
- 
- const struct rz_sysc_init_data rzv2h_sys_init_data = {
+   reg:
+     maxItems: 1
+@@ -113,11 +116,7 @@ allOf:
+       properties:
+         compatible:
+           contains:
+-            enum:
+-              - renesas,sdhi-r9a07g043
+-              - renesas,sdhi-r9a07g044
+-              - renesas,sdhi-r9a07g054
+-              - renesas,sdhi-r9a08g045
++            const: renesas,rzg2l-sdhi
+     then:
+       properties:
+         clocks:
 -- 
 2.43.0
 
