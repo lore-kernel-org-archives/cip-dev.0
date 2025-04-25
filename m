@@ -1,79 +1,115 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 196BEC369C2
-	for <webhook@archiver.kernel.org>; Fri, 25 Apr 2025 08:46:47 +0000 (UTC)
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web10.2487.1745570800790957000
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 551C7C369D7
+	for <webhook@archiver.kernel.org>; Fri, 25 Apr 2025 09:11:07 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web11.2669.1745572264712836893
  for <cip-dev@lists.cip-project.org>;
- Fri, 25 Apr 2025 01:46:41 -0700
+ Fri, 25 Apr 2025 02:11:05 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=FkDZpkCL;
- spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 814E010275AF8;
-	Fri, 25 Apr 2025 10:46:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1745570798; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=q2AnNmeC2euUos/IALbKS7nvWBDm9YDARcRU4YP+SeE=;
-	b=FkDZpkCLLGFFiqgkIH7eGo3Z8NcT4RwOGehBrPrc92ljjnBAKpdeNw6oaxziVmo6vVHiu3
-	Xti2UwPUI6WIvTpXQpY0wT6w8IC1hfQqZ3DPEgVMliVg4rY8WohUMhJqib5ihAvHjdr4Bo
-	GW/n2AWrdnMxbRSWfUumtIO20hwwQfsxGZoCfRqarzjjRBgRekod25U/IkpNEijNOGPJ7z
-	A+kNFhuPGl/jk0NKy0cotQScI3xkFbv8zIk3/WrAvzYgWHcENTGUHNw9Llafqe6MOGKCKl
-	AeQBFxNPP1D9P1no1Ts5VrXzu8RGlS9BsqR+9L7F6Noy0iRyxlaeIpssPJnzMA==
-Date: Fri, 25 Apr 2025 10:46:31 +0200
-From: Pavel Machek <pavel@denx.de>
-To: prabhakar.mahadev-lad.rj@bp.renesas.com
-Cc: cip-dev@lists.cip-project.org,
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+X-CSE-ConnectionGUID: uRVe9MerRVevyeisl8Lfzg==
+X-CSE-MsgGUID: dIwN5e4eS+C0O7sKX7hqlg==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 25 Apr 2025 18:11:04 +0900
+Received: from Ubuntu-22.. (unknown [10.226.92.1])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 925BC41FE015;
+	Fri, 25 Apr 2025 18:11:02 +0900 (JST)
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
+	Pavel Machek <pavel@denx.de>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: Re: [cip-dev] [PATCH 6.12.y-cip 0/8] i2c: riic: miscellaneous code
- cleanup and improvements
-Message-ID: <aAtL50fkTs8tJaPu@duo.ucw.cz>
-References: <20250423210458.14698-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 02/15] i2c: riic: Call pm_runtime_get_sync() when need to access registers
+Date: Fri, 25 Apr 2025 10:10:44 +0100
+Message-ID: <20250425091057.33752-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250425091057.33752-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250425091057.33752-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Vh3yS9GTFUFAOvtR"
-Content-Disposition: inline
-In-Reply-To: <20250423210458.14698-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 25 Apr 2025 08:46:47 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18603
+ <cip-dev@lists.cip-project.org>; Fri, 25 Apr 2025 09:11:07 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18606
 
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
---Vh3yS9GTFUFAOvtR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+commit a1ecb041589017ce4e03d92f3b9a92a2a8a37ceb upstream.
 
-Hi!
+There is no need to runtime resume the device as long as the IP registers
+are not accessed. Calling pm_runtime_get_sync() at the register access
+time leads to a simpler error path.
 
-> This patch series includes miscellaneous code cleanup and
-> improvements to RIIC driver used by Renesas RZ SoCs.
->=20
-> Note, all the patches have been cherry-picked from v6.15-rc3.
+Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: Andi Shyti <andi.shyti@kernel.org>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/i2c/busses/i2c-riic.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-Thank you, applied.
+diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
+index ea2c894600d52..531210f55abac 100644
+--- a/drivers/i2c/busses/i2c-riic.c
++++ b/drivers/i2c/busses/i2c-riic.c
+@@ -302,19 +302,15 @@ static const struct i2c_algorithm riic_algo = {
+ 
+ static int riic_init_hw(struct riic_dev *riic, struct i2c_timings *t)
+ {
+-	int ret = 0;
+ 	unsigned long rate;
+ 	int total_ticks, cks, brl, brh;
+ 	struct device *dev = riic->adapter.dev.parent;
+ 
+-	pm_runtime_get_sync(dev);
+-
+ 	if (t->bus_freq_hz > I2C_MAX_FAST_MODE_FREQ) {
+ 		dev_err(&riic->adapter.dev,
+ 			"unsupported bus speed (%dHz). %d max\n",
+ 			t->bus_freq_hz, I2C_MAX_FAST_MODE_FREQ);
+-		ret = -EINVAL;
+-		goto out;
++		return -EINVAL;
+ 	}
+ 
+ 	rate = clk_get_rate(riic->clk);
+@@ -352,8 +348,7 @@ static int riic_init_hw(struct riic_dev *riic, struct i2c_timings *t)
+ 	if (brl > (0x1F + 3)) {
+ 		dev_err(&riic->adapter.dev, "invalid speed (%lu). Too slow.\n",
+ 			(unsigned long)t->bus_freq_hz);
+-		ret = -EINVAL;
+-		goto out;
++		return -EINVAL;
+ 	}
+ 
+ 	brh = total_ticks - brl;
+@@ -385,6 +380,8 @@ static int riic_init_hw(struct riic_dev *riic, struct i2c_timings *t)
+ 		 t->scl_fall_ns / (1000000000 / rate),
+ 		 t->scl_rise_ns / (1000000000 / rate), cks, brl, brh);
+ 
++	pm_runtime_get_sync(dev);
++
+ 	/* Changing the order of accessing IICRST and ICE may break things! */
+ 	riic_writeb(riic, ICCR1_IICRST | ICCR1_SOWP, RIIC_ICCR1);
+ 	riic_clear_set_bit(riic, 0, ICCR1_ICE, RIIC_ICCR1);
+@@ -398,9 +395,8 @@ static int riic_init_hw(struct riic_dev *riic, struct i2c_timings *t)
+ 
+ 	riic_clear_set_bit(riic, ICCR1_IICRST, 0, RIIC_ICCR1);
+ 
+-out:
+ 	pm_runtime_put(dev);
+-	return ret;
++	return 0;
+ }
+ 
+ static struct riic_irq_desc riic_irqs[] = {
+-- 
+2.43.0
 
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---Vh3yS9GTFUFAOvtR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaAtL5wAKCRAw5/Bqldv6
-8ksWAKC+jaiKl4VQu8qjyDXy9QtuGZZ50ACgoWivHlHIgs7hLv+12xgXeHtdG7Q=
-=owox
------END PGP SIGNATURE-----
-
---Vh3yS9GTFUFAOvtR--
 
