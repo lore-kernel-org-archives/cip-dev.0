@@ -2,137 +2,139 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC65C369D5
-	for <webhook@archiver.kernel.org>; Fri, 25 Apr 2025 12:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DBE7C369D1
+	for <webhook@archiver.kernel.org>; Fri, 25 Apr 2025 12:15:09 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web10.5186.1745583290157660139
+ by mx.groups.io with SMTP id smtpd.web11.5118.1745583293547492863
  for <cip-dev@lists.cip-project.org>;
- Fri, 25 Apr 2025 05:14:50 -0700
+ Fri, 25 Apr 2025 05:14:59 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: Iw2eKN3eTFu4jidK1u7+pA==
-X-CSE-MsgGUID: ALxX4ZLkQ4qBC+QeAV/hZg==
+X-CSE-ConnectionGUID: e2RLUmdKQeywiImRqw/KXw==
+X-CSE-MsgGUID: gA9C8RQESe28cv8syrOvcQ==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 25 Apr 2025 21:14:48 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 25 Apr 2025 21:14:59 +0900
 Received: from Ubuntu-22.. (unknown [10.226.92.1])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1CD5842D7EC5;
-	Fri, 25 Apr 2025 21:14:46 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id CE3F442D7EC5;
+	Fri, 25 Apr 2025 21:14:57 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 6.1.y-cip 00/21] Add SYSC/MMC/GTM driver support for Renesas RZ/V2H(P) SoC
-Date: Fri, 25 Apr 2025 13:14:24 +0100
-Message-ID: <20250425121445.62818-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 05/21] soc: renesas: Add identification support for RZ/V2H SoC
+Date: Fri, 25 Apr 2025 13:14:29 +0100
+Message-ID: <20250425121445.62818-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250425121445.62818-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250425121445.62818-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 25 Apr 2025 12:14:58 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18622
+ <cip-dev@lists.cip-project.org>; Fri, 25 Apr 2025 12:15:09 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18627
 
-Hi All,
+commit 0be9a322307994443e854efd6a05b129c26ce287 upstream.
 
-This patch series aims to add below driver support to
-Renesas RZ/V2H(P) SoC:
-- eMMC/SDHI
-- GTM
-- SYSC
+Add support to identify the RZ/V2H (R9A09G057) SoC.
 
-Note,
-- All the patches have been cherry picked from upstream kernel
-  v6.15-rc1
-- All the patches have applied cleanly apart from 5/6/11/14 where
-  the patch had to be applied manually.
-- Once these patches are accepted, I plan to send the below patches
-  which add initial DTS/I support to Renesas RZ/V2H EVK  (out of
-  which couple of them were already posted to v6.12-cip):
-   * clk: renesas: r9a09g057: Add reset entry for SYS
-   * clk: renesas: r9a09g057: Add clock and reset entries for GIC
-   * arm64: dts: renesas: r9a09g011: Update fallback string for SDHI nodes
-   * arm64: dts: renesas: rzg2l: Update fallback string for SDHI nodes
-   * arm64: dts: renesas: r9a08g045: Update fallback string for SDHI nodes
-   * arm64: dts: renesas: r9a08g045: Enable SYS node
-   * arm64: dts: renesas: Add initial SoC DTSI for RZ/V2H(P) SoC
-   * arm64: dts: renesas: Add initial DTS for RZ/V2H EVK board
-   * arm64: dts: renesas: r9a09g057: Add OSTM0-OSTM7 nodes
-   * arm64: dts: renesas: r9a09g057: Add RIIC0-RIIC8 nodes
-   * arm64: dts: renesas: r9a09g057: Add SDHI0-SDHI2 nodes
-   * arm64: dts: renesas: r9a09g057: Add WDT0-WDT3 nodes
-   * arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Enable OSTM, I2C, and SDHI
-   * arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Enable watchdog
-   * arm64: dts: renesas: r9a09g057: Add OPP table
-   * arm64: dts: renesas: r9a09g057: Enable SYS node
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20240227232531.218159-4-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[PL: manually applied changes to Kconfig]
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/soc/renesas/Kconfig       |  5 +++++
+ drivers/soc/renesas/renesas-soc.c | 20 +++++++++++++++++++-
+ 2 files changed, 24 insertions(+), 1 deletion(-)
 
-Cheers,
-Prabhakar
-
-Claudiu Beznea (2):
-  soc: renesas: Add SYSC driver for Renesas RZ family
-  soc: renesas: rz-sysc: Move RZ/G3S SoC detection to the SYSC driver
-
-Geert Uytterhoeven (1):
-  clocksource/drivers/renesas-ostm: Avoid reprobe after successful early
-    probe
-
-John Madieu (3):
-  soc: renesas: rz-sysc: Add support for RZ/G3E family
-  soc: renesas: rz-sysc: Move RZ/V2H SoC detection to the SYS driver
-  soc: renesas: r9a09g057-sys: Add a callback to print SoC-specific
-    extra features
-
-Krzysztof Kozlowski (1):
-  soc: renesas: mark OF related data as maybe unused
-
-Lad Prabhakar (14):
-  dt-bindings: soc: renesas: Document Renesas RZ/V2H(P) SoC variants
-  dt-bindings: soc: renesas: Document RZ/V2H EVK board
-  dt-bindings: arm: renesas: Document Renesas RZ/V2H(P) System
-    Controller
-  soc: renesas: Add identification support for RZ/V2H SoC
-  arm64: defconfig: Enable R9A09G057 SoC
-  dt-bindings: mmc: renesas,sdhi: Group single const value items into an
-    enum list
-  dt-bindings: mmc: renesas,sdhi: Document RZ/Five SoC
-  dt-bindings: mmc: renesas,sdhi: Document RZ/G2L family compatibility
-  mmc: renesas_sdhi: Add compatible string for RZ/G2L family, RZ/G3S,
-    and RZ/V2M SoCs
-  dt-bindings: mmc: renesas,sdhi: Document RZ/V2H(P) support
-  dt-bindings: mmc: renesas,sdhi: Remove duplicate compatible and add
-    clock checks
-  mmc: renesas_sdhi: Add RZ/V2H(P) compatible string
-  dt-bindings: timer: renesas: ostm: Document Renesas RZ/V2H(P) SoC
-  clocksource/drivers/renesas-ostm: Allow OSTM driver to reprobe for
-    RZ/V2H(P) SoC
-
- .../devicetree/bindings/arm/renesas.yaml      |  10 ++
- .../devicetree/bindings/mmc/renesas,sdhi.yaml |  39 +++--
- .../soc/renesas/renesas,r9a09g057-sys.yaml    |  51 +++++++
- .../bindings/timer/renesas,ostm.yaml          |   2 +
- arch/arm64/configs/defconfig                  |   1 +
- drivers/clocksource/renesas-ostm.c            |   3 +-
- drivers/mmc/host/renesas_sdhi_internal_dmac.c |  10 +-
- drivers/soc/renesas/Kconfig                   |  23 +++
- drivers/soc/renesas/Makefile                  |   4 +
- drivers/soc/renesas/r9a08g045-sysc.c          |  23 +++
- drivers/soc/renesas/r9a09g047-sys.c           |  67 +++++++++
- drivers/soc/renesas/r9a09g057-sys.c           |  67 +++++++++
- drivers/soc/renesas/renesas-soc.c             |  15 +-
- drivers/soc/renesas/rz-sysc.c                 | 137 ++++++++++++++++++
- drivers/soc/renesas/rz-sysc.h                 |  46 ++++++
- 15 files changed, 458 insertions(+), 40 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/soc/renesas/renesas,r9a09g057-sys.yaml
- create mode 100644 drivers/soc/renesas/r9a08g045-sysc.c
- create mode 100644 drivers/soc/renesas/r9a09g047-sys.c
- create mode 100644 drivers/soc/renesas/r9a09g057-sys.c
- create mode 100644 drivers/soc/renesas/rz-sysc.c
- create mode 100644 drivers/soc/renesas/rz-sysc.h
-
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index e0eb3fbc3ca6b..312670907ae52 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -343,6 +343,11 @@ config ARCH_R9A09G047
+ 	help
+ 	  This enables support for the Renesas RZ/G3E SoC variants.
+ 
++config ARCH_R9A09G057
++	bool "ARM64 Platform support for RZ/V2H(P)"
++	help
++	  This enables support for the Renesas RZ/V2H(P) SoC variants.
++
+ endif # ARM64
+ 
+ if RISCV
+diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
+index 6520af0d9a12e..2bb41b17e99ad 100644
+--- a/drivers/soc/renesas/renesas-soc.c
++++ b/drivers/soc/renesas/renesas-soc.c
+@@ -76,6 +76,10 @@ static const struct renesas_family fam_rzg3s __initconst __maybe_unused = {
+ 	.name	= "RZ/G3S",
+ };
+ 
++static const struct renesas_family fam_rzv2h __initconst __maybe_unused = {
++	.name	= "RZ/V2H",
++};
++
+ static const struct renesas_family fam_rzv2l __initconst __maybe_unused = {
+ 	.name	= "RZ/V2L",
+ };
+@@ -179,6 +183,11 @@ static const struct renesas_soc soc_rz_g3s __initconst __maybe_unused = {
+ 	.id	= 0x85e0447,
+ };
+ 
++static const struct renesas_soc soc_rz_v2h __initconst __maybe_unused = {
++	.family = &fam_rzv2h,
++	.id     = 0x847a447,
++};
++
+ static const struct renesas_soc soc_rz_v2l __initconst __maybe_unused = {
+ 	.family = &fam_rzv2l,
+ 	.id     = 0x8447447,
+@@ -403,6 +412,9 @@ static const struct of_device_id renesas_socs[] __initconst __maybe_unused = {
+ #ifdef CONFIG_ARCH_R9A09G011
+ 	{ .compatible = "renesas,r9a09g011",	.data = &soc_rz_v2m },
+ #endif
++#ifdef CONFIG_ARCH_R9A09G057
++	{ .compatible = "renesas,r9a09g057",	.data = &soc_rz_v2h },
++#endif
+ #ifdef CONFIG_ARCH_SH73A0
+ 	{ .compatible = "renesas,sh73a0",	.data = &soc_shmobile_ag5 },
+ #endif
+@@ -428,6 +440,11 @@ static const struct renesas_id id_rzg2l __initconst = {
+ 	.mask = 0xfffffff,
+ };
+ 
++static const struct renesas_id id_rzv2h __initconst = {
++	.offset = 0x304,
++	.mask = 0xfffffff,
++};
++
+ static const struct renesas_id id_rzv2m __initconst = {
+ 	.offset = 0x104,
+ 	.mask = 0xff,
+@@ -445,6 +462,7 @@ static const struct of_device_id renesas_ids[] __initconst = {
+ 	{ .compatible = "renesas,r9a07g054-sysc",	.data = &id_rzg2l },
+ 	{ .compatible = "renesas,r9a08g045-sysc",	.data = &id_rzg2l },
+ 	{ .compatible = "renesas,r9a09g011-sys",	.data = &id_rzv2m },
++	{ .compatible = "renesas,r9a09g057-sys",	.data = &id_rzv2h },
+ 	{ .compatible = "renesas,prr",			.data = &id_prr },
+ 	{ /* sentinel */ }
+ };
+@@ -513,7 +531,7 @@ static int __init renesas_soc_init(void)
+ 			eslo = product & 0xf;
+ 			soc_dev_attr->revision = kasprintf(GFP_KERNEL, "ES%u.%u",
+ 							   eshi, eslo);
+-		}  else if (id == &id_rzg2l) {
++		}  else if (id == &id_rzg2l || id == &id_rzv2h) {
+ 			eshi =  ((product >> 28) & 0x0f);
+ 			soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%u",
+ 							   eshi);
 -- 
 2.43.0
 
