@@ -1,77 +1,104 @@
-Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Return-Path: <iwamatsu@gmail.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE61C369D7
-	for <webhook@archiver.kernel.org>; Fri, 25 Apr 2025 12:15:39 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.5135.1745583332362271398
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B450FC369C2
+	for <webhook@archiver.kernel.org>; Fri, 25 Apr 2025 22:07:11 +0000 (UTC)
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+ by mx.groups.io with SMTP id smtpd.web10.411.1745618826511302505
  for <cip-dev@lists.cip-project.org>;
- Fri, 25 Apr 2025 05:15:32 -0700
+ Fri, 25 Apr 2025 15:07:06 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: nLpp/ut3Tq2dLt84/XMljA==
-X-CSE-MsgGUID: QemraT+BQ6qscsWs8EJlMA==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 25 Apr 2025 21:15:31 +0900
-Received: from Ubuntu-22.. (unknown [10.226.92.1])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 32BC942D7EC8;
-	Fri, 25 Apr 2025 21:15:29 +0900 (JST)
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@denx.de>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Subject: [PATCH 6.1.y-cip 20/21] clocksource/drivers/renesas-ostm: Allow OSTM driver to reprobe for RZ/V2H(P) SoC
-Date: Fri, 25 Apr 2025 13:14:44 +0100
-Message-ID: <20250425121445.62818-21-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250425121445.62818-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250425121445.62818-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=LMe2frBm;
+ spf=pass (domain: gmail.com, ip: 209.85.160.171, mailfrom: iwamatsu@gmail.com)
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-476ab588f32so44959191cf.2
+        for <cip-dev@lists.cip-project.org>; Fri, 25 Apr 2025 15:07:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745618825; x=1746223625; darn=lists.cip-project.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jV4yUaJ2ZD3iHJ+W5mtF6at7VGr2HokiFC6/PEjFfHA=;
+        b=LMe2frBmwZ3YWFWrb/nbd9hxpubd8jFLhKBWPhzzFY8zUQq1oJp7S/VGXHNbY4OzxR
+         vkBTP/Y6xxvqti7REVtIVHobQlqPUZKNZ3hNOkk2dh5KjpKbaurgVBBuql3m85afoaxE
+         7nZMRdYEXUNgyAhKzs0bYZnUayvhMTji7wIdyLxwx65yb9WaE8ws79L+czliRLiVlgpC
+         9G4L39x+YvNUf7D4F6cpHD9auHqwOidgwccPDBKkzOKnJTlrsbZ6XRYhoIdCBMLV7jy2
+         rc/PmkOgUbtmLpYwNdFVwk2yskInth1BF1zx6/nldtlMfO3O4LI2TO9o0kSHPRFYleqM
+         CAKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745618825; x=1746223625;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jV4yUaJ2ZD3iHJ+W5mtF6at7VGr2HokiFC6/PEjFfHA=;
+        b=uRBJot3XOaSPvFnYIpbYGUUMu7/05C2zjKsfqp1RCziRIuFWEK2lTUSvL9ZWKjRyWT
+         n1HNjtn1mNypIi6Zx/dhdJBSUAJ2ZHEw7VoULTYsKL/XpiQzmXjEOKeUevtmaRuFj4hW
+         Gvq/oUGbzgGhM1aurR5kyzw5Lb7doAkRlIs14J/miKzNwZ+IznTzBIn0xaNsG7LYFEq0
+         6X3BBjwIPa8c1J5PePMI//HSdREYow5d1+hAd4PEWQn54HPeSG1HK7UvgHRsRzXlLTIq
+         pr1UP9aXhd0NsfCLNKX1jmQlGLtHGskCH3pi0mUjppd3eQbzhkBaei0xPbPyjq61dVBa
+         BFPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWe4kMdDSt1pbNEhvm8BmLvsTwpPyhg91TdLqcLBrwNslktwovjj6Dh4OcQ38Bp5sgKnvvRR/w/@lists.cip-project.org
+X-Gm-Message-State: AOJu0YzlfMy16jXU72IQv6bsQARjyRuggYKWaEr1A17gsykdhYhRgw+b
+	Eiu2Mf+DVIR2GvinylwVMvV4k2gSc67urGz+Xf5RNb9AdlmWwdeAnoI/viUxGsi5wdUhQK1lyKF
+	0gwJxLZtrYtrfmbuH0BzZ2Sarl54=
+X-Gm-Gg: ASbGncuIr+8OdNJm3kurGtbSplyvVU06GyM9iN9th0pACJGLqVsbBte/Zu3pV2LH0m4
+	Wx4spZjKxW6q/T5n3SK/EZMdrR669AvuqXmQ7HhiNQINdRLjaLf0vSoRywINE7j8Sn6Lc5/tXsv
+	e6lxF6t7eJA8u+KpB+CPw=
+X-Google-Smtp-Source: AGHT+IFCbTBauLxeMbC3uY8asrX7Bg2vH3LtOIvV+Qb8l69RKJfby0D3RDJJx3j550gtU6UF/A1igjBNnz6m5llzEn4=
+X-Received: by 2002:ac8:5e11:0:b0:476:b7cf:4d42 with SMTP id
+ d75a77b69052e-48131de3bccmr19324981cf.27.1745618825477; Fri, 25 Apr 2025
+ 15:07:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250425091057.33752-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <aAti7FKVCHFN4Tdu@duo.ucw.cz>
+In-Reply-To: <aAti7FKVCHFN4Tdu@duo.ucw.cz>
+From: Nobuhiro Iwamatsu <iwamatsu@gmail.com>
+Date: Sat, 26 Apr 2025 07:06:54 +0900
+X-Gm-Features: ATxdqUHtwvTSV212D3BpW2xIaqDGiIXF1cDRh4SWzN2R9RUujbY8ClfCE_twW0Y
+Message-ID: <CACe6DC64Hpc1870ucfH4P401M8YuVNgq5+RktY+ePT+RMArrgQ@mail.gmail.com>
+Subject: Re: [cip-dev] [PATCH 6.1.y-cip 00/15] i2c: riic: miscellaneous code
+ cleanup and improvements
+To: pavel@denx.de
+Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, cip-dev@lists.cip-project.org, 
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 25 Apr 2025 12:15:39 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18642
+ <cip-dev@lists.cip-project.org>; Fri, 25 Apr 2025 22:07:11 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18644
 
-commit 0f63c95aebf11d87b166a5dfd389957c67fef9c0 upstream.
+Hi all,
 
-The RZ/V2H(P) (R9A09G057) SoC is equipped with the Generic Timer Module,
-also known as OSTM. Similar to the RZ/G2L SoC, the OSTM on the RZ/V2H(P)
-SoC requires the reset line to be deasserted before accessing any
-registers.
+2025=E5=B9=B44=E6=9C=8825=E6=97=A5(=E9=87=91) 19:24 Pavel Machek via lists.=
+cip-project.org
+<pavel=3Ddenx.de@lists.cip-project.org>:
+>
+> Hi!
+>
+> > This patch series includes miscellaneous code cleanup and improvements
+> > to RIIC driver used by Renesas RZ SoCs. Below are the features which
+> > are backported:
+> > - Runtime PM support
+> > - Suspend/Resume support
+> > - Fast Mode Plus
+> >
+> > Note,
+> > - Patches 9-15 have been recently posted to 6.12-cip
+> > - All the patches have been cherry-picked from v6.15-rc3.
+>
+> Thank you, these look good. I can apply them if they pass testing and
+> there are no other comments.
 
-Early call to ostm_init() happens through TIMER_OF_DECLARE() which always
-fails with -EPROBE_DEFER, as resets are not available that early in the
-boot process.  To address this issue on the RZ/V2H(P) SoC, enable the OSTM
-driver to be reprobed through the platform driver probe mechanism.
+I reviewed this series, looks good to me, too.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Link: https://lore.kernel.org/r/20240322151219.885832-3-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/clocksource/renesas-ostm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 
-diff --git a/drivers/clocksource/renesas-ostm.c b/drivers/clocksource/renesas-ostm.c
-index 8da972dc17136..39487d05a009d 100644
---- a/drivers/clocksource/renesas-ostm.c
-+++ b/drivers/clocksource/renesas-ostm.c
-@@ -224,7 +224,7 @@ static int __init ostm_init(struct device_node *np)
- 
- TIMER_OF_DECLARE(ostm, "renesas,ostm", ostm_init);
- 
--#ifdef CONFIG_ARCH_RZG2L
-+#if defined(CONFIG_ARCH_RZG2L) || defined(CONFIG_ARCH_R9A09G057)
- static int __init ostm_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--- 
-2.43.0
+Best regards,
+  Nobuhiro
 
+
+--=20
+Nobuhiro Iwamatsu
 
