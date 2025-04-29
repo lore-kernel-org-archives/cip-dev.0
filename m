@@ -2,72 +2,83 @@ Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5DDC369DC
-	for <webhook@archiver.kernel.org>; Tue, 29 Apr 2025 09:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57647C369DC
+	for <webhook@archiver.kernel.org>; Tue, 29 Apr 2025 09:56:26 +0000 (UTC)
 Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web10.15596.1745920405463876846
+ by mx.groups.io with SMTP id smtpd.web11.15589.1745920584415391739
  for <cip-dev@lists.cip-project.org>;
- Tue, 29 Apr 2025 02:53:26 -0700
+ Tue, 29 Apr 2025 02:56:24 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=BHvHCDsV;
+ dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=Vvoh7iE+;
  spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1D3D71026A6DE;
-	Tue, 29 Apr 2025 11:53:19 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2C03C1026A6DE;
+	Tue, 29 Apr 2025 11:56:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1745920403; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=nSoQGFKXQywWtHa5tV3gXCq6x707vroNxjzD+OtiYT0=;
-	b=BHvHCDsVM5c/WeFVekY2kcpyglDsIzT/JGOXPhepM/13Bt7toLinekUI35uf9ZzPRbwjDD
-	OPMc0nNFzc7Ua5yVAOot+BjRsELOfqcYxp/WqXinnpbC3xlI/xCt2HWvZ83pwDAsutihi8
-	1znrPAImviLGLFQxySXeifnZktyC0VoZC/xGyPLsLen54cNN62/U+AHqXzN7mFif5LXyJU
-	jxmGTzNmTSoMzKCk8vSac/2sDcX4mSv0czQkNNdMzZTR6Da/ymP23O3Fy4WRLWSIbg3AGU
-	YLXqjJCqgFqwkPIT6/w0BjUpWW6WppcW6aHeWxhAsg1Mv8AWVUyIylX8yN9zUw==
-Date: Tue, 29 Apr 2025 11:53:17 +0200
+	t=1745920582; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=hNI+1HkgfIbBVRhZEuXtVo7MRIzH1sSZS9Vpt22mAqs=;
+	b=Vvoh7iE+HNEbAFCYz6PWpQNUGwVCNNz0YcPMksXlaGEk33gbo3uJKBBNaeMv4R2vrngKVu
+	RQqFjGVqoUWWbIE+sxZnsZUFCuYAaq8cO6v4CAaiHZMZEAE/CFQUmNPHbjtuUKFlFdlIGy
+	isvYmkrxValK0GLENqJ/eA8fK55+ThdBE1u5xQxvkOJ2HAyYHzresXGUGkiRMWCz53UNZ/
+	/2bNocdiadeetYGxFTT+8fEwqRbQ2PNXwFrgX4TClnb5hNCSHojMXsaFftsZvBiBrS9kkP
+	DWC5oadX3So1g2GqPE6w4jamLrTYtq152m5DKOrz7guBH/jzusSEL2tfpSWvDA==
+Date: Tue, 29 Apr 2025 11:56:18 +0200
 From: Pavel Machek <pavel@denx.de>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Cc: nobuhiro1.iwamatsu@toshiba.co.jp, cip-dev@lists.cip-project.org
-Subject: Re: [cip-dev] [PATCH v6.1.y-cip 0/3] RZ/G3S: Backport DMA
-Message-ID: <aBChjSNF4X9pEdot@duo.ucw.cz>
-References: <20250428050051.3081705-1-claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v5.10.y-cip 0/3] RZ/G3S: Backport DMA
+Message-ID: <aBCiQhG6jIe7KP50@duo.ucw.cz>
+References: <20250428050116.3081804-1-claudiu.beznea.uj@bp.renesas.com>
+ <aA8nwI87irhzJxS3@duo.ucw.cz>
+ <d8ff6b74-0508-453e-946a-83491659316c@tuxon.dev>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/kYM9PCokBUcpnb5"
+	protocol="application/pgp-signature"; boundary="ylX8qBFxhrXU0VQr"
 Content-Disposition: inline
-In-Reply-To: <20250428050051.3081705-1-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <d8ff6b74-0508-453e-946a-83491659316c@tuxon.dev>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 29 Apr 2025 09:53:26 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18709
+ <cip-dev@lists.cip-project.org>; Tue, 29 Apr 2025 09:56:26 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18710
 
 
---/kYM9PCokBUcpnb5
+--ylX8qBFxhrXU0VQr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> Series backports the Renesas RZ/G3S DMA support to v5.10.y CIP.
+> >> Series backports the Renesas RZ/G3S DMA support to v5.10.y CIP.
+> >=20
+> > Thank you. Series looks okay to me, and I can apply it if there are no
+> > other comments and it passes testing.
+> >=20
+> > If you wanted to help me, adding note "All the patches are already in
+> > v6.12-cip" would be nice. (I checked few, and assume they are).
+>=20
+> Yes, they are all present in v6.12-cip. Sorry for not mentioning it. I'll
+> keep it in mind for the next submissions.
 
-Applied. I had to fix up 3/ patch as the dts changed and it no longer
-applied. It was trivial enough, so I believe I got it right.
+Thank you, applied.
 
 Best regards,
 								Pavel
+
 --=20
 DENX Software Engineering GmbH,        Managing Director: Erika Unter
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---/kYM9PCokBUcpnb5
+--ylX8qBFxhrXU0VQr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaBChjQAKCRAw5/Bqldv6
-8mnoAJ9SrkjtSRqhy8A+rJNlPvRedibN5gCgijiEgdxaJak7LyNZkkhd25BbP3U=
-=DVyw
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaBCiQgAKCRAw5/Bqldv6
+8nDgAJ91RN617hfNsYtE1fcWoyEfRbaNMgCfbG3zDp+q5MP7jWmkZUfziDY1xys=
+=IL+0
 -----END PGP SIGNATURE-----
 
---/kYM9PCokBUcpnb5--
+--ylX8qBFxhrXU0VQr--
 
