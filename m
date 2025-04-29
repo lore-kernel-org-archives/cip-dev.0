@@ -1,84 +1,93 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57647C369DC
-	for <webhook@archiver.kernel.org>; Tue, 29 Apr 2025 09:56:26 +0000 (UTC)
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web11.15589.1745920584415391739
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA91C369DC
+	for <webhook@archiver.kernel.org>; Tue, 29 Apr 2025 12:24:56 +0000 (UTC)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+ by mx.groups.io with SMTP id smtpd.web10.18471.1745929493010073481
  for <cip-dev@lists.cip-project.org>;
- Tue, 29 Apr 2025 02:56:24 -0700
+ Tue, 29 Apr 2025 05:24:53 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=Vvoh7iE+;
- spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2C03C1026A6DE;
-	Tue, 29 Apr 2025 11:56:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1745920582; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=hNI+1HkgfIbBVRhZEuXtVo7MRIzH1sSZS9Vpt22mAqs=;
-	b=Vvoh7iE+HNEbAFCYz6PWpQNUGwVCNNz0YcPMksXlaGEk33gbo3uJKBBNaeMv4R2vrngKVu
-	RQqFjGVqoUWWbIE+sxZnsZUFCuYAaq8cO6v4CAaiHZMZEAE/CFQUmNPHbjtuUKFlFdlIGy
-	isvYmkrxValK0GLENqJ/eA8fK55+ThdBE1u5xQxvkOJ2HAyYHzresXGUGkiRMWCz53UNZ/
-	/2bNocdiadeetYGxFTT+8fEwqRbQ2PNXwFrgX4TClnb5hNCSHojMXsaFftsZvBiBrS9kkP
-	DWC5oadX3So1g2GqPE6w4jamLrTYtq152m5DKOrz7guBH/jzusSEL2tfpSWvDA==
-Date: Tue, 29 Apr 2025 11:56:18 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: nobuhiro1.iwamatsu@toshiba.co.jp, cip-dev@lists.cip-project.org
-Subject: Re: [PATCH v5.10.y-cip 0/3] RZ/G3S: Backport DMA
-Message-ID: <aBCiQhG6jIe7KP50@duo.ucw.cz>
-References: <20250428050116.3081804-1-claudiu.beznea.uj@bp.renesas.com>
- <aA8nwI87irhzJxS3@duo.ucw.cz>
- <d8ff6b74-0508-453e-946a-83491659316c@tuxon.dev>
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=lxFcRFww;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.43, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac25d2b2354so883840166b.1
+        for <cip-dev@lists.cip-project.org>; Tue, 29 Apr 2025 05:24:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1745929491; x=1746534291; darn=lists.cip-project.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pc6ZR1NpCVtm9PnknEzbXci8JnVP4BKFlZUUaZpWbBI=;
+        b=lxFcRFwwFpivuCAgCoXEsQbRf6KcwuEmRRFZLX/yXhbEBqqr4YXH13dLu+sM65P4wy
+         Z5rSLsyhdyb2TS6jhkASBLVIAiZuq7hLAwUdB3CSwyOYldUageeH68AQIaht01TeUzbC
+         mRYGL4UF2my3QxhlXYWpmCAzQNI1Dfmroj55Tc/EGab5of6ev4L1WBGb7yLQabiY1FLp
+         C20K5GvJmDqPdwxqK0miBzDFOzGEFjCxgPS7sYBgxD91wHhW0mvYK3dOCU8Gykk+uoCY
+         GapNVSxDtOVpIgssJ7WTdBOqdw+eP5QZjuP+ja5w87J9bBxaI+l5uOurNUvlNFMj6dc0
+         q8bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745929491; x=1746534291;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pc6ZR1NpCVtm9PnknEzbXci8JnVP4BKFlZUUaZpWbBI=;
+        b=qYOO6j8A1qqBfsUfhTWr8N0uc/zcPiU/QlpBNKXArovDbAAEiqdX4SZ5HxlBfJOWl3
+         a+6/pZMVr6JWDZERiPelzWwSmEpBE5NVU3BCzTqs5+1uxEsVrYWWmvT+BH9i0k5qfMmT
+         ECjDDJYA5OsL9AlQbh1fFM2BJr1cBWFT4Z+wRdBjBOqFJvjTqh4BYmSb5Jv/G7Gsv3id
+         BogpuTZffLbJdDSJ9QhRgqr1bGh2uhiE+n5qTA8sepNYEAScKVjoqnrKLWlEiOrREzwv
+         Ag7nfLqjnKCGvo5ap5Sp8ByYSXsQB3mzuC0XxFlZubMrPTcjDwvHDnngqQfrbq3HNuRL
+         NKwA==
+X-Forwarded-Encrypted: i=1; AJvYcCXyiyvcPQXjaecZ2PLXm0vARDt51zhtuJFghqnYWqDvsRhHGTYXqAiX9vMnM4Hgf1tnsW+Mi69y@lists.cip-project.org
+X-Gm-Message-State: AOJu0Yxa0hr5yVYh9O5IrhYPj/XiMO8MvArxDjqCwxJGQjNukDnXSBzk
+	NDNjGcc5PhKJfN8lyyt2HYQnp36ikJRHtas6+ldbUUhLr8eFlO1kWrIwy4XZzW0=
+X-Gm-Gg: ASbGncuFeBSVlrmMmpzl/LY8YyXtg3lHtvc4Hqi1B/Ma3OdINjt7dYpo2EHm/1LAAk8
+	Tclf7I3MtpqFB9bj5tqCXTpBRMiUrLqWHjWu2EpksBfu7H2ktTitxKVBR1mcdDtg8lN4N4MdmCU
+	jIzDsa9355G0LT/0PHsljpLRzIH979jaZI2QAKqNjS5i6Zpm0JLEEIv7ewbhaHIhAMuX6EDua4X
+	E5ce0nfURRYqOR9MGtqz1CmN39pqr1NIOdguK0fa0Y8tjq6Yo+qEhadqKLTdMLHFzgN/nP0KO3s
+	UGIaPQYI17seep7WjTXIWtAa5vTTKvtjeXbg32KzQ+ue8xqu/A==
+X-Google-Smtp-Source: AGHT+IHmd8yK8hPTs+1ZtOeeGbdFmtzgZ/dyw7LE3UCCCMO2L4v46Dgm+fIWwHAm1vEvj29aDn9g/w==
+X-Received: by 2002:a17:907:2da3:b0:ace:3643:1959 with SMTP id a640c23a62f3a-acec4b404d3mr348801466b.7.1745929491173;
+        Tue, 29 Apr 2025 05:24:51 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.166])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f7016f6424sm7549846a12.42.2025.04.29.05.24.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Apr 2025 05:24:50 -0700 (PDT)
+Message-ID: <103ba099-d12a-404a-ba93-118d61dfc929@tuxon.dev>
+Date: Tue, 29 Apr 2025 15:24:49 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ylX8qBFxhrXU0VQr"
-Content-Disposition: inline
-In-Reply-To: <d8ff6b74-0508-453e-946a-83491659316c@tuxon.dev>
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cip-dev] [PATCH v6.1.y-cip 0/3] RZ/G3S: Backport DMA
+To: Pavel Machek <pavel@denx.de>
+Cc: nobuhiro1.iwamatsu@toshiba.co.jp, cip-dev@lists.cip-project.org
+References: <20250428050051.3081705-1-claudiu.beznea.uj@bp.renesas.com>
+ <aBChjSNF4X9pEdot@duo.ucw.cz>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <aBChjSNF4X9pEdot@duo.ucw.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 29 Apr 2025 09:56:26 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18710
+ <cip-dev@lists.cip-project.org>; Tue, 29 Apr 2025 12:24:56 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18711
 
+Hi, Pavel,
 
---ylX8qBFxhrXU0VQr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 29.04.2025 12:53, Pavel Machek wrote:
+> Hi!
+> 
+>> Series backports the Renesas RZ/G3S DMA support to v5.10.y CIP.
+> 
+> Applied. I had to fix up 3/ patch as the dts changed and it no longer
+> applied. It was trivial enough, so I believe I got it right.
 
-Hi!
+I checked it. All good. Thank you for taking care of it!
 
-> >> Series backports the Renesas RZ/G3S DMA support to v5.10.y CIP.
-> >=20
-> > Thank you. Series looks okay to me, and I can apply it if there are no
-> > other comments and it passes testing.
-> >=20
-> > If you wanted to help me, adding note "All the patches are already in
-> > v6.12-cip" would be nice. (I checked few, and assume they are).
->=20
-> Yes, they are all present in v6.12-cip. Sorry for not mentioning it. I'll
-> keep it in mind for the next submissions.
+Claudiu
 
-Thank you, applied.
+> 
+> Best regards,
+> 								Pavel
 
-Best regards,
-								Pavel
-
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---ylX8qBFxhrXU0VQr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaBCiQgAKCRAw5/Bqldv6
-8nDgAJ91RN617hfNsYtE1fcWoyEfRbaNMgCfbG3zDp+q5MP7jWmkZUfziDY1xys=
-=IL+0
------END PGP SIGNATURE-----
-
---ylX8qBFxhrXU0VQr--
 
