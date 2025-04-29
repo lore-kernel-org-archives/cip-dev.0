@@ -2,65 +2,65 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A8CC3ABA5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F55C3ABAD
 	for <webhook@archiver.kernel.org>; Tue, 29 Apr 2025 13:47:57 +0000 (UTC)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
- by mx.groups.io with SMTP id smtpd.web11.20342.1745934468193605254
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+ by mx.groups.io with SMTP id smtpd.web10.20311.1745934472011731437
  for <cip-dev@lists.cip-project.org>;
- Tue, 29 Apr 2025 06:47:48 -0700
+ Tue, 29 Apr 2025 06:47:52 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=grqpZTy/;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.42, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac7bd86f637so1345455466b.1
-        for <cip-dev@lists.cip-project.org>; Tue, 29 Apr 2025 06:47:47 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=J4cSrFs2;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.53, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac7bd86f637so1345475266b.1
+        for <cip-dev@lists.cip-project.org>; Tue, 29 Apr 2025 06:47:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1745934466; x=1746539266; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1745934470; x=1746539270; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HUjJs53pECTQAQLLLIFnroxQozV2zkDi6pnqFMTwqEA=;
-        b=grqpZTy/ulXjerMSslsUVR1778YtYT6NjA2nWxB4tPQbE/i7xRrSMxIULmX3RmAMY+
-         0m8AcmPSPalg7Bk4IYOoMaw0YVDIku85PdZ+5rSC9thku2lmIRnwtuFlu1S7ZtDpPI0o
-         pgr0ma3rcRDsTgJoo7Cr8h5rSs0Hip+EkclwB8irxgy21dzkqGnjdXIxialQN7MVvGSs
-         8DCobN01N9WGT1oHlcbPj6Rq8TxGnQ2RGABoSk5912E/1RWH/FekPHb8TzEXLWdLQBtG
-         IDKqN23nHNaigB5A+sKrhEtKZT2eiWL6TR/r2/1BeDfRDBoCho6soXFGOtNjAaighXTQ
-         FeiQ==
+        bh=/SK7pwyeZc1WmwoNomzal0yxKmrsSlIHgO2qSukFbaM=;
+        b=J4cSrFs2/3mxoiYQncqaAvvbBzazQm0o8CdjJI0kGpjreujLmO5iva0JtLz2OEluyy
+         VKqV55JfO6ZCyjzwAUkKtBULOwrtN7A49htMrjp+zxWVfS9mSm4ZkCH5kKb1zpIv4bpA
+         hKM9tG7Q/VrhBa+5qNj0FSSXXxq09CRq1NDsIkq9YEvNj0U9VsW7KP/jNfeMQZvYvc1n
+         P/IBGLhgyWpeO3qZdC8LvUV4fFFZbbVUv9+HESZhwhW+QmHX/uBO/4XCW6pwWCua2+eX
+         5VvFq8hlhleUU5iaxtP1Jve0aUak4OqbHo3WTQgho4/LYMf5mGeFs7ERP+W2ZHi21Z3k
+         uW1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745934466; x=1746539266;
+        d=1e100.net; s=20230601; t=1745934470; x=1746539270;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HUjJs53pECTQAQLLLIFnroxQozV2zkDi6pnqFMTwqEA=;
-        b=rjZm5FvSSlqslWANqzgNJ0oZZQPRgCoKtNn7EuVi1Re6fVhkH69pgYqgOOGamoFr83
-         RVYAu/goMGLO3v6DtoJXnWC/8mrJd6eWzFk3SkqIeU5QU0onCXWDvhYw8LuK3BDIVXzL
-         t3/wr0pMxaB/WfwN1zKja0RUIAOP9MNkTDgq58GIPcZhtYXdw56Tg9/iOVcpsNWl5aHe
-         rgNLUnB0IXAe6rclNM6vqOJL9uvIzXSc9m0QILSR+dlIEN1GMng5zPd/drWrWTME1dtA
-         zMFl5OGEb/8JIjcKbInz7Ib8mmyg+S0vVJwgmbOwMtBM9h3AYhXVM4xqmoLllkILruZp
-         mrsg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxyNLrccxj2aRvPMK4GzyxL011eEZgUVdm8UWqKKoP1YE9GbUv634sxPwlYVtVvcid4BR4a9A0@lists.cip-project.org
-X-Gm-Message-State: AOJu0YziVacPzoJz2yIBScrsE/j2roiTQLjXYBaqmxIx/j7glv+U6TTV
-	TWHI/2dxR6p3KIDq1A+b0aCTkWk1BCxlHHFw83cHWo/U4lJGl7FPPIF6oK2vRCw=
-X-Gm-Gg: ASbGncsj3d0u1IDChMwZZ0p87SUj7fDiOTMlWPjqzYjVTh8IQEWj3x/yH51CbloEwVy
-	wrNn/DtAYKQJQHDb2YcjC71OgVDGqMkBOI2u4+eiETfxWx6H2G6MyXqi8Ktc/4s0C7yqIvk9hmp
-	1Mrk179wr1hQYyL6MSCzGs97/iBD27VSyKXrTPZaGW5stA+EeLixZwVYgURSUF57x/pwmvYMdge
-	qSQEr4A5lLLVFSXR/5NhD5FWACgx3Ca1P5y7MH5LfklpjegL1yXh1/b0UTB+i3AqwP549pZl51I
-	mKYat18bSxeTHEp+fygAGTh4v2GhZcikQ2h1CXiwTpag9hB+lIispDQUNo9ZXlj8Ms5GRJs=
-X-Google-Smtp-Source: AGHT+IHda4ofzSfEPCvYmOhFJl7AXI6wrEk64ooqKdPSDgcjIkyAzojW+atGnXxDLBd5oxXHjJQZvA==
-X-Received: by 2002:a17:907:2d1f:b0:aca:aeb4:938e with SMTP id a640c23a62f3a-acec6a2689fmr321752866b.8.1745934466604;
-        Tue, 29 Apr 2025 06:47:46 -0700 (PDT)
+        bh=/SK7pwyeZc1WmwoNomzal0yxKmrsSlIHgO2qSukFbaM=;
+        b=DEfjN1kGdqkQ1I1D3vYjlsAv5slIqAsArlcckyVqXCtLaNt6HWEl5keEhLVR/90KS5
+         U1449MfbfDGJOoFT88oOfnd9JlbELE3L/7kXbIawlaK8hCREVmtpht1CusM2X//JCEPr
+         HfYyYvk9cYGjedWQSydK9p8lDv9RZ2ePwTvKViUzvUx4FllcUZFNsCq2bV7Q3Ez0mh4s
+         wd7r10Vw/eIchCRJW/v/S6a/7Aamkk8VtcJmDEghcuzqkzUjdXPs4od3z3WFMLgBdsTQ
+         cuP3Bor9LE4pxnraCet7zj0MuDAdg8pW9tezFkxwz+1zDjCfqP8GOZ8MRewOYuSY1PGb
+         i8Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCXIjOhOly0c9JtNaSy8qZbmmdiKkxfq/K9qFNsusGS5XUNcTK0ds7OAn7dXry9A6fqNyLGEM87F@lists.cip-project.org
+X-Gm-Message-State: AOJu0YxUftujn/cLJgxAeNEdnBaIRW2bhiL2/Tpcil1jFY7Dvven65N6
+	aH3/CDgzybKxzPU4bchQL1nKP/eAmF3fOHUbmiUTf+q4dHPjZ6C3vRKPx18CGeE=
+X-Gm-Gg: ASbGnctNOKrNflXwiadxw+53ZvOCHh9Ve451vaKTd2XkMd7P05U6V40jle1t+KdjOpT
+	jbc743fRB2djCDw++aPUS519+T7aqa9YWjXNyze9nEk9cseXBET/sPzPqkvP1rFiCLIO6Tat1nI
+	Eiesf7i7DzRG9aI1SVAJD+BF2k5tLCC/nBbzDu4Ed0myYq/I4Ady9Y/h/LqZgbl2tXiRrVGwalc
+	VJyIRrW/3fDS7mXhOIYKk9BTbVutZrSSDUrSj5AZAWA02F0PseAjtMeol2F6BHFPX90DIIl5Ll6
+	A3AWi/TZ4W5jWIQnm2JcwDTGmaYHgvSdmLgA05wkJSXNf5KQaSSqb6DoCtA0y5DS63JHrGM=
+X-Google-Smtp-Source: AGHT+IGUpz46SVSB60UCvoAzobTDY3Q0q1crTtN18vToNjAkfkU8NmwWQU+ZbpL2JJbyBXz5Fmm78A==
+X-Received: by 2002:a17:907:6d17:b0:ac4:3d0:8bca with SMTP id a640c23a62f3a-acec6c12ae4mr300801866b.29.1745934470282;
+        Tue, 29 Apr 2025 06:47:50 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.166])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6edb1cbfsm776852766b.181.2025.04.29.06.47.44
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6edb1cbfsm776852766b.181.2025.04.29.06.47.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 06:47:45 -0700 (PDT)
+        Tue, 29 Apr 2025 06:47:49 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH v5.10.y-cip 10/21] i2c: riic: Enable runtime PM autosuspend support
-Date: Tue, 29 Apr 2025 16:47:16 +0300
-Message-ID: <20250429134727.2429662-11-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v5.10.y-cip 12/21] i2c: riic: Define individual arrays to describe the register offsets
+Date: Tue, 29 Apr 2025 16:47:18 +0300
+Message-ID: <20250429134727.2429662-13-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250429134727.2429662-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250429134727.2429662-1-claudiu.beznea.uj@bp.renesas.com>
@@ -70,80 +70,105 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 29 Apr 2025 13:47:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18723
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18725
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 10d5c8845d36ca71212f588849532c5f484111e4 upstream.
+commit 88c5cf45927bb43328b869b0bda7276e47896c44 upstream.
 
-Enable runtime PM autosuspend support for the RIIC driver. With this, in
-case there are consecutive xfer requests the device wouldn't be runtime
-enabled/disabled after each consecutive xfer but after the
-the delay configured by user. With this, we can avoid touching hardware
-registers involved in runtime PM suspend/resume saving in this way some
-cycles. The default chosen autosuspend delay is zero to keep the
-previous driver behavior.
+Define individual arrays to describe the register offsets. In this way
+we can describe different IP variants that share the same register offsets
+but have differences in other characteristics. Commit prepares for the
+addition of fast mode plus.
 
 Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Signed-off-by: Andi Shyti <andi.shyti@kernel.org>
-[claudiu.beznea: fix conflict in riic_i2c_remove() as the function
- returns int compared to its upstream version]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/i2c/busses/i2c-riic.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-riic.c | 58 +++++++++++++++++++----------------
+ 1 file changed, 31 insertions(+), 27 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
-index 84f831635cd9..d3c17891970a 100644
+index eaa11b3edd2d..bb1339ccfb49 100644
 --- a/drivers/i2c/busses/i2c-riic.c
 +++ b/drivers/i2c/busses/i2c-riic.c
-@@ -172,7 +172,8 @@ static int riic_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
- 	}
+@@ -92,7 +92,7 @@ enum riic_reg_list {
+ };
  
-  out:
--	pm_runtime_put(dev);
-+	pm_runtime_mark_last_busy(dev);
-+	pm_runtime_put_autosuspend(dev);
+ struct riic_of_data {
+-	u8 regs[RIIC_REG_END];
++	const u8 *regs;
+ };
  
- 	return riic->err ?: num;
- }
-@@ -400,7 +401,8 @@ static int riic_init_hw(struct riic_dev *riic, struct i2c_timings *t)
- 
- 	riic_clear_set_bit(riic, ICCR1_IICRST, 0, RIIC_ICCR1);
- 
--	pm_runtime_put(dev);
-+	pm_runtime_mark_last_busy(dev);
-+	pm_runtime_put_autosuspend(dev);
+ struct riic_dev {
+@@ -525,36 +525,40 @@ static int riic_i2c_remove(struct platform_device *pdev)
  	return 0;
  }
  
-@@ -480,6 +482,9 @@ static int riic_i2c_probe(struct platform_device *pdev)
++static const u8 riic_rz_a_regs[RIIC_REG_END] = {
++	[RIIC_ICCR1] = 0x00,
++	[RIIC_ICCR2] = 0x04,
++	[RIIC_ICMR1] = 0x08,
++	[RIIC_ICMR3] = 0x10,
++	[RIIC_ICSER] = 0x18,
++	[RIIC_ICIER] = 0x1c,
++	[RIIC_ICSR2] = 0x24,
++	[RIIC_ICBRL] = 0x34,
++	[RIIC_ICBRH] = 0x38,
++	[RIIC_ICDRT] = 0x3c,
++	[RIIC_ICDRR] = 0x40,
++};
++
+ static const struct riic_of_data riic_rz_a_info = {
+-	.regs = {
+-		[RIIC_ICCR1] = 0x00,
+-		[RIIC_ICCR2] = 0x04,
+-		[RIIC_ICMR1] = 0x08,
+-		[RIIC_ICMR3] = 0x10,
+-		[RIIC_ICSER] = 0x18,
+-		[RIIC_ICIER] = 0x1c,
+-		[RIIC_ICSR2] = 0x24,
+-		[RIIC_ICBRL] = 0x34,
+-		[RIIC_ICBRH] = 0x38,
+-		[RIIC_ICDRT] = 0x3c,
+-		[RIIC_ICDRR] = 0x40,
+-	},
++	.regs = riic_rz_a_regs,
++};
++
++static const u8 riic_rz_v2h_regs[RIIC_REG_END] = {
++	[RIIC_ICCR1] = 0x00,
++	[RIIC_ICCR2] = 0x01,
++	[RIIC_ICMR1] = 0x02,
++	[RIIC_ICMR3] = 0x04,
++	[RIIC_ICSER] = 0x06,
++	[RIIC_ICIER] = 0x07,
++	[RIIC_ICSR2] = 0x09,
++	[RIIC_ICBRL] = 0x10,
++	[RIIC_ICBRH] = 0x11,
++	[RIIC_ICDRT] = 0x12,
++	[RIIC_ICDRR] = 0x13,
+ };
  
- 	i2c_parse_fw_timings(dev, &i2c_t, true);
+ static const struct riic_of_data riic_rz_v2h_info = {
+-	.regs = {
+-		[RIIC_ICCR1] = 0x00,
+-		[RIIC_ICCR2] = 0x01,
+-		[RIIC_ICMR1] = 0x02,
+-		[RIIC_ICMR3] = 0x04,
+-		[RIIC_ICSER] = 0x06,
+-		[RIIC_ICIER] = 0x07,
+-		[RIIC_ICSR2] = 0x09,
+-		[RIIC_ICBRL] = 0x10,
+-		[RIIC_ICBRH] = 0x11,
+-		[RIIC_ICDRT] = 0x12,
+-		[RIIC_ICDRR] = 0x13,
+-	},
++	.regs = riic_rz_v2h_regs,
+ };
  
-+	/* Default 0 to save power. Can be overridden via sysfs for lower latency. */
-+	pm_runtime_set_autosuspend_delay(dev, 0);
-+	pm_runtime_use_autosuspend(dev);
- 	pm_runtime_enable(dev);
- 
- 	ret = riic_init_hw(riic, &i2c_t);
-@@ -497,6 +502,7 @@ static int riic_i2c_probe(struct platform_device *pdev)
- 
- out:
- 	pm_runtime_disable(dev);
-+	pm_runtime_dont_use_autosuspend(dev);
- 	return ret;
- }
- 
-@@ -513,6 +519,7 @@ static int riic_i2c_remove(struct platform_device *pdev)
- 	}
- 	i2c_del_adapter(&riic->adapter);
- 	pm_runtime_disable(dev);
-+	pm_runtime_dont_use_autosuspend(dev);
- 
- 	return 0;
- }
+ static int riic_i2c_suspend(struct device *dev)
 -- 
 2.43.0
 
