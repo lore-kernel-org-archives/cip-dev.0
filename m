@@ -2,132 +2,120 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CD9AC3ABA5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EFCBC3ABAB
 	for <webhook@archiver.kernel.org>; Tue, 29 Apr 2025 13:47:37 +0000 (UTC)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
- by mx.groups.io with SMTP id smtpd.web11.20332.1745934451581092136
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+ by mx.groups.io with SMTP id smtpd.web10.20294.1745934453206946412
  for <cip-dev@lists.cip-project.org>;
- Tue, 29 Apr 2025 06:47:32 -0700
+ Tue, 29 Apr 2025 06:47:33 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=qhDIUKR1;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.51, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac345bd8e13so869955566b.0
-        for <cip-dev@lists.cip-project.org>; Tue, 29 Apr 2025 06:47:31 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=cEWYp8CW;
+ spf=pass (domain: tuxon.dev, ip: 209.85.208.45, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5f624291db6so10495450a12.3
+        for <cip-dev@lists.cip-project.org>; Tue, 29 Apr 2025 06:47:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1745934450; x=1746539250; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zZzAOm5Fkl8qCIT3j66YGe08i6RZkMxf0ta1Ae6dYhE=;
-        b=qhDIUKR1ppa+Kc5jHwZzvrRyMKLsXqfm6zifwE67BUHUSLg3xqUUpo+0YlKgEUjksQ
-         yZhC/QYEwuDL5rlRlmsIeduX8gbQIEIcDqRkNuVGUrZ1zNpAJmfKgX1Ep1E4KVCtjGKX
-         bIn6fkeAwcFIXFtNBzgvTmuUHRe2mSu9+TmLFpyGF1wl4AQwibRBTbu/eg11XgATk/x9
-         fyKYFuBtSj9E2AdojfbiSLXXpL28Vli2lp4alntWmzftRd62CTsUlXdQYCVtiMwHHWlM
-         ynDMMwdpoJlgiNvfcBSK8YjePjoPYcMQGN9KOAb9vlMEPnoGeFXcybjEZrXWOUEwFH+l
-         X71A==
+        d=tuxon.dev; s=google; t=1745934451; x=1746539251; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0Aooz71updk3uskflDW3rkicD9BjwvZEZWvnjEoP1n4=;
+        b=cEWYp8CWjAqFPeE05RJZQeJgDA9oYEZSb5TRwIr1qxAxsm7qZ/wnc5A0myOlLNdl9A
+         1Fymdoc70z//ee+sMYUlcsoul0t1uuirexpQiaNTzQaTIpRo9r8ELz0S9lZbRX2+bK/d
+         LEdFe/2SvskJJxqATgddlndEUx0WGuWKsyFOJgeObo71ylqlj603H9O1z8nrEvNLe4xB
+         wXmwwmlBNtwZlMkOiVVhCac0hjMgT+xa8d26MBcCCAyntXocVD6NNib58WlRJ0+zqqtt
+         VWJUTwLavKrtkpGCVhaTnKA4Lh+GQVZOtlMwO1BLzqQmwjWB0antfBl4yTuzc9Ae0wCF
+         cxqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745934450; x=1746539250;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zZzAOm5Fkl8qCIT3j66YGe08i6RZkMxf0ta1Ae6dYhE=;
-        b=nATdDxmYTVgS/M1nEas/ul/vsoS/VGMcHGoJCtGVaiQZGaeKUKbD4GmyadJNQLQkjh
-         +H9+1sENg0HASb8jVpralIROjtJ0Myoy2+lstzILGvAuP2YqMrhBYeXMrV/bzxBJxIes
-         NeB2a0s+WC0bTyapfY0hNW8mRPRzmhoiIf1vKyaZu0lfbZERVkkCebhfokO84U24iLPt
-         +8qCE22boGlQ3qM4ju1c7rnpJkh2iVK63Re3bT5/8KVl6wx6k7DJVOWPBV0jCvlunt0F
-         ZoeekWYil6ksuuRfTXGx0Uv26CXlG5bMY65P6nc17Jc/M2w1Wo/ONhuIo3WVQRpyVxgZ
-         ZXeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVAZwVWnact8oOzlSE1IZMRNjjLbgGSsKCEzm8GsJX60qUonTGr1+FPX/gZEnAqXCPq8+g9PibE@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yw0x8RFUDZJfK6LkTIzvBur72S7Ti7kSHleRP0MnZ7CQzzSGqNA
-	KK4RRPEoDEadE8CxI9HLT4L28CKe0yzXqv0F9WT9vuZ/fgJgX2coUSrmI20Fygc=
-X-Gm-Gg: ASbGncvDlC2UcoZZEXIySessaZpPcZiD/Hd2tPXHX4brQ1Frrle+sRF5NSHSAh1ycma
-	ZNt4oSN7tFGURVeMcebyJ1rA+PD5sNXfHlMxeAJPiqKQCkUojYh+mr7Gl0cYaIcNxSbyDS2qaGO
-	ArZ08ii7A/2hukxeCIHOanWtxaUbxn2Qzin1oJ51zfb71EGl6nymE1US+gDZaS6Li2W2aUF/OXT
-	ezd9YdV1+ml1q0E1e0KBTQUPj1ahtIexDxceHGUW1J4hoY+cmlxbtsypP3AXQ/TNA4jjWP7tE8Z
-	0EIPs0/37f9LYw/YS+tlsxJMZg5kb+vo1DdE4QamoQPlvbt2SNJ81yygqSCdYoMO0C+5VF4=
-X-Google-Smtp-Source: AGHT+IG6mxLaLkfygtApOBBDV+5I7kjkgYbWSY1CEGrd/ByqrE6MItlN+JUhhEEvW2LyQu6TNoU0TQ==
-X-Received: by 2002:a17:907:7f92:b0:ac6:fcdd:5a97 with SMTP id a640c23a62f3a-acec874bc8emr293224166b.48.1745934449643;
-        Tue, 29 Apr 2025 06:47:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745934451; x=1746539251;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0Aooz71updk3uskflDW3rkicD9BjwvZEZWvnjEoP1n4=;
+        b=hbt8nGqhaz4UUug8u+qWIgOvxhnxPuDOP6i6IHADoMKFkYiwfjJu29p4/C+5QuUU2o
+         9whdPff28VB/qTEA+LcsDwHGTTDyhGiulPW4v7ibcMQQGehIuKTu2f7fdbpvxOz3HEM2
+         Eq2yYLxtV9kh5HodjFjqPWZd8B9fuDk91hCvwxEu3mnWBGiXiyBQYGtXXBDK/Fc+3N5+
+         kXA1klZQ/Yn/LPVnQPQyIUroSHsUoUkfQ0OCJOmkv6fWvRVovXOnvH3AvLNvSBz5FnpE
+         bAvrK2IM96WpniL5LC/2yFETi2SBDHrHdZBB0JRzryig6lQ84D1MsQ95Q7sU0lj0ZYiH
+         p0Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCWta4YlzGpFZiTIb3l9hpLWKP8PbY5tUESXxO7rOgqiZo2FbeiYAWU65WtRHOsIg9I+3D2eYEb/@lists.cip-project.org
+X-Gm-Message-State: AOJu0Yzu6b6U5OziLAEaYGUNVpCX7hD9a5VR1wKb3npy2YWowIvp5IN4
+	6z7D+VYzKSs7ES1BULKEULlyeteCoK0/+KzekCnOBpcTrwssfscYCZftP1KgDJw=
+X-Gm-Gg: ASbGncscxR3MTa+O27bGo4AUnhCt+qRywCH+pIcxpPvqMKxZ29MdQu0YRwyLg5Q1qxM
+	NPr5HZszhK8XeQrt0etAVzdEu3FGhYtIHB2nfuzDIECrRvfGrjkO1J+q5XJygpYc4QcvLH/HiuG
+	YGoGOGELEGfO2nOtxPX7BzmLC3B18gakU+wSds0PTbBcCBcOGPKJIIpgvMd9zzc/fK8aWkaEpxh
+	DtvqMGDHP8IXj8UY0LQCYtO9bGYd4gimQuWYuamp9/i5x/EpZ5NSicS09YRjxeVe8WKxGi6sqVh
+	1LCtBpba83H2AvNUpnnmHCROgeYERtuV5JGDoBF8tg+g+lYg7d12e4aYmdr4i2yh5XHAc0w=
+X-Google-Smtp-Source: AGHT+IFEMBgBUw2EVpRr7DIirJbKIggVrJVyGpVXTRj5NR3jDT8iRPuuWE9trcjSmedsBoQ+tZLI5g==
+X-Received: by 2002:a17:907:60d0:b0:acb:6ec0:12ec with SMTP id a640c23a62f3a-acec4ce14a0mr380597366b.35.1745934451232;
+        Tue, 29 Apr 2025 06:47:31 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.166])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6edb1cbfsm776852766b.181.2025.04.29.06.47.28
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6edb1cbfsm776852766b.181.2025.04.29.06.47.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 06:47:29 -0700 (PDT)
+        Tue, 29 Apr 2025 06:47:30 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH v5.10.y-cip 00/21] RZ/G3S: Backport I2C
-Date: Tue, 29 Apr 2025 16:47:06 +0300
-Message-ID: <20250429134727.2429662-1-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v5.10.y-cip 01/21] i2c: riic: Use platform_get_irq() to get the interrupt
+Date: Tue, 29 Apr 2025 16:47:07 +0300
+Message-ID: <20250429134727.2429662-2-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250429134727.2429662-1-claudiu.beznea.uj@bp.renesas.com>
+References: <20250429134727.2429662-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 29 Apr 2025 13:47:37 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18713
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18714
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Hi,
+commit 8ab1ff9b1ec819bf431cf6c370ba3d9f8c8a108b upstream.
 
-Series backports the Renesas RZ/G3S I2C support to v5.10.y CIP.
+platform_get_resource(pdev, IORESOURCE_IRQ, ..) relies on static
+allocation of IRQ resources in DT core code, this causes an issue
+when using hierarchical interrupt domains using "interrupts" property
+in the node as this bypasses the hierarchical setup and messes up the
+irq chaining.
 
-For v6.1 CIP only the following patches need to be backported (everything
-else is already integrated):
+In preparation for removal of static setup of IRQ resource from DT core
+code use platform_get_irq().
 
-  clk: renesas: r9a08g045: Add clock, reset and power domain support for
-    I2C
-  arm64: dts: renesas: r9a08g045: Add I2C nodes
-  arm64: dts: renesas: rzg3s-smarc: Enable I2C0 node
-  arm64: dts: renesas: rzg3s-smarc-som: Enable I2C1 node
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa@kernel.org>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+ drivers/i2c/busses/i2c-riic.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-For v6.12 CIP none of these patches need to be backported. Everything is
-already integrated.
-
-Thank you,
-Claudiu Beznea
-
-Claudiu Beznea (12):
-  i2c: riic: Use temporary variable for struct device
-  i2c: riic: Call pm_runtime_get_sync() when need to access registers
-  i2c: riic: Use pm_runtime_resume_and_get()
-  i2c: riic: Enable runtime PM autosuspend support
-  i2c: riic: Add suspend/resume support
-  i2c: riic: Define individual arrays to describe the register offsets
-  dt-bindings: i2c: renesas,riic: Document the R9A08G045 support
-  i2c: riic: Add support for fast mode plus
-  clk: renesas: r9a08g045: Add clock, reset and power domain support for
-    I2C
-  arm64: dts: renesas: r9a08g045: Add I2C nodes
-  arm64: dts: renesas: rzg3s-smarc: Enable I2C0 node
-  arm64: dts: renesas: rzg3s-smarc-som: Enable I2C1 node
-
-Geert Uytterhoeven (1):
-  i2c: riic: Simplify unsupported bus speed handling
-
-Lad Prabhakar (7):
-  i2c: riic: Use platform_get_irq() to get the interrupt
-  i2c: riic: Use devm_platform_ioremap_resource()
-  i2c: riic: Introduce helper functions for I2C read/write operations
-  i2c: riic: Pass register offsets and chip details as OF data
-  i2c: riic: Add support for R9A09G057 SoC
-  dt-bindings: i2c: renesas,riic: Fix 'unevaluatedProperties' warnings
-  dt-bindings: i2c: renesas,riic: Document R9A09G057 support
-
-Wolfram Sang (1):
-  i2c: move drivers from strlcpy to strscpy
-
- .../devicetree/bindings/i2c/renesas,riic.yaml |  26 +-
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  88 +++++
- .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |   5 +
- arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi  |   7 +
- drivers/clk/renesas/r9a08g045-cpg.c           |   8 +
- drivers/i2c/busses/i2c-riic.c                 | 309 +++++++++++++-----
- 6 files changed, 349 insertions(+), 94 deletions(-)
-
+diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
+index b4365edc7e24..45ea33e1538c 100644
+--- a/drivers/i2c/busses/i2c-riic.c
++++ b/drivers/i2c/busses/i2c-riic.c
+@@ -434,12 +434,12 @@ static int riic_i2c_probe(struct platform_device *pdev)
+ 		return ret;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(riic_irqs); i++) {
+-		res = platform_get_resource(pdev, IORESOURCE_IRQ, riic_irqs[i].res_num);
+-		if (!res)
+-			return -ENODEV;
++		ret = platform_get_irq(pdev, riic_irqs[i].res_num);
++		if (ret < 0)
++			return ret;
+ 
+-		ret = devm_request_irq(&pdev->dev, res->start, riic_irqs[i].isr,
+-					0, riic_irqs[i].name, riic);
++		ret = devm_request_irq(&pdev->dev, ret, riic_irqs[i].isr,
++				       0, riic_irqs[i].name, riic);
+ 		if (ret) {
+ 			dev_err(&pdev->dev, "failed to request irq %s\n", riic_irqs[i].name);
+ 			return ret;
 -- 
 2.43.0
 
