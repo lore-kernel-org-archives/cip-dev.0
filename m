@@ -2,66 +2,66 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C316C3ABAC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73863C369DC
 	for <webhook@archiver.kernel.org>; Tue, 29 Apr 2025 13:47:37 +0000 (UTC)
 Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
- by mx.groups.io with SMTP id smtpd.web11.20335.1745934455276935008
+ by mx.groups.io with SMTP id smtpd.web11.20336.1745934456624159367
  for <cip-dev@lists.cip-project.org>;
- Tue, 29 Apr 2025 06:47:35 -0700
+ Tue, 29 Apr 2025 06:47:36 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=bFVbGNj0;
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=XD4ucarG;
  spf=pass (domain: tuxon.dev, ip: 209.85.218.46, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac339f53df9so1160893566b.1
-        for <cip-dev@lists.cip-project.org>; Tue, 29 Apr 2025 06:47:35 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac34257295dso1024234866b.2
+        for <cip-dev@lists.cip-project.org>; Tue, 29 Apr 2025 06:47:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1745934454; x=1746539254; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1745934455; x=1746539255; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yamUPL1mYnb0zkVwBYojz97fLGYy2NeuXvu2g9jYV7c=;
-        b=bFVbGNj0nRdNYlZZ1VrRS6g+lkDndkTvhv/2oZ0CbLNbAjLyhky6uyIipS8csOcRek
-         VlT9F1RDryFI6KB9kfctuJ8q8VvvbMGGggXx/Hw+AGFVK51MCYVbMTuEa1ZAA+xioJGA
-         Nlw6oodYAGc1FgQBcHxMIv2GZJa0ZtAwqT6tecIkjswApPzdCHGzrazkI78fPhqkHbTI
-         yFMkYffVd8cb0+Xc+mehzEfr1jy7WsMORXrsiYis7zd01RuBVj0L05EkBTVauzCiFqc3
-         tIWux51DxJ07y6bwPQFrguix890ani1524yDuEHoEF7aNuc/cSJO/lBSDjLLVF+87Mmw
-         FjQw==
+        bh=qA9R1ldJtQHSHc6sx5NCXw/2aHm97A7KonFj+C4dW98=;
+        b=XD4ucarGiZ+IfSKxiefR9yAYGlkmS50E1U9O+6E+rl9TLnrXbn2X/s6SUBAKMjRyaO
+         3633oagkSSbH1eprat0yqzC1HwLaV9aqyT8ySY631tCd5q07fI4YwHFcy0ayphapg95H
+         EYMq5/DlHUzwxnUWLjwLgpfYAHvvDSPIOnIo4P0wa8R/8UXmGVcyGCZLWhIWTnJh2O0u
+         Dw6giftJGyxcVqgPFtNo1dsKsb452sifjwbPqfU5qLX31wNO/w6XvqU8zf0Lg7UbRskm
+         TaVPiM86u6MK6wa29RA0LlWol4RuuNITLlcZgUGEOZsGGFNzl/WW2QbRuichcuJIqNF2
+         YBWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745934454; x=1746539254;
+        d=1e100.net; s=20230601; t=1745934455; x=1746539255;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yamUPL1mYnb0zkVwBYojz97fLGYy2NeuXvu2g9jYV7c=;
-        b=rBEdUPPZP4vmDVNWBywU6DqhL9p9FsvJhn78aBLHAwbpzjaituEc+cjh41XPILJ/hm
-         CmoQiqIKezPXIUAWdUlBQOM5ciphB3mYlbhQA0t3is/8i6+yaeFG0tTu7GX7LmPxUTpd
-         HTtu3zEq2ggf18iXRFEiqho4ktUjJrr9k2ryT8Pkbq7vBKgqwwZ8c7I3eIwW7mkzMXzg
-         BQA4bqVKL0SNMtVt9Bb6GgNdpzAjbtqyYNG6djStzgmJxGWXNKIKJkHjdVlaECTEHTUg
-         +5MCCd0pmSW1hV5+t9MsbdVykMptw9Ki7ATLpEvNCjwsK7eiWnfKdQl0QBf0JYqDxAAr
-         wRhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLpbtr5mGgRMTj44v41/tIyGWIT00KDP8z+9DtkC3Tlc/bs7IAtQVa3cVY3kbq9/SlsLAmFjeA@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yw7VkpWQUANSg+GgY1YUrMgA1bUJ93S4c1uIGd+oR22U0PxEGK4
-	20yNXg3iKAd8G/f8kYvMG8Mik+Nn88uJon02q8+iEZKSJvQu8JeHYD9k5a4NzjDXUeASyxzx6ld
-	D
-X-Gm-Gg: ASbGncvLmkP2pIkWMYFQZSNaKAtn33+DZStcZpkPHLvI4c0UzLjcVSBZh52ahzbMu7u
-	enGwIyBAT8BLG1xb/bFW10MmITwTmNpjQstIJa2olSYwQ4nflMMsW7VF5F8JDkZ0KX5r1hMVxXp
-	hIC13WnIfUSbeoWZ3R8zwjNgpmzzp7KIwTTHzGS/Ug1JgjTe//oSCLwW++QL3J5oqqKlaSmSIq2
-	cNlqoN3JyraXGlOz5wDgGOZwo/9hTLRdn9MODyRmUlt7xesRsCjrPP2BGEb8TUeU5ib5tBpj90G
-	JrwnhqPacer87kxStxmu97ZreTExdi1Zm0T8LkQI7c0+/Csx5odCpktbYHImhi8VBzP/bIA=
-X-Google-Smtp-Source: AGHT+IHTd7Q/HZKsvFKh6hldJRP21JQp56BDPcwxwBlArakoKYpnuc/dZzSSloiwLuEfop/qMO8+AA==
-X-Received: by 2002:a17:907:97c4:b0:ab7:1012:3ccb with SMTP id a640c23a62f3a-ace848f77e1mr1253283166b.14.1745934453695;
-        Tue, 29 Apr 2025 06:47:33 -0700 (PDT)
+        bh=qA9R1ldJtQHSHc6sx5NCXw/2aHm97A7KonFj+C4dW98=;
+        b=dyEUM8seWF/G8jTuXdmdztwpfQpwwMFJ/svjKbxiT4EXFBGyxnaHtMrXgBwJE/OIMC
+         F50EdFhs+jeYao5Y022ngaNGzALLU1Fg/+2pXPSm0grOpSrev76s31MmiDiqvH0voJOL
+         wgTF5ZswQjC245Sq1AKpLKPcqeKwO0nzsrxx955kmtcWGD8gLlN73aMnt2SKAW2DTlwP
+         XFawugu3tk39REa4EWcvcJ2XJ5/+CyVX0ptFSOPEPcLcBsyEozGvhojL2FySHXtmrGSG
+         mQ2HNDYRyduYaCIelBMOc2Squ9jdZMK4OpHXuBi6K2Fn+OD49eEe52JPksl7BkeLQ2Zs
+         vjAg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8GVbbRzT+rEcHk8zz4U5LaLJc6WXw1K06Xu2qQ6mTpGp1sfSmyU1VuAflJH5U2ODyshNBtIiL@lists.cip-project.org
+X-Gm-Message-State: AOJu0YznlCv7S51MMK9t77fY1YT39VPDO51pldQAQPbdOiCq1xmcRf4H
+	hOciLG9pybuNTS2C11GIJnapNwvn2RyrHnqpKXO8vQK1a8+ECnz1c5bM9oQf0RgFIV8JPrpCt1b
+	+
+X-Gm-Gg: ASbGncvt+dTrZfBseqPWQ87zS3mcV9R6DofF8xrKz8nVzKwE9mUPo/eql1B5dYyW6CN
+	8nYPNKnCeRUA0fJNyp2Ib3vE8n/Dhe57NG5klHQWQTgbq3Cn55c9dQuVx9sNBlvQ/sPODyalSOU
+	fbJ/wVVCgHfea22ZSmeZy0QafdGDfVqHj1yz+/FISBaQ8953aJjaSud/j5ZzV2x4i8MX/2AfbO8
+	TP4ZfonAnGtVHzQgGjONLF45xKjVpKZSBW/WY5zQYLiYJ7xmgwIFmWjuKsdLWLzWsUjTW2KnJ5o
+	NhaZem7Sw2DBtg/IkeQ5+vDPDLNUX4gIvv5bKDBw1p8TMC1NN5PKbclEnnoxjezscfnf6vc=
+X-Google-Smtp-Source: AGHT+IGB9+CgwY2FjXgKuX8s91rOEqwhJZ4Q09HBmUYiVn+PSVVdowoeT78S3zslw3F3VaOgyDgDZw==
+X-Received: by 2002:a17:907:72cf:b0:ac7:2f8b:6844 with SMTP id a640c23a62f3a-acec4e05972mr369204266b.23.1745934454920;
+        Tue, 29 Apr 2025 06:47:34 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.166])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6edb1cbfsm776852766b.181.2025.04.29.06.47.31
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6edb1cbfsm776852766b.181.2025.04.29.06.47.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 06:47:32 -0700 (PDT)
+        Tue, 29 Apr 2025 06:47:34 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH v5.10.y-cip 02/21] i2c: move drivers from strlcpy to strscpy
-Date: Tue, 29 Apr 2025 16:47:08 +0300
-Message-ID: <20250429134727.2429662-3-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v5.10.y-cip 03/21] i2c: riic: Use devm_platform_ioremap_resource()
+Date: Tue, 29 Apr 2025 16:47:09 +0300
+Message-ID: <20250429134727.2429662-4-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250429134727.2429662-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250429134727.2429662-1-claudiu.beznea.uj@bp.renesas.com>
@@ -71,38 +71,44 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 29 Apr 2025 13:47:37 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18715
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18716
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit ea1558ce149d286eaf2c0800a93b7efa2adda094 upstream.
+commit e05e47088ef12ce69b5c40605e95d01c11807a22 upstream.
 
-Follow the advice of the below link and prefer 'strscpy'. Conversion is
-easy because no driver used the return value and has been done with a
-simple sed invocation.
+Use the devm_platform_ioremap_resource() helper instead of calling
+platform_get_resource() and devm_ioremap_resource() separately.
 
-Link: https://lore.kernel.org/r/CAHk-=wgfRnXz0W3D37d01q3JFkr_i_uTL=V6A6G1oUZcprmknw@mail.gmail.com/
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Signed-off-by: Wolfram Sang <wsa@kernel.org>
-[claudiu.beznea: kept only the i2c-riic driver]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/i2c/busses/i2c-riic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-riic.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
-index 45ea33e1538c..efa1655da7d6 100644
+index efa1655da7d6..6f8ce656183c 100644
 --- a/drivers/i2c/busses/i2c-riic.c
 +++ b/drivers/i2c/busses/i2c-riic.c
-@@ -448,7 +448,7 @@ static int riic_i2c_probe(struct platform_device *pdev)
+@@ -400,7 +400,6 @@ static int riic_i2c_probe(struct platform_device *pdev)
+ {
+ 	struct riic_dev *riic;
+ 	struct i2c_adapter *adap;
+-	struct resource *res;
+ 	struct i2c_timings i2c_t;
+ 	struct reset_control *rstc;
+ 	int i, ret;
+@@ -409,8 +408,7 @@ static int riic_i2c_probe(struct platform_device *pdev)
+ 	if (!riic)
+ 		return -ENOMEM;
  
- 	adap = &riic->adapter;
- 	i2c_set_adapdata(adap, riic);
--	strlcpy(adap->name, "Renesas RIIC adapter", sizeof(adap->name));
-+	strscpy(adap->name, "Renesas RIIC adapter", sizeof(adap->name));
- 	adap->owner = THIS_MODULE;
- 	adap->algo = &riic_algo;
- 	adap->dev.parent = &pdev->dev;
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	riic->base = devm_ioremap_resource(&pdev->dev, res);
++	riic->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(riic->base))
+ 		return PTR_ERR(riic->base);
+ 
 -- 
 2.43.0
 
