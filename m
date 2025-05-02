@@ -1,84 +1,84 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <sai.sathujoda@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0474DC3ABA3
-	for <webhook@archiver.kernel.org>; Thu,  1 May 2025 08:24:51 +0000 (UTC)
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web10.6869.1746087883836759283
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 891FDC3ABA5
+	for <webhook@archiver.kernel.org>; Fri,  2 May 2025 05:24:56 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
+ by mx.groups.io with SMTP id smtpd.web11.12972.1746163485779955977
  for <cip-dev@lists.cip-project.org>;
- Thu, 01 May 2025 01:24:44 -0700
+ Thu, 01 May 2025 22:24:46 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=TU1W61gJ;
- spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2EA2D10269597;
-	Thu,  1 May 2025 10:24:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1746087882; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=8Ll3N83wiu2u2kwSTxZKa1ikoicssDHWovoDIiIfcXU=;
-	b=TU1W61gJaSKW9N3oqOIBubzQlZYySoZixfu04RdtsGdmP7Xr//iDrQKNjUxNlZmaidkBe6
-	FizTmzlWIep7XzrIkESNUrIDwz2KSAhkaOB0/X6xjrDUhqmZOjbxw1YjK7g1NY7hrjddyO
-	xGNvszl0rKg6T4H1HgJHue1HivTebBZGb+DukBJwvJm5yRIvDrHPWyva7zZfjarACj7gIG
-	la/yLI1XwiaF5DmqGttICKHNIyF9vrQYlQpPCfvwzOXEWgZFFIj3Cg70Pd4vYaUJ/SLHCa
-	VB+ypSkGnwLyHVqbL4t2gTL9O8MPRvjaQwBAi/Y57VkzJpxwyi0jrGfZn1R9pw==
-Date: Thu, 1 May 2025 10:24:38 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: nobuhiro1.iwamatsu@toshiba.co.jp, cip-dev@lists.cip-project.org
-Subject: Re: [PATCH v5.10.y-cip 00/21] RZ/G3S: Backport I2C
-Message-ID: <aBMvxq+o+EBL0Ay/@duo.ucw.cz>
-References: <20250429134727.2429662-1-claudiu.beznea.uj@bp.renesas.com>
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.134, mailfrom: sai.sathujoda@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 5425Ohtj1664470; Fri, 2 May 2025 14:24:44 +0900
+X-Iguazu-Qid: 2yAbaKzOi3OYSDTHO9
+X-Iguazu-QSIG: v=2; s=0; t=1746163482; q=2yAbaKzOi3OYSDTHO9; m=E7ImDwovpFbMPAUv5wo6sDP3J77KEvBPN8sToG7Zo5U=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1803) id 5425Ofvg1700360
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 2 May 2025 14:24:42 +0900
+From: Sai.Sathujoda@toshiba-tsip.com
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Cc: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>,
+        dinesh.kumar@toshiba-tsip.com, kazuhiro3.hayashi@toshiba.co.jp
+Subject: [isar-cip-core v1] README.security-testing.md: Remove the credentials from console & document them
+Date: Fri,  2 May 2025 10:50:34 +0530
+X-TSB-HOP2: ON
+Message-Id: <20250502052035.1959453-1-Sai.Sathujoda@toshiba-tsip.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/DwfJBCW7D6eGqsd"
-Content-Disposition: inline
-In-Reply-To: <20250429134727.2429662-1-claudiu.beznea.uj@bp.renesas.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 02 May 2025 05:24:39.0227 (UTC) FILETIME=[803C28B0:01DBBB22]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 01 May 2025 08:24:51 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18746
+ <cip-dev@lists.cip-project.org>; Fri, 02 May 2025 05:24:56 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18747
+
+From: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
+
+The IEC 62443-4-2 certification body insists on removing the login credentials
+from console prior login prompt and document them as part of user manual.
+
+Signed-off-by: sai ashrith sathujoda <sai.sathujoda@toshiba-tsip.com>
+---
+ doc/README.security-testing.md                      | 7 +++++++
+ recipes-core/security-customizations/files/postinst | 2 +-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/doc/README.security-testing.md b/doc/README.security-testing.md
+index 213fc82..9696892 100644
+--- a/doc/README.security-testing.md
++++ b/doc/README.security-testing.md
+@@ -25,6 +25,13 @@ Save & Build
+ ```
+ host$ ./start-qemu.sh x86
+ ```
++# Login using the following credentials
++```
++username: root
++password: CIPsecurity@123
++```
++IEC 62443-4-2 certification body expects to remove the credentials from being displayed on the console prior login stage.
++(Warning) CIP users are strongly recommended not to use CIP default credentials for production images.
+ 
+ # Copy security tests in to the Linux image
+ - Clone the cip-security-tests from following URL
+diff --git a/recipes-core/security-customizations/files/postinst b/recipes-core/security-customizations/files/postinst
+index daade83..15be659 100755
+--- a/recipes-core/security-customizations/files/postinst
++++ b/recipes-core/security-customizations/files/postinst
+@@ -6,7 +6,7 @@
+ 
+ set -e
+ 
+-echo "CIP Core Security Image (login: root/CIPsecurity@123)" > /etc/issue
++echo "CIP Core Security Image" > /etc/issue
+ 
+ # CR1.7: Strength of password-based authentication
+ # Pam configuration to  enforce password strength
+-- 
+2.30.2
 
 
---/DwfJBCW7D6eGqsd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> Series backports the Renesas RZ/G3S I2C support to v5.10.y CIP.
->=20
-> For v6.1 CIP only the following patches need to be backported (everything
-> else is already integrated):
->=20
->   clk: renesas: r9a08g045: Add clock, reset and power domain support for
->     I2C
->   arm64: dts: renesas: r9a08g045: Add I2C nodes
->   arm64: dts: renesas: rzg3s-smarc: Enable I2C0 node
->   arm64: dts: renesas: rzg3s-smarc-som: Enable I2C1 node
->=20
-> For v6.12 CIP none of these patches need to be backported. Everything is
-> already integrated.
-
-Thank you, applied.
-
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---/DwfJBCW7D6eGqsd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaBMvxgAKCRAw5/Bqldv6
-8kRDAJ4y4GIR8pvcD41UGGvYOSz8EwXSjgCgr8BgKh4AjD/3vwzvpt+6ckRRtRk=
-=5Qrn
------END PGP SIGNATURE-----
-
---/DwfJBCW7D6eGqsd--
 
