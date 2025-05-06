@@ -2,33 +2,35 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A31C3ABC0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE3AFC3ABC6
 	for <webhook@archiver.kernel.org>; Tue,  6 May 2025 12:08:14 +0000 (UTC)
-Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
- by mx.groups.io with SMTP id smtpd.web11.74573.1746533291150690777
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+ by mx.groups.io with SMTP id smtpd.web11.74574.1746533291377374454
  for <cip-dev@lists.cip-project.org>;
  Tue, 06 May 2025 05:08:11 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=c2JUOivj;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.225, mailfrom: fm-51332-20250506120807dcdb54e5b489541398-vyorp9@rts-flowmailer.siemens.com)
-Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 20250506120807dcdb54e5b489541398
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=VGvcXODL;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-51332-20250506120808929a9221149164aad6-1igkeh@rts-flowmailer.siemens.com)
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20250506120808929a9221149164aad6
         for <cip-dev@lists.cip-project.org>;
         Tue, 06 May 2025 14:08:08 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
- bh=QloN8zvyRamZU7BE4UZE799R3fb/QpxziBxC3m/6Kmc=;
- b=c2JUOivjlkhATxex8EmRxlHdt0lo5pt2v9han1V84opcl7hyK400oN3/IvY2mJWKP20Hcq
- N5Py1JbDl9AnOETXpR9XA2T0t+tDbmC1lZtggrOXcVnk4NvOoYzedwdmODnFzw+XOLNjQbNQ
- MeY9C4IypBrOrpi5VEvyeNIG37mgnD4vWLuy+RdCTARPNwq6lXTgCmKK78QmsuEp0ltlWO2d
- kdLO1M7uhP91qK+vxB36E1yTQTz84PpD01TuwxtiS+L9C273jRA4XGEgjhHG9EvkRlURJruU
- ckSdyWmGHa67E5D70TIlncqNdW+DE4jXD5doNBIuxvgst0zagwMxXeJA==;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
+ bh=YxsAwY8ZBrDSbBIiEKTP7lULz/zMTq3j0ANvuNAN4VA=;
+ b=VGvcXODLZQxFjwa/HWFE+Lgecsm6b2KG/lQspdB6XDzAxoME5NUkI8Qp5Wjia3MYB6tC9S
+ KQ2HVT1hG4ycK0Ub5T2UN0b5PPRxn/MVh3LwQTZU+Sl58HwNuXYSINenZ9NgM9pQmkJKuVzy
+ WWAN9lXyieZSe2347jDpAk5L2egyqTbRrzKGeRjwd7RiDES5/i/H+dBEcfvO23zAzXqyVUxP
+ NisolERQNrLt/yeBZVDtkfkkYgbQLmF56yB2YBoMmMuXuDbt55piqft3vyykmENA6aSQREN/
+ L7XiHv9fAs9ClMhK37WRX7daEPd4Gonk5UAYG6OtQqkzzL6YBkHQAPmg==;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org,
 	jan.kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][RFC v2 0/6] Add factory-reset
-Date: Tue,  6 May 2025 14:07:42 +0200
-Message-ID: <20250506120807.255675-1-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][RFC v2 6/6] Add settings for factory-reset with a separate home partition
+Date: Tue,  6 May 2025 14:07:48 +0200
+Message-ID: <20250506120807.255675-7-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20250506120807.255675-1-Quirin.Gylstorff@siemens.com>
+References: <20250506120807.255675-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
@@ -37,54 +39,26 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 06 May 2025 12:08:14 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18766
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18764
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ kas/opt/separate-home-partition.yml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-This adds an new hooks for factory-reset to the
-initramfs. This hook will
-
-- format the disk.
-- In case of a encrypted disk factory reset the TPM is cleared(all keys
-  are deleted)
-
-In case of an encrypted file system the marker hook needs to be stored
-in a readable location, e.g. one of the boot partitions or the efi
-partition.
-
-Changes v2:
- - make marker check a separate script
- - change data-reset to factory-reset hook
-
-Quirin Gylstorff (6):
-  add factory-reset initramfs hook
-  add factory-reset-helper to set the marker file
-  encrypt-data.yml: Add factory-reset information to encrypt-data
-  cip-core-image: add factory-reset helper
-  add factory-reset to initramfs
-  Add settings for factory-reset with a separate home partition
-
- kas/opt/encrypt-data.yml                      |  3 +
- kas/opt/separate-home-partition.yml           |  3 +
- recipes-core/images/cip-core-image.bb         |  2 +-
- .../cip-core-initramfs/cip-core-initramfs.bb  |  1 +
- .../files/detect-marker-file                  | 33 +++++++++
- .../initramfs-factory-reset-hook/files/hook   |  7 ++
- .../files/local-top-complete                  | 67 +++++++++++++++++++
- .../files/reset-env.tmpl                      |  4 ++
- .../initramfs-factory-reset-hook_0.1.bb       | 52 ++++++++++++++
- .../factory-reset-helper_0.1.bb               | 34 ++++++++++
- .../files/set-factory-reset-marker.sh.tmpl    | 28 ++++++++
- 11 files changed, 233 insertions(+), 1 deletion(-)
- create mode 100644 recipes-initramfs/initramfs-factory-reset-hook/files/detect-marker-file
- create mode 100644 recipes-initramfs/initramfs-factory-reset-hook/files/hook
- create mode 100644 recipes-initramfs/initramfs-factory-reset-hook/files/local-top-complete
- create mode 100644 recipes-initramfs/initramfs-factory-reset-hook/files/reset-env.tmpl
- create mode 100644 recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.1.bb
- create mode 100644 recipes-support/factory-reset-helper/factory-reset-helper_0.1.bb
- create mode 100644 recipes-support/factory-reset-helper/files/set-factory-reset-marker.sh.tmpl
-
+diff --git a/kas/opt/separate-home-partition.yml b/kas/opt/separate-home-partition.yml
+index 83f59a1..48cccc2 100644
+--- a/kas/opt/separate-home-partition.yml
++++ b/kas/opt/separate-home-partition.yml
+@@ -19,3 +19,6 @@ local_conf_header:
+     OVERRIDES .= ":separate-home-part"
+   add-home-partition-to-crypt: |
+     CRYPT_PARTITIONS:append:separate-home-part = " home:/home:reencrypt"
++  add-home-partition-to-factory-reset: |
++    INITRAMFS_FACTORY_RESET_DEVICES:append:separate-home-part = " /dev/disk/by-partlabel/home"
++
 -- 
 2.47.0
 
