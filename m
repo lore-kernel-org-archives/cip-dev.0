@@ -1,81 +1,268 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B968C3ABC0
-	for <webhook@archiver.kernel.org>; Wed,  7 May 2025 07:50:21 +0000 (UTC)
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web11.3319.1746604211665327605
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7BC5C3ABC0
+	for <webhook@archiver.kernel.org>; Wed,  7 May 2025 08:11:31 +0000 (UTC)
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
+ by mx.groups.io with SMTP id smtpd.web11.3611.1746605487485672506
  for <cip-dev@lists.cip-project.org>;
- Wed, 07 May 2025 00:50:12 -0700
+ Wed, 07 May 2025 01:11:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=E+1CQaN6;
- spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CD6431048C2F0;
-	Wed,  7 May 2025 09:50:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1746604209; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=mZQW3xsww7uUV70c7Tb+W186s80fLY8tDnEz3lJCiM8=;
-	b=E+1CQaN62BGS7usH7P+6x6kd8/oCribdHFvNcionjVry+hapMNnWnXsVKx7HT5zP/kPLyo
-	e/Tq43ajm0YYMgEA1DyZbpTvc3SPvscCu9OJ6vgirIjL6uc7zgdo2FVFNppru/hHolTWGt
-	bY378cBsL9/M+uweynD397oO0w1qFv0NybT2RtAnSSyma+1Dja+OKoKmtK9S3HJxlMAYep
-	0OBM0uIl7ZnEd6MvWo1sar1spRJBrNmQrjZZcSI4j6SSNAELMAGywC2VOtp8AFOXvYsEKF
-	Piq1pKoKZvFk6Ga5EztfcxXQRlkFjeBTKFoy1rMYpWcw5QT+HW475tZaWNR6ow==
-Date: Wed, 7 May 2025 09:50:04 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Ulrich Hecht <uli@fpond.eu>
-Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: Re: Request for review for 4.19-st4, 4.19-cip120
-Message-ID: <aBsQrIFPDLWwXXCd@duo.ucw.cz>
-References: <781807518.215591.1746544433020@webmail.strato.de>
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=gnNHwe95;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-51332-20250507081124cb9c3bc2d59c97491f-6qt8tz@rts-flowmailer.siemens.com)
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20250507081124cb9c3bc2d59c97491f
+        for <cip-dev@lists.cip-project.org>;
+        Wed, 07 May 2025 10:11:24 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
+ bh=Qvcji5VLprk9VN9avrlm2dNUzMWxiFEBySsnkry0ZP8=;
+ b=gnNHwe95pbxvIPkYKJ4//bZa+UvngGXH+pyqvWz2AbZX3EbBf43k/Q14Iy3uYOA1iTbZAi
+ JLMQl8LVkCze+B9B5UbiR1nY4trfLgbOTtrShORvERZRMa28qXub/QJCMAB+PAKkhMIJHxPn
+ 43TIvOfkrfO35bBVHHi+Cjsy6F/DvfjQIO9+9IF5ODIVij7e+y+8M4Vli1ZGkKdKqQpplDGJ
+ 17zZUnJQ8zYzzpmW/IzCbhsjeIkgxSMEKyKGVB8fjFed27NOO58iSDlsW5P7wVboFUARknx3
+ xpIPh4dn+2fdFywb3oB9M9fq2cu6t0bBxTiEglTseZtSzLWgx2k4iImA==;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: cip-dev@lists.cip-project.org,
+	jan.kiszka@siemens.com
+Subject: [cip-dev][isar-cip-core][PATCH v3 1/6] add factory-reset initramfs hook
+Date: Wed,  7 May 2025 10:10:37 +0200
+Message-ID: <20250507081123.94511-1-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20250506120807.255675-2-Quirin.Gylstorff@siemens.com>
+References: <20250506120807.255675-2-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="5GfRWIQelSXH6Gjf"
-Content-Disposition: inline
-In-Reply-To: <781807518.215591.1746544433020@webmail.strato.de>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 07 May 2025 07:50:21 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18773
+ <cip-dev@lists.cip-project.org>; Wed, 07 May 2025 08:11:31 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18774
 
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
---5GfRWIQelSXH6Gjf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This allows to reset the device back to first boot by
+formatting the persistent partitions.
 
-Hi!
+The reset occurs if a file defined by the variable
+INITRAMFS_FACTORY_RESET_MARKER
+exists in the device INITRAMFS_FACTORY_RESET_MARKER_DEVICE.
 
-> Here's the single manual backport for the upcoming 4.19 kernel release. A=
-s always it can be found in https://git.kernel.org/pub/scm/linux/kernel/git=
-/cip/linux-cip.git/log/?h=3Dlinux-4.19.y-st-rc
->=20
-> b6c3d672c55ea net: dsa: mv88e6xxx: propperly shutdown PPU re-enable timer=
- on destroy
->=20
-> Thanks for having a look!
+In case of disk encryption it will invalidate the keys
+stored in the TPM.
 
-Thank you, patch looks ok to me.
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+Changes v3:
+ - remove `set -x`
 
-Best regards,
-								Pavel
+ .../files/detect-marker-file                  | 33 ++++++++++
+ .../initramfs-factory-reset-hook/files/hook   |  7 ++
+ .../files/local-top-complete                  | 66 +++++++++++++++++++
+ .../files/reset-env.tmpl                      |  4 ++
+ .../initramfs-factory-reset-hook_0.1.bb       | 52 +++++++++++++++
+ 5 files changed, 162 insertions(+)
+ create mode 100644 recipes-initramfs/initramfs-factory-reset-hook/files/detect-marker-file
+ create mode 100644 recipes-initramfs/initramfs-factory-reset-hook/files/hook
+ create mode 100644 recipes-initramfs/initramfs-factory-reset-hook/files/local-top-complete
+ create mode 100644 recipes-initramfs/initramfs-factory-reset-hook/files/reset-env.tmpl
+ create mode 100644 recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.1.bb
 
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+diff --git a/recipes-initramfs/initramfs-factory-reset-hook/files/detect-marker-file b/recipes-initramfs/initramfs-factory-reset-hook/files/detect-marker-file
+new file mode 100644
+index 0000000..30e399e
+--- /dev/null
++++ b/recipes-initramfs/initramfs-factory-reset-hook/files/detect-marker-file
+@@ -0,0 +1,33 @@
++#!/bin/sh
++# Copyright (C) Siemens AG, 2025
++#
++# SPDX-License-Identifier: MIT
++#
++# This implementation check for the a existing file to trigger a
++# factory reset. Prints 'true' in case the marker was found
++
++check_for_factory_reset() {
++	marker="$(basename ${INITRAMFS_FACTORY_RESET_MARKER})"
++	marker_storage_device="${INITRAMFS_FACTORY_RESET_MARKER_STORAGE_DEVICE}"
++	storage_mnt="$(findmnt findmnt  --first-only --output TARGET --noheadings "${marker_storage_device}")"
++	tmp_mount=$(mktemp -d)
++	# check for marker
++	if [ -z "${storage_mnt}" ]; then
++		if ! mount -t "$(get_fstype "${marker_storage_device}")" \
++			 "${marker_storage_device}" \
++			 "${tmp_mount}"; then
++			panic "Can't mount ${marker_storage_device}!"
++		fi
++		storage_mnt="$tmp_mount"
++	fi
++	if [ -e "${storage_mnt}/${marker}" ]; then
++		echo "true"
++		# delete marker
++		rm "${storage_mnt}/${marker}"
++	fi
++	if mountpoint -q "$tmp_mount"; then
++		umount "$tmp_mount"
++	fi
++	rmdir "$tmp_mount"
++}
++
+diff --git a/recipes-initramfs/initramfs-factory-reset-hook/files/hook b/recipes-initramfs/initramfs-factory-reset-hook/files/hook
+new file mode 100644
+index 0000000..4b4ff25
+--- /dev/null
++++ b/recipes-initramfs/initramfs-factory-reset-hook/files/hook
+@@ -0,0 +1,7 @@
++# Copyright (C) Siemens AG, 2025
++#
++# SPDX-License-Identifier: MIT
++
++copy_file library /usr/share/factory-reset/factory_reset_marker /usr/share/factory-reset/factory_reset_marker
++copy_file library /usr/share/factory-reset/reset-env /usr/share/factory-reset/reset-env
++
+diff --git a/recipes-initramfs/initramfs-factory-reset-hook/files/local-top-complete b/recipes-initramfs/initramfs-factory-reset-hook/files/local-top-complete
+new file mode 100644
+index 0000000..d8e06be
+--- /dev/null
++++ b/recipes-initramfs/initramfs-factory-reset-hook/files/local-top-complete
+@@ -0,0 +1,66 @@
++#!/bin/sh
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2025
++#
++# Authors:
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#
++prereqs() {
++	# no prereqs we want in front of crypt
++	echo ""
++}
++case $1 in
++prereqs)
++	prereqs
++	exit 0
++	;;
++esac
++
++
++. /scripts/functions
++. /usr/share/factory-reset/reset-env
++. /usr/share/factory-reset/factory_reset_marker
++
++target_devices="${INITRAMFS_FACTORY_RESET_DEVICES}"
++
++if [ "$(check_for_factory_reset)" = "true" ]; then
++	log_begin_msg "Factory Reset"
++	for target in ${target_devices}; do
++		log_begin_msg "Reset device: $target"
++		fs_type=$(get_fstype ${target})
++		case "$target" in
++			*by-partlabel*)
++				label="$(basename "${target}" )"
++			;;
++			*)
++				label=$(blkid --match-tag LABEL "$target" | awk -F= '{gsub(/"/,"");print $2}' )
++				if [ -z "${label}" ]; then
++					log_warning_msg "Could not find any label  for target '$target'"
++				fi
++			;;
++		esac
++		if [ "$fs_type" = "luks" ]; then
++			# after this the data on the encrypted partition
++			# is inaccessible
++			tpm2_clear
++			# with encryption the original fs_type is hidden
++			# use a variable from the reset-env to set it
++			fs_type="$INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE"
++		fi
++		case ${fs_type} in
++		ext*)
++			/sbin/mke2fs -L "${label}" -F -t ext4 "${target}"
++			;;
++		btrfs)
++			/sbin/mkfs.btrfs -L "${label}" --force "${target}"
++			;;
++		*)
++			log_warning_msg "Unrecognized filesystem type ${fs_type} - could not format"
++			;;
++		esac
++		log_end_msg "Reset device: $target"
++	done
++	log_end_msg "Factory Reset"
++fi
+diff --git a/recipes-initramfs/initramfs-factory-reset-hook/files/reset-env.tmpl b/recipes-initramfs/initramfs-factory-reset-hook/files/reset-env.tmpl
+new file mode 100644
+index 0000000..ed68398
+--- /dev/null
++++ b/recipes-initramfs/initramfs-factory-reset-hook/files/reset-env.tmpl
+@@ -0,0 +1,4 @@
++INITRAMFS_FACTORY_RESET_MARKER="${INITRAMFS_FACTORY_RESET_MARKER}"
++INITRAMFS_FACTORY_RESET_MARKER_STORAGE_DEVICE="${INITRAMFS_FACTORY_RESET_MARKER_STORAGE_DEVICE}"
++INITRAMFS_FACTORY_RESET_DEVICES="${INITRAMFS_FACTORY_RESET_DEVICES}"
++INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE="${INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE}"
+diff --git a/recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.1.bb b/recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.1.bb
+new file mode 100644
+index 0000000..9e765b9
+--- /dev/null
++++ b/recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.1.bb
+@@ -0,0 +1,52 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2025
++#
++# Authors:
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++
++require recipes-initramfs/initramfs-hook/hook.inc
++DESCRIPTION = "Delete the content of the given Devices"
++
++# find the file defined by INITRAMFS_FACTORY_RESET_MARKER in
++# INITRAMFS_FACTORY_RESET_MARKER_STORAGE_DEVICE. Important
++# this function does not work with disk encryption.
++FACTORY_RESET_DETECT_MARKER ?= "detect-marker-file"
++
++# if this file exists execute a factory reset for the given
++# list of factory-reset targets.
++INITRAMFS_FACTORY_RESET_MARKER ?= ".factory-reset"
++# use labels as crypt setup replaces the label links if
++# an partition is encrypted
++INITRAMFS_FACTORY_RESET_MARKER_STORAGE_DEVICE ??= "/dev/disk/by-partlabel/var"
++
++# list of partitions by label
++INITRAMFS_FACTORY_RESET_DEVICES ??= "/dev/disk/by-partlabel/var"
++INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE ??= "ext4"
++SRC_URI += " \
++    file://reset-env.tmpl \
++    file://local-top-complete \
++    file://${FACTORY_RESET_DETECT_MARKER} \
++    file://hook"
++
++TEMPLATE_FILES += "reset-env.tmpl"
++TEMPLATE_VARS += " INITRAMFS_FACTORY_RESET_MARKER \
++                   INITRAMFS_FACTORY_RESET_MARKER_STORAGE_DEVICE \
++                   INITRAMFS_FACTORY_RESET_DEVICES \
++                   INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE"
++
++DEBIAN_DEPENDS .= ", coreutils, util-linux, e2fsprogs, btrfs-progs, awk"
++DEBIAN_DEPENDS:append:encrypt-partitions = ", tpm2-tools"
++HOOK_COPY_EXECS = "mountpoint findmnt mktemp rmdir basename mke2fs mkfs.btrfs awk blkid rm"
++HOOK_COPY_EXECS:append:encrypt-partitions = " tpm2_clear"
++
++do_install[cleandirs] += "${D}/usr/share/factory-reset/"
++do_install:prepend() {
++    install -m 0755 "${WORKDIR}/reset-env" \
++        "${D}/usr/share/factory-reset/reset-env"
++    install -m 0755 "${WORKDIR}/${FACTORY_RESET_DETECT_MARKER}" \
++        "${D}/usr/share/factory-reset/factory_reset_marker"
++}
+-- 
+2.47.0
 
---5GfRWIQelSXH6Gjf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaBsQrAAKCRAw5/Bqldv6
-8kXBAJ9WpxoL3vXHOoaed/Mx5qMcagAx+QCfUb9mizm96A/L72cQTR3C9NlV4B8=
-=ZWsR
------END PGP SIGNATURE-----
-
---5GfRWIQelSXH6Gjf--
 
