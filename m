@@ -1,268 +1,112 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <uli@fpond.eu>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7BC5C3ABC0
-	for <webhook@archiver.kernel.org>; Wed,  7 May 2025 08:11:31 +0000 (UTC)
-Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
- by mx.groups.io with SMTP id smtpd.web11.3611.1746605487485672506
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8560C3ABC0
+	for <webhook@archiver.kernel.org>; Wed,  7 May 2025 08:45:21 +0000 (UTC)
+Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.219])
+ by mx.groups.io with SMTP id smtpd.web10.3898.1746607519859451389
  for <cip-dev@lists.cip-project.org>;
- Wed, 07 May 2025 01:11:28 -0700
+ Wed, 07 May 2025 01:45:20 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=gnNHwe95;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-51332-20250507081124cb9c3bc2d59c97491f-6qt8tz@rts-flowmailer.siemens.com)
-Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20250507081124cb9c3bc2d59c97491f
-        for <cip-dev@lists.cip-project.org>;
-        Wed, 07 May 2025 10:11:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=Qvcji5VLprk9VN9avrlm2dNUzMWxiFEBySsnkry0ZP8=;
- b=gnNHwe95pbxvIPkYKJ4//bZa+UvngGXH+pyqvWz2AbZX3EbBf43k/Q14Iy3uYOA1iTbZAi
- JLMQl8LVkCze+B9B5UbiR1nY4trfLgbOTtrShORvERZRMa28qXub/QJCMAB+PAKkhMIJHxPn
- 43TIvOfkrfO35bBVHHi+Cjsy6F/DvfjQIO9+9IF5ODIVij7e+y+8M4Vli1ZGkKdKqQpplDGJ
- 17zZUnJQ8zYzzpmW/IzCbhsjeIkgxSMEKyKGVB8fjFed27NOO58iSDlsW5P7wVboFUARknx3
- xpIPh4dn+2fdFywb3oB9M9fq2cu6t0bBxTiEglTseZtSzLWgx2k4iImA==;
-From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: cip-dev@lists.cip-project.org,
-	jan.kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH v3 1/6] add factory-reset initramfs hook
-Date: Wed,  7 May 2025 10:10:37 +0200
-Message-ID: <20250507081123.94511-1-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20250506120807.255675-2-Quirin.Gylstorff@siemens.com>
-References: <20250506120807.255675-2-Quirin.Gylstorff@siemens.com>
+ dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=l5hqi0Uk;
+ dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=r9JDO+5p;
+ spf=none, err=permanent DNS error (domain: fpond.eu, ip: 81.169.146.219, mailfrom: uli@fpond.eu)
+ARC-Seal: i=1; a=rsa-sha256; t=1746607506; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=LgCkWNXb3hJ9MpMdcwSjCLOP/WMOUOdjWOOb9L+ilXOxN/lRTuGHWSh+ktExx+4xz5
+    eW1EjiqLhc0mnK2wkcykmpdgCMCAzb6UomSW8AYiBooE3HX/sF0XoDg23RmajQ6wA5Ah
+    i7gM22FmdSEmp32KYwa4Egqt9ZIDqydoHfKFUMXoFJVyo/NilohVQsQBy9CA42JtwKjF
+    MmZT3wSKnoZJRkQWMrhUwVUbrzkH7ikv/zLRZAVqR4TGM2Wc55YAPsNLHm5GpTx8YyWa
+    0a8XCoHI3J/oU2+QzBO/GbhbowqoqCobCoHPxs2KAlUNXgPpYN+rWLrS+rzW03GAne3W
+    8uzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1746607506;
+    s=strato-dkim-0002; d=strato.com;
+    h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=wzU6el7xq3chXvoiOpY+eW0mJn69AdElax4fVYtAuhE=;
+    b=hUK5waU10tjSgY0ZknVp8DFazd2nRa3FcO9GQ++urWnlQ/I+ATIJr+UKaNX6rhO3SI
+    xrpDKI1jw5lA72SpBGT2G4Tg9GQhZ3nXHd6ShhmIrijKVNCVSAbZ3tkJPbXyG/Gke3/f
+    Y9ZndFG8n4gZQld93ZyxrI+8/cJm7c05yHMD0RGV5g4pV2QsNg7bvvY2U22hyqc8WEPF
+    LatUk9wjAOytFTJUZcJxW8407Dl6iaG4Hpyge2R/ZW/6+ihfXCGRQEkyQ1d9iZh/7WEl
+    tR/966OmPPGtxjdyqUFECwfuBpQiFiWD/uWOFY64oAp2kD2erV16a13k7VQ8Z/vp6BUA
+    fNNQ==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo00
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1746607506;
+    s=strato-dkim-0002; d=fpond.eu;
+    h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=wzU6el7xq3chXvoiOpY+eW0mJn69AdElax4fVYtAuhE=;
+    b=l5hqi0Uk9k9SICyCJCQyiRAtj1Fb+0CVel8ylGNluMHj6NwGNxsOTdHb/mRdCGoVJu
+    Uvz1nYH3E5pYOAvHoGjMfmkEnKRQd4yfQ17jGQJq1N/ka6UPj6y4RDb7tLurwht5XZgs
+    H1omS72oRGpH5AuD6iRDBGi9ADzt38UfX08Ndo9rGiKic8GGsMYRm2VuipqvZX67yNJt
+    bo4KRbQObdd5IME8tsPXgp/TONSu8e/Is/D7WAyrLlR/8zJL34PaJkUh2bBEX2k45Zv7
+    v8zloH6Vjp1yavLEt94GOL6MrlPXWWY4j/am3mdTLGEDXlnI63a5G9Vtsc2IZpBxx1iC
+    mefw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1746607506;
+    s=strato-dkim-0003; d=fpond.eu;
+    h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=wzU6el7xq3chXvoiOpY+eW0mJn69AdElax4fVYtAuhE=;
+    b=r9JDO+5pM7VHosIi5HnNtUvfOCjxu9ujVcVehdh3PCrr9aeBdxbsAN4EHKmHD0BKeS
+    cG5X4akgntXJKFV8ExBQ==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv30UF1hex6fd76vq"
+Received: from open-xchange-core-mw-gw-24.open-xchange-core-mw-hazelcast-headless.open-xchange.svc.cluster.local
+    by smtp-ox.front (RZmta 51.3.0 AUTH)
+    with ESMTPSA id z2a3401478j6vvu
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256 bits))
+	(Client did not present a certificate);
+    Wed, 7 May 2025 10:45:06 +0200 (CEST)
+Date: Wed, 7 May 2025 10:45:06 +0200 (CEST)
+From: Ulrich Hecht <uli@fpond.eu>
+To: nobuhiro1.iwamatsu@toshiba.co.jp,
+	"Nobuhiro Iwamatsu via lists.cip-project.org"
+ <nobuhiro1.iwamatsu=toshiba.co.jp@lists.cip-project.org>,
+	prabhakar.mahadev-lad.rj@bp.renesas.com
+Cc: biju.das.jz@bp.renesas.com, cip-dev@lists.cip-project.org, pavel@denx.de
+Message-ID: <1012487320.262646.1746607506076@webmail.strato.de>
+In-Reply-To: <TY7PR01MB1481851C84944731CC67B05D19288A@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+References: <1833151A32081021.4816@lists.cip-project.org>
+ <TYYPR01MB7024C8C39B7B1226B7924447AABD2@TYYPR01MB7024.jpnprd01.prod.outlook.com>
+ <TY7PR01MB14818A6DBF8C7D899210ED72592BC2@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+ <OSZPR01MB7019C7990FA3543B1F69A6CFAA862@OSZPR01MB7019.jpnprd01.prod.outlook.com>
+ <TY7PR01MB1481851C84944731CC67B05D19288A@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+Subject: Re: [cip-dev] [PATCH 4.4.y-cip] ARM: shmobile: smp: Enforce
+ shmobile_smp_* alignment
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v8.33.60
+X-Originating-Port: 38590
+X-Originating-Client: open-xchange-appsuite
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 07 May 2025 08:11:31 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18774
+ <cip-dev@lists.cip-project.org>; Wed, 07 May 2025 08:45:21 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18775
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-This allows to reset the device back to first boot by
-formatting the persistent partitions.
+> On 05/07/2025 2:55 AM CEST Nobuhiro Iwamatsu via lists.cip-project.org <nobuhiro1.iwamatsu=toshiba.co.jp@lists.cip-project.org> wrote:
+> > > > Gentle ping for review.
+> > > LGTM.
+> > >
+> > > Reviewed-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+> > >
+> > Thank you for the review. This patch is missing in 4.4-cip.
+> 
+> Perhaps Uli does not notice because he is not in TO and CC.
 
-The reset occurs if a file defined by the variable
-INITRAMFS_FACTORY_RESET_MARKER
-exists in the device INITRAMFS_FACTORY_RESET_MARKER_DEVICE.
+Yes, please include me when sending patches for 4.4 and 4.19 kernels.
 
-In case of disk encryption it will invalidate the keys
-stored in the TPM.
+> Uli, could you pick this patch to next 4.4.y-cip release?
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
-Changes v3:
- - remove `set -x`
+Can do. Am I correct to assume that this is specifically for -cip and does not apply to -st?
 
- .../files/detect-marker-file                  | 33 ++++++++++
- .../initramfs-factory-reset-hook/files/hook   |  7 ++
- .../files/local-top-complete                  | 66 +++++++++++++++++++
- .../files/reset-env.tmpl                      |  4 ++
- .../initramfs-factory-reset-hook_0.1.bb       | 52 +++++++++++++++
- 5 files changed, 162 insertions(+)
- create mode 100644 recipes-initramfs/initramfs-factory-reset-hook/files/detect-marker-file
- create mode 100644 recipes-initramfs/initramfs-factory-reset-hook/files/hook
- create mode 100644 recipes-initramfs/initramfs-factory-reset-hook/files/local-top-complete
- create mode 100644 recipes-initramfs/initramfs-factory-reset-hook/files/reset-env.tmpl
- create mode 100644 recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.1.bb
-
-diff --git a/recipes-initramfs/initramfs-factory-reset-hook/files/detect-marker-file b/recipes-initramfs/initramfs-factory-reset-hook/files/detect-marker-file
-new file mode 100644
-index 0000000..30e399e
---- /dev/null
-+++ b/recipes-initramfs/initramfs-factory-reset-hook/files/detect-marker-file
-@@ -0,0 +1,33 @@
-+#!/bin/sh
-+# Copyright (C) Siemens AG, 2025
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+# This implementation check for the a existing file to trigger a
-+# factory reset. Prints 'true' in case the marker was found
-+
-+check_for_factory_reset() {
-+	marker="$(basename ${INITRAMFS_FACTORY_RESET_MARKER})"
-+	marker_storage_device="${INITRAMFS_FACTORY_RESET_MARKER_STORAGE_DEVICE}"
-+	storage_mnt="$(findmnt findmnt  --first-only --output TARGET --noheadings "${marker_storage_device}")"
-+	tmp_mount=$(mktemp -d)
-+	# check for marker
-+	if [ -z "${storage_mnt}" ]; then
-+		if ! mount -t "$(get_fstype "${marker_storage_device}")" \
-+			 "${marker_storage_device}" \
-+			 "${tmp_mount}"; then
-+			panic "Can't mount ${marker_storage_device}!"
-+		fi
-+		storage_mnt="$tmp_mount"
-+	fi
-+	if [ -e "${storage_mnt}/${marker}" ]; then
-+		echo "true"
-+		# delete marker
-+		rm "${storage_mnt}/${marker}"
-+	fi
-+	if mountpoint -q "$tmp_mount"; then
-+		umount "$tmp_mount"
-+	fi
-+	rmdir "$tmp_mount"
-+}
-+
-diff --git a/recipes-initramfs/initramfs-factory-reset-hook/files/hook b/recipes-initramfs/initramfs-factory-reset-hook/files/hook
-new file mode 100644
-index 0000000..4b4ff25
---- /dev/null
-+++ b/recipes-initramfs/initramfs-factory-reset-hook/files/hook
-@@ -0,0 +1,7 @@
-+# Copyright (C) Siemens AG, 2025
-+#
-+# SPDX-License-Identifier: MIT
-+
-+copy_file library /usr/share/factory-reset/factory_reset_marker /usr/share/factory-reset/factory_reset_marker
-+copy_file library /usr/share/factory-reset/reset-env /usr/share/factory-reset/reset-env
-+
-diff --git a/recipes-initramfs/initramfs-factory-reset-hook/files/local-top-complete b/recipes-initramfs/initramfs-factory-reset-hook/files/local-top-complete
-new file mode 100644
-index 0000000..d8e06be
---- /dev/null
-+++ b/recipes-initramfs/initramfs-factory-reset-hook/files/local-top-complete
-@@ -0,0 +1,66 @@
-+#!/bin/sh
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2025
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+prereqs() {
-+	# no prereqs we want in front of crypt
-+	echo ""
-+}
-+case $1 in
-+prereqs)
-+	prereqs
-+	exit 0
-+	;;
-+esac
-+
-+
-+. /scripts/functions
-+. /usr/share/factory-reset/reset-env
-+. /usr/share/factory-reset/factory_reset_marker
-+
-+target_devices="${INITRAMFS_FACTORY_RESET_DEVICES}"
-+
-+if [ "$(check_for_factory_reset)" = "true" ]; then
-+	log_begin_msg "Factory Reset"
-+	for target in ${target_devices}; do
-+		log_begin_msg "Reset device: $target"
-+		fs_type=$(get_fstype ${target})
-+		case "$target" in
-+			*by-partlabel*)
-+				label="$(basename "${target}" )"
-+			;;
-+			*)
-+				label=$(blkid --match-tag LABEL "$target" | awk -F= '{gsub(/"/,"");print $2}' )
-+				if [ -z "${label}" ]; then
-+					log_warning_msg "Could not find any label  for target '$target'"
-+				fi
-+			;;
-+		esac
-+		if [ "$fs_type" = "luks" ]; then
-+			# after this the data on the encrypted partition
-+			# is inaccessible
-+			tpm2_clear
-+			# with encryption the original fs_type is hidden
-+			# use a variable from the reset-env to set it
-+			fs_type="$INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE"
-+		fi
-+		case ${fs_type} in
-+		ext*)
-+			/sbin/mke2fs -L "${label}" -F -t ext4 "${target}"
-+			;;
-+		btrfs)
-+			/sbin/mkfs.btrfs -L "${label}" --force "${target}"
-+			;;
-+		*)
-+			log_warning_msg "Unrecognized filesystem type ${fs_type} - could not format"
-+			;;
-+		esac
-+		log_end_msg "Reset device: $target"
-+	done
-+	log_end_msg "Factory Reset"
-+fi
-diff --git a/recipes-initramfs/initramfs-factory-reset-hook/files/reset-env.tmpl b/recipes-initramfs/initramfs-factory-reset-hook/files/reset-env.tmpl
-new file mode 100644
-index 0000000..ed68398
---- /dev/null
-+++ b/recipes-initramfs/initramfs-factory-reset-hook/files/reset-env.tmpl
-@@ -0,0 +1,4 @@
-+INITRAMFS_FACTORY_RESET_MARKER="${INITRAMFS_FACTORY_RESET_MARKER}"
-+INITRAMFS_FACTORY_RESET_MARKER_STORAGE_DEVICE="${INITRAMFS_FACTORY_RESET_MARKER_STORAGE_DEVICE}"
-+INITRAMFS_FACTORY_RESET_DEVICES="${INITRAMFS_FACTORY_RESET_DEVICES}"
-+INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE="${INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE}"
-diff --git a/recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.1.bb b/recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.1.bb
-new file mode 100644
-index 0000000..9e765b9
---- /dev/null
-+++ b/recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.1.bb
-@@ -0,0 +1,52 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2025
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+
-+require recipes-initramfs/initramfs-hook/hook.inc
-+DESCRIPTION = "Delete the content of the given Devices"
-+
-+# find the file defined by INITRAMFS_FACTORY_RESET_MARKER in
-+# INITRAMFS_FACTORY_RESET_MARKER_STORAGE_DEVICE. Important
-+# this function does not work with disk encryption.
-+FACTORY_RESET_DETECT_MARKER ?= "detect-marker-file"
-+
-+# if this file exists execute a factory reset for the given
-+# list of factory-reset targets.
-+INITRAMFS_FACTORY_RESET_MARKER ?= ".factory-reset"
-+# use labels as crypt setup replaces the label links if
-+# an partition is encrypted
-+INITRAMFS_FACTORY_RESET_MARKER_STORAGE_DEVICE ??= "/dev/disk/by-partlabel/var"
-+
-+# list of partitions by label
-+INITRAMFS_FACTORY_RESET_DEVICES ??= "/dev/disk/by-partlabel/var"
-+INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE ??= "ext4"
-+SRC_URI += " \
-+    file://reset-env.tmpl \
-+    file://local-top-complete \
-+    file://${FACTORY_RESET_DETECT_MARKER} \
-+    file://hook"
-+
-+TEMPLATE_FILES += "reset-env.tmpl"
-+TEMPLATE_VARS += " INITRAMFS_FACTORY_RESET_MARKER \
-+                   INITRAMFS_FACTORY_RESET_MARKER_STORAGE_DEVICE \
-+                   INITRAMFS_FACTORY_RESET_DEVICES \
-+                   INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE"
-+
-+DEBIAN_DEPENDS .= ", coreutils, util-linux, e2fsprogs, btrfs-progs, awk"
-+DEBIAN_DEPENDS:append:encrypt-partitions = ", tpm2-tools"
-+HOOK_COPY_EXECS = "mountpoint findmnt mktemp rmdir basename mke2fs mkfs.btrfs awk blkid rm"
-+HOOK_COPY_EXECS:append:encrypt-partitions = " tpm2_clear"
-+
-+do_install[cleandirs] += "${D}/usr/share/factory-reset/"
-+do_install:prepend() {
-+    install -m 0755 "${WORKDIR}/reset-env" \
-+        "${D}/usr/share/factory-reset/reset-env"
-+    install -m 0755 "${WORKDIR}/${FACTORY_RESET_DETECT_MARKER}" \
-+        "${D}/usr/share/factory-reset/factory_reset_marker"
-+}
--- 
-2.47.0
-
+CU
+Uli
 
