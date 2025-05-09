@@ -2,67 +2,65 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4578C3ABCF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB56FC3ABD2
 	for <webhook@archiver.kernel.org>; Fri,  9 May 2025 09:34:04 +0000 (UTC)
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
- by mx.groups.io with SMTP id smtpd.web11.10310.1746783236583287317
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+ by mx.groups.io with SMTP id smtpd.web11.10313.1746783242981975595
  for <cip-dev@lists.cip-project.org>;
- Fri, 09 May 2025 02:33:56 -0700
+ Fri, 09 May 2025 02:34:03 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=CiBkOF1z;
- spf=pass (domain: tuxon.dev, ip: 209.85.208.48, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5f4d0da2d2cso3337690a12.3
-        for <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 02:33:56 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=Z4rh+VcN;
+ spf=pass (domain: tuxon.dev, ip: 209.85.208.54, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5fbee322ddaso3666997a12.0
+        for <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 02:34:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1746783235; x=1747388035; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1746783241; x=1747388041; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9gLaqSvYvz+KVxul0WTQkHptzePqo/2yXN+mEZLwURU=;
-        b=CiBkOF1zagOTt6u6Y3m/kp1Rg1FNll3jSRRIfwmieFLw12AN/VdhKCxBCRl3OZilTg
-         mZ5nGEe/kQKFtJDKdshPEf2ARhoCV6BnXHyxCuW5Qm6H/2h3EryIh6ZeYcF6Ig2thaBG
-         ptD/p0+M3OunOJ6ulP2tuiKtCJm8YKquSiJm9I7lTE/5JSdJbuwgTB1wwbWwLPfp1o18
-         CnMzhVJ/BSJUsy6Tzhui7QkKTOp+0R2m602Asp098jDNEjbN8hAMCKabN91BVaO7gRf6
-         W+FCKFcfRB5MJ9bQ3dR9y4LiMOaqFiBCyq84TzRw6s1kLGbBNMSEgfA/oXGxyCSE2npq
-         ZYPg==
+        bh=3+GFAP2q6jaQyzIPN/6ZG4+aybkPJORZM3eoXZ+a9I0=;
+        b=Z4rh+VcN8CxA/VLw+RhtsGPYzhD3X/Ho41Nts8yRxiofogvnpK3gYBfgmeSdob6yfk
+         y7Ngx7ncsiYLWga+Vxew0izmUnlh03V3Vj8pNJKMnx8QXuQWXh79SamaISedXF0RaeJL
+         2xOYMfEqEPbMb7t8weCiXxwixYvM5fDdlh8hDXWCEncH8NbAZ8d1v/jR+4HXp3HCQnKp
+         7BE1Ycnxw4T3C4QNz0Rea4ML+veaF9FRSHPGBjgpZIkdXUBXNbA3jUxVzXcVvNPQuSaB
+         k+91odAnVWG6+bkJRkOI9RR8IQhv0L9fvkkPC3YviUM0mdovX2w3A4Lj4YJnqdDlq6ZP
+         OWeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746783235; x=1747388035;
+        d=1e100.net; s=20230601; t=1746783241; x=1747388041;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9gLaqSvYvz+KVxul0WTQkHptzePqo/2yXN+mEZLwURU=;
-        b=G3wlewaGf1t/X2BzmOP5GaGGlL/stgHZIU1CjoMgjjvdoQgm+/+pmLUo4TlYGqYlqM
-         VDYbyu9glGPfy5K5PQmxCL1/Ica979ZA4Ig1hHV79WgMH4fD4WlqOBMdE2POF7Z1dlf6
-         LIqIJ6/NrAlObBK/Osxhv5/h/v9NSsjtbGukoga0DVPTmLB2Y9zHgqXySvfYkiLvEM++
-         8UYWjQfY+GxMfS+peW3zJZbhygwMk7bNa7ge3xjqAqFesBMXctufVsBeEZqSDoicQZrT
-         MQGmVuHutWpabhhzJnKslW17hQBq2TluWMbxzLFOAZyl9SlwgX/U/scC9qIp+B6vvVKY
-         lhqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAXU/7uO2QoWffB79hgYrEeylsP6RWP02O0/m3jVM/vjxIAfAiykq3f/n3MHqvz5aC+SUlh8ex@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yy+2snbdFEXSGXeGhAaLWvCpm6QmJsdOGci2yTz7F/sklOz5aEx
-	scs4W6PqZg4lev47X+1H2vgcGM3/IDFnzLVO4H2Ue3YWGBxbwAuupC+W2bz27VSZW2q7keadswj
-	s
-X-Gm-Gg: ASbGnctTM372srX0IJqr7rMK8Yu/4XZ90OsyjunPQDimSOmkk9dqUizZnNKI1ArL+WO
-	3zFA2OZRFFS9cnKRWVgAxzZjzKVREgM78GOoxUTqjrQXJOb+8zkdeGpSKlBFtogHnioYoTyQeL0
-	BhBDXOzrx2GkJrPno3vUdlFjJcpA16c/VxxCRb2TwA86vkvlhMMp9X1A/3b8z1UBaQb8yYFT3/R
-	KBSQH8V64B+wcqf6wPVsdFvHkoagt3UR0TMGITOVUrh6X+0q74i6n5XLfG+Yech3B/UmS9f6jGt
-	cRRcXkU5/dWQjub5AK/CmNKQf6w994RmsL9ggUSZSTK9FX9+fr/Ugsa86LJSUZHXNSpIu1h8pJI
-	EeysG
-X-Google-Smtp-Source: AGHT+IFbO/1Nwz/5yA4JjmLLEPVNSpmxyrQKIxI327NJX26rqsZQr9k8tOJVdPK/5n/DlmJdvzkaoA==
-X-Received: by 2002:a05:6402:3484:b0:5fb:455f:ac40 with SMTP id 4fb4d7f45d1cf-5fca073078cmr2095633a12.4.1746783234966;
-        Fri, 09 May 2025 02:33:54 -0700 (PDT)
+        bh=3+GFAP2q6jaQyzIPN/6ZG4+aybkPJORZM3eoXZ+a9I0=;
+        b=nyjCJS9oDd5QpW5P4oIx5PdP/YPvVMTSvszaurHfczPNZxz/rOma0BlVM8nYhhedfe
+         Tsv5yMtc/Z6Z9h9C9WF78+IpF7ILIDeEA9X4BC+U4eJ9Ev/OpfTYG/BT9S7ESlTWDche
+         X5+a+mqdrDSG/c8FaCWqzwwXk8+cGjv6+E6LNxAshsce9rkus1P9SleljNDCETrx+mTr
+         /U7+t1Ib+rmi2D+vTqsfo+v9BcYtrxzNwHlDQeBDYttHwf5I7jm43I5hT2/xMyQ07WEo
+         C0UVByNm1q+oTlTHFeP+nLFzu4mBjiPJaMYxwYpAKDf27H+ML92TqIqi+Ew95CKsvX/u
+         Jbkg==
+X-Forwarded-Encrypted: i=1; AJvYcCX919MMR9NXNLmmSwol9EHUujtf+w2oxT08O6H26Ih3YLbPI2sVkiXTCh0jUqkvTMcislitcHVU@lists.cip-project.org
+X-Gm-Message-State: AOJu0YwF39XutQ4FpbzXzIPxBVQzCi2LpYHGCsq3UH8EDZ033cO0i2/V
+	IuXzlth3/aXhtpgv3RlrvM3OAj3jC1Oez+wRcOMvG1d3PdZXvsXreyjpPORUscM=
+X-Gm-Gg: ASbGncu5tTz86jsHML/vbS+pvUII1Fysz+gdnt/iwy0sbnMLEqNZciBDD7Wc7h9LrGM
+	ium+yPMJDm0H7tKFGa55pN/0v8kYUcCs+mp3h9LloUJWWM4LykD7HwkH2hh3iwfh7io/XEPkk8k
+	H30Kaagayob/86uRYJVyBWdTRO98se0HGBNLKiZ5nM7q8kctkoF6l0TVk8ID5DukDbIJnhBl9jn
+	ZDG+f2fDCy00U65r2o0KFlzDk/QY/Ar/SC6cPw0aLuviLRqiwgWPf5Z2TgoxK720aFuaDBr/F2v
+	OaAfnqpNM4ZSdkaGvZki5O8kSoylGFqWmvywt5rT5qPxtGjQ6Aztj+RP+YvDYPpmSzQCMA==
+X-Google-Smtp-Source: AGHT+IFSzp/kK+PoqUxiG1KNwMI5aBoAtP3Y8IA7P7PMAmrABzym+SM6e01E+o69s2PybaqxkcENgA==
+X-Received: by 2002:a05:6402:1e88:b0:5fc:4121:e8c3 with SMTP id 4fb4d7f45d1cf-5fca073137amr2112813a12.4.1746783241331;
+        Fri, 09 May 2025 02:34:01 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fc9d700d6esm1106984a12.60.2025.05.09.02.33.53
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fc9d700d6esm1106984a12.60.2025.05.09.02.34.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 02:33:54 -0700 (PDT)
+        Fri, 09 May 2025 02:34:00 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.1.y-cip 23/34] ASoC: renesas: rz-ssi: Add runtime PM support
-Date: Fri,  9 May 2025 12:33:07 +0300
-Message-ID: <20250509093318.4014916-24-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 28/34] ASoC: dt-bindings: renesas,rz-ssi: Document the Renesas RZ/G3S SoC
+Date: Fri,  9 May 2025 12:33:12 +0300
+Message-ID: <20250509093318.4014916-29-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250509093318.4014916-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250509093318.4014916-1-claudiu.beznea.uj@bp.renesas.com>
@@ -72,91 +70,38 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 09:34:04 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18840
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18845
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 3888672495fcaee98b90196c0a899b1c2eb57d5b upstream.
+commit 699a9733a354d74482ae4d4304acdbb0c0318a23 upstream.
 
-Add runtime PM support to the ssi driver. This assert/de-assert the
-reset lines on runtime suspend/resume. Along with it the de-assertion of
-the reset line from probe function was removed as it is not necessary
-anymore.
+The SSI IP variant present on the Renesas RZ/G3S SoC is similar to the
+one found on the Renesas RZ/G2{UL, L, LC} SoCs. Add documentation for
+it.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://patch.msgid.link/20241210170953.2936724-16-claudiu.beznea.uj@bp.renesas.com
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20241210170953.2936724-20-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- sound/soc/sh/rz-ssi.c | 26 +++++++++++++++++++++-----
- 1 file changed, 21 insertions(+), 5 deletions(-)
+ Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/sh/rz-ssi.c b/sound/soc/sh/rz-ssi.c
-index 7692de807e3e..57c3fb48a7af 100644
---- a/sound/soc/sh/rz-ssi.c
-+++ b/sound/soc/sh/rz-ssi.c
-@@ -1151,14 +1151,13 @@ static int rz_ssi_probe(struct platform_device *pdev)
- 		goto err_release_dma_chs;
- 	}
+diff --git a/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml b/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
+index 94e2e3abdaf0..fd1ba590e8d3 100644
+--- a/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
++++ b/Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
+@@ -16,6 +16,7 @@ properties:
+           - renesas,r9a07g043-ssi  # RZ/G2UL
+           - renesas,r9a07g044-ssi  # RZ/G2{L,LC}
+           - renesas,r9a07g054-ssi  # RZ/V2L
++          - renesas,r9a08g045-ssi  # RZ/G3S
+       - const: renesas,rz-ssi
  
--	reset_control_deassert(ssi->rstc);
- 	/* Default 0 for power saving. Can be overridden via sysfs. */
- 	pm_runtime_set_autosuspend_delay(dev, 0);
- 	pm_runtime_use_autosuspend(dev);
- 	ret = devm_pm_runtime_enable(dev);
- 	if (ret < 0) {
- 		dev_err(dev, "Failed to enable runtime PM!\n");
--		goto err_reset;
-+		goto err_release_dma_chs;
- 	}
- 
- 	ret = devm_snd_soc_register_component(dev, &rz_ssi_soc_component,
-@@ -1166,13 +1165,11 @@ static int rz_ssi_probe(struct platform_device *pdev)
- 					      ARRAY_SIZE(rz_ssi_soc_dai));
- 	if (ret < 0) {
- 		dev_err(dev, "failed to register snd component\n");
--		goto err_reset;
-+		goto err_release_dma_chs;
- 	}
- 
- 	return 0;
- 
--err_reset:
--	reset_control_assert(ssi->rstc);
- err_release_dma_chs:
- 	rz_ssi_release_dma_channels(ssi);
- 
-@@ -1196,10 +1193,29 @@ static const struct of_device_id rz_ssi_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, rz_ssi_of_match);
- 
-+static int rz_ssi_runtime_suspend(struct device *dev)
-+{
-+	struct rz_ssi_priv *ssi = dev_get_drvdata(dev);
-+
-+	return reset_control_assert(ssi->rstc);
-+}
-+
-+static int rz_ssi_runtime_resume(struct device *dev)
-+{
-+	struct rz_ssi_priv *ssi = dev_get_drvdata(dev);
-+
-+	return reset_control_deassert(ssi->rstc);
-+}
-+
-+static const struct dev_pm_ops rz_ssi_pm_ops = {
-+	RUNTIME_PM_OPS(rz_ssi_runtime_suspend, rz_ssi_runtime_resume, NULL)
-+};
-+
- static struct platform_driver rz_ssi_driver = {
- 	.driver	= {
- 		.name	= "rz-ssi-pcm-audio",
- 		.of_match_table = rz_ssi_of_match,
-+		.pm = pm_ptr(&rz_ssi_pm_ops),
- 	},
- 	.probe		= rz_ssi_probe,
- 	.remove		= rz_ssi_remove,
+   reg:
 -- 
 2.43.0
 
