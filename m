@@ -2,65 +2,65 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75894C3ABD2
-	for <webhook@archiver.kernel.org>; Fri,  9 May 2025 09:35:25 +0000 (UTC)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
- by mx.groups.io with SMTP id smtpd.web11.10365.1746783324731217313
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 705C0C3ABC9
+	for <webhook@archiver.kernel.org>; Fri,  9 May 2025 09:35:35 +0000 (UTC)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+ by mx.groups.io with SMTP id smtpd.web10.10426.1746783327695514128
  for <cip-dev@lists.cip-project.org>;
- Fri, 09 May 2025 02:35:25 -0700
+ Fri, 09 May 2025 02:35:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=Rhpctw9I;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.41, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-acb5ec407b1so323911566b.1
-        for <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 02:35:24 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=V3wO+Pn6;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.44, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac2af2f15d1so245621566b.1
+        for <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 02:35:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1746783323; x=1747388123; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1746783326; x=1747388126; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FdhmbNis7qjclOAYi7WYEtGdFAD87guhALBKL5SwpEM=;
-        b=Rhpctw9I1QhIRtmW/+a2+lMtCY+2iqynScZGa9jAuY+D3A2Fqt9+vNEMOhjqiuYfuL
-         jqasyWDOBKRK8gZ7HEcOfBTe4oeXvNotuliauv9rh7HqpEJ7n2j5Kr91DmPcmCLq+YCc
-         KX1AuMRsrl4usEu3uvT5s8DHVYah+EZV1gLAI+KvvSPW3DBZTAZXsigAETMrq0ZneGMp
-         we1w+lh3Jqf4aNloao+SLly7gcY4F8qwEpFBez/bfNyxYhKDvPUfOeJgDnWiajPbN9QA
-         AlmfTOUbJ7+o2ECw3vIydRwlPGLR2hk27EaOavvGdwAN7GtHS9lJf7WeJUYgzEWPlO6c
-         8wQg==
+        bh=10AuFG3ngBCbtivxOs+BInG3ViZofcVfKM8nyljn6Tg=;
+        b=V3wO+Pn6FXQnLdnxxNatcwiyO9ycSQ2Qh9TBv40YmhPHzPF5FGXV8Kq//klkWeMpPN
+         g+6atBJvmxO+SJ9HGFN54aLrXgLPUVjxrEJuVT7sQiZ3GVZI7EF/uUcDtshpdC5t32L0
+         vUpK79Yb1Ph02kdYpFEjC2X8T2CRI0o6WxXQASERZJPPsAzud7YwR7V4i6tsFiao7tDW
+         +P8Yce27TXzNUr3CoIWEuU+U2TNgCv5PxzxvAJ0FnERVr2CP1CyzFg1Jx74U940tFMNJ
+         Ah17yS4+XRFcKyHHhKU6v4vkah3YmYpF3EEjUsZYMS8Stm01StkvMu32+k0U3f73P/MJ
+         qdBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746783323; x=1747388123;
+        d=1e100.net; s=20230601; t=1746783326; x=1747388126;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FdhmbNis7qjclOAYi7WYEtGdFAD87guhALBKL5SwpEM=;
-        b=NeskKWDFWkcaQB9VFecH0Za6zgTsOqLs1or3K5N7BUGluOxNSCvz21LdH7KOcnRmC3
-         EikLpROUIqmP1o0yUChBqImy2W+uBuKr+mbg3GMaDrEMfc4F7+vG4SKCVTw2DcpNFifA
-         SNFVGD0VIl64nKYtKQgEav2ZqTnc4dYPFDkRJaUX6mmS/xTz0uU3AniHRmKSFd3gNTeW
-         ZWQSc8TLsTOZv0OvuV0GeUsVc4nhbE8eiD0MlkmwG05xVH1nd+r1yNEFzRofu2MYCn3t
-         faqF4lnwzPuFhLHebIesiivd/MgljV9WVybyrJGxF+U/Z04J38oea4yRE2LU5sIvyddf
-         sibQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbyc16MBGgUc+98iDA8CHB4AGxqjsGIqdWKcFisKy2THn8DW/JFeZOCD46lq3rM6dYNRt4pd0z@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yzou9ggqOBiwvmHIDpx4fpCwAoCxgt5SGGySM+u7HQSJJk4YWFT
-	Gk+aTbDqIpKkqZE/QZ/gosBOKxZo9XTPz5VMI8ZSn97D6M713VAxjIsNfHBypd4=
-X-Gm-Gg: ASbGncsBt8Nevn1d2mSHaW8LMZvqmQgV7Ou/9u2O4YF+w71C7M1O6xH79LLRqoWMQDZ
-	U5fHrTLPZtOjmJEQZzvxPzVnMoWK/rcxkuSwuqlhX6pEULivP8be43RVJRvjlIb6de7ffyb5doH
-	UqJ7hkfwZWo8eCOnoP8Dpo/dCDM21SntIfa7FGqy0QwzFY+0Ck/UFZvyO1UoxAMJ2N7bxmQns4v
-	qiWx7uiQ2HmxWD+R8Y3bnJ+AuIC1VoVwq1+y6xuB+EW+8a5DCRajKdsGBlvbK2WU63FveyqPHxD
-	j5JHQ/eBvyqWTvaHkfjd0jd+vfrU0eoKqGY/1Sb69Jq/LgwwQdgs2AkM5pikNW/CY/vE+g==
-X-Google-Smtp-Source: AGHT+IF0nNTppVnp6bANyQAQufH1kV+hILcZyezO9MPrpm8Po6U6LwhcZ40P523V0XxM45VOu3fauA==
-X-Received: by 2002:a17:907:a708:b0:ace:c5de:24cc with SMTP id a640c23a62f3a-ad2192dea1cmr215411466b.60.1746783323084;
-        Fri, 09 May 2025 02:35:23 -0700 (PDT)
+        bh=10AuFG3ngBCbtivxOs+BInG3ViZofcVfKM8nyljn6Tg=;
+        b=lwNd8mswygduloLd6g8kzAlCJq5DZ5b2wdCjfQbPRcegJsmSLzn0PnCE7vLPpr3gPs
+         jXHqWmhD4wcM2Y78UisygMGF9iC8n08GB/SFMykvFmKbEpJukuL6PqR4z6DNSFehLrY+
+         1cc0/5BF2+Ug3Beh7WhQZKN62dpRXWO13IpJbKs2edTVWIaJ2IPcQK3YdtNN1T4br/hl
+         o62u16wv9KSqpbOu14Wiv3yguQ3vjg2wXc6xRqdnTJ/Ieg/6IqBR899bKt103BJY0hcg
+         zBBoWx7gzOBvnP9P6nTYs9nbTRjCeL3YmHndGrFl9zKJylsJ0+BSOwiqqX+EuO8o5ylp
+         vDTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPmPn2xI1SLLOvNWWgwSUQOjTz/HGIM3EYnA5Hybw6ikKtnytQo9EbI6ywDzR+DHF2TgPsx1qn@lists.cip-project.org
+X-Gm-Message-State: AOJu0YxV2b5TBogdvmHx+p5FEfuqGV/FHkNWRkn5WjK9pQVnGtEPIXuh
+	p3WB1EXcO1HPyeGolIxpw49XvblOe/Hx/JFvAf7FygJPE/gJ74yd7qv00NFWtMU=
+X-Gm-Gg: ASbGncsw7N35+uZp0Q29hZBqCtrufF7DLXdLUf5RR+bhTN09eDhMfE922RkAsRZ9bVx
+	2w/hkAu6zX6/ZhFb5R7qtxXKNgcOizF2lq9mbbfd1+l+HveL85W316YcmADdCut3QZrMX7mOaUF
+	qbob2GNmF3jCyWCCMbC57cluF4BnTH+VAxQ39zVkM8ovC3diMGGsYaq/NfxG0wX5X6tpyBp0IA6
+	kOAW+GSxnTKnp2ELIo3fyvyAAaX1Y3fcJ5dmONW1mCEAKodJwF3LGTGHXwbJH1cHX9cWwYJ/uMm
+	iGLNQ4w7pTwYfqE3S9F8vfcybeTPgJ/ggxjhL2AOREtkVKZ5sPNPRee6K8dVE4150/icCg==
+X-Google-Smtp-Source: AGHT+IG/m+IltV9sC1C4jWVHDpQMfzpD3iQR1m0qk5tVG9QctklmHUF6O18um5AtqMzOB9uxG/uDqQ==
+X-Received: by 2002:a17:907:9453:b0:aca:a3da:80b8 with SMTP id a640c23a62f3a-ad21917d128mr306156866b.55.1746783326122;
+        Fri, 09 May 2025 02:35:26 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad21974697asm121095466b.114.2025.05.09.02.35.21
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad21974697asm121095466b.114.2025.05.09.02.35.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 02:35:22 -0700 (PDT)
+        Fri, 09 May 2025 02:35:25 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 27/37] ASoC: renesas: rz-ssi: Issue software reset in hw_params API
-Date: Fri,  9 May 2025 12:34:32 +0300
-Message-ID: <20250509093442.4015145-28-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 29/37] ASoC: renesas: rz-ssi: Use NOIRQ_SYSTEM_SLEEP_PM_OPS()
+Date: Fri,  9 May 2025 12:34:34 +0300
+Message-ID: <20250509093442.4015145-30-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250509093442.4015145-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250509093442.4015145-1-claudiu.beznea.uj@bp.renesas.com>
@@ -69,85 +69,54 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 09:35:25 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18879
+ <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 09:35:35 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18881
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit fc2a31affb22394d1d74d3ecc86b5c68da33d52a upstream.
+commit c1b0f5183a4488b6b7790f834ce3a786725b3583 upstream.
 
-The code initially issued software reset on SNDRV_PCM_TRIGGER_START
-action only before starting the first stream. This can be easily moved to
-hw_params() as the action is similar to setting the clocks. Moreover,
-according to the hardware manual (Table 35.7 Bits Initialized by Software
-Reset of the SSIFCR.SSIRST Bit) the software reset action acts also on the
-clock dividers bits. Due to this issue the software reset in hw_params()
-before configuring the clock dividers. This also simplifies the code in
-trigger API.
+In the latest kernel versions system crashes were noticed occasionally
+during suspend/resume. This occurs because the RZ SSI suspend trigger
+(called from snd_soc_suspend()) is executed after rz_ssi_pm_ops->suspend()
+and it accesses IP registers. After the rz_ssi_pm_ops->suspend() is
+executed the IP clocks are disabled and its reset line is asserted.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Since snd_soc_suspend() is invoked through snd_soc_pm_ops->suspend(),
+snd_soc_pm_ops is associated with soc_driver (defined in
+sound/soc/soc-core.c), and there is no parent-child relationship between
+soc_driver and rz_ssi_driver the power management subsystem does not
+enforce a specific suspend/resume order between the RZ SSI platform driver
+and soc_driver.
+
+To ensure that the suspend/resume function of rz-ssi is executed after
+snd_soc_suspend(), use NOIRQ_SYSTEM_SLEEP_PM_OPS().
+
+Fixes: 1fc778f7c833 ("ASoC: renesas: rz-ssi: Add suspend to RAM support")
+Cc: stable@vger.kernel.org
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://patch.msgid.link/20241210170953.2936724-17-claudiu.beznea.uj@bp.renesas.com
+Link: https://patch.msgid.link/20250410141525.4126502-1-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
+[claudiu.beznea: use SET_NOIRQ_SYSTEM_SLEEP_PM_OPS() as
+ NOIRQ_SYSTEM_SLEEP_PM_OPS() is NA in v5.10]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- sound/soc/sh/rz-ssi.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+ sound/soc/sh/rz-ssi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/sound/soc/sh/rz-ssi.c b/sound/soc/sh/rz-ssi.c
-index 2e688889653a..bc9e75b04dcc 100644
+index 0f03739f920c..c431e67903f7 100644
 --- a/sound/soc/sh/rz-ssi.c
 +++ b/sound/soc/sh/rz-ssi.c
-@@ -399,6 +399,15 @@ static int rz_ssi_start(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
- 	return 0;
- }
+@@ -1253,7 +1253,7 @@ static int rz_ssi_runtime_resume(struct device *dev)
  
-+static int rz_ssi_swreset(struct rz_ssi_priv *ssi)
-+{
-+	u32 tmp;
-+
-+	rz_ssi_reg_mask_setl(ssi, SSIFCR, 0, SSIFCR_SSIRST);
-+	rz_ssi_reg_mask_setl(ssi, SSIFCR, SSIFCR_SSIRST, 0);
-+	return readl_poll_timeout_atomic(ssi->base + SSIFCR, tmp, !(tmp & SSIFCR_SSIRST), 1, 5);
-+}
-+
- static int rz_ssi_stop(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
- {
- 	strm->running = 0;
-@@ -793,14 +802,6 @@ static int rz_ssi_dai_trigger(struct snd_pcm_substream *substream, int cmd,
+ static const struct dev_pm_ops rz_ssi_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(rz_ssi_runtime_suspend, rz_ssi_runtime_resume, NULL)
+-	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
++	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
+ };
  
- 	switch (cmd) {
- 	case SNDRV_PCM_TRIGGER_START:
--		/* Soft Reset */
--		if (!rz_ssi_is_stream_running(&ssi->playback) &&
--		    !rz_ssi_is_stream_running(&ssi->capture)) {
--			rz_ssi_reg_mask_setl(ssi, SSIFCR, 0, SSIFCR_SSIRST);
--			rz_ssi_reg_mask_setl(ssi, SSIFCR, SSIFCR_SSIRST, 0);
--			udelay(5);
--		}
--
- 		rz_ssi_stream_init(strm, substream);
- 
- 		if (ssi->dma_rt) {
-@@ -925,6 +926,7 @@ static int rz_ssi_dai_hw_params(struct snd_pcm_substream *substream,
- 					SNDRV_PCM_HW_PARAM_SAMPLE_BITS)->min;
- 	unsigned int channels = params_channels(params);
- 	unsigned int rate = params_rate(params);
-+	int ret;
- 
- 	if (sample_bits != 16) {
- 		dev_err(ssi->dev, "Unsupported sample width: %d\n",
-@@ -951,6 +953,10 @@ static int rz_ssi_dai_hw_params(struct snd_pcm_substream *substream,
- 	rz_ssi_cache_hw_params(ssi, rate, channels, strm->sample_width,
- 			       sample_bits);
- 
-+	ret = rz_ssi_swreset(ssi);
-+	if (ret)
-+		return ret;
-+
- 	return rz_ssi_clk_setup(ssi, rate, channels);
- }
- 
+ static struct platform_driver rz_ssi_driver = {
 -- 
 2.43.0
 
