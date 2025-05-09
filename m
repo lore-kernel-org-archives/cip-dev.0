@@ -2,142 +2,144 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE52C3ABC3
-	for <webhook@archiver.kernel.org>; Fri,  9 May 2025 09:32:53 +0000 (UTC)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
- by mx.groups.io with SMTP id smtpd.web11.10267.1746783165416403553
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C08CDC3ABC3
+	for <webhook@archiver.kernel.org>; Fri,  9 May 2025 09:33:23 +0000 (UTC)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+ by mx.groups.io with SMTP id smtpd.web11.10281.1746783201879005763
  for <cip-dev@lists.cip-project.org>;
- Fri, 09 May 2025 02:32:45 -0700
+ Fri, 09 May 2025 02:33:22 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=dnSIOb0p;
- spf=pass (domain: tuxon.dev, ip: 209.85.208.52, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9ebdfso3475181a12.3
-        for <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 02:32:45 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=R4mx0Ksl;
+ spf=pass (domain: tuxon.dev, ip: 209.85.208.51, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5fbcd9088a7so3563994a12.0
+        for <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 02:33:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1746783164; x=1747387964; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x4acHJ2fedLxmozibcgN4e+UQS8aCHGqoQDPAaHVTO4=;
-        b=dnSIOb0pcC2p/SySYRQS+Y1COqg1CfisEk1kOYha308b9fa1n+uh5cpCZ4RF36uDP0
-         Xqm1sTjyrSEOMdw7Xhg9cIH/ge0suSsNr9jeN708LvVHdLquoavj71MbIw5iqrgPFd9p
-         IfIENZDSZKCrriMM96BCZpxvRG9nCJkaRYKhYCmfJj5/c9wnUp8C2KlcBOUVlJFvv/NQ
-         OshJCLISwqBSK6RXaxUoT78gewoQaOgrrIyaOPLF9Lx1Zork0jLCj8K0lIoLnH9fQ4Is
-         Fm99N+Ux/8hmBDCH2jt0hW05U/r8x2zTZe7q4/qsJnwIIv5UR5OkMgmdGS0dsy7Gjn0W
-         cEsA==
+        d=tuxon.dev; s=google; t=1746783200; x=1747388000; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CdLMOUXAEWPzS6sGDj4fnxGcwzBi5zodj18BPKeS8eE=;
+        b=R4mx0Ksl4m2vqkQnLCaJ+6C2WsE0qk7SNfgaCUpgo2ngtcNPg8DX4e1fip+3qgTlVc
+         FhT0CHJRGAy73fFGWmDYSeB4QmN6AOJTgNxvL8SAmjiPgOreAeuaULxLIdZiVZlh+QV1
+         gICMNw3Tt+LtfWgYaV20lWbu9bcrv/c9igIUEofKEn8kk/3WRQOoqlIkJLWrxjzRVSmt
+         Ok/4JigZS1WJSR8iU0OY63vR7NgYmBAMZnWPcWFYjkRNtOAbMPB8nrW7Sf0nw16ECihg
+         uPE38sZ/oNXs1lpAqQdDDlyG9Uekguhs4vQceoFquyZf4Qi7ECy8HYrXn8LmOSlSP9GX
+         8bvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746783164; x=1747387964;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x4acHJ2fedLxmozibcgN4e+UQS8aCHGqoQDPAaHVTO4=;
-        b=EypwCgTN5Dy7p5XTCLB3Sls6ILFxHVbRDxwrYNURcIb48Ywgr/VxI6vEVaur/nPmVV
-         Jecsl7NYhmrBeyhMQ+DWmFzYeKE+zlzChAmiH7It1zWqXfmRtRQaXM4KXFg4/Rii0tpR
-         uH6MAJCLifWhk56sFv10M7MjjCNL6vAmFD/tGPdNB0ufUvbNejOt6PVyeUn1C1x89odM
-         eL7ZRmNO4J7c8hQEWx+tKNj1862evbaGdFan8ihyUNPBvx+D9cA3v+DPiip6ixiG8IsN
-         BjzsYTrJR4SUXIus4Y4+MfBADirsQ0gXEmapUHLpba+p4hnc2ceVE39A4srFLrqIR78N
-         FFSA==
-X-Forwarded-Encrypted: i=1; AJvYcCVC0Wj2l0pXeIE7+yTqjMDon1UBUvtDR5wAGY1H27//TZSwaP2fS3PlxParyYSy+viFT4EvZAqv@lists.cip-project.org
-X-Gm-Message-State: AOJu0YxXc3cEnLRFd0/K5G/TY6JYGVuetFXH9ZHCoUaOxwirCf7imgLH
-	mQNJccKbE7LnPH2yif7qr4Fssq46gux2kG/npKKFTz/5LznsBsgY8YKfoHyDbkbrENpKiWjzRFf
-	D
-X-Gm-Gg: ASbGncu2pmI5c7FhBe6T4fkXBet8JJmvewFTlJnUXtbDAFDDAKg4Vfc/UflW28V4Vuw
-	xfCowrpCJB/epVH27yXCOloKuT5zjR1OBKquwkOdCmg4RBrgArRXDN2ffBoEr8jvH3+n6g9IkJi
-	QfX1Xj73I1iq2leyAFTMC7WnJrGN3sQ+bvYX98FmDLA1+nDzaU10Xw/LbHCU0p1fqplR0TMgE6i
-	0VM+uldgKseWZPg4YPKed/X3BSW2Mi/ItvQ53tAgYDFGHz2axEgXBPJ+ZPTZZJm7KkMkzbKyD5q
-	MR12cvodJdjpTsLcWzoj5YITJniQZs0aLQuxaNUxp+HHoZAbuS1+1rhrOUfnY3Kk7SHHTA==
-X-Google-Smtp-Source: AGHT+IGZ/87MfNCk1EyRve5le6Lcz3Pz/ESGFhLBVEM7Uvsvp5DvWSWW6AkXzzCmrz+Ak1llP+q01A==
-X-Received: by 2002:a05:6402:5106:b0:5fa:82a4:4879 with SMTP id 4fb4d7f45d1cf-5fca078ee96mr2121766a12.16.1746783163812;
-        Fri, 09 May 2025 02:32:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746783200; x=1747388000;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CdLMOUXAEWPzS6sGDj4fnxGcwzBi5zodj18BPKeS8eE=;
+        b=MFl3pTkcI/DIN9jTwKpFNF/39xsxxQ2OU3Tpm4jgtSyIiG3tyebo7li33IalwbAwB6
+         IQ1DfA2swKF3UMyPd3QwXbHsqNA92sSkIyghvg00Nhps3EYyChgw1VcAtB+QuqnwNdmy
+         FKICdm6CsfxXeRDw25R1BKK/AOiuSg9Lhf5f7rLitY2DXIfnePTRVc2FSgNgwlpIIJ7K
+         Ajtd+klWQhFQ89m+aqf7Mw1AVL1706nMMoBfJKRmSFxeK6Z3m9GxzdcHhSbfzs1scLE1
+         u1GfnPtnH4o5ohmx9po2MV3wviRs3ffhSaIqSnye4j/HWMu7xa3dZmvQ+QGhb9x31eoi
+         coXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXTmu2TDDZ/g56yPkd0WzRFzwA6m9raAK/+AiY8HXB+G73DkXN4VP9CbiVq32IGLWZe2pYCnCv@lists.cip-project.org
+X-Gm-Message-State: AOJu0YyWFKbsIYiIPHx7Pd1+cu1rXhk3CeT6zmzFm0h8TgUXpASf4dZN
+	TH3O9lPkNWmXKN9hwBOKGYyGSzqjkrOPzGYzeTwLemPyPCdfmf8SUTsvSTGxUKU=
+X-Gm-Gg: ASbGncvWq1KL8vUrq1/XcuO7Tmft4FJ3TNlLVQeioNPACB4KSH1POA/VDWfFFSSexwp
+	S6DSkMOxmd3NosBjrYz/F1ix9pvdYL6A6K73fNLl9ETvLnN8Vksld+x+5YVXmAzJtiXdEvOIWmO
+	JVawAhNtW0PzlrTpZVTiPB4KCQI7FFFN9c6PfOfGcxF3M1YVi8r0sJuwvdPLhtzG5NEPtpXB+Z7
+	4WvVp3b88D4Sgjwtb7zwKjzV9r+4a7xKT7bjf/4FQ+2FjvVJtT5s9xr30c6diJWE37Fw1OqvoO3
+	iflFmOm+2Bi6bEo75/PAC73rlJHqVGQxUQ4rF79ltGf6u+crikeusJHu1vUXe2i3inXLdnJVLkM
+	K46+3
+X-Google-Smtp-Source: AGHT+IHw143ZqDZ7IUHB5Cs1wN2RGBnape2I6sAjH7iGnoCS10PvEGi8Y7qQAJTzO2NgjalGm/khDw==
+X-Received: by 2002:a05:6402:34cc:b0:5fb:5be8:3e2c with SMTP id 4fb4d7f45d1cf-5fc34e3d613mr5794998a12.9.1746783200262;
+        Fri, 09 May 2025 02:33:20 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fc9cbe523bsm1128033a12.12.2025.05.09.02.32.42
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fc9d700d6esm1106984a12.60.2025.05.09.02.33.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 02:32:43 -0700 (PDT)
+        Fri, 09 May 2025 02:33:19 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.12.y-cip 26/29] arm64: dts: renesas: rzg3s-smarc-som: Add versa3 clock generator node
-Date: Fri,  9 May 2025 12:32:00 +0300
-Message-ID: <20250509093203.4014750-27-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 00/34] RZ/G3S: Backport audio support
+Date: Fri,  9 May 2025 12:32:44 +0300
+Message-ID: <20250509093318.4014916-1-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250509093203.4014750-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20250509093203.4014750-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 09:32:53 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18813
+ <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 09:33:23 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18817
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit a94253232b0454ae3f45e2a941bbc0a1d5bdb955 upstream.
+Hi,
 
-Add versa3 clock generator node. It provides the clocks for the Ethernet
-PHY, PCIe, audio devices.
+Series backports the Renesas RZ/G3S audio support to v6.1.y CIP.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://lore.kernel.org/20241210170953.2936724-22-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
- .../boot/dts/renesas/rzg3s-smarc-som.dtsi     | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
+Thank you,
+Claudiu Beznea
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-index 204d126f5ced..cfbee7f0b4a3 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-@@ -87,6 +87,12 @@ vcc_sdhi2: regulator2 {
- 		gpios = <&pinctrl RZG2L_GPIO(8, 1) GPIO_ACTIVE_HIGH>;
- 		enable-active-high;
- 	};
-+
-+	x3_clk: x3-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <24000000>;
-+	};
- };
- 
- #if SW_CONFIG3 == SW_ON
-@@ -149,6 +155,30 @@ &extal_clk {
- 
- &i2c1 {
- 	status = "okay";
-+
-+	versa3: clock-generator@68 {
-+		compatible = "renesas,5l35023";
-+		reg = <0x68>;
-+		clocks = <&x3_clk>;
-+		#clock-cells = <1>;
-+		assigned-clocks = <&versa3 0>,
-+				  <&versa3 1>,
-+				  <&versa3 2>,
-+				  <&versa3 3>,
-+				  <&versa3 4>,
-+				  <&versa3 5>;
-+		assigned-clock-rates = <24000000>,
-+				       <12288000>,
-+				       <11289600>,
-+				       <25000000>,
-+				       <100000000>,
-+				       <100000000>;
-+		renesas,settings = [
-+		  80 00 11 19 4c 42 dc 2f 06 7d 20 1a 5f 1e f2 27
-+		  00 40 00 00 00 00 00 00 06 0c 19 02 3f f0 90 86
-+		  a0 80 30 30 9c
-+		];
-+	};
- };
- 
- #if SW_CONFIG2 == SW_ON
+Claudiu Beznea (29):
+  ASoC: da7213: Initialize the mutex
+  ASoC: da7213: Populate max_register to regmap_config
+  ASoC: da7213: Return directly the value of regcache_sync()
+  ASoC: da7213: Add suspend to RAM support
+  clk: renesas: r9a08g045: Add clocks, resets and power domains support
+    for SSI
+  clk: versaclock3: Prepare for the addition of 5L35023 device
+  dt-bindings: clock: versaclock3: Document 5L35023 Versa3 clock
+    generator
+  clk: versaclock3: Add support for the 5L35023 variant
+  ASoC: renesas: rz-ssi: Terminate all the DMA transactions
+  ASoC: renesas: rz-ssi: Fix typo on SSI_RATES macro comment
+  ASoC: renesas: rz-ssi: Remove pdev member of struct rz_ssi_priv
+  ASoC: renesas: rz-ssi: Remove the first argument of
+    rz_ssi_stream_is_play()
+  ASoC: renesas: rz-ssi: Use readl_poll_timeout_atomic()
+  ASoC: renesas: rz-ssi: Use temporary variable for struct device
+  ASoC: renesas: rz-ssi: Use goto label names that specify their actions
+  ASoC: renesas: rz-ssi: Rely on the ASoC subsystem to runtime
+    resume/suspend the SSI
+  ASoC: renesas: rz-ssi: Enable runtime PM autosuspend support
+  ASoC: renesas: rz-ssi: Add runtime PM support
+  ASoC: renesas: rz-ssi: Issue software reset in hw_params API
+  ASoC: renesas: rz-ssi: Add suspend to RAM support
+  ASoC: renesas: rz-ssi: Use NOIRQ_SYSTEM_SLEEP_PM_OPS()
+  ASoC: dt-bindings: renesas,rz-ssi: Remove DMA description
+  ASoC: dt-bindings: renesas,rz-ssi: Document the Renesas RZ/G3S SoC
+  pinctrl: renesas: rzg2l: Add audio clock pins on RZ/G3S
+  arm64: dts: renesas: r9a08g045: Add SSI nodes
+  arm64: dts: renesas: rzg3s-smarc-som: Add versa3 clock generator node
+  arm64: dts: renesas: Add da7212 audio codec node
+  arm64: dts: renesas: rzg3s-smarc: Enable SSI3
+  arm64: dts: renesas: rzg3s-smarc: Add sound card
+
+David Rau (2):
+  ASoC: da7213: Add support for mono, set frame width to 32 when
+    possible
+  ASoC: da7213: Add new kcontrol for tonegen
+
+Hao Bui (2):
+  ASoC: da7213: Avoid setting PLL when closing audio stream
+  ASoC: da7213: Extend support for the MCK in range [2, 50] MHz
+
+Kuninori Morimoto (1):
+  arm64: defconfig: Enable DA7213 Codec
+
+ .../bindings/clock/renesas,5p35023.yaml       |   1 +
+ .../bindings/sound/renesas,rz-ssi.yaml        |  19 +-
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  94 +++++++
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |  47 +++-
+ arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi  |  63 +++++
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/clk/clk-versaclock3.c                 |  67 +++--
+ drivers/clk/renesas/r9a08g045-cpg.c           |  12 +
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c       |   2 +
+ sound/soc/codecs/da7213.c                     | 230 +++++++++++++++++-
+ sound/soc/codecs/da7213.h                     |  68 +++++-
+ sound/soc/sh/rz-ssi.c                         | 208 ++++++++++------
+ 12 files changed, 685 insertions(+), 127 deletions(-)
+
 -- 
 2.43.0
 
