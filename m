@@ -2,65 +2,65 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78E7DC3ABC9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90C07C3ABC3
 	for <webhook@archiver.kernel.org>; Fri,  9 May 2025 09:32:43 +0000 (UTC)
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
- by mx.groups.io with SMTP id smtpd.web10.10329.1746783153431855999
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+ by mx.groups.io with SMTP id smtpd.web10.10334.1746783157365768604
  for <cip-dev@lists.cip-project.org>;
- Fri, 09 May 2025 02:32:33 -0700
+ Fri, 09 May 2025 02:32:37 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=Y5MI4eVr;
- spf=pass (domain: tuxon.dev, ip: 209.85.208.48, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5fbfdf7d353so2481203a12.0
-        for <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 02:32:33 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=KW4QHZqB;
+ spf=pass (domain: tuxon.dev, ip: 209.85.208.46, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5fbed53b421so2915553a12.0
+        for <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 02:32:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1746783152; x=1747387952; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1746783156; x=1747387956; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IaHjyis1u7ToX/nfp5POUmMWA4xpoNySvQQE6asI7xQ=;
-        b=Y5MI4eVr3/1Eu0Dft7fGVz3SOwsb1fBRAxdMfA7a3kGXrivIyCVWEbHjuDT30iUn8y
-         JCLgsxiFeiVwVDLypl3+c27wR14aby9Q5SPiHCPxqXD5Ip50QNfxJL6mWEYm6k5ZS+Yz
-         FdPEDtSLvClzjTr1f4xZzMAkk+HLXnVEKY9xk3i6xG4sHr3FCV2MBMPo1Igc64+uKtQl
-         diqAEDw2jD2Yt2BwC9S4Wj/HyAtLCEmeftVsLwsggdbOcYzUG0ApLk/kkZQROi+A3rGu
-         6SCydPfdiREOy3G3nz70jocBQLAMeN2IhX9kAXupGMeso4pfE1UpPs1sRGBluuSdL91G
-         YUMQ==
+        bh=NRuGo5tEGCyIKAzMsV330q5VV5Qi8wAVinXrwFLwx54=;
+        b=KW4QHZqBL+A6tAogMiQzYVS/D4hmLyZW6V0aaKwa17FBBvIZUg0VWFkQk/vQD8ShVA
+         emoufI5Ral8+kOfhTjLEqS8np16ZwGndGh1vW0Mod4iEj/vjFMbnLlb/cMvA5ZNn5HZQ
+         NpsHJ1YRTzAsWh8Z10pmt6flhA66gbtaKKCyVBgQFVdvj54xpvddrYTLd6Y9WKThxgw/
+         beu8F0PRT6/1PRN1/Q/JLl2cZ5AJHStD5MIA7fMnu7vOL5EEFWnSD3WTJbO+6OiyUEc7
+         oU3zqahAgr164o6XSDH9ZGvgq2DDk/K//59qLme08pHBpBe3UUIyuHIlWw+BKC/qw3W9
+         I9PQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746783152; x=1747387952;
+        d=1e100.net; s=20230601; t=1746783156; x=1747387956;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IaHjyis1u7ToX/nfp5POUmMWA4xpoNySvQQE6asI7xQ=;
-        b=TOAZsWQZxtb3FxFWe4AgMKwTu+iiH+Kl8YbKuddN6fJnuHMEALJOiQIfHWJG2lulhj
-         7UQJCLlMShQVtZ0Te2+fIvQEjVp0Pv5ZUANwJ2s7DMX/eJXwcmNbn7tBHYpyn5DXSDo/
-         EiTJsTbAsc2IwmSz3BXp3XVHdnFmNhNPBtqS9nLJB7Q87twFMHlc7V+V//cbY7RWxSE3
-         fB/G3Np0X+Vlx0XQYiKQKlj9i1LGPmLPu4VNdOi6UyUsdfTDZeDYfvj5mkdS52DifXI/
-         FJtUxGC2AlY3XwB5lNvBSUPwp06u8jaXbSszfKE0x+gLkkQ9ahMbzI4BDN+P9NnFpzY5
-         EHug==
-X-Forwarded-Encrypted: i=1; AJvYcCX7cESIcUZfmbQcFY5I4t1/bh+Xw/EGceM8yji09XzL784rlfUfdByEi/5e0Y3jo7TNtQBnJkVE@lists.cip-project.org
-X-Gm-Message-State: AOJu0YyUdh0yohRCYy/X3F/iSxb/plrA9EcWDuLy2rKOmFPALELcOPxT
-	dyVLU8WSKw/uOdxgem6FD6tI5J/buhO8ZtHW9IBDJQpf9lvLSh9gQoippnzIR0s=
-X-Gm-Gg: ASbGncsK2TAW3d3uZslx5oIlN+Bagab/0FFzBGTN/ZuhMJFgS50zAcpjVDE62xuizKw
-	99iYMqFzEdp5remHMRb8yahd59gAovcHR0UQ7AYwaUBfW3zdOTMqPl9TL6toDKjKn8PMycR7aDl
-	8dyRzaXPwGShDlyilLpSgMmu0IcaEwxDZu2QEBsaOK8AFbaUKeXKcn9WySm6dJHCv86ey29j8DR
-	OsgR96K00P+J0+lL3YoK3hyC0MgCpuRHdUhA6+Wk7NYkKaa+yz+VKXiEp7RCh8BbKdcSImei+Ab
-	A0egsvDokcK0cFunb65cmHebRwGdGdjDWI9C18w57qeS/6e2zKH8rwsXOwzHISo3iycwRQ==
-X-Google-Smtp-Source: AGHT+IHUXZ5tNQ3Heyeiakrgt71uJnuiIeC23KaTwdMF6qJW6xqT6jyRWYAHI6OfU8QJg/OXDyYz7g==
-X-Received: by 2002:a05:6402:5cd:b0:5fc:8d89:c609 with SMTP id 4fb4d7f45d1cf-5fca11e38a7mr1854308a12.34.1746783151790;
-        Fri, 09 May 2025 02:32:31 -0700 (PDT)
+        bh=NRuGo5tEGCyIKAzMsV330q5VV5Qi8wAVinXrwFLwx54=;
+        b=cHtsY05SE2lzvKNgys61k/6zlGugoSnU1+pjv0cEVVXbS06tIEbqDar2DbvdTF3//l
+         AwIHMZZAZXCvSpZ1BIfkQHKoqoQbOjGOOwcNnyOd2P5+O644fGu0xIiemoRn2LM+1Mfd
+         +pBjdVAmHcdGvjLZ+/XZA7L5upAFW0yM2wNYIHZ6T3wt6hkzA+uw3dGdDdxtY81N87IV
+         +jPjEwA0NaLKxpK6OITF3p3IHYiNsHSl251m0fh3Z6NSNwg+q8dQMOOH+4ljbss40YI1
+         +XsQ80XvfUfpgLMpqvYaBZ5YuUB4dtAFQQJowYF6oQJ+VfjYmAXppklD4fxkI0eidIXv
+         rhZg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCAnejUblOd8ekYU3SqORW4NXLvXwvg6WUWXsm5fx+VXBhsfxyp7q8W12kuZ4DSb5WiPgOJU5J@lists.cip-project.org
+X-Gm-Message-State: AOJu0Yy9QAUAV9lZCJRJihURrOEotQeJwfMzseLqkULE/KaKRWzb5Aoq
+	IDmybNLTOGGfuKHR4wE1N6RdPsmGcq4qYq6y2Orx1zd/5vATHsnp0cS9Z1s5bzU=
+X-Gm-Gg: ASbGncsId99sVIc+bTAJQ/o3PFblRfpL7ipda3pubQizl2FSvI4qV1D+Pl0EdVvd97n
+	yDF5r2KNTv5yjwcD45MpaUv8sv2xbSrpCmgvARq8n+VLV6lZRq1QsEKFh4rqPaR9ntzm588n5lP
+	z2/bUiTYbcBG/R7eNqhQkLNUKq8jwMZLBjtjkmzbdL74lvgxzhfW+F+WJ8CxPx5VHTo31S7RNBv
+	p3FbCzlpP3JBKvVBP72SWz+UfEccLEAwaCh8+bKIr25rUwd6MVqXs0HN5P069gotw2a5W3U9f7a
+	dUQLY79XM0KykkF3IbtFjh+Svjz+do6pFY5ouYSd5t4qNHD4U7SFQL1mEKMwqyZagPNS1g==
+X-Google-Smtp-Source: AGHT+IGUFgV+I8DKiYBm9o5S1biiyzK+Wc3iyQKU2FJOdvDXxcvXIljWXqmrAk5yprQGu6tmEXWbtw==
+X-Received: by 2002:a05:6402:2813:b0:5fb:1fbd:e3ad with SMTP id 4fb4d7f45d1cf-5fca0759c82mr2104717a12.13.1746783155726;
+        Fri, 09 May 2025 02:32:35 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fc9cbe523bsm1128033a12.12.2025.05.09.02.32.30
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fc9cbe523bsm1128033a12.12.2025.05.09.02.32.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 02:32:31 -0700 (PDT)
+        Fri, 09 May 2025 02:32:34 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.12.y-cip 18/29] ASoC: renesas: rz-ssi: Add runtime PM support
-Date: Fri,  9 May 2025 12:31:52 +0300
-Message-ID: <20250509093203.4014750-19-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 20/29] ASoC: renesas: rz-ssi: Add suspend to RAM support
+Date: Fri,  9 May 2025 12:31:54 +0300
+Message-ID: <20250509093203.4014750-21-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250509093203.4014750-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250509093203.4014750-1-claudiu.beznea.uj@bp.renesas.com>
@@ -70,91 +70,116 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 09:32:43 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18805
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18807
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 3888672495fcaee98b90196c0a899b1c2eb57d5b upstream.
+commit 1fc778f7c833aeb13041adc06f016f1a2dff7350 upstream.
 
-Add runtime PM support to the ssi driver. This assert/de-assert the
-reset lines on runtime suspend/resume. Along with it the de-assertion of
-the reset line from probe function was removed as it is not necessary
-anymore.
+The SSIF-2 IP is available on the Renesas RZ/G3S SoC. The Renesas RZ/G3S
+SoC supports a power-saving mode where power to most of the SoC
+components is turned off. Add suspend/resume support to the SSIF-2 driver
+to support this power-saving mode.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On SNDRV_PCM_TRIGGER_SUSPEND trigger the SSI is stopped (the stream
+user pointer is left untouched to avoid breaking user space and the dma
+buffer pointer is set to zero), on SNDRV_PCM_TRIGGER_RESUME software reset
+is issued for the SSIF-2 IP and the clocks are re-configured.
+
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://patch.msgid.link/20241210170953.2936724-16-claudiu.beznea.uj@bp.renesas.com
+Link: https://patch.msgid.link/20241210170953.2936724-18-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- sound/soc/sh/rz-ssi.c | 26 +++++++++++++++++++++-----
- 1 file changed, 21 insertions(+), 5 deletions(-)
+ sound/soc/sh/rz-ssi.c | 46 +++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 44 insertions(+), 2 deletions(-)
 
 diff --git a/sound/soc/sh/rz-ssi.c b/sound/soc/sh/rz-ssi.c
-index fa32a5bd0d7b..34eb079a6aea 100644
+index 2d1ffea84159..bffd41742200 100644
 --- a/sound/soc/sh/rz-ssi.c
 +++ b/sound/soc/sh/rz-ssi.c
-@@ -1143,14 +1143,13 @@ static int rz_ssi_probe(struct platform_device *pdev)
- 		goto err_release_dma_chs;
- 	}
+@@ -786,6 +786,32 @@ static int rz_ssi_dma_request(struct rz_ssi_priv *ssi, struct device *dev)
+ 	return -ENODEV;
+ }
  
--	reset_control_deassert(ssi->rstc);
- 	/* Default 0 for power saving. Can be overridden via sysfs. */
- 	pm_runtime_set_autosuspend_delay(dev, 0);
- 	pm_runtime_use_autosuspend(dev);
- 	ret = devm_pm_runtime_enable(dev);
- 	if (ret < 0) {
- 		dev_err(dev, "Failed to enable runtime PM!\n");
--		goto err_reset;
-+		goto err_release_dma_chs;
- 	}
++static int rz_ssi_trigger_resume(struct rz_ssi_priv *ssi)
++{
++	int ret;
++
++	if (rz_ssi_is_stream_running(&ssi->playback) ||
++	    rz_ssi_is_stream_running(&ssi->capture))
++		return 0;
++
++	ret = rz_ssi_swreset(ssi);
++	if (ret)
++		return ret;
++
++	return rz_ssi_clk_setup(ssi, ssi->hw_params_cache.rate,
++				ssi->hw_params_cache.channels);
++}
++
++static void rz_ssi_streams_suspend(struct rz_ssi_priv *ssi)
++{
++	if (rz_ssi_is_stream_running(&ssi->playback) ||
++	    rz_ssi_is_stream_running(&ssi->capture))
++		return;
++
++	ssi->playback.dma_buffer_pos = 0;
++	ssi->capture.dma_buffer_pos = 0;
++}
++
+ static int rz_ssi_dai_trigger(struct snd_pcm_substream *substream, int cmd,
+ 			      struct snd_soc_dai *dai)
+ {
+@@ -794,8 +820,16 @@ static int rz_ssi_dai_trigger(struct snd_pcm_substream *substream, int cmd,
+ 	int ret = 0, i, num_transfer = 1;
  
- 	ret = devm_snd_soc_register_component(dev, &rz_ssi_soc_component,
-@@ -1158,13 +1157,11 @@ static int rz_ssi_probe(struct platform_device *pdev)
- 					      ARRAY_SIZE(rz_ssi_soc_dai));
- 	if (ret < 0) {
- 		dev_err(dev, "failed to register snd component\n");
--		goto err_reset;
-+		goto err_release_dma_chs;
- 	}
+ 	switch (cmd) {
++	case SNDRV_PCM_TRIGGER_RESUME:
++		ret = rz_ssi_trigger_resume(ssi);
++		if (ret)
++			return ret;
++
++		fallthrough;
++
+ 	case SNDRV_PCM_TRIGGER_START:
+-		rz_ssi_stream_init(strm, substream);
++		if (cmd == SNDRV_PCM_TRIGGER_START)
++			rz_ssi_stream_init(strm, substream);
  
- 	return 0;
+ 		if (ssi->dma_rt) {
+ 			bool is_playback;
+@@ -823,6 +857,12 @@ static int rz_ssi_dai_trigger(struct snd_pcm_substream *substream, int cmd,
  
--err_reset:
--	reset_control_assert(ssi->rstc);
- err_release_dma_chs:
- 	rz_ssi_release_dma_channels(ssi);
+ 		ret = rz_ssi_start(ssi, strm);
+ 		break;
++
++	case SNDRV_PCM_TRIGGER_SUSPEND:
++		rz_ssi_stop(ssi, strm);
++		rz_ssi_streams_suspend(ssi);
++		break;
++
+ 	case SNDRV_PCM_TRIGGER_STOP:
+ 		rz_ssi_stop(ssi, strm);
+ 		rz_ssi_stream_quit(ssi, strm);
+@@ -962,7 +1002,8 @@ static const struct snd_soc_dai_ops rz_ssi_dai_ops = {
+ static const struct snd_pcm_hardware rz_ssi_pcm_hardware = {
+ 	.info			= SNDRV_PCM_INFO_INTERLEAVED	|
+ 				  SNDRV_PCM_INFO_MMAP		|
+-				  SNDRV_PCM_INFO_MMAP_VALID,
++				  SNDRV_PCM_INFO_MMAP_VALID	|
++				  SNDRV_PCM_INFO_RESUME,
+ 	.buffer_bytes_max	= PREALLOC_BUFFER,
+ 	.period_bytes_min	= 32,
+ 	.period_bytes_max	= 8192,
+@@ -1205,6 +1246,7 @@ static int rz_ssi_runtime_resume(struct device *dev)
  
-@@ -1186,10 +1183,29 @@ static const struct of_device_id rz_ssi_of_match[] = {
+ static const struct dev_pm_ops rz_ssi_pm_ops = {
+ 	RUNTIME_PM_OPS(rz_ssi_runtime_suspend, rz_ssi_runtime_resume, NULL)
++	SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
  };
- MODULE_DEVICE_TABLE(of, rz_ssi_of_match);
  
-+static int rz_ssi_runtime_suspend(struct device *dev)
-+{
-+	struct rz_ssi_priv *ssi = dev_get_drvdata(dev);
-+
-+	return reset_control_assert(ssi->rstc);
-+}
-+
-+static int rz_ssi_runtime_resume(struct device *dev)
-+{
-+	struct rz_ssi_priv *ssi = dev_get_drvdata(dev);
-+
-+	return reset_control_deassert(ssi->rstc);
-+}
-+
-+static const struct dev_pm_ops rz_ssi_pm_ops = {
-+	RUNTIME_PM_OPS(rz_ssi_runtime_suspend, rz_ssi_runtime_resume, NULL)
-+};
-+
  static struct platform_driver rz_ssi_driver = {
- 	.driver	= {
- 		.name	= "rz-ssi-pcm-audio",
- 		.of_match_table = rz_ssi_of_match,
-+		.pm = pm_ptr(&rz_ssi_pm_ops),
- 	},
- 	.probe		= rz_ssi_probe,
- 	.remove		= rz_ssi_remove,
 -- 
 2.43.0
 
