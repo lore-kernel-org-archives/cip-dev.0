@@ -2,65 +2,65 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA97C3ABC3
-	for <webhook@archiver.kernel.org>; Fri,  9 May 2025 09:35:05 +0000 (UTC)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
- by mx.groups.io with SMTP id smtpd.web11.10346.1746783300881848882
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32245C3ABC3
+	for <webhook@archiver.kernel.org>; Fri,  9 May 2025 09:35:15 +0000 (UTC)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+ by mx.groups.io with SMTP id smtpd.web11.10353.1746783305136353486
  for <cip-dev@lists.cip-project.org>;
- Fri, 09 May 2025 02:35:01 -0700
+ Fri, 09 May 2025 02:35:05 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=p6hyMuIY;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.47, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ad221e3e5a2so61954166b.1
-        for <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 02:35:00 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=EMfqPKQD;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.45, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac28e66c0e1so221016166b.0
+        for <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 02:35:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1746783299; x=1747388099; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1746783303; x=1747388103; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xb12DoZwHc9YoOL7RjZ/tQ+aPeTqA2wzf4IXjgzwS40=;
-        b=p6hyMuIYI/K9BXvaeRvaneO2Vs+LbbsNzbuX/MFUq9P2lLLNSNyGpVRLqd30vDjXvc
-         Nkoo3PrqwcjOEEb2G01aLMg1svBFJdQq+tugSg2FvI/40wbJ2k6LTGrs6fW64r2AjHcy
-         zArKSNknSxaoMVYzQuY8fhBbYgVEJZJDg02g+QCg8uD10/GHB4oSYV/Fo4qs/tlKI240
-         T0mBby6BMY3SEFpfvH9dxtgl0wN7KLpt3sD0Z3Yf+uFNLvrkRkhK8OH9ppe8RayOp08d
-         q62zYDUG2vnszSBAO+KLsdFy08louVpONStPk361PLjXIs3fHwaA4HjQNxGXfFVL6iOm
-         HhuQ==
+        bh=iun09y0IT/d9FNVVRKVLZsVKN/IxkDzK0zGvl755C6M=;
+        b=EMfqPKQDgGbxP/hgocaIA+gCwVqWnlYWzFnWvCA33aazDPH4F46f0MEJTYADEEavEP
+         WmFh+BX52lPSwLzfgzYM7Eti6Md03/D03McsqzJ9mZ+jIHh95TG9DzNZtPZlQRTZWsAC
+         FR8J58oZndmSY1sEnaZQ9ngVK2oU73n8++AXnaNdpxLD0CsA1oT+XKqa2nGoVP4RJ6Cq
+         ig1qmwqqaMdxWxpj30twMWzpUL8M7nz05/FFhIX/pYLfhIohiWZg/VE9vBUJMS2yVzUs
+         e06ADr6PpuxnVxU96yOsQYi09G+PVBo5pyq/5CygHSoIL626W41aLT2/X51r4AM9mubg
+         y+qA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746783299; x=1747388099;
+        d=1e100.net; s=20230601; t=1746783303; x=1747388103;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xb12DoZwHc9YoOL7RjZ/tQ+aPeTqA2wzf4IXjgzwS40=;
-        b=UGpxold2GhmSGwgUE3TRy1GE7dy3ywTAt7zFT/WRYFVUyXyx2QoXl08UhtriywCe9B
-         v0je0dP5upFzGkk1TXb2TxlmA3HnWFQDeJQ/hPOdPREqboSYfjff0drfBQ3FAPXFysGi
-         BNzjam+GzRWB7ydwLZj/OU8QzyYEFsw/5g2Cz8bG6SCwQjooM5j8kb9QvKV0bEDKqp4P
-         Zuu2Dd8uWapMG/QS+qkSHpCfa52CvB1vHOTs++zAL/87AvUXzajuO7P+304ILwEQIC3p
-         DKusRCB/Fg7czUQspEB2AHBGmIkUAJKNpxaSTJwdURZNncxDL4PSiUuvHGgALtHRh7ec
-         8c1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXhpjfyOaifLqf2E79NdF7qDvVLhZWkA6Z2dHIF416kSgQZmzy1FzytKuVjaS6VGO179BhdvmxO@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yw++KemEULkYON9iQ/cOJXkIo5ixifPSRi98fFm2k3mqGX3rb4n
-	aYEleo5hTuIK0DwMi70ecBi+lleqRA26pHydaC+SEPLFF0PMHtBGPi1AJg9w4Jo=
-X-Gm-Gg: ASbGncs04Nzy5gUOT0E+dn/DY0p3BKOUI2x9IU1xnRlXYEFwnGKDE/d5dfOlr6Vrq93
-	y3BQAz3mL/QMyESwXDmtGC0SHePnRR/3AtTO44TvhWi7AuOHe02ZwGaCWv8gOTs/PLDa+eZR5Oy
-	5MO3cIR3S+uEaNSFa31qf4GOhtis9crBPqtYgfiVhAV8HPsWpml+hJGCL0mKYS79myFUL2f9cWr
-	FoMFO7SCMwI79vjhHMLvUta7r/Q1+tEd41d+TA+ZjwL37OgFNOSJ2lBIvinMutZg2ryiNiztjvd
-	x3ncWaIYgqOYSSZh3Z85/0Wd7aXQLoW2GclJFMJjS6wCdhn8CZW46SUjX73dnX6UDvO9qg==
-X-Google-Smtp-Source: AGHT+IF0TgMKYPoAlHz8ps9BylYOKOsPsLP8+JYZFDzPiR0aq8Y+cWIPTHvIP9Uk+aJcsVFFtYKiHw==
-X-Received: by 2002:a17:906:8e13:b0:ad1:825f:e33e with SMTP id a640c23a62f3a-ad218f4cb47mr242014566b.15.1746783299249;
-        Fri, 09 May 2025 02:34:59 -0700 (PDT)
+        bh=iun09y0IT/d9FNVVRKVLZsVKN/IxkDzK0zGvl755C6M=;
+        b=I0t//YK7F2mTY1UJIxU6qrdffP077Ispyx35Lv4sjpVbw5BRQSwHjr8vFigLT1GI6J
+         xppZ7zj6ybEtu6L6Nv0vmZRSQXcRsMPTwMG/XWxE4C8oJaPtd9CBzul3Z5auNIZZt6LA
+         SL4DdHcioEDRdCTb8w3mgBI2qAkBYws4d80gKTKGmd8NH7/AjBAcUvruWA2+E0dciZO3
+         0bS8pYdylDAL5oiNZguu2+IIZihrLkO6hWI4cMyPA/FyRo/FZ1Kt/2oKtzYw0NFxzE6w
+         2ZC1AU6OkZ1C40pvuHo8R0zwLLP4UHdVVZYpvCSFHbznb1aJTBFMpNjUl+/zBVE5qRrM
+         CfRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXkHAVWVwtOs5zDUdmMbkoVki564merr9Scb5FJGg2lbo+lxIRkS0kYauvyzGRGxZAvNh5pEvSX@lists.cip-project.org
+X-Gm-Message-State: AOJu0Yx61LXzn0NUcJL8H15bpInrUDDEmA4o+Ds222htsOJKGs+8wza/
+	JQaIzVMp0rnHD6ebn2ZCXmWvTYeFLI/2YJI9Q/CP3DLW08ChJgboEbZSMdP02vI=
+X-Gm-Gg: ASbGncvYqmlDwPciCGsAHgf9mLm9Uz7LaAKrdFnYzzduWcRnGKDh8yudit92MQK/Gx1
+	SoA95nR2nAJhLU96iKct99IfP10bKSYQtjLc7uDpIoYSqceQf9DrBLtZpJnwcwbZLcjhREO7p9G
+	hyIKTU8dROvZ9MzxI6uyuEoQTB+CUO1Ja+eMLtNHEpceyy+/NpVlJGWAGkSzbDMTgB3XlqbiQX8
+	nnh9RwL8AiKXsyAVgcc8856JZQVlRItEa35iCZ1IKmUBPPq9XCeUBFTBDkDsNNczKA2RaW+08Rl
+	iaZaNS+JtMpdDROXwjjQSYV1JfESYbbqbRE73NPZ2y/YAEYNPXnwH2Vr6bmyA0bgHmSYew==
+X-Google-Smtp-Source: AGHT+IHdiEV2dMu5sjCC7Rvu4lWz+jn0ICT3q9QUbBHQtUrXNO3rXEUlbby7QdeFLaO41O0u4X9ZZg==
+X-Received: by 2002:a17:907:7d88:b0:ad1:a87d:3de6 with SMTP id a640c23a62f3a-ad218f2c720mr277557066b.4.1746783303440;
+        Fri, 09 May 2025 02:35:03 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad21974697asm121095466b.114.2025.05.09.02.34.57
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad21974697asm121095466b.114.2025.05.09.02.35.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 02:34:58 -0700 (PDT)
+        Fri, 09 May 2025 02:35:02 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 11/37] arm64: defconfig: Enable DA7213 Codec
-Date: Fri,  9 May 2025 12:34:16 +0300
-Message-ID: <20250509093442.4015145-12-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 14/37] dt-bindings: clock: versaclock3: Document 5L35023 Versa3 clock generator
+Date: Fri,  9 May 2025 12:34:19 +0300
+Message-ID: <20250509093442.4015145-15-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250509093442.4015145-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250509093442.4015145-1-claudiu.beznea.uj@bp.renesas.com>
@@ -69,37 +69,41 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 09:35:05 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18863
+ <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 09:35:15 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18866
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 29dfd412ec9e08b05b65848174646353b58fb54d upstream.
+commit 626b77735a3712b02dabb25be3a0abdde6696bf3 upstream.
 
-Enable the DA7213 Codec for ARD-AUDIO-DA7212 support on R-Car V4H White
-Hawk.
+There are some differences b/w 5L35023 and 5P35023 Versa3 clock
+generator variants but the same driver could be used with minimal
+adjustments. The identified differences are PLL2 Fvco, the clock sel
+bit for SE2 clock and different default values for some registers.
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/87mt4pl9sz.wl-kuninori.morimoto.gx@renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Link: https://lore.kernel.org/r/20241210170953.2936724-3-claudiu.beznea.uj@bp.renesas.com
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- arch/arm64/configs/defconfig | 1 +
+ Documentation/devicetree/bindings/clock/renesas,5p35023.yaml | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 14a6a6978714..0bda64450d24 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -731,6 +731,7 @@ CONFIG_SND_SOC_TEGRA210_I2S=m
- CONFIG_SND_SOC_TEGRA186_DSPK=m
- CONFIG_SND_SOC_TEGRA210_ADMAIF=m
- CONFIG_SND_SOC_AK4613=m
-+CONFIG_SND_SOC_DA7213=m
- CONFIG_SND_SOC_ES7134=m
- CONFIG_SND_SOC_ES7241=m
- CONFIG_SND_SOC_PCM3168A_I2C=m
+diff --git a/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml b/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
+index 42b6f80613f3..162d38035188 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,5p35023.yaml
+@@ -31,6 +31,7 @@ description: |
+ properties:
+   compatible:
+     enum:
++      - renesas,5l35023
+       - renesas,5p35023
+ 
+   reg:
 -- 
 2.43.0
 
