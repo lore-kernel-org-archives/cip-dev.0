@@ -2,66 +2,65 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A0EC3ABCA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C762C3ABCF
 	for <webhook@archiver.kernel.org>; Fri,  9 May 2025 09:35:15 +0000 (UTC)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
- by mx.groups.io with SMTP id smtpd.web11.10356.1746783308876789331
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+ by mx.groups.io with SMTP id smtpd.web11.10357.1746783310425556248
  for <cip-dev@lists.cip-project.org>;
- Fri, 09 May 2025 02:35:09 -0700
+ Fri, 09 May 2025 02:35:10 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=NukEUT6o;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.51, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac2a81e41e3so202169866b.1
-        for <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 02:35:08 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=oYLawJR/;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.48, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac345bd8e13so273311166b.0
+        for <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 02:35:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1746783307; x=1747388107; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1746783309; x=1747388109; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NzFriyDy/RxiDg0ruOMyhKrsxou7jJqrqrow5GAQsSk=;
-        b=NukEUT6osNeZ9AP+pOM723rFCK7Z62W8HFCND68qI0ukY2A1Rtu0WQ5isoy7GQHL36
-         MDBZDfjmhB2+w4U2a6/7twKPITqlQEXJyUhTp6MNf5AE1XcvQ39K/PMMcV+KDwdj4K0G
-         0P22oL0SkKJqcFRp2DnlKBMcFliF7MyYdewIzkzjW0smA+R7SLNCISBqZh6enCTIixl/
-         sSBWYCsQIMSerbTSHGwTqgtzUbtoY610e78deOzXgn9SIjDfKdTeJ3Jp4P34NudbSLH/
-         AhsCcFl5t7pEr6N5N90jaHc36PtlnCDqDj6b0pKafNjP9OQWowCLVrKe7xgtqew1JXRE
-         qZmw==
+        bh=DWWW+r3I13VsjnIkhw3ZTNhi61SinnMYLXrApzsFQNs=;
+        b=oYLawJR/3uqqnZZ6A3p3CpN+NajtIyipxMbB+EdC3GPX96lQs5NIcWEHNwD+zaECVU
+         Zdr6ljtVv+Bti7py29wHo7Yf3FAAHenGw0GHQY/HQjnRjGgkRZXfgLiiecdbVJFibkRG
+         agJHWiy03ylL2A5KOsSbT344KcPmp1BVLpE5KJEbCwvTzjXWmfd316598M38PxUW1bvk
+         jTNKJtsrRtmHYz3S2qk02mh0WpZvTN7Q2TaITqsQbhqOQcdqUUEhmMBvUBfdRX2NMRNB
+         MkFtJX30/QrSsP0s/pIQ+KQJlesdi2/M9mOHYScxyZDE2SPsWK9GbEHrx3k/luqD0kXH
+         sWHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746783307; x=1747388107;
+        d=1e100.net; s=20230601; t=1746783309; x=1747388109;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NzFriyDy/RxiDg0ruOMyhKrsxou7jJqrqrow5GAQsSk=;
-        b=k5aGOmC16wRl34FxH0n0kIHImX6KA1po1ZuLFzYbmfjfq0nB7itHosRUnKNYo79MwE
-         Z0U8nHVGRdG/FpUiDpY54hQMBXnvs/+6qu6UZtc59tHvi1ikiO9cS4lkp3UJDaQ0MMd/
-         y4d5pdLDHr/x3dLdGaJOa1HThEiI/5YQAr56HCF+WbV3GF5R+/GCDvCtpiOaoIF8th7C
-         lFrgTBLlLjLF50llUzDy9JnBcGh8v0zBGzuCrrQ6Ze847k67ZS6QLb1Yze+rKj/v7UE8
-         qHf0R1j22buQlERrtLZTxUBfRhQPEN42SUuT7d656RefLFhWUbQleuJYykMxAhio0ZZK
-         p/7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV5u11rzXdGnI7LZBoEYhsNfYE4zMI8Z1uSlnBz6kc0VlU8e1h7mH5bZjGZGTXf51Ro2sb12Szq@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yx89ETY8jsz1V3TseXQlxkYki+YfoZYwr3ASfNuqVzG+BGYAkBL
-	nVjDQ6Xc3b2JKcWLMekApPm9Q4YcG4Akmyxza00EBhOQtjzFYjXy1PjJFUw9rAS2kMk0QTA6UtE
-	V
-X-Gm-Gg: ASbGncuC5rGGtJlRxPYbNFr5BW8mJn+LJRghj7V032bGBR25ptNGYtIwJck2V5URzoh
-	Ez7QxWq1Q9dX1a4Anwi9kUduaJ9P9HsInP3VW1cVnJ5W+0eYPnAvjxfQbq86CoRrnxJ8fbTx6j0
-	MC13d9+lp7NtgVnyjNPf95lfhThgsVpGizYi/smZ0xezak7X1ks+ql2cS2IHrPZOo4Fo47zGYAK
-	lWivNdXtLiV8Oo/fCw/unx+uwjNSSkjLqiHe+XJx4XZqQcH+YKcBucL57cFfgtJtTMVPp7s2o4q
-	1DiYswGjNTOiXw7GTAJwNuzR2s6hLxJzU+xCnogBBMZTy7RQy2uNhx5EYIIG7x/p0HxDFg==
-X-Google-Smtp-Source: AGHT+IFt1fCmz37eK/jFvOKybSOrO7AA52z+GjwHcvZiIu0iVKjrKL2k/3QanRQGLG+00LWZFrbodA==
-X-Received: by 2002:a17:907:3f8d:b0:ad2:1355:874b with SMTP id a640c23a62f3a-ad218e54d64mr287945966b.4.1746783307237;
-        Fri, 09 May 2025 02:35:07 -0700 (PDT)
+        bh=DWWW+r3I13VsjnIkhw3ZTNhi61SinnMYLXrApzsFQNs=;
+        b=vBPNE+Syfma+XTv0xzsi+2hg3X7x6iaHkXV5zvL6cnW0VOnL0KKE+0O+n5bYkRbT+H
+         Q4qMDjOn8PneC7DHBQk3Ffx1yymOrfOJiWOQGZN9cZrU3zCPedmRKJAvkIjDbtQE/JrX
+         mKZfP+XAGirbQgflpcGtqxpPlYnJ9Z1OkbPDB1eTMU0ugZh7FH6WJ+QkRaoDgEv5M2xe
+         NjAIhmWVslbKfK5nkhFhbzq407Xl+ZYYcI6JgBJBMvnfKUywbQIHXAhCKJ5lM0ED6XND
+         eJ+5te6kWi++Eqa5Wp6ZpbHYXGGtO7pJJoNRBXwD3GkbCJe5yZyZH/8tG4Dc+mh0IxVg
+         Bb2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUxhdg3Dj3f3HsVOEUTLFt/WwvE7nMQz3VHrWRa1qM125L4R+fZ47L3BxhgDx9Ki/2MtDbfiVA6@lists.cip-project.org
+X-Gm-Message-State: AOJu0Yz4SHcMgJXw9rns6lB5dJBAcv+kgl76s3mp/8jv2qoKQVsJYb0f
+	Mst+OxScgk+MacHxetfR2+tAeXFKaQMKtJN0oVkHS2+gHkCSz9hc4XIkzS21oGE=
+X-Gm-Gg: ASbGncuAhkXrntGb7CKowNS8KNkCjhv5Z8vxcqDq02+6E/tqPWkbWIM5mrAidD5cSRD
+	CsYnP7dIB2vqPGGFCXyBRR8iYs/wtiBEt8nEc01Q43Z/JWXGMmuIecGlHqVE3IV9oO0IPBACabc
+	qknva+qqqmXDedouzwpeN20ri5sIjnAfFfOD/uTop+E1E2UUmw0vd3Bt2pEuaGNhWlkOOTrasxP
+	KrYdRGpzusfA/ZjFNt79Pm8zZGDOaa2LKSWb6+GoA6tdmbp3nVz8A+hYaThHt1eYfRppqYn2L6H
+	dGgu1LdTOKAFNteLiKh3Cw5GH/C7D8cYIGI0lQY4WOheQGCXec0q9AZREjVtJZYLASALWQ==
+X-Google-Smtp-Source: AGHT+IEo3cT8PILAatb3bSL3MAdvMY8dANzBqHc0UV2kDD3Q164/+ImDlY6qkO6xoFbSyh9U5WYTjA==
+X-Received: by 2002:a17:907:968b:b0:ad2:2417:12d2 with SMTP id a640c23a62f3a-ad224173b1cmr95146266b.42.1746783308818;
+        Fri, 09 May 2025 02:35:08 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad21974697asm121095466b.114.2025.05.09.02.35.06
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad21974697asm121095466b.114.2025.05.09.02.35.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 02:35:06 -0700 (PDT)
+        Fri, 09 May 2025 02:35:07 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 17/37] ASoC: renesas: rz-ssi: Use only the proper amount of dividers
-Date: Fri,  9 May 2025 12:34:22 +0300
-Message-ID: <20250509093442.4015145-18-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 18/37] ASoC: renesas: rz-ssi: Fix typo on SSI_RATES macro comment
+Date: Fri,  9 May 2025 12:34:23 +0300
+Message-ID: <20250509093442.4015145-19-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250509093442.4015145-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250509093442.4015145-1-claudiu.beznea.uj@bp.renesas.com>
@@ -71,41 +70,37 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 09:35:15 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18869
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18870
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 55c209cd4318c701e6e88e0b2512a0f12dd02a7d upstream.
+commit 100c6b22d6c70adabdf45dcb346d7d853bff6a30 upstream.
 
-There is no need to populate the ckdv[] with invalid dividers as that
-part will not be indexed anyway. The ssi->audio_mck/bclk_rate should
-always be >= 0. While at it, change the ckdv type as u8, as the divider
-128 was previously using the s8 sign bit.
+The SSI_RATES macro covers 8KHz-48KHz audio frequencies. Update macro
+comment to reflect it.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Fixes: 03e786bd43410fa9 ("ASoC: sh: Add RZ/G2L SSIF-2 driver")
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20241210170953.2936724-6-claudiu.beznea.uj@bp.renesas.com
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Link: https://patch.msgid.link/20241210170953.2936724-7-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- sound/soc/sh/rz-ssi.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ sound/soc/sh/rz-ssi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/sound/soc/sh/rz-ssi.c b/sound/soc/sh/rz-ssi.c
-index a2cae68245a7..9b99a0318572 100644
+index 9b99a0318572..5828d059262f 100644
 --- a/sound/soc/sh/rz-ssi.c
 +++ b/sound/soc/sh/rz-ssi.c
-@@ -259,8 +259,7 @@ static void rz_ssi_stream_quit(struct rz_ssi_priv *ssi,
- static int rz_ssi_clk_setup(struct rz_ssi_priv *ssi, unsigned int rate,
- 			    unsigned int channels)
- {
--	static s8 ckdv[16] = { 1,  2,  4,  8, 16, 32, 64, 128,
--			       6, 12, 24, 48, 96, -1, -1, -1 };
-+	static u8 ckdv[] = { 1,  2,  4,  8, 16, 32, 64, 128, 6, 12, 24, 48, 96 };
- 	unsigned int channel_bits = 32;	/* System Word Length */
- 	unsigned long bclk_rate = rate * channels * channel_bits;
- 	unsigned int div;
+@@ -72,7 +72,7 @@
+ #define PREALLOC_BUFFER		(SZ_32K)
+ #define PREALLOC_BUFFER_MAX	(SZ_32K)
+ 
+-#define SSI_RATES		SNDRV_PCM_RATE_8000_48000 /* 8k-44.1kHz */
++#define SSI_RATES		SNDRV_PCM_RATE_8000_48000 /* 8k-48kHz */
+ #define SSI_FMTS		SNDRV_PCM_FMTBIT_S16_LE
+ #define SSI_CHAN_MIN		2
+ #define SSI_CHAN_MAX		2
 -- 
 2.43.0
 
