@@ -2,65 +2,66 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7FF4C3ABC9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6290C3ABCB
 	for <webhook@archiver.kernel.org>; Fri,  9 May 2025 09:34:14 +0000 (UTC)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
- by mx.groups.io with SMTP id smtpd.web11.10316.1746783244357092845
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+ by mx.groups.io with SMTP id smtpd.web10.10394.1746783250669634157
  for <cip-dev@lists.cip-project.org>;
- Fri, 09 May 2025 02:34:04 -0700
+ Fri, 09 May 2025 02:34:10 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=RjG6yBzY;
- spf=pass (domain: tuxon.dev, ip: 209.85.208.46, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5fc7edf00b2so2355195a12.2
-        for <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 02:34:04 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=jWWtqPEk;
+ spf=pass (domain: tuxon.dev, ip: 209.85.208.54, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5fbdf6973e7so2411859a12.2
+        for <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 02:34:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1746783243; x=1747388043; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1746783249; x=1747388049; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NN1kHZnpiwrM/E1GKZNg1TSC5j/KrvJ0Loesijqd9Jc=;
-        b=RjG6yBzY4ooQns8EBn+BR1DzyLu6mZ3yvwtPAdXS3se0oG5ZYptclkD9g/SSRMthYH
-         fATvE6Al16r6oMNX7t2grFq+ZHS0U2LIWjCsWaed5l7WHQYjYt07jPQyME3DjXwZrrHr
-         pKtKNIg07+xu0Q4xh2nSIUlejIkgT0TflqybhEVpIjlB/0BiICHgnaKUoMvRqOb8Nk0+
-         Rg+lyasP/b3eaCJJbgbixPFzmBZsoEjo09bs4o1y7Vd/1L9txYPRVvH630R6rhijcwt2
-         bGVuM+qm4PXW11fmJcb6bQkKW/6Kxyb6UHbSOxFw8rppQIVOfrKBsNP5zOkGKw0iiomV
-         wMeg==
+        bh=QCQ25g4vQ6Z6BOwfBM4ssj1hE4tla9RWIcCKCcyPFeE=;
+        b=jWWtqPEk0tjmNm7xH+egLTbQbMCPxNkXKoO+KLhTP3YO/aYCV8lvKv/lUufnmmiVM5
+         QRCMaQYOPm17hx2f/EwoEezNc+oDuJFXEBfX437XCjhI/BN3kQgOTkfJXZQHv1oDPea7
+         yNsOzL09TI4KIhtrBwy0/HZcRzS7Y4+cB0Stnu9b47E5gkLY8QZK5aaGCcbdtihw3fiZ
+         z01SSOhPBXj82fgWs27PiFJGrh3NfHg31FPidrxq4FAXOAKBC36KSqD6I/rK45ox/mgf
+         mNnWxCgzLrn4AVImd55ZkQ4XJyPOgM04ZQ1Mu2KNYgUklsT3WjF04rxulgz2LfCRp+rv
+         UGbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746783243; x=1747388043;
+        d=1e100.net; s=20230601; t=1746783249; x=1747388049;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NN1kHZnpiwrM/E1GKZNg1TSC5j/KrvJ0Loesijqd9Jc=;
-        b=C564/f9RE3wMkcVLcP5js3gGRqwy/+uIpUgBzN7VUIFpPpFwipwcZzS8ajNxx/1mhD
-         MnJ/NRJCVyuOiw2yPEwasuomTfWWAVQxpLlwDKLMg+ZAsiEGVdkKOUEu6mHmxSQo5Ur9
-         tbIL28iHHvcXGfO7cfuUOat+zLtH8YggquyV6/oLD0BbRIta8Ho4Uko2BnP0XK6xZIFK
-         elZXMiumm5L5VNfZ751CNng7LRRFQfOIT1v7gEhPHFNR4tj8KBPsdpHNz6TWWus52wOL
-         Ts0Tgsabxw403666fNf4yPfBPxVYSoIn/9Xc0uq0ESmx2Ac2oJmJ6YIesgPX2+7xemzp
-         EKvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWvzCDctOll7uAR+hDtQlE4BOlZCrfRo23G2Rb9uCEz6b9hTO5z7MjT8HF+84a3YHxhbKZIoKvT@lists.cip-project.org
-X-Gm-Message-State: AOJu0YxNs1NKyOdwp9WLo5JqS8+oWzEGBVSzQFQb4HOveWgkZIVdWo5L
-	n/3e2gSIq1ORLy5MRMCocPOZbwyHufrYdVW1vJzA/fQCcZSDWhs4IhwbkRE93eI=
-X-Gm-Gg: ASbGncscZdsUtLGWCFc78UxOWkyjgMMQibSVDGUA66NJ5FKfEvU4yuYMOVYNvvZDyf/
-	n8kbfVxdndVM4LG2z1KcQs67BXqW0qa2GnMvYdOjCkyb3iu4h4RhSpE6q+96IrTRhbplyKI836W
-	wWt3UQTpDBc44V4lbxV9borX59NB0xpz6Go8UXfvVjYKDtu8d1X43NcgerdR79r5iW1NniPMmU/
-	+oifZu3S69AfGoPWnrazBl5TCvbAZfMlsRYN8A5OGi5V5dXaHnVowqWXb5SvcTCOBDAoBaGniZB
-	o9xitnwx/0cWUOenFGb1WruOhDnY54izYFw4kPt5aMtKtcyowDg25+KftT04VBZHevAUWg==
-X-Google-Smtp-Source: AGHT+IEJC52TsDHTFjFw1r7fqmAAju3l3BnmtUpy4XPlivx9ihpjnWl3Qd2Sh1POKrXXIAkTGKg5Eg==
-X-Received: by 2002:a05:6402:34c6:b0:5f6:212f:ed3 with SMTP id 4fb4d7f45d1cf-5fca07707eamr2122243a12.15.1746783242781;
-        Fri, 09 May 2025 02:34:02 -0700 (PDT)
+        bh=QCQ25g4vQ6Z6BOwfBM4ssj1hE4tla9RWIcCKCcyPFeE=;
+        b=nCe0qwcpyj3qJzJQxiSiI8aRkPbtIvfg6P1Eu4rUBGoeJHp4p8s7xJJLlxNN1rgHVG
+         xFPe+yuTUyY1DXBlLDzI3d2YCqZcPsRtJ7jGFSofVOSKAgpehLdmkrWMu6pD7X9aMKGz
+         gw3ovSnfdu4bbACAqqg36ee39DgKHFJ2piB17MJO3Tw1JsoA2FIkH5r1nAkhhHZnNEiN
+         DWUsU5o2O6X7iY7brPlfJN7Ig3IMyVrdjlQwwvx7a/VB63nXMrp0PLAKz0TsCeUxpZU+
+         3TyHJkJrFZWDbRNJIWz99JRnqyDRZYL2AWFNYjSZ837ibQh9SsMpey5OxHQMqtEl8Bij
+         sivA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXWq964R4R7eCZqPW4Y3r3J7mUp1QWj4uwCjLWKPwWfczWEyPCO/9bNVAFHGDMSgBAqQabz+P7@lists.cip-project.org
+X-Gm-Message-State: AOJu0YxYpn6U5Txsi943F+sfkhh4v65IzXeCC0+aqPV6JP1g8COKrrcX
+	/At1Qd2eo8uMWZk9Ta86yKttn3KVf7aZCeBzb/6rsPLeDeGqXz6Rt4gRV4aKURBUUmutTYap1ok
+	r
+X-Gm-Gg: ASbGncutiueU2iMfLTkz0AwqXe4BJ/J+Xm22npaFSrH+DmC+hc/T1Ch6sdBHAyUiMzd
+	ExUZ3cZisOr6Gtz3XIUktLKD7UNPWpcLeeNRUFXjRWrmwdg86bfDlWPi5zPaQkZc0oPeVIrxrOp
+	IdKKkB1+5hsMd4LnucJ8a6ubJ3iSdhVuRPa4CIAoN53qHcgTorZCF9vEXGasoBzsZ0XMXT4secu
+	XrzAce/ElKnwshYGhPYbxYGCiKstz5CRiK5q51m3quU0oQvXutz8biOvMo7u9HA0eDUPvaSV2ur
+	v5ym4vWm7lkun3v3sYDg0eUbEWWA+Ya6C+Zw2l3Whzl7vSZ9jPVgunWuSKkCEQI7cEgRbw==
+X-Google-Smtp-Source: AGHT+IGbbu8qR+ARAWsdH6GsE3AVf/scm0Fjm7+yCirKI0DAntp1w1M1F4IFFcupj+j3O+2Z3gOxog==
+X-Received: by 2002:a05:6402:35ca:b0:5fb:455f:ac25 with SMTP id 4fb4d7f45d1cf-5fca0730764mr2241149a12.7.1746783249037;
+        Fri, 09 May 2025 02:34:09 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fc9d700d6esm1106984a12.60.2025.05.09.02.34.01
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fc9d700d6esm1106984a12.60.2025.05.09.02.34.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 02:34:01 -0700 (PDT)
+        Fri, 09 May 2025 02:34:08 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.1.y-cip 29/34] pinctrl: renesas: rzg2l: Add audio clock pins on RZ/G3S
-Date: Fri,  9 May 2025 12:33:13 +0300
-Message-ID: <20250509093318.4014916-30-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 34/34] arm64: dts: renesas: rzg3s-smarc: Add sound card
+Date: Fri,  9 May 2025 12:33:18 +0300
+Message-ID: <20250509093318.4014916-35-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250509093318.4014916-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250509093318.4014916-1-claudiu.beznea.uj@bp.renesas.com>
@@ -70,39 +71,51 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 09:34:14 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18846
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18851
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 03fc60cd8e7b7e6f330d0a48c54545740addd9d8 upstream.
+commit 24bfc042ba3dc3692e206ff060eb22733b6d3ac0 upstream.
 
-Add audio clock pins on the RZ/G3S SoC.  These are used by audio IPs as
-input pins to feed them with audio clocks.
+Add sound card with SSI3 as CPU DAI and DA7212 as codec DAI.
 
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20241113133540.2005850-6-claudiu.beznea.uj@bp.renesas.com
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Link: https://lore.kernel.org/20241210170953.2936724-25-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 41944e91f6eb..3ff6bc8e4137 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -2192,6 +2192,8 @@ static const struct rzg2l_dedicated_configs rzg3s_dedicated_pins[] = {
- 	{ "TMS/SWDIO", RZG2L_SINGLE_PIN_PACK(0x1, 0, (PIN_CFG_IOLH_A | PIN_CFG_IEN |
- 						      PIN_CFG_SOFT_PS)) },
- 	{ "TDO", RZG2L_SINGLE_PIN_PACK(0x1, 1, (PIN_CFG_IOLH_A | PIN_CFG_SOFT_PS)) },
-+	{ "AUDIO_CLK1", RZG2L_SINGLE_PIN_PACK(0x2, 0, PIN_CFG_IEN) },
-+	{ "AUDIO_CLK2", RZG2L_SINGLE_PIN_PACK(0x2, 1, PIN_CFG_IEN) },
- 	{ "WDTOVF_PERROUT#", RZG2L_SINGLE_PIN_PACK(0x6, 0, PIN_CFG_IOLH_A | PIN_CFG_SOFT_PS) },
- 	{ "SD0_CLK", RZG2L_SINGLE_PIN_PACK(0x10, 0, (PIN_CFG_IOLH_B | PIN_CFG_IO_VMC_SD0)) },
- 	{ "SD0_CMD", RZG2L_SINGLE_PIN_PACK(0x10, 1, (PIN_CFG_IOLH_B | PIN_CFG_IEN |
+diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+index 12cd3772148b..244f77925239 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+@@ -47,6 +47,23 @@ key-3 {
+ 		};
+ 	};
+ 
++	snd_rzg3s: sound {
++		compatible = "simple-audio-card";
++		simple-audio-card,format = "i2s";
++		simple-audio-card,bitclock-master = <&cpu_dai>;
++		simple-audio-card,frame-master = <&cpu_dai>;
++		simple-audio-card,mclk-fs = <256>;
++
++		cpu_dai: simple-audio-card,cpu {
++			sound-dai = <&ssi3>;
++		};
++
++		codec_dai: simple-audio-card,codec {
++			sound-dai = <&da7212>;
++			clocks = <&versa3 1>;
++		};
++	};
++
+ 	vcc_sdhi1: regulator-vcc-sdhi1 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "SDHI1 Vcc";
 -- 
 2.43.0
 
