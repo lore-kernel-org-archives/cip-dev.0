@@ -2,66 +2,65 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89479C3ABCB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8956EC3ABCF
 	for <webhook@archiver.kernel.org>; Fri,  9 May 2025 09:35:35 +0000 (UTC)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
- by mx.groups.io with SMTP id smtpd.web11.10371.1746783333729263990
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+ by mx.groups.io with SMTP id smtpd.web11.10370.1746783332357646241
  for <cip-dev@lists.cip-project.org>;
- Fri, 09 May 2025 02:35:34 -0700
+ Fri, 09 May 2025 02:35:32 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=MTRSl80T;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.52, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ad21c5d9db2so117527866b.3
-        for <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 02:35:33 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=G28vzI8k;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.54, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac28e66c0e1so221063966b.0
+        for <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 02:35:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1746783332; x=1747388132; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1746783331; x=1747388131; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Q9g2hf2sbktVlMbhEjWOCWKLi+ZAFRelq76h2FfEJhQ=;
-        b=MTRSl80TeEsdrlZPhf0Kx+TRqGMyzqd+LdZ/9zEmauwy9pLcrLs4g+8ovquu+/G6oY
-         EXR/vWJWtNJ9zutcuczKLz+ADtfObDkViPIkT2ohb46zGaZfo6scUaHWBk8RUs1JsWJ8
-         UXd8qdatu9DyP2yh8d40LMmbhrUEzB38Z9A5zftG5h0LbXcXYBzd8Z4tJQARmGqJ/vEG
-         70h2lBLoWQV1nKqyFQjCi9DXmG9QjAS2/dB31gtHuj99kKQ3rz3uABz+doeTx2HCx0lk
-         NedM636s0jBlzCoF2p4xqrYzrVkKrjhO6ny+OVDqQVlbCuQZ/QNdllIG2piWmL2yIrzX
-         j6lQ==
+        bh=+Yn7J1P8pwoviXk58a92JoNdDWKOu1lLI8d9GERQQf8=;
+        b=G28vzI8khb0cpZURLkQHaLDURgz+zO8HrV98r4tbSujHe6pnenpokFRymoy0sg7sR6
+         YUwV6iKMCp/9HlsyP1klzgyay7Uk4YaytwvOqWact0qDQmTaqFQ4la/zj4yRtRCUoM10
+         i1mIhUMOkEwd8RVPuMXsiIfms4nP45jhO9gCFV6N6WCZE605fYVp4WRUm1I5EBEjF0Qt
+         Pj4WQohxxVlmbjJIqAJiTSlgNqQUfTzuEB65m4F+M9nP58gmleusrRrJNxojLHNezLS4
+         N4aDBKnwebY0iO42qjxjEgcjHESNSCc6lIq1d/B1xPjRvWbcrigERbBHABGz+utt53Fv
+         NkkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746783332; x=1747388132;
+        d=1e100.net; s=20230601; t=1746783331; x=1747388131;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Q9g2hf2sbktVlMbhEjWOCWKLi+ZAFRelq76h2FfEJhQ=;
-        b=p1Svua9hGT3jIxPOOEQLQA3KleWSkLKuMlYPrmcAn0VgaxPl6LbZblKcrfxxlK9vjQ
-         c6TPO1QcmNS5cncxuCAHoCnVrgKiQ8SlMiW6jfTn8iqOG2LX9qtTGyoyzibwoomm8sMs
-         P9Aq9ZfGLYdhjeiK1EjrigNIqLnAZ9HJA6UFuVnjSJGXK+/pq10Oep+6/r7JV302Vfff
-         TuTG8BxLh9Icu+5lQK0XMec6eyLTO0QGwKMWYpkydlLRZh4mAwMrdph7ua6d/RDmre7Q
-         7pFzwIsfSKWnQgRgBm9XgaMQ+YWyQm2wYQV9s9BrBI+rmd4ntPtEctn96wD9TEe/Esem
-         HObw==
-X-Forwarded-Encrypted: i=1; AJvYcCX13SggrtyVbwx6ThFO44OnC/pi0epc0OnAhs0Q3dJpWDZ4Rcp9xwhK/IK4rpF08HnUFiLczyo8@lists.cip-project.org
-X-Gm-Message-State: AOJu0YxSZs5aZxfkjFgKiLvoTdQP/qyQB/wik2ojOz7C2mdihDCl1RbE
-	3yJtTUwJdzPipJKQTva/4/OA1HLTc0npjkyYNi+cePRItzvwI1OS3p70FHi5NTnsm6QyZMRzdmX
-	c
-X-Gm-Gg: ASbGnctVwWXeY3vWZIUGC/UFEMpMQGocys8WL6aOVsxszm98xWfkydUrbzB8mUugjGV
-	/JflFY/ImVGVbAlrY7nPco55bIVBoTJp1TorDTd037DXBdzVSIx4nYCO0N4gBIkk5czidzbH1gq
-	nV9/AbCnAAMgyTYODnmu0qOSLYGglQsFjjsiS8zBVxHxUNyEydYxy2pXz3ZiXTloamSNLWT5kxM
-	juCE9n7Ei+rxgppHrCQmJxZKFRoogJ5W857wzon8BOFlrH8HnlFDW9BXNVKRDinYPC9S7kwb/Wq
-	l0KTPr+d21gAqvbxFoDVSNi09uwYVGd7oD9ppz9Lab0EdQ143fd7gA09qmRd3fZ+t0HPLg==
-X-Google-Smtp-Source: AGHT+IGrZPNMZKrb7vd+1yQR6dXw30ekhnTHhYv/R5nEYWHFzFh9344xm/q8CZCIe8YQhS7H+//0FA==
-X-Received: by 2002:a17:907:3445:b0:ace:c50a:f87 with SMTP id a640c23a62f3a-ad2192a8811mr186579866b.46.1746783332068;
-        Fri, 09 May 2025 02:35:32 -0700 (PDT)
+        bh=+Yn7J1P8pwoviXk58a92JoNdDWKOu1lLI8d9GERQQf8=;
+        b=ESMb8n5d9ZK1GCHgDl6K3QxZBv+29eFk/irAstxDKwr9QQmYmxYGU198bdqFiTfCfn
+         yQbDooLgO/xdOVzvmnzxECwA9fHEl/X2514F3AN+wS4hv8ssEcIZhj9seCjKO6cw3I8F
+         IlVPcc53i/jbbplsGAZZj5YrWa2Nd5UVc99Jnv4eMU1BHn8e7sqjnZ0f3MqUlTxARr8a
+         ZmsU239ouzOvfMIP+Q3OTtzL+W9pk2NB6kVRiM1hKKqLPagVZugX1gvuTD0jKlw02W7T
+         9Yg8F+mA7bsDjii3thOMos3cMIQJadRZVmdEEWZn7yoRvXiLKC33pHiYBwWd/yh0EWAs
+         PiCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYfm415wMtff1Nzt4qwrgn19LklbcxnyUbZBryEEUHctDdUXOidWAQt5kKVk20XeS9MaudzF18@lists.cip-project.org
+X-Gm-Message-State: AOJu0YyHNb72VvzvTnyr0cTiCfZRhgLBg536hp70lnuN3M9gVnsGp0Q6
+	rPnsRiMblqju9ybL2JJdFWrHu2T/N5Oh92NfWV9DCXH5varpVpJjLnG3nOu6P3E=
+X-Gm-Gg: ASbGncuC/HmZCbSs0bXUjB42kichfs1tQDqy1r/N20prRoJoYKAGD6MNVRLXSg2gy4D
+	zq2Qn5qQhn2guiQkJIwXdJfKJTt4G3pnoQpxJ15s3w6JKg2+BwNp49ISvf48uMm1N6EqyyG96fc
+	dNtEi1tWN/+yPPhJwrM2qg3NgzMh7tLgWyeDXxmWgD+Ych5KmTDxjpmok3AA97wLDiZR2XWcIrp
+	yyPtDLhUGtnQ0ekrQL0x5GCy9IxmxQ3lun0I9MBN/+s1SAf8ULKG6NqnlyteordyK24ZpbnBAAE
+	X6Wxlt1KrQvGPCQqaRwBkx7tYWMMzH++ynV9WwtpJfrFeo8aNc/+zxKEz927z/xWiZdJuw==
+X-Google-Smtp-Source: AGHT+IGip9TnRQ0E1NSOptcmNAvVGLKZ0azMhgik0Tyn0N9d8XxofOLOcbzciSHvCk2RDobc4DcXCw==
+X-Received: by 2002:a17:907:da0:b0:ace:c2ab:a720 with SMTP id a640c23a62f3a-ad218f2d373mr249430866b.6.1746783330691;
+        Fri, 09 May 2025 02:35:30 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad21974697asm121095466b.114.2025.05.09.02.35.30
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad21974697asm121095466b.114.2025.05.09.02.35.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 02:35:31 -0700 (PDT)
+        Fri, 09 May 2025 02:35:30 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 33/37] arm64: dts: renesas: r9a08g045: Add SSI nodes
-Date: Fri,  9 May 2025 12:34:38 +0300
-Message-ID: <20250509093442.4015145-34-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 32/37] pinctrl: renesas: rzg2l: Add audio clock pins on RZ/G3S
+Date: Fri,  9 May 2025 12:34:37 +0300
+Message-ID: <20250509093442.4015145-33-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250509093442.4015145-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250509093442.4015145-1-claudiu.beznea.uj@bp.renesas.com>
@@ -71,138 +70,39 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 09:35:35 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18885
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18884
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 880f6c84701cb7735d19f20db89e757086a8fcfa upstream.
+commit 03fc60cd8e7b7e6f330d0a48c54545740addd9d8 upstream.
 
-Add DT nodes for the SSI IPs available on the Renesas RZ/G3S SoC. Along
-with it external audio clocks were added. Board device tree could use it
-and update the frequencies.
+Add audio clock pins on the RZ/G3S SoC.  These are used by audio IPs as
+input pins to feed them with audio clocks.
 
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20241210170953.2936724-21-claudiu.beznea.uj@bp.renesas.com
+Link: https://lore.kernel.org/20241113133540.2005850-6-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 94 ++++++++++++++++++++++
- 1 file changed, 94 insertions(+)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-index 496394ca141c..7913820d88e7 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-@@ -14,6 +14,20 @@ / {
- 	#address-cells = <2>;
- 	#size-cells = <2>;
- 
-+	audio_clk1: audio1-clk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by boards that provide it. */
-+		clock-frequency = <0>;
-+	};
-+
-+	audio_clk2: audio2-clk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by boards that provide it. */
-+		clock-frequency = <0>;
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -187,6 +201,86 @@ i2c3: i2c@10090c00 {
- 			status = "disabled";
- 		};
- 
-+		ssi0: ssi@100a8000 {
-+			compatible = "renesas,r9a08g045-ssi",
-+				     "renesas,rz-ssi";
-+			reg = <0 0x100a8000 0 0x400>;
-+			interrupts = <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 241 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 242 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "int_req", "dma_rx", "dma_tx";
-+			clocks = <&cpg CPG_MOD R9A08G045_SSI0_PCLK2>,
-+				 <&cpg CPG_MOD R9A08G045_SSI0_PCLK_SFR>,
-+				 <&audio_clk1>, <&audio_clk2>;
-+			clock-names = "ssi", "ssi_sfr", "audio_clk1", "audio_clk2";
-+			resets = <&cpg R9A08G045_SSI0_RST_M2_REG>;
-+			dmas = <&dmac 0x2665>, <&dmac 0x2666>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&cpg>;
-+			#sound-dai-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		ssi1: ssi@100a8400 {
-+			compatible = "renesas,r9a08g045-ssi",
-+				     "renesas,rz-ssi";
-+			reg = <0 0x100a8400 0 0x400>;
-+			interrupts = <GIC_SPI 243 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 244 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 245 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "int_req", "dma_rx", "dma_tx";
-+			clocks = <&cpg CPG_MOD R9A08G045_SSI1_PCLK2>,
-+				 <&cpg CPG_MOD R9A08G045_SSI1_PCLK_SFR>,
-+				 <&audio_clk1>, <&audio_clk2>;
-+			clock-names = "ssi", "ssi_sfr", "audio_clk1", "audio_clk2";
-+			resets = <&cpg R9A08G045_SSI1_RST_M2_REG>;
-+			dmas = <&dmac 0x2669>, <&dmac 0x266a>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&cpg>;
-+			#sound-dai-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		ssi2: ssi@100a8800 {
-+			compatible = "renesas,r9a08g045-ssi",
-+				     "renesas,rz-ssi";
-+			reg = <0 0x100a8800 0 0x400>;
-+			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 247 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 248 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "int_req", "dma_rx", "dma_tx";
-+			clocks = <&cpg CPG_MOD R9A08G045_SSI2_PCLK2>,
-+				 <&cpg CPG_MOD R9A08G045_SSI2_PCLK_SFR>,
-+				 <&audio_clk1>, <&audio_clk2>;
-+			clock-names = "ssi", "ssi_sfr", "audio_clk1", "audio_clk2";
-+			resets = <&cpg R9A08G045_SSI2_RST_M2_REG>;
-+			dmas = <&dmac 0x266d>, <&dmac 0x266e>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&cpg>;
-+			#sound-dai-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		ssi3: ssi@100a8c00 {
-+			compatible = "renesas,r9a08g045-ssi",
-+				     "renesas,rz-ssi";
-+			reg = <0 0x100a8c00 0 0x400>;
-+			interrupts = <GIC_SPI 249 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 250 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 251 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "int_req", "dma_rx", "dma_tx";
-+			clocks = <&cpg CPG_MOD R9A08G045_SSI3_PCLK2>,
-+				 <&cpg CPG_MOD R9A08G045_SSI3_PCLK_SFR>,
-+				 <&audio_clk1>, <&audio_clk2>;
-+			clock-names = "ssi", "ssi_sfr", "audio_clk1", "audio_clk2";
-+			resets = <&cpg R9A08G045_SSI3_RST_M2_REG>;
-+			dmas = <&dmac 0x2671>, <&dmac 0x2672>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&cpg>;
-+			#sound-dai-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		cpg: clock-controller@11010000 {
- 			compatible = "renesas,r9a08g045-cpg";
- 			reg = <0 0x11010000 0 0x10000>;
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index 4e95cf53d0cd..7e6ff6617c93 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -1803,6 +1803,8 @@ static const struct rzg2l_dedicated_configs rzg3s_dedicated_pins[] = {
+ 	{ "TMS/SWDIO", RZG2L_SINGLE_PIN_PACK(0x1, 0, (PIN_CFG_IOLH_A | PIN_CFG_IEN |
+ 						      PIN_CFG_SOFT_PS)) },
+ 	{ "TDO", RZG2L_SINGLE_PIN_PACK(0x1, 1, (PIN_CFG_IOLH_A | PIN_CFG_SOFT_PS)) },
++	{ "AUDIO_CLK1", RZG2L_SINGLE_PIN_PACK(0x2, 0, PIN_CFG_IEN) },
++	{ "AUDIO_CLK2", RZG2L_SINGLE_PIN_PACK(0x2, 1, PIN_CFG_IEN) },
+ 	{ "WDTOVF_PERROUT#", RZG2L_SINGLE_PIN_PACK(0x6, 0, PIN_CFG_IOLH_A | PIN_CFG_SOFT_PS) },
+ 	{ "SD0_CLK", RZG2L_SINGLE_PIN_PACK(0x10, 0, (PIN_CFG_IOLH_B | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_CMD", RZG2L_SINGLE_PIN_PACK(0x10, 1, (PIN_CFG_IOLH_B | PIN_CFG_IEN |
 -- 
 2.43.0
 
