@@ -2,111 +2,125 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 032FDC3ABCC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04218C3ABCF
 	for <webhook@archiver.kernel.org>; Fri,  9 May 2025 09:34:55 +0000 (UTC)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
- by mx.groups.io with SMTP id smtpd.web11.10337.1746783292920624114
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+ by mx.groups.io with SMTP id smtpd.web10.10407.1746783291182079273
  for <cip-dev@lists.cip-project.org>;
- Fri, 09 May 2025 02:34:53 -0700
+ Fri, 09 May 2025 02:34:51 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=Oorn4uxO;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.47, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-acacb8743a7so321522866b.1
-        for <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 02:34:52 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=Z1pyoZIq;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.45, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-acae7e7587dso276492266b.2
+        for <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 02:34:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1746783291; x=1747388091; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1746783289; x=1747388089; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zuI1L4XG9JCPrAZb1VBo11Jf0/wYsEL9cazaEZ/IAdc=;
-        b=Oorn4uxOKi6vOinw5PmMAxJsYNTB2U9dCbRtORHYp9wMztwzRqrf9RhHiTJG5AZCyt
-         3NwBIet+F8/+ekQn1tIKO3RDeof71S5E27LRYRSXaG6AR+2nYV2rMaNdGMLP+gW4qmxi
-         xEf6B5inrSza/OhZCdzfb998tK5dPflF4jexU9fIrf+QK/Rm+08mH+3ae6q4+jVwA0iE
-         Q6IA+D000WYkUvB4RiRBMT6mwjKUIOcY5Fw/NQ+pHeXdgbNKD8luDdGMCGQKt3JFwMgh
-         eRrmGzSRHSCuhuM6nvTmuPMDYy7rbMOkeDOYSR0NxR+L+naR3X9YaMzBh+7NNpfUh5go
-         /n4g==
+        bh=6/Y/IMirM1chB0vnlvNOa67uROpPmju1qMja6bTYjHw=;
+        b=Z1pyoZIqIqt/mHZBnHwIrilC7Zm/uc7ZKnqUGiqvCxqD9rvf+mnUcljDSUt2AC/Uww
+         k8Hfx5UdQZd23AsBn0YBlYQmJlVCHA36CSzazTkQqFgbX7yUyiORIaj6hFQ76FZh8vYC
+         xOoOLGhXTV9zwNTS23jeabfnWQbmVbTEKpfOuCf2w3G0iPp1hYvoHMOH4/twEL70XzdN
+         apeuaAYASl1jjxoMpdgAd/jR4LKumETyFGU4x/svqki/o9oaO1ax1B8g5lgLt/gr4zcK
+         Yzci61rHvZB2q3jLF+eEYrQJiHSW6YqyxfHjlDJF32t/szZlnP8OBcvvgQR29nPepKlP
+         Xg8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746783291; x=1747388091;
+        d=1e100.net; s=20230601; t=1746783289; x=1747388089;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zuI1L4XG9JCPrAZb1VBo11Jf0/wYsEL9cazaEZ/IAdc=;
-        b=GZym2gjJxT6wwZm9SFzGlbUbjhX3W6eqFB5ySQu2TiJRsTY4cBUja9aR+QCGUIawVp
-         cpljw9ey+HRUbvKBjz4oKGD8dcNeFpObHWhKbXogu5i/w5Fjt+knwYPvw1Qk/qdTp0Bl
-         x7kgyn8NUJDW4/SyYBDgmIYd7rlxP5JVrQg8sdAu4e39na12T9rxCZ63bRfW3/jF4pUH
-         tHyrvMqal5vYY5x/F8cpFSsGI0+eFgxlQW5cm3fu1olIlVKk2UHsGg6vgpV52CuUHNLH
-         +xDvp8YvMnZ62RKR20IRnt4WvFdsnXWsMqMiLjGe99w9W+3W/XFXmhjpkeTvPfcFkiE1
-         /4vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0GiDuhd7zGdaJcUpjgpQyYLU0zp0VzooybqThzyr5jTPn5438/V2Rje8coL9v7ttFYuDGQgUC@lists.cip-project.org
-X-Gm-Message-State: AOJu0YxQYvkkp9deiqGTL5j/XWkgdmayXQKtsXiyK3BsXPkwaxJm8Skl
-	1lSBE1OAzeuoClXPFfLJFweXRBWjsd+T5GMd17K8svcQ6Z8xjIavvbBut4qInk0=
-X-Gm-Gg: ASbGncv2TkwcjNADErHHMLlI3O4rofs8T7x3DZYl88JkJcim+KjzyX6zph7i2PJtWKW
-	UveftmCNC3jKik6axGbYOURh+h9reuNiROxDv1P4S92MYSnKKR4jIxm6JA3Lfl6MerzAZR0PqwF
-	wNJO/pIGQTMlob91kXcNfPou7igdlbiRK9+HfdgkH0uNUO1y8415oUnNlTVEDqUKSVBudhfbduY
-	gQy3mcAjknEs/c60Lj4NVk3fmdeBAVaWqHZ/kWAqM5mbkAVnXA3KSuD6a+b7xT7gwct9KeUBuKR
-	PTCIbWR6/T0Ja98hSSxKstEzP940s95yCMEnL9wS+9fUkA9QfOzPpgiNcMV4pqTQSPjaCQ==
-X-Google-Smtp-Source: AGHT+IGVTP6L4IHUoBBfZAyX0FNE3dDX359kf8ojF61/298PAlaBtoMoavjj10zF3WRWPpQMr3lTjw==
-X-Received: by 2002:a17:907:a4c6:b0:ad2:175b:9db with SMTP id a640c23a62f3a-ad21b16e27cmr251959666b.8.1746783290773;
-        Fri, 09 May 2025 02:34:50 -0700 (PDT)
+        bh=6/Y/IMirM1chB0vnlvNOa67uROpPmju1qMja6bTYjHw=;
+        b=cBFgL+6jliTOc5TlEu4J9CI9HMX1PIIaNIRUfoAd9Ppick26KDyTC9JobVahB5Z3qY
+         g0IBjHs1ESxBlDtx+tmRMqUfJCZ+OUOK5wKeUAmSgnrg8PLtJ8y4Q6ymGfLlHXlhwNYl
+         n4mVcRqxV1KkdmySeZAlP1Mb5sLojubhHKbW71MItgDn6NnCyO3R4rt/Zj+O06QsP9XH
+         UdQAyHpKyPTk7HhCyVfq15yiNAEFWx3LV0DsFO76ia0ufiKN59u7LVnpGjKlTN1CWZpE
+         Eh1L4Ftkos4OcfdOLrIwp+KvgFW49SbKAvtt7ZHmF3hoStSqsoaD3mP8gyXH+g5A4sDz
+         Ns2w==
+X-Forwarded-Encrypted: i=1; AJvYcCUl+/AB9EDNfQUhLhtJQEHFZWSJ7X5dy7C6iRYoGK7qeGW9ejYuWuo+08yRJggJPU8ME4OZO2I0@lists.cip-project.org
+X-Gm-Message-State: AOJu0YyjVCkCg4FY/dphccwW5EwymcKQdcNqoen2puE9f6NRFhghHl1H
+	50nUQrHUxUObZTW41h881/wHQvbuE/9NYYZJqwlK9bbjCzoP8zJJw0agJXLwcBA=
+X-Gm-Gg: ASbGncvqL7exvrM/4GhvgsBCBOdUFU+rWVM38fo87Fk2W7GuveQs/pEwa4w9PCQV13f
+	E+7fXpty9SgCFnHBWpUDTEuk+nWYTGiPmMC9d3WWelyQfxpkL7JqbCuktFGIpdibsFktQKWYfxf
+	/pjagDzS2YSGKbxQFURrgp+h9BwBmp2+ZYhiLLZFZNH+Qtv4W9JyrplzIfuyR5HspqFkhS21/jZ
+	6RvD6dYUcY6d18vo272FipdTsgg1hlruvZEVd+XjArjfNaYaSByeSi6ocxrTM8vrMkr+2SzDW4g
+	50X7F/ArvQLJ5sB5etkD2y2ETkHr+BXZRB8KaRxnVuLQ1nI8nva141Yey4HtOpUKeEtKsA==
+X-Google-Smtp-Source: AGHT+IEEXvWtckSSeYmdmmNvxokxVd5sjiVQx5cnXS6tkjaVBsm3gKkPYVrsu+m+QPzxHbHlZILdBA==
+X-Received: by 2002:a17:907:a646:b0:ace:d848:2242 with SMTP id a640c23a62f3a-ad2192d4a2bmr250319566b.58.1746783289503;
+        Fri, 09 May 2025 02:34:49 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad21974697asm121095466b.114.2025.05.09.02.34.49
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad21974697asm121095466b.114.2025.05.09.02.34.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 02:34:50 -0700 (PDT)
+        Fri, 09 May 2025 02:34:48 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 05/37] ASoC: da7213: Populate max_register to regmap_config
-Date: Fri,  9 May 2025 12:34:10 +0300
-Message-ID: <20250509093442.4015145-6-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 04/37] ASoC: codecs: da7213: Simplify mclk initialization
+Date: Fri,  9 May 2025 12:34:09 +0300
+Message-ID: <20250509093442.4015145-5-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250509093442.4015145-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250509093442.4015145-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 09:34:55 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18857
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18856
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Cezary Rojewski <cezary.rojewski@intel.com>
 
-commit 9d4f9f6a7bb1afbde57d08c98f2db4ff019ee19d upstream.
+commit e2cb72d28740516cb03fa072e14b2f1a6eceef61 upstream.
 
-On the Renesas RZ/G3S SMARC Carrier II board having a DA7212 codec (using
-da7213 driver) connected to one SSIF-2 available on the Renesas RZ/G3S SoC
-it has been discovered that using the runtime PM API for suspend/resume
-(as will be proposed in the following commits) leads to the codec not
-being propertly initialized after resume. This is because w/o
-max_register populated to regmap_config the regcache_rbtree_sync()
-breaks on base_reg > max condition and the regcache_sync_block() call is
-skipped.
+Most of clk_xxx() functions do check if provided clk-pointer is
+non-NULL. These do not check if the pointer is an error-pointer.
+Providing such to a clk_xxx() results in a panic.
 
-Fixes: ef5c2eba2412 ("ASoC: codecs: Add da7213 codec")
-Cc: stable@vger.kernel.org
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://patch.msgid.link/20241106081826.1211088-23-claudiu.beznea.uj@bp.renesas.com
+By utilizing _optional() variant of devm_clk_get() the driver code is
+both simplified and more robust. There is no need to remember about
+IS_ERR(clk) checks each time mclk is accessed.
+
+Reviewed-by: Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
+Signed-off-by: Cezary Rojewski <cezary.rojewski@intel.com>
+Link: https://msgid.link/r/20240221152516.852353-2-cezary.rojewski@intel.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- sound/soc/codecs/da7213.c | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/codecs/da7213.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
 diff --git a/sound/soc/codecs/da7213.c b/sound/soc/codecs/da7213.c
-index 911348ba8ad7..d4b0e48f818c 100644
+index 8a30221a20a1..911348ba8ad7 100644
 --- a/sound/soc/codecs/da7213.c
 +++ b/sound/soc/codecs/da7213.c
-@@ -2119,6 +2119,7 @@ static const struct regmap_config da7213_regmap_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
+@@ -2083,18 +2083,14 @@ static int da7213_probe(struct snd_soc_component *component)
+ 	pm_runtime_put_sync(component->dev);
  
-+	.max_register = DA7213_TONE_GEN_OFF_PER,
- 	.reg_defaults = da7213_reg_defaults,
- 	.num_reg_defaults = ARRAY_SIZE(da7213_reg_defaults),
- 	.volatile_reg = da7213_volatile_register,
+ 	/* Check if MCLK provided */
+-	da7213->mclk = devm_clk_get(component->dev, "mclk");
+-	if (IS_ERR(da7213->mclk)) {
+-		if (PTR_ERR(da7213->mclk) != -ENOENT)
+-			return PTR_ERR(da7213->mclk);
+-		else
+-			da7213->mclk = NULL;
+-	} else {
++	da7213->mclk = devm_clk_get_optional(component->dev, "mclk");
++	if (IS_ERR(da7213->mclk))
++		return PTR_ERR(da7213->mclk);
++	if (da7213->mclk)
+ 		/* Do automatic PLL handling assuming fixed clock until
+ 		 * set_pll() has been called. This makes the codec usable
+ 		 * with the simple-audio-card driver. */
+ 		da7213->fixed_clk_auto_pll = true;
+-	}
+ 
+ 	/* Default infinite tone gen, start/stop by Kcontrol */
+ 	snd_soc_component_write(component, DA7213_TONE_GEN_CYCLES, DA7213_BEEP_CYCLES_MASK);
 -- 
 2.43.0
 
