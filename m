@@ -2,65 +2,66 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32283C3ABC9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A0EC3ABCA
 	for <webhook@archiver.kernel.org>; Fri,  9 May 2025 09:35:15 +0000 (UTC)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
- by mx.groups.io with SMTP id smtpd.web10.10413.1746783306397922713
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+ by mx.groups.io with SMTP id smtpd.web11.10356.1746783308876789331
  for <cip-dev@lists.cip-project.org>;
- Fri, 09 May 2025 02:35:06 -0700
+ Fri, 09 May 2025 02:35:09 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=AlXROt3c;
- spf=pass (domain: tuxon.dev, ip: 209.85.208.41, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5f6fb95f431so5670509a12.0
-        for <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 02:35:06 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=NukEUT6o;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.51, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac2a81e41e3so202169866b.1
+        for <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 02:35:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1746783305; x=1747388105; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1746783307; x=1747388107; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9IK5IAU8pI0ZsvPQhMGEPlNFMgPFOGCjMq42ZwDseHo=;
-        b=AlXROt3cDN9ZxoHV5MJghU3vFg80CoxlE5WvD+662t9hNVe6Wxr7ylXIOoNhOA0RzA
-         Hh8iX1ITZeBhWLWW/KAOpUX2vIZJHv0+CgaiUoI/jJVfcvCc8q8ELzV89jydyxJnRpHV
-         SjuKS9shjaZ00uiU1wrz8w8/Vb2oq8osUC2Z3AayfWvLCUtqwCsf/AO8H1AY29n3hFfy
-         C0KSEvzdtXsalzY6q/VJSMKU7cEoco/FJLcxWeCaHKbs5JPXDadSOK/VRqedMSWshw7l
-         QFmG7CfyaKPLXUd2n/G8wChxjVriASwZjy7ntDQeCYphnzGkV+531JhqcZ/ddReIOPBp
-         BCaw==
+        bh=NzFriyDy/RxiDg0ruOMyhKrsxou7jJqrqrow5GAQsSk=;
+        b=NukEUT6osNeZ9AP+pOM723rFCK7Z62W8HFCND68qI0ukY2A1Rtu0WQ5isoy7GQHL36
+         MDBZDfjmhB2+w4U2a6/7twKPITqlQEXJyUhTp6MNf5AE1XcvQ39K/PMMcV+KDwdj4K0G
+         0P22oL0SkKJqcFRp2DnlKBMcFliF7MyYdewIzkzjW0smA+R7SLNCISBqZh6enCTIixl/
+         sSBWYCsQIMSerbTSHGwTqgtzUbtoY610e78deOzXgn9SIjDfKdTeJ3Jp4P34NudbSLH/
+         AhsCcFl5t7pEr6N5N90jaHc36PtlnCDqDj6b0pKafNjP9OQWowCLVrKe7xgtqew1JXRE
+         qZmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746783305; x=1747388105;
+        d=1e100.net; s=20230601; t=1746783307; x=1747388107;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9IK5IAU8pI0ZsvPQhMGEPlNFMgPFOGCjMq42ZwDseHo=;
-        b=MXk4sKWtNI9P3fysurm6+S60YjX4kl+witpBkO+zO/zZJyXCcfL0iODy8x+10AADCY
-         zL9dkFLH8JrCqy9uiToSCcPDXEDxOncYfsK2UgiCD/pR8Edn7GJPgBbdKP095L5r44wd
-         DeJMUjrQlsYtyBFwH4WuU0EriFa01I85DBNa6isaMDO0KFUQCzY/1V9QZY2cCz9Mi0Qb
-         tJGaKCy1nyqiR+RvbBHGtwURDbUUy+AEVnfyFwkrNnYEaJasv19NwYxe23q4JtuL4EZR
-         dHDhAlPyMzia4GYENlJofoXGzvAu4aNMIOp/vBuCJkbonpNNOFZdFzYSbfwwRKoY0NwM
-         Uhvw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQc6pyJaE0ne1C2ydqKXwwTb68/720Znr8pgceVH7vrv3dBz9YAj1BvOW2jkMKNO5tNwbbdRvp@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yw4BMlZB9fxC9CHgFQmOc3bI8dUFUuI4pwhbu8Q3nTGx2mdXVrg
-	OaA5GVLRrmM+ZwSNavuiECXa8N/6+3EhNQp1h4zLmJ2aiABJ972Z9Zw1rinFpZo=
-X-Gm-Gg: ASbGncubW9GBJ2tvxw8g/zfIYLQNEWJ+jgXpwEQmlb+opjVJB8N/T65NFqGG65XAV6v
-	1VR6AhAoDdfwTg6ADi0sOYSAmr9bDT4XtUUtPxe+CJCAZI94KKSNHgAVFGFugE0Ph3++CWr5hsk
-	HQgWlP08oB1rX0y3Oq0ohZeimPDbMW+QxRUiudXopY1iSxsDV+tQJry1/lvqiiSqbL7HmUCq15Q
-	Z+GN3LSg40YYMIjlZR3L63clMCndEEMhZYQ3AJzbEr0n++3pKXFPCbt1EHYuZKTtobehcdwO5dF
-	1RXY4olYw2XD97WQY4N7/g+cDrh0wNra7AkXHYdiuYNm2/qhJSk32TadiQ4IH/XwreWvXA==
-X-Google-Smtp-Source: AGHT+IHgEol0M4WDRa1mXG3dEA+bGx+8tUrjHjZ4zn8UrZXZFuFCpstP4YV5QBsyz2/jMdCrKHvuPA==
-X-Received: by 2002:a17:907:c717:b0:ac7:81b0:62c9 with SMTP id a640c23a62f3a-ad21b42627amr222222766b.20.1746783304796;
-        Fri, 09 May 2025 02:35:04 -0700 (PDT)
+        bh=NzFriyDy/RxiDg0ruOMyhKrsxou7jJqrqrow5GAQsSk=;
+        b=k5aGOmC16wRl34FxH0n0kIHImX6KA1po1ZuLFzYbmfjfq0nB7itHosRUnKNYo79MwE
+         Z0U8nHVGRdG/FpUiDpY54hQMBXnvs/+6qu6UZtc59tHvi1ikiO9cS4lkp3UJDaQ0MMd/
+         y4d5pdLDHr/x3dLdGaJOa1HThEiI/5YQAr56HCF+WbV3GF5R+/GCDvCtpiOaoIF8th7C
+         lFrgTBLlLjLF50llUzDy9JnBcGh8v0zBGzuCrrQ6Ze847k67ZS6QLb1Yze+rKj/v7UE8
+         qHf0R1j22buQlERrtLZTxUBfRhQPEN42SUuT7d656RefLFhWUbQleuJYykMxAhio0ZZK
+         p/7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV5u11rzXdGnI7LZBoEYhsNfYE4zMI8Z1uSlnBz6kc0VlU8e1h7mH5bZjGZGTXf51Ro2sb12Szq@lists.cip-project.org
+X-Gm-Message-State: AOJu0Yx89ETY8jsz1V3TseXQlxkYki+YfoZYwr3ASfNuqVzG+BGYAkBL
+	nVjDQ6Xc3b2JKcWLMekApPm9Q4YcG4Akmyxza00EBhOQtjzFYjXy1PjJFUw9rAS2kMk0QTA6UtE
+	V
+X-Gm-Gg: ASbGncuC5rGGtJlRxPYbNFr5BW8mJn+LJRghj7V032bGBR25ptNGYtIwJck2V5URzoh
+	Ez7QxWq1Q9dX1a4Anwi9kUduaJ9P9HsInP3VW1cVnJ5W+0eYPnAvjxfQbq86CoRrnxJ8fbTx6j0
+	MC13d9+lp7NtgVnyjNPf95lfhThgsVpGizYi/smZ0xezak7X1ks+ql2cS2IHrPZOo4Fo47zGYAK
+	lWivNdXtLiV8Oo/fCw/unx+uwjNSSkjLqiHe+XJx4XZqQcH+YKcBucL57cFfgtJtTMVPp7s2o4q
+	1DiYswGjNTOiXw7GTAJwNuzR2s6hLxJzU+xCnogBBMZTy7RQy2uNhx5EYIIG7x/p0HxDFg==
+X-Google-Smtp-Source: AGHT+IFt1fCmz37eK/jFvOKybSOrO7AA52z+GjwHcvZiIu0iVKjrKL2k/3QanRQGLG+00LWZFrbodA==
+X-Received: by 2002:a17:907:3f8d:b0:ad2:1355:874b with SMTP id a640c23a62f3a-ad218e54d64mr287945966b.4.1746783307237;
+        Fri, 09 May 2025 02:35:07 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad21974697asm121095466b.114.2025.05.09.02.35.03
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad21974697asm121095466b.114.2025.05.09.02.35.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 02:35:04 -0700 (PDT)
+        Fri, 09 May 2025 02:35:06 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 15/37] clk: versaclock3: Add support for the 5L35023 variant
-Date: Fri,  9 May 2025 12:34:20 +0300
-Message-ID: <20250509093442.4015145-16-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 17/37] ASoC: renesas: rz-ssi: Use only the proper amount of dividers
+Date: Fri,  9 May 2025 12:34:22 +0300
+Message-ID: <20250509093442.4015145-18-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250509093442.4015145-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250509093442.4015145-1-claudiu.beznea.uj@bp.renesas.com>
@@ -70,43 +71,41 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 09 May 2025 09:35:15 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18867
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18869
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit d3dcc98f65dbd364ff839edecf39d1a1e949ee90 upstream.
+commit 55c209cd4318c701e6e88e0b2512a0f12dd02a7d upstream.
 
-Add support for the 5L35023 variant of the Versa 3 clock generator.
+There is no need to populate the ckdv[] with invalid dividers as that
+part will not be indexed anyway. The ssi->audio_mck/bclk_rate should
+always be >= 0. While at it, change the ckdv type as u8, as the divider
+128 was previously using the s8 sign bit.
 
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://lore.kernel.org/r/20241210170953.2936724-4-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: 03e786bd43410fa9 ("ASoC: sh: Add RZ/G2L SSIF-2 driver")
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20241210170953.2936724-6-claudiu.beznea.uj@bp.renesas.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/clk-versaclock3.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ sound/soc/sh/rz-ssi.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-versaclock3.c b/drivers/clk/clk-versaclock3.c
-index 70f23e64939c..b6db9453f9b6 100644
---- a/drivers/clk/clk-versaclock3.c
-+++ b/drivers/clk/clk-versaclock3.c
-@@ -1137,8 +1137,14 @@ static const struct vc3_hw_cfg vc3_5p = {
- 	.se2_clk_sel_msk = BIT(6),
- };
- 
-+static const struct vc3_hw_cfg vc3_5l = {
-+	.pll2_vco = { .min = 30000000UL, .max = 130000000UL },
-+	.se2_clk_sel_msk = BIT(0),
-+};
-+
- static const struct of_device_id dev_ids[] = {
- 	{ .compatible = "renesas,5p35023", .data = &vc3_5p },
-+	{ .compatible = "renesas,5l35023", .data = &vc3_5l },
- 	{ /* Sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, dev_ids);
+diff --git a/sound/soc/sh/rz-ssi.c b/sound/soc/sh/rz-ssi.c
+index a2cae68245a7..9b99a0318572 100644
+--- a/sound/soc/sh/rz-ssi.c
++++ b/sound/soc/sh/rz-ssi.c
+@@ -259,8 +259,7 @@ static void rz_ssi_stream_quit(struct rz_ssi_priv *ssi,
+ static int rz_ssi_clk_setup(struct rz_ssi_priv *ssi, unsigned int rate,
+ 			    unsigned int channels)
+ {
+-	static s8 ckdv[16] = { 1,  2,  4,  8, 16, 32, 64, 128,
+-			       6, 12, 24, 48, 96, -1, -1, -1 };
++	static u8 ckdv[] = { 1,  2,  4,  8, 16, 32, 64, 128, 6, 12, 24, 48, 96 };
+ 	unsigned int channel_bits = 32;	/* System Word Length */
+ 	unsigned long bclk_rate = rate * channels * channel_bits;
+ 	unsigned int div;
 -- 
 2.43.0
 
