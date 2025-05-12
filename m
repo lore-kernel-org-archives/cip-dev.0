@@ -2,75 +2,57 @@ Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC0DDC3ABCD
-	for <webhook@archiver.kernel.org>; Mon, 12 May 2025 11:45:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A4AC3ABCB
+	for <webhook@archiver.kernel.org>; Mon, 12 May 2025 16:06:36 +0000 (UTC)
 Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web11.48354.1747050301236306161
+ by mx.groups.io with SMTP id smtpd.web11.54398.1747065986163499876
  for <cip-dev@lists.cip-project.org>;
- Mon, 12 May 2025 04:45:01 -0700
+ Mon, 12 May 2025 09:06:26 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=K+LVu5o7;
+ dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=IfPH5izV;
  spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4E1B5101EC1F3;
-	Mon, 12 May 2025 13:44:55 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9A1F8101EC1F1;
+	Mon, 12 May 2025 18:06:21 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1747050299; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=r43J8EPCqBjyla53TepPevNMKTqXJtqfWU+O3zJ67gA=;
-	b=K+LVu5o7jg3gBcyvjg+Zwej7+QBXnr5eg2xzjKoxKHAYjBVh3wvNfetabPB/TKnS8VvDb0
-	eOTYXuLj05U/eJ4tGbP+0xulEukfY8Apse6Mlqp0RvGO9siK1GT92CSJdCQrxbCk4mJkrF
-	78bj+Yvl1s01QQWaMpp7PtB3SjPAOgz+EUL922axfmZaOg9ZM3hJxIpYHARFxgZ7M6MRe1
-	cL9oHAFpR4WE+/YkZc2eUyoMMOmuQIG/+rwQo0Rlyehn61n6XrHIXx/slePg/11A11SxZ1
-	yDjWILKiCxLBEzOZGAQCi6DawsEpREGRxZkhuey5OUoSLm+m7xoaNUant3056Q==
-Date: Mon, 12 May 2025 13:44:53 +0200
+	t=1747065984; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=YnTu0CiEfRpcXq/nE5wmr+i5wiP1IRS+Ygq1EZJ7jOQ=;
+	b=IfPH5izVWIRczmK0dadOAYoo7IHEkzmlir/O8EfITe+OBFR5KkjnhtG9rs0lxlZXVJBiD8
+	f9/1SQE/pUksPM/+BqbbSDDTSHQTk65nN/TSbdpii6dPp+xSsePZ5SHTPZr1O11iKmAg9k
+	79JCtXwTlWL4iIMrPjT7dC5EeKQOaTuMMFdI9hOCRpLJOD0WdIT00/1GvD/9ppcZ8BZX4o
+	Hwg2hAjKGLXHBbqy9CLo5g9XDNtlgAv5Rz9XTfv/3ETTNA28y2x4SiUyljkwrjTJ8nCJll
+	yxjGs0AR+SObT+Tj4wmxNxJqGN/y7NLm2N7wGI355Nq61sa4AFz01FE6W+sYVg==
+Date: Mon, 12 May 2025 18:06:18 +0200
 From: Pavel Machek <pavel@denx.de>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+To: Claudiu <claudiu.beznea@tuxon.dev>
 Cc: nobuhiro1.iwamatsu@toshiba.co.jp, cip-dev@lists.cip-project.org
-Subject: Re: [PATCH 5.10.y-cip 03/37] ASoC: da7213: Add new kcontrol for
- tonegen
-Message-ID: <aCHfNffAfYMPSkaP@duo.ucw.cz>
-References: <20250509093442.4015145-1-claudiu.beznea.uj@bp.renesas.com>
- <20250509093442.4015145-4-claudiu.beznea.uj@bp.renesas.com>
- <aCGq0e9FcQ1ShAAq@duo.ucw.cz>
- <3b2097ac-20e1-4e5d-a9d6-2b2bfbf0cc1b@tuxon.dev>
+Subject: Re: [PATCH 6.12.y-cip 00/29] RZ/G3S: Backport audio support
+Message-ID: <aCIcegq472gRjUJL@duo.ucw.cz>
+References: <20250509093203.4014750-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="NRmppKVkJ4NfD4Oo"
+	protocol="application/pgp-signature"; boundary="KJCRnyvBWIdUF3eF"
 Content-Disposition: inline
-In-Reply-To: <3b2097ac-20e1-4e5d-a9d6-2b2bfbf0cc1b@tuxon.dev>
+In-Reply-To: <20250509093203.4014750-1-claudiu.beznea.uj@bp.renesas.com>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 12 May 2025 11:45:04 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18897
+ <cip-dev@lists.cip-project.org>; Mon, 12 May 2025 16:06:36 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18898
 
 
---NRmppKVkJ4NfD4Oo
+--KJCRnyvBWIdUF3eF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> >> From: David Rau <David.Rau.opensource@dm.renesas.com>
-> >>
-> >> commit 64c3259b5f86963c5214e63cfadedaa2278ba0ed upstream.
-> >>
-> >> Add new kcontrol for tone generator
-> >=20
-> > DTMF in hardware? What are you using DTMF for these days? And is it
-> > really useful to have special silicon and special code in driver to
-> > accelerate it?
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >=20
-> We are currently don't use this with the RZ/G3S SoC. I've backported this
-> patch as it was needed to have the DA7213_TONE_GEN_OFF_PER macro used in
-> patch 05/37 "ASoC: da7213: Populate max_register to regmap_config".
->=20
-> Would you like me to try another approach 05/37? E.g. Use directly the
-> latest available offset for v5.10?
+> Series backports the Renesas RZ/G3S audio support to v6.12.y CIP.
 
-No, its okay as it is. I was just wondering how people uses DTMF in
-2025.
+Thank you, applied.
 
 Best regards,
 								Pavel
@@ -78,15 +60,15 @@ Best regards,
 DENX Software Engineering GmbH,        Managing Director: Erika Unter
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---NRmppKVkJ4NfD4Oo
+--KJCRnyvBWIdUF3eF
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaCHfNQAKCRAw5/Bqldv6
-8gIUAJ9Wzk8h/19v/bhkwaOTxtbNzuCNIACeM+OjoiIN2y80fM+l+rrSnfkiNNU=
-=8WBP
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaCIcegAKCRAw5/Bqldv6
+8lOFAJ4x6t1UfC/KV9R04mez/2zFlU4WFACdEu2LzHzZoROJewP0xZZweSAzoL0=
+=uaOD
 -----END PGP SIGNATURE-----
 
---NRmppKVkJ4NfD4Oo--
+--KJCRnyvBWIdUF3eF--
 
