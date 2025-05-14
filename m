@@ -1,87 +1,101 @@
-Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C00C3ABD9
-	for <webhook@archiver.kernel.org>; Wed, 14 May 2025 09:43:19 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.98181.1747215792653558106
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AED3C3ABCC
+	for <webhook@archiver.kernel.org>; Wed, 14 May 2025 10:02:39 +0000 (UTC)
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+ by mx.groups.io with SMTP id smtpd.web11.98918.1747216954141937406
  for <cip-dev@lists.cip-project.org>;
- Wed, 14 May 2025 02:43:13 -0700
+ Wed, 14 May 2025 03:02:34 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: yltShOAKQ0mOJ3gmgmVa2g==
-X-CSE-MsgGUID: qCiARrFQQga4EFugnYaMcg==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 14 May 2025 18:43:10 +0900
-Received: from Ubuntu-22.. (unknown [10.226.92.9])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3989240A9339;
-	Wed, 14 May 2025 18:43:08 +0900 (JST)
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: cip-dev@lists.cip-project.org,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@denx.de>,
-	Ulrich Hecht <uli@fpond.eu>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH RESEND 4.4.y-cip] ARM: shmobile: smp: Enforce shmobile_smp_* alignment
-Date: Wed, 14 May 2025 10:43:08 +0100
-Message-ID: <20250514094308.60634-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+ dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=WZPbIY37;
+ spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4153310692226;
+	Wed, 14 May 2025 12:02:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1747216951; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=tMbkST/7ur0wtwuaQIAGck9cjugsaL69nrF8gbIlWco=;
+	b=WZPbIY377WN6qFT3ecSaanifoSRBmWuuhrAPfzWZSqqxmCWiuCktf+0/1wsrqvhGLLD9u3
+	rcQtzRv7P62a9KRmRKxP522R2TNtkEiZhImcS6VlmG6FfV7U7TJ2gX/+5aSWk+VyZPqumX
+	7Sd7kS/YGUTa3Pf9IIt6sDpm4hrgxixjShNPspSrVfCD+/TbuNAUPJH3SsvtidyYYX4+eg
+	vT9cQ/z5vKcOeFBmq7q0/eX6VJHbA+mIlr2Qz+k4CIJVrlJuEZTMmSzH2TIG23JOfcXGnS
+	szjIrKzoWlGNYuukn4DPyIdQYhKAys4PAbsqUCbpGKleGnQpEqzVye/nLwms9A==
+Date: Wed, 14 May 2025 12:02:25 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Ulrich Hecht <uli@fpond.eu>
+Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: Re: Request for review for 4.4-st64, 4.4-cip99
+Message-ID: <aCRqMeCYmmC2pFVm@duo.ucw.cz>
+References: <594897735.236352.1747215068214@webmail.strato.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="YuAvsppdD/9EJD17"
+Content-Disposition: inline
+In-Reply-To: <594897735.236352.1747215068214@webmail.strato.de>
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 14 May 2025 09:43:19 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18905
+ <cip-dev@lists.cip-project.org>; Wed, 14 May 2025 10:02:39 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18906
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 379c590113ce46f605439d4887996c60ab8820cc upstream.
+--YuAvsppdD/9EJD17
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-When the addresses of the shmobile_smp_mpidr, shmobile_smp_fn, and
-shmobile_smp_arg variables are not multiples of 4 bytes, secondary CPU
-bring-up fails:
+Hi!
 
-    smp: Bringing up secondary CPUs ...
-    CPU1: failed to come online
-    CPU2: failed to come online
-    CPU3: failed to come online
-    smp: Brought up 1 node, 1 CPU
+> Here's the manual backports for the upcoming 4.4 kernel release. As alway=
+s they can be found in https://git.kernel.org/pub/scm/linux/kernel/git/cip/=
+linux-cip.git/log/?h=3Dlinux-4.4.y-st-rc
+>
 
-Fix this by adding the missing alignment directive.
+These are ok:
 
-Fixes: 4e960f52fce16a3b ("ARM: shmobile: Move shmobile_smp_{mpidr, fn, arg}[] from .text to .bss")
-Closes: https://lore.kernel.org/r/CAMuHMdU=QR-JLgEHKWpsr6SbaZRc-Hz9r91JfpP8c3n2G-OjqA@mail.gmail.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/c499234d559a0d95ad9472883e46077311051cd8.1741612208.git.geert+renesas@glider.be
-Cc: stable@vger.kernel.org
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Reviewed-by: Pavel Machek <pavel@denx.de>
----
-Note,
-- Just resending the patch with Reviewed-by from Pavel and Iwamatsu-san.
-- This patch needs applying for 4.4.y-cip only
-- Patch previoulsy posted https://patchwork.kernel.org/project/cip-dev/patch/20250404095757.58956-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
----
- arch/arm/mach-shmobile/headsmp.S | 1 +
- 1 file changed, 1 insertion(+)
+a GFP_KERNEL failures are mostly theoretical > 21503a13375d5 qlcnic: fix me=
+mory leak issues in qlcnic_sriov_common.c
+a just a hw bug workaround > 952bc6f3a0ebb HID: ignore non-functional senso=
+r in HP 5MP Camera
 
-diff --git a/arch/arm/mach-shmobile/headsmp.S b/arch/arm/mach-shmobile/headsmp.S
-index cef8e8c555f84..49df98d8b459b 100644
---- a/arch/arm/mach-shmobile/headsmp.S
-+++ b/arch/arm/mach-shmobile/headsmp.S
-@@ -139,6 +139,7 @@ ENDPROC(shmobile_smp_sleep)
- 	.long	shmobile_smp_arg - 1b
- 
- 	.bss
-+	.align	2
- 	.globl	shmobile_smp_mpidr
- shmobile_smp_mpidr:
- 	.space	NR_CPUS * 4
--- 
-2.43.0
+Are you sure about this one?
 
+!! > ece0f8e21aa7f net_sched: Prevent creation of classes with TC_H_ROOT
+
+Unlike newer kernels, out: has non-trivial cleanup, so we probably
+want to goto there.
+
+> There is also one new patch that I added mostly for my own benefit:
+>=20
+> 18a3ce42a20f0 mm/sparsemem: silence "'mem_section' will never be NULL" wa=
+rning
+
+Looks good. I'd quote commit id in the log ...
+
+    This is similar in function to the upstream patch
+    a431dbbc540532b7465eae4fc8b56a85a9fc7d17 "mm/sparsemem: fix
+    'mem_section' will never be NULL gcc 12 warning" but avoids adding
+    extra checks to minimize the potential for regressions.
+
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--YuAvsppdD/9EJD17
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaCRqMQAKCRAw5/Bqldv6
+8nTrAJ9+V4euvrqLA5T//vlFqdGU8tIdBACfXqBt9ipBHmPLpBf6TeXrDS0oQxg=
+=9lCJ
+-----END PGP SIGNATURE-----
+
+--YuAvsppdD/9EJD17--
 
