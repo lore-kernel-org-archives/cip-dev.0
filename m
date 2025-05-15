@@ -2,114 +2,108 @@ Return-Path: <uli@fpond.eu>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 845F7C2D0CD
-	for <webhook@archiver.kernel.org>; Thu, 15 May 2025 12:36:34 +0000 (UTC)
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.221])
- by mx.groups.io with SMTP id smtpd.web10.11346.1747312586545672063
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A02D2C2D0CD
+	for <webhook@archiver.kernel.org>; Thu, 15 May 2025 12:38:14 +0000 (UTC)
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.54])
+ by mx.groups.io with SMTP id smtpd.web11.11190.1747312690799097251
  for <cip-dev@lists.cip-project.org>;
- Thu, 15 May 2025 05:36:27 -0700
+ Thu, 15 May 2025 05:38:11 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=pjUu98tL;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=ZqX4KXJm;
- spf=none, err=permanent DNS error (domain: fpond.eu, ip: 81.169.146.221, mailfrom: uli@fpond.eu)
-ARC-Seal: i=1; a=rsa-sha256; t=1747312562; cv=none;
+ dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=nSl6CUhf;
+ dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=JVsyc4cx;
+ spf=none, err=permanent DNS error (domain: fpond.eu, ip: 85.215.255.54, mailfrom: uli@fpond.eu)
+ARC-Seal: i=1; a=rsa-sha256; t=1747312684; cv=none;
     d=strato.com; s=strato-dkim-0002;
-    b=e4vbdm16p1p1bFSy2AfG8DCfcuu4Dnit53gT8daEAtAbAOByFQ9QdE25QpCHPZlT2m
-    kImcvobP8oBgc7SnxQe3U4MqKObGo85VSwrIQvyXV7kInW9hudCplcmDotyiZ3acQkJx
-    qVInahFMewuUk3RyltWbgipcJo0LrC4obksh89gfBr+dWjpBqTOROWebRC8+Fhhj41ym
-    ZHAdtW/W1HA1fAiP8+YJ7LMoRWtD3z0C/weTdISaHMJmZt2P85C1LqsKv41oi2FnQqso
-    3eJczE7ApCkHTojVJZoiPnngs9PxTXwrLOlw9kthCI7LUg3eGCGwh7+UP/kurNhP9Ni+
-    U63Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1747312562;
+    b=bXHSJCpzU43LSt/BSaKaaltL/bwnAh9hklt2W4s7vU6GgCWhvtgDeskRI5f4sgDaIq
+    GeTDT3/oGrxf3CKcCrJeloTjcaJVXJojk4MLJqeWbTDbGRnfV7pouXpA/RRqmP6p+2Wf
+    0Q1U4vaW3v3WrYJ2BgVsGU7n2wKp/CP/5oXHfEFdlNXvZx7tM03QxkEJsJm4H+tvOfS4
+    kIHrJnL5ckn/30ASX7L929zRaXNTZDvA6uBa172AiPoenU1ET1L8UHSIlitMOx64dIqI
+    15ERSBcfWRKdpePG46rpoMWwr2bOntw/+jocfr1sMpDmYg69JYehuM7d5PH1kpF4dOHh
+    i74Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1747312684;
     s=strato-dkim-0002; d=strato.com;
-    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
-    bh=8xLWFbJvczzTLzBv1aqMB1ECAVavxL3tHkRCdcbH6wE=;
-    b=DgWQmBYKgD9tArTgqiPkAOH2GRIXojKYm/543L8/cp9Koqy08VhbH+ZY6Wo5VgSKsy
-    GOiIpJdSja5F4RXcCe5oscpIy/jM0mHarXMlu6JNG9Dxg0dDRl1efk72KWyk8YH4SvwP
-    HVBX88DCTAGGo0Lq0nrLhHVsGalQAOoKtmbzkvP932hadQ0dC1qunhhioDy0sXQjVS4m
-    hbb3kDyG0GnTQ3rpkg0GKms6mpBpxJIkkcGn3G9T08t3i5qgzXnhXeG7uQKO7ndm+OvR
-    F1RXzODOYmEdbxJCzEXbvBekflp08rU9cWChlsnAkbQtHoEN/0p8771cEfeixChvJoA4
-    pXrg==
+    h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=1xef6Kt2KS1Qeeijh2h6TIulCEAyxXq13KGbCmDeIFo=;
+    b=CC3AORAzDvXWw/MNJDP6DQiD7o5jvQiLBAxk0RLo8J1yrZqjf5j8yVKMTZwga3o0O7
+    tpcFxiZS1Qlq1md665QM51NpQX0BCk1SnJ3EnWmSgMm21KFc78IW0dMyH9qfw9Yysp3H
+    ei2t1Mpt0sKCPKotvpyRM35raIs9WfRu5G5Mf78oPVxgign/V8sGQ/IZo5sHmIoiZW3G
+    VzQvvRO2dXmdVrAZESd1LfnmJ5dv2uOahzrczD6YkaDMP3Rid+eObQTzGtofHoU+1kND
+    elZ40xLcgllH0wZY6BKobiFzGWasCDClYHxsB+yghfQJr/lJnRg2mQichV4ojYw3l6e/
+    yUSQ==
 ARC-Authentication-Results: i=1; strato.com;
     arc=none;
     dkim=none
-X-RZG-CLASS-ID: mo00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1747312562;
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1747312684;
     s=strato-dkim-0002; d=fpond.eu;
-    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
-    bh=8xLWFbJvczzTLzBv1aqMB1ECAVavxL3tHkRCdcbH6wE=;
-    b=pjUu98tLykbFybYevsEFyPG/8bcStof+lYYL5uIg7/uiIRvP96Tjp4EYbqG7E4FFGt
-    9h5T2ZU14REWo5/XpgXe3jiX6BrCT3J6tL+kWKeFQwLTRdVcFdutJWUPjcRtq0Scudkl
-    /aaweolHcgFJrjsIiMOvt9VUci0KDof0EO4Rc9FuMKlDNv/bxB01QiiFems2+YyfrBgP
-    WCsEfNLq4PhdXtrQtdVTAg9eRqaDpmedoInVCGn4ytWQvPNwzS0d2+9Fe9bCt9uppgrp
-    /W8pBVar36ts8Jv1dJkgfSID8RowbE3T/lPeLpZcz28C4GKMOK13U3GiOw5kLapkoIzO
-    z1Fw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1747312562;
+    h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=1xef6Kt2KS1Qeeijh2h6TIulCEAyxXq13KGbCmDeIFo=;
+    b=nSl6CUhfFDObJ2K6gZlDWD26kgWJthgd1tjaT85bRP198zROf2wgGRj2XjPoH3MrrR
+    qIYkrP1T+q2PFhHT3MhkH7F24xSfnXeqW1DdWyDYNaQyzLguzBk1yDpMkVb2p2kRTSnr
+    GgaZwwg/re1wxXjwlWWLBuSGv20xLa3PLhblxSha0VZZRIA9SMEJSoHr9QiX5HHLl1zM
+    3Pr2WTrkpCIx5RBaU9zqo7wkPuK1yPf8u78LCd4J+l/e+zDd2DTcmy80Q7+zFgllOG1A
+    kS8PoPhYXxq8VnZvlQ7Odd4QbMIAKruXjuqT2LKPDNO8LqZ2xiZvW2zcVCQsncldYcQh
+    Zjqw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1747312684;
     s=strato-dkim-0003; d=fpond.eu;
-    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
-    bh=8xLWFbJvczzTLzBv1aqMB1ECAVavxL3tHkRCdcbH6wE=;
-    b=ZqX4KXJmSMPueLXhx1yZYiUmiFPkwrR3lBecjBLTIFlgIXQk0tU40wkeDLAc6z4By+
-    H2BzxugsoKI2iURoIbAw==
+    h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=1xef6Kt2KS1Qeeijh2h6TIulCEAyxXq13KGbCmDeIFo=;
+    b=JVsyc4cx7MO+gdqNc/cMMQjrPepoFCfrQEWi+XYxrdaK5FIUo9YtcNhW+wwY+AqZOT
+    kO7iSjE7oqCIJ9eMadBA==
 X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv30UF1hex6fd76vq"
 Received: from open-xchange-core-mw-gw-14.open-xchange-core-mw-hazelcast-headless.open-xchange.svc.cluster.local
     by smtp-ox.front (RZmta 51.3.0 AUTH)
-    with ESMTPSA id z2a34014FCa2SnA
+    with ESMTPSA id z2a34014FCc4Snb
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256 bits))
 	(Client did not present a certificate);
-    Thu, 15 May 2025 14:36:02 +0200 (CEST)
-Date: Thu, 15 May 2025 14:36:01 +0200 (CEST)
+    Thu, 15 May 2025 14:38:04 +0200 (CEST)
+Date: Thu, 15 May 2025 14:38:04 +0200 (CEST)
 From: Ulrich Hecht <uli@fpond.eu>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"pavel@denx.de" <pavel@denx.de>,
-	"jan.kiszka@siemens.com" <jan.kiszka@siemens.com>,
-	"masami.ichikawa@cybertrust.co.jp" <masami.ichikawa@cybertrust.co.jp>,
-	"chris.paterson2@renesas.com" <chris.paterson2@renesas.com>,
+To: pavel@denx.de
+Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
 	"nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>
-Message-ID: <585489375.340335.1747312561927@webmail.strato.de>
-Subject: [ANNOUNCE] Release v4.4.302-cip99
+Message-ID: <1131286918.340542.1747312684534@webmail.strato.de>
+In-Reply-To: <aCRqMeCYmmC2pFVm@duo.ucw.cz>
+References: <594897735.236352.1747215068214@webmail.strato.de>
+ <aCRqMeCYmmC2pFVm@duo.ucw.cz>
+Subject: Re: [cip-dev] Request for review for 4.4-st64, 4.4-cip99
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Priority: 3
 Importance: Normal
 X-Mailer: Open-Xchange Mailer v8.33.60
-X-Originating-Port: 60522
+X-Originating-Port: 58420
 X-Originating-Client: open-xchange-appsuite
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 15 May 2025 12:36:34 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18911
+ <cip-dev@lists.cip-project.org>; Thu, 15 May 2025 12:38:14 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18912
 
-Hi,
+Hi!
 
-the CIP kernel team has released Linux kernel v4.4.302-cip99. The linux-4.4.y-cip tree's base version has been updated to v4.4-st64. The trees are up-to-date with kernel 4.19-st4.
+Thanks for the reviews.
 
-You can get this release via the git tree or as a tarball from https://mirrors.edge.kernel.org/pub/linux/kernel/projects/cip/4.4/
+> On 05/14/2025 12:02 PM CEST Pavel Machek via lists.cip-project.org <pavel=denx.de@lists.cip-project.org> wrote:
+> Are you sure about this one?
+> 
+> !! > ece0f8e21aa7f net_sched: Prevent creation of classes with TC_H_ROOT
+> 
+> Unlike newer kernels, out: has non-trivial cleanup, so we probably
+> want to goto there.
 
-  v4.4.302-cip99:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-4.4.y-cip
-    commit hash:
-      e6c5131ebe8aa7b802f05d277d357a9c80c32da2
-    Fixed CVEs:
-      CVE-2025-21638: sctp: sysctl: auth_enable: avoid using current->nsproxy
-      CVE-2025-21640: sctp: sysctl: cookie_hmac_alg: avoid using current->nsproxy
-      CVE-2025-21992: HID: ignore non-functional sensor in HP 5MP Camera
-      CVE-2025-21993: iscsi_ibft: Fix UBSAN shift-out-of-bounds warning in ibft_attr_show_nic()
-      CVE-2025-21996: drm/radeon: fix uninitialized size issue in radeon_vce_cs_parse()
-      CVE-2025-22004: net: atm: fix use after free in lec_send()
-      CVE-2025-22007: Bluetooth: Fix error code in chan_alloc_skb_cb()
-      CVE-2025-22018: atm: Fix NULL pointer dereference
-      CVE-2025-22035: tracing: Fix use-after-free in print_graph_function_flags during tracer switching
-      CVE-2025-22073: spufs: fix a leak on spufs_new_file() failure
-      CVE-2025-22079: ocfs2: validate l_tree_depth to avoid out-of-bounds access
-      CVE-2025-23136: thermal: int340x: Add NULL check for adev
-      CVE-2025-39735: jfs: fix slab-out-of-bounds read in ea_get()
-      CVE-2025-21971: net_sched: Prevent creation of classes with TC_H_ROOT
+Good point. Fixed.
 
-Best regards,
-Ulrich Hecht
+> > 18a3ce42a20f0 mm/sparsemem: silence "'mem_section' will never be NULL" warning
+> 
+> Looks good. I'd quote commit id in the log ...
+
+Likewise.
+
+CU
+Uli
 
