@@ -1,133 +1,73 @@
-Return-Path: <d.kauschke154@googlemail.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CA1C3ABDD
-	for <webhook@archiver.kernel.org>; Tue, 20 May 2025 05:53:19 +0000 (UTC)
-Subject: [isar-cip-core][QUESTION] initramfs-overlay-hook: tmpFS for overlay storage
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D04EC54754
+	for <webhook@archiver.kernel.org>; Tue, 20 May 2025 12:43:52 +0000 (UTC)
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
+ by mx.groups.io with SMTP id smtpd.web11.19994.1747745027012003524
+ for <cip-dev@lists.cip-project.org>;
+ Tue, 20 May 2025 05:43:48 -0700
+Authentication-Results: mx.groups.io;
+ dkim=pass header.i=jan.kiszka@siemens.com header.s=fm1 header.b=Yz4z+Dnd;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-294854-202505201243433db269a9f46d01a8d0-phason@rts-flowmailer.siemens.com)
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 202505201243433db269a9f46d01a8d0
+        for <cip-dev@lists.cip-project.org>;
+        Tue, 20 May 2025 14:43:44 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=jan.kiszka@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+ bh=iGd1hFnmWvXXXZJQqaBpMGIQHETvNaWfZqERKywel0c=;
+ b=Yz4z+Dnd13hfrRLnAcWvzxIjndh4EF5MLYrHaQUJfZPSxr2+ZuF0vhRq0A0iAV9IqXaJXF
+ W56TiG6u3h4LcMQZ5qxTlgUIPybuvTz0AJgoGl+QY8Z/T8+QkLkQGwPZball9D4b/tyAv9mU
+ xcapOEEHH4099zskS554aZX28zyAfLnWEX0q7sv4qv7cRsxSkA+Y/TNRdhtFfGTlXDXvDz/P
+ 5mKSV5zMN19U+A98DC7c3WIe2PCjyoLEF/hRj9sumvOH6YAiFjed2EM1MDTYbONy1oh79D/I
+ uRT5wfnhnPRd2W6cvoAwBenJD5nmRSnnsN3IVCygCLCeQr04Ar2TF+Tw==;
+From: Jan Kiszka <jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
-From: d.kauschke154@googlemail.com
-X-Originating-Location: Munich, Bavaria, DE (188.195.217.206)
-X-Originating-Platform: Linux Firefox 138
-User-Agent: GROUPS.IO Web Poster
+Subject: [isar-cip-core][PATCH 0/4] Add support for 6.12 CIP kernel and more
+Date: Tue, 20 May 2025 14:43:38 +0200
+Message-ID: <cover.1747745022.git.jan.kiszka@siemens.com>
 MIME-Version: 1.0
-Date: Mon, 19 May 2025 22:53:14 -0700
-Message-ID: <unkY.1747720394864813878.o3iY@lists.cip-project.org>
-Content-Type: multipart/alternative; boundary="FQIhswi6hyRSknvdV4bj"
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-294854:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 20 May 2025 05:53:19 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18924
+ <cip-dev@lists.cip-project.org>; Tue, 20 May 2025 12:43:52 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18929
 
---FQIhswi6hyRSknvdV4bj
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+See patches for details.
 
-Hello all,
+Jan
 
-I have some questions regarding the use of the initramfs-overlay-hook featu=
-re in CIP Core:
-https://gitlab.com/cip-project/cip-core/isar-cip-core/-/blob/master/recipes=
--initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.3.bb
+Jan Kiszka (4):
+  linux-cip: Fold rt-specific include into a single file
+  linux-cip: Bump cip-kernel-config revision
+  Add support for CIP kernel 6.12
+  trixie: Drop pinning on snapshot version
 
-Currently, I=E2=80=99m using the default behavior where the overlay=E2=80=
-=99s upper directory is located on a separate, persistent /var partition.
-An wic example setup can be found here:
-https://gitlab.com/cip-project/cip-core/isar-cip-core/-/blob/master/wic/bbb=
--efibootguard.wks.in
+ Kconfig                                       |  4 +++
+ conf/distro/cip-core-common.inc               |  3 +-
+ conf/distro/cip-core-trixie.conf              | 10 ++-----
+ kas/opt/6.12.yml                              | 18 +++++++++++
+ recipes-kernel/linux/cip-kernel-config.inc    |  2 +-
+ recipes-kernel/linux/linux-cip-common.inc     |  3 +-
+ recipes-kernel/linux/linux-cip-rt-common.inc  | 15 ----------
+ .../linux-cip-rt_4.19.325-cip118-rt41.bb      |  4 +--
+ .../linux/linux-cip-rt_4.4.302-cip98-rt55.bb  |  4 +--
+ .../linux/linux-cip-rt_5.10.237-cip60-rt26.bb |  4 +--
+ .../linux/linux-cip-rt_6.12.29-cip1.bb        |  1 +
+ .../linux/linux-cip_6.12.29-cip1.bb           | 10 +++++++
+ scripts/update-linux-cip.sh                   | 30 +++++++++++--------
+ 13 files changed, 65 insertions(+), 43 deletions(-)
+ create mode 100644 kas/opt/6.12.yml
+ delete mode 100644 recipes-kernel/linux/linux-cip-rt-common.inc
+ create mode 120000 recipes-kernel/linux/linux-cip-rt_6.12.29-cip1.bb
+ create mode 100644 recipes-kernel/linux/linux-cip_6.12.29-cip1.bb
 
-At runtime, /etc/fstab includes an entry:
+-- 
+2.43.0
 
-overlay on /etc type overlay (rw,relatime,lowerdir=3D/root/etc,upperdir=3D/=
-root/var/local/etc,workdir=3D/root/var/local/.etc-atomic,uuid=3Don)
-
-In this setup, the root filesystem is mounted read-only, and directories li=
-ke /etc are made writable via an overlay.
-
-This works well from a functional perspective, but due to the use of persis=
-tent storage for the upper and work directories (on /var),
-all runtime modifications are retained across reboots.
-For example:
-/etc/machine-id can be modified as expected,
-but also a file like /etc/systemd/system/attacker.service could be dropped =
-during runtime by someone with physical access to the flash of the device.
-These files would then persist across reboots, undermining runtime integrit=
-y.
-
-Questions:
-1) Is there an existing way to configure initramfs-overlay-hook to use a vo=
-latile overlay backed by tmpFS for the upper directories?
-2) If not, would it be feasible or acceptable to extend the recipe to optio=
-nally support such a mode?
-3) Are there known reasons why a tmpFS for overlay storage was not implemen=
-ted yet?
-
-The goal is to ensure that the system always boots into a clean and control=
-led state,
-without retaining any changes made during runtime =E2=80=94 for improved se=
-curity and integrity.
-
-Thank you for your time and expertise.
-
-Best regards,
-David
-
---FQIhswi6hyRSknvdV4bj
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div>
-<div>Hello all,</div>
-<div>&nbsp;</div>
-<div>I have some questions regarding the use of the initramfs-overlay-hook =
-feature in CIP Core:<br /><a href=3D"https://gitlab.com/cip-project/cip-cor=
-e/isar-cip-core/-/blob/master/recipes-initramfs/initramfs-overlay-hook/init=
-ramfs-overlay-hook_0.3.bb" target=3D"_blank" rel=3D"noopener">https://gitla=
-b.com/cip-project/cip-core/isar-cip-core/-/blob/master/recipes-initramfs/in=
-itramfs-overlay-hook/initramfs-overlay-hook_0.3.bb</a></div>
-<div>&nbsp;</div>
-<div>Currently, I&rsquo;m using the default behavior where the overlay&rsqu=
-o;s upper directory is located on a separate, persistent /var partition.<br=
- />An wic example setup can be found here:<br /><a href=3D"https://gitlab.c=
-om/cip-project/cip-core/isar-cip-core/-/blob/master/wic/bbb-efibootguard.wk=
-s.in" target=3D"_blank" rel=3D"noopener">https://gitlab.com/cip-project/cip=
--core/isar-cip-core/-/blob/master/wic/bbb-efibootguard.wks.in</a></div>
-<div>&nbsp;</div>
-<div>At runtime, /etc/fstab includes an entry:</div>
-<div>&nbsp;</div>
-<div>overlay on /etc type overlay (rw,relatime,lowerdir=3D/root/etc,upperdi=
-r=3D/root/var/local/etc,workdir=3D/root/var/local/.etc-atomic,uuid=3Don)</d=
-iv>
-<div>&nbsp;</div>
-<div>In this setup, the root filesystem is mounted read-only, and directori=
-es like /etc are made writable via an overlay.</div>
-<div>&nbsp;</div>
-<div>This works well from a functional perspective, but due to the use of p=
-ersistent storage for the upper and work directories (on /var),<br />all ru=
-ntime modifications are retained across reboots.</div>
-<div>For example:</div>
-<div>/etc/machine-id can be modified as expected,<br />but also a file like=
- /etc/systemd/system/attacker.service could be dropped during runtime by so=
-meone with physical access to the flash of the device.</div>
-<div>These files would then persist across reboots, undermining runtime int=
-egrity.</div>
-<div>&nbsp;</div>
-<div>Questions:</div>
-<div>1) Is there an existing way to configure initramfs-overlay-hook to use=
- a volatile overlay backed by tmpFS for the upper directories?<br />2) If n=
-ot, would it be feasible or acceptable to extend the recipe to optionally s=
-upport such a mode?<br />3) Are there known reasons why a tmpFS for overlay=
- storage was not implemented yet?</div>
-<div>&nbsp;</div>
-<div>The goal is to ensure that the system always boots into a clean and co=
-ntrolled state,<br />without retaining any changes made during runtime &mda=
-sh; for improved security and integrity.</div>
-<div>&nbsp;</div>
-<div>Thank you for your time and expertise.</div>
-<div>&nbsp;</div>
-<div>Best regards,<br />David</div>
-</div>
-
---FQIhswi6hyRSknvdV4bj--
 
