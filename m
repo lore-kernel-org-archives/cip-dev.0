@@ -2,32 +2,34 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D04EC54754
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66325C3DA6D
 	for <webhook@archiver.kernel.org>; Tue, 20 May 2025 12:43:52 +0000 (UTC)
-Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
- by mx.groups.io with SMTP id smtpd.web11.19994.1747745027012003524
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+ by mx.groups.io with SMTP id smtpd.web11.19995.1747745027086901000
  for <cip-dev@lists.cip-project.org>;
  Tue, 20 May 2025 05:43:48 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=jan.kiszka@siemens.com header.s=fm1 header.b=Yz4z+Dnd;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-294854-202505201243433db269a9f46d01a8d0-phason@rts-flowmailer.siemens.com)
-Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 202505201243433db269a9f46d01a8d0
+ dkim=pass header.i=jan.kiszka@siemens.com header.s=fm1 header.b=ZTXbf2uA;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-294854-2025052012434487847dec6ea1e51801-juqgkk@rts-flowmailer.siemens.com)
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 2025052012434487847dec6ea1e51801
         for <cip-dev@lists.cip-project.org>;
         Tue, 20 May 2025 14:43:44 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=jan.kiszka@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
- bh=iGd1hFnmWvXXXZJQqaBpMGIQHETvNaWfZqERKywel0c=;
- b=Yz4z+Dnd13hfrRLnAcWvzxIjndh4EF5MLYrHaQUJfZPSxr2+ZuF0vhRq0A0iAV9IqXaJXF
- W56TiG6u3h4LcMQZ5qxTlgUIPybuvTz0AJgoGl+QY8Z/T8+QkLkQGwPZball9D4b/tyAv9mU
- xcapOEEHH4099zskS554aZX28zyAfLnWEX0q7sv4qv7cRsxSkA+Y/TNRdhtFfGTlXDXvDz/P
- 5mKSV5zMN19U+A98DC7c3WIe2PCjyoLEF/hRj9sumvOH6YAiFjed2EM1MDTYbONy1oh79D/I
- uRT5wfnhnPRd2W6cvoAwBenJD5nmRSnnsN3IVCygCLCeQr04Ar2TF+Tw==;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
+ bh=FpvrcGftbUPJIa4UaXDi4foVV2Cs7QS57ntjW83T+us=;
+ b=ZTXbf2uAX/817gmGmd649yeF8THZSQOyE8DSFqN3vL1z+/OlR0oW1GHuT2GgocpBbuYMsa
+ /vBegaJlqMlmNLMo3PP7PIaT5ncli9zY0WIqBkOg/3n42ct+on0CZhr3RPO/L3mJd2fGT/IF
+ /ifVMutrNwsj+H4DhjNh6SqhAwI48qt6RdOnz6piT9R+LUQiq9uFU6wLyaSVCd5P7duQ/QoS
+ iAb8na2Ij1Fzg/fzhWpSjJiftOfeH8hAlYcxoJSvjktqX9RlwF/Q8HnCyY+ijXVoL9C5HWCk
+ BEJp1xNjJqOoAJc7m0LB8+Zr6WGXzXgIhc+bl/TnPuGFXCG0+lLlY2KQ==;
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
-Subject: [isar-cip-core][PATCH 0/4] Add support for 6.12 CIP kernel and more
-Date: Tue, 20 May 2025 14:43:38 +0200
-Message-ID: <cover.1747745022.git.jan.kiszka@siemens.com>
+Subject: [isar-cip-core][PATCH 4/4] trixie: Drop pinning on snapshot version
+Date: Tue, 20 May 2025 14:43:42 +0200
+Message-ID: <edb921ebbf2c4fd7e0612829c78dc240451295d2.1747745022.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1747745022.git.jan.kiszka@siemens.com>
+References: <cover.1747745022.git.jan.kiszka@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
@@ -36,37 +38,53 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 20 May 2025 12:43:52 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18929
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18925
 
-See patches for details.
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Jan
+Cross-build is working again, and trixie is in freeze now. Lift the
+pinning to a specific snapshot. That also means to stop building a
+patched dosfstools because our issue is now fixed upstream.
 
-Jan Kiszka (4):
-  linux-cip: Fold rt-specific include into a single file
-  linux-cip: Bump cip-kernel-config revision
-  Add support for CIP kernel 6.12
-  trixie: Drop pinning on snapshot version
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ conf/distro/cip-core-common.inc  | 3 ++-
+ conf/distro/cip-core-trixie.conf | 4 ----
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
- Kconfig                                       |  4 +++
- conf/distro/cip-core-common.inc               |  3 +-
- conf/distro/cip-core-trixie.conf              | 10 ++-----
- kas/opt/6.12.yml                              | 18 +++++++++++
- recipes-kernel/linux/cip-kernel-config.inc    |  2 +-
- recipes-kernel/linux/linux-cip-common.inc     |  3 +-
- recipes-kernel/linux/linux-cip-rt-common.inc  | 15 ----------
- .../linux-cip-rt_4.19.325-cip118-rt41.bb      |  4 +--
- .../linux/linux-cip-rt_4.4.302-cip98-rt55.bb  |  4 +--
- .../linux/linux-cip-rt_5.10.237-cip60-rt26.bb |  4 +--
- .../linux/linux-cip-rt_6.12.29-cip1.bb        |  1 +
- .../linux/linux-cip_6.12.29-cip1.bb           | 10 +++++++
- scripts/update-linux-cip.sh                   | 30 +++++++++++--------
- 13 files changed, 65 insertions(+), 43 deletions(-)
- create mode 100644 kas/opt/6.12.yml
- delete mode 100644 recipes-kernel/linux/linux-cip-rt-common.inc
- create mode 120000 recipes-kernel/linux/linux-cip-rt_6.12.29-cip1.bb
- create mode 100644 recipes-kernel/linux/linux-cip_6.12.29-cip1.bb
-
+diff --git a/conf/distro/cip-core-common.inc b/conf/distro/cip-core-common.inc
+index d06eef05..0814b082 100644
+--- a/conf/distro/cip-core-common.inc
++++ b/conf/distro/cip-core-common.inc
+@@ -1,7 +1,7 @@
+ #
+ # CIP Core, generic profile
+ #
+-# Copyright (c) Siemens AG, 2019-2024
++# Copyright (c) Siemens AG, 2019-2025
+ #
+ # Authors:
+ #  Jan Kiszka <jan.kiszka@siemens.com>
+@@ -17,6 +17,7 @@ CIP_IMAGE_OPTIONS ?= ""
+ 
+ IMAGER_BUILD_DEPS:append = " dosfstools-native"
+ IMAGER_BUILD_DEPS:remove:buster = "dosfstools-native"
++IMAGER_BUILD_DEPS:remove:trixie = "dosfstools-native"
+ 
+ PREFERRED_VERSION_linux-cip-native ?= "${PREFERRED_VERSION_linux-cip}"
+ PREFERRED_VERSION_linux-cip-kbuildtarget ?= "${PREFERRED_VERSION_linux-cip}"
+diff --git a/conf/distro/cip-core-trixie.conf b/conf/distro/cip-core-trixie.conf
+index e8eff746..b133bbbb 100644
+--- a/conf/distro/cip-core-trixie.conf
++++ b/conf/distro/cip-core-trixie.conf
+@@ -14,7 +14,3 @@ require cip-core-common.inc
+ 
+ PREFERRED_VERSION_linux-cip ?= "6.12.%"
+ PREFERRED_VERSION_linux-cip-rt ?= "6.12.%"
+-
+-# cross build currently broken, use working snapshot
+-ISAR_USE_APT_SNAPSHOT = "1"
+-ISAR_APT_SNAPSHOT_DATE = "20250309T000000Z"
 -- 
 2.43.0
 
