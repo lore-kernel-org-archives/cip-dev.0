@@ -2,32 +2,32 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE3EC54E71
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 724DFC3ABDD
 	for <webhook@archiver.kernel.org>; Tue, 20 May 2025 12:43:52 +0000 (UTC)
-Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
- by mx.groups.io with SMTP id smtpd.web11.19996.1747745027161363937
+Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
+ by mx.groups.io with SMTP id smtpd.web10.19825.1747745027409433866
  for <cip-dev@lists.cip-project.org>;
  Tue, 20 May 2025 05:43:48 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=jan.kiszka@siemens.com header.s=fm1 header.b=XN7PVcd2;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228, mailfrom: fm-294854-20250520124343de71649e21da64acca-pt_jeo@rts-flowmailer.siemens.com)
-Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 20250520124343de71649e21da64acca
+ dkim=pass header.i=jan.kiszka@siemens.com header.s=fm1 header.b=fkSSPaGi;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-294854-20250520124344fd9626a6156570eea3-cyhayq@rts-flowmailer.siemens.com)
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20250520124344fd9626a6156570eea3
         for <cip-dev@lists.cip-project.org>;
         Tue, 20 May 2025 14:43:44 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=jan.kiszka@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=pNdBeaXQ6IL5M4qUTTm55cCVYTUVwmTXugcEBXkgdtA=;
- b=XN7PVcd2w7+Z3SvS0oP6i2WpTfPTMsKJ5jZwOlkFX8lLC5snZif6p1v0N4JuimrsQu1Njq
- WMwA3G1MNy8KSgHOaaiKCKlW3B4x+TwGQh/iJZjYwl7ULszGr7mQcbV1fxDV8dfaJaz6bPLI
- vyyXxp8uIDu8fUxldyTBYdLxQv2fuBmRwwJBTmeKx+JA7Dg4zJvm3Paec3XywKvn3H2J+uom
- sSJ0HcZg6vTRjHoACNVsKAwogU/dYhRoKyts8w+puZkn26fRUwsWsCCJyieKu7vWAJVd8A4w
- 61neQf1cDXn0ua2HgrQBfA2wYMrhbaFx1ei0AVxK8UXciecTl+rmgGjA==;
+ bh=NONHeukLg8lkxaotqG2DCXZZ/8Ku4n7RD6zqUDnB4/g=;
+ b=fkSSPaGiVn1GvHCYJFP7jUGQ9iyhgo6kAJ8Qib0L3Ynrqy1dd8oRhX4kp7cJtTLY/ku2aX
+ USJePg7+nOYsrfdm622CFLvaSRT1JwsfJUqjAnXP03q2ckS02CCQQ1E7bxiuBv7Evpk1bHHE
+ fMEKyMWXolGq7yPSBx7V4MFLOpQRhPcU413sfIdZNZlZW4wHhw7oiMov24GtsWqRqfyqfLxN
+ 2vQQzn9hvSqLivO3ar3T8DNp+vy0ysD4EsFTGmAlHxiLS2vfFbzJdNYsTYOV/AhFJX5o+Km6
+ BWDDlIJ4Oxnqk4ooW1VY60qNCa3GPU7Kwc92l8rFwhnTcG8Du5BIfqAQ==;
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
-Subject: [isar-cip-core][PATCH 1/4] linux-cip: Fold rt-specific include into a single file
-Date: Tue, 20 May 2025 14:43:39 +0200
-Message-ID: <a6355ca3e7f2b866c7b87eb193c8adb8eec907c5.1747745022.git.jan.kiszka@siemens.com>
+Subject: [isar-cip-core][PATCH 3/4] Add support for CIP kernel 6.12
+Date: Tue, 20 May 2025 14:43:41 +0200
+Message-ID: <39db6eaae60ba88a961e5a793db1f1bc77fd32a7.1747745022.git.jan.kiszka@siemens.com>
 In-Reply-To: <cover.1747745022.git.jan.kiszka@siemens.com>
 References: <cover.1747745022.git.jan.kiszka@siemens.com>
 MIME-Version: 1.0
@@ -38,132 +38,180 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 20 May 2025 12:43:52 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18926
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18928
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-This will simplify the addition of the 6.12 kernel where there is no
-need for a separate recipe as there is no separate code base anymore.
+One difference with 6.12 is that there are no longer two different code
+bases for vanilla and RT. Therefore, simply establish a link from the RT
+recipe to the regular one so that we can continue to control the
+activation of RT kernel config by setting the KERNEL_NAME to "cip-rt".
 
-At this chance, it turned out that we never built the 6.1-cip-rt kernel
-in isar-cip-core with RT settings. That is automatically fixed now as
-well.
+As trixie upstream is heading for 6.12, lift our default for CIP images
+built for it accordingly.
 
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- recipes-kernel/linux/linux-cip-common.inc         |  3 ++-
- recipes-kernel/linux/linux-cip-rt-common.inc      | 15 ---------------
- .../linux/linux-cip-rt_4.19.325-cip118-rt41.bb    |  4 ++--
- .../linux/linux-cip-rt_4.4.302-cip98-rt55.bb      |  4 ++--
- .../linux/linux-cip-rt_5.10.237-cip60-rt26.bb     |  4 ++--
- 5 files changed, 8 insertions(+), 22 deletions(-)
- delete mode 100644 recipes-kernel/linux/linux-cip-rt-common.inc
+ Kconfig                                       |  4 +++
+ conf/distro/cip-core-trixie.conf              |  6 ++--
+ kas/opt/6.12.yml                              | 18 +++++++++++
+ .../linux/linux-cip-rt_6.12.29-cip1.bb        |  1 +
+ .../linux/linux-cip_6.12.29-cip1.bb           | 10 +++++++
+ scripts/update-linux-cip.sh                   | 30 +++++++++++--------
+ 6 files changed, 54 insertions(+), 15 deletions(-)
+ create mode 100644 kas/opt/6.12.yml
+ create mode 120000 recipes-kernel/linux/linux-cip-rt_6.12.29-cip1.bb
+ create mode 100644 recipes-kernel/linux/linux-cip_6.12.29-cip1.bb
 
-diff --git a/recipes-kernel/linux/linux-cip-common.inc b/recipes-kernel/linux/linux-cip-common.inc
-index 5d1b8ac0..f20d6a06 100644
---- a/recipes-kernel/linux/linux-cip-common.inc
-+++ b/recipes-kernel/linux/linux-cip-common.inc
+diff --git a/Kconfig b/Kconfig
+index a726d262..f809f014 100644
+--- a/Kconfig
++++ b/Kconfig
+@@ -100,6 +100,9 @@ config KERNEL_5_10
+ config KERNEL_6_1
+ 	bool "Kernel 6.1.x-cip"
+ 
++config KERNEL_6_12
++	bool "Kernel 6.12.x-cip"
++
+ endchoice
+ 
+ config KAS_INCLUDE_KERNEL
+@@ -108,6 +111,7 @@ config KAS_INCLUDE_KERNEL
+ 	default "kas/opt/4.19.yml" if KERNEL_4_19
+ 	default "kas/opt/5.10.yml" if KERNEL_5_10
+ 	default "kas/opt/6.1.yml" if KERNEL_6_1
++	default "kas/opt/6.12.yml" if KERNEL_6_12
+ 
+ config KERNEL_RT
+ 	bool "Real-time CIP kernel"
+diff --git a/conf/distro/cip-core-trixie.conf b/conf/distro/cip-core-trixie.conf
+index 723a3d70..e8eff746 100644
+--- a/conf/distro/cip-core-trixie.conf
++++ b/conf/distro/cip-core-trixie.conf
 @@ -1,7 +1,7 @@
  #
  # CIP Core, generic profile
  #
--# Copyright (c) Siemens AG, 2022-2023
-+# Copyright (c) Siemens AG, 2022-2025
+-# Copyright (c) Siemens AG, 2024
++# Copyright (c) Siemens AG, 2024-2025
  #
  # Authors:
- #  Jan Kiszka <jan.kiszka@siemens.com>
-@@ -21,6 +21,7 @@ require recipes-kernel/linux/cip-kernel-config.inc
+ #  Cedric Hombourger <cedric.hombourger@siemens.com>
+@@ -12,8 +12,8 @@
+ require conf/distro/debian-trixie.conf
+ require cip-core-common.inc
  
- SRC_URI += " \
-     https://cdn.kernel.org/pub/linux/kernel/projects/cip/${KERNEL_MAJOR_MINOR}/linux-cip-${PV}.tar.xz \
-+    ${@'file://preempt-rt.cfg' if d.getVar('KERNEL_NAME') == 'cip-rt' else ''} \
-     "
+-PREFERRED_VERSION_linux-cip ?= "6.1.%"
+-PREFERRED_VERSION_linux-cip-rt ?= "6.1.%"
++PREFERRED_VERSION_linux-cip ?= "6.12.%"
++PREFERRED_VERSION_linux-cip-rt ?= "6.12.%"
  
- S = "${WORKDIR}/linux-cip-${PV}"
-diff --git a/recipes-kernel/linux/linux-cip-rt-common.inc b/recipes-kernel/linux/linux-cip-rt-common.inc
-deleted file mode 100644
-index 8e2c2939..00000000
---- a/recipes-kernel/linux/linux-cip-rt-common.inc
-+++ /dev/null
-@@ -1,15 +0,0 @@
--#
--# CIP Core, generic profile
--#
--# Copyright (c) Siemens AG, 2019
--#
--# Authors:
--#  Jan Kiszka <jan.kiszka@siemens.com>
--#
--# SPDX-License-Identifier: MIT
--#
--
--require linux-cip-common.inc
--
--SRC_URI += "file://preempt-rt.cfg"
--
-diff --git a/recipes-kernel/linux/linux-cip-rt_4.19.325-cip118-rt41.bb b/recipes-kernel/linux/linux-cip-rt_4.19.325-cip118-rt41.bb
-index 8d5c31e2..1d791669 100644
---- a/recipes-kernel/linux/linux-cip-rt_4.19.325-cip118-rt41.bb
-+++ b/recipes-kernel/linux/linux-cip-rt_4.19.325-cip118-rt41.bb
-@@ -1,7 +1,7 @@
- #
- # CIP Core, generic profile
- #
--# Copyright (c) Siemens AG, 2019 - 2023
-+# Copyright (c) Siemens AG, 2019-2025
- #
- # Authors:
- #  Jan Kiszka <jan.kiszka@siemens.com>
-@@ -9,6 +9,6 @@
- # SPDX-License-Identifier: MIT
- #
- 
--require linux-cip-rt-common.inc
+ # cross build currently broken, use working snapshot
+ ISAR_USE_APT_SNAPSHOT = "1"
+diff --git a/kas/opt/6.12.yml b/kas/opt/6.12.yml
+new file mode 100644
+index 00000000..052b59cc
+--- /dev/null
++++ b/kas/opt/6.12.yml
+@@ -0,0 +1,18 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2025
++#
++# Authors:
++#  Jan Kiszka <jan.kiszka@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++#
++
++header:
++  version: 14
++
++local_conf_header:
++  kernel-version: |
++    PREFERRED_VERSION_linux-cip = "6.12.%"
++    PREFERRED_VERSION_linux-cip-rt = "6.12.%"
+diff --git a/recipes-kernel/linux/linux-cip-rt_6.12.29-cip1.bb b/recipes-kernel/linux/linux-cip-rt_6.12.29-cip1.bb
+new file mode 120000
+index 00000000..4986a547
+--- /dev/null
++++ b/recipes-kernel/linux/linux-cip-rt_6.12.29-cip1.bb
+@@ -0,0 +1 @@
++linux-cip_6.12.29-cip1.bb
+\ No newline at end of file
+diff --git a/recipes-kernel/linux/linux-cip_6.12.29-cip1.bb b/recipes-kernel/linux/linux-cip_6.12.29-cip1.bb
+new file mode 100644
+index 00000000..5b8fbdbc
+--- /dev/null
++++ b/recipes-kernel/linux/linux-cip_6.12.29-cip1.bb
+@@ -0,0 +1,10 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2025
++#
++# SPDX-License-Identifier: MIT
++
 +require linux-cip-common.inc
++
++SRC_URI[sha256sum] = "27bf5750e3ac4ed50b3cca0eb910e330eb3b24ec3d078af3d7d626123ba7b819"
+diff --git a/scripts/update-linux-cip.sh b/scripts/update-linux-cip.sh
+index e4e170f4..62af344b 100755
+--- a/scripts/update-linux-cip.sh
++++ b/scripts/update-linux-cip.sh
+@@ -2,7 +2,7 @@
+ REPO_ROOT=$(git rev-parse --show-toplevel)
+ pushd ${REPO_ROOT}/recipes-kernel/linux >/dev/null
  
- SRC_URI[sha256sum] = "ac71b31b34e89e7d6daf98a202806037e44203d5d79bc74da5c57f5c24ccf946"
-diff --git a/recipes-kernel/linux/linux-cip-rt_4.4.302-cip98-rt55.bb b/recipes-kernel/linux/linux-cip-rt_4.4.302-cip98-rt55.bb
-index f66c06ea..e5bfca91 100644
---- a/recipes-kernel/linux/linux-cip-rt_4.4.302-cip98-rt55.bb
-+++ b/recipes-kernel/linux/linux-cip-rt_4.4.302-cip98-rt55.bb
-@@ -1,7 +1,7 @@
- #
- # CIP Core, generic profile
- #
--# Copyright (c) Siemens AG, 2019 - 2023
-+# Copyright (c) Siemens AG, 2019-2025
- #
- # Authors:
- #  Jan Kiszka <jan.kiszka@siemens.com>
-@@ -9,6 +9,6 @@
- # SPDX-License-Identifier: MIT
- #
+-for MAJOR_VERSION in 4.4 4.19 5.10 6.1; do
++for MAJOR_VERSION in 4.4 4.19 5.10 6.1 6.12; do
+ 	rm -f sha256sums.asc
+ 	wget -q https://cdn.kernel.org/pub/linux/kernel/projects/cip/${MAJOR_VERSION}/sha256sums.asc
+ 	if ! gpg2 --verify sha256sums.asc 2>/dev/null; then
+@@ -14,7 +14,7 @@ for MAJOR_VERSION in 4.4 4.19 5.10 6.1; do
+ 	VERSION=${LAST_ENTRY/*linux-cip-/}
+ 	VERSION=${VERSION/.tar.xz/}
+ 	RECIPE_FILE=linux-cip_${VERSION}.bb
+-	if [ ! -f ${RECIPE_FILE} ]; then
++	if [ ! -f "${RECIPE_FILE}" ]; then
+ 		echo "Updating recipe to ${VERSION}"
+ 		git mv linux-cip_${MAJOR_VERSION}*.bb ${RECIPE_FILE}
+ 		SHASUM=${LAST_ENTRY/ */}
+@@ -22,16 +22,22 @@ for MAJOR_VERSION in 4.4 4.19 5.10 6.1; do
+ 		git add ${RECIPE_FILE}
+ 	fi
  
--require linux-cip-rt-common.inc
-+require linux-cip-common.inc
+-	LAST_ENTRY=$(grep "rt[0-9]\+\.tar\.xz" sha256sums.asc | sort -t p -k 3n | tail -1)
+-	VERSION=${LAST_ENTRY/*linux-cip-/}
+-	VERSION=${VERSION/.tar.xz/}
+-	RECIPE_FILE=linux-cip-rt_${VERSION}.bb
+-	if [ ! -f ${RECIPE_FILE} ]; then
+-		echo "Updating recipe to ${VERSION}"
+-		git mv linux-cip-rt_${MAJOR_VERSION}*.bb ${RECIPE_FILE}
+-		SHASUM=${LAST_ENTRY/ */}
+-		sed -i 's/\(SRC_URI\[sha256sum\] = "\).*/\1'${SHASUM}'"'/ ${RECIPE_FILE}
+-		git add ${RECIPE_FILE}
++	if [ "${MAJOR_VERSION}" == "6.12" ]; then
++		git rm linux-cip-rt_${MAJOR_VERSION}*.bb
++		ln -s ${RECIPE_FILE} linux-cip-rt_${VERSION}.bb
++		git add linux-cip-rt_${VERSION}.bb
++	else
++		LAST_ENTRY=$(grep "rt[0-9]\+\.tar\.xz" sha256sums.asc | sort -t p -k 3n | tail -1)
++		VERSION=${LAST_ENTRY/*linux-cip-/}
++		VERSION=${VERSION/.tar.xz/}
++		RECIPE_FILE=linux-cip-rt_${VERSION}.bb
++		if [ ! -f "${RECIPE_FILE}" ]; then
++			echo "Updating recipe to ${VERSION}"
++			git mv linux-cip-rt_${MAJOR_VERSION}*.bb ${RECIPE_FILE}
++			SHASUM=${LAST_ENTRY/ */}
++			sed -i 's/\(SRC_URI\[sha256sum\] = "\).*/\1'${SHASUM}'"'/ ${RECIPE_FILE}
++			git add ${RECIPE_FILE}
++		fi
+ 	fi
+ done
  
- SRC_URI[sha256sum] = "70e223852d3a7f711dd511524243df512dcc7799010004b4d99e0acf1f95866a"
-diff --git a/recipes-kernel/linux/linux-cip-rt_5.10.237-cip60-rt26.bb b/recipes-kernel/linux/linux-cip-rt_5.10.237-cip60-rt26.bb
-index 212b0937..5440ae62 100644
---- a/recipes-kernel/linux/linux-cip-rt_5.10.237-cip60-rt26.bb
-+++ b/recipes-kernel/linux/linux-cip-rt_5.10.237-cip60-rt26.bb
-@@ -1,7 +1,7 @@
- #
- # CIP Core, generic profile
- #
--# Copyright (c) Siemens AG, 2021-2023
-+# Copyright (c) Siemens AG, 2021-2025
- #
- # Authors:
- #  Jan Kiszka <jan.kiszka@siemens.com>
-@@ -9,6 +9,6 @@
- # SPDX-License-Identifier: MIT
- #
- 
--require linux-cip-rt-common.inc
-+require linux-cip-common.inc
- 
- SRC_URI[sha256sum] = "e2d8fae539c6429e1680b9875b6b6c16792ee20a85d47b6f8c8227ef679c9886"
 -- 
 2.43.0
 
