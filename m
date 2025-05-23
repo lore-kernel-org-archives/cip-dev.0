@@ -2,35 +2,33 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 248C8C54F32
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E00C54FC6
 	for <webhook@archiver.kernel.org>; Fri, 23 May 2025 14:48:01 +0000 (UTC)
-Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
- by mx.groups.io with SMTP id smtpd.web11.50113.1748011672410073899
+Received: from mta-65-228.siemens.flowmailer.net (mta-65-228.siemens.flowmailer.net [185.136.65.228])
+ by mx.groups.io with SMTP id smtpd.web10.49811.1748011672246570552
  for <cip-dev@lists.cip-project.org>;
- Fri, 23 May 2025 07:47:53 -0700
+ Fri, 23 May 2025 07:47:52 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=jan.kiszka@siemens.com header.s=fm1 header.b=QP90IQ/4;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.225, mailfrom: fm-294854-202505231447496d8276eb3e45be571f-unlwlc@rts-flowmailer.siemens.com)
-Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 202505231447496d8276eb3e45be571f
+ dkim=pass header.i=jan.kiszka@siemens.com header.s=fm1 header.b=YTtRFmzF;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.228, mailfrom: fm-294854-20250523144748c9b60bd34ca36a4e6a-gbwwuv@rts-flowmailer.siemens.com)
+Received: by mta-65-228.siemens.flowmailer.net with ESMTPSA id 20250523144748c9b60bd34ca36a4e6a
         for <cip-dev@lists.cip-project.org>;
         Fri, 23 May 2025 16:47:49 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=jan.kiszka@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=JdhqhpIJ8VelsVvpuPU9pJti2XraMHzFTVjQIJoNX2E=;
- b=QP90IQ/4XV3Q4NlrpbZvPmvlXgKrqckfGeIdySboDGyBmtHlR/X30psQe8+BsyPOVfawL7
- 6lQfNg361UFG4Ri36nRbC8gKAPR4rt61iBCcCGWZhrJF0yZeDc0G0gjE7Ng67n1QKm9sSPw2
- vkwoISjGeCv/7khmWNCdEzk2/KkH7bCGr6yNHksqqCBAEp8OI1v9PaE5IiWb6WzoqFM+kvsO
- CsGqU3RJC7BUqNLfWHN6h2lmTIDUAfxRu0PFk1oZ36IVy601juKJ+DB9I7UzEVnBKOQ6cVZ7
- zYHBh5IeO2VcYnOu4xRIB4e4uCq1NVCTB+1WUw0u6JUsnTFdqx1XeUoQ==;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=D+6LeO5/3PD5xLGmfjxJP2848xFrgh46iCdelPotCac=;
+ b=YTtRFmzFxxIH78eQEgtquIuA0awc4iZOO8suVNQJzihcsuOJFCSADfgwCigja20J+RgCLD
+ /ndHSDk4rPxbwGbfumWGAepd2hbswfgpZU9+PqFxEYzJS0ZHtFzGVp158n3fReCUUic7kq/z
+ nnqCxb2mXjwKPJ9daP7deSWkswpEAY1oZgs+vicpCQ1mwhV9lDHZ6WMQM2TvdoqQmfvfaEnx
+ vsFvhQyR0cNN5tMreQz01Zc7VGaLbLF6H2TvRKiDVm+N3Q7O3hOEYJwuiBGrakTUYPUAkHZ4
+ 7LKrZnlTTHldSc6R3NOqij27khiBv37FCb9wCSpRrhCtEQhQWqc0ZxpQ==;
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
 Cc: Sai Sree Kartheek Adivi <s-adivi@ti.com>
-Subject: [isar-cip-core][PATCH v2 5/5] linux-cip: Update to 4.19.325-cip120-rt42
-Date: Fri, 23 May 2025 16:47:47 +0200
-Message-ID: <08665ab0b75a37c3e764cb5898ec6c317c53e069.1748011667.git.jan.kiszka@siemens.com>
-In-Reply-To: <cover.1748011667.git.jan.kiszka@siemens.com>
-References: <cover.1748011667.git.jan.kiszka@siemens.com>
+Subject: [isar-cip-core][PATCH v2 0/5] linux-cip: Add support for building branch heads, cleanups
+Date: Fri, 23 May 2025 16:47:42 +0200
+Message-ID: <cover.1748011667.git.jan.kiszka@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Flowmailer-Platform: Siemens
@@ -39,29 +37,66 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 23 May 2025 14:48:01 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18948
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18946
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+Changes in v2:
+ - fix update-linux-cip.sh script
+ - shellcheck cleanups for the latter
+ - 4.19.325-cip120-rt42 kernel recipe update
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- ....325-cip118-rt41.bb => linux-cip-rt_4.19.325-cip120-rt42.bb} | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
- rename recipes-kernel/linux/{linux-cip-rt_4.19.325-cip118-rt41.bb => linux-cip-rt_4.19.325-cip120-rt42.bb} (68%)
+This turned out to be trickier than I thought, but now it seems to work
+fine. Please check.
 
-diff --git a/recipes-kernel/linux/linux-cip-rt_4.19.325-cip118-rt41.bb b/recipes-kernel/linux/linux-cip-rt_4.19.325-cip120-rt42.bb
-similarity index 68%
-rename from recipes-kernel/linux/linux-cip-rt_4.19.325-cip118-rt41.bb
-rename to recipes-kernel/linux/linux-cip-rt_4.19.325-cip120-rt42.bb
-index 8c32f39c..6f1351f2 100644
---- a/recipes-kernel/linux/linux-cip-rt_4.19.325-cip118-rt41.bb
-+++ b/recipes-kernel/linux/linux-cip-rt_4.19.325-cip120-rt42.bb
-@@ -11,4 +11,4 @@
- 
- require linux-cip-release.inc
- 
--SRC_URI[sha256sum] = "ac71b31b34e89e7d6daf98a202806037e44203d5d79bc74da5c57f5c24ccf946"
-+SRC_URI[sha256sum] = "6ed1623cdc2a47131736848e2ba8b4674f9daa33dfb98feff8b062b275009dac"
+Jan
+
+Jan Kiszka (5):
+  linux-cip: Prepare for building from git branches
+  linux-cip: Add support for building head of development branches
+  Expose kernel branch head recipes via kas option and Kconfig
+  scripts/update-linux-cip.sh: Address shellcheck findings
+  linux-cip: Update to 4.19.325-cip120-rt42
+
+ Kconfig                                       | 11 ++++++
+ kas/opt/kernel-head.yml                       | 18 ++++++++++
+ recipes-kernel/linux/linux-cip-common.inc     |  9 +----
+ recipes-kernel/linux/linux-cip-head.inc       | 34 +++++++++++++++++++
+ ...x-cip-common.inc => linux-cip-release.inc} | 11 ++----
+ .../linux/linux-cip-rt_4.19-cip-head.bb       |  1 +
+ ...b => linux-cip-rt_4.19.325-cip120-rt42.bb} |  4 +--
+ .../linux/linux-cip-rt_4.4-cip-head.bb        |  1 +
+ .../linux/linux-cip-rt_4.4.302-cip98-rt55.bb  |  2 +-
+ .../linux/linux-cip-rt_5.10-cip-head.bb       |  1 +
+ .../linux/linux-cip-rt_5.10.237-cip60-rt26.bb |  2 +-
+ .../linux/linux-cip-rt_6.1-cip-head.bb        |  1 +
+ .../linux/linux-cip-rt_6.1.134-cip41-rt22.bb  |  2 +-
+ .../linux/linux-cip-rt_6.12-cip-head.bb       |  1 +
+ .../linux/linux-cip_4.19-cip-head.bb          |  1 +
+ .../linux/linux-cip_4.19.325-cip120.bb        |  2 +-
+ .../linux/linux-cip_4.4-cip-head.bb           |  1 +
+ .../linux/linux-cip_4.4.302-cip99.bb          |  2 +-
+ .../linux/linux-cip_5.10-cip-head.bb          |  1 +
+ .../linux/linux-cip_5.10.237-cip60.bb         |  2 +-
+ .../linux/linux-cip_6.1-cip-head.bb           |  1 +
+ .../linux/linux-cip_6.1.137-cip42.bb          |  2 +-
+ .../linux/linux-cip_6.12-cip-head.bb          |  1 +
+ .../linux/linux-cip_6.12.29-cip1.bb           |  2 +-
+ scripts/update-linux-cip.sh                   | 26 +++++++-------
+ 25 files changed, 99 insertions(+), 40 deletions(-)
+ create mode 100644 kas/opt/kernel-head.yml
+ create mode 100644 recipes-kernel/linux/linux-cip-head.inc
+ copy recipes-kernel/linux/{linux-cip-common.inc => linux-cip-release.inc} (50%)
+ create mode 120000 recipes-kernel/linux/linux-cip-rt_4.19-cip-head.bb
+ rename recipes-kernel/linux/{linux-cip-rt_4.19.325-cip118-rt41.bb => linux-cip-rt_4.19.325-cip120-rt42.bb} (57%)
+ create mode 120000 recipes-kernel/linux/linux-cip-rt_4.4-cip-head.bb
+ create mode 120000 recipes-kernel/linux/linux-cip-rt_5.10-cip-head.bb
+ create mode 120000 recipes-kernel/linux/linux-cip-rt_6.1-cip-head.bb
+ create mode 120000 recipes-kernel/linux/linux-cip-rt_6.12-cip-head.bb
+ create mode 120000 recipes-kernel/linux/linux-cip_4.19-cip-head.bb
+ create mode 120000 recipes-kernel/linux/linux-cip_4.4-cip-head.bb
+ create mode 120000 recipes-kernel/linux/linux-cip_5.10-cip-head.bb
+ create mode 120000 recipes-kernel/linux/linux-cip_6.1-cip-head.bb
+ create mode 120000 recipes-kernel/linux/linux-cip_6.12-cip-head.bb
+
 -- 
 2.43.0
 
