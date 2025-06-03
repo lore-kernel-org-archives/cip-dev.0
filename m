@@ -2,66 +2,66 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64846C5B559
-	for <webhook@archiver.kernel.org>; Tue,  3 Jun 2025 09:20:17 +0000 (UTC)
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
- by mx.groups.io with SMTP id smtpd.web10.7000.1748942412967040205
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A8CC5AD49
+	for <webhook@archiver.kernel.org>; Tue,  3 Jun 2025 09:20:27 +0000 (UTC)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+ by mx.groups.io with SMTP id smtpd.web10.7006.1748942417888074144
  for <cip-dev@lists.cip-project.org>;
- Tue, 03 Jun 2025 02:20:13 -0700
+ Tue, 03 Jun 2025 02:20:18 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=RshAoLtY;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.50, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ad89333d603so1037036666b.2
-        for <cip-dev@lists.cip-project.org>; Tue, 03 Jun 2025 02:20:12 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=pG504LW2;
+ spf=pass (domain: tuxon.dev, ip: 209.85.208.46, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-60410a9c6dcso116498a12.1
+        for <cip-dev@lists.cip-project.org>; Tue, 03 Jun 2025 02:20:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1748942411; x=1749547211; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1748942416; x=1749547216; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=U6lN+tRlKq8+ZCqJDHZhyDz9gvLseGLsPyxTKaL0u3Y=;
-        b=RshAoLtYzwZOay9PUtwpVuWdGMHE/itT6rdmbJxKR6EAG0MEP0U8LGQVyODfI179YR
-         GyBWKmH1Lk/vj8cRcAcWTWVCuKABNSPx/j1YWOp6blsHOgJoVkTxRewQN7ViouvBnOHd
-         hYbC+GaW9DOAX+huSf/MkPmOcGqjxyMutebtELK+MOF9LS31cAtvWrMm5Kc6pMQgI9oL
-         M/3cEenfkt13kU4GGkj5yPyC/KlBjaum6VdpmhOqbZqOuwL7CLGa8OHd9J4HYb/eqFPE
-         7JbURTTWspuMc6aF3FeiYZOaB1KDy3yYW2A+6ZOEv2WwcaPNWiww9p1qcFjrklITWN1s
-         2OSQ==
+        bh=s1pJ0g/rZ9ZSZxTDY447WDIFqB6vOTQlEBSZ4slNYJk=;
+        b=pG504LW2q5MMfygpgOTsQHDpxsCCaJXhb1EDdVOK9jTXKzoqHRQjYgSBYX0H2W9oSQ
+         lFufl5xAisAKMgUaDQfg3t1irTO/h2qt/S6uV1DpVihwHROXh9ghA9MAamBj6hhuJHbO
+         UNw8ie7bzQfCB9RtvVOePjo4TMligzbm/zukwGHQ4wYH82wUbFnajpv44rJNY/oIE/Uo
+         eP0oNFRtQTDLDPmT6iWtjDG9uulpaE+4KPIIXGA/eTbTR4jptFvK0DyGoNSu3LgoajXZ
+         ZB3RAGqa1S2bM4rn5wLBEWXyDchGXj/CvZwQmNXDZcAgRxt4m5TpTUfaFfXk6s+DjNrP
+         JWdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748942411; x=1749547211;
+        d=1e100.net; s=20230601; t=1748942416; x=1749547216;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=U6lN+tRlKq8+ZCqJDHZhyDz9gvLseGLsPyxTKaL0u3Y=;
-        b=IJ1+zIQTj/swoU6aeTnEyxvM4rAztTa/3AFAr7Dlpyup02Wlrs+wJP+9AC/GruDUn/
-         DP5jUkvbrR8UXNWGdI8kAxQnmBLeRcbKB47fgN7cTmqNAIX1GOA67VrGw+9aTWBA4WLX
-         Blo4Xxj2fUg/8GtKTVqFWGVC5CS6v24RVm2DIwYdGPzHchUReIxHBbOlKzj4CiZ2HVU8
-         OF3If1A7VCnQclpvFfctkUs9THq2yomUH3VN7wek1P3olfbUyJP6w4HZILGnihA3Myyx
-         hJj+m85VAyUuNJy1MpKP/VVOktIsqXDs7hjWckdvKQB882oVsR9mF/IC6jPx8C53eYNJ
-         cBxA==
-X-Forwarded-Encrypted: i=1; AJvYcCXyTS8D8wljZw1zXtIl4bOGA9RJrE5mrZoDtf4VwG4lkEEG01drD4VU1brRyklL0tjyevKg07Ot@lists.cip-project.org
-X-Gm-Message-State: AOJu0YyaejADfqkEku5SiUf1vuV4pZ4VBrOg39mz4aMtGs1rp1Nto4Fl
-	sIT8StZuqRhoTA9NeKZR+CLJZEZh+dw03hNaWPp2aEx8Dy+FFWl6UhIlHktUwgZ+cts=
-X-Gm-Gg: ASbGncvJtcz1gSSDn/tNaFx2Z0xKd3YxHFl4XlIowG6aKVEWKCgCB6Cxs3lQAcrYZtB
-	SL7LVVI9eDHcmZv7d+3vPlwDmAXw959FpSy8gTmMic+/UAW1MP1Ygjq4pU70F8aXwwR6EVTGo6M
-	rb8sYAmyi7Fj3pEOecm3GICmxPDLVw0jzyfopQdOI+oW/iil47KfLevIUrUuqbXTXoJr6XdRLh7
-	HXnC86QysevbHy+gWJl53C3L2EN/lujAeLnnFzR/4EPV8/mgcDQtKO3nl+Y29J7TwFMeLURjJUH
-	8Lvb2scFp+Hg5WJmVXN/nnLnSAaNZbKQW/Vbh6U8J/ekLqyo9d8xW+HmahF8N2ucQHXNKgbdpJe
-	Xftubew==
-X-Google-Smtp-Source: AGHT+IFCzwt2VLV0Bi39ddJlBsCF8nKkzE3N1Mvx0GZa+HlXWkLW5SWSpCBFPtkdS3LJXz8+iRTbtQ==
-X-Received: by 2002:a17:907:3d16:b0:ace:d710:a8d1 with SMTP id a640c23a62f3a-adb32287d6amr1400025466b.24.1748942411264;
-        Tue, 03 Jun 2025 02:20:11 -0700 (PDT)
+        bh=s1pJ0g/rZ9ZSZxTDY447WDIFqB6vOTQlEBSZ4slNYJk=;
+        b=USSGeZ9FOnuMm/sC+nmvhU2zJLkKffCxvSs0YbBEXBPSMNdC5m8XqEV5YS+gNnDD2N
+         Mr+A3hA9Rp58xcRW0K9r/4tes+MGuX9VHOXsZLO1IL60EALZO3qo/HBW5cqE637wwUpl
+         DCOhMS9W4rDtrQRTKAez7JYCZB72eDPUzt7My34pp2xtSz5j3ySGV4A2N9ZTmHRJCaTk
+         LnBJGwzbQdvTvIxEmwE1l6S+0Mf2Aed6XpDecKNPK2svf8d+Kp8X7uxSHZ6Z6KVADG6H
+         ulGNd8qSbjr+dnjWPY0GAS2mfj7lt0Car0GOwnGMdTSvHpMn1PWR5A9MAc8PYxEwgJAo
+         1P9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXUyZ921UkgiAaJ4CvQ5lVteivAldhAptqBqDGUAFuTljumRHYzvMO0B7dVeCfAC7sTYnIpjdAC@lists.cip-project.org
+X-Gm-Message-State: AOJu0Yx/nfPtEwgjRWS4vKOEBfo2XxIw5FVJhnsPSlBQ6FDiMWb/du+W
+	ODGOV2kFZZqFtwZJIMoy/vH2GKh20YIAoxTdwZebEpDI0SIaDsf7AvMjR81Nzi+1mwY=
+X-Gm-Gg: ASbGnctaJDpZPu0HBMJrlLK4zbNvSASJegq/Bid8gix6YAtA2k6PF9tBMuJF18Jlda0
+	4G7dNRJoZkUFc7A/zpRZyqYfidQq+ZeGNFPev6fNyhpZhG+1IFSJmek8pyQ5p9/cR1+sYVcoqkr
+	ZmEnxujlfYWyYYZuLFRFhM9ozyYGhSdbT2hWpMydsWPKtnjlJcv3lBr4iK99Vv4n1nRaJw501xU
+	uyR2monPZquhAPmA+FhZewO8K4Ho7+s5wbrZ8lHQtAjU2NAp29JchsqD+StNgFiB1CXVvsDJUkt
+	63Up5GCgFIlLRcfoIbD8JT8vAtT4Lou9wCtMyS/ibSTvxAfxk5deQcOgO1FNLmWU4wFcbh+VqnO
+	8+51J/lN8PFG7GWEI
+X-Google-Smtp-Source: AGHT+IF6w9SoUSnpZPTbgN0+2t+uvNDFeawy+SW33YcMuGUku4niHLq1Yfa/Ra1Tm2yJ22d2/LGMDw==
+X-Received: by 2002:a17:907:3e13:b0:ad5:78ca:2126 with SMTP id a640c23a62f3a-adb3243e11bmr1669261366b.59.1748942416150;
+        Tue, 03 Jun 2025 02:20:16 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.126])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adb2e220548sm817017266b.109.2025.06.03.02.20.10
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adb2e220548sm817017266b.109.2025.06.03.02.20.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 02:20:10 -0700 (PDT)
+        Tue, 03 Jun 2025 02:20:15 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.12.y-cip 3/7] serial: sh-sci: Save and restore more registers
-Date: Tue,  3 Jun 2025 12:20:01 +0300
-Message-ID: <20250603092005.3917850-4-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 7/7] arm64: dts: renesas: r9a08g045s33-smarc-pmod: Add overlay for SCIF1
+Date: Tue,  3 Jun 2025 12:20:05 +0300
+Message-ID: <20250603092005.3917850-8-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250603092005.3917850-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250603092005.3917850-1-claudiu.beznea.uj@bp.renesas.com>
@@ -70,114 +70,127 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 03 Jun 2025 09:20:17 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18986
+ <cip-dev@lists.cip-project.org>; Tue, 03 Jun 2025 09:20:27 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18990
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 81100b9a7b0515132996d62a7a676a77676cb6e3 upstream.
+commit cc018b98a9bf47c06bc985632a7ed9291decb965 upstream.
 
-On (H)SCIF with a Baud Rate Generator for External Clock (BRG), there
-are multiple ways to configure the requested serial speed.  If firmware
-uses a different method than Linux, and if any debug info is printed
-after the Bit Rate Register (SCBRR) is restored, but before termios is
-reconfigured (which configures the alternative method), the system may
-lock-up during resume.
+Add a DT overlay for SCIF1 (of the Renesas RZ/G3S SoC) routed through
+the PMOD1_3A interface available on the Renesas RZ SMARC Carrier II
+board.
 
-Fix this by saving and restoring the contents of the BRG Frequency
-Division (SCDL) and Clock Select (SCCKS) registers as well.
-
-Also save and restore the HSCIF's Sampling Rate Register (HSSRR), which
-configures the sampling point, and the SCIFA/SCIFB's Serial Port Control
-and Data Registers (SCPCR/SCPDR), which configure the optional control
-flow signals.
-
-After this, all registers that are not saved/restored are either:
-  - read-only,
-  - write-only,
-  - status registers containing flags with clear-after-set semantics,
-  - FIFO Data Count Trigger registers, which do not matter much for
-    the serial console.
-
-Fixes: 22a6984c5b5df8ea ("serial: sh-sci: Update the suspend/resume support")
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/20250120130936.1080069-5-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://lore.kernel.org/r/11c2eab45d48211e75d8b8202cce60400880fe55.1741114989.git.geert+renesas@glider.be
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/tty/serial/sh-sci.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ arch/arm64/boot/dts/renesas/Makefile          |  3 ++
+ .../r9a08g045s33-smarc-pmod1-type-3a.dtso     | 48 +++++++++++++++++++
+ .../boot/dts/renesas/rzg3s-smarc-switches.h   |  8 ++++
+ arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi  |  1 +
+ 4 files changed, 60 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a08g045s33-smarc-pmod1-type-3a.dtso
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index f0ad251d352c..3ea1d13fe5cb 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -105,10 +105,15 @@ struct plat_sci_reg {
- };
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index bf5b49f47ce8..7959f62a8e26 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -137,6 +137,9 @@ r9a07g054l2-smarc-cru-csi-ov5645-dtbs := r9a07g054l2-smarc.dtb r9a07g054l2-smarc
+ dtb-$(CONFIG_ARCH_R9A07G054) += r9a07g054l2-smarc-cru-csi-ov5645.dtb
  
- struct sci_suspend_regs {
-+	u16 scdl;
-+	u16 sccks;
- 	u16 scsmr;
- 	u16 scscr;
- 	u16 scfcr;
- 	u16 scsptr;
-+	u16 hssrr;
-+	u16 scpcr;
-+	u16 scpdr;
- 	u8 scbrr;
- 	u8 semr;
- };
-@@ -3564,6 +3569,10 @@ static void sci_console_save(struct sci_port *s)
- 	struct sci_suspend_regs *regs = &s->suspend_regs;
- 	struct uart_port *port = &s->port;
+ dtb-$(CONFIG_ARCH_R9A08G045) += r9a08g045s33-smarc.dtb
++dtb-$(CONFIG_ARCH_R9A08G045) += r9a08g045s33-smarc-pmod1-type-3a.dtbo
++r9a08g045s33-smarc-pmod1-type-3a-dtbs := r9a08g045s33-smarc.dtb r9a08g045s33-smarc-pmod1-type-3a.dtbo
++dtb-$(CONFIG_ARCH_R9A08G045) += r9a08g045s33-smarc-pmod1-type-3a.dtb
  
-+	if (sci_getreg(port, SCDL)->size)
-+		regs->scdl = sci_serial_in(port, SCDL);
-+	if (sci_getreg(port, SCCKS)->size)
-+		regs->sccks = sci_serial_in(port, SCCKS);
- 	if (sci_getreg(port, SCSMR)->size)
- 		regs->scsmr = sci_serial_in(port, SCSMR);
- 	if (sci_getreg(port, SCSCR)->size)
-@@ -3574,6 +3583,12 @@ static void sci_console_save(struct sci_port *s)
- 		regs->scsptr = sci_serial_in(port, SCSPTR);
- 	if (sci_getreg(port, SCBRR)->size)
- 		regs->scbrr = sci_serial_in(port, SCBRR);
-+	if (sci_getreg(port, HSSRR)->size)
-+		regs->hssrr = sci_serial_in(port, HSSRR);
-+	if (sci_getreg(port, SCPCR)->size)
-+		regs->scpcr = sci_serial_in(port, SCPCR);
-+	if (sci_getreg(port, SCPDR)->size)
-+		regs->scpdr = sci_serial_in(port, SCPDR);
- 	if (sci_getreg(port, SEMR)->size)
- 		regs->semr = sci_serial_in(port, SEMR);
- }
-@@ -3583,6 +3598,10 @@ static void sci_console_restore(struct sci_port *s)
- 	struct sci_suspend_regs *regs = &s->suspend_regs;
- 	struct uart_port *port = &s->port;
+ dtb-$(CONFIG_ARCH_R9A09G011) += r9a09g011-v2mevk2.dtb
  
-+	if (sci_getreg(port, SCDL)->size)
-+		sci_serial_out(port, SCDL, regs->scdl);
-+	if (sci_getreg(port, SCCKS)->size)
-+		sci_serial_out(port, SCCKS, regs->sccks);
- 	if (sci_getreg(port, SCSMR)->size)
- 		sci_serial_out(port, SCSMR, regs->scsmr);
- 	if (sci_getreg(port, SCSCR)->size)
-@@ -3593,6 +3612,12 @@ static void sci_console_restore(struct sci_port *s)
- 		sci_serial_out(port, SCSPTR, regs->scsptr);
- 	if (sci_getreg(port, SCBRR)->size)
- 		sci_serial_out(port, SCBRR, regs->scbrr);
-+	if (sci_getreg(port, HSSRR)->size)
-+		sci_serial_out(port, HSSRR, regs->hssrr);
-+	if (sci_getreg(port, SCPCR)->size)
-+		sci_serial_out(port, SCPCR, regs->scpcr);
-+	if (sci_getreg(port, SCPDR)->size)
-+		sci_serial_out(port, SCPDR, regs->scpdr);
- 	if (sci_getreg(port, SEMR)->size)
- 		sci_serial_out(port, SEMR, regs->semr);
- }
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g045s33-smarc-pmod1-type-3a.dtso b/arch/arm64/boot/dts/renesas/r9a08g045s33-smarc-pmod1-type-3a.dtso
+new file mode 100644
+index 000000000000..4a81e3a3c8bd
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r9a08g045s33-smarc-pmod1-type-3a.dtso
+@@ -0,0 +1,48 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * Device Tree Source for the RZ/G3S SMARC Carrier II EVK PMOD parts
++ *
++ * Copyright (C) 2024 Renesas Electronics Corp.
++ *
++ *
++ * [Connection]
++ *
++ * SMARC Carrier II EVK
++ * +--------------------------------------------+
++ * |PMOD1_3A (PMOD1 PIN HEADER)			|
++ * |	SCIF1_CTS# (pin1)  (pin7)  PMOD1_GPIO10	|
++ * |	SCIF1_TXD  (pin2)  (pin8)  PMOD1_GPIO11	|
++ * |	SCIF1_RXD  (pin3)  (pin9)  PMOD1_GPIO12	|
++ * |	SCIF1_RTS# (pin4)  (pin10) PMOD1_GPIO13	|
++ * |	GND	   (pin5)  (pin11) GND		|
++ * |	PWR_PMOD1  (pin6)  (pin12) GND		|
++ * +--------------------------------------------+
++ *
++ * The following switches should be set as follows for SCIF1:
++ * - SW_CONFIG2:  ON
++ * - SW_OPT_MUX4: ON
++ */
++
++/dts-v1/;
++/plugin/;
++
++#include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
++#include "rzg3s-smarc-switches.h"
++
++&pinctrl {
++	scif1_pins: scif1-pins {
++		pinmux = <RZG2L_PORT_PINMUX(14, 0, 1)>, /* TXD */
++			 <RZG2L_PORT_PINMUX(14, 1, 1)>, /* RXD */
++			 <RZG2L_PORT_PINMUX(16, 0, 1)>, /* CTS# */
++			 <RZG2L_PORT_PINMUX(16, 1, 1)>; /* RTS# */
++	};
++};
++
++#if SW_CONFIG3 == SW_ON && SW_OPT_MUX4 == SW_ON
++&scif1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&scif1_pins>;
++	uart-has-rtscts;
++	status = "okay";
++};
++#endif
+diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h b/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
+index 5c27c043afef..bbf908a5322c 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
++++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
+@@ -29,4 +29,12 @@
+ #define SW_CONFIG2	SW_OFF
+ #define SW_CONFIG3	SW_ON
+ 
++/*
++ * SW_OPT_MUX[x] switches' states:
++ * @SW_OPT_MUX4:
++ *	SW_OFF - The SMARC SER0 signals are routed to M.2 Key E UART
++ *	SW_ON  - The SMARC SER0 signals are routed to PMOD1
++ */
++#define SW_OPT_MUX4	SW_ON
++
+ #endif /* __RZG3S_SMARC_SWITCHES_H__ */
+diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+index 34adfbf2ec76..db05c28a8f6c 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+@@ -12,6 +12,7 @@
+ / {
+ 	aliases {
+ 		i2c0 = &i2c0;
++		serial0 = &scif1;
+ 		serial1 = &scif3;
+ 		serial3 = &scif0;
+ 		mmc1 = &sdhi1;
 -- 
 2.43.0
 
