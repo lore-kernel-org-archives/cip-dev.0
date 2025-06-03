@@ -2,66 +2,66 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 233F8C61CE5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 359A9C61DB2
 	for <webhook@archiver.kernel.org>; Tue,  3 Jun 2025 09:19:17 +0000 (UTC)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
- by mx.groups.io with SMTP id smtpd.web11.7095.1748942349931500801
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+ by mx.groups.io with SMTP id smtpd.web10.6966.1748942347744869767
  for <cip-dev@lists.cip-project.org>;
- Tue, 03 Jun 2025 02:19:10 -0700
+ Tue, 03 Jun 2025 02:19:08 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=ehbthPMY;
- spf=pass (domain: tuxon.dev, ip: 209.85.208.54, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6049431b409so9667146a12.3
-        for <cip-dev@lists.cip-project.org>; Tue, 03 Jun 2025 02:19:09 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=S6YQs0RC;
+ spf=pass (domain: tuxon.dev, ip: 209.85.208.50, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-602e203db66so9300041a12.1
+        for <cip-dev@lists.cip-project.org>; Tue, 03 Jun 2025 02:19:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1748942348; x=1749547148; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1748942346; x=1749547146; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SXmYsTM6p2s/Yz7WC81zIsDl6rRB5BIdyJIAqO6iiDw=;
-        b=ehbthPMYtQtIV7CS1zwESlyv7CuwycGvAq5wf7RA4TQPe++FSkMmY/FajNcALijHyC
-         TRVTwSqy63wsELwGSARUo77pCTOmI8J/rl3ZZgdQDPUv1egSfO4tml9Kuvo48+UFTbhk
-         +pNv119nKweHPEAIVStB7feH0UlH963kfAQUtNSCrKLgJU/sT7pdCGhsd74HTIlPagE/
-         nw2q5OM/AvYTDn+4CwdcK2YsZKtEOyaI8xk+jKWlrk8uCQeHp/oYXNPBv+QdIB0i+PPo
-         qrHeIb6k8VZnugkhGfTO6tufx63SGGO3A0atzjUr4Q87K+3shpzMy2F+sK5v0/FceY8a
-         EWew==
+        bh=Ae5vt5GN06EU1NkfFFuyCos0NK7itnNXnj5i5OfwWrY=;
+        b=S6YQs0RC70GWOxLWo/2AZELwxCOqpzYYgtkPfPYLYqD57S68TqXgXFUJgSjy8yL2Ac
+         eDeSoDQxHmTHf1R4CMv95CHnvV3BVXzg9X1i4LtChK2cAeCtP8PouOIoVGj9lLl3b8Om
+         SkL0aLRU7E8yboq90NcjzGlnPHicnz3zykDuTmRZk1GkPPSxuJLqadmzpUVs9t5y90ty
+         UabpHVtuwVkXECn+yPblXSlJMV7/0ATXtbWxy/qOHmMLHnBFH1e2NKVZllTlYZZkkwfh
+         YeOiJZjYe/OzLN+RihPNP7vyHwZNiynmoHr/0GHDOzOeR95PxoyBav/+e33oY5LgCQyu
+         yQ4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748942348; x=1749547148;
+        d=1e100.net; s=20230601; t=1748942346; x=1749547146;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SXmYsTM6p2s/Yz7WC81zIsDl6rRB5BIdyJIAqO6iiDw=;
-        b=q/Ktx4gSd8g+ivcFySz/Zx0Jdpew4kc9oRFubbYD3/N0iDPQxWuh1+JYWzo0Ekclxg
-         MEyS9clH0I7pTCiWMgMGleBrTljpvtyVN41iOy0yNkOdsRaRqkStTrRciMgSC05LgJcb
-         quqVkgiK9YxzNyn+EaAdvJfZF4pyHRcWa1mpGjYCRcN5MLLs/4b7SgVGAoE5e9or0ua1
-         dLmMuRIgQ7qNlxO7/DpMvblFXjrq0rBUCrdMWRbyGF9Rr6pNdBn84ndTAi7RkLPhbWg6
-         O49SXxknmC40eICRc5mlLjKrZ13k7HMGahqsJxnOv80tksnnpEmjd4GptajXWhquGkFg
-         hXtg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXw78jxlAvD+T8WnXUlRtUNRJhvnvEFJTANFk7J5S33hmvJaectAsSSQHSXTVGIWHx+UNpmDB3@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yz3csjkRlddhg6OWamKktTd8jSdHuY6XMkKGYD+wsW2L0xnGgGC
-	dW8iV0VLT566KEX3LIL4bh329bA8sdZ2S2mCu8BMvoX30Oh+Fxl3SSQM+4ZOFWij3lY=
-X-Gm-Gg: ASbGncsNv/qjzFJSWQ4H51yPd0KLI38c9lRwuxsxZCr2s7btu2aNo1wfRv1tCAiRnc1
-	snC8KurHANZEWlpIFzZtnit16of/ZMbHIZNlLfEVxAZtYyV/g7JSoZ0eqS1zRufhT+aaVArlS4e
-	NUMvY+H3V1rE7nLUgh/GloQky/O84MUD2I91n1bPHKLU9QPCaIS9IMhtSsOjkuzXnHMnwcPOV4u
-	O3KYI5IAs5jgeY5LN1A5CRkzW9OYS2LDvTz5MzPNO1NuaM/JAXbTJkkPpk/UbGv3rlesdqV+NeH
-	h6rF8ydXbooTYpkASD1UKypRJEfrfy8rdEXyAOYSf7/1avEO3I3Gn3u2RRCJyzaeoifADpUfAaf
-	cCuZaguQVUp4z74Ud
-X-Google-Smtp-Source: AGHT+IETIWG08C4nZWAyLNHuRPUqZwHyv/jiv8DbbD9y4e6JBB1W7qrJthMpNySVRRzDWP0zMhm3Uw==
-X-Received: by 2002:a17:907:a08a:b0:ad2:43b6:dd75 with SMTP id a640c23a62f3a-adb49370c27mr1144976166b.10.1748942348208;
-        Tue, 03 Jun 2025 02:19:08 -0700 (PDT)
+        bh=Ae5vt5GN06EU1NkfFFuyCos0NK7itnNXnj5i5OfwWrY=;
+        b=SlvpRj9nIGaHVpAYuIMBsWBm6c4eg0NDu8UluttBv8RZxSb9n8zpcrIsxmYXIHCTKQ
+         Owe2I8fm9ltlGuoJUlTBRcdGu/NehrXl9SSOjmlARCMKf4B1LhB4R0a8AKwIwN/FbIir
+         svwdryemJcTwqyHI0U+sjbVZUK9vct2X/xXYc00gYMQ2dWUkz2H8/SX2A7ps83N48aIs
+         Uc6YzUEBQ0JmB0LEKtbm/67a1D1M/XavCBABpjbOR16y6G9KcbYQLBR3C3OvcT9Aru6Z
+         xpsR4sGjADNi2Jf4uUiMCmhG3rFjpjduHqmWVEJZD+ZDG/d8VkXLdjWDnfgntSBTGT83
+         ICGg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8M+rYjOzFgQZQfvdA0iz/V0agOKHLZ0Fj8QvKFV4zUO0sQ51FRhsbbI05YF2ofBQ/q39htXFW@lists.cip-project.org
+X-Gm-Message-State: AOJu0Yx+dVef96/UYjbr0/UuCK8fWZGaA3MNI3i5r23yzmraXGYHGp/j
+	kCMZXVrMujLM5o8UGMQZQi/Z7izb+iPe0gog5WBAhLRztsP+kLy9kUABdq5/RF7Z07U=
+X-Gm-Gg: ASbGnctYAhBie3tlIx8W+jScGV2OtotyWuk4J7poTDyt//sr0DJ8ec5fxxp5HN1Ycrr
+	zsEB5/t8CAmA1jFFcx9DoHgR/tQ2WHvP1GsbhnSGF6gB4Uh5/xb2grvRG3YzdE62GX2Fdav6RGP
+	mWmwtZbffERmNcitrrm0ENjqE1Qo9v4eUYyRA9eLg9Ks63nYLw/nr/6X5/bMmDfBPTiNIfjZ6b+
+	G5bqcC+u94Wt0nsWS5DGMrfrhT2mzRwKYTqxf/6S1hKkwsyV/5HO4RXQJEufKo+BPfqtokpwBl+
+	IwOB/R+uUpN6LVhhcw3bGrwPdFtZz/z+ypMJOFsFQqxQKVE+3lWoq0qHNQRJU8NKi0gS1DxkV65
+	mVjZGeOlLiuuHPZDiJFdDqTfBHIw=
+X-Google-Smtp-Source: AGHT+IGdLQv1VF4lNrppIiv+4qbmQ1LpWXyxq7QFPidL+XVJB1w+H/r0/cIOvE7HF7vMRmMcMFeuaQ==
+X-Received: by 2002:a17:907:728e:b0:ad8:a512:a9fc with SMTP id a640c23a62f3a-adb49548765mr1151210666b.42.1748942346058;
+        Tue, 03 Jun 2025 02:19:06 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.126])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d7fecd2sm918093866b.36.2025.06.03.02.19.07
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d7fecd2sm918093866b.36.2025.06.03.02.19.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 02:19:07 -0700 (PDT)
+        Tue, 03 Jun 2025 02:19:05 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 3/8] serial: sh-sci: Save and restore more registers
-Date: Tue,  3 Jun 2025 12:18:58 +0300
-Message-ID: <20250603091903.3917202-4-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 1/8] clk: renesas: r9a08g045: Add clock, reset and power domain for the remaining SCIFs
+Date: Tue,  3 Jun 2025 12:18:56 +0300
+Message-ID: <20250603091903.3917202-2-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250603091903.3917202-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250603091903.3917202-1-claudiu.beznea.uj@bp.renesas.com>
@@ -71,113 +71,55 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 03 Jun 2025 09:19:17 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18968
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18966
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 81100b9a7b0515132996d62a7a676a77676cb6e3 upstream.
+commit b73435047ef74c82d6e82c333810eba0038f9cf7 upstream.
 
-On (H)SCIF with a Baud Rate Generator for External Clock (BRG), there
-are multiple ways to configure the requested serial speed.  If firmware
-uses a different method than Linux, and if any debug info is printed
-after the Bit Rate Register (SCBRR) is restored, but before termios is
-reconfigured (which configures the alternative method), the system may
-lock-up during resume.
+The Renesas RZ/G3S SoC has 6 SCIF interfaces.  SCIF0 is used as debug
+console and is already enabled.  Add clock, reset and power domain
+support for the remaining ones.
 
-Fix this by saving and restoring the contents of the BRG Frequency
-Division (SCDL) and Clock Select (SCCKS) registers as well.
-
-Also save and restore the HSCIF's Sampling Rate Register (HSSRR), which
-configures the sampling point, and the SCIFA/SCIFB's Serial Port Control
-and Data Registers (SCPCR/SCPDR), which configure the optional control
-flow signals.
-
-After this, all registers that are not saved/restored are either:
-  - read-only,
-  - write-only,
-  - status registers containing flags with clear-after-set semantics,
-  - FIFO Data Count Trigger registers, which do not matter much for
-    the serial console.
-
-Fixes: 22a6984c5b5df8ea ("serial: sh-sci: Update the suspend/resume support")
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/20241115134401.3893008-2-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://lore.kernel.org/r/11c2eab45d48211e75d8b8202cce60400880fe55.1741114989.git.geert+renesas@glider.be
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[claudiu.beznea: drop the power domain description array as the core code
+ is not available in v6.1]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/tty/serial/sh-sci.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ drivers/clk/renesas/r9a08g045-cpg.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 98742edd93f5..a3f7ee98afad 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -106,10 +106,15 @@ struct plat_sci_reg {
+diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
+index d01a784cbb10..7f96b615f087 100644
+--- a/drivers/clk/renesas/r9a08g045-cpg.c
++++ b/drivers/clk/renesas/r9a08g045-cpg.c
+@@ -227,6 +227,11 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
+ 	DEF_MOD("i2c2_pclk",		R9A08G045_I2C2_PCLK, R9A08G045_CLK_P0, 0x580, 2),
+ 	DEF_MOD("i2c3_pclk",		R9A08G045_I2C3_PCLK, R9A08G045_CLK_P0, 0x580, 3),
+ 	DEF_MOD("scif0_clk_pck",	R9A08G045_SCIF0_CLK_PCK, R9A08G045_CLK_P0, 0x584, 0),
++	DEF_MOD("scif1_clk_pck",	R9A08G045_SCIF1_CLK_PCK, R9A08G045_CLK_P0, 0x584, 1),
++	DEF_MOD("scif2_clk_pck",	R9A08G045_SCIF2_CLK_PCK, R9A08G045_CLK_P0, 0x584, 2),
++	DEF_MOD("scif3_clk_pck",	R9A08G045_SCIF3_CLK_PCK, R9A08G045_CLK_P0, 0x584, 3),
++	DEF_MOD("scif4_clk_pck",	R9A08G045_SCIF4_CLK_PCK, R9A08G045_CLK_P0, 0x584, 4),
++	DEF_MOD("scif5_clk_pck",	R9A08G045_SCIF5_CLK_PCK, R9A08G045_CLK_P0, 0x584, 5),
+ 	DEF_MOD("gpio_hclk",		R9A08G045_GPIO_HCLK, R9A08G045_OSCCLK, 0x598, 0),
+ 	DEF_MOD("vbat_bclk",		R9A08G045_VBAT_BCLK, R9A08G045_OSCCLK, 0x614, 0),
  };
- 
- struct sci_suspend_regs {
-+	u16 scdl;
-+	u16 sccks;
- 	u16 scsmr;
- 	u16 scscr;
- 	u16 scfcr;
- 	u16 scsptr;
-+	u16 hssrr;
-+	u16 scpcr;
-+	u16 scpdr;
- 	u8 scbrr;
- 	u8 semr;
- };
-@@ -3541,6 +3546,10 @@ static void sci_console_save(struct sci_port *s)
- 	struct sci_suspend_regs *regs = &s->suspend_regs;
- 	struct uart_port *port = &s->port;
- 
-+	if (sci_getreg(port, SCDL)->size)
-+		regs->scdl = sci_serial_in(port, SCDL);
-+	if (sci_getreg(port, SCCKS)->size)
-+		regs->sccks = sci_serial_in(port, SCCKS);
- 	if (sci_getreg(port, SCSMR)->size)
- 		regs->scsmr = sci_serial_in(port, SCSMR);
- 	if (sci_getreg(port, SCSCR)->size)
-@@ -3551,6 +3560,12 @@ static void sci_console_save(struct sci_port *s)
- 		regs->scsptr = sci_serial_in(port, SCSPTR);
- 	if (sci_getreg(port, SCBRR)->size)
- 		regs->scbrr = sci_serial_in(port, SCBRR);
-+	if (sci_getreg(port, HSSRR)->size)
-+		regs->hssrr = sci_serial_in(port, HSSRR);
-+	if (sci_getreg(port, SCPCR)->size)
-+		regs->scpcr = sci_serial_in(port, SCPCR);
-+	if (sci_getreg(port, SCPDR)->size)
-+		regs->scpdr = sci_serial_in(port, SCPDR);
- 	if (sci_getreg(port, SEMR)->size)
- 		regs->semr = sci_serial_in(port, SEMR);
- }
-@@ -3560,6 +3575,10 @@ static void sci_console_restore(struct sci_port *s)
- 	struct sci_suspend_regs *regs = &s->suspend_regs;
- 	struct uart_port *port = &s->port;
- 
-+	if (sci_getreg(port, SCDL)->size)
-+		sci_serial_out(port, SCDL, regs->scdl);
-+	if (sci_getreg(port, SCCKS)->size)
-+		sci_serial_out(port, SCCKS, regs->sccks);
- 	if (sci_getreg(port, SCSMR)->size)
- 		sci_serial_out(port, SCSMR, regs->scsmr);
- 	if (sci_getreg(port, SCSCR)->size)
-@@ -3570,6 +3589,12 @@ static void sci_console_restore(struct sci_port *s)
- 		sci_serial_out(port, SCSPTR, regs->scsptr);
- 	if (sci_getreg(port, SCBRR)->size)
- 		sci_serial_out(port, SCBRR, regs->scbrr);
-+	if (sci_getreg(port, HSSRR)->size)
-+		sci_serial_out(port, HSSRR, regs->hssrr);
-+	if (sci_getreg(port, SCPCR)->size)
-+		sci_serial_out(port, SCPCR, regs->scpcr);
-+	if (sci_getreg(port, SCPDR)->size)
-+		sci_serial_out(port, SCPDR, regs->scpdr);
- 	if (sci_getreg(port, SEMR)->size)
- 		sci_serial_out(port, SEMR, regs->semr);
- }
+@@ -252,6 +257,11 @@ static const struct rzg2l_reset r9a08g045_resets[] = {
+ 	DEF_RST(R9A08G045_I2C2_MRST, 0x880, 2),
+ 	DEF_RST(R9A08G045_I2C3_MRST, 0x880, 3),
+ 	DEF_RST(R9A08G045_SCIF0_RST_SYSTEM_N, 0x884, 0),
++	DEF_RST(R9A08G045_SCIF1_RST_SYSTEM_N, 0x884, 1),
++	DEF_RST(R9A08G045_SCIF2_RST_SYSTEM_N, 0x884, 2),
++	DEF_RST(R9A08G045_SCIF3_RST_SYSTEM_N, 0x884, 3),
++	DEF_RST(R9A08G045_SCIF4_RST_SYSTEM_N, 0x884, 4),
++	DEF_RST(R9A08G045_SCIF5_RST_SYSTEM_N, 0x884, 5),
+ 	DEF_RST(R9A08G045_GPIO_RSTN, 0x898, 0),
+ 	DEF_RST(R9A08G045_GPIO_PORT_RESETN, 0x898, 1),
+ 	DEF_RST(R9A08G045_GPIO_SPARE_RESETN, 0x898, 2),
 -- 
 2.43.0
 
