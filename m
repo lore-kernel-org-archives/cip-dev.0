@@ -2,67 +2,66 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59B69C61CE7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F1EEC5AE59
 	for <webhook@archiver.kernel.org>; Tue,  3 Jun 2025 09:19:57 +0000 (UTC)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
- by mx.groups.io with SMTP id smtpd.web10.6981.1748942388225125911
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+ by mx.groups.io with SMTP id smtpd.web10.6979.1748942387273452798
  for <cip-dev@lists.cip-project.org>;
- Tue, 03 Jun 2025 02:19:48 -0700
+ Tue, 03 Jun 2025 02:19:47 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=bkbgTpK3;
- spf=pass (domain: tuxon.dev, ip: 209.85.208.44, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6020ff8d51dso9250977a12.2
-        for <cip-dev@lists.cip-project.org>; Tue, 03 Jun 2025 02:19:48 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=m5h+piPV;
+ spf=pass (domain: tuxon.dev, ip: 209.85.208.48, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60462000956so9160015a12.0
+        for <cip-dev@lists.cip-project.org>; Tue, 03 Jun 2025 02:19:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1748942387; x=1749547187; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1748942386; x=1749547186; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uIe74c3lnxezeRHihBqvwan1qGrpCDrEkylOYmq2oMA=;
-        b=bkbgTpK3mazpNadcCnWoAlYR0330CxfCFl8hRfCwxEa+tlLXnylFVWNCSofd7iHmq1
-         pEJ8053CVrAVQj0Z5aeS6nh7ZDHsZszQ08IlzAuQepFzjBL4FfvBJeXuLenYKxpPEm7W
-         Azs+ELhRH9fdUFw1zB6AWhfuPuFYVJ4TysoEB94IzgPoN4uv98SGEBEkbTA2OrE7lhBQ
-         rNoXBG0RgsUzaw2yjr4MVr9ji1MY32B0ebtG9Pxti/VTe43qlP9U+pR1/ljljHq1P57w
-         Ct0ckFYaqC0H2c/uzucs/ZI98E7U60/iuYdTls6OzPFvwGDxnmw3m4TW0gZdofjSp2pi
-         YU7A==
+        bh=xhTTBFXuZ0psyEJ76glufVgmlB9G1xyg1vLzkzG7kKQ=;
+        b=m5h+piPVAftRlPUpw26Sl2K0KKnizrv5wSCiv7mwL/U0yEQPVqtKulrHltsv1kTFkr
+         gtHj8f6dhsJhv1U/OwSc13dQuDUKgjdqAbCVZyi5ithxUxAMH80e0v7dtF5T7HxL4i5/
+         JePjqcCt0FofqsDsOQEQZIgjuz5k5LmwrbG9WeBSppDUYC+gtwW4qecUdBtjbxN85G1G
+         RSMAe8DFKaEYxJAzA7gl/kgyBeaweSt5yXVMkbxpC/hRLxGPMPQuIQWiyovYUMjTcCb/
+         H1bysBK1Hu1/zJbRDzkjyQUm8p3CCBMikJAuYINe0jzRTMrMnAN10pqmx9MS4HQX/Mfc
+         M2CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748942387; x=1749547187;
+        d=1e100.net; s=20230601; t=1748942386; x=1749547186;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uIe74c3lnxezeRHihBqvwan1qGrpCDrEkylOYmq2oMA=;
-        b=a9AfwIrJqiJ07eoEEWfgVdEbbXom6ucscBhpQTVycpq4MpenBSxg3lGhIVKGMISCbD
-         8h8SZz7HHqkk8h8d/Ryr8+DE/Q2yOPYSsN63+stEXxYM6CGXH2m0dclzm3lC3yx0nFmG
-         qTIjGVOrSvxbd4XwEJ1C3Wgdqwzq0hDaTrOiSoSY1/BpgoNr/N4M4zRCvfmM7yD27fmx
-         GhWoLtHWB8QT8P1a7UGh39JlXGExI1ydpfyR5ikxKen0dWLfoK3bKKtbfyarEh4+2xKi
-         /OpLcmvqnOOsMu9NPvPc42f4SjlgrW1iIJeKXsr7IA8B7lkpJlcR0ST2FyX9lSPP4nHU
-         5MUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWq4te0ehhr5B18BvdkKJe7g32XgQ33BGYRTN4KqtwiL1E39FATdsowNKZhrmBkBBShzFe4cKbZ@lists.cip-project.org
-X-Gm-Message-State: AOJu0YzQU0Wnwm0FG0vItcTVA8rZjJBZW0pc2dHr5a3pbzhF46ZUiTOh
-	oSNybIl4oNc9AqHnbjs4LvaDGysT7c1m96MO10maCrRtp4yTDfFu6Tcuay3UfHL9Rl2lAdqzqGo
-	c0O77
-X-Gm-Gg: ASbGnctu9cIRS8hgLMqDzOsS7KImPGqypU+Adxpejf0Eb1+1UtF3SxC99CdFzLcN5JZ
-	f4vGl6N17LyN5M0PPbN1CrU4H2sr1vjwBmLXojJjwMw1dPjYHdyVQC6KQYo2EK9q9UAS1Uy+pUY
-	AFwQ2Kr7syuAcS7WIVuz2Tmzj5ArWwBMZlC+u1uwU2VUj72eWOhIeH7C5hDnvzHjvAnsG/TiZ5u
-	blR4xS19jFxyi0SAk6Z8mFFHjSSQmK4JWCjqXtGRtCMBUft+RvRL8VpOv9gen44ckHzUhe2ph4S
-	SUDgAHmk0aqVwDeBNvyVR2yeENQss/CYYrXcIgSqo733i1mNOM0L6hdCcElecDdgpeBLx2eZiIq
-	4D0dEuxPWFmVSz4r2
-X-Google-Smtp-Source: AGHT+IGvTxxMQB6ucN67I3q/lxQlnsflxOG1WZPNt5sykqJqQWFB6nI/U3/ZLZQS+06qPsauq0Pdaw==
-X-Received: by 2002:a05:6402:210c:b0:601:f4dd:8572 with SMTP id 4fb4d7f45d1cf-6056df48906mr17607207a12.17.1748942386662;
-        Tue, 03 Jun 2025 02:19:46 -0700 (PDT)
+        bh=xhTTBFXuZ0psyEJ76glufVgmlB9G1xyg1vLzkzG7kKQ=;
+        b=Qw8kJ0RSzV5PqLJZiaqVhXBCr3jdXyM+afVXuYl5lA24ojEJBySp11pOb0yrJcsf0y
+         iIYDvRtz6XMf6nrbhRZ9lczEroJKT7pNm4JCmZrY34h42b48xcP8rOZaHVYZmLypDdas
+         nlbp63trCtQrYZeWLmlYgi9s5xx1bvljwFcsYS/9owA89xthzJAGPDn/rjNYwYDPEFBH
+         UUZvOrZHyQcwSlY3ktxwAijDMkD4n4DCRkT1UCX/AbmALsN2rOCnExW9BA/m0rGj2Seg
+         zsp1YnCHQovLx1AbHNIE+NyW7KxoBWuY3ZEtMbQNt3eSt3Wr1MdRcXVPUcgRebY9JZuT
+         u+Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCWINypRzEeRipEcvg0LZnXvp/PRKJKzlQUkGp9Iqm+TXGl7V1vZ/8Ni3a2H6SMv3dvRqL1HxD7b@lists.cip-project.org
+X-Gm-Message-State: AOJu0YwaQxdUNG1eqBsnuB8rfy7mVUTXRi+0AJjwWLUcq9D9g5WEBKli
+	lgNrzC+AZyW7ZjhPTvw1EeSu5PtFfdSv64hqA+oxzOpR6dqFjCAChT7RyRNlCGCGmf0=
+X-Gm-Gg: ASbGncu6DX7q/s7ITCdqAzn1VyhvdzZBiguZp/SULD6hF5ylWalna1MF2nfD0GY4eGj
+	p7oqVFVOf5IjkeuJA8NQ9Ex/Y3Ey2fFztbo9FlAT6F5Z8F4fAPJzuDERU7XTUT5am9zeMKLbovM
+	VQ1xLqUGbml2Op83qgR+2pwSyuDO/Vxdefu8WhBy+mEYeGiJsGEsn92fmRUX/I5XBcfCCtobXUB
+	xlpaDar9BD9hjEMNqAO0RGLdSZ7vdg6hgQf18YJW6KCH2Oo9KFWfZdkSEhNYLGhTY2e3JSKG33W
+	lvZYxNyKxVxQujN0W6cEzrq0wxX+VGWxfXjOxPCJmo0YouC6sOHuF6BzuiU/zRToRwHfapplfx9
+	iihE97A==
+X-Google-Smtp-Source: AGHT+IEcaYWQO32iEeaYklFwqN5EKOEucBJy7gNxCnPQn7mREsuZ1I5fzReeXyoeL7pj5ScJ4DdTGg==
+X-Received: by 2002:a05:6402:2349:b0:604:efcc:bf64 with SMTP id 4fb4d7f45d1cf-6057c60312bmr13932862a12.19.1748942385652;
+        Tue, 03 Jun 2025 02:19:45 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.126])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60566c5c5casm7301944a12.25.2025.06.03.02.19.45
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60566c5c5casm7301944a12.25.2025.06.03.02.19.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 02:19:46 -0700 (PDT)
+        Tue, 03 Jun 2025 02:19:45 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.1.y-cip 4/8] arm64: dts: renesas: r9a08g045: Add the remaining SCIF interfaces
-Date: Tue,  3 Jun 2025 12:19:36 +0300
-Message-ID: <20250603091940.3917581-5-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 3/8] serial: sh-sci: Save and restore more registers
+Date: Tue,  3 Jun 2025 12:19:35 +0300
+Message-ID: <20250603091940.3917581-4-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250603091940.3917581-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250603091940.3917581-1-claudiu.beznea.uj@bp.renesas.com>
@@ -72,125 +71,113 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 03 Jun 2025 09:19:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18978
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18977
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit aaf7188d7f77bb8a6e043c70dc6cc6616c427762 upstream.
+commit 81100b9a7b0515132996d62a7a676a77676cb6e3 upstream.
 
-The Renesas RZ/G3S SoC has 6 SCIF interfaces. SCIF0 is used as debug
-console. Add the remaining ones.
+On (H)SCIF with a Baud Rate Generator for External Clock (BRG), there
+are multiple ways to configure the requested serial speed.  If firmware
+uses a different method than Linux, and if any debug info is printed
+after the Bit Rate Register (SCBRR) is restored, but before termios is
+reconfigured (which configures the alternative method), the system may
+lock-up during resume.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20241115134401.3893008-5-claudiu.beznea.uj@bp.renesas.com
+Fix this by saving and restoring the contents of the BRG Frequency
+Division (SCDL) and Clock Select (SCCKS) registers as well.
+
+Also save and restore the HSCIF's Sampling Rate Register (HSSRR), which
+configures the sampling point, and the SCIFA/SCIFB's Serial Port Control
+and Data Registers (SCPCR/SCPDR), which configure the optional control
+flow signals.
+
+After this, all registers that are not saved/restored are either:
+  - read-only,
+  - write-only,
+  - status registers containing flags with clear-after-set semantics,
+  - FIFO Data Count Trigger registers, which do not matter much for
+    the serial console.
+
+Fixes: 22a6984c5b5df8ea ("serial: sh-sci: Update the suspend/resume support")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Link: https://lore.kernel.org/r/11c2eab45d48211e75d8b8202cce60400880fe55.1741114989.git.geert+renesas@glider.be
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 90 ++++++++++++++++++++++
- 1 file changed, 90 insertions(+)
+ drivers/tty/serial/sh-sci.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-index c317c23adc50..5634eff1e921 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-@@ -87,6 +87,96 @@ scif0: serial@1004b800 {
- 			status = "disabled";
- 		};
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index fad62f1a5ad8..f914cd5df01c 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -106,10 +106,15 @@ struct plat_sci_reg {
+ };
  
-+		scif1: serial@1004bc00 {
-+			compatible = "renesas,scif-r9a08g045", "renesas,scif-r9a07g044";
-+			reg = <0 0x1004bc00 0 0x400>;
-+			interrupts = <GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi",
-+					  "bri", "dri", "tei";
-+			clocks = <&cpg CPG_MOD R9A08G045_SCIF1_CLK_PCK>;
-+			clock-names = "fck";
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A08G045_SCIF1_RST_SYSTEM_N>;
-+			status = "disabled";
-+		};
-+
-+		scif2: serial@1004c000 {
-+			compatible = "renesas,scif-r9a08g045", "renesas,scif-r9a07g044";
-+			reg = <0 0x1004c000 0 0x400>;
-+			interrupts = <GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi",
-+					  "bri", "dri", "tei";
-+			clocks = <&cpg CPG_MOD R9A08G045_SCIF2_CLK_PCK>;
-+			clock-names = "fck";
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A08G045_SCIF2_RST_SYSTEM_N>;
-+			status = "disabled";
-+		};
-+
-+		scif3: serial@1004c400 {
-+			compatible = "renesas,scif-r9a08g045", "renesas,scif-r9a07g044";
-+			reg = <0 0x1004c400 0 0x400>;
-+			interrupts = <GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi",
-+					  "bri", "dri", "tei";
-+			clocks = <&cpg CPG_MOD R9A08G045_SCIF3_CLK_PCK>;
-+			clock-names = "fck";
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A08G045_SCIF3_RST_SYSTEM_N>;
-+			status = "disabled";
-+		};
-+
-+		scif4: serial@1004c800 {
-+			compatible = "renesas,scif-r9a08g045", "renesas,scif-r9a07g044";
-+			reg = <0 0x1004c800 0 0x400>;
-+			interrupts = <GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi",
-+					  "bri", "dri", "tei";
-+			clocks = <&cpg CPG_MOD R9A08G045_SCIF4_CLK_PCK>;
-+			clock-names = "fck";
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A08G045_SCIF4_RST_SYSTEM_N>;
-+			status = "disabled";
-+		};
-+
-+		scif5: serial@1004e000 {
-+			compatible = "renesas,scif-r9a08g045", "renesas,scif-r9a07g044";
-+			reg = <0 0x1004e000 0 0x400>;
-+			interrupts = <GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 348 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 349 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 349 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi",
-+					  "bri", "dri", "tei";
-+			clocks = <&cpg CPG_MOD R9A08G045_SCIF5_CLK_PCK>;
-+			clock-names = "fck";
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A08G045_SCIF5_RST_SYSTEM_N>;
-+			status = "disabled";
-+		};
-+
- 		rtc: rtc@1004ec00 {
- 			compatible = "renesas,r9a08g045-rtca3", "renesas,rz-rtca3";
- 			reg = <0 0x1004ec00 0 0x400>;
+ struct sci_suspend_regs {
++	u16 scdl;
++	u16 sccks;
+ 	u16 scsmr;
+ 	u16 scscr;
+ 	u16 scfcr;
+ 	u16 scsptr;
++	u16 hssrr;
++	u16 scpcr;
++	u16 scpdr;
+ 	u8 scbrr;
+ 	u8 semr;
+ };
+@@ -3563,6 +3568,10 @@ static void sci_console_save(struct sci_port *s)
+ 	struct sci_suspend_regs *regs = &s->suspend_regs;
+ 	struct uart_port *port = &s->port;
+ 
++	if (sci_getreg(port, SCDL)->size)
++		regs->scdl = sci_serial_in(port, SCDL);
++	if (sci_getreg(port, SCCKS)->size)
++		regs->sccks = sci_serial_in(port, SCCKS);
+ 	if (sci_getreg(port, SCSMR)->size)
+ 		regs->scsmr = sci_serial_in(port, SCSMR);
+ 	if (sci_getreg(port, SCSCR)->size)
+@@ -3573,6 +3582,12 @@ static void sci_console_save(struct sci_port *s)
+ 		regs->scsptr = sci_serial_in(port, SCSPTR);
+ 	if (sci_getreg(port, SCBRR)->size)
+ 		regs->scbrr = sci_serial_in(port, SCBRR);
++	if (sci_getreg(port, HSSRR)->size)
++		regs->hssrr = sci_serial_in(port, HSSRR);
++	if (sci_getreg(port, SCPCR)->size)
++		regs->scpcr = sci_serial_in(port, SCPCR);
++	if (sci_getreg(port, SCPDR)->size)
++		regs->scpdr = sci_serial_in(port, SCPDR);
+ 	if (sci_getreg(port, SEMR)->size)
+ 		regs->semr = sci_serial_in(port, SEMR);
+ }
+@@ -3582,6 +3597,10 @@ static void sci_console_restore(struct sci_port *s)
+ 	struct sci_suspend_regs *regs = &s->suspend_regs;
+ 	struct uart_port *port = &s->port;
+ 
++	if (sci_getreg(port, SCDL)->size)
++		sci_serial_out(port, SCDL, regs->scdl);
++	if (sci_getreg(port, SCCKS)->size)
++		sci_serial_out(port, SCCKS, regs->sccks);
+ 	if (sci_getreg(port, SCSMR)->size)
+ 		sci_serial_out(port, SCSMR, regs->scsmr);
+ 	if (sci_getreg(port, SCSCR)->size)
+@@ -3592,6 +3611,12 @@ static void sci_console_restore(struct sci_port *s)
+ 		sci_serial_out(port, SCSPTR, regs->scsptr);
+ 	if (sci_getreg(port, SCBRR)->size)
+ 		sci_serial_out(port, SCBRR, regs->scbrr);
++	if (sci_getreg(port, HSSRR)->size)
++		sci_serial_out(port, HSSRR, regs->hssrr);
++	if (sci_getreg(port, SCPCR)->size)
++		sci_serial_out(port, SCPCR, regs->scpcr);
++	if (sci_getreg(port, SCPDR)->size)
++		sci_serial_out(port, SCPDR, regs->scpdr);
+ 	if (sci_getreg(port, SEMR)->size)
+ 		sci_serial_out(port, SEMR, regs->semr);
+ }
 -- 
 2.43.0
 
