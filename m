@@ -2,66 +2,66 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F5F8C5AE59
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 794C3C61DB2
 	for <webhook@archiver.kernel.org>; Tue,  3 Jun 2025 09:20:17 +0000 (UTC)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
- by mx.groups.io with SMTP id smtpd.web10.7002.1748942415426155210
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+ by mx.groups.io with SMTP id smtpd.web10.6997.1748942410457859810
  for <cip-dev@lists.cip-project.org>;
- Tue, 03 Jun 2025 02:20:15 -0700
+ Tue, 03 Jun 2025 02:20:10 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=LzNr+QFw;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.54, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-acb5ec407b1so845617366b.1
-        for <cip-dev@lists.cip-project.org>; Tue, 03 Jun 2025 02:20:15 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=S72X7Ysl;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.47, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ad883afdf0cso1020460666b.0
+        for <cip-dev@lists.cip-project.org>; Tue, 03 Jun 2025 02:20:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1748942414; x=1749547214; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1748942409; x=1749547209; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Reo6KcsJ/mjLequuPMD8JFrkY+r5qz3DNelQ1/P83fw=;
-        b=LzNr+QFwaJHB17ZgcP7SKDy9Zb3P/tZzjtX8uGGs8ti6FsmyqkUX7Oe1YF/W/OTl9l
-         8KXfmP6iemxQTXAXIeR56URYy+WHvQeAOExog4LDjM5AL6olwIOtrcILCskp+Jg5Sqba
-         mnQy1LKB7J8Y/p6IYoJtGRROCkHeZEpgrSkBGdbnYWBtIJy01OGjmoF/TTg9PGEE6xKg
-         tNZXdSD6UACSji4FJn70byUIvdbgdHIKgLkekJoZaTA5wDpDu4/SCF1v9KKyYYhQSyRO
-         gQiygIOvytmfS2S9JyHvOSV3PO4mi9AEkBhADE6/wH7QLObgelCj20DDW2OiaxX/+YJM
-         m+EQ==
+        bh=jrGN8NBWDM4xuwsVHmicnKnIvM4AZqMWDBS5VF60a6c=;
+        b=S72X7Ysls3QDZHBNAA5hKfetz6yn7oOW8miJi2wa0ohmu51sStlTMwJwoJ/+mY2qUo
+         b6ub+VO5NSpoz2QokvTwiOiCoSRqNYrjams9IAqlrOiF4MEdTMSFUFTJ9CNQeIVPjMAL
+         gHyrrr5ygnfQBI7AX1wGZNfVnpIRGNY8gUDEHe/jJtdPIAiyd2KS8vwavQArhxKiHUhW
+         T9kW02p+1F8FP5WUYTKmpW49hd3bM+gdP0Og4UC4Nre6c/AqnkD4e1No/5lYGDJ2DG/K
+         8/bSSgMtBpjx5mq41VUgqLDdA80AxD3f+AkfkSsbPbdzHhc0kRfohk5AAXsnVgHGPj0t
+         qGbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748942414; x=1749547214;
+        d=1e100.net; s=20230601; t=1748942409; x=1749547209;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Reo6KcsJ/mjLequuPMD8JFrkY+r5qz3DNelQ1/P83fw=;
-        b=gGInjFnx/GgLz+I+NqueUQaY55pUhrpgzRooY3vCALRPj6LEJd2hqlnsTWfVycSG/t
-         rDru5NurCljWg/9Mr4FOXY6P3QKgL6yTVfMIwyiyg9AjkX/tytoeYWhJwv/AbRyyHrU8
-         VYsUPuyedlqGSnUN1ASY8UbW8Tmsff8hBd5rAGaCy4fGA5mJjyWPShex8H8QtcDWGNuq
-         Tf6itDQLzdXcwKcs7rqMvTt3nERnHb/n+PzfCREfbr1ITGYvjue9QhtXxISPyFIpkl6h
-         2adksXT7Zq8KNodl23mEiCk/L2U5DXWKkRnsGvEf6zNKpP1+wpAwGJ8ZOIILdKYWG19A
-         YzfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXgwQ4nOs0nqarbuwlZqGE1kObiGnRjUI3p7JuK+QIadDQmMNYf47T+dFJJ4YmldHw7DRobUSKy@lists.cip-project.org
-X-Gm-Message-State: AOJu0YxWp/hgi4Zyg2sIGMhQ3UjJf3vQIMvgMPO9gSHQGh7pXzSDg/ys
-	Bk28+ODSnKuQBiYTOE0WLpQOzxKx+ncYKOVk4bOO47SzIGWfj4ORxOmtAAg2XT9Y+cw=
-X-Gm-Gg: ASbGnctnOfJ+LaoWo1ibfnkdia2nPl3cY8C+FI5jb1pKrXI0BiqyWE4w4hGUazeBpgo
-	ssqLhaof9lAv6VqJtadIOIJicVAWsFr8XXW9Oz7FTXXWJot5jiOnl2VXArBQ3LZqgjw3uOVeaIj
-	F7l9oqh50CmF15j8Q5zePjTxW2vP8XgcQULRVzxRLvwWXXb3vK7w3EDJLIMhf5OxhXLgua7G+Vn
-	jy2Uxr8xeSTHUmyObYm82JQTwEODPIW9VVVjnBk2R/X6FwWJk+LkCryfP9e+UTTzqFgOvxPGfwS
-	Vwkjh6y9dmww866tcAFIqp+yyooX8dQP/IBsqaelhXd1LXXy/wfFFZO+PlR+bIH/9/aEQl0d7RP
-	Oj1HCRVjxt6P1Vzdu
-X-Google-Smtp-Source: AGHT+IGkA27E6QHZ27aX97mDsb5ND74CCyUI3UOUWHJxxQB332ia4U3eebbmgtfmiRC7oZrlqsYm5g==
-X-Received: by 2002:a17:907:2cc7:b0:ad9:6350:c1e2 with SMTP id a640c23a62f3a-adb36c114efmr1526156766b.49.1748942413808;
-        Tue, 03 Jun 2025 02:20:13 -0700 (PDT)
+        bh=jrGN8NBWDM4xuwsVHmicnKnIvM4AZqMWDBS5VF60a6c=;
+        b=Nu60Hyya1ucJxqAOusrRfRDA9YrMayId8NNFA2m3dw44J3mDh2korULV1W2Snglhgh
+         Y1934O9jK5D0HN4dIkvLRbildoYJ6O1FVZjsr3V0XJFueDFcwE2ApC0GRrvnFwNpQYKL
+         Rm1zy7Sxjwi0XF7QNhyRFxclzy3bu69UNzhRJaQpKBHaHea2RQo5wW1IeACqdQ2M9Fd9
+         5bm5iMfkFNad4OwQzF6G0HpSs8fNo6eRKz8J5fZ+8mLZlZkSO8q+Kl6mkcKLYhwY93wA
+         qMfiX66htKs/d5ok/E7nDrIf8Nqm2urd9neG99OJ0oyrHJEBmWM0LT/G3+mZ85veU9rP
+         aKOA==
+X-Forwarded-Encrypted: i=1; AJvYcCX07Bk2LuSCzzyw5SFaMNwXzS8jG6PYEklTUEdwfYI/rpMxQn/76ArmIgsNQWr4ZmoUM0+bcv+E@lists.cip-project.org
+X-Gm-Message-State: AOJu0YwuFaEFMyIpVwBtGM6UNlu7TVOqyYKHm2mW7HaAdOS5s/zruNiB
+	Jpz6Qlv9SXO7QFgjtpLZu8ktu4tcV1mjwfsj1O+/7tynwkeWPCh5e67vzFZr0YrG6Bc=
+X-Gm-Gg: ASbGncs41kpUwwZfquWMA00uyzuLNWEHCllLQ5a9ET2Wqq1fUSuiq4qhCPDfFeAHzJU
+	kEkLKeqxbRf1x2N6c83BfoKoMYmi/X8CNXQN7bHddHLC381z41+H2jIyjnO+K7Z4i1UqOAtoLDu
+	glTvTTj6gEJDxPkvevqPfRbCRgyGKazcFY3zYY41XnRr20WaS2vvO1UjnsZR4ujoYLIdCyoxF/X
+	y9EB0SRrkO8D2X8E7f0sQ899qBKsBRydPEdJ2gMra1cTxCr3TQfVmRx/qVUkYU1IrhxbDk3AUmV
+	rarUvm1ZqUIS3vuIsHEnIzhWyWgKKysKxIO5U5xlUXQjNNtVknE734/QvikTp9JzM4vaUxW1Hlp
+	6pjjipqX2Mx1UgLGT
+X-Google-Smtp-Source: AGHT+IHN2UMknOkKqnvqbmTUoK1ZeN3cLqQu1+yLao66XaUQPh4Ki3zQ49aiJKnjsTIlv/if43B39g==
+X-Received: by 2002:a17:906:4794:b0:ad2:2dc9:e3d3 with SMTP id a640c23a62f3a-adb36c07b40mr1629134466b.57.1748942408696;
+        Tue, 03 Jun 2025 02:20:08 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.126])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adb2e220548sm817017266b.109.2025.06.03.02.20.12
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adb2e220548sm817017266b.109.2025.06.03.02.20.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 02:20:13 -0700 (PDT)
+        Tue, 03 Jun 2025 02:20:08 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.12.y-cip 5/7] arm64: dts: renesas: rzg3s-smarc-switches: Add a header to describe different switches
-Date: Tue,  3 Jun 2025 12:20:03 +0300
-Message-ID: <20250603092005.3917850-6-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 1/7] clk: renesas: r9a08g045: Add clock, reset and power domain for the remaining SCIFs
+Date: Tue,  3 Jun 2025 12:19:59 +0300
+Message-ID: <20250603092005.3917850-2-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250603092005.3917850-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250603092005.3917850-1-claudiu.beznea.uj@bp.renesas.com>
@@ -71,107 +71,77 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 03 Jun 2025 09:20:17 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18988
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18984
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 02760e35b5a62f0ca24e792817d720a2c8ddd409 upstream.
+commit b73435047ef74c82d6e82c333810eba0038f9cf7 upstream.
 
-There are different switches available on both the RZ/G3S SMARC Module and
-RZ SMARC Carrier II boards. These switches are used to route different SoC
-signals to different parts available on board.
-
-These switches are described in device trees through macros. These macros
-are set accordingly such that the resulted compiled dtb to describe the
-on-board switches states.
-
-The SCIF1 depends on the state of the SW_CONFIG3 and SW_OPT_MUX4 switches.
-SCIF1 can be enabled through a device tree overlay. To manage all switches
-in a unified state and allow users to configure the output device tree, add
-a file that contains all switch definitions and states.
-
-Commit prepares the code to enable SCIF1 on the RZ/G3S overlay.
+The Renesas RZ/G3S SoC has 6 SCIF interfaces.  SCIF0 is used as debug
+console and is already enabled.  Add clock, reset and power domain
+support for the remaining ones.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250120130936.1080069-3-claudiu.beznea.uj@bp.renesas.com
+Link: https://lore.kernel.org/20241115134401.3893008-2-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[claudiu.beznea: fixed conflict by using RZG2L_PD_F_NONE instead of zero
+ to describe the power domain flags]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- .../boot/dts/renesas/rzg3s-smarc-som.dtsi     | 20 +-----------
- .../boot/dts/renesas/rzg3s-smarc-switches.h   | 32 +++++++++++++++++++
- 2 files changed, 33 insertions(+), 19 deletions(-)
- create mode 100644 arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
+ drivers/clk/renesas/r9a08g045-cpg.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-index 7ae319d941ac..7c40532fc869 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-@@ -9,25 +9,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
- 
--/*
-- * On-board switches' states:
-- * @SW_OFF: switch's state is OFF
-- * @SW_ON:  switch's state is ON
-- */
--#define SW_OFF		0
--#define SW_ON		1
--
--/*
-- * SW_CONFIG[x] switches' states:
-- * @SW_CONFIG2:
-- *	SW_OFF - SD0 is connected to eMMC
-- *	SW_ON  - SD0 is connected to uSD0 card
-- * @SW_CONFIG3:
-- *	SW_OFF - SD2 is connected to SoC
-- *	SW_ON  - SCIF1, SSI0, IRQ0, IRQ1 connected to SoC
-- */
--#define SW_CONFIG2	SW_OFF
--#define SW_CONFIG3	SW_ON
-+#include "rzg3s-smarc-switches.h"
- 
- / {
- 	compatible = "renesas,rzg3s-smarcm", "renesas,r9a08g045s33", "renesas,r9a08g045";
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h b/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
-new file mode 100644
-index 000000000000..5c27c043afef
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
-@@ -0,0 +1,32 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * On-board switches for the Renesas RZ/G3S SMARC Module and RZ SMARC Carrier II
-+ * boards.
-+ *
-+ * Copyright (C) 2024 Renesas Electronics Corp.
-+ */
-+
-+#ifndef __RZG3S_SMARC_SWITCHES_H__
-+#define __RZG3S_SMARC_SWITCHES_H__
-+
-+/*
-+ * On-board switches' states:
-+ * @SW_OFF: switch's state is OFF
-+ * @SW_ON:  switch's state is ON
-+ */
-+#define SW_OFF		0
-+#define SW_ON		1
-+
-+/*
-+ * SW_CONFIG[x] switches' states:
-+ * @SW_CONFIG2:
-+ *	SW_OFF - SD0 is connected to eMMC
-+ *	SW_ON  - SD0 is connected to uSD0 card
-+ * @SW_CONFIG3:
-+ *	SW_OFF - SD2 is connected to SoC
-+ *	SW_ON  - SCIF1, SSI0, IRQ0, IRQ1 connected to SoC
-+ */
-+#define SW_CONFIG2	SW_OFF
-+#define SW_CONFIG3	SW_ON
-+
-+#endif /* __RZG3S_SMARC_SWITCHES_H__ */
+diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
+index 1610d4bf203f..70ad59f63d45 100644
+--- a/drivers/clk/renesas/r9a08g045-cpg.c
++++ b/drivers/clk/renesas/r9a08g045-cpg.c
+@@ -232,6 +232,11 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
+ 	DEF_MOD("i2c2_pclk",		R9A08G045_I2C2_PCLK, R9A08G045_CLK_P0, 0x580, 2),
+ 	DEF_MOD("i2c3_pclk",		R9A08G045_I2C3_PCLK, R9A08G045_CLK_P0, 0x580, 3),
+ 	DEF_MOD("scif0_clk_pck",	R9A08G045_SCIF0_CLK_PCK, R9A08G045_CLK_P0, 0x584, 0),
++	DEF_MOD("scif1_clk_pck",	R9A08G045_SCIF1_CLK_PCK, R9A08G045_CLK_P0, 0x584, 1),
++	DEF_MOD("scif2_clk_pck",	R9A08G045_SCIF2_CLK_PCK, R9A08G045_CLK_P0, 0x584, 2),
++	DEF_MOD("scif3_clk_pck",	R9A08G045_SCIF3_CLK_PCK, R9A08G045_CLK_P0, 0x584, 3),
++	DEF_MOD("scif4_clk_pck",	R9A08G045_SCIF4_CLK_PCK, R9A08G045_CLK_P0, 0x584, 4),
++	DEF_MOD("scif5_clk_pck",	R9A08G045_SCIF5_CLK_PCK, R9A08G045_CLK_P0, 0x584, 5),
+ 	DEF_MOD("gpio_hclk",		R9A08G045_GPIO_HCLK, R9A08G045_OSCCLK, 0x598, 0),
+ 	DEF_MOD("vbat_bclk",		R9A08G045_VBAT_BCLK, R9A08G045_OSCCLK, 0x614, 0),
+ };
+@@ -261,6 +266,11 @@ static const struct rzg2l_reset r9a08g045_resets[] = {
+ 	DEF_RST(R9A08G045_I2C2_MRST, 0x880, 2),
+ 	DEF_RST(R9A08G045_I2C3_MRST, 0x880, 3),
+ 	DEF_RST(R9A08G045_SCIF0_RST_SYSTEM_N, 0x884, 0),
++	DEF_RST(R9A08G045_SCIF1_RST_SYSTEM_N, 0x884, 1),
++	DEF_RST(R9A08G045_SCIF2_RST_SYSTEM_N, 0x884, 2),
++	DEF_RST(R9A08G045_SCIF3_RST_SYSTEM_N, 0x884, 3),
++	DEF_RST(R9A08G045_SCIF4_RST_SYSTEM_N, 0x884, 4),
++	DEF_RST(R9A08G045_SCIF5_RST_SYSTEM_N, 0x884, 5),
+ 	DEF_RST(R9A08G045_GPIO_RSTN, 0x898, 0),
+ 	DEF_RST(R9A08G045_GPIO_PORT_RESETN, 0x898, 1),
+ 	DEF_RST(R9A08G045_GPIO_SPARE_RESETN, 0x898, 2),
+@@ -343,6 +353,21 @@ static const struct rzg2l_cpg_pm_domain_init_data r9a08g045_pm_domains[] = {
+ 	DEF_PD("scif0",		R9A08G045_PD_SCIF0,
+ 				DEF_REG_CONF(CPG_BUS_MCPU2_MSTOP, BIT(1)),
+ 				RZG2L_PD_F_NONE),
++	DEF_PD("scif1",		R9A08G045_PD_SCIF1,
++				DEF_REG_CONF(CPG_BUS_MCPU2_MSTOP, BIT(2)),
++				RZG2L_PD_F_NONE),
++	DEF_PD("scif2",		R9A08G045_PD_SCIF2,
++				DEF_REG_CONF(CPG_BUS_MCPU2_MSTOP, BIT(3)),
++				RZG2L_PD_F_NONE),
++	DEF_PD("scif3",		R9A08G045_PD_SCIF3,
++				DEF_REG_CONF(CPG_BUS_MCPU2_MSTOP, BIT(4)),
++				RZG2L_PD_F_NONE),
++	DEF_PD("scif4",		R9A08G045_PD_SCIF4,
++				DEF_REG_CONF(CPG_BUS_MCPU2_MSTOP, BIT(5)),
++				RZG2L_PD_F_NONE),
++	DEF_PD("scif5",		R9A08G045_PD_SCIF5,
++				DEF_REG_CONF(CPG_BUS_MCPU3_MSTOP, BIT(4)),
++				RZG2L_PD_F_NONE),
+ 	DEF_PD("vbat",		R9A08G045_PD_VBAT,
+ 				DEF_REG_CONF(CPG_BUS_MCPU3_MSTOP, BIT(8)),
+ 				RZG2L_PD_F_ALWAYS_ON),
 -- 
 2.43.0
 
