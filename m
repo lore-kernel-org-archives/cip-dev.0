@@ -2,108 +2,194 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18427C5AE59
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1721CC5AD49
 	for <webhook@archiver.kernel.org>; Tue,  3 Jun 2025 09:19:17 +0000 (UTC)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
- by mx.groups.io with SMTP id smtpd.web11.7092.1748942346589675511
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+ by mx.groups.io with SMTP id smtpd.web10.6967.1748942351052649442
  for <cip-dev@lists.cip-project.org>;
- Tue, 03 Jun 2025 02:19:07 -0700
+ Tue, 03 Jun 2025 02:19:11 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=MgtcafRv;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.45, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ad88105874aso846704666b.1
-        for <cip-dev@lists.cip-project.org>; Tue, 03 Jun 2025 02:19:06 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=oKG+07V+;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.51, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ad93ff9f714so980139266b.2
+        for <cip-dev@lists.cip-project.org>; Tue, 03 Jun 2025 02:19:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1748942345; x=1749547145; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dxPoNh10+qqcyw1arnhiQYj7uSI7piBpALGHS+sHIUg=;
-        b=MgtcafRvsX6770GiS+0S9Kq8YhB4M9f3c8isING9t31FWzyNzTRau2lvRGVf+EBNF3
-         cyPid+KrTnLlJmANsnukOp/A2SxFCHZvIAWpmwzdIwkKFZK8k/8Ysv+tgPXtNkJg73/r
-         qg3fG0zfcdgMvWJdAV9pAE6XYUEwYngIOobKNDQyVD5Xb/XRA2lsW1w7sBH/fGKmYIQ/
-         FyO8B9rAjL9MUNfJ24X3IK7QON02lP/ociNgToDwmZIgHpVYTBnohuEAGBfwDDp3aviZ
-         IvDdvJwUrrNhObGNtWlgB1gZ2fAPLI8rPSSnKRr0440HNnbyN8I3dKNoVVYza0Ca9L3O
-         HprQ==
+        d=tuxon.dev; s=google; t=1748942349; x=1749547149; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U5mWeqrusKpqUh037VjpQedgL+L2dc6PNNHq8av6zqc=;
+        b=oKG+07V+PX2vxCAuB6zYBKgRicy0/B5umuix29UEddm+/whKl5n4dT2BLene4Y/ySn
+         Hs4PS9aB2RXJe/vGEfL64qJhBTrmq13JzzlsfDa8X8Sg2MXNHbm+/y/A1+opz2J5R8T/
+         FEKLVlEtIPDZRIZSHf4Dvy2itxiaOa+iLBnCA1LDIApxhFTELDILnEoNQVUodLXRngFu
+         dvnLdrVIYc155oeYvrc0vrl42dLHZf/WAfQppfPRKUh4AzUs/awecWiXYTGKFp2Bp2Ns
+         gDo6uhJeEDlNH+ArzbwKtLf24N0o4eSYjU0gMmPDCLCd4YD8f2tSZhk32DRHiv46x/sf
+         209Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748942345; x=1749547145;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dxPoNh10+qqcyw1arnhiQYj7uSI7piBpALGHS+sHIUg=;
-        b=GYyhcIOea1J7TEoj23zJopKrYBsntUC3EqiwBav6uvmQd/aZ84bplrJrRrksuNuJjJ
-         0xB4/fqpqJMerM5RYR2A0j1eh0893z9XO8PzZuDXO1uU26Q4PzCV9JdFmjq27m8pNNuc
-         lclEgw0L5COjMWxBdxRk00oNWur5/P9wYNAfb3bCjjcokGMQWAKozw4jJnJSvyskg+y9
-         3+SWc1QzfHtyM/rU5rSHj4vy48pFPPvca/ftvigjX0xt2uYWbBYmLhqkPY5FR7/viRdG
-         /BcTf8KzWXfFbpSGsykrRQMnvpQsfwcMn+7h83/4MApQE48BW+/19035u4Nia/ID8LS4
-         DY+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUlCTlNyjzj93XPZlUmqGpCxhCDAfjAkAZhtzFB2zdQfCye1yzPpwL7fWOii1v/3HzA4/99aMRR@lists.cip-project.org
-X-Gm-Message-State: AOJu0YwPo9wKyBj1WKxL13THfpmswSY2hi01vX/GGIraRxn2XlvtSmVU
-	q0nhjcR7ypvAjbEKlzK75lFvcIiMnunlMwzU3wWo6s5R8z9ry8VKRRz5LRUdBAvWoSQ=
-X-Gm-Gg: ASbGncvSLVCCj3N7kw1VEeQAEoZvbnSXUB/H2tmwCQnQ+2wwyJdhjmEipMNhHND90ok
-	hsBHNHRDi7DJjSVAzGKSZH2zyV8OKIzZ0BRCyS8zShNGjelqpGu02RdzdKkK3quA73d0oTDd80h
-	gxzwzc+nmgAEYONo9VT9TMCBdD7nk6ti9QKT2Gv2YXA/2IyKH6qp9yFpNvS2Q90p6G0w1bmzN2K
-	b4+W7CUeqFdI0XAxmqk+XMNeqla407rsPjUDNg700obgFwrB0iVDqlfJuaOJb/1V5T/Hx2Hh5wg
-	ujbVIlaAVfJS90/giWRbzUUe+rqQbUEQcxvxOXJ8d0W6rDdsxN2r9TNR2p0RdGvyeDL1ncH3S9y
-	qRHIohQ==
-X-Google-Smtp-Source: AGHT+IFZrfO1i+w4+atZXCXDTFMyw3TqmSa6l6fSKuEve96tUrmKDBWVfJEx3sLvqnpDZ5wW8qRWOw==
-X-Received: by 2002:a17:907:3dac:b0:ad8:93c0:27a5 with SMTP id a640c23a62f3a-adb322b36ecmr1626710066b.5.1748942344653;
-        Tue, 03 Jun 2025 02:19:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1748942349; x=1749547149;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=U5mWeqrusKpqUh037VjpQedgL+L2dc6PNNHq8av6zqc=;
+        b=Oy0JOh+IcCmWUCO6EP6WlRrWRT3c3PKIdfOGpOGqyiLLVI9oGgL1Of5I+ZzUm6xqdU
+         eNLV0lCHEMijDGcRvHZsYw8LEVw7sShst4j08g/LcebofO65MkkcbKomIMZRmzVfjzhB
+         AmomUDwh5TYo2XEeR5gPWwRn62oaQBfe9nOreLDPXJqoCBMYVv8xmf3iL56JgSK738EK
+         Ih6ylYX7ZUYJGGD2MT2c8YZ7LrlaNQSnU+kYqlfRmzsToDJK+/nIS5WjRVCd+zbtTC5z
+         Qzd6QWJJ5Pjn+OtUFB+CVzlDxVAElJSO8mXlgAg6WNcAsXvMU/3RHeZ3owTCVUoqVSj5
+         1RNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXs42lkkpQHD/X/qieGfmpqS3HZ1KXkUAug09/RwVVRrpKZWAu/loqARKHoki6/ueF3NYzyttOE@lists.cip-project.org
+X-Gm-Message-State: AOJu0YxjokaUq8dx/jHv+1oWCN7HnajVamFQSnzElFSi5RI96WdXtCFx
+	NDs5/B9oCYjHIMOBjtNlcx2VOIxvA4TKrHCVHd1biHDDFh9CCY5X9lY2ZGUMxUNRz7Q=
+X-Gm-Gg: ASbGnctCh44mkF4Ha8Hx42OcnK8aZpPNjC8fVvkSDBiVe5VUuK0X21hCapDaA/OYJmW
+	5DxqxjufxhaYIW5DWi2K3orVqY2TNuSZvHzAuNJyD7JiqKCws8VRp4+PeyNp1DmMPlEI98hVfah
+	niceIguaLuj+85cBpEbVndcg2jMUOh0mO4WvkzW2ppXxsIqiLucsUEbJZXXomChTfGCK/7ithvj
+	cKFMQJ2+fUSYupZrIC+RLG2Oe0v2wlXffkbtI4WVzpo2HiH1A3Kg8WdkuYzhAdZlRnuL8h9umOp
+	hQTpEGADZoEJQk2vrLvNmymc0Vu68CxdrW3P/Q2Wv4Fo5vAgZpqZoWPNhZsNkDsGyc/kEwFaeDB
+	H7ZG7vQ==
+X-Google-Smtp-Source: AGHT+IH0CzVmjlPNxHYBqLrvCIKan72bpEwl8hQcizwngOVK9gl5e0C4KX739JBYsk2dWFECCbS/4g==
+X-Received: by 2002:a17:907:9623:b0:acb:5343:e75 with SMTP id a640c23a62f3a-adb36ba4aa3mr1484945066b.34.1748942349396;
+        Tue, 03 Jun 2025 02:19:09 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.126])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d7fecd2sm918093866b.36.2025.06.03.02.19.03
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5d7fecd2sm918093866b.36.2025.06.03.02.19.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 02:19:04 -0700 (PDT)
+        Tue, 03 Jun 2025 02:19:08 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 0/8] RZ/G3S: Backport SCIF support
-Date: Tue,  3 Jun 2025 12:18:55 +0300
-Message-ID: <20250603091903.3917202-1-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 4/8] arm64: dts: renesas: r9a08g045: Add the remaining SCIF interfaces
+Date: Tue,  3 Jun 2025 12:18:59 +0300
+Message-ID: <20250603091903.3917202-5-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250603091903.3917202-1-claudiu.beznea.uj@bp.renesas.com>
+References: <20250603091903.3917202-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 03 Jun 2025 09:19:17 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18965
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/18969
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Hi,
+commit aaf7188d7f77bb8a6e043c70dc6cc6616c427762 upstream.
 
-Series backports the Renesas RZ/G3S SCIF support to v5.10.y CIP.
+The Renesas RZ/G3S SoC has 6 SCIF interfaces. SCIF0 is used as debug
+console. Add the remaining ones.
 
-Thank you,
-Claudiu Beznea
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/20241115134401.3893008-5-claudiu.beznea.uj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 90 ++++++++++++++++++++++
+ 1 file changed, 90 insertions(+)
 
-Claudiu Beznea (7):
-  clk: renesas: r9a08g045: Add clock, reset and power domain for the
-    remaining SCIFs
-  serial: sh-sci: Update the suspend/resume support
-  arm64: dts: renesas: r9a08g045: Add the remaining SCIF interfaces
-  arm64: dts: renesas: rzg3s-smarc: Fix the debug serial alias
-  arm64: dts: renesas: rzg3s-smarc-switches: Add a header to describe
-    different switches
-  arm64: dts: renesas: rzg3s-smarc: Enable SCIF3
-  arm64: dts: renesas: r9a08g045s33-smarc-pmod: Add overlay for SCIF1
-
-Geert Uytterhoeven (1):
-  serial: sh-sci: Save and restore more registers
-
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi    | 90 +++++++++++++++++
- .../dts/renesas/rz-smarc-pmod1-type-3a.dtsi   | 45 +++++++++
- .../boot/dts/renesas/rzg3s-smarc-som.dtsi     | 25 +----
- .../boot/dts/renesas/rzg3s-smarc-switches.h   | 40 ++++++++
- arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi  | 21 +++-
- drivers/clk/renesas/r9a08g045-cpg.c           | 10 ++
- drivers/tty/serial/sh-sci.c                   | 96 ++++++++++++++++++-
- 7 files changed, 300 insertions(+), 27 deletions(-)
- create mode 100644 arch/arm64/boot/dts/renesas/rz-smarc-pmod1-type-3a.dtsi
- create mode 100644 arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
-
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+index 7913820d88e7..3a8ddfbe1aff 100644
+--- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+@@ -87,6 +87,96 @@ scif0: serial@1004b800 {
+ 			status = "disabled";
+ 		};
+ 
++		scif1: serial@1004bc00 {
++			compatible = "renesas,scif-r9a08g045", "renesas,scif-r9a07g044";
++			reg = <0 0x1004bc00 0 0x400>;
++			interrupts = <GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "eri", "rxi", "txi",
++					  "bri", "dri", "tei";
++			clocks = <&cpg CPG_MOD R9A08G045_SCIF1_CLK_PCK>;
++			clock-names = "fck";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A08G045_SCIF1_RST_SYSTEM_N>;
++			status = "disabled";
++		};
++
++		scif2: serial@1004c000 {
++			compatible = "renesas,scif-r9a08g045", "renesas,scif-r9a07g044";
++			reg = <0 0x1004c000 0 0x400>;
++			interrupts = <GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "eri", "rxi", "txi",
++					  "bri", "dri", "tei";
++			clocks = <&cpg CPG_MOD R9A08G045_SCIF2_CLK_PCK>;
++			clock-names = "fck";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A08G045_SCIF2_RST_SYSTEM_N>;
++			status = "disabled";
++		};
++
++		scif3: serial@1004c400 {
++			compatible = "renesas,scif-r9a08g045", "renesas,scif-r9a07g044";
++			reg = <0 0x1004c400 0 0x400>;
++			interrupts = <GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "eri", "rxi", "txi",
++					  "bri", "dri", "tei";
++			clocks = <&cpg CPG_MOD R9A08G045_SCIF3_CLK_PCK>;
++			clock-names = "fck";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A08G045_SCIF3_RST_SYSTEM_N>;
++			status = "disabled";
++		};
++
++		scif4: serial@1004c800 {
++			compatible = "renesas,scif-r9a08g045", "renesas,scif-r9a07g044";
++			reg = <0 0x1004c800 0 0x400>;
++			interrupts = <GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "eri", "rxi", "txi",
++					  "bri", "dri", "tei";
++			clocks = <&cpg CPG_MOD R9A08G045_SCIF4_CLK_PCK>;
++			clock-names = "fck";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A08G045_SCIF4_RST_SYSTEM_N>;
++			status = "disabled";
++		};
++
++		scif5: serial@1004e000 {
++			compatible = "renesas,scif-r9a08g045", "renesas,scif-r9a07g044";
++			reg = <0 0x1004e000 0 0x400>;
++			interrupts = <GIC_SPI 345 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 347 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 348 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 346 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 349 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 349 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "eri", "rxi", "txi",
++					  "bri", "dri", "tei";
++			clocks = <&cpg CPG_MOD R9A08G045_SCIF5_CLK_PCK>;
++			clock-names = "fck";
++			power-domains = <&cpg>;
++			resets = <&cpg R9A08G045_SCIF5_RST_SYSTEM_N>;
++			status = "disabled";
++		};
++
+ 		rtc: rtc@1004ec00 {
+ 			compatible = "renesas,r9a08g045-rtca3", "renesas,rz-rtca3";
+ 			reg = <0 0x1004ec00 0 0x400>;
 -- 
 2.43.0
 
