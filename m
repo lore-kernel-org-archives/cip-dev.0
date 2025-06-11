@@ -1,191 +1,161 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E1BBC71135
-	for <webhook@archiver.kernel.org>; Wed, 11 Jun 2025 22:07:29 +0000 (UTC)
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
- by mx.groups.io with SMTP id smtpd.web10.7732.1749679645712862483
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F124DC71135
+	for <webhook@archiver.kernel.org>; Thu, 12 Jun 2025 00:23:20 +0000 (UTC)
+Received: from AS8PR03CU001.outbound.protection.outlook.com (AS8PR03CU001.outbound.protection.outlook.com [52.101.71.68])
+ by mx.groups.io with SMTP id smtpd.web11.6115.1749674812732021162
  for <cip-dev@lists.cip-project.org>;
- Wed, 11 Jun 2025 15:07:26 -0700
+ Wed, 11 Jun 2025 13:46:53 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=grCIetml;
- spf=pass (domain: miraclelinux.com, ip: 209.85.219.182, mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e81a6da56b2so204572276.3
-        for <cip-dev@lists.cip-project.org>; Wed, 11 Jun 2025 15:07:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1749679645; x=1750284445; darn=lists.cip-project.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0hZ5+ey9al7dXJq0HlDVKzewdGwzVp44Itg/s3Fa8JE=;
-        b=grCIetml+oup2XeHX+Ot/NSrNi5hNETfNMz2vLgO2vmJbDlZPzY+DlVBp1gmPXEQZM
-         TSIs0dron2qSJQ7Pqr6KK0ByY4BXB93gOPFOLb16YjLgyCUXOeesnQ418NX+nhKrSCay
-         jZFlOIhP6Cvt/4nA7+YE1Q3KJmzoWeu1t36VbROy51kjN9aM6SgpNpJgHukfhfuQl/k0
-         iZRJTH6JqFYlC/HRQevcOZxRy/ANyTWcqeWuuE0ni1k0nJmdxkaK9e9Plv7bO69A844m
-         j8SNtr32/00Fv9KLu69UYPLsNqDXlwuZe2AB1uaYKPE1QzHiUU5erdlcbjV72nNKKl3s
-         65hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749679645; x=1750284445;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0hZ5+ey9al7dXJq0HlDVKzewdGwzVp44Itg/s3Fa8JE=;
-        b=gqKfRe7z9W6Wwg7L1IlhIlyxKFnMJYnY4GiNp93Vxvl9nW5srCutTFWh+uAuHfCxl5
-         sM1xR3uHVxd3tC8q3tVngmMCGkCtfxN+hLblETLUDDB1oU9XY9E3Fj7snMjonmzQ4/ey
-         1TdAUHuubfaN3/CQR7evOu6qZd1cOX8mr3gncErKuyluQEJOGVAXeJrvVCQSrg7bPPp3
-         mKZH8iim4HTUFYBSycnAqoIRZCqPYbpmFfSzR7uStomBahhrj6q5TQbpU/bMXvKkucEB
-         NRmud05QY+CLsdBnrtA8sql31ZeaR7dVpNOPCRunI6KKdJLRhKHOz+YwkaPKFpiPKdMO
-         G6FQ==
-X-Gm-Message-State: AOJu0YxRihPfSI0LJO0h+03ZnWEDaTXqhHcbLko6AZVXfa0ia8gk3hju
-	QjM4VicnKoBORJ8rr+sYa0BEjxaMMyN6J4OS3GsHz8hCp3zs/tWKVxaM11I8bs2i0XgPCWJ5Q3v
-	DD+jImsUkZnnoXvjHuERapZm0aPXS5H1jFqpM1U0dvzQbryv8y8qfkQ8=
-X-Gm-Gg: ASbGncsvMjxaS223SsFwfV3VmOfeoGnuwc8ihquQwDzoX6kzKOelDGq6N5+qTuw32g6
-	bqNCoe6HtwGdkpfW+9IegcgjaB03L4fj9FP6jZK50QTwHXKQTguCkN/W4ZFIVk7O+fT6p/+x4ln
-	+HNnyW1P+sA7bOSTbbuDzZTkrMfu76/TqVK8Kh3mYa2hLYOLaudalCO7g=
-X-Google-Smtp-Source: AGHT+IHrj/mBCAZ881VG58BmfQ5UKwtsXZNFYoKwqueOt+t3ayR7zI9zrtUz2GJx3x+Jz1af9n6Xkq0IuzjN4ajJlXA=
-X-Received: by 2002:a05:690c:690a:b0:70d:ed5d:b4b2 with SMTP id
- 00721157ae682-7115098f4b6mr14488527b3.13.1749679644523; Wed, 11 Jun 2025
- 15:07:24 -0700 (PDT)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=ejlyiGhY;
+ spf=pass (domain: siemens.com, ip: 52.101.71.68, mailfrom: gokhan.cetin@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oliX0iwS94g8gKl0qgZIBSi8Un1UU1KahcEH3sixHzXGP8G+W1+MVDw8Mn8kQU+NmDUqXelAw3K8ItldLTol2ljGKiWrhfw1recMUyYCU5wFH5d1N+5eMEcw0o4SMrJl79sO+Qo3AR+KmrvnZ9uSMT/MjvJllTtWVmg1FZOJNdxlxCWguj4mFr0bz1Ri2o1zLUsZYxXb2C81pZRnZe6w7JYUbiiNsU80/q0rY741oHL/Ucn+9uP52lBviADpNvPnSWywIWuyxeNdQOPOcIua6DGU0ZBq0GP5K7TVnkyigDIHmJZDro3/RLYHAGbt0uHc6yRwIfdhkzHJq2GjLvaKWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aw6F9Ve70NYRMfBGc1GpjF7uugouNYqVCLzs0Qr3P8o=;
+ b=oLHrYCpzaGpqTYBrQP3LAKfO7xwh6KfYGFU/CH6miON0z+ZT57lcpBQ1QvnbLl030qcrVqStsiEml6WDJcdjOFcvIqbLBuWSy+GD8DM9DtDM7cBTUwUCWsI0L+MbCxprYbCEls1MHiLc937mNHDkZNZPbCbiOhflEQ59E97TYdzxVd+lKoEjhX/ObJJJ7ps1YBKi7muRWKBxXiiMSWlkBeDPVM7+Bt61t7aKEdM18G5YWsEXKN2/zdMtwwYfEiS1N7N7iWZYGp/nBBBgRnMlnjQCipz7jSRQvUr0iZXwMgp61ez9NuH+nY3f7BNlU2HGWLwOdt7irv/qRxRE6xPAYw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aw6F9Ve70NYRMfBGc1GpjF7uugouNYqVCLzs0Qr3P8o=;
+ b=ejlyiGhY0U0cvRLZfmifrdUqQP7NNjMYUXbNOuOSbnHmCO2QOx+Fy4kzaT1c3wb8LU7Q9D+b7adhw2LKieEdvCedRovwqu00YVLPeOMDG1uw8fh02lyXtogylTcuIJSgmNxZOdizBGVryYYzAbY90bpSw3a2CklJpkItgjhy4VzSDsT7lANWHxolfAsRv+PDRPeFXl5H6bWDlmkF5a5oR0qH94MCOWzkJvegRWlYhXT7YEVq6tpYEZtXLEh9Kulryg7aN3WaIYXAmXEUyt6UA28qWDj5D9KgFqrZM6RH8iY+qqctFVsB9nxqSV70eLtvKDWtju4CaC9TkpVsTRcaqg==
+Received: from PRAPR10MB5422.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:27a::6)
+ by DU0PR10MB5605.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:31b::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.30; Wed, 11 Jun
+ 2025 20:46:46 +0000
+Received: from PRAPR10MB5422.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::1432:b18b:182c:9158]) by PRAPR10MB5422.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::1432:b18b:182c:9158%4]) with mapi id 15.20.8835.018; Wed, 11 Jun 2025
+ 20:46:45 +0000
+From: "Cetin, Gokhan" <gokhan.cetin@siemens.com>
+To: "Kiszka, Jan" <jan.kiszka@siemens.com>, Claudius Heine <ch@denx.de>,
+	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
+CC: "quirin.gylstorff@siemens.com" <quirin.gylstorff@siemens.com>, "Heinisch,
+ Alexander" <alexander.heinisch@siemens.com>
+Subject: Re: [PATCH v6 0/4] initramfs-crypt-hook patch
+Thread-Topic: [PATCH v6 0/4] initramfs-crypt-hook patch
+Thread-Index: AQHb0W3Z1EgfPBWCLU+eSDzvsYtruLPvi3CAgAABVgCADvAhYA==
+Date: Wed, 11 Jun 2025 20:46:45 +0000
+Message-ID: 
+ <PRAPR10MB542211966641957AF9AD3C788075A@PRAPR10MB5422.EURPRD10.PROD.OUTLOOK.COM>
+References: 
+ <20250320-initramfs-crypt-hook-patches-2-v6-0-ef10c11cad94@denx.de>
+ <69ab7fad-b2e4-4fe7-bb16-1d6e0bbb4d5a@siemens.com>
+ <DABWFSN87AVE.H2RGOY175Z6S@denx.de>
+ <a22f282c-efea-4cfd-9870-118e1950b828@siemens.com>
+In-Reply-To: <a22f282c-efea-4cfd-9870-118e1950b828@siemens.com>
+Accept-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+ MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ActionId=bbfd808f-46c5-4369-af78-38b09e01ad97;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=true;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=restricted;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2025-06-11T20:31:59Z;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Tag=10,
+ 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PRAPR10MB5422:EE_|DU0PR10MB5605:EE_
+x-ms-office365-filtering-correlation-id: 2f829aee-9313-4c62-f516-08dda9291462
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info: 
+ =?iso-8859-1?Q?X4LuuDEYXQ1tuTw0d5yAgysfiLc1znqRxQ04WVUlTCcYV3q2rY3/lBMLiZ?=
+ =?iso-8859-1?Q?c0+IJu6EvFHnxk+q1t2imqQxLDwhyp/+G0KMNIiycB6Aoo3Q+p4tjHbomj?=
+ =?iso-8859-1?Q?EQWcN9aQXft/8L0PoSGCkQ7zNcWsJq5wY3irrh7lZmJFnjuMuBtcmEJyNC?=
+ =?iso-8859-1?Q?KjoMBeHE8aKfnGcvqfM99OwUCrQW+W5oEGwwGI/szP9sksdhiBF7EBHQmF?=
+ =?iso-8859-1?Q?OscfaLHmxWXJBGVw942x58PWH3okarhT1ZkO4rfp+cRj85VmmyzXAUDueu?=
+ =?iso-8859-1?Q?+aNAhyryxuSveXC9lICsiNL9ZKzqfSxBKaEg7nDsuOzcWlpLTnBzPZlwYw?=
+ =?iso-8859-1?Q?vHUl+wcgBPQBUi+KLca6NrFjJ2xSpw4mefRCmRoHbOQ4gIsFNs+UbjTOdK?=
+ =?iso-8859-1?Q?4EAVJOV/R4xacdS+9Ia3XSO44VveD61suBBt0SlaqGEkFsAW5LhaVZ0c40?=
+ =?iso-8859-1?Q?q6iKrwfNkdzTa0jHlGaJmZ7kiZ/NYvGYJ6Rl7wLvexlhjigcmx0Z83pyC2?=
+ =?iso-8859-1?Q?JQ0sfj6ImIzRsqBHiPcCUuJXCbFyxV/tO7fmKUIHzWSmtBWhBBXyCqMvK9?=
+ =?iso-8859-1?Q?C5OVtiX2vPP+R9MJichmcijmXZfZlIo1SAutuBVhuwcM3vMqq3apsJI6gc?=
+ =?iso-8859-1?Q?8gu9iAUMCue43cVN1vpmyAYIF/6Mw5IkwgBa/O9NZVwYtFkFz4kwdj+0GL?=
+ =?iso-8859-1?Q?F5TynqSbCduTxtkkQRHHbflpQYB47Sd9UpVl+u/QfmSlJb1/YkHtCU/cJj?=
+ =?iso-8859-1?Q?ggk9cKs0MCd7L4Py3IYaTneD+7op3PnAyKtMh13i6gx/aM4a+0y8Fp1WiP?=
+ =?iso-8859-1?Q?mAiKEcOGQXnE7Dad9O5af4VRIPMyswCvgWLlKYSRX4MMMfEusUOeL2V4IJ?=
+ =?iso-8859-1?Q?JlI8gihpu702mSwqGrUhpFv8krwxvzFRZS4gVe3Bg4J4mT62RJl71UlceX?=
+ =?iso-8859-1?Q?LFy+RjkmsCfvvwsR/iBfuBqbIwzN6j12A79KORFQ7yFymcaWzCs9nxJVML?=
+ =?iso-8859-1?Q?4vncO4Qvl50vuU22tO6d7ybKGfn3P2zG8BosSfWhiswGNrAtn6+jyRCXUU?=
+ =?iso-8859-1?Q?qu08m6n3ihkMFwxUohoQsQvg3kiUzEfuY/Rumn3vfAzFwW8pOtGJtvDHLF?=
+ =?iso-8859-1?Q?ODNgDXYNy6i7qzFqSBBnizU7FjO2N/24YNSNFebxMYjsWK3K9cRhbiV08M?=
+ =?iso-8859-1?Q?btNwxYOvNDK1HtnbTLy3SeaiEe2ZpBqdhMQN8CSiBn/RgJrAPPBAggcUN6?=
+ =?iso-8859-1?Q?Dh7W2PIT2QuqhS+HxXcRBqtoLD3fYLkmzu+YKCGFJjPDxf8O7OruMUjSKe?=
+ =?iso-8859-1?Q?xqLDlFXxAUYm0Ije2DzknpiG6kjUrPOWdpH0HWrpiCntul2tahVUYyurxx?=
+ =?iso-8859-1?Q?cUX44YEROvFiZaSbcYFppbvMgas8/N67m5GFKceI+dJhgtjJ/UMfosSupV?=
+ =?iso-8859-1?Q?H6fyCyVV+qU7yVfATLxPkSFOqD3zzZIFAbQlUjRJYES6d6mCEQajLOSf3D?=
+ =?iso-8859-1?Q?aJ+PVTcAdOGsOWOEuCL2Nf9ZqMpFUGweCjxuO8Gna6MyZgGwINCZS1yG27?=
+ =?iso-8859-1?Q?pJ8HCNk=3D?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PRAPR10MB5422.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-8859-1?Q?YRufcygOKiGrILvBLX9BQPN7jEMuLr/o3D2uLsgnx2Lsp8LkctADrLJiqT?=
+ =?iso-8859-1?Q?zFhiJiRN+K6TQIsiL7IqFG/XbLeeuSZhL7n1cVNX4lJ/jpbulbCFzrP1bo?=
+ =?iso-8859-1?Q?y0yN5P+WFXCNGE/UsGn+xyjjiUbyVlmnGyV9jcl+zHArtMT7RNOYngdk5Q?=
+ =?iso-8859-1?Q?4cUEN/GVs559nh4LCUjH7ADqiEv7ltv5R3A214tsLjn+SBKa9CKAUuAalF?=
+ =?iso-8859-1?Q?VMkMR2O7WSWhjDNIBfMOHtKwRhSECJN9bYSn38YVUujxRvinRpz7eOcEa+?=
+ =?iso-8859-1?Q?bX16wZpadtykCsp1F+cDWW98nFKv7njEYCWWNlcLTt7cQv9xLTXVKvt/6j?=
+ =?iso-8859-1?Q?bv/wBwI4rhWKSbyhVWr6cw5gfUbOBeUPom3br/TRY1QVD4pj0yGIYqnWvr?=
+ =?iso-8859-1?Q?b8s+0AWtqCY1b3cg8qQhZSziq7OUoTOebSLDt00PgLllsk25aiBw9dmgnf?=
+ =?iso-8859-1?Q?a17JVjpz1vaJ4iI62wnsErx5+9YMBGUnKJWlGvmpIyzvNlx8O/TRjlva2j?=
+ =?iso-8859-1?Q?V77U491X8YJgcS8Xqy+F0L7woWwVehkVhaFlyoDi50Dk15TsLR+cMmI7mb?=
+ =?iso-8859-1?Q?LlfnT0OiVy5uTqqDrRXF4YV9bAhrLV1KgpkMwSDZ7RJFleWDnhLQJZOW6U?=
+ =?iso-8859-1?Q?LLzijOZHdNmuBTyhv9cr7KBk4cP66EDBmamLSnHhlj57yxrubTXVoEoaNj?=
+ =?iso-8859-1?Q?3zWW5Oxm7hLzh31BQBWN9IxtBoznWtgk184A8S4QpV4qFeyAigbTxxIz+J?=
+ =?iso-8859-1?Q?8eprjoWYS+avGqmkY1NCxAgvtVjMqzvrsO3HAE2mG7kbyfmYEbdQNo17iP?=
+ =?iso-8859-1?Q?niEbR+NtOJF7/bAzkgHzyQWyQwm627eRAcUBTEDf8evWW5agJ66izyWujH?=
+ =?iso-8859-1?Q?5FKR9sbSilp9v+Yd4GY1VAj6VPqfxShXgBZm3wau1Pybuae80kKDNRAXm4?=
+ =?iso-8859-1?Q?LjYH7xP/xrWcjrgBtteLjZHlWS6CdsQDhmZPFFt+GvYfqzNNE4Uy/T/Fny?=
+ =?iso-8859-1?Q?ay1mE9+qj1ns7bbFbuVt2VpbnOVaX8gp2lJ5qRZAeVQvVCdaSMDLjL5Ugp?=
+ =?iso-8859-1?Q?hiGk8tMbDGuuW/XQNTOHeYdz6r6q3fhpFWGm2FA0gHjPC65dK85XhuY9vB?=
+ =?iso-8859-1?Q?BtJDi2otFCccIYrTzceiY5egYuQW2qioaN2eu5Ivd5zy8SdhzMmVg3FcAZ?=
+ =?iso-8859-1?Q?iKr+7iWyj0mM7ylk8I0P7e6+v0dA+8dMdLnC0lP/Q5Jxlimu6gVuqwsnt8?=
+ =?iso-8859-1?Q?yNDxm6dAihgSpEHV+kLpiSy/KBzuBNWU4pWgu8tgHo+cD8tJyw2K7jcjlq?=
+ =?iso-8859-1?Q?5HlmNK9X3LG1IgfeszpwGml/hay+DyKD14XtGgWc7WWpOXh4KdHzb/HGQK?=
+ =?iso-8859-1?Q?Ffwwhc5rz3tuuXs6ArKz8OLgpjJkav9rqLGi1gW+MSQ1Pa/0igoL5LotKr?=
+ =?iso-8859-1?Q?krkEpLERP0K/W7uamr43AWrdrNRpe56txtgKAA2Q9+MgOlnUmho7TNCb7b?=
+ =?iso-8859-1?Q?0TZ9nCrN5o2J8W7a8m9HszvKWisRnv0ArqNixiYodUTUXL5yvTbYpC/848?=
+ =?iso-8859-1?Q?UFtPk0kyAXNaGV1wM/8aMoQZROltm6nZnvVvzqa6LyX8mec5pxD13TgrO3?=
+ =?iso-8859-1?Q?PTEluzFyCNwzFTGcsouqqJhzIlvaXZPDN3?=
 MIME-Version: 1.0
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 12 Jun 2025 07:06:48 +0900
-X-Gm-Features: AX0GCFuXUUbYv_KS-50KbLJIQR5iQCAgqlezG7f_CZSbl6B2yDSK7Fx2zRKa9C0
-Message-ID: <CAODzB9oho334Pt+7DSr1YPoftCaxiM3KWmCzEKcM3QTc=eP2SQ@mail.gmail.com>
-Subject: [kernel-cve-report] New CVE entries this week
-To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PRAPR10MB5422.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f829aee-9313-4c62-f516-08dda9291462
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jun 2025 20:46:45.6702
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: uENJ6ykT+zrkHEuuu/rDsAxvX61fcx8SXvLkq0v7sY+ae88FhyE10uhRAxCGubNrRrDQenxESEn+lIn2qe6JTDRLa0fALu91SYs1slsgXJQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB5605
+Content-Language: en-US
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 11 Jun 2025 22:07:29 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19035
+ <cip-dev@lists.cip-project.org>; Thu, 12 Jun 2025 00:23:20 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19036
 
-Hi!
+Hi,
 
-It's this week's CVE report.
-
-This week reported 5 new CVEs and 2 updated CVEs.
-
-* New CVEs
-CVE-2025-38000: sch_hfsc: Fix qlen accounting bug when using peek in
-hfsc_enqueue()
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-38000
-
-Introduced by commit 12d0ad3 ("net/sched/sch_hfsc.c: handle corner
-cases where head may change invalidating calculated deadline") in
-v4.8-rc1.
-Fixed in v6.15.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [3f981138109f63232a5fb7165938d4c945cc1b9d]
-stable/5.10: [f9f593e34d2fb67644372c8f7b033bdc622ad228]
-stable/5.15: [89c301e929a0db14ebd94b4d97764ce1d6981653]
-stable/5.4: [1034e3310752e8675e313f7271b348914008719a]
-stable/6.1: [f1dde3eb17dc1b8bd07aed00004b1e05fc87a3d4]
-stable/6.12: [49b21795b8e5654a7df3d910a12e1060da4c04cf]
-stable/6.6: [93c276942e75de0e5bc91576300d292e968f5a02]
-
-CVE-2025-38001: net_sched: hfsc: Address reentrant enqueue adding
-class to eltree twice
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-38001
-
-Introduced by commit 37d9cf1 ("sched: Fix detection of empty queues in
-child qdiscs")
-in 5.0-rc3.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [ac9fe7dd8e730a103ae4481147395cc73492d786]
-stable/5.10: [6672e6c00810056acaac019fe26cdc26fee8a66c]
-stable/5.15: [2c928b3a0b04a431ffcd6c8b7d88a267124a3a28]
-stable/5.4: [e5bee633cc276410337d54b99f77fbc1ad8801e5]
-stable/6.1: [a0ec22fa20b252edbe070a9de8501eef63c17ef5]
-stable/6.12: [2f2190ce4ca972051cac6a8d7937448f8cb9673c]
-stable/6.6: [295f7c579b07b5b7cf2dffe485f71cc2f27647cb]
-
-CVE-2025-38002: io_uring/fdinfo: grab ctx->uring_lock around
-io_uring_show_fdinfo()
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-38002
-
-Introduced by commit 79cfe9e ("io_uring/register: add
-IORING_REGISTER_RESIZE_RINGS") in v6.13-rc1.
-Fixed in v6.15-rc7.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [d871198ee431d90f5308d53998c1ba1d5db5619a]
-
-CVE-2025-38003: can: bcm: add missing rcu read protection for procfs content
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-38003
-
-Introduced by commit f1b4e32 ("can: bcm: use call_rcu() instead of
-costly synchronize_rcu()") in v5.19-rc6.
-Fixed in v6.15.
-
-Bug introduced commit was backported to following branches.
-cip/4.19 cip/4.19-rt cip/4.19-st cip/5.10 cip/5.10-rt stable/5.10
-stable/5.15 stable/5.4
-
-Fixed status
-mainline: [dac5e6249159ac255dad9781793dbe5908ac9ddb]
-stable/5.10: [659701c0b954ccdb4a916a4ad59bbc16e726d42c]
-stable/5.15: [0622846db728a5332b917c797c733e202c4620ae]
-stable/5.4: [19f553a1ddf260da6570ed8f8d91a8c87f49b63a]
-stable/6.1: [6d7d458c41b98a5c1670cbd36f2923c37de51cf5]
-stable/6.12: [63567ecd99a24495208dc860d50fb17440043006]
-stable/6.6: [1f912f8484e9c4396378c39460bbea0af681f319]
-
-CVE-2025-38004: can: bcm: add locking for bcm_op runtime updates
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-38004
-
-Introduced by commit ffd980f ("[CAN]: Add broadcast manager (bcm)
-protocol") in v2.6.25-rc1.
-Fixed in v6.15.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [c2aba69d0c36a496ab4f2e81e9c2b271f2693fd7]
-stable/5.10: [7595de7bc56e0e52b74e56c90f7e247bf626d628]
-stable/5.15: [fbd8fdc2b218e979cfe422b139b8f74c12419d1f]
-stable/5.4: [8f1c022541bf5a923c8d6fa483112c15250f30a4]
-stable/6.1: [2a437b86ac5a9893c902f30ef66815bf13587bf6]
-stable/6.12: [cc55dd28c20a6611e30596019b3b2f636819a4c0]
-stable/6.6: [76c84c3728178b2d38d5604e399dfe8b0752645e]
-
-
-* Updated CVEs
-
-CVE-2025-22122: block: fix adding folio to bio
-
-stable/6.12 was fixed.
-
-Fixed status
-stable/6.12: [0c60158ff14df04c92792dd9b1809372b095040f]
-stable/6.14: [b96e0af1b1c99cb7e6188b6fa4963a4e47beb01e]
-
-CVE-2025-22123: f2fs: fix to avoid accessing uninitialized curseg
-
-stable/6.12 was fixed.
-
-Fixed status
-stable/6.12: [bf49527089ec1ba894c6e587affabbfb2329f52e]
-stable/6.14: [7f90e5d423cd2d4c74b2abb527872f335108637f]
-
+One feedback from my side:
+`tpm2_createpolicy` is still used by the `clevis` backend and should be par=
+t of the HOOK_COPY_EXECS, that patch 1/4 removes it.
+Probably overlooked because it has no direct use in the encrypt_partition s=
+cript.
 
 Regards,
--- 
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
-
-Email :masami.ichikawa@cybertrust.co.jp
-          :masami.ichikawa@miraclelinux.com
+Gokhan
 
