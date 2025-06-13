@@ -2,66 +2,67 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB17C71153
-	for <webhook@archiver.kernel.org>; Fri, 13 Jun 2025 10:15:09 +0000 (UTC)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
- by mx.groups.io with SMTP id smtpd.web11.7069.1749809708945316067
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02296C71151
+	for <webhook@archiver.kernel.org>; Fri, 13 Jun 2025 10:15:10 +0000 (UTC)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+ by mx.groups.io with SMTP id smtpd.web11.7067.1749809706935708264
  for <cip-dev@lists.cip-project.org>;
- Fri, 13 Jun 2025 03:15:09 -0700
+ Fri, 13 Jun 2025 03:15:07 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=Iu/kg+YS;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.54, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ade48b24c97so285311166b.2
-        for <cip-dev@lists.cip-project.org>; Fri, 13 Jun 2025 03:15:08 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=Qthc+hkg;
+ spf=pass (domain: tuxon.dev, ip: 209.85.208.51, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-604f5691bceso4190323a12.0
+        for <cip-dev@lists.cip-project.org>; Fri, 13 Jun 2025 03:15:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1749809707; x=1750414507; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1749809705; x=1750414505; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nVZnathdqWSPliV4N2/CcVk9Ik+y4W1g8AYHgGX+/h0=;
-        b=Iu/kg+YSwqsXt9scKbJtsNzJYQkWRgj06UXc8zdmCkuo35IQwWRcRPTnq2DlNM0LEd
-         v/exPx1/DWx6J6qds/ruk1sOX0WyKdzsX96i5/F34MMMzTS6edxUORIm7rXNrfwBBWmD
-         pK0LCQPFGi3XdEUx8SlVDjK95oBsYzKwOu0EaWd+1a566UF7pd/y+K6QgMhpvxbCp8f/
-         j1EHIhxIwZRC2jjcn52nYEwdAGjICzd18m/7xc4kSagAlheVbPQOeJaJ9xPsfBISLC2/
-         +gollHdmQyqgvC7IwrHFqYqH7yp8BvV4itpQE6BPUCyTzP2I0ckl8WwpduzDGDXh2rV5
-         ndsg==
+        bh=uH5wDizsWU5kOMHjwRpVGmiDa30POD+WZJPQmgh1jzE=;
+        b=Qthc+hkgPRjaChreQ13tRs0bK8hkJUXCBWy8NGtDK5xGaVycxFYj2zGjQ+Wi8SP28f
+         butIYPgJTHIIfGWFnbo+GfD1+/oAKBcW6Gw6MQBXoO4ALDkjcla6UmJzbg9V7wZTO4yP
+         XcO73cAsFTKHiS8KkQk5S6mswwI/Vpy0uVdvzXoFZ1Q38lXVexx0l544m8NVUaT5KqOV
+         pPpM/40aNM4JU8YkHcAyxp7u14mvr56CuUe0b3rauzerDmUhtJa7XgQtvAEVXW5kVKEz
+         7VNsv0ez32QaG8soYk0uVwsDsrtTGJbOSNh6sYgNIcy+CQURRdbop0oVHsGjZXfJT74b
+         GhYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749809707; x=1750414507;
+        d=1e100.net; s=20230601; t=1749809705; x=1750414505;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nVZnathdqWSPliV4N2/CcVk9Ik+y4W1g8AYHgGX+/h0=;
-        b=o7YeZwCx1Xas2wjKvcFNaa6fWYd9azbSCdoePfCNzZTxEX15hY2ob9JwRwucCeiq1Y
-         7x7J5CAEgysbzBUVLQNLkmqZfVySzu7DEZ9JeTjiocgMYKv7vMkR4MVCEM0+GL9s+uQ4
-         EesddOSOvini6Wh6Sssn2vMllhwAxqYfXenqe6Co7KUSSylnNQ57bWd2xVZU5F8dOFq3
-         MgpTQxefKGmLiynHKJdQCW24Mxc83cp/XQK+VQhguQruyTgXTQadurzF9qtomyKOZZyI
-         4eHBiQPugy5fTLrYqI0COJnrUrsMAafdRJPRZ/LvC/23DtK749GHbjQndz20U2GOWWa3
-         h8Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqzg4krWtn2nk2qDKNzdCYlpsvK2zvCPEA1wzXXQSdQpJ7YEbhFh+I5S26+YB/jVmza76S/ELu@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yw5BPpRE0ZUjah7luJc8UICXEuD7dG0d5t7t2CeAz6yyJBPBsgz
-	WFkSCyv8vOGEa/6XFl6crvHSeyzNyOWCTLtyDMvRhoHDgGhk4h0LJsHNKUq+OVpJzps=
-X-Gm-Gg: ASbGnctRQu2MIZknTEoDnn2Bjqyc7YETlKjqaMt50EXje8uXkbFYGHBWbQtNNOBybXW
-	zsgmifRnZdMzTmzTwWn5yYBePYmZEzqL8RQEmIEys2Zey8ejo00OVsweYmarS/tSDzcwphubEYM
-	qB0Q5+yIrlLXL6JjaPajglQwpg9ligxkew9v4Ke/t5XztDATdMIeIMz9zrDrek81T2WP6ZN2G1a
-	GmYCQOdQd4v3AUGZ9ZIHBynR4rODp2cLguYw8xzhV5Dh0aVGXhI0hZQxiGbSId6Qwj0rq/gHUuB
-	esVf6e7vAYEFplu4BbeqKKn1tS0eRrjZnlWHOLrOudkCud6REo/ZB4g7V2j5vx0X7Wry0Bg6eei
-	AgkkXf6nb8eUwJfBW
-X-Google-Smtp-Source: AGHT+IGTzPMActBDjR56kols01ko1so9WMc+gyXdbCDDDPYLuGdw1Zw8ZF2FgLOUwiyeaT6xoPvilQ==
-X-Received: by 2002:a17:907:6e89:b0:ad2:549b:4c8d with SMTP id a640c23a62f3a-adec5c7c4dfmr231501266b.51.1749809707247;
-        Fri, 13 Jun 2025 03:15:07 -0700 (PDT)
+        bh=uH5wDizsWU5kOMHjwRpVGmiDa30POD+WZJPQmgh1jzE=;
+        b=TX4G5JayHyKHQbelohciNk078hUV3AZNwmKTKEW3qQSLxpZNKLUC0bQ18SyvbOTeXS
+         gWdIqaFSRg7M5SqxW3gV+sOZb1631yD+PKHv5vCXLJV9LYt4xa77We40XzfBgUBml+KD
+         PmRRufv+ln/RPaMoOfeCr5vusJguxChJDWC8nRwmJzd/kVq6ZguJamiVlzjTk8TtwCRz
+         QnyPyA5RsoQcl70idYxawdrEmdtFYpiunBLSOfePaBVbM6uTYlUuw2DaSvAp25lSGjuU
+         D21krNQ8eHUBUp+eF+LcxIWLTXxyl0Zs92qxPBBBelDW8xJnNvJqd9UT6iCBiyZyKDQF
+         okFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXaBz3IZwqYOsLERqvRC0enNysQZAzAdKQ36+83LMVguy4MWsGSf08uvgipPsYvA8G0nahWZwhz@lists.cip-project.org
+X-Gm-Message-State: AOJu0Yxu4ABd1sSOHEqIdnR0U+3zeUvoTagYkrGutY3V4129cgYcDuMs
+	CsCWpFwB7+lQRIX/k6CR1nHLxQ1NxLqRWMck9ZCe2r6u6XEuC98Jt8MGfICeJS9H8BMNKZcS5jq
+	sw60M
+X-Gm-Gg: ASbGncs0n0wP0NmCzDCSVEP7Rl0MzFEfN7RzF0thKp9dTJQIS80kKZlAbAW9cx3XcNd
+	mfiesgEBLdUFA+PiN54hV/FYF+Y7Vx2xn81LCRo5h/q74SBPqWIDxA/7OcdFimXTaKomiEPV4Ln
+	mjddpHfwb2eE5vUSjWXumFW261JdJWBG9bHq++DK+i/h/wmJjazm8wCnWnzRQ2d5z7lod6vmqjs
+	GBPZpXONGQCDHHH5tKctICY/1dulQSWnYtPm6f0K4tAh+izH5jCIJmoZBAaj20S1qhRxzrYLEkW
+	Am/W5Hz1ufD6JiU5LeM0xzi90ywGDu83AReTy1a1mSPSqQutkGQsxnaCQDEu1uS4uMRqE2cXZtF
+	LuHqef2Ohi4E8Qjx6
+X-Google-Smtp-Source: AGHT+IExUdldqE4iCZwyViZafLPrw2EkB76e0oxnPkzLDkRJQaTF4BoMOYbNy/Ko+qi7m60ez/Tykg==
+X-Received: by 2002:a17:907:6d1c:b0:ad1:e67e:483 with SMTP id a640c23a62f3a-adec5c2acd6mr237283866b.45.1749809705013;
+        Fri, 13 Jun 2025 03:15:05 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.110])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec8159377sm105101466b.9.2025.06.13.03.15.06
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec8159377sm105101466b.9.2025.06.13.03.15.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 03:15:06 -0700 (PDT)
+        Fri, 13 Jun 2025 03:15:04 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 04/12] iio: adc: rzg2l_adc: Use read_poll_timeout()
-Date: Fri, 13 Jun 2025 13:14:53 +0300
-Message-ID: <20250613101501.262091-5-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 02/12] iio: adc: rzg2l_adc: Convert dev_err() to dev_err_probe()
+Date: Fri, 13 Jun 2025 13:14:51 +0300
+Message-ID: <20250613101501.262091-3-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250613101501.262091-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250613101501.262091-1-claudiu.beznea.uj@bp.renesas.com>
@@ -70,94 +71,140 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 13 Jun 2025 10:15:09 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19045
+ <cip-dev@lists.cip-project.org>; Fri, 13 Jun 2025 10:15:10 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19043
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit b7549624af04eb52cb28df57bee2bcc88be1adc0 upstream.
+commit a34dc289f89ecc4e967dfe6ec742aafdc5ae62f6 upstream.
 
-Replace the driver-specific implementation with the read_poll_timeout()
-function. This change simplifies the code and improves maintainability by
-leveraging the standardized helper.
+Convert all occurrences of dev_err() in the probe path to dev_err_probe().
+This improves readability and simplifies the code.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://patch.msgid.link/20241206111337.726244-7-claudiu.beznea.uj@bp.renesas.com
+Link: https://patch.msgid.link/20241206111337.726244-3-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/iio/adc/rzg2l_adc.c | 29 ++++++++++-------------------
- 1 file changed, 10 insertions(+), 19 deletions(-)
+ drivers/iio/adc/rzg2l_adc.c | 78 +++++++++++++++----------------------
+ 1 file changed, 32 insertions(+), 46 deletions(-)
 
 diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
-index 08b4d43aa3ea..48021edd622e 100644
+index b36048d7015d..cf95aeab7cf9 100644
 --- a/drivers/iio/adc/rzg2l_adc.c
 +++ b/drivers/iio/adc/rzg2l_adc.c
-@@ -13,6 +13,7 @@
- #include <linux/iio/iio.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-+#include <linux/iopoll.h>
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-@@ -111,7 +112,7 @@ static void rzg2l_adc_pwr(struct rzg2l_adc *adc, bool on)
+@@ -305,15 +305,12 @@ static int rzg2l_adc_parse_properties(struct platform_device *pdev, struct rzg2l
+ 		return -ENOMEM;
  
- static void rzg2l_adc_start_stop(struct rzg2l_adc *adc, bool start)
- {
--	int timeout = 5;
-+	int ret;
- 	u32 reg;
- 
- 	reg = rzg2l_adc_readl(adc, RZG2L_ADM(0));
-@@ -124,15 +125,10 @@ static void rzg2l_adc_start_stop(struct rzg2l_adc *adc, bool start)
- 	if (start)
- 		return;
- 
--	do {
--		usleep_range(100, 200);
--		reg = rzg2l_adc_readl(adc, RZG2L_ADM(0));
--		timeout--;
--		if (!timeout) {
--			pr_err("%s stopping ADC timed out\n", __func__);
--			break;
--		}
--	} while (((reg & RZG2L_ADM0_ADBSY) || (reg & RZG2L_ADM0_ADCE)));
-+	ret = read_poll_timeout(rzg2l_adc_readl, reg, !(reg & (RZG2L_ADM0_ADBSY | RZG2L_ADM0_ADCE)),
-+				200, 1000, true, adc, RZG2L_ADM(0));
-+	if (ret)
-+		pr_err("%s stopping ADC timed out\n", __func__);
- }
- 
- static void rzg2l_set_trigger(struct rzg2l_adc *adc)
-@@ -335,7 +331,6 @@ static int rzg2l_adc_parse_properties(struct platform_device *pdev, struct rzg2l
- 
- static int rzg2l_adc_hw_init(struct device *dev, struct rzg2l_adc *adc)
- {
--	int timeout = 5;
- 	u32 reg;
- 	int ret;
- 
-@@ -348,14 +343,10 @@ static int rzg2l_adc_hw_init(struct device *dev, struct rzg2l_adc *adc)
- 	reg |= RZG2L_ADM0_SRESB;
- 	rzg2l_adc_writel(adc, RZG2L_ADM(0), reg);
- 
--	while (!(rzg2l_adc_readl(adc, RZG2L_ADM(0)) & RZG2L_ADM0_SRESB)) {
--		if (!timeout) {
--			ret = -EBUSY;
--			goto exit_hw_init;
--		}
--		timeout--;
--		usleep_range(100, 200);
+ 	num_channels = device_get_child_node_count(&pdev->dev);
+-	if (!num_channels) {
+-		dev_err(&pdev->dev, "no channel children\n");
+-		return -ENODEV;
 -	}
-+	ret = read_poll_timeout(rzg2l_adc_readl, reg, reg & RZG2L_ADM0_SRESB,
-+				200, 1000, false, adc, RZG2L_ADM(0));
-+	if (ret)
-+		goto exit_hw_init;
++	if (!num_channels)
++		return dev_err_probe(&pdev->dev, -ENODEV, "no channel children\n");
  
- 	/* Only division by 4 can be set */
- 	reg = rzg2l_adc_readl(adc, RZG2L_ADIVC);
+-	if (num_channels > RZG2L_ADC_MAX_CHANNELS) {
+-		dev_err(&pdev->dev, "num of channel children out of range\n");
+-		return -EINVAL;
+-	}
++	if (num_channels > RZG2L_ADC_MAX_CHANNELS)
++		return dev_err_probe(&pdev->dev, -EINVAL,
++				     "num of channel children out of range\n");
+ 
+ 	chan_array = devm_kcalloc(&pdev->dev, num_channels, sizeof(*chan_array),
+ 				  GFP_KERNEL);
+@@ -441,62 +438,51 @@ static int rzg2l_adc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(adc->base);
+ 
+ 	adc->pclk = devm_clk_get(dev, "pclk");
+-	if (IS_ERR(adc->pclk)) {
+-		dev_err(dev, "Failed to get pclk");
+-		return PTR_ERR(adc->pclk);
+-	}
++	if (IS_ERR(adc->pclk))
++		return dev_err_probe(dev, PTR_ERR(adc->pclk),
++				     "Failed to get pclk");
+ 
+ 	adc->adclk = devm_clk_get(dev, "adclk");
+-	if (IS_ERR(adc->adclk)) {
+-		dev_err(dev, "Failed to get adclk");
+-		return PTR_ERR(adc->adclk);
+-	}
++	if (IS_ERR(adc->adclk))
++		return dev_err_probe(dev, PTR_ERR(adc->adclk),
++				     "Failed to get adclk");
+ 
+ 	adc->adrstn = devm_reset_control_get_exclusive(dev, "adrst-n");
+-	if (IS_ERR(adc->adrstn)) {
+-		dev_err(dev, "failed to get adrstn\n");
+-		return PTR_ERR(adc->adrstn);
+-	}
++	if (IS_ERR(adc->adrstn))
++		return dev_err_probe(dev, PTR_ERR(adc->adrstn),
++				     "failed to get adrstn\n");
+ 
+ 	adc->presetn = devm_reset_control_get_exclusive(dev, "presetn");
+-	if (IS_ERR(adc->presetn)) {
+-		dev_err(dev, "failed to get presetn\n");
+-		return PTR_ERR(adc->presetn);
+-	}
++	if (IS_ERR(adc->presetn))
++		return dev_err_probe(dev, PTR_ERR(adc->presetn),
++				     "failed to get presetn\n");
+ 
+ 	ret = reset_control_deassert(adc->adrstn);
+-	if (ret) {
+-		dev_err(&pdev->dev, "failed to deassert adrstn pin, %d\n", ret);
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "failed to deassert adrstn pin\n");
+ 
+ 	ret = devm_add_action_or_reset(&pdev->dev,
+ 				       rzg2l_adc_reset_assert, adc->adrstn);
+-	if (ret) {
+-		dev_err(&pdev->dev, "failed to register adrstn assert devm action, %d\n",
+-			ret);
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "failed to register adrstn assert devm action\n");
+ 
+ 	ret = reset_control_deassert(adc->presetn);
+-	if (ret) {
+-		dev_err(&pdev->dev, "failed to deassert presetn pin, %d\n", ret);
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "failed to deassert presetn pin\n");
+ 
+ 	ret = devm_add_action_or_reset(&pdev->dev,
+ 				       rzg2l_adc_reset_assert, adc->presetn);
+-	if (ret) {
+-		dev_err(&pdev->dev, "failed to register presetn assert devm action, %d\n",
+-			ret);
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "failed to register presetn assert devm action\n");
+ 
+ 	ret = rzg2l_adc_hw_init(adc);
+-	if (ret) {
+-		dev_err(&pdev->dev, "failed to initialize ADC HW, %d\n", ret);
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "failed to initialize ADC HW\n");
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0)
 -- 
 2.43.0
 
