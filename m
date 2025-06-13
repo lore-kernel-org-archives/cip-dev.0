@@ -2,66 +2,66 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC09C71148
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACBD2C61DB2
 	for <webhook@archiver.kernel.org>; Fri, 13 Jun 2025 10:16:40 +0000 (UTC)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
- by mx.groups.io with SMTP id smtpd.web10.7107.1749809791390853217
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+ by mx.groups.io with SMTP id smtpd.web11.7128.1749809790375165381
  for <cip-dev@lists.cip-project.org>;
- Fri, 13 Jun 2025 03:16:31 -0700
+ Fri, 13 Jun 2025 03:16:30 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=AIOuqZ1W;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.51, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-addcea380eeso337299666b.0
-        for <cip-dev@lists.cip-project.org>; Fri, 13 Jun 2025 03:16:31 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=qfhmpydS;
+ spf=pass (domain: tuxon.dev, ip: 209.85.208.51, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-60780d74c85so3031721a12.2
+        for <cip-dev@lists.cip-project.org>; Fri, 13 Jun 2025 03:16:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1749809790; x=1750414590; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1749809789; x=1750414589; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZdjUCVpqPUm8ixGqf+F8dk8bdPFxFedEDIckenWkGiA=;
-        b=AIOuqZ1Woed5nKc/8YSW6fKZ/zruJA3tmJ1UrysI4cVo4bCDMJJvu94SD/aTVjVs5v
-         Rx3am4tX+1yC+dxtCJnCYPdRJW/JcuntntP9ttDf0D+7o+0ifw3cqtFkIK5fPGpheodN
-         0NrRyOKTY3DZuXx81R/V1Rxza6rH4f2h4zrG0BcB/vgwGIdw6d+7ZZHwUDObvvpcXwIv
-         ox24MJ/WeoO79gNv0wXQeyXN/THrTUrk3iYxEmj1ADs5JKMOBGahbPInJt6cZr94E/oU
-         SUheieEZ93ADTEPLHYlCJQxu33rBaO5EK2qKeiprBXD0ODH3PL3UPQIDNfpksrIYjkzj
-         ujDA==
+        bh=74SEsl7w0MxKp2l+FL3lPjAKUx079z1T69l0QIGtZL0=;
+        b=qfhmpydSeSJuEDhNqq8MZfsYh0Cs5ytCy6I2lmzqS0CQNC36uFgEeSNDfJOEU+TnI+
+         GcozDVCVD3mFtMXsiOQQagQLMTtWQgA00CNS/Rq8Vt9ugeJ+1pa0WNKviFBt6yZ591Kl
+         p0oqX7FY/e6e1Cg5pv6SMG4xP7rShOccvLsSCA7PiBe/o/oJMxGAoPN1gHklKtcMrf1w
+         rE7gzQXHVCxOmcmNsIwQP2zSuilwhbusWlJYdoKEL3SgifgMt6lg4Yhpa6C4e+53hVep
+         OwSL1/eOY9L+IwpSv0r3CsVi7Jq75mg87pGrKfWahE+cPn4Hx8ki09HQBXENmGIvwoo7
+         pGLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749809790; x=1750414590;
+        d=1e100.net; s=20230601; t=1749809789; x=1750414589;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZdjUCVpqPUm8ixGqf+F8dk8bdPFxFedEDIckenWkGiA=;
-        b=M6Kkwjigpt4yPr/NJnsWPS6zF2xSQIZz46WaON1fH2ek0XSMPVpFeiMwYVmwaDOknK
-         gsfq+0K47QKYOTQZ7UB2kXI0TYviYPgSBbsw0JmSaBUGHQzBt+ZNyNNN7StatHSSReFP
-         vRkRLO9x2M7mAegVVKBwDoNqLg521UE2cVc7/g5LguwujYJBhp/ZPKh+lKKjJfsefRuP
-         HWZ9xcGp0pE3QjzFLQinpOdDW0eQxcI7Vdyg+HrSkj3Mhz9rXBTJXkGK6glsv6w8MyCZ
-         Dc6l874mSAuGlNXA102+voXglurZqSMjerjQwe8Ig8bLHpT3UsC4W2hA04g8Hsy+TRzw
-         JP6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWLKZss+NJv3ZR27I+7u+tB/Y3Oav9zRhrx7GuDgTBTz0dASAHLZMKtSrfackHLV55QQq4FP31y@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yzf0OXEWSSSTDpHV8ancLXKXd76kx0V9aSW6+YtwY+hLyUu++TJ
-	+uCpxIrX8PyRCq0G6VHj8MiUZ9R6IFXlYp70hKQSvgr6hg/hGNzNPpL+96HMuvZdyfA=
-X-Gm-Gg: ASbGncsBItnL+l4RppSbvQc4DWYVj9tx0SGIBgOJ0bUmCEJQT2y8gRYZururQZLEUWv
-	ltecJ9219LE4Q+uhxVkc4bO1G8Y8vNMCnVMMw9vHSMG2PYE0L43hyMB6NIG6xVOC+Rh/8t0n30m
-	B7E+HzA1CwaciA/lXrNYK0ikBe3dgW7ioRU5x31J1e+vk7DBetOs8Vbcc9plOVLBOtDKfr3i9iY
-	cyj4jcLbLPvq/r71mf/KPZmwvNH8zooLeGnj+phS494gXscwn1eXQFNCIjK8NLEjaoLyxFcyj1C
-	nRPk2TmAWW3A+44RL1ttrRIFOiwO7JS9ufUN1X2Pjg698WyuFhJsbetJDAq3Qbi/WWznUdZqQEM
-	FKKTddkC90SSohyxn
-X-Google-Smtp-Source: AGHT+IEaqK4JQkwa5OuCohg1y22PQC1ylK916FumqT4LYVzs1LuFG7GAee9xVJHM2Nz1AKKsADn6WQ==
-X-Received: by 2002:a17:906:7312:b0:ade:2e4b:50d1 with SMTP id a640c23a62f3a-adec568577cmr249869166b.29.1749809789754;
-        Fri, 13 Jun 2025 03:16:29 -0700 (PDT)
+        bh=74SEsl7w0MxKp2l+FL3lPjAKUx079z1T69l0QIGtZL0=;
+        b=q/4y1kgDStNh57K1rwie7jofd6Jh0NXLyzSTEhIME4oHY0/SYRUofvqlowXhyzfJTX
+         4ofInQORfTuS0m8+cwa/Nybj9p8NA0qYSJeJmO2H70/HExL3aW0OlCzjTssBK5Z0A5fy
+         5oyMB5D3bfhywy/cvwkCp5ZD3EacHof0xuDMKMXBrMfVh10ODxSuGkCAYlZQZTNOytv/
+         8Facg1PVyVd6G30F9PM5C3SwVd0OQw4/i7o1a//VpR3S9DMLAwJIAPbYDzeHUZJHctBC
+         VNS23o1HJqVghExKSt0L1AkYC5sx6OY7+truhFfn3TupiO5qyaaGs5RQJwWT/Yqhohq8
+         MCjg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/hwCYa2g+tUm6ui9Hm7StRvuvsh/785bMcRYJ6U2yEYvrqm5AjYUVN9I+mL8Uu5VgFGvx7uQE@lists.cip-project.org
+X-Gm-Message-State: AOJu0YyEZyX5eEpJGR26fc/B4gORZCAYVt0MhlNurtc3kGl5cROsFIeY
+	wKj8xmwk98ZgYTe37cUWNy3uUBAk0in0bs1p2VlzHIItwbNzWTRs395bUJiLVNg9UOY=
+X-Gm-Gg: ASbGncuYo48vi7aXqTagY6SkXpcCFvKZgIdWfUy5r6v9ngEU8u3kt4+ZiVlbQVuru3D
+	Rt/jreDw8OYi4YEbLzkPFWF0j74VnM0ratnVouuYJDdlHnHawVP4lyx+4OO4YfBaZT+NNkWedCx
+	pRS76PVyKmef0JRArIsWTCOriEX30rQP63ycILdnmI0ExLJ2w3yAAU0raXrEBxlW1xA6m6Rp8oJ
+	0WtEv2TyuHF+UPhPyRubE4iq5rVH325JxprYfhHjH1Fk8aNRlKRjLpUzy4j/0HCRzvxh0uBanMB
+	rlk9qaXenVMZrl8H3grx3rE1e4CfpnF+LeMq3JWxNlt0BilrJo5fTAUorYhwvoiPLSGJwm46RKh
+	VYVIwOcxDJOmmmxSe
+X-Google-Smtp-Source: AGHT+IEt77qd3xkw/PEQbe1vaN0aWZfKu2dndCu1mhfrvePMkNMEZxTFAJqLMvEpJ0TrmePZbXEWIg==
+X-Received: by 2002:a17:906:9fd1:b0:adb:469d:221f with SMTP id a640c23a62f3a-adec5bb5e01mr249833866b.31.1749809788764;
+        Fri, 13 Jun 2025 03:16:28 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.110])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec88ff5efsm104506666b.104.2025.06.13.03.16.28
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec88ff5efsm104506666b.104.2025.06.13.03.16.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 03:16:29 -0700 (PDT)
+        Fri, 13 Jun 2025 03:16:28 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.12.y-cip 13/14] arm64: dts: renesas: r9a08g045: Add ADC node
-Date: Fri, 13 Jun 2025 13:16:12 +0300
-Message-ID: <20250613101613.296649-14-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 12/14] iio: adc: rzg2l_adc: Add support for Renesas RZ/G3S
+Date: Fri, 13 Jun 2025 13:16:11 +0300
+Message-ID: <20250613101613.296649-13-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250613101613.296649-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250613101613.296649-1-claudiu.beznea.uj@bp.renesas.com>
@@ -71,88 +71,50 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 13 Jun 2025 10:16:40 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19082
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19081
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 78f2c089d0797fbf677a415aeeba8061b442027b upstream.
+commit 645fb7c22fd8d27c223b0e4abff442632bd9a75a upstream.
 
-Add the device tree node for the ADC IP available on the Renesas RZ/G3S
-SoC.
+Add ADC support for the Renesas RZ/G3S SoC. The key features of this IP
+include:
+- 9 channels, with one dedicated to reading the temperature reported by the
+  Thermal Sensor Unit (TSU)
+- A different default ADCMP value, which is written to the ADM3 register.
+- Different default sampling rates
+- ADM3.ADSMP field is 8 bits wide
+- ADINT.INTEN field is 11 bits wide
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20241206111337.726244-15-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20241206111337.726244-14-claudiu.beznea.uj@bp.renesas.com
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 53 ++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+ drivers/iio/adc/rzg2l_adc.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-index 1707d47a09df..d1e228b439df 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-@@ -191,6 +191,59 @@ rtc: rtc@1004ec00 {
- 			status = "disabled";
- 		};
+diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+index 41e59310117b..6dc97fac0e7f 100644
+--- a/drivers/iio/adc/rzg2l_adc.c
++++ b/drivers/iio/adc/rzg2l_adc.c
+@@ -531,7 +531,16 @@ static const struct rzg2l_adc_hw_params rzg2l_hw_params = {
+ 	.adivc = true
+ };
  
-+		adc: adc@10058000 {
-+			compatible = "renesas,r9a08g045-adc";
-+			reg = <0 0x10058000 0 0x1000>;
-+			interrupts = <GIC_SPI 312 IRQ_TYPE_EDGE_RISING>;
-+			clocks = <&cpg CPG_MOD R9A08G045_ADC_ADCLK>,
-+				 <&cpg CPG_MOD R9A08G045_ADC_PCLK>;
-+			clock-names = "adclk", "pclk";
-+			resets = <&cpg R9A08G045_ADC_PRESETN>,
-+				 <&cpg R9A08G045_ADC_ADRST_N>;
-+			reset-names = "presetn", "adrst-n";
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			#io-channel-cells = <1>;
-+			status = "disabled";
++static const struct rzg2l_adc_hw_params rzg3s_hw_params = {
++	.num_channels = 9,
++	.default_adcmp = 0x1d,
++	.default_adsmp = { 0x7f, 0xff },
++	.adsmp_mask = GENMASK(7, 0),
++	.adint_inten_mask = GENMASK(11, 0),
++};
 +
-+			channel@0 {
-+				reg = <0>;
-+			};
-+
-+			channel@1 {
-+				reg = <1>;
-+			};
-+
-+			channel@2 {
-+				reg = <2>;
-+			};
-+
-+			channel@3 {
-+				reg = <3>;
-+			};
-+
-+			channel@4 {
-+				reg = <4>;
-+			};
-+
-+			channel@5 {
-+				reg = <5>;
-+			};
-+
-+			channel@6 {
-+				reg = <6>;
-+			};
-+
-+			channel@7 {
-+				reg = <7>;
-+			};
-+
-+			channel@8 {
-+				reg = <8>;
-+			};
-+		};
-+
- 		vbattb: clock-controller@1005c000 {
- 			compatible = "renesas,r9a08g045-vbattb";
- 			reg = <0 0x1005c000 0 0x1000>;
+ static const struct of_device_id rzg2l_adc_match[] = {
++	{ .compatible = "renesas,r9a08g045-adc", .data = &rzg3s_hw_params },
+ 	{ .compatible = "renesas,rzg2l-adc", .data = &rzg2l_hw_params },
+ 	{ /* sentinel */ }
+ };
 -- 
 2.43.0
 
