@@ -2,66 +2,66 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDAB9C71135
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB17C71153
 	for <webhook@archiver.kernel.org>; Fri, 13 Jun 2025 10:15:09 +0000 (UTC)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
- by mx.groups.io with SMTP id smtpd.web10.7048.1749809705671786533
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+ by mx.groups.io with SMTP id smtpd.web11.7069.1749809708945316067
  for <cip-dev@lists.cip-project.org>;
- Fri, 13 Jun 2025 03:15:05 -0700
+ Fri, 13 Jun 2025 03:15:09 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=lKnVex3L;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.44, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ad1b94382b8so354206466b.0
-        for <cip-dev@lists.cip-project.org>; Fri, 13 Jun 2025 03:15:05 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=Iu/kg+YS;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.54, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ade48b24c97so285311166b.2
+        for <cip-dev@lists.cip-project.org>; Fri, 13 Jun 2025 03:15:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1749809704; x=1750414504; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1749809707; x=1750414507; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HjfCpIVovp7G/dAcAxi2sdE49DmY03tav6ed1o125r4=;
-        b=lKnVex3LXeiu9RxK2IzWMiRedDZk+kh7UKeJkA0AN61FheXvH99O8NV+EjipblNe7a
-         I5upgJ0DmrDsSlaTErhoosPwX6NUp3MCz2QFonQsA/Tq5VwnE2p86acTf77tXIulXkhG
-         uCbpw86xZJYISa1SbO1DCHxlUrqKECww1XRhbPQymnhxSg2uhKqLnXAaqDst3Tw/AOhZ
-         Og0rHj1Hyw6iLe8ZlgyNT4hZuN5faOzSMxSqGtCnw7+FvrbdbhSpE/JIto+RFnbdtW5J
-         o/rRFt2Uin/9C1KcAdWqm1qE5G4qeV+0CTIEVp7rJUufTKfZsxsqhRRfc8VAF2jFBgbi
-         PpXw==
+        bh=nVZnathdqWSPliV4N2/CcVk9Ik+y4W1g8AYHgGX+/h0=;
+        b=Iu/kg+YSwqsXt9scKbJtsNzJYQkWRgj06UXc8zdmCkuo35IQwWRcRPTnq2DlNM0LEd
+         v/exPx1/DWx6J6qds/ruk1sOX0WyKdzsX96i5/F34MMMzTS6edxUORIm7rXNrfwBBWmD
+         pK0LCQPFGi3XdEUx8SlVDjK95oBsYzKwOu0EaWd+1a566UF7pd/y+K6QgMhpvxbCp8f/
+         j1EHIhxIwZRC2jjcn52nYEwdAGjICzd18m/7xc4kSagAlheVbPQOeJaJ9xPsfBISLC2/
+         +gollHdmQyqgvC7IwrHFqYqH7yp8BvV4itpQE6BPUCyTzP2I0ckl8WwpduzDGDXh2rV5
+         ndsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749809704; x=1750414504;
+        d=1e100.net; s=20230601; t=1749809707; x=1750414507;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HjfCpIVovp7G/dAcAxi2sdE49DmY03tav6ed1o125r4=;
-        b=Z+vh84tw6wWTvx/u2kZ1t8Ked9URIY4tuHnvRdJCzzvTLGoGY4LvLCbJkHqQZyecpQ
-         e7DrSs7/5K0/Y58VMR0vbPBvpNOQswDe6vdmOZY5Y2Ke2+veEedifmPhbvnWbq4CEoKZ
-         u+RWeeeoLzG0cJyb98avrumXH/di5AWpGlprB56z67rcu04LEh67yP67xTpE+eE0m64W
-         RRFVpSevgOgwWBaMKAf7tELRt1pVQqddtR4VFfkFCw4JSxlr8QFv/Ghf5YsK5ug0SZZ9
-         g1/QyXoYm0RqObVgXr/Gs/yUxEOkeKjggmYJzfLa8NGg4ksrkfdXwkovUN4nY37swvPl
-         +2fA==
-X-Forwarded-Encrypted: i=1; AJvYcCUg69+uvRUBauvjwep56ClLNjWbVdHYoVg2CxG0T+KVs8sGkpQ1ixphnzX28IyzQ8FOyXhsmn7W@lists.cip-project.org
-X-Gm-Message-State: AOJu0YxUbA6mN66dYXjmvw4SQ3dbQsiOM4bc9R4xSd1WzVebRzgUD1Ye
-	za/WtYYCfh024kZW8yVmKEaefviwvUHqJ5k5EPZoABVapUXBg+obWctHHQRfGRWFTDg=
-X-Gm-Gg: ASbGncvvq8qaEcd/FztALkfTw6ZNykis8ebPaFyCbwWbu9pXYxg388Mz4JWCN6nb6rZ
-	hTBjFwBtixc9wMRZ1OFanqUS7uSd4GQ9Zroy8ArSmqELKRhPHOBONy3RzMxavx4AFVUG8L7ciFI
-	OF5qDUAsyFCbTKybc+VaYOXGdCqC5gorfPq3sJO5nMlMB4QgIuVj6hzPpYicWZsWXTRa68w5QEo
-	K/gH0M0RabrnHyvsUlCIFGawbZBhj7sSTdBTwQ9u4Ui/8FvfeDZG+C4cPKviv+JQryuoOSusVg6
-	7B72tms+8G4BMnoezkI9BYPATe1ZBSpOmjBeG/bsTw/NwisAePnwDHavGZw4d6P7YPYp0KNmy1H
-	GaMc23RfwswOLRZTQ
-X-Google-Smtp-Source: AGHT+IGkIXAaG4zjWp5UVA8QYSt1hD/OxJHnnHiqlNE4tcBwt7ofTvp3y7+2jv2ROWjcNhzYYpNN+g==
-X-Received: by 2002:a17:907:7f28:b0:ad8:a9fc:8146 with SMTP id a640c23a62f3a-adec56a068bmr220312166b.44.1749809703923;
-        Fri, 13 Jun 2025 03:15:03 -0700 (PDT)
+        bh=nVZnathdqWSPliV4N2/CcVk9Ik+y4W1g8AYHgGX+/h0=;
+        b=o7YeZwCx1Xas2wjKvcFNaa6fWYd9azbSCdoePfCNzZTxEX15hY2ob9JwRwucCeiq1Y
+         7x7J5CAEgysbzBUVLQNLkmqZfVySzu7DEZ9JeTjiocgMYKv7vMkR4MVCEM0+GL9s+uQ4
+         EesddOSOvini6Wh6Sssn2vMllhwAxqYfXenqe6Co7KUSSylnNQ57bWd2xVZU5F8dOFq3
+         MgpTQxefKGmLiynHKJdQCW24Mxc83cp/XQK+VQhguQruyTgXTQadurzF9qtomyKOZZyI
+         4eHBiQPugy5fTLrYqI0COJnrUrsMAafdRJPRZ/LvC/23DtK749GHbjQndz20U2GOWWa3
+         h8Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqzg4krWtn2nk2qDKNzdCYlpsvK2zvCPEA1wzXXQSdQpJ7YEbhFh+I5S26+YB/jVmza76S/ELu@lists.cip-project.org
+X-Gm-Message-State: AOJu0Yw5BPpRE0ZUjah7luJc8UICXEuD7dG0d5t7t2CeAz6yyJBPBsgz
+	WFkSCyv8vOGEa/6XFl6crvHSeyzNyOWCTLtyDMvRhoHDgGhk4h0LJsHNKUq+OVpJzps=
+X-Gm-Gg: ASbGnctRQu2MIZknTEoDnn2Bjqyc7YETlKjqaMt50EXje8uXkbFYGHBWbQtNNOBybXW
+	zsgmifRnZdMzTmzTwWn5yYBePYmZEzqL8RQEmIEys2Zey8ejo00OVsweYmarS/tSDzcwphubEYM
+	qB0Q5+yIrlLXL6JjaPajglQwpg9ligxkew9v4Ke/t5XztDATdMIeIMz9zrDrek81T2WP6ZN2G1a
+	GmYCQOdQd4v3AUGZ9ZIHBynR4rODp2cLguYw8xzhV5Dh0aVGXhI0hZQxiGbSId6Qwj0rq/gHUuB
+	esVf6e7vAYEFplu4BbeqKKn1tS0eRrjZnlWHOLrOudkCud6REo/ZB4g7V2j5vx0X7Wry0Bg6eei
+	AgkkXf6nb8eUwJfBW
+X-Google-Smtp-Source: AGHT+IGTzPMActBDjR56kols01ko1so9WMc+gyXdbCDDDPYLuGdw1Zw8ZF2FgLOUwiyeaT6xoPvilQ==
+X-Received: by 2002:a17:907:6e89:b0:ad2:549b:4c8d with SMTP id a640c23a62f3a-adec5c7c4dfmr231501266b.51.1749809707247;
+        Fri, 13 Jun 2025 03:15:07 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.110])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec8159377sm105101466b.9.2025.06.13.03.15.02
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec8159377sm105101466b.9.2025.06.13.03.15.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 03:15:03 -0700 (PDT)
+        Fri, 13 Jun 2025 03:15:06 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 01/12] clk: renesas: r9a08g045: Add clocks, resets and power domain support for the ADC IP
-Date: Fri, 13 Jun 2025 13:14:50 +0300
-Message-ID: <20250613101501.262091-2-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 04/12] iio: adc: rzg2l_adc: Use read_poll_timeout()
+Date: Fri, 13 Jun 2025 13:14:53 +0300
+Message-ID: <20250613101501.262091-5-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250613101501.262091-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250613101501.262091-1-claudiu.beznea.uj@bp.renesas.com>
@@ -71,57 +71,93 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 13 Jun 2025 10:15:09 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19042
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19045
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit f962745289958e89bf520407728e384e52ea8e27 upstream.
+commit b7549624af04eb52cb28df57bee2bcc88be1adc0 upstream.
 
-Add clocks, resets and power domains for ADC IP available on the Renesas
-RZ/G3S SoC.
+Replace the driver-specific implementation with the read_poll_timeout()
+function. This change simplifies the code and improves maintainability by
+leveraging the standardized helper.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://lore.kernel.org/20241206111337.726244-2-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[claudiu.beznea: drop the power domain description array as the core code
- is not available in v6.1]
+Link: https://patch.msgid.link/20241206111337.726244-7-claudiu.beznea.uj@bp.renesas.com
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a08g045-cpg.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/iio/adc/rzg2l_adc.c | 29 ++++++++++-------------------
+ 1 file changed, 10 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
-index 7f96b615f087..89d6f361a5d3 100644
---- a/drivers/clk/renesas/r9a08g045-cpg.c
-+++ b/drivers/clk/renesas/r9a08g045-cpg.c
-@@ -186,6 +186,7 @@ static const struct cpg_core_clk r9a08g045_core_clks[] __initconst = {
- 	DEF_FIXED("OSC", R9A08G045_OSCCLK, CLK_EXTAL, 1, 1),
- 	DEF_FIXED("OSC2", R9A08G045_OSCCLK2, CLK_EXTAL, 1, 3),
- 	DEF_FIXED("HP", R9A08G045_CLK_HP, CLK_PLL6, 1, 2),
-+	DEF_FIXED("TSU", R9A08G045_CLK_TSU, CLK_PLL2_DIV2, 1, 8),
- };
+diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+index 08b4d43aa3ea..48021edd622e 100644
+--- a/drivers/iio/adc/rzg2l_adc.c
++++ b/drivers/iio/adc/rzg2l_adc.c
+@@ -13,6 +13,7 @@
+ #include <linux/iio/iio.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
++#include <linux/iopoll.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+@@ -111,7 +112,7 @@ static void rzg2l_adc_pwr(struct rzg2l_adc *adc, bool on)
  
- static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
-@@ -233,6 +234,8 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
- 	DEF_MOD("scif4_clk_pck",	R9A08G045_SCIF4_CLK_PCK, R9A08G045_CLK_P0, 0x584, 4),
- 	DEF_MOD("scif5_clk_pck",	R9A08G045_SCIF5_CLK_PCK, R9A08G045_CLK_P0, 0x584, 5),
- 	DEF_MOD("gpio_hclk",		R9A08G045_GPIO_HCLK, R9A08G045_OSCCLK, 0x598, 0),
-+	DEF_MOD("adc_adclk",		R9A08G045_ADC_ADCLK, R9A08G045_CLK_TSU, 0x5a8, 0),
-+	DEF_MOD("adc_pclk",		R9A08G045_ADC_PCLK, R9A08G045_CLK_TSU, 0x5a8, 1),
- 	DEF_MOD("vbat_bclk",		R9A08G045_VBAT_BCLK, R9A08G045_OSCCLK, 0x614, 0),
- };
+ static void rzg2l_adc_start_stop(struct rzg2l_adc *adc, bool start)
+ {
+-	int timeout = 5;
++	int ret;
+ 	u32 reg;
  
-@@ -265,6 +268,8 @@ static const struct rzg2l_reset r9a08g045_resets[] = {
- 	DEF_RST(R9A08G045_GPIO_RSTN, 0x898, 0),
- 	DEF_RST(R9A08G045_GPIO_PORT_RESETN, 0x898, 1),
- 	DEF_RST(R9A08G045_GPIO_SPARE_RESETN, 0x898, 2),
-+	DEF_RST(R9A08G045_ADC_PRESETN, 0x8a8, 0),
-+	DEF_RST(R9A08G045_ADC_ADRST_N, 0x8a8, 1),
- 	DEF_RST(R9A08G045_VBAT_BRESETN, 0x914, 0),
- };
+ 	reg = rzg2l_adc_readl(adc, RZG2L_ADM(0));
+@@ -124,15 +125,10 @@ static void rzg2l_adc_start_stop(struct rzg2l_adc *adc, bool start)
+ 	if (start)
+ 		return;
  
+-	do {
+-		usleep_range(100, 200);
+-		reg = rzg2l_adc_readl(adc, RZG2L_ADM(0));
+-		timeout--;
+-		if (!timeout) {
+-			pr_err("%s stopping ADC timed out\n", __func__);
+-			break;
+-		}
+-	} while (((reg & RZG2L_ADM0_ADBSY) || (reg & RZG2L_ADM0_ADCE)));
++	ret = read_poll_timeout(rzg2l_adc_readl, reg, !(reg & (RZG2L_ADM0_ADBSY | RZG2L_ADM0_ADCE)),
++				200, 1000, true, adc, RZG2L_ADM(0));
++	if (ret)
++		pr_err("%s stopping ADC timed out\n", __func__);
+ }
+ 
+ static void rzg2l_set_trigger(struct rzg2l_adc *adc)
+@@ -335,7 +331,6 @@ static int rzg2l_adc_parse_properties(struct platform_device *pdev, struct rzg2l
+ 
+ static int rzg2l_adc_hw_init(struct device *dev, struct rzg2l_adc *adc)
+ {
+-	int timeout = 5;
+ 	u32 reg;
+ 	int ret;
+ 
+@@ -348,14 +343,10 @@ static int rzg2l_adc_hw_init(struct device *dev, struct rzg2l_adc *adc)
+ 	reg |= RZG2L_ADM0_SRESB;
+ 	rzg2l_adc_writel(adc, RZG2L_ADM(0), reg);
+ 
+-	while (!(rzg2l_adc_readl(adc, RZG2L_ADM(0)) & RZG2L_ADM0_SRESB)) {
+-		if (!timeout) {
+-			ret = -EBUSY;
+-			goto exit_hw_init;
+-		}
+-		timeout--;
+-		usleep_range(100, 200);
+-	}
++	ret = read_poll_timeout(rzg2l_adc_readl, reg, reg & RZG2L_ADM0_SRESB,
++				200, 1000, false, adc, RZG2L_ADM(0));
++	if (ret)
++		goto exit_hw_init;
+ 
+ 	/* Only division by 4 can be set */
+ 	reg = rzg2l_adc_readl(adc, RZG2L_ADIVC);
 -- 
 2.43.0
 
