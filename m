@@ -2,66 +2,66 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57A7FC71157
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B59C71159
 	for <webhook@archiver.kernel.org>; Fri, 13 Jun 2025 10:15:50 +0000 (UTC)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
- by mx.groups.io with SMTP id smtpd.web10.7071.1749809742770613622
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+ by mx.groups.io with SMTP id smtpd.web10.7075.1749809748315995806
  for <cip-dev@lists.cip-project.org>;
- Fri, 13 Jun 2025 03:15:43 -0700
+ Fri, 13 Jun 2025 03:15:48 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=O+kzaO7g;
- spf=pass (domain: tuxon.dev, ip: 209.85.218.45, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-acae7e7587dso289341466b.2
-        for <cip-dev@lists.cip-project.org>; Fri, 13 Jun 2025 03:15:42 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=d6+DtTXL;
+ spf=pass (domain: tuxon.dev, ip: 209.85.208.44, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-607873cc6c4so3951877a12.1
+        for <cip-dev@lists.cip-project.org>; Fri, 13 Jun 2025 03:15:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1749809741; x=1750414541; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1749809747; x=1750414547; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fQ3ecMgEVGnkqqYKDnMwHQpTkXBHPBf1sY20uBSdVvM=;
-        b=O+kzaO7gAjnoJkSX8qvTsZhArxVC17PyDHPb8F0vSG6jpfLfmDMvog5kkg5A5740iK
-         85BwKfbT9odf6wwdSeK5HTuSSExDMaLInQeZ5g91eY0DDENQen/oLPUNKPzGlCPURF4g
-         B642ddLC1Fn2Nh8N3UbrTzZN7XND30JjwzA3n9P0kN4XLnL/Jb2BWoi51s48ZlkOQ0dI
-         X1UXMZHfG71GN2KlIxk2M/9sq52P4sbv1EBUm57pZCeW8GwU4tYTLKLGBtV5u4G7uL9e
-         pXO770ltcKqjL6H95GvqMABvEUUBZoh64T/lik6VXh0o61pHAGMxSI84AgdQG/Tp+ZxJ
-         NoJQ==
+        bh=QU0VxY9EWwOTYYD+RRez7aXb2FrVjwg5V3cOaf6CW9U=;
+        b=d6+DtTXLsgouy91Z5Zf8WWsOgePJZ8ezlaBH6OvZGwDkwWtC+vcPtBNrC8BFxv+pDO
+         1ouBOnR2JDsyHsehldrclGQskVk6mSykI7p/g+Y+HoTFDq07+ZbJFur3Q9rfGXNLWKow
+         yN5NRgX6lyd37Povqt5oI1PXrAxoNskbmW4pH49+jOd7ejX5WG0q68KicBioz1UNzjIQ
+         Xdxy3bfXZETmKHa9E2ZZ7GhYS8nuLIdVQHt4pmVnnop9xg3YmJWTi3EP9YngBEBwTgaS
+         O8h/xAaSnhmuHVKTFy8WVQdAVu/r52j2qkkUZQUBj7PGEa8V0tB4/nwLW33whoZsK6lV
+         FtbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749809741; x=1750414541;
+        d=1e100.net; s=20230601; t=1749809747; x=1750414547;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fQ3ecMgEVGnkqqYKDnMwHQpTkXBHPBf1sY20uBSdVvM=;
-        b=PBn2JklvGOdQ3RS+x9GjksOPKOlsQwMQvBhE2PLInold1Tj/+YigbHH7mgncOT1FvU
-         xYIP4qMn/YC1KlRGkd+1E5BDwuAE7Or8ru1qVvfBLXp8gl8Wpwr95KVJ+RoaJgxLiIOD
-         v//FivvoDFg2YP1iq0Tbn/bldKMVQxjX1ZmhJkbI3mAEyewiniHVJmbYotYJXLT0QSNv
-         0ZelrMokRoCsBcRRZIevnvDD+gEp6QLwrrj4uLP2ojCy4dFx6WlXUg+zYtEEG8NVxcuU
-         vKLMi5B2PooS/Ptlbmz8W524BJ0tYg5qneHagsNK5mRr5sKvBibn8PsrIA/7SyDb0I9O
-         QqaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4xHZI/3mUgikEyX+sysxTGKFDFZaiB82bt4hdW7k1REKePKtqssPLKXpBctTKJpywbrqAxpPe@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yy09XlRjrnJzkhS3C+v4zdhYGEW0uaaeqEzNlDTupc+4husiYLR
-	0iqdXKt1dEUAikJyeeNiFUgjofvG3yt5asdnfb5Dk7JiB4SDjvFHzDf/UuJfjIZ+LaQ=
-X-Gm-Gg: ASbGnctSLImEmWyFtAmmYaYyAnvx2u3KJfHTqAgcjTgyM2dteMF4TFk1jUz0EAWz2bm
-	SH3/ba8HLfoGiqW2hhMMZc+8PDQQPlwQbdpCfCyP6HKBhUJELU257DOrzr7dwwgSouhhL68i0Bz
-	4aiJEe16hALS12tFuQpiZVB124tQ9buubuh+KRsGdjL0aZ2JSG1XEQAUlCZeAGVFituNTkQJ95O
-	7BH2tY/4t12FsldOfN10svlwGDb/p170Zw+151w87S2EUXefv0zXQbt4iUSddpHcYiKjQH3rQ6j
-	bfziNgius2bkAgEGix7G+cxfnwKCDQEHYz4mMB4ADkZBaf3D2F/oZoootT1y8695sCCB0LnN+7p
-	+zSDbEqljeApirpeI
-X-Google-Smtp-Source: AGHT+IGeIsvXW5Gqt67LNG9wb++WacAcdbPx0+21Glh4khUypOUcQ25LLDwbcN9FWa97Z1ho4AKCpw==
-X-Received: by 2002:a17:906:9f8a:b0:ad8:8c91:f976 with SMTP id a640c23a62f3a-adec5c3e4f7mr238106766b.35.1749809741049;
-        Fri, 13 Jun 2025 03:15:41 -0700 (PDT)
+        bh=QU0VxY9EWwOTYYD+RRez7aXb2FrVjwg5V3cOaf6CW9U=;
+        b=UJksL8R0krWj80NDLv2ClzFxRyuKHpBF9wxIKWS+2QVOn5k/hKeO52K+HNldt/jybn
+         Wc0b/26icxEjxKgxKzayatKqk3+jt0bjLWKjS8nKy4IyB/sNYyeww57OheCkkw1hKuiY
+         a6wn7uzUGjdIeZrvK8+xPAu2ohAYTcmNburEN63/GiBnF2US8rCn7c5a1ttIbWb4cTeB
+         F9aMXv9CokvgYQGtdpQEhI466XrectqSiU0vb4t5iyE6iSCAjAhWRaJM1hSANrJ6CgJY
+         sp0KU8FzjDSYz1+Bm5mxlf6O4fZ3iQGXH5v5SohbX1sBNM8ydvBH8qRAvVfyzWsEAlX4
+         KGOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0W3cA7ladMl52prwp9zi2h0LxhNe5zsO+zvytn18ng8cxDm1IpdP6Q6VBdp1E4utuBWHyTu7s@lists.cip-project.org
+X-Gm-Message-State: AOJu0YyuWTQDMO7GKN/jsqJ966UhJNLdOkPQ3D3PK+FBFSJmsHB+PaLk
+	xMxTS4dTL1KPIhPOlnSQ634j8qYcPCPbbAc2CNB6EkphN084ALgTBM2XJw8LonBjBME=
+X-Gm-Gg: ASbGncu3MfMxtQpcle9jYdmWUZRBbl5SnRj6YFQKwn+eusnyMrfIRiqSC20Y2OMprv6
+	NL8h5oAcvKcqYOTrLwlWJkYab14WuXriG9r6rN0IyumDoJ489jD1daORcL0IXPzI42ZkcagYmV1
+	DAdNDj/unpjbjKQOsgtknhDQU4kyF4bClOiUOtszmUVv0KSLys8ICCy2OuEs43wpeWDwdgMPPuN
+	Tk3ETB4O47jBz4ZjI1xVKH+M1xdDsYMLmqOgcYov1hErHY0k+CFqpgz0b8hKdiUvPB828JRsDQp
+	cq/+sh9wd/uBOnXXSdlHgsFKhhXX/k81UN7oY61TFml3GD1P7dVAvSpfe2kSDY/v8opEWQH5/8F
+	hIzS38cbeO9ykJ4mL
+X-Google-Smtp-Source: AGHT+IEUCPyZcooM42Py3z6EClyccwwdlxzRKzIDaNXMgQfdeWdvEqr18Q2v4THo5d2VCeB1N2j6iw==
+X-Received: by 2002:a05:6402:40d0:b0:600:a694:7a23 with SMTP id 4fb4d7f45d1cf-608c6c3830cmr182372a12.0.1749809746738;
+        Fri, 13 Jun 2025 03:15:46 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.110])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-608b48d77a8sm1015320a12.20.2025.06.13.03.15.40
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-608b48d77a8sm1015320a12.20.2025.06.13.03.15.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 03:15:40 -0700 (PDT)
+        Fri, 13 Jun 2025 03:15:46 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.1.y-cip 02/14] iio: adc: rzg2l_adc: Convert dev_err() to dev_err_probe()
-Date: Fri, 13 Jun 2025 13:15:24 +0300
-Message-ID: <20250613101537.279131-3-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 07/14] iio: adc: rzg2l_adc: Enable runtime PM autosuspend support
+Date: Fri, 13 Jun 2025 13:15:29 +0300
+Message-ID: <20250613101537.279131-8-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250613101537.279131-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250613101537.279131-1-claudiu.beznea.uj@bp.renesas.com>
@@ -71,139 +71,62 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 13 Jun 2025 10:15:50 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19056
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19061
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit a34dc289f89ecc4e967dfe6ec742aafdc5ae62f6 upstream.
+commit d7c3e3463492f50644168cbb4e443034052d1c22 upstream.
 
-Convert all occurrences of dev_err() in the probe path to dev_err_probe().
-This improves readability and simplifies the code.
+Enable runtime PM autosuspend support for the rzg2l_adc driver. With this
+change, consecutive conversion requests will no longer cause the device to
+be runtime-enabled/disabled after each request. Instead, the device will
+transition based on the delay configured by the user.
+
+This approach reduces the frequency of hardware register access during
+runtime PM suspend/resume cycles, thereby saving CPU cycles.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://patch.msgid.link/20241206111337.726244-3-claudiu.beznea.uj@bp.renesas.com
+Link: https://patch.msgid.link/20241206111337.726244-9-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/iio/adc/rzg2l_adc.c | 78 +++++++++++++++----------------------
- 1 file changed, 32 insertions(+), 46 deletions(-)
+ drivers/iio/adc/rzg2l_adc.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
-index 0921ff2d9b3a..1d847c878014 100644
+index 93ee448bf575..47e50cb3f270 100644
 --- a/drivers/iio/adc/rzg2l_adc.c
 +++ b/drivers/iio/adc/rzg2l_adc.c
-@@ -314,15 +314,12 @@ static int rzg2l_adc_parse_properties(struct platform_device *pdev, struct rzg2l
- 		return -ENOMEM;
+@@ -208,7 +208,8 @@ static int rzg2l_adc_conversion(struct iio_dev *indio_dev, struct rzg2l_adc *adc
+ 	rzg2l_adc_start_stop(adc, false);
  
- 	num_channels = device_get_child_node_count(&pdev->dev);
--	if (!num_channels) {
--		dev_err(&pdev->dev, "no channel children\n");
--		return -ENODEV;
--	}
-+	if (!num_channels)
-+		return dev_err_probe(&pdev->dev, -ENODEV, "no channel children\n");
+ rpm_put:
+-	pm_runtime_put_sync(dev);
++	pm_runtime_mark_last_busy(dev);
++	pm_runtime_put_autosuspend(dev);
+ 	return ret;
+ }
  
--	if (num_channels > RZG2L_ADC_MAX_CHANNELS) {
--		dev_err(&pdev->dev, "num of channel children out of range\n");
--		return -EINVAL;
--	}
-+	if (num_channels > RZG2L_ADC_MAX_CHANNELS)
-+		return dev_err_probe(&pdev->dev, -EINVAL,
-+				     "num of channel children out of range\n");
+@@ -378,7 +379,8 @@ static int rzg2l_adc_hw_init(struct device *dev, struct rzg2l_adc *adc)
+ 	rzg2l_adc_writel(adc, RZG2L_ADM(3), reg);
  
- 	chan_array = devm_kcalloc(&pdev->dev, num_channels, sizeof(*chan_array),
- 				  GFP_KERNEL);
-@@ -450,62 +447,51 @@ static int rzg2l_adc_probe(struct platform_device *pdev)
- 		return PTR_ERR(adc->base);
+ exit_hw_init:
+-	pm_runtime_put_sync(dev);
++	pm_runtime_mark_last_busy(dev);
++	pm_runtime_put_autosuspend(dev);
+ 	return ret;
+ }
  
- 	adc->pclk = devm_clk_get(dev, "pclk");
--	if (IS_ERR(adc->pclk)) {
--		dev_err(dev, "Failed to get pclk");
--		return PTR_ERR(adc->pclk);
--	}
-+	if (IS_ERR(adc->pclk))
-+		return dev_err_probe(dev, PTR_ERR(adc->pclk),
-+				     "Failed to get pclk");
+@@ -443,6 +445,8 @@ static int rzg2l_adc_probe(struct platform_device *pdev)
+ 		return dev_err_probe(&pdev->dev, ret,
+ 				     "failed to register presetn assert devm action\n");
  
- 	adc->adclk = devm_clk_get(dev, "adclk");
--	if (IS_ERR(adc->adclk)) {
--		dev_err(dev, "Failed to get adclk");
--		return PTR_ERR(adc->adclk);
--	}
-+	if (IS_ERR(adc->adclk))
-+		return dev_err_probe(dev, PTR_ERR(adc->adclk),
-+				     "Failed to get adclk");
- 
- 	adc->adrstn = devm_reset_control_get_exclusive(dev, "adrst-n");
--	if (IS_ERR(adc->adrstn)) {
--		dev_err(dev, "failed to get adrstn\n");
--		return PTR_ERR(adc->adrstn);
--	}
-+	if (IS_ERR(adc->adrstn))
-+		return dev_err_probe(dev, PTR_ERR(adc->adrstn),
-+				     "failed to get adrstn\n");
- 
- 	adc->presetn = devm_reset_control_get_exclusive(dev, "presetn");
--	if (IS_ERR(adc->presetn)) {
--		dev_err(dev, "failed to get presetn\n");
--		return PTR_ERR(adc->presetn);
--	}
-+	if (IS_ERR(adc->presetn))
-+		return dev_err_probe(dev, PTR_ERR(adc->presetn),
-+				     "failed to get presetn\n");
- 
- 	ret = reset_control_deassert(adc->adrstn);
--	if (ret) {
--		dev_err(&pdev->dev, "failed to deassert adrstn pin, %d\n", ret);
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "failed to deassert adrstn pin\n");
- 
- 	ret = devm_add_action_or_reset(&pdev->dev,
- 				       rzg2l_adc_reset_assert, adc->adrstn);
--	if (ret) {
--		dev_err(&pdev->dev, "failed to register adrstn assert devm action, %d\n",
--			ret);
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "failed to register adrstn assert devm action\n");
- 
- 	ret = reset_control_deassert(adc->presetn);
--	if (ret) {
--		dev_err(&pdev->dev, "failed to deassert presetn pin, %d\n", ret);
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "failed to deassert presetn pin\n");
- 
- 	ret = devm_add_action_or_reset(&pdev->dev,
- 				       rzg2l_adc_reset_assert, adc->presetn);
--	if (ret) {
--		dev_err(&pdev->dev, "failed to register presetn assert devm action, %d\n",
--			ret);
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "failed to register presetn assert devm action\n");
- 
- 	ret = rzg2l_adc_hw_init(adc);
--	if (ret) {
--		dev_err(&pdev->dev, "failed to initialize ADC HW, %d\n", ret);
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "failed to initialize ADC HW\n");
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0)
++	pm_runtime_set_autosuspend_delay(dev, 300);
++	pm_runtime_use_autosuspend(dev);
+ 	ret = devm_pm_runtime_enable(dev);
+ 	if (ret)
+ 		return ret;
 -- 
 2.43.0
 
