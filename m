@@ -2,66 +2,66 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80CE9C71135
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60CF1C71153
 	for <webhook@archiver.kernel.org>; Fri, 13 Jun 2025 10:16:00 +0000 (UTC)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
- by mx.groups.io with SMTP id smtpd.web10.7080.1749809752180258150
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+ by mx.groups.io with SMTP id smtpd.web11.7108.1749809755656318106
  for <cip-dev@lists.cip-project.org>;
- Fri, 13 Jun 2025 03:15:52 -0700
+ Fri, 13 Jun 2025 03:15:55 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=JZx3Fxkk;
- spf=pass (domain: tuxon.dev, ip: 209.85.208.44, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-607cc1a2bd8so3405776a12.2
-        for <cip-dev@lists.cip-project.org>; Fri, 13 Jun 2025 03:15:51 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=iNRaSO1l;
+ spf=pass (domain: tuxon.dev, ip: 209.85.208.54, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-60789b450ceso3723069a12.2
+        for <cip-dev@lists.cip-project.org>; Fri, 13 Jun 2025 03:15:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1749809750; x=1750414550; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1749809754; x=1750414554; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tJJ+pYGhYEF1J0IRKPhGD9rKucNjt2Z0qEIxgOny92A=;
-        b=JZx3FxkkvU9evNiI9xbAMSnw8v7TzHrhn9XI9Oh4sWbadkMSca2Nkp3WDrIRZiqkr5
-         eowkNoBJDlC1OUbPz3er23h/Gj/Doc7CvjTRhowHzVIVeFaRyWAhJJzo+Ms45Qdg0kx2
-         8lSvLGxdwck20E62Sznb93ojPyf7W9fc8k563vB/0yrF0YrrJB1cnCIJ3dIp+FcvYbkC
-         95Yf6Ba6g1xZGKPUCgJfSRPqmrcAApTMhi/lOy2/8d6pHUjgQvb2Oyx1pGRoCDE1+cU5
-         g7POJkinoWpRkrkWJvj9tkoZLG+aEm+JWhR7Py8c4ZyoSy8l8W/SdPPC9xR3IY5Qz2K4
-         rJCA==
+        bh=BA+hC4g5j7ph+nGLwg0OzXKEPzN/QyBeFp3OYOMdiC8=;
+        b=iNRaSO1lVLxCDQ8BsBJnUT/b8LAnoS8gGxygDMu89isc25idZ+h4qtFnCDcnH4/7Tl
+         RmdbIctCfmX9pKf/grN16JxnpB9ENi6xVqOL46InwfAh0lcwow62viT96h1PuX7rm5Fd
+         71K8pdtMrZvYYIk9sQpSew7//oyuToo6Z5kuMyvWjJuG3ucxHEzaYjPxWJw1n+2wiFHV
+         ChpYGZ1bszwCrImixLojaU41VGKPcR2G3bj16UDvxd4DFKa0/eRI+idPGbO/dBrDdYk7
+         9aNUQZrx/uS1/LI84WX5RRBw1JuDqaFUmTqcS/gxD+fZokqQokMNpsj/VCNywEHaiStQ
+         MWqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749809750; x=1750414550;
+        d=1e100.net; s=20230601; t=1749809754; x=1750414554;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tJJ+pYGhYEF1J0IRKPhGD9rKucNjt2Z0qEIxgOny92A=;
-        b=WLFJfBF9jp2ei42VDIY0ScGIXS2rScMohcp5fc56af8XgaI9T4d+DbBFzMwKPw3dHX
-         pJIvFWi/3JEdJttBOV1mKmW3IYoxF0wJwSP58YRRKz2rQJIAr/H9SYTmhYMeMbQgnXAx
-         eVZekzNCpbv0aHLxybHoHgJhLi1PWv3oMvQCNnhzdMvqWhdUCgwE6R+S3RD99Mwo4QTH
-         esbIBmDI9yPS88Z7O9MLtMNjUjm5G5Pt/e6eakTNHi19+RA9NEOh44qjmpQmp0TGcyTF
-         MRkb8CmX3pnMOmJ+OerrkfaLdlrs3BJ+3GlV0B/D+/snJw/mHhSD/Iubeaz5uZJyzn/r
-         +vJg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+G5e1GXY4RYv1OamZpE1TvKqJ3QQKd2YLPk6NxuuJSZ440vT7N2UK7zwMLU5/3zGu7U5v4Vpu@lists.cip-project.org
-X-Gm-Message-State: AOJu0YzF/32OfuOyCzfAQ5U5isDLXb/wngQ/x66UjzcQdp7/MWh9rcHu
-	s149JvlBzFcLX6sUWnEtSlEjMmxXgrNKvQDBDF033Vt0Q97hVPiA+6v5qzwLi3OmLzs=
-X-Gm-Gg: ASbGnctgSx7UBEMq9H2x5zmQJPxvHxs+I1GS1M0sIZOe+1OlkyPXOkSlmJLXr21UlqT
-	GKbVjILkFGkA+s6b2s5Aey4QVDJzawb2/QHiqTz6Qr49wU1HgslBU4+tzYkGnxK1egeeBtmvRXe
-	m0Y0ilN/z025VkU+aEtGSViEmSg2aT6sxWeOjchK0FbJ7ZimzKNCNiKXk3jMitA+AC6vRXvWghm
-	YlGJvkxRbNDhln+RG02khF7siMdwrVI87a4mCmptYisRnHRlw2lH8Qz+6e0omTIltKDaWICbnFi
-	n8OIscR8FD664SWr0/HKv78wREypDp6xgoh+1gTdio+yzRHzwKco4mD4boaZOyTxIuDFv2E7hzQ
-	uBFii06TTJ65KkVrE
-X-Google-Smtp-Source: AGHT+IHQmvCT+eVU5OSenl3FNEBJJuSh9hrqk34ewe7OJDBRJFkzh8pJhLygyphBYC6HNWKgs1HX5g==
-X-Received: by 2002:a05:6402:5c8:b0:607:6b8d:1a7c with SMTP id 4fb4d7f45d1cf-608b492603bmr1947180a12.12.1749809750565;
-        Fri, 13 Jun 2025 03:15:50 -0700 (PDT)
+        bh=BA+hC4g5j7ph+nGLwg0OzXKEPzN/QyBeFp3OYOMdiC8=;
+        b=QCC/DqgHv8GbNQ/HQdwYaYxQmMorJlGpxIcIX87ZyeDj26Lbf32fWJQm6/VE3QUlsP
+         IHzLfjpOky72MogL8FdLTo5GrJ+zEsp+1jAsjVX+YM0C28tY6J6E1Q+Pw9NB5toLRVLq
+         MpwAPfIa9fx3JwPktmSAae3rcN/iMT/0QQPmcO78Zxtzt8qkEyb+tHaMzxNwzR5KPbVK
+         vn52HJ2h2whniVFlytSK+NJvwUK35gsuz4T/HQC45+/LGo9u/s7+jF1GdKTi8Mdpv9gA
+         QlLiRINzsTrx4XksD0STWP2vyHotjPMcZvPcGQAjWfmB07STcMW1SFt97NDmv5vIxS5k
+         fZ7A==
+X-Forwarded-Encrypted: i=1; AJvYcCXwn3LcAQ930e9+plN4EEWwMhsk1p+Fe88ZGGrsMS1MMH7dDsv1TvHkppaOFUFIBoO2CuigIvd0@lists.cip-project.org
+X-Gm-Message-State: AOJu0YyOwVDoPXR112ig1Kl6479FAWl9Ai1h3ioFVF1ZMJy3y4GcmtTe
+	X3ZnmyDmbAG/fiZbfm+tTElodD9WWCViihjTdRFk3/yVb6WMCX1Qp8W1jWtKAIH+LV4=
+X-Gm-Gg: ASbGncsZGGAgbP0qUnESvX3sfuDZNbt8jxYa01Fjjoy+TSxTvgNP/tVcRVbE28z/w7O
+	S0HfNmjYExZlE1HRNN+S0S0mwVIJmgSpRRtybqBe5DYKa25QVq//BXF6SRkXwFRRrWPckdqGsBI
+	kqh2LCnZ/G4oZ+LKepmW8z71ppj6z/cHsWEFaSBQSOD06stusDCFLJsAhdM8Th09RWgVMVOUTHd
+	ZhcIX9omqCxWAkmJDRmNhWtd5kXjYy6Ohv+a0/niME9WBcKU1i9cjJIWFXiDDBcOHD3eiyx4naC
+	6AmZ2lB8MS5D8if3NAz7IlVWq1kS1ZBfIoTpI2L/ThrseMebwkanMHNVopclNdX2tXhHwct/GlC
+	mQmQxTd33+/rho2Zd
+X-Google-Smtp-Source: AGHT+IGhR2jKmXqCB1EP/8Dr5wbrX/q4frmgtDVGvharAudDnSi/XofShpKbB+GONQL3+MQzo1ycBw==
+X-Received: by 2002:a05:6402:348b:b0:607:6057:9006 with SMTP id 4fb4d7f45d1cf-608b48f79a2mr2172492a12.8.1749809753994;
+        Fri, 13 Jun 2025 03:15:53 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.110])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-608b48d77a8sm1015320a12.20.2025.06.13.03.15.49
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-608b48d77a8sm1015320a12.20.2025.06.13.03.15.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jun 2025 03:15:50 -0700 (PDT)
+        Fri, 13 Jun 2025 03:15:53 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.1.y-cip 10/14] iio: adc: rzg2l_adc: Add suspend/resume support
-Date: Fri, 13 Jun 2025 13:15:32 +0300
-Message-ID: <20250613101537.279131-11-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 13/14] arm64: dts: renesas: r9a08g045: Add ADC node
+Date: Fri, 13 Jun 2025 13:15:35 +0300
+Message-ID: <20250613101537.279131-14-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250613101537.279131-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250613101537.279131-1-claudiu.beznea.uj@bp.renesas.com>
@@ -71,120 +71,88 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 13 Jun 2025 10:16:00 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19064
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19067
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 563cf94f932946521ce885a089399a2c813c71ab upstream.
+commit 78f2c089d0797fbf677a415aeeba8061b442027b upstream.
 
-The Renesas RZ/G3S SoC features a power-saving mode where power to most of
-the SoC components is turned off, including the ADC IP.
-
-Suspend/resume support has been added to the rzg2l_adc driver to restore
-functionality after resuming from this power-saving mode. During suspend,
-the ADC resets are asserted, and the ADC is powered down. On resume, the
-ADC resets are de-asserted, the hardware is re-initialized, and the ADC
-power is restored using the runtime PM APIs.
+Add the device tree node for the ADC IP available on the Renesas RZ/G3S
+SoC.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Link: https://patch.msgid.link/20241206111337.726244-12-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/20241206111337.726244-15-claudiu.beznea.uj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/iio/adc/rzg2l_adc.c | 70 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 53 ++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
-diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
-index 2364405c6b83..a28aa00680d1 100644
---- a/drivers/iio/adc/rzg2l_adc.c
-+++ b/drivers/iio/adc/rzg2l_adc.c
-@@ -88,6 +88,7 @@ struct rzg2l_adc {
- 	struct completion completion;
- 	struct mutex lock;
- 	u16 last_val[RZG2L_ADC_MAX_CHANNELS];
-+	bool was_rpm_active;
- };
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+index 5634eff1e921..55ee6195bacc 100644
+--- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+@@ -191,6 +191,59 @@ rtc: rtc@1004ec00 {
+ 			status = "disabled";
+ 		};
  
- /**
-@@ -561,8 +562,77 @@ static int rzg2l_adc_pm_runtime_resume(struct device *dev)
- 	return 0;
- }
- 
-+static int rzg2l_adc_suspend(struct device *dev)
-+{
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-+	struct rzg2l_adc *adc = iio_priv(indio_dev);
-+	struct reset_control_bulk_data resets[] = {
-+		{ .rstc = adc->presetn },
-+		{ .rstc = adc->adrstn },
-+	};
-+	int ret;
++		adc: adc@10058000 {
++			compatible = "renesas,r9a08g045-adc";
++			reg = <0 0x10058000 0 0x1000>;
++			interrupts = <GIC_SPI 312 IRQ_TYPE_EDGE_RISING>;
++			clocks = <&cpg CPG_MOD R9A08G045_ADC_ADCLK>,
++				 <&cpg CPG_MOD R9A08G045_ADC_PCLK>;
++			clock-names = "adclk", "pclk";
++			resets = <&cpg R9A08G045_ADC_PRESETN>,
++				 <&cpg R9A08G045_ADC_ADRST_N>;
++			reset-names = "presetn", "adrst-n";
++			power-domains = <&cpg>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			#io-channel-cells = <1>;
++			status = "disabled";
 +
-+	if (pm_runtime_suspended(dev)) {
-+		adc->was_rpm_active = false;
-+	} else {
-+		ret = pm_runtime_force_suspend(dev);
-+		if (ret)
-+			return ret;
-+		adc->was_rpm_active = true;
-+	}
++			channel@0 {
++				reg = <0>;
++			};
 +
-+	ret = reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
-+	if (ret)
-+		goto rpm_restore;
++			channel@1 {
++				reg = <1>;
++			};
 +
-+	return 0;
++			channel@2 {
++				reg = <2>;
++			};
 +
-+rpm_restore:
-+	if (adc->was_rpm_active)
-+		pm_runtime_force_resume(dev);
++			channel@3 {
++				reg = <3>;
++			};
 +
-+	return ret;
-+}
++			channel@4 {
++				reg = <4>;
++			};
 +
-+static int rzg2l_adc_resume(struct device *dev)
-+{
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-+	struct rzg2l_adc *adc = iio_priv(indio_dev);
-+	struct reset_control_bulk_data resets[] = {
-+		{ .rstc = adc->adrstn },
-+		{ .rstc = adc->presetn },
-+	};
-+	int ret;
++			channel@5 {
++				reg = <5>;
++			};
 +
-+	ret = reset_control_bulk_deassert(ARRAY_SIZE(resets), resets);
-+	if (ret)
-+		return ret;
++			channel@6 {
++				reg = <6>;
++			};
 +
-+	if (adc->was_rpm_active) {
-+		ret = pm_runtime_force_resume(dev);
-+		if (ret)
-+			goto resets_restore;
-+	}
++			channel@7 {
++				reg = <7>;
++			};
 +
-+	ret = rzg2l_adc_hw_init(dev, adc);
-+	if (ret)
-+		goto rpm_restore;
++			channel@8 {
++				reg = <8>;
++			};
++		};
 +
-+	return 0;
-+
-+rpm_restore:
-+	if (adc->was_rpm_active) {
-+		pm_runtime_mark_last_busy(dev);
-+		pm_runtime_put_autosuspend(dev);
-+	}
-+resets_restore:
-+	reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
-+	return ret;
-+}
-+
- static const struct dev_pm_ops rzg2l_adc_pm_ops = {
- 	RUNTIME_PM_OPS(rzg2l_adc_pm_runtime_suspend, rzg2l_adc_pm_runtime_resume, NULL)
-+	SYSTEM_SLEEP_PM_OPS(rzg2l_adc_suspend, rzg2l_adc_resume)
- };
- 
- static struct platform_driver rzg2l_adc_driver = {
+ 		vbattb: clock-controller@1005c000 {
+ 			compatible = "renesas,r9a08g045-vbattb";
+ 			reg = <0 0x1005c000 0 0x1000>;
 -- 
 2.43.0
 
