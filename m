@@ -1,126 +1,107 @@
-Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
+Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86BDDC71136
-	for <webhook@archiver.kernel.org>; Thu, 12 Jun 2025 12:20:04 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
- by mx.groups.io with SMTP id smtpd.web11.11402.1749730795908596530
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFAE0C61DB2
+	for <webhook@archiver.kernel.org>; Fri, 13 Jun 2025 10:15:09 +0000 (UTC)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+ by mx.groups.io with SMTP id smtpd.web11.7063.1749809704854104543
  for <cip-dev@lists.cip-project.org>;
- Thu, 12 Jun 2025 05:19:56 -0700
+ Fri, 13 Jun 2025 03:15:05 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=nobuhiro1.iwamatsu@toshiba.co.jp header.s=key1.smx header.b=m6GIWX2Y;
- spf=pass (domain: toshiba.co.jp, ip: 210.130.202.134, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
-DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=toshiba.co.jp;h=From:To:Cc
-	:Subject:Date:Message-Id:In-Reply-To:References;i=
-	nobuhiro1.iwamatsu@toshiba.co.jp;s=key1.smx;t=1749730764;x=1750940364;bh=xQm9
-	B29yPR1oyas3GtkbwBMzJYt6zLvgmttpuy7ZSPk=;b=m6GIWX2YM04uEf5/Wo/254lns3u3M97P5W
-	Pl6qWDIJOXClOfPIsBGFnQB+ZWj2E7cq9Arx/a9F6dBdza77/v6eqkRqEOQD7C6wQbkCDKRJNj8o+
-	2Ga2Izu5aJRluuTWS0+OqabyYAlQWpkyg0O0d7PmhT3jPul5b93xm4okt26EhYgq/mnr6UTdV4Nwl
-	HRI0c96TDGYA7HA2tP26Yp9KwM+jqa4W+xrRqZtgBb4+r26h5vqEUBtV8tZSRr0EdFln1YAZ7dIbM
-	EvFYPQ5qeOoK+wOO6qunR4TNxHD4+DRQZMDs41Ql3OYkTW6kQQ0tQNaVTc66dWdOvpbb1+JSDF1Ug
-	==;
-Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 55CCJNit2959845; Thu, 12 Jun 2025 21:19:23 +0900
-X-Iguazu-Qid: 2yAbuzQy46AqjXOFbU
-X-Iguazu-QSIG: v=2; s=0; t=1749730763; q=2yAbuzQy46AqjXOFbU; m=FYXFmWI0MHZCpQZh0Nn2zLThPXMCPiWlDVx/pxSlSK0=
-Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1801) id 55CCJLIC1292051
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Thu, 12 Jun 2025 21:19:21 +0900
-From: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-To: cip-dev@lists.cip-project.org, pavel@denx.de
-Cc: prabhakar.mahadev-lad.rj@bp.renesas.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: [PATCH for 5.10.y-cip 1/1] media: mc: Provide a helper for setting bus_info field
-Date: Thu, 12 Jun 2025 21:19:10 +0900
-X-TSB-HOP2: ON
-Message-Id: <1749730750-6914-2-git-send-email-nobuhiro1.iwamatsu@toshiba.co.jp>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1749730750-6914-1-git-send-email-nobuhiro1.iwamatsu@toshiba.co.jp>
-References: <1749730750-6914-1-git-send-email-nobuhiro1.iwamatsu@toshiba.co.jp>
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=ozEIFBGX;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.42, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-acbb85ce788so322405666b.3
+        for <cip-dev@lists.cip-project.org>; Fri, 13 Jun 2025 03:15:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1749809703; x=1750414503; darn=lists.cip-project.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uqLwOaW/yPF2E3cHC+he+Bi/RPjZkR00zBvHjnhlwng=;
+        b=ozEIFBGXRO08k+6NhxoZdfImTH3XDrZCG9LvETLNbjFiGwKm6Nub5WxrHM3ZynBumC
+         YUur7mVtKqWTx+ABDUwNW9xtK+AvgLdDRAEGQSj+AWXJkVVEEQBs36zNOCDeOHcHQZEi
+         THhd23ZyDqazODaKoImVVfc12rnRUWz9RoPeljMxjxN7gfEfMwWJjpEL5L1F9doF3SuB
+         isnB0CgSykte+xJWRPN3Cb1x/HT0E0r65c2Y0c9Pk+BssluL7TC50os2G0ipH5pYdBtH
+         miIVDK3omMBX43I9jORuM++w69nnaPICNMJuizmDHx+Cqvzv6tfnjYVu15HCZjJc8KAj
+         0LCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749809703; x=1750414503;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uqLwOaW/yPF2E3cHC+he+Bi/RPjZkR00zBvHjnhlwng=;
+        b=H1bs4BAHXLttgOJ5tJnO1d3Wjv3Ao1v6VoqOlgz/i8aTsf4cRzCyKNDlv5uz2ko6KR
+         EZks3rsaTLCOCRazDDb/JTe2RcpO33MPM61fXoPtrWMG6zilUvLZBHjwF6tTGPE71Oo6
+         1UIHxnbRk4p/cE283ZXRCY4e20gQcuczFmJkTVkvmtj7/M342dJLkuu7Xvqh2IRCTHNg
+         lIyFs6SqXgkyYPbzJDYivuPE/NAfxJr0pGh008XrDCuCK5KTPCy3lzmTmE8PyIZKRXIK
+         0cXjzV6N7I5HjcnpePwIYZoiHKvya8dtnPdoKoJ07eqr6dmhWwjN2loEi7iUboKFHYa1
+         ijFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5/UxzdwuUJpiV4AB77uQVV+KkBE0uePgC85xWQCqPX7QwkbtOtqTNkYw0tWQyOasMWWQd8LE4@lists.cip-project.org
+X-Gm-Message-State: AOJu0YzbRVYNZNpHx1H9u06DchgDwlp3KdNziwmohbrdbt9oM6ewnVAj
+	n+bTJVVEGhd+wgAY6GNfm5u2OF2asDh6NKA5TBDdo9IKIALidW4DDp9DPAyZBgdB8Zk=
+X-Gm-Gg: ASbGncta0fov4s4VgQSkmVLijG7LTP3XH26hiH/N04irvUP5rHbN8S/Ifl2W7uzvZP1
+	YZDjajdZo0IKgK7S34Zcd2xqwb2YvXQK5wSojM0nRtPfwQkMPEVQaG5oxXW3G0KrtCIF34lJZJq
+	sl9p57PV04Q6xcdizmgpfe6HJV0R4d9RxGx6TVDKrYW0fwx0VEdKloqAbcuBumwTWKGkTYjkAP1
+	6/3z0awdVXXjZWsV91RxpQxklF85WOXN2ZgYaoD+IDEDnEPF4oHCqS+S91KQoAvaT2CQvOa+xhh
+	P/bni7kfxLVHbxnsmloLAO0DJhifncbj/COHOi2OBsKBbfp3N4a2SknemKNx/Ade74o7c7JgpYO
+	Ijv5spkDbEUlFq6Bdh0QmvtQ1otU=
+X-Google-Smtp-Source: AGHT+IGp/av6CPUQe1eGuUOplAXauxg3pcEWVgfZ0/1Mexgfi6Do1qFVLEJlE+SOW0NocnvVuGnN9g==
+X-Received: by 2002:a17:907:2d0b:b0:ad8:89c7:2735 with SMTP id a640c23a62f3a-adec5ca1112mr272164566b.58.1749809702719;
+        Fri, 13 Jun 2025 03:15:02 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.110])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec8159377sm105101466b.9.2025.06.13.03.15.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jun 2025 03:15:02 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: nobuhiro1.iwamatsu@toshiba.co.jp,
+	pavel@denx.de
+Cc: claudiu.beznea@tuxon.dev,
+	cip-dev@lists.cip-project.org
+Subject: [PATCH 5.10.y-cip 00/12] RZ/G3S: Backport ADC support
+Date: Fri, 13 Jun 2025 13:14:49 +0300
+Message-ID: <20250613101501.262091-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 12 Jun 2025 12:20:04 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19040
+ <cip-dev@lists.cip-project.org>; Fri, 13 Jun 2025 10:15:09 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19041
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 78a171e58717685ea0eb082a24bc75bd9e20518f upstream.
+Hi,
 
-The bus_info or a similar field exists in a lot of structs, yet drivers
-tend to set the value of that field by themselves in a determinable way.
-Thus provide a helper for doing this. To be used in subsequent patches.
+Series backports the Renesas RZ/G3S ADC support to v5.10.y CIP.
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
-Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
----
- include/media/media-device.h | 29 ++++++++++++++++++++++++++---
- 1 file changed, 26 insertions(+), 3 deletions(-)
+Thank you,
+Claudiu Beznea
 
-diff --git a/include/media/media-device.h b/include/media/media-device.h
-index 1345e6da688a..077250c49f1a 100644
---- a/include/media/media-device.h
-+++ b/include/media/media-device.h
-@@ -13,12 +13,13 @@
- 
- #include <linux/list.h>
- #include <linux/mutex.h>
-+#include <linux/pci.h>
-+#include <linux/platform_device.h>
- 
- #include <media/media-devnode.h>
- #include <media/media-entity.h>
- 
- struct ida;
--struct device;
- struct media_device;
- 
- /**
-@@ -181,8 +182,7 @@ struct media_device {
- 	atomic_t request_id;
- };
- 
--/* We don't need to include pci.h or usb.h here */
--struct pci_dev;
-+/* We don't need to include usb.h here */
- struct usb_device;
- 
- #ifdef CONFIG_MEDIA_CONTROLLER
-@@ -496,4 +496,27 @@ static inline void __media_device_usb_init(struct media_device *mdev,
- #define media_device_usb_init(mdev, udev, name) \
- 	__media_device_usb_init(mdev, udev, name, KBUILD_MODNAME)
- 
-+/**
-+ * media_set_bus_info() - Set bus_info field
-+ *
-+ * @bus_info:		Variable where to write the bus info (char array)
-+ * @bus_info_size:	Length of the bus_info
-+ * @dev:		Related struct device
-+ *
-+ * Sets bus information based on &dev. This is currently done for PCI and
-+ * platform devices. dev is required to be non-NULL for this to happen.
-+ *
-+ * This function is not meant to be called from drivers.
-+ */
-+static inline void
-+media_set_bus_info(char *bus_info, size_t bus_info_size, struct device *dev)
-+{
-+	if (!dev)
-+		strscpy(bus_info, "no bus info", bus_info_size);
-+	else if (dev_is_platform(dev))
-+		snprintf(bus_info, bus_info_size, "platform:%s", dev_name(dev));
-+	else if (dev_is_pci(dev))
-+		snprintf(bus_info, bus_info_size, "PCI:%s", dev_name(dev));
-+}
-+
- #endif
+Claudiu Beznea (12):
+  clk: renesas: r9a08g045: Add clocks, resets and power domain support
+    for the ADC IP
+  iio: adc: rzg2l_adc: Convert dev_err() to dev_err_probe()
+  iio: adc: rzg2l_adc: Simplify the runtime PM code
+  iio: adc: rzg2l_adc: Use read_poll_timeout()
+  iio: adc: rzg2l_adc: Enable runtime PM autosuspend support
+  iio: adc: rzg2l_adc: Prepare for the addition of RZ/G3S support
+  iio: adc: rzg2l_adc: Add support for channel 8
+  iio: adc: rzg2l_adc: Add suspend/resume support
+  dt-bindings: iio: adc: renesas,rzg2l-adc: Document RZ/G3S SoC
+  iio: adc: rzg2l_adc: Add support for Renesas RZ/G3S
+  arm64: dts: renesas: r9a08g045: Add ADC node
+  arm64: dts: renesas: rzg3s-smarc-som: Enable ADC
+
+ .../bindings/iio/adc/renesas,rzg2l-adc.yaml   |  39 +-
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  53 +++
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |   4 +
+ drivers/clk/renesas/r9a08g045-cpg.c           |   5 +
+ drivers/iio/adc/rzg2l_adc.c                   | 405 ++++++++++--------
+ 5 files changed, 323 insertions(+), 183 deletions(-)
+
 -- 
-2.25.1
-
+2.43.0
 
 
