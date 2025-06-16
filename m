@@ -1,76 +1,112 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <ch@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B7F4C71135
-	for <webhook@archiver.kernel.org>; Mon, 16 Jun 2025 07:53:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA0DC71135
+	for <webhook@archiver.kernel.org>; Mon, 16 Jun 2025 09:30:33 +0000 (UTC)
 Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web10.25211.1750060422786504220
+ by mx.groups.io with SMTP id smtpd.web10.26453.1750066227769587849
  for <cip-dev@lists.cip-project.org>;
- Mon, 16 Jun 2025 00:53:43 -0700
+ Mon, 16 Jun 2025 02:30:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=BNMwhcRm;
- spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 326B21039EF14;
-	Mon, 16 Jun 2025 09:53:37 +0200 (CEST)
+ dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=daSxwSNi;
+ spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: ch@denx.de)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 748F5103972B5;
+	Mon, 16 Jun 2025 11:30:24 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1750060420; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=Jh2ExOykoPuJ80LOz/266dzfbIQOZngP2ssaZbGf66s=;
-	b=BNMwhcRmvJlLrPjDJmSZtaLSJfsg3aAIFalLvgHVugVzStXioIDLytI6HpFyAUBPydFMVG
-	MKXGx6EHdvKSYXC2urceQiV/55ptkB01y9wZD/psgIdrWb7BCASRU0j2h1ia/x0wkrThBG
-	KPt14vC+qQ+e42Csm3TwiwyLkdTvAeSMobnMqOCYnsxDtnrYVsryrSeHfe6pAU/sa9D9uR
-	M+eXAWnd0aw9uW4bcp4++PpAb08Oc92RBbyX/F38Fzw58O8n331OHJJwvvAo/fU3WmTiOx
-	zkDNQAureNZb+Otc8bsGGwpVtJ5RXNP2gBlujp6OfRYLla3zIBD+7QnCnTfWFQ==
-Date: Mon, 16 Jun 2025 09:53:35 +0200
-From: Pavel Machek <pavel@denx.de>
-To: nobuhiro1.iwamatsu@toshiba.co.jp
-Cc: claudiu.beznea@tuxon.dev, cip-dev@lists.cip-project.org
-Subject: Re: [cip-dev] [PATCH 5.10.y-cip 00/12] RZ/G3S: Backport ADC support
-Message-ID: <aE/Nf0GBgpJRLN4Y@duo.ucw.cz>
-References: <20250613101501.262091-1-claudiu.beznea.uj@bp.renesas.com>
- <TY7PR01MB14818F570BA2356DF7ACB80E89270A@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+	t=1750066225; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=oD1pqDI5U9luj9XajkjfqwFPHKTUeuXDmQTv4ClV5Wk=;
+	b=daSxwSNizL+OvdIzPHUv1vobiO3JulVefLnDHSJffL9S6RfIPV9aYdyeM2tsrH8h9yVMN/
+	kqcKzvhyQ9TRXX6MgPxPSltdjOREi4hant4fhrba8KFYepocuOvhVuNy4g72wckMe8wgt4
+	zLkmmV7J9D/vVKbj6QLY0Xfb+KGwbyY4K3AtaPXPB0tWXhAyEhy/E/DEzRB52yod9uUBMn
+	lnLzDxrWVX9k7S3t6AVin9tPPOPmm8eig3/1bGvKzx2ZcW4Oxy2Vnst6USrQnD80dKfJdZ
+	Z/e5Ga5B35OrdqhViY0NB6iHp8fiY3TjZtwuI/5Oiqzmx2x3az3OyJ0PKIh4NA==
+From: Claudius Heine <ch@denx.de>
+Subject: [PATCH v7 0/4] initramfs-crypt-hook patch
+Date: Mon, 16 Jun 2025 11:30:10 +0200
+Message-Id: <20250616-initramfs-crypt-hook-patches-2-v7-0-82dc9d0dbbcf@denx.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="EFc3D1k1B3uQinvW"
-Content-Disposition: inline
-In-Reply-To: <TY7PR01MB14818F570BA2356DF7ACB80E89270A@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACLkT2gC/43OQW7DIBCF4atErDsRMwbbdNV7VF0gGAqqYiywr
+ ESR716cReuu0uXbfO+/i8olcRWvp7sovKaa8tTG8HISLtrpkyH5tgVJ0rKTGtKUlmIvoYIrt3m
+ BmPMXzHZxkSsQGOeUlTS40VjRkLlwSNfHwftH26HkCyyxsD2yCjs5qO5MIxKOHSC4+OZ5up497
+ 0pMdcnl9qhc1W79O2hVIEHhIA0Sa+rxx91zVn3AsHuK6YYF15NXlqwn8xfrDxjJp1jfMA4oHaK
+ z3qhfbNu2byVkNwqaAQAA
+X-Change-ID: 20250305-initramfs-crypt-hook-patches-2-9cc4a027c89a
+To: cip-dev@lists.cip-project.org
+Cc: Jan Kiszka <jan.kiszka@siemens.com>, 
+ Quirin Gylstorff <quirin.gylstorff@siemens.com>, 
+ Heinisch Alexander <alexander.heinisch@siemens.com>, 
+ Cetin Gokhan <gokhan.cetin@siemens.com>, Claudius Heine <ch@denx.de>
+X-Mailer: b4 0.14.2
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 16 Jun 2025 07:53:52 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19097
+ <cip-dev@lists.cip-project.org>; Mon, 16 Jun 2025 09:30:33 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19098
 
+Hi,
 
---EFc3D1k1B3uQinvW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+here is v7 of my patchset.
 
-Hi!
+I readded `tpm2_createpolicy` for clevis.
 
-> I reviewed this series, LGTM.
-> I can apply, if there are no other comments.
->=20
-> Reviewed-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Kind regards,
+Claudius
 
-Thank you, applied.
+---
+Changes in v7:
+- readded tpm2_createpolicy for clevis
+- Link to v6: https://lore.kernel.org/r/20250320-initramfs-crypt-hook-patches-2-v6-0-ef10c11cad94@denx.de
+
+Changes in v6:
+- luks formatting of format-if-empty will now be redone when if it is a
+  luks partition without a TPM2 token, this makes it a bit more
+  power-fail save
+- Link to v5: https://lore.kernel.org/r/20250313-initramfs-crypt-hook-patches-2-v5-0-fc62d4a2ad29@denx.de
+
+Changes in v5:
+- Switch to use TPM2 protected password instead of static initial
+  password for encryption
+- Link to v4: https://lore.kernel.org/r/20250305-initramfs-crypt-hook-patches-2-v4-0-4170912e5261@denx.de
+
+Changes in v4:
+ - improve documentation and commit messages
+ - reorder commits, to put re-encryption recovery up front
+ - extract static temporary encryption key patch into its own
+ - switch from lsblk to blkid
+
+Changes in v3:
+ - Rebase on current next
+ - Extended `noencrypt` documentation
+ - support clevis tokens for re-encryption recovery
+
+Changes in v2:
+ - Added more descriptive commit message
+ - Added more descriptive documentation about noencrypt option
+ - Fixed typos in documentation
+ - removed unnecessary setting of /conf/param.conf in initramfs-crypt-hook
+ - added re-encryption recovery patch
+
+---
+Claudius Heine (4):
+      initramfs-crypt-hook: store initial encryption key in TPM2
+      initramfs-crypt-hook: add re-encryption recovery
+      initramfs-crypt-hook: implement 'noencrypt' option
+      initramfs-crypt-hook: add 'format-if-empty' feature
+
+ doc/README.tpm2.encryption.md                      |  25 +++-
+ .../initramfs-crypt-hook/files/local-top-complete  | 127 +++++++++++++++++++--
+ .../initramfs-crypt-hook_0.7.bb                    |  13 ++-
+ 3 files changed, 147 insertions(+), 18 deletions(-)
+---
+base-commit: 8f93ab805738001fc33dd1f918c6e7f73a90e744
+change-id: 20250305-initramfs-crypt-hook-patches-2-9cc4a027c89a
 
 Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+-- 
+Claudius Heine <ch@denx.de>
 
---EFc3D1k1B3uQinvW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaE/NfwAKCRAw5/Bqldv6
-8sPLAJ9Xh0MR0CBkoStm6N7F2aP+yyMWHQCfUh1JVcCjNXeFOLDzoZEVWAJgans=
-=fbJc
------END PGP SIGNATURE-----
-
---EFc3D1k1B3uQinvW--
 
