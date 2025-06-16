@@ -2,33 +2,33 @@ Return-Path: <ch@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E86C71136
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C48F7C7115D
 	for <webhook@archiver.kernel.org>; Mon, 16 Jun 2025 09:30:33 +0000 (UTC)
 Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web10.26454.1750066230178360208
+ by mx.groups.io with SMTP id smtpd.web11.26426.1750066230933074363
  for <cip-dev@lists.cip-project.org>;
- Mon, 16 Jun 2025 02:30:30 -0700
+ Mon, 16 Jun 2025 02:30:31 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=fMY7cHVm;
+ dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=DKai5vvH;
  spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: ch@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3C2D61039EF19;
-	Mon, 16 Jun 2025 11:30:28 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 176A4103972B5;
+	Mon, 16 Jun 2025 11:30:29 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1750066228; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1750066229; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=pS54Bl/DWjS1hhUTL+Gr8Rk9RJbScOGvZFL0TXK2ZS0=;
-	b=fMY7cHVmiq9shI8vG3W1pwB+dfQtEhTwLKlbfRCsC+R2Pq8mksP0ikGfQ10Pb/6JDVFsku
-	SeYybZsYUdeoQBC6iYtfdpN0+bxGfyreC/CA0+ejKB9xvRZsGGMomDff+mu+01B6E3FrNc
-	mXWpbnJWuyuoFJZVCI5Kf9v5FVyEs4IHlanW7/Tjn8NmYHM+xkjmmFbkuOpEmoOvfYllsB
-	4s3CifFEulDBYtdrvcur8ks2+Gd4CtKeeOjpUFlCKz6EKRS8i/4Ykl4fTuIqz4ps20y4ai
-	qQO5CgnTXI6aiOS2sUg+yirVMQzSYIcApHkmLuRFqkaqZYORDoJZECqF5akmfw==
+	bh=PWZD1JE30VzAMcD8O7z/2Kz5GJVZGzobdoZYcbFtwqI=;
+	b=DKai5vvH44kXXLAehQtBdaLclsnIXNljJeRbiJdCdc/pF5HTSqW1FPmDHIWQpVt9iebMkA
+	Nm3A5KsrprOc67YrYFlkJ1wp0QdQyhuhGOWFeQCsWhAZU0lI6Qhv8qekjASMIl1dX7I33p
+	cmnI/mDtloJc0xZUNXak+cYpJxHzvZ3Jv3gr7ZJ0nxYKZR1HC8AYcXGkkwGDsCeOHE01M+
+	vmaJU7hN5JrKpzF9uGE1caxfSkUxMTw+Cfy/xku5/rZepbQQ2rkh8Oz8/FJ9CaNFtWdrab
+	O0N0ZOS+NAxK8nA1M8heriLpeYjv3gIXjhXBB0nrADtSU2fOYfxTuVJ0AMh9RA==
 From: Claudius Heine <ch@denx.de>
-Date: Mon, 16 Jun 2025 11:30:13 +0200
-Subject: [PATCH v7 3/4] initramfs-crypt-hook: implement 'noencrypt' option
+Date: Mon, 16 Jun 2025 11:30:14 +0200
+Subject: [PATCH v7 4/4] initramfs-crypt-hook: add 'format-if-empty' feature
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250616-initramfs-crypt-hook-patches-2-v7-3-82dc9d0dbbcf@denx.de>
+Message-Id: <20250616-initramfs-crypt-hook-patches-2-v7-4-82dc9d0dbbcf@denx.de>
 References: <20250616-initramfs-crypt-hook-patches-2-v7-0-82dc9d0dbbcf@denx.de>
 In-Reply-To: <20250616-initramfs-crypt-hook-patches-2-v7-0-82dc9d0dbbcf@denx.de>
 To: cip-dev@lists.cip-project.org
@@ -42,112 +42,121 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 16 Jun 2025 09:30:33 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19101
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19102
 
-In case encryption needs to be enabled via an update, while still
-allowing the update fall back to work. One update step where encryption
-is supported, but no reencryption is taking place if the device is not
-encrypted.
+With the A/B update scheme, the goal is to have two (mostly) independent
+system slots, one that is active and one that is inactive. The active
+system slot writes updates to the inactive system slot and switches the
+active and inactive slot via a reboot. Late when booting the new system,
+it will decide if the current system is stable and then 'bless' it in
+the bootloader, or it will consider the update failed and the system
+reboots, without the updated system slot being blessed.
 
-For this the `noencrypt` hook is implemented, which requires some
-restructure/reordering of the `local-top-complete` script.
+In the last case, the system in the old slot will work as a fallback
+system, that reports the failed update back to the backend, and continue
+the service, as it has before the update was applied.
+
+It is important here that the update does not modify the fallback system
+in any avoidable way, because doing so might break the fallback and make
+the system not remotely recoverable.
+
+If encryption is added via an update, there are two cases to consider:
+
+1. Update is applied to the inactive update slot via the normal update
+   procedure. In this case the fallback system should not be modified.
+2. A system that uses encryption is flashed via a factory flash. In this
+   case there is no fallback system and all partitions of both update
+   slots need to be encrypted.
+
+To differentiate between these cases, the content of each fallback
+partition can be looked at, if they contain data, we are in case (1) and
+these partitions should be left alone, if they contain only 0x00, they
+can be formatted, because we are in case (2).
+
+The `format-if-empty` option is implemented here, will look if the first
+10 MiB of each partition marked with this option contains 0x00 or not
+and will either format it or leave it alone.
 
 Signed-off-by: Claudius Heine <ch@denx.de>
 ---
- doc/README.tpm2.encryption.md                      | 22 +++++++++++++++++++-
- .../initramfs-crypt-hook/files/local-top-complete  | 24 +++++++++++++++++-----
- 2 files changed, 40 insertions(+), 6 deletions(-)
+ doc/README.tpm2.encryption.md                       |  5 ++++-
+ .../initramfs-crypt-hook/files/local-top-complete   | 21 +++++++++++++++++++++
+ .../initramfs-crypt-hook_0.7.bb                     |  2 +-
+ 3 files changed, 26 insertions(+), 2 deletions(-)
 
 diff --git a/doc/README.tpm2.encryption.md b/doc/README.tpm2.encryption.md
-index 3f7e89f34fa4638a42285989e61370d8970afcde..2256f95a039044313807ab75ce219fa3eb7408b6 100644
+index 2256f95a039044313807ab75ce219fa3eb7408b6..3c29381209c5bec8aa0b031d941d23b7bf0cfd95 100644
 --- a/doc/README.tpm2.encryption.md
 +++ b/doc/README.tpm2.encryption.md
-@@ -42,11 +42,12 @@ The initramfs-crypt-hook recipe has the following variables which can be overwri
+@@ -42,12 +42,13 @@ The initramfs-crypt-hook recipe has the following variables which can be overwri
  ### CRYPT_PARTITIONS
  
  The variable `CRYPT_PARTITIONS` contains the information which partition shall be encrypted where to mount it.
--Each entry uses the schema `<partition-identifier>:<mountpoint>:<reencrypt or format>`.
-+Each entry uses the schema `<partition-identifier>:<mountpoint>:<reencrypt | format | noencrypt>`.
+-Each entry uses the schema `<partition-identifier>:<mountpoint>:<reencrypt | format | noencrypt>`.
++Each entry uses the schema `<partition-identifier>:<mountpoint>:<reencrypt | format | noencrypt | format-if-empty>`.
  - The `partition-idenitifer` is used to identify the partition on the disk, it can contain a partition label, partition UUID or absolute path to the partition device, e.g. `/dev/sda`.
  - The `mountpoint` is used mount the decrypted partition in the root file system
  - `reencrypt` uses `cryptsetup reencrypt` to encrypt the exiting content of the partition. This reduces the partition by 32MB and the file system by a similar amount
  - `format` creates a empty LUKS partition and creates a file system defined with the shell command given in `CRYPT_CREATE_FILE_SYSTEM_CMD`
-+- `noencrypt` will not try to encrypt the partition if it isn't encrypted already, but will open it if it is. See the section [Encrypting the shared partition via an update](#### Encrypting the shared partition via an update) for more information
+ - `noencrypt` will not try to encrypt the partition if it isn't encrypted already, but will open it if it is. See the section [Encrypting the shared partition via an update](#### Encrypting the shared partition via an update) for more information
++- `format-if-empty` will create an empty LUKS partition and format it, like the `format` option, but only if the first 10 MiB are empty (contain only 0x00). This makes it possible to differentiate if a partition is empty and can be encrypted, because it was freshly flashed via a factory image, or if it might contain an unencrypted fallback system and should be left alone.
  
  #### Encrypted root file system
  
-@@ -58,6 +59,25 @@ The mountpoint is empty as the root partition is mounted  by a seperate initramf
- Both partitions are encrypted during first boot. The initramfs hook opens `${ABROOTFS_PART_UUID_A}` and `${ABROOTFS_PART_UUID_B}`
- during boot.
+@@ -78,6 +79,8 @@ The data partition in the fallback system will have the `noencrypt` flag set, wh
+ - Update fails at a later point and is not blessed; system reboots into the fallback system on slot A.
+ - Fallback system now needs to be able to use the shared data partition.
  
-+#### Encrypting the shared partition via an update
-+
-+With the following requirements, special handling is necessary:
-+
-+- A/B update scheme is used.
-+- Both slots have a shared volume that needs to be encrypted as well.
-+- The system in the field is currently unencrypted, and encryption should be added via an update.
-+- When the update fails, the fallback system needs to deal with an encrypted data partition.
-+
-+In this case, the fallback system needs to support an encrypted shared data partition but would not encrypt it on its own. For this, the `noencrypt` flag can be used.
-+
-+The data partition in the fallback system will have the `noencrypt` flag set, while the update system will set the flag to `reencrypt`. This will handle the following case:
-+
-+- Unencrypted system on slot A is running; the shared data partition has set the `noencrypt` flag and is not encrypted.
-+- Update for enabling encryption is applied to slot B, where the shared data partition has the `reencrypt` flag.
-+- System reboots to slot B, encrypting the shared data partition.
-+- Update fails at a later point and is not blessed; system reboots into the fallback system on slot A.
-+- Fallback system now needs to be able to use the shared data partition.
++In this case, where encryption is added via an update, the `format-if-empty` option is also useful. The system with encryption enabled has the `format-if-empty` option set for the partition(s) in the inactive update slot. This will cause both sets of partitions in both slots to be encrypted after the first boot on a fresh factory flashed system, but will not disturb existing data of any fallback system if booted after an update.
 +
  ### CRYPT_CREATE_FILE_SYSTEM_CMD
  
  The variable `CRYPT_CREATE_FILE_SYSTEM_CMD` contains the command to create a new file system on a newly
 diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-index 6df4cccee9c99653fa9869ca2e46ead549d6fc2d..19df9ac9e22fde09dda8ea3ad76f7ff763d3cf1b 100644
+index 19df9ac9e22fde09dda8ea3ad76f7ff763d3cf1b..58a6cbcbb5b0880cb93d08a4b64b8b0635927702 100644
 --- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
 +++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-@@ -303,15 +303,18 @@ for partition_set in $partition_sets; do
- 	if [ ! -e  "$part_device" ]; then
- 		panic "Could not find device  mapped to '$partition' cannot be encrypted!"
- 	fi
--	decrypted_part=/dev/mapper/"$crypt_mount_name"
--	# check if we are trying to mount root
--	if [ "$partition_mountpoint" = "/" ]; then
--		echo "ROOT=$decrypted_part" >/conf/param.conf
--	fi
+@@ -365,6 +365,27 @@ for partition_set in $partition_sets; do
+ 			eval "${create_file_system_cmd} ${decrypted_part}"
+ 			log_end_msg
+ 		;;
++		"format-if-empty")
++			# Check if first 10MiB contain only zeros, or if it contains a luks
++			# header, but no TPM2 token
++			if cmp -s -n "$(( 10 * 1024 * 1024 ))" "${part_device}" /dev/zero || \
++				( [ "$(get_fstype "${part_device}")" = "luks" ] && \
++				! ( /usr/sbin/cryptsetup luksDump --batch-mode "$part_device" |
++					grep -q "systemd-tpm2\|clevis" ) )
++			then
++				log_begin_msg "Encryption of ${part_device}"
++				/usr/sbin/cryptsetup luksFormat --batch-mode \
++					 --type luks2 "$part_device" < "$tmp_key"
++				enroll_tpm2_token "$part_device" "$tmp_key" "$tpm_device" "$tpm_key_algorithm" "$pcr_bank_hash_type"
++				tpm2_key_del
++				open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
++				eval "${create_file_system_cmd} ${decrypted_part}"
++				log_end_msg
++			else
++				# If not empty, leave it alone.
++				continue
++			fi
++		;;
+ 		*)
+ 			panic "Unknown value ${partition_format}. Cannot create a encrypted partition !"
+ 		;;
+diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.7.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.7.bb
+index b48c6e89384f7f43737fdbb3438d5be15bb5945e..2e5c99624661d807a986da291ffeb0c6e8f95926 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.7.bb
++++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.7.bb
+@@ -40,7 +40,7 @@ HOOK_ADD_MODULES = " \
  
-+	# If partition is already encrypted, decrypt and continue with next partition:
-+	decrypted_part=/dev/mapper/"$crypt_mount_name"
- 	if /usr/sbin/cryptsetup luksDump --batch-mode "$part_device" \
- 			| grep -q "systemd-tpm2\|clevis"; then
- 		open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
-+
-+		# check if we are trying to mount root, set ROOT to decrypted partition:
-+		if [ "$partition_mountpoint" = "/" ]; then
-+			echo "ROOT=$decrypted_part" >/conf/param.conf
-+		fi
-+
- 		continue
- 	fi
- 
-@@ -321,6 +324,17 @@ for partition_set in $partition_sets; do
- 		partition_format="reencrypt"
- 	fi
- 
-+	# If partition should not be encrypted, continue with next partition:
-+	if [ "$partition_format" = "noencrypt" ]
-+	then
-+		continue
-+	fi
-+
-+	# check if we are trying to mount root, set ROOT to decrypted partition:
-+	if [ "$partition_mountpoint" = "/" ]; then
-+		echo "ROOT=$decrypted_part" >/conf/param.conf
-+	fi
-+
- 	# service watchdog in the background during lengthy re-encryption
- 	if [ -z "$watchdog_pid" ]; then
- 		service_watchdog &
+ HOOK_COPY_EXECS = " \
+     mke2fs grep awk expr seq sleep basename uuidparse mountpoint \
+-    e2fsck resize2fs cryptsetup head tr rm \
++    e2fsck resize2fs cryptsetup head tr rm cmp \
+     tpm2_pcrread tpm2_testparms tpm2_flushcontext tpm2_startauthsession \
+     tpm2_policypcr tpm2_createprimary tpm2_create tpm2_load tpm2_evictcontrol \
+     tpm2_unseal tpm2_getcap \
 
 -- 
 2.49.0
