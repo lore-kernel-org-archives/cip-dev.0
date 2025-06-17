@@ -1,96 +1,67 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <Shivanand.Kunijadar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59AEFC71136
-	for <webhook@archiver.kernel.org>; Tue, 17 Jun 2025 09:27:20 +0000 (UTC)
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web11.14663.1750152433744114486
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 880DDC71157
+	for <webhook@archiver.kernel.org>; Tue, 17 Jun 2025 09:46:10 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.web11.14894.1750153556687286956
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Jun 2025 02:27:14 -0700
+ Tue, 17 Jun 2025 02:45:57 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=SE6W5EmO;
- spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0F6CE103972B9;
-	Tue, 17 Jun 2025 11:27:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1750152431; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=8tsRvtefdURmGRvK8wgBp9tyd1zj/wns4kkBZmGJnL4=;
-	b=SE6W5EmO8mIA++XxONXNBExcoVEcJN9YCxsh6oy5C48dGzSeU1EaB496lmCq04u0E+Yflo
-	ct1sxlOnpxlHssX2SJgsTNA7JtKIXk0XT7An0ALxT7j3d8ipw0Y3TZUlBVjTW5OGxYmeri
-	vzvcgXWOCpeJ44c9Qv5iyla9nzXRrfa7yZjxtMgzwICfXbonSuJ9rwq0XblYsNQ1AppA/L
-	IZ0UALpdzL5QtfKDKX6LZBm+UR1aUBWh9jGwzH/J1O4Z3IMW+x+NS0mgb9yIn/U/ll7EeZ
-	hNjiHfFn6dQ/H8mKY21g8lj2P2yV7a34+z1TmFUpWrml6o/5JdpbPx4HlNTwzw==
-Date: Tue, 17 Jun 2025 11:27:05 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Ulrich Hecht <uli@fpond.eu>
-Cc: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: Re: Request for review for 4.4-st65, 4.4-cip100
-Message-ID: <aFE06VzaBSMttFH9@duo.ucw.cz>
-References: <1652754680.135113.1750092922654@webmail.strato.de>
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.158, mailfrom: shivanand.kunijadar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 55H9jrWr305938; Tue, 17 Jun 2025 18:45:54 +0900
+X-Iguazu-Qid: 2rWhqikygHWJqXkZJ3
+X-Iguazu-QSIG: v=2; s=0; t=1750153553; q=2rWhqikygHWJqXkZJ3; m=Fqiwt2XRqK32EpTOpg3Py5u0xiQxQ3XNzCMfkwXxh28=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1123) id 55H9jqRQ3186991
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 17 Jun 2025 18:45:53 +0900
+From: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Cc: shivanand.kunijadar@toshiba-tsip.com, dinesh.kumar@toshiba-tsip.com,
+        kazuhiro3.hayashi@toshiba.co.jp
+Subject: [isar-cip-core][PATCH] .gitlab-ci.yml: Increase IEC test timeout for real hardware(M-COM).
+Date: Tue, 17 Jun 2025 15:06:42 +0530
+X-TSB-HOP2: ON
+Message-Id: <20250617093642.1320442-1-Shivanand.Kunijadar@toshiba-tsip.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zlnq90S0jviVxEBb"
-Content-Disposition: inline
-In-Reply-To: <1652754680.135113.1750092922654@webmail.strato.de>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 17 Jun 2025 09:45:50.0670 (UTC) FILETIME=[9C2516E0:01DBDF6C]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 17 Jun 2025 09:27:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19117
+ <cip-dev@lists.cip-project.org>; Tue, 17 Jun 2025 09:46:10 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19118
+
+Sometimes the current timeout of 60 mins for IEC tests execution for M-COM
+device on LAVA lab is not sufficient. The gitlab CI job fails due to timeout
+issue. Increase timeout to 120 min to avoid CI job failures.
+
+It's a temporary fix, so need to explore the reason for the longer runtime
+in LAVA setup for M-COM.
+
+[1] https://lava.ciplatform.org/scheduler/job/1281301
+---
+ .gitlab-ci.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index ca52a05..f7a8127 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -458,7 +458,7 @@ test:x86-uefi-IEC:
+   variables:
+     target: x86-uefi
+     test_function: IEC
+-    iec_test_timeout: 60
++    iec_test_timeout: 120
+ 
+ test:qemu-amd64-secure-boot-unsigned-kernel:
+   extends:
+-- 
+2.39.2
 
 
---zlnq90S0jviVxEBb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> Here's the manual backports for the upcoming 4.4 kernel release. As alway=
-s they can be found in https://git.kernel.org/pub/scm/linux/kernel/git/cip/=
-linux-cip.git/log/?h=3Dlinux-4.4.y-st-rc
->
-
-One patch is not complete, the rest look ok to me.
-
-a > 8dab9bb642b2e net_sched: hfsc: Fix a potential UAF in hfsc_dequeue() too
-> 6f43c571bf094 of/irq: Fix device node refcount leakages in
-> of_irq_init()
-
-4.4 has one more place to handle, AFAICT:
-
-                        if (WARN(!match->data,
-                            "of_irq_init: no init function for %s\n",
-                            match->compatible)) {
-                                kfree(desc);
-                                continue;
-			}
-
-(Being behind WARN(), it is probably not too important).
-
-a > 7f406a4c1fd70 mm: add missing release barrier on PGDAT_RECLAIM_LOCKED u=
-nlock
-a > d24045205aaa7 media: streamzap: prevent processing IR data on URB failu=
-re
-
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---zlnq90S0jviVxEBb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaFE06QAKCRAw5/Bqldv6
-8geNAKC2auOzHmEAU7kw4eklCh6nBNsssgCdH82IYZAsrkemnnDy9BgfByHoXE8=
-=9BGU
------END PGP SIGNATURE-----
-
---zlnq90S0jviVxEBb--
 
