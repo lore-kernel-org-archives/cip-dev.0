@@ -2,56 +2,56 @@ Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FBB6C7115B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE03C7115C
 	for <webhook@archiver.kernel.org>; Wed, 18 Jun 2025 09:13:55 +0000 (UTC)
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
- by mx.groups.io with SMTP id smtpd.web10.37847.1750217921745067492
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+ by mx.groups.io with SMTP id smtpd.web11.38105.1750218592248944131
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Jun 2025 20:38:41 -0700
+ Tue, 17 Jun 2025 20:49:52 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@gmail.com header.s=20230601 header.b=J8S2bZFE;
- spf=pass (domain: gmail.com, ip: 209.85.210.178, mailfrom: zaq14760@gmail.com)
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-747e41d5469so6823464b3a.3
-        for <cip-dev@lists.cip-project.org>; Tue, 17 Jun 2025 20:38:41 -0700 (PDT)
+ dkim=pass header.i=@gmail.com header.s=20230601 header.b=EXctGM2U;
+ spf=pass (domain: gmail.com, ip: 209.85.214.180, mailfrom: zaq14760@gmail.com)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2363e973db1so2421655ad.0
+        for <cip-dev@lists.cip-project.org>; Tue, 17 Jun 2025 20:49:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750217921; x=1750822721; darn=lists.cip-project.org;
+        d=gmail.com; s=20230601; t=1750218591; x=1750823391; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
         bh=7Crp3CEYLqrLG+apC2mAZnpDNJDCfTEyqUeeXu58j3U=;
-        b=J8S2bZFENC1buhKdvanztp6Rcac6CMW4Ki6EHQo3GX9rNIcnkUcoPnHwlwlSlvB9uO
-         fmQrAvilGgudUwU/Qds7ApfqMc7v0OsgF9sQOi1UGrU9VaSSM4/YP1K2wVBGJqLmN12b
-         Xmo0h+Utb2S96MhY6O6kdSpXqK/BOE0NtPU4lCGE8sHvz3/i63EDT3geZh9j5mVxgiea
-         IGh7SG7KAF0ZJTctaDrAXRexjcptMgkbPNNfDyHZraNF6AXACe9imKlvyAK/zgSzuj1M
-         W8HMFXgUd/X962C/nIKeYatVOcUupKA34r2x3IbqkcXHseAqVy9QQ6PqgqVm0jlJ1eA5
-         /M6g==
+        b=EXctGM2Uy83sG0dLP07MtO8z8S91OEkwOZxUCui6pIrzI/gQOyo0WKXx3WBFF5LrcL
+         HWv4kb9V64Mv+sW4K3vp79x8Uvczu66j2k2wKtWaD3B09XJKOBB4y7lMeJxlWNWcKRzj
+         WvE/jWcuH0XPiib9Mth7lMpc3DncMcNrv7JUaUPr2ajYFvQNg0DmWJ4T+5RqQc8MmCyY
+         QR8BPmdzIIM4cVc06RHtwjXVJV9V5t23Of8ikV7+UYcOzipc/4ES/4kWk3Kou0OYJT9K
+         mQaP4163Sl2XfRthelAu5aVOKkj6B8TlR7S5yWVeH2DsodLvYw+TDTZGfJhGQxTO4IlE
+         nEBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750217921; x=1750822721;
+        d=1e100.net; s=20230601; t=1750218591; x=1750823391;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
         bh=7Crp3CEYLqrLG+apC2mAZnpDNJDCfTEyqUeeXu58j3U=;
-        b=H/6HsxKzrtS2tNv9EtcvKC0KOGCyCNbmP8JrALc2TBQE2f8kUBYsNC9YgRE5cHfXIe
-         7IaVDP+Mvi8uNXeoU2fbsjQSiBSV0phYk6zd36O/PIUTilqI1j1BBBfpkPIHkT34xIdN
-         9TAi3waSHuB/myhMgZIjzNBT5ps88rTkdNbt9ddcV+DYXu2sBqLHmhNjoilN1X75SNH2
-         e3FgdwfJb6SCOpyYLWfqrGz8/uqbhOdmTy8ZRbR1sLFNwjfBzzLm1UQBrdiZOCEbxK+g
-         DCqSeoTt5WaB6Q9/zEdeQlm7LzeBKft3GIb+9hI+hC330Nbn2eApfd+Lh86HaiaWr500
-         gwmg==
-X-Gm-Message-State: AOJu0Yz1xN7+Hd/9xKEN9M0NeX0OEA/bKYmu62KwZVYlSWJcFd0+4Fej
-	z3/kAhifrYZnkNLCMJQR72pAfKi/ftBPZy45WrEzDEaoAukKlt9ryMwRLFWle2PB
-X-Gm-Gg: ASbGncutroLsSu7OJX9c1PJGEiM8hvOanxDpFjjDRnuN8A7O23lQMdH04gZ+FouMKfQ
-	M4HqPWSk75gLveseVjxlVJUhsGX6bOLY8YQ13ejlX5YBmqkuHtVawIjSFUBkptYr3BN/FrDJQK6
-	bGeSp/2vrR/vxCt3dwnxYyWf4Vb84l3xNLE7o3PO2uIzXCHb1yMlk59Kjtx6C2WQ5a7me64nNUF
-	I5lXguocTDdDtHpVWRykjqPMMkB8RzGzKe04J8gUP6CiMPHhHQ4QwZ49QQlzvutBPZ9x02Yfmc5
-	4G0kN0waC+foBunEIrzOWF1PXtfao3d5G+Pgs9LJF9lISTQ8XwRuft4wIzJSwQ7lR6h4iTXWETf
-	nvaVIFgi1sG/y5FKug0P+SiK3Z3BKh+xpCOEvwxU=
-X-Google-Smtp-Source: AGHT+IHbSHvGm0QbeCyiMDx7nSJ6QOKwx2BCtI7rOP0KbnpEARCZ0sIVhZ9/sbhyMcG5HjU83gpjww==
-X-Received: by 2002:a05:6a00:893:b0:748:2ac2:f8c3 with SMTP id d2e1a72fcca58-7489cffb9ddmr24650502b3a.24.1750217920668;
-        Tue, 17 Jun 2025 20:38:40 -0700 (PDT)
+        b=oYdxqlWF+VuWETZ4H6eYbDCPmL4JP9HfMsyl+W8bzjaGiJDLITBI9kI9CGrxFNcQkx
+         /fRxFsyWEFc4+YyysEvLIIA/Wwyim6Mt8nqGI3qF5G7k7SSKFrfTzgT1y4MqJJi3LCoy
+         0lCNNppbqp1OxQJmVFEK2vdQ/XIqTx89GKTKmxCC8bRz2w51eGnEFZgMLX2JuY2AlqP1
+         t5NwEFHuOmhPNdbKrjXTGE9PeTdu9XnAdmU5bymD5KVyymNS9VlqYxIAudnsYARYK4nA
+         tbCATZ7R42k/IYJavi3gvqwAgQKutcPIvWDzgkAISo5DDkK96MtsE7hXpdeIlU9j2Nq1
+         I7oQ==
+X-Gm-Message-State: AOJu0Ywhk4R/mWRCgUt9UGh0HKjfxTTW81Z7HsH1ZLhZ72HVeHAAeDZb
+	IUz3/9/p+YSWZlSoG+UlXE44hEZpq3+THUQpLFy8ByQu6A4JkRaXOgVsawQX3cTJ
+X-Gm-Gg: ASbGncuuf/2/5sIhgDKiaUeW+bMBGZwUoPCycw42OP/ytltOW0RwqPiY7GIXSPsi9Gn
+	cLiUVHF4DJ4pqT+V9d5XqiE28PemgPHZOSjsKsCkvL0NOiHTGeqa0p5+uaIiMC2yTnKrwKpgv+d
+	KEk1rsXJtyzjHosndhHss5vmeeHPMI8KfunbXOZxdGxedFmCh9cTRVMEdjQPqS29GEOcamWy62h
+	Pbz9smhifbOIZ9sUqJeY8QOB5IIk+iqnssBf1hlBkTe/M2q6FlW1tYu7zmEsTw2dQn7BwyLT/Af
+	9//zMYtaupv3I62yKfbrE4ut1DnagfT7snh9cOT194wkS3YV+x+UW8mHRcU+bdsn0alQyqvmPI4
+	+9aM0a2BMThmTy3u9w/b8mZfSHx+K6FyWnBlFgX8=
+X-Google-Smtp-Source: AGHT+IHbh93ZFfxvSAelhKz+a+nejv/JYZrkAogjMFdOMKtc/mynIFhBnCtf+5R6YwJYdXzQo1sAhA==
+X-Received: by 2002:a17:902:d548:b0:234:325:500b with SMTP id d9443c01a7336-237c20f843amr17338045ad.22.1750218591134;
+        Tue, 17 Jun 2025 20:49:51 -0700 (PDT)
 Received: from lcwang-Precision-3630-Tower.. (211-23-39-77.hinet-ip.hinet.net. [211.23.39.77])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-748900822b7sm10147934b3a.101.2025.06.17.20.38.38
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-236736cb4f9sm63418405ad.138.2025.06.17.20.49.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jun 2025 20:38:40 -0700 (PDT)
+        Tue, 17 Jun 2025 20:49:50 -0700 (PDT)
 From: LiangCheng Wang <zaq14760@gmail.com>
 To: cip-dev@lists.cip-project.org
 Cc: drm@lists.freedesktop.org,
@@ -62,18 +62,18 @@ Cc: drm@lists.freedesktop.org,
 	zaq14760@gmail.com,
 	onlywig@gmail.com
 Subject: [PATCH 3/3] dt-bindings: display: Add MAYQUEEN PIXPAPER e-ink panel
-Date: Wed, 18 Jun 2025 11:37:31 +0800
-Message-Id: <20250618033731.171812-4-zaq14760@gmail.com>
+Date: Wed, 18 Jun 2025 11:49:36 +0800
+Message-Id: <20250618034936.172150-4-zaq14760@gmail.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250618033731.171812-1-zaq14760@gmail.com>
-References: <20250618033731.171812-1-zaq14760@gmail.com>
+In-Reply-To: <20250618034936.172150-1-zaq14760@gmail.com>
+References: <20250618034936.172150-1-zaq14760@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 18 Jun 2025 09:13:55 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19126
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19130
 
 The binding is for the MAYQUEEN PIXPAPER e-ink display panel,
 controlled via an SPI interface.
