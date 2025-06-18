@@ -2,39 +2,40 @@ Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7331EC7115F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 685D0C761AE
 	for <webhook@archiver.kernel.org>; Wed, 18 Jun 2025 09:13:55 +0000 (UTC)
 Received: from sea.source.kernel.org (sea.source.kernel.org [172.234.252.31])
- by mx.groups.io with SMTP id smtpd.web10.516.1750227289652180516
+ by mx.groups.io with SMTP id smtpd.web11.482.1750227223013603313
  for <cip-dev@lists.cip-project.org>;
- Tue, 17 Jun 2025 23:14:49 -0700
+ Tue, 17 Jun 2025 23:13:43 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernel.org header.s=k20201202 header.b=Ic3Ulc7s;
+ dkim=pass header.i=@kernel.org header.s=k20201202 header.b=EtgWsDgr;
  spf=pass (domain: kernel.org, ip: 172.234.252.31, mailfrom: krzk@kernel.org)
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
-	by sea.source.kernel.org (Postfix) with ESMTP id 310E849F02;
-	Wed, 18 Jun 2025 06:14:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D847C4CEE7;
-	Wed, 18 Jun 2025 06:14:47 +0000 (UTC)
+	by sea.source.kernel.org (Postfix) with ESMTP id 5EEA14A7A8;
+	Wed, 18 Jun 2025 06:13:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77F10C4CEE7;
+	Wed, 18 Jun 2025 06:13:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750227289;
-	bh=5E2ijx0m6u/TCWOdmNL/uRtF0dD872lxPRwG66MgXDY=;
+	s=k20201202; t=1750227222;
+	bh=wJQDPPQJetS4I1Aeo7+LVEsKKXqK6ABtx+3C+TzKErI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ic3Ulc7sGcOHtZV5lStbE6ckQU++Ay6IoXAbT6mpUHBfj6zA0vb4X4FNBmj6XKQz9
-	 c7xk8QqrqnGN4KVKHkqgyqyHhIe/6RvWSxLxxTTKtkwXKMCW7tQxYax7yO7OjqXrSm
-	 d+cqhIjGiw7J8Djx46ENNBwsHqEfz44dkfv1xwiziw5LbVqsZ2QzfX01tSDM92JzqN
-	 SaVdfPTTudEHwYO7I9pWDV5XCG6F6IdMTNhXwj7jO5sEXKDTzg6xjMoSqoAwDoAFOM
-	 DUctCIScd+ENgpGa5UY/QDNTU0iNafXINUyz2OgWd5A8RYnkJ08zHMPoHY48c9igl1
-	 xC/xOERcE09DA==
-Message-ID: <2f4a72d6-d0aa-4364-be61-a8c2263e194c@kernel.org>
-Date: Wed, 18 Jun 2025 08:14:45 +0200
+	b=EtgWsDgr2wXdqXmImNsunifsLSxtCatEBORnG7d9QydIbP74GwbHkNGgESDGIBpMI
+	 TFyeR0u4SdMAzAklV2ZBB7gGLLWJVSOBXzHtJ+nyuMZL8GbK6z6emec0uGK0oFjQ97
+	 LvTgPYs1+hZn+Xc3P9x4Qmlde4pxSdHAJ86QOqBvDpQKF84vUKKIdsNJdF2PqKX0S7
+	 HS+OCKIe/0PcKUphfaMLbzF775tmFu1Mi3uBiMj60wLHfyNXo8OeysWzXitDZTtv3d
+	 5fstH1ww9NWhCSb4y/LKdSnK/F0naKU74WdML+5h1U46LH6RC9S47XfX/n53uKRo2i
+	 /kT+3ZNoo3jEg==
+Message-ID: <76b20182-a3b2-4906-85e5-8db524d0811a@kernel.org>
+Date: Wed, 18 Jun 2025 08:13:38 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] drm/tiny: Add MAYQUEEN PIXPAPER e-ink panel support
+Subject: Re: [PATCH 3/3] dt-bindings: display: Add MAYQUEEN PIXPAPER e-ink panel
 To: LiangCheng Wang <zaq14760@gmail.com>, cip-dev@lists.cip-project.org
 Cc: drm@lists.freedesktop.org, devicetree@vger.kernel.org,
  noralf@tronnes.org, robh+dt@kernel.org, onlywig@gmail.com
 References: <20250618034936.172150-1-zaq14760@gmail.com>
+ <20250618034936.172150-4-zaq14760@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -79,7 +80,7 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250618034936.172150-1-zaq14760@gmail.com>
+In-Reply-To: <20250618034936.172150-4-zaq14760@gmail.com>
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
@@ -87,44 +88,100 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 18 Jun 2025 09:13:55 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19132
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19131
 
 On 18/06/2025 05:49, LiangCheng Wang wrote:
-> This series adds support for the MAYQUEEN PIXPAPER e-ink panel
-> (122x250 pixels, SPI-controlled) to the tiny drm subsystem.
+> The binding is for the MAYQUEEN PIXPAPER e-ink display panel,
+> controlled via an SPI interface.
 > 
-> Patches (must be applied in order due to dependencies):
-> Patch 1/3: Adds 'mayqueen' vendor prefix.
-> Patch 2/3: Implements PIXPAPER tiny drm driver.
-> Patch 3/3: Adds PIXPAPER device tree bindings.
-> 
-> Tested on PIXPAPER hardware with linux-5.10.y-cip,
-> verifying display initialization and refresh.
-> All patches pass checkpatch.pl.
-> 
-> Signed-off-by: Wig Cheng <onlywig@gmail.com>
 > Signed-off-by: LiangCheng Wang <zaq14760@gmail.com>
+> ---
+>  .../bindings/display/mayqueen,pixpaper.yaml   | 67 +++++++++++++++++++
+
+Don't send multiple patches but version them correctly.
+
+>  1 file changed, 67 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/mayqueen,pixpaper.yaml
 > 
+> diff --git a/Documentation/devicetree/bindings/display/mayqueen,pixpaper.yaml b/Documentation/devicetree/bindings/display/mayqueen,pixpaper.yaml
+> new file mode 100644
+> index 000000000..f7c33957e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/mayqueen,pixpaper.yaml
+> @@ -0,0 +1,67 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/mayqueen,pixpaper.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MAYQUEEN PIXPAPER e-ink display panel
 
-I don't understand this CC list. Cip is for sure incorrect... unless you
-target CIP, but such patches must not be sent to upstream because that
-would be waste of our time.
+Don't capitalize all letters. Mayqueen Pixpaper or whatever it is really
+called.
 
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC (and consider --no-git-fallback argument, so you will
-not CC people just because they made one commit years ago). It might
-happen, that command when run on an older kernel, gives you outdated
-entries. Therefore please be sure you base your patches on recent Linux
-kernel.
+> +
+> +maintainers:
+> +  - LC Wang <zaq14760@gmail.com>
+> +
+> +description: |
 
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
-</form letter>
+Do not need '|' unless you need to preserve formatting.
+
+> +  The PIXPAPER is an e-ink display panel controlled via an SPI interface.
+> +  The panel has a resolution of 122x250 pixels and requires GPIO pins for
+> +  reset, busy, and data/command control.
+> +
+> +allOf:
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: mayqueen,pixpaper
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description: SPI chip select number for the device.
+
+Drop description
+
+> +
+> +  spi-max-frequency:
+> +    default: 1000000
+> +    description: Maximum SPI clock frequency in Hz.
+
+Drop description
+
+
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +    description: GPIO for the panel reset pin.
+
+Drop description
+
+
+> +
+> +  busy-gpios:
+> +    maxItems: 1
+> +    description: GPIO for the panel busy pin.
+> +
+> +  dc-gpios:
+> +    maxItems: 1
+> +    description: GPIO for the data/command pin.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reset-gpios
+> +  - busy-gpios
+> +  - dc-gpios
+> +
+> +additionalProperties: false
+
+unevaluatedProperties instead
+
+
 
 Best regards,
 Krzysztof
