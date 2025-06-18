@@ -2,106 +2,127 @@ Return-Path: <uli@fpond.eu>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D3CFC7115A
-	for <webhook@archiver.kernel.org>; Wed, 18 Jun 2025 15:43:54 +0000 (UTC)
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.51])
- by mx.groups.io with SMTP id smtpd.web11.2163.1750261424274005441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA40C7115A
+	for <webhook@archiver.kernel.org>; Wed, 18 Jun 2025 15:44:34 +0000 (UTC)
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.52])
+ by mx.groups.io with SMTP id smtpd.web11.2181.1750261464902240332
  for <cip-dev@lists.cip-project.org>;
- Wed, 18 Jun 2025 08:43:44 -0700
+ Wed, 18 Jun 2025 08:44:25 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=FoPTh8rQ;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=Gc+hJTK7;
- spf=none, err=permanent DNS error (domain: fpond.eu, ip: 85.215.255.51, mailfrom: uli@fpond.eu)
-ARC-Seal: i=1; a=rsa-sha256; t=1750261421; cv=none;
+ dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=VGgJkb7+;
+ dkim=pass header.i=@fpond.eu header.s=strato-dkim-0003 header.b=7EWfcwyP;
+ spf=none, err=permanent DNS error (domain: fpond.eu, ip: 85.215.255.52, mailfrom: uli@fpond.eu)
+ARC-Seal: i=1; a=rsa-sha256; t=1750261453; cv=none;
     d=strato.com; s=strato-dkim-0002;
-    b=ppq3nsj9PoXXlI833nWeoRbkyzpPZwLiMmjazFhUPxFgdOeKRnX+NSQI9wcN8m1LRo
-    kLxETgotaeCwbT2RvPDKxd0yEwK4vXRuU8w5mnUhPP0LtajOkJzSM6KKHc1ZGtD+M4ND
-    PPlw6NZb03nCRbOdbioWi08ZeeTvXPuJGUgA1YKo5YjFWaOGav9PlVHcFq84oA7tGqel
-    CGYtGsAhW5LYWmYViH87a0IljMeUex3E6DcAZ+atS++GDaTjdlsRV/dcsgpO6LVej/lh
-    O63HRF+VGcLNBk9/SKzdAJ2vzNLUiFz6dOJnFAceQs2dR3qUitkET19BPgAkO/QZvyaE
-    WL5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1750261421;
+    b=UUlEhnzO/4BPW5FSbitC8s1fff1o4KrdRdJQodetGGbrbz1oJINMbYAWgy/K+K/yVF
+    uvefO4rxrkJU3l0nbLTMbQMQqI8hN1MjqgU4Yjn1g2mHQPIEhUBiiI9UejrSwmmC0sFM
+    QW1+gGKYjCcFo0MauG+GCnLPDSHUlVXRhmKFw79EX4fSxsrs9SP8tAt4Y8tDCe73VFo5
+    CWQQ/qyBl/jpsh78eWAAl3zaruiGln/g4d6ETxldFHdO+HDV4iSMM3XBnpb1b3IMeRGJ
+    5QAZ9tIXzD7nm6QiM7t9PyMtTEPW2xmfthKGyJBemjWDgWZimwpoxeSC7sYtDBlxgezT
+    KDhQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1750261453;
     s=strato-dkim-0002; d=strato.com;
     h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
     From:Subject:Sender;
-    bh=m6hpG0+K28I1xVgbGyWsUwCPbwXir8OUTYajyLeWM7c=;
-    b=KaVCt3WQVEq05XU30TO/gUMqKMmVO4amnATjA5oQVhavnH5PmXCdorW/r8ClsNIhH0
-    xgUb8reAQD7azjkYHaI9nJeAmioccSmk7AY3XkUKsqSWTIvdfxNto6xpE1mJ9ehCu68V
-    N/G2GLMBvQT/UXy1PcbdzntuereJ6k7VRSPEO8I+WiMTSeuHEeSGVMEUdZHa3j9NEMir
-    x3ByCrfdTmr4qzutsabUNi0osZ4jO1NJuBIJwZZuys6v1WuLysrg1o3hYLIO0Nk5EgYF
-    b5L59ZBmvvp8PxZuJGY2pft2Z2U3GnDyRLRmQZ8IZABKC+6/OC5ZSqJFUC98gQ6gI1tt
-    laoQ==
+    bh=iM3r5D46BIauaLI/sTimycMV3v+5FS8I6Sj5/MW8eSU=;
+    b=WiwaIpU4ueCyrnsefZwLc5YMfE/l1V+2vgDf3oumit1GJ/XwDFCgzYCQ7/pbuAd6lT
+    lvJMc7+eYl5imjeO8u0m0+x09gkQ/WxcKsf3C3Voti4S3KGQEq5DS0RxhKslegE7Z2ec
+    qssmhLhr9V1rRGVKk8xjzCjP4khUTIyvvMWHPRqNz5hi1X5ONEkW/QtmwrdiQfURE0Ja
+    XQ0DHktDob2pmkGXhv1na628criVUBUxG9vDHPuc/Hxu81/OodeqLBM6Agg4VZjFgr8P
+    t6r3Iv8usQKtrxChAEufJG8qH56ioyGOF/hppbIi/hyRK2sJfyl9ROkV2kfERZWTZsYA
+    HK4Q==
 ARC-Authentication-Results: i=1; strato.com;
     arc=none;
     dkim=none
 X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1750261421;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1750261453;
     s=strato-dkim-0002; d=fpond.eu;
     h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
     From:Subject:Sender;
-    bh=m6hpG0+K28I1xVgbGyWsUwCPbwXir8OUTYajyLeWM7c=;
-    b=FoPTh8rQmH4HN9lDqJY/6MPLOII5MDDGKerAI9picxxbqZ3It4Ge7jeVIpcgwXplXe
-    bFXpu/qfHoeB7ScJgmldgK51x2YHQlJU+U+xezlUbJ70qVzu6hfxFRb++mNosrWEIuk6
-    v+w3txxHdcwJ84a69OLZbwV9o/9KwPHy4EbN3CELJkgYyWGz1ysqtQ6nFlRXnen5vbOO
-    fZJo72hayB+MD78QebHKu7qvwjjjRu+u6NrS+LroXcg1BMDGxG8ea9Y7pI9p9VecjGO6
-    FYngSIVAP2X9PsWioHegtgZ/Px7dVKv6Sf6Dh2ZbDbLwPWb71XzoqUZcHra4gGT+xgWO
-    0FTw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1750261421;
+    bh=iM3r5D46BIauaLI/sTimycMV3v+5FS8I6Sj5/MW8eSU=;
+    b=VGgJkb7+772a27IkDVti32K5WKAqSBZSCKfOb3ruOYZm1WNbyMr1p3srdrAeGGzhKD
+    fZ7PXRElwKBryT6NEtr3MOnV1f1PBgJvv8E0BC3Xez+jpYcNesofPWst16MTQPJPRiMr
+    BbrjEf3Ttc/23H5Y9Rc2Ma7BVHFM735Fj+3+ENKdFmhW0uJybvGPavtAXU+qhO+dbnFC
+    0D2GEXgBkK8+jGgMh9wTQzHwULRdMNvWtI8sEml5pGJfNipmB8fRJRRugijCaqJRt7PV
+    yembg0CWXX3fph0H7nPK12xUAWvr/5SjFCmzDx8s5px7oGL4V/ZWCmyC2MH4Q/AN54Dm
+    O3pA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1750261453;
     s=strato-dkim-0003; d=fpond.eu;
     h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
     From:Subject:Sender;
-    bh=m6hpG0+K28I1xVgbGyWsUwCPbwXir8OUTYajyLeWM7c=;
-    b=Gc+hJTK7kaN1evx7z0OozTz0YKrwVbYZaBxiTTl3flp5uLrExlXBwO/caT7v2/9sSI
-    FisAd533LcD8vNpcZ5Cg==
+    bh=iM3r5D46BIauaLI/sTimycMV3v+5FS8I6Sj5/MW8eSU=;
+    b=7EWfcwyPVK6jjAGftgMEWBA3kXuBKGgKATIa+ICm90kLb9WS1qpY9+RbPoIYx37ysm
+    3F2SG4DilkfBSAR8PgDw==
 X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv30UF1hex6fd76vq"
 Received: from open-xchange-core-mw-gw-27.open-xchange-core-mw-hazelcast-headless.open-xchange.svc.cluster.local
     by smtp-ox.front (RZmta 51.3.0 AUTH)
-    with ESMTPSA id z2a34015IFheUud
+    with ESMTPSA id z2a34015IFiDUuf
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256 bits))
 	(Client did not present a certificate);
-    Wed, 18 Jun 2025 17:43:40 +0200 (CEST)
-Date: Wed, 18 Jun 2025 17:43:40 +0200 (CEST)
+    Wed, 18 Jun 2025 17:44:13 +0200 (CEST)
+Date: Wed, 18 Jun 2025 17:44:12 +0200 (CEST)
 From: Ulrich Hecht <uli@fpond.eu>
-To: christoph.steiger@siemens.com, cip-dev@lists.cip-project.org
-Cc: jan.kiszka@siemens.com
-Message-ID: <70209609.332983.1750261420929@webmail.strato.de>
-In-Reply-To: <20250520122309.180558-1-christoph.steiger@siemens.com>
-References: <20250520122309.180558-1-christoph.steiger@siemens.com>
-Subject: Re: [cip-dev] [PATCH 4.19.y-cip 0/1] mmc: sdhci: Do not lock
- spinlock around mmc_gpio_get_ro()
+To: Finn Thain <fthain@linux-m68k.org>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+	Pavel Machek <pavel@denx.de>, Michael Schmitz <schmitzmic@gmail.com>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	cip-dev@lists.cip-project.org, linux-m68k@lists.linux-m68k.org
+Message-ID: <279974101.333016.1750261452981@webmail.strato.de>
+In-Reply-To: <288cd2e42b6d4cbf77822cce3b348d6f@linux-m68k.org>
+References: <288cd2e42b6d4cbf77822cce3b348d6f@linux-m68k.org>
+Subject: Re: [cip-dev] [PATCH RESEND 4.19.y-cip] signal/m68k: Use
+ force_sigsegv(SIGSEGV) in fpsp040_die
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Priority: 3
 Importance: Normal
 X-Mailer: Open-Xchange Mailer v8.36.53
-X-Originating-Port: 50528
+X-Originating-Port: 46284
 X-Originating-Client: open-xchange-appsuite
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 18 Jun 2025 15:43:54 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19134
+ <cip-dev@lists.cip-project.org>; Wed, 18 Jun 2025 15:44:34 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19135
 
 
-> On 05/20/2025 2:23 PM CEST Christoph Steiger via lists.cip-project.org <christoph.steiger=siemens.com@lists.cip-project.org> wrote:
-> This backport fixes a sleep-in-atomic-context bug we encountered on a
-> 4.19.124-cip27 kernel:
+> On 05/16/2025 11:28 AM CEST Finn Thain <fthain@linux-m68k.org> wrote:
 > 
-
-[...]
-
-> The patch fixes 6d5cd068ee59 ("mmc: sdhci: use WP GPIO in sdhci_check_ro()")
-> which was later introduced in 5.0, which is likely why this fix has been
-> missed so far in 4.19. As it turns out it also fixes a very similar problem in
-> some drivers like the sdhci-esdhc-imx, which is already relevant for 4.4 and
-> 4.19.
+>  
+> From: "Eric W. Biederman" <ebiederm@xmission.com>
 > 
-> I tested this for 4.19 on hardware, I can not verify it easily for 4.4.
+> [ Upstream commit a3616a3c02722d1edb95acc7fceade242f6553ba ]
+> 
+> In the fpsp040 code when copyin or copyout fails call
+> force_sigsegv(SIGSEGV) instead of do_exit(SIGSEGV).
+> 
+> This solves a couple of problems.  Because do_exit embeds the ptrace
+> stop PTRACE_EVENT_EXIT a complete stack frame needs to be present for
+> that to work correctly.  There is always the information needed for a
+> ptrace stop where get_signal is called.  So exiting with a signal
+> solves the ptrace issue.
+> 
+> Further exiting with a signal ensures that all of the threads in a
+> process are killed not just the thread that malfunctioned.  Which
+> avoids confusing userspace.
+> 
+> To make force_sigsegv(SIGSEGV) work in fpsp040_die modify the code to
+> save all of the registers and jump to ret_from_exception (which
+> ultimately calls get_signal) after fpsp040_die returns.
+> 
+> v2: Updated the branches to use gas's pseudo ops that automatically
+>     calculate the best branch instruction to use for the purpose.
+> 
+> v1: https://lkml.kernel.org/r/87a6m8kgtx.fsf_-_@disp2133
+> Link: https://lkml.kernel.org/r/87tukghjfs.fsf_-_@disp2133
+> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> [ Pass 'current' to force_sigsegv() as was done prior to v5.3 ]
+> Signed-off-by: Finn Thain <fthain@linux-m68k.org>
 
-Applied for the next 4.19. I'm holding off on this for 4.4 until somebody has the opportunity to test it there.
-
-Please CC me for patches for 4.4 and 4.19 in the future, thanks.
+Thanks, applied for the next 4.19.
+Please CC me for 4.4 and 4.19 patches in the future.
 
 CU
 Uli
