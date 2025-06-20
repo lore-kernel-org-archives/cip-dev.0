@@ -2,41 +2,41 @@ Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14195C7EE32
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F2EC7EE2E
 	for <webhook@archiver.kernel.org>; Mon, 23 Jun 2025 04:25:16 +0000 (UTC)
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
- by mx.groups.io with SMTP id smtpd.web11.2361.1750404467550638297
+ by mx.groups.io with SMTP id smtpd.web10.2372.1750404516898660069
  for <cip-dev@lists.cip-project.org>;
- Fri, 20 Jun 2025 00:27:47 -0700
+ Fri, 20 Jun 2025 00:28:37 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernel.org header.s=k20201202 header.b=rPLgba/j;
+ dkim=pass header.i=@kernel.org header.s=k20201202 header.b=PWnJf0yG;
  spf=pass (domain: kernel.org, ip: 139.178.84.217, mailfrom: krzk@kernel.org)
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
-	by dfw.source.kernel.org (Postfix) with ESMTP id 46B205C6A3B;
-	Fri, 20 Jun 2025 07:25:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D536C4CEE3;
-	Fri, 20 Jun 2025 07:27:44 +0000 (UTC)
+	by dfw.source.kernel.org (Postfix) with ESMTP id DD2765C6A3B;
+	Fri, 20 Jun 2025 07:26:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EEE6C4CEE3;
+	Fri, 20 Jun 2025 07:28:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750404466;
-	bh=glK0OkxsOOdQ+2F37FlJiX8MDpqmVygs0MvAxwZYHAM=;
+	s=k20201202; t=1750404516;
+	bh=S70XKRYBaw1mAzuZMLTGJ4yyDg8pvgH6xFea1aFdfvQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rPLgba/jBbJOYPqkSCfSTIwDAinwlUfz0lO3P47wB2y3GzgO4hJ5AnFfCcDE7Uds6
-	 Au6tnCFVLyDXGPEnV8EPQ61jEFMxBbsLChK6xCTbNT9CGtUj+JiUSmUQWkvmz2uIY2
-	 9QmkclucH/vd6kFYr4P8nqwLb/o3w7MNhU3lgskXO+7gG4wySyNPPAKx+8oVSZ7dmz
-	 QQDoH/iMuTtVsfU8AeNZRtiuZLfckM7kv0IaGhGlu0ZGI8vOl9W5BUC0Meb4ne7xCX
-	 xlPbh0dCScaL1fbo4gxFAzjwsaTamhU7NELwQaUa2B0RqRrJYP2f42b6XlvHs5rs2z
-	 BDdWe+ugX1UfA==
-Message-ID: <8afd468e-c394-41e5-8578-016b324db7f8@kernel.org>
-Date: Fri, 20 Jun 2025 09:27:42 +0200
+	b=PWnJf0yGWfSEfrZAYuoBm8dYjC7/a4pmiw8RiNBr7c6tQF47RrbNA/BNMgpg6qJ23
+	 x977Z7W2elyXqQrnyWg8MovLRc64RNstMKL2PiDirZsa7bpkR5dKExf+heSTDCa2Fy
+	 ndeCWYfksHjHUQetPBv7uTkQRLRryyNkMpc2eczxk7MgjBuL5PGANJKkt0oNvDrz+s
+	 p/pPHdrrGbWI/DrbP0L27tQdrFS8F0vbN8kReNs9V6/yS94WR3A+/mlry5vqa8vZhy
+	 23CcaNVigAjx0sNRBIiVLkr9jGTr76M4AogNInkBCl8NIDE70PuKjhUEkN6IS1rnfj
+	 uNi3UNQMXEK4g==
+Message-ID: <615522b2-544f-487d-aeb1-5ba069c322cd@kernel.org>
+Date: Fri, 20 Jun 2025 09:28:32 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] drm/tiny: Add MAYQUEEN PIXPAPER e-ink panel support
-To: LiangCheng Wang <zaq14760@gmail.com>, conor@kernel.org
+Subject: Re: [PATCH v2 3/3] dt-bindings: display: Add MAYQUEEN PIXPAPER e-ink panel
+To: LiangCheng Wang <zaq14760@gmail.com>
 Cc: drm@lists.freedesktop.org, devicetree@vger.kernel.org,
  noralf@tronnes.org, robh+dt@kernel.org, onlywig@gmail.com,
- cip-dev@lists.cip-project.org
+ cip-dev@lists.cip-project.org, conor@kernel.org
 References: <20250620035310.735055-1-lcwang@ieiworld.com>
- <20250620071825.741903-1-zaq14760@gmail.com>
+ <20250620071825.741903-2-zaq14760@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -81,7 +81,7 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250620071825.741903-1-zaq14760@gmail.com>
+In-Reply-To: <20250620071825.741903-2-zaq14760@gmail.com>
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
@@ -89,34 +89,36 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 23 Jun 2025 04:25:16 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19161
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19162
 
 On 20/06/2025 09:18, LiangCheng Wang wrote:
-> This series adds support for the MAYQUEEN PIXPAPER e-ink panel
-> (122x250 pixels, SPI-controlled) to the tiny drm subsystem.
+> The binding is for the MAYQUEEN PIXPAPER e-ink display panel,
+> controlled via an SPI interface.
 > 
-> Patches (must be applied in order due to dependencies):
-> Patch 1/3: Adds 'mayqueen' vendor prefix.
-> Patch 2/3: Implements PIXPAPER tiny drm driver.
-> Patch 3/3: Adds PIXPAPER device tree bindings.
-> 
-> Tested on PIXPAPER hardware with linux-5.10.y-cip,
+> Signed-off-by: LiangCheng Wang <zaq14760@gmail.com>
+> ---
 
-So this explains incorrect Cc list. Your emails keep bouncing and you do
-not even cared enough to fix it.
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC (and consider --no-git-fallback argument, so you will
+not CC people just because they made one commit years ago). It might
+happen, that command when run on an older kernel, gives you outdated
+entries. Therefore please be sure you base your patches on recent Linux
+kernel.
 
-No, don't work on ancient 5.10 kernels. This is so ancient it should
-have never been used (regardless of what CIP tells you).
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
+</form letter>
 
-Using v5.10 kernel as starting point for your driver means you probably
-replicated all the style issues, all the bugs we already fixed.
+Important from above:
 
-This must be developed on latest kernel. You must take latest reviewed
-drivers as your template.
+"ancient tree (don't, instead use mainline) or work on fork of kernel"
 
-Then test it on latest kernel, not CIP!
-
-Then send it from latest kernel, so you will get CC list right.
+That's exactly what you did.
 
 Best regards,
 Krzysztof
