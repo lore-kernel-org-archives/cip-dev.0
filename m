@@ -2,41 +2,41 @@ Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F2EC7EE2E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15913C7EE31
 	for <webhook@archiver.kernel.org>; Mon, 23 Jun 2025 04:25:16 +0000 (UTC)
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
- by mx.groups.io with SMTP id smtpd.web10.2372.1750404516898660069
+Received: from nyc.source.kernel.org (nyc.source.kernel.org [147.75.193.91])
+ by mx.groups.io with SMTP id smtpd.web11.3029.1750407986616013077
  for <cip-dev@lists.cip-project.org>;
- Fri, 20 Jun 2025 00:28:37 -0700
+ Fri, 20 Jun 2025 01:26:26 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@kernel.org header.s=k20201202 header.b=PWnJf0yG;
- spf=pass (domain: kernel.org, ip: 139.178.84.217, mailfrom: krzk@kernel.org)
+ dkim=pass header.i=@kernel.org header.s=k20201202 header.b=hYXKepY3;
+ spf=pass (domain: kernel.org, ip: 147.75.193.91, mailfrom: krzk@kernel.org)
 Received: from smtp.kernel.org (transwarp.subspace.kernel.org [100.75.92.58])
-	by dfw.source.kernel.org (Postfix) with ESMTP id DD2765C6A3B;
-	Fri, 20 Jun 2025 07:26:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EEE6C4CEE3;
-	Fri, 20 Jun 2025 07:28:33 +0000 (UTC)
+	by nyc.source.kernel.org (Postfix) with ESMTP id 71AC0A4B76F;
+	Fri, 20 Jun 2025 08:26:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EFCEC4CEE3;
+	Fri, 20 Jun 2025 08:26:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750404516;
-	bh=S70XKRYBaw1mAzuZMLTGJ4yyDg8pvgH6xFea1aFdfvQ=;
+	s=k20201202; t=1750407985;
+	bh=f3IlF7ITdBk8iHABLLDhvV2mabQdWJwbdpk++R0M8Bg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PWnJf0yGWfSEfrZAYuoBm8dYjC7/a4pmiw8RiNBr7c6tQF47RrbNA/BNMgpg6qJ23
-	 x977Z7W2elyXqQrnyWg8MovLRc64RNstMKL2PiDirZsa7bpkR5dKExf+heSTDCa2Fy
-	 ndeCWYfksHjHUQetPBv7uTkQRLRryyNkMpc2eczxk7MgjBuL5PGANJKkt0oNvDrz+s
-	 p/pPHdrrGbWI/DrbP0L27tQdrFS8F0vbN8kReNs9V6/yS94WR3A+/mlry5vqa8vZhy
-	 23CcaNVigAjx0sNRBIiVLkr9jGTr76M4AogNInkBCl8NIDE70PuKjhUEkN6IS1rnfj
-	 uNi3UNQMXEK4g==
-Message-ID: <615522b2-544f-487d-aeb1-5ba069c322cd@kernel.org>
-Date: Fri, 20 Jun 2025 09:28:32 +0200
+	b=hYXKepY3N6v/qIMfLcpshOGvez+Y9UCBTH1LPDeNbYNRCrUFEro5BA4t5yj6b+8wX
+	 z/jaBrr9i4cAzXDfOkYD3Qkjv1U5y4UgZp0uhTd+uA2E87BAdEfGmglzVOBdOdAzrW
+	 1TytagJgB/7DPkiegpEI0Zprc+Nhf/oc4FuyZHh3GKTL4HFSvObNeuPduDXemNwUyl
+	 1GY9YFe82ytchyD3MuB+d5QrNO+qA+Qzz8T32z1/tjU0Q7ZJK+X1gYlQ2mb2bh/er4
+	 Z6EDg/xigPlwkn0IaC6TqAEenCCZ0+U7cLJa32engk0lMNMSG+N6isFoijwSgAXqEz
+	 fG07a2J0icruA==
+Message-ID: <97fc47af-82ed-41e4-8824-02b1b817d967@kernel.org>
+Date: Fri, 20 Jun 2025 10:26:21 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2 3/3] dt-bindings: display: Add MAYQUEEN PIXPAPER e-ink panel
 To: LiangCheng Wang <zaq14760@gmail.com>
 Cc: drm@lists.freedesktop.org, devicetree@vger.kernel.org,
- noralf@tronnes.org, robh+dt@kernel.org, onlywig@gmail.com,
- cip-dev@lists.cip-project.org, conor@kernel.org
-References: <20250620035310.735055-1-lcwang@ieiworld.com>
- <20250620071825.741903-2-zaq14760@gmail.com>
+ noralf@tronnes.org, robh+dt@kernel.org, conor@kernel.org, onlywig@gmail.com,
+ cip-dev@lists.cip-project.org
+References: <615522b2-544f-487d-aeb1-5ba069c322cd@kernel.org>
+ <20250620080629.743266-1-zaq14760@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -81,7 +81,7 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250620071825.741903-2-zaq14760@gmail.com>
+In-Reply-To: <20250620080629.743266-1-zaq14760@gmail.com>
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
@@ -89,36 +89,33 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 23 Jun 2025 04:25:16 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19162
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19164
 
-On 20/06/2025 09:18, LiangCheng Wang wrote:
-> The binding is for the MAYQUEEN PIXPAPER e-ink display panel,
-> controlled via an SPI interface.
+On 20/06/2025 10:06, LiangCheng Wang wrote:
+> Dear Krzysztof,
 > 
-> Signed-off-by: LiangCheng Wang <zaq14760@gmail.com>
-> ---
+> Thank you very much for your review and feedback.
+> I sincerely apologize for the issue with my emails bouncing.
+> As a newcomer to using `git send-email`, I was unaware of this problem,
+> particularly because I did not receive any bounce notifications in my Gmail inbox or spam folder.
+> This made it difficult for me to identify the issue promptly.
+> 
+> Following your advice, I am migrating my driver development to the latest kernel (e.g., v6.12)
+> and will use the `get_maintainer.pl` script from that kernel to ensure the correct Cc list.
+> I am also reviewing my `git send-email` configuration to prevent further email delivery issues.
+> 
+> Could you kindly provide more details about the email bounce issue, such as specific error messages,
+> problematic recipient addresses, or any other relevant information?
+> This would help me pinpoint and resolve the issue more effectively.
 
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC (and consider --no-git-fallback argument, so you will
-not CC people just because they made one commit years ago). It might
-happen, that command when run on an older kernel, gives you outdated
-entries. Therefore please be sure you base your patches on recent Linux
-kernel.
+Every email here bounces from non-existing drm list.
 
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
-</form letter>
+ <drm@lists.freedesktop.org>: unknown user: "drm"
 
-Important from above:
+> Additionally, if you have any tips on configuring `git send-email`
+> or the patch submission process, I would greatly appreciate your guidance.
+> 
 
-"ancient tree (don't, instead use mainline) or work on fork of kernel"
-
-That's exactly what you did.
 
 Best regards,
 Krzysztof
