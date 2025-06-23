@@ -2,41 +2,41 @@ Return-Path: <tommaso.merciai.xr@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88796C7EE39
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F5C2C7EE33
 	for <webhook@archiver.kernel.org>; Mon, 23 Jun 2025 14:48:52 +0000 (UTC)
-Received: from TYVP286CU001.outbound.protection.outlook.com (TYVP286CU001.outbound.protection.outlook.com [52.101.125.65])
- by mx.groups.io with SMTP id smtpd.web10.423.1750690130688908500
+Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.7])
+ by mx.groups.io with SMTP id smtpd.web10.419.1750690126843463648
  for <cip-dev@lists.cip-project.org>;
- Mon, 23 Jun 2025 07:48:51 -0700
+ Mon, 23 Jun 2025 07:48:47 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=UqoANXSw;
- spf=pass (domain: bp.renesas.com, ip: 52.101.125.65, mailfrom: tommaso.merciai.xr@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=pqM1zwTx;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.229.7, mailfrom: tommaso.merciai.xr@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WPFhKm+HVVw6XXCpfHimR9LzT0RZjyrg//UVSWES3hH8BK0MPOrsvlyTpqPkYVacvMRGwsgNP82bPLnCfaIOkBZ8LxKn70j4xDw12dDoqZainfFe1rwNfXKrS1zKsX3K2iIL8r9kWR+A6Brx2v21AdDpfRiRPZ7ecR8+CkSWDVdClFFb5O054y3mDOrlsvhOZNvsygogrTqTxY3hRaDs8XS8yVJWFrfRamh4c5iQIUaTK+jpCZEX467CFYrFEDjZ//Gk8PRRZSQw80XDM7ym9g1MXG+kcD7qI3IL67MeLdxPfllbF2ewyLMT5KgtWvwpd3MeYLwVCXJxg7e/H/QNeQ==
+ b=iH2Y7X4bIpZSIODAbbWq8pVy3ah+MjlvpNYNhhiEYzdrIMmKFCgzcfsc+kqdUe0lL2/DTTJzBktLAs2ng/qh/D0TlaXNy77vfnNxsLB6Wuf4J3IYeFYumsHFBZVQQh5dBph1pLoDYJPqUOUOsLjbTHn3COwLSSaHgmpzUaJHNeBYIE6su55ZuRXtfJoLHfhnwRT8CXNgibNJqj1ghq0jcBDR/j1rXLcIExugB7SfSLYLD4J/qwoKszKzAbCXY5qjb1yIM3e2vmL3NmjlNod6GChvKvK83ELRdPoGrO4qrqfan0gQVCK8FM8GRCRixpU0IEKDF0Oq2/TcsklS/IcfHQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cg6iCfN6wM7L8Utd3d2vPeza1lsICCPn27pT/yeZBJs=;
- b=Svk6Otw9A1BBuR3Ax+8zItZpDqEJsmPQvA2c5ghbA8fwwbBaI23/bfFVb8V34t28GHA1L3CWPxJKbuu/GZtPekcFR+8ZJGooscMJk85nhR0Erj76fZRndXbyTUMQYj87hpD2Sq2e3BgHaez3G3P8FGe4OeWpA8Fzlr+TcZr/wrLGgnoxxagkiIkCyyQZz3kG3NcZmb9+bRXhYohXo/nluLS6Gl4lICosehVtBIJZR8yBgIgZ+BXpwdnZs25X+AVMpWwkL8fevizLACV5mchyHUfiTrtOoO7eaYsyQGYaQximokKWFE3GaZNqm2fb1N+/H8pehMQ+dbW/L+FXKkVEug==
+ bh=eyyp90Dcos1ktK+Scf2Mu1xot9bzf7Iiy30R/5vdJpY=;
+ b=t0vvYJ+5FiDkOLo/hWf6mnFn2e68/m4CryMEVJkjqyTvDT7aQ0V4cAeewi/tRfc/m3nCmygWtLS01O4921T/pqv7B/wvHAIFAhzTruYU3mzcNM359zU0MVcsq8rB5p6EuhpCIcFQTNXhaANPBpqZWaX+JbdLO6u+cu6pWEuq0hTbVMY7FCJ/v7nrhB7t7mqXtT77Db/wle5z37iTe4PBdlJCDNYlnT1ETv0EyQtFDcDC64X/+jmx+wnkBt/FRxa3RVQASU2kSKFLqOecgCQFvxU+GnLOLZEgD5Tf3GJFLM6a5kqvm7hJ18woh2aGH4Pun4kpEKuwylRauYNkpKkC6g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cg6iCfN6wM7L8Utd3d2vPeza1lsICCPn27pT/yeZBJs=;
- b=UqoANXSwrRuwfDJFxxTI4S3HOksdNXmYo+Iec4DOcYsXz3/hY1nam67vqjcBpajgp5UKL9/YrUFdgOVtCu6EV8iDyy2y3JOf+j0TeEeZqdGM4dzaHGpuhUMy0KX/Buu6hdUXN1K4dma0nxVB9F3iE5ikZCqLHhciFWZlTs6GQFo=
+ bh=eyyp90Dcos1ktK+Scf2Mu1xot9bzf7Iiy30R/5vdJpY=;
+ b=pqM1zwTx75k4nCVjpmsI3N6yJ5dDKmhe8AFhosZWUx0gBypiK0BT6xN4E+TcrFxrFh55/B5DVwLBED3LCfy0zwDc1N6ObASl3t2MrM7gu85ZKSNW0kef4QwHDQWxZjODASVqHj1RogbUXs9WIsTFVZusA8h95LshZoM9L/d4sW4=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com (2603:1096:604:35e::5)
  by TYAPR01MB5851.jpnprd01.prod.outlook.com (2603:1096:404:8057::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.29; Mon, 23 Jun
- 2025 14:48:50 +0000
+ 2025 14:48:44 +0000
 Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com
  ([fe80::244d:8815:7064:a9f3]) by OS9PR01MB13950.jpnprd01.prod.outlook.com
  ([fe80::244d:8815:7064:a9f3%6]) with mapi id 15.20.8857.026; Mon, 23 Jun 2025
- 14:48:50 +0000
+ 14:48:44 +0000
 From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -44,9 +44,9 @@ To: cip-dev@lists.cip-project.org,
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: [PATCH 6.12.y-cip 05/10] mmc: renesas_sdhi: Use of_get_available_child_by_name()
-Date: Mon, 23 Jun 2025 16:48:12 +0200
-Message-ID: <20250623144817.2119838-6-tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 03/10] of: base: Add of_get_available_child_by_name()
+Date: Mon, 23 Jun 2025 16:48:10 +0200
+Message-ID: <20250623144817.2119838-4-tommaso.merciai.xr@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250623144817.2119838-1-tommaso.merciai.xr@bp.renesas.com>
 References: <20250623144817.2119838-1-tommaso.merciai.xr@bp.renesas.com>
@@ -58,127 +58,181 @@ X-ClientProxiedBy: FR4P281CA0422.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: OS9PR01MB13950:EE_|TYAPR01MB5851:EE_
-X-MS-Office365-Filtering-Correlation-Id: c719f77e-3a0c-4637-897b-08ddb26510ef
+X-MS-Office365-Filtering-Correlation-Id: 7451e434-8b9b-403a-38ae-08ddb2650d97
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?Ouy8F6QdIt6G4k0EOJvxumGfVnC12C9oceGHWG5ZVHLMVbbK7WEAMApzRtTk?=
- =?us-ascii?Q?/wC/5mCFFbdLcNiXglqOaIejjiBBIyGft2Te3VnXIESi53UGZB1If2jaYoq1?=
- =?us-ascii?Q?izvZQJts1zk660c49ucxpydg31Oacgbn5uh1JghzykgFNkuKLS9MJKKlDD37?=
- =?us-ascii?Q?iMI0LG4byhZjrPP2NoYqld+dJjc1rKbsBBXMofv74ltNXXImlz7o/egFtPpe?=
- =?us-ascii?Q?opxmriKr9BP02vh92ZQrZq8m/ljGpykJ0j/en4tTNQ7InzTF0h9TIWkDZxgC?=
- =?us-ascii?Q?J/oMnyw0WkXBMiLsUciNIOINi8OWY26/lZ874p3eYXt/4k9NV2eToMP5Z3mD?=
- =?us-ascii?Q?fZV7z6Ell2vBYXsOv/1PM3w8s/gSTlr3fgaBKmCOMGz2U3G5R9jX3B1H6moI?=
- =?us-ascii?Q?2gzWa0FlKqTH7tJKFy+vu4ZauM8ECrdJi8xWEHzjvQwupPYHVeg2FiHsTSZV?=
- =?us-ascii?Q?hDNDWqyyo7XridRdtLJP2Rx7IKKQMVYPiIJoC9dqV27WADNjmynzSTq/IDKM?=
- =?us-ascii?Q?O9ONLoWWxAPeIyMTDeWHK3Kng/Lx5I24wzMG/jM5QcpCfmqbCpw5UB+yUus8?=
- =?us-ascii?Q?RibxaB0xpYmrVlNfzL6Xj1sGjuT/rTHklffhtzCqGtaWheSYawbyJDGZfQ4C?=
- =?us-ascii?Q?rUbh00wNWcTiJnelzoUMBZ/4Pz7nFdeyH5NwMky3pF+/eZ2dtBmK2K04nUQT?=
- =?us-ascii?Q?UFNFzkTWztXHIOr5XOfuj4FhiejXq8Wx95xh+jrmB0ROJB+qYiSP60dkASI4?=
- =?us-ascii?Q?hRLYKX+QMdvGiwm/PpjLxnTguVkvywXvQU3oER8r1gBfqDPMfaQ7OIEbGzCY?=
- =?us-ascii?Q?+q9z43u6fl11RaJEoajl+b/8VrZq/VQKqkZEwMHmxaH6hNjsR3ijl3tmUzVq?=
- =?us-ascii?Q?+qGDo9OQQHxqz17K0Xah7pNiLzb2rjDpMtK3gppvsuySQ+aOc6rssVUuBWqh?=
- =?us-ascii?Q?tuk0qlVh8ZqSf80uRSCm0WVk7gJ8D3PGI4gGFdMSKZZWqwQkWx4grTVXNTWL?=
- =?us-ascii?Q?rdtgP4QySO2LniX0Fg9CXK9hATdO04k9uXdPNPAO4vosF6oeETRc62m7vnzK?=
- =?us-ascii?Q?rY3PCtYrZwLfyUnJtvgjxRf2auk5pCB/VzfvtalbcNKREDinq36nbx8LhkpD?=
- =?us-ascii?Q?fGxcJkiMF1x9wXuYFPz+/EBeCSUej+PNO32rwlccAbcW7HP0uxpe/LoQOcu8?=
- =?us-ascii?Q?TABoVsxpPR8wnALYpuBSVP2tehwOmEuKRiTHlqRBhJ1oyi8xfog/puvF3YZR?=
- =?us-ascii?Q?yMgZFkz8i3YF+STP6RjrdSfp3umRTJ+jNRi6/QCDwbdKOpSUKZuVuTQRpyaQ?=
- =?us-ascii?Q?ZmgWpEAXLQPt9g7rjztWV7MuBSDsFi7va9SxRfzNtvO8bIRR2svIpgyGVD7/?=
- =?us-ascii?Q?FWK9sJs3L0WkkutKDqS5G+4qV0q191mjQWMORg6EHYNU6aSqewiaicOo4MMR?=
- =?us-ascii?Q?jhrbmynrVqZXrxWcFl/ilxNGRFB0LSoaw+1HRu2aC1oMkDnvNlDggYJam5ts?=
- =?us-ascii?Q?9pDlvZLBKjBmBYQ=3D?=
+	=?us-ascii?Q?Nee4qMwDJh6MmZvDg8EGLXXiGrfB7+V2xeZAOSI+9pvUqMiYEmuk3Z2SWoQ7?=
+ =?us-ascii?Q?7LRduKxUjvcOnCBYqvU4SnDplC8QnOO46yDc3UUxd08KFM9V+dN+pMKuv5pl?=
+ =?us-ascii?Q?hEOOEsr/i+qwXjFv8uLklG41aABD1LT3SHxMJC7yU1gkZbevhmWn9zWHXwTf?=
+ =?us-ascii?Q?mvSjuodUnXJq1xsTkwu0axB7ELJty9bejHKYlxSQI9gJvgwcydJVSZGYYvyc?=
+ =?us-ascii?Q?j+z10nt+5DsCuzY8mXP4KQKwa1vpQrWNhBlWQFTtHm96ljqdp1jaGuMz/6Hg?=
+ =?us-ascii?Q?8AB12neMOKavhy3SCM+t2OQp79NKSqeoEX8SevN+YPa9FfubNL2CK5y7Qq6F?=
+ =?us-ascii?Q?ekGBqgFv9SeX0Fr6jfO/5BA8uaj39z/i79ObML0P1NSXxZfSmhN/6BeGrf+b?=
+ =?us-ascii?Q?qvN2CwJf7Oz75ZdEkILl+w85o+SBnIzZaxBx+kpSUEAGhSSHNcdYinvUwl2Y?=
+ =?us-ascii?Q?/k//Q9CCPn74UmgCYbMJCAUj6Sz7mUaV9p4hGTr5P5e8SA9SbNHLm57aeAkq?=
+ =?us-ascii?Q?KursylXrc+COu3AMW8HhxjiaHe6zIWCgh7fWDxiLJHls2bfkm+EbwFDfRTGa?=
+ =?us-ascii?Q?8XBrahvLgh1sCuiVV3OLbRvPZt/05mzTKLTW+px4Zpvt2kIboPAZwRRuhz9Y?=
+ =?us-ascii?Q?Oe7u/lATNXB0KwCDW2t30CwHCopaXff7Sp/U8d23wT66l0TS8j+S/V/v8170?=
+ =?us-ascii?Q?se9uy0FGOIrb5jLXV1n4AAvjRbNUddrQuAC9wRtAULBdo0h6lLjToCNhsFfS?=
+ =?us-ascii?Q?FqsMsqeWYfU71tp0TKVLB+qvofHhYUgCsz0SBhfVEwT5qW/Tgua2AN76U++z?=
+ =?us-ascii?Q?DGf/bKj1EimAhJgbyq5rv9R8H2ZhOtMBnDp0iyBwpOZKA6j2lzqbJiEu3Jih?=
+ =?us-ascii?Q?rckQJBN3jzpOVR1gWYF2wFTzixWThKmdbiQdqu8jpNMD+M2zPX+mX4ikF6NP?=
+ =?us-ascii?Q?51N4jTZwfrc/8rQOVQaNS9QcMpdcNLhXpGsz9FJK1L4tUdY/d9SB0WKAFzhU?=
+ =?us-ascii?Q?N1BsIQsEy8Av0xs/NanHoyh8O2xumuljElwPUH20a7K5H71q2RsXG2FHRA4p?=
+ =?us-ascii?Q?dzEj8sfX83jhsSbnW9RSzw1jHc9Naca/a6AkMlXqmuZwyHyz8dZUs1LzEtM5?=
+ =?us-ascii?Q?Xq/SKsDtTRjQVIftOGsGdWwJE98sVsfmpZs/SozH1hPREqQly4v12r8nibYO?=
+ =?us-ascii?Q?RVB2fPrDWQ65ilPTpbEbxY/ERPkC9VjJqxFqFJfAbIgYflg/MAMZdTwoXSNK?=
+ =?us-ascii?Q?ZSriJVuDw7nG0aZyUxmxcKx8pultEk37i9TESbAObHUCX291bKEwt3nKTviJ?=
+ =?us-ascii?Q?p7KJ94BWJA6cQ8mfr8vPzW9oTJoAmobghpC7XOiCtVGvuHjNWdTQ7xoBVHvK?=
+ =?us-ascii?Q?Rsh21POl+GZ4XRqlMBWDVQba7ux4w+GFjrsZK3wnORFz1MRitLtpWwbIWc0/?=
+ =?us-ascii?Q?OlSP6oUyxQQLWSUrTBnCesLunYUKGsvvu5BC2xybGPwH6qBI2rOClQ=3D=3D?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS9PR01MB13950.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?njemTenPAHSWNVghKlDN4BiDNNwW12jVnYlAaQXIkwqsmvnO9GENKUuSx3iB?=
- =?us-ascii?Q?mQImE9aZfER0fGpRDc9vxzkKQRyRufs+dUCU6EZdRA8t6k7R1skyPrsaBRTd?=
- =?us-ascii?Q?fj0jsSydLkB0YJsHP8FZMBwyL5VhEyXc6Vrrg18yp3vrYoE/b28LdgOEUpXp?=
- =?us-ascii?Q?BT0/FcFnISSrmjVd9A+DtQqOJTXluPFXRPtdGf3pDEuJFB87dUkHua1Sth3W?=
- =?us-ascii?Q?RaTRWZbrVu24WBKVZ/BIJDJCpOFD3mwRYLb6ptOs4H+1kiwOdIv8Dte4iQ67?=
- =?us-ascii?Q?jq5fR1ypgdzQl66YCr2QHtyq9QU3bhpdvs4nHU1Fcw8tkTLdpyJS2N/YrbSF?=
- =?us-ascii?Q?pDmBQAm82h7QeAtUXF6VUZHdWv2mkdzBt/bV66hx+F18gilXf8ZXsAxgnn4t?=
- =?us-ascii?Q?ICSnGJXbPcsJoJuoKALMuyhwp6WLyqXacLnlsQ91+j4Y6IjIg29TN9tVeNW/?=
- =?us-ascii?Q?srJVI5vbbW0+QAkkHgvvB4MULnYi9Dn3nVXyxOsFE+jXDNlnLRCJ2RCutBnW?=
- =?us-ascii?Q?HZaqZhhrwt8FCkoq0ofsVIhciIOEcYSQAaRIqv7357UmunDSTqmzg5QWxJSr?=
- =?us-ascii?Q?ASI0ThZiuIZtN12oh2pNWRgAvidcZB2TAEbubA5U9A7MtLZOvhO/6jjBZByX?=
- =?us-ascii?Q?Tb6jHUk1gK58FKyuWVtKQtPIQrCeki2j+Vfm5gjc+raiVS9ZQw0nuPDLEJ+0?=
- =?us-ascii?Q?8kab/IQXltcCuVulIkwIiGyW8g2BgpfB+PmTZI/VOiocm6tMuNpNBOvVvbtl?=
- =?us-ascii?Q?kQBUiuUFoXYB1kgUjhYJ/1TqGe/J562gp+HXgRNGXSA5zSRscXgcIUfXFrq1?=
- =?us-ascii?Q?RGW2yBKSE6E3+k5WZELDW4q3BVyPw0TGwfNVY7nfKcacpfm3DfOzqoqwXWqD?=
- =?us-ascii?Q?hr0glxN+RDEXEoDDgXsAD7kSyszP7AudFRbrOUQfRkJff49E202qw6iUte5i?=
- =?us-ascii?Q?zOROJvWiXC182AHJ+pFszAfPozqTU8L0eh4a2ohbdtdpqcTS+2YOo/fDAytH?=
- =?us-ascii?Q?dQ+KnIcoW24QzkBh6yhZOvIAm2eF9PS/Bv+nMNWWr+VdG+6OYU/cmDOpRyAx?=
- =?us-ascii?Q?E/KcbI0bDx9bH6dx1nX36BFFGMyiMEo4xeGTgnGTc3KIzzsJXZ++UpGNZbLo?=
- =?us-ascii?Q?BNM3GRNWnCt0uWZNAWMuM1KlDcEMaPFRTsn1/Lh9RXtkddZpm6eqGhzT90QS?=
- =?us-ascii?Q?pLuM9yz66EsE7eDrNax6tiTa2M6s7EZjxN6KtJvJJAPB3fWi9c+P/S+PgfG2?=
- =?us-ascii?Q?EuBiX2q9LI5yYs2EZ+0w1eQCrJQpOVbLtslhhzOTZrtfF0ley2NfNMl5yOHc?=
- =?us-ascii?Q?CK5zhMTEPf4zFA7fKXmbJDLkVYweDg6TBqx230KAcGsIdfnmgFCplDuoWkMv?=
- =?us-ascii?Q?gLNMHKlfnl5VHM5W9DxCZuWMkJmftfJUyDfAjxTU37mEB8w05j9pqdOnLIa9?=
- =?us-ascii?Q?pHU0naW+muz24Lk5YnCuxpnCmD761DqGvRzZnK649SQRnV3BABRQ5fGG/POX?=
- =?us-ascii?Q?ibwc4YNKO/XvJLTv3b1HQJS5UFvDdfvFQnt5UKxb13rHVuAurkKLLmGmnrP+?=
- =?us-ascii?Q?jZpCeIOPAWh7oznx4PrAsTwtpMA06AWABTOvqqhP7W4mwcM9gBnQBASUY45K?=
- =?us-ascii?Q?gYTEB/bSlpaPm+xVTTU6P2k=3D?=
+	=?us-ascii?Q?kV8d0ZaW+5O+2HpHbGy06wRWTOFdBBzB/p7Mtoygt0TL+9WZbPAAm37Dx3qt?=
+ =?us-ascii?Q?lKAADLpVtpxbFBbBeqz/H98YNvqz1KZDQOmjaixdnuzfvdT8IdB2JixWjHaN?=
+ =?us-ascii?Q?xo29bBQMrXr9VsVVjx5p4FGxfZ8/ac2ZrQoBjdqP63G+XNKENgr01+8gmgCo?=
+ =?us-ascii?Q?RqHRBPFoa28fz9TKv8bM2TzUm/bKUA9kjJONNHHXLvu60L+01PEPXe843/mv?=
+ =?us-ascii?Q?IJlVkmGmAVUgwF0xXxNeW+KDHIlV8VspjIAZGxeBT72r1b4R+dNULOh+TI1Q?=
+ =?us-ascii?Q?K30kjtRcTfLNve8H8/intmqqkXCLv+JtAcGouS5Wg6EPjZNUBSoHDxOxBcvp?=
+ =?us-ascii?Q?iuqB5/ut3ijyd6RcF1ISJoFxFkA9qmKma5SgSlo+f7AGZliLdU6JPxaFL2O/?=
+ =?us-ascii?Q?GVAI5H0GZpvu7PxcQmuTz4GATv92mXkLEAY3PyEZ/e5eyvPPP3IL6BLoHyur?=
+ =?us-ascii?Q?jC22nUiRR5rgHKBPcy6iri1pGn5NpM6BCaqGaWrqnhBTtPxQ8cIcunoj13oE?=
+ =?us-ascii?Q?ldQx9nBdXgQ1LWrQ8RSs/kJLw7bY+7fzBX2W8Sc+8BVogE6J/CULg9+pbWmJ?=
+ =?us-ascii?Q?5Or/Lyy8r13ESZkE0Ge+MPUvCWpnehFNH4s+ePHfC577kJak708GJSlCOqGv?=
+ =?us-ascii?Q?2Cib+Vd4buq+MQTmhrTomqkvE1O1MhWsFjvrFZPx8xJW/Y5VlRPr5pZ+ekzq?=
+ =?us-ascii?Q?J0b49535lBG73xpbOuHDYQuJXkA081+0B6DIB7cehxg8WUxOx4Rq121jdgP+?=
+ =?us-ascii?Q?+AHxTOKWgzpkwOMqzdV4eNkJ7plbLBkPmkhMh4r7iwwAcq1Ok0E7adFl/ZF8?=
+ =?us-ascii?Q?mufv/ZRMGHY0Hg/DFZbBSdQqdddkUlVYa7x+BkSXTHFzvuQR4ZyIEPJIU6yo?=
+ =?us-ascii?Q?69L5WYUIi2iborBNVOrHj8YlOsJqNCVM1dtU3ciW+LotI6rPf0l2d7/wiA09?=
+ =?us-ascii?Q?xsWngo5Ju+mD34O4k1HQJb+odXldUdZsJKZz6gZmee30buCyynBPTWHmQp/7?=
+ =?us-ascii?Q?TedUAUCfqQRHbaKOr8sPbTBB6DHr1OjBwdFVb7tq/yNZoJmVxTJpUPa7aSCK?=
+ =?us-ascii?Q?1YZlMtEGHsZA2/yc3EDUaaI7tSKgeqaqpDFy5JPJAbbexH0we6zbEYy350+A?=
+ =?us-ascii?Q?3qnpga1X4eQhns4wHB7xL2ncdMAu+j4qFjH2ryaPhylioMfVo4/+wivcLMWO?=
+ =?us-ascii?Q?g0q8FEHVp+FJomUnMAhH7Xvrk2m+x0VxBjRGHRUxYDRIpREVZHf9mX+jKVSX?=
+ =?us-ascii?Q?+WD4OcLMkSelow6ZfgavWLGQQ/euuzpseVr0Otk/XleovDWPHjuGy/hJmK6h?=
+ =?us-ascii?Q?+Rzqjh69CzyWQ8SyOP8DNwLSkVAhYivZw9JKfULb4hPbpKuaTkPF1U2vnH/R?=
+ =?us-ascii?Q?LPe95/i/tjrb1kk6pub7b54HHmR7AoL6YWtL6WYHMCBMWUfGD1dsUoJziHCX?=
+ =?us-ascii?Q?/U77xozAbTEPXeiXCSHjKXpIvU/kTiKxCa1h7q96e54OMhiiIm46PAjVF8Bh?=
+ =?us-ascii?Q?6FsAa4LjZabavAEHWAJBiTKMK3zOxPtTGk63A64iK1I1dlU1QUyPoXAnkdrO?=
+ =?us-ascii?Q?A1JOtI5uIPJzYASff7lrX3y4BI3thPTZdfvCm0BNSkzuJ0cE6KRo7JLZXzk4?=
+ =?us-ascii?Q?lD4MiD4oL4k77wb57iFkZ4Q=3D?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c719f77e-3a0c-4637-897b-08ddb26510ef
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7451e434-8b9b-403a-38ae-08ddb2650d97
 X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB13950.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2025 14:48:50.2958
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2025 14:48:44.8765
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fo9bbYxgwB88ISCGIYss90iAtAWcVxAfY66nhunc35QNTVOC3KSKtHhXn238AiDBb+V0u+P81+ZgCGkPBBnL4ulNfxedeF83vzMTxf9xlqPN89MZC4Kf4lT19NK5R3GG
+X-MS-Exchange-CrossTenant-UserPrincipalName: pVbPEGXs8voRlP+/dCoHNMTKZEjEEz5eZOSjgp1QmVAXKifOm67scLywb8j2nEGzU0IbP3H6XstQ8pWQRj/XI7G/b6hnTRnNutKTxkS8NcJwa3p97Ari7PbD57mYAixC
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB5851
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 23 Jun 2025 14:48:52 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19210
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19208
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-commit 18da3ecdbaf6f140eb45818fd848b85d2c414db6 upstream.
+commit 8d3bbe4355aded32961b9009b31de6d41b7352e9 upstream.
 
-Use the helper of_get_available_child_by_name() to simplify
-renesas_sdhi_probe().
+There are lot of drivers using of_get_child_by_name() followed by
+of_device_is_available() to find the available child node by name for a
+given parent. Provide a helper for these users to simplify the code.
 
+Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Link: https://lore.kernel.org/r/20250407092144.35268-1-biju.das.jz@bp.renes=
-as.com
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Simon Horman <horms@kernel.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 ---
- drivers/mmc/host/renesas_sdhi_core.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/of/base.c  | 27 +++++++++++++++++++++++++++
+ include/linux/of.h |  9 +++++++++
+ 2 files changed, 36 insertions(+)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesa=
-s_sdhi_core.c
-index 8c83e203c516..862c279be4b3 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -1166,12 +1166,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 	if (ret)
- 		goto efree;
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index 4bb87e0cbaf1..c2ecd77325a3 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -771,6 +771,33 @@ struct device_node *of_get_child_by_name(const struct =
+device_node *node,
+ }
+ EXPORT_SYMBOL(of_get_child_by_name);
 =20
--	rcfg.of_node =3D of_get_child_by_name(dev->of_node, "vqmmc-regulator");
--	if (!of_device_is_available(rcfg.of_node)) {
--		of_node_put(rcfg.of_node);
--		rcfg.of_node =3D NULL;
--	}
--
-+	rcfg.of_node =3D of_get_available_child_by_name(dev->of_node, "vqmmc-regu=
-lator");
- 	if (rcfg.of_node) {
- 		rcfg.driver_data =3D priv->host;
- 		rdev =3D devm_regulator_register(dev, &renesas_sdhi_vqmmc_regulator, &rc=
-fg);
++/**
++ * of_get_available_child_by_name - Find the available child node by name =
+for a given parent
++ * @node:	parent node
++ * @name:	child name to look for.
++ *
++ * This function looks for child node for given matching name and checks t=
+he
++ * device's availability for use.
++ *
++ * Return: A node pointer if found, with refcount incremented, use
++ * of_node_put() on it when done.
++ * Returns NULL if node is not found.
++ */
++struct device_node *of_get_available_child_by_name(const struct device_nod=
+e *node,
++						   const char *name)
++{
++	struct device_node *child;
++
++	child =3D of_get_child_by_name(node, name);
++	if (child && !of_device_is_available(child)) {
++		of_node_put(child);
++		return NULL;
++	}
++
++	return child;
++}
++EXPORT_SYMBOL(of_get_available_child_by_name);
++
+ struct device_node *__of_find_node_by_path(struct device_node *parent,
+ 						const char *path)
+ {
+diff --git a/include/linux/of.h b/include/linux/of.h
+index 85b60ac9eec5..4232d1c43929 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -298,6 +298,8 @@ extern struct device_node *of_get_compatible_child(cons=
+t struct device_node *par
+ 					const char *compatible);
+ extern struct device_node *of_get_child_by_name(const struct device_node *=
+node,
+ 					const char *name);
++extern struct device_node *of_get_available_child_by_name(const struct dev=
+ice_node *node,
++							  const char *name);
+=20
+ /* cache lookup */
+ extern struct device_node *of_find_next_cache_node(const struct device_nod=
+e *);
+@@ -575,6 +577,13 @@ static inline struct device_node *of_get_child_by_name=
+(
+ 	return NULL;
+ }
+=20
++static inline struct device_node *of_get_available_child_by_name(
++					const struct device_node *node,
++					const char *name)
++{
++	return NULL;
++}
++
+ static inline int of_device_is_compatible(const struct device_node *device=
+,
+ 					  const char *name)
+ {
 --=20
 2.43.0
 
