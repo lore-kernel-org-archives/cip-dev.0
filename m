@@ -2,41 +2,41 @@ Return-Path: <tommaso.merciai.xr@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA3DC77B7C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B77C7115B
 	for <webhook@archiver.kernel.org>; Mon, 23 Jun 2025 14:48:02 +0000 (UTC)
-Received: from TYVP286CU001.outbound.protection.outlook.com (TYVP286CU001.outbound.protection.outlook.com [52.101.125.57])
- by mx.groups.io with SMTP id smtpd.web10.390.1750690076340392678
+Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.2])
+ by mx.groups.io with SMTP id smtpd.web10.386.1750690072755413411
  for <cip-dev@lists.cip-project.org>;
- Mon, 23 Jun 2025 07:47:56 -0700
+ Mon, 23 Jun 2025 07:47:53 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=NAQUVRNn;
- spf=pass (domain: bp.renesas.com, ip: 52.101.125.57, mailfrom: tommaso.merciai.xr@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=clEIiKeS;
+ spf=pass (domain: bp.renesas.com, ip: 40.107.74.2, mailfrom: tommaso.merciai.xr@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=h1CFIjgQqJnWCNCPFusxM2cidn/+hiTx2OBHBg2bL4HgtNDMPMMV5vcy5xbNNdxNTeF6TwIa72+KYRlCucLENmy/zy00cHYSRAcGek8awkHzHRJM0b7sEVQNReK0QgbMRl/ONsAz8COzHh4rNFirgn9/amQF1ntqCOaUWDX3WR0TmoQLEgKM+Sd7iwwisVdtLrYMKOSDsKjZdznvrDEnfqnjfUbb2J2XSfh8xgkyAtXb2OXZKVb/MTz96Aikd/G0+BXu6D7vGD9OgG7yaLNe0yY7Ylp0nMf4BjBVSwftzdD0JHkkrGK75KYS2Hkax2ECNDfKvSzPyUUaMzDDr/6Zig==
+ b=eivKhwuZc+gpJfLhpD+yoScq0oad2DRYyf3DsDbwHcr3PRDATxK6L4SYk9LOx5QXKjGjxq1a00yhrEsS9Qw94KdkPK7PbHvA/6iB2AM76jmHHEnUTm9Nmib+MgLCDGi+/puDSst4L4whrwGAt/S0mAxZBkLBSjsKPj6uiPVXYEz4McYa8EwMyKpNqCwKNXW2D3Jd7RGN1cfz1jttuAub6f5MCC2OXQEvzaFbC2jnEhLR9P0aUpXBwUWyYjdALYxkTSh8jpGSbMvsKEdqbPQwwvUVz9G1VVnA1roVD2jo7ATSUh4h/j9Ebm0Jv4oeE2ibdHgirkrHgHZZ/R4ZDaJN6g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MJQUVtslxUboFtDWpkKGfVhhsRg3Koak5muzQSsRNhg=;
- b=lgalxpURHrmKdcl1v/S1cUxp2HjC1M3lHUDUI33cHlu8jeMBKFSL0RTNlvHdr4LYO4h0o8yKXHW+oxaT63NeB39w2sWMFjMfkcJiFauo3qprkRxy+YUipkpGSS7scTkCic4u22K1dLG7c+EHtBaPuFifkCFsOSnmsfOdDhcsdw1XNWHsiUBZ618mjY0/ZR43m1NkXRJkXROTphvMMYIchSDfyLW60WFBGMZgQ7I/wyZayVhGiShQcjsdd3mBYwXHQjuhv2M9LP7+t2l0JWQzD0cJoj9NTuFhnLoh45MvzIu6pmWR+msLGEVG5pqR4PLBrh5pO1Y2abcr29kNBgaGdw==
+ bh=asx9eyL6wmOeNXkFOYwjFUDLfLQU5Ku+Gju8IefX1Ow=;
+ b=BW9Y4/C5+OsnyJVS1ORu44VXSg+xDwo8Dfn/v85JBeHunIG9oi9gA1g02ez+2KwUDsl80Exa63ZhnE6CorYXp8OinLZhN9UhYuHp55NDzihuqf17AYkavCbSu6RrqCCndW7YixoWMLkHGghmN2RouB/GyZLu71vSuOSScAhEPnO8RalM1onLrMFcCVgcqvxHg66gGGUOrzPMYe6zW1r5N5EhVO5VGhoDqHUeXNZB7hb+zCZSiltJJPqCsRO6wLPph9iC5ZJxEKJTxv/d8ulAFqiBhEE3C1XgtOirqGI1nkH56nkfMGU9x6T63zi5Ukyd/dM9jo9LXIhlhBrSdEVA6Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MJQUVtslxUboFtDWpkKGfVhhsRg3Koak5muzQSsRNhg=;
- b=NAQUVRNnVIYyB75gNbX/WNJ/RHsKAIwFWibC5P3Oa56gGyc1v3G2QytV0u4Tudgi58dAJqqqj37e5FCPcLz1MbZ6ThEyLXa2hO8uMcNdNS6a8zPJPFH0vC0STqVY3MsnHxUMgsUTXLvydFRi2ARLeIXfbOgKTIKnq7t/x0irepk=
+ bh=asx9eyL6wmOeNXkFOYwjFUDLfLQU5Ku+Gju8IefX1Ow=;
+ b=clEIiKeS40x8P/yH+7PPx8fZ9zsu2kgPfv7X3D7xMywgGLwIdTqkRu3s4miXsWBSGy+entqWKxHBMFoRkuWE2yzgVaPHbmvleHvbtI6Fk2JPR/j0gCYWoFDNN95ba3oQyxL59ESFxaps9UAXDlNQ332S6M9aDcS8q5iHGTzWkOM=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com (2603:1096:604:35e::5)
  by OSCPR01MB16379.jpnprd01.prod.outlook.com (2603:1096:604:342::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8857.21; Mon, 23 Jun
- 2025 14:47:53 +0000
+ 2025 14:47:50 +0000
 Received: from OS9PR01MB13950.jpnprd01.prod.outlook.com
  ([fe80::244d:8815:7064:a9f3]) by OS9PR01MB13950.jpnprd01.prod.outlook.com
  ([fe80::244d:8815:7064:a9f3%6]) with mapi id 15.20.8857.026; Mon, 23 Jun 2025
- 14:47:53 +0000
+ 14:47:50 +0000
 From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
@@ -44,9 +44,9 @@ To: cip-dev@lists.cip-project.org,
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: [PATCH 6.1.y-cip 17/17] arm64: dts: renesas: r9a09g047e57-smarc: Enable SDHI1
-Date: Mon, 23 Jun 2025 16:46:39 +0200
-Message-ID: <20250623144639.2119707-18-tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 16/17] arm64: dts: renesas: rzg3e-smarc-som: Add support to enable SD on SDHI0
+Date: Mon, 23 Jun 2025 16:46:38 +0200
+Message-ID: <20250623144639.2119707-17-tommaso.merciai.xr@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250623144639.2119707-1-tommaso.merciai.xr@bp.renesas.com>
 References: <20250623144639.2119707-1-tommaso.merciai.xr@bp.renesas.com>
@@ -58,223 +58,211 @@ X-ClientProxiedBy: FR3P281CA0066.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: OS9PR01MB13950:EE_|OSCPR01MB16379:EE_
-X-MS-Office365-Filtering-Correlation-Id: 83233a43-5b06-450e-ebc9-08ddb264ef14
+X-MS-Office365-Filtering-Correlation-Id: 8bcfbc84-1d54-4e66-db88-08ddb264ed65
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|1800799024|376014|366016|52116014|38350700014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?zAxGQk39izDAxOiEFQ4EJCTvy6laAVrSAyAL/K2tkEPhp1PmqF+bU24qeY+I?=
- =?us-ascii?Q?IYB8SEWPtBLiMmK3PxMt/aOVAPPL8NUDsNIKNIW0/WBwV62gmFof9LmkbjIX?=
- =?us-ascii?Q?MMM14YOqcpci9bZqcEb7rZnD0oTU0tl7TiXzs0pHhRsqZNJBWBgwdjLS9zlk?=
- =?us-ascii?Q?tGep/Y+4gcqN3rulgrZqh81dT6VEx6mn2dhWzurZDFX3+ytHr3DK5GT1QALV?=
- =?us-ascii?Q?inA6vVtab1A0pKwFRrf9Jvv3PtcGVdn3nZBO1TrZrj4X+hTwcg6Na2qxKmSY?=
- =?us-ascii?Q?5eVTERabQqrS1j+JJ/qShxP6egdM+zck3DepxLSNs7eIDXhyqyL0FzwtF6l3?=
- =?us-ascii?Q?B0DLuS7wlOpu2VmzwrlxNwq5Ssp54rTiC6Awd1fBDuzjr0UK+N2Syx4L2dlp?=
- =?us-ascii?Q?24x9gw37i/m68i8m0PFOR4oy9JOxR8/UQQXF4YN/5xZmXKIoAtzZAsBXVeuw?=
- =?us-ascii?Q?Yp6lfQJtoQd+AgLd0AX8w9vEZrrlN8bYLoeFTF1KVMuEQ/X1ovS1MzkNea4E?=
- =?us-ascii?Q?BsY0amty7ThGBcKXa2PZd64EALtnUnzOSx/D++NfgtNa1ib8MFdaciujzWv3?=
- =?us-ascii?Q?3565AO0/XTNZcU6yKUfdh23cr6udsSFEeFdA9BiMDg6d0ijmL27QwZUbm2ze?=
- =?us-ascii?Q?r8BXfYx9YKA139pv1PaqT38GdzePYhIEXBxgTjbuobqP9uQZcFqKB6DREGXk?=
- =?us-ascii?Q?PI2E3Z8AKhZjFxUgM/2MEhx72zlfnP+uNyVBUDSNLy9Vd+CI1vG5EXuQe+YT?=
- =?us-ascii?Q?iZHk9qRoADPxOPEaIWBXcB66UPrZ/XHl1wrQHuGHLZypVHjDK/o8TtDzYMDn?=
- =?us-ascii?Q?hECKpJqx7PET6sCJ0cQLXuOESGYp0fWN9JR72hKjejeOz+OLMTJEYJTJ3Iy3?=
- =?us-ascii?Q?54v0e+f4EEiLWYQXStZik42Zso/kOtDcWDL1DAliOU6X3oVCzUlbHwlecDp+?=
- =?us-ascii?Q?QT8TceNjQMiM9htMQpUqwWQrXKTNI18lNfjL3/PvItF45UH7GZnl0ruzxxks?=
- =?us-ascii?Q?xrREcis1N7Vdxkv5QiMHwntlrRcFO/OYPCc7tBN1DYuGnxzpg5vjbBS4goTc?=
- =?us-ascii?Q?NucL8KSz8jQdAn4raeGpY1wOwD2HIaXdYjp1BNs+Tvb2qNSuVK8oTZCSzTRc?=
- =?us-ascii?Q?LVk57xX3CGlkiTgjQO55yRKlX0LJfB0U/shB3Fosl/eGWPnstf7Ae3nch9YG?=
- =?us-ascii?Q?Dnyxns6r/XPXtksZ19ahCA8x3sy9/L1OBexj4XCCBDj3mp3swlPhXEJxLdeA?=
- =?us-ascii?Q?trjgm8W5OpHQjiqD7u6VZ9QkEaBMEX/Y/uHZgRCWUIvfgs0pLrGk5YpkXR8D?=
- =?us-ascii?Q?0fBhRIYto02ZM98uuORsxzezhT3jAaHjFofo304fTudEFIRHcsa4LQgMQnqa?=
- =?us-ascii?Q?SCThGVkOMxvNkb3NVrrPeGK0cMx8twJM/nMCYvyqG35sYTKwwHEUEvBFFn7A?=
- =?us-ascii?Q?ZjlGTFb3vNEIsdEbld0hCKn6LRFDy4QLGhtr7Z21ilAY/FiQxgDJNKb9Drsx?=
- =?us-ascii?Q?cw5PywaWHL8aC9s=3D?=
+	=?us-ascii?Q?intHYPQfVr7ZyG9Xb14Tye2OhEYhQVz+HlAUl2HDG7ZNMjiRcb1jhxOEDd/l?=
+ =?us-ascii?Q?Lsn2msoA0kFO3Mwwvqe7ZhXavg45tLE4Nhm3Vy0HEdtzmZNRha2ptVpE1Si1?=
+ =?us-ascii?Q?oQORu7nqrYONm90xPg6QqdbafjVl265XEaIkjz0Ggq8F/W6bBZUs2FrOOkO7?=
+ =?us-ascii?Q?s2PX/DHp83X2Cufgz2qtSDEBr4/7ZYj2ZTByqdHs/N3uJomDX7WIm8bK5lnM?=
+ =?us-ascii?Q?Z5wEQKBg+2EM9TZ9xsbHQUQmiyv93/J9HC4pEt8NbR49IGKoYo1UYISidEes?=
+ =?us-ascii?Q?JeorHZOjrSv4blSYpJPfZLYl41LlFQuV9qXvhvjVqaa5cWy17Kn/kY5mFVGF?=
+ =?us-ascii?Q?BeA9pZ+lZEkCcJ6C3C5AeaphnNptm8d6HlW2lLPT0vuvb+Y6DV4vEcdAANmg?=
+ =?us-ascii?Q?AgREZbK3tluykEClp7ox/jl58ZiXzlp7vO6ph163PC+rWLwo06h6iagbsilH?=
+ =?us-ascii?Q?lM6TmfByO1Ee8izKVSga/zQuRwntriQNMtoZDAXJsDRP25zQHrad0pSlW1yC?=
+ =?us-ascii?Q?bcTH6RGqGhk/c3AF/Tic1EBYNMT2fQieranhZOsukVJqbBZgbSuUxBT4WBXm?=
+ =?us-ascii?Q?SGuimiJNOT4Z4uadlWL+zyG2ibslfRV50a97Z2nf2FQ7/WkvBM9sG1PBBVWJ?=
+ =?us-ascii?Q?drhI7alLucnW7Z/Bvcr9fsq3x4nsCfqvpSbST0M+UO6m8/7jl9QsUpA8vhM2?=
+ =?us-ascii?Q?9Kwtkc17Zi/39/dalStlZp0dN7emYnmPaDjuh/Dv5m9bOpuBs6HGM1zwSedo?=
+ =?us-ascii?Q?zH2ch4v2GiBtlKO6ks43ATb+anCfTVBHHI7Ejblru/oxYb6+WKplndfuQCmf?=
+ =?us-ascii?Q?H9VqgBDXN5lyBzQ4wsTRfxlACQ/Z8JlyiqUI5Ai6tG+rndDei6RSemUF+QVw?=
+ =?us-ascii?Q?NztwrnJExG30s8q5wlh1jpqRmGn9aMLj+EUHOjw3CQ/j1X64pVZw7hqf3TLk?=
+ =?us-ascii?Q?/ENQ7xG740HBjjnD/5LhfCoWeRlEp0SG7oBpmkuzeqa9FSEC3SY89GavHda2?=
+ =?us-ascii?Q?DksTpmJPjkjFHhUcVPJ3nADVBMYfRD6sYdnKquZNrMoltpOT9LmdokZBm/Dw?=
+ =?us-ascii?Q?O+XlaWJEIVrQzjbF1xPawnljSDcvSuaZI0W8LZ4TEO0TJsTqyWeQz1P4Y+LL?=
+ =?us-ascii?Q?Fwxtff6pG/nCbkJQr5/SajqI+BrjBgnMEwMFS1WTfkyVEPIyQFn4m3YSlCiC?=
+ =?us-ascii?Q?b4nU85ktGAlG0qObqkcHi4DxoeQ2U2X4DN3a7c3KBEk/DHEogDL2aqRR374Q?=
+ =?us-ascii?Q?evzBWd/c11Zp6CyKrArkwt1R1k6KxPLvW8A+27tMvDXr3LocCFHSZdGSQvfy?=
+ =?us-ascii?Q?lgtIy1NDFiauJL5FXYBa/XuMe6iI6VelHunuZXeejtIvr94qhySF9RjkCXuM?=
+ =?us-ascii?Q?hSLTSu6qougQs1PatKoqTBJFM3G3rHCf4/La1cuarnoJqA0hMwUFOJCWkoGf?=
+ =?us-ascii?Q?fEhW269ziEiaYndgV/xju+RP28QDc1MzNHi0AoeT3N6Gp9llbi1XVa3WQxV5?=
+ =?us-ascii?Q?6WEPCZfVly6IE2I=3D?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS9PR01MB13950.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(52116014)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?7Vd2gtl1jl+dGXkwfOmpwRQeYZFAr3CZwsh4UpCmvW+zZluFzR9Y4age0fHr?=
- =?us-ascii?Q?NjCSHvAoFeR897jKP9dHT5b53ixi6TgsL6kV+2H1FACILY+Z2IeIL3qGsMBI?=
- =?us-ascii?Q?OLYEsu9QpiNSWo3xXMY5/wU2Sg/Nk2yD6QIsyfCI/d0Hls4H2QdHgJYJNz51?=
- =?us-ascii?Q?PskYepFZjqsFJ9Uu/vub4GNJw7cF+PKNUFj/hw86MRoORJVc6lLQYGQPiCRz?=
- =?us-ascii?Q?TH7lPY8mimDye/18h/f9ETYLF3efiOKQVCYJsX+s5w2qS7Z/NwrCTdYK1Z8h?=
- =?us-ascii?Q?tISxlUN3yam1z0mcFoCLzolmCommEcbVHfRZlWuo9k2xLaxkjabXhGXWoq9H?=
- =?us-ascii?Q?UqbFhB1s9eYSnv0KvcnyIqbZXYfdfRLzbNF1+CAIgXAJD3meohJ78azC2qBa?=
- =?us-ascii?Q?VtiVVBSs0M752/aO4pL0F4OqrZ8L/opNpFCXK8J+9Ik2hwL5V30jlegXB+Yt?=
- =?us-ascii?Q?U8Z/2SlmbdFh1nTtvOcK31ooYufZxN2oJQinGBZ0bbO/jnZd+pee3krpBVF2?=
- =?us-ascii?Q?4ChFYwhr3+ZxUlk9SGG80nYr7a3ET+P9cFAX8y5oDnk9ZgxclaDFbpYRSeHm?=
- =?us-ascii?Q?bCCLz1w+Hkx2C73DxPZd2642v60T1nl913tpnEomvrMx7q/GRmZcEvZQUZ0V?=
- =?us-ascii?Q?XL061pdLB9fnbyIusSulCvfUzTDuErcfnhTq6/8EjWtuf6s/Nez+m2qjbct2?=
- =?us-ascii?Q?1GGZkw/2TtndctyrHiNrn5JK2DCxFXYP3Xe+vWgFBjb41oFIk1IiS1QdlnyT?=
- =?us-ascii?Q?BX69c/LfuChW7qxpe20Z+NaSo56SOCO5dLbdQ8cGPJr1kilWe/BkLEfo0ebg?=
- =?us-ascii?Q?9nSwwX+4rw4TlaskNwYtgitJ7c1ktFh4IkpyaF5j45Kr3I/9PuNmRliM9z4u?=
- =?us-ascii?Q?Y9oG6MVf4FSMD11ndX+kOSk0a+EGFumNaVO+KCoPC2rho8EOc67a6uS97HkE?=
- =?us-ascii?Q?h24sgbvakqvj/ROW1pkC54kcIppvmFQ4h6sZGlUxaZ6dyWmiHA5HnqtIxOQn?=
- =?us-ascii?Q?w3REoICi2Ng4/5UMb1L6F6COji1P5muwjiuQNNlL6LXbYFeDzrRlSZo8GoVv?=
- =?us-ascii?Q?XZdlo0UhkXOsXo6o896CAGvG96jITLfLDJepMFfQwFAWcpqInREeQZ5hnGZX?=
- =?us-ascii?Q?/2zCyDJ5cST0kl4o6+geqhTKIksDxCY/ou3A7Pf2YaT6jQz7jFveWZi2HYPP?=
- =?us-ascii?Q?bks9iyyw29vxX4KLtY5U5K+9ScO90Fmup+r9sZ10MQB63oFxh33TRMLjRW+y?=
- =?us-ascii?Q?SVa0MMm9EAYmWlLtAr/Lc8+BzDrsaFC4NhQMTn63O/QkuQEQTFUT637Uzfnk?=
- =?us-ascii?Q?uWMCePFKnS0smdbse48Rj8deAWbZJFt0MhY8T0hpCC9FSdAe6WxjD0wiA6j1?=
- =?us-ascii?Q?30ud6SCF6v75fMSrJhpDR67AngUH3d1Y4IIFF4h9BiVVa8jPKpPmFMDkqlIv?=
- =?us-ascii?Q?cz5a0q2k1nHPDs+xZ0uPe7kQvwCA7BGkybiRLZgCq0+RwBmf/A3m/qacn0fX?=
- =?us-ascii?Q?hiIt5KJTFgyYkCH3xuuAlbBGj1bVByvrbOEussG4Foi/Z94AhZkhOkhvo7RY?=
- =?us-ascii?Q?L0F+YopYOh2MTeC+F1h66wxmLeEVBcN0vJrVUErTnTL75N/wiYGdKMKDkgg+?=
- =?us-ascii?Q?vS/LcCbZT74JyAftrLmxpi8=3D?=
+	=?us-ascii?Q?dXU40B0iQZEcXuNrnTuofEb8ryB7fstBWpIvT6bybgriSUPT+IgoiEspY4ws?=
+ =?us-ascii?Q?YR4S9i/X9TMuyS0ban1g321svrPs82AUBGGzAxpl5CyH//m0PyYb/O+NtjFN?=
+ =?us-ascii?Q?0icqIDYwu7VWbay+kCOBRu1PMqOndlJg9XpCDlSG1y7vclRl7t1MJehz7UE9?=
+ =?us-ascii?Q?1HzSGMr8x2ZNJQXJIoF345biihIE4WF3iJoOcvDrQPg6hfqxpcfhSqDkR7G4?=
+ =?us-ascii?Q?rtT1GCJ7A/i0z726FT27lSfggynj2hGY/6NOlIEnMamfF8KpFo3czjLNFWmg?=
+ =?us-ascii?Q?aS/m/1MiYOOGgg9tr4SKJs75AjpFgzxHQN+eP2bsz/f3zs9iWYnx0mDATTiN?=
+ =?us-ascii?Q?wGLuiJtMnHxYvbRDBL+p00niek9qz9RVNjgLlRbt+wC634Dmt99pk0cknsga?=
+ =?us-ascii?Q?VOHKdH/AbERvVlwMLtmMb5J0Cw0SPUgpbWFpnzdVQp/4gT10THegVA//L7X+?=
+ =?us-ascii?Q?ODkn2aTO9t4LDpSQpKta8N27qCzRchtf8VjpJ/DZCPU1q7Q6f90iu30uJV2S?=
+ =?us-ascii?Q?dHGmwXJvkRVHiVZTxR1QdgEilpayxT7QWPxFoZ2LSwK+nJjHDWM1DDfK7TlT?=
+ =?us-ascii?Q?bnex2loz9HB39eIsTpRHHBIwS7NcxxLB2X/ey+Sjvme8BxaHgCHpfvbhrf+c?=
+ =?us-ascii?Q?X89sMf4Oi7Na+HpnhXd4lWSL6MkpzA5MulB9wbjQhIaprpWL/j+iYtYyZvja?=
+ =?us-ascii?Q?JIWgb/e8JcR2DuqA1NOq45G9tAQAN2vSLj3eYNRX10VhLbz2c70CU+CWr93c?=
+ =?us-ascii?Q?lNcW7M2yaUt0BL7cmU4vKdyo+dOhlZF61JTYII69aA4rt8Nt6v/KmWLfnDjj?=
+ =?us-ascii?Q?vNtBXj55sDvAEr1r+Xfe5j9vX13omIUQn/zFVqAgb0Y4YcBBkk6miLXQvz+b?=
+ =?us-ascii?Q?yyQB0nQFNk7oe4RZHluGm/wX8sPExYGnvQ8cxsjEgnU+9s6sTEmlj/PkwHDt?=
+ =?us-ascii?Q?GI9z20K5BlGemBM7ZUnKZ3aHz2RHzZHSmER/lGUSdINxMIiOmjR/MUdpCy4g?=
+ =?us-ascii?Q?SegCb07iY9uukCIe1Dbo3Uz5pVTM/E0I9DgO2x6DUy0RDeJ7J7cJArg3iQSm?=
+ =?us-ascii?Q?BX5Oh5azAY1hgonFvvwrbu7477eaw3+zJtPi9b1/0iipJfhSL9O1yjDml3UC?=
+ =?us-ascii?Q?/YshmGCzrbmDoer2xyMpN38HJQ88eCS1neB+WqakYfMVF/l1ZFhP1sf667/B?=
+ =?us-ascii?Q?JatmD5a1xU+KZo2oCSkpeseZjLznwJtU+IUI7dZlOQ34gqsbkgmnicbEtKxp?=
+ =?us-ascii?Q?HhxIp3SNfs0dQ51CydojnAXzX+325QDp3HmgKPDH2GYCY85tObVB1a8TXBg6?=
+ =?us-ascii?Q?vgHRU00EwdUafJLPx8Ui1Y7O72EvpDKs1tBd+qVyF4pELUXZo9XJ4v+1hkmw?=
+ =?us-ascii?Q?GpMnId6OF0cpJ1YDpta4IvzQ3tJ6onAl/Q9mBza2S3BGhSXXimAg9qVxnEdb?=
+ =?us-ascii?Q?Z/CDYWUlqtD4Q6VL4gMXkP3L2wKn120Ahd7zI7QGoVJpRl1sm/wToUi9DEer?=
+ =?us-ascii?Q?pGcGK36d6dbKET+tMM3iJUZzKVShJzxQGImW8Gkx9uAnWh3pmVGvN2nLjDXK?=
+ =?us-ascii?Q?mCc6gkXj9RA4zg1rsf1S5EgjHx94o7FwKBKPemBvGWZ46/CYWx6PGe9ZIsms?=
+ =?us-ascii?Q?bfumvrjUO71UMRB2cq0q6gU=3D?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83233a43-5b06-450e-ebc9-08ddb264ef14
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8bcfbc84-1d54-4e66-db88-08ddb264ed65
 X-MS-Exchange-CrossTenant-AuthSource: OS9PR01MB13950.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2025 14:47:53.7096
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jun 2025 14:47:50.8928
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eNQnSmgg259SjDqWOVv7v/OAWR79NWMYg5NF+8rJ8cF8TezPkL/QIFjuXx7/1tKqy+E227MQsw2tx0b78NFt26X2ezLCd2AlRMpnMi6Ij3EJLshhK1uPD5ISEmBUiQuE
+X-MS-Exchange-CrossTenant-UserPrincipalName: ge/j46JN7Tvw1L3tj6QQtrEauPczoQumwj6Ti+1ksGPXvGEcs7anPWMMgGbsYbd+B/GQUhtl3awKAhcx7ghPk97A27x/cukWkglhu3Gbb4EVW8DV42vS9ohOCceHuvmR
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSCPR01MB16379
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 23 Jun 2025 14:48:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19204
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19203
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-commit ae9edcbc712249832beb3f5457cb03cc809f72c4 upstream.
+commit 4c85281bed1732693f2f2e32cf60e0e30722d06e upstream.
 
-Enable SDHI1 on the RZ/G3E SMARC EVK platform using gpio regulator for
-voltage switching.
+Add support for enabling SD on SDHI0 on RZ/G3E SMARC SoM. It is enabled
+by setting the macro SW_SD0_DEV_SEL to 1 in board DTS and setting the
+switch SYS.1 to ON position on the SoM.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250206134047.67866-9-biju.das.jz@bp.renesas=
+Link: https://lore.kernel.org/20250206134047.67866-8-biju.das.jz@bp.renesas=
 .com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 ---
- .../boot/dts/renesas/r9a09g047e57-smarc.dts   | 46 +++++++++++++++++++
- .../boot/dts/renesas/renesas-smarc2.dtsi      | 18 ++++++++
- 2 files changed, 64 insertions(+)
+ .../boot/dts/renesas/r9a09g047e57-smarc.dts   |  3 ++
+ .../boot/dts/renesas/rzg3e-smarc-som.dtsi     | 54 +++++++++++++++++++
+ 2 files changed, 57 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts b/arch/arm6=
 4/boot/dts/renesas/r9a09g047e57-smarc.dts
-index 152a00aa354b..5d7983812c70 100644
+index c063d47e2952..152a00aa354b 100644
 --- a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
 +++ b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
-@@ -9,7 +9,9 @@
+@@ -7,6 +7,9 @@
 =20
- /* Switch selection settings */
- #define SW_SD0_DEV_SEL		0
-+#define SW_SDIO_M2E		0
+ /dts-v1/;
 =20
-+#include <dt-bindings/gpio/gpio.h>
++/* Switch selection settings */
++#define SW_SD0_DEV_SEL		0
++
  #include <dt-bindings/pinctrl/renesas,r9a09g047-pinctrl.h>
  #include "r9a09g047e57.dtsi"
  #include "rzg3e-smarc-som.dtsi"
-@@ -19,6 +21,16 @@ / {
- 	model =3D "Renesas SMARC EVK version 2 based on r9a09g047e57";
- 	compatible =3D "renesas,smarc2-evk", "renesas,rzg3e-smarcm",
- 		     "renesas,r9a09g047e57", "renesas,r9a09g047";
-+
-+	vqmmc_sd1_pvdd: regulator-vqmmc-sd1-pvdd {
-+		compatible =3D "regulator-gpio";
-+		regulator-name =3D "SD1_PVDD";
-+		regulator-min-microvolt =3D <1800000>;
-+		regulator-max-microvolt =3D <3300000>;
-+		gpios =3D <&pinctrl RZG3E_GPIO(1, 5) GPIO_ACTIVE_HIGH>;
-+		gpios-states =3D <0>;
-+		states =3D <3300000 0>, <1800000 1>;
-+	};
- };
-=20
- &pinctrl {
-@@ -26,9 +38,43 @@ scif_pins: scif {
- 		pins =3D "SCIF_TXD", "SCIF_RXD";
- 		renesas,output-impedance =3D <1>;
- 	};
-+
-+	sd1-pwr-en-hog {
-+		gpio-hog;
-+		gpios =3D <RZG3E_GPIO(1, 6) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name =3D "sd1_pwr_en";
-+	};
-+
-+	sdhi1_pins: sd1 {
-+		sd1-cd {
-+			pinmux =3D <RZG3E_PORT_PINMUX(1, 4, 8)>; /* SD1CD */
-+		};
-+
-+		sd1-ctrl {
-+			pinmux =3D <RZG3E_PORT_PINMUX(G, 0, 1)>, /* SD1CLK */
-+				 <RZG3E_PORT_PINMUX(G, 1, 1)>; /* SD1CMD */
-+		};
-+
-+		sd1-data {
-+			pinmux =3D <RZG3E_PORT_PINMUX(G, 2, 1)>, /* SD1DAT0 */
-+				 <RZG3E_PORT_PINMUX(G, 3, 1)>, /* SD1DAT1 */
-+				 <RZG3E_PORT_PINMUX(G, 4, 1)>, /* SD1DAT2 */
-+				 <RZG3E_PORT_PINMUX(G, 5, 1)>; /* SD1DAT3 */
-+		};
-+	};
- };
-=20
- &scif0 {
- 	pinctrl-0 =3D <&scif_pins>;
- 	pinctrl-names =3D "default";
- };
-+
-+&sdhi1 {
-+	pinctrl-0 =3D <&sdhi1_pins>;
-+	pinctrl-1 =3D <&sdhi1_pins>;
-+	pinctrl-names =3D "default", "state_uhs";
-+
-+	vmmc-supply =3D <&reg_3p3v>;
-+	vqmmc-supply =3D <&vqmmc_sd1_pvdd>;
-+};
-diff --git a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi b/arch/arm64/b=
-oot/dts/renesas/renesas-smarc2.dtsi
-index e378d55e6e9b..fd82df8adc1e 100644
---- a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
-+++ b/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
+diff --git a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi b/arch/arm64/=
+boot/dts/renesas/rzg3e-smarc-som.dtsi
+index fcbabe2cb003..72b42a81bcf3 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
 @@ -5,6 +5,15 @@
   * Copyright (C) 2024 Renesas Electronics Corp.
   */
 =20
 +/*
-+ * Please set the switch position SW_OPT_MUX.1 on the carrier board and th=
-e
-+ * corresponding macro SW_SDIO_M2E on the board DTS:
++ * Please set the switch position SYS.1 on the SoM and the corresponding m=
+acro
++ * SW_SD0_DEV_SEL on the board DTS:
 + *
-+ * SW_SDIO_M2E:
-+ *     0 - SMARC SDIO signal is connected to uSD1
-+ *     1 - SMARC SDIO signal is connected to M.2 Key E connector
++ * SW_SD0_DEV_SEL:
++ *      0 - SD0 is connected to eMMC (default)
++ *      1 - SD0 is connected to uSD0 card
 + */
 +
  / {
- 	model =3D "Renesas RZ SMARC Carrier-II Board";
- 	compatible =3D "renesas,smarc2-evk";
-@@ -16,9 +25,18 @@ chosen {
+ 	compatible =3D "renesas,rzg3e-smarcm", "renesas,r9a09g047e57", "renesas,r=
+9a09g047";
 =20
- 	aliases {
- 		serial3 =3D &scif0;
-+		mmc1 =3D &sdhi1;
+@@ -61,6 +70,32 @@ sd0-rst {
+ 		};
  	};
+=20
++	sdhi0_usd_pins: sd0-usd {
++		sd0-cd {
++			pinmux =3D <RZG3E_PORT_PINMUX(5, 0, 8)>;
++		};
++
++		sd0-ctrl {
++			pins =3D "SD0CLK", "SD0CMD";
++			renesas,output-impedance =3D <3>;
++		};
++
++		sd0-data {
++			pins =3D "SD0DAT0", "SD0DAT1", "SD0DAT2", "SD0DAT3";
++			renesas,output-impedance =3D <3>;
++		};
++
++		sd0-iovs {
++			pins =3D "SD0IOVS";
++			renesas,output-impedance =3D <3>;
++		};
++
++		sd0-pwen {
++			pins =3D "SD0PWEN";
++			renesas,output-impedance =3D <3>;
++		};
++	};
++
+ 	sdhi2_pins: sd2 {
+ 		sd2-cd {
+ 			pinmux =3D <RZG3E_PORT_PINMUX(K, 0, 1)>; /* SD2CD */
+@@ -96,6 +131,24 @@ &rtxin_clk {
+ 	clock-frequency =3D <32768>;
  };
 =20
- &scif0 {
- 	status =3D "okay";
- };
++#if (SW_SD0_DEV_SEL)
++&sdhi0 {
++	pinctrl-0 =3D <&sdhi0_usd_pins>;
++	pinctrl-1 =3D <&sdhi0_usd_pins>;
++	pinctrl-names =3D "default", "state_uhs";
 +
-+&sdhi1 {
++	vmmc-supply =3D <&reg_3p3v>;
++	vqmmc-supply =3D <&sdhi0_vqmmc>;
 +	bus-width =3D <4>;
 +	sd-uhs-sdr50;
 +	sd-uhs-sdr104;
-+
 +	status =3D "okay";
 +};
++
++&sdhi0_vqmmc {
++	status =3D "okay";
++};
++#else
+ &sdhi0 {
+ 	pinctrl-0 =3D <&sdhi0_emmc_pins>;
+ 	pinctrl-1 =3D <&sdhi0_emmc_pins>;
+@@ -109,6 +162,7 @@ &sdhi0 {
+ 	fixed-emmc-driver-type =3D <1>;
+ 	status =3D "okay";
+ };
++#endif
+=20
+ &sdhi2 {
+ 	pinctrl-0 =3D <&sdhi2_pins>;
 --=20
 2.43.0
 
