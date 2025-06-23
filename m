@@ -2,26 +2,26 @@ Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 719E7C77B7F
-	for <webhook@archiver.kernel.org>; Mon, 23 Jun 2025 11:11:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 775D0C77B7F
+	for <webhook@archiver.kernel.org>; Mon, 23 Jun 2025 11:16:29 +0000 (UTC)
 Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web11.17143.1750677066861661375
+ by mx.groups.io with SMTP id smtpd.web10.17136.1750677379388294445
  for <cip-dev@lists.cip-project.org>;
- Mon, 23 Jun 2025 04:11:07 -0700
+ Mon, 23 Jun 2025 04:16:19 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=Me9bYqK1;
+ dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=J50zARq0;
  spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B160510246DB8;
-	Mon, 23 Jun 2025 13:10:59 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9C31010246DB8;
+	Mon, 23 Jun 2025 13:16:14 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1750677064; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=1ph97100VM82Ht87+4NyLzl7+gBQnp0kBK8ZH8MSKoU=;
-	b=Me9bYqK1BgMrRy8+SLUsaC/kfBJ9++WZ9n1iGTR8pyCHfqMrL/MSCGXw8OoFqTJ/dBAd/0
-	Zx+a/VvXRxp+ecdRrOt3B1aFEwNvuTHsG9NER1CJJggjIaxSVANYU7cxpeKmtkApKriGgI
-	B9yY4QB+bWQwF2MWKVQVrrUxcRI2cE9G0qCLm3Mmn20W37hIGjwUiaj22kbynJe/tnlcru
-	ms1jHlL1dYDG+6b2iIwONgwf0+mG0q70WsCsOshhLjGeeMJ7nz7Q3bAcKobo/QsmN4WWc1
-	em6XIjaA3LGaR1SxPG5Rgo1I7fju1cmxaChmKwXV6fJpO98nXZTZ0oYma1oV/w==
-Date: Mon, 23 Jun 2025 13:10:57 +0200
+	t=1750677377; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=qe92E8x6/SkyMRehVMc/0K8wSdn6f31cUvXYHqvIa+Q=;
+	b=J50zARq0HDDexaIfbwr6Ot+VgT+1V0yBpTSq8RP2TtnvIH6pjXayTv9/1k7zt3POwIG4kx
+	FuW/nUW6lZyFSsQlqvH+u/fin1baHE7wAJ0qRT47j4mizhUdAUY5OTqAU8ozIv3CZBvoCF
+	Oh5Sj6P5YgtLoHOI1sMRsCMAKt8dilR/XQEUmje/rmPPNIwm8WCa5uc8OWI6dERaKO7tRB
+	uGU1anvEUzjtKE7V/ScY2ohv3m9ux/mCLfJGNr+UIMhHjvP/OoV/9RWmIsCH5wLVu/PWIE
+	NGkWttlOcspQBvEM+G3CnLXk8sIMSajf7NZMa356hGIBUrt5MNznTDh4aXSwkw==
+Date: Mon, 23 Jun 2025 13:16:12 +0200
 From: Pavel Machek <pavel@denx.de>
 To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 Cc: cip-dev@lists.cip-project.org,
@@ -29,23 +29,23 @@ Cc: cip-dev@lists.cip-project.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: Re: [PATCH 6.12.y-cip 0/7] Add support for RZ/G3E WDT
-Message-ID: <aFk2QQJUVBuWYKiS@duo.ucw.cz>
-References: <20250623102857.1493371-1-tommaso.merciai.xr@bp.renesas.com>
+Subject: Re: [PATCH 6.1.y-cip 0/8] Add support for RZ/G3E WDT
+Message-ID: <aFk3fJb1XRFVhDgs@duo.ucw.cz>
+References: <20250623102730.1493286-1-tommaso.merciai.xr@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="dmrJZtgYk1+rc5ld"
+	protocol="application/pgp-signature"; boundary="QiMmS2sJKfyMWyNB"
 Content-Disposition: inline
-In-Reply-To: <20250623102857.1493371-1-tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <20250623102730.1493286-1-tommaso.merciai.xr@bp.renesas.com>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 23 Jun 2025 11:11:09 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19182
+ <cip-dev@lists.cip-project.org>; Mon, 23 Jun 2025 11:16:29 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19183
 
 
---dmrJZtgYk1+rc5ld
+--QiMmS2sJKfyMWyNB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -72,15 +72,15 @@ Best regards,
 DENX Software Engineering GmbH,        Managing Director: Erika Unter
 HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---dmrJZtgYk1+rc5ld
+--QiMmS2sJKfyMWyNB
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaFk2QQAKCRAw5/Bqldv6
-8vw3AJ0aZE4LFdkrElrI9OWLBEySdrmT6ACeMfw5F0khKl4POUKz6bTcpgKr7o0=
-=uQRl
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaFk3fAAKCRAw5/Bqldv6
+8loKAJ9QUCBzjavydUq6IUlvdVav0N7KZwCfUu9833IZRS+ye4riaLMA6iwOx08=
+=UVp4
 -----END PGP SIGNATURE-----
 
---dmrJZtgYk1+rc5ld--
+--QiMmS2sJKfyMWyNB--
 
