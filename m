@@ -1,155 +1,203 @@
-Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
+Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 050A5C7115C
-	for <webhook@archiver.kernel.org>; Wed, 25 Jun 2025 06:37:18 +0000 (UTC)
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
- by mx.groups.io with SMTP id smtpd.web11.6349.1750818193183482822
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51194C7115C
+	for <webhook@archiver.kernel.org>; Wed, 25 Jun 2025 07:19:08 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.web11.9807.1750835942930364160
  for <cip-dev@lists.cip-project.org>;
- Tue, 24 Jun 2025 19:23:13 -0700
+ Wed, 25 Jun 2025 00:19:04 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@rowland.harvard.edu header.s=google header.b=ekSlY1AV;
- spf=permerror, err=parse error for token &{10 18 %{i}._ip.%{h}._ehlo.%{d}._spf.vali.email}: invalid domain name (domain: g.harvard.edu, ip: 209.85.219.43, mailfrom: stern@g.harvard.edu)
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6fa980d05a8so10154006d6.2
-        for <cip-dev@lists.cip-project.org>; Tue, 24 Jun 2025 19:23:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1750818192; x=1751422992; darn=lists.cip-project.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MhVPhW6zAvMo92rhc/bflxjgJ9TsGXieNEe3ODAbCaM=;
-        b=ekSlY1AVqamzbFFDxzPI3vO2ERnCfYIASwr643328jq0bA9Z7aTauYKi7pvrcadLLI
-         XT2zDxZ4XuVLO14xg7i8b5jGzSojO8QgE9oNyhLa++a972Pm/wKkFDoaSK5eLQkIrS92
-         l0BwfrtddEuAHuyOnAPzw6Be5T6jISAgSflJoZRX8lMehF9A+/zsI6b8WzdrXbyezwOk
-         CBBmHlerpcHlzLfBJvq6lWGz9CRCv3SvMXZH959JS+uumK2XP7XKgoicmtXb1RhR3yol
-         l6UzjpZqr2I2IY+ueMKJx4f44m6UkBbu3Fn6dSXPgJ5QJJc93TtGPSkSV40N7jSO/CGt
-         /v5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750818192; x=1751422992;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MhVPhW6zAvMo92rhc/bflxjgJ9TsGXieNEe3ODAbCaM=;
-        b=WlMfbgwkL8aMvOpoXq5Ojgv7PbnhtyrrN/EZ+ru05v9uJhyIw4Q/xnzcG08RYu1d33
-         1gqjekzqM2L0/u9+jZRqWwhEk+989rFuq/ldBO7qASbrU1PyzJ4Oi3LjJPlRWHkJi9ow
-         9pgzPMqNY1fXDIgyFkvJKs3vY+xgVCgY605HVk3E3JQhA2LoBB2jTWLnkk72EveoJy8G
-         1MPPa7M+tzHFZPVtnNvyRQvrbcon8Bo3ZeX+srKnrdyzFmerPgjz+vw5cd0EjIhidGHn
-         9hzWOsfaWlybDwo/PRaoOeqI3gSroctz7IqOtssZ5zTMYnmLVnz1KOula5aFrNd6YJb2
-         X9yg==
-X-Gm-Message-State: AOJu0YyfuSlRS8UAj7MiCAjGqJz1ewifocfdc6bd1mttuv3jqYZnZEPp
-	z4uMiHKMfe0KDZqgwTwmfABPGrqNCkskbcn8NlL8wRWmjDRcsUuWxO7eFcTpywMoOQ==
-X-Gm-Gg: ASbGncvzCZcPw2IuM6ClPbJ6VGjT21xSEH3ZkOWc1u4fbkCwyGn93rn/qCrOg4hpFD2
-	i8ZvN4MdiglsohenO4C62PaAtC3lrbo2RD2UlyTob0FMdYuOZJ9L+syUWe5PEryGroHCsaHUjU4
-	0qFzowIPZ0j98lnMMUO+l9C2dGv17vbfCk7+KAeulnj3B2zubqIfIE8H2mnMKlQxUlW18Qk7Egj
-	uvsnM0Jnll978SqzUy7DHAmdpnRc+lGxFD8+UzgVGdzJeYr24lJiUHxUNzYnCoBaepRayZCXHbH
-	krFOpe+jrZZJf26B75CMoHhjzJdCrbyZa2j2+pf52Ul5JFZCWDPCzkCCRkZxG4M=
-X-Google-Smtp-Source: AGHT+IF90HyR81uc5IHzklkKvJbHJLLUAtNNBbUQ9KJUQ3fycjUPEibTbX4sfUwdYIlH5lDfz+oMpA==
-X-Received: by 2002:a05:6214:19c6:b0:6fa:9cdb:31a1 with SMTP id 6a1803df08f44-6fd5ef319d0mr17559236d6.1.1750818192146;
-        Tue, 24 Jun 2025 19:23:12 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::9ca8])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fd09599c95sm63214026d6.106.2025.06.24.19.23.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 19:23:11 -0700 (PDT)
-Date: Tue, 24 Jun 2025 22:23:09 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Cc: cip-dev@lists.cip-project.org, Ulrich Hecht <uli@fpond.eu>,
-	Pavel Machek <pavel@denx.de>, Bart Van Assche <bvanassche@acm.org>,
-	Yi Zhang <yi.zhang@redhat.com>, stable@vger.kernel.org,
-	"Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCH for 4.4] scsi: core: Remove the /proc/scsi/${proc_name} directory earlier
-Message-ID: <8187ad4f-32e5-4768-8286-984c5b31845b@rowland.harvard.edu>
-References: <1750816826-2341-1-git-send-email-nobuhiro1.iwamatsu@toshiba.co.jp>
+ dkim=pass header.i=nobuhiro1.iwamatsu@toshiba.co.jp header.s=key1.smx header.b=B6T0TvBD;
+ spf=pass (domain: toshiba.co.jp, ip: 210.130.202.158, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=toshiba.co.jp;h=From:To:CC
+	:Subject:Date:Message-ID:References:In-Reply-To:Content-Type:
+	Content-Transfer-Encoding:MIME-Version;i=nobuhiro1.iwamatsu@toshiba.co.jp;s=
+	key1.smx;t=1750835907;x=1752045507;bh=A5dpD86BmXGpStBmfurKPB24Clzptl5nCWfOfEz
+	aj0s=;b=B6T0TvBDsIbQ+YY5mACv9G1P90DD+KyMLTJj+NR2ywjVS6IWeoj3G8ECbDBim8vAFb1gn
+	Q2q9Xr0OF7Ed77tgjrc5Ra8NFCE/cp/zxj4Gr+/GPGcNgM/EjuR8lR5dwvyXLDXlkmuZhviTp/rD8
+	Xb7KqeDAeVvAmpq7CY5NxG0dahsNMfG1bU0XudzOkXffm0ZHWm7bo2cDqS1iMfz3aNZ7k2n09jkEU
+	V0Xa5aQFEX+ZZzTSMYFs5YacxI4JvekF+MKh+OPC0vHpS7f8jZW5Vl+OXPfTp/0+ExLLwa46BvXAX
+	73HjsLzVH8I7HgPzSkkQ/FNgs3e0LfsLsNhP/ZogXg==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 55P7IQ8q1556222; Wed, 25 Jun 2025 16:18:27 +0900
+X-Iguazu-Qid: 2rWhWAeBnEWYb9Q9DQ
+X-Iguazu-QSIG: v=2; s=0; t=1750835906; q=2rWhWAeBnEWYb9Q9DQ; m=gn3QICnVqlV1bC5BJ5z1hIHdT77spMATbJjQo5oXTyo=
+Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
+	by relay.securemx.jp (mx-mr1122) id 55P7INOG253964
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 16:18:24 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sS+oA4XVcDCgf92hR/WQtRuGOw2Ii5q+P3zY+XWu1j7FWe9YcBScTqS1T73dMDVvHg2F0kQ8pq35G7pj7HVb6H4dHNZR0aE1hOtBe0EpUwsSGagHLdjT+TArv3cqq0DSzAAiWnaMsga3XJAi3EtpjVX3snuhQGmqfdnQA2zSWlUl6pe85vJ5JgZ1wOANdbQHJBO3c6np2QUFPA46os7nadkWOHGiDjLQZMwcQKrr1uUMTSR1eYL2ihe3RXrhviq0q3Mo8khdHVGt9qFIr0hyiD85Fv+fP8eHksb6Y7HaeYLZ1Gqr3TEu6FitMc/8MQbrFLBF8vCdMvsrGKvHKhGSUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=P4XiCaMBSXgTHC4zFXpyqVVi5U+VUZnxAjan3RejLmw=;
+ b=iuviP9RI9ce1Is+j/KAOtSnPCf1DrxQ5Oa61le9PFeG6sessEY7SFBAizCHWfLpyOpjTMyYvuiMT55mA5zgZMOsu0AxeybdwKgTt0RW35XmtaL4nBn8PTGgXv1T66xGAC5EFJ+tL+XqDjQISXuXJOBgJb0BR/zevV1YT4CLRBNq4e6UZOf/CJIl0EfFI1szRSr2/n6UIp4ElzHL/M9O0AF8vK4kdgWyxRj9bKOhV2clidt2OFWrjCpuVJYIstCOB7jq+6uASeJkcTWFXRbO+SvvvH++M/c6BvCQdpTbX6O3oke+hYLNcOXdDWj4iaXBowccD0Q/MUM+0Mthmu1oGbw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: <gregkh@linuxfoundation.org>
+CC: <cip-dev@lists.cip-project.org>, <uli@fpond.eu>, <pavel@denx.de>,
+        <bvanassche@acm.org>, <stern@rowland.harvard.edu>,
+        <yi.zhang@redhat.com>, <stable@vger.kernel.org>,
+        <martin.petersen@oracle.com>
+Subject: RE: [PATCH for 4.4] scsi: core: Remove the /proc/scsi/${proc_name}
+ directory earlier
+Thread-Topic: [PATCH for 4.4] scsi: core: Remove the /proc/scsi/${proc_name}
+ directory earlier
+Thread-Index: AQHb5XTz5FbjPd/DfEex+j2Da/vn1bQTc/YAgAADGpA=
+Date: Wed, 25 Jun 2025 07:18:19 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <TY7PR01MB14818AE41EF3127F74E29873B927BA@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+References: 
+ <1750816826-2341-1-git-send-email-nobuhiro1.iwamatsu@toshiba.co.jp>
+ <2025062506-thimble-unwieldy-9c6c@gregkh>
+In-Reply-To: <2025062506-thimble-unwieldy-9c6c@gregkh>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|TY3PR01MB11827:EE_
+x-ms-office365-filtering-correlation-id: 73c3aa23-5d67-4448-25db-08ddb3b87672
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info: 
+ =?iso-2022-jp?B?Yys4WUhlMzlaSVlQYUkwRmRORDNKZmYySi82MVRrdFpvcWdiN1BvRmkx?=
+ =?iso-2022-jp?B?V09RRGt4c29TNGpkSjZCVzVXUnNZcEN4ZjRxN3FPUUVsZm1vUWFRNWw2?=
+ =?iso-2022-jp?B?ZnpsQmI2VTBRdndvS2ZHOSsvYjdFa1g4VW9ZaXJDcUVpTEI4d1A0bnZr?=
+ =?iso-2022-jp?B?NjdSQmYvbDVkODlPREZ2NElEUmZWdWFyUTVWdnV6UkYvQ1dzY3B0UWQ5?=
+ =?iso-2022-jp?B?RWx2aGtCVXBzZmZ6dmZLdWZzKzlRc3BFNkl2TVowOW1xdks1MEx4NTRQ?=
+ =?iso-2022-jp?B?bFBLSzlJOWkvZTA5cWE1aWRFbW9VNXluY3hIcGVRSzZoUkwxYXJpdHVo?=
+ =?iso-2022-jp?B?U1hHSitYZ25HT2duOTdFOUVzZlJpODBLVHppY29JQUNFZlhvVHAzaVlD?=
+ =?iso-2022-jp?B?VnI5Q01nWlZEZG00cWRZM1JIWlZxRDhqT2xqS2l5bEI4VTU2RkxDZWV1?=
+ =?iso-2022-jp?B?TDZjSDhIeGNsb0EzZngwcnVDVUgyVVpOclhXb3l4OGp3TUhJWDFPMHg5?=
+ =?iso-2022-jp?B?U3drdjcwSmhrWlI2QVRkUEVoblpDelg3L1JpVnoraFJLTUtUcEwvd25P?=
+ =?iso-2022-jp?B?SDM3Z2U4Vm4vb2YrV2lkLzJKR1NzSXEvaExEb3g4ZWozbVdwb3d3K0xk?=
+ =?iso-2022-jp?B?VElNUkEvdGtoY256cFIyRmhRUGNuWjhOK3JYdk1XVm5FTzh5VVplSVl1?=
+ =?iso-2022-jp?B?Q2RWR0MyR2taL09Qdm5OSlpnTk9jTWs4YXllbGVTMXJjQ1VXTkQ3OFpW?=
+ =?iso-2022-jp?B?NUNZZkhJMUE5RUJIKzJwaFJsK3BuRlpMekFMaWFEMXFMMGVsclNnRHUw?=
+ =?iso-2022-jp?B?a0E3Sk85VzlOVkRBa0dMVXdvY0R2blhTamc2NjUxbzkzV01QL2pCdlpM?=
+ =?iso-2022-jp?B?a3RtSWxtT2R5QUVFZktEb08wNVpHWlRNNUlpalRqS0U1bzMrMVRHS2g5?=
+ =?iso-2022-jp?B?a0dIbWVkYUs0OXlzM05QdWJYRG50d3RMKzg5RkZGQ2QwNUVLYlo5TUYx?=
+ =?iso-2022-jp?B?ZWJtTDJyNDUwM25vOUo4N2wyVW5Eck9CREsvZkRoVk0ycmZtTEtnbVB6?=
+ =?iso-2022-jp?B?NzU1eUQ3KzdYVTZ4QzBZVWpqalJtb1QvelZEUEdOeFhQZFNwQWRpTHFm?=
+ =?iso-2022-jp?B?bGM3bGhaaG9YZ0NjcWNYaVRBcVl2T3FzMTFiY3ZRMmNTWHlZdk9VZDNE?=
+ =?iso-2022-jp?B?dmdnU0xOYnZoTnRJa0tFamVjZmwyazNHSDJxOXk5NVNQdnBHeUcvZWIy?=
+ =?iso-2022-jp?B?UkswTU9CL29mQXJqR25ocG5sUzZMZW5ubXQ4R1lNSFRxZlVkakE1cXE0?=
+ =?iso-2022-jp?B?MzJkM2gvMml0U0tYOWFsMlg3RVpER0JWU2J0RHFkdmIySUFCdWUra1Yx?=
+ =?iso-2022-jp?B?RFBZRkRDT0w4OUoyL05iZEFFd3VKRkdLZEtmVGt2NjZveTJaaDdkOEJG?=
+ =?iso-2022-jp?B?clNWVmgrZ3BXQk5YRFUxTDhkWENlVWNEcUJkMHJnSVZNNjhFcnBRQ3RH?=
+ =?iso-2022-jp?B?eU9LeVdRdXNNZzI1VEpIVDRUT2RlaExJeUNIZW5QYWtyeG1IWm9VaFAr?=
+ =?iso-2022-jp?B?U0grTUd6SDZwZGt5NDZwV0F0cXhlY2gzNHg4ZVRDRng0QXh3MTM5eklr?=
+ =?iso-2022-jp?B?TWlEcHRZUUkxN3BPUFdCZXY2QlUrMHdicGRPY2tmcUpnYnlLSG9uMDVx?=
+ =?iso-2022-jp?B?OGN3NExISHhpVG1uOTNLV3FLVzhKcVZqaGIxejMvZDE0dGs4ck12QnN4?=
+ =?iso-2022-jp?B?ekFaOXlJV2U3OHBzcjd0ZzdiRWpEU0ExM1JJRVRhdTE0cVlIcnpNcDN5?=
+ =?iso-2022-jp?B?d2NKVDJUc2F1cVBWWlNFR2dhcHUvQy8rdzlkd29lU1NBWFk0NlpSOHBB?=
+ =?iso-2022-jp?B?WEpuc3REclF4cDBwODlhTDdtbitzSHU2bE83bTJkNURlTDBLdWRRVmt6?=
+ =?iso-2022-jp?B?MmdYVDdCeks2M2VKS3Zqb0tRL05DYXFFMG5uVVVxZk5qd2pXQlBnNmdQ?=
+ =?iso-2022-jp?B?V2lFb1NXNjRkdHk0eDkzRVRnNnIvODBwU29wYXN6R09sM2ZkaHgvYTFx?=
+ =?iso-2022-jp?B?aGFGR2lNOU5mZnpEenNWQnJ2aDkrRkpjOVVDbEtkTzdMcloybGZpdjlK?=
+ =?iso-2022-jp?B?SVFOMkVuQ3laNTdwQk9nVzVLYW1ZZkdwM1dGQXZiSkdDTUVDMjhVQ2pD?=
+ =?iso-2022-jp?B?dm1BPQ==?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?WTgrQmJEUnRNczliKzkvbHo2MU1jMkVBUXpZb3NXOVJFRU5zYTR4WWhX?=
+ =?iso-2022-jp?B?L1plRGMxOWtQZEFZdjNBYXNEYzRIcEhXY3pJSmNhZzhZeitrMmZaZXNC?=
+ =?iso-2022-jp?B?S2Z4a1oxQmVzajAwVHRyV0FXeUxCKzQ5WEFPNFpiN2lQcHgrM2lsM0dS?=
+ =?iso-2022-jp?B?bjYzaVdyOE1aRHZ0NGR3UHMwTEozWGtMWWN5SHhJOFU2R2cycTZ1STJI?=
+ =?iso-2022-jp?B?SFBIbDZsTUk1TWdzWi9FcmlkZW1RL09nUC9URHlYaTBoYnQrS3lSbnBp?=
+ =?iso-2022-jp?B?OWxwZGFPR2E0Mkp0b0ExRkJGM3FSM1F1WGYwa3VhQlR3Vjl1UVh1Q3lL?=
+ =?iso-2022-jp?B?TDk0TTY5VFFSaEM2Sk94UnlxYUg4L1Zvd2ZlUFBBaXhUZHluU0xCRUVW?=
+ =?iso-2022-jp?B?UmtZZVdpWDdMWkVXQk43QnpVenIyQ3huR09jV3lLODkxaE1aZXBiVlh5?=
+ =?iso-2022-jp?B?N0gwOFpZT3hnUVZrcHVWa2N1ZTV4dlNza3RBdTN1UVZnaHFRRFFvRGdS?=
+ =?iso-2022-jp?B?ZnRSa3c5aEo0clJVSi84Rkk4aDUzVXk0SlVMMkY1WmJoa2RHUkQxUEdo?=
+ =?iso-2022-jp?B?TEdxTkFMTWVoenFtTGR2NndYK1NkeFl2ZGwvYWxqK2tpdHl3eEJrWFhn?=
+ =?iso-2022-jp?B?RGo5U2pHYmlySzhrVy8wd1NCNlNKcXFzbmdIYWI1VEJrQkwyWGsxeDhL?=
+ =?iso-2022-jp?B?WW5EbnEyNTBVZjl6ZjRzUVZKbDdTbXlacS9WMWcxSXYwOUMyTnpoLzlH?=
+ =?iso-2022-jp?B?Z1ovSzBqZ2U0c3ZVdCtEejh6L1MrTDQyK0pscmgrSlN0UmJFZEZ4a3d3?=
+ =?iso-2022-jp?B?SVl2aVBNeTNBUEdPeWMvbmNodlUyNFB5RUJJQThUUEZlUlhRaXdubVQ0?=
+ =?iso-2022-jp?B?VW1hWFlOSEQrMlBwZXJuRzZjdjZRTjFDUUUyZzUxWHlvVVhjU09hS2pr?=
+ =?iso-2022-jp?B?MzBkbXo4eXBBNWYxQzlBV1RzNlBnT0didWxGbmp5SlR5V3RidjFlQWUr?=
+ =?iso-2022-jp?B?SjRKTXlBYW9tYWxFeDg4UVkxUFlQcVE4V1VpeGdGbTJhQTE1UXRXR0Nr?=
+ =?iso-2022-jp?B?Q25wYnhxUHZqenV6VTA2aUcxSXpEaWdTNHo2blU3SzJOeGlFMS9KMWVu?=
+ =?iso-2022-jp?B?WEhrMnYyVjVkYkFPOVpITVlLMTlmZVIzSFdhdGc1dVVPWDhkcmphVWVV?=
+ =?iso-2022-jp?B?RjFkbFQ5K2MzNUVpd24zeElWdzAraXd6WDl5TUtadGJzOWhKMG41OXNm?=
+ =?iso-2022-jp?B?ZnZyT25XNmJ5cVAwYVphaVM4VS9GNm9rOXEwQ2hlY3VxM2IwQXZydGNP?=
+ =?iso-2022-jp?B?K0c2d0dFbm1acW5JeldSM2txQkMzWksvMmplSjNIcWRNc2hINUlhcFVu?=
+ =?iso-2022-jp?B?NE5VM0cxNThXNTVPdDNDbzhOMTlsTzdvc0JWRFJwYjdyNGFDU2pXUXpU?=
+ =?iso-2022-jp?B?YjlYa3VGS3BrUWFTK3dUdktsM0Z1Mlo2dzQxOGJxdHA0SnNCc3VTcFNR?=
+ =?iso-2022-jp?B?QkFId3YrRjUxWVIyWmdOU3dRT0I0VTZCZmcwclVHVW9jdXg3LzBYRk5i?=
+ =?iso-2022-jp?B?YTZiQ1ZwbXY2ZWlvelJPUEV2anVHSFYraXM3bkh6V1hlS3V5dXBQYmwv?=
+ =?iso-2022-jp?B?WTJnYmJubXh1elBLb1VBZjduUDRENTRad3ZlaFlya0JJcnY3YUljaTVh?=
+ =?iso-2022-jp?B?K0dNSW5QQ08xejhOTlV1enNYd1RDOC9MdnRJTG5idEUreGFYMGJYdnFD?=
+ =?iso-2022-jp?B?dlRQRGdXVE04bVc4VkN2T1FLQ1M4RmdlMHZvSzJnTm9aZzR1aWQyOHBm?=
+ =?iso-2022-jp?B?RVM2OVZnWk1PZCtRTzl2RzRWTXAwNXhzMXhETjFBR3k2WnJvSTgzWEIr?=
+ =?iso-2022-jp?B?bUVVa01EYUN1QWxNcnVZSHRQMG5jaUdMYkVHY21PTFZmSFdsRmk2NnFP?=
+ =?iso-2022-jp?B?MVFJVVd2QTY0Y3hNVVk4QXNzUi9JY2FSaVdXQWNVK3V3cjJrL0JEL2c4?=
+ =?iso-2022-jp?B?ejNhWFJEMFMzWUFBeXdPQ1ZBSzlEalp6OTk5UnNiM21xTHlGaC9QUVI3?=
+ =?iso-2022-jp?B?Q3VldEg2WHZOaFdPRjVWN2RDaUN1WE9HMnl2VGViSXgxQjRIK2FrTFdJ?=
+ =?iso-2022-jp?B?MXQ1WHJMUXRBNTVVQzNpM0pDTWcvK3hZRkhzWEtVb3AzQWpPUFFMRFVy?=
+ =?iso-2022-jp?B?R1VBMzQ5OGtRUkJVRk5XbXArOTBaMlhpSlIrQXlHaHFjOHVXVGhrU0g0?=
+ =?iso-2022-jp?B?OFdFdkplalVQbm1ZRHE2U2RBeGNJamZxSzRDLytoYndOL0dUN0VLRnFp?=
+ =?iso-2022-jp?B?QTIrUmFWVWN5QmpOSG1YcTVVT0xNRDJFZ0E9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <1750816826-2341-1-git-send-email-nobuhiro1.iwamatsu@toshiba.co.jp>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-OriginatorOrg: toshiba.co.jp
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 73c3aa23-5d67-4448-25db-08ddb3b87672
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2025 07:18:19.8549
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: NZwmzqGHIlu1h1evHf4BYUP6eml8fF+ObdZOGDDFom8JSR0jxjyCOrg/qmtJq9CKFoZo2dIZRq6n2sXb54NJGaDYJ8o27ixg4vaEqxtg4ZQs467WD+l3x51J4mhvfmN+
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB11827
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 25 Jun 2025 06:37:18 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19231
+ <cip-dev@lists.cip-project.org>; Wed, 25 Jun 2025 07:19:08 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19232
 
-On Wed, Jun 25, 2025 at 11:00:26AM +0900, Nobuhiro Iwamatsu wrote:
-> From: Bart Van Assche <bvanassche@acm.org>
-> 
-> commit fc663711b94468f4e1427ebe289c9f05669699c9 upstream.
-> 
-> Remove the /proc/scsi/${proc_name} directory earlier to fix a race
-> condition between unloading and reloading kernel modules. This fixes a bug
-> introduced in 2009 by commit 77c019768f06 ("[SCSI] fix /proc memory leak in
-> the SCSI core").
-> 
-> Fix the following kernel warning:
-> 
-> proc_dir_entry 'scsi/scsi_debug' already registered
-> WARNING: CPU: 19 PID: 27986 at fs/proc/generic.c:376 proc_register+0x27d/0x2e0
-> Call Trace:
->  proc_mkdir+0xb5/0xe0
->  scsi_proc_hostdir_add+0xb5/0x170
->  scsi_host_alloc+0x683/0x6c0
->  sdebug_driver_probe+0x6b/0x2d0 [scsi_debug]
->  really_probe+0x159/0x540
->  __driver_probe_device+0xdc/0x230
->  driver_probe_device+0x4f/0x120
->  __device_attach_driver+0xef/0x180
->  bus_for_each_drv+0xe5/0x130
->  __device_attach+0x127/0x290
->  device_initial_probe+0x17/0x20
->  bus_probe_device+0x110/0x130
->  device_add+0x673/0xc80
->  device_register+0x1e/0x30
->  sdebug_add_host_helper+0x1a7/0x3b0 [scsi_debug]
->  scsi_debug_init+0x64f/0x1000 [scsi_debug]
->  do_one_initcall+0xd7/0x470
->  do_init_module+0xe7/0x330
->  load_module+0x122a/0x12c0
->  __do_sys_finit_module+0x124/0x1a0
->  __x64_sys_finit_module+0x46/0x50
->  do_syscall_64+0x38/0x80
->  entry_SYSCALL_64_after_hwframe+0x46/0xb0
+> -----Original Message-----
+> From: Greg KH <gregkh@linuxfoundation.org>
+> Sent: Wednesday, June 25, 2025 4:05 PM
+> To: iwamatsu nobuhiro(=1B$B4d>>=1B(B =1B$B?.MN=1B(B =1B$B""#D#I#T#C!{#C#P=
+#T=1B(B)
+> <nobuhiro1.iwamatsu@toshiba.co.jp>
+> Cc: cip-dev@lists.cip-project.org; Ulrich Hecht <uli@fpond.eu>; Pavel
+> Machek <pavel@denx.de>; Bart Van Assche <bvanassche@acm.org>; Alan
+> Stern <stern@rowland.harvard.edu>; Yi Zhang <yi.zhang@redhat.com>;
+> stable@vger.kernel.org; Martin K . Petersen <martin.petersen@oracle.com>
+> Subject: Re: [PATCH for 4.4] scsi: core: Remove the /proc/scsi/${proc_nam=
+e}
+> directory earlier
+>=20
+> On Wed, Jun 25, 2025 at 11:00:26AM +0900, Nobuhiro Iwamatsu wrote:
+> > From: Bart Van Assche <bvanassche@acm.org>
+> >
+> > commit fc663711b94468f4e1427ebe289c9f05669699c9 upstream.
+>=20
+> 4.4.y is long out-of-support by us, and this is in all activly supported =
+kenrnels at
+> this time, so why is this sent to us?
+>=20
 
-Can you or Bart please explain in more detail the race that causes this 
-problem, and add that description to the changelog?  Also, explain how 
-this patch fixes the race.
+This was also sent to stable due to the processing of the patch's CC tag.
+I'm sorry for the confusion.
 
-Alan Stern
+Best regards,
+  Nobuhiro
 
-> Link: https://lore.kernel.org/r/20230210205200.36973-3-bvanassche@acm.org
-> Cc: Alan Stern <stern@rowland.harvard.edu>
-> Cc: Yi Zhang <yi.zhang@redhat.com>
-> Cc: stable@vger.kernel.org
-> Fixes: 77c019768f06 ("[SCSI] fix /proc memory leak in the SCSI core")
-> Reported-by: Yi Zhang <yi.zhang@redhat.com>
-> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-> Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-> Signed-off-by: Nobuhiro Iwamatsu (CIP) <nobuhiro1.iwamatsu@toshiba.co.jp>
-> ---
->  drivers/scsi/hosts.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/scsi/hosts.c b/drivers/scsi/hosts.c
-> index c59b3fd6b361..7ffdebdd9c54 100644
-> --- a/drivers/scsi/hosts.c
-> +++ b/drivers/scsi/hosts.c
-> @@ -173,6 +173,7 @@ void scsi_remove_host(struct Scsi_Host *shost)
->  	scsi_forget_host(shost);
->  	mutex_unlock(&shost->scan_mutex);
->  	scsi_proc_host_rm(shost);
-> +	scsi_proc_hostdir_rm(shost->hostt);
->  
->  	spin_lock_irqsave(shost->host_lock, flags);
->  	if (scsi_host_set_state(shost, SHOST_DEL))
-> @@ -322,6 +323,7 @@ static void scsi_host_dev_release(struct device *dev)
->  	struct request_queue *q;
->  	void *queuedata;
->  
-> +	/* In case scsi_remove_host() has not been called. */
->  	scsi_proc_hostdir_rm(shost->hostt);
->  
->  	if (shost->tmf_work_q)
-> -- 
-> 2.25.1
-> 
-> 
+
 
