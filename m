@@ -2,36 +2,38 @@ Return-Path: <ch@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BD9BC7EE33
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A816C7EE32
 	for <webhook@archiver.kernel.org>; Thu, 26 Jun 2025 09:09:41 +0000 (UTC)
 Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web10.4063.1750928980643627428
+ by mx.groups.io with SMTP id smtpd.web10.4062.1750928979869675898
  for <cip-dev@lists.cip-project.org>;
- Thu, 26 Jun 2025 02:09:41 -0700
+ Thu, 26 Jun 2025 02:09:40 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=Zxej9VZ+;
+ dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=bcEdWzJR;
  spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: ch@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B86001039728C;
-	Thu, 26 Jun 2025 11:09:38 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A0B2810397286;
+	Thu, 26 Jun 2025 11:09:37 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1750928979; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=HJJ2Eh39qZPt1jEJBKx7hn1axOcJI2hGtqJmrLSgMVM=;
-	b=Zxej9VZ+wv9H1GeFwm8maBipXRkxQiREESkJPe9GzRjRFBCcu7JJTnfyPTnwxeODSd5uzc
-	Bub0fUdfZsBoWeGVeALv+g7z83UU2AvLfRPp/n0A2W6ULA03J5FHHKlbZpbSXZUZOtocE9
-	6OyqRy0cdl18elnEQsx/pSIe0sv0Y+5UCxMc4muuTmKzmRlhuNuB4ix+tQyF+0m0aASDHj
-	tzBMC7/0rt0jHkHNeajl6YXwGQQuTK9T8uRdlwuT1xQCBqiI6cSKZVrhaIOVDe/LUuhjnL
-	WadOordfMvzwgy4Xkxv1wwHQnI5V+40AXCsMYEP7B9QtKIuRBNclLaD54sUsSw==
+	t=1750928977; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=d+CLoxqdz8u2GT5Duc8TW7uN5vG0GFibvldyqfGdND0=;
+	b=bcEdWzJR8Y42zPZwaoHCslYbcZGDNWdWCA9gnA1mlMrTb1MVkSsdztWB/a5foE+xb623+1
+	UPJhgWpH9gn4mUaK/giGriNgpPKibYQ6wJd14Jbnzbz8MGfbbrpVOot51cqz1uB/8k6two
+	R/7qpb2TG+lsIWP7RCQBbPvVvrvirpC4w8tiDHlOHgrFLP3sy9qZn7FBvlPrcVwZeg7AYF
+	pQ1xrxCdl5f7b6ut2d5bMBDTcepXp30KXS2MvvclvIclWtpRrson2kRR20Rg6Tlo6eYuj4
+	sfEZNbEeYCk/S+H01ZnBct6gGPtpU2f1aZ1d124kd9NFyk98vktzwoz40HVjWg==
 From: Claudius Heine <ch@denx.de>
-Date: Thu, 26 Jun 2025 11:09:24 +0200
-Subject: [PATCH v8 1/4] initramfs-crypt-hook: store initial encryption key
- in TPM2
+Subject: [PATCH v8 0/4] initramfs-crypt-hook patch
+Date: Thu, 26 Jun 2025 11:09:23 +0200
+Message-Id: <20250626-initramfs-crypt-hook-patches-2-v8-0-46f000788686@denx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250626-initramfs-crypt-hook-patches-2-v8-1-46f000788686@denx.de>
-References: <20250626-initramfs-crypt-hook-patches-2-v8-0-46f000788686@denx.de>
-In-Reply-To: <20250626-initramfs-crypt-hook-patches-2-v8-0-46f000788686@denx.de>
+X-B4-Tracking: v=1; b=H4sIAEMOXWgC/43OQW7DIBCF4atErDsRM8bYdNV7VF2QAQqqYltgW
+ Yki3704i8ZZpcu3+d5/E8Xn5It4P9xE9ksqaRzq6N8OgqMdvj0kV7cgSa1sZAtpSHO251CA83W
+ aIY7jD0x25ugLEBhmZSV13BsrKjJlH9LlfvD5VXfI4xnmmL3dswob2anmSD0S9g0gcPxwfrgcn
+ d+UmMo85uu9clGb9e+gRYEEhZ00SL4ljX/ulrO0Owybl1hbscCanLJkHZlnTO8wki8xXTEfUDI
+ iW2fUM9Y9MI36JdZVrCfHxkl3OnF4YOu6/gLhFxtt5wEAAA==
+X-Change-ID: 20250305-initramfs-crypt-hook-patches-2-9cc4a027c89a
 To: cip-dev@lists.cip-project.org
 Cc: Jan Kiszka <jan.kiszka@siemens.com>, 
  Quirin Gylstorff <quirin.gylstorff@siemens.com>, 
@@ -43,155 +45,72 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 26 Jun 2025 09:09:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19240
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19239
 
-cryptsetup and systemd-cryptenroll do not currently support encrypting
-partitions directly with keys stored in the TPM. For that reason a
-temporary random password is used for the initial encryption, which will
-get removed once the TPM2 token is added to the partition.
+Hi,
 
-However this process does not allow continuing with the encryption
-process in case of power failure.
+here is v8 of my patchset.
 
-For that reason store the initial encryption password in the TPM,
-protected via measured boot based on the TPM2-PCR:7 register, which is
-the default for `systemd-cryptenroll` and load it if it exists.
+Kind regards,
+Claudius
 
-Signed-off-by: Claudius Heine <ch@denx.de>
 ---
- .../initramfs-crypt-hook/files/local-top-complete  | 56 ++++++++++++++++++++--
- .../initramfs-crypt-hook_0.8.bb                    | 13 ++---
- 2 files changed, 60 insertions(+), 9 deletions(-)
+Changes in v8:
+- Rebased on next
+- Added documentation about the power fail scenarios and the LUKS header
+  example.
+- Link to v7: https://lore.kernel.org/r/20250616-initramfs-crypt-hook-patches-2-v7-0-82dc9d0dbbcf@denx.de
 
-diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-index 2b4bed02484bface7b0370e6ef1b9953e8ae4eff..9e7525117a03debdf2c526ab742e9428372cd0cf 100644
---- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-+++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-@@ -216,6 +216,54 @@ if [ ! -e "$tpm_device" ]; then
- 	panic "No tpm device exists or supports pcr_hash '$pcr_bank_hash_type' or '$tpm_key_algorithm' - cannot create a encrypted device!"
- fi
- 
-+export TPM2TOOLS_TCTI="device:${tpm_device}"
-+TPM2_HANDLE="0x81080001"
-+tpm2_key_get() {
-+	key_file="$1"
-+	TPM2_WORKDIR="/tmp/tpm2"
-+
-+	if ! tpm2_getcap handles-persistent | grep -q "$TPM2_HANDLE"; then
-+		mkdir -p "${TPM2_WORKDIR}"
-+		# Open session:
-+		tpm2_startauthsession -S "${TPM2_WORKDIR}/session.ctx"
-+		tpm2_policypcr -Q -S "${TPM2_WORKDIR}/session.ctx" \
-+			-l "${HASH_TYPE}:7" \
-+			-L "${TPM2_WORKDIR}/pcr7.${HASH_TYPE}.policy"
-+		tpm2_flushcontext "${TPM2_WORKDIR}/session.ctx"
-+
-+		# Add new key to tpm:
-+		tpm2_createprimary -Q -C o -c "${TPM2_WORKDIR}/prim.ctx"
-+		echo "$(tr -dc 'A-Za-z0-9_' </dev/urandom | head -c 32)" | \
-+			tpm2_create -Q -g "sha256" \
-+				-u "${TPM2_WORKDIR}/pcr_seal_key.pub" \
-+				-r "${TPM2_WORKDIR}/pcr_seal_key.priv" \
-+				-i- \
-+				-C "${TPM2_WORKDIR}/prim.ctx" \
-+				-L "${TPM2_WORKDIR}/pcr7.${HASH_TYPE}.policy"
-+		tpm2_load -Q \
-+			-C "${TPM2_WORKDIR}/prim.ctx" \
-+			-u "${TPM2_WORKDIR}/pcr_seal_key.pub" \
-+			-r "${TPM2_WORKDIR}/pcr_seal_key.priv" \
-+			-n "${TPM2_WORKDIR}/pcr_seal_key.name" \
-+			-c "${TPM2_WORKDIR}/pcr_seal_key.ctx"
-+		tpm2_evictcontrol -c "${TPM2_WORKDIR}/pcr_seal_key.ctx" \
-+			"$TPM2_HANDLE" -C o
-+
-+		rm -rf "${TPM2_WORKDIR}"
-+	fi
-+
-+	mkdir -p "${TPM2_WORKDIR}"
-+	tpm2_startauthsession --policy-session -S "${TPM2_WORKDIR}/session.ctx"
-+	tpm2_policypcr -Q -S "${TPM2_WORKDIR}/session.ctx" -l "${HASH_TYPE}:7"
-+	tpm2_unseal -p "session:${TPM2_WORKDIR}/session.ctx" -c "$TPM2_HANDLE" >"$key_file"
-+	tpm2_flushcontext "${TPM2_WORKDIR}/session.ctx"
-+	rm -rf "${TPM2_WORKDIR}"
-+}
-+
-+tpm2_key_del() {
-+	tpm2_evictcontrol -C o -c "$TPM2_HANDLE"
-+}
-+
- prepare_for_encryption
- 
- for partition_set in $partition_sets; do
-@@ -259,16 +307,17 @@ for partition_set in $partition_sets; do
- 		watchdog_pid=$!
- 	fi
- 
--	# create random password for initial encryption
--	# this will be dropped after reboot
-+	# create random password, store it in the tpm2 encrypted and protected with
-+	# PCR:7 registers to allow continuing reencryption in case of power-failure.
- 	tmp_key=/tmp/"$(basename "$part_device")-lukskey"
--	openssl rand -base64 32 > "$tmp_key"
-+	tpm2_key_get "${tmp_key}"
- 
- 	case "${partition_format}" in
- 		"reencrypt")
- 			log_begin_msg "Encryption of ${part_device}"
- 			reencrypt_existing_partition "$part_device" "$tmp_key"
- 			enroll_tpm2_token "$part_device" "$tmp_key" "$tpm_device" "$tpm_key_algorithm" "$pcr_bank_hash_type"
-+			tpm2_key_del
- 			open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
- 			log_end_msg
- 		;;
-@@ -277,6 +326,7 @@ for partition_set in $partition_sets; do
- 			/usr/sbin/cryptsetup luksFormat --batch-mode \
- 				 --type luks2 "$part_device" < "$tmp_key"
- 			enroll_tpm2_token "$part_device" "$tmp_key" "$tpm_device" "$tpm_key_algorithm" "$pcr_bank_hash_type"
-+			tpm2_key_del
- 			open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
- 			eval "${create_file_system_cmd} ${decrypted_part}"
- 			log_end_msg
-diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.8.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.8.bb
-index f3b6c82e96eac82137fdb528838e468987b79f46..b7884aff741df69eee88d5def94868c66f541126 100644
---- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.8.bb
-+++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.8.bb
-@@ -14,7 +14,6 @@ require recipes-initramfs/initramfs-hook/hook.inc
- DEBIAN_DEPENDS .= ", \
-     cryptsetup, \
-     awk, \
--    openssl, \
-     e2fsprogs, \
-     tpm2-tools, \
-     coreutils, \
-@@ -40,19 +39,21 @@ HOOK_ADD_MODULES = " \
-     ecb aes_generic xts"
- 
- HOOK_COPY_EXECS = " \
--    openssl mke2fs grep awk expr seq sleep basename uuidparse mountpoint \
--    e2fsck resize2fs cryptsetup \
--    tpm2_pcrread tpm2_testparms tpm2_flushcontext tpm2_shutdown \
-+    mke2fs grep awk expr seq sleep basename uuidparse mountpoint \
-+    e2fsck resize2fs cryptsetup head tr rm \
-+    tpm2_pcrread tpm2_testparms tpm2_flushcontext tpm2_startauthsession \
-+    tpm2_policypcr tpm2_createprimary tpm2_create tpm2_load tpm2_evictcontrol \
-+    tpm2_unseal tpm2_getcap tpm2_shutdown \
-     /usr/lib/*/libgcc_s.so.1"
- 
- HOOK_COPY_EXECS:append:clevis = " \
-     clevis clevis-decrypt clevis-encrypt-tpm2 clevis-decrypt-tpm2 \
-     clevis-luks-bind clevis-luks-unlock \
-     clevis-luks-list clevis-luks-common-functions \
--    tpm2_createprimary tpm2_unseal tpm2_create tpm2_load tpm2_createpolicy \
-+    tpm2_createpolicy \
-     bash luksmeta jose sed tail sort rm mktemp pwmake file"
- HOOK_COPY_EXECS:append:systemd = " \
--    systemd-cryptenroll tpm2_pcrread tpm2_testparms \
-+    systemd-cryptenroll \
-     /usr/lib/systemd/systemd-cryptsetup \
-     /usr/lib/*/cryptsetup/libcryptsetup-token-systemd-tpm2.so"
- 
+Changes in v7:
+- readded tpm2_createpolicy for clevis
+- Link to v6: https://lore.kernel.org/r/20250320-initramfs-crypt-hook-patches-2-v6-0-ef10c11cad94@denx.de
 
+Changes in v6:
+- luks formatting of format-if-empty will now be redone when if it is a
+  luks partition without a TPM2 token, this makes it a bit more
+  power-fail save
+- Link to v5: https://lore.kernel.org/r/20250313-initramfs-crypt-hook-patches-2-v5-0-fc62d4a2ad29@denx.de
+
+Changes in v5:
+- Switch to use TPM2 protected password instead of static initial
+  password for encryption
+- Link to v4: https://lore.kernel.org/r/20250305-initramfs-crypt-hook-patches-2-v4-0-4170912e5261@denx.de
+
+Changes in v4:
+ - improve documentation and commit messages
+ - reorder commits, to put re-encryption recovery up front
+ - extract static temporary encryption key patch into its own
+ - switch from lsblk to blkid
+
+Changes in v3:
+ - Rebase on current next
+ - Extended `noencrypt` documentation
+ - support clevis tokens for re-encryption recovery
+
+Changes in v2:
+ - Added more descriptive commit message
+ - Added more descriptive documentation about noencrypt option
+ - Fixed typos in documentation
+ - removed unnecessary setting of /conf/param.conf in initramfs-crypt-hook
+ - added re-encryption recovery patch
+
+---
+Claudius Heine (4):
+      initramfs-crypt-hook: store initial encryption key in TPM2
+      initramfs-crypt-hook: add re-encryption recovery
+      initramfs-crypt-hook: implement 'noencrypt' option
+      initramfs-crypt-hook: add 'format-if-empty' feature
+
+ doc/README.tpm2.encryption.md                      |  57 +++++++--
+ .../initramfs-crypt-hook/files/local-top-complete  | 127 +++++++++++++++++++--
+ ...ypt-hook_0.8.bb => initramfs-crypt-hook_0.9.bb} |  13 ++-
+ 3 files changed, 171 insertions(+), 26 deletions(-)
+---
+base-commit: cad5026bc860a2eefb828e03a9205ed8803cd958
+change-id: 20250305-initramfs-crypt-hook-patches-2-9cc4a027c89a
+
+Best regards,
 -- 
-2.50.0
+Claudius Heine <ch@denx.de>
 
 
