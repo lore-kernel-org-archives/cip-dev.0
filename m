@@ -2,38 +2,35 @@ Return-Path: <ch@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A816C7EE32
-	for <webhook@archiver.kernel.org>; Thu, 26 Jun 2025 09:09:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 792C5C7EE32
+	for <webhook@archiver.kernel.org>; Thu, 26 Jun 2025 09:09:51 +0000 (UTC)
 Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web10.4062.1750928979869675898
+ by mx.groups.io with SMTP id smtpd.web10.4064.1750928982223003927
  for <cip-dev@lists.cip-project.org>;
- Thu, 26 Jun 2025 02:09:40 -0700
+ Thu, 26 Jun 2025 02:09:42 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=bcEdWzJR;
+ dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=dfyYCH+g;
  spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: ch@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A0B2810397286;
-	Thu, 26 Jun 2025 11:09:37 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4A3A71039BD78;
+	Thu, 26 Jun 2025 11:09:40 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1750928977; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=d+CLoxqdz8u2GT5Duc8TW7uN5vG0GFibvldyqfGdND0=;
-	b=bcEdWzJR8Y42zPZwaoHCslYbcZGDNWdWCA9gnA1mlMrTb1MVkSsdztWB/a5foE+xb623+1
-	UPJhgWpH9gn4mUaK/giGriNgpPKibYQ6wJd14Jbnzbz8MGfbbrpVOot51cqz1uB/8k6two
-	R/7qpb2TG+lsIWP7RCQBbPvVvrvirpC4w8tiDHlOHgrFLP3sy9qZn7FBvlPrcVwZeg7AYF
-	pQ1xrxCdl5f7b6ut2d5bMBDTcepXp30KXS2MvvclvIclWtpRrson2kRR20Rg6Tlo6eYuj4
-	sfEZNbEeYCk/S+H01ZnBct6gGPtpU2f1aZ1d124kd9NFyk98vktzwoz40HVjWg==
+	t=1750928980; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=xzUsfmfvAjfj4wugvJAdsXBeUBVnZKNB3fG8MtDyE7A=;
+	b=dfyYCH+gygoQ84erqsW+gQQdEY0rrnlBtGuhqkvPPDcW7WuDe8vUTaW9GN1rQl1001NE2U
+	UHlNu9DDiDs3fUBfm2AfYAXT/K4uETCTfKii3jBQLAfz904xybvGSk/R9So2Rpn1hGk85T
+	jbdN6fXwTvvWHJKy0VLeV43HeZ5qrS0acRrg4huGbROsOqVyJiWKi52wYkxBfXRyZvVqkZ
+	B0gIlFIZKEHXT7SaUs4xjDjFeptqy/E7Qth6Q2soO6+6eOqvM9dAo95SNXY655cZY6+tPg
+	YOHDT1RFyTtQ65uwBJ3lbO0C3Uiaisjw0+8afOhq42Ebay1+G7UThlPIhuCd3Q==
 From: Claudius Heine <ch@denx.de>
-Subject: [PATCH v8 0/4] initramfs-crypt-hook patch
-Date: Thu, 26 Jun 2025 11:09:23 +0200
-Message-Id: <20250626-initramfs-crypt-hook-patches-2-v8-0-46f000788686@denx.de>
+Date: Thu, 26 Jun 2025 11:09:26 +0200
+Subject: [PATCH v8 3/4] initramfs-crypt-hook: implement 'noencrypt' option
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAEMOXWgC/43OQW7DIBCF4atErDsRM8bYdNV7VF2QAQqqYltgW
- Yki3704i8ZZpcu3+d5/E8Xn5It4P9xE9ksqaRzq6N8OgqMdvj0kV7cgSa1sZAtpSHO251CA83W
- aIY7jD0x25ugLEBhmZSV13BsrKjJlH9LlfvD5VXfI4xnmmL3dswob2anmSD0S9g0gcPxwfrgcn
- d+UmMo85uu9clGb9e+gRYEEhZ00SL4ljX/ulrO0Owybl1hbscCanLJkHZlnTO8wki8xXTEfUDI
- iW2fUM9Y9MI36JdZVrCfHxkl3OnF4YOu6/gLhFxtt5wEAAA==
-X-Change-ID: 20250305-initramfs-crypt-hook-patches-2-9cc4a027c89a
+Message-Id: <20250626-initramfs-crypt-hook-patches-2-v8-3-46f000788686@denx.de>
+References: <20250626-initramfs-crypt-hook-patches-2-v8-0-46f000788686@denx.de>
+In-Reply-To: <20250626-initramfs-crypt-hook-patches-2-v8-0-46f000788686@denx.de>
 To: cip-dev@lists.cip-project.org
 Cc: Jan Kiszka <jan.kiszka@siemens.com>, 
  Quirin Gylstorff <quirin.gylstorff@siemens.com>, 
@@ -44,73 +41,115 @@ X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 26 Jun 2025 09:09:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19239
+ <cip-dev@lists.cip-project.org>; Thu, 26 Jun 2025 09:09:51 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19242
 
-Hi,
+In case encryption needs to be enabled via an update, while still
+allowing the update fall back to work. One update step where encryption
+is supported, but no reencryption is taking place if the device is not
+encrypted.
 
-here is v8 of my patchset.
+For this the `noencrypt` hook is implemented, which requires some
+restructure/reordering of the `local-top-complete` script.
 
-Kind regards,
-Claudius
-
+Signed-off-by: Claudius Heine <ch@denx.de>
 ---
-Changes in v8:
-- Rebased on next
-- Added documentation about the power fail scenarios and the LUKS header
-  example.
-- Link to v7: https://lore.kernel.org/r/20250616-initramfs-crypt-hook-patches-2-v7-0-82dc9d0dbbcf@denx.de
+ doc/README.tpm2.encryption.md                      | 22 +++++++++++++++++++-
+ .../initramfs-crypt-hook/files/local-top-complete  | 24 +++++++++++++++++-----
+ 2 files changed, 40 insertions(+), 6 deletions(-)
 
-Changes in v7:
-- readded tpm2_createpolicy for clevis
-- Link to v6: https://lore.kernel.org/r/20250320-initramfs-crypt-hook-patches-2-v6-0-ef10c11cad94@denx.de
+diff --git a/doc/README.tpm2.encryption.md b/doc/README.tpm2.encryption.md
+index 3f7e89f34fa4638a42285989e61370d8970afcde..2256f95a039044313807ab75ce219fa3eb7408b6 100644
+--- a/doc/README.tpm2.encryption.md
++++ b/doc/README.tpm2.encryption.md
+@@ -42,11 +42,12 @@ The initramfs-crypt-hook recipe has the following variables which can be overwri
+ ### CRYPT_PARTITIONS
+ 
+ The variable `CRYPT_PARTITIONS` contains the information which partition shall be encrypted where to mount it.
+-Each entry uses the schema `<partition-identifier>:<mountpoint>:<reencrypt or format>`.
++Each entry uses the schema `<partition-identifier>:<mountpoint>:<reencrypt | format | noencrypt>`.
+ - The `partition-idenitifer` is used to identify the partition on the disk, it can contain a partition label, partition UUID or absolute path to the partition device, e.g. `/dev/sda`.
+ - The `mountpoint` is used mount the decrypted partition in the root file system
+ - `reencrypt` uses `cryptsetup reencrypt` to encrypt the exiting content of the partition. This reduces the partition by 32MB and the file system by a similar amount
+ - `format` creates a empty LUKS partition and creates a file system defined with the shell command given in `CRYPT_CREATE_FILE_SYSTEM_CMD`
++- `noencrypt` will not try to encrypt the partition if it isn't encrypted already, but will open it if it is. See the section [Encrypting the shared partition via an update](#### Encrypting the shared partition via an update) for more information
+ 
+ #### Encrypted root file system
+ 
+@@ -58,6 +59,25 @@ The mountpoint is empty as the root partition is mounted  by a seperate initramf
+ Both partitions are encrypted during first boot. The initramfs hook opens `${ABROOTFS_PART_UUID_A}` and `${ABROOTFS_PART_UUID_B}`
+ during boot.
+ 
++#### Encrypting the shared partition via an update
++
++With the following requirements, special handling is necessary:
++
++- A/B update scheme is used.
++- Both slots have a shared volume that needs to be encrypted as well.
++- The system in the field is currently unencrypted, and encryption should be added via an update.
++- When the update fails, the fallback system needs to deal with an encrypted data partition.
++
++In this case, the fallback system needs to support an encrypted shared data partition but would not encrypt it on its own. For this, the `noencrypt` flag can be used.
++
++The data partition in the fallback system will have the `noencrypt` flag set, while the update system will set the flag to `reencrypt`. This will handle the following case:
++
++- Unencrypted system on slot A is running; the shared data partition has set the `noencrypt` flag and is not encrypted.
++- Update for enabling encryption is applied to slot B, where the shared data partition has the `reencrypt` flag.
++- System reboots to slot B, encrypting the shared data partition.
++- Update fails at a later point and is not blessed; system reboots into the fallback system on slot A.
++- Fallback system now needs to be able to use the shared data partition.
++
+ ### CRYPT_CREATE_FILE_SYSTEM_CMD
+ 
+ The variable `CRYPT_CREATE_FILE_SYSTEM_CMD` contains the command to create a new file system on a newly
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
+index e773ec3e165f72de624a17872ed3fa74746f20d8..9038f4b74b94a5c673239da316f0966b77e4b5d3 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
++++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
+@@ -303,15 +303,18 @@ for partition_set in $partition_sets; do
+ 	if [ ! -e  "$part_device" ]; then
+ 		panic "Could not find device  mapped to '$partition' cannot be encrypted!"
+ 	fi
+-	decrypted_part=/dev/mapper/"$crypt_mount_name"
+-	# check if we are trying to mount root
+-	if [ "$partition_mountpoint" = "/" ]; then
+-		echo "ROOT=$decrypted_part" >/conf/param.conf
+-	fi
+ 
++	# If partition is already encrypted, decrypt and continue with next partition:
++	decrypted_part=/dev/mapper/"$crypt_mount_name"
+ 	if /usr/sbin/cryptsetup luksDump --batch-mode "$part_device" \
+ 			| grep -q "systemd-tpm2\|clevis"; then
+ 		open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
++
++		# check if we are trying to mount root, set ROOT to decrypted partition:
++		if [ "$partition_mountpoint" = "/" ]; then
++			echo "ROOT=$decrypted_part" >/conf/param.conf
++		fi
++
+ 		continue
+ 	fi
+ 
+@@ -321,6 +324,17 @@ for partition_set in $partition_sets; do
+ 		partition_format="reencrypt"
+ 	fi
+ 
++	# If partition should not be encrypted, continue with next partition:
++	if [ "$partition_format" = "noencrypt" ]
++	then
++		continue
++	fi
++
++	# check if we are trying to mount root, set ROOT to decrypted partition:
++	if [ "$partition_mountpoint" = "/" ]; then
++		echo "ROOT=$decrypted_part" >/conf/param.conf
++	fi
++
+ 	# service watchdog in the background during lengthy re-encryption
+ 	if [ -z "$watchdog_pid" ]; then
+ 		service_watchdog &
 
-Changes in v6:
-- luks formatting of format-if-empty will now be redone when if it is a
-  luks partition without a TPM2 token, this makes it a bit more
-  power-fail save
-- Link to v5: https://lore.kernel.org/r/20250313-initramfs-crypt-hook-patches-2-v5-0-fc62d4a2ad29@denx.de
-
-Changes in v5:
-- Switch to use TPM2 protected password instead of static initial
-  password for encryption
-- Link to v4: https://lore.kernel.org/r/20250305-initramfs-crypt-hook-patches-2-v4-0-4170912e5261@denx.de
-
-Changes in v4:
- - improve documentation and commit messages
- - reorder commits, to put re-encryption recovery up front
- - extract static temporary encryption key patch into its own
- - switch from lsblk to blkid
-
-Changes in v3:
- - Rebase on current next
- - Extended `noencrypt` documentation
- - support clevis tokens for re-encryption recovery
-
-Changes in v2:
- - Added more descriptive commit message
- - Added more descriptive documentation about noencrypt option
- - Fixed typos in documentation
- - removed unnecessary setting of /conf/param.conf in initramfs-crypt-hook
- - added re-encryption recovery patch
-
----
-Claudius Heine (4):
-      initramfs-crypt-hook: store initial encryption key in TPM2
-      initramfs-crypt-hook: add re-encryption recovery
-      initramfs-crypt-hook: implement 'noencrypt' option
-      initramfs-crypt-hook: add 'format-if-empty' feature
-
- doc/README.tpm2.encryption.md                      |  57 +++++++--
- .../initramfs-crypt-hook/files/local-top-complete  | 127 +++++++++++++++++++--
- ...ypt-hook_0.8.bb => initramfs-crypt-hook_0.9.bb} |  13 ++-
- 3 files changed, 171 insertions(+), 26 deletions(-)
----
-base-commit: cad5026bc860a2eefb828e03a9205ed8803cd958
-change-id: 20250305-initramfs-crypt-hook-patches-2-9cc4a027c89a
-
-Best regards,
 -- 
-Claudius Heine <ch@denx.de>
+2.50.0
 
 
