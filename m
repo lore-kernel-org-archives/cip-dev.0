@@ -2,36 +2,36 @@ Return-Path: <alexander.heinisch@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB2BC8302D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 280C0C83039
 	for <webhook@archiver.kernel.org>; Mon, 30 Jun 2025 18:15:42 +0000 (UTC)
-Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
- by mx.groups.io with SMTP id smtpd.web10.48073.1751307331284490973
+Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
+ by mx.groups.io with SMTP id smtpd.web10.48071.1751307331097939331
  for <cip-dev@lists.cip-project.org>;
- Mon, 30 Jun 2025 11:15:31 -0700
+ Mon, 30 Jun 2025 11:15:32 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=alexander.heinisch@siemens.com header.s=fm1 header.b=NFg4y1RK;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-1330684-20250630181526da6a829fad3ecbc50b-2e69v2@rts-flowmailer.siemens.com)
-Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 20250630181526da6a829fad3ecbc50b
+ dkim=pass header.i=alexander.heinisch@siemens.com header.s=fm1 header.b=cqWxJm+A;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-1330684-20250630181527a223ba8c16b53cfe71-4acobg@rts-flowmailer.siemens.com)
+Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 20250630181527a223ba8c16b53cfe71
         for <cip-dev@lists.cip-project.org>;
-        Mon, 30 Jun 2025 20:15:26 +0200
+        Mon, 30 Jun 2025 20:15:27 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=alexander.heinisch@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=hmD5BFaN1vkiTkLPSmOdaO4c20+rZtRH6JkMzJeQqFc=;
- b=NFg4y1RKLP5AHz5xpNhjxh5R2MXoR52WFQfd497HNXGcsSZFNGk+Sn/BKj0KxVbgKtUydD
- 7sU/d94Cg2vVTdUQ48qGaRwr8K01pqxK+qrRCrLs5V2lVIXLuJY5slRHGM7EzaX6EDR4+j6E
- xskBPcR2eXfNwZOM6AlpDoluDTa8cV8Ss6e2VTrx5/tV8MTW9hoKmrwlc4DmrIs5qzmvIEE5
- WEi2V/69nAZ4qEaZ1gzflvHhfl04Y9lSctrlGDwVCxvjioXO2nyQ54JskA6rqIMUgUryYOec
- +vvx96/rhMwJUxbMzDzwwPCHxPIhmZRvYPYRTDWi4vcfMr4AiI59DwYw==;
+ bh=wGKFf4cjevYXzAlMfpR+gRgt5KtrrszHliI0/46nTKs=;
+ b=cqWxJm+A3K2XvOShrrfNFkc7QfhcLTCh6pDE+FnYy+XjuSjtBkDqHf5RWjnylcYvFJrDBP
+ Em77qyC2k6x7t/MoYw4TA5ekKeAuhljx9oema7g59uXttWK60i8/wrIrY1pOjNkx31GbF0RN
+ vjv5C8CHRTHE2TuIp27PMRTxHv3CzP+Ndcv6lVYgmnGTpsFvWEaY98WyD46XT1dIaPQTUxir
+ gluV+tsMfaHxgBW4jMb9vAY90TNJNCRSlb2xw/HnMkZtbscXEBFeVTZVNqM1krizXZMGrUNO
+ 8Pr6l5ynrAQR5aJeJUDKjOfuKsGbGYwqK5yE8mm5sU3/OW3HMpCYhwrw==;
 From: alexander.heinisch@siemens.com
 To: cip-dev@lists.cip-project.org
 Cc: jan.kiszka@siemens.com,
 	quirin.gylstorff@siemens.com,
 	felix.moessbauer@siemens.com,
 	Alexander Heinisch <alexander.heinisch@siemens.com>
-Subject: [isar-cip-core][RFC 1/7] initramfs: Split handling of persistence mount and overlay setup.
-Date: Mon, 30 Jun 2025 20:15:10 +0200
-Message-Id: <20250630181516.1718712-2-alexander.heinisch@siemens.com>
+Subject: [isar-cip-core][RFC 3/7] temporary-kas: Added patches for isar upstream
+Date: Mon, 30 Jun 2025 20:15:12 +0200
+Message-Id: <20250630181516.1718712-4-alexander.heinisch@siemens.com>
 In-Reply-To: <20250630181516.1718712-1-alexander.heinisch@siemens.com>
 References: <20250630181516.1718712-1-alexander.heinisch@siemens.com>
 MIME-Version: 1.0
@@ -42,277 +42,159 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 30 Jun 2025 18:15:42 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19258
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19260
 
 From: Alexander Heinisch <alexander.heinisch@siemens.com>
 
+* to support linked /etc/machine-id
+* to populate systemd units at build time.
+
 Signed-off-by: Alexander Heinisch <alexander.heinisch@siemens.com>
 ---
- .../cip-core-initramfs/cip-core-initramfs.bb  |  1 +
- .../files/local-bottom.tmpl                   | 31 +------------
- .../initramfs-overlay-hook_0.4.bb             | 42 ++++++++++++++++++
- .../files/local-bottom.tmpl                   | 43 +++++++++++++++++++
- .../files/persistence_recovery_action.script} |  4 +-
- .../initramfs-persistence-hook_0.1.bb}        | 29 +++++++------
- 6 files changed, 105 insertions(+), 45 deletions(-)
- create mode 100644 recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.4.bb
- create mode 100644 recipes-initramfs/initramfs-persistent-storage/files/local-bottom.tmpl
- rename recipes-initramfs/{initramfs-overlay-hook/files/overlay_recovery_action.script => initramfs-persistent-storage/files/persistence_recovery_action.script} (64%)
- rename recipes-initramfs/{initramfs-overlay-hook/initramfs-overlay-hook_0.3.bb => initramfs-persistent-storage/initramfs-persistence-hook_0.1.bb} (57%)
+ kas-cip.yml                                   |  7 ++
+ ...stproc-Enable-systemd-units-based-on.patch | 70 +++++++++++++++++++
+ ...stproc-chroot-before-postprocessing-.patch | 37 ++++++++++
+ 3 files changed, 114 insertions(+)
+ create mode 100644 patches/0001-classes-image-postproc-Enable-systemd-units-based-on.patch
+ create mode 100644 patches/0001-classes-image-postproc-chroot-before-postprocessing-.patch
 
-diff --git a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-index 0e4cf74..12797d3 100644
---- a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-+++ b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
-@@ -15,4 +15,5 @@ INITRAMFS_INSTALL += " \
-     initramfs-overlay-hook \
-     "
+diff --git a/kas-cip.yml b/kas-cip.yml
+index 47c02ec..e65b80a 100644
+--- a/kas-cip.yml
++++ b/kas-cip.yml
+@@ -25,6 +25,13 @@ repos:
+     commit: 938dab363006529f0b5296dfbc09ef306fc8c3d7
+     layers:
+       meta:
++    patches:
++      1-chroot-before-postprocessing-etc-machine-id:
++        repo: cip-core
++        path: patches/0001-classes-image-postproc-chroot-before-postprocessing-.patch
++      2-enable-systemd-units-bsed-on-presets:
++        repo: cip-core
++        path: patches/0001-classes-image-postproc-Enable-systemd-units-based-on.patch
  
-+INITRAMFS_INSTALL:append = " initramfs-persistence-hook"
- INITRAMFS_INSTALL:append:encrypt-partitions = " initramfs-crypt-hook"
-diff --git a/recipes-initramfs/initramfs-overlay-hook/files/local-bottom.tmpl b/recipes-initramfs/initramfs-overlay-hook/files/local-bottom.tmpl
-index 71cc63c..31937e0 100644
---- a/recipes-initramfs/initramfs-overlay-hook/files/local-bottom.tmpl
-+++ b/recipes-initramfs/initramfs-overlay-hook/files/local-bottom.tmpl
-@@ -1,45 +1,18 @@
- #
- # CIP Core, generic profile
- #
--# Copyright (c) Siemens AG, 2022-2024
-+# Copyright (c) Siemens AG, 2022-2025
- #
- # Authors:
- #  Jan Kiszka <jan.kiszka@siemens.com>
- #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#  Alexander Heinisch <alexander.heinisch@siemens.com>
- #
- 
- ovl_storage_path="${INITRAMFS_OVERLAY_STORAGE_PATH}"
- ovl_lower_dirs="${INITRAMFS_OVERLAY_PATHS}"
- 
- root_mount_storage=${rootmnt}${ovl_storage_path}
--storage_mount_point="$(echo "${ovl_storage_path}" | awk -F/ '{print FS$2}' )"
--
--if ! mountpoint -q "${rootmnt}${storage_mount_point}"; then
--	ovl_partition_device="${INITRAMFS_OVERLAY_STORAGE_DEVICE}"
--	ovl_mount_option="${INITRAMFS_OVERLAY_MOUNT_OPTION}"
--	ovl_recovery_script="/scripts/${INITRAMFS_OVERLAY_RECOVERY_SCRIPT}"
--
--	partition_fstype=$(get_fstype "${ovl_partition_device}")
--
--	case $partition_fstype in
--	ext*)
--		fsck_ret=0
--		e2fsck -p -f "$ovl_partition_device" || fsck_ret="$?"
--
--		# e2fsck returns a 1 in case of repairing the file system
--		# https://man7.org/linux/man-pages/man8/e2fsck.8.html#EXIT_CODE
--		if [ "$fsck_ret" -gt "1" ]  && [ -x "$ovl_recovery_script" ]; then
--			"$ovl_recovery_script" "$partition_fstype" "$ovl_partition_device"
--		fi
--		;;
--	esac
--	if ! mount -t ${partition_fstype} \
--		 -o ${ovl_mount_option} \
--		 ${ovl_partition_device} \
--		 ${rootmnt}${storage_mount_point}; then
--		panic "Can't mount ${storage_mount_point} partition - overlay will not work!"
--	fi
--fi
- 
- for ovl_lower_dir in ${ovl_lower_dirs}; do
- 	# remove the first '/' and replace all '/' with '_'
-diff --git a/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.4.bb b/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.4.bb
+ bblayers_conf_header:
+   standard: |
+diff --git a/patches/0001-classes-image-postproc-Enable-systemd-units-based-on.patch b/patches/0001-classes-image-postproc-Enable-systemd-units-based-on.patch
 new file mode 100644
-index 0000000..5ccc20c
+index 0000000..ecbebf1
 --- /dev/null
-+++ b/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.4.bb
-@@ -0,0 +1,42 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2022 - 2025
-+#
-+# Authors:
-+#  Jan Kiszka <jan.kiszka@siemens.com>
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#  Alexander Heinisch <alexander.heinisch@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
++++ b/patches/0001-classes-image-postproc-Enable-systemd-units-based-on.patch
+@@ -0,0 +1,70 @@
++From 48ab8e834cf46f08cc2d7cf11637a3c25c67b2bd Mon Sep 17 00:00:00 2001
++From: Alexander Heinisch <alexander.heinisch@siemens.com>
++Date: Thu, 26 Jun 2025 11:11:01 +0200
++Subject: [PATCH] classes/image-postproc: Enable systemd units based on systemd
++ presets
 +
-+require recipes-initramfs/initramfs-hook/hook.inc
++By default population of the presets is automatically done by systemd
++on first-boot.
 +
-+SRC_URI += " \
-+    file://local-bottom.tmpl \
-+    "
++There were several issues with that:
 +
-+# The variable INITRAMFS_OVERLAY_PATHS contains the directories which are
-+# overlayed(lower dir).
-+INITRAMFS_OVERLAY_PATHS ??= "/etc"
++1. The rootfs we get as a build artifact does not reflect the actual
++system running in the field.
 +
-+# The variable INITRAMFS_OVERLAY_STORAGE_PATH designates the path were the
-+# changes to the overlayed directory are stored (upper dir). The initramfs
-+# hook also mounts the first directory after root to
-+# INITRAMFS_OVERLAY_STORAGE_DEVICE if it is not mounted yet.
-+INITRAMFS_OVERLAY_STORAGE_PATH ??= "/var/local"
++2. For setups without writeable /etc this fails. With that addition
++it happens already at build time.
 +
-+TEMPLATE_FILES += "local-bottom.tmpl"
-+TEMPLATE_VARS += " \
-+    INITRAMFS_OVERLAY_STORAGE_PATH \
-+    INITRAMFS_OVERLAY_PATHS \
-+    "
++Note: Additional services are enabled only. Services already enabled
++during the package installation won't be changed.
 +
-+DEPENDS += "initramfs-persistence-hook"
-+DEBIAN_DEPENDS .= ", initramfs-persistence-hook, awk, coreutils, util-linux"
++Opt-out: `ROOTFS_POSTPROCESS_COMMAND:remove = "image_postprocess_populate_systemd_preset"`
 +
-+HOOK_ADD_MODULES = "overlay"
-+HOOK_COPY_EXECS = "awk"
++Signed-off-by: Alexander Heinisch <alexander.heinisch@siemens.com>
++---
++ RECIPE-API-CHANGELOG.md                       | 18 ++++++++++++++++++
++ meta/classes/image-postproc-extension.bbclass |  5 +++++
++ 2 files changed, 23 insertions(+)
 +
-+SCRIPT_PREREQ="persistence"
-diff --git a/recipes-initramfs/initramfs-persistent-storage/files/local-bottom.tmpl b/recipes-initramfs/initramfs-persistent-storage/files/local-bottom.tmpl
++# diff --git a/RECIPE-API-CHANGELOG.md b/RECIPE-API-CHANGELOG.md
++# index 8468717d..fb9ad4f3 100644
++# --- a/RECIPE-API-CHANGELOG.md
++# +++ b/RECIPE-API-CHANGELOG.md
++# @@ -727,3 +727,21 @@ Changes in next
++
++#  This was never documented and never had practical relevance. `oci-archive` is
++#  the useful OCI image format that can be imported, e.g., by podman.
++# +
++# +### Populate systemd units based on presets during image postprocessing
++# +
++# +By default population of the presets is automatically done by systemd
++# +on first-boot.
++# +
++# +There were several issues with that:
++# +
++# +1. The rootfs we get as a build artifact does not reflect the actual
++# +system running in the field.
++# +
++# +2. For setups without writeable /etc this fails. With that addition
++# +it happens already at build time.
++# +
++# +**Note**: Additional services are enabled only. Services already enabled
++# +during the package installation won't be changed.
++# +
++# +Opt-out: `ROOTFS_POSTPROCESS_COMMAND:remove = "image_postprocess_populate_systemd_preset"`
++diff --git a/meta/classes/image-postproc-extension.bbclass b/meta/classes/image-postproc-extension.bbclass
++index 991bac4c..269b86c0 100644
++--- a/meta/classes/image-postproc-extension.bbclass
+++++ b/meta/classes/image-postproc-extension.bbclass
++@@ -95,3 +95,8 @@ image_posprocess_disable_systemd_firstboot() {
++         fi
++     fi
++ }
+++
+++ROOTFS_POSTPROCESS_COMMAND =+ "image_postprocess_populate_systemd_preset"
+++image_postprocess_populate_systemd_preset() {
+++    sudo chroot '${ROOTFSDIR}' systemctl preset-all --preset-mode="enable-only"
+++}
++--
++2.39.5
++
+diff --git a/patches/0001-classes-image-postproc-chroot-before-postprocessing-.patch b/patches/0001-classes-image-postproc-chroot-before-postprocessing-.patch
 new file mode 100644
-index 0000000..dd655ea
+index 0000000..85aa265
 --- /dev/null
-+++ b/recipes-initramfs/initramfs-persistent-storage/files/local-bottom.tmpl
-@@ -0,0 +1,43 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2022-2025
-+#
-+# Authors:
-+#  Jan Kiszka <jan.kiszka@siemens.com>
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#  Alexander Heinisch <alexander.heinisch@siemens.com>
-+#
++++ b/patches/0001-classes-image-postproc-chroot-before-postprocessing-.patch
+@@ -0,0 +1,37 @@
++From 409ec65811c4c5fccc2552d6772c171dfb2c3fee Mon Sep 17 00:00:00 2001
++From: Alexander Heinisch <alexander.heinisch@siemens.com>
++Date: Tue, 17 Jun 2025 16:18:51 +0200
++Subject: [PATCH] classes/image-postproc: chroot before postprocessing
++ /etc/machine-id
 +
-+pers_storage_path="${INITRAMFS_PERSISTENCE_STORAGE_PATH}"
++If /etc/machine-id happens to be a link to e.g. /var/...
++the postprocessing overrides build-hosts /var/... instead of
++the desired file on the rootfs.
 +
-+storage_mount_point="$(echo "${pers_storage_path}" | awk -F/ '{print FS$2}' )"
++Signed-off-by: Alexander Heinisch <alexander.heinisch@siemens.com>
++---
++ meta/classes/image-postproc-extension.bbclass | 4 ++--
++ 1 file changed, 2 insertions(+), 2 deletions(-)
 +
-+if ! mountpoint -q "${rootmnt}${storage_mount_point}"; then
-+	pers_partition_device="${INITRAMFS_PERSISTENCE_STORAGE_DEVICE}"
-+	pers_mount_option="${INITRAMFS_PERSISTENCE_MOUNT_OPTION}"
-+	pers_recovery_script="/scripts/${INITRAMFS_PERSISTENCE_RECOVERY_SCRIPT}"
++diff --git a/meta/classes/image-postproc-extension.bbclass b/meta/classes/image-postproc-extension.bbclass
++index 991bac4c..4f2a3d00 100644
++--- a/meta/classes/image-postproc-extension.bbclass
+++++ b/meta/classes/image-postproc-extension.bbclass
++@@ -58,12 +58,12 @@ image_postprocess_machine_id() {
++     # systemd(1) takes care of recreating the machine-id on first boot
++     # for systemd < v247, set to empty string, else set to uninitialized
++     # (required if initramfs with ro root is used)
++-    SYSTEMD_VERSION=$( sudo chroot ${IMAGE_ROOTFS} dpkg-query --showformat='${source:Upstream-Version}' --show systemd || echo "0" )
+++    SYSTEMD_VERSION=$( sudo chroot '${IMAGE_ROOTFS}' dpkg-query --showformat='${source:Upstream-Version}' --show systemd || echo "0" )
++     MACHINE_ID="uninitialized"
++     if dpkg --compare-versions "$SYSTEMD_VERSION" "lt" "247"; then
++         MACHINE_ID=""
++     fi
++-    echo "$MACHINE_ID" | sudo tee '${IMAGE_ROOTFS}/etc/machine-id'
+++    echo "$MACHINE_ID" | sudo chroot '${IMAGE_ROOTFS}' tee '/etc/machine-id'
++     sudo rm -f '${IMAGE_ROOTFS}/var/lib/dbus/machine-id'
++ }
++ 
++-- 
++2.39.5
 +
-+	partition_fstype=$(get_fstype "${pers_partition_device}")
-+
-+	case $partition_fstype in
-+	ext*)
-+		fsck_ret=0
-+		e2fsck -p -f "$pers_partition_device" || fsck_ret="$?"
-+
-+		# e2fsck returns a 1 in case of repairing the file system
-+		# https://man7.org/linux/man-pages/man8/e2fsck.8.html#EXIT_CODE
-+		if [ "$fsck_ret" -gt "1" ]  && [ -x "$pers_recovery_script" ]; then
-+			"$pers_recovery_script" "$partition_fstype" "$pers_partition_device"
-+		fi
-+		;;
-+	esac
-+	if ! mount -t ${partition_fstype} \
-+		 -o ${pers_mount_option} \
-+		 ${pers_partition_device} \
-+		 ${rootmnt}${storage_mount_point}; then
-+		panic "Can't mount ${storage_mount_point} partition - persistence will not work!"
-+	fi
-+fi
-+
-+exit 0
-diff --git a/recipes-initramfs/initramfs-overlay-hook/files/overlay_recovery_action.script b/recipes-initramfs/initramfs-persistent-storage/files/persistence_recovery_action.script
-similarity index 64%
-rename from recipes-initramfs/initramfs-overlay-hook/files/overlay_recovery_action.script
-rename to recipes-initramfs/initramfs-persistent-storage/files/persistence_recovery_action.script
-index 0cd084b..afe3605 100644
---- a/recipes-initramfs/initramfs-overlay-hook/files/overlay_recovery_action.script
-+++ b/recipes-initramfs/initramfs-persistent-storage/files/persistence_recovery_action.script
-@@ -9,6 +9,6 @@
- #
- 
- partition_fstype="$1"
--ovl_partition_device="$2"
-+partition_device="$2"
- 
--mke2fs -q -FF -t "$partition_fstype" "$ovl_partition_device"
-+mke2fs -q -FF -t "$partition_fstype" "$partition_device"
-diff --git a/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.3.bb b/recipes-initramfs/initramfs-persistent-storage/initramfs-persistence-hook_0.1.bb
-similarity index 57%
-rename from recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.3.bb
-rename to recipes-initramfs/initramfs-persistent-storage/initramfs-persistence-hook_0.1.bb
-index a5b39d9..44ee9e1 100644
---- a/recipes-initramfs/initramfs-overlay-hook/initramfs-overlay-hook_0.3.bb
-+++ b/recipes-initramfs/initramfs-persistent-storage/initramfs-persistence-hook_0.1.bb
-@@ -1,55 +1,56 @@
- #
- # CIP Core, generic profile
- #
--# Copyright (c) Siemens AG, 2022 - 2024
-+# Copyright (c) Siemens AG, 2022 - 2025
- #
- # Authors:
- #  Jan Kiszka <jan.kiszka@siemens.com>
- #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#  Alexander Heinisch <alexander.heinisch@siemens.com>
- #
- # SPDX-License-Identifier: MIT
- #
- 
- require recipes-initramfs/initramfs-hook/hook.inc
- 
--INITRAMFS_OVERLAY_RECOVERY_SCRIPT ??= "overlay_recovery_action.script"
-+INITRAMFS_OVERLAY_RECOVERY_SCRIPT ??= "persistence_recovery_action.script"
-+INITRAMFS_PERSISTENCE_RECOVERY_SCRIPT ??= "${INITRAMFS_OVERLAY_RECOVERY_SCRIPT}"
- 
- SRC_URI += " \
-     file://local-bottom.tmpl \
--    file://${INITRAMFS_OVERLAY_RECOVERY_SCRIPT} \
-+    file://${INITRAMFS_PERSISTENCE_RECOVERY_SCRIPT} \
-     "
- 
--# The variable INITRAMFS_OVERLAY_PATHS contains the directories which are
--# overlayed(lower dir).
--INITRAMFS_OVERLAY_PATHS ??= "/etc"
--
- # The variable INITRAMFS_OVERLAY_STORAGE_PATH designates the path were the
- # changes to the overlayed directory are stored (upper dir). The initramfs
- # hook also mounts the first directory after root to
- # INITRAMFS_OVERLAY_STORAGE_DEVICE if it is not mounted yet.
- INITRAMFS_OVERLAY_STORAGE_PATH ??= "/var/local"
-+INITRAMFS_PERSISTENCE_STORAGE_PATH ??="${INITRAMFS_OVERLAY_STORAGE_PATH}"
- 
- # override this to switch to UUID or PARTUUID based mounts
- INITRAMFS_OVERLAY_STORAGE_DEVICE ??= "/dev/disk/by-label/var"
-+INITRAMFS_PERSISTENCE_STORAGE_DEVICE ??= "${INITRAMFS_OVERLAY_STORAGE_DEVICE}"
- 
- # options to use for mounting INITRAMFS_OVERLAY_STORAGE_DEVICE
- INITRAMFS_OVERLAY_MOUNT_OPTION ??= "defaults,nodev,nosuid,noexec"
-+INITRAMFS_PERSISTENCE_MOUNT_OPTION ??= "${INITRAMFS_OVERLAY_MOUNT_OPTION}"
- 
- TEMPLATE_FILES += "local-bottom.tmpl"
--TEMPLATE_VARS += " INITRAMFS_OVERLAY_STORAGE_PATH \
--    INITRAMFS_OVERLAY_PATHS \
--    INITRAMFS_OVERLAY_STORAGE_DEVICE \
--    INITRAMFS_OVERLAY_MOUNT_OPTION \
--    INITRAMFS_OVERLAY_RECOVERY_SCRIPT"
-+TEMPLATE_VARS += " \
-+    INITRAMFS_PERSISTENCE_STORAGE_PATH \
-+    INITRAMFS_PERSISTENCE_STORAGE_DEVICE \
-+    INITRAMFS_PERSISTENCE_MOUNT_OPTION \
-+    INITRAMFS_PERSISTENCE_RECOVERY_SCRIPT"
- 
- DEBIAN_DEPENDS .= ", awk, coreutils, util-linux, e2fsprogs"
- 
--HOOK_ADD_MODULES = "overlay"
-+HOOK_ADD_MODULES = ""
- HOOK_COPY_EXECS = "mountpoint awk e2fsck mke2fs"
- 
- SCRIPT_PREREQ="crypt"
- 
- do_install:append() {
--    install -m 0755 "${WORKDIR}/${INITRAMFS_OVERLAY_RECOVERY_SCRIPT}" \
-+    install -m 0755 "${WORKDIR}/${INITRAMFS_PERSISTENCE_RECOVERY_SCRIPT}" \
-         "${D}/usr/share/initramfs-tools/scripts"
- }
 -- 
 2.39.5
 
