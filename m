@@ -2,49 +2,50 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C94C83030
-	for <webhook@archiver.kernel.org>; Mon, 30 Jun 2025 20:10:22 +0000 (UTC)
-Received: from MRWPR03CU001.outbound.protection.outlook.com (MRWPR03CU001.outbound.protection.outlook.com [40.107.130.26])
- by mx.groups.io with SMTP id smtpd.web10.50770.1751314213727208847
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4853C83033
+	for <webhook@archiver.kernel.org>; Mon, 30 Jun 2025 20:11:32 +0000 (UTC)
+Received: from MRWPR03CU001.outbound.protection.outlook.com (MRWPR03CU001.outbound.protection.outlook.com [40.107.130.64])
+ by mx.groups.io with SMTP id smtpd.web11.50551.1751314283075727711
  for <cip-dev@lists.cip-project.org>;
- Mon, 30 Jun 2025 13:10:14 -0700
+ Mon, 30 Jun 2025 13:11:23 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=spOV0L5P;
- spf=pass (domain: siemens.com, ip: 40.107.130.26, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=kxMs52OG;
+ spf=pass (domain: siemens.com, ip: 40.107.130.64, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YrfdVUTexH9pH+xyCMGtBO8wGodCFliQXxFqDvvcsygXmivRTrL4ZQgJsXAVLeIrKSQmFg4xW/a3GuOYiN/Y0BGGKJS5F0PN63Wek7yN95hS1W7fkuMGBDNo5+q3sPO+WhKyDVUtbXSiu46ucv9MjwsDsH0FH5ypvp6rOjYtGLO4xxTkgKqO6C3VMQa9vU5a9tBOmdlvFnb6EbfhFyE25qseoy07zf/uD9htLHOt6L4gq6cpQnbVegvhf4qyg6kR86S0RvS/zv+0w9Th2fba9L/8CktlGsx8N9cGzzw7IEfxYuxI8iP/6U4bJXf/g/wWqgJGH8J5cd0KeEOP++/lDQ==
+ b=CwhvZnaatBWs+QXmrQxC2HGy/uBbqMfNk+NH0rGzGtoQmI/npUKbB9v3TX5YyCBI4YozE76PPqqjpzBccX0eqCawhF1+/zVHo4j+4F8D+MeU9/HhoxhMzkM3RvF1fIU0088kC9qqURwTFqbl3PO2tftcZbhnOvq9gs2IsWjb1DuT0OyqEYpDBtPKccuZHZs1P1Q0hFza1Ayf7fWqIFbGbCiRaGNqPRoHDm7V//cQnSUGFga3ZF6SSb8BnVbqenZHROtoD7kBngFkzSbUOvjhtTVSs5M+FguCO1Lq7F5P+FI626ZRvCyeBt2xP+thflsXF7v2ODnwZhU1s+3S/fCzmw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5x0XTkIg++Ho1b7xiZcU3bZ46ZXWcUT1KJkhDwzZaaA=;
- b=Fc63IBIXfs1kCe0w+Sji6JQRS2ekIb2smvsrTVuNk6beZszIrh9UtxkAc/4pLzNTohbj1op80LQgRPupQiUdUYKWTQgpMZeHdu8Za6WVpef7FPIy00nxSAjGcezDzIw4IZt5ApzrlDvw3DYleUD2d9IWcrqBFH998Jl6bIzdeKsnMNVX8hA+chodaXUembGB+vsvxhW2vIBdJeNt5vYveDigGbwRYgwklr2MkcGvCDivgCMZAare9d22AyvkefWYvn+4XjPcVZWEJwC+KkGh6M0QD8K9dhSvmyTiQ3zLjVcLPfzJROEI+tR1c9tk8qVzQDvK1BxEZArG4ggge5KRHw==
+ bh=ySVvwG8FjmntgDCQ9i+a5ALmq2S2QEo4ZI5FbTUu2UQ=;
+ b=VaGC/kL2MSOc6CNlVRMdmRrK33mKfGz9brUMqVrm61TukXyAvQsPpkAYjqIjniudYqoNHK/rxnVmyKFELwFOOWiJMx5Nx+e4gcfoqnYP2I+f7MlTi34LwzVcDRGfbvjdsqRb4uNUt1rFZPc4DXaAgDMq+ou8jJRoL8FPrIv+8w7dj2ORLxWJTcg4zhxeLJuZJwcCMLGdYCUt7oz55DuW7W6KKqF89K/emOk88tto7UveB5JAeOnMxZ182UE7QdzhMlmk7d0h32ViTIigcvfZCqWaYaAILgxDneSxgdWWsewFp7yKPSjezks+lnr0b2gNVkvJVUmZMWoqhGIc9z25Ig==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5x0XTkIg++Ho1b7xiZcU3bZ46ZXWcUT1KJkhDwzZaaA=;
- b=spOV0L5PYtWhY/f+qooT+3ErnAWzLcv1KaknAxAJ1B7rwTRlD5Gft35N0/TtX0EJx2jLGPf0IqIeRLDhSw81osaSb903+UFBtQ/TVijToPQKCzR0Vg0FE7wC9dtBH590CqWIToLWEmi0YE4dZwnM/ZqciKGn1Fusyt4XpZnJ8853cuTxr5P2lMWAfKNhQ1g8lrtqE3adJIjiCwxW7d+ynCaoA9PfrsadNnWV/SfJTxsWvfUx6KGQK4sjZZOxiSAu0kihLfilGRq3+h/09OzFKEV9nc5b0OvZ5v0I9hTIzAdZy/qeKbBoPiET7ZYENvcflzsWe2ab0CmXN6DYfygwIQ==
+ bh=ySVvwG8FjmntgDCQ9i+a5ALmq2S2QEo4ZI5FbTUu2UQ=;
+ b=kxMs52OGEocvBY0ZSC/2QAPA+bs2GBjyG2aJ2PxDKSI+Bql4V1BvhgqRp94p0V1ViNYtqG2hJXdpZJfq7vL04LYGXhvyE3xsz9KJtWxQU3IBsAxbxFV8UkKxaEW9yQA6GoxdRS2R+B43tKgY168a3ZlQdc/it0O7pbIRVkLo51Tla3YYQoENdCGUQI5yS7WRAw+M7wt5CGYtnH8qjCrED2cunKMqdjar1qvPo2vPlMVBKjQ2p/VVQY5tvaNuMI7UlJ8t8XnvLKmrPzrAF6IqQnq36DUflpDp9K2YSdWRVJr/ukWj97ZWGIfG9M8Go7hObsUMeqzwPLJ8vIYRbV+Dmg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
  by AM7PR10MB3745.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:14e::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.23; Mon, 30 Jun
- 2025 20:10:10 +0000
+ 2025 20:11:20 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408%7]) with mapi id 15.20.8880.021; Mon, 30 Jun 2025
- 20:10:10 +0000
-Message-ID: <881c1466-0b98-4f48-9faf-0c7c65cbfc57@siemens.com>
-Date: Mon, 30 Jun 2025 22:10:08 +0200
+ 20:11:20 +0000
+Message-ID: <2fc7ada9-53fc-4fb7-90dd-45d275c90501@siemens.com>
+Date: Mon, 30 Jun 2025 22:11:18 +0200
 User-Agent: Mozilla Thunderbird
 Subject: Re: [isar-cip-core][RFC 0/7] Immutable /etc
+From: Jan Kiszka <jan.kiszka@siemens.com>
 To: alexander.heinisch@siemens.com, cip-dev@lists.cip-project.org
 Cc: quirin.gylstorff@siemens.com, felix.moessbauer@siemens.com
 References: <20250630181516.1718712-1-alexander.heinisch@siemens.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
+ <881c1466-0b98-4f48-9faf-0c7c65cbfc57@siemens.com>
 Content-Language: en-US
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
@@ -89,194 +90,201 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
  8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
-In-Reply-To: <20250630181516.1718712-1-alexander.heinisch@siemens.com>
+In-Reply-To: <881c1466-0b98-4f48-9faf-0c7c65cbfc57@siemens.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0119.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:9d::15) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR2P281CA0113.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:9d::8) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AM7PR10MB3745:EE_
-X-MS-Office365-Filtering-Correlation-Id: fa873078-65eb-44e5-da8f-08ddb8121d45
+X-MS-Office365-Filtering-Correlation-Id: e4ffece9-eee9-4e9c-c2a0-08ddb812470b
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?eHFDN3B1dUVGYVhyODB6djQ4RTZyd1ovc1kxc1JiMFl2dVFYTDFvZWIvTHpi?=
- =?utf-8?B?RkluQXozQ3JacGwyZkxXWWljUTFIUEZLNlduZ3Mxblh1NzV0S1dsSWFBMDRa?=
- =?utf-8?B?aWhaU3dJUER5N0tnTit4ekdkTWp2dy9MbGdpeStoYTVJYkw1d2pkRXM3L2M1?=
- =?utf-8?B?Y0E0dW1USDVhYkIxVUwwSVVmaUFFaUJMWXNSTXF5U3FISGtEcU9uSnU3RCs0?=
- =?utf-8?B?M3NrNHg4SllFUkxOK3JpbEg5d2RQUDVsUEVnV0htRTNEb0VUdTR4aWl2L3RR?=
- =?utf-8?B?WldMQVpZN254dkFIQytxb25BRmI2N3ZOS2NZMGxPNU80QnE2YzNFeHRNWldj?=
- =?utf-8?B?djAwRHBqTUhIbks3MUNZblFZelNWbUt4V29sRjIzYXZKZDBGbXF3Y0Y2RXhj?=
- =?utf-8?B?ZHRqaUdJMm0vTFRYdUhVQWIrUit1TVIxWkc2alhKZGFCVUEyY3I2Y2xHSUVs?=
- =?utf-8?B?elJ2MmxEUU55Y2xEMDVkV0ViWGhMdlRNeUpIYmZheENBYmlNb0tKalc1bExD?=
- =?utf-8?B?QVY2d2Y4a2h4Nm1CK3AyZGdnK284WnQrYVRVZS9rL3FlSkpiUWFFV2M2UFp3?=
- =?utf-8?B?RSt5Q3ppVXlNeTlKSHBzL1BPTTlGMlZtd290RXpKMzNsRGJ1Wk9xdzNyMGlL?=
- =?utf-8?B?eWVkNWF5ZTQ2ZVB6ckV1WkRUOFZFMzBnczZwL3Z3V0h6Y3ZwbjAwdEFPQ05l?=
- =?utf-8?B?WWpHOC9ra0RHT09hR0tVOWJsZU1zQWt6Q2pLckdXRHlLaE40cUp4THdxUktX?=
- =?utf-8?B?SHFWaHFPdlVjSEgrYy84QVBRUS9SOFNTQkZqU1QrS3hIM2J0MUpkS1ZlaHcx?=
- =?utf-8?B?dW1tVUhwTHRWVUtCSm8yTzlUR1Y2SmREMTU2UzVLSUk3aTFLRTVZNnVsUk51?=
- =?utf-8?B?K3d0Q3F0K2pnWjJ2K21lU3l6MmdVMDAxOU4xRHp1OVR1aDRNTlFUTktDSnJy?=
- =?utf-8?B?TmdtZ2VuaGtNWFAxSHpHcFNzelgvR3ZzWDQ0c0xMVDc2aFM4ZUMrdzdkQ0VC?=
- =?utf-8?B?UGtaVmhtdkIwMzhXYU9qQW16WmJZc3pVTER3bFJuZ0xEcGxlc085S3VFcEtq?=
- =?utf-8?B?by9Na3VYeTBXUDBrNkVwdUhhV2QvRnVIOEVEdkhPSkVUcWU0SFBsZHYydzYz?=
- =?utf-8?B?aDR5aDRZbDhGVGlqRHZWWDFmNGhkQnM0dVhEYkgrYXBzN1ZSQ0tsaEFueVNU?=
- =?utf-8?B?dkE2UTBwbjZvcDFFbDNMenBrSlVtK2NhenhnZUM4aTRLOG9Wb3FQRlZpenYv?=
- =?utf-8?B?ZXlSY1Z0MFdDZmNaYi9mWkw0VGJpNlhsdzVkWVFGN2FiL1pUbkFlWE5qRW5H?=
- =?utf-8?B?TWhuUitOeEw3dklGcTJESkNETVRWOStBWXFOYVIwbWszRFJmdlhYeWRyVTBN?=
- =?utf-8?B?RmFzZW1XTGlwdWlVbnFlOFZMYldtdUtEa251bWZNSU12SUZyR1lubUFIbkRP?=
- =?utf-8?B?MXdlQ3gvMmk5aXJBYkdtRmlUb3NXMER3WTZPaU54SUxVeXVrOXh2S0hhVnRR?=
- =?utf-8?B?OTdmdU1DV1ZnbFZrbSsyN2V3a0w3MFZhRzBiYTB1VnE4ZzdhaUhXRllLb1A0?=
- =?utf-8?B?bDVtQjhGZGRmNk5TajgydjdCQWVpUW0xOTF4NVU4NkNjb3VIUHIvaWc5dURh?=
- =?utf-8?B?cmZkMlhLUFlpa2NaTkIrWDhwaDl5K0xaU1ZWZVNBZko4c3BTZGRRWUNWVjRv?=
- =?utf-8?B?VmwvYjhKTEp4WDJCSnNaRnVuQWpPWk1qcVZkQ1hub1ROTGY5WmFCYnlQSUcr?=
- =?utf-8?B?SXBSVTlZb3RKUmIwbE1BRTZtaGdtcy9CR3ZIZks2R00xTU1TcXpiR1dBb05J?=
- =?utf-8?B?eVJBSHlDcmRXOEo0MXAxK2RDakdodnBYU0xnazcyWmM4VVpLQTNuL2t2cGJi?=
- =?utf-8?B?eDdlRWY2bTYrd3VnSWo4MHAxZlNFQ01FUFI3Y0tTYlM5QzRJZVBsTkhYQUtG?=
- =?utf-8?Q?4NxqqsYT/9o=3D?=
+	=?utf-8?B?WElOKzE5RUh4TVVpTGlqb1B6UTNTRFRVWDBnWXRHYit1a0xYQkNGa0JBWFJh?=
+ =?utf-8?B?dlh1cWtPZExHU2pGK05mVjlsQnNpdjk1ZFFTT3ZzUm42WW9CdERCNVNRUnBR?=
+ =?utf-8?B?dUY1VFljU3Q5YW0ycFgwMWNQZjRMQ05hL0IxSlA4QXNseXdpYU85N01mOXJo?=
+ =?utf-8?B?NFNHUHZRVXp3eEhzS0ppaTJic1h3eVZFdWRZUGpvM1ZHVmpHZlAzK3Y0dEE0?=
+ =?utf-8?B?K2VXQ2NjMDBpOVRmcXp6N2plTDFtdEdFYkFuVUpkc0thRXc5QXdQamJuQi9s?=
+ =?utf-8?B?dU14TkZHWUNkQ3dVZUgxand1UU9RaUFWVE5rY0dyV3M3S3gycVVSNENCTDJt?=
+ =?utf-8?B?SGhHZzQ1NkdFRUZOUUhBb3RMK1JyRjAySTFYWjZsOXA3WlU0N3hxdEVyV1lq?=
+ =?utf-8?B?N1BCa1UwVjNGYnprb0RSMURXaklhWk1lNWpyREdvcTF5VXA4bmh5cXpON2hs?=
+ =?utf-8?B?MUJYUFp1V2lmTW9EZ1hhc29oc0IzYmtmS0o0UVk3V2M3ajFPWHRlV095Njhn?=
+ =?utf-8?B?K01FakNLRW0yRGFmUERHMkxBV0RFVWhEZmsxdVl1cFIxajJDeDFtUHV3ZjYz?=
+ =?utf-8?B?a2NsYzVXaHBzWEtKSE9nL1k5ZTRyYnVQSmlMWmJsYVY2T2xqemltak1oRk1M?=
+ =?utf-8?B?ckdTb3NRNGkrOFNFSC9udmJ3dkpiUE9tUlkyZytpV3NUYTYyNjhZc3dvdVBV?=
+ =?utf-8?B?aG5UMWRuVjhza2IydU1WOFR5N205Q2FOL1FyV2Fwaml4MXN6Mi8yVVVGZVp4?=
+ =?utf-8?B?VDQ4TkRpVTRxQU9iUWNQL08rWExBY0I5Z3RITmExWnlCS2ZTTlRRQ3RoeVJZ?=
+ =?utf-8?B?M2l2enJ0WFIzaDBsc1kxWmRpdlBxU1JhaHkvMklwU0IxNkRBS0MwQzdYWUdN?=
+ =?utf-8?B?eGxIQSt6ZzROUWVSKzJqS1dtYzUxMExvVUpXUWxjVGFML2cyRzBpWWZBUlJy?=
+ =?utf-8?B?eFBySmhEUW1ma3ZYaHdsRjJmZ01BaWxwM2szYm9aOVhyZUFtUWxnVm9vR0ha?=
+ =?utf-8?B?L2xNeHQ3SndnRmI1Y1ZTc01ZYjMrd2pZZEFib1RyL3kwS25DU2FOaUhPeUM0?=
+ =?utf-8?B?bk1JTkRxYUFOTkE0UVBxbFB5Zyt3YUs2dWkzV2h5SHloalFiSzlONGlQYVJ6?=
+ =?utf-8?B?SVBVUmZIWlZjN3FIQzVGbVRBUVBmeXZCNkpRd2twcktrNTdtQ0hVM2IvdXRs?=
+ =?utf-8?B?N0dDcWIrWHErMEYxcDNOaUVCRU5DWHl6dEpQclk1TEtnYWY4OXJ5enNFMGpy?=
+ =?utf-8?B?M1lXSnpJbmRvMDNPT3BObEdXMnBCdUpoY0RYWkcyYkFVNWZONHA5ZTlJeHpw?=
+ =?utf-8?B?a1l6Z2QwRktScmdSVjhhNjRqS2pYVVpDWkFoTGw5cFVhRjBCUG5LSm83Rlgr?=
+ =?utf-8?B?d2R6V0FiUS9FNStyVkJoWGlWVW9SQW8wQUFSN0J1SkFQdVNmS3AwUlRyVFcv?=
+ =?utf-8?B?dEl6WURXa0lSNkZkT0hadjlCSC9FSEc1d083R2lVUDhGd21HdXVxVjNQWXpm?=
+ =?utf-8?B?aEhyTmkzL1paYU0rRjVOaWxDSXg3QUR2UVZ4RU5UOHZ3QzEwNjc5eTRrWUhl?=
+ =?utf-8?B?S1Rsc1ZMRURNczNHUXQ3WUlJcFZUbEd3YzRXTXdRckc0cDkwTi9QVXQ3QStl?=
+ =?utf-8?B?dnFWTUk4a0hyblk2RWR2Sm5pU3RNbjRyRjhXdlp5RW4xVHNYQlBQRnZUZ3pr?=
+ =?utf-8?B?ZCtZWWpZaDk0QWlCSVdUSlh6SG1NM0VhWXFKM1hDV29HT1lMSnNGT0cwVG1S?=
+ =?utf-8?B?WXE5VjZic2VnRzlZVksvREFWcHNlZjI4TnM4Tk5TL1dpeDZoWkQybmpZRSsv?=
+ =?utf-8?B?eXhNdmphZm0rVnB0S2JCZHhxVmRvSnBKSG5lUW1YTGk4cGhWZGFlNkN5RnRT?=
+ =?utf-8?B?NDBYWElNblZESFZZK1ZNMUVFN3Fxb1pmNS9VU1VjUUJPVUZDWkdVWk9JWWNI?=
+ =?utf-8?Q?aI/1urwk7xw=3D?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?ZUJmZHF1d3M4ZFFiSjJsbVJ6VVBjWVNSZjgrVjU3eTBaSkpnMkthL1FJTG9Q?=
- =?utf-8?B?eVAwQVEremoxWVl4NFFSTW9wQ2pLcmN1L2J3V1Q3WERETHY5Rm1WOCt5bXdw?=
- =?utf-8?B?TkJNNXBURFp5cTJ3R2E3dFVmOGFmOWxveTdxN1BUL2lFcmhGemUzVEtCRzJJ?=
- =?utf-8?B?cjhTaU8wSk5VNG14NjZMcmNxRHBOKzd2UVVtbldabWJzNXdnbkJjWnZZNCsx?=
- =?utf-8?B?cFRXM1lpU28rT1p6My9XNVFuU3BkbDNrWHZBUndwUWZ3a2MwUk9iNFM0Q1Jq?=
- =?utf-8?B?YlgzblNma3NTOGRMeWJtWTVkMURBeFAyK00zT1QxWU5VQnYraWJhYXlZMWR5?=
- =?utf-8?B?dXcxMEY5S25IL0FtYjhRdHlFUFczSFJpOTE3NDNic0FQbnd6bWU1K0xwRXds?=
- =?utf-8?B?RGh6d2JMSTNqQmdaQnNDaisyS2U0Ny9YREZXVkhvUEFJaFZ0b05ZZlo2NzRR?=
- =?utf-8?B?ZTZNMnVJUWx5THVTdlA3Z2tmaXp3SXl5OHEzL2JNRVpMYWx2NW1RNHRmd213?=
- =?utf-8?B?NkJybmZwZGU0QTQ3ckNVdEdNcTc3QmxnYU1YYzk4c1UvQTZ3czN2M3NCSkpl?=
- =?utf-8?B?NEZseGdOQlN6NlpxRzNSQ3hoNHVWVncyZHpORVBqc2g5R1BkTVBJZU1yQVZW?=
- =?utf-8?B?VFJET00wcmd4RXlOcGttQ3lhaUhPeWRBZ3FrNGtaSUYvV0VGbEtRRnZiVllo?=
- =?utf-8?B?K25lZjZVcm9uK1RIckY1dE5ZRVAvK1MrTnNzaVlEbU9ZY0NJZWlDNFY0ZTJn?=
- =?utf-8?B?SjFKNVRYSVlQeGF2S0pkZ1NnN2ZWNXE5QkdYTDR2R2lYU0Q0T1puTTRsU3k0?=
- =?utf-8?B?TXM1MjFlTnFIYjJNL1pCVGFnY2cxN3J3TWc3RWVIbGZLYzlqNFBqVWViQUcz?=
- =?utf-8?B?NEE5dmRLODlWSTU0RFl4VzNyeXdoNUh0ZWtCbFlNTXBqS1FwRVF6VW8yeFF5?=
- =?utf-8?B?YzkrUU9SRm43VjJOa2RDVFpGR1NMcHpuS3JkejVtUHl6MzZvYmlNaWIva2FM?=
- =?utf-8?B?c3JaZnNPQkVCWmFlYkYzQnc2NUhCdFc0eVFwbEQvSW1KN3ZHZThBOUlua3Qv?=
- =?utf-8?B?eXB1Y1FiRUpRbHJpOHRLY2lyMmVSNWc2cjhPTlJ1WFdDOWhnTDZ3U3NUNHZn?=
- =?utf-8?B?ZXN0clNUSEdNajZTdCtZaW1VNW96UHF5T2FrWGNXM3dSck1hSDgwWVVmWS9Z?=
- =?utf-8?B?RDYzQWwzSlFFc2hJYlVydHVHZHk1Q0FhYVZCMTlmNzhBcis1N3liTWJkMzJF?=
- =?utf-8?B?Qmk2QUREamloZXM0bEVpOEhuazZKUGxnQWRrNzRHOFFKUkcyMFA2RUYvQmJC?=
- =?utf-8?B?dzNzNmhVdzA3a0NWVHg1aFFJcy9Ja2VuNkZKR3R1anJnb2xhZVBPczMrRmRh?=
- =?utf-8?B?VWoxZmJiRnlDdnAvY2hCVWVyaC9PZ2xsektCQkdXdGtkcUJhNG83L1Fmd2dF?=
- =?utf-8?B?ZGZRTEhYWDRHcm4vb2xhdVhuRlQ4bkhtY29YbnoyNzVaUlJhSGVZWnpvL1hz?=
- =?utf-8?B?SHhFVVh0T0tlUThkOGpGNnRKbUoxYXAvWGpDWnFWcGVIZWtlalh4ZEJiTkFy?=
- =?utf-8?B?OGlIYmxSUHcwU2xrK204VTZray9nZ3gvREZMcnpJRHpFaE5DaWxzWnIrODNB?=
- =?utf-8?B?YVhjTXIvb1JKdlprSXNMM3h1RGF1bkw1MHFMUnlnUFhyVklrdWU4cGRqUTF2?=
- =?utf-8?B?TVpLRFZ0QXc0T3JqYzNGZWhaeGRrSzgvcWt2aGduRnhkL2NCSDJvOHNrdzFy?=
- =?utf-8?B?R3RBTkpRcGtoVXJrQldkY3E0T1cvRUZXQjRxd0ZTcCtLTFBkcStQM2Iwb3hX?=
- =?utf-8?B?VlQzRUw5akJoc1lYdzYzNDcvUnN2bS9tTDdGRVFjVnQ0dGQ0a0JtRE9uOGhW?=
- =?utf-8?B?VGpVR3NKMERjbnRqb05MZnNEcitPTjdpQnZuNXdUUlRFSjZZWmRrMzVPVU1R?=
- =?utf-8?B?MUtPL3QvMXRyR2t3QUVRanc0Wk1QSmNnSUlrUjQ0QzdQVEkzMFlKYjVaTFd0?=
- =?utf-8?B?NnZiNGZYVklhK1RkeXJ0cnpmeGppUy9SeE94ZHNuN2tsbjl0ODdxQ3oyMWtp?=
- =?utf-8?B?cksyMXNEYmRhanhaRHRjMVFYS2N5NTRYZHRacklIZldMT1hmRmY1OXcwN3FM?=
- =?utf-8?B?VUllSDZieW9zWEpPT3J2NkxwcDVPbUNwQnpWQ29ySVBRMEhjYm0rdEYrNnpX?=
- =?utf-8?B?WVE9PQ==?=
+	=?utf-8?B?OUZQOTd1eDU0aFN5QmNSQll2REs1UFZWNCtnejJlNERuSE40OVNQZHN1ZC8x?=
+ =?utf-8?B?cnZUSTVvcVY4RjZLQ25LSHFOQjUyQmd3YWlnNTdERCtJYWphd084UjRWd2Nw?=
+ =?utf-8?B?ZlVUQ3NOMkFOWE5TVzRkWVFRcGRhcjZldnlwZWliZlZxSTRWWlBmOXArcS8r?=
+ =?utf-8?B?cWJZNjRtRDdHZmtSYXdyWkJLdlhKY3RGNEVQUHlBWWFHUG1ZYzdQMXNJQjVn?=
+ =?utf-8?B?dVZNSFhnZjlZSGo5b2U4dUc3OFUyZlkzckJlaTVOeHdRcHIzbUg3ckhCR0Yz?=
+ =?utf-8?B?L0xZM1ZNa1V5T2dTMWNTMVJVeDFUeXVnZG53NEkzWUtRc1VZU2ZERCt0REdM?=
+ =?utf-8?B?c09KRTZwamlLMG40RGRWRkZFT25KOGt2eGtrdnZGNlVPclhjQ2lvME96eUVo?=
+ =?utf-8?B?bTJhMmV5T1FzUHNHM2VlMFZMWVp2YVVkL09jVStLTi9KWjlCZTB1RWV5c28w?=
+ =?utf-8?B?UVFXSDV4ak1rUkg2MDZEK3BCUTFyWG0rT3prRkJkcFJETm5mWm1Sazc2ZVBs?=
+ =?utf-8?B?bnVhbFFTMlMrT3FKalExMzlCRHZlQldmc3R5VkxScmxTRmdibzR1c0V4dDRS?=
+ =?utf-8?B?T0REYkF3ZFZaL05hTnlGdjh2YW9yT3JIN0xvN1o5alVSWitGUkJDRXVERFpC?=
+ =?utf-8?B?QzBZKzNvM0dWWVRpcEkyMWZJUjQwMFFaNFg2b05ESWJUNEdYbjduTWczbTZl?=
+ =?utf-8?B?dEdWWlNFQmhNTitySlE2bGlGQ0tIbDc3ZTlzYk0vaEpOWld3aENJeExZamZU?=
+ =?utf-8?B?RU5Ua0VDTXRUeFhNOVNBUGswR0N0a1ZkZG1LazR5dHZpbjdDTEp0clBhVEUz?=
+ =?utf-8?B?SE45UDhydVFXMGtrUDZyRFlWcFBXWHo5SEhMMDRDRTNoZjBKZStlNHQvOUJp?=
+ =?utf-8?B?OEhySENPNFl3OFNjamN6ZjhtVTNwcm9wZnB0K0t2dFp3N2Qycjg5TXRVenVF?=
+ =?utf-8?B?REZEVG5pZFM3NjJOMHBnOXNQTkZXdlArdC9aeHM3ZWpxQU1KVDY5Vnp0VXdh?=
+ =?utf-8?B?R1hxQkg1bUdJZ3VhaUF3emk0ZGxjOG5uOC9Sb0hmTDNNNGhrY2RxVDJUYUxO?=
+ =?utf-8?B?Y0hZR01vWjlNeVo0MUNrUzNmbDhkakRTUEpwaktpUCtRc1V5ak1PWC8yVVFP?=
+ =?utf-8?B?ckFaak5XVUYwVDAwcU9EVThSTHVoVVJkanhvNTRLeUxza3g2MUo0SXN2SUgw?=
+ =?utf-8?B?cWM3SzBUb3lSSy9FR21WZkE0SEJ2Mjl4eWlSTXlXSE54b0ZFWGZCd3RWVm9D?=
+ =?utf-8?B?TzY1dUx6WWRkTmVPRWRUc0p1RE1UdG16Tk9lTkN4YUZURVFkY3JnTFRBS1Zt?=
+ =?utf-8?B?VUwwT1JhYi9QQ1ovdUJXU1g3UnVCRDVVdk0yTWZBSnlBeWM5QmVTWmJRcDBX?=
+ =?utf-8?B?bDFTY2w0T3pNQWYyN002VnIza3d0dWV0SlZ1ZzZ1M2tYN2tBeVFxMUlKZUNU?=
+ =?utf-8?B?YURwbTBBck5Cd25JTlllUTFGYk85M3AveE9GN2J3d29Lajd2MjZVTjRVZkVW?=
+ =?utf-8?B?Z3lJV2VYalV6ZzJITUtpQWpkRHpLdXVQaERvRkU4VlR6SDJGTnBnZ2RaNDdj?=
+ =?utf-8?B?WmtFcDZDSlZIbGsvUWxQVVNLYWNWUmlqU3NrQjJVcWVhMmU1bjNRUUZFakxZ?=
+ =?utf-8?B?UVBMNTIzeWFpNHNxcWYvdFo5WWFmbGxzZnJTcUtUMnhXU3dQRHV1ZUZrL3kv?=
+ =?utf-8?B?YXVNM2NSQVpqdEFXR2lTUEhDT2JmSGZZOGxYMVZWQTQ0QXlsZlJCNVRSZ1lN?=
+ =?utf-8?B?WGh6aUh2bFlzZERHbUNaNTdyM25PM1ZhbFBzL1M1SlhCNUExelV1V0F1NHZJ?=
+ =?utf-8?B?TFFIaWozOXQyMTEyb3lNUVpNdVh4VnB3VzdHV0VQNjJ1U0Z5dURza2x6VEpL?=
+ =?utf-8?B?bDV4K003ZjhFck84ZlRKYVNMNVFMRisydi9FMEx4WEFMWUZPdVZVWXREdDRO?=
+ =?utf-8?B?R2Z6d2FuTnpzcHUvL1RHL3FXWEFVSXRoNWpqeFpndmhiUGRGdnl2TzhNVy9Y?=
+ =?utf-8?B?YU5tb3lFTEVJREpydEIxd0dab1Y5WXR4ODlxd2dJSW10OElYY1RnWjdlNThY?=
+ =?utf-8?B?OXV3WG9NOFJYVjQ3aDhFTS9mU09GVWduaUllSHpFWkttbFFFamlveW4rWHZQ?=
+ =?utf-8?B?c0JRbmJxZmVhRFdOTjgrNDRVZTJ0TmR3SlVHZ0lkVVgwTnZPL0dqNlVvT1Bq?=
+ =?utf-8?B?L3c9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa873078-65eb-44e5-da8f-08ddb8121d45
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4ffece9-eee9-4e9c-c2a0-08ddb812470b
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2025 20:10:10.1025
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2025 20:11:19.9524
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7Jktv2P7WgkW//lw8I3/dMcunx0LREJwKamvJfFBTkkncPvwIufyNOVnQLQDD7DFDvWdOIMGALgZ42oM0OX9ag==
+X-MS-Exchange-CrossTenant-UserPrincipalName: YPADu9fTAzM8rowQHGJ2LzrAC/WWDJP8ssThy8codrjZeAaOKKutqIewbUkxZMcK6GNwWrKuFG+13syS/XvHfQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3745
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 30 Jun 2025 20:10:22 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19266
+ <cip-dev@lists.cip-project.org>; Mon, 30 Jun 2025 20:11:32 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19267
 
-On 30.06.25 20:15, alexander.heinisch@siemens.com wrote:
-> From: Alexander Heinisch <alexander.heinisch@siemens.com>
+On 30.06.25 22:10, Jan Kiszka wrote:
+> On 30.06.25 20:15, alexander.heinisch@siemens.com wrote:
+>> From: Alexander Heinisch <alexander.heinisch@siemens.com>
+>>
+>> **NOTE:** The patch series appended to this RFC mainly covers
+>> handling of /etc/machine-id (see below) in the proposed solution and serves
+>> as a basis to estimate additional complexity ro etc introduces.
+>> Thus, be aware that some of the patches included are not to be applied
+>> on next, (yet), and therefore, this patchset does not cover all
+>> cases and introduces some regression on the images built
+>> (e.g. ssh-regen-keys)
+>>
+>> The setup used for the PoC was built using:
+>>
+>> ```
+>> ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/6.1.yml:kas/opt/bookworm.yml:kas/opt/ebg-swu.yml:kas/opt/readonly-etc.yml:kas/opt/machine-id-on-var.yml:kas/opt/config-on-var-demo.yml
+>> ```
+>>
+>> ## Background:
+>>
+>> During hardening activities we identified potential
+>> security implications of having a rw /etc.
+>> While this most certainly is a problem when attackers gain
+>> root access to the device, it prohibits unnoticed configuration
 > 
-> **NOTE:** The patch series appended to this RFC mainly covers
-> handling of /etc/machine-id (see below) in the proposed solution and serves
-> as a basis to estimate additional complexity ro etc introduces.
-> Thus, be aware that some of the patches included are not to be applied
-> on next, (yet), and therefore, this patchset does not cover all
-> cases and introduces some regression on the images built
-> (e.g. ssh-regen-keys)
+> You likely mean, that rw /etc "allows" unnoticed changes.
 > 
-> The setup used for the PoC was built using:
+>> changes by tools running on the system, as well.
+>>
 > 
-> ```
-> ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/6.1.yml:kas/opt/bookworm.yml:kas/opt/ebg-swu.yml:kas/opt/readonly-etc.yml:kas/opt/machine-id-on-var.yml:kas/opt/config-on-var-demo.yml
-> ```
+> Can you please elaborate more on the actual threat model? I'm not a fan
+> of adding such complexity based on "something may go wrong".
 > 
-> ## Background:
+>> Further discussion is based on following observations:
+>>
+>> 1. Many services don't need to be reconfigured during runtime
+>>    and shall remain static. With an (rw) overlay on /etc this cannot
+>>    be guaranteed.
+>>
+>> 2. Having fine granular overlays won't work either, because
+>>    some services rely on files put in /etc directly.
+>>
+>> ### Systemd:
+>>
+>> Systemd maintainers suggest to have full /etc rw and
+>> put immutable configuration to /usr.
+>> While this theoretically could work, many programs
+>> don't fall back to configuration on /usr and if so need
+>> to be reconfigured (efforts not estimated yet).
+>> Further potential to reconfigure services (permanently)
+>> is still not prohibited, since in case of systemd
+>> /etc has precedence over /usr (/lib) based configs.
+>>
+>> ## Proposal
+>>
+>> Therefore, our RFC proposes the following:
+>>
+>> 1. Having an immutable /etc
+>>
+>> 2. In case of non-epemeral, rw-able files use soft links to /var/mutable/...
+>>    In case attackers get (root) access, this still impacts those
+>>    configuration but the rest remains static.
+>>
+>> 3. In case of ephemeral, rw-able files (e.g. config that can be regenerated)
+>>    same can be applied backed by tmpfs and config service / tmpfiles.d
+>>
+>> 4. In case of rw-able dirctories fine grained overlays are ok.
+>>    But most probably on hardened systems config tools exactly know
+>>    which files to touch (so use can be limited quite exhaustively).
 > 
-> During hardening activities we identified potential
-> security implications of having a rw /etc.
-> While this most certainly is a problem when attackers gain
-> root access to the device, it prohibits unnoticed configuration
+> Are we the first to propose such a scheme? What do others do to achieve
+> similar protection goals?
+> 
+> And how many services will now need lots of fine-tunings in order to set
+> up all those links and folders?
+> 
+> This sounds like labeling a system for selinux: Can be done once, all
 
-You likely mean, that rw /etc "allows" unnoticed changes.
-
-> changes by tools running on the system, as well.
-> 
-
-Can you please elaborate more on the actual threat model? I'm not a fan
-of adding such complexity based on "something may go wrong".
-
-> Further discussion is based on following observations:
-> 
-> 1. Many services don't need to be reconfigured during runtime
->    and shall remain static. With an (rw) overlay on /etc this cannot
->    be guaranteed.
-> 
-> 2. Having fine granular overlays won't work either, because
->    some services rely on files put in /etc directly.
-> 
-> ### Systemd:
-> 
-> Systemd maintainers suggest to have full /etc rw and
-> put immutable configuration to /usr.
-> While this theoretically could work, many programs
-> don't fall back to configuration on /usr and if so need
-> to be reconfigured (efforts not estimated yet).
-> Further potential to reconfigure services (permanently)
-> is still not prohibited, since in case of systemd
-> /etc has precedence over /usr (/lib) based configs.
-> 
-> ## Proposal
-> 
-> Therefore, our RFC proposes the following:
-> 
-> 1. Having an immutable /etc
-> 
-> 2. In case of non-epemeral, rw-able files use soft links to /var/mutable/...
->    In case attackers get (root) access, this still impacts those
->    configuration but the rest remains static.
-> 
-> 3. In case of ephemeral, rw-able files (e.g. config that can be regenerated)
->    same can be applied backed by tmpfs and config service / tmpfiles.d
-> 
-> 4. In case of rw-able dirctories fine grained overlays are ok.
->    But most probably on hardened systems config tools exactly know
->    which files to touch (so use can be limited quite exhaustively).
-
-Are we the first to propose such a scheme? What do others do to achieve
-similar protection goals?
-
-And how many services will now need lots of fine-tunings in order to set
-up all those links and folders?
-
-This sounds like labeling a system for selinux: Can be done once, all
-looks nice afterwards, and then something changes, people loose
-overview, and the whole concept erodes until everything is reverted to
-normal mode. Such an approach must not only technically work. It must be
-*maintainable* first and foremost. And I'm missing the latter here.
+...labeling and creating the policies, of course.
 
 Jan
+
+> looks nice afterwards, and then something changes, people loose
+> overview, and the whole concept erodes until everything is reverted to
+> normal mode. Such an approach must not only technically work. It must be
+> *maintainable* first and foremost. And I'm missing the latter here.
+> 
+> Jan
+> 
 
 -- 
 Siemens AG, Foundational Technologies
