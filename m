@@ -2,35 +2,35 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F2F0C83F10
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E34C83F15
 	for <webhook@archiver.kernel.org>; Mon,  7 Jul 2025 09:16:28 +0000 (UTC)
-Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
- by mx.groups.io with SMTP id smtpd.web10.55700.1751879784441193449
+Received: from mta-65-228.siemens.flowmailer.net (mta-65-228.siemens.flowmailer.net [185.136.65.228])
+ by mx.groups.io with SMTP id smtpd.web10.55697.1751879784132940039
  for <cip-dev@lists.cip-project.org>;
  Mon, 07 Jul 2025 02:16:25 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=jan.kiszka@siemens.com header.s=fm1 header.b=Aao30M/B;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-294854-20250707091621bf1daffc89babce280-mvr11o@rts-flowmailer.siemens.com)
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 20250707091621bf1daffc89babce280
+ dkim=pass header.i=jan.kiszka@siemens.com header.s=fm1 header.b=LSzYEWfH;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.228, mailfrom: fm-294854-20250707091622b92733b515c1f31935-mcptht@rts-flowmailer.siemens.com)
+Received: by mta-65-228.siemens.flowmailer.net with ESMTPSA id 20250707091622b92733b515c1f31935
         for <cip-dev@lists.cip-project.org>;
-        Mon, 07 Jul 2025 11:16:21 +0200
+        Mon, 07 Jul 2025 11:16:22 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=jan.kiszka@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=GZKqngNRPq65dACgfONJ3TZGW2c58jLyZiEXfeCyWho=;
- b=Aao30M/Be86lHCVW26waTXwNsSu+kHdqhWAaU/HIUj+pYRntfamrsFFG/BazSbEi2XImBx
- +GyvcS9Ld4QkkPq46jJE1RVR/zWFb+PBbaEI1EqN9W1drjCuxdfSA41/3GB8te9KFecrJwBP
- Xa2G3VpY7Ea2yTX+395YrM6GPA7wluaryYZcvBGs8fDDuzDYYS0+sQis70JJZvUVjJd2rzd0
- wiArKMIiNfO9IM2kQR34+RGaM3R3T1HAFI4nAYEYqNTiXQL8DQDY2Ap8shxPUShuHE2fpx3U
- p1D+sIg02Cj8TtoIzUfAzew5BI8IEVndcpIcstf/RkCrixgwWcbxI8xA==;
+ bh=buEpxKqui5/wqGTfN7DuW22VQ9hk3wqRhScBabBp2fE=;
+ b=LSzYEWfHGpRDU3TjgPopdzRsyIb1POsKvf/L1dagpPnbwnLvJaxMBOgbKazxC3CV3CiFmJ
+ l7Vht3wq0dVVR39VTBuJJj/jHjNQ3ZJxULOQuWahC1adROn9E+asGRbTv2I3r3nOGsodfOcf
+ zAK1rnWKy8S3KE3VB3H7DrE6YhCUIUOMJ4yutOvAkqmeKpnaNz51pQQxRLw078I9rTifIYDx
+ oPzS8M8KiXhNcUx7xpXKRk74EbWW5kQwA57V293WQGO5SAdz8TxdkxwKZ9tXCLUXxD3+Vl6M
+ YQpw6c2B8cSP1c8XoOPsPrnpCwyuBscJXfvxkxLPhASQxDX+JdfFQkmw==;
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
 Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>,
 	Heinisch Alexander <alexander.heinisch@siemens.com>,
 	Cetin Gokhan <gokhan.cetin@siemens.com>
-Subject: [isar-cip-core][PATCH v9 6/8] initramfs-crypt-hook: add re-encryption recovery
-Date: Mon,  7 Jul 2025 11:16:18 +0200
-Message-ID: <1c6d1caa1a062487ccc56ea1405757e15767cc93.1751879779.git.jan.kiszka@siemens.com>
+Subject: [isar-cip-core][PATCH v9 8/8] initramfs-crypt-hook: add 'format-if-empty' feature
+Date: Mon,  7 Jul 2025 11:16:20 +0200
+Message-ID: <17b139c338fb5513e0c589f2392371c66d4d6952.1751879780.git.jan.kiszka@siemens.com>
 In-Reply-To: <cover.1751879779.git.jan.kiszka@siemens.com>
 References: <cover.1751879779.git.jan.kiszka@siemens.com>
 MIME-Version: 1.0
@@ -41,94 +41,215 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 07 Jul 2025 09:16:28 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19376
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19373
 
 From: Claudius Heine <ch@denx.de>
 
-Integrate detection and recovery of power failures while a partition is
-being encrypted.
+With the A/B update scheme, the goal is to have two (mostly) independent
+system slots, one that is active and one that is inactive. The active
+system slot writes updates to the inactive system slot and switches the
+active and inactive slot via a reboot. Late when booting the new system,
+it will decide if the current system is stable and then 'bless' it in
+the bootloader, or it will consider the update failed and the system
+reboots, without the updated system slot being blessed.
 
-There are possible scenarios:
-1. Power-fail happens while the partition is reencrypted:
-  - The LUKS header contains `online-reencrypt-v2` and needs to be
-    repaired with `cryptsetup repair` before it can continue.
-  - Also no resizing of the file system is necessary
-2. Power-fail happens before the systemd-tpm2/clevis token can be installed
-  - The LUKS header does not contain 'systemd-tpm2'/'clevis', thus it
-    needs to be registered and the temporary encryption key needs to be
-    removed
+In the last case, the system in the old slot will work as a fallback
+system, that reports the failed update back to the backend, and continue
+the service, as it has before the update was applied.
 
-The list of these scenarios is not complete, there might be other
-instances where a sudden power-fail could be fatal to the system, but
-these where the most obvious and risky ones.
+It is important here that the update does not modify the fallback system
+in any avoidable way, because doing so might break the fallback and make
+the system not remotely recoverable.
+
+If encryption is added via an update, there are two cases to consider:
+
+1. Update is applied to the inactive update slot via the normal update
+   procedure. In this case the fallback system should not be modified.
+2. A system that uses encryption is flashed via a factory flash. In this
+   case there is no fallback system and all partitions of both update
+   slots need to be encrypted.
+
+To differentiate between these cases, the content of each fallback
+partition can be looked at, if they contain data, we are in case (1) and
+these partitions should be left alone, if they contain only 0x00, they
+can be formatted, because we are in case (2).
+
+The `format-if-empty` option is implemented here, will look if the first
+10 MiB of each partition marked with this option contains 0x00 or not
+and will either format it or leave it alone.
 
 Signed-off-by: Claudius Heine <ch@denx.de>
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- .../files/local-top-complete                  | 26 ++++++++++++++++---
- 1 file changed, 23 insertions(+), 3 deletions(-)
+ doc/README.tpm2.encryption.md                 | 37 ++++++++++++++-----
+ .../files/local-top-complete                  | 21 +++++++++++
+ .../initramfs-crypt-hook_0.9.bb               |  2 +-
+ 3 files changed, 50 insertions(+), 10 deletions(-)
 
+diff --git a/doc/README.tpm2.encryption.md b/doc/README.tpm2.encryption.md
+index 2256f95a..6ae2c897 100644
+--- a/doc/README.tpm2.encryption.md
++++ b/doc/README.tpm2.encryption.md
+@@ -12,7 +12,7 @@ passphrase on the device.
+ 
+ Testing with qemu-amd64 requires the package `swtpm`. Under Debian/Ubuntu this can be installed
+ 
+-``` shell
++```shell
+ apt-get install swtpm
+ ```
+ 
+@@ -23,39 +23,49 @@ or `clevis` (Debian 10 and Debian 11) to enroll a TPM2 protected LUKS passphrase
+ The procedure for storing a key is described in [systemd/src/shared/tpm2-util.c](https://github.com/systemd/systemd/blob/0254e4d66af7aa893b31b2326335ded5dde48b51/src/shared/tpm2-util.c#L1395).
+ 
+ ## How to build an QEMU image with TPM encryption
++
+ An example for qemu-amd64 can be build with by selecting the option after calling:
+ 
+ ```
+ ./kas-container menu
+ ```
++
+ or by adding using the following command line build:
+ 
+ ```
+ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu.yml:kas/opt/encrypt-data.yml
+ ```
++
+ ## initramfs-crypt-hook configuration
+ 
+ The initramfs-crypt-hook recipe has the following variables which can be overwritten during image build:
++
+ - CRYPT_PARTITIONS
+ - CRYPT_CREATE_FILE_SYSTEM_CMD
+ 
+ ### CRYPT_PARTITIONS
+ 
+ The variable `CRYPT_PARTITIONS` contains the information which partition shall be encrypted where to mount it.
+-Each entry uses the schema `<partition-identifier>:<mountpoint>:<reencrypt | format | noencrypt>`.
++Each entry uses the schema `<partition-identifier>:<mountpoint>:<reencrypt | format | noencrypt | format-if-empty>`.
++
+ - The `partition-idenitifer` is used to identify the partition on the disk, it can contain a partition label, partition UUID or absolute path to the partition device, e.g. `/dev/sda`.
+ - The `mountpoint` is used mount the decrypted partition in the root file system
+ - `reencrypt` uses `cryptsetup reencrypt` to encrypt the exiting content of the partition. This reduces the partition by 32MB and the file system by a similar amount
+ - `format` creates a empty LUKS partition and creates a file system defined with the shell command given in `CRYPT_CREATE_FILE_SYSTEM_CMD`
+ - `noencrypt` will not try to encrypt the partition if it isn't encrypted already, but will open it if it is. See the section [Encrypting the shared partition via an update](#### Encrypting the shared partition via an update) for more information
++- `format-if-empty` will create an empty LUKS partition and format it, like the `format` option, but only if the first 10 MiB are empty (contain only 0x00). This makes it possible to differentiate if a partition is empty and can be encrypted, because it was freshly flashed via a factory image, or if it might contain an unencrypted fallback system and should be left alone.
++
++Power failure safety: Changes to the partition structure or file system super blocks can be dangerous and may result in the system failing to boot if power is cut at a critical point. Efforts were made to either eliminate these critical periods or keep them as short as possible. However, some remain. For example, if writing the LUKS header block is interrupted halfway through, the script and tools may misinterpret the state and be unable to recover.
+ 
+ #### Encrypted root file system
+ 
+ To encrypt the root file system the variable `CRYPT_PARTITIONS` needs to be set to:
++
+ ```
+ CRYPT_PARTITIONS = "${ABROOTFS_PART_UUID_A}::reencrypt ${ABROOTFS_PART_UUID_B}::reencrypt"
+ ```
+-The mountpoint is empty as the root partition is mounted  by a seperate initramfs hook.
++
++The mountpoint is empty as the root partition is mounted by a seperate initramfs hook.
+ Both partitions are encrypted during first boot. The initramfs hook opens `${ABROOTFS_PART_UUID_A}` and `${ABROOTFS_PART_UUID_B}`
+ during boot.
+ 
+@@ -78,22 +88,29 @@ The data partition in the fallback system will have the `noencrypt` flag set, wh
+ - Update fails at a later point and is not blessed; system reboots into the fallback system on slot A.
+ - Fallback system now needs to be able to use the shared data partition.
+ 
++In this case, where encryption is added via an update, the `format-if-empty` option is also useful. The system with encryption enabled has the `format-if-empty` option set for the partition(s) in the inactive update slot. This will cause both sets of partitions in both slots to be encrypted after the first boot on a fresh factory flashed system, but will not disturb existing data of any fallback system if booted after an update.
++
+ ### CRYPT_CREATE_FILE_SYSTEM_CMD
+ 
+ The variable `CRYPT_CREATE_FILE_SYSTEM_CMD` contains the command to create a new file system on a newly
+ encrypted partition. The Default (`mke2fs -t ext4`) creates an ext4 partition.
+ 
+ # Convert clevis based encryption to systemd-cryptenroll
++
+ ## Prerequisites
++
+ The following packages are necessary to convert a clevis based encryption to a systemd-cryptenroll
+ based encryption:
+- - clevis-luks
+- - clevis-tpm2
+- - cryptsetup
+- - jq
++
++- clevis-luks
++- clevis-tpm2
++- cryptsetup
++- jq
+ 
+ ## steps to convert clevis to systemd
++
+ The following script shows how to enroll a systemd-tpm2 token with a existing clevis based encryption:
++
+ ```bash
+ export device=/dev/sda6
+ export keyslot=$(sudo cryptsetup luksDump "$device" --dump-json-metadata | jq -c '.tokens.[] | select( .type == "clevis") | .keyslots | first' | head -n1)
+@@ -102,15 +119,17 @@ if [ -n "$keyslot" ]; then
+   systemd-cryptenroll --tpm2-device="$tpm_device" --tpm2-pcrs=7 "$device"
+ fi
+ ```
++
+ # TPM2 based encryption on generic x86
+ 
+-For a generic x86 platform with TPM2  module the build can be started with:
++For a generic x86 platform with TPM2 module the build can be started with:
+ 
+ ```bash
+ kas-container menu
+ ```
+ 
+ The TPM2 module should support:
+- - a sha256 pcr bar with the ecc algorithm.
++
++- a sha256 pcr bar with the ecc algorithm.
+ 
+ If only a sha1 pcr bar is avaiable the variable `CRYPT_HASH_TYPE` needs to be set to `sha1`.
 diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-index 6d5feda8..f93f2a92 100644
+index b76b1db3..0d42bd41 100644
 --- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
 +++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
-@@ -75,6 +75,9 @@ reencrypt_existing_partition() {
- 	reduced_size="$(expr "$part_size_blocks" - 65536 )"
- 	reduced_size_in_byte="$(expr "$reduced_size" \* 512)"
- 	reduced_size_in_kb="$(expr "$reduced_size_in_byte" / 1024)K"
-+
-+	CRYPTSETUP_PARAMS="--reduce-device-size ${reduce_device_size}k"
-+
- 	case $partition_fstype in
- 	ext*)
- 		# reduce the filesystem and partition by 32M to fit the LUKS header
-@@ -93,14 +96,25 @@ reencrypt_existing_partition() {
- 	squashfs|swap|erofs|"")
- 		[ "$debug" = "y" ] && echo "skip disk resize as it is not supported or unnecessary for fstype: '$partition_fstype'"
+@@ -305,6 +305,27 @@ for partition_set in $partition_sets; do
+ 			eval "${create_file_system_cmd} ${decrypted_part}"
+ 			log_end_msg
  		;;
-+	luks)
-+		# Check if reencrypt was aborted
-+		if /usr/sbin/cryptsetup luksDump --batch-mode "$1" \
-+				| grep -q "online-reencrypt-v2"; then
-+			/usr/sbin/cryptsetup repair --batch-mode "$1" < "$2" || \
-+				panic "cryptsetup repair was not successful"
-+		fi
-+
-+		# already luks partition, don't resize
-+		CRYPTSETUP_PARAMS=""
++		"format-if-empty")
++			# Check if first 10MiB contain only zeros, or if it contains a luks
++			# header, but no TPM2 token
++			if cmp -s -n "$(( 10 * 1024 * 1024 ))" "${part_device}" /dev/zero || \
++				( [ "$(get_fstype "${part_device}")" = "luks" ] && \
++				! ( /usr/sbin/cryptsetup luksDump --batch-mode "$part_device" |
++					grep -q "systemd-tpm2\|clevis" ) )
++			then
++				log_begin_msg "Encryption of ${part_device}"
++				/usr/sbin/cryptsetup luksFormat --batch-mode \
++					 --type luks2 "$part_device" < "$tmp_key"
++				enroll_tpm2_token "$part_device" "$tmp_key" "$tpm_device" "$tpm_key_algorithm" "$pcr_bank_hash_type"
++				tpm2_key_del
++				open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
++				eval "${create_file_system_cmd} ${decrypted_part}"
++				log_end_msg
++			else
++				# If not empty, leave it alone.
++				continue
++			fi
 +		;;
- 	*)
- 		panic "cannot resize partition, unsupported fstype: '$partition_fstype'"
+ 		*)
+ 			panic "Unknown value ${partition_format}. Cannot create a encrypted partition !"
  		;;
- 	esac
- 	if [ -x /usr/sbin/cryptsetup-reencrypt ]; then
--		/usr/sbin/cryptsetup-reencrypt --new --reduce-device-size "$reduce_device_size"k "$1" < "$2"
-+		/usr/sbin/cryptsetup-reencrypt --new ${CRYPTSETUP_PARAMS} "$1" < "$2"
- 	else
--		/usr/sbin/cryptsetup reencrypt --encrypt --reduce-device-size "$reduce_device_size"k "$1" < "$2"
-+		/usr/sbin/cryptsetup reencrypt --encrypt ${CRYPTSETUP_PARAMS} "$1" < "$2"
- 	fi
- }
+diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.9.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.9.bb
+index f85d3ec6..e2d55f99 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.9.bb
++++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.9.bb
+@@ -44,7 +44,7 @@ HOOK_ADD_MODULES = " \
  
-@@ -236,11 +250,17 @@ for partition_set in $partition_sets; do
- 	fi
- 
- 	if /usr/sbin/cryptsetup luksDump --batch-mode "$part_device" \
--			| grep -q "luks2"; then
-+			| grep -q "systemd-tpm2\|clevis"; then
- 		open_tpm2_partition "$part_device" "$crypt_mount_name" "$tpm_device"
- 		continue
- 	fi
- 
-+	# If partition contains an aborted reencrypt luks header, switch to reencrypt mode:
-+	if /usr/sbin/cryptsetup luksDump --batch-mode "${part_device}" \
-+			| grep -q "online-reencrypt-v2"; then
-+		partition_format="reencrypt"
-+	fi
-+
- 	# service watchdog in the background during lengthy re-encryption
- 	if [ -z "$watchdog_pid" ]; then
- 		service_watchdog &
+ HOOK_COPY_EXECS = " \
+     pwgen mke2fs grep awk expr seq sleep basename uuidparse mountpoint \
+-    e2fsck resize2fs cryptsetup rm \
++    e2fsck resize2fs cryptsetup rm cmp \
+     tpm2_pcrread tpm2_testparms tpm2_flushcontext tpm2_shutdown \
+     tpm2_startauthsession tpm2_policypcr tpm2_createprimary tpm2_create \
+     tpm2_load tpm2_evictcontrol tpm2_unseal tpm2_getcap \
 -- 
 2.43.0
 
