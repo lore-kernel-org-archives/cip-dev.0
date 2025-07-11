@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D7FC83F26
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B58C83F1B
 	for <webhook@archiver.kernel.org>; Fri, 11 Jul 2025 16:32:39 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.web11.18309.1752251547448211862
  for <cip-dev@lists.cip-project.org>;
- Fri, 11 Jul 2025 09:32:32 -0700
+ Fri, 11 Jul 2025 09:32:38 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
-X-CSE-ConnectionGUID: ASa2bunuQU+dYHyfFDPUmg==
-X-CSE-MsgGUID: AlujBf0sQw+MUqoinA+XRQ==
+X-CSE-ConnectionGUID: FhWVzksvRsi+bqtrHzOGow==
+X-CSE-MsgGUID: GZ+U1atdQO60EgGg55GL3A==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 12 Jul 2025 01:32:32 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 12 Jul 2025 01:32:38 +0900
 Received: from localhost.localdomain (unknown [10.226.93.74])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id ABDB1402AA23;
-	Sat, 12 Jul 2025 01:32:30 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 02D7B402A8BF;
+	Sat, 12 Jul 2025 01:32:36 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Pavel Machek <pavel@denx.de>
 Cc: nobuhiro1.iwamatsu@toshiba.co.jp,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.1.y-cip 3/8] drm: renesas: rz-du: Add Kconfig dependency between RZG2L_DU and RZG2L_MIPI_DSI
-Date: Fri, 11 Jul 2025 17:32:13 +0100
-Message-ID: <20250711163222.191633-4-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 6/8] drm: renesas: Extend RZ/G2L supported KMS formats
+Date: Fri, 11 Jul 2025 17:32:16 +0100
+Message-ID: <20250711163222.191633-7-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250711163222.191633-1-biju.das.jz@bp.renesas.com>
 References: <20250711163222.191633-1-biju.das.jz@bp.renesas.com>
@@ -35,51 +35,176 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 11 Jul 2025 16:32:39 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19409
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19412
 
-commit 7e6cb7290b4a92a6af096b137b84bf285801a5d6 upstream.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Add Kconfig dependency between RZG2L_DU and RZG2L_MIPI_DSI, so that
-DSI module has functional dependency on DU. It is similar way that
-the R-Car MIPI DSI encoder is handled.
+commit bc3faba1f96983f0aa9a6b2e800457e7e3b9a051 upstream.
 
-While at it drop ARCH_RENESAS dependency as DRM_RZG2L_DU depend on
-ARCH_RZG2L.
+The RZ/G2L driver utilises the VSPD to read data from input sources.
 
-Suggested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+The rzg2l_du_kms component lists a restricted subset of the capabilities
+of the VSPD which prevents additional formats from being used for
+display planes.
+
+The supported display plane formats are mapped in rzg2l_du_vsp_formats[].
+
+Extend the rzg2l_du_format_infos[] table with the corresponding mappings
+between the supported DRM formats and the formats exposed by the VSP in
+rzg2l_du_vsp_formats, maintaining the same ordering in both tables.
+
+The RPF module on VSPD supports various format conversion and send the
+image data to BRS(Blend ROP Sub Unit) for further processing.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20240827163727.108405-1-biju.das.jz@bp.renesas.com
+Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Link: https://lore.kernel.org/r/20250330102357.56010-3-biju.das.jz@bp.renesas.com
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/gpu/drm/renesas/rz-du/Kconfig | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c | 117 ++++++++++++++++++-
+ 1 file changed, 113 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/renesas/rz-du/Kconfig b/drivers/gpu/drm/renesas/rz-du/Kconfig
-index 8ec14271ebba..a9488f873436 100644
---- a/drivers/gpu/drm/renesas/rz-du/Kconfig
-+++ b/drivers/gpu/drm/renesas/rz-du/Kconfig
-@@ -11,10 +11,15 @@ config DRM_RZG2L_DU
- 	  Choose this option if you have an RZ/G2L alike chipset.
- 	  If M is selected the module will be called rzg2l-du-drm.
+diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c
+index a875023cbf13..2174118df792 100644
+--- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c
++++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_kms.c
+@@ -36,13 +36,37 @@
  
--config DRM_RZG2L_MIPI_DSI
--	tristate "RZ/G2L MIPI DSI Encoder Support"
--	depends on DRM && DRM_BRIDGE && OF
--	depends on ARCH_RENESAS || COMPILE_TEST
--	select DRM_MIPI_DSI
-+config DRM_RZG2L_USE_MIPI_DSI
-+	bool "RZ/G2L MIPI DSI Encoder Support"
-+	depends on DRM_BRIDGE && OF
-+	depends on DRM_RZG2L_DU || COMPILE_TEST
-+	default DRM_RZG2L_DU
- 	help
- 	  Enable support for the RZ/G2L Display Unit embedded MIPI DSI encoders.
-+
-+config DRM_RZG2L_MIPI_DSI
-+	def_tristate DRM_RZG2L_DU
-+	depends on DRM_RZG2L_USE_MIPI_DSI
-+	select DRM_MIPI_DSI
+ static const struct rzg2l_du_format_info rzg2l_du_format_infos[] = {
+ 	{
+-		.fourcc = DRM_FORMAT_XRGB8888,
+-		.v4l2 = V4L2_PIX_FMT_XBGR32,
++		.fourcc = DRM_FORMAT_RGB332,
++		.v4l2 = V4L2_PIX_FMT_RGB332,
+ 		.planes = 1,
+ 		.hsub = 1,
+ 	}, {
+-		.fourcc = DRM_FORMAT_ARGB8888,
+-		.v4l2 = V4L2_PIX_FMT_ABGR32,
++		.fourcc = DRM_FORMAT_ARGB4444,
++		.v4l2 = V4L2_PIX_FMT_ARGB444,
++		.planes = 1,
++		.hsub = 1,
++	}, {
++		.fourcc = DRM_FORMAT_XRGB4444,
++		.v4l2 = V4L2_PIX_FMT_XRGB444,
++		.planes = 1,
++		.hsub = 1,
++	}, {
++		.fourcc = DRM_FORMAT_ARGB1555,
++		.v4l2 = V4L2_PIX_FMT_ARGB555,
++		.planes = 1,
++		.hsub = 1,
++	}, {
++		.fourcc = DRM_FORMAT_XRGB1555,
++		.v4l2 = V4L2_PIX_FMT_XRGB555,
++		.planes = 1,
++	}, {
++		.fourcc = DRM_FORMAT_RGB565,
++		.v4l2 = V4L2_PIX_FMT_RGB565,
++		.planes = 1,
++		.hsub = 1,
++	}, {
++		.fourcc = DRM_FORMAT_BGR888,
++		.v4l2 = V4L2_PIX_FMT_RGB24,
+ 		.planes = 1,
+ 		.hsub = 1,
+ 	}, {
+@@ -50,6 +74,91 @@ static const struct rzg2l_du_format_info rzg2l_du_format_infos[] = {
+ 		.v4l2 = V4L2_PIX_FMT_BGR24,
+ 		.planes = 1,
+ 		.hsub = 1,
++	}, {
++		.fourcc = DRM_FORMAT_BGRA8888,
++		.v4l2 = V4L2_PIX_FMT_ARGB32,
++		.planes = 1,
++		.hsub = 1,
++	}, {
++		.fourcc = DRM_FORMAT_BGRX8888,
++		.v4l2 = V4L2_PIX_FMT_XRGB32,
++		.planes = 1,
++		.hsub = 1,
++	}, {
++		.fourcc = DRM_FORMAT_ARGB8888,
++		.v4l2 = V4L2_PIX_FMT_ABGR32,
++		.planes = 1,
++		.hsub = 1,
++	}, {
++		.fourcc = DRM_FORMAT_XRGB8888,
++		.v4l2 = V4L2_PIX_FMT_XBGR32,
++		.planes = 1,
++		.hsub = 1,
++	}, {
++		.fourcc = DRM_FORMAT_UYVY,
++		.v4l2 = V4L2_PIX_FMT_UYVY,
++		.planes = 1,
++		.hsub = 2,
++	}, {
++		.fourcc = DRM_FORMAT_YUYV,
++		.v4l2 = V4L2_PIX_FMT_YUYV,
++		.planes = 1,
++		.hsub = 2,
++	}, {
++		.fourcc = DRM_FORMAT_YVYU,
++		.v4l2 = V4L2_PIX_FMT_YVYU,
++		.planes = 1,
++		.hsub = 2,
++	}, {
++		.fourcc = DRM_FORMAT_NV12,
++		.v4l2 = V4L2_PIX_FMT_NV12M,
++		.planes = 2,
++		.hsub = 2,
++	}, {
++		.fourcc = DRM_FORMAT_NV21,
++		.v4l2 = V4L2_PIX_FMT_NV21M,
++		.planes = 2,
++		.hsub = 2,
++	}, {
++		.fourcc = DRM_FORMAT_NV16,
++		.v4l2 = V4L2_PIX_FMT_NV16M,
++		.planes = 2,
++		.hsub = 2,
++	}, {
++		.fourcc = DRM_FORMAT_NV61,
++		.v4l2 = V4L2_PIX_FMT_NV61M,
++		.planes = 2,
++		.hsub = 2,
++	}, {
++		.fourcc = DRM_FORMAT_YUV420,
++		.v4l2 = V4L2_PIX_FMT_YUV420M,
++		.planes = 3,
++		.hsub = 2,
++	}, {
++		.fourcc = DRM_FORMAT_YVU420,
++		.v4l2 = V4L2_PIX_FMT_YVU420M,
++		.planes = 3,
++		.hsub = 2,
++	}, {
++		.fourcc = DRM_FORMAT_YUV422,
++		.v4l2 = V4L2_PIX_FMT_YUV422M,
++		.planes = 3,
++		.hsub = 2,
++	}, {
++		.fourcc = DRM_FORMAT_YVU422,
++		.v4l2 = V4L2_PIX_FMT_YVU422M,
++		.planes = 3,
++		.hsub = 2,
++	}, {
++		.fourcc = DRM_FORMAT_YUV444,
++		.v4l2 = V4L2_PIX_FMT_YUV444M,
++		.planes = 3,
++		.hsub = 1,
++	}, {
++		.fourcc = DRM_FORMAT_YVU444,
++		.v4l2 = V4L2_PIX_FMT_YVU444M,
++		.planes = 3,
++		.hsub = 1,
+ 	}
+ };
+ 
 -- 
 2.43.0
 
