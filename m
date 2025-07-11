@@ -2,84 +2,84 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29305C83F1B
-	for <webhook@archiver.kernel.org>; Fri, 11 Jul 2025 15:56:59 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web10.17510.1752249403067918131
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C76C83F20
+	for <webhook@archiver.kernel.org>; Fri, 11 Jul 2025 16:32:29 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web11.18309.1752251547448211862
  for <cip-dev@lists.cip-project.org>;
- Fri, 11 Jul 2025 08:56:51 -0700
+ Fri, 11 Jul 2025 09:32:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
-X-CSE-ConnectionGUID: AZls33byQUSZDxmGTWjPgQ==
-X-CSE-MsgGUID: uCclKXoYRsmetHp2bgcPlg==
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+X-CSE-ConnectionGUID: oy5geaqES4+73tibyYiP1Q==
+X-CSE-MsgGUID: icPfyzsjSQiWtauHVG1WlQ==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 12 Jul 2025 00:56:50 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 12 Jul 2025 01:32:28 +0900
 Received: from localhost.localdomain (unknown [10.226.93.74])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E4C2E4018C7F;
-	Sat, 12 Jul 2025 00:56:48 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 7BF3B402AA23;
+	Sat, 12 Jul 2025 01:32:26 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Pavel Machek <pavel@denx.de>
 Cc: nobuhiro1.iwamatsu@toshiba.co.jp,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.12.y-cip 7/8] drm: renesas: Add zpos, alpha and blend properties to RZ/G2L DU
-Date: Fri, 11 Jul 2025 16:56:26 +0100
-Message-ID: <20250711155633.103449-8-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 1/8] drm: renesas: rz-du: Drop DU_MCR0_DPI_OE macro
+Date: Fri, 11 Jul 2025 17:32:11 +0100
+Message-ID: <20250711163222.191633-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250711155633.103449-1-biju.das.jz@bp.renesas.com>
-References: <20250711155633.103449-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20250711163222.191633-1-biju.das.jz@bp.renesas.com>
+References: <20250711163222.191633-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 11 Jul 2025 15:56:59 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19404
+ <cip-dev@lists.cip-project.org>; Fri, 11 Jul 2025 16:32:29 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19407
 
-commit e7bb7d44c3b97aea1f0e354c6499900154ac67f2 upstream.
+commit e22c857aed59ed3f5f3e144039ef095521f15179 upstream.
 
-Add support for zpos, alpha and blend properties to RZ/G2L DU
-driver as the IP supports all these properties.
+The DPI_OE bit is removed from the latest RZ/G2UL and RZ/G2L hardware
+manual. So, drop this macro.
 
-It is tested by the below modetest commands:
-
-modetest -M rzg2l-du -s 44@42:1920x1080@AR24 -d -P \
-37@42:512x300+200+200@XR15
-
-modetest -M rzg2l-du -w {32,37}:alpha:{0,65535}
-modetest -M rzg2l-du -w {32,37}:zpos:{0,1}
-
+Fixes: b330f1480172 ("drm: renesas: rz-du: Add RZ/G2UL DU Support")
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com> #On RZ/V2H
-Link: https://lore.kernel.org/r/20250404133047.172080-1-biju.das.jz@bp.renesas.com
+Link: https://patchwork.freedesktop.org/patch/msgid/20241022082433.32513-2-biju.das.jz@bp.renesas.com
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.c
-index 8643ff2eec46e..040d4e4aff000 100644
---- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.c
-+++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_vsp.c
-@@ -340,6 +340,15 @@ int rzg2l_du_vsp_init(struct rzg2l_du_vsp *vsp, struct device_node *np,
+diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
+index c4c1474d487e..6e7aac6219be 100644
+--- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
++++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_crtc.c
+@@ -28,7 +28,6 @@
+ #include "rzg2l_du_vsp.h"
  
- 		drm_plane_helper_add(&plane->plane,
- 				     &rzg2l_du_vsp_plane_helper_funcs);
-+
-+		drm_plane_create_alpha_property(&plane->plane);
-+		drm_plane_create_zpos_property(&plane->plane, i, 0,
-+					       num_planes - 1);
-+
-+		drm_plane_create_blend_mode_property(&plane->plane,
-+					BIT(DRM_MODE_BLEND_PIXEL_NONE) |
-+					BIT(DRM_MODE_BLEND_PREMULTI) |
-+					BIT(DRM_MODE_BLEND_COVERAGE));
- 	}
+ #define DU_MCR0			0x00
+-#define DU_MCR0_DPI_OE		BIT(0)
+ #define DU_MCR0_DI_EN		BIT(8)
  
- 	return 0;
+ #define DU_DITR0		0x10
+@@ -217,14 +216,9 @@ static void rzg2l_du_crtc_put(struct rzg2l_du_crtc *rcrtc)
+ 
+ static void rzg2l_du_start_stop(struct rzg2l_du_crtc *rcrtc, bool start)
+ {
+-	struct rzg2l_du_crtc_state *rstate = to_rzg2l_crtc_state(rcrtc->crtc.state);
+ 	struct rzg2l_du_device *rcdu = rcrtc->dev;
+-	u32 val = DU_MCR0_DI_EN;
+ 
+-	if (rstate->outputs & BIT(RZG2L_DU_OUTPUT_DPAD0))
+-		val |= DU_MCR0_DPI_OE;
+-
+-	writel(start ? val : 0, rcdu->mmio + DU_MCR0);
++	writel(start ? DU_MCR0_DI_EN : 0, rcdu->mmio + DU_MCR0);
+ }
+ 
+ static void rzg2l_du_crtc_start(struct rzg2l_du_crtc *rcrtc)
 -- 
 2.43.0
 
