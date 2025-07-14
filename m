@@ -2,69 +2,75 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D9F4C83F1A
-	for <webhook@archiver.kernel.org>; Mon, 14 Jul 2025 10:10:10 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.74801.1752487784571804237
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A64F3C83F21
+	for <webhook@archiver.kernel.org>; Mon, 14 Jul 2025 10:17:00 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web11.74897.1752488214061695340
  for <cip-dev@lists.cip-project.org>;
- Mon, 14 Jul 2025 03:10:05 -0700
+ Mon, 14 Jul 2025 03:16:57 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
-X-CSE-ConnectionGUID: tI9EWmW+T2uc5XxzH38jGA==
-X-CSE-MsgGUID: gZK0PCrnRl64thClzbg2QQ==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Jul 2025 19:10:04 +0900
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+X-CSE-ConnectionGUID: c/3HmtE9Q2iwTvNHtVE91Q==
+X-CSE-MsgGUID: vSPctKwVSoGgBA7wYBYSSA==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 14 Jul 2025 19:16:57 +0900
 Received: from localhost.localdomain (unknown [10.226.92.48])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4832D4060623;
-	Mon, 14 Jul 2025 19:10:03 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id DCAAF400CEEA;
+	Mon, 14 Jul 2025 19:16:55 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Pavel Machek <pavel@denx.de>
 Cc: nobuhiro1.iwamatsu@toshiba.co.jp,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.1.y-cip 57/57] arm64: defconfig: Enable CAN PHY transceiver driver
-Date: Mon, 14 Jul 2025 11:07:38 +0100
-Message-ID: <20250714100802.80035-58-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 02/36] clk: renesas: rzv2h: Update error message
+Date: Mon, 14 Jul 2025 11:16:02 +0100
+Message-ID: <20250714101650.80381-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250714100802.80035-1-biju.das.jz@bp.renesas.com>
-References: <20250714100802.80035-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20250714101650.80381-1-biju.das.jz@bp.renesas.com>
+References: <20250714101650.80381-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 14 Jul 2025 10:10:10 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19485
+ <cip-dev@lists.cip-project.org>; Mon, 14 Jul 2025 10:17:00 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19488
 
-From: Bhavya Kapoor <b-kapoor@ti.com>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit af87ac738715d8877222b25829845589b25fe24c upstream.
+commit 43961f7ee3f31c97209157bd19420ea8a65b1181 upstream.
 
-Enable CAN PHY transceiver driver to be built as a module which will
-add support for generic CAN transceivers used by TI K3 specific SoCs.
+Update the error message in `rzv2h_mod_clock_endisable()` to provide
+clearer debugging information. Instead of printing only the register
+address, include both the `GET_CLK_ON_OFFSET(reg)` offset and the
+corresponding `clk` name (`%pC`). This enhances readability and aids
+in debugging clock enable failures.
 
-Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Bjorn Andersson <quic_bjorande@quicinc.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/20250211105603.195905-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/renesas/rzv2h-cpg.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index b65eb4e67244..b8fbe72c92d1 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1242,6 +1242,7 @@ CONFIG_RESET_QCOM_PDC=m
- CONFIG_RESET_RZG2L_USBPHY_CTRL=y
- CONFIG_RESET_TI_SCI=y
- CONFIG_PHY_XGENE=y
-+CONFIG_PHY_CAN_TRANSCEIVER=m
- CONFIG_PHY_SUN4I_USB=y
- CONFIG_PHY_CADENCE_TORRENT=m
- CONFIG_PHY_CADENCE_SIERRA=m
+diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
+index 7e85bfde46dcd..227a30d592fdd 100644
+--- a/drivers/clk/renesas/rzv2h-cpg.c
++++ b/drivers/clk/renesas/rzv2h-cpg.c
+@@ -542,8 +542,8 @@ static int rzv2h_mod_clock_endisable(struct clk_hw *hw, bool enable)
+ 	error = readl_poll_timeout_atomic(priv->base + reg, value,
+ 					  value & bitmask, 0, 10);
+ 	if (error)
+-		dev_err(dev, "Failed to enable CLK_ON %p\n",
+-			priv->base + reg);
++		dev_err(dev, "Failed to enable CLK_ON 0x%x/%pC\n",
++			GET_CLK_ON_OFFSET(clock->on_index), hw->clk);
+ 
+ 	return error;
+ }
 -- 
 2.43.0
 
