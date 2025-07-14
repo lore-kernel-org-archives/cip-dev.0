@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DFFCC83F1A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E723C83F27
 	for <webhook@archiver.kernel.org>; Mon, 14 Jul 2025 10:10:00 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web11.74801.1752487784571804237
  for <cip-dev@lists.cip-project.org>;
- Mon, 14 Jul 2025 03:09:58 -0700
+ Mon, 14 Jul 2025 03:09:56 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
-X-CSE-ConnectionGUID: P0DnJU2IRGeZail9NfBijQ==
-X-CSE-MsgGUID: o4fYyINLQY2hY2GqD0iySw==
+X-CSE-ConnectionGUID: 3DgOTLTZQuWzTp+ri1nixg==
+X-CSE-MsgGUID: mb4zvKpgQ9CR+Cs6g7KVZg==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Jul 2025 19:09:58 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 14 Jul 2025 19:09:56 +0900
 Received: from localhost.localdomain (unknown [10.226.92.48])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 07DFC41D4BDF;
-	Mon, 14 Jul 2025 19:09:56 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E478841D4BDF;
+	Mon, 14 Jul 2025 19:09:54 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Pavel Machek <pavel@denx.de>
 Cc: nobuhiro1.iwamatsu@toshiba.co.jp,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.1.y-cip 54/57] arm64: dts: renesas: r9a09g047: Add CANFD node
-Date: Mon, 14 Jul 2025 11:07:35 +0100
-Message-ID: <20250714100802.80035-55-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 53/57] can: rcar_canfd: Add RZ/G3E support
+Date: Mon, 14 Jul 2025 11:07:34 +0100
+Message-ID: <20250714100802.80035-54-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250714100802.80035-1-biju.das.jz@bp.renesas.com>
 References: <20250714100802.80035-1-biju.das.jz@bp.renesas.com>
@@ -35,92 +35,79 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 14 Jul 2025 10:10:00 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19482
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19481
 
-commit 9c1d49dd0975cd91529417a70a34817e489d954b upstream.
+commit be53aa052008538d67d9ad23f6f8160df390e1d6 upstream.
 
-Add CANFD node to RZ/G3E ("R9A09G047") SoC DTSI.
+The CAN-FD IP found on the RZ/G3E SoC is similar to R-Car Gen4, but
+it has no external clock instead it has clk_ram, it has 6 channels
+and supports 20 interrupts. Add support for RZ/G3E CAN-FD driver.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250320164121.193857-2-biju.das.jz@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Link: https://patch.msgid.link/20250417054320.14100-20-biju.das.jz@bp.renesas.com
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi | 60 ++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+ drivers/net/can/rcar/rcar_canfd.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-index 5b413d31b8cd..bfdb03e69540 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-@@ -294,6 +294,66 @@ scif0: serial@11c01400 {
- 			status = "disabled";
- 		};
+diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
+index f0fe09c9f06d..bacc01805dbf 100644
+--- a/drivers/net/can/rcar/rcar_canfd.c
++++ b/drivers/net/can/rcar/rcar_canfd.c
+@@ -727,6 +727,22 @@ static const struct rcar_canfd_hw_info rzg2l_hw_info = {
+ 	.external_clk = 1,
+ };
  
-+		canfd: can@12440000 {
-+			compatible = "renesas,r9a09g047-canfd";
-+			reg = <0 0x12440000 0 0x40000>;
-+			interrupts = <GIC_SPI 709 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 710 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 697 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 703 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 711 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 698 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 704 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 712 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 699 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 705 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 713 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 700 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 706 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 714 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 701 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 707 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 715 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 702 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 708 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 716 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "g_err", "g_recc",
-+					  "ch0_err", "ch0_rec", "ch0_trx",
-+					  "ch1_err", "ch1_rec", "ch1_trx",
-+					  "ch2_err", "ch2_rec", "ch2_trx",
-+					  "ch3_err", "ch3_rec", "ch3_trx",
-+					  "ch4_err", "ch4_rec", "ch4_trx",
-+					  "ch5_err", "ch5_rec", "ch5_trx";
-+			clocks = <&cpg CPG_MOD 0x9c>, <&cpg CPG_MOD 0x9d>,
-+				 <&cpg CPG_MOD 0x9e>;
-+			clock-names = "fck", "ram_clk", "can_clk";
-+			assigned-clocks = <&cpg CPG_MOD 0x9e>;
-+			assigned-clock-rates = <80000000>;
-+			resets = <&cpg 0xa1>, <&cpg 0xa2>;
-+			reset-names = "rstp_n", "rstc_n";
-+			power-domains = <&cpg>;
-+			status = "disabled";
++static const struct rcar_canfd_hw_info r9a09g047_hw_info = {
++	.nom_bittiming = &rcar_canfd_gen4_nom_bittiming_const,
++	.data_bittiming = &rcar_canfd_gen4_data_bittiming_const,
++	.regs = &rcar_gen4_regs,
++	.sh = &rcar_gen4_shift_data,
++	.rnc_field_width = 16,
++	.max_aflpn = 63,
++	.max_cftml = 31,
++	.max_channels = 6,
++	.postdiv = 1,
++	.multi_channel_irqs = 1,
++	.ch_interface_mode = 1,
++	.shared_can_regs = 1,
++	.external_clk = 0,
++};
 +
-+			channel0 {
-+				status = "disabled";
-+			};
-+			channel1 {
-+				status = "disabled";
-+			};
-+			channel2 {
-+				status = "disabled";
-+			};
-+			channel3 {
-+				status = "disabled";
-+			};
-+			channel4 {
-+				status = "disabled";
-+			};
-+			channel5 {
-+				status = "disabled";
-+			};
-+		};
+ /* Helper functions */
+ static inline void rcar_canfd_update(u32 mask, u32 val, u32 __iomem *reg)
+ {
+@@ -1970,6 +1986,7 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 	u32 rule_entry = 0;
+ 	bool fdmode = true;			/* CAN FD only mode - default */
+ 	char name[9] = "channelX";
++	struct clk *clk_ram;
+ 	int i;
+ 
+ 	info = of_device_get_match_data(dev);
+@@ -2059,6 +2076,11 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+ 		gpriv->extclk = gpriv->info->external_clk;
+ 	}
+ 
++	clk_ram = devm_clk_get_optional_enabled(dev, "ram_clk");
++	if (IS_ERR(clk_ram))
++		return dev_err_probe(dev, PTR_ERR(clk_ram),
++				     "cannot get enabled ram clock\n");
 +
- 		wdt1: watchdog@14400000 {
- 			compatible = "renesas,r9a09g047-wdt", "renesas,r9a09g057-wdt";
- 			reg = <0 0x14400000 0 0x400>;
+ 	addr = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(addr)) {
+ 		err = PTR_ERR(addr);
+@@ -2223,6 +2245,7 @@ static SIMPLE_DEV_PM_OPS(rcar_canfd_pm_ops, rcar_canfd_suspend,
+ 
+ static const __maybe_unused struct of_device_id rcar_canfd_of_table[] = {
+ 	{ .compatible = "renesas,r8a779a0-canfd", .data = &rcar_gen4_hw_info },
++	{ .compatible = "renesas,r9a09g047-canfd", .data = &r9a09g047_hw_info },
+ 	{ .compatible = "renesas,rcar-gen3-canfd", .data = &rcar_gen3_hw_info },
+ 	{ .compatible = "renesas,rcar-gen4-canfd", .data = &rcar_gen4_hw_info },
+ 	{ .compatible = "renesas,rzg2l-canfd", .data = &rzg2l_hw_info },
 -- 
 2.43.0
 
