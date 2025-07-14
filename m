@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D882C83F21
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BDF5C83F22
 	for <webhook@archiver.kernel.org>; Mon, 14 Jul 2025 10:18:11 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web11.74928.1752488282775987838
  for <cip-dev@lists.cip-project.org>;
- Mon, 14 Jul 2025 03:18:03 -0700
+ Mon, 14 Jul 2025 03:18:08 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
-X-CSE-ConnectionGUID: wdWKPDQ6RCGHvMCA0fACIQ==
-X-CSE-MsgGUID: 9gb0QsfuSaKGVEurF+Ii1Q==
+X-CSE-ConnectionGUID: Ys6xXNfwSqiplTXGyRmxfw==
+X-CSE-MsgGUID: FUvVmIQZQXOeT2n/ZXeHFw==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Jul 2025 19:18:02 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 14 Jul 2025 19:18:08 +0900
 Received: from localhost.localdomain (unknown [10.226.92.48])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B335E400D4C7;
-	Mon, 14 Jul 2025 19:18:00 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id F2A2B400D4D1;
+	Mon, 14 Jul 2025 19:18:06 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Pavel Machek <pavel@denx.de>
 Cc: nobuhiro1.iwamatsu@toshiba.co.jp,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.12.y-cip 33/36] can: rcar_canfd: Add RZ/G3E support
-Date: Mon, 14 Jul 2025 11:16:33 +0100
-Message-ID: <20250714101650.80381-34-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 36/36] arm64: dts: renesas: r9a09g047e57-smarc: Enable CAN Transceiver
+Date: Mon, 14 Jul 2025 11:16:36 +0100
+Message-ID: <20250714101650.80381-37-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250714101650.80381-1-biju.das.jz@bp.renesas.com>
 References: <20250714101650.80381-1-biju.das.jz@bp.renesas.com>
@@ -35,79 +35,116 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 14 Jul 2025 10:18:11 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19519
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19522
 
-commit be53aa052008538d67d9ad23f6f8160df390e1d6 upstream.
+commit 99256644c8c9523e27312f6318058481943281ab upstream.
 
-The CAN-FD IP found on the RZ/G3E SoC is similar to R-Car Gen4, but
-it has no external clock instead it has clk_ram, it has 6 channels
-and supports 20 interrupts. Add support for RZ/G3E CAN-FD driver.
+Enable TCAN1046V-Q1 CAN Transceiver populated on RZ/G3E SMARC EVK by
+modelling it as two instances of tcan1042.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://patch.msgid.link/20250417054320.14100-20-biju.das.jz@bp.renesas.com
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/20250320164121.193857-4-biju.das.jz@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/net/can/rcar/rcar_canfd.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ .../boot/dts/renesas/r9a09g047e57-smarc.dts   | 22 ++++++++++++++++
+ .../boot/dts/renesas/renesas-smarc2.dtsi      | 25 +++++++++++++++++++
+ 2 files changed, 47 insertions(+)
 
-diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
-index 6a9c970364cb0..27d503ac87dcd 100644
---- a/drivers/net/can/rcar/rcar_canfd.c
-+++ b/drivers/net/can/rcar/rcar_canfd.c
-@@ -726,6 +726,22 @@ static const struct rcar_canfd_hw_info rzg2l_hw_info = {
- 	.external_clk = 1,
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
+index 7e1daaabce8a9..1f5e61a73c35b 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
++++ b/arch/arm64/boot/dts/renesas/r9a09g047e57-smarc.dts
+@@ -8,6 +8,8 @@
+ /dts-v1/;
+ 
+ /* Switch selection settings */
++#define SW_GPIO8_CAN0_STB	0
++#define SW_GPIO9_CAN1_STB	0
+ #define SW_LCD_EN		0
+ #define SW_PDM_EN		0
+ #define SW_SD0_DEV_SEL		0
+@@ -42,16 +44,36 @@ &canfd {
+ #if (!SW_PDM_EN)
+ 	channel1 {
+ 		status = "okay";
++#if (!SW_LCD_EN) && (SW_GPIO9_CAN1_STB)
++		phys = <&can_transceiver1>;
++#endif
+ 	};
+ #endif
+ 
+ #if (!SW_LCD_EN)
+ 	channel4 {
+ 		status = "okay";
++#if (SW_GPIO8_CAN0_STB)
++		phys = <&can_transceiver0>;
++#endif
+ 	};
+ #endif
  };
  
-+static const struct rcar_canfd_hw_info r9a09g047_hw_info = {
-+	.nom_bittiming = &rcar_canfd_gen4_nom_bittiming_const,
-+	.data_bittiming = &rcar_canfd_gen4_data_bittiming_const,
-+	.regs = &rcar_gen4_regs,
-+	.sh = &rcar_gen4_shift_data,
-+	.rnc_field_width = 16,
-+	.max_aflpn = 63,
-+	.max_cftml = 31,
-+	.max_channels = 6,
-+	.postdiv = 1,
-+	.multi_channel_irqs = 1,
-+	.ch_interface_mode = 1,
-+	.shared_can_regs = 1,
-+	.external_clk = 0,
++#if (!SW_LCD_EN) && (SW_GPIO8_CAN0_STB)
++&can_transceiver0 {
++	standby-gpios = <&pinctrl RZG3E_GPIO(5, 4) GPIO_ACTIVE_HIGH>;
++	status = "okay";
 +};
++#endif
 +
- /* Helper functions */
- static inline void rcar_canfd_update(u32 mask, u32 val, u32 __iomem *reg)
- {
-@@ -1969,6 +1985,7 @@ static int rcar_canfd_probe(struct platform_device *pdev)
- 	u32 rule_entry = 0;
- 	bool fdmode = true;			/* CAN FD only mode - default */
- 	char name[9] = "channelX";
-+	struct clk *clk_ram;
- 	int i;
- 
- 	info = of_device_get_match_data(dev);
-@@ -2058,6 +2075,11 @@ static int rcar_canfd_probe(struct platform_device *pdev)
- 		gpriv->extclk = gpriv->info->external_clk;
- 	}
- 
-+	clk_ram = devm_clk_get_optional_enabled(dev, "ram_clk");
-+	if (IS_ERR(clk_ram))
-+		return dev_err_probe(dev, PTR_ERR(clk_ram),
-+				     "cannot get enabled ram clock\n");
++#if (!SW_LCD_EN) && (SW_GPIO9_CAN1_STB)
++&can_transceiver1 {
++	standby-gpios = <&pinctrl RZG3E_GPIO(5, 5) GPIO_ACTIVE_HIGH>;
++	status = "okay";
++};
++#endif
 +
- 	addr = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(addr)) {
- 		err = PTR_ERR(addr);
-@@ -2220,6 +2242,7 @@ static SIMPLE_DEV_PM_OPS(rcar_canfd_pm_ops, rcar_canfd_suspend,
+ &pinctrl {
+ 	canfd_pins: canfd {
+ 		can1_pins: can1 {
+diff --git a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi b/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
+index 1d3a844174b37..afdc1940e24ab 100644
+--- a/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
++++ b/arch/arm64/boot/dts/renesas/renesas-smarc2.dtsi
+@@ -12,6 +12,17 @@
+  * SW_SDIO_M2E:
+  *     0 - SMARC SDIO signal is connected to uSD1
+  *     1 - SMARC SDIO signal is connected to M.2 Key E connector
++ *
++ * Please set the switch position SW_GPIO_CAN_PMOD on the carrier board and the
++ * corresponding macro SW_GPIO8_CAN0_STB/SW_GPIO8_CAN0_STB on the board DTS:
++ *
++ * SW_GPIO8_CAN0_STB:
++ *	0 - Connect to GPIO8 PMOD (default)
++ *	1 - Connect to CAN0 transceiver STB pin
++ *
++ * SW_GPIO9_CAN1_STB:
++ *	0 - Connect to GPIO9 PMOD (default)
++ *	1 - Connect to CAN1 transceiver STB pin
+  */
  
- static const __maybe_unused struct of_device_id rcar_canfd_of_table[] = {
- 	{ .compatible = "renesas,r8a779a0-canfd", .data = &rcar_gen4_hw_info },
-+	{ .compatible = "renesas,r9a09g047-canfd", .data = &r9a09g047_hw_info },
- 	{ .compatible = "renesas,rcar-gen3-canfd", .data = &rcar_gen3_hw_info },
- 	{ .compatible = "renesas,rcar-gen4-canfd", .data = &rcar_gen4_hw_info },
- 	{ .compatible = "renesas,rzg2l-canfd", .data = &rzg2l_hw_info },
+ / {
+@@ -27,6 +38,20 @@ aliases {
+ 		serial3 = &scif0;
+ 		mmc1 = &sdhi1;
+ 	};
++
++	can_transceiver0: can-phy0 {
++		compatible = "ti,tcan1042";
++		#phy-cells = <0>;
++		max-bitrate = <8000000>;
++		status = "disabled";
++	};
++
++	can_transceiver1: can-phy1 {
++		compatible = "ti,tcan1042";
++		#phy-cells = <0>;
++		max-bitrate = <8000000>;
++		status = "disabled";
++	};
+ };
+ 
+ &canfd {
 -- 
 2.43.0
 
