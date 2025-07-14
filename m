@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDDC6C83F1B
-	for <webhook@archiver.kernel.org>; Mon, 14 Jul 2025 10:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D05FC83F22
+	for <webhook@archiver.kernel.org>; Mon, 14 Jul 2025 10:09:00 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.web10.74863.1752487730286377307
  for <cip-dev@lists.cip-project.org>;
- Mon, 14 Jul 2025 03:08:50 -0700
+ Mon, 14 Jul 2025 03:08:54 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
-X-CSE-ConnectionGUID: pgPwTVSkSrC1BIQvpJ+ZlA==
-X-CSE-MsgGUID: iIGQe6RISeGE5It0ktAEnQ==
+X-CSE-ConnectionGUID: 7x3GS77eSTGP6CNPsRF8+A==
+X-CSE-MsgGUID: BevK8ECqS2OChYxQZg2X7A==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Jul 2025 19:08:49 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 14 Jul 2025 19:08:53 +0900
 Received: from localhost.localdomain (unknown [10.226.92.48])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3569741D45A9;
-	Mon, 14 Jul 2025 19:08:47 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5CC7341D45A9;
+	Mon, 14 Jul 2025 19:08:52 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Pavel Machek <pavel@denx.de>
 Cc: nobuhiro1.iwamatsu@toshiba.co.jp,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.1.y-cip 21/57] dt-bindings: can: renesas,rcar-canfd: Document RZ/G3E support
-Date: Mon, 14 Jul 2025 11:07:02 +0100
-Message-ID: <20250714100802.80035-22-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 23/57] can: rcar_canfd: Abstract out DCFG address differences
+Date: Mon, 14 Jul 2025 11:07:04 +0100
+Message-ID: <20250714100802.80035-24-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250714100802.80035-1-biju.das.jz@bp.renesas.com>
 References: <20250714100802.80035-1-biju.das.jz@bp.renesas.com>
@@ -34,161 +34,59 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 14 Jul 2025 10:08:59 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19449
+ <cip-dev@lists.cip-project.org>; Mon, 14 Jul 2025 10:09:00 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19451
 
-commit e623c6e56bdf776b001313934709f9ff38b7dda6 upstream.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Document support for the CAN-FD Interface on the RZ/G3E (R9A09G047) SoC,
-which supports up to six channels.
+commit bbf6681d1f0f74a737e0804ab586ac016b2f4ccb upstream.
 
-The CAN-FD module on RZ/G3E is very similar to the one on both R-Car V4H
-and RZ/G2L, but differs in some hardware parameters:
- * No external clock, but instead has ram clock.
- * Support up to 6 channels.
- * 20 interrupts.
+Abstract the different addresses for the Channel n Data Bitrate
+Configuration Register (DCFG) in the definition of the register macro,
+like is already done for other register definitions, to simplify code
+accessing this register.
 
-Reviewed-by: "Rob Herring (Arm)" <robh@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://patch.msgid.link/20250417054320.14100-3-biju.das.jz@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/all/13e02d710dac3ddef73aa4be2b995766db9b6b4d.1674499048.git.geert+renesas@glider.be
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- .../bindings/net/can/renesas,rcar-canfd.yaml  | 77 +++++++++++++++++--
- 1 file changed, 71 insertions(+), 6 deletions(-)
+ drivers/net/can/rcar/rcar_canfd.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
-index 10d668fedabf..46215e0b0930 100644
---- a/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
-+++ b/Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
-@@ -40,6 +40,8 @@ properties:
-               - renesas,r9a07g054-canfd    # RZ/V2L
-           - const: renesas,rzg2l-canfd     # RZ/G2L family
+diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
+index 6a732bbed822..2a76610bfa34 100644
+--- a/drivers/net/can/rcar/rcar_canfd.c
++++ b/drivers/net/can/rcar/rcar_canfd.c
+@@ -429,7 +429,6 @@
+ #define RCANFD_C_RPGACC(r)		(0x1900 + (0x04 * (r)))
  
-+      - const: renesas,r9a09g047-canfd     # RZ/G3E
-+
-   reg:
-     maxItems: 1
+ /* R-Car V3U Classical and CAN FD mode specific register map */
+-#define RCANFD_V3U_DCFG(m)		(0x1400 + (0x20 * (m)))
+ #define RCANFD_V3U_FDCFG(m)		(0x1404 + (0x20 * (m)))
  
-@@ -57,6 +59,19 @@ properties:
-           - description: CAN1 error interrupt
-           - description: CAN1 transmit interrupt
-           - description: CAN1 transmit/receive FIFO receive completion interrupt
-+          - description: CAN2 error interrupt
-+          - description: CAN2 transmit interrupt
-+          - description: CAN2 transmit/receive FIFO receive completion interrupt
-+          - description: CAN3 error interrupt
-+          - description: CAN3 transmit interrupt
-+          - description: CAN3 transmit/receive FIFO receive completion interrupt
-+          - description: CAN4 error interrupt
-+          - description: CAN4 transmit interrupt
-+          - description: CAN4 transmit/receive FIFO receive completion interrupt
-+          - description: CAN5 error interrupt
-+          - description: CAN5 transmit interrupt
-+          - description: CAN5 transmit/receive FIFO receive completion interrupt
-+        minItems: 8
+ #define RCANFD_V3U_GAFL_OFFSET		(0x1800)
+@@ -437,7 +436,7 @@
+ /* CAN FD mode specific register map */
  
-   interrupt-names:
-     oneOf:
-@@ -72,15 +87,33 @@ properties:
-           - const: ch1_err
-           - const: ch1_rec
-           - const: ch1_trx
-+          - const: ch2_err
-+          - const: ch2_rec
-+          - const: ch2_trx
-+          - const: ch3_err
-+          - const: ch3_rec
-+          - const: ch3_trx
-+          - const: ch4_err
-+          - const: ch4_rec
-+          - const: ch4_trx
-+          - const: ch5_err
-+          - const: ch5_rec
-+          - const: ch5_trx
-+        minItems: 8
+ /* RSCFDnCFDCmXXX -> RCANFD_F_XXX(m) */
+-#define RCANFD_F_DCFG(m)		(0x0500 + (0x20 * (m)))
++#define RCANFD_F_DCFG(gpriv, m)		(reg_v3u(gpriv, 0x1400, 0x0500) + (0x20 * (m)))
+ #define RCANFD_F_CFDCFG(m)		(0x0504 + (0x20 * (m)))
+ #define RCANFD_F_CFDCTR(m)		(0x0508 + (0x20 * (m)))
+ #define RCANFD_F_CFDSTS(m)		(0x050c + (0x20 * (m)))
+@@ -1338,10 +1337,7 @@ static void rcar_canfd_set_bittiming(struct net_device *dev)
+ 		cfg = (RCANFD_DCFG_DTSEG1(gpriv, tseg1) | RCANFD_DCFG_DBRP(brp) |
+ 		       RCANFD_DCFG_DSJW(sjw) | RCANFD_DCFG_DTSEG2(gpriv, tseg2));
  
-   clocks:
-     maxItems: 3
- 
-   clock-names:
--    items:
--      - const: fck
--      - const: canfd
--      - const: can_clk
-+    oneOf:
-+      - items:
-+          - const: fck
-+          - const: canfd
-+          - const: can_clk
-+      - items:
-+          - const: fck
-+          - const: ram_clk
-+          - const: can_clk
- 
-   power-domains:
-     maxItems: 1
-@@ -143,11 +176,9 @@ allOf:
-     then:
-       properties:
-         interrupts:
--          minItems: 8
-           maxItems: 8
- 
-         interrupt-names:
--          minItems: 8
-           maxItems: 8
- 
-         resets:
-@@ -181,6 +212,30 @@ allOf:
-         resets:
-           maxItems: 1
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: renesas,r9a09g047-canfd
-+    then:
-+      properties:
-+        interrupts:
-+          minItems: 20
-+
-+        interrupt-names:
-+          minItems: 20
-+
-+        resets:
-+          minItems: 2
-+          maxItems: 2
-+
-+        reset-names:
-+          minItems: 2
-+          maxItems: 2
-+
-+      required:
-+        - reset-names
-+
-   - if:
-       properties:
-         compatible:
-@@ -192,6 +247,16 @@ allOf:
-       patternProperties:
-         "^channel[2-7]$": false
- 
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: renesas,r9a09g047-canfd
-+    then:
-+      patternProperties:
-+        "^channel[6-7]$": false
-+
- unevaluatedProperties: false
- 
- examples:
+-		if (is_v3u(gpriv))
+-			rcar_canfd_write(priv->base, RCANFD_V3U_DCFG(ch), cfg);
+-		else
+-			rcar_canfd_write(priv->base, RCANFD_F_DCFG(ch), cfg);
++		rcar_canfd_write(priv->base, RCANFD_F_DCFG(gpriv, ch), cfg);
+ 		netdev_dbg(priv->ndev, "drate: brp %u, sjw %u, tseg1 %u, tseg2 %u\n",
+ 			   brp, sjw, tseg1, tseg2);
+ 	} else {
 -- 
 2.43.0
 
