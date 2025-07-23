@@ -1,369 +1,228 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <nobuhiro1.iwamatsu@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3103C83F17
-	for <webhook@archiver.kernel.org>; Wed, 23 Jul 2025 22:10:41 +0000 (UTC)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
- by mx.groups.io with SMTP id smtpd.web10.2777.1753308632382819510
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F81CC83F1A
+	for <webhook@archiver.kernel.org>; Wed, 23 Jul 2025 22:40:02 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
+ by mx.groups.io with SMTP id smtpd.web10.3369.1753310398337049083
  for <cip-dev@lists.cip-project.org>;
- Wed, 23 Jul 2025 15:10:32 -0700
+ Wed, 23 Jul 2025 15:39:59 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=xS6AajIK;
- spf=pass (domain: miraclelinux.com, ip: 209.85.219.171, mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e7311e66a8eso272125276.2
-        for <cip-dev@lists.cip-project.org>; Wed, 23 Jul 2025 15:10:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1753308631; x=1753913431; darn=lists.cip-project.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/yG0tT/pKX+ykXeN2vNbdGOZtdeTIHg6Nra8TzDLi7I=;
-        b=xS6AajIKvPaYBxElk0GrFQx/J1WRTPuj4oTGj1Bd+w/VbAIfeCSlEuZflLBDu8oioX
-         DTS9qmoAlb11CZbUeYfi7foHWunI33dWRZJ63fTQOWhpsFhCYLv3bfnSbx3Ed8ZuEYtF
-         I621eQ299FMWbPhdGBF0VbOZWpuUuBcumv8qhVkIzO+VhQRZERpKmqM+nLH0ogbrFRa+
-         aciXApSxzYMFlPVhGeHq7fDemQa3Nk/GiJSgiF+cJKa+rIwV1G8CjYzcE+dktcFf2rlB
-         BJmG65SiMbGCOj+JIxxA0MKrI3LYA1LxowAG7TU0hVMiZphikYg9WKCoeRoCf+LNG6Y2
-         hTiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753308631; x=1753913431;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/yG0tT/pKX+ykXeN2vNbdGOZtdeTIHg6Nra8TzDLi7I=;
-        b=MFCedOSiWeGhJ9m9ODeUHzhcxfDcEDKmAFbOxNG7mgIPA+GzyF4pWut7Lb1E34mWk3
-         0baVwCvAyNJ47hxFgKzl+76wTFjB2NKqvbFlLLwZOAlh7XrT/26yIfQDu2qcMo+tCcqd
-         NHGR4Y+p9ppxUifkSPPxMR8E9BlrzgEIWu6GEuQNASsb2gGwNKisaZRa8/blJKI65O8l
-         Hwljs4iw4miFyEqI27EMV6ozKhRkPfCEEsITDa2kbi/t2X5SXd/KclehUBG+oTF9JYjZ
-         ewsBv0n9kqejFB061pEh+ZAVv8hsPTNErzLsVQxuwQceOVcUGzkfl+Ef7fOKJEirqfLJ
-         n9uA==
-X-Gm-Message-State: AOJu0YzwliZXfhPRVgi5Jkx7djWEoaNL6EV7zhbdtUyeqghKEzxmY6l9
-	F1+fVDyF67VWlQk2hFdA7WayBOsaao2GB1EPkiT4mR0qe1Hvnqkm0ZjcaI9JeKGHFozb1PslJt9
-	SFHayY6E1ABR6c2OBVaSOLefpWoc4raie0VZjzXNfDuaGBNANXtuK4ug=
-X-Gm-Gg: ASbGncuMSF9eFjWATq/r8y94dBLBZmEUfA2ZlUokuw4ZLd1Mnpb5u12JEMHF7deQrKC
-	pLYRQMIV+8Y8ivQEmdb2nQBGEKiXu1qXO1Ru6fpnI445wYis3RixAAWnY877v1vi5/uY/1m1vXi
-	JZGztc9E1TQjvOrcOLAG7VcmGxbOGTiVubVttEfA8po3WeqMf3wdSa+9cysJW2fcZ2REezc45nK
-	IdNoALs
-X-Google-Smtp-Source: AGHT+IGOF7OlXCrQO0+1egD9lP/eYJmJvHxoMgJMbxNbciS6xxWRuAGRVvaDnbaeTrGxsAV4466jzGhVsoPNvZVKjOc=
-X-Received: by 2002:a5b:442:0:b0:e8b:53ba:2a2 with SMTP id 3f1490d57ef6-e8dc5aba0b4mr4585735276.39.1753308630987;
- Wed, 23 Jul 2025 15:10:30 -0700 (PDT)
+ dkim=pass header.i=nobuhiro1.iwamatsu@toshiba.co.jp header.s=key1.smx header.b=Swi2exSE;
+ spf=pass (domain: toshiba.co.jp, ip: 210.130.202.134, mailfrom: nobuhiro1.iwamatsu@toshiba.co.jp)
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=toshiba.co.jp;h=From:To:
+	Subject:Date:Message-ID:Content-Type:Content-Transfer-Encoding:MIME-Version;
+	i=nobuhiro1.iwamatsu@toshiba.co.jp;s=key1.smx;t=1753310395;x=1754519995;bh=b+
+	WdA+siWMo9ucwo9kkDr6l+AbZF8QuEzhWCoEwnhuI=;b=Swi2exSEXrq1qPQcsOZrOQEK04Xq59wp
+	bHhpe26PNZHqAnEO37ETWlPAoYmji5MdLdsL7HkylXHOx9yvHEACmL7DciVW5ap6snCJ8EyWNHS9q
+	C1487FZdjZsRsnahCd5Gu0iqq3dOA1WVBBrbG6JQRz5RjK7xIPdfB1DFfeEhr2TOB4Nt9FhsRFAaU
+	iL4GnkfHaP89lH9Fles23Um2Emsc8U4aqZUWevk4X82fh9u0z9Do5lYZ9/m5fbmU9dOuDJv6m8Rrw
+	zD3hKdIFqeSJPbl4eVIqZFsBUnrfXm4RlDMsCnIa5EsJnEzTcuZpHGXLuGvG7ZUCD6C/ePMdUXBJ7
+	TQ==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 56NMdsgV3132515; Thu, 24 Jul 2025 07:39:54 +0900
+X-Iguazu-Qid: 2yAbRDIdxz4LsFYpr2
+X-Iguazu-QSIG: v=2; s=0; t=1753310394; q=2yAbRDIdxz4LsFYpr2; m=zztahmcQ9CSTAb/Kwp0VXdGcRODBRBf5eKYhnGM+Sig=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1800) id 56NMdqZM2894890
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 24 Jul 2025 07:39:53 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=l7YYlMVPeySh9afP00sOpUcu6Poy5WjGhnCpr23pAu89mJRM1C/Qx8xNXkaZmUm0iDN8k6zgY0VcnOMjcp1Lznbz/mtcwX6NEo8D88RB8o9yoqHyfM3RajYkVawqVx8KeQ4g+X0ZrWrjLiBwPK52UMja0BPcpRS1dnWu6CVaXtHl4Y8RMXcJKA8aNfmm4eohUjnb0yoiTeFkSyhGZ84wB+s70HtQ+nAueUYkHT5GLmEHPNfKhUxpP7iWRs68/vKfKmJyVto5Qubvtf2QmuBlCgU8PZ+45pnIPk6PP7WxznbB0GHvcNmzxtP2OSeXxyCi94douaAUG+uqyw+CiCMfuA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NdBC4cydHBiLgcDhVAPeuJjc2UV+OyUkxV/Yqh+1VRg=;
+ b=HcQ5MuWaE7mR6PvQLUPoP3CMy+stFMoav9URAf8Xrd82pLMRC/WkkUHX4zIHhp1XxhvjHwR6Mo4P4AwatDWh9nOa7TtUhw7UBNLfFu0GbeV6f3eiF8KMkWBMW6k10KnWXjPiN7caIAy4zgNwtLXL1D3rTNXbCsXof3GONhneR78qEVAcX6VOekqwr/6P82gQxSGNc45tBv6gXp+BpsSz8AhnMKb6YPp9+BAChE7j9JMSJZhTEVEGpDyEQ8l+FNMc/2ctwa71bKbEjrbWqtjdZgCEqYiMzfocbKk5h2JI9t2DfvkmXYi6SyJS4+zhUxnQnzt9IsJ3pWNxt+9qxlz/RA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=toshiba.co.jp; dmarc=pass action=none
+ header.from=toshiba.co.jp; dkim=pass header.d=toshiba.co.jp; arc=none
+From: <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: <cip-dev@lists.cip-project.org>
+Subject: CIP IRC weekly meeting today on libera.chat (2025/07/24)
+Thread-Topic: CIP IRC weekly meeting today on libera.chat (2025/07/24)
+Thread-Index: Adv8IqxojCmQZpg/TVOeg4Gsn1d97g==
+Date: Wed, 23 Jul 2025 22:39:50 +0000
+X-TSB-HOP2: ON
+Message-ID: 
+ <TY7PR01MB1481815867A23D912EF19E0C2925FA@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=toshiba.co.jp;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|TYRPR01MB12774:EE_
+x-ms-office365-filtering-correlation-id: 94fc4b65-b79f-4ae4-abc4-08ddca39d5af
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info: 
+ =?iso-2022-jp?B?QmUvbnFLNXlYdTl4Q3FBanBZYlVvVlFkT3lGazFMVmxzOHRuRVJXT2E0?=
+ =?iso-2022-jp?B?T1dEa0k4WG1UaGlqODF6ZmhvV0tkR0VXWFlNMFRZUmRvaHB6WVBRbWVX?=
+ =?iso-2022-jp?B?TFhxR3JzVlZSZ3lrRzZHN3czWFZDS0FycEI1RmVIdkFPdGE4TWVkZFhY?=
+ =?iso-2022-jp?B?KzVBaG9LOVhmbUxra2ttUy94Ui9lVVd2Tmo0d0tHcG5lMUZabXlPbHVI?=
+ =?iso-2022-jp?B?ckNkNk1pWGRZZzlwWVhOU2YwSjBZenZHdGllQUhjNndhVU95YmNBdEtR?=
+ =?iso-2022-jp?B?RnV3S2ZZNURoeVhBZDMwVFRhOGsreU5GaCtvYTVWVkM1R09pR3lFSkNH?=
+ =?iso-2022-jp?B?QzJ1cmhNUGNDSXpEc2djajNRM0FoUG0xL3haeEFuT0VPOXphcEVjQUFz?=
+ =?iso-2022-jp?B?ZVN5akY3QlpCVUE5eWpTSWVwR3BtRVgxVkFlbDNsUkhpMUtWejFVdDlk?=
+ =?iso-2022-jp?B?M2lYbjlzMWpiVzc3ZlhoME9JSG5Bb25Lb09OSmErUlZoVjdrZVdLY0pi?=
+ =?iso-2022-jp?B?OVR6M3NkTmtZTkVPS29zN0lET0JmMFgxOXM2Uk96TnZ3aks0RTFtVTg3?=
+ =?iso-2022-jp?B?bjFjMTJpYmpSV3VUaUpYY3hVTUllRTB6REJrNTduKzg5UnhLTjY4RDNK?=
+ =?iso-2022-jp?B?MGgvQWNDcHFzSEtmeUV0Um9CdnhGOVFBTzgzaFJFTE16aEdvWXlLYk1Q?=
+ =?iso-2022-jp?B?OEttM2JVN0Jjb2xNUmtvdjl6VHRLK2dqNFRVYkZ5TFdIekYwY1ZEaVpH?=
+ =?iso-2022-jp?B?RUMyWXMzd2d0azY5YmpoKzRacFVUNmVISmZmb3hlQU5ZQU02LzJnbVpX?=
+ =?iso-2022-jp?B?aTJ2bHlSQXcxTnJhZUc3aTk5QXB2UmFYeDI3Y2R4QVZ0ZXF1cjREelhR?=
+ =?iso-2022-jp?B?YjQyV1V6OFVxbUMwQzBzbTZ1ZDhaRjBad2xpSWtxcEZVd01BS0lIazNC?=
+ =?iso-2022-jp?B?Sy80ZWJUMFkwakZDcUxTOWNLcWZkMEQ3OWkrTjhJY01PbjgyekdqRkRT?=
+ =?iso-2022-jp?B?VEt5OWQwSnB5bGZROTQ1Tnd2VStYc3BZK0RxdnlkaTFwQjkxM2M4VUg2?=
+ =?iso-2022-jp?B?Mm41K0ZHKzJSZjVib1AvSzRha0ZGdTdiTUFibDYvMEhvamhLK2d2RHdy?=
+ =?iso-2022-jp?B?UExMVllPU0RaOFhCOHp4L0ZMWkFieFBtMTVXbVFXUWRvay91bmpWeUcr?=
+ =?iso-2022-jp?B?MXB3cGI2ZXJKNlBVWEd2WlkvWmhTWVFETGhZOGxTRU5MNGVvYzNVWFBy?=
+ =?iso-2022-jp?B?VnhEOUMwNk1mbFdjOTNIa3NuSFh0WmdXdngwUWFITGttWG5ZQkdnR1dY?=
+ =?iso-2022-jp?B?djFLakpNZ1dwOHpYR2ZxdEpiOTVrczY0SHBVS0srMnNxN0RXNmx4L0U1?=
+ =?iso-2022-jp?B?UFpjWWtsRG1weFZRRVpYVkFBdnF5NlJ6cy9jU053TmMwdUVKdmxYdGtJ?=
+ =?iso-2022-jp?B?cFdWOCtob2RQU24zV21LL051WkZ5TVdLVW1lYmErcENmaVRLUnFuSFJW?=
+ =?iso-2022-jp?B?YldVZW03OFpNYVByRytQVHVrbHkwZlF3ai84R09Ibk01YWhQQ1VtZEhn?=
+ =?iso-2022-jp?B?WkZXTnR0eDcrWVU3VEJ5OXMvZDRaMGJ2ZWVxYWJoTnhTYlptMGRNNVZC?=
+ =?iso-2022-jp?B?dXFocXJYN1dLdTFLdkJvM1lQS0M5dzl0YUZWNWd5RmlaVHVzdU04TVBP?=
+ =?iso-2022-jp?B?QzFJSXBHUWJHSG93RFB1WjJKOXR2bnFBRmdkMXk4RVVnWlRWbXgvbHVq?=
+ =?iso-2022-jp?B?dEhWaytma1RVQzdZU0hTSzRzSGQ2SkdOSnpNbkZFRWpCQ1ZCb0JWZ2Fy?=
+ =?iso-2022-jp?B?a1RBWWl1MHpkYit6RGdDd2pCNmZvU0lQNHl5ZTU3WXV3c1hsbVUwREpw?=
+ =?iso-2022-jp?B?Nk43NDVjL1FVZXVPZTVNNUNBWHkzaGpuOThHd3MrZW5GRTZ1WVdDc1dO?=
+ =?iso-2022-jp?B?a0crY0o0VXdFbWdPZ1J5WkdvYiswTTJlczFkYkhhYms3enVJTVlWbXJN?=
+ =?iso-2022-jp?B?UGV3Yy9tdXZFbkNtaThoVnVrV1lER091TDhSTC85TlJMUm5tTVRFa01H?=
+ =?iso-2022-jp?B?T09HN29wdEtaV3NBVVMwZlNmU1huNkk9?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?iso-2022-jp?B?Y1NIdVk0L0pEd0VQTGJwWUNVT3Q0LytYMEw0K2JVM1g1TUhRVStBaHY0?=
+ =?iso-2022-jp?B?U2JNYTlnMHdLMnpqeFpabGdiaFMwZzJ2Uk82UXc4REhDMmxua1N4bFBM?=
+ =?iso-2022-jp?B?anVrZXFqK0pnVjNGWURZZXlFUTVyTldLL2gvdjA5WE1icjM3REZtRHRo?=
+ =?iso-2022-jp?B?VFovYVdldGFVc3FHcHpMN2tqUVFpYldtZDBwQXBBemkrZCtabEdYOWpr?=
+ =?iso-2022-jp?B?M3B1QlI5VkNGY0hkejNzVUs3UG1xRWxNaUlmK3lFMUN0TGJzbENjelpn?=
+ =?iso-2022-jp?B?ZEJNWFhLaWxGVERMengrdjlkR2I5QnNwa3QzQmtYWlY5eG9oS25Nb0Ri?=
+ =?iso-2022-jp?B?Q293Wlg2cmJST1pyemg1amZoRFNzblBCdFR0cjM4Y2hSZ0dVczFyWDEy?=
+ =?iso-2022-jp?B?VzNQZ1hkV25nREZ5Mm1YdW0wa2NkN3FhR3hFSWdLQUxGdTJjV3QrbFg4?=
+ =?iso-2022-jp?B?MW1nbDFFSHl0YlNhb1Jra3FmODJSOXFsSmxrUWt4K0xNWXcxb1p1RlYy?=
+ =?iso-2022-jp?B?MHhNdituSHZVSGUrR3NuOEx2SkVOWk9lMVZaL0JQaFN3TDlEQjZobkd3?=
+ =?iso-2022-jp?B?Z0xaUCtRV255RGVmLzlKRzhzbXJVRWxPZ0tIbDBGQ1lLdXJRVHJjajdh?=
+ =?iso-2022-jp?B?aHdpajM3MzJCM1hFQ1FOaHV2OVM4SGx4NDNiM1Zmczhrc3pBcjdQM1J5?=
+ =?iso-2022-jp?B?R09uRGlnZEc0TWttb0plZ2hBNWR6MHk3UTNOUkdpQXhaVElsYW03azlU?=
+ =?iso-2022-jp?B?ME9lUEdYUXU1OVp6bHF2M2hmOFpTa1h1WFU3cFZuTStGY1RNNVk4UDRL?=
+ =?iso-2022-jp?B?bkFQMHd2VEkyVzM4UDlqcW1MYUZaZXBLNTZRc3ljK2VCUndCd3JDUFBm?=
+ =?iso-2022-jp?B?VmJ6NFpYd1p0V2MyVWFma2Z4cE5CSUlJK3MwcWR2QjBQQXE1b1hYL3Rk?=
+ =?iso-2022-jp?B?eUhlMjRNYi8ycGtIbXFPbVlnYldCUnVkUGwwZlN1d3V4OWpkcGM3MXpj?=
+ =?iso-2022-jp?B?RDRML2Z6aTROYm1wNS9XZmtCZVpaR3IyTC9Ib3Z2aGx1SzBWVlZBQXZK?=
+ =?iso-2022-jp?B?a2tONGtsQzZLZTczcWVyb3FsQnFPRFlrRkI0bmZlS2tmSHNINlRjRktW?=
+ =?iso-2022-jp?B?U3A2V1hMcVd6OGVCZmR1Qlc4MmxWMjVoRmM5bjBHRWo1NldEUFFmZno3?=
+ =?iso-2022-jp?B?YStPc1FpVUQvS2ZNUWlyN2QrQW4yanR4NFhPbjJOMEMvcG5zTE9CUk1O?=
+ =?iso-2022-jp?B?ZmdMbytBT3VnanNFNTEwMkpIMFpyQkcvb0c0bVFGZHlLMmxGY0lTV05B?=
+ =?iso-2022-jp?B?OUVjVEkrRm1jalBzUDNIcnZkVGV3a2oyMU9ydXVWQ1RqQXdxM2ZhK1RE?=
+ =?iso-2022-jp?B?UmlFLzZJME1rSDJKajZUV3RISDgvRVFxODdCTzVzLysxaTdxRS9QN0Zm?=
+ =?iso-2022-jp?B?aVJMdmI3R1hHUmc5OU9LNlltbzR4RUUwUitvZisybmlMTjJQZ2J2Mm9q?=
+ =?iso-2022-jp?B?QkVrNnZpYXNMK0lEQW9WSDFZSCtPWXVHYVMzZmwyR1IvOEtiOHJxSFlx?=
+ =?iso-2022-jp?B?U1ovaHZadFpxQWV0Y0F5WTRrb2hZMGNYTWhHSU1TYWlsSmZ5Z3RlS0dR?=
+ =?iso-2022-jp?B?Z2hOSFlJcURhQVJWNUZFbmEvaUdxQzdwWkJFSDRZbDhSQXN3T2xlWGVr?=
+ =?iso-2022-jp?B?Z0Fydm16Tng2cEl5eldNY3IxZU8yQUduNzEvRUZGS0NOVy9xVWtGTHpX?=
+ =?iso-2022-jp?B?a0wrSk5KajFVOGhlT0FrTkU1OHQvZURCTktHSW9vaDE0UENURGp5M2N0?=
+ =?iso-2022-jp?B?TFM3bVQzTzZsRHhTSVpZMSs3NUZKNjcyV09Sc09FaHBrdTZjQVI2anp4?=
+ =?iso-2022-jp?B?T2ZUNk5kQzRQLzhEWlNLOGJ2MEVxVVFOL1lzN2hzVThNYjJJeDlDUmRw?=
+ =?iso-2022-jp?B?QnI5S0RFN2dxem5Ielgrb1ROMThONGJ6K3Yva1BLQStJaFRQeXlUZGF4?=
+ =?iso-2022-jp?B?T1BzM0RoNUNQNjJCRmxHeVo4MWw5STFuYm53a2dzS1NTVWEzV2l4NmJ0?=
+ =?iso-2022-jp?B?ZjdFUmNhVnVURUF3QU1iN0FDZW02b1RjdEExSldBQkRpU0ludzk5U0Mv?=
+ =?iso-2022-jp?B?SXZWTVNxbm1Yc21yU1kxWmk2dzlTdUNjc1NnKzVaK2Jhd0tkVTVEMUR2?=
+ =?iso-2022-jp?B?UVNRTjE0cVIvS2JmVmpJVGRBYmtjMlRoaHY3OFNyZUJySmFDZXVpeElT?=
+ =?iso-2022-jp?B?dXBTbG5sV2h5VVA5Q0xJcDdTVnlySE1oWlJGZUFSb2lsaHB0a2M3LzZG?=
+ =?iso-2022-jp?B?c0x5bWZ6aExLdHBiekVMcUdqYmpFUjFoZk81NzBJRUJMUFZkT0xmUy9B?=
+ =?iso-2022-jp?B?M2VaQUE9?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 24 Jul 2025 07:09:55 +0900
-X-Gm-Features: Ac12FXwrSNQYP2hAnVk3eSXT7Bf33DBrhmiiW67PjCH9O9yDYoxJTA1-9Yhrn4E
-Message-ID: <CAODzB9pQO5pjBnk052EgGuizESk+3okckMsw1BBC3JLhb_2nMQ@mail.gmail.com>
-Subject: [kernel-cve-report] New CVE entries this week
-To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: toshiba.co.jp
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 94fc4b65-b79f-4ae4-abc4-08ddca39d5af
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jul 2025 22:39:50.3105
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: UoVQyRpSG1Zsc2m8xSxGux5ajWvPsFo7waI2newx4bLdTQvcvxk+C1olKZ4WSIAaUGAgPYEWUQQlFiBSSPuV6uk/svLZUzlB6UNF18o6F0EftTRgV76M/e+IW0frFFqZ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB12774
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 23 Jul 2025 22:10:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19576
+ <cip-dev@lists.cip-project.org>; Wed, 23 Jul 2025 22:40:02 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19577
+
+Hi all,
+
+Kindly be reminded to attend the weekly meeting through IRC to discuss
+technical topics with CIP kernel today. Our channel is the following:
+
+    irc:irc.libera.chat:6667/cip
+
+The IRC meeting is scheduled to UTC (GMT) 13:00:
+
+https://www.timeanddate.com/worldclock/meetingdetails.html?year=3D2025&mont=
+h=3D7&day=3D17&hour=3D13&min=3D0&sec=3D0&p1=3D224&p2=3D179&p3=3D136&p4=3D37=
+&p5=3D241&p6=3D248
+
+USWest    USEast    UK        DE        TW        JP
+06:00     09:00     14:00     15:00     21:00     22:00
+
+Last meeting minutes:
+https://ircbot.wl.linuxfoundation.org/meetings/cip/2025/07/cip.2025-07-17-1=
+3.02.log.html
+
+* Action items
+* Kernel maintenance updates
+* Kernel release status [*]
+* Kernel testing
+* AOB
+
+Best regards,
+  Nobuhiro
+
+Date the data is created: Wed Jul 23 10:36:52 PM UTC 2025
+linux-4.4.y-cip: interval 30 day
+  latest version release date: Wed Jun 18 08:46:56 AM UTC 2025
+  limit date: Fri Jul 18 08:46:56 AM UTC 2025
+  Status: Late
+linux-4.4.y-cip-rt: interval 60 day
+  latest version release date: Thu Jul  3 11:41:37 AM UTC 2025
+  limit date: Mon Sep  1 11:41:37 AM UTC 2025
+  Status: On track
+linux-4.19.y-cip: interval 30 day
+  latest version release date: Thu Jul 17 08:30:58 AM UTC 2025
+  limit date: Sat Aug 16 08:30:58 AM UTC 2025
+  Status: On track
+linux-4.19.y-cip-rt: interval 60 day
+  latest version release date: Wed May 21 07:22:16 PM UTC 2025
+  limit date: Sun Jul 20 07:22:16 PM UTC 2025
+  Status: Late
+linux-5.10.y-cip: interval 30 day
+  latest version release date: Wed Jul 16 05:30:11 AM UTC 2025
+  limit date: Fri Aug 15 05:30:11 AM UTC 2025
+  Status: On track
+linux-5.10.y-cip-rt: interval 60 day
+  latest version release date: Fri Jul 18 08:16:28 AM UTC 2025
+  limit date: Tue Sep 16 08:16:28 AM UTC 2025
+  Status: On track
+linux-6.1.y-cip: interval 30 day
+  latest version release date: Tue Jul 15 04:51:02 AM UTC 2025
+  limit date: Thu Aug 14 04:51:02 AM UTC 2025
+  Status: On track
+linux-6.1.y-cip-rt: interval 60 day
+  latest version release date: Thu Jul 10 07:45:38 PM UTC 2025
+  limit date: Mon Sep  8 07:45:38 PM UTC 2025
+  Status: On track
+linux-6.12.y-cip: interval 15 day
+  latest version release date: Thu Jul 10 12:36:09 PM UTC 2025
+  limit date: Fri Jul 25 12:36:09 PM UTC 2025
+  Status: On track
 
-Hi!
-
-It's this week's CVE report.
-
-This week reported 4 new CVEs and 24 updated CVEs.
-
-* New CVEs
-CVE-2025-38349: eventpoll: don't decrement ep refcount while still
-holding the ep mutex
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-38349
-
-Introduced commit is not determined.Fixed in v6.16-rc6.
-Reference counter code was introduced by 58c9b01 ("epoll: use refcount to
-reduce ep_mutex contention") in 6.4-rc1.
-
-Fixed status
-mainline: [8c2e52ebbe885c7eeaabd3b7ddcdc1246fc400d2]
-stable/6.12: [6dee745bd0aec9d399df674256e7b1ecdb615444]
-stable/6.6: [521e9ff0b67c66a17d6f9593dfccafaa984aae4c]
-
-CVE-2025-38350: net/sched: Always pass notifications when child class
-becomes empty
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-38350
-
-Introduced by commit 3f98113 ("sch_hfsc: Fix qlen accounting bug when
-using peek in hfsc_enqueue()") in v6.15.
-Fixed in v6.16-rc5.
-
-Bug introduced commit was backported to following branches.
-cip/4.19 cip/4.19-st cip/5.10 cip/5.10-rt cip/6.1 cip/6.1-rt cip/6.12
-stable/5.10 stable/5.15 stable/5.4 stable/6.1 stable/6.12 stable/6.6
-
-Fixed status
-mainline: [103406b38c600fec1fe375a77b27d87e314aea09]
-stable/5.10: [e9921b57dca05ac5f4fa1fa8e993d4f0ee52e2b7]
-stable/5.15: [e269f29e9395527bc00c213c6b15da04ebb35070]
-stable/5.4: [3b290923ad2b23596208c1e29520badef4356a43]
-stable/6.1: [7874c9c132e906a52a187d045995b115973c93fb]
-stable/6.12: [a553afd91f55ff39b1e8a1c4989a29394c9e0472]
-stable/6.6: [f680a4643c6f71e758d8fe0431a958e9a6a4f59d]
-
-CVE-2025-38351: KVM: x86/hyper-v: Skip non-canonical addresses during
-PV TLB flush
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-38351
-
-Introduced by commit 2609708 ("KVM: x86: hyper-v: Handle
-HVCALL_FLUSH_VIRTUAL_ADDRESS_LIST{,EX} calls gently") in v6.2-rc1.
-Fixed in v6.16-rc6.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [fa787ac07b3ceb56dd88a62d1866038498e96230]
-
-CVE-2025-38352: posix-cpu-timers: fix race between
-handle_posix_cpu_timers() and posix_cpu_timer_del()
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-38352
-
-Introduced by commit 0bdd2ed ("sched: run_posix_cpu_timers: Don't
-check ->exit_state, use lock_task_sighand()") in v2.6.36-rc1.
-Fixed in v6.16-rc2.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-cip/4.19-st: [e43787b92b7f343724665c2666ee072e5d67c356]
-mainline: [f90fff1e152dedf52b932240ebbd670d83330eca]
-stable/5.10: [c076635b3a42771ace7d276de8dc3bc76ee2ba1b]
-stable/5.15: [2f3daa04a9328220de46f0d5c919a6c0073a9f0b]
-stable/5.4: [78a4b8e3795b31dae58762bc091bb0f4f74a2200]
-stable/6.1: [764a7a5dfda23f69919441f2eac2a83e7db6e5bb]
-stable/6.12: [c29d5318708e67ac13c1b6fc1007d179fb65b4d7]
-stable/6.6: [2c72fe18cc5f9f1750f5bc148cf1c94c29e106ff]
-
-* Updated CVEs
-CVE-2022-48703: thermal/int340x_thermal: handle data_vault when the
-value is ZERO_SIZE_PTR
-
-stable/5.15 was fixed.
-
-Fixed status
-stable/5.15: [39d5137085a6c37ace4680ee4d24020a4a03e7dc]
-
-CVE-2024-26644: btrfs: don't abort filesystem when attempting to
-snapshot deleted subvolume
-
-stable/5.4 was fixed.
-
-Fixed status
-stable/5.4: [c06941564027bdbc01d2df7f41e333c11cb0482d]
-
-CVE-2024-26775: aoe: avoid potential deadlock at set_capacity
-
-stable/5.15 was fixed.
-
-Fixed status
-stable/5.15: [2499fa286fb010ceb289950050199f33c26667b9]
-
-CVE-2024-44939: jfs: fix null ptr deref in dtInsertEntry
-
-stable/5.15 was fixed.
-
-Fixed status
-stable/5.15: [f98bf80b20f4a930589cda48a35f751a64fe0dc2]
-
-CVE-2024-49935: ACPI: PAD: fix crash in exit_round_robin()
-
-stable/5.10, stable/5.4 were fixed.
-
-Fixed status
-stable/5.10: [d214ffa6eb39c08d18a460124dd7ba318dc56f33]
-stable/5.4: [82191a21a0dedc8c64e14f07f5d568d09bc4b331]
-
-CVE-2025-37984: crypto: ecdsa - Harden against integer overflows in
-DIV_ROUND_UP()
-
-stable/6.12, stable/6.6 were fixed.
-
-Fixed status
-stable/6.12: [f2133b849ff273abddb6da622daddd8f6f6fa448]
-stable/6.6: [f02f0218be412cff1c844addf58e002071be298b]
-
-CVE-2025-38067: rseq: Fix segfault on registration when rseq_cs is non-zero
-
-stable/5.10, stable/5.15, stable/6.1, stable/6.12, stable/6.6 were fixed.
-
-Fixed status
-stable/5.10: [48900d839a3454050fd5822e34be8d54c4ec9b86]
-stable/5.15: [3e4028ef31b69286c9d4878cee0330235f53f218]
-stable/6.1: [b2b05d0dc2f4f0646922068af435aed5763d16ba]
-stable/6.12: [f004f58d18a2d3dc761cf973ad27b4a5997bd876]
-stable/6.6: [eaf112069a904b6207b4106ff083e0208232a2eb]
-
-CVE-2025-38074: vhost-scsi: protect vq->log_used with vq->mutex
-
-stable/5.10, stable/5.15, stable/6.1 were fixed.
-
-Fixed status
-stable/5.10: [80cf68489681c165ded460930e391b1eb37b5f6f]
-stable/5.15: [8312a1ccff1566f375191a89b9ba71b6eb48a8cd]
-stable/6.1: [59614c5acf6688f7af3c245d359082c0e9e53117]
-
-CVE-2025-38102: VMCI: fix race between vmci_host_setup_notify and
-vmci_ctx_unset_notify
-
-stable/5.10, stable/5.4 were fixed.
-
-Fixed status
-stable/5.10: [468aec888f838ce5174b96e0cb4396790d6f60ca]
-stable/5.4: [74095bbbb19ca74a0368d857603a2438c88ca86c]
-
-CVE-2025-38104: drm/amdgpu: Replace Mutex with Spinlock for RLCG
-register access to avoid Priority Inversion in SRIOV
-
-stable/6.12 was fixed.
-
-Fixed status
-stable/6.12: [07ed75bfa7ede8bfcfa303fd6efc85db1c8684c7]
-
-CVE-2025-38193: net_sched: sch_sfq: reject invalid perturb period
-
-stable/5.10 was fixed.
-
-Fixed status
-stable/5.10: [2254d038dab9c194fe6a4b1ce31034f42e91a6e5]
-
-CVE-2025-38211: RDMA/iwcm: Fix use-after-free of work objects after
-cm_id destruction
-
-stable/5.10, stable/5.4 were fixed.
-
-Fixed status
-stable/5.10: [bf7eff5e3a36c54bbe8aff7fd6dd7c07490b81c5]
-stable/5.4: [013dcdf6f03bcedbaf1669e3db71c34a197715b2]
-
-CVE-2025-38226: media: vivid: Change the siize of the composing
-
-stable/5.4 was fixed.
-
-Fixed status
-stable/5.4: [57597d8db5bbda618ba2145b7e8a7e6f01b6a27e]
-
-CVE-2025-38229: media: cxusb: no longer judge rbuf when the write fails
-
-stable/5.4 was fixed.
-
-Fixed status
-stable/5.4: [77829a5f5a74026b888b0529628475b29750cef4]
-
-CVE-2025-38230: jfs: validate AG parameters in dbMount() to prevent crashes
-
-stable/5.10, stable/5.4 were fixed.
-
-Fixed status
-stable/5.10: [a4259e72363e1ea204a97292001a9fc36c7e52fd]
-stable/5.4: [95ae5ee6069d9a5945772625f289422ef659221a]
-
-CVE-2025-38245: atm: Release atm_dev_mutex after removing procfs in
-atm_dev_deregister().
-
-stable/5.10, stable/5.4 were fixed.
-
-Fixed status
-stable/5.10: [4bb1bb438134d9ee6b97cc07289dd7c569092eec]
-stable/5.4: [2a8dcee649d12f69713f2589171a1caf6d4fa439]
-
-CVE-2025-38249: ALSA: usb-audio: Fix out-of-bounds read in
-snd_usb_get_audioformat_uac3()
-
-stable/5.10, stable/5.4 were fixed.
-
-Fixed status
-stable/5.10: [2dc1c3edf67abd30c757f8054a5da61927cdda21]
-stable/5.4: [24ff7d465c4284529bbfa207757bffb6f44b6403]
-
-CVE-2025-38251: atm: clip: prevent NULL deref in clip_push()
-
-stable/5.10 was fixed.
-
-Fixed status
-stable/5.10: [41f6420ee845006354c004839fed07da71e34aee]
-
-CVE-2025-38262: tty: serial: uartlite: register uart driver in init
-
-stable/5.4 was fixed.
-
-Fixed status
-stable/5.4: [5015eed450005bab6e5cb6810f7a62eab0434fc4]
-
-CVE-2025-38263: bcache: fix NULL pointer in cache_set_flush()
-
-stable/5.10 was fixed.
-
-Fixed status
-stable/5.10: [d54681938b777488e5dfb781b566d16adad991de]
-
-
-CVE-2024-28956: x86: Indirect Target Selection
-
-stable/5.10 was fixed.
-
-Fixed status
-stable/5.10: [cda93610bbbfa5b8d1b0e7fe746c8be81d484f23,
-5402d7784a0c128dac6edd09ae387dd2e26c7249,
-3c9fea6f464966b7c49399416f32f06d36fb8112,
-09c33d19dd4c00069ec85137907e0ffdf3ccf60c,
-c06b48bf6649fc7f5df93e319f064c4d661b54b5,
-ae00968afde358ea046eb1a7c7342d8db3b875bd,
-ad40aa1f3f10cd433f6442e438dbe11449e71aef,
-d9e2ba542fc2c55eb4128e57d77c07c9539980e1,
-f5709d9086f6dd97f5582620fd8609f9d02eb15b,
-07d828c0845651a7822be9535e91c095474bd140,
-116a42f01f7da1c7b032bf7ceded132c671f8e6f,
-129947ac5441b5c3e1c350ac49492d83ce957d87,
-852084566b338d42338ee203e329b31dd8495862,
-ac1b649e46f90fa9183edde5ac9a10154eeb53d6,
-31967b44812db6a5902ef77a8a51fb0593ff0bb5,
-0aac24882272233eced7dca4862fca6fa90ef415]
-
-CVE-2025-27558: IEEE P802.11-REVme D1.1 through D7.0 allows
-FragAttacks against mesh
-networks. In mesh networks using Wi-Fi Protected Access (WPA, WPA2, or
-WPA3) or Wired Equivalent Privacy (WEP), an adversary can exploit this
-vulnerability to inject arbitrary frames towards devices that support
-receiving non-SSP A-MSDU frames. NOTE: this issue exists because of an
-incorrect fix for CVE-2020-24588. P802.11-REVme, as of early 2025, is a
-planned release of the 802.11 standard.
-
-stable/6.1, stable/6.12, stable/6.15, stable/6.6 were fixed.
-
-Fixed status
-stable/6.1: [e2c8a3c0388aef6bfc4aabfba07bc7dff16eea80]
-stable/6.12: [e01851f6e9a665a6011b14714b271d3e6b0b8d32]
-stable/6.15: [6e3b09402cc6c3e3474fa548e8adf6897dda05de]
-stable/6.6: [ec6392061de6681148b63ee6c8744da833498cdd]
-
-CVE-2024-36350: TSA-SQ (TSA in the Store Queues)
-
-stable/5.10 was fixed.
-
-Fixed status
-stable/5.10: [b9d08aebbe1859bbca5600fd1220b2ffa703df29,
-78192f511f401af644e6ccb7c02bc1ce39092851,
-6fea1a4e150f1fe3726310558f33a30e0c209153,
-a8a08f1e519b4fd08adce08ebfa1763950be5d99]
-
-CVE-2024-36357: TSA-L1 (TSA in the L1 data cache)
-
-stable/5.10 was fixed.
-
-Fixed status
-stable/5.10: [b9d08aebbe1859bbca5600fd1220b2ffa703df29,
-78192f511f401af644e6ccb7c02bc1ce39092851,
-6fea1a4e150f1fe3726310558f33a30e0c209153,
-a8a08f1e519b4fd08adce08ebfa1763950be5d99]
-
-Regards,
--- 
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
-
-Email :masami.ichikawa@cybertrust.co.jp
-          :masami.ichikawa@miraclelinux.com
 
