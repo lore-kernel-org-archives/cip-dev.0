@@ -1,610 +1,216 @@
-Return-Path: <Shivanand.Kunijadar@toshiba-tsip.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9937EC87FC9
-	for <webhook@archiver.kernel.org>; Tue, 29 Jul 2025 13:45:52 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.131])
- by mx.groups.io with SMTP id smtpd.web10.7207.1753796747819608287
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A82C87FC9
+	for <webhook@archiver.kernel.org>; Tue, 29 Jul 2025 22:07:45 +0000 (UTC)
+Received: from MRWPR03CU001.outbound.protection.outlook.com (MRWPR03CU001.outbound.protection.outlook.com [40.107.130.56])
+ by mx.groups.io with SMTP id smtpd.web11.20817.1753826857946369319
  for <cip-dev@lists.cip-project.org>;
- Tue, 29 Jul 2025 06:45:48 -0700
+ Tue, 29 Jul 2025 15:07:38 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.131, mailfrom: shivanand.kunijadar@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1120) id 56TDjiNk728209; Tue, 29 Jul 2025 22:45:45 +0900
-X-Iguazu-Qid: 2rWhEqwpnRWrFv1KaG
-X-Iguazu-QSIG: v=2; s=0; t=1753796744; q=2rWhEqwpnRWrFv1KaG; m=G+nNwcuZiZnN/20HaMNAhwOffKKSGPs3Jz30WHg1S5I=
-Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
-	by relay.securemx.jp (mx-mr1121) id 56TDjhNa2235921
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 29 Jul 2025 22:45:44 +0900
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=qqOQGo9C;
+ spf=pass (domain: siemens.com, ip: 40.107.130.56, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W1kPLz/i46hKLol8eakHVM2LnfDtsqlYJhZyeNJ1r9/2UJrjn2QqOmteUrB2o19erOlswxYpEtrkKj3bbnQ7D7uj8/uiBpEq8/XIRbX59v651id3ID7g6xHZvo+Eszna9VnKUOL8E050cupwHIK4qmqlRb2v8wWAoL9vOHP5oCdSTlgHNJPOCGkLgvMZ4b7oAhzrihIY4/7UGXB+XKD63MjLFnPiDZ1C+8ROU61UzwbxPGb/CNiUErt6OosnvIHszY5gRjFu5UjFHQPIUNhKvdB9ZvBWv1VHPvo/CEbD4OEm159mkQyyg3D2Y7lXkykVoPXIwgG8FR1ra3WKgVaDqA==
+ b=yctYoFesqAWwA18p35WGLGCPwbQ+3xMFS41kM7x743PZ+cjxn1xJbgqUvTEMwX5n+AYH6c/RjgqCczt+WWtkEiAt43no4/VqWt615t21k7eGYPyVVFOTkdDS7kcIc8Ehb0ZmEB5I5h5Ve8dfFyAfLpDeoLGk7s5n/DuY9mqjgBy1ytMHbdr6egvA70/u0kpDvtLTfdds5PD5J4HfBF1QiIxGf93y60HwwkVe4iNQDIyBC6vxRhDZLRpK9DJ/ZOQxP6Fqjbw2nw3gEb2x0uV/d3rjOQNG59fiF+38SDdDjRtjW1AiyL425U9ybbQXu618VuurUqJCBgz/5oNhkoaAVA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fCoqIfDiSO1dy0qUAqpatSUS6RtQ3wLDXn/1g2PcRm4=;
- b=rJxl0bDnGzRZsJj0SFhNwEX7IWmc9GC9dlep5wbJeMi2v8zlnAW7xA6+yV0dog1avlde/sHVag/Bi8zKTEIv4R0Rvj3PIskHY2VV/oUflqXNp4E3uyRPW6Nxv1X2QOQAXwtgg9cUzu+o16/Xn7dNntKnJiMAdADw8/19LHZOF1GHcDRWWFARVVAZChtTG5eYS4WhTPQbX0znNfq4bIR480c2lPxnJNstxAM8LY29HySL1Rp+Xw0aHRbl2YYXX8koMagg373ukxs8PzPZBv60zdaZXUJ5poBTIxSCDU38+x5xITFO//Q55tHSYSuqwhZD6nGvD0ms8kgeLWTAkvLt2g==
+ bh=ApUmMc61lB2aKxxURpNkkiJpo3NOSl8Djw/US92wbHA=;
+ b=TEzk+nIEHb8SnkgOBe2hN5+Cwi9Qa6oskne1i+RzkuGd9m+2rBa/ExZzbx50/u9POaCDs5NT8FqW0/zmo4XG+ve3Cnmn4IxXwkXSjsn+BT9p2VWWBJ6/bejKcRJVXjftJJK/D7DNGcrWFa4p1W/dE31zNoLhTCSIDnYB5ByxX4KifoRkz3AaUTYxahXmaRoxXV6mfja2NrwLa48d4hDP++OCTAXwS2+WQYKwCvdL/ubVvrqCYKNggJH2u3PbSabi3dbknRiNu32dXBGbDmlGLCclND2xnn9U2rvn/CIjAsOSINCra+cXUbJQvDgngQCHSf43v+HHrWci2PnIG46hjQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
- header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
-From: <Shivanand.Kunijadar@toshiba-tsip.com>
-To: <Chris.Paterson2@renesas.com>
-CC: <dinesh.kumar@toshiba-tsip.com>, <kazuhiro3.hayashi@toshiba.co.jp>,
-        <jan.kiszka@siemens.com>, <Adithya.Balakumar@toshiba-tsip.com>,
-        <cip-dev@lists.cip-project.org>
-Subject: RE: File server for zchunk swupdate update
-Thread-Topic: File server for zchunk swupdate update
-Thread-Index: AduXPMDwGbkQ98swTHSVcGfABwDcxwFaGtzQGPn4QcA=
-Date: Tue, 29 Jul 2025 13:45:33 +0000
-X-TSB-HOP2: ON
-Message-ID: 
- <TY3PR01MB1107501396B71E71A49B7A7C8C725A@TY3PR01MB11075.jpnprd01.prod.outlook.com>
-References: 
- <TY3PR01MB11075908DA987ADCDE33DD899C7DF2@TY3PR01MB11075.jpnprd01.prod.outlook.com>
- <OS3PR01MB58966EB75B7DC1FEB3851792B7A42@OS3PR01MB5896.jpnprd01.prod.outlook.com>
-In-Reply-To: 
- <OS3PR01MB58966EB75B7DC1FEB3851792B7A42@OS3PR01MB5896.jpnprd01.prod.outlook.com>
-Accept-Language: en-US
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ApUmMc61lB2aKxxURpNkkiJpo3NOSl8Djw/US92wbHA=;
+ b=qqOQGo9CuEaiAu9Db7hi5+JdBYWT7/aSR6RpImbA5s4mtpukTKvWdgGO4eMJiVbIVtmsIqD++lUqaXk9donFvkxapg7rvR0bkWsgOcrXXNZXNMsNYUyzYpfjcotUE88ts4e9hL9rvnCYz/CG5ucrkpEjiXTHmiwZok1Fn2jNKjDZc9GrgBGlkKeQhOihvYh2+d5BwMTY3myEr1xaPSS7Vk1MovXhGMQsfRD0VWO2rd/Jlui/ApQKqVp5WFrAHP2uXe93TVLXXrcBQu4M4vFkI8vDpTxbDfPLxVWIRQMRATFhWO1BaSKUC/m5aO8wg8X3CimDuR/gqT8k/riPqapq1g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by GV1PR10MB6681.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:82::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.26; Tue, 29 Jul
+ 2025 22:07:33 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408%5]) with mapi id 15.20.8989.010; Tue, 29 Jul 2025
+ 22:07:33 +0000
+Message-ID: <324b1c7a-acf0-417e-a4e1-f38c797ebc66@siemens.com>
+Date: Wed, 30 Jul 2025 00:07:32 +0200
+User-Agent: Mozilla Thunderbird
+From: Jan Kiszka <jan.kiszka@siemens.com>
+To: cip-dev <cip-dev@lists.cip-project.org>
+Subject: [isar-cip-core][PATCH] linux-cip: Update to 4.19.325-cip122-rt43
 Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11075:EE_|TY4PR01MB14526:EE_
-x-ms-office365-filtering-correlation-id: a0593967-2948-472e-3197-08ddcea630e5
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|376014|1800799024|366016|8096899003|7053199007|13003099007|38070700018;
-x-microsoft-antispam-message-info: 
- =?iso-2022-jp?B?ZTNOZVJZcyt3SWxhRkVZc204TlRnNUZXc1lnMGVhaHU3ZnlHYW5sak1R?=
- =?iso-2022-jp?B?L0loakIwYU96aFRiNFFCSGdMRmZnWjZCa3MzMEpJUFp2a2ZpL0JkSzVp?=
- =?iso-2022-jp?B?RlVTMWtGbkgzb1dTVlBnSHpRZW5TRnNRdm04a2JYbXhVNFhIVnZ6aXEx?=
- =?iso-2022-jp?B?OEV0NHVWNDVsK2JTOHNhNUg3Mk1BcnhUMHJTaVdpTHlSM2t1YXM2YXVE?=
- =?iso-2022-jp?B?d1JQUEdRaHdwaG1ubHpyakk3MDhIdEJkRVRUcko0WExzR1pBbFRBTlNs?=
- =?iso-2022-jp?B?cHJCNDlvNDRYeDVqempQR0N3bWs2dStjQkdLTVVwYTMxM1BoNzZ0MVRH?=
- =?iso-2022-jp?B?b0FkSWNOeWprWVd1RXJDR3dxRkxkdTZ3aGU0dmFJVDhuSFRyY1VHeWJh?=
- =?iso-2022-jp?B?eE00MEhHV2RjMHdtMEZ6Z1RVbFRKMXJPMWJPOFJHMmhRdUdvL2Yva3Ji?=
- =?iso-2022-jp?B?b21MZ3Rka09GMkI5cDVqSEJqNTR3QW9JREhsWWc2TXV2ZFR4M2FWZi91?=
- =?iso-2022-jp?B?WUJOSzhyWTMzV3g0WGQ5cDFaU20yYitWc2lPWmk5UlZjbElqK25NMGtn?=
- =?iso-2022-jp?B?Q3JaQ1ZVY3BFMzdOUGRHam1sbFc3ZzZlOWgxLzdvWVJ0dXVYNTU1V3VM?=
- =?iso-2022-jp?B?TkwxZzlrMC8wdWRWUkZCbFh5NTJadzJEUk9XSlVEV1FLU1JaaGNIcFVh?=
- =?iso-2022-jp?B?UDZaQm4rT0dLYlVweEpGOE9IVnk1TWsxd1RjelQ2TzdEMVV6QzJJZDRL?=
- =?iso-2022-jp?B?dU5pSTg0blFYSmFKdGMwUDVtVHlneVZmM2dlTEp5akVEdUJkRTNDTjhU?=
- =?iso-2022-jp?B?QjBreHVsTXMyaTQwMkM0eGQzbVczSHFCSVVLVmJPeE9Ic0RIMFZpa1ZJ?=
- =?iso-2022-jp?B?NmtRWjdrUDk4eDhySnJ2SHIxRFNEYjVHNHE3QzZ6aXRwd3pKOGlVaGI1?=
- =?iso-2022-jp?B?TjIyK2ZJYlBLb3hVRGZKSGhPeXp2aS9LM3c2TE5YVXg0Z0hYd09pem5m?=
- =?iso-2022-jp?B?bE4xSFBrNmhUYWw2V3hadTJpWS9oYkJuME9ia3ovOHZpRjVKT3VXejF5?=
- =?iso-2022-jp?B?NUgvRnJTVFpJeGtLWEdkamY2WW1HZHYwbnJjN0k3RzdtYzVOYmVsbk95?=
- =?iso-2022-jp?B?M0RCTXRpb1RMbE5vSVVweEcwajNKNXpMeFFVOVFTVTNBMm1tZXFLWWpP?=
- =?iso-2022-jp?B?VGladzk5blN2Wkw3ZThYVWlPOUNhTlFFWlp2SVhnMUJFWmJySkR6YXU0?=
- =?iso-2022-jp?B?U0ErM0R5ZTNhS0djU0cwSVN2dmlkNnc4Z0dkZEUxSE1nMUo1YW93TFBr?=
- =?iso-2022-jp?B?dkREeDE4bE5jYUswNi9rTXMyNmpGdWF6Uk5DUWgwYlAyWktMM01vVWJy?=
- =?iso-2022-jp?B?V0Qzb3paL3hNdWFmVlNQMm1yVU10ZURoTEpqeGVCSGtZNjBXVE4rWmtS?=
- =?iso-2022-jp?B?OU1WOE9mdG5pOVRYSkRvZkVlbkN4TTJibCswYUpyK1YrOXBJUkNlbHds?=
- =?iso-2022-jp?B?NHNiRTJKVGswb3lqdUNnL25ndm1RdjZqZHFwbWJ4cEdsMlJ1TGxsY2hy?=
- =?iso-2022-jp?B?d0hFL2NZRkJxTmpUTkFxbFc1cmxJU0ZOMHh1Z0MrSVZLaEZFeE0zQjEw?=
- =?iso-2022-jp?B?VzF1VEp1dW5lVmJvRC9TMkFGdXMvMHdKcVhxci9HWlJVRi8zTk1HN3JY?=
- =?iso-2022-jp?B?N1VHUUs4Z0lkL1pOclgxMUV6eVlENWZ3dDlUNlU1V3BJamo4VWc5M0hu?=
- =?iso-2022-jp?B?NFMwVW1YWm9sL1FKcE5BV21vZDVkLzhkWjYyT25HMldqWDJuMk5saDZp?=
- =?iso-2022-jp?B?bU5QYXpyOEJUb2dMc3hXaTFTWGZzeGNaN09UWmdUR0RQdmdUZGRmKy9S?=
- =?iso-2022-jp?B?S1NkQXFUYXlZYXNrYUdpZlAzSlFXOUJVZEVhNFhWdXFNZzllTHFnTVcx?=
- =?iso-2022-jp?B?NlZReXp6bTBsUFdFV3BFcStMd0lhUXJzd0s3WTg4YWdXNmlUQzlMT0Ji?=
- =?iso-2022-jp?B?RkIzUFdwdXAwQzZ3QktWNVpUZ0dRR2EvVW9LVk9qRVEvaUtaUFRBT1cv?=
- =?iso-2022-jp?B?Uk54MWwremIvVkpjeSs2T2w2YmZIYTg9?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11075.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(8096899003)(7053199007)(13003099007)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?anJoVFd3R2w2UmRNZi9OZFZEK2dybjd3Y2M5ZHRSYXFXTG40VDZZNStm?=
- =?iso-2022-jp?B?ODF5cnFUcjZ5Y2xJZTBIRkVpZm9pZGI5N0EzK2RQTENXOHVQMEFiM01p?=
- =?iso-2022-jp?B?b0RpV0ptOVRrUmlGMDFrR1JVcWNXTUwvc00yRmkvWHZQRkxOQkRSakZU?=
- =?iso-2022-jp?B?UVI0aEpBT0xxS2dDMmxSNE53dDl2L2xJdzNJUGt2ZTQ1aHdGTDNxM3g3?=
- =?iso-2022-jp?B?VUNKVy9IYk1jamhLTnk5YTczU3VvVm5EV2VKWXh1OGVxcWVBdHpwM1cr?=
- =?iso-2022-jp?B?ajlObVJWcFQ5LzNsbzk2WXhwRndUODJwSHhjR1lvaVFwdHJlQklvMDlV?=
- =?iso-2022-jp?B?eEVBd2NEUmRuQTF2dHhYcGFRVktNOFVFekNIN21wQmR1aDRWVU1WaHAx?=
- =?iso-2022-jp?B?OW95V1p2bVBxWFVUZDBtY256MTVoTmxFRGNwaE45bm1TbFI3RDBMaHoz?=
- =?iso-2022-jp?B?RkRVbjZONk5SeFkycGtabVYwbEVCQmJFWERxMTlyMVcwM0JWTjRUU1M1?=
- =?iso-2022-jp?B?NW1oUStpQnByNnZqdGxxTGJRT25jaXdRMngxT1B2UXFhSjVRbXpZMDZo?=
- =?iso-2022-jp?B?RlVMUFB3ZEFDdjJpdVh6NHE0ZU15dFVoVk1ta25Hd2h6bWRyYzRMc0xD?=
- =?iso-2022-jp?B?WnhmM3hFTjdKQnd5aWRmZ2Y5TEx0MXhKenZTV1dPclF4VCt1eGJMNm0v?=
- =?iso-2022-jp?B?QTdsazFNQmYxUEZ3RFhOamdVUDc2dVRoeEZSQ1JlQVlTTlg4SXQ3RUg4?=
- =?iso-2022-jp?B?c215OXJlamp0ckZKWGVLRUJCWjJvVFB2NEh2OUh2cTJZcEN5VUhrOVZi?=
- =?iso-2022-jp?B?VmJIMHRhSGx2UUsvdVZiRC9RM3VhbmdiblJyWVVpS0c4TjNIS3dUdnhr?=
- =?iso-2022-jp?B?emlZN2dIaFFLN0l0Ry9mOGxCenVqaFZlL2lzTXE3TnkrTm4wYzF0TUhl?=
- =?iso-2022-jp?B?RXdBcWRzOUJqQWxUWTN4REwxbkhjRGg0MnBGc3pRd1drTldvT3ltZ1pC?=
- =?iso-2022-jp?B?WTFQVTFubktCNk5TQ0pvNEdOQVVHS3dxdXpPSTNuNjc0QVNzUlVHV283?=
- =?iso-2022-jp?B?QzdsMnE3Y0FwblJDRkhFMU9xSWhCaUxIN2hoekpETE5ZeTlkbEtkOXdJ?=
- =?iso-2022-jp?B?SXVyT3RUSkhsLzVUTHVWai9wM0psUUFVNkN5a043Z1ViYXkwTW9mWlhm?=
- =?iso-2022-jp?B?R0g4Z1V2THlPQnJMc2xhSTVEY1VXZWptaHM1Y1dUWHF0dU5EL2hoMjZo?=
- =?iso-2022-jp?B?a3FWTHg4N0ppeW1OK1dzSlY1WWozZVVNazk3NGN1ZWxjaVdrQ0l1VTR3?=
- =?iso-2022-jp?B?NHJqd2FpL0VTbzFkblA1a2NpMDRQV3lJRkdOSnpMdmp1NEVXaERIWVVB?=
- =?iso-2022-jp?B?RmtaNlpIWmNvajhiVmQvL2lSVDJrNHdLYS9YaDFDQW1IOCtzWlJOWlBC?=
- =?iso-2022-jp?B?UnFYcDN5eEVMWjJrOEpVUDU2VWVacGZTTTVPWEhpaXoyRWY5dEplTEY2?=
- =?iso-2022-jp?B?VHJzRkZ3cW0wc0Q2U3lBakFHZDltaWNKZUU2bGJZOFNydzEvWDBWNVNJ?=
- =?iso-2022-jp?B?eDk0VGhhZ0tCS2ZUUjFDWW1Pa2dEQXpubjFuaE4wVG11Q283R3FTUXh5?=
- =?iso-2022-jp?B?M0NCcjZQWm1ENmJvVHkzSENBMFRMRmlwVVB5czNVVE5oZWtOb0Zya2RI?=
- =?iso-2022-jp?B?bGc0cmhyR1JDcDBIVGErQVF2NG05bC9TNEx3a3NHMTVyb013Z1JJcWR0?=
- =?iso-2022-jp?B?Nk9GRzJncFBkc2hxc1BvVHRXZVB3d1gvWTQvY1hXY2V1Y0R5blVZSXIz?=
- =?iso-2022-jp?B?VjJwYmlXTXpyU2NEWkJHMUVTYjljYkgyYWdtRWFibDFkb3crbFRta0JJ?=
- =?iso-2022-jp?B?aXdXN3pjUW5MRWFwZDZUYUlldmhWWU5RdmJ0UlJOa2t3N0h1VUpmRm53?=
- =?iso-2022-jp?B?cVUwd2xnZFRDN0VIR21EVkZOZ093S2c2a1V1ZVc2V1J4d3o5UVhtaFZZ?=
- =?iso-2022-jp?B?WmJzVUhYcmpHNyt0YWYyQ1pWMlVsSlEyVjlTaU9jRENBVjZmU3pjcTNI?=
- =?iso-2022-jp?B?RU9XY1UzZ2hEUlJNaWF0TXo4QXE3QjdXZ3U2dks1clVyd2FOTzBscWph?=
- =?iso-2022-jp?B?aE9oZWp1bUlnUmtuN1MwYk1XR0ZEK3FRSVBmSGNHUml5TDBlNmJkSlFj?=
- =?iso-2022-jp?B?NlUwZEMyMHNnSkxiRVpzUU54ZEtUcWVpRmtOTWpyZ0RZemRGM0xsUW9o?=
- =?iso-2022-jp?B?dzVrbE91eWFPcEh1cHArTGM0eTd4NUQ1YmRiNjAzQVJzZmlBOHJlWXpr?=
- =?iso-2022-jp?B?VnpIWkR3VU1xRDFmWkNiZGVudUxabUxUci9iTThwY1dRY1dsNTl5Uit1?=
- =?iso-2022-jp?B?WmdpcmM9?=
-Content-Type: multipart/alternative;
-	boundary="_000_TY3PR01MB1107501396B71E71A49B7A7C8C725ATY3PR01MB11075jp_"
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ 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
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0214.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:e4::10) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
-X-OriginatorOrg: toshiba-tsip.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GV1PR10MB6681:EE_
+X-MS-Office365-Filtering-Correlation-Id: 814ecb78-61c0-48a0-e731-08ddceec518a
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?eTIzTkZtekJJbis2NWErWnR5L2RCd3AwVVdZdm8yeVRsaGd3ZGU2UzkwaWQ0?=
+ =?utf-8?B?S0NTczdIbUt1TGtTRVBqSTJjZVZJN3BRWGlsdkpoVisreldYTGFiUVlCeXVI?=
+ =?utf-8?B?ZExqNlgvTEFZdHBHVi9VSUEzamhUZmhLRDlzYnRjQzFQcDhxN29iSFZGckdY?=
+ =?utf-8?B?UmlPZDc5Y05qeUJpR2FDSWlWdjQ4M1RUQ1M0eTc1c001TWtlR3RpTkZGLzJB?=
+ =?utf-8?B?ak1wTmFLZUMyelpRTWEyOVhaY2pLUG9LZHk3WUtzY1Z6OE9FeGlhOVVsZm9X?=
+ =?utf-8?B?djBUV0VYbEMxaWUwN1ByL21zdFQxUFJjMUxFekM4VkZmN0lndG1ITTNsYURQ?=
+ =?utf-8?B?R3AyYnVLbjcxeXpxbzhOV2JCQ0dXTGlLQ2RxeTFLdnF2RkJNclE1aC9GcGVF?=
+ =?utf-8?B?Tyt6SUVvQUxyMkp0dVNDMjBmZ1AvUk1EYnJDUTBZNmdnNCtNMjZiYWgzZ2tk?=
+ =?utf-8?B?czVnOW9QNUN4cDhneE9OYXpEZk0wSjBXd2ExK1IzbE1Od2p4T2IyTWxtMnYr?=
+ =?utf-8?B?M1F2MFMyNWxWYTdvSFhrOVBjTjRuRWlOVkNOZWN2N3BpbjdTK3FaT25YRERh?=
+ =?utf-8?B?b2xVVS8wYjhRUU82bC9DRFgvcWVSWE1oNFpuR2oyQVhNZE9sVjl6TE1yaStT?=
+ =?utf-8?B?Y1g0VzEzeG0xSWMwWFAxSDY4VGRYRWIyTTZ1SGhzUm5qYXU0WUYwMmtrM24w?=
+ =?utf-8?B?TlFrYVpROXRHNHJGdlB4cDgycnJGRUpJZ0JTT1J0VU9pNkg3S3c5eGFDays0?=
+ =?utf-8?B?UGZpODE3dVk0YVI0VHFRWFR5bDRzbXRYSW1qeFRqTzFLbm0vNHN0MXdxZTly?=
+ =?utf-8?B?d253R3N2SjVjWE8rbXFiSExYZmJDNXVmNzZjeHU2ZWEyQ0NNTkZsMmFzUFFa?=
+ =?utf-8?B?ZmcyNFZiaTNhRDdBU1pFRHl3K0d2VER5RzY0em16UXpkVnhmSGFrMlNPYTNw?=
+ =?utf-8?B?SHljWUxkbHdYT1RhS3krTWxSU2hBSHp1NU5TVEtyNHNiSDRIWDIzY25zcTFE?=
+ =?utf-8?B?U2dPdnJxZmJPRkxKNEcyTlR3dVNmWnhxZ0xVSHNWMUwxbzFhdGVzbHhkUjhX?=
+ =?utf-8?B?U25CdnVMVzczTHp0VVRxU1Q4MGhmeFR5WWJITlBXdkVvbUlOZTNmNEY5S2hk?=
+ =?utf-8?B?STEySit3Z1VPWHVIR3ZqVUI1VVM0Zm9tc2JQYXJiRERQNTI0RXhBL2JIOG1r?=
+ =?utf-8?B?VGhTS0lsaURDa3gvU1VxRCtqbXRhenR5UXBwOHpZSzdzN0EzK0xzNk4xVnJk?=
+ =?utf-8?B?TVVvbGIxU0V2cC8wWjI0aVdsdW1TSTNQRjVzS1VJUnMzYlpVcTVySmY2YzIw?=
+ =?utf-8?B?UkVqYnp2cC9RZ1lDb0RJTzMzeVMvcXQ5cS9rRVFsRS9kTXpHdXFuM1Ivcjh3?=
+ =?utf-8?B?Z3QxdWdYOElXSXh0SnhhOGFDQjNLbEZEOXdJamtEeEdGOWV4WWZlMzJKSGN5?=
+ =?utf-8?B?ZGllc0U0WDRkSjNEdnNhZVQvVnFDNnpZQndBR3EyUmRKN3Y1QU8zUzdRek9U?=
+ =?utf-8?B?Yzd1aHEwUnlHQ2E2NExOQ3NWQ2FoS0l5Q0dJY3ZQTk81MFFMbktHMUxYU2R2?=
+ =?utf-8?B?Y2NSZGV1RGc1TGJjZXRVUDFiOHRKcHVKTlpkeFM3V0RpK1c5VEVvVlR0OHdj?=
+ =?utf-8?B?aXRTR2E0T01BK0tqZjBYak93NFp1NE5WN2R0amoyWlE4VXpnaXdld1M4Y3lW?=
+ =?utf-8?B?SDBvZm04bUpZbEluZi9PdnYvZFNZVUlnc3NqQTNjRzlyY0F1TnpUc0U3bk1C?=
+ =?utf-8?B?bFoyZ1dKdERDOFQ0RGRNWWljdkk4bVpOdGJCSVlXRVNQUnVBMk5NMlFqRzc2?=
+ =?utf-8?B?cGtocmJGYzBzQWdPMTIxM3lmMHk1MjJpMHdLV2FzZjlXdlNPeE5iNWU2VDRp?=
+ =?utf-8?B?UlZ2MGZrcmdXVCtBNDZvUmpRSnZUYkRZVUppVXEwbVJvbnc9PQ==?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?MVlXbTg2MWdDR3kvL3NJUEEwdmtLajJ5aHNyMm0rZWp2S1FrcE1QU3o3ZjBZ?=
+ =?utf-8?B?WDJveWNMdThvN0RIQ1N5WXRQL216eFRoV1lqZTdUVy9XNTN5R1pldWk1OUJY?=
+ =?utf-8?B?OWtNRjRnQ2F1bnNZdGUyOURRQVhLN2sxZXJZOFY0WVVBZmhRTStrZmhHRHhQ?=
+ =?utf-8?B?OW1xOEt0eVRnMitzWG4vc0g0dlBMR3FSQllGU3lsaWhxMW5jMWpka2ZFZ0VQ?=
+ =?utf-8?B?S1BMTk5ZdEUzM1M4NElZUXJoanFxYnFUNnpocGQvZlYwMWV4QmVNeFhSRm1I?=
+ =?utf-8?B?ZjNMR21FSEk0NFl4VEpaMEtlRUJ4bWlSRlA5SCtkSXdDOGgrdEt5ekFKNUFN?=
+ =?utf-8?B?YUNMMi9ROVRNK3pETWk4ckIrRzBCaDNodkNiOGozcDgzaFZLbWZtSkhlRHdC?=
+ =?utf-8?B?S1RDZ1pPOXR4N0hLVVZvV2grbUtkQ3dHVk82NU9TbTlMbmttRjBsNEFSQjVI?=
+ =?utf-8?B?WHNCcGllZUZEMXhDU3YzTXZlNXhCdm13NG95UGt6ZTZjcEhxSzE1STczZ3JY?=
+ =?utf-8?B?ckZ4aExPanFnSW1LclFtbk9DQlg2bnV3WkVPUkM1RGtweERtUHg3enE1WDJG?=
+ =?utf-8?B?bGJLZVU3VGw1UmFpTkVuM2ZlUjdXMjRqcTk1WjdNTEM0dEROK3hzODY3dnJi?=
+ =?utf-8?B?dy9vUDFsalJ4ODBhdmtOaXlxYUsrQktoV25yeTFNeDhLVnNtRXVvNDdvWFln?=
+ =?utf-8?B?bVc2MGJKaEtqN0ZpWjlnUzRadzlVTU05eDlWQk0zKzFPUWhWNWs3NDE4OVZ2?=
+ =?utf-8?B?NmxnbGllZHdldTFZaXNXWlQyWDJFcEo4MlRqZXQvL3lWT1ZsQThEdHVsNzFx?=
+ =?utf-8?B?QkVkSUR6ZmF0Yi9md2ROczlORnZGN0liYUEzcjJWc3Q0RUE0aGFtSEdlVHBh?=
+ =?utf-8?B?bjdBenlXdjhVR0FRN0Y1VW1kTnM0d2lYZjNpSWpnNXRjVFhZcmFBUHhWdERx?=
+ =?utf-8?B?a1lTWDJmSDZURmQzb1o1Q3dtSmsvaloycll2aWlIdzFnWVNSTmtuY0F3ZmxT?=
+ =?utf-8?B?Sk1BdU10ODJsaHZNdzA5dDdnNWQ2Tzl1VlZabGJ5WTBLMTNoTTNCTkVsaG1k?=
+ =?utf-8?B?bnk1ZjhpbkhMY25yWlBpbWIwQzk2N0MvczlGdlVRU3JpdS84TEVjQkhCd0Rw?=
+ =?utf-8?B?eFNGZGt4UGVvNGZrMllZODNJMitjTUpUeEhiZXlJa3F4SjRYZ3Z2cnVhYmhV?=
+ =?utf-8?B?Z0hSRkV1MFdWUXE4bEtqSzBVTXpJMlNBRVJWM1RYL25CQlh1eGlaTjYzdGlw?=
+ =?utf-8?B?OXlXd05aMkp3NlFYS2h3b1UzWklFZWFwYjIwZy9oYmQxd1pSQTFCOXEzZTdK?=
+ =?utf-8?B?RWVuMFZtU0xwNWZVend1OEphZnoxSmdoamw0YVRrVnF6NkdyZEdmRERpRHZj?=
+ =?utf-8?B?K3laOEVtUSswN1ZwSFljTDllSVU3MVpMYmwxd3BoenZLb2FobEpnVVRmSEJO?=
+ =?utf-8?B?VjZDQjBIRStZaHZSaFNTdmo0MmNoOVV6ZTBETVBLN2R0dHdQc1RMVEVHSVpx?=
+ =?utf-8?B?SkFRMW5abUpidlJjRW1qeFRjTHBnN3FMdDl4ZkQyU21FZ1IxU1d2YTczUGhZ?=
+ =?utf-8?B?RDFxTGFIMTB1ZldpTGg2WkdsOWl3ODB1a0tKbFN4cUh1Z1JJQnVOdDU5YVNB?=
+ =?utf-8?B?Ym12STRPcEJaVGRIRW9IVFJWTjN0amFRQ0pnS1M5bFdaa1FkOFdwckxndGFv?=
+ =?utf-8?B?TTkrNHd4TVR3UTJucWw1anQ4TC8rQUtwKzlRbkZ2Z1pnV2hDMnFFb3hOTE1P?=
+ =?utf-8?B?MlQ3TUd5Ky9wam9oaHpldVVXOGRRZkwzN2EyR1JNUDlIc1Y0MUtlZFJGSHNR?=
+ =?utf-8?B?OS9Zclo0YzlxRU1NUnN6ZFpuUy82cGE4SWRjaFBKOWVPYnBjcXVadGpVOWNv?=
+ =?utf-8?B?Zy90R3UrUFZQVmhXYS9vVjlhYkY4YWtLRlNWVm5xMll6N3lrY3lhM1lGS2RW?=
+ =?utf-8?B?YWdzT2dTb3VBUitLZ3BOcjE0L3hQVms1RWQwazB6S1grRUxkY3FqR0trdzR4?=
+ =?utf-8?B?dWc4RUNDTHFCd3ZwMDJWdlVENjRQeUhDeXdOS3Z1Y29aQytjWUFOZ2I1ZThx?=
+ =?utf-8?B?S0JzNWJVTGpyZktrRW4zSU1JeG5CY1Avc0VlUEpLdkl2cktTWmdDWjYrZWla?=
+ =?utf-8?Q?wBIKFf8cA7SHqjIGSX21Rk0Tq?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 814ecb78-61c0-48a0-e731-08ddceec518a
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11075.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a0593967-2948-472e-3197-08ddcea630e5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jul 2025 13:45:33.6248
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2025 22:07:33.4072
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 9+OoMGxdvZEZ4EuTSWeb7JBgnYpIOuqgX1/Zbh8b5uIU/N/9C08tNczNXrFd5EGjLWuPzFQGVLXSHFxE4b+ApDNJyk0WccC/vCDuaXQo098TmJf8rRvnk5Cbo+KwW/me
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB14526
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1BHK/OACvLaXxLXeF3k80OiouuzxWFFLb7J1t7LDR4Ep4bxVO5GsRS4tlSc5GeEz2PhahPRl/PtT+0cn90ncTA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB6681
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 29 Jul 2025 13:45:52 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19615
+ <cip-dev@lists.cip-project.org>; Tue, 29 Jul 2025 22:07:45 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19616
 
---_000_TY3PR01MB1107501396B71E71A49B7A7C8C725ATY3PR01MB11075jp_
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Hello Chris,
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ ....325-cip120-rt42.bb => linux-cip-rt_4.19.325-cip122-rt43.bb} | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+ rename recipes-kernel/linux/{linux-cip-rt_4.19.325-cip120-rt42.bb => linux-cip-rt_4.19.325-cip122-rt43.bb} (68%)
 
-Hope you are doing well.
-
-
-  *   I think the CIP core group just did something similar for a WFX servi=
-ce?
-  *   You could go down the same route for zchunk. Either by using the same=
- server or in setting up a new one.
-
-In CIP core/SWUpdate regular meetings, we are discussing alternate options =
-for hosting a file server for zchunk based updates.
-In case of new EC2 instance we should also consider the cost of the instanc=
-e.
-
-So, Is there any possibility to use LAVA master server as a file server for=
- zchunk updates? Is it also running in AWS?
-
-Basically, we can configure either nginx or apache2  server in this PC and =
-use it for zchunk updates.
-However, we need to check how to upload .zck file every time to LAVA master=
- server pc before the running the tests and also LAVA jobs should access th=
-is file.
-
-It is just an idea so I=1B$B!G=1B(Bm not sure whether it works. What do you=
- think? Is it possible?
-
-Thanks & Regards
-Shivanand K
-From: Chris Paterson <Chris.Paterson2@renesas.com>
-Sent: 24 March 2025 15:46
-To: kunijadar shivanand(=1B$B#T#S#I#P=1B(B DITC_DIT-OST) <Shivanand.Kunijad=
-ar@toshiba-tsip.com>
-Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B DITC_DIT-OST) <dinesh.kumar@toshiba-tsi=
-p.com>; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B=
-!{#D#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp>; jan.kiszk=
-a@siemens.com; balakumar adithya(=1B$B#T#S#I#P=1B(B DITC_DIT-OST) <Adithya.=
-Balakumar@toshiba-tsip.com>; ashrith sai(=1B$B#T#S#I#P=1B(B DITC_DIT-OST) <=
-Sai.Sathujoda@toshiba-tsip.com>; cip-dev@lists.cip-project.org
-Subject: RE: File server for zchunk swupdate update
-
-Hello Shivanand,
-
-I think the CIP core group just did something similar for a WFX service?
-You could go down the same route for zchunk. Either by using the same serve=
-r or in setting up a new one.
-
-Either way the only people with admin access to install things are the LF a=
-dmins.
-You can create a ticket with them through the LF helpdesk: https://jira.lin=
-uxfoundation.org/plugins/servlet/desk
-
-Kind regards, Chris
-
-From: Shivanand.Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijadar@toshi=
-ba-tsip.com> <Shivanand.Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijad=
-ar@toshiba-tsip.com>>
-Sent: 17 March 2025 13:57
-To: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@rene=
-sas.com>>
-Cc: dinesh.kumar@toshiba-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>; ka=
-zuhiro3.hayashi@toshiba.co.jp<mailto:kazuhiro3.hayashi@toshiba.co.jp>; jan.=
-kiszka@siemens.com<mailto:jan.kiszka@siemens.com>; Adithya.Balakumar@toshib=
-a-tsip.com<mailto:Adithya.Balakumar@toshiba-tsip.com>; Sai.Sathujoda@toshib=
-a-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>; cip-dev@lists.cip-projec=
-t.org<mailto:cip-dev@lists.cip-project.org>
-Subject: File server for zchunk swupdate update
-
-Hi Chris,
-
-This is regarding the zchunk based swupdate verification on LAVA lab.
-
-The zchunk based update needs a file server where we keep .zck file and swu=
-pdate requests multiple byte ranges based on the requirement.
-In manual test scenario, this has been verified by keeping the file in Apac=
-he / nginx file server.
-
-In LAVA lab, I also verified zchunk update by installing Apache / nginx in =
-CIP image itself.
-In the last CIP core meeting, we discussed to use some container to host th=
-e file server (Apache or nginx) for this purpose instead of installing in t=
-he CIP image by considering the package size and maintenance.
-
-Do you know any EC2 instance where we can run docker container with nginx/A=
-pache for this and should be accessible to LAVA lab?
-Or do you have any other ideas/place apart from EC2 instance for running co=
-ntainer?
-
-Please provide your opinion.
-
-Thanks & Regards
-Shivanand K
-
---_000_TY3PR01MB1107501396B71E71A49B7A7C8C725ATY3PR01MB11075jp_
-Content-Type: text/html; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
-
-<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
-osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
-xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
-//www.w3.org/TR/REC-html40">
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
-jp">
-<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
-<style><!--
-/* Font Definitions */
-@font-face
-	{font-family:Wingdings;
-	panose-1:5 0 0 0 0 0 0 0 0 0;}
-@font-face
-	{font-family:"Cambria Math";
-	panose-1:2 4 5 3 5 4 6 3 2 4;}
-@font-face
-	{font-family:Calibri;
-	panose-1:2 15 5 2 2 2 4 3 2 4;}
-@font-face
-	{font-family:Aptos;}
-@font-face
-	{font-family:"MS PGothic";
-	panose-1:2 11 6 0 7 2 5 8 2 4;}
-@font-face
-	{font-family:"\@MS PGothic";}
-/* Style Definitions */
-p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{margin:0cm;
-	font-size:11.0pt;
-	font-family:"Aptos",sans-serif;
-	mso-ligatures:standardcontextual;
-	mso-fareast-language:EN-US;}
-a:link, span.MsoHyperlink
-	{mso-style-priority:99;
-	color:#0563C1;
-	text-decoration:underline;}
-p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph
-	{mso-style-priority:34;
-	margin-top:0cm;
-	margin-right:0cm;
-	margin-bottom:0cm;
-	margin-left:36.0pt;
-	font-size:11.0pt;
-	font-family:"Aptos",sans-serif;
-	mso-ligatures:standardcontextual;
-	mso-fareast-language:EN-US;}
-span.EmailStyle20
-	{mso-style-type:personal-reply;
-	font-family:"Aptos",sans-serif;
-	color:windowtext;}
-.MsoChpDefault
-	{mso-style-type:export-only;
-	font-size:10.0pt;
-	mso-ligatures:none;}
-@page WordSection1
-	{size:612.0pt 792.0pt;
-	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
-div.WordSection1
-	{page:WordSection1;}
-/* List Definitions */
-@list l0
-	{mso-list-id:1675448488;
-	mso-list-type:hybrid;
-	mso-list-template-ids:1797717820 2124340810 1074331651 1074331653 10743316=
-49 1074331651 1074331653 1074331649 1074331651 1074331653;}
-@list l0:level1
-	{mso-level-start-at:96;
-	mso-level-number-format:bullet;
-	mso-level-text:\F0D8;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	font-family:Wingdings;
-	mso-fareast-font-family:"MS PGothic";
-	mso-bidi-font-family:"MS PGothic";}
-@list l0:level2
-	{mso-level-number-format:bullet;
-	mso-level-text:o;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	font-family:"Courier New";}
-@list l0:level3
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0A7;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	font-family:Wingdings;}
-@list l0:level4
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	font-family:Symbol;}
-@list l0:level5
-	{mso-level-number-format:bullet;
-	mso-level-text:o;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	font-family:"Courier New";}
-@list l0:level6
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0A7;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	font-family:Wingdings;}
-@list l0:level7
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	font-family:Symbol;}
-@list l0:level8
-	{mso-level-number-format:bullet;
-	mso-level-text:o;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	font-family:"Courier New";}
-@list l0:level9
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0A7;
-	mso-level-tab-stop:none;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	font-family:Wingdings;}
-ol
-	{margin-bottom:0cm;}
-ul
-	{margin-bottom:0cm;}
---></style><!--[if gte mso 9]><xml>
-<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
-</xml><![endif]--><!--[if gte mso 9]><xml>
-<o:shapelayout v:ext=3D"edit">
-<o:idmap v:ext=3D"edit" data=3D"1" />
-</o:shapelayout></xml><![endif]-->
-</head>
-<body lang=3D"EN-IN" link=3D"#0563C1" vlink=3D"#954F72" style=3D"word-wrap:=
-break-word">
-<div class=3D"WordSection1">
-<p class=3D"MsoNormal">Hello Chris, <o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Hope you are doing well. <o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<ul style=3D"margin-top:0cm" type=3D"disc">
-<li class=3D"MsoListParagraph" style=3D"color:#7030A0;margin-left:0cm;mso-l=
-ist:l0 level1 lfo1">
-<span lang=3D"EN-GB" style=3D"font-family:&quot;Calibri&quot;,sans-serif">I=
- think the CIP core group just did something similar for a WFX service?<o:p=
-></o:p></span></li><li class=3D"MsoListParagraph" style=3D"color:#7030A0;ma=
-rgin-left:0cm;mso-list:l0 level1 lfo1">
-<span lang=3D"EN-GB" style=3D"font-family:&quot;Calibri&quot;,sans-serif">Y=
-ou could go down the same route for zchunk. Either by using the same server=
- or in setting up a new one.<o:p></o:p></span></li></ul>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">In CIP core/SWUpdate regular meetings, we are discus=
-sing alternate options for hosting a file server for zchunk based updates.
-<o:p></o:p></p>
-<p class=3D"MsoNormal">In case of new EC2 instance we should also consider =
-the cost of the instance.
-<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">So, Is there any possibility to use LAVA master serv=
-er as a file server for zchunk updates? Is it also running in AWS?
-<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Basically, we can configure either <b>nginx</b> or <=
-b>apache2</b> &nbsp;server in this PC and use it for zchunk updates.<o:p></=
-o:p></p>
-<p class=3D"MsoNormal">However, we need to check how to upload .zck file ev=
-ery time to LAVA master server pc before the running the tests and also LAV=
-A jobs should access this file.
-<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">It is just an idea so I=1B$B!G=1B(Bm not sure whethe=
-r it works. What do you think? Is it possible?
-<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Thanks &amp; Regards<o:p></o:p></p>
-<p class=3D"MsoNormal">Shivanand K<o:p></o:p></p>
-<div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
-0cm 0cm">
-<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"font-family:&quot;C=
-alibri&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">From:</=
-span></b><span lang=3D"EN-US" style=3D"font-family:&quot;Calibri&quot;,sans=
--serif;mso-ligatures:none;mso-fareast-language:JA"> Chris Paterson
- &lt;Chris.Paterson2@renesas.com&gt; <br>
-<b>Sent:</b> 24 March 2025 15:46<br>
-<b>To:</b> kunijadar shivanand(</span><span lang=3D"JA" style=3D"font-famil=
-y:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language=
-:JA">=1B$B#T#S#I#P=1B(B</span><span lang=3D"EN-US" style=3D"font-family:&qu=
-ot;Calibri&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA"> DI=
-TC_DIT-OST)
- &lt;Shivanand.Kunijadar@toshiba-tsip.com&gt;<br>
-<b>Cc:</b> dinesh kumar(</span><span lang=3D"JA" style=3D"font-family:&quot=
-;MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=
-=1B$B#T#S#I#P=1B(B</span><span lang=3D"EN-US" style=3D"font-family:&quot;Ca=
-libri&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA"> DITC_DI=
-T-OST)
- &lt;dinesh.kumar@toshiba-tsip.com&gt;; hayashi kazuhiro(</span><span lang=
-=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligature=
-s:none;mso-fareast-language:JA">=1B$BNS=1B(B</span><span lang=3D"JA" style=
-=3D"font-family:&quot;Calibri&quot;,sans-serif;mso-ligatures:none;mso-farea=
-st-language:JA">
-</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
-erif;mso-ligatures:none;mso-fareast-language:JA">=1B$BOB9(=1B(B</span><span=
- lang=3D"JA" style=3D"font-family:&quot;Calibri&quot;,sans-serif;mso-ligatu=
-res:none;mso-fareast-language:JA">
-</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
-erif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#D#M#E=1B(B</span><sp=
-an lang=3D"EN-US" style=3D"font-family:&quot;Calibri&quot;,sans-serif;mso-l=
-igatures:none;mso-fareast-language:JA"> =1B$B!{=1B(B</span><span lang=3D"JA=
-" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:none=
-;mso-fareast-language:JA">=1B$B#D#I#G=1B(B</span><span lang=3D"EN-US" style=
-=3D"font-family:&quot;Calibri&quot;,sans-serif;mso-ligatures:none;mso-farea=
-st-language:JA">=1B$B""=1B(B</span><span lang=3D"JA" style=3D"font-family:&=
-quot;MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA=
-">=1B$B#M#P#S=1B(B</span><span lang=3D"EN-US" style=3D"font-family:&quot;Ca=
-libri&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B!{=
-=1B(B</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,s=
-ans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#M#P#4=1B(B</spa=
-n><span lang=3D"EN-US" style=3D"font-family:&quot;Calibri&quot;,sans-serif;=
-mso-ligatures:none;mso-fareast-language:JA">)
- &lt;kazuhiro3.hayashi@toshiba.co.jp&gt;; jan.kiszka@siemens.com; balakumar=
- adithya(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quo=
-t;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#T#S#I#P=1B(=
-B</span><span lang=3D"EN-US" style=3D"font-family:&quot;Calibri&quot;,sans-=
-serif;mso-ligatures:none;mso-fareast-language:JA">
- DITC_DIT-OST) &lt;Adithya.Balakumar@toshiba-tsip.com&gt;; ashrith sai(</sp=
-an><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif=
-;mso-ligatures:none;mso-fareast-language:JA">=1B$B#T#S#I#P=1B(B</span><span=
- lang=3D"EN-US" style=3D"font-family:&quot;Calibri&quot;,sans-serif;mso-lig=
-atures:none;mso-fareast-language:JA">
- DITC_DIT-OST) &lt;Sai.Sathujoda@toshiba-tsip.com&gt;; cip-dev@lists.cip-pr=
-oject.org<br>
-<b>Subject:</b> RE: File server for zchunk swupdate update<o:p></o:p></span=
-></p>
-</div>
-</div>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Cali=
-bri&quot;,sans-serif;color:#7030A0">Hello Shivanand,<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Cali=
-bri&quot;,sans-serif;color:#7030A0"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Cali=
-bri&quot;,sans-serif;color:#7030A0">I think the CIP core group just did som=
-ething similar for a WFX service?<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Cali=
-bri&quot;,sans-serif;color:#7030A0">You could go down the same route for zc=
-hunk. Either by using the same server or in setting up a new one.<o:p></o:p=
-></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Cali=
-bri&quot;,sans-serif;color:#7030A0"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Cali=
-bri&quot;,sans-serif;color:#7030A0">Either way the only people with admin a=
-ccess to install things are the LF admins.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Cali=
-bri&quot;,sans-serif;color:#7030A0">You can create a ticket with them throu=
-gh the LF helpdesk:
-<a href=3D"https://jira.linuxfoundation.org/plugins/servlet/desk">https://j=
-ira.linuxfoundation.org/plugins/servlet/desk</a><o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Cali=
-bri&quot;,sans-serif;color:#7030A0"><o:p>&nbsp;</o:p></span></p>
-<div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-liga=
-tures:none;mso-fareast-language:EN-GB">Kind regards, Chris<o:p></o:p></span=
-></p>
-</div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Cali=
-bri&quot;,sans-serif;color:#7030A0"><o:p>&nbsp;</o:p></span></p>
-<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0cm 0cm 0cm =
-4.0pt">
-<div>
-<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
-0cm 0cm">
-<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"font-family:&quot;C=
-alibri&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">From:</=
-span></b><span lang=3D"EN-US" style=3D"font-family:&quot;Calibri&quot;,sans=
--serif;mso-ligatures:none;mso-fareast-language:JA">
-<a href=3D"mailto:Shivanand.Kunijadar@toshiba-tsip.com">Shivanand.Kunijadar=
-@toshiba-tsip.com</a> &lt;<a href=3D"mailto:Shivanand.Kunijadar@toshiba-tsi=
-p.com">Shivanand.Kunijadar@toshiba-tsip.com</a>&gt;
-<br>
-<b>Sent:</b> 17 March 2025 13:57<br>
-<b>To:</b> Chris Paterson &lt;<a href=3D"mailto:Chris.Paterson2@renesas.com=
-">Chris.Paterson2@renesas.com</a>&gt;<br>
-<b>Cc:</b> <a href=3D"mailto:dinesh.kumar@toshiba-tsip.com">dinesh.kumar@to=
-shiba-tsip.com</a>;
-<a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.jp">kazuhiro3.hayashi@toshib=
-a.co.jp</a>;
-<a href=3D"mailto:jan.kiszka@siemens.com">jan.kiszka@siemens.com</a>; <a hr=
-ef=3D"mailto:Adithya.Balakumar@toshiba-tsip.com">
-Adithya.Balakumar@toshiba-tsip.com</a>; <a href=3D"mailto:Sai.Sathujoda@tos=
-hiba-tsip.com">
-Sai.Sathujoda@toshiba-tsip.com</a>; <a href=3D"mailto:cip-dev@lists.cip-pro=
-ject.org">
-cip-dev@lists.cip-project.org</a><br>
-<b>Subject:</b> File server for zchunk swupdate update<o:p></o:p></span></p=
->
-</div>
-</div>
-<p class=3D"MsoNormal"><span lang=3D"EN-GB"><o:p>&nbsp;</o:p></span></p>
-<p class=3D"MsoNormal">Hi Chris, <o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">This is regarding the zchunk based swupdate verifica=
-tion on LAVA lab.
-<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">The zchunk based update needs a file server where we=
- keep .zck file and swupdate requests multiple byte ranges based on the req=
-uirement.
-<o:p></o:p></p>
-<p class=3D"MsoNormal">In manual test scenario, this has been verified by k=
-eeping the file in Apache / nginx file server.
-<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">In LAVA lab, I also verified zchunk update by instal=
-ling Apache / nginx in CIP image itself.
-<o:p></o:p></p>
-<p class=3D"MsoNormal">In the last CIP core meeting, we discussed to use so=
-me container to host the file server (Apache or nginx) for this purpose ins=
-tead of installing in the CIP image by considering the package size and mai=
-ntenance.<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Do you know any EC2 instance where we can run docker=
- container with nginx/Apache for this and should be accessible to LAVA lab?
-<o:p></o:p></p>
-<p class=3D"MsoNormal">Or do you have any other ideas/place apart from EC2 =
-instance for running container?
-<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Please provide your opinion.&nbsp; <o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Thanks &amp; Regards<o:p></o:p></p>
-<p class=3D"MsoNormal">Shivanand K<o:p></o:p></p>
-</div>
-</div>
-</body>
-</html>
-
---_000_TY3PR01MB1107501396B71E71A49B7A7C8C725ATY3PR01MB11075jp_--
-
+diff --git a/recipes-kernel/linux/linux-cip-rt_4.19.325-cip120-rt42.bb b/recipes-kernel/linux/linux-cip-rt_4.19.325-cip122-rt43.bb
+similarity index 68%
+rename from recipes-kernel/linux/linux-cip-rt_4.19.325-cip120-rt42.bb
+rename to recipes-kernel/linux/linux-cip-rt_4.19.325-cip122-rt43.bb
+index 6f1351f2..d843899b 100644
+--- a/recipes-kernel/linux/linux-cip-rt_4.19.325-cip120-rt42.bb
++++ b/recipes-kernel/linux/linux-cip-rt_4.19.325-cip122-rt43.bb
+@@ -11,4 +11,4 @@
+ 
+ require linux-cip-release.inc
+ 
+-SRC_URI[sha256sum] = "6ed1623cdc2a47131736848e2ba8b4674f9daa33dfb98feff8b062b275009dac"
++SRC_URI[sha256sum] = "90e25b2144793c3328ce84acad73b2b0b6e318b4761ae4a350235251fa9f2b0e"
+-- 
+2.43.0
 
