@@ -2,60 +2,48 @@ Return-Path: <Shivanand.Kunijadar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B55C83F26
-	for <webhook@archiver.kernel.org>; Tue, 29 Jul 2025 09:44:20 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
- by mx.groups.io with SMTP id smtpd.web11.3356.1753782255088389286
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9937EC87FC9
+	for <webhook@archiver.kernel.org>; Tue, 29 Jul 2025 13:45:52 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.131])
+ by mx.groups.io with SMTP id smtpd.web10.7207.1753796747819608287
  for <cip-dev@lists.cip-project.org>;
- Tue, 29 Jul 2025 02:44:15 -0700
+ Tue, 29 Jul 2025 06:45:48 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.152, mailfrom: shivanand.kunijadar@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 56T9iCL5627901; Tue, 29 Jul 2025 18:44:12 +0900
-X-Iguazu-Qid: 2yAbj3N9cJ7o3r8QzY
-X-Iguazu-QSIG: v=2; s=0; t=1753782252; q=2yAbj3N9cJ7o3r8QzY; m=qrCNEPKvPMDXhXmq+GuC/epujX1pvXec67jktTjt+To=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1803) id 56T9iAV11995492
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.131, mailfrom: shivanand.kunijadar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1120) id 56TDjiNk728209; Tue, 29 Jul 2025 22:45:45 +0900
+X-Iguazu-Qid: 2rWhEqwpnRWrFv1KaG
+X-Iguazu-QSIG: v=2; s=0; t=1753796744; q=2rWhEqwpnRWrFv1KaG; m=G+nNwcuZiZnN/20HaMNAhwOffKKSGPs3Jz30WHg1S5I=
+Received: from imx12-a.toshiba.co.jp ([38.106.60.135])
+	by relay.securemx.jp (mx-mr1121) id 56TDjhNa2235921
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 29 Jul 2025 18:44:11 +0900
+	Tue, 29 Jul 2025 22:45:44 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KOq6F4Aig813LrhFNbq9lWXmXUtNCRFQyJjC8pRgQhcslYbJBahuGeSe2UhIqmOXqLQFgiM3VjRpfFrQ++TqOvQqUGLB7Nl07S9Y9/BvFbzS1m1JtnESCGsnqDxYa+As6zkTW5Dzvp+eTXCKaTLwDjx3ycLl/n2fBFPxt3Y2xbzEdv37VjdooawRxgWJ/MO+sTI0IfC1GZopjfLzpIJi2GSmzDpKvlgjMcLetPt+yt9tX821id+ZyPAimoVa0aMIDDQrBPsGScnAXXsLMjwlr0q/R497q6xrfxY6e6N1bTHLpw9DkCg3K1CeeggzISTMI7OCC5DLPlJPETlHx5S7CQ==
+ b=W1kPLz/i46hKLol8eakHVM2LnfDtsqlYJhZyeNJ1r9/2UJrjn2QqOmteUrB2o19erOlswxYpEtrkKj3bbnQ7D7uj8/uiBpEq8/XIRbX59v651id3ID7g6xHZvo+Eszna9VnKUOL8E050cupwHIK4qmqlRb2v8wWAoL9vOHP5oCdSTlgHNJPOCGkLgvMZ4b7oAhzrihIY4/7UGXB+XKD63MjLFnPiDZ1C+8ROU61UzwbxPGb/CNiUErt6OosnvIHszY5gRjFu5UjFHQPIUNhKvdB9ZvBWv1VHPvo/CEbD4OEm159mkQyyg3D2Y7lXkykVoPXIwgG8FR1ra3WKgVaDqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SSDiFNTdOKqd1iO8iKW55Qdd2Ar6b+bkOHlrSf7uiLM=;
- b=nr3iSfxh3fwNawQiM3AHc2TuRdTcko83OIE51RaLfiIy+TjGsa5WwGriR+8xoejgvV/QXfjsdhBFJOVYUEA40n94hEjoZz4gDxF+QNult3RtEyh9LanmolErLIxPSSN2XwjLMmf+Psfeppnk0tzDvJ2/4aiv1UfjBXBFpG63wgW2ZIEaOW4p4LZH9eE1o+y4UNDC+Wfdh840qgm51LOJTxBg9v0dz/Yx4vXBfN2w/KZJMN8IkOoRS5lRNfJineBTHJomsxjfeSnKSjgudEqS9Gd7CgJKdIKqdwbjaFdHbfRN1uJPPEKl4M2pS96QMItGWDyDWvhtgwm5H6KkaM0ZwA==
+ bh=fCoqIfDiSO1dy0qUAqpatSUS6RtQ3wLDXn/1g2PcRm4=;
+ b=rJxl0bDnGzRZsJj0SFhNwEX7IWmc9GC9dlep5wbJeMi2v8zlnAW7xA6+yV0dog1avlde/sHVag/Bi8zKTEIv4R0Rvj3PIskHY2VV/oUflqXNp4E3uyRPW6Nxv1X2QOQAXwtgg9cUzu+o16/Xn7dNntKnJiMAdADw8/19LHZOF1GHcDRWWFARVVAZChtTG5eYS4WhTPQbX0znNfq4bIR480c2lPxnJNstxAM8LY29HySL1Rp+Xw0aHRbl2YYXX8koMagg373ukxs8PzPZBv60zdaZXUJ5poBTIxSCDU38+x5xITFO//Q55tHSYSuqwhZD6nGvD0ms8kgeLWTAkvLt2g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
  header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
 From: <Shivanand.Kunijadar@toshiba-tsip.com>
-To: <jan.kiszka@siemens.com>, <cip-dev@lists.cip-project.org>
-CC: <dinesh.kumar@toshiba-tsip.com>, <kazuhiro3.hayashi@toshiba.co.jp>
-Subject: RE: [cip-dev] LAVA: Support ROOTFS dm-verity corruption detection
- case.
-Thread-Topic: [cip-dev] LAVA: Support ROOTFS dm-verity corruption detection
- case.
-Thread-Index: 
- AdvrHhlzn/A/DOQaQCWzDQhadgxFugAAWvSAAAJFldAAAq2dgAAAqsrwAADXmQAAADm2oAKFRenwAAfGywAAAHnW4AADs3kAAAIwyQAB+lSXQAC+23hQ
-Date: Tue, 29 Jul 2025 09:44:05 +0000
+To: <Chris.Paterson2@renesas.com>
+CC: <dinesh.kumar@toshiba-tsip.com>, <kazuhiro3.hayashi@toshiba.co.jp>,
+        <jan.kiszka@siemens.com>, <Adithya.Balakumar@toshiba-tsip.com>,
+        <cip-dev@lists.cip-project.org>
+Subject: RE: File server for zchunk swupdate update
+Thread-Topic: File server for zchunk swupdate update
+Thread-Index: AduXPMDwGbkQ98swTHSVcGfABwDcxwFaGtzQGPn4QcA=
+Date: Tue, 29 Jul 2025 13:45:33 +0000
 X-TSB-HOP2: ON
 Message-ID: 
- <TYWPR01MB110635C8A76AFFA2ADAC6B4A7C725A@TYWPR01MB11063.jpnprd01.prod.outlook.com>
+ <TY3PR01MB1107501396B71E71A49B7A7C8C725A@TY3PR01MB11075.jpnprd01.prod.outlook.com>
 References: 
- <TY3PR01MB1107541F904CDED694538F4F2C740A@TY3PR01MB11075.jpnprd01.prod.outlook.com>
- <511d0d4a-5604-4be5-ab59-c8abbfab8a26@siemens.com>
- <TY3PR01MB110751BC4788282D51875846CC740A@TY3PR01MB11075.jpnprd01.prod.outlook.com>
- <4e7965a6-f4ac-4d1a-a6c3-ac3a09bffd50@siemens.com>
- <TY3PR01MB110754BBC6C6B9E2D8B90BAD1C740A@TY3PR01MB11075.jpnprd01.prod.outlook.com>
- <7294c0cc-3b39-4857-bca8-2258e2da9f91@siemens.com>
- <TY3PR01MB11075FFD9AD18F9025A11ED32C740A@TY3PR01MB11075.jpnprd01.prod.outlook.com>
- <TY3PR01MB11075915C17031D280B208A16C757A@TY3PR01MB11075.jpnprd01.prod.outlook.com>
- <643a6b8c-feb3-4b27-8fe6-f76a30ce0a3d@siemens.com>
- <TY3PR01MB1107546DA13B576633ABC1614C757A@TY3PR01MB11075.jpnprd01.prod.outlook.com>
- <2006d2a3-df31-469d-9fb0-09f0086b7b59@siemens.com>
- <TY3PR01MB11075AF23719F7D751E3D703BC757A@TY3PR01MB11075.jpnprd01.prod.outlook.com>
- <TY3PR01MB1107531A5EBAC974132D95A0AC759A@TY3PR01MB11075.jpnprd01.prod.outlook.com>
+ <TY3PR01MB11075908DA987ADCDE33DD899C7DF2@TY3PR01MB11075.jpnprd01.prod.outlook.com>
+ <OS3PR01MB58966EB75B7DC1FEB3851792B7A42@OS3PR01MB5896.jpnprd01.prod.outlook.com>
 In-Reply-To: 
- <TY3PR01MB1107531A5EBAC974132D95A0AC759A@TY3PR01MB11075.jpnprd01.prod.outlook.com>
+ <OS3PR01MB58966EB75B7DC1FEB3851792B7A42@OS3PR01MB5896.jpnprd01.prod.outlook.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -63,233 +51,560 @@ X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYWPR01MB11063:EE_|TY1PR01MB10785:EE_
-x-ms-office365-filtering-correlation-id: eb68d3a8-93c0-4b49-f5ae-08ddce847541
+x-ms-traffictypediagnostic: TY3PR01MB11075:EE_|TY4PR01MB14526:EE_
+x-ms-office365-filtering-correlation-id: a0593967-2948-472e-3197-08ddcea630e5
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|376014|1800799024|366016|8096899003|7053199007|13003099007|38070700018;
 x-microsoft-antispam-message-info: 
- =?utf-8?B?T2oyYmUxeG5VNThhUlAxSFBqN2o5aG5Gc25hNmg3R0k4ZTRzUzJScUxnYlo4?=
- =?utf-8?B?d0lFSTZnWlRtMzIzL1pTbTZiVzN2MDlKYWNCclhmL2N3Z2tYMTdFaWxBaU9t?=
- =?utf-8?B?YVhPZEFFNUl2RTQ1L0w1SUVEdzRaVm14cy9QZGZwbExyeUo4eXNUdHlLVG12?=
- =?utf-8?B?SDV6Tkl2Vm9nS2svRitDanFlS0NweWIybUkzSk5PS2NTakNFa1BQc25FaFJ6?=
- =?utf-8?B?QXc2dlFRUDRydWhhQ0pGUlBicmZDc1JuMHRJZXd6MUxWSjQzSE5YSFNnK3VU?=
- =?utf-8?B?V1ZzckR2WkUzbXg4VnZNS1QxL1hUdlVnY014SU1jS3RpRlltUUZWdm1CUHZK?=
- =?utf-8?B?UENQQnJoaWhZQUl3djN5Vk44bm1TTmZBZ2dVampoNzVXOGMyMG95dmZUL09l?=
- =?utf-8?B?andZZEhyeGdURzdBY1BudTlyWXp6R3BNM3hvZFVDckFDMDE5ejB2T1l3OXVX?=
- =?utf-8?B?NllyM2ZnR2doNVNGNUJXQ2dZZUxPM3hkY2hEaVp3dythbVVwNXg5ekFmb1Nl?=
- =?utf-8?B?V01oanRVbnBnaldGa1Z6bEFEdXBTeFYyRFFvbVVoVzU0ZVh3L2FJeDVnZlVK?=
- =?utf-8?B?UVJuS21vczF5Z0xJU1ZvcE9wUk1pU0ZNRjQ1YzQ2blZSR1gzVEZGNUVvTVhL?=
- =?utf-8?B?Ry83U2twT0Q5WmpJcDdzMnpLTnloMmg2dmt4TW16QVhxYlpWRTgxVkVYSXZ2?=
- =?utf-8?B?T0JhV3MzcUxzWFJQaXpFMWVZVzlzeUZudnhKcy92SThRTGNVdFBFRjQwL1Zj?=
- =?utf-8?B?enQvSERPYjVGeGxDVUQ5a0VCNmlrUTJXSFh1bHIrVUR2NGw2cWJoUUFjYnVT?=
- =?utf-8?B?NkhTZ3NjdWdqS1hoWjRMRm9OVWFNNFl2VDVsSVM2bUJTbnUxQnh6aXN4aytx?=
- =?utf-8?B?M0VNVUxzTnlLcWZQbVRrcUxEQVVOc3Nkd0svVGpZUXB4UGUvdGlDNysxd0ZR?=
- =?utf-8?B?Y0tXL3B4QmdPb2IxRUZIVklORkZlc0RDSUhxUm9TNnAzNDVacGYwTDRoYllE?=
- =?utf-8?B?dXdpRWlOaWtGT0h6QUhRbko0bXk0UVJiNURETWZadm5kS1k1M21aWjY5SXky?=
- =?utf-8?B?TCtkSVVZcDBiSGR6dERlVVQ4L2JZd2NBcnNLaERuZm1TemFqV2ZhR1VveHBZ?=
- =?utf-8?B?RnVBVVoyMk5Yd3gxd3VBZGQwcDlrM1JieHl3bHhKR2NpaWVxMkZLQU5OeG9G?=
- =?utf-8?B?NlhJY3VpT1kydHlDNEgrSlhSR2hOYk5XUE1BKzFPY3hJRkszWkI5ajVqK0pL?=
- =?utf-8?B?Vml2bG5acThxUWVjK3FYL3FqMHJDZ1lEc3BUWmQ1YjFjV1JmcjFYcUZsQTZo?=
- =?utf-8?B?dXpYMTk0YWVwUjF3WTlBQS96Z2ZtWG5wTnVjMGNjanNSVitKMXpPaDhVZUJO?=
- =?utf-8?B?NHFac2ptK0pNODJnZnAzcGZtdFoxZXdTN3NLbE5aSmhoN05mMmI3Mkx3bmlp?=
- =?utf-8?B?UmFrN0o1UGVEQ3VKbEtnbkd4TWVRNTMrTkRVTG5NVStkT3hIVXBkenFlNVJq?=
- =?utf-8?B?N3d5VDI3MUxDdFZnM1V6TEs2OTBia3JYa3hscWhTVzk1SmJSRzA0NWp0aFZP?=
- =?utf-8?B?Z29mYm8xd0IyQ3hlL1BoNDkxSUUwZGZMVGpUWHNFanZhMS9lOGFOL2ZrK2c1?=
- =?utf-8?B?bk1DRUY4RlAyOUI1Q0JHUXcrQTVXUW1icUhTSUU0RTdPZ2tEdEhGT0hKT1E0?=
- =?utf-8?B?ZUVtMmdPSXp4Y0NQb2RGRDFieVF1blhweTViRzVvd0FyckY4TkVqQ250SmtM?=
- =?utf-8?B?TkYxZjlTTVlyTEZpV0ExNnIzNkgvL0pSZE9BanJ1blNmNVpWeHFHaWlpY1B0?=
- =?utf-8?B?UmZkcDYrVjYybFpMazhkSjdnd1N6OFIvRmtNS3Q1YkFNTm0wSi9nT0tVd21V?=
- =?utf-8?B?TmdrcEJJT09PcjdmZ0QyWGwwOXNsN3NlMlFqNzVKMjFCSCtZNFo5SkFuNFZt?=
- =?utf-8?Q?lT09XHVN4R/86CqUpDiszSaEzLu9HCx0?=
+ =?iso-2022-jp?B?ZTNOZVJZcyt3SWxhRkVZc204TlRnNUZXc1lnMGVhaHU3ZnlHYW5sak1R?=
+ =?iso-2022-jp?B?L0loakIwYU96aFRiNFFCSGdMRmZnWjZCa3MzMEpJUFp2a2ZpL0JkSzVp?=
+ =?iso-2022-jp?B?RlVTMWtGbkgzb1dTVlBnSHpRZW5TRnNRdm04a2JYbXhVNFhIVnZ6aXEx?=
+ =?iso-2022-jp?B?OEV0NHVWNDVsK2JTOHNhNUg3Mk1BcnhUMHJTaVdpTHlSM2t1YXM2YXVE?=
+ =?iso-2022-jp?B?d1JQUEdRaHdwaG1ubHpyakk3MDhIdEJkRVRUcko0WExzR1pBbFRBTlNs?=
+ =?iso-2022-jp?B?cHJCNDlvNDRYeDVqempQR0N3bWs2dStjQkdLTVVwYTMxM1BoNzZ0MVRH?=
+ =?iso-2022-jp?B?b0FkSWNOeWprWVd1RXJDR3dxRkxkdTZ3aGU0dmFJVDhuSFRyY1VHeWJh?=
+ =?iso-2022-jp?B?eE00MEhHV2RjMHdtMEZ6Z1RVbFRKMXJPMWJPOFJHMmhRdUdvL2Yva3Ji?=
+ =?iso-2022-jp?B?b21MZ3Rka09GMkI5cDVqSEJqNTR3QW9JREhsWWc2TXV2ZFR4M2FWZi91?=
+ =?iso-2022-jp?B?WUJOSzhyWTMzV3g0WGQ5cDFaU20yYitWc2lPWmk5UlZjbElqK25NMGtn?=
+ =?iso-2022-jp?B?Q3JaQ1ZVY3BFMzdOUGRHam1sbFc3ZzZlOWgxLzdvWVJ0dXVYNTU1V3VM?=
+ =?iso-2022-jp?B?TkwxZzlrMC8wdWRWUkZCbFh5NTJadzJEUk9XSlVEV1FLU1JaaGNIcFVh?=
+ =?iso-2022-jp?B?UDZaQm4rT0dLYlVweEpGOE9IVnk1TWsxd1RjelQ2TzdEMVV6QzJJZDRL?=
+ =?iso-2022-jp?B?dU5pSTg0blFYSmFKdGMwUDVtVHlneVZmM2dlTEp5akVEdUJkRTNDTjhU?=
+ =?iso-2022-jp?B?QjBreHVsTXMyaTQwMkM0eGQzbVczSHFCSVVLVmJPeE9Ic0RIMFZpa1ZJ?=
+ =?iso-2022-jp?B?NmtRWjdrUDk4eDhySnJ2SHIxRFNEYjVHNHE3QzZ6aXRwd3pKOGlVaGI1?=
+ =?iso-2022-jp?B?TjIyK2ZJYlBLb3hVRGZKSGhPeXp2aS9LM3c2TE5YVXg0Z0hYd09pem5m?=
+ =?iso-2022-jp?B?bE4xSFBrNmhUYWw2V3hadTJpWS9oYkJuME9ia3ovOHZpRjVKT3VXejF5?=
+ =?iso-2022-jp?B?NUgvRnJTVFpJeGtLWEdkamY2WW1HZHYwbnJjN0k3RzdtYzVOYmVsbk95?=
+ =?iso-2022-jp?B?M0RCTXRpb1RMbE5vSVVweEcwajNKNXpMeFFVOVFTVTNBMm1tZXFLWWpP?=
+ =?iso-2022-jp?B?VGladzk5blN2Wkw3ZThYVWlPOUNhTlFFWlp2SVhnMUJFWmJySkR6YXU0?=
+ =?iso-2022-jp?B?U0ErM0R5ZTNhS0djU0cwSVN2dmlkNnc4Z0dkZEUxSE1nMUo1YW93TFBr?=
+ =?iso-2022-jp?B?dkREeDE4bE5jYUswNi9rTXMyNmpGdWF6Uk5DUWgwYlAyWktMM01vVWJy?=
+ =?iso-2022-jp?B?V0Qzb3paL3hNdWFmVlNQMm1yVU10ZURoTEpqeGVCSGtZNjBXVE4rWmtS?=
+ =?iso-2022-jp?B?OU1WOE9mdG5pOVRYSkRvZkVlbkN4TTJibCswYUpyK1YrOXBJUkNlbHds?=
+ =?iso-2022-jp?B?NHNiRTJKVGswb3lqdUNnL25ndm1RdjZqZHFwbWJ4cEdsMlJ1TGxsY2hy?=
+ =?iso-2022-jp?B?d0hFL2NZRkJxTmpUTkFxbFc1cmxJU0ZOMHh1Z0MrSVZLaEZFeE0zQjEw?=
+ =?iso-2022-jp?B?VzF1VEp1dW5lVmJvRC9TMkFGdXMvMHdKcVhxci9HWlJVRi8zTk1HN3JY?=
+ =?iso-2022-jp?B?N1VHUUs4Z0lkL1pOclgxMUV6eVlENWZ3dDlUNlU1V3BJamo4VWc5M0hu?=
+ =?iso-2022-jp?B?NFMwVW1YWm9sL1FKcE5BV21vZDVkLzhkWjYyT25HMldqWDJuMk5saDZp?=
+ =?iso-2022-jp?B?bU5QYXpyOEJUb2dMc3hXaTFTWGZzeGNaN09UWmdUR0RQdmdUZGRmKy9S?=
+ =?iso-2022-jp?B?S1NkQXFUYXlZYXNrYUdpZlAzSlFXOUJVZEVhNFhWdXFNZzllTHFnTVcx?=
+ =?iso-2022-jp?B?NlZReXp6bTBsUFdFV3BFcStMd0lhUXJzd0s3WTg4YWdXNmlUQzlMT0Ji?=
+ =?iso-2022-jp?B?RkIzUFdwdXAwQzZ3QktWNVpUZ0dRR2EvVW9LVk9qRVEvaUtaUFRBT1cv?=
+ =?iso-2022-jp?B?Uk54MWwremIvVkpjeSs2T2w2YmZIYTg9?=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB11063.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11075.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(8096899003)(7053199007)(13003099007)(38070700018);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?QjZET3kyMFdqUHFJejNoOEEvZE5wUmpLT0I3WktWYWdEaXJ6REhuR1QwaEJO?=
- =?utf-8?B?aGdDa0dDMUxyY2xwT0huMW1Sc3prTjJublJGUFhuS2tEdEtPMlBaS2ZnN05M?=
- =?utf-8?B?ZnF6RGcyMWRUT0JCc0VUY000NEhIUnBUbUZ4enZ6dmZkeTUyU1BHeVdkbmtU?=
- =?utf-8?B?VCtRdGU0WGJ1RnR3eVRJT3piQ2N1VlUxUEliQUhrdk4xNXpSV093SXFkRXV2?=
- =?utf-8?B?OVpGT3ZjenhxWmtCRmlGZWxnRmh6SGYwL3dWeG41ZnRXK1ZjRHZxNXhqYm9p?=
- =?utf-8?B?ZHFLWGVKTEhGeTY0WW9uSkVxZUYyYjNpbDN5MFFKaGJzck9IUlE4U0lSU0Vk?=
- =?utf-8?B?QjdKTlJ4Q2hUWUJUR0dFNVloR0dyeTlhYTdqQVRiaHZVcHdodnpTaHVZdm81?=
- =?utf-8?B?RmwzTXIzdUNVdjYvL1dTdGtSOG1kMytVQUprOGJvZFFKNmFyZTROaHpQYSs3?=
- =?utf-8?B?VEZtenJQd2VhWEhEa3RrQ0xUMkRqWStyUTNmZjlxUDZVT25HTnBhd3ViZmZk?=
- =?utf-8?B?bGg4a1paUU1WdnJPeEdxSVUzdHNiOTBGaFRKWE5CU0ovYnhUWUsraTk1dVRQ?=
- =?utf-8?B?czB6bWEybXBHUFd0ZXRJT25MalVKQVVabks4LzZnMENINFNOdExlSXNzaVls?=
- =?utf-8?B?bE9qamNacWo3TGh4OUcxTHdpMnhVekZlV09IQk1yVDlEL29YWlFiTWc2QnpJ?=
- =?utf-8?B?Zkpmc21FZTJoZE5GMjlpNmdhYlFmYU9oaFZMaGxTK1d6RHR1empmeE1UODVn?=
- =?utf-8?B?TnMzUVpJaHdGVUo0ZVMyVWZTWkN5UGNJSFRweWF2UER0UGc4NUg0enNmVnVX?=
- =?utf-8?B?N1E1WitJU3pnNjJ5RHZ4VWhkVkJueHBVUDJmbGxMT25VZTJ4dE1TejZEUTNJ?=
- =?utf-8?B?YW1YVzBpWUZCekl2bkpOY2FwdzhXOHJaZDBxbk1EWlgxc2NFSVdTSTlJV1B5?=
- =?utf-8?B?ckk2SEFxbUxDSnNFQkRMRlhaMVl6aVE2TThBbWJtWFc2a3ZNaVFKZU1DN0ZG?=
- =?utf-8?B?K3pwV1ptQ3VGQUIzYUpCVXE3cEp6N0JXMU9LMDZYUmliYU40K3g1QmxLS2hL?=
- =?utf-8?B?V3U0b1RYT0hzRE4yRmdyZVhOQ3lwd0Y1UnRmUXV6QWE3OSt6MldUdW1WSUtV?=
- =?utf-8?B?QW9UTXBONjJoWFY1SWdraUFmTGtPVXl6eUdDSE85ajFpY2hwRDZ2U05OYXpz?=
- =?utf-8?B?blNUZFB3NjJlYXord09YUGp5NzRudlRxQzBnbTgxWDNTZ1dpaHNSL2xqM0Vm?=
- =?utf-8?B?YXFCWkVNYTZRK3FuQlgwWkZOTXNTNCtIWkllL0VBbk9sOHozbGhtc2kvL3Zs?=
- =?utf-8?B?RUplZXdYZmwwTWk4TDByVDhrakpOVmlZOHZqcVJ2eFV4UEZzdzRLRzJ1WU1V?=
- =?utf-8?B?RHZ4Q2ZEZS9oWVVoZXQxSS9RUm9ER1RzOFFua3kzb29PZXBSQ3hzQ2E4VjVL?=
- =?utf-8?B?cGJxbnMrSml5amY0V3VjclhQamZoSEs5UURYekhtcCtoZnJvYmQzUG9DSEx2?=
- =?utf-8?B?TllSK3k5ZWRWdHRDdVlTWDRwbTZETGRvb0hxTWFHMVBITDlwNDUwU3ZoWWlB?=
- =?utf-8?B?ckttMlFzbU1ibnhVeXVyTVJRUDBlRks4bXNmdHFKVzlpQlNBaWYrSml6UjJn?=
- =?utf-8?B?eDlHWUcxeU5SalJvTlB1eXgzeGRaMldPdzdYaGd2UE9WV1JVTTZxajF2aFRl?=
- =?utf-8?B?aGZSa3hvY0d6amFEVHNNcVhCcVl5Vm5rQ3RmcXBoMTNneU4vQTN2eEFETnJn?=
- =?utf-8?B?a0ZnZkp6RVJwemtoaFF3MFBNTC8wbmdSNlJxcUJhYnhKS3JQSU1wQUZzSi9j?=
- =?utf-8?B?ZXBrd3dSUEtiSWpVbFJ3MGFwUFR1alpGeDk4Qk1yczk3TGNGbGx0Kzlpem1O?=
- =?utf-8?B?cDV0TXhhdmVvMUVoaXhEUFFsOFlocEJzRUVaSEh2MVpGeXE5SEY4YjZRRDhW?=
- =?utf-8?B?NXhpYlYzY3ZQZkZjL0xlYllISGUrTWRiUHcxaUVRT3hzSHVwRXZaMXhqdnRr?=
- =?utf-8?B?S3cwckluR1MxTTU3OE01RVZOSWdFd3BGV1dWVkZZK3dQMkNWNjVrYlJta2Rz?=
- =?utf-8?B?OTV5NDk3R0k3anA2VjQzaUpXWGJnT3l5Uk9IZXErVzJ3bGhqU0hVOHNnc3pr?=
- =?utf-8?B?QzVndU9Xa3A4VnYvZXd4SlE3SURTVXVXZGlaZmxtWUUyV0Z4TllQVjV1QnZy?=
- =?utf-8?Q?5j2+ZofBzH6uUtlBjPqcyAQ=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ =?iso-2022-jp?B?anJoVFd3R2w2UmRNZi9OZFZEK2dybjd3Y2M5ZHRSYXFXTG40VDZZNStm?=
+ =?iso-2022-jp?B?ODF5cnFUcjZ5Y2xJZTBIRkVpZm9pZGI5N0EzK2RQTENXOHVQMEFiM01p?=
+ =?iso-2022-jp?B?b0RpV0ptOVRrUmlGMDFrR1JVcWNXTUwvc00yRmkvWHZQRkxOQkRSakZU?=
+ =?iso-2022-jp?B?UVI0aEpBT0xxS2dDMmxSNE53dDl2L2xJdzNJUGt2ZTQ1aHdGTDNxM3g3?=
+ =?iso-2022-jp?B?VUNKVy9IYk1jamhLTnk5YTczU3VvVm5EV2VKWXh1OGVxcWVBdHpwM1cr?=
+ =?iso-2022-jp?B?ajlObVJWcFQ5LzNsbzk2WXhwRndUODJwSHhjR1lvaVFwdHJlQklvMDlV?=
+ =?iso-2022-jp?B?eEVBd2NEUmRuQTF2dHhYcGFRVktNOFVFekNIN21wQmR1aDRWVU1WaHAx?=
+ =?iso-2022-jp?B?OW95V1p2bVBxWFVUZDBtY256MTVoTmxFRGNwaE45bm1TbFI3RDBMaHoz?=
+ =?iso-2022-jp?B?RkRVbjZONk5SeFkycGtabVYwbEVCQmJFWERxMTlyMVcwM0JWTjRUU1M1?=
+ =?iso-2022-jp?B?NW1oUStpQnByNnZqdGxxTGJRT25jaXdRMngxT1B2UXFhSjVRbXpZMDZo?=
+ =?iso-2022-jp?B?RlVMUFB3ZEFDdjJpdVh6NHE0ZU15dFVoVk1ta25Hd2h6bWRyYzRMc0xD?=
+ =?iso-2022-jp?B?WnhmM3hFTjdKQnd5aWRmZ2Y5TEx0MXhKenZTV1dPclF4VCt1eGJMNm0v?=
+ =?iso-2022-jp?B?QTdsazFNQmYxUEZ3RFhOamdVUDc2dVRoeEZSQ1JlQVlTTlg4SXQ3RUg4?=
+ =?iso-2022-jp?B?c215OXJlamp0ckZKWGVLRUJCWjJvVFB2NEh2OUh2cTJZcEN5VUhrOVZi?=
+ =?iso-2022-jp?B?VmJIMHRhSGx2UUsvdVZiRC9RM3VhbmdiblJyWVVpS0c4TjNIS3dUdnhr?=
+ =?iso-2022-jp?B?emlZN2dIaFFLN0l0Ry9mOGxCenVqaFZlL2lzTXE3TnkrTm4wYzF0TUhl?=
+ =?iso-2022-jp?B?RXdBcWRzOUJqQWxUWTN4REwxbkhjRGg0MnBGc3pRd1drTldvT3ltZ1pC?=
+ =?iso-2022-jp?B?WTFQVTFubktCNk5TQ0pvNEdOQVVHS3dxdXpPSTNuNjc0QVNzUlVHV283?=
+ =?iso-2022-jp?B?QzdsMnE3Y0FwblJDRkhFMU9xSWhCaUxIN2hoekpETE5ZeTlkbEtkOXdJ?=
+ =?iso-2022-jp?B?SXVyT3RUSkhsLzVUTHVWai9wM0psUUFVNkN5a043Z1ViYXkwTW9mWlhm?=
+ =?iso-2022-jp?B?R0g4Z1V2THlPQnJMc2xhSTVEY1VXZWptaHM1Y1dUWHF0dU5EL2hoMjZo?=
+ =?iso-2022-jp?B?a3FWTHg4N0ppeW1OK1dzSlY1WWozZVVNazk3NGN1ZWxjaVdrQ0l1VTR3?=
+ =?iso-2022-jp?B?NHJqd2FpL0VTbzFkblA1a2NpMDRQV3lJRkdOSnpMdmp1NEVXaERIWVVB?=
+ =?iso-2022-jp?B?RmtaNlpIWmNvajhiVmQvL2lSVDJrNHdLYS9YaDFDQW1IOCtzWlJOWlBC?=
+ =?iso-2022-jp?B?UnFYcDN5eEVMWjJrOEpVUDU2VWVacGZTTTVPWEhpaXoyRWY5dEplTEY2?=
+ =?iso-2022-jp?B?VHJzRkZ3cW0wc0Q2U3lBakFHZDltaWNKZUU2bGJZOFNydzEvWDBWNVNJ?=
+ =?iso-2022-jp?B?eDk0VGhhZ0tCS2ZUUjFDWW1Pa2dEQXpubjFuaE4wVG11Q283R3FTUXh5?=
+ =?iso-2022-jp?B?M0NCcjZQWm1ENmJvVHkzSENBMFRMRmlwVVB5czNVVE5oZWtOb0Zya2RI?=
+ =?iso-2022-jp?B?bGc0cmhyR1JDcDBIVGErQVF2NG05bC9TNEx3a3NHMTVyb013Z1JJcWR0?=
+ =?iso-2022-jp?B?Nk9GRzJncFBkc2hxc1BvVHRXZVB3d1gvWTQvY1hXY2V1Y0R5blVZSXIz?=
+ =?iso-2022-jp?B?VjJwYmlXTXpyU2NEWkJHMUVTYjljYkgyYWdtRWFibDFkb3crbFRta0JJ?=
+ =?iso-2022-jp?B?aXdXN3pjUW5MRWFwZDZUYUlldmhWWU5RdmJ0UlJOa2t3N0h1VUpmRm53?=
+ =?iso-2022-jp?B?cVUwd2xnZFRDN0VIR21EVkZOZ093S2c2a1V1ZVc2V1J4d3o5UVhtaFZZ?=
+ =?iso-2022-jp?B?WmJzVUhYcmpHNyt0YWYyQ1pWMlVsSlEyVjlTaU9jRENBVjZmU3pjcTNI?=
+ =?iso-2022-jp?B?RU9XY1UzZ2hEUlJNaWF0TXo4QXE3QjdXZ3U2dks1clVyd2FOTzBscWph?=
+ =?iso-2022-jp?B?aE9oZWp1bUlnUmtuN1MwYk1XR0ZEK3FRSVBmSGNHUml5TDBlNmJkSlFj?=
+ =?iso-2022-jp?B?NlUwZEMyMHNnSkxiRVpzUU54ZEtUcWVpRmtOTWpyZ0RZemRGM0xsUW9o?=
+ =?iso-2022-jp?B?dzVrbE91eWFPcEh1cHArTGM0eTd4NUQ1YmRiNjAzQVJzZmlBOHJlWXpr?=
+ =?iso-2022-jp?B?VnpIWkR3VU1xRDFmWkNiZGVudUxabUxUci9iTThwY1dRY1dsNTl5Uit1?=
+ =?iso-2022-jp?B?WmdpcmM9?=
+Content-Type: multipart/alternative;
+	boundary="_000_TY3PR01MB1107501396B71E71A49B7A7C8C725ATY3PR01MB11075jp_"
 MIME-Version: 1.0
 X-OriginatorOrg: toshiba-tsip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB11063.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb68d3a8-93c0-4b49-f5ae-08ddce847541
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jul 2025 09:44:05.4404
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11075.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a0593967-2948-472e-3197-08ddcea630e5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jul 2025 13:45:33.6248
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Hy1lmByV28uRkJze7S/wT1JuwtF+G9+IgYLCe397uOJ/9XsrRMiSh25n+2Smn4P5c83woPY49JwUtxRAU0OBRRTNa383+ILCyo+0+fykuOiq/Mv5Fc87NelH/cbuj1rs
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB10785
+X-MS-Exchange-CrossTenant-userprincipalname: 9+OoMGxdvZEZ4EuTSWeb7JBgnYpIOuqgX1/Zbh8b5uIU/N/9C08tNczNXrFd5EGjLWuPzFQGVLXSHFxE4b+ApDNJyk0WccC/vCDuaXQo098TmJf8rRvnk5Cbo+KwW/me
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY4PR01MB14526
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 29 Jul 2025 09:44:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19614
+ <cip-dev@lists.cip-project.org>; Tue, 29 Jul 2025 13:45:52 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19615
 
-SGkgSmFuLCANCg0KQW55IGNvbW1lbnRzIG9uIHRoZSBiZWxvdyBhcHByb2FjaCBmb3Igcm9vdGZz
-IGNvcnJ1cHRpb24/IElmIHRoaXMgaXMgZmluZSwgSSB3b3VsZCBsaWtlIHRvIHNlbmQgYSBwYXRj
-aCB0byBpc2FyLWNpcC1jb3JlIE1MLg0KDQpTbywgdGhlIGZpbmFsIGNvbW1hbmQgd2lsbCBiZSBh
-cyBiZWxvdywgDQoNCiQgZGQgaWY9L2Rldi96ZXJvIG9mPWNpcC1jb3JlLWltYWdlLXNlY3VyaXR5
-LWNpcC1jb3JlLWJvb2t3b3JtLXFlbXUtYW1kNjQud2ljIGJzPTEgc2Vlaz1ST09URlNfU1RBUlQr
-OTYgY291bnQ9OCBjb252PW5vdHJ1bmMNCk5vdGU6IDk2IC0tPiBzcXVhc2hmcyBzdXBlcmJsb2Nr
-IChoZWFkZXIpIHNpemUNCg0KVGhhbmtzICYgUmVnYXJkcw0KU2hpdmFuYW5kIEsNCg0KLS0tLS1P
-cmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206IGt1bmlqYWRhciBzaGl2YW5hbmQo77y077yz77yp
-77ywIERJVENfRElULU9TVCkgDQpTZW50OiAyNSBKdWx5IDIwMjUgMjA6MTYNClRvOiAnSmFuIEtp
-c3prYScgPGphbi5raXN6a2FAc2llbWVucy5jb20+OyAnY2lwLWRldkBsaXN0cy5jaXAtcHJvamVj
-dC5vcmcnIDxjaXAtZGV2QGxpc3RzLmNpcC1wcm9qZWN0Lm9yZz4NCkNjOiBkaW5lc2gga3VtYXIo
-77y077yz77yp77ywIERJVENfRElULU9TVCkgPGRpbmVzaC5rdW1hckB0b3NoaWJhLXRzaXAuY29t
-PjsgaGF5YXNoaSBrYXp1aGlybyjmnpcg5ZKM5a6PIOKWoe+8pO+8qe+8tO+8o+KXi++8o++8sO+8
-tCkgPGthenVoaXJvMy5oYXlhc2hpQHRvc2hpYmEuY28uanA+DQpTdWJqZWN0OiBSRTogW2NpcC1k
-ZXZdIExBVkE6IFN1cHBvcnQgUk9PVEZTIGRtLXZlcml0eSBjb3JydXB0aW9uIGRldGVjdGlvbiBj
-YXNlLg0KDQpIaSBKYW4sIA0KDQpUaGFuayB5b3UgZm9yIHRoZSBkaXNjdXNzaW9uIHNvIGZhci4g
-DQoNCj5JIHRyaWVkIHVzaW5nIGRkIGNvbW1hbmQgdG8gY29ycnVwdCBST09URlMgYXMgYmVsb3cg
-KHdyaXRlIHplcm9zIHRvIA0KPnN0YXJ0aW5nIGFkZHJlc3Mgb2YgUk9PVEZTKSAkIGRkIGlmPS9k
-ZXYvemVybyANCj5vZj1jaXAtY29yZS1pbWFnZS1zZWN1cml0eS1jaXAtY29yZS1ib29rd29ybS1x
-ZW11LWFtZDY0LndpYyBicz0xIA0KPnNlZWs9MTU3Mjg2NDAwIGNvdW50PTI1Ng0KDQo+QWZ0ZXIg
-dGhlIGFib3ZlIGNoYW5nZSwgdGhlIGpvYiBmYWlsZWQgd2l0aCBiZWxvdyBlcnJvciBbM10uDQo+
-IkNvdWxkIG5vdCBmaW5kIGRldmljZSAgbWFwcGVkIHRvICdob21lJyBjYW5ub3QgYmUgZW5jcnlw
-dGVkIQ0KPlJlYm9vdGluZyBhdXRvbWF0aWNhbGx5IGR1ZSB0byBwYW5pYz0gYm9vdCBhcmd1bWVu
-dCINCg0KSSBmb3VuZCB0aGUgcmVhc29uIGZvciB0aGlzIGVycm9yLCB0aGUgYWJvdmUgZGQgY29t
-bWFuZCBpcyB0cnVuY2F0aW5nIC53aWMgZmlsZSBhZnRlciB3cml0aW5nIDI1NiBieXRlcyBvZiBk
-YXRhIHRvIG9mZnNldCAxNTcyODY0MDAsIGJhc2ljYWxseSB0aGUgZmluYWwgLndpYyBmaWxlIHNp
-emUgaXMgcmVkdWNlZCB0byAxNTFNIChvcmlnaW5hbCBzaXplIDUuNUcpLg0KDQpCZWNhdXNlIG9m
-IHRoaXMgdHJ1bmNhdGlvbiwgaXQgaXMgbm90IGZpbmRpbmcgdGhlIGZpbGUgL2Rldi9kaXNrL2J5
-LXBhcnRsYWJlbC9ob21lWzFdIGhlbmNlIHJlcG9ydGluZyB0aGUgYWJvdmUgZXJyb3IuDQoNClNv
-LCBJJ3ZlIHRyaWVkIHVzaW5nIGNvbnY9bm90cnVuYyBvcHRpb24gZm9yIGRkIGNvbW1hbmQgYXMg
-YmVsb3csDQoNCiQgZGQgaWY9L2Rldi96ZXJvIG9mPWNpcC1jb3JlLWltYWdlLXNlY3VyaXR5LWNp
-cC1jb3JlLWJvb2t3b3JtLXFlbXUtYW1kNjQud2ljIGJzPTEgc2Vlaz0xNTcyODY0MDAgY291bnQ9
-MjU2IGNvbnY9bm90cnVuYyAgICANCg0KSGVyZSwgSSBjb25maXJtZWQgdGhlcmUgaXMgbm8gZGlm
-ZmVyZW5jZSBpbiB0aGUgZmlsZSBzaXplIGFmdGVyIGV4ZWN1dGluZyBkZCBjb21tYW5kLg0KQWZ0
-ZXIgdGhpcywgSWYgSSB0cnkgdG8gYm9vdCB0aGUgaW1hZ2UgaXQgaXMgZmFpbGluZyBhdCBkbS12
-ZXJpdHkgdmVyaWZpY2F0aW9uIHN0YWdlLg0KDQpQbGVhc2Ugbm90ZSB0aGUgb2Zmc2V0IDE1NzI4
-NjQwMCBpcyBzdGFydGluZyBhZGRyZXNzIG9mIFJPT1RGUyBhbmQgSSBmb3VuZCB0aGUgc3F1YXNo
-ZnMgc3VwZXJibG9jayAoaGVhZGVyKSBzaXplIGlzIDk2IGJ5dGVzWzJdLiANCnNvIHdlIGNhbiBz
-ZXQgUk9PVEZTX1NUQVJUKzk2IGFzIG9mZnNldC4NCg0KRXhhbXBsZToNCg0KJCBkZCBpZj0vZGV2
-L3plcm8gb2Y9Y2lwLWNvcmUtaW1hZ2Utc2VjdXJpdHktY2lwLWNvcmUtYm9va3dvcm0tcWVtdS1h
-bWQ2NC53aWMgYnM9MSBzZWVrPTE1NzI4NjQwMCs5NiBjb3VudD0yNTYgY29udj1ub3RydW5jIA0K
-DQpTbywgYnkgdGhlIGFib3ZlIGNvbW1hbmQsIEkndmUgcmVwcm9kdWNlZCBkbS12ZXJpdHkgY29y
-cnVwdGVkIGVycm9yLg0KDQpbICAgIDQuODMxMTM3XSBkZXZpY2UtbWFwcGVyOiB2ZXJpdHk6IHNo
-YTI1NiB1c2luZyBpbXBsZW1lbnRhdGlvbiAic2hhMjU2LWdlbmVyaWMiIA0KWyAgICA0LjgzNjcx
-MF0gZGV2aWNlLW1hcHBlcjogdmVyaXR5OiA4OjQ6IGRhdGEgYmxvY2sgMCBpcyBjb3JydXB0ZWQN
-ClsgICAgNC44Mzc3NDddIHNkIDU6MDowOjA6IFtzZGFdIFN5bmNocm9uaXppbmcgU0NTSSBjYWNo
-ZQ0KWyAgICA0Ljg0MDYwN10gQUNQSTogUE06IFByZXBhcmluZyB0byBlbnRlciBzeXN0ZW0gc2xl
-ZXAgc3RhdGUgUzUNClsgICAgNC44NDE0OThdIHJlYm9vdDogUmVzdGFydGluZyBzeXN0ZW0gd2l0
-aCBjb21tYW5kICdkbS12ZXJpdHkgZGV2aWNlIGNvcnJ1cHRlZCcNClsgICAgNC44NDI4OTRdIHJl
-Ym9vdDogbWFjaGluZSByZXN0YXJ0DQoNCkkgaG9wZSB0aGlzIG1ldGhvZCBpcyBmaW5lIGFzIGl0
-J3MgYSB2ZXJ5IHNpbXBsZSBvbmUuIA0KDQpbMV0gaHR0cHM6Ly9naXRsYWIuY29tL2NpcC1wcm9q
-ZWN0L2NpcC1jb3JlL2lzYXItY2lwLWNvcmUvLS9ibG9iL21hc3Rlci9yZWNpcGVzLWluaXRyYW1m
-cy9pbml0cmFtZnMtY3J5cHQtaG9vay9maWxlcy9sb2NhbC10b3AtY29tcGxldGU/cmVmX3R5cGU9
-aGVhZHMjTDIzNQ0KWzJdIGh0dHBzOi8vZHItZW1hbm4uZ2l0aHViLmlvL3NxdWFzaGZzL3NxdWFz
-aGZzLmh0bWwjX3RoZV9zdXBlcmJsb2NrDQoNCg0KVGhhbmtzICYgUmVnYXJkcw0KU2hpdmFuYW5k
-IEsNCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206IGt1bmlqYWRhciBzaGl2YW5h
-bmQo77y077yz77yp77ywIERJVENfRElULU9TVCkNClNlbnQ6IDE1IEp1bHkgMjAyNSAxODozOQ0K
-VG86IEphbiBLaXN6a2EgPGphbi5raXN6a2FAc2llbWVucy5jb20+OyBjaXAtZGV2QGxpc3RzLmNp
-cC1wcm9qZWN0Lm9yZw0KQ2M6IGRpbmVzaCBrdW1hcijvvLTvvLPvvKnvvLAgRElUQ19ESVQtT1NU
-KSA8ZGluZXNoLmt1bWFyQHRvc2hpYmEtdHNpcC5jb20+OyBoYXlhc2hpIGthenVoaXJvKOaelyDl
-kozlro8g4pah77yk77yp77y077yj4peL77yj77yw77y0KSA8a2F6dWhpcm8zLmhheWFzaGlAdG9z
-aGliYS5jby5qcD4NClN1YmplY3Q6IFJFOiBbY2lwLWRldl0gTEFWQTogU3VwcG9ydCBST09URlMg
-ZG0tdmVyaXR5IGNvcnJ1cHRpb24gZGV0ZWN0aW9uIGNhc2UuDQoNCkhpIEphbiwgDQoNCj4gV2hl
-cmUgZGlkIHlvdSByZWFkIHRoYXQgdGhpcyBpbmZvcm1hdGlvbiBpcyBhcHBlbmRlZD8gSSdtIHJl
-YWRpbmcgDQo+IGh0dHBzOi8vd3d3Lmtlcm5lbC5vcmcvZG9jL0RvY3VtZW50YXRpb24vYWRtaW4t
-Z3VpZGUvZGV2aWNlLW1hcHBlci92ZXINCj4gaXR5LnJzdCwNCmFuZCB0YWxrcyBhYm91dCBhIGhl
-YWRlciBhbmQgc29tZSBoYXNoIGJsb2NrcyBmb2xsb3dpbmcgaXQuIA0KDQpCZWxvdyBpcyBteSB1
-bmRlcnN0YW5kaW5nLCBwbGVhc2UgY29ycmVjdCBtZSBpZiBJJ20gd3JvbmcgaGVyZS4NCiANCndl
-IHVzZSB2ZXJpdHlzZXR1cCBiaW5hcnkgdG8gY3JlYXRlIC52ZXJpdHkgZmlsZSBhbmQgdGhhdCB3
-aWxsIGJlIHdyaXR0ZW4gYmFjayB0byAud2ljIGZpbGUgbGF0ZXIuICANCg0KdmVyaXR5c2V0dXAg
-LS1kYXRhLWJsb2Nrcz0yNTYgLS1oYXNoLW9mZnNldD0xMDUyNjcyIGZvcm1hdA0KICAgICAgIDxk
-ZXZpY2U+IDxkZXZpY2U+DQoNCiAgICAgICBWZXJpZmljYXRpb24gZGF0YSAoaGFzaGVzKSBpcyBz
-dG9yZWQgb24gdGhlIHNhbWUgZGV2aWNlIGFzIGRhdGENCiAgICAgICAoc3RhcnRpbmcgYXQgaGFz
-aC1vZmZzZXQpLiBIYXNoLW9mZnNldCBtdXN0IGJlIGdyZWF0ZXIgdGhhbiBudW1iZXINCiAgICAg
-ICBvZiBibG9ja3MgaW4gZGF0YS1hcmVhLlsxXQ0KDQpJbiBjaXAgY2FzZSwgZGV2aWNlIHdpbGwg
-YmUgLnZlcml0eSBmaWxlIGFuZCB0aGUgdmVyaWZpY2F0aW9uIGRhdGEgKGhhc2hlcykgaXMgc3Rv
-cmVkIG9uIHRoZSAudmVyaXR5IGZpbGUuIA0KDQpTbyBpbiBST09URlMgY29ycnVwdGlvbiBjYXNl
-IHVzaW5nIHNxdWFzaGZzIG1ldGhvZCwgSSdtIG5vdCBleGVjdXRpbmcgdGhpcyB2ZXJpdHlzZXR1
-cCBzdGVwIGhlbmNlIHRoZSBmaW5hbCBzcXVhc2hmcyBkb2Vzbid0IGNvbnRhaW4gdmVyaWZpY2F0
-aW9uIGRhdGEuICANCg0KPiBJIHdvdWxkIGhhdmUgdGFrZW4gdGhlIHJvb3RmcyBwYXJ0aXRpb24s
-IGFkZGVkIHNvbWUgcmVhc29uYWJsZSBvZmZzZXQgb2Ygc2VjdG9ycyB0byBza2lwIHRoZSBoZWFk
-ZXIgYW5kIGVpdGhlciBoaXQgdGhlIGhhc2ggYmxvY2tzIG9yIGV2ZW4gdGhlIHJvb3RmcyBpdHNl
-bGYgdGhpcyB3YXkuIE5vIHJlZ2VuZXJhdGlvbiBvZiBhbnkgc3F1YXNoZnMsIGp1c3Qgb25lIHNl
-Y3RvciByZWFkLCAiYml0LWZsaXAiLCB3cml0ZS4gDQoNCkhtbSwgSSB3aWxsIGxvb2sgaW50byB0
-aGlzLCB3aWxsIHRyeSB0byBkZXJpdmUgdGhlIHJlYXNvbmFibGUgb2Zmc2V0LiANCg0KWzFdIGh0
-dHBzOi8vbWFuNy5vcmcvbGludXgvbWFuLXBhZ2VzL21hbjgvdmVyaXR5c2V0dXAuOC5odG1sIA0K
-DQpUaGFua3MgJiBSZWdhcmRzDQpTaGl2YW5hbmQgSw0KDQotLS0tLU9yaWdpbmFsIE1lc3NhZ2Ut
-LS0tLQ0KRnJvbTogSmFuIEtpc3prYSA8amFuLmtpc3prYUBzaWVtZW5zLmNvbT4NClNlbnQ6IDE1
-IEp1bHkgMjAyNSAxNzoyNA0KVG86IGt1bmlqYWRhciBzaGl2YW5hbmQo77y077yz77yp77ywIERJ
-VENfRElULU9TVCkgPFNoaXZhbmFuZC5LdW5pamFkYXJAdG9zaGliYS10c2lwLmNvbT47IGNpcC1k
-ZXZAbGlzdHMuY2lwLXByb2plY3Qub3JnDQpDYzogZGluZXNoIGt1bWFyKO+8tO+8s++8qe+8sCBE
-SVRDX0RJVC1PU1QpIDxkaW5lc2gua3VtYXJAdG9zaGliYS10c2lwLmNvbT47IGhheWFzaGkga2F6
-dWhpcm8o5p6XIOWSjOWujyDilqHvvKTvvKnvvLTvvKPil4vvvKPvvLDvvLQpIDxrYXp1aGlybzMu
-aGF5YXNoaUB0b3NoaWJhLmNvLmpwPg0KU3ViamVjdDogUmU6IFtjaXAtZGV2XSBMQVZBOiBTdXBw
-b3J0IFJPT1RGUyBkbS12ZXJpdHkgY29ycnVwdGlvbiBkZXRlY3Rpb24gY2FzZS4NCg0KT24gMTUu
-MDcuMjUgMTI6NTMsIFNoaXZhbmFuZC5LdW5pamFkYXJAdG9zaGliYS10c2lwLmNvbSB3cm90ZToN
-Cj4gSGkgSmFuLA0KPiANCj4gVGhhbmtzIGZvciB0aGUgcmVwbHkuDQo+IA0KPj4gSG93IGRvIHlv
-dSBhY2NvdW50IGZvciB0aGUgZG0tdmVyaXR5IGNvbnRhaW5lciBoZXJlPyBXaGF0IHlvdSBnZXQg
-aXQganVzdCB0aGUgZG0tdmVyaXR5IGNvbnRhaW5lciBzdGFydCwgbm8/DQo+IA0KPiBZZXMsIGZy
-b20gdGhlIGZkaXNrIHRvb2wsIEknbSBmaW5kaW5nIHdoYXQgaXMgdGhlIHN0YXJ0IGFkZHJlc3Mg
-b2YgUk9PVEZTIChzeXN0ZW1hKS4gDQo+IA0KPiBUaGUgcmUtY3JlYXRlZCBzcXVhc2hmcyBpbWFn
-ZSBpcyB3cml0dGVuIGJhY2sgdG8gYSBvZmZzZXQgKHN0YXJ0IGFkZHJlc3Mgb2YgUk9PVEZTKSB1
-c2luZyBkZCBjb21tYW5kLg0KPiBJbiB0aGlzIGNhc2UsIG15IHVuZGVyc3RhbmRpbmcgaXMgdGhh
-dCB0aGUgUk9PVEZTIGlzIG5vdCBjb3JydXB0ZWQgaGVyZSBidXQgb25seSBpdCBkb24ndCBoYXZl
-IHRoZSByZXF1aXJlZCB2ZXJpdHkgaGFzaCBkZXRhaWxzIGFwcGVuZGVkIHRvIGl0cyB0YWlsLg0K
-DQpXaGVyZSBkaWQgeW91IHJlYWQgdGhhdCB0aGlzIGluZm9ybWF0aW9uIGlzIGFwcGVuZGVkPyBJ
-J20gcmVhZGluZyBodHRwczovL3d3dy5rZXJuZWwub3JnL2RvYy9Eb2N1bWVudGF0aW9uL2FkbWlu
-LWd1aWRlL2RldmljZS1tYXBwZXIvdmVyaXR5LnJzdCwNCmFuZCB0YWxrcyBhYm91dCBhIGhlYWRl
-ciBhbmQgc29tZSBoYXNoIGJsb2NrcyBmb2xsb3dpbmcgaXQuDQoNCj4gDQo+ICQgZGQgaWY9L2Rl
-di96ZXJvICBvZj1jaXAtY29yZS1pbWFnZS1zZWN1cml0eS1jaXAtY29yZS1ib29rd29ybS1xZW11
-LWFtZDY0LndpYyBicz0xIHNlZWs9MTU3Mjg2NDAwIGNvdW50PTI1NiAgICgxNTcyODY0MDAgLSBz
-dGFydCBhZGRyZXNzIG9mIFJPT1RGUykuDQo+IA0KPiBJbiBjYXNlIG9mIGFib3ZlIG1ldGhvZCwg
-SXQgd2lsbCBjb3JydXB0IHRoZSBST09URlMgY29udGVudHMsIHRoZXJlIGJ5IG5vdCBpZGVudGlm
-eWluZyAgL2Rldi9kaXNrL2J5LXBhcnRsYWJlbC9ob21lIGZpbGUgYW5kIGVuZGluZyB1cCB3aXRo
-IHBhbmljIGVycm9yLiANCj4gcGFuaWMgIkNvdWxkIG5vdCBmaW5kIGRldmljZSAgbWFwcGVkIHRv
-ICdob21lJyBjYW5ub3QgYmUgZW5jcnlwdGVkISINCj4gDQo+IEFsdGhvdWdoIGJvdGggbWV0aG9k
-cyB1c2UgdGhlIHNhbWUgb2Zmc2V0LCB0aGUgYm9vdCB3aWxsIGZhaWwgaW4gZGlmZmVyZW50IHZl
-cmlmaWNhdGlvbiBzdGVwcy4NCj4gSWYgeW91IGZlZWwgdGhlIHNxdWFzaGZzIG1ldGhvZCBpcyBj
-b21wbGV4IHRoZW4gd2UgbWlnaHQgbmVlZCB0byBpbnZlc3RpZ2F0ZSBmdXJ0aGVyIHRvIGZpbmQg
-YSBzaW1wbGUgc3RlcCB0byB2ZXJpZnkgZG0tdmVyaXR5IGNvcnJ1cHQgaXNzdWUuIElmIHdlIGRv
-bid0IGZpbmQgYW55IGFsdGVybmF0ZSBzb2x1dGlvbiB0aGVuIHdlIG1heSBuZWVkIHRvIGZpbmFs
-aXplIGFueSBvbmUgb2YgdGhlc2UgdHdvLiAgDQoNCkkgd291bGQgaGF2ZSB0YWtlbiB0aGUgcm9v
-dGZzIHBhcnRpdGlvbiwgYWRkZWQgc29tZSByZWFzb25hYmxlIG9mZnNldCBvZiBzZWN0b3JzIHRv
-IHNraXAgdGhlIGhlYWRlciBhbmQgZWl0aGVyIGhpdCB0aGUgaGFzaCBibG9ja3Mgb3IgZXZlbiB0
-aGUgcm9vdGZzIGl0c2VsZiB0aGlzIHdheS4gTm8gcmVnZW5lcmF0aW9uIG9mIGFueSBzcXVhc2hm
-cywganVzdCBvbmUgc2VjdG9yIHJlYWQsICJiaXQtZmxpcCIsIHdyaXRlLg0KDQpKYW4NCg0KLS0N
-ClNpZW1lbnMgQUcsIEZvdW5kYXRpb25hbCBUZWNobm9sb2dpZXMNCkxpbnV4IEV4cGVydCBDZW50
-ZXINCg==
+--_000_TY3PR01MB1107501396B71E71A49B7A7C8C725ATY3PR01MB11075jp_
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+Hello Chris,
+
+Hope you are doing well.
+
+
+  *   I think the CIP core group just did something similar for a WFX servi=
+ce?
+  *   You could go down the same route for zchunk. Either by using the same=
+ server or in setting up a new one.
+
+In CIP core/SWUpdate regular meetings, we are discussing alternate options =
+for hosting a file server for zchunk based updates.
+In case of new EC2 instance we should also consider the cost of the instanc=
+e.
+
+So, Is there any possibility to use LAVA master server as a file server for=
+ zchunk updates? Is it also running in AWS?
+
+Basically, we can configure either nginx or apache2  server in this PC and =
+use it for zchunk updates.
+However, we need to check how to upload .zck file every time to LAVA master=
+ server pc before the running the tests and also LAVA jobs should access th=
+is file.
+
+It is just an idea so I=1B$B!G=1B(Bm not sure whether it works. What do you=
+ think? Is it possible?
+
+Thanks & Regards
+Shivanand K
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+Sent: 24 March 2025 15:46
+To: kunijadar shivanand(=1B$B#T#S#I#P=1B(B DITC_DIT-OST) <Shivanand.Kunijad=
+ar@toshiba-tsip.com>
+Cc: dinesh kumar(=1B$B#T#S#I#P=1B(B DITC_DIT-OST) <dinesh.kumar@toshiba-tsi=
+p.com>; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B#D#M#E=1B(B =1B$B=
+!{#D#I#G""#M#P#S!{#M#P#4=1B(B) <kazuhiro3.hayashi@toshiba.co.jp>; jan.kiszk=
+a@siemens.com; balakumar adithya(=1B$B#T#S#I#P=1B(B DITC_DIT-OST) <Adithya.=
+Balakumar@toshiba-tsip.com>; ashrith sai(=1B$B#T#S#I#P=1B(B DITC_DIT-OST) <=
+Sai.Sathujoda@toshiba-tsip.com>; cip-dev@lists.cip-project.org
+Subject: RE: File server for zchunk swupdate update
+
+Hello Shivanand,
+
+I think the CIP core group just did something similar for a WFX service?
+You could go down the same route for zchunk. Either by using the same serve=
+r or in setting up a new one.
+
+Either way the only people with admin access to install things are the LF a=
+dmins.
+You can create a ticket with them through the LF helpdesk: https://jira.lin=
+uxfoundation.org/plugins/servlet/desk
+
+Kind regards, Chris
+
+From: Shivanand.Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijadar@toshi=
+ba-tsip.com> <Shivanand.Kunijadar@toshiba-tsip.com<mailto:Shivanand.Kunijad=
+ar@toshiba-tsip.com>>
+Sent: 17 March 2025 13:57
+To: Chris Paterson <Chris.Paterson2@renesas.com<mailto:Chris.Paterson2@rene=
+sas.com>>
+Cc: dinesh.kumar@toshiba-tsip.com<mailto:dinesh.kumar@toshiba-tsip.com>; ka=
+zuhiro3.hayashi@toshiba.co.jp<mailto:kazuhiro3.hayashi@toshiba.co.jp>; jan.=
+kiszka@siemens.com<mailto:jan.kiszka@siemens.com>; Adithya.Balakumar@toshib=
+a-tsip.com<mailto:Adithya.Balakumar@toshiba-tsip.com>; Sai.Sathujoda@toshib=
+a-tsip.com<mailto:Sai.Sathujoda@toshiba-tsip.com>; cip-dev@lists.cip-projec=
+t.org<mailto:cip-dev@lists.cip-project.org>
+Subject: File server for zchunk swupdate update
+
+Hi Chris,
+
+This is regarding the zchunk based swupdate verification on LAVA lab.
+
+The zchunk based update needs a file server where we keep .zck file and swu=
+pdate requests multiple byte ranges based on the requirement.
+In manual test scenario, this has been verified by keeping the file in Apac=
+he / nginx file server.
+
+In LAVA lab, I also verified zchunk update by installing Apache / nginx in =
+CIP image itself.
+In the last CIP core meeting, we discussed to use some container to host th=
+e file server (Apache or nginx) for this purpose instead of installing in t=
+he CIP image by considering the package size and maintenance.
+
+Do you know any EC2 instance where we can run docker container with nginx/A=
+pache for this and should be accessible to LAVA lab?
+Or do you have any other ideas/place apart from EC2 instance for running co=
+ntainer?
+
+Please provide your opinion.
+
+Thanks & Regards
+Shivanand K
+
+--_000_TY3PR01MB1107501396B71E71A49B7A7C8C725ATY3PR01MB11075jp_
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
+osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
+//www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
+<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
+<style><!--
+/* Font Definitions */
+@font-face
+	{font-family:Wingdings;
+	panose-1:5 0 0 0 0 0 0 0 0 0;}
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:Aptos;}
+@font-face
+	{font-family:"MS PGothic";
+	panose-1:2 11 6 0 7 2 5 8 2 4;}
+@font-face
+	{font-family:"\@MS PGothic";}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	font-size:11.0pt;
+	font-family:"Aptos",sans-serif;
+	mso-ligatures:standardcontextual;
+	mso-fareast-language:EN-US;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:#0563C1;
+	text-decoration:underline;}
+p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph
+	{mso-style-priority:34;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:36.0pt;
+	font-size:11.0pt;
+	font-family:"Aptos",sans-serif;
+	mso-ligatures:standardcontextual;
+	mso-fareast-language:EN-US;}
+span.EmailStyle20
+	{mso-style-type:personal-reply;
+	font-family:"Aptos",sans-serif;
+	color:windowtext;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-size:10.0pt;
+	mso-ligatures:none;}
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
+div.WordSection1
+	{page:WordSection1;}
+/* List Definitions */
+@list l0
+	{mso-list-id:1675448488;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1797717820 2124340810 1074331651 1074331653 10743316=
+49 1074331651 1074331653 1074331649 1074331651 1074331653;}
+@list l0:level1
+	{mso-level-start-at:96;
+	mso-level-number-format:bullet;
+	mso-level-text:\F0D8;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:Wingdings;
+	mso-fareast-font-family:"MS PGothic";
+	mso-bidi-font-family:"MS PGothic";}
+@list l0:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:"Courier New";}
+@list l0:level3
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:Wingdings;}
+@list l0:level4
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l0:level5
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:"Courier New";}
+@list l0:level6
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:Wingdings;}
+@list l0:level7
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l0:level8
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:"Courier New";}
+@list l0:level9
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:Wingdings;}
+ol
+	{margin-bottom:0cm;}
+ul
+	{margin-bottom:0cm;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]-->
+</head>
+<body lang=3D"EN-IN" link=3D"#0563C1" vlink=3D"#954F72" style=3D"word-wrap:=
+break-word">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal">Hello Chris, <o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Hope you are doing well. <o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<ul style=3D"margin-top:0cm" type=3D"disc">
+<li class=3D"MsoListParagraph" style=3D"color:#7030A0;margin-left:0cm;mso-l=
+ist:l0 level1 lfo1">
+<span lang=3D"EN-GB" style=3D"font-family:&quot;Calibri&quot;,sans-serif">I=
+ think the CIP core group just did something similar for a WFX service?<o:p=
+></o:p></span></li><li class=3D"MsoListParagraph" style=3D"color:#7030A0;ma=
+rgin-left:0cm;mso-list:l0 level1 lfo1">
+<span lang=3D"EN-GB" style=3D"font-family:&quot;Calibri&quot;,sans-serif">Y=
+ou could go down the same route for zchunk. Either by using the same server=
+ or in setting up a new one.<o:p></o:p></span></li></ul>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">In CIP core/SWUpdate regular meetings, we are discus=
+sing alternate options for hosting a file server for zchunk based updates.
+<o:p></o:p></p>
+<p class=3D"MsoNormal">In case of new EC2 instance we should also consider =
+the cost of the instance.
+<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">So, Is there any possibility to use LAVA master serv=
+er as a file server for zchunk updates? Is it also running in AWS?
+<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Basically, we can configure either <b>nginx</b> or <=
+b>apache2</b> &nbsp;server in this PC and use it for zchunk updates.<o:p></=
+o:p></p>
+<p class=3D"MsoNormal">However, we need to check how to upload .zck file ev=
+ery time to LAVA master server pc before the running the tests and also LAV=
+A jobs should access this file.
+<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">It is just an idea so I=1B$B!G=1B(Bm not sure whethe=
+r it works. What do you think? Is it possible?
+<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Thanks &amp; Regards<o:p></o:p></p>
+<p class=3D"MsoNormal">Shivanand K<o:p></o:p></p>
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"font-family:&quot;C=
+alibri&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">From:</=
+span></b><span lang=3D"EN-US" style=3D"font-family:&quot;Calibri&quot;,sans=
+-serif;mso-ligatures:none;mso-fareast-language:JA"> Chris Paterson
+ &lt;Chris.Paterson2@renesas.com&gt; <br>
+<b>Sent:</b> 24 March 2025 15:46<br>
+<b>To:</b> kunijadar shivanand(</span><span lang=3D"JA" style=3D"font-famil=
+y:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language=
+:JA">=1B$B#T#S#I#P=1B(B</span><span lang=3D"EN-US" style=3D"font-family:&qu=
+ot;Calibri&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA"> DI=
+TC_DIT-OST)
+ &lt;Shivanand.Kunijadar@toshiba-tsip.com&gt;<br>
+<b>Cc:</b> dinesh kumar(</span><span lang=3D"JA" style=3D"font-family:&quot=
+;MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=
+=1B$B#T#S#I#P=1B(B</span><span lang=3D"EN-US" style=3D"font-family:&quot;Ca=
+libri&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA"> DITC_DI=
+T-OST)
+ &lt;dinesh.kumar@toshiba-tsip.com&gt;; hayashi kazuhiro(</span><span lang=
+=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligature=
+s:none;mso-fareast-language:JA">=1B$BNS=1B(B</span><span lang=3D"JA" style=
+=3D"font-family:&quot;Calibri&quot;,sans-serif;mso-ligatures:none;mso-farea=
+st-language:JA">
+</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
+erif;mso-ligatures:none;mso-fareast-language:JA">=1B$BOB9(=1B(B</span><span=
+ lang=3D"JA" style=3D"font-family:&quot;Calibri&quot;,sans-serif;mso-ligatu=
+res:none;mso-fareast-language:JA">
+</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-s=
+erif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#D#M#E=1B(B</span><sp=
+an lang=3D"EN-US" style=3D"font-family:&quot;Calibri&quot;,sans-serif;mso-l=
+igatures:none;mso-fareast-language:JA"> =1B$B!{=1B(B</span><span lang=3D"JA=
+" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif;mso-ligatures:none=
+;mso-fareast-language:JA">=1B$B#D#I#G=1B(B</span><span lang=3D"EN-US" style=
+=3D"font-family:&quot;Calibri&quot;,sans-serif;mso-ligatures:none;mso-farea=
+st-language:JA">=1B$B""=1B(B</span><span lang=3D"JA" style=3D"font-family:&=
+quot;MS PGothic&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA=
+">=1B$B#M#P#S=1B(B</span><span lang=3D"EN-US" style=3D"font-family:&quot;Ca=
+libri&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B!{=
+=1B(B</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,s=
+ans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#M#P#4=1B(B</spa=
+n><span lang=3D"EN-US" style=3D"font-family:&quot;Calibri&quot;,sans-serif;=
+mso-ligatures:none;mso-fareast-language:JA">)
+ &lt;kazuhiro3.hayashi@toshiba.co.jp&gt;; jan.kiszka@siemens.com; balakumar=
+ adithya(</span><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quo=
+t;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">=1B$B#T#S#I#P=1B(=
+B</span><span lang=3D"EN-US" style=3D"font-family:&quot;Calibri&quot;,sans-=
+serif;mso-ligatures:none;mso-fareast-language:JA">
+ DITC_DIT-OST) &lt;Adithya.Balakumar@toshiba-tsip.com&gt;; ashrith sai(</sp=
+an><span lang=3D"JA" style=3D"font-family:&quot;MS PGothic&quot;,sans-serif=
+;mso-ligatures:none;mso-fareast-language:JA">=1B$B#T#S#I#P=1B(B</span><span=
+ lang=3D"EN-US" style=3D"font-family:&quot;Calibri&quot;,sans-serif;mso-lig=
+atures:none;mso-fareast-language:JA">
+ DITC_DIT-OST) &lt;Sai.Sathujoda@toshiba-tsip.com&gt;; cip-dev@lists.cip-pr=
+oject.org<br>
+<b>Subject:</b> RE: File server for zchunk swupdate update<o:p></o:p></span=
+></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Cali=
+bri&quot;,sans-serif;color:#7030A0">Hello Shivanand,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Cali=
+bri&quot;,sans-serif;color:#7030A0"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Cali=
+bri&quot;,sans-serif;color:#7030A0">I think the CIP core group just did som=
+ething similar for a WFX service?<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Cali=
+bri&quot;,sans-serif;color:#7030A0">You could go down the same route for zc=
+hunk. Either by using the same server or in setting up a new one.<o:p></o:p=
+></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Cali=
+bri&quot;,sans-serif;color:#7030A0"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Cali=
+bri&quot;,sans-serif;color:#7030A0">Either way the only people with admin a=
+ccess to install things are the LF admins.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Cali=
+bri&quot;,sans-serif;color:#7030A0">You can create a ticket with them throu=
+gh the LF helpdesk:
+<a href=3D"https://jira.linuxfoundation.org/plugins/servlet/desk">https://j=
+ira.linuxfoundation.org/plugins/servlet/desk</a><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Cali=
+bri&quot;,sans-serif;color:#7030A0"><o:p>&nbsp;</o:p></span></p>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"color:#7030A0;mso-liga=
+tures:none;mso-fareast-language:EN-GB">Kind regards, Chris<o:p></o:p></span=
+></p>
+</div>
+<p class=3D"MsoNormal"><span lang=3D"EN-GB" style=3D"font-family:&quot;Cali=
+bri&quot;,sans-serif;color:#7030A0"><o:p>&nbsp;</o:p></span></p>
+<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0cm 0cm 0cm =
+4.0pt">
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"font-family:&quot;C=
+alibri&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">From:</=
+span></b><span lang=3D"EN-US" style=3D"font-family:&quot;Calibri&quot;,sans=
+-serif;mso-ligatures:none;mso-fareast-language:JA">
+<a href=3D"mailto:Shivanand.Kunijadar@toshiba-tsip.com">Shivanand.Kunijadar=
+@toshiba-tsip.com</a> &lt;<a href=3D"mailto:Shivanand.Kunijadar@toshiba-tsi=
+p.com">Shivanand.Kunijadar@toshiba-tsip.com</a>&gt;
+<br>
+<b>Sent:</b> 17 March 2025 13:57<br>
+<b>To:</b> Chris Paterson &lt;<a href=3D"mailto:Chris.Paterson2@renesas.com=
+">Chris.Paterson2@renesas.com</a>&gt;<br>
+<b>Cc:</b> <a href=3D"mailto:dinesh.kumar@toshiba-tsip.com">dinesh.kumar@to=
+shiba-tsip.com</a>;
+<a href=3D"mailto:kazuhiro3.hayashi@toshiba.co.jp">kazuhiro3.hayashi@toshib=
+a.co.jp</a>;
+<a href=3D"mailto:jan.kiszka@siemens.com">jan.kiszka@siemens.com</a>; <a hr=
+ef=3D"mailto:Adithya.Balakumar@toshiba-tsip.com">
+Adithya.Balakumar@toshiba-tsip.com</a>; <a href=3D"mailto:Sai.Sathujoda@tos=
+hiba-tsip.com">
+Sai.Sathujoda@toshiba-tsip.com</a>; <a href=3D"mailto:cip-dev@lists.cip-pro=
+ject.org">
+cip-dev@lists.cip-project.org</a><br>
+<b>Subject:</b> File server for zchunk swupdate update<o:p></o:p></span></p=
+>
+</div>
+</div>
+<p class=3D"MsoNormal"><span lang=3D"EN-GB"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal">Hi Chris, <o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">This is regarding the zchunk based swupdate verifica=
+tion on LAVA lab.
+<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">The zchunk based update needs a file server where we=
+ keep .zck file and swupdate requests multiple byte ranges based on the req=
+uirement.
+<o:p></o:p></p>
+<p class=3D"MsoNormal">In manual test scenario, this has been verified by k=
+eeping the file in Apache / nginx file server.
+<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">In LAVA lab, I also verified zchunk update by instal=
+ling Apache / nginx in CIP image itself.
+<o:p></o:p></p>
+<p class=3D"MsoNormal">In the last CIP core meeting, we discussed to use so=
+me container to host the file server (Apache or nginx) for this purpose ins=
+tead of installing in the CIP image by considering the package size and mai=
+ntenance.<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Do you know any EC2 instance where we can run docker=
+ container with nginx/Apache for this and should be accessible to LAVA lab?
+<o:p></o:p></p>
+<p class=3D"MsoNormal">Or do you have any other ideas/place apart from EC2 =
+instance for running container?
+<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Please provide your opinion.&nbsp; <o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal">Thanks &amp; Regards<o:p></o:p></p>
+<p class=3D"MsoNormal">Shivanand K<o:p></o:p></p>
+</div>
+</div>
+</body>
+</html>
+
+--_000_TY3PR01MB1107501396B71E71A49B7A7C8C725ATY3PR01MB11075jp_--
 
 
