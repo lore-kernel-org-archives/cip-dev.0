@@ -2,27 +2,27 @@ Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50132C87FCC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 500F9C87FCA
 	for <webhook@archiver.kernel.org>; Thu, 31 Jul 2025 04:39:27 +0000 (UTC)
-Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
- by mx.groups.io with SMTP id smtpd.web10.39784.1753892600291933369
+Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
+ by mx.groups.io with SMTP id smtpd.web11.39794.1753892600242934485
  for <cip-dev@lists.cip-project.org>;
  Wed, 30 Jul 2025 09:23:20 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=nicusor.huhulea@siemens.com header.s=fm2 header.b=KIrBxwcq;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-1331196-20250730161312fa0bb0965d9732929e-qtfczd@rts-flowmailer.siemens.com)
-Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 20250730161312fa0bb0965d9732929e
+ dkim=pass header.i=nicusor.huhulea@siemens.com header.s=fm2 header.b=OQnyxUHD;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-1331196-20250730161315c8b8c6650a7268b1c0-_xe2bd@rts-flowmailer.siemens.com)
+Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 20250730161315c8b8c6650a7268b1c0
         for <cip-dev@lists.cip-project.org>;
-        Wed, 30 Jul 2025 18:13:13 +0200
+        Wed, 30 Jul 2025 18:13:15 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
  d=siemens.com; i=nicusor.huhulea@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=SM18kxHUwUOMwVIKh7FMbuWbiK+t9G6vHIfzFyWk3rk=;
- b=KIrBxwcqCMFleJ5qRPVb0wv3K58/GG0o58C4dCCy6FcUj+sNOYa/UVG8PCswiIMv9ZanP0
- +BgzxeMZqgMoYsXp3/wAyTJYVuwZ8pl/WqGh36F2wLg6Bu8Z15JW7otMKdjRayAtHGikUQqt
- r7KQaqsU/dkUvwM5JNjMNToG5Sx+vaZB6mindv/8EAkDJ4AfafMLenAZJkPVhlHj3qCNBWcT
- S7LX5340SuNBV/si9AWLB8hwvHZwB4mMjsAXKrD5Pe84I0x1blKP2DeARP9TBh+Ci2CmNeKL
- hErGA6pUytr3yevUp6odglx8BbZedmYV22HKQOLfANkfht8tGHh/J1Yw==;
+ bh=YFPzJYoDv3cX+8o/GvSkSkoQ51LHu7AECjzM4Hsiq/U=;
+ b=OQnyxUHD5CsAuL9spD+tylm+gUMS42osIg5+Pz8wfGHWjkYP3maOoQjmUpfjRO7BEMe6XI
+ n+0RNaAGAvvn+PgdgU6NGC9zs6VnMjXQT/M4wBBHHWrDoosgfSArgqwu9xUOnok6qCa2+Wdy
+ 33WMdR11z4kiDcMbb3w6b0GmUMjojVuJL/yVvPlQKudonxYSknWC+33q2A0hYbUUISPgUksw
+ DhAbgeQLKWz4WLnVeOgrHgrRMVrbWSiNoS5t45uSN5CFtuX/luPAfM5Z5ShoF+MFkteMAWq/
+ e2IjBnekR2aNq1Fyab2hgXllDLVC8abdxIIyTOvWwfEOqoB4uiGexfmg==;
 From: Nicusor Huhulea <nicusor.huhulea@siemens.com>
 To: stable@vger.kernel.org,
 	dri-devel@lists.freedesktop.org,
@@ -44,77 +44,86 @@ Cc: cip-dev@lists.cip-project.org,
 	cedric.hombourger@siemens.com,
 	shrikant.bobade@siemens.com,
 	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
 	Nicusor Huhulea <nicusor.huhulea@siemens.com>
-Subject: [PATCH 1/5] drm/i915: Fix HPD polling, reenabling the output poll work as needed
-Date: Wed, 30 Jul 2025 19:11:02 +0300
-Message-Id: <20250730161106.80725-2-nicusor.huhulea@siemens.com>
+Subject: [PATCH 4/5] drm/probe-helper: enable and disable HPD on connectors
+Date: Wed, 30 Jul 2025 19:11:05 +0300
+Message-Id: <20250730161106.80725-5-nicusor.huhulea@siemens.com>
 In-Reply-To: <20250730161106.80725-1-nicusor.huhulea@siemens.com>
 References: <20250730161106.80725-1-nicusor.huhulea@siemens.com>
 MIME-Version: 1.0
 X-Flowmailer-Platform: Siemens
 Feedback-ID: 519:519-1331196:519-21489:flowmailer
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 31 Jul 2025 04:39:27 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19630
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19629
 
-From: Imre Deak <imre.deak@intel.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-commit 50452f2f76852322620b63e62922b85e955abe94 upstream.
+commit c8268795c9a9cc7be50f78d4502fad83a2a4f8df upstream
 
-While this commit is not a direct cherry-pick, the critical fix(two lines)
-was adapted and applied.
+This is not a direct cherry-pick of the upstream commit.
+Only the helper functions required as dependencies for
+"drm/i915: Fix HPD polling, reenabling the output poll work as needed"
+were extracted from the original commit. The rest of the code was not
+applied, as the codebase has diverged significantly from upstream.
 
-After the commit in the Fixes: line below, HPD polling stopped working
-on i915, since after that change calling drm_kms_helper_poll_enable()
-doesn't restart drm_mode_config::output_poll_work if the work was
-stopped (no connectors needing polling) and enabling polling for a
-connector (during runtime suspend or detecting an HPD IRQ storm).
+This partial adaptation ensures that the required drm_connector_helper_funcs
+are available for the dependent fix, while minimizing changes to the existing code.
 
-After the above change calling drm_kms_helper_poll_enable() is a nop
-after it's been called already and polling for some connectors was
-disabled/re-enabled.
+Introduce two drm_connector_helper_funcs: enable_hpd() and disable_hpd().
+They are called by drm_kms_helper_poll_enable() and
+drm_kms_helper_poll_disable() (and thus drm_kms_helper_poll_init() and
+drm_kms_helper_poll_fini()) respectively.
 
-Fix this by calling drm_kms_helper_poll_reschedule() added in the
-previous patch instead, which reschedules the work whenever expected.
+This allows DRM drivers to rely on drm_kms_helper_poll for enabling and
+disabling HPD detection rather than doing that manually.
 
-Fixes: d33a54e3991d ("drm/probe_helper: sort out poll_running vs poll_enabled")
-Cc: stable@vger.kernel.org # 6.4+
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: dri-devel@lists.freedesktop.org
-Reviewed-by: Jouni Högander <jouni.hogander@intel.com>
-Signed-off-by: Imre Deak <imre.deak@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20230822113015.41224-2-imre.deak@intel.com
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20221102180705.459294-3-dmitry.baryshkov@linaro.org
 Signed-off-by: Nicusor Huhulea <nicusor.huhulea@siemens.com>
 ---
- drivers/gpu/drm/i915/display/intel_hotplug.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/drm/drm_modeset_helper_vtables.h | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/gpu/drm/i915/display/intel_hotplug.c b/drivers/gpu/drm/i915/display/intel_hotplug.c
-index f7a2f485b177..6ba2d7b0cd1b 100644
---- a/drivers/gpu/drm/i915/display/intel_hotplug.c
-+++ b/drivers/gpu/drm/i915/display/intel_hotplug.c
-@@ -208,7 +208,7 @@ intel_hpd_irq_storm_switch_to_polling(struct drm_i915_private *dev_priv)
+diff --git a/include/drm/drm_modeset_helper_vtables.h b/include/drm/drm_modeset_helper_vtables.h
+index 6f19cf5c210e..54f4848a655a 100644
+--- a/include/drm/drm_modeset_helper_vtables.h
++++ b/include/drm/drm_modeset_helper_vtables.h
+@@ -1144,6 +1144,28 @@ struct drm_connector_helper_funcs {
+ 	 */
+ 	void (*cleanup_writeback_job)(struct drm_writeback_connector *connector,
+ 				      struct drm_writeback_job *job);
++
++	/**
++	 * @enable_hpd:
++	 *
++	 * Enable hot-plug detection for the connector.
++	 *
++	 * This operation is optional.
++	 *
++	 * This callback is used by the drm_kms_helper_poll_enable() helpers.
++	 */
++	void (*enable_hpd)(struct drm_connector *connector);
++
++	/**
++	 * @disable_hpd:
++	 *
++	 * Disable hot-plug detection for the connector.
++	 *
++	 * This operation is optional.
++	 *
++	 * This callback is used by the drm_kms_helper_poll_disable() helpers.
++	 */
++	void (*disable_hpd)(struct drm_connector *connector);
+ };
  
- 	/* Enable polling and queue hotplug re-enabling. */
- 	if (hpd_disabled) {
--		drm_kms_helper_poll_enable(dev);
-+		drm_kms_helper_poll_reschedule(&dev_priv->drm);
- 		mod_delayed_work(system_wq, &dev_priv->display.hotplug.reenable_work,
- 				 msecs_to_jiffies(HPD_STORM_REENABLE_DELAY));
- 	}
-@@ -638,7 +638,7 @@ static void i915_hpd_poll_init_work(struct work_struct *work)
- 	drm_connector_list_iter_end(&conn_iter);
- 
- 	if (enabled)
--		drm_kms_helper_poll_enable(dev);
-+		drm_kms_helper_poll_reschedule(&dev_priv->drm);
- 
- 	mutex_unlock(&dev->mode_config.mutex);
- 
+ /**
 -- 
 2.39.2
 
