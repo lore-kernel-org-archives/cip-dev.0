@@ -2,47 +2,47 @@ Return-Path: <s-adivi@ti.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB34C87FD5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6598C87FD2
 	for <webhook@archiver.kernel.org>; Thu, 31 Jul 2025 08:24:38 +0000 (UTC)
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
- by mx.groups.io with SMTP id smtpd.web10.56835.1753950272413002909
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+ by mx.groups.io with SMTP id smtpd.web10.56838.1753950277803417197
  for <cip-dev@lists.cip-project.org>;
- Thu, 31 Jul 2025 01:24:32 -0700
+ Thu, 31 Jul 2025 01:24:37 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=jjPsb+W7;
- spf=pass (domain: ti.com, ip: 198.47.23.234, mailfrom: s-adivi@ti.com)
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56V8OVtJ2987946;
-	Thu, 31 Jul 2025 03:24:31 -0500
+ dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=JkSkjibY;
+ spf=pass (domain: ti.com, ip: 198.47.23.235, mailfrom: s-adivi@ti.com)
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56V8Ob1N3445811;
+	Thu, 31 Jul 2025 03:24:37 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1753950271;
-	bh=j8lTXUSPO+XwYZoaEIlZIjFjXsXh+ipfdXRsqDXumK0=;
+	s=ti-com-17Q1; t=1753950277;
+	bh=8RhU+ULVyPgrV/T6mjkhGExBdKWUBF8qmwoujdGX+mM=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=jjPsb+W727YouD2hRnjeyp57JkuPOScVlLM70ZxFzN61Z95hyeqVPU871PeKoOuhB
-	 91wrCL4Uw76YqgOit/gUhHFb7wiVd4MKx3l7qhUARqDvSDZENDCNXR/igvEakiUaop
-	 49rqB7YIzJpkeyDItHWALyJIZ+47sBaw2jnBr5Xk=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56V8OVvs3819922
+	b=JkSkjibYVHfOSkWS9L2uxba7EUzTmZiZRAAwc3u4pCEJvNR2It/cxOKMfG5DpgoJT
+	 fr53RKHFdYrrlQxNymZrd6NwnqFyBHKUTTJcSyZ1TwKuhokk0/XzRc32KGhYc3i+qU
+	 BLhEcdQbqMLXv6uj9BpwCt7Skm2uSDUfyFy8FnLg=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56V8ObqQ3181470
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 31 Jul 2025 03:24:31 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+	Thu, 31 Jul 2025 03:24:37 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 31
- Jul 2025 03:24:31 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ Jul 2025 03:24:36 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 31 Jul 2025 03:24:30 -0500
+ Frontend Transport; Thu, 31 Jul 2025 03:24:36 -0500
 Received: from uda0498651.dhcp.ti.com (uda0498651.dhcp.ti.com [172.24.233.117])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56V8OQxa2604023;
-	Thu, 31 Jul 2025 03:24:29 -0500
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56V8OQxd2604023;
+	Thu, 31 Jul 2025 03:24:35 -0500
 From: Sai Sree Kartheek Adivi <s-adivi@ti.com>
 To: <cip-dev@lists.cip-project.org>, <jan.kiszka@siemens.com>,
         <dinesh.kumar@toshiba-tsip.com>
 CC: <vigneshr@ti.com>
-Subject: [cip-dev][isar-cip-core][PATCH v2 1/4] Add support for TI AM62Px SK platform
-Date: Thu, 31 Jul 2025 13:54:18 +0530
-Message-ID: <20250731082421.292376-2-s-adivi@ti.com>
+Subject: [cip-dev][isar-cip-core][PATCH v2 4/4] ti-am62px-sk: enable data encryption
+Date: Thu, 31 Jul 2025 13:54:21 +0530
+Message-ID: <20250731082421.292376-5-s-adivi@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250731082421.292376-1-s-adivi@ti.com>
 References: <20250731082421.292376-1-s-adivi@ti.com>
@@ -54,421 +54,382 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 31 Jul 2025 08:24:38 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19634
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19637
 
-- Add machine conf and and kas yml files for TI AM62Px SK
-- Add new u-boot 2025.01 recipe as support for AM62P is only available
-  from 2025.01
-- Add new patch 0001-configs-KASLR-OPTEE-RNG-support-for-K3-devic.patch
-  to enable KASLR support. This is already upstreamed to u-boot at [1].
-- Add new recipes for trusted-firmware-a, optee-os
+- optee-client, optee-ftpm:
+  - This integrate Microsoft's reference implementation of the TCG
+    TPM2.0 as an OPTee trusted application.
+    Since the OPTee secure storage on TI AM62Px SK is RPMB-based, and
+    the RPMB accessing is provided by linux tee-supplicant, this TA is
+    only discoverable when tee-supplicant is running.
 
-[1]: https://github.com/u-boot/u-boot/commit/7d4136397715d2c08161a32a873c052dd1bb8b6c
+- optee-os, optee-os-tadevkit:
+  - refactor optee-os recipe and add one for optee-os-tadevkit which is
+    required for optee-client
 
+- u-boot:
+  - Add rpmb-setup.cfg for setting up additional configs required for
+    enabling FTPM.
+
+- cip-core-image-security:
+  - Add newly added optee ta packages to cip-core-image-security
+
+- Kconfig
+  - Enable security features (data encryption, full encryption) for
+    TI AM62Px SK
+
+Co-authored-by: Ayush Gupta <a-gupta4@ti.com>
+Co-authored-by: Sai Sree Kartheek Adivi <s-adivi@ti.com>
 Signed-off-by: Sai Sree Kartheek Adivi <s-adivi@ti.com>
 ---
- Kconfig                                       |  5 ++
- conf/machine/ti-am62px-sk.conf                | 32 ++++++++++
- kas/board/ti-am62px-sk.yml                    | 13 ++++
- recipes-bsp/optee-os/files/rules-ti.tmpl      | 21 +++++++
- recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.bb  | 37 ++++++++++++
- .../trusted-firmware-a-ti-k3_2.13.bb          | 18 ++++++
- ...KASLR-OPTEE-RNG-support-for-K3-devic.patch | 38 ++++++++++++
- recipes-bsp/u-boot/files/rules-ti.tmpl        | 33 ++++++++++
- recipes-bsp/u-boot/u-boot-common-2025.01.inc  | 33 ++++++++++
- .../u-boot/u-boot-ti-am62px-sk_2025.01.bb     | 60 +++++++++++++++++++
- wic/ti-am62px-sk.wks                          | 11 ++++
- 11 files changed, 301 insertions(+)
- create mode 100644 conf/machine/ti-am62px-sk.conf
- create mode 100644 kas/board/ti-am62px-sk.yml
- create mode 100755 recipes-bsp/optee-os/files/rules-ti.tmpl
- create mode 100644 recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.bb
- create mode 100644 recipes-bsp/trusted-firmware-a/trusted-firmware-a-ti-k3_2.13.bb
- create mode 100644 recipes-bsp/u-boot/files/0001-configs-KASLR-OPTEE-RNG-support-for-K3-devic.patch
- create mode 100755 recipes-bsp/u-boot/files/rules-ti.tmpl
- create mode 100644 recipes-bsp/u-boot/u-boot-common-2025.01.inc
- create mode 100644 recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.01.bb
- create mode 100644 wic/ti-am62px-sk.wks
+ Kconfig                                       |  6 +--
+ .../optee-client/optee-client-ti-k3_4.6.0.bb  | 16 ++++++++
+ .../files/0001-add-enum-to-ta-flags.patch     | 27 ++++++++++++++
+ .../optee-ftpm-ti-k3_0~231017+git.bb          | 33 +++++++++++++++++
+ .../optee-os/optee-os-tadevkit-ti-k3_4.6.0.bb | 12 ++++++
+ recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.bb  | 37 ++++++++++---------
+ recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.inc | 29 +++++++++++++++
+ recipes-bsp/u-boot/files/rpmb-setup.cfg       | 12 ++++++
+ recipes-bsp/u-boot/files/rules-ti.tmpl        |  2 -
+ .../u-boot/u-boot-ti-am62px-sk_2025.01.bb     |  9 +++++
+ .../images/cip-core-image-security.bb         | 13 +++++++
+ .../cip-core-initramfs/cip-core-initramfs.bb  |  5 +++
+ 12 files changed, 178 insertions(+), 23 deletions(-)
+ create mode 100644 recipes-bsp/optee-client/optee-client-ti-k3_4.6.0.bb
+ create mode 100644 recipes-bsp/optee-ftpm/files/0001-add-enum-to-ta-flags.patch
+ create mode 100644 recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_0~231017+git.bb
+ create mode 100644 recipes-bsp/optee-os/optee-os-tadevkit-ti-k3_4.6.0.bb
+ create mode 100644 recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.inc
+ create mode 100644 recipes-bsp/u-boot/files/rpmb-setup.cfg
 
 diff --git a/Kconfig b/Kconfig
-index e078892..1b7e428 100644
+index 68c4309..b59ca59 100644
 --- a/Kconfig
 +++ b/Kconfig
-@@ -77,6 +77,10 @@ config TARGET_QEMU_RISCV64
- 	select ARCH_RISCV64
- 	select HAS_SWUPDATE if KERNEL_6_1 || KERNEL_6_12
+@@ -204,7 +204,7 @@ config IMAGE_SECURITY
+ 	select IMAGE_SWUPDATE
+ 	select IMAGE_SECURE_BOOT
+ 	select IMAGE_DATA_ENCRYPTION
+-	depends on TARGET_QEMU_AMD64 || TARGET_QEMU_ARM64 || TARGET_QEMU_ARM || TARGET_X86_UEFI
++	depends on TARGET_QEMU_AMD64 || TARGET_QEMU_ARM64 || TARGET_QEMU_ARM || TARGET_X86_UEFI || TARGET_TI_AM62PX_SK
+ 	help
+ 	  This enables security, encryption, secureboot and swupdate for IEC 62443-4-2.
  
-+config TARGET_TI_AM62PX_SK
-+	bool "Texas Instruments AM62Px SK"
-+	select ARCH_ARM64
-+
- endchoice
+@@ -260,13 +260,13 @@ config KAS_INCLUDE_DELTA_UPDATE
  
- config KAS_INCLUDE_BOARD
-@@ -89,6 +93,7 @@ config KAS_INCLUDE_BOARD
- 	default "kas/board/bbb.yml" if TARGET_BBB
- 	default "kas/board/iwg20m.yml" if TARGET_IWG20D
- 	default "kas/board/qemu-riscv64.yml" if TARGET_QEMU_RISCV64
-+	default "kas/board/ti-am62px-sk.yml" if TARGET_TI_AM62PX_SK
+ config IMAGE_DATA_ENCRYPTION
+ 	bool "Encrypt data partitions on first boot"
+-	depends on TARGET_QEMU_AMD64 || TARGET_QEMU_ARM64 || TARGET_QEMU_ARM || TARGET_X86_UEFI
++	depends on TARGET_QEMU_AMD64 || TARGET_QEMU_ARM64 || TARGET_QEMU_ARM || TARGET_X86_UEFI || TARGET_TI_AM62PX_SK
+ 	help
+ 	  This enables LUKS encryption for the partitions /var and /home.
  
- comment "Kernel options"
- 
-diff --git a/conf/machine/ti-am62px-sk.conf b/conf/machine/ti-am62px-sk.conf
+ config IMAGE_FULL_ENCRYPTION
+ 	bool "Encrypt rootfs and data partitions"
+-	depends on TARGET_QEMU_AMD64 || TARGET_QEMU_ARM64 || TARGET_QEMU_ARM || TARGET_X86_UEFI
++	depends on TARGET_QEMU_AMD64 || TARGET_QEMU_ARM64 || TARGET_QEMU_ARM || TARGET_X86_UEFI || TARGET_TI_AM62PX_SK
+ 	select IMAGE_DATA_ENCRYPTION
+ 	help
+ 	  This enables LUKS encryption for all non-boot partitions on first boot.
+diff --git a/recipes-bsp/optee-client/optee-client-ti-k3_4.6.0.bb b/recipes-bsp/optee-client/optee-client-ti-k3_4.6.0.bb
 new file mode 100644
-index 0000000..6e59250
+index 0000000..6b9d640
 --- /dev/null
-+++ b/conf/machine/ti-am62px-sk.conf
-@@ -0,0 +1,32 @@
++++ b/recipes-bsp/optee-client/optee-client-ti-k3_4.6.0.bb
+@@ -0,0 +1,16 @@
 +#
 +# Copyright (c) Texas Instruments Incorporated, 2025
++# Copyright (c) Siemens AG, 2023
 +#
 +# Authors:
-+#  Sai Sree Kartheek Adivi <s-adivi@ti.com>
++#  Su Bao Cheng <baocheng.su@siemens.com>
 +#
 +# SPDX-License-Identifier: MIT
 +#
 +
-+DISTRO_ARCH = "arm64"
-+DTB_FILES = "k3-am62p5-sk.dtb"
++require recipes-bsp/optee-client/optee-client-custom.inc
 +
-+IMAGE_FSTYPES ?= "wic"
-+WKS_FILE ?= "ti-am62px-sk.wks"
++SRC_URI += "https://github.com/OP-TEE/optee_client/archive/${PV}.tar.gz;downloadfilename=optee_client-${PV}.tar.gz"
++SRC_URI[sha256sum] = "a970338c9f69861901336716d89684646e4480b9970996a5b3581ae7d49fdaa3"
 +
-+IMAGER_INSTALL:wic += "${SYSTEMD_BOOTLOADER_INSTALL} u-boot-ti-am62px-sk"
-+IMAGER_BUILD_DEPS += "u-boot-ti-am62px-sk"
-+
-+IMAGE_INSTALL += "u-boot-script"
-+IMAGE_PREINSTALL += "firmware-ti-connectivity"
-+
-+IMAGE_BOOT_FILES = " \
-+    /usr/lib/u-boot/${MACHINE}/u-boot.img;u-boot.img \
-+    /usr/lib/u-boot/${MACHINE}/tispl.bin;tispl.bin \
-+    /usr/lib/u-boot/${MACHINE}/tiboot3-am62px-hs-fs-evm.bin;tiboot3.bin"
-+
-+USE_CIP_KERNEL_CONFIG = "1"
-+KERNEL_DEFCONFIG = "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/arm64/ti_defconfig"
-+
-+WDOG_TIMEOUT = "0"
-+
-+PREFERRED_PROVIDER_u-boot-${MACHINE} = "u-boot-ti-am62px-sk"
-diff --git a/kas/board/ti-am62px-sk.yml b/kas/board/ti-am62px-sk.yml
++S = "${WORKDIR}/optee_client-${PV}"
+diff --git a/recipes-bsp/optee-ftpm/files/0001-add-enum-to-ta-flags.patch b/recipes-bsp/optee-ftpm/files/0001-add-enum-to-ta-flags.patch
 new file mode 100644
-index 0000000..53e08be
+index 0000000..57917ba
 --- /dev/null
-+++ b/kas/board/ti-am62px-sk.yml
-@@ -0,0 +1,13 @@
++++ b/recipes-bsp/optee-ftpm/files/0001-add-enum-to-ta-flags.patch
+@@ -0,0 +1,27 @@
++From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
++From: Maxim Uvarov <maxim.uvarov@linaro.org>
++Date: Fri, 17 Apr 2020 12:05:53 +0100
++Subject: [PATCH] add enum to ta flags
++
++If we compile this TA into OPTEE-OS we need to define a flag
++that this TA can be discovered on the optee bus.
++Upstream-Status: Submitted [https://github.com/microsoft/MSRSec/pull/34]
++
++Signed-off-by: Maxim Uvarov <maxim.uvarov@linaro.org>
++---
++ .../ARM32-FirmwareTPM/optee_ta/fTPM/user_ta_header_defines.h    | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
++
++diff --git a/Samples/ARM32-FirmwareTPM/optee_ta/fTPM/user_ta_header_defines.h b/Samples/ARM32-FirmwareTPM/optee_ta/fTPM/user_ta_header_defines.h
++index 92c33c1..e83619d 100644
++--- a/Samples/ARM32-FirmwareTPM/optee_ta/fTPM/user_ta_header_defines.h
+++++ b/Samples/ARM32-FirmwareTPM/optee_ta/fTPM/user_ta_header_defines.h
++@@ -44,7 +44,7 @@
++ 
++ #define TA_UUID                     TA_FTPM_UUID
++ 
++-#define TA_FLAGS                    (TA_FLAG_SINGLE_INSTANCE | TA_FLAG_INSTANCE_KEEP_ALIVE)
+++#define TA_FLAGS                    (TA_FLAG_SINGLE_INSTANCE | TA_FLAG_INSTANCE_KEEP_ALIVE | TA_FLAG_DEVICE_ENUM_SUPP)
++ #define TA_STACK_SIZE               (64 * 1024)
++ #define TA_DATA_SIZE                (32 * 1024)
++ 
+diff --git a/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_0~231017+git.bb b/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_0~231017+git.bb
+new file mode 100644
+index 0000000..14df4d4
+--- /dev/null
++++ b/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_0~231017+git.bb
+@@ -0,0 +1,33 @@
 +#
 +# Copyright (c) Texas Instruments Incorporated, 2025
++# Copyright (c) Siemens AG, 2023
 +#
 +# Authors:
-+#  Sai Sree Kartheek Adivi <s-adivi@ti.com>
++#  Su Bao Cheng <baocheng.su@siemens.com>
 +#
 +# SPDX-License-Identifier: MIT
 +#
-+
-+header:
-+  version: 1
-+
-+machine: ti-am62px-sk
-diff --git a/recipes-bsp/optee-os/files/rules-ti.tmpl b/recipes-bsp/optee-os/files/rules-ti.tmpl
-new file mode 100755
-index 0000000..d5163d5
---- /dev/null
-+++ b/recipes-bsp/optee-os/files/rules-ti.tmpl
-@@ -0,0 +1,21 @@
-+#!/usr/bin/make -f
-+
-+# Debian rules for custom OP-TEE OS build
-+#
-+# This software is a part of ISAR.
-+# Copyright (c) Siemens AG, 2020
-+#
-+# SPDX-License-Identifier: MIT
-+
-+ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
-+export CROSS_COMPILE=$(DEB_HOST_GNU_TYPE)-
-+endif
-+
-+override_dh_auto_build:
-+	CFLAGS= LDFLAGS= $(MAKE) $(PARALLEL_MAKE) PLATFORM=${OPTEE_PLATFORM} \
-+		CROSS_COMPILE=arm-linux-gnueabihf- \
-+		CROSS_COMPILE64=${CROSS_COMPILE} \
-+		${OPTEE_EXTRA_BUILDARGS}
-+
-+%:
-+	dh $@
-diff --git a/recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.bb b/recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.bb
-new file mode 100644
-index 0000000..0d03a57
---- /dev/null
-+++ b/recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.bb
-@@ -0,0 +1,37 @@
-+#
-+# Copyright (c) Texas Instruments Incorporated, 2025
-+#
-+# SPDX-License-Identifier: MIT
-+
-+require recipes-bsp/optee-os/optee-os-custom.inc
++require recipes-bsp/optee-ftpm/optee-ftpm.inc
 +
 +SRC_URI += " \
-+    https://github.com/OP-TEE/optee_os/archive/${PV}.tar.gz;downloadfilename=optee_os-${PV}.tar.gz \
-+    file://rules-ti.tmpl \
-+"
++    https://github.com/Microsoft/ms-tpm-20-ref/archive/${SRCREV}.tar.gz \
++    https://github.com/wolfSSL/wolfssl/archive/${SRCREV-wolfssl}.tar.gz;name=wolfssl \
++    file://0001-add-enum-to-ta-flags.patch \
++    "
++
++SRCREV = "e9fc7b89d865536c46deb63f9c7d0121a3ded49c"
++SRCREV-wolfssl = "9db828a099bda150a4595cf89954c15877947039"
++
++SRC_URI[sha256sum] = "b77d092c0dde362adf6bc88a580ca7c8abe124d69bb734bf28f8904ae30494a4"
++SRC_URI[wolfssl.sha256sum] = "18f77959daf2a7995757cc7e6c86efe513aa6e355e4770bba6d36bf677fe88df"
++
++S = "${WORKDIR}/ms-tpm-20-ref-${SRCREV}"
++
++OPTEE_NAME = "ti-k3"
++TA_CPU = "cortex-a53"
++TA_DEV_KIT_DIR = "/usr/lib/optee-os/${OPTEE_NAME}/export-ta_arm64"
++
++do_prepare_build:append() {
++    rm -rf ${S}/external/wolfssl
++    cp -a ${S}/../wolfssl-${SRCREV-wolfssl} ${S}/external/wolfssl
++}
+diff --git a/recipes-bsp/optee-os/optee-os-tadevkit-ti-k3_4.6.0.bb b/recipes-bsp/optee-os/optee-os-tadevkit-ti-k3_4.6.0.bb
+new file mode 100644
+index 0000000..30f046e
+--- /dev/null
++++ b/recipes-bsp/optee-os/optee-os-tadevkit-ti-k3_4.6.0.bb
+@@ -0,0 +1,12 @@
++#
++# Copyright (c) Texas Instruments Incorporated, 2025
++# Copyright (c) Siemens AG, 2023
++#
++# Authors:
++#  Su Bao Cheng <baocheng.su@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++#
++
++require recipes-bsp/optee-os/optee-os-tadevkit-custom.inc
++require optee-os-ti-k3_${PV}.inc
+diff --git a/recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.bb b/recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.bb
+index 0d03a57..be4f8cb 100644
+--- a/recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.bb
++++ b/recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.bb
+@@ -1,27 +1,17 @@
+ #
+ # Copyright (c) Texas Instruments Incorporated, 2025
++# Copyright (c) Siemens AG, 2020-2023
++#
++# Authors:
++#  Jan Kiszka <jan.kiszka@siemens.com>
++#  Su Bao Cheng <baocheng.su@siemens.com>
+ #
+ # SPDX-License-Identifier: MIT
+-
++#
+ require recipes-bsp/optee-os/optee-os-custom.inc
++require optee-os-ti-k3_${PV}.inc
+ 
+-SRC_URI += " \
+-    https://github.com/OP-TEE/optee_os/archive/${PV}.tar.gz;downloadfilename=optee_os-${PV}.tar.gz \
+-    file://rules-ti.tmpl \
+-"
+-SRC_URI[sha256sum] = "0c947c6972bf50c483cb993af01041d4094b1e03711c7246cdde6ba2ffc351fe"
+-
+-S = "${WORKDIR}/optee_os-${PV}"
+-
+-DEBIAN_BUILD_DEPENDS += ", python3-cryptography:native"
+-
+-OPTEE_PLATFORM = "k3-am62x"
+-OPTEE_NAME = "ti-k3"
+-OPTEE_EXTRA_BUILDARGS = " \
+-    TEE_IMPL_VERSION=${PV} \
+-    CFG_ARM64_core=y \
+-    CFG_USER_TA_TARGETS=ta_arm64 \
+-    CFG_TEE_CORE_LOG_LEVEL=1"
++SRC_URI += "file://rules-ti.tmpl"
+ 
+ OPTEE_BINARIES = "tee-pager_v2.bin"
+ 
+@@ -34,4 +24,15 @@ python do_transform_template:prepend() {
+     shutil.copyfile(src, dst)
+ }
+ 
++# MS fTPM integration
++DEPENDS:append:encrypt-partitions = " optee-ftpm-${OPTEE_NAME} optee-client-${OPTEE_NAME}"
++DEBIAN_BUILD_DEPENDS:append:encrypt-partitions = ", optee-ftpm-${OPTEE_NAME}"
++
++FTPM_UUID = "bc50d971-d4c9-42c4-82cb-343fb7f37896"
++
++OPTEE_EXTRA_BUILDARGS:append:encrypt-partitions = " \
++    CFG_EARLY_TA=y \
++    EARLY_TA_PATHS=/usr/lib/optee-os/${OPTEE_NAME}/ta/${FTPM_UUID}.stripped.elf \
++    "
++
+ COMPATIBLE_MACHINE = "ti-am62px-sk"
+diff --git a/recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.inc b/recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.inc
+new file mode 100644
+index 0000000..ae66283
+--- /dev/null
++++ b/recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.inc
+@@ -0,0 +1,29 @@
++#
++# Copyright (c) Siemens AG, 2020-2023
++#
++# Authors:
++#  Jan Kiszka <jan.kiszka@siemens.com>
++#  Su Bao Cheng <baocheng.su@siemens.com>
++#
++# This file is subject to the terms and conditions of the MIT License.  See
++# COPYING.MIT file in the top-level directory.
++#
++
++SRC_URI += "https://github.com/OP-TEE/optee_os/archive/${PV}.tar.gz;downloadfilename=optee-os-${PV}.tar.gz"
 +SRC_URI[sha256sum] = "0c947c6972bf50c483cb993af01041d4094b1e03711c7246cdde6ba2ffc351fe"
 +
 +S = "${WORKDIR}/optee_os-${PV}"
 +
 +DEBIAN_BUILD_DEPENDS += ", python3-cryptography:native"
 +
-+OPTEE_PLATFORM = "k3-am62x"
 +OPTEE_NAME = "ti-k3"
++OPTEE_PLATFORM = "k3-am62x"
 +OPTEE_EXTRA_BUILDARGS = " \
 +    TEE_IMPL_VERSION=${PV} \
 +    CFG_ARM64_core=y \
-+    CFG_USER_TA_TARGETS=ta_arm64 \
-+    CFG_TEE_CORE_LOG_LEVEL=1"
-+
-+OPTEE_BINARIES = "tee-pager_v2.bin"
-+
-+python do_transform_template:prepend() {
-+    import shutil
-+    import os
-+
-+    src = os.path.join(d.getVar('WORKDIR'), 'rules-ti.tmpl')
-+    dst = os.path.join(d.getVar('WORKDIR'), 'debian/rules.tmpl')
-+    shutil.copyfile(src, dst)
-+}
++    CFG_TEE_CORE_LOG_LEVEL=1 CFG_TEE_TA_LOG_LEVEL=1 \
++    CFG_TA_MEASURED_BOOT=y CFG_USER_TA_TARGETS=ta_arm64 \
++    CFG_CONSOLE_UART=0 CFG_CORE_DYN_SHM=y \
++    CFG_REE_FS=n CFG_RPMB_FS=y CFG_RPMB_WRITE_KEY=y CFG_CORE_HEAP_SIZE=524288 CONFIG_INSECURE=y"
 +
 +COMPATIBLE_MACHINE = "ti-am62px-sk"
-diff --git a/recipes-bsp/trusted-firmware-a/trusted-firmware-a-ti-k3_2.13.bb b/recipes-bsp/trusted-firmware-a/trusted-firmware-a-ti-k3_2.13.bb
+diff --git a/recipes-bsp/u-boot/files/rpmb-setup.cfg b/recipes-bsp/u-boot/files/rpmb-setup.cfg
 new file mode 100644
-index 0000000..eca70d8
+index 0000000..bfe7226
 --- /dev/null
-+++ b/recipes-bsp/trusted-firmware-a/trusted-firmware-a-ti-k3_2.13.bb
-@@ -0,0 +1,18 @@
-+#
-+# Copyright (c) Texas Instruments Incorporated, 2025
-+#
-+# SPDX-License-Identifier: MIT
-+
-+require recipes-bsp/trusted-firmware-a/trusted-firmware-a-custom.inc
-+
-+SRC_URI += "https://github.com/ARM-software/arm-trusted-firmware/archive/v${PV}.tar.gz;downloadfilename=arm-trusted-firmware-${PV}.tar.gz"
-+SRC_URI[sha256sum] = "68333c8be57830e7430d7dd39064826729923d86d6bb7af38d713d4e9d15dcf9"
-+
-+S = "${WORKDIR}/arm-trusted-firmware-${PV}"
-+
-+TF_A_NAME = "ti-k3"
-+TF_A_PLATFORM = "k3"
-+TF_A_EXTRA_BUILDARGS = "CFG_ARM64=y TARGET_BOARD=lite SPD=opteed K3_PM_SYSTEM_SUSPEND=1"
-+TF_A_BINARIES = "lite/release/bl31.bin"
-+
-+COMPATIBLE_MACHINE = "ti-am62px-sk"
-diff --git a/recipes-bsp/u-boot/files/0001-configs-KASLR-OPTEE-RNG-support-for-K3-devic.patch b/recipes-bsp/u-boot/files/0001-configs-KASLR-OPTEE-RNG-support-for-K3-devic.patch
-new file mode 100644
-index 0000000..d831b21
---- /dev/null
-+++ b/recipes-bsp/u-boot/files/0001-configs-KASLR-OPTEE-RNG-support-for-K3-devic.patch
-@@ -0,0 +1,38 @@
-+From 7d4136397715d2c08161a32a873c052dd1bb8b6c Mon Sep 17 00:00:00 2001
-+From: Gokul Praveen <g-praveen@ti.com>
-+Date: Thu, 10 Jul 2025 15:29:22 +0530
-+Subject: [PATCH] configs: KASLR OPTEE RNG support for K3 devices
-+
-+KASLR, or Kernel Address Space Layout Randomization, is a security
-+feature in the Linux kernel that randomizes the memory location
-+where the kernel is loaded during boot.
-+
-+OP-TEE RNG is a Random Number Generator (RNG) component within the
-+Open Portable Trusted Execution Environment (OP-TEE) which provides
-+a random number to U-BOOT and U-BOOT provides this random number
-+as seed value to the LINUX kernel for KASLR.
-+
-+Add KASLR OPTEE RNG support across K3 devices by enabling the required
-+configs.
-+
-+Signed-off-by: Gokul Praveen <g-praveen@ti.com>
-+Reviewed-by: Bryan Brattlof <bb@ti.com>
-+Reviewed-by: Manorit Chawdhry <m-chawdhry@ti.com>
-+---
-+ arch/arm/Kconfig | 3 +++
-+ 1 file changed, 3 insertions(+)
-+
-+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-+index 5872455a0fe5..4e7593616d8a 100644
-+--- a/arch/arm/Kconfig
-++++ b/arch/arm/Kconfig
-+@@ -835,6 +835,9 @@ config ARCH_K3
-+ 	select FIT_SIGNATURE if ARM64
-+ 	select LTO
-+ 	imply TI_SECURE_DEVICE
-++	imply DM_RNG if ARM64
-++	imply TEE if ARM64
-++	imply OPTEE if ARM64
-+ 
-+ config ARCH_OMAP2PLUS
-+ 	bool "TI OMAP2+"
++++ b/recipes-bsp/u-boot/files/rpmb-setup.cfg
+@@ -0,0 +1,12 @@
++### RPMB key pairing config
++CONFIG_TEE=y
++CONFIG_OPTEE=y
++CONFIG_OPTEE_SERVICE_DISCOVERY=y
++CONFIG_TPM=y
++CONFIG_TPM_V2=y
++CONFIG_CMD_TPM=y
++CONFIG_TPM2_FTPM_TEE=y
++CONFIG_SUPPORT_EMMC_RPMB=y
++CONFIG_CMD_NVEDIT_EFI=y
++CONFIG_CMD_MMC_RPMB=y
++CONFIG_BOOTCOMMAND="setenv pair_rpmb_key 'setenv -e -nv -bs -rt pairing 1; setenv -e pairing'; run pair_rpmb_key; bootefi bootmgr"
 diff --git a/recipes-bsp/u-boot/files/rules-ti.tmpl b/recipes-bsp/u-boot/files/rules-ti.tmpl
-new file mode 100755
-index 0000000..8f41300
---- /dev/null
+index 77840e2..3c5ac22 100755
+--- a/recipes-bsp/u-boot/files/rules-ti.tmpl
 +++ b/recipes-bsp/u-boot/files/rules-ti.tmpl
-@@ -0,0 +1,33 @@
-+#!/usr/bin/make -f
-+#
-+# Debian rules for custom U-Boot build for ti-am62p-sk
-+#
-+# Copyright (c) Texas Instruments Incorporated, 2025
-+#
-+# SPDX-License-Identifier: MIT
-+
-+ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
-+export CROSS_COMPILE=$(DEB_HOST_GNU_TYPE)-
-+SET_CROSS_BUILD_TOOLS=CROSS_BUILD_TOOLS=y
-+endif
-+
-+override_dh_auto_build:
-+	$(MAKE) $(PARALLEL_MAKE) ARCH=arm ${U_BOOT_R5_CONFIG}
-+	$(MAKE) $(PARALLEL_MAKE) ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- BINMAN_INDIRS=${BINMAN_INDIRS}
-+
-+	$(MAKE) $(PARALLEL_MAKE) ${U_BOOT_A53_CONFIG}
-+	$(MAKE) $(PARALLEL_MAKE) BL31=/usr/lib/trusted-firmware-a/ti-k3/bl31.bin \
-+		TEE=/usr/lib/optee-os/ti-k3/tee-pager_v2.bin BINMAN_INDIRS=${BINMAN_INDIRS}
-+	$(MAKE) $(PARALLEL_MAKE) u-boot-initial-env
-+	$(MAKE) $(PARALLEL_MAKE) $(SET_CROSS_BUILD_TOOLS) NO_SDL=1 tools-only envtools
-+
-+override_dh_auto_install:
-+	mv tools/env/lib.a tools/env/libubootenv.a
-+
-+override_dh_auto_test:
-+
-+override_dh_strip:
-+	dh_strip -X libubootenv.a
-+
-+%:
-+	dh $@ --parallel
-diff --git a/recipes-bsp/u-boot/u-boot-common-2025.01.inc b/recipes-bsp/u-boot/u-boot-common-2025.01.inc
-new file mode 100644
-index 0000000..14bdef9
---- /dev/null
-+++ b/recipes-bsp/u-boot/u-boot-common-2025.01.inc
-@@ -0,0 +1,33 @@
-+#
-+# Copyright (c) 2025 Texas Instruments Incorporated - http://www.ti.com
-+#
-+# SPDX-License-Identifier: MIT
-+
-+require recipes-bsp/u-boot/u-boot-custom.inc
-+
-+FILESPATH:append := ":${FILE_DIRNAME}/files"
-+
-+SRC_URI += " \
-+    https://ftp.denx.de/pub/u-boot/u-boot-${PV}.tar.bz2 \
-+    file://rules.tmpl;subdir=debian"
-+SRC_URI[sha256sum] = "cdef7d507c93f1bbd9f015ea9bc21fa074268481405501945abc6f854d5b686f"
-+
-+SRC_URI:append:secureboot = " \
-+    file://secure-boot.cfg"
-+
-+S = "${WORKDIR}/u-boot-${PV}"
-+
-+DEBIAN_BUILD_DEPENDS += ", libssl-dev:native, libssl-dev:${DISTRO_ARCH}, \
-+        libgnutls28-dev:native, libgnutls28-dev:${DISTRO_ARCH}, yamllint:native"
-+
-+DEBIAN_BUILD_DEPENDS:append:secureboot = ", \
-+    openssl, efivar, secure-boot-secrets, python3-openssl:native"
-+DEBIAN_BUILD_DEPENDS:append:secureboot:buster   = ", pesign"
-+DEBIAN_BUILD_DEPENDS:append:secureboot:bullseye = ", pesign"
-+DEBIAN_BUILD_DEPENDS:append:secureboot:bookworm = ", pesign"
-+DEPENDS:append:secureboot = " secure-boot-secrets"
-+
-+do_prepare_build:append:secureboot() {
-+    sed -ni '/### Secure boot config/q;p' ${S}/configs/${U_BOOT_CONFIG}
-+    cat ${WORKDIR}/secure-boot.cfg >> ${S}/configs/${U_BOOT_CONFIG}
-+}
+@@ -15,13 +15,11 @@ override_dh_auto_build:
+ 	if [ -e /usr/share/secure-boot-secrets/secure-boot.pem ]; then \
+ 		openssl x509 -in /usr/share/secure-boot-secrets/secure-boot.pem -out secure-boot.der -outform der; \
+ 		rm -f secure-boot.esl; \
+-		\
+ 		if [ -x /usr/bin/efisecdb ]; then \
+ 			efisecdb -g 32db313c-f7d4-42a6-9a49-e32870001c63 -a -c secure-boot.der -o secure-boot.esl; \
+ 		else \
+ 			efisiglist -a -c secure-boot.der -o secure-boot.esl; \
+ 		fi; \
+-		\
+ 		rm -f ubootefi.var; \
+ 		tools/efivar.py set -i ubootefi.var -n PK -d secure-boot.esl -t file; \
+ 		tools/efivar.py set -i ubootefi.var -n KEK -d secure-boot.esl -t file; \
 diff --git a/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.01.bb b/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.01.bb
-new file mode 100644
-index 0000000..d0d6e5d
---- /dev/null
+index d0d6e5d..b129bde 100644
+--- a/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.01.bb
 +++ b/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.01.bb
-@@ -0,0 +1,60 @@
-+#
-+# Copyright (c) 2025 Texas Instruments Incorporated - http://www.ti.com
-+#
-+# SPDX-License-Identifier: MIT
+@@ -22,6 +22,10 @@ SRC_URI[sysfw-enc.sha256sum] = "4db6ed096fd5077023f292841a64aedb3a4ff8408d1160fb
+ SRC_URI[sysfw-stub-cert.sha256sum] = "22b58a07429da5ae0b0cd126d4ec0f429ee687429251f4fcfe9a2f5bb3e74b5d"
+ SRC_URI[sysfw-stub-enc.sha256sum] = "2cb73e5c9acf985325f40f16152906c9a2057f41ffb7903a981a34f7b2aaf524"
+ 
++SRC_URI:append:encrypt-partitions = " \
++    file://rpmb-setup.cfg \
++"
 +
-+require u-boot-common-${PV}.inc
+ S = "${WORKDIR}/u-boot-${PV}"
+ TI_LINUX_FIRMWARE = "${S}/ti-linux-firmware"
+ BINMAN_INDIRS = "./ti-linux-firmware"
+@@ -58,3 +62,8 @@ python do_transform_template:prepend() {
+     dst = os.path.join(d.getVar('WORKDIR'), 'debian/rules.tmpl')
+     shutil.copyfile(src, dst)
+ }
 +
-+TI_FIRMWARE_SRCREV = "33bec0e2ea9a25362c0c8243b2f1ed392dbc5b02"
-+
-+SRC_URI += " \
-+    https://git.ti.com/cgit/processor-firmware/ti-linux-firmware/plain/ti-sysfw/ti-fs-firmware-am62px-hs-fs-cert.bin?id=${TI_FIRMWARE_SRCREV};downloadfilename=ti-fs-firmware-am62px-hs-fs-cert.bin;name=sysfw-cert \
-+    https://git.ti.com/cgit/processor-firmware/ti-linux-firmware/plain/ti-sysfw/ti-fs-firmware-am62px-hs-fs-enc.bin?id=${TI_FIRMWARE_SRCREV};downloadfilename=ti-fs-firmware-am62px-hs-fs-enc.bin;name=sysfw-enc \
-+    https://git.ti.com/cgit/processor-firmware/ti-linux-firmware/plain/ti-sysfw/ti-fs-stub-firmware-am62px-hs-cert.bin?id=${TI_FIRMWARE_SRCREV};downloadfilename=ti-fs-stub-firmware-am62px-hs-cert.bin;name=sysfw-stub-cert \
-+    https://git.ti.com/cgit/processor-firmware/ti-linux-firmware/plain/ti-sysfw/ti-fs-stub-firmware-am62px-hs-enc.bin?id=${TI_FIRMWARE_SRCREV};downloadfilename=ti-fs-stub-firmware-am62px-hs-enc.bin;name=sysfw-stub-enc \
-+    https://git.ti.com/cgit/processor-firmware/ti-linux-firmware/plain/ti-dm/am62pxx/ipc_echo_testb_mcu1_0_release_strip.xer5f?id=${TI_FIRMWARE_SRCREV};downloadfilename=ipc_echo_testb_mcu1_0_release_strip.xer5f;name=dm \
-+    file://0001-configs-KASLR-OPTEE-RNG-support-for-K3-devic.patch \
-+    file://rules-ti.tmpl"
-+
-+SRC_URI[dm.sha256sum] = "7251394068d287ec81cb0f005a734de3bb7bb695d9dbcc3903ea83dda2182efc"
-+SRC_URI[sysfw-cert.sha256sum] = "fe36da7923ac6fa52eea5e601fb4321299df5e639d9dd66b41b6825bc1d9d539"
-+SRC_URI[sysfw-enc.sha256sum] = "4db6ed096fd5077023f292841a64aedb3a4ff8408d1160fb10a7aa0355d06e56"
-+SRC_URI[sysfw-stub-cert.sha256sum] = "22b58a07429da5ae0b0cd126d4ec0f429ee687429251f4fcfe9a2f5bb3e74b5d"
-+SRC_URI[sysfw-stub-enc.sha256sum] = "2cb73e5c9acf985325f40f16152906c9a2057f41ffb7903a981a34f7b2aaf524"
-+
-+S = "${WORKDIR}/u-boot-${PV}"
-+TI_LINUX_FIRMWARE = "${S}/ti-linux-firmware"
-+BINMAN_INDIRS = "./ti-linux-firmware"
-+
-+COMPATIBLE_MACHINE = "ti-am62px-sk"
-+
-+U_BOOT_R5_CONFIG = "am62px_evm_r5_defconfig"
-+U_BOOT_A53_CONFIG = "am62px_evm_a53_defconfig"
-+U_BOOT_CONFIG = "${U_BOOT_A53_CONFIG}"
-+
-+U_BOOT_BIN_INSTALL = "tiboot3-am62px-hs-fs-evm.bin tispl.bin u-boot.img"
-+
-+DEPENDS += "trusted-firmware-a-ti-k3 optee-os-ti-k3"
-+DEBIAN_BUILD_DEPENDS =. "gcc-arm-linux-gnueabihf, \
-+    libssl-dev:native, libssl-dev, grub-common, \
-+    swig, python3-dev:native, python3-setuptools, python3-pyelftools, \
-+    python3-jsonschema:native, python3-yaml:native, \
-+    trusted-firmware-a-ti-k3, optee-os-ti-k3,"
-+
-+do_prepare_build:append() {
-+    mkdir -p ${TI_LINUX_FIRMWARE}/ti-sysfw
-+    cp ${WORKDIR}/ti-fs-*firmware-am62px-hs*.bin ${TI_LINUX_FIRMWARE}/ti-sysfw
-+    mkdir -p ${TI_LINUX_FIRMWARE}/ti-dm/am62pxx
-+    cp ${WORKDIR}/ipc_echo_testb_mcu1_0_release_strip.xer5f ${TI_LINUX_FIRMWARE}/ti-dm/am62pxx
++do_prepare_build:append:encrypt-partitions() {
++    sed -ni '/### RPMB key pairing config/q;p' ${S}/configs/${U_BOOT_CONFIG}
++    cat ${WORKDIR}/rpmb-setup.cfg >> ${S}/configs/${U_BOOT_CONFIG}
 +}
+diff --git a/recipes-core/images/cip-core-image-security.bb b/recipes-core/images/cip-core-image-security.bb
+index 8a8c695..fafd907 100644
+--- a/recipes-core/images/cip-core-image-security.bb
++++ b/recipes-core/images/cip-core-image-security.bb
+@@ -35,5 +35,18 @@ IMAGE_PREINSTALL += " \
+ 	util-linux \
+ "
+ 
++IMAGE_INSTALL += " \
++	sshd-regen-keys \
++	optee-os-ti-k3 \
++	optee-client-dev \
++	optee-os-tadevkit-ti-k3 \
++	optee-ftpm-ti-k3 \
++	tee-supplicant \
++	libteec1 \
++	libteeacl0.1.0 \
++	libseteec0 \
++	libckteec0 \
++"
 +
-+TEMPLATE_VARS += "BINMAN_INDIRS U_BOOT_R5_CONFIG U_BOOT_A53_CONFIG"
+ CIP_IMAGE_OPTIONS ?= ""
+ require ${CIP_IMAGE_OPTIONS}
+diff --git a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
+index 0e4cf74..cb16e67 100644
+--- a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
++++ b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
+@@ -16,3 +16,8 @@ INITRAMFS_INSTALL += " \
+     "
+ 
+ INITRAMFS_INSTALL:append:encrypt-partitions = " initramfs-crypt-hook"
 +
-+python do_transform_template:prepend() {
-+    import shutil
-+    import os
-+
-+    src = os.path.join(d.getVar('WORKDIR'), 'rules-ti.tmpl')
-+    dst = os.path.join(d.getVar('WORKDIR'), 'debian/rules.tmpl')
-+    shutil.copyfile(src, dst)
-+}
-diff --git a/wic/ti-am62px-sk.wks b/wic/ti-am62px-sk.wks
-new file mode 100644
-index 0000000..8663607
---- /dev/null
-+++ b/wic/ti-am62px-sk.wks
-@@ -0,0 +1,11 @@
-+#
-+# Copyright (c) Texas Instruments Incorporated, 2023-2024
-+#
-+# SPDX-License-Identifier: MIT
-+
-+part /boot/firmware --source bootimg-partition --fstype=vfat --label firmware --active --align 1024 --size 16M --overhead-factor 1 --extra-space 0 --use-uuid --part-type E3C9E316-0B5C-4DB8-817D-F92DF00215AE
-+part /boot --source bootimg-efi-isar --sourceparams "loader=systemd-boot" --label efi --part-type EF00 --align 1024 --use-uuid
-+
-+part / --source rootfs --fstype ext4 --mkfs-extraopts "-T default" --label platform --align 1024 --use-uuid --exclude-path boot/
-+
-+bootloader --ptable gpt --source hybrid-boot --timeout=0 --append "rootwait rw"
++INITRAMFS_INSTALL:append:encrypt-partitions = " \
++    initramfs-tee-supplicant-hook \
++    initramfs-tee-ftpm-hook \
++"
 -- 
 2.34.1
 
