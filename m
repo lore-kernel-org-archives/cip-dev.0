@@ -1,431 +1,373 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04654C87FCB
-	for <webhook@archiver.kernel.org>; Sun,  3 Aug 2025 20:54:50 +0000 (UTC)
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.50])
- by mx.groups.io with SMTP id smtpd.web10.3972.1754254481412591523
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B722C87FD3
+	for <webhook@archiver.kernel.org>; Mon,  4 Aug 2025 05:03:12 +0000 (UTC)
+Received: from DUZPR83CU001.outbound.protection.outlook.com (DUZPR83CU001.outbound.protection.outlook.com [52.101.66.52])
+ by mx.groups.io with SMTP id smtpd.web10.89937.1754059931868352216
  for <cip-dev@lists.cip-project.org>;
- Sun, 03 Aug 2025 13:54:41 -0700
+ Fri, 01 Aug 2025 07:52:12 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@siemens.com header.s=selector2 header.b=dSN7AYpC;
- spf=pass (domain: siemens.com, ip: 52.101.84.50, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=IziG/fVt;
+ spf=pass (domain: siemens.com, ip: 52.101.66.52, mailfrom: nicusor.huhulea@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TT5ikOdwD30SbdEIQWHMOyiMOTukuQE7sXq8hVkcd2a4HWL4KEQyBBcQ7Yvh/xlUApMD+e4/lTV4y8UhVspqc2HRePzxvSbCGIo5vwCs3ar2VKbQZf2pxxKiLDLdlMa6WIi2fWzY0r4UARv9mWnwF+2FIThYFWUjuemGGu1iuuEpb8TXi9vnv99Z62nRQ75e56EZSp7sfzu9UmQEAMPBrNTJVGCXXSyaf5ycYkh5Jk+g4QkGwLtprvFaMUijaGUPlr73i2nAEKS9Zss0dgMrDHWIhf26gvRclyatNxni+d6OWP9Du7Gxmk5eI1M5BnQN4NXXmWz2+XQYg2Q8sps9tQ==
+ b=JOmMhB6vgBoV52JU9E1CucgXOJNpaXbrBiVSUELf55Ge/A6fYD4ZRzTx/p6sbUnzVJRC2laSqtdJP+vuoynzTpnFuXwG+smbvQwTCqPQk7hyWm3haF2jRsx9AR3y3gJgFUgHGE3aYNEkchNvy4ZqE15c6Zc4vuJfZmwh4JoLOodpXI5YMCyJaWPUHZ/xzStBJntLPQVkMcfCWVvYy7DuI+9L1vEnBfmCTl/yEZVrjVkPEKr2dd602VitFJfgNx3J1aeAefWgh7MErJx6v9SFgOHy34+7BynZ0bYjv8zKRnDi2me8S9+xB8BjhG4OQfDtrwsNpFKmxfKTVhiX/l4BZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OXQDnPYKz6BzA2buHrNCCOSZm0HlAlxF/zaXaGNGz/c=;
- b=uipjrVq8LPQoyff2FsxvBDzRRcS6YiVMenS5hA06uHyeHbudhR4NVnlnEU8UcOu+NtkeKXZB9kemaePkjsNBhdGo2yH9OYZIDpYxGEqxHokfPoZ7wn5WVF4m33OITOLl//JMLddA5RpKSFwbwFqc3cP/FCfDefYIG721O1eFiLzsC3jvxGYTRULyZxmk+EjTJN1zBX0MaTyAUxhFo4arHIF6Plhwec5dnbDb9VSgx7d7b27YPKOgAjE1wpT/PpyTjRSnSXtM7lv/Fd8vouQnxn4wzpMCCna+s3irofgIm160iEsfF8GpeLd0lJp7rgJOEdwtMh9Hv2gu+jrMm3iZ2g==
+ bh=NeswODzYUUmfqe5P/T/uSHeKXjQqSlFhGM5H6HglSZM=;
+ b=UD7I7YA/IeybwT7caHBrtvgrCyjEcxwj42JVmdJ8UTr41pSPbsj0B+Q9vKBAnm7uqhgPa9+jf1S4hDLa5AebkiZaDtoBth+jBBP8dCov0e1sM2A5WJVmsXaA2DbY7i7zPOe3A9sEFYsgQaYJWNpuuzoU+Q+igIASXCAr4kaKdrY9JkU/7MSUvT08+Z0upIMLMFNt4ucYjXq2vqlKt92IfmH+vFl1igO5JG99QAXPv6QTsRlCrcRbcZ2BYMul7CdR+IUkBprYREuE/Hzztgl8EvqGDmBAXd+KlXOaITOoQNfccPTsgV5PuJ1L76zEzGX7kQgVCuXkQjPbJiz930FgWA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OXQDnPYKz6BzA2buHrNCCOSZm0HlAlxF/zaXaGNGz/c=;
- b=dSN7AYpCS75RJHpXXvM4kNz8us9FzTbO+yCQ7Vs4ThWH0O764/a+khv/vzzdzRWosf2tiaWjUP9pYKIcnsTITDFtVk+oNu0hmaAWgkE4O3GeaJV2yuv0JbgZ0f7PZGmzlttVI4u4EK4FG3jkuRN7h7Jlu+R6gzN9nBb+vUHuHxMg66Hc8B6bF35TT72fk/UbVzchuayeFpgVLMSCN5CCjmLCkrRZ7JEbGmdEB20O1CxJVceHikCHdnfe6Ssr+jRWdKejHdi5ryOsm3Glm2tzFYvyC1mhpwv1LA3JcYD92CDwVW0U4I2HbHpGTY4YuKaMIfx1mSHphKgv2KTnkEKu/A==
-Authentication-Results: dkim=none (message not signed)
+ bh=NeswODzYUUmfqe5P/T/uSHeKXjQqSlFhGM5H6HglSZM=;
+ b=IziG/fVt9GvDU4FKO7q76R9bYUmsUwD95VijEX/JP7Au2v44RNl+cRx1I2WyymRaFc6PQvDh4I7fsTzxcgW2P1/yNVWXQXaeKYWhOC3yrcWS4ohmboEfaKUO7pGhnccb5w2Ezv89PycUweh/oDUTKwo9gR+whADH1UhHEjtRPgOt/DhdZ9KbN0vGkB/7yroAimfDnMtT3KzfTAL0Vh6v+FxfwNajz111amOLv+Ca+gf4rrUi5U61CETdZzHs8cJth0+/l0LeZjjO7Bkp0abyri1c6JEE3gbeoX6WvXKCoaAX9bdeiTiZ3Tigg/VDS4BegnIW39V/m2TtDUzWemMWLA==
+Received: from DB3SPRMB0006.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:436::7) by
+ AS4PR10MB6304.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:58f::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8989.16; Fri, 1 Aug 2025 14:37:04 +0000
+Received: from DB3SPRMB0006.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::7fc6:5d80:5e9c:246c]) by DB3SPRMB0006.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::7fc6:5d80:5e9c:246c%2]) with mapi id 15.20.8964.030; Fri, 1 Aug 2025
+ 14:37:04 +0000
+From: "nicusor.huhulea@siemens.com" <nicusor.huhulea@siemens.com>
+To: "imre.deak@intel.com" <imre.deak@intel.com>
+CC: "stable@vger.kernel.org" <stable@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"jouni.hogander@intel.com" <jouni.hogander@intel.com>,
+	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
+	"jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>, "tzimmermann@suse.de"
+	<tzimmermann@suse.de>, "airlied@gmail.com" <airlied@gmail.com>,
+	"daniel@ffwll.ch" <daniel@ffwll.ch>, "joonas.lahtinen@linux.intel.com"
+	<joonas.lahtinen@linux.intel.com>, "rodrigo.vivi@intel.com"
+	<rodrigo.vivi@intel.com>, "tvrtko.ursulin@linux.intel.com"
+	<tvrtko.ursulin@linux.intel.com>, "laurentiu.palcu@oss.nxp.com"
+	<laurentiu.palcu@oss.nxp.com>, "cedric.hombourger@siemens.com"
+	<cedric.hombourger@siemens.com>, "shrikant.bobade@siemens.com"
+	<shrikant.bobade@siemens.com>
+Subject: Re: [PATCH 0/5] drm/i915: fixes for i915 Hot Plug Detection and build/runtime issues
+Thread-Topic: [PATCH 0/5] drm/i915: fixes for i915 Hot Plug Detection and
+ build/runtime issues
+Thread-Index: AQHcAWzy3t50zo5SAEmpHcCyMXGHRrRLFuMAgALIj8A=
+Date: Fri, 1 Aug 2025 14:37:04 +0000
+Message-ID: 
+ <DB3SPRMB000631927D36A721EAE657F3E626A@DB3SPRMB0006.EURPRD10.PROD.OUTLOOK.COM>
+References: <20250730161106.80725-1-nicusor.huhulea@siemens.com>
+ <aIp6UgiwtDU1Ktmp@ideak-desk>
+In-Reply-To: <aIp6UgiwtDU1Ktmp@ideak-desk>
+Accept-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+ MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ActionId=7a45d62f-ef00-4b33-a332-ed51e405b6d6;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_ContentBits=0;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Enabled=true;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Method=Standard;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Name=restricted;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SetDate=2025-08-01T14:32:46Z;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_SiteId=38ae3bcd-9579-4fd4-adda-b42e1495d55a;MSIP_Label_9d258917-277f-42cd-a3cd-14c4e9ee58bc_Tag=10,
+ 3, 0, 1;
+authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by PA2PR10MB9136.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:420::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.18; Sun, 3 Aug
- 2025 20:54:38 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408%5]) with mapi id 15.20.8989.017; Sun, 3 Aug 2025
- 20:54:37 +0000
-Message-ID: <9bbceb24-c6f6-4584-8d08-9903c0ec4de0@siemens.com>
-Date: Sun, 3 Aug 2025 22:54:36 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev][isar-cip-core][PATCH 4/4] ti-am62px-sk: enable data
- encryption
-To: "Adivi, Sai Sree Kartheek" <s-adivi@ti.com>,
- cip-dev@lists.cip-project.org, vigneshr@ti.com
-References: <20250722101551.1727649-1-s-adivi@ti.com>
- <20250722101551.1727649-5-s-adivi@ti.com>
- <9bec0162-625e-4796-97d5-0cd364b3ad2a@web.de>
- <d40cd721-9403-404a-8a5d-83820646ab33@ti.com>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-In-Reply-To: <d40cd721-9403-404a-8a5d-83820646ab33@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: FR4P281CA0112.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:bb::11) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DB3SPRMB0006:EE_|AS4PR10MB6304:EE_
+x-ms-office365-filtering-correlation-id: 6b3b0b62-ed43-4a16-7b7c-08ddd108e246
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700018;
+x-microsoft-antispam-message-info: 
+ =?us-ascii?Q?Uqp6XI/v2jXPbCbPTDYnCZ+zlTnrXd5Rem4rRb5WvW1AySfWwJ0+GsGzbGUA?=
+ =?us-ascii?Q?OfH9Q/X5Rcj4bARzCJp/nJcGztLDeiEwGcVx8tyYrUa5ok6kLt8b5fb/s2pN?=
+ =?us-ascii?Q?0Rb6mjAbxCbNvXR++1LWJMwVblWguSQB0qHRzC1gfQ4R1devcms7QXDrUiH5?=
+ =?us-ascii?Q?11RqnZvOgn09HdSfeCONye5i4ftXelU+BO6+t1ymuLV87XOueOF6u6PwqAPb?=
+ =?us-ascii?Q?b/V9MSDzq4Uf3K/MvksGVPKN1vMrostla2K3nARgwycKAf//PYf6KL9mM26F?=
+ =?us-ascii?Q?HWzQhva7w25o0/PqxfgDtq3X/47gqzCrARGFmggAUJzH2h2+flC7F4OKvdnC?=
+ =?us-ascii?Q?uKpe8QHhjO1PaKVUND6x7dshUIQFRgsdLyqI7QugmVub69rlVD+MB+PYtoQ6?=
+ =?us-ascii?Q?ztAI0mfi4jEhsrH8R01P9AA9LHFFW5fc7ErjVu1P++6Cr1PjGMDI0O79+d7n?=
+ =?us-ascii?Q?r2CDFe9On31kGLWBZf16mDn69J1ijF92jyolbo1bJA+769GSxQosAnaZCSrV?=
+ =?us-ascii?Q?cVYObNeYT/XT3bMpcgfh5pp7aOnRO4izdDvQISo+dZVjNAac+607la3dm/BX?=
+ =?us-ascii?Q?W8e5M5mYEAvQG2m7Kg9PZFOO5QlFKjpfK5HFpYtxUZ5i8jh/A56jMfEu2GQm?=
+ =?us-ascii?Q?x0ZML7LyXLlACc8qYn/wr4JJIkJzM/5bmRQd/MdyWy8bpBOaF/Gvcz7CF44U?=
+ =?us-ascii?Q?ieAHa70l2wALbDBKO/burIQ0EbEJ/O3RcBOLGiVB13aQsAkJ2S7HE7/BA4wv?=
+ =?us-ascii?Q?BKYUDv46nQ2C5/CcoUw1tpUU0B3sxUkjcO9GphRp0nLFmJ/MD0JFMe5Km6gh?=
+ =?us-ascii?Q?BWyzqLrzEu11YLMvx919DdhGI64WOsuuNxk+LmumZMWbbSxHv9QLvcWrXqGz?=
+ =?us-ascii?Q?jkkWHuG1nEV3wtmrlO9MxGEF5HruRdHu3znqSTZAXb2LtRVAjRNIHP6LPaqC?=
+ =?us-ascii?Q?Rd3yNmuhP8WFaIjot4/xVcHTJuAB5hRbnJqHt2RXyu5YLX1KQeJ8ZQ41834S?=
+ =?us-ascii?Q?LRDOxW8RkONd12MplunqmHt3u7R72xmvPTSI5iA5yVYlUWBWFeUk69uYL7Ld?=
+ =?us-ascii?Q?gOHFbdciVnAqvViEGw4SRFgmh8gfJTku2Xpoy+SY4o2JLctJEasktGtBOTwP?=
+ =?us-ascii?Q?+mAyx4m0BScJHumvy6O4UwH9Jlum1fc7xGGi/SrfqX77MwB6M9m+tDaJ+CiS?=
+ =?us-ascii?Q?MqcyNnWZeRsdpMsJomsTs37ar8qSMm4ZMtmL1Ysja/u0mQfuwKTC4nk2YjLI?=
+ =?us-ascii?Q?wjo5HWJpfO47LWlfe8IWqP8o97U/P1HmIFwp8GxCGE5pKSDJjiF58nsZ9GsZ?=
+ =?us-ascii?Q?fOHLdk2BCUJzZNwF2Ypy/nTX1JwUY9pS29v+R/uOitwvFgEfKQre6KVcmHZU?=
+ =?us-ascii?Q?cc2hYMePRzKd7RhL9whNHItzPDJHFLbes9DYjuf+xk+ha8Z+DCd4tSV9JDUm?=
+ =?us-ascii?Q?lVC7y1u7SsE=3D?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB3SPRMB0006.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?us-ascii?Q?SeVZoxAVsSz0DMMDNaoqfNERviNmkeboBBmn3Us2W81vJMwy2qX6DWnr7h2Z?=
+ =?us-ascii?Q?k9Z8lvoG4hid5knDcQ/zz1024CEPeT4MPNpVTtedEYBAR739Qe/uckrwKcvl?=
+ =?us-ascii?Q?CfevTY3GQF7cg4mVGYPrmNyvFZmz97haAvFzSKJ0I46e+zZXMnIVXcA0tWtP?=
+ =?us-ascii?Q?SluV7DlwYLmLM6w1+FanM0SOfJkevpTH8o891O3v7T2yu01BmLQDyEIy8rqG?=
+ =?us-ascii?Q?Ip5U6tnPhauv9t3Hg/3qiaTVcbJUWpgIXgJU3TT15HVwgR48gB4tJGMOmmPH?=
+ =?us-ascii?Q?QTIOS0Bl5/+o2Mt9uLgRaOyLJO1IGYOMYwqlwUs7OLkRLQbbe03MnYS6bhX2?=
+ =?us-ascii?Q?PMKJmnSeEqWcfain7blkLAeo4N+cLO3r9vRSQ6sTcRLFYyqb04tWqSSjnq7m?=
+ =?us-ascii?Q?r9aLFiQRJHooXbI1321PtKi3vH8Htadnu9JNsCmw+6vKlDlsOWwS0qj4XUQB?=
+ =?us-ascii?Q?NNRwUQToEpaGgotSRhXDNyaUjvP/MxF8oOsOvoU620G6A4BicJBp94doa3qw?=
+ =?us-ascii?Q?9yyMg48PK6TpAFxPtvKcLuOvvwrQZ2fYuHMHyHsMDu7Q8DYRIJIoFCwuxM9j?=
+ =?us-ascii?Q?FWkaSiAZ4kqJb4Wp+rse+AClyNq1W0FQR+1sxBHu3aDdbJGhwqPC8SiqGN20?=
+ =?us-ascii?Q?xJ4D84A4hc7wClY09p/G2AMYCh4ucS/FzUIZmHVJ/lkR+aAgYOQDiHjUfO8L?=
+ =?us-ascii?Q?dfa6BIdYL/CTWRYUY8U9axxJeAIJnGFAmlYkv1UGl9Dea1xZATpVQBHZrU8R?=
+ =?us-ascii?Q?L+HD7O5yhQFaxK0/1EpkEQkpvHyk7lYXy/lbl8PyrgfcKacc1vc26rluyjSl?=
+ =?us-ascii?Q?6YuDSlRpkkf+zGQUQxjtyFbbJVwC+e2rFayL+1QMHWSry5sJTj21YuiO69mp?=
+ =?us-ascii?Q?fUPQOyS1rmFfDQCPlNyJ+8nn6haKIDK10IMtIgjtaXym+KhW5N+dFLvigCo0?=
+ =?us-ascii?Q?FhvW75i9czhXQeVynVxGzFgLbxmb/JuS2qSUKcLlOyzfDQKbLIbTrhl/I8Rd?=
+ =?us-ascii?Q?PkVH97G5TbdJfbWx+iXUvMJpTAU6X+HFt955X7LSaf+ZXTA1aHfuvS55xku1?=
+ =?us-ascii?Q?VFwZ/S4eA8AbNllylpoYZGx8KkKsIEj2he4D8I9Zv6FKNfgoDVGKVrK7cZ3/?=
+ =?us-ascii?Q?g8RgPlMTOVO9hARd5g3mdcM0vPnPOG2CenrWzlUbd+w/qKYQEHd0ll3RurWp?=
+ =?us-ascii?Q?kZI9zFrxfjSRpOj2ovi6Gq3+IGknC/u1954TNmRhFQ6cvLRVGZwjJ0xl2uHa?=
+ =?us-ascii?Q?QpNkdPExHybzfQOqFypbmg51zLMKbzu6HaD2bO0ul4Lq/p5cCGes+WSTjtch?=
+ =?us-ascii?Q?48mGi2lIILlgee53Hv9SGVeOo+UqnqvzvtDvxlZIWDYt+/9TPJ8Ai2mRIsT2?=
+ =?us-ascii?Q?oQuOthkAxyfXGmBTo9bxLZGYa2q5swFrBUchgNOOFjbcj5CF3prCpWcC0Bhz?=
+ =?us-ascii?Q?36UcfTYzNQTm+q5CLq0Z9R83xH6C+/1GUtBTu2qg5PCUnD5k8zECG/TfIYdV?=
+ =?us-ascii?Q?RJfFrMfX4JhmvQSTaPVdRDBMZKHmYgDTanhCleaviGpt8+oFDn7mdhMQqg3V?=
+ =?us-ascii?Q?4OAPihQvh22iddh0tPucNFZsxiwoiybHM2a7joBpDCYoicRZGyPtKKs3S9zo?=
+ =?us-ascii?Q?AA=3D=3D?=
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PA2PR10MB9136:EE_
-X-MS-Office365-Filtering-Correlation-Id: 085f4f9b-8dfa-4adb-af81-08ddd2cff590
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?D3qDAldoRaZ28vfHso58dwUz4ffOENRsy93IVENeE8Jdm1mn2MgMhxHhpftY?=
- =?us-ascii?Q?dI8kzm4Nd3GUN/6BgdPCP5yqEzqebDkMvsFMGLzo7P67wdSXqcpkz5SiTiJQ?=
- =?us-ascii?Q?scN1EQWR/JYwSlxj/UNXau1Vi9iHRb6pbeEBSGczxY32TIEJB/HtxucA6pKu?=
- =?us-ascii?Q?FuUXSapO93skiMR5lYlCwoY+QUDgo2bDfy+SG7o8YHELPOTF/O51K0E2ZhFo?=
- =?us-ascii?Q?XlB0otyh8gUiLQWGlJIVxpoHuphaeoy0DayFgZ2zv0QEefbDlfbAguag78FR?=
- =?us-ascii?Q?WOecEiPJ7W2H+J3Xa9E8d9HJqH8dh40eGr3fYWxacYnVjdMkAw4mdo2Er6Fk?=
- =?us-ascii?Q?jKLDhuZZ18a27HLis2puxdpLvoU5rCqHPNSrEPTcpc+jCzbenmCEQU2KSDvQ?=
- =?us-ascii?Q?O2yeOl5ye3dW8DHKjImewNyY4UK7bnMCfwvf/3ebz1XdFOxgiIlOsHB+Kbv4?=
- =?us-ascii?Q?fz1sb0BPh7blpfWKwxH0R9WDUISLMj3QDWUGw1w+Pe+1mDuoFmY7Btmfk3Uh?=
- =?us-ascii?Q?Z1kJhvj+UYCw1fq/9frG1nmBjGMheU67+MjfcT7i4Mn1Y7FP8jnVn2Ec5GUY?=
- =?us-ascii?Q?WgR8/1ErRHv2qfdCPLiKmlxYAnjsxjPeOQ7bwqxQYpa6iL/ltNCk1ghN2ryS?=
- =?us-ascii?Q?MMhB0fsIovrDXglIcC01j7RgJ15qM7Ov+H9IGkKahE3fVXb9ueAyjXMk2WuC?=
- =?us-ascii?Q?VjrFUAD07V4EzuK6k2wlDo5yY8+gZs0xu90IQ+lTw5bKihq8wl3Vz1pxSQGi?=
- =?us-ascii?Q?SOycROO2ZfSCiXKzTwDxh2UNMUIaAYzuoiLpECVgzE01ie0cMBLz3K0CmPXP?=
- =?us-ascii?Q?xpYKpvLwfSE3zTX7kn08gP2LZVXJaRNavncAmSjkwISGVYxKqxcEaCdPTUyR?=
- =?us-ascii?Q?62tu7Q3vxxrq7GzvhLSRQ6eIxw+7sYHDMwlr4WeCXuk8GSofM4/O+ZrEvcly?=
- =?us-ascii?Q?PYZW2AXLZZ16IvahnDGccs6kqnpeg05+8a4HJXyfPNZY5Aru7cmSz0iZYorS?=
- =?us-ascii?Q?7Hqx8qWV5ELKymwDbFtLBdQuTWjj5HQ5xrPicxeOYFwbFhsofNo5R1EAGCdR?=
- =?us-ascii?Q?fae+mT3OnM6Q7BOx9MVg4iqQntFQwAvVd2Js3NV1E7ruEC0Xar4/zNB9Qn5n?=
- =?us-ascii?Q?dQ9Z532cibMWG7/iLHdwJVAymoZkTYP3Gqpftd841giH0eCRbhUllOSBE0yR?=
- =?us-ascii?Q?v+bkQnH7GglH6CLeQ+O0a08EQFbDvTLa7MFsZ0w22RdrZj9N6bVR5iKE6UI+?=
- =?us-ascii?Q?GKsoqgpbelY99NOEOk012+Aak46A+P/mDNYZFpCFRppslJ4rTjw8l7WRKfWX?=
- =?us-ascii?Q?B+aHjtZDW2NyNBFWQsEHGU8OghlBdEmpxP4vOERtylmx8bCexMuWSHzrQ+27?=
- =?us-ascii?Q?GN9/Zy36x3vKVQ1wtuwpPvFxhc0pOVOk51jgPLNHEtadXDrw5ee4HW7w+VoK?=
- =?us-ascii?Q?c+I3bQUgAk8=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?51f4Xk4I/Nx+Ugwt2msQExYj5n4bW437U1DJ/nZFrWRyrM53Abq4UynTm01Q?=
- =?us-ascii?Q?spzo7we1ChyDHctH21gwAucBmK1JHm5cRZ+Zg5+PWoW8maaP1TsS/dTlEFoe?=
- =?us-ascii?Q?D5LDem+dOInQdrK6GTaW3X8bvOL/V0QMxnYculVN7n2Tp2xSDjx6uI4eUpje?=
- =?us-ascii?Q?nevR9CV7DibKHEQzcQmV0EpaP8drgCTDnrumTH2284sFHwWg4UHoc2speH38?=
- =?us-ascii?Q?lz24zYnb4oGgW6lKTzm+3kYjXq1WNQEAM2sAMBMKlZ5Ye4PCsLEmEHcJed7R?=
- =?us-ascii?Q?+1C6aeOEzdODtx375+0x1p0pQSVXSsidCAQdgATgYsidCDgTJCsOz+BExG4J?=
- =?us-ascii?Q?51PFDf9GovzE3MxoYyS1EoOdFHaEbjXAQ/Stu536bnkebbn+K+f7dOfw1JkK?=
- =?us-ascii?Q?ivgKyULjZ182GF1PdBRrrWF12ZkwHngB2LoLum6FLKB40zxedYa6yB4sxj4c?=
- =?us-ascii?Q?IZkwH79DNS8cTj05xuZpcIS2v8MYCvaEkgjUmEaEDzNIvGeysbGX1C7S4+a2?=
- =?us-ascii?Q?z+NW/uus684Mz1GyU5TKguq5t06lbjkTPjfOttyYaN040whZE5ghl+F5C3zj?=
- =?us-ascii?Q?iATYsUN94gsC6aUOn6RHqt7dMjMUl9NSE1I4JLmxpFiTPbITMs3lcMKIkzs3?=
- =?us-ascii?Q?0xztOBVroI13Hjqm5mq/6dIH+2mKmSNQfvtKAvbxTbket3hQsxeTQcKPYzsL?=
- =?us-ascii?Q?UDrUXz5x6KfvwexQBSjgiS38oq6UScvOZI4fYRAU+L6cWh9WeB2rwcITs0Hb?=
- =?us-ascii?Q?3fK/0tkhakj54U/P1ES7qItpfxEdud1OWjkoKyXFrpX8XsyW9lzvXUIqjBjS?=
- =?us-ascii?Q?tpqg4s4xBqlfoIHIS/XjOmRSBTRA3+cWNtT0pePJLQ1j2MI1MlvHKVHjb7v5?=
- =?us-ascii?Q?BBwlzUSvQXnb6VMHxIBH6fmVfQ6Tt+EnZivPctXpKMHm5BNszt0TYgqs/C2E?=
- =?us-ascii?Q?RdsZ8OXzwtu7XBR4u8Ygy1RZLEv8NV5m/hR7X08ytVxAWoswzGrW478sIHV+?=
- =?us-ascii?Q?IcuJi4BjqqEZ3ZqHm0oG3ZRF5UMuq+/mR5zFRK7B+HW+MO7P23U47zWij0sB?=
- =?us-ascii?Q?DIdqczOcvU3coUlOKaDGcFB/DBk+r4bnof9gQX+kWcdMK2V/Zlv6Rj3TngAT?=
- =?us-ascii?Q?TH26r8FY1JVVn6UbDly7Sv4yK2iyBKWyIXhtwsCzz0Y1trSctZ2S2eqYT+QV?=
- =?us-ascii?Q?bHebo/ClqRRRMlZ6y77GzG0mOv6EpU9+8KUt0MbBLxKzcDrrqJH31Np/r0Vf?=
- =?us-ascii?Q?xfa6VuhHA3lenagXwJR2oXPPogKYnT3w540W1YeNDk4KGkhMEAa5/8HBZcde?=
- =?us-ascii?Q?05DmXbw0riCO8VSXiw7CcIvEn5UgOJCtfmoksO1eN3tB8vtmltpqgtgvVsyS?=
- =?us-ascii?Q?f3VxlYWaf1ZGB7md2ICyxWzXapNRAJQnZCWiv039P90T6iloqyyjVYc5RnJo?=
- =?us-ascii?Q?eo5Te4D38okNXS+DZb0+Sr5/D2s4kAQnBOShT9xNieuo7q4tV24o8fQyI64s?=
- =?us-ascii?Q?co8SEHdZN33iH4N6fZ6fONWI8n+HJlkex9Id61uMSuSF6XAJn8uZbVTH8NBw?=
- =?us-ascii?Q?H3vCT71cTUIIFjPFf7xO+6JDFKn16QJ1Ogguo1c3SCAela1nd4p00LiVlQAP?=
- =?us-ascii?Q?pw=3D=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 085f4f9b-8dfa-4adb-af81-08ddd2cff590
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2025 20:54:37.9066
+X-MS-Exchange-CrossTenant-AuthSource: DB3SPRMB0006.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6b3b0b62-ed43-4a16-7b7c-08ddd108e246
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Aug 2025 14:37:04.2012
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FKcmqqcKemTUdnxqXe95S+1hOp3ujTw7NZvR8PwH96ahMZyUJp0Xe/aZEsjWZct+aKSRMoHF/6xfxrgd7mlRzQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR10MB9136
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: HWKh0HooznNaiVWV1alyoY12F94NxSGVwIZ/wMcEg6SnLNZN/Scmgq08Zrpp+0Wc5WdlquNUDx9G4NpUq6g10CPYt0ap0uGI5HxYl0L+7Hc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR10MB6304
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Sun, 03 Aug 2025 20:54:49 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19651
+ <cip-dev@lists.cip-project.org>; Mon, 04 Aug 2025 05:03:12 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19652
 
-On 01.08.25 07:27, Adivi, Sai Sree Kartheek wrote:
->=20
->=20
-> On 7/23/2025 3:38 AM, Jan Kiszka wrote:
->> On 22.07.25 12:15, Sai Sree Kartheek Adivi wrote:
->>> - optee-client, optee-ftpm:
->>> =C2=A0=C2=A0 - This integrate Microsoft's reference implementation of t=
-he TCG
->>> =C2=A0=C2=A0=C2=A0=C2=A0 TPM2.0 as an OPTee trusted application.
->>> =C2=A0=C2=A0=C2=A0=C2=A0 Since the OPTee secure storage on TI AM62Px SK=
- is RPMB-based, and
->>> =C2=A0=C2=A0=C2=A0=C2=A0 the RPMB accessing is provided by linux tee-su=
-pplicant, this TA is
->>> =C2=A0=C2=A0=C2=A0=C2=A0 only discoverable when tee-supplicant is runni=
-ng.
->>>
->>> - optee-os, optee-os-tadevkit:
->>> =C2=A0=C2=A0 - refactor optee-os recipe and add one for optee-os-tadevk=
-it which is
->>> =C2=A0=C2=A0=C2=A0=C2=A0 required for optee-client
->>>
->>> - u-boot:
->>> =C2=A0=C2=A0 - New patch to add ftpm node in the am62px device tree
->>> =C2=A0=C2=A0 - Add rpmb-setup.cfg for setting up additional configs req=
-uired for
->>> =C2=A0=C2=A0=C2=A0=C2=A0 enabling FTPM.
->>>
->>> - cip-core-image-security:
->>> =C2=A0=C2=A0 - Add newly added optee ta packages to cip-core-image-secu=
-rity
->>>
->>> - Kconfig
->>> =C2=A0=C2=A0 - Enable security features (data encryption, full encrypti=
-on) for
->>> =C2=A0=C2=A0=C2=A0=C2=A0 TI AM62Px SK
->>>
->>> Co-authored-by: Ayush Gupta <a-gupta4@ti.com>
->>> Co-authored-by: Sai Sree Kartheek Adivi <s-adivi@ti.com>
->>> Signed-off-by: Sai Sree Kartheek Adivi <s-adivi@ti.com>
->>> ---
->>> =C2=A0 Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 6 ++--
->>> =C2=A0 .../optee-client/optee-client-ti-k3_4.6.0.bb=C2=A0 | 16 ++++++++=
-+
->>> =C2=A0 .../files/0001-add-enum-to-ta-flags.patch=C2=A0=C2=A0=C2=A0=C2=
-=A0 | 27 +++++++++++++++
->>> =C2=A0 .../optee-ftpm-ti-k3_0~231017+git.bb=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 33 +++++++++++++++++++
->>> =C2=A0 .../optee-os/optee-os-tadevkit-ti-k3_4.6.0.bb | 12 +++++++
->>> =C2=A0 recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.bb=C2=A0 | 29 ++++++++=
---------
->>> =C2=A0 recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.inc | 29 +++++++++++++=
-+++
->>> =C2=A0 .../files/0001-Add-tpm-node-in-uboot.patch=C2=A0=C2=A0=C2=A0 | 3=
-0 +++++++++++++++++
->>> =C2=A0 recipes-bsp/u-boot/files/rpmb-setup.cfg=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 12 +++++++
->>> =C2=A0 recipes-bsp/u-boot/files/rules-ti-am62px-sk=C2=A0=C2=A0 |=C2=A0 =
-2 --
->>> =C2=A0 .../u-boot/u-boot-ti-am62px-sk_2025.01.bb=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0 9 +++++
->>> =C2=A0 .../images/cip-core-image-security.bb=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 | 13 ++++++++
->>> =C2=A0 .../cip-core-initramfs/cip-core-initramfs.bb=C2=A0 |=C2=A0 7 +++=
-+
->>> =C2=A0 13 files changed, 207 insertions(+), 18 deletions(-)
->>> =C2=A0 create mode 100644 recipes-bsp/optee-client/optee-client-ti-
->>> k3_4.6.0.bb
->>> =C2=A0 create mode 100644 recipes-bsp/optee-ftpm/files/0001-add-enum-to=
--
->>> ta-flags.patch
->>> =C2=A0 create mode 100644 recipes-bsp/optee-ftpm/optee-ftpm-ti-
->>> k3_0~231017+git.bb
->>> =C2=A0 create mode 100644 recipes-bsp/optee-os/optee-os-tadevkit-ti-
->>> k3_4.6.0.bb
->>> =C2=A0 create mode 100644 recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.inc
->>> =C2=A0 create mode 100644 recipes-bsp/u-boot/files/0001-Add-tpm-node-in=
--
->>> uboot.patch
->>> =C2=A0 create mode 100644 recipes-bsp/u-boot/files/rpmb-setup.cfg
->>>
->>> diff --git a/Kconfig b/Kconfig
->>> index 68c4309..b59ca59 100644
->>> --- a/Kconfig
->>> +++ b/Kconfig
->>> @@ -204,7 +204,7 @@ config IMAGE_SECURITY
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select IMAGE_SWUPDATE
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select IMAGE_SECURE_BOOT
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select IMAGE_DATA_ENCRYPTION
->>> -=C2=A0=C2=A0=C2=A0 depends on TARGET_QEMU_AMD64 || TARGET_QEMU_ARM64 |=
-|
->>> TARGET_QEMU_ARM || TARGET_X86_UEFI
->>> +=C2=A0=C2=A0=C2=A0 depends on TARGET_QEMU_AMD64 || TARGET_QEMU_ARM64 |=
-|
->>> TARGET_QEMU_ARM || TARGET_X86_UEFI || TARGET_TI_AM62PX_SK
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 help
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This enables security, encry=
-ption, secureboot and swupdate
->>> for IEC 62443-4-2.
->>> =C2=A0 @@ -260,13 +260,13 @@ config KAS_INCLUDE_DELTA_UPDATE
->>> =C2=A0 =C2=A0 config IMAGE_DATA_ENCRYPTION
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool "Encrypt data partitions on first b=
-oot"
->>> -=C2=A0=C2=A0=C2=A0 depends on TARGET_QEMU_AMD64 || TARGET_QEMU_ARM64 |=
-|
->>> TARGET_QEMU_ARM || TARGET_X86_UEFI
->>> +=C2=A0=C2=A0=C2=A0 depends on TARGET_QEMU_AMD64 || TARGET_QEMU_ARM64 |=
-|
->>> TARGET_QEMU_ARM || TARGET_X86_UEFI || TARGET_TI_AM62PX_SK
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 help
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This enables LUKS encryption=
- for the partitions /var and /home.
->>> =C2=A0 =C2=A0 config IMAGE_FULL_ENCRYPTION
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool "Encrypt rootfs and data partitions=
-"
->>> -=C2=A0=C2=A0=C2=A0 depends on TARGET_QEMU_AMD64 || TARGET_QEMU_ARM64 |=
-|
->>> TARGET_QEMU_ARM || TARGET_X86_UEFI
->>> +=C2=A0=C2=A0=C2=A0 depends on TARGET_QEMU_AMD64 || TARGET_QEMU_ARM64 |=
-|
->>> TARGET_QEMU_ARM || TARGET_X86_UEFI || TARGET_TI_AM62PX_SK
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select IMAGE_DATA_ENCRYPTION
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 help
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This enables LUKS encryption=
- for all non-boot partitions on
->>> first boot.
->>> diff --git a/recipes-bsp/optee-client/optee-client-ti-k3_4.6.0.bb b/
->>> recipes-bsp/optee-client/optee-client-ti-k3_4.6.0.bb
->>> new file mode 100644
->>> index 0000000..6b9d640
->>> --- /dev/null
->>> +++ b/recipes-bsp/optee-client/optee-client-ti-k3_4.6.0.bb
->>> @@ -0,0 +1,16 @@
->>> +#
->>> +# Copyright (c) Texas Instruments Incorporated, 2025
->>> +# Copyright (c) Siemens AG, 2023
->>> +#
->>> +# Authors:
->>> +#=C2=A0 Su Bao Cheng <baocheng.su@siemens.com>
->>> +#
->>> +# SPDX-License-Identifier: MIT
->>> +#
->>> +
->>> +require recipes-bsp/optee-client/optee-client-custom.inc
->>> +
->>> +SRC_URI +=3D "https://github.com/OP-TEE/optee_client/archive/
->>> ${PV}.tar.gz;downloadfilename=3Doptee_client-${PV}.tar.gz"
->>> +SRC_URI[sha256sum] =3D
->>> "a970338c9f69861901336716d89684646e4480b9970996a5b3581ae7d49fdaa3"
->>> +
->>> +S =3D "${WORKDIR}/optee_client-${PV}"
->>> diff --git a/recipes-bsp/optee-ftpm/files/0001-add-enum-to-ta-
->>> flags.patch b/recipes-bsp/optee-ftpm/files/0001-add-enum-to-ta-
->>> flags.patch
->>> new file mode 100644
->>> index 0000000..57917ba
->>> --- /dev/null
->>> +++ b/recipes-bsp/optee-ftpm/files/0001-add-enum-to-ta-flags.patch
->>> @@ -0,0 +1,27 @@
->>> +From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
->>> +From: Maxim Uvarov <maxim.uvarov@linaro.org>
->>> +Date: Fri, 17 Apr 2020 12:05:53 +0100
->>> +Subject: [PATCH] add enum to ta flags
->>> +
->>> +If we compile this TA into OPTEE-OS we need to define a flag
->>> +that this TA can be discovered on the optee bus.
->>> +Upstream-Status: Submitted [https://github.com/microsoft/MSRSec/
->>> pull/34]
->>> +
->>> +Signed-off-by: Maxim Uvarov <maxim.uvarov@linaro.org>
->>> +---
->>> + .../ARM32-FirmwareTPM/optee_ta/fTPM/user_ta_header_defines.h=C2=A0=C2=
-=A0=C2=A0 | 2 +-
->>> + 1 file changed, 1 insertion(+), 1 deletion(-)
->>> +
->>> +diff --git a/Samples/ARM32-FirmwareTPM/optee_ta/fTPM/
->>> user_ta_header_defines.h b/Samples/ARM32-FirmwareTPM/optee_ta/fTPM/
->>> user_ta_header_defines.h
->>> +index 92c33c1..e83619d 100644
->>> +--- a/Samples/ARM32-FirmwareTPM/optee_ta/fTPM/user_ta_header_defines.h
->>> ++++ b/Samples/ARM32-FirmwareTPM/optee_ta/fTPM/user_ta_header_defines.h
->>> +@@ -44,7 +44,7 @@
->>> +
->>> + #define TA_UUID=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 TA_FTPM_=
-UUID
->>> +
->>> +-#define TA_FLAGS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (TA_FLAG_SI=
-NGLE_INSTANCE |
->>> TA_FLAG_INSTANCE_KEEP_ALIVE)
->>> ++#define TA_FLAGS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (TA_FLAG_SI=
-NGLE_INSTANCE |
->>> TA_FLAG_INSTANCE_KEEP_ALIVE | TA_FLAG_DEVICE_ENUM_SUPP)
->>> + #define TA_STACK_SIZE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (64 * 1024)
->>> + #define TA_DATA_SIZE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (32 * 1024)
->>> +
->>> diff --git a/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_0~231017+git.bb
->>> b/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_0~231017+git.bb
->>> new file mode 100644
->>> index 0000000..14df4d4
->>> --- /dev/null
->>> +++ b/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_0~231017+git.bb
->>> @@ -0,0 +1,33 @@
->>> +#
->>> +# Copyright (c) Texas Instruments Incorporated, 2025
->>> +# Copyright (c) Siemens AG, 2023
->>> +#
->>> +# Authors:
->>> +#=C2=A0 Su Bao Cheng <baocheng.su@siemens.com>
->>> +#
->>> +# SPDX-License-Identifier: MIT
->>> +#
->>> +require recipes-bsp/optee-ftpm/optee-ftpm.inc
->>> +
->>> +SRC_URI +=3D " \
->>> +=C2=A0=C2=A0=C2=A0 https://github.com/Microsoft/ms-tpm-20-ref/archive/
->>> ${SRCREV}.tar.gz \
+
+
+>>-----Original Message-----
+>>From: Imre Deak <imre.deak@intel.com>
+>>Sent: Wednesday, July 30, 2025 11:02 PM
+>>To: Huhulea, Nicusor Liviu (FT FDS CES LX PBU 1)
+>><nicusor.huhulea@siemens.com>
+>>Cc: stable@vger.kernel.org; dri-devel@lists.freedesktop.org; intel-
+>>gfx@lists.freedesktop.org; cip-dev@lists.cip-project.org;
+>>jouni.hogander@intel.com; neil.armstrong@linaro.org; jani.nikula@linux.in=
+tel.com;
+>>maarten.lankhorst@linux.intel.com; mripard@kernel.org; tzimmermann@suse.d=
+e;
+>>airlied@gmail.com; daniel@ffwll.ch; joonas.lahtinen@linux.intel.com;
+>>rodrigo.vivi@intel.com; tvrtko.ursulin@linux.intel.com;
+>>laurentiu.palcu@oss.nxp.com; Hombourger, Cedric (FT FDS CES LX)
+>><cedric.hombourger@siemens.com>; Bobade, Shrikant Krishnarao (FT FDS CES
+>>LX PBU 1) <shrikant.bobade@siemens.com>
+>>Subject: Re: [PATCH 0/5] drm/i915: fixes for i915 Hot Plug Detection and
+>>build/runtime issues
 >>
->> We need to migrate to https://github.com/OP-TEE/optee_ftpm.
->=20
-> I'm still working on this part. Running into some issues (optee-ftpm ta
-> is not discoverable. So doesn't probe.). Do we have this enabled on any
-> other platform or qemu?
+>>Hi Nicusor,
+>>
+>>thanks for the report and the root causing effort. The patchset itself ha=
+s a few
+>>issues:
+>>
+>>- commit cfd48ad8c4a9 ("drm/i915: Fix HPD polling, reenabling the output
+>>  poll work as needed") you backport fixes d33a54e3991d
+>>  ("drm/probe_helper: sort out poll_running vs poll_enabled"), but this
+>>  fixed commit is not part of the 6.1.y stable tree which you are
+>>  targeting.
+>>
+>>  Similarly commit d33a54e3991d fixes c8268795c9a9 ("drm/probe-helper:
+>>  enable and disable HPD on connectors"), which is not part of 6.1.y
+>>  either.
+>>
+>>  This means the issue commit cfd48ad8c4a9 is fixing is not present in
+>>  the 6.1.y tree, as the changes introducing that issue are not present
+>>  in that tree either.
+>>
+>>- The compile errors the patches in your patchset introduce would
+>>  prevent bisection, so fixing up these compile errors only at the end
+>>  of the patchset is not ok; the tree should compile without errors at
+>>  each patch/commit.
+>>
+>>Looking at v6.1.y and the patchset I suspect the actual issue is the
+>>
+>>commit 4ad8d57d902f ("drm: Check output polling initialized before
+>>disabling") backport in v6.1.y, which had the
+>>
+>>-       if (!dev->mode_config.poll_enabled || !drm_kms_helper_poll)
+>>+       if (drm_WARN_ON_ONCE(dev, !dev->mode_config.poll_enabled) ||
+>>+           !drm_kms_helper_poll || dev->mode_config.poll_running)
+>>
+>>change, not part of the original
+>>
+>>commit 5abffb66d12b ("drm: Check output polling initialized before disabl=
+ing"). i.e.
+>>the original patch didn't add the check for
+>>dev->mode_config.poll_running. So could you try on top of v6.1.147
+>>(w/o the changes in the patchset you posted):
+>>
+>>diff --git a/drivers/gpu/drm/drm_probe_helper.c
+>>b/drivers/gpu/drm/drm_probe_helper.c
+>>index 0e5eadc6d44d..a515b78f839e 100644
+>>--- a/drivers/gpu/drm/drm_probe_helper.c
+>>+++ b/drivers/gpu/drm/drm_probe_helper.c
+>>@@ -250,7 +250,7 @@ void drm_kms_helper_poll_enable(struct drm_device *de=
+v)
+>>        unsigned long delay =3D DRM_OUTPUT_POLL_PERIOD;
+>>
+>>        if (drm_WARN_ON_ONCE(dev, !dev->mode_config.poll_enabled) ||
+>>-           !drm_kms_helper_poll || dev->mode_config.poll_running)
+>>+           !drm_kms_helper_poll)
+>>                return;
+>>
+>>        drm_connector_list_iter_begin(dev, &conn_iter);
 
-Likely not, thus there might still be problems in transition. Did you
-already discuss this issue with upstream?
+Thank you for your thorough explanation, especially regarding the bisecting=
+ issue. I hadn't anticipated that by fixing compile errors only at the end =
+of the series, I would make bisection unreliable.
 
->=20
-> Meanwhile, I've posted a v2 fixing other issues. I'm ok if you want to
-> merge the first 3 patches in the v2 and leave the data encryption patch
-> out until I migrate to optee-ftpm.
+I have tested your idea/fix and it works. HPD polling works reliably on bot=
+h devices. I can see the polling in logs when display cable is not connecte=
+d.
 
-I'll have a look the next days.
+Since this fix is mostly your solution, would you prefer to submit yourself=
+, or would you like me to resubmit it as a v2 and credit you appropriately =
+?
 
-Thanks,
-Jan
-
---=20
-Siemens AG, Foundational Technologies
-Linux Expert Center
+>>
+>>If this doesn't resolve the issue, I think we need to figure out the actu=
+al root cause,
+>>for that could you please open at a ticket at
+>>
+>>https://gitlab.freed/
+>>esktop.org%2Fdrm%2Fi915%2Fkernel%2F-
+>>%2Fissues%2Fnew&data=3D05%7C02%7Cnicusor.huhulea%40siemens.com%7Cd78
+>>e534c4c604c981c9108ddcfa41f44%7C38ae3bcd95794fd4addab42e1495d55a%7C1
+>>%7C0%7C638895025993788215%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1h
+>>cGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyf
+>>Q%3D%3D%7C0%7C%7C%7C&sdata=3Dnss8VV88cJo9qDB5YSlr1OKAYXMo6epa
+>>HcR1p355Lns%3D&reserved=3D0
+>>
+>>attaching a dmesg log booting v6.1.147 and if possible also the latest dr=
+m-tip
+>>kernel with the drm.debug=3D0xe kernel parameter?
+>>
+>>Thanks,
+>>Imre
+>>
+>>On Wed, Jul 30, 2025 at 07:11:01PM +0300, Nicusor Huhulea wrote:
+>>> Hello maintainers,
+>>>
+>>> This series addresses a defect observed on certain hardware platforms
+>>> using Linux kernel 6.1.147 with the i915 driver. The issue concerns hot=
+ plug
+>>detection (HPD) logic, leading to unreliable or missed detection events o=
+n affected
+>>hardware. This is happening on some specific devices.
+>>>
+>>> ### Background
+>>>
+>>> Issue:
+>>>     On Simatic IPC227E, we observed unreliable or missing hot plug dete=
+ction
+>>events, while on Simatic IPC227G (otherwise similar platform), expected h=
+ot plug
+>>behavior was maintained.
+>>> Affected kernel:
+>>>     This patch series is intended for the Linux 6.1.y stable tree only =
+(tested on
+>>6.1.147)
+>>>     Most of the tests were conducted on 6.1.147 (manual/standalone kern=
+el build,
+>>CIP/Isar context).
+>>> Root cause analysis:
+>>>     I do not have access to hardware signal traces or scope data to con=
+clusively
+>>prove the root cause at electrical level. My understanding is based on ob=
+served
+>>driver behavior and logs.
+>>>     Therefore my assumption as to the real cause is that on IPC227G, HP=
+D IRQ
+>>storms are apparently not occurring, so the standard HPD IRQ-based detect=
+ion
+>>works as expected. On IPC227E,
+>>>     frequent HPD interrupts trigger the i915 driver's storm detection l=
+ogic, causing
+>>it to switch to polling mode. Therefore polling does not resume correctly=
+, leading
+>>to the hotplug
+>>>     issue this series addresses. Device IPC227E's behavior triggers thi=
+s kernel
+>>edge case, likely due to slight variations in signal integrity, electrica=
+l margins, or
+>>internal component timing.
+>>>     Device IPC227G, functions as expected, possibly due to cleaner elec=
+trical
+>>signaling or more optimal timing characteristics, thus avoiding the trigg=
+ering
+>>condition.
+>>> Conclusion:
+>>>     This points to a hardware-software interaction where kernel code as=
+sumes
+>>nicer signaling or margins than IPC227E is able to provide, exposing logi=
+c gaps
+>>not visible on more robust hardware.
+>>>
+>>> ### Patches
+>>>
+>>> Patches 1-4:
+>>>     - Partial backports of upstream commits; only the relevant logic or=
+ fixes are
+>>applied, with other code omitted due to downstream divergence.
+>>>     - Applied minimal merging without exhaustive backport of all interm=
+ediate
+>>upstream changes.
+>>> Patch 5:
+>>>     - Contains cherry-picked logic plus context/compatibility amendment=
+s as
+>>needed. Ensures that the driver builds.
+>>>     - Together these fixes greatly improve reliability of hotplug detec=
+tion on both
+>>devices, with no regression detected in our setups.
+>>>
+>>> Thank you for your review,
+>>> Nicusor Huhulea
+>>>
+>>> This patch series contains the following changes:
+>>>
+>>> Dmitry Baryshkov (2):
+>>>   drm/probe_helper: extract two helper functions
+>>>   drm/probe-helper: enable and disable HPD on connectors
+>>>
+>>> Imre Deak (2):
+>>>   drm/i915: Fix HPD polling, reenabling the output poll work as needed
+>>>   drm: Add an HPD poll helper to reschedule the poll work
+>>>
+>>> Nicusor Huhulea (1):
+>>>   drm/i915: fixes for i915 Hot Plug Detection and build/runtime issues
+>>>
+>>>  drivers/gpu/drm/drm_probe_helper.c           | 127 ++++++++++++++-----
+>>>  drivers/gpu/drm/i915/display/intel_hotplug.c |   4 +-
+>>>  include/drm/drm_modeset_helper_vtables.h     |  22 ++++
+>>>  include/drm/drm_probe_helper.h               |   1 +
+>>>  4 files changed, 122 insertions(+), 32 deletions(-)
+>>>
+>>> --
+>>> 2.39.2
+>>>
 
