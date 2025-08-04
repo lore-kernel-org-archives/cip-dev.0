@@ -2,322 +2,129 @@ Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33A69C87FDA
-	for <webhook@archiver.kernel.org>; Mon,  4 Aug 2025 05:03:52 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mx.groups.io with SMTP id smtpd.web10.4944.1754134249371045977
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ED06C87FDA
+	for <webhook@archiver.kernel.org>; Mon,  4 Aug 2025 05:04:02 +0000 (UTC)
+Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
+ by mx.groups.io with SMTP id smtpd.web11.9480.1754275126665276534
  for <cip-dev@lists.cip-project.org>;
- Sat, 02 Aug 2025 04:30:49 -0700
+ Sun, 03 Aug 2025 19:38:47 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@intel.com header.s=Intel header.b=TE1KwmsC;
- spf=pass (domain: intel.com, ip: 198.175.65.15, mailfrom: imre.deak@intel.com)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754134250; x=1785670250;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   in-reply-to:mime-version;
-  bh=V09noKUjZ4g8Ld0vuvr+fowBxs8yC2cep8s95fDIO+g=;
-  b=TE1KwmsCKoLtSkvKZze/bRzjDuZ+9i56IBANu6Jrb/PivnRy5dN2fPqC
-   e27yGD1v3lcfkniLm19evb1v7InDuMhBJBSu89+R4+sD4kAefLZQTBcbH
-   9xBonzEIukdCxMjEuQO4VLAVQvGtR8IlwQA5KO52G9JSqosJPOmatrKcf
-   ivfxHKF+D/YwDhpeDBbkUsj7amEZxE7iY1EGIfBPXcIsqvYOYjW+wawjb
-   xgThZh81gq9oU/iGNYz0SRqMS4FPmdAHQAdAXLBVlF5UVp3G2OOz6QRzn
-   PFbT60j5rju/nXiDVo05kzJwMABUITbUYdVgNvUPrN7zTRh8QvdinrSYe
-   A==;
-X-CSE-ConnectionGUID: xgYqloNIS0eq1E0mm6G/gQ==
-X-CSE-MsgGUID: UjNP549TQRCLghVApgqaVg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="60103216"
-X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
-   d="scan'208";a="60103216"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2025 04:27:44 -0700
-X-CSE-ConnectionGUID: yeQ61NVYQ1eYsSWSC0qVFA==
-X-CSE-MsgGUID: P87HgmWWTOyV3AE/Ljc+6Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
-   d="scan'208";a="163464785"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2025 04:27:43 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Sat, 2 Aug 2025 04:27:42 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Sat, 2 Aug 2025 04:27:42 -0700
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (40.107.95.70) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Sat, 2 Aug 2025 04:27:42 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YR10IGyVKOcuCJFim5mnhVV4M9FeycFcLvk9p6u6X2L5xYkCaPfHwrvYu3HhS8g+wCgh0F7bbEo/uxeIiQO/y155gORzg+J8a6rA+0vhKtkpxsZTAx22HB8gIVTf3KYnGK0IR7eMLi/cLIfBpEIuqUCKmvLB33up+ZoWIq151VudewwxpF00e3js2HygqRQiDcEJUB+awr+cd3yv7eH5CWo63/NieJZH83UNgwLLm2f8n9CJZzHuer4HLZMjJfW2g/l/RexITN2CLjdzYBbDQZMU7kHc7mepbfg99NeS2qzZTZ16xU99xycMm0U8nMsNEU1jejCjPqtXKwci+NJowQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jQbUTQ+8NZAxSF/oNG52eR7dwhTl9OVP2Rk+0h9m3vg=;
- b=ntQq/Tp4dYmKYxY2PVVmu5xZRWh0k6lH0BmfZAPcqgdfd8gZxSF7vnN2Te9IhnRtgG+n5nm/bKM8vrox1a2dDgGhfZnSD4+cXry7eJaisl3TDulSmOJ25dmllcGc7N59EGBKb9phcbTbDZBa8QEYewVJP05YW1K4lp89bikl8uxLh676Gi1yLEecd5OsbLnkPqyF+pJCOrRsNcHWxsbwFw0D5n/V0sZc+hIh8KKkSbRK5t6cX8RcG8fygkrPysYwt+fH3LjhkMVGy1p4hm/ki5p9fy2DDUaFVCx4fyIdfKbBhdqywe6fpAYHhdSNOCHffEnZ0zyq/R/Gvo3ImZHp1A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ0PR11MB4845.namprd11.prod.outlook.com (2603:10b6:a03:2d1::10)
- by PH7PR11MB8456.namprd11.prod.outlook.com (2603:10b6:510:2fe::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.17; Sat, 2 Aug
- 2025 11:27:39 +0000
-Received: from SJ0PR11MB4845.namprd11.prod.outlook.com
- ([fe80::8900:d137:e757:ac9f]) by SJ0PR11MB4845.namprd11.prod.outlook.com
- ([fe80::8900:d137:e757:ac9f%5]) with mapi id 15.20.8989.017; Sat, 2 Aug 2025
- 11:27:38 +0000
-Date: Sat, 2 Aug 2025 14:27:25 +0300
-From: Imre Deak <imre.deak@intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nicusor Huhulea
-	<nicusor.huhulea@siemens.com>
-CC: Shradha Gupta <shradhagupta@linux.microsoft.com>, "stable@vger.kernel.org"
-	<stable@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "intel-gfx@lists.freedesktop.org"
-	<intel-gfx@lists.freedesktop.org>, "cip-dev@lists.cip-project.org"
-	<cip-dev@lists.cip-project.org>, "jouni.hogander@intel.com"
-	<jouni.hogander@intel.com>, "neil.armstrong@linaro.org"
-	<neil.armstrong@linaro.org>, "jani.nikula@linux.intel.com"
-	<jani.nikula@linux.intel.com>, "maarten.lankhorst@linux.intel.com"
-	<maarten.lankhorst@linux.intel.com>, "mripard@kernel.org"
-	<mripard@kernel.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>,
-	"joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
-	"rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
-	"tvrtko.ursulin@linux.intel.com" <tvrtko.ursulin@linux.intel.com>,
-	"laurentiu.palcu@oss.nxp.com" <laurentiu.palcu@oss.nxp.com>,
-	"cedric.hombourger@siemens.com" <cedric.hombourger@siemens.com>,
-	"shrikant.bobade@siemens.com" <shrikant.bobade@siemens.com>
-Subject: Re: [PATCH 0/5] drm/i915: fixes for i915 Hot Plug Detection and build/runtime issues
-Message-ID: <aI32HUzrT95nS_H9@ideak-desk>
-Reply-To: <imre.deak@intel.com>
-References: <20250730161106.80725-1-nicusor.huhulea@siemens.com>
- <aIp6UgiwtDU1Ktmp@ideak-desk>
- <DB3SPRMB000631927D36A721EAE657F3E626A@DB3SPRMB0006.EURPRD10.PROD.OUTLOOK.COM>
- <aIzcjMgUttb1UpVt@ideak-desk>
- <2025080225-attach-ravioli-3d3d@gregkh>
-In-Reply-To: <2025080225-attach-ravioli-3d3d@gregkh>
-X-ClientProxiedBy: LO2P123CA0086.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:138::19) To SJ0PR11MB4845.namprd11.prod.outlook.com
- (2603:10b6:a03:2d1::10)
+ dkim=pass header.i=huaqian.li@siemens.com header.s=fm2 header.b=SYskjuio;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-959203-2025080402283625326bdb125c5100bc-dj93p1@rts-flowmailer.siemens.com)
+Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 2025080402283625326bdb125c5100bc
+        for <cip-dev@lists.cip-project.org>;
+        Mon, 04 Aug 2025 04:28:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=huaqian.li@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=zcyNHItROUPy5UZT6VfsXPprSw87fb5CZyrVaAMwSiw=;
+ b=SYskjuio+aj/sDGxSkYM4w7ubeAh4Uu+RZYOXgZduuHvmBdlcOwc1knO3mMR1mPqSxKvxK
+ W/Z+45Hl9XoDqI+qb+yjC3pu6iCrXFp+f6kGxYJh1A34DZMYuZQn9DUzkUYWN0UXYNMwv8Lq
+ gClzMNXxV35iWrwtOmaMPtguF4tNO7n9UG5ijze9h4UDIfPxDXE8btySx0PhdavWdCNctXng
+ 08jA528O2m5/t2bhvuigXlLDPwXr2xqw+kqWeIcxF+x8BxMiiecU1DrNmAvyqFtnTGNYw3YC
+ z9l4OR35GInI3OjM7xdjTAfXyEzZhcHpha6zG293OuWUYaVq6srykimA==;
+From: huaqian.li@siemens.com
+To: cip-dev@lists.cip-project.org
+Cc: baocheng.su@siemens.com,
+	huaqian.li@siemens.com,
+	jan.kiszka@siemens.com
+Subject: [isar-cip-core][PATCH] edk2-standalonemm-rpmb: Bump to 202505 and refresh crypto dependencies
+Date: Mon,  4 Aug 2025 10:28:19 +0800
+Message-Id: <20250804022819.136786-1-huaqian.li@siemens.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR11MB4845:EE_|PH7PR11MB8456:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7be16a81-d137-4569-8958-08ddd1b79613
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|10070799003|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?9989lhQ3ooY9hMdQnjRr6szBQAMwSgJRhC986ZjsFw2AOJULs7lRnIGjsYYJ?=
- =?us-ascii?Q?uv4YkH4apXq+d99udES6zb9MRrZ6+/RXeQVTFVYr6Qf8qqVjgUp52jjC+j8X?=
- =?us-ascii?Q?b/hO3yjpPrWaIhwFu0Fft0ASeQMsUoEAtIQdUA1mSpZnMQUS1Nlhz8Fknngw?=
- =?us-ascii?Q?wlVA+AgewYeobbSZm2NzQpwALtIDUy3M3AdDD+wkvoso8ZOk32LXs58ju8Vu?=
- =?us-ascii?Q?8Fz6cZbFAAXKAb2KL64JUwBhcu87HODyYbt8wqLKjhseyBCWRbcXZ/v8fWE0?=
- =?us-ascii?Q?yA2ubpdvf3rAVlDaUgf0lKDuJkucJhhWUpOWQi/mk7TXI34/NeQzPhAbkdgh?=
- =?us-ascii?Q?NeZysDtNCbYZsgUuuCdaqTJ9WYflqSQerAXggm5YqAY1W74PGPFApFREuQ40?=
- =?us-ascii?Q?kvgGmITBxJqryFQtKbLv5jP6bSPK0kngvbGzNHaoHRlgEIFigvSchQpZi7XX?=
- =?us-ascii?Q?XSsSoeJQI+vOjF5mcJQyoY64qN6e2oHYYQOImHogNwayI+Y6eWIlgV4Rcfvz?=
- =?us-ascii?Q?0hcepNk713zuC+S128ElL0GwqtS+DPx6yIRJKyr2ljMFej2PgJ0lyLCqJw5a?=
- =?us-ascii?Q?AzTpha4aWG70ZELPR0imkiJgexbr1SFoWOZkkD2ZPtzeHZdZBvQ10mA2RpEp?=
- =?us-ascii?Q?PMYiZx1GTVl4QLLXbcwR10qha6cT9w3hdjfyD/eLw6UmS7xCW9O/uzp+T0bJ?=
- =?us-ascii?Q?xntfbMEze6Z7A57Zlw748sSaheFcoJg70jOdhZyzpn/pTlgO1ebKxYjbGZJN?=
- =?us-ascii?Q?M/GWA6USt7lAEVEpBhD17/tyXHu+IR2jySOicplG96620t63AS/gQk/tVVor?=
- =?us-ascii?Q?KiWJWh97PqeW+0Hbq4GU94eyTBlfyArLCo3AS76U3ns785UI9UR0PoYp3bYO?=
- =?us-ascii?Q?ndzKy6TKZFVwk5bQ7sefRC1eWOfK4A1FVyM2UkQvWiO4RzJjw1Iq0yfQtCoR?=
- =?us-ascii?Q?6XPKb4f6yS9wyNy0tStFtd1FqGrikXIT6Qa5RKVFUe96J6FPyFoxArinOgm6?=
- =?us-ascii?Q?Fuh2VAH3pM4F2ReU0c0CmJmKtt5hITBs1eVeM2i75HumDwk0gwR1s9iMJ3s0?=
- =?us-ascii?Q?NeS+I5KFUMUwn7w6vfokDOY1WC37k5VHXqodOjGNuqa9kei2RXOg+x5RV7j0?=
- =?us-ascii?Q?Xpi+RqMr/x/TWtZ2gl7HjpMTDmphlHlrxGEOcXESYnjsPqHjXxzc5WYO3oqM?=
- =?us-ascii?Q?hWfT6N0DeWnKi8XwPXO3XLNigEByX+mslFnG7shRZ97O4w5GFuacMCYWnIxl?=
- =?us-ascii?Q?lNdiL/swdrPLqen2MlEinHqD06E480/vxOieqFJPJZtNF4C/9Lqow3yYXIgR?=
- =?us-ascii?Q?a+MjYd3BG8A9oJ1TZHAXmRPxl8kiSsjozNqK4WSgHviuqDt0GV7ZbewpPVDZ?=
- =?us-ascii?Q?zJmbG7Jzu2yQyNohYsm5vWjjuIjL5E+6F5rOosIBvw5GXJO9KlSQWvZoTQRd?=
- =?us-ascii?Q?QsmhFuGOBGk=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB4845.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(10070799003)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?oM+slfMLQggdl/nghFhiuK0342u1GVWDVXQNZRoYdaqzU5goSRDWStfp3diQ?=
- =?us-ascii?Q?ROkmoYAstBnwBM2hG/XPA++8RY3DrtquYlq6x70uB71VCasNXRMVGhhnHHOZ?=
- =?us-ascii?Q?XZ9RMczwxRDcu6Tm2xIIwhzkz2x97dTursk/5Bw68z+caab4600+T6A4oc66?=
- =?us-ascii?Q?sSw6oBSpQRLuuh/u0qNgHOXeUCiDvxzUZzHoCU7w0MOmEhskemm48wjNehR+?=
- =?us-ascii?Q?P+iWYukR8fKCA4VQH4vvZKnqe9svcEKG6y8VRZxYVheYE5UGugViK5V6ZhGn?=
- =?us-ascii?Q?e/vqds1OkMT9YdmC+P5COIb4PhfxSbmEqD9Uas+oee8kRSc4Bpuz73tQUWzc?=
- =?us-ascii?Q?xYNgcRS3H/cakEXVsCHWqm6hUER7qC7v/7uxYdSNOV75/R1RiYE/64BB+Lxq?=
- =?us-ascii?Q?KrQjPkXg5MJ7LHk3F/RfaIF7d0M3nht/V2UwZujgqLjm3jX5zFb3PFAGyzoe?=
- =?us-ascii?Q?ZYHffr17BNtEqOPKogYGtr/WvKAfg9SJ/+8er5zrUsR8whGjUXKpEoM/TKGS?=
- =?us-ascii?Q?6H4pxPO/2TpiqhS1+g2dSc4f84ouekFA7TKRXkx4Cc2FupQ5PGlSFB1Fz7De?=
- =?us-ascii?Q?lCGRdaS5hVrRsiGlaXytwkbTS2j4+hm9wLG2dXWG6QcXzkpH15ptcjnEZS1U?=
- =?us-ascii?Q?Yy3U3KXOwSfZs9NIS8pliE6qbs7BfW96Vk+pwTJMXh25/DOp8WElLlIFzTNZ?=
- =?us-ascii?Q?DGkOV/0Lnah724bg1QBUw4RTwQ0jC8Pk7BsrRhnOTLr2mr5IvbQQiLDvSXCe?=
- =?us-ascii?Q?sFnltwLl+k4vj/9p22wvsI2TEPCBKwYpwn/s67Ab6CEUIUr9l6rQ7Cpa1DEq?=
- =?us-ascii?Q?wYKepsww5sXXN/CNY3X9tHwWJWCdYDbzzZKYigzteQ6gqMri3ZMCB2OSgb/X?=
- =?us-ascii?Q?Mo9H9Dt9ZlufkJEf7Tw+qfd9o2Y8NJDvGaBGieC4zCR2lmoptGWvUcI9bFQg?=
- =?us-ascii?Q?t6Ly94DFzxKo++c8B+Gc7XOaZpWNPRJShooJwu8SW8w4rd9l9bdVyTJplxf6?=
- =?us-ascii?Q?ybtzyW4QYJVHXlHnV+ZP4c2kgUbnx/OyK3beD3ZrBzgw9vIP3rJ9vtroCeBW?=
- =?us-ascii?Q?+HsH7cjWx1YvXj/hG+9bwrh8MbhiY+0pLNKTAc3NWW838s/r2OKm9NwS8DAj?=
- =?us-ascii?Q?WTcS/KbhPviDblB4eUEXzy39QrqvQnsZGrMJ2WrY9BOWCir0h+e9Wf3HMF88?=
- =?us-ascii?Q?qQ2uAtnJyrL/QcE1eBdZcvOLoYjKEC/9q2/8XaLTtBUkY/AKbIzGETYFREx4?=
- =?us-ascii?Q?ctX2A348yikcR23H8VdJ/bQYrSZ0OA3/zuLmAOLi787rgD77ZNeFp50qwXwH?=
- =?us-ascii?Q?yxxXh/PG+AbGM0q5Im5qXG2+COiaue2yfVTgWFKJd/Lo6kkElwX8ZuJHGtmV?=
- =?us-ascii?Q?9tQR0KAw1iEK103Uk2PNMrCkTExaxKG4SMFXt96u3eg68KHK+dn/eTq/jafC?=
- =?us-ascii?Q?pgASawQVZ7WO9PFhA0eLXio/pgiFytUjWACq0+lntHnPaag5Djj28cI+9hUc?=
- =?us-ascii?Q?X08b2ZSlQUKwTs+eWGghHELjjmrlRQktHnT/cuW64fA9Fic7FzKgGUB/3e59?=
- =?us-ascii?Q?39wW8SidaxXVRngoPJ3Tt4d9z2MEd0b233iJPdnGb9P27VW4TcODkNMXHGG5?=
- =?us-ascii?Q?D6aLN5I9ySXXxyAD/ByHWWnt5ckLkHtp0dJgu85Qaf/c?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7be16a81-d137-4569-8958-08ddd1b79613
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB4845.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Aug 2025 11:27:38.5748
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MwLYR1UUe+aG4TEL9Z7H3LyluqFCbGMBVWgwn+1D6FvnvrbQqwC8ONksMao+nkDC3GHwXMDZNL3tCe/v7zloXA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB8456
-X-OriginatorOrg: intel.com
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-959203:519-21489:flowmailer
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 04 Aug 2025 05:03:52 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19655
+ <cip-dev@lists.cip-project.org>; Mon, 04 Aug 2025 05:04:02 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19656
 
-On Sat, Aug 02, 2025 at 08:38:36AM +0100, Greg Kroah-Hartman wrote:
-> On Fri, Aug 01, 2025 at 06:26:04PM +0300, Imre Deak wrote:
-> > Hi Greg and Shradha,
-> > 
-> > could you please check the comment below about the 4ad8d57d902f backport
-> > commit in the v6.1.y stable tree and if you agree with the reasoning why
-> > it has an issue, then suggest a way to resolve it?
-> > 
-> > Also, AFAICS, other stable trees are not affected, since the original
-> > 5abffb66d12bcac commit got only backported to the above v6.1.y tree, but
-> > please confirm this.
-> > 
-> > On Fri, Aug 01, 2025 at 02:37:04PM +0000, nicusor.huhulea@siemens.com wrote:
-> > > > -----Original Message-----
-> > > > From: Imre Deak <imre.deak@intel.com>
-> > > > Sent: Wednesday, July 30, 2025 11:02 PM
-> > > > To: Nicusor Liviu Huhulea (FT FDS CES LX PBU 1) <nicusor.huhulea@siemens.com>
-> > > > Cc: stable@vger.kernel.org; dri-devel@lists.freedesktop.org;
-> > > > intel-gfx@lists.freedesktop.org; cip-dev@lists.cip-project.org;
-> > > > jouni.hogander@intel.com; neil.armstrong@linaro.org; jani.nikula@linux.intel.com;
-> > > > maarten.lankhorst@linux.intel.com; mripard@kernel.org; tzimmermann@suse.de;
-> > > > airlied@gmail.com; daniel@ffwll.ch; joonas.lahtinen@linux.intel.com;
-> > > > rodrigo.vivi@intel.com; tvrtko.ursulin@linux.intel.com;
-> > > > laurentiu.palcu@oss.nxp.com;
-> > > > Cedric Hombourger (FT FDS CES LX) <cedric.hombourger@siemens.com>;
-> > > > Shrikant Krishnarao Bobade (FT FDS CES LX PBU 1) <shrikant.bobade@siemens.com>
-> > > > Subject: Re: [PATCH 0/5] drm/i915: fixes for i915 Hot Plug Detection and build/runtime issues
-> > > > 
-> > > > Hi Nicusor,
-> > > > 
-> > > > thanks for the report and the root causing effort. The patchset itself has a few
-> > > > issues:
-> > > > 
-> > > > - commit cfd48ad8c4a9 ("drm/i915: Fix HPD polling, reenabling the output
-> > > >   poll work as needed") you backport fixes d33a54e3991d
-> > > >   ("drm/probe_helper: sort out poll_running vs poll_enabled"), but this
-> > > >   fixed commit is not part of the 6.1.y stable tree which you are
-> > > >   targeting.
-> > > > 
-> > > >   Similarly commit d33a54e3991d fixes c8268795c9a9 ("drm/probe-helper:
-> > > >   enable and disable HPD on connectors"), which is not part of 6.1.y
-> > > >   either.
-> > > > 
-> > > >   This means the issue commit cfd48ad8c4a9 is fixing is not present in
-> > > >   the 6.1.y tree, as the changes introducing that issue are not present
-> > > >   in that tree either.
-> > > > 
-> > > > - The compile errors the patches in your patchset introduce would
-> > > >   prevent bisection, so fixing up these compile errors only at the end
-> > > >   of the patchset is not ok; the tree should compile without errors at
-> > > >   each patch/commit.
-> > > > 
-> > > > Looking at v6.1.y and the patchset I suspect the actual issue is the
-> > > > 
-> > > > commit 4ad8d57d902f ("drm: Check output polling initialized before
-> > > > disabling") backport in v6.1.y, which had the
-> > > > 
-> > > > -       if (!dev->mode_config.poll_enabled || !drm_kms_helper_poll)
-> > > > +       if (drm_WARN_ON_ONCE(dev, !dev->mode_config.poll_enabled) ||
-> > > > +           !drm_kms_helper_poll || dev->mode_config.poll_running)
-> > > > 
-> > > > change, not part of the original
-> > > > 
-> > > > commit 5abffb66d12b ("drm: Check output polling initialized before disabling"). i.e.
-> > > > the original patch didn't add the check for
-> > > > dev->mode_config.poll_running. So could you try on top of v6.1.147
-> > > > (w/o the changes in the patchset you posted):
-> > > > 
-> > > > diff --git a/drivers/gpu/drm/drm_probe_helper.c
-> > > > b/drivers/gpu/drm/drm_probe_helper.c
-> > > > index 0e5eadc6d44d..a515b78f839e 100644
-> > > > --- a/drivers/gpu/drm/drm_probe_helper.c
-> > > > +++ b/drivers/gpu/drm/drm_probe_helper.c
-> > > > @@ -250,7 +250,7 @@ void drm_kms_helper_poll_enable(struct drm_device *dev)
-> > > >         unsigned long delay = DRM_OUTPUT_POLL_PERIOD;
-> > > > 
-> > > >         if (drm_WARN_ON_ONCE(dev, !dev->mode_config.poll_enabled) ||
-> > > > -           !drm_kms_helper_poll || dev->mode_config.poll_running)
-> > > > +           !drm_kms_helper_poll)
-> > > >                 return;
-> > > > 
-> > > >         drm_connector_list_iter_begin(dev, &conn_iter);
-> > > 
-> > > Thank you for your thorough explanation, especially regarding the
-> > > bisecting issue. I hadn't anticipated that by fixing compile errors
-> > > only at the end of the series, I would make bisection unreliable.
-> > > 
-> > > I have tested your idea/fix and it works. HPD polling works reliably
-> > > on both devices. I can see the polling in logs when display cable is
-> > > not connected.
-> > > 
-> > > Since this fix is mostly your solution, would you prefer to submit
-> > > yourself, or would you like me to resubmit it as a v2 and credit you
-> > > appropriately ?
-> > 
-> > Thanks again Nicusor for the effort to root cause this and for all the
-> > tests.
-> > 
-> > Greg, Shradha, as described above I think in the 4ad8d57d902f backport
-> > commit in v6.1.y it was incorrect to add the
-> > 
-> > 	dev->mode_config.poll_running
-> > 
-> > condition, as the original 5abffb66d12b commit was not the one adding
-> > this, in that commit that condition was only part of the diff context.
-> > OTOH, adding the check for this condition causes an issue in the i915
-> > driver's IRQ storm handling in the v6.1.y stable tree: after
-> > dev->mode_config.poll_running gets set (during the first connector
-> > detection in drm_helper_probe_single_connector_modes()), the
-> > 
-> > 	drm_kms_helper_poll_enable()
-> > 
-> > call in intel_hpd_irq_storm_switch_to_polling() will not any more
-> > schedule the output_poll_work as expected. Thus after an IRQ storm, the
-> > HPD IRQs get disabled, but the HPD polling will not run and so the HPD
-> > detection will not work as Nicusor described above.
-> > 
-> > If you agree with the above and the above proposed solution to remove
-> > the dev->mode_config.poll_running check from the v6.1.y tree, then what
-> > would be Greg the correct way to do this?
-> 
-> Send whatever fix is needed please.
+From: Li Hua Qian <huaqian.li@siemens.com>
 
-Ok. Nicusor could you please send a patch with the above diff removing
-the dev->mode_config.poll_running check to stable@vger.kernel.org, also
-CCing Shradha? You could also add a Link: line to this email thread. The
-patch description should mention that it is a fix for the v6.1.y stable
-tree for commit 4ad8d57d902f in that tree, give a concise explanation of
-the issue with the commit itself based on the above and describe the
-problem you observed it causes (vs. that the patch fixes this problem
-based on your tests)?
+Sync with latest upstream, requiring OpenSSL 3.4.1, MbedTLS 3.3.0, and
+libspdm 3.6.0 per EDK2/edk2-platforms dependencies. Also pick the latest
+brotli release with edk2 submodules.
 
-Thanks,
-Imre
+Signed-off-by: Li Hua Qian <huaqian.li@siemens.com>
+---
+ ...05.bb => edk2-standalonemm-rpmb_202505.bb} | 30 ++++++++++++++-----
+ 1 file changed, 22 insertions(+), 8 deletions(-)
+ rename recipes-bsp/edk2/{edk2-standalonemm-rpmb_202305.bb => edk2-standalonemm-rpmb_202505.bb} (62%)
+
+diff --git a/recipes-bsp/edk2/edk2-standalonemm-rpmb_202305.bb b/recipes-bsp/edk2/edk2-standalonemm-rpmb_202505.bb
+similarity index 62%
+rename from recipes-bsp/edk2/edk2-standalonemm-rpmb_202305.bb
+rename to recipes-bsp/edk2/edk2-standalonemm-rpmb_202505.bb
+index 01dcbf9..4f80cc7 100644
+--- a/recipes-bsp/edk2/edk2-standalonemm-rpmb_202305.bb
++++ b/recipes-bsp/edk2/edk2-standalonemm-rpmb_202505.bb
+@@ -1,11 +1,12 @@
+ #
+ # CIP Core, generic profile
+ #
+-# Copyright (c) Siemens AG, 2022-2023
++# Copyright (c) Siemens AG, 2022-2025
+ #
+ # Authors:
+ #  Sven Schultschik <sven.schultschik@siemens.com>
+ #  Jan Kiszka <jan.kiszka@siemens.com>
++#  Li Hua Qian <huaqian.li@siemens.com>
+ #
+ # SPDX-License-Identifier: MIT
+ #
+@@ -21,22 +22,29 @@ SRC_URI = " \
+     https://github.com/google/brotli/archive/${SRCREV-brotli}.tar.gz;name=brotli;subdir=${S} \
+     https://github.com/MIPI-Alliance/public-mipi-sys-t/archive/${SRCREV-mipisyst}.tar.gz;name=mipisyst;subdir=${S} \
+     https://github.com/openssl/openssl/archive/refs/tags/${PV-openssl}.tar.gz;name=openssl;subdir=${S} \
++    https://github.com/Mbed-TLS/mbedtls/archive/${PV-mbedtls}.tar.gz;name=mbedtls;subdir=${S} \
++    https://github.com/DMTF/libspdm/archive/refs/tags/${PV-libspdm}.tar.gz;name=libspdm;subdir=${S} \
+     file://rules \
+     "
+-SRC_URI[sha256sum] = "5f6c18cf1068089d669fbe81dab2325f8bf7b1298b192c276490b65e2edbbd94"
+-SRC_URI[edk2-platforms.sha256sum] = "31257160ac51a4a5f63db92d26482d6a005286ed040dafe89d01f0ee906b111e"
+-SRC_URI[brotli.sha256sum] = "6d6cacce05086b7debe75127415ff9c3661849f564fe2f5f3b0383d48aa4ed77"
++SRC_URI[sha256sum] = "5f2b5e3a267230f82e4566592fd0bfac5e205ad90520b2c9bf80f575293b7015"
++SRC_URI[edk2-platforms.sha256sum] = "0a266a61732d8dbb95bd2a4c0bf64a91965728b9fcd567af6af0894f23da0f97"
++SRC_URI[brotli.sha256sum] = "aaa739962a45b508b2e783b915e6b2b57ed3b12bd4b0feac73acfb144dffa54f"
+ SRC_URI[mipisyst.sha256sum] = "9fda3b9a78343ab2be6f06ce6396536e7e065abac29b47c8eb2e42cbb4c4f00b"
+-SRC_URI[openssl.sha256sum] = "b1270f044e36452e15d1f2e18b702691a240b0445080282f2c7daaea8704ec5e"
++SRC_URI[openssl.sha256sum] = "d4b22527a645acf76b53e44487a8db687c6eed621d7246891d025e38ba8c9651"
++SRC_URI[mbedtls.sha256sum] = "a22ff38512697b9cd8472faa2ea2d35e320657f6d268def3a64765548b81c3ec"
++SRC_URI[libspdm.sha256sum] = "dfadf501d23c26041c921974971953a1d4a250ed6cd2679facb781471a5f944c"
+ 
+ # according to edk2 submodules
+-SRCREV-brotli = "f4153a09f87cbb9c826d8fc12c74642bb2d879ea"
++SRCREV-brotli = "ed738e842d2fbdf2d6459e39267a633c4a9b2f5d"
+ SRCREV-mipisyst = "370b5944c046bab043dd8b133727b2135af7747a"
+ 
+ # revision closest to edk2 release
+-SRCREV-edk2-platforms = "b71f2bda9e4fc183068eef5d1d90a631181a2506"
++SRCREV-edk2-platforms = "cf63a7257a0a12044b4530904835427813855f4f"
++
++PV-openssl = "openssl-3.4.1"
++PV-mbedtls = "mbedtls-3.3.0"
++PV-libspdm = "3.6.0"
+ 
+-PV-openssl = "OpenSSL_1_1_1t"
+ 
+ DEBIAN_BUILD_DEPENDS = "bash, python3:native, dh-python, uuid-dev:native"
+ 
+@@ -61,6 +69,12 @@ do_prepare_build() {
+     rm -rf ${S}/edk2/CryptoPkg/Library/OpensslLib/openssl
+     ln -s ../../../../openssl-${PV-openssl} ${S}/edk2/CryptoPkg/Library/OpensslLib/openssl
+ 
++    rm -rf ${S}/edk2/CryptoPkg/Library/MbedTlsLib/mbedtls
++    ln -s ../../../../mbedtls-${PV-mbedtls} ${S}/edk2/CryptoPkg/Library/MbedTlsLib/mbedtls
++
++    rm -rf ${S}/edk2/SecurityPkg/DeviceSecurity/SpdmLib/libspdm
++    ln -s ../../../../libspdm-${PV-libspdm} ${S}/edk2/SecurityPkg/DeviceSecurity/SpdmLib/libspdm
++
+     echo "Build/MmStandaloneRpmb/RELEASE_GCC5/FV/BL32_AP_MM.fd /usr/lib/edk2/" > \
+         ${S}/debian/edk2-standalonemm-rpmb.install
+ }
+-- 
+2.34.1
+
 
