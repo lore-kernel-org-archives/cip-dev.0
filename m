@@ -2,134 +2,223 @@ Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9C88C87FCB
-	for <webhook@archiver.kernel.org>; Wed,  6 Aug 2025 01:16:08 +0000 (UTC)
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
- by mx.groups.io with SMTP id smtpd.web10.19610.1754393749611635984
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6508C87FD1
+	for <webhook@archiver.kernel.org>; Wed,  6 Aug 2025 01:16:18 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+ by mx.groups.io with SMTP id smtpd.web10.1913.1754407206065967203
  for <cip-dev@lists.cip-project.org>;
- Tue, 05 Aug 2025 04:35:49 -0700
+ Tue, 05 Aug 2025 08:20:06 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@qualcomm.com header.s=qcppdkim1 header.b=UkUY+mZ/;
- spf=permerror, err=parse error for token &{10 18 %{ir}.%{v}.%{d}.spf.has.pphosted.com}: invalid domain name (domain: oss.qualcomm.com, ip: 205.220.168.131, mailfrom: dmitry.baryshkov@oss.qualcomm.com)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5756COuA029904
-	for <cip-dev@lists.cip-project.org>; Tue, 5 Aug 2025 10:47:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=6MqyqJWNT+su2i0PV9Dq1jib
-	VxeVp+m7xarMv4uNdaM=; b=UkUY+mZ/do5d/LOeZT1b2eMvT8zMlRbivn4pPtf2
-	xKW49RajL0IVJr+uYEbm8YKJoiMB1JNYFQ4EeZ3r0dBt2eMq3r9r8fuj3eS+k8gK
-	lizM3E10wX6NbggpEcTK5P696eHp4MmAirEPZH5ct9DdE9+8IjMaVSXePnxE7gVl
-	572oFeV76r/uZKS65Lm4VMi5Xbv+oy1IkvjPDncpOKomjrhrSwXzxjGvgkAWHTJY
-	gCp2U9U+5DKa3O5JjnCzGlQrcQi28ceZsHdQSIpb/rjmiwi/xIjvi7GDbzXoyKbg
-	ubrNu6m6jN0O9efbc52gMHgAMpddcDDVA9oINLDznIU2Uw==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 489byc85s3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <cip-dev@lists.cip-project.org>; Tue, 05 Aug 2025 10:47:00 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70741fda996so70048316d6.0
-        for <cip-dev@lists.cip-project.org>; Tue, 05 Aug 2025 03:47:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754390815; x=1754995615;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6MqyqJWNT+su2i0PV9Dq1jibVxeVp+m7xarMv4uNdaM=;
-        b=oQlw+DzS719lNvinOGINcHCr+Uz05mR4aXZBbmdU8s91g2L3F6CeNWMZGHbLcrUCEj
-         4eEiU8fdgVhL5vvxbyrf5Egp2gHvFfn2HMRzwp+qLJWerZrDCQf+VKE+yaOhF9IvLOm/
-         ABWSqsr/0XmxFLl8IJf3i+9SjtQSwkn22i7Si4Xr7sf9zVmd2n0QeRZBJW8qnrQtFOgS
-         PlAyEW+GLJ6pANZeNGW23MdKfWxNBRGMoZaHcerPgManRC6y1RYOsKXjd+rKei/PBHp3
-         J70F1TMOsUGl/A4PRfYbsls9Fxq748KxrCGi1VN3CvYTFKnYa5rWFBhys4bpVb99p9hC
-         W+mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW7MJX+uRmhiALgb9K0DLYB38LojTHmVUgoHBElnmUk9LDGhIp5Qj0+6erEXqncuEHHHA5BHUVn@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yz9EDuBPKpUFenyJUL3+ixHvcDxIIoicCR5NHU0facOVZgEC9ou
-	W89nMxS9GSvcVXhuvx7fnImXROvEVa/irgaZPDCbR9W4mfCRpeivB00mCl179Vwxq18UVzaOHFR
-	Vj3pbW4r/NOFxJO+h0iCUsW1vGs2jK7/EypwOyLF5rFk0Duh7NWqVZdEpfOU25cb0ycjq
-X-Gm-Gg: ASbGncsGKfg+m6RTgn8cKJhH+wjpL6ngVo3P6Srt0oHAgIy3ObUfBTrvgI1hyxQgCG9
-	xvBGVqHd0i904gDvsBMxzgc4Di9myGtiz58BBqOKMmcLHLnhEe5hdW2jx8Xg0FcjItbc+iG//ID
-	xPCyeA/VryLvlBCmYpk4x3mH1iaVjRsdTnHtx6uYpv+GxiOF1q8F2TIULmF8uz6ggKh8lh/WRyp
-	D8MhiLHUcRMQ7vGa9qGSXenfMd87FeaRoWMjHqzoOZLwY+47iqPzavBYAn1kzz/3kk3KuS1SlqK
-	J42atr0u62qG8McyKTScd1qy500QYSirq94aZuRoDfD33gqjxeyJMzEFUJ0NqGqh6DdtF7IOPvu
-	cu7xneDZv4u/C1gV1TTGxKvGKBvs+jeIE42s5yohHOrWk7/6jDuAd
-X-Received: by 2002:a05:6214:762:b0:704:7b9a:8515 with SMTP id 6a1803df08f44-70936313db4mr165964646d6.38.1754390814913;
-        Tue, 05 Aug 2025 03:46:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFmShMkZ4kKSVeaIHraWH/PlAWlX7H2EEZv0YV6qAruKBuxlJC4H8uILodqhzr6oCtQ73Ww0w==
-X-Received: by 2002:a05:6214:762:b0:704:7b9a:8515 with SMTP id 6a1803df08f44-70936313db4mr165964346d6.38.1754390814481;
-        Tue, 05 Aug 2025 03:46:54 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b889ac71esm1875211e87.66.2025.08.05.03.46.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Aug 2025 03:46:53 -0700 (PDT)
-Date: Tue, 5 Aug 2025 13:46:51 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Nicusor Huhulea <nicusor.huhulea@siemens.com>
-Cc: stable@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, cip-dev@lists.cip-project.org,
-        shradhagupta@linux.microsoft.com, imre.deak@intel.com,
-        jouni.hogander@intel.com, neil.armstrong@linaro.org,
-        jani.nikula@linux.intel.com, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-        daniel@ffwll.ch, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, laurentiu.palcu@oss.nxp.com,
-        cedric.hombourger@siemens.com, shrikant.bobade@siemens.com
+ dkim=pass header.i=@intel.com header.s=Intel header.b=Z8N+aMoV;
+ spf=pass (domain: intel.com, ip: 192.198.163.12, mailfrom: imre.deak@intel.com)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754407206; x=1785943206;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   in-reply-to:mime-version;
+  bh=RVtJzwN6ds3SakRR4PDIi06I30cHeHAUl3SycxWE9EQ=;
+  b=Z8N+aMoV8IRQn9i1hmRGoLcceXp3hMwrZ9Ml3hUYB6I1A7J93U8xVlqg
+   T/x0cRsUCXKbMvrowXBAw0ScWPGTRi5+EIrvMxtQzAMxcByG3tl4gnbTB
+   EpVx6YE96mnYvv327qfWzL/N3TDOLFoeMG+Bm8wDhEe8yjM0Lla0x3cvh
+   QtgRMXTWNX9uBpbWATy8QXEeq0NkzOK9GFgF0Dj6Vzy7S/JuVRjNGXYYo
+   a/zZFW4G6j4A7kJIuOZQFLnqHYwU5DWNGkIjvPJF/fxOdS8YTCC7sIXpI
+   vp4xVwRMVGSOC06TLLhx4EtHt4bK8CpT3R3ow2I0k2u+aTsdOzymSZouz
+   w==;
+X-CSE-ConnectionGUID: +5YATUm/TfOjyRLPEwJVFg==
+X-CSE-MsgGUID: 0bsmzQteS9KTNAeXirhPcA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11513"; a="60519240"
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="60519240"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 08:20:03 -0700
+X-CSE-ConnectionGUID: kgvJYUAHS6CtBuetoNh9JQ==
+X-CSE-MsgGUID: k7L1dAGZS4CGnftrihln/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,268,1747724400"; 
+   d="scan'208";a="165282695"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 08:19:57 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Tue, 5 Aug 2025 08:19:56 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Tue, 5 Aug 2025 08:19:56 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.74) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Tue, 5 Aug 2025 08:19:55 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ayaj/GgxlBC2ZnxJqpZ3esERVOzxAo8IuFF3sQTL0D552AofnmRieLGFljSiXI6pTZwXdXOjOKTxdDYRnGUN19wiT14VNjh/dQA1/2/a/tcZcKcyI7tYkEWLJ+pgMeXrMi8S/oYNjcTrWJHiMGzRZ/j2NkNEln2ciK3hRzUTLZOuGPmRLr1nFQHrKyhVhWozUtJd2Bw8HL0COR2IT853FhYDexPU+s00eXdg3ddlaXHgF2eVHnws5hNmFTKo8wd+P8kJqwSGYL6TCIDPyhueh6NE83DCokn7Pz2GKM7K9kr70qOee2FzGywjSm9AywF+u9ZfKJY4hTZ9qt53bnoRmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QatqgQ8PcDxpyKiOhYLNEMsG+RaVpZ2IAi2zQeVDDqw=;
+ b=RYYlTb30WnMjeEv5EcY+nSbLMYixFtRl5gtWxlzCh6H34flhotphhkwcDeDfkrGAOAHYis/fyXFN+snJ+YwrYNTQR0bQfzmm0Vi6m44PgJ/5vywqLdwaf2RZ/NoV9G4iGIJOJX1V1K3DOPmjo32tBZG3aXZu9YgbvaFClFyvZbuxCbor43MclF73th3wKDel8+0lZhn+zyHF8651vvDvRymvmqmMZp1AGZ67qxuUOrUHQXGFmXNtgfub+A2ptZif3qLHnQnhRpLpl1IoXgbf8gfRj30W1GTVA9ZQj5LngIwk7iFSCESq3h3DjTMrBtput1K5HKsaNkOLZVHUoRfcMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ0PR11MB4845.namprd11.prod.outlook.com (2603:10b6:a03:2d1::10)
+ by SA2PR11MB4987.namprd11.prod.outlook.com (2603:10b6:806:113::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.21; Tue, 5 Aug
+ 2025 15:19:50 +0000
+Received: from SJ0PR11MB4845.namprd11.prod.outlook.com
+ ([fe80::8900:d137:e757:ac9f]) by SJ0PR11MB4845.namprd11.prod.outlook.com
+ ([fe80::8900:d137:e757:ac9f%5]) with mapi id 15.20.9009.013; Tue, 5 Aug 2025
+ 15:19:50 +0000
+Date: Tue, 5 Aug 2025 18:19:39 +0300
+From: Imre Deak <imre.deak@intel.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: Nicusor Huhulea <nicusor.huhulea@siemens.com>, <stable@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>, <intel-gfx@lists.freedesktop.org>,
+	<cip-dev@lists.cip-project.org>, <shradhagupta@linux.microsoft.com>,
+	<jouni.hogander@intel.com>, <neil.armstrong@linaro.org>,
+	<jani.nikula@linux.intel.com>, <maarten.lankhorst@linux.intel.com>,
+	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
+	<daniel@ffwll.ch>, <joonas.lahtinen@linux.intel.com>,
+	<rodrigo.vivi@intel.com>, <laurentiu.palcu@oss.nxp.com>,
+	<cedric.hombourger@siemens.com>, <shrikant.bobade@siemens.com>
 Subject: Re: [PATCH] drm/probe-helper: fix output polling not resuming after HPD IRQ storm
-Message-ID: <z4jxkrseavbeblgji4cnbyeohkjv4ar3mbbdvothao6abfu6nf@nqlhcegwtwzf>
+Message-ID: <aJIhCyP2mwaaiS22@ideak-desk>
+Reply-To: <imre.deak@intel.com>
 References: <20250804201359.112764-1-nicusor.huhulea@siemens.com>
+ <z4jxkrseavbeblgji4cnbyeohkjv4ar3mbbdvothao6abfu6nf@nqlhcegwtwzf>
+In-Reply-To: <z4jxkrseavbeblgji4cnbyeohkjv4ar3mbbdvothao6abfu6nf@nqlhcegwtwzf>
+X-ClientProxiedBy: LO4P123CA0237.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a7::8) To SJ0PR11MB4845.namprd11.prod.outlook.com
+ (2603:10b6:a03:2d1::10)
 MIME-Version: 1.0
-In-Reply-To: <20250804201359.112764-1-nicusor.huhulea@siemens.com>
-X-Proofpoint-ORIG-GUID: OVc-VDXTXR-7jyVEfHbPQAgX-aWixvgn
-X-Authority-Analysis: v=2.4 cv=Y6D4sgeN c=1 sm=1 tr=0 ts=6891e124 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=Lu6GMi6qvROXTdHYmRoA:9 a=CjuIK1q_8ugA:10
- a=OIgjcC2v60KrkQgK7BGD:22
-X-Proofpoint-GUID: OVc-VDXTXR-7jyVEfHbPQAgX-aWixvgn
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA1MDA3OCBTYWx0ZWRfX1d9KqMG6q9Hb
- HRX61+KX8+EHSEjYAJKLtgiFpv/hZwSpAp95cJkqRLxDk3eK807cma8+cJb4TuY4LYe9VImrLcL
- 4SVU7Uxc39D6WsMuhdoXALfS7UdUXMpEShshbcSnDvzK2+M6cSS0NiyB2gNdjagV1zd60Zl76kr
- sJvgjDU/HKY2BHdQCz/gdaXqploY0f59PAUDCcgaJkF0dFSHd/s6S02K9YekYQcjeR1lcOUMhc1
- 4gn+nJ9M5m0uWjnoYa96rduCtLIglXMzlM7vwlfs+P33K0ygrq4mn66p7hxmYyh2X4uZcdYbbul
- xYoKQUIBLgk1y+ra3wkJbhlt82wQad0lBjvODzqLr2/OB5za8IM9TQjWoIaQTpTupQgRJvWCfOw
- HQugMX8YZ+wzOE50vqPuW9oTbKVJd5IB/UaV9huIcydUX+nIplxrRVpvETfaZqfrbM5/MZaD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-05_03,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 mlxlogscore=999 suspectscore=0 clxscore=1011 lowpriorityscore=0
- phishscore=0 malwarescore=0 adultscore=0 spamscore=0 impostorscore=0
- priorityscore=1501 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508050078
-Content-Type: text/plain; charset=us-ascii
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR11MB4845:EE_|SA2PR11MB4987:EE_
+X-MS-Office365-Filtering-Correlation-Id: d4b24fed-ceb8-494d-6dc9-08ddd4338548
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|10070799003;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?dclDaOzWsW5SxOGVuU6gk7AATWDyrf+qaS32l+bWrZxGqn62HSD7bGH/gCnU?=
+ =?us-ascii?Q?MkQVfPpZ0qP4WhzYhmEYVNWRjV/6379UVT0tBVqvCsrrln9UaM87fmn5CTqA?=
+ =?us-ascii?Q?1zl7djB956ToSzHDUoTJ6nCnFhCuPOK8CGx3+iEADzQEpzUrzAmrkD8/7tLp?=
+ =?us-ascii?Q?sQaIEBpjk+XloaFiINaXRxXYgvQeLtxywzxAvnJ6hQTve+9MVQvgqZ8a9kBF?=
+ =?us-ascii?Q?mA++W6Uxj/G+KbGx+EZXjL+TatPm3QUPFPYvQXBslaXxGeXlupol7JXnDgcL?=
+ =?us-ascii?Q?cjrPdGHHaNFfQGc20/v37TvgmplGq//cAGrbYc4m9PlFqxo4/DgI5mOEkaWs?=
+ =?us-ascii?Q?z91igVgKEefHT8qtS/ZbVBQ2JI9FwgyEG8bY1AuSouuf2sA5iASj3uCH6+5/?=
+ =?us-ascii?Q?sfoThRr0UYp95q1uh7Sr/BRgKnYfBU9A+h9iIn8t9d7pcj/XssfqrVFKCqWe?=
+ =?us-ascii?Q?9TfNRqUcT9R3mQOKOuVD0+dLqBs3GfLPICgU+p7FntGOMGLkQzd1pIjVNpNc?=
+ =?us-ascii?Q?7DLa5szZaJY1AwBoMUr6VVb5i0Ak7Z5uJ/EOMhnmBobqJCTquILv0YWVRR7F?=
+ =?us-ascii?Q?RcOWsIG435QRQ9YFZOp9iOycoNXXCxawXA0yk3ZLzKKXfFxjgiQrp9hA8hnk?=
+ =?us-ascii?Q?jVmFizhlJS9BNXmlTgZfdmJg3LrKB9/4+iysU5M9ZvaET78jftcWkp/klKTL?=
+ =?us-ascii?Q?tM+Y3UetyDNbiJbHIPsRwhDyDUaDdzdiah/+NVjw4xWsxINcKsTc3eWA2kSV?=
+ =?us-ascii?Q?B5NdtOJS/lziyElPFzHuDquXBlUMruSrTUWpvanrKV4BMQnHcOTWX8YcP0PN?=
+ =?us-ascii?Q?XlRsCgO6t6IPVokBRrt5/u2WEj/Ab3E6TvldNyeFiQdi0R6gYizRyCzyvxqZ?=
+ =?us-ascii?Q?u/ytmuXKXsVHMeeaAIMjIvGHtKh4YU9R3PS3XzYtVw1iG5RCQMBwouROr7eq?=
+ =?us-ascii?Q?7Q55m/RQihFnJ96JV7LIiklzdzWDspgp3Ne6lKK1F0K67DXUZaAY/8MH6+hr?=
+ =?us-ascii?Q?v+Dm7J4d738GsV8VUwSKKktdyK+aPtEMM4D9/9dKfa7iRRDJysCXrSXYwgG+?=
+ =?us-ascii?Q?DO2akS8q3ESxSyBRxWPynczxfB0QIkd9TwV/5Q36oBmjgcZ3n3XBBCaxkcI8?=
+ =?us-ascii?Q?dhn10Tv+g7RjQDS9XUVpVGjs0bhTYWn9LxKrtmtKxqwk4o3kIJnuDqtCtFJU?=
+ =?us-ascii?Q?/SE8Bz6ZKW0/XV8+ULRdOOqSoxP5khHnYRymREgphMh1P+GNGlEN9CLfM1F4?=
+ =?us-ascii?Q?KzzFAOKwcECr4PhZGshjiFG62Uy3O79Q1YNFq+YjprLd0Zieq9bQVEndsdmk?=
+ =?us-ascii?Q?mSi7cZUt/vRg+KWHZCU2gHd6QevQ1SLa8QFECxTYe54TOdgIw8JRLPNucKWg?=
+ =?us-ascii?Q?MSh172qQa8vRYEXNWgtIbENPpGHA04IyhUQ8frAgd8zinRiS1vP2MUIsRtU3?=
+ =?us-ascii?Q?aIemQdeDy2E=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB4845.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?9EuBEnLaZTMULBCuBYWHJBKmzZaaHqmL+bj0ZVVdIRpJ3hpvQatrEHBdVqYC?=
+ =?us-ascii?Q?TCunsBOcLEbw9G0Hmo0RyjXsJkEvrsIslQJV09b0osgdUVApk5zK6+7Is9La?=
+ =?us-ascii?Q?ePUr+ltpfRGPRXTTN30iXRensT26NihaA0/G/V2y8Kn3+HHyFWpJLLwFJIgz?=
+ =?us-ascii?Q?bMlcPee9C1cJyT4J2iuFQVVhxslArosnuXTK7hdgByYlrDhxPMb4TNj8dUlq?=
+ =?us-ascii?Q?o5UN5aCkiqbU9WOfgw/6V/AQn6mQ8ZKUmah0BX7gsypvOBgmyTsxix4J1+hB?=
+ =?us-ascii?Q?386DteAn5P7YrX7gOhmp1mAKqAfY9y9PM9ZPDpPeyeg/4JY4CLzetnxDHmaP?=
+ =?us-ascii?Q?fivj2y3HG/JQmLfy+LLgq8fdQ4uucBaw9jP11O9L71RZ6zlwxYTNwxnTcNMK?=
+ =?us-ascii?Q?dG5ptRFGJxxEs0EjA00YTLMVuwIMjA0H0wJvFnCg2jx/LOfnNb6bB3yKQAFn?=
+ =?us-ascii?Q?O7UD2NijxTrCC4XMyQ7U7CwQMqMzMXxgHEnY1S0Wbnv1fPNkQn4iSEHcHqFJ?=
+ =?us-ascii?Q?lk+2A6i08ok+Vs8I7U2c+J/sZ/Cqqgwr+QZIsfHKV39P5LkWqqv8XjD10BH2?=
+ =?us-ascii?Q?MA73dFrd/LbtTFe7tpydoM8uJ4vVP5EHhMnE0cEdd52WaNcOgb18cr6kxgyZ?=
+ =?us-ascii?Q?RCwjxWZZFMFPK6SCHhl9Lzg49kOvNTzpdsHg2sfmbV3AQrTOXzasllnUgthE?=
+ =?us-ascii?Q?MyxWZ/OzdrtXyIPo7vBFbYFUzyYuBYZo1pDt/BeDbSSi5ymWjilIC/5I0Q2d?=
+ =?us-ascii?Q?3kE5dCYWCoUkwP9e2lXfgULmK9y6cFrmxbwFbenAaLltW4jU4D/UMAMza9Go?=
+ =?us-ascii?Q?FUDSop0YnwruHyr6wKEudGIyalkjd7RvMWnnnM9wG5RIE4EouGfqO0Su98M/?=
+ =?us-ascii?Q?XWTxZDKVCeWe2E1BKokeuLUKvPIH/peVBQvWrM7UfgBUm05fdDz4PBu/lbc2?=
+ =?us-ascii?Q?bv3mZ7d44L0a6UubGTS6ZKe7lsopO33HBXF5KFdB6VV7wzl3FfSueCHXbNrN?=
+ =?us-ascii?Q?NHV+U7TghKtVcwsGoJhVqkVRk0unY559ZoUjX/ZYObhGoTvI7hDbL4v8ViUQ?=
+ =?us-ascii?Q?hlS8JqJkdAfHDKEmetiNUv/NXEB+6mdCnAxD2PZayuThAcwzQ8QSSw9qQGlw?=
+ =?us-ascii?Q?lHDCSSov9SfmMZzRqM5Lykd4Wxe5EApDuu7bl8nx/UHFBZZQhmeaRwm3t+1U?=
+ =?us-ascii?Q?bj1AEBUoQE8yjDz2RlyxQlP8dp5JwkQvq0gHwVe+yQ/0gK7cv4EUbKVhhVUY?=
+ =?us-ascii?Q?Yys0s/bE0lzSCYOevtQ4992uhwv/B95jLc8/4lDnWx2FqhjUutrxQNr/905H?=
+ =?us-ascii?Q?GPbvL1aHB6z9Al0QQTjDomc1UkYFpazr6NlaKE7vDQ9EuJ8GPVdF5w6ijgvD?=
+ =?us-ascii?Q?H3JAu1uLlymJUNHGQLQfA3hCdWum/lSHhKJJ0W3I2Y8LArrOx6ALz4liuDUp?=
+ =?us-ascii?Q?ZrZfXE5UiSYRyC3ZWrwlvLHOS/0cMeEvyMWnuASkX5iI/Cp5GfsTp7Ig9xfb?=
+ =?us-ascii?Q?C3RE+biUC1vb61m3L7fsnxp2Q2pCM+qfae3ooeTXZHeW9o8WRwr/LbQIhwQW?=
+ =?us-ascii?Q?pS+UrrKoHXAtD80ihh6SO879SzWmiAWjsla+sy2oJun30nfwxOd/wTVTCeEv?=
+ =?us-ascii?Q?pwjJH/dftdLBN7xQ2jk6w5CixgpzTCHfB44t3FNph7rs?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d4b24fed-ceb8-494d-6dc9-08ddd4338548
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB4845.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2025 15:19:50.2565
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CVu21GuJe52RJn09jDFZzAM/hBR49lRVKbbl9DgyigAVwQnWisHpCk712GPUKSMdEfqsXMkmT5P2EdhhDk4ilg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4987
+X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 06 Aug 2025 01:16:08 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19673
+ <cip-dev@lists.cip-project.org>; Wed, 06 Aug 2025 01:16:18 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19674
 
-On Mon, Aug 04, 2025 at 11:13:59PM +0300, Nicusor Huhulea wrote:
-> A regression in output polling was introduced by commit 4ad8d57d902fbc7c82507cfc1b031f3a07c3de6e
-> ("drm: Check output polling initialized before disabling") in the 6.1.y stable tree.
-> As a result, when the i915 driver detects an HPD IRQ storm and attempts to switch
-> from IRQ-based hotplug detection to polling, output polling fails to resume.
+On Tue, Aug 05, 2025 at 01:46:51PM +0300, Dmitry Baryshkov wrote:
+> On Mon, Aug 04, 2025 at 11:13:59PM +0300, Nicusor Huhulea wrote:
+> > A regression in output polling was introduced by commit 4ad8d57d902fbc7c82507cfc1b031f3a07c3de6e
+> > ("drm: Check output polling initialized before disabling") in the 6.1.y stable tree.
+> > As a result, when the i915 driver detects an HPD IRQ storm and attempts to switch
+> > from IRQ-based hotplug detection to polling, output polling fails to resume.
+> > 
+> > The root cause is the use of dev->mode_config.poll_running. Once poll_running is set
+> > (during the first connector detection) the calls to drm_kms_helper_poll_enable(), such as
+> > intel_hpd_irq_storm_switch_to_polling() fails to schedule output_poll_work as expected.
+> > Therefore, after an IRQ storm disables HPD IRQs, polling does not start, breaking hotplug detection.
 > 
-> The root cause is the use of dev->mode_config.poll_running. Once poll_running is set
-> (during the first connector detection) the calls to drm_kms_helper_poll_enable(), such as
-> intel_hpd_irq_storm_switch_to_polling() fails to schedule output_poll_work as expected.
-> Therefore, after an IRQ storm disables HPD IRQs, polling does not start, breaking hotplug detection.
+> Why doesn't disable path use drm_kms_helper_poll_disable() ?
 
-Why doesn't disable path use drm_kms_helper_poll_disable() ?
+In general i915 doesn't disable polling as a whole after an IRQ storm
+and a 2 minute delay (or runtime resuming), since on some other
+connectors the polling may be still required.
 
-> 
-> The fix is to remove the dev->mode_config.poll_running in the check condition, ensuring polling
-> is always scheduled as requested.
-> 
-> Notes:
->  Initial analysis, assumptions, device testing details, the correct fix and detailed rationale
->  were discussed here https://lore.kernel.org/stable/aI32HUzrT95nS_H9@ideak-desk/
-> 
+Also, in the 6.1.y stable tree drm_kms_helper_poll_disable() is:
 
--- 
-With best wishes
-Dmitry
+        if (drm_WARN_ON(dev, !dev->mode_config.poll_enabled))
+                return;
+
+        cancel_delayed_work_sync(&dev->mode_config.output_poll_work);
+
+so calling that wouldn't really fix the problem, which is clearly just
+an incorrect backport of the upstream commit 5abffb66d12bcac8 ("drm:
+Check output polling initialized before disabling") to the v6.1.y stable
+tree by commit 4ad8d57d902f ("drm: Check output polling initialized
+before disabling") in v6.1.y.
+
+The upstream commit did not add the check for
+dev->mode_config.poll_running in drm_kms_helper_poll_enable(), the
+condition was only part of the diff context in the commit. Hence adding
+the condition in the 4ad8d57d902f backport commit was incorrect.
+
+> > The fix is to remove the dev->mode_config.poll_running in the check condition, ensuring polling
+> > is always scheduled as requested.
+> > 
+> > Notes:
+> >  Initial analysis, assumptions, device testing details, the correct fix and detailed rationale
+> >  were discussed here https://lore.kernel.org/stable/aI32HUzrT95nS_H9@ideak-desk/
+> > 
+> 
+> -- 
+> With best wishes
+> Dmitry
 
