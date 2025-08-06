@@ -1,327 +1,191 @@
-Return-Path: <s-adivi@ti.com>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C226CC87FD3
-	for <webhook@archiver.kernel.org>; Wed,  6 Aug 2025 13:58:02 +0000 (UTC)
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
- by mx.groups.io with SMTP id smtpd.web11.26104.1754488680414452947
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C050EC87FD3
+	for <webhook@archiver.kernel.org>; Wed,  6 Aug 2025 22:03:25 +0000 (UTC)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+ by mx.groups.io with SMTP id smtpd.web11.37444.1754517798373612686
  for <cip-dev@lists.cip-project.org>;
- Wed, 06 Aug 2025 06:58:00 -0700
+ Wed, 06 Aug 2025 15:03:18 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@ti.com header.s=ti-com-17Q1 header.b=xO7PR8bZ;
- spf=pass (domain: ti.com, ip: 198.47.23.234, mailfrom: s-adivi@ti.com)
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 576Dvx1E135082;
-	Wed, 6 Aug 2025 08:57:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1754488679;
-	bh=4fn+47Ya46dL0rSaCtSm7XSW7FchnUIACp0IoORDVIo=;
-	h=Date:Subject:To:References:From:CC:In-Reply-To;
-	b=xO7PR8bZGLvmJUI+rZF4bZnoZ1D049/ljaiB5QGmoaO9Ytyjh+HUPxDnxFxp5DXKD
-	 Z+Ox1TtZciza9OdY3yA1NoX197ocOURUjg0sPPvQ5ttK35F57MWt3nkBslJqYNQCzb
-	 f9e68I+98UnSf2etdO9+96BRMI8TxV42lLcMHuVI=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 576Dvx7Y176306
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 6 Aug 2025 08:57:59 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 6
- Aug 2025 08:57:59 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 6 Aug 2025 08:57:59 -0500
-Received: from [172.24.233.226] (uda0498651.dhcp.ti.com [172.24.233.226])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 576DvvPP3923075;
-	Wed, 6 Aug 2025 08:57:58 -0500
-Message-ID: <1b3e688c-ac4d-4d98-a0c5-b2e933e038d6@ti.com>
-Date: Wed, 6 Aug 2025 19:27:57 +0530
+ dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=CpIzHKw2;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.128.173, mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-71a4742d81aso3427307b3.2
+        for <cip-dev@lists.cip-project.org>; Wed, 06 Aug 2025 15:03:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1754517797; x=1755122597; darn=lists.cip-project.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fQJcfRftohyDGrJ9UXuims9qODrOHFFBv2a/7USl3ZA=;
+        b=CpIzHKw2MYupz3FgEsDdg/FhFhAYjCfs1tZ8ou6Ojz9jYh1sSv1QE3nwGlP88Mg2Hl
+         oIl0Xlr4Y9bLgS9ifggilgjXgURRzdyS2d/fPXupqfTdP9pn+tzcklSi59CpLuidHAY6
+         ZXsIfpdzwOSzZR8MG1KbNTRkF3nopQ7kHJWKncS3o2FirH2nHMWipj3x+xa0eDf7TnYn
+         rJ3GEF7TVBvJSqj0qhURAWYdkvUZm631aOVR+Ca0y3xMDhN+8PeF1Kb1WMo/D7l6kHpc
+         rVagKc3SxHB+njZ8felMrlIg0NSsx/rHXVKNCEjjKWipWTTQ43fGmZR3gnZpHiLWnV/C
+         VtIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754517797; x=1755122597;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fQJcfRftohyDGrJ9UXuims9qODrOHFFBv2a/7USl3ZA=;
+        b=onVd0J6qmuMFrVrrr14undIwvH9/ZuoTDse/YsW05OiphE5TmSnweGoTl6Yd6hzd//
+         kg7Vil+MTsglhE2gZeTKvZjCYueRUJiiM+B2a0CM8t0rYTOt4Ca9FVqwSwlz0dzGn4iB
+         PW/6qZZ84JE41liYORje43vYK9MewlRUIHWqScyr0pmofXBotCrqsG1FLkgqhiKp6sEJ
+         YcAp8uSLZ/EB2bPFGEUHohRM/HLQe5BYCzUvoT6/JQcNoretG845QKBCCTOBA5mBnSo6
+         SExEX4/AzgoQcMuPY05pgCDdteUVkpJrAKoKbCLTmEPAnPIsgyqMdm1NR/dkRTclgt5e
+         lmEA==
+X-Gm-Message-State: AOJu0YyG0ys5rrRDsCQPDhOc02lMDKzRakAQqsBPGv6dx5y8Q8DkOglH
+	1uhiSC7zqZCi3SdB75jtTXm7bChFc9nPFXJAcB6bKTbyLY/Xx9QMP5jjpbbSpYPrxEo/dja02gP
+	r+wcweQKW1UC/YCaoqMUwxifzgM0cZ/Wdzxp5eJKDD/PNEwyGZpq8B/c=
+X-Gm-Gg: ASbGncsEKOrrJ85LkYPx+AiQbHmG5JHL2kC+xxpoJJJlnPKP8Ngxsd9EP/q7YtHqoYV
+	AJQQRjfG7fqMcngQ50lBKB9EcdYGQBgmohXb8az7rlnZCKOloTVb+ZQ75hYdC4r+Bhi5iplCNQC
+	9V92tv04sHgZoHAsM057RK0xSI5wYgvbApTtL3ayGxR+aJziGYBU7dt+Pos+klMBYiOg2kYqV3L
+	c6vFEme
+X-Google-Smtp-Source: AGHT+IEicKcJcL+zblP+vcUY+lwsFevP0l5WSXJxSSEd5hrXKNa1kZVUEMPnxu/wwcubzm0KDk42IYwgK/m+zsp0M9A=
+X-Received: by 2002:a05:690c:e1e:b0:71a:403d:1aac with SMTP id
+ 00721157ae682-71bcc88e7e5mr56791187b3.31.1754517797174; Wed, 06 Aug 2025
+ 15:03:17 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev][isar-cip-core][PATCH 4/4] ti-am62px-sk: enable data
- encryption
-To: Jan Kiszka <jan.kiszka@siemens.com>,
-        "cip-dev@lists.cip-project.org"
-	<cip-dev@lists.cip-project.org>
-References: <20250722101551.1727649-1-s-adivi@ti.com>
- <20250722101551.1727649-5-s-adivi@ti.com>
- <9bec0162-625e-4796-97d5-0cd364b3ad2a@web.de>
- <d40cd721-9403-404a-8a5d-83820646ab33@ti.com>
- <9bbceb24-c6f6-4584-8d08-9903c0ec4de0@siemens.com>
-Content-Language: en-US
-From: Sai Sree Kartheek Adivi <s-adivi@ti.com>
-CC: "Raghavendra, Vignesh" <vigneshr@ti.com>
-In-Reply-To: <9bbceb24-c6f6-4584-8d08-9903c0ec4de0@siemens.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-Content-Transfer-Encoding: quoted-printable
-X-MIME-Autoconverted: from 8bit to quoted-printable by lelvem-ot01.ext.ti.com id 576Dvx1E135082
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 7 Aug 2025 07:02:40 +0900
+X-Gm-Features: Ac12FXzk2cfEqbTK-iv66RDFyIOZ7pHnQSfcN7nfcR5nYo0pDOlCAKNFkSNl9bw
+Message-ID: <CAODzB9r4o84OUkoFepZzX0u9YMK-pbVXitP_iiz1bd8vO_=w8w@mail.gmail.com>
+Subject: [kernel-cve-report] New CVE entries this week
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 06 Aug 2025 13:58:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19696
+ <cip-dev@lists.cip-project.org>; Wed, 06 Aug 2025 22:03:25 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19697
+
+Hi!
+
+It's this week's CVE report.
+
+This week reported 4 new CVEs and 8 updated CVEs.
+
+* New CVEs
+CVE-2023-32251: ksmbd: block asynchronous requests when making a delay
+on session setup
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2023-32251
+
+The 5 seconds delay was added by 621be84 ("ksmbd: throttle session setup
+failures to avoid dictionary attacks") in 5.15-rc7
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [b096d97f47326b1e2dbdef1c91fab69ffda54d17]
+stable/5.15: [dff87902d96082e6e271385b14adda8f65fc3e03]
+stable/6.1: [502cf9709036d9305495876fa8c33c8a52541b15]
+
+CVE-2023-32256: ksmbd: fix racy issue from smb2 close and logoff with
+multichannel
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2023-32256
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [abcc506a9a71976a8b4c9bf3ee6efd13229c1e19]
+stable/5.15: [ae06b798f72d6cc792cfa1745490be65da90eb03]
+stable/6.1: [4aba9ab6a007e41182454f84f95c0bddf7d6d7e1]
+
+CVE-2023-32253: ksmbd: fix deadlock in ksmbd_find_crypto_ctx()
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2023-32253
+
+It looks as if this bug was introduced by e2f3448 ("cifsd: add
+server-side procedures for SMB3") in 5.15-rc1.
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [7b4323373d844954bb76e0e9f39c4e5fc785fa7b]
+stable/5.15: [4f9baa06674910876ce3e0b5fbe23214690d731d]
+stable/6.1: [18973b73fa5177b5ac3c0eb81d2fe093452ecaa9]
+
+CVE-2023-32255: ksmbd: fix memleak in session setup
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2023-32255
+
+It looks as if this bug was introduced by e2f3448 ("cifsd: add
+server-side procedures for SMB3") in 5.15-rc1.
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [6d7cb549c2ca20e1f07593f15e936fd54b763028]
+stable/5.15: [671f21fbcb47517448dd519389a21989063a5847]
+stable/6.1: [c3a3259675a6c9626bb9fbd2d84f15bae16ffed4]
+
+* Updated CVEs
+
+CVE-2025-37777: ksmbd: fix use-after-free in __smb2_lease_break_noti()
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [1da8bd9a10ecd718692732294d15fd801c0eabb5]
+
+CVE-2025-37925: jfs: reject on-disk inodes of an unsupported type
+
+stable/6.12, stable/6.6 were fixed.
+
+Fixed status
+stable/6.12: [28419a4f3a1eeee33472a1b3856ae62aaa5a649b]
+stable/6.6: [45fd8421081ec79e661e5f3ead2934fdbddb4287]
+
+CVE-2025-38221: ext4: fix out of bounds punch offset
+
+stable/6.12 was fixed.
+
+Fixed status
+stable/6.12: [a4d60ba277ecd8a98c5a593cbc0ef2237c20a541]
+
+CVE-2025-38322: perf/x86/intel: Fix crash in icl_update_topdown_event()
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [79e2dd573116d3338507c311460da9669095c94d]
+
+CVE-2025-38325: ksmbd: add free_transport ops in ksmbd connection
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [52f5a52dc17a4a7b4363ac03fe2c4ef26f020dc6]
+
+CVE-2025-38335: Input: gpio-keys - fix a sleep while atomic with PREEMPT_RT
+
+stable/6.12, stable/6.6 were fixed.
+
+Fixed status
+stable/6.12: [a7b79db25846459de63ca8974268f0c41c734c4b]
+stable/6.6: [fa53beab4740c4e5fe969f218a379f9558be33dc]
+
+CVE-2025-38351: KVM: x86/hyper-v: Skip non-canonical addresses during
+PV TLB flush
+
+stable/6.12 was fixed.
+
+Fixed status
+stable/6.12: [f1b3ad11ec11c88ba9f79a73d27d4cda3f80fb24]
+
+CVE-2025-38491: mptcp: make fallback action and fallback decision atomic
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [75a4c9ab8a7af0d76b31ccd1188ed178c38b35d2]
 
 
+Regards,
+-- 
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
 
-On 04/08/25 02:24, Jan Kiszka wrote:
-> On 01.08.25 07:27, Adivi, Sai Sree Kartheek wrote:
->>
->>
->> On 7/23/2025 3:38 AM, Jan Kiszka wrote:
->>> On 22.07.25 12:15, Sai Sree Kartheek Adivi wrote:
->>>> - optee-client, optee-ftpm:
->>>>  =C2=A0=C2=A0 - This integrate Microsoft's reference implementation =
-of the TCG
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0 TPM2.0 as an OPTee trusted application.
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0 Since the OPTee secure storage on TI AM62P=
-x SK is RPMB-based, and
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0 the RPMB accessing is provided by linux te=
-e-supplicant, this TA is
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0 only discoverable when tee-supplicant is r=
-unning.
->>>>
->>>> - optee-os, optee-os-tadevkit:
->>>>  =C2=A0=C2=A0 - refactor optee-os recipe and add one for optee-os-ta=
-devkit which is
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0 required for optee-client
->>>>
->>>> - u-boot:
->>>>  =C2=A0=C2=A0 - New patch to add ftpm node in the am62px device tree
->>>>  =C2=A0=C2=A0 - Add rpmb-setup.cfg for setting up additional configs=
- required for
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0 enabling FTPM.
->>>>
->>>> - cip-core-image-security:
->>>>  =C2=A0=C2=A0 - Add newly added optee ta packages to cip-core-image-=
-security
->>>>
->>>> - Kconfig
->>>>  =C2=A0=C2=A0 - Enable security features (data encryption, full encr=
-yption) for
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0 TI AM62Px SK
->>>>
->>>> Co-authored-by: Ayush Gupta <a-gupta4@ti.com>
->>>> Co-authored-by: Sai Sree Kartheek Adivi <s-adivi@ti.com>
->>>> Signed-off-by: Sai Sree Kartheek Adivi <s-adivi@ti.com>
->>>> ---
->>>>  =C2=A0 Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 6 ++--
->>>>  =C2=A0 .../optee-client/optee-client-ti-k3_4.6.0.bb=C2=A0 | 16 ++++=
-+++++
->>>>  =C2=A0 .../files/0001-add-enum-to-ta-flags.patch=C2=A0=C2=A0=C2=A0=C2=
-=A0 | 27 +++++++++++++++
->>>>  =C2=A0 .../optee-ftpm-ti-k3_0~231017+git.bb=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 33 +++++++++++++++++++
->>>>  =C2=A0 .../optee-os/optee-os-tadevkit-ti-k3_4.6.0.bb | 12 +++++++
->>>>  =C2=A0 recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.bb=C2=A0 | 29 ++++=
-++++--------
->>>>  =C2=A0 recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.inc | 29 +++++++++=
-+++++++
->>>>  =C2=A0 .../files/0001-Add-tpm-node-in-uboot.patch=C2=A0=C2=A0=C2=A0=
- | 30 +++++++++++++++++
->>>>  =C2=A0 recipes-bsp/u-boot/files/rpmb-setup.cfg=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 | 12 +++++++
->>>>  =C2=A0 recipes-bsp/u-boot/files/rules-ti-am62px-sk=C2=A0=C2=A0 |=C2=
-=A0 2 --
->>>>  =C2=A0 .../u-boot/u-boot-ti-am62px-sk_2025.01.bb=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0 9 +++++
->>>>  =C2=A0 .../images/cip-core-image-security.bb=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 | 13 ++++++++
->>>>  =C2=A0 .../cip-core-initramfs/cip-core-initramfs.bb=C2=A0 |=C2=A0 7=
- ++++
->>>>  =C2=A0 13 files changed, 207 insertions(+), 18 deletions(-)
->>>>  =C2=A0 create mode 100644 recipes-bsp/optee-client/optee-client-ti-
->>>> k3_4.6.0.bb
->>>>  =C2=A0 create mode 100644 recipes-bsp/optee-ftpm/files/0001-add-enu=
-m-to-
->>>> ta-flags.patch
->>>>  =C2=A0 create mode 100644 recipes-bsp/optee-ftpm/optee-ftpm-ti-
->>>> k3_0~231017+git.bb
->>>>  =C2=A0 create mode 100644 recipes-bsp/optee-os/optee-os-tadevkit-ti=
--
->>>> k3_4.6.0.bb
->>>>  =C2=A0 create mode 100644 recipes-bsp/optee-os/optee-os-ti-k3_4.6.0=
-.inc
->>>>  =C2=A0 create mode 100644 recipes-bsp/u-boot/files/0001-Add-tpm-nod=
-e-in-
->>>> uboot.patch
->>>>  =C2=A0 create mode 100644 recipes-bsp/u-boot/files/rpmb-setup.cfg
->>>>
->>>> diff --git a/Kconfig b/Kconfig
->>>> index 68c4309..b59ca59 100644
->>>> --- a/Kconfig
->>>> +++ b/Kconfig
->>>> @@ -204,7 +204,7 @@ config IMAGE_SECURITY
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select IMAGE_SWUPDATE
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select IMAGE_SECURE_BOOT
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select IMAGE_DATA_ENCRYPTION
->>>> -=C2=A0=C2=A0=C2=A0 depends on TARGET_QEMU_AMD64 || TARGET_QEMU_ARM6=
-4 ||
->>>> TARGET_QEMU_ARM || TARGET_X86_UEFI
->>>> +=C2=A0=C2=A0=C2=A0 depends on TARGET_QEMU_AMD64 || TARGET_QEMU_ARM6=
-4 ||
->>>> TARGET_QEMU_ARM || TARGET_X86_UEFI || TARGET_TI_AM62PX_SK
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 help
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This enables security, e=
-ncryption, secureboot and swupdate
->>>> for IEC 62443-4-2.
->>>>  =C2=A0 @@ -260,13 +260,13 @@ config KAS_INCLUDE_DELTA_UPDATE
->>>>  =C2=A0 =C2=A0 config IMAGE_DATA_ENCRYPTION
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool "Encrypt data partitions on fir=
-st boot"
->>>> -=C2=A0=C2=A0=C2=A0 depends on TARGET_QEMU_AMD64 || TARGET_QEMU_ARM6=
-4 ||
->>>> TARGET_QEMU_ARM || TARGET_X86_UEFI
->>>> +=C2=A0=C2=A0=C2=A0 depends on TARGET_QEMU_AMD64 || TARGET_QEMU_ARM6=
-4 ||
->>>> TARGET_QEMU_ARM || TARGET_X86_UEFI || TARGET_TI_AM62PX_SK
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 help
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This enables LUKS encryp=
-tion for the partitions /var and /home.
->>>>  =C2=A0 =C2=A0 config IMAGE_FULL_ENCRYPTION
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool "Encrypt rootfs and data partit=
-ions"
->>>> -=C2=A0=C2=A0=C2=A0 depends on TARGET_QEMU_AMD64 || TARGET_QEMU_ARM6=
-4 ||
->>>> TARGET_QEMU_ARM || TARGET_X86_UEFI
->>>> +=C2=A0=C2=A0=C2=A0 depends on TARGET_QEMU_AMD64 || TARGET_QEMU_ARM6=
-4 ||
->>>> TARGET_QEMU_ARM || TARGET_X86_UEFI || TARGET_TI_AM62PX_SK
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select IMAGE_DATA_ENCRYPTION
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 help
->>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This enables LUKS encryp=
-tion for all non-boot partitions on
->>>> first boot.
->>>> diff --git a/recipes-bsp/optee-client/optee-client-ti-k3_4.6.0.bb b/
->>>> recipes-bsp/optee-client/optee-client-ti-k3_4.6.0.bb
->>>> new file mode 100644
->>>> index 0000000..6b9d640
->>>> --- /dev/null
->>>> +++ b/recipes-bsp/optee-client/optee-client-ti-k3_4.6.0.bb
->>>> @@ -0,0 +1,16 @@
->>>> +#
->>>> +# Copyright (c) Texas Instruments Incorporated, 2025
->>>> +# Copyright (c) Siemens AG, 2023
->>>> +#
->>>> +# Authors:
->>>> +#=C2=A0 Su Bao Cheng <baocheng.su@siemens.com>
->>>> +#
->>>> +# SPDX-License-Identifier: MIT
->>>> +#
->>>> +
->>>> +require recipes-bsp/optee-client/optee-client-custom.inc
->>>> +
->>>> +SRC_URI +=3D "https://github.com/OP-TEE/optee_client/archive/
->>>> ${PV}.tar.gz;downloadfilename=3Doptee_client-${PV}.tar.gz"
->>>> +SRC_URI[sha256sum] =3D
->>>> "a970338c9f69861901336716d89684646e4480b9970996a5b3581ae7d49fdaa3"
->>>> +
->>>> +S =3D "${WORKDIR}/optee_client-${PV}"
->>>> diff --git a/recipes-bsp/optee-ftpm/files/0001-add-enum-to-ta-
->>>> flags.patch b/recipes-bsp/optee-ftpm/files/0001-add-enum-to-ta-
->>>> flags.patch
->>>> new file mode 100644
->>>> index 0000000..57917ba
->>>> --- /dev/null
->>>> +++ b/recipes-bsp/optee-ftpm/files/0001-add-enum-to-ta-flags.patch
->>>> @@ -0,0 +1,27 @@
->>>> +From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2=
-001
->>>> +From: Maxim Uvarov <maxim.uvarov@linaro.org>
->>>> +Date: Fri, 17 Apr 2020 12:05:53 +0100
->>>> +Subject: [PATCH] add enum to ta flags
->>>> +
->>>> +If we compile this TA into OPTEE-OS we need to define a flag
->>>> +that this TA can be discovered on the optee bus.
->>>> +Upstream-Status: Submitted [https://github.com/microsoft/MSRSec/
->>>> pull/34]
->>>> +
->>>> +Signed-off-by: Maxim Uvarov <maxim.uvarov@linaro.org>
->>>> +---
->>>> + .../ARM32-FirmwareTPM/optee_ta/fTPM/user_ta_header_defines.h=C2=A0=
-=C2=A0=C2=A0 | 2 +-
->>>> + 1 file changed, 1 insertion(+), 1 deletion(-)
->>>> +
->>>> +diff --git a/Samples/ARM32-FirmwareTPM/optee_ta/fTPM/
->>>> user_ta_header_defines.h b/Samples/ARM32-FirmwareTPM/optee_ta/fTPM/
->>>> user_ta_header_defines.h
->>>> +index 92c33c1..e83619d 100644
->>>> +--- a/Samples/ARM32-FirmwareTPM/optee_ta/fTPM/user_ta_header_define=
-s.h
->>>> ++++ b/Samples/ARM32-FirmwareTPM/optee_ta/fTPM/user_ta_header_define=
-s.h
->>>> +@@ -44,7 +44,7 @@
->>>> +
->>>> + #define TA_UUID=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 TA_=
-FTPM_UUID
->>>> +
->>>> +-#define TA_FLAGS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (TA_FLAG_=
-SINGLE_INSTANCE |
->>>> TA_FLAG_INSTANCE_KEEP_ALIVE)
->>>> ++#define TA_FLAGS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (TA_FLAG_=
-SINGLE_INSTANCE |
->>>> TA_FLAG_INSTANCE_KEEP_ALIVE | TA_FLAG_DEVICE_ENUM_SUPP)
->>>> + #define TA_STACK_SIZE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (64 * 1024)
->>>> + #define TA_DATA_SIZE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (32 * 1024)
->>>> +
->>>> diff --git a/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_0~231017+git.bb
->>>> b/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_0~231017+git.bb
->>>> new file mode 100644
->>>> index 0000000..14df4d4
->>>> --- /dev/null
->>>> +++ b/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_0~231017+git.bb
->>>> @@ -0,0 +1,33 @@
->>>> +#
->>>> +# Copyright (c) Texas Instruments Incorporated, 2025
->>>> +# Copyright (c) Siemens AG, 2023
->>>> +#
->>>> +# Authors:
->>>> +#=C2=A0 Su Bao Cheng <baocheng.su@siemens.com>
->>>> +#
->>>> +# SPDX-License-Identifier: MIT
->>>> +#
->>>> +require recipes-bsp/optee-ftpm/optee-ftpm.inc
->>>> +
->>>> +SRC_URI +=3D " \
->>>> +=C2=A0=C2=A0=C2=A0 https://github.com/Microsoft/ms-tpm-20-ref/archi=
-ve/
->>>> ${SRCREV}.tar.gz \
->>>
->>> We need to migrate to https://github.com/OP-TEE/optee_ftpm.
->>
->> I'm still working on this part. Running into some issues (optee-ftpm t=
-a
->> is not discoverable. So doesn't probe.). Do we have this enabled on an=
-y
->> other platform or qemu?
->=20
-> Likely not, thus there might still be problems in transition. Did you
-> already discuss this issue with upstream?
-
-I haven't raised this upstream yet. I'll go ahead and do that. Please do=20
-let me know if you come across anything relevant on your end.
-
->=20
->>
->> Meanwhile, I've posted a v2 fixing other issues. I'm ok if you want to
->> merge the first 3 patches in the v2 and leave the data encryption patc=
-h
->> out until I migrate to optee-ftpm.
->=20
-> I'll have a look the next days.
->=20
-> Thanks,
-> Jan
->=20
-
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
