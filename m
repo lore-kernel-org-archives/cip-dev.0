@@ -1,231 +1,498 @@
-Return-Path: <Shivanand.Kunijadar@toshiba-tsip.com>
+Return-Path: <s-adivi@ti.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5FE0C87FCB
-	for <webhook@archiver.kernel.org>; Wed,  6 Aug 2025 10:42:01 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
- by mx.groups.io with SMTP id smtpd.web11.22312.1754476912105219486
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC74C87FCB
+	for <webhook@archiver.kernel.org>; Wed,  6 Aug 2025 13:50:12 +0000 (UTC)
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+ by mx.groups.io with SMTP id smtpd.web11.25940.1754488212289262000
  for <cip-dev@lists.cip-project.org>;
- Wed, 06 Aug 2025 03:41:52 -0700
+ Wed, 06 Aug 2025 06:50:12 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.158, mailfrom: shivanand.kunijadar@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 576Afnki392117; Wed, 6 Aug 2025 19:41:49 +0900
-X-Iguazu-Qid: 2rWh5b6vJTuyPuQ3E0
-X-Iguazu-QSIG: v=2; s=0; t=1754476909; q=2rWh5b6vJTuyPuQ3E0; m=YPIP7n9MZzfq90otJK2T8JGsUt9M9NrBCWcS+PQtghY=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1122) id 576AflBK2792735
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 6 Aug 2025 19:41:48 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BB3dxVHcUAS14j9sAEQ3dAtZokAcI0CrmnnIvNBAOOv3P3tSU+maakJSKu6xVCD6yXoKgqHqwpzzSxxcPyBZ3HV3Hwgncetue28Un+rQdw85dCu6aQ7fhfWB9+B1cywrXEuE5NCecvi1l9li6g+wV3kvB7l2oLNDrHTxn1O926SEdC9BIZ4kG0w39R5d3NfBRD/SPAzb1BZHQztwYp7uCt16Z/ezea0DBGJ09hn1TMIkJDL+IehnLj5IDQvcFG0Vb4jL7JKHnfB3MIqOTHw049oCAtrTUxYkcvir/oFlPrJp9VaeUghtvtBqDDeNHvNu2s/KsgvoJ9h88XJCtcOdbw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BmLVmuCcPYhp7oBOy+4CQ0zSvk8/ouekNsXJgNQFCmg=;
- b=yLAf+JhgxQ+0I8SBPIqJyS59oPWdUyuaLXWwdD2Rgn2QZ7EXivIzTjXL2E//i0c5GL/pT4h14w4JwQ6Nc+BE9nGW6atNaBGTLwVkjiUvxsg5Tku17LJJ/6oHZKpABG++O2UQBRWFeDKpaSetgmBJe3AsujkcgrpSK+Ygv2TBlqvBH4+hDcoApg9hp2n0MEnO2fOuxyJ2lGUr0Hlm+MFhXI9q6xQ9E1/ksnSdn6HcA1bjRRpNF3DexGR/3uuJh9YRa3Ayl/xW3eR2nZwomRm+kqCIH5gfcdbIkdNmzO5LnSZsWG4s2SgJ1pmXWYRxdJv/2lbYT6zbPsv16gbkuyPtCA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
- header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
-From: <Shivanand.Kunijadar@toshiba-tsip.com>
-To: <jan.kiszka@siemens.com>, <cip-dev@lists.cip-project.org>
-CC: <dinesh.kumar@toshiba-tsip.com>, <kazuhiro3.hayashi@toshiba.co.jp>,
-        <Adithya.Balakumar@toshiba-tsip.com>
-Subject: RE: [cip-dev] [isar-cip-core v1] README.security-testing.md: Remove
- the credentials from console & document them
-Thread-Topic: [cip-dev] [isar-cip-core v1] README.security-testing.md: Remove
- the credentials from console & document them
-Thread-Index: AQHbuyKPR5GGPQhBmkSQO9iot55vJ7O+78cAgJPA+/qAAAA9QIAC5vIAgABtGrA=
-Date: Wed, 6 Aug 2025 10:41:45 +0000
-X-TSB-HOP2: ON
-Message-ID: 
- <TY3PR01MB1107507C9567147863B7EBB17C72DA@TY3PR01MB11075.jpnprd01.prod.outlook.com>
-References: <20250502052035.1959453-1-Sai.Sathujoda@toshiba-tsip.com>
- <29c1beeb-3f3e-4bb2-89b5-a84d2b0b5043@siemens.com>
- <TYCPR01MB9669DF71C777AFA3B394F007C423A@TYCPR01MB9669.jpnprd01.prod.outlook.com>
- <TY3PR01MB11075B09AA1BFCDF5DACB3519C723A@TY3PR01MB11075.jpnprd01.prod.outlook.com>
- <45d4c4e8-322c-4b01-9385-219333638981@siemens.com>
-In-Reply-To: <45d4c4e8-322c-4b01-9385-219333638981@siemens.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11075:EE_|OS7PR01MB14446:EE_
-x-ms-office365-filtering-correlation-id: 65ee5b6e-f854-44da-70b2-08ddd4d5d71a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info: 
- =?utf-8?B?MnRwZTVQTVNmcHllOEFoTysvZG9lVmJnRlJRMVFkaFpraTRmU1QrR1lWMGQ5?=
- =?utf-8?B?OWloRVZxZzBJYVhPOGtwWmhRc3pmeEtoT2lqZ1hVZldvLzlKdXdSZXJrTzFH?=
- =?utf-8?B?NC9BYkNMSXJXN0QxQ1FneENRbTN4TG53Sk1Rc3hnSklvLzhCMkNjVHNjWElJ?=
- =?utf-8?B?MkxhTUlUTFphb1JyQmJsRlJPZUNKT0lrVTRNODNuUW1IZzN2WnF0OFk0ckVV?=
- =?utf-8?B?bWVUQUJFbHd3K1Y4V21PdlhaNlExV3h4L2R2Vld4SEw0a2Y3eDBVZ0xtaTZ1?=
- =?utf-8?B?UERZbXI1bkxsbTF0bEFPZytYeU4wK1ZVbkFNK3J1NnJUVFg1Tkh4L1hmR0tt?=
- =?utf-8?B?OHRicFhjZFZOQ1VFVHNXL3RxSlNrWFlDNFJqaWZON2lCUS9mN0YwYWJNSjYv?=
- =?utf-8?B?cGxmZHVSbnhya2p1Y3NQM1FNTFZsdy8zYzhpVzllVzNHd1VuL2pTKzZpWC9I?=
- =?utf-8?B?Y1Vjdmw4SXRXT01TWUIxUGxzTVJxaGtrSW1aSTQvSVEyaHlzTGxBdFYyeTFW?=
- =?utf-8?B?Qjg0eW56WFlvRWlHNFdwOFBMUkY2TCtPYmkycmsxK3VGcFJ5Z3FrSzZqMmNC?=
- =?utf-8?B?T1pWenFiUjlPVTJHakJvdjI0b3MxV0dCMlVwNXJkUDRTY1hjeVFtY2xEUnYv?=
- =?utf-8?B?WlRrNjhCZkppb3NZN3F5VENqL3NGM1orenhyTDJZZjJ4V2NRdHc4ZDg1QWxB?=
- =?utf-8?B?eGdHSE43NG1MakJqc0x5VnpwZEs1andhM2lwTmNyZXp0Y1dZRGhQaWIxWXlv?=
- =?utf-8?B?WEdaYUhPWW5FN0lQS2lvakRPMTNSeCt5YlV6c2ttR0xuSFBONXRaSklITVkv?=
- =?utf-8?B?U0FBaS82a21kVkcwZVVqRFRicGV2dVhyRnFTQVBaWDdqWVBIN09hYXg1NkMy?=
- =?utf-8?B?UlREWk10bFcyb0ZZK3lIc2t2WndUTkFQZWFUbmxvbEJwNkV2RlRLS1VXWGNJ?=
- =?utf-8?B?WUxjQ1Q5dlJYOTY4cnZvTk9DMGpyRlNtcVU5M1EzMFV0VHNQeFlKWmxtejFy?=
- =?utf-8?B?WUcrUmo3OGovajFqWVVoMmU5OGhaOUFRdHpyTG44aG5BSWZrMEVYaUNhNUln?=
- =?utf-8?B?bVA1OGp4enRmVVQ1RTlvczZaK1V0S3FpUnRzeGtvYUl4Wmg1eUhTT0Q4Zlll?=
- =?utf-8?B?em5zOXFLdHY5ZktKQlpVN0plU29ORGNreldwUFY0eFdwODFYbFEwbDNyNit4?=
- =?utf-8?B?azUyVWJsZ1pVbTc4VVJTTkF0Z1hoY1VhS0dnSTBUVFZXbU8rOC9tcjdtTy9L?=
- =?utf-8?B?bit5d0ZFczNmUGpIWDgvalpqVStNQlF5ajRLeW9zUTFPelNlRkJUb0dycnVP?=
- =?utf-8?B?L1NiUmVtVlVZNDZWbWlmNklHd05wMFdtQkFZYktWZzloUHYxVk5vVEdHUFNk?=
- =?utf-8?B?U05rQjEyNkc2N0FWVFozRFpVd0h6T0owMkJaYk9CQmZSQ2wyZExvMFR6UUsv?=
- =?utf-8?B?czE2VXZMczcyczUvTkxDK29leFVOdlZPbGQxMHJRdENIMm9Db3h4QWJ3NkpB?=
- =?utf-8?B?ZHhEUE9nbDNvM3hGcjRsTFowVlk4YVk2b2pjZHZIYTJhdlRLUGFiK09vNjVN?=
- =?utf-8?B?UGNNSkFqQ3EydXZwcTZpNTRBMjl4ZVdCSmIvT0Uzd1ViMW1PWHJFNktiYW5w?=
- =?utf-8?B?UzBZUlBDYTRxM3YwYXIzaW5ucXdqU2p1SFg4SWNna0hETmJHbzJFZHlaWUdq?=
- =?utf-8?B?ZE53YUJ0bkREZHRhb1BoM3JBNHJCUEkxclk2RTJ0Uy9XLzNOaXRIWVlRT1l2?=
- =?utf-8?B?Yk41V2puUERpM3Z0QlFLWHpqK3pXOHcwZmx0TVoxRFhjRDBkK2h5aXd3azJt?=
- =?utf-8?B?c0NHRU1Da2VhZ2tWRUJaZlFmM0FJV2JkcUFOdVY4TVpHUFpQbnNZTTFBZmhn?=
- =?utf-8?B?L0g2ZDhzTFF2UWtYUmpvU0Y1OHYra2RRSkN0MHYvdDVqWTNJaU5ESjlDMVhJ?=
- =?utf-8?B?dmtldDZYYVhNMVp1YlpDT2ZETVVxVjFpYTZpTUdkWTZSQ2p4UGw0OHlZNGNP?=
- =?utf-8?Q?elldRbHBy48ajY2+klHzx03Bnz3/XI=3D?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11075.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?MjZ1RGNjU2NDUGlsNlRnRFRtQlBzdGw0RWQwOTUvb1drNEpUVDdHUlp0b1VQ?=
- =?utf-8?B?Q0x5WC9MSXpwN1UxVWYxbHRXRnpXTU9Gd3lwazZhbHVUcHJmdWpzN2xydDNC?=
- =?utf-8?B?ZHRvd3RjMHVkZlhSWk1UQWlabWZVK21BbXkzVmdmWllPSS9nYkVPdnc4UWVx?=
- =?utf-8?B?eHhWV05vdm5RZ1FoeG4wRTg5VzVycXRVQnorWVFKQTduZXBGaXVkWm91YXEx?=
- =?utf-8?B?dlo2bUZoUEE3cnFJNTliVzhJalBZb2RtMS9XcWhHeWlUd0VEYXRaSzZjOXFW?=
- =?utf-8?B?eW5FNWJ5R1h0M3EzeEwwTVVqUllQOW9wOWlrRHhlRWxwbk9UU1kxdy9NNU1G?=
- =?utf-8?B?S1ltdzNUdFR6MlJpWE1UYWJsRDRzSHpVa1VFbzNMN0NOVmV4c2kwTGpUeHRx?=
- =?utf-8?B?cmZ3b2ZwZDVyR2hDZndsTE14QUVObktIOVMwUlR0LytwV2JNZFhsZ1BZZElU?=
- =?utf-8?B?MTljbkpiT0I2eWkrZXpoUjRyK2ZDYUpFU1ZPQ1hkSGRGdVBoY1hBcDZqSFVj?=
- =?utf-8?B?YnlkWjFBcWtPRkg1U0MzZ3NuZDFSMlNBQ0hrcnIrbnIwY3Yxc1NOa0dvZ1Z6?=
- =?utf-8?B?VE00amVOSkNWYzdaN0wvVHc4V3huRmRYU2ZCcEd6Y2Y3L1ZpNnZTQVFrcEcv?=
- =?utf-8?B?enRDSTI5aW5idFUxUVowZ0xuNHZvR2RvTlFkcG5vZW9lbVFnYjRIUHR0WWhJ?=
- =?utf-8?B?V1lETHROeCtPTEFQNGxScTF2Vzc4dWpISkR5bUh2S29TdkFNZys0ZVl6M3NG?=
- =?utf-8?B?b2dJNzZpdHZwVEU5WWV1V3JGVHZRQjlDbjdLbXBILyt4V0pxTkw2bXFsd1d5?=
- =?utf-8?B?YjlRM2gyVnUvNTJ3dDRFcnYvUFdWaTZNWC9ac2xrbS9WQlozaUJEWm42aC80?=
- =?utf-8?B?dkkySXhCRnlwVzRJZmFJbjh6VU1BTWNhUzlGbE5CM05lR3pzdzRjdFlFSjNy?=
- =?utf-8?B?SXA5SmFKNVBPeEtoSEVKVUxObnNNQ09MUzFpd3huQWNOQjRkV1VoYVNQd1NH?=
- =?utf-8?B?RjgyM2doMldJQjJldHBtNXNHY1lXSzJYaXJiVE9BbjlYUWtSMElSWnhISnhM?=
- =?utf-8?B?RlhUWUNYU1RlWWozZFROT0VuWDExMEk3cFByTTJBblpoM1JCVUdyYWVKejdk?=
- =?utf-8?B?bG5xV1VGcnBBZ1lQdnlCVC9idXgyZ0lTYlFYbzZjdzV3UDNJdmhJd2NjdWZN?=
- =?utf-8?B?S1VOZ2l6NldCci9ncEhRdjl0anUyYjdZSFJBc1UvNndCTjFibURFdlpkUENX?=
- =?utf-8?B?cXh1dDBZdjltd3ZFbG41Rkw4aFpjWmZNdVVEUW9pR3FXSGg5ZlZFWkpkYjZG?=
- =?utf-8?B?eGcvRXlIbjNQZ0xnWDgzU09qNi8zcTB6YWQwcVI2bExTN1BmZ051Tk5Uc0FZ?=
- =?utf-8?B?Z3lWK3ZjaGRNeDFTMlk5QWNpMndSMmtMVFhYaUtXRlROYXdzS25oM1F5OUhS?=
- =?utf-8?B?aUp0a3h2V09qNmF3cW9weVk3RWFIV0FpdDVUdm5JQjl3eUhtS3ovY0QxUEpt?=
- =?utf-8?B?clRNM0lHZHBXWjUzRkxVWHd4N0lZRjRMTWlHeHQ2RTYva2ErMnd6RjM3NmMy?=
- =?utf-8?B?SFU5Q3JEcDVReC9ZT242RU1tNVloUklGbUFDUEp2U2wzUmw1bkI1UW9Ndkgw?=
- =?utf-8?B?K1FmUnZKajNDL3U3QVZQU0V5c1QrY0lHRjcwby9NaUFhYkNLQjVSTEJNcUdn?=
- =?utf-8?B?dXdqdStCdzhJbFJRc1VlU1lXL2JkQzRzd2tBSFBBVEx5RllMRlhIWHZMejkv?=
- =?utf-8?B?NitNZ1hqdHZnSjRhS096NHYzNzVUY1BUcGpMNlNTY0lkVXdtTG9PNERsMnNq?=
- =?utf-8?B?YStNY2JSSnZuTXVJQkwrdE0yTno3azBPVGJIZ09UOWJwMDduelBMUVNPZTM0?=
- =?utf-8?B?K2FaOUFhOVoySmhGRTBlbDNKMzVDSE1CYmRPSGRNdG8yaE1INnBGRzFpa0E1?=
- =?utf-8?B?RHhFTnBJVU1jSXFUNUloa3pXck1BeW5NbXZMQS80aXBkTzVoUFpvbVA3OVBM?=
- =?utf-8?B?T3VwZ3U5RTQ4bStic2xKVldjL0l1RWp3V3BDK25wbm9tdnZKcUZacGxXU2Vp?=
- =?utf-8?B?T24zNmt2VWpvaW85ajQxa1pwM0FxK1Z5dXEyVjliRTJzUFNpSzFtN0laZmpX?=
- =?utf-8?B?QUNCTEZJcVpPNnp6TGJBVGJQYWxuL0dhSEhjUGdUZXV5L2ZOajAzakFMd21W?=
- =?utf-8?Q?92AVpke5P2Ev+s6G7i18w+Y=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=Bpv+8mPE;
+ spf=pass (domain: ti.com, ip: 198.47.19.245, mailfrom: s-adivi@ti.com)
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 576DoBWT092710;
+	Wed, 6 Aug 2025 08:50:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1754488211;
+	bh=YHR61NSqeoLXVCPDoZjz5qUBdlPQWvpBK9ei0htvSpc=;
+	h=Date:Subject:To:References:From:CC:In-Reply-To;
+	b=Bpv+8mPEkcIxNloLnFAeW47HMsJpYJi5dLjb8yZ0fXnWo3pawx7ncytknJa2xjv0m
+	 CNBSqIlJNyjo3DjrqglPEHRSlxmOqtH7Az4LSAS63/q8IaSohns5f8pICledrGnDKc
+	 wst/AE+0V79elygNbckZIJQtLo+x2Ls1KG9Glvp8=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 576DoBl1172746
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 6 Aug 2025 08:50:11 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 6
+ Aug 2025 08:50:11 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 6 Aug 2025 08:50:10 -0500
+Received: from [172.24.233.226] (uda0498651.dhcp.ti.com [172.24.233.226])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 576Do9kj3915001;
+	Wed, 6 Aug 2025 08:50:09 -0500
+Message-ID: <5115b1c9-33b5-4760-9463-340123b32b58@ti.com>
+Date: Wed, 6 Aug 2025 19:20:08 +0530
 MIME-Version: 1.0
-X-OriginatorOrg: toshiba-tsip.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11075.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 65ee5b6e-f854-44da-70b2-08ddd4d5d71a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2025 10:41:45.7839
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: S/s599WHVdu4iUv5P2fM08YU+ZPdVMraxtxSS1HeEDbBv+w6frWfCo7LnJz1HBbG58sP5dL4lrcPo5m6O7zB9Y2XDoZ7Oak8IT89f+juRkZRFGnw4F0R0D9Ok6VDZWxr
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS7PR01MB14446
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cip-dev][isar-cip-core][PATCH 1/4] Add support for TI AM62Px SK
+ platform
+To: Jan Kiszka <jan.kiszka@siemens.com>,
+        "cip-dev@lists.cip-project.org"
+	<cip-dev@lists.cip-project.org>
+References: <20250722101551.1727649-1-s-adivi@ti.com>
+ <20250722101551.1727649-2-s-adivi@ti.com>
+ <9de6a768-68af-40b4-b0e7-bdd07b1b8eb9@siemens.com>
+Content-Language: en-US
+From: Sai Sree Kartheek Adivi <s-adivi@ti.com>
+CC: "Raghavendra, Vignesh" <vigneshr@ti.com>
+In-Reply-To: <9de6a768-68af-40b4-b0e7-bdd07b1b8eb9@siemens.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 06 Aug 2025 10:42:01 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19694
+ <cip-dev@lists.cip-project.org>; Wed, 06 Aug 2025 13:50:12 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19695
 
-SGkgSmFuLCANCg0KVGhhbmtzIGZvciB0aGUgcmVwbHkuDQoNCj4gSGF2aW5nIHRoZSBzdGF0ZW1l
-bnQgdGhhdCBkZWZhdWx0IGNyZWRlbnRpYWxzIG11c3Qgbm90IGJlIHVzZWQgZm9yIHByb2R1Y3Rp
-b24gcmVtYWlucyB2YWxpZC4gVGhhdCBzdGF0ZW1lbnQgc2hvdWxkIGFsc28gYmUgYWRkZWQgdG8g
-a2FzL29wdC9zZWN1cml0eS55bWwgd2hlcmUgd2UgaW5qZWN0IHRoZW0uIFRoYXQgZmlsZSwgYXMg
-aXQgaXMsIE1VU1QgTk9UIGJlIHVzZWQgZm9yIHByb2R1Y3Rpb24uDQo+IFBsZWFzZSBhZGp1c3Qg
-dGhlIHJlYWRtZSBjaGFuZ2VzIGFzIGRpc2N1c3NlZCBhYm92ZSBhbmQsIHdoaWxlIGF0IGl0LCBk
-b2N1bWVudCB3aGVyZSB0aGUgY3JlZGVudGlhbCBhcmUgaW5qZWN0ZWQgYW5kIHdoYXQgc2hvdWxk
-IGJlIGNoYW5nZWQgb3Igd2hhdCBzaG91bGQgYmUgYXZvaWRlZCBmb3IgcHJvZHVjdGlvbiB1c2Ug
-L3dydCBjcmVkZW50aWFscy4gVGhlbiB3ZSBib3RoIGZ1bGZpbGwgdGhlIGZvcm1hbCBjZXJ0aWZp
-Y2F0aW9uIG5lZWRzIGFuZCBldmVuIGFkZCByZWFsIHNlY3VyaXR5IGF0IHRoZSBzYW1lIHRpbWUu
-DQoNClVuZGVyc3Rvb2QsIHRoZSBpbmZvcm1hdGlvbiBhYm91dCBjcmVkZW50aWFscyBhcmUgcHJl
-c2VudCBpbiBrYXMvb3B0L3NlY3VyaXR5LnltbCBmaWxlIG5vdy4gd2UgY2FuIGFkZCBhIHNpbWls
-YXIgY29tbWVudCBpbiB0aGlzIGZpbGUgYXMgd2VsbC4gDQpBcyB5b3Ugc3VnZ2VzdGVkIHdlIGNh
-biBhbHNvIGRvY3VtZW50IHRoZSBhYm92ZSBpbmZvcm1hdGlvbiBpbiBSRUFETUUgZmlsZSBzbywg
-SSB3aWxsIHBsYW4gdG8gc2VuZCB2MiBwYXRjaCBmb3IgdGhlc2UgY2hhbmdlcy4gDQoNClRoYW5r
-cyAmIFJlZ2FyZHMNClNoaXZhbmFuZCBLDQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpG
-cm9tOiBKYW4gS2lzemthIDxqYW4ua2lzemthQHNpZW1lbnMuY29tPiANClNlbnQ6IDA2IEF1Z3Vz
-dCAyMDI1IDA5OjM0DQpUbzoga3VuaWphZGFyIHNoaXZhbmFuZCjvvLTvvLPvvKnvvLAgRElUQ19E
-SVQtT1NUKSA8U2hpdmFuYW5kLkt1bmlqYWRhckB0b3NoaWJhLXRzaXAuY29tPjsgY2lwLWRldkBs
-aXN0cy5jaXAtcHJvamVjdC5vcmcNCkNjOiBkaW5lc2gga3VtYXIo77y077yz77yp77ywIERJVENf
-RElULU9TVCkgPGRpbmVzaC5rdW1hckB0b3NoaWJhLXRzaXAuY29tPjsgaGF5YXNoaSBrYXp1aGly
-byjmnpcg5ZKM5a6PIOKWoe+8pO+8qe+8tO+8o+KXi++8o++8sO+8tCkgPGthenVoaXJvMy5oYXlh
-c2hpQHRvc2hpYmEuY28uanA+OyBiYWxha3VtYXIgYWRpdGh5YSjvvLTvvLPvvKnvvLAg77yk77yp
-77y077yj77y/77yk77yp77y0Le+8r++8s++8tCkgPEFkaXRoeWEuQmFsYWt1bWFyQHRvc2hpYmEt
-dHNpcC5jb20+DQpTdWJqZWN0OiBSZTogW2NpcC1kZXZdIFtpc2FyLWNpcC1jb3JlIHYxXSBSRUFE
-TUUuc2VjdXJpdHktdGVzdGluZy5tZDogUmVtb3ZlIHRoZSBjcmVkZW50aWFscyBmcm9tIGNvbnNv
-bGUgJiBkb2N1bWVudCB0aGVtDQoNCk9uIDA0LjA4LjI1IDE1OjA4LCBTaGl2YW5hbmQuS3VuaWph
-ZGFyQHRvc2hpYmEtdHNpcC5jb20gd3JvdGU6DQo+IEhpIEphbiwNCj4gDQo+IFRoaXMgaXMgYW4g
-b2xkIHBhdGNoIGFuZCB3b3VsZCBsaWtlIHRvIGdldCBzb21lIGNvbmNsdXNpb24gb24gdGhpcy4N
-Cj4gQmFzZWQgb24gdGhlIGNvbmNsdXNpb24sIEkgd2lsbCBwbGFuIHRvIHNlbmQgdjIgcGF0Y2gg
-aWYgcmVxdWlyZWQuDQo+IA0KPj4+ICtJRUMgNjI0NDMtNC0yIGNlcnRpZmljYXRpb24gYm9keSBl
-eHBlY3RzIHRvIHJlbW92ZSB0aGUgY3JlZGVudGlhbHMgZnJvbSBiZWluZyBkaXNwbGF5ZWQgb24g
-dGhlIGNvbnNvbGUgcHJpb3IgbG9naW4gc3RhZ2UuDQo+PlRoaXMgc2VudGVuY2UgZG9lcyBub3Qg
-YmVsb25nIGhlcmUuDQo+IA0KPiBPa2F5LCB3ZSBjYW4gcmVtb3ZlIGl0Lg0KPiANCj4+PiArKFdh
-cm5pbmcpIENJUCB1c2VycyBhcmUgc3Ryb25nbHkgcmVjb21tZW5kZWQgbm90IHRvIHVzZSBDSVAg
-ZGVmYXVsdCBjcmVkZW50aWFscyBmb3IgcHJvZHVjdGlvbiBpbWFnZXMuDQo+IA0KPj5ObywgdGhp
-cyBNVVNUIG5ldmVyIGJlIHNoaXBwZWQgaW4gcHJvZHVjdGlvbiwgaXJyZXNwZWN0aXZlIG9mIGFu
-eSANCj4+Zm9ybWFsIGNlcnRpZmljYXRlcy4gVGhpcyBoZXJlIGlzIGEgVEVTVCBpbWFnZSwgbm90
-IGEgUFJPRFVDVElPTiBpbWFnZS4NCj4gDQo+IFdlIGNhbiByZW1vdmUgdGhpcyBzdGF0ZW1lbnQg
-YXMgd2VsbC4NCj4gDQoNCkhhdmluZyB0aGUgc3RhdGVtZW50IHRoYXQgZGVmYXVsdCBjcmVkZW50
-aWFscyBtdXN0IG5vdCBiZSB1c2VkIGZvciBwcm9kdWN0aW9uIHJlbWFpbnMgdmFsaWQuIFRoYXQg
-c3RhdGVtZW50IHNob3VsZCBhbHNvIGJlIGFkZGVkIHRvIGthcy9vcHQvc2VjdXJpdHkueW1sIHdo
-ZXJlIHdlIGluamVjdCB0aGVtLiBUaGF0IGZpbGUsIGFzIGl0IGlzLCBNVVNUIE5PVCBiZSB1c2Vk
-IGZvciBwcm9kdWN0aW9uLg0KDQo+IA0KPj5Bbnl0aGluZyB0aGF0IG11c3QgYmUga2VwdCBmb3Ig
-YSBwcm9kdWN0aW9uIGltYWdlIG11c3Qgbm90IGJlIA0KPj5jb250YW1pbmF0ZWQgYnkgc2V0dGlu
-ZyB0aGF0IGFyZSBqdXN0IGZvciB0ZXN0aW5nIHB1cnBvc2VzLg0KPj5JbiB0aGF0IGxpZ2h0LCBo
-YXZpbmcgb3VyIHRlc3QgcGFzc3dvcmQgaW5zaWRlIGEgY3VzdG9taXphdGlvbiBwYWNrYWdlIA0K
-Pj50aGF0IGNvdWxkIGJlIHJldXNlIGZvciBhIHJlYWwgaW1hZ2UgaXMgYSBiYWQgdGhpbmcuDQo+
-IA0KPiBBcyBwZXIgbXkgdW5kZXJzdGFuZGluZywgd2UgZG9u4oCZdCBoYXZlIHNlcGFyYXRlIHJl
-Y2lwZXMgZm9yIFRFU1QgLyANCj4gUFJPRFVDVElPTiBpbWFnZXMuDQoNCkJ5IGRlZmluaXRpb24s
-IGlzYXItY2lwLWNvcmUgZG9lcyBub3QgKGFuZCBjYW5ub3QpIHByb3ZpZGUgcHJvZHVjdGlvbiBp
-bWFnZXMuIEl0IGlzIGp1c3QgdGhlIHRvb2xib3ggdG8gYnVpbGQgc3VjaCBpbWFnZXMgZnJvbS4N
-Cg0KPiANCj4gQ29ycmVjdCBtZSBpZiBteSB1bmRlcnN0YW5kaW5nIGlzIHdyb25nIGhlcmUgYW5k
-IGFsc28gSSBiZWxpZXZlIA0KPiBtaW5pbWFsIGNoYW5nZXMgcmVxdWlyZWQgZm9yIFBST0RVQ1RJ
-T04gaW1hZ2VzIGJhc2VkIG9uIHRoZSBjdXJyZW50IA0KPiBpc2FyLWNpcC0gY29yZSByZWNpcGVz
-Lg0KPiANCg0KSG93IG1pbmltYWwgY2hhbmdlcyBhcmUgZGVwZW5kcyBvbiB0aGUgYWN0dWFsIHBy
-b2R1Y3QuIEJ1dCBpdCBkb2VzIG5vdCBtYXR0ZXIgaWYgdGhvc2UgY2hhbmdlcyBhcmUganVzdCBm
-bGlwcGluZyBhIHZhcmlhYmxlIHZhbHVlIG9yIHJlcGxhY2luZyBtdWx0aXBsZSByZWNpcGVzLCBh
-ZGRpbmcgb3RoZXJzLiBUaGUgcG9pbnQgaXMgdGhhdCB3ZSBhcmUgbm90IHByb2R1Y2luZyBpbWFn
-ZXMgdGhhdCBhcmUgMToxIHVzYWJsZSBmb3IgYWN0dWFsIHByb2R1Y3RzLg0KDQo+IA0KPiBJbiB0
-aGF0IGNhc2UsIHRoZSBjdXJyZW50IHBhdGNoIHdoaWNoIHJlbW92ZXMgY3JlZGVudGlhbHMgZnJv
-bSBjb25zb2xlDQo+ICgvZXRjL2lzc3VlKSB3b3JrcyBmb3IgYm90aCBURVNUIC9QUk9EVUNUSU9O
-IChpZiBwcm9kdWN0aW9uIGltYWdlIHVzZXMgDQo+IHRoZSBjdXJyZW50IHJlY2lwZXMgYXMgYmFz
-ZS9yZWZlcmVuY2UpIGltYWdlcy4NCj4gVGhlIENJUCB1c2VycyBzaG91bGQgcmVmZXIgUkVBRE1F
-IGZvciB0aGUgbG9naW4gY3JlZGVudGlhbCBkZXRhaWxzIGZvciANCj4gVEVTVCBpbWFnZXMuDQo+
-IA0KPiBBcyBvZiBub3csIHRoZXJlIGlzIG5vIGJsb2NrZXIgZnJvbSB0aGlzIHBhdGNoLg0KPiAN
-Cg0KUGxlYXNlIGFkanVzdCB0aGUgcmVhZG1lIGNoYW5nZXMgYXMgZGlzY3Vzc2VkIGFib3ZlIGFu
-ZCwgd2hpbGUgYXQgaXQsIGRvY3VtZW50IHdoZXJlIHRoZSBjcmVkZW50aWFsIGFyZSBpbmplY3Rl
-ZCBhbmQgd2hhdCBzaG91bGQgYmUgY2hhbmdlZCBvciB3aGF0IHNob3VsZCBiZSBhdm9pZGVkIGZv
-ciBwcm9kdWN0aW9uIHVzZSAvd3J0IGNyZWRlbnRpYWxzLiBUaGVuIHdlIGJvdGggZnVsZmlsbCB0
-aGUgZm9ybWFsIGNlcnRpZmljYXRpb24gbmVlZHMgYW5kIGV2ZW4gYWRkIHJlYWwgc2VjdXJpdHkg
-YXQgdGhlIHNhbWUgdGltZS4NCg0KSmFuDQoNCi0tDQpTaWVtZW5zIEFHLCBGb3VuZGF0aW9uYWwg
-VGVjaG5vbG9naWVzDQpMaW51eCBFeHBlcnQgQ2VudGVyDQo=
+Hi Jan,
+
+I've already posted v2. Anyway, you can find my responses here.
+
+On 05/08/25 15:46, Jan Kiszka wrote:
+> On 22.07.25 12:15, Sai Sree Kartheek Adivi wrote:
+>> - Add machine conf and and kas yml files for TI AM62Px SK
+>> - Add new u-boot 2025.01 recipe as support for AM62P is only available
+>>    from 2025.01
+>> - Add new recipes for trusted-firmware-a, optee-os
+>> - Add new initramfs hook to include TI kernel modules in initramfs image
+>>
+>> Signed-off-by: Sai Sree Kartheek Adivi <s-adivi@ti.com>
+>> ---
+>>   Kconfig                                       |  5 ++
+>>   conf/machine/ti-am62px-sk.conf                | 32 +++++++++++++
+>>   kas/board/ti-am62px-sk.yml                    | 13 ++++++
+>>   recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.bb  | 24 ++++++++++
+>>   .../trusted-firmware-a-ti-k3_2.13.bb          | 18 ++++++++
+>>   ...KASLR-OPTEE-RNG-support-for-K3-devic.patch | 31 +++++++++++++
+>>   recipes-bsp/u-boot/files/rules-ti-am62px-sk   | 33 +++++++++++++
+>>   recipes-bsp/u-boot/u-boot-common-2025.01.inc  | 33 +++++++++++++
+>>   .../u-boot/u-boot-ti-am62px-sk_2025.01.bb     | 46 +++++++++++++++++++
+>>   .../initramfs-ti-k3-kernel-modules-hook.bb    | 27 +++++++++++
+>>   wic/ti-am62px-sk.wks                          | 11 +++++
+>>   11 files changed, 273 insertions(+)
+>>   create mode 100644 conf/machine/ti-am62px-sk.conf
+>>   create mode 100644 kas/board/ti-am62px-sk.yml
+>>   create mode 100644 recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.bb
+>>   create mode 100644 recipes-bsp/trusted-firmware-a/trusted-firmware-a-ti-k3_2.13.bb
+>>   create mode 100644 recipes-bsp/u-boot/files/0001-configs-KASLR-OPTEE-RNG-support-for-K3-devic.patch
+>>   create mode 100644 recipes-bsp/u-boot/files/rules-ti-am62px-sk
+>>   create mode 100644 recipes-bsp/u-boot/u-boot-common-2025.01.inc
+>>   create mode 100644 recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.01.bb
+>>   create mode 100644 recipes-initramfs/initramfs-ti-k3-kernel-modules-hook/initramfs-ti-k3-kernel-modules-hook.bb
+>>   create mode 100644 wic/ti-am62px-sk.wks
+>>
+>> diff --git a/Kconfig b/Kconfig
+>> index e078892..1b7e428 100644
+>> --- a/Kconfig
+>> +++ b/Kconfig
+>> @@ -77,6 +77,10 @@ config TARGET_QEMU_RISCV64
+>>   	select ARCH_RISCV64
+>>   	select HAS_SWUPDATE if KERNEL_6_1 || KERNEL_6_12
+>>   
+>> +config TARGET_TI_AM62PX_SK
+>> +	bool "Texas Instruments AM62Px SK"
+>> +	select ARCH_ARM64
+> 
+> Same questions as for the ZCU102 target apply here as well: Please
+> encode your kernel and possibly also distro version requirements in Kconfig.
+
+Sure
+
+> 
+>> +
+>>   endchoice
+>>   
+>>   config KAS_INCLUDE_BOARD
+>> @@ -89,6 +93,7 @@ config KAS_INCLUDE_BOARD
+>>   	default "kas/board/bbb.yml" if TARGET_BBB
+>>   	default "kas/board/iwg20m.yml" if TARGET_IWG20D
+>>   	default "kas/board/qemu-riscv64.yml" if TARGET_QEMU_RISCV64
+>> +	default "kas/board/ti-am62px-sk.yml" if TARGET_TI_AM62PX_SK
+>>   
+>>   comment "Kernel options"
+>>   
+>> diff --git a/conf/machine/ti-am62px-sk.conf b/conf/machine/ti-am62px-sk.conf
+>> new file mode 100644
+>> index 0000000..a520002
+>> --- /dev/null
+>> +++ b/conf/machine/ti-am62px-sk.conf
+>> @@ -0,0 +1,32 @@
+>> +#
+>> +# Copyright (c) Texas Instruments Incorporated, 2025
+>> +#
+>> +# Authors:
+>> +#  Sai Sree Kartheek Adivi <s-adivi@ti.com>
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>> +
+>> +DISTRO_ARCH = "arm64"
+>> +DTB_FILES = "k3-am62p5-sk.dtb"
+>> +
+>> +IMAGE_FSTYPES ?= "wic"
+>> +WKS_FILE ?= "ti-am62px-sk.wks"
+>> +
+>> +IMAGER_INSTALL:wic += "${SYSTEMD_BOOTLOADER_INSTALL} u-boot-ti-am62px-sk"
+>> +IMAGER_BUILD_DEPS += "u-boot-ti-am62px-sk"
+>> +
+>> +IMAGE_INSTALL += "u-boot-script initramfs-ti-k3-kernel-modules-hook"
+>> +IMAGE_PREINSTALL += "firmware-ti-connectivity"
+>> +
+>> +IMAGE_BOOT_FILES = " \
+>> +    /usr/lib/u-boot/${MACHINE}/u-boot.img;u-boot.img \
+>> +    /usr/lib/u-boot/${MACHINE}/tispl.bin;tispl.bin \
+>> +    /usr/lib/u-boot/${MACHINE}/tiboot3-am62px-hs-fs-evm.bin;tiboot3.bin"
+>> +
+>> +USE_CIP_KERNEL_CONFIG = "1"
+>> +KERNEL_DEFCONFIG = "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/arm64/ti_defconfig"
+>> +
+>> +WDOG_TIMEOUT = "0"
+>> +
+>> +PREFERRED_PROVIDER_u-boot-${MACHINE} = "u-boot-ti-am62px-sk"
+>> diff --git a/kas/board/ti-am62px-sk.yml b/kas/board/ti-am62px-sk.yml
+>> new file mode 100644
+>> index 0000000..53e08be
+>> --- /dev/null
+>> +++ b/kas/board/ti-am62px-sk.yml
+>> @@ -0,0 +1,13 @@
+>> +#
+>> +# Copyright (c) Texas Instruments Incorporated, 2025
+>> +#
+>> +# Authors:
+>> +#  Sai Sree Kartheek Adivi <s-adivi@ti.com>
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>> +
+>> +header:
+>> +  version: 1
+> 
+> We rather want 14 here.
+
+noted. will update for v3.
+
+> 
+>> +
+>> +machine: ti-am62px-sk
+>> diff --git a/recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.bb b/recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.bb
+> 
+> Intentionally not (yet) 4.7.0?
+
+No. This can be updated to 4.7.0. Will update in v3.
+
+> 
+>> new file mode 100644
+>> index 0000000..437b6fd
+>> --- /dev/null
+>> +++ b/recipes-bsp/optee-os/optee-os-ti-k3_4.6.0.bb
+>> @@ -0,0 +1,24 @@
+>> +#
+>> +# Copyright (c) Texas Instruments Incorporated, 2025
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +
+>> +require recipes-bsp/optee-os/optee-os-custom.inc
+>> +
+>> +SRC_URI += "https://github.com/OP-TEE/optee_os/archive/${PV}.tar.gz;downloadfilename=optee_os-${PV}.tar.gz"
+>> +SRC_URI[sha256sum] = "0c947c6972bf50c483cb993af01041d4094b1e03711c7246cdde6ba2ffc351fe"
+>> +
+>> +S = "${WORKDIR}/optee_os-${PV}"
+>> +
+>> +DEBIAN_BUILD_DEPENDS += ", python3-cryptography:native"
+>> +
+>> +OPTEE_PLATFORM = "k3-am62x"
+>> +OPTEE_EXTRA_BUILDARGS = " \
+>> +    TEE_IMPL_VERSION=${PV} \
+>> +    CFG_ARM64_core=y \
+>> +    CFG_USER_TA_TARGETS=ta_arm64 \
+>> +    CFG_TEE_CORE_LOG_LEVEL=1"
+>> +
+>> +OPTEE_BINARIES = "tee-raw.bin"
+>> +
+>> +COMPATIBLE_MACHINE = "ti-am62px-sk"
+>> diff --git a/recipes-bsp/trusted-firmware-a/trusted-firmware-a-ti-k3_2.13.bb b/recipes-bsp/trusted-firmware-a/trusted-firmware-a-ti-k3_2.13.bb
+>> new file mode 100644
+>> index 0000000..eca70d8
+>> --- /dev/null
+>> +++ b/recipes-bsp/trusted-firmware-a/trusted-firmware-a-ti-k3_2.13.bb
+>> @@ -0,0 +1,18 @@
+>> +#
+>> +# Copyright (c) Texas Instruments Incorporated, 2025
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +
+>> +require recipes-bsp/trusted-firmware-a/trusted-firmware-a-custom.inc
+>> +
+>> +SRC_URI += "https://github.com/ARM-software/arm-trusted-firmware/archive/v${PV}.tar.gz;downloadfilename=arm-trusted-firmware-${PV}.tar.gz"
+>> +SRC_URI[sha256sum] = "68333c8be57830e7430d7dd39064826729923d86d6bb7af38d713d4e9d15dcf9"
+>> +
+>> +S = "${WORKDIR}/arm-trusted-firmware-${PV}"
+>> +
+>> +TF_A_NAME = "ti-k3"
+>> +TF_A_PLATFORM = "k3"
+>> +TF_A_EXTRA_BUILDARGS = "CFG_ARM64=y TARGET_BOARD=lite SPD=opteed K3_PM_SYSTEM_SUSPEND=1"
+>> +TF_A_BINARIES = "lite/release/bl31.bin"
+>> +
+>> +COMPATIBLE_MACHINE = "ti-am62px-sk"
+>> diff --git a/recipes-bsp/u-boot/files/0001-configs-KASLR-OPTEE-RNG-support-for-K3-devic.patch b/recipes-bsp/u-boot/files/0001-configs-KASLR-OPTEE-RNG-support-for-K3-devic.patch
+>> new file mode 100644
+>> index 0000000..3b55aaf
+>> --- /dev/null
+>> +++ b/recipes-bsp/u-boot/files/0001-configs-KASLR-OPTEE-RNG-support-for-K3-devic.patch
+>> @@ -0,0 +1,31 @@
+>> +From 69a862c40c976a534ca79153c04d69ef3544ca57 Mon Sep 17 00:00:00 2001
+>> +From: Gokul Praveen <g-praveen@ti.com>
+>> +Date: Mon, 5 May 2025 15:32:53 +0530
+>> +Subject: [PATCH 1/1] configs: KASLR OPTEE RNG support for
+>> + K3 devices
+>> +
+>> +Add KASLR OPTEE RNG support across K3 devices by enabling the required
+>> +configs.
+>> +
+> 
+> 
+> That's 7d4136397715d2c08161a32a873c052dd1bb8b6c in upstream, right?
+
+Already fixed in v2.
+
+> 
+>> +Signed-off-by: Gokul Praveen <g-praveen@ti.com>
+>> +---
+>> + arch/arm/Kconfig | 3 +++
+>> + 1 file changed, 3 insertions(+)
+>> +
+>> +diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+>> +index 7282c4123b0..cd27e5a5422 100644
+>> +--- a/arch/arm/Kconfig
+>> ++++ b/arch/arm/Kconfig
+>> +@@ -805,6 +805,9 @@ config ARCH_K3
+>> + 	select REGEX
+>> + 	select FIT_SIGNATURE if ARM64
+>> + 	imply TI_SECURE_DEVICE
+>> ++	imply DM_RNG
+>> ++	imply TEE
+>> ++	imply OPTEE
+>> +
+>> + config ARCH_OMAP2PLUS
+>> + 	bool "TI OMAP2+"
+>> +--
+>> +2.34.1
+>> +
+>> diff --git a/recipes-bsp/u-boot/files/rules-ti-am62px-sk b/recipes-bsp/u-boot/files/rules-ti-am62px-sk
+>> new file mode 100644
+>> index 0000000..dc53b07
+>> --- /dev/null
+>> +++ b/recipes-bsp/u-boot/files/rules-ti-am62px-sk
+>> @@ -0,0 +1,33 @@
+>> +#!/usr/bin/make -f
+>> +#
+>> +# Debian rules for custom U-Boot build for ti-am62p-sk
+>> +#
+>> +# Copyright (c) Texas Instruments Incorporated, 2025
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +
+>> +ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
+>> +export CROSS_COMPILE=$(DEB_HOST_GNU_TYPE)-
+>> +SET_CROSS_BUILD_TOOLS=CROSS_BUILD_TOOLS=y
+>> +endif
+>> +
+>> +override_dh_auto_build:
+>> +	$(MAKE) $(PARALLEL_MAKE) ARCH=arm am62px_evm_r5_defconfig
+>> +	$(MAKE) $(PARALLEL_MAKE) ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf-
+>> +
+>> +	$(MAKE) $(PARALLEL_MAKE) am62px_evm_a53_defconfig
+>> +	$(MAKE) $(PARALLEL_MAKE) BL31=/usr/lib/trusted-firmware-a/ti-k3/bl31.bin \
+>> +		TEE=/usr/lib/optee-os/ti-k3/tee-raw.bin
+>> +	$(MAKE) $(PARALLEL_MAKE) u-boot-initial-env
+>> +	$(MAKE) $(PARALLEL_MAKE) $(SET_CROSS_BUILD_TOOLS) NO_SDL=1 tools-only envtools
+>> +
+>> +override_dh_auto_install:
+>> +	mv tools/env/lib.a tools/env/libubootenv.a
+>> +
+>> +override_dh_auto_test:
+>> +
+>> +override_dh_strip:
+>> +	dh_strip -X libubootenv.a
+>> +
+>> +%:
+>> +	dh $@ --parallel
+>> diff --git a/recipes-bsp/u-boot/u-boot-common-2025.01.inc b/recipes-bsp/u-boot/u-boot-common-2025.01.inc
+>> new file mode 100644
+>> index 0000000..14bdef9
+>> --- /dev/null
+>> +++ b/recipes-bsp/u-boot/u-boot-common-2025.01.inc
+> 
+> Why not 2025.07?
+
+2025.07 should work. Let me give it a try and update for v3.
+
+> 
+>> @@ -0,0 +1,33 @@
+>> +#
+>> +# Copyright (c) 2025 Texas Instruments Incorporated - http://www.ti.com
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +
+>> +require recipes-bsp/u-boot/u-boot-custom.inc
+>> +
+>> +FILESPATH:append := ":${FILE_DIRNAME}/files"
+>> +
+>> +SRC_URI += " \
+>> +    https://ftp.denx.de/pub/u-boot/u-boot-${PV}.tar.bz2 \
+>> +    file://rules.tmpl;subdir=debian"
+>> +SRC_URI[sha256sum] = "cdef7d507c93f1bbd9f015ea9bc21fa074268481405501945abc6f854d5b686f"
+>> +
+>> +SRC_URI:append:secureboot = " \
+>> +    file://secure-boot.cfg"
+>> +
+>> +S = "${WORKDIR}/u-boot-${PV}"
+>> +
+>> +DEBIAN_BUILD_DEPENDS += ", libssl-dev:native, libssl-dev:${DISTRO_ARCH}, \
+>> +        libgnutls28-dev:native, libgnutls28-dev:${DISTRO_ARCH}, yamllint:native"
+>> +
+>> +DEBIAN_BUILD_DEPENDS:append:secureboot = ", \
+>> +    openssl, efivar, secure-boot-secrets, python3-openssl:native"
+>> +DEBIAN_BUILD_DEPENDS:append:secureboot:buster   = ", pesign"
+>> +DEBIAN_BUILD_DEPENDS:append:secureboot:bullseye = ", pesign"
+>> +DEBIAN_BUILD_DEPENDS:append:secureboot:bookworm = ", pesign"
+>> +DEPENDS:append:secureboot = " secure-boot-secrets"
+>> +
+>> +do_prepare_build:append:secureboot() {
+>> +    sed -ni '/### Secure boot config/q;p' ${S}/configs/${U_BOOT_CONFIG}
+>> +    cat ${WORKDIR}/secure-boot.cfg >> ${S}/configs/${U_BOOT_CONFIG}
+>> +}
+>> diff --git a/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.01.bb b/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.01.bb
+>> new file mode 100644
+>> index 0000000..b9dbdf8
+>> --- /dev/null
+>> +++ b/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.01.bb
+>> @@ -0,0 +1,46 @@
+>> +#
+>> +# Copyright (c) 2025 Texas Instruments Incorporated - http://www.ti.com
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +
+>> +require u-boot-common-${PV}.inc
+>> +
+>> +TI_FIRMWARE_SRCREV = "9ee2fedb1fb4815f54310dd872d34faf9948c7c1"
+>> +
+>> +SRC_URI += " \
+>> +    https://git.ti.com/cgit/processor-firmware/ti-linux-firmware/plain/ti-sysfw/ti-fs-firmware-am62px-hs-fs-cert.bin?id=${TI_FIRMWARE_SRCREV};downloadfilename=ti-fs-firmware-am62px-hs-fs-cert.bin;name=sysfw-cert \
+>> +    https://git.ti.com/cgit/processor-firmware/ti-linux-firmware/plain/ti-sysfw/ti-fs-firmware-am62px-hs-fs-enc.bin?id=${TI_FIRMWARE_SRCREV};downloadfilename=ti-fs-firmware-am62px-hs-fs-enc.bin;name=sysfw-enc \
+>> +    https://git.ti.com/cgit/processor-firmware/ti-linux-firmware/plain/ti-sysfw/ti-fs-stub-firmware-am62px-hs-cert.bin?id=${TI_FIRMWARE_SRCREV};downloadfilename=ti-fs-stub-firmware-am62px-hs-cert.bin;name=sysfw-stub-cert \
+>> +    https://git.ti.com/cgit/processor-firmware/ti-linux-firmware/plain/ti-sysfw/ti-fs-stub-firmware-am62px-hs-enc.bin?id=${TI_FIRMWARE_SRCREV};downloadfilename=ti-fs-stub-firmware-am62px-hs-enc.bin;name=sysfw-stub-enc \
+>> +    https://git.ti.com/cgit/processor-firmware/ti-linux-firmware/plain/ti-dm/am62pxx/ipc_echo_testb_mcu1_0_release_strip.xer5f?id=${TI_FIRMWARE_SRCREV};downloadfilename=ipc_echo_testb_mcu1_0_release_strip.xer5f;name=dm \
+>> +    file://0001-configs-KASLR-OPTEE-RNG-support-for-K3-devic.patch \
+>> +    file://rules-${MACHINE}"
+>> +
+>> +SRC_URI[dm.sha256sum] = "3435b8b5be80a3fe8775f60b1239dd909a2a75958569727491ca9691fecc820d"
+>> +SRC_URI[sysfw-cert.sha256sum] = "3565f0dd48470e6ae36a7a90fb2eb2e2e0949b9702271e3b944b98a208a01a69"
+>> +SRC_URI[sysfw-enc.sha256sum] = "61c52ea82d5b0eddfb236619d685d660ab1afc18d10aa4794b03a1c1a679baf7"
+>> +SRC_URI[sysfw-stub-cert.sha256sum] = "a0c9181646c1832eb5bdfdf243634fe03df1c0bad01653b041149768a39d35f9"
+>> +SRC_URI[sysfw-stub-enc.sha256sum] = "d96af397494c460cd3bbd6cf925c6f559a9c43b572cfdd58961b5c8900124144"
+>> +
+>> +S = "${WORKDIR}/u-boot-${PV}"
+>> +
+>> +COMPATIBLE_MACHINE = "ti-am62px-sk"
+>> +
+>> +U_BOOT_CONFIG = "am62px_evm_a53_defconfig"
+>> +
+>> +U_BOOT_BIN_INSTALL = "tiboot3-am62px-hs-fs-evm.bin tispl.bin u-boot.img"
+>> +
+>> +DEPENDS += "trusted-firmware-a-ti-k3 optee-os-ti-k3"
+>> +DEBIAN_BUILD_DEPENDS =. "gcc-arm-linux-gnueabihf, \
+>> +    libssl-dev:native, libssl-dev, grub-common, \
+>> +    swig, python3-dev:native, python3-setuptools, python3-pyelftools, \
+>> +    python3-jsonschema:native, python3-yaml:native, \
+>> +    trusted-firmware-a-ti-k3, optee-os-ti-k3,"
+>> +
+>> +do_prepare_build:append() {
+>> +    mkdir -p ${S}/ti-sysfw
+>> +    cp ${WORKDIR}/ti-fs-*firmware-am62px-hs*.bin ${S}/ti-sysfw
+>> +    mkdir -p ${S}/ti-dm/am62pxx
+>> +    cp ${WORKDIR}/ipc_echo_testb_mcu1_0_release_strip.xer5f ${S}/ti-dm/am62pxx
+>> +    cp ${WORKDIR}/rules-${MACHINE} ${S}/debian/rules
+>> +}
+>> diff --git a/recipes-initramfs/initramfs-ti-k3-kernel-modules-hook/initramfs-ti-k3-kernel-modules-hook.bb b/recipes-initramfs/initramfs-ti-k3-kernel-modules-hook/initramfs-ti-k3-kernel-modules-hook.bb
+>> new file mode 100644
+>> index 0000000..75e7f92
+>> --- /dev/null
+>> +++ b/recipes-initramfs/initramfs-ti-k3-kernel-modules-hook/initramfs-ti-k3-kernel-modules-hook.bb
+>> @@ -0,0 +1,27 @@
+>> +#
+>> +# Copyright (c) Texas Instruments Incorporated, 2025
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +#
+>> +
+>> +require recipes-initramfs/initramfs-hook/hook.inc
+>> +
+>> +HOOK_ADD_MODULES = " \
+>> +    snd-soc-davinci-mcasp \
+>> +    snd-soc-ti-udma \
+>> +    ti-eqep \
+>> +    ti-ecap-capture \
+>> +    mcrc \
+>> +    sa2ul \
+>> +    icss_iep \
+>> +    icssg \
+>> +    icssg-prueth \
+>> +    ti_k3_common.ko \
+>> +    ti_k3_dsp_remoteproc.ko \
+>> +    ti_k3_m4_remoteproc \
+>> +    ti_k3_r5_remoteproc \
+>> +    rpmsg_char \
+>> +    rpmsg_ctrl \
+>> +    rtc-ti-k3 \
+>> +    pruss \
+> 
+> Why are those modules if they are boot-essential? And what do we really
+> need? I doubt that we need them all...
+
+True, and none of these are needed. I've already removed this 
+initramfs-hook in v2.
+
+> 
+>> +"
+>> diff --git a/wic/ti-am62px-sk.wks b/wic/ti-am62px-sk.wks
+>> new file mode 100644
+>> index 0000000..8663607
+>> --- /dev/null
+>> +++ b/wic/ti-am62px-sk.wks
+>> @@ -0,0 +1,11 @@
+>> +#
+>> +# Copyright (c) Texas Instruments Incorporated, 2023-2024
+>> +#
+>> +# SPDX-License-Identifier: MIT
+>> +
+>> +part /boot/firmware --source bootimg-partition --fstype=vfat --label firmware --active --align 1024 --size 16M --overhead-factor 1 --extra-space 0 --use-uuid --part-type E3C9E316-0B5C-4DB8-817D-F92DF00215AE
+>> +part /boot --source bootimg-efi-isar --sourceparams "loader=systemd-boot" --label efi --part-type EF00 --align 1024 --use-uuid
+>> +
+>> +part / --source rootfs --fstype ext4 --mkfs-extraopts "-T default" --label platform --align 1024 --use-uuid --exclude-path boot/
+>> +
+>> +bootloader --ptable gpt --source hybrid-boot --timeout=0 --append "rootwait rw"
+> 
+> Jan
+> 
+
+Kartheek
 
 
