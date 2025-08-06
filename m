@@ -2,52 +2,51 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A501C87FD1
-	for <webhook@archiver.kernel.org>; Wed,  6 Aug 2025 05:24:50 +0000 (UTC)
-Received: from MRWPR03CU001.outbound.protection.outlook.com (MRWPR03CU001.outbound.protection.outlook.com [40.107.130.5])
- by mx.groups.io with SMTP id smtpd.web11.18393.1754457883484002397
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C2BFC87FD1
+	for <webhook@archiver.kernel.org>; Wed,  6 Aug 2025 07:01:20 +0000 (UTC)
+Received: from GVXPR05CU001.outbound.protection.outlook.com (GVXPR05CU001.outbound.protection.outlook.com [52.101.83.12])
+ by mx.groups.io with SMTP id smtpd.web11.19347.1754463679125028003
  for <cip-dev@lists.cip-project.org>;
- Tue, 05 Aug 2025 22:24:44 -0700
+ Wed, 06 Aug 2025 00:01:19 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=eBXMPRMs;
- spf=pass (domain: siemens.com, ip: 40.107.130.5, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=CfbhYSvn;
+ spf=pass (domain: siemens.com, ip: 52.101.83.12, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=O+Hmnijn3xxjKYt4VgZsBYRBfyPF5Ri8X1iT2O1U1c4Egl8fuKzeoMw9cnS2N6eHyh4Gci0RtNmYcNdAexUkFfu/9RMi0kD8NExbLsWSXqfLB3PTbOXIoe72ERfCvnH7i6psFR0glALNxC5k/yTepn8Dpey2Om/pJ04EiNKc7bQ4yMTrYeAb7DK1W/g1+1SFZk8e2DlZ+4OBuwt/Hx7oVuV372L54cOen1qZuHSZUvTK27xtqWq7zl+xtZuBW8A9jkG/LwFSLLXurBDSXp+0Jgb2C74C9pPnejMVU25VGGtNO2C841/EenP99uNWc/YkxnE/Y9dbst32BqFjN8xJMg==
+ b=XL0KY6IOmHYaAlySLXFuAkkgLWM3c75T4aQ0lsGItmtcmeVhNyC64DRrryevsbHwt6IIra3fZGJQQMjLHpa7vYQTiOe/LAziKW8TnIkPz5dC/W2CMdUbNtvpivorLkHsIttL4LJJdUnqdcqtW/ZCp1tEtWEgRYGtcJSIxENjroSkuprP7aA1FpXJmu0GrTpS3IpjaRt34hHVNw+ySL9SpYsQNqMXMneBbX6HcrjSqP4ARI8QIQAqdRjKX9H+ryyeGIGAIX98Wg7WvILuAdRqIaj/dyDzGHslCDTDyF9z5OB//J3iHI0vEW2wYiOUV+HtS7HU3QrY0rP5A5tZW3fGEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+FgJhsoJvcaSsMNfPRUAKmitCyRa7Ph5MMd2KgldeVw=;
- b=qU2xuqxUeTmYd8frbwc43Mr9D134Go34OkQF9ji/BH7l+1Nz3pmkCPDbcsJO2SiN++LN+3axEPmTmYHMhIEaP4886BTnY5QUL75JCmi49z+SGdwrx7JV0r4KoAy8AVnqEEEm0DNEZvDe6HX85Srd/RmiSGWXMXum6yy2X7vszaWkzOv76xhHhmNB7rUNeZ+GEvmM0bYGxtvNLrNlOYy9M/E/avvpJ38lrXS+mxfHpbkcGVbsShDPdlymUobrcERFn01iI3966EVbTBw8+StntCqWnSH7u/+pK5EX3Npred2E7gAEM5NYDSY+ajvdh27tsaeT0n5C4x2WwN4SD6IR5g==
+ bh=3JMqrZM7cPZJ48Mhjn0bFcVseAUB3/uh+Fg9fkX3xxY=;
+ b=DlcZFTqZzNdcRNsD+qJYuJzAjA9yxAQTQaNOf+sT303lUhffTjc/vfBSxwAwHnu5ZH2FoUxqDMacBrHlB28I1VXdUtAlfow7LChvH7ColLUalFKvHNlryU91ncVXwD7nA1F//M3upp30VKIyfFcPGYXW3hYblnVqbpJ0R4uJ9Vf36JUybRdX1Gx0O5xwn7vg5TwBENIlNsuun1NoZQHX1xGKViTngMXzr4HhdVUhvSYQ6dnXLqsZWY3jG70AuCsSN/gsvXOkZQXdLxz+0w9rnJ13B26UVEkHo5mfwj/tbLlfbf90bH6a01qHl9NDmbRRfF7qL7DpGuW5RnHPn/p0/Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+FgJhsoJvcaSsMNfPRUAKmitCyRa7Ph5MMd2KgldeVw=;
- b=eBXMPRMszXS/KOmeqxS4DcEMV/4MoDUikFnCTzQKfLRmpxOTzZ6Y97BrPThafam7JR0tVWQyPs8T7919MCyx/MUlvlNxfNHxeWGbrv9VxBJLCcqLt1Ux9kaRgdW0TMGi0UTXklnHxgIeKC3saTGBsK5osflNsTi6TvDo0TqUsM2rNOeBzzjDbN7LgqrIK7M/JJFm9TdTI54dG+Ro96OCCkPo3UVzWObytm3ymvB87sfGNyZ7XysKXtHOVOb5azA9HOuhI1kSDXW0IP1sav0FfbSnYkHoEXgTRuliteapFDWx0h/yBGpCm2zGjK0UHndmbvw5sXFexwI9DutzjpXe5A==
+ bh=3JMqrZM7cPZJ48Mhjn0bFcVseAUB3/uh+Fg9fkX3xxY=;
+ b=CfbhYSvnJT3eSAfNNH3M1d7VKKYvQb/u0ZSCLF1dBxeghFtKoo3hAYsUx6menXR9Vz3+2rj6w0OEfzjjnyS8cOQzPNsB9AHoL9GaXBV0BFUiQblQ/jdLKCZdVN4bbh9ZXQ0CqUzbhApEmN346LCzlShJ2vadvTztMvC695k+PTCxhfPcd/FsP/QskD73EcKk3b1yK8/fb5LO7nrwFmVTJUrib36G/QS94tc3hnzXacfUwQC4uyrDhz9j0hmAaweIG93JFNo2XGHZLfrUawsJFZkiDCgrmdFS8ZHPhfd///rTU3Hfh99BOwwvVtlVSbvBFkw9asKpN7Ftz3cjLImelQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by PA1PR10MB8893.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:451::20) with
+ by PA2PR10MB8874.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:421::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.16; Wed, 6 Aug
- 2025 05:24:40 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.15; Wed, 6 Aug
+ 2025 07:01:15 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408%5]) with mapi id 15.20.9009.013; Wed, 6 Aug 2025
- 05:24:40 +0000
-Message-ID: <5180a08e-8a2a-4a8e-b591-cf3ab81d7e34@siemens.com>
-Date: Wed, 6 Aug 2025 07:24:39 +0200
+ 07:01:15 +0000
+Message-ID: <68a235ad-709a-448e-acdf-d206a8428fdd@siemens.com>
+Date: Wed, 6 Aug 2025 09:01:14 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [isar-cip-core][PATCH v4 2/2] Kconfig: Add config NO_KERNEL for
- kernel selection
+Subject: Re: [isar-cip-core][PATCH v4 1/2] kas/opt: Add option for not install
+ kernel
 To: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 Cc: cip-dev@lists.cip-project.org
 References: <1754457742-4006-1-git-send-email-nobuhiro1.iwamatsu@toshiba.co.jp>
- <1754457742-4006-2-git-send-email-nobuhiro1.iwamatsu@toshiba.co.jp>
-Content-Language: en-US
 From: Jan Kiszka <jan.kiszka@siemens.com>
+Content-Language: en-US
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
  uNUqthIkgLGWzKugodvkcCK8Wbyw+1vxcl4Lw56WezLsOTfu7oi7Z0vp1XkrLcM0tofTbClW
@@ -91,156 +90,309 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
  8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
-In-Reply-To: <1754457742-4006-2-git-send-email-nobuhiro1.iwamatsu@toshiba.co.jp>
+In-Reply-To: <1754457742-4006-1-git-send-email-nobuhiro1.iwamatsu@toshiba.co.jp>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0129.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:b9::12) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR2P281CA0158.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:99::11) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PA1PR10MB8893:EE_
-X-MS-Office365-Filtering-Correlation-Id: ea72023f-9f38-4e61-e414-08ddd4a98ad0
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PA2PR10MB8874:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3ac9b703-77b6-43eb-718d-08ddd4b708eb
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?OWFlb1F1eUVkeGF3ZDUxZ3ZkdWpPMUI4bTFySkUySmdiQnRvY2lLUW5HWkN2?=
- =?utf-8?B?TThKYms2b1FQWEFJcEQ4aXoyVE85ZWxoazRNSjJtLzk4ek83U3hRODNJTS9h?=
- =?utf-8?B?UmdSaS9yNy9BUVgyUzZsdERNUzgreTUwS0xJc2hqNU12L01aSDRkUlhTc1pU?=
- =?utf-8?B?VWY2UmpkS3RtSEIzeUxZZWJ5RTVtc1phVm5oc2piRGRTakhab2RXNEIzb1lX?=
- =?utf-8?B?dHUyMHVtMEVYK2MwYUQ1Rk5lbVpaZ0phaWRnb01SNEFhR3o2cVNZV3Y5eHFS?=
- =?utf-8?B?SzBWaUtZK3RzcVBNaXY5M2xkcWFrbzVRcU1wQVdhTzRKY0dBeERVRUc4MmdE?=
- =?utf-8?B?MGNlczFaV2Y5WG1TSE5PbVozbjg4TlJYOGtPY3lNUXk2aTIxK2NxOVFLbWM5?=
- =?utf-8?B?TWdMdUZVK2ZtbWlKc1lVR3FpVzlETWhORTE1N1lSMkRHNnVaUWR0cmRLQnpT?=
- =?utf-8?B?S3NQbVlEQjJ2a1ZpdGgwdG85Zyt6eW5RYmF6NEJ6M0lQVlltQUM2Z3dEYXhQ?=
- =?utf-8?B?cGZZSndiLzdtZ053RDExMUE5eUM4ODFYK3ZRZDJkaC9rNVpVM3B1WHhENHpx?=
- =?utf-8?B?RkpRVXZEZk1ta2xQdi9zam1jeWdTTjJiUmttdzY1Q0R4Vm5LTmJLUm0zb0o3?=
- =?utf-8?B?Nko4bHV6Wk9tKzlQOVN5U245U1pVTjN5RytIMGVieHdXYTFSczNuNk84cEYz?=
- =?utf-8?B?Vmw1VEpMbFo4czVQVHRnRlQ0UGtrenZPbGJQSjB3aHNsRVZLVnIrN0FwOVlL?=
- =?utf-8?B?MEVTa3Rydkl3bjVVbUd6Wi9HMUdKekFHQ0xrL2IrbGlQVkFmZmkwaUZCVk9i?=
- =?utf-8?B?U2VZWVpPTlA1WDkydE5FbHZBTWIvQjZ6ZC93YTVLRjJJR050NXNCVVNvRFNU?=
- =?utf-8?B?RE54U2JhRm96T1JNQ2lQNW5sejZvclZxcHlyN3lrekc3Vkk1TGZGVXhGYXpG?=
- =?utf-8?B?ZWZBeDFRYWRHMk5xMHFpU3VWV0tpSkhSbnZVbzU5RTg2bVY3dnZydmhNSW96?=
- =?utf-8?B?L3ppcDZSdU05VzlSNjhKMS9LRnJ1V21DeGJyMXQzc29DdHFzMDFQSVdmMDIv?=
- =?utf-8?B?eUNsNTlDQytWVFcvSnBTd2ViRklBUnY4TnpwTCtMSnByVXV2a3l0bU9RTzJB?=
- =?utf-8?B?aG9INVR4NFhoWXdUYngwWEROa2M4M2xjSFZZcDc0a245N0xjbUE0L21jdGtP?=
- =?utf-8?B?c2kwaWlnNUxKeVFGa1F0eTRpbmxrbU56R0t6c0xuOUxBYlNWM0liMkFUL3p3?=
- =?utf-8?B?YlRzd25zcWJla2J1dmtTRlJsc1NvNDBWN3Y2RG9GTXk0NjRSQnE3QXFoZEdm?=
- =?utf-8?B?bU56OU4vRTMxYzN2RVJKU2FGaGJxbG0rV3NpV2I0Qms1c0JrcHl0Um16bC9x?=
- =?utf-8?B?ekRwVWx3bm9VRmxpWCs5U2Q5anBuOEhteTRoK0lDVHEzc2RPNjhQSWtkWngr?=
- =?utf-8?B?eGxhdmRoTXdhYWdkbmFMQ2ZKQVZQNWREbmdsaVBINXhUWHh4ZFkwQllJMXF0?=
- =?utf-8?B?cXBnN0poRWdVeFRYaDRyM1psVUNCOU83OXMvS0FhdXMvRTBJZCtmMCtZOEZW?=
- =?utf-8?B?RkhReS9mR1VITDNpTHRjbStla1JDVmpzcm9xb290TnhqVEpMMW01Q3JEUEZ5?=
- =?utf-8?B?SVAvRytDdjNKV0hlUHJPNTVvdVAvRUpSelNsTkU1MmpOOGRGZUhEempweVpk?=
- =?utf-8?B?V1ZrcHNzUXVMWG91K0x3RXV3U2hDLzhCZHIyczlRTGJ0alcvalVtaDN4dWpN?=
- =?utf-8?B?RUNsREZ0STlqb1BUOVpsQ3ZzNEdxVmp2N0M4Zk51MDVDcXlEazhTZHBBYW55?=
- =?utf-8?B?d1R3L3BWUFpHYVlPcHozREx6M0lSa3hsWFdySTJ3TUx3Q3U2M1d2MUR1Z1BU?=
- =?utf-8?B?am1xS1FwdzNpdHV5amFhOW9JNjEzOTE0UUI4YTEzTHFCUFlnK1NzbEhJVzh2?=
- =?utf-8?Q?EMd46txh1v8=3D?=
+	=?utf-8?B?VDVCc0FPNWwvdEMwL1pRK2hobFdOOWhrak9qakh4d0V1M3BUOC9XbHZhQWo0?=
+ =?utf-8?B?dXozZXV1b1BOdGhLYjNoSTlldmVzRVBpTmR1ZHltUEw3ZkZ1L2ZKWmNuMGh3?=
+ =?utf-8?B?UWUwcVcrL2k2Wkx2MUgzakR4c2JRa25KWlpNRUh0cmt0c0U4ejJDTmFmaDEv?=
+ =?utf-8?B?Y0JtcDF0TFVIb0hJbHQxSDZpNUYzVG9PN0hzWnVHeDhvQmR6aEdMOVlpd0oz?=
+ =?utf-8?B?QUNrdHVwQ25scFNBNjFTNHRtRy9weVcxMzRkS1ZJcVp6TG9tVXFPMUFOc3BM?=
+ =?utf-8?B?Y3p2UFY1dXVkdlZFa0VGYjFvVU1sRUlYeDNSVTJTOVl5ekpxL3orNDlwdUJZ?=
+ =?utf-8?B?L1ZERDBzVDZiUHppN0ZjQU5pUzFsTFA2ZXAweStiWFk2ZVFXMmk0bVVwcEZX?=
+ =?utf-8?B?cWhqOTBXc01NSDFvTHFabFdSS3JaSUJ3U1VzZEhnS1BSQ0hEMkk2MXk4TEwz?=
+ =?utf-8?B?UklycWVyVjJudE1kYWFhc0tOVGo4MWJwdlpycFNlWi9iVHBEZlBJL3RhblZv?=
+ =?utf-8?B?VlNXM29CZDE5MmNvYjRIc1ZSZ1M2ZERIL2xrUTdPQTZ3MmswRGQ2ODNEaCtQ?=
+ =?utf-8?B?ZGdjUStzVHNMM3ZJTXNSOWszZEdTTWw5R1B3Z3lJUER0R2ZmbVhtZmhDL2pU?=
+ =?utf-8?B?RWVaZjhkYWF2MjFQUkNTbHNSdEtoVGRPTUtpYmxVZHZRV0lBVTJiMU5VNytS?=
+ =?utf-8?B?bFZ1K0RlOTluYWV1REU3elBVNFlvMEoyQ2U5VVJCcDhBQlQzaEpVSVVzV3hs?=
+ =?utf-8?B?cnpNR3JhNGJwNWpqTjMrcGlJbGd3UlJweU41UG9rQXBOKzFkcFZFRGg4QXRj?=
+ =?utf-8?B?MC9FbEN5VXIwd3BuSnB3eGJRSTlSdFFQeE1ablorNFMyS1NoOHRFanFsQTBk?=
+ =?utf-8?B?cGgxY2FLQ2JtS1pPcWFxelN2cVdQeHArOUk2Ukh1U1grK1IyTkljbW1Yb1Nj?=
+ =?utf-8?B?OURrR0hGMHRLUzNnWjRXY0JWRWo5N0h4dHBBbUV5ZTBWNnhPVWt1NG9iQnoz?=
+ =?utf-8?B?eHhHYVJiUFVBUG1aVmJJNzlGVUR3Y0ZiazUvNGlsZlVkblRMdm9aWSt1S1kw?=
+ =?utf-8?B?WnQvTGhjQzhHTnJHOTFKakRnaWkwZ2cySWc4NFJ1Q2JLNjZ5NFRWOHpzVmdX?=
+ =?utf-8?B?RCtWYkRDWEptc3NGTW0vM3I5WldzTVZiT0VwNUwyandaQVZVSUFENlRqd3Yz?=
+ =?utf-8?B?ZzdBWEdhc01yRlNNVENJVDMycUNBUm5KM1R2UForVlJ5OVJkL2NxYnVuUzdF?=
+ =?utf-8?B?YmJwa2N4QXBhWENXZzNHVXpEUXBRS0FCS2grU0pnOFlyZnhaaFdQanoxNUx2?=
+ =?utf-8?B?WFU5RkYwNlJiZko5M2Z3TWhFdE9PNGYyQTBLMm9QenlLOEJuY0dWN25QUlpq?=
+ =?utf-8?B?L0NyRW0xYTBNekkzTkhuVkZoSEpxc05Rdmprd053ZGZjaGU1VDBZd3cwOVYw?=
+ =?utf-8?B?eU8vRkpraENYUWc3ZTBXS1hmbmYwOTBRdTArTCs2UmJ5NlU0S21NZGQvTkc2?=
+ =?utf-8?B?N2dUU2trYXhLd0hQQ0xrU2ZldDVPWFhlYnZhUk8reDdHTVlibzIyRzFxS0l5?=
+ =?utf-8?B?TGgrSUhxVFBvaklDcHBFQ1pvV0YwODZYSEFaV2lzV2x1UFRhcTFvWE5MYzlR?=
+ =?utf-8?B?SUppVkc4NHpwQzJ3ZndRTy9YaEh1WWVEOEtmZGRLcEZRclQwQTBINXM1bk00?=
+ =?utf-8?B?WkNYdlMwK3NVajljblVwakhXZW16Mk9WdHRjaWsrT3lOV0lYdjE1M3hpTDEz?=
+ =?utf-8?B?WXFlV1FyZERiWEMrMmptUFFtZllWeW1FSTdscFpEaWVLb2NVMWhsUEpDZzlo?=
+ =?utf-8?B?VkJWWjA1QStvSjNsQTQxUEFvVmhrR2tyZEVlZ0dOc3hrenNjc1ZXUzFNT0w2?=
+ =?utf-8?B?SWtMWmxUbVRUaWgrU0ZKamhxQVgwUFJzNTNhM0M2L1V1QTl2U2ZjdGlIb25J?=
+ =?utf-8?Q?U0Gnf6BpjKQ=3D?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?b25Fb1o1eWZlL1BMZnFCbm9VUEZrNWVaa3AzN3dVK0dGWVhtZm53Rnlxd0xO?=
- =?utf-8?B?TXlxdHFtcFAxQ2hoVTdTbGVQenlSNldBaUZuRHk0RGN6TkhPNmtUQzc5QlZx?=
- =?utf-8?B?a3BYZTVxb3VxaGYzYm1QN09iYjh6VDg4dHV4UGJzTDlIam42b0pkZkpFL2ln?=
- =?utf-8?B?ajF3M29vN0xDeml4eVZoNHVQSWZFSm8xMVZBTVZtL0F2aUxUWVl3YXhXOFVE?=
- =?utf-8?B?b2FjZVBlSSs5aENxZzVDNlZycGY3N1praWNIWW9ydEJLKzBYOS9XL2pKdUdG?=
- =?utf-8?B?b3NvclZBKzBKSktHbjV0bmxaUnVOUGd0d2t2TVF0L3prNHFJRGh4b2FSaWtN?=
- =?utf-8?B?OG9zbkFzb0dxektmZlFGZ3NXSkhjRzhWQXRBNC94bElDMDlDY01xeldXVHYw?=
- =?utf-8?B?VkZ2RXFUcE5wdkJURS85WndRa2hlVHpnU1pXa1ltYjJkVXFMYjBqMHN6Z1BB?=
- =?utf-8?B?WUhoRldjU083VG8zMHZsVVQrWjdxTitYOUY4Z0o1bngrN3Z2TlVJQWNEM0g2?=
- =?utf-8?B?b2tESUJ6eHVGNXRIeCtlUXhSb2U4ek5ZUUpTcklESE5BVTU0MmkvNzJFUVFi?=
- =?utf-8?B?Q0lWYmFmaG84SnFYYnppb1RBVWsvN1hZSW9XNk4wU0VJMWxWNDJJajlFYzFk?=
- =?utf-8?B?Z09wSFdZM1ZvQWJHRTkzWE9hUGR2aklndlBJcTJNbXVvcXBZREkvTXluYWJx?=
- =?utf-8?B?ZFgyMHBwbDN6VVVvQjFOODNibTV0dTZqbkhlVktTOU1BOStSVjdWMHhhTXNs?=
- =?utf-8?B?QUVxUnVjUm9PeHlaamhNbjdvZUR5RVpoemJ0Ni8wL3R6NXVjb2FLbWIrdWMv?=
- =?utf-8?B?SWlWTitGUDhRc3FVckEzS3R4OU5GZ3c4dlp5K1FlSVJYbzN4MGpZQWlEUW5n?=
- =?utf-8?B?TGRzRk9YNE9rMXVMNFM4SjBLelljVDMxejYyc09kMjZyNE1uRHFKbW1SK3pF?=
- =?utf-8?B?STJRVEZKQmY2T0JoWGR3RFlkbUo3TENVazZjRU45d1JhRWJJaE9aNk5XUXh1?=
- =?utf-8?B?VnFSN3NjQTc1Nkg3bmV1WlVnNENHcUVXVVZ4ODdNRlJyYmk5YW5hQ1VLWmtB?=
- =?utf-8?B?by8wT2dDWURERHh1VkkvdFFCVlhWODRBRTYyL2IwZytvYzNuSEw1MllMemtm?=
- =?utf-8?B?NXdYVHFmVmhqdkJsZ1RVZnFndWZ6MUxYUW1UMEMxOVkyYm96cEZVVTJUdldH?=
- =?utf-8?B?ZFBUbkxGY2tTbDZnV0NNdEVLN1R2aDZYVHovVkxsK3JHL0Z2dWlRWFZvaU40?=
- =?utf-8?B?Rm54TG9UMTBwUFJtUkl0dmI1ZmhOVm1qaDhOenZnL1NmeFIrbmxHRWFRU2pi?=
- =?utf-8?B?T3JtRWxIQnkzRm5SMHBHQjdqTkJtNmVmYmdNY3Arem91QkpmOFlNK2NDaGVR?=
- =?utf-8?B?djFDQUdWQTgzbS9Oa01UK2d4cHhkVHZMeXd0RWF2Rjl5WC8xRGkxYUVncHE5?=
- =?utf-8?B?QjlZYVNZdUQzUmxHVzhoTDNWYlN3ZDIvMVBzb05VYlFkdjNSUjFzNUpNYnhK?=
- =?utf-8?B?bGQyakNjWDM0YVdXZUJhY1BpT3Z6VXhLSmtyUzdPbVhWd042aEl2b0hqWUNi?=
- =?utf-8?B?bEIvVzA5aUl6WkdUaWYxT1hid09neG02eURXMkxQeFNOKy90UlBDWWtoMGFX?=
- =?utf-8?B?alJCMkdTSlczWTFmem84cU9RY2UwVzNlRWdaYnljVStueE9NQ2J5bkxQYmVP?=
- =?utf-8?B?N2UwL3NOOGwyUEp1MnhZNUllSWRXWVZ5MVh3L0YxaGs2SVFSRGZOZkFrNmQ5?=
- =?utf-8?B?ejhEUUhsOHFOM3BuM2lndHFzcmE5RXhtTTNPY0xjNng1MGRCRWVWeFB3WDRq?=
- =?utf-8?B?cGdhSVNXTFNqay8xdU0zeDBwUFc4VVQ1eFlYV2t5TkpjQmM5ci96eU5aKytO?=
- =?utf-8?B?LzlWM2dKcWRoamNZdTA0YzhoVjd5RlFYMjlINTVtNmRTd0dDL1pxZEhlMnNW?=
- =?utf-8?B?TUZVQWhZMm1QQTZTNnBpak5Ud3BFU0RXNXczUFIxcnJvYkxFNEQ1SG5TbnFa?=
- =?utf-8?B?TW5RWnVCYVZWWHY1VGN1TnFEVEdkSUpTbGRxaStUaDhVNGtCUm9VaFhHazRF?=
- =?utf-8?B?TTBiM0JRcUphc1hUVVp6b2x2ZXh4MW5BR1QxdlRwNm1Xa3E4N2ZVSHRCWFBr?=
- =?utf-8?Q?bbt++fiugtISIeffMrOa02m+L?=
+	=?utf-8?B?bUZ6WmhoVTFOYjZWNnlhbTYxUnI4YXRXemVPSTE3bTBMN3JJOE1pSXlCNFF2?=
+ =?utf-8?B?T0lSTUsvbHlxMHBoaXEwTWZNOFA5UG9VYUlMYUtET3IrazU3b3FNaWVKTmd0?=
+ =?utf-8?B?elR2aEpuMnkrNlY0V2FtOHEwYVhNR0c1QUxmeW9zbUIrNTZvMnZlcVpIR2RH?=
+ =?utf-8?B?eXExK3JzL29OMUkwZlVGZnlpZ1A0Znh6TDFDczhMWm5qUUlGMWxoSGl3NUl2?=
+ =?utf-8?B?aU9YRkZsNnlITHg4YlBCWFlGNjdSSEdQdzAxZTRGdUpHaDdSSmZaZTErTjVF?=
+ =?utf-8?B?eEhFUjRwLzRGNVB5ZW1oWndGY2ErZ1RzUWdTekduWmlURElMdWlSOERTNFhL?=
+ =?utf-8?B?V0x2QTI2SFVJRHhaeVRkV05WYXFrWmF4OE04eFUwa1A1Y2hLa2IzRjdFNnE3?=
+ =?utf-8?B?dU9hcW0vd1RvYjJQQ0pjdEJrTHM4UkRkN1NjaHF1THhzSGtGL1lGK3hwRmlJ?=
+ =?utf-8?B?aVZmNkhhcDlkWDM2LzgzZ1pPNytZTysxd2lvMk1CVWxrRnRRMzBiakd4aU1G?=
+ =?utf-8?B?NjBobkNsNnBUQkF1dmN3NUNKVFNVdVBFeHRlcGRXSmlsa1dGTjI3eENhemQr?=
+ =?utf-8?B?UjFvQ0JjYUtjenJsTHhzcVVQS0ROSlQvUlRReEVVY2RKZEhmS2NSYlczYlQx?=
+ =?utf-8?B?ODJBVEt1QUsybkd3TWtKU2kxc1BrVHJTNDdpRnhHa1J5Y0IwYWRUWEE3eTZT?=
+ =?utf-8?B?cWxqcWZaeVJ2aWhvR3h2bll4dzVtZGZQZVdCZlhFMExqK29Hb0ZWNXpkRW10?=
+ =?utf-8?B?REtqTDBHZW1oV2lDdVR3SVFMUmRVUWgrbzBWVytqYlJ0S3hDUnNkQTNaYitH?=
+ =?utf-8?B?T2lYZjBKcE1ZR3h3eWVSSXRzS0dRSG9xVWdlV3JXMnpYVkJTdFdJY2hZK0FZ?=
+ =?utf-8?B?NXVmbUxNZHVOODYyMnB3SEFNYmp1VkFGcGt0dzRnTmlWWGxXZUpBdWkwUW9j?=
+ =?utf-8?B?SHJMT3pUU0Y2VVZWWFp6NGJVOWVyeUF1UXJqRHVRczluRGI3MHAwM2xSYUMw?=
+ =?utf-8?B?QXFpbWZVT1F6d3E2blh2VUVETkRDbWZsVEJRdldtZE1SV0lRcGF3TCtJWTRE?=
+ =?utf-8?B?aDV6NmQ3VUNVUnFqQmdiN0ZuTnE1OE1GOStFT0pzVUh0elRidkt2Q1Z6QlRt?=
+ =?utf-8?B?clRKTEt5ajVTZzBUUTRCQzZRSm9LVFRFUldxT1FJVjVESWs2c2xIRnlmbW8r?=
+ =?utf-8?B?ZTAvakphWjNuNEw5N1JweDkyMmhjaTl3aUVzdEJQZk0wblgraytRbXB0Z04r?=
+ =?utf-8?B?MzkzZDJkcDRCNlNHUlRFTGRqWVpKTXVOell2cWZJTE05bjJwaVpkbU9WY0VR?=
+ =?utf-8?B?ZVRzZWd5R3gvY1gvUFQ5VTJXREVxNWhOOUNxR2lrbkN3NE5HdmlTYnRKUE94?=
+ =?utf-8?B?MGZnVjhTOUZUZk5QelRRWWJZQzIybGpobDQ2SlZYbGdhWkh6Ui83eEhpN0l4?=
+ =?utf-8?B?WktBYlpWZk1xTm1qZUlwNXJzNUJzTlpBYXNhY1pFdVNGZkZ1Um5rVmY5eU1S?=
+ =?utf-8?B?WW9aaVlnOGUwZ0g0cGppMk5qQ29CR1p2K3BtR0hlVjNaRXBFVGVQTnl6WjlX?=
+ =?utf-8?B?dnNTOFpzSzVTbHM5OUo3cXpkWEZpRjZpbjF3NWJqeEk4RWJmRGVzODJOWWVs?=
+ =?utf-8?B?MWZJQ3FSeGFkUWNRamhuL0tKNHZOMGd5Uy9ZNjc0RUhJQ2hUcWdxdkVqOFpk?=
+ =?utf-8?B?UTd4Vm9UN3dWVmUxMXBRSXZobk9zM2VVR0RKTTZJTC95V2NkQWplaW9hN3hG?=
+ =?utf-8?B?cGwrOTIyYUNucW56MEZGRVh1VGd3Yk80ZGtRbEhkbGhxV1dIcEFieWxBU0pS?=
+ =?utf-8?B?SkNpb2VhR0NaK1NiWW1ZbkZPdkMyZkt0UmxSbURSaXVQMXoxeE5uMnhiNWI5?=
+ =?utf-8?B?b2tyVG5oVEZFbnNLRXErSkRwMHowUVpKenVFbUJvZUdnRlZJVWNRTG5kR3Bm?=
+ =?utf-8?B?MmM3WGRhUVllcm15L1E3K0prR1J5WnlLZFpYaFhGQnJIbXByRDRmcm9tVXFP?=
+ =?utf-8?B?dmt4NjkzUGRwN09UK3B4ZmRkTTNpa2habStWaEk5Q0VhS0VUUGdSQ3BtZU5m?=
+ =?utf-8?B?SmZZdmd0M2Z6ODhwcHN5Mzcrd2lQaVZoWDEySlRCcW1ITmh1dEc1RFR6VlBG?=
+ =?utf-8?Q?NfiZtTfGYB19QqYlHhSY9Plax?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ea72023f-9f38-4e61-e414-08ddd4a98ad0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3ac9b703-77b6-43eb-718d-08ddd4b708eb
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 05:24:40.0929
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2025 07:01:15.2872
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ex6j/NaxqqVTvdPSlNSxND9rPBryvyTZNHd4d5/3hmhcxPmNZ4yLUvlKzg6IL4UECis90/cC0vAhOUgwYHv7ZA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR10MB8893
+X-MS-Exchange-CrossTenant-UserPrincipalName: s12DBGn6Liuako3hVHDKesnPoc9GKr8ULf4yFUmRD5Q2axwK/MJ/pRQCxUyRcPYvZzK5ihiJNPKBXUw825sxZg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR10MB8874
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 06 Aug 2025 05:24:50 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19681
+ <cip-dev@lists.cip-project.org>; Wed, 06 Aug 2025 07:01:20 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19682
 
 On 06.08.25 07:22, Nobuhiro Iwamatsu wrote:
-> This adds config NO_KERNEL not to install the kernel select.
+> This adds an option to create an image that does not contain the kernel.
+> This is mainly intended to provide images for kernel testing.
+> When testing the kernel, kernel image files that are not used for testing
+> are not necessary in rootfs. Providing images with these files removed
+> allows you to reduce the size of the rootfs image.
+> 
+> wo_kernel is false:
+>   -rw-r--r-- 1 iwamatsu iwamatsu 351M Jul 25 17:31 cip-core-image-cip-core-bookworm-qemu-amd64.ext4
+> 
+> no_kernel is true:
+>   -rw-r--r-- 1 iwamatsu iwamatsu 275M Jul 25 17:09 cip-core-image-cip-core-bookworm-qemu-amd64.ext4
 > 
 > Signed-off-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
 > 
 > ---
-> 
 > v4:
->   - Update description for help.
+>   - Fix the NO_KERNEL check to 'enable' only.
 > v3:
->   - Add description for help.
+>   - Update commit message.
+> v2:
+>   - Use KERNEL_NAME instead of IMAGE_INSTALL:remove
+>   - Add build:qemu-riscv64-test-nokerne; pipeline
 > 
->  Kconfig | 8 ++++++++
->  1 file changed, 8 insertions(+)
+>  .gitlab-ci.yml             | 36 +++++++++++++++++++++++++++-
+>  kas/opt/no_kernel.yml      | 17 +++++++++++++
+>  scripts/deploy-cip-core.sh | 49 ++++++++++++++++++++++++++++----------
+>  3 files changed, 88 insertions(+), 14 deletions(-)
+>  create mode 100644 kas/opt/no_kernel.yml
 > 
-> diff --git a/Kconfig b/Kconfig
-> index e078892..3196b91 100644
-> --- a/Kconfig
-> +++ b/Kconfig
-> @@ -114,6 +114,13 @@ config KERNEL_6_12
->  	bool "Kernel 6.12.x-cip"
->  	depends on !TARGET_IWG20D
+> diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+> index 628e624..496a56d 100644
+> --- a/.gitlab-ci.yml
+> +++ b/.gitlab-ci.yml
+> @@ -28,6 +28,7 @@ variables:
+>    swupdate_version: default
+>    test_function: swupdate
+>    separate_home_partition: disable
+> +  no_kernel: disable
 >  
-> +config NO_KERNEL
-> +	bool "Do not install kernel to image"
-> +	help
-> +	  This does not build the kernel or install it on rootfs.
-> +	  This can be used when creating images for testing kernels that are
-> +	  built separately, e.g. via KernleCI.
-> +
->  endchoice
->  
->  config KAS_INCLUDE_KERNEL
-> @@ -123,6 +130,7 @@ config KAS_INCLUDE_KERNEL
->  	default "kas/opt/5.10.yml" if KERNEL_5_10
->  	default "kas/opt/6.1.yml" if KERNEL_6_1
->  	default "kas/opt/6.12.yml" if KERNEL_6_12
-> +	default "kas/opt/no_kernel.yml" if NO_KERNEL
->  
->  config KERNEL_HEAD
->  	bool "Head of selected CIP kernel branch"
+>  stages:
+>    - build
+> @@ -69,9 +70,10 @@ default:
+>      - if [ "${watchdog}" = "disable" ]; then base_yaml="${base_yaml}:kas/opt/disable-watchdog.yml"; fi
+>      - if [ "${security_test}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/security_test.yml"; fi
+>      - if [ "${swupdate_version}" = "2022.12" ]; then base_yaml="${base_yaml}:kas/opt/swupdate-2022.12.yaml"; fi
+> +    - if [ "${no_kernel}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/no_kernel.yml"; fi
+>      - echo "Building ${base_yaml}"
+>      - kas build ${base_yaml}
+> -    - if [ "${deploy}" = "enable" ]; then scripts/deploy-cip-core.sh ${release} ${target} ${extension} ${dtb} ${CI_COMMIT_REF_SLUG} wic; fi
+> +    - if [ "${deploy}" = "enable" ]; then scripts/deploy-cip-core.sh ${release} ${target} ${extension} ${no_kernel} ${dtb} ${CI_COMMIT_REF_SLUG} wic; fi
 
-Thanks, both applied.
+Another call site of the script below was missing. I've updated that
+now, result in next.
 
 Jan
+
+>      - if [ "${build_swu_v2}" = "enable" ]; then
+>            mkdir build/previous-image;
+>            if [ "${extension}" = "security" ] || [ "${extension}" = "ebg-secure-boot-snakeoil" ]; then
+> @@ -229,6 +231,38 @@ build:qemu-arm-test:
+>      target:  qemu-arm
+>      extension: test
+>  
+> +build:qemu-amd64-test-nokernel:
+> +  extends:
+> +    - .build_base
+> +  variables:
+> +    target:  qemu-amd64
+> +    extension: test
+> +    no_kernel: enable
+> +
+> +build:qemu-arm64-test-nokernel:
+> +  extends:
+> +    - .build_base
+> +  variables:
+> +    target:  qemu-arm64
+> +    extension: test
+> +    no_kernel: enable
+> +
+> +build:qemu-arm-test-nokernel:
+> +  extends:
+> +    - .build_base
+> +  variables:
+> +    target:  qemu-arm
+> +    extension: test
+> +    no_kernel: enable
+> +
+> +build:qemu-riscv64-test-nokernel:
+> +  extends:
+> +    - .build_base
+> +  variables:
+> +    target:  qemu-riscv64
+> +    extension: test
+> +    no_kernel: enable
+> +
+>  build:x86-uefi-secure-boot:
+>    extends:
+>      - .build_base
+> diff --git a/kas/opt/no_kernel.yml b/kas/opt/no_kernel.yml
+> new file mode 100644
+> index 0000000..7bba6a5
+> --- /dev/null
+> +++ b/kas/opt/no_kernel.yml
+> @@ -0,0 +1,17 @@
+> +#
+> +# CIP Core, generic profile
+> +#
+> +# Copyright (c) Toshiba Corporation 2025
+> +#
+> +# Authors:
+> +#  Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+> +#
+> +# SPDX-License-Identifier: MIT
+> +#
+> +
+> +header:
+> +  version: 14
+> +
+> +local_conf_header:
+> +  kernel-version: |
+> +    KERNEL_NAME = ""
+> diff --git a/scripts/deploy-cip-core.sh b/scripts/deploy-cip-core.sh
+> index 6e4dfd7..5647381 100755
+> --- a/scripts/deploy-cip-core.sh
+> +++ b/scripts/deploy-cip-core.sh
+> @@ -13,9 +13,10 @@ fi
+>  RELEASE=$1
+>  TARGET=$2
+>  EXTENSION=$3
+> -DTB=$4
+> -REF=$5
+> -DEPLOY=$6
+> +NO_KERNEL=$4
+> +DTB=$5
+> +REF=$6
+> +DEPLOY=$7
+>  
+>  BASE_FILENAME=cip-core-image-cip-core-$RELEASE-$TARGET
+>  if [ "${EXTENSION}" != "none" ]; then
+> @@ -29,6 +30,23 @@ fi
+>  BASE_PATH=build/tmp/deploy/images/$TARGET/$BASE_FILENAME
+>  S3_TARGET=s3://download2.cip-project.org/cip-core/$REF/$TARGET/
+>  
+> +if [ "${NO_KERNEL}" = "enable" ]; then
+> +	__BASE_PATH=${BASE_PATH}
+> +	BASE_PATH="${BASE_PATH}-nokernel"
+> +
+> +	echo "Rename from ${BASE_FILENAME}.* to ${BASE_FILENAME}-nokernel.*"
+> +
+> +	if [ -f "${__BASE_PATH}.tar.gz" ]; then
+> +		mv "${__BASE_PATH}.tar.gz" "${BASE_PATH}.tar.gz"
+> +	fi
+> +	if [ -f "${__BASE_PATH}.swu" ]; then
+> +		mv "${__BASE_PATH}.swu" "${BASE_PATH}.swu"
+> +	fi
+> +	if [ -f "${__BASE_PATH}.wic" ]; then
+> +		mv "${__BASE_PATH}.wic" "${BASE_PATH}.wic"
+> +	fi
+> +fi
+> +
+>  if [ -f "${BASE_PATH}.wic" ]; then
+>  	echo "Uploading artifacts..."
+>  	if [ "$DEPLOY" = "swu" ]; then
+> @@ -48,17 +66,22 @@ else
+>  		aws s3 cp --no-progress --acl public-read "${BASE_PATH}.tar.gz" "${S3_TARGET}"
+>  	fi
+>  
+> -	KERNEL_IMAGE="$BASE_PATH-vmlinu[xz]"
+> -	# iwg20m workaround
+> -	if [ -f "build/tmp/deploy/images/$TARGET/zImage" ]; then
+> -		KERNEL_IMAGE=build/tmp/deploy/images/$TARGET/zImage
+> -	fi
+> -	# shellcheck disable=SC2086
+> -	aws s3 cp --no-progress --acl public-read $KERNEL_IMAGE "${S3_TARGET}"
+> -	aws s3 cp --no-progress --acl public-read "${BASE_PATH}-initrd.img" "${S3_TARGET}"
+> +	if [ "${NO_KERNEL}" = "enable" ]; then
+> +		echo "The image does not include the linux kernel. Therefore, kernel related files will not be uploaded."
+> +	else
+> +		KERNEL_IMAGE="$BASE_PATH-vmlinu[xz]"
+> +		# iwg20m workaround
+> +		if [ -f "build/tmp/deploy/images/$TARGET/zImage" ]; then
+> +			KERNEL_IMAGE=build/tmp/deploy/images/$TARGET/zImage
+> +		fi
+> +
+> +		# shellcheck disable=SC2086
+> +		aws s3 cp --no-progress --acl public-read $KERNEL_IMAGE "${S3_TARGET}"
+> +		aws s3 cp --no-progress --acl public-read "${BASE_PATH}-initrd.img" "${S3_TARGET}"
+>  
+> -	if [ "$DTB" != "none" ]; then
+> -		aws s3 cp --no-progress --acl public-read build/tmp/deploy/images/*/"$DTB" "${S3_TARGET}"
+> +		if [ "$DTB" != "none" ]; then
+> +			aws s3 cp --no-progress --acl public-read build/tmp/deploy/images/*/"$DTB" "${S3_TARGET}"
+> +		fi
+>  	fi
+>  fi
+>  
+
 
 -- 
 Siemens AG, Foundational Technologies
