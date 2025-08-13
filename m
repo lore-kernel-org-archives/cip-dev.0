@@ -2,73 +2,224 @@ Return-Path: <Shivanand.Kunijadar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC08CA0EE5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD4DCA0EE7
 	for <webhook@archiver.kernel.org>; Wed, 13 Aug 2025 13:56:31 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.132])
- by mx.groups.io with SMTP id smtpd.web11.101460.1755093385198503130
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.web11.101459.1755093384848828723
  for <cip-dev@lists.cip-project.org>;
  Wed, 13 Aug 2025 06:56:25 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.132, mailfrom: shivanand.kunijadar@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1121) id 57DDuNbb1960539; Wed, 13 Aug 2025 22:56:23 +0900
-X-Iguazu-Qid: 2rWhiV7hVlpo0oQULY
-X-Iguazu-QSIG: v=2; s=0; t=1755093383; q=2rWhiV7hVlpo0oQULY; m=62Fg+57/QNWZid4qK+6S05TCWJad/tTH7wybexdROO0=
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.158, mailfrom: shivanand.kunijadar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 57DDuMwn3204235; Wed, 13 Aug 2025 22:56:23 +0900
+X-Iguazu-Qid: 2rWhiV7hVlpnw7lF9U
+X-Iguazu-QSIG: v=2; s=0; t=1755093382; q=2rWhiV7hVlpnw7lF9U; m=4FHe/cY9XB+F+bgQETDKQc87QAIALCJpKSYouB1OLwc=
 Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1121) id 57DDuMtx1699295
+	by relay.securemx.jp (mx-mr1120) id 57DDuLdQ3183670
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 13 Aug 2025 22:56:23 +0900
+	Wed, 13 Aug 2025 22:56:22 +0900
 From: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
 To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
 Cc: shivanand.kunijadar@toshiba-tsip.com, dinesh.kumar@toshiba-tsip.com,
         kazuhiro3.hayashi@toshiba.co.jp
-Subject: [isar-cip-core][PATCH v1 3/5] README.swupdate.md: Modify readme for kernel binary delta update support.
-Date: Wed, 13 Aug 2025 19:16:28 +0530
+Subject: [isar-cip-core][PATCH v1 2/5] Add delta update support for kernel binary update using rdiff_file handler
+Date: Wed, 13 Aug 2025 19:16:27 +0530
 X-TSB-HOP2: ON
-Message-Id: <20250813134630.3943194-4-Shivanand.Kunijadar@toshiba-tsip.com>
+Message-Id: <20250813134630.3943194-3-Shivanand.Kunijadar@toshiba-tsip.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250813134630.3943194-1-Shivanand.Kunijadar@toshiba-tsip.com>
 References: <20250813134630.3943194-1-Shivanand.Kunijadar@toshiba-tsip.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 13 Aug 2025 13:56:17.0801 (UTC) FILETIME=[0A8F0F90:01DC0C5A]
+X-OriginalArrivalTime: 13 Aug 2025 13:56:17.0723 (UTC) FILETIME=[0A8328B0:01DC0C5A]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 13 Aug 2025 13:56:31 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19731
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19730
 
 Signed-off-by: Shivanand Kunijadar <Shivanand.Kunijadar@toshiba-tsip.com>
 ---
- doc/README.swupdate.md | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ classes/delta-update.bbclass                | 33 +++++++++++++++------
+ classes/swupdate.bbclass                    | 24 +++++++++++----
+ recipes-core/images/swu/sw-description.tmpl |  7 +++--
+ 3 files changed, 46 insertions(+), 18 deletions(-)
 
-diff --git a/doc/README.swupdate.md b/doc/README.swupdate.md
-index 5308a50..b68b5b7 100644
---- a/doc/README.swupdate.md
-+++ b/doc/README.swupdate.md
-@@ -408,16 +408,19 @@ host$ ./kas-container build kas-cip.yml:kas/board/qemu-amd64.yml:kas/opt/ebg-swu
- ```
- The image is built with the RT kernel just so that there are some differences between the two images used. The above image will be used as the base image to which the update is applied.
+diff --git a/classes/delta-update.bbclass b/classes/delta-update.bbclass
+index ab11be5..d033df0 100644
+--- a/classes/delta-update.bbclass
++++ b/classes/delta-update.bbclass
+@@ -15,6 +15,7 @@ FILESEXTRAPATHS:prepend = "${TOPDIR}/previous-image:"
  
--## Delta Software Update using rdiff_image handler
-+## Delta Software Update using rdiff (rdiff_image & rdiff_file handlers)
+ DELTA_UPDATE_TYPE ??= ""
+ DELTA_RDIFF_REF_IMAGE ??= ""
++DELTA_RDIFF_REF_KERNEL_IMAGE ??= ""
+ DELTA_ZCK_URL ??= ""
+ DELTA_PREV_IMAGE_PATH ??= "${TOPDIR}/previous-image"
  
--Creating an delta update file for rdiff_image handler requires a reference artifact (against which the delta is computed). In this case, the image built in the previous section can be used as the reference artifact. By default the `DELTA_UPDATE_TYPE` is set to `rdiff` and `DELTA_RDIFF_REF_IMAGE` is set to the name `${IMAGE_FULLNAME}.squashfs` (or ${IMAGE_FULLNAME}.verity in the case of Secure boot enabled image). The values of `DELTA_UPDATE_TYPE` and `DELTA_RDIFF_REF_IMAGE` can be changed in the `delta-update.yml` file.
-+**Note**: Only `rdiff` supports delta kernel binary update using `rdiff_file` handler.
+@@ -24,8 +25,8 @@ def disable_delta_update_tasks (d):
+ 
+ python () {
+     if d.getVar("DELTA_UPDATE_TYPE") == "rdiff":
+-        if d.getVar("DELTA_RDIFF_REF_IMAGE") == "":
+-            bb.fatal("You must set DELTA_RDIFF_REF_IMAGE and provide the required files as artifacts to this recipe")
++        if d.getVar("DELTA_RDIFF_REF_IMAGE") == "" or d.getVar("DELTA_RDIFF_REF_KERNEL_IMAGE") == "":
++            bb.fatal("You must set DELTA_RDIFF_REF_IMAGE and DELTA_RDIFF_REF_KERNEL_IMAGE and also provide the required files as artifacts to this recipe")
+     elif d.getVar("DELTA_UPDATE_TYPE") == "zchunk":
+         if d.getVar("BASE_DISTRO_CODENAME") != "trixie":
+             bb.fatal("Zchunk based delta update is only supported from trixie onward")
+@@ -35,11 +36,13 @@ python () {
+ 
+ python do_fetch_delta_rdiff_ref_image () {
+     if d.getVar("DELTA_UPDATE_TYPE") == "rdiff":
+-        path = d.getVar("DELTA_PREV_IMAGE_PATH") + "/" + d.getVar("DELTA_RDIFF_REF_IMAGE")
+-        if not os.path.isfile(path):
+-            bb.fatal("No such file found: "+ path + ". Provide the required files at "+ d.getVar("DELTA_PREV_IMAGE_PATH") + " for rdiff based delta update")
++        rootfs_path = d.getVar("DELTA_PREV_IMAGE_PATH") + "/" + d.getVar("DELTA_RDIFF_REF_IMAGE")
++        kernel_path = d.getVar("DELTA_PREV_IMAGE_PATH") + "/" + d.getVar("DELTA_RDIFF_REF_KERNEL_IMAGE")
++        if not os.path.isfile(rootfs_path) or not os.path.isfile(kernel_path):
++            bb.fatal("No such files found: "+ rootfs_path + "," + kernel_path + ". Provide the required files at "+ d.getVar("DELTA_PREV_IMAGE_PATH") + " for rdiff based delta update")
+         else:
+             d.appendVar("SRC_URI", " file://" + d.getVar("DELTA_RDIFF_REF_IMAGE"))
++            d.appendVar("SRC_URI", " file://" + d.getVar("DELTA_RDIFF_REF_KERNEL_IMAGE"))
+ }
+ 
+ do_fetch[prefuncs] += "do_fetch_delta_rdiff_ref_image"
+@@ -47,18 +50,30 @@ do_unpack[prefuncs] += "do_fetch_delta_rdiff_ref_image"
+ 
+ create_rdiff_delta_artifact() {
+     rm -f ${DEPLOY_DIR_IMAGE}/${IMAGE_FULLNAME}.delta
+-    # create signature file with rdiff
++    # create signature file with rdiff for rootfs
+     ${SUDO_CHROOT} /usr/bin/rdiff signature ${WORKDIR}/${DELTA_RDIFF_REF_IMAGE} \
+         ${WORKDIR}/delta_interim_artifacts/old-image-rootfs.sig
+ 
+-    # create delta file with the signature file
++    # create delta file with the signature file for rootfs
+     ${SUDO_CHROOT} /usr/bin/rdiff delta ${WORKDIR}/delta_interim_artifacts/old-image-rootfs.sig \
+         ${PP_DEPLOY}/${IMAGE_FULLNAME}.${SWU_ROOTFS_TYPE} ${PP_DEPLOY}/${IMAGE_FULLNAME}.delta
+ 
+-    DELTA_ARTIFACT_SWU=${IMAGE_FULLNAME}.delta
++    DELTA_ARTIFACT_ROOTFS_SWU=${IMAGE_FULLNAME}.delta
+ 
+     # create a symbolic link as IMAGE_CMD expects a *.delta_update file in deploy image directory
+-    ln -sf ${DELTA_ARTIFACT_SWU} ${DEPLOY_DIR_IMAGE}/${IMAGE_FULLNAME}.delta_update
++    ln -sf ${DELTA_ARTIFACT_ROOTFS_SWU} ${DEPLOY_DIR_IMAGE}/${IMAGE_FULLNAME}.delta_update
 +
-+Creating an delta update file for rdiff_image (rootfs) and rdiff_file (kernel)  handlers requires a reference artifacts (against which the delta is computed). In this case, the image and kernel built in the previous section can be used as the reference artifacts. By default the `DELTA_UPDATE_TYPE` is set to `rdiff`, `DELTA_RDIFF_REF_IMAGE` is set to the name `${IMAGE_FULLNAME}.squashfs` (or ${IMAGE_FULLNAME}.verity in the case of Secure boot enabled image) and `DELTA_RDIFF_REF_KERNEL_IMAGE` is set to the name `linux.efi`. The values of `DELTA_UPDATE_TYPE`, `DELTA_RDIFF_REF_IMAGE` and `DELTA_RDIFF_REF_KERNEL_IMAGE` can be changed in the `delta-update.yml` file.
++    rm -f ${DEPLOY_DIR_IMAGE}/linux.efi.delta
++
++    # create signature file with rdiff for kernel
++    ${SUDO_CHROOT} /usr/bin/rdiff signature ${WORKDIR}/${DELTA_RDIFF_REF_KERNEL_IMAGE} \
++        ${WORKDIR}/delta_interim_artifacts/old-linux.efi.sig
++
++    # create delta file with the signature file for kernel
++    ${SUDO_CHROOT} /usr/bin/rdiff delta ${WORKDIR}/delta_interim_artifacts/old-linux.efi.sig \
++        ${PP_DEPLOY}/linux.efi ${PP_DEPLOY}/linux.efi.delta
++
++    ln -sf linux.efi.delta ${DEPLOY_DIR_IMAGE}/linux.efi.delta_update
+ }
  
- The build system looks for the reference artifact in a directory named `previous-image` in the build directory used for the build process.
+ create_zchunk_delta_artifact() {
+diff --git a/classes/swupdate.bbclass b/classes/swupdate.bbclass
+index b0b05d5..c18aaa9 100644
+--- a/classes/swupdate.bbclass
++++ b/classes/swupdate.bbclass
+@@ -15,6 +15,7 @@ inherit template
+ RO_ROOTFS_TYPE ??= "squashfs"
+ SWU_ROOTFS_TYPE ?= "${RO_ROOTFS_TYPE}"
+ SWU_ROOTFS_NAME ?= "${IMAGE_FULLNAME}"
++SWU_KERNEL_NAME ?= "linux.efi"
+ # compression type as defined by swupdate (zlib or zstd). Set to empty string to disable compression
+ SWU_COMPRESSION_TYPE ?= "zlib"
+ SWU_ROOTFS_PARTITION_NAME ?= "${SWU_ROOTFS_NAME}.${SWU_ROOTFS_TYPE}${@get_swu_compression_type(d)}"
+@@ -32,9 +33,14 @@ SWU_ROOTFS_ARTIFACT_NAME = "${@ '${SWU_DELTA_UPDATE_ARTIFACT}' \
+     if d.getVar('DELTA_UPDATE_TYPE') == "rdiff" or d.getVar('DELTA_UPDATE_TYPE') == "zchunk" \
+     else '${SWU_ROOTFS_PARTITION_NAME}'}"
  
--Copy the reference artifact to the mentioned directory with the following commands:
-+Copy the reference artifacts to the mentioned directory with the following commands:
- ```
- mkdir -p build-v2/previous-image
- cp build/tmp/deploy/images/qemu-amd64/cip-core-image-cip-core-bookworm-qemu-amd64.squashfs build-v2/previous-image
-+cp build/tmp/deploy/images/qemu-amd64/linux.efi build-v2/previous-image
- ```
- Build the second image with `build-v2` as the build directory with the following command:
- ```
++SWU_DELTA_UPDATE_KERNEL_ARTIFACT = "${SWU_KERNEL_NAME}.delta_update"
++SWU_KERNEL_ARTIFACT_NAME = "${@ '${SWU_DELTA_UPDATE_KERNEL_ARTIFACT}' \
++    if d.getVar('DELTA_UPDATE_TYPE') == "rdiff" \
++    else '${SWU_KERNEL_NAME}'}"
++
+ SWU_IMAGE_FILE ?= "${IMAGE_FULLNAME}"
+ SWU_DESCRIPTION_FILE ?= "sw-description"
+-SWU_ADDITIONAL_FILES ?= "linux.efi ${SWU_ROOTFS_ARTIFACT_NAME}"
++SWU_ADDITIONAL_FILES ?= "${SWU_KERNEL_ARTIFACT_NAME} ${SWU_ROOTFS_ARTIFACT_NAME}"
+ SWU_SIGNED ??= ""
+ SWU_SIGNATURE_EXT ?= "sig"
+ SWU_SIGNATURE_TYPE ?= "cms"
+@@ -58,6 +64,7 @@ IMAGE_TEMPLATE_FILES:swu += "${SWU_DESCRIPITION_FILE_BOOTLOADER}.tmpl"
+ IMAGE_TEMPLATE_VARS:swu = " \
+     RO_ROOTFS_TYPE \
+     SWU_ROOTFS_ARTIFACT_NAME \
++    SWU_KERNEL_ARTIFACT_NAME \
+     TARGET_IMAGE_UUID \
+     ABROOTFS_PART_UUID_A \
+     ABROOTFS_PART_UUID_B \
+@@ -68,7 +75,8 @@ IMAGE_TEMPLATE_VARS:swu = " \
+     SWU_FILE_NODES \
+     SWU_BOOTLOADER_FILE_NODE \
+     SWU_SCRIPTS_NODE \
+-    SWU_DELTA_UPDATE_PROPERTIES \
++    SWU_DELTA_UPDATE_ROOTFS_PROPERTIES \
++    SWU_DELTA_UPDATE_KERNEL_PROPERTIES \
+     "
+ 
+ # TARGET_IMAGE_UUID needs to be generated before completing the template
+@@ -163,17 +171,21 @@ python add_scripts_node() {
+ SWU_EXTEND_SW_DESCRIPTION += "add_swu_delta_update_properties"
+ python add_swu_delta_update_properties() {
+     delta_type = d.getVar('DELTA_UPDATE_TYPE')
+-    swu_delta_update_properties = ""
++    swu_delta_update_rootfs_properties = ""
++    swu_delta_update_kernel_properties = ""
+     if delta_type == "rdiff":
+-        swu_delta_update_properties =  'chainhandler = "rdiff_image";'
++        swu_delta_update_rootfs_properties =  'chainhandler = "rdiff_image";'
++        swu_delta_update_kernel_properties =  'chainhandler = "rdiff_file";'
+     elif delta_type == "zchunk":
+         zck_url = d.getVar('DELTA_ZCK_URL')
+-        swu_delta_update_properties = f"""
++        swu_delta_update_rootfs_properties = f"""
+                         chainhandler = "delta";
+                         url = "{zck_url}";
+                         zckloglevel = "error";
+         """
+-    d.setVar('SWU_DELTA_UPDATE_PROPERTIES', swu_delta_update_properties)
++    d.setVar('SWU_DELTA_UPDATE_ROOTFS_PROPERTIES', swu_delta_update_rootfs_properties)
++    d.setVar('SWU_DELTA_UPDATE_KERNEL_PROPERTIES', swu_delta_update_kernel_properties)
++
+ }
+ 
+ # convert between swupdate compressor name and imagetype extension
+diff --git a/recipes-core/images/swu/sw-description.tmpl b/recipes-core/images/swu/sw-description.tmpl
+index eeb8fc2..3d7898c 100644
+--- a/recipes-core/images/swu/sw-description.tmpl
++++ b/recipes-core/images/swu/sw-description.tmpl
+@@ -21,20 +21,21 @@ software =
+             properties: {
+                         subtype = "image";
+                         configfilecheck = "/etc/os-release@not_match@IMAGE_UUID=${TARGET_IMAGE_UUID}";
+-                        ${SWU_DELTA_UPDATE_PROPERTIES}
++                        ${SWU_DELTA_UPDATE_ROOTFS_PROPERTIES}
+             };
+             sha256 = "${SWU_ROOTFS_ARTIFACT_NAME}-sha256";
+     });
+     files: ({
+-            filename = "linux.efi";
++            filename = "${SWU_KERNEL_ARTIFACT_NAME}";
+             path = "linux.efi";
+             type = "roundrobin";
+             device = "C:BOOT0:linux.efi->BOOT0,C:BOOT1:linux.efi->BOOT1";
+             filesystem = "vfat";
+             properties: {
+                         subtype = "kernel";
++                        ${SWU_DELTA_UPDATE_KERNEL_PROPERTIES}
+             };
+-            sha256 = "linux.efi-sha256";
++            sha256 = "${SWU_KERNEL_ARTIFACT_NAME}-sha256";
+     }${SWU_FILE_NODES});
+     ${SWU_SCRIPTS_NODE}
+ }
 -- 
 2.39.5
 
