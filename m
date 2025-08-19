@@ -1,374 +1,512 @@
-Return-Path: <yoshitake.kobayashi@toshiba.co.jp>
+Return-Path: <chris.paterson2@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA12CA0EE9
-	for <webhook@archiver.kernel.org>; Tue, 19 Aug 2025 05:02:51 +0000 (UTC)
-Received: from mo-csw-fb.securemx.jp (mo-csw-fb.securemx.jp [210.130.202.129])
- by mx.groups.io with SMTP id smtpd.web11.1584.1755560454982128481
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7AE8CA0EEB
+	for <webhook@archiver.kernel.org>; Tue, 19 Aug 2025 13:09:23 +0000 (UTC)
+Received: from OS0P286CU010.outbound.protection.outlook.com (OS0P286CU010.outbound.protection.outlook.com [40.107.74.29])
+ by mx.groups.io with SMTP id smtpd.web11.13794.1755608962130896207
  for <cip-dev@lists.cip-project.org>;
- Mon, 18 Aug 2025 16:40:56 -0700
+ Tue, 19 Aug 2025 06:09:23 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key1.smx header.b=UAD+BlVt;
- spf=pass (domain: mail.toshiba, ip: 210.130.202.129, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
-Received: by mo-csw-fb.securemx.jp (mx-mo-csw-fb1121) id 57IMSNh7143536; Tue, 19 Aug 2025 07:28:24 +0900
-DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:CC:
-	Subject:Date:Message-ID:Content-Type:Content-Transfer-Encoding:MIME-Version;
-	i=nobuhiro.iwamatsu.x90@mail.toshiba;s=key1.smx;t=1755556074;x=1756765674;bh=
-	o+gZx/4Ifx2CiHRdpeqQlT6bAXeAf4UMbEP0X5mj388=;b=UAD+BlVtuqcBz+scZXtScp6lsVd/79
-	0sIbsc8s5kqrknI3KeWNmuH/BOyFp/EKG7JaymdVfaNKzXNCMMD7f2VYWF3d0g01A+2oQ3g9oZEa7
-	iLQV+dAM1fl6fedu5iz3Walc00UySk2uqk1+nH+mzsQXz5E/woisF3KGVx95JQoxVhDZlzgOF4P3R
-	3wvvgF7JudrK8pFgfzHXDER/hv1w0uA9yvZnSkSEUCe4tFP80sCLfS07EAO58sS7DE6cmLxCtwdkV
-	v5V/nfA5MKNKjnwixKC/2GZojdFTg49xvzvDbzDBrQi6+fu3h7xOrAiBMfMtZMceUQsO6r/KpbAEE
-	t9BA==;
-Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 57IMRriu873045; Tue, 19 Aug 2025 07:27:53 +0900
-X-Iguazu-Qid: 2rWhWAeBojNHTk5QeG
-X-Iguazu-QSIG: v=2; s=0; t=1755556073; q=2rWhWAeBojNHTk5QeG; m=3pQdzuMdbu7M6eW39ALV3qeIYbA71GbLh+DjPlKgfgM=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1120) id 57IMRoO6135278
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 19 Aug 2025 07:27:51 +0900
+ dkim=pass header.i=@renesas.com header.s=selector1 header.b=O4IoA8Ll;
+ spf=pass (domain: renesas.com, ip: 40.107.74.29, mailfrom: chris.paterson2@renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UdUHNMxW3oYjcRrN26JR8XPgRFiHXzYJqCvNDQjtIaXRIJ8QgmvlkSuNYnTcPb/nN2R9vabH9Ud8pm6qKqx6C1PnKR61pCi0wOQW7qtvvKH8A0AzD7JT6WOs5Aq9PgwvPpGWHcP7FCH42NG6fwizNqBN8tUpKFv5Mibfk0CArneKzDoBJGf7jUKsCHzUCMkU+R/W3IolbzaSmtKXEsdQ5ijUdSQZwAFNyjEXCybOp+GNprO/dek6DTY3m6UKBCtkYak+YukFUgGyW1u2s/ODyh7PtHNMLchXNzWQXnFjtrF+SlbN8PnnGx90KleLw7+SMzFDFcc8gwzKD5fNfTWP5Q==
+ b=wE4oyeZ+45v1x1VbF5wXspUml1RzfpxCGih/iNoV//zhcADpZaTxN44wOVitRJ4qSoRNNG42a6ipfW8ZZExvVlWC2xn2EYp+XQeCl4I70Mr4gJyJZPcWe2dj0Uxy9g1zGBn2b871qMB0QI/9AUtdEccSGcV81w9vEBvSNhXJxQgmeZo275A/RQwH7N2YOBhcNkxlLQMHeZkpYY42l6QBfafFrsQosvDtoS9fZ+qzbpBn87JrWH6pGJa1FXm7D/f7licHd9k/nxF/DZF4VYtWOcHlfYE2upGGkm7YbGYRtlarVn1mKE75hTAsxgjd22cIcydWCfmf1rtM/f1nd4pTFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AFmM9s8bKvLHaMevAy1QpJai+hTHB+mMYWtpDCJIU5w=;
- b=XmiEuo3ikFAf2rgD7dR15JSM3qaTNa0BOhDrO/AOz/JjYcaykP3MA0KR77Q+A/28VkhdUfI5sraNQKwC6WFEGm8Klm+k1nBsl5+Etx0QvQsPqVLPPAy09gcNzxpHfxt5Opl3wmjBCc88nCM2cl3bsEhy+ub11jpW6K7ihhhyruhQWhPXFNRx/Cf5Tmc0DMR7HBYApfZ2sIYc4XwDSJMLIgogPsiJva0KoyMKX3jdXvmHNxCrN9ghgD1EX7wwDEdUqa6Scgen/bi2IV5XiYvJJ62QxC0anxNUkkP+IDiZ/ZLhVxAXRJ2qAMkueUtaiZ108Szw8/cC4AbKQwpKGKf/Ow==
+ bh=G52Rk677flv2O8Zzvgb72rBiGpEpn3w4/RxBTj7wlmQ=;
+ b=B4rLBHuo7WANQ/GZcnpl7Ge6XfdImWdCVuwoW6ksYP2jhQn/49EbM/5J/H5vu1PfZa74Fy5eOXx3Rbq0voWnbgSY3pkaBcip5HAAlp5FORcuG0stuaAt0I8NZuLjAaHvfnBS3lMxKuGvOnQ2cMlMbRyH2k3TwEPk2Ialhq5vBEkDM4FmpMfRKKBe/L9azyCALDEwa+46N5CwpbI2XyPYBSUoZy9pU9Zc9LZqOm7Zl6sQm1gxHhTk9DA5edN55EePwlzcxfm+MZkoANfnFkVw6Q7rdDJdJJnBo0qg1KZGgEiYYPL7eFzYDGPdX6OeyXHyyBmoXuw9RUt9s/VYwcdb4g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mail.toshiba; dmarc=pass action=none header.from=mail.toshiba;
- dkim=pass header.d=mail.toshiba; arc=none
-From: <nobuhiro.iwamatsu.x90@mail.toshiba>
-To: <cip-dev@lists.cip-project.org>
-CC: <jan.kiszka@siemens.com>, <pavel@denx.de>, <uli@fpond.eu>,
-        <masami.ichikawa@cybertrust.co.jp>, <chris.paterson2@renesas.com>
-Subject: [ANNOUNCE] Release v6.1.148-cip45
-Thread-Topic: [ANNOUNCE] Release v6.1.148-cip45
-Thread-Index: AdwQjzkzj2jTkLGMTCSvaGUKrqWbNw==
-Date: Mon, 18 Aug 2025 22:27:46 +0000
-X-TSB-HOP2: ON
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G52Rk677flv2O8Zzvgb72rBiGpEpn3w4/RxBTj7wlmQ=;
+ b=O4IoA8LlkPixQBR4P6zk+lNVnQBBfJsiydpfJi7eKAhrwwPH8LYu9iOg7YJDE+W8kliCBDkY/mvDRN/CL9Jmb3DTUBkOItwESFpM1jKy5diaRw2QkAHWfN6lCCrVW8wkHg4RsWCuGeFiRJSRP3jj3bZZGkBG0RSLTXMfPL16f3w=
+Received: from TYYPR01MB15132.jpnprd01.prod.outlook.com
+ (2603:1096:405:1a1::10) by TY3PR01MB11789.jpnprd01.prod.outlook.com
+ (2603:1096:400:406::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Tue, 19 Aug
+ 2025 13:09:18 +0000
+Received: from TYYPR01MB15132.jpnprd01.prod.outlook.com
+ ([fe80::3fd9:f47c:79c7:a6c6]) by TYYPR01MB15132.jpnprd01.prod.outlook.com
+ ([fe80::3fd9:f47c:79c7:a6c6%7]) with mapi id 15.20.9031.023; Tue, 19 Aug 2025
+ 13:09:18 +0000
+From: Chris Paterson <Chris.Paterson2@renesas.com>
+To: "Shivanand.Kunijadar@toshiba-tsip.com"
+	<Shivanand.Kunijadar@toshiba-tsip.com>, Quirin Gylstorff
+	<quirin.gylstorff@siemens.com>, "nobuhiro.iwamatsu.x90@mail.toshiba"
+	<nobuhiro.iwamatsu.x90@mail.toshiba>
+CC: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"kazuhiro3.hayashi@toshiba.co.jp" <kazuhiro3.hayashi@toshiba.co.jp>,
+	"jan.kiszka@siemens.com" <jan.kiszka@siemens.com>
+Subject: RE: Effective QEMU devices usage for testing in LAVA
+Thread-Topic: Effective QEMU devices usage for testing in LAVA
+Thread-Index: AdwNI0Zo7YnIbeRzQ4KMFrrfEXZpJAD5cXeQ
+Date: Tue, 19 Aug 2025 13:09:18 +0000
 Message-ID: 
- <TY7PR01MB148182511FA1B0AC6AB88832BCD31A@TY7PR01MB14818.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
+ <TYYPR01MB151321574499D48D7E7119A7AB730A@TYYPR01MB15132.jpnprd01.prod.outlook.com>
+References: 
+ <TY3PR01MB11075A93846FA70A1AEB01145C735A@TY3PR01MB11075.jpnprd01.prod.outlook.com>
+In-Reply-To: 
+ <TY3PR01MB11075A93846FA70A1AEB01145C735A@TY3PR01MB11075.jpnprd01.prod.outlook.com>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-Mentions: quirin.gylstorff@siemens.com,nobuhiro.iwamatsu.x90@mail.toshiba
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mail.toshiba;
+ header.d=none;dmarc=none action=none header.from=renesas.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|TYRPR01MB12559:EE_
-x-ms-office365-filtering-correlation-id: 22bb80f6-3017-4741-8fd8-08dddea674bf
+x-ms-traffictypediagnostic: TYYPR01MB15132:EE_|TY3PR01MB11789:EE_
+x-ms-office365-filtering-correlation-id: c3daf781-b35c-4bd8-f126-08dddf219af0
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam: 
+ BCL:0;ARA:13230040|376014|366016|1800799024|7053199007|38070700018|8096899003|13003099007;
 x-microsoft-antispam-message-info: 
- =?iso-2022-jp?B?ajlIUmgvdy9Ienk2VDY1LzJIWlpVd0VlYWlWT1VvNmVKTHdmR3dLZk1z?=
- =?iso-2022-jp?B?OEJ5UDRrdzhJaVQzbzhhSkhsa2JGVkpYVFNFSkRyTU56RUgxbTcvbEhX?=
- =?iso-2022-jp?B?UnN1OE02R1d5OGJWT25wWDIyMzFpY1lDNk9FbllUTXZlaEswNlIyc1FH?=
- =?iso-2022-jp?B?WEJMWnVPOW4rRWlLaEZ4UDBLQ1oveWY3c1RKemhLLy92WHphSllGZWh3?=
- =?iso-2022-jp?B?eEtsVERudTZlL0VrNXF3bExDL080YVJhMUNxeCtFMXZmTDJwaTZZamxq?=
- =?iso-2022-jp?B?RVR1blU5VE1hbllUZ0JPUUFnQytrQWNTWFArMlJDYjNPNWxBa1B2TFR5?=
- =?iso-2022-jp?B?ZG1ZOTNkK2JhM2ZsY3o0OExka3ZlVktrNDJEYW5QcXFya3JDaDk2eFk2?=
- =?iso-2022-jp?B?OFRUU2ptbDN6ajM1Z01jS3ZES2ExSnVVZGhUYk5qS0c1U29aUk41cEZt?=
- =?iso-2022-jp?B?blRSZjlyNkhqNk1xZzZLWlRkT1dYS3VXWjhPcitYOEYzbGh3NGcxYWFk?=
- =?iso-2022-jp?B?dWlBUjRRditSYURUVStvL1ErQnBoeFYwZHpDZHBPYjZPVENFWEJ5MG1l?=
- =?iso-2022-jp?B?K2VnQUhJemNlZFFXMlFhM3BBTGwzQXZneEtkQnpnbTc0Y1RBYTZpQXpO?=
- =?iso-2022-jp?B?aFRSdWU1OFg5eDVMZG1BTXpXdnRieEpaaW9PT0JFdE5lRHdmRy9RMHBs?=
- =?iso-2022-jp?B?MmJNVnNYVm8ySGowT2U4Z09WbnFWMzlBaVQwVWNqR1hLSTRySzZPOXI3?=
- =?iso-2022-jp?B?K1Mrcy9DSzJrKyt3WGlpb21JRi9IaS9oMExEcnVlZ2ZidmovY3U5RXhR?=
- =?iso-2022-jp?B?VVNjK1ZWVS9IUTU1RWNvMFlkMnJHR3VaUXpFcWExM0RNaEZQQThubjFC?=
- =?iso-2022-jp?B?RHdpeFJ6YTU3N2lDam4yVWFrSUFJSDJQTmZZYTN3WXJXUStlRHdKeHlR?=
- =?iso-2022-jp?B?bXgreHcyMFV3RHMrY2dPV3F1RXBIU0hKeEt2Vm9UYWdqSDBVUHFoWkty?=
- =?iso-2022-jp?B?dmVWM3FqZXo0Ujdzejd6WktWUzI0NWVrK29mVjAxOE5qcHpGRkQzOVRw?=
- =?iso-2022-jp?B?ZStqT0ZxcTZGTzZ5eVRjamRXbEV5TWp1QUhiaHk4dWNqV3ppMG9FRDAw?=
- =?iso-2022-jp?B?Tno2cTd3bjA4VmtuUlY2cE1heWxhOHI4ZG5ER0pQWS9RT2lEWWd1ei8v?=
- =?iso-2022-jp?B?Skg5ZFFobEFoS0NhbTluek5YMXQwMFU3bEVMNDhJSlF5Qmh4K1poK2cy?=
- =?iso-2022-jp?B?Nlovam9zUnFPMkIxSDB0RjVFL3E0K0hicnQ4Rm5Kc1A4Uzl5K1VrVFFw?=
- =?iso-2022-jp?B?RlV1LzVLV3VWS1dQN2J1WmpYL1lQUlhVN0FXRWw1enZ5RCtwN3ZKVzNk?=
- =?iso-2022-jp?B?YU85MjFJdnJJdTlxRCtGQWtIRnZvait2UDBpVXBsWFgrZlBZTzlNNk9o?=
- =?iso-2022-jp?B?S0tlZXhpVk5IU0FSd2VGNVV2aDRNWGgzV2tMU1ZnZTZkNFdsOUE4a001?=
- =?iso-2022-jp?B?SEZEdVFqWHZiSi9PWE1EYXZSYkgvZzdsd29LZnVKbjdrR3N1VUI4dVJM?=
- =?iso-2022-jp?B?cndKYzhtT3E1QU1TaHIrT0dVdEd1QUtNSjYyOUlta0pwelhIbDlNdnhF?=
- =?iso-2022-jp?B?dk1NQllOUGVJVkdtTXhGa3ZjYXFPYzI0ZlZEMVRibkIwcXhnUUU3a1dw?=
- =?iso-2022-jp?B?VW9mMnFBcUxpaERtc3JHVmprVTVzWWFZYk5qZHIxUVN5bnV0c1hRSkRB?=
- =?iso-2022-jp?B?dlpWU1ljb1Avd2xmY29rbHRML3ZQNUtzaDJBakd4MWo2bTRXZzYyd2Fr?=
- =?iso-2022-jp?B?VGs4THJhWXFwSGNaTjNKTzFPckpUcjlkRDdTTXZOeGpmb0NxeU1rSmFM?=
- =?iso-2022-jp?B?NUF4NW5PY2Ric2lNTWlqckdscDl4SEZXUFdjTmY0dHlrajNXTTVEaE5O?=
- =?iso-2022-jp?B?WHY3b0lzRHhPQ1BMVHpuWlpqS0hKcEtNTEJXUUdMcW1FaXhaTUNHWENF?=
- =?iso-2022-jp?B?dTllOGRZaWtFbm9BYVRCenpMV08wTGp0azhUYTFvN1JQZ09uZ2p2eVlT?=
- =?iso-2022-jp?B?bjZKaHhsUUZnMFdyNzY5VHdQWGlLSE8xbWsvemd4YWhycUg0VXlML2lG?=
- =?iso-2022-jp?B?TzlZU0ZDZU9GRlRlRHFnMnJkVkxiK3AvdmdlUlgvUlRTdVdsaWVDYzlw?=
- =?iso-2022-jp?B?dUYwPQ==?=
+ =?iso-2022-jp?B?TVZqSFFtbUpiM3J6QndOVDlqUWpJYkdlbUEyQzc3T2xhdzVZQkloOXdZ?=
+ =?iso-2022-jp?B?N0Q3UkNSRlZGUU10KzR2Um5ZTkk1djUwL0xVeGdZbDFLbWpuVU82N1FY?=
+ =?iso-2022-jp?B?dWN4c3o0eDBnNWxBUnYxUk1XQ2lEb3ZRY0pUNWhRNUx1dWIvT1E1cWto?=
+ =?iso-2022-jp?B?WS90d0pVWkJiaDJYSWtSVEUvclkzd3kxM0tZZUNWSGFwZ1JvR3k0Ykxp?=
+ =?iso-2022-jp?B?S2kzK3JIaVRWckgwdkI4MkpaaUY2UXgzaGl4TVA4MVNYQTViSUVGT1VU?=
+ =?iso-2022-jp?B?VXcvY2dVU3R2K2dEUmxPNVBrdjA0NjJqaExsRFNDWnNYUk5ycTRXQWM1?=
+ =?iso-2022-jp?B?SDFPRERjV3pnQmhRTVR2dWthK01abWk0Z2NqRzRQWDNBQVRBYnRtRXhO?=
+ =?iso-2022-jp?B?TzlaZWZCd2JjeFBpS09JZ29rMUhOa042eVFSV1NQSlVOc0dBZHJaeG1h?=
+ =?iso-2022-jp?B?N1RDbzFnRnJpbWxUMUVCODJlc0txOUJSZDh6TktxYUx2cjhBNUpyTnNk?=
+ =?iso-2022-jp?B?T1FRaXBVLzFKODRGQTZVdXZBQzVZVXZTY0xHQ04xLzZUQ2xZU25jaXF5?=
+ =?iso-2022-jp?B?Y2J5bkdyTXNMeTM0cW5jOXRtVjVnZXJmY3BaeXFRREdSazlENndjZGYz?=
+ =?iso-2022-jp?B?TFVUeVBFVkExUzBwWTd5UHp6d0pQeWNtNkRZbE1jNGpvY1lrY3BtdEsr?=
+ =?iso-2022-jp?B?T0JmdXVuL2JYK3FFZ1dCc3RwUEpYc1VKN2dna3JMUy93Y3UzdWVzOFZX?=
+ =?iso-2022-jp?B?TWtSME4xVm9ncUdlRGIrZDFNK1pWL3B2N1RSZkpvbUlmbW9adzJrR1dm?=
+ =?iso-2022-jp?B?eG0zV2REWGMyemNGeGVYaTk5QjdIRXJiaUdNY0hOMmNVaXRObDFSUFk5?=
+ =?iso-2022-jp?B?TmxicDBlUld5TWJ5eXZMOHBxRGRWUzJ4aFJmdkxla1ZpLzlNRmNST0Q4?=
+ =?iso-2022-jp?B?NGhrT2tuWGVHRk9yb1FnNFErS0REU2NEcXJrVmhtMTQxcVF1b2dxQ01t?=
+ =?iso-2022-jp?B?dnRORUs4L2w3WllaM2pNQXo0UUJJb29yN2FXMXBFSURrUDFYeXRsc1kx?=
+ =?iso-2022-jp?B?TWM3WHZqT2Z3ek9TREhLNjQxMGRVRGhja0I4Y3hrWjZJRXZGRHJvSkxh?=
+ =?iso-2022-jp?B?L1NLSUlxQ2JOYnBSUkpUeSt6ZGNOakpqNmFwYUw1MFMvdG42MnpIVURv?=
+ =?iso-2022-jp?B?Rm5sQ2MybUdDYTJRUDcwcldaOXBzTHR6bzh0Q3gydlNzZmdXalhPRzdu?=
+ =?iso-2022-jp?B?bTNWN2VUYzVFMjZyWm1FaTJvOTl0QjIrYkYwNjJoWVBoMFgvUEcva0lG?=
+ =?iso-2022-jp?B?eldoQmkvVkpsQ0JwYnZDOUJaOFZwU0tQWDR0TEk3TERMaXoyN1VHS20y?=
+ =?iso-2022-jp?B?NmZiYTJDNkVoaENsNmFhdXJDNFdNdFk3Vm1tR25JQXdCenplSjkrRVhx?=
+ =?iso-2022-jp?B?RWhYaWpNczFxYllBZHZDTFlVZ05Fd25CQkhPK1lHNzFZNis0dUptNnd6?=
+ =?iso-2022-jp?B?L1B5OWs4TDVIRXhZY2M4cmNvQjY1Snlaeld4K1JRVjdwUnhNT0VUOTV1?=
+ =?iso-2022-jp?B?cVlIeklqd2xUa0lBNjA0T1M0RktGWitvWnJpcXJ0OE1ZZ21FK2c5b1lz?=
+ =?iso-2022-jp?B?MVR5SmdtWVhRelE3M2M3eStZSmk2ZHJKM0hRcGxyS0tTdmphWC9pUm1x?=
+ =?iso-2022-jp?B?UElENHg0ZDIzbHFVSWhIdWxiQTdPVEM1OE1QbFJhL1lqWTk1R0M4VGlY?=
+ =?iso-2022-jp?B?blFiQ29ielpDL1BIaTZZYXJ0c3RXMHRscVAyaGJ4emVQaHk2SzRhWGlP?=
+ =?iso-2022-jp?B?elJhdmcwaDQ1RzM1UnZBWEd1d005QlBqNG14UWYyUldtb2gyY1Fkd3lr?=
+ =?iso-2022-jp?B?Lzhaa2M0dElhQnVuV3lqVEE0MUNFdE5iZldLS3VGS0VUSVBLOW1mL0hK?=
+ =?iso-2022-jp?B?djQwK2MzRHVIWVJDd2lyVFd3NGh3Rm5pM1JnVzFkblRDWlBSdjcvOGN0?=
+ =?iso-2022-jp?B?blRnc090dyt0Vy9SQSt0UDROMEx2NDBEVDRvMEpSODdRSTRvaHJ6Vkh2?=
+ =?iso-2022-jp?B?QmhvZVdjN0ZsYnAzZkhrM0lyY2paY1U9?=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYYPR01MB15132.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007)(38070700018)(8096899003)(13003099007);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?em9FVU5CbEcvakNzQjhaVndLSHk3WjVTNk5KSnVXR0lxZmN4QmJTdUtx?=
- =?iso-2022-jp?B?UkpiTHpDS2ZGV0s1aFFXWktsS2hBRVp6bk5aaitidlZNdnR6dWVpNlBS?=
- =?iso-2022-jp?B?cnZMQ3FyZ0FHWmIrNkM3azYvODQ2QXZuUXVQVHh5MXBzd0QyK0h6Y2pE?=
- =?iso-2022-jp?B?QlN0UG5WWlIvMTViOFV1a1Y4dUJ0NVdaeS92STNWd0UySVpqZDIwb2Fv?=
- =?iso-2022-jp?B?YWduUGxta3d5SjlUQm1DQlQwVmpVRjhhUzUraGVGL1ViZUcyWHY0YkJU?=
- =?iso-2022-jp?B?QXZCMjNmVTdrc0NtMml4Y3FoM0JtTVI4Zmw5dkwyQjhTWmRBU1NZT25z?=
- =?iso-2022-jp?B?WGp1bDBOb0xmMzVWSC92cUFYUjJlaXFWcnhxTGFwQkw3dnBMVWZsd3lo?=
- =?iso-2022-jp?B?NUdUMERnZVNBREJJUlpKYnd5UXJFMG1ZVHNuYlB2dHE1cm5SUHFlYktQ?=
- =?iso-2022-jp?B?aEFuMzJjMUU5OUY4YzliREdCa2pYa2l3WXZOeUJLaGxKeVEyMGMvUG54?=
- =?iso-2022-jp?B?WTIrY3RXdGNhRkorcENhaXJaN3ZiTTV2bTRVUFJqVzFMT2Z4bG0wYVVM?=
- =?iso-2022-jp?B?ZjU1NUZWb2FLWGRVejNjWG9sd2c2QnRmR1B0QWRlT0FreFVFMytlMG9i?=
- =?iso-2022-jp?B?OEFFNk9NTjlsdWR4dzU5MzhFZE9HYktnTE1RdG5IbU1OU3F1U1ZLU2hV?=
- =?iso-2022-jp?B?Tkloa29pL0ZaMCs0UmxVMGxFV1RTL3puMjRiUEVwRnA4dGRoS0JhdXlz?=
- =?iso-2022-jp?B?aW5VbDU0dnJTU01BS3hXUmV6UFVPdmFJL1dZb3Q3S2JzT3pVU2szRnpl?=
- =?iso-2022-jp?B?MGs0dFBwR2JNbzlHZHJraENlNGV1dHdGREVxNGZFcDRsSmtJUmRMNDVp?=
- =?iso-2022-jp?B?Y0ZvRmx0M2FXWGwzb1U3UlIwcHh6ZXZnc2V5SHpnT1ZtdjZ4bk8yNmYz?=
- =?iso-2022-jp?B?NGxUNW00Zm13MjAxRGd4bjJudVk4Q1lRQUhva0NMOU5GSkU4ZE9Vb1p2?=
- =?iso-2022-jp?B?dm9Za1hSRmZSNk9LY3FJNEdLYkMzK3BoOEN1QTBzdGNvUHpvdkxRUmt1?=
- =?iso-2022-jp?B?dXNiZm91VERpeWV6NHNDNWR1dkNJN3ByT1p5Yyt3Y3llR2IvOE45YkNu?=
- =?iso-2022-jp?B?L2hLN2cwMDFqK0RaVE9URDNpbjhRZmVTOUVyZ1JYMVp4NERvNHVzTUUy?=
- =?iso-2022-jp?B?a0dNT0lXV1BtMWNzOE5NMlV3MGovR2NzWjg0L013S0xwcW1IUWR2UVBI?=
- =?iso-2022-jp?B?eElXb1lha3pzUGdHVWRvenY1MXduUlFUTExJSWFHTkMvUU40S3hydUtm?=
- =?iso-2022-jp?B?L3VyZkNuRnNHTENaYzNNZ1BOckxlVzNQYVhxdHVXQWhiSGpMaEVvK2dp?=
- =?iso-2022-jp?B?WEFnRlpZUnhRTCtydmNaOG1ZK3pvajFWcEdPQzdaQzViREViV3RNd1J1?=
- =?iso-2022-jp?B?K2NqTW54VVBhS1N0emF2MGFRUnNReEM5OFJ4akpYZTJ3WWQyRWUvWFU1?=
- =?iso-2022-jp?B?enQzN0ZiN2lUMk4wa0ovT1dzZ2JmenJWZ0UxdXliZVpJZGpSeW5QbmhK?=
- =?iso-2022-jp?B?c0VJYktIMnQ5eHZpRVU3UDIvZlM1VGRDWEo4WUpvM25WckN3S1R0MmhK?=
- =?iso-2022-jp?B?SnRhaHdSKzIyWFNRd3VBM0NVQWpwMzdjQ0J5eUNRelljNjJnbjRaVG14?=
- =?iso-2022-jp?B?WFhNeEt4dk9iS2hidVdnQ3laMGljK0g4TW1XSGlmaUxyZGYxT0pXdWxp?=
- =?iso-2022-jp?B?QmRSM09hUjR5UE0vUmtRSmRpVXR3b1AzZ0pwK1U0aUh0QkJjMnVJSXNC?=
- =?iso-2022-jp?B?Wnl3bzQ4QlJrT0E0NldUM3lReS92MUxTTDVKdDRvTGtxRUJiWityKzJk?=
- =?iso-2022-jp?B?L1pvNXBWc0dpWDBiaDd3RXJIUVFzUG13YTl2L3pJem1yMXdDMFZ5UHdu?=
- =?iso-2022-jp?B?d25xbW5Ra0RsVWlGeVVrbWYyOVk0ZnBiS1hqYWowc3lxQjNrSHd0L3VQ?=
- =?iso-2022-jp?B?dVZVanpENWRYOW1tQzJFcTI1eG92dHFvazcyRmRLYkg1eW9zTkRXeUgx?=
- =?iso-2022-jp?B?VmY1aHpVdnRjT0oxSTBBRCtoTk80ZEpOOThaaXQ4ajhvUjVJN1dBblds?=
- =?iso-2022-jp?B?dkR1OTlqTFJoeGhsQkt4NDZDekVnb1FGbk8wRnZkRWZ5bFM3OXhFV1ZQ?=
- =?iso-2022-jp?B?dUhndm13VGZiTDlBWTUvVnlXQnVsa1lKRHg3UEVZMjRxSGxaZ0pMbC9C?=
- =?iso-2022-jp?B?MHhaYnZwdHFBdXBIRkxDcFR4RTI2Y09LQlNETzg0NzZwcDBtTDIxSHhz?=
- =?iso-2022-jp?B?VVN3dVRhOVgrZmJlOGpCMnVwZUprOERxbVE9PQ==?=
+ =?iso-2022-jp?B?bFA0eitFZllQY1cycTJSZzgzSk9ZWXZLZG5aWDE0MzRXdlZXa2NqUUIr?=
+ =?iso-2022-jp?B?eE1sV29iYUhlakVXSy90V01WWms1RW9mZTE3WVFYd1BvaHhOLzhxeFFI?=
+ =?iso-2022-jp?B?ZGlnd0FrbzByWEFNeUJBYkpXeGdSVnlBKzEzVGxBWTYxM0JxSEpiTi8y?=
+ =?iso-2022-jp?B?OWNvYU5nNWVkZk9qeXZLTUs5L0tZeTZaVFFicVJWY1k1bUwwNmFrSU85?=
+ =?iso-2022-jp?B?TFAxc0xFOGhvRzhSSDRyM2QrOTZNT3B5SnZZTHFXdmZkTDdML2k0U2dI?=
+ =?iso-2022-jp?B?RGQzZXB3TVhySGxZcCtla2VGcDNlZ2krL1FMSU1DeW9ZaVF4Zmh4QW9W?=
+ =?iso-2022-jp?B?RDFYVnFvSC9kTlV1VUVLZWozZlRLamFTeUgzUnQ3UldmOUNneUVzN3Zi?=
+ =?iso-2022-jp?B?K2t2Ymw0R3NLUVBtdHM5Tzk0d1dQNzJZUm1lazlQZVlpcmJXNmM5SEQz?=
+ =?iso-2022-jp?B?WW0waFdLOCtBRVNGMng0VG1QU3RzSGJXUk5sN1UvOUJkNm9aSG5vdWU5?=
+ =?iso-2022-jp?B?aldWYlJUTFZGcjFqNFBsenQ2bFdQQ3V1R0ZGTEhIVncwUXJ5RThISmVy?=
+ =?iso-2022-jp?B?M1VRZVg1ZENveTVaYVhCMVI0TlF3RGtiZm1DUXplOENSL3JldC95d2FQ?=
+ =?iso-2022-jp?B?aDEreDVEaTJDQ2VlWlBkMHVCU0pFbHNwZFlIdVUwVUg1c0xBaTJHc1BH?=
+ =?iso-2022-jp?B?UGZveXl0Z2JBckZRTHJESTNIMVpjTGJkSWl5bWp0VzJoL3NwQlE1RVdT?=
+ =?iso-2022-jp?B?THdBMi9DYzduWm1XZlErTUYyd1VYTWVtR0h0RlF1NlRqdEtzZEg0dlBH?=
+ =?iso-2022-jp?B?dk5UQXlsTDNPOHc4b0pqMjQyczNFdHZRVjRMZzBPZk1iOHIrR2FmT1dm?=
+ =?iso-2022-jp?B?bnRORG8zQ01iemlMV0dHdlZWSkI0MUJuOVdoR3RhS2ZhdWpXUVZhTmxY?=
+ =?iso-2022-jp?B?OEk1WnI0QlZSdHVaN25MTk5EcFliUDlJdDBFeFVIV2xsaE1QQjIzbXh1?=
+ =?iso-2022-jp?B?VldldURJNWN1OCsvaFh1aVJjOHlmTGQ5eTdVQ2hGL2hHdjNSREM3OEJn?=
+ =?iso-2022-jp?B?R1RLNldtbEdyQlpEUmxVcWkxSTFCYjRkS0JNM3hkY1E5ckRnWHdpTDYw?=
+ =?iso-2022-jp?B?T1FyWnZyall3RTJ1Y2tlVkE4Z0FyZnkvWE02VHNDckl4MWZzaU5IT1B3?=
+ =?iso-2022-jp?B?Vm45NzRnRVIwd2NVNjlialMvQk5xRmpTQ1ppYUhLNklReEEzNVVDSVZH?=
+ =?iso-2022-jp?B?TkEzZGhrWnZ4N3lheE92RDFPN0N3L2VWeWF0UGNRQkNCSlF2ekl2U0sr?=
+ =?iso-2022-jp?B?NEJKcFRyWlE0WHRUUWhxVlBvaFdIT05pR2xKSSsvYkJTZEVzTC9BbE5y?=
+ =?iso-2022-jp?B?cHBudEJWQjlCcXdwR2diV1NScWVXKzhiSDdvUGl3VkNXOXI0bFkrUUtD?=
+ =?iso-2022-jp?B?aVRqa1FFSmNFT255Tzk1RXN4dzBYR3B6cEhhWkFteW52bmp0ZkZTQk5E?=
+ =?iso-2022-jp?B?TlVHSTBiM0hPLzN3Nm1TL1Rpd3MrUXdobTZZWDBRb1dRWEhKdHRkMjA3?=
+ =?iso-2022-jp?B?Rmhzc2xPeC9CbWlsT0Q2R0lDc0JVUERET3pQWFRBQlRaeG83UjV3S3pa?=
+ =?iso-2022-jp?B?T0llYVNZRWVXYURma1FiS2pTYk45UGRaRVhsZEFJVS9ZdUNtSFhyTCtx?=
+ =?iso-2022-jp?B?eEpKbmRXTlZaN0UrTzN1aTdKTHBJTXNqUWRDcmh4OXpYYjJHVEg2eWVw?=
+ =?iso-2022-jp?B?L09LcDFrbXBVeHBDVmRZZ1p1Mm96ZWg0Q05mSmUzSElUUTNnMFNtTW1H?=
+ =?iso-2022-jp?B?dWhKektzOWlsWHlxeDBac3Z2YnJ5UGZ4aklydC8yUHA0NjVXSi96OEpQ?=
+ =?iso-2022-jp?B?VWVvdXQwdjVQWklvOVFUTTJzbDlXR0xRQ1ZCSGVlOFIzdGlMMG04NVVQ?=
+ =?iso-2022-jp?B?SUVsTnY4Y0phVGtyUm1IUXVHY21McWczQlVnRjdHZVl3TTV2UVRZSTBs?=
+ =?iso-2022-jp?B?RG1DOUZyckR5dHR4QlBDQVBLajk0cmVFR0tHcVBHS05xUTAzd1RsQjg3?=
+ =?iso-2022-jp?B?c0hZNXdDYjNaZGRxOTBkbXk2VGxkVTdpNHAwWjMwM2liZlhack1rM0dT?=
+ =?iso-2022-jp?B?bEtvcnVDTUI4NURLV1FoK29YMWdsanBvaHBUajdSY1NQZGREL3FhQmFn?=
+ =?iso-2022-jp?B?RzkzeXljK0NmRnEzVFNIMFoyQklYM0J3bk56Z2VZNWlpV2VBMnN6Zmpk?=
+ =?iso-2022-jp?B?MVVLTjdzUFpZTDJoaTBnTWcvc1NYV1FjcjVJM2RtS01DbkRZNmtsOHkz?=
+ =?iso-2022-jp?B?d1prbFpuMjhENGJSeklGQll3dnh5cEpOU3c9PQ==?=
+Content-Type: multipart/alternative;
+	boundary="_000_TYYPR01MB151321574499D48D7E7119A7AB730ATYYPR01MB15132jp_"
 MIME-Version: 1.0
-X-OriginatorOrg: mail.toshiba
+X-OriginatorOrg: renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 22bb80f6-3017-4741-8fd8-08dddea674bf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Aug 2025 22:27:46.0901
+X-MS-Exchange-CrossTenant-AuthSource: TYYPR01MB15132.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c3daf781-b35c-4bd8-f126-08dddf219af0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Aug 2025 13:09:18.2831
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: QcwYjKdWiG6rU7ktFjtZn+RtDnnYLmgmy3Xj87OWdWu/wU056kNftkckX/7KeCn0FkM9VaLLbRKw9p8zqqd8oSGJRzi7cCdmHJI16hRW2/fb9tYHplXJws5i+GHAAIRB
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB12559
-Content-Language: ja-JP
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-userprincipalname: dcLDBEYXo0g+Bd5ZJnqmPBr21aBvVw/TGUBhzb/nYeAxf9GWNCdIs2F3Z81m5b99VHLccp9DUN6UXN5y7JUVbFhbgVOmkytvgk4qSHDfGSs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB11789
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 19 Aug 2025 05:02:51 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19763
+ <cip-dev@lists.cip-project.org>; Tue, 19 Aug 2025 13:09:23 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19764
 
-Hi all,
+--_000_TYYPR01MB151321574499D48D7E7119A7AB730ATYYPR01MB15132jp_
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 
-CIP kernel team has released Linux kernel v6.1.148-cip45.
-The linux-6.1.y-cip tree has been updated base version from v6.1.145 to v6.=
-1.148.
-This release adds CANFD and Clock updates for Renesas ARM64 kernel SoCs.
+Hello Shivanand,
 
-Information about this release is as follows:
+I=1B$B!G=1B(Bve enabled these tags and the required user_commands for qemu-=
+patersonc-02.
 
-  v6.1.148-cip45:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-6.1.y-cip
-    commit hash:
-      4d0a8db08c739a7353c078fbdcce2a2e7e5b7363
-    fixed CVEs:
-      CVE-2025-38467: drm/exynos: exynos7_drm_decon: add vblank check in IR=
-Q handling
-      CVE-2025-38437: ksmbd: fix potential use-after-free in oplock/lease b=
-reak ack
-      CVE-2025-38458: atm: clip: Fix NULL pointer dereference in vcc_sendms=
-g()
-      CVE-2025-38459: atm: clip: Fix infinite recursive call of clip_push()=
+@Quirin Gylstorff<mailto:quirin.gylstorff@siemens.com>, @nobuhiro.iwamatsu.=
+x90@mail.toshiba<mailto:nobuhiro.iwamatsu.x90@mail.toshiba> please could yo=
+u do the same for lab-cip-siemens-prag, lab-cip-siemens-muc and lab-iwamats=
+u?
+
+To do this, please update the qemu machines your boards.yaml with the follo=
+wing:
+
+    raw_custom_option:
+
+    - "{% set user_commands =3D {'start_tpm': {'do':'\"/usr/bin/sh /usr/loc=
+al/bin/swtpm_start.sh\"','undo':'\"/usr/bin/sh /usr/local/bin/swtpm_finish.=
+sh\"' },'manual_kill': {'do':'\"/usr/bin/pkill -15 swtpm\"'}} %}"
+
+    tags:
+
+    - sw-update-testing
+
+    - swtpm-jobs
+
+
+Thanks, Chris
+
+From: Shivanand.Kunijadar@toshiba-tsip.com <Shivanand.Kunijadar@toshiba-tsi=
+p.com>
+Sent: 14 August 2025 14:59
+To: Chris Paterson <Chris.Paterson2@renesas.com>
+Cc: cip-dev@lists.cip-project.org; kazuhiro3.hayashi@toshiba.co.jp; jan.kis=
+zka@siemens.com
+Subject: Effective QEMU devices usage for testing in LAVA
+
+Hello Chris,
+
+Hope this message finds you well.
+
+As you may know, the CIP security images uses swtpm package for booting the=
+ devices on QEMU.
+we have added a separate tags to devices like =1B$B!H=1B(Bsw-update-testing=
+, swtpm-jobs=1B$B!I=1B(B.
+This makes the LAVA job specified with these tags will run only on the devi=
+ces which are assigned with these tags.
+
+I had a look on the list of QEMU devices on the current LAVA lab, I observe=
+d there are many QEMU devices which are not assigned with these tags.
+Example:
+https://lava.ciplatform.org/scheduler/device/qemu-04
+https://lava.ciplatform.org/scheduler/device/qemu-board
+https://lava.ciplatform.org/scheduler/device/qemu-cip-siemens-muc
+https://lava.ciplatform.org/scheduler/device/qemu-iwamatsu-01
+https://lava.ciplatform.org/scheduler/device/qemu-patersonc-02
+
+It restricts most of the CI jobs to use only the devices which are associat=
+ed with these tags.
+So if we update the same tags for other QEMU devices which provides more nu=
+mber of devices to CI which will eventually speeds up CI pipeline execution=
 .
-      CVE-2025-38441: netfilter: flowtable: account for Ethernet header in =
-nf_flow_pppoe_proto()
-      CVE-2025-38457: net/sched: Abort __tc_modify_qdisc if parent class do=
-es not exist
-      CVE-2025-38510: kasan: remove kasan_find_vm_area() to prevent possibl=
-e deadlock
-      CVE-2025-38464: tipc: Fix use-after-free in tipc_conn_close().
-      CVE-2025-38546: atm: clip: Fix memory leak of struct clip_vcc.
-      CVE-2025-38542: net: appletalk: Fix device refcount leak in atrtr_cre=
-ate()
-      CVE-2025-38444: raid10: cleanup memleak at raid10_make_request
-      CVE-2025-38462: vsock: Fix transport_{g2h,h2g} TOCTOU
-      CVE-2025-38074: vhost-scsi: protect vq->log_used with vq->mutex
-      CVE-2025-38455: KVM: SVM: Reject SEV{-ES} intra host migration if vCP=
-U creation is in-flight
-      CVE-2025-38503: btrfs: fix assertion when building free space tree
-      CVE-2025-38461: vsock: Fix transport_* TOCTOU
-      CVE-2025-38465: netlink: Fix wraparounds of sk->sk_rmem_alloc.
-      CVE-2025-38460: atm: clip: Fix potential null-ptr-deref in to_atmarpd=
-().
-      CVE-2025-38067: rseq: Fix segfault on registration when rseq_cs is no=
-n-zero
-      CVE-2025-38513: wifi: zd1211rw: Fix potential NULL pointer dereferenc=
-e in zd_mac_tx_to_dev()
-      CVE-2025-38543: drm/tegra: nvdec: Fix dma_alloc_coherent error check
-      CVE-2025-38456: ipmi:msghandler: Fix potential memory corruption in i=
-pmi_create_user()
-      CVE-2025-38516: pinctrl: qcom: msm: mark certain pins as invalid for =
-interrupts
-      CVE-2025-38512: wifi: prevent A-MSDU attacks in mesh networks
-      CVE-2025-38445: md/raid1: Fix stack memory use after return in raid1_=
-reshape
-      CVE-2025-38364: maple_tree: fix MA_STATE_PREALLOC flag in mas_preallo=
-cate()
-      CVE-2025-38466: perf: Revert to requiring CAP_SYS_ADMIN for uprobes
-      CVE-2025-27558: IEEE P802.11-REVme D1.1 through D7.0 allows FragAttac=
-ks against mesh ...
-      CVE-2025-38443: nbd: fix uaf in nbd_genl_connect() error path
-      CVE-2025-38448: usb: gadget: u_serial: Fix race condition in TTY wake=
-up
-      CVE-2025-38515: drm/sched: Increment job count before swapping tail s=
-psc queue
-      CVE-2025-38540: HID: quirks: Add quirk for 2 Chicony Electronics HP 5=
-MP Cameras
-      CVE-2025-38439: bnxt_en: Set DMA unmap len correctly for XDP_REDIRECT
-      CVE-2025-38514: rxrpc: Fix oops due to non-existence of prealloc back=
-log struct
-      CVE-2025-38451: md/md-bitmap: fix GPF in bitmap_get_stats()
-      CVE-2025-38396: fs: export anon_inode_make_secure_inode() and fix sec=
-retmem LSM bypass
-      CVE-2025-38538: dmaengine: nbpfaxi: Fix memory corruption in probe()
-      CVE-2025-38488: smb: client: fix use-after-free in crypt_message when=
- using async crypto
-      CVE-2025-38535: phy: tegra: xusb: Fix unbalanced regulator disable in=
- UTMI PHY mode
-      CVE-2025-38481: comedi: Fail COMEDI_INSNLIST ioctl if n_insns is too =
-large
-      CVE-2025-38528: bpf: Reject %p% format string in bprintf-like helpers
-      CVE-2025-38468: net/sched: Return NULL when htb_lookup_leaf encounter=
-s an empty rbtree
-      CVE-2025-38527: smb: client: fix use-after-free in cifs_oplock_break
-      CVE-2025-38550: ipv6: mcast: Delay put pmc->idev in mld_del_delrec()
-      CVE-2025-38480: comedi: Fix use of uninitialized data in insn_rw_emul=
-ate_bits()
-      CVE-2025-38495: HID: core: ensure the allocated report buffer can con=
-tain the reserved report ID
-      CVE-2025-38530: comedi: pcl812: Fix bit shift out of bounds
-      CVE-2025-38487: soc: aspeed: lpc-snoop: Don't disable channels that a=
-ren't enabled
-      CVE-2025-38499: clone_private_mnt(): make sure that caller has CAP_SY=
-S_ADMIN in the right userns
-      CVE-2025-38474: usb: net: sierra: check for no status endpoint
-      CVE-2025-38477: net/sched: sch_qfq: Fix race condition on qfq_aggrega=
-te
-      CVE-2025-38494: HID: core: do not bypass hid_hw_raw_request
-      CVE-2025-38539: tracing: Add down_write(trace_event_sem) when adding =
-trace event
-      CVE-2025-38470: net: vlan: fix VLAN 0 refcount imbalance of toggling =
-filtering during runtime
-      CVE-2025-38483: comedi: das16m1: Fix bit shift out of bounds
-      CVE-2025-38529: comedi: aio_iiro_16: Fix bit shift out of bounds
-      CVE-2025-38472: netfilter: nf_conntrack: fix crash due to removal of =
-uninitialised entry
-      CVE-2025-38473: Bluetooth: Fix null-ptr-deref in l2cap_sock_resume_cb=
-()
-      CVE-2025-38478: comedi: Fix initialization of data for instructions t=
-hat write to subdevice
-      CVE-2025-38485: iio: accel: fxls8962af: Fix use after free in fxls896=
-2af_fifo_flush
-      CVE-2025-38497: usb: gadget: configfs: Fix OOB read on empty string w=
-rite
-      CVE-2025-38476: rpl: Fix use-after-free in rpl_do_srh_inline().
-      CVE-2025-38548: hwmon: (corsair-cpro) Validate the size of the receiv=
-ed input buffer
-      CVE-2025-38471: tls: always refresh the queue when reading sock
-      CVE-2025-38482: comedi: das6402: Fix bit shift out of bounds
-      CVE-2024-36331: x86/sev: Evict cache lines during SNP memory validati=
-on
-      CVE-2025-38501: ksmbd: limit repeated connections from clients with t=
-he same IP
-      CVE-2025-37925: jfs: reject on-disk inodes of an unsupported type
-      CVE-2025-38335: Input: gpio-keys - fix a sleep while atomic with PREE=
-MPT_RT
-      CVE-2025-38520: drm/amdkfd: Don't call mmput from MMU notifier callba=
-ck
-      CVE-2025-38500: xfrm: interface: fix use-after-free after changing co=
-llect_md xfrm interface
-    added commits:
-      CIP: Bump version suffix to -cip45 after merge from stable
-      arm64: dts: renesas: rzg3e-smarc-som: Add RAA215300 pmic support
-      arm64: dts: renesas: rzg3e-smarc-som: Add I2C2 device pincontrol
-      arm64: defconfig: Enable CAN PHY transceiver driver
-      arm64: dts: renesas: r9a09g047e57-smarc: Enable CAN Transceiver
-      arm64: dts: renesas: r9a09g047e57-smarc: Enable CANFD
-      arm64: dts: renesas: r9a09g047: Add CANFD node
-      can: rcar_canfd: Add RZ/G3E support
-      can: rcar_canfd: Enhance multi_channel_irqs handling
-      can: rcar_canfd: Add external_clk variable to struct rcar_canfd_hw_in=
-fo
-      can: rcar_canfd: Add sh variable to struct rcar_canfd_hw_info
-      can: rcar_canfd: Add struct rcanfd_regs variable to struct rcar_canfd=
-_hw_info
-      can: rcar_canfd: Add shared_can_regs variable to struct rcar_canfd_hw=
-_info
-      can: rcar_canfd: Add ch_interface_mode variable to struct rcar_canfd_=
-hw_info
-      can: rcar_canfd: Add {nom,data}_bittiming variables to struct rcar_ca=
-nfd_hw_info
-      can: rcar_canfd: Add max_cftml variable to struct rcar_canfd_hw_info
-      can: rcar_canfd: Add max_aflpn variable to struct rcar_canfd_hw_info
-      can: rcar_canfd: Add rnc_field_width variable to struct rcar_canfd_hw=
-_info
-      can: rcar_canfd: Update RCANFD_GAFLCFG macro
-      can: rcar_canfd: Add rcar_canfd_setrnc()
-      can: rcar_canfd: Drop the mask operation in RCANFD_GAFLCFG_SETRNC mac=
-ro
-      can: rcar_canfd: Update RCANFD_GERFL_ERR macro
-      can: rcar_canfd: Drop RCANFD_GAFLCFG_GETRNC macro
-      can: rcar_canfd: Use of_get_available_child_by_name()
-      can: rcar_canfd: Remove superfluous parentheses in address calculatio=
-ns
-      can: rcar_canfd: Improve printing of global operational state
-      can: rcar_canfd: Simplify clock handling
-      can: rcar_canfd: rcar_canfd_probe(): fix plain integer in transceiver=
-s[] init
-      can: rcar_canfd: Improve error messages
-      can: rcar_canfd: Add transceiver support
-      phy: Add devm_of_phy_optional_get() helper
-      phy: Remove unused phy_optional_get()
-      can: rcar_canfd: Add helper variable dev
-      can: rcar_canfd: Sort included header files
-      can: rcar_canfd: Fix R-Car Gen4 CFCC.CFTML field width
-      can: rcar_canfd: Fix R-Car Gen4 DCFG.DSJW field width
-      can: rcar_canfd: Add support for R-Car Gen4
-      can: rcar_canfd: Abstract out DCFG address differences
-      can: rcar_canfd: Fix R-Car V3U CAN mode selection
-      dt-bindings: can: renesas,rcar-canfd: Document RZ/G3E support
-      dt-bindings: can: renesas,rcar-canfd: Simplify the conditional schema
-      dt-bindings: can: renesas,rcar-canfd: Add transceiver support
-      dt-bindings: can: renesas,rcar-canfd: R-Car V3U is R-Car Gen4
-      dt-bindings: can: renesas,rcar-canfd: Fix number of channels for R-Ca=
-r V3U
-      dt-bindings: can: renesas,rcar-canfd: Document RZ/Five SoC
-      clk: renesas: rzv2h: Use both CLK_ON and CLK_MON bits for clock state=
- validation
-      clk: renesas: rzv2h: Use str_on_off() helper in rzv2h_mod_clock_endis=
-able()
-      lib/string_helpers: Split out string_choices.h
-      clk: renesas: rzv2h: Support static dividers without RMW
-      clk: renesas: rzv2h: Add macro for defining static dividers
-      clk: renesas: rzv2h: Add support for static mux clocks
-      clk: renesas: rzv2h: Fix a typo
-      clk: renesas: rzv2h: Sort compatible list based on SoC part number
-      clk: renesas: rzv2h: Simplify rzv2h_cpg_assert()/rzv2h_cpg_deassert()
-      clk: renesas: rzv2h: Improve rzv2h_ddiv_set_rate()
-      clk: renesas: rzv2h: Rename PLL field macros for consistency
-      clk: renesas: rzv2h: Add support for enabling PLLs
-      clk: renesas: rzv2h: Remove unused `type` field from `struct pll_clk`
-      clk: renesas: rzv2h: Update error message
-      clk: renesas: rzv2h: Adjust for CPG_BUS_m_MSTOP starting from m =3D 1
 
-Best regards,
-  Nobuhiro
+At the moment, the pipeline is taking 183 minutes 54 seconds to complete it=
+ [1]. So if there are no issues then we can consider to add the tags for ab=
+ove devices as well.
+This requires the update to each device dictionary[2] as well and also we m=
+ight need to copy the scripts (swtpm_start.sh and swtpm_finish.sh) to each =
+device.
+I=1B$B!G=1B(Bm not quite sure about how to do update device dictionaries/ta=
+gs.
 
+So, please have a look at this once and let us know if any help required on=
+ this.
+
+[1] https://gitlab.com/cip-project/cip-core/isar-cip-core/-/pipelines/19780=
+31660/
+[2] https://lava.ciplatform.org/scheduler/device/qemu-denx-01/devicedict
+
+Thanks & Regards
+Shivanand K
+
+--_000_TYYPR01MB151321574499D48D7E7119A7AB730ATYYPR01MB15132jp_
+Content-Type: text/html; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
+osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:dt=3D"uuid:C2F41010-65B3-11d1-A29F-00AA00C14882" xmlns:m=3D"http://sc=
+hemas.microsoft.com/office/2004/12/omml" xmlns=3D"http://www.w3.org/TR/REC-=
+html40">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
+jp">
+<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
+<style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:Aptos;}
+@font-face
+	{font-family:"MS PGothic";
+	panose-1:2 11 6 0 7 2 5 8 2 4;}
+@font-face
+	{font-family:"\@MS PGothic";}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	font-size:11.0pt;
+	font-family:"Aptos",sans-serif;
+	mso-ligatures:standardcontextual;
+	mso-fareast-language:EN-US;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:#0563C1;
+	text-decoration:underline;}
+p.MsoPlainText, li.MsoPlainText, div.MsoPlainText
+	{mso-style-priority:99;
+	mso-style-link:"Plain Text Char";
+	margin:0cm;
+	font-size:10.0pt;
+	font-family:"Courier New";
+	mso-ligatures:standardcontextual;
+	mso-fareast-language:EN-US;}
+span.EmailStyle19
+	{mso-style-type:personal-reply;
+	font-family:"Calibri",sans-serif;
+	color:#7030A0;
+	font-weight:normal;
+	font-style:normal;
+	text-decoration:none none;}
+span.PlainTextChar
+	{mso-style-name:"Plain Text Char";
+	mso-style-priority:99;
+	mso-style-link:"Plain Text";
+	font-family:"Courier New";
+	mso-ligatures:standardcontextual;
+	mso-fareast-language:EN-US;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-size:10.0pt;
+	mso-ligatures:none;}
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
+div.WordSection1
+	{page:WordSection1;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]-->
+</head>
+<body lang=3D"EN-GB" link=3D"#0563C1" vlink=3D"#954F72" style=3D"word-wrap:=
+break-word">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Calibri&quot;,sans-=
+serif;color:#7030A0">Hello Shivanand,<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Calibri&quot;,sans-=
+serif;color:#7030A0"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Calibri&quot;,sans-=
+serif;color:#7030A0">I=1B$B!G=1B(Bve enabled these tags and the required us=
+er_commands for qemu-patersonc-02.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Calibri&quot;,sans-=
+serif;color:#7030A0"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Calibri&quot;,sans-=
+serif;color:#7030A0"><a id=3D"OWAAM984D0041DC284583BCC533728E0042ED" href=
+=3D"mailto:quirin.gylstorff@siemens.com"><span style=3D"font-family:&quot;C=
+alibri&quot;,sans-serif;text-decoration:none">@Quirin Gylstorff</span></a>,
+<a id=3D"OWAAM8D6B8DD62AF84249A630F97E1DB8A220" href=3D"mailto:nobuhiro.iwa=
+matsu.x90@mail.toshiba">
+<span style=3D"font-family:&quot;Calibri&quot;,sans-serif;text-decoration:n=
+one">@nobuhiro.iwamatsu.x90@mail.toshiba</span></a> please could you do the=
+ same for lab-cip-siemens-prag, lab-cip-siemens-muc and lab-iwamatsu?<o:p><=
+/o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Calibri&quot;,sans-=
+serif;color:#7030A0"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Calibri&quot;,sans-=
+serif;color:#7030A0">To do this, please update the qemu machines your board=
+s.yaml with the following:<o:p></o:p></span></p>
+<p class=3D"MsoPlainText">&nbsp;&nbsp;&nbsp; raw_custom_option:&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<o:p></o:p></p>
+<p class=3D"MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;- &quot;{% set user_comma=
+nds =3D {'start_tpm': {'do':'\&quot;/usr/bin/sh /usr/local/bin/swtpm_start.=
+sh\&quot;','undo':'\&quot;/usr/bin/sh /usr/local/bin/swtpm_finish.sh\&quot;=
+' },'manual_kill': {'do':'\&quot;/usr/bin/pkill -15 swtpm\&quot;'}} %}&quot=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;
+<o:p></o:p></p>
+<p class=3D"MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;tags:&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<o:p></o:p></p>
+<p class=3D"MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;- sw-update-testing&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<o:p></o:p></p>
+<p class=3D"MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;- swtpm-jobs<o:p></o:p></=
+p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Calibri&quot;,sans-=
+serif;color:#7030A0"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Calibri&quot;,sans-=
+serif;color:#7030A0"><o:p>&nbsp;</o:p></span></p>
+<div>
+<p class=3D"MsoNormal"><span style=3D"color:#7030A0;mso-ligatures:none;mso-=
+fareast-language:EN-GB">Thanks, Chris<o:p></o:p></span></p>
+</div>
+<p class=3D"MsoNormal"><span style=3D"font-family:&quot;Calibri&quot;,sans-=
+serif;color:#7030A0"><o:p>&nbsp;</o:p></span></p>
+<div style=3D"border:none;border-left:solid blue 1.5pt;padding:0cm 0cm 0cm =
+4.0pt">
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"font-family:&quot;C=
+alibri&quot;,sans-serif;mso-ligatures:none;mso-fareast-language:JA">From:</=
+span></b><span lang=3D"EN-US" style=3D"font-family:&quot;Calibri&quot;,sans=
+-serif;mso-ligatures:none;mso-fareast-language:JA"> Shivanand.Kunijadar@tos=
+hiba-tsip.com
+ &lt;Shivanand.Kunijadar@toshiba-tsip.com&gt; <br>
+<b>Sent:</b> 14 August 2025 14:59<br>
+<b>To:</b> Chris Paterson &lt;Chris.Paterson2@renesas.com&gt;<br>
+<b>Cc:</b> cip-dev@lists.cip-project.org; kazuhiro3.hayashi@toshiba.co.jp; =
+jan.kiszka@siemens.com<br>
+<b>Subject:</b> Effective QEMU devices usage for testing in LAVA<o:p></o:p>=
+</span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN">Hello Chris, <o:p></o:p></span>=
+</p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN">Hope this message finds you wel=
+l. <o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN">As you may know, the CIP securi=
+ty images uses swtpm package for booting the devices on QEMU.
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN">we have added a separate tags t=
+o devices like =1B$B!H=1B(B<b>sw-update-testing, swtpm-jobs</b>=1B$B!I=1B(B=
+.
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN">This makes the LAVA job specifi=
+ed with these tags will run only on the devices which are assigned with the=
+se tags.
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN">I had a look on the list of QEM=
+U devices on the current LAVA lab, I observed there are many QEMU devices w=
+hich are not assigned with these tags.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN">Example: <o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN"><a href=3D"https://lava.ciplatf=
+orm.org/scheduler/device/qemu-04">https://lava.ciplatform.org/scheduler/dev=
+ice/qemu-04</a><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN"><a href=3D"https://lava.ciplatf=
+orm.org/scheduler/device/qemu-board">https://lava.ciplatform.org/scheduler/=
+device/qemu-board</a><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN"><a href=3D"https://lava.ciplatf=
+orm.org/scheduler/device/qemu-cip-siemens-muc">https://lava.ciplatform.org/=
+scheduler/device/qemu-cip-siemens-muc</a><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN"><a href=3D"https://lava.ciplatf=
+orm.org/scheduler/device/qemu-iwamatsu-01">https://lava.ciplatform.org/sche=
+duler/device/qemu-iwamatsu-01</a><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN"><a href=3D"https://lava.ciplatf=
+orm.org/scheduler/device/qemu-patersonc-02">https://lava.ciplatform.org/sch=
+eduler/device/qemu-patersonc-02</a><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN">It restricts most of the CI job=
+s to use only the devices which are associated with these tags.
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN">So if we update the same tags f=
+or other QEMU devices which provides more number of devices to CI which wil=
+l eventually
+<b>speeds up</b> CI pipeline execution.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN">&nbsp;<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN">At the moment, the pipeline is =
+taking <b>
+183 minutes 54 seconds</b> to complete it [1]. So if there are no issues th=
+en we can consider to add the tags for above devices as well.
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN">This requires the update to eac=
+h device dictionary[2] as well and also we might need to copy the scripts (=
+swtpm_start.sh and swtpm_finish.sh) to each device.
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN">I=1B$B!G=1B(Bm not quite sure a=
+bout how to do update device dictionaries/tags.
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN">So, please have a look at this =
+once and let us know if any help required on this. &nbsp;&nbsp;<o:p></o:p><=
+/span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN">[1] <a href=3D"https://gitlab.c=
+om/cip-project/cip-core/isar-cip-core/-/pipelines/1978031660/">
+https://gitlab.com/cip-project/cip-core/isar-cip-core/-/pipelines/197803166=
+0/</a>
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN">[2] <a href=3D"https://lava.cip=
+latform.org/scheduler/device/qemu-denx-01/devicedict">
+https://lava.ciplatform.org/scheduler/device/qemu-denx-01/devicedict</a> <o=
+:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN"><o:p>&nbsp;</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN">Thanks &amp; Regards<o:p></o:p>=
+</span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-IN">Shivanand K<o:p></o:p></span></=
+p>
+</div>
+</div>
+</body>
+</html>
+
+--_000_TYYPR01MB151321574499D48D7E7119A7AB730ATYYPR01MB15132jp_--
 
