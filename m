@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D720CA0EDC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67999CA0EFA
 	for <webhook@archiver.kernel.org>; Wed, 20 Aug 2025 08:47:20 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web10.15332.1755679615607846173
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.web11.15474.1755679628275340829
  for <cip-dev@lists.cip-project.org>;
- Wed, 20 Aug 2025 01:47:14 -0700
+ Wed, 20 Aug 2025 01:47:12 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
-X-CSE-ConnectionGUID: ifOUv1ebRlWUh5OhuwKtVQ==
-X-CSE-MsgGUID: d6S5YLywQ0+h6vkgwwc+ng==
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
+X-CSE-ConnectionGUID: qgN9KgUnTxuIoywJfdzVTA==
+X-CSE-MsgGUID: KmF1lv9ZRf+s0xBMI/7Nxg==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 20 Aug 2025 17:47:14 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 20 Aug 2025 17:47:11 +0900
 Received: from localhost.localdomain (unknown [10.226.92.43])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 59CC4400B524;
-	Wed, 20 Aug 2025 17:47:12 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3A94D40138ED;
+	Wed, 20 Aug 2025 17:47:09 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 09/23] clk: renesas: rzv2h: Drop redundant base pointer from pll_clk
-Date: Wed, 20 Aug 2025 09:45:55 +0100
-Message-ID: <20250820084645.6988-10-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 08/23] clk: renesas: rzv2h: Add missing include file
+Date: Wed, 20 Aug 2025 09:45:54 +0100
+Message-ID: <20250820084645.6988-9-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250820084645.6988-1-biju.das.jz@bp.renesas.com>
 References: <20250820084645.6988-1-biju.das.jz@bp.renesas.com>
@@ -35,53 +35,38 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 20 Aug 2025 08:47:20 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19804
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19803
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 
-commit 8250a8a9b10f459a40460104e6d6064c98283d1e upstream.
+commit b7c26cbd5b704a350b3176669f47047153903bc9 upstream.
 
-The base address can be accessed via the priv pointer already present in
-struct pll_clk, making the separate base field redundant. Remove the base
-member and its assignment.
+File `rzv2h-cpg.h' makes use of data types defined in `linux/types.h',
+but it does not include the latter, which could lead to build errors.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Include `linux/types.h' to fix this problem.
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250624153049.462535-1-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/20250624192748.340196-1-fabrizio.castro.jz@renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/renesas/rzv2h-cpg.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/clk/renesas/rzv2h-cpg.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
-index 47b1f1e0cae86..54330e6c526b9 100644
---- a/drivers/clk/renesas/rzv2h-cpg.c
-+++ b/drivers/clk/renesas/rzv2h-cpg.c
-@@ -101,7 +101,6 @@ struct rzv2h_cpg_priv {
+diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cpg.h
+index 540f2f3d8a013..bf543e13eb1a2 100644
+--- a/drivers/clk/renesas/rzv2h-cpg.h
++++ b/drivers/clk/renesas/rzv2h-cpg.h
+@@ -9,6 +9,7 @@
+ #define __RENESAS_RZV2H_CPG_H__
  
- struct pll_clk {
- 	struct rzv2h_cpg_priv *priv;
--	void __iomem *base;
- 	struct clk_hw hw;
- 	struct pll pll;
- };
-@@ -230,7 +229,6 @@ rzv2h_cpg_pll_clk_register(const struct cpg_core_clk *core,
- 			   struct rzv2h_cpg_priv *priv,
- 			   const struct clk_ops *ops)
- {
--	void __iomem *base = priv->base;
- 	struct device *dev = priv->dev;
- 	struct clk_init_data init;
- 	const struct clk *parent;
-@@ -255,7 +253,6 @@ rzv2h_cpg_pll_clk_register(const struct cpg_core_clk *core,
+ #include <linux/bitfield.h>
++#include <linux/types.h>
  
- 	pll_clk->hw.init = &init;
- 	pll_clk->pll = core->cfg.pll;
--	pll_clk->base = base;
- 	pll_clk->priv = priv;
- 
- 	ret = devm_clk_hw_register(dev, &pll_clk->hw);
+ /**
+  * struct pll - Structure for PLL configuration
 -- 
 2.43.0
 
