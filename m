@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87CE4CA0EFC
-	for <webhook@archiver.kernel.org>; Wed, 20 Aug 2025 08:47:30 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.15481.1755679645462313820
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91CECCA0EF8
+	for <webhook@archiver.kernel.org>; Wed, 20 Aug 2025 08:47:40 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web11.15483.1755679656199304806
  for <cip-dev@lists.cip-project.org>;
- Wed, 20 Aug 2025 01:47:25 -0700
+ Wed, 20 Aug 2025 01:47:36 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
-X-CSE-ConnectionGUID: zWAU4FjvQIaNSRL7awKUxQ==
-X-CSE-MsgGUID: 6VrFMdVlQsuLCd1JkrT4GA==
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+X-CSE-ConnectionGUID: JFwEfyTITiOQ8u1aogZgfg==
+X-CSE-MsgGUID: aUqhLbBSTEKmoDt24gzHGg==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 20 Aug 2025 17:47:24 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 20 Aug 2025 17:47:35 +0900
 Received: from localhost.localdomain (unknown [10.226.92.43])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2B4D2400B524;
-	Wed, 20 Aug 2025 17:47:22 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id F1F56401A64C;
+	Wed, 20 Aug 2025 17:47:33 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 14/23] memory: renesas-rpc-if: Move rpc-if reg definitions
-Date: Wed, 20 Aug 2025 09:46:00 +0100
-Message-ID: <20250820084645.6988-15-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 19/23] spi: rpc-if: Add write support for memory-mapped area
+Date: Wed, 20 Aug 2025 09:46:05 +0100
+Message-ID: <20250820084645.6988-20-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250820084645.6988-1-biju.das.jz@bp.renesas.com>
 References: <20250820084645.6988-1-biju.das.jz@bp.renesas.com>
@@ -34,323 +34,63 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 20 Aug 2025 08:47:30 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19809
+ <cip-dev@lists.cip-project.org>; Wed, 20 Aug 2025 08:47:40 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19814
 
-commit 228e72bf943687d04bf06a98722ab6cf9d4b8ba6 upstream.
+commit b0b8d3aeadb5c49bf78305a1bc844e5a9378257c upstream.
 
-Move rpc-if reg definitions to a header file for the preparation of adding
-support for RZ/G3E XSPI that has different register definitions.
+Add write support for memory-mapped area as xSPI interface require
+it.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20250424090000.136804-3-biju.das.jz@bp.renesas.com
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Link: https://patch.msgid.link/20250424090000.136804-8-biju.das.jz@bp.renesas.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/memory/renesas-rpc-if-regs.h | 147 +++++++++++++++++++++++++++
- drivers/memory/renesas-rpc-if.c      | 134 +-----------------------
- 2 files changed, 148 insertions(+), 133 deletions(-)
- create mode 100644 drivers/memory/renesas-rpc-if-regs.h
+ drivers/spi/spi-rpc-if.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/memory/renesas-rpc-if-regs.h b/drivers/memory/renesas-rpc-if-regs.h
-new file mode 100644
-index 0000000000000..e6b33f7c40a87
---- /dev/null
-+++ b/drivers/memory/renesas-rpc-if-regs.h
-@@ -0,0 +1,147 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * R-Car RPC Interface Registers Definitions
-+ *
-+ * Copyright (C) 2025 Renesas Electronics Corporation
-+ */
-+
-+#ifndef __RENESAS_RPC_IF_REGS_H__
-+#define __RENESAS_RPC_IF_REGS_H__
-+
-+#include <linux/bits.h>
-+
-+#define RPCIF_CMNCR		0x0000	/* R/W */
-+#define RPCIF_CMNCR_MD		BIT(31)
-+#define RPCIF_CMNCR_MOIIO3(val)	(((val) & 0x3) << 22)
-+#define RPCIF_CMNCR_MOIIO2(val)	(((val) & 0x3) << 20)
-+#define RPCIF_CMNCR_MOIIO1(val)	(((val) & 0x3) << 18)
-+#define RPCIF_CMNCR_MOIIO0(val)	(((val) & 0x3) << 16)
-+#define RPCIF_CMNCR_MOIIO(val)	(RPCIF_CMNCR_MOIIO0(val) | RPCIF_CMNCR_MOIIO1(val) | \
-+				 RPCIF_CMNCR_MOIIO2(val) | RPCIF_CMNCR_MOIIO3(val))
-+#define RPCIF_CMNCR_IO3FV(val)	(((val) & 0x3) << 14) /* documented for RZ/G2L */
-+#define RPCIF_CMNCR_IO2FV(val)	(((val) & 0x3) << 12) /* documented for RZ/G2L */
-+#define RPCIF_CMNCR_IO0FV(val)	(((val) & 0x3) << 8)
-+#define RPCIF_CMNCR_IOFV(val)	(RPCIF_CMNCR_IO0FV(val) | RPCIF_CMNCR_IO2FV(val) | \
-+				 RPCIF_CMNCR_IO3FV(val))
-+#define RPCIF_CMNCR_BSZ(val)	(((val) & 0x3) << 0)
-+
-+#define RPCIF_SSLDR		0x0004	/* R/W */
-+#define RPCIF_SSLDR_SPNDL(d)	(((d) & 0x7) << 16)
-+#define RPCIF_SSLDR_SLNDL(d)	(((d) & 0x7) << 8)
-+#define RPCIF_SSLDR_SCKDL(d)	(((d) & 0x7) << 0)
-+
-+#define RPCIF_DRCR		0x000C	/* R/W */
-+#define RPCIF_DRCR_SSLN		BIT(24)
-+#define RPCIF_DRCR_RBURST(v)	((((v) - 1) & 0x1F) << 16)
-+#define RPCIF_DRCR_RCF		BIT(9)
-+#define RPCIF_DRCR_RBE		BIT(8)
-+#define RPCIF_DRCR_SSLE		BIT(0)
-+
-+#define RPCIF_DRCMR		0x0010	/* R/W */
-+#define RPCIF_DRCMR_CMD(c)	(((c) & 0xFF) << 16)
-+#define RPCIF_DRCMR_OCMD(c)	(((c) & 0xFF) << 0)
-+
-+#define RPCIF_DREAR		0x0014	/* R/W */
-+#define RPCIF_DREAR_EAV(c)	(((c) & 0xF) << 16)
-+#define RPCIF_DREAR_EAC(c)	(((c) & 0x7) << 0)
-+
-+#define RPCIF_DROPR		0x0018	/* R/W */
-+
-+#define RPCIF_DRENR		0x001C	/* R/W */
-+#define RPCIF_DRENR_CDB(o)	(((u32)((o) & 0x3)) << 30)
-+#define RPCIF_DRENR_OCDB(o)	(((o) & 0x3) << 28)
-+#define RPCIF_DRENR_ADB(o)	(((o) & 0x3) << 24)
-+#define RPCIF_DRENR_OPDB(o)	(((o) & 0x3) << 20)
-+#define RPCIF_DRENR_DRDB(o)	(((o) & 0x3) << 16)
-+#define RPCIF_DRENR_DME		BIT(15)
-+#define RPCIF_DRENR_CDE		BIT(14)
-+#define RPCIF_DRENR_OCDE	BIT(12)
-+#define RPCIF_DRENR_ADE(v)	(((v) & 0xF) << 8)
-+#define RPCIF_DRENR_OPDE(v)	(((v) & 0xF) << 4)
-+
-+#define RPCIF_SMCR		0x0020	/* R/W */
-+#define RPCIF_SMCR_SSLKP	BIT(8)
-+#define RPCIF_SMCR_SPIRE	BIT(2)
-+#define RPCIF_SMCR_SPIWE	BIT(1)
-+#define RPCIF_SMCR_SPIE		BIT(0)
-+
-+#define RPCIF_SMCMR		0x0024	/* R/W */
-+#define RPCIF_SMCMR_CMD(c)	(((c) & 0xFF) << 16)
-+#define RPCIF_SMCMR_OCMD(c)	(((c) & 0xFF) << 0)
-+
-+#define RPCIF_SMADR		0x0028	/* R/W */
-+
-+#define RPCIF_SMOPR		0x002C	/* R/W */
-+#define RPCIF_SMOPR_OPD3(o)	(((o) & 0xFF) << 24)
-+#define RPCIF_SMOPR_OPD2(o)	(((o) & 0xFF) << 16)
-+#define RPCIF_SMOPR_OPD1(o)	(((o) & 0xFF) << 8)
-+#define RPCIF_SMOPR_OPD0(o)	(((o) & 0xFF) << 0)
-+
-+#define RPCIF_SMENR		0x0030	/* R/W */
-+#define RPCIF_SMENR_CDB(o)	(((o) & 0x3) << 30)
-+#define RPCIF_SMENR_OCDB(o)	(((o) & 0x3) << 28)
-+#define RPCIF_SMENR_ADB(o)	(((o) & 0x3) << 24)
-+#define RPCIF_SMENR_OPDB(o)	(((o) & 0x3) << 20)
-+#define RPCIF_SMENR_SPIDB(o)	(((o) & 0x3) << 16)
-+#define RPCIF_SMENR_DME		BIT(15)
-+#define RPCIF_SMENR_CDE		BIT(14)
-+#define RPCIF_SMENR_OCDE	BIT(12)
-+#define RPCIF_SMENR_ADE(v)	(((v) & 0xF) << 8)
-+#define RPCIF_SMENR_OPDE(v)	(((v) & 0xF) << 4)
-+#define RPCIF_SMENR_SPIDE(v)	(((v) & 0xF) << 0)
-+
-+#define RPCIF_SMRDR0		0x0038	/* R */
-+#define RPCIF_SMRDR1		0x003C	/* R */
-+#define RPCIF_SMWDR0		0x0040	/* W */
-+#define RPCIF_SMWDR1		0x0044	/* W */
-+
-+#define RPCIF_CMNSR		0x0048	/* R */
-+#define RPCIF_CMNSR_SSLF	BIT(1)
-+#define RPCIF_CMNSR_TEND	BIT(0)
-+
-+#define RPCIF_DRDMCR		0x0058	/* R/W */
-+#define RPCIF_DMDMCR_DMCYC(v)	((((v) - 1) & 0x1F) << 0)
-+
-+#define RPCIF_DRDRENR		0x005C	/* R/W */
-+#define RPCIF_DRDRENR_HYPE(v)	(((v) & 0x7) << 12)
-+#define RPCIF_DRDRENR_ADDRE	BIT(8)
-+#define RPCIF_DRDRENR_OPDRE	BIT(4)
-+#define RPCIF_DRDRENR_DRDRE	BIT(0)
-+
-+#define RPCIF_SMDMCR		0x0060	/* R/W */
-+#define RPCIF_SMDMCR_DMCYC(v)	((((v) - 1) & 0x1F) << 0)
-+
-+#define RPCIF_SMDRENR		0x0064	/* R/W */
-+#define RPCIF_SMDRENR_HYPE(v)	(((v) & 0x7) << 12)
-+#define RPCIF_SMDRENR_ADDRE	BIT(8)
-+#define RPCIF_SMDRENR_OPDRE	BIT(4)
-+#define RPCIF_SMDRENR_SPIDRE	BIT(0)
-+
-+#define RPCIF_PHYADD		0x0070	/* R/W available on R-Car E3/D3/V3M and RZ/G2{E,L} */
-+#define RPCIF_PHYWR		0x0074	/* R/W available on R-Car E3/D3/V3M and RZ/G2{E,L} */
-+
-+#define RPCIF_PHYCNT		0x007C	/* R/W */
-+#define RPCIF_PHYCNT_CAL	BIT(31)
-+#define RPCIF_PHYCNT_OCTA(v)	(((v) & 0x3) << 22)
-+#define RPCIF_PHYCNT_EXDS	BIT(21)
-+#define RPCIF_PHYCNT_OCT	BIT(20)
-+#define RPCIF_PHYCNT_DDRCAL	BIT(19)
-+#define RPCIF_PHYCNT_HS		BIT(18)
-+#define RPCIF_PHYCNT_CKSEL(v)	(((v) & 0x3) << 16) /* valid only for RZ/G2L */
-+#define RPCIF_PHYCNT_STRTIM(v)	(((v) & 0x7) << 15 | ((v) & 0x8) << 24) /* valid for R-Car and RZ/G2{E,H,M,N} */
-+
-+#define RPCIF_PHYCNT_WBUF2	BIT(4)
-+#define RPCIF_PHYCNT_WBUF	BIT(2)
-+#define RPCIF_PHYCNT_PHYMEM(v)	(((v) & 0x3) << 0)
-+#define RPCIF_PHYCNT_PHYMEM_MASK GENMASK(1, 0)
-+
-+#define RPCIF_PHYOFFSET1	0x0080	/* R/W */
-+#define RPCIF_PHYOFFSET1_DDRTMG(v) (((v) & 0x3) << 28)
-+
-+#define RPCIF_PHYOFFSET2	0x0084	/* R/W */
-+#define RPCIF_PHYOFFSET2_OCTTMG(v) (((v) & 0x7) << 8)
-+
-+#define RPCIF_PHYINT		0x0088	/* R/W */
-+#define RPCIF_PHYINT_WPVAL	BIT(1)
-+
-+#endif /* __RENESAS_RPC_IF_REGS_H__ */
-diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
-index c194390b1cdd9..52aa49430dcba 100644
---- a/drivers/memory/renesas-rpc-if.c
-+++ b/drivers/memory/renesas-rpc-if.c
-@@ -18,139 +18,7 @@
+diff --git a/drivers/spi/spi-rpc-if.c b/drivers/spi/spi-rpc-if.c
+index c24dad51a0e96..307463bb94ff6 100644
+--- a/drivers/spi/spi-rpc-if.c
++++ b/drivers/spi/spi-rpc-if.c
+@@ -75,6 +75,19 @@ static bool rpcif_spi_mem_supports_op(struct spi_mem *mem,
+ 	return true;
+ }
  
- #include <memory/renesas-rpc-if.h>
++static ssize_t xspi_spi_mem_dirmap_write(struct spi_mem_dirmap_desc *desc,
++					 u64 offs, size_t len, const void *buf)
++{
++	struct rpcif *rpc = spi_controller_get_devdata(desc->mem->spi->controller);
++
++	if (offs + desc->info.offset + len > U32_MAX)
++		return -EINVAL;
++
++	rpcif_spi_mem_prepare(desc->mem->spi, &desc->info.op_tmpl, &offs, &len);
++
++	return xspi_dirmap_write(rpc->dev, offs, len, buf);
++}
++
+ static ssize_t rpcif_spi_mem_dirmap_read(struct spi_mem_dirmap_desc *desc,
+ 					 u64 offs, size_t len, void *buf)
+ {
+@@ -103,7 +116,7 @@ static int rpcif_spi_mem_dirmap_create(struct spi_mem_dirmap_desc *desc)
+ 	if (!rpc->dirmap)
+ 		return -EOPNOTSUPP;
  
--#define RPCIF_CMNCR		0x0000	/* R/W */
--#define RPCIF_CMNCR_MD		BIT(31)
--#define RPCIF_CMNCR_MOIIO3(val)	(((val) & 0x3) << 22)
--#define RPCIF_CMNCR_MOIIO2(val)	(((val) & 0x3) << 20)
--#define RPCIF_CMNCR_MOIIO1(val)	(((val) & 0x3) << 18)
--#define RPCIF_CMNCR_MOIIO0(val)	(((val) & 0x3) << 16)
--#define RPCIF_CMNCR_MOIIO(val)	(RPCIF_CMNCR_MOIIO0(val) | RPCIF_CMNCR_MOIIO1(val) | \
--				 RPCIF_CMNCR_MOIIO2(val) | RPCIF_CMNCR_MOIIO3(val))
--#define RPCIF_CMNCR_IO3FV(val)	(((val) & 0x3) << 14) /* documented for RZ/G2L */
--#define RPCIF_CMNCR_IO2FV(val)	(((val) & 0x3) << 12) /* documented for RZ/G2L */
--#define RPCIF_CMNCR_IO0FV(val)	(((val) & 0x3) << 8)
--#define RPCIF_CMNCR_IOFV(val)	(RPCIF_CMNCR_IO0FV(val) | RPCIF_CMNCR_IO2FV(val) | \
--				 RPCIF_CMNCR_IO3FV(val))
--#define RPCIF_CMNCR_BSZ(val)	(((val) & 0x3) << 0)
--
--#define RPCIF_SSLDR		0x0004	/* R/W */
--#define RPCIF_SSLDR_SPNDL(d)	(((d) & 0x7) << 16)
--#define RPCIF_SSLDR_SLNDL(d)	(((d) & 0x7) << 8)
--#define RPCIF_SSLDR_SCKDL(d)	(((d) & 0x7) << 0)
--
--#define RPCIF_DRCR		0x000C	/* R/W */
--#define RPCIF_DRCR_SSLN		BIT(24)
--#define RPCIF_DRCR_RBURST(v)	((((v) - 1) & 0x1F) << 16)
--#define RPCIF_DRCR_RCF		BIT(9)
--#define RPCIF_DRCR_RBE		BIT(8)
--#define RPCIF_DRCR_SSLE		BIT(0)
--
--#define RPCIF_DRCMR		0x0010	/* R/W */
--#define RPCIF_DRCMR_CMD(c)	(((c) & 0xFF) << 16)
--#define RPCIF_DRCMR_OCMD(c)	(((c) & 0xFF) << 0)
--
--#define RPCIF_DREAR		0x0014	/* R/W */
--#define RPCIF_DREAR_EAV(c)	(((c) & 0xF) << 16)
--#define RPCIF_DREAR_EAC(c)	(((c) & 0x7) << 0)
--
--#define RPCIF_DROPR		0x0018	/* R/W */
--
--#define RPCIF_DRENR		0x001C	/* R/W */
--#define RPCIF_DRENR_CDB(o)	(((u32)((o) & 0x3)) << 30)
--#define RPCIF_DRENR_OCDB(o)	(((o) & 0x3) << 28)
--#define RPCIF_DRENR_ADB(o)	(((o) & 0x3) << 24)
--#define RPCIF_DRENR_OPDB(o)	(((o) & 0x3) << 20)
--#define RPCIF_DRENR_DRDB(o)	(((o) & 0x3) << 16)
--#define RPCIF_DRENR_DME		BIT(15)
--#define RPCIF_DRENR_CDE		BIT(14)
--#define RPCIF_DRENR_OCDE	BIT(12)
--#define RPCIF_DRENR_ADE(v)	(((v) & 0xF) << 8)
--#define RPCIF_DRENR_OPDE(v)	(((v) & 0xF) << 4)
--
--#define RPCIF_SMCR		0x0020	/* R/W */
--#define RPCIF_SMCR_SSLKP	BIT(8)
--#define RPCIF_SMCR_SPIRE	BIT(2)
--#define RPCIF_SMCR_SPIWE	BIT(1)
--#define RPCIF_SMCR_SPIE		BIT(0)
--
--#define RPCIF_SMCMR		0x0024	/* R/W */
--#define RPCIF_SMCMR_CMD(c)	(((c) & 0xFF) << 16)
--#define RPCIF_SMCMR_OCMD(c)	(((c) & 0xFF) << 0)
--
--#define RPCIF_SMADR		0x0028	/* R/W */
--
--#define RPCIF_SMOPR		0x002C	/* R/W */
--#define RPCIF_SMOPR_OPD3(o)	(((o) & 0xFF) << 24)
--#define RPCIF_SMOPR_OPD2(o)	(((o) & 0xFF) << 16)
--#define RPCIF_SMOPR_OPD1(o)	(((o) & 0xFF) << 8)
--#define RPCIF_SMOPR_OPD0(o)	(((o) & 0xFF) << 0)
--
--#define RPCIF_SMENR		0x0030	/* R/W */
--#define RPCIF_SMENR_CDB(o)	(((o) & 0x3) << 30)
--#define RPCIF_SMENR_OCDB(o)	(((o) & 0x3) << 28)
--#define RPCIF_SMENR_ADB(o)	(((o) & 0x3) << 24)
--#define RPCIF_SMENR_OPDB(o)	(((o) & 0x3) << 20)
--#define RPCIF_SMENR_SPIDB(o)	(((o) & 0x3) << 16)
--#define RPCIF_SMENR_DME		BIT(15)
--#define RPCIF_SMENR_CDE		BIT(14)
--#define RPCIF_SMENR_OCDE	BIT(12)
--#define RPCIF_SMENR_ADE(v)	(((v) & 0xF) << 8)
--#define RPCIF_SMENR_OPDE(v)	(((v) & 0xF) << 4)
--#define RPCIF_SMENR_SPIDE(v)	(((v) & 0xF) << 0)
--
--#define RPCIF_SMRDR0		0x0038	/* R */
--#define RPCIF_SMRDR1		0x003C	/* R */
--#define RPCIF_SMWDR0		0x0040	/* W */
--#define RPCIF_SMWDR1		0x0044	/* W */
--
--#define RPCIF_CMNSR		0x0048	/* R */
--#define RPCIF_CMNSR_SSLF	BIT(1)
--#define RPCIF_CMNSR_TEND	BIT(0)
--
--#define RPCIF_DRDMCR		0x0058	/* R/W */
--#define RPCIF_DMDMCR_DMCYC(v)	((((v) - 1) & 0x1F) << 0)
--
--#define RPCIF_DRDRENR		0x005C	/* R/W */
--#define RPCIF_DRDRENR_HYPE(v)	(((v) & 0x7) << 12)
--#define RPCIF_DRDRENR_ADDRE	BIT(8)
--#define RPCIF_DRDRENR_OPDRE	BIT(4)
--#define RPCIF_DRDRENR_DRDRE	BIT(0)
--
--#define RPCIF_SMDMCR		0x0060	/* R/W */
--#define RPCIF_SMDMCR_DMCYC(v)	((((v) - 1) & 0x1F) << 0)
--
--#define RPCIF_SMDRENR		0x0064	/* R/W */
--#define RPCIF_SMDRENR_HYPE(v)	(((v) & 0x7) << 12)
--#define RPCIF_SMDRENR_ADDRE	BIT(8)
--#define RPCIF_SMDRENR_OPDRE	BIT(4)
--#define RPCIF_SMDRENR_SPIDRE	BIT(0)
--
--#define RPCIF_PHYADD		0x0070	/* R/W available on R-Car E3/D3/V3M and RZ/G2{E,L} */
--#define RPCIF_PHYWR		0x0074	/* R/W available on R-Car E3/D3/V3M and RZ/G2{E,L} */
--
--#define RPCIF_PHYCNT		0x007C	/* R/W */
--#define RPCIF_PHYCNT_CAL	BIT(31)
--#define RPCIF_PHYCNT_OCTA(v)	(((v) & 0x3) << 22)
--#define RPCIF_PHYCNT_EXDS	BIT(21)
--#define RPCIF_PHYCNT_OCT	BIT(20)
--#define RPCIF_PHYCNT_DDRCAL	BIT(19)
--#define RPCIF_PHYCNT_HS		BIT(18)
--#define RPCIF_PHYCNT_CKSEL(v)	(((v) & 0x3) << 16) /* valid only for RZ/G2L */
--#define RPCIF_PHYCNT_STRTIM(v)	(((v) & 0x7) << 15 | ((v) & 0x8) << 24) /* valid for R-Car and RZ/G2{E,H,M,N} */
--
--#define RPCIF_PHYCNT_WBUF2	BIT(4)
--#define RPCIF_PHYCNT_WBUF	BIT(2)
--#define RPCIF_PHYCNT_PHYMEM(v)	(((v) & 0x3) << 0)
--#define RPCIF_PHYCNT_PHYMEM_MASK GENMASK(1, 0)
--
--#define RPCIF_PHYOFFSET1	0x0080	/* R/W */
--#define RPCIF_PHYOFFSET1_DDRTMG(v) (((v) & 0x3) << 28)
--
--#define RPCIF_PHYOFFSET2	0x0084	/* R/W */
--#define RPCIF_PHYOFFSET2_OCTTMG(v) (((v) & 0x7) << 8)
--
--#define RPCIF_PHYINT		0x0088	/* R/W */
--#define RPCIF_PHYINT_WPVAL	BIT(1)
-+#include "renesas-rpc-if-regs.h"
+-	if (desc->info.op_tmpl.data.dir != SPI_MEM_DATA_IN)
++	if (!rpc->xspi && desc->info.op_tmpl.data.dir != SPI_MEM_DATA_IN)
+ 		return -EOPNOTSUPP;
  
- static const struct regmap_range rpcif_volatile_ranges[] = {
- 	regmap_reg_range(RPCIF_SMRDR0, RPCIF_SMRDR1),
+ 	return 0;
+@@ -125,6 +138,7 @@ static const struct spi_controller_mem_ops rpcif_spi_mem_ops = {
+ 	.exec_op	= rpcif_spi_mem_exec_op,
+ 	.dirmap_create	= rpcif_spi_mem_dirmap_create,
+ 	.dirmap_read	= rpcif_spi_mem_dirmap_read,
++	.dirmap_write	= xspi_spi_mem_dirmap_write,
+ };
+ 
+ static int rpcif_spi_probe(struct platform_device *pdev)
 -- 
 2.43.0
 
