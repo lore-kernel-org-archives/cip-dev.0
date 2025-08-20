@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C612CA0EDC
-	for <webhook@archiver.kernel.org>; Wed, 20 Aug 2025 08:39:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EAF0CA0EFA
+	for <webhook@archiver.kernel.org>; Wed, 20 Aug 2025 08:39:59 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web10.15235.1755679177922058475
+ by mx.groups.io with SMTP id smtpd.web10.15245.1755679192981456975
  for <cip-dev@lists.cip-project.org>;
- Wed, 20 Aug 2025 01:39:39 -0700
+ Wed, 20 Aug 2025 01:39:53 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
-X-CSE-ConnectionGUID: 36uqvnHPQxGucnUYqyfVMw==
-X-CSE-MsgGUID: ioZ2xP18Rk2qBSRh/shtGw==
+X-CSE-ConnectionGUID: EpgFkH88QYmQCuCJ3PZnvw==
+X-CSE-MsgGUID: VT634WvcSCyhyM5VgQq1qA==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 20 Aug 2025 17:39:39 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 20 Aug 2025 17:39:52 +0900
 Received: from localhost.localdomain (unknown [10.226.92.43])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id DCED2415F3DE;
-	Wed, 20 Aug 2025 17:39:37 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id C39DE415F3DE;
+	Wed, 20 Aug 2025 17:39:50 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 16/22] memory: renesas-rpc-if: Add wrapper functions
-Date: Wed, 20 Aug 2025 09:38:24 +0100
-Message-ID: <20250820083855.6337-17-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 22/22] arm64: dts: renesas: rzg3e-smarc-som: Enable serial NOR FLASH
+Date: Wed, 20 Aug 2025 09:38:30 +0100
+Message-ID: <20250820083855.6337-23-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250820083855.6337-1-biju.das.jz@bp.renesas.com>
 References: <20250820083855.6337-1-biju.das.jz@bp.renesas.com>
@@ -34,202 +34,83 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 20 Aug 2025 08:39:49 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19785
+ <cip-dev@lists.cip-project.org>; Wed, 20 Aug 2025 08:39:59 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19791
 
-commit e1c200a4c7f0e8b842a9a5b7f38fa7036c0df417 upstream.
+commit 0712fcaebd76a74a022e5ce105ebe96fa8627961 upstream.
 
-Even though XSPI and RPCIF has different register layout, reuse the code
-by adding wrapper functions to support both XSPI and RPC-IF.
+Enable Renesas AT25QL128A FLASH connected to XSPI.
 
-While at it, replace error check for pm_runtime_resume_and_get().
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/r/20250424090000.136804-6-biju.das.jz@bp.renesas.com
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/20250508183109.137721-3-biju.das.jz@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/memory/renesas-rpc-if.c | 96 ++++++++++++++++++++++-----------
- 1 file changed, 65 insertions(+), 31 deletions(-)
+ .../boot/dts/renesas/rzg3e-smarc-som.dtsi     | 46 +++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
-index 1e449766f160..09c617a217d0 100644
---- a/drivers/memory/renesas-rpc-if.c
-+++ b/drivers/memory/renesas-rpc-if.c
-@@ -175,16 +175,11 @@ static void rpcif_rzg2l_timing_adjust_sdr(struct rpcif_priv *rpc)
- 	regmap_write(rpc->regmap, RPCIF_PHYADD, 0x80000032);
- }
- 
--int rpcif_hw_init(struct device *dev, bool hyperflash)
-+static int rpcif_hw_init_impl(struct rpcif_priv *rpc, bool hyperflash)
- {
--	struct rpcif_priv *rpc = dev_get_drvdata(dev);
- 	u32 dummy;
- 	int ret;
- 
--	ret = pm_runtime_resume_and_get(dev);
--	if (ret)
--		return ret;
--
- 	if (rpc->info->type == RPCIF_RZ_G2L) {
- 		ret = reset_control_reset(rpc->rstc);
- 		if (ret)
-@@ -232,12 +227,26 @@ int rpcif_hw_init(struct device *dev, bool hyperflash)
- 	regmap_write(rpc->regmap, RPCIF_SSLDR, RPCIF_SSLDR_SPNDL(7) |
- 		     RPCIF_SSLDR_SLNDL(7) | RPCIF_SSLDR_SCKDL(7));
- 
--	pm_runtime_put(dev);
--
- 	rpc->bus_size = hyperflash ? 2 : 1;
- 
- 	return 0;
- }
+diff --git a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
+index ecea29a76b14..f99a09d04ddd 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3e-smarc-som.dtsi
+@@ -182,6 +182,15 @@ sd2-pwen {
+ 			pinmux = <RZG3E_PORT_PINMUX(K, 2, 1)>; /* SD2PWEN */
+ 		};
+ 	};
 +
-+int rpcif_hw_init(struct device *dev, bool hyperflash)
-+{
-+	struct rpcif_priv *rpc = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = rpcif_hw_init_impl(rpc, hyperflash);
-+
-+	pm_runtime_put(dev);
-+
-+	return ret;
-+}
- EXPORT_SYMBOL(rpcif_hw_init);
++	xspi_pins: xspi0 {
++		pinmux = <RZG3E_PORT_PINMUX(M, 0, 0)>, /* XSPI0_IO0 */
++			 <RZG3E_PORT_PINMUX(M, 1, 0)>, /* XSPI0_IO1 */
++			 <RZG3E_PORT_PINMUX(M, 2, 0)>, /* XSPI0_IO2 */
++			 <RZG3E_PORT_PINMUX(M, 3, 0)>, /* XSPI0_IO3 */
++			 <RZG3E_PORT_PINMUX(L, 0, 0)>, /* XSPI0_CKP */
++			 <RZG3E_PORT_PINMUX(L, 1, 0)>; /* XSPI0_CS0 */
++	};
+ };
  
- static int wait_msg_xfer_end(struct rpcif_priv *rpc)
-@@ -262,11 +271,9 @@ static u8 rpcif_bit_size(u8 buswidth)
- 	return buswidth > 4 ? 2 : ilog2(buswidth);
- }
- 
--void rpcif_prepare(struct device *dev, const struct rpcif_op *op, u64 *offs,
--		   size_t *len)
-+static void rpcif_prepare_impl(struct rpcif_priv *rpc, const struct rpcif_op *op,
-+			       u64 *offs, size_t *len)
- {
--	struct rpcif_priv *rpc = dev_get_drvdata(dev);
--
- 	rpc->smcr = 0;
- 	rpc->smadr = 0;
- 	rpc->enable = 0;
-@@ -347,18 +354,21 @@ void rpcif_prepare(struct device *dev, const struct rpcif_op *op, u64 *offs,
- 		rpc->enable |= RPCIF_SMENR_SPIDB(rpcif_bit_size(op->data.buswidth));
- 	}
- }
--EXPORT_SYMBOL(rpcif_prepare);
- 
--int rpcif_manual_xfer(struct device *dev)
-+void rpcif_prepare(struct device *dev, const struct rpcif_op *op, u64 *offs,
-+		   size_t *len)
- {
- 	struct rpcif_priv *rpc = dev_get_drvdata(dev);
+ &qextal_clk {
+@@ -245,3 +254,40 @@ &sdhi2_vqmmc {
+ &wdt1 {
+ 	status = "okay";
+ };
 +
-+	rpcif_prepare_impl(rpc, op, offs, len);
-+}
-+EXPORT_SYMBOL(rpcif_prepare);
++&xspi {
++	pinctrl-0 = <&xspi_pins>;
++	pinctrl-names = "default";
++	status = "okay";
 +
-+static int rpcif_manual_xfer_impl(struct rpcif_priv *rpc)
-+{
- 	u32 smenr, smcr, pos = 0, max = rpc->bus_size == 2 ? 8 : 4;
- 	int ret = 0;
- 
--	ret = pm_runtime_resume_and_get(dev);
--	if (ret < 0)
--		return ret;
--
- 	regmap_update_bits(rpc->regmap, RPCIF_PHYCNT,
- 			   RPCIF_PHYCNT_CAL, RPCIF_PHYCNT_CAL);
- 	regmap_update_bits(rpc->regmap, RPCIF_CMNCR,
-@@ -466,15 +476,29 @@ int rpcif_manual_xfer(struct device *dev)
- 			goto err_out;
- 	}
- 
--exit:
--	pm_runtime_put(dev);
- 	return ret;
- 
- err_out:
- 	if (reset_control_reset(rpc->rstc))
--		dev_err(dev, "Failed to reset HW\n");
--	rpcif_hw_init(dev, rpc->bus_size == 2);
--	goto exit;
-+		dev_err(rpc->dev, "Failed to reset HW\n");
-+	rpcif_hw_init_impl(rpc, rpc->bus_size == 2);
-+	return ret;
-+}
++	flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		vcc-supply = <&reg_1p8v>;
++		m25p,fast-read;
++		spi-max-frequency = <50000000>;
++		spi-tx-bus-width = <4>;
++		spi-rx-bus-width = <4>;
 +
-+int rpcif_manual_xfer(struct device *dev)
-+{
-+	struct rpcif_priv *rpc = dev_get_drvdata(dev);
-+	int ret;
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
 +
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret)
-+		return ret;
++			partition@0 {
++				label = "bl2";
++				reg = <0x00000000 0x00060000>;
++			};
 +
-+	ret = rpcif_manual_xfer_impl(rpc);
++			partition@60000 {
++				label = "fip";
++				reg = <0x00060000 0x007a0000>;
++			};
 +
-+	pm_runtime_put(dev);
-+
-+	return ret;
- }
- EXPORT_SYMBOL(rpcif_manual_xfer);
- 
-@@ -520,20 +544,15 @@ static void memcpy_fromio_readw(void *to,
- 	}
- }
- 
--ssize_t rpcif_dirmap_read(struct device *dev, u64 offs, size_t len, void *buf)
-+static size_t rpcif_dirmap_read_impl(struct rpcif_priv *rpc, u64 offs,
-+				     size_t len, void *buf)
- {
--	struct rpcif_priv *rpc = dev_get_drvdata(dev);
- 	loff_t from = offs & (rpc->size - 1);
- 	size_t size = rpc->size - from;
--	int ret;
- 
- 	if (len > size)
- 		len = size;
- 
--	ret = pm_runtime_resume_and_get(dev);
--	if (ret < 0)
--		return ret;
--
- 	regmap_update_bits(rpc->regmap, RPCIF_CMNCR, RPCIF_CMNCR_MD, 0);
- 	regmap_write(rpc->regmap, RPCIF_DRCR, 0);
- 	regmap_write(rpc->regmap, RPCIF_DRCMR, rpc->command);
-@@ -550,9 +569,24 @@ ssize_t rpcif_dirmap_read(struct device *dev, u64 offs, size_t len, void *buf)
- 	else
- 		memcpy_fromio(buf, rpc->dirmap + from, len);
- 
-+	return len;
-+}
-+
-+ssize_t rpcif_dirmap_read(struct device *dev, u64 offs, size_t len, void *buf)
-+{
-+	struct rpcif_priv *rpc = dev_get_drvdata(dev);
-+	size_t read;
-+	int ret;
-+
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret)
-+		return ret;
-+
-+	read = rpcif_dirmap_read_impl(rpc, offs, len, buf);
-+
- 	pm_runtime_put(dev);
- 
--	return len;
-+	return read;
- }
- EXPORT_SYMBOL(rpcif_dirmap_read);
- 
++			partition@800000 {
++				label = "user";
++				reg = <0x800000 0x800000>;
++			};
++		};
++	};
++};
 -- 
 2.43.0
 
