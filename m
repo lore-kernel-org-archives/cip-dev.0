@@ -2,50 +2,50 @@ Return-Path: <tommaso.merciai.xr@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9418CA0EED
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB0EFCA0EFC
 	for <webhook@archiver.kernel.org>; Wed, 20 Aug 2025 16:05:53 +0000 (UTC)
-Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.71])
- by mx.groups.io with SMTP id smtpd.web10.967.1755705952775270777
+Received: from TY3P286CU002.outbound.protection.outlook.com (TY3P286CU002.outbound.protection.outlook.com [52.101.229.20])
+ by mx.groups.io with SMTP id smtpd.web10.963.1755705950313248058
  for <cip-dev@lists.cip-project.org>;
- Wed, 20 Aug 2025 09:05:53 -0700
+ Wed, 20 Aug 2025 09:05:50 -0700
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=rr0or2TG;
- spf=pass (domain: bp.renesas.com, ip: 52.101.229.71, mailfrom: tommaso.merciai.xr@bp.renesas.com)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@bp.renesas.com header.s=selector1 header.b=Wqo2h5J2;
+ spf=pass (domain: bp.renesas.com, ip: 52.101.229.20, mailfrom: tommaso.merciai.xr@bp.renesas.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=usemfV04zxyTmHbQm5RVLz1OhlROqc6/FC2zD/XOMzSa16WdQveqLvchImPIpwPeee4dGeYm6FtaP5UeXwzOIg7Tharm8MC9pdxqpfbKU5W33lYCscY5Z4ZqbTonjCIpjZmZKkQqOIpbMl3qelTzUCEEoSpZXR1L58mbzjLk62br+axt0Z1qmK75a2iWyvCqRAD8vBYAmemwhoUY5ACcQRgQu8/nZnoZWYgAHKvKztB3VovaXcjHaNKWlSkgfPVBd+AUE06ocyeqzFLOeNctIBUz3cigwnOCUGRkao37zIDYtklcDclpjxH0otB14kYV7lJpVQT/HcASH/sbZO3VaQ==
+ b=tCrx97ts5bGWNaQJxp+4MbPFX4KgC4/nt2PQEhbqcmUqUgq5Yj1quoxHOBTQGdolaQpQJ+MPIN/AR227aqw5dumm5XJSXtKrvzkUVZ8zji06ZRbfdxyAVDVi2g7TAm/idMLzN6O3Ekpm14gkCDuejiK6kIzgDQM5CELaqMjIzTtvFytTiVvSxgsqL+EGOYR67Lhje5nOqQKz/5gQECqjtaIUbaObC++wqTahLedKuhs4C8uYI64IFibWvWkKOmVa7RJhqfRNCGfYtAcp6Gb9YIVdGDaiWxg79nrgP40DYpn1c0bSrqJKarAj//AeTghVbP9M3L5B/e9cBOE4YDY1yA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0S/dq9rRBTS1ePimSC/cWCrA3Smy//jbieclNJin+tg=;
- b=OCWH+r0CuFg2Wp8+pnc+GnE4Mhd9vaAPjGaq1wJUYYyYUKi0xXsJPQ9E9HZur4sUyyRrbhdjc0ttIhRCm+1RguIsKWcSiehZKcQ/Hqwbh61lCG1LEtRp1sR1FVzaK7o1jGoH74NcGP4/DtmUN8VD7SCJi7LJ6nbtea4VEvt6F5EPozo5XIriYEIZ1l8p+JUMjSoOPv2zFBDkKV+dk9+FqqCLPYdvvjU3LU43L0810Sv4maiTO6g8gW+theSIdiMvD60k//FHG9Bgq9u3zG76CRWiK4mxwdWrQ4wGvCQtOX/9MntN7SsWTDq16KyQaUJBRhS+bGigyHH2q+1Y+Y6cBQ==
+ bh=m8Hqk2TRDxTfcPwUqb5cE0r68ksorVVlDvFtviHywX4=;
+ b=wx10Y/tZgT+oqVaoGKDWyEQiRg07WWURzqLw+zZ2FFr8cIU4GX2DgIaf99BicuvoQ/fTPwmYZh1BkICrMR5u2GJb+oj/C6bTNxH3mQYnyteuvfd2aQpQYFFNZ0+EG6SNvx8eLaw9if/7rEhNIZB1jJ4de6o0KGtN0WUqR5G729q4LbWI9V+D/uBGTF/T/3poZvGgzvvPMFCXcMND/2eapEebOTsq9iNDrZndg87pGQFUs9HWrYXDHIKSubPVCxtatSlCzPdFL/NH85bUawsaTIx2Kx0+DXYB+mafE3yr/OEceAt0vtsBq9G0lDiTlBY3x3X/OfhTr9bOnQNW8kpF6A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
  header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0S/dq9rRBTS1ePimSC/cWCrA3Smy//jbieclNJin+tg=;
- b=rr0or2TGEitFcutJjDtm5IGJHzb/sM2qBW8X1NI5AAfb9ntx4GSCTuF1YNii1I5+ymNzXfBlenOOZvjLkiYfrPdKp0ZOVTBsqVgKoA7RCEtDithyTRH5ZgkQWYjjOA4Qg7LdN0CO4g+MLwHxB/D/C//Uup75MLnccBy4O9S5Bb8=
+ bh=m8Hqk2TRDxTfcPwUqb5cE0r68ksorVVlDvFtviHywX4=;
+ b=Wqo2h5J202hh+7eUfdS55qki44CXbceJP8N0xbwzB8Ggb0mZRKl+dcnIZ752P1qFAUhcNC9zMs9UzECl9O7TGUnNM+XYRnUFTjvSwcAbZW9obpQIs8iJPqAb/bUfwF+9O9/RMMQYG/jfzBxxjVBst7+7IQChVCgJqmP+gfnVHlA=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=bp.renesas.com;
 Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com (2603:1096:400:3e1::6)
  by TYWPR01MB10458.jpnprd01.prod.outlook.com (2603:1096:400:2fa::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.13; Wed, 20 Aug
- 2025 16:05:50 +0000
+ 2025 16:05:48 +0000
 Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com
  ([fe80::63d8:fff3:8390:8d31]) by TYCPR01MB11947.jpnprd01.prod.outlook.com
  ([fe80::63d8:fff3:8390:8d31%5]) with mapi id 15.20.9031.023; Wed, 20 Aug 2025
- 16:05:50 +0000
+ 16:05:48 +0000
 From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 CC: Biju Das <biju.das.jz@bp.renesas.com>,
 	tomm.merciai@gmail.com
-Subject: [PATCH 6.1.y-cip 28/55] media: renesas: rzg2l-cru: Add 'yuv' flag to IP format structure
-Date: Wed, 20 Aug 2025 18:03:44 +0200
-Message-ID: <20250820160413.801341-29-tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 27/55] media: rzg2l-cru: Move register definitions to a separate file
+Date: Wed, 20 Aug 2025 18:03:43 +0200
+Message-ID: <20250820160413.801341-28-tommaso.merciai.xr@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250820160413.801341-1-tommaso.merciai.xr@bp.renesas.com>
 References: <20250820160413.801341-1-tommaso.merciai.xr@bp.renesas.com>
@@ -57,213 +57,308 @@ X-ClientProxiedBy: FR2P281CA0073.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: TYCPR01MB11947:EE_|TYWPR01MB10458:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9ac605aa-ee95-48f4-6dc0-08dde0036ecd
+X-MS-Office365-Filtering-Correlation-Id: 63efbd5c-ff24-47a3-b53a-08dde0036d4d
 X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: 
 	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|38350700014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?3wxlFLB9b8zxa+fCI+iIDuAKc/MxFyLNM2sAGqo8ybS+otLXF7YLH3yNGTKt?=
- =?us-ascii?Q?pw/fdsk09JKGVvRiM7/WcVNSaylksfQhtIcyA3+NaOQnDR4sorYXsu1kEPHI?=
- =?us-ascii?Q?VH19+C8liGW/zZ0XchHYV4JVhnBn+GK7n9UmND2RrRjP/VkLBbF29DsI5lQt?=
- =?us-ascii?Q?5pGifWLCt2YcUNkAqi8dqn+4IbbSD6E1a1tvzUdq9ZnCIwAPkqmHbK1kIEDR?=
- =?us-ascii?Q?zqHQF7RFGZyIr1D3dHJq2F1bECb3X1eZSFdqyzP8JuV/ZBjjxDl57ajP6shs?=
- =?us-ascii?Q?Xd+oLCj7BLE8zBRc4GJJ8n6SmDA+ZjyxRThAnfF3b3EWtgabqnebOSBGRWGe?=
- =?us-ascii?Q?lBJRuy5a5nY6OqdHdqbdCNLumi7hAOZFb4mriEMgkayLN7KGeV9qOnLHHL0W?=
- =?us-ascii?Q?wkwKl+UGECTAQ6EBpTtEdT9Q0nYSJA3RarPnL+ZPVGXb1j29RKjdwghW/08A?=
- =?us-ascii?Q?mX81pPCEojXZ80m0AU3CllnCd5KCRnhUmJBCoGK9tK+uvO0YZ5CZduQRl5uk?=
- =?us-ascii?Q?jtDVJ8gvTjktY/UblqimFgA9BdqpQv6Uz30g7FbdD/+oZegpcs7xtelNDOCS?=
- =?us-ascii?Q?x0fv/++4sRjaEi2HC3mQwOWS0kDLgzkKSdmTBsQQffQzlAs8/R/wbviTWCFN?=
- =?us-ascii?Q?GbeLZmkWqEgpWJA66zih8tqeBCeju5nmIq29GWuJg8KgCX2Lw5THb0DGi4Xz?=
- =?us-ascii?Q?D9mMz+NUhtrUYlbioetlJOC0AWSvVja2Mx4hplTuwIsSOJ/mHcbpzqmf4ZBB?=
- =?us-ascii?Q?PTFTbLurQWDOnhi8pAYayFiqi+iCHRgPePjiZYbgSi9FmUeASYaZNZaM3YQm?=
- =?us-ascii?Q?QAPGNBe4xemDVnq/2IwiaIIM2d/QfwEiPPEezRsxTk3fBfkCkZ6EqgM/RNc2?=
- =?us-ascii?Q?QsDe7QD65BoLqTDu2MZ1oPXAEsLM3lpFfbaK7waa5/zhNAnhQYDi85NBiQA8?=
- =?us-ascii?Q?s0Axbf52UBLuXsBfm24qamm/CCMjcx5NPyk+vGIcjnpygpJsznZQc5YjSss4?=
- =?us-ascii?Q?KQkfkFAPYd+JhHn+1YzQbNQyYa3wrJdSPuQp5Bm7Y4jH3HuXQLVJi2IqnvSr?=
- =?us-ascii?Q?83QhO5KGzviTFxAGm47NICvcm3GWw5OUsfBTxNau9/5SjdDCyaulNf1N9MCt?=
- =?us-ascii?Q?XA6FjYXzT3lbjdidWzKIJ5TlTWaeeddCSOTb4uOOcggmG4lA+NGPiPY2/Le3?=
- =?us-ascii?Q?VaBb11KX4RN3cfDfX0Wv0YC18gYdwUZZbQkfbrKCflzHsVMURR5oL4IwKWWn?=
- =?us-ascii?Q?CChxCrO3gnUurBzVKMsd49AYUsA0eOR3VN6M9LAQWVloWosEzo20PFfMjIKb?=
- =?us-ascii?Q?gGBPKobpMAea9INRK2NYmemm95xBLGbOfMMXZUPuoD/R+9+JPzlvs+s7uRg4?=
- =?us-ascii?Q?zgtSkeY7luL0vHa86+WnteR1VT2TyOQKic/wwSguVyEi/FtlJbOoABh1Qilh?=
- =?us-ascii?Q?u8RMu5luiYeE+cV9ldHjD89LGnH2vsrRVqDmjU7VflNvaALYup2OjEbUWmcQ?=
- =?us-ascii?Q?+cqYvWZSf9pEHEM=3D?=
+	=?us-ascii?Q?U8Lc8HW987astF+hYXA61Xwp7b2gRC3q84Qb/blhKpyw2FiZJM2lbqq+9uLo?=
+ =?us-ascii?Q?6fiDGH42TK4QuVS7GGdh8NFu6VGdjbAwZOvGiMwJ6c/u9ngcx7XnrqlC01IM?=
+ =?us-ascii?Q?Ucl1vrRugtHElB00gqB64nvq0SwxAwpzBuNtr/Wd9mJXoF0sfUYo7xW9TFG3?=
+ =?us-ascii?Q?g6j/xBDG3ncr0jDOB0ZkbGYBUtoQkGA+y8bRHRx6mtbWhj6kXzGIK4POTLEB?=
+ =?us-ascii?Q?BflvCSSInOJREySl+cEkCoEkSHYqKHkqmsTNnb+idYyKiCtfw3c36ESEmBFd?=
+ =?us-ascii?Q?fH4LG4rz7HNk0Koo/hulYn99LN9wlmQcGXZtlT9zYRo5LQ1lwFIfzTR1+D6V?=
+ =?us-ascii?Q?2IKBL2jiWaLl+XFQr5sE0BcRocLYSM3Zq1oHjYDgriBHveMsXMZFzlYmO+Zo?=
+ =?us-ascii?Q?M5VCQYNf5O3JC6ettyQWyM4ivXuAsxP4aCzDaiuace1CSOYeoilV5QiVblxE?=
+ =?us-ascii?Q?2uDScKAJpxzCo7IeOibVJZClAGtA7b99gEUenn6K9he8PEM5Do5hd003mjdF?=
+ =?us-ascii?Q?pQ1BPbyPToSXZYMRJFyMcjItXvLGQ6Am4MY640qoEjujUGdW0d5hmGOCbFEO?=
+ =?us-ascii?Q?7NeCVf1mmRk2dzu5ntQYpplKhewe24xvgl39K+v+a+yrHLpxIAYmNL2PlZST?=
+ =?us-ascii?Q?QgogIpg1T8K5g7R+z6bV03drKHo0nNUnHzXapNYPdd3nuacId2fPrH3j7N55?=
+ =?us-ascii?Q?xfMgeG1IgHXKkY/eQGL1HZ3B/EpRMLjFvKi/is8kBX2zTBw1Twd+/PY83d0x?=
+ =?us-ascii?Q?/o5Nb1c90xafQDNbdYygeNadyPp+WX3gN2hYoYygYgsc1/XEZUBglwq6KHf+?=
+ =?us-ascii?Q?MIgszH0weJn1UW0h98GwVUoy/cDZzi6gw04J0Uu621DnnSxrn1GD2ClXu+Rh?=
+ =?us-ascii?Q?HUoLI/si1COFLrWLkmbZQ/64Rj1+h75wx4wJQ/22Ogob92gQ4pcKFqEUUBWD?=
+ =?us-ascii?Q?5ZpPAtHEgJ3/MsQLe1shDbXcKos3SKHgP9KaFRZQxXnnn7t73ktx/PQ29G2c?=
+ =?us-ascii?Q?Fff+amduaSAz3qn66ND33wgtzlnCrHAcljkRR2dQg7ViH9Xtj+Gyi/4x49vE?=
+ =?us-ascii?Q?RbE/tqVl50bMiQf9E6d7TO4wkw/XJbpN5+qy5U5b/CRG1VveRMY35clL5UJQ?=
+ =?us-ascii?Q?GGVKpesbjk1b95AOT5K+VTR3G9p7ZEOWGA2FEPsrlke9tRm1n4IkpSJBwPPc?=
+ =?us-ascii?Q?3EXL5OkhlH2adGw0lNGCWjwf5ET86xnEy4qrz8eSixk+ZulgU+oLM2cHAemt?=
+ =?us-ascii?Q?boCSKmImiSqOm4iz+/vv/lyMP8QuGDeJa4bQlgIo7Raxons87LTVnjuXkFyu?=
+ =?us-ascii?Q?3LLtg5Sb0pPT2+77T+1ztlS/mDVWrn7ldNG3Oy8VjxVwqJgCuLKKthm3cDEx?=
+ =?us-ascii?Q?af3YxIR9awtiLSREH/1X0TardP045YaWOuF2jNzqbYBRvei3ziUwO4Jbnwkv?=
+ =?us-ascii?Q?MFsqgPjVlNS6PBnRgIC2wcXZOGWmf1C33kU0wJ89oNEqbzO4keXXPw5Ouv/B?=
+ =?us-ascii?Q?lu3CjObWO1R8Z+M=3D?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11947.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?A/E8mvry6dcOFgCS7pKZDysEmdShb8DKVQnXKHyyDMppl6zH8SMhjd+I0oI1?=
- =?us-ascii?Q?CW70dQn54XEpxo+ldOSEKx1a70r/MKfxis1I63R1rufXWqbVrP7/7HqXhTPJ?=
- =?us-ascii?Q?zeRjwhikxb1qmT2eYLdxl4StEWuicg8H7/gP+0A0BNFyyL6zM1k9m+UbFgTN?=
- =?us-ascii?Q?k7p7R+0mKBpHW+ZSLV8sd0WsekVzxEp2nYM7JvkewcNrdlQiCfFM9ny6QSmp?=
- =?us-ascii?Q?NdHezNwSaOwZeoAXItpSsRMbM8AxGqJCWssRFKXH2CeSm/a1hxX0Vddw6zeT?=
- =?us-ascii?Q?MsGeV+/GA1MIDLGBzvY37vp/09hWIdDBjqGqI1upwwGhf/DFEeAav88DUGmP?=
- =?us-ascii?Q?GigoSLEX0drSqNWu4GesFNxAzR4C6UUksXpQ+IYhx5BsFnmXViFH5kSkimm8?=
- =?us-ascii?Q?6T+5q7wQYSKvvy2xLDoY/0pU0cYcW3hnh+9veD9srifTRJYt5J7vMzPmqSzm?=
- =?us-ascii?Q?jsUvv0zvyhVzRuQDI2s+2jZ9GJt29BhYsPbQT36KrBoYEO72CGfOYyudsugm?=
- =?us-ascii?Q?U01tUG/6YjA3s3voaBz5Pbv2FaIzKQMJYd6UuFeLgnU8jd2X5FBEB0inIpxR?=
- =?us-ascii?Q?fRlyPZVuO+M+Iqy52aB/jokJ9y6aQ8+HkI615UV/NdTeCNIbi8lmYz4MUyID?=
- =?us-ascii?Q?lOH53eJKJCYVlEN5eRnoPYtE5NLoratbAOyCnCR4IjT3MCzCObEwPPxzENpE?=
- =?us-ascii?Q?sPW46fhZs4iNHA+KGvq8xHPB1mCvptBq0NdPw8g8wahsOKsDJCCqrYCyZZQJ?=
- =?us-ascii?Q?H1PJGO0aoPA5UZw6v+TN+WAwcy6BLyxAcAKGF0kp85ujOL2iRU4waFEoRfs4?=
- =?us-ascii?Q?U7z+VglwnYtOjkKz6ECSoshNe3aa0/uPQc6NvdtJyxna96I+ZlCrM091jNrk?=
- =?us-ascii?Q?UhCLGqbj3KZspd9p20IjRWAwAUTuumFDfPKqiShMy199pb3PpOMi0HVLC3Aj?=
- =?us-ascii?Q?t10YtKI22sD8VYVQC7S/FkW44koz1SVLAzVkrT0T2VNbPKfqHcPQlEBiu378?=
- =?us-ascii?Q?IBe0QSUmZ+aQv+JUlmkPwmBnuyQY2htSXS6WY8TL0zatIEFJwqBREdeBq37q?=
- =?us-ascii?Q?TeuIeCBobh9nyvQjIflGTvC7o61/FyiX/Dsuc671GyHndzKyJf0XH9zYv63k?=
- =?us-ascii?Q?9vOpMloIp5M/ttxH2v8yBTmomLeDlshBzIBFB4ghb5G2JGl1tnbXrnPino9C?=
- =?us-ascii?Q?RKQGrnkkKDcXeUWgll2UinmNjCaRHsiR4d1/cRXc+HpMR+PZqHMgly4DW+nj?=
- =?us-ascii?Q?KMNx0Kijfxi75jkENdgegk+31mU4d8CooIThUEOeXMKedcrU9AWL0CyGrODR?=
- =?us-ascii?Q?k2BSnbrbECuzoBiUQpx/APqSQeofev4zQ1Hi7h1FAsAcpORq/u8E5FFtzWMK?=
- =?us-ascii?Q?w3/qd5bQ7lCDqYELmTISarvJ/CHIe2atM2VkMtQS1dLA+f26IaiMmWCeqBVs?=
- =?us-ascii?Q?sE3R34AmgY7JZVTYuLOAg8JHPy/pW8NIoBkQ1Vkta9aAWA6C0RC7PEbwGN0H?=
- =?us-ascii?Q?hhX2acT+PkVOibOZzBJfu4ByaoRdySQkEmwAsRLo6QzJzbNIvQEnI9XtfbRv?=
- =?us-ascii?Q?6fugRU4tvY5ZHK65fVBXfcpAPuOQjMFNgi9ZcstvTVR7cDq+mNLbh5JNe0Ju?=
- =?us-ascii?Q?XyfohJLFtjJjxgDke88cMNM=3D?=
+	=?us-ascii?Q?cJxR0VSGrQnaea1BxoyPjVQqbpcf7MW11L+peNyNuTwdh7phy9l/mwv1ly/q?=
+ =?us-ascii?Q?2Rgz7ffWQokOjtHmE9Wfh5XsE+gRIT/l2++51YbAMgRxVWV5mudUvhMxeW7g?=
+ =?us-ascii?Q?2ppBHjCj9ArVTalRCCcjppBhNoKCBW930IF5YTHg0xAbkmUZwlWtvhbrEZlA?=
+ =?us-ascii?Q?Hu8tkspAR56THeIN1RvmA/Oj20xJ0kv+qMG/6R0jeULBVOWDy4WOxUkEDFwG?=
+ =?us-ascii?Q?w5bpjhyaMgvk9z29mVLo4ROAWSAt5zNWzv1wGg9iXksR23QGljr4DAjb8TqT?=
+ =?us-ascii?Q?TqE8IgNFB0T6/s9qSU/dxPwusKQlxzX6CutlzbRYI8f4pcXRiCAsO84CR4FR?=
+ =?us-ascii?Q?/nG6m6nY4lPXmDKrSv2X5n42ltwxV8XyeDTjXwWy1a/WonlN5o0wuzCkieIu?=
+ =?us-ascii?Q?HOlf9U55owAuVZ9CMXTbexCNRX/yFO2mRlb868osBOgzpyGRVTswltXqViAn?=
+ =?us-ascii?Q?P9XU2qlIxqHn/zVPc1H/7SH0LJhB050FBTcXABvEYMvZc28BEj6ySSr4KQwJ?=
+ =?us-ascii?Q?w6BMBKyHyuQygz9c5KJS/OFE8f/XvuYt8WJT5jxLTFo/JtePeYp993Uv6Qyx?=
+ =?us-ascii?Q?J4elz+QQYQRyqWkD7Wjp9DE/65uuGPl1MRtqRPqGfzHk2VDKCJ7K8XNCMRDX?=
+ =?us-ascii?Q?poXBnhBWFo4mcun9Gg48DPr6MGlVJuJo+mKTuFb4kiTGQKdhDTwJTxaRuLfN?=
+ =?us-ascii?Q?TUBjlArYjjJCr9VbTbxLL9w19yjK8aoridp1kBwNbbXG1Ztqi3sbrXqQpN6b?=
+ =?us-ascii?Q?m/hOsGhHUaS2hsKQONg0GPrJRZ0lvTaIzCjJc+6q1DL88EuUgRjWzoZEv07l?=
+ =?us-ascii?Q?JI9+Pjq6hlCWxO1Syuq7H8cbsIi8Nst5sw3JIUUvIcUftNhP6uB+eX8tYib7?=
+ =?us-ascii?Q?KJ3a7xpsvQdKLwTNqLzCMfV7CfZt19nADFBJKkSY8x/kkisuZ9NPXz0YCpDU?=
+ =?us-ascii?Q?Iw7ne0r8pDtsFzFURHW4vWSt32rrlWYcPcgfmKaV0lAyuhaqGTmqdLKCjBb4?=
+ =?us-ascii?Q?AV4Ny+s4vfZ2FUsJL3CWicOw14dBaUfShlin4sg4aBYZ2H8ZRvwWo1zBFl42?=
+ =?us-ascii?Q?n/+W2cNL65fUoN0FFt+2jahkJ2dPIhDKasbxJeidO7uOhQAAmupE5pQ0/cu2?=
+ =?us-ascii?Q?Q72DBzEP9Y95nEBDQjY4tYc2HmYL6rgP99Ft8IguEvyQcpO6BZit5IhV1msU?=
+ =?us-ascii?Q?xoN0D693Zz5eyaivfm2/wEmWPR+b9dFImZsqfUMSw/tBl3ZxEJ0trpBZMiUj?=
+ =?us-ascii?Q?hojfLPNcnrhldpWPMS5UxgNMKmIOPYD5oKIJCoV4jm9d6BnV46JHGfTnxM3D?=
+ =?us-ascii?Q?ubYDBf6Nw+9jCTyhwUCg+jGyhBoUyDaIQxCgqWgXaDo7faHK/zXj+ZfQ+pyg?=
+ =?us-ascii?Q?3WTe3zO8nH5e3YVnVbpLprqzGgqfeySgiv3GAuJB1wQLsosfaazN28Jztj1v?=
+ =?us-ascii?Q?oOMmUyrVDHQOInevrUrPOWSyKyvrMy5tPKxOeqsOsfn2rNtfYKsdypx/MppI?=
+ =?us-ascii?Q?txzlUooJcyOWHDNqphbTwSwsBPCFRFlooWAPQXO2etf4BMiTdDEWH69k+4j/?=
+ =?us-ascii?Q?tUHJrcRJG3qYp9ID4wTj9R7Br+o61XXdlb3IZTLeNm+9j48guCkLIKV5+KQv?=
+ =?us-ascii?Q?kT7m8QGtgRGICqnGBy03qPE=3D?=
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ac605aa-ee95-48f4-6dc0-08dde0036ecd
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63efbd5c-ff24-47a3-b53a-08dde0036d4d
 X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11947.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 16:05:50.7818
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 16:05:48.2634
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dam3hj1uCcYWzy8DDWvCyLmYNJmfzhGMe7PnPVTroUGnCRmo13S031GxKbjITj5USwBKdUdn+lqlhdvBDNHRZaxJlAddGdkFLgXijanqpCGDbrDJfjbrqhF98m4WCQ3b
+X-MS-Exchange-CrossTenant-UserPrincipalName: LAclw67JnTxqGxxtG2tBxIjkNM6ItS6NEVtwPUrb8fMRTfxLP9d+v2MNi6EpSYJ3/58ReMdxCumuD6cSOy4AVnVrXz55FtPR+QeK1DFyev0XF8/71EZvZwANQT+rh3iE
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB10458
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 20 Aug 2025 16:05:53 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19853
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19852
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 2269e399b3f0f9d474606cddd9cb6a833fc62b7f upstream.
+commit c0fc8dd01ffc37f3ce4132b7b2b579fbf64aaca7 upstream.
 
-Add a 'yuv' flag to the `rzg2l_cru_ip_format` structure to indicate
-whether a given format is YUV-based and update the `rzg2l_cru_ip_formats`
-array with this flag appropriately. This change enables a more efficient
-way to check if the input and output formats use the same colorspace.
+Move the RZ/G2L CRU register definitions from `rzg2l-video.c` to a
+dedicated header file, `rzg2l-cru-regs.h`. Separating these definitions
+into their own file improves the readability of the code.
 
-With this change, we can eliminate the use of `v4l2_format_info()` in
-`rzg2l_cru_initialize_image_conv()` as the necessary details for the source
-and destination formats are already available through the `yuv` flag.
-
+Suggested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Link: https://lore.kernel.org/r/20241018133446.223516-24-prabhakar.mahadev-=
+Link: https://lore.kernel.org/r/20241018133446.223516-23-prabhakar.mahadev-=
 lad.rj@bp.renesas.com
 Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
 Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 ---
- drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h   | 2 ++
- drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c    | 5 +++++
- drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c | 6 +-----
- 3 files changed, 8 insertions(+), 5 deletions(-)
+ .../renesas/rzg2l-cru/rzg2l-cru-regs.h        | 80 +++++++++++++++++++
+ .../platform/renesas/rzg2l-cru/rzg2l-cru.h    |  2 -
+ .../platform/renesas/rzg2l-cru/rzg2l-ip.c     |  1 +
+ .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 69 +---------------
+ 4 files changed, 82 insertions(+), 70 deletions(-)
+ create mode 100644 drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs=
+.h
 
+diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h b/dr=
+ivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h
+new file mode 100644
+index 000000000000..1c9f22118a5d
+--- /dev/null
++++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h
+@@ -0,0 +1,80 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * rzg2l-cru-regs.h--RZ/G2L (and alike SoCs) CRU Registers Definitions
++ *
++ * Copyright (C) 2024 Renesas Electronics Corp.
++ */
++
++#ifndef __RZG2L_CRU_REGS_H__
++#define __RZG2L_CRU_REGS_H__
++
++/* HW CRU Registers Definition */
++
++/* CRU Control Register */
++#define CRUnCTRL			0x0
++#define CRUnCTRL_VINSEL(x)		((x) << 0)
++
++/* CRU Interrupt Enable Register */
++#define CRUnIE				0x4
++#define CRUnIE_EFE			BIT(17)
++
++/* CRU Interrupt Status Register */
++#define CRUnINTS			0x8
++#define CRUnINTS_SFS			BIT(16)
++
++/* CRU Reset Register */
++#define CRUnRST				0xc
++#define CRUnRST_VRESETN			BIT(0)
++
++/* Memory Bank Base Address (Lower) Register for CRU Image Data */
++#define AMnMBxADDRL(x)			(0x100 + ((x) * 8))
++
++/* Memory Bank Base Address (Higher) Register for CRU Image Data */
++#define AMnMBxADDRH(x)			(0x104 + ((x) * 8))
++
++/* Memory Bank Enable Register for CRU Image Data */
++#define AMnMBVALID			0x148
++#define AMnMBVALID_MBVALID(x)		GENMASK(x, 0)
++
++/* Memory Bank Status Register for CRU Image Data */
++#define AMnMBS				0x14c
++#define AMnMBS_MBSTS			0x7
++
++/* AXI Master Transfer Setting Register for CRU Image Data */
++#define AMnAXIATTR			0x158
++#define AMnAXIATTR_AXILEN_MASK		GENMASK(3, 0)
++#define AMnAXIATTR_AXILEN		(0xf)
++
++/* AXI Master FIFO Pointer Register for CRU Image Data */
++#define AMnFIFOPNTR			0x168
++#define AMnFIFOPNTR_FIFOWPNTR		GENMASK(7, 0)
++#define AMnFIFOPNTR_FIFORPNTR_Y		GENMASK(23, 16)
++
++/* AXI Master Transfer Stop Register for CRU Image Data */
++#define AMnAXISTP			0x174
++#define AMnAXISTP_AXI_STOP		BIT(0)
++
++/* AXI Master Transfer Stop Status Register for CRU Image Data */
++#define AMnAXISTPACK			0x178
++#define AMnAXISTPACK_AXI_STOP_ACK	BIT(0)
++
++/* CRU Image Processing Enable Register */
++#define ICnEN				0x200
++#define ICnEN_ICEN			BIT(0)
++
++/* CRU Image Processing Main Control Register */
++#define ICnMC				0x208
++#define ICnMC_CSCTHR			BIT(5)
++#define ICnMC_INF(x)			((x) << 16)
++#define ICnMC_VCSEL(x)			((x) << 22)
++#define ICnMC_INF_MASK			GENMASK(21, 16)
++
++/* CRU Module Status Register */
++#define ICnMS				0x254
++#define ICnMS_IA			BIT(2)
++
++/* CRU Data Output Mode Register */
++#define ICnDMR				0x26c
++#define ICnDMR_YCMODE_UYVY		(1 << 4)
++
++#endif /* __RZG2L_CRU_REGS_H__ */
 diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h b/drivers=
 /media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-index e4c9a7b49302..c496a5f2fd1e 100644
+index 766ffaaa6130..e4c9a7b49302 100644
 --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
 +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-@@ -69,6 +69,7 @@ struct rzg2l_cru_ip {
-  * @format: 4CC format identifier (V4L2_PIX_FMT_*)
-  * @icndmr: ICnDMR register value
-  * @bpp: bytes per pixel
-+ * @yuv: Flag to indicate whether the format is YUV-based.
-  */
- struct rzg2l_cru_ip_format {
- 	u32 code;
-@@ -76,6 +77,7 @@ struct rzg2l_cru_ip_format {
- 	u32 format;
- 	u32 icndmr;
- 	u8 bpp;
-+	bool yuv;
- };
+@@ -31,8 +31,6 @@
+ #define RZG2L_CRU_MIN_INPUT_HEIGHT	240
+ #define RZG2L_CRU_MAX_INPUT_HEIGHT	4095
 =20
- /**
+-#define ICnDMR_YCMODE_UYVY		(1 << 4)
+-
+ enum rzg2l_csi2_pads {
+ 	RZG2L_CRU_IP_SINK =3D 0,
+ 	RZG2L_CRU_IP_SOURCE,
 diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c b/drivers/=
 media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-index 581bdd372ad0..4094a480db21 100644
+index 1a3d33bf5b13..581bdd372ad0 100644
 --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
 +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-@@ -18,6 +18,7 @@ static const struct rzg2l_cru_ip_format rzg2l_cru_ip_form=
-ats[] =3D {
- 		.format =3D V4L2_PIX_FMT_UYVY,
- 		.bpp =3D 2,
- 		.icndmr =3D ICnDMR_YCMODE_UYVY,
-+		.yuv =3D true,
- 	},
- 	{
- 		.code =3D MEDIA_BUS_FMT_SBGGR8_1X8,
-@@ -25,6 +26,7 @@ static const struct rzg2l_cru_ip_format rzg2l_cru_ip_form=
-ats[] =3D {
- 		.datatype =3D MIPI_CSI2_DT_RAW8,
- 		.bpp =3D 1,
- 		.icndmr =3D 0,
-+		.yuv =3D false,
- 	},
- 	{
- 		.code =3D MEDIA_BUS_FMT_SGBRG8_1X8,
-@@ -32,6 +34,7 @@ static const struct rzg2l_cru_ip_format rzg2l_cru_ip_form=
-ats[] =3D {
- 		.datatype =3D MIPI_CSI2_DT_RAW8,
- 		.bpp =3D 1,
- 		.icndmr =3D 0,
-+		.yuv =3D false,
- 	},
- 	{
- 		.code =3D MEDIA_BUS_FMT_SGRBG8_1X8,
-@@ -39,6 +42,7 @@ static const struct rzg2l_cru_ip_format rzg2l_cru_ip_form=
-ats[] =3D {
- 		.datatype =3D MIPI_CSI2_DT_RAW8,
- 		.bpp =3D 1,
- 		.icndmr =3D 0,
-+		.yuv =3D false,
- 	},
- 	{
- 		.code =3D MEDIA_BUS_FMT_SRGGB8_1X8,
-@@ -46,6 +50,7 @@ static const struct rzg2l_cru_ip_format rzg2l_cru_ip_form=
-ats[] =3D {
- 		.datatype =3D MIPI_CSI2_DT_RAW8,
- 		.bpp =3D 1,
- 		.icndmr =3D 0,
-+		.yuv =3D false,
- 	},
- };
+@@ -9,6 +9,7 @@
+ #include <media/mipi-csi2.h>
 =20
+ #include "rzg2l-cru.h"
++#include "rzg2l-cru-regs.h"
+=20
+ static const struct rzg2l_cru_ip_format rzg2l_cru_ip_formats[] =3D {
+ 	{
 diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drive=
 rs/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-index a0fd84e5f242..5ded0a1f5626 100644
+index dae952e05944..a0fd84e5f242 100644
 --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
 +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-@@ -210,7 +210,6 @@ static int rzg2l_cru_initialize_image_conv(struct rzg2l=
-_cru_dev *cru,
- 					   struct v4l2_mbus_framefmt *ip_sd_fmt,
- 					   u8 csi_vc)
- {
--	const struct v4l2_format_info *src_finfo, *dst_finfo;
- 	const struct rzg2l_cru_ip_format *cru_video_fmt;
- 	const struct rzg2l_cru_ip_format *cru_ip_fmt;
+@@ -20,74 +20,7 @@
+ #include <media/videobuf2-dma-contig.h>
 =20
-@@ -225,11 +224,8 @@ static int rzg2l_cru_initialize_image_conv(struct rzg2=
-l_cru_dev *cru,
- 		return -EINVAL;
- 	}
-=20
--	src_finfo =3D v4l2_format_info(cru_ip_fmt->format);
--	dst_finfo =3D v4l2_format_info(cru->format.pixelformat);
+ #include "rzg2l-cru.h"
 -
- 	/* If input and output use same colorspace, do bypass mode */
--	if (v4l2_is_format_yuv(src_finfo) =3D=3D v4l2_is_format_yuv(dst_finfo))
-+	if (cru_ip_fmt->yuv =3D=3D cru_video_fmt->yuv)
- 		rzg2l_cru_write(cru, ICnMC,
- 				rzg2l_cru_read(cru, ICnMC) | ICnMC_CSCTHR);
- 	else
+-/* HW CRU Registers Definition */
+-
+-/* CRU Control Register */
+-#define CRUnCTRL			0x0
+-#define CRUnCTRL_VINSEL(x)		((x) << 0)
+-
+-/* CRU Interrupt Enable Register */
+-#define CRUnIE				0x4
+-#define CRUnIE_EFE			BIT(17)
+-
+-/* CRU Interrupt Status Register */
+-#define CRUnINTS			0x8
+-#define CRUnINTS_SFS			BIT(16)
+-
+-/* CRU Reset Register */
+-#define CRUnRST				0xc
+-#define CRUnRST_VRESETN			BIT(0)
+-
+-/* Memory Bank Base Address (Lower) Register for CRU Image Data */
+-#define AMnMBxADDRL(x)			(0x100 + ((x) * 8))
+-
+-/* Memory Bank Base Address (Higher) Register for CRU Image Data */
+-#define AMnMBxADDRH(x)			(0x104 + ((x) * 8))
+-
+-/* Memory Bank Enable Register for CRU Image Data */
+-#define AMnMBVALID			0x148
+-#define AMnMBVALID_MBVALID(x)		GENMASK(x, 0)
+-
+-/* Memory Bank Status Register for CRU Image Data */
+-#define AMnMBS				0x14c
+-#define AMnMBS_MBSTS			0x7
+-
+-/* AXI Master Transfer Setting Register for CRU Image Data */
+-#define AMnAXIATTR			0x158
+-#define AMnAXIATTR_AXILEN_MASK		GENMASK(3, 0)
+-#define AMnAXIATTR_AXILEN		(0xf)
+-
+-/* AXI Master FIFO Pointer Register for CRU Image Data */
+-#define AMnFIFOPNTR			0x168
+-#define AMnFIFOPNTR_FIFOWPNTR		GENMASK(7, 0)
+-#define AMnFIFOPNTR_FIFORPNTR_Y		GENMASK(23, 16)
+-
+-/* AXI Master Transfer Stop Register for CRU Image Data */
+-#define AMnAXISTP			0x174
+-#define AMnAXISTP_AXI_STOP		BIT(0)
+-
+-/* AXI Master Transfer Stop Status Register for CRU Image Data */
+-#define AMnAXISTPACK			0x178
+-#define AMnAXISTPACK_AXI_STOP_ACK	BIT(0)
+-
+-/* CRU Image Processing Enable Register */
+-#define ICnEN				0x200
+-#define ICnEN_ICEN			BIT(0)
+-
+-/* CRU Image Processing Main Control Register */
+-#define ICnMC				0x208
+-#define ICnMC_CSCTHR			BIT(5)
+-#define ICnMC_INF(x)			((x) << 16)
+-#define ICnMC_VCSEL(x)			((x) << 22)
+-#define ICnMC_INF_MASK			GENMASK(21, 16)
+-
+-/* CRU Module Status Register */
+-#define ICnMS				0x254
+-#define ICnMS_IA			BIT(2)
+-
+-/* CRU Data Output Mode Register */
+-#define ICnDMR				0x26c
++#include "rzg2l-cru-regs.h"
+=20
+ #define RZG2L_TIMEOUT_MS		100
+ #define RZG2L_RETRIES			10
 --=20
 2.43.0
 
