@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C878CA0EFE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C612CA0EDC
 	for <webhook@archiver.kernel.org>; Wed, 20 Aug 2025 08:39:49 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.15371.1755679186563346831
+ by mx.groups.io with SMTP id smtpd.web10.15235.1755679177922058475
  for <cip-dev@lists.cip-project.org>;
- Wed, 20 Aug 2025 01:39:46 -0700
+ Wed, 20 Aug 2025 01:39:39 -0700
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
-X-CSE-ConnectionGUID: aJAqBmhbSdyf3/LDIj2lWw==
-X-CSE-MsgGUID: Zfr67zn2QMGGX0FYl32JKQ==
+X-CSE-ConnectionGUID: 36uqvnHPQxGucnUYqyfVMw==
+X-CSE-MsgGUID: ioZ2xP18Rk2qBSRh/shtGw==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 20 Aug 2025 17:39:45 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 20 Aug 2025 17:39:39 +0900
 Received: from localhost.localdomain (unknown [10.226.92.43])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5CE11415F3DE;
-	Wed, 20 Aug 2025 17:39:44 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id DCED2415F3DE;
+	Wed, 20 Aug 2025 17:39:37 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.1.y-cip 19/22] irqchip/renesas-rzv2h: Enable SKIP_SET_WAKE and MASK_ON_SUSPEND
-Date: Wed, 20 Aug 2025 09:38:27 +0100
-Message-ID: <20250820083855.6337-20-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 16/22] memory: renesas-rpc-if: Add wrapper functions
+Date: Wed, 20 Aug 2025 09:38:24 +0100
+Message-ID: <20250820083855.6337-17-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250820083855.6337-1-biju.das.jz@bp.renesas.com>
 References: <20250820083855.6337-1-biju.das.jz@bp.renesas.com>
@@ -35,44 +35,201 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 20 Aug 2025 08:39:49 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19788
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19785
 
-commit de2942828e7670526289f098df7e50b112e8ff1e upstream.
+commit e1c200a4c7f0e8b842a9a5b7f38fa7036c0df417 upstream.
 
-The interrupt controller found on RZ/G3E doesn't provide any facility to
-configure the wakeup sources. That's the reason why the driver lacks the
-irq_set_wake() callback for the interrupt chip.
+Even though XSPI and RPCIF has different register layout, reuse the code
+by adding wrapper functions to support both XSPI and RPC-IF.
 
-But this prevent to properly enter power management states like "suspend to
-idle".
+While at it, replace error check for pm_runtime_resume_and_get().
 
-Enable the flags IRQCHIP_SKIP_SET_WAKE and IRQCHIP_MASK_ON_SUSPEND so the
-interrupt suspend logic can handle the chip correctly.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/all/20250701105923.52151-1-biju.das.jz@bp.renesas.com
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Link: https://lore.kernel.org/r/20250424090000.136804-6-biju.das.jz@bp.renesas.com
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/irqchip/irq-renesas-rzv2h.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/memory/renesas-rpc-if.c | 96 ++++++++++++++++++++++-----------
+ 1 file changed, 65 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
-index 8cccebaae111..194c94dafff8 100644
---- a/drivers/irqchip/irq-renesas-rzv2h.c
-+++ b/drivers/irqchip/irq-renesas-rzv2h.c
-@@ -394,7 +394,9 @@ static const struct irq_chip rzv2h_icu_chip = {
- 	.irq_retrigger		= irq_chip_retrigger_hierarchy,
- 	.irq_set_type		= rzv2h_icu_set_type,
- 	.irq_set_affinity	= irq_chip_set_affinity_parent,
--	.flags			= IRQCHIP_SET_TYPE_MASKED,
-+	.flags			= IRQCHIP_MASK_ON_SUSPEND |
-+				  IRQCHIP_SET_TYPE_MASKED |
-+				  IRQCHIP_SKIP_SET_WAKE,
- };
+diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
+index 1e449766f160..09c617a217d0 100644
+--- a/drivers/memory/renesas-rpc-if.c
++++ b/drivers/memory/renesas-rpc-if.c
+@@ -175,16 +175,11 @@ static void rpcif_rzg2l_timing_adjust_sdr(struct rpcif_priv *rpc)
+ 	regmap_write(rpc->regmap, RPCIF_PHYADD, 0x80000032);
+ }
  
- static int rzv2h_icu_alloc(struct irq_domain *domain, unsigned int virq, unsigned int nr_irqs,
+-int rpcif_hw_init(struct device *dev, bool hyperflash)
++static int rpcif_hw_init_impl(struct rpcif_priv *rpc, bool hyperflash)
+ {
+-	struct rpcif_priv *rpc = dev_get_drvdata(dev);
+ 	u32 dummy;
+ 	int ret;
+ 
+-	ret = pm_runtime_resume_and_get(dev);
+-	if (ret)
+-		return ret;
+-
+ 	if (rpc->info->type == RPCIF_RZ_G2L) {
+ 		ret = reset_control_reset(rpc->rstc);
+ 		if (ret)
+@@ -232,12 +227,26 @@ int rpcif_hw_init(struct device *dev, bool hyperflash)
+ 	regmap_write(rpc->regmap, RPCIF_SSLDR, RPCIF_SSLDR_SPNDL(7) |
+ 		     RPCIF_SSLDR_SLNDL(7) | RPCIF_SSLDR_SCKDL(7));
+ 
+-	pm_runtime_put(dev);
+-
+ 	rpc->bus_size = hyperflash ? 2 : 1;
+ 
+ 	return 0;
+ }
++
++int rpcif_hw_init(struct device *dev, bool hyperflash)
++{
++	struct rpcif_priv *rpc = dev_get_drvdata(dev);
++	int ret;
++
++	ret = pm_runtime_resume_and_get(dev);
++	if (ret)
++		return ret;
++
++	ret = rpcif_hw_init_impl(rpc, hyperflash);
++
++	pm_runtime_put(dev);
++
++	return ret;
++}
+ EXPORT_SYMBOL(rpcif_hw_init);
+ 
+ static int wait_msg_xfer_end(struct rpcif_priv *rpc)
+@@ -262,11 +271,9 @@ static u8 rpcif_bit_size(u8 buswidth)
+ 	return buswidth > 4 ? 2 : ilog2(buswidth);
+ }
+ 
+-void rpcif_prepare(struct device *dev, const struct rpcif_op *op, u64 *offs,
+-		   size_t *len)
++static void rpcif_prepare_impl(struct rpcif_priv *rpc, const struct rpcif_op *op,
++			       u64 *offs, size_t *len)
+ {
+-	struct rpcif_priv *rpc = dev_get_drvdata(dev);
+-
+ 	rpc->smcr = 0;
+ 	rpc->smadr = 0;
+ 	rpc->enable = 0;
+@@ -347,18 +354,21 @@ void rpcif_prepare(struct device *dev, const struct rpcif_op *op, u64 *offs,
+ 		rpc->enable |= RPCIF_SMENR_SPIDB(rpcif_bit_size(op->data.buswidth));
+ 	}
+ }
+-EXPORT_SYMBOL(rpcif_prepare);
+ 
+-int rpcif_manual_xfer(struct device *dev)
++void rpcif_prepare(struct device *dev, const struct rpcif_op *op, u64 *offs,
++		   size_t *len)
+ {
+ 	struct rpcif_priv *rpc = dev_get_drvdata(dev);
++
++	rpcif_prepare_impl(rpc, op, offs, len);
++}
++EXPORT_SYMBOL(rpcif_prepare);
++
++static int rpcif_manual_xfer_impl(struct rpcif_priv *rpc)
++{
+ 	u32 smenr, smcr, pos = 0, max = rpc->bus_size == 2 ? 8 : 4;
+ 	int ret = 0;
+ 
+-	ret = pm_runtime_resume_and_get(dev);
+-	if (ret < 0)
+-		return ret;
+-
+ 	regmap_update_bits(rpc->regmap, RPCIF_PHYCNT,
+ 			   RPCIF_PHYCNT_CAL, RPCIF_PHYCNT_CAL);
+ 	regmap_update_bits(rpc->regmap, RPCIF_CMNCR,
+@@ -466,15 +476,29 @@ int rpcif_manual_xfer(struct device *dev)
+ 			goto err_out;
+ 	}
+ 
+-exit:
+-	pm_runtime_put(dev);
+ 	return ret;
+ 
+ err_out:
+ 	if (reset_control_reset(rpc->rstc))
+-		dev_err(dev, "Failed to reset HW\n");
+-	rpcif_hw_init(dev, rpc->bus_size == 2);
+-	goto exit;
++		dev_err(rpc->dev, "Failed to reset HW\n");
++	rpcif_hw_init_impl(rpc, rpc->bus_size == 2);
++	return ret;
++}
++
++int rpcif_manual_xfer(struct device *dev)
++{
++	struct rpcif_priv *rpc = dev_get_drvdata(dev);
++	int ret;
++
++	ret = pm_runtime_resume_and_get(dev);
++	if (ret)
++		return ret;
++
++	ret = rpcif_manual_xfer_impl(rpc);
++
++	pm_runtime_put(dev);
++
++	return ret;
+ }
+ EXPORT_SYMBOL(rpcif_manual_xfer);
+ 
+@@ -520,20 +544,15 @@ static void memcpy_fromio_readw(void *to,
+ 	}
+ }
+ 
+-ssize_t rpcif_dirmap_read(struct device *dev, u64 offs, size_t len, void *buf)
++static size_t rpcif_dirmap_read_impl(struct rpcif_priv *rpc, u64 offs,
++				     size_t len, void *buf)
+ {
+-	struct rpcif_priv *rpc = dev_get_drvdata(dev);
+ 	loff_t from = offs & (rpc->size - 1);
+ 	size_t size = rpc->size - from;
+-	int ret;
+ 
+ 	if (len > size)
+ 		len = size;
+ 
+-	ret = pm_runtime_resume_and_get(dev);
+-	if (ret < 0)
+-		return ret;
+-
+ 	regmap_update_bits(rpc->regmap, RPCIF_CMNCR, RPCIF_CMNCR_MD, 0);
+ 	regmap_write(rpc->regmap, RPCIF_DRCR, 0);
+ 	regmap_write(rpc->regmap, RPCIF_DRCMR, rpc->command);
+@@ -550,9 +569,24 @@ ssize_t rpcif_dirmap_read(struct device *dev, u64 offs, size_t len, void *buf)
+ 	else
+ 		memcpy_fromio(buf, rpc->dirmap + from, len);
+ 
++	return len;
++}
++
++ssize_t rpcif_dirmap_read(struct device *dev, u64 offs, size_t len, void *buf)
++{
++	struct rpcif_priv *rpc = dev_get_drvdata(dev);
++	size_t read;
++	int ret;
++
++	ret = pm_runtime_resume_and_get(dev);
++	if (ret)
++		return ret;
++
++	read = rpcif_dirmap_read_impl(rpc, offs, len, buf);
++
+ 	pm_runtime_put(dev);
+ 
+-	return len;
++	return read;
+ }
+ EXPORT_SYMBOL(rpcif_dirmap_read);
+ 
 -- 
 2.43.0
 
