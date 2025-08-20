@@ -2,30 +2,30 @@ Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FAA6CA0EE4
-	for <webhook@archiver.kernel.org>; Wed, 20 Aug 2025 14:16:42 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web10.20952.1755699393500995781
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77750CA0EE4
+	for <webhook@archiver.kernel.org>; Wed, 20 Aug 2025 14:19:12 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web10.21017.1755699547240158021
  for <cip-dev@lists.cip-project.org>;
- Wed, 20 Aug 2025 07:16:34 -0700
+ Wed, 20 Aug 2025 07:19:07 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
-X-CSE-ConnectionGUID: VWhm2RNrRqmJOUc7MsYh5w==
-X-CSE-MsgGUID: MSbvCD1uTm+nEpvSKwmlzA==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 20 Aug 2025 23:16:31 +0900
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+X-CSE-ConnectionGUID: cBjvG325TrOBQeOIPvpulQ==
+X-CSE-MsgGUID: 5byFDUyDRzK16hSsAMLTZw==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 20 Aug 2025 23:19:06 +0900
 Received: from Ubuntu-22.. (unknown [10.24.0.236])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 228F24007CF8;
-	Wed, 20 Aug 2025 23:16:29 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3B0C141CBCF9;
+	Wed, 20 Aug 2025 23:19:04 +0900 (JST)
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>,
 	Ulrich Hecht <uli@kernel.org>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 4.19.y-cip] gpio: rcar: Use raw_spinlock to protect register access
-Date: Wed, 20 Aug 2025 15:16:28 +0100
-Message-ID: <20250820141628.5014-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 4.4.y-cip] gpio: rcar: Use raw_spinlock to protect register access
+Date: Wed, 20 Aug 2025 15:19:04 +0100
+Message-ID: <20250820141904.5127-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -33,8 +33,8 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 20 Aug 2025 14:16:42 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19823
+ <cip-dev@lists.cip-project.org>; Wed, 20 Aug 2025 14:19:12 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19824
 
 From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
@@ -119,11 +119,12 @@ This backport is intended to fix CVE-2025-21912 [0].
 Note,
 - This patch is already present in 6.1-cip [1] & 6.12-cip [2].
 - Patch posted for 5.10-cip [3]
-- I intend to backport similar patch for 4.4-cip.
+- Patch posted for 4.19-cip [4]
 
 [1] https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/commit/drivers/gpio/gpio-rcar.c?h=linux-6.1.y-cip&id=3e300913c42041e81c5b17a970c4e078086ff2d1
 [2] https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/commit/drivers/gpio/gpio-rcar.c?h=linux-6.12.y-cip&id=b42c84f9e4ec5bc2885e7fd80c79ec0352f5d2af
 [3] https://lore.kernel.org/all/20250820141305.4841-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+[4] https://lore.kernel.org/all/20250820141628.5014-1-prabhakar.mahadev-lad.rj@bp.renesas.com/T/#u
 
 Cheers, Prabhakar
 ---
@@ -131,19 +132,19 @@ Cheers, Prabhakar
  1 file changed, 10 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index c8d526aed633..f70dec0dfd83 100644
+index 2778dcd96ae7..ecbed711fddf 100644
 --- a/drivers/gpio/gpio-rcar.c
 +++ b/drivers/gpio/gpio-rcar.c
-@@ -42,7 +42,7 @@ struct gpio_rcar_bank_info {
+@@ -33,7 +33,7 @@
  
  struct gpio_rcar_priv {
  	void __iomem *base;
 -	spinlock_t lock;
 +	raw_spinlock_t lock;
- 	struct device *dev;
+ 	struct gpio_rcar_config config;
+ 	struct platform_device *pdev;
  	struct gpio_chip gpio_chip;
- 	struct irq_chip irq_chip;
-@@ -122,7 +122,7 @@ static void gpio_rcar_config_interrupt_input_mode(struct gpio_rcar_priv *p,
+@@ -112,7 +112,7 @@ static void gpio_rcar_config_interrupt_input_mode(struct gpio_rcar_priv *p,
  	 * "Setting Level-Sensitive Interrupt Input Mode"
  	 */
  
@@ -152,7 +153,7 @@ index c8d526aed633..f70dec0dfd83 100644
  
  	/* Configure postive or negative logic in POSNEG */
  	gpio_rcar_modify_bit(p, POSNEG, hwirq, !active_high_rising_edge);
-@@ -141,7 +141,7 @@ static void gpio_rcar_config_interrupt_input_mode(struct gpio_rcar_priv *p,
+@@ -131,7 +131,7 @@ static void gpio_rcar_config_interrupt_input_mode(struct gpio_rcar_priv *p,
  	if (!level_trigger)
  		gpio_rcar_write(p, INTCLR, BIT(hwirq));
  
@@ -161,7 +162,7 @@ index c8d526aed633..f70dec0dfd83 100644
  }
  
  static int gpio_rcar_irq_set_type(struct irq_data *d, unsigned int type)
-@@ -234,7 +234,7 @@ static void gpio_rcar_config_general_input_output_mode(struct gpio_chip *chip,
+@@ -277,7 +277,7 @@ static void gpio_rcar_config_general_input_output_mode(struct gpio_chip *chip,
  	 * "Setting General Input Mode"
  	 */
  
@@ -170,17 +171,17 @@ index c8d526aed633..f70dec0dfd83 100644
  
  	/* Configure postive logic in POSNEG */
  	gpio_rcar_modify_bit(p, POSNEG, gpio, false);
-@@ -249,7 +249,7 @@ static void gpio_rcar_config_general_input_output_mode(struct gpio_chip *chip,
- 	if (p->has_outdtsel && output)
- 		gpio_rcar_modify_bit(p, OUTDTSEL, gpio, false);
+@@ -288,7 +288,7 @@ static void gpio_rcar_config_general_input_output_mode(struct gpio_chip *chip,
+ 	/* Select Input Mode or Output Mode in INOUTSEL */
+ 	gpio_rcar_modify_bit(p, INOUTSEL, gpio, output);
  
 -	spin_unlock_irqrestore(&p->lock, flags);
 +	raw_spin_unlock_irqrestore(&p->lock, flags);
  }
  
  static int gpio_rcar_request(struct gpio_chip *chip, unsigned offset)
-@@ -313,9 +313,9 @@ static void gpio_rcar_set(struct gpio_chip *chip, unsigned offset, int value)
- 	struct gpio_rcar_priv *p = gpiochip_get_data(chip);
+@@ -344,9 +344,9 @@ static void gpio_rcar_set(struct gpio_chip *chip, unsigned offset, int value)
+ 	struct gpio_rcar_priv *p = gpio_to_priv(chip);
  	unsigned long flags;
  
 -	spin_lock_irqsave(&p->lock, flags);
@@ -191,7 +192,7 @@ index c8d526aed633..f70dec0dfd83 100644
  }
  
  static void gpio_rcar_set_multiple(struct gpio_chip *chip, unsigned long *mask,
-@@ -329,12 +329,12 @@ static void gpio_rcar_set_multiple(struct gpio_chip *chip, unsigned long *mask,
+@@ -363,12 +363,12 @@ static void gpio_rcar_set_multiple(struct gpio_chip *chip, unsigned long *mask,
  	if (!bankmask)
  		return;
  
@@ -206,15 +207,15 @@ index c8d526aed633..f70dec0dfd83 100644
  }
  
  static int gpio_rcar_direction_output(struct gpio_chip *chip, unsigned offset,
-@@ -448,7 +448,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+@@ -482,7 +482,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
  		return -ENOMEM;
  
- 	p->dev = dev;
+ 	p->pdev = pdev;
 -	spin_lock_init(&p->lock);
 +	raw_spin_lock_init(&p->lock);
  
- 	/* Get device configuration from DT node */
- 	ret = gpio_rcar_parse_dt(p, &npins);
+ 	/* Get device configuration from DT node or platform data. */
+ 	ret = gpio_rcar_parse_pdata(p);
 -- 
 2.51.0
 
