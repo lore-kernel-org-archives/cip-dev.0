@@ -2,30 +2,30 @@ Return-Path: <biju.das.jz@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BE82CA0EDC
-	for <webhook@archiver.kernel.org>; Wed, 20 Aug 2025 08:47:00 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.web11.15471.1755679617497403191
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B93DCA0EFA
+	for <webhook@archiver.kernel.org>; Wed, 20 Aug 2025 08:47:10 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.web10.15332.1755679615607846173
  for <cip-dev@lists.cip-project.org>;
- Wed, 20 Aug 2025 01:46:57 -0700
+ Wed, 20 Aug 2025 01:47:03 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: biju.das.jz@bp.renesas.com)
-X-CSE-ConnectionGUID: LobOvluLRMy4/Nb8ef6sUg==
-X-CSE-MsgGUID: t4K0gs9BSMOYYCfQUzykvg==
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
+X-CSE-ConnectionGUID: UGLaN0TRTI2O63X9xHnYZQ==
+X-CSE-MsgGUID: FNZ9yH5fSrupzPZrmq5G9Q==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 20 Aug 2025 17:46:56 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 20 Aug 2025 17:47:03 +0900
 Received: from localhost.localdomain (unknown [10.226.92.43])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4D228400B524;
-	Wed, 20 Aug 2025 17:46:55 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B1035400B524;
+	Wed, 20 Aug 2025 17:47:01 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 01/23] clk: renesas: Use str_on_off() helper
-Date: Wed, 20 Aug 2025 09:45:47 +0100
-Message-ID: <20250820084645.6988-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 04/23] clk: renesas: r9a09g047: Add XSPI clock/reset
+Date: Wed, 20 Aug 2025 09:45:50 +0100
+Message-ID: <20250820084645.6988-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250820084645.6988-1-biju.das.jz@bp.renesas.com>
 References: <20250820084645.6988-1-biju.das.jz@bp.renesas.com>
@@ -34,67 +34,73 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 20 Aug 2025 08:47:00 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19796
+ <cip-dev@lists.cip-project.org>; Wed, 20 Aug 2025 08:47:10 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19799
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+commit 28548f3f7994dd214ad4f4ba5763cd06333404a upstream.
 
-commit aff664cc8cbc5c28e5aa57dc4201c34497f3c871 upstream.
+Add XSPI clock and reset entries.
 
-Use the str_on_off() helper instead of open-coding the same operation.
-Note that this does change the case of the flags, which doesn't matter
-much for debug messages.
-
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/20250424081400.135028-4-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/622f8554dcb815c8fc73511a1a118c1724570fa9.1745840497.git.geert+renesas@glider.be
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/renesas/renesas-cpg-mssr.c | 3 ++-
- drivers/clk/renesas/rzg2l-cpg.c        | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/clk/renesas/r9a09g047-cpg.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 0f27c33192e10..4e7eabfaec478 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -27,6 +27,7 @@
- #include <linux/psci.h>
- #include <linux/reset-controller.h>
- #include <linux/slab.h>
-+#include <linux/string_choices.h>
+diff --git a/drivers/clk/renesas/r9a09g047-cpg.c b/drivers/clk/renesas/r9a09g047-cpg.c
+index be387548664a8..21699999cedde 100644
+--- a/drivers/clk/renesas/r9a09g047-cpg.c
++++ b/drivers/clk/renesas/r9a09g047-cpg.c
+@@ -35,6 +35,7 @@ enum clk_ids {
+ 	CLK_PLLCM33_DIV4,
+ 	CLK_PLLCM33_DIV5,
+ 	CLK_PLLCM33_DIV16,
++	CLK_PLLCM33_GEAR,
+ 	CLK_SMUX2_XSPI_CLK0,
+ 	CLK_SMUX2_XSPI_CLK1,
+ 	CLK_PLLCM33_XSPI,
+@@ -107,6 +108,8 @@ static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
+ 	DEF_FIXED(".pllcm33_div5", CLK_PLLCM33_DIV5, CLK_PLLCM33, 1, 5),
+ 	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
  
- #include <dt-bindings/clock/renesas-cpg-mssr.h>
++	DEF_DDIV(".pllcm33_gear", CLK_PLLCM33_GEAR, CLK_PLLCM33_DIV4, CDDIV0_DIVCTL1, dtable_2_64),
++
+ 	DEF_SMUX(".smux2_xspi_clk0", CLK_SMUX2_XSPI_CLK0, SSEL1_SELCTL2, smux2_xspi_clk0),
+ 	DEF_SMUX(".smux2_xspi_clk1", CLK_SMUX2_XSPI_CLK1, SSEL1_SELCTL3, smux2_xspi_clk1),
+ 	DEF_CSDIV(".pllcm33_xspi", CLK_PLLCM33_XSPI, CLK_SMUX2_XSPI_CLK1, CSDIV0_DIVCTL3,
+@@ -135,6 +138,7 @@ static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
+ 	DEF_DDIV("ca55_0_coreclk3", R9A09G047_CA55_0_CORECLK3, CLK_PLLCA55,
+ 		 CDDIV1_DIVCTL3, dtable_1_8),
+ 	DEF_FIXED("iotop_0_shclk", R9A09G047_IOTOP_0_SHCLK, CLK_PLLCM33_DIV16, 1, 1),
++	DEF_FIXED("spi_clk_spi", R9A09G047_SPI_CLK_SPI, CLK_PLLCM33_XSPI, 1, 2),
+ };
  
-@@ -205,7 +206,7 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
- 	int error;
- 
- 	dev_dbg(dev, "MSTP %u%02u/%pC %s\n", reg, bit, hw->clk,
--		enable ? "ON" : "OFF");
-+		str_on_off(enable));
- 	spin_lock_irqsave(&priv->rmw_lock, flags);
- 
- 	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A) {
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 97d42328fa81a..804a4b55bd7c5 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -27,6 +27,7 @@
- #include <linux/pm_domain.h>
- #include <linux/reset-controller.h>
- #include <linux/slab.h>
-+#include <linux/string_choices.h>
- #include <linux/units.h>
- 
- #include <dt-bindings/clock/renesas-cpg-mssr.h>
-@@ -1222,7 +1223,7 @@ static int rzg2l_mod_clock_endisable(struct clk_hw *hw, bool enable)
- 	}
- 
- 	dev_dbg(dev, "CLK_ON 0x%x/%pC %s\n", CLK_ON_R(reg), hw->clk,
--		enable ? "ON" : "OFF");
-+		str_on_off(enable));
- 
- 	value = bitmask << 16;
- 	if (enable)
+ static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
+@@ -180,6 +184,12 @@ static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
+ 						BUS_MSTOP(10, BIT(14))),
+ 	DEF_MOD("canfd_0_clkc",			CLK_PLLCLN_DIV20, 9, 14, 4, 30,
+ 						BUS_MSTOP(10, BIT(14))),
++	DEF_MOD("spi_hclk",			CLK_PLLCM33_GEAR, 9, 15, 4, 31,
++						BUS_MSTOP(4, BIT(5))),
++	DEF_MOD("spi_aclk",			CLK_PLLCM33_GEAR, 10, 0, 5, 0,
++						BUS_MSTOP(4, BIT(5))),
++	DEF_MOD_NO_PM("spi_clk_spix2",		CLK_PLLCM33_XSPI, 10, 1, 5, 2,
++						BUS_MSTOP(4, BIT(5))),
+ 	DEF_MOD("sdhi_0_imclk",			CLK_PLLCLN_DIV8, 10, 3, 5, 3,
+ 						BUS_MSTOP(8, BIT(2))),
+ 	DEF_MOD("sdhi_0_imclk2",		CLK_PLLCLN_DIV8, 10, 4, 5, 4,
+@@ -240,6 +250,8 @@ static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
+ 	DEF_RST(10, 0, 4, 17),		/* RIIC_8_MRST */
+ 	DEF_RST(10, 1, 4, 18),		/* CANFD_0_RSTP_N */
+ 	DEF_RST(10, 2, 4, 19),		/* CANFD_0_RSTC_N */
++	DEF_RST(10, 3, 4, 20),		/* SPI_HRESETN */
++	DEF_RST(10, 4, 4, 21),		/* SPI_ARESETN */
+ 	DEF_RST(10, 7, 4, 24),		/* SDHI_0_IXRST */
+ 	DEF_RST(10, 8, 4, 25),		/* SDHI_1_IXRST */
+ 	DEF_RST(10, 9, 4, 26),		/* SDHI_2_IXRST */
 -- 
 2.43.0
 
