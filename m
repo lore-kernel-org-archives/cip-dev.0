@@ -1,88 +1,94 @@
-Return-Path: <biju.das.jz@bp.renesas.com>
+Return-Path: <prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A07D9CA0EDC
-	for <webhook@archiver.kernel.org>; Wed, 20 Aug 2025 08:47:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E60ACA0EDC
+	for <webhook@archiver.kernel.org>; Wed, 20 Aug 2025 13:56:32 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.web11.15483.1755679656199304806
+ by mx.groups.io with SMTP id smtpd.web11.20503.1755698186835829712
  for <cip-dev@lists.cip-project.org>;
- Wed, 20 Aug 2025 01:47:42 -0700
+ Wed, 20 Aug 2025 06:56:27 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: biju.das.jz@bp.renesas.com)
-X-CSE-ConnectionGUID: yME5pyfJSxqfnklsppxd1g==
-X-CSE-MsgGUID: tYKALIahTe+uKyg0y4g16w==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 20 Aug 2025 17:47:42 +0900
-Received: from localhost.localdomain (unknown [10.226.92.43])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 5917340138ED;
-	Wed, 20 Aug 2025 17:47:40 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: prabhakar.mahadev-lad.rj@bp.renesas.com)
+X-CSE-ConnectionGUID: ftFL2JCKRVue8vvx+Qc+gw==
+X-CSE-MsgGUID: +R+PsdDAS5+o7Hf6fB+rgQ==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 20 Aug 2025 22:56:25 +0900
+Received: from Ubuntu-22.. (unknown [10.24.0.236])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 7D9104178746;
+	Wed, 20 Aug 2025 22:56:23 +0900 (JST)
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Pavel Machek <pavel@denx.de>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 6.12.y-cip 22/23] arm64: dts: renesas: r9a09g047: Add XSPI node
-Date: Wed, 20 Aug 2025 09:46:08 +0100
-Message-ID: <20250820084645.6988-23-biju.das.jz@bp.renesas.com>
+	Pavel Machek <pavel@denx.de>,
+	Ulrich Hecht <uli@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>
+Subject: [PATCH 4.19.y-cip] usb: renesas_usbhs: Flush the notify_hotplug_work
+Date: Wed, 20 Aug 2025 14:56:22 +0100
+Message-ID: <20250820135622.27414-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250820084645.6988-1-biju.das.jz@bp.renesas.com>
-References: <20250820084645.6988-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 20 Aug 2025 08:47:50 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19817
+ <cip-dev@lists.cip-project.org>; Wed, 20 Aug 2025 13:56:32 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19819
 
-commit 348da7b1cf0c5a7f2081ff42e969baf0c84da4e7 upstream.
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Add XSPI node to RZ/G3E ("R9A09G047") SoC DTSI.
+commit 552ca6b87e3778f3dd5b87842f95138162e16c82 upstream.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250508183109.137721-2-biju.das.jz@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+When performing continuous unbind/bind operations on the USB drivers
+available on the Renesas RZ/G2L SoC, a kernel crash with the message
+"Unable to handle kernel NULL pointer dereference at virtual address"
+may occur. This issue points to the usbhsc_notify_hotplug() function.
+
+Flush the delayed work to avoid its execution when driver resources are
+unavailable.
+
+Fixes: bc57381e6347 ("usb: renesas_usbhs: use delayed_work instead of work_struct")
+Cc: stable <stable@kernel.org>
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Link: https://lore.kernel.org/r/20250225110248.870417-4-claudiu.beznea.uj@bp.renesas.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[PL: manually applied the changes]
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Hi all,
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-index 876f70fed433f..3d3aa371dad86 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-@@ -280,6 +280,27 @@ sys: system-controller@10430000 {
- 			resets = <&cpg 0x30>;
- 		};
+This backport is intended to fix CVE-2025-21912 [0].
+
+[0] https://nvd.nist.gov/vuln/detail/CVE-2025-21912
+
+Note,
+- This patch is already present in 6.1-cip [1] & 6.12-cip [2].
+- I intended to send similar patch for 4.4-cip too.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/commit/drivers/usb/renesas_usbhs?h=linux-6.1.y-cip&id=4ca078084cdd5f32d533311d6a0b63a60dcadd41
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git/commit/drivers/usb/renesas_usbhs?h=linux-6.12.y-cip&id=e5aac1c9b2974636db7ce796ffa6de88fa08335e
+
+Cheers, Prabhakar
+---
+ drivers/usb/renesas_usbhs/common.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
+index 4b5621d24f87..56a43d74a395 100644
+--- a/drivers/usb/renesas_usbhs/common.c
++++ b/drivers/usb/renesas_usbhs/common.c
+@@ -823,6 +823,8 @@ static int usbhs_remove(struct platform_device *pdev)
  
-+		xspi: spi@11030000 {
-+			compatible = "renesas,r9a09g047-xspi";
-+			reg = <0 0x11030000 0 0x10000>,
-+			      <0 0x20000000 0 0x10000000>;
-+			reg-names = "regs", "dirmap";
-+			interrupts = <GIC_SPI 228 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 229 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "pulse", "err_pulse";
-+			clocks = <&cpg CPG_MOD 0x9f>,
-+				 <&cpg CPG_MOD 0xa0>,
-+				 <&cpg CPG_CORE R9A09G047_SPI_CLK_SPI>,
-+				 <&cpg CPG_MOD 0xa1>;
-+			clock-names = "ahb", "axi", "spi", "spix2";
-+			resets = <&cpg 0xa3>, <&cpg 0xa4>;
-+			reset-names = "hresetn", "aresetn";
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
+ 	dev_dbg(&pdev->dev, "usb remove\n");
+ 
++	flush_delayed_work(&priv->notify_hotplug_work);
 +
- 		scif0: serial@11c01400 {
- 			compatible = "renesas,scif-r9a09g047", "renesas,scif-r9a09g057";
- 			reg = <0 0x11c01400 0 0x400>;
+ 	dfunc->notify_hotplug = NULL;
+ 
+ 	/* power off */
 -- 
-2.43.0
+2.51.0
 
 
