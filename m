@@ -2,91 +2,74 @@ Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67CCBCA0EED
-	for <webhook@archiver.kernel.org>; Fri, 22 Aug 2025 11:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A8E3CA0EFC
+	for <webhook@archiver.kernel.org>; Fri, 22 Aug 2025 11:35:33 +0000 (UTC)
 Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web11.7692.1755862425719174805
+ by mx.groups.io with SMTP id smtpd.web10.7736.1755862531825106709
  for <cip-dev@lists.cip-project.org>;
- Fri, 22 Aug 2025 04:33:46 -0700
+ Fri, 22 Aug 2025 04:35:32 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=ATUymbh0;
+ dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=G7tuWAhM;
  spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 308E71038C11E;
-	Fri, 22 Aug 2025 13:33:41 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D2D591038C11E;
+	Fri, 22 Aug 2025 13:35:27 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1755862423; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=yKVwnkx8uVrz8ARNr3z6zFutB1k5/yQqf42qa8vT/Rs=;
-	b=ATUymbh09FhuIWbj0wKPUv0PYP5fmxgP+bjC5CYf719skO9ix/3ht38+LUSUkAv5pHqN1A
-	66DjmcEAzk6KP75BXzBWJ5O6apzHslkL53N+PNzZtnMAp/1jTmStS2eaNQh98dKiHWyPJW
-	c/EKcG3wfqPE7jB8Dqie8cdJDkKU0n3D6IW6gP2g2Hvun2olX98i/d9IVfMEAeUM26RnCF
-	32P/7/+oTK1uwUd6FuDoK1VsGWOIlPAAEvwDpO5HCmXaamUhiCYrHLuO4knk4O1QYUgOwZ
-	BW87cu2ABerasbLKd0fN3tCaMzXURttgNlF5JpH+32lYNHFUwj2/QmUL799MuA==
-Date: Fri, 22 Aug 2025 13:33:39 +0200
+	t=1755862529; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=vdOPjSLnU4cXijpapYTaTFGSv8Vm8XOdynwSvJXGgOg=;
+	b=G7tuWAhMC5FPMb+01lQKgiUeErFhI/s7t/jieEdmm52ppYsCeH4gLJvSjvszhqbmK1zkO5
+	Dm/3BYNy8XQ5LH6zCqEuCNuIvxv+9PR87NX03kNZ7WXS+tOn/F68buatTs7Eoh71MLqmmS
+	2wYIHAs5K4aSIhhVrI1H2rbKYKMDNMsyrRR7MYgu6Rtqebb5bf7YkndO0RPYqvEUATJlZU
+	oo6hLq7TdxRzsY5gz/3JnCkvWiFMl3FWse9Hd2CVKZBxAKd411ZnNPQ+lJRMkOJ9WKjyw0
+	hAOz2OGB2ei+V85DDRcmLZsbUABTEL6fTuEi8HMB7gEpx+lKPQuD4jQAtrrYnA==
+Date: Fri, 22 Aug 2025 13:35:24 +0200
 From: Pavel Machek <pavel@denx.de>
 To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 Cc: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Biju Das <biju.das.jz@bp.renesas.com>, tomm.merciai@gmail.com
-Subject: Re: [PATCH 6.1.y-cip 41/55] media: rzg2l-cru: Add function pointer
- to check if FIFO is empty
-Message-ID: <aKhVkzicPtd8Al2K@duo.ucw.cz>
+Subject: Re: [PATCH 6.1.y-cip 50/55] media: i2c: ov5645: Refactor
+ ov5645_set_power_off()
+Message-ID: <aKhV/HFqmppq+b2A@duo.ucw.cz>
 References: <20250820160413.801341-1-tommaso.merciai.xr@bp.renesas.com>
- <20250820160413.801341-42-tommaso.merciai.xr@bp.renesas.com>
+ <20250820160413.801341-51-tommaso.merciai.xr@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="LdHRMbpi5D6XBEJA"
+	protocol="application/pgp-signature"; boundary="7r6an5rY+KP5y+aE"
 Content-Disposition: inline
-In-Reply-To: <20250820160413.801341-42-tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <20250820160413.801341-51-tommaso.merciai.xr@bp.renesas.com>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 22 Aug 2025 11:33:53 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19946
+ <cip-dev@lists.cip-project.org>; Fri, 22 Aug 2025 11:35:33 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19947
 
 
---LdHRMbpi5D6XBEJA
+--7r6an5rY+KP5y+aE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> From: Ricardo Ribalda <ribalda@chromium.org>
 >=20
-> commit 446c645f7fe480a4420072728faa1f261530b984 upstream.
+> commit 820d81a167d422027ca4af7f0511e101f21aa214 upstream.
 >=20
-> Add a `fifo_empty` function pointer to the `rzg2l_cru_info` structure and
-> pass it as part of the OF data. On RZ/G3E and RZ/V2H(P) SoCs, checking if
-> the FIFO is empty requires a different register configuration.
+> Factor out all the power off logic, except clk_disable_unprepare(), to a
+> new function __ov5645_set_power_off().
 >=20
-> Implement `rzg2l_fifo_empty()` and update the code to use it from the
-> function pointer.
+> This allows ov5645_set_power_on() to excplicitly clean-out the clock
+> during the error-path.
+>=20
+> The following smatch warning is fixed:
+> drivers/media/i2c/ov5645.c:690 ov5645_set_power_on() warn: 'ov5645->xclk'=
+ from clk_prepare_enable() not released on lines: 690.
+>
 
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> @@ -290,9 +290,23 @@ static int rzg2l_cru_initialize_image_conv(struct rz=
-g2l_cru_dev *cru,
->  	return 0;
->  }
-> =20
-> -void rzg2l_cru_stop_image_processing(struct rzg2l_cru_dev *cru)
-> +bool rzg2l_fifo_empty(struct rzg2l_cru_dev *cru)
->  {
->  	u32 amnfifopntr, amnfifopntr_w, amnfifopntr_r_y;
-> +
-> +	amnfifopntr =3D rzg2l_cru_read(cru, AMnFIFOPNTR);
-> +
-> +	amnfifopntr_w =3D amnfifopntr & AMnFIFOPNTR_FIFOWPNTR;
-> +	amnfifopntr_r_y =3D
-> +		(amnfifopntr & AMnFIFOPNTR_FIFORPNTR_Y) >> 16;
-> +	if (amnfifopntr_w =3D=3D amnfifopntr_r_y)
-> +		return true;
-> +
-> +	return amnfifopntr_w =3D=3D amnfifopntr_r_y;
-> +}
-
-This adds strange code duplication (amnfifopntr_w =3D=3D amnfifopntr_r_y
-twice), but that's fixed 43/, so I guess that's ok.
+Do we really need to take these? Maybe cleanup, but no real
+impact... I'd be inclined not to take ov5645 series... stuff will work
+ok without it.
 
 Best regards,
 								Pavel
@@ -94,15 +77,15 @@ Best regards,
 In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
 Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---LdHRMbpi5D6XBEJA
+--7r6an5rY+KP5y+aE
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaKhVkwAKCRAw5/Bqldv6
-8hxNAKClxMKRPMbl4DZunVhMOZ3ziuztHwCgjnkElXre+9Ux7CUullF26aus/Dc=
-=8fIZ
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaKhV/AAKCRAw5/Bqldv6
+8iOFAJsFAjAOyTWqaMOiv0Jfc7tNTBrESgCeLD+rYbKSmxSuVGK0eaNtqlO5EIY=
+=1iZX
 -----END PGP SIGNATURE-----
 
---LdHRMbpi5D6XBEJA--
+--7r6an5rY+KP5y+aE--
 
