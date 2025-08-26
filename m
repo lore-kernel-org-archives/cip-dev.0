@@ -1,324 +1,253 @@
-Return-Path: <nobuhiro.iwamatsu.x90@mail.toshiba>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C8EBCA0EE4
-	for <webhook@archiver.kernel.org>; Tue, 26 Aug 2025 04:34:13 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
- by mx.groups.io with SMTP id smtpd.web11.57415.1756182842827906025
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53D04CA0EE4
+	for <webhook@archiver.kernel.org>; Tue, 26 Aug 2025 07:13:04 +0000 (UTC)
+Received: from AS8PR04CU009.outbound.protection.outlook.com (AS8PR04CU009.outbound.protection.outlook.com [52.101.70.48])
+ by mx.groups.io with SMTP id smtpd.web10.58745.1756192380568662821
  for <cip-dev@lists.cip-project.org>;
- Mon, 25 Aug 2025 21:34:04 -0700
+ Tue, 26 Aug 2025 00:13:01 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key1.smx header.b=MS9U84ZG;
- spf=pass (domain: mail.toshiba, ip: 210.130.202.152, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
-DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:CC:
-	Subject:Date:Message-ID:Content-Type:Content-Transfer-Encoding:MIME-Version;
-	i=nobuhiro.iwamatsu.x90@mail.toshiba;s=key1.smx;t=1756182821;x=1757392421;bh=
-	Sl46lkcw39xWd3bY/R4eo2CftdrpJVCvtvNJJgQs+yo=;b=MS9U84ZGLHbMdgDzcsE3++Jc5+d1p8
-	mc2GYmQjBg9hXCiMUKHAFSt9F3PoMzVhfGUNqenbqRWzY3UhMul1Q4FM0to9MNp/oLHqtMsvhqUbc
-	xqY1ncaE0+aA5BcA4Zo717LBRURwK6fxixYSAmer3tVonoVsV7ZnG6EY5mPRFIeonMxIDoeHJaLTG
-	+PuZuu5qx8kWU5JKcWXsRxVvFOduHCBp5NEOeh2x4fzrxR9E7oXjNJriG0nFEr4lneSjYKRvAaG3w
-	Il3NC03zV8a4VzD61rd/t1kKzYt3YjDCgeicB7lvX57RLTCudkxm7uVYOqg4iIZnqlEckjuX1MT+S
-	jtKg==;
-Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 57Q4XeXP3625179; Tue, 26 Aug 2025 13:33:40 +0900
-X-Iguazu-Qid: 2yAbuzQy695mvxJWXC
-X-Iguazu-QSIG: v=2; s=0; t=1756182819; q=2yAbuzQy695mvxJWXC; m=/Tnt51sr81Cwlp4wszngY6hw4DEkgYFdIXYp3/EQYJo=
-Received: from imx12-a.toshiba.co.jp (unknown [38.106.60.135])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	 id 4c9vtT5BZKzyPm; Tue, 26 Aug 2025 13:33:37 +0900 (JST)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=XhHd0ksN;
+ spf=pass (domain: siemens.com, ip: 52.101.70.48, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=opCP/ZcT3W/Nd4kq3hLGQreJuGVHKi1uR5uyKpASJbYeHV+q015GBaKWRKpIMbhIhJTOgDkAMfJc63BLgxLNBoPqq41NS4FYUFZVk6pC7WEx64VO+paIR3J5XY86/bbJSgpjT+p0c7IDTyVEJGHLtiSeJnzM6jjtv0SFVOYUoHvd++IG9VR14BOxMTqxWC7flwTGErr8u9HyU7W+17btzYrUAyzo7sOadNXkchIylulN+HA35Ox4ZxqUvN1IoqNmbD+0GglqaO8ghLQk3LeWZTCfpzFBZ0oExl7fp5MLPGZJzcC4kOrY1yp+9Xu6JUioT+XixIhJTuBnl7oAq1MUuQ==
+ b=iplkutliO3SdzvK4D411lsOKAYwkMoXgV8awf0s3z0yRG//MirMkWQ3T4mml7lZ/bg4nAIR2pxFcBvw9UxxoLFL7hucLw8FO08fQpGoeAFuF32AYcCAKf/f/0jy7bxPP0mXUWwhqSNNy+3L1yzt0ULKyHZAxsgjTZSVuiBb9XJoWZ6KAlelnTgergqnD5hcSEvpF76ImBn0VwexMncofhtWv0OeNW6QDmK83tqac765GHbVjQUhr6INg5QgTrnabEkC5stxXsUoZ8Gs12G63Jc3uA5ZMERdrdlX/yFx+OECIJdoWf6ZzdImFEoiUaxo/sdv4hXe6K+hWF2A13GzqHQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ylr/fUzIAOyTy74ni3nq1N02FZg4vbgjNHTi8nVc4KA=;
- b=SU/w1AIN6lA1wGIeWOQUKjb5Bk6gGt0VrxkMUyCAI9luJq8PzxLcEmR0FVMFDjfmr/WvPj3c7mibYqvi2Go+MnBxzfFrZrNEujXNX/Gv3lmeIPFR7W4cPVT9ikNl1yO6ApNesZcGs5dr2dv1oGZUvXGcxEG64mmDxejgwOKCfYYUDgttDVW/rBU9oVoY3rKDu3FFJ5T31itqjRtts00Cd2x4gXR052nQqVh0jWUnjanw1kSzBYcWM+JeG7dL/sX+/RWsTs/UeZZNb9p6KBpgZtGCX9Y934EM28TNLdR033CF7dm9k3DG3jaqY6+f9v5c8z0yGqS6yG87PfodPkvADQ==
+ bh=sD6a9fZ+hF9B4v/CDfVAJLNVCWGW00/CG7c9TGwMgR8=;
+ b=pnuzu2i+J7vecgwv2uSVK16mmRLowtX17ddzoBr3Hyyk/9XxiXs3UdBIjdP7rQa+dJM4jtJ38IIPvW7yHN/c1PKJ6HHXQsYOaBh2hkKa53yTruw8Jso5Y29KZ+u0Ms3GwqR5cxtLkRvVERYzkNMmiwwxobKNmJcIWFfV2UCu3RIvyilir0sTs0U5+wkafCzfHuqi+NisZYDx8KBnXaBLtMkbYQSpRGydSQBhSm9kq/WEtIFNUHdjC4cK8ONHzEkoji8CMxVtUF3A3z7zx6FqlNVLp96me1nsItoAFWy9YuLfBN8g7nZSEsR4GHIHRq+4jXL0rZF7oEbmtsbs3zbbew==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mail.toshiba; dmarc=pass action=none header.from=mail.toshiba;
- dkim=pass header.d=mail.toshiba; arc=none
-From: <nobuhiro.iwamatsu.x90@mail.toshiba>
-To: <cip-dev@lists.cip-project.org>
-CC: <jan.kiszka@siemens.com>, <pavel@denx.de>,
-        <masami.ichikawa@cybertrust.co.jp>, <uli@fpond.eu>,
-        <chris.paterson2@renesas.com>
-Subject: [ANNOUNCE] Release v6.12.43-cip7
-Thread-Topic: [ANNOUNCE] Release v6.12.43-cip7
-Thread-Index: AdwWQoLdRVtEd8iqQjyzYU0NMEevpQ==
-Date: Tue, 26 Aug 2025 04:33:34 +0000
-X-TSB-HOP2: ON
-Message-ID: 
- <TY7PR01MB148184BB1A00AB48A858F4BC6CD39A@TY7PR01MB14818.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mail.toshiba;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|TYWPR01MB7449:EE_
-x-ms-office365-filtering-correlation-id: 1d829a09-775a-4e13-ea10-08dde459b7da
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info: 
- =?iso-2022-jp?B?dUhoN29RVUIyN29TNW9iNmlSeURSMFFMUkVBYUxtVWx6Y2xLSEhicXdZ?=
- =?iso-2022-jp?B?NmRnYnQzQUd4bWl1ZkpEeGErZmF3eStTeE1lZ1hJZ2dFek93YkNmNWRy?=
- =?iso-2022-jp?B?ajl3bWNTZGZwL2I0TWoyUlJrOFRjTlYyeWNxQ0dXUFExd0MvcHdaVFJW?=
- =?iso-2022-jp?B?Z3J5SUxyLzZLNU05a0FmSGhuRzIxT3Aya3RWYUVaRjE1Y21Gd2hCK3JS?=
- =?iso-2022-jp?B?cXdhbmlrN2tVczhvRk44U0FDK2hYTllwTmZRcHk1WHZoeDN5bjg3Y3Ey?=
- =?iso-2022-jp?B?NTdremgvd3dPZ2ZhOTlFWGRYbHFYbDZ2dkkzZWs3S3ZJWHpHWjdQQU9h?=
- =?iso-2022-jp?B?ZDhKOGFlMnc5dmkyQjY5R213anVQNXhnZW15Uk4vbGw0Y3BtYTBnRERO?=
- =?iso-2022-jp?B?OGNuOFBzb3hxNFZWazRjVTIwWndQR3pIZS9lWUlOaWhtYnhBOVAreXgv?=
- =?iso-2022-jp?B?aUZxR0FxUndaR0xwUFo2blkrWmhkRjBtYVRvSnlNMXgyQ3AreXZZOTAz?=
- =?iso-2022-jp?B?Q1c0OXEvY0JRYkxiWWF2cVhtMitna0VQN2I3VjVXbFVZa2ZhR2VBbnFY?=
- =?iso-2022-jp?B?Z3NHNzduRHdETURWYXhOUzh3NTE2SmYvYUlQY2hpOXNvazVUcEtVTEZi?=
- =?iso-2022-jp?B?VzUvcE1DbER5Y0haVWZPYklyeElCaVg1S0I1L1VsalNMNnFyckhGc2tW?=
- =?iso-2022-jp?B?UnRQdjl2MWlmb0VyakFhd084UWhIQzNaUWMzQjMxNHl6cXoxSHFPdzIx?=
- =?iso-2022-jp?B?Z05xdi92S3NjRUFuTWxCdHIvMWNwcktGQmxHMldCU1huMldhd214ZGx5?=
- =?iso-2022-jp?B?a1RRd1h6UkRuRzB2eC9XZW9RWWJEUU4xMkRHVjgwR1g2eWJoR2Y1dDFJ?=
- =?iso-2022-jp?B?SUZCMnRMSjU0cU15RWdZWEo3OWJ0a2phWDM5RVljckR4YlVrUjlzL2Fa?=
- =?iso-2022-jp?B?K2owbElkSlZ0SXBYNkJDelYwczFYNnVsYjVHeW51TGRzR0RWYXprTnUv?=
- =?iso-2022-jp?B?dkcrTHBZM0sxRGNWQ2gxeWRZMDFodU03OXZLTzZia044NTVzM2c5SE9C?=
- =?iso-2022-jp?B?NzJDTjNhN3h0OEtjRGdXZXlPN3doNy9xeFRLWFljbnRoazJ5c2JaSzVl?=
- =?iso-2022-jp?B?b0w5OEVaSUhnYXR1SGpTQmY4UlpvS1FVaDFsajVVczlxekFRZjhrREZv?=
- =?iso-2022-jp?B?dEViZlRJUytPM0tkNnpCOWdjelBRZGI1TzkyaGdXYkJZVjVDMGpzQWho?=
- =?iso-2022-jp?B?dDJwcjVLZ1YyZVZkLzQwY0RMSU1DeFRJeittbi9kMWg3NVFqZjhXRzJk?=
- =?iso-2022-jp?B?Q3dxem9YL0ZQbHhmUlhYMXVRU2htWkxkQ2dsSEJuQnRXaGVNZXhVOFBB?=
- =?iso-2022-jp?B?dHMwZHpCS1NNRFBSSHJ2SFF6bktmcFdWcWVqYmFuMm1ZeGhCQWI3elJh?=
- =?iso-2022-jp?B?NlBHa09qN2ltVjZqVVoweDBOaUhyOGZHRS9lMVZmSmptN0xnVjR3c0Jn?=
- =?iso-2022-jp?B?M2N3UXlsbXZ1MWZ0NnZoZGQzZjM3QStvTDZnaXFJM3JsNVU2L3lvbkNU?=
- =?iso-2022-jp?B?bXVzT0lPbEsxZjZLby9aWVUzRXhpNWtpa0hLYlA0L2ZUcTluVFRGbG0w?=
- =?iso-2022-jp?B?Nmo3UFZ5TlZ3dndzeEhFbjF5N1BXQm5Tc3JpUmtxRW00T1grVGZzVmlq?=
- =?iso-2022-jp?B?K3dCR2pzZkd1ZnI0MGh4TkJWNlg3SGdMaGY5aHBGM2x4MjBqQWdQdFNa?=
- =?iso-2022-jp?B?eGFUM1FBdElpb1NjdFpZaENiR3dvU28wUk5RN3NMVkkvczU5aUlLNE1K?=
- =?iso-2022-jp?B?Zi9MYXlHNTFzZzVnSytyNHJRYUVESzlvWTJGckdyNnBpUG9DNmY3Qjgz?=
- =?iso-2022-jp?B?Zk03ME40M3VOY3RDMzNPakF6b3VrYWZnWTc0Z1dqbFpYbXBPd3U2Zys3?=
- =?iso-2022-jp?B?a09hcFBVRlNSYUJDR2Jaay9UaUMxbmxGYnN6QWpNdTdEWlpYaEhyWkc3?=
- =?iso-2022-jp?B?bEdEa01XVTJJTnQvSyt6NUlFd2FVMk0zb28yRGRJZWVGbktTR2RNZHU5?=
- =?iso-2022-jp?B?MDBmMWEyTFArQitHZ3NaaEQ5U2thbmhaQ1dtOHhmRWFMK2xWTjhveFBv?=
- =?iso-2022-jp?B?bXRaOXNkMmJXWHVkbTVFbmorZTNka25xblczbTNlMmtxalRmaCs0Nkww?=
- =?iso-2022-jp?B?Y09jPQ==?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?N0hPcnJIdmZqcmYvaVMzUTJpUGdaSjdVbk5kVHNnUm9rK2xPVUc0TW5Y?=
- =?iso-2022-jp?B?b0tnRmR6WGhQZHo5R2Vncko1ZUFDMmUvUWN3ek9DQkdTcEpIQ1pOUWdt?=
- =?iso-2022-jp?B?Uk1XSWViZWw3cDdyU1B0TEdMSG9KeXlWb1BqV3NxdkRTNHRRSnR1dVVZ?=
- =?iso-2022-jp?B?dXZKcU1FL2M1TmswYyt5UWo1VTFSM2hvR3VkMWtEbzZIcEdxQ1R3M3Fx?=
- =?iso-2022-jp?B?NTFBZkNidnBDSURFQkFMVE1XYzYrb3UzQVB4NDdmTlRxMUx2WlBaRTJo?=
- =?iso-2022-jp?B?NDR6UHYrZXdaQnZJWDAwdnVmT0MyRTFKR3ZDM3B4OU52RXFMTGFKQS9t?=
- =?iso-2022-jp?B?QnoySm1OWCtvSGhucVlnNmFaakRHRDFYdDlqSE9SQ1AyRVRtTGo5WC9q?=
- =?iso-2022-jp?B?QTZXN2UvV1piSmhwWU1adUxaYUdXZlJEQWdXMTdjVWtyK1pQRk1MSysv?=
- =?iso-2022-jp?B?Q0IvczR1dmhqckIxb3E1ZXZVQ3g5dzF2dkljYjBoblFvbXlOb1NmL1NH?=
- =?iso-2022-jp?B?TGxBMHh2b1lCbUJFSVhOSndwSE9ucGR6YVZYQlQ0VHI0VG5pWG1Xby9i?=
- =?iso-2022-jp?B?TXpmMWxiNStpTW9udGNSWFBBbUxscnJuNXNhR2hyRzdGRk5aR1ZFT1JI?=
- =?iso-2022-jp?B?OFB4SW9qWEVzVEFkTU1uUEZ0Z1plTXpZdHVCcGwraTBuU240UndPVi9m?=
- =?iso-2022-jp?B?V3dWcTNUUUh2ajBUM3JDaUhJdkRtR2pwTXJUb1hjNk1Tb0FRUWFDckZi?=
- =?iso-2022-jp?B?ZnVvNW9OaHdZUkl4NDdRdTVGZkhUUVVVNEYvd2hMb0l6dEhXelpqQXNj?=
- =?iso-2022-jp?B?SjVqKzM2dktSdkRVY2ZOWnFMcGdqdUdaOXRBSmVnTUZxTkVJZk53Y2NG?=
- =?iso-2022-jp?B?aFZyR1pRdnJ0KzBuRXBkUHdhTFBqL3cvMk1JSzlxa2lyMzJIRGZWZDV2?=
- =?iso-2022-jp?B?ajduM2cvTVM3K25wUi9FTjBtSDVMeitFZHlWamRXM1lUOHlIOWlZd0Fr?=
- =?iso-2022-jp?B?QjVWamVCbzVJb1pRNnptRzBpMGZ2c1J5Y3BVN2pHczRudGIwZHI4ei9u?=
- =?iso-2022-jp?B?ZXJxNFdPWFU4RWlJMWF6VHVHUWJUWWY0akV6bTA2Z3Y4Z01qZWg5a1Bt?=
- =?iso-2022-jp?B?am9LNHY0RlFtdThZbnYxT3k5V2Nma0pUQlE0VU83MmNmdWRFR0NuYU5Z?=
- =?iso-2022-jp?B?cXlxTW0yaU5xc2FsSXJFeVFHT1UyT0IxdlNkMG5pZWpielZRYi9maDRM?=
- =?iso-2022-jp?B?ZXBhaGFXUVU1eWVsdVpYM0ZzT3dWaGVFNFRkRmdMS1dTYlp2RXJiK3Q1?=
- =?iso-2022-jp?B?TXJ4WVJtQ0sxaXNuSVljNFBTYVBMQnIvSzFCVnhna1FSbDRBN1BOVWk1?=
- =?iso-2022-jp?B?aUtDSXNPU2pFQmx2bkV6Y09Hdmc2aDRJSGlFUEsvRTFhdzFnQUd2NkNX?=
- =?iso-2022-jp?B?aHhOSk9HbkIwM0k3WlFzeHk2L2xhbDA1QU8zbUNrZzgzbSs4alZIRjZi?=
- =?iso-2022-jp?B?RmxYQWxBQ3E3TXZrZ2w5RFBCYVBQdi9qUm52Z1Z4YVkvemJ4N3VLOThj?=
- =?iso-2022-jp?B?OTRSRVJLUW9May9QMnZtUTUrdzcwMUtic3ZBRnZFR2FDZEd5TmNrMS9C?=
- =?iso-2022-jp?B?b3p0d0tyZk1udjh0ZkIyT25nYnAwVkREV3U2bWpFbDhxSHduWXNjMHR5?=
- =?iso-2022-jp?B?dlZibkx1Zy9ZYVZmL0hxQTlKQjFZNE8zd2NpekRwb1Zjbk4rLzJ4eHdJ?=
- =?iso-2022-jp?B?bDh6cmRTZXcvdEdUTzVBN0pYRko2a04wZ2NwdFgvdXhxZkNHV2xzd092?=
- =?iso-2022-jp?B?M05MK05EV3dMWmFiUTlhNVVoUVJ4cndYTmtad21uKzRyMURGVVlBRDNq?=
- =?iso-2022-jp?B?eUtwUjBUZUtncDFGNG9ucTNCN28wdlpCOEdaUnhuRXhTVXVwNmwxWlR2?=
- =?iso-2022-jp?B?M0RaSkY0V2d2c2dzaXV2ZkVWTktOY3lLb1E3cnFQbndvNkNXREpIZFpJ?=
- =?iso-2022-jp?B?K0c5TGlCdjFnZEdOMFpvNHRST29VOHFQQ2JzU2dIeWU0NzQ4VUN3Tk9W?=
- =?iso-2022-jp?B?UnNiN0dFbjZKMXFPYlE0eDc4RUZORkNIclBmTHprNjJiUjFiNFdXU0dC?=
- =?iso-2022-jp?B?TXJJYm5ub3NaTU42QXdHNW4xUDI0QzVXSzhKZUpBaUZ6ckRhMU1PbjM1?=
- =?iso-2022-jp?B?SXZuMVhCMnVkb0tJWW0zcEFPTjZFU3VvSklWbDI1eUIwak9yc2VianFR?=
- =?iso-2022-jp?B?Mnc3V0ZyYlRITFVHbEptY2lpTmJ5MnBXTUZ5TkU3aWVWb0s5Rmhhb0hz?=
- =?iso-2022-jp?B?OGROeFpBWlhnVzcxSUhEVVpVZlgwbzd0RUE9PQ==?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sD6a9fZ+hF9B4v/CDfVAJLNVCWGW00/CG7c9TGwMgR8=;
+ b=XhHd0ksNQ9ouKaYAuRDOXI/+vyfY1/+oQErYYb20K1pG4d4STttKrx6mTDD04RcfrPNBm42WQMtI7dQLK3CdTtHQVjHdC9Ra/p8sT8Ych/GNlTMjKLcCKGxNhSxjJ4ThPCRV/0os8dD2Fq59pTNF0iAhVQ8eUySXe7mM6bscnE/zAUf+GKOEDI19Y7M9GciBpmANgqFLPm2kEhlwJxl+jWRglic5L//nL9tjdy/gHMfvXTHPufYV/jC42uD4u9pl8B3oZelhSIvkV4VsEANpbRxTHXqrpltopogXIBYEH0AU1ov3eaggJwbg+MRdlVKgfx698y44mNrxso3v7+PnSQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by GV1PR10MB8707.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:1d4::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Tue, 26 Aug
+ 2025 07:12:57 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408%5]) with mapi id 15.20.9052.019; Tue, 26 Aug 2025
+ 07:12:56 +0000
+Message-ID: <4cfe95b3-becb-499c-b426-10825467f3fe@siemens.com>
+Date: Tue, 26 Aug 2025 09:12:56 +0200
+User-Agent: Mozilla Thunderbird
+From: Jan Kiszka <jan.kiszka@siemens.com>
+To: cip-dev <cip-dev@lists.cip-project.org>
+Subject: [isar-cip-core][PATCH] linux-cip: Update to 5.10.240-cip63 and
+ 6.12.43-cip7
+Content-Language: en-US
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ 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
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM0PR07CA0009.eurprd07.prod.outlook.com
+ (2603:10a6:208:ac::22) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
-X-OriginatorOrg: mail.toshiba
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GV1PR10MB8707:EE_
+X-MS-Office365-Filtering-Correlation-Id: 16e2c144-19cd-463f-9941-08dde46ffb5c
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?Y3VZR1ZVUTNWbGxZbTlDc01HRTlJaCt6YnlnV04vWW95bVBtODc5N3lxOWN2?=
+ =?utf-8?B?NExYYUpGbEpzREpBTUlzTkFzQk96MnA3UU9ZbEcrOUZOK2t4dHoyOTFqNDhE?=
+ =?utf-8?B?dUxNeXNRZTFodktjT1N0bTA2QWhTL3VwQVh0OVdyQ2cvSFd2Q3NMZjZDdTRD?=
+ =?utf-8?B?Y3VkckFEN3FsUlkvcUJldkFLWGIxMDVmTlljb0lieXN4TmNVaXJpN3JyTEJ2?=
+ =?utf-8?B?MjJFR1Q1VXlpTGJQcFRCbW9PV2JJL1NHOGJKcDd3QkNiMXBRVEF5QzNwelQ4?=
+ =?utf-8?B?dUhFcHlBSmljMm5TYUFpWm41bDllazVLVEdIZDZXR296NCtTOVhtSW4wR0FM?=
+ =?utf-8?B?V1plTkJOS2I1UVA3aGVhSGwwSkxMTHhWMVBJbHQ2aFZ5N3RRQVR4azJnaG0y?=
+ =?utf-8?B?NzdZMjFReXJrYW9adzMyRnljRWJLdXNQcHRJc2s5WitSQnEyd1daM3N4TG9o?=
+ =?utf-8?B?cDZzUnVRcnUvZXpocEdNM0paeWVRVVBXVDdSSlBxSHdYUEZNS0dVaW5nYW9T?=
+ =?utf-8?B?OUFGK09QSzFWNm5iMC80UGd0VHF2bEtzdlJBNHI4RDYxZTdWNnZqL3lwTytR?=
+ =?utf-8?B?TXQxVTVSZXpnbnd1VEs2MUxsQUs5MldNMWVKZENkMnJBVDhxaXBxQVlONGc5?=
+ =?utf-8?B?VGlzbld5QWI3TnFESG5EMElqekxKZkdZWHJ3bkJDVTJEend6dHVmcmRiaEhD?=
+ =?utf-8?B?ejhIam1sUUZoZDdoTzJjM1ZNZXprRzhBSkxBNG91azd4bCt4NFprTldLSDhu?=
+ =?utf-8?B?d3ZXZzFmOWU1V1llRkxGRjRGU3BSWk5FNHJGVU9BNm13NDNKT3RQbFhKN05a?=
+ =?utf-8?B?czZ1YTVleUkvWlZ5UlcrWjRob3QrOG9OaTlINFk1UENQZkdPQTUrU2pkRVRW?=
+ =?utf-8?B?L0xsVGl1SkIxYWdONmhaSUNhbjNHc2pGbTdUZ3JKYmV4ZmtPQTNoc3R2Wk53?=
+ =?utf-8?B?UmtELzBOQ3lseHVoWkU2Nm5iTUxueXZDK3pyZm0rVTNBOGZUL1pjZ3l2V3dX?=
+ =?utf-8?B?TFEwOTl1TXNLQ0s2WnFjUGp6MEZPc0lxdENzeTFnSHlhRndMWG9sWU5od0tt?=
+ =?utf-8?B?aXQ0cUkxYVBhdGFwRlA5amxRNmNUREN4NGttY0NDR3RLRS9PZFBTSU1EcHRj?=
+ =?utf-8?B?bWpjam9DaHNHQi9OWTYvV0FMY3dGd0VhUFFGR2FlRzU3VlNRT1VHM1BoQ0Fk?=
+ =?utf-8?B?aFE1K1R2eVBGS00xaFZZc29qUzRHc28yZGFoOVhiRXBrbmVRQnlVYk45SXFv?=
+ =?utf-8?B?QTYwcmpSUTlrWjNXdEh3am5xcWpLL3pEZWhXMXF6TzUraUkxVnNPWTdpeVYy?=
+ =?utf-8?B?M3pFR2p1R1VhcTNMcFRJYitXNEcvK3FSNFpEUW1wZHlFdGplUzZmVlNFMDhw?=
+ =?utf-8?B?WTBjT0ViMVdDQ0dJbmJGSFdCSVdQaEsxdFI5Y0xHRkVudlllRmxoU0tJbEZ2?=
+ =?utf-8?B?aFpqbisweHRrTmtEOHlEYS9oZjBKb25wc2ZXUjN4LzhpREsxalA2VWJCWjRp?=
+ =?utf-8?B?SW8rMngxYkNvUDZGMW45dm00VzVMa3FOcEJGZ0g3V2FWakpzSG1tUmpmai9j?=
+ =?utf-8?B?KzM1cWZiVk41T0tXdG9uOW1wV3Uvd25LWmFtMXhyVEp1NHpyRGFUMVFIS1VN?=
+ =?utf-8?B?UEhiNjdKMjB4TmtjcnRYRVZTRFBmem1pbTNPVWxnMjZYb0E2WnpuRlA4U29Y?=
+ =?utf-8?B?QlJpVFN6cWRmaERlQkg2c1AzWGhWNnRqOExOaHgvVE03T1FjcUx3TitUSkNm?=
+ =?utf-8?B?U2wrYi9JeC9YekhHaWMyVUZvQ1MwWkNPYVdPOUJGaGN1Q2tuTElsUm5qRW1I?=
+ =?utf-8?B?ZUZKeENvY2Ria0h0K2pzUmxHanVLZTNMVFd3Y1pDck5JWFZBZy8vWCtjdXBv?=
+ =?utf-8?B?dlAzdUNFR3lOb2t1UytqaDBQMFdsb2d3Z29LMEwyMDRFY0E9PQ==?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?TGJyZVhBWnVyaE9HMlpmQ3FyaERhZGN5Ymt4eXVtZXlRVm1LUjl2ZElKdEVP?=
+ =?utf-8?B?bzFmYmVvaXlSbFp2N1AwU0RHdkVDM09LT0l2YmNkZ3YxNm1QYVh6NVRKRHhV?=
+ =?utf-8?B?d1lhOEViUzhDZERmZUlkZFM4VmJiaG1vallvM2kyeDVYVUhrcnlBendBS0lL?=
+ =?utf-8?B?U0JGTjdKYmZuOWpsNExGZjRWMnBiYldYR3Q3RVBMRGxtN1JycHFwazdwRUpp?=
+ =?utf-8?B?K3hpMks0NnFiYklCenVzRDFLR3hGNVF6VDhXSVM0UjB3eHlxWWpnZGZOSUJ1?=
+ =?utf-8?B?UDRCbWhYeit3VHYwZllZT2FXSitmSzhWVmJET2llTlZTOS83cnZMRzcwYk90?=
+ =?utf-8?B?cjZjTWd2cDd6SlMxVy90b0prLzJKZkpLYWF6VXlPdEI0dGpoK1ZtakNCMFBK?=
+ =?utf-8?B?MVRGZFpnaW8vdHNWWmNiR0RVS3Eyb21OSCtlaGVYdnh6MHRjejQ5UWE5VXlo?=
+ =?utf-8?B?RVR4aUdYVWh1eXdQeHRKOGg4WlY3NzJ3M0paNGpKcFJtWlA5SzF4R1RmNnlk?=
+ =?utf-8?B?cFQ1LzFneTRxOEFkNUY3YXY5R0draFJraEdlcjNDKzNhUG9pZ1pJa0UzWmYv?=
+ =?utf-8?B?d09Nc0JSVmV6SjhUaVNrSG9ZNWFpNWp4N0NLSU5nb2xrS3J6UzlVUjVmYlVW?=
+ =?utf-8?B?ZUJxYW8ybUM3V2hCZExzNUFlOGJXeTV4ek1KZTJNUnBWMmZlQWRibXlsamJO?=
+ =?utf-8?B?ZVh4YlVWT3lRc0c1aEt4THBiOUNDZytHVVRyM3poODNWRGJhNWxjbkVPRTUr?=
+ =?utf-8?B?Y09kakxDY2pPcVl6UnJPYlZHUEhqbW1GdTV1Y0M0RisvYmkrVXZ0STJJYWlI?=
+ =?utf-8?B?K3JGK2Yyd2FuT2ZjKzVSK1plVEFKY3RzOXdUYWVWNGFUTnRaV1Fkck1lWDFm?=
+ =?utf-8?B?dTFPdXB5R0pENmhBeVlPbkRma0VzOExSTmhZbUNtM1Jlc2trQkxuM05TMmRi?=
+ =?utf-8?B?UGFMZ05FVUV1RFNTc2xrbGhneGxtTE10cFdjNHo4VS80Vnc2ejF1WFcva1NS?=
+ =?utf-8?B?VDVaOHM0REtTaVc3OHZtMGwwMDFIZ2lCQ2hBaXNZS2xGM0MzVldjSWlqY2VP?=
+ =?utf-8?B?UXpnekJKYWRzcmhncXI2VnI1VURxcTJqcmNzS3ppZml6aDhadllRM08yblUy?=
+ =?utf-8?B?WDY3S0RSOEp3NGwvRmNKT1I2cGlUdFhIdm5rSFZFMkc0aXBrT2JxUlF2bTRX?=
+ =?utf-8?B?M0VqdVViZ1Z6ZWx2N0JuQWpDMjFGR0NwWFdKTnFIdi9qdGhnWFhvQkEzSmRK?=
+ =?utf-8?B?QUxiVkNTRFZDWEJIaDRXWVNnVVoxUjVSME5KNWRrb0NiTDYxdmdrMUY3dmk0?=
+ =?utf-8?B?TVRnTzJzUTZpdDZmdkNZUDVFeHNIMUhEd0xSTWdkNmIwTEhBNVhRc01qVUZr?=
+ =?utf-8?B?blBOdGVhOW5GeFZ3SXpYbGYvT2dmc1NRZDVyRE5Ud0pqajBpcEs3T0NXVXRw?=
+ =?utf-8?B?TEFHY3hNTzJLZk1pNHBzajhvNDFXbGtLRitiN0N1dTAydll6NkFWRElBdUxB?=
+ =?utf-8?B?MjNJaUNQS3MzMk5UbmVIZ011ZzZZelFSN2dGeVhsSFRVTnlNbjhlQ2FwMU00?=
+ =?utf-8?B?SXNpOGNsVHJ1SWhkbHFIWWgxTEdEYXNXQWJHdFFBNjkyRWNCOUtWTGNZNWFY?=
+ =?utf-8?B?NWY4Vkh6OWVId0NOVW5JTWpxTTVMU2tvNThVUXA5R0VYNUNDZENDRWpJZklt?=
+ =?utf-8?B?SkhVS1djZGtQcXRZY3A5ck9HSXRJdWF2S1RSSTVqTlhlY0lwdzUyUzNkSTRm?=
+ =?utf-8?B?OXRtVS9XbHEzdkM1SDJQRFFjZGEzYk0raUNzbHZkd2JVbmJRRk05NzJFeGds?=
+ =?utf-8?B?ZUdva1kxdTdJQUt6TTJVZm1xUzdYV0RwWUV0TGl6WGtrUDdWcWdPQmRBck1N?=
+ =?utf-8?B?bGR2NU1JNFY5bHVkMlIrR0p5WDVrcTN6WUpKQ21hOEl6WEpGc2ZDUjZLb3FK?=
+ =?utf-8?B?dGdiZjlWQVAxZXgwZkNEYXBXbThoQm1mZXBzTzk0NHdvVDRYOW1WVmV5MHE5?=
+ =?utf-8?B?K0dFYkJGNTdFSmJLdnBIWHFKRHpFWmpJUEN2UG5hNFlqTXRnWE1tTDdpelRn?=
+ =?utf-8?B?clhYVUZVWnRxSlQ1M2wzK28wYmxVWGVmYVQ4UlZJOVdSdGZLMGo4bXFScXJm?=
+ =?utf-8?B?YUVVZlBJWkhydkZ0eTY3Qk9zLy8xMVNjbVZVRmdHTmpPb25qVnRGNlg5elov?=
+ =?utf-8?B?OVE9PQ==?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 16e2c144-19cd-463f-9941-08dde46ffb5c
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d829a09-775a-4e13-ea10-08dde459b7da
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Aug 2025 04:33:34.4037
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 07:12:56.8608
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 0TVzzk1PtoJEi4G03iojrivBOaUfoFeQgNsofre1S/IKhgUeSjJXvfqNtNmG7cox60WM01bc25GqpAFjBpRtdx0MrvQ9v1U6uO/LE3hcwIotbWMSP+sO/aV25IIPGhwI
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB7449
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aO1/uA67k/0RR2JPQ7jwfuhw5weg1lm29USBz0VNBuOpuPX6/xY/dffDJsm4nsB/2MQLm0CLzytjxE4XhTevhA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB8707
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 26 Aug 2025 04:34:13 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19961
+ <cip-dev@lists.cip-project.org>; Tue, 26 Aug 2025 07:13:04 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19962
 
-Hi all,
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-CIP kernel team has released Linux kernel v6.12.43-cip7.
-The linux-6.12.y-cip tree has been updated base version from v6.12.41 to v6=
-.12.43.
-This release also adds support XSPI for Renesas ARM64.
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+---
+ recipes-kernel/linux/linux-cip-rt_6.12.41-cip6.bb               | 1 -
+ recipes-kernel/linux/linux-cip-rt_6.12.43-cip7.bb               | 1 +
+ ...{linux-cip_5.10.239-cip62.bb => linux-cip_5.10.240-cip63.bb} | 2 +-
+ .../{linux-cip_6.12.41-cip6.bb => linux-cip_6.12.43-cip7.bb}    | 2 +-
+ 4 files changed, 3 insertions(+), 3 deletions(-)
+ delete mode 120000 recipes-kernel/linux/linux-cip-rt_6.12.41-cip6.bb
+ create mode 120000 recipes-kernel/linux/linux-cip-rt_6.12.43-cip7.bb
+ rename recipes-kernel/linux/{linux-cip_5.10.239-cip62.bb => linux-cip_5.10.240-cip63.bb} (68%)
+ rename recipes-kernel/linux/{linux-cip_6.12.41-cip6.bb => linux-cip_6.12.43-cip7.bb} (59%)
 
-Information about this release is as follows:
-
-  v6.12.43-cip7:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-6.12.y-cip
-    commit hash:
-      368d84a5ca367192469eec6834e8cc02bbd9f538
-    fixed CVEs:
-      CVE-2025-38566: sunrpc: fix handling of server side tls alerts
-      CVE-2025-38640: bpf: Disable migration in nf_hook_run_bpf().
-      CVE-2025-38622: net: drop UFO packets in udp_rcv_segment()
-      CVE-2025-38626: f2fs: fix to trigger foreground gc during f2fs_map_bl=
-ocks() in lfs mode
-      CVE-2025-38578: f2fs: fix to avoid UAF in f2fs_sync_inode_meta()
-      CVE-2025-38648: spi: stm32: Check for cfg availability in stm32_spi_p=
-robe
-      CVE-2025-38630: fbdev: imxfb: Check fb_add_videomode to prevent null-=
-ptr-deref
-      CVE-2025-38653: proc: use the same treatment to check proc_lseek as o=
-nes for proc_read_iter et.al
-      CVE-2025-38612: staging: fbtft: fix potential memory leak in fbtft_fr=
-amebuffer_alloc()
-      CVE-2025-38595: xen: fix UAF in dmabuf_exp_from_pages()
-      CVE-2025-38608: bpf, ktls: Fix data corruption when using bpf_msg_pop=
-_data() in ktls
-      CVE-2025-38623: PCI: pnv_php: Fix surprise plug detection and recover=
-y
-      CVE-2025-38571: sunrpc: fix client side handling of tls alerts
-      CVE-2025-38602: iwlwifi: Add missing check for alloc_ordered_workqueu=
-e
-      CVE-2025-38632: pinmux: fix race causing mux_owner NULL with active m=
-ux_usecount
-      CVE-2025-38559: platform/x86/intel/pmt: fix a crashlog NULL pointer a=
-ccess
-      CVE-2025-38628: vdpa/mlx5: Fix release of uninitialized resources on =
-error path
-      CVE-2025-38579: f2fs: fix KMSAN uninit-value in extent_info usage
-      CVE-2025-38644: wifi: mac80211: reject TDLS operations when station i=
-s not associated
-      CVE-2025-38601: wifi: ath11k: clear initialized flag for deinit-ed sr=
-ng lists
-      CVE-2024-36331: x86/sev: Evict cache lines during SNP memory validati=
-on
-      CVE-2025-38557: HID: apple: validate feature-report field count to pr=
-event NULL pointer dereference
-      CVE-2025-38561: ksmbd: fix Preauh_HashValue race condition
-      CVE-2025-38610: powercap: dtpm_cpu: Fix NULL pointer dereference in g=
-et_pd_power_uw()
-      CVE-2025-38501: ksmbd: limit repeated connections from clients with t=
-he same IP
-      CVE-2025-38635: clk: davinci: Add NULL check in davinci_lpsc_clk_regi=
-ster()
-      CVE-2025-38577: f2fs: fix to avoid panic in f2fs_evict_inode
-      CVE-2025-38569: benet: fix BUG when creating VFs
-      CVE-2025-38639: netfilter: xt_nfacct: don't assume acct name is null-=
-terminated
-      CVE-2025-38660: [ceph] parse_longname(): strrchr() expects NUL-termin=
-ated string
-      CVE-2025-38581: crypto: ccp - Fix crash when rebind ccp device for cc=
-p.ko
-      CVE-2025-38576: powerpc/eeh: Make EEH driver device hotplug safe
-      CVE-2025-38625: vfio/pds: Fix missing detach_ioas op
-      CVE-2025-38646: wifi: rtw89: avoid NULL dereference when RX problemat=
-ic packet on unsupported 6 GHz band
-      CVE-2025-38565: perf/core: Exit early on perf_mmap() fail
-      CVE-2025-38619: media: ti: j721e-csi2rx: fix list_del corruption
-      CVE-2025-38611: vmci: Prevent the dispatching of uninitialized payloa=
-ds
-      CVE-2025-38618: vsock: Do not allow binding to VMADDR_PORT_ANY
-      CVE-2025-38615: fs/ntfs3: cancle set bad inode after removing name fa=
-ils
-      CVE-2025-38586: bpf, arm64: Fix fp initialization for exception bound=
-ary
-      CVE-2025-38572: ipv6: reject malicious packets in ipv6_gso_segment()
-      CVE-2025-38634: power: supply: cpcap-charger: Fix null check for powe=
-r_supply_get_by_name
-      CVE-2025-38568: net/sched: mqprio: fix stack out-of-bounds write in t=
-c entry parsing
-      CVE-2025-38563: perf/core: Prevent VMA split of buffer mappings
-      CVE-2025-38553: net/sched: Restrict conditions for adding duplicating=
- netems to qdisc tree
-      CVE-2025-38560: x86/sev: Evict cache lines during SNP memory validati=
-on
-      CVE-2025-38604: wifi: rtl818x: Kill URBs before clearing tx status qu=
-eue
-      CVE-2025-38583: clk: xilinx: vcu: unregister pll_post only if registe=
-red correctly
-      CVE-2025-38590: net/mlx5e: Remove skb secpath if xfrm state is not fo=
-und
-      CVE-2025-38624: PCI: pnv_php: Clean up allocated IRQs on unplug
-      CVE-2025-38585: staging: media: atomisp: Fix stack buffer overflow in=
- gmin_get_var_int()
-      CVE-2025-38609: PM / devfreq: Check governor before using governor->n=
-ame
-      CVE-2025-38593: Bluetooth: hci_sync: fix double free in 'hci_discover=
-y_filter_clear()'
-      CVE-2025-38588: ipv6: prevent infinite loop in rt6_nlmsg_size()
-      CVE-2025-38631: clk: imx95-blk-ctl: Fix synchronous abort
-      CVE-2025-38573: spi: cs42l43: Property entry should be a null-termina=
-ted array
-      CVE-2025-38617: net/packet: fix a race in packet_set_ring() and packe=
-t_notifier()
-      CVE-2025-38650: hfsplus: remove mutex_lock check in hfsplus_free_exte=
-nts
-      CVE-2025-38587: ipv6: fix possible infinite loop in fib6_info_uses_de=
-v()
-      CVE-2025-38574: pptp: ensure minimal skb length in pptp_xmit()
-      CVE-2025-38582: RDMA/hns: Fix double destruction of rsv_qp
-      CVE-2025-38555: usb: gadget : fix use-after-free in composite_dev_cle=
-anup()
-      CVE-2025-38562: ksmbd: fix null pointer dereference error in generate=
-_encryptionkey
-      CVE-2025-38645: net/mlx5: Check device memory pointer before usage
-      CVE-2025-38652: f2fs: fix to avoid out-of-boundary access in devs.pat=
-h
-      CVE-2025-38659: gfs2: No more self recovery
-      CVE-2025-38616: tls: handle data disappearing from under the TLS ULP
-      CVE-2025-38614: eventpoll: Fix semi-unbounded recursion
-      CVE-2025-21884: net: better track kernel sockets lifetime
-    added commits:
-      CIP: Bump version suffix to -cip7 after merge from stable
-      arm64: dts: renesas: rzg3e-smarc-som: Enable serial NOR FLASH
-      arm64: dts: renesas: r9a09g047: Add XSPI node
-      arm64: dts: renesas: r9a09g047: Add SYS node
-      irqchip/renesas-rzv2h: Enable SKIP_SET_WAKE and MASK_ON_SUSPEND
-      spi: rpc-if: Add write support for memory-mapped area
-      memory: renesas-rpc-if: Add RZ/G3E xSPI support
-      memory: renesas-rpc-if: Add wrapper functions
-      memory: renesas-rpc-if: Add regmap to struct rpcif_info
-      memory: renesas-rpc-if: Use devm_reset_control_array_get_exclusive()
-      memory: renesas-rpc-if: Move rpc-if reg definitions
-      dt-bindings: memory: Document RZ/G3E support
-      memory: renesas-rpc-if: Move rpcif_info definitions near to the user
-      memory: renesas-rpc-if: Fix RPCIF_DRENR_CDB macro error
-      clk: renesas: rzv2h: Add fixed-factor module clocks with status repor=
-ting
-      clk: renesas: rzv2h: Drop redundant base pointer from pll_clk
-      clk: renesas: rzv2h: Add missing include file
-      clk: renesas: rzv2h: Use devm_kmemdup_array()
-      clk: renesas: rzv2h: Skip monitor checks for external clocks
-      clk: renesas: r9a09g047: Add XSPI clock/reset
-      clk: renesas: r9a09g047: Add support for xspi mux and divider
-      dt-bindings: clock: renesas,r9a09g047-cpg: Add XSPI and GBETH PTP cor=
-e clocks
-      clk: renesas: Use str_on_off() helper
-
-Best regards,
-  Nobuhiro
-
+diff --git a/recipes-kernel/linux/linux-cip-rt_6.12.41-cip6.bb b/recipes-kernel/linux/linux-cip-rt_6.12.41-cip6.bb
+deleted file mode 120000
+index f68d2686..00000000
+--- a/recipes-kernel/linux/linux-cip-rt_6.12.41-cip6.bb
++++ /dev/null
+@@ -1 +0,0 @@
+-linux-cip_6.12.41-cip6.bb
+\ No newline at end of file
+diff --git a/recipes-kernel/linux/linux-cip-rt_6.12.43-cip7.bb b/recipes-kernel/linux/linux-cip-rt_6.12.43-cip7.bb
+new file mode 120000
+index 00000000..091db61d
+--- /dev/null
++++ b/recipes-kernel/linux/linux-cip-rt_6.12.43-cip7.bb
+@@ -0,0 +1 @@
++linux-cip_6.12.43-cip7.bb
+\ No newline at end of file
+diff --git a/recipes-kernel/linux/linux-cip_5.10.239-cip62.bb b/recipes-kernel/linux/linux-cip_5.10.240-cip63.bb
+similarity index 68%
+rename from recipes-kernel/linux/linux-cip_5.10.239-cip62.bb
+rename to recipes-kernel/linux/linux-cip_5.10.240-cip63.bb
+index b2dfb4da..40841607 100644
+--- a/recipes-kernel/linux/linux-cip_5.10.239-cip62.bb
++++ b/recipes-kernel/linux/linux-cip_5.10.240-cip63.bb
+@@ -11,4 +11,4 @@
+ 
+ require linux-cip-release.inc
+ 
+-SRC_URI[sha256sum] = "13925dd65f12b38832340a654226becade5c2118f94d86a022b386231ca57998"
++SRC_URI[sha256sum] = "6a84a1f1395b99040b06fcea02f8884ecee6da85b345edd2b160e47838a374ce"
+diff --git a/recipes-kernel/linux/linux-cip_6.12.41-cip6.bb b/recipes-kernel/linux/linux-cip_6.12.43-cip7.bb
+similarity index 59%
+rename from recipes-kernel/linux/linux-cip_6.12.41-cip6.bb
+rename to recipes-kernel/linux/linux-cip_6.12.43-cip7.bb
+index c4f24657..4a23b9fc 100644
+--- a/recipes-kernel/linux/linux-cip_6.12.41-cip6.bb
++++ b/recipes-kernel/linux/linux-cip_6.12.43-cip7.bb
+@@ -7,4 +7,4 @@
+ 
+ require linux-cip-release.inc
+ 
+-SRC_URI[sha256sum] = "c69287b8d28e0b740ea46441584cca19896fe887befc296743b4cc0a426508ba"
++SRC_URI[sha256sum] = "d85bb43cc091d7cd1b860dceeefad4345d5a9bd39d81c1abb24fd962e21d537f"
+-- 
+2.43.0
 
