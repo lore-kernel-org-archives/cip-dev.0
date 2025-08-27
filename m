@@ -2,74 +2,74 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91786CA0FED
-	for <webhook@archiver.kernel.org>; Wed, 27 Aug 2025 10:43:31 +0000 (UTC)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
- by mx.groups.io with SMTP id smtpd.web11.11679.1756291404951070525
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC07CA0FED
+	for <webhook@archiver.kernel.org>; Wed, 27 Aug 2025 10:45:31 +0000 (UTC)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+ by mx.groups.io with SMTP id smtpd.web10.12081.1756291525737683449
  for <cip-dev@lists.cip-project.org>;
- Wed, 27 Aug 2025 03:43:25 -0700
+ Wed, 27 Aug 2025 03:45:26 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=qa1/COzU;
- spf=pass (domain: tuxon.dev, ip: 209.85.208.54, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61c325a4d18so7355644a12.0
-        for <cip-dev@lists.cip-project.org>; Wed, 27 Aug 2025 03:43:24 -0700 (PDT)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=qN8judKL;
+ spf=pass (domain: tuxon.dev, ip: 209.85.218.49, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-afe9358fe77so454763766b.1
+        for <cip-dev@lists.cip-project.org>; Wed, 27 Aug 2025 03:45:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1756291403; x=1756896203; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1756291524; x=1756896324; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XLNmIsW5Q3GINiArPxonzyeIFuJOwZj7rn8N13+KnSs=;
-        b=qa1/COzUi03yAC+8/kONPtpfQzqrugir7SgYSOxtvYtkamDV7EAlhu/ZKrjxQIyJbW
-         LqWlZXGlO5JcpEUxzrPCLdYWXctwrVvevUnIejzHAy6m3Wrq586qR9Ju4JXpVV3U1eX4
-         st4Bo6ibcrVbVELTmsz7HHjUIOkcsgXPjROp1G3aDfJSdHHSoVw1DaMdTgEiOXzRMzKm
-         50P2gUtYD7vkcKetE9RXtD/wxT8tvS1mtYoiC/AI7/6mhbxdDBOdb9G/wsjzDpsi8Gjw
-         9ORFGOUOQvk8yQjJX+GzkQwwioVBx2Rhb45BZA6Jslpak3cyY2LYeaDSbaZZnRHFEbss
-         zlGg==
+        bh=8edHdPscngRl+C0b8pVKTzF5bxiXP/JT9Xlxj4/QSQY=;
+        b=qN8judKLqnPbYDSP4c8a3rJfRvudif4ttFtKb53XS+08BIvck1vQHd0ZDo3hupJUn0
+         lPzkE5hj3heUDhVLYfrYALgxiztYeXgvxtPW37mPA30Wp5NyGkwVUuwY0SduNVAZ+kE8
+         kaXEliCeAhw4l1elWo3b2LJDWI5Acae2iVh3CpVfcU2XcjRpLyM3B6cElaMzRhfoq/wL
+         GRLgk987AVEBbAkkK4wEIl17vUx2TDwLOqCJM2Ka8nhpbSS8daL1ksLibfNA5DFK7sFb
+         wT84SMEefGwpcMz1GENAVJraGS9lM6FHt7awTEUKQzHr6L2ivGVp9YC6VuL+SfLgnuLW
+         QEGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756291403; x=1756896203;
+        d=1e100.net; s=20230601; t=1756291524; x=1756896324;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XLNmIsW5Q3GINiArPxonzyeIFuJOwZj7rn8N13+KnSs=;
-        b=F+oKRYGIR9QkoKrx2G1wxTG9SE+LuWDyo4CdYr9wx8CmEkF1/wDU2IYQ/VjQir3Qas
-         1p/Y2sSuhwtyhTOREmYv4IX2P0goAG4Q0xi4ttj7Jv/3udQ037ygP3rhHxXrUxYSkVBp
-         p147K+vo4c+NELU+r4wz/yxM1jxEwBPnPugPGT4k3gsGAchPXf65pWF4ngIe4ffhX2gH
-         MfLW4sPZGUKg0wwJf4h51YH8W1GzElCzFExDevgNJsdhmDzg5eMsMbpC31V7/nd4u/Kb
-         x3YHOtHeeK5i8JbuU8PSXurlJoxkWsTyjuYS8LFbMgDo/ljkOP1j+5DW28UJVVKkCLWY
-         zKtA==
-X-Forwarded-Encrypted: i=1; AJvYcCW5rEaomuevllo5/JqxVfS10LzzP3ap9TSZdgi70I4fiE2/bcNtxRW/TjtE4HEKy6I2pdGGK55o@lists.cip-project.org
-X-Gm-Message-State: AOJu0YxHiWL2PyvDjVF9LGj4iK+boJWZVpHC0WrVzfBlPvBGPPSF1KVa
-	TZjCqNJRIP9F9fR0MF6i34Vin/fsb6s085xJ5wyP+u4/2xU9Bc6vWGgRf6Ds2cUuWg4=
-X-Gm-Gg: ASbGncsoIai8l8h6m0Xa2rSqNhSpks9SebTExaf8FDELhON3YE/GbtCWhG83+1tX3PS
-	dUyM/tx+HVxVZUEprmY89GQdVHsBD1ktZ1f4y4Wf567KON9FyCAgAItPuJ29o4ZXsNJox8wiRgI
-	BFvpqOZm/oJlFH5lbiAIZGV6ARYGXR2KnwNhx9/PShCV4va0MTdjYYCGXLA1S8uClO7jiJRhj+/
-	E8nc9G+OcS2ttCNWe+L9jU/hqodX15Sz2kIAOU69Vc/N0OwfEcFRb6uZhCEgbbNE4ftj2maVi1C
-	cVa3O4S7r47fGxqv0NNXYO3k35ChsAb/AR8uSt2uUh7gOKBb0toIZWIjg5Dxo5RGkbjGt/rh6Bo
-	O8sULrvA2Ds1pzAs2yAhYvrsubAQJgyyhCbSyenKR6lcFAzGYbkfAod7VTdzyrYkvGET/dpF71y
-	45AeXTrA==
-X-Google-Smtp-Source: AGHT+IEWEQvNu0H8mqHFeoV9NGCmBLa81BbLfNA/z5rASW6mT7zoEtmzeckissjJFwsSU/riV3hIvQ==
-X-Received: by 2002:a17:907:60ca:b0:adb:45eb:7d0b with SMTP id a640c23a62f3a-afe28f156f6mr1726016166b.15.1756291403211;
-        Wed, 27 Aug 2025 03:43:23 -0700 (PDT)
+        bh=8edHdPscngRl+C0b8pVKTzF5bxiXP/JT9Xlxj4/QSQY=;
+        b=i502nEJCX1qEIdm74uV7zgUXWTDlJsv14+LNGh4sylS1oioYdFY1yfZA/50d5NxgzE
+         HdVNvV17nm8DzafkjOaWATptN129374LmxXWenqCAIBVbAVr/WTtI4FAaOPr+roJxl8y
+         N1QQoG63nVoxHJSLWLDOjGkHbYCxdN7bI/yqFRXesxoKq+7hu1JD0Q3nd2hicOgUt9cb
+         7jAUe+PsDgoQ0Sbj0KhlDGBfjRtMC7vtL+s9D0u5ll5+YvVunXsrvetSJlfVtXpN1EKU
+         S7Fn8V51eNRKRzdKD2cOQ5DLcx9XAtPpBslLg4GfBdrKB9shPzqJJuE1a9By0hoPpi5c
+         ubRA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHlS5vGAFY12sD7OhirCQ6ELVLjTfGo6gaMPXmZajsFb7tQDzPLa/mzzd/HGzl9sXFQlzKgEqg@lists.cip-project.org
+X-Gm-Message-State: AOJu0YzVusPLvQY6u+GHEbBWeVxS9/0bQOOqNY0hcmNkR4ZpSFYdq32+
+	ANBcCdF1DKJISyUierqemW581vMFyfBcn77swl3FLZVzHZ2pV5cXBW877vZHw8EoGSw=
+X-Gm-Gg: ASbGncu7K0lmdypQ5Uyl5QjpBSfUUpve5gWoUFsyWsTdV7lUvHBkQOvr+yj3jhr1Xtw
+	Q42ev6x4ofj0qt8+TyNcz7Y0LQMCoQDazlDeTbtgMtewtNmexveVfhZ5DdXHOBfbTY17LUbAk8D
+	Ov6uKq3gGXg5iAzKTXSzfEzD1eC1LjUFd2IvkglJUGdoMaGN1R1hO7HA1er5oBbIbKaJFfhIHCk
+	3XuGJiuiy5sTDh2q/pnpH/GGvR0xosSN1gFG3bFZlxMr03Ar8bCSB69F+QI87HYiPRW4wVaiga6
+	AYgUP3+rsrvuhZPo7rurE6IgAKzrghYfgbkPlhgzR6MqBWJ6sML2RNW4JwutEBdPjLqVufieO5i
+	yM0IdGvefQdLYksgr4fBnZNDw+2fPJKd/IBJiu8Xlw6+E5LSen6U+5JvFEHtHUm+dYPND/GdIOr
+	J9AiGz7Jkf2P5sCQJT
+X-Google-Smtp-Source: AGHT+IFgwrAOFdUdq3eVq2zlNzjKpzUvMXoGg7BPNSNqmTcZwUSfenMYXlBeApSaj/qXkwLXVtAdKg==
+X-Received: by 2002:a17:907:3cc1:b0:af9:8cbf:6053 with SMTP id a640c23a62f3a-afe28fe85e1mr1553162966b.6.1756291523950;
+        Wed, 27 Aug 2025 03:45:23 -0700 (PDT)
 Received: from claudiu-TUXEDO-InfinityBook-Pro-AMD-Gen9.. ([2a02:2f04:6103:4200:a5a4:15e6:5b6a:a96])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afe90c8f85fsm497239066b.8.2025.08.27.03.43.22
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-afeb7fa311bsm220226266b.69.2025.08.27.03.45.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 03:43:22 -0700 (PDT)
+        Wed, 27 Aug 2025 03:45:23 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip] mmc: renesas_sdhi: Set the SDBUF after reset
-Date: Wed, 27 Aug 2025 13:43:21 +0300
-Message-ID: <20250827104321.931369-1-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip] mmc: renesas_sdhi: Set the SDBUF after reset
+Date: Wed, 27 Aug 2025 13:45:21 +0300
+Message-ID: <20250827104521.931674-1-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 27 Aug 2025 10:43:31 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19976
+ <cip-dev@lists.cip-project.org>; Wed, 27 Aug 2025 10:45:31 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19977
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
@@ -97,15 +97,23 @@ Link: https://lore.kernel.org/r/20240430093724.2692232-1-claudiu.beznea.uj@bp.re
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
+
+Hi,
+
+This fix is already integrated in v6.12.y CIP.
+
+Thank you,
+Claudiu
+
  drivers/mmc/host/renesas_sdhi_core.c | 3 +++
  1 file changed, 3 insertions(+)
 
 diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 621670c6a227..a087eb41e9e7 100644
+index 725bd37b8c21..30ceda915f1a 100644
 --- a/drivers/mmc/host/renesas_sdhi_core.c
 +++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -599,6 +599,9 @@ static void renesas_sdhi_reset(struct tmio_mmc_host *host, bool preserve)
- 			sd_ctrl_write16(host, CTL_RESET_SD, 0x0001);
+@@ -603,6 +603,9 @@ static void renesas_sdhi_reset(struct tmio_mmc_host *host, bool preserve)
+ 
  			priv->needs_adjust_hs400 = false;
  			renesas_sdhi_set_clock(host, host->clk_cache);
 +
