@@ -1,384 +1,227 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F645CA0FFE
-	for <webhook@archiver.kernel.org>; Thu, 28 Aug 2025 11:07:24 +0000 (UTC)
-Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
- by mx.groups.io with SMTP id smtpd.web11.18176.1756379236526067330
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 321A8CA0FE8
+	for <webhook@archiver.kernel.org>; Sun, 31 Aug 2025 13:10:43 +0000 (UTC)
+Received: from GVXPR05CU001.outbound.protection.outlook.com (GVXPR05CU001.outbound.protection.outlook.com [52.101.83.50])
+ by mx.groups.io with SMTP id smtpd.web10.28899.1756645838446965123
  for <cip-dev@lists.cip-project.org>;
- Thu, 28 Aug 2025 04:07:17 -0700
+ Sun, 31 Aug 2025 06:10:39 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=AVvMv3Le;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-51332-202508281107131aafe02e1f00020790-iiu40c@rts-flowmailer.siemens.com)
-Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 202508281107131aafe02e1f00020790
-        for <cip-dev@lists.cip-project.org>;
-        Thu, 28 Aug 2025 13:07:13 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=RkYu+vjq4T6XbJnpvKKggbj3+pvnpLGiKBtxnTThIaQ=;
- b=AVvMv3Lercjx5VFsDAI/QUpUjGQcJ4pQIfazs7EcrVLkVagqhAkDchpG7tZ3kn66OS9rPQ
- H+D6EYupUCvYHvGs+kVOzOvqx1H+cGHG9AsG0QWezsYaJQ7w55oqCGN+qAAMVo7L5Q9EWnwg
- 8sNnWZlgH7HjGfwH4QU7ZTeoMc2yG+8hNTi/00Zl0oqMYGlFANd9ushRxGU2C69a00rhligF
- RJmgd6q9DZwbIggysnUN4ayShV7ZLuei6VhAhcu///eqOkUWtdiHv5oRCagOjpjLL/V7BeJY
- IPg819KKQ2p7gamiPtIIS36tg75QaIB1Lbj5yBeKAAvUPxrEWNiBCkZw==;
-From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: cip-dev@lists.cip-project.org,
-	jan.kiszka@siemens.com,
-	gokhan.cetin@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH v4 1/7] Add factory-reset-helper to set the Marker correctly
-Date: Thu, 28 Aug 2025 13:06:48 +0200
-Message-ID: <20250828110712.392641-2-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20250828110712.392641-1-Quirin.Gylstorff@siemens.com>
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=V66KsCOQ;
+ spf=pass (domain: siemens.com, ip: 52.101.83.50, mailfrom: jan.kiszka@siemens.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=usg4sWBs5TASmSsIzdIn2DKPD5I+YS4HFMlmQOwxIoz0q+TUbXFJU0pyDzyoNC4+QLR3axfjyH3Lk3CyyHMlumaPjZqiA1ZXaGvvOx/K7NP7kVmxqoQUKygcdjBNDd5yj0d3Bc8llkrR0fR0Dw2uonutdSHifi1ASlw4X0moSmrri0hdsg9RzbzFzlWCUR6IGtJww4mNuDdXb9wgDVNJUGvOdfZVTzBN5KSF03DX+dIWnMtZM5jIvaSrBE74uVPRFUe1K8maz473eKC2wJvS3n15NRq4PRQhVAxBB3DSBK7sO6bDNWaKeAA0+IR7gPc/JgxcjRuzUGH2p1OTw2Qw5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ARilepxErv211FWdfQT3qdfBy3Bg1pjqUobAU1UHRdo=;
+ b=Xc3Iu13oWY4v2vK6EQPIfu80rSY7ProMYzZI0WYjRbviiS7+YVv6TYqjuTYMK6Nt6rf9TMFwnkxZ6vz84HSc0Uc0xHdTHxbV9OixvqdeasZVKl/ZbXVg3dALY/H+YsVzeFnNRkdscjkiKz6q4uhmNd45h2stspRd8uFl5vyLsuKshYxBztZe6nFyMZk0hdE4CwX2Dx8eGCsDQv6LSp7yA3EpQguLvKQjbbSqdyu7HPEreOiQHBwrmBZfmP6152Eot/rdUONxVEPNyEPen2VRTpL5hgf7/BZ0+alTm9uHYIjr4YvAn6kbteu2L5rBerZc1NktMDXao2vR/tmmXvgYkw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ARilepxErv211FWdfQT3qdfBy3Bg1pjqUobAU1UHRdo=;
+ b=V66KsCOQBEYLXhYVCAhTE1mj+DOvsws7uJ9aRl5whQJhpKyWTcPHWFFpAbHnYT0AVzEc5selz10/ncuFPNZu2cCMBJtwrrCl//m1LjiFxCip15gjOR6qae4Q34KoSvax0XcsjCYGfKWFi+YsvO3JcFzdP5cK2enphe8joMH31AZ2GLKEyNfClWMWBjqeZM/jR+uElYdH7evUKrxUfxeYAy6X2e++F9EdnMh+/xO4g73IUslCqIbAI5YAM9Ov9ZiWAKmrqfErIeT8VKl3gdyXIaQWq2yZQ2W/DgDeuNlpaJ4Ikqu75thKfF53ue1U4jQUufDEee7+14P+KOQV/mav8w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by AM7PR10MB3255.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:dd::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.25; Sun, 31 Aug
+ 2025 13:10:34 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408%5]) with mapi id 15.20.9073.021; Sun, 31 Aug 2025
+ 13:10:34 +0000
+Message-ID: <ccd932f7-27e7-48fa-b0b6-5e19881a8f8b@siemens.com>
+Date: Sun, 31 Aug 2025 15:10:32 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cip-dev][isar-cip-core][PATCH v4 2/7] Add factory-reset
+ initramfs hook
+To: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>,
+ cip-dev@lists.cip-project.org, gokhan.cetin@siemens.com
 References: <20250828110712.392641-1-Quirin.Gylstorff@siemens.com>
+ <20250828110712.392641-3-Quirin.Gylstorff@siemens.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Content-Language: en-US
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ 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
+In-Reply-To: <20250828110712.392641-3-Quirin.Gylstorff@siemens.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0104.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:cb::7) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|AM7PR10MB3255:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8f4715bd-2ed4-4ef9-9574-08dde88fc4fe
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?dG5IcDBtdGxnbnZlaUZUZFpMbWw3T2ppZ2VsNWQ3S1ZmUmszTEc3d3N0T3pi?=
+ =?utf-8?B?MVRQZThuL3c3QUpzR210Ty82anBuaTBhTzIxNklBcW5GLzhuZkZQdTBLdnBO?=
+ =?utf-8?B?Y21qK3pwdnk5cXVHR1dZRXZ2TjJ5N3BGRFNSNnlSdmFiRlBmWFltelV5NjBF?=
+ =?utf-8?B?L21hZlZublVZQi9YdzFTb2VRcE91MFpBNFhjb2huTFNNQWY0cVdNeDhrM3kx?=
+ =?utf-8?B?aHBrZjg3RE1wNWdkV0VJSTcydkdBUzlSNW1BZnRoRFhLdjNIWjVudGtlanJE?=
+ =?utf-8?B?UjBmSGthaGtHaitoaHZHQ2VibFZuQjdTQUdtbzBiR3hnWU9QT2x6OERwamtQ?=
+ =?utf-8?B?dG8wcm5JREs1cm1EZWhGTThRVFBXcG44WXdxaUg5K1d6ZGY4UFRxbmk4Tkh5?=
+ =?utf-8?B?TUtMMVFjMEZGQ1EyRlZSZXdnY1hpRWFja3A0WVZhQ1BENDhJNmpyd25JYlVJ?=
+ =?utf-8?B?U2xmaVFNTk5XbExpckFTRG50Ulc5TURUdFBDQVhib0gvMnpnUEJyN3llOHJR?=
+ =?utf-8?B?VnVvWURaamVaemlubUQ5YnRySTRBVmdFWnN5LzhXT2Z0RDM1RFpCZTBHZGdI?=
+ =?utf-8?B?Y0VqRkNLcWFlNXZFdEk4aVU4VEpOUlVUb3NVaTZHYVg3RHVEZ1ZnbUZFV2Zu?=
+ =?utf-8?B?SHR6NThkWEZIMDRkczJVSlpJamcrQlkzcDNScWExejZiVEpGV0dpZS9ZTEUz?=
+ =?utf-8?B?NTlwYk0xWFJxeUZsVXZ3K1JYNy9ka2FobVNmcGRUb2tYamEvNUhURHZsWGNL?=
+ =?utf-8?B?aUdVMlM4cjZqc0h1Mk8yMmVZRmVCT2thQUQ5OCtkL2dMZGIvZ2xnWThmeHFp?=
+ =?utf-8?B?OVhDNnAvbXNmY2piZW5QbGhNVVl0QlJyeHoweU5JcHhSV2ROZzFJbHE4OWt1?=
+ =?utf-8?B?SWoxaHlKVlQvN2l6UXVUMFBHd25iVUFEczhPWHlndi9HN092M2wzZ0hlKzNa?=
+ =?utf-8?B?cGw5WFNzUTF0MmhpNkZ3NVRIemc3R3FUZUlEbURHaVI2ekdIbCt4VEZuaUNY?=
+ =?utf-8?B?WlJmSWk1TGdQUG5vQm5tVnhPSzBocFpTM2I3Wnowc2w5a0lMYnFSWktXaEVU?=
+ =?utf-8?B?a3o1Nm5NditDMloyZ0s2c1JGb3NNbkZQKzZ2cWNYZlRPdWxTVC9aL0NXdkFK?=
+ =?utf-8?B?ZnFhRDNwWlFsWnpwSDFjTVFTZTEydTVjWFVSdXNDQitUWkwzK21LRU1TL1k2?=
+ =?utf-8?B?NkVoTzVUb1dBQ3dMOGR5WTNpTDZvVm5XNnR0LzNtVlQ4NEt1M0t2cFBrUldE?=
+ =?utf-8?B?SmthQXpYTGp0OXQ5Y2JNbkw4M0FBZ2lUUGIxVjk0M1Bmbi9XM0N5OTFYSTdh?=
+ =?utf-8?B?WEVMYWtEQURPcmpDNzNsblY0a0lza0xkOGpBRjVqczkwYTRqMnU4MzNWSU80?=
+ =?utf-8?B?Nm9SbjRFLzJYZlNrbm1lOWo3dU9yZmpPUWFGUlpIR0xmSnZiTTdxYXpPZ1Bz?=
+ =?utf-8?B?K3l2d3o2aHMxeUl6RWxUT1U2cTV4R0U5R1p5cytrMmg2NWsrbHNwWjZxUVVo?=
+ =?utf-8?B?czNHWFNmVnJkaFBxVVBWYVlERXBNa2gzdE5tREdldnJEdjB3L3B0d1RmaWh2?=
+ =?utf-8?B?eVdaaUx1RTVMMGV1OUkrcEJXSnV6cHIrTDFnL0p4cHB2UXRZbHdKRTJnb0px?=
+ =?utf-8?B?VkJVS2NsZkhUZlJBOFZuZUdXbCt0cEJkSHpLNUk5VC9uSHA0Rkc0eGlOZ1hr?=
+ =?utf-8?B?NkVvSGlkRC90ZGZ1K2tZUXY4ME5MYmw1YWV5bkVmcE5sQUo1U09rZnpEdVZP?=
+ =?utf-8?B?bUVRcnRjektJOTVOVEMzd2lmaUdobEJtYkxEWEE5UERQOVhXazB6WEt0NG9Y?=
+ =?utf-8?B?S3paaXpva044QTNuSEp6RkdhNDkya2NYOWFkV0pMcDVrVzh0dW5kMjVpL05t?=
+ =?utf-8?B?d2JLOWtaQTF6TFlUZjc1MU5NaGRQVklVVTdUdzZlY0hNWWc9PQ==?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?RC91dEkvcEViYitubkZyMzcrVXVJTU1od3hsbzBlbFM4TWxrQksxYjYvUW9q?=
+ =?utf-8?B?M2lnVld4N3MwZjZXajl2VVF2djdLcGFseEdMOTF2dm9EaDd2RUN5ZGJ0cE53?=
+ =?utf-8?B?MVpaNklOWCtreUNtc3ZMdjFZWnBqV2oxbXJPdTFrOWVWaXZVa1BVUEpMdXBm?=
+ =?utf-8?B?bU1xWENCcWV5SEtTYXhYUXhRQkE5ckJEMnhEMHRBQkZkU2FuSXZiR1MyTTVR?=
+ =?utf-8?B?bWxJY1U5Sy9BVElaNmxzRXJCWUlpcDFwU2NhRGRaNUpnNUVUTTFaZnVCN1k0?=
+ =?utf-8?B?YnM1V01pb1BIT0hUUkRTTjc2RERSbktOek9JZ2tac0MzNEhUZDZIZCtpWUE5?=
+ =?utf-8?B?SEZ4T003NkhVNElGcGhkZTQxM09UdW5SemZnQWdnZDNNa2VZWkZ4OVI5WitR?=
+ =?utf-8?B?QWxwVHBVd3hQZlVySythWE9jUXJuVTROVmhOajN0TkJRajV5YWVBN1ZOWkNZ?=
+ =?utf-8?B?ZWV2WjJTRmJPaGN3aG1sSmI5cHNjM2VCVFFyRVVodVVHMm80UjJ0cWJLeWt5?=
+ =?utf-8?B?eDhYNFZpVnN3SW93aWFWbHdYL2RGR1VESWlvRFBMa01KUmtxOW1tenZPb3Yx?=
+ =?utf-8?B?SzJLTWtDbkJsK1o5dVhiQlFSbWlzRC9GZ0NYVFJMT1lISUxLRDd0R25Ua3Jw?=
+ =?utf-8?B?N3FQaldGOUNmaFl5MmpxcVJwUEJMZWdlN3lldjltSUJyVlpVUWNEeVhGU2ZN?=
+ =?utf-8?B?ZlFKT3NHTkpIWU4wY2NBaEZhdnlZcnFVRjdyTStUcnBlSk55ZDA4MmNqNVlT?=
+ =?utf-8?B?cDh4WDJDaUkwMXZmSWN3ZnIyQXBtMFpGWWFaUmhKWkd4YU45VkNaU2ZaSUE4?=
+ =?utf-8?B?bDg1R1VmS242cFIxdzNnaFI0QklORlNaWmphVm9JSFdzTDVUSUlSemlCQ3Fr?=
+ =?utf-8?B?WTdSbEI1RG5SM0lsSFpYNFpadENsMGdrWGUrUE1UbFRYdENQY2FQUVRnYlQw?=
+ =?utf-8?B?UG43Z3UyT0YxZ1JZK2UrMTZSa05ST1B6RjVIcmZvazJDbkJzYnlYZWY5VG5I?=
+ =?utf-8?B?YnphdnJQOWVQT1lzK3ZJamN4OTlHQTFudkRPYlQxRzhBZ3ZwUkV6NGZJL2xm?=
+ =?utf-8?B?Q1kvUGUyTGNveUNVeW1Ndyt5MzZSVkJ1R3YwWXZQdEVETHV3TUdZcHAyajVl?=
+ =?utf-8?B?dHlKRFF2Wkl2R2ZMMTNrRVZCOU9zdTNMZ1pvSEtHOU9zZkhCOEZHM244cXhO?=
+ =?utf-8?B?Mm9hdUZ4Zi9CcUF2VThrRHg4SVRwbTlrSzVGSkJZTG5TaGtTRGw0OENDblNX?=
+ =?utf-8?B?aGxaUXdSSDk1bFRnMkZRb2dYbTRDUUhZNzdXYmNsemp5U1lnV3JjajVmZG1s?=
+ =?utf-8?B?QjNPN053SzhCUTlNSWQwblFCeTR4ZzdId1VlSGMzY0t4RXFuQXdZeWY2dS9z?=
+ =?utf-8?B?aFJVd0FHcnBmaFgycmNueWprU2pHa3ZldytiSkdlck1DNkdLVzhkMjFYa0kx?=
+ =?utf-8?B?bzFIOEw4cDZGMDJGSS9QdHh2QnEzODhlbnJIZjRsaHhjUzA4TjhTOElibzlk?=
+ =?utf-8?B?OUN2S0UxRk0wWFBZT2Zxd1pwWlZpb0wweUYyN3lCbElTVmFpL1F0TTcvSmww?=
+ =?utf-8?B?VFR5ZDMvTnZaMnJvMGVWbWxiMmFmenBjbHV0YVFLYnJNVFVtcmRacmZWenJD?=
+ =?utf-8?B?dzVkVkNFZ2NzWUtnTjIvNGlhdVJrQzA4WmtlWHYwdERVMFh0U1RUelovc0gy?=
+ =?utf-8?B?d3hWN1N0YUQzWHFrSHMzT0VvVXp4cVoxRjViamphQytBS3Z5WG5PamVZc3Bl?=
+ =?utf-8?B?bU5oekxubXY5VnY4c3dXWHltNTBEUU84dk1TNS9YQ2NsODVObE5PZVMzYzEr?=
+ =?utf-8?B?RGVIalAzM2l1T25WQmlYZ1hTaVRsN2xsSy8zdmRwci95ZVY5VUhJRWVCR0wr?=
+ =?utf-8?B?ZE9HV1ZKdzZSZjM5NkhRQjFCRFZlTFR2S3cvRUhaMXV6VGFFSzFzTzZ1eFZz?=
+ =?utf-8?B?bWs5N1FGNUdFUWNmOElKbW9VQWhtUkhTNWtuS2xLYVBBMXJWK09XUDByQWwx?=
+ =?utf-8?B?cXpvR2M0S0ZmUnRVMGNqai9mMVJKNktEQ3lCWmpTeUgvRUh1SmdLcW0wYjFX?=
+ =?utf-8?B?YXF1YUZKZDVmSVp6NjhySFF1R0c1L2phcldRVlRDZHFUUXpwRnd3OWNESXY5?=
+ =?utf-8?Q?iwL++s0yYxCWM9HXl9PeWKBzU?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f4715bd-2ed4-4ef9-9574-08dde88fc4fe
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2025 13:10:34.2545
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AeoZeN24zpthOckaP1x7L6elRU3Rd23VCnl2S54XXuYwE8ReEkIKh5VrZ4l73NsvK5KT7aEBX8tDQi55ShD2wA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3255
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 28 Aug 2025 11:07:24 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19985
+ <cip-dev@lists.cip-project.org>; Sun, 31 Aug 2025 13:10:43 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/19988
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+On 28.08.25 13:06, Quirin Gylstorff wrote:
+> From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+> 
+> This allows to reset the device back to first boot by
+> formatting the persistent partitions.
+> 
+> The reset occurs if a file defined by the variable
+> INITRAMFS_FACTORY_RESET_MARKER
+> exists in the device INITRAMFS_FACTORY_RESET_MARKER_DEVICE.
+> 
+> In case of disk encryption it will invalidate the keys
+> stored in the TPM.
 
-The factory-reset-helper provides:
-- set-factory-reset.sh to set the marker
-- get-factory-reset.sh to get the marker
+I wonder if this needs some finer control: We only clear the TPM in case
+that :encrypt-partitions override is set. What if a user if this
+infrastructure would clearing also in other cases? And what if only the
+encryption key should be wiped from the TPM?
 
-The helper provides a EFI and file based flavor. The
-EFI based flavor should be preferred. The file based flavor
-is used to set the factory-reset on targets where the EFI variables
-can not be written, e.g. QEMU for arm64.
+I'm a little bit concerned about what "factory reset" may imply for
+users. In some cases, it may actually mean to wipe anything that made
+the device "unique". In others, it may be needed to return to the state
+that was programmed in the factory, and that may include bits in the TPM
+that should be kept in such a case.
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- .../factory-reset-helper-efi_0.1.bb           | 22 +++++++
- .../factory-reset-helper-file_0.1.bb          | 18 ++++++
- .../factory-reset-helper.inc                  | 34 +++++++++++
- .../files/get-factory-reset-efivar.sh.tmpl    | 25 ++++++++
- .../files/get-factory-reset-file.sh.tmpl      | 49 +++++++++++++++
- .../files/set-factory-reset-efivar.sh.tmpl    | 60 +++++++++++++++++++
- .../files/set-factory-reset-file.sh.tmpl      | 57 ++++++++++++++++++
- 7 files changed, 265 insertions(+)
- create mode 100644 recipes-support/factory-reset-helper/factory-reset-helper-efi_0.1.bb
- create mode 100644 recipes-support/factory-reset-helper/factory-reset-helper-file_0.1.bb
- create mode 100644 recipes-support/factory-reset-helper/factory-reset-helper.inc
- create mode 100644 recipes-support/factory-reset-helper/files/get-factory-reset-efivar.sh.tmpl
- create mode 100644 recipes-support/factory-reset-helper/files/get-factory-reset-file.sh.tmpl
- create mode 100644 recipes-support/factory-reset-helper/files/set-factory-reset-efivar.sh.tmpl
- create mode 100644 recipes-support/factory-reset-helper/files/set-factory-reset-file.sh.tmpl
+Jan
 
-diff --git a/recipes-support/factory-reset-helper/factory-reset-helper-efi_0.1.bb b/recipes-support/factory-reset-helper/factory-reset-helper-efi_0.1.bb
-new file mode 100644
-index 0000000..d9bd84d
---- /dev/null
-+++ b/recipes-support/factory-reset-helper/factory-reset-helper-efi_0.1.bb
-@@ -0,0 +1,22 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2025
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+
-+require recipes-support/factory-reset-helper/factory-reset-helper.inc
-+DEBIAN_CONFLICTS = "factory-reset-helper-file"
-+
-+# use systemd-factory-reset as default
-+# https://www.freedesktop.org/software/systemd/man/devel/systemd-factory-reset.html#EFI%20Variables
-+# The efivariable is defined by ${FACTORY_RESET_MARKER}-${FACTORY_RESET_EFIVARS_GUID}
-+FACTORY_RESET_MARKER ?= "FactoryResetRequest"
-+# Use a new vendor id instead of the one from systemd
-+FACTORY_RESET_EFIVARS_GUID ?= "abc688c9-fee3-41f7-87d3-1076e4a29e8f"
-+FACTORY_RESET_TYPE = "efivar"
-+
-+DEBIAN_DEPENDS .= ", coreutils, util-linux, e2fsprogs, bsdextrautils, efivar"
-diff --git a/recipes-support/factory-reset-helper/factory-reset-helper-file_0.1.bb b/recipes-support/factory-reset-helper/factory-reset-helper-file_0.1.bb
-new file mode 100644
-index 0000000..3e8650b
---- /dev/null
-+++ b/recipes-support/factory-reset-helper/factory-reset-helper-file_0.1.bb
-@@ -0,0 +1,18 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2025
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+
-+require recipes-support/factory-reset-helper/factory-reset-helper.inc
-+DEBIAN_CONFLICTS = "factory-reset-helper-efi"
-+
-+FACTORY_RESET_MARKER ?= ".factory-reset"
-+FACTORY_RESET_MARKER_STORAGE_DEVICE ?= "/dev/disk/by-partlabel/efi"
-+FACTORY_RESET_TYPE = "file"
-+
-+DEBIAN_DEPENDS .= ", coreutils, util-linux, e2fsprogs, bsdextrautils"
-diff --git a/recipes-support/factory-reset-helper/factory-reset-helper.inc b/recipes-support/factory-reset-helper/factory-reset-helper.inc
-new file mode 100644
-index 0000000..29ebf77
---- /dev/null
-+++ b/recipes-support/factory-reset-helper/factory-reset-helper.inc
-@@ -0,0 +1,34 @@
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2025
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+
-+inherit dpkg-raw
-+DPKG_ARCH = "all"
-+DESCRIPTION = "helper script to execute a factory reset"
-+
-+PROVIDES = "factory-reset-helper"
-+DEBIAN_PROVIDES = "factory-reset-helper"
-+
-+SRC_URI = "file://set-factory-reset-${FACTORY_RESET_TYPE}.sh.tmpl \
-+           file://get-factory-reset-${FACTORY_RESET_TYPE}.sh.tmpl"
-+
-+TEMPLATE_FILES += "set-factory-reset-${FACTORY_RESET_TYPE}.sh.tmpl \
-+                   get-factory-reset-${FACTORY_RESET_TYPE}.sh.tmpl"
-+
-+TEMPLATE_VARS += " FACTORY_RESET_MARKER \
-+                   FACTORY_RESET_EFIVARS_GUID \
-+                   FACTORY_RESET_MARKER_STORAGE_DEVICE"
-+
-+do_install[cleandirs] += "${D}/usr/sbin/"
-+do_install:prepend() {
-+    install -m 0700 "${WORKDIR}/set-factory-reset-${FACTORY_RESET_TYPE}.sh" \
-+        "${D}/usr/sbin/set-factory-reset.sh"
-+    install -m 0700 "${WORKDIR}/get-factory-reset-${FACTORY_RESET_TYPE}.sh" \
-+        "${D}/usr/sbin/get-factory-reset.sh"
-+}
-diff --git a/recipes-support/factory-reset-helper/files/get-factory-reset-efivar.sh.tmpl b/recipes-support/factory-reset-helper/files/get-factory-reset-efivar.sh.tmpl
-new file mode 100644
-index 0000000..4af5500
---- /dev/null
-+++ b/recipes-support/factory-reset-helper/files/get-factory-reset-efivar.sh.tmpl
-@@ -0,0 +1,25 @@
-+#!/bin/sh
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2025
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+
-+marker_file="/sys/firmware/efi/efivars/${FACTORY_RESET_MARKER}-${FACTORY_RESET_EFIVARS_GUID}"
-+
-+if ! mountpoint -q /sys/firmware/efi/efivars; then
-+	if ! mount -t efivarfs none /sys/firmware/efi/efivars; then
-+		echo "Could not mount efivarfs"
-+		exit 1
-+	fi
-+fi
-+if [ -e "$marker_file" ]; then
-+	echo "factory-reset was triggered"
-+	chattr -i "$marker_file"
-+	rm "$marker_file"
-+fi
-+
-diff --git a/recipes-support/factory-reset-helper/files/get-factory-reset-file.sh.tmpl b/recipes-support/factory-reset-helper/files/get-factory-reset-file.sh.tmpl
-new file mode 100644
-index 0000000..281ea3d
---- /dev/null
-+++ b/recipes-support/factory-reset-helper/files/get-factory-reset-file.sh.tmpl
-@@ -0,0 +1,49 @@
-+#!/bin/sh
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2025
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+
-+marker="$(basename ${FACTORY_RESET_MARKER})"
-+marker_storage_device="${FACTORY_RESET_MARKER_STORAGE_DEVICE}"
-+storage_mnt="$(findmnt  --first-only --output TARGET --noheadings "${marker_storage_device}")"
-+tmp_mount=$(mktemp -d)
-+# check for marker
-+if [ -z "${storage_mnt}" ]; then
-+	time_elapsed=0
-+	while true; do
-+	    sleep 1
-+	    if [ -n "$(blkid --output value --match-tag TYPE "${marker_storage_device}")" ]; then
-+		break
-+	    fi
-+	    time_elapsed="$((time_elapsed+1))"
-+	    if [ "${time_elapsed}" -ge 30 ]; then
-+		break
-+	    fi
-+	done
-+	if ! mount -t "$(blkid --output value --match-tag TYPE "${marker_storage_device}")" \
-+		 "${marker_storage_device}" \
-+		 "${tmp_mount}"; then
-+		if [ $(type -t panic) == function ]; then
-+			panic "Can't mount ${marker_storage_device}!"
-+		else
-+			exit 1
-+		fi
-+	fi
-+	storage_mnt="$tmp_mount"
-+fi
-+if [ -e "${storage_mnt}/${marker}" ]; then
-+	echo "factory-reset was triggered"
-+	# delete marker
-+	rm "${storage_mnt}/${marker}"
-+fi
-+if mountpoint -q "$tmp_mount"; then
-+	umount "$tmp_mount"
-+fi
-+rmdir "$tmp_mount"
-+
-diff --git a/recipes-support/factory-reset-helper/files/set-factory-reset-efivar.sh.tmpl b/recipes-support/factory-reset-helper/files/set-factory-reset-efivar.sh.tmpl
-new file mode 100644
-index 0000000..f5a2273
---- /dev/null
-+++ b/recipes-support/factory-reset-helper/files/set-factory-reset-efivar.sh.tmpl
-@@ -0,0 +1,60 @@
-+#!/bin/sh
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2025
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+
-+usage() {
-+  echo "$0 --create|--delete"
-+}
-+marker_file="/sys/firmware/efi/efivars/${FACTORY_RESET_MARKER}-${FACTORY_RESET_EFIVARS_GUID}"
-+
-+create_marker() {
-+	if [ ! -e "$marker_file" ]; then
-+		tmpfile=$(mktemp)
-+		echo "FactoryReset" > $tmpfile
-+		efivar -w -n ${FACTORY_RESET_EFIVARS_GUID}-${FACTORY_RESET_MARKER} -t 7 -f "$tmpfile"
-+	fi
-+}
-+
-+delete_marker() {
-+	if [ -e "$marker_file" ]; then
-+		chattr -i "$marker_file"
-+		rm "$marker_file"
-+	fi
-+}
-+
-+if [ $# -eq 0 ]; then
-+  usage
-+fi
-+
-+if ! mountpoint -q /sys/firmware/efi/efivars; then
-+	if ! mount -t efivarfs none /sys/firmware/efi/efivars; then
-+		echo "Could not mount efivarfs"
-+		exit 1
-+	fi
-+fi
-+
-+while [[ $# -gt 0 ]]; do
-+  case $1 in
-+  -c|--create)
-+  create_marker
-+  shift
-+  ;;
-+  -d|--delete)
-+  delete_marker
-+  shift
-+  ;;
-+  -*|--*)
-+  echo "Unkown option '$1'"
-+  usage
-+  exit 1
-+  ;;
-+  esac
-+done
-+
-diff --git a/recipes-support/factory-reset-helper/files/set-factory-reset-file.sh.tmpl b/recipes-support/factory-reset-helper/files/set-factory-reset-file.sh.tmpl
-new file mode 100644
-index 0000000..7777c84
---- /dev/null
-+++ b/recipes-support/factory-reset-helper/files/set-factory-reset-file.sh.tmpl
-@@ -0,0 +1,57 @@
-+#!/bin/sh
-+#
-+# CIP Core, generic profile
-+#
-+# Copyright (c) Siemens AG, 2025
-+#
-+# Authors:
-+#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
-+#
-+# SPDX-License-Identifier: MIT
-+
-+usage() {
-+  echo "$0 --create|--delete"
-+}
-+
-+marker="$(basename "${FACTORY_RESET_MARKER}")"
-+marker_storage_device="${FACTORY_RESET_MARKER_STORAGE_DEVICE}"
-+
-+tmp_mnt=$(mktemp -d)
-+if [ -n "$marker_storage_device" ]; then
-+  marker_mnt="$(findmnt  --first-only --output TARGET --noheadings "${marker_storage_device}")"
-+  if [ -z "$marker_mnt" ]; then
-+    mount "${marker_storage_device}" "$tmp_mnt"
-+    marker_mnt="${tmp_mnt}"
-+  fi
-+fi
-+
-+if [ $# -eq 0 ]; then
-+  usage
-+fi
-+if [ -z "${marker_mnt}" ]; then
-+   marker_mnt=$(pwd)
-+fi
-+# shellcheck disable=SC2221,SC2222
-+while [ $# -gt 0 ]; do
-+  case $1 in
-+  -c|--create)
-+  touch "${marker_mnt}/${marker}"
-+  shift
-+  ;;
-+  -d|--delete)
-+  rm -f "${marker_mnt}/${marker}"
-+  shift
-+  ;;
-+  -*|--*)
-+  echo "Unkown option '$1'"
-+  usage
-+  exit 1
-+  ;;
-+  esac
-+done
-+
-+if mountpoint -q "$tmp_mnt"; then
-+   umount "$tmp_mnt"
-+fi
-+rmdir "$tmp_mnt"
-+
 -- 
-2.50.1
-
+Siemens AG, Foundational Technologies
+Linux Expert Center
 
