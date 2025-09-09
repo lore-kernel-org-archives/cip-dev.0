@@ -1,83 +1,109 @@
-Return-Path: <david.kauschke.ext@zeiss.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB1CDCAC583
-	for <webhook@archiver.kernel.org>; Tue,  9 Sep 2025 13:04:33 +0000 (UTC)
-Subject: =?UTF-8?B?UmU6IFtpc2FyLWNpcC1jb3JlXVtQQVRDSF0gaW5pdHJhbWZzLWNyeXB0LWhvb2s6IGFkZCB0cG1fdGlzX3NwaSBtb2R1bGUgw4Igc3VwcG9ydA==?=
-To: cip-dev@lists.cip-project.org
-From: david.kauschke.ext@zeiss.com
-X-Originating-Location: North Rhine-Westphalia, DE (145.253.133.129)
-X-Originating-Platform: Linux Firefox 142
-User-Agent: GROUPS.IO Web Poster
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D1DCA0FED
+	for <webhook@archiver.kernel.org>; Tue,  9 Sep 2025 13:31:24 +0000 (UTC)
+Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
+ by mx.groups.io with SMTP id smtpd.web10.13155.1757424674518887507
+ for <cip-dev@lists.cip-project.org>;
+ Tue, 09 Sep 2025 06:31:15 -0700
+Authentication-Results: mx.groups.io;
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=Z2d8YYrK;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-51332-20250909133111233fc23fde0002072d-nnbtb_@rts-flowmailer.siemens.com)
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20250909133111233fc23fde0002072d
+        for <cip-dev@lists.cip-project.org>;
+        Tue, 09 Sep 2025 15:31:12 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
+ bh=8rlKfOvYlMS8vWR6Ky+UVnWkyVnRzDlLeLENWsBWcPU=;
+ b=Z2d8YYrKML/Io5zGwF5wZLbOAWw3P1RcPuqx+RqTQYPPewXtbVlWkA7gpJEWeiwHP26a/U
+ jPczfzH7mU5Fsu0p8+qpZpZOq/ibmj9h9azbIr6sYOVx92Y2K2zjoIrXm5wuzgenf/I8pXfU
+ oh0wKjxa1F2w65mXUs84AP69n/CiXMD34EWM3nAuFXEoZ8bBKMjMC5liWKi+L1yDYnXbauy2
+ xlfbAXJOn74IiF7qvisKFIu0IgGKleA+nlROc7ri0MvGYq4hcJBddUdZoCGjONdWNcUXl9Xz
+ qUTb6iJYA0m8RgGQkimjVvabRh9ECsw4m7z9QVTVEmfP+LgfAc2W3wIA==;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
+To: cip-dev@lists.cip-project.org,
+	jan.kiszka@siemens.com
+Subject: [cip-dev][isar-cip-core][PATCH v6] Add Readme for factory-reset
+Date: Tue,  9 Sep 2025 15:29:08 +0200
+Message-ID: <20250909133109.1428300-1-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <e2e9a482-3283-469d-b629-965662c716e7@siemens.com>
+References: <e2e9a482-3283-469d-b629-965662c716e7@siemens.com>
 MIME-Version: 1.0
-Date: Tue, 09 Sep 2025 06:04:30 -0700
-References: <c271caac-1b1f-4992-845c-51cd1224d125@siemens.com>
-In-Reply-To: <c271caac-1b1f-4992-845c-51cd1224d125@siemens.com>
-Message-ID: <26560.1757423070395792404@lists.cip-project.org>
-Content-Type: multipart/alternative; boundary="ab43SHrGSXLE3na70QgK"
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 09 Sep 2025 13:04:33 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20029
+ <cip-dev@lists.cip-project.org>; Tue, 09 Sep 2025 13:31:24 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20030
 
---ab43SHrGSXLE3na70QgK
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-On Tue, Sep 9, 2025 at 12:12 PM, Jan Kiszka wrote:
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
+---
+ README.md                   |  3 ++-
+ doc/README.factory-reset.md | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 31 insertions(+), 1 deletion(-)
+ create mode 100644 doc/README.factory-reset.md
 
->=20
-> On 09.09.25 09:44, david.kauschke.ext@zeiss.com wrote:
->=20
->> Hello Jan, hello Quirin,
->>=20
->> this patch provides TPM SPI support in the initramfs.
->>=20
->=20
-> The patch was mangled and was not sent stand-alone. Could you use "git
-> sendemail" instead?
+diff --git a/README.md b/README.md
+index fa1c437..435d037 100644
+--- a/README.md
++++ b/README.md
+@@ -54,11 +54,12 @@ or via bmap-tools
+ 
+ ## Documentation
+ 
+-The following topics are in a separate READMEs:
++The following topics are in separate READMEs:
+  - [Secureboot](./doc/README.secureboot.md)
+  - [Update process with SWUpdate](./doc/README.swupdate.md)
+  - [Update and Secure boot signing](./doc/README.signing.md)
+  - [Encryption with TPM2](./doc/README.tpm2.encryption.md)
++ - [Factory-reset](./doc/README.factory-reset.md)
+  - [Release policy](./doc/README_version-release-policy.md)
+ 
+ ## Community Resources
+diff --git a/doc/README.factory-reset.md b/doc/README.factory-reset.md
+new file mode 100644
+index 0000000..34b431d
+--- /dev/null
++++ b/doc/README.factory-reset.md
+@@ -0,0 +1,29 @@
++# Enable Factory-reset
++
++To enable the factory-reset functionality the following two elements need to be installed:
++ - initramfs-factory-reset-hook which executes the factory-reset
++  ```
++  INITRAMFS_INSTALL += "initramfs-factory-reset-hook"
++  ```
++- factory-reset-helper which provides the helper scripts to set the factory-reset marker
++  ```
++  IMAGE_INSTALL += "factory-reset-helper"
++  ```
++
++## Technical details
++
++The by executing `set-factory-reset.sh --create` a marker is stored as a EFI variable or on disk (default `/dev/disk/by-partlabel/efi`).
++The marker on disk is intended for devices which do not provide the facilities to set EFI variables.
++The initramfs reads this marker and formats the hard-drives provided by the variable `INITRAMFS_FACTORY_RESET_DEVICES`.
++The initramfs-hook will try to detect the previous used file system and will format the partition with the detected type.
++
++### Disk encryption
++[clevis](https://github.com/latchset/clevis/blob/2ad7027b7182b8f46404f8ec0735a83738f7ca7f/src/pins/tpm2/clevis-encrypt-tpm2#L192C8-L192C26)
++and [systemd](https://github.com/systemd/systemd/blob/114ad16c4dcac136fb7646866f8a95ee5631ee51/src/shared/tpm2-util.c#L5281)
++use the primary key of TPM. To ensure that the key is not reused the factory-reset deletes the primary key from the TPM
++before formatting the selected hard drives with a new LUKS container.
++
++The removal of the TPM keys can be deactivated by setting the variable `INITRAMFS_FACTORY_RESET_CLEAR_TPM` to `0`.
++As the factory-reset is executed before the disks are unlocked in the initramfs, the file system type must be provided with the
++variable `INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE`.
++
+-- 
+2.50.1
 
-Sorry for that.
-
-Created patch via git send-email.
-See new msg: https://lists.cip-project.org/g/cip-dev/topic/isar_cip_core_pa=
-tch/115149593
-
-If anything can be improved just inform me.
-
-Thank you for your fast response Jan.
-
-David
-
---ab43SHrGSXLE3na70QgK
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div>On Tue, Sep 9, 2025 at 12:12 PM, Jan Kiszka wrote:</div>
-<div>
-<blockquote>On 09.09.25 09:44, david.kauschke.ext@zeiss.com wrote:<br />
-<blockquote>Hello Jan, hello Quirin,<br />&nbsp;<br />this patch provides T=
-PM SPI support in the initramfs.<br />&nbsp;</blockquote>
-The patch was mangled and was not sent stand-alone. Could you use "git<br /=
->sendemail" instead?</blockquote>
-Sorry for that.</div>
-<div>&nbsp;</div>
-<div>Created patch via git send-email.</div>
-<div>See new msg: <a href=3D"https://lists.cip-project.org/g/cip-dev/topic/=
-isar_cip_core_patch/115149593" target=3D"_blank" rel=3D"noopener">https://l=
-ists.cip-project.org/g/cip-dev/topic/isar_cip_core_patch/115149593</a></div=
->
-<div>&nbsp;</div>
-<div>If anything can be improved just inform me.</div>
-<div>&nbsp;</div>
-<div>&nbsp;</div>
-<div>Thank you for your fast response Jan.</div>
-<div>&nbsp;</div>
-<div>David</div>
-<div>&nbsp;</div>
-<div>&nbsp;</div>
-
---ab43SHrGSXLE3na70QgK--
 
