@@ -2,49 +2,49 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDBF2CAC58F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD1FCAC58E
 	for <webhook@archiver.kernel.org>; Sat, 13 Sep 2025 06:54:56 +0000 (UTC)
 Received: from AS8PR04CU009.outbound.protection.outlook.com (AS8PR04CU009.outbound.protection.outlook.com [52.101.70.13])
  by mx.groups.io with SMTP id smtpd.web10.528.1757746486923296458
  for <cip-dev@lists.cip-project.org>;
- Fri, 12 Sep 2025 23:54:48 -0700
+ Fri, 12 Sep 2025 23:54:47 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=itLzWM6c;
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=N1e+O+It;
  spf=pass (domain: siemens.com, ip: 52.101.70.13, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sEEnayBnPiYvNYYRhYXmzixKC9v1M4FQbtU+ShMy20uUdlew4SFZ0zOdGffWKb/70w4btD2wdU5F8clBVIwT6QG8GTweEWPA7+ZmJfSnKPCY7Dmq5DWU+U2d69MetjJktx5Q7VlKiE9OaMj2w6JIXWGtlW/5IFZVV6NmROHj9C305hOjWR09R/kGIiOqIkKa5rHE+fiwanzYkNK5WDNrlGYObV4ZtCJobmb1N6HUYL74MbSM+Djuf9GS1lnAabpUy3nN4DwHQnmMUspBlz4bc/A15qqMBOuFaiPPJ4mqlqXsopp/SDkhNw078MseXr0Ns48VuKC8kTCiY19l9sVP4g==
+ b=ov+uaH6j1mVYJ4id8jn0IVSgWcgJYO02ehnSLI3LN5gDW6CCwOVkvaTe/aAEl7Iw6YLbYcyVSdonqEjhwcrZvy1dNphmMSLfIUGI/8Er2XU9kkQOT0IVIXzshWTldDxGtgUMNPOHoGlswmDA+iQEpQP9jtZ+a4fYwn/qtLbOHZo0EndKrsUECu2NUOc2Mkl2xiW1nT7osjESSN4uac2u9Tb2b+WGoGb7N/RbCjct8PzfyfOWWXRgFtdnKMu3orvAi9wrZHKpoECX7KbhT10M137Akj+GF6ElLNfHk5IQQ55RnGFbBcs5thezMPmox8wCADFoJ1AHrXtBGtQ6mxGLmg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SVGDlYOB7V0xcPdeQc7UvAxrJqG+mNFgaiRcNkQmnd0=;
- b=xfeNybYvJlcXID03VCW9Uef0Vl6GCenDrKdrYdTWM0S0QxbuhUsMNmQFVz83Cq3BqLhStDdH39ERF3HXSB4vQcnb2QJaXZ6ecwloGhoOuuwINPV0MmQHlh8YgttIwa+wXm8JVkH7Y9LzXHg9mlBSWTkV3vrUDiD/VrJckXRFeBqfe17JdUYT9IaMxdHP7QKcrDBPzwvPbM6JGEapx8GLlMjdFPwsLwaRv8EM+Mx1hzNQ0Sv0fyXRy9m6Qes5rMeh3hdTu9vJ6el/WwXhR5d89BosidpdulrfQV94Ej/Z4NW44rokuv0hnOWIquP2T0n9mt0GECgqcG/ml+LhgufaZQ==
+ bh=VuMfpoJhiNswKyrCDjnEHb51H5X08/JXOAwEY2ulGzM=;
+ b=oCRGKlZG6WWS2I+WFpaXDJHREmH4qZZ/FY1SsGOa0vYqeSfSBWvp5P5rOB/6wKkoTSUl5BE1eDkjqA/qjdUrR7JL2NcEBoCVi/edr+9vuQ2kwD3ow86XruKHShIgrq7eU5ZxG1I6NVIG3WSyHAUkWZLGBDt6luCR1fjR1oMLC0rxayj5T9q7MFOVmmmtitstEwraRqItaOXRgN0lEWipLRjgxuoTTCCAXGh0YTFytYb3PNXi6N1fxxEkFSG2C2ESQu1iXY9GVSN9LMYYz9Xdcmcavw8Y//Yho69bSBvNCnqbwkF6PIm5dajrtVlhGHA7KsNHb1W/6FG2s/edjmwuKA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SVGDlYOB7V0xcPdeQc7UvAxrJqG+mNFgaiRcNkQmnd0=;
- b=itLzWM6cMyicAdRUAEqi58I+o83jpuEMzLFB4DGR/S1BTfl+cUhCi1isQV2kquKO+rKSyBVea9Fva6hmVccr1JdNfZWosftZx/y07WCFHD3bDkywKlRhi4zxBqjcBf8Ij4pnlo4F2s5XUDRg6+iaUENZSZy4E3x0v24PZ0eS2UpqkuoSWiFVhtdIWWZOirgR35zAKacUHPFZNonNv0aZL16aeJX/cd8rCX+hPv8M6krqKkT8YwKrKOfgXQzBlMFwDVESiPNMEjnnppcRvIpD5KDu0RVZUEYgQCdIy81GOurQ23NU6xJbybWOYa1Iyl0WDDSTElNsHZLs9TbVz3aVUg==
+ bh=VuMfpoJhiNswKyrCDjnEHb51H5X08/JXOAwEY2ulGzM=;
+ b=N1e+O+ItikR4iZ7TdCAkp7aFRX7dbM936iPtesnlLys3a7QOjyttgvPDy5DGui7IWSKj2/E0GYewCzT5Kaut5qIm6/mwfW4BjuRjfi822TqIZHgSPZ21z9g7s+YnofsLxSRWT04u9FgnPwG/1Yd+SPJiuLGdcsPnWVLB2uqPXSVpUs+s4vW5BFjqmK3CFi276X0qQccIgneir12+STcseBH16KOBZCXVhYLPrtvTQsgvrcbcBX7EZOQnNRuRp58pdjsVfzUI8aMASfyF2FdFgzl0MAtwog1iAhUvXhKKdreLXI/VotHLHrNUewvL6XZyxANYzkco/IbChGivqgg7Jw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:76::15)
  by GV1PR10MB9058.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:1ce::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Sat, 13 Sep
- 2025 06:54:44 +0000
+ 2025 06:54:41 +0000
 Received: from GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::7fc:74bb:a781:a286]) by GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::7fc:74bb:a781:a286%6]) with mapi id 15.20.9094.021; Sat, 13 Sep 2025
- 06:54:44 +0000
-Message-ID: <890e1149-4622-4637-b64a-63e52c91c795@siemens.com>
-Date: Sat, 13 Sep 2025 08:54:44 +0200
+ 06:54:40 +0000
+Message-ID: <f21c1149-65b3-4dfc-9212-49e4db3abc28@siemens.com>
+Date: Sat, 13 Sep 2025 08:54:39 +0200
 User-Agent: Mozilla Thunderbird
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: cip-dev <cip-dev@lists.cip-project.org>
-Subject: [isar-cip-core][PATCH] efibootguard: Update to 0.21-1
+Subject: [isar-cip-core][PATCH] linux-cip: Update to 4.4.302-cip102[-rt57],
+ 5.10.241-cip64, 6.12.46-cip8
 Content-Language: en-US
-Cc: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  xsFNBGZY+hkBEACkdtFD81AUVtTVX+UEiUFs7ZQPQsdFpzVmr6R3D059f+lzr4Mlg6KKAcNZ
  uNUqthIkgLGWzKugodvkcCK8Wbyw+1vxcl4Lw56WezLsOTfu7oi7Z0vp1XkrLcM0tofTbClW
@@ -96,256 +96,188 @@ X-ClientProxiedBy: FR2P281CA0091.DEUP281.PROD.OUTLOOK.COM
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: GV2PR10MB6186:EE_|GV1PR10MB9058:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0610ac13-8b76-4305-7181-08ddf2926bd8
+X-MS-Office365-Filtering-Correlation-Id: 7468da33-4cff-44b4-a287-08ddf2926979
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?enRqR2grTjBiMWNDMFZ2Q2pmRktkNVVKQW9uL1ppMk41V3NneUlGaTNMVGp3?=
- =?utf-8?B?MTNCUitVb1BSSU9pdXlwMlVuVTllL2txdWM5UVRBZUk1ckpvOUhTZnpDN2VT?=
- =?utf-8?B?cTFOR0tXT3BBUVBxTkluekt0K0JyQTRFQ3B6RHlUTTFncWs2TitBeUZoZklE?=
- =?utf-8?B?SGYrbTRybmFoZjR3a2QyNC9vRzUvTmlzZ2tRVlR0RTlMejFpNXpBdy9lcmEv?=
- =?utf-8?B?cWwyTHhFSUlpOXFORFRiOGRYMkxLL3JyazRLZXJvTTAyOFptaFNDQjVXUTBo?=
- =?utf-8?B?aDZMRVZ3Wnp4elluYTNqVHZtQzV5OGZzQWV3eHNaZXFFa3FidjUvN2V6YnJ3?=
- =?utf-8?B?WmhnenEzUXJsV09rcWlOZlAwc2xjS1hwZXlaTjUzZW1OSzlocklrZi91Z1da?=
- =?utf-8?B?RkZ1OW5DaExvRnJaUFVIVzRHM21tTFFTblQ0R21vVG1mR1B1Q2RqWVhiNmdK?=
- =?utf-8?B?TkE4S3d6NlpoN0MxaHBOUVJtQU1hcDQ4eER6dlVjUnVEZ25TYlh5US8vTDJU?=
- =?utf-8?B?WnlmKzQ0ZEtFTGdlUzl6d1RXcmFwd3NGZzJuWENIVTFPck5HL21FTVFGMzho?=
- =?utf-8?B?dE1NcW1UREN1c1liNUg4WHpmOGJ6WlovVlNLbHdWYnNlT0ZnUUR1b09PMUZk?=
- =?utf-8?B?ZDVaWWNyTkdmalJUWU1YNFhSNmFtK2t3YSsyR3YrcHE3OVhHMVlKS1ZzSUNH?=
- =?utf-8?B?UDRxdGhkWlhsemFmbEkyeDRtSEFaRjEvblVNOXlST1BMNFpVWHp3VTR1RVF4?=
- =?utf-8?B?eXZaaEk4U0VYUm9JNXpBUG1kMjlBKzk1MmE2V0tuNFFtSkJyTmVWcFl1UC92?=
- =?utf-8?B?TTFGZW5vdGZNU0dYSDZBQzdGb0F1ZnBXSUNRRC9EWUVqbm82Vy8xTU5hT2lM?=
- =?utf-8?B?YjBzaDYrSTRyVEZKa09zTDd1NWhwWk43MkFnNzNMVUM5R28rVEdGb2hwV3Fs?=
- =?utf-8?B?dGc4dEVBS3B0RXEwcjBGWFhOK09GUmprbFZQOFJBenA2MHRlR2NzUEQ3MTRj?=
- =?utf-8?B?amdzbHU4M0pXUDBKV0ozQzRPeFhXbStBSXlVbHZkNTBoMTlkNVJYVmticiti?=
- =?utf-8?B?K3JXSk9YVDNtVms1QXdJY2ZLVmNYTlFMMWR4dzFRUU5BSzFHVGZVbkNrTkhH?=
- =?utf-8?B?NHBYOTVpeFByZUU1dDR1a2c5NmpvdnNsMVRteEhNQ2ZoRC85OWNOQjZWR2tL?=
- =?utf-8?B?d3E5SHRnVHgvU1psdDhIM3lJdVJSSTJmeEJwdkJ5MzVtbmdoZFUwWWhVbFFQ?=
- =?utf-8?B?QlkrM2Mvd21MSEphQWdyaUh3OFJnQkpZOXE0V0VjWU1QZERpRkd0YXdLc2NE?=
- =?utf-8?B?djl6bjNIQ280WXRuVGF2NTdKUm1xY1hPa2tnMmI3ZjBHTWdzYTNuc0JKYitp?=
- =?utf-8?B?amE5N3k4eTJxTlhLakNjbkh0eWoyU2Fxd2FhbGxTZ0hGc2dPRW85NGdFWlFM?=
- =?utf-8?B?NHZTaGdsMGJtZUlFQ01IYnBaNU9Za2tMU1o2WE00M1Q4eXl4NnhUNWh6SUxn?=
- =?utf-8?B?NHc5VVhBZHU2cklhTHlnT3Bza2NCZ1p1KzVESFJBU0o5WkNSdlUwTlIwU1Vm?=
- =?utf-8?B?M0JhQWJsTlpyY3NZRHRYMFhqcmVkN0ZvM1hDbWIvWE1oRkpBbVFySDBOVzVy?=
- =?utf-8?B?UndsMU5peXJCK210SjhIZlBFRHI3VjB2RVhqV3ZyQ09DTElaV3F1OXRQdVh2?=
- =?utf-8?B?SVhZZURPRUd3ekdlZmY4NHhjRnNiV3BxWEJHc3l6cEoyaTByQXNiSXhTekN3?=
- =?utf-8?B?SHNDaHAvYlg4eWlzYWpGYVRvRUIrUk1YOGxRNjRPL0dFZzVyb0lscWlFUUhE?=
- =?utf-8?B?Y2l3Sko0NEVpWDRhczVqNGxEdzcxRElBQXhRSVdnalBUT2M3UGk1cjRLbk1S?=
- =?utf-8?B?b1lpL0hnZnBlY0d6Wms0bmdsUmJiUEpRVy96Vnd1OW4wa082L1F6cVFwQlNU?=
- =?utf-8?Q?i0MYkAhcWIQ=3D?=
+	=?utf-8?B?WXpaTFFaaFNadEtRL0Y4bVl5cmJEY2x0S3BJeHNLMjF6ZlJvUWlmOWE5a0U1?=
+ =?utf-8?B?UkdwVWdla0pUSTg3Szc2SHduZkZNK2dKbDcvWTBRNUswOEphTENSY1hYRHRs?=
+ =?utf-8?B?ZFZoYXcyYUo5ZGhyNFdQbHkyZGRmQkhmSXFUbEVXcUVPYUdFT3didDBSYkIv?=
+ =?utf-8?B?T3pCclFFTDRUZUVIVWtsSnFWaFdYZ3NIeGpSb3VUdWpDUzgwNWYyUHJXeGZG?=
+ =?utf-8?B?M0xxQ094bFFPSVpZRHdTU1NZVUxONjd5YzlrUlRvTk5qVXRneS9tRWV4TDdn?=
+ =?utf-8?B?VW9zVHNybll0d1o0VXhzTkxPSXE0NDVoTVdITUVyelMyZXplRDlwQU5yUmt2?=
+ =?utf-8?B?TGVmejk4SGlJTzBIWXhYcTV2eFJCVlFsSUVIYXZIYlBIdzZ2aTI4d1BEUEp2?=
+ =?utf-8?B?aDlFaHpnWkpBY043T1JCWEtxczFnbklUWGYrd2RzaWNKdjNDS0JJYWo0dmNC?=
+ =?utf-8?B?dFIvbHJaYlJHd1pHL2lxUDBaMjJLM1pua0tJaTVUby9nRmlCcDVrVUUreUtp?=
+ =?utf-8?B?cU44bUxJa3QxeUJqQnFpM3ppZ2dXbStiZHZoT1JjVGZmbDVwajd4c2RQNjdz?=
+ =?utf-8?B?eU02MEdVYmx0NXJqWm9tY0RiVHBoK3pLdks0SEhMd3ozUVJtcEJUUU9CSHha?=
+ =?utf-8?B?QTZ1SVJtMzlXVFAvZzUrQVRMc053YlJxQy9hNVFrWkVrUUVlNGt3cFkxdlJC?=
+ =?utf-8?B?RTl3eTdhSE1KU1UxSjFUSnY2L0ZwdE5WOFQyS3Y5aWE4Y2ZELzNuWkJJZkwv?=
+ =?utf-8?B?eGNDZjZSbHY4YU1BL0doeDBXU09wem5NS3Y3UlBJYTFlMTY0SGVYckl2K1dV?=
+ =?utf-8?B?bWJDSWFaNU54SkpRNVBLSmFXSFhQRlV0UXpvVXAvNE1acVRDclZnQStRYjNw?=
+ =?utf-8?B?eEdZU2h1UDN5VnRTbGpoS1dOMW5ZQkJrb0RzcWF3RmhlZHI0cUY5eldMWnZT?=
+ =?utf-8?B?SE9hSFh5MDhLVFV2ZjBuNHJtQlVubFpxeHVseHg4cm0xbklDMTZadThGUExI?=
+ =?utf-8?B?Q1JWWTFlcTMvL2hmNlNseXU1R0x6enlYUG5ERDgwWDF3YWJSSHA0WkZrNUE2?=
+ =?utf-8?B?eE1EakRFczQxK01YUFdlRHViTkRrRSt6NDMxazdHWERWOFJ6NXhpUDlyU1R1?=
+ =?utf-8?B?bWNzUWFBVHZBYWNIS3psS1lVcW42Vm9vZzhyRHNkSXpLOXJtL1c2R3llajRO?=
+ =?utf-8?B?VjlCQmVZb2pudDVMOVJpSHNnV0VzbVhtSWN1bVI1TStiVytPcnd3bGVwVHJh?=
+ =?utf-8?B?dkVNMFB1dFJ5cGFTNTdmZXVxRDNOZTNNejEzcVc0eWNLY2ZSSjBYM3hMOVRp?=
+ =?utf-8?B?bWNKTFNWS1c5cS80Q1hnanRwQTZSWklwVFpBRHlGbnZrcS9xbkt5TTQxVitS?=
+ =?utf-8?B?Nm5aUzFyai9icmxOYi9iSWhtNm53Vmg0WG1HYUZuZ2QzQlFSVHUzV3ZVNnl3?=
+ =?utf-8?B?VDNOK2QxdnhpTVpHclFpRnJ0dHd3c0FjaldCWFZMZTJNYTJXUWpiZ0VkbTEv?=
+ =?utf-8?B?S2Y1KzJ4bWFueXR0eUVZUmNTTk9oaG5LbVE0VXUyd0VtbHBQVHRkVVRmU3Fs?=
+ =?utf-8?B?eXV5OUIxdCtzSnpZbFJHWU1Fa0VtV3RwUEV6ZDRHRGR1QzZ5bzNnTFp0d01k?=
+ =?utf-8?B?R3p0MkJGaUZjOFQ4RnJQR00zdUJFUGRZZitEMmhpVnBQT2pLRmI5U25Oclp2?=
+ =?utf-8?B?N3pwV2ZtaVdPRWxZeTlWQTUzcjN6dWNVNzE1SEFzWHRwaEcvZWo5cUhXcHFZ?=
+ =?utf-8?B?Y1RLVzdTbEU1c3ZoQVl4UlhHa0xicmY3Zlk5NHh2R3RsUG56TkdEQXNhaTlY?=
+ =?utf-8?B?Yzl0aEhaU0F6a0xTaG10U1ZwZ0FxcGFGRWlsbW9ML0t1azVKdjFMUVBaVG5G?=
+ =?utf-8?B?Qm00anVuN3pzZ3ZTTVUzYWFNZU80c0hUc3Z5UHhmRDNZaS9nQmxoaWJxS1M4?=
+ =?utf-8?Q?N+RMwHgB4iA=3D?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?T0l4YTJUUW9QOXMzTEx4MkVXR20wVmVDd3VEM1F1REFlUy9WZUFOZVlQd2Ri?=
- =?utf-8?B?ZGR5bnRIeS9aSWxRLzViSk9POFdMamNYMVFRT01xUzl3b2lENkorSVZ2YSti?=
- =?utf-8?B?NVRtbktaMVFWbmZyZFF3N2NQcTdFbXhoMnI5OU4rbkIzaHFraFJ0eDBBUUtG?=
- =?utf-8?B?U2tzL250ZVU4MXphejBzREdoUXhKc0xhb0xCeHdaem9Gc2pkRkszT1ZPQUhP?=
- =?utf-8?B?UDJ0TVg5T0p1RXFCQ09XM05SV1QyelA0V1MrY2F1OGhJVXFnY0J2UlZSRlg1?=
- =?utf-8?B?RlFmMGtxM1VpZW5ncGtVMU1pQnZUb3lRQXVhNzRYM0pWUkR1M2NVc1BtQ3F6?=
- =?utf-8?B?T2svbWFvdi9QVFFzME9HanY1NkdUL1YwQ0hsdEpCZlREUXNWT0dxc2xRcm5n?=
- =?utf-8?B?OGRNUVN4MHU5YTc3cWVMUnVvcXRRNU90RUFzck9Od0RlSFdpQThuU0ZZL3hW?=
- =?utf-8?B?UmhiWFRobVpWeGhYT1VkQ1V2K1NtMGpiSUFXb2ZBWDgrR1gvcStnUWx3ZE8x?=
- =?utf-8?B?aUtCMzI0NEc1NExjWHNlRDRUaUlvampxczM4VVllTVg3OHEzMk9BemRHcEE0?=
- =?utf-8?B?emEyRi9qK0lmVTNnendqZ3UvZWZSWnc4L1FpZDhybUVxaHJ1RGJiKy9hRkRQ?=
- =?utf-8?B?VEMxdEh1em9oT2Q2a0tSZHkrNzhtTWNoQkwra2VBcGxRaXFRcE1hOEg3Tlc3?=
- =?utf-8?B?cTZFcDVZc0o0Zy9vSXJvbmJ0MnFCWGJvMndNUDA2aEcwQkVFVG1NWWptTlBm?=
- =?utf-8?B?ZzlEOWZWMkE1bGRmb3cwSnhsQno1ajNFWlJBRjBuUmdGdVZEWUdvNEZmeDhh?=
- =?utf-8?B?ZzZKeVVpSGhPc3FVb0N3M0Q3ZzYrM3NwK2t1SWR4MHFNQVNSQmhoWlJGQ2JX?=
- =?utf-8?B?RTkrdjVkYnV0SS9nK3JZL2ZjY3p2SWlzN05BMk1nV2RsVGkwRFY3U0NRVkNS?=
- =?utf-8?B?d0VIcjIzUzdpc2VqeFJ1WEFGQjlsc3l1aWYyeXFrKzlQdm1YZG9JYWNTM0dS?=
- =?utf-8?B?djNhY2JIcms4K05wVHAyTGxlVnlsd2JtWDBjd2o1VUsxOE5rakFjbTZPdzFn?=
- =?utf-8?B?MUFGbHhnRGNxMG9rWUdpejBZdmpzeVZrZ3JiVTJXRVdhcTQ3ZWtvbitZTW5X?=
- =?utf-8?B?Q0xGZ2xMVXdqU1N0NWlzWHRZQ2tnYmVZTWxVSzBGdWYrdExUc0d2bFllYnhz?=
- =?utf-8?B?WU0rL2VJSlZuN0VNdHh0aFZGQStidHBZZlJycnZJbTVzRGJQa0QrM2o4WURE?=
- =?utf-8?B?M3RnNWVDeTlOU2txRDh2L0ZGdVViaGhmak1Wdi8zUHR3cHVpSUJtd1F5bVJp?=
- =?utf-8?B?M29TTHkyM0p3VmNISCt6SXZtY3RHZFk3WjV3YmZDb3JpQnpYL2dmR3NnbFFI?=
- =?utf-8?B?ODVXSzYvbUh3MVY2eTNCQmhYN1VuZERNNmpiT2hsZUcyMi95b0ZtbnVOSnJ4?=
- =?utf-8?B?N0tWbkVkZFN5dGwzeW04SFl0K0FFdDFYTWIxVlJHb2tIQStvTDRvdkF3Yk9J?=
- =?utf-8?B?VFg3eGxYemc5NE1sUDg4MFJQUENVY2pLNGROc0xUeFdETm1uaVBaUnhmbC9C?=
- =?utf-8?B?WW5IRmVrN3dlUzBSeHZPVkcwYmxJNlRWdVFRSjFxck1IUEhsYjJENXd3WFU5?=
- =?utf-8?B?WWkxVHhjeXlvUnl0akRtc3A5Z1RRUzBIcHRReE5zSmY4NndEVXRnQmtLTzkw?=
- =?utf-8?B?UlBTRFl2cUY1SmE0YkJueVBjTldXdnFOZkp0YU12UDdENkVDVm9xRXF4cTYy?=
- =?utf-8?B?UjdDYjNyVkdOejBMRXNZT2FGZ1c3dFN2SkVtd2cwM0twdVRlNEdKVDdVdE8w?=
- =?utf-8?B?NXFGYjhmaHVNOWFqMnlHQTR1VUE3eEM5UWJUOTRGMkZNMVl2dk9sbzNsNHVC?=
- =?utf-8?B?MDViOVFaOU83eW05Wkt2cThVYzdabEMrRjhhakxtaEJWMndzelBjTUgyQTJW?=
- =?utf-8?B?MlF1a3hvY1V5RXhkcUY5MTl4RDhmREF4S00yTURyVFVsOVNlSkJrUG93TWFD?=
- =?utf-8?B?OU9Ja1crMmoyalp4NzgyUUl1WFhvZEZGZXhNZnA0SldoemczcU9iSDR4TFBh?=
- =?utf-8?B?Mi92K0kwd3NHSGZQbUdsclFJMSsyUUhzQm1GR1V2aWpPdmh1MWZoVUluWnNt?=
- =?utf-8?Q?TTv9fSGDQq9jsdv1lMU+UnU9e?=
+	=?utf-8?B?WmtuczhQRW8wemh4UnBteXp3ZXVxLzJiaHgwcE1DUFJFWWdlOXJSWWxQRVhC?=
+ =?utf-8?B?TTcvaGV5UkFGSUVpSjBNYlhCV3VGZEQ0d09HeWpLN1NkbWVTQ3llS0MyNXJL?=
+ =?utf-8?B?UXdQUkd1NUppUzBZbFRYclR1WEtkdmpPSzVIK3kxQWg2WUFBeS85bWdlNi9i?=
+ =?utf-8?B?TXV1SEhqNDdjN2xLRHdyUmZYSUtqZ2NqYmNQZnFQZmljU1JxeGVxcXBSUjF0?=
+ =?utf-8?B?Y0owdjNFTXZ5UGhBcFFQcWhRWVJXRXhnM1c0UWZnVklWbDY4SHpJbklwODFs?=
+ =?utf-8?B?Vm9WWFRDRlkyNXBNS0JyWlA4THFseVB3a3laeFVYUXVTWlVRenhCN08xcHM5?=
+ =?utf-8?B?ekQ3S1Voc0xlNnl3bTJOaEM4aXZBb2Y3L3dZQUhNRVNJbzVuVWF2R1hxM0U1?=
+ =?utf-8?B?c0VPTk10MEd6VkQ3Ykg0VUd0UFpLTmdVOTBvR1o3K3pSbTE3VjBJblFwY3pB?=
+ =?utf-8?B?NCtpcXFuNGh2VXJoWE9DWDZESElGbCtneFc2UjI5a3BJcERwRVhCbjIzcTlt?=
+ =?utf-8?B?Vnc1eXU3NHdlYVovcXVheVdEc1pPb1ZoM2doV3FQVzVTQzk4L1hiTUNlUUFl?=
+ =?utf-8?B?MHJMNkFZa0ZLdFJzRlQ1cnIvS2I5KzhjdHNJenhCYnBBOTFodkZQZGZFWjly?=
+ =?utf-8?B?SDkyZDdKR2piMzZTTEErZHI0U25qeGFkQUVyaEswQlQ5WTdxZjdtczd3Tjkv?=
+ =?utf-8?B?WERmbzRLOTl1ZHNiY2c0cGlmeElsSWcwUE1KVG5oTjFNQXJsSUlJOFhHWDdx?=
+ =?utf-8?B?UnB6N1UvK1dQMS8vSkZPTFdBRjNYNGkyMHRmMUNWdjJiQ2tYS0JZS0ZzaTlH?=
+ =?utf-8?B?VEoxMzkxM1dwSzkzSGJGQ1J5c2VtS0tmT3hIbDZIUVdxc3NIZVNNYVBRZGc4?=
+ =?utf-8?B?ZzRZMmN1czdLYnd5OHRrNjluNXZkL1lrWm4rR1RxQTY1VStEYzZBeUVNcmh2?=
+ =?utf-8?B?WDI5MUY1U0ZjVHJCWVVzSjJCMUJyREIwZ0V1Q0NUZno3ZGVQWG1HWENVY2I0?=
+ =?utf-8?B?c1FZMzFZcTUyOVdYQ2VUWkw5THM0R2laN1NIcFlRTHdMWUxJUDN5bEJlZ3l0?=
+ =?utf-8?B?SGdJZ2w4azlNSlFrUDZ5WlpPWXRMVzMwdklBcGY4am4xTHZNVWF5Y0J4Y2dM?=
+ =?utf-8?B?WElnekM4clgzdWFVOFJGU3RzR0ZXUGIxOFNKdlplWmlmK3JYUDMrQUFraGNL?=
+ =?utf-8?B?UzlRc0ZCSytLTVV1eG5DeGRQMkIrTkhhZFJYbXkySlpvZC9McHB5d3lDVWhu?=
+ =?utf-8?B?eHRHTExVUXEwQ1Uzb01YeFRIRlBoRnAxQkxDeU80U0F0QzB2ckxUSThvWDFK?=
+ =?utf-8?B?Wm9qZmxVd2RVVlhsNGdjTnlVbVFqaWxpWEkwYVYyS1hKaTNJVHV3TG1WdDNU?=
+ =?utf-8?B?LzZvK3V6ck93eCtzOFlSYWpqU0dnbHIyMk5vdncxdFJJVmRwSVRsUHN4L2FM?=
+ =?utf-8?B?UTlDVUNzRStzS2h3enlKMVU0NjBpQkpNQ2d6YldIeS9rZnlNOVhEOXQrSHVI?=
+ =?utf-8?B?cEZ6aEY4ejBaRmtQNEdHM3EvVUh1N2R4MzBCZ04vaWYvejR3c1htMHJPTWli?=
+ =?utf-8?B?WUdSUkJzejU4ekNmUEx6WDI4RGppNERpUmpuYVJvZytSVk9ZdGhSTncrY3Mw?=
+ =?utf-8?B?dmF5UVB3aVJQOFdOK0JZKyt6WGhrRzVGYTdBeG5JN2NYTE1kVmhXS254akV0?=
+ =?utf-8?B?bE5WSUxBYmRFamxtWUVMZDRUL0svVmk2NUFCenU2Mk5pMWJaN2pURDZYZ0J6?=
+ =?utf-8?B?TkJJZFRjd0ZDTDlFQldxbE9OQWZBalhoRzROZzJ3ZEM1Q3I2TmxabDBBVHBo?=
+ =?utf-8?B?d0RNdlBhT0c4ZUdtNzJYaS80M2pYSldzS0xrOFdNbmVJdXVtSW9UVVYwclA5?=
+ =?utf-8?B?em9ibUpFVDc5NTVKQ0pnM0JTbmU0ZW43QlRTUGF1ZmFnREd0OE1VWDFvRk1q?=
+ =?utf-8?B?RTFObEwvVkRvbXNlL215M2svQ0xSK3kwMGdyT1pyc2YrbCt5STExb3A2SEZP?=
+ =?utf-8?B?dmxrMk01Rkw5dXVNMnB0RUhiSzlKNit1Wm5jQ2RIOUZVQnVVdWRPU3V1bEJH?=
+ =?utf-8?B?cDF4eTB3ZDA2QUJoV0VkK1FJaVhENGRqRzNaU1ZtVUdvUUMvcy9RSk81QVpL?=
+ =?utf-8?Q?UfG137Bx02EOCCkWRrDx9X8tQ?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0610ac13-8b76-4305-7181-08ddf2926bd8
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7468da33-4cff-44b4-a287-08ddf2926979
 X-MS-Exchange-CrossTenant-AuthSource: GV2PR10MB6186.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2025 06:54:44.6733
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2025 06:54:40.8477
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: G0h2Zu+hOSKQF0+9rC4nO3+hm4F9HpR4LXMDLFlvY223Ky+FAdiuASkYk1eHUovgyxc1cubYS1EnxBaNYrOqmQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: akp1Q9G84iEZnnw/KqOANy7zDiDl6k8nc/JoyHc7jro6ELlznCsTcoxefwhQCJMNgy4wpNMg+ENwWV3uP8JBgg==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB9058
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Sat, 13 Sep 2025 06:54:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20046
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20045
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-This brings various fixes, specifically for secure booting on armhf and
-for using bg_* on mounted partitions.
-
-On the debian package side, we now have a split between efi binaries and
-the tools which allows to leave out the former from the rootfs.
-
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- classes/efibootguard.bbclass                  |  4 +-
- ...19-1+cip.bb => efibootguard_0.21-1+cip.bb} |  7 ++--
- ...l-Make-compatible-with-debian-buster.patch |  6 +--
- ...vert-d-Enable-unit-tests-post-trixie.patch | 41 +++++++++++++++++++
- .../wic/plugins/source/efibootguard-boot.py   |  6 +--
- 5 files changed, 52 insertions(+), 12 deletions(-)
- rename recipes-bsp/efibootguard/{efibootguard_0.19-1+cip.bb => efibootguard_0.21-1+cip.bb} (82%)
- create mode 100644 recipes-bsp/efibootguard/files/debian-patches/0002-Revert-d-Enable-unit-tests-post-trixie.patch
+ ...4.302-cip100-rt56.bb => linux-cip-rt_4.4.302-cip102-rt57.bb} | 2 +-
+ recipes-kernel/linux/linux-cip-rt_6.12.43-cip7.bb               | 1 -
+ recipes-kernel/linux/linux-cip-rt_6.12.46-cip8.bb               | 1 +
+ ...{linux-cip_4.4.302-cip101.bb => linux-cip_4.4.302-cip102.bb} | 2 +-
+ ...{linux-cip_5.10.240-cip63.bb => linux-cip_5.10.241-cip64.bb} | 2 +-
+ .../{linux-cip_6.12.43-cip7.bb => linux-cip_6.12.46-cip8.bb}    | 2 +-
+ 6 files changed, 5 insertions(+), 5 deletions(-)
+ rename recipes-kernel/linux/{linux-cip-rt_4.4.302-cip100-rt56.bb => linux-cip-rt_4.4.302-cip102-rt57.bb} (68%)
+ delete mode 120000 recipes-kernel/linux/linux-cip-rt_6.12.43-cip7.bb
+ create mode 120000 recipes-kernel/linux/linux-cip-rt_6.12.46-cip8.bb
+ rename recipes-kernel/linux/{linux-cip_4.4.302-cip101.bb => linux-cip_4.4.302-cip102.bb} (68%)
+ rename recipes-kernel/linux/{linux-cip_5.10.240-cip63.bb => linux-cip_5.10.241-cip64.bb} (68%)
+ rename recipes-kernel/linux/{linux-cip_6.12.43-cip7.bb => linux-cip_6.12.46-cip8.bb} (59%)
 
-diff --git a/classes/efibootguard.bbclass b/classes/efibootguard.bbclass
-index 422d4270..cbd23768 100644
---- a/classes/efibootguard.bbclass
-+++ b/classes/efibootguard.bbclass
-@@ -9,8 +9,8 @@
- # SPDX-License-Identifier: MIT
- #
+diff --git a/recipes-kernel/linux/linux-cip-rt_4.4.302-cip100-rt56.bb b/recipes-kernel/linux/linux-cip-rt_4.4.302-cip102-rt57.bb
+similarity index 68%
+rename from recipes-kernel/linux/linux-cip-rt_4.4.302-cip100-rt56.bb
+rename to recipes-kernel/linux/linux-cip-rt_4.4.302-cip102-rt57.bb
+index 5d94f7ee..9800cf9c 100644
+--- a/recipes-kernel/linux/linux-cip-rt_4.4.302-cip100-rt56.bb
++++ b/recipes-kernel/linux/linux-cip-rt_4.4.302-cip102-rt57.bb
+@@ -11,4 +11,4 @@
  
--IMAGE_INSTALL:append = " efibootguard libebgenv0"
--IMAGER_INSTALL:wic:append = " efibootguard:${DISTRO_ARCH}"
-+IMAGE_INSTALL:append = " efibootguard-tools libebgenv0"
-+IMAGER_INSTALL:wic:append = " efibootguard:${DISTRO_ARCH} efibootguard-tools:${DISTRO_ARCH}"
- WDOG_TIMEOUT ?= "60"
- WICVARS += "WDOG_TIMEOUT KERNEL_IMAGE INITRD_DEPLOY_FILE DTB_FILES EFI_ARCH EFI_LIB_ARCH UKI_FILENAME"
- IMAGE_TYPEDEP:swu:append = " wic"
-diff --git a/recipes-bsp/efibootguard/efibootguard_0.19-1+cip.bb b/recipes-bsp/efibootguard/efibootguard_0.21-1+cip.bb
-similarity index 82%
-rename from recipes-bsp/efibootguard/efibootguard_0.19-1+cip.bb
-rename to recipes-bsp/efibootguard/efibootguard_0.21-1+cip.bb
-index 981aa3d4..f5dd1933 100644
---- a/recipes-bsp/efibootguard/efibootguard_0.19-1+cip.bb
-+++ b/recipes-bsp/efibootguard/efibootguard_0.21-1+cip.bb
-@@ -22,11 +22,12 @@ SRC_URI = " \
-     https://github.com/siemens/efibootguard/archive/refs/tags/v${EBG_VERSION}.tar.gz;downloadfilename=efibootguard_${EBG_VERSION}.orig.tar.gz;unpack=0;name=tarball \
-     git://salsa.debian.org/debian/efibootguard.git;protocol=https;branch=master;name=debian \
-     file://debian-patches/0001-d-control-Make-compatible-with-debian-buster.patch \
-+    file://debian-patches/0002-Revert-d-Enable-unit-tests-post-trixie.patch \
-     "
--SRC_URI[tarball.sha256sum] = "167a808d508558341b81d9a493f76161ac7fd7119e764435eae1b13e31a69737"
--SRCREV_debian = "040c116a61ffc99a92b6cbdb793abb7f51ef8d4a"
-+SRC_URI[tarball.sha256sum] = "f252e87b6acc74df34a0d894f2b5188fe797c2a2b7a14a231b9f224ad9b9de20"
-+SRCREV_debian = "86f686fab1a5a55c445718d4bd6a32106f2b8800"
+ require linux-cip-release.inc
  
--PROVIDES = "libebgenv-dev libebgenv0 efibootguard"
-+PROVIDES = "libebgenv-dev libebgenv0 efibootguard efibootguard-tools"
- 
- S = "${WORKDIR}/git"
- 
-diff --git a/recipes-bsp/efibootguard/files/debian-patches/0001-d-control-Make-compatible-with-debian-buster.patch b/recipes-bsp/efibootguard/files/debian-patches/0001-d-control-Make-compatible-with-debian-buster.patch
-index bf02a8a5..f5ff6c08 100644
---- a/recipes-bsp/efibootguard/files/debian-patches/0001-d-control-Make-compatible-with-debian-buster.patch
-+++ b/recipes-bsp/efibootguard/files/debian-patches/0001-d-control-Make-compatible-with-debian-buster.patch
-@@ -1,4 +1,4 @@
--From 299b2fecb4be67b3b669762a88cb3376a9fd5628 Mon Sep 17 00:00:00 2001
-+From 2550b65d0ae7bacbc79c0a30f883ff4895e5ff01 Mon Sep 17 00:00:00 2001
- From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
- Date: Tue, 14 Feb 2023 10:30:34 +0100
- Subject: [PATCH 1/2] d/control: Make compatible with debian buster
-@@ -19,7 +19,7 @@ index 0000000..9a03714
- +10
- \ No newline at end of file
- diff --git a/debian/control b/debian/control
--index fa7867c..8b92019 100644
-+index bcb9df6..c56dd1e 100644
- --- a/debian/control
- +++ b/debian/control
- @@ -2,7 +2,7 @@ Source: efibootguard
-@@ -32,5 +32,5 @@ index fa7867c..8b92019 100644
-   check,
-   gnu-efi,
- -- 
--2.39.2
-+2.51.0
- 
-diff --git a/recipes-bsp/efibootguard/files/debian-patches/0002-Revert-d-Enable-unit-tests-post-trixie.patch b/recipes-bsp/efibootguard/files/debian-patches/0002-Revert-d-Enable-unit-tests-post-trixie.patch
-new file mode 100644
-index 00000000..2eb3c807
+-SRC_URI[sha256sum] = "313cf525f5ce70b5ef99ab329360f5beba3d82a594a896d041d9c17c4b1434d5"
++SRC_URI[sha256sum] = "1d6cc128cdc0e763dc645364b1f49ecc4d6d31f9be15bb31774a9c4e2dbaed49"
+diff --git a/recipes-kernel/linux/linux-cip-rt_6.12.43-cip7.bb b/recipes-kernel/linux/linux-cip-rt_6.12.43-cip7.bb
+deleted file mode 120000
+index 091db61d..00000000
+--- a/recipes-kernel/linux/linux-cip-rt_6.12.43-cip7.bb
++++ /dev/null
+@@ -1 +0,0 @@
+-linux-cip_6.12.43-cip7.bb
+\ No newline at end of file
+diff --git a/recipes-kernel/linux/linux-cip-rt_6.12.46-cip8.bb b/recipes-kernel/linux/linux-cip-rt_6.12.46-cip8.bb
+new file mode 120000
+index 00000000..07b718bb
 --- /dev/null
-+++ b/recipes-bsp/efibootguard/files/debian-patches/0002-Revert-d-Enable-unit-tests-post-trixie.patch
-@@ -0,0 +1,41 @@
-+From dce9246ecb5935d815a1b2c1975af00d542da562 Mon Sep 17 00:00:00 2001
-+From: Jan Kiszka <jan.kiszka@siemens.com>
-+Date: Sat, 13 Sep 2025 07:29:35 +0200
-+Subject: [PATCH 2/2] Revert "d/*: Enable unit tests post-trixie"
-+
-+This reverts commit 2bba3769aa3a6d80180ed96501e7b2a852f30b78.
-+
-+Only supported after trixie.
-+
-+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-+---
-+ debian/control | 1 -
-+ debian/rules   | 3 +++
-+ 2 files changed, 3 insertions(+), 1 deletion(-)
-+
-+diff --git a/debian/control b/debian/control
-+index c56dd1e..684fc1b 100644
-+--- a/debian/control
-++++ b/debian/control
-+@@ -7,7 +7,6 @@ Build-Depends: debhelper,
-+  check,
-+  gnu-efi,
-+  help2man <!nodoc>,
-+- libfff-dev <!nocheck>,
-+  libpci-dev,
-+  pkgconf,
-+  python3-shtab,
-+diff --git a/debian/rules b/debian/rules
-+index 12a3ffb..ee00053 100755
-+--- a/debian/rules
-++++ b/debian/rules
-+@@ -20,3 +20,6 @@ ifeq (,$(filter nodoc,$(DEB_BUILD_OPTIONS) $(DEB_BUILD_PROFILES)))
-+ 		tools/bg_gen_unified_kernel
-+ endif
-+ 
-++# do not run the tests until fff is available in Debian
-++override_dh_auto_test:
-++	true
-+-- 
-+2.51.0
-+
-diff --git a/scripts/lib/wic/plugins/source/efibootguard-boot.py b/scripts/lib/wic/plugins/source/efibootguard-boot.py
-index dde72725..5206f864 100644
---- a/scripts/lib/wic/plugins/source/efibootguard-boot.py
-+++ b/scripts/lib/wic/plugins/source/efibootguard-boot.py
-@@ -215,7 +215,6 @@ class EfibootguardBootPlugin(SourcePlugin):
-     def _create_unified_kernel_image(cls, rootfs_dir, cr_workdir, cmdline,
-                                      deploy_dir, kernel_image, initrd_image,
-                                      dtb_files, source_params):
--        rootfs_path = rootfs_dir.get('ROOTFS_DIR')
-         efiarch = get_bitbake_var("EFI_ARCH")
-         if not efiarch:
-             msger.error("Bitbake variable 'EFI_ARCH' not set, exiting\n")
-@@ -225,9 +224,8 @@ class EfibootguardBootPlugin(SourcePlugin):
-             msger.error("Bitbake variable 'EFI_LIB_ARCH' not set, exiting\n")
-             exit(1)
++++ b/recipes-kernel/linux/linux-cip-rt_6.12.46-cip8.bb
+@@ -0,0 +1 @@
++linux-cip_6.12.46-cip8.bb
+\ No newline at end of file
+diff --git a/recipes-kernel/linux/linux-cip_4.4.302-cip101.bb b/recipes-kernel/linux/linux-cip_4.4.302-cip102.bb
+similarity index 68%
+rename from recipes-kernel/linux/linux-cip_4.4.302-cip101.bb
+rename to recipes-kernel/linux/linux-cip_4.4.302-cip102.bb
+index c1e0efd1..6a58804f 100644
+--- a/recipes-kernel/linux/linux-cip_4.4.302-cip101.bb
++++ b/recipes-kernel/linux/linux-cip_4.4.302-cip102.bb
+@@ -11,4 +11,4 @@
  
--        efistub = "{rootfs_path}/usr/lib/{libpath}/efibootguard/kernel-stub{efiarch}.efi"\
--            .format(rootfs_path=rootfs_path,
--                    libpath=libarch,
-+        efistub = "/usr/lib/{libpath}/efibootguard/kernel-stub{efiarch}.efi"\
-+            .format(libpath=libarch,
-                     efiarch=efiarch)
-         uefi_kernel_name = get_bitbake_var('UKI_FILENAME') or 'linux.efi'
-         uefi_kernel_file = "{deploy_dir}/{uefi_kernel_name}"\
+ require linux-cip-release.inc
+ 
+-SRC_URI[sha256sum] = "631eb00305c944e6f10d7f9227962d8d468d60c9bb83d9a78901074a05007a96"
++SRC_URI[sha256sum] = "1dfeb1f5efd4636a652acf1d42fde90f39c1381269b23d91697b5b3dfac20666"
+diff --git a/recipes-kernel/linux/linux-cip_5.10.240-cip63.bb b/recipes-kernel/linux/linux-cip_5.10.241-cip64.bb
+similarity index 68%
+rename from recipes-kernel/linux/linux-cip_5.10.240-cip63.bb
+rename to recipes-kernel/linux/linux-cip_5.10.241-cip64.bb
+index 40841607..9c206f1b 100644
+--- a/recipes-kernel/linux/linux-cip_5.10.240-cip63.bb
++++ b/recipes-kernel/linux/linux-cip_5.10.241-cip64.bb
+@@ -11,4 +11,4 @@
+ 
+ require linux-cip-release.inc
+ 
+-SRC_URI[sha256sum] = "6a84a1f1395b99040b06fcea02f8884ecee6da85b345edd2b160e47838a374ce"
++SRC_URI[sha256sum] = "b629bb6a300d5204baae478b3f80434f43cced6a500aae356d57e38c2956cb95"
+diff --git a/recipes-kernel/linux/linux-cip_6.12.43-cip7.bb b/recipes-kernel/linux/linux-cip_6.12.46-cip8.bb
+similarity index 59%
+rename from recipes-kernel/linux/linux-cip_6.12.43-cip7.bb
+rename to recipes-kernel/linux/linux-cip_6.12.46-cip8.bb
+index 4a23b9fc..dbda1fe6 100644
+--- a/recipes-kernel/linux/linux-cip_6.12.43-cip7.bb
++++ b/recipes-kernel/linux/linux-cip_6.12.46-cip8.bb
+@@ -7,4 +7,4 @@
+ 
+ require linux-cip-release.inc
+ 
+-SRC_URI[sha256sum] = "d85bb43cc091d7cd1b860dceeefad4345d5a9bd39d81c1abb24fd962e21d537f"
++SRC_URI[sha256sum] = "5a6ffd6c3c98e578c066d3e0864ac12cdbabd5dfdad1f86ee9eb532099db5f14"
 -- 
 2.51.0
 
