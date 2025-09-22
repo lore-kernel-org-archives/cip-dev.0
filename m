@@ -1,225 +1,190 @@
-Return-Path: <jan.kiszka@siemens.com>
+Return-Path: <uli@fpond.eu>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C138CAC592
-	for <webhook@archiver.kernel.org>; Mon, 22 Sep 2025 06:16:27 +0000 (UTC)
-Received: from GVXPR05CU001.outbound.protection.outlook.com (GVXPR05CU001.outbound.protection.outlook.com [52.101.83.53])
- by mx.groups.io with SMTP id smtpd.web11.45159.1758521781311937766
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F0D1CAC5A8
+	for <webhook@archiver.kernel.org>; Mon, 22 Sep 2025 14:44:40 +0000 (UTC)
+Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [81.169.146.218])
+ by mx.groups.io with SMTP id smtpd.web10.53834.1758552273794405482
  for <cip-dev@lists.cip-project.org>;
- Sun, 21 Sep 2025 23:16:22 -0700
+ Mon, 22 Sep 2025 07:44:34 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=xv+7Pnlu;
- spf=pass (domain: siemens.com, ip: 52.101.83.53, mailfrom: jan.kiszka@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XjFY6SgJiWvpFoOLFPULtuT9+UldSG9Azws8jROa+EFdLQboKR6dVuYRX3CT6og3/E6A+M9rkJKYFZNtbgpkmMEmWq4hN1LL6cDgkr5C8nUYnVUjnehzG5fN+Ickp/jzd4eQK+a3TSifEDnk/Br0xzUNiPEzLnISkQ/0V2dItEObA6fpjSu6x9gzle3UTI43LMNdLqcQ6oT4wyOMnRNJwCsQ8u7ugC/hypPlXeLbAS/TjcnerG33ceUzyWOBKX4kKXtdj5knHPOFM5+WnPuw9gdu54LS6WNd9Q6bINut034pdV7Iigk+77VoJp2LRsNqpuy9fEe6L/iMJlWC49NZwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=v5U0a3h+V+RsWlkzvGl/hNzcuETfPDHHbE5enhtIQuc=;
- b=UCp1h/7FwWZb4oSJXzf7BKybryaS0u7PzMdn3IRV7e188fk3AXXj5vdOo2JvI0ArSbgjVQu0CFPFSoBdMxLK1nC1sd/zeoY/9ljNVAIpMptT4Lhmfp1ke+QZv83fWiwja5LxqyBelbRaHMSHcHVbIO4lxKH5j/Xrv3/uSt0kJh86vBhT5MHtMF1s/WvIYux45vzH0VaBiK6NWRKXN3H3Acv1Qm7rn97hsykzpWN/lvyaR7Ezzly9/yCQdydD6p+6hF+0iF9WOTiUox5PoK1GRKNGcu/F4wBcr/AyDGW2IYsz6+tphOmL6y7r++EKMqQGLnTEzVrCjS5M/4L0uWPMaA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v5U0a3h+V+RsWlkzvGl/hNzcuETfPDHHbE5enhtIQuc=;
- b=xv+7Pnlu+N2eb2urePcW71N9cplCCku1pmiTGcqG0jKEd1nHBaw5hUPjCT9nMBlR8VmFAvUKeoX1HO4ckd9vCI17ZUKKM5Bg2IvLmj8eecAwaqdHJNouO6AkTOCXgEJFajYcspozsMRMZC9wZNTq0fcduxfkB1CY5qwRz22facf2st4iIpte5dBN6QohDQLBivzIBVNPirIiEd8cFze48JnK43Fqs/hQHY6ec+G5rox0mlNgswECFQJrT5ix6ebhBZBIFuzmAj5EQupdp6FksSXWLfvnJh8BSXPeTRDalz/Ic1dDkhezAUiVsC1z8bIDqavu0HbQUh5bvDzQebJqxg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by GV1PR10MB8419.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:1d0::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Mon, 22 Sep
- 2025 06:16:17 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408%6]) with mapi id 15.20.9137.018; Mon, 22 Sep 2025
- 06:16:17 +0000
-Message-ID: <6f4eb6c0-68ca-4aed-971c-e39c518f5efa@siemens.com>
-Date: Mon, 22 Sep 2025 08:16:15 +0200
-User-Agent: Mozilla Thunderbird
-From: Jan Kiszka <jan.kiszka@siemens.com>
-To: cip-dev <cip-dev@lists.cip-project.org>
-Subject: [isar-cip-core][PATCH] ci: Fix reproducible build jobs
-Content-Language: en-US
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
+ dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=qJnmE1nM;
+ spf=none, err=permanent DNS error (domain: fpond.eu, ip: 81.169.146.218, mailfrom: uli@fpond.eu)
+ARC-Seal: i=1; a=rsa-sha256; t=1758552254; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=FdIq6+0iuPMMx3sMjFnNnPqd56PuI+EE5Pntyduko/2OodhUFJb/exstpKHGqPKABq
+    Wbc2UQQ/oqhO+/nzv17qJ7QmOxfoxL9Hu5S1ip3IcHtzTjK/ACPnFO099hX/2RaMRAqZ
+    44Qq/yAgsvGY5C/ElG2yXlQlaF2YL2Tw3zmQKAzUQv+HfpAhRBVRbimI0O8ouCyOrnYl
+    R+TfQPyG5kqf+ocYZswQwVJW5iOuU1NJLt4MkQcjnr2X6w3zHOuJRXKBF/tOIZD0C2R2
+    T+wAbRwwf5tsq8n9fSHqBJ/7Bt8797pnXKlHNTI/2zSvi1PrrfHTtmF2kQSAYkhyLq+g
+    3t+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1758552254;
+    s=strato-dkim-0002; d=strato.com;
+    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
+    bh=ITXw8ddd5hLF+kkfbHFJSQKwYTwT8qsr5E/JQ12Aimc=;
+    b=jWRI2t/nY19gt0QRplOPSxzq7Fln8v9qNK0MCFCa7LjJnxLud7e8nLAyogENi1GHr1
+    KfKErMFULkfqRpaxl3pQ5jJecZXk8rurzD/7NaQe2wPG+6Tz/mudaNVeN4BVAx8ydSCE
+    GpZDA5Hg4pjeM5ZVrRXVrL7fRPsXoenpPI+iQIuRSF+/vaMXY1Q0wQXiwix8cFClzC7t
+    yq1L8hqVORUaRmEvMUGVIK4DDUZITgb9w3ZON4ltpMv2+MYTILhpMYk+Pu2t9fTPuwAo
+    ZBmjIPLpj82KfFmdsu+5sTpZ2bsFJVXuMjIKQfysCeRlITGq33oVX+WWOXkQiHYOmYOt
+    Ytgw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo00
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1758552254;
+    s=strato-dkim-0002; d=fpond.eu;
+    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
+    bh=ITXw8ddd5hLF+kkfbHFJSQKwYTwT8qsr5E/JQ12Aimc=;
+    b=qJnmE1nMeh6mIMEt1TfS2VQMfxAWtKDdEH56+1VGf84R7H77g4PLvqiRHt/DXHrcNr
+    O0f7sRepnNoU9g2GlebT06alu/AnezfWQ6X3yoHaJ6t8RHsRBPg0TyA5eBgck3qQd8NV
+    OCLeW5FgWIAc2WKg8eezeHh3IzXkr/qxmgwgCNTiPgOlS2z1ZpOJf1D3bAxcto/zAEZz
+    i6RT363p3qSgE1f6kZIKO0EjRGL0ptzwdFPkRN6zeod/VxAa1WhnJehjnqN0WeL9T7Qu
+    tcYK/4gukiIFn0+0dFXFNthZySD5MdzoJXAzCgjP4MEtwyosyLyI8UZ4LSKL+NjrSe7e
+    VUsw==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv30UF1hexKzK+A+UOEY="
+Received: from open-xchange-core-mw-gw-30.open-xchange-core-mw-hazelcast-headless.open-xchange.svc.cluster.local
+    by smtp-ox.front (RZmta 52.1.2 AUTH)
+    with ESMTPSA id z025ba18MEiDRnc
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256 bits))
+	(Client did not present a certificate);
+    Mon, 22 Sep 2025 16:44:13 +0200 (CEST)
+Date: Mon, 22 Sep 2025 16:44:13 +0200 (CEST)
+From: Ulrich Hecht <uli@fpond.eu>
+To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
+	"pavel@denx.de" <pavel@denx.de>,
+	"jan.kiszka@siemens.com" <jan.kiszka@siemens.com>,
+	"masami.ichikawa@cybertrust.co.jp" <masami.ichikawa@cybertrust.co.jp>,
+	"chris.paterson2@renesas.com" <chris.paterson2@renesas.com>,
+	"nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>
+Message-ID: <783054085.122881.1758552253280@webmail.strato.de>
+Subject: [ANNOUNCE] Release v4.19.325-cip124
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0012.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a::22) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GV1PR10MB8419:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1bb3c63e-9e6a-4f5c-718b-08ddf99f8a07
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|13003099007;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?RFhDT0ExMUpFaXdrdlQ4UThPQVVRNHZRNUlUdnJOR21xM1J4S0laajY2eGlC?=
- =?utf-8?B?QTdDWTFVbXluMXB5ZXRWUkVXa0xLbHZzb3JvWDVuTFNuY1VjM1hiZkozaG16?=
- =?utf-8?B?My9WV3o0cjAyMGJSQ2U1dVplUWJNdmplNS9jRTJBRkZNOUVOWXFOM2RuQnRh?=
- =?utf-8?B?RnJuT0tYUFkyZXhPUS92NkxvbVM4UFdmK2JPOTBXdUZHSTZVNzIwREw4SXlv?=
- =?utf-8?B?MUx4S3RrSkhvY1RNamRXbWYxUXltUEJXTDBIVFB1bDVwcjZRMTdvL21UK1NM?=
- =?utf-8?B?NlI2L2JQS04yNHZZWUM1VWFiTEdKWm45cGwyelhqc2RnSCs1K2dNME1CaktC?=
- =?utf-8?B?NWNCNVR5dk1BS2tHTnRiL05FYm1UT3hKUmRLa2o2SnR2M1dFZjdHZWJrS05V?=
- =?utf-8?B?SjRnaWt2QXIxQTBiYWFmQno3cmI4dFhWd3Y5RWVRTkl1Ykt1byt1YVdOd3o1?=
- =?utf-8?B?TXpMR0R2THo2bnJvUXA5MWZ4UGVydnlIOElSUW5vemcwUDBjTXh5TE56QmU5?=
- =?utf-8?B?aHluQ1RxRExpb0NUeVIzVFp4bDZ0SUYvTEtLMEpOU2FxVitSSjZmYnEzay9I?=
- =?utf-8?B?RW1KQXQwSFhHbGFPeVcyU3l3NkVsZE1PbjhaYVZCMGh4TmUrcnpxTTFvWG43?=
- =?utf-8?B?TlhyMmFJUDE2RnFKSkZOVnYvUlk4YmpHTHhHZmlENTl4WnZDMnpQQVc4Nmhr?=
- =?utf-8?B?R0Vzd1VGOWdyYkUrQlV4MGluWGtXZHFybTBEWHIxUEpGL0x1T2NYR1NqTHdy?=
- =?utf-8?B?T2NMR3Y2WUpINVhHWlJEOFpLeFFLOXJEZlViUXdseFB4YzlXeWdlMllSVTIv?=
- =?utf-8?B?M1Vtc1J1b2I1Z1MwT0o2L00zOE1FbG5JOG91clh1QjlLZnZJZ0E3NW9Bd1Ny?=
- =?utf-8?B?MDliSTk3dThIcllBeU95djBvY0hnMHZlMnAvL245cFhjb2hCTGdrVXB2M3J3?=
- =?utf-8?B?SEZuQWphYW9HWHJWSitHV3hyUFVOV1FycjNJYjY1TUh1anMrZ0VqN1RnM096?=
- =?utf-8?B?YWV5RStNbmc3L0dTT3hwOGkxKzkvOThDTFU2bGF2Nm5XM004WXN3eUp0NFZ0?=
- =?utf-8?B?VkN4dXFYN0ZkQWFrWUlobk5KN1RZdVdqWTJKSlJpRUQ4dmM4cURIUUVxV3g2?=
- =?utf-8?B?ck1QVkpsR1pnbUlTTkliMzh2d2lMWUtPdXRyRHVaTGNHRU9aRDZQNUpVUlI5?=
- =?utf-8?B?NkUzN1RqbFpDNHdidGM4Y3hQMmwzZFBBTDdwVFJvUkN4VnFKZ3JtZmlSOFI5?=
- =?utf-8?B?K2dJTktjblVPSXh5Qnh2azlYeVExMHkrZHhLa0JDbEpiZGJ1OW1rOWNmTHlH?=
- =?utf-8?B?bzVHdDYwaFhybVN0VURQaGtKRHBZTHNnRlNZL0N4Sm5CWHYwZHViekYwZ3VI?=
- =?utf-8?B?QWRlenk1ZVNBYloxMXoySkxtWlBkM1ZmWTNWb1M1R1BYRGJVaE1nSHNJWk1H?=
- =?utf-8?B?Nm13MjNXSlZ6RHk0cktxUWwvVmVLVzRIZmZZTjlDMUU5UlF1aDVOYjFZTGU1?=
- =?utf-8?B?eWQxZ3owci9BVFg3N2JObnBsQnc3MUUrMXRKOW53Y1J6SDFxeXpScUVGVkNP?=
- =?utf-8?B?bnF0TGdqb0RKR28rUFJ2NlBaQThDeEU3elhvRTJRZVRQa05WTG1wZ1J1bFc0?=
- =?utf-8?B?T2x2OW8xcjdHbHFYR1MweGZHK3Y5Nk53cS9vdm5RMlJocmtDSXRGR1BoVjFl?=
- =?utf-8?B?cDBoazRYVXdMUFZsVk8vMHRJS1VhdlNSMEtCYjJ6SzNFRTJ2NlJPOUxkV1Zo?=
- =?utf-8?B?Q2ZlSjRERnlIZWlEUjI1RkNJV2dhVDl1MmQ3Qm5DcUNFa0xuSjV1L1Zsbk1H?=
- =?utf-8?Q?rbfKo8BQfUB73ExlWa/Zg4oC966YMfmvaBM04=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(13003099007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?M2RIbE84elNEMmFJeFhQcnZENGlyM21WSTJCUW5WNGh0NXY0NlZsWEc2cnVm?=
- =?utf-8?B?Vmc4NHgrRDV2S1FWK1AzRDIxVS9jeGl2WDBkYjczaHMydkVKeGpoTCtjTXBr?=
- =?utf-8?B?VTNXUFdiblJtMTJieXUxS1UrbWdCZXdlZlVDQTlXamRLWVhWU0FlMzlUVHhk?=
- =?utf-8?B?Q3FRV1ZVdHNYR0ZyMWZla2d5R0h4b3oxY3JLQkZyRks0WlBhYlhKQ3UvakhJ?=
- =?utf-8?B?bnI0anNsK1F6MHZkZk14ZEJjUTVZNDJET3BOUnJNWU5WR3gwOHZLaXRwQlUy?=
- =?utf-8?B?YXhyd1JrUGxNUlBWNnd5WjNKNEh1QmYxUEtGeERDV3NJRVplSEkrVCtiUnl1?=
- =?utf-8?B?cnJacnNVRnZIeVNpWkpqZ055MGFPamJKVGdsV2E3MGt2VGZyL1RIZXNsVmY1?=
- =?utf-8?B?SFdlaXZJNTl2N0VaMnhnU2lnbmhxcTVhTWt0dXNmMElzOU1qSUtJT0FtYWNa?=
- =?utf-8?B?UnFlRXZSdHV2SWV1TURVYWsvZFZoV1VEWjdCcWdjaDdpZXVhb2lwWlNQcnZE?=
- =?utf-8?B?bnA4T3VpM01oaTlaOU1iUTdranplRHdYbno3RlJiWlJVblVrRis4dTVYZ2d0?=
- =?utf-8?B?cGJDeW8rUk5RWktWM21IazYvWGxicVhNZ3JUdTFSUXNTZzE2eE5xcGxsTGZ2?=
- =?utf-8?B?aXZEd0V6NTJFOXdEUkpRYklxTjBBdkhPRjcwOWp1Y0I1VTcrWTg3akRrSXNi?=
- =?utf-8?B?V00rc2VsWnV4c3pUWFloS2dvUTh5MzVPNEcwL2prcG5rSEtBZTMzQnlQY2Rr?=
- =?utf-8?B?N2ZSL2FTZm4xVkJTTkNjYmt1SlA1Q1dQem9IYjZXK3V6NlhvdGFiRGl4ekc5?=
- =?utf-8?B?Q3VVYlovQ0pDbHRCNVRIK1pCNWVRUDViRE80VUo2MkZ2cmNiM3RUWlAxZzdG?=
- =?utf-8?B?aFZ3a29VbnpDYVhiOUY4ZnlmVDBnRDk3YkliUmp1T2VMblkwdk8xS096V1Ew?=
- =?utf-8?B?WWRWN1JvaHBWdXJ0amFmbmp1bXdyYmo3UW95dDhzRGFIUkVtTXpONjFsNHR4?=
- =?utf-8?B?OHNpN004Q2lNTTJHeE5uQS8xTEI5MVZBRHR2ZXh4RHVHbXRySlUvQk9odmV3?=
- =?utf-8?B?VEF4VythZnlBVTU5RWJJTDlKcnVaTnAwUzZUY25jcmZSZzAzemJCdTZEV3li?=
- =?utf-8?B?U3JsWWVRaE4vdy9YZHpaNHNEL2VJaHJ2V1UvWUoxcXNxcGEwSGpLbE1zUnBr?=
- =?utf-8?B?WTRwb3lNbExROEU1cmJGeGxTQjZ0TDgvTTd1WXZjNlFzdDFxcXBBd0loQkp3?=
- =?utf-8?B?WGFSM1hVejZuYzNGU0FLK3FiR1JHSGxiY2d5akNRSzd4azhDRTFnOTU3cjFt?=
- =?utf-8?B?TEJWQTU0OXZVK3FpaGdTb1orNnBwei9qdy8vb2lUaUxQMVcyTHI2MktiOHFn?=
- =?utf-8?B?UjZBRExkYTJsWVlhV2VHSWxad29UQW9EZFNVNnBQaUgzakVwMHlWd3A4Q3c0?=
- =?utf-8?B?KzlHWU1McVJRZG9BWEZyMkErcklwMklSOUtITEpWR0UvbnArdjFKcDZ3Y0lD?=
- =?utf-8?B?NTFtdFlKK1NnKzRmYnJmYmo4Qm1hTGxKS0JYU0loU1hSVjdrTzZub1dueHBF?=
- =?utf-8?B?TXg2ckpITFdIZjlNUnZyd0NHczVKRjBvWjR2b3QwbWhybzJ3SENBYk5saXhM?=
- =?utf-8?B?KzVubnB6L1pTK0NnWEJWTnJlUVBsMk1zWmIvaWt2MGZGdW5FQ3p0MVlkaTNI?=
- =?utf-8?B?RTk4MnVBVlQzR1dlQithNmlOZnFQU2pqQk1nMFFQa3pvRnRRN25ObDlrbmNN?=
- =?utf-8?B?b0kxQUNUL1FNaEdYS1VpSkVCWUJMQjZNTm9oVWRLWXZ1em5ndm5ObzNJdlRS?=
- =?utf-8?B?N1VGM0ZkV2RGVjhBdHE3VmpRSzNCeDNWNjg4TDN3bGtoWWtnajlkaW1IR1RH?=
- =?utf-8?B?MmwzRXh0UnJqYks2VjVNT3kyeGh6THhmL1V6Mk1vKy9UeDdzRjR2K1dqZS9X?=
- =?utf-8?B?THQvcTZOSTZDT0tRN1gxN0NRUHAweHREN1BoMU5FL2NnejY3dzhyMXJ5KzFi?=
- =?utf-8?B?dGdDS1cyMGZtVCtnU2Y5cEZLM2hKYXdWUFBvRUhLUHBQV0MwNEdRQTZOcEZK?=
- =?utf-8?B?eEdMZFFucTlwSzJWNVRjRTRXQ2UvQVZ4R2JML0VrT0U5TEoweFZWZWRLVkZo?=
- =?utf-8?Q?O8kGwfm8B7fosbTkRPttbkEqN?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1bb3c63e-9e6a-4f5c-718b-08ddf99f8a07
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2025 06:16:17.0211
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XHdBYG/nJJt91r8tln8fnhj5KtAEHuGgdmMUku8K6wlm84m8XVaW/5b9MqFuMhHRjguMUxQmPjRdNFamctMOiA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB8419
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v8.38.83
+X-Originating-Port: 45964
+X-Originating-Client: open-xchange-appsuite
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 22 Sep 2025 06:16:27 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20087
+ <cip-dev@lists.cip-project.org>; Mon, 22 Sep 2025 14:44:40 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20088
 
-From: Jan Kiszka <jan.kiszka@siemens.com>
+Hi,
 
-Define the kas-isar image via default to avoid missing a build job while
-keeping version maintenance at one place.
+the CIP kernel team has released Linux kernel v4.19.325-cip124. The linux-4.19.y-cip tree's base version has been updated to v4.19-st8. The trees are up-to-date with kernel 5.4.298.
 
-Fixes: 640238410510 ("ci: Switch test jobs to self-built lavacli container")
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- .gitlab-ci.yml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+You can get this release via the git tree or as a tarball from https://mirrors.edge.kernel.org/pub/linux/kernel/projects/cip/4.19/
 
-diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-index 99c8013b..7ddb97c8 100644
---- a/.gitlab-ci.yml
-+++ b/.gitlab-ci.yml
-@@ -34,6 +34,7 @@ stages:
-   - cve-check
- 
- default:
-+  image: ghcr.io/siemens/kas/kas-isar:4.8.1
-   before_script:
-     - export http_proxy=$HTTP_PROXY
-     - export https_proxy=$HTTPS_PROXY
-@@ -45,7 +46,6 @@ default:
- 
- .build_base:
-   stage: build
--  image: ghcr.io/siemens/kas/kas-isar:4.8.1
-   rules:
-     - if: $CI_COMMIT_TAG
-       when: never
--- 
-2.51.0
+  v4.19.325-cip124:
+    repository:
+      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+    branch:
+      linux-4.19.y-cip
+    commit hash:
+      6ea7b609a0cdeea3232ae4b9f47472140c5beef2
+    Fixed CVEs:
+      CVE-2024-26958: nfs: fix UAF in direct writes
+      CVE-2024-53237: Bluetooth: fix use-after-free in device_for_each_child()
+      CVE-2025-21917: usb: renesas_usbhs: Flush the notify_hotplug_work
+      CVE-2022-50327: ACPI: processor: idle: Check acpi_fetch_acpi_dev() return value
+      CVE-2024-57996: net_sched: sch_sfq: don't allow 1 packet limit
+      CVE-2025-37752: net_sched: sch_sfq: move the limit validation
+      CVE-2025-37798: codel: remove sch->q.qlen check before qdisc_tree_reduce_backlog()
+      CVE-2025-38177: sch_hfsc: make hfsc_qlen_notify() idempotent
+      CVE-2025-38193: net_sched: sch_sfq: reject invalid perturb period
+      CVE-2025-38347: f2fs: fix to do sanity check on ino and xnid
+      CVE-2025-38375: virtio-net: ensure the received length does not exceed allocated size
+      CVE-2025-38468: net/sched: Return NULL when htb_lookup_leaf encounters an empty rbtree
+      CVE-2025-38470: net: vlan: fix VLAN 0 refcount imbalance of toggling filtering during runtime
+      CVE-2025-38473: Bluetooth: Fix null-ptr-deref in l2cap_sock_resume_cb()
+      CVE-2025-38474: usb: net: sierra: check for no status endpoint
+      CVE-2025-38477: net/sched: sch_qfq: Fix race condition on qfq_aggregate
+      CVE-2025-38480: comedi: Fix use of uninitialized data in insn_rw_emulate_bits()
+      CVE-2025-38482: comedi: das6402: Fix bit shift out of bounds
+      CVE-2025-38483: comedi: das16m1: Fix bit shift out of bounds
+      CVE-2025-38487: soc: aspeed: lpc-snoop: Don't disable channels that aren't enabled
+      CVE-2025-38494: HID: core: do not bypass hid_hw_raw_request
+      CVE-2025-38495: HID: core: ensure the allocated report buffer can contain the reserved report ID
+      CVE-2025-38497: usb: gadget: configfs: Fix OOB read on empty string write
+      CVE-2025-38529: comedi: aio_iiro_16: Fix bit shift out of bounds
+      CVE-2025-38530: comedi: pcl812: Fix bit shift out of bounds
+      CVE-2025-38538: dmaengine: nbpfaxi: Fix memory corruption in probe()
+      CVE-2025-38539: tracing: Add down_write(trace_event_sem) when adding trace event
+      CVE-2025-38553: net/sched: Restrict conditions for adding duplicating netems to qdisc tree
+      CVE-2025-38555: usb: gadget : fix use-after-free in composite_dev_cleanup()
+      CVE-2025-38563: perf/core: Prevent VMA split of buffer mappings
+      CVE-2025-38565: perf/core: Exit early on perf_mmap() fail
+      CVE-2025-38569: benet: fix BUG when creating VFs
+      CVE-2025-38572: ipv6: reject malicious packets in ipv6_gso_segment()
+      CVE-2025-38574: pptp: ensure minimal skb length in pptp_xmit()
+      CVE-2025-38577: f2fs: fix to avoid panic in f2fs_evict_inode
+      CVE-2025-38578: f2fs: fix to avoid UAF in f2fs_sync_inode_meta()
+      CVE-2025-38581: crypto: ccp - Fix crash when rebind ccp device for ccp.ko
+      CVE-2025-38602: iwlwifi: Add missing check for alloc_ordered_workqueue
+      CVE-2025-38604: wifi: rtl818x: Kill URBs before clearing tx status queue
+      CVE-2025-38612: staging: fbtft: fix potential memory leak in fbtft_framebuffer_alloc()
+      CVE-2025-38617: net/packet: fix a race in packet_set_ring() and packet_notifier()
+      CVE-2025-38618: vsock: Do not allow binding to VMADDR_PORT_ANY
+      CVE-2025-38630: fbdev: imxfb: Check fb_add_videomode to prevent null-ptr-deref
+      CVE-2025-38635: clk: davinci: Add NULL check in davinci_lpsc_clk_register()
+      CVE-2025-38639: netfilter: xt_nfacct: don't assume acct name is null-terminated
+      CVE-2025-38650: hfsplus: remove mutex_lock check in hfsplus_free_extents
+      CVE-2025-38652: f2fs: fix to avoid out-of-boundary access in devs.path
+      CVE-2025-38663: nilfs2: reject invalid file types when reading inodes
+      CVE-2025-38666: net: appletalk: Fix use-after-free in AARP proxy probe
+      CVE-2025-38671: i2c: qup: jump out of the loop in case of timeout
+      CVE-2025-38677: f2fs: fix to avoid out-of-boundary access in dnode page
+      CVE-2025-38680: media: uvcvideo: Fix 1-byte out-of-bounds read in uvc_parse_format()
+      CVE-2025-38691: pNFS: Fix uninited ptr deref in block/scsi layout
+      CVE-2025-38693: media: dvb-frontends: w7090p: fix null-ptr-deref in w7090p_tuner_write_serpar and w7090p_tuner_read_serpar
+      CVE-2025-38694: media: dvb-frontends: dib7090p: fix null-ptr-deref in dib7090p_rw_on_apb()
+      CVE-2025-38696: MIPS: Don't crash in stack_top() for tasks without ABI or vDSO
+      CVE-2025-38697: jfs: upper bound check of tree index in dbAllocAG
+      CVE-2025-38698: jfs: Regular file corruption check
+      CVE-2025-38699: scsi: bfa: Double-free fix
+      CVE-2025-38700: scsi: libiscsi: Initialize iscsi_conn->dd_data only if memory is allocated
+      CVE-2025-38701: ext4: do not BUG when INLINE_DATA_FL lacks system.data xattr
+      CVE-2025-38708: drbd: add missing kref_get in handle_write_conflicts
+      CVE-2025-38712: hfsplus: don't use BUG_ON() in hfsplus_create_attributes_file()
+      CVE-2025-38713: hfsplus: fix slab-out-of-bounds read in hfsplus_uni2asc()
+      CVE-2025-38714: hfsplus: fix slab-out-of-bounds in hfsplus_bnode_read()
+      CVE-2025-38715: hfs: fix slab-out-of-bounds in hfs_bnode_read()
+      CVE-2025-38718: sctp: linearize cloned gso packets in sctp_rcv
+      CVE-2025-38721: netfilter: ctnetlink: fix refcount leak on table dump
+      CVE-2025-38724: nfsd: handle get_client_locked() failure in nfsd4_setclientid_confirm()
+      CVE-2025-38727: netlink: avoid infinite retry looping in netlink_unicast()
+      CVE-2025-38729: ALSA: usb-audio: Validate UAC3 power domain descriptors, too
+      CVE-2025-39676: scsi: qla4xxx: Prevent a potential error pointer dereference
+      CVE-2025-39689: ftrace: Also allocate and copy hash for reading of filter files
+      CVE-2025-39691: fs/buffer: fix use-after-free when call bh_read() helper
+      CVE-2025-39709: media: venus: protect against spurious interrupts during probe
+      CVE-2025-39710: media: venus: Add a check for packet size after reading from shared memory
+      CVE-2025-39713: media: rainshadow-cec: fix TOCTOU race condition in rain_interrupt()
+      CVE-2025-39714: media: usbtv: Lock resolution while streaming
+      CVE-2025-39724: serial: 8250: fix panic due to PSLVERR
+      CVE-2025-39730: NFS: Fix filehandle bounds checking in nfs_fh_to_dentry()
+      CVE-2025-39742: RDMA: hfi1: fix possible divide-by-zero in find_hw_thread_mask()
+      CVE-2025-39743: jfs: truncate good inode pages when hard link is 0
+      CVE-2025-39751: ALSA: hda/ca0132: Fix buffer overflow in add_tuning_control
+      CVE-2025-39756: fs: Prevent file descriptor table allocations exceeding INT_MAX
+      CVE-2025-39757: ALSA: usb-audio: Validate UAC3 cluster segment descriptors
+      CVE-2025-39766: net/sched: Make cake_enqueue return NET_XMIT_CN when past buffer_limit
+      CVE-2025-39782: jbd2: prevent softlockup in jbd2_log_do_checkpoint()
+      CVE-2025-39783: PCI: endpoint: Fix configfs group list head handling
+      CVE-2025-39794: ARM: tegra: Use I/O memcpy to write to IRAM
+      CVE-2025-39798: NFS: Fix the setting of capabilities when automounting a new filesystem
+      CVE-2025-39808: HID: hid-ntrig: fix unable to handle page fault in ntrig_report_version()
+      CVE-2025-39812: sctp: initialize more fields in sctp_v6_from_sk()
+      CVE-2025-39813: ftrace: Fix potential warning in trace_printk_seq during ftrace_dump
+      CVE-2025-39817: efivarfs: Fix slab-out-of-bounds in efivarfs_d_compare
+      CVE-2025-39824: HID: asus: fix UAF via HID_CLAIMED_INPUT validation
+      CVE-2025-39828: atm: atmtcp: Prevent arbitrary write in atmtcp_recv_control().
+
+Best regards,
+Ulrich Hecht
 
