@@ -2,33 +2,33 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77FA7CAC5AA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 794BACAC5B1
 	for <webhook@archiver.kernel.org>; Thu, 25 Sep 2025 06:00:36 +0000 (UTC)
-Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
- by mx.groups.io with SMTP id smtpd.web10.4681.1758780027789414557
+Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
+ by mx.groups.io with SMTP id smtpd.web11.4811.1758780027608006968
  for <cip-dev@lists.cip-project.org>;
  Wed, 24 Sep 2025 23:00:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=m0Cvvu4L;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-51332-20250925060025803f63085500020762-a_u8nl@rts-flowmailer.siemens.com)
-Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 20250925060025803f63085500020762
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=YRdvyRsb;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-51332-202509250600256e3e063aae00020715-rrvk27@rts-flowmailer.siemens.com)
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 202509250600256e3e063aae00020715
         for <cip-dev@lists.cip-project.org>;
         Thu, 25 Sep 2025 08:00:25 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=1pc26AHnIBv7oSdy/XfkNJRNMrxr5p+CoWFLqstdx6c=;
- b=m0Cvvu4LpMHjCLa/s+xHdQqnj/SCbJx0pDewzfldJz7MNUU5jsJhzlrcR8DGK/5zMXPQN7
- UGlOIE7YKwb6zJsd9AozDsPUQmkC3+m10W5Cdf8qaa1sZGOJCUiXU3F3edyx78eQOSEoXePP
- tiFzowKLeN6ja5V9NfgxGHxBYfigyGDiUI8IyuMdtWlFoJsQQ5BzJ7xg1w6AgQjz8GPkdktC
- OopocUN45XHwPrF24gQyYcjC/WkRNNHpGWwGBdQnY77+255Qh/kWJ/L5qE9lkezjuemT1YBi
- UUC6JfPJsZVg4EnGK+ncmZgB/ile12wZGFFVww2EFX3cuTmZQYDQiecA==;
+ bh=yi9x6IFN2f9LEhqowLJV07hRkz2WgNSy/lIRPmUvgNg=;
+ b=YRdvyRsb48kOOskk1MegkiMPo2eBDIwBeWTlTaKd+edfBNp5yIYo2KTOLCBQvOEXLiYX0e
+ ENUqbeZtQjqEdz1ZBqFkGqsFU/TU5+Svukt9M4aFKAASsg8GCSj+n0Cg9Hwo3tLoHwDUebjS
+ x2+gum1Dp/yQhryZnOlJgIbhSulNEvp+JbRsZ7+lETSlh8Q1/GqzvNqYaPxhv9fLrmmAl4zi
+ 9o2F2sY0fSWSpTZVL8vGiFBFUyNrZkWwyeshJP5WSVGGwkAWkUu52Tydxskz8H9aPPHOPv48
+ w406busZ+0dlgyohHY+4jtmZG5JbV/8s7Lhd5WQLWtQtnmnhzvuA6bMw==;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: jan.kiszka@siemens.com,
 	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH v8 8/8] ci: Add factory-reset to qemu-amd64
-Date: Thu, 25 Sep 2025 07:59:20 +0200
-Message-ID: <20250925060009.1711605-9-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v8 7/8] Kconfig: add option for factory-reset
+Date: Thu, 25 Sep 2025 07:59:19 +0200
+Message-ID: <20250925060009.1711605-8-Quirin.Gylstorff@siemens.com>
 In-Reply-To: <20250925060009.1711605-1-Quirin.Gylstorff@siemens.com>
 References: <20250925060009.1711605-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
@@ -39,43 +39,129 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 25 Sep 2025 06:00:36 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20122
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20128
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
+A full disk image is necessary to provide the necessary infrastructure
+(bootloader or boot partition) to execute a factory-reset. In isar-cip-core
+this is only possible with the efibootguard based images.
+
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- .gitlab-ci.yml | 3 +++
- 1 file changed, 3 insertions(+)
+ Kconfig                                         | 16 ++++++++++++++++
+ kas/opt/factory-reset.yml                       | 17 +++++++++++++++++
+ recipes-core/images/cip-core-image.bb           |  2 ++
+ .../cip-core-initramfs/cip-core-initramfs.bb    |  3 ++-
+ 4 files changed, 37 insertions(+), 1 deletion(-)
+ create mode 100644 kas/opt/factory-reset.yml
 
-diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-index 7ddb97c..ed151fa 100644
---- a/.gitlab-ci.yml
-+++ b/.gitlab-ci.yml
-@@ -26,6 +26,7 @@ variables:
-   swupdate_version: default
-   test_function: swupdate
-   separate_home_partition: disable
-+  factory_reset: disable
-   no_kernel: disable
+diff --git a/Kconfig b/Kconfig
+index 3ba6131..e7d8bd5 100644
+--- a/Kconfig
++++ b/Kconfig
+@@ -34,6 +34,9 @@ config ARCH_RISCV64
+ config HAS_SWUPDATE
+ 	bool
  
- stages:
-@@ -66,6 +67,7 @@ default:
-     - if [ "${release}" = "bookworm" ]; then base_yaml="${base_yaml}:kas/opt/bookworm.yml"; fi
-     - if [ "${release}" = "trixie" ]; then base_yaml="${base_yaml}:kas/opt/trixie.yml"; fi
-     - if [ "${encrypt}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/encrypt-data.yml"; fi
-+    - if [ "${factory_reset}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/factory-reset.yml"; fi
-     - if [ "${watchdog}" = "disable" ]; then base_yaml="${base_yaml}:kas/opt/disable-watchdog.yml"; fi
-     - if [ "${security_test}" = "enable" ]; then base_yaml="${base_yaml}:kas/opt/security_test.yml"; fi
-     - if [ "${swupdate_version}" = "2022.12" ]; then base_yaml="${base_yaml}:kas/opt/swupdate-2022.12.yaml"; fi
-@@ -269,6 +271,7 @@ build:qemu-amd64-swupdate:
-     use_rt: disable
-     targz: disable
-     deploy: disable
-+    factory_reset: enable
++config HAS_EFIVARS
++	bool
++
+ choice
+ 	prompt "Target board"
+ 	default TARGET_QEMU_AMD64
+@@ -42,11 +45,13 @@ config TARGET_QEMU_AMD64
+ 	bool "QEMU AMD64 (x86-64)"
+ 	select ARCH_AMD64
+ 	select HAS_SWUPDATE
++	select HAS_EFIVARS
  
- # bullseye images
- build:iwg20m-bullseye:
+ config TARGET_X86_UEFI
+ 	bool "Generic x86 machine booting via UEFI"
+ 	select ARCH_AMD64
+ 	select HAS_SWUPDATE
++	select HAS_EFIVARS
+ 
+ config TARGET_QEMU_ARM64
+ 	bool "QEMU ARM64 (aarch64)"
+@@ -281,6 +286,13 @@ config SEPARATE_HOME_PARTITION
+ 	  This adds a separate home partition to the build image instead of moving
+ 	  home to the var partition.
+ 
++config FACTORY_RESET
++	bool "Enable factory reset"
++	depends on IMAGE_SWUPDATE && (HAS_EFIVARS || !(IMAGE_FULL_ENCRYPTION || IMAGE_DATA_ENCRYPTION))
++	help
++	  This adds the necessary packages to request and execute a factory
++	  reset of the persistent partition. See also ./doc/README.factory-reset.md.
++
+ config KAS_INCLUDE_DATA_ENCRYPTION
+ 	string
+ 	default "kas/opt/encrypt-data.yml" if IMAGE_DATA_ENCRYPTION
+@@ -293,6 +305,10 @@ config KAS_INCLUDE_SEPARATE_HOME_PARTITION
+ 	string
+ 	default "kas/opt/separate-home-partition.yml" if SEPARATE_HOME_PARTITION
+ 
++config KAS_INCLUDE_FACTORY_RESET
++	string
++	default "kas/opt/factory-reset.yml" if FACTORY_RESET
++
+ config WDOG_TIMEOUT
+ 	int "EFI Boot Guard watchdog timeout in seconds"
+ 	default 60
+diff --git a/kas/opt/factory-reset.yml b/kas/opt/factory-reset.yml
+new file mode 100644
+index 0000000..1ea11db
+--- /dev/null
++++ b/kas/opt/factory-reset.yml
+@@ -0,0 +1,17 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2025
++#
++# Authors:
++#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++#
++
++header:
++  version: 14
++
++local_conf_header:
++  factory-reset: |
++    OVERRIDES .= ":factory-reset"
+diff --git a/recipes-core/images/cip-core-image.bb b/recipes-core/images/cip-core-image.bb
+index 4a9cea9..52dd180 100644
+--- a/recipes-core/images/cip-core-image.bb
++++ b/recipes-core/images/cip-core-image.bb
+@@ -15,5 +15,7 @@ DESCRIPTION = "CIP Core image"
+ 
+ IMAGE_INSTALL += "customizations"
+ 
++IMAGE_INSTALL:append:factory-reset = "factory-reset-helper"
++
+ CIP_IMAGE_OPTIONS ?= ""
+ require ${CIP_IMAGE_OPTIONS}
+diff --git a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
+index 0e4cf74..4fe7ee1 100644
+--- a/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
++++ b/recipes-initramfs/cip-core-initramfs/cip-core-initramfs.bb
+@@ -1,7 +1,7 @@
+ #
+ # CIP Core, generic profile
+ #
+-# Copyright (c) Siemens AG, 2021 - 2023
++# Copyright (c) Siemens AG, 2021 - 2025
+ #
+ # Authors:
+ #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+@@ -16,3 +16,4 @@ INITRAMFS_INSTALL += " \
+     "
+ 
+ INITRAMFS_INSTALL:append:encrypt-partitions = " initramfs-crypt-hook"
++INITRAMFS_INSTALL:append:factory-reset = " initramfs-factory-reset-hook"
 -- 
 2.51.0
 
