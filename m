@@ -2,33 +2,33 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2A4ECAC5B8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B24C3CAC5BB
 	for <webhook@archiver.kernel.org>; Thu, 25 Sep 2025 06:00:36 +0000 (UTC)
-Received: from mta-65-228.siemens.flowmailer.net (mta-65-228.siemens.flowmailer.net [185.136.65.228])
- by mx.groups.io with SMTP id smtpd.web10.4680.1758780027546826074
+Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
+ by mx.groups.io with SMTP id smtpd.web11.4810.1758780027390729912
  for <cip-dev@lists.cip-project.org>;
  Wed, 24 Sep 2025 23:00:28 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=qe/372gy;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.228, mailfrom: fm-51332-2025092506002569f1dd3f1c00020777-n8aobn@rts-flowmailer.siemens.com)
-Received: by mta-65-228.siemens.flowmailer.net with ESMTPSA id 2025092506002569f1dd3f1c00020777
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=JdGDutTf;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-51332-20250925060025730a09057a00020720-f_cjey@rts-flowmailer.siemens.com)
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20250925060025730a09057a00020720
         for <cip-dev@lists.cip-project.org>;
         Thu, 25 Sep 2025 08:00:25 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=H6zfzy1SOnvn4QOSPNFeApOV1C6p5Zl1IG+VXAmP/rw=;
- b=qe/372gyCRya/sxPQJzLgsBBeMYLArGWk9Bi/56Qs5xr5OwjRWhIIqPhZP6l1DKg+xL0Vf
- DjpH72groksbMrJ6V2piPh6A/vwkrn+Q/dBvUVJuNq5VdiLhmFrHw/6praDdH5aI2VxRQuRw
- JUyX29Uc+5M4WJ3nXbwmStxr2ezK4DGD1UdX2bkxca42Akz+6KrFFrgJuBTAMXluLB7zAkjN
- vbzFzgyaic708JNpOexI9VdLTLpiy49keJ8uUdFqjoUSM65mBz99mpZotMS4r3dI5vKev1v4
- iTUXZPoOqwTx8niQYimH22u0bz0z+w/ru1CnR/KnJGt7F0C0NILSTmeA==;
+ bh=uZRbq3W1AHG32OIxnGqWeYzLQX7AchxTrsFO/WvPJXU=;
+ b=JdGDutTfWauXrOTGRt7zF1Pfm108XqWbb/Rrj5OWvOM5MtngRyULF0W8JwDPQCMheen5G7
+ pPclCxQ8VBeRgjrqFumcz48ibfF5IaRclwKy0zYynJveuTHnnG6zHMPuBMDLUzcP/SfhBZ9f
+ YPElEdTSnjYTY0kRuW4XRtAcGF1ql3vWzCd8/STx7svAxGzis3Cvr+BV3bVDQmcm2cqUKgha
+ Kee9L2NVF94JD87pcPUs43T/S5w4F3NyccCaRxrFBAsmiqFcC+zU/hwHhhJY3idkI2293Gbw
+ +wBebFI1j+yRrCVhtTl0uOvuhWmKDkkjf8oMnlHVoihZgmkSNs8a5mhg==;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: jan.kiszka@siemens.com,
 	cip-dev@lists.cip-project.org
-Subject: [cip-dev][isar-cip-core][PATCH v8 5/8] Add settings for factory-reset with a separate home partition
-Date: Thu, 25 Sep 2025 07:59:17 +0200
-Message-ID: <20250925060009.1711605-6-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v8 6/8] Add README for factory-reset
+Date: Thu, 25 Sep 2025 07:59:18 +0200
+Message-ID: <20250925060009.1711605-7-Quirin.Gylstorff@siemens.com>
 In-Reply-To: <20250925060009.1711605-1-Quirin.Gylstorff@siemens.com>
 References: <20250925060009.1711605-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
@@ -39,25 +39,70 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 25 Sep 2025 06:00:36 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20125
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20127
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- kas/opt/separate-home-partition.yml | 2 ++
- 1 file changed, 2 insertions(+)
+ README.md                   |  3 ++-
+ doc/README.factory-reset.md | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 31 insertions(+), 1 deletion(-)
+ create mode 100644 doc/README.factory-reset.md
 
-diff --git a/kas/opt/separate-home-partition.yml b/kas/opt/separate-home-partition.yml
-index 83f59a1..9fccd20 100644
---- a/kas/opt/separate-home-partition.yml
-+++ b/kas/opt/separate-home-partition.yml
-@@ -19,3 +19,5 @@ local_conf_header:
-     OVERRIDES .= ":separate-home-part"
-   add-home-partition-to-crypt: |
-     CRYPT_PARTITIONS:append:separate-home-part = " home:/home:reencrypt"
-+  add-home-partition-to-factory-reset: |
-+    INITRAMFS_FACTORY_RESET_DEVICES:append:separate-home-part = " /dev/disk/by-partlabel/home"
+diff --git a/README.md b/README.md
+index fa1c437..435d037 100644
+--- a/README.md
++++ b/README.md
+@@ -54,11 +54,12 @@ or via bmap-tools
+ 
+ ## Documentation
+ 
+-The following topics are in a separate READMEs:
++The following topics are in separate READMEs:
+  - [Secureboot](./doc/README.secureboot.md)
+  - [Update process with SWUpdate](./doc/README.swupdate.md)
+  - [Update and Secure boot signing](./doc/README.signing.md)
+  - [Encryption with TPM2](./doc/README.tpm2.encryption.md)
++ - [Factory-reset](./doc/README.factory-reset.md)
+  - [Release policy](./doc/README_version-release-policy.md)
+ 
+ ## Community Resources
+diff --git a/doc/README.factory-reset.md b/doc/README.factory-reset.md
+new file mode 100644
+index 0000000..729912b
+--- /dev/null
++++ b/doc/README.factory-reset.md
+@@ -0,0 +1,29 @@
++# Enable Factory-reset
++
++To enable the factory-reset functionality the following two elements need to be installed:
++ - initramfs-factory-reset-hook which executes the factory-reset
++  ```
++  INITRAMFS_INSTALL += "initramfs-factory-reset-hook"
++  ```
++- factory-reset-helper which provides the helper scripts to set the factory-reset marker
++  ```
++  IMAGE_INSTALL += "factory-reset-helper"
++  ```
++
++## Technical details
++
++The by executing `set-factory-reset.sh --create` a marker is stored as a EFI variable or on disk (default `/dev/disk/by-partlabel/efi`).
++The marker on disk is intended for devices which do not provide the facilities to set EFI variables.
++The initramfs reads this marker and formats the hard-drives provided by the variable `INITRAMFS_FACTORY_RESET_DEVICES`.
++The initramfs-hook will try to detect the previous used file system and will format the partition with the detected type.
++
++### Disk encryption
++[clevis](https://github.com/latchset/clevis/blob/2ad7027b7182b8f46404f8ec0735a83738f7ca7f/src/pins/tpm2/clevis-encrypt-tpm2#L192C8-L192C26)
++and [systemd](https://github.com/systemd/systemd/blob/114ad16c4dcac136fb7646866f8a95ee5631ee51/src/shared/tpm2-util.c#L5281)
++use the primary key of TPM. To ensure that the key is not reused the factory-reset deletes the primary key from the TPM
++before formatting the selected hard drives with a new LUKS container.
++
++The removal of the TPM keys can be deactivated by setting the variable `INITRAMFS_FACTORY_RESET_CLEAR_TPM` to `0`.
++As the factory-reset is executed before the disks are unlocked in the initramfs, the file system type must be provided with the
++variable `INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE`. The factory-reset of encrypted partition is not supported with the file based
++marker.
 -- 
 2.51.0
 
