@@ -1,294 +1,863 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C6FCCD18E
-	for <webhook@archiver.kernel.org>; Wed, 15 Oct 2025 10:16:42 +0000 (UTC)
-Received: from OSPPR02CU001.outbound.protection.outlook.com (OSPPR02CU001.outbound.protection.outlook.com [40.107.159.14])
- by mx.groups.io with SMTP id smtpd.web10.12530.1760523394868920579
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 816FACCD193
+	for <webhook@archiver.kernel.org>; Wed, 15 Oct 2025 22:46:11 +0000 (UTC)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+ by mx.groups.io with SMTP id smtpd.web10.346.1760568361542159597
  for <cip-dev@lists.cip-project.org>;
- Wed, 15 Oct 2025 03:16:35 -0700
+ Wed, 15 Oct 2025 15:46:02 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=r1oGn9Wi;
- spf=pass (domain: siemens.com, ip: 40.107.159.14, mailfrom: quirin.gylstorff@siemens.com)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lqOZWcY/LDrX/rE3S/5FSwrxwZZ0VVMKNrDwuDk5q5fGWbSvHDTMeSxddGd/7DpCBnmwFgjfLvERD6Apdi/rc8kBMnNd87Yc0hrtBXWs7EikWSe21U2YeoZxF0EkDdn2JTir7a3iZzik6Wiih5fmVmQMldDirNFw8NxtTg8dxWDWxSZW+d4D6La5XC5LvyxhyZGVsiMaNQdiIQ2c4VgRUtMnDUHXH8fqZJMPw1RZDW935fMETW0oU1N9nrKnCPpqg5NVz/1Xz0ZU0ILzJU5jeLS5txnuXXGjVzBL2a2DSn2qNzTzO7OV4t6R3rfenVVknG1eM7hXE5XdMNEOu4X+3A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bhLYpNszv2oiDArjrsrBgW6nGFKTipEl2x7JllJ5yKs=;
- b=B3U+RemcED6QQj0Ne5HJKLJZYwM9tsHXQrXK2cjmqAGxvxFxHrEXlEiPqTCb33L68HHCrrgAAWQsRhFXjnsFHOaL/e8+sl3SURTMpfBD+3aPEK1jl6AAB5K4T/nIhrpogs+993UCSEY6I2YAszC63JK3nOAXW//0ma0CtNZw3rK+QL1/8zAX/rcb9OA+htiNpPLDtnORCj+KOgLRmuHHIvIiws4MdvuaOoFz3+bqM289JjdGDyrYWBfaQgDLtrzrnFPWffLVQUKF8XxhTXzz/WgGShfK/iy1DqegOggziJVjJn0vcI1QDoBafyA6vcH+l3gFE1KkQrAsa5/R3LILUQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bhLYpNszv2oiDArjrsrBgW6nGFKTipEl2x7JllJ5yKs=;
- b=r1oGn9WiwlOqFVN6FNfaIpBrZCtQxjk6S8mnIWvyLZx8gPqdf6gIZPoYJYTMwPnVbE0lRaJSsnjWLTbpKtgrBciFE5J67+7DrQKIjmqpBVi5a39YxdpPsbbEWFDIF4Rwk4LnDV3T8TB8RbKlSWzheqJ1n4Z8dk6LvQQTKlecX584cRT+s1kqpkN3c+sL0J1ebaqUiqq70lQzg4ESzuDi1tUU74V6a97yCGi/WQBmgaMab0TOjJqsh8hYwTLtsTTkAox52c2HhjXsZlmyeESaA0E436obSl/ukjUJb+5gEhGGB4o2iGRjGrZgZOBT3cAQaGxv4xvN7VBbtPtHJ67PWQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS8PR10MB6023.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:525::6)
- by DU2PR10MB7648.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:490::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Wed, 15 Oct
- 2025 10:16:29 +0000
-Received: from AS8PR10MB6023.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::4bc5:6908:1189:7a]) by AS8PR10MB6023.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::4bc5:6908:1189:7a%7]) with mapi id 15.20.9228.009; Wed, 15 Oct 2025
- 10:16:29 +0000
-Message-ID: <160719b2-7915-48e3-9e63-eb08fa9d5c6b@siemens.com>
-Date: Wed, 15 Oct 2025 12:16:28 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev] isar-cip-core: on-device tests failing
-To: Jan Kiszka <jan.kiszka@siemens.com>, Adithya.Balakumar@toshiba-tsip.com,
- Shivanand.Kunijadar@toshiba-tsip.com, cip-dev@lists.cip-project.org,
- Chris.Paterson2@renesas.com, dinesh.kumar@toshiba-tsip.com,
- nobuhiro.iwamatsu.x90@mail.toshiba
-References: <53fe043c-eba5-4d8b-826e-5846efce7d57@siemens.com>
- <TY3PR01MB11075F7F38A4345A60D5FF028C71FA@TY3PR01MB11075.jpnprd01.prod.outlook.com>
- <3643259b-7e4d-4e38-9d53-b0e2227f9931@siemens.com>
- <TY3PR01MB11075A9F4E791BBC04C5EE28DC71FA@TY3PR01MB11075.jpnprd01.prod.outlook.com>
- <c8e57ef0-6f4f-481a-9e36-214f44fffb5f@siemens.com>
- <d196dbf9-7c3f-421b-a80c-2d39cfb6e27c@siemens.com>
- <TY3PR01MB110754E7268909F7468881081C71BA@TY3PR01MB11075.jpnprd01.prod.outlook.com>
- <638abd24-8fc6-4fee-9bf4-679b51c936a3@siemens.com>
- <dcc32fbe-2b53-40de-aca3-0bb0e9bdf481@siemens.com>
- <232ddcae-a297-4e7d-9898-f34edd3671f1@siemens.com>
- <TYWPR01MB110639A5228DE9FB8CAC93E4EC7EBA@TYWPR01MB11063.jpnprd01.prod.outlook.com>
- <0f2a5909-4746-452a-8f39-187eaa9e3cd1@siemens.com>
- <6fc52da1-ce17-412a-85b0-8e36187ed56e@siemens.com>
- <8bf58a7b-cea2-480f-bec6-bcba41d450dd@siemens.com>
- <TYCPR01MB96696580C7FDEB7E0CDC3782C4E8A@TYCPR01MB9669.jpnprd01.prod.outlook.com>
- <ce936062-26d5-4bee-8eb4-e2eadd1a37d0@siemens.com>
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
-Content-Language: en-US
-Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
- 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
- Z2NBPBZUysw=
-In-Reply-To: <ce936062-26d5-4bee-8eb4-e2eadd1a37d0@siemens.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0285.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e6::19) To AS8PR10MB6023.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:525::6)
+ dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=C/OzvhP3;
+ spf=pass (domain: miraclelinux.com, ip: 209.85.128.181, mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-781421f5be8so1038067b3.1
+        for <cip-dev@lists.cip-project.org>; Wed, 15 Oct 2025 15:46:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1760568360; x=1761173160; darn=lists.cip-project.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=E7Lp/lI3fGxw4pioEjKVakbOMbvPDdZh2oMyrkOFfjM=;
+        b=C/OzvhP3U/DTKZPfF3hfPuE05axmTf4Iw6h5tPpa26U0tJasNA/ZKc+11pQ6RYoEf8
+         INQ12I2sebruqNuOdbu3Coi6l3yEsd/yeJzo/6BpVYP/VgI+mlRJwGUMGLhFUnRg4Bqq
+         NJbq0npSuMs8SaVpTMDvf+kUqIjuLqa9uTOoduOilsbg9idVOUFZXHea5IBIMCYz1sDL
+         zD80aQ4AFpDhfS8wKHY936OC4HoxvTkJ5koLrW00z8/6onxF8EGiOPVBL5feEtHqOfPt
+         TdHMtLL4cvkJpPN4K/viwE238+woV/fJAyhIdmKIFLOBSQ3Q8zSlwh8yNzI6vx1gPJFn
+         6a1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760568360; x=1761173160;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=E7Lp/lI3fGxw4pioEjKVakbOMbvPDdZh2oMyrkOFfjM=;
+        b=B/LzXQY5d4LuF4eoqssSr8QhxFiqSj0Eio6SArXvZxKymoUVg84mHLN+eovWbDmfxK
+         4Piq6sNginh/SmI1D8yHZ+5YiiQJXGkBwqNESU7Sgiu6A8FDz3TtnEKvXLOv9uDGlVjw
+         ua7bdEqg1cFVYsSYTFdU7IjFXPcZND3Z0zw53CSSgH+YfTnFijxQFGRa4BEwokAqMPsP
+         fDHsGFGSBl3zhnzHzu/7OBxVrtxib1N5KUn+EyOxWHQ079BXgz0J0O3xnPhGodi3KJxQ
+         Vlj5Zzv7iyvO1m1tY9VO41m/zzhAQYRcUnJxe8pDc3CHQfm6rhPynTkICjL6pS8BnMRV
+         deuw==
+X-Gm-Message-State: AOJu0Yy58bNIVJ58M59QwxmoFXddoqnumBHSFfYlR6ncpDLl65y0Yp5l
+	QF4bgy/pOE25M73qvKbuIrb5yPccrCO9Te97Kgtzo9o8vMDUROXNUHlg9yxwVnSbWGI0adhQe9U
+	aLFp4DzvvSvgVBOVNw0qii1AOha4QIAJqFputeRmRUdcLfaryyiY88Y4=
+X-Gm-Gg: ASbGncuvS/6LqYB+JHvtRp3Al0KTPxLfOM1hanvumLfqfSdsJkfsTpDtz7cAMpepfCT
+	Vw1kakV0n70xND7VomVMGhrZp0u+a07Qh54HreJYGsBiQ4UNvB+MytcJ3bnb3SOJ2C3QmgiVall
+	zJ593wuzxqDw3pOpIT1Hagor1gKqRSlihIiXcfoylhnx1N1gKU/hrIQJWGQ1m07KyUDktOOLo+J
+	SdhY1B3eGJMXVBvOVVryfmoWM3xvRjXm0lzLdDAqfpjifmObMYkLj0iyG0xCA==
+X-Google-Smtp-Source: AGHT+IHMoZVogfbmqJWPSY2luTNyQ20IpnyEnmjkJHhWka3zAkfJGulZZqmLbxB0p69Y2nvYPS7yiWIj9rkQGSWRPXA=
+X-Received: by 2002:a05:690e:1699:b0:63e:d1f:d683 with SMTP id
+ 956f58d0204a3-63e0d1fd881mr217720d50.45.1760568359638; Wed, 15 Oct 2025
+ 15:45:59 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR10MB6023:EE_|DU2PR10MB7648:EE_
-X-MS-Office365-Filtering-Correlation-Id: d33ea955-8c24-4c1f-0822-08de0bd3e820
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?RHE2QXFrT21BRTN2eENnbmdROGlGLzRJUVhiWm5WVWc3blNRaEJjMm1NWTJY?=
- =?utf-8?B?UE9Jd2xzNGJWbk9VU0NIa1BvcDRYa0FpZFN3WEcvWTdzbFN0V2FIVndRSWIr?=
- =?utf-8?B?QTdCV2tlREU5dHZ1MUpXSm9jOFhZOGMvMGV1TWEzWmlENXJRYkUvRGhscU1a?=
- =?utf-8?B?T1o3Vjd4aVY3akp4TEVyaXlUSlNpd0FlaStWV0VkOWtPeGFJNERlRGFBN3o1?=
- =?utf-8?B?WkgzZ0xjaDBGRmRaZEZsOTdicFFkUmRaWDN5cTgwZWNMV0lwUm9TeFVkS2xq?=
- =?utf-8?B?YVFPS2drWlVQUktIVVdDZHNaRy84bHZhK0lSNnpvNDJMS3dxYkZndjk2QXlB?=
- =?utf-8?B?amVqSUFON3k2cVc4RjlVRUhydGZMQjFMRkxMbDNjbEJUZWVQdXVhellacXVG?=
- =?utf-8?B?QW5oMGxySkg0Q2J4dUx5TStsRVB2MlhzSGh1NnlqeHkxU2txY0JkcTZCNDJv?=
- =?utf-8?B?QjJyQVNkdnNqWXdjSy9Wa2NsbG1SZ3MxZHp2TDFlUGMxUk16WHh3SVNEZTNo?=
- =?utf-8?B?QmxMVHJyK3pnR1B1dktTUlFaaEFCSXB2TXhPMFEzNFRPbWFKR1MzWVZLRDF0?=
- =?utf-8?B?ZUFhZkwwWEdKS2JJOFdHT1ZGTUg4SFJoR1ZyTGZFVEhUQ05kVFZXbTlYdXZ6?=
- =?utf-8?B?cWdnS0wvbGVNdkJmVklxOVd5cW96SjdHb2NxbjZTWE80WjNIdW8venErc2Jx?=
- =?utf-8?B?ZmhUelZROUY5dVZ6WCtXSWhGa1pvTWNTWDFLbHhsRlJ1dmN4L1Nxa1hBMkJj?=
- =?utf-8?B?UHlzV09CaFErMm9uNDlrOExzd0p1ZGhXZjZsaWZJcENOYkxCTURteEIvSmFN?=
- =?utf-8?B?QzdDZWNCV0tpTW8xVmFZenRoQmlESk5xM3JNU2dxMjZzREpjYzNXZVpqNUEv?=
- =?utf-8?B?NXlybGpXcFBqZjE5ZnJXWGhaOUYyQmZIcmdVTVlnQytaUFAzOUpTekg5My9p?=
- =?utf-8?B?cWJ0b2dQZjZFUThwaEwxUkFpK25qYmw5WmVERU9UdlMvZnNTR3VMbUw0WnZy?=
- =?utf-8?B?Sm04MndJdkxXZWZoUmpaMVF4REdHVlkxYWlUTlpXbmkySVBaK1ByUEdWYUxP?=
- =?utf-8?B?SjlaOUVxOGZqNTNqWk82Y3A0WURTYUNwTy8wWEdYVW5nQkFIL1NhME9pdys0?=
- =?utf-8?B?cTFhTzM2NXZtTlF5Q1FIY25pbDg1N3VVS2ljWkxpSDlreUF1cWhqT1N2YVA5?=
- =?utf-8?B?dE04UVVhR29KMXRyZHJ6RlRCVFZhVlZ6RHpheG03aVZ6YmdZQmZIaTNFR0Jn?=
- =?utf-8?B?VGpzdFovbVZwSjZFb0hSODBXcEhURzE4NFIwbE9LKzl3TVBJQTN3R0tSRm91?=
- =?utf-8?B?Tk9pQkRUQkVhTjY3TWx3enhzdXdDMk54Z21SbFdGY0pOaGlwNjg2SGZobHNE?=
- =?utf-8?B?aUhtaklmYTBLT0kxZmRURmhTNUdySDVET25QUVp1NXpKZkg5S3I5MDFteklS?=
- =?utf-8?B?QmFEWkxMUTVER1RndHh5b0xkSFdBMHhrb3F1M3ZFdXN3ajBZTmZBSUlCSW1O?=
- =?utf-8?B?U1ZwKzU5R3JxdFZ4SEZ4aXpxT2p1WWViU3d3Y3J5d3Vqczc1QXFNZTNLZmRm?=
- =?utf-8?B?aXQwMzdJOGh3aTRZZWU0SUFoQzc5SG1HUDRsRzhQSWtuZEJYZUcvQkI3MW1G?=
- =?utf-8?B?VzVWQmdQd0dpUDJDejd0cWpLYzNZZElrdm1ISFB6V3MvOGNLSDVTWXByV3Ny?=
- =?utf-8?B?VGI3L093Nmp0RVNQR29LWnN2K2s4eDZhQkQ3S21lSmNhSGRVMFBDQ1JUaFd2?=
- =?utf-8?B?cHZlNXduUDNFVTZRVCtrczB6M0ZOcTB0anIvcis2S1dpRFBPajZpZ212WWxI?=
- =?utf-8?B?K3ZLMDBzVE15OWVDTDYvRFpqUDdaTjNVeHZCMkRnZGlxQStUUzhaaEFpWTI2?=
- =?utf-8?B?TnhSL2hpbUU5ZlpRZWx3YzFIMWVaYlVIK1ZRa2pmeFpDa0E9PQ==?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR10MB6023.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?TkxKbjUwMUF2R2g3akxnUnVIYkt5NkFScTV0RnVwa09qTTl3bzhwQzZhSnRS?=
- =?utf-8?B?UE9LN3c2dFczQ1lMQzVFOTJFM2c3bytRSkVlaEl2YkRoUkU3MEl0a3VlbTcr?=
- =?utf-8?B?SWFINHFrSnVFT1o0Zmx6MFNZVXF4d2xPNDBZOElSU056STR3UmNQVFNWcW42?=
- =?utf-8?B?MTc1Qkp6MmhLdFpUcVlNVkJ2R2dYT1pMbFlIT0phdnovbmtDQlFYalM5VUN5?=
- =?utf-8?B?SlE3YUlZbXVlZlJPdWJqR21aejhWTklqOUVVbC8wZzJPd1Z4S1dHV29BSTZh?=
- =?utf-8?B?eS8rTmh5MDdFMTJGRmdqNDNBMkVVN095dysyV1dxTXdrWG5OKzZsMzNLWnpw?=
- =?utf-8?B?RW1DaTJMYmZwN0dUVjh6YVU4QXh3SHlhUUE4RXlmcDdibVdKMnROZENLZ2l6?=
- =?utf-8?B?TnlIRHU2NWNDSndMazdnSEZlcFJSaEFtdTI1TGh3bkkzODQyZTQyaW1UY0ZL?=
- =?utf-8?B?YW9OSnVVTVhpWWsxQnZHZDNXZlhDV0U5OWxMWm9ndW5ick5nR3dkVDRoejI5?=
- =?utf-8?B?MkFYWGVaa1dNd25rZVNSZWYxM2lvM2ZPNXJTbkdzVjN4S2hWVkdqZlBBSmNw?=
- =?utf-8?B?R0RqVFVwNnljRzRyUjRwTXRKWVhQaU9jVU1mYVFtQ01seS9BdnQ5VEhTL1J0?=
- =?utf-8?B?bVd4VHB3L3g4UVp1MWl5M3dxTWJOcFRLblNCd0JlZDVHbytNTHB3bWJxaGlH?=
- =?utf-8?B?bS9lNEE5NmFjWDQ3eE5iTXBnTkw2K2NYVkxnMUlSd25BNm9qdTVyOFhuVGwx?=
- =?utf-8?B?cGNRNEg4UXUrbUtNeUVOR3FvQlYvcysyV1pHWENoWGN2RXlGcUdHVkFQb2dk?=
- =?utf-8?B?d3owcElzWVlFMXp2TnR2enNOK0wwR3phU2FkV2Y3UitNNDRUSTZFLzE4TnZ5?=
- =?utf-8?B?WEFEaTJUcVQwZkFGTzVoVnhuWjE5QWY1RTl6MGlQRkhvSzBRZXNMQUNBME03?=
- =?utf-8?B?TEtmZUY4VzZQMjBNNHpDNkN2eitmM0V0RG1oQStyV3Q4dWl5SGlHSmw3NWQy?=
- =?utf-8?B?blpkNkpzZDZ6dndpME41UmhWR1R6U1QrNGh6TTNRN0NFT1BnNS9CdXhab1F3?=
- =?utf-8?B?Q3F1TUw2UFJYNzgxdUJaSkI4eklxU0pSTWZabEZVZGRMTUdsOUlzRCs4RjVx?=
- =?utf-8?B?ZWJmVXptTmdUQzQybjZKL21neGlZN0lUa1dHNjlRUXRFblUzZ2xHb09BMEJU?=
- =?utf-8?B?MWlmcDZMa3lNeEVNRHpNZGNRWGE0R0hpWTRrZGt1Ung1dHFkbGJEM09pU09i?=
- =?utf-8?B?dlRSRXRIWUgrcC90L3VNQ2k2MUpjMEFVTUZySzdzWEUvUGxnN3R1Y3Y4WURt?=
- =?utf-8?B?NTRaVEhiQ1FEb21BTUZpNm5FSEVscHhHdUd0NFNWb2N3ZDEzaVFrSWFFWmtB?=
- =?utf-8?B?b2FSRzdIa2RCdGgrTWNEemt0OWNTRjFpOXYzUkpGaHNERmZDU01sanlINXhF?=
- =?utf-8?B?YkM2YnByNWJQa2RNdmE2NUpQckQrWlVycGpPWnBLazMyRmN0WmdyeUR4Qi9B?=
- =?utf-8?B?N0plWFpGS2lOazFrVU5wYkdWc3JxN2xIRU9QNHhyM3BLMXRHRFc0RllzYlIz?=
- =?utf-8?B?eTY0ZVE1Z2JKd2tvcVJTSVdvNlYxR0c0aWVvc1RLVVVlNFVObHVKWjEvYWd0?=
- =?utf-8?B?YzFLOEg1OTBXdDVQVnR4bWhEZE5HMW44Zm5DT1FhazV3VlZuOGpFc2JrSlBJ?=
- =?utf-8?B?NE5ON1NzbW5BL3NER0piWkhmK09ScEkwUGtuYkZjQURXejhEKy9XOXJPYlVs?=
- =?utf-8?B?a1JlMlg1cEVTNFZaUTRzRXpaRHV5YUxLRjFmT3VYWHl4Z2NSMWNsUjB2dkFP?=
- =?utf-8?B?MGF5QkZwWXUvREUrbWZrZFF6cDBwd2JJek1HcUxMK2ZNTVJDQnJaZ29xQnhB?=
- =?utf-8?B?Z20vb29QN2NNNzM2a3MxTDVlVXUyalljbXNXSVh5NnBUZkV4SHpwczBkT3Ux?=
- =?utf-8?B?VVc4bDA4VzNjUUpVTS92a1QrUnpEdjBxVEsyZVpUdTRnWURnK005dE8wMzdk?=
- =?utf-8?B?WGZaRExNVDY2OXBKdUdqWHlwWlJNZlIxaTZ3WEJXNTFFbkxjb3hmYWRucXlN?=
- =?utf-8?B?c3FoZ2tTdCtDcFNSQ2xabnFOcDZEc0xNYUtTUk5PZmR4NW5aMUxvYVpVeHpK?=
- =?utf-8?B?UUJJV0VNSHFBM09LMUdxVGE4eE9RZXFQMlp4UUxrZmhWelc1NTZ0YmRteDZH?=
- =?utf-8?B?RUE9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d33ea955-8c24-4c1f-0822-08de0bd3e820
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR10MB6023.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 10:16:29.5334
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 98CL0NwaBNjcEq5z7PkuOiWhaetxaw4HU1NEw/KJcRzqywv+fpwslhMbXYkLMKx2MWRJIyVFS8Yi4TSFh8E2Tmwm8ScRl17OcxdewtVs0/k=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR10MB7648
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 16 Oct 2025 07:45:23 +0900
+X-Gm-Features: AS18NWDSb0xEzIwswRYxSlS3Brc7mc4DIfPVg8_GUaEKuiS1lCr3jyfiF0xTGck
+Message-ID: <CAODzB9qcm0ye-waPrBxq-AtVJGBRQSxTXViWMMpcOKMrqTiW3A@mail.gmail.com>
+Subject: [kernel-cve-report] New CVE entries this week
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 15 Oct 2025 10:16:42 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20179
+ <cip-dev@lists.cip-project.org>; Wed, 15 Oct 2025 22:46:11 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20180
 
-Hi,
+Hi!
 
-On 10/15/25 12:08, Jan Kiszka wrote:
-> On 15.10.25 10:53, Adithya.Balakumar@toshiba-tsip.com wrote:
->> Hi Jan,
->>
->> Sorry to jump in here.
->>
->>> We may have a kernel configuration issue here - or a real CIP kernel
->>> regression. Going back a month to a passing test, we got this back then:
->>
+It's this week's CVE report.
 
-these are the modules the debian kernel has loaded initially:
-crc64                  20480  1 crc64_rocksoft
-crc_t10dif             20480  1 t10_pi
-crct10dif_generic      16384  0
-mmc_block              57344  0
-ahci                   49152  0
-libahci                49152  1 ahci
-sdhci_pci              81920  0
-xhci_pci               24576  0
-crct10dif_pclmul       16384  1
-crct10dif_common       16384  3 
-crct10dif_generic,crc_t10dif,crct10dif_pclmul
-cqhci                  32768  1 sdhci_pci
-i2c_kempld             16384  0
-xhci_hcd              315392  1 xhci_pci
-gpio_kempld            16384  0
-libata                401408  2 libahci,ahci
-crc32_pclmul           16384  0
-igb                   270336  0
-sdhci                  81920  1 sdhci_pci
-usbcore               348160  4 xhci_hcd,usb_storage,xhci_pci,uas
-i2c_i801               36864  0
-kempld_core            16384  2 gpio_kempld,i2c_kempld
-i2c_algo_bit           16384  1 igb
-scsi_mod              286720  5 sd_mod,usb_storage,uas,libata,sg
-crc32c_intel           24576  5
-lpc_ich                28672  0
-mmc_core              217088  4 sdhci,cqhci,mmc_block,sdhci_pci
-i2c_smbus              20480  1 i2c_i801
-usb_common             16384  2 xhci_hcd,usbcore
-dca                    16384  1 igb
-video                  65536  0
-scsi_common            16384  5 scsi_mod,usb_storage,uas,libata,sg
-fan                    20480  0
-wmi                    36864  1 video
-i2c_scmi               20480  0
+This week reported 47 new CVEs and 2 updated CVEs.
 
-See also https://lava.ciplatform.org/scheduler/job/1316606#L1301.
+* New CVEs
+CVE-2025-39954: clk: sunxi-ng: mp: Fix dual-divider clock rate readback
 
-Quirin
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39954
+
+Introduced by commit 4571780 ("clk: sunxi-ng: mp: introduce
+dual-divider clock") in v6.15-rc1.
+Fixed in v6.17-rc7.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [25fbbaf515acd13399589bd5ee6de5f35740cef2]
+
+CVE-2025-39955: tcp: Clear tcp_sk(sk)->fastopen_rsk in tcp_disconnect().
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39955
+
+Introduced by commit 8336886 ("tcp: TCP Fast Open Server - support TFO
+listeners") in v3.7-rc1.
+Fixed in v6.17-rc7.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [45c8a6cc2bcd780e634a6ba8e46bffbdf1fc5c01]
+stable/5.10: [a4378dedd6e07e62f2fccb17d78c9665718763d0]
+stable/5.15: [33a4fdf0b4a25f8ce65380c3b0136b407ca57609]
+stable/5.4: [7ec092a91ff351dcde89c23e795b73a328274db6]
+stable/6.1: [17d699727577814198d744d6afe54735c6b54c99]
+stable/6.12: [fa4749c065644af4db496b338452a69a3e5147d9]
+stable/6.6: [dfd06131107e7b699ef1e2a24ed2f7d17c917753]
+
+CVE-2025-39956: igc: don't fail igc_probe() on LED setup error
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39956
+
+Introduced by commit ea57870 ("igc: Add support for LEDs on
+i225/i226") in v6.9-rc1.
+Fixed in v6.17-rc7.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [528eb4e19ec0df30d0c9ae4074ce945667dde919]
+stable/6.12: [bec504867acc7315de9cd96ef9161fa52a25abe8]
+
+CVE-2025-39957: wifi: mac80211: increase scan_ies_len for S1G
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39957
+
+Introduced commit is not determined.Fixed in v6.17-rc5.
 
 
->>> "The time taken to execute TC_CR1.9_1 is 28 seconds" [3]
->>
->>> [3] https://gitlab.com/cip-project/cip-core/isar-cip-core/-/
->> jobs/11344068159#L1724 <https://gitlab.com/cip-project/cip-core/isar-
->> cip-core/-/jobs/11344068159#L1724>
->>
->> What you are referring to in [3] is a qemu-amd64-IEC job (not M-COM).
->> QEMU IEC test jobs have always been quicker and are even now.
->>
->>> "The time taken to execute TC_CR1.9_1 is 28 seconds" [3]
->>
->> As far as I recall, I don't remember the IEC tests run this quick on the
->> LAVA M-COM. Apologies if I am mistaken.
->>
-> 
-> Right, I looked at the wrong log:
-> 
-> "The time taken to execute TC_CR1.9_1 is 304 seconds"
-> (https://gitlab.com/cip-project/cip-core/isar-cip-core/-/jobs/11344068162)
-> 
-> Still a bit faster than it is now (448 s).
-> 
-> Jan
-> 
+Fixed status
+mainline: [7e2f3213e85eba00acb4cfe6d71647892d63c3a1]
+stable/6.1: [16c9244a62116fe148f6961753b68e7160799f97]
+stable/6.12: [32adb020b0c32939da1322dcc87fc0ae2bc935d1]
+stable/6.6: [93e063f15e17acb8cd6ac90c8f0802c2624e1a74]
 
+CVE-2025-39958: iommu/s390: Make attach succeed when the device was
+surprise removed
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39958
+
+Introduced commit is not determined.Fixed in v6.17-rc7.
+
+
+Fixed status
+mainline: [9ffaf5229055fcfbb3b3d6f1c7e58d63715c3f73]
+
+CVE-2025-39959: ASoC: amd: acp: Fix incorrect retrival of acp_chip_info
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39959
+
+Introduced by commit e393368 ("ASoC: amd: acp: Remove redundant
+acp_dev_data structure") in v6.15-rc1.
+Fixed in v6.17-rc7.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [d7871f400cad1da376f1d7724209a1c49226c456]
+
+CVE-2025-39960: gpiolib: acpi: initialize acpi_gpio_info struct
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39960
+
+Introduced by commit 7c010d4 ("gpiolib: acpi: Make sure we fill struct
+acpi_gpio_info") in v6.16-rc1.
+Fixed in v6.17-rc7.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [19c839a98c731169f06d32e7c9e00c78a0086ebe]
+
+CVE-2025-39961: iommu/amd/pgtbl: Fix possible race while increase page
+table level
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39961
+
+Introduced by commit 754265b ("iommu/amd: Fix race in
+increase_address_space()") in v5.3-rc8.
+Fixed in v6.17-rc7.
+
+Bug introduced commit was backported to following branches.
+cip/4.19 cip/4.19-rt cip/4.19-st
+
+Fixed status
+mainline: [1e56310b40fd2e7e0b9493da9ff488af145bdd0c]
+stable/6.12: [cd92c8ab336c3a633d46e6f35ebcd3509ae7db3b]
+stable/6.6: [075abf0b1a958acfbea2435003d228e738e90346]
+
+CVE-2025-39962: rxrpc: Fix untrusted unsigned subtract
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39962
+
+Introduced by commit 9d1d2b5 ("rxrpc: rxgk: Implement the yfs-rxgk
+security class (GSSAPI)") in v6.16-rc1.
+Fixed in v6.17-rc7.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [2429a197648178cd4dc930a9d87c13c547460564]
+
+CVE-2025-39963: io_uring: fix incorrect io_kiocb reference in io_link_skb
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39963
+
+Introduced by commit 6fe4220 ("io_uring/notif: implement notification
+stacking") in v6.10-rc1.
+Fixed in v6.17-rc7.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [2c139a47eff8de24e3350dadb4c9d5e3426db826]
+stable/6.12: [a89c34babc2e5834aa0905278f26f4dbe4b26b76]
+
+CVE-2023-53642: x86: fix clear_user_rep_good() exception handling annotation
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2023-53642
+
+Introduced commit is not determined.Fixed in v6.4-rc1.
+
+
+Fixed status
+mainline: [e046fe5a36a970bc14fbfbcb2074a48776f6b671]
+stable/6.1: [76ce32682635fe907e0f8e64e039e773e5c7508f]
+
+CVE-2025-39964: crypto: af_alg - Disallow concurrent writes in af_alg_sendmsg
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39964
+
+Introduced by commit 8ff5909 ("crypto: algif_skcipher - User-space
+interface for skcipher operations") in v2.6.38-rc1.
+Fixed in v6.17-rc7.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [1b34cbbf4f011a121ef7b2d7d6e6920a036d5285]
+stable/5.10: [0f28c4adbc4a97437874c9b669fd7958a8c6d6ce]
+stable/5.15: [e4c1ec11132ec466f7362a95f36a506ce4dc08c9]
+stable/6.1: [1f323a48e9b5ebfe6dc7d130fdf5c3c0e92a07c8]
+stable/6.12: [9aee87da5572b3a14075f501752e209801160d3d]
+stable/6.6: [7c4491b5644e3a3708f3dbd7591be0a570135b84]
+
+CVE-2025-39965: xfrm: xfrm_alloc_spi shouldn't use 0 as SPI
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39965
+
+Introduced by commit 94f3980 ("xfrm: Duplicate SPI Handling") in v6.17-rc1.
+Fixed in v6.17.
+
+Bug introduced commit was backported to following branches.
+cip/6.12 stable/6.12 stable/6.6
+
+Fixed status
+mainline: [cd8ae32e4e4652db55bce6b9c79267d8946765a9]
+stable/6.12: [9fcedabaae0096f712bbb4ccca6a8538af1cd1c8]
+stable/6.6: [0baf92d0b1590b903c1f4ead75e61715e50e8146]
+
+CVE-2025-39966: iommufd: Fix race during abort for file descriptors
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39966
+
+Introduced by commit 07838f7 ("iommufd: Add iommufd fault object") in v6.11-rc1.
+Fixed in v6.17.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [4e034bf045b12852a24d5d33f2451850818ba0c1]
+stable/6.12: [17195a7d754a5c6a31888702ca93f6f08f3383ad]
+
+CVE-2025-39967: fbcon: fix integer overflow in fbcon_do_set_font
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39967
+
+Introduced by commit 39b3cff ("fbcon: prevent user font height or
+width change from causing potential out-of-bounds access") in
+v5.9-rc3.
+Fixed in v6.17.
+
+Bug introduced commit was backported to following branches.
+cip/4.19 cip/4.19-rt cip/4.19-st cip/4.4 cip/4.4-rt cip/4.4-st stable/5.4
+
+Fixed status
+mainline: [1a194e6c8e1ee745e914b0b7f50fa86c89ed13fe]
+stable/5.10: [9c8ec14075c5317edd6b242f1be8167aa1e4e333]
+stable/5.15: [b8a6e85328aeb9881531dbe89bcd2637a06c3c95]
+stable/5.4: [994bdc2d23c79087fbf7dcd9544454e8ebcef877]
+stable/6.1: [a6eb9f423b3db000aaedf83367b8539f6b72dcfc]
+stable/6.12: [4a4bac869560f943edbe3c2b032062f6673b13d3]
+stable/6.6: [adac90bb1aaf45ca66f9db8ac100be16750ace78]
+
+CVE-2025-39968: i40e: add max boundary check for VF filters
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39968
+
+Introduced by commit e284fc2 ("i40e: Add and delete cloud filter") in v4.17-rc1.
+Fixed in v6.17.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [cb79fa7118c150c3c76a327894bb2eb878c02619]
+stable/5.10: [e490d8c5a54e0dd1ab22417d72c3a7319cf0f030]
+stable/5.15: [77a35be582dff4c80442ebcdce24d45eed8a6ce4]
+stable/5.4: [9176e18681cb0d34c5acc87bda224f5652af2ab8]
+stable/6.1: [02aae5fcdd34c3a55a243d80a1b328a35852a35c]
+stable/6.12: [d33e5d6631ac4fddda235a7815babc9d3f124299]
+stable/6.6: [edecce7abd7152b48e279b4fa0a883d1839bb577]
+
+CVE-2025-39969: i40e: fix validation of VF state in get resources
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39969
+
+Introduced by commit 61125b8 ("i40e: Fix failed opcode appearing if
+handling messages from VF") in v5.16-rc5.
+Fixed in v6.17.
+
+Bug introduced commit was backported to following branches.
+cip/5.10 cip/5.10-rt stable/5.10 stable/5.15 stable/5.4
+
+Fixed status
+mainline: [877b7e6ffc23766448236e8732254534c518ba42]
+stable/5.10: [f47876788a23de296c42ef9d505b5c1630f0b4b8]
+stable/5.15: [8e35c80f8570426fe0f0cc92b151ebd835975f22]
+stable/5.4: [185745d56ec958bf8aa773828213237dfcc32f5a]
+stable/6.1: [6c3981fd59ef11a75005ac9978f034da5a168b6a]
+stable/6.12: [6128bbc7adc25c87c2f64b5eb66a280b78ef7ab7]
+stable/6.6: [e748f1ee493f88e38b77363a60499f979d42c58a]
+
+CVE-2025-39970: i40e: fix input validation logic for action_meta
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39970
+
+Introduced by commit e284fc2 ("i40e: Add and delete cloud filter") in v4.17-rc1.
+Fixed in v6.17.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [9739d5830497812b0bdeaee356ddefbe60830b88]
+stable/5.10: [28465770ca3b694286ff9ed6dfd558413f57d98f]
+stable/5.15: [f8c8e11825b24661596fa8db2f0981ba17ed0817]
+stable/5.4: [a88c1b2746eccf00e2094b187945f0f1e990b400]
+stable/6.1: [461e0917eedcd159d87f3ea846754a1e07d7e78a]
+stable/6.12: [3118f41d8fa57b005f53ec3db2ba5eab1d7ba12b]
+stable/6.6: [3883e9702b6a4945e93b16c070f338a9f5b496f9]
+
+CVE-2025-39971: i40e: fix idx validation in config queues msg
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39971
+
+Introduced by commit c27eac4 ("i40e: Enable ADq and create queue
+channel/s on VF") in v4.17-rc1.
+Fixed in v6.17.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [f1ad24c5abe1eaef69158bac1405a74b3c365115]
+stable/5.10: [f5f91d164af22e7147130ef8bebbdb28d8ecc6e2]
+stable/5.15: [1fa0aadade34481c567cdf4a897c0d4e4d548bd1]
+stable/5.4: [a6ff2af78343eceb0f77ab1a2fe802183bc21648]
+stable/6.1: [8b9c7719b0987b1c6c5fc910599f3618a558dbde]
+stable/6.12: [bfcc1dff429d4b99ba03e40ddacc68ea4be2b32b]
+stable/6.6: [2cc26dac0518d2fa9b67ec813ee60e183480f98a]
+
+CVE-2025-39972: i40e: fix idx validation in i40e_validate_queue_map
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39972
+
+Introduced by commit c27eac4 ("i40e: Enable ADq and create queue
+channel/s on VF") in v4.17-rc1.
+Fixed in v6.17.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [aa68d3c3ac8d1dcec40d52ae27e39f6d32207009]
+stable/5.10: [6f15a7b34fae75e745bdc2ec05e06ddfd0dd2f3c]
+stable/5.15: [34dfac0c904829967d500c51f216916ce1452957]
+stable/5.4: [b6cb93a7ff208f324c7ec581d72995f80e115e0e]
+stable/6.1: [4d5e804a9e19b639b18fd13664dbad3c03c79e61]
+stable/6.12: [cc4191e8ef40d2249c1b9a8617d22ec8a976b574]
+stable/6.6: [50a1e2f50f6c22b93b94eb8d168a1be3c05bf5cd]
+
+CVE-2025-39973: i40e: add validation for ring_len param
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39973
+
+Introduced by commit 5c3c48a ("i40e: implement virtual device
+interface") in v3.12-rc1.
+Fixed in v6.17.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [55d225670def06b01af2e7a5e0446fbe946289e8]
+stable/5.10: [7d749e38dd2b7e8a80da2ca30c93e09de95bfcf9]
+stable/5.15: [45a7527cd7da4cdcf3b06b5c0cb1cae30b5a5985]
+stable/5.4: [0543d40d6513cdf1c7882811086e59a6455dfe97]
+stable/6.1: [d3b0d3f8d11fa957171fbb186e53998361a88d4e]
+stable/6.12: [05fe81fb9db20464fa532a3835dc8300d68a2f84]
+stable/6.6: [c0c83f4cd074b75cecef107bfc349be7d516c9c4]
+
+CVE-2025-39974: tracing/osnoise: Fix slab-out-of-bounds in
+_parse_integer_limit()
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39974
+
+Introduced by commit 17f8910 ("tracing/osnoise: Allow arbitrarily long
+CPU string") in v6.16-rc1.
+Fixed in v6.17.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [a2501032de0d1bc7971b2e43c03da534ac10ee9b]
+
+CVE-2025-39975: smb: client: fix wrong index reference in smb2_compound_op()
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39975
+
+Introduced by commit 3681c74 ("smb: client: handle lack of EA support
+in smb2_query_path_info()") # 6.14 in v6.14-rc1.
+Fixed in v6.17.
+
+Bug introduced commit was backported to following branches.
+cip/6.12 stable/6.12 stable/6.6
+
+Fixed status
+mainline: [fbe2dc6a9c7318f7263f5e4d50f6272b931c5756]
+stable/6.12: [bfb1e2aad1fecef8320fd71332acde0d53a8d699]
+stable/6.6: [ba7bcfd52c66dd1c2dfa5142aca7e4a70b62dfa5]
+
+CVE-2025-39976: futex: Use correct exit on failure from
+futex_hash_allocate_default()
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39976
+
+Introduced by commit 7c4f75a ("futex: Allow automatic allocation of
+process wide futex hash") in v6.16-rc1.
+Fixed in v6.17.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [4ec3c15462b9f44562f45723a92e2807746ba7d1]
+
+CVE-2025-39977: futex: Prevent use-after-free during requeue-PI
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39977
+
+Introduced by commit 07d91ef ("futex: Prevent requeue_pi() lock
+nesting issue on RT") in v5.15-rc1.
+Fixed in v6.17.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [b549113738e8c751b613118032a724b772aa83f2]
+stable/6.1: [cb5d19a61274b51b49601214a87af573b43d60fa]
+stable/6.12: [a170b9c0dde83312b8b58ccc91509c7c15711641]
+stable/6.6: [348736955ed6ca6e99ca24b93b1d3fbfe352c181]
+
+CVE-2025-39978: octeontx2-pf: Fix potential use after free in otx2_tc_add_flow()
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39978
+
+Introduced by commit 68fbff6 ("octeontx2-pf: Add police action for TC
+flower") in v5.14-rc1.
+Fixed in v6.17.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [d9c70e93ec5988ab07ad2a92d9f9d12867f02c56]
+stable/6.1: [5723120423a753a220b8b2954b273838b9d7e74a]
+stable/6.12: [c41b2941a024d4ec7c768e16ffb10a74b188fced]
+stable/6.6: [df2c071061ed52d2225d97b212d27ecedf456b8a]
+
+CVE-2025-39979: net/mlx5: fs, fix UAF in flow counter release
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39979
+
+Introduced by commit b581f42 ("net/mlx5: fs, manage flow counters HWS
+action sharing by refcount") in v6.14-rc1.
+Fixed in v6.17.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [6043819e707cefb1c9e59d6e431dcfa735c4f975]
+
+CVE-2025-39980: nexthop: Forbid FDB status change while nexthop is in a group
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39980
+
+Introduced by commit 38428d6 ("nexthop: support for fdb ecmp
+nexthops") in v5.8-rc1.
+Fixed in v6.17.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [390b3a300d7872cef9588f003b204398be69ce08]
+stable/5.10: [e1e87ac0daacd51f522ecd1645cd76b5809303ed]
+stable/5.15: [0e7bfe7a268ccbd7859730c529161cafbf44637c]
+stable/6.1: [ec428fff792b7bd15b248dafca2e654b666b1304]
+stable/6.12: [f0e49fd13afe9dea7a09a1c9537fd00cea22badb]
+stable/6.6: [24046d31f6f92220852d393d510b6062843e3fbd]
+
+CVE-2025-39981: Bluetooth: MGMT: Fix possible UAFs
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39981
+
+Introduced by commit cf75ad8 ("Bluetooth: hci_sync: Convert
+MGMT_SET_POWERED") in v5.17-rc1.
+Introduced by commit 2bd1b23 ("Bluetooth: hci_sync: Convert
+MGMT_OP_SET_DISCOVERABLE to use cmd_sync") in v5.17-rc1.
+Introduced by commit f056a65 ("Bluetooth: hci_sync: Convert
+MGMT_OP_SET_CONNECTABLE to use cmd_sync") in v5.17-rc1.
+Introduced by commit 3244845 ("Bluetooth: hci_sync: Convert
+MGMT_OP_SSP") in v5.17-rc1.
+Introduced by commit d81a494 ("Bluetooth: hci_sync: Convert
+MGMT_OP_SET_LE") in v5.17-rc1.
+Introduced by commit b338d91 ("Bluetooth: Implement support for Mesh")
+in v6.1-rc1.
+Introduced by commit 6f6ff38 ("Bluetooth: hci_sync: Convert
+MGMT_OP_SET_LOCAL_NAME") in v5.17-rc1.
+Introduced by commit 71efbb0 ("Bluetooth: hci_sync: Convert
+MGMT_OP_SET_PHY_CONFIGURATION") in v5.17-rc1.
+Introduced by commit b747a83 ("Bluetooth: hci_sync: Refactor add Adv
+Monitor") in v6.0-rc1.
+Introduced by commit abfeea4 ("Bluetooth: hci_sync: Convert
+MGMT_OP_START_DISCOVERY") in v5.17-rc1.
+Introduced by commit 26ac4c5 ("Bluetooth: hci_sync: Convert
+MGMT_OP_SET_ADVERTISING") in v5.17-rc1.
+Fixed in v6.17.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [302a1f674c00dd5581ab8e493ef44767c5101aab]
+
+CVE-2025-39982: Bluetooth: hci_event: Fix UAF in hci_acl_create_conn_sync
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39982
+
+Introduced by commit aef2aa4 ("Bluetooth: hci_event: Fix creating
+hci_conn object on error status") in v5.18-rc5.
+Fixed in v6.17.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [9e622804d57e2d08f0271200606bd1270f75126f]
+stable/6.1: [6243bda271a628c48875e3e473206e7f584892ce]
+stable/6.12: [484c7d571a3d1b3fd298fa691b660438c4548a53]
+stable/6.6: [bcce99f613163a43de24674b717e7a6c135fc879]
+
+CVE-2025-39983: Bluetooth: hci_event: Fix UAF in hci_conn_tx_dequeue
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39983
+
+Introduced by commit 134f4b3 ("Bluetooth: add support for skb TX
+SND/COMPLETION timestamping") in v6.15-rc1.
+Fixed in v6.17.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [2e128683176a56459cef8705fc7c35f438f88abd]
+
+CVE-2025-39984: net: tun: Update napi->skb after XDP process
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39984
+
+Introduced by commit e6d5dbd ("xdp: add multi-buff support for xdp
+running in generic mode") in v6.9-rc1.
+Fixed in v6.17.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [1091860a16a86ccdd77c09f2b21a5f634f5ab9ec]
+stable/6.12: [953200d56fc23eebf80a5ad9eed6e2e8a3065093]
+
+CVE-2025-39985: can: mcba_usb: populate ndo_change_mtu() to prevent
+buffer overflow
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39985
+
+Introduced by commit 51f3baa ("can: mcba_usb: Add support for
+Microchip CAN BUS Analyzer") in v4.12-rc1.
+Fixed in v6.17.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [17c8d794527f01def0d1c8b7dc2d7b8d34fed0e6]
+stable/5.10: [37aed407496bf6de8910e588edb04d2435fa7011]
+stable/5.15: [6eec67bfb25637f9b51e584cf59ddace59925bc8]
+stable/5.4: [0fa9303c4b9493727e0d3a6ac3729300e3013930]
+stable/6.1: [ca4e51359608e1f29bf1f2c33c3ddf775b6b7ed1]
+stable/6.12: [6b9fb82df8868dbe9ffea5874b8d35f951faedbb]
+stable/6.6: [3664ae91b26d1fd7e4cee9cde17301361f4c89d5]
+
+CVE-2025-39986: can: sun4i_can: populate ndo_change_mtu() to prevent
+buffer overflow
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39986
+
+Introduced by commit 0738eff ("can: Allwinner A10/A20 CAN Controller
+support - Kernel module") in v4.4-rc1.
+Fixed in v6.17.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [61da0bd4102c459823fbe6b8b43b01fb6ace4a22]
+stable/5.10: [4f382cc887adca8478b9d3e6b81aa6698a95fff4]
+stable/5.15: [60463a1c138900494cb3adae41142a11cd8feb3c]
+stable/5.4: [063539db42203b29d5aa2adf0cae3d68c646a6b6]
+stable/6.1: [a61ff7ac93270d20ca426c027d6d01c8ac8e904c]
+stable/6.12: [de77841652e57afbc46e9e1dbf51ee364fc008e1]
+stable/6.6: [2e423e1990f3972cbea779883fef52c2f2acb858]
+
+CVE-2025-39987: can: hi311x: populate ndo_change_mtu() to prevent
+buffer overflow
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39987
+
+Introduced by commit 57e83fb ("can: hi311x: Add Holt HI-311x CAN
+driver") in v4.12-rc1.
+Fixed in v6.17.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [ac1c7656fa717f29fac3ea073af63f0b9919ec9a]
+stable/5.10: [8f351db6b2367991f0736b2cff082f5de4872113]
+stable/5.15: [7ab85762274c0fa997f0ef9a2307b2001aae43c4]
+stable/5.4: [f2c247e9581024d8b3dd44cbe086bf2bebbef42c]
+stable/6.1: [57d332ce8c921d0e340650470bb0c1d707f216ee]
+stable/6.12: [def814b4ba31b563584061d6895d5ff447d5bc14]
+stable/6.6: [be1b25005fd0f9d4e78bec6695711ef87ee33398]
+
+CVE-2025-39988: can: etas_es58x: populate ndo_change_mtu() to prevent
+buffer overflow
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39988
+
+Introduced by commit 8537257 ("can: etas_es58x: add core support for
+ETAS ES58X CAN USB interfaces") in v5.13-rc1.
+Fixed in v6.17.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [38c0abad45b190a30d8284a37264d2127a6ec303]
+stable/5.15: [72de0facc50afdb101fb7197d880407f1abfc77f]
+stable/6.1: [c4e582e686c4d683c87f2b4a316385b3d81d370f]
+stable/6.12: [b26cccd87dcddc47b450a40f3b1ac3fe346efcff]
+stable/6.6: [cbc1de71766f326a44bb798aeae4a7ef4a081cc9]
+
+CVE-2025-39990: bpf: Check the helper function is valid in get_helper_proto
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39990
+
+Introduced commit is not determined.Fixed in v6.17-rc6.
+The get_helper_proto was added by 45cbc7a ("bpf: add a
+get_helper_proto() utility function") in 6.12-rc1. It looks as
+versions prior to 6.12 appear to be affected as well.
+
+Fixed status
+mainline: [e4414b01c1cd9887bbde92f946c1ba94e40d6d64]
+stable/6.12: [3d429cb1278e995e22995ef117fa96d223a67e93]
+
+CVE-2025-39991: wifi: ath11k: fix NULL dereference in ath11k_qmi_m3_load()
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39991
+
+Introduced by commit 7db88b9 ("wifi: ath11k: add firmware-2.bin
+support") in v6.7-rc1.
+Fixed in v6.18-rc1.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [3fd2ef2ae2b5c955584a3bee8e83ae7d7a98f782]
+stable/6.12: [1f52119809b76d43759fc47da1cf708690b740a1]
+
+CVE-2025-39992: mm: swap: check for stable address space before
+operating on the VMA
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39992
+
+Introduced by commit d240629 ("fork: use __mt_dup() to duplicate maple
+tree in dup_mmap()") in v6.8-rc1.
+Fixed in v6.18-rc1.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [1367da7eb875d01102d2ed18654b24d261ff5393]
+stable/6.12: [4e5f060d7347466f77aaff1c0d5a6c4f1fb217ac]
+
+CVE-2025-39993: media: rc: fix races with imon_disconnect()
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39993
+
+Introduced by commit 21677cf ("V4L/DVB: ir-core: add imon driver") in
+v2.6.35-rc1.
+Fixed in v6.18-rc1.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [fa0f61cc1d828178aa921475a9b786e7fbb65ccb]
+stable/6.1: [71096a6161a25e84acddb89a9d77f138502d26ab]
+stable/6.12: [fd5d3e6b149ec8cce045d86a2b5e3664d6b32ba5]
+stable/6.6: [71da40648741d15b302700b68973fe8b382aef3c]
+
+CVE-2025-39994: media: tuner: xc5000: Fix use-after-free in xc5000_release
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39994
+
+Introduced by commit f7a27ff ("[media] xc5000: delay tuner sleep to 5
+seconds") in v3.16-rc1.
+Fixed in v6.18-rc1.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [40b7a19f321e65789612ebaca966472055dab48c]
+stable/6.1: [df0303b4839520b84d9367c2fad65b13650a4d42]
+stable/6.12: [effb1c19583bca7022fa641a70766de45c6d41ac]
+stable/6.6: [71ed8b81a4906cb785966910f39cf7f5ad60a69e]
+
+CVE-2025-39995: media: i2c: tc358743: Fix use-after-free bugs caused
+by orphan timer in probe
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39995
+
+Introduced by commit 869f38a ("media: i2c: tc358743: Fix crash in the
+probe error path when using polling") in v6.13-rc1.
+Introduced by commit d32d986 ("[media] Driver for Toshiba TC358743
+HDMI to CSI-2 bridge") in v4.3-rc1.
+Fixed in v6.18-rc1.
+
+Bug introduced commit was backported to following branches.
+cip/4.19 cip/4.19-rt cip/4.19-st cip/5.10 cip/5.10-rt cip/6.1
+cip/6.1-rt cip/6.12 stable/5.10 stable/5.15 stable/5.4 stable/6.1
+stable/6.12 stable/6.6
+
+Fixed status
+mainline: [79d10f4f21a92e459b2276a77be62c59c1502c9d]
+stable/6.1: [3d17701c156579969470e58b3a906511f8bc018d]
+stable/6.12: [f92181c0e13cad9671d07b15be695a97fc2534a3]
+stable/6.6: [228d06c4cbfc750f1216a3fd91b4693b0766d2f6]
+
+CVE-2025-39996: media: b2c2: Fix use-after-free causing by
+irq_check_work in flexcop_pci_remove
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39996
+
+Introduced by commit 382c554 ("V4L/DVB (10694): [PATCH] software IRQ
+watchdog for Flexcop B2C2 DVB PCI cards") in v2.6.29-rc7.
+Fixed in v6.18-rc1.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [01e03fb7db419d39e18d6090d4873c1bff103914]
+stable/6.1: [d502df8a716d993fa0f9d8c00684f1190750e28e]
+stable/6.12: [514a519baa9e2be7ddc2714bd730bc5a883e1244]
+stable/6.6: [bb10a9ddc8d6c5dbf098f21eb1055a652652e524]
+
+CVE-2025-39997: ALSA: usb-audio: fix race condition to UAF in snd_usbmidi_free
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39997
+
+Introduced by commit 0718a78 ("ALSA: usb-audio: Kill timer properly at
+removal") in v6.16-rc1.
+Fixed in v6.18-rc1.
+
+Bug introduced commit was backported to following branches.
+stable/6.12 stable/6.6
+
+Fixed status
+mainline: [9f2c0ac1423d5f267e7f1d1940780fc764b0fee3]
+stable/6.12: [647d6b8d22be12842fde6ed0c56859ebc615f21e]
+stable/6.6: [dc4874366cf6cf4a31d8fa4b7f0e2a5b2d7647ba]
+
+CVE-2025-39998: scsi: target: target_core_configfs: Add length check
+to avoid buffer overflow
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39998
+
+Introduced commit is not determined.Fixed in v6.18-rc1.
+
+
+Fixed status
+mainline: [27e06650a5eafe832a90fd2604f0c5e920857fae]
+stable/6.1: [e73fe0eefac3e15bf88fb5b4afae4c76215ee4d4]
+stable/6.12: [53c6351597e6a17ec6619f6f060d54128cb9a187]
+stable/6.6: [f03aa5e39da7d045615b3951d2a6ca1d7132f881]
+
+CVE-2025-39999: blk-mq: fix blk_mq_tags double free while nr_requests grown
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-39999
+
+Introduced by commit f5a6604 ("block: fix lockdep warning caused by
+lock dependency in elv_iosched_store") in v6.17-rc1.
+Fixed in v6.18-rc1.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [ba28afbd9eff2a6370f23ef4e6a036ab0cfda409]
+
+CVE-2025-40000: wifi: rtw89: fix use-after-free in
+rtw89_core_tx_kick_off_and_wait()
+
+Announce: https://www.cve.org/CVERecord?id=CVE-2025-40000
+
+Introduced by commit 1ae5ca6 ("wifi: rtw89: add function to wait for
+completion of TX skbs") in v6.4-rc1.
+Fixed in v6.18-rc1.
+
+Bug introduced commit is not backported to older stable kernels.
+
+Fixed status
+mainline: [3e31a6bc07312b448fad3b45de578471f86f0e77]
+stable/6.12: [895cccf639ac015f3d5f993218cf098db82ac145]
+
+
+* Updated CVEs
+
+CVE-2025-40364: io_uring: fix io_req_prep_async with provided buffers
+
+stable/6.1, stable/6.12, stable/6.6 were fixed.
+
+Fixed status
+stable/6.1: [a1b17713b32c75a90132ea2f92b1257f3bbc20f3,
+233b210a678bddf8b49b02a070074a52b87e6d43]
+stable/6.12: [35ae7910c349fb3c60439992e2e0e79061e95382]
+stable/6.6: [a94592ec30ff67dc36c424327f1e0a9ceeeb9bd3,
+b86f1d51731e621e83305dc9564ae14c9ef752bf]
+
+CVE-2025-38105: ALSA: usb-audio: Kill timer properly at removal
+
+stable/6.12, stable/6.6 were fixed.
+
+Fixed status
+stable/6.12: [c611b9e55174e439dcd85a72969b43a95f3827a4]
+stable/6.6: [647410a7da46067953a53c0d03f8680eff570959]
+
+
+Regards,
+-- 
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
+
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
