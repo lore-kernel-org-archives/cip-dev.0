@@ -2,49 +2,49 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB24CCD184
-	for <webhook@archiver.kernel.org>; Tue, 21 Oct 2025 12:58:14 +0000 (UTC)
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.56])
- by mx.groups.io with SMTP id smtpd.web10.11052.1761051487701102627
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D107FCCD1AA
+	for <webhook@archiver.kernel.org>; Tue, 21 Oct 2025 13:04:44 +0000 (UTC)
+Received: from AM0PR83CU005.outbound.protection.outlook.com (AM0PR83CU005.outbound.protection.outlook.com [52.101.69.61])
+ by mx.groups.io with SMTP id smtpd.web11.11317.1761051878768720665
  for <cip-dev@lists.cip-project.org>;
- Tue, 21 Oct 2025 05:58:08 -0700
+ Tue, 21 Oct 2025 06:04:39 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=b/XYvGjl;
- spf=pass (domain: siemens.com, ip: 52.101.84.56, mailfrom: quirin.gylstorff@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=IYrs7TH3;
+ spf=pass (domain: siemens.com, ip: 52.101.69.61, mailfrom: quirin.gylstorff@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=x1UyMb9KIFPG1DFBEK6wuxdd2I60y2ft4+UOAzWWF+JiTIJ7ppw/eZt4MblQhsKqBRW64fRdpWCKwkrfW1vnER1IQQIWDW/NUTL3cm9M8bdGd/cedAIGoBFv5HIgUr+ddKZrnaqN4NWbyXynzoFQSQCCWzzR4tuPO3aLI+xo3YKsZUz6FfznIAP3pVkWWMUWr6zUyFA9k4tIBeKEGEcXv9fisk/otdp68sHJxkYdu3p8794lfK8gaELF5zp8sth+yh7aB406MsEdwXTR1u61JjmRmo1BWLcqz25bQdigzpAmUF7nSpthBg/Ox43mKGhwhTna9+ZmnWjeTdkw62EgbA==
+ b=BTF393q2xE7xseu+M7ZQrNfkTDFhaIp2+pXB9G8KqptvAAym3Xq2gRHJuNb3WFHA4q9ckCPMcrIA9HsnLV3Gmwa5Q1Hr6MOTOcMyR+hD9hzgabHcZIObZyXVmHL/nHFkYmjb7x+wFt8qhqGPq5FNxn7KwQa1Gi2et8q5Wn0tUhA5mfnm3SOfJ4W/cDCuf2P9GecyGJ3sBL8N/+RtiWFdB32jQZdiWIEKnzJeXxAEXlhBsjQhWbVYMYj63VTpYZKD9LauC4y+JVCOuWk3qXR3NBdrNqpYUMekrJFkEN+n8gudlPqSxi1/Ml9aKGYlx4kO+3BL9dBqXAblYL7ZePDqew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wZTQCC5eA+s5u9uPUistML8jf8ce2kcisScQyhR262E=;
- b=uqtrItEdZ69JdQJum6QpgBeGv/+X6CoTcEwlEh5BPEVuX9pfV5rot5GB5eGpfU0ozk/q4lDO4fzaG5IWb03DtQWpvEvQPRjGhCUrwLY+wtruo95LGeBEQsceOg17GFfbhTcCau8Q7UnCv3Dx1p39Eww0D7xTAiTLDKmIYwAwwoxfxG9kALrITP2uD46PEl9/4MTzsTTDgipp6nnZgBu4+TRx4dOSjn97ptQ81IEO8w6bf6GgeUCYT8/cCVkLwPiWbBGwe+K0RyMw8+V82+JXCoT9DQxo5JPcleXdJMXh44B4VfTe0eNR5yW3wxAut6+E0MEUSduI96ykeyM3tI546g==
+ bh=fwDyTf7Df5hiP+bv6/qrzUcTWwgI+3SSOGH6kaHj4DQ=;
+ b=nSuMltYejGodcNkRRw7/3jAiIitELi8bKvTJmq75U3dRTIOm2h2Nt2fjVX5WTsekrACAzYqStByCP+P4Frw2Meq454AfL6wuAb8wnh6Ky3mzTgqz7OoHNwYqiYdH6BajWoMH9plWgKaFKhLfIeHKOU0WPC0QYFnmFmufHDis9RAErY+iZk+nd2vc9VgELDqzQ8sOZ4dMMeHuJIbdvoTQm8WiuSJavr8rJDVH/AyT+P4klkF67HrglB6MylriiIljQl0xyhM4Q7ynT3bNC1X7ZtVwqoWbHKdC2TtHvfIDyG+xfycSWFGboL9hVSs9R5E/F2RF18fU6/89pK/7NizdcQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wZTQCC5eA+s5u9uPUistML8jf8ce2kcisScQyhR262E=;
- b=b/XYvGjlzu45S4nRCO8nQ6lI5gNKBmJV8jbohl/IxwYosxlfVBGOgENFRnqSNTeWfyCTplJah5nLDDpanP/jrm+8hrxtS6sidPPKwYr7Fjts8zWmKzu/5LK+My+4st9ShWRCEf/4w4GsUo8+PxefqkKco0V8x1zlM+O42jKhvE+nQLPbz42/zxvAEZIpj3tBHI5SiveSgJBY5faKJbjBw0Ua67SY5bLfmejcWtk2HztGrmmwajxT9C9nUdujq+tXq6+g8KHWx9Ucd8JM1dl/ZyawMiupVNcM4R7Y/7NIDrLi9vtITVwTe0f3mQzb6UBwd/5uniAUOFGasqO4gW6Y0w==
+ bh=fwDyTf7Df5hiP+bv6/qrzUcTWwgI+3SSOGH6kaHj4DQ=;
+ b=IYrs7TH3e7Qdx3HU58WlRaMoobEKnae6Wsl3u5HwsuwSD37KSTIsjdNNP33y9nOYAeF8FBy3g04QPxWWOze6pjedrPcv0bnf9adsGK4xkDRtkGLryIvxRptdXEOLNmIP/KHHsQVRebiYPrmut2hS8od1ohGqKwBQ0puh7ynWf5ZEtZxXqOYL9xRhVl/ahnahzxIISKB+iLElGS/UN7Yi4QHManAouE2CVwJIbxLnbqcc55WuMsuxItR0r5V6g7vTw9ktm8EDq2+nWKyeBZdVLBRwtFimvs5FovKI3WT4pHpSgRm51/kK6HqlJb+EkxFe4m4bOaVxG1aPtg5kYA8tOw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from GVXPR10MB6005.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:1::16)
- by GVXPR10MB8897.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:1df::18) with
+ by AS2PR10MB7251.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:608::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.17; Tue, 21 Oct
- 2025 12:56:20 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Tue, 21 Oct
+ 2025 13:04:34 +0000
 Received: from GVXPR10MB6005.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8141:f914:455e:a790]) by GVXPR10MB6005.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8141:f914:455e:a790%3]) with mapi id 15.20.9228.015; Tue, 21 Oct 2025
- 12:56:20 +0000
-Message-ID: <0f2a33fc-dcca-423e-a3f6-efc12a3a6d50@siemens.com>
-Date: Tue, 21 Oct 2025 14:56:17 +0200
+ 13:04:34 +0000
+Message-ID: <70151038-f129-42e4-acf4-9d0e4384da38@siemens.com>
+Date: Tue, 21 Oct 2025 15:04:33 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev] [isar-cip-core][RFC v1 1/5] SWUpdate: Use self-built
- SWUpdate 2025.05 for trixie
+Subject: Re: [cip-dev] [isar-cip-core][RFC v1 2/5]
+ recipes-core/swupdate-config: Add suricatta section in swupdate.cfg
 To: cip-dev@lists.cip-project.org
 References: <20251021125233.1528087-1-Adithya.Balakumar@toshiba-tsip.com>
- <20251021125233.1528087-2-Adithya.Balakumar@toshiba-tsip.com>
+ <20251021125233.1528087-3-Adithya.Balakumar@toshiba-tsip.com>
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 Content-Language: en-US
 Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
@@ -91,359 +91,202 @@ Autocrypt: addr=quirin.gylstorff@siemens.com; keydata=
  qIxmFqiZiwfFB91OCCqRFtm2LcfwR1fLrUtSrhmENjdBhZljfJKjxAfFOWXngfT10Sin9h20
  4A7NrVMzatAJLl79L0PdJIVpGUDQHU9K7rIs2MoQKzmAvyUSJB4sAChft5wz7JbvFKqY2fW4
  Z2NBPBZUysw=
-In-Reply-To: <20251021125233.1528087-2-Adithya.Balakumar@toshiba-tsip.com>
+In-Reply-To: <20251021125233.1528087-3-Adithya.Balakumar@toshiba-tsip.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CH0PR13CA0057.namprd13.prod.outlook.com
- (2603:10b6:610:b2::32) To GVXPR10MB6005.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR3P281CA0209.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a5::8) To GVXPR10MB6005.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:150:1::16)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GVXPR10MB6005:EE_|GVXPR10MB8897:EE_
-X-MS-Office365-Filtering-Correlation-Id: 514a3a8c-150b-4bab-2d9e-08de10a13b6f
+X-MS-TrafficTypeDiagnostic: GVXPR10MB6005:EE_|AS2PR10MB7251:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8d8305fc-978a-436b-9834-08de10a2617a
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|4022899009|376014|366016|1800799024;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?ZVllYXczM2NQY0hmcXpCQUl2MlhnRlFLUCt3TnVCVlNVQkUxN1hHb0thSGY2?=
- =?utf-8?B?VDhFRnkwN3RjK1o2N3VJNi8vV1VjcHF4NDJpL0ZnOEFFVGhSWXpMeTRTbzh2?=
- =?utf-8?B?cWhQNVZKeE5zSkprdFFidTIwbGpWbXZGZ09ldFJTTnBiUmd6T3BDelA2UzFr?=
- =?utf-8?B?UUJTVmhZK0d6bEp5eUd5a29tRlBybXpKSmdUVWtmdU9iakdFNU1aaWM4TTY0?=
- =?utf-8?B?RHF4cGFNVEpJS2JZU2RZSnk2UEZINS9PbU1nUDU5RUNsUXZDdXpNSFlCV3ZV?=
- =?utf-8?B?WmJ0SzBxKys5Mm9ybVdlTlF2TWtLVmhDVnJFRHREbTlxbjJFZ0hodlRkVzB4?=
- =?utf-8?B?NmgwR1NhVlZlMkYza1AyMmhYZlhpRlNIamhFOUduSE82V0NwdkE1N0N3enhN?=
- =?utf-8?B?dDh3STd1dFlaSDk0VFJNVkxCb0ZEaDZTbGxON3FTSllhV0hxV3FYaitTbUVD?=
- =?utf-8?B?ejZQWFV3SExYTXdCTzd1cUt1QnpiNFZuT2pucUVOMmVLQ0lpV0YxbUNGZ05u?=
- =?utf-8?B?OUVCWjd0Q0Q0NmI4eEp0WHJoK2VWYkU4UlYzVGFKRVhOc3RzclYvNU9yeXlm?=
- =?utf-8?B?cThDdzFBQ2RRVWo5TUZuOExMRzgvSHNUVDVSanRmUjc5YmIrek5wZU1TUHF2?=
- =?utf-8?B?R1lnTGpPV0JldUpjaWl6RkNmaGlETmhJcG95RGoxU0lRWjh5WDcrQW8xTkYw?=
- =?utf-8?B?LzkyTmdBL01sMWxvM0RQYTkvVjhXWlR5TzhJemp2c0QyeThvbkpaY0x4M2F5?=
- =?utf-8?B?alVuS1NFaG0yODVCUkJZeE51UitUajFodFJVS0pNSkJFOHRCa2JBWjJDd0Ns?=
- =?utf-8?B?S1ZCUXdwZnJLcVV0RFpER3hRd3NEZ1JtdjVoM0RSSkNWN1RrTEE5YXdKSFNt?=
- =?utf-8?B?a3JyRVBUMXFsZDlWQUlCc1N3dUxtV1hqSDEvREM5UTZBUmJzT1hDTGYwZVBW?=
- =?utf-8?B?dnlOS3hTS2lab3F1cUh0RFdRRFdwYis1eEZPK1I4ZUtDUVBwQVhmL2FOMWlD?=
- =?utf-8?B?emxFc3RGYkRTR1ExaUdoa3BGWTY3VWdwbjhHZWJXL2g5RzEyOWVMSllhSGVi?=
- =?utf-8?B?VTY2MzZnZ29HWmxQN1lIRHg2MUp1QWdnZkczS3ZrdmpBSlRwcEo2UlRzUkwx?=
- =?utf-8?B?K0ZmcExUdXo0VWFya2FFRThjMXFBZ1FEMGU5UWI5T0Z6blRhbVVjeUNXaHVk?=
- =?utf-8?B?OVJ0YTlKL0tUWFU4SGQvUE1FdjBoZVJUWjVBdGQrQXhBejBIS1NtVEdTQnFS?=
- =?utf-8?B?VXp3R202cG9yZVBsd0ZBbHRPMVdwWWl4UHpBWnpya24zQUNVQ0E0RE93MXBE?=
- =?utf-8?B?cm5tUGRyL0pMbTJ5L2laUktXSkxqejhXcHhjK2lXV1JNd3AyeXNTWkswNjhu?=
- =?utf-8?B?N2VRRnNrMzNJbFByUTVzSHVyUTBQckVXNGs0RUFkSGNobDhRU2UwZjdyRDRH?=
- =?utf-8?B?cE52Sk1jaEFROTVwcGZNZkkzTlJjSlNWOUwwMHcySmpmaXd1RUJEWnowdENv?=
- =?utf-8?B?NUQxSXo2OUtXZDNkTDUzeWxkVmtrODBYejlZYVlLcCtTc0xnNUROeXphb0V4?=
- =?utf-8?B?MDNhclFFWUdiUEQ5MGQ4dFZ4dkMwRjM0RmYwaVZZaGhTZVZ1aDU0Mlh0Qkl4?=
- =?utf-8?B?WXBONUpkWVRTYnJKMW9BZTB6djV5bFVDSUxKQ0U2anZhQUNUZWROeUNBdnlM?=
- =?utf-8?B?djlEbmdlaVFlelFoNzZwZW9oc3Uva1VzMVhFallaejJHNXdMUGZIcmhmTUtX?=
- =?utf-8?B?WlRoS1dHYitJUzEyQS9KclBzNHV6clRJcUVvOU5Xd0gybWRDd3ZWTXNBaVdT?=
- =?utf-8?B?VWdFMCtMQVYySjY3d2lRbnd4RGJKQ0x1RnF1Z0M5eEtpU0VDV1dHQ21ZLzI0?=
- =?utf-8?B?TFdDZk5XdDdpQjN0SDZVa0h3Q3RHMDJWMTNuVThkZkpSMUE9PQ==?=
+	=?utf-8?B?Z2dJNTdDajdRSitURS9ieXd3U2VlNFdwenVTZTZ1UEJDR2wzR1cyV1FKcFV0?=
+ =?utf-8?B?Vy9qNGpIUlpmcHhibVF1bmhqVDQ4UDVMT1EyRzRnNmp0UjdjZXZsYzN1Q0Vv?=
+ =?utf-8?B?ZEF1N2o1OWZGcGxRMngxK0JYZ1c1K2JxSTFUcjA4SUxBaFVUbk0yZ3YxVVo2?=
+ =?utf-8?B?V0RGalA1eVAyVlNLaCtLTDlUL2xZYkwybmZLNG1FbGRwRWV1RzJUcnh5OUFV?=
+ =?utf-8?B?bjNTOGZueFJkcCtEcjdkZERWenJVc2tteUdsdWFtd1E5TkZzR1dXdWJXNFMv?=
+ =?utf-8?B?NHZmYWI1a3FFcDhRQlJvdGQrNzZWY0NwTk5iWVI1cTY4b3pILys5M2ZWRFZu?=
+ =?utf-8?B?bTFyV3UrdFphWDMvUk8rdUg3R3ZDdE1iQ0E0Nlh3eUVLU0FEMGhTeDlOaExH?=
+ =?utf-8?B?V3ZNNmJaeDZCaExRT1B4RFJuQStOZkhiZmxERHhKRzBVOThIaXV2bXNLTTI5?=
+ =?utf-8?B?NVY0WU0zczUvL0l3S21jeDBiQUFSV1JMMGJpck4rc2JKbUdMNFZzcS9HdkJB?=
+ =?utf-8?B?SkNrVkdKRHQ2M3JEM3ZUWWtoc2IxQkY4WWRBMzZ6R25xQVYxMlQzeFhZV1ZK?=
+ =?utf-8?B?ZFVpcExTdGVPV0F4VGpacUZwVkMwcnEzUllja2JuMUlPMzZrMUVOVGM2SnpP?=
+ =?utf-8?B?a0Q5VE1IQnpOQ1lqMkJ2cDEybVcrdjFYUGpTZGhCMzZrUkdyOEJXa2NndjIx?=
+ =?utf-8?B?VS9lOUViRktYV0RrMmdpQURObjhLNjVJdUpJZm92dkd1NzB0akk0ZHZNc0Nn?=
+ =?utf-8?B?WDROenNQaUNpVURuWHRwdlAreGtwRUwwOWFqWFlGY0VEd3A0eFZlbExZUlhQ?=
+ =?utf-8?B?VVljWnJqUHZKNnZCdVp5WWRrNkE0a3VLR2d6TmtndngzRTU3MVBTOGNLRWZN?=
+ =?utf-8?B?aERtT2RkZ3ZyQ3FoVmRKOHViVDdwSWhaaTBGTU4yczFYYnJrUWtFWkRjWExE?=
+ =?utf-8?B?SzRmMVlmNEkra1NYek1pbFcxc1k5Nk9nZFl1VDBSYTh4dE8xYUpDcXFaZWg5?=
+ =?utf-8?B?anRZUjVtMitJbXVaSFpFR1YrRDlGVHBaTTloQkdVZFpUZUVZT2Ixa3htd1hi?=
+ =?utf-8?B?NTRmdlgxS0NBckxRd2tGenhyR1pZV1dNSEZjdGxHRnRGT2QzTFhkaldGR2w3?=
+ =?utf-8?B?Ryt4UVNnOUE4d2pEenhMRE5BQVRyNEdNa3JjdjJtbG5saDg1dndmWkp2bmI3?=
+ =?utf-8?B?ckx5N2Y0TzBNbGwvdVpjbVJuek9IMStkWnNaRlQ5SGt2djlrUVBzU1RGMzF6?=
+ =?utf-8?B?eEd2QkJ6MHFETURyUWRaNnRDOW5JMXF1UStMWTBQYzN1b3I1RUxUVk9LU3o2?=
+ =?utf-8?B?RUZjRlpOZnp0ZlRER0VjY1FuWDh3OTRrOVROR2ZIWW41b2JHQmZpUVpDMGNS?=
+ =?utf-8?B?MXlGejUvNlczQ3paSWIrVlI2b3c0aVZHeHhzazdTN3VnaWEzdUZlanhmRi96?=
+ =?utf-8?B?N3VMdk94dlZPUlhkR2IyQ2VoWENBWTVTUGlqajhOMzQwUTN4WU9RS3I5K28y?=
+ =?utf-8?B?cjhCbXRIVzc0ZHZybjVybzVnSWVHWUovWTRmdFF6aWZEOXRYQmZOdU5kdjZo?=
+ =?utf-8?B?L3FndWRYRkk0UnlGU254YXFSdnVMUm1tWHRXYk51MDFWY09qUW5pbUdFNUpZ?=
+ =?utf-8?B?YXMrV1ZmNk1KY00zeXZKOURWekpjVVpUMWxiS003cnBaUmtjcnBiY0FSRDZP?=
+ =?utf-8?B?UFlwNWViL1pva3ZIYzBLdFJTVUdtUDJVbDNYVjlvQjI1b0RtODV1MEtnNVE3?=
+ =?utf-8?B?TjljNUd3WGdzTDAxRUM5WFBMcUhZY0E5dU9UeHE1Njlkd0dNVktnKzlBc3JE?=
+ =?utf-8?B?THVsUU9BVzZrUFBJdmw2QVJNQUhYNlhEdlEzWHBiVElqR21rWE5WUjF2aEJ5?=
+ =?utf-8?B?Q0FlQldqbnZ2WWt1V1N1clVpazBzbmhrME5Ya293WFZkM0E9PQ==?=
 X-Forefront-Antispam-Report: 
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GVXPR10MB6005.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(4022899009)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?MzdXRTNJejhucFdITFJ1YnJyWGFGRDJQcUxMcEhGd3VhV1RSSEZ5TE1GWnBJ?=
- =?utf-8?B?Z2NwVHFmU2lQekJSQXZSay8vajJoenNSYk83Ujk1SmVuZEZGdzdNQ3RvNElq?=
- =?utf-8?B?ME5GckdXVFRFR3h0dExCS25lSkN1cUtJVlI1NEM3UTNuZW1UYmdmUzJNYmhB?=
- =?utf-8?B?NTFpUzVnUHdPYmFiZ3JlSXB4cnRONkxUTlFNNnNXc0Z3M3JURXArVG53VkZL?=
- =?utf-8?B?V3VMNnYvQ3orQWk2MmhNcmlOUTkyYThnMzFNbVhQamN4ZjUwaUlsWEFmSVEz?=
- =?utf-8?B?c0wxaFprd0F5MFhYc3J6VXl3K1BoTk50WVNNVHdhSG50YS9tZXMxUVA1eHlE?=
- =?utf-8?B?Uy9CYW5aMzcxZG1tbXJUL1NXK25XSUNSdkM3aUVQM0RuRXdsaUUwSDk3TEpy?=
- =?utf-8?B?TnVBaGN1UjMwbWZVSHJJN3JneFF6Y2M2Z0xsV0RPMjNZYmpxdldCd0F0MTBX?=
- =?utf-8?B?MDRSUGs4STg5RXlyMVBLWm4yZHNObEM1VHVvMllITi92VnBJQzhoQXBlV3RG?=
- =?utf-8?B?Myt4TjNkWUJmV3I2cFl4QmZjdUV5Z1ZETjByNVZwT1NtQXhQeHlLV0xwRVg5?=
- =?utf-8?B?MFJSRzZHMWx6RDNRNElUbUVOSGpGUVN2Skx6TVdqeHJxVTZrM0t6NGZxNHdx?=
- =?utf-8?B?UnhhUi8vQ095SnhJRVpheUZ0MVNRNGpnc3FkREpadm5qTUdlc2lKQTYyWVJj?=
- =?utf-8?B?TGY4VzB3QldsU0dqa3dLeDVGa2xyTHNjRUpFcEpJTWFVRmJvSlRaa0xwbHcw?=
- =?utf-8?B?WkEzL3RVaG8xdzdYYldtMkFTdWtJVWtlSEhXOXRLNTErYjhKRWE1WU4zeVdB?=
- =?utf-8?B?aDltYUp6dzM2VVYrN09zWUV5VUlhNWg4UmJMa0RwZEp2dVcwN1pQeHgrTFgw?=
- =?utf-8?B?eGQxTCtqQk9GeHRKM3RTeW1sSVZSWVA4eERNdkF3cXRFVm5sZHVtV0hLVWdu?=
- =?utf-8?B?WHozd3g2VkNaVFhrY0VUOXpHRzg3WE5XUmZ3YlVzbEVsSy9aOCtIKytvSkNJ?=
- =?utf-8?B?dzJSVGdTd1pYRjE2ZG15T0VuUi9MWm5yV2tEM2NGNldHZVY1R2tmOTA3MFBp?=
- =?utf-8?B?V0hWNWhPdjZUSDYzbHpVOHZPOVJ4dWxnR2ZzbEoySnlpdmRqNXNQS09PRWhJ?=
- =?utf-8?B?Z1Nacmc2SERKSEhaQUFaMTlJSmJhSmEreU0rbjVPNndnVHRMcWVqcjVZNS9K?=
- =?utf-8?B?akdMN3AvV3VnT0JWR0RnS1J4V2xrWWNkVHJOR3hIZ2h3RjdMenFKWU1aZ1BD?=
- =?utf-8?B?TDJVMENTOUt2VG1tV2N6Tmhja0tyT0NmRG9LT1hLM2hFNVlDVjhKQ0hZc1dD?=
- =?utf-8?B?SWQ3MzdMaUYwY3NHSzlwZDRDZ0EyTEo2LzhtL1RORFNsU05rVDVNcitVWndW?=
- =?utf-8?B?bnZKSEJmdG1wZ3pUTjc5aTR3RzhwaHpGZ05qZnlYQ0tSZnE5REYzS2krK3cz?=
- =?utf-8?B?Smp1QjI1Skp4Yk9DRlBDT3NIY3BMZUhpVWErb1pIQndmaHZnQ0xPNFEzZE9C?=
- =?utf-8?B?bjhiOTgwbWs2MmNUVXhPZThqZm8vVTMzcFkzUEx0bE1zWGgwOWxxdVhkWXlN?=
- =?utf-8?B?eEhlUXJMalllbDBacW9IY1JEVTNLbzY5NmQwTEFIaENWSzdXWW9PN1IvZGNs?=
- =?utf-8?B?SUF3dmRQU0pQK2tzclBiSEZQamxlZEpXd1hkYU5NejM2alo2aEZXaGpKTzR1?=
- =?utf-8?B?cE1BNXBnTFFjNXBhQTVzWG9udEJ6cFJTUXpEb1g0cUNaOG1YUWliZmtuRTNt?=
- =?utf-8?B?RVY0Tmt5Slg1KzFNdGgvdmlQVGwva0k2RFBXMy9nK21tNnl1VE1WL2ZVaE0y?=
- =?utf-8?B?WG9mdDRpKzdmV3ErWHUzN21IejhJdTVMVExvSkpMWUJ3dVl5OGgxREwwNm1p?=
- =?utf-8?B?Z1N3ci9yNUU4bDlKQnlsdXpwNzFrNGtrZGoxUjB0ZE5ublQ5Wi93WEpjY1Nw?=
- =?utf-8?B?My9kVEFqZ2V5YTk1Mng2VytvYmxFbEFpSklBRmZTK2VvMFRuVnNJR09BZzRQ?=
- =?utf-8?B?TExFb2ZoYzVoVTdPQVRCWDlRMGVnc0RROXUyejY1TVJEZXAxVEJjc0dGU2sx?=
- =?utf-8?B?eTYrMnNxMVRrNlNlZUg5UFpNR3ZadFNZZGRrTzliSEhIU3dQRlE1RWl0alZL?=
- =?utf-8?B?NDZjZ0x2aFdqdkxkaTkxc3ZiUWg2Sjh0c29ubEs4bytOM3dqbCtKL21oQkJo?=
- =?utf-8?Q?qWQcKG4UCfO6IPC3ibFemZI=3D?=
+	=?utf-8?B?MkJKTXAyWnl5am8vdGVoOXRwck5KVFFxMmhFQVZTNDFiOVE2QUsySjZpYmU2?=
+ =?utf-8?B?d1AwN2xTcUpTMVBxdGhyZ3lZbHF3bGtzN3hiNk5ab3lobnpIeVR2SkVoK1VR?=
+ =?utf-8?B?d2xESHloa2ZyNXNzbVNrRW5qQWZ0aU9rS0J6SXd1NzZkTXdhQm1GRVJ5MDVB?=
+ =?utf-8?B?SHkvUWVJcnR3YnNlZEo1NnIzNVhVTzl5WGZHZ1VVdEphYjBGL3l0eDJ2aklE?=
+ =?utf-8?B?ZW55L0d0cFVETFl0dFA3S1RkRjlBdXU4cFI1YnBxbE5KbmNmbElTMEd4SHF4?=
+ =?utf-8?B?Q20vL2dXWnd4SUc0QUFMT3FpT3dLQUsyTm1iWjlqcUttUVpGMkRVTW05cWla?=
+ =?utf-8?B?QkhRR21SbGcwVFZWSFMxelpiU0pUcGVVUDFkUDlVSDJXNmtlN1pZMUVOS2cv?=
+ =?utf-8?B?NjExRVpsa3g3U2hsYzU0V2dpNEwyTlZIekIwVUJRaE12M1hoSVVHUnhOSmZk?=
+ =?utf-8?B?eHBwK0xsSjgxYkdkc1JnTHpzSFl1dUZyWEZqa3hXWktiek1CWTI4cVh1OUVq?=
+ =?utf-8?B?RUVCZmExMWRST2Q1TmhMSStTdEtGalRYMmYyLzdkQXJOeUpYQlBIcDh5YzVK?=
+ =?utf-8?B?VFlZVnZGVkcxTTFaam9Ic2U2MWgxbmRidXVBemh2aURrc1dSVXZPUFdma20v?=
+ =?utf-8?B?K1dXdTlEUHNoMUJ2QWVaMnV5eUxhY0tsY2ZnYVdSTTl4SEFZN3l4T2RkOUVN?=
+ =?utf-8?B?T3A0bFZUam9hMFJ1N09lYW1EY3FDQ2J3SE5YeC93bjhuR2s5RDZsVHI5RWN4?=
+ =?utf-8?B?dTIrc2N2cFJKZWFyNTZGRW4yRVNkK09jbWVnUVpFcDNjT3ZhalVNVkxuWjVw?=
+ =?utf-8?B?T3B0MWVrVlExaEhJdlhzbVZPV2dvb1BQTnl2dDFFcmF6N3grRnU5ZTdaRUI4?=
+ =?utf-8?B?YVliM2RpeCtOaEtlRFg4REtYcTgyYnRHL1VpYVVKeWNYSGtjbXd5YXhYcU1i?=
+ =?utf-8?B?b0QvN3RxLy9uMWNzWmxXbXBzcE1iTUkwR3ZjQnJZRjhwUTRyK2FKYmpjRGxI?=
+ =?utf-8?B?SnR6RUhUQXFPb0gvbkw0eklRTGR0THlTQUVDUW5XYWx6TDBhVSs2aUthNHli?=
+ =?utf-8?B?MkVMdDc3UjF5WFBFQ0hWalFjL3NIQnBIWG5sZlp5WkNKWnlOV0l4ZnJucW1j?=
+ =?utf-8?B?Mzc3V0RYSHFGS0E3d2ptd3NjUmdoai96OFUwTTI1ZGpIOGNlTzFWNVdUN3Fa?=
+ =?utf-8?B?cG55WXdwMnl2Z3RvYjRBT0JGZzRDTVZOUlIrRVk3Q25Rb1dveEZPZXQ5aWEr?=
+ =?utf-8?B?K2MrdGRuVkVFdTQxRkJkZVViMlBmNVYzZWpCZVFxRHZuUUVETW8ydG5YYVpV?=
+ =?utf-8?B?TFBMNThlVWV6WUl5NUtjdHYyVXVWL00xNEZoY3BXMklCZkVyd09hYkdKNXhp?=
+ =?utf-8?B?Yy82ZzNVRUhwdGxEUTFWNlRxQS9IN0pLL1p6NWpPSU9Cbmh2RW1mNTFCenRl?=
+ =?utf-8?B?RzI5QlBkTXRkWlVaQ0VuaXZ1QXFJZGVmUTN1VmV6TjJSYlVBM2RGTllQdEpI?=
+ =?utf-8?B?Q05lK0liRlRIdFlkYkN2aUNPY2RZZXAveUtHdmtDY0dZOWFHK3ZoOUM3aXZ3?=
+ =?utf-8?B?dXRLUkg3cFlnWFBoc3RsTC9pVTF4ZHBxVG1pclZZdnRMYWN0V0F0SGo4eGxR?=
+ =?utf-8?B?SlN0ck9XVndpV0NtdFFqSjN0MU9yYVVHVXVONXVPVEt1ZE5SWUdJcWY1NFBa?=
+ =?utf-8?B?bFNRL0NNL2ZnMUlsYktBam1GazYzdFVEK2FTWnVHck1NMzJNZE95L0JxamhF?=
+ =?utf-8?B?U2xWUHJ0Mmlmb0RpRUptSXVhMnEvMWxqT2g1NUtSWXgxcWtaSTdsOTZOY2do?=
+ =?utf-8?B?Yy9FMWJTcHB2cG9DNXU3cjZhc2tXN0J6NElOSnYrMGdOeHN2N3ZzdjNNWHhC?=
+ =?utf-8?B?cEFrUzNzUVdRbGZXVkZZRFZtaDFycDVsNWdVMnJKZ1NjSHVuVmlTRzMyYzNG?=
+ =?utf-8?B?dGJ1aDErbE10VHJ2cVU2TWJTdFBQVUVkaWZUcnAxc0prZXpsVS9EUkk0aHN0?=
+ =?utf-8?B?MEpMd2t6SVVTY2xzRU84TWNnZW9pTS8rZFlmM2t2NWpnT20rL1BHOUVGYkJi?=
+ =?utf-8?B?citqelczbTFucUg5c0M4SDFjVitROWlENTVmaCtJTlhBVDRZbE1QOEc2ZkE5?=
+ =?utf-8?B?VmltRkZUM20xSXluTTE3L3FNNE5DTVZrN0x3dUcxUXFvUWV3cEZyM0dkZEZl?=
+ =?utf-8?Q?oQ+WcPAPyyvrCXbuFxh8Il4=3D?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 514a3a8c-150b-4bab-2d9e-08de10a13b6f
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d8305fc-978a-436b-9834-08de10a2617a
 X-MS-Exchange-CrossTenant-AuthSource: GVXPR10MB6005.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2025 12:56:20.7550
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2025 13:04:34.1249
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GT6ozaZRRxnDrxiPK59e8Yx+5LQ5Fc7g1ceWoYK/WTOoWbxFgpRFoqpJkD9Dk1/0XzjXBZspQo5PY0/d9jiN0j6lNVhIoN23+csAzj3M9H0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR10MB8897
+X-MS-Exchange-CrossTenant-UserPrincipalName: lRuOgSKtzROisoyMWoU/zo2rROUHhXh/jn+nOuIfEl6svoxnxWk2IUjlS8TwmUgryWssspzJWwSHfBnpLsaEjQdSKX940tf/6+YH2NR5o28=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR10MB7251
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 21 Oct 2025 12:58:14 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20208
+ <cip-dev@lists.cip-project.org>; Tue, 21 Oct 2025 13:04:44 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20209
 
-Hi,
+
 
 On 10/21/25 14:40, Adithya Balakumar wrote:
 > From: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
 > 
-> SWUpdate debian package for trixie has an issue[1] when used with suricatta wfx.
-> Although the issue is solved, but the fix isn't yet available in any debian
-> version.
+> wfx requires options to be set via the suricatta section of swupdate.cfg,
+> let's add a suricatta section to the swupdate.cfg file and also an
+> additional suricatta arguments file to allow swupdate to start in
+> suricatta daemon mode at boot time.
 > 
-> For now carry the upstream patch and build SWUpdate from source.
-> 
-> [1] https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1118485
-I would discuss this fix with Debian upstream instead of fixing it in
-CIP with a new SWUpdate version. As we need to maintain this version 
-even after debian no longer supports it.
-
-Best regards
-Quirin>
 > Signed-off-by: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
 > ---
->   conf/distro/cip-core-trixie.conf              |   1 +
->   recipes-core/images/swupdate.inc              |   3 +-
->   ...x-rebooting-via-tools-swupdate-progr.patch | 129 ++++++++++++++++++
->   recipes-core/swupdate/swupdate_2025.05.bb     |  39 ++++++
->   4 files changed, 171 insertions(+), 1 deletion(-)
->   create mode 100644 recipes-core/swupdate/files/2025.05/0001-suricatta-wfx-Fix-rebooting-via-tools-swupdate-progr.patch
->   create mode 100644 recipes-core/swupdate/swupdate_2025.05.bb
+>   recipes-core/swupdate-config/files/suricatta         |  1 +
+>   .../files/{swupdate.cfg => swupdate.cfg.tmpl}        |  7 +++++++
+>   recipes-core/swupdate-config/swupdate-config_0.2.bb  | 12 ++++++++++--
+>   3 files changed, 18 insertions(+), 2 deletions(-)
+>   create mode 100644 recipes-core/swupdate-config/files/suricatta
+>   rename recipes-core/swupdate-config/files/{swupdate.cfg => swupdate.cfg.tmpl} (55%)
 > 
-> diff --git a/conf/distro/cip-core-trixie.conf b/conf/distro/cip-core-trixie.conf
-> index b133bbb..663f2b0 100644
-> --- a/conf/distro/cip-core-trixie.conf
-> +++ b/conf/distro/cip-core-trixie.conf
-> @@ -12,5 +12,6 @@
->   require conf/distro/debian-trixie.conf
->   require cip-core-common.inc
->   
-> +PREFERRED_VERSION_swupdate ?= "2025.05%"
->   PREFERRED_VERSION_linux-cip ?= "6.12.%"
->   PREFERRED_VERSION_linux-cip-rt ?= "6.12.%"
-> diff --git a/recipes-core/images/swupdate.inc b/recipes-core/images/swupdate.inc
-> index 75be566..47f18c5 100644
-> --- a/recipes-core/images/swupdate.inc
-> +++ b/recipes-core/images/swupdate.inc
-> @@ -28,10 +28,11 @@ SWUPDATE_SELFBUILT ?= "0"
->   SWUPDATE_SELFBUILT:buster = "1"
->   SWUPDATE_SELFBUILT:bullseye = "1"
->   SWUPDATE_SELFBUILT:bookworm = "1"
-> +SWUPDATE_SELFBUILT:trixie = "1"
->   
->   python() {
->       base_distro = d.getVar('BASE_DISTRO_CODENAME')
-> -    if base_distro not in ['buster', 'bullseye', 'bookworm'] and \
-> +    if base_distro not in ['buster', 'bullseye', 'bookworm', 'trixie'] and \
->          bb.utils.to_boolean(d.getVar('SWUPDATE_SELFBUILT')):
->           bb.fatal(f'Self-built SWUpdate not supported for {base_distro}')
->   
-> diff --git a/recipes-core/swupdate/files/2025.05/0001-suricatta-wfx-Fix-rebooting-via-tools-swupdate-progr.patch b/recipes-core/swupdate/files/2025.05/0001-suricatta-wfx-Fix-rebooting-via-tools-swupdate-progr.patch
+> diff --git a/recipes-core/swupdate-config/files/suricatta b/recipes-core/swupdate-config/files/suricatta
 > new file mode 100644
-> index 0000000..68cd6a1
+> index 0000000..1dbdd5a
 > --- /dev/null
-> +++ b/recipes-core/swupdate/files/2025.05/0001-suricatta-wfx-Fix-rebooting-via-tools-swupdate-progr.patch
-> @@ -0,0 +1,129 @@
-> +From 6281f3783a303904981523ed8388b468d58eb5a0 Mon Sep 17 00:00:00 2001
-> +From: "Storm, Christian" <christian.storm@siemens.com>
-> +Date: Tue, 15 Jul 2025 08:59:07 +0000
-> +Subject: [PATCH] suricatta/wfx: Fix rebooting via tools/swupdate-progress.c
+> +++ b/recipes-core/swupdate-config/files/suricatta
+Why was this empty file added?> @@ -0,0 +1 @@
+> +SWUPDATE_SURICATTA_ARGS="-S lua"
+> \ No newline at end of file
+> diff --git a/recipes-core/swupdate-config/files/swupdate.cfg b/recipes-core/swupdate-config/files/swupdate.cfg.tmpl
+> similarity index 55%
+> rename from recipes-core/swupdate-config/files/swupdate.cfg
+> rename to recipes-core/swupdate-config/files/swupdate.cfg.tmpl
+> index 3e2b45c..8a60f4b 100644
+> --- a/recipes-core/swupdate-config/files/swupdate.cfg
+> +++ b/recipes-core/swupdate-config/files/swupdate.cfg.tmpl
+> @@ -3,3 +3,10 @@ globals :
+>       bootloader = "ebg";
+>       public-key-file = "/usr/share/swupdate-signing/swupdate-sign.crt"
+>   };
 > +
-> +The changes leading to commit 077ef4f broke rebooting via
-> +tools/swupdate-progress.c. Hence, adapt the C Lua bridge
-> +lua_notify_progress() and update its invocation in
-> +suricatta/server_wfx.lua as well as updating / fixing
-> +Lua annotations.
+> +suricatta :
+> +{
+> +    id = "__DEVICE_ID__";
+> +    url = "${WFX_URL}";
+> +    polldelay = 20;
+> +};
+
+This section should be optional appended if somebody is not using wfx.
+
+Quirin> diff --git a/recipes-core/swupdate-config/swupdate-config_0.2.bb 
+b/recipes-core/swupdate-config/swupdate-config_0.2.bb
+> index 63fa320..218174a 100644
+> --- a/recipes-core/swupdate-config/swupdate-config_0.2.bb
+> +++ b/recipes-core/swupdate-config/swupdate-config_0.2.bb
+> @@ -16,12 +16,14 @@ DEBIAN_PROVIDES := "${PN}"
+>   
+>   PN .= "-${MACHINE}"
+>   
+> -SRC_URI = "file://swupdate.cfg \
+> +SRC_URI = "file://swupdate.cfg.tmpl \
+>              file://hwrevision.tmpl"
+> +SRC_URI:append:wfx = " file://suricatta"
+>   
+>   MACHINE_HW_VERSION ??= "cip-core-1.0"
+> -TEMPLATE_FILES += "hwrevision.tmpl"
+> +TEMPLATE_FILES += "hwrevision.tmpl swupdate.cfg.tmpl"
+>   TEMPLATE_VARS += "MACHINE MACHINE_HW_VERSION"
+> +TEMPLATE_VARS:append:wfx = " WFX_URL"
+>   
+>   do_install[cleandirs] = "${D}/etc/"
+>   do_install() {
+> @@ -30,3 +32,9 @@ do_install() {
+>           install -v -m 644 "${WORKDIR}"/hwrevision "${D}"/etc/
+>       fi
+>   }
 > +
-> +Signed-off-by: Christian Storm <christian.storm@siemens.com>
-> +---
-> + corelib/lua_interface.c  | 17 +++++++++--------
-> + doc/source/suricatta.rst |  8 ++++----
-> + handlers/swupdate.lua    |  5 +++--
-> + suricatta/server_wfx.lua |  6 ++++--
-> + suricatta/suricatta.lua  |  5 +++--
-> + 5 files changed, 23 insertions(+), 18 deletions(-)
-> +
-> +diff --git a/corelib/lua_interface.c b/corelib/lua_interface.c
-> +index 8d57aaa9..1ff3e5e4 100644
-> +--- a/corelib/lua_interface.c
-> ++++ b/corelib/lua_interface.c
-> +@@ -1232,17 +1232,18 @@ static int l_stat(lua_State *L)
-> +  * @brief Dispatch a message to the progress interface.
-> +  *
-> +  * @param [Lua] Message to dispatch to progress interface.
-> ++ * @param [Lua] progress_cause_t number (optional), default: CAUSE_NONE
-> +  * @return [Lua] nil.
-> +  */
-> + int lua_notify_progress(lua_State *L) {
-> +-  /*
-> +-   * NOTE: level is INFOLEVEL for the sake of specifying a level.
-> +-   * It is unused in core/notifier.c :: progress_notifier() as the
-> +-   * progress emitter doesn't know about log levels.
-> +-   */
-> +-  notify(PROGRESS, RECOVERY_NO_ERROR, INFOLEVEL, luaL_checkstring(L, -1));
-> +-  lua_pop(L, 1);
-> +-  return 0;
-> ++	lua_Number cause = CAUSE_NONE;
-> ++	if (lua_isnumber(L, -1) == 1) {
-> ++		cause = lua_tonumber(L, -1);
-> ++		lua_pop(L, 1);
-> ++	}
-> ++	notify(PROGRESS, (progress_cause_t)cause, INFOLEVEL, luaL_checkstring(L, -1));
-> ++	lua_pop(L, 1);
-> ++	return 0;
-> + }
-> +
-> + /**
-> +diff --git a/doc/source/suricatta.rst b/doc/source/suricatta.rst
-> +index 474d02cc..a4081a63 100644
-> +--- a/doc/source/suricatta.rst
-> ++++ b/doc/source/suricatta.rst
-> +@@ -557,10 +557,10 @@ The ``suricatta.status`` table exposes the ``server_op_res_t`` enum values defin
-> + The ``suricatta.notify`` table provides the usual logging functions to the Lua
-> + suricatta module matching their uppercase-named pendants available in the C realm.
-> +
-> +-One notable exception is ``suricatta.notify.progress(message)`` which dispatches the
-> +-message to the progress interface (see :doc:`progress`). Custom progress client
-> +-implementations listening and acting on custom progress messages can be realized
-> +-using this function.
-> ++One notable exception is ``suricatta.notify.progress(message, cause)`` which
-> ++dispatches the message to the progress interface (see :doc:`progress`). Custom
-> ++progress client implementations listening and acting on custom progress messages
-> ++can be realized using this function.
-> +
-> + All notify functions return ``nil``.
-> +
-> +diff --git a/handlers/swupdate.lua b/handlers/swupdate.lua
-> +index aa8a31d0..d32f83b9 100644
-> +--- a/handlers/swupdate.lua
-> ++++ b/handlers/swupdate.lua
-> +@@ -63,8 +63,9 @@ swupdate.warn  = function(format, ...) end
-> + swupdate.debug = function(format, ...) end
-> +
-> + --- Lua equivalent of `notify(PROGRESS, ..., msg)`.
-> +---- @param msg  string  Message to send to progress interface
-> +-swupdate.progress = function(msg) end
-> ++--- @param msg    string        Message to send to progress interface
-> ++--- @param cause  number | nil  `progress_cause_t` value as defined in `include/progress_ipc.h`
-> ++swupdate.progress = function(msg, cause) end
-> +
-> + --- Lua equivalent of `notify(status, error, INFOLEVEL, msg)`.
-> + --- @param status  swupdate.RECOVERY_STATUS  Current status, one of `swupdate.RECOVERY_STATUS`'s values
-> +diff --git a/suricatta/server_wfx.lua b/suricatta/server_wfx.lua
-> +index 0978ed50..d0b01bad 100644
-> +--- a/suricatta/server_wfx.lua
-> ++++ b/suricatta/server_wfx.lua
-> +@@ -1471,8 +1471,10 @@ M.job.workflow.dispatch:set(
-> +             suricatta.notify.warn("Cannot initialize progress reporting channel, won't send progress.")
-> +         end
-> +
-> +-        suricatta.notify.progress(M.utils.string.escape([[{"%s": { "reboot-mode" : "no-reboot"}}]])
-> +-            :format(suricatta.ipc.progress_cause.CAUSE_REBOOT_MODE))
-> ++        suricatta.notify.progress(
-> ++            M.utils.string.escape([[{ "reboot-mode" : "no-reboot"}]]),
-> ++            suricatta.ipc.progress_cause.CAUSE_REBOOT_MODE
-> ++        )
-> +
-> +         suricatta.notify.debug(
-> +             "%s Version '%s' (Type: %s).",
-> +diff --git a/suricatta/suricatta.lua b/suricatta/suricatta.lua
-> +index 24d6eb8f..b8707a25 100644
-> +--- a/suricatta/suricatta.lua
-> ++++ b/suricatta/suricatta.lua
-> +@@ -47,6 +47,7 @@ suricatta.status = {
-> + --
-> + -- Translates to `notify(string.format(message, ...))`,
-> + -- @see `corelib/lua_interface.c`
-> ++-- except for `suricatta.notify.progress()`.
-> + --
-> + --- @class suricatta.notify
-> + suricatta.notify = {
-> +@@ -60,8 +61,8 @@ suricatta.notify = {
-> +     info     = function(message, ...) end,
-> +     --- @type fun(message: string, ...: any)
-> +     warn     = function(message, ...) end,
-> +-    --- @type fun(message: string, ...: any)
-> +-    progress = function(message, ...) end,
-> ++    --- @type fun(message: string, cause:suricatta.ipc.progress_cause?)
-> ++    progress = function(message, cause) end,
-> + }
-> +
-> +
-> +--
-> +2.39.5
-> +
-> diff --git a/recipes-core/swupdate/swupdate_2025.05.bb b/recipes-core/swupdate/swupdate_2025.05.bb
-> new file mode 100644
-> index 0000000..b77236a
-> --- /dev/null
-> +++ b/recipes-core/swupdate/swupdate_2025.05.bb
-> @@ -0,0 +1,39 @@
-> +#
-> +# CIP Core, generic profile
-> +#
-> +# Copyright (c) Toshiba Corporation, 2025
-> +#
-> +# Authors:
-> +#  Adithya Balakumar <adithya.balakumar@toshiba-tsip.com>
-> +#
-> +# SPDX-License-Identifier: MIT
-> +
-> +inherit dpkg
-> +
-> +require swupdate.inc
-> +
-> +DEPENDS += "libebgenv-dev"
-> +DEPENDS += "libubootenv-dev"
-> +
-> +DEB_BUILD_PROFILES += "nodoc"
-> +DEB_BUILD_OPTIONS += "nodoc"
-> +
-> +FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files/${PV}:"
-> +
-> +SRC_URI = "git://salsa.debian.org/debian/swupdate.git;protocol=https;branch=debian/master;destsuffix=${P}"
-> +
-> +SRCREV = "25e4534a157b8e432c3bcb4091e75724fcb0a5d4"
-> +
-> +# patches
-> +SRC_URI += "file://0001-suricatta-wfx-Fix-rebooting-via-tools-swupdate-progr.patch"
-> +
-> +DEB_BUILD_PROFILES += "cross nocheck"
-> +ISAR_CROSS_COMPILE:trixie = "0"
-> +
-> +CHANGELOG_V ?= "${PV}+cip-${SRCREV}"
-> +
-> +do_prepare_build() {
-> +    deb_add_changelog
-> +    cd ${WORKDIR}
-> +    tar cJf ${PN}_${PV}+cip.orig.tar.xz --exclude=.git --exclude=debian ${P}
+> +do_install:append:wfx () {
+> +    # start swupdate service in suricatta mode
+> +    install -d ${D}/etc/swupdate/conf.d
+> +    install -m 0644 ${WORKDIR}/suricatta ${D}/etc/swupdate/conf.d
 > +}
 > 
 > 
 > 
 > -=-=-=-=-=-=-=-=-=-=-=-
 > Links: You receive all messages sent to this group.
-> View/Reply Online (#20203): https://lists.cip-project.org/g/cip-dev/message/20203
-> Mute This Topic: https://lists.cip-project.org/mt/115872046/1753640
+> View/Reply Online (#20204): https://lists.cip-project.org/g/cip-dev/message/20204
+> Mute This Topic: https://lists.cip-project.org/mt/115872047/1753640
 > Group Owner: cip-dev+owner@lists.cip-project.org
 > Unsubscribe: https://lists.cip-project.org/g/cip-dev/unsub [quirin.gylstorff@siemens.com]
 > -=-=-=-=-=-=-=-=-=-=-=-
 > 
-
 
 
 
