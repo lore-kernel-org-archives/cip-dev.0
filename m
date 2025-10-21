@@ -1,126 +1,91 @@
-Return-Path: <uli@fpond.eu>
+Return-Path: <adithya.balakumar@toshiba-tsip.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95370CCD184
-	for <webhook@archiver.kernel.org>; Tue, 21 Oct 2025 09:32:03 +0000 (UTC)
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [85.215.255.24])
- by mx.groups.io with SMTP id smtpd.web10.7186.1761039116822087753
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0EF7CCD1AB
+	for <webhook@archiver.kernel.org>; Tue, 21 Oct 2025 12:40:44 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.158])
+ by mx.groups.io with SMTP id smtpd.web10.10622.1761050443073660351
  for <cip-dev@lists.cip-project.org>;
- Tue, 21 Oct 2025 02:31:57 -0700
+ Tue, 21 Oct 2025 05:40:43 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=EaCWSakr;
- spf=none, err=permanent DNS error (domain: fpond.eu, ip: 85.215.255.24, mailfrom: uli@fpond.eu)
-ARC-Seal: i=1; a=rsa-sha256; t=1761039096; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=Lod2qAhdi0cbrjqGX4OHstGhGUl2ABevdfLc1SnszF9m1RrrbIgqIGbdrhjjbdGWXD
-    /EOdc4Tx7+53wttJvR2MCR/s44RdeWFZLNtSsVZQiEyRZGW1lfMOAStWOADEmhg47NgJ
-    FBT2ndpRhPLFn2vCaY6hQickHjIdj3o9ePSu0by10aD7mtjxBm0o/GvH+MlI5+o0+tql
-    1SnL/mts5iPL6NaRLiWmB/YzK+LE7MbtTQBd0x39II34LdkrO3er5XLsW0yT6tOMDKwS
-    NDkK/pAICvG/UnYxKH2Arnh2hTNl/DHtCvJdJwtETEOwZI9D/qAfJoU52BCAig+MJ+Hc
-    B0xQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1761039096;
-    s=strato-dkim-0002; d=strato.com;
-    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
-    bh=z3UQWQZDXakSlp6gRyrqwbu2w2vxt8SfVRQCIq/SNM4=;
-    b=CPllJVATlNBK+Ay5zAoh5Ac1gxuuxuuqdDhQ/c0MYg5px1Oz7NXvxUp6cYwXqJcdLx
-    9rDgkGPveyrTx67hJ3cAyP0ge+otwFYjCMVMiSma+piiUbbRVjXD+ub8xweAR9EYDKw0
-    9MRiFcdGQizUtfg9nbOGbcH3wrtdIv2BwZFDVyEH86t3xqBlPjcbvj9fyKuyW4Ip+IHF
-    4GXForMOSYB4207MyDmbChn+LrvuwKb7wfAVYMXw1YsBxrpgcUMxw9NumNKk5uVsY7Fm
-    Dgorq1ZH6ht9CuAv0RHmDAi09PIEj1e/eF7nrVC25UVPvTyA3HjnJLwbO7vpJHcrRicH
-    iiyA==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1761039096;
-    s=strato-dkim-0002; d=fpond.eu;
-    h=Subject:Message-ID:To:From:Date:Cc:Date:From:Subject:Sender;
-    bh=z3UQWQZDXakSlp6gRyrqwbu2w2vxt8SfVRQCIq/SNM4=;
-    b=EaCWSakrVVnbJTDLYJM0NTwemul50YuwKmtwxocSL0hUntDlPG6defkMYXCFMj1mOC
-    lQxrnKi6uxEQuZj5jV4I4QvsvmT5wsXQ+M94df8SjP0dqQxE18TFv5KTv1Y+4909pM4r
-    IQ58YS9C5o9DJ63HltPbxP4e0jEccT++37D1qtThTGjNF3VeESvAdUGht6pjCGL1p4Og
-    YPfjJ+Anu8nFwMJ5qUBCFQyukhIV6aIWI0SML+acZ+jsijGb/Ekm34o/ZP+JeAZjFv0A
-    /hpi8pslQc8x7fbLW5txgx/6AfrPZIsJAAX3R95QJC+tBW81Dz219cGl4G3aJpUu2jy9
-    ZGmg==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv30UF1hewKDd5BNnyw=="
-Received: from open-xchange-core-mw-gw-5.open-xchange-core-mw-hazelcast-headless.open-xchange.svc.cluster.local
-    by smtp-ox.front (RZmta 53.4.2 AUTH)
-    with ESMTPSA id z2815319L9ValIo
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256 bits))
-	(Client did not present a certificate);
-    Tue, 21 Oct 2025 11:31:36 +0200 (CEST)
-Date: Tue, 21 Oct 2025 11:31:06 +0200 (CEST)
-From: Ulrich Hecht <uli@fpond.eu>
-To: "cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>,
-	"pavel@denx.de" <pavel@denx.de>,
-	"jan.kiszka@siemens.com" <jan.kiszka@siemens.com>,
-	"masami.ichikawa@cybertrust.co.jp" <masami.ichikawa@cybertrust.co.jp>,
-	"chris.paterson2@renesas.com" <chris.paterson2@renesas.com>,
-	"nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>
-Message-ID: <4337027.175672.1761039096556@webmail.strato.de>
-Subject: [ANNOUNCE] Release v4.19.325-cip125
+ dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.158, mailfrom: adithya.balakumar@toshiba-tsip.com)
+Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 59LCeexr4138212; Tue, 21 Oct 2025 21:40:40 +0900
+X-Iguazu-Qid: 2rWhqFKk8CehysnJhr
+X-Iguazu-QSIG: v=2; s=0; t=1761050439; q=2rWhqFKk8CehysnJhr; m=FcmsQ33DeliYbb39KaLCMhS02AMovnAE4rG+vA4Zpo4=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	 id 4crX2b5lmFz4vyh; Tue, 21 Oct 2025 21:40:39 +0900 (JST)
+From: Adithya.Balakumar@toshiba-tsip.com
+To: cip-dev@lists.cip-project.org, jan.kiszka@siemens.com
+Cc: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>,
+        shivanand.kunijadar@toshiba-tsip.com, dinesh.kumar@toshiba-tsip.com,
+        kazuhiro3.hayashi@toshiba.co.jp, akunuri.sahithi@toshiba-tsip.com
+Subject: [isar-cip-core][RFC v1 0/5] Enable support for wfx backend based software updates
+Date: Tue, 21 Oct 2025 08:52:27 -0400
+X-TSB-HOP2: ON
+Message-Id: <20251021125233.1528087-1-Adithya.Balakumar@toshiba-tsip.com>
+X-Mailer: git-send-email 2.39.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v8.38.93
-X-Originating-Port: 39312
-X-Originating-Client: open-xchange-appsuite
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 21 Oct 2025 12:40:37.0104 (UTC) FILETIME=[E6986F00:01DC4287]
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 21 Oct 2025 09:32:03 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20201
+ <cip-dev@lists.cip-project.org>; Tue, 21 Oct 2025 12:40:44 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20202
 
-Hi,
+From: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
 
-the CIP kernel team has released Linux kernel v4.19.325-cip125. The linux-4.19.y-cip tree's base version has been updated to v4.19-st9. The trees are up-to-date with kernel 5.4.300.
+SWUpdate has supported software updates with wfx[1] backend for a while now. But using this requires a few configurations in the image (swupdate.cfg). These series of patches enables/sets the necessary configurations required to use wfx for software updates.
 
-You can get this release via the git tree or as a tarball from https://mirrors.edge.kernel.org/pub/linux/kernel/projects/cip/4.19/
+For now, I'm sending this as an RFC to understand the opinions of a broader audience.
 
-  v4.19.325-cip125:
-    repository:
-      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
-    branch:
-      linux-4.19.y-cip
-    commit hash:
-      d68802a940fe1efb4315cbd06f2fc8d9c861aec3
-    Fixed CVEs:
-      CVE-2023-52935: mm/khugepaged: fix ->anon_vma race
-      CVE-2025-21861: mm/migrate_device: don't add folio to be freed to LRU in migrate_device_finalize()
-      CVE-2025-23143: net: Fix null-ptr-deref by sock_lock_init_class_and_name() and rmmod.
-      CVE-2025-37968: iio: light: opt3001: fix deadlock due to concurrent flag access
-      CVE-2025-39839: batman-adv: fix OOB read/write in network-coding decode
-      CVE-2025-39846: pcmcia: Fix a NULL pointer dereference in __iodyn_find_io_region()
-      CVE-2025-39847: ppp: fix memory leak in pad_compress_skb
-      CVE-2025-39848: ax25: properly unshare skbs in ax25_kiss_rcv()
-      CVE-2025-39853: i40e: Fix potential invalid access when MAC list is empty
-      CVE-2025-39860: Bluetooth: Fix use-after-free in l2cap_sock_cleanup_listen()
-      CVE-2025-39869: dmaengine: ti: edma: Fix memory allocation size for queue_priority_map
-      CVE-2025-39876: net: fec: Fix possible NPD in fec_enet_phy_reset_after_clk_enable()
-      CVE-2025-39883: mm/memory-failure: fix VM_BUG_ON_PAGE(PagePoisoned(page)) when unpoison memory
-      CVE-2025-39885: ocfs2: fix recursive semaphore deadlock in fiemap call
-      CVE-2025-39891: wifi: mwifiex: Initialize the chan_stats array to zero
-      CVE-2025-39898: e1000e: fix heap overflow in e1000_set_eeprom
-      CVE-2025-39902: mm/slub: avoid accessing metadata when pointer is invalid in object_err()
-      CVE-2025-39911: i40e: fix IRQ freeing in i40e_vsi_request_irq_msix error path
-      CVE-2025-39920: pcmcia: Add error handling for add_interval() in do_validate_mem()
-      CVE-2025-39923: dmaengine: qcom: bam_dma: Fix DT error handling for num-channels/ees
-      CVE-2025-39937: net: rfkill: gpio: Fix crash due to dereferencering uninitialized pointer
-      CVE-2025-39945: cnic: Fix use-after-free bugs in cnic_delete_task
-      CVE-2025-39953: cgroup: split cgroup_destroy_wq into 3 workqueues
-      CVE-2025-39955: tcp: Clear tcp_sk(sk)->fastopen_rsk in tcp_disconnect().
-      CVE-2025-39967: fbcon: fix integer overflow in fbcon_do_set_font
-      CVE-2025-39968: i40e: add max boundary check for VF filters
-      CVE-2025-39970: i40e: fix input validation logic for action_meta
-      CVE-2025-39972: i40e: fix idx validation in i40e_validate_queue_map
-      CVE-2025-39973: i40e: add validation for ring_len param
-      CVE-2025-39985: can: mcba_usb: populate ndo_change_mtu() to prevent buffer overflow
-      CVE-2025-39986: can: sun4i_can: populate ndo_change_mtu() to prevent buffer overflow
-      CVE-2025-39987: can: hi311x: populate ndo_change_mtu() to prevent buffer overflow
+A couple notes about the implementation:
+- Provides using wfx as the update backend as an option (not forced).
+- Adds a new section for suricatta in the swupdate.cfg file.
+- Starts SWUpdate in suricatta daemon mode at service startup (if wfx support is enabled at build).
+- wfx requires a clientId per device in order to target devices (create jobs for devices). This is currently achieved with wfx-customizations package which deploys a script in the image that generates and sets the ID in the swupdate.cfg at run time.
+- The above point could be made more practical with something like an onboarding function (See [2], This is still not officially part of the CIP project yet).
+- Introduces wfx.yml to set wfx specific variables.
 
-Best regards,
-Ulrich Hecht
+[1] https://sbabic.github.io/swupdate/suricatta.html#support-for-wfx
+[2] https://gitlab.com/cip-playground/cip-wfx-onboarding-client-plugin
+
+Adithya Balakumar (5):
+  SWUpdate: Use self-built SWUpdate 2025.05 for trixie
+  recipes-core/swupdate-config: Add suricatta section in swupdate.cfg
+  wfx-customizations: Recipe to add wfx helper specific scripts into
+    target
+  kas/opt/wfx.yml: Set wfx specific variables
+  doc/README.swupdate.md: Add section for software update with wfx
+
+ conf/distro/cip-core-trixie.conf              |   1 +
+ doc/README.swupdate.md                        | 124 +++++++++++++++++
+ kas/opt/wfx.yml                               |  20 +++
+ recipes-core/images/swupdate.inc              |   3 +-
+ recipes-core/swupdate-config/files/suricatta  |   1 +
+ .../files/{swupdate.cfg => swupdate.cfg.tmpl} |   7 +
+ .../swupdate-config/swupdate-config_0.2.bb    |  12 +-
+ ...x-rebooting-via-tools-swupdate-progr.patch | 129 ++++++++++++++++++
+ recipes-core/swupdate/swupdate_2025.05.bb     |  39 ++++++
+ .../wfx-customizations/files/override.conf    |   6 +
+ .../files/wfx-generate-uuid.sh                |  22 +++
+ .../wfx-customizations_0.1.bb                 |  28 ++++
+ 12 files changed, 389 insertions(+), 3 deletions(-)
+ create mode 100644 kas/opt/wfx.yml
+ create mode 100644 recipes-core/swupdate-config/files/suricatta
+ rename recipes-core/swupdate-config/files/{swupdate.cfg => swupdate.cfg.tmpl} (55%)
+ create mode 100644 recipes-core/swupdate/files/2025.05/0001-suricatta-wfx-Fix-rebooting-via-tools-swupdate-progr.patch
+ create mode 100644 recipes-core/swupdate/swupdate_2025.05.bb
+ create mode 100644 recipes-core/wfx-customizations/files/override.conf
+ create mode 100644 recipes-core/wfx-customizations/files/wfx-generate-uuid.sh
+ create mode 100644 recipes-core/wfx-customizations/wfx-customizations_0.1.bb
+
+-- 
+2.39.5
+
+
 
