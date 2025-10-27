@@ -2,32 +2,32 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D085CCF9F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 132EFCCF9F3
 	for <webhook@archiver.kernel.org>; Mon, 27 Oct 2025 07:22:02 +0000 (UTC)
 Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
- by mx.groups.io with SMTP id smtpd.web11.26400.1761549712486507065
+ by mx.groups.io with SMTP id smtpd.web10.26592.1761549712709964129
  for <cip-dev@lists.cip-project.org>;
  Mon, 27 Oct 2025 00:21:53 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=jan.kiszka@siemens.com header.s=fm2 header.b=SAjozR5i;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-294854-20251027072150ef995a6384000207d3-jka8hj@rts-flowmailer.siemens.com)
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 20251027072150ef995a6384000207d3
+ dkim=pass header.i=jan.kiszka@siemens.com header.s=fm2 header.b=fxkV+Vzq;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-294854-2025102707215069a0f77a1c000207ba-glgsnc@rts-flowmailer.siemens.com)
+Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 2025102707215069a0f77a1c000207ba
         for <cip-dev@lists.cip-project.org>;
         Mon, 27 Oct 2025 08:21:50 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
  d=siemens.com; i=jan.kiszka@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=O32b7XAoN1CljXFLLUISv+6EZebCLWYC476C6kKVKJk=;
- b=SAjozR5i8cj0LXdWJN8plNDw0bkTuIlvESyF0VRTdRzq+39zErTkJfDVfY0HI+ZJnKCq4m
- LpP5rCiBE1OtWoH4sKtP12q3mok4JZR/JsYl+E+XZgggBdMjJLHzM6oBPkXiFoquAnkTaZ6p
- 1U2sHa5QGjh/Ia4U+JkEvXBJT4EciLMQcZfwBv7vshXIfONB8JPzt2eqVr8y31JjZVVcZ6WY
- 48Jf7PCwd//+vbImQIT1yRrJflFBBwXF1juahL5Rr8iQmVNbSwhJDLIJoPd08V8HQAve7OdD
- DGFPHSevV39e8EHMY2Z+YBp4HgjKzzSSrxHx9NETlauvDH+VVCvSrSmg==;
+ bh=yN46aGPLF8HoK3C9gAeQZotgwDIp3oSG+AgN0tuB4pQ=;
+ b=fxkV+VzqMQZonhDUgB5WUpS5CszrDY6xAudQ6ObZiexhqBZsxlA0TWzCTYw1fE3uXnSPl4
+ QeFAcL5knt6dJRbSJPi+q9Kk0vFB8APJxIkn3uH5G1qD7YIWaS+540YxZ044JzA3C+G+WQak
+ hVijbFpNytE15L8xkcp7zuT9Uia0dGdD0ktp+3+IqCc/Vy5qcrw2En+dUYyJZQZFExkAmdFQ
+ zr0MYSVmhhh9y1lhQWD+/PSDyfxwshJJ6fWP7UjumukaKZnjq1bFhyO2O8BdoOnMD9f5sMz4
+ ZdmcqxH/OTfuEyX5T01DAR3yoXQa1/nIOBqq7wDfeQB1iu9/nVGMpNkA==;
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
-Subject: [isar-cip-core][PATCH 08/19] u-boot-qemu: Add patches and config switch needed for eMMC boot
-Date: Mon, 27 Oct 2025 08:21:37 +0100
-Message-ID: <95aa9bf9d60d569ed57d4b90c41e088360b0572b.1761549708.git.jan.kiszka@siemens.com>
+Subject: [isar-cip-core][PATCH 12/19] Add class to generate eMMC image for QEMU
+Date: Mon, 27 Oct 2025 08:21:41 +0100
+Message-ID: <08f8a09bd85b9b151784e387cc5a4572dfbacbe0.1761549708.git.jan.kiszka@siemens.com>
 In-Reply-To: <cover.1761549708.git.jan.kiszka@siemens.com>
 References: <cover.1761549708.git.jan.kiszka@siemens.com>
 MIME-Version: 1.0
@@ -38,128 +38,115 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 27 Oct 2025 07:22:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20235
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20236
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Add 2 patches that are needed to boot from a PCI-attached eMMC. Both
-will be available with v2026.01. Furthermore enable the required config
-switches for all QEMU builds of U-Boot. Only ARM64 will use that soon,
-but there is no reason to not have the others prepared already.
+To add an RPMB partition to eMMC image for QEMU, we need a simple image
+class. It will prepend a zero'ed partition to the user data area or 2 MB
+by default.
+
+First user of this image type is the qemu-arm64 target in fTPM/StMM
+mode.
 
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- ...onvert-SYS_EARLY_PCI_INIT-to-Kconfig.patch | 37 +++++++++++++++++++
- ...arm-Select-CONFIG_SYS_EARLY_PCI_INIT.patch | 28 ++++++++++++++
- recipes-bsp/u-boot/files/qemu-extra.cfg       |  7 ++++
- recipes-bsp/u-boot/u-boot-common-2025.07.inc  |  2 +
- 4 files changed, 74 insertions(+)
- create mode 100644 recipes-bsp/u-boot/files/0001-Kconfig-Convert-SYS_EARLY_PCI_INIT-to-Kconfig.patch
- create mode 100644 recipes-bsp/u-boot/files/0002-qemu_arm-Select-CONFIG_SYS_EARLY_PCI_INIT.patch
+ classes/qemu-emmc.bbclass    | 43 ++++++++++++++++++++++++++++++++++++
+ conf/layer.conf              |  5 ++---
+ conf/machine/qemu-arm64.conf |  4 +++-
+ 3 files changed, 48 insertions(+), 4 deletions(-)
+ create mode 100644 classes/qemu-emmc.bbclass
 
-diff --git a/recipes-bsp/u-boot/files/0001-Kconfig-Convert-SYS_EARLY_PCI_INIT-to-Kconfig.patch b/recipes-bsp/u-boot/files/0001-Kconfig-Convert-SYS_EARLY_PCI_INIT-to-Kconfig.patch
+diff --git a/classes/qemu-emmc.bbclass b/classes/qemu-emmc.bbclass
 new file mode 100644
-index 00000000..36c0ea8b
+index 00000000..bded834d
 --- /dev/null
-+++ b/recipes-bsp/u-boot/files/0001-Kconfig-Convert-SYS_EARLY_PCI_INIT-to-Kconfig.patch
-@@ -0,0 +1,37 @@
-+From d3403a731b5b194a9e4e2ba67911e760dcd89207 Mon Sep 17 00:00:00 2001
-+From: Fabio Estevam <festevam@gmail.com>
-+Date: Thu, 14 Aug 2025 20:14:35 +0200
-+Subject: [PATCH 1/3] Kconfig: Convert SYS_EARLY_PCI_INIT to Kconfig
++++ b/classes/qemu-emmc.bbclass
+@@ -0,0 +1,43 @@
++#
++# CIP Core, generic profile
++#
++# Copyright (c) Siemens AG, 2025
++#
++# Authors:
++#  Jan Kiszka <jan.kiszka@siemens.com>
++#
++# SPDX-License-Identifier: MIT
++#
 +
-+The CONFIG_SYS_EARLY_PCI_INIT symbol is currently not supported
-+by Kconfig.
++IMAGE_TYPEDEP:qemu_emmc = "wic"
 +
-+Make it a Kconfig symbol so that users could select it via defconfig.
++SOURCE_IMAGE_FILE ?= "${IMAGE_FULLNAME}.wic"
++SOURCE_IMAGE_PATH = "${DEPLOY_DIR_IMAGE}/${SOURCE_IMAGE_FILE}"
 +
-+Signed-off-by: Fabio Estevam <festevam@gmail.com>
-+Reviewed-by: Tom Rini <trini@konsulko.com>
-+---
-+ common/Kconfig | 7 +++++++
-+ 1 file changed, 7 insertions(+)
++QEMU_EMMC_RPMB_PART_SIZE ?= "2097152"
 +
-+diff --git a/common/Kconfig b/common/Kconfig
-+index a2f653f7e72..cb17f056153 100644
-+--- a/common/Kconfig
-++++ b/common/Kconfig
-+@@ -833,6 +833,13 @@ config PCI_INIT_R
-+ 	  case of DM PCI-based Ethernet devices, which will not be detected
-+ 	  without having the enumeration performed earlier.
-+ 
-++config SYS_EARLY_PCI_INIT
-++	bool "Enumerate PCI buses early during init"
-++	depends on PCI
-++	help
-++	  Do early PCI configuration before the eMMC gets initialised,
-++	  because PCI resources are crucial for eMMC access on some boards.
-++
-+ config RESET_PHY_R
-+ 	bool "Reset ethernet PHY during init"
-+ 	help
-+-- 
-+2.51.0
++python set_data_part_size() {
++    import os
 +
-diff --git a/recipes-bsp/u-boot/files/0002-qemu_arm-Select-CONFIG_SYS_EARLY_PCI_INIT.patch b/recipes-bsp/u-boot/files/0002-qemu_arm-Select-CONFIG_SYS_EARLY_PCI_INIT.patch
-new file mode 100644
-index 00000000..ec82a32b
---- /dev/null
-+++ b/recipes-bsp/u-boot/files/0002-qemu_arm-Select-CONFIG_SYS_EARLY_PCI_INIT.patch
-@@ -0,0 +1,28 @@
-+From b93d9e7cc2b39a6d16356d391d2d7832ed4b9202 Mon Sep 17 00:00:00 2001
-+From: Fabio Estevam <festevam@gmail.com>
-+Date: Thu, 14 Aug 2025 20:14:36 +0200
-+Subject: [PATCH 2/3] qemu_arm: Select CONFIG_SYS_EARLY_PCI_INIT
++    size = os.stat(d.getVar('SOURCE_IMAGE_PATH')).st_size
++    if size > 2 * 1024 * 1024 * 1024:
++        size = (size + 511) & ~511
++    elif size & (size - 1) > 0:
++        n = 0
++        while size > 0:
++            size >>= 1
++            n = n + 1
++        size = 1 << n
++    size += int(d.getVar('QEMU_EMMC_RPMB_PART_SIZE'))
++    d.setVar('QEMU_EMMC_IMAGE_SIZE', str(size))
++}
 +
-+Select CONFIG_SYS_EARLY_PCI_INIT so that eMMC emulation can
-+work.
++do_image_qemu_emmc[prefuncs] = "set_data_part_size"
++IMAGE_CMD:qemu_emmc() {
++    dd if=/dev/zero of="${IMAGE_FILE_HOST}" status=none bs=128K \
++        count=${@int(d.getVar('QEMU_EMMC_RPMB_PART_SIZE')) // (128*1024)}
++    cat "${SOURCE_IMAGE_PATH}" >> "${IMAGE_FILE_HOST}"
 +
-+Signed-off-by: Fabio Estevam <festevam@gmail.com>
-+---
-+ board/emulation/qemu-arm/Kconfig | 1 +
-+ 1 file changed, 1 insertion(+)
++    image_size=$(stat -L -c %s "${SOURCE_IMAGE_PATH}")
++    truncate "${IMAGE_FILE_HOST}" -s ${QEMU_EMMC_IMAGE_SIZE}
++}
+diff --git a/conf/layer.conf b/conf/layer.conf
+index 316f4a81..c51c3af1 100644
+--- a/conf/layer.conf
++++ b/conf/layer.conf
+@@ -1,7 +1,7 @@
+ #
+ # CIP Core, generic profile
+ #
+-# Copyright (c) Siemens AG, 2019
++# Copyright (c) Siemens AG, 2019-2025
+ #
+ # Authors:
+ #  Jan Kiszka <jan.kiszka@siemens.com>
+@@ -23,5 +23,4 @@ LAYERSERIES_COMPAT_cip-core = "next"
+ LAYERDIR_cip-core = "${LAYERDIR}"
+ LAYERDIR_cip-core[vardepvalue] = "isar-cip-core"
+ 
+-IMAGE_CLASSES += "squashfs erofs verity swupdate delta-update"
+-
++IMAGE_CLASSES += "squashfs erofs verity swupdate delta-update qemu-emmc"
+diff --git a/conf/machine/qemu-arm64.conf b/conf/machine/qemu-arm64.conf
+index cdb94d51..0745938b 100644
+--- a/conf/machine/qemu-arm64.conf
++++ b/conf/machine/qemu-arm64.conf
+@@ -1,7 +1,7 @@
+ #
+ # CIP Core, generic profile
+ #
+-# Copyright (c) Siemens AG, 2019
++# Copyright (c) Siemens AG, 2019-2025
+ #
+ # SPDX-License-Identifier: MIT
+ #
+@@ -9,6 +9,8 @@
+ DISTRO_ARCH = "arm64"
+ 
+ IMAGE_FSTYPES ?= "ext4"
++IMAGE_FSTYPES:append:ftpm-stmm = " qemu-emmc"
 +
-+diff --git a/board/emulation/qemu-arm/Kconfig b/board/emulation/qemu-arm/Kconfig
-+index 80ab9d8e1c3..447061b25cd 100644
-+--- a/board/emulation/qemu-arm/Kconfig
-++++ b/board/emulation/qemu-arm/Kconfig
-+@@ -8,6 +8,7 @@ config BOARD_SPECIFIC_OPTIONS # dummy
-+ 	select HAS_CUSTOM_SYS_INIT_SP_ADDR
-+ 	select QFW if ACPI
-+ 	select QFW_MMIO if CMD_QFW
-++	imply SYS_EARLY_PCI_INIT
-+ 	imply VIRTIO_MMIO
-+ 	imply VIRTIO_PCI
-+ 	imply VIRTIO_NET
-+-- 
-+2.51.0
-+
-diff --git a/recipes-bsp/u-boot/files/qemu-extra.cfg b/recipes-bsp/u-boot/files/qemu-extra.cfg
-index 775e999c..e643db7d 100644
---- a/recipes-bsp/u-boot/files/qemu-extra.cfg
-+++ b/recipes-bsp/u-boot/files/qemu-extra.cfg
-@@ -1,2 +1,9 @@
- ### QEMU extra config
-+CONFIG_MMC=y
-+CONFIG_SUPPORT_EMMC_RPMB=y
-+CONFIG_SUPPORT_EMMC_BOOT=y
-+CONFIG_MMC_PCI=y
-+CONFIG_MMC_SDHCI=y
-+CONFIG_CMD_MMC=y
-+CONFIG_CMD_MMC_REG=y
- CONFIG_EFI_SCROLL_ON_CLEAR_SCREEN=y
-diff --git a/recipes-bsp/u-boot/u-boot-common-2025.07.inc b/recipes-bsp/u-boot/u-boot-common-2025.07.inc
-index b5ecb31a..5f8f9de9 100644
---- a/recipes-bsp/u-boot/u-boot-common-2025.07.inc
-+++ b/recipes-bsp/u-boot/u-boot-common-2025.07.inc
-@@ -16,6 +16,8 @@ FILESPATH:append := ":${FILE_DIRNAME}/files"
- SRC_URI += " \
-     https://ftp.denx.de/pub/u-boot/u-boot-${PV}.tar.bz2 \
-     file://0001-tools-Do-not-generate-logo-when-cross-building.patch \
-+    file://0001-Kconfig-Convert-SYS_EARLY_PCI_INIT-to-Kconfig.patch \
-+    file://0002-qemu_arm-Select-CONFIG_SYS_EARLY_PCI_INIT.patch \
-     file://rules.tmpl;subdir=debian"
- SRC_URI[sha256sum] = "0f933f6c5a426895bf306e93e6ac53c60870e4b54cda56d95211bec99e63bec7"
+ USE_CIP_KERNEL_CONFIG = "1"
+ KERNEL_DEFCONFIG ?= "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/arm64/cip_merged_defconfig"
  
 -- 
 2.51.0
