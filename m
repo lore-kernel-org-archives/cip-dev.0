@@ -2,32 +2,32 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2372ACCF9F6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 358BBCCF9F9
 	for <webhook@archiver.kernel.org>; Mon, 27 Oct 2025 07:22:02 +0000 (UTC)
-Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
- by mx.groups.io with SMTP id smtpd.web11.26397.1761549712393480804
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
+ by mx.groups.io with SMTP id smtpd.web11.26394.1761549712339499875
  for <cip-dev@lists.cip-project.org>;
  Mon, 27 Oct 2025 00:21:53 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=jan.kiszka@siemens.com header.s=fm2 header.b=GStuEuOZ;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.228, mailfrom: fm-294854-20251027072149112c009a5700020774-majmgb@rts-flowmailer.siemens.com)
-Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 20251027072149112c009a5700020774
+ dkim=pass header.i=jan.kiszka@siemens.com header.s=fm2 header.b=DJyYubma;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-294854-2025102707215008188eb77200020721-okona_@rts-flowmailer.siemens.com)
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 2025102707215008188eb77200020721
         for <cip-dev@lists.cip-project.org>;
         Mon, 27 Oct 2025 08:21:50 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
  d=siemens.com; i=jan.kiszka@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=d7L8e1CDzWi64AQDJMvPwoF3VDDekySdmCXJlMhPSpA=;
- b=GStuEuOZDZVvnSl5vaajASMkXL4cgpvSaNVAPUgWo9OI0IPufjmga/jm8YZOjEQvEHFaql
- GlDOnVWFA+PHVRv7CibmXraGG6lGSU4eFSzuYCGEWAIyIeP40w8s5vSdc7lva3bhQSfNh/xv
- pO1vDJE+K3C0QSYNxiuhNzmY2tI+RCJEsmT9u+cdnHJzrLnOONHvGgtRvxmRlL5Oq/0N4g5T
- EhxOGzu04ZavG1wAXdJypOk/ZKWeE3bJSMVw+mNBxLeYRKELLOQyMCg3sFN2+FlvX1GlFaCB
- Jn5HPaiwSS+svJVpH9HChUGKnIJH4YwGp/TaoBRBxqInauL26ms8HfCA==;
+ bh=Ow/FLXnRiFJvajvnLhA/2+Pr+xA1F0sEgKTZzJbLfMU=;
+ b=DJyYubmanl3MJ0OC+TRDkeeuZh8dA3ckxluT9jJr+AMtj7Exg/ik55Cy7+NZjCm1sDc/3k
+ N/FI7IyA+QnsYZArqbXvlQ8UyAjtEndZ5g1zY5XMg8DmVDfMT7/JNpGo31mlrbLHSlRElAqm
+ 1BkWmOqDDD0UuK/C73Kqkxjg4+6du4INA/tPMhCzHQiSgIrRbVCWv1vXj4Mq4VULj/OJAMAr
+ cDiHrIKsyoiI+YIboHsPdndnfd3EYzgiSBJL7S+x8iFv1O7sVoQwRk7xZ/Kd+UXZHd/LsM4C
+ FzVzj1Pp7OlCUBQnEFxsJPnhTpCRe4k1TDQ8h7baF/eqWKc0i6jek6xQ==;
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
-Subject: [isar-cip-core][PATCH 06/19] u-boot: Add patch to fix sporadic build failures
-Date: Mon, 27 Oct 2025 08:21:35 +0100
-Message-ID: <3b23fd63dddcdda47d0609e2e1f0d88b5ef2b747.1761549708.git.jan.kiszka@siemens.com>
+Subject: [isar-cip-core][PATCH 07/19] u-boot: Relocate or drop secure boot unrelated config switches
+Date: Mon, 27 Oct 2025 08:21:36 +0100
+Message-ID: <ec7f76d44cd2ec5dd5cd216932d19a025f88a418.1761549708.git.jan.kiszka@siemens.com>
 In-Reply-To: <cover.1761549708.git.jan.kiszka@siemens.com>
 References: <cover.1761549708.git.jan.kiszka@siemens.com>
 MIME-Version: 1.0
@@ -38,70 +38,80 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 27 Oct 2025 07:22:02 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20233
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20225
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Merge upstream, will appear in v2026.01.
+CONFIG_USB_STORAGE and CONFIG_FIT_SIGNATURE are not generically required
+to switch U-Boot into UEFI secure boot, drop them.
+
+CONFIG_EFI_SCROLL_ON_CLEAR_SCREEN helps to keep the debug output intact
+when booting via UEFI, but also without secure boot. Move this into a
+newly introduced config extension for the QEMU boards. That snippet will
+gain more options soon.
 
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- ...ot-generate-logo-when-cross-building.patch | 33 +++++++++++++++++++
- recipes-bsp/u-boot/u-boot-common-2025.07.inc  |  1 +
- 2 files changed, 34 insertions(+)
- create mode 100644 recipes-bsp/u-boot/files/0001-tools-Do-not-generate-logo-when-cross-building.patch
+ recipes-bsp/u-boot/files/qemu-extra.cfg   | 2 ++
+ recipes-bsp/u-boot/files/secure-boot.cfg  | 3 ---
+ recipes-bsp/u-boot/u-boot-qemu-common.inc | 9 ++++++++-
+ 3 files changed, 10 insertions(+), 4 deletions(-)
+ create mode 100644 recipes-bsp/u-boot/files/qemu-extra.cfg
 
-diff --git a/recipes-bsp/u-boot/files/0001-tools-Do-not-generate-logo-when-cross-building.patch b/recipes-bsp/u-boot/files/0001-tools-Do-not-generate-logo-when-cross-building.patch
+diff --git a/recipes-bsp/u-boot/files/qemu-extra.cfg b/recipes-bsp/u-boot/files/qemu-extra.cfg
 new file mode 100644
-index 00000000..16b219f5
+index 00000000..775e999c
 --- /dev/null
-+++ b/recipes-bsp/u-boot/files/0001-tools-Do-not-generate-logo-when-cross-building.patch
-@@ -0,0 +1,33 @@
-+From 371a76e845504c9ba7ca216b6edfb4ae4ec14e56 Mon Sep 17 00:00:00 2001
-+From: Jan Kiszka <jan.kiszka@siemens.com>
-+Date: Sat, 23 Aug 2025 17:21:09 +0200
-+Subject: [PATCH] tools: Do not generate logo when cross-building
-+
-+This cannot work (unless qemu-user is registered in binfmt_misc) as the
-+tools will be for a different architecture.
-+
-+Fixes "make cross_tools" in case CONFIG_VIDEO_LOGO is enabled.
-+
-+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-+Reviewed-by: Tom Rini <trini@konsulko.com>
-+---
-+ tools/Makefile | 2 ++
-+ 1 file changed, 2 insertions(+)
-+
-+diff --git a/tools/Makefile b/tools/Makefile
-+index 7eb17f92116..ae6a3052646 100644
-+--- a/tools/Makefile
-++++ b/tools/Makefile
-+@@ -333,7 +333,9 @@ HOST_EXTRACFLAGS += -include $(srctree)/include/compiler.h \
-+ 		-D__KERNEL_STRICT_NAMES \
-+ 		-D_GNU_SOURCE
-+ 
-++ifeq ($(CROSS_BUILD_TOOLS),)
-+ __build:	$(LOGO-y)
-++endif
-+ 
-+ $(LOGO_H):	$(obj)/bmp_logo $(LOGO_BMP)
-+ 	$(obj)/bmp_logo --gen-info $(LOGO_BMP) > $@
-+-- 
-+2.51.0
-+
-diff --git a/recipes-bsp/u-boot/u-boot-common-2025.07.inc b/recipes-bsp/u-boot/u-boot-common-2025.07.inc
-index 93678cbf..b5ecb31a 100644
---- a/recipes-bsp/u-boot/u-boot-common-2025.07.inc
-+++ b/recipes-bsp/u-boot/u-boot-common-2025.07.inc
-@@ -15,6 +15,7 @@ FILESPATH:append := ":${FILE_DIRNAME}/files"
++++ b/recipes-bsp/u-boot/files/qemu-extra.cfg
+@@ -0,0 +1,2 @@
++### QEMU extra config
++CONFIG_EFI_SCROLL_ON_CLEAR_SCREEN=y
+diff --git a/recipes-bsp/u-boot/files/secure-boot.cfg b/recipes-bsp/u-boot/files/secure-boot.cfg
+index 58786a45..9d8b047e 100644
+--- a/recipes-bsp/u-boot/files/secure-boot.cfg
++++ b/recipes-bsp/u-boot/files/secure-boot.cfg
+@@ -9,12 +9,9 @@ CONFIG_BOOTDELAY=-2
+ CONFIG_USE_BOOTCOMMAND=y
+ CONFIG_BOOTCOMMAND="bootflow scan -lb; echo 'EFI Boot failed!'; sleep 1000; reset"
+ CONFIG_HUSH_PARSER=y
+-CONFIG_USB_STORAGE=y
+ CONFIG_EFI_PARTITION=y
+ CONFIG_FS_FAT=y
+ CONFIG_EFI_VARIABLES_PRESEED=y
+ CONFIG_EFI_SECURE_BOOT=y
+-CONFIG_FIT_SIGNATURE=y
+-CONFIG_EFI_SCROLL_ON_CLEAR_SCREEN=y
+ # workaround for v2025.07
+ CONFIG_CMD_DHCP=y
+diff --git a/recipes-bsp/u-boot/u-boot-qemu-common.inc b/recipes-bsp/u-boot/u-boot-qemu-common.inc
+index 0bf7b621..f1a415b1 100644
+--- a/recipes-bsp/u-boot/u-boot-qemu-common.inc
++++ b/recipes-bsp/u-boot/u-boot-qemu-common.inc
+@@ -1,7 +1,7 @@
+ #
+ # CIP Core, generic profile
+ #
+-# Copyright (c) Siemens AG, 2022-2024
++# Copyright (c) Siemens AG, 2022-2025
+ #
+ # Authors:
+ #  Jan Kiszka <jan.kiszka@siemens.com>
+@@ -11,8 +11,15 @@
  
- SRC_URI += " \
-     https://ftp.denx.de/pub/u-boot/u-boot-${PV}.tar.bz2 \
-+    file://0001-tools-Do-not-generate-logo-when-cross-building.patch \
-     file://rules.tmpl;subdir=debian"
- SRC_URI[sha256sum] = "0f933f6c5a426895bf306e93e6ac53c60870e4b54cda56d95211bec99e63bec7"
+ inherit deploy-firmware
  
++SRC_URI += "file://qemu-extra.cfg"
++
+ U_BOOT_BIN = "u-boot.bin"
+ 
++do_prepare_build:append() {
++    sed -ni '/### QEMU extra config/q;p' ${S}/configs/${U_BOOT_CONFIG}
++    cat ${WORKDIR}/qemu-extra.cfg >> ${S}/configs/${U_BOOT_CONFIG}
++}
++
+ do_deploy_firmware() {
+     dpkg --fsys-tarfile "${WORKDIR}/u-boot-${MACHINE}_${PV}_${DISTRO_ARCH}.deb" | \
+         tar xOf - "./usr/lib/u-boot/${MACHINE}/${U_BOOT_BIN}" \
 -- 
 2.51.0
 
