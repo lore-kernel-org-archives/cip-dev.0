@@ -1,424 +1,202 @@
-Return-Path: <adithya.balakumar@toshiba-tsip.com>
+Return-Path: <nobuhiro.iwamatsu.x90@mail.toshiba>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5666FCCF9E0
-	for <webhook@archiver.kernel.org>; Tue, 28 Oct 2025 07:31:46 +0000 (UTC)
-Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.134])
- by mx.groups.io with SMTP id smtpd.web10.6190.1761636700186542901
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC4CCCD1BF
+	for <webhook@archiver.kernel.org>; Tue, 28 Oct 2025 07:39:56 +0000 (UTC)
+Received: from mo-csw.securemx.jp (mo-csw.securemx.jp [210.130.202.152])
+ by mx.groups.io with SMTP id smtpd.web10.6253.1761637183436697674
  for <cip-dev@lists.cip-project.org>;
- Tue, 28 Oct 2025 00:31:40 -0700
+ Tue, 28 Oct 2025 00:39:44 -0700
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: toshiba-tsip.com, ip: 210.130.202.134, mailfrom: adithya.balakumar@toshiba-tsip.com)
-Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 59S7Vbm52839282; Tue, 28 Oct 2025 16:31:38 +0900
-X-Iguazu-Qid: 2yAbDoX6mPezKvSuRj
-X-Iguazu-QSIG: v=2; s=0; t=1761636697; q=2yAbDoX6mPezKvSuRj; m=AkHRnRdzNkeTP4PPjS64UE1M7Ku+AyAih45SseraF/U=
-Received: from imx12-a.toshiba.co.jp (unknown [38.106.60.135])
+ dkim=pass header.i=nobuhiro.iwamatsu.x90@mail.toshiba header.s=key1.smx header.b=heIWGKtI;
+ spf=pass (domain: mail.toshiba, ip: 210.130.202.152, mailfrom: nobuhiro.iwamatsu.x90@mail.toshiba)
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=mail.toshiba;h=From:To:CC:
+	Subject:Date:Message-ID:Content-Type:Content-Transfer-Encoding:MIME-Version;
+	i=nobuhiro.iwamatsu.x90@mail.toshiba;s=key1.smx;t=1761637162;x=1762846762;bh=
+	R4/Vi8nhIy2c/Fxl4O6FF1JmhIYpyfhqF24IOtJH2os=;b=heIWGKtIW21uZQaHmzp4/E6cxRv94l
+	tl5C8Vb88ApJeG0gfnN6qVHz8q2xywLXIAShzwPQPZnfzJ1XYJu46QAoIwln0LKa//yIGp3JRvD7O
+	+xzdFaN/Eyf2B3kk8KlS5iC0Wlr1gTwtkJnakRlYqRjSReNHNcH7vn8W+4ZDbivPbSAhfxNWpczR2
+	TJOk8sAmGWUsnqCsmhrH5lOx4I2bE1IUA6rFlUU01LUDMouhXEhPMt0CL9KcyRHvPXzpBkzmUDtig
+	jNSdF8fZ1GFFppHbfEKv1pTq8mAkEOi46XK4u4pe+GWo+ef+EyinHwx7rlpn3uM61YU7AwJHp5XqV
+	FS9A==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1802) id 59S7dMHk2534694; Tue, 28 Oct 2025 16:39:22 +0900
+X-Iguazu-Qid: 2yAblOJGmdggwDfyDo
+X-Iguazu-QSIG: v=2; s=0; t=1761637161; q=2yAblOJGmdggwDfyDo; m=mh7NFDx6a/IsEhfheATiJNx0KkMhCDClgViwcYr78C8=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	 id 4cwhrn2jMxz1xnc; Tue, 28 Oct 2025 16:31:36 +0900 (JST)
+	 id 4cwj1j4GsCzyPQ; Tue, 28 Oct 2025 16:39:21 +0900 (JST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pHzawOdYkQxBT4D2WvUoge3NXlknbFS8aI0eZe/do+1MYT3OZslRU+L3jgjvse0+knglPF8odBT3u25fOnEKf+n2GyQ8+7Ls0oPFoz6hwCaKAabqoRAopnlw0Ty4ibvHxw9A4jiwExuAW+AQhupTlbMIV4MGxHatwTIDdUnWSinXaf4cx+LjDfvCvNI5REpfqRacxLY7JKQA1BQo2mNXFZMwmSKQ+HYh+s2N5mpbTpJHFXh0iUDyyIHGmfUhnI0ngnZ6hxKtEkvIhYsNL4mncVGqZun9TOfL8uSZr2jl7i+FXDkrC8pGkALuGqNN7RauZAlV297WbbiktFnmipyFag==
+ b=o+fW3JR7tTbMTxaIrP05/Hn3fxMcPQqYhVcIIL2fdNVmTvf/0DfC6bmFq5boAJAwsbvERbwCwGdTozjiB9w2QkmTevaAjSsAMHOVconIFQMW9nCwzxNOOjoLeFEx1/uLWSPNtLeymCsu/0oNjKAOh856GaTEgGSNbonEEaM55KGqAsbj/vgr/8zGY+99ocA/NAD0Z1lMVOEwWAMVGVuyMgUJEzdc9M8OCdER9ZpF1ao7clqVDllPwTusxnNHBmKWD96ZaBTx6yoASfxu77OX76B97yVctTI/SUOLV0Eam+sl95uG+IreVhxBI8vAVLL6CIk2rXyTVtyUwQb0WBQ9Uw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=h75lIJm7uQ+sd+qDHGxcoUVdkZariK3itdGa4owWT88=;
- b=fap2OZhDdi548gFDXIqoCRV2THgt3RBa8tM+lV6acaElcCZJs9/MpI6MowhGz4wIhikqxM+EVnjWEpSqMSjejS+atO9QzUoEDic81WTuxdj1IUoIyj3wYxQC+Yh1SRX/oBMzuVHVSFi82ayuPDPtRsp5BnZUH7yihsixzPXjpepmUdSjcnRq+6jpjJqWooYbQBlY3TiT9DYfuEZvXpxEvMkw0g3nklMikUDSjnmBCgpIaIfnGekhbk2GNpo5jJmD65YHkxxl+rth3HueUDbzycyPhkK83Lcbdh/ufUZHFFkCBrLmE2GPACpsewAayAYSaLabw7FmMlbBcb3nK1M3/w==
+ bh=mDkZ/M5tSadqivBhaPK+sdhCyO/JqlV7WJJkhoJ4fdE=;
+ b=B1OAVpAEAV8KQstWe8V5E/CZbqA1FllkxXk9bHhLeG6IU1YqodToNna4ykzhWUiseCc8XX7LvxetK1fg5vEQDClL3Iv/iBFpw/ArQln9P1XjH4PyeQFrNbpTt15ml7Y/Iv7DbH91LhQ7LWj35pmkE2zS+z6neonEDDJBGyBj5CWaUSPYxISS+9kRe+5m0Z0mIUxW0ghNde77cZH3WAuOEmBz5QMGIiDVj/HKZaOTDvy9R18SZvIae+Mc9b0KnIYJtQ0KSZA1DApE6QiFhvlDD7PZ6S96eUNToQ+wMY18N55FHFZ65WJMGiQrBaQmpOAcwTUsMcGIHMH5zGsMvDJnzg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=toshiba-tsip.com; dmarc=pass action=none
- header.from=toshiba-tsip.com; dkim=pass header.d=toshiba-tsip.com; arc=none
-From: <Adithya.Balakumar@toshiba-tsip.com>
-To: <cip-dev@lists.cip-project.org>, <jan.kiszka@siemens.com>
-CC: <Shivanand.Kunijadar@toshiba-tsip.com>, <dinesh.kumar@toshiba-tsip.com>,
-        <kazuhiro.hayashi.f74@mail.toshiba>,
-        <akunuri.sahithi@toshiba-tsip.com>
-Subject: Re: [cip-dev] [isar-cip-core][RFC v2 0/5] Enable support for wfx
- backend based software updates
-Thread-Topic: [cip-dev] [isar-cip-core][RFC v2 0/5] Enable support for wfx
- backend based software updates
-Thread-Index: AQHcR8yXUw+OJx5BuUud53aTobS52LTXKX8O
-Date: Tue, 28 Oct 2025 07:31:34 +0000
+ smtp.mailfrom=mail.toshiba; dmarc=pass action=none header.from=mail.toshiba;
+ dkim=pass header.d=mail.toshiba; arc=none
+From: <nobuhiro.iwamatsu.x90@mail.toshiba>
+To: <cip-dev@lists.cip-project.org>
+CC: <jan.kiszka@siemens.com>, <chris.paterson2@renesas.com>, <pavel@denx.de>,
+        <uli@fpond.eu>, <masami.ichikawa@cybertrust.co.jp>
+Subject: [ANNOUNCE] Release v6.12.55-cip11
+Thread-Topic: [ANNOUNCE] Release v6.12.55-cip11
+Thread-Index: AdxH3eNzO7Wc3OYCRQqWQ5T5QTmglw==
+Date: Tue, 28 Oct 2025 07:39:18 +0000
 X-TSB-HOP2: ON
 Message-ID: 
- <TYCPR01MB96690A02857F4B9B3E08E9DBC4FDA@TYCPR01MB9669.jpnprd01.prod.outlook.com>
-References: <187290DC79541D18.436@lists.cip-project.org>
-In-Reply-To: <187290DC79541D18.436@lists.cip-project.org>
-Accept-Language: en-US
-Content-Language: en-US
+ <TY7PR01MB14818116B78CAB1336058CFB0CDFDA@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: 
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=toshiba-tsip.com;
+ header.d=none;dmarc=none action=none header.from=mail.toshiba;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYCPR01MB9669:EE_|OS7PR01MB17195:EE_
-x-ms-office365-filtering-correlation-id: 4ac4c0c5-74cd-4784-1d47-08de15f405e1
+x-ms-traffictypediagnostic: TY7PR01MB14818:EE_|OS9PR01MB14115:EE_
+x-ms-office365-filtering-correlation-id: ed5bd74c-32a6-488f-1593-08de15f51a98
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|1800799024|366016|376014|7053199007|8096899003|13003099007|38070700021|95630200002;
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700021;
 x-microsoft-antispam-message-info: 
- =?iso-2022-jp?B?R2RCMkwwL0wxOVl6ZUtQSGJ3eGhFeEdIN3gwMUFEb1RHRDJUb0lYY0lz?=
- =?iso-2022-jp?B?SVZoZjNhME1nTG9XWVdwRVo2dkdpRit1aXVVRi9LTUltTW5NSEM3S0dv?=
- =?iso-2022-jp?B?QUxsQ0M4M0Y3eHR1NTNQZXRJZkk0RnEyem5Hejc4b2ZmK0hJWkJuU3gz?=
- =?iso-2022-jp?B?eTJxVVNBNHo2QU12SlJ4UXdCR05qemJSbnB4R3F5L2J5T2VGUFp0dHBL?=
- =?iso-2022-jp?B?ckJMaUo1N2t1aFo2dHBSOTlTV2poamJ0Y1kzSXhDdHk2SytvVUVOektr?=
- =?iso-2022-jp?B?NUUwVFhmT1ZSTlVpNDBUS2RLWUdvQ2VaU0M4ei9POGl3NEtmUEFXUDVv?=
- =?iso-2022-jp?B?aW9xRkhOR25Mc3hQY1FXSUNUVHB2Wll1bkVsQk9LUmZmOE83eGpIRTBp?=
- =?iso-2022-jp?B?NzdVRkJwL2FaK05kV1pBYUZxTk96TEFwYytlZUl3bW41dnJFWGVjNFVp?=
- =?iso-2022-jp?B?RjJ5WUpFN2ZvYUhTMEpoMy8zSHQ4ampTRHFJWEl1ZHRUa1cyZkpaejRF?=
- =?iso-2022-jp?B?cTJyNUd1eFdqamRKWXl2VnAyRDdhdFphSzk2SGtzL09iOEFnajMycjIy?=
- =?iso-2022-jp?B?RjQxdkQ4L1MvZmU5Q2RnL3ROTEVpS3FnNGJqNkRQbDRSamV3SXdLU3Fs?=
- =?iso-2022-jp?B?UjJPQUs5MmNnaFBvTXFlVGZzNmxlNlpKTmcxQlZZak5lb3A2Ynloa0FR?=
- =?iso-2022-jp?B?VlB4U2RySUdLNmtvQTdJb0pGcTFMSkU3ZzlEZVVkSU5hZjdOMG1sL1Q1?=
- =?iso-2022-jp?B?eDd0TndrMXhlNTg4OVBwMGxSdnJiYW1mdG0vRU5YeDB3VWxaVEt0TEVG?=
- =?iso-2022-jp?B?aWFoRk4rWU9DaTZodXI5c3pHSW5KcFAxV01hOTd3eGV0NHF2Q2xIaFNU?=
- =?iso-2022-jp?B?TTVwRDg4Ujcwcjd2WUlFN0Q4d1o2UVoybVZQcHMvVkwvZVR6a1p3M3hG?=
- =?iso-2022-jp?B?bHNwcCtkSzlGUVYvMzRwVFZsa3dzWVlaODFpSVV0M05ucU9PQmlycWUy?=
- =?iso-2022-jp?B?U1Z3aWZVVUt6TE11bEpybGNTdnlReVdDR0JBU0srR0dNZ1pzbVEyTFR1?=
- =?iso-2022-jp?B?U3pvWkFiNG9acGthSXRqeDVCaFdtSE5KRVdXMzF4dk1ZeU8zUlhPU053?=
- =?iso-2022-jp?B?MjMvamg2eU82b2gzblYxTFpOY0RjU3ViQUlvMjNMZzdiUmwzUGlyb2Jo?=
- =?iso-2022-jp?B?UW1HNkxsTEZNbEExUUc0cTZzVTRqTHVwVjE5TjFWMWIxRUhrR0xrVWJ4?=
- =?iso-2022-jp?B?a2ZVZ2cyNXV3WTM0eS9aV1dYL3FZb3l6RmVkcGRaQ1cwa0Y2Z0krb01I?=
- =?iso-2022-jp?B?a3liWUxHd2VOR2Q0eUlidXo2SFk4dWVOSFk4L2J0ZmJnSzBZeGFMWnV3?=
- =?iso-2022-jp?B?ZVRWdENDaEdTUC9TNWQwU0pLTnRwdloveW5GVXU2VkdyU3IxU1RGOUJl?=
- =?iso-2022-jp?B?bmtOc01Qa3lkbDU3TjI3aUxNb3lqdFBXNlA0MDlRTTV6cXJRNjhjbDVu?=
- =?iso-2022-jp?B?SmRpZHpiMHZpN2t5U2dmS053QlRmbG1yL0JNZTYxbWNMK2tkcnlrMS9N?=
- =?iso-2022-jp?B?LzBkeGwzTkNaMnpqaFNaQmhXQXE5WGt1bVFxWEdoSXNqcHJqQm5MenRQ?=
- =?iso-2022-jp?B?WWVPWnAvK0RRR0tiSmM5bnVsS2I1V1hVNjkwNkxTbjB5bmFDNXVQRUt1?=
- =?iso-2022-jp?B?ekxJRDBYV0REMnBpNWYwMGdmeTMrWXVqK2Q2K0Ztbm4yY0k1VzVhTVJJ?=
- =?iso-2022-jp?B?VC9FOTBINmVnMzBtemJrWTdTTzJLY0RRVTFua2phcWlQajZseWM1U044?=
- =?iso-2022-jp?B?OWhQN0pMS0Rsd2IweVF3QWR5ZmhqSEROR2xySC9uREp0NzN4Umw4V09s?=
- =?iso-2022-jp?B?NmJtdHFTdDNVTW1qeWFKb25PVlE3WkZLRm5pQ3BLeGpveEFRSXdIdUY4?=
- =?iso-2022-jp?B?MjlpTEI3VDZ0alNoR1lTdHVISTYzZlZMM0FXUDVDSzBZa1pvcDlHNkUx?=
- =?iso-2022-jp?B?cmJpR3pCTUhwUFpBUkdxTjJodkVTMUZSK3FNV0xsMWlFeVR6VjJmQngr?=
- =?iso-2022-jp?B?eHgxSkpWSHVLOTA3clBTSnNzdmxrTEZ4MjUwdzg1VjM3MUNFdGVkczlL?=
- =?iso-2022-jp?B?eUZNSmNveGNPYnF3eXdoVUM2M2JYSHJ5di9ZRGNSNGdXZkcvelpmL2Iw?=
- =?iso-2022-jp?B?UHRFPQ==?=
+ =?iso-2022-jp?B?Vm01SWpsK0NHRVlqck45alR3UTdRSmhjZzdzaVZQV1lMeitXMFlsbUJJ?=
+ =?iso-2022-jp?B?Vk0vZjFjN1dZNGk2SUJuT284Mk9ieWlhUWhnVmJPWkJDRkpkZnYvaU53?=
+ =?iso-2022-jp?B?QkxBQkhDZmZBWGRpaEJ6VnVaT2I1RHgvODBTN1VBMTlnUGtPTVBIanI3?=
+ =?iso-2022-jp?B?alVxa3VUdm1iOHpEbkh4Y0pYRXNqRHF4cVJxZnlCSTQ0YUh0NysyT3dx?=
+ =?iso-2022-jp?B?YjArQXA5UkxkTFg3dlhvaGFkQVlOMk5kZndQZjJ3SVhacnNnbEtQS1dJ?=
+ =?iso-2022-jp?B?OVhMU0tydTJPSnV4T3JDenI1WXYzc1duQzlzL2VIWFhJK3FKbFNJMFRw?=
+ =?iso-2022-jp?B?RVNLZEhSbVA2d3hwZmlZTE1jOTNBS1ZGY1FSRmNkZXJkM0l6WlhYM2JQ?=
+ =?iso-2022-jp?B?eTgyM2U1T2o0aGV5OUNwMVczdHlqK2ptd1VmaUNZVkFkYXpiOVhQcVp4?=
+ =?iso-2022-jp?B?VlJDQjFlQkg2K2ZmTzVlWlQ3bm5WdWRZb3M3TXZkSm9Jb1p2Vk5pWERi?=
+ =?iso-2022-jp?B?UTV2dTEremxRQkFIWjd3VzBoWmNROW1jMVVxdmFOc080bEFxUFNhVjlR?=
+ =?iso-2022-jp?B?R3FCa1NIcHR0aDJFb1F3aG04b0hJaU5mYmllbFBUaXpqWmlLYlNNaWx5?=
+ =?iso-2022-jp?B?SDZOZ3lJWDUvbmVCdExCOFFLUnpKemdwbjBNV2VWK2dvWkcyUFlnM1Zx?=
+ =?iso-2022-jp?B?OWg0bHhQSlVsUzJVRnFaVVJDMWZrVTQ2WFArVndXWFpmY3JpNVREOXp0?=
+ =?iso-2022-jp?B?ZjhtSnhwbENGL0JMYm9lRWszZkJ6b1lGUzlRQ0FGVG5YVDZUOU1yK24z?=
+ =?iso-2022-jp?B?clI2aTlhVUhoWHFqMU1JWEFyUG01dHRlR0NUZmxGSXQ1a2tXVnJJRUNl?=
+ =?iso-2022-jp?B?emtlMU1QeWVXb0d0elpBdFFFeWFBZlZGdk1ONUREblpWajJKbHNETmpW?=
+ =?iso-2022-jp?B?aERDMFpyb2l0OEkrekdHekNFd1BRZkhTMmh3SUZVR0Z6eUR1N0lnQkNu?=
+ =?iso-2022-jp?B?NlI2SCtPei9mL1RRZmEwZ3pEVklvb1YxeVNybFh6TGUya25GeVNpMWc3?=
+ =?iso-2022-jp?B?eWdiSkhDZ1JkV0ZjdXVyTDFiazQ3T0cyYjZJT0lCbE0rb3ZxbXdITitC?=
+ =?iso-2022-jp?B?SjNsQjJ2cUV5TFdzMkEreE9OaGh1MmIwNEpSczFTbUpVcUY1RkVjVkg1?=
+ =?iso-2022-jp?B?OGIrS1NYZ3crZmh3bEdsWHZIOXpPMkZ0OGRMVUQyK0lPaURLWmJGbE0v?=
+ =?iso-2022-jp?B?V2M3Y0Vma3NFN0diY0ZmcVVXTHE3dlNXaTZjZ29KNDNKMkRFQ2E0a3Ro?=
+ =?iso-2022-jp?B?Y3h0aFU0S3kyUnFacVJoY2hld055TFBnbE8zZ0xsMTNJVEJzN2p0bndm?=
+ =?iso-2022-jp?B?Mm9OYUJnbnM0TFUvNFZ6TmRoUmhQTEgvc1lyd1RpbS9kZmErWDdsR0pE?=
+ =?iso-2022-jp?B?RjQxVW9md2ROUWcxQ2FYRlRYWE9PZm56QkFEcnBSYjZ0RnpJa29hRWkr?=
+ =?iso-2022-jp?B?RUl5UEpablBmYThzZ3g2ZVAyRGE1SElyL3NoSkVJbE1lZk10emJsUENW?=
+ =?iso-2022-jp?B?S2kzekVRaVlZL0o2alpNTWgxc3RGWDZWNkExaWxjWld5V0RhekdLY3hw?=
+ =?iso-2022-jp?B?bVN6RWdjeUlHRHgzc0FiOFlBNmVHVkl5MEJHNGg3ZzVZdzJzNHVSWDRm?=
+ =?iso-2022-jp?B?Ty9QSnphaVRwNmU5bkRGM3AvanlUS1JyMXFSb1FsdUs0TVI0VllUWVBL?=
+ =?iso-2022-jp?B?NG1iK25sNmFzKy8zUlY4WGFBVzVNbzZJdzBRRnB6MXlDVVFEQ0ZXS1lp?=
+ =?iso-2022-jp?B?cjNFKy91dmcwMlZyWE9QVGlpMEFiM2I4cVBPdXZwZ2dMWmlVM25Id3oy?=
+ =?iso-2022-jp?B?ek5kZEQ4d0xWZkE1VXYyMHphZmRya3VCRjc0Q3JHbUlHamlxMlExam9M?=
+ =?iso-2022-jp?B?cmdkZ2JQRmpiVU9uWGU5dncyeWQ4dDJ2SHlyQW5BTnpub241OFBLOUNa?=
+ =?iso-2022-jp?B?MU9iNEZxanVjWTFqU3lrS2U5YjBxZ2tBZ2VpUDRXZlRCczZzRTdBM2JX?=
+ =?iso-2022-jp?B?TEFpbnZ4UEtoZUoxQU9zSDBxbUxxZG1nUklrRGF5TnQzaEFjVlpPcTVk?=
+ =?iso-2022-jp?B?RzJwcituaGNwcFRUcUgrTy9XZFArQithdEpwL1hBdTdpTUxGRTFVUFJp?=
+ =?iso-2022-jp?B?REZoOTd3cStXNFhkTzErcGh1Zy9HMEdF?=
 x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB9669.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007)(8096899003)(13003099007)(38070700021)(95630200002);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY7PR01MB14818.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700021);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0: 
- =?iso-2022-jp?B?MEZHVWxyYkpoZWpsUGphV0xkRnZ5dWxrY0gxSzRCYkJNM29wUDM4MHEx?=
- =?iso-2022-jp?B?ZlVXei9hc0IvQjBWNXNiMHZ0R2JYbi9GMjJ0OUFOSlB3T2prQjBhQ1Bt?=
- =?iso-2022-jp?B?T3dFalVrdEtwK1E1N0FTS0VBeEJZTzdmTnpxWHBJNWVDOG5YSzZBRS9Q?=
- =?iso-2022-jp?B?Y29SdXQ4NmlQdVJGcW1WeUZwWFU4eGNLWmlCVXhWMmZXRHF6L0JnaDRG?=
- =?iso-2022-jp?B?aGo5VWFIOExiTVQ4L2tINzdldWVOR29MYkhJcW4rZmxBcVloaEo2alVw?=
- =?iso-2022-jp?B?aVJjTkFrZkRHbkpQWGJzODJ3UnNKOU40cTRWOHMraktmUTBSbXd2elhi?=
- =?iso-2022-jp?B?bTlWRVdjMmVMcHZoYW5jOUpKaGtDT215MmJCQnR6bWxjQW9aZEdDa3NF?=
- =?iso-2022-jp?B?WjJNUDNJMThFNHBDbDFSQmJmMkM5b1pBSG5rVTd6UkZreGMyYlBmWUZO?=
- =?iso-2022-jp?B?RU9xWkdlZHQ0THFtUFB3VkJHSEgvQklUcXdKY1NaOEVaaUFicTNSZkNx?=
- =?iso-2022-jp?B?TmNKVm9zV2orSGJRUEkyb2dsSVppNDN0SVJzNkplUk1xL0NWbEZPcDVZ?=
- =?iso-2022-jp?B?RlE1TkN1UFRLSVZUeitEMDRRZFllU3VoSFBFRTlRb1J2dmkwRXZhVmtY?=
- =?iso-2022-jp?B?MEZiU1pqNUJmSnM0NkswdWV0QmlYSTZXZ0Mwb1U5a3hXS25uWGZSS0s3?=
- =?iso-2022-jp?B?V1E4aWs3M1cxZTQxRjcwdkxlRHhHb0d3NlhsTk5JZVRmYU13RjJSZVJ3?=
- =?iso-2022-jp?B?cE85S3RFbFA4TC9ibEVLRVlQY1poM2pCS09aTUpIOWNYSHVEWmhyaDZr?=
- =?iso-2022-jp?B?dVoxbnY1Nnh2TnFmVUQ0NnJrSlc2aVZSMFA5dW1qQVJVdFJadCtsN0Zm?=
- =?iso-2022-jp?B?eGUvRForKzhTOHZCTWNVa0x4bVEzY1F4OUNDS2Z4UkFLMVVaV1Ywdksv?=
- =?iso-2022-jp?B?eHR3dE8vL2ZXMjJyR2JlSGpvaFRsSUJ0ckhqMERIMTdiUkRuYWdoSW5j?=
- =?iso-2022-jp?B?NTg0bGR1T3FWdDhhTHFiQlcrUjM1ZDQxSk1DeXdlUDI4cjVqWEd4dU14?=
- =?iso-2022-jp?B?a0o1dG1wdEcxc1NLTWM5Z0gvQUNEeU56S09neFZqd0RhWDJIcFFEb2Fj?=
- =?iso-2022-jp?B?SWdEcU9qN2I5ZVliN2o4R1FaUFF5RDJrcmNCODVwUHlDQVpkbzlZQ0Uz?=
- =?iso-2022-jp?B?R0lpY0VPbDd1eUhxd2FZMmxqaVZnZjB1a0R5QkdjbUxwS1FQZGxCYVBT?=
- =?iso-2022-jp?B?OXBUQVhKQWl6bGxPdDNxM0dpY3J4b0VIUTVwSzIxWU9EaFJOMGVuUHpl?=
- =?iso-2022-jp?B?Y1o5VFpCeFRCekd3RWNyeEVwSVJaallCZUl5TnpXQktEblFtK3hvSExQ?=
- =?iso-2022-jp?B?UDZzYlVOaVNSSnMwTm5ndTVEK294TU9tRW9FRWxUWUk4WHIzOTUwNmRW?=
- =?iso-2022-jp?B?ejhVMHZmM0tpcWNQSG1GNjJSZXZzbTBoRTB3cjJCNHh4STZ6WE5XbkRB?=
- =?iso-2022-jp?B?aFBFVXFqTHlvdFpkU2RFcjFkNjdZQTJCaHRHSWY4aEpxZloweHcxYUtB?=
- =?iso-2022-jp?B?QTFySmVabVl3dTNLS1dSbDFldUJWRW4va0xEVEthYmxhZ0tFRUtrQWZ0?=
- =?iso-2022-jp?B?d3BqZkN4VnUrdXhlMHJIUUc0TXF1ajVlckdkbWpJbVRKazByTlNpaTd5?=
- =?iso-2022-jp?B?TFM3aXo3RXEvVy9wK0MvUEdZUU0rWkI1MFZFMlIyQkRRblFOOVZ0NWsv?=
- =?iso-2022-jp?B?VU9Mb21kcTZYM3Y0ZWhpV1pSaVF3eHVyVXJDZWg4Y0huRnlmcDZBSWoz?=
- =?iso-2022-jp?B?dSt1YllkNERRYU0zTE5IS1gzSmgzd3pKY0N4MDJhaytLOFp4N2Fzenhs?=
- =?iso-2022-jp?B?aVExYzQrVEZOYzJPTDhNVWRScXZKWFk1a1BJZ1RGZUtqV2lpd09COXQv?=
- =?iso-2022-jp?B?RFVTbEYzV1N2NGp6S3lMZ3Bla05wdS9SRjZnKzJSNHowSlBjR0ZSRW5h?=
- =?iso-2022-jp?B?NWMrT0J4NWh4M2VPU0E3QlRiU3FsenpCV1NCMHplNDFQRUVXWU4rTGZt?=
- =?iso-2022-jp?B?Q3kzektXUnA5aTBrTkhnaWxQL1RON2tWaEFmYkNKUHZRNXc4WEJUOExV?=
- =?iso-2022-jp?B?YWJ5LzNKeSt0WWE4OHdQNmU1amdpNWJXM0szZE5SY2hZZGJQdXM0VjBK?=
- =?iso-2022-jp?B?RFV4YlFOakJ5NHFKT0xkTlF1ZytxZmswMlplNjUvQmZleDU5VzFwc0FU?=
- =?iso-2022-jp?B?K29UY2k4dUhKSFZKR1NsakdtMFVyL2RmT2NGWDBUVUZ0ZzBPOVR3K3pC?=
- =?iso-2022-jp?B?Mi95MllqclY5NWRNVkU2Y21pSnREZkpmdHc9PQ==?=
-Content-Type: multipart/alternative;
-	boundary="_000_TYCPR01MB96690A02857F4B9B3E08E9DBC4FDATYCPR01MB9669jpnp_"
+ =?iso-2022-jp?B?ZW11YlJjd0pCTmhxdk1Ja1d6SkxMMVk5eFNMaXhQUnlqMUJWOHg5cy8y?=
+ =?iso-2022-jp?B?VG9ZcXJrOVFOT1NJRlZRRkRlYnI0RVpjSVVTMUNMZVhsVjV4bkhiMUJU?=
+ =?iso-2022-jp?B?SGtRWC9obWRweTRCWDBwL1dwOFA0bTVUSFJUNnJiaEtJOEdCdmdIN242?=
+ =?iso-2022-jp?B?cmNQQWJhMmZhT3NpUkx1MDBHeCtac29ySnp3a2kxaEdNNmlxUmE5WGhw?=
+ =?iso-2022-jp?B?dldRaUVJU2dHM25XUmI3YitFU0JPSS95VmZFYm1NTk1LRzVHUkowSkhr?=
+ =?iso-2022-jp?B?VkJyckpJYW50WDBCSHJRbi91MUNETVFaT0o3L3AvdTRtMXQrSTV0cUY1?=
+ =?iso-2022-jp?B?Q0RnSkdVQndRWGJNcSszSDE2R0ZBVW9lMmhFaVpCbkdZWGRrd2duTkwx?=
+ =?iso-2022-jp?B?QlAybXR2d0Q5VUtzWjBLNStPM2N5SXY2YUY2V0RrOCszUW92M0Zodk9w?=
+ =?iso-2022-jp?B?MExFbUFZMEQ5WlhOekx5aWRLUC9STktWc3AwK3dBTE5mWEdJc3hweFFt?=
+ =?iso-2022-jp?B?ZittN0NuSGFuK2RLTVJlemlqZG91cHFyMlV0ZlJiRkRLMkFJZm1FOEll?=
+ =?iso-2022-jp?B?dmNGckZYekRYQ1Y2Q2RIbVZIckhzYytXc2Z5S2tucTlyc0k1WWErWUFF?=
+ =?iso-2022-jp?B?QkpkT2MyaGNOVjYrNU13WWhhMllyL0tCdS9BMTFhcEJQS0tJVXA4d1hD?=
+ =?iso-2022-jp?B?NExRTHJOSTlRRGZyZklGRGxublg0TjJESlFET1gzc2RKTEJSSnBWb0lK?=
+ =?iso-2022-jp?B?UU45RVA3cWt3bDdCZXZjTU00TUFlaUtxY3FHQVk0Y1hFOHBDK3BOWEpr?=
+ =?iso-2022-jp?B?aGp6aVc0QmI1bnVyRmhMN2dKczQwU0l1dVp2UkpkaVFMb0QrYm5QanRr?=
+ =?iso-2022-jp?B?L3piU1VsV09xRzlJaG1oamZreGFMVXZ1bzZvdGtnK3IxUlI0VkxUbEtr?=
+ =?iso-2022-jp?B?eWtrY2hhK0IrT2ZHVzVCc2luRWNZb2g1blJHRC9kMUFIRmpmaGNCeTFk?=
+ =?iso-2022-jp?B?cmdiakxUKzJQZUk3RVJSeGpjY3Zzbmp5anRYSEc4bGg2UEp4Z3R6YXFk?=
+ =?iso-2022-jp?B?Qk12cWx1b0VsREwyS0pHcDcwZXEzSkdUTGF6Z0RBSXdNaExQYjlzVkxL?=
+ =?iso-2022-jp?B?Y25yZTdLaFVReXN6Rk5MT0hteS9GL0U3L0VSUFhvcnFoTXRFb1VpUHV5?=
+ =?iso-2022-jp?B?clc5ai9VVlBGYUFBZ2RiN0ZQMThPalpUcTFwQjNwMWkvc0dKKzhsR0tF?=
+ =?iso-2022-jp?B?K3RBL0FNd0ZHSmxTSmlYQzE5dk4yRXJQSkx0VTZ4enlCK2RsamVaVi9s?=
+ =?iso-2022-jp?B?SVlvM2Z1Z25pc25kc3B1cktRRDZ4RzRtcGlIa2ZDRXZwYThTM0hiSFJk?=
+ =?iso-2022-jp?B?amJpTXdNZXovbXhhV29Fem9zOHZ4bTNGUk9tWjc1YjNKWmZ6ZmR0cU0r?=
+ =?iso-2022-jp?B?SWo2d0pyVVk1aW1pZzQ5cS9WenBmQ2crQ1ljYll4dTFtREVxWHl2bEFD?=
+ =?iso-2022-jp?B?RklrM1RBaHlQVWtBVzhsSmxsOUM4RmtDRWg0U1FnK1VQajA0OXlvK29N?=
+ =?iso-2022-jp?B?ZjloQjRpTXZMVWJVMGhmQkVtK3BiR3I2UFY4ZmN4SGptVkV5NGR4Y3JM?=
+ =?iso-2022-jp?B?enNiWTVLWVQ1bEh5LzJXR05Mclk2M2cxYUZPdVJSMnVsWDhvbUMzTWRr?=
+ =?iso-2022-jp?B?Z3hybkR6dXFGMzNXdzF1OHBHZENGYmRmSS9wM3RXenhPZ29jeXlWMXdU?=
+ =?iso-2022-jp?B?RXNlOXFudGVITVhoa2hCOVMzd2VDTVRvR3RsdHJzODF5UjNGejlnVit1?=
+ =?iso-2022-jp?B?MnZFZUxRVVV1b05ubTdud3I3aDFaajFTTk1ITTk5RGxrSTI2TXBUMzdF?=
+ =?iso-2022-jp?B?OWlhQ1dOeUZnVHlWaDdVRU5jNE5hTFphWmJLWHJ6MVhnTTRZY1ZZaHFO?=
+ =?iso-2022-jp?B?SHJMOWpRU21oalFwYVNlVi9XQlBac1pJTnNLSitXSFhvRVdqZUFjZElW?=
+ =?iso-2022-jp?B?d0ZHSkhtajBoZGNGYS93RTZsQTIyQ282ZFJMYUZMT2dVUU9DcWFrTk9W?=
+ =?iso-2022-jp?B?RXgwRWhDeGwyMHdxeEFkMzkrSW93QzF6VXVFZkF2b0ZUd1YyUTR6K0hu?=
+ =?iso-2022-jp?B?T3dXT3pVditOZkJvR0JSSDFBWFl4MGlnZUlSTkhGZ2hpdU5SRkVFdWV2?=
+ =?iso-2022-jp?B?aWRTOFJBVFY5Tno0M2xZNFRReXlBK0dTbEtVc3VBcGRKN1BUVFJrSG1S?=
+ =?iso-2022-jp?B?akZCUDhsODlNdzkzUjBGNjdJQVpjU3NiQ0FHelNOcGlsWFc3SnVJT3pS?=
+ =?iso-2022-jp?B?aGE3dDArT2c2T1ZjNVVqUFhuUnNwZVBYS3c9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: toshiba-tsip.com
+X-OriginatorOrg: mail.toshiba
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB9669.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4ac4c0c5-74cd-4784-1d47-08de15f405e1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Oct 2025 07:31:34.7570
+X-MS-Exchange-CrossTenant-AuthSource: TY7PR01MB14818.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed5bd74c-32a6-488f-1593-08de15f51a98
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Oct 2025 07:39:19.0284
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: f109924e-fb71-4ba0-b2cc-65dcdf6fbe4f
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: iB2EdFZ6FQqv7j65OL04SLT04cJF++U8d3ZQLuFMD3xYWk+Jd6Njgk8gazZnpbwUFGTz/tLN5AGb14mgKh5GnYcDULJBlUVNxSXoipLN89IPWE9vIFa4bExwxebC9AVh
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS7PR01MB17195
+X-MS-Exchange-CrossTenant-userprincipalname: TBB30HAlcB//xF6Wvuasl/7CWP7v2hft6+WXN5XwmKLA/EdBZMlJaARSA8OmS3aQC+HoQXRM/STZ6edcWVayHkHCVCRPLe/Gs+eMP04Px/1/ajYxismYh7WPS/o4bY1s
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB14115
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 28 Oct 2025 07:31:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20248
+ <cip-dev@lists.cip-project.org>; Tue, 28 Oct 2025 07:39:56 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20249
 
---_000_TYCPR01MB96690A02857F4B9B3E08E9DBC4FDATYCPR01MB9669jpnp_
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi All,
+CIP kernel team has released Linux kernel v6.12.55-cip11.
+The linux-6.12.y-cip tree has been updated base version from v6.12.51 to v6=
+.12.55.
 
-Please ignore this v2 series. Just found an issue with patch 2 (recipes-cor=
-e/swupdate-config: Add suricatta section in swupdate.cfg).
-Will share v3 in sometime.
+Information about this release is as follows:
 
-Regards,
-Adithya Balakumar
-________________________________
-From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> on beha=
-lf of Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
-Sent: Tuesday, October 28, 2025 11:04 AM
-To: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org>; jan.kisz=
-ka@siemens.com <jan.kiszka@siemens.com>
-Cc: balakumar adithya(=1B$B#T#S#I#P=1B(B =1B$B#D#I#T#C!2#D#I#T=1B(B-=1B$B#O=
-#S#T=1B(B) <Adithya.Balakumar@toshiba-tsip.com>; kunijadar shivanand(=1B$B#=
-T#S#I#P=1B(B DITC_DIT-OST) <Shivanand.Kunijadar@toshiba-tsip.com>; dinesh k=
-umar(=1B$B#T#S#I#P=1B(B DITC_DIT-OST) <dinesh.kumar@toshiba-tsip.com>; haya=
-shi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B$B""#D#I#T#C!{#C#P#T=1B(B) <kaz=
-uhiro.hayashi.f74@mail.toshiba>; sahithi akunuri(=1B$B#T#S#I#P=1B(B TEUR) <=
-akunuri.sahithi@toshiba-tsip.com>
-Subject: [cip-dev] [isar-cip-core][RFC v2 0/5] Enable support for wfx backe=
-nd based software updates
+  v6.12.55-cip11:
+    repository:
+      https://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git
+    branch:
+      linux-6.12.y-cip
+    commit hash:
+      330e81cffd92ee882cab831898b219e5f15b243c
+    fixed CVEs:
+      CVE-2025-38105: ALSA: usb-audio: Kill timer properly at removal
+      CVE-2025-39995: media: i2c: tc358743: Fix use-after-free bugs caused =
+by orphan timer in probe
+      CVE-2025-40000: wifi: rtw89: fix use-after-free in rtw89_core_tx_kick=
+_off_and_wait()
+      CVE-2025-39997: ALSA: usb-audio: fix race condition to UAF in snd_usb=
+midi_free
+      CVE-2025-40018: ipvs: Defer ip_vs_ftp unregister during netns cleanup
+      CVE-2025-40004: net/9p: Fix buffer overflow in USB transport layer
+      CVE-2025-40003: net: mscc: ocelot: Fix use-after-free caused by cycli=
+c delayed work
+      CVE-2025-40019: crypto: essiv - Check ssize for decryption and in-pla=
+ce encryption
+      CVE-2025-40001: scsi: mvsas: Fix use-after-free bugs in mvs_work_queu=
+e
+    added commits:
+      CIP: Bump version suffix to -cip11 after merge from stable
 
-From: Adithya Balakumar <Adithya.Balakumar@toshiba-tsip.com>
-
-SWUpdate has supported software updates with wfx[1] backend for a while now=
-. But using this requires a few configurations in the image (swupdate.cfg).=
- These series of patches enables/sets the necessary configurations required=
- to use wfx for software updates.
-
-For now, I'm sending this as an RFC to understand the opinions of a broader=
- audience.
-
-A couple notes about the implementation:
-- Provides using wfx as the update backend as an option (not forced).
-- Adds a new section for suricatta in the swupdate.cfg file.
-- Starts SWUpdate in suricatta daemon mode at service startup (if wfx suppo=
-rt is enabled at build).
-- wfx requires a clientId per device in order to target devices (create job=
-s for devices). This is currently achieved with wfx-customizations package =
-which deploys a script in the image that sets the ID in the swupdate.cfg at=
- run time.
-- The above point could be made more practical with something like an onboa=
-rding function (See [2], This is still not officially part of the CIP proje=
-ct yet).
-- Introduces wfx.yml to set wfx specific variables.
-
-[1] https://sbabic.github.io/swupdate/suricatta.html#support-for-wfx
-[2] https://gitlab.com/cip-playground/cip-wfx-onboarding-client-plugin
-
-Changes since v1:
-- Rebase to current next
-- Drop carrying the patch to fix swupdate issue as its backported to
-  debian
-- Fix appending suricatta section in swupdate.cfg only if wfx is
-  requested at build time
-- Use /etc/machine-id as is for client-id in suricatta
-
-Adithya Balakumar (5):
-  SWUpdate: Use self-built SWUpdate 2025.05+dfsg-3 for trixie
-  recipes-core/swupdate-config: Add suricatta section in swupdate.cfg
-  wfx-customizations: Recipe to add wfx helper specific scripts into
-    target
-  kas/opt/wfx.yml: Set wfx specific variables
-  doc/README.swupdate.md: Add section for software update with wfx
-
- conf/distro/cip-core-trixie.conf              |   1 +
- doc/README.swupdate.md                        | 124 ++++++++++++++++++
- kas/opt/wfx.yml                               |  20 +++
- recipes-core/images/swupdate.inc              |   3 +-
- recipes-core/swupdate-config/files/suricatta  |   1 +
- .../files/{swupdate.cfg =3D> swupdate.cfg.tmpl} |   2 +
- .../swupdate-config/swupdate-config_0.2.bb    |  27 +++-
- .../swupdate/swupdate_2025.05+dfsg-3.bb       |  36 +++++
- .../wfx-customizations/files/override.conf    |   6 +
- .../files/wfx-generate-client-id.sh           |   9 ++
- .../wfx-customizations_0.1.bb                 |  28 ++++
- 11 files changed, 254 insertions(+), 3 deletions(-)
- create mode 100644 kas/opt/wfx.yml
- create mode 100644 recipes-core/swupdate-config/files/suricatta
- rename recipes-core/swupdate-config/files/{swupdate.cfg =3D> swupdate.cfg.=
-tmpl} (83%)
- create mode 100644 recipes-core/swupdate/swupdate_2025.05+dfsg-3.bb
- create mode 100644 recipes-core/wfx-customizations/files/override.conf
- create mode 100644 recipes-core/wfx-customizations/files/wfx-generate-clie=
-nt-id.sh
- create mode 100644 recipes-core/wfx-customizations/wfx-customizations_0.1.=
-bb
-
---
-2.39.5
-
-
-
---_000_TYCPR01MB96690A02857F4B9B3E08E9DBC4FDATYCPR01MB9669jpnp_
-Content-Type: text/html; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-2022-=
-jp">
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);" clas=
-s=3D"elementToProof">
-Hi All,</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);" clas=
-s=3D"elementToProof">
-<br>
-Please ignore this v2 series. Just found an issue with patch 2 (recipes-cor=
-e/swupdate-config: Add suricatta section in swupdate.cfg).</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);" clas=
-s=3D"elementToProof">
-Will share v3 in sometime.</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);" clas=
-s=3D"elementToProof">
-<br>
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);" clas=
-s=3D"elementToProof">
-Regards,<br>
-Adithya Balakumar</div>
-<div class=3D"elementToProof"><span style=3D"font-family: Calibri, Arial, H=
-elvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);"></span></div>
-<hr style=3D"display: inline-block; width: 98%;">
-<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
-: 12pt; color: rgb(0, 0, 0);">
-<b>From:</b>&nbsp;cip-dev@lists.cip-project.org &lt;cip-dev@lists.cip-proje=
-ct.org&gt; on behalf of Adithya Balakumar &lt;Adithya.Balakumar@toshiba-tsi=
-p.com&gt;<br>
-<b>Sent:</b>&nbsp;Tuesday, October 28, 2025 11:04 AM<br>
-<b>To:</b>&nbsp;cip-dev@lists.cip-project.org &lt;cip-dev@lists.cip-project=
-.org&gt;; jan.kiszka@siemens.com &lt;jan.kiszka@siemens.com&gt;<br>
-<b>Cc:</b>&nbsp;balakumar adithya(=1B$B#T#S#I#P=1B(B =1B$B#D#I#T#C!2#D#I#T=
-=1B(B-=1B$B#O#S#T=1B(B) &lt;Adithya.Balakumar@toshiba-tsip.com&gt;; kunijad=
-ar shivanand(=1B$B#T#S#I#P=1B(B DITC_DIT-OST) &lt;Shivanand.Kunijadar@toshi=
-ba-tsip.com&gt;; dinesh kumar(=1B$B#T#S#I#P=1B(B DITC_DIT-OST) &lt;dinesh.k=
-umar@toshiba-tsip.com&gt;; hayashi kazuhiro(=1B$BNS=1B(B =1B$BOB9(=1B(B =1B=
-$B""#D#I#T#C!{#C#P#T=1B(B)
- &lt;kazuhiro.hayashi.f74@mail.toshiba&gt;; sahithi akunuri(=1B$B#T#S#I#P=
-=1B(B TEUR) &lt;akunuri.sahithi@toshiba-tsip.com&gt;<br>
-<b>Subject:</b>&nbsp;[cip-dev] [isar-cip-core][RFC v2 0/5] Enable support f=
-or wfx backend based software updates
-</div>
-<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
-: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-size: 11pt;">From: Adithya Balakumar &lt;Adithya.Balakum=
-ar@toshiba-tsip.com&gt;<br>
-<br>
-SWUpdate has supported software updates with wfx[1] backend for a while now=
-. But using this requires a few configurations in the image (swupdate.cfg).=
- These series of patches enables/sets the necessary configurations required=
- to use wfx for software updates.<br>
-<br>
-For now, I'm sending this as an RFC to understand the opinions of a broader=
- audience.<br>
-<br>
-A couple notes about the implementation:<br>
-- Provides using wfx as the update backend as an option (not forced).<br>
-- Adds a new section for suricatta in the swupdate.cfg file.<br>
-- Starts SWUpdate in suricatta daemon mode at service startup (if wfx suppo=
-rt is enabled at build).<br>
-- wfx requires a clientId per device in order to target devices (create job=
-s for devices). This is currently achieved with wfx-customizations package =
-which deploys a script in the image that sets the ID in the swupdate.cfg at=
- run time.<br>
-- The above point could be made more practical with something like an onboa=
-rding function (See [2], This is still not officially part of the CIP proje=
-ct yet).<br>
-- Introduces wfx.yml to set wfx specific variables.<br>
-<br>
-[1] <a data-auth=3D"NotApplicable" class=3D"OWAAutoLink" id=3D"OWAc79b5f64-=
-6ed6-ee0d-8d8f-79e814636238" href=3D"https://sbabic.github.io/swupdate/suri=
-catta.html#support-for-wfx">
-https://sbabic.github.io/swupdate/suricatta.html#support-for-wfx</a><br>
-[2] <a data-auth=3D"NotApplicable" class=3D"OWAAutoLink" id=3D"OWA57eeef83-=
-15f9-a8f6-1c54-d61367062c38" href=3D"https://gitlab.com/cip-playground/cip-=
-wfx-onboarding-client-plugin">
-https://gitlab.com/cip-playground/cip-wfx-onboarding-client-plugin</a><br>
-<br>
-Changes since v1:<br>
-- Rebase to current next<br>
-- Drop carrying the patch to fix swupdate issue as its backported to<br>
-&nbsp; debian<br>
-- Fix appending suricatta section in swupdate.cfg only if wfx is<br>
-&nbsp; requested at build time<br>
-- Use /etc/machine-id as is for client-id in suricatta<br>
-<br>
-Adithya Balakumar (5):<br>
-&nbsp; SWUpdate: Use self-built SWUpdate 2025.05+dfsg-3 for trixie<br>
-&nbsp; recipes-core/swupdate-config: Add suricatta section in swupdate.cfg<=
-br>
-&nbsp; wfx-customizations: Recipe to add wfx helper specific scripts into<b=
-r>
-&nbsp;&nbsp;&nbsp; target<br>
-&nbsp; kas/opt/wfx.yml: Set wfx specific variables<br>
-&nbsp; doc/README.swupdate.md: Add section for software update with wfx<br>
-<br>
-&nbsp;conf/distro/cip-core-trixie.conf&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp; 1 +<br>
-&nbsp;doc/README.swupdate.md&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
-;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp; | 124 ++++++++++++++++++<br>
-&nbsp;kas/opt/wfx.yml&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp; 20 +++<br>
-&nbsp;recipes-core/images/swupdate.inc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
-nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp; 3 +-<br>
-&nbsp;recipes-core/swupdate-config/files/suricatta&nbsp; |&nbsp;&nbsp; 1 +<=
-br>
-&nbsp;.../files/{swupdate.cfg =3D&gt; swupdate.cfg.tmpl} |&nbsp;&nbsp; 2 +<=
-br>
-&nbsp;.../swupdate-config/swupdate-config_0.2.bb&nbsp;&nbsp;&nbsp; |&nbsp; =
-27 +++-<br>
-&nbsp;.../swupdate/swupdate_2025.05+dfsg-3.bb&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-&nbsp; |&nbsp; 36 +++++<br>
-&nbsp;.../wfx-customizations/files/override.conf&nbsp;&nbsp;&nbsp; |&nbsp;&=
-nbsp; 6 +<br>
-&nbsp;.../files/wfx-generate-client-id.sh&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp;&nbsp; 9 ++<br>
-&nbsp;.../wfx-customizations_0.1.bb&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp; 28 ++++<br=
->
-&nbsp;11 files changed, 254 insertions(+), 3 deletions(-)<br>
-&nbsp;create mode 100644 kas/opt/wfx.yml<br>
-&nbsp;create mode 100644 recipes-core/swupdate-config/files/suricatta<br>
-&nbsp;rename recipes-core/swupdate-config/files/{swupdate.cfg =3D&gt; swupd=
-ate.cfg.tmpl} (83%)<br>
-&nbsp;create mode 100644 recipes-core/swupdate/swupdate_2025.05+dfsg-3.bb<b=
-r>
-&nbsp;create mode 100644 recipes-core/wfx-customizations/files/override.con=
-f<br>
-&nbsp;create mode 100644 recipes-core/wfx-customizations/files/wfx-generate=
--client-id.sh<br>
-&nbsp;create mode 100644 recipes-core/wfx-customizations/wfx-customizations=
-_0.1.bb<br>
-<br>
---<br>
-2.39.5<br>
-<br>
-<br>
-</div>
-</body>
-</html>
-
---_000_TYCPR01MB96690A02857F4B9B3E08E9DBC4FDATYCPR01MB9669jpnp_--
+Best regards,
+  Nobuhiro
 
 
