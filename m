@@ -1,94 +1,138 @@
-Return-Path: <uli@fpond.eu>
+Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05486CCF9E9
-	for <webhook@archiver.kernel.org>; Wed, 29 Oct 2025 11:06:57 +0000 (UTC)
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [85.215.255.20])
- by mx.groups.io with SMTP id smtpd.web01.3844.1761736013148611350
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A20CCF9F0
+	for <webhook@archiver.kernel.org>; Wed, 29 Oct 2025 14:30:18 +0000 (UTC)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+ by mx.groups.io with SMTP id smtpd.web01.7299.1761748216075080429
  for <cip-dev@lists.cip-project.org>;
- Wed, 29 Oct 2025 04:06:53 -0700
+ Wed, 29 Oct 2025 07:30:16 -0700
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@fpond.eu header.s=strato-dkim-0002 header.b=ac8Xos+D;
- spf=none, err=permanent DNS error (domain: fpond.eu, ip: 85.215.255.20, mailfrom: uli@fpond.eu)
-ARC-Seal: i=1; a=rsa-sha256; t=1761736006; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=E2wW8eLlDAip2cji2jHrvV1zut0sMr7qDlw9NwyC+ikMw83I7V9cbrLsTMdbz9nRgk
-    uiZ7qAzBrR2b8qlgPJn7SISg8t1FOqAlseGn4NmFrGmXryJClP42tlzHbk9++eNu627X
-    yBR4bbPH7QoIDiayjl4JBxedkV/usbbCgu7aN8s6D2qTIifNICegv7rPEpy6tLFPVJ3z
-    jkrjpAt0GjQrJTiQT3sSakVZlltkOIp5zq8EB2/I1OyUBMuCo34DJL83mxQH27dHQU3/
-    w7BQjoVaVKnU/v26PmOejeUwuWQ0hI6r1bSiPsL+4Q/56q1Bz4T1Gwo0o+1PMwrHp3vt
-    QwTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1761736006;
-    s=strato-dkim-0002; d=strato.com;
-    h=Subject:References:In-Reply-To:Message-ID:To:From:Date:Cc:Date:From:
-    Subject:Sender;
-    bh=0z1CTKnDkBlo/suxO/GNcZW/6VexS8bLi5dk0qss41Y=;
-    b=qP4i58WTC+Hk1/Z2Mr//g2K2GJQY4G4u+p2OO8cAQojzvES+oiKkGI8L2m8p7vhFIU
-    dNy9oz31C9yvqHbDvEY2gtoki8P4idL4kpzxUYx1JHOOWajK7KyZPts9KhiBxWs+orRC
-    bfWKKR9TjcmTEZB54y1fwPvLKllgozB5lnOLW603SR3oy7T92qPP5HVw3Z6uc2rj3ZMF
-    ivOnRc9v6/amXyK05apNhB2fFbZJFVk8Z2nGxRF33vpiHJ2U3Hqc13KX8QIwmZlIqQXX
-    XKekeMA//YRM8NS4HmWDBvBaUXhPjZ8lf715Pkve1a0HXg+PUSOBPNnasn2EjbQf/Ete
-    xE+w==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1761736006;
-    s=strato-dkim-0002; d=fpond.eu;
-    h=Subject:References:In-Reply-To:Message-ID:To:From:Date:Cc:Date:From:
-    Subject:Sender;
-    bh=0z1CTKnDkBlo/suxO/GNcZW/6VexS8bLi5dk0qss41Y=;
-    b=ac8Xos+DTCcuwv4Ra9DLZmI43T/pRKbN9WKFuHbeyLZyI2pC+yw3JMo50XF59LHQ3B
-    0HRXTNZs/krM0h1Imh9b0yhRu2cWTxypnuy3mncsGfKeWQ10vp5GDdPY0GM4uWDiNnG6
-    +mVkxU/e/kPtqoCZECoTD+ocm6sA3QEnCh1wHx4ztiYceXBnE+QL9Vchg92jfBnzMjHG
-    selDVhkXbjqwxoOfGsIr8l6wfnt6VYJoBs1Qc5wb+CNPCZ6KO5L3m/WSLZSpfCo1ks2M
-    IZ6PtsCYdjL3JcYLFgcsp8GgiEj4F6epC4zget+jY2FZijhr3QvbYSVWw3frAIWPH7ZS
-    NtNQ==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv30UF1hexKHG+OxMWg=="
-Received: from open-xchange-core-mw-gw-36.open-xchange-core-mw-hazelcast-headless.open-xchange.svc.cluster.local
-    by smtp-ox.front (RZmta 53.4.2 AUTH)
-    with ESMTPSA id z2815319TB6kGq7
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256 bits))
-	(Client did not present a certificate);
-    Wed, 29 Oct 2025 12:06:46 +0100 (CET)
-Date: Wed, 29 Oct 2025 12:06:46 +0100 (CET)
-From: Ulrich Hecht <uli@fpond.eu>
-To: nobuhiro.iwamatsu.x90@mail.toshiba,
-	"Nobuhiro Iwamatsu via lists.cip-project.org"
- <nobuhiro.iwamatsu.x90=mail.toshiba@lists.cip-project.org>,
-	cip-dev@lists.cip-project.org, pavel@denx.de
-Message-ID: <667154897.130105.1761736006462@webmail.strato.de>
-In-Reply-To: <TY7PR01MB14818DB1B8949574A3367636DCDFAA@TY7PR01MB14818.jpnprd01.prod.outlook.com>
-References: <1483065062.11009.1761645498941@webmail.strato.de>
- <TY7PR01MB14818DB1B8949574A3367636DCDFAA@TY7PR01MB14818.jpnprd01.prod.outlook.com>
-Subject: Re: [cip-dev] Request for review for 4.4-st69, 4.4-cip104
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=P0Qy1Il6;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.44, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-47118259fd8so57271915e9.3
+        for <cip-dev@lists.cip-project.org>; Wed, 29 Oct 2025 07:30:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1761748214; x=1762353014; darn=lists.cip-project.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tsUF/Gqv0mJ2Cv8yyGx+O8IwfssgJPBvuxjHLOrN6sk=;
+        b=P0Qy1Il63jxkI+96tqoOd3odBiWnRzoCV3M+NUEd2JM+ijuaOhYtBcl3XmiwmRNRKF
+         oGPXdN1FaECTkl5NvtfdaK/vs/ECzYIigLEYaI2rhDBANpDwCVUG3xD5YL9917INQblb
+         ufCQkq3tUk3QzLaF7Ll0IU6p8qw9T0RTRH4tdTz65mGBRlxd2OPjyYw06hM6o55AlfFC
+         bri+2i86eeyQy0hZj07GZqtRgvY5Y+25e1gav/KZU46lIsInWCk/DPA8jZPxbHFOQ42H
+         HUWFcAPQRDfuC2sHRcIex70EYEYDn7oECvCymQGCHZnJPKDuSetKBd+7uKuSOQgde4Jm
+         rEbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761748214; x=1762353014;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tsUF/Gqv0mJ2Cv8yyGx+O8IwfssgJPBvuxjHLOrN6sk=;
+        b=s/ao6o722ZWgQEK17xFnsWDceZpw0O7XO7Zfv8kCTlgEeaIrbOCTLs3/kjThrIfT2W
+         bLFVMTTz8Ccj/qTAPpn/bY/YwHWeO4mhaEJGeQtcm3FwYyS2cGm9bpvI420kmEaNYzUN
+         m/iX73ZT9/csDoPhjJhpbYvI/GcOpqq1NsGyeiiHWOt1xg9h2Tls1ikLnQLPS1OT0csx
+         XT4NRHZ34gnp7nP5GS+Zmsx8sHfnLxgULrg2u4QMP5B6VIvGciM/E+G+L3lSpEKQrCxM
+         FvatDJEgt6+Xst374Je/YjTFMeSt4/506tM6fH7LvIBEoxnj6JBOd4JxwzZj6a3MiSgL
+         UjjA==
+X-Forwarded-Encrypted: i=1; AJvYcCW4DbETS3O8yTyNWD1/pm1Z5zTccV2Aiefw8ZIioIq1K1uIYffNwsvO8BOVYX0WZMrjBvDvjFvW@lists.cip-project.org
+X-Gm-Message-State: AOJu0YzSrdaq+7g1aBwnO1cNFQGY2k4DIa5+l6bXnDm39x9jathbbfz7
+	I8UaElxs7r2jYoNzqdID6K3YaHcUyfnanzkG28JOxzN7PCvowyaeN1lN0wOjnacIa1I=
+X-Gm-Gg: ASbGncsSXTQ03H8p+ldVSa9usuvvTrjSrb6czWfYpPmKukBrAILqhJmkDL2gf2VRTqJ
+	8vYjQl6zF8GVuSCRJvoOuOixaX2h1G8HjuNrnsRlb7UKkwfRPq3STktkmjzhtk0sk2+3N7csC3R
+	+MRqNNERrCW5169M/+8snskJP5O++Sdny/+oVEiIK3IQ5KZKtTs7rs2nU2826O0llji4pMbLNgs
+	vt9CaWktWbrqPPx0XaUhr2lwSzhy7DP1KloC7CA3FxBcJbteDPRE6aC5qZXfidTwfk6eXF0Aluj
+	98f/vFPCd8kc0vsxNtVVxLUs2RI9UPb6ZHfdqF29cx/WX3MU91YfR3ZU/rhAcHSzFehiBpYYVo7
+	gVsEvFewtUPbZ/XGwQz2Z7ZnBqJiyIJJYGYjqLrNjMnxuSpPFImUL8bovTqsyxEniP0DN0GdXlQ
+	KbHfeSYeV3NnLkI0mYFGZQfybLe+7zXxt1nTz+76aT98rR9MbOWBaLOzw=
+X-Google-Smtp-Source: AGHT+IEjFEJzjwzCoCZkIG8NNNB3/h598yXT0KSBjoYdwhJ55WaqyLycvg0ZQSK1DPaNjOve9gykaw==
+X-Received: by 2002:a05:600d:435c:b0:458:a7fa:211d with SMTP id 5b1f17b1804b1-4771fd61d0emr18802445e9.29.1761748212502;
+        Wed, 29 Oct 2025 07:30:12 -0700 (PDT)
+Received: from ?IPV6:2a02:2f04:6302:7900:aafe:5712:6974:4a42? ([2a02:2f04:6302:7900:aafe:5712:6974:4a42])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952cb7d1sm27034146f8f.16.2025.10.29.07.30.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Oct 2025 07:30:11 -0700 (PDT)
+Message-ID: <bd43e5bf-4fe9-451d-971e-f4bea874db23@tuxon.dev>
+Date: Wed, 29 Oct 2025 16:30:09 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12.y-cip] mm: page_alloc: Add kernel parameter to select
+ maximum PCP batch scale number
+To: Pavel Machek <pavel@denx.de>
+Cc: nobuhiro1.iwamatsu@toshiba.co.jp, cip-dev@lists.cip-project.org
+References: <20251027092658.84955-1-claudiu.beznea.uj@bp.renesas.com>
+ <aQHdNhBR2DiWAtEx@duo.ucw.cz>
+Content-Language: en-US
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <aQHdNhBR2DiWAtEx@duo.ucw.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v8.38.93
-X-Originating-Port: 44176
-X-Originating-Client: open-xchange-appsuite
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 29 Oct 2025 11:06:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20275
+ <cip-dev@lists.cip-project.org>; Wed, 29 Oct 2025 14:30:18 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20276
 
+Hi, Pavel,
 
-> On 10/29/2025 10:15 AM CET Nobuhiro Iwamatsu via lists.cip-project.org <nobuhiro.iwamatsu.x90=mail.toshiba@lists.cip-project.org> wrote:
-> Thanks for updating 4.4.y tree. I reviewed this series, looks good to me.
+On 10/29/25 11:24, Pavel Machek wrote:
+> Hi!
+> 
+>> Commit 52166607ecc9 ("mm: restrict the pcp batch scale factor to avoid
+>> too long latency") introduced default PCP (Per-CPU Pageset) batch size as
+>> a configuration flag. The configuration flag is CONFIG_PCP_BATCH_SCALE_MAX.
+>>
+>> The ARM64 defconfig has CONFIG_PCP_BATCH_SCALE_MAX=5. This defconfig
+>> is used by a high range of SoCs.
+>>
+>> The Renesas RZ/G3S SoC is a single CPU SoC, with L1$ (I-cache 32Kbytes,
+>> D-cache 32 Kbytes), L3$ (256 Kbytes), but no L2$. It is currently used in
+>> a configuration with 1 GiB RAM size. In this configuration, starting with
+>> commit 52166607ecc9 ("mm: restrict the pcp batch scale factor to avoid too
+>> long latency") the "bonnie++ -d /mnt -u root" benchmark takes ~14 minutes
+>> while previously it took ~10 minutes. The /mnt directory is mounted on SD
+>> card. Same behavior is reproduced on similar Renesas single core devices
+>> (e.g., Renesas RZ/G2UL). bonnie++ version used was 1.04.
+>>
+>> Add a new kernel parameter to allow systems like Renesas RZ/G3S to
+>> continue have the same performance numbers with the default mainline
+> ...
+> 
+>> This patch was posted as RFC at [1] but got no feedback. Starting with
+>> kernel v6.17 the behaviour was restored by commits:
+>>
+>> 18ebe55a9236 ("mm/readahead: terminate async readahead on natural boundary")
+>> 38b0ece6d763 ("mm/filemap: allow arch to request folio size for exec
+>> memory")
+> 
+> Ok, so this is not mainline, because mainline has different solution.
+> 
+> It is also not queued for stable.
+> 
+> It introduces kernel parameter that will be special for -cip, not seen
+> in mainline nor -stable.
+> 
+> Presumably you'll be telling your customers to set the command line
+> parameter.
 
-Thank you!
+Yes, the idea was to have the generic built image tuned tough the command line 
+parameter.
 
-> BTW, could you apply these requests?
->   https://lore.kernel.org/all/OS7PR01MB14808FF4B6303383C05F05D27CD00A@OS7PR01MB14808.jpnprd01.prod.outlook.com/
->   https://lore.kernel.org/all/TY7PR01MB1481806DFD83FC78B45EF2CC9CDFAA@TY7PR01MB14818.jpnprd01.prod.outlook.com/
+> Would it make sense to ask them to tune the config instead?
 
-Done.
+We wanted to avoid updating the generic kernel config to not, presumably, affect 
+the more powerful devices sharing the same defconfig. We can update the config 
+in cip-kernel-config but that may have negative impact on the more powerful 
+devices. Please let me know this approach fits better for you.
 
-CU
-Uli
+The commit description specifies:
+
+Although it is reasonable to use 5 as max batch scale factor for the
+systems tested, there are also slower systems.  Where smaller value should
+be used to constrain the page allocation/freeing latency.
+
+Thank you,
+Claudiu
 
