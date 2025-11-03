@@ -2,28 +2,28 @@ Return-Path: <john.madieu.xa@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36331CCFA06
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C6DCCFA07
 	for <webhook@archiver.kernel.org>; Mon,  3 Nov 2025 11:36:40 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.18623.1762169774650115223
  for <cip-dev@lists.cip-project.org>;
- Mon, 03 Nov 2025 03:36:35 -0800
+ Mon, 03 Nov 2025 03:36:33 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: john.madieu.xa@bp.renesas.com)
-X-CSE-ConnectionGUID: QcLAkRX/R5mG6c2GKPhkBA==
-X-CSE-MsgGUID: 21cPN1tQQdmO6dOSJkZRzQ==
+X-CSE-ConnectionGUID: aoQYSXeMTsSu50HtYuA9jw==
+X-CSE-MsgGUID: DuB+Y/+DQa2UHjOkBTD9NA==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 03 Nov 2025 20:36:34 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 03 Nov 2025 20:36:32 +0900
 Received: from ubuntu.adwin.renesas.com (unknown [10.226.93.166])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 68205400942A;
-	Mon,  3 Nov 2025 20:36:33 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id A9B20400942A;
+	Mon,  3 Nov 2025 20:36:31 +0900 (JST)
 From: John Madieu <john.madieu.xa@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
-Subject: [PATCH 6.1.y-cip 14/25] dt-bindings: net: Document support for Renesas RZ/V2H(P) GBETH
-Date: Mon,  3 Nov 2025 12:35:47 +0100
-Message-ID: <20251103113608.36240-15-john.madieu.xa@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 13/25] clk: renesas: r9a09g047: Add clock and reset signals for the GBETH IPs
+Date: Mon,  3 Nov 2025 12:35:46 +0100
+Message-ID: <20251103113608.36240-14-john.madieu.xa@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251103113608.36240-1-john.madieu.xa@bp.renesas.com>
 References: <20251103113608.36240-1-john.madieu.xa@bp.renesas.com>
@@ -33,258 +33,180 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 03 Nov 2025 11:36:40 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20306
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20305
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+[ Upstream commit e6e54229f328c30a1b4ecba1253f9d314dd42e33 ]
 
-[ Upstream commit 8fff7ae84d1880b7d435f3bb71518eb24bf84846 ]
+Add clock and reset entries for the Gigabit Ethernet Interfaces (GBETH 0-1)
+IPs found on the RZ/G3E SoC. This includes various PLLs, dividers, and mux
+clocks needed by these two GBETH IPs.
 
-GBETH IP on the Renesas RZ/V2H(P) SoC is integrated with Synopsys
-DesignWare MAC (version 5.20). Document the device tree bindings for
-the GBETH glue layer.
-
-Generic compatible string 'renesas,rzv2h-gbeth' is added since this
-module is identical on both the RZ/V2H(P) and RZ/G3E SoCs.
-
-The Rx/Tx clocks supplied for GBETH on the RZ/V2H(P) SoC is depicted
-below:
-
-                      Rx / Tx
--------+------------- on / off -------
-       |
-       |            Rx-180 / Tx-180
-       +---- not ---- on / off -------
-
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Link: https://patch.msgid.link/20250417084015.74154-3-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/20250702005706.1200059-2-john.madieu.xa@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[john.madieu:
+ - Updated rzv2h-cpg.h header file to define necesaeey macro. That is,
+   CPG_SSEL0, CSDIV0_DIVCTL0/1, SSEL0_SELCTL2/3, and SSEL1_SELCTL0/1]
 Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 ---
- .../bindings/net/renesas,r9a09g057-gbeth.yaml | 201 ++++++++++++++++++
- .../devicetree/bindings/net/snps,dwmac.yaml   |   1 +
- 2 files changed, 202 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/renesas,r9a09g057-gbeth.yaml
+ drivers/clk/renesas/r9a09g047-cpg.c | 64 +++++++++++++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.h     |  7 ++++
+ 2 files changed, 71 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/net/renesas,r9a09g057-gbeth.yaml b/Documentation/devicetree/bindings/net/renesas,r9a09g057-gbeth.yaml
-new file mode 100644
-index 000000000000..02a6793c26f5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/renesas,r9a09g057-gbeth.yaml
-@@ -0,0 +1,201 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/renesas,r9a09g057-gbeth.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/clk/renesas/r9a09g047-cpg.c b/drivers/clk/renesas/r9a09g047-cpg.c
+index 21699999cedd..281d19782409 100644
+--- a/drivers/clk/renesas/r9a09g047-cpg.c
++++ b/drivers/clk/renesas/r9a09g047-cpg.c
+@@ -29,6 +29,7 @@ enum clk_ids {
+ 	CLK_PLLDTY,
+ 	CLK_PLLCA55,
+ 	CLK_PLLVDO,
++	CLK_PLLETH,
+ 
+ 	/* Internal Core Clocks */
+ 	CLK_PLLCM33_DIV3,
+@@ -46,6 +47,15 @@ enum clk_ids {
+ 	CLK_PLLDTY_ACPU,
+ 	CLK_PLLDTY_ACPU_DIV2,
+ 	CLK_PLLDTY_ACPU_DIV4,
++	CLK_PLLDTY_DIV8,
++	CLK_PLLETH_DIV_250_FIX,
++	CLK_PLLETH_DIV_125_FIX,
++	CLK_CSDIV_PLLETH_GBE0,
++	CLK_CSDIV_PLLETH_GBE1,
++	CLK_SMUX2_GBE0_TXCLK,
++	CLK_SMUX2_GBE0_RXCLK,
++	CLK_SMUX2_GBE1_TXCLK,
++	CLK_SMUX2_GBE1_RXCLK,
+ 	CLK_PLLDTY_DIV16,
+ 	CLK_PLLVDO_CRU0,
+ 	CLK_PLLVDO_GPU,
+@@ -85,7 +95,18 @@ static const struct clk_div_table dtable_2_64[] = {
+ 	{0, 0},
+ };
+ 
++static const struct clk_div_table dtable_2_100[] = {
++	{0, 2},
++	{1, 10},
++	{2, 100},
++	{0, 0},
++};
 +
-+title: GBETH glue layer for Renesas RZ/V2H(P) (and similar SoCs)
+ /* Mux clock tables */
++static const char * const smux2_gbe0_rxclk[] = { ".plleth_gbe0", "et0_rxclk" };
++static const char * const smux2_gbe0_txclk[] = { ".plleth_gbe0", "et0_txclk" };
++static const char * const smux2_gbe1_rxclk[] = { ".plleth_gbe1", "et1_rxclk" };
++static const char * const smux2_gbe1_txclk[] = { ".plleth_gbe1", "et1_txclk" };
+ static const char * const smux2_xspi_clk0[] = { ".pllcm33_div3", ".pllcm33_div4" };
+ static const char * const smux2_xspi_clk1[] = { ".smux2_xspi_clk0", ".pllcm33_div5" };
+ 
+@@ -100,6 +121,7 @@ static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
+ 	DEF_FIXED(".pllcln", CLK_PLLCLN, CLK_QEXTAL, 200, 3),
+ 	DEF_FIXED(".plldty", CLK_PLLDTY, CLK_QEXTAL, 200, 3),
+ 	DEF_PLL(".pllca55", CLK_PLLCA55, CLK_QEXTAL, PLLCA55),
++	DEF_FIXED(".plleth", CLK_PLLETH, CLK_QEXTAL, 125, 3),
+ 	DEF_FIXED(".pllvdo", CLK_PLLVDO, CLK_QEXTAL, 105, 2),
+ 
+ 	/* Internal Core Clocks */
+@@ -122,6 +144,18 @@ static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
+ 	DEF_DDIV(".plldty_acpu", CLK_PLLDTY_ACPU, CLK_PLLDTY, CDDIV0_DIVCTL2, dtable_2_64),
+ 	DEF_FIXED(".plldty_acpu_div2", CLK_PLLDTY_ACPU_DIV2, CLK_PLLDTY_ACPU, 1, 2),
+ 	DEF_FIXED(".plldty_acpu_div4", CLK_PLLDTY_ACPU_DIV4, CLK_PLLDTY_ACPU, 1, 4),
++	DEF_FIXED(".plldty_div8", CLK_PLLDTY_DIV8, CLK_PLLDTY, 1, 8),
 +
-+maintainers:
-+  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-+
-+select:
-+  properties:
-+    compatible:
-+      contains:
-+        enum:
-+          - renesas,r9a09g057-gbeth
-+          - renesas,rzv2h-gbeth
-+  required:
-+    - compatible
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - renesas,r9a09g057-gbeth # RZ/V2H(P)
-+      - const: renesas,rzv2h-gbeth
-+      - const: snps,dwmac-5.20
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: CSR clock
-+      - description: AXI system clock
-+      - description: PTP clock
-+      - description: TX clock
-+      - description: RX clock
-+      - description: TX clock phase-shifted by 180 degrees
-+      - description: RX clock phase-shifted by 180 degrees
-+
-+  clock-names:
-+    items:
-+      - const: stmmaceth
-+      - const: pclk
-+      - const: ptp_ref
-+      - const: tx
-+      - const: rx
-+      - const: tx-180
-+      - const: rx-180
-+
-+  interrupts:
-+    minItems: 11
-+
-+  interrupt-names:
-+    items:
-+      - const: macirq
-+      - const: eth_wake_irq
-+      - const: eth_lpi
-+      - const: rx-queue-0
-+      - const: rx-queue-1
-+      - const: rx-queue-2
-+      - const: rx-queue-3
-+      - const: tx-queue-0
-+      - const: tx-queue-1
-+      - const: tx-queue-2
-+      - const: tx-queue-3
-+
-+  resets:
-+    items:
-+      - description: AXI power-on system reset
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - interrupts
-+  - interrupt-names
-+  - resets
-+
-+allOf:
-+  - $ref: snps,dwmac.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/renesas-cpg-mssr.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    ethernet@15c30000 {
-+        compatible = "renesas,r9a09g057-gbeth", "renesas,rzv2h-gbeth", "snps,dwmac-5.20";
-+        reg = <0x15c30000 0x10000>;
-+        clocks =  <&cpg CPG_MOD 0xbd>, <&cpg CPG_MOD 0xbc>,
-+                  <&ptp_clock>, <&cpg CPG_MOD 0xb8>,
-+                  <&cpg CPG_MOD 0xb9>, <&cpg CPG_MOD 0xba>,
-+                  <&cpg CPG_MOD 0xbb>;
-+        clock-names = "stmmaceth", "pclk", "ptp_ref",
-+                      "tx", "rx", "tx-180", "rx-180";
-+        resets = <&cpg 0xb0>;
-+        interrupts = <GIC_SPI 765 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 767 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 766 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 772 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 773 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 774 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 745 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 768 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 769 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 770 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 771 IRQ_TYPE_LEVEL_HIGH>;
-+        interrupt-names = "macirq", "eth_wake_irq", "eth_lpi",
-+                          "rx-queue-0", "rx-queue-1", "rx-queue-2",
-+                          "rx-queue-3", "tx-queue-0", "tx-queue-1",
-+                          "tx-queue-2", "tx-queue-3";
-+        phy-mode = "rgmii-id";
-+        snps,multicast-filter-bins = <256>;
-+        snps,perfect-filter-entries = <128>;
-+        rx-fifo-depth = <8192>;
-+        tx-fifo-depth = <8192>;
-+        snps,fixed-burst;
-+        snps,force_thresh_dma_mode;
-+        snps,axi-config = <&stmmac_axi_setup>;
-+        snps,mtl-rx-config = <&mtl_rx_setup>;
-+        snps,mtl-tx-config = <&mtl_tx_setup>;
-+        snps,txpbl = <32>;
-+        snps,rxpbl = <32>;
-+        phy-handle = <&phy0>;
-+
-+        stmmac_axi_setup: stmmac-axi-config {
-+            snps,lpi_en;
-+            snps,wr_osr_lmt = <0xf>;
-+            snps,rd_osr_lmt = <0xf>;
-+            snps,blen = <16 8 4 0 0 0 0>;
-+        };
-+
-+        mtl_rx_setup: rx-queues-config {
-+            snps,rx-queues-to-use = <4>;
-+            snps,rx-sched-sp;
-+
-+            queue0 {
-+                snps,dcb-algorithm;
-+                snps,priority = <0x1>;
-+                snps,map-to-dma-channel = <0>;
-+            };
-+
-+            queue1 {
-+                snps,dcb-algorithm;
-+                snps,priority = <0x2>;
-+                snps,map-to-dma-channel = <1>;
-+            };
-+
-+            queue2 {
-+                snps,dcb-algorithm;
-+                snps,priority = <0x4>;
-+                snps,map-to-dma-channel = <2>;
-+            };
-+
-+            queue3 {
-+                snps,dcb-algorithm;
-+                snps,priority = <0x8>;
-+                snps,map-to-dma-channel = <3>;
-+            };
-+        };
-+
-+        mtl_tx_setup: tx-queues-config {
-+            snps,tx-queues-to-use = <4>;
-+
-+            queue0 {
-+                snps,dcb-algorithm;
-+                snps,priority = <0x1>;
-+            };
-+
-+            queue1 {
-+                snps,dcb-algorithm;
-+                snps,priority = <0x2>;
-+            };
-+
-+            queue2 {
-+                snps,dcb-algorithm;
-+                snps,priority = <0x4>;
-+            };
-+
-+            queue3 {
-+                snps,dcb-algorithm;
-+                snps,priority = <0x1>;
-+            };
-+        };
-+
-+        mdio {
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+            compatible = "snps,dwmac-mdio";
-+
-+            phy0: ethernet-phy@0 {
-+                reg = <0>;
-+            };
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-index 13b984076af5..68d051e148c2 100644
---- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-+++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-@@ -67,6 +67,7 @@ properties:
-         - loongson,ls7a-dwmac
-         - renesas,r9a06g032-gmac
-         - renesas,rzn1-gmac
-+        - renesas,rzv2h-gbeth
-         - rockchip,px30-gmac
-         - rockchip,rk3128-gmac
-         - rockchip,rk3228-gmac
++	DEF_FIXED(".plleth_250_fix", CLK_PLLETH_DIV_250_FIX, CLK_PLLETH, 1, 4),
++	DEF_FIXED(".plleth_125_fix", CLK_PLLETH_DIV_125_FIX, CLK_PLLETH_DIV_250_FIX, 1, 2),
++	DEF_CSDIV(".plleth_gbe0", CLK_CSDIV_PLLETH_GBE0, CLK_PLLETH_DIV_250_FIX,
++		  CSDIV0_DIVCTL0, dtable_2_100),
++	DEF_CSDIV(".plleth_gbe1", CLK_CSDIV_PLLETH_GBE1, CLK_PLLETH_DIV_250_FIX,
++		  CSDIV0_DIVCTL1, dtable_2_100),
++	DEF_SMUX(".smux2_gbe0_txclk", CLK_SMUX2_GBE0_TXCLK, SSEL0_SELCTL2, smux2_gbe0_txclk),
++	DEF_SMUX(".smux2_gbe0_rxclk", CLK_SMUX2_GBE0_RXCLK, SSEL0_SELCTL3, smux2_gbe0_rxclk),
++	DEF_SMUX(".smux2_gbe1_txclk", CLK_SMUX2_GBE1_TXCLK, SSEL1_SELCTL0, smux2_gbe1_txclk),
++	DEF_SMUX(".smux2_gbe1_rxclk", CLK_SMUX2_GBE1_RXCLK, SSEL1_SELCTL1, smux2_gbe1_rxclk),
+ 	DEF_FIXED(".plldty_div16", CLK_PLLDTY_DIV16, CLK_PLLDTY, 1, 16),
+ 
+ 	DEF_DDIV(".pllvdo_cru0", CLK_PLLVDO_CRU0, CLK_PLLVDO, CDDIV3_DIVCTL3, dtable_2_4),
+@@ -139,6 +173,10 @@ static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
+ 		 CDDIV1_DIVCTL3, dtable_1_8),
+ 	DEF_FIXED("iotop_0_shclk", R9A09G047_IOTOP_0_SHCLK, CLK_PLLCM33_DIV16, 1, 1),
+ 	DEF_FIXED("spi_clk_spi", R9A09G047_SPI_CLK_SPI, CLK_PLLCM33_XSPI, 1, 2),
++	DEF_FIXED("gbeth_0_clk_ptp_ref_i", R9A09G047_GBETH_0_CLK_PTP_REF_I,
++		  CLK_PLLETH_DIV_125_FIX, 1, 1),
++	DEF_FIXED("gbeth_1_clk_ptp_ref_i", R9A09G047_GBETH_1_CLK_PTP_REF_I,
++		  CLK_PLLETH_DIV_125_FIX, 1, 1),
+ };
+ 
+ static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
+@@ -214,6 +252,30 @@ static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
+ 						BUS_MSTOP(8, BIT(4))),
+ 	DEF_MOD("sdhi_2_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 14, 5, 14,
+ 						BUS_MSTOP(8, BIT(4))),
++	DEF_MOD_MUX_EXTERNAL("gbeth_0_clk_tx_i", CLK_SMUX2_GBE0_TXCLK, 11, 8, 5, 24,
++						BUS_MSTOP(8, BIT(5)), 1),
++	DEF_MOD_MUX_EXTERNAL("gbeth_0_clk_rx_i", CLK_SMUX2_GBE0_RXCLK, 11, 9, 5, 25,
++						BUS_MSTOP(8, BIT(5)), 1),
++	DEF_MOD_MUX_EXTERNAL("gbeth_0_clk_tx_180_i", CLK_SMUX2_GBE0_TXCLK, 11, 10, 5, 26,
++						BUS_MSTOP(8, BIT(5)), 1),
++	DEF_MOD_MUX_EXTERNAL("gbeth_0_clk_rx_180_i", CLK_SMUX2_GBE0_RXCLK, 11, 11, 5, 27,
++						BUS_MSTOP(8, BIT(5)), 1),
++	DEF_MOD("gbeth_0_aclk_csr_i",		CLK_PLLDTY_DIV8, 11, 12, 5, 28,
++						BUS_MSTOP(8, BIT(5))),
++	DEF_MOD("gbeth_0_aclk_i",		CLK_PLLDTY_DIV8, 11, 13, 5, 29,
++						BUS_MSTOP(8, BIT(5))),
++	DEF_MOD_MUX_EXTERNAL("gbeth_1_clk_tx_i", CLK_SMUX2_GBE1_TXCLK, 11, 14, 5, 30,
++						BUS_MSTOP(8, BIT(6)), 1),
++	DEF_MOD_MUX_EXTERNAL("gbeth_1_clk_rx_i", CLK_SMUX2_GBE1_RXCLK, 11, 15, 5, 31,
++						BUS_MSTOP(8, BIT(6)), 1),
++	DEF_MOD_MUX_EXTERNAL("gbeth_1_clk_tx_180_i", CLK_SMUX2_GBE1_TXCLK, 12, 0, 6, 0,
++						BUS_MSTOP(8, BIT(6)), 1),
++	DEF_MOD_MUX_EXTERNAL("gbeth_1_clk_rx_180_i", CLK_SMUX2_GBE1_RXCLK, 12, 1, 6, 1,
++						BUS_MSTOP(8, BIT(6)), 1),
++	DEF_MOD("gbeth_1_aclk_csr_i",		CLK_PLLDTY_DIV8, 12, 2, 6, 2,
++						BUS_MSTOP(8, BIT(6))),
++	DEF_MOD("gbeth_1_aclk_i",		CLK_PLLDTY_DIV8, 12, 3, 6, 3,
++						BUS_MSTOP(8, BIT(6))),
+ 	DEF_MOD("cru_0_aclk",			CLK_PLLDTY_ACPU_DIV2, 13, 2, 6, 18,
+ 						BUS_MSTOP(9, BIT(4))),
+ 	DEF_MOD_NO_PM("cru_0_vclk",		CLK_PLLVDO_CRU0, 13, 3, 6, 19,
+@@ -255,6 +317,8 @@ static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
+ 	DEF_RST(10, 7, 4, 24),		/* SDHI_0_IXRST */
+ 	DEF_RST(10, 8, 4, 25),		/* SDHI_1_IXRST */
+ 	DEF_RST(10, 9, 4, 26),		/* SDHI_2_IXRST */
++	DEF_RST(11, 0, 5, 1),		/* GBETH_0_ARESETN_I */
++	DEF_RST(11, 1, 5, 2),		/* GBETH_1_ARESETN_I */
+ 	DEF_RST(12, 5, 5, 22),		/* CRU_0_PRESETN */
+ 	DEF_RST(12, 6, 5, 23),		/* CRU_0_ARESETN */
+ 	DEF_RST(12, 7, 5, 24),		/* CRU_0_S_RESETN */
+diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cpg.h
+index 543e44904bba..f01a74353095 100644
+--- a/drivers/clk/renesas/rzv2h-cpg.h
++++ b/drivers/clk/renesas/rzv2h-cpg.h
+@@ -111,6 +111,7 @@ struct fixed_mod_conf {
+ 		.mon_bit = (_bit), \
+ 	})
+ 
++#define CPG_SSEL0		(0x300)
+ #define CPG_SSEL1		(0x304)
+ #define CPG_CDDIV0		(0x400)
+ #define CPG_CDDIV1		(0x404)
+@@ -131,8 +132,14 @@ struct fixed_mod_conf {
+ #define CDDIV4_DIVCTL1	DDIV_PACK(CPG_CDDIV4, 4, 1, 17)
+ #define CDDIV4_DIVCTL2	DDIV_PACK(CPG_CDDIV4, 8, 1, 18)
+ 
++#define CSDIV0_DIVCTL0	DDIV_PACK(CPG_CSDIV0, 0, 2, CSDIV_NO_MON)
++#define CSDIV0_DIVCTL1	DDIV_PACK(CPG_CSDIV0, 4, 2, CSDIV_NO_MON)
+ #define CSDIV0_DIVCTL3	DDIV_PACK_NO_RMW(CPG_CSDIV0, 12, 2, CSDIV_NO_MON)
+ 
++#define SSEL0_SELCTL2 	SMUX_PACK(CPG_SSEL0, 8, 1)
++#define SSEL0_SELCTL3 	SMUX_PACK(CPG_SSEL0, 12, 1)
++#define SSEL1_SELCTL0 	SMUX_PACK(CPG_SSEL1, 0, 1)
++#define SSEL1_SELCTL1	SMUX_PACK(CPG_SSEL1, 4, 1)
+ #define SSEL1_SELCTL2	SMUX_PACK(CPG_SSEL1, 8, 1)
+ #define SSEL1_SELCTL3	SMUX_PACK(CPG_SSEL1, 12, 1)
+ 
 -- 
 2.25.1
 
