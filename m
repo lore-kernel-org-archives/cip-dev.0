@@ -2,28 +2,28 @@ Return-Path: <john.madieu.xa@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 442F7CCFA07
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A84CCCFA0C
 	for <webhook@archiver.kernel.org>; Mon,  3 Nov 2025 11:36:50 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.18460.1762169800316022948
  for <cip-dev@lists.cip-project.org>;
- Mon, 03 Nov 2025 03:36:41 -0800
+ Mon, 03 Nov 2025 03:36:45 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: john.madieu.xa@bp.renesas.com)
-X-CSE-ConnectionGUID: j3xvWPm4QvyM0nsn5jYPXA==
-X-CSE-MsgGUID: IY7znxRRQ+qXlIa5CSgi2g==
+X-CSE-ConnectionGUID: tvJ4s2giRrKkz0mRLrNTeQ==
+X-CSE-MsgGUID: SZAJZv2nS5eeXU5ZWD7RgQ==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 03 Nov 2025 20:36:41 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 03 Nov 2025 20:36:44 +0900
 Received: from ubuntu.adwin.renesas.com (unknown [10.226.93.166])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4D798400942A;
-	Mon,  3 Nov 2025 20:36:40 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B5B014009A16;
+	Mon,  3 Nov 2025 20:36:43 +0900 (JST)
 From: John Madieu <john.madieu.xa@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
-Subject: [PATCH 6.1.y-cip 18/25] net: phy: Add helper for mapping RGMII link speed to clock rate
-Date: Mon,  3 Nov 2025 12:35:51 +0100
-Message-ID: <20251103113608.36240-19-john.madieu.xa@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 20/25] net: stmmac: provide generic implementation for set_clk_tx_rate method
+Date: Mon,  3 Nov 2025 12:35:53 +0100
+Message-ID: <20251103113608.36240-21-john.madieu.xa@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251103113608.36240-1-john.madieu.xa@bp.renesas.com>
 References: <20251103113608.36240-1-john.madieu.xa@bp.renesas.com>
@@ -33,67 +33,84 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 03 Nov 2025 11:36:50 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20310
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20312
 
-From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
+From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit 386aa60abdb600a4e5ad818e6dba171685942e54 ]
+[ Upstream commit 12bce6d5404ea30180536322c1ad31bc45a988d2 ]
 
-The RGMII interface supports three data rates: 10/100 Mbps
-and 1 Gbps. These speeds correspond to clock frequencies
-of 2.5/25 MHz and 125 MHz, respectively.
+Provide a generic implementation for the set_clk_tx_rate method
+introduced by the previous patch, which is capable of configuring the
+MAC transmit clock for 10M, 100M and 1000M speeds for at least MII,
+GMII, RGMII and RMII interface modes.
 
-Many Ethernet drivers, including glues in stmmac, follow
-a similar pattern of converting RGMII speed to clock frequency.
-
-To simplify code, define the helper rgmii_clock(speed)
-to convert connection speed to clock frequency.
-
-Suggested-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+Reviewed-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
-Link: https://patch.msgid.link/20241205-upstream_s32cc_gmac-v8-4-ec1d180df815@oss.nxp.com
+Link: https://patch.msgid.link/E1tna0K-0052sY-QF@rmk-PC.armlinux.org.uk
 Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 ---
- include/linux/phy.h | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h  |  2 ++
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 32 +++++++++++++++++++
+ 2 files changed, 34 insertions(+)
 
-diff --git a/include/linux/phy.h b/include/linux/phy.h
-index ddf66198f751..a8c6e3c29ed6 100644
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -280,6 +280,29 @@ static inline const char *phy_modes(phy_interface_t interface)
- 	}
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+index 46944c02b45e..db2ef77ab8ad 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+@@ -356,6 +356,8 @@ int stmmac_reinit_queues(struct net_device *dev, u32 rx_cnt, u32 tx_cnt);
+ int stmmac_reinit_ringparam(struct net_device *dev, u32 rx_size, u32 tx_size);
+ int stmmac_bus_clks_config(struct stmmac_priv *priv, bool enabled);
+ void stmmac_fpe_handshake(struct stmmac_priv *priv, bool enable);
++int stmmac_set_clk_tx_rate(void *bsp_priv, struct clk *clk_tx_i,
++			   phy_interface_t interface, int speed);
+ 
+ static inline bool stmmac_xdp_is_enabled(struct stmmac_priv *priv)
+ {
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index bd0524213933..81b516528ed9 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -178,6 +178,38 @@ int stmmac_bus_clks_config(struct stmmac_priv *priv, bool enabled)
  }
+ EXPORT_SYMBOL_GPL(stmmac_bus_clks_config);
  
 +/**
-+ * rgmii_clock - map link speed to the clock rate
-+ * @speed: link speed value
++ * stmmac_set_clk_tx_rate() - set the clock rate for the MAC transmit clock
++ * @bsp_priv: BSP private data structure (unused)
++ * @clk_tx_i: the transmit clock
++ * @interface: the selected interface mode
++ * @speed: the speed that the MAC will be operating at
 + *
-+ * Description: maps RGMII supported link speeds
-+ * into the clock rates.
++ * Set the transmit clock rate for the MAC, normally 2.5MHz for 10Mbps,
++ * 25MHz for 100Mbps and 125MHz for 1Gbps. This is suitable for at least
++ * MII, GMII, RGMII and RMII interface modes. Platforms can hook this into
++ * the plat_data->set_clk_tx_rate method directly, call it via their own
++ * implementation, or implement their own method should they have more
++ * complex requirements. It is intended to only be used in this method.
 + *
-+ * Returns: clock rate or negative errno
++ * plat_data->clk_tx_i must be filled in.
 + */
-+static inline long rgmii_clock(int speed)
++int stmmac_set_clk_tx_rate(void *bsp_priv, struct clk *clk_tx_i,
++			   phy_interface_t interface, int speed)
 +{
-+	switch (speed) {
-+	case SPEED_10:
-+		return 2500000;
-+	case SPEED_100:
-+		return 25000000;
-+	case SPEED_1000:
-+		return 125000000;
-+	default:
-+		return -EINVAL;
-+	}
-+}
++	long rate = rgmii_clock(speed);
 +
- #define PHY_INIT_TIMEOUT	100000
- #define PHY_FORCE_TIMEOUT	10
- 
++	/* Silently ignore unsupported speeds as rgmii_clock() only
++	 * supports 10, 100 and 1000Mbps. We do not want to spit
++	 * errors for 2500 and higher speeds here.
++	 */
++	if (rate < 0)
++		return 0;
++
++	return clk_set_rate(clk_tx_i, rate);
++}
++EXPORT_SYMBOL_GPL(stmmac_set_clk_tx_rate);
++
+ /**
+  * stmmac_verify_args - verify the driver parameters.
+  * Description: it checks the driver parameters and set a default in case of
 -- 
 2.25.1
 
