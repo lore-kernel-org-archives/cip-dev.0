@@ -2,28 +2,28 @@ Return-Path: <john.madieu.xa@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB907CCF9F8
-	for <webhook@archiver.kernel.org>; Mon,  3 Nov 2025 11:41:50 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.18722.1762170106622650558
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4DE3CCF9F8
+	for <webhook@archiver.kernel.org>; Mon,  3 Nov 2025 11:42:00 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.18724.1762170111076734979
  for <cip-dev@lists.cip-project.org>;
- Mon, 03 Nov 2025 03:41:46 -0800
+ Mon, 03 Nov 2025 03:41:51 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: john.madieu.xa@bp.renesas.com)
-X-CSE-ConnectionGUID: 1Tz0HxI2TFqmvXZYxm5Hrg==
-X-CSE-MsgGUID: AvCrYPS8SbKQ1gYbPFkAYw==
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: john.madieu.xa@bp.renesas.com)
+X-CSE-ConnectionGUID: rkGpONxrTBK1F1yVRo5aCg==
+X-CSE-MsgGUID: Vz3c4B1QS8SKodIL8R8jMw==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 03 Nov 2025 20:26:42 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 03 Nov 2025 20:26:47 +0900
 Received: from ubuntu.adwin.renesas.com (unknown [10.226.93.166])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6F1B64008A0A;
-	Mon,  3 Nov 2025 20:26:41 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9A18B400545C;
+	Mon,  3 Nov 2025 20:26:46 +0900 (JST)
 From: John Madieu <john.madieu.xa@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
-Subject: [PATCH 6.1.y-cip 15/25] dt-bindings: net: renesas-gbeth: Add support for RZ/G3E (R9A09G047) SoC
-Date: Mon,  3 Nov 2025 12:25:34 +0100
-Message-ID: <20251103112614.36134-16-john.madieu.xa@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 18/25] net: phy: Add helper for mapping RGMII link speed to clock rate
+Date: Mon,  3 Nov 2025 12:25:37 +0100
+Message-ID: <20251103112614.36134-19-john.madieu.xa@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251103112614.36134-1-john.madieu.xa@bp.renesas.com>
 References: <20251103112614.36134-1-john.madieu.xa@bp.renesas.com>
@@ -32,46 +32,68 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 03 Nov 2025 11:41:50 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20343
+ <cip-dev@lists.cip-project.org>; Mon, 03 Nov 2025 11:42:00 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20344
 
-[ Upstream commit 31b928210df1097eaa5e8cb51e2ff79989ebe57e ]
+From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
 
-Document support for the GBETH IP found on the Renesas RZ/G3E (R9A09G047) SoC.
-The GBETH block on RZ/G3E is equivalent in functionality to the GBETH found on
-RZ/V2H(P) (R9A09G057).
+[ Upstream commit 386aa60abdb600a4e5ad818e6dba171685942e54 ]
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Link: https://patch.msgid.link/20250611061204.15393-1-john.madieu.xa@bp.renesas.com
+The RGMII interface supports three data rates: 10/100 Mbps
+and 1 Gbps. These speeds correspond to clock frequencies
+of 2.5/25 MHz and 125 MHz, respectively.
+
+Many Ethernet drivers, including glues in stmmac, follow
+a similar pattern of converting RGMII speed to clock frequency.
+
+To simplify code, define the helper rgmii_clock(speed)
+to convert connection speed to clock frequency.
+
+Suggested-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+Link: https://patch.msgid.link/20241205-upstream_s32cc_gmac-v8-4-ec1d180df815@oss.nxp.com
 Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 ---
- .../devicetree/bindings/net/renesas,r9a09g057-gbeth.yaml        | 2 ++
- 1 file changed, 2 insertions(+)
+ include/linux/phy.h | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/net/renesas,r9a09g057-gbeth.yaml b/Documentation/devicetree/bindings/net/renesas,r9a09g057-gbeth.yaml
-index 02a6793c26f5..91f637b048ab 100644
---- a/Documentation/devicetree/bindings/net/renesas,r9a09g057-gbeth.yaml
-+++ b/Documentation/devicetree/bindings/net/renesas,r9a09g057-gbeth.yaml
-@@ -14,6 +14,7 @@ select:
-     compatible:
-       contains:
-         enum:
-+          - renesas,r9a09g047-gbeth
-           - renesas,r9a09g057-gbeth
-           - renesas,rzv2h-gbeth
-   required:
-@@ -23,6 +24,7 @@ properties:
-   compatible:
-     items:
-       - enum:
-+          - renesas,r9a09g047-gbeth # RZ/G3E
-           - renesas,r9a09g057-gbeth # RZ/V2H(P)
-       - const: renesas,rzv2h-gbeth
-       - const: snps,dwmac-5.20
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index ddf66198f751..a8c6e3c29ed6 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -280,6 +280,29 @@ static inline const char *phy_modes(phy_interface_t interface)
+ 	}
+ }
+ 
++/**
++ * rgmii_clock - map link speed to the clock rate
++ * @speed: link speed value
++ *
++ * Description: maps RGMII supported link speeds
++ * into the clock rates.
++ *
++ * Returns: clock rate or negative errno
++ */
++static inline long rgmii_clock(int speed)
++{
++	switch (speed) {
++	case SPEED_10:
++		return 2500000;
++	case SPEED_100:
++		return 25000000;
++	case SPEED_1000:
++		return 125000000;
++	default:
++		return -EINVAL;
++	}
++}
++
+ #define PHY_INIT_TIMEOUT	100000
+ #define PHY_FORCE_TIMEOUT	10
+ 
 -- 
 2.25.1
 
