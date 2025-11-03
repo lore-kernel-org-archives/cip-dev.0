@@ -2,28 +2,28 @@ Return-Path: <john.madieu.xa@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78BDDCCFA05
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C40CCFA07
 	for <webhook@archiver.kernel.org>; Mon,  3 Nov 2025 11:38:30 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.18662.1762169901935752604
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.18661.1762169900237480921
  for <cip-dev@lists.cip-project.org>;
- Mon, 03 Nov 2025 03:38:22 -0800
+ Mon, 03 Nov 2025 03:38:29 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: john.madieu.xa@bp.renesas.com)
-X-CSE-ConnectionGUID: uIKLW3VgR8KoVlA5W5fcRQ==
-X-CSE-MsgGUID: 7duYyNITTZePZ2I189jW3w==
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: john.madieu.xa@bp.renesas.com)
+X-CSE-ConnectionGUID: JWLjfbNkQdGNiCVLZVjncg==
+X-CSE-MsgGUID: M9qq3BQpSFGdAY5BU39yYw==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 03 Nov 2025 20:38:21 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 03 Nov 2025 20:38:28 +0900
 Received: from ubuntu.adwin.renesas.com (unknown [10.226.93.166])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4085F41A027C;
-	Mon,  3 Nov 2025 20:38:19 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 7DF70419FC18;
+	Mon,  3 Nov 2025 20:38:27 +0900 (JST)
 From: John Madieu <john.madieu.xa@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
-Subject: [PATCH 6.12.y-cip 01/22] soc: renesas: Add config option for RZ/V2N (R9A09G056) SoC
-Date: Mon,  3 Nov 2025 12:37:45 +0100
-Message-ID: <20251103113817.36331-2-john.madieu.xa@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 05/22] pinctrl: renesas: rzg2l: Unify OEN access by making pin-to-bit mapping configurable
+Date: Mon,  3 Nov 2025 12:37:49 +0100
+Message-ID: <20251103113817.36331-6-john.madieu.xa@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251103113817.36331-1-john.madieu.xa@bp.renesas.com>
 References: <20251103113817.36331-1-john.madieu.xa@bp.renesas.com>
@@ -33,42 +33,145 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 03 Nov 2025 11:38:30 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20319
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20323
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-[ Upstream commit 31d358e611b7cc21349da58dd2c9118c84b0859f ]
+[ Upstream commit a3455a0c24834eaa20f032b214d53b1607d60073 ]
 
-Add a new Kconfig option, ARCH_R9A09G056, to enable ARM64 platform support
-for the Renesas RZ/V2N SoC. Default this option to "y" when ARCH_RENESAS is
-enabled, ensuring that support for the RZ/V2N SoC is automatically included.
+Refactor the RZG2L pinctrl driver to support reuse of the common
+rzg2l_read_oen() and rzg2l_write_oen() helpers across SoCs with
+different output-enable (OEN) bit mappings.
+
+Introduce a new `pin_to_oen_bit` callback in `struct rzg2l_pinctrl_data`
+to allow SoCs to provide custom logic for mapping a pin to its OEN bit.
+Update the generic OEN read/write paths to use this callback when present.
+
+With this change, SoCs like RZ/G3S can reuse the common OEN handling
+code by simply supplying their own `pin_to_oen_bit` implementation.
+The previously duplicated `rzg3s_oen_read()` and `rzg3s_oen_write()`
+functions are now removed.
+
+This improves maintainability and prepares the driver for supporting
+future SoCs with minimal duplication.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250407191628.323613-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/20250806195555.1372317-4-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 ---
- drivers/soc/renesas/Kconfig | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 54 +++++++------------------
+ 1 file changed, 15 insertions(+), 39 deletions(-)
 
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index 49648cf28bd2..c679a6e089b1 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -352,6 +352,12 @@ config ARCH_R9A09G047
- 	help
- 	  This enables support for the Renesas RZ/G3E SoC variants.
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index e24ff882b609..dda610c74120 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -296,6 +296,7 @@ struct rzg2l_pinctrl_data {
+ #endif
+ 	void (*pwpr_pfc_lock_unlock)(struct rzg2l_pinctrl *pctrl, bool lock);
+ 	void (*pmc_writeb)(struct rzg2l_pinctrl *pctrl, u8 val, u16 offset);
++	int (*pin_to_oen_bit)(struct rzg2l_pinctrl *pctrl, unsigned int _pin);
+ 	u32 (*oen_read)(struct rzg2l_pinctrl *pctrl, unsigned int _pin);
+ 	int (*oen_write)(struct rzg2l_pinctrl *pctrl, unsigned int _pin, u8 oen);
+ 	int (*hw_to_bias_param)(unsigned int val);
+@@ -1065,7 +1066,10 @@ static u32 rzg2l_read_oen(struct rzg2l_pinctrl *pctrl, unsigned int _pin)
+ {
+ 	int bit;
  
-+config ARCH_R9A09G056
-+	bool "ARM64 Platform support for RZ/V2N"
-+	default y if ARCH_RENESAS
-+	help
-+	  This enables support for the Renesas RZ/V2N SoC variants.
+-	bit = rzg2l_pin_to_oen_bit(pctrl, _pin);
++	if (!pctrl->data->pin_to_oen_bit)
++		return 0;
 +
- config ARCH_R9A09G057
- 	bool "ARM64 Platform support for RZ/V2H(P)"
- 	select RENESAS_RZV2H_ICU
++	bit = pctrl->data->pin_to_oen_bit(pctrl, _pin);
+ 	if (bit < 0)
+ 		return 0;
+ 
+@@ -1079,9 +1083,12 @@ static int rzg2l_write_oen(struct rzg2l_pinctrl *pctrl, unsigned int _pin, u8 oe
+ 	int bit;
+ 	u8 val;
+ 
+-	bit = rzg2l_pin_to_oen_bit(pctrl, _pin);
++	if (!pctrl->data->pin_to_oen_bit)
++		return -EINVAL;
++
++	bit = pctrl->data->pin_to_oen_bit(pctrl, _pin);
+ 	if (bit < 0)
+-		return bit;
++		return -EINVAL;
+ 
+ 	spin_lock_irqsave(&pctrl->lock, flags);
+ 	val = readb(pctrl->base + oen_offset);
+@@ -1115,40 +1122,6 @@ static int rzg3s_pin_to_oen_bit(struct rzg2l_pinctrl *pctrl, unsigned int _pin)
+ 	return bit;
+ }
+ 
+-static u32 rzg3s_oen_read(struct rzg2l_pinctrl *pctrl, unsigned int _pin)
+-{
+-	int bit;
+-
+-	bit = rzg3s_pin_to_oen_bit(pctrl, _pin);
+-	if (bit < 0)
+-		return 0;
+-
+-	return !(readb(pctrl->base + pctrl->data->hwcfg->regs.oen) & BIT(bit));
+-}
+-
+-static int rzg3s_oen_write(struct rzg2l_pinctrl *pctrl, unsigned int _pin, u8 oen)
+-{
+-	u16 oen_offset = pctrl->data->hwcfg->regs.oen;
+-	unsigned long flags;
+-	int bit;
+-	u8 val;
+-
+-	bit = rzg3s_pin_to_oen_bit(pctrl, _pin);
+-	if (bit < 0)
+-		return bit;
+-
+-	spin_lock_irqsave(&pctrl->lock, flags);
+-	val = readb(pctrl->base + oen_offset);
+-	if (oen)
+-		val &= ~BIT(bit);
+-	else
+-		val |= BIT(bit);
+-	writeb(val, pctrl->base + oen_offset);
+-	spin_unlock_irqrestore(&pctrl->lock, flags);
+-
+-	return 0;
+-}
+-
+ static int rzg2l_hw_to_bias_param(unsigned int bias)
+ {
+ 	switch (bias) {
+@@ -3305,6 +3278,7 @@ static struct rzg2l_pinctrl_data r9a07g043_data = {
+ #endif
+ 	.pwpr_pfc_lock_unlock = &rzg2l_pwpr_pfc_lock_unlock,
+ 	.pmc_writeb = &rzg2l_pmc_writeb,
++	.pin_to_oen_bit = &rzg2l_pin_to_oen_bit,
+ 	.oen_read = &rzg2l_read_oen,
+ 	.oen_write = &rzg2l_write_oen,
+ 	.hw_to_bias_param = &rzg2l_hw_to_bias_param,
+@@ -3322,6 +3296,7 @@ static struct rzg2l_pinctrl_data r9a07g044_data = {
+ 	.hwcfg = &rzg2l_hwcfg,
+ 	.pwpr_pfc_lock_unlock = &rzg2l_pwpr_pfc_lock_unlock,
+ 	.pmc_writeb = &rzg2l_pmc_writeb,
++	.pin_to_oen_bit = &rzg2l_pin_to_oen_bit,
+ 	.oen_read = &rzg2l_read_oen,
+ 	.oen_write = &rzg2l_write_oen,
+ 	.hw_to_bias_param = &rzg2l_hw_to_bias_param,
+@@ -3338,8 +3313,9 @@ static struct rzg2l_pinctrl_data r9a08g045_data = {
+ 	.hwcfg = &rzg3s_hwcfg,
+ 	.pwpr_pfc_lock_unlock = &rzg2l_pwpr_pfc_lock_unlock,
+ 	.pmc_writeb = &rzg2l_pmc_writeb,
+-	.oen_read = &rzg3s_oen_read,
+-	.oen_write = &rzg3s_oen_write,
++	.pin_to_oen_bit = &rzg3s_pin_to_oen_bit,
++	.oen_read = &rzg2l_read_oen,
++	.oen_write = &rzg2l_write_oen,
+ 	.hw_to_bias_param = &rzg2l_hw_to_bias_param,
+ 	.bias_param_to_hw = &rzg2l_bias_param_to_hw,
+ };
 -- 
 2.25.1
 
