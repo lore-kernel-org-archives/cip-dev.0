@@ -2,28 +2,28 @@ Return-Path: <john.madieu.xa@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24E4CCCFA05
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C696CCF9F8
 	for <webhook@archiver.kernel.org>; Mon,  3 Nov 2025 11:36:40 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.18623.1762169774650115223
  for <cip-dev@lists.cip-project.org>;
- Mon, 03 Nov 2025 03:36:31 -0800
+ Mon, 03 Nov 2025 03:36:38 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: john.madieu.xa@bp.renesas.com)
-X-CSE-ConnectionGUID: mg6eUEStSrSw1WUl+Dm1vA==
-X-CSE-MsgGUID: RNWhM3DRRZG205GJFUeCuw==
+X-CSE-ConnectionGUID: vMwl5jEdRqG6+wzoOuZE5Q==
+X-CSE-MsgGUID: fJ4h1jHkSSidp3hA+OSQXQ==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 03 Nov 2025 20:36:31 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 03 Nov 2025 20:36:38 +0900
 Received: from ubuntu.adwin.renesas.com (unknown [10.226.93.166])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id F39CC400942A;
-	Mon,  3 Nov 2025 20:36:29 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id E1D5D4009A16;
+	Mon,  3 Nov 2025 20:36:36 +0900 (JST)
 From: John Madieu <john.madieu.xa@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
-Subject: [PATCH 6.1.y-cip 12/25] pinctrl: renesas: rzg2l: Fix OEN resume
-Date: Mon,  3 Nov 2025 12:35:45 +0100
-Message-ID: <20251103113608.36240-13-john.madieu.xa@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 16/25] dt-bindings: net: Rename renesas,r9a09g057-gbeth.yaml
+Date: Mon,  3 Nov 2025 12:35:49 +0100
+Message-ID: <20251103113608.36240-17-john.madieu.xa@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251103113608.36240-1-john.madieu.xa@bp.renesas.com>
 References: <20251103113608.36240-1-john.madieu.xa@bp.renesas.com>
@@ -33,57 +33,44 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 03 Nov 2025 11:36:40 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20304
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20308
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 30247fc3254a4502465ab809d49e2167ace5a6f2 ]
+[ Upstream commit d53320aeef18ece4999c0cf07cb802d1dd990885 ]
 
-Writing to the PFC_OEN register is controlled by the write protect
-register (PWPR).  Currently the OEN register write in resume() is done
-without enabling write access in PWPR leading to incorrect operation.
+The DT bindings file "renesas,r9a09g057-gbeth.yaml" applies to a whole
+family of SoCs, and uses "renesas,rzv2h-gbeth" as a fallback compatible
+value.  Hence rename it to the more generic "renesas,rzv2h-gbeth.yaml".
 
-Fixes: cd39805be85b ("pinctrl: renesas: rzg2l: Unify OEN handling across RZ/{G2L,V2H,V2N}")
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[geert: Move spin_*lock*() calls inside if-statements]
-Link: https://lore.kernel.org/20250817143024.165471-2-biju.das.jz@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Simon Horman <horms@kernel.org>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Link: https://patch.msgid.link/721f6e0e09777e0842ecaca4578bc50c953d2428.1750838954.git.geert+renesas@glider.be
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ .../{renesas,r9a09g057-gbeth.yaml => renesas,rzv2h-gbeth.yaml}  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+ rename Documentation/devicetree/bindings/net/{renesas,r9a09g057-gbeth.yaml => renesas,rzv2h-gbeth.yaml} (98%)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 7a5123f71c72..8475a1f5fcc0 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -3141,6 +3141,8 @@ static int rzg2l_pinctrl_resume_noirq(struct device *dev)
- 	const struct rzg2l_hwcfg *hwcfg = pctrl->data->hwcfg;
- 	const struct rzg2l_register_offsets *regs = &hwcfg->regs;
- 	struct rzg2l_pinctrl_reg_cache *cache = pctrl->cache;
-+	unsigned long flags;
-+	u8 pwpr;
- 	int ret;
+diff --git a/Documentation/devicetree/bindings/net/renesas,r9a09g057-gbeth.yaml b/Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml
+similarity index 98%
+rename from Documentation/devicetree/bindings/net/renesas,r9a09g057-gbeth.yaml
+rename to Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml
+index 91f637b048ab..ee8fbb6c7994 100644
+--- a/Documentation/devicetree/bindings/net/renesas,r9a09g057-gbeth.yaml
++++ b/Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: http://devicetree.org/schemas/net/renesas,r9a09g057-gbeth.yaml#
++$id: http://devicetree.org/schemas/net/renesas,rzv2h-gbeth.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
  
- 	if (!atomic_read(&pctrl->wakeup_path)) {
-@@ -3150,7 +3152,16 @@ static int rzg2l_pinctrl_resume_noirq(struct device *dev)
- 	}
- 
- 	writeb(cache->qspi, pctrl->base + QSPI);
-+	if (pctrl->data->hwcfg->oen_pwpr_lock) {
-+		spin_lock_irqsave(&pctrl->lock, flags);
-+		pwpr = readb(pctrl->base + regs->pwpr);
-+		writeb(pwpr | PWPR_REGWE_B, pctrl->base + regs->pwpr);
-+	}
- 	writeb(cache->oen, pctrl->base + pctrl->data->hwcfg->regs.oen);
-+	if (pctrl->data->hwcfg->oen_pwpr_lock) {
-+		writeb(pwpr & ~PWPR_REGWE_B, pctrl->base + regs->pwpr);
-+		spin_unlock_irqrestore(&pctrl->lock, flags);
-+	}
- 	for (u8 i = 0; i < 2; i++) {
- 		if (regs->sd_ch)
- 			writeb(cache->sd_ch[i], pctrl->base + SD_CH(regs->sd_ch, i));
+ title: GBETH glue layer for Renesas RZ/V2H(P) (and similar SoCs)
 -- 
 2.25.1
 
