@@ -2,28 +2,28 @@ Return-Path: <john.madieu.xa@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C64A5CCFA05
-	for <webhook@archiver.kernel.org>; Mon,  3 Nov 2025 11:41:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB907CCF9F8
+	for <webhook@archiver.kernel.org>; Mon,  3 Nov 2025 11:41:50 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.18715.1762170094595720827
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.18722.1762170106622650558
  for <cip-dev@lists.cip-project.org>;
- Mon, 03 Nov 2025 03:41:34 -0800
+ Mon, 03 Nov 2025 03:41:46 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.171, mailfrom: john.madieu.xa@bp.renesas.com)
-X-CSE-ConnectionGUID: gUDf1NR1QGalam2UExp3nw==
-X-CSE-MsgGUID: FgD8X+HBTK2aLMmrQpyRkQ==
+X-CSE-ConnectionGUID: 1Tz0HxI2TFqmvXZYxm5Hrg==
+X-CSE-MsgGUID: AvCrYPS8SbKQ1gYbPFkAYw==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 03 Nov 2025 20:26:30 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 03 Nov 2025 20:26:42 +0900
 Received: from ubuntu.adwin.renesas.com (unknown [10.226.93.166])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6EBD54008A0A;
-	Mon,  3 Nov 2025 20:26:29 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6F1B64008A0A;
+	Mon,  3 Nov 2025 20:26:41 +0900 (JST)
 From: John Madieu <john.madieu.xa@bp.renesas.com>
 To: cip-dev@lists.cip-project.org,
 	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
 	Pavel Machek <pavel@denx.de>
-Subject: [PATCH 6.1.y-cip 08/25] pinctrl: renesas: rzg2l: Remove OEN ops for RZ/G3E
-Date: Mon,  3 Nov 2025 12:25:27 +0100
-Message-ID: <20251103112614.36134-9-john.madieu.xa@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 15/25] dt-bindings: net: renesas-gbeth: Add support for RZ/G3E (R9A09G047) SoC
+Date: Mon,  3 Nov 2025 12:25:34 +0100
+Message-ID: <20251103112614.36134-16-john.madieu.xa@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251103112614.36134-1-john.madieu.xa@bp.renesas.com>
 References: <20251103112614.36134-1-john.madieu.xa@bp.renesas.com>
@@ -32,43 +32,46 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 03 Nov 2025 11:41:40 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20342
+ <cip-dev@lists.cip-project.org>; Mon, 03 Nov 2025 11:41:50 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20343
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+[ Upstream commit 31b928210df1097eaa5e8cb51e2ff79989ebe57e ]
 
-[ Upstream commit dd0d40d8f4ac8c2cb5967fdb2e1efa70cfc0c9ee ]
+Document support for the GBETH IP found on the Renesas RZ/G3E (R9A09G047) SoC.
+The GBETH block on RZ/G3E is equivalent in functionality to the GBETH found on
+RZ/V2H(P) (R9A09G057).
 
-The RZ/G3E pin controller does not advertise PIN_CFG_OEN capability, so
-there is no valid mapping for output-enable bits on this SoC. Remove the
-oen_read and oen_write callbacks from the RZ/G3E driver data to defer
-OEN support until PIN_CFG_OEN support is added.
-
-This is a preparatory change for future unification of OEN handling across
-the driver.
-
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250806195555.1372317-5-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Link: https://patch.msgid.link/20250611061204.15393-1-john.madieu.xa@bp.renesas.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 2 --
- 1 file changed, 2 deletions(-)
+ .../devicetree/bindings/net/renesas,r9a09g057-gbeth.yaml        | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 30e2346c7109..36f3452939f0 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -3320,8 +3320,6 @@ static struct rzg2l_pinctrl_data r9a09g047_data = {
- #endif
- 	.pwpr_pfc_lock_unlock = &rzv2h_pwpr_pfc_lock_unlock,
- 	.pmc_writeb = &rzv2h_pmc_writeb,
--	.oen_read = &rzv2h_oen_read,
--	.oen_write = &rzv2h_oen_write,
- 	.hw_to_bias_param = &rzv2h_hw_to_bias_param,
- 	.bias_param_to_hw = &rzv2h_bias_param_to_hw,
- };
+diff --git a/Documentation/devicetree/bindings/net/renesas,r9a09g057-gbeth.yaml b/Documentation/devicetree/bindings/net/renesas,r9a09g057-gbeth.yaml
+index 02a6793c26f5..91f637b048ab 100644
+--- a/Documentation/devicetree/bindings/net/renesas,r9a09g057-gbeth.yaml
++++ b/Documentation/devicetree/bindings/net/renesas,r9a09g057-gbeth.yaml
+@@ -14,6 +14,7 @@ select:
+     compatible:
+       contains:
+         enum:
++          - renesas,r9a09g047-gbeth
+           - renesas,r9a09g057-gbeth
+           - renesas,rzv2h-gbeth
+   required:
+@@ -23,6 +24,7 @@ properties:
+   compatible:
+     items:
+       - enum:
++          - renesas,r9a09g047-gbeth # RZ/G3E
+           - renesas,r9a09g057-gbeth # RZ/V2H(P)
+       - const: renesas,rzv2h-gbeth
+       - const: snps,dwmac-5.20
 -- 
 2.25.1
 
