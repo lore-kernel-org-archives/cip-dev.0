@@ -1,85 +1,81 @@
-Return-Path: <pavel@denx.de>
+Return-Path: <john.madieu.xa@bp.renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E7ECCFA00
-	for <webhook@archiver.kernel.org>; Fri, 31 Oct 2025 08:30:36 +0000 (UTC)
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.web10.10717.1761899429068362682
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8FA4CCFA06
+	for <webhook@archiver.kernel.org>; Mon,  3 Nov 2025 11:36:19 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.18623.1762169774650115223
  for <cip-dev@lists.cip-project.org>;
- Fri, 31 Oct 2025 01:30:29 -0700
+ Mon, 03 Nov 2025 03:36:19 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=T8iOmgnV;
- spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 73E061020BDF9;
-	Fri, 31 Oct 2025 09:30:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1761899426; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=/SmEGWRdLWrrAcPvUjqmDYufEeCmIZeK++5plsRtpLE=;
-	b=T8iOmgnVg1ajzzeU2Jylot66IhlQK+oLg35b+G6B26rG+XTtT8nuJjsbkPkk/XHllvilpS
-	4EfOr3+iDnPdivX7s5/akQahc+zFR0VO7iTZWok9FgS2HqXV4DTRJzVF+WXIEMJt9R6B/1
-	VhPmmS5lSzWSaK6TnwvsdXVfzQXiEv+PGqykZbbVR9YdMGkw3nvfIRT3Rg93Etb3MY/sLy
-	MGYqwswjnC6VNlK3lR6lvUrj7cL0FRCC/ud+kwyeGVwAhhP1UIw+M7qK6McDfAsVlfXB3w
-	IdBQLIpE2I5vyFUKXm9bsZIrOKpXRPZ+fTtGY4Za30VDjPNpF0t5gjzkUUef8A==
-Date: Fri, 31 Oct 2025 09:30:21 +0100
-From: Pavel Machek <pavel@denx.de>
-To: nobuhiro.iwamatsu.x90@mail.toshiba
-Cc: ovidiu.panait.rb@renesas.com, cip-dev@lists.cip-project.org
-Subject: Re: [PATCH 6.12.y-cip 0/1] Add RZ/V2H ICU support
-Message-ID: <aQRznZw+YUU6h42P@duo.ucw.cz>
-References: <20251030084927.47505-1-ovidiu.panait.rb@renesas.com>
- <TY7PR01MB148188796779012A1BC1EDA69CDF8A@TY7PR01MB14818.jpnprd01.prod.outlook.com>
+ dkim=none (message not signed); spf=pass (domain: bp.renesas.com, ip: 210.160.252.172, mailfrom: john.madieu.xa@bp.renesas.com)
+X-CSE-ConnectionGUID: mkKftW6iT/WTEs2MQ9Z6Mg==
+X-CSE-MsgGUID: Gz0usHUOTpmyOUyJgQ9FmA==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 03 Nov 2025 20:36:19 +0900
+Received: from ubuntu.adwin.renesas.com (unknown [10.226.93.166])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0FDE4400942A;
+	Mon,  3 Nov 2025 20:36:17 +0900 (JST)
+From: John Madieu <john.madieu.xa@bp.renesas.com>
+To: cip-dev@lists.cip-project.org,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Pavel Machek <pavel@denx.de>
+Subject: [PATCH 6.1.y-cip 05/25] pinctrl: renesas: rzg2l: Fix invalid unsigned return in rzg3s_oen_read()
+Date: Mon,  3 Nov 2025 12:35:38 +0100
+Message-ID: <20251103113608.36240-6-john.madieu.xa@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251103113608.36240-1-john.madieu.xa@bp.renesas.com>
+References: <20251103113608.36240-1-john.madieu.xa@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="G4aGzMpeH1jSo+3h"
-Content-Disposition: inline
-In-Reply-To: <TY7PR01MB148188796779012A1BC1EDA69CDF8A@TY7PR01MB14818.jpnprd01.prod.outlook.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
-X-Webhook-Received: from li982-79.members.linode.com [45.33.32.79] by
+X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 31 Oct 2025 08:30:36 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20291
+ <cip-dev@lists.cip-project.org>; Mon, 03 Nov 2025 11:36:19 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20297
 
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
---G4aGzMpeH1jSo+3h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[ Upstream commit 8912b2862b9b74a0dc4e3ea1aacdec2f8abd7e1d ]
 
-Hi!
+rzg3s_oen_read() returns a u32 value, but previously propagated a negative
+error code from rzg3s_pin_to_oen_bit(), resulting in an unintended large
+positive value due to unsigned conversion. This caused incorrect
+output-enable reporting for certain pins.
 
-> > This series adds the ICU dts node for the Renesas RZ/V2H SoC, to the
-> > linux-6.12.y-cip kernel.
-> >=20
-> > The ICU driver and its dependencies are already present in the 6.12.y-c=
-ip
-> > branch, having been included earlier as part of the RZ/G3E backporting =
-work.
+Without this patch, pins P1_0-P1_4 and P7_0-P7_4 are incorrectly reported
+as "output enabled" in the pinconf-pins debugfs file. With this fix, only
+P1_0-P1_1 and P7_0-P7_1 are shown as "output enabled", which matches the
+hardware manual.
 
-> > The patch was cherry-picked from mainline kernel.
->=20
-> Thanks for your patch.
-> Looks good to me. I can apply this patch if there are no other comments.
+Fix this by returning 0 when the OEN bit lookup fails, treating the pin
+as output-disabled by default.
 
-Both 6.1 and 6.12 versions look good to me, too.
+Fixes: a9024a323af2 ("pinctrl: renesas: rzg2l: Clean up and refactor OEN read/write functions")
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/20250709160819.306875-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+---
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Pavel Machek <pavel@denx.de>
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index 3c60663c9454..9b157eab986b 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -1117,7 +1117,7 @@ static u32 rzg3s_oen_read(struct rzg2l_pinctrl *pctrl, unsigned int _pin)
+ 
+ 	bit = rzg3s_pin_to_oen_bit(pctrl, _pin);
+ 	if (bit < 0)
+-		return bit;
++		return 0;
+ 
+ 	return !(readb(pctrl->base + ETH_MODE) & BIT(bit));
+ }
+-- 
+2.25.1
 
-									Pavel
---=20
-In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
-Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---G4aGzMpeH1jSo+3h
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaQRznQAKCRAw5/Bqldv6
-8veVAJ0QoMXBCm2Svrhhr83zzbQnnLD/pwCfY5ju5lnQyJ8mcid2JDxhoi6Llfc=
-=Kqwt
------END PGP SIGNATURE-----
-
---G4aGzMpeH1jSo+3h--
 
