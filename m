@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF346CCFA1D
-	for <webhook@archiver.kernel.org>; Thu,  6 Nov 2025 10:37:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E798FCCFA05
+	for <webhook@archiver.kernel.org>; Thu,  6 Nov 2025 10:38:06 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.11655.1762425463946013726
  for <cip-dev@lists.cip-project.org>;
- Thu, 06 Nov 2025 02:37:49 -0800
+ Thu, 06 Nov 2025 02:37:58 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: WtgTK9x/SbG0eoHYq1z0KA==
-X-CSE-MsgGUID: oZuwGq3DRY+HFQ5KdkN6tQ==
+X-CSE-ConnectionGUID: ZqTChWYmTpuYfVgsrno9Bw==
+X-CSE-MsgGUID: xaRf1ZOyQgexe288ROhmmg==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Nov 2025 19:37:48 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 06 Nov 2025 19:37:57 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.93.83])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7555E4007F25;
-	Thu,  6 Nov 2025 19:37:47 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 589F84003FD6;
+	Thu,  6 Nov 2025 19:37:56 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@denx.de,
 	nobuhiro1.iwamatsu@toshiba.co.jp
-Subject: [PATCH 6.1.y-cip 4/9] dt-bindings: net: Define interrupt constraints for DWMAC vendor bindings
-Date: Thu,  6 Nov 2025 10:37:33 +0000
-Message-ID: <20251106103738.28911-5-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 9/9] arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Fix pinctrl node name for GBETH1
+Date: Thu,  6 Nov 2025 10:37:38 +0000
+Message-ID: <20251106103738.28911-10-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251106103738.28911-1-ovidiu.panait.rb@renesas.com>
 References: <20251106103738.28911-1-ovidiu.panait.rb@renesas.com>
@@ -32,165 +32,39 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 10:37:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20444
+ <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 10:38:06 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20449
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 5a1dddd2944492edb1e61c5db1cc386e5419fcf4 upstream.
+commit ffcc8c2e97ca29494687201557fd984d16d5cc4c upstream.
 
-The `snps,dwmac.yaml` binding currently sets `maxItems: 3` for the
-`interrupts` and `interrupt-names` properties, but vendor bindings
-selecting `snps,dwmac.yaml` do not impose these limits.
+Rename the GBETH1 pinctrl node from "eth0" to "eth1" to avoid duplicate
+node names in the DT and correctly reflect the label "eth1_pins".
 
-Define constraints for `interrupts` and `interrupt-names` properties in
-various DWMAC vendor bindings to ensure proper validation and consistency.
-
+Fixes: 802292ee27a7 ("arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Enable GBETH")
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Acked-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Link: https://patch.msgid.link/20250309003301.1152228-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/20250703235544.715433-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- .../devicetree/bindings/net/amlogic,meson-dwmac.yaml   |  6 ++++++
- .../devicetree/bindings/net/intel,dwmac-plat.yaml      |  6 ++++++
- .../devicetree/bindings/net/mediatek-dwmac.yaml        |  6 ++++++
- .../devicetree/bindings/net/nxp,dwmac-imx.yaml         |  8 ++++++++
- .../devicetree/bindings/net/rockchip-dwmac.yaml        | 10 ++++++++++
- Documentation/devicetree/bindings/net/stm32-dwmac.yaml | 10 ++++++++++
- .../bindings/net/toshiba,visconti-dwmac.yaml           |  6 ++++++
- 7 files changed, 52 insertions(+)
+ arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml b/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
-index ddd5a073c3a8..59ef200f3ced 100644
---- a/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
-+++ b/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
-@@ -152,6 +152,12 @@ properties:
-           The second range is is for the Amlogic specific configuration
-           (for example the PRG_ETHERNET register range on Meson8b and newer)
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
+index 6ddc1746aa5a..a53ef16c2b1e 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
++++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
+@@ -218,7 +218,7 @@ eth0_pins: eth0 {
+ 		output-enable;
+ 	};
  
-+  interrupts:
-+    maxItems: 1
-+
-+  interrupt-names:
-+    const: macirq
-+
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/net/intel,dwmac-plat.yaml b/Documentation/devicetree/bindings/net/intel,dwmac-plat.yaml
-index d23fa3771210..a1664ce17a01 100644
---- a/Documentation/devicetree/bindings/net/intel,dwmac-plat.yaml
-+++ b/Documentation/devicetree/bindings/net/intel,dwmac-plat.yaml
-@@ -41,6 +41,12 @@ properties:
-       - const: ptp_ref
-       - const: tx_clk
- 
-+  interrupts:
-+    maxItems: 1
-+
-+  interrupt-names:
-+    const: macirq
-+
- required:
-   - compatible
-   - clocks
-diff --git a/Documentation/devicetree/bindings/net/mediatek-dwmac.yaml b/Documentation/devicetree/bindings/net/mediatek-dwmac.yaml
-index 0fa2132fa4f4..e2867f1fa8c0 100644
---- a/Documentation/devicetree/bindings/net/mediatek-dwmac.yaml
-+++ b/Documentation/devicetree/bindings/net/mediatek-dwmac.yaml
-@@ -64,6 +64,12 @@ properties:
-       - const: rmii_internal
-       - const: mac_cg
- 
-+  interrupts:
-+    maxItems: 1
-+
-+  interrupt-names:
-+    const: macirq
-+
-   power-domains:
-     maxItems: 1
- 
-diff --git a/Documentation/devicetree/bindings/net/nxp,dwmac-imx.yaml b/Documentation/devicetree/bindings/net/nxp,dwmac-imx.yaml
-index 4c155441acbf..d95b07b7926b 100644
---- a/Documentation/devicetree/bindings/net/nxp,dwmac-imx.yaml
-+++ b/Documentation/devicetree/bindings/net/nxp,dwmac-imx.yaml
-@@ -52,6 +52,14 @@ properties:
-         - tx
-         - mem
- 
-+  interrupts:
-+    maxItems: 2
-+
-+  interrupt-names:
-+    items:
-+      - const: macirq
-+      - const: eth_wake_irq
-+
-   intf_mode:
-     $ref: /schemas/types.yaml#/definitions/phandle-array
-     items:
-diff --git a/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml b/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
-index 42fb72b6909d..fca0211740f3 100644
---- a/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
-+++ b/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
-@@ -56,6 +56,16 @@ properties:
-               - rockchip,rk3588-gmac
-           - const: snps,dwmac-4.20a
- 
-+  interrupts:
-+    minItems: 1
-+    maxItems: 2
-+
-+  interrupt-names:
-+    minItems: 1
-+    items:
-+      - const: macirq
-+      - const: eth_wake_irq
-+
-   clocks:
-     minItems: 5
-     maxItems: 8
-diff --git a/Documentation/devicetree/bindings/net/stm32-dwmac.yaml b/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
-index 5c93167b3b41..1a0894bdb7ac 100644
---- a/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
-+++ b/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
-@@ -50,6 +50,16 @@ properties:
-     items:
-       - const: stmmaceth
- 
-+  interrupts:
-+    minItems: 1
-+    maxItems: 2
-+
-+  interrupt-names:
-+    minItems: 1
-+    items:
-+      - const: macirq
-+      - const: eth_wake_irq
-+
-   clocks:
-     minItems: 3
-     items:
-diff --git a/Documentation/devicetree/bindings/net/toshiba,visconti-dwmac.yaml b/Documentation/devicetree/bindings/net/toshiba,visconti-dwmac.yaml
-index 0988ed8d1c12..fba7d3a37807 100644
---- a/Documentation/devicetree/bindings/net/toshiba,visconti-dwmac.yaml
-+++ b/Documentation/devicetree/bindings/net/toshiba,visconti-dwmac.yaml
-@@ -42,6 +42,12 @@ properties:
-       - const: stmmaceth
-       - const: phy_ref_clk
- 
-+  interrupts:
-+    maxItems: 1
-+
-+  interrupt-names:
-+    const: macirq
-+
- required:
-   - compatible
-   - reg
+-	eth1_pins: eth0 {
++	eth1_pins: eth1 {
+ 		pins = "ET1_TXC_TXCLK";
+ 		output-enable;
+ 	};
 -- 
 2.51.0
 
