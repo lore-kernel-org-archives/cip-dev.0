@@ -2,81 +2,120 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF8FFCCFA18
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE993CCF9F8
 	for <webhook@archiver.kernel.org>; Thu,  6 Nov 2025 10:37:46 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.11655.1762425463946013726
  for <cip-dev@lists.cip-project.org>;
- Thu, 06 Nov 2025 02:37:44 -0800
+ Thu, 06 Nov 2025 02:37:45 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: 5i/fzxY6S5W7kqDXYjCDsg==
-X-CSE-MsgGUID: J+FJLdg5Qqix0Oz5G2QtpA==
+X-CSE-ConnectionGUID: 0D7wSbirQrWHGmo7u9t/Ig==
+X-CSE-MsgGUID: oJ3kasw+ReGhOkGiKWIDOQ==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Nov 2025 19:37:41 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 06 Nov 2025 19:37:45 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.93.83])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 57B9F4003FD6;
-	Thu,  6 Nov 2025 19:37:40 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id DDE654003FD6;
+	Thu,  6 Nov 2025 19:37:43 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@denx.de,
 	nobuhiro1.iwamatsu@toshiba.co.jp
-Subject: [PATCH 6.1.y-cip 0/9] Add RZ/V2H GBETH support
-Date: Thu,  6 Nov 2025 10:37:29 +0000
-Message-ID: <20251106103738.28911-1-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 2/9] clk: renesas: r9a09g057: Add clock and reset entries for USB2
+Date: Thu,  6 Nov 2025 10:37:31 +0000
+Message-ID: <20251106103738.28911-3-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251106103738.28911-1-ovidiu.panait.rb@renesas.com>
+References: <20251106103738.28911-1-ovidiu.panait.rb@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 10:37:46 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20440
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20442
 
-Hi,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-This patch series adds GBETH support for the Renesas RZ/V2H SoC,
-to the linux-6.1.y-cip kernel.
+commit 93f2878136262e6efcc6320bc31ada62fb0afd20 upstream.
 
-Patches were cherry-picked from mainline kernel.
+Add clock and reset entries for USB2.
 
-Note: this series depends on the following RZ/G3E series:
-https://lore.kernel.org/cip-dev/20251103113608.36240-1-john.madieu.xa@bp.renesas.com/
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/20250407165202.197570-9-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+---
+ drivers/clk/renesas/r9a09g057-cpg.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-Best regards,
-Ovidiu
-
-Biju Das (1):
-  arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Replace RZG2L macros
-
-Lad Prabhakar (8):
-  dt-bindings: clock: renesas,r9a09g057-cpg: Add USB2 PHY and GBETH PTP
-    core clocks
-  clk: renesas: r9a09g057: Add clock and reset entries for USB2
-  clk: renesas: r9a09g057: Add clock and reset entries for GBETH0/1
-  dt-bindings: net: Define interrupt constraints for DWMAC vendor
-    bindings
-  dt-bindings: net: dwmac: Increase 'maxItems' for 'interrupts' and
-    'interrupt-names'
-  arm64: dts: renesas: r9a09g057: Add GBETH nodes
-  arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Enable GBETH
-  arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Fix pinctrl node name for
-    GBETH1
-
- .../bindings/net/amlogic,meson-dwmac.yaml     |   6 +
- .../bindings/net/intel,dwmac-plat.yaml        |   6 +
- .../bindings/net/mediatek-dwmac.yaml          |   6 +
- .../bindings/net/nxp,dwmac-imx.yaml           |   8 +
- .../bindings/net/rockchip-dwmac.yaml          |  10 +
- .../devicetree/bindings/net/snps,dwmac.yaml   |  22 +-
- .../devicetree/bindings/net/stm32-dwmac.yaml  |  10 +
- .../bindings/net/toshiba,visconti-dwmac.yaml  |   6 +
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi    | 209 ++++++++++++++++++
- .../dts/renesas/r9a09g057h44-rzv2h-evk.dts    | 102 +++++++--
- drivers/clk/renesas/r9a09g057-cpg.c           |  84 ++++++-
- .../dt-bindings/clock/renesas,r9a09g057-cpg.h |   4 +
- 12 files changed, 447 insertions(+), 26 deletions(-)
-
+diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
+index da20dbaead1f..3c40e36259fe 100644
+--- a/drivers/clk/renesas/r9a09g057-cpg.c
++++ b/drivers/clk/renesas/r9a09g057-cpg.c
+@@ -16,7 +16,7 @@
+ 
+ enum clk_ids {
+ 	/* Core Clock Outputs exported to DT */
+-	LAST_DT_CORE_CLK = R9A09G057_IOTOP_0_SHCLK,
++	LAST_DT_CORE_CLK = R9A09G057_GBETH_1_CLK_PTP_REF_I,
+ 
+ 	/* External Input Clocks */
+ 	CLK_AUDIO_EXTAL,
+@@ -41,6 +41,7 @@ enum clk_ids {
+ 	CLK_PLLDTY_ACPU,
+ 	CLK_PLLDTY_ACPU_DIV2,
+ 	CLK_PLLDTY_ACPU_DIV4,
++	CLK_PLLDTY_DIV8,
+ 	CLK_PLLDTY_DIV16,
+ 	CLK_PLLDTY_RCPU,
+ 	CLK_PLLDTY_RCPU_DIV4,
+@@ -104,6 +105,7 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
+ 	DEF_DDIV(".plldty_acpu", CLK_PLLDTY_ACPU, CLK_PLLDTY, CDDIV0_DIVCTL2, dtable_2_64),
+ 	DEF_FIXED(".plldty_acpu_div2", CLK_PLLDTY_ACPU_DIV2, CLK_PLLDTY_ACPU, 1, 2),
+ 	DEF_FIXED(".plldty_acpu_div4", CLK_PLLDTY_ACPU_DIV4, CLK_PLLDTY_ACPU, 1, 4),
++	DEF_FIXED(".plldty_div8", CLK_PLLDTY_DIV8, CLK_PLLDTY, 1, 8),
+ 	DEF_FIXED(".plldty_div16", CLK_PLLDTY_DIV16, CLK_PLLDTY, 1, 16),
+ 	DEF_DDIV(".plldty_rcpu", CLK_PLLDTY_RCPU, CLK_PLLDTY, CDDIV3_DIVCTL2, dtable_2_64),
+ 	DEF_FIXED(".plldty_rcpu_div4", CLK_PLLDTY_RCPU_DIV4, CLK_PLLDTY_RCPU, 1, 4),
+@@ -126,6 +128,8 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
+ 	DEF_DDIV("ca55_0_coreclk3", R9A09G057_CA55_0_CORE_CLK3, CLK_PLLCA55,
+ 		 CDDIV1_DIVCTL3, dtable_1_8),
+ 	DEF_FIXED("iotop_0_shclk", R9A09G057_IOTOP_0_SHCLK, CLK_PLLCM33_DIV16, 1, 1),
++	DEF_FIXED("usb2_0_clk_core0", R9A09G057_USB2_0_CLK_CORE0, CLK_QEXTAL, 1, 1),
++	DEF_FIXED("usb2_0_clk_core1", R9A09G057_USB2_0_CLK_CORE1, CLK_QEXTAL, 1, 1),
+ };
+ 
+ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
+@@ -219,6 +223,16 @@ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
+ 						BUS_MSTOP(8, BIT(4))),
+ 	DEF_MOD("sdhi_2_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 14, 5, 14,
+ 						BUS_MSTOP(8, BIT(4))),
++	DEF_MOD("usb2_0_u2h0_hclk",		CLK_PLLDTY_DIV8, 11, 3, 5, 19,
++						BUS_MSTOP(7, BIT(7))),
++	DEF_MOD("usb2_0_u2h1_hclk",		CLK_PLLDTY_DIV8, 11, 4, 5, 20,
++						BUS_MSTOP(7, BIT(8))),
++	DEF_MOD("usb2_0_u2p_exr_cpuclk",	CLK_PLLDTY_ACPU_DIV4, 11, 5, 5, 21,
++						BUS_MSTOP(7, BIT(9))),
++	DEF_MOD("usb2_0_pclk_usbtst0",		CLK_PLLDTY_ACPU_DIV4, 11, 6, 5, 22,
++						BUS_MSTOP(7, BIT(10))),
++	DEF_MOD("usb2_0_pclk_usbtst1",		CLK_PLLDTY_ACPU_DIV4, 11, 7, 5, 23,
++						BUS_MSTOP(7, BIT(11))),
+ 	DEF_MOD("cru_0_aclk",			CLK_PLLDTY_ACPU_DIV2, 13, 2, 6, 18,
+ 						BUS_MSTOP(9, BIT(4))),
+ 	DEF_MOD_NO_PM("cru_0_vclk",		CLK_PLLVDO_CRU0, 13, 3, 6, 19,
+@@ -286,6 +300,10 @@ static const struct rzv2h_reset r9a09g057_resets[] __initconst = {
+ 	DEF_RST(10, 7, 4, 24),		/* SDHI_0_IXRST */
+ 	DEF_RST(10, 8, 4, 25),		/* SDHI_1_IXRST */
+ 	DEF_RST(10, 9, 4, 26),		/* SDHI_2_IXRST */
++	DEF_RST(10, 12, 4, 29),		/* USB2_0_U2H0_HRESETN */
++	DEF_RST(10, 13, 4, 30),		/* USB2_0_U2H1_HRESETN */
++	DEF_RST(10, 14, 4, 31),		/* USB2_0_U2P_EXL_SYSRST */
++	DEF_RST(10, 15, 5, 0),		/* USB2_0_PRESETN */
+ 	DEF_RST(12, 5, 5, 22),		/* CRU_0_PRESETN */
+ 	DEF_RST(12, 6, 5, 23),		/* CRU_0_ARESETN */
+ 	DEF_RST(12, 7, 5, 24),		/* CRU_0_S_RESETN */
 -- 
 2.51.0
 
