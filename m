@@ -2,67 +2,67 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93466CCFA1A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A37CCF9F8
 	for <webhook@archiver.kernel.org>; Thu,  6 Nov 2025 08:11:44 +0000 (UTC)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.10032.1762416699966621552
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.10075.1762416701032441824
  for <cip-dev@lists.cip-project.org>;
- Thu, 06 Nov 2025 00:11:40 -0800
+ Thu, 06 Nov 2025 00:11:41 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=hYYxKGJd;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.44, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-47754547a38so5043535e9.2
-        for <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 00:11:39 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=iIAmNkji;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.42, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-477442b1de0so4098625e9.1
+        for <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 00:11:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1762416698; x=1763021498; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1762416699; x=1763021499; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rcO6bxC5sutfLiJ12bSbwxhOLw6VToCiNt9uC70tff4=;
-        b=hYYxKGJd4tV/lVBDFCtc9u+U3D5V73bwTv4G34BkidinkUD45bleUi7x216s5l5B9O
-         PTpMp2FSqLEap62xcuxBq38Zi1Q5Og2LuBBjnn+2wfkoK/PILh1KrJX+aUNX130LWXpw
-         d51AFs9HkKsHFc6nV2y5072vH9NDYQgtb6eP73KrKA0ZJHK9A+Eu741xr+Y/aQrn/odz
-         wy/6mGmKJWcqwRi3z6RhWVbDbKX40vueA5+4ZBtEG2pqHCk5TV51ni8TbbSabhHWGky9
-         w8lPXDGMEprNoO9w+GD/KGFrX6qg4vZnWmujBmIev3y+KCv8SSxOZfD8gV40t/6awWQ0
-         AQPg==
+        bh=4e+k4yA7xkEaRZlYKnxKbP/oq1sI68nJY9Ll0WwWqw8=;
+        b=iIAmNkjiO5HF4rcTunAeJLQjAfFiZ00JCer2jz4rYrGXyNQAfxW/ACme/rH6Q4u1Wo
+         2SS1DGpTUNAJc8mWlmWWWN8QWlV4GN51ahci0c1A5CwMuxm6Fs0WvX/7P/GdVqqLB852
+         Wmq2SZvDjPkHEx7pmWcFehrTmiDL/jRJ2I1KavCmAsDmL5Pn50YY3ySZphqQ8SJ7SY/k
+         nMJXjS6GVxKAAkK+7x4t8QdDeBzRZ2/tnMUstsfeVGqhreNIyOmEJybXkbK+BimTSKmH
+         aY/29oUJg3Wfi63szdvd4qOOZkN2Poiam6CIuk/zZvnnSfD9CIYZF4/VMHbIPeBjwsod
+         F5Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762416698; x=1763021498;
+        d=1e100.net; s=20230601; t=1762416699; x=1763021499;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rcO6bxC5sutfLiJ12bSbwxhOLw6VToCiNt9uC70tff4=;
-        b=G5P+eQpXLy5ML6efmp5qDUkFVES4LKcxcNN4OPnUZlhVLujBw/iAINIIA8runiC9oV
-         SBJVXgTEKWHpU4bBUmSaHwCT6MNMQNlyIccz7O0L6toGtH0jP0OBcLne993l26FaAdaZ
-         q5Z10aQJOP4HQwgYf5K7bqXMMmE+w+Y3D72JqYOte1rl+Zaej+OeRWfp2os3ijY5qhKm
-         doEry55BP0IHLm5/I0YXDwcbgj8fDBgjPb3/bSwbuT2diWRVIFfjOLNdXnUKPkOLGRb2
-         5adEzy2iON98s/LEnSR0xW677pMI+eBaysP6y2ZuVlENqvuxXZeOc8UrWQymayNJp/KP
-         TYow==
-X-Forwarded-Encrypted: i=1; AJvYcCVPj2oY3mBC+C+zuZF9Vpfy0rebu4KKWtQeSa7iZBEYa92PGTtJyqoNjmNCbOSi5Qz1G02JGBIa@lists.cip-project.org
-X-Gm-Message-State: AOJu0YwW1aYddyqLmIkklx9dTLt0BADIbJxq3fkq8l5wrQkhZFMSmYZw
-	SMcBz4PKk/W9t/mwdA5hRjb7DotFASUeRUJY1CzgLp+hCZkP2t18PxcK4u8FwnoMJkQ=
-X-Gm-Gg: ASbGnctBFTtU4K9eBQH1obevAEw6z2bY+LuPMoYJKeLh7TkQ/rwoV9sn98nkWAVtYz9
-	GPb+Q8KR3v9VzNKGIhAsSgCUoUKFVGeOLl5ZBP2MfOq9EtqfAYXMdi4ntgVyNYqCqjq125WuvDC
-	r15NSgcSIK4uCtRQzLz0KZqYbZSZ0xJQmSlfZqwit3xp3Yu8AmDJ28YYpoYtBVIF/oNgUDcXfXi
-	di5PUPykP/f/V+m3zhC3zhrej4Eq2j2H1qUvd16PiHQwtzt4XlKOba4AxMuh34pil10pzJdqWA4
-	QFze0Ux+UsrqjFw0N1lS6shrSLO6ikNmlkbe2BWqBVYi/LF7udneeEBIdwkRJyAP+SVbVjWbeJf
-	49j5r4LqrPyYigA4fxWHxZrnXZ8x6ZAn17TlDYnJpVzwyljS6l/Wd6soXPeT7R6KABoBwzf4oxj
-	Rzd9ZwJKaXu9KBjZ75jJrabQiUJBv//g==
-X-Google-Smtp-Source: AGHT+IESVf7sKz1tE4GXsgKNO5+UWZfLJD7JqgV0f5/tj9nUZkUeBsdfWpCHurG01I/rgqLioZr9NQ==
-X-Received: by 2002:a05:600c:5488:b0:477:4483:f491 with SMTP id 5b1f17b1804b1-4775cdc53e0mr49505975e9.10.1762416698266;
-        Thu, 06 Nov 2025 00:11:38 -0800 (PST)
+        bh=4e+k4yA7xkEaRZlYKnxKbP/oq1sI68nJY9Ll0WwWqw8=;
+        b=t/cblLN27zCHVV2zdJxDIkEhvfjieG3fRc+W3Qbg72O42W2JkGu0t3oqSv2X7Gc4rm
+         JaW1uHR0ljmimjv4wsFSiqRff6BfjmXbrfuLdEXcdmk6gSWgJADnOiLgssslhzAD7bha
+         +jaQj/gAfwXpoMXnYbnDz7OyRKLbZ/mZRriLpPUwbTPzEw/paodBex+4JsuT3A10o9Y/
+         J+6FYJgMn4iunFL0pv9S84dc5Cu6FBpVZjPD50MEXiQOoAfJlojTmKRQJrUtf3xi1bXF
+         qGUjUjbsh8sbi8T2VSEMEcnCEcbeLYK8DUBuA3uewn5tCsLc8bzPY2NIM80+aVhXnFTn
+         zRPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWQBtjfx6zcdLZ1yuCDJPyHeMHcXUtewYj+B/G5Htq8dUv006GwwGDBFK8+d2H+lYF2VN9qlWja@lists.cip-project.org
+X-Gm-Message-State: AOJu0Ywt90G60nTMUu/30cLnihAiQCpL6rNTGsXOWwetRy0HwgrZjVUf
+	W9957G1+z9g1EwRjfVALOf/wJ7aVIAj7zNKyQUksOOgpWP9FcGv0TI519ouTOtN4jnQ=
+X-Gm-Gg: ASbGncupFeE//zCADJkzxkkQtkCrV7ADiebs9eMl6uVvTX6P2YBH103rLK4H/sRr57N
+	+yBVB3byZ0YCb1MUqEuTzDYpeu9eADm5aEXXLgycUXFQXHSehqRs4ZZwyNz2AstbrtEnehql+3r
+	oC91KmOFhL10/lvoNWxcFQ94NABwWWN9cyJt3AvUddExXD5SQ0qCgYmiMyIHUj2Z/hKv5NhRbrl
+	LmZWhVOJbYde3Kn+54imGu+vSj9R3ROO18kxe8+XZBeH7VdTrqH5zwxQknAv4LJIrkZwWaTROt8
+	W77ImRB+J3v+NrumftOzFoKNJe1VaNjLJsr5V8UOAg+LQgvyyNWtJTOqKNALf5g5zXj4oCFFd+P
+	kG533ZlNW9EVcdssmYCdi7gmKkhFosHHq/7WH3xWzXwwI2TIfQ1wnYRhyQ/c7s61kC5kprF5Knw
+	VnENxUrCy4AQ5t3WGFCRvglaRMcsdzsg==
+X-Google-Smtp-Source: AGHT+IEKqAxsXJk2ufeJucNpBkaZCa/Tq5uKqPdkRG5rnK5AnifAWjOpsyiP14lB85kGMMY5il9j7A==
+X-Received: by 2002:a05:600c:348f:b0:46e:2801:84aa with SMTP id 5b1f17b1804b1-4775cd3bec8mr67350675e9.0.1762416699455;
+        Thu, 06 Nov 2025 00:11:39 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477624f86a2sm32862295e9.6.2025.11.06.00.11.36
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477624f86a2sm32862295e9.6.2025.11.06.00.11.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 00:11:36 -0800 (PST)
+        Thu, 06 Nov 2025 00:11:38 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.1.y-cip 02/23] of: Add of_machine_compatible_match()
-Date: Thu,  6 Nov 2025 10:11:11 +0200
-Message-ID: <20251106081132.2574638-3-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 03/23] PM: domains: Add helper to check for PM domain detach on unbind cleanup
+Date: Thu,  6 Nov 2025 10:11:12 +0200
+Message-ID: <20251106081132.2574638-4-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251106081132.2574638-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20251106081132.2574638-1-claudiu.beznea.uj@bp.renesas.com>
@@ -72,91 +72,72 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 08:11:44 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20395
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20396
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit c029b22f8a98e14988f800d5c0176a9eaec3c8db upstream.
+Add helper to check if PM domain detach is allowed in
+device_unbind_cleanup(). This is necessary to avoid issues when unbinding
+as decribed in commit f99508074e78 ("PM: domains: Detach on
+device_unbind_cleanup()").
 
-We have of_machine_is_compatible() to check if a machine is compatible
-with a single compatible string. However some code is able to support
-multiple compatible boards, and so wants to check for one of many
-compatible strings.
-
-So add of_machine_compatible_match() which takes a NULL terminated
-array of compatible strings to check against the root node's
-compatible property.
-
-Compared to an open coded match this is slightly more self
-documenting, and also avoids the caller needing to juggle the root
-node either directly or via of_find_node_by_path().
-
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://msgid.link/20231214103152.12269-1-mpe@ellerman.id.au
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/of/base.c  | 21 +++++++++++++++++++++
- include/linux/of.h |  6 ++++++
- 2 files changed, 27 insertions(+)
+ drivers/base/power/common.c | 20 ++++++++++++++++++++
+ include/linux/pm_domain.h   |  5 +++++
+ 2 files changed, 25 insertions(+)
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 788706579419..f61e2c1f7777 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -580,6 +580,27 @@ int of_device_compatible_match(const struct device_node *device,
+diff --git a/drivers/base/power/common.c b/drivers/base/power/common.c
+index 1a68e0075c14..da8b9af9d798 100644
+--- a/drivers/base/power/common.c
++++ b/drivers/base/power/common.c
+@@ -228,3 +228,23 @@ void dev_pm_domain_set(struct device *dev, struct dev_pm_domain *pd)
+ 	device_pm_check_callbacks(dev);
  }
- EXPORT_SYMBOL_GPL(of_device_compatible_match);
- 
+ EXPORT_SYMBOL_GPL(dev_pm_domain_set);
++
 +/**
-+ * of_machine_compatible_match - Test root of device tree against a compatible array
-+ * @compats: NULL terminated array of compatible strings to look for in root node's compatible property.
++ * dev_pm_domain_allow_detach_on_unbind_cleanup - Check if PM domain
++ * detach during the unbind cleanup driver remove phase is permitted.
 + *
-+ * Returns true if the root node has any of the given compatible values in its
-+ * compatible property.
++ * Returns true if allowed, false otherwise
 + */
-+bool of_machine_compatible_match(const char *const *compats)
++bool dev_pm_domain_allow_detach_on_unbind_cleanup(void)
 +{
-+	struct device_node *root;
-+	int rc = 0;
++	static const char * const pm_detach_allow_list[] = {
++		"renesas,r9a07g043", /* Renesas RZ/{G2UL, Five} */
++		"renesas,r9a07g044", /* Renesas RZ/G2{L, LC} */
++		"renesas,r9a07g054", /* Renesas RZ/V2L */
++		"renesas,r9a08g045", /* Renesas RZ/G3S */
++		NULL
++	};
 +
-+	root = of_find_node_by_path("/");
-+	if (root) {
-+		rc = of_device_compatible_match(root, compats);
-+		of_node_put(root);
-+	}
-+
-+	return rc != 0;
++	return of_machine_compatible_match(pm_detach_allow_list);
 +}
-+
- /**
-  * of_machine_is_compatible - Test root of device tree for a given compatible value
-  * @compat: compatible string to look for in root node's compatible property.
-diff --git a/include/linux/of.h b/include/linux/of.h
-index 44e432dbf67f..30d641eab476 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -394,6 +394,7 @@ extern int of_alias_get_id(struct device_node *np, const char *stem);
- extern int of_alias_get_highest_id(const char *stem);
- 
- extern int of_machine_is_compatible(const char *compat);
-+bool of_machine_compatible_match(const char *const *compats);
- 
- extern int of_add_property(struct device_node *np, struct property *prop);
- extern int of_remove_property(struct device_node *np, struct property *prop);
-@@ -787,6 +788,11 @@ static inline int of_remove_property(struct device_node *np, struct property *pr
- 	return 0;
++EXPORT_SYMBOL_GPL(dev_pm_domain_allow_detach_on_unbind_cleanup);
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index d05b8cd15055..e6f14c3e63b3 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -429,6 +429,7 @@ struct device *dev_pm_domain_attach_by_name(struct device *dev,
+ void dev_pm_domain_detach(struct device *dev, bool power_off);
+ int dev_pm_domain_start(struct device *dev);
+ void dev_pm_domain_set(struct device *dev, struct dev_pm_domain *pd);
++bool dev_pm_domain_allow_detach_on_unbind_cleanup(void);
+ #else
+ static inline int dev_pm_domain_attach(struct device *dev, u32 flags)
+ {
+@@ -451,6 +452,10 @@ static inline int dev_pm_domain_start(struct device *dev)
  }
- 
-+static inline bool of_machine_compatible_match(const char *const *compats)
+ static inline void dev_pm_domain_set(struct device *dev,
+ 				     struct dev_pm_domain *pd) {}
++static bool dev_pm_domain_allow_detach_on_unbind_cleanup(void)
 +{
 +	return false;
 +}
-+
- static inline bool of_console_check(const struct device_node *dn, const char *name, int index)
- {
- 	return false;
+ #endif
+ 
+ #endif /* _LINUX_PM_DOMAIN_H */
 -- 
 2.43.0
 
