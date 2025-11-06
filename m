@@ -2,67 +2,67 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9256FCCFA1E
-	for <webhook@archiver.kernel.org>; Thu,  6 Nov 2025 08:11:24 +0000 (UTC)
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.10014.1762416675888425524
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C658CCF9F8
+	for <webhook@archiver.kernel.org>; Thu,  6 Nov 2025 08:11:34 +0000 (UTC)
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.10021.1762416685137510508
  for <cip-dev@lists.cip-project.org>;
- Thu, 06 Nov 2025 00:11:16 -0800
+ Thu, 06 Nov 2025 00:11:25 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=MUlXjUns;
- spf=pass (domain: tuxon.dev, ip: 209.85.221.50, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-429cf861327so516280f8f.0
-        for <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 00:11:15 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=D6FeNyBW;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.51, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-470ffbf2150so8050635e9.1
+        for <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 00:11:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1762416674; x=1763021474; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1762416683; x=1763021483; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1zptoHHy4ZTDFi1mgdHAf9pUqr5ngphtpWC/OsyVBWc=;
-        b=MUlXjUnszrTMwjK6LttmOn9LBo8gsARi0ov1VyF95VNLG68Qix85KUkg3Z+hdACx0v
-         Fpcd5p9AHGAH84jXUnIezjH82RaOVe/nQTxUyU/4jTQhtrz+ihaJHb47OFNoandDqygA
-         PYqRjo0qG1AA4S5jL5UqQhbOMB0k94vvxnk56LwQA8GPyVVmMXyXocQ1vOz4cy1W20an
-         86pFp0r/6D9HLs2mv4mTSe/N2+KA50fkNmyGtT2IA3JQ8biscm0XmnKxUJht7wwdSpFX
-         L+RleL/rF9l69dKUkd7vwo2jiVrd3V3jf6R1gcBsbyMzGoH6dfA2NEWi7yKxq7uEtzY0
-         wDWg==
+        bh=v/UneUPWkf3tkIbCTIx6lmUz17X0EqMQCJU4eY0VnvA=;
+        b=D6FeNyBWKt6j2ZbyqR5sWm53vKoLJx62Q2wo6KIutNeOXlnOAhMjY6K3MeNay2hvrv
+         fUSuua+ClzgbPmMSzoMHiTTkzozfHKr4Hn9xpJDS72xhNyws5iijYoN9OBTqwsRr2AZf
+         M7Blar1hHa6ABxrkN2bDtyat4nf2/YFX5C5o9/ZsO8k6uaslzaDvsONnK7LptklfcMcX
+         0WHq8Dv3hvk/6/bMr09byt3FYEnJ6YvHQF0UfKj5seRm3xqEtQFQux3ikHXCz7aAJXJC
+         FBcwTjtjX2ohEqROQ3UIz3nWTYkKJfAm03q3MTQl5sb5b85DHrZudRmO8kyrHhgP3X7r
+         2PBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762416674; x=1763021474;
+        d=1e100.net; s=20230601; t=1762416683; x=1763021483;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1zptoHHy4ZTDFi1mgdHAf9pUqr5ngphtpWC/OsyVBWc=;
-        b=vQWeMUTBRBE6EU2TLKHQRBErNm/pGj/c+H7bxEybCLV2EwB6fsq+UOB/erFLLok4Bc
-         MpyBLFgZGH2zlCDxWmPd7qgiOlP/Cu8Vjij3wZBQ6RLLsLN+a5ZsjLwmqEXXiCiTsslT
-         HZaaCE6P2CON/JgZAmbwEEc0lvYmAc1N+seeiOTvpQe1XfE0saUY8WkgRgO8hVVRIMgL
-         io52k0AmPZrm1vDyefHRYNMggwhBCvXeOuUT8CBUdYzmZdQSYs+DoM8/NeJzvbtvhKAU
-         ZIlcTTiJUe/loWEDEmbl1PfJRaUIOrQ835jbVeJ/ABtW52k264ChMGooRYYZt2eHhT4l
-         Gf3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWmlm7WZxFij4wDv5F+UYjt6xOBNwIZlYB1tgh03B6qOTzhrid8BG0gZkyVjAYDt3TGPEhHHaRY@lists.cip-project.org
-X-Gm-Message-State: AOJu0YwSPk50ldAkZdV87vJJDV2x3xwzbnVAxqgTIYWZ3gRjiS7qohy8
-	lWyVr9B8RvyE/TMEpIkiXiBKdkTMKY0JnsVH+sHYpf6DWeMfbGmo6ojLnBqpsOAq5XI=
-X-Gm-Gg: ASbGncvrDnWL9aMjf7Gt4Wj9exWeao1fHkwohH9Po6VHK+6cGfxsZVYZdmni3sKFOQe
-	iUbJAyX4aII04142rYqPnDESXBWsJzuC1rRarp+liiozgnwHmA9l5uVqY9tv1O74Rv+AnT5TaiG
-	cAXir2cS9r87j4kDtWtq7JHcXi5X09jqRn8k57ILKO6ByTNgRBLkT0SmFVKkWEL096Odygn58b2
-	m9RCDoN9bR202QQME68Wbmw8C2UxD1RJfeR/VxCzq/B6zdLat8XFUSLnm3r46rY4i9kP4qBxE5e
-	GDU/6IXrAG5MFvz8T66cJKms/A74tgcMfkeeBVAvbiCy2w1+p20Pizmq0AWgbyRuCoOSHTqP+5s
-	YE/oA5Zg3P+2eryzYmdBVqN2Bx9R0bfqik9WJImdnBQESAdOAZh+OFNjgKY+rzhgf9XPBaST8O5
-	0yWJfrRGEr3UCSdVp2RaTSn3ljHxMHlDfXhY5+rBni
-X-Google-Smtp-Source: AGHT+IECOanHIzWBtmmFi+av0DCh6zjAxaAfRPiGcDi1attFy1yZK9JzX72V75THxpm2VS0FfGJNCw==
-X-Received: by 2002:a05:6000:220e:b0:426:fd06:6b98 with SMTP id ffacd0b85a97d-429e32e91e9mr5106682f8f.14.1762416674245;
-        Thu, 06 Nov 2025 00:11:14 -0800 (PST)
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=v/UneUPWkf3tkIbCTIx6lmUz17X0EqMQCJU4eY0VnvA=;
+        b=uJNuPhj+ZvEL1rIQDJdl2m/Z7r31Z//TI+IXP65qyEW9bYqr53f7z+65VjUTZBPkl5
+         MCMXn17IT/gbokeP2xZw5naDBBotsbL1WvDz95W7rGf3s3fC2s3LiGv5M6+178HLggEn
+         nyf3K2Zw5wOoH3yOKm4UQbaVAtWPKHt1L6ZXRX8DbL50wWLk7/L2oHPKUWG0vLVoRf9w
+         yXfQBU1LREdYMLiNbYP2NDhyFsN8OWDaTEdPCXopKs6/FoofNMDv8KFbemgaFtqMOaaD
+         uQyzj17/oTVAZwIjBLdpaI6frsuqQCS6fnuGb8S4hP/NkeX6+rsFWVFtd57D1pmJgrOm
+         PezA==
+X-Forwarded-Encrypted: i=1; AJvYcCVyIkbXWGruW8Vzorl7sEcnMyCPVK9oTlhCnv8ZV+k4ezL9QiF+YefSPOOZwEswtLfBhlS3E1oa@lists.cip-project.org
+X-Gm-Message-State: AOJu0Yz5pYxE7r/ZboK4m58wFQuBn5nz/BoD7+isscNzFQkqPfxK/CSr
+	2/2ZrVhcqo3LcfYzjRBndzCuVW/DOaJ9s+hMOQYgTXQPd6Re80qeemtpaL6gPxjHay4=
+X-Gm-Gg: ASbGncsVBIhWs2QNGM51p0l6GSpHjJIadGtAU7jnVf9/onTcpwvlMngstFfN648yIDP
+	ufICZKyABSuM90GfajCIsVrEU6kgVk0DJw0lrhOwVoXcdP2ixd8UadKUPq3txAjTI+smCzR2+qv
+	2HBalkl7xuaXR7FXO2bzeWgDV2slIkAOdnyYCyk5OxIGbETccruyrCdjmcja6JuFWekUdDWfj4C
+	DlAnSvlRxm8QO+j01YBmtbOv8mOF40ZojQiyM2iDYSc6ohbhTZmJ41aFoby5IEVFp5DYqXdvMh5
+	vEjBblEcDdQpervrQ0qV4tN3lM+dxWlOJ/nnXBX1y3ldMvPihVFyzt3nBNVCKnPOLhH4Sy3xlUJ
+	/B3O+eLfdj36tg5HTTZBq6CNuUNZzVCC+lFCeq3/CWXolIequqaCQuZnWXWUgGD7JFGedP+3vfv
+	KmiRl1RDtzA2QL7l9vscjye6TV7h0dOp45IHGyLZBK
+X-Google-Smtp-Source: AGHT+IFx/k7mfsBXrIohbBAgL3DznFCvQ9h3VEWB+mWaMLO8tuDQ2/gWKGdJ9sBPCFnkeLkNnRRQPw==
+X-Received: by 2002:a05:600c:3e16:b0:475:d7fd:5c59 with SMTP id 5b1f17b1804b1-477620a59f0mr16988635e9.16.1762416682248;
+        Thu, 06 Nov 2025 00:11:22 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb47873dsm3486735f8f.31.2025.11.06.00.11.12
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb47873dsm3486735f8f.31.2025.11.06.00.11.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 00:11:13 -0800 (PST)
+        Thu, 06 Nov 2025 00:11:21 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.12.y-cip 17/23] dt-bindings: clock: rzg2l: Drop power domain IDs
-Date: Thu,  6 Nov 2025 10:10:42 +0200
-Message-ID: <20251106081048.2574345-18-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 23/23] clk: renesas: r9a07g04[34]: Use tabs instead of spaces
+Date: Thu,  6 Nov 2025 10:10:48 +0200
+Message-ID: <20251106081048.2574345-24-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251106081048.2574345-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20251106081048.2574345-1-claudiu.beznea.uj@bp.renesas.com>
@@ -71,307 +71,70 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 08:11:24 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20386
+ <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 08:11:34 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20392
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 4a59e02a5aa178f80d065ad0368d29f25620c334 upstream.
+commit 8933612860fd0087a0e27dfca01106a98ccc334a upstream.
 
-Since the configuration order between the individual MSTOP and CLKON
-bits cannot be preserved with the power domain abstraction, drop the
-power domain IDs.  The corresponding code has also been removed.
-Currently, there are no device tree users for these IDs.
+Use tabs instead of spaces in the CRU clock descriptions to match the
+formatting used in the rest of the clock definitions.
 
-Acked-by: "Rob Herring (Arm)" <robh@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://lore.kernel.org/20250527112403.1254122-8-claudiu.beznea.uj@bp.renesas.com
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/20250806092129.621194-5-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[claudiu.beznea: fixed conflict by dropping all the power domain IDs]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- include/dt-bindings/clock/r9a07g043-cpg.h | 53 -----------------
- include/dt-bindings/clock/r9a07g044-cpg.h | 58 -------------------
- include/dt-bindings/clock/r9a07g054-cpg.h | 58 -------------------
- include/dt-bindings/clock/r9a08g045-cpg.h | 70 -----------------------
- 4 files changed, 239 deletions(-)
+ drivers/clk/renesas/r9a07g043-cpg.c | 8 ++++----
+ drivers/clk/renesas/r9a07g044-cpg.c | 8 ++++----
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/include/dt-bindings/clock/r9a07g043-cpg.h b/include/dt-bindings/clock/r9a07g043-cpg.h
-index 131993343777..e1f65f1928cf 100644
---- a/include/dt-bindings/clock/r9a07g043-cpg.h
-+++ b/include/dt-bindings/clock/r9a07g043-cpg.h
-@@ -200,57 +200,4 @@
- #define R9A07G043_AX45MP_CORE0_RESETN	78	/* RZ/Five Only */
- #define R9A07G043_IAX45_RESETN		79	/* RZ/Five Only */
- 
--/* Power domain IDs. */
--#define R9A07G043_PD_ALWAYS_ON		0
--#define R9A07G043_PD_GIC		1	/* RZ/G2UL Only */
--#define R9A07G043_PD_IA55		2	/* RZ/G2UL Only */
--#define R9A07G043_PD_MHU		3	/* RZ/G2UL Only */
--#define R9A07G043_PD_CORESIGHT		4	/* RZ/G2UL Only */
--#define R9A07G043_PD_SYC		5	/* RZ/G2UL Only */
--#define R9A07G043_PD_DMAC		6
--#define R9A07G043_PD_GTM0		7
--#define R9A07G043_PD_GTM1		8
--#define R9A07G043_PD_GTM2		9
--#define R9A07G043_PD_MTU		10
--#define R9A07G043_PD_POE3		11
--#define R9A07G043_PD_WDT0		12
--#define R9A07G043_PD_SPI		13
--#define R9A07G043_PD_SDHI0		14
--#define R9A07G043_PD_SDHI1		15
--#define R9A07G043_PD_ISU		16	/* RZ/G2UL Only */
--#define R9A07G043_PD_CRU		17	/* RZ/G2UL Only */
--#define R9A07G043_PD_LCDC		18	/* RZ/G2UL Only */
--#define R9A07G043_PD_SSI0		19
--#define R9A07G043_PD_SSI1		20
--#define R9A07G043_PD_SSI2		21
--#define R9A07G043_PD_SSI3		22
--#define R9A07G043_PD_SRC		23
--#define R9A07G043_PD_USB0		24
--#define R9A07G043_PD_USB1		25
--#define R9A07G043_PD_USB_PHY		26
--#define R9A07G043_PD_ETHER0		27
--#define R9A07G043_PD_ETHER1		28
--#define R9A07G043_PD_I2C0		29
--#define R9A07G043_PD_I2C1		30
--#define R9A07G043_PD_I2C2		31
--#define R9A07G043_PD_I2C3		32
--#define R9A07G043_PD_SCIF0		33
--#define R9A07G043_PD_SCIF1		34
--#define R9A07G043_PD_SCIF2		35
--#define R9A07G043_PD_SCIF3		36
--#define R9A07G043_PD_SCIF4		37
--#define R9A07G043_PD_SCI0		38
--#define R9A07G043_PD_SCI1		39
--#define R9A07G043_PD_IRDA		40
--#define R9A07G043_PD_RSPI0		41
--#define R9A07G043_PD_RSPI1		42
--#define R9A07G043_PD_RSPI2		43
--#define R9A07G043_PD_CANFD		44
--#define R9A07G043_PD_ADC		45
--#define R9A07G043_PD_TSU		46
--#define R9A07G043_PD_PLIC		47	/* RZ/Five Only */
--#define R9A07G043_PD_IAX45		48	/* RZ/Five Only */
--#define R9A07G043_PD_NCEPLDM		49	/* RZ/Five Only */
--#define R9A07G043_PD_NCEPLMT		50	/* RZ/Five Only */
--
- #endif /* __DT_BINDINGS_CLOCK_R9A07G043_CPG_H__ */
-diff --git a/include/dt-bindings/clock/r9a07g044-cpg.h b/include/dt-bindings/clock/r9a07g044-cpg.h
-index e209f96f92b7..0bb17ff1a01a 100644
---- a/include/dt-bindings/clock/r9a07g044-cpg.h
-+++ b/include/dt-bindings/clock/r9a07g044-cpg.h
-@@ -217,62 +217,4 @@
- #define R9A07G044_ADC_ADRST_N		82
- #define R9A07G044_TSU_PRESETN		83
- 
--/* Power domain IDs. */
--#define R9A07G044_PD_ALWAYS_ON		0
--#define R9A07G044_PD_GIC		1
--#define R9A07G044_PD_IA55		2
--#define R9A07G044_PD_MHU		3
--#define R9A07G044_PD_CORESIGHT		4
--#define R9A07G044_PD_SYC		5
--#define R9A07G044_PD_DMAC		6
--#define R9A07G044_PD_GTM0		7
--#define R9A07G044_PD_GTM1		8
--#define R9A07G044_PD_GTM2		9
--#define R9A07G044_PD_MTU		10
--#define R9A07G044_PD_POE3		11
--#define R9A07G044_PD_GPT		12
--#define R9A07G044_PD_POEGA		13
--#define R9A07G044_PD_POEGB		14
--#define R9A07G044_PD_POEGC		15
--#define R9A07G044_PD_POEGD		16
--#define R9A07G044_PD_WDT0		17
--#define R9A07G044_PD_WDT1		18
--#define R9A07G044_PD_SPI		19
--#define R9A07G044_PD_SDHI0		20
--#define R9A07G044_PD_SDHI1		21
--#define R9A07G044_PD_3DGE		22
--#define R9A07G044_PD_ISU		23
--#define R9A07G044_PD_VCPL4		24
--#define R9A07G044_PD_CRU		25
--#define R9A07G044_PD_MIPI_DSI		26
--#define R9A07G044_PD_LCDC		27
--#define R9A07G044_PD_SSI0		28
--#define R9A07G044_PD_SSI1		29
--#define R9A07G044_PD_SSI2		30
--#define R9A07G044_PD_SSI3		31
--#define R9A07G044_PD_SRC		32
--#define R9A07G044_PD_USB0		33
--#define R9A07G044_PD_USB1		34
--#define R9A07G044_PD_USB_PHY		35
--#define R9A07G044_PD_ETHER0		36
--#define R9A07G044_PD_ETHER1		37
--#define R9A07G044_PD_I2C0		38
--#define R9A07G044_PD_I2C1		39
--#define R9A07G044_PD_I2C2		40
--#define R9A07G044_PD_I2C3		41
--#define R9A07G044_PD_SCIF0		42
--#define R9A07G044_PD_SCIF1		43
--#define R9A07G044_PD_SCIF2		44
--#define R9A07G044_PD_SCIF3		45
--#define R9A07G044_PD_SCIF4		46
--#define R9A07G044_PD_SCI0		47
--#define R9A07G044_PD_SCI1		48
--#define R9A07G044_PD_IRDA		49
--#define R9A07G044_PD_RSPI0		50
--#define R9A07G044_PD_RSPI1		51
--#define R9A07G044_PD_RSPI2		52
--#define R9A07G044_PD_CANFD		53
--#define R9A07G044_PD_ADC		54
--#define R9A07G044_PD_TSU		55
--
- #endif /* __DT_BINDINGS_CLOCK_R9A07G044_CPG_H__ */
-diff --git a/include/dt-bindings/clock/r9a07g054-cpg.h b/include/dt-bindings/clock/r9a07g054-cpg.h
-index 2c99f89397c4..43f4dbda872c 100644
---- a/include/dt-bindings/clock/r9a07g054-cpg.h
-+++ b/include/dt-bindings/clock/r9a07g054-cpg.h
-@@ -226,62 +226,4 @@
- #define R9A07G054_TSU_PRESETN		83
- #define R9A07G054_STPAI_ARESETN		84
- 
--/* Power domain IDs. */
--#define R9A07G054_PD_ALWAYS_ON		0
--#define R9A07G054_PD_GIC		1
--#define R9A07G054_PD_IA55		2
--#define R9A07G054_PD_MHU		3
--#define R9A07G054_PD_CORESIGHT		4
--#define R9A07G054_PD_SYC		5
--#define R9A07G054_PD_DMAC		6
--#define R9A07G054_PD_GTM0		7
--#define R9A07G054_PD_GTM1		8
--#define R9A07G054_PD_GTM2		9
--#define R9A07G054_PD_MTU		10
--#define R9A07G054_PD_POE3		11
--#define R9A07G054_PD_GPT		12
--#define R9A07G054_PD_POEGA		13
--#define R9A07G054_PD_POEGB		14
--#define R9A07G054_PD_POEGC		15
--#define R9A07G054_PD_POEGD		16
--#define R9A07G054_PD_WDT0		17
--#define R9A07G054_PD_WDT1		18
--#define R9A07G054_PD_SPI		19
--#define R9A07G054_PD_SDHI0		20
--#define R9A07G054_PD_SDHI1		21
--#define R9A07G054_PD_3DGE		22
--#define R9A07G054_PD_ISU		23
--#define R9A07G054_PD_VCPL4		24
--#define R9A07G054_PD_CRU		25
--#define R9A07G054_PD_MIPI_DSI		26
--#define R9A07G054_PD_LCDC		27
--#define R9A07G054_PD_SSI0		28
--#define R9A07G054_PD_SSI1		29
--#define R9A07G054_PD_SSI2		30
--#define R9A07G054_PD_SSI3		31
--#define R9A07G054_PD_SRC		32
--#define R9A07G054_PD_USB0		33
--#define R9A07G054_PD_USB1		34
--#define R9A07G054_PD_USB_PHY		35
--#define R9A07G054_PD_ETHER0		36
--#define R9A07G054_PD_ETHER1		37
--#define R9A07G054_PD_I2C0		38
--#define R9A07G054_PD_I2C1		39
--#define R9A07G054_PD_I2C2		40
--#define R9A07G054_PD_I2C3		41
--#define R9A07G054_PD_SCIF0		42
--#define R9A07G054_PD_SCIF1		43
--#define R9A07G054_PD_SCIF2		44
--#define R9A07G054_PD_SCIF3		45
--#define R9A07G054_PD_SCIF4		46
--#define R9A07G054_PD_SCI0		47
--#define R9A07G054_PD_SCI1		48
--#define R9A07G054_PD_IRDA		49
--#define R9A07G054_PD_RSPI0		50
--#define R9A07G054_PD_RSPI1		51
--#define R9A07G054_PD_RSPI2		52
--#define R9A07G054_PD_CANFD		53
--#define R9A07G054_PD_ADC		54
--#define R9A07G054_PD_TSU		55
--
- #endif /* __DT_BINDINGS_CLOCK_R9A07G054_CPG_H__ */
-diff --git a/include/dt-bindings/clock/r9a08g045-cpg.h b/include/dt-bindings/clock/r9a08g045-cpg.h
-index 8281e9caf3a9..410725b778a8 100644
---- a/include/dt-bindings/clock/r9a08g045-cpg.h
-+++ b/include/dt-bindings/clock/r9a08g045-cpg.h
-@@ -239,74 +239,4 @@
- #define R9A08G045_I3C_PRESETN		92
- #define R9A08G045_VBAT_BRESETN		93
- 
--/* Power domain IDs. */
--#define R9A08G045_PD_ALWAYS_ON		0
--#define R9A08G045_PD_GIC		1
--#define R9A08G045_PD_IA55		2
--#define R9A08G045_PD_MHU		3
--#define R9A08G045_PD_CORESIGHT		4
--#define R9A08G045_PD_SYC		5
--#define R9A08G045_PD_DMAC		6
--#define R9A08G045_PD_GTM0		7
--#define R9A08G045_PD_GTM1		8
--#define R9A08G045_PD_GTM2		9
--#define R9A08G045_PD_GTM3		10
--#define R9A08G045_PD_GTM4		11
--#define R9A08G045_PD_GTM5		12
--#define R9A08G045_PD_GTM6		13
--#define R9A08G045_PD_GTM7		14
--#define R9A08G045_PD_MTU		15
--#define R9A08G045_PD_POE3		16
--#define R9A08G045_PD_GPT		17
--#define R9A08G045_PD_POEGA		18
--#define R9A08G045_PD_POEGB		19
--#define R9A08G045_PD_POEGC		20
--#define R9A08G045_PD_POEGD		21
--#define R9A08G045_PD_WDT0		22
--#define R9A08G045_PD_XSPI		23
--#define R9A08G045_PD_SDHI0		24
--#define R9A08G045_PD_SDHI1		25
--#define R9A08G045_PD_SDHI2		26
--#define R9A08G045_PD_SSI0		27
--#define R9A08G045_PD_SSI1		28
--#define R9A08G045_PD_SSI2		29
--#define R9A08G045_PD_SSI3		30
--#define R9A08G045_PD_SRC		31
--#define R9A08G045_PD_USB0		32
--#define R9A08G045_PD_USB1		33
--#define R9A08G045_PD_USB_PHY		34
--#define R9A08G045_PD_ETHER0		35
--#define R9A08G045_PD_ETHER1		36
--#define R9A08G045_PD_I2C0		37
--#define R9A08G045_PD_I2C1		38
--#define R9A08G045_PD_I2C2		39
--#define R9A08G045_PD_I2C3		40
--#define R9A08G045_PD_SCIF0		41
--#define R9A08G045_PD_SCIF1		42
--#define R9A08G045_PD_SCIF2		43
--#define R9A08G045_PD_SCIF3		44
--#define R9A08G045_PD_SCIF4		45
--#define R9A08G045_PD_SCIF5		46
--#define R9A08G045_PD_SCI0		47
--#define R9A08G045_PD_SCI1		48
--#define R9A08G045_PD_IRDA		49
--#define R9A08G045_PD_RSPI0		50
--#define R9A08G045_PD_RSPI1		51
--#define R9A08G045_PD_RSPI2		52
--#define R9A08G045_PD_RSPI3		53
--#define R9A08G045_PD_RSPI4		54
--#define R9A08G045_PD_CANFD		55
--#define R9A08G045_PD_ADC		56
--#define R9A08G045_PD_TSU		57
--#define R9A08G045_PD_OCTA		58
--#define R9A08G045_PD_PDM		59
--#define R9A08G045_PD_PCI		60
--#define R9A08G045_PD_SPDIF		61
--#define R9A08G045_PD_I3C		62
--#define R9A08G045_PD_VBAT		63
--
--#define R9A08G045_PD_DDR		64
--#define R9A08G045_PD_TZCDDR		65
--#define R9A08G045_PD_OTFDE_DDR		66
--
- #endif /* __DT_BINDINGS_CLOCK_R9A08G045_CPG_H__ */
+diff --git a/drivers/clk/renesas/r9a07g043-cpg.c b/drivers/clk/renesas/r9a07g043-cpg.c
+index f050f8565916..33e9a1223c72 100644
+--- a/drivers/clk/renesas/r9a07g043-cpg.c
++++ b/drivers/clk/renesas/r9a07g043-cpg.c
+@@ -213,13 +213,13 @@ static const struct rzg2l_mod_clk r9a07g043_mod_clks[] = {
+ 	DEF_MOD("sdhi1_aclk",	R9A07G043_SDHI1_ACLK, R9A07G043_CLK_P1,
+ 				0x554, 7, MSTOP(BUS_PERI_COM, BIT(1))),
+ #ifdef CONFIG_ARM64
+-	DEF_MOD("cru_sysclk",   R9A07G043_CRU_SYSCLK, CLK_M2_DIV2,
++	DEF_MOD("cru_sysclk",	R9A07G043_CRU_SYSCLK, CLK_M2_DIV2,
+ 				0x564, 0, MSTOP(BUS_PERI_VIDEO, BIT(3))),
+-	DEF_MOD("cru_vclk",     R9A07G043_CRU_VCLK, R9A07G043_CLK_M2,
++	DEF_MOD("cru_vclk",	R9A07G043_CRU_VCLK, R9A07G043_CLK_M2,
+ 				0x564, 1, MSTOP(BUS_PERI_VIDEO, BIT(3))),
+-	DEF_MOD("cru_pclk",     R9A07G043_CRU_PCLK, R9A07G043_CLK_ZT,
++	DEF_MOD("cru_pclk",	R9A07G043_CRU_PCLK, R9A07G043_CLK_ZT,
+ 				0x564, 2, MSTOP(BUS_PERI_VIDEO, BIT(3))),
+-	DEF_MOD("cru_aclk",     R9A07G043_CRU_ACLK, R9A07G043_CLK_M0,
++	DEF_MOD("cru_aclk",	R9A07G043_CRU_ACLK, R9A07G043_CLK_M0,
+ 				0x564, 3, MSTOP(BUS_PERI_VIDEO, BIT(3))),
+ 	DEF_COUPLED("lcdc_clk_a", R9A07G043_LCDC_CLK_A, R9A07G043_CLK_M0,
+ 				0x56c, 0, MSTOP(BUS_PERI_VIDEO, GENMASK(8, 7))),
+diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
+index fdbc0635a869..0dd264877b9a 100644
+--- a/drivers/clk/renesas/r9a07g044-cpg.c
++++ b/drivers/clk/renesas/r9a07g044-cpg.c
+@@ -303,13 +303,13 @@ static const struct {
+ 					0x558, 1, 0),
+ 		DEF_MOD("gpu_ace_clk",	R9A07G044_GPU_ACE_CLK, R9A07G044_CLK_P1,
+ 					0x558, 2, 0),
+-		DEF_MOD("cru_sysclk",   R9A07G044_CRU_SYSCLK, CLK_M2_DIV2,
++		DEF_MOD("cru_sysclk",	R9A07G044_CRU_SYSCLK, CLK_M2_DIV2,
+ 					0x564, 0, MSTOP(BUS_PERI_VIDEO, BIT(3))),
+-		DEF_MOD("cru_vclk",     R9A07G044_CRU_VCLK, R9A07G044_CLK_M2,
++		DEF_MOD("cru_vclk",	R9A07G044_CRU_VCLK, R9A07G044_CLK_M2,
+ 					0x564, 1, MSTOP(BUS_PERI_VIDEO, BIT(3))),
+-		DEF_MOD("cru_pclk",     R9A07G044_CRU_PCLK, R9A07G044_CLK_ZT,
++		DEF_MOD("cru_pclk",	R9A07G044_CRU_PCLK, R9A07G044_CLK_ZT,
+ 					0x564, 2, MSTOP(BUS_PERI_VIDEO, BIT(3))),
+-		DEF_MOD("cru_aclk",     R9A07G044_CRU_ACLK, R9A07G044_CLK_M0,
++		DEF_MOD("cru_aclk",	R9A07G044_CRU_ACLK, R9A07G044_CLK_M0,
+ 					0x564, 3, MSTOP(BUS_PERI_VIDEO, BIT(3))),
+ 		DEF_MOD("dsi_pll_clk",	R9A07G044_MIPI_DSI_PLLCLK, R9A07G044_CLK_M1,
+ 					0x568, 0, MSTOP(BUS_PERI_VIDEO, GENMASK(6, 5))),
 -- 
 2.43.0
 
