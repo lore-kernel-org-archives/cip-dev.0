@@ -2,68 +2,67 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B250CCCFA03
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0F1CCF9F8
 	for <webhook@archiver.kernel.org>; Thu,  6 Nov 2025 08:11:54 +0000 (UTC)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.10083.1762416712045190460
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.10036.1762416705622927426
  for <cip-dev@lists.cip-project.org>;
- Thu, 06 Nov 2025 00:11:52 -0800
+ Thu, 06 Nov 2025 00:11:45 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=Jh84uC5/;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.46, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-47118259fd8so4373995e9.3
-        for <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 00:11:51 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=U9WADeH6;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.48, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-47109187c32so2700075e9.2
+        for <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 00:11:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1762416710; x=1763021510; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1762416704; x=1763021504; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=R5/SmrPCBIcTNTmOhay/F307DEFDs5Zbf3TLxYKOrJ4=;
-        b=Jh84uC5/nFtXRQ+eGuXMeqyc/aEm4ebPqejVAsKpBR94UzmiaaTy+bnKd3uhknYw+T
-         YCTyrSiYmWTKG4mMsvxUDw9lpOuTRRCHkc59HXFPLUjGiYaYOcPW6sEX6E6nxX0Tb8A6
-         7UTmQ1RiPdy0HWUA5EHMjZtvYzkC7buN4nWLWvtGr/xxxWCi+4FNzwy9+sMZ2BVVN631
-         dG7o6DTwihpJfIm7Xx/jCFk9AJ/ysjUi3EPztnHm0P6ceECkr7IR9fy5XZqQpTvSysun
-         Cc0Vbnr7WDtPFZTzdetfBtrcU1uLk1mLN28y6Zn2pdE2BgMlUj2zUc+oZmBvBrqj1VLZ
-         4miQ==
+        bh=Xw0gL4PDd1QR2Pf19PmOE0Td0QBDX+cFTEunQvaCchA=;
+        b=U9WADeH6p0Pp/b/a/KLlDICRHa1RoWdyzweHwe0rDg5R/nyV0lofk42VW+72unaAz4
+         ZTdJ2bVAsdAryLDG4NxCWILTfSJw+7LpikKs7flPuRhJseopaLQvHHXkkizlssQPT/iN
+         HkcPEeVx1x0gmE0jCPH0cWcLpLQIh+SklmoKsWxxstcSCLmt+mNGV2C0YgTdxnsyQp0V
+         UqZOy8o9ph2Wn7GDV2s7MDMKdFszQBKImtJhdCawQLpZJzSqVBZu5MEAfeJWbezJzhIT
+         BrY4f22EdT8xYP2GYGY5Z2VV467a8tFpt83G3sEPPvk76OcRwtTjixbksln2CnjLMBnO
+         g20Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762416710; x=1763021510;
+        d=1e100.net; s=20230601; t=1762416704; x=1763021504;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=R5/SmrPCBIcTNTmOhay/F307DEFDs5Zbf3TLxYKOrJ4=;
-        b=NHp6qiE5tcmgwYPIdTPtmeVBiw6ja/5xvQT//uny/qQHBvWAfnkNvw8kN+Or4IqMn/
-         XbLRu9Vi63KsDGirHoS1od+v8deI6vncsjHkdE/7wg8TjK9GT6WGU04L5dX5VdrYI+mg
-         cWBSStLyaip+ejx9v3nZgdcvjL1nagUcJ1rvorSUS4elTjVVgr5iNJN+oNXGr5QZkjm3
-         SJIlWbNIl38kczVNrQUnLYMT0U6jyPXeaNkJtq7vTNwcOD+biEhhSz26JILxL1RtJ0Vh
-         K4ORQ2gvXQ3tJKscZsQQ1Dgwycw4jIVgxZcIALmq8Y3NTZdAHLKH9owKM6mJUz0Ozy8t
-         puFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWObrof4LzbnJc2ZB218QOp+M/7g6CDhZa0MDKAf+g9wG61YIsJk1QAc9U1U0hg+VoFBDxFJX/d@lists.cip-project.org
-X-Gm-Message-State: AOJu0YxUDeT8VYccOj1Riv+yX0fhCSUMI5IXzdpb4ydgt4OW6OhQqVdy
-	jbe7gSzD3hJsPKSATFd53ARQ/zhcxmTBWEAuGJBnxSVvixANHhUOENaSrAdkcclyXBcVYFNXi7r
-	ONaOwZ1Y=
-X-Gm-Gg: ASbGncuHXMTMOTLpl/GQFScwaXU5snlRB2evdPeoRTi2lkWikskQ6r+614J/G2YhPYA
-	fRbVToqylQk9cwJseu4r9s2YccFtbrmTlv3RfoP1u9qgvXQoI4e527leXve7maWJzyNNu5uZiIm
-	o12SQYdxPMjyg/8LXJXS/ZFKCE+IIw9RMw6mMujf4NN9SPXa7purF4+Z1yP5eK8rdxbTJCo9ISF
-	BjlUERRyROikDBgrAf8MaoTK2tPYgoR/9Xt8smhc9wENymQxmFAkCL4ZIm3/N3oBVyo9M28J/yl
-	ffSg7GNPi/8N1hxVipIHNxEfQ8v6E14IVooCcHqC2dglMoGh8F7WIDNXvKa0+ll8rVxm9vKJsHc
-	G1Zp1x4bzyMr0Nq8vm52V37RGTkoisFiat/h3VSi4q5zz77/R9DSSdhI1dwfFPEaVPmT6N497hq
-	N423zX1CffOqFBNSp9YBFKLIbfwYAAxAqw/WIFa+f49o/1VkZnPuw=
-X-Google-Smtp-Source: AGHT+IFiZP5JHNrL/ele1M0lbAz3aa83br1YvkQfD6g/4YiTTI5SVbgt4hnnY7QZg8/LLLH0Eqm/qQ==
-X-Received: by 2002:a05:600c:5488:b0:475:dac3:69a2 with SMTP id 5b1f17b1804b1-4775ce164c5mr50855185e9.27.1762416710455;
-        Thu, 06 Nov 2025 00:11:50 -0800 (PST)
+        bh=Xw0gL4PDd1QR2Pf19PmOE0Td0QBDX+cFTEunQvaCchA=;
+        b=Cle5rcufYKIv5hG/PVZWBZrcQPJijxcA1648tPkGgNeiEVzQDrfLEFDRWNWZzSJGle
+         +ugNA1K5sueqyCs9JjzPbw53LbXbgpbrhgaN43jAS2xIbQN5KzsWzdCXEAfHmAFdtIHU
+         A5kbhENXP4PciGWawJ/8pC5zvZlWRmFFcSw0SuH/3J1RPhuGZn8ssTzpae8COnOgINrx
+         WvFbau1yMwAhlPRB+gvfxcv8ogWHeusahJhAT9raahvKphzhOLV7Ebso6t7/h7xupSWz
+         fr1ai4grJZGy75+0eH8AQsDIOA48RmkJdFzD9V3xA6r96h8fLL1GSzZgCEl+d/icvyS/
+         eDdw==
+X-Forwarded-Encrypted: i=1; AJvYcCV1UN7HzfhJZJrROI4uCbRzmOJQc0iN/kVwJemS4gA397+llvdR5s7Zi0pUngBe4g0WgdkxvEEB@lists.cip-project.org
+X-Gm-Message-State: AOJu0YwhOah/2sgI2QO1COwGaqvWPIlhmgWl5oNmA3zkFHAENBz96Hm+
+	zqAsB2MaRRbBHYk1UDPBDyLZ8UTj9XRTsq5bBQMAL0Ozn8AthMil0Kch/DcI2318w8o=
+X-Gm-Gg: ASbGncsZaax38uq0Bb8uaB/MJDRLwPKu4XTFO0iay9tj9RV3zFNXMJjZiG+iPfh6AvJ
+	j8PyR6Sy08MxAZxMMb1URzWDFGWuXho9K6h2xEMRCzEk7ipIPIh6rtEWAX9UrhR1dwuq8bKJ68t
+	gQ3SFExXz+sVKqcWMtn/gOJx3YuqWaCzI0WAO/83uPkYFpyMl7m+/GvfkOXb7sXT5kmNbHw2Z2c
+	orLIEn5d2zQ6ttEKQUM+hxQOf9prLdAzrNsm1TKxH2dlvry8mr1iiA80+ZP/pk/cCiEW/YZZ1bM
+	Z0T0c60AFRQWwfGtcta1ZyOBLfYaROe3blRR1E0t30UkWNtmVyEuIhGaZu/SMs+EErAwxb5m2av
+	yOdUfDEZjbhJ2lTfnrJgE/uBNiUIFccPD9RpYoHmKVB+W4EgQqiyILGXtK/qj+T6uAj47lmspEq
+	dshrX1xpjv64/melZHKN2xj2QL5oKO+D/Y86YKFwi8
+X-Google-Smtp-Source: AGHT+IFMwlKiecapRX9FOBJPJ1JYlkjE05PywATIKVHk+Z5h4jjzFJB9VrHCRlmZ62gaQfOtxmjq0g==
+X-Received: by 2002:a05:600c:1c90:b0:477:1ae1:fa5d with SMTP id 5b1f17b1804b1-4775ce1eaf2mr61596815e9.20.1762416704059;
+        Thu, 06 Nov 2025 00:11:44 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477624f86a2sm32862295e9.6.2025.11.06.00.11.49
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477624f86a2sm32862295e9.6.2025.11.06.00.11.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 00:11:49 -0800 (PST)
+        Thu, 06 Nov 2025 00:11:42 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.1.y-cip 11/23] driver core: auxiliary bus: Drop dev_pm_domain_detach() call
-Date: Thu,  6 Nov 2025 10:11:20 +0200
-Message-ID: <20251106081132.2574638-12-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 06/23] mmc: sdio: Drop dev_pm_domain_detach() call
+Date: Thu,  6 Nov 2025 10:11:15 +0200
+Message-ID: <20251106081132.2574638-7-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251106081132.2574638-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20251106081132.2574638-1-claudiu.beznea.uj@bp.renesas.com>
@@ -73,11 +72,11 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 08:11:54 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20404
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20399
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit eca710386972f2a72708b0b2a615eb150d218e18 upstream.
+commit c2ef7a03f5c8f0a612a8beff666483b725adf8fc upstream.
 
 Starting with commit f99508074e78 ("PM: domains: Detach on
 device_unbind_cleanup()"), there is no longer a need to call
@@ -92,47 +91,38 @@ on the flags passed to dev_pm_domain_attach() to power off the
 domain.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Link: https://lore.kernel.org/r/20250827100541.926350-1-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Link: https://lore.kernel.org/r/20250827101236.927313-1-claudiu.beznea.uj@bp.renesas.com
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 [claudiu.beznea: drop dev_pm_domain_detach() conditionally]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/base/auxiliary.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/mmc/core/sdio_bus.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
-index 31f5a81b5393..b02bbbc8d117 100644
---- a/drivers/base/auxiliary.c
-+++ b/drivers/base/auxiliary.c
-@@ -207,14 +207,15 @@ static int auxiliary_bus_probe(struct device *dev)
- 	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
- 	int ret;
- 
--	ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON);
-+	ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON |
-+					PD_FLAG_DETACH_POWER_OFF);
- 	if (ret) {
- 		dev_warn(dev, "Failed to attach to PM Domain : %d\n", ret);
- 		return ret;
- 	}
- 
- 	ret = auxdrv->probe(auxdev, auxiliary_match_id(auxdrv->id_table, auxdev));
--	if (ret)
-+	if (ret && !dev_pm_domain_allow_detach_on_unbind_cleanup())
- 		dev_pm_domain_detach(dev, true);
- 
- 	return ret;
-@@ -227,7 +228,8 @@ static void auxiliary_bus_remove(struct device *dev)
- 
- 	if (auxdrv->remove)
- 		auxdrv->remove(auxdev);
--	dev_pm_domain_detach(dev, true);
+diff --git a/drivers/mmc/core/sdio_bus.c b/drivers/mmc/core/sdio_bus.c
+index 8e7322fd62e0..0142db1bcd74 100644
+--- a/drivers/mmc/core/sdio_bus.c
++++ b/drivers/mmc/core/sdio_bus.c
+@@ -200,7 +200,8 @@ static int sdio_bus_probe(struct device *dev)
+ 	atomic_dec(&func->card->sdio_funcs_probed);
+ 	if (func->card->host->caps & MMC_CAP_POWER_OFF_CARD)
+ 		pm_runtime_put_noidle(dev);
+-	dev_pm_domain_detach(dev, false);
 +	if (!dev_pm_domain_allow_detach_on_unbind_cleanup())
-+		dev_pm_domain_detach(dev, true);
++		dev_pm_domain_detach(dev, false);
+ 	return ret;
  }
  
- static void auxiliary_bus_shutdown(struct device *dev)
+@@ -232,7 +233,8 @@ static void sdio_bus_remove(struct device *dev)
+ 	if (func->card->host->caps & MMC_CAP_POWER_OFF_CARD)
+ 		pm_runtime_put_sync(dev);
+ 
+-	dev_pm_domain_detach(dev, false);
++	if (!dev_pm_domain_allow_detach_on_unbind_cleanup())
++		dev_pm_domain_detach(dev, false);
+ }
+ 
+ static const struct dev_pm_ops sdio_bus_pm_ops = {
 -- 
 2.43.0
 
