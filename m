@@ -2,67 +2,67 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 227EACCFA19
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F43CCFA1E
 	for <webhook@archiver.kernel.org>; Thu,  6 Nov 2025 08:11:04 +0000 (UTC)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.10060.1762416661382786316
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.10058.1762416659158830844
  for <cip-dev@lists.cip-project.org>;
- Thu, 06 Nov 2025 00:11:01 -0800
+ Thu, 06 Nov 2025 00:10:59 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=iQOZW8hY;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.54, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4711810948aso4193735e9.2
-        for <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 00:11:01 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=jBXmkPKn;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.49, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4711810948aso4193405e9.2
+        for <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 00:10:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1762416660; x=1763021460; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1762416657; x=1763021457; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/CbSCUiVXd3UmEiyuTweiB55o9W4Xbnloi3Ne0sXyu0=;
-        b=iQOZW8hY9LpUCKlqyfuN/4ySyKMDL1rl1A2WJrX6fIPYUyh3/hrB3By/m/DxJeISuJ
-         SXxXHClCJVr2voA1QTug83U2F8c4np45pI/oVpUneaY+CqZ2zFSJKiU7rxY7vNMDonuz
-         xM6H2c0h+olxbkJdOBrQZL8mNAjPyVFMc3syHR1stPLP3sLTRS6RSkD2vlkokR0uTj2K
-         HX/+5BoG9FaBz/EOuLQ+Sn6mHRlSDm9kSKt/1cucA19WX3FnzqNQaGP2EMFtcXb7TDMc
-         qS+ajnMtJMV3t8YU6beKJS8ZViLhQptE9zzxKRf0E5as0bFsBK42TUYsPBei6XcGy+gT
-         1wbA==
+        bh=wLRE1jII1+q6BJfenK6o3c2T2ae2cX6QoBHsZ8qLAGU=;
+        b=jBXmkPKnzBs/0moDdwgG6KFPRjbgMLfvcWS3DL9mZ22LXVSKG/OLd0FqQr25B8sxHA
+         pXGjxYINJSntaakleZJYInV0HHfcCVW9eRZREXzP9riwy/pa8iBMp5MuPSTeRS5g1y/y
+         5sYgWfddpn/tXiGVY0B5DxPJek6aQ0Rg4NZ87VsN6kN/istYsYc9XUEO+6SujMjnH8vg
+         O9tt5/ykHFTGbMqW2ocrL7Ie2mqvupdFsZZcO59z66lOm9D9k3IkYEDAkeSbWRzlPzWs
+         mp3uy3qIJ1I0qTNXSF3zQ8rG1pUvEQFyyPUgXJr2tSH/4oNZgZUmzc6N1G0tFsUMPzhi
+         e1Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762416660; x=1763021460;
+        d=1e100.net; s=20230601; t=1762416657; x=1763021457;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/CbSCUiVXd3UmEiyuTweiB55o9W4Xbnloi3Ne0sXyu0=;
-        b=cxiTV3u9rS6yTlrgaOwLEN/EBTKPdjn1GyeJIWy9uX6Ifc8fdBTMg6il+KnZX9T2Zh
-         C+OMA3LE7b8TVknTNZl1IwAxNABN3SWilrfLHvK8oLki8Q6IijZqrntYp4LyQ9o+HgNt
-         vBZ52MuPhiQQlXk6enNKE8EbsHVUv+01Zw2Fxza0aakKLIbn09Hof4kIS4h3SfHhZdsr
-         dhMAjgAbcvlWiaY+iAQ8vgpuPP1I0l1XVMWr6nHe8V+CyExY1+oOD46NV7gO9ZjLHWCe
-         sYDDFSukgeWoQqRbilH+r4jIWiosrWgpNdO9Pg/qlcpBNUJgB0N25CSe1I9bMst3omnx
-         Dzxg==
-X-Forwarded-Encrypted: i=1; AJvYcCWPwP1aFy7PtKu0UKeXVLZfdamHMi89GOKZJeS9/yLUaQOAe38harvOLVlQHDeMafYrFGUqaMJS@lists.cip-project.org
-X-Gm-Message-State: AOJu0YyZswp2Xqt4D6zABaCSQz3h1ywGagw9dwin3idpOMe7h2sgjNJc
-	oDIm3YAoNRyMloXuvO1aQ6hrMu6KvK19uh5np0+2c6c03lWLkv9Zq16JDbns1gGR5Ec=
-X-Gm-Gg: ASbGncvPG8n5h9fsOs4T3pnDR+rraQue6qe3azkXZdRK+XzSjLMCqUMOtwIQBji3ALd
-	6L6WV8aFdfwdLKpynX01gQj9tIbEKQlRb84gjSmnoMsUeHibgOulweF9MlbO6+DPcZCVWCeT72r
-	FRt/oP/X8V6lP3DcQpG4YM/skPjHj41qAbM0k77FZGsk7IyokB9LsTAmUTJwb7SaXrRuNopMZ4f
-	D4OxMMbWnS+ypUO7pMOmL56Em8PnfVnVMEiDuPsiKiAdA0FdQI4Ms09/AA9n1dDXOMbRLRQkbTm
-	kVc6eZ0T1jdKe+1I1VqIomZGuBVn+z2Dx4hqdfwCkYFCqpd4Xht9/MufRBbgCkJx1KJK6+6tLcU
-	cnBlCNUkjRROxp591O0/xauAKuyU6uwpSJ0JOSXEGH/qeg3PaUicnuysmmELtRgTq9/1XCwv3S4
-	NKocKD8lqks/EZlDt0WfwQQKr6xT7R3jVDvdfNYOEb
-X-Google-Smtp-Source: AGHT+IEcz7CEiT/+gKcHRP2cXH5dONSeIy/j8XX2rA4R3iURYvykjwS3ymV8J1KWjeUQZAEl3yFDxg==
-X-Received: by 2002:a05:600c:450b:b0:477:5897:a0c4 with SMTP id 5b1f17b1804b1-4775cdad63cmr51974445e9.4.1762416659770;
-        Thu, 06 Nov 2025 00:10:59 -0800 (PST)
+        bh=wLRE1jII1+q6BJfenK6o3c2T2ae2cX6QoBHsZ8qLAGU=;
+        b=xT7lzeAnNOD6lLlz43TzvQ/VAhfnsimWoVKTURVhSLAxL8LdNQoPSommnfeU2jhyov
+         RCTtu51vgOGCnKms5nWcrXOMbiRhEjtrfnDZwVkd0EulWwxWjK6Mvfd7aC7eHff6TZ77
+         QkhbpPSNNBy+kMUtgHctXzbJTFVFj6o+3W8aj8Yff/06YotZo22H8mmTidBwp7efATXI
+         PfiE+qzM13cBEDPalUMfpSuGwGbGX6295G1KHr3PB8jN14K+7hnxb2vlgc8tanH1inn6
+         uKX/ktxNqYjrrnOtOsR3Fh6u2RdKev0HoIf7eEHvX68A73bluRRQQ4qLR5++0jzBofzn
+         UATw==
+X-Forwarded-Encrypted: i=1; AJvYcCUpmRRh+XieGG/xGu4nhe24WAQz9lQ2CVsGDw2aiMXqN/lFUnsFh2iOcqjjksbHIxLKK0R58s0m@lists.cip-project.org
+X-Gm-Message-State: AOJu0Yxmy5URUy7nWnuhUg2vs/wvxMvwsreBkKXx/eY8WUzr1b88XbsJ
+	PWZJg8YgDE2a158N9dWn6wn92rxOdfmsUSLjlVkgf0LUcHkGPhmG0QQw18uVd7IcjGI=
+X-Gm-Gg: ASbGncsauUoOgzfk8wiRMYRYp1jbc4jejsZ5UTxGEnz64uSiFz0nokQ3XPKmutrQUw7
+	RJLC7684zfuQ7Dd9wmSMstlPIVDlv8ZTlkAN/xMTnpS5H0hdatfEt1ujeFQWpHSJHRxG89V1U30
+	C9G7TIt3VhAUZVZpMmVc3YgNx0GisRxaF/kZwZ3XJSGbP39Zb55uOCyXbhjr8WgFeyYfXBQBJWS
+	DCvowr7cVZEEwN48kd91PNTWyErVz36eXiM5o7x4jn3vmjME74ooNQnapG01pR1Td/Kg65xgdQq
+	428EBt4fj1iX77Ukr19B57BuLKlw5iY90HiLiKNrt45qTzeDKjrotzMxPcAzXqLuf8LIDprdOmT
+	dg+jzYbQbURJAknrCQRuQb2VoE4lUErVTY1/fa3d3186fPaTUxwXyfM82MLhcQK+STtXgrxkKGp
+	Mrh+11lDwCN+Aun+CW0qiWl7kObL3x5Q==
+X-Google-Smtp-Source: AGHT+IEdA8J1cyIHyn5OBGB6a8XZrzNCMkl24QziPez0+InDo0HbOjct3LkpNNdqyzR6H0aLdicMuA==
+X-Received: by 2002:a05:600c:46ce:b0:471:d2d:ac42 with SMTP id 5b1f17b1804b1-4775cdc8e30mr42944455e9.14.1762416657574;
+        Thu, 06 Nov 2025 00:10:57 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb47873dsm3486735f8f.31.2025.11.06.00.10.58
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb47873dsm3486735f8f.31.2025.11.06.00.10.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 00:10:59 -0800 (PST)
+        Thu, 06 Nov 2025 00:10:57 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.12.y-cip 08/23] soundwire: bus: Drop dev_pm_domain_detach() call
-Date: Thu,  6 Nov 2025 10:10:33 +0200
-Message-ID: <20251106081048.2574345-9-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 06/23] spi: Drop dev_pm_domain_detach() call
+Date: Thu,  6 Nov 2025 10:10:31 +0200
+Message-ID: <20251106081048.2574345-7-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251106081048.2574345-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20251106081048.2574345-1-claudiu.beznea.uj@bp.renesas.com>
@@ -72,11 +72,11 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 08:11:04 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20377
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20375
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 969bf687c12cd9f64ed9368f0c7429445de7c10b upstream.
+commit c42e36a488c7e01f833fc9f4814f735b66b2d494 upstream.
 
 Starting with commit f99508074e78 ("PM: domains: Detach on
 device_unbind_cleanup()"), there is no longer a need to call
@@ -92,28 +92,45 @@ domain.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Link: https://lore.kernel.org/r/20250827101506.927787-1-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Message-ID: <20250827101612.928008-1-claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 [claudiu.beznea: drop dev_pm_domain_detach() conditionally]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/soundwire/bus_type.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/spi/spi.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/soundwire/bus_type.c b/drivers/soundwire/bus_type.c
-index 9900cf0e6f8d..24041aceadbc 100644
---- a/drivers/soundwire/bus_type.c
-+++ b/drivers/soundwire/bus_type.c
-@@ -175,7 +175,8 @@ static int sdw_drv_remove(struct device *dev)
- 	if (drv->remove)
- 		ret = drv->remove(slave);
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index fbc3b87c535c..55e94b55e3d3 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -434,13 +434,14 @@ static int spi_probe(struct device *dev)
+ 			spi->irq = 0;
+ 	}
  
--	dev_pm_domain_detach(dev, false);
+-	ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON);
++	ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON |
++					PD_FLAG_DETACH_POWER_OFF);
+ 	if (ret)
+ 		return ret;
+ 
+ 	if (sdrv->probe) {
+ 		ret = sdrv->probe(spi);
+-		if (ret)
++		if (ret && !dev_pm_domain_allow_detach_on_unbind_cleanup())
+ 			dev_pm_domain_detach(dev, true);
+ 	}
+ 
+@@ -454,7 +455,8 @@ static void spi_remove(struct device *dev)
+ 	if (sdrv->remove)
+ 		sdrv->remove(to_spi_device(dev));
+ 
+-	dev_pm_domain_detach(dev, true);
 +	if (!dev_pm_domain_allow_detach_on_unbind_cleanup())
-+		dev_pm_domain_detach(dev, false);
- 
- 	return ret;
++		dev_pm_domain_detach(dev, true);
  }
+ 
+ static void spi_shutdown(struct device *dev)
 -- 
 2.43.0
 
