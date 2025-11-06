@@ -2,139 +2,199 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C658CCF9F8
-	for <webhook@archiver.kernel.org>; Thu,  6 Nov 2025 08:11:34 +0000 (UTC)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.10021.1762416685137510508
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA1BCCFA19
+	for <webhook@archiver.kernel.org>; Thu,  6 Nov 2025 08:11:44 +0000 (UTC)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.10076.1762416703578674747
  for <cip-dev@lists.cip-project.org>;
- Thu, 06 Nov 2025 00:11:25 -0800
+ Thu, 06 Nov 2025 00:11:43 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=D6FeNyBW;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.51, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-470ffbf2150so8050635e9.1
-        for <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 00:11:24 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=glSfzmqS;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.42, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-47758595eecso3227335e9.0
+        for <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 00:11:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1762416683; x=1763021483; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1762416702; x=1763021502; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=v/UneUPWkf3tkIbCTIx6lmUz17X0EqMQCJU4eY0VnvA=;
-        b=D6FeNyBWKt6j2ZbyqR5sWm53vKoLJx62Q2wo6KIutNeOXlnOAhMjY6K3MeNay2hvrv
-         fUSuua+ClzgbPmMSzoMHiTTkzozfHKr4Hn9xpJDS72xhNyws5iijYoN9OBTqwsRr2AZf
-         M7Blar1hHa6ABxrkN2bDtyat4nf2/YFX5C5o9/ZsO8k6uaslzaDvsONnK7LptklfcMcX
-         0WHq8Dv3hvk/6/bMr09byt3FYEnJ6YvHQF0UfKj5seRm3xqEtQFQux3ikHXCz7aAJXJC
-         FBcwTjtjX2ohEqROQ3UIz3nWTYkKJfAm03q3MTQl5sb5b85DHrZudRmO8kyrHhgP3X7r
-         2PBg==
+        bh=SXrWbS5Of2bHY61qwgBAT9LLHEIz13TiDK0masPFwy4=;
+        b=glSfzmqSyUd8EqqfMPdI6a/NaezE9Zt/r9GER9bGjOipvTqkEUQtvdiNTcnGkh6W7V
+         Ca5YBHKOo8owj1N+tfQrbIdT9Hx6qTSYLj2odJuoYfDFReNGKjeNP7h6r0EBCB69dgtz
+         mw7aXzcgLJgSxtTVeyam5vAx711UyxiT/ltWmO5wFGT++iYFB8we8c/ZpL+S1/LYP/6w
+         agoW/Gq79PlCWSWTAMBSeXgiqH1lCdnX7xtzbDw1nEFvUHECwg6FNwgJGjh+u4o2Lm3r
+         CtHifmo0VDS+dC5N+40yeWzr06o6G1GzlBv/dprToV7g0jKBAzo45LMOBIXcdYXMzEsn
+         FIQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762416683; x=1763021483;
+        d=1e100.net; s=20230601; t=1762416702; x=1763021502;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=v/UneUPWkf3tkIbCTIx6lmUz17X0EqMQCJU4eY0VnvA=;
-        b=uJNuPhj+ZvEL1rIQDJdl2m/Z7r31Z//TI+IXP65qyEW9bYqr53f7z+65VjUTZBPkl5
-         MCMXn17IT/gbokeP2xZw5naDBBotsbL1WvDz95W7rGf3s3fC2s3LiGv5M6+178HLggEn
-         nyf3K2Zw5wOoH3yOKm4UQbaVAtWPKHt1L6ZXRX8DbL50wWLk7/L2oHPKUWG0vLVoRf9w
-         yXfQBU1LREdYMLiNbYP2NDhyFsN8OWDaTEdPCXopKs6/FoofNMDv8KFbemgaFtqMOaaD
-         uQyzj17/oTVAZwIjBLdpaI6frsuqQCS6fnuGb8S4hP/NkeX6+rsFWVFtd57D1pmJgrOm
-         PezA==
-X-Forwarded-Encrypted: i=1; AJvYcCVyIkbXWGruW8Vzorl7sEcnMyCPVK9oTlhCnv8ZV+k4ezL9QiF+YefSPOOZwEswtLfBhlS3E1oa@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yz5pYxE7r/ZboK4m58wFQuBn5nz/BoD7+isscNzFQkqPfxK/CSr
-	2/2ZrVhcqo3LcfYzjRBndzCuVW/DOaJ9s+hMOQYgTXQPd6Re80qeemtpaL6gPxjHay4=
-X-Gm-Gg: ASbGncsVBIhWs2QNGM51p0l6GSpHjJIadGtAU7jnVf9/onTcpwvlMngstFfN648yIDP
-	ufICZKyABSuM90GfajCIsVrEU6kgVk0DJw0lrhOwVoXcdP2ixd8UadKUPq3txAjTI+smCzR2+qv
-	2HBalkl7xuaXR7FXO2bzeWgDV2slIkAOdnyYCyk5OxIGbETccruyrCdjmcja6JuFWekUdDWfj4C
-	DlAnSvlRxm8QO+j01YBmtbOv8mOF40ZojQiyM2iDYSc6ohbhTZmJ41aFoby5IEVFp5DYqXdvMh5
-	vEjBblEcDdQpervrQ0qV4tN3lM+dxWlOJ/nnXBX1y3ldMvPihVFyzt3nBNVCKnPOLhH4Sy3xlUJ
-	/B3O+eLfdj36tg5HTTZBq6CNuUNZzVCC+lFCeq3/CWXolIequqaCQuZnWXWUgGD7JFGedP+3vfv
-	KmiRl1RDtzA2QL7l9vscjye6TV7h0dOp45IHGyLZBK
-X-Google-Smtp-Source: AGHT+IFx/k7mfsBXrIohbBAgL3DznFCvQ9h3VEWB+mWaMLO8tuDQ2/gWKGdJ9sBPCFnkeLkNnRRQPw==
-X-Received: by 2002:a05:600c:3e16:b0:475:d7fd:5c59 with SMTP id 5b1f17b1804b1-477620a59f0mr16988635e9.16.1762416682248;
-        Thu, 06 Nov 2025 00:11:22 -0800 (PST)
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SXrWbS5Of2bHY61qwgBAT9LLHEIz13TiDK0masPFwy4=;
+        b=wBWWWSEpIl5kGrtwWCOHeJYfxVnwykjz69LM0upGxQTQ6m1vIasD93xtEnkiZ1B98A
+         ZF8vwwl3JFXUVfC6J6kqrNRFe4Id/PQ2/ayDbydtbWNIdsleWoXvGAwHXbEnxkrW2Tdm
+         28DGWN3RO1iLVoCfGbHkKabL4RblsCbT1NCDfJucewuvqd9Jqbih+qVJP39bH5N9gxgO
+         D4piePgRZLXX/IKhvMa/c2bxpS2af3caZlcRtCiMcncJoOvfzr6re5ZnledN8Z0SuHso
+         chIoNrqjFqQnT0nNEo/MYGJUdHzp3/cHKhg51vMhTT0PGO3XGdiTQLEQUeqPQoRSr7K8
+         ISgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMbWVZ7XrT4Mlpn5FP1WF5EIDoiTSmyZ4pBUZkvMnrXUVqDVhsly3/HFwPXnupjClTaBe3gK1P@lists.cip-project.org
+X-Gm-Message-State: AOJu0YwyjAj6Jt0v9eZs1RQuthEf4EffUd2SAy7I73n7SrLa2A4RfieD
+	Y6onZ3YXBVt3VOSEx1bZo6D35d1OV6CIjfz6J0WaFEdRuNRpZZ03o4ptKlM4BWML1EQFq/7RenS
+	3m0xhNFU=
+X-Gm-Gg: ASbGncsM7dZP9QPYfXZBOHBRPDCEYzvBMKnTYWfutU3X3ysFiUgwHHrRWE6T+8QFulX
+	Cb9fwpgHbQ/qjxSa1Xc2yKO7wHx7QhofPkWr7yttA5yox1Gb/mfc0e/iU3ZvRxHKk+RFZ/GtYjB
+	jkrdXo+07mxKET9hkFwqAe5SzBXlQ8kXtAqn3wHqKNxpoVNt43zXKR3tLTfDhOtsPF67cCWXa1X
+	OlNIBqtuVnstLhY7/F1IA9j7tf/ZaLHg86w7D+ADlBzwlogenkXrqHeZGxbyJuYjF+FWG7hiWdq
+	lv42QgRk1P491IRLTLkGq32KjbHxE/ZlP3jr2En2dfYCbGUzaHb+YXe1IvxvfKouX1nmfrhNSXi
+	qs2yS/SYc1EmLcqgCliBVy1+D0I22CMZkbl10YwTPQwR3r2h4ld4FLb41CJZ/wzs06mHXcxPZ3Z
+	AoLopHC96lbppPP4nXyzgMpqRH032DQfpf7pRiOjqC
+X-Google-Smtp-Source: AGHT+IH8YHPBwQcdiE1rTDGQvm/pJeG+A3rbjFY89mvrmBvAuFkdLekc48OhA4DOl5rZWYqZg9fIPA==
+X-Received: by 2002:a05:600c:348f:b0:476:a25f:6a4d with SMTP id 5b1f17b1804b1-4775cd9c069mr49221015e9.1.1762416701888;
+        Thu, 06 Nov 2025 00:11:41 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb47873dsm3486735f8f.31.2025.11.06.00.11.21
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477624f86a2sm32862295e9.6.2025.11.06.00.11.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 00:11:21 -0800 (PST)
+        Thu, 06 Nov 2025 00:11:41 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.12.y-cip 23/23] clk: renesas: r9a07g04[34]: Use tabs instead of spaces
-Date: Thu,  6 Nov 2025 10:10:48 +0200
-Message-ID: <20251106081048.2574345-24-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.1.y-cip 05/23] driver core: platform: Drop dev_pm_domain_detach() call
+Date: Thu,  6 Nov 2025 10:11:14 +0200
+Message-ID: <20251106081132.2574638-6-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251106081048.2574345-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20251106081048.2574345-1-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20251106081132.2574638-1-claudiu.beznea.uj@bp.renesas.com>
+References: <20251106081132.2574638-1-claudiu.beznea.uj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 08:11:34 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20392
+ <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 08:11:44 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20398
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 8933612860fd0087a0e27dfca01106a98ccc334a upstream.
+commit ba2ebd52a22eb7306a2093924920a125ad91215a upstream.
 
-Use tabs instead of spaces in the CRU clock descriptions to match the
-formatting used in the rest of the clock definitions.
+On the Renesas RZ/G3S (and other Renesas SoCs, e.g., RZ/G2{L, LC, UL}),
+clocks are managed through PM domains. These PM domains, registered on
+behalf of the clock controller driver, are configured with
+GENPD_FLAG_PM_CLK. In most of the Renesas drivers used by RZ SoCs, the
+clocks are enabled/disabled using runtime PM APIs. The power domains may
+also have power_on/power_off support implemented. After the device PM
+domain is powered off any CPU accesses to these domains leads to system
+aborts.
+
+During probe, devices are attached to the PM domain controlling their
+clocks and power. Similarly, during removal, devices are detached from the
+PM domain.
+
+The detachment call stack is as follows:
+
+device_driver_detach() ->
+  device_release_driver_internal() ->
+    __device_release_driver() ->
+      device_remove() ->
+        platform_remove() ->
+          dev_pm_domain_detach()
+
+During driver unbind, after the device is detached from its PM domain,
+the device_unbind_cleanup() function is called, which subsequently
+invokes devres_release_all(). This function handles devres resource
+cleanup.
+
+If runtime PM is enabled in driver probe via devm_pm_runtime_enable(),
+the cleanup process triggers the action or reset function for disabling
+runtime PM. This function is pm_runtime_disable_action(), which leads
+to the following call stack of interest when called:
+
+pm_runtime_disable_action() ->
+  pm_runtime_dont_use_autosuspend() ->
+    __pm_runtime_use_autosuspend() ->
+      update_autosuspend() ->
+        rpm_idle()
+
+The rpm_idle() function attempts to resume the device at runtime.
+However, at the point it is called, the device is no longer part of a PM
+domain (which manages clocks and power states). If the driver implements
+its own runtime PM APIs for specific functionalities - such as the
+rzg2l_adc driver - while also relying on the power domain subsystem for
+power management, rpm_idle() will invoke the driver's runtime PM API.
+However, since the device is no longer part of a PM domain at this point,
+the PM domain's runtime PM APIs will not be called. This leads to system
+aborts on Renesas SoCs.
+
+Another identified case is when a subsystem performs various cleanups
+using device_unbind_cleanup(), calling driver-specific APIs in the
+process. A known example is the thermal subsystem, which may call driver-
+specific APIs to disable the thermal device. The relevant call stack in
+this case is:
+
+device_driver_detach() ->
+  device_release_driver_internal() ->
+    device_unbind_cleanup() ->
+      devres_release_all() ->
+        devm_thermal_of_zone_release() ->
+          thermal_zone_device_disable() ->
+            thermal_zone_device_set_mode() ->
+              struct thermal_zone_device_ops::change_mode()
+
+At the moment the driver-specific change_mode() API is called, the
+device is no longer part of its PM domain. Accessing its registers
+without proper power management leads to system aborts.
+
+Drop the call to dev_pm_domain_detach() from the platform bus remove
+function and rely on the newly introduced call in device_unbind_cleanup().
+
+This ensures the same effect, but the call now occurs after all
+driver-specific devres resources have been freed.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250806092129.621194-5-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Link: https://patch.msgid.link/20250703112708.1621607-4-claudiu.beznea.uj@bp.renesas.com
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+[claudiu.beznea: fixed conflict in platform_remove() by:
+ - keeping ->remove_new() section
+ - conditionally call dev_pm_domain_detach()]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a07g043-cpg.c | 8 ++++----
- drivers/clk/renesas/r9a07g044-cpg.c | 8 ++++----
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/base/platform.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/renesas/r9a07g043-cpg.c b/drivers/clk/renesas/r9a07g043-cpg.c
-index f050f8565916..33e9a1223c72 100644
---- a/drivers/clk/renesas/r9a07g043-cpg.c
-+++ b/drivers/clk/renesas/r9a07g043-cpg.c
-@@ -213,13 +213,13 @@ static const struct rzg2l_mod_clk r9a07g043_mod_clks[] = {
- 	DEF_MOD("sdhi1_aclk",	R9A07G043_SDHI1_ACLK, R9A07G043_CLK_P1,
- 				0x554, 7, MSTOP(BUS_PERI_COM, BIT(1))),
- #ifdef CONFIG_ARM64
--	DEF_MOD("cru_sysclk",   R9A07G043_CRU_SYSCLK, CLK_M2_DIV2,
-+	DEF_MOD("cru_sysclk",	R9A07G043_CRU_SYSCLK, CLK_M2_DIV2,
- 				0x564, 0, MSTOP(BUS_PERI_VIDEO, BIT(3))),
--	DEF_MOD("cru_vclk",     R9A07G043_CRU_VCLK, R9A07G043_CLK_M2,
-+	DEF_MOD("cru_vclk",	R9A07G043_CRU_VCLK, R9A07G043_CLK_M2,
- 				0x564, 1, MSTOP(BUS_PERI_VIDEO, BIT(3))),
--	DEF_MOD("cru_pclk",     R9A07G043_CRU_PCLK, R9A07G043_CLK_ZT,
-+	DEF_MOD("cru_pclk",	R9A07G043_CRU_PCLK, R9A07G043_CLK_ZT,
- 				0x564, 2, MSTOP(BUS_PERI_VIDEO, BIT(3))),
--	DEF_MOD("cru_aclk",     R9A07G043_CRU_ACLK, R9A07G043_CLK_M0,
-+	DEF_MOD("cru_aclk",	R9A07G043_CRU_ACLK, R9A07G043_CLK_M0,
- 				0x564, 3, MSTOP(BUS_PERI_VIDEO, BIT(3))),
- 	DEF_COUPLED("lcdc_clk_a", R9A07G043_LCDC_CLK_A, R9A07G043_CLK_M0,
- 				0x56c, 0, MSTOP(BUS_PERI_VIDEO, GENMASK(8, 7))),
-diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
-index fdbc0635a869..0dd264877b9a 100644
---- a/drivers/clk/renesas/r9a07g044-cpg.c
-+++ b/drivers/clk/renesas/r9a07g044-cpg.c
-@@ -303,13 +303,13 @@ static const struct {
- 					0x558, 1, 0),
- 		DEF_MOD("gpu_ace_clk",	R9A07G044_GPU_ACE_CLK, R9A07G044_CLK_P1,
- 					0x558, 2, 0),
--		DEF_MOD("cru_sysclk",   R9A07G044_CRU_SYSCLK, CLK_M2_DIV2,
-+		DEF_MOD("cru_sysclk",	R9A07G044_CRU_SYSCLK, CLK_M2_DIV2,
- 					0x564, 0, MSTOP(BUS_PERI_VIDEO, BIT(3))),
--		DEF_MOD("cru_vclk",     R9A07G044_CRU_VCLK, R9A07G044_CLK_M2,
-+		DEF_MOD("cru_vclk",	R9A07G044_CRU_VCLK, R9A07G044_CLK_M2,
- 					0x564, 1, MSTOP(BUS_PERI_VIDEO, BIT(3))),
--		DEF_MOD("cru_pclk",     R9A07G044_CRU_PCLK, R9A07G044_CLK_ZT,
-+		DEF_MOD("cru_pclk",	R9A07G044_CRU_PCLK, R9A07G044_CLK_ZT,
- 					0x564, 2, MSTOP(BUS_PERI_VIDEO, BIT(3))),
--		DEF_MOD("cru_aclk",     R9A07G044_CRU_ACLK, R9A07G044_CLK_M0,
-+		DEF_MOD("cru_aclk",	R9A07G044_CRU_ACLK, R9A07G044_CLK_M0,
- 					0x564, 3, MSTOP(BUS_PERI_VIDEO, BIT(3))),
- 		DEF_MOD("dsi_pll_clk",	R9A07G044_MIPI_DSI_PLLCLK, R9A07G044_CLK_M1,
- 					0x568, 0, MSTOP(BUS_PERI_VIDEO, GENMASK(6, 5))),
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 14fde28de3f8..62e8ff1ece97 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -1392,13 +1392,14 @@ static int platform_probe(struct device *_dev)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ret = dev_pm_domain_attach(_dev, PD_FLAG_ATTACH_POWER_ON);
++	ret = dev_pm_domain_attach(_dev, PD_FLAG_ATTACH_POWER_ON |
++					 PD_FLAG_DETACH_POWER_OFF);
+ 	if (ret)
+ 		goto out;
+ 
+ 	if (drv->probe) {
+ 		ret = drv->probe(dev);
+-		if (ret)
++		if (ret && !dev_pm_domain_allow_detach_on_unbind_cleanup())
+ 			dev_pm_domain_detach(_dev, true);
+ 	}
+ 
+@@ -1424,7 +1425,8 @@ static void platform_remove(struct device *_dev)
+ 		if (ret)
+ 			dev_warn(_dev, "remove callback returned a non-zero value. This will be ignored.\n");
+ 	}
+-	dev_pm_domain_detach(_dev, true);
++	if (!dev_pm_domain_allow_detach_on_unbind_cleanup())
++		dev_pm_domain_detach(_dev, true);
+ }
+ 
+ static void platform_shutdown(struct device *_dev)
 -- 
 2.43.0
 
