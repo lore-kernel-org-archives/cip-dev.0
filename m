@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3FA4CCF9F8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC6C2CCFA18
 	for <webhook@archiver.kernel.org>; Thu,  6 Nov 2025 10:37:56 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.11656.1762425464098919191
  for <cip-dev@lists.cip-project.org>;
- Thu, 06 Nov 2025 02:37:50 -0800
+ Thu, 06 Nov 2025 02:37:47 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: RIJsPOHrQXuj4da7VLiqGQ==
-X-CSE-MsgGUID: tSEZyqpWQw2TR7vIS2zE+A==
+X-CSE-ConnectionGUID: rT8W3M98RR62ZEiXzE7VCA==
+X-CSE-MsgGUID: /GJXPS8GS0qO/TsemJT/sQ==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 06 Nov 2025 19:37:50 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 06 Nov 2025 19:37:46 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.93.83])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3CB6C4003FD6;
-	Thu,  6 Nov 2025 19:37:48 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id A4C6E4003FD6;
+	Thu,  6 Nov 2025 19:37:45 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@denx.de,
 	nobuhiro1.iwamatsu@toshiba.co.jp
-Subject: [PATCH 6.1.y-cip 5/9] dt-bindings: net: dwmac: Increase 'maxItems' for 'interrupts' and 'interrupt-names'
-Date: Thu,  6 Nov 2025 10:37:34 +0000
-Message-ID: <20251106103738.28911-6-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 3/9] clk: renesas: r9a09g057: Add clock and reset entries for GBETH0/1
+Date: Thu,  6 Nov 2025 10:37:32 +0000
+Message-ID: <20251106103738.28911-4-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251106103738.28911-1-ovidiu.panait.rb@renesas.com>
 References: <20251106103738.28911-1-ovidiu.panait.rb@renesas.com>
@@ -33,68 +33,150 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 10:37:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20445
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20443
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 8c989368c04c17a6ed834ae528458844f553bead upstream.
+commit 598b2a06702c12916d97640dbfb09bfdbf002c5c upstream.
 
-Increase the `maxItems` value for the `interrupts` and `interrupt-names`
-properties to 11 to support additional per-channel Tx/Rx completion
-interrupts on the Renesas RZ/V2H(P) SoC, which features the
-`snps,dwmac-5.20` IP.
-
-Refactor the `interrupt-names` property by replacing repeated `enum`
-entries with a `oneOf` list. Add support for per-channel receive and
-transmit completion interrupts using regex patterns.
+Add clock and reset entries for GBETH instances. Include core clocks for
+PTP, sourced from PLLETH, and add PLLs, dividers, and static mux clocks
+used as clock sources for the GBETH IP.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Link: https://patch.msgid.link/20250417084015.74154-2-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-[OP: small contextual adjustment due to missing sfty irq in v6.1.y-cip]
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/20250509160121.331073-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[OP: omitted rzv2h-cpg.h changes, as they are already present in v6.1.y-cip]
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- .../devicetree/bindings/net/snps,dwmac.yaml   | 22 +++++++++++++------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+ drivers/clk/renesas/r9a09g057-cpg.c | 64 +++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-index 68d051e148c2..7cb2235c032f 100644
---- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-+++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-@@ -97,17 +97,25 @@ properties:
+diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
+index 3c40e36259fe..da908e820950 100644
+--- a/drivers/clk/renesas/r9a09g057-cpg.c
++++ b/drivers/clk/renesas/r9a09g057-cpg.c
+@@ -29,6 +29,7 @@ enum clk_ids {
+ 	CLK_PLLDTY,
+ 	CLK_PLLCA55,
+ 	CLK_PLLVDO,
++	CLK_PLLETH,
+ 	CLK_PLLGPU,
  
-   interrupts:
-     minItems: 1
--    items:
--      - description: Combined signal for various interrupt events
--      - description: The interrupt to manage the remote wake-up packet detection
--      - description: The interrupt that occurs when Rx exits the LPI state
-+    maxItems: 11
+ 	/* Internal Core Clocks */
+@@ -49,6 +50,14 @@ enum clk_ids {
+ 	CLK_PLLVDO_CRU1,
+ 	CLK_PLLVDO_CRU2,
+ 	CLK_PLLVDO_CRU3,
++	CLK_PLLETH_DIV_250_FIX,
++	CLK_PLLETH_DIV_125_FIX,
++	CLK_CSDIV_PLLETH_GBE0,
++	CLK_CSDIV_PLLETH_GBE1,
++	CLK_SMUX2_GBE0_TXCLK,
++	CLK_SMUX2_GBE0_RXCLK,
++	CLK_SMUX2_GBE1_TXCLK,
++	CLK_SMUX2_GBE1_RXCLK,
+ 	CLK_PLLGPU_GEAR,
  
-   interrupt-names:
-     minItems: 1
-+    maxItems: 11
-     items:
--      - const: macirq
--      - const: eth_wake_irq
--      - const: eth_lpi
-+      oneOf:
-+        - description: Combined signal for various interrupt events
-+          const: macirq
-+        - description: The interrupt to manage the remote wake-up packet detection
-+          const: eth_wake_irq
-+        - description: The interrupt that occurs when Rx exits the LPI state
-+          const: eth_lpi
-+        - description: The interrupt that occurs when HW safety error triggered
-+          const: sfty
-+        - description: Per channel receive completion interrupt
-+          pattern: '^rx-queue-[0-3]$'
-+        - description: Per channel transmit completion interrupt
-+          pattern: '^tx-queue-[0-3]$'
+ 	/* Module Clocks */
+@@ -78,6 +87,19 @@ static const struct clk_div_table dtable_2_64[] = {
+ 	{0, 0},
+ };
  
-   clocks:
-     minItems: 1
++static const struct clk_div_table dtable_2_100[] = {
++	{0, 2},
++	{1, 10},
++	{2, 100},
++	{0, 0},
++};
++
++/* Mux clock tables */
++static const char * const smux2_gbe0_rxclk[] = { ".plleth_gbe0", "et0_rxclk" };
++static const char * const smux2_gbe0_txclk[] = { ".plleth_gbe0", "et0_txclk" };
++static const char * const smux2_gbe1_rxclk[] = { ".plleth_gbe1", "et1_rxclk" };
++static const char * const smux2_gbe1_txclk[] = { ".plleth_gbe1", "et1_txclk" };
++
+ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
+ 	/* External Clock Inputs */
+ 	DEF_INPUT("audio_extal", CLK_AUDIO_EXTAL),
+@@ -90,6 +112,7 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
+ 	DEF_FIXED(".plldty", CLK_PLLDTY, CLK_QEXTAL, 200, 3),
+ 	DEF_PLL(".pllca55", CLK_PLLCA55, CLK_QEXTAL, PLLCA55),
+ 	DEF_FIXED(".pllvdo", CLK_PLLVDO, CLK_QEXTAL, 105, 2),
++	DEF_FIXED(".plleth", CLK_PLLETH, CLK_QEXTAL, 125, 3),
+ 	DEF_PLL(".pllgpu", CLK_PLLGPU, CLK_QEXTAL, PLLGPU),
+ 
+ 	/* Internal Core Clocks */
+@@ -115,6 +138,17 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
+ 	DEF_DDIV(".pllvdo_cru2", CLK_PLLVDO_CRU2, CLK_PLLVDO, CDDIV4_DIVCTL1, dtable_2_4),
+ 	DEF_DDIV(".pllvdo_cru3", CLK_PLLVDO_CRU3, CLK_PLLVDO, CDDIV4_DIVCTL2, dtable_2_4),
+ 
++	DEF_FIXED(".plleth_250_fix", CLK_PLLETH_DIV_250_FIX, CLK_PLLETH, 1, 4),
++	DEF_FIXED(".plleth_125_fix", CLK_PLLETH_DIV_125_FIX, CLK_PLLETH_DIV_250_FIX, 1, 2),
++	DEF_CSDIV(".plleth_gbe0", CLK_CSDIV_PLLETH_GBE0,
++		  CLK_PLLETH_DIV_250_FIX, CSDIV0_DIVCTL0, dtable_2_100),
++	DEF_CSDIV(".plleth_gbe1", CLK_CSDIV_PLLETH_GBE1,
++		  CLK_PLLETH_DIV_250_FIX, CSDIV0_DIVCTL1, dtable_2_100),
++	DEF_SMUX(".smux2_gbe0_txclk", CLK_SMUX2_GBE0_TXCLK, SSEL0_SELCTL2, smux2_gbe0_txclk),
++	DEF_SMUX(".smux2_gbe0_rxclk", CLK_SMUX2_GBE0_RXCLK, SSEL0_SELCTL3, smux2_gbe0_rxclk),
++	DEF_SMUX(".smux2_gbe1_txclk", CLK_SMUX2_GBE1_TXCLK, SSEL1_SELCTL0, smux2_gbe1_txclk),
++	DEF_SMUX(".smux2_gbe1_rxclk", CLK_SMUX2_GBE1_RXCLK, SSEL1_SELCTL1, smux2_gbe1_rxclk),
++
+ 	DEF_DDIV(".pllgpu_gear", CLK_PLLGPU_GEAR, CLK_PLLGPU, CDDIV3_DIVCTL1, dtable_2_64),
+ 
+ 	/* Core Clocks */
+@@ -130,6 +164,10 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
+ 	DEF_FIXED("iotop_0_shclk", R9A09G057_IOTOP_0_SHCLK, CLK_PLLCM33_DIV16, 1, 1),
+ 	DEF_FIXED("usb2_0_clk_core0", R9A09G057_USB2_0_CLK_CORE0, CLK_QEXTAL, 1, 1),
+ 	DEF_FIXED("usb2_0_clk_core1", R9A09G057_USB2_0_CLK_CORE1, CLK_QEXTAL, 1, 1),
++	DEF_FIXED("gbeth_0_clk_ptp_ref_i", R9A09G057_GBETH_0_CLK_PTP_REF_I,
++		  CLK_PLLETH_DIV_125_FIX, 1, 1),
++	DEF_FIXED("gbeth_1_clk_ptp_ref_i", R9A09G057_GBETH_1_CLK_PTP_REF_I,
++		  CLK_PLLETH_DIV_125_FIX, 1, 1),
+ };
+ 
+ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
+@@ -233,6 +271,30 @@ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
+ 						BUS_MSTOP(7, BIT(10))),
+ 	DEF_MOD("usb2_0_pclk_usbtst1",		CLK_PLLDTY_ACPU_DIV4, 11, 7, 5, 23,
+ 						BUS_MSTOP(7, BIT(11))),
++	DEF_MOD_MUX_EXTERNAL("gbeth_0_clk_tx_i", CLK_SMUX2_GBE0_TXCLK, 11, 8, 5, 24,
++						BUS_MSTOP(8, BIT(5)), 1),
++	DEF_MOD_MUX_EXTERNAL("gbeth_0_clk_rx_i", CLK_SMUX2_GBE0_RXCLK, 11, 9, 5, 25,
++						BUS_MSTOP(8, BIT(5)), 1),
++	DEF_MOD_MUX_EXTERNAL("gbeth_0_clk_tx_180_i", CLK_SMUX2_GBE0_TXCLK, 11, 10, 5, 26,
++						BUS_MSTOP(8, BIT(5)), 1),
++	DEF_MOD_MUX_EXTERNAL("gbeth_0_clk_rx_180_i", CLK_SMUX2_GBE0_RXCLK, 11, 11, 5, 27,
++						BUS_MSTOP(8, BIT(5)), 1),
++	DEF_MOD("gbeth_0_aclk_csr_i",		CLK_PLLDTY_DIV8, 11, 12, 5, 28,
++						BUS_MSTOP(8, BIT(5))),
++	DEF_MOD("gbeth_0_aclk_i",		CLK_PLLDTY_DIV8, 11, 13, 5, 29,
++						BUS_MSTOP(8, BIT(5))),
++	DEF_MOD_MUX_EXTERNAL("gbeth_1_clk_tx_i", CLK_SMUX2_GBE1_TXCLK, 11, 14, 5, 30,
++						BUS_MSTOP(8, BIT(6)), 1),
++	DEF_MOD_MUX_EXTERNAL("gbeth_1_clk_rx_i", CLK_SMUX2_GBE1_RXCLK, 11, 15, 5, 31,
++						BUS_MSTOP(8, BIT(6)), 1),
++	DEF_MOD_MUX_EXTERNAL("gbeth_1_clk_tx_180_i", CLK_SMUX2_GBE1_TXCLK, 12, 0, 6, 0,
++						BUS_MSTOP(8, BIT(6)), 1),
++	DEF_MOD_MUX_EXTERNAL("gbeth_1_clk_rx_180_i", CLK_SMUX2_GBE1_RXCLK, 12, 1, 6, 1,
++						BUS_MSTOP(8, BIT(6)), 1),
++	DEF_MOD("gbeth_1_aclk_csr_i",		CLK_PLLDTY_DIV8, 12, 2, 6, 2,
++						BUS_MSTOP(8, BIT(6))),
++	DEF_MOD("gbeth_1_aclk_i",		CLK_PLLDTY_DIV8, 12, 3, 6, 3,
++						BUS_MSTOP(8, BIT(6))),
+ 	DEF_MOD("cru_0_aclk",			CLK_PLLDTY_ACPU_DIV2, 13, 2, 6, 18,
+ 						BUS_MSTOP(9, BIT(4))),
+ 	DEF_MOD_NO_PM("cru_0_vclk",		CLK_PLLVDO_CRU0, 13, 3, 6, 19,
+@@ -304,6 +366,8 @@ static const struct rzv2h_reset r9a09g057_resets[] __initconst = {
+ 	DEF_RST(10, 13, 4, 30),		/* USB2_0_U2H1_HRESETN */
+ 	DEF_RST(10, 14, 4, 31),		/* USB2_0_U2P_EXL_SYSRST */
+ 	DEF_RST(10, 15, 5, 0),		/* USB2_0_PRESETN */
++	DEF_RST(11, 0, 5, 1),		/* GBETH_0_ARESETN_I */
++	DEF_RST(11, 1, 5, 2),		/* GBETH_1_ARESETN_I */
+ 	DEF_RST(12, 5, 5, 22),		/* CRU_0_PRESETN */
+ 	DEF_RST(12, 6, 5, 23),		/* CRU_0_ARESETN */
+ 	DEF_RST(12, 7, 5, 24),		/* CRU_0_S_RESETN */
 -- 
 2.51.0
 
