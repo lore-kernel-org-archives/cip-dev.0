@@ -1,125 +1,72 @@
-Return-Path: <claudiu.beznea@tuxon.dev>
+Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87084CCFA1B
-	for <webhook@archiver.kernel.org>; Thu,  6 Nov 2025 08:12:55 +0000 (UTC)
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.10112.1762416766877701473
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1EC8CCFA05
+	for <webhook@archiver.kernel.org>; Thu,  6 Nov 2025 10:37:46 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.11656.1762425464098919191
  for <cip-dev@lists.cip-project.org>;
- Thu, 06 Nov 2025 00:12:47 -0800
+ Thu, 06 Nov 2025 02:37:44 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=bwa671Jf;
- spf=pass (domain: tuxon.dev, ip: 209.85.221.46, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-429bf011e6cso633524f8f.1
-        for <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 00:12:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1762416765; x=1763021565; darn=lists.cip-project.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6pvJbytWTzeQQgTeew+XJ2afs5Lm454b8s0jaDQoDtQ=;
-        b=bwa671JfsS6lKC0wd7Eil+rSruK+7U21bzhy+AOocZQg/fc9V0cdLWbceLRVGoVlWM
-         3cZoGvsH/9+YPk5Aorn/IFk0PH/jl3sgQcubXRGa50S9oc37iISP80NQS/fmZYv6qY4l
-         KlPAFNWfN0d4mzSKGoheTqeS06q6u0Rg4nFzvHgdzB2e3azxTyVWolumtDJzf+XPkxUu
-         31McrX2uQl7SfzmRmqsJijLXps1O18R/ABsbSIuTX36HJZ8Q/LyY1ZL2gxmqziLIZ5pu
-         oOcBtJ1uUtOkc3xnL9FiZk/eaS+URemF9WqvaQmBIC0bRPZ+lbH/sTc8FY1YGi9xPYUv
-         Wmkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762416765; x=1763021565;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6pvJbytWTzeQQgTeew+XJ2afs5Lm454b8s0jaDQoDtQ=;
-        b=kQ9qwRl9FZ/TxVWjZroBv9dXVSRTJ55ALvtHyelpSrrplHt8gJL98N3hWdcdgc/NCA
-         SY7Aq9fE5UA/KwIVEcTYfLY5gh/D3sMYJtlQncq5lmIxKfsvQlu1u94qxs+Q6yLMwuXL
-         3L1UsTdUTEADpv8/rycqH4aGthxqQhK+NrZQQoiHm9vmdJGwZgurBTjiYjmKAX/byEQc
-         Q/kU/MTmsjLv5uLjGXuylloboS984Ayuyg3riIVdbaEoixAYoGASnPAKt27Z/XUBTy4c
-         r5Vt8URgxn70xEpu5YRlakgVITOKwnQaczYQ9FnOFBDMaGuUEnKjv/0uiL9/GTo6L8ka
-         xNMA==
-X-Forwarded-Encrypted: i=1; AJvYcCWUgObgT+FiFPH4cGu7uHTDfelFEm014G+F+lGBRd9iQCNwclwcn/iWsS4SHcqI5YDzbGwChMgD@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yyf9AfrcGR65IHToYfk3s0DRpGAb6b77LqVwfILWAE8SMhK37Hx
-	Q7ZbHUeMJ7UaB8jkUSOHi5N6H+QZY5zxLEQ6+q5F4XrxTWUVsxgHy9wUvQi6sQJOml67tRBBzgu
-	XhVH7BLk=
-X-Gm-Gg: ASbGnct6LOpOQJRApWi10kLxez+lbpRXPfTiZZY49hyYrZu6frq/HNbaj2Dgae3Akr5
-	F3VfL96blTKu8wOft20bRBIikRvb9POEpSganKNO9UoNYKje1wvmuNF5drY8gNrIwD6zdiNLpHS
-	gH7kmfYsHU0k1VHpPBenurLrqBcctKSTnua0urCRAc7ctc5hG/lggtK8r9F/gFawfK/Rdel2Ujy
-	08Pn7C07Sq1fK6t92aGKsL+J0/3Yakmait+YsQik/yrdRSledHuUi6EALRFWGoemQRQ/iMfSNfh
-	+jLKy9+Cp/Qi2rTlduRl2fB8q3RTcChcc929H9+Pw20bWQBlUyE2dHVWX93XPaho7B17uO3nCi+
-	H8Shqt11EmD1zv6xN/xSyW5aG6Eh2nAK3VBjIQgBSEsDZR6f8hZOqIVAHISJPmcUhok4srtyhq6
-	cCgUywQdNLNJLcdWd8E99Y3HeQYqPUX5KyFzKuLsIh
-X-Google-Smtp-Source: AGHT+IFf0x37ugFw79ts0zsMyPnvHj902HeHBE5i7GybkHl1c6/JQnzbnPnyL1fyeVBYul20redRaQ==
-X-Received: by 2002:a05:6000:1acb:b0:429:d6fa:da20 with SMTP id ffacd0b85a97d-429e32e48famr5237211f8f.25.1762416765227;
-        Thu, 06 Nov 2025 00:12:45 -0800 (PST)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eceaed27sm2486647f8f.27.2025.11.06.00.12.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 00:12:44 -0800 (PST)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: nobuhiro1.iwamatsu@toshiba.co.jp,
-	pavel@denx.de
-Cc: claudiu.beznea@tuxon.dev,
-	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 18/22] clk: renesas: r9a08g045: Add MSTOP for coupled clocks as well
-Date: Thu,  6 Nov 2025 10:12:14 +0200
-Message-ID: <20251106081218.2574950-19-claudiu.beznea.uj@bp.renesas.com>
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: VBUU35XQSPGL4iU4RHORng==
+X-CSE-MsgGUID: 5Bq2SqucQ1iycDbcSI6B+Q==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 06 Nov 2025 19:37:43 +0900
+Received: from vm01.adwin.renesas.com (unknown [10.226.93.83])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 226834007F25;
+	Thu,  6 Nov 2025 19:37:41 +0900 (JST)
+From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+To: cip-dev@lists.cip-project.org,
+	pavel@denx.de,
+	nobuhiro1.iwamatsu@toshiba.co.jp
+Subject: [PATCH 6.1.y-cip 1/9] dt-bindings: clock: renesas,r9a09g057-cpg: Add USB2 PHY and GBETH PTP core clocks
+Date: Thu,  6 Nov 2025 10:37:30 +0000
+Message-ID: <20251106103738.28911-2-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251106081218.2574950-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20251106081218.2574950-1-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20251106103738.28911-1-ovidiu.panait.rb@renesas.com>
+References: <20251106103738.28911-1-ovidiu.panait.rb@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 08:12:55 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20435
+ <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 10:37:46 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20441
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 0ab2d84f94dae48c3e7605cdc99dbb4e7c7b206a upstream.
+commit ad227dab306543208a0658357a82712e678a06f4 upstream.
 
-If MSTOP is not added for both clocks in a coupled pair, and the clocks
-are not disabled in the reverse order of their enable sequence, the MSTOP
-may remain enabled when disabling the clocks.
+Add definitions for USB2 PHY core clocks and Gigabit Ethernet PTP
+reference core clocks in the R9A09G057 CPG DT bindings header file.
 
-This happens because rzg2l_mod_clock_endisable() executes for coupled
-clocks only when a single clock from the pair is enabled. If one clock has
-no MSTOP defined, it can result in the MSTOP configuration being left
-active when the clocks are disabled out of order (i.e., not in the reverse
-order of enabling).
-
-Fixes: c49695952746 ("clk: renesas: r9a08g045: Drop power domain instantiation")
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250704134328.3614317-2-claudiu.beznea.uj@bp.renesas.com
+Link: https://lore.kernel.org/20250407165202.197570-8-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- drivers/clk/renesas/r9a08g045-cpg.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ include/dt-bindings/clock/renesas,r9a09g057-cpg.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
-index f5f0ddca4b8b..6d7295c36d5a 100644
---- a/drivers/clk/renesas/r9a08g045-cpg.c
-+++ b/drivers/clk/renesas/r9a08g045-cpg.c
-@@ -246,11 +246,13 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
- 					MSTOP(BUS_MCPU1, BIT(13))),
- 	DEF_COUPLED("eth0_axi",		R9A08G045_ETH0_CLK_AXI, R9A08G045_CLK_M0, 0x57c, 0,
- 					MSTOP(BUS_PERI_COM, BIT(2))),
--	DEF_COUPLED("eth0_chi",		R9A08G045_ETH0_CLK_CHI, R9A08G045_CLK_ZT, 0x57c, 0, 0),
-+	DEF_COUPLED("eth0_chi",		R9A08G045_ETH0_CLK_CHI, R9A08G045_CLK_ZT, 0x57c, 0,
-+					MSTOP(BUS_PERI_COM, BIT(2))),
- 	DEF_MOD("eth0_refclk",		R9A08G045_ETH0_REFCLK, R9A08G045_CLK_HP, 0x57c, 8, 0),
- 	DEF_COUPLED("eth1_axi",		R9A08G045_ETH1_CLK_AXI, R9A08G045_CLK_M0, 0x57c, 1,
- 					MSTOP(BUS_PERI_COM, BIT(3))),
--	DEF_COUPLED("eth1_chi",		R9A08G045_ETH1_CLK_CHI, R9A08G045_CLK_ZT, 0x57c, 1, 0),
-+	DEF_COUPLED("eth1_chi",		R9A08G045_ETH1_CLK_CHI, R9A08G045_CLK_ZT, 0x57c, 1,
-+					MSTOP(BUS_PERI_COM, BIT(3))),
- 	DEF_MOD("eth1_refclk",		R9A08G045_ETH1_REFCLK, R9A08G045_CLK_HP, 0x57c, 9, 0),
- 	DEF_MOD("i2c0_pclk",		R9A08G045_I2C0_PCLK, R9A08G045_CLK_P0, 0x580, 0,
- 					MSTOP(BUS_MCPU2, BIT(10))),
+diff --git a/include/dt-bindings/clock/renesas,r9a09g057-cpg.h b/include/dt-bindings/clock/renesas,r9a09g057-cpg.h
+index 541e6d719bd6..884dbeb1e139 100644
+--- a/include/dt-bindings/clock/renesas,r9a09g057-cpg.h
++++ b/include/dt-bindings/clock/renesas,r9a09g057-cpg.h
+@@ -17,5 +17,9 @@
+ #define R9A09G057_CM33_CLK0			6
+ #define R9A09G057_CST_0_SWCLKTCK		7
+ #define R9A09G057_IOTOP_0_SHCLK			8
++#define R9A09G057_USB2_0_CLK_CORE0		9
++#define R9A09G057_USB2_0_CLK_CORE1		10
++#define R9A09G057_GBETH_0_CLK_PTP_REF_I		11
++#define R9A09G057_GBETH_1_CLK_PTP_REF_I		12
+ 
+ #endif /* __DT_BINDINGS_CLOCK_RENESAS_R9A09G057_CPG_H__ */
 -- 
-2.43.0
+2.51.0
 
 
