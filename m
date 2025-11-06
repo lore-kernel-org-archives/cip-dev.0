@@ -2,68 +2,67 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A19CCFA19
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 399DDCCF9F8
 	for <webhook@archiver.kernel.org>; Thu,  6 Nov 2025 08:12:45 +0000 (UTC)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.10065.1762416755763510632
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.10107.1762416758774844521
  for <cip-dev@lists.cip-project.org>;
- Thu, 06 Nov 2025 00:12:36 -0800
+ Thu, 06 Nov 2025 00:12:39 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=SoQ4amkO;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.53, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-47721743fd0so2674605e9.2
-        for <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 00:12:35 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=fWM4DCFd;
+ spf=pass (domain: tuxon.dev, ip: 209.85.221.51, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-426f1574a14so359488f8f.3
+        for <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 00:12:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1762416754; x=1763021554; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1762416757; x=1763021557; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=isD06OhGbZfVwb3s9/n0YrhqLWxMvwlqAr7xafmkFd8=;
-        b=SoQ4amkO+O8bMHy2O2GY9XFgvAdmRyHqy3Vc6zqBQVz4OjLN73acTTropz74IhtyAr
-         uSW6De5ZVg0dN56t+cvkXhXazn+Z5xb/loHnKw5aDmUzHvPf2H+0nhPtUPVUweCy4p9V
-         2O+QjSb8SSYxS41aAaC6ZVHobywbRttQ637OTtGkVYWRP3+s/S6zsg172aiLq587B43r
-         OwWglmDIRAWv0g4Q0OVvLO3QZ6dEtuEp7QvF4DlKngpvynZYHv2oOI+Ldlw2Ye4fe62S
-         9HIri1Kx01CznW6GaMegtxSFxszUyHctlK9UHS+uzEHJdsuTUcjaaLZBlMOgz+zcvZom
-         rcog==
+        bh=BE3BqxYyAQENBEeB0eG2xk/SPw80peinml7of1+9xEA=;
+        b=fWM4DCFdB1cLFBEXFqVbPpIqep7wpU9vL9p0R3xGRaNV7Aem8h1i89Lz2dUqGeTi/K
+         Hc0j02zWUzuXpNC9/rHIIpWO0mi9pbueKwwNEFPggdCwsmOY44OA+K0++XoR1VaD+HDi
+         ba8GRxqdJpMJN5h27wVO6P7BFXEFuBM4bjOQkN70PHoXY1rKo5yvt5OhBABTpVcr9obO
+         4X+i6lhDOxqKZMW1q5/ORwbUVzJWC3glUNTBjj4e5brJKq7O5Vq1a6AIJvrPnHl4ShUZ
+         z4+nRqrfez+4amrfNr79Y2g7QQtwzjOqNhBWyrWuhenF9ZxvIAOWX2Ilh0b3O2PXP3uc
+         Zjlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762416754; x=1763021554;
+        d=1e100.net; s=20230601; t=1762416757; x=1763021557;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=isD06OhGbZfVwb3s9/n0YrhqLWxMvwlqAr7xafmkFd8=;
-        b=nNp3XGe/rZ1aZxcjDfo773gOq7hRtmgGcp7uE2WYhWru+6rRPL/xM1YlgG7gmm0waE
-         JwfyxLG6/fnfyFIIPo6Afs/myT8Tx1inF34xb3ibJ+E25mb6xd89khDWiIc2tKXyvWjA
-         zeFRU2o3hd/eziKpUQl7ulZO9OBp5bW7uCiFzgG0QOL8ljIVCIGJ1ZhuhT5HfaHSVZI7
-         XuuChhR6p0wg3uJea9b4U7cbzMfxdSUjFRo9e6NGgBKMvPCzIJIo/slLfqdgPa7oceOg
-         YBqe5YGqPQfz3srXVpdsEBko7eSrNZbIF5CLXXjK/wk6WChadZqCaZpiCK7zOaOZHGGX
-         IOzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkEi17zWwURkr3+huv+PFd5IyW3w4dFR+ReKJ6V+tkM5Ify57xQMHJI6pXPQhmA96t8t0gDRTK@lists.cip-project.org
-X-Gm-Message-State: AOJu0Yw60Lgdlq8N+e2W3S59wwNLeDdrr7k458nwJB1sL0zk1pEpM2Rs
-	TIUqRU5Z5kYWAKYanz5Y8IywqC/Po1kSUhXRMKwNesnSR5Oamngm9mCt9SkP6teEv2XisyT4hsL
-	rmZR1r+E=
-X-Gm-Gg: ASbGncvSgJpSdJx5IXtwL9Yh2E4ZzWfyP1165RNZCkgBy8VSxW8ZXLUuJWmt6lkoAlK
-	DPCTKeUwxSQPlN18K3OzjWuVI/doPp2U0Cy9HmRH8U5dBWp3rAgQitNijXTg63JDSrZupkNFb6B
-	yGpJmAk9TqGSu6hWaPILG3UgRY+0wdsgc/rwNViSRU3HcWAooGqD+A2z7I2vL1Dk0YQRqnlGZ3b
-	8/bt0fdM0usZ61C3COBDBjnfiMcVYX05JO0kJbXgxeQGksPvNBtQzNrsxGOeyGjLYzIz4HajP73
-	Z1QcmD0mKLEDUZseDFjr/3O+a/Rqb5SDBGwVo63m5pGeaBs0uehADauP2PEOLGISuCpTMwSCdDQ
-	43xjWS6PYVmycmFb+kRK4yXEjnnsMfPu+NCqs9UOt5ifa/uozfyM6cr/Yl+YD2ZYHu7GOwM+OLm
-	DphLzWAFgzV65Lmwzsc9eeE1dZgjFqt/zKSTnKpyQL
-X-Google-Smtp-Source: AGHT+IF4+wiqZXcudslpWOIB6jJrJD8ibRcveVKzgl0wsBf+/p0WtstMr4EUgcAV2iYiOBt46RxQEQ==
-X-Received: by 2002:a05:600c:1386:b0:477:fcb:226b with SMTP id 5b1f17b1804b1-4775cdbd53bmr50574245e9.2.1762416753953;
-        Thu, 06 Nov 2025 00:12:33 -0800 (PST)
+        bh=BE3BqxYyAQENBEeB0eG2xk/SPw80peinml7of1+9xEA=;
+        b=HgneNiyKKsY2vI7fxEIGxhD8GqTWXdNJ4S6qYgo9O2IRBh4e3bhWW2TI7mktuuouAL
+         o/stVcN5k4r8U2peyTEyRGl+MuuWZpSdNDa3Gz2PLxyg2XeJpndCcpz2PM/V6PgN2lDi
+         UKTZoehE662adauCx1i4NY9hxgnA+sCSC4UdJZPf1EKQm8Wc/WzuUR7vwMr3UnrDoNED
+         geIIT9bvnEKtXEt0xxzjdYTMi5VsGUwBQo6OwuSZwnIpFm3iNPX7LDbXXXUiAUjBhs32
+         9yY8KOX4VilDvDCAgmtETtdyeUyBIjocC+r+EBhKBG1UnaRdjvI5j1+jN84iY/LNe38b
+         lLow==
+X-Forwarded-Encrypted: i=1; AJvYcCX7PL1qJ1gb3lo+jjtf1KV/Os/E/gEH9IFMzon/oW6GXH9ABgGgiDlHCit0d3gU3D2jpUiVYg1x@lists.cip-project.org
+X-Gm-Message-State: AOJu0Yz8gfBwkB65OCXygfnV30eiFhloOgNUgtrv/ujlgBYMz/r4xF63
+	oMc2y4m8XbwKUECDIBB68h0MNJr3jg39OX2SNLmc3E1Fzg6VPgSs5WdHDk6M4yngalA=
+X-Gm-Gg: ASbGncu/CAtG0muXe0sx8JZ2hj3tUHvyNVuv9F6dXY0tMLa1mtUreQggyr9a3t+au4y
+	2czPQpGkuMJoWyQvhj1ldJLU6LLLp0Fi2gWHgQefvEKK9QG1L3tTUUFT/NDs/enWihAu9R0PsJZ
+	9UHPxqsDQrNMKmvu69L+FTSgkxJ6355s5GEPQxE1wulDLkj4tClE8t5bgWrXRwvuKHUVGo+Vdp5
+	gc1VNJ36fFqxlMZNqy4UjbRmIvQ12up3ZByfpgrffFqG+tlNm4y0pkZ+PIXMNqMoAhsb+c/FwHf
+	UxGZfHb6AE1kTZv4EpvLw5M1D4sREQHREsogwkjHGlab0g2ePo07uRudewfV2govgnqRcusJDB9
+	z2L7zeIl93PHGstK5HooMOSRsjYsHBuwt4yAzXnb6meQJZ3y1o5x9an/z+mXxAk+qJrjO9uphDb
+	XbQCEB/pFfcA5PPPk8JwGn15+Ye1wzSulsiQRqYROY
+X-Google-Smtp-Source: AGHT+IFZdPYquKJQvUp5klTHytXnx1OGaEFP7WMcPNSl+5DO7fa5aMvxis804xSF/AOqwXABsstQ6A==
+X-Received: by 2002:a05:6000:4285:b0:429:cda2:9ff5 with SMTP id ffacd0b85a97d-429e32e4494mr4489742f8f.21.1762416757115;
+        Thu, 06 Nov 2025 00:12:37 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eceaed27sm2486647f8f.27.2025.11.06.00.12.32
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eceaed27sm2486647f8f.27.2025.11.06.00.12.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 00:12:32 -0800 (PST)
+        Thu, 06 Nov 2025 00:12:36 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 10/22] serdev: Drop dev_pm_domain_detach() call
-Date: Thu,  6 Nov 2025 10:12:06 +0200
-Message-ID: <20251106081218.2574950-11-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 12/22] clk: renesas: rzg2l: Extend power domain support
+Date: Thu,  6 Nov 2025 10:12:08 +0200
+Message-ID: <20251106081218.2574950-13-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251106081218.2574950-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20251106081218.2574950-1-claudiu.beznea.uj@bp.renesas.com>
@@ -73,66 +72,71 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 08:12:45 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20427
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20429
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit e3fa89f3a768a9c61cf1bfe86b939ab5f36a9744 upstream.
+commit 0c8a59b3113ef6184d1e4cf2fb911c641d5172e3 upstream.
 
-Starting with commit f99508074e78 ("PM: domains: Detach on
-device_unbind_cleanup()"), there is no longer a need to call
-dev_pm_domain_detach() in the bus remove function. The
-device_unbind_cleanup() function now handles this to avoid
-invoking devres cleanup handlers while the PM domain is
-powered off, which could otherwise lead to failures as
-described in the above-mentioned commit.
+RZ/{G2L, V2L, G3S}-based CPG versions have support for saving extra
+power when clocks are disabled by activating module standby.  This is
+done through MSTOP-specific registers that are part of CPG.  Each
+individual module has one or more bits associated with one MSTOP
+register (see table "Registers for Module Standby Mode" from HW
+manuals).  Hardware manual associates modules' clocks with one or more
+MSTOP bits.  There are 3 mappings available (identified by researching
+RZ/G2L, RZ/G3S, RZ/V2L HW manuals):
 
-Drop the explicit dev_pm_domain_detach() call and rely instead
-on the flags passed to dev_pm_domain_attach() to power off the
-domain.
+case 1: N clocks mapped to N MSTOP bits (with N={0, ..., X})
+case 2: N clocks mapped to 1 MSTOP bit  (with N={0, ..., X})
+case 3: N clocks mapped to M MSTOP bits (with N={0, ..., X}, M={0, ..., Y})
+
+Case 3 has been currently identified on RZ/V2L for the VCPL4 module.
+
+To cover all three cases, the individual platform drivers will provide
+the clock driver with MSTOP register offsets and associated bits in this
+register as a bitmask, and the clock driver will apply this bitmask to
+the proper MSTOP register.
+
+The MSTOP support was implemented through power domains.
+Platform-specific clock drivers will register an array of type struct
+rzg2l_cpg_pm_domain_init_data, which will be used to instantiate
+properly the power domains.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Link: https://lore.kernel.org/r/20250827101747.928265-1-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[claudiu.beznea:
- - fixed conflict by keeping v5.10 CIP code
- - drop dev_pm_domain_detach() conditionally]
+Link: https://lore.kernel.org/r/20240422105355.1622177-7-claudiu.beznea.uj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[claudiu.beznea: kept only the register defines from rzg2l-cpg.h]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/tty/serdev/core.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/clk/renesas/rzg2l-cpg.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
-index bf35e03c06cd..5ee0e60b39cc 100644
---- a/drivers/tty/serdev/core.c
-+++ b/drivers/tty/serdev/core.c
-@@ -410,12 +410,13 @@ static int serdev_drv_probe(struct device *dev)
- 	const struct serdev_device_driver *sdrv = to_serdev_device_driver(dev->driver);
- 	int ret;
+diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
+index d9be4317e587..29d53ed70eed 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.h
++++ b/drivers/clk/renesas/rzg2l-cpg.h
+@@ -28,6 +28,18 @@
+ #define CPG_PL6_ETH_SSEL	(0x418)
+ #define CPG_PL5_SDIV		(0x420)
+ #define CPG_RST_MON		(0x680)
++#define CPG_BUS_ACPU_MSTOP	(0xB60)
++#define CPG_BUS_MCPU1_MSTOP	(0xB64)
++#define CPG_BUS_MCPU2_MSTOP	(0xB68)
++#define CPG_BUS_PERI_COM_MSTOP	(0xB6C)
++#define CPG_BUS_PERI_CPU_MSTOP	(0xB70)
++#define CPG_BUS_PERI_DDR_MSTOP	(0xB74)
++#define CPG_BUS_REG0_MSTOP	(0xB7C)
++#define CPG_BUS_REG1_MSTOP	(0xB80)
++#define CPG_BUS_TZCDDR_MSTOP	(0xB84)
++#define CPG_MHU_MSTOP		(0xB88)
++#define CPG_BUS_MCPU3_MSTOP	(0xB90)
++#define CPG_BUS_PERI_CPU2_MSTOP	(0xB94)
+ #define CPG_OTHERFUNC1_REG	(0xBE8)
  
--	ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON);
-+	ret = dev_pm_domain_attach(dev, PD_FLAG_ATTACH_POWER_ON |
-+					PD_FLAG_DETACH_POWER_OFF);
- 	if (ret)
- 		return ret;
- 
- 	ret = sdrv->probe(to_serdev_device(dev));
--	if (ret)
-+	if (ret && !dev_pm_domain_allow_detach_on_unbind_cleanup())
- 		dev_pm_domain_detach(dev, true);
- 
- 	return ret;
-@@ -427,7 +428,8 @@ static int serdev_drv_remove(struct device *dev)
- 	if (sdrv->remove)
- 		sdrv->remove(to_serdev_device(dev));
- 
--	dev_pm_domain_detach(dev, true);
-+	if (!dev_pm_domain_allow_detach_on_unbind_cleanup())
-+		dev_pm_domain_detach(dev, true);
- 
- 	return 0;
- }
+ #define CPG_SIPLL5_STBY_RESETB		BIT(0)
 -- 
 2.43.0
 
