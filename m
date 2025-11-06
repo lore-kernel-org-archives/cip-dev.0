@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6467CCFA1B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF346CCFA1D
 	for <webhook@archiver.kernel.org>; Thu,  6 Nov 2025 10:37:56 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.11655.1762425463946013726
  for <cip-dev@lists.cip-project.org>;
- Thu, 06 Nov 2025 02:37:54 -0800
+ Thu, 06 Nov 2025 02:37:49 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: TmjoV4iaTZSWK5k1WTLoVg==
-X-CSE-MsgGUID: 28Fibvb0T6+dHm/k9+LuVQ==
+X-CSE-ConnectionGUID: WtgTK9x/SbG0eoHYq1z0KA==
+X-CSE-MsgGUID: oZuwGq3DRY+HFQ5KdkN6tQ==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Nov 2025 19:37:53 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 06 Nov 2025 19:37:48 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.93.83])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id C94B44003FD6;
-	Thu,  6 Nov 2025 19:37:52 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7555E4007F25;
+	Thu,  6 Nov 2025 19:37:47 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@denx.de,
 	nobuhiro1.iwamatsu@toshiba.co.jp
-Subject: [PATCH 6.1.y-cip 7/9] arm64: dts: renesas: r9a09g057: Add GBETH nodes
-Date: Thu,  6 Nov 2025 10:37:36 +0000
-Message-ID: <20251106103738.28911-8-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 4/9] dt-bindings: net: Define interrupt constraints for DWMAC vendor bindings
+Date: Thu,  6 Nov 2025 10:37:33 +0000
+Message-ID: <20251106103738.28911-5-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251106103738.28911-1-ovidiu.panait.rb@renesas.com>
 References: <20251106103738.28911-1-ovidiu.panait.rb@renesas.com>
@@ -33,245 +33,164 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 10:37:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20447
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20444
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 050ee38d00025771d22348bbf1e9922f8fe8d502 upstream.
+commit 5a1dddd2944492edb1e61c5db1cc386e5419fcf4 upstream.
 
-Renesas RZ/V2H(P) SoC is equipped with 2x Synopsys DesignWare Ethernet
-Quality-of-Service IP block version 5.20. Add GBETH nodes to R9A09G057
-RZ/V2H(P) SoC DTSI.
+The `snps,dwmac.yaml` binding currently sets `maxItems: 3` for the
+`interrupts` and `interrupt-names` properties, but vendor bindings
+selecting `snps,dwmac.yaml` do not impose these limits.
+
+Define constraints for `interrupts` and `interrupt-names` properties in
+various DWMAC vendor bindings to ensure proper validation and consistency.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250513131412.253091-2-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Acked-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Link: https://patch.msgid.link/20250309003301.1152228-1-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 209 +++++++++++++++++++++
- 1 file changed, 209 insertions(+)
+ .../devicetree/bindings/net/amlogic,meson-dwmac.yaml   |  6 ++++++
+ .../devicetree/bindings/net/intel,dwmac-plat.yaml      |  6 ++++++
+ .../devicetree/bindings/net/mediatek-dwmac.yaml        |  6 ++++++
+ .../devicetree/bindings/net/nxp,dwmac-imx.yaml         |  8 ++++++++
+ .../devicetree/bindings/net/rockchip-dwmac.yaml        | 10 ++++++++++
+ Documentation/devicetree/bindings/net/stm32-dwmac.yaml | 10 ++++++++++
+ .../bindings/net/toshiba,visconti-dwmac.yaml           |  6 ++++++
+ 7 files changed, 52 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-index bdaab9ae10b8..2e2d8ed42e6d 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-@@ -650,6 +650,215 @@ sdhi2_vqmmc: vqmmc-regulator {
- 				status = "disabled";
- 			};
- 		};
-+
-+		eth0: ethernet@15c30000 {
-+			compatible = "renesas,r9a09g057-gbeth", "renesas,rzv2h-gbeth",
-+				     "snps,dwmac-5.20";
-+			reg = <0 0x15c30000 0 0x10000>;
-+			interrupts = <GIC_SPI 765 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 767 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 766 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 772 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 773 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 774 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 775 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 768 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 769 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 770 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 771 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "macirq", "eth_wake_irq", "eth_lpi",
-+					  "rx-queue-0", "rx-queue-1", "rx-queue-2",
-+					  "rx-queue-3", "tx-queue-0", "tx-queue-1",
-+					  "tx-queue-2", "tx-queue-3";
-+			clocks =  <&cpg CPG_MOD 0xbd>, <&cpg CPG_MOD 0xbc>,
-+				  <&cpg CPG_CORE R9A09G057_GBETH_0_CLK_PTP_REF_I>,
-+				  <&cpg CPG_MOD 0xb8>, <&cpg CPG_MOD 0xb9>,
-+				  <&cpg CPG_MOD 0xba>, <&cpg CPG_MOD 0xbb>;
-+			clock-names = "stmmaceth", "pclk", "ptp_ref",
-+				      "tx", "rx", "tx-180", "rx-180";
-+			resets = <&cpg 0xb0>;
-+			power-domains = <&cpg>;
-+			snps,multicast-filter-bins = <256>;
-+			snps,perfect-filter-entries = <128>;
-+			rx-fifo-depth = <8192>;
-+			tx-fifo-depth = <8192>;
-+			snps,fixed-burst;
-+			snps,no-pbl-x8;
-+			snps,force_thresh_dma_mode;
-+			snps,axi-config = <&stmmac_axi_setup>;
-+			snps,mtl-rx-config = <&mtl_rx_setup0>;
-+			snps,mtl-tx-config = <&mtl_tx_setup0>;
-+			snps,txpbl = <32>;
-+			snps,rxpbl = <32>;
-+			status = "disabled";
-+
-+			mdio0: mdio {
-+				compatible = "snps,dwmac-mdio";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
-+
-+			mtl_rx_setup0: rx-queues-config {
-+				snps,rx-queues-to-use = <4>;
-+				snps,rx-sched-sp;
-+
-+				queue0 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x1>;
-+					snps,map-to-dma-channel = <0>;
-+				};
-+
-+				queue1 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x2>;
-+					snps,map-to-dma-channel = <1>;
-+				};
-+
-+				queue2 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x4>;
-+					snps,map-to-dma-channel = <2>;
-+				};
-+
-+				queue3 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x8>;
-+					snps,map-to-dma-channel = <3>;
-+				};
-+			};
-+
-+			mtl_tx_setup0: tx-queues-config {
-+				snps,tx-queues-to-use = <4>;
-+
-+				queue0 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x1>;
-+				};
-+
-+				queue1 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x2>;
-+				};
-+
-+				queue2 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x4>;
-+				};
-+
-+				queue3 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x8>;
-+				};
-+			};
-+		};
-+
-+		eth1: ethernet@15c40000 {
-+			compatible = "renesas,r9a09g057-gbeth", "renesas,rzv2h-gbeth",
-+				     "snps,dwmac-5.20";
-+			reg = <0 0x15c40000 0 0x10000>;
-+			interrupts = <GIC_SPI 780 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 782 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 781 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 787 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 788 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 789 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 790 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 783 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 784 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 785 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 786 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "macirq", "eth_wake_irq", "eth_lpi",
-+					  "rx-queue-0", "rx-queue-1", "rx-queue-2",
-+					  "rx-queue-3", "tx-queue-0", "tx-queue-1",
-+					  "tx-queue-2", "tx-queue-3";
-+			clocks =  <&cpg CPG_MOD 0xc3>, <&cpg CPG_MOD 0xc2>,
-+				  <&cpg CPG_CORE R9A09G057_GBETH_1_CLK_PTP_REF_I>,
-+				  <&cpg CPG_MOD 0xbe>, <&cpg CPG_MOD 0xbf>,
-+				  <&cpg CPG_MOD 0xc0>, <&cpg CPG_MOD 0xc1>;
-+			clock-names = "stmmaceth", "pclk", "ptp_ref",
-+				      "tx", "rx", "tx-180", "rx-180";
-+			resets = <&cpg 0xb1>;
-+			power-domains = <&cpg>;
-+			snps,multicast-filter-bins = <256>;
-+			snps,perfect-filter-entries = <128>;
-+			rx-fifo-depth = <8192>;
-+			tx-fifo-depth = <8192>;
-+			snps,fixed-burst;
-+			snps,no-pbl-x8;
-+			snps,force_thresh_dma_mode;
-+			snps,axi-config = <&stmmac_axi_setup>;
-+			snps,mtl-rx-config = <&mtl_rx_setup1>;
-+			snps,mtl-tx-config = <&mtl_tx_setup1>;
-+			snps,txpbl = <32>;
-+			snps,rxpbl = <32>;
-+			status = "disabled";
-+
-+			mdio1: mdio {
-+				compatible = "snps,dwmac-mdio";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
-+
-+			mtl_rx_setup1: rx-queues-config {
-+				snps,rx-queues-to-use = <4>;
-+				snps,rx-sched-sp;
-+
-+				queue0 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x1>;
-+					snps,map-to-dma-channel = <0>;
-+				};
-+
-+				queue1 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x2>;
-+					snps,map-to-dma-channel = <1>;
-+				};
-+
-+				queue2 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x4>;
-+					snps,map-to-dma-channel = <2>;
-+				};
-+
-+				queue3 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x8>;
-+					snps,map-to-dma-channel = <3>;
-+				};
-+			};
-+
-+			mtl_tx_setup1: tx-queues-config {
-+				snps,tx-queues-to-use = <4>;
-+
-+				queue0 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x1>;
-+				};
-+
-+				queue1 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x2>;
-+				};
-+
-+				queue2 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x4>;
-+				};
-+
-+				queue3 {
-+					snps,dcb-algorithm;
-+					snps,priority = <0x8>;
-+				};
-+			};
-+		};
-+	};
-+
-+	stmmac_axi_setup: stmmac-axi-config {
-+		snps,lpi_en;
-+		snps,wr_osr_lmt = <0xf>;
-+		snps,rd_osr_lmt = <0xf>;
-+		snps,blen = <16 8 4 0 0 0 0>;
- 	};
+diff --git a/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml b/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
+index ddd5a073c3a8..59ef200f3ced 100644
+--- a/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
++++ b/Documentation/devicetree/bindings/net/amlogic,meson-dwmac.yaml
+@@ -152,6 +152,12 @@ properties:
+           The second range is is for the Amlogic specific configuration
+           (for example the PRG_ETHERNET register range on Meson8b and newer)
  
- 	timer {
++  interrupts:
++    maxItems: 1
++
++  interrupt-names:
++    const: macirq
++
+ required:
+   - compatible
+   - reg
+diff --git a/Documentation/devicetree/bindings/net/intel,dwmac-plat.yaml b/Documentation/devicetree/bindings/net/intel,dwmac-plat.yaml
+index d23fa3771210..a1664ce17a01 100644
+--- a/Documentation/devicetree/bindings/net/intel,dwmac-plat.yaml
++++ b/Documentation/devicetree/bindings/net/intel,dwmac-plat.yaml
+@@ -41,6 +41,12 @@ properties:
+       - const: ptp_ref
+       - const: tx_clk
+ 
++  interrupts:
++    maxItems: 1
++
++  interrupt-names:
++    const: macirq
++
+ required:
+   - compatible
+   - clocks
+diff --git a/Documentation/devicetree/bindings/net/mediatek-dwmac.yaml b/Documentation/devicetree/bindings/net/mediatek-dwmac.yaml
+index 0fa2132fa4f4..e2867f1fa8c0 100644
+--- a/Documentation/devicetree/bindings/net/mediatek-dwmac.yaml
++++ b/Documentation/devicetree/bindings/net/mediatek-dwmac.yaml
+@@ -64,6 +64,12 @@ properties:
+       - const: rmii_internal
+       - const: mac_cg
+ 
++  interrupts:
++    maxItems: 1
++
++  interrupt-names:
++    const: macirq
++
+   power-domains:
+     maxItems: 1
+ 
+diff --git a/Documentation/devicetree/bindings/net/nxp,dwmac-imx.yaml b/Documentation/devicetree/bindings/net/nxp,dwmac-imx.yaml
+index 4c155441acbf..d95b07b7926b 100644
+--- a/Documentation/devicetree/bindings/net/nxp,dwmac-imx.yaml
++++ b/Documentation/devicetree/bindings/net/nxp,dwmac-imx.yaml
+@@ -52,6 +52,14 @@ properties:
+         - tx
+         - mem
+ 
++  interrupts:
++    maxItems: 2
++
++  interrupt-names:
++    items:
++      - const: macirq
++      - const: eth_wake_irq
++
+   intf_mode:
+     $ref: /schemas/types.yaml#/definitions/phandle-array
+     items:
+diff --git a/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml b/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
+index 42fb72b6909d..fca0211740f3 100644
+--- a/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
++++ b/Documentation/devicetree/bindings/net/rockchip-dwmac.yaml
+@@ -56,6 +56,16 @@ properties:
+               - rockchip,rk3588-gmac
+           - const: snps,dwmac-4.20a
+ 
++  interrupts:
++    minItems: 1
++    maxItems: 2
++
++  interrupt-names:
++    minItems: 1
++    items:
++      - const: macirq
++      - const: eth_wake_irq
++
+   clocks:
+     minItems: 5
+     maxItems: 8
+diff --git a/Documentation/devicetree/bindings/net/stm32-dwmac.yaml b/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
+index 5c93167b3b41..1a0894bdb7ac 100644
+--- a/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
++++ b/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
+@@ -50,6 +50,16 @@ properties:
+     items:
+       - const: stmmaceth
+ 
++  interrupts:
++    minItems: 1
++    maxItems: 2
++
++  interrupt-names:
++    minItems: 1
++    items:
++      - const: macirq
++      - const: eth_wake_irq
++
+   clocks:
+     minItems: 3
+     items:
+diff --git a/Documentation/devicetree/bindings/net/toshiba,visconti-dwmac.yaml b/Documentation/devicetree/bindings/net/toshiba,visconti-dwmac.yaml
+index 0988ed8d1c12..fba7d3a37807 100644
+--- a/Documentation/devicetree/bindings/net/toshiba,visconti-dwmac.yaml
++++ b/Documentation/devicetree/bindings/net/toshiba,visconti-dwmac.yaml
+@@ -42,6 +42,12 @@ properties:
+       - const: stmmaceth
+       - const: phy_ref_clk
+ 
++  interrupts:
++    maxItems: 1
++
++  interrupt-names:
++    const: macirq
++
+ required:
+   - compatible
+   - reg
 -- 
 2.51.0
 
