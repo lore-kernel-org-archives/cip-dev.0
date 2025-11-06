@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A47CCFA1A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3FA4CCF9F8
 	for <webhook@archiver.kernel.org>; Thu,  6 Nov 2025 10:37:56 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.11655.1762425463946013726
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.11656.1762425464098919191
  for <cip-dev@lists.cip-project.org>;
- Thu, 06 Nov 2025 02:37:52 -0800
+ Thu, 06 Nov 2025 02:37:50 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: TDfq86HDRu+Fivp3LpxdbA==
-X-CSE-MsgGUID: BckTUKDuTmefHz3yxOf/cQ==
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: RIJsPOHrQXuj4da7VLiqGQ==
+X-CSE-MsgGUID: tSEZyqpWQw2TR7vIS2zE+A==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Nov 2025 19:37:52 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 06 Nov 2025 19:37:50 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.93.83])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0D1944003FD6;
-	Thu,  6 Nov 2025 19:37:50 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3CB6C4003FD6;
+	Thu,  6 Nov 2025 19:37:48 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@denx.de,
 	nobuhiro1.iwamatsu@toshiba.co.jp
-Subject: [PATCH 6.1.y-cip 6/9] arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Replace RZG2L macros
-Date: Thu,  6 Nov 2025 10:37:35 +0000
-Message-ID: <20251106103738.28911-7-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 5/9] dt-bindings: net: dwmac: Increase 'maxItems' for 'interrupts' and 'interrupt-names'
+Date: Thu,  6 Nov 2025 10:37:34 +0000
+Message-ID: <20251106103738.28911-6-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251106103738.28911-1-ovidiu.panait.rb@renesas.com>
 References: <20251106103738.28911-1-ovidiu.panait.rb@renesas.com>
@@ -33,117 +33,68 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 10:37:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20446
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20445
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 6e526427fa78439cc8045068d78df1d8cd911213 upstream.
+commit 8c989368c04c17a6ed834ae528458844f553bead upstream.
 
-Replace RZG2L_* macros with RZV2H_* macros, so that we can define
-port names in alpha-numeric.
+Increase the `maxItems` value for the `interrupts` and `interrupt-names`
+properties to 11 to support additional per-channel Tx/Rx completion
+interrupts on the Renesas RZ/V2H(P) SoC, which features the
+`snps,dwmac-5.20` IP.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Link: https://lore.kernel.org/20241216195325.164212-6-biju.das.jz@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Refactor the `interrupt-names` property by replacing repeated `enum`
+entries with a `oneOf` list. Add support for per-channel receive and
+transmit completion interrupts using regex patterns.
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Link: https://patch.msgid.link/20250417084015.74154-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+[OP: small contextual adjustment due to missing sfty irq in v6.1.y-cip]
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- .../dts/renesas/r9a09g057h44-rzv2h-evk.dts    | 36 +++++++++----------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+ .../devicetree/bindings/net/snps,dwmac.yaml   | 22 +++++++++++++------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-index 4703da8e9cff..0b705c987b6c 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-@@ -7,7 +7,7 @@
+diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+index 68d051e148c2..7cb2235c032f 100644
+--- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
++++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+@@ -97,17 +97,25 @@ properties:
  
- /dts-v1/;
+   interrupts:
+     minItems: 1
+-    items:
+-      - description: Combined signal for various interrupt events
+-      - description: The interrupt to manage the remote wake-up packet detection
+-      - description: The interrupt that occurs when Rx exits the LPI state
++    maxItems: 11
  
--#include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
-+#include <dt-bindings/pinctrl/renesas,r9a09g057-pinctrl.h>
- #include <dt-bindings/gpio/gpio.h>
- #include "r9a09g057.dtsi"
+   interrupt-names:
+     minItems: 1
++    maxItems: 11
+     items:
+-      - const: macirq
+-      - const: eth_wake_irq
+-      - const: eth_lpi
++      oneOf:
++        - description: Combined signal for various interrupt events
++          const: macirq
++        - description: The interrupt to manage the remote wake-up packet detection
++          const: eth_wake_irq
++        - description: The interrupt that occurs when Rx exits the LPI state
++          const: eth_lpi
++        - description: The interrupt that occurs when HW safety error triggered
++          const: sfty
++        - description: Per channel receive completion interrupt
++          pattern: '^rx-queue-[0-3]$'
++        - description: Per channel transmit completion interrupt
++          pattern: '^tx-queue-[0-3]$'
  
-@@ -56,7 +56,7 @@ reg_3p3v: regulator1 {
- 	vqmmc_sdhi1: regulator-vccq-sdhi1 {
- 		compatible = "regulator-gpio";
- 		regulator-name = "SDHI1 VccQ";
--		gpios = <&pinctrl RZG2L_GPIO(10, 2) GPIO_ACTIVE_HIGH>;
-+		gpios = <&pinctrl RZV2H_GPIO(A, 2) GPIO_ACTIVE_HIGH>;
- 		regulator-min-microvolt = <1800000>;
- 		regulator-max-microvolt = <3300000>;
- 		gpios-states = <0>;
-@@ -158,38 +158,38 @@ &ostm7 {
- 
- &pinctrl {
- 	i2c0_pins: i2c0 {
--		pinmux = <RZG2L_PORT_PINMUX(3, 0, 1)>, /* I2C0_SDA */
--			 <RZG2L_PORT_PINMUX(3, 1, 1)>; /* I2C0_SCL */
-+		pinmux = <RZV2H_PORT_PINMUX(3, 0, 1)>, /* I2C0_SDA */
-+			 <RZV2H_PORT_PINMUX(3, 1, 1)>; /* I2C0_SCL */
- 	};
- 
- 	i2c1_pins: i2c1 {
--		pinmux = <RZG2L_PORT_PINMUX(3, 2, 1)>, /* I2C1_SDA */
--			 <RZG2L_PORT_PINMUX(3, 3, 1)>; /* I2C1_SCL */
-+		pinmux = <RZV2H_PORT_PINMUX(3, 2, 1)>, /* I2C1_SDA */
-+			 <RZV2H_PORT_PINMUX(3, 3, 1)>; /* I2C1_SCL */
- 	};
- 
- 	i2c2_pins: i2c2 {
--		pinmux = <RZG2L_PORT_PINMUX(2, 0, 4)>, /* I2C2_SDA */
--			 <RZG2L_PORT_PINMUX(2, 1, 4)>; /* I2C2_SCL */
-+		pinmux = <RZV2H_PORT_PINMUX(2, 0, 4)>, /* I2C2_SDA */
-+			 <RZV2H_PORT_PINMUX(2, 1, 4)>; /* I2C2_SCL */
- 	};
- 
- 	i2c3_pins: i2c3 {
--		pinmux = <RZG2L_PORT_PINMUX(3, 6, 1)>, /* I2C3_SDA */
--			 <RZG2L_PORT_PINMUX(3, 7, 1)>; /* I2C3_SCL */
-+		pinmux = <RZV2H_PORT_PINMUX(3, 6, 1)>, /* I2C3_SDA */
-+			 <RZV2H_PORT_PINMUX(3, 7, 1)>; /* I2C3_SCL */
- 	};
- 
- 	i2c6_pins: i2c6 {
--		pinmux = <RZG2L_PORT_PINMUX(4, 4, 1)>, /* I2C6_SDA */
--			 <RZG2L_PORT_PINMUX(4, 5, 1)>; /* I2C6_SCL */
-+		pinmux = <RZV2H_PORT_PINMUX(4, 4, 1)>, /* I2C6_SDA */
-+			 <RZV2H_PORT_PINMUX(4, 5, 1)>; /* I2C6_SCL */
- 	};
- 
- 	i2c7_pins: i2c7 {
--		pinmux = <RZG2L_PORT_PINMUX(4, 6, 1)>, /* I2C7_SDA */
--			 <RZG2L_PORT_PINMUX(4, 7, 1)>; /* I2C7_SCL */
-+		pinmux = <RZV2H_PORT_PINMUX(4, 6, 1)>, /* I2C7_SDA */
-+			 <RZV2H_PORT_PINMUX(4, 7, 1)>; /* I2C7_SCL */
- 	};
- 
- 	i2c8_pins: i2c8 {
--		pinmux = <RZG2L_PORT_PINMUX(0, 6, 1)>, /* I2C8_SDA */
--			 <RZG2L_PORT_PINMUX(0, 7, 1)>; /* I2C8_SCL */
-+		pinmux = <RZV2H_PORT_PINMUX(0, 6, 1)>, /* I2C8_SDA */
-+			 <RZV2H_PORT_PINMUX(0, 7, 1)>; /* I2C8_SCL */
- 	};
- 
- 	scif_pins: scif {
-@@ -199,7 +199,7 @@ scif_pins: scif {
- 
- 	sd1-pwr-en-hog {
- 		gpio-hog;
--		gpios = <RZG2L_GPIO(10, 3) GPIO_ACTIVE_HIGH>;
-+		gpios = <RZV2H_GPIO(A, 3) GPIO_ACTIVE_HIGH>;
- 		output-high;
- 		line-name = "sd1_pwr_en";
- 	};
-@@ -219,7 +219,7 @@ sd1_clk {
- 		};
- 
- 		sd1_cd {
--			pinmux = <RZG2L_PORT_PINMUX(9, 4, 14)>; /* SD1_CD */
-+			pinmux = <RZV2H_PORT_PINMUX(9, 4, 14)>; /* SD1_CD */
- 		};
- 	};
- };
+   clocks:
+     minItems: 1
 -- 
 2.51.0
 
