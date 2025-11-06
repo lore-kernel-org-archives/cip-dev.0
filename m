@@ -2,68 +2,68 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F153CCFA1B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7424ECCF9F8
 	for <webhook@archiver.kernel.org>; Thu,  6 Nov 2025 08:11:14 +0000 (UTC)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.10066.1762416668683752630
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.10010.1762416666258254874
  for <cip-dev@lists.cip-project.org>;
- Thu, 06 Nov 2025 00:11:09 -0800
+ Thu, 06 Nov 2025 00:11:06 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=FP9c9hrI;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.53, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4711810948aso4194555e9.2
-        for <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 00:11:08 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=hRF+eyUV;
+ spf=pass (domain: tuxon.dev, ip: 209.85.221.50, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-429b9b6ce96so470471f8f.3
+        for <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 00:11:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1762416667; x=1763021467; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1762416665; x=1763021465; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hLrKsUKq42gjyo4U+pzTkejs8sL+52pdjk2i6snybIo=;
-        b=FP9c9hrIs6xJj/zDFmqRSiqvJg2f1Nn42dqiWCC4z1n9vwKPIhmxynuLwrwA6vxTvr
-         ZVNIL8gTi8j9Nq4tpIvbU1TfKlkUfC1wKmS/FLP9OXPj+2fnrxQF6z2ll/hE1swBEgUR
-         T2So/li+ETyJMg4jLpwDkGqErp7Hbydx5RUeScKA1/iHjzmBxSayA6VQe8PPAv5VXAqh
-         tR+xLb/WTVbOOY1hVVn63VwZjsuAv89wL20moUPhA4uf4YO9JErGKMtlGqV2Qs2QkC6T
-         1WgKbaj+YO7lMiZArE/NeHtQpHemapBXka0YW3WItTPONzkeVGxUIfm/4IxnXwKyxON/
-         yyCA==
+        bh=IR4fLDKYJBnHkJ72md+G+zEENAkuDpPtXwhJJOjPgQ0=;
+        b=hRF+eyUV8N/sCcatnIKtCgmqTN+2MEq7U2IqdjJXzQSsWyYPxeAjCU4js7f2BUAajw
+         555ltIG7MbeZnu7s+HMBahRGt2BUbkkjqUWWfq9SnAc4Qnpt36A9jLZv8g8L8vy5mh8N
+         cGyJYZnecM0NbYr3T1wZvE0S6P3PWPzejByW6/8KqIp80lMTaaMIyHnA5V9ZZEYrWn0/
+         3CDlVl3Hk9RRzjsAiuEbiIzuEP+Wc7NF1zKm4t0kxgNAkrMiCdudALvSxz8zCuVZE0Et
+         K/vWqJVD9Jf2aP61cQVezDDhcqAWUcqo+tNUEDRpbgeHdYPuhOJqGM4yq5r/MeeF7c7X
+         AcyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762416667; x=1763021467;
+        d=1e100.net; s=20230601; t=1762416665; x=1763021465;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hLrKsUKq42gjyo4U+pzTkejs8sL+52pdjk2i6snybIo=;
-        b=G3KEQ98FwOz2Kn+VIcncbxutQu87Q8/6V1V7QzWZl1ivQyoWJ5rMbxnofkvE7pz1fe
-         1TgNMr4NdSZDk7OnIiJVVCfARIRr2EqylrFJNuoqGHXexg432KC4YdEbKSG50MLCo9KH
-         xATHTHntcO0026kiJNiEo3k0rnzLpFJcpsCajmQC9tfDjnxb+HQ1CSYPozLWLu/Esbk/
-         M5NI8kGyy7qWz95bTjW6a3Udex7q3sUrRBYnJomiVHzmao1NIpmFnuXydSgINwZq7wyD
-         2oyMn86zY4n1SwQqCz/8Id3lGL5TBJ997P0hSRH83K/T4WV5Ytsew9tC2lNdk53sRYJf
-         J++A==
-X-Forwarded-Encrypted: i=1; AJvYcCWC7CMbNf9weBQWXQ6JdPetrAG/qoB0PnOavE/arYQl4x7nMbm5pfOd8KGH0SYFB/nOZee5JzxV@lists.cip-project.org
-X-Gm-Message-State: AOJu0YytL1iWDx7QYDtj9OLCH2XZyl3S0kPTmttXNPArGxijSGMNEprQ
-	EX/PIFJx662XiPQ9BZ6qZPoYtRLonmZktq+X9K8GVt5tUOuWFwzTI95K1pqRG5RQBu+WVUsJ4Tz
-	/v0UPIQ0=
-X-Gm-Gg: ASbGnctzJz+vAYuz4Zxjf/99Xb8JT83M8DykG29l9sI1d2KD3NXB5FJnElBUTU0DiNz
-	BeLupcaj3I+/kO+vMfdkRHHyC0RcWZ6Cq9z9Ca9zaH4ZEFPal2eso8MhZvih1Ntn19gPjODQiIS
-	nX501qc2xxGkxDjS9GHKd57O4jznAExJBkKiDBg+x+1GTMqzMHtoU7/YZVVKEzxARtCxP45uVeq
-	cS5SHHHizJ7IGxV+/E4O6KqbwSGKhLWOjBprd+ojFWOwRPrekpAEsnZETl1hvUm3j399kATqmF4
-	xa0lkIwMC6IlBHPQ0+3DKxvdvjX+FypkMLGhpzLeeKLttdl3JTWn22G/TDepo5eHawWAZzR186G
-	PyDeRXICUIC2otKNl6eB87KIKEicYIOedkZnnEp77LuNBESg11/MVuLT320+E89V8Eumr1HVlSs
-	tb2EuadFViTy/rovHpCSh+rsCmnVSiQQ==
-X-Google-Smtp-Source: AGHT+IHesiP5Vj3+i6ktzhveql9kWPA7ONmT1G+TTQU/ra3dZq6UEehEyAYRaTOl6ava5vXJWOeMFw==
-X-Received: by 2002:a05:600c:4e47:b0:477:5a30:1c21 with SMTP id 5b1f17b1804b1-4775ce230d6mr59734505e9.36.1762416667066;
-        Thu, 06 Nov 2025 00:11:07 -0800 (PST)
+        bh=IR4fLDKYJBnHkJ72md+G+zEENAkuDpPtXwhJJOjPgQ0=;
+        b=uZlIFmAHerbWNaqmKXK1MYOe3G/RoW0DGLIfMoGdFQ5n3OmMVG8p4mEBlc0FNZOPXa
+         iJozK78sxYIVn2wvEWA1oHUrOF+yxYrmCeyypdJ+2EK9+TGGzuEv5aGmOCBudL4bTpmP
+         6M0KBR3rkW2/RZQihoK8T1EsEo9v+NI3k3pswD5JNLEYSSZxkGoiyyUnaXBpi3fcUCY/
+         icFwf0r5STpsMzZKyeEw83nE4nxs1tatsvTau3VjMx71mnrXkWZ6lcvgiuw5HW1xwoij
+         8SwnoRHjdpfWUFGleRSyb7ezCGjF2dQCYZUuilEhzE7/A1Oz/bCetW10LtAu6dri75dv
+         udfA==
+X-Forwarded-Encrypted: i=1; AJvYcCW5EpOjIvcoZUsUdeQNBEKwgqvTaJDdwb6VKdnCHevIEWhmflNjXvWkSOtYMgGvcZHnGCfgS5eU@lists.cip-project.org
+X-Gm-Message-State: AOJu0YwsDWUeh/odDLVVxokac41IG6ng627TeotzCZfj3DloJAo3XvLg
+	U1XGB3Dsg3YXh54o0ucNWhercKVc8kOaIX8XO6xt+C8zvgUcxKHstgcr9jektDQVEMr44hk5qF8
+	hgjfzees=
+X-Gm-Gg: ASbGncsNA+s+ikk4rsmONM9CdDem3AfRGg4H6kTPfw8pZMojN5KzyWY9UhBWgzhcEXx
+	vj1YdABRkfeEqeUTGCjkv6sFt5I/oy0levQyJXC5doAf1EUNCZZVmqzQadiS+j3lhUoU9Xe5WNa
+	pXL+qvXkAxPpYWKyo+wgQN7fAZf8LYJFni/DW/qjNpND30BWIpkRgrO41xQGgR7DBVk4yPxgvUd
+	gUUcU5RvESqrO7oSiZPebUJR+iU85RyxC9L3VCWp6HkLaKPpbETp+oJle/BPYlJBDQbmDwOu1ER
+	KbEQoBDPI867gmSWWt5bDxBXvLydjbM5ms6Y7qR6DYlIGexG4kjerAaGAzNx/S+r6TesPsTyyG9
+	1brh10oT/zxAf0hYUa0PZMRn4hDRloUiwsJTzn3Wo/L9/k5kebL9Hx3PmzHkA9qZtxUK5EMHlqd
+	T0/8/FOg3oJlZxvVUdeyP5du+U6S2QzT5tnnDZcQ+u
+X-Google-Smtp-Source: AGHT+IGvp82ivhepJTcyCJ5JT5F5SC6FbdXfbYDUOnfB/l7TH76AnJDtcx0j+m4rMM4zT4SThk0U+w==
+X-Received: by 2002:a05:6000:23c2:b0:429:ce0c:e668 with SMTP id ffacd0b85a97d-429e33079edmr4119968f8f.38.1762416664586;
+        Thu, 06 Nov 2025 00:11:04 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb47873dsm3486735f8f.31.2025.11.06.00.11.05
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429eb47873dsm3486735f8f.31.2025.11.06.00.11.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Nov 2025 00:11:06 -0800 (PST)
+        Thu, 06 Nov 2025 00:11:03 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 6.12.y-cip 13/23] clk: renesas: rzg2l: Add macro to loop through module clocks
-Date: Thu,  6 Nov 2025 10:10:38 +0200
-Message-ID: <20251106081048.2574345-14-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 6.12.y-cip 11/23] i2c: core: Drop dev_pm_domain_detach() call
+Date: Thu,  6 Nov 2025 10:10:36 +0200
+Message-ID: <20251106081048.2574345-12-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251106081048.2574345-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20251106081048.2574345-1-claudiu.beznea.uj@bp.renesas.com>
@@ -73,63 +73,67 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 06 Nov 2025 08:11:14 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20382
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20380
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 3fd4a8bb4b63b886a7a11444f85000ea90d2617f upstream.
+commit eddfe53b0d84b02802432bf783ccd53b095dd10a upstream.
 
-Add a macro to iterate over the module clocks array. This will be useful
-in the upcoming commits that move MSTOP support into the clock
-enable/disable APIs.
+Starting with commit f99508074e78 ("PM: domains: Detach on
+device_unbind_cleanup()"), there is no longer a need to call
+dev_pm_domain_detach() in the bus remove function. The
+device_unbind_cleanup() function now handles this to avoid
+invoking devres cleanup handlers while the PM domain is
+powered off, which could otherwise lead to failures as
+described in the above-mentioned commit.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Drop the explicit dev_pm_domain_detach() call and rely instead
+on the flags passed to dev_pm_domain_attach() to power off the
+domain.
+
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://lore.kernel.org/20250527112403.1254122-4-claudiu.beznea.uj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+[claudiu.beznea: drop dev_pm_domain_detach() conditionally]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/i2c/i2c-core-base.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index dd94eca21b19..fa5cfce2e9a1 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -1207,6 +1207,13 @@ struct mstp_clock {
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index d70364e6ea6f..4a4756cd09b0 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -572,7 +572,8 @@ static int i2c_device_probe(struct device *dev)
+ 		goto err_clear_wakeup_irq;
  
- #define to_mod_clock(_hw) container_of(_hw, struct mstp_clock, hw)
+ 	do_power_on = !i2c_acpi_waive_d0_probe(dev);
+-	status = dev_pm_domain_attach(&client->dev, do_power_on ? PD_FLAG_ATTACH_POWER_ON : 0);
++	status = dev_pm_domain_attach(&client->dev, PD_FLAG_DETACH_POWER_OFF |
++				      (do_power_on ? PD_FLAG_ATTACH_POWER_ON : 0));
+ 	if (status)
+ 		goto err_clear_wakeup_irq;
  
-+#define for_each_mod_clock(mod_clock, hw, priv) \
-+	for (unsigned int i = 0; (priv) && i < (priv)->num_mod_clks; i++) \
-+		if ((priv)->clks[(priv)->num_core_clks + i] == ERR_PTR(-ENOENT)) \
-+			continue; \
-+		else if (((hw) = __clk_get_hw((priv)->clks[(priv)->num_core_clks + i])) && \
-+			 ((mod_clock) = to_mod_clock(hw)))
-+
- static int rzg2l_mod_clock_endisable(struct clk_hw *hw, bool enable)
- {
- 	struct mstp_clock *clock = to_mod_clock(hw);
-@@ -1319,17 +1326,10 @@ static struct mstp_clock
- *rzg2l_mod_clock_get_sibling(struct mstp_clock *clock,
- 			     struct rzg2l_cpg_priv *priv)
- {
-+	struct mstp_clock *clk;
- 	struct clk_hw *hw;
--	unsigned int i;
--
--	for (i = 0; i < priv->num_mod_clks; i++) {
--		struct mstp_clock *clk;
--
--		if (priv->clks[priv->num_core_clks + i] == ERR_PTR(-ENOENT))
--			continue;
+@@ -604,7 +605,8 @@ static int i2c_device_probe(struct device *dev)
+ err_release_driver_resources:
+ 	devres_release_group(&client->dev, client->devres_group_id);
+ err_detach_pm_domain:
+-	dev_pm_domain_detach(&client->dev, do_power_on);
++	if (!dev_pm_domain_allow_detach_on_unbind_cleanup())
++		dev_pm_domain_detach(&client->dev, do_power_on);
+ err_clear_wakeup_irq:
+ 	dev_pm_clear_wake_irq(&client->dev);
+ 	device_init_wakeup(&client->dev, false);
+@@ -629,7 +631,8 @@ static void i2c_device_remove(struct device *dev)
  
--		hw = __clk_get_hw(priv->clks[priv->num_core_clks + i]);
--		clk = to_mod_clock(hw);
-+	for_each_mod_clock(clk, hw, priv) {
- 		if (clock->off == clk->off && clock->bit == clk->bit)
- 			return clk;
- 	}
+ 	devres_release_group(&client->dev, client->devres_group_id);
+ 
+-	dev_pm_domain_detach(&client->dev, true);
++	if (!dev_pm_domain_allow_detach_on_unbind_cleanup())
++		dev_pm_domain_detach(&client->dev, true);
+ 
+ 	dev_pm_clear_wake_irq(&client->dev);
+ 	device_init_wakeup(&client->dev, false);
 -- 
 2.43.0
 
