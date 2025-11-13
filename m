@@ -1,327 +1,329 @@
-Return-Path: <s-adivi@ti.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F6BCCD5BB4
-	for <webhook@archiver.kernel.org>; Thu, 13 Nov 2025 10:14:57 +0000 (UTC)
-Received: from CH1PR05CU001.outbound.protection.outlook.com (CH1PR05CU001.outbound.protection.outlook.com [52.101.193.51])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.20433.1763028887041618804
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C6ECCD5BB9
+	for <webhook@archiver.kernel.org>; Thu, 13 Nov 2025 10:20:27 +0000 (UTC)
+Received: from DUZPR83CU001.outbound.protection.outlook.com (DUZPR83CU001.outbound.protection.outlook.com [52.101.66.5])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.20525.1763029223714443241
  for <cip-dev@lists.cip-project.org>;
- Thu, 13 Nov 2025 02:14:47 -0800
+ Thu, 13 Nov 2025 02:20:24 -0800
 Authentication-Results: mx.groups.io;
- dkim=fail reason="dkim: body hash did not verify" header.i=@ti.com header.s=selector1 header.b=aN4W8cM9;
- spf=permerror, err=parse error for token &{10 18 spf.protection.outlook.com}: limit exceeded (domain: ti.com, ip: 52.101.193.51, mailfrom: s-adivi@ti.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=dTLzWwyS;
+ spf=pass (domain: siemens.com, ip: 52.101.66.5, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=quHGaGOtqksBBIbOqjuPzTS2k186b6w5vfju9lh59UVEZdpdq6oK5jL9oRCAx/DuuUUmt45O1lMnGzA2/ipTM6koKPUcmNUxmK1pk4EMSsMlm1n24FVODA1D9/jhkkEL3UGwwfDgduyVLRgaoTHYhUTcCZbJwulfzZo7kdcSf6mK70QtLOqXjrHknxxB7pVxKr0TNFh2F/0fascp2ajNmqsS7Mb5w1GkjdQz8H+STB79b+aQfg3ui/IBd7v3UYlTGPg8xx9c4ODYuGf2xp+LRNrQPd3TwqnOz8UhNNjQ4dJbI2DcLz58JUFUIk8HSu9LohnpgtCybgxL90zFQeFTpA==
+ b=bRMdnle1tvFF/65lhkXq+ZR+x2i/RSgOUqamqYzGx8QUfRZOi2fiyud7G2jQcJB/kAZ8iYIo8ko/vmRkB+UtSbpxVAnH0tkcf+ryTUDzp0gAZbw4sxy258mmyHycP94qWOvB5WST2o7cK7snjxJfRUUSC7lGWTCiPBR3DpSV8wDsWrOiCz/qrH2Yq7FaEqRSwnR21FWlslVQBDCK9sfEUUnYG1V5oVmsovDEYWIdoLOWZJLVkg+JFm0vXrGMyHUHbopnFqoqqb7BRX6jYbCios+HMPGV1/lcgXvi4lg8MD9CVU2iLFJWEjFc5T4zYBhtN375RnN4HaqPYzvL9WHY+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=knqd0PNdBaN3k0ZVLM/3jYhCul6xEQX1RHSV6WEF/2g=;
- b=q9fB97M5vCV3jHU9HolkMjBJFR6ZP3M5iahYfwrcyha5N40OiLTlK4ZivhxEU9ha2f8xZzESWsQkQBDCeHvexJjjObuuFeysU1UXDUgRFfAZ2eWBsmlQAI1TumAOsulmTTBM/j/drInipjbqo+XFM5idzDBmrXedoENcDRk1jKZHO60trjqNkBry10kUZbq/ad1vH/CHUw3vc71l1nTbmpNCqysAyhgp4rkW+5A2KANF6mMVw8SML+CoTa8g+/AZRBINx11U1FcdMPMI3S6lCEAotGVvbKcADw7Ekb1MLHsfSIifrB/Fg0L1fN4sYh4vsyrooGa/41nJDb9wfPUgAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.23.194) smtp.rcpttodomain=siemens.com smtp.mailfrom=ti.com; dmarc=pass
- (p=quarantine sp=none pct=100) action=none header.from=ti.com; dkim=none
- (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ bh=YWan4E+1LHraomakbpHIVPVrbPvo1abcv0Z4kW3dUGY=;
+ b=XzLGo4dvP3but6+ulIwfQ5otCi8IujkPHHYIhSHYofD/3B9fbAOaQ5EWLmbK1HrP9th+4gABp0NOqwY204n/10wSvKDfSTGDhlfGaBZgd1F9g3+gT05FvufwWITxQUHEzCOjqBHtUZLUpeysM3ywDv33pbcHJYG7SG07bKUHUsM/KGJc21y8K/zqNmID8Iq4vD3r3XpKncrxFZvUUkLTE8XVzqkVZSTbTFWpefPUriP6Rhreacx4J3tkgjMRxeeicss7M2uSMuQGo11PgTrxL7If+dLYwYKxPLID3l47/UynWRsLKn+ZuTi2ad69okD+nkYiGBcAQrmxhsybI7nJKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=knqd0PNdBaN3k0ZVLM/3jYhCul6xEQX1RHSV6WEF/2g=;
- b=aN4W8cM9d3JN+d/JyIJbE2yX8QFqFv3t2EBRZzAKRPFgSTreSf6PWZh7CIwPap7F1DYf22wcJcAe7Ae93Ijx/8BAzckjyZ1AHZSohSX31BNjlkYEyYqTv2CkzQwZsmO5mObkrnF3Eif32xf7wVyuUU0nAvYo9arBhLsK039ZXY8=
-Received: from CH5PR03CA0006.namprd03.prod.outlook.com (2603:10b6:610:1f1::7)
- by BN0PR10MB4903.namprd10.prod.outlook.com (2603:10b6:408:122::6) with
+ bh=YWan4E+1LHraomakbpHIVPVrbPvo1abcv0Z4kW3dUGY=;
+ b=dTLzWwySfpQeBp9tLR6nhQRjHeraa87joZf74lY7wnkrvbUX/W2bEI+XRF2AuQV8XQ6WxxNmrEXYPXfoEU5mlO4VYa+Qd9868tsF9R6/hLpwnDc2qEeWM1/BwLTiBc6Vj5wt6wVAt+gYZCewEZOXuT9SbfI6FVV38djInxMT6/CjTkDPM1kR3dyzGbNfWXRooxWrrEmQLDQw8B/NiGg4OiAUxrCzOpUkOuN5eQsCHI0ulqinpyxQPcw3b2DHigyijzTng5l3lmUMqQMSIuKwW83viICQ4d6jWSSlr973QeLI2vKoTCvFOmZ6ALmAuOqZbivVUnt4cR5bEQjsJNQ+hw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by PAXPR10MB5614.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:244::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
- 2025 10:14:44 +0000
-Received: from CH1PEPF0000AD75.namprd04.prod.outlook.com
- (2603:10b6:610:1f1:cafe::80) by CH5PR03CA0006.outlook.office365.com
- (2603:10b6:610:1f1::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.17 via Frontend Transport; Thu,
- 13 Nov 2025 10:14:40 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
-Received: from lewvzet200.ext.ti.com (198.47.23.194) by
- CH1PEPF0000AD75.mail.protection.outlook.com (10.167.244.54) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Thu, 13 Nov 2025 10:14:42 +0000
-Received: from DLEE205.ent.ti.com (157.170.170.85) by lewvzet200.ext.ti.com
- (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 13 Nov
- 2025 04:14:38 -0600
-Received: from DLEE214.ent.ti.com (157.170.170.117) by DLEE205.ent.ti.com
- (157.170.170.85) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 13 Nov
- 2025 04:14:38 -0600
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE214.ent.ti.com
- (157.170.170.117) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 13 Nov 2025 04:14:38 -0600
-Received: from uda0498651.dhcp.ti.com (uda0498651.dhcp.ti.com [172.24.233.117])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5ADAES1U058943;
-	Thu, 13 Nov 2025 04:14:37 -0600
-From: Sai Sree Kartheek Adivi <s-adivi@ti.com>
-To: <cip-dev@lists.cip-project.org>, <vigneshr@ti.com>,
-	<jan.kiszka@siemens.com>
-Subject: [cip-dev][isar-cip-core][PATCH v4 5/5] ti-am62px-sk: enable data encryption with optee-ftpm
-Date: Thu, 13 Nov 2025 15:44:25 +0530
-Message-ID: <20251113101425.1177129-6-s-adivi@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251113101425.1177129-1-s-adivi@ti.com>
-References: <20251113101425.1177129-1-s-adivi@ti.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Thu, 13 Nov
+ 2025 10:20:19 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408%6]) with mapi id 15.20.9320.013; Thu, 13 Nov 2025
+ 10:20:19 +0000
+Message-ID: <b28e5c10-31e9-4f18-959f-89438fa28a4f@siemens.com>
+Date: Thu, 13 Nov 2025 11:20:15 +0100
+User-Agent: Mozilla Thunderbird
+From: Jan Kiszka <jan.kiszka@siemens.com>
+To: cip-dev <cip-dev@lists.cip-project.org>
+Subject: [isar-cip-core][PATCH] linux-cip: Update to 4.4.302-cip104[-rt58],
+ 5.10.246-cip66-[rt29], 6.1.157-cip48[-rt26] and 6.12.57-cip12
+Content-Language: en-US
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ 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
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: CH5P222CA0008.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:610:1ee::17) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD75:EE_|BN0PR10MB4903:EE_
-X-MS-Office365-Filtering-Correlation-Id: 65e32741-f51b-4d3f-b19d-08de229d76b0
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PAXPR10MB5614:EE_
+X-MS-Office365-Filtering-Correlation-Id: 64060d18-63ed-4b07-b775-08de229e3f4b
+X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700013|13003099007;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
 X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?7ModbnodnGxO+VPB9TfSjFebWTKjWZlKPoyHTF1IrJiMxLXsKZbQnIImbinh?=
- =?us-ascii?Q?9w+E5VPA7kTotsp9xAnkXlSIt/QnSojhhaX2a9jqmHWfM6BM9nrj2O4beEUp?=
- =?us-ascii?Q?NH+zehRAosjdAiJLWyJF+263wXUcUY/6DeieW+/pRTIH5ewA8JJB9mXkinuG?=
- =?us-ascii?Q?Z9SDgQ2TmzegxKXJaqUG/nq2KrzBj/6vltqt8sM6ufYkd+yQzPtNG7BKXIIO?=
- =?us-ascii?Q?AjZIjSiw9awF9t7cTfzFEaA+vxX/ZUZkL73ozZGI55rbZiW2eKXmPAWn076x?=
- =?us-ascii?Q?6xVQZY28dJU8ieLmy5PBK7rjp6BU77FBBP7Pk53eQ9hVNg2/X/+CBBfsBuJM?=
- =?us-ascii?Q?VkZAl8tpA3M1WZZ4KyM1HsypaTEKFxgVYBV+Lf8xBY6yTj+67udJbKn6snSD?=
- =?us-ascii?Q?fnFHOLsFnl9GLkSfTcO5HxkZMttpa/BMIhKD2vSmp0fJmHe3HhfiQkDvTT87?=
- =?us-ascii?Q?Xc5w5AZnz7OYM/zbqcLVV6MJqekzwUwONMT5YU4RKZzy3EKkbdadnWxCQ6i9?=
- =?us-ascii?Q?pLyZYE6i+fY3sYlz9ief8jw1mQvejFrdt1CqjfVkQy7yPGKNCOAW+mnZn9jB?=
- =?us-ascii?Q?saU2KTDmdsVXGD5b8wVfhEnMJN5ZtdjaXI4Bm+qfi3oyr2al0xiNuGQNaDra?=
- =?us-ascii?Q?Cj0KZ7vi5e5+F8XjhncYSlfMAEf1Evca3WbsjfcgaEpSzki4rOtrf/HzuEw8?=
- =?us-ascii?Q?iJEJMNynP5+Px3kMMdtotpXLU3EDRNer8dj8PeC+Ns7qTiDtVVM85v8Qw9EA?=
- =?us-ascii?Q?JJGxLk25zZaTklSnN7CJVvspKLwxxah4wP26Wm6x3+iwvm9PsQkG1KsRcYoO?=
- =?us-ascii?Q?whd25H4J8VaQEvNCUFegy+bTDexXyfdxJ+CZM+pyXRQiv8FEXotgb2BM0QE1?=
- =?us-ascii?Q?0c8giwAW+dc20CVU0La3wwXGxk7cMHWu3t5ULlsRB32uKWv5poXa12eSzF/m?=
- =?us-ascii?Q?ATIIEsGugMvr798CMHeGfw77UsNks/GKujTcX2JK7zcxCvyE2xiwpEkL0fzE?=
- =?us-ascii?Q?0Nrf2iP9C9eR8S7no9GzUe2WZ8Xq60v8NvjiveKyZ7pOOtpPf6jtITO5dBoN?=
- =?us-ascii?Q?j1s4AYp8+W9e0kKfO6YH2b24LhZAFwbcns+5gOPC3+niLrbZJIszb32x+4AY?=
- =?us-ascii?Q?i1zBQDMn8gFsymAOvet36XrD8M2xhjgK2rgpMsFZHUH47TFVYCLGBhEganXA?=
- =?us-ascii?Q?5TIY7HU0OAIcJw9ilL5mYMS1/npXUL2vDRdc45TIajNnXp661JslS/26JdcU?=
- =?us-ascii?Q?1PP9Z4zKyKFaDKPgDuKxCft3XvMH30fllB+ZEV56KZ+SF33815S3+NO9gZBa?=
- =?us-ascii?Q?22q039cB/zO5/JoGOeA56PjIkjZKg38CwKAgm7UCpKUehLmB214Gqi4Ys6ob?=
- =?us-ascii?Q?wJ9rkrU5MelO6z9wCJ7Z/y56TaN5ANGZ9XJq+7CwzkC5GADWGBNCTpUmMl5V?=
- =?us-ascii?Q?qvOLVQnvt9ezYSuXC5SA7No3faCvqGoD8HJWqRIHRrchNLqzPVS+rISw/hdt?=
- =?us-ascii?Q?6vCXMoYZom4lVziTWN4rJT2F8TtLDRZ05x3LuVTHu6/obwKvxM6oHIA1T2EK?=
- =?us-ascii?Q?+Wky9S9ymhz2v5zjDC0=3D?=
+	=?utf-8?B?SDFpRmxETHJqaldxMnJSN0pWRTQ5OFFlVlhuV2ZpUC9qYzFwYmY5WU1zYnBM?=
+ =?utf-8?B?ZytjRm5yUmFFV0FSRzc0VmFqT0k0NlIrRDRDZDZZbDBhMkF6bk1mWmhzeExF?=
+ =?utf-8?B?cEZwTFhoSjRUUE03RnF1eFhDaFBwNGFSNTVSUW9uNjJKaDFLZ20yRDZ3dGtE?=
+ =?utf-8?B?a09Ra0lJNWlYL3J3emN4dE1mTDJ1dWVkNmhyM3p1MmFOZzRKY0lLY3BsQ0l4?=
+ =?utf-8?B?Vmo3UnM2TDFBelVGaXkxU0FvOVBMZktDSG8yWGl6VzhEb1R5YXZVVVZHNWw4?=
+ =?utf-8?B?bmdGazlyZzRtSnozTENRZWtjVUhrM1VwYjhjNjdBMnpCMWNxb0JmQlhIWDBI?=
+ =?utf-8?B?bTBjSkZvbE1PSmZIMEJpRmNrYkU0dnZ3TEQrQnYrN1BWTXNiS0FWR01lVzNz?=
+ =?utf-8?B?VThVRHUwR21YTUQ1Mi9WVEZHUTJhNk1TRnRDSXZmRVYwbVBRMDh2U1FJVFJH?=
+ =?utf-8?B?bEpPOGFCeEsrUHVjbjdKWHdWbnVoQ3duaWtMMytMaGlhMytPaGJTWkxaY0RI?=
+ =?utf-8?B?cnRjeVI0YzJYRTFmOTRkRTJjb25CbHg4WW13R3dnQlovRmZZTmhVUndzM2NC?=
+ =?utf-8?B?bFQ0M3FGUy9Tc1ZyVDFHWUFsaEFKMXB0N2ZpKzJPTmhSSU1tVWVzY1pyVjBj?=
+ =?utf-8?B?MVMrWGI5b2ROQmxlalNZY2JKR0p6OUd4Z2hLK0ZXTTVFQmk1RFBHUlRtN2JI?=
+ =?utf-8?B?cWJvTWxrVStPVGQ3cXVORGhoV1ErZUJLbGJ4RnlFOHAxS2VBN1dlbDMxTU1j?=
+ =?utf-8?B?UDQ3ZU1yZDRmRmZHVGhoUVcyTlFveVhjYnNjOVV6NzE4S3ZEWEFaMklJN3hX?=
+ =?utf-8?B?eVdVdHYydERqWWFrRzIvaERSSkMycjEyRkozdVNOcVdNTTZUa3BEdHdnd1d6?=
+ =?utf-8?B?aitXVENBZUFxL3IvSVZPczVQc3NxMFVPL0JmczZCUjZCaGRZMzNoWHFxcytU?=
+ =?utf-8?B?bThqUVljVU9jTWtuNmNDdFNCbm5hS3Y3Yk5SMUFsQkVDNkEvMTU0aHR2VnJk?=
+ =?utf-8?B?K2VXZFJQaDhOZkc5NEFlbjFFMXYwQ21SeUMrMDR4QXE3YVZ3cGh2ckJNSnZz?=
+ =?utf-8?B?enh5cVpWaldSS2pEVnIwblo0bnNDOStQUG5mMm9YbFFpNkc2NzhoWS81SzM2?=
+ =?utf-8?B?U2Z4cDlGdVNyR2djK3g1UHo2UVhBdkhvMEl2ZGJqalNna2p2UDRFMGd0S0do?=
+ =?utf-8?B?T3JtQmhGNWFhVHNXWjlTZTlRbU8vQWZQcmI1a1ZORjZDV1B4aWhjT1FrenZ3?=
+ =?utf-8?B?cU1kOFZLeU91eVRZV1JyeXdWUmhEYUY2QjJwS2RuTFV2RlptWjNCbE81elp0?=
+ =?utf-8?B?Vk5zMnRDaUVLQTd3eGRPYUdyRDNOZnlJRWJoNi96ejBRRDZkSzFsMjRNVFk3?=
+ =?utf-8?B?WktJYUdUdnBuUGhmc05wcDRHcThKb2R6eWV6VUxSWldsZW5iRWtqVjM3UFJp?=
+ =?utf-8?B?eUVPazBNaGp5RlpES0pPU3ZuVlRkOGJuQkt6QThNUkNTY3dMU29XR0c1T0VB?=
+ =?utf-8?B?Z2I2anEyenNCM2hXVHNhRzBJbkM1eUxUNFFmWk9tS2pkeEo5cGIrT2xpa0Zk?=
+ =?utf-8?B?RldTbUhWbHhqNjJ5dGMrWGNZam5NZzF3cTZ5VGJlUjN0QjRCWVhpY0ZlQVVQ?=
+ =?utf-8?B?aHFlUDhESDNBOC93Umt3WGZPS28vL1JTOUFrUElpQmtJRmxmOXhsbmdza3VH?=
+ =?utf-8?B?bDlLUkVqT3RJazFnZlVVTFVBWllMYm4ybHZnS0JQSFpjakJhTWk2dE1Ybmpu?=
+ =?utf-8?B?UWVxVndMbDhKSThDeFQ2Q1NPMFVvWGhCK1RqaE1NS1lZRGJNMGVRcHFRY0tP?=
+ =?utf-8?B?Yk8zOGpXWlI3YklrQjlPdFRpcFJqcFdQcnFiaUVRYXdjeW9Dc2w0YU1PTDJE?=
+ =?utf-8?B?YjY1K3RKTmN0Q1ZxQkhsRStZUFRSYy8zcENCakt1YUJKZzM3aitLN2c4YjVx?=
+ =?utf-8?Q?wI+EtfiM+zGcNDxQWeYCxX8TYH73XRFA?=
 X-Forefront-Antispam-Report: 
-	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 10:14:42.9238
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?WlBjNzhOUDBLc3BSTzgwSmZ1c01EUy9DWkgreit5SmU2MHNHRU1tbTlSb3pk?=
+ =?utf-8?B?Yll4QjZleG12YjkrOTdtcFVQZjByK01MR1RIdjZoMFRKNU44S3c5dlZjY0Ni?=
+ =?utf-8?B?SzVRcHR6cVRiR21Ya3V1anRNb1RCaVAySVR3WEtlTkVUTUdTL2xzUEFSTis0?=
+ =?utf-8?B?S3BydWhWRE9FUXgxYmgyVElkNDRPbHlROGRQOTNEZ1ZzVTIwSE5HdHlhVjkz?=
+ =?utf-8?B?WVJRRmlUbDBCQ2s2dkZzc25rQjNuUnlWRXltbXMyUFpxeVRUeXh1TDlrQ3V3?=
+ =?utf-8?B?R3hVZk9NU2hQQmpOREx2MG5KQnBxZ1FuMzlTSVN2cGFydDd2NUpsc3VhZ25z?=
+ =?utf-8?B?TmNBdjJLalpIVVdPaENjaGFjdGN5SUltKzJsdkFZNks5TE9tdWxGYTBQcGwv?=
+ =?utf-8?B?MHFKdXNpMERGbVZMK3lYS3dCTE1oc1pXbkNBMEVJYmVkenR2UXRBOUNTa1lm?=
+ =?utf-8?B?WUloVmh0VjdxUDNaWE5hVEt1ZHRMbU5ocHpyY3kyRlZ6eWxhU0dXUzBGUHZj?=
+ =?utf-8?B?cFFLUHkraTgyZDIwbmZIT0tUQjVkLzd6Q1RXenVyVkxEZHFRb0hBRUNrckhK?=
+ =?utf-8?B?ckg3SCtWM29rQmU1Wm5PajVxUzJCeXNQWW16dHQ5QkpoVm4vRTZSaVBzSm8v?=
+ =?utf-8?B?aVQ0U25TY0RpTC9yUDRQdW82WHpaMzByL2Q3bnhwampwRWVxS3F1VDVCdjNM?=
+ =?utf-8?B?RjBSa1M2Tms5QVF6Q2NpN05CWTNVVVRwN01SUmxjVFJnVkhJQTlHVjJkWXZL?=
+ =?utf-8?B?eVFYbkg5REpCbWdXZS90ZlNaYXhlYzd3MnBiMldtL2hKVGhrQjFvbnNlS0Uy?=
+ =?utf-8?B?UDhOT3lmaUltNWhNMjhqek9qV0djbG9DVWxEK28yU1JneklNQklFanM0TTVl?=
+ =?utf-8?B?bjdnUkRlcGhLTGZZLzYvUEZ0anZ2a0R3TjhlWndyR1RTa2kvaFpmSUpkUW5U?=
+ =?utf-8?B?Nkc1b29EdzEyb3pPOEpEdWY1WWV4WWdSSjFmK3paYndEVUlvTmVRLzc1cVAx?=
+ =?utf-8?B?V1dSM1JnYjkzYWQ2bWhuUmdjYi91elhJMTlFL20wUjlrUmZIWEFVdWI4VnFz?=
+ =?utf-8?B?QWVqQjltakJLeWFYS1Z5VlFWWGhRckp2c0xuNjRNNWRuNXZWQ0Yyb0UxWm96?=
+ =?utf-8?B?bXo1b0oyV05yL3ZsQ3VUSW1tVXlGaUdRbFFsL25iQzB1K2xHdFZFNkxFWmZF?=
+ =?utf-8?B?VjQ3TC9pWUM3ODZJKzUvVi9lNUxPc0tVa0hna1ZqejN1V3pKVmd3M0k0MS8z?=
+ =?utf-8?B?dWg4bG1jQkxNK2lFVmRzWjFDaW85WnRVeUwrcUJyZnpzaEFDODRGOGFZdTFT?=
+ =?utf-8?B?RkJCSWV2Z3QwUnJMY3dLLzV6YUVKb3c1bXVNRTVydFRxTDJhdUp3US9tQmYz?=
+ =?utf-8?B?UURFR3ZMSEppNFZBcVllMDcrQnRreHUycWl5bXpBTk1MVDBXSTF2SGlLMVdt?=
+ =?utf-8?B?aEpUbkFzSmdGRGgxZEV0SW4rdVUycnFMWlRpcis1MDFSVDljRzdQbWhoSnNN?=
+ =?utf-8?B?R0ZRVFQvSWtmWkRMaGRHWDRRdjUybUZHc0MvOXIyQlFzSVBVUGlnYmNPblpU?=
+ =?utf-8?B?eVRJQmUxRFBVRjhYRGp3bjY1cmFXZ3g2dGdibklJU2JYb21Ob0k4Sm8yM21F?=
+ =?utf-8?B?WEMzT1FwT2taanQ2bk90YXRJWHE3T2dvTDFGZGIyVldtcTU0ckhtVFdzaDc4?=
+ =?utf-8?B?N1pZOTlLdG5iUVFjUU1hZHhwY0RHZ09JVjVlQmgvRHFoSWZSUFQxVXNyMndZ?=
+ =?utf-8?B?a00yS3FPQm5mM3BzWkxuL3JkdExRWllLQ1l4RmF5WnVucG9HQ2IvY3gxWktU?=
+ =?utf-8?B?SVB2U2t1bGYrNTY5RjdwSzh1MlJBUWRTWStsa0pjMzdZOENPTWhRb0ZXUlM3?=
+ =?utf-8?B?VFpCMnU0OUdqbDRuc0RXVEhrZktQTHcvRnVSd0tTNjMvWi9ibWlrT1JSbTEx?=
+ =?utf-8?B?Kys1U3pDR0VncjhRaEcreERWdExyNlNtQ1dBdEdvZmF2MzVHVjdlbjRDUmpj?=
+ =?utf-8?B?MWphY0FObkcrYUI5QnhvTFA1Smc0ZGI5OVFjZ2VtY2RWVUVTMDFXaWpZcWxP?=
+ =?utf-8?B?bDhSRVdZMlkwUW1KU3J6d2NoOHdZTmxkQTNjNkJ1amhSQlV3UE13T0R1M1Ew?=
+ =?utf-8?B?Y1k5QWI3dDdqNVY0MlhTSlJKRDgzVW01VWZGOFIvRTQ1YWNIbWxrRWZOUVIy?=
+ =?utf-8?B?NlE9PQ==?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 64060d18-63ed-4b07-b775-08de229e3f4b
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 10:20:19.8110
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 65e32741-f51b-4d3f-b19d-08de229d76b0
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	CH1PEPF0000AD75.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB4903
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2Et1PGg8wVeqTUrT/5RJQluuyfTA0kxa8A0Np5SD9HRYtzrB6D5v8nhL7WyxgA4WACSrVT9AZBKHPVvnkhPzAw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR10MB5614
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 13 Nov 2025 10:14:57 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20526
+ <cip-dev@lists.cip-project.org>; Thu, 13 Nov 2025 10:20:27 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20528
 
-- Add new recipe for optee-os-tadevkit, optee-ftpm
-- Integrate OPTEE-fTPM, StMM for data encryption
-- Add ti-extra.cfg for enabling RPMB, FTPM and StMM related configs
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Signed-off-by: Sai Sree Kartheek Adivi <s-adivi@ti.com>
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- Kconfig                                       |  3 ++
- ...ptee-ftpm-ti-k3_4.8+v1.62r1-48-ge9fc7b8.bb | 28 +++++++++++++++++++
- .../optee-os/optee-os-tadevkit-ti-k3_4.8.0.bb | 13 +++++++++
- recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.bb  | 16 +++++++++++
- recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.inc |  5 +++-
- recipes-bsp/u-boot/files/ti-extra.cfg         | 19 +++++++++++++
- .../u-boot/u-boot-ti-am62px-sk_2025.07.bb     |  4 +++
- 7 files changed, 87 insertions(+), 1 deletion(-)
- create mode 100644 recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_4.8+v1.62r1-48-=
-ge9fc7b8.bb
- create mode 100644 recipes-bsp/optee-os/optee-os-tadevkit-ti-k3_4.8.0.bb
- create mode 100644 recipes-bsp/u-boot/files/ti-extra.cfg
+ ...4.302-cip102-rt57.bb => linux-cip-rt_4.4.302-cip104-rt58.bb} | 2 +-
+ ...10.241-cip64-rt28.bb => linux-cip-rt_5.10.246-cip66-rt29.bb} | 2 +-
+ ...-cip_6.1.155-cip47.bb => linux-cip-rt_6.1.157-cip48-rt26.bb} | 2 +-
+ recipes-kernel/linux/linux-cip-rt_6.12.51-cip10.bb              | 1 -
+ recipes-kernel/linux/linux-cip-rt_6.12.57-cip12.bb              | 1 +
+ ...{linux-cip_4.4.302-cip103.bb => linux-cip_4.4.302-cip104.bb} | 2 +-
+ ...{linux-cip_5.10.245-cip65.bb => linux-cip_5.10.246-cip66.bb} | 2 +-
+ ...-cip-rt_6.1.155-cip47-rt25.bb => linux-cip_6.1.157-cip48.bb} | 2 +-
+ .../{linux-cip_6.12.51-cip10.bb => linux-cip_6.12.57-cip12.bb}  | 2 +-
+ 9 files changed, 8 insertions(+), 8 deletions(-)
+ rename recipes-kernel/linux/{linux-cip-rt_4.4.302-cip102-rt57.bb => linux-cip-rt_4.4.302-cip104-rt58.bb} (68%)
+ rename recipes-kernel/linux/{linux-cip-rt_5.10.241-cip64-rt28.bb => linux-cip-rt_5.10.246-cip66-rt29.bb} (68%)
+ rename recipes-kernel/linux/{linux-cip_6.1.155-cip47.bb => linux-cip-rt_6.1.157-cip48-rt26.bb} (59%)
+ delete mode 120000 recipes-kernel/linux/linux-cip-rt_6.12.51-cip10.bb
+ create mode 120000 recipes-kernel/linux/linux-cip-rt_6.12.57-cip12.bb
+ rename recipes-kernel/linux/{linux-cip_4.4.302-cip103.bb => linux-cip_4.4.302-cip104.bb} (68%)
+ rename recipes-kernel/linux/{linux-cip_5.10.245-cip65.bb => linux-cip_5.10.246-cip66.bb} (68%)
+ rename recipes-kernel/linux/{linux-cip-rt_6.1.155-cip47-rt25.bb => linux-cip_6.1.157-cip48.bb} (59%)
+ rename recipes-kernel/linux/{linux-cip_6.12.51-cip10.bb => linux-cip_6.12.57-cip12.bb} (59%)
 
-diff --git a/Kconfig b/Kconfig
-index c02ac94..536162d 100644
---- a/Kconfig
-+++ b/Kconfig
-@@ -105,6 +105,9 @@ config TARGET_TI_AM62PX_SK
- 	select ARCH_ARM64
- 	select HAS_SWUPDATE
- 	select HAS_SECURE_BOOT
-+	select HAS_DISK_ENCRYPTION
-+	select HAS_OPTEE
-+	select FTPM_STMM
-=20
- endchoice
-=20
-diff --git a/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_4.8+v1.62r1-48-ge9fc7b=
-8.bb b/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_4.8+v1.62r1-48-ge9fc7b8.bb
-new file mode 100644
-index 0000000..2cfff21
+diff --git a/recipes-kernel/linux/linux-cip-rt_4.4.302-cip102-rt57.bb b/recipes-kernel/linux/linux-cip-rt_4.4.302-cip104-rt58.bb
+similarity index 68%
+rename from recipes-kernel/linux/linux-cip-rt_4.4.302-cip102-rt57.bb
+rename to recipes-kernel/linux/linux-cip-rt_4.4.302-cip104-rt58.bb
+index 9800cf9c..df900fd9 100644
+--- a/recipes-kernel/linux/linux-cip-rt_4.4.302-cip102-rt57.bb
++++ b/recipes-kernel/linux/linux-cip-rt_4.4.302-cip104-rt58.bb
+@@ -11,4 +11,4 @@
+ 
+ require linux-cip-release.inc
+ 
+-SRC_URI[sha256sum] = "1d6cc128cdc0e763dc645364b1f49ecc4d6d31f9be15bb31774a9c4e2dbaed49"
++SRC_URI[sha256sum] = "705c91e197198c7771af123164e51ad520daa9cee30e0b8ed914841be97ad7f0"
+diff --git a/recipes-kernel/linux/linux-cip-rt_5.10.241-cip64-rt28.bb b/recipes-kernel/linux/linux-cip-rt_5.10.246-cip66-rt29.bb
+similarity index 68%
+rename from recipes-kernel/linux/linux-cip-rt_5.10.241-cip64-rt28.bb
+rename to recipes-kernel/linux/linux-cip-rt_5.10.246-cip66-rt29.bb
+index 09bc40cc..8386b246 100644
+--- a/recipes-kernel/linux/linux-cip-rt_5.10.241-cip64-rt28.bb
++++ b/recipes-kernel/linux/linux-cip-rt_5.10.246-cip66-rt29.bb
+@@ -11,4 +11,4 @@
+ 
+ require linux-cip-release.inc
+ 
+-SRC_URI[sha256sum] = "681e2ed1c9407c6050c0b60432050c09cb3257f654368fe3d48880945fddd1c3"
++SRC_URI[sha256sum] = "ae5233fd7d570b1fbd537bb0a84c0de8a865a4317f4bd4bd6e963bf9ab24e64c"
+diff --git a/recipes-kernel/linux/linux-cip_6.1.155-cip47.bb b/recipes-kernel/linux/linux-cip-rt_6.1.157-cip48-rt26.bb
+similarity index 59%
+rename from recipes-kernel/linux/linux-cip_6.1.155-cip47.bb
+rename to recipes-kernel/linux/linux-cip-rt_6.1.157-cip48-rt26.bb
+index 8d1bd1b7..fb4810bd 100644
+--- a/recipes-kernel/linux/linux-cip_6.1.155-cip47.bb
++++ b/recipes-kernel/linux/linux-cip-rt_6.1.157-cip48-rt26.bb
+@@ -7,4 +7,4 @@
+ 
+ require linux-cip-release.inc
+ 
+-SRC_URI[sha256sum] = "a04254f036c472bd0656d6013ee9be27d4aea31d43ba558af08dd1d4081c4ebc"
++SRC_URI[sha256sum] = "38f7198a3b3e1b0f4c92452754582866c9d12b14272fa57f502c75ab64c8e576"
+diff --git a/recipes-kernel/linux/linux-cip-rt_6.12.51-cip10.bb b/recipes-kernel/linux/linux-cip-rt_6.12.51-cip10.bb
+deleted file mode 120000
+index 6df87a9a..00000000
+--- a/recipes-kernel/linux/linux-cip-rt_6.12.51-cip10.bb
++++ /dev/null
+@@ -1 +0,0 @@
+-linux-cip_6.12.51-cip10.bb
+\ No newline at end of file
+diff --git a/recipes-kernel/linux/linux-cip-rt_6.12.57-cip12.bb b/recipes-kernel/linux/linux-cip-rt_6.12.57-cip12.bb
+new file mode 120000
+index 00000000..e78f72ab
 --- /dev/null
-+++ b/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_4.8+v1.62r1-48-ge9fc7b8.bb
-@@ -0,0 +1,28 @@
-+#
-+# Copyright (c) Texas Instruments Incorporated, 2025
-+#
-+# Authors:
-+#  Sai Sree Kartheek Adivi <s-adivi@ti.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+require recipes-bsp/optee-ftpm/optee-ftpm.inc
-+
-+SRC_URI +=3D " \
-+    https://github.com/OP-TEE/optee_ftpm/archive/${SRCREV}.tar.gz;download=
-filename=3Doptee_ftpm-${SRCREV}.tar.gz \
-+    https://github.com/microsoft/ms-tpm-20-ref/archive/${SRCREV_ms-tpm}.ta=
-r.gz;name=3Dms-tpm;downloadfilename=3Dms-tpm-20-ref-${SRCREV_ms-tpm}.tar.gz=
- \
-+    "
-+SRCREV =3D "04cbc8a136e8fe6731a536f5fe145e2862feafd7"
-+SRCREV_ms-tpm =3D "e9fc7b89d865536c46deb63f9c7d0121a3ded49c"
-+
-+SRC_URI[sha256sum] =3D "7adfa71c4b49affef7d4db2436d8d6b93cdc3aaa9bdc9cf795=
-c0bf7488a4cac6"
-+SRC_URI[ms-tpm.sha256sum] =3D "b77d092c0dde362adf6bc88a580ca7c8abe124d69bb=
-734bf28f8904ae30494a4"
-+
-+S =3D "${WORKDIR}/optee_ftpm-${SRCREV}"
-+MS_TPM_20_REF_DIR =3D "ms-tpm-20-ref-${SRCREV_ms-tpm}"
-+
-+OPTEE_NAME =3D "ti-k3"
-+
-+TA_CPU =3D "cortex-a53"
-+TA_DEV_KIT_DIR =3D "/usr/lib/optee-os/${OPTEE_NAME}/export-ta_arm64"
-diff --git a/recipes-bsp/optee-os/optee-os-tadevkit-ti-k3_4.8.0.bb b/recipe=
-s-bsp/optee-os/optee-os-tadevkit-ti-k3_4.8.0.bb
-new file mode 100644
-index 0000000..6e396fa
---- /dev/null
-+++ b/recipes-bsp/optee-os/optee-os-tadevkit-ti-k3_4.8.0.bb
-@@ -0,0 +1,13 @@
-+#
-+# Copyright (c) Texas Instruments Incorporated, 2025
-+#
-+# Authors:
-+#  Sai Sree Kartheek Adivi <s-adivi@ti.com>
-+#
-+# SPDX-License-Identifier: MIT
-+#
-+
-+OPTEE_ENABLE_APPS =3D "0"
-+
-+require recipes-bsp/optee-os/optee-os-tadevkit-custom.inc
-+require optee-os-ti-k3_${PV}.inc
-diff --git a/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.bb b/recipes-bsp/opt=
-ee-os/optee-os-ti-k3_4.8.0.bb
-index f8cd973..e73a7bf 100644
---- a/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.bb
-+++ b/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.bb
-@@ -9,3 +9,19 @@
-=20
- require recipes-bsp/optee-os/optee-os-custom.inc
- require optee-os-ti-k3_${PV}.inc
-+
-+# StMM integration, required by UEFI auth variable management
-+DEPENDS:append:optee-with-apps =3D " edk2-standalonemm-rpmb"
-+DEBIAN_BUILD_DEPENDS:append:optee-with-apps =3D ", edk2-standalonemm-rpmb"
-+OPTEE_EXTRA_BUILDARGS:append:optee-with-apps =3D " \
-+	CFG_STMM_PATH=3D/usr/lib/edk2/BL32_AP_MM.fd \
-+	"
-+
-+# OP-TEE fTPM integration
-+DEPENDS:append:optee-with-apps =3D " optee-ftpm-${OPTEE_NAME}"
-+DEBIAN_BUILD_DEPENDS:append:optee-with-apps =3D ", optee-ftpm-${OPTEE_NAME=
-}"
-+FTPM_UUID =3D "bc50d971-d4c9-42c4-82cb-343fb7f37896"
-+OPTEE_EXTRA_BUILDARGS:append:optee-with-apps =3D " \
-+	CFG_EARLY_TA=3Dy \
-+	EARLY_TA_PATHS=3D/usr/lib/optee-os/${OPTEE_NAME}/ta/${FTPM_UUID}.stripped=
-.elf \
-+	"
-diff --git a/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.inc b/recipes-bsp/op=
-tee-os/optee-os-ti-k3_4.8.0.inc
-index 444f6b3..5ee5020 100644
---- a/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.inc
-+++ b/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.inc
-@@ -21,7 +21,10 @@ OPTEE_EXTRA_BUILDARGS +=3D " \
- 	CFG_ARM64_core=3Dy \
- 	CFG_USER_TA_TARGETS=3Dta_arm64 \
- 	TEE_IMPL_VERSION=3D${PV} \
--	CFG_TEE_CORE_LOG_LEVEL=3D1 \
-+	CFG_TEE_CORE_LOG_LEVEL=3D1 CFG_TEE_TA_LOG_LEVEL=3D1 \
-+	CFG_CORE_DYN_SHM=3Dy CFG_CORE_HEAP_SIZE=3D524288 \
-+	CFG_REE_FS=3Dn CFG_RPMB_FS=3Dy \
-+	CONFIG_INSECURE=3Dy \
- 	"
-=20
- DEBIAN_BUILD_DEPENDS +=3D ", device-tree-compiler, python3-cryptography:na=
-tive"
-diff --git a/recipes-bsp/u-boot/files/ti-extra.cfg b/recipes-bsp/u-boot/fil=
-es/ti-extra.cfg
-new file mode 100644
-index 0000000..faff390
---- /dev/null
-+++ b/recipes-bsp/u-boot/files/ti-extra.cfg
-@@ -0,0 +1,19 @@
-+### FTPM + RPMB + StandaloneMM setup
-+CONFIG_TEE=3Dy
-+CONFIG_OPTEE=3Dy
-+CONFIG_OPTEE_SERVICE_DISCOVERY=3Dy
-+CONFIG_TPM=3Dy
-+CONFIG_TPM_V2=3Dy
-+CONFIG_CMD_TPM=3Dy
-+CONFIG_TPM2_FTPM_TEE=3Dy
-+CONFIG_CMD_OPTEE_RPMB=3Dy
-+CONFIG_SUPPORT_EMMC_RPMB=3Dy
-+CONFIG_EFI_MM_COMM_TEE=3Dy
-+CONFIG_MEASURED_BOOT=3Dy
-+CONFIG_CMD_NVEDIT_EFI=3Dy
-+CONFIG_CMD_MMC_RPMB=3Dy
-+CONFIG_EFI_TCG2_PROTOCOL=3Dn
-+CONFIG_BOOTCOMMAND=3D"setenv pair_rpmb_key 'setenv -e -nv -bs -rt pairing =
-1; setenv -e pairing'; run pair_rpmb_key; bootefi bootmgr"
-+
-+# workaround for v2025.07
-+CONFIG_USB_STORAGE=3Dy
-diff --git a/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.07.bb b/recipes-bs=
-p/u-boot/u-boot-ti-am62px-sk_2025.07.bb
-index 8f8d0ff..9a1d641 100644
---- a/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.07.bb
-+++ b/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.07.bb
-@@ -20,6 +20,7 @@ SRC_URI +=3D " \
- 	https://github.com/TexasInstruments/ti-linux-firmware/raw/refs/tags/${TI_=
-FIRMWARE_PV}/ti-sysfw/ti-fs-firmware-am62px-hs-enc.bin;downloadfilename=3Dt=
-i-fs-firmware-am62px-hs-enc.bin;name=3Dam62p-sysfw-enc-hs \
- 	https://github.com/TexasInstruments/ti-linux-firmware/raw/refs/tags/${TI_=
-FIRMWARE_PV}/ti-dm/am62pxx/ipc_echo_testb_mcu1_0_release_strip.xer5f;downlo=
-adfilename=3Dipc_echo_testb_mcu1_0_release_strip.xer5f;name=3Dam62p-dm \
- 	file://rules-${MACHINE} \
-+	file://ti-extra.cfg \
- 	file://0001-configs-KASLR-OPTEE-RNG-support-for-K3-devic.patch \
- 	"
-=20
-@@ -58,4 +59,7 @@ do_prepare_build:append() {
-     cp ${WORKDIR}/ti-fs-*firmware-am62px-hs*.bin ${TI_LINUX_FIRMWARE}/ti-s=
-ysfw
-     mkdir -p ${TI_LINUX_FIRMWARE}/ti-dm/am62pxx
-     cp ${WORKDIR}/ipc_echo_testb_mcu1_0_release_strip.xer5f ${TI_LINUX_FIR=
-MWARE}/ti-dm/am62pxx
-+
-+    sed -ni '/### TI extra config/q;p' ${S}/configs/${U_BOOT_CONFIG}
-+    cat ${WORKDIR}/ti-extra.cfg >> ${S}/configs/${U_BOOT_CONFIG}
- }
---=20
-2.34.1
-
++++ b/recipes-kernel/linux/linux-cip-rt_6.12.57-cip12.bb
+@@ -0,0 +1 @@
++linux-cip_6.12.57-cip12.bb
+\ No newline at end of file
+diff --git a/recipes-kernel/linux/linux-cip_4.4.302-cip103.bb b/recipes-kernel/linux/linux-cip_4.4.302-cip104.bb
+similarity index 68%
+rename from recipes-kernel/linux/linux-cip_4.4.302-cip103.bb
+rename to recipes-kernel/linux/linux-cip_4.4.302-cip104.bb
+index 5f4d1e34..994d934a 100644
+--- a/recipes-kernel/linux/linux-cip_4.4.302-cip103.bb
++++ b/recipes-kernel/linux/linux-cip_4.4.302-cip104.bb
+@@ -11,4 +11,4 @@
+ 
+ require linux-cip-release.inc
+ 
+-SRC_URI[sha256sum] = "a7ec74eb70cd953f1c10e031ffd34cc1e0e30942b684a331225fb7991d95b829"
++SRC_URI[sha256sum] = "73489ea64b015a3539b4399dd233f0ca7e69cb179c0676095c1d587c77c93a78"
+diff --git a/recipes-kernel/linux/linux-cip_5.10.245-cip65.bb b/recipes-kernel/linux/linux-cip_5.10.246-cip66.bb
+similarity index 68%
+rename from recipes-kernel/linux/linux-cip_5.10.245-cip65.bb
+rename to recipes-kernel/linux/linux-cip_5.10.246-cip66.bb
+index d2fe0e66..7e02ce32 100644
+--- a/recipes-kernel/linux/linux-cip_5.10.245-cip65.bb
++++ b/recipes-kernel/linux/linux-cip_5.10.246-cip66.bb
+@@ -11,4 +11,4 @@
+ 
+ require linux-cip-release.inc
+ 
+-SRC_URI[sha256sum] = "23996d35b4264c02839705539390cde672da51150fca655ad30cee01b8f7e4a8"
++SRC_URI[sha256sum] = "776dc35c07830ef54756328b47c72b81f4af58117a9321683eb788be6dc82258"
+diff --git a/recipes-kernel/linux/linux-cip-rt_6.1.155-cip47-rt25.bb b/recipes-kernel/linux/linux-cip_6.1.157-cip48.bb
+similarity index 59%
+rename from recipes-kernel/linux/linux-cip-rt_6.1.155-cip47-rt25.bb
+rename to recipes-kernel/linux/linux-cip_6.1.157-cip48.bb
+index 0edb2a38..185d56ed 100644
+--- a/recipes-kernel/linux/linux-cip-rt_6.1.155-cip47-rt25.bb
++++ b/recipes-kernel/linux/linux-cip_6.1.157-cip48.bb
+@@ -7,4 +7,4 @@
+ 
+ require linux-cip-release.inc
+ 
+-SRC_URI[sha256sum] = "f9bc9fdacf78719926d7e6d92575f2dc1b975b359b73e375c92541aabc3b623a"
++SRC_URI[sha256sum] = "7d4cf60253c1a57745d1dfd56c92a4a7e2d71ba71f1d3f488d5c37c435fea141"
+diff --git a/recipes-kernel/linux/linux-cip_6.12.51-cip10.bb b/recipes-kernel/linux/linux-cip_6.12.57-cip12.bb
+similarity index 59%
+rename from recipes-kernel/linux/linux-cip_6.12.51-cip10.bb
+rename to recipes-kernel/linux/linux-cip_6.12.57-cip12.bb
+index 4c000d7b..320888f0 100644
+--- a/recipes-kernel/linux/linux-cip_6.12.51-cip10.bb
++++ b/recipes-kernel/linux/linux-cip_6.12.57-cip12.bb
+@@ -7,4 +7,4 @@
+ 
+ require linux-cip-release.inc
+ 
+-SRC_URI[sha256sum] = "729b2987b444e3dbbe85551d37a416fd9d06c9e53926da0680342df89b9f525a"
++SRC_URI[sha256sum] = "bd5279dce14c0dba16dda09f35b6d2d8224d8251a6575544beca2165c591e1c6"
+-- 
+2.51.0
 
