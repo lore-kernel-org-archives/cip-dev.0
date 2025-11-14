@@ -1,244 +1,133 @@
-Return-Path: <ovidiu.panait.rb@renesas.com>
+Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3788ACE7AE8
-	for <webhook@archiver.kernel.org>; Fri, 14 Nov 2025 11:14:09 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.15685.1763118846899523216
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F6BCE7AEF
+	for <webhook@archiver.kernel.org>; Fri, 14 Nov 2025 11:20:09 +0000 (UTC)
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.15633.1763119205948568664
  for <cip-dev@lists.cip-project.org>;
- Fri, 14 Nov 2025 03:14:08 -0800
+ Fri, 14 Nov 2025 03:20:07 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: UyzOmi7GTUmjlyu4XOlbQQ==
-X-CSE-MsgGUID: lTwIR7gXSKyTRs30BI7/Zw==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 14 Nov 2025 20:14:08 +0900
-Received: from vm01.adwin.renesas.com (unknown [10.226.92.4])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id EF8204575F03;
-	Fri, 14 Nov 2025 20:14:06 +0900 (JST)
-From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=laCc3u9F;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.227, mailfrom: fm-51332-202511141120036a0d0eb1030002072f-kbrlzl@rts-flowmailer.siemens.com)
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 202511141120036a0d0eb1030002072f
+        for <cip-dev@lists.cip-project.org>;
+        Fri, 14 Nov 2025 12:20:03 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=Quirin.Gylstorff@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
+ bh=JC2/BggFTlkkO2ayDl/qEuRwEU3aLkHkYDR5Ejrdz3g=;
+ b=laCc3u9F7GdYbv57ImDmCWwaFH2u9H2I0ufbRhtaApw29gNr7j7331l2mCaBaYyEAuzP+O
+ AhYsN4RzZEgl+cruvs5jb/kv2sTaY2tgmGfayQalgMW0Qjw3mTxNdcMUlUyW4SMXrfR/S6qe
+ nPc4i0ey/ooXjWbwvvSuGAzV9ptryEga8Xy2u0OYH7Q7wfF4cs5uvWlKq7JFpEz2vkLzfw7x
+ hltyyyZPhjKPBBoSPvcbaqB6t3clX1oxsu8TvH/x4e+Tz+AN16QQVrD87mN7JRjd7vRIe44M
+ IZlQWGMiUPlppIzQbhaq4ij+S54fHDirORSGOWwxrTfuLDwogdFkDRkQ==;
+From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org,
-	pavel@denx.de,
-	nobuhiro1.iwamatsu@toshiba.co.jp
-Subject: [PATCH 6.12.y-cip 1/1] arm64: dts: renesas: Add CN15 eMMC and SD overlays for RZ/V2H and RZ/V2N EVKs
-Date: Fri, 14 Nov 2025 11:14:03 +0000
-Message-ID: <20251114111403.74450-2-ovidiu.panait.rb@renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251114111403.74450-1-ovidiu.panait.rb@renesas.com>
-References: <20251114111403.74450-1-ovidiu.panait.rb@renesas.com>
+	jan.kiszka@siemens.com
+Subject: [cip-dev][isar-cip-core][PATCH 5/5] initramfs-crypt-hook: Scan if all request partitions are available
+Date: Fri, 14 Nov 2025 12:17:44 +0100
+Message-ID: <20251114111925.903740-6-Quirin.Gylstorff@siemens.com>
+In-Reply-To: <20251114111925.903740-1-Quirin.Gylstorff@siemens.com>
+References: <20251114111925.903740-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-51332:519-21489:flowmailer
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 14 Nov 2025 11:14:09 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20552
+ <cip-dev@lists.cip-project.org>; Fri, 14 Nov 2025 11:20:09 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20555
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-commit 3d6c2bc7629c8b1bfd75416767122096bb75ba7b upstream.
+This fixes an issue found during testing in the cip-lab with debian
+trixie as the device was not available[1]:
 
-Introduce device tree overlays for supporting the eMMC (RTK0EF0186B02000BJ)
-and microSD (RTK0EF0186B01000BJ) sub-boards connected via the CN15
-connector on the RZ/V2H and RZ/V2N evaluation kits.
+{"dt": "2025-11-05T17:42:59.297005", "lvl": "target", "msg": "Begin: Mounting root file system ... Begin: Running /scripts/local-top ... /dev/disk/by-partlabel/var: No such file or directory"}
+{"dt": "2025-11-05T17:42:59.297463", "lvl": "target", "msg": "Could not find device  mapped to 'var' cannot be encrypted!"}
+{"dt": "2025-11-05T17:42:59.297795", "lvl": "target", "msg": "Rebooting automatically due to panic= boot argument"}
 
-These overlays enable SDHI0 with appropriate pin control settings, power
-regulators, and GPIO handling. Both sub-boards are supported using shared
-overlay files that can be applied to either EVK due to their identical
-connector layout and interface support.
+[1]: https://lava.ciplatform.org/scheduler/job/1325480
 
-To support this, new DT overlay files are added:
-- `rzv2-evk-cn15-emmc.dtso` for eMMC
-- `rzv2-evk-cn15-sd.dtso` for microSD
-
-Additionally, the base DTS files for both EVKs are updated to include a
-fixed 1.8V regulator (`reg_1p8v`) needed by the eMMC sub-board and
-potential future use cases such as HDMI output.
-
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250627193742.110818-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[OP: cherry-picked RZ/V2H parts only]
-Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- arch/arm64/boot/dts/renesas/Makefile          |  6 ++
- .../dts/renesas/r9a09g057h44-rzv2h-evk.dts    |  9 +++
- .../boot/dts/renesas/rzv2-evk-cn15-emmc.dtso  | 50 ++++++++++++++
- .../boot/dts/renesas/rzv2-evk-cn15-sd.dtso    | 69 +++++++++++++++++++
- 4 files changed, 134 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/rzv2-evk-cn15-emmc.dtso
- create mode 100644 arch/arm64/boot/dts/renesas/rzv2-evk-cn15-sd.dtso
+ .../files/local-top-complete                   | 18 +++++++++++++++++-
+ ...ook_0.9.bb => initramfs-crypt-hook_0.10.bb} |  5 ++++-
+ 2 files changed, 21 insertions(+), 2 deletions(-)
+ rename recipes-initramfs/initramfs-crypt-hook/{initramfs-crypt-hook_0.9.bb => initramfs-crypt-hook_0.10.bb} (98%)
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index c8a8a2d108a4..8403ef4fbe88 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -149,6 +149,12 @@ r9a09g047e57-smarc-cru-csi-ov5645-dtbs := r9a09g047e57-smarc.dtb r9a09g047e57-sm
- dtb-$(CONFIG_ARCH_R9A09G047) += r9a09g047e57-smarc-cru-csi-ov5645.dtb
+diff --git a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
+index 664124d..74970ce 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
++++ b/recipes-initramfs/initramfs-crypt-hook/files/local-top-complete
+@@ -33,6 +33,7 @@ esac
  
- dtb-$(CONFIG_ARCH_R9A09G057) += r9a09g057h44-rzv2h-evk.dtb
-+dtb-$(CONFIG_ARCH_R9A09G057) += rzv2-evk-cn15-emmc.dtbo
-+r9a09g057h44-rzv2h-evk-cn15-emmc-dtbs := r9a09g057h44-rzv2h-evk.dtb rzv2-evk-cn15-emmc.dtbo
-+dtb-$(CONFIG_ARCH_R9A09G057) += r9a09g057h44-rzv2h-evk-cn15-emmc.dtb
-+dtb-$(CONFIG_ARCH_R9A09G057) += rzv2-evk-cn15-sd.dtbo
-+r9a09g057h44-rzv2h-evk-cn15-sd-dtbs := r9a09g057h44-rzv2h-evk.dtb rzv2-evk-cn15-sd.dtbo
-+dtb-$(CONFIG_ARCH_R9A09G057) += r9a09g057h44-rzv2h-evk-cn15-sd.dtb
+ . /scripts/functions
  
- dtb-$(CONFIG_ARCH_RCAR_GEN3) += draak-ebisu-panel-aa104xd12.dtbo
- dtb-$(CONFIG_ARCH_RCAR_GEN3) += salvator-panel-aa104xd12.dtbo
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-index a53ef16c2b1e..392fd2a54649 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-@@ -45,6 +45,15 @@ memory@240000000 {
- 		reg = <0x2 0x40000000 0x2 0x00000000>;
- 	};
++. /scripts/cip-initramfs-functions
+ # get configuration variables
+ . /usr/share/encrypt_partition/encrypt_partition.env
  
-+	reg_1p8v: regulator-1p8v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	reg_3p3v: regulator1 {
- 		compatible = "regulator-fixed";
+@@ -67,6 +68,21 @@ service_watchdog() {
+ 		sleep 10
+ 	done > "$WATCHDOG_DEV"
+ }
++set -x
++check_partitions()
++{
++	found=0
++	for partition_set in $partition_sets; do
++		partition="$(awk -v var="$partition_set" 'BEGIN{split(var,a,":"); print a[1]}')"
++		if $(blkid | grep -q "$partition"); then
++			found=$((found + 1))
++		fi
++	done
++	if [ "$found" -eq "$(awk -v var="$partition_sets" 'BEGIN{n=split(var,a," "); print n}')" ]; then
++		return 0
++	fi
++	return 1
++}
  
-diff --git a/arch/arm64/boot/dts/renesas/rzv2-evk-cn15-emmc.dtso b/arch/arm64/boot/dts/renesas/rzv2-evk-cn15-emmc.dtso
-new file mode 100644
-index 000000000000..eda2b31f6d79
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/rzv2-evk-cn15-emmc.dtso
-@@ -0,0 +1,50 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Shared DT overlay for the eMMC Sub Board (RTK0EF0186B02000BJ), which
-+ * is connected to the CN15 connector on the RZ/V2H and RZ/V2N EVKs.
-+ *
-+ * Copyright (C) 2025 Renesas Electronics Corp.
-+ */
+ reencrypt_existing_partition() {
+ 	part_size_blocks="$(cat /sys/class/block/"${1##*/}"/size)"
+@@ -220,7 +236,7 @@ if [ ! -e "$tpm_device" ]; then
+ fi
+ 
+ prepare_for_encryption
+-
++wait_30sec_for_condition check_partitions
+ for partition_set in $partition_sets; do
+ 	partition="$(awk -v var="$partition_set" 'BEGIN{split(var,a,":"); print a[1]}')"
+ 	partition_mountpoint="$(awk -v var="$partition_set" 'BEGIN{split(var,a,":"); print a[2]}')"
+diff --git a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.9.bb b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb
+similarity index 98%
+rename from recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.9.bb
+rename to recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb
+index e107575..9aaa03b 100644
+--- a/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.9.bb
++++ b/recipes-initramfs/initramfs-crypt-hook/initramfs-crypt-hook_0.10.bb
+@@ -11,6 +11,8 @@
+ 
+ require recipes-initramfs/initramfs-hook/hook.inc
+ 
++RDEPENDS += "initramfs-cip-functions"
 +
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
-+
-+&{/} {
-+	aliases {
-+		mmc0 = "/soc/mmc@15c00000";
-+	};
-+};
-+
-+&pinctrl {
-+	sdhi0_emmc_pins: emmc-pins {
-+		sd0-clk {
-+			pins = "SD0CLK";
-+			renesas,output-impedance = <3>;
-+			slew-rate = <0>;
-+		};
-+
-+		sd0-dat-cmd {
-+			pins = "SD0DAT0", "SD0DAT1", "SD0DAT2", "SD0DAT3", "SD0DAT4",
-+			       "SD0DAT5", "SD0DAT6", "SD0DAT7", "SD0CMD";
-+			input-enable;
-+			renesas,output-impedance = <3>;
-+			slew-rate = <0>;
-+		};
-+	};
-+};
-+
-+&sdhi0 {
-+	pinctrl-0 = <&sdhi0_emmc_pins>;
-+	pinctrl-1 = <&sdhi0_emmc_pins>;
-+	pinctrl-names = "default", "state_uhs";
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&reg_1p8v>;
-+	bus-width = <8>;
-+	mmc-hs200-1_8v;
-+	non-removable;
-+	fixed-emmc-driver-type = <1>;
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/renesas/rzv2-evk-cn15-sd.dtso b/arch/arm64/boot/dts/renesas/rzv2-evk-cn15-sd.dtso
-new file mode 100644
-index 000000000000..0af1e0a6c7f4
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/rzv2-evk-cn15-sd.dtso
-@@ -0,0 +1,69 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Shared DT overlay for the microSD Sub Board (RTK0EF0186B01000BJ), which
-+ * is connected to the CN15 connector on the RZ/V2H and RZ/V2N EVKs.
-+ *
-+ * Copyright (C) 2025 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
-+
-+&{/} {
-+	aliases {
-+		mmc0 = "/soc/mmc@15c00000";
-+	};
-+
-+	vqmmc_sdhi0: regulator-vqmmc-sdhi0 {
-+		compatible = "regulator-gpio";
-+		regulator-name = "SDHI0 VqmmC";
-+		gpios = <&pinctrl RZG2L_GPIO(10, 0) GPIO_ACTIVE_HIGH>;
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpios-states = <0>;
-+		states = <3300000 0>, <1800000 1>;
-+	};
-+};
-+
-+&pinctrl {
-+	sdhi0-pwr-en-hog {
-+		gpio-hog;
-+		gpios = <RZG2L_GPIO(10, 1) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "sd0_pwr_en";
-+	};
-+
-+	sdhi0_pins: sd0 {
-+		sd0-cd {
-+			pinmux = <RZG2L_PORT_PINMUX(10, 5, 15)>; /* SD0_CD */
-+		};
-+
-+		sd0-clk {
-+			pins = "SD0CLK";
-+			renesas,output-impedance = <3>;
-+			slew-rate = <0>;
-+		};
-+
-+		sd0-dat-cmd {
-+			pins = "SD0DAT0", "SD0DAT1", "SD0DAT2", "SD0DAT3", "SD0CMD";
-+			input-enable;
-+			renesas,output-impedance = <3>;
-+			slew-rate = <0>;
-+		};
-+	};
-+};
-+
-+&sdhi0 {
-+	pinctrl-0 = <&sdhi0_pins>;
-+	pinctrl-1 = <&sdhi0_pins>;
-+	pinctrl-names = "default", "state_uhs";
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&vqmmc_sdhi0>;
-+	bus-width = <4>;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
-+	status = "okay";
-+};
+ DEBIAN_DEPENDS .= ", \
+     cryptsetup, \
+     awk, \
+@@ -18,7 +20,8 @@ DEBIAN_DEPENDS .= ", \
+     e2fsprogs, \
+     tpm2-tools, \
+     coreutils, \
+-    uuid-runtime"
++    uuid-runtime, \
++    initramfs-cip-functions"
+ 
+ CRYPT_BACKEND:buster = "clevis"
+ CRYPT_BACKEND:bullseye = "clevis"
 -- 
 2.51.0
 
