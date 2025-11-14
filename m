@@ -2,56 +2,50 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EDF1CE8D4F
-	for <webhook@archiver.kernel.org>; Fri, 14 Nov 2025 16:15:25 +0000 (UTC)
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (DB3PR0202CU003.outbound.protection.outlook.com [52.101.84.61])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.2058.1763136916688764037
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5675BCE8D64
+	for <webhook@archiver.kernel.org>; Fri, 14 Nov 2025 17:37:26 +0000 (UTC)
+Received: from DU2PR03CU002.outbound.protection.outlook.com (DU2PR03CU002.outbound.protection.outlook.com [52.101.65.31])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.4062.1763141842109081415
  for <cip-dev@lists.cip-project.org>;
- Fri, 14 Nov 2025 08:15:17 -0800
+ Fri, 14 Nov 2025 09:37:22 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@siemens.com header.s=selector2 header.b=cW9/agz0;
- spf=pass (domain: siemens.com, ip: 52.101.84.61, mailfrom: jan.kiszka@siemens.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=wZ1FXBs5;
+ spf=pass (domain: siemens.com, ip: 52.101.65.31, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iFs1hzsMpAYbH/tF8FKGbOQTfAT1kJKRnkhaKmNhcRsECcxd8icFDkA9MJXUPSksQepcAdUP4eDZuY4nSFCS74TGV5HV5nkYKh36Wd+ie0eAojxwdBCqoJPti777hFkshsdbGHNlcOVjabRU1DxJO6IGN9DYV4sg6OE74ipABDePCK6tYmWcqERZ7LA4WD+H8YNKQazi1TBYTgFQDWa9seLXMPZOVRJOdC3ggWn0jJULlHOOHQi60k5FbxX4CXK9umRPrsVc+HfiMrnLr+De5AjFaidKDuLhDqDUsLo9CBtt6GXw19kKNW5SuhUbRyYL0ARUkfG6sTQBx/ioJTILkw==
+ b=N+qNAGhEUurvF7eHFlNERRKp9kDmoPR2luGmQZBiD9OgP+Lwg5PqB5OBX8aeUnh296x+4tB1prnSDOPnwszOgc5uEA2fh/iX4sjQP8K0qPiSZXrBPzJ055KkR8EXh56+o0BGfd0UXPzxxhbRL6hufls+M9iavrfYVC1Ul6Ir0WAilYp1/lkGC63fe/m+JxIZuufYHLvfTCat4SPLi9to/8Vw6Ep3/ky3UgD6JR94pTKrMkp0u/6JVahOVG2NxjDLdxjC6IofS/GKlV1S3jUMQ9NnPGAGZdN3y+nRsbXHWwYaf+X1GIyaMl0AI6EB+l3nTg10rQ3cb8QrddnSAWXlwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=v9j52mYBDTp2NrgJM/6t2aeng6PJh1FLN/YWGi5qZlk=;
- b=w8NHqO9Tl4Wn25rBeub24cBB//IF5r5u4LoU1oaIKpqkh8jet1wFqZF0U1HiwnzINxhPrIPKq9Pr+NdPFF4U+beg/eXwN0ot6vzzsJ5HDoVl6t6l0g12+Fqb1d+jzjNRb9xII+BZeToh3Lj9rDFK7lnAexar9nIIZx5OocKKp8iiU4oATo+eHGmIAXZAN3lONeQ6gdg5QkEDh3UP0eZck6xnjU6iXzbDtHy93xO/V6I7wJA62OwS7QMDTHTHvvc6EGs+HntVeKgqctTLc1Q5Gs2Uyj4/BpppEIkreuOO29FlMCUASg7gL/1y5IFsKBIUwBNew067c+L06DcGBHDLsQ==
+ bh=a3gKsMCIDz9BQhl3RNNDc61kitfhsVFsKVdSgtBfRLA=;
+ b=lgOQsBm5668UnD5fXJyFzs6keaq3U50YriZamIg0yyoD5o3WWEwCypRurZwDShX1rvo4TiW+0Sxv6iGwBWFhHr9jzAPadqSZ5bzwN1jPN4LMAfeizXhqLFpkuL4IXO+EXVVvWMsd5Z+d39UekzyEI5gIGre/TQqEOvGFS2hCiBPi9u3Uj2g1zyWFx/C2HZcC+z8LkhOYDqhmGQN6gUMaFdiXEERltBDomBk42QNEdVl389vZoIhgIJIQDFoiaAzjhU0J4HuBwPigHKUaKWp3m5g6zMm4LGXHYGRvAXl7vGY9nmtZNXuHqADXtet2xFE3dh+v61speKiGhBya8nyaVw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
  dkim=pass header.d=siemens.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v9j52mYBDTp2NrgJM/6t2aeng6PJh1FLN/YWGi5qZlk=;
- b=cW9/agz0i9wno2+CvG9pmXCg5BilZ6ogd/z/P3WUrDERsItcCa5UPa8WohhKSiDvCBzHN/HtLoG9OXE+bOXz2xlTwbeqCLKJAPedAGGy0+d9HIHAOC6ZOhY/ftqbIxY4GttnWlnT4Yq5PYoI57/hbUa32LqaSn0cTvsey3wNLS+SFtYZYIferfZuoxj7S1GMjwOWasgkr2lI18BxTHvN9Gkqlcx6xmanZx3dzKTu3Sx9TOcYyfjoiHLCgrkmbFtHad+Ynd0SUOaNovUA5e130TxBjbUD9SxziCLHc34P7Hf9OWgBNetmRcSiffGEHV3JxARBE+tCvVCyCEZeKKan1g==
+ bh=a3gKsMCIDz9BQhl3RNNDc61kitfhsVFsKVdSgtBfRLA=;
+ b=wZ1FXBs5fe45GL/KcbiQiZQ92FhdrvY2Z1BWfJIOPtDCV6LMQOz8Cy2PQsv7JsUEJgIWxaPoD7IQWX1niUA3L62wNCMbN8AbRz1+5xm+Z+gBKiWZf5od7MAFvgFhPGQQnCRP2BL+Z9WbJ8bVWYAWNKiVfxfsD/ljl4WSjJzEDk0MdNuf+05MlVYRmn4je4HOgVpgRvOIgKS37Z7+evtDpQgwFsVVKC5dngcwrvs8Oc61yNFDevVA0WfpQY2IlmX+edhXkB2BKsVUldAAAvDju6X9K1U2mEXnfWE/dLhyk7tvFSnWKJv1egC7ZpZLhJRWXzl11BY4HhW4ziYTghbfXg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=siemens.com;
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by GV2PR10MB6257.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:78::17) with
+ by DU0PR10MB6680.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:400::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Fri, 14 Nov
- 2025 16:15:13 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Fri, 14 Nov
+ 2025 17:37:18 +0000
 Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  ([fe80::8fe1:7e71:cf4a:7408%6]) with mapi id 15.20.9320.013; Fri, 14 Nov 2025
- 16:15:13 +0000
-Message-ID: <80ecb9cb-2b48-46ec-b92d-090898097f5b@siemens.com>
-Date: Fri, 14 Nov 2025 17:15:12 +0100
+ 17:37:18 +0000
+Message-ID: <07b0cdc9-6aa1-4ec5-b9cf-44fcd5a663f3@siemens.com>
+Date: Fri, 14 Nov 2025 18:37:17 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev] Testing isar-cip-core on the iwg20d
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- Chris Paterson <Chris.Paterson2@renesas.com>,
- cip-dev <cip-dev@lists.cip-project.org>
-References: <a0f4d994-2f70-4bad-b823-b3bf1a373fce@siemens.com>
- <5cd84b25-4709-4813-9d38-2652810874bf@siemens.com>
- <TY3PR01MB11346468D1012CFB886455D8286CAA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <52e217f0-5cbb-451d-ad56-4c30927b99f3@siemens.com>
- <TY3PR01MB11346CDEF02F029DD1B64560786CAA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <70790d7a-1ac9-4c7b-acc6-2ee4edc4a472@siemens.com>
- <1877EA27D24C204E.1114802@lists.cip-project.org>
- <TY3PR01MB1134685CE8A4BD38F73A0C1D386CAA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Subject: Re: [cip-dev][isar-cip-core][PATCH v5 4/4] ti-am62px-sk: Add support
+ for secureboot & data encryption
+To: Sai Sree Kartheek Adivi <s-adivi@ti.com>, cip-dev@lists.cip-project.org,
+ vigneshr@ti.com
+References: <20251114090509.2935933-1-s-adivi@ti.com>
+ <20251114090509.2935933-5-s-adivi@ti.com>
 From: Jan Kiszka <jan.kiszka@siemens.com>
 Content-Language: en-US
 Autocrypt: addr=jan.kiszka@siemens.com; keydata=
@@ -97,294 +91,342 @@ Autocrypt: addr=jan.kiszka@siemens.com; keydata=
  qH4kDzsqKX8zzTzfAWFxrkXA/kFpR3JsMzNmvextkN2kOLCCHkym0zz5Y3vxaYtbXG2wTrqJ
  8WpkWIE8STUhQa9AkezgucXN7r6uSrzW8IQXxBInZwFIyBgM0f/fzyNqzThFT15QMrYUqhhW
  ZffO4PeNJOUYfXdH13A6rbU0y6xE7Okuoa01EqNi9yqyLA8gPgg/DhOpGtK8KokCsdYsTbk=
-In-Reply-To: <TY3PR01MB1134685CE8A4BD38F73A0C1D386CAA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <20251114090509.2935933-5-s-adivi@ti.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0262.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e8::6) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-ClientProxiedBy: FR3P281CA0021.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:1c::11) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
  (2603:10a6:20b:588::19)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|GV2PR10MB6257:EE_
-X-MS-Office365-Filtering-Correlation-Id: 276f26b1-2a31-4602-a50f-08de2398fdb4
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DU0PR10MB6680:EE_
+X-MS-Office365-Filtering-Correlation-Id: 694756eb-a229-4a90-5802-08de23a47518
 X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|376014|366016|1800799024|13003099007|7053199007;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?cTBDV3hpK1FIQ3hXMmJQZGNpeHpKUzV4bWlGb2FCZEsyYW9WdEI2UlpzbDU3?=
- =?utf-8?B?YlN4OFFmTmtXQ3ZkNTFRcWxJUzNWTWY2aDdsYk1ucFVhYkJMbThQM1c4MXc5?=
- =?utf-8?B?YkdVSzF5cGQ1a2Y5cVpnemx6bkRaUlQvRzhXNENVemZueGxvWXc1YUdXRmFZ?=
- =?utf-8?B?UkRUOHpRN3RlUWFwNzJGdHdxK1BNS2FyQXFWZ3hIODVKcm9DR2Y1VFRRa2pt?=
- =?utf-8?B?dDRDRXk2WG5EREo5eDUzdm5XazRjR2I5aDJSUmxHLzhoMW9NemtMbkFKN1JC?=
- =?utf-8?B?a04xS2lOMnNMcVVkWi9kTXI4TGlMTFN6NlpDTWt6WEloSkNGUzRpR1FFWFNo?=
- =?utf-8?B?UkJzN1REWjBIb3JJb0FYb3gwcWZQTEhlWG5LRmRzNFo2Y1pxTTYycUY0R1du?=
- =?utf-8?B?UmloTnR4THF2VWZiM2FBanovT1A0Z2VxVStIVms2eENhRkJ5VFpPZm9ucUNn?=
- =?utf-8?B?N0dUajZ0WnhoRkxzeHRJSk42cE9UZTRJdDI5cEFpeThnYXM0QU5KaTBTR2s4?=
- =?utf-8?B?QWlzc3MwS1BrTnZUU0ovcng1elF3d0hDNDlURGJ6aGRHbmNSTk5NSFd3cnlT?=
- =?utf-8?B?UW1Fb3pYWThGWFc5dlUxTldGNTFYa3BpOVVReE5KTTRITStlQjJvdEc5dlVq?=
- =?utf-8?B?ek50dzlVWnFSSkJmUERMMTRldjRrdTdPazdaU0lwVmVhbEtSYS8xc1IxN1Nq?=
- =?utf-8?B?TWtGTS94cW90SXFvRkJFdDFWc3BwLzVYTlZ3OVJ4aUZIc1E5KzVXVDZnZDdi?=
- =?utf-8?B?MjgrWVY2SWRGendjSkdxejlXQlM0NUZ2RS9tc2tjUFB5TnNvYmpVZFRMbElX?=
- =?utf-8?B?eEpaYXRLNFo0bUk4TytHR0ltUVB2UGFIdHlIT1hiSUZIZ01CR1o5VnBlRXkz?=
- =?utf-8?B?SmkvaWNHNExnZ1J4OGFMRENtYnZZTDBkNVpiYkxsRlA3Y2Fkc1hKTXVzRStH?=
- =?utf-8?B?aWthbjY4d2N3ZlRDSVBBMXNBdVNubFpWU21xTS9HUitocUVQZmFqSzFKMHhn?=
- =?utf-8?B?dkF1azhvL2QzWDZ4RnNHQTlaUFpWbERVL294a0VieEFaMjhkTTBUVk9mandQ?=
- =?utf-8?B?cDFUMVpBT2tzK29EQ0xIMzR0dFMwcUh2R3ZVWXRRVWhaMTZhR1JGWnV4czJ6?=
- =?utf-8?B?bmJVQlloTFd5SDZtREQ3YXRzM3Zpa3FlcGxrODhtQ29GdWo5RjhKL0tZS0I1?=
- =?utf-8?B?MFg3TEVqcVdRTWRENGdEeDkvUlhJd1ErT3JHcmRsRWRWdmp5L0hJL2xzZHJV?=
- =?utf-8?B?OHJlUS90eFB3eE5ESTNJV2wxRTVVVlhPOGFNMktOVEtZM0Y3LzhwOVBNZFdI?=
- =?utf-8?B?M1lRY21MUGlWbWV0ZjBEeW1wODIrcnY5TzVHN0g0TDZ6dUJyV1R3ejB2ZVJL?=
- =?utf-8?B?ZWpSaTVuOTNPeEVvcnBOV1JLMktLOEJRZ2R2QUFjcllQZVgxY1hCWDJ1M0gz?=
- =?utf-8?B?bVc1SUU3T21LVVUrTkRqYll4SXpKMVQ0L3c2cEtSMHg4TzJjbVBhclJmb29P?=
- =?utf-8?B?aUlGQ1ZDSzM5dlhDRm1FY1pmOWkyeXBWajRiWWw3QWZGS2FLSWRyOTJTRXR3?=
- =?utf-8?B?Z1lmdzFLWndML05JL1Z0cHNpaXNIZlB6VUMvTjNwL2JnbForMmdxVUtyQU42?=
- =?utf-8?B?Y016V2NhaG42SXV4S0tQSXdTQ3FadzNpRXFsRzJTVlN5NGthK3BRYkR2ejlJ?=
- =?utf-8?B?b3JpN211QUozb0w2eStqSXhrKzdoQlNPMUorcW1uMWc3enVYRU85eTlLcXFw?=
- =?utf-8?B?dVB5TXNIMHZTY3NaaHBWYW1Sa2V3R0hBNlFQV3ZsVEVVRC9pYTI5N2VjaWE5?=
- =?utf-8?B?aXJyZURDbFdiOGlPMzlzMHBvd2lBK0YrWktyS2VHamVlTGdBR2dSaHZ0NDNU?=
- =?utf-8?B?Znl5NC9mSmFDdmN3UTg3eG9WTU1ISXlBVzc5Wm9aUEJjWEpIZ3BPNWltTzJL?=
- =?utf-8?B?TkVhdGwzNUx4SnFZT3lVblBmWU91TlFwOGdmZ2x5Ly9uRVBjUmpnbFNiYXdq?=
- =?utf-8?B?akpBYzg5TW5nPT0=?=
+	=?utf-8?B?RE5iSU9Dc3pYNlJKb2wvLzVrdjhRVFA1MU9rencrb1JGeWl3Mk5lTlFLT3FX?=
+ =?utf-8?B?NmNQdCt4Z1djQWxvWDNXQUpNZ3lJVTBPVHQ1T2NMd0NMR3BsdjFyM0lPRGJC?=
+ =?utf-8?B?VFdpOHJvQy9xV3B6UHdWKzhMV3FCUTNQYWFUcGtYWnZXU0VmSXBxcC9jL1RZ?=
+ =?utf-8?B?ZTFIL21yYUZMN2wraHJvQ1hSL0dxSXdueU0vUlJZM09mZWFqZXRpMXY2cDEz?=
+ =?utf-8?B?VHdScUJjRS9KNGZUdzNNV0doQ3RBS1I5YU9odWFxUjE5OHIvTDFYZlFicUZ0?=
+ =?utf-8?B?eGRtWHhFV1N4RTc2aTI3djRvU1ZYYUlueC9wZEFsY0RPMVpjYjhHaFBtNWMw?=
+ =?utf-8?B?dE9KQnY5RFljaEl3clY1RzlsZWRkZ2tjQXFJRXZKbWg2V1FDV1RYSVo5T3JT?=
+ =?utf-8?B?T1lKbGUrTGtadEdvRTY3WnhGS3hOSG5mbnh4S29iTUhIajVOL3NUM3AwRFZM?=
+ =?utf-8?B?SEQ2ZWNWV0FHMTRwNHE1a1EwQ0w0cWNWa1dCd2d6dXZicmloVWFDck9aWmtz?=
+ =?utf-8?B?WDJxSWZQdFBWSktjSEYyQ2pDRVNrc09LZVMyM1RSV2hjZk5oVmhnOG8wZWxU?=
+ =?utf-8?B?UVJmS0QwL2tJcVFUMTkxWHBKYVpjT1JncXMxWnczS2VZZkhmeXJMVjQvT2VS?=
+ =?utf-8?B?NFhRWjRUOWZ6MHlUODIwSGpsNVJKVk9VZmorK09CTHlmZXdEcnc1ditNTzEv?=
+ =?utf-8?B?bEswRlFnMmpPMTgrcVpjK1dCdzVwUE9MdHozVWN3UUM3K25GcW9GTFIwY29s?=
+ =?utf-8?B?U3lXNmxPV0JNZWM4TEZ2aHgxZitYd1lIYmxJbHl4RkozcWVvSWMrVDNKMy9K?=
+ =?utf-8?B?d3dxclZuYjlqNGRFTkxjeUVWQXVJVXJVS0tHaXhiOEZkVC8vdE1kTHd0Z0F5?=
+ =?utf-8?B?aTJxUHpwcVNJZmNqemsxQ1M4Y1lqTUJWdDU4eVJ6SHZkZkhPOVZiZzBxM2or?=
+ =?utf-8?B?OFhXZmUvb1NreWdBVGpEZm1mNk5WbFNpd2ZuamE3d3JQL0wwSnN0OVh5cHpG?=
+ =?utf-8?B?L2lSQWhpVUJ3RDFSMWgwSkdMK2F6Y0txR2hzblBGeFlyWW9xOVFRQjk4VHdN?=
+ =?utf-8?B?ZzZ0WElDU1F1MlgrWGxtYnZuV2RxY0FIQlF0WmVTMTM1eHhZUkd6ZTFYbHdI?=
+ =?utf-8?B?WG1RMzVHRjc0RzZSa2k0WGpMRUNrcFhzNExybHNrUlR4SGlZRzhmSDl2cXZq?=
+ =?utf-8?B?Zmh1WkhwOWNaSCtJeEw2LzNqZ0xyTEJOTXU4ODZUWkJwYWNxMmJrcVFMNXlt?=
+ =?utf-8?B?ZEtKeHc0WWhuTkQxRHI3eXYyM1BMdWRRK0xCa1IzREk4Q3BUb0hJSWtTemhM?=
+ =?utf-8?B?MjFGbGdWczNGTmw0ZTBqZUd6QSt1czR2Ymo5ZFlGSWdadjd1djdyaVV0QU5O?=
+ =?utf-8?B?U3pGUlV4V0VMWk5CdmQrVGJTYW9wajlUU1dqRTNKSjl0QWNBWUpTTFZ1SFhx?=
+ =?utf-8?B?Rmk3ckVwekRIV29IZkhyN0R4WUY0R3JxcHQ2Wkh2WnlxQ1d0dzZhV0ZEanhU?=
+ =?utf-8?B?RGlocGVIS2hRY2Y3QUxQSlJFMHJqNHFQc01TSXVsbXNDSC9VOEVJRHQ2UnpJ?=
+ =?utf-8?B?MTVIV3BUL1dDNE83N0FJVzJrZnVEV0daalFWNDQ4aDIyeitkeVF6SVZnRWcz?=
+ =?utf-8?B?aUlBclo0SEJzMk1BMFp5NHdxTGFId3BUWkt5S09mbzdSdkxJR2RPSlE4V1pT?=
+ =?utf-8?B?d0g0Zk93SHdlMklJcHhLTTh2VGVKd2VteVNLRmFmRzlzRUF4QTVWTlpadHJL?=
+ =?utf-8?B?MXEyakpEYUpPcVVjV0Y5UE5VNzdDSHhIM1VCaXRVOWNDSDF3bjZPdXc2M0pL?=
+ =?utf-8?B?LzVmQUowWUtJRDJxWG50b1ZJeDYvb05YWTVzZURmNkZJT0hIUEVraHBMQ3lY?=
+ =?utf-8?B?MUs5Z2hmNGFOdmdGc2Fhako3ZDR6TzduMnp0WE1yelVBeW4yYkVibVdNUmZK?=
+ =?utf-8?B?VmJ6NHQ1cVFuZy9SVU5aV3hFcmZGV25mNzR2RnRmMkpzRjNINFJvMEhIK20v?=
+ =?utf-8?B?OWlPRTFJWENRPT0=?=
 X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(13003099007)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?STcvc0FhT0J0NzJ5c2JmckVKZzhnQ3E3Vkg3R25XM3pVMWxsNURab0ZOSVZD?=
- =?utf-8?B?NjJiK2YrUGp3b1g5TTFKK0pRbXNtTU41RUk5VXZiclZoOWpKalRMUmZvMWVQ?=
- =?utf-8?B?eUt5WkdqUWt4M2NxQmtjYW1pZERESm1adUpKRzJFUmRnZFg5YXFmdEpWUDd5?=
- =?utf-8?B?bE40ZXdaS3d1K1V4TUs0QXU1eFRheGhqSmZBUWdtUFNFblpIZWJmQnhlZml0?=
- =?utf-8?B?NFpXRi96NmF3U2JyMHVCMURTQXBFUjdCYUhXZTRVaTlyR0xDR1NSTkRoUDhj?=
- =?utf-8?B?VCtCTlBVTzhtazhqYUlFT1lTaS9uY2RRQWt0N2RraWZEN3gzbDdrTEZHZXQr?=
- =?utf-8?B?alZ1YUs5N1Z6UUh6WHRsbWtqMGFaS1hPSWQycTNkNlhjZGNqNzR0bS9jM3RG?=
- =?utf-8?B?alk3NDdGUUlEaGxzUUwzZ2ZCaXBVTnlTL3VHaEtUdlI1cUJsM3MzZW55Nm92?=
- =?utf-8?B?eHBRM3FadC9PMWljUHZnVmJzQXI3TTBqSElIQ0E3M1ZBZm1VVUpiWmlLTEU2?=
- =?utf-8?B?UE54REdQNTFNWDFyQlIxVERNcHphU25OOXVxRWdEMFdtVDZrQVkyYVN6YnhQ?=
- =?utf-8?B?M21pZzdxcGZmVm5FVmJCKy9aWjNXcWpjWThTKzhGTzYyaC9oeUNhYjFNZEh2?=
- =?utf-8?B?aUFMZzk2czJkR29uZFdaOG4vUGlHVmt1aXVOSFcwa3JWTHRmTEJFeW51VG9z?=
- =?utf-8?B?REVKTHNGcjRtOUE2ZlhaYWV0U1JFZkI4cDRURWtuU29Nc1hnTkhyeU1TOXI2?=
- =?utf-8?B?MWVYcE9sVk1YblE5UGR6NG00MzJCSFZkU21VZ0I5WkttMW1DR2EycmQyb2t4?=
- =?utf-8?B?ZFNRUWRQYXlrS3J3L2QzWFlJZXFXUlJmTXFzUThPV1FYT05mb0dTcVpKSzBC?=
- =?utf-8?B?cVFqWlpjbEpXRndhbEMxUDB4MmIvT0daQU9rVnlpSTVVNTQrb3RjUVpMSDF1?=
- =?utf-8?B?eWNMaU5Jd3lOa2VDRDZuVWlBR1Y2Y2c5YWZsTFNyK0t6SUtLTm1Ydlp4Vk9S?=
- =?utf-8?B?aVl6WG9ZWk5peng2cTRXeFliNEs3c2pZdjNJTGdsSmg1bmlpR2kwTFc1ZGVL?=
- =?utf-8?B?OHVtazZFMzNmaXd6ZHljUHNIdFVvZTJjZmZqL1JpTUlvT3hRMTRBRGpoaWtp?=
- =?utf-8?B?SkRyZGNVSlluTXc1TzQxTVpqNURrb3NZV0FRa3NsYUsvdjZoeFVBUU9vUkRx?=
- =?utf-8?B?aVQ1SEwzS203Unp1amthQWpWZlpRRnZYS3J1RTdhODVtOGdTYWNkMHdFRFl5?=
- =?utf-8?B?bk4rMkk5cHJtYVQ1UFNteG1TVVRTUkg4dDlEQy9YekViYVJRcXZ1NjM5RTRh?=
- =?utf-8?B?cXhRK2FIcFZ2UWE4MXVUb3E0L0lFNkhoUGV5RUtZbTlWR2ZBd3Y1WXpHaTI2?=
- =?utf-8?B?eE9uckhRQzFRZGV2VHNmMDNUbi9MeG5vQkt3NWcrQk1hSXZ2eGFMUG9sTDVz?=
- =?utf-8?B?M0NaK1hIckg5WEtnWExIVWpmMzYyZ2tkak5mWkVyQVZndUE4SWVEOGVyLzZY?=
- =?utf-8?B?SnRsbFV0NkowSmh2aXp2NDh4NkJHaHZ1YWQ1MXN5Q01NbFpHNmM3aFlTTFk0?=
- =?utf-8?B?dE91QzN5UmVIc2xMUnQxa3ArOUlHU2YvWEltQjJiVnNRcnI1N25KV0YxVStj?=
- =?utf-8?B?MXVjVURDSHhWd01Db1VvQ0FJYTRzaXVNcmVGSlRJeGtvY3cvenVwNFJPdGRx?=
- =?utf-8?B?MVl1QXZ2dWJ2Sndab2J0WW42SElUd1VzT0FIcUtGREU0RTNRS2FvTUFnd3Bl?=
- =?utf-8?B?MTQ5K2NuY0RwWUhKV0xzQzhCOW9uYTFJZHNkVmhiQ3p2YktOMHJ3SjRzOFJT?=
- =?utf-8?B?QWV3V2xxeUhmNkJvRUZIaEpmTlUvdWU4bWZ0cStMcjlwTjV3M2pYaFVDT0tS?=
- =?utf-8?B?WWFzRzlJYlJNQ01aQ0RYaGFQZ0hFNTVnWGFwU2tKbUpnRkFzWGhOVTFITjJT?=
- =?utf-8?B?QXU0OFd3cWJxWmpGUXN4UElRSTVrSXN2a3VJdU8wdEY1Vk9ydjVDdmpFdVpV?=
- =?utf-8?B?blZMZFZyM3NqWVlsaXJ6NmwzY1RidFUvMFdtSzhmS29hZjVkbFZDLzAxL3Jw?=
- =?utf-8?B?aTNYSC84WE03QThjTURHSHVVRDl0ZzVnVDQ5WEN3SlNudEd0a2U5UC82M2Zh?=
- =?utf-8?Q?GOt+zD8YrFVBWGjkoj5+OW6l5?=
+	=?utf-8?B?NDRhYkU1ZzJxRCtjMDhOZ3JJak8zVHVUZUFCb3l2WWl6amdMM0RuZmM1Q2M2?=
+ =?utf-8?B?TkVhcjFDNlRhTjc0WVdCQ2ZwUUFFejFKdlB0bnlwdTJXRFFrZ05LTVZFOERK?=
+ =?utf-8?B?MzROTVJsMHNCU2ZwL2hzVEtBd1dicHJqd2pXQU5tMkpzdUhqL25KRjRxUzFk?=
+ =?utf-8?B?Z040V25aRE5jbG1ONHpxM25NSEZGdkhJWThHUHdDeHViTW95QmdWSTFMdngy?=
+ =?utf-8?B?NFlIWHQvbjlnT1JNckxlOWJjWk1YZzVYc3NMbkd0UkxOOWxOdVZ0ZmJJVG1D?=
+ =?utf-8?B?TG43VnFiMFl2bC9uM21ROHVSZTNjSXFZNmdvNkQvL205SG5xWnZLTzB3QTlO?=
+ =?utf-8?B?TzNwN3dEaEdveFJWQW1nVXVvWFNqQjhVQU1OM2NuMjlmUFhRZmQzSWV2ZnhB?=
+ =?utf-8?B?T2gxUTd1RmNjN2cvMUpxb3JwQWQ0WWgxNzBqUE5HWElFZVQyeGV4SEhndVRv?=
+ =?utf-8?B?Yyt6LzM5ekloV2ZnZit2Y2FPQlkyMVJoeFFURzdFOUp2TUlZK0xteENyWjl3?=
+ =?utf-8?B?UVUrQm0yVEZiYmFXb1pPV0lHMU85SDI0QzYvVVdxWkJyU0dJT0dLQkJ4NTlJ?=
+ =?utf-8?B?a1lRVUg5ams3K2k5M0lNeTRoV0Flb2kyQ1lEZCtLNmtQYnM4SzBEUWxkVENp?=
+ =?utf-8?B?dlNWbXFnSXJVQllnQlRrRElpQ2pHV3lLaE0xVWJ6N1RoR3YvRmxPUzJzVG9W?=
+ =?utf-8?B?aXFPL0tRcHh4dmtOOU4zL25uaHExOVgzQzduUGJvN1R5bWU1WUVoa3dxYVVh?=
+ =?utf-8?B?V25kVXRuZkJ6ZzI2aVU2ZisvREZRd0Ziek4wRUZoZDBPNFgwMEN4V05JUGtR?=
+ =?utf-8?B?cTl3Y2w3WEpEUUdYL2h4RnVMSWFKV1V1YzFBQnFkckNzR3lJSjh0M1pwUk93?=
+ =?utf-8?B?enhnR2dtbXQxdGREbFlsYlM4blZCT1JTQUFCRCt1Q2h3SktndzR4dm9LTG9w?=
+ =?utf-8?B?T3NFbTRtU01Tb1NCRUdNVmFGUExsbTQ4NjUvbnJDSXJNWVNUNVdtZ1lrUDBu?=
+ =?utf-8?B?RzQ2SmNlV2I3aTRDTEo0YWhtYk8vYWVRMjQ1U3ZscmRBRm5oSndMWTRtQUNh?=
+ =?utf-8?B?dTkwdDN5UDk2SXFjdkZYcGMyVjM2bVFNKzlGNU5FWXJ5N0g1eThCaTJPZklN?=
+ =?utf-8?B?VmFsZy9Pbkw1TkphOFJBNmE3T3lQMTVsWU0rQW96eDNwR29HbllSelhrM3BC?=
+ =?utf-8?B?UHA0TmJDVnBDdUJGczk2dHVJTzZaZm9FY2IvZXFHMithRUQrVWhMQ1VWbFEy?=
+ =?utf-8?B?WTBFWmdTUnpUNlBEME5BY2xXT3ZRSzhVK3dSdllENXZHQkNrdm1LU3YyNEVK?=
+ =?utf-8?B?Mm5sOVlrMEg1T0xzYXpKMzhIWTZiZzJTbUw0RVdVT0FiNStCdGF2azVicU1u?=
+ =?utf-8?B?TWJCUDNWSUJ6bjVMR0J6M05ZNnJjLzVmT2ZXTkx4UDdPem1RajNOTy9VME9Y?=
+ =?utf-8?B?WnVjajg1K0tINHJFRFdmNGh0eVJnVzZVOERjS1dLWmpxWTRJNldmM2YvNlBk?=
+ =?utf-8?B?TU5TaXgxdW9QTXd6U09UM1I3WjRHMll1Yi9YY2lOMmVDOFE1aENXdVhvajhV?=
+ =?utf-8?B?MnV4SnNadWxib0JtWWRmSTFlUW4wbU9lWXZ5eTE0bWI3ZjNha1VRa1FMbnIv?=
+ =?utf-8?B?UU1NYkxrWTlMa1ZEb3gyRUlKejI2WDZlNUxaMEUvOHdYMDk3WkpWL1pjVHhB?=
+ =?utf-8?B?ZFdyY0xLSEUxanFUMGExNFlzR0xqeFhxejlOR1Y3OVYxTkVYSFhJVEgzVG5Z?=
+ =?utf-8?B?dXJFSGRLTnFTOGxIcmYvcTEyUStFY3l5KzFlVmViMldRelJtOFI1S0RORXJX?=
+ =?utf-8?B?WmVWMmd6YURyNU9qNzcvSjBlTDc0VFlVWmZHVE9qYkVZQVJDeGlmaW9WeVpF?=
+ =?utf-8?B?dUwzZmlBMHJnMEhqUUplMmorMFppZHdiN0RESnpLK0pHR080ODZBR3A5blQ0?=
+ =?utf-8?B?bkZBbklCckc5RWJDektidXBKeG9Ya0p3S2ZpZDZSemNGYmdrOVBFNDZnL0pr?=
+ =?utf-8?B?SVcwQzY2NE01NGtNQXVRZkozL3p6TXdIR1M5ZmpKSHYweEsvNmJiaGN6QWFj?=
+ =?utf-8?B?UzBSeksrNVU3WDNjbmkzdDZ5VXhnL0RnN2lNVzQ3dWpoaE5QSTN3cWwwZmFC?=
+ =?utf-8?B?UTJxem01eGcydm5xeUgyTHFxenlHUXpDTXpZeVBlZVdsbGlSOHFCWE1rcG1K?=
+ =?utf-8?B?a0E9PQ==?=
 X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 276f26b1-2a31-4602-a50f-08de2398fdb4
+X-MS-Exchange-CrossTenant-Network-Message-Id: 694756eb-a229-4a90-5802-08de23a47518
 X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2025 16:15:13.3103
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2025 17:37:18.0897
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dTszCKv1JUgGfE8a5M64vqL8pGYmKxYzRrD7N2sLlW5sbvgGoWmHovOkEX5N2oZbij/xLbwhuuNUgA1N/r3KXg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR10MB6257
+X-MS-Exchange-CrossTenant-UserPrincipalName: c7FHIEiNnlcEbF5S24e4y02KR5PP6P6Zzd47KUSbjP7BcSikkCXdQgb8+gQWrcE7dvS1gkbhRsW+ajr8OTSklg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB6680
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Fri, 14 Nov 2025 16:15:25 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20562
+ <cip-dev@lists.cip-project.org>; Fri, 14 Nov 2025 17:37:26 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20563
 
-On 14.11.25 17:03, Biju Das wrote:
-> make -j4 uImage UIMAGE_LOADADDR=0x40008000
+On 14.11.25 10:05, Sai Sree Kartheek Adivi wrote:
+> - Add new recipe for optee-os-tadevkit, optee-ftpm
+> - Integrate OPTEE-fTPM, StMM
+> - Add ti-extra.cfg for enabling RPMB, FTPM and StMM related configs
+> - Update Kconfig to enable secureboot
+> - Add wks file for use with secureboot
 > 
-> This is the command for building uImage.
+> Signed-off-by: Sai Sree Kartheek Adivi <s-adivi@ti.com>
+> ---
+>  Kconfig                                       |  4 +++
+>  ...ptee-ftpm-ti-k3_4.8+v1.62r1-48-ge9fc7b8.bb | 28 +++++++++++++++++++
+>  .../optee-os/optee-os-tadevkit-ti-k3_4.8.0.bb | 13 +++++++++
+>  recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.bb  | 16 +++++++++++
+>  recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.inc |  5 +++-
+>  recipes-bsp/u-boot/files/ti-extra.cfg         | 19 +++++++++++++
+>  .../u-boot/u-boot-ti-am62px-sk_2025.07.bb     |  4 +++
+>  ...i-am62px-sk-efibootguard-secureboot.wks.in | 23 +++++++++++++++
+>  8 files changed, 111 insertions(+), 1 deletion(-)
+>  create mode 100644 recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_4.8+v1.62r1-48-ge9fc7b8.bb
+>  create mode 100644 recipes-bsp/optee-os/optee-os-tadevkit-ti-k3_4.8.0.bb
+>  create mode 100644 recipes-bsp/u-boot/files/ti-extra.cfg
+>  create mode 100644 wic/ti-am62px-sk-efibootguard-secureboot.wks.in
 > 
+> diff --git a/Kconfig b/Kconfig
+> index d322a94..536162d 100644
+> --- a/Kconfig
+> +++ b/Kconfig
+> @@ -104,6 +104,10 @@ config TARGET_TI_AM62PX_SK
+>  	bool "Texas Instruments AM62Px SK"
+>  	select ARCH_ARM64
+>  	select HAS_SWUPDATE
+> +	select HAS_SECURE_BOOT
+> +	select HAS_DISK_ENCRYPTION
+> +	select HAS_OPTEE
+> +	select FTPM_STMM
+>  
+>  endchoice
+>  
+> diff --git a/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_4.8+v1.62r1-48-ge9fc7b8.bb b/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_4.8+v1.62r1-48-ge9fc7b8.bb
+> new file mode 100644
+> index 0000000..2cfff21
+> --- /dev/null
+> +++ b/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_4.8+v1.62r1-48-ge9fc7b8.bb
+> @@ -0,0 +1,28 @@
+> +#
+> +# Copyright (c) Texas Instruments Incorporated, 2025
+> +#
+> +# Authors:
+> +#  Sai Sree Kartheek Adivi <s-adivi@ti.com>
+> +#
+> +# SPDX-License-Identifier: MIT
+> +#
+> +
+> +require recipes-bsp/optee-ftpm/optee-ftpm.inc
+> +
+> +SRC_URI += " \
+> +    https://github.com/OP-TEE/optee_ftpm/archive/${SRCREV}.tar.gz;downloadfilename=optee_ftpm-${SRCREV}.tar.gz \
+> +    https://github.com/microsoft/ms-tpm-20-ref/archive/${SRCREV_ms-tpm}.tar.gz;name=ms-tpm;downloadfilename=ms-tpm-20-ref-${SRCREV_ms-tpm}.tar.gz \
+> +    "
+> +SRCREV = "04cbc8a136e8fe6731a536f5fe145e2862feafd7"
+> +SRCREV_ms-tpm = "e9fc7b89d865536c46deb63f9c7d0121a3ded49c"
+> +
+> +SRC_URI[sha256sum] = "7adfa71c4b49affef7d4db2436d8d6b93cdc3aaa9bdc9cf795c0bf7488a4cac6"
+> +SRC_URI[ms-tpm.sha256sum] = "b77d092c0dde362adf6bc88a580ca7c8abe124d69bb734bf28f8904ae30494a4"
+> +
+> +S = "${WORKDIR}/optee_ftpm-${SRCREV}"
+> +MS_TPM_20_REF_DIR = "ms-tpm-20-ref-${SRCREV_ms-tpm}"
+> +
+> +OPTEE_NAME = "ti-k3"
+> +
+> +TA_CPU = "cortex-a53"
+> +TA_DEV_KIT_DIR = "/usr/lib/optee-os/${OPTEE_NAME}/export-ta_arm64"
+> diff --git a/recipes-bsp/optee-os/optee-os-tadevkit-ti-k3_4.8.0.bb b/recipes-bsp/optee-os/optee-os-tadevkit-ti-k3_4.8.0.bb
+> new file mode 100644
+> index 0000000..6e396fa
+> --- /dev/null
+> +++ b/recipes-bsp/optee-os/optee-os-tadevkit-ti-k3_4.8.0.bb
+> @@ -0,0 +1,13 @@
+> +#
+> +# Copyright (c) Texas Instruments Incorporated, 2025
+> +#
+> +# Authors:
+> +#  Sai Sree Kartheek Adivi <s-adivi@ti.com>
+> +#
+> +# SPDX-License-Identifier: MIT
+> +#
+> +
+> +OPTEE_ENABLE_APPS = "0"
+> +
+> +require recipes-bsp/optee-os/optee-os-tadevkit-custom.inc
+> +require optee-os-ti-k3_${PV}.inc
+> diff --git a/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.bb b/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.bb
+> index f8cd973..e73a7bf 100644
+> --- a/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.bb
+> +++ b/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.bb
+> @@ -9,3 +9,19 @@
+>  
+>  require recipes-bsp/optee-os/optee-os-custom.inc
+>  require optee-os-ti-k3_${PV}.inc
+> +
+> +# StMM integration, required by UEFI auth variable management
+> +DEPENDS:append:optee-with-apps = " edk2-standalonemm-rpmb"
+> +DEBIAN_BUILD_DEPENDS:append:optee-with-apps = ", edk2-standalonemm-rpmb"
+> +OPTEE_EXTRA_BUILDARGS:append:optee-with-apps = " \
+> +	CFG_STMM_PATH=/usr/lib/edk2/BL32_AP_MM.fd \
+> +	"
+> +
+> +# OP-TEE fTPM integration
+> +DEPENDS:append:optee-with-apps = " optee-ftpm-${OPTEE_NAME}"
+> +DEBIAN_BUILD_DEPENDS:append:optee-with-apps = ", optee-ftpm-${OPTEE_NAME}"
+> +FTPM_UUID = "bc50d971-d4c9-42c4-82cb-343fb7f37896"
+> +OPTEE_EXTRA_BUILDARGS:append:optee-with-apps = " \
+> +	CFG_EARLY_TA=y \
+> +	EARLY_TA_PATHS=/usr/lib/optee-os/${OPTEE_NAME}/ta/${FTPM_UUID}.stripped.elf \
+> +	"
+> diff --git a/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.inc b/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.inc
+> index 444f6b3..5ee5020 100644
+> --- a/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.inc
+> +++ b/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.inc
+> @@ -21,7 +21,10 @@ OPTEE_EXTRA_BUILDARGS += " \
+>  	CFG_ARM64_core=y \
+>  	CFG_USER_TA_TARGETS=ta_arm64 \
+>  	TEE_IMPL_VERSION=${PV} \
+> -	CFG_TEE_CORE_LOG_LEVEL=1 \
+> +	CFG_TEE_CORE_LOG_LEVEL=1 CFG_TEE_TA_LOG_LEVEL=1 \
+> +	CFG_CORE_DYN_SHM=y CFG_CORE_HEAP_SIZE=524288 \
+> +	CFG_REE_FS=n CFG_RPMB_FS=y \
+> +	CONFIG_INSECURE=y \
+>  	"
+>  
+>  DEBIAN_BUILD_DEPENDS += ", device-tree-compiler, python3-cryptography:native"
+> diff --git a/recipes-bsp/u-boot/files/ti-extra.cfg b/recipes-bsp/u-boot/files/ti-extra.cfg
+> new file mode 100644
+> index 0000000..faff390
+> --- /dev/null
+> +++ b/recipes-bsp/u-boot/files/ti-extra.cfg
+> @@ -0,0 +1,19 @@
+> +### FTPM + RPMB + StandaloneMM setup
+> +CONFIG_TEE=y
+> +CONFIG_OPTEE=y
+> +CONFIG_OPTEE_SERVICE_DISCOVERY=y
+> +CONFIG_TPM=y
+> +CONFIG_TPM_V2=y
+> +CONFIG_CMD_TPM=y
+> +CONFIG_TPM2_FTPM_TEE=y
+> +CONFIG_CMD_OPTEE_RPMB=y
+> +CONFIG_SUPPORT_EMMC_RPMB=y
+> +CONFIG_EFI_MM_COMM_TEE=y
+> +CONFIG_MEASURED_BOOT=y
+> +CONFIG_CMD_NVEDIT_EFI=y
+> +CONFIG_CMD_MMC_RPMB=y
+> +CONFIG_EFI_TCG2_PROTOCOL=n
 
-But Daniel set up things for zImage back then. I just discovered
+Some of those are part of ftpm-stmm.cfg which you get anyway. Maybe you
+can drop them in a follow-up patch.
 
-https://gitlab.com/cip-project/cip-core/isar-cip-core/-/blob/master/doc/README_iwg20m.md?ref_type=heads
+Then you don't need TPM support in U-Boot for our integration - or do
+you have scenario for that? Doesn't do any harm, just curious.
 
-Maybe that whole thing was never tested again this way after 4.4.
+Did you already test if measured boot works for you?
 
+> +CONFIG_BOOTCOMMAND="setenv pair_rpmb_key 'setenv -e -nv -bs -rt pairing 1; setenv -e pairing'; run pair_rpmb_key; bootefi bootmgr"
+
+This looks suspicious on second glance: pairing with the RPMB should not
+be done in production but via a special firmware. Critical here is
+optee, but I see that you are not setting CFG_RPMB_WRITE_KEY=y (unlike
+we do for testing of qemu-arm64). Still, do we want that code above in
+the regular, secured, likely signed firmware, even though it should
+never trigger there?
+
+> +
+> +# workaround for v2025.07
+> +CONFIG_USB_STORAGE=y
+> diff --git a/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.07.bb b/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.07.bb
+> index 8fecee8..b97b70f 100644
+> --- a/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.07.bb
+> +++ b/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.07.bb
+> @@ -20,6 +20,7 @@ SRC_URI += " \
+>  	https://github.com/TexasInstruments/ti-linux-firmware/raw/refs/tags/${TI_FIRMWARE_PV}/ti-sysfw/ti-fs-firmware-am62px-hs-enc.bin;downloadfilename=ti-fs-firmware-am62px-hs-enc.bin;name=am62p-sysfw-enc-hs \
+>  	https://github.com/TexasInstruments/ti-linux-firmware/raw/refs/tags/${TI_FIRMWARE_PV}/ti-dm/am62pxx/ipc_echo_testb_mcu1_0_release_strip.xer5f;downloadfilename=ipc_echo_testb_mcu1_0_release_strip.xer5f;name=am62p-dm \
+>  	file://rules-${MACHINE} \
+> +	file://ti-extra.cfg \
+>  	file://0001-configs-KASLR-OPTEE-RNG-support-for-K3-devic.patch \
+>  	"
+>  
+> @@ -56,4 +57,7 @@ do_prepare_build:append() {
+>      cp ${WORKDIR}/ipc_echo_testb_mcu1_0_release_strip.xer5f ${TI_LINUX_FIRMWARE}/ti-dm/am62pxx
+>  
+>      cp ${WORKDIR}/rules-${MACHINE} ${S}/debian/rules
+> +
+> +    sed -ni '/### TI extra config/q;p' ${S}/configs/${U_BOOT_CONFIG}
+> +    cat ${WORKDIR}/ti-extra.cfg >> ${S}/configs/${U_BOOT_CONFIG}
+>  }
+> diff --git a/wic/ti-am62px-sk-efibootguard-secureboot.wks.in b/wic/ti-am62px-sk-efibootguard-secureboot.wks.in
+> new file mode 100644
+> index 0000000..52fcb09
+> --- /dev/null
+> +++ b/wic/ti-am62px-sk-efibootguard-secureboot.wks.in
+> @@ -0,0 +1,23 @@
+> +#
+> +# Copyright (c) Texas Instruments Incorporated, 2025
+> +#
+> +# Authors:
+> +#  Sai Sree Kartheek Adivi <s-adivi@ti.com>
+> +#
+> +# SPDX-License-Identifier: MIT
+> +#
+> +
+> +# Boot partition containing Bootloader binaries
+> +part /boot/firmware --source bootimg-partition --fstype=vfat --label firmware --active --align 1024 --size 16M --overhead-factor 1 --extra-space 0 --use-uuid --part-type E3C9E316-0B5C-4DB8-817D-F92DF00215AE
+> +
+> +include ebg-signed-sysparts.inc
+> +
+> +# ABROOTFS partitions
+> +part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
+> +part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
+> +
+> +# var and optional home are extra partitions
+> +part /var --fstype=ext4 --label var --align 1024 --fixed-size 512M --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 423f0a2e-b9b3-4615-85be-2a4261fa32d9
+> +${WIC_HOME_PARTITION}
+> +
+> +bootloader --ptable gpt --source hybrid-boot --timeout=0 --append "rootwait rw console=ttyS2,115200n8"
+
+My questions are comming late, so I'm taking this as is. Please try to
+follow up on the points I made, patching on top where needed.
+
+Thanks,
 Jan
-
-> 
-> Cheers,
-> Biju
-> 
->> -----Original Message-----
->> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org> On Behalf Of Biju Das via
->> lists.cip-project.org
->> Sent: 14 November 2025 15:47
->> To: Jan Kiszka <jan.kiszka@siemens.com>; Chris Paterson <Chris.Paterson2@renesas.com>; cip-dev <cip-
->> dev@lists.cip-project.org>
->> Subject: Re: [cip-dev] Testing isar-cip-core on the iwg20d
->>
->>
->>
->>> -----Original Message-----
->>> From: Jan Kiszka <jan.kiszka@siemens.com>
->>> Sent: 14 November 2025 14:18
->>> To: Biju Das <biju.das.jz@bp.renesas.com>; Chris Paterson
->>> <Chris.Paterson2@renesas.com>; cip-dev <cip-
->>> dev@lists.cip-project.org>
->>> Subject: Re: [cip-dev] Testing isar-cip-core on the iwg20d
->>>
->>> On 14.11.25 11:03, Biju Das wrote:
->>>>
->>>>
->>>>> -----Original Message-----
->>>>> From: cip-dev@lists.cip-project.org <cip-dev@lists.cip-project.org>
->>>>> On Behalf Of Jan Kiszka via lists.cip-project.org
->>>>> Sent: 14 November 2025 09:54
->>>>> To: Biju Das <biju.das.jz@bp.renesas.com>; Chris Paterson
->>>>> <Chris.Paterson2@renesas.com>; cip-dev <cip-
->>>>> dev@lists.cip-project.org>
->>>>> Subject: Re: [cip-dev] Testing isar-cip-core on the iwg20d
->>>>>
->>>>> On 14.11.25 10:48, Biju Das wrote:
->>>>>>
->>>>>>
->>>>>>> -----Original Message-----
->>>>>>> From: cip-dev@lists.cip-project.org
->>>>>>> <cip-dev@lists.cip-project.org> On Behalf Of Jan Kiszka via
->>>>>>> lists.cip-project.org
->>>>>>> Sent: 14 November 2025 09:35
->>>>>>> To: Chris Paterson <Chris.Paterson2@renesas.com>; cip-dev
->>>>>>> <cip-dev@lists.cip-project.org>
->>>>>>> Subject: Re: [cip-dev] Testing isar-cip-core on the iwg20d
->>>>>>>
->>>>>>> On 14.11.25 10:05, Jan Kiszka wrote:
->>>>>>>> Hi all,
->>>>>>>>
->>>>>>>> as I still have the boards with me, I "quickly" wanted to
->>>>>>>> renovate and test isar-cip-core on iwg20d. But the board I
->>>>>>>> picked from the stack has an ancient u-boot pre-installed
->>>>>>>> (2013.01.01) and has no clue about GPT or the right name of dtb file to load etc. etc.
->>>>>>>>
->>>>>>>> Can this board only boot U-Boot from SPI? How do I refresh that safely?
->>>>>>>> Or can I also make it load U-Boot from SD card?
->>>>>>>>
->>>>>>>
->>>>>>> With some tricks, I meanwhile loaded the zimage that
->>>>>>> isar-cip-core is generating via the old u-boot, but that is not
->>>>>>> giving any output during
->>>>>>> boot:
->>>>>>>
->>>>>>>
->>>>>>> iW-RainboW-G20M SPI_LOADER(DDR3) V0.20 2015.07.16
->>>>>>> BSP Version     : iW-PREWZ-SC-01-REL2.0-Linux3.10.31-PATCH004
->>>>>>>  DEVICE SST25VF016B
->>>>>>>
->>>>>>>
->>>>>>> U-Boot 2013.01.01 (Nov 04 2016 - 22:21:05)
->>>>>>>
->>>>>>> CPU: Renesas Electronics R8A7743 rev 3.0
->>>>>>> CPU: Temperature 50 C
->>>>>>> Board: RZ/G1M iW-RainboW-G20M-Q7
->>>>>>>
->>>>>>> DRAM:  1 GiB
->>>>>>> MMC:   sh-sdhi: 0, sh-sdhi: 1, sh_mmcif: 2
->>>>>>> SF: Detected SST25VF016B with page size 4 KiB, total 2 MiB
->>>>>>> *** Warning - bad CRC, using default environment
->>>>>>>
->>>>>>> In:    serial
->>>>>>> Out:   serial
->>>>>>> Err:   serial
->>>>>>>
->>>>>>> Board Info:
->>>>>>>         BSP Version     : iW-PREWZ-SC-01-R3.0-REL2.0-Linux3.10.31
->>>>>>>         SOM Version     : iW-PREWZ-AP-01-R3.3
->>>>>>>
->>>>>>> Net:   ether_avb
->>>>>>> Hit any key to stop autoboot:  0
->>>>>>> iWave-G20M > pri
->>>>>>> baudrate=115200
->>>>>>> bootargs=console=ttySC0
->>>>>>> bootargs_base=console=ttySC0,115200n8 ignore_loglevel
->>>>>>> vmalloc=384M bootargs_mmc=setenv bootargs ${bootargs_base}
->>>>>>> root=/dev/mmcblk2p2 rootwait rootfstype=ext3 rw bootcmd=run
->>>>>>> bootcmd_mmc bootcmd_mmc=run bootargs_mmc;run fdt_check;mmc dev
->>>>>>> 2;fatload mmc 2 ${loadaddr} ${kernel};fatload mmc 2 ${fdt_addr}
->>>>>>> ${fdt_file};bootm ${loadaddr} - ${fdt_addr}
->>>>>>> bootdelay=3
->>>>>>> bootfile=uImage
->>>>>>> bootm_low=0x40e00000
->>>>>>> bootm_size=0x100000
->>>>>>> ethact=ether_avb
->>>>>>> ethaddr=00:01:02:03:04:05
->>>>>>> fdt_addr=0x40f00000
->>>>>>> fdt_check=if test ${fdtforce} = "0"; then dynamicfdt;fi;
->>>>>>> fdt_file=r8a7743-iwg20m_q7.dtb
->>>>>>> fdtforce=0
->>>>>>> kernel=uImage
->>>>>>> loadaddr=0x40007fc0
->>>>>>> stderr=serial
->>>>>>> stdin=serial
->>>>>>> stdout=serial
->>>>>>> ver=U-Boot 2013.01.01 (Nov 04 2016 - 22:21:05)
->>>>>>> vin2_camera=ov5640
->>>>>>>
->>>>>>> Environment size: 803/8188 bytes
->>>>>>> iWave-G20M > run bootargs_mmc;run fdt_check;mmc dev 0;fatload mmc
->>>>>>> 0 ${loadaddr} zimage;fatload mmc 0 ${fdt_addr}
->>>>>>> r8a7743-iwg20d-q7-dbcm-ca.dtb;bootz ${loadaddr} - ${fdt_addr}
->>>>>>> mmc0 is current device
->>>>>>> reading zimage
->>>>>>> 15151616 bytes read in 685 ms (21.1 MiB/s) reading
->>>>>>> r8a7743-iwg20d-q7-dbcm-ca.dtb
->>>>>>> 41327 bytes read in 5 ms (7.9 MiB/s) ## Flattened Device Tree
->>>>>>> blob at 40f00000
->>>>>>>    Booting using the fdt blob at 0x40f00000
->>>>>>>    Loading Device Tree to 40ef2000, end 40eff16e ... OK Unable to
->>>>>>> update property <NULL>:mac-address, err=FDT_ERR_BADPATH Unable to
->>>>>>> update property <NULL>:local-mac-address, err=FDT_ERR_BADPATH
->>>>>>> Unable to update property /iwg20m_q7_common:vin2-ov5640,
->>>>>>> err=FDT_ERR_NOTFOUND
->>>>>>>
->>>>>>> Starting kernel ...>
->>>>>>>
->>>>>>> Tried kernel 6.1-cip and 5.10-cip already. I guess I should put this aside...
->>>>>>
->>>>>> You need to load r8a7743-iwg20d-q7.dtb by updating u-boot env variable.
->>>>>>
->>>>>
->>>>> Already tried that as well - same result.
->>>>
->>>> Can you try setting this in u-boot?
->>>>
->>>> bootm_low=0x43e00000
->>>> bootm_size=0x100000
->>>
->>> No change, still.
->>>
->>> I'm using bootz here as the input is a zImage - does that make a difference?
->>
->> I never used zImage, I only used uImage
->>
->> bootcmd=tftpboot ${kernel_addr} ${kernel};tftpboot ${fdt_addr} ${fdt_file};bootm ${kernel_addr} -
->> ${fdt_addr}
->> fdt_addr=0x42e00000
->> fdt_file=RZ-G1M/r8a7743-iwg20d-q7-dbcm-ca.dtb
->> kernel=RZ-G1M/uImage
->> kernel_addr=0x40007FC0
->>
->> bootargs=console=ttySC0,115200n8 root=/dev/nfs nfsroot=192.168.1.30:/tftpboot/RZ-G1M,nfsvers=3
->> earlyprintk=serial ip=192.168.1.33:::::eth0
->>
->>
->> Cheers,
->> Biju
-> 
 
 -- 
 Siemens AG, Foundational Technologies
