@@ -2,33 +2,33 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A20CE7AED
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF1ECE7AF7
 	for <webhook@archiver.kernel.org>; Fri, 14 Nov 2025 11:20:09 +0000 (UTC)
 Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.15767.1763119206423452591
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.15637.1763119206420899233
  for <cip-dev@lists.cip-project.org>;
  Fri, 14 Nov 2025 03:20:07 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=JUtwyU/k;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-51332-20251114112003e774b067570002072c-mcxpud@rts-flowmailer.siemens.com)
-Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20251114112003e774b067570002072c
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=LVzH4nVR;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.226, mailfrom: fm-51332-20251114112003b647e4f48b00020745-zlyvb2@rts-flowmailer.siemens.com)
+Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 20251114112003b647e4f48b00020745
         for <cip-dev@lists.cip-project.org>;
         Fri, 14 Nov 2025 12:20:03 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=ozt3aiigDnpj0zN9wAlbQ5o4qmccFAxNEP1lkyPXolw=;
- b=JUtwyU/kMd27OHNsx+KNj4MGKsLOUC8+6oGDTUZnPzL/ZhMID+sVmgBoz6XuAmHMDp8f1X
- 7qVp2l3p2iE0QZPoxEuFtpUPt0pPO1p/Z1Boz00zP76vjDAnk3fLOzWoB6FIVZrZxHYpkT7e
- YBzhlSZTETTlp2CeObMm1UG0TP2SjcT87TBIW534A4QFWm6K/ugEqeZurIW4uariHILlMDMo
- PNDBMXNlWTTGDF+wy+eyyyWdgzxYB3dahT4zAO4D+aIoa+mc2oE6f0Fafr4N76wvi2Kyqby1
- JGIgKY87Sl22ohBSNxPIGTgxZVMChvB9k2UK6DPOG33UwVkpyCsDvaSg==;
+ bh=X5Gd2uIneW2GGQfY0g+oICWpl823a15D6dnIN7OdRwc=;
+ b=LVzH4nVRNwNn7mOZTYvf/qoFQqm1Ki8L/iinFB7MCVsueHLaw7Yjw768UaApNQ+hkgTeda
+ xssbXL4AwdELEzHwpX21tuPfA/JbhvXHfvU6B1Ox14hRYQ1nijYd84r/g3UMTDmXNd2ts54c
+ EqjpSlwfkxv5WGsCRVlDAvy4MCfiWmN91BjNKyWOexH4uBJh1gFTprVyDxTpvClypIBRMJMf
+ rW1YAxREzHzmTH818UplYMz+wr77u9hItwyiOcZl5fTeRjZGreHJk6Axb/PsBIhncxcsBHyP
+ DLqyy0Nf+ScBgbqB30lpEqQDCT083oidKIOboX5m9MamahjnkQLFT1mQ==;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org,
 	jan.kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH 2/5] initramfs-abrootfs-hook: Use initramfs-cip-functions
-Date: Fri, 14 Nov 2025 12:17:41 +0100
-Message-ID: <20251114111925.903740-3-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH 3/5] initramfs-verity-hook: Use initramfs-cip-functions
+Date: Fri, 14 Nov 2025 12:17:42 +0100
+Message-ID: <20251114111925.903740-4-Quirin.Gylstorff@siemens.com>
 In-Reply-To: <20251114111925.903740-1-Quirin.Gylstorff@siemens.com>
 References: <20251114111925.903740-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
@@ -39,7 +39,7 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 14 Nov 2025 11:20:09 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20553
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20558
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
@@ -48,40 +48,48 @@ code used by initramfs-verity-hook and initramfs-abrootfs-hook.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- .../files/local-top-complete                  | 53 ++++---------------
- ..._0.2.bb => initramfs-abrootfs-hook_0.3.bb} |  3 +-
- 2 files changed, 11 insertions(+), 45 deletions(-)
- rename recipes-initramfs/initramfs-abrootfs-hook/{initramfs-abrootfs-hook_0.2.bb => initramfs-abrootfs-hook_0.3.bb} (79%)
+ .../files/local-top-complete.tmpl             | 55 ++++---------------
+ ...ok_0.2.bb => initramfs-verity-hook_0.3.bb} |  3 +-
+ 2 files changed, 12 insertions(+), 46 deletions(-)
+ rename recipes-initramfs/initramfs-verity-hook/{initramfs-verity-hook_0.2.bb => initramfs-verity-hook_0.3.bb} (85%)
 
-diff --git a/recipes-initramfs/initramfs-abrootfs-hook/files/local-top-complete b/recipes-initramfs/initramfs-abrootfs-hook/files/local-top-complete
-index 74a7714..d113f34 100644
---- a/recipes-initramfs/initramfs-abrootfs-hook/files/local-top-complete
-+++ b/recipes-initramfs/initramfs-abrootfs-hook/files/local-top-complete
-@@ -31,6 +31,8 @@ esac
- 
+diff --git a/recipes-initramfs/initramfs-verity-hook/files/local-top-complete.tmpl b/recipes-initramfs/initramfs-verity-hook/files/local-top-complete.tmpl
+index 991178c..8fea98f 100644
+--- a/recipes-initramfs/initramfs-verity-hook/files/local-top-complete.tmpl
++++ b/recipes-initramfs/initramfs-verity-hook/files/local-top-complete.tmpl
+@@ -33,6 +33,8 @@ esac
  . /scripts/functions
+ . /lib/cryptsetup/functions
  
 +. /scripts/cip-initramfs-functions
 +
- load_abrootfs_env_from_cmdline()
+ load_verity_env_from_cmdline()
  {
-     abrootfs_opts=$(cat /proc/cmdline | sed -n 's/.*cip.abrootfs_root_options=\([^ ]*\).*/\1/p' | sed 's/,/ /g')
-@@ -47,10 +49,13 @@ load_abrootfs_env_from_cmdline()
+     local verity_opts
+@@ -71,9 +73,13 @@ load_verity_env_from_cmdline()
      done
  }
  
 +found_root=""
 +scanned_partitions=""
- 
++
  find_root_via_image_uuid()
  {
--    for part in $partitions; do
+-    for part in ${partitions}; do
 +    loc_partitions="$1"
-+    for part in $loc_partitions; do
-         if [ "$(blkid -p "${part}" --match-types novfat -s USAGE -o value)" = "filesystem" ]; then
-             mount -o ro -t "$(get_fstype "${part}")" "${part}" "${rootmnt}"
-             if [ -e "${rootmnt}/etc/os-release" ]; then
-@@ -82,57 +87,17 @@ case "$ROOT" in
++    for part in ${loc_partitions}; do
+         if [ "$(blkid -p ${part} --match-types novfat -s USAGE -o value)" = "filesystem" ]; then
+             verity_uuid=$(
+                 veritysetup dump "${part}" --hash-offset "${HASH_OFFSET}" | \
+@@ -99,7 +105,6 @@ find_root_via_image_uuid()
+ # broken trust chain.
+ echo "ROOT=/dev/null" >/conf/param.conf
+ wait_for_udev 10
+-
+ load_verity_env_from_cmdline
+ 
+ case "$ROOT" in
+@@ -109,57 +114,17 @@ case "$ROOT" in
          found_root=$(blkid --list-one --output device --match-token "$ROOT")
          if [ -z "${found_root}" ]; then
              log_begin_msg "Waiting for ${ROOT}"
@@ -103,7 +111,7 @@ index 74a7714..d113f34 100644
          fi
          ;;
      "")
-         # No Root device was given. Search for the matching IMAGE_UUID
+         # No Root device was given. Use veritysetup verify to search matching roots
          partitions="$(blkid -o device)"
 -        find_root_via_image_uuid
 +        find_root_via_image_uuid "$partitions"
@@ -138,27 +146,27 @@ index 74a7714..d113f34 100644
 -                fi
 -                scanned_partitions="${scanned_partitions} ${partitions}"
 -            done
-+            wait_30sec_for_condition scan_partitions
++            wait_30sec_for_condition scan_partitions_for_uuid
          fi
          ;;
  esac
-diff --git a/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.2.bb b/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.3.bb
-similarity index 79%
-rename from recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.2.bb
-rename to recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.3.bb
-index f7569e2..c3ac22e 100644
---- a/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.2.bb
-+++ b/recipes-initramfs/initramfs-abrootfs-hook/initramfs-abrootfs-hook_0.3.bb
-@@ -11,7 +11,8 @@
+diff --git a/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.2.bb b/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.3.bb
+similarity index 85%
+rename from recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.2.bb
+rename to recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.3.bb
+index 668419e..37781c9 100644
+--- a/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.2.bb
++++ b/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.3.bb
+@@ -21,7 +21,8 @@ VERITY_BEHAVIOR_ON_CORRUPTION ?= "--restart-on-corruption"
+ TEMPLATE_FILES += "local-top-complete.tmpl"
+ TEMPLATE_VARS += "VERITY_BEHAVIOR_ON_CORRUPTION"
  
- require recipes-initramfs/initramfs-hook/hook.inc
- 
--DEBIAN_DEPENDS .= ", util-linux"
+-DEBIAN_DEPENDS .= ", cryptsetup"
 +RDEPENDS += "initramfs-cip-functions"
-+DEBIAN_DEPENDS .= ", util-linux, initramfs-cip-functions"
- DEBIAN_CONFLICTS = "initramfs-verity-hook"
++DEBIAN_DEPENDS .= ", cryptsetup, initramfs-cip-functions"
+ DEBIAN_CONFLICTS = "initramfs-abrootfs-hook"
  
- SRC_URI += " \
+ HOOK_ADD_MODULES = "dm_mod dm_verity"
 -- 
 2.51.0
 
