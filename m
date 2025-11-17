@@ -2,34 +2,34 @@ Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9066CEBF92
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D96B3CEBF93
 	for <webhook@archiver.kernel.org>; Mon, 17 Nov 2025 17:15:24 +0000 (UTC)
-Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.14790.1763399722329863964
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.14980.1763399721869826293
  for <cip-dev@lists.cip-project.org>;
  Mon, 17 Nov 2025 09:15:23 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=jan.kiszka@siemens.com header.s=fm1 header.b=ne73PKI4;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.64.227, mailfrom: fm-294854-20251117171518426565c36d000207a3-0ue4aq@rts-flowmailer.siemens.com)
-Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 20251117171518426565c36d000207a3
+ dkim=pass header.i=jan.kiszka@siemens.com header.s=fm1 header.b=Y2eOYUjJ;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-294854-202511171715185ebb69032b000207af-hvcbxp@rts-flowmailer.siemens.com)
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 202511171715185ebb69032b000207af
         for <cip-dev@lists.cip-project.org>;
         Mon, 17 Nov 2025 18:15:18 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=jan.kiszka@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=cxyKejTdD5CiidLJwzL0UUWH7zhnZ8z18unf1mAGfrI=;
- b=ne73PKI43JBpJuutdx7nGHDpjGJuJ5NUkibZcPugp+BaI9QiJJ3qBbsmRl6+68eeYCfWI3
- GXyTEDDpXWieSqe6gqBwWJScOJEF0jTEbxo1b8NzlVgbZoN89QxcvYBHPZpWJwnDWlovb7Nq
- og5dWGdYsHPcUw5jkqzOTsrXAbkTu0DxN1TC5/JRhMI9ukk/8kavjWhWchj3Xk1n+5Nr1193
- l8bBznTUiOoIbZUceHkBCF+Cb3ne231uHNZcXasEscT4soH/1mpzV9iOic2VeaWKi9LN9sCY
- nbhKCuPJ1tONw+UU2Jo3pZbP6Ep9ZNZ52Oghww80g4IyDxjNeienmsXg==;
+ bh=ST7N0rclEJDA8KfYEhTEBGkRPc8y8fR+hQODRk5WgV8=;
+ b=Y2eOYUjJbP41G3PJG3r2U0BgfiRu4g6esEjiCuv1sRN37av+l//2UwtrNiyyH+VKVWg6AE
+ NdCElIJZOYvj0i+1JUNJvrcMhhm01T7H7YeBbWEuQKOxlFNa9ZmhRJMocTBdG+YQheVY/mub
+ 1myLmfiJhvzmgYIfmpblcrIYnONWldpgusHRetMN9yEQfVfuVooiEi6AuPuAucb9RYsuHzhN
+ fMyH9j919lDBe0ax75qDQTr6xaVGty14WfTmOX8Z4HypcjxycLoMQpNMde7W7YroESOaNdSo
+ yxul726jx3voWaHqMia+E5QEvJ13L7uiWJc1AoEGYOa8u2ijbLjIPdgQ==;
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: cip-dev@lists.cip-project.org
 Cc: Sai Sree Kartheek Adivi <s-adivi@ti.com>,
 	Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [isar-cip-core][PATCH 5/6] u-boot-ti-am62px-sk: Drop redundant or unused DEBIAN_BUILD_DEPENDS
-Date: Mon, 17 Nov 2025 18:15:16 +0100
-Message-ID: <2888b7f5839b31f31c0067d128eab393bfcd10c1.1763399717.git.jan.kiszka@siemens.com>
+Subject: [isar-cip-core][PATCH 3/6] arm64: Switch to cip_merged_defconfig
+Date: Mon, 17 Nov 2025 18:15:14 +0100
+Message-ID: <ae9f51993b0cf98e41452074a51cf1a15716f21d.1763399717.git.jan.kiszka@siemens.com>
 In-Reply-To: <cover.1763399717.git.jan.kiszka@siemens.com>
 References: <cover.1763399717.git.jan.kiszka@siemens.com>
 MIME-Version: 1.0
@@ -40,29 +40,52 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Mon, 17 Nov 2025 17:15:24 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20602
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20598
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-The 2 ssl deps are already added by the common inc, and grub is uneeded.
+Allows to use the same kernel for all arm64 targets.
 
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.07.bb | 1 -
- 1 file changed, 1 deletion(-)
+ conf/machine/hihope-rzg2m.conf | 4 ++--
+ conf/machine/ti-am62px-sk.conf | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.07.bb b/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.07.bb
-index fa72054c..b26c089d 100644
---- a/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.07.bb
-+++ b/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.07.bb
-@@ -47,7 +47,6 @@ OVERRIDES .= ":ftpm-stmm"
+diff --git a/conf/machine/hihope-rzg2m.conf b/conf/machine/hihope-rzg2m.conf
+index 0b3acf49..485683b2 100644
+--- a/conf/machine/hihope-rzg2m.conf
++++ b/conf/machine/hihope-rzg2m.conf
+@@ -1,7 +1,7 @@
+ #
+ # CIP Core, generic profile
+ #
+-# Copyright (c) Siemens AG, 2019
++# Copyright (c) Siemens AG, 2019-2025
+ #
+ # Authors:
+ #  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+@@ -13,7 +13,7 @@ DISTRO_ARCH = "arm64"
  
- DEPENDS += "trusted-firmware-a-ti-k3 optee-os-ti-k3"
- DEBIAN_BUILD_DEPENDS =. "gcc-arm-linux-gnueabihf, \
--    libssl-dev:native, libssl-dev, grub-common, \
-     swig, python3-dev:native, python3-setuptools, python3-pyelftools, \
-     python3-jsonschema:native, yamllint:native, \
-     trusted-firmware-a-ti-k3, optee-os-ti-k3,"
+ IMAGE_FSTYPES ?= "wic"
+ 
+-KERNEL_DEFCONFIG = "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/arm64/renesas_defconfig"
++KERNEL_DEFCONFIG = "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/arm64/cip_merged_defconfig"
+ USE_CIP_KERNEL_CONFIG = "1"
+ DTB_FILES = "r8a774a1-hihope-rzg2m-ex.dtb"
+ IMAGE_BOOT_FILES = "${KERNEL_IMAGE} ${DTB_FILES}"
+diff --git a/conf/machine/ti-am62px-sk.conf b/conf/machine/ti-am62px-sk.conf
+index 589f071e..bf3cf9ab 100644
+--- a/conf/machine/ti-am62px-sk.conf
++++ b/conf/machine/ti-am62px-sk.conf
+@@ -23,6 +23,6 @@ IMAGE_BOOT_FILES = " \
+     /usr/lib/u-boot/${MACHINE}/tiboot3-am62px-hs-fs-evm.bin;tiboot3.bin"
+ 
+ USE_CIP_KERNEL_CONFIG = "1"
+-KERNEL_DEFCONFIG = "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/arm64/ti_defconfig"
++KERNEL_DEFCONFIG = "cip-kernel-config/${KERNEL_DEFCONFIG_VERSION}/arm64/cip_merged_defconfig"
+ 
+ WDOG_TIMEOUT = "0"
 -- 
 2.51.0
 
