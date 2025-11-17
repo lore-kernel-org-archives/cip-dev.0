@@ -1,391 +1,253 @@
-Return-Path: <s-adivi@ti.com>
+Return-Path: <jan.kiszka@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A881ECE8D6B
-	for <webhook@archiver.kernel.org>; Mon, 17 Nov 2025 11:13:32 +0000 (UTC)
-Received: from BN1PR04CU002.outbound.protection.outlook.com (BN1PR04CU002.outbound.protection.outlook.com [52.101.56.16])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.6938.1763377995579164682
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4FA7CEACEF
+	for <webhook@archiver.kernel.org>; Mon, 17 Nov 2025 11:38:52 +0000 (UTC)
+Received: from MRWPR03CU001.outbound.protection.outlook.com (MRWPR03CU001.outbound.protection.outlook.com [40.107.130.12])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.7267.1763379513456383274
  for <cip-dev@lists.cip-project.org>;
- Mon, 17 Nov 2025 03:13:26 -0800
+ Mon, 17 Nov 2025 03:38:43 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@ti.com header.s=selector1 header.b=qcwUhpSg;
- spf=temperror, err=temporary DNS error (domain: ti.com, ip: 52.101.56.16, mailfrom: s-adivi@ti.com)
+ dkim=pass header.i=@siemens.com header.s=selector2 header.b=p5lOeA58;
+ spf=none, err=SPF record not found (domain: siemens.com, ip: 40.107.130.12, mailfrom: jan.kiszka@siemens.com)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hZis9RQs0DE3QCwwVrm4iFtX5QQXrZVyMtSDcXVlPx8l+n4omzl+qwRaa2C/sZ5isahjm6gUoaxCFL/lgwwtRDCU6TAkMxTOQXZS+TBW0KTQUVbIdXP/5VQdjnseXMe3dy7TuvR+njELDEvtQBHcJ1vSqDz4FcL/3QH1YWWZVWuo9BOAlTNmmkG7N3KD1nK8SBMlMNeNUqA6exfgibzpowsPzcusOB1FgxzzZO/+PlEB3id6qm2bgYabZR0FNjAcDgiSAlNXjllIEdwE7rj45EbbF2wEoXIEftKAtowwTb1sSnipoeEZ0gW8291X+iTp6p7hmD6MalDvD5J8U27mlA==
+ b=INwb1W0h1L/kFhigXaPaEIYx36owpDGXIW4qLwaX7+ftCBel5DXZeWgeNfcgZz2nZTzg0HKAZnk6ci7vds5CEHB5NR/NI4s4HxF6slBbSngFwm0UeNaNmzl++jD2oJk96RUTNJMjx7IapyJeRLAVHoRoOoxeEMi4EkcG6qPIdljaH8drGbilNGhrn3DqB8pMNpFGjTw2/FLXXiIKxDCBGrzK3lP4skear9PtsdfpUagXio9wxpQc8LjJYAoFLIP3CunpiZMfaLMR3k01airNuMoUydu+qywUWvv5Wd8B3eCF99CT5TdoFDfyjpgmMUZzRR+O9qQlKEiPtno2sjDqaA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3zYN/sEV+FvRPM4H1H0uL/3cRju33M/ARbLXBnZK9YE=;
- b=mQvJYep3YG2v3g/9lwq4PPxZGDeJyTg7arzGbouN2VilQk6m2CIeepoBN8JeXPOgh0lfPb9QL2t3Uj8/ylEjE7MOtgpXH0ZLQmIJcPxuKyNj6xGGlJZWJrIwdd/HPP2Pd5JRZD5p7lGnnzalaFh1PTeL6w4dkHx/f/pzrVma49oVMOViLjqQzFEk1v7DB2n+ju+0Xz4UXixa024XfKcL3giXjKik4V+Pe+j3NqQK1dLsSmDtcOyt3Ef8VN6okzTCrbqwBfmCGoulCKAaBHZIn6UfFA6xQy7XYR14Uis6g3m06BsxthNUAs6aFLePWinjjaIE944sMc8humnYzRslYA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.23.194) smtp.rcpttodomain=lists.cip-project.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ bh=I11L5HHkwNc7woV9bffyefJnp+VvRc+isRELtUC/TkA=;
+ b=AM76k/eudo+NKqRGQXzcOFddbBkL3BBvmvcxqqMh1/5XrKRNUJkDE0Ec3gGrWJOBfisQghEav7RWidsChXv1/bl3qiYoIWtspBH8ukf1cT4WYvPYMtxNY+KIcHDPjOMYOyCvMz1mzxMqpPHbzW8DZjMvCMLUAqmh2tQWnh1bXfPFC1MA+gkvaVRxL7OgedlDjvNZ6k83xYzveD3ep6pLeAm/DsQzkx6u5rCf7Yo2SSW45BZHKkqzkyL65tTFiPw9KSJ6l1NaiOSVzKqTv0ZS4/xooWLp3D8u+h0z8Ehl7zwNc7DR6iQR9Cjw19NvXMj0Dk97DEJos6d7cgAOJaaf2A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3zYN/sEV+FvRPM4H1H0uL/3cRju33M/ARbLXBnZK9YE=;
- b=qcwUhpSgB9xYsbnNLhMJSfeVdGQCuN8JLnOUI2kOxihOz6WPvYmeEGZjJCqQfMuGdL/HiCR1u3thPk2kIzTBDu8KpIpgNO0QiaH3oHq4FTOOB6YWbb81/slvq4o9ElPAkS/C1tsu9OJEbb0StUU7TL4+mrc+1Dtkv4vKAs6DXrg=
-Received: from DM5PR08CA0058.namprd08.prod.outlook.com (2603:10b6:4:60::47) by
- SJ0PR10MB6376.namprd10.prod.outlook.com (2603:10b6:a03:485::21) with
+ bh=I11L5HHkwNc7woV9bffyefJnp+VvRc+isRELtUC/TkA=;
+ b=p5lOeA580jYaclM2qQtkaIMtmVxVIMpHGxvs/xiqJ4o12oqZn1VYgnvNbt70Cm1w350d1YwWWSdFZ5tfxNTMq76aZTehrtdfr+4tbedvAK1svl9Z6zqYNvTJmUp/8Q3SyYQCZ+ChbkL3sB+pAsnrQIskQPlELrK+MrWYLOtA6Bq7oUaXKNlvS9/AXI3bvjFZkbtoQKQciVfdPchYvqZjv/VujuUy4S+gVeFgTUslU+U5lDP2wbZOVQqUN3vAM8nv7VNCNfQRW28LXuIUP4Zm8EyZnWL7sBLsb2CYd9T2R7tMaxiIpBlJAS5kZmEYwAkn9fSEpibIvsUOZXeXTms68A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siemens.com;
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
+ by DB8PR10MB3676.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:13c::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.20; Mon, 17 Nov
- 2025 11:13:12 +0000
-Received: from DS1PEPF0001709B.namprd05.prod.outlook.com
- (2603:10b6:4:60:cafe::8) by DM5PR08CA0058.outlook.office365.com
- (2603:10b6:4:60::47) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.22 via Frontend Transport; Mon,
- 17 Nov 2025 11:13:11 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
-Received: from lewvzet200.ext.ti.com (198.47.23.194) by
- DS1PEPF0001709B.mail.protection.outlook.com (10.167.18.105) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9343.9 via Frontend Transport; Mon, 17 Nov 2025 11:13:11 +0000
-Received: from DLEE205.ent.ti.com (157.170.170.85) by lewvzet200.ext.ti.com
- (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 17 Nov
- 2025 05:13:08 -0600
-Received: from DLEE212.ent.ti.com (157.170.170.114) by DLEE205.ent.ti.com
- (157.170.170.85) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 17 Nov
- 2025 05:13:07 -0600
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE212.ent.ti.com
- (157.170.170.114) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Mon, 17 Nov 2025 05:13:07 -0600
-Received: from [172.24.233.117] (uda0498651.dhcp.ti.com [172.24.233.117])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5AHBD6Ta2399957;
-	Mon, 17 Nov 2025 05:13:07 -0600
-Message-ID: <6aacb3eb-9f12-470d-86ad-5ca712f6aaf1@ti.com>
-Date: Mon, 17 Nov 2025 16:43:05 +0530
-MIME-Version: 1.0
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.21; Mon, 17 Nov
+ 2025 11:38:29 +0000
+Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8fe1:7e71:cf4a:7408%6]) with mapi id 15.20.9320.013; Mon, 17 Nov 2025
+ 11:38:29 +0000
+Message-ID: <f2c73b72-cbb3-49c1-8555-9341b3cd3535@siemens.com>
+Date: Mon, 17 Nov 2025 12:38:28 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [cip-dev][isar-cip-core][PATCH v5 4/4] ti-am62px-sk: Add support
- for secureboot & data encryption
-To: Jan Kiszka <jan.kiszka@siemens.com>, <cip-dev@lists.cip-project.org>,
-	<vigneshr@ti.com>
-References: <20251114090509.2935933-1-s-adivi@ti.com>
- <20251114090509.2935933-5-s-adivi@ti.com>
- <07b0cdc9-6aa1-4ec5-b9cf-44fcd5a663f3@siemens.com>
 Content-Language: en-US
-From: Sai Sree Kartheek Adivi <s-adivi@ti.com>
-In-Reply-To: <07b0cdc9-6aa1-4ec5-b9cf-44fcd5a663f3@siemens.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Jan Kiszka <jan.kiszka@siemens.com>
+To: cip-dev <cip-dev@lists.cip-project.org>,
+ Arisu Tachibana <arisu.tachibana@miraclelinux.com>,
+ Chris Paterson <Chris.Paterson2@renesas.com>,
+ Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+ Quirin Gylstorff <quirin.gylstorff@siemens.com>
+Subject: DE0-Nano-SoC & KernelCI
+Autocrypt: addr=jan.kiszka@siemens.com; keydata=
+ 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
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
+X-ClientProxiedBy: FR0P281CA0111.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a8::12) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:20b:588::19)
+MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF0001709B:EE_|SJ0PR10MB6376:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2b3f308e-4968-4fef-e97a-08de25ca4bc1
+X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|DB8PR10MB3676:EE_
+X-MS-Office365-Filtering-Correlation-Id: bb1e6145-cc51-4471-d808-08de25cdd469
+X-MS-Exchange-AtpMessageProperties: SA
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: 
-	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024|13003099007;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
 X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?SlFhbjZnUENEVjBjSGhNQm9DTzJYSFYyYUs0QWhOZGJodkRPbDVoTG9ZcVpx?=
- =?utf-8?B?TVpWOFAvZzRyQkswZkhOUHRJMm9HeExEcHY0RThuZ1JpOEowSWltbFhBN3l2?=
- =?utf-8?B?L2VzbGtmbWJoazBNeHE4NmN2UnZqUGFlSFZ2V0lKNTNqSG1wUGx3VktCZlRq?=
- =?utf-8?B?RGJrT0Zrdlk5Vlp1U1RFeGdLNjhLdlBpN0dRYXViVURFTDllNmhJUXRpeGlq?=
- =?utf-8?B?Z2RZRDhwbDJ3ck9LeFpwWS9ocE9hUjl0dzVpQmVEbHcxZ3hRQnY2RHo5MXg4?=
- =?utf-8?B?RWpMbWtvb09HRS8rdFFnQ0IwMm5XRUg1NmFSWStKZjVHc3NNcG5yb01Oay9S?=
- =?utf-8?B?WWVDV3VEM2xYVW80QUc5MmVjTndjL3lHR3BYcXhYdzQ4NnRuMUJobE5lclVy?=
- =?utf-8?B?OWNjT3NBeStMcjBqYmZ5YkVqZDhoTEhIK3NSY3ZPTGNkaTQzMkpMZEVOYlRW?=
- =?utf-8?B?eXhjaGZsZk9jWFNQQ3hlWlBGYzhNRlNxZTdNSWVITnV2M2RlS1NKeHc0eVFC?=
- =?utf-8?B?Nmlob0xjWHZhdUttbWRMeEIwQzNTUEVvMzhqUDFEajVvSjcvczNDUmZoSDZR?=
- =?utf-8?B?eVJnemVpazJ2MVIzaFRLV2pBN0RaTVhvYVBXSERuU1JqbkFXc3FzN2xsY2JO?=
- =?utf-8?B?WVorc0pHbDV6YTNRbEJXejgwWDFzaEdJVFVUejVSaGNGS0M0cTBSWklHbkpY?=
- =?utf-8?B?NXlUNTV5eEVuQkU5OUJHOVZ0TkpTUktKUjNOcG81MlJOOVU4RVhWVUdHbjJv?=
- =?utf-8?B?bU1BaU1FYjVKLzJuV3o4VHFqempqS1hSREtiWXdGR1YvMmxVYlBPSFNsRzQy?=
- =?utf-8?B?V2NLNllDcTlsRjZ5VHp0czBiWWlibTBRdEVlRUR1UW5ZZUM4alc5bisvNkQv?=
- =?utf-8?B?SEpaZ2VNd0crZ2owaFM3ODV2U2VtY3lYQXhJQWluNENKV1grZDEyaEYzRjF1?=
- =?utf-8?B?aGpMcjEwNXhieGgxV0tsVm42QzdJMWExcXgxR3hEUTFFRlpJeFdaK1pheVVS?=
- =?utf-8?B?R0kzb0x6QkR3aHhqNDV2WXpNOTVpNGtMbFBNY0x5Y3JMQ0VjZ0s3Qm91N09S?=
- =?utf-8?B?R21HbW9ObXNHTEM0ckppWFlGSGJGWlE2U2JLMkVneVpIYzRvSUw4ajJjQ1Np?=
- =?utf-8?B?YkhNeGZ4L2RXNG8wbkJjRFdDd3NQQUZPUk9SZlFlR3hzZUdTdU5uQzQvMUtl?=
- =?utf-8?B?dlZ1cTNqeGk3R09qRzlIb2V5a3UxVnJvbVBicG5UYVNPb2hyWFJsUEJINjlu?=
- =?utf-8?B?UjlZV1d3d3dRY1drMkxSWFBnMmpMSnhrTlpTWVhPM3l0UkpjUmZ5cm5YclRV?=
- =?utf-8?B?OXZ0ZER1ajhkV3p6dys1V2kyazl4OVZNNmVOZEhCL3ZtM3lJUjh2NnVlZkg3?=
- =?utf-8?B?Ty95Rjg1MVFHeUNtdDdBa040emxDa2svY3Rtam41TzBxeDYzYys4NFVUNmg0?=
- =?utf-8?B?am54Tmhsa3JkTVpYOUZzNEJ0b3BxQlVBU1RQcE02RjJRcXkxRTBoYjQrdUc3?=
- =?utf-8?B?Y0hGMjVhNHZjTmpuQkF5L3FDemoyN0Z4cElTSWE3TVI3ZzE5V3kzeTJjNktG?=
- =?utf-8?B?Zld6L2pvS0R6S25IbHRGdzlJZXFnRzhzOE4xUDl1WkdlR01BeDVxVTB0M0Jt?=
- =?utf-8?B?UTBjVkFNQ2VLbmcvY2tldDF0WldTRXZSeDJMQ1c0MnVQbUQwQWZYK3FNbzlo?=
- =?utf-8?B?SFNVdmJuM2FTWEtraS9qOU1aWnl6Z1NxQ1gvendpSU83c0VXUW1QVDVDM0M0?=
- =?utf-8?B?OWlrc01jRXJvOUZyL3QyclR4WnB2NWtWVGJpQW1yRTFRbjduVlkrZnFibVJo?=
- =?utf-8?B?NmZ2QVBtUWVIdkZicHB4S3BaK0orY0NRcEgrZnBDalc2S3JhYk82b2dqYkts?=
- =?utf-8?B?Q1hENTViM2pMS1ltYUdRazdaRlM5N0NrN1JYUWFJbi9pWXNSY0pGeDYxcnEx?=
- =?utf-8?B?ZFpoVEtzUEQ3TVRjYlNvdU1ta3h6UEJZcG5FVi9McGFFUFlTa1JDcEFsOE9a?=
- =?utf-8?B?a1VvcWMrajY3b3NNbXRTWi9aV2k2Z2lJaUFUa3lxdURTcDBGUERTUU9LUkZi?=
- =?utf-8?B?TzRWQVNRUS9USlU5QTF6SEc3M2VvbStFUnpVNS9JT0cxQU1TNi9Ja1Y4aXdV?=
- =?utf-8?Q?7Yck=3D?=
+	=?utf-8?B?a0RMNjRMY0RJWlR0ZHJKQzh0TlBiTmhJMm4ySi9VR0hwOWQwbzNxVGZjNUJi?=
+ =?utf-8?B?cDVKVC9PaVJtMHBxWGJKNVUyUFhIYzFMOGlJV0U4UHBTUVF1L25vZXZOb3h1?=
+ =?utf-8?B?REdoQlR0bjNJQjgyQ0tMRW9EV0tOeHlYejVwYnBFbjMxTUtzVU5ieVFPODBE?=
+ =?utf-8?B?SVYrVlhyemYrQWI0eHU3TG1yUDVDb1JoMVJuUEo3ZmdSSkRLZ0JyRldSK0Q1?=
+ =?utf-8?B?dEdsR25KY2FiWTRiMmpnbnU2bDh4YmYxbk5JNlB0TzJ0SFdYUkVUUkVqbkNu?=
+ =?utf-8?B?UjFsMUtWb2krWXZsQkRSNFduTk04ejVaUjVGaWR4MEtHbFYvOVpZelVaeEhm?=
+ =?utf-8?B?NE1ERDdpYU9Ub0pQWmN4NTFidmZBZVFJT3huazRJMEIvaVd4cGN6N3pWNjUw?=
+ =?utf-8?B?YWx3VlU1TlZZY0ZoYXcvZW11cmViVmY0RVZkSysyNWxBT2VRRUhmaktrbDdR?=
+ =?utf-8?B?V2RGblkzN3hnY2FjY0p5c1JTcW5oMUVUOGQ4UTFabC9ZTWVhZVVqQklUWDZE?=
+ =?utf-8?B?b0xLQy9HUzY2amJ2SEtnb09KTWZyOW9MK0g5L1djejFCN2RvbE5qY1hUQU03?=
+ =?utf-8?B?M3VKb095VDVaa3ZSa0hSNStuaEtCbENVTk5EaDFFK2VXV2w5bUtnWmpQRFEx?=
+ =?utf-8?B?VWgwWHdlblp3QlRWWHBRSkY5dXdJOXVTK1lzRmxnQ2RoZzRMaDlFVk10R3Ex?=
+ =?utf-8?B?dGtsb05WSWJKL2F5b1JybkVKazVMUDlLTWk3aG05M041ejM3VW9zSklmZlBV?=
+ =?utf-8?B?eEFhZ1doN3MzTjBydWxMT2o3MERzS2FWNEFzVWsranhvbVRlRTFya243UTZI?=
+ =?utf-8?B?TCs0ck9Xa0dmY1N1YkZvb2MyKys3ZldMSzl4RzVUSXFWMkhQK2N5aTczTHF6?=
+ =?utf-8?B?QnFQcDNzekk1VzJsY2RXd2orV0pwVUFHRWZpekd0dk5FZGpUWVlVczBsU2h2?=
+ =?utf-8?B?clRoZlYzMFFMeElSdVZEMkt2YnIyY28zZERocjFXTGRVR3d4VTgzTE41SDNR?=
+ =?utf-8?B?SUNZUUZaVGpZSU8xYVdNV3pES2xYVG52QlZZOGtQSnc4WWtmYm1CbDFmZTFE?=
+ =?utf-8?B?RGYxbitQMm5mRjJRUFdQaksxU2psYkI4enBGcHhYOXEvVHBVZkxlb29RblZG?=
+ =?utf-8?B?NmRkYitrWnBWc0huNGY1QndXRzJnb1M5YVNsWFdBdFZQelhGODk0aEVkYUo2?=
+ =?utf-8?B?NWlMeUZnV250OTBvQnRyajhmazF0UFJZSWtVT05NQ0JTVE9SdnZta0JJb2xG?=
+ =?utf-8?B?TU4xaWI1c1Z4V2hmWEgweFlLYkYyWjduUXlXTnZUS3JJZmNaaVhkTGRnVmR6?=
+ =?utf-8?B?Z1NPSzhHd0lwb1dEdFVYc20vNXFSdHNUeXhNYjIrTDNCTG5YTmtoVUZxczN5?=
+ =?utf-8?B?SDV0cEl2c1cwc0xUSExGNnlITG5SV3FYR3l1WW1OLytscWlkbk4zeDZFTWEx?=
+ =?utf-8?B?QnR2YUFUL1dTSHJiUkhIeUNlZW5qU0VGQmhDaFJzUGRwbEpXWDdGV05wNVhV?=
+ =?utf-8?B?RSt5SmRVb1c1aVRmdklNTkI5OXJKc2RuWVdMbEpTMk8wR0gra2VaU2J0RnUr?=
+ =?utf-8?B?S3J3bGEyblkwQkdXTUt6R3JiYjZBT0xXSXRwN0FVZnQzS2tMUTc3MFg2dklw?=
+ =?utf-8?B?NGNKaFVjTFBuQXRSZ2owZlZiVk96WWRNaiszQ3dVYW5ldkVDOG9HL0pDc1Rz?=
+ =?utf-8?B?YkJuRHhPaTVMN20wdzI3RllsaVlCM0J0SVQ1ZEFMWnd3WVp2YmFnZmpjbmw4?=
+ =?utf-8?B?enJPRlFyalpBV3ppYkROWGNYQ2JOVmhNNkcrbVQwVk5ZR2JLc3NZWkhaeUhC?=
+ =?utf-8?B?cWhZSG9kVWpOTE42U0RUcHRUSGdqVXlBemlxbVFKOGpaVWlSeHNhQ1JTN0Ix?=
+ =?utf-8?B?YzJiQWd1b0RTRjhoUVh2OXJFN05ON0x3L256SFM2N0FkRTF1NS9PcThKYXdh?=
+ =?utf-8?B?N3p2ZTFQZWM2MDhQdmFjVVROemJZeEt0ZGhjcXI5Q0hMaXR1T1NZZWp6RUh4?=
+ =?utf-8?B?L0g5SXYwenBnPT0=?=
 X-Forefront-Antispam-Report: 
-	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2025 11:13:11.7157
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?aS91TnNodkFvdDJ4cDhWei9UejczUkdCQzU3SkNmU2ZoWW9HMUJyMUdrOGN5?=
+ =?utf-8?B?VXZmKzY4RFptSENkOWVGTWIvR0ZyT0lKTFA4YnlWUzVYVTQ1UWNaK2ZtN2xn?=
+ =?utf-8?B?emtGNjZ6bEUxdk5vb1ZwS2xJQmIycDZxSE9iNDFLTHpIclB3RzUvaFVpRUsr?=
+ =?utf-8?B?b0tMamlJWGpDdGhzVndObjRFUXh3K01PQlcvM2hWelVRcHBIMnIxRUo5UXE2?=
+ =?utf-8?B?SHVTUFRXV1dIbG1oOE5adUhoOGg1UHRHWDNLWWJrb3Noci9Ma09MN0kwWWQ0?=
+ =?utf-8?B?eG1Id0hYQ2hXQnRDUkRJRFJXWVMwdjBsUXRSZ2VYMDBkZ0ViRXprWGxMT3VE?=
+ =?utf-8?B?SWxmMkpEYWxBVVdkZCtPcVZoRzN5R29ZWGJKRUZ5ZHc3cmN4ekJXZlY2WU5m?=
+ =?utf-8?B?d3NNWkJ1b2lZcHljb0hsR2FRRzlWaEJPWUo0Sm41UUR0VmViK3ozRldxcWho?=
+ =?utf-8?B?QzFUZGdBOWtmRXJuSExjU2JuWXNlZWs2SFF1LzhPWW1sZkJ0aVc1dnhNb0hJ?=
+ =?utf-8?B?Nk1jb0VBTldRNUhMS3V0bUNjdk1GMXVZNm5BTGl5VnJiV3VRbG9MdmlicWV4?=
+ =?utf-8?B?T1poWGU4WW5EeGcxTG4xU05Kd2VETjVtSjBSTXZpVnVwdU43K3BXYWl6a3hy?=
+ =?utf-8?B?REJKbFg4a1ZDKzJpOTU2Mm5WUWg4U3BJeUIvWjlONE1Va1ovNitsbHVUVklT?=
+ =?utf-8?B?R1VHb3M3cmFhUkNIcnFaVzRlZHZYa24wQXAwbVpkVFhnZWJNSExoYUIzbXpE?=
+ =?utf-8?B?U1ZLNWNuNkZFWS9uSnNSbllzNjlVSGxNVVVBdXoraVRIQ3ZiYk56Z0pHUzQ2?=
+ =?utf-8?B?OUlTR0JOWlI0Y1YwZUMzODgxMmF3d2JsMTZ6NHBWekd4RDhtVUFoWjRjT3or?=
+ =?utf-8?B?UzRZZCtsZEU0cW5FRzJMWUJiSmgrVi9LMWxTd1NDak5PcGJaVzhJSjZMaVpU?=
+ =?utf-8?B?d2UwRHNtKzRGdzJxSTF6WERSazhuMHQ1ZERuMkpRUi9jdjNjOEszaFFpZytG?=
+ =?utf-8?B?alJ3WGh2NXMzY2VYZnhoc0s2a0FiNUxVSFRER2xmL0p4UmZyWW5weTRxZUJh?=
+ =?utf-8?B?ZG1ZaGwwVXd2cmJFVmh1R3NyNVFQYXFuVXR5NUtaZWlrZTFESTJyb3dVSjZU?=
+ =?utf-8?B?enNZZHRjeVNXUDgxTE1SY2xDNkJhcFN1dng1ZGh0RFN0N3hNc3krRmlsQ1pF?=
+ =?utf-8?B?ZUNESGtWcm9VcFZmbGY5K1U5eFlnaTRzTHFhUWw1WFhnZ0hHK3V1MFlhRkQv?=
+ =?utf-8?B?REgvb1JsR2kvYnVEMzA0c3FKMnFOMDNtTHBVR0FiU3pUU01KS1dLMUwvL2Rv?=
+ =?utf-8?B?RlN1MlFPbDMzQmxUUnFNSVZSZUxwTlZ6Z2s3TTRVVWRxZXp0K3RvVzlxK0R3?=
+ =?utf-8?B?OVJ1cjI0RTZIMGFqRTQyYW1ybklIK2ZUZ29ZVHNaVGtQcDZQeDZPUlFBMi9j?=
+ =?utf-8?B?ZUdUS25IbUswcytrMGJrQW5HZ1I2a1R5Q2NOTjNoamlCT3R2MlBhYnNTTmFI?=
+ =?utf-8?B?b3Q4NStNMCtmWGlraTJhbUQ0QTBGdEhaeHJ4MWYzVmpHWUIxbkZQQ2pWN0t0?=
+ =?utf-8?B?b1ZENXE2MnlUc3ZTUElsOWVIUWVyNkFVVmM2SzRFcWdFdkpsVVRJNVJ5dDY1?=
+ =?utf-8?B?MHM3NHBIQzJxSjN6UmUxYVBBWi9lTTA1Z3JYY0ZDTERrTVZQWWpWV0k5NWdn?=
+ =?utf-8?B?TFpsSG9aS3BLdnllL0ZPTnNpbG5OYys2Y3UzT216elk4UDlWbGxUd3krS1dw?=
+ =?utf-8?B?N2RhMVJPbVRzb0RFMUJGM1l0OXBBMWpEVGI4RWtTd1pUSEMzUlczc1U0cjUr?=
+ =?utf-8?B?NmV4MWdtNTUwc0d6Um5wSjg3REdwR0NsVnEwVUUxTWE3TkNlbDZFdEhKUThL?=
+ =?utf-8?B?VHdXOUNpQTE0TS9ncThNWFZ2L1dUK1JFWjY0cGpMSERuMWVSQXlidE9WRW9D?=
+ =?utf-8?B?MmpDVlRJMUhld0RCK3Z6aVJJY2lPcVFqNWpOaFBnNDl4dURNNmE4NGs3TWFa?=
+ =?utf-8?B?RFd3REhMai9yL3gyRFBINU1aOHF0V1dwZ2lJZzBDZ0pGcUdicS92L2k3WGZE?=
+ =?utf-8?B?OEZWNHlPYUtwYUttZEgzYitJb1k5bHlCb1dYQ292T2Z6MXpHR2o3dlhZQmx4?=
+ =?utf-8?B?dXp4YXNTbW05SEhyb2ZnbmQ1c05HTWRKVVd3MlkrSW5DUWR3bExkcUdGbmVL?=
+ =?utf-8?B?Nmc9PQ==?=
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb1e6145-cc51-4471-d808-08de25cdd469
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2025 11:38:29.6982
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2b3f308e-4968-4fef-e97a-08de25ca4bc1
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource: 
-	DS1PEPF0001709B.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB6376
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jxQE4wgVFhehSI1Zoqlg29xX5lrHdpRnn5ofwtO1hO8r/UhuvG8J6yk47MtY1smu/EfJ/gEcaJ1Qx5AUL6Xdeg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR10MB3676
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 17 Nov 2025 11:13:32 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20577
+ <cip-dev@lists.cip-project.org>; Mon, 17 Nov 2025 11:38:52 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20578
 
+Hi all,
 
+as promised on our last IRC meeting, I looked a bit into the state of
+recent CIP kernel & config on the DE0-Nano-SoC. One outcome will be
+posted later (isar-cip-core support [1]). Another is that 6.12-cip with
+cip_merged_defconfig does boot fine on the board in principle. I tested
+both EFI booting (not relevant for kernelci) as well as legacy (bootz,
+u-boot-script), and both worked.
 
-On 11/14/25 23:07, Jan Kiszka wrote:
-> On 14.11.25 10:05, Sai Sree Kartheek Adivi wrote:
->> - Add new recipe for optee-os-tadevkit, optee-ftpm
->> - Integrate OPTEE-fTPM, StMM
->> - Add ti-extra.cfg for enabling RPMB, FTPM and StMM related configs
->> - Update Kconfig to enable secureboot
->> - Add wks file for use with secureboot
->>
->> Signed-off-by: Sai Sree Kartheek Adivi <s-adivi@ti.com>
->> ---
->>   Kconfig                                       |  4 +++
->>   ...ptee-ftpm-ti-k3_4.8+v1.62r1-48-ge9fc7b8.bb | 28 +++++++++++++++++++
->>   .../optee-os/optee-os-tadevkit-ti-k3_4.8.0.bb | 13 +++++++++
->>   recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.bb  | 16 +++++++++++
->>   recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.inc |  5 +++-
->>   recipes-bsp/u-boot/files/ti-extra.cfg         | 19 +++++++++++++
->>   .../u-boot/u-boot-ti-am62px-sk_2025.07.bb     |  4 +++
->>   ...i-am62px-sk-efibootguard-secureboot.wks.in | 23 +++++++++++++++
->>   8 files changed, 111 insertions(+), 1 deletion(-)
->>   create mode 100644 recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_4.8+v1.62r1-48-ge9fc7b8.bb
->>   create mode 100644 recipes-bsp/optee-os/optee-os-tadevkit-ti-k3_4.8.0.bb
->>   create mode 100644 recipes-bsp/u-boot/files/ti-extra.cfg
->>   create mode 100644 wic/ti-am62px-sk-efibootguard-secureboot.wks.in
->>
->> diff --git a/Kconfig b/Kconfig
->> index d322a94..536162d 100644
->> --- a/Kconfig
->> +++ b/Kconfig
->> @@ -104,6 +104,10 @@ config TARGET_TI_AM62PX_SK
->>   	bool "Texas Instruments AM62Px SK"
->>   	select ARCH_ARM64
->>   	select HAS_SWUPDATE
->> +	select HAS_SECURE_BOOT
->> +	select HAS_DISK_ENCRYPTION
->> +	select HAS_OPTEE
->> +	select FTPM_STMM
->>   
->>   endchoice
->>   
->> diff --git a/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_4.8+v1.62r1-48-ge9fc7b8.bb b/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_4.8+v1.62r1-48-ge9fc7b8.bb
->> new file mode 100644
->> index 0000000..2cfff21
->> --- /dev/null
->> +++ b/recipes-bsp/optee-ftpm/optee-ftpm-ti-k3_4.8+v1.62r1-48-ge9fc7b8.bb
->> @@ -0,0 +1,28 @@
->> +#
->> +# Copyright (c) Texas Instruments Incorporated, 2025
->> +#
->> +# Authors:
->> +#  Sai Sree Kartheek Adivi <s-adivi@ti.com>
->> +#
->> +# SPDX-License-Identifier: MIT
->> +#
->> +
->> +require recipes-bsp/optee-ftpm/optee-ftpm.inc
->> +
->> +SRC_URI += " \
->> +    https://github.com/OP-TEE/optee_ftpm/archive/${SRCREV}.tar.gz;downloadfilename=optee_ftpm-${SRCREV}.tar.gz \
->> +    https://github.com/microsoft/ms-tpm-20-ref/archive/${SRCREV_ms-tpm}.tar.gz;name=ms-tpm;downloadfilename=ms-tpm-20-ref-${SRCREV_ms-tpm}.tar.gz \
->> +    "
->> +SRCREV = "04cbc8a136e8fe6731a536f5fe145e2862feafd7"
->> +SRCREV_ms-tpm = "e9fc7b89d865536c46deb63f9c7d0121a3ded49c"
->> +
->> +SRC_URI[sha256sum] = "7adfa71c4b49affef7d4db2436d8d6b93cdc3aaa9bdc9cf795c0bf7488a4cac6"
->> +SRC_URI[ms-tpm.sha256sum] = "b77d092c0dde362adf6bc88a580ca7c8abe124d69bb734bf28f8904ae30494a4"
->> +
->> +S = "${WORKDIR}/optee_ftpm-${SRCREV}"
->> +MS_TPM_20_REF_DIR = "ms-tpm-20-ref-${SRCREV_ms-tpm}"
->> +
->> +OPTEE_NAME = "ti-k3"
->> +
->> +TA_CPU = "cortex-a53"
->> +TA_DEV_KIT_DIR = "/usr/lib/optee-os/${OPTEE_NAME}/export-ta_arm64"
->> diff --git a/recipes-bsp/optee-os/optee-os-tadevkit-ti-k3_4.8.0.bb b/recipes-bsp/optee-os/optee-os-tadevkit-ti-k3_4.8.0.bb
->> new file mode 100644
->> index 0000000..6e396fa
->> --- /dev/null
->> +++ b/recipes-bsp/optee-os/optee-os-tadevkit-ti-k3_4.8.0.bb
->> @@ -0,0 +1,13 @@
->> +#
->> +# Copyright (c) Texas Instruments Incorporated, 2025
->> +#
->> +# Authors:
->> +#  Sai Sree Kartheek Adivi <s-adivi@ti.com>
->> +#
->> +# SPDX-License-Identifier: MIT
->> +#
->> +
->> +OPTEE_ENABLE_APPS = "0"
->> +
->> +require recipes-bsp/optee-os/optee-os-tadevkit-custom.inc
->> +require optee-os-ti-k3_${PV}.inc
->> diff --git a/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.bb b/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.bb
->> index f8cd973..e73a7bf 100644
->> --- a/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.bb
->> +++ b/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.bb
->> @@ -9,3 +9,19 @@
->>   
->>   require recipes-bsp/optee-os/optee-os-custom.inc
->>   require optee-os-ti-k3_${PV}.inc
->> +
->> +# StMM integration, required by UEFI auth variable management
->> +DEPENDS:append:optee-with-apps = " edk2-standalonemm-rpmb"
->> +DEBIAN_BUILD_DEPENDS:append:optee-with-apps = ", edk2-standalonemm-rpmb"
->> +OPTEE_EXTRA_BUILDARGS:append:optee-with-apps = " \
->> +	CFG_STMM_PATH=/usr/lib/edk2/BL32_AP_MM.fd \
->> +	"
->> +
->> +# OP-TEE fTPM integration
->> +DEPENDS:append:optee-with-apps = " optee-ftpm-${OPTEE_NAME}"
->> +DEBIAN_BUILD_DEPENDS:append:optee-with-apps = ", optee-ftpm-${OPTEE_NAME}"
->> +FTPM_UUID = "bc50d971-d4c9-42c4-82cb-343fb7f37896"
->> +OPTEE_EXTRA_BUILDARGS:append:optee-with-apps = " \
->> +	CFG_EARLY_TA=y \
->> +	EARLY_TA_PATHS=/usr/lib/optee-os/${OPTEE_NAME}/ta/${FTPM_UUID}.stripped.elf \
->> +	"
->> diff --git a/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.inc b/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.inc
->> index 444f6b3..5ee5020 100644
->> --- a/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.inc
->> +++ b/recipes-bsp/optee-os/optee-os-ti-k3_4.8.0.inc
->> @@ -21,7 +21,10 @@ OPTEE_EXTRA_BUILDARGS += " \
->>   	CFG_ARM64_core=y \
->>   	CFG_USER_TA_TARGETS=ta_arm64 \
->>   	TEE_IMPL_VERSION=${PV} \
->> -	CFG_TEE_CORE_LOG_LEVEL=1 \
->> +	CFG_TEE_CORE_LOG_LEVEL=1 CFG_TEE_TA_LOG_LEVEL=1 \
->> +	CFG_CORE_DYN_SHM=y CFG_CORE_HEAP_SIZE=524288 \
->> +	CFG_REE_FS=n CFG_RPMB_FS=y \
->> +	CONFIG_INSECURE=y \
->>   	"
->>   
->>   DEBIAN_BUILD_DEPENDS += ", device-tree-compiler, python3-cryptography:native"
->> diff --git a/recipes-bsp/u-boot/files/ti-extra.cfg b/recipes-bsp/u-boot/files/ti-extra.cfg
->> new file mode 100644
->> index 0000000..faff390
->> --- /dev/null
->> +++ b/recipes-bsp/u-boot/files/ti-extra.cfg
->> @@ -0,0 +1,19 @@
->> +### FTPM + RPMB + StandaloneMM setup
->> +CONFIG_TEE=y
->> +CONFIG_OPTEE=y
->> +CONFIG_OPTEE_SERVICE_DISCOVERY=y
->> +CONFIG_TPM=y
->> +CONFIG_TPM_V2=y
->> +CONFIG_CMD_TPM=y
->> +CONFIG_TPM2_FTPM_TEE=y
->> +CONFIG_CMD_OPTEE_RPMB=y
->> +CONFIG_SUPPORT_EMMC_RPMB=y
->> +CONFIG_EFI_MM_COMM_TEE=y
->> +CONFIG_MEASURED_BOOT=y
->> +CONFIG_CMD_NVEDIT_EFI=y
->> +CONFIG_CMD_MMC_RPMB=y
->> +CONFIG_EFI_TCG2_PROTOCOL=n
-> 
-> Some of those are part of ftpm-stmm.cfg which you get anyway. Maybe you
-> can drop them in a follow-up patch.
-> 
-> Then you don't need TPM support in U-Boot for our integration - or do
-> you have scenario for that? Doesn't do any harm, just curious.
-> 
-> Did you already test if measured boot works for you?
+What I noticed though is that the pre-installed U-Boot versions on the
+two devices in our labs are quite different: 2024.07 at siemens-muc,
+2013.01.01 (historic vendor version?) at iwamatsu. That may lead to
+different memory layouts and problems when artifacts grow (as they tend
+to with newer versions):
 
-I've enabled TPM support in u-boot because measured boot depends on it. 
-And no, measured boot is not working yet and it's still a wip. Do you 
-want me to remove these configs and re-enable them with measured boot 
-related patches?
+2013.01.01:
+SOCFPGA_CYCLONE5 # tftp 0x82000000
+1329397/tftp-deploy-so0uyc8_/ramdisk/ramdisk.cpio.gz.uboot
+("works")
+SOCFPGA_CYCLONE5 # bootz 0x01000000 0x82000000 0x03000000
+(hangs with 6.12-cip)
 
-> 
->> +CONFIG_BOOTCOMMAND="setenv pair_rpmb_key 'setenv -e -nv -bs -rt pairing 1; setenv -e pairing'; run pair_rpmb_key; bootefi bootmgr"
-> 
-> This looks suspicious on second glance: pairing with the RPMB should not
-> be done in production but via a special firmware. Critical here is
-> optee, but I see that you are not setting CFG_RPMB_WRITE_KEY=y (unlike
-> we do for testing of qemu-arm64). Still, do we want that code above in
-> the regular, secured, likely signed firmware, even though it should
-> never trigger there?
+2024.07:
+=> tftp 0x82000000
+1329285/tftp-deploy-2s1r4tdd/ramdisk/ramdisk.cpio.gz.uboot
+...
+TFTP error: trying to overwrite reserved memory...
 
-you are correct, this is a leftover from my earlier experiments. Will 
-post a patch to remove this line along with the redundant configs that 
-you mentioned above.
+I unfortunately do not have the parameters for the my build experiments
+anymore (host decided to run out of power over night), but we may want
+to double-check what u-boot-script naturally picks kernel_addr_r and
+ramdisk_addr_r. The initramfs I built from isar-cip-core might have been
+smaller, though. Maybe worth to check, first of all, if the kernel-ci
+pipeline would make the kernel start to boot without any initramfs (even
+if it will get stuck later on). I may also reproduce my sd-card boots if
+that helps.
 
-> 
->> +
->> +# workaround for v2025.07
->> +CONFIG_USB_STORAGE=y
->> diff --git a/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.07.bb b/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.07.bb
->> index 8fecee8..b97b70f 100644
->> --- a/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.07.bb
->> +++ b/recipes-bsp/u-boot/u-boot-ti-am62px-sk_2025.07.bb
->> @@ -20,6 +20,7 @@ SRC_URI += " \
->>   	https://github.com/TexasInstruments/ti-linux-firmware/raw/refs/tags/${TI_FIRMWARE_PV}/ti-sysfw/ti-fs-firmware-am62px-hs-enc.bin;downloadfilename=ti-fs-firmware-am62px-hs-enc.bin;name=am62p-sysfw-enc-hs \
->>   	https://github.com/TexasInstruments/ti-linux-firmware/raw/refs/tags/${TI_FIRMWARE_PV}/ti-dm/am62pxx/ipc_echo_testb_mcu1_0_release_strip.xer5f;downloadfilename=ipc_echo_testb_mcu1_0_release_strip.xer5f;name=am62p-dm \
->>   	file://rules-${MACHINE} \
->> +	file://ti-extra.cfg \
->>   	file://0001-configs-KASLR-OPTEE-RNG-support-for-K3-devic.patch \
->>   	"
->>   
->> @@ -56,4 +57,7 @@ do_prepare_build:append() {
->>       cp ${WORKDIR}/ipc_echo_testb_mcu1_0_release_strip.xer5f ${TI_LINUX_FIRMWARE}/ti-dm/am62pxx
->>   
->>       cp ${WORKDIR}/rules-${MACHINE} ${S}/debian/rules
->> +
->> +    sed -ni '/### TI extra config/q;p' ${S}/configs/${U_BOOT_CONFIG}
->> +    cat ${WORKDIR}/ti-extra.cfg >> ${S}/configs/${U_BOOT_CONFIG}
->>   }
->> diff --git a/wic/ti-am62px-sk-efibootguard-secureboot.wks.in b/wic/ti-am62px-sk-efibootguard-secureboot.wks.in
->> new file mode 100644
->> index 0000000..52fcb09
->> --- /dev/null
->> +++ b/wic/ti-am62px-sk-efibootguard-secureboot.wks.in
->> @@ -0,0 +1,23 @@
->> +#
->> +# Copyright (c) Texas Instruments Incorporated, 2025
->> +#
->> +# Authors:
->> +#  Sai Sree Kartheek Adivi <s-adivi@ti.com>
->> +#
->> +# SPDX-License-Identifier: MIT
->> +#
->> +
->> +# Boot partition containing Bootloader binaries
->> +part /boot/firmware --source bootimg-partition --fstype=vfat --label firmware --active --align 1024 --size 16M --overhead-factor 1 --extra-space 0 --use-uuid --part-type E3C9E316-0B5C-4DB8-817D-F92DF00215AE
->> +
->> +include ebg-signed-sysparts.inc
->> +
->> +# ABROOTFS partitions
->> +part --source rawcopy --sourceparams "file=${IMAGE_FULLNAME}.verity" --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_A}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systema
->> +part --source empty --align 1024 --fixed-size 1G --uuid "${ABROOTFS_PART_UUID_B}" --part-type 0FC63DAF-8483-4772-8E79-3D69D8477DE4 --part-name systemb
->> +
->> +# var and optional home are extra partitions
->> +part /var --fstype=ext4 --label var --align 1024 --fixed-size 512M --fsuuid 96be3374-4258-11ee-be56-0242ac120002 --uuid 423f0a2e-b9b3-4615-85be-2a4261fa32d9
->> +${WIC_HOME_PARTITION}
->> +
->> +bootloader --ptable gpt --source hybrid-boot --timeout=0 --append "rootwait rw console=ttyS2,115200n8"
-> 
-> My questions are comming late, so I'm taking this as is. Please try to
-> follow up on the points I made, patching on top where needed.
+Now, simply updating U-Boot to a more recent version turned out to be
+not that easy thanks to no one (hello, Altera) testing U-Boot upstream
+on our board for a year or longer. Patches to fix regressions there were
+sent upstream, though, and will also become available via isar-cip-core [2].
 
-Thanks, will do.
+Jan
 
-> 
-> Thanks,
-> Jan
-> 
+[1]
+https://gitlab.com/cip-project/cip-core/isar-cip-core/-/commits/next?ref_type=heads
+[2]
+https://gitlab.com/cip-project/cip-core/isar-cip-core/-/commit/cf43e9da3cfc59771e801d3215d3b3794f3602a8
+
+-- 
+Siemens AG, Foundational Technologies
+Linux Expert Center
+
 
