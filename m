@@ -2,33 +2,33 @@ Return-Path: <quirin.gylstorff@siemens.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E67CEDDBB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63F0FCEE323
 	for <webhook@archiver.kernel.org>; Tue, 18 Nov 2025 15:10:41 +0000 (UTC)
-Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.14641.1763478633913345674
+Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.14644.1763478634190816077
  for <cip-dev@lists.cip-project.org>;
  Tue, 18 Nov 2025 07:10:35 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=B4hGWXYY;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.225, mailfrom: fm-51332-202511181510316f6ffdd37400020775-ygqq42@rts-flowmailer.siemens.com)
-Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 202511181510316f6ffdd37400020775
+ dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=f2BnoOZZ;
+ spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-51332-20251118151031eeef9cf17300020768-uz1h6o@rts-flowmailer.siemens.com)
+Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 20251118151031eeef9cf17300020768
         for <cip-dev@lists.cip-project.org>;
         Tue, 18 Nov 2025 16:10:31 +0100
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
  d=siemens.com; i=Quirin.Gylstorff@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=bT135yBPSolkBbB3pl32BE/OZLKbN8RAjZDpONB8WLE=;
- b=B4hGWXYYUgJQ6P/eVcwS0k/rPXpQg2rPBIzeshuIhn9nknqiujmKYbyq9/AshbhdhYEobW
- /Lh63sNSGzxbLBSEaIRHGAEkWNlt6C7vxYNh16jAroRcGfOUGDRol/JX216Kx45pni/5KwNz
- uYF+7DuDWOLoM4dqu/gyW/huZ527LACyfHXj64R0xIodsH5jdsAS0dsXGZZXyz3WJBUH7Ufu
- ykSSsxvCsOnxW+6RZF7QjmAcvWvencwXvrRAJFlWS0p0IcgMc+QjB9+O7x2Q4OV7z73g1Ozp
- 3C6YeYeDWvanoRScemu8qNqWT0xxnyMzqqFtT19zJ1QZxKMRIOGYAo5g==;
+ bh=gNYivp0SuoERTJA2aeguG86gluGBoXxtzTuhOeXKplI=;
+ b=f2BnoOZZwah/nXgP+OT2AltV8V+82EaqUmsfNU54jy/bNTz8J4VNuM8qHleNhB/1K0Gn85
+ 6aEM29uwiqqJm5bSm2nxGOvXZatEaCRcl0ctijRkuGUZaCzfDwarbvR2opnvtFO3F/W9wKZw
+ YQ9nx6IbQbHus1ahcvbEfSWTYG7kj+IOmYF04JlZx8SaSDqEnFf+8aHNkDeu81yOm+RvJ84R
+ TzEcPbEpPcm237zOsV6xX5wXS4U7MaFtikWZ2/bAO/6PieJJggs12KVptq1JH4XmKEzvoZpW
+ nCF8+AcmL6mJD5cNoi3aSunLNpTaH23TKwb+ydNanLNy1R3tS4Xss7mg==;
 From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
 To: cip-dev@lists.cip-project.org,
 	jan.kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH v2 3/5] initramfs-verity-hook: Use initramfs-cip-functions
-Date: Tue, 18 Nov 2025 15:14:46 +0100
-Message-ID: <20251118151030.504765-4-Quirin.Gylstorff@siemens.com>
+Subject: [cip-dev][isar-cip-core][PATCH v2 4/5] initramfs-factory-reset: de-duplicate code between local-top and local-bottom
+Date: Tue, 18 Nov 2025 15:14:47 +0100
+Message-ID: <20251118151030.504765-5-Quirin.Gylstorff@siemens.com>
 In-Reply-To: <20251118151030.504765-1-Quirin.Gylstorff@siemens.com>
 References: <20251118151030.504765-1-Quirin.Gylstorff@siemens.com>
 MIME-Version: 1.0
@@ -39,134 +39,155 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Tue, 18 Nov 2025 15:10:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20618
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20620
 
 From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-This use the functions from the new package to de-duplicate the
-code used by initramfs-verity-hook and initramfs-abrootfs-hook.
+The local-top and local-bottom functions are nearly identical. Use
+a template and change the name during prepare_build to the indented
+initramfs stage to maintain only one file.
 
 Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 ---
- .../files/local-top-complete.tmpl             | 55 ++++---------------
- ...ok_0.2.bb => initramfs-verity-hook_0.3.bb} |  3 +-
- 2 files changed, 12 insertions(+), 46 deletions(-)
- rename recipes-initramfs/initramfs-verity-hook/{initramfs-verity-hook_0.2.bb => initramfs-verity-hook_0.3.bb} (85%)
+ .../{local-top => factory-reset-script.tmpl}  | 18 ++++---
+ .../files/local-bottom                        | 48 -------------------
+ ...bb => initramfs-factory-reset-hook_0.2.bb} | 18 +++++--
+ 3 files changed, 26 insertions(+), 58 deletions(-)
+ rename recipes-initramfs/initramfs-factory-reset-hook/files/{local-top => factory-reset-script.tmpl} (70%)
+ delete mode 100644 recipes-initramfs/initramfs-factory-reset-hook/files/local-bottom
+ rename recipes-initramfs/initramfs-factory-reset-hook/{initramfs-factory-reset-hook_0.1.bb => initramfs-factory-reset-hook_0.2.bb} (62%)
 
-diff --git a/recipes-initramfs/initramfs-verity-hook/files/local-top-complete.tmpl b/recipes-initramfs/initramfs-verity-hook/files/local-top-complete.tmpl
-index 991178c..db805c0 100644
---- a/recipes-initramfs/initramfs-verity-hook/files/local-top-complete.tmpl
-+++ b/recipes-initramfs/initramfs-verity-hook/files/local-top-complete.tmpl
-@@ -33,6 +33,8 @@ esac
- . /scripts/functions
- . /lib/cryptsetup/functions
- 
-+. /scripts/cip-initramfs-functions
-+
- load_verity_env_from_cmdline()
- {
-     local verity_opts
-@@ -71,9 +73,13 @@ load_verity_env_from_cmdline()
-     done
- }
- 
-+found_root=""
-+scanned_partitions=""
-+
- find_root_via_image_uuid()
- {
--    for part in ${partitions}; do
-+    loc_partitions="$1"
-+    for part in ${loc_partitions}; do
-         if [ "$(blkid -p ${part} --match-types novfat -s USAGE -o value)" = "filesystem" ]; then
-             verity_uuid=$(
-                 veritysetup dump "${part}" --hash-offset "${HASH_OFFSET}" | \
-@@ -99,7 +105,6 @@ find_root_via_image_uuid()
- # broken trust chain.
- echo "ROOT=/dev/null" >/conf/param.conf
- wait_for_udev 10
--
- load_verity_env_from_cmdline
- 
- case "$ROOT" in
-@@ -109,57 +114,17 @@ case "$ROOT" in
-         found_root=$(blkid --list-one --output device --match-token "$ROOT")
-         if [ -z "${found_root}" ]; then
-             log_begin_msg "Waiting for ${ROOT}"
--            while true; do
--                sleep 1
--                time_elapsed="$(time_elapsed)"
--
--                found_root=$(blkid --list-one --output device --match-token "$ROOT")
--                if [ -n "${found_root}" ]; then
--                    log_end_msg 1
--                    break
--                fi
--                if [ "${time_elapsed}" -ge 30 ]; then
--                    log_end_msg 0
--                    break
--                fi
--            done
-+            wait_30sec_for_condition find_root_by_part
+diff --git a/recipes-initramfs/initramfs-factory-reset-hook/files/local-top b/recipes-initramfs/initramfs-factory-reset-hook/files/factory-reset-script.tmpl
+similarity index 70%
+rename from recipes-initramfs/initramfs-factory-reset-hook/files/local-top
+rename to recipes-initramfs/initramfs-factory-reset-hook/files/factory-reset-script.tmpl
+index a1aaf26..a6c622f 100644
+--- a/recipes-initramfs/initramfs-factory-reset-hook/files/local-top
++++ b/recipes-initramfs/initramfs-factory-reset-hook/files/factory-reset-script.tmpl
+@@ -28,12 +28,18 @@ if /usr/sbin/get-factory-reset.sh --delete | grep -q "factory-reset"; then
+                 ;;
+         esac
+         if [ "$fs_type" = "luks" ]; then
+-            # after this the data on the encrypted partition
+-            # is inaccessible
+-            tpm2_clear
+-            # with encryption the original fs_type is hidden
+-            # use a variable from the reset-env to set it
+-            fs_type="$INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE"
++            if [ -n "${INITRAMFS_FACTORY_RESET_CLEAR_TPM}" ]; then
++                # after this the data on the encrypted partition
++                # is inaccessible
++                tpm2_clear
++                # with encryption the original fs_type is hidden
++                # use a variable from the reset-env to set it
++                fs_type="$INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE"
++            else
++                target=$(find /dev/mapper -iname "*$label")
++                fs_type=$(get_fstype "${target}")
++                echo "luks device detected use $target"
++            fi
          fi
-         ;;
-     "")
-         # No Root device was given. Use veritysetup verify to search matching roots
-         partitions="$(blkid -o device)"
--        find_root_via_image_uuid
-+        find_root_via_image_uuid "$partitions"
-         if [ -z "${found_root}" ]; then
-             log_begin_msg "Waiting for IMAGE_UUID=${TARGET_IMAGE_UUID}"
-             scanned_partitions="${partitions}"
--            while true; do
--                sleep 1
--                time_elapsed="$(time_elapsed)"
+         case ${fs_type} in
+             ext*)
+diff --git a/recipes-initramfs/initramfs-factory-reset-hook/files/local-bottom b/recipes-initramfs/initramfs-factory-reset-hook/files/local-bottom
+deleted file mode 100644
+index 15d44c9..0000000
+--- a/recipes-initramfs/initramfs-factory-reset-hook/files/local-bottom
++++ /dev/null
+@@ -1,48 +0,0 @@
+-#!/bin/sh
+-#
+-# CIP Core, generic profile
+-#
+-# Copyright (c) Siemens AG, 2025
+-#
+-# Authors:
+-#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
+-#
+-. /usr/share/factory-reset/reset-env
+-target_devices="${INITRAMFS_FACTORY_RESET_DEVICES}"
 -
--                unset partitions
--                for part in $(blkid -o device); do
--                    unset found
--                    for scanned_part in ${scanned_partitions}; do
--                        if [ "${scanned_part}" = "${part}" ]; then
--                            found=1
--                            break
--                        fi
--                    done
--                    if [ -z "${found}" ]; then
--                        partitions="${partitions} ${part}"
--                    fi
--                done
--                find_root_via_image_uuid
--                if [ -n "${found_root}" ]; then
--                    log_end_msg 1
--                    break
+-if /usr/sbin/get-factory-reset.sh --delete | grep -q "factory-reset"; then
+-    log_begin_msg "Factory Reset"
+-    for target in ${target_devices}; do
+-        log_begin_msg "Reset device: $target"
+-        fs_type=$(get_fstype "${target}")
+-        case "$target" in
+-            *by-partlabel*)
+-                label="$(basename "${target}" )"
+-                ;;
+-            *)
+-                label=$(blkid --match-tag LABEL "$target" | awk -F= '{gsub(/"/,"");print $2}' )
+-                if [ -z "${label}" ]; then
+-                    log_warning_msg "Could not find any label  for target '$target'"
 -                fi
--                if [ "${time_elapsed}" -ge 30 ]; then
--                    log_end_msg 0
--                    break
--                fi
--                scanned_partitions="${scanned_partitions} ${partitions}"
--            done
-+            wait_30sec_for_condition scan_for_partitions
-         fi
-         ;;
- esac
-diff --git a/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.2.bb b/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.3.bb
-similarity index 85%
-rename from recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.2.bb
-rename to recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.3.bb
-index 668419e..37781c9 100644
---- a/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.2.bb
-+++ b/recipes-initramfs/initramfs-verity-hook/initramfs-verity-hook_0.3.bb
-@@ -21,7 +21,8 @@ VERITY_BEHAVIOR_ON_CORRUPTION ?= "--restart-on-corruption"
- TEMPLATE_FILES += "local-top-complete.tmpl"
- TEMPLATE_VARS += "VERITY_BEHAVIOR_ON_CORRUPTION"
+-                ;;
+-        esac
+-        if [ "$fs_type" = "luks" ]; then
+-            target=$(find /dev/mapper -iname "*$label")
+-            fs_type=$(get_fstype "${target}")
+-            echo "luks device detected use $target"
+-        fi
+-        case ${fs_type} in
+-            ext*)
+-                /sbin/mke2fs -L "${label}" -F -t ext4 "${target}"
+-                ;;
+-            btrfs)
+-                /sbin/mkfs.btrfs -L "${label}" --force "${target}"
+-                ;;
+-            *)
+-                log_warning_msg "Unrecognized filesystem type ${fs_type} - could not format"
+-                ;;
+-        esac
+-        log_end_msg "Reset device: $target"
+-    done
+-    log_end_msg "Factory Reset"
+-fi
+diff --git a/recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.1.bb b/recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.2.bb
+similarity index 62%
+rename from recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.1.bb
+rename to recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.2.bb
+index 68dda34..1834a2e 100644
+--- a/recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.1.bb
++++ b/recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.2.bb
+@@ -14,16 +14,20 @@ DESCRIPTION = "Delete the content of the given Devices"
+ # list of partitions by label
+ INITRAMFS_FACTORY_RESET_DEVICES ??= "/dev/disk/by-partlabel/var"
+ INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE ??= "ext4"
+-INITRAMFS_FACTORY_RESET_CLEAR_TPM ??= '1'
++INITRAMFS_FACTORY_RESET_CLEAR_TPM ??= '0'
++INITRAMFS_FACTORY_RESET_CLEAR_TPM:encrypt-partitions ?= '1'
++
+ SRC_URI += " \
++    file://factory-reset-script.tmpl \
+     file://reset-env.tmpl \
+     file://hook"
  
--DEBIAN_DEPENDS .= ", cryptsetup"
-+RDEPENDS += "initramfs-cip-functions"
-+DEBIAN_DEPENDS .= ", cryptsetup, initramfs-cip-functions"
- DEBIAN_CONFLICTS = "initramfs-abrootfs-hook"
+-SRC_URI += "${@ 'file://local-top' if bb.utils.to_boolean(d.getVar('INITRAMFS_FACTORY_RESET_CLEAR_TPM')) else 'file://local-bottom'}"
++FACTORY_RESET_HOOK_TARGET = "${@ 'local-top' if bb.utils.to_boolean(d.getVar('INITRAMFS_FACTORY_RESET_CLEAR_TPM')) else 'local-bottom'}"
  
- HOOK_ADD_MODULES = "dm_mod dm_verity"
+-TEMPLATE_FILES += "reset-env.tmpl"
++TEMPLATE_FILES += "reset-env.tmpl factory-reset-script.tmpl"
+ TEMPLATE_VARS += " INITRAMFS_FACTORY_RESET_DEVICES \
+-                   INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE"
++                   INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE \
++                   INITRAMFS_FACTORY_RESET_CLEAR_TPM"
+ 
+ RDEPENDS = "factory-reset-helper"
+ DEBIAN_DEPENDS .= ", coreutils, util-linux, e2fsprogs, btrfs-progs, awk, factory-reset-helper, findutils"
+@@ -33,6 +37,12 @@ HOOK_COPY_EXECS = "mountpoint findmnt mktemp rmdir basename \
+                    chattr grep find"
+ HOOK_COPY_EXECS:append:encrypt-partitions = " tpm2_clear"
+ 
++# provide the script under the required name
++do_prepare_build:append() {
++    rm -f ${WORKDIR}/local-top ${WORKDIR}/local-bottom
++    ln -sf ${WORKDIR}/factory-reset-script ${WORKDIR}/${FACTORY_RESET_HOOK_TARGET}
++}
++
+ do_install[cleandirs] += "${D}/usr/share/factory-reset/"
+ do_install:prepend() {
+     install -m 0755 "${WORKDIR}/reset-env" \
 -- 
 2.51.2
 
