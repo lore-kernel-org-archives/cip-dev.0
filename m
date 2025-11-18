@@ -1,194 +1,79 @@
-Return-Path: <quirin.gylstorff@siemens.com>
+Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63F0FCEE323
-	for <webhook@archiver.kernel.org>; Tue, 18 Nov 2025 15:10:41 +0000 (UTC)
-Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.14644.1763478634190816077
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ECF2CEE35C
+	for <webhook@archiver.kernel.org>; Tue, 18 Nov 2025 21:17:31 +0000 (UTC)
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.7755.1763500643149215822
  for <cip-dev@lists.cip-project.org>;
- Tue, 18 Nov 2025 07:10:35 -0800
+ Tue, 18 Nov 2025 13:17:23 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=Quirin.Gylstorff@siemens.com header.s=fm1 header.b=f2BnoOZZ;
- spf=pass (domain: rts-flowmailer.siemens.com, ip: 185.136.65.226, mailfrom: fm-51332-20251118151031eeef9cf17300020768-uz1h6o@rts-flowmailer.siemens.com)
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 20251118151031eeef9cf17300020768
-        for <cip-dev@lists.cip-project.org>;
-        Tue, 18 Nov 2025 16:10:31 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=Quirin.Gylstorff@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:References:In-Reply-To;
- bh=gNYivp0SuoERTJA2aeguG86gluGBoXxtzTuhOeXKplI=;
- b=f2BnoOZZwah/nXgP+OT2AltV8V+82EaqUmsfNU54jy/bNTz8J4VNuM8qHleNhB/1K0Gn85
- 6aEM29uwiqqJm5bSm2nxGOvXZatEaCRcl0ctijRkuGUZaCzfDwarbvR2opnvtFO3F/W9wKZw
- YQ9nx6IbQbHus1ahcvbEfSWTYG7kj+IOmYF04JlZx8SaSDqEnFf+8aHNkDeu81yOm+RvJ84R
- TzEcPbEpPcm237zOsV6xX5wXS4U7MaFtikWZ2/bAO/6PieJJggs12KVptq1JH4XmKEzvoZpW
- nCF8+AcmL6mJD5cNoi3aSunLNpTaH23TKwb+ydNanLNy1R3tS4Xss7mg==;
-From: Quirin Gylstorff <Quirin.Gylstorff@siemens.com>
-To: cip-dev@lists.cip-project.org,
-	jan.kiszka@siemens.com
-Subject: [cip-dev][isar-cip-core][PATCH v2 4/5] initramfs-factory-reset: de-duplicate code between local-top and local-bottom
-Date: Tue, 18 Nov 2025 15:14:47 +0100
-Message-ID: <20251118151030.504765-5-Quirin.Gylstorff@siemens.com>
-In-Reply-To: <20251118151030.504765-1-Quirin.Gylstorff@siemens.com>
-References: <20251118151030.504765-1-Quirin.Gylstorff@siemens.com>
+ dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=XcTowstr;
+ spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0A514101E0E56;
+	Tue, 18 Nov 2025 22:17:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1763500638; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=IDTkSNsThXxNCYdiRk04DdYwVcL4OOgFF3ugBpP81Ww=;
+	b=XcTowstrWadth6Gb5Lkr4oYIA+UFuzPr/OZbDZemjyIKAiKT6SukfFt90wfuyhHZ+pFFVL
+	NSvUoZFL34ki30lFC8sPO2G4aHkG+p6LJbvoTehMdpISI3tw6vLww9z/BAgw3TcozDEkff
+	py4P6e08GChSgDcJJcDXME5i1XxBuzEBaaP+5o2MNXfCmYNx610IjiSMPRS47cDXDek/2I
+	EUWDpsv+WM5Z78eV1jJSw+KfpbJZv4Uqbu2900vdum/3qpLia+eG8eofII5NtGdSBt+32v
+	RFHW0aWUWwbcKttP7diGYs+9MhJr+kPTqNwwh9tGU6vZVfV6DbBNIIbBGfV7Fw==
+Date: Tue, 18 Nov 2025 22:17:13 +0100
+From: Pavel Machek <pavel@denx.de>
+To: ovidiu.panait.rb@renesas.com
+Cc: cip-dev@lists.cip-project.org, nobuhiro1.iwamatsu@toshiba.co.jp
+Subject: Re: [cip-dev] [PATCH 6.1.y-cip 0/2] Add RZ/V2H eMMC support
+Message-ID: <aRziWZLWjVUBMgo6@duo.ucw.cz>
+References: <20251114111343.74438-1-ovidiu.panait.rb@renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-51332:519-21489:flowmailer
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="YTbRN31D6svzPAe6"
+Content-Disposition: inline
+In-Reply-To: <20251114111343.74438-1-ovidiu.panait.rb@renesas.com>
+X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Tue, 18 Nov 2025 15:10:41 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20620
+ <cip-dev@lists.cip-project.org>; Tue, 18 Nov 2025 21:17:31 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20621
 
-From: Quirin Gylstorff <quirin.gylstorff@siemens.com>
 
-The local-top and local-bottom functions are nearly identical. Use
-a template and change the name during prepare_build to the indented
-initramfs stage to maintain only one file.
+--YTbRN31D6svzPAe6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Quirin Gylstorff <quirin.gylstorff@siemens.com>
----
- .../{local-top => factory-reset-script.tmpl}  | 18 ++++---
- .../files/local-bottom                        | 48 -------------------
- ...bb => initramfs-factory-reset-hook_0.2.bb} | 18 +++++--
- 3 files changed, 26 insertions(+), 58 deletions(-)
- rename recipes-initramfs/initramfs-factory-reset-hook/files/{local-top => factory-reset-script.tmpl} (70%)
- delete mode 100644 recipes-initramfs/initramfs-factory-reset-hook/files/local-bottom
- rename recipes-initramfs/initramfs-factory-reset-hook/{initramfs-factory-reset-hook_0.1.bb => initramfs-factory-reset-hook_0.2.bb} (62%)
+Hi!
 
-diff --git a/recipes-initramfs/initramfs-factory-reset-hook/files/local-top b/recipes-initramfs/initramfs-factory-reset-hook/files/factory-reset-script.tmpl
-similarity index 70%
-rename from recipes-initramfs/initramfs-factory-reset-hook/files/local-top
-rename to recipes-initramfs/initramfs-factory-reset-hook/files/factory-reset-script.tmpl
-index a1aaf26..a6c622f 100644
---- a/recipes-initramfs/initramfs-factory-reset-hook/files/local-top
-+++ b/recipes-initramfs/initramfs-factory-reset-hook/files/factory-reset-script.tmpl
-@@ -28,12 +28,18 @@ if /usr/sbin/get-factory-reset.sh --delete | grep -q "factory-reset"; then
-                 ;;
-         esac
-         if [ "$fs_type" = "luks" ]; then
--            # after this the data on the encrypted partition
--            # is inaccessible
--            tpm2_clear
--            # with encryption the original fs_type is hidden
--            # use a variable from the reset-env to set it
--            fs_type="$INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE"
-+            if [ -n "${INITRAMFS_FACTORY_RESET_CLEAR_TPM}" ]; then
-+                # after this the data on the encrypted partition
-+                # is inaccessible
-+                tpm2_clear
-+                # with encryption the original fs_type is hidden
-+                # use a variable from the reset-env to set it
-+                fs_type="$INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE"
-+            else
-+                target=$(find /dev/mapper -iname "*$label")
-+                fs_type=$(get_fstype "${target}")
-+                echo "luks device detected use $target"
-+            fi
-         fi
-         case ${fs_type} in
-             ext*)
-diff --git a/recipes-initramfs/initramfs-factory-reset-hook/files/local-bottom b/recipes-initramfs/initramfs-factory-reset-hook/files/local-bottom
-deleted file mode 100644
-index 15d44c9..0000000
---- a/recipes-initramfs/initramfs-factory-reset-hook/files/local-bottom
-+++ /dev/null
-@@ -1,48 +0,0 @@
--#!/bin/sh
--#
--# CIP Core, generic profile
--#
--# Copyright (c) Siemens AG, 2025
--#
--# Authors:
--#  Quirin Gylstorff <quirin.gylstorff@siemens.com>
--#
--. /usr/share/factory-reset/reset-env
--target_devices="${INITRAMFS_FACTORY_RESET_DEVICES}"
--
--if /usr/sbin/get-factory-reset.sh --delete | grep -q "factory-reset"; then
--    log_begin_msg "Factory Reset"
--    for target in ${target_devices}; do
--        log_begin_msg "Reset device: $target"
--        fs_type=$(get_fstype "${target}")
--        case "$target" in
--            *by-partlabel*)
--                label="$(basename "${target}" )"
--                ;;
--            *)
--                label=$(blkid --match-tag LABEL "$target" | awk -F= '{gsub(/"/,"");print $2}' )
--                if [ -z "${label}" ]; then
--                    log_warning_msg "Could not find any label  for target '$target'"
--                fi
--                ;;
--        esac
--        if [ "$fs_type" = "luks" ]; then
--            target=$(find /dev/mapper -iname "*$label")
--            fs_type=$(get_fstype "${target}")
--            echo "luks device detected use $target"
--        fi
--        case ${fs_type} in
--            ext*)
--                /sbin/mke2fs -L "${label}" -F -t ext4 "${target}"
--                ;;
--            btrfs)
--                /sbin/mkfs.btrfs -L "${label}" --force "${target}"
--                ;;
--            *)
--                log_warning_msg "Unrecognized filesystem type ${fs_type} - could not format"
--                ;;
--        esac
--        log_end_msg "Reset device: $target"
--    done
--    log_end_msg "Factory Reset"
--fi
-diff --git a/recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.1.bb b/recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.2.bb
-similarity index 62%
-rename from recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.1.bb
-rename to recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.2.bb
-index 68dda34..1834a2e 100644
---- a/recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.1.bb
-+++ b/recipes-initramfs/initramfs-factory-reset-hook/initramfs-factory-reset-hook_0.2.bb
-@@ -14,16 +14,20 @@ DESCRIPTION = "Delete the content of the given Devices"
- # list of partitions by label
- INITRAMFS_FACTORY_RESET_DEVICES ??= "/dev/disk/by-partlabel/var"
- INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE ??= "ext4"
--INITRAMFS_FACTORY_RESET_CLEAR_TPM ??= '1'
-+INITRAMFS_FACTORY_RESET_CLEAR_TPM ??= '0'
-+INITRAMFS_FACTORY_RESET_CLEAR_TPM:encrypt-partitions ?= '1'
-+
- SRC_URI += " \
-+    file://factory-reset-script.tmpl \
-     file://reset-env.tmpl \
-     file://hook"
- 
--SRC_URI += "${@ 'file://local-top' if bb.utils.to_boolean(d.getVar('INITRAMFS_FACTORY_RESET_CLEAR_TPM')) else 'file://local-bottom'}"
-+FACTORY_RESET_HOOK_TARGET = "${@ 'local-top' if bb.utils.to_boolean(d.getVar('INITRAMFS_FACTORY_RESET_CLEAR_TPM')) else 'local-bottom'}"
- 
--TEMPLATE_FILES += "reset-env.tmpl"
-+TEMPLATE_FILES += "reset-env.tmpl factory-reset-script.tmpl"
- TEMPLATE_VARS += " INITRAMFS_FACTORY_RESET_DEVICES \
--                   INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE"
-+                   INITRAMFS_FACTORY_RESET_LUKS_FORMAT_TYPE \
-+                   INITRAMFS_FACTORY_RESET_CLEAR_TPM"
- 
- RDEPENDS = "factory-reset-helper"
- DEBIAN_DEPENDS .= ", coreutils, util-linux, e2fsprogs, btrfs-progs, awk, factory-reset-helper, findutils"
-@@ -33,6 +37,12 @@ HOOK_COPY_EXECS = "mountpoint findmnt mktemp rmdir basename \
-                    chattr grep find"
- HOOK_COPY_EXECS:append:encrypt-partitions = " tpm2_clear"
- 
-+# provide the script under the required name
-+do_prepare_build:append() {
-+    rm -f ${WORKDIR}/local-top ${WORKDIR}/local-bottom
-+    ln -sf ${WORKDIR}/factory-reset-script ${WORKDIR}/${FACTORY_RESET_HOOK_TARGET}
-+}
-+
- do_install[cleandirs] += "${D}/usr/share/factory-reset/"
- do_install:prepend() {
-     install -m 0755 "${WORKDIR}/reset-env" \
--- 
-2.51.2
+> This series adds support in 6.1.y-cip for the eMMC and microSD sub-boards
+> connected via the CN15 connector on the RZ/V2H evaluation kit.
+>=20
+> Patches were cherry-picked from mainline kernel. Note that only the RZ/V2H
+> part of the eMMC patch was backported, as there is no support currently f=
+or
+> the RZ/V2N SoC in 6.1.y-cip.
 
+This series looks ok to me. I can apply it if it passes testing and
+there are no other comments.
+
+Best regards,
+								Pavel
+--=20
+In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
+Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--YTbRN31D6svzPAe6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaRziWQAKCRAw5/Bqldv6
+8ubpAJwLvzPyzrmd5bm4Nz+C9q9s8xi/qwCgoIlUO8pKIoWnfEpXz2abtDYvW88=
+=TM3u
+-----END PGP SIGNATURE-----
+
+--YTbRN31D6svzPAe6--
 
