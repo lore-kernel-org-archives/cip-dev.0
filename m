@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D28CF9C60
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F2FCF9C67
 	for <webhook@archiver.kernel.org>; Thu, 20 Nov 2025 17:04:07 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.1523.1763658240642756193
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.1527.1763658244305288022
  for <cip-dev@lists.cip-project.org>;
- Thu, 20 Nov 2025 09:04:05 -0800
+ Thu, 20 Nov 2025 09:04:04 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: hgrFxI2vTLqKyk3R0IAejA==
-X-CSE-MsgGUID: o8uXz6oEQKemJFTrj3zpqA==
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: bZ2+T3p2QbeVWFZz62ZuYA==
+X-CSE-MsgGUID: PaXOfkbLQnOX8h3knm+lBw==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 21 Nov 2025 02:04:05 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 21 Nov 2025 02:04:03 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.93.111])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id D68C540617BF;
-	Fri, 21 Nov 2025 02:04:03 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1269F40614F0;
+	Fri, 21 Nov 2025 02:04:01 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@denx.de,
 	nobuhiro1.iwamatsu@toshiba.co.jp
-Subject: [PATCH 6.12.y-cip 03/10] reset: Add USB2PHY port reset driver for Renesas RZ/V2H(P)
-Date: Thu, 20 Nov 2025 17:03:50 +0000
-Message-ID: <20251120170357.18342-4-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.12.y-cip 02/10] dt-bindings: reset: Document RZ/V2H(P) USB2PHY reset
+Date: Thu, 20 Nov 2025 17:03:49 +0000
+Message-ID: <20251120170357.18342-3-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251120170357.18342-1-ovidiu.panait.rb@renesas.com>
 References: <20251120170357.18342-1-ovidiu.panait.rb@renesas.com>
@@ -33,305 +33,89 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 20 Nov 2025 17:04:07 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20650
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20649
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit e3911d7f865bbc704205f45333e491e4034942c7 upstream.
+commit 261f3ff29a2b15ad70bf2530550421ad9a9a5966 upstream.
 
-Implement a USB2PHY port reset driver for the Renesas RZ/V2H(P) SoC.
-Enable control of USB2.0 PHY reset and power-down operations, including
-assert and deassert functionalities for the PHY.
-
-Leverage device tree (OF) data to support future SoCs with similar USB2PHY
-hardware but varying register configurations. Define initialization values
-and control register settings to ensure flexibility for upcoming platforms.
+Add a device tree binding document for the Renesas RZ/V2H(P) USB2PHY reset
+controller. This block manages the reset and power-down of the USB 2.0 PHY,
+which is used in both host and function modes.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Reviewed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Link: https://lore.kernel.org/r/20250415195131.281060-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/r/20250415195131.281060-2-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- drivers/reset/Kconfig               |   7 +
- drivers/reset/Makefile              |   1 +
- drivers/reset/reset-rzv2h-usb2phy.c | 236 ++++++++++++++++++++++++++++
- 3 files changed, 244 insertions(+)
- create mode 100644 drivers/reset/reset-rzv2h-usb2phy.c
+ .../reset/renesas,rzv2h-usb2phy-reset.yaml    | 56 +++++++++++++++++++
+ 1 file changed, 56 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2phy-reset.yaml
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 1cf577e3223b..8329ebd982f1 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -231,6 +231,13 @@ config RESET_RZG2L_USBPHY_CTRL
- 	  Support for USBPHY Control found on RZ/G2L family. It mainly
- 	  controls reset and power down of the USB/PHY.
- 
-+config RESET_RZV2H_USB2PHY
-+	tristate "Renesas RZ/V2H(P) (and similar SoCs) USB2PHY Reset driver"
-+	depends on ARCH_RENESAS || COMPILE_TEST
-+	help
-+	  Support for USB2PHY Port reset Control found on the RZ/V2H(P) SoC
-+	  (and similar SoCs).
-+
- config RESET_SCMI
- 	tristate "Reset driver controlled via ARM SCMI interface"
- 	depends on ARM_SCMI_PROTOCOL || COMPILE_TEST
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 4411a2a124d7..a757da46c196 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -31,6 +31,7 @@ obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
- obj-$(CONFIG_RESET_QCOM_PDC) += reset-qcom-pdc.o
- obj-$(CONFIG_RESET_RASPBERRYPI) += reset-raspberrypi.o
- obj-$(CONFIG_RESET_RZG2L_USBPHY_CTRL) += reset-rzg2l-usbphy-ctrl.o
-+obj-$(CONFIG_RESET_RZV2H_USB2PHY) += reset-rzv2h-usb2phy.o
- obj-$(CONFIG_RESET_SCMI) += reset-scmi.o
- obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
- obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
-diff --git a/drivers/reset/reset-rzv2h-usb2phy.c b/drivers/reset/reset-rzv2h-usb2phy.c
+diff --git a/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2phy-reset.yaml b/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2phy-reset.yaml
 new file mode 100644
-index 000000000000..ae643575b067
+index 000000000000..c79f61c2373b
 --- /dev/null
-+++ b/drivers/reset/reset-rzv2h-usb2phy.c
-@@ -0,0 +1,236 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Renesas RZ/V2H(P) USB2PHY Port reset control driver
-+ *
-+ * Copyright (C) 2025 Renesas Electronics Corporation
-+ */
++++ b/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2phy-reset.yaml
+@@ -0,0 +1,56 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/reset/renesas,rzv2h-usb2phy-reset.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#include <linux/cleanup.h>
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/reset.h>
-+#include <linux/reset-controller.h>
++title: Renesas RZ/V2H(P) USB2PHY Port reset Control
 +
-+struct rzv2h_usb2phy_regval {
-+	u16 reg;
-+	u16 val;
-+};
++maintainers:
++  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 +
-+struct rzv2h_usb2phy_reset_of_data {
-+	const struct rzv2h_usb2phy_regval *init_vals;
-+	unsigned int init_val_count;
++description:
++  The RZ/V2H(P) USB2PHY Control mainly controls Port reset and power down of the
++  USB2.0 PHY.
 +
-+	u16 reset_reg;
-+	u16 reset_assert_val;
-+	u16 reset_deassert_val;
-+	u16 reset_status_bits;
-+	u16 reset_release_val;
++properties:
++  compatible:
++    const: renesas,r9a09g057-usb2phy-reset     # RZ/V2H(P)
 +
-+	u16 reset2_reg;
-+	u16 reset2_acquire_val;
-+	u16 reset2_release_val;
-+};
++  reg:
++    maxItems: 1
 +
-+struct rzv2h_usb2phy_reset_priv {
-+	const struct rzv2h_usb2phy_reset_of_data *data;
-+	void __iomem *base;
-+	struct device *dev;
-+	struct reset_controller_dev rcdev;
-+	spinlock_t lock; /* protects register accesses */
-+};
++  clocks:
++    maxItems: 1
 +
-+static inline struct rzv2h_usb2phy_reset_priv
-+*rzv2h_usbphy_rcdev_to_priv(struct reset_controller_dev *rcdev)
-+{
-+	return container_of(rcdev, struct rzv2h_usb2phy_reset_priv, rcdev);
-+}
++  resets:
++    maxItems: 1
 +
-+/* This function must be called only after pm_runtime_resume_and_get() has been called */
-+static void rzv2h_usbphy_assert_helper(struct rzv2h_usb2phy_reset_priv *priv)
-+{
-+	const struct rzv2h_usb2phy_reset_of_data *data = priv->data;
++  power-domains:
++    maxItems: 1
 +
-+	scoped_guard(spinlock, &priv->lock) {
-+		writel(data->reset2_acquire_val, priv->base + data->reset2_reg);
-+		writel(data->reset_assert_val, priv->base + data->reset_reg);
-+	}
++  '#reset-cells':
++    const: 0
 +
-+	usleep_range(11, 20);
-+}
++required:
++  - compatible
++  - reg
++  - clocks
++  - resets
++  - power-domains
++  - '#reset-cells'
 +
-+static int rzv2h_usbphy_reset_assert(struct reset_controller_dev *rcdev,
-+				     unsigned long id)
-+{
-+	struct rzv2h_usb2phy_reset_priv *priv = rzv2h_usbphy_rcdev_to_priv(rcdev);
-+	struct device *dev = priv->dev;
-+	int ret;
++additionalProperties: false
 +
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret) {
-+		dev_err(dev, "pm_runtime_resume_and_get failed\n");
-+		return ret;
-+	}
++examples:
++  - |
++    #include <dt-bindings/clock/renesas,r9a09g057-cpg.h>
 +
-+	rzv2h_usbphy_assert_helper(priv);
-+
-+	pm_runtime_put(dev);
-+
-+	return 0;
-+}
-+
-+static int rzv2h_usbphy_reset_deassert(struct reset_controller_dev *rcdev,
-+				       unsigned long id)
-+{
-+	struct rzv2h_usb2phy_reset_priv *priv = rzv2h_usbphy_rcdev_to_priv(rcdev);
-+	const struct rzv2h_usb2phy_reset_of_data *data = priv->data;
-+	struct device *dev = priv->dev;
-+	int ret;
-+
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret) {
-+		dev_err(dev, "pm_runtime_resume_and_get failed\n");
-+		return ret;
-+	}
-+
-+	scoped_guard(spinlock, &priv->lock) {
-+		writel(data->reset_deassert_val, priv->base + data->reset_reg);
-+		writel(data->reset2_release_val, priv->base + data->reset2_reg);
-+		writel(data->reset_release_val, priv->base + data->reset_reg);
-+	}
-+
-+	pm_runtime_put(dev);
-+
-+	return 0;
-+}
-+
-+static int rzv2h_usbphy_reset_status(struct reset_controller_dev *rcdev,
-+				     unsigned long id)
-+{
-+	struct rzv2h_usb2phy_reset_priv *priv = rzv2h_usbphy_rcdev_to_priv(rcdev);
-+	struct device *dev = priv->dev;
-+	int ret;
-+	u32 reg;
-+
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret) {
-+		dev_err(dev, "pm_runtime_resume_and_get failed\n");
-+		return ret;
-+	}
-+
-+	reg = readl(priv->base + priv->data->reset_reg);
-+
-+	pm_runtime_put(dev);
-+
-+	return (reg & priv->data->reset_status_bits) == priv->data->reset_status_bits;
-+}
-+
-+static const struct reset_control_ops rzv2h_usbphy_reset_ops = {
-+	.assert = rzv2h_usbphy_reset_assert,
-+	.deassert = rzv2h_usbphy_reset_deassert,
-+	.status = rzv2h_usbphy_reset_status,
-+};
-+
-+static int rzv2h_usb2phy_reset_of_xlate(struct reset_controller_dev *rcdev,
-+					const struct of_phandle_args *reset_spec)
-+{
-+	/* No special handling needed, we have only one reset line per device */
-+	return 0;
-+}
-+
-+static int rzv2h_usb2phy_reset_probe(struct platform_device *pdev)
-+{
-+	const struct rzv2h_usb2phy_reset_of_data *data;
-+	struct rzv2h_usb2phy_reset_priv *priv;
-+	struct device *dev = &pdev->dev;
-+	struct reset_control *rstc;
-+	int error;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	data = of_device_get_match_data(dev);
-+	priv->data = data;
-+	priv->dev = dev;
-+	priv->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(priv->base))
-+		return PTR_ERR(priv->base);
-+
-+	rstc = devm_reset_control_get_shared_deasserted(dev, NULL);
-+	if (IS_ERR(rstc))
-+		return dev_err_probe(dev, PTR_ERR(rstc),
-+				     "failed to get deasserted reset\n");
-+
-+	spin_lock_init(&priv->lock);
-+
-+	error = devm_pm_runtime_enable(dev);
-+	if (error)
-+		return dev_err_probe(dev, error, "Failed to enable pm_runtime\n");
-+
-+	error = pm_runtime_resume_and_get(dev);
-+	if (error)
-+		return dev_err_probe(dev, error, "pm_runtime_resume_and_get failed\n");
-+
-+	for (unsigned int i = 0; i < data->init_val_count; i++)
-+		writel(data->init_vals[i].val, priv->base + data->init_vals[i].reg);
-+
-+	/* keep usb2phy in asserted state */
-+	rzv2h_usbphy_assert_helper(priv);
-+
-+	pm_runtime_put(dev);
-+
-+	priv->rcdev.ops = &rzv2h_usbphy_reset_ops;
-+	priv->rcdev.of_reset_n_cells = 0;
-+	priv->rcdev.nr_resets = 1;
-+	priv->rcdev.of_xlate = rzv2h_usb2phy_reset_of_xlate;
-+	priv->rcdev.of_node = dev->of_node;
-+	priv->rcdev.dev = dev;
-+
-+	return devm_reset_controller_register(dev, &priv->rcdev);
-+}
-+
-+/*
-+ * initialization values required to prepare the PHY to receive
-+ * assert and deassert requests.
-+ */
-+static const struct rzv2h_usb2phy_regval rzv2h_init_vals[] = {
-+	{ .reg = 0xc10, .val = 0x67c },
-+	{ .reg = 0xc14, .val = 0x1f },
-+	{ .reg = 0x600, .val = 0x909 },
-+};
-+
-+static const struct rzv2h_usb2phy_reset_of_data rzv2h_reset_of_data = {
-+	.init_vals = rzv2h_init_vals,
-+	.init_val_count = ARRAY_SIZE(rzv2h_init_vals),
-+	.reset_reg = 0,
-+	.reset_assert_val = 0x206,
-+	.reset_status_bits = BIT(2),
-+	.reset_deassert_val = 0x200,
-+	.reset_release_val = 0x0,
-+	.reset2_reg = 0xb04,
-+	.reset2_acquire_val = 0x303,
-+	.reset2_release_val = 0x3,
-+};
-+
-+static const struct of_device_id rzv2h_usb2phy_reset_of_match[] = {
-+	{ .compatible = "renesas,r9a09g057-usb2phy-reset", .data = &rzv2h_reset_of_data },
-+	{ /* Sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, rzv2h_usb2phy_reset_of_match);
-+
-+static struct platform_driver rzv2h_usb2phy_reset_driver = {
-+	.driver = {
-+		.name		= "rzv2h_usb2phy_reset",
-+		.of_match_table	= rzv2h_usb2phy_reset_of_match,
-+	},
-+	.probe = rzv2h_usb2phy_reset_probe,
-+};
-+module_platform_driver(rzv2h_usb2phy_reset_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>");
-+MODULE_DESCRIPTION("Renesas RZ/V2H(P) USB2PHY Control");
++    reset-controller@15830000 {
++        compatible = "renesas,r9a09g057-usb2phy-reset";
++        reg = <0x15830000 0x10000>;
++        clocks = <&cpg CPG_MOD 0xb6>;
++        resets = <&cpg 0xaf>;
++        power-domains = <&cpg>;
++        #reset-cells = <0>;
++    };
 -- 
 2.51.0
 
