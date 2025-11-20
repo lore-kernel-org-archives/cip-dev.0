@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66E8CCF9C5B
-	for <webhook@archiver.kernel.org>; Thu, 20 Nov 2025 17:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A8A3CF9C67
+	for <webhook@archiver.kernel.org>; Thu, 20 Nov 2025 17:04:17 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.msgproc02-g2.1523.1763658240642756193
  for <cip-dev@lists.cip-project.org>;
- Thu, 20 Nov 2025 09:04:01 -0800
+ Thu, 20 Nov 2025 09:04:07 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: SOvWHAG4SGGIzAR13hV3pg==
-X-CSE-MsgGUID: /cXT6pCtTFSayFkWwWblFg==
+X-CSE-ConnectionGUID: y+w+YoN4RJqUAYDP4PpuYg==
+X-CSE-MsgGUID: LKkvAUnJRfyth353/7rw3A==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 21 Nov 2025 02:04:01 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 21 Nov 2025 02:04:06 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.93.111])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4001140612B8;
-	Fri, 21 Nov 2025 02:03:59 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id AE9AB40614F0;
+	Fri, 21 Nov 2025 02:04:05 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@denx.de,
 	nobuhiro1.iwamatsu@toshiba.co.jp
-Subject: [PATCH 6.12.y-cip 01/10] dt-bindings: usb: renesas,usbhs: Add RZ/V2H(P) SoC support
-Date: Thu, 20 Nov 2025 17:03:48 +0000
-Message-ID: <20251120170357.18342-2-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.12.y-cip 04/10] dt-bindings: phy: renesas,usb2-phy: Add clock constraint for RZ/G2L family
+Date: Thu, 20 Nov 2025 17:03:51 +0000
+Message-ID: <20251120170357.18342-5-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251120170357.18342-1-ovidiu.panait.rb@renesas.com>
 References: <20251120170357.18342-1-ovidiu.panait.rb@renesas.com>
@@ -32,57 +32,40 @@ Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Thu, 20 Nov 2025 17:04:07 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20648
+ <cip-dev@lists.cip-project.org>; Thu, 20 Nov 2025 17:04:17 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20651
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit c0a1d1e9a48f36086ef5a2863844175476bd3b8e upstream.
+commit 31eebeef8cdd4c9bddc9d34053cab6553616d0b7 upstream.
 
-Document the Renesas USBHS controller found on the Renesas RZ/V2H(P) SoC.
-The USBHS block on RZ/V2H(P) is functionally identical to the one on the
-RZ/G2L family, so no driver changes are needed. The existing
-"renesas,rzg2l-usbhs" fallback compatible will continue to be used for
-handling this IP.
-
-In addition, update the schema validation logic by replacing the enum list
-of SoC-specific compatibles with a const "renesas,rzg2l-usbhs" as all
-listed SoCs share identical USBHS hardware and already include the fallback
-compatible. This will help to simplify the schema and avoid redundancy.
+The RZ/G2L family requires two clocks for USB2 PHY, which are already
+defined in the DTSI files. Add a constraint in the DT binding document
+to ensure validation with `dtbs_check`.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
-Link: https://lore.kernel.org/r/20250414165201.362262-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Link: https://lore.kernel.org/r/20250414145729.343133-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- Documentation/devicetree/bindings/usb/renesas,usbhs.yaml | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/usb/renesas,usbhs.yaml b/Documentation/devicetree/bindings/usb/renesas,usbhs.yaml
-index c63db3ebd07b..45d133253094 100644
---- a/Documentation/devicetree/bindings/usb/renesas,usbhs.yaml
-+++ b/Documentation/devicetree/bindings/usb/renesas,usbhs.yaml
-@@ -26,6 +26,7 @@ properties:
-               - renesas,usbhs-r9a07g043 # RZ/G2UL and RZ/Five
-               - renesas,usbhs-r9a07g044 # RZ/G2{L,LC}
-               - renesas,usbhs-r9a07g054 # RZ/V2L
-+              - renesas,usbhs-r9a09g057 # RZ/V2H(P)
-           - const: renesas,rzg2l-usbhs
- 
-       - items:
-@@ -122,10 +123,7 @@ allOf:
-       properties:
-         compatible:
+diff --git a/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml b/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
+index af275cea3456..f8d15f239b18 100644
+--- a/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
+@@ -107,6 +107,9 @@ allOf:
            contains:
--            enum:
--              - renesas,usbhs-r9a07g043
--              - renesas,usbhs-r9a07g044
--              - renesas,usbhs-r9a07g054
-+            const: renesas,rzg2l-usbhs
+             const: renesas,rzg2l-usb2-phy
      then:
-       properties:
-         interrupts:
++      properties:
++        clocks:
++          minItems: 2
+       required:
+         - resets
+ 
 -- 
 2.51.0
 
