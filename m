@@ -2,64 +2,68 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AFB6CFA477
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C488CFA47F
 	for <webhook@archiver.kernel.org>; Fri, 21 Nov 2025 08:06:54 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.7203.1763712411705775757
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.7317.1763712412858557271
  for <cip-dev@lists.cip-project.org>;
- Fri, 21 Nov 2025 00:06:52 -0800
+ Fri, 21 Nov 2025 00:06:53 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: 4d7/ADv6TjmBrz5+0+vE7A==
-X-CSE-MsgGUID: 2SC0V9hdRJKc4kO8D6o/7A==
+X-CSE-ConnectionGUID: Ed1vdFc1QK62tHBpb1idJw==
+X-CSE-MsgGUID: UoDK0trkSj68xt+nW0zh/A==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 21 Nov 2025 17:06:49 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 21 Nov 2025 17:06:51 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.93.111])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id D24B0437D117;
-	Fri, 21 Nov 2025 17:06:48 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 968C1437D117;
+	Fri, 21 Nov 2025 17:06:50 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@denx.de,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.1.y-cip 0/6] Add RZ/V2H XSPI support
-Date: Fri, 21 Nov 2025 08:06:41 +0000
-Message-ID: <20251121080647.20592-1-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 1/6] dt-bindings: clock: renesas,r9a09g056/57-cpg: Add XSPI core clock
+Date: Fri, 21 Nov 2025 08:06:42 +0000
+Message-ID: <20251121080647.20592-2-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251121080647.20592-1-ovidiu.panait.rb@renesas.com>
+References: <20251121080647.20592-1-ovidiu.panait.rb@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Fri, 21 Nov 2025 08:06:54 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20661
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20662
 
-Hi,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-This series adds XSPI support for the Renesas RZ/V2H SoC and enables the
-MT25QU512ABB8E12 flash device used on the RZ/V2H EVK board.
+commit 5e4e8c1415c181ce311a0b5936ef301edd57c5d1 upstream.
 
-Patches were cherry-picked from mainline kernel.
+Add XSPI core clock definitions to the clock bindings for the Renesas
+R9A09G056 and R9A09G057 SoCs. These clocks IDs are used to support XSPI
+interface.
 
-Best regards,
-Ovidiu
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/20250627204237.214635-2-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[OP: cherry-picked only the RZ/V2H part]
+Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+---
+ include/dt-bindings/clock/renesas,r9a09g057-cpg.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Lad Prabhakar (6):
-  dt-bindings: clock: renesas,r9a09g056/57-cpg: Add XSPI core clock
-  clk: renesas: r9a09g057: Add support for xspi mux and divider
-  clk: renesas: r9a09g057: Add XSPI clock/reset
-  dt-bindings: memory: renesas,rzg3e-xspi: Document RZ/V2H(P) and RZ/V2N
-    support
-  arm64: dts: renesas: r9a09g057: Add XSPI node
-  arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Enable serial NOR FLASH
-
- .../renesas,rzg3e-xspi.yaml                   |  9 ++-
- arch/arm64/boot/dts/renesas/r9a09g057.dtsi    | 21 +++++++
- .../dts/renesas/r9a09g057h44-rzv2h-evk.dts    | 55 +++++++++++++++++++
- drivers/clk/renesas/r9a09g057-cpg.c           | 39 +++++++++++--
- drivers/clk/renesas/rzv2h-cpg.h               |  2 +
- .../dt-bindings/clock/renesas,r9a09g057-cpg.h |  1 +
- 6 files changed, 122 insertions(+), 5 deletions(-)
-
+diff --git a/include/dt-bindings/clock/renesas,r9a09g057-cpg.h b/include/dt-bindings/clock/renesas,r9a09g057-cpg.h
+index 884dbeb1e139..5346a898ab60 100644
+--- a/include/dt-bindings/clock/renesas,r9a09g057-cpg.h
++++ b/include/dt-bindings/clock/renesas,r9a09g057-cpg.h
+@@ -21,5 +21,6 @@
+ #define R9A09G057_USB2_0_CLK_CORE1		10
+ #define R9A09G057_GBETH_0_CLK_PTP_REF_I		11
+ #define R9A09G057_GBETH_1_CLK_PTP_REF_I		12
++#define R9A09G057_SPI_CLK_SPI			13
+ 
+ #endif /* __DT_BINDINGS_CLOCK_RENESAS_R9A09G057_CPG_H__ */
 -- 
 2.51.0
 
