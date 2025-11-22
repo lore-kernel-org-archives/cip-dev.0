@@ -2,67 +2,68 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D37BECFC521
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D65ABCFC528
 	for <webhook@archiver.kernel.org>; Sat, 22 Nov 2025 10:51:29 +0000 (UTC)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.7110.1763808681578029945
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.7141.1763808680544143862
  for <cip-dev@lists.cip-project.org>;
- Sat, 22 Nov 2025 02:51:22 -0800
+ Sat, 22 Nov 2025 02:51:21 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=psZZUsUT;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.41, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-47775fb6cb4so18896325e9.0
-        for <cip-dev@lists.cip-project.org>; Sat, 22 Nov 2025 02:51:21 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=eWI3cu2L;
+ spf=pass (domain: tuxon.dev, ip: 209.85.128.52, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-47795f6f5c0so18088805e9.1
+        for <cip-dev@lists.cip-project.org>; Sat, 22 Nov 2025 02:51:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1763808680; x=1764413480; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1763808679; x=1764413479; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SOf5ekhE9yH/LrkP5usncH/jveY1QzLXMxT9ThkhbJs=;
-        b=psZZUsUTTL1yIN9nkz1aCkmwSvJAq+N2xh3IMxBDerCGVYsrB09QiKZEinBueVEIfV
-         VIb/1Y64y7n1WVdOcy7aUYZFce0jJutVUSrh0wksyah4Sd8nCEpsjUgR6JunK/oiHAN4
-         VpcxXLYPsfXm8ddCkNQRcRwUPVYIGvzLq6ZAZs+JSNuz+gje+3DKdv9vibrfDBgAVLQe
-         n+7YGt+Y9JZ+qqf/EipeAHA2rAf8leHMf1Mub0t0E91anCgqWeQZb5NbqYBq8fQ2qJ0t
-         l0//D2+3beDkybXyOTbx25zamXGIrI2feEUehG9i80p+EeV8jwv1TX3sxLvou/0ZyVJO
-         ItmQ==
+        bh=bjH0N5r2GHnR9DKLB5FqN2rI8xhkKj3tclD4sjXIoig=;
+        b=eWI3cu2L3GLZtX9GvoLRpPQPKLfh5WPewOpwa9y4c9Yd87U2JUHYoE5Sd5iM3fruzO
+         06UMtV9odVThn4sAInhVzPdJQMijiUFxSDIW0n32SQe69oyWszogPu2SroCnaU+40KXV
+         8ZJxFkaYAZ3tIF5V5a359M1akvXuFlMcHsnizxOOaSEsxKMeY3frQx7v4aGRYrJhoS4+
+         vte+sUu5iS2tw5BTNRRsNDsifjyw2qc7BvnCiJKgCp3/xZJanYbUMvu3JQ05vfuMw4BI
+         tLovJcrmpoZu7CW/eytFNdJBh5ly0n9erTyAxmnMcks3r5nfc2Mgft+hjKzr+lCpTI+8
+         avIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763808680; x=1764413480;
+        d=1e100.net; s=20230601; t=1763808679; x=1764413479;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=SOf5ekhE9yH/LrkP5usncH/jveY1QzLXMxT9ThkhbJs=;
-        b=rcXOgW80lhDKYGvx8gDerWw22ewsknrHk6Wly+kkoeLs2G/XZtcJ5S+M6qYWaNPcy1
-         HFifEHp7diS/pMO5csiJJwCj3OT/oRsXk+e8hb3Z/3YR9bO8lcCsS5jc4asctBWPiDXq
-         AWNVzxf9FyzMzWj8DWoRpLooJ+FbRPIHuGUm1E4zE/V3rAt39SGDv5cI+P719SHCzXVw
-         3Pk7Cx7gNq0OixMUSNn/9rYhmQeOexYsWB1hoUsgA9mUuyiZNGjF6hJc45AioXE8Qs5L
-         e4lHGB40xuh+iu3ABlgCn64qBqo2Mh22PM9MEdlO0Scx4NwgNVeNAOvMToyxjxOsAVw1
-         lSPA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNnZF7TSewYsOiQuR+J2Qo9kw6XM7KzMMzjnAyf1FTB+uTJveyDmWN2+eWotfH28tgb4JqRA/d@lists.cip-project.org
-X-Gm-Message-State: AOJu0YybC2TgLM/P1NNBut2kigDymqmZf2SoJxiRLYRzrmWnKJ6/EQ3z
-	Xbroehcv4vM6/TepcNZ1PzY6CT8BiECX9ab4Rsw+l2LNtcWUt3h3OsODyD0oqpOk8T4=
-X-Gm-Gg: ASbGncuQ9mRRn5gWH9LaXG85AQ+qotkmSKTNHDYkJQmIY6MNQlxBbXG82kMEeaoxxFy
-	joYzVqG3t9m9SmddYyoj72GiCEiTxCmrvmOGxmAgwe54l+Z4Q9iOWp+sR1QCS6zdMVKP9yFIJos
-	k3hIdvXaw/0Y5S3NHgYbFAiJMRGe3NXoKZDHxO6vyOB305g/VpCHlNaNZAoW37cfaOryZw4qTDi
-	qbBxnUV3DjuzLmmPMEEEwjN9ZMZe+pcbsmLzbDOj98zKayP2znZFDkkYTwCXYu3aCeYU+AoI7S2
-	m+Y2KeQcbEtpc8cQsOzhLXoVcbRqqlFb4ZXkdSFKX/2zMBbrFOmHoD6hEQnhePS0JKp1MTev8QZ
-	3ZBE4rN0TOlMzsWUeTgs3lV3ooVV134VRvaPgBDG179kzOziGG9+6DEt8llcN/GoUuW6mhEP0tQ
-	QH7lDCCDvy17ElbASJVZJcEs8bK43JQatKLau393cG
-X-Google-Smtp-Source: AGHT+IGyy7m6/Uq5BcIGTskEhwjupu3hCG1DDa30fcncopdTlZT/bUp8K/P3+4RHaEZJRm7HrYIyTQ==
-X-Received: by 2002:a05:600c:3b01:b0:477:9cdb:e336 with SMTP id 5b1f17b1804b1-477c1119e60mr41350015e9.21.1763808679957;
-        Sat, 22 Nov 2025 02:51:19 -0800 (PST)
+        bh=bjH0N5r2GHnR9DKLB5FqN2rI8xhkKj3tclD4sjXIoig=;
+        b=K3nPqTC7inLujw0Ey6x0VtPFR6yQ+8nZmQO69wOEODZ645iCT78djwp2j/t6E4Wk+1
+         umAnB59UeP/h1ZR2RG4s2H8gWZ2q6m2iEIH4U6QJ6dQ7FqfjMM4hZWBQwcS12ysU36/+
+         BysAbMVC7xU6AykmTf7zwaDMS66lvEL0+jgURDGKKU+aDRg/ZUH1J1C1w8QSBrpjUMGB
+         PdPnuEDN9IsErs8ZhMmBY3m4KIc+IbzHqR5Ld6xJYBTtVHXRBMN5++PsGY+z/9rucHPp
+         08S1HuMmbXYAbm5ZhhyW5vc6u3lYS9lhXnLMi5cIz5WosCWjfNwFNtgGgLdz2SABPr2b
+         GbPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXUacqxD7ynPqx/H4laBiQNSTx6+ODSGwAqaMyAFBMcui1rKKrSvgCkIWZlqM687uP4Clbf3vIL@lists.cip-project.org
+X-Gm-Message-State: AOJu0Yyy8u0Iio/VgXmjCzxMkszYw6uhUhthjFT/uHr+V7H4z0BUdX04
+	eDo7UDTpNdK/+l7Z7BOnfXfgW+PrzvFT59w/DoKx1PXWJB9f0fup1LxYSijb1OWGzKH1bZ/Otiw
+	RLJ677lI=
+X-Gm-Gg: ASbGncsWspq7kKi9nDJyE9bgHpctnnTHpRc7FqtY9NKqDwPjDo+4tzLg22rHDfd51BM
+	VBmxf/FkinEDuBMpPGthTTiyLK3KEFhvIAE2RmIHqJ/6xI4xYjUE6a3ZBB8we5o3mrsK+Qd1x4B
+	B3zw1npOqpI/MnprXkJ8gqcTUlPbJp2cedT7JVCWp1vuchNS1bU3kvRmy7s6Fc/oPm4GOMBEixX
+	8PHZjfbhWqy+STepbqaauzFFLGUNuWnyxTgPlnrTc/y/5cchVMdUmN26xGlXYsDuUh1IKVGtoor
+	vr2ixMu3nFazZF+oMppe7HoYMSCOFmNgilaA1z2FYP/Cd2lTnJzTBpL8CVaAlRBsnxG8VXncfMR
+	NqlWxUJMTHDPiVKWi7WHgawR1VR5f45cY9p2vJsg3YkzL2N0jBoZkt1hx/87PBgicwxP/TGbDqj
+	crQlxmqHvNZB0ARkhvHxKWT3mIW/SQJ8tib6oZxDFG
+X-Google-Smtp-Source: AGHT+IHm2A0980vlUDaV1FN7ufmc9QxHrhIf43Jv5nvQxT0k2QX39V1yoSgLrm5VWhAp581hXJ+O0A==
+X-Received: by 2002:a05:600c:1c13:b0:471:786:94d3 with SMTP id 5b1f17b1804b1-477c01b201fmr53217465e9.22.1763808678938;
+        Sat, 22 Nov 2025 02:51:18 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477bf227ae2sm88105385e9.9.2025.11.22.02.51.19
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477bf227ae2sm88105385e9.9.2025.11.22.02.51.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Nov 2025 02:51:19 -0800 (PST)
+        Sat, 22 Nov 2025 02:51:18 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip 2/2] ASoC: renesas: rz-ssi: Use proper dma_buffer_pos after resume
-Date: Sat, 22 Nov 2025 12:51:16 +0200
-Message-ID: <20251122105116.2782841-3-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip 1/2] ASoC: da7213: Use component driver suspend/resume
+Date: Sat, 22 Nov 2025 12:51:15 +0200
+Message-ID: <20251122105116.2782841-2-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251122105116.2782841-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20251122105116.2782841-1-claudiu.beznea.uj@bp.renesas.com>
@@ -72,120 +73,150 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Sat, 22 Nov 2025 10:51:29 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20689
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20688
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit 22897e568646de5907d4981eae6cc895be2978d1 upstream.
+commit 249d96b492efb7a773296ab2c62179918301c146 upstream.
 
-When the driver supports DMA, it enqueues four DMA descriptors per
-substream before the substream is started. New descriptors are enqueued in
-the DMA completion callback, and each time a new descriptor is queued, the
-dma_buffer_pos is incremented.
+Since snd_soc_suspend() is invoked through snd_soc_pm_ops->suspend(),
+and snd_soc_pm_ops is associated with the soc_driver (defined in
+sound/soc/soc-core.c), and there is no parent-child relationship between
+the soc_driver and the DA7213 codec driver, the power management subsystem
+does not enforce a specific suspend/resume order between the DA7213 driver
+and the soc_driver.
 
-During suspend, the DMA transactions are terminated. There might be cases
-where the four extra enqueued DMA descriptors are not completed and are
-instead canceled on suspend. However, the cancel operation does not take
-into account that the dma_buffer_pos was already incremented.
+Because of this, the different codec component functionalities, called from
+snd_soc_resume() to reconfigure various functions, can race with the
+DA7213 struct dev_pm_ops::resume function, leading to misapplied
+configuration. This occasionally results in clipped sound.
 
-Previously, the suspend code reinitialized dma_buffer_pos to zero, but this
-is not always correct.
-
-To avoid losing any audio periods during suspend/resume and to prevent
-clip sound, save the completed DMA buffer position in the DMA callback and
-reinitialize dma_buffer_pos on resume.
+Fix this by dropping the struct dev_pm_ops::{suspend, resume} and use
+instead struct snd_soc_component_driver::{suspend, resume}. This ensures
+the proper configuration sequence is handled by the ASoC subsystem.
 
 Cc: stable@vger.kernel.org
-Fixes: 1fc778f7c833a ("ASoC: renesas: rz-ssi: Add suspend to RAM support")
+Fixes: 431e040065c8 ("ASoC: da7213: Add suspend to RAM support")
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://patch.msgid.link/20251029141134.2556926-3-claudiu.beznea.uj@bp.renesas.com
+Link: https://patch.msgid.link/20251104114914.2060603-1-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
+[claudiu.beznea: fixed conflict by keeping the code from this patch and
+ using SET_RUNTIME_PM_OPS() instead of RUNTIME_PM_OPS()]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- sound/soc/sh/rz-ssi.c | 25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+ sound/soc/codecs/da7213.c | 65 ++++++++++++++++++++++++---------------
+ sound/soc/codecs/da7213.h |  1 +
+ 2 files changed, 42 insertions(+), 24 deletions(-)
 
-diff --git a/sound/soc/sh/rz-ssi.c b/sound/soc/sh/rz-ssi.c
-index c431e67903f7..f32ad81b08f8 100644
---- a/sound/soc/sh/rz-ssi.c
-+++ b/sound/soc/sh/rz-ssi.c
-@@ -86,6 +86,7 @@ struct rz_ssi_stream {
- 	struct snd_pcm_substream *substream;
- 	int fifo_sample_size;	/* sample capacity of SSI FIFO */
- 	int dma_buffer_pos;	/* The address for the next DMA descriptor */
-+	int completed_dma_buf_pos; /* The address of the last completed DMA descriptor. */
- 	int period_counter;	/* for keeping track of periods transferred */
- 	int sample_width;
- 	int buffer_pos;		/* current frame position in the buffer */
-@@ -230,6 +231,7 @@ static void rz_ssi_stream_init(struct rz_ssi_stream *strm,
- 	rz_ssi_set_substream(strm, substream);
- 	strm->sample_width = samples_to_bytes(runtime, 1);
- 	strm->dma_buffer_pos = 0;
-+	strm->completed_dma_buf_pos = 0;
- 	strm->period_counter = 0;
- 	strm->buffer_pos = 0;
+diff --git a/sound/soc/codecs/da7213.c b/sound/soc/codecs/da7213.c
+index 6d32026ae69f..b4f4f4ebafaf 100644
+--- a/sound/soc/codecs/da7213.c
++++ b/sound/soc/codecs/da7213.c
+@@ -2106,11 +2106,50 @@ static int da7213_probe(struct snd_soc_component *component)
+ 	return 0;
+ }
  
-@@ -454,6 +456,10 @@ static void rz_ssi_pointer_update(struct rz_ssi_stream *strm, int frames)
- 		snd_pcm_period_elapsed(strm->substream);
- 		strm->period_counter = current_period;
- 	}
++static int da7213_runtime_suspend(struct device *dev)
++{
++	struct da7213_priv *da7213 = dev_get_drvdata(dev);
 +
-+	strm->completed_dma_buf_pos += runtime->period_size;
-+	if (strm->completed_dma_buf_pos >= runtime->buffer_size)
-+		strm->completed_dma_buf_pos = 0;
- }
- 
- static int rz_ssi_pio_recv(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
-@@ -793,10 +799,14 @@ static int rz_ssi_dma_request(struct rz_ssi_priv *ssi, struct device *dev)
- 	return -ENODEV;
- }
- 
--static int rz_ssi_trigger_resume(struct rz_ssi_priv *ssi)
-+static int rz_ssi_trigger_resume(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
- {
-+	struct snd_pcm_substream *substream = strm->substream;
-+	struct snd_pcm_runtime *runtime = substream->runtime;
- 	int ret;
- 
-+	strm->dma_buffer_pos = strm->completed_dma_buf_pos + runtime->period_size;
++	regcache_cache_only(da7213->regmap, true);
++	regcache_mark_dirty(da7213->regmap);
++	regulator_bulk_disable(DA7213_NUM_SUPPLIES, da7213->supplies);
 +
- 	if (rz_ssi_is_stream_running(&ssi->playback) ||
- 	    rz_ssi_is_stream_running(&ssi->capture))
- 		return 0;
-@@ -809,16 +819,6 @@ static int rz_ssi_trigger_resume(struct rz_ssi_priv *ssi)
- 				ssi->hw_params_cache.channels);
++	return 0;
++}
++
++static int da7213_runtime_resume(struct device *dev)
++{
++	struct da7213_priv *da7213 = dev_get_drvdata(dev);
++	int ret;
++
++	ret = regulator_bulk_enable(DA7213_NUM_SUPPLIES, da7213->supplies);
++	if (ret < 0)
++		return ret;
++	regcache_cache_only(da7213->regmap, false);
++	return regcache_sync(da7213->regmap);
++}
++
++static int da7213_suspend(struct snd_soc_component *component)
++{
++	struct da7213_priv *da7213 = snd_soc_component_get_drvdata(component);
++
++	return da7213_runtime_suspend(da7213->dev);
++}
++
++static int da7213_resume(struct snd_soc_component *component)
++{
++	struct da7213_priv *da7213 = snd_soc_component_get_drvdata(component);
++
++	return da7213_runtime_resume(da7213->dev);
++}
++
+ static const struct snd_soc_component_driver soc_component_dev_da7213 = {
+ 	.probe			= da7213_probe,
+ 	.set_bias_level		= da7213_set_bias_level,
+ 	.controls		= da7213_snd_controls,
+ 	.num_controls		= ARRAY_SIZE(da7213_snd_controls),
++	.suspend		= da7213_suspend,
++	.resume			= da7213_resume,
+ 	.dapm_widgets		= da7213_dapm_widgets,
+ 	.num_dapm_widgets	= ARRAY_SIZE(da7213_dapm_widgets),
+ 	.dapm_routes		= da7213_audio_map,
+@@ -2159,6 +2198,8 @@ static int da7213_i2c_probe(struct i2c_client *i2c,
+ 	if (!da7213->fin_min_rate)
+ 		return -EINVAL;
+ 
++	da7213->dev = &i2c->dev;
++
+ 	i2c_set_clientdata(i2c, da7213);
+ 
+ 	/* Get required supplies */
+@@ -2210,32 +2251,8 @@ static int da7213_i2c_remove(struct i2c_client *i2c)
+ 	return 0;
  }
  
--static void rz_ssi_streams_suspend(struct rz_ssi_priv *ssi)
+-static int __maybe_unused da7213_runtime_suspend(struct device *dev)
 -{
--	if (rz_ssi_is_stream_running(&ssi->playback) ||
--	    rz_ssi_is_stream_running(&ssi->capture))
--		return;
+-	struct da7213_priv *da7213 = dev_get_drvdata(dev);
 -
--	ssi->playback.dma_buffer_pos = 0;
--	ssi->capture.dma_buffer_pos = 0;
+-	regcache_cache_only(da7213->regmap, true);
+-	regcache_mark_dirty(da7213->regmap);
+-	regulator_bulk_disable(DA7213_NUM_SUPPLIES, da7213->supplies);
+-
+-	return 0;
 -}
 -
- static int rz_ssi_dai_trigger(struct snd_pcm_substream *substream, int cmd,
- 			      struct snd_soc_dai *dai)
- {
-@@ -828,7 +828,7 @@ static int rz_ssi_dai_trigger(struct snd_pcm_substream *substream, int cmd,
+-static int __maybe_unused da7213_runtime_resume(struct device *dev)
+-{
+-	struct da7213_priv *da7213 = dev_get_drvdata(dev);
+-	int ret;
+-
+-	ret = regulator_bulk_enable(DA7213_NUM_SUPPLIES, da7213->supplies);
+-	if (ret < 0)
+-		return ret;
+-	regcache_cache_only(da7213->regmap, false);
+-	return regcache_sync(da7213->regmap);
+-}
+-
+ static const struct dev_pm_ops da7213_pm = {
+ 	SET_RUNTIME_PM_OPS(da7213_runtime_suspend, da7213_runtime_resume, NULL)
+-	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
+ };
  
- 	switch (cmd) {
- 	case SNDRV_PCM_TRIGGER_RESUME:
--		ret = rz_ssi_trigger_resume(ssi);
-+		ret = rz_ssi_trigger_resume(ssi, strm);
- 		if (ret)
- 			return ret;
- 
-@@ -867,7 +867,6 @@ static int rz_ssi_dai_trigger(struct snd_pcm_substream *substream, int cmd,
- 
- 	case SNDRV_PCM_TRIGGER_SUSPEND:
- 		rz_ssi_stop(ssi, strm);
--		rz_ssi_streams_suspend(ssi);
- 		break;
- 
- 	case SNDRV_PCM_TRIGGER_STOP:
+ static const struct i2c_device_id da7213_i2c_id[] = {
+diff --git a/sound/soc/codecs/da7213.h b/sound/soc/codecs/da7213.h
+index b9ab791d6b88..29cbf0eb6124 100644
+--- a/sound/soc/codecs/da7213.h
++++ b/sound/soc/codecs/da7213.h
+@@ -595,6 +595,7 @@ enum da7213_supplies {
+ /* Codec private data */
+ struct da7213_priv {
+ 	struct regmap *regmap;
++	struct device *dev;
+ 	struct mutex ctrl_lock;
+ 	struct regulator_bulk_data supplies[DA7213_NUM_SUPPLIES];
+ 	struct clk *mclk;
 -- 
 2.43.0
 
