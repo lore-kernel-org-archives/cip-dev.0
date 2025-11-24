@@ -2,117 +2,98 @@ Return-Path: <pavel@denx.de>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61595CFD317
-	for <webhook@archiver.kernel.org>; Mon, 24 Nov 2025 10:10:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5863CCFA466
+	for <webhook@archiver.kernel.org>; Mon, 24 Nov 2025 10:16:07 +0000 (UTC)
 Received: from mx.denx.de (mx.denx.de [89.58.32.78])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.13666.1763979028927915959
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.13725.1763979361013010517
  for <cip-dev@lists.cip-project.org>;
- Mon, 24 Nov 2025 02:10:29 -0800
+ Mon, 24 Nov 2025 02:16:01 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=fj7LdfVh;
+ dkim=pass header.i=@denx.de header.s=mx-20241105 header.b=iPe1t0EY;
  spf=pass (domain: denx.de, ip: 89.58.32.78, mailfrom: pavel@denx.de)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1C45F10074A12;
-	Mon, 24 Nov 2025 11:10:10 +0100 (CET)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 090A01007D76F;
+	Mon, 24 Nov 2025 11:15:53 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1763979014; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=UyNkVnz/uprCNrTFfbli1iGS49ZhTV17OkEc+lkla60=;
-	b=fj7LdfVhST1p/7gtajo3Ezva4A7BqYxay1xpT/B4eorNFF3VQHK17oB0SInl59dszEAWD9
-	YUBj6JC83r/6OxSQiM1kjO7Ep323/mTU3Ud+S1f3b8I4JhamYfLEW/T3CE/7ROxJuRJHnf
-	GIxmixFT/EiwV/L9K50LKa+x8OLsVjKqJhWnUZOdeBJy4Ww9WeDh/mnPO+6YNUJ8KOnFQw
-	O7vSOP/jdlsrKnUBPaU8sVc9KXvx5l7Bh7TWraCLFH1dPtMg5M8KlN/RH7TAJPYerITgr4
-	KY3LE5YerIjcYZCzX+nl1rGeMG528eCOuTBpVIuSF7C+2MbhKpN4vbfyULh/ow==
-Date: Mon, 24 Nov 2025 11:10:08 +0100
+	t=1763979357; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=RuTuGb3Z79ssMdSscMwPD95rM2UESTGXJE1TXiK1AYQ=;
+	b=iPe1t0EYYSKKrhhczFVuBHuAsznCs4Ey47B/139NKkCg9PMS1d2qEXbApgIqUqj4kDg1fH
+	T1hUCvnDfYNKeTOYQK9CjE1tFpoRzVAZSVgmz5se5jRYV6VscpJbvaxRNjBkf1rmLCP9g0
+	D7g7eP4bxOYiEY0A7emPhA+h9EZKArFOX/n1x/uIo0PJn3RVo7ICFYkwnKpCQd3577i0O+
+	Uj0HhLPRgm0A/lI6kpL2QagwTkJwz6TMGQaBuxJSt72L6436Y1qU9g4DinX6lv1aj0K1tC
+	Z/lNO98n5iMXHS10J7KuPfDKSfSBd/cyxcEAupM92Mb3DAoVYpibSu+lQKcu4g==
+Date: Mon, 24 Nov 2025 11:15:46 +0100
 From: Pavel Machek <pavel@denx.de>
 To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	"nobuhiro1.iwamatsu@toshiba.co.jp" <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	"cip-dev@lists.cip-project.org" <cip-dev@lists.cip-project.org>
-Subject: Re: [cip-dev] [PATCH 5.10.y-cip 00/22] RZ/{G2L, G2LC, G2UL, G3S,
- Five, V2L}: Backport MSTOP support
-Message-ID: <aSQvAIPPOVe7dAuF@duo.ucw.cz>
-References: <20251106081218.2574950-1-claudiu.beznea.uj@bp.renesas.com>
- <aQz1pgHaEQNgfdKa@duo.ucw.cz>
- <1875B18477989308.416970@lists.cip-project.org>
- <e4137de7-ef22-41ce-b2b5-a1d2762eeb4b@tuxon.dev>
- <aSBslxvWFIij/zGh@duo.ucw.cz>
- <111077d3-10ee-4c95-926c-e81f4c622c37@tuxon.dev>
- <TY3PR01MB113467C7D29D1ACED3381BDB386D3A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <df838a73-788b-4b4d-8c91-e2bbcc827cc0@tuxon.dev>
+Cc: "Nobuhiro Iwamatsu (Toshiba)" <iwamatsu@gmail.com>,
+	nobuhiro1.iwamatsu@toshiba.co.jp, cip-dev@lists.cip-project.org
+Subject: Re: [cip-dev] [PATCH 5.10.y-cip 1/2] ASoC: da7213: Use component
+ driver suspend/resume
+Message-ID: <aSQwUuxR6mnh+ug/@duo.ucw.cz>
+References: <20251122105116.2782841-1-claudiu.beznea.uj@bp.renesas.com>
+ <20251122105116.2782841-2-claudiu.beznea.uj@bp.renesas.com>
+ <CACe6DC5bsN166QrMFSzVT_JhtLKVHtqXrnP0aBdrk0ua0mEWJw@mail.gmail.com>
+ <401dab8e-a50f-4c76-8997-a311e818e81e@tuxon.dev>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="8IFKwSWDmyJQ4/xE"
+	protocol="application/pgp-signature"; boundary="k++epbzG+e4vOxdA"
 Content-Disposition: inline
-In-Reply-To: <df838a73-788b-4b4d-8c91-e2bbcc827cc0@tuxon.dev>
+In-Reply-To: <401dab8e-a50f-4c76-8997-a311e818e81e@tuxon.dev>
 X-Last-TLS-Session-Version: TLSv1.3
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Mon, 24 Nov 2025 10:10:37 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20707
+ <cip-dev@lists.cip-project.org>; Mon, 24 Nov 2025 10:16:07 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20708
 
 
---8IFKwSWDmyJQ4/xE
+--k++epbzG+e4vOxdA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-> >>>> I'm going to send a PoC patch for the media drivers used by the
-> >>>> RZ/{G2L, G2LC, G2UL, V2L} SoCs in reply to this thread. Please let me
-> >>>> know how do you consider this approach.
-> >>>
-> >>> I'll take a look, but if mainline is happy, likely I'll be happy, too.
+> >> +++ b/sound/soc/codecs/da7213.c
+> >> @@ -2106,11 +2106,50 @@ static int da7213_probe(struct snd_soc_compone=
+nt *component)
+> >>         return 0;
+> >>  }
 > >>
-> >> In mainline the problem is already fixed by patches 01-11 from this se=
-ries.
-> >> The PoC patch that I sent is intended for CIP kernels only, and, along=
- with it, all the other drivers
-> >> used by the RZ/{G2L, G2LC, G2UL, G3S, Five, V2L} SoCs will have to be =
-patched with something similar.
+> >> +static int da7213_runtime_suspend(struct device *dev)
+> >> +{
+> >> +       struct da7213_priv *da7213 =3D dev_get_drvdata(dev);
+> >> +
+> >> +       regcache_cache_only(da7213->regmap, true);
+> >> +       regcache_mark_dirty(da7213->regmap);
+> >> +       regulator_bulk_disable(DA7213_NUM_SUPPLIES, da7213->supplies);
 > >=20
-> >=20
-> > What to do with Mali driver used in RZ/{G2L, G2LC, V2L} ? Mali driver i=
-s used by other vendors as well.
-> > Maybe special handling??
+> > There is no error checking.
+> > We need to add error checking or return an error code.
 >=20
-> DT nodes for the Mali IP on RZ/{G2L, G2LC, V2L} have Renesas compatibles.
-> Taking into account these compatibles, the code could be adjusted to be
-> executed only for the Renesas SoCs.
+> This is just a move of da7213_runtime_suspend() to be able to use it in
+> da7213_suspend() w/o forward declaration.
+>=20
+> Do you want me to adjust it for CIP?
 
-Ok, so we have two solutions:
-
-1) one requires small changes to unrelated drivers in the tree
-
-2) one that is only touching Renesas code, but is not mainline, an is
-not going mainline
-
-Neither is good. I don't believe there's another possibility?
-
-I'd still like to know how much power this saves, and if we really
-need to have this in 5.10.
-
-It looks to me like 1) is less bad, and we may have to live with it,
-but I'd like to get confirmation from other stakeholders at this
-point.I t may be best discussed at thursday's IRC meeting. (Do you
-want to join? :-) ).
+I don't believe this should block merge, but you may want to
+investigate error handling here and eventually fix it up in the
+mainline. At that point it may be worth backporting to -cip (or not).
 
 Best regards,
 								Pavel
-
 --=20
 In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
 Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
---8IFKwSWDmyJQ4/xE
+--k++epbzG+e4vOxdA
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaSQvAAAKCRAw5/Bqldv6
-8tCMAKCXVYb/N63QahIDDTbWnYFmu09NjACgr2+s/uVc9/8tZdUMF2rRGPQ9UII=
-=mzHv
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaSQwUgAKCRAw5/Bqldv6
+8lMiAJwPZdTClWl12H6rPjnyzegETYpxRACgjfPOFio4uomCfup8SCad6mskl8c=
+=fQgn
 -----END PGP SIGNATURE-----
 
---8IFKwSWDmyJQ4/xE--
+--k++epbzG+e4vOxdA--
 
