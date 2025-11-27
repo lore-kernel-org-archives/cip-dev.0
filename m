@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B1A4D11183
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C248D116F5
 	for <webhook@archiver.kernel.org>; Thu, 27 Nov 2025 11:30:26 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.16539.1764243017745651992
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.16542.1764243024755181265
  for <cip-dev@lists.cip-project.org>;
- Thu, 27 Nov 2025 03:30:19 -0800
+ Thu, 27 Nov 2025 03:30:25 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: vzXLboBkRLGKLz0cPZpcgw==
-X-CSE-MsgGUID: B5rSBiKkRTGIxXhv08tr6A==
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: hBZwHoo1QJKVJIjRUuHm5Q==
+X-CSE-MsgGUID: vfGADbPJTGyyI59+pKwzFg==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 27 Nov 2025 20:30:18 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 27 Nov 2025 20:30:24 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.93.131])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id BE5F9401109B;
-	Thu, 27 Nov 2025 20:30:17 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0DE1C401091A;
+	Thu, 27 Nov 2025 20:30:22 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@denx.de,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 2/5] irqchip/renesas-rzv2h: Add rzv2h_icu_register_dma_req()
-Date: Thu, 27 Nov 2025 11:30:09 +0000
-Message-ID: <20251127113012.55325-3-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.12.y-cip 5/5] arm64: dts: renesas: r9a09g057: Add DMAC nodes
+Date: Thu, 27 Nov 2025 11:30:12 +0000
+Message-ID: <20251127113012.55325-6-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251127113012.55325-1-ovidiu.panait.rb@renesas.com>
 References: <20251127113012.55325-1-ovidiu.panait.rb@renesas.com>
@@ -33,137 +33,200 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 27 Nov 2025 11:30:26 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20751
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20754
 
 From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 
-commit 9002b75aa8e6f034ffbd1c1ccac46927a1cf0f12 upstream.
+commit 7d33e0ee5f98b3fc74566fa00d0926bc5deb8174 upstream.
 
-On the Renesas RZ/V2H(P) family of SoCs, DMAC IPs are connected
-to the Interrupt Control Unit (ICU).
-For DMA transfers, a request number must be registered with the
-ICU, which means that the DMAC driver has to be able to instruct
-the ICU driver with the registration of such id.
-
-Export rzv2h_icu_register_dma_req() so that the DMAC driver can
-register the DMAC request number.
+Add nodes for the DMAC IPs found on the Renesas RZ/V2H(P) SoC.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20250423143422.3747702-4-fabrizio.castro.jz@renesas.com
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Link: https://lore.kernel.org/r/20250423143422.3747702-7-fabrizio.castro.jz@renesas.com
 Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- drivers/irqchip/irq-renesas-rzv2h.c       | 35 +++++++++++++++++++++++
- include/linux/irqchip/irq-renesas-rzv2h.h | 23 +++++++++++++++
- 2 files changed, 58 insertions(+)
- create mode 100644 include/linux/irqchip/irq-renesas-rzv2h.h
+ arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 165 +++++++++++++++++++++
+ 1 file changed, 165 insertions(+)
 
-diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
-index f1f7869b49cb..766adccf11dc 100644
---- a/drivers/irqchip/irq-renesas-rzv2h.c
-+++ b/drivers/irqchip/irq-renesas-rzv2h.c
-@@ -15,6 +15,7 @@
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/irqchip.h>
-+#include <linux/irqchip/irq-renesas-rzv2h.h>
- #include <linux/irqdomain.h>
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
-@@ -41,6 +42,8 @@
- #define ICU_TSCLR				0x24
- #define ICU_TITSR(k)				(0x28 + (k) * 4)
- #define ICU_TSSR(k)				(0x30 + (k) * 4)
-+#define ICU_DMkSELy(k, y)			(0x420 + (k) * 0x20 + (y) * 4)
-+#define ICU_DMACKSELk(k)			(0x500 + (k) * 4)
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+index b97828f498d6..7cfdf9db851d 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+@@ -272,6 +272,171 @@ xspi: spi@11030000 {
+ 			status = "disabled";
+ 		};
  
- /* NMI */
- #define ICU_NMI_EDGE_FALLING			0
-@@ -103,6 +106,15 @@ struct rzv2h_hw_info {
- 	u8		field_width;
- };
- 
-+/* DMAC */
-+#define ICU_DMAC_DkRQ_SEL_MASK			GENMASK(9, 0)
++		dmac0: dma-controller@11400000 {
++			compatible = "renesas,r9a09g057-dmac";
++			reg = <0 0x11400000 0 0x10000>;
++			interrupts = <GIC_SPI 499 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 89  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 90  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 91  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 92  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 93  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 94  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 95  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 96  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 97  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 98  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 99  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 100 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 101 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 102 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 103 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 104 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "error",
++					  "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12", "ch13", "ch14", "ch15";
++			clocks = <&cpg CPG_MOD 0x0>;
++			power-domains = <&cpg>;
++			resets = <&cpg 0x31>;
++			#dma-cells = <1>;
++			dma-channels = <16>;
++			renesas,icu = <&icu 4>;
++		};
 +
-+#define ICU_DMAC_DMAREQ_SHIFT(up)		((up) * 16)
-+#define ICU_DMAC_DMAREQ_MASK(up)		(ICU_DMAC_DkRQ_SEL_MASK \
-+						 << ICU_DMAC_DMAREQ_SHIFT(up))
-+#define ICU_DMAC_PREP_DMAREQ(sel, up)		(FIELD_PREP(ICU_DMAC_DkRQ_SEL_MASK, (sel)) \
-+						 << ICU_DMAC_DMAREQ_SHIFT(up))
++		dmac1: dma-controller@14830000 {
++			compatible = "renesas,r9a09g057-dmac";
++			reg = <0 0x14830000 0 0x10000>;
++			interrupts = <GIC_SPI 495 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 25  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 26  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 27  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 28  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 29  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 30  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 31  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 32  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 33  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 34  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 35  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 36  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 37  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 38  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 39  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 40  IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "error",
++					  "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12", "ch13", "ch14", "ch15";
++			clocks = <&cpg CPG_MOD 0x1>;
++			power-domains = <&cpg>;
++			resets = <&cpg 0x32>;
++			#dma-cells = <1>;
++			dma-channels = <16>;
++			renesas,icu = <&icu 0>;
++		};
 +
- /**
-  * struct rzv2h_icu_priv - Interrupt Control Unit controller private data structure.
-  * @base:	Controller's base address
-@@ -117,6 +129,27 @@ struct rzv2h_icu_priv {
- 	const struct rzv2h_hw_info	*info;
- };
- 
-+void rzv2h_icu_register_dma_req(struct platform_device *icu_dev, u8 dmac_index, u8 dmac_channel,
-+				u16 req_no)
-+{
-+	struct rzv2h_icu_priv *priv = platform_get_drvdata(icu_dev);
-+	u32 icu_dmksely, dmareq, dmareq_mask;
-+	u8 y, upper;
++		dmac2: dma-controller@14840000 {
++			compatible = "renesas,r9a09g057-dmac";
++			reg = <0 0x14840000 0 0x10000>;
++			interrupts = <GIC_SPI 496 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 41  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 42  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 43  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 44  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 45  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 46  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 47  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 48  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 49  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 50  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 51  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 52  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 53  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 54  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 55  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 56  IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "error",
++					  "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12", "ch13", "ch14", "ch15";
++			clocks = <&cpg CPG_MOD 0x2>;
++			power-domains = <&cpg>;
++			resets = <&cpg 0x33>;
++			#dma-cells = <1>;
++			dma-channels = <16>;
++			renesas,icu = <&icu 1>;
++		};
 +
-+	y = dmac_channel / 2;
-+	upper = dmac_channel % 2;
++		dmac3: dma-controller@12000000 {
++			compatible = "renesas,r9a09g057-dmac";
++			reg = <0 0x12000000 0 0x10000>;
++			interrupts = <GIC_SPI 497 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 57  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 58  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 59  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 60  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 61  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 62  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 63  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 64  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 65  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 66  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 67  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 68  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 69  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 70  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 71  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 72  IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "error",
++					  "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12", "ch13", "ch14", "ch15";
++			clocks = <&cpg CPG_MOD 0x3>;
++			power-domains = <&cpg>;
++			resets = <&cpg 0x34>;
++			#dma-cells = <1>;
++			dma-channels = <16>;
++			renesas,icu = <&icu 2>;
++		};
 +
-+	dmareq = ICU_DMAC_PREP_DMAREQ(req_no, upper);
-+	dmareq_mask = ICU_DMAC_DMAREQ_MASK(upper);
++		dmac4: dma-controller@12010000 {
++			compatible = "renesas,r9a09g057-dmac";
++			reg = <0 0x12010000 0 0x10000>;
++			interrupts = <GIC_SPI 498 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 73  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 74  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 75  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 76  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 77  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 78  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 79  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 80  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 81  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 82  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 83  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 84  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 85  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 86  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 87  IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 88  IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "error",
++					  "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12", "ch13", "ch14", "ch15";
++			clocks = <&cpg CPG_MOD 0x4>;
++			power-domains = <&cpg>;
++			resets = <&cpg 0x35>;
++			#dma-cells = <1>;
++			dma-channels = <16>;
++			renesas,icu = <&icu 3>;
++		};
 +
-+	guard(raw_spinlock_irqsave)(&priv->lock);
-+
-+	icu_dmksely = readl(priv->base + ICU_DMkSELy(dmac_index, y));
-+	icu_dmksely = (icu_dmksely & ~dmareq_mask) | dmareq;
-+	writel(icu_dmksely, priv->base + ICU_DMkSELy(dmac_index, y));
-+}
-+EXPORT_SYMBOL_GPL(rzv2h_icu_register_dma_req);
-+
- static inline struct rzv2h_icu_priv *irq_data_to_priv(struct irq_data *data)
- {
- 	return data->domain->host_data;
-@@ -493,6 +526,8 @@ static int rzv2h_icu_init_common(struct device_node *node, struct device_node *p
- 	if (!rzv2h_icu_data)
- 		return -ENOMEM;
- 
-+	platform_set_drvdata(pdev, rzv2h_icu_data);
-+
- 	rzv2h_icu_data->base = devm_of_iomap(&pdev->dev, pdev->dev.of_node, 0, NULL);
- 	if (IS_ERR(rzv2h_icu_data->base))
- 		return PTR_ERR(rzv2h_icu_data->base);
-diff --git a/include/linux/irqchip/irq-renesas-rzv2h.h b/include/linux/irqchip/irq-renesas-rzv2h.h
-new file mode 100644
-index 000000000000..618a60d2eac0
---- /dev/null
-+++ b/include/linux/irqchip/irq-renesas-rzv2h.h
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Renesas RZ/V2H(P) Interrupt Control Unit (ICU)
-+ *
-+ * Copyright (C) 2025 Renesas Electronics Corporation.
-+ */
-+
-+#ifndef __LINUX_IRQ_RENESAS_RZV2H
-+#define __LINUX_IRQ_RENESAS_RZV2H
-+
-+#include <linux/platform_device.h>
-+
-+#define RZV2H_ICU_DMAC_REQ_NO_DEFAULT		0x3ff
-+
-+#ifdef CONFIG_RENESAS_RZV2H_ICU
-+void rzv2h_icu_register_dma_req(struct platform_device *icu_dev, u8 dmac_index, u8 dmac_channel,
-+				u16 req_no);
-+#else
-+static inline void rzv2h_icu_register_dma_req(struct platform_device *icu_dev, u8 dmac_index,
-+					      u8 dmac_channel, u16 req_no) { }
-+#endif
-+
-+#endif /* __LINUX_IRQ_RENESAS_RZV2H */
+ 		ostm0: timer@11800000 {
+ 			compatible = "renesas,r9a09g057-ostm", "renesas,ostm";
+ 			reg = <0x0 0x11800000 0x0 0x1000>;
 -- 
 2.51.0
 
