@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A25D116F8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A87FD116F7
 	for <webhook@archiver.kernel.org>; Thu, 27 Nov 2025 11:29:56 +0000 (UTC)
 Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.16615.1764242986753558087
  for <cip-dev@lists.cip-project.org>;
- Thu, 27 Nov 2025 03:29:53 -0800
+ Thu, 27 Nov 2025 03:29:50 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: CEjhFGrlTxG+yofUsaGzdQ==
-X-CSE-MsgGUID: HdiKpMjlQA28P4D8AcW4KA==
+X-CSE-ConnectionGUID: oC8exFhhQbSCXJnFt9y5XA==
+X-CSE-MsgGUID: SJk7Ln39SmOX6zX5qLkdHQ==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 27 Nov 2025 20:29:53 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 27 Nov 2025 20:29:49 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.93.131])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id E08A740078CF;
-	Thu, 27 Nov 2025 20:29:51 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 68320401091A;
+	Thu, 27 Nov 2025 20:29:48 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@denx.de,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.1.y-cip 5/6] dmaengine: sh: rz-dmac: Add RZ/V2H(P) support
-Date: Thu, 27 Nov 2025 11:29:40 +0000
-Message-ID: <20251127112941.55300-6-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 3/6] irqchip/renesas-rzv2h: Add rzv2h_icu_register_dma_req()
+Date: Thu, 27 Nov 2025 11:29:38 +0000
+Message-ID: <20251127112941.55300-4-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251127112941.55300-1-ovidiu.panait.rb@renesas.com>
 References: <20251127112941.55300-1-ovidiu.panait.rb@renesas.com>
@@ -33,203 +33,137 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 27 Nov 2025 11:29:56 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20747
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20745
 
 From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 
-commit 7de873201c44bff5b42f2e560098d463843b8a4c upstream.
+commit 9002b75aa8e6f034ffbd1c1ccac46927a1cf0f12 upstream.
 
-The DMAC IP found on the Renesas RZ/V2H(P) family of SoCs is
-similar to the version found on the Renesas RZ/G2L family of
-SoCs, but there are some differences:
-* It only uses one register area
-* It only uses one clock
-* It only uses one reset
-* Instead of using MID/IRD it uses REQ No
-* It is connected to the Interrupt Control Unit (ICU)
-* On the RZ/G2L there is only 1 DMAC, on the RZ/V2H(P) there are 5
+On the Renesas RZ/V2H(P) family of SoCs, DMAC IPs are connected
+to the Interrupt Control Unit (ICU).
+For DMA transfers, a request number must be registered with the
+ICU, which means that the DMAC driver has to be able to instruct
+the ICU driver with the registration of such id.
 
-Add specific support for the Renesas RZ/V2H(P) family of SoC by
-tackling the aforementioned differences.
+Export rzv2h_icu_register_dma_req() so that the DMAC driver can
+register the DMAC request number.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20250423143422.3747702-6-fabrizio.castro.jz@renesas.com
+Link: https://lore.kernel.org/r/20250423143422.3747702-4-fabrizio.castro.jz@renesas.com
 Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- drivers/dma/sh/rz-dmac.c | 81 ++++++++++++++++++++++++++++++++++++----
- 1 file changed, 74 insertions(+), 7 deletions(-)
+ drivers/irqchip/irq-renesas-rzv2h.c       | 35 +++++++++++++++++++++++
+ include/linux/irqchip/irq-renesas-rzv2h.h | 23 +++++++++++++++
+ 2 files changed, 58 insertions(+)
+ create mode 100644 include/linux/irqchip/irq-renesas-rzv2h.h
 
-diff --git a/drivers/dma/sh/rz-dmac.c b/drivers/dma/sh/rz-dmac.c
-index badb4ffa8664..32850608d4c4 100644
---- a/drivers/dma/sh/rz-dmac.c
-+++ b/drivers/dma/sh/rz-dmac.c
-@@ -14,6 +14,7 @@
- #include <linux/dmaengine.h>
- #include <linux/interrupt.h>
- #include <linux/iopoll.h>
+diff --git a/drivers/irqchip/irq-renesas-rzv2h.c b/drivers/irqchip/irq-renesas-rzv2h.c
+index 194c94dafff8..1d03ee911b2a 100644
+--- a/drivers/irqchip/irq-renesas-rzv2h.c
++++ b/drivers/irqchip/irq-renesas-rzv2h.c
+@@ -15,6 +15,7 @@
+ #include <linux/err.h>
+ #include <linux/io.h>
+ #include <linux/irqchip.h>
 +#include <linux/irqchip/irq-renesas-rzv2h.h>
- #include <linux/list.h>
- #include <linux/module.h>
- #include <linux/of.h>
-@@ -89,8 +90,14 @@ struct rz_dmac_chan {
+ #include <linux/irqdomain.h>
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+@@ -41,6 +42,8 @@
+ #define ICU_TSCLR				0x24
+ #define ICU_TITSR(k)				(0x28 + (k) * 4)
+ #define ICU_TSSR(k)				(0x30 + (k) * 4)
++#define ICU_DMkSELy(k, y)			(0x420 + (k) * 0x20 + (y) * 4)
++#define ICU_DMACKSELk(k)			(0x500 + (k) * 4)
  
- #define to_rz_dmac_chan(c)	container_of(c, struct rz_dmac_chan, vc.chan)
- 
-+struct rz_dmac_icu {
-+	struct platform_device *pdev;
-+	u8 dmac_index;
-+};
-+
- struct rz_dmac {
- 	struct dma_device engine;
-+	struct rz_dmac_icu icu;
- 	struct device *dev;
- 	struct reset_control *rstc;
- 	void __iomem *base;
-@@ -99,6 +106,8 @@ struct rz_dmac {
- 	unsigned int n_channels;
- 	struct rz_dmac_chan *channels;
- 
-+	bool has_icu;
-+
- 	DECLARE_BITMAP(modules, 1024);
+ /* NMI */
+ #define ICU_NMI_EDGE_FALLING			0
+@@ -103,6 +106,15 @@ struct rzv2h_hw_info {
+ 	u8		field_width;
  };
  
-@@ -167,6 +176,9 @@ struct rz_dmac {
- #define RZ_DMAC_MAX_CHANNELS		16
- #define DMAC_NR_LMDESC			64
- 
-+/* RZ/V2H ICU related */
-+#define RZV2H_MAX_DMAC_INDEX		4
++/* DMAC */
++#define ICU_DMAC_DkRQ_SEL_MASK			GENMASK(9, 0)
 +
- /*
-  * -----------------------------------------------------------------------------
-  * Device access
-@@ -324,7 +336,13 @@ static void rz_dmac_prepare_desc_for_memcpy(struct rz_dmac_chan *channel)
- 	lmdesc->chext = 0;
- 	lmdesc->header = HEADER_LV;
- 
--	rz_dmac_set_dmars_register(dmac, channel->index, 0);
-+	if (dmac->has_icu) {
-+		rzv2h_icu_register_dma_req(dmac->icu.pdev, dmac->icu.dmac_index,
-+					   channel->index,
-+					   RZV2H_ICU_DMAC_REQ_NO_DEFAULT);
-+	} else {
-+		rz_dmac_set_dmars_register(dmac, channel->index, 0);
-+	}
- 
- 	channel->chcfg = chcfg;
- 	channel->chctrl = CHCTRL_STG | CHCTRL_SETEN;
-@@ -375,7 +393,13 @@ static void rz_dmac_prepare_descs_for_slave_sg(struct rz_dmac_chan *channel)
- 
- 	channel->lmdesc.tail = lmdesc;
- 
--	rz_dmac_set_dmars_register(dmac, channel->index, channel->mid_rid);
-+	if (dmac->has_icu) {
-+		rzv2h_icu_register_dma_req(dmac->icu.pdev, dmac->icu.dmac_index,
-+					   channel->index, channel->mid_rid);
-+	} else {
-+		rz_dmac_set_dmars_register(dmac, channel->index, channel->mid_rid);
-+	}
++#define ICU_DMAC_DMAREQ_SHIFT(up)		((up) * 16)
++#define ICU_DMAC_DMAREQ_MASK(up)		(ICU_DMAC_DkRQ_SEL_MASK \
++						 << ICU_DMAC_DMAREQ_SHIFT(up))
++#define ICU_DMAC_PREP_DMAREQ(sel, up)		(FIELD_PREP(ICU_DMAC_DkRQ_SEL_MASK, (sel)) \
++						 << ICU_DMAC_DMAREQ_SHIFT(up))
 +
- 	channel->chctrl = CHCTRL_SETEN;
- }
+ /**
+  * struct rzv2h_icu_priv - Interrupt Control Unit controller private data structure.
+  * @base:	Controller's base address
+@@ -117,6 +129,27 @@ struct rzv2h_icu_priv {
+ 	const struct rzv2h_hw_info	*info;
+ };
  
-@@ -644,7 +668,13 @@ static void rz_dmac_device_synchronize(struct dma_chan *chan)
- 	if (ret < 0)
- 		dev_warn(dmac->dev, "DMA Timeout");
- 
--	rz_dmac_set_dmars_register(dmac, channel->index, 0);
-+	if (dmac->has_icu) {
-+		rzv2h_icu_register_dma_req(dmac->icu.pdev, dmac->icu.dmac_index,
-+					   channel->index,
-+					   RZV2H_ICU_DMAC_REQ_NO_DEFAULT);
-+	} else {
-+		rz_dmac_set_dmars_register(dmac, channel->index, 0);
-+	}
- }
- 
- /*
-@@ -821,6 +851,38 @@ static int rz_dmac_chan_probe(struct rz_dmac *dmac,
- 	return 0;
- }
- 
-+static int rz_dmac_parse_of_icu(struct device *dev, struct rz_dmac *dmac)
++void rzv2h_icu_register_dma_req(struct platform_device *icu_dev, u8 dmac_index, u8 dmac_channel,
++				u16 req_no)
 +{
-+	struct device_node *np = dev->of_node;
-+	struct of_phandle_args args;
-+	uint32_t dmac_index;
-+	int ret;
++	struct rzv2h_icu_priv *priv = platform_get_drvdata(icu_dev);
++	u32 icu_dmksely, dmareq, dmareq_mask;
++	u8 y, upper;
 +
-+	ret = of_parse_phandle_with_fixed_args(np, "renesas,icu", 1, 0, &args);
-+	if (ret == -ENOENT)
-+		return 0;
-+	if (ret)
-+		return ret;
++	y = dmac_channel / 2;
++	upper = dmac_channel % 2;
 +
-+	dmac->has_icu = true;
++	dmareq = ICU_DMAC_PREP_DMAREQ(req_no, upper);
++	dmareq_mask = ICU_DMAC_DMAREQ_MASK(upper);
 +
-+	dmac->icu.pdev = of_find_device_by_node(args.np);
-+	of_node_put(args.np);
-+	if (!dmac->icu.pdev) {
-+		dev_err(dev, "ICU device not found.\n");
-+		return -ENODEV;
-+	}
++	guard(raw_spinlock_irqsave)(&priv->lock);
 +
-+	dmac_index = args.args[0];
-+	if (dmac_index > RZV2H_MAX_DMAC_INDEX) {
-+		dev_err(dev, "DMAC index %u invalid.\n", dmac_index);
-+		return -EINVAL;
-+	}
-+	dmac->icu.dmac_index = dmac_index;
-+
-+	return 0;
++	icu_dmksely = readl(priv->base + ICU_DMkSELy(dmac_index, y));
++	icu_dmksely = (icu_dmksely & ~dmareq_mask) | dmareq;
++	writel(icu_dmksely, priv->base + ICU_DMkSELy(dmac_index, y));
 +}
++EXPORT_SYMBOL_GPL(rzv2h_icu_register_dma_req);
 +
- static int rz_dmac_parse_of(struct device *dev, struct rz_dmac *dmac)
+ static inline struct rzv2h_icu_priv *irq_data_to_priv(struct irq_data *data)
  {
- 	struct device_node *np = dev->of_node;
-@@ -837,7 +899,7 @@ static int rz_dmac_parse_of(struct device *dev, struct rz_dmac *dmac)
- 		return -EINVAL;
- 	}
+ 	return data->domain->host_data;
+@@ -493,6 +526,8 @@ static int rzv2h_icu_init_common(struct device_node *node, struct device_node *p
+ 	if (!rzv2h_icu_data)
+ 		return -ENOMEM;
  
--	return 0;
-+	return rz_dmac_parse_of_icu(dev, dmac);
- }
- 
- static int rz_dmac_probe(struct platform_device *pdev)
-@@ -871,9 +933,11 @@ static int rz_dmac_probe(struct platform_device *pdev)
- 	if (IS_ERR(dmac->base))
- 		return PTR_ERR(dmac->base);
- 
--	dmac->ext_base = devm_platform_ioremap_resource(pdev, 1);
--	if (IS_ERR(dmac->ext_base))
--		return PTR_ERR(dmac->ext_base);
-+	if (!dmac->has_icu) {
-+		dmac->ext_base = devm_platform_ioremap_resource(pdev, 1);
-+		if (IS_ERR(dmac->ext_base))
-+			return PTR_ERR(dmac->ext_base);
-+	}
- 
- 	/* Register interrupt handler for error */
- 	irq = platform_get_irq_byname(pdev, irqname);
-@@ -989,10 +1053,13 @@ static int rz_dmac_remove(struct platform_device *pdev)
- 	pm_runtime_put(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
- 
-+	platform_device_put(dmac->icu.pdev);
++	platform_set_drvdata(pdev, rzv2h_icu_data);
 +
- 	return 0;
- }
- 
- static const struct of_device_id of_rz_dmac_match[] = {
-+	{ .compatible = "renesas,r9a09g057-dmac", },
- 	{ .compatible = "renesas,rz-dmac", },
- 	{ /* Sentinel */ }
- };
+ 	rzv2h_icu_data->base = devm_of_iomap(&pdev->dev, pdev->dev.of_node, 0, NULL);
+ 	if (IS_ERR(rzv2h_icu_data->base))
+ 		return PTR_ERR(rzv2h_icu_data->base);
+diff --git a/include/linux/irqchip/irq-renesas-rzv2h.h b/include/linux/irqchip/irq-renesas-rzv2h.h
+new file mode 100644
+index 000000000000..618a60d2eac0
+--- /dev/null
++++ b/include/linux/irqchip/irq-renesas-rzv2h.h
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Renesas RZ/V2H(P) Interrupt Control Unit (ICU)
++ *
++ * Copyright (C) 2025 Renesas Electronics Corporation.
++ */
++
++#ifndef __LINUX_IRQ_RENESAS_RZV2H
++#define __LINUX_IRQ_RENESAS_RZV2H
++
++#include <linux/platform_device.h>
++
++#define RZV2H_ICU_DMAC_REQ_NO_DEFAULT		0x3ff
++
++#ifdef CONFIG_RENESAS_RZV2H_ICU
++void rzv2h_icu_register_dma_req(struct platform_device *icu_dev, u8 dmac_index, u8 dmac_channel,
++				u16 req_no);
++#else
++static inline void rzv2h_icu_register_dma_req(struct platform_device *icu_dev, u8 dmac_index,
++					      u8 dmac_channel, u16 req_no) { }
++#endif
++
++#endif /* __LINUX_IRQ_RENESAS_RZV2H */
 -- 
 2.51.0
 
