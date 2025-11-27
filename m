@@ -1,261 +1,153 @@
-Return-Path: <masami.ichikawa@miraclelinux.com>
+Return-Path: <s-adivi@ti.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8614DD111A7
-	for <webhook@archiver.kernel.org>; Wed, 26 Nov 2025 23:02:22 +0000 (UTC)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.6701.1764198140308178509
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3403D10375
+	for <webhook@archiver.kernel.org>; Thu, 27 Nov 2025 06:37:54 +0000 (UTC)
+Received: from CY3PR05CU001.outbound.protection.outlook.com (CY3PR05CU001.outbound.protection.outlook.com [40.93.201.16])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.12804.1764225472592824840
  for <cip-dev@lists.cip-project.org>;
- Wed, 26 Nov 2025 15:02:21 -0800
+ Wed, 26 Nov 2025 22:37:53 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=KwnxK83O;
- spf=pass (domain: miraclelinux.com, ip: 209.85.128.177, mailfrom: masami.ichikawa@miraclelinux.com)
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-787da30c53dso3106447b3.0
-        for <cip-dev@lists.cip-project.org>; Wed, 26 Nov 2025 15:02:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1764198139; x=1764802939; darn=lists.cip-project.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ywiN1S9hRaBcDiYqZrnZayJxFJQJ4hSWdRqZIoFYPN8=;
-        b=KwnxK83ONVxSJJo1o+1G36+Bra3fDMrfiVjDnLKyK4eQIo7mIwE00vXTlobrhIIaU1
-         9aUlDexlmeBJMfcYvQb70EP6v4NCHy6WobXSGQ+vvf8FRsxEwSX+p3KlFay5STwi4zuz
-         HrjkfRMcLi7J/di9AFF+dNYmt+Xl3eIAH9d+6CrCl27eUdgZWnh5zjMgfuX0kMS1w5QU
-         3juHPPk5KHlq0X17CRH4X0OoyqALv6vAe66srYGIVKeH6Vhgi9yf6TGnnfSfIVWHjbzB
-         30YbhMK/GFv+e5UvzJ8VUOfUtkjF6Gpdm0BWb31uz+8ai9oirktfT9fvAri7Pwn2cppe
-         mrjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764198139; x=1764802939;
-        h=to:subject:message-id:date:from:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ywiN1S9hRaBcDiYqZrnZayJxFJQJ4hSWdRqZIoFYPN8=;
-        b=vxGeSFgzFj5UaHuVNhddOEyGKsSnl3u28xMoY7RLJ70zsL21Scoom/OZs6NZphrhUu
-         goHPqYSrE0CAZmYIRg1IRzHReRH8JCla4Jj7ckoAIGNEFk0NPHQ2IUyOQCeT+cClMwkT
-         wgJc1QJiGYXvM2tc+/kWlg22IEJg1vQE0cCqUW/D0EHwhpFvqgL5y1rOneb7dDxJYj9y
-         rbYc2/ulr5EBj0tLH3OEL/Gflr1g6bcRnbE+jCHU/fZqwQzP1NGvJNdTpAjm/fSno2OD
-         WgMPT43SwolaXL5msZmSpyHfX3tG40h2y8Im4NbjcfkFnV9oLQOpkBRwaGc6MsqClCMV
-         cKpA==
-X-Gm-Message-State: AOJu0YywKt9aiH6sm8g/OD0mduVK3R6pW6kL34rGB7S/illxxl9bx8YN
-	TfAz3W6d8+FHmw2wJg2UqYRS/8K3kDiRrACKWQlTLlpyFuGt/0M0JKOtRyZIPS+y2m9HQsfD9DI
-	zwf3UiCsP0iB4e5YFQOknGK6KYILcyrFzNuIwkwlCfaFdraoxc44zzfM=
-X-Gm-Gg: ASbGnctkbd7K65Od0WzynOyu+dEd09JAEEcKwXaAfRXi7GGNixs6NcyP1f9r1Hxsb1p
-	JX4ENi2vgmHKCYvcUhjJ6VaXaY2G1OPejW9LUkvAPxUQSHVQmR+HzuTDZkIc6v5KKD+vZ7v2SVi
-	px/6I618w+lYYOVT4OCAv2fWOmVMyd8Uh9OVbjmv2eZo73+8Fz9pcn09eDkXaz6Bn1zQUczg82J
-	v3TK5WYVs5HA8OXFmITm5GF48g5BkU/vvQxzV3Sk6reRfIR7SaldQp5JmLpJdjfNdH6bRE1
-X-Google-Smtp-Source: AGHT+IHEVXw+8w9kqNKCf503bp7OEbe0UBPUy9UmmIZnOXNqcJRzCU6Jg8tT/yPOMNK1ZGLkj915InB38wEeovz1R0o=
-X-Received: by 2002:a05:690c:4985:b0:78a:27a9:d471 with SMTP id
- 00721157ae682-78a8b568025mr143035677b3.69.1764198139083; Wed, 26 Nov 2025
- 15:02:19 -0800 (PST)
+ dkim=fail reason="dkim: body hash did not verify" header.i=@ti.com header.s=selector1 header.b=B5LVgvV3;
+ spf=permerror, err=parse error for token &{10 18 spf.protection.outlook.com}: limit exceeded (domain: ti.com, ip: 40.93.201.16, mailfrom: s-adivi@ti.com)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QLSsgv2HHcHJG/7u7gARo08e+iiPgNdOu4QaY97q/V7Gc5IKKD6aXmxXbSK6aeEkmyF0il7ucTBbrHmkpPOfhhrMUl7UgwBXP7L9oxJvxR0aqsgXRW+96mYYtppxW6dg4M321YyG/hlp49y8sw+SJrerx4u9qMDhCV5TiWbCnP+wg44nuyCAfj3kknAwjoDvslzt3qMC+Zc+ov/x/oSU0+ltGGw/thjN6G+8Mudj/tOaA32VSmfRK8uP4DPGTq2MFoU0TL4y9Qgff9BZEpJ4pmuXpKiGiZbOIrSkDNQ/T7Cnra3BWMt38JYWieUivzoagnW1HXkZmwgZ0lCJ7cTCSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hdEKkEb0TgbWCZguYZYbG2s5rLbbbz/PNpnxi9Ke2+M=;
+ b=QtnTT109euw4ewzUhUvcziDU6ptbhiLMmHOPajHO52LWVNIeMS4f87tPmThVBzQW533ITL6jlWDsrcIM2+sH//OqjXMsVg1yyZSUXDRsYfkMXkfmuqVP9R6XzvRgroAZMA6d4XcbKMykGwNmq1AgaWhPgL3Dak7iG2+x+HZjjO54L++Qwx2RxoYA1hZMp6xbCla1ZI9HiuUBwfMbmWmxwK6cnfHxIlTeQlS0z6BMzDT915usuuk3XFQbAVnE2vHklr7FkS6N4k3LNBpMkK+zZrrqoBQY4iQPPnjuIoC7Zd0pNMkKLQPb+MWHOcLtca6DiaKn0nd6f0KAj2woSsU5VA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.21.195) smtp.rcpttodomain=siemens.com smtp.mailfrom=ti.com; dmarc=pass
+ (p=quarantine sp=none pct=100) action=none header.from=ti.com; dkim=none
+ (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hdEKkEb0TgbWCZguYZYbG2s5rLbbbz/PNpnxi9Ke2+M=;
+ b=B5LVgvV331ZrgksOahadMZVLwHYAXFD8+cytbdmSYgsu0yhC3vd8ZYpz+lJgyzvRQNkCZkG8A+vJB2zm/MkHo+Bh45RlUuwic3XmkFQqdw3nfe7p0SqJouMsSxyL+M16lOiAytgdILFSmYmmmhseeNjIdoePffYs8y6y/hxtiJU=
+Received: from BYAPR05CA0100.namprd05.prod.outlook.com (2603:10b6:a03:e0::41)
+ by IA1PR10MB6878.namprd10.prod.outlook.com (2603:10b6:208:422::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.13; Thu, 27 Nov
+ 2025 06:37:49 +0000
+Received: from SJ1PEPF00001CE5.namprd03.prod.outlook.com
+ (2603:10b6:a03:e0:cafe::de) by BYAPR05CA0100.outlook.office365.com
+ (2603:10b6:a03:e0::41) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9388.3 via Frontend Transport; Thu,
+ 27 Nov 2025 06:37:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.195)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.21.195 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.195; helo=flwvzet201.ext.ti.com; pr=C
+Received: from flwvzet201.ext.ti.com (198.47.21.195) by
+ SJ1PEPF00001CE5.mail.protection.outlook.com (10.167.242.21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9366.7 via Frontend Transport; Thu, 27 Nov 2025 06:37:48 +0000
+Received: from DFLE201.ent.ti.com (10.64.6.59) by flwvzet201.ext.ti.com
+ (10.248.192.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 27 Nov
+ 2025 00:37:43 -0600
+Received: from DFLE208.ent.ti.com (10.64.6.66) by DFLE201.ent.ti.com
+ (10.64.6.59) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 27 Nov
+ 2025 00:37:43 -0600
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE208.ent.ti.com
+ (10.64.6.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 27 Nov 2025 00:37:43 -0600
+Received: from uda0498651.dhcp.ti.com (uda0498651.dhcp.ti.com [172.24.233.117])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5AR6bfat2498845;
+	Thu, 27 Nov 2025 00:37:42 -0600
+From: Sai Sree Kartheek Adivi <s-adivi@ti.com>
+To: <cip-dev@lists.cip-project.org>, <jan.kiszka@siemens.com>,
+	<vigneshr@ti.com>
+Subject: [cip-dev][isar-cip-core][PATCH 1/2] ti-am62px-sk: Enable TEE_SUPPLICANT_IN_USERLAND
+Date: Thu, 27 Nov 2025 12:07:37 +0530
+Message-ID: <20251127063738.435868-1-s-adivi@ti.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
-Date: Thu, 27 Nov 2025 08:01:43 +0900
-X-Gm-Features: AWmQ_blyEKt1yPRIoXYURqTpZx-gdF3n4BJiAuJxSgFNWq2mDRP8RANheEtgDvg
-Message-ID: <CAODzB9qRnpnW585bide=GPr5q1c6SQYrQs6zWozR1gp15+sMCQ@mail.gmail.com>
-Subject: [kernel-cve-report] New CVE entries this week
-To: cip-dev <cip-dev@lists.cip-project.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE5:EE_|IA1PR10MB6878:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2fc728d7-e52c-4dc8-e0bb-08de2d7f7b25
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?0CkRH6M87mQTuoFELTuQWUGKJH0RgLZouZU3SRZs3sa3H8Y27e73fBgmyQ7b?=
+ =?us-ascii?Q?+OBEZZsd9qhICHGShJtHWeICvmr5whg9TvLU4OaZDcVWWnJyE1prk4aVC0vo?=
+ =?us-ascii?Q?Hkh+XLPqbJMaAMgiqSIBCIvnuLiGcdxUzNdfyca72RtWVKDeqs5zhEOd9VyX?=
+ =?us-ascii?Q?KMNNcdTx7tUFsyxX0o7q71uTfqd+HNEM4S9B1aRP3UuNBtxBLOdEzjNReBcA?=
+ =?us-ascii?Q?h3M+qGR69+JQNL1IBfy5yU11O4QjbbEGUYqt+sESxoMgsuid4icHIvyYmy5f?=
+ =?us-ascii?Q?HXW5/SbbN3gMcKxNF0Ag/hmUXyhi9391K3ejxigwDJAgx6WzImANVLyhl8pb?=
+ =?us-ascii?Q?3U7quiGL7BiT75ReQQH4j276CIr2jh74qcQSYxDGh2IIUjorN+zJHYqTcrim?=
+ =?us-ascii?Q?tQdNOmW4VPJ+/JJcgfOOuYivZEAq1fqwKQqGjc2SMdMp/Ry4RuaOCuXst0Pg?=
+ =?us-ascii?Q?JD7Xkhz+4yJAU81FvOPwDRnmVJRoThPKaveQ0AA+ztxUs+uwrLOjxo3qqz2q?=
+ =?us-ascii?Q?PTAm2Yz3i47ygYbtglu6m6pWl9NXPJ3Vh2JfFi5vm1H9gjL8XU8/2M8qEQ20?=
+ =?us-ascii?Q?9gmPk8tHaN7YRW5Wj8CahmfcedJZRuTNdnE2bPT3r/tvYbMxrDjsPJzO3moM?=
+ =?us-ascii?Q?+xYGhzF/Haoul0VQeRpHt1Yn9TfZ8ds1HQ2tanr3J9WCHF/0diRn5XnOm3oW?=
+ =?us-ascii?Q?Bm96M8pBa/vbP9xW+J4fDvK9rM1OrTo5GphPEGi52exw6UWKhspGIuUhejl1?=
+ =?us-ascii?Q?i7BHhrf582Lq8re++POmmFYg2ZT6ptQgT8QAvK1T8sVFYWieP6dz2p+MgLOw?=
+ =?us-ascii?Q?BWpKUhJn2RkXK9Wyg+uEVNtlwe/qwb7XRWV2RjIOD9g73qKeBayFWjaeseGl?=
+ =?us-ascii?Q?KKwhTFfv/XUUzaOcml42dpA8oolkTD7CFTz0ovBJJKj5saDoXFRfxcV0OB6A?=
+ =?us-ascii?Q?bungko/rsvm2ZdaQSqOor8WBiSKcQa9fm5roGkilzQPZZdnvzRp+31wAGmix?=
+ =?us-ascii?Q?Eq0n4HrUIwLdf5e4WBFjfo/GHZ/7HMh8ylzADui5gDetQ2OxJyyVhq88M2Ic?=
+ =?us-ascii?Q?9ANMi0KNH1stdt/CK2KubVo/GEFysaRDB0nZBytlL6PDcfHHpuKOtXYVY2gj?=
+ =?us-ascii?Q?qI/haCpbIgLjYgSxnsfQ+pn2cc7C3h+VmNGnn2Rvxzn5/z1jbip2kBn8MpFJ?=
+ =?us-ascii?Q?dsPXeLsjNZnRsEyJ9DS0dDskDS19fuZykxJ45ursfZmDfeDAdsCUcPIWSX/k?=
+ =?us-ascii?Q?XRUI8mvJfh6sQAueQD4wU/Rr9YjgGn4tUNC6uHtUWtblPFfY9eKQo+DUplQX?=
+ =?us-ascii?Q?lesJITE12QoCvAIr+Cg6n51cBfQYZIieUT/2Aztd6SRusl00sLSt6oMWCyKU?=
+ =?us-ascii?Q?cOa90AoHXjOmeZfcufyMgq+yruSZFU8p3SzNpzU1zmSqrqS4A3dhD6uR2tmD?=
+ =?us-ascii?Q?SntkMF4gUKs9CyBzgTPUtDQXPcG0qkCQfsOolkJkCA4SpixrKtklAELc8IoT?=
+ =?us-ascii?Q?u1TGEqYnXKqVtd+kUu7IXG06jN1kZxQteJ2GUgkMc5+vCh5f0WvJgGCu9Xgb?=
+ =?us-ascii?Q?OdMTLjDa6O9IHTQkkzo=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:198.47.21.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet201.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2025 06:37:48.2336
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2fc728d7-e52c-4dc8-e0bb-08de2d7f7b25
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.195];Helo=[flwvzet201.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource: 
+	SJ1PEPF00001CE5.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB6878
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 26 Nov 2025 23:02:22 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20734
+ <cip-dev@lists.cip-project.org>; Thu, 27 Nov 2025 06:37:54 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20735
+
+TI AM62Px SK platform only supports 6.12 kernel and it does support
+fTPM. For initramfs-tee-ftpm-hook to actually install local-top scripts
+into the initramfs, need to set TEE_SUPPLICANT_IN_USERLAND.
+
+Signed-off-by: Sai Sree Kartheek Adivi <s-adivi@ti.com>
+---
+ conf/machine/ti-am62px-sk.conf | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/conf/machine/ti-am62px-sk.conf b/conf/machine/ti-am62px-sk.con=
+f
+index beabac9..31fa93b 100644
+--- a/conf/machine/ti-am62px-sk.conf
++++ b/conf/machine/ti-am62px-sk.conf
+@@ -24,4 +24,5 @@ IMAGE_BOOT_FILES =3D " \
+=20
+ USE_CIP_KERNEL_CONFIG =3D "1"
+=20
++TEE_SUPPLICANT_IN_USERLAND =3D "1"
+ WDOG_TIMEOUT =3D "0"
+--=20
+2.34.1
 
-Hi!
-
-It's this week's CVE report.
-
-This week reported 5 new CVEs and 14 updated CVEs.
-
-* New CVEs
-
-* New CVEs
-CVE-2025-40209: btrfs: fix memory leak of qgroup_list in
-btrfs_add_qgroup_relation
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-40209
-
-Introduced by commit 4addc1f ("btrfs: qgroup: preallocate memory
-before adding a relation") in v6.11-rc1.
-Fixed in v6.18-rc5.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [f260c6aff0b8af236084012d14f9f1bf792ea883]
-stable/6.12: [3412d0e973e8f8381747d69033eda809a57a2581]
-
-CVE-2025-40210: Revert "NFSD: Remove the cap on number of operations
-per NFSv4 COMPOUND"
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-40210
-
-Introduced commit is not determined.Fixed in v6.18-rc4.
-According to the commit log, this commit reverts 48aab16 ("NFSD:
-Remove the cap on number of operations per NFSv4 COMPOUND").
-
-Fixed status
-mainline: [3e7f011c255582d7c914133785bbba1990441713]
-
-CVE-2025-40211: ACPI: video: Fix use-after-free in
-acpi_video_switch_brightness()
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-40211
-
-Introduced by commit 8ab58e8 ("ACPI / video: Fix backlight taking 2
-steps on a brightness up/down keypress") in v3.17-rc1.
-Fixed in v6.18-rc4.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [8f067aa59430266386b83c18b983ca583faa6a11]
-stable/6.12: [de5fc93275a4a459fe2f7cb746984f2ab3e8292a]
-stable/6.6: [4e85246ec0d019dfba86ba54d841ef6694f97149]
-
-CVE-2025-40212: nfsd: fix refcount leak in nfsd_set_fh_dentry()
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-40212
-
-Introduced by commit ef7f6c4 ("nfsd: move V4ROOT version check to
-nfsd_set_fh_dentry()") in v6.12-rc1.
-Fixed in v6.18-rc6.
-
-Bug introduced commit is not backported to older stable kernels.
-
-Fixed status
-mainline: [8a7348a9ed70bda1c1f51d3f1815bcbdf9f3b38c]
-stable/6.12: [b6bc86ce3944b10b9fc181fc00c1a520a20ed965]
-
-CVE-2025-40213: Bluetooth: MGMT: fix crash in set_mesh_sync and
-set_mesh_complete
-
-Announce: https://www.cve.org/CVERecord?id=CVE-2025-40213
-
-Introduced by commit 302a1f6 ("Bluetooth: MGMT: Fix possible UAFs") in v6.17.
-Fixed in v6.18-rc4.
-
-Bug introduced commit was backported to following branches.
-stable/6.12
-
-Fixed status
-mainline: [e8785404de06a69d89dcdd1e9a0b6ea42dc6d327]
-stable/6.12: [5c19daa93d9af29f1f46251b47e1ea66bcc8d679]
-
-
-
-* Updated CVEs
-
-CVE-2024-41033: cachestat: do not flush stats in recency check
-
-stable/6.6 was fixed.
-
-Fixed status
-stable/6.6: [e2f7c76758be16f1dc32c5a82270d4f6649eedab]
-
-CVE-2024-49998: net: dsa: improve shutdown sequence
-
-stable/6.6 was fixed.
-
-Fixed status
-stable/6.6: [2e93bf719462ac6d23c881c8b93e5dc9bf5ab7f5]
-
-CVE-2025-21868: net: allow small head cache usage with large
-MAX_SKB_FRAGS values
-
-stable/6.6 was fixed.
-
-Fixed status
-stable/6.6: [ed8a77fee4618facd2a539cad7b7366697b5a575]
-
-CVE-2025-22103: net: fix NULL pointer dereference in l3mdev_l3_rcv
-
-stable/6.6 was fixed.
-
-Fixed status
-stable/6.6: [52b44d8c653459c658b733d13658afdde45f6836]
-
-CVE-2025-22107: net: dsa: sja1105: fix kasan out-of-bounds warning in
-sja1105_table_delete_entry()
-
-stable/6.12 was fixed.
-
-Fixed status
-stable/6.12: [031e00249e9e6bee72ba66701c8f83b45fc4b8a2]
-
-CVE-2025-22121: ext4: fix out-of-bound read in ext4_xattr_inode_dec_ref_all()
-
-stable/6.12 was fixed.
-
-Fixed status
-stable/6.12: [098927a13fd918bd7c64c2de905350a1ad7b4a3a]
-
-CVE-2025-23129: wifi: ath11k: Clear affinity hint before calling
-ath11k_pcic_free_irq() in error path
-
-stable/6.12 was fixed.
-
-Fixed status
-stable/6.12: [80dc5a2ce5b75d648e08549617f5c555d07ae43c]
-
-CVE-2025-23155: net: stmmac: Fix accessing freed irq affinity_hint
-
-stable/6.6 was fixed.
-
-Fixed status
-stable/6.6: [960dab23f6d405740c537d095f90a4ee9ddd9285]
-
-CVE-2025-38057: espintcp: fix skb leaks
-
-stable/6.6 was fixed.
-
-Fixed status
-stable/6.6: [d8d79cf8c2b7475c22f9874eb844bcc80f858b13]
-
-CVE-2025-38593: Bluetooth: hci_sync: fix double free in
-'hci_discovery_filter_clear()'
-
-stable/6.6 was fixed.
-
-Fixed status
-stable/6.6: [7ce9bb0b95fc280e9212b8922590c492ca1d9c39]
-
-CVE-2025-38678: netfilter: nf_tables: reject duplicate device on updates
-
-stable/6.12, stable/6.6 were fixed.
-
-Fixed status
-stable/6.12: [cf23d531a9d496863aa4c5a0e2f71f0a23f3df3c]
-stable/6.6: [3f358a66a04513311668ea4b40f5064e253d8386]
-
-CVE-2025-39981: Bluetooth: MGMT: Fix possible UAFs
-
-stable/6.12 was fixed.
-
-Fixed status
-stable/6.12: [d71b98f253b079cbadc83266383f26fe7e9e103b]
-
-CVE-2025-40077: f2fs: fix to avoid overflow while left shift operation
-
-stable/6.12, stable/6.6 were fixed.
-
-Fixed status
-stable/6.12: [0e75a098b0a37f02ca31fe99ac16004c8163cf67]
-stable/6.6: [ef49378864bb1ed14cd48c8e687729e12714d849]
-
-CVE-2025-40097: ALSA: hda: Fix missing pointer check in
-hda_component_manager_init function
-
-stable/6.12 was fixed.
-
-Fixed status
-stable/6.12: [218a8504e62fc2c8a1fd12523346b7a2b9bd2474]
-
-
-Regards,
--- 
-Masami Ichikawa
-Cybertrust Japan Co., Ltd.
-
-Email :masami.ichikawa@cybertrust.co.jp
-          :masami.ichikawa@miraclelinux.com
 
