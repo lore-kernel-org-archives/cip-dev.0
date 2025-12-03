@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E30EFD15DA3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F172FD15DA7
 	for <webhook@archiver.kernel.org>; Wed,  3 Dec 2025 15:41:17 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.18296.1764776461970046583
+Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.18297.1764776463748732008
  for <cip-dev@lists.cip-project.org>;
- Wed, 03 Dec 2025 07:41:16 -0800
+ Wed, 03 Dec 2025 07:41:12 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: qhLoYyaNTC2leShYR1wodQ==
-X-CSE-MsgGUID: IN81b3aQR1W6h6WIYSZ7NQ==
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: y8ARhvldQw2xjKr9rVyTTQ==
+X-CSE-MsgGUID: Fn3sQn4lTkmbViPeRt5i4A==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 04 Dec 2025 00:41:15 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 04 Dec 2025 00:41:11 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.93.82])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 48D57400CD06;
-	Thu,  4 Dec 2025 00:41:14 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id BF065400CD10;
+	Thu,  4 Dec 2025 00:41:10 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@denx.de,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 08/11] clk: renesas: rzv2h: Add support for RZ/V2N SoC
-Date: Wed,  3 Dec 2025 15:40:55 +0000
-Message-ID: <20251203154058.33022-9-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.12.y-cip 06/11] dt-bindings: mmc: renesas,sdhi: Document RZ/V2N support
+Date: Wed,  3 Dec 2025 15:40:53 +0000
+Message-ID: <20251203154058.33022-7-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251203154058.33022-1-ovidiu.panait.rb@renesas.com>
 References: <20251203154058.33022-1-ovidiu.panait.rb@renesas.com>
@@ -33,255 +33,41 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 03 Dec 2025 15:41:17 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20834
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20832
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit f6462eb04f24447e3f9cc33071bbcb888f521985 upstream.
+commit 8e127dbbf6c363e6b4bb486d631d936fd6d1646d upstream.
 
-The clock structure for RZ/V2N is almost identical to RZ/V2H(P) SoC
-with less IP blocks compared to RZ/V2H(P). For eg: CRU2/3 are present
-only on the RZ/V2H(P) SoC.
-
-Add minimal clock and reset entries required to boot the Renesas
-RZ/V2N EVK and binds it with the RZ/V2H CPG family driver.
+Add SDHI bindings for the Renesas RZ/V2N (a.k.a R9A09G056) SoC. Use
+`renesas,sdhi-r9a09g057` as a fallback since the SD/MMC block on
+RZ/V2N is identical to the one on RZ/V2H(P), allowing reuse of the
+existing driver without modifications.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250407191628.323613-9-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Link: https://lore.kernel.org/r/20250326143945.82142-8-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- drivers/clk/renesas/Kconfig         |   5 +
- drivers/clk/renesas/Makefile        |   1 +
- drivers/clk/renesas/r9a09g056-cpg.c | 152 ++++++++++++++++++++++++++++
- drivers/clk/renesas/rzv2h-cpg.c     |   6 ++
- drivers/clk/renesas/rzv2h-cpg.h     |   1 +
- 5 files changed, 165 insertions(+)
- create mode 100644 drivers/clk/renesas/r9a09g056-cpg.c
+ Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-index 5a4bc3f94d49..50c20119d12a 100644
---- a/drivers/clk/renesas/Kconfig
-+++ b/drivers/clk/renesas/Kconfig
-@@ -41,6 +41,7 @@ config CLK_RENESAS
- 	select CLK_R9A08G045 if ARCH_R9A08G045
- 	select CLK_R9A09G011 if ARCH_R9A09G011
- 	select CLK_R9A09G047 if ARCH_R9A09G047
-+	select CLK_R9A09G056 if ARCH_R9A09G056
- 	select CLK_R9A09G057 if ARCH_R9A09G057
- 	select CLK_SH73A0 if ARCH_SH73A0
+diff --git a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+index 773baa6c2656..7563623876fc 100644
+--- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
++++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+@@ -69,7 +69,9 @@ properties:
+               - renesas,sdhi-r9a09g011 # RZ/V2M
+           - const: renesas,rzg2l-sdhi
+       - items:
+-          - const: renesas,sdhi-r9a09g047 # RZ/G3E
++          - enum:
++              - renesas,sdhi-r9a09g047 # RZ/G3E
++              - renesas,sdhi-r9a09g056 # RZ/V2N
+           - const: renesas,sdhi-r9a09g057 # RZ/V2H(P)
  
-@@ -199,6 +200,10 @@ config CLK_R9A09G047
-        bool "RZ/G3E clock support" if COMPILE_TEST
-        select CLK_RZV2H
- 
-+config CLK_R9A09G056
-+       bool "RZ/V2N clock support" if COMPILE_TEST
-+       select CLK_RZV2H
-+
- config CLK_R9A09G057
-        bool "RZ/V2H(P) clock support" if COMPILE_TEST
-        select CLK_RZV2H
-diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-index 2d6e746939c4..f9075bca6e95 100644
---- a/drivers/clk/renesas/Makefile
-+++ b/drivers/clk/renesas/Makefile
-@@ -38,6 +38,7 @@ obj-$(CONFIG_CLK_R9A07G054)		+= r9a07g044-cpg.o
- obj-$(CONFIG_CLK_R9A08G045)		+= r9a08g045-cpg.o
- obj-$(CONFIG_CLK_R9A09G011)		+= r9a09g011-cpg.o
- obj-$(CONFIG_CLK_R9A09G047)		+= r9a09g047-cpg.o
-+obj-$(CONFIG_CLK_R9A09G056)		+= r9a09g056-cpg.o
- obj-$(CONFIG_CLK_R9A09G057)		+= r9a09g057-cpg.o
- obj-$(CONFIG_CLK_SH73A0)		+= clk-sh73a0.o
- 
-diff --git a/drivers/clk/renesas/r9a09g056-cpg.c b/drivers/clk/renesas/r9a09g056-cpg.c
-new file mode 100644
-index 000000000000..e2712a25c43a
---- /dev/null
-+++ b/drivers/clk/renesas/r9a09g056-cpg.c
-@@ -0,0 +1,152 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Renesas RZ/V2N CPG driver
-+ *
-+ * Copyright (C) 2025 Renesas Electronics Corp.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+
-+#include <dt-bindings/clock/renesas,r9a09g056-cpg.h>
-+
-+#include "rzv2h-cpg.h"
-+
-+enum clk_ids {
-+	/* Core Clock Outputs exported to DT */
-+	LAST_DT_CORE_CLK = R9A09G056_GBETH_1_CLK_PTP_REF_I,
-+
-+	/* External Input Clocks */
-+	CLK_AUDIO_EXTAL,
-+	CLK_RTXIN,
-+	CLK_QEXTAL,
-+
-+	/* PLL Clocks */
-+	CLK_PLLCM33,
-+	CLK_PLLCLN,
-+	CLK_PLLDTY,
-+	CLK_PLLCA55,
-+
-+	/* Internal Core Clocks */
-+	CLK_PLLCM33_DIV16,
-+	CLK_PLLCLN_DIV2,
-+	CLK_PLLCLN_DIV8,
-+	CLK_PLLDTY_ACPU,
-+	CLK_PLLDTY_ACPU_DIV4,
-+
-+	/* Module Clocks */
-+	MOD_CLK_BASE,
-+};
-+
-+static const struct clk_div_table dtable_1_8[] = {
-+	{0, 1},
-+	{1, 2},
-+	{2, 4},
-+	{3, 8},
-+	{0, 0},
-+};
-+
-+static const struct clk_div_table dtable_2_64[] = {
-+	{0, 2},
-+	{1, 4},
-+	{2, 8},
-+	{3, 16},
-+	{4, 64},
-+	{0, 0},
-+};
-+
-+static const struct cpg_core_clk r9a09g056_core_clks[] __initconst = {
-+	/* External Clock Inputs */
-+	DEF_INPUT("audio_extal", CLK_AUDIO_EXTAL),
-+	DEF_INPUT("rtxin", CLK_RTXIN),
-+	DEF_INPUT("qextal", CLK_QEXTAL),
-+
-+	/* PLL Clocks */
-+	DEF_FIXED(".pllcm33", CLK_PLLCM33, CLK_QEXTAL, 200, 3),
-+	DEF_FIXED(".pllcln", CLK_PLLCLN, CLK_QEXTAL, 200, 3),
-+	DEF_FIXED(".plldty", CLK_PLLDTY, CLK_QEXTAL, 200, 3),
-+	DEF_PLL(".pllca55", CLK_PLLCA55, CLK_QEXTAL, PLLCA55),
-+
-+	/* Internal Core Clocks */
-+	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
-+
-+	DEF_FIXED(".pllcln_div2", CLK_PLLCLN_DIV2, CLK_PLLCLN, 1, 2),
-+	DEF_FIXED(".pllcln_div8", CLK_PLLCLN_DIV8, CLK_PLLCLN, 1, 8),
-+
-+	DEF_DDIV(".plldty_acpu", CLK_PLLDTY_ACPU, CLK_PLLDTY, CDDIV0_DIVCTL2, dtable_2_64),
-+	DEF_FIXED(".plldty_acpu_div4", CLK_PLLDTY_ACPU_DIV4, CLK_PLLDTY_ACPU, 1, 4),
-+
-+	/* Core Clocks */
-+	DEF_FIXED("sys_0_pclk", R9A09G056_SYS_0_PCLK, CLK_QEXTAL, 1, 1),
-+	DEF_DDIV("ca55_0_coreclk0", R9A09G056_CA55_0_CORE_CLK0, CLK_PLLCA55,
-+		 CDDIV1_DIVCTL0, dtable_1_8),
-+	DEF_DDIV("ca55_0_coreclk1", R9A09G056_CA55_0_CORE_CLK1, CLK_PLLCA55,
-+		 CDDIV1_DIVCTL1, dtable_1_8),
-+	DEF_DDIV("ca55_0_coreclk2", R9A09G056_CA55_0_CORE_CLK2, CLK_PLLCA55,
-+		 CDDIV1_DIVCTL2, dtable_1_8),
-+	DEF_DDIV("ca55_0_coreclk3", R9A09G056_CA55_0_CORE_CLK3, CLK_PLLCA55,
-+		 CDDIV1_DIVCTL3, dtable_1_8),
-+	DEF_FIXED("iotop_0_shclk", R9A09G056_IOTOP_0_SHCLK, CLK_PLLCM33_DIV16, 1, 1),
-+};
-+
-+static const struct rzv2h_mod_clk r9a09g056_mod_clks[] __initconst = {
-+	DEF_MOD_CRITICAL("gic_0_gicclk",	CLK_PLLDTY_ACPU_DIV4, 1, 3, 0, 19,
-+						BUS_MSTOP(3, BIT(5))),
-+	DEF_MOD("scif_0_clk_pck",		CLK_PLLCM33_DIV16, 8, 15, 4, 15,
-+						BUS_MSTOP(3, BIT(14))),
-+	DEF_MOD("sdhi_0_imclk",			CLK_PLLCLN_DIV8, 10, 3, 5, 3,
-+						BUS_MSTOP(8, BIT(2))),
-+	DEF_MOD("sdhi_0_imclk2",		CLK_PLLCLN_DIV8, 10, 4, 5, 4,
-+						BUS_MSTOP(8, BIT(2))),
-+	DEF_MOD("sdhi_0_clk_hs",		CLK_PLLCLN_DIV2, 10, 5, 5, 5,
-+						BUS_MSTOP(8, BIT(2))),
-+	DEF_MOD("sdhi_0_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 6, 5, 6,
-+						BUS_MSTOP(8, BIT(2))),
-+	DEF_MOD("sdhi_1_imclk",			CLK_PLLCLN_DIV8, 10, 7, 5, 7,
-+						BUS_MSTOP(8, BIT(3))),
-+	DEF_MOD("sdhi_1_imclk2",		CLK_PLLCLN_DIV8, 10, 8, 5, 8,
-+						BUS_MSTOP(8, BIT(3))),
-+	DEF_MOD("sdhi_1_clk_hs",		CLK_PLLCLN_DIV2, 10, 9, 5, 9,
-+						BUS_MSTOP(8, BIT(3))),
-+	DEF_MOD("sdhi_1_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 10, 5, 10,
-+						BUS_MSTOP(8, BIT(3))),
-+	DEF_MOD("sdhi_2_imclk",			CLK_PLLCLN_DIV8, 10, 11, 5, 11,
-+						BUS_MSTOP(8, BIT(4))),
-+	DEF_MOD("sdhi_2_imclk2",		CLK_PLLCLN_DIV8, 10, 12, 5, 12,
-+						BUS_MSTOP(8, BIT(4))),
-+	DEF_MOD("sdhi_2_clk_hs",		CLK_PLLCLN_DIV2, 10, 13, 5, 13,
-+						BUS_MSTOP(8, BIT(4))),
-+	DEF_MOD("sdhi_2_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 14, 5, 14,
-+						BUS_MSTOP(8, BIT(4))),
-+};
-+
-+static const struct rzv2h_reset r9a09g056_resets[] __initconst = {
-+	DEF_RST(3, 0, 1, 1),		/* SYS_0_PRESETN */
-+	DEF_RST(3, 8, 1, 9),		/* GIC_0_GICRESET_N */
-+	DEF_RST(3, 9, 1, 10),		/* GIC_0_DBG_GICRESET_N */
-+	DEF_RST(9, 5, 4, 6),		/* SCIF_0_RST_SYSTEM_N */
-+	DEF_RST(10, 7, 4, 24),		/* SDHI_0_IXRST */
-+	DEF_RST(10, 8, 4, 25),		/* SDHI_1_IXRST */
-+	DEF_RST(10, 9, 4, 26),		/* SDHI_2_IXRST */
-+};
-+
-+const struct rzv2h_cpg_info r9a09g056_cpg_info __initconst = {
-+	/* Core Clocks */
-+	.core_clks = r9a09g056_core_clks,
-+	.num_core_clks = ARRAY_SIZE(r9a09g056_core_clks),
-+	.last_dt_core_clk = LAST_DT_CORE_CLK,
-+	.num_total_core_clks = MOD_CLK_BASE,
-+
-+	/* Module Clocks */
-+	.mod_clks = r9a09g056_mod_clks,
-+	.num_mod_clks = ARRAY_SIZE(r9a09g056_mod_clks),
-+	.num_hw_mod_clks = 25 * 16,
-+
-+	/* Resets */
-+	.resets = r9a09g056_resets,
-+	.num_resets = ARRAY_SIZE(r9a09g056_resets),
-+
-+	.num_mstop_bits = 192,
-+};
-diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
-index 25a8189c2a13..f468afbb54e2 100644
---- a/drivers/clk/renesas/rzv2h-cpg.c
-+++ b/drivers/clk/renesas/rzv2h-cpg.c
-@@ -1167,6 +1167,12 @@ static const struct of_device_id rzv2h_cpg_match[] = {
- 		.data = &r9a09g047_cpg_info,
- 	},
- #endif
-+#ifdef CONFIG_CLK_R9A09G056
-+	{
-+		.compatible = "renesas,r9a09g056-cpg",
-+		.data = &r9a09g056_cpg_info,
-+	},
-+#endif
- #ifdef CONFIG_CLK_R9A09G057
- 	{
- 		.compatible = "renesas,r9a09g057-cpg",
-diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cpg.h
-index f1fcc2c30ea1..53f3b96cd85f 100644
---- a/drivers/clk/renesas/rzv2h-cpg.h
-+++ b/drivers/clk/renesas/rzv2h-cpg.h
-@@ -339,6 +339,7 @@ struct rzv2h_cpg_info {
- };
- 
- extern const struct rzv2h_cpg_info r9a09g047_cpg_info;
-+extern const struct rzv2h_cpg_info r9a09g056_cpg_info;
- extern const struct rzv2h_cpg_info r9a09g057_cpg_info;
- 
- #endif	/* __RENESAS_RZV2H_CPG_H__ */
+   reg:
 -- 
 2.51.0
 
