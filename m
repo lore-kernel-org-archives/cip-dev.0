@@ -2,108 +2,100 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C89D15D9D
-	for <webhook@archiver.kernel.org>; Wed,  3 Dec 2025 15:38:27 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.18215.1764776292894303297
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5835D15D9D
+	for <webhook@archiver.kernel.org>; Wed,  3 Dec 2025 15:41:07 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.18296.1764776461970046583
  for <cip-dev@lists.cip-project.org>;
- Wed, 03 Dec 2025 07:38:21 -0800
+ Wed, 03 Dec 2025 07:41:02 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: WBBYjn03TA6nWX8rgff51g==
-X-CSE-MsgGUID: LvPGkvf7TcCF/yhQAJaTaA==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 04 Dec 2025 00:38:20 +0900
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: bFZL4fPoQu6ZmXnnrAcd8g==
+X-CSE-MsgGUID: +pGhjrlqT3iXYG1DwBPxqg==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 04 Dec 2025 00:41:01 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.93.82])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id A11294015D8A;
-	Thu,  4 Dec 2025 00:38:19 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 397E0400C979;
+	Thu,  4 Dec 2025 00:40:59 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@denx.de,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.1.y-cip 12/12] arm64: dts: renesas: Add CN15 eMMC and SD overlays for RZ/V2H and RZ/V2N EVKs
-Date: Wed,  3 Dec 2025 15:37:57 +0000
-Message-ID: <20251203153757.32977-13-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.12.y-cip 00/11] Add initial support for RZ/V2N EVK
+Date: Wed,  3 Dec 2025 15:40:47 +0000
+Message-ID: <20251203154058.33022-1-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251203153757.32977-1-ovidiu.panait.rb@renesas.com>
-References: <20251203153757.32977-1-ovidiu.panait.rb@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 03 Dec 2025 15:38:27 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20825
+ <cip-dev@lists.cip-project.org>; Wed, 03 Dec 2025 15:41:07 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20826
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi,
 
-commit 3d6c2bc7629c8b1bfd75416767122096bb75ba7b upstream.
+This series adds initial support for the Renesas RZ/V2N EVK platform. It
+provides the basic SoC and board dts files and enables the following core
+functionality:
+  - CPU (Cortex-A55 cores with operating points)
+  - External clocks (audio, qextal, rtxin)
+  - Pin controller (GPIO support)
+  - Clock Pulse Generator (CPG)
+  - System controller (SYS)
+  - Serial Communication Interface (SCIF)
+  - Secure Digital Host Interface and eMMC (SDHI)
+  - Generic Interrupt Controller (GIC)
+  - ARMv8 timer
 
-Introduce device tree overlays for supporting the eMMC (RTK0EF0186B02000BJ)
-and microSD (RTK0EF0186B01000BJ) sub-boards connected via the CN15
-connector on the RZ/V2H and RZ/V2N evaluation kits.
+Note that the RZ/V2N SoC shares most functionality with the RZ/V2H SoC,
+which is already supported in the CIP kernels, so most of the required
+driver infrastructure is already available.
 
-These overlays enable SDHI0 with appropriate pin control settings, power
-regulators, and GPIO handling. Both sub-boards are supported using shared
-overlay files that can be applied to either EVK due to their identical
-connector layout and interface support.
+Thanks,
+Ovidiu
 
-To support this, new DT overlay files are added:
-- `rzv2-evk-cn15-emmc.dtso` for eMMC
-- `rzv2-evk-cn15-sd.dtso` for microSD
+Lad Prabhakar (11):
+  dt-bindings: soc: renesas: Document Renesas RZ/V2N SoC variants and
+    EVK
+  soc: renesas: Add config option for RZ/V2N (R9A09G056) SoC
+  dt-bindings: soc: renesas: Document SYS for RZ/V2N SoC
+  soc: renesas: rz-sysc: Add SoC identification for RZ/V2N SoC
+  dt-bindings: serial: renesas: Document RZ/V2N SCIF
+  dt-bindings: mmc: renesas,sdhi: Document RZ/V2N support
+  dt-bindings: clock: renesas: Document RZ/V2N SoC CPG
+  clk: renesas: rzv2h: Add support for RZ/V2N SoC
+  arm64: dts: renesas: Add initial SoC DTSI for RZ/V2N
+  arm64: dts: renesas: Add initial device tree for RZ/V2N EVK
+  arm64: dts: renesas: Add CN15 eMMC and SD overlays for RZ/V2H and
+    RZ/V2N EVKs
 
-Additionally, the base DTS files for both EVKs are updated to include a
-fixed 1.8V regulator (`reg_1p8v`) needed by the eMMC sub-board and
-potential future use cases such as HDMI output.
+ .../bindings/clock/renesas,rzv2h-cpg.yaml     |   5 +-
+ .../devicetree/bindings/mmc/renesas,sdhi.yaml |   4 +-
+ .../bindings/serial/renesas,scif.yaml         |   1 +
+ .../soc/renesas/renesas,r9a09g057-sys.yaml    |   5 +-
+ .../bindings/soc/renesas/renesas.yaml         |  15 +
+ arch/arm64/boot/dts/renesas/Makefile          |   8 +
+ arch/arm64/boot/dts/renesas/r9a09g056.dtsi    | 282 ++++++++++++++++++
+ .../dts/renesas/r9a09g056n48-rzv2n-evk.dts    | 123 ++++++++
+ drivers/clk/renesas/Kconfig                   |   5 +
+ drivers/clk/renesas/Makefile                  |   1 +
+ drivers/clk/renesas/r9a09g056-cpg.c           | 152 ++++++++++
+ drivers/clk/renesas/rzv2h-cpg.c               |   6 +
+ drivers/clk/renesas/rzv2h-cpg.h               |   1 +
+ drivers/soc/renesas/Kconfig                   |  11 +
+ drivers/soc/renesas/Makefile                  |   1 +
+ drivers/soc/renesas/r9a09g056-sys.c           |  75 +++++
+ drivers/soc/renesas/rz-sysc.c                 |   3 +
+ drivers/soc/renesas/rz-sysc.h                 |   1 +
+ .../dt-bindings/clock/renesas,r9a09g056-cpg.h |  24 ++
+ 19 files changed, 719 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a09g056.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
+ create mode 100644 drivers/clk/renesas/r9a09g056-cpg.c
+ create mode 100644 drivers/soc/renesas/r9a09g056-sys.c
+ create mode 100644 include/dt-bindings/clock/renesas,r9a09g056-cpg.h
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250627193742.110818-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-[OP: cherry-picked missing RZ/V2N bits]
-Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
----
- arch/arm64/boot/dts/renesas/Makefile                   | 6 ++++++
- arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts | 9 +++++++++
- 2 files changed, 15 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 14a8255ae878..b9cb031a6eba 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -92,6 +92,12 @@ dtb-$(CONFIG_ARCH_R9A09G011) += r9a09g011-v2mevk2.dtb
- dtb-$(CONFIG_ARCH_R9A09G047) += r9a09g047e57-smarc.dtb
- 
- dtb-$(CONFIG_ARCH_R9A09G056) += r9a09g056n48-rzv2n-evk.dtb
-+dtb-$(CONFIG_ARCH_R9A09G056) += rzv2-evk-cn15-emmc.dtbo
-+r9a09g056n48-rzv2n-evk-cn15-emmc-dtbs := r9a09g056n48-rzv2n-evk.dtb rzv2-evk-cn15-emmc.dtbo
-+dtb-$(CONFIG_ARCH_R9A09G056) += r9a09g056n48-rzv2n-evk-cn15-emmc.dtb
-+dtb-$(CONFIG_ARCH_R9A09G056) += rzv2-evk-cn15-sd.dtbo
-+r9a09g056n48-rzv2n-evk-cn15-sd-dtbs := r9a09g056n48-rzv2n-evk.dtb rzv2-evk-cn15-sd.dtbo
-+dtb-$(CONFIG_ARCH_R9A09G056) += r9a09g056n48-rzv2n-evk-cn15-sd.dtb
- 
- dtb-$(CONFIG_ARCH_R9A09G057) += r9a09g057h44-rzv2h-evk.dtb
- dtb-$(CONFIG_ARCH_R9A09G057) += rzv2-evk-cn15-emmc.dtbo
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-index 24343fce7f53..e27f542c0561 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-@@ -30,6 +30,15 @@ memory@48000000 {
- 		reg = <0x0 0x48000000 0x1 0xf8000000>;
- 	};
- 
-+	reg_1p8v: regulator-1p8v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	reg_3p3v: regulator-3p3v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-3.3V";
 -- 
 2.51.0
 
