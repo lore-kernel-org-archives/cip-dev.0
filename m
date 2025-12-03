@@ -1,199 +1,97 @@
-Return-Path: <ovidiu.panait.rb@renesas.com>
+Return-Path: <masami.ichikawa@miraclelinux.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D078D15DA7
-	for <webhook@archiver.kernel.org>; Wed,  3 Dec 2025 15:41:28 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.18296.1764776461970046583
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B18D1CDA5
+	for <webhook@archiver.kernel.org>; Wed,  3 Dec 2025 22:26:50 +0000 (UTC)
+Received: from mail-yx1-f52.google.com (mail-yx1-f52.google.com [74.125.224.52])
+ by mx.groups.io with SMTP id smtpd.msgproc02-g2.28676.1764800803887034063
  for <cip-dev@lists.cip-project.org>;
- Wed, 03 Dec 2025 07:41:19 -0800
+ Wed, 03 Dec 2025 14:26:44 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: vkZO+YiTTQ6eeLKYR8oM5g==
-X-CSE-MsgGUID: ap77D1G4TzakVY3iEMvrkg==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 04 Dec 2025 00:41:19 +0900
-Received: from vm01.adwin.renesas.com (unknown [10.226.93.82])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id D760D400CD10;
-	Thu,  4 Dec 2025 00:41:17 +0900 (JST)
-From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-To: cip-dev@lists.cip-project.org,
-	pavel@denx.de,
-	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 10/11] arm64: dts: renesas: Add initial device tree for RZ/V2N EVK
-Date: Wed,  3 Dec 2025 15:40:57 +0000
-Message-ID: <20251203154058.33022-11-ovidiu.panait.rb@renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251203154058.33022-1-ovidiu.panait.rb@renesas.com>
-References: <20251203154058.33022-1-ovidiu.panait.rb@renesas.com>
+ dkim=pass header.i=@miraclelinux-com.20230601.gappssmtp.com header.s=20230601 header.b=CsQ3ZmfW;
+ spf=pass (domain: miraclelinux.com, ip: 74.125.224.52, mailfrom: masami.ichikawa@miraclelinux.com)
+Received: by mail-yx1-f52.google.com with SMTP id 956f58d0204a3-640daf41b19so578969d50.0
+        for <cip-dev@lists.cip-project.org>; Wed, 03 Dec 2025 14:26:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=miraclelinux-com.20230601.gappssmtp.com; s=20230601; t=1764800803; x=1765405603; darn=lists.cip-project.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5rVGy9k/X24dckifr9lCaCLJrwTmFsNsXiXbHmc5ozY=;
+        b=CsQ3ZmfWBN1iVAi+sEt+Z1wcMjvysejNBkh9A7hnvIbv6vYLnPGL17AZ28SPQCmHLH
+         oNIkI8+e9OjDEjF2pEE09wMHTV/cGCwTbqnJvwOIC9xcDP7lfQubp5sMehuCwX6O7yzq
+         spv8wqud7Ptq3MgP4nW1afMLqksn3Cr9p45KPbKD56rAN6wuAl9tP4TZe/uA3c1e1O8P
+         KMDcxE2/qdni7HxP+R9ssUIdQTLr7hkjuFatD6kniAqahyy+nGZkWBTTozli7aqVf7ge
+         Gu97V4qHopv+p7KErlJP4oNQ5LLTVkexH9t/zmaYwLT4iQViMyQlQt9YSVT7zDDZF/Oz
+         2iTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764800803; x=1765405603;
+        h=to:subject:message-id:date:from:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5rVGy9k/X24dckifr9lCaCLJrwTmFsNsXiXbHmc5ozY=;
+        b=wxvrLVTd2om7iZbMBG+1lMj1i4Ye1DbZYWRhfCB0iceflk6CKhoZMlcWTwxURrJ7g+
+         V5yu04eAmg1WypoMUgewQyqh/lGKnr2zcx7qTRKK82mONCxb7IcdwbCK8NCl6SfnQE00
+         iZ5t279aJ0pPFjP6VoP4QkY8ucX9haB0r2kjg6rJ7y63KjixytJpa+zVdKZR82ksrnIk
+         TrsvlMWMR0dEiEQKW2cpCMneKwR77Fd86OhVNGuX9dC1ai+9ZV6k/l0AICt8X3r0fqZz
+         x0zxre/RlPo5zwti1v5i8ppPBdlFAOhh9yb0QnTzR5DdWavzkoBkRr1+A2rOg3H2ZsXi
+         uzuQ==
+X-Gm-Message-State: AOJu0YyvAdq67iWCa2fnduUb9QjPtuaK4ltSJlwoabmMHpmyWDQXz/YR
+	qLF7yO4LQ3diXZDhvYe40S6zo2tOGVnCD7ZSDsGcod/0Va+STXpi3MeOlndj1uiSoQiA80vL8UO
+	0dXqRGuuPRgVbHTKYzMfVkDknUrQnBhnX3hXWRwhCuEKF3SR5vDGFgPY=
+X-Gm-Gg: ASbGncsKqWK3YHqJ4mieTOyufdIOJwr0UI3g4c8Yu6Mt/7grLXWiPxqlG6zp7wEvmaA
+	XEzKsLmUJPcILdMO/rLdBElrHenzQNVxbiOIhYvmTDnTIEWFu1/2m8voIXUbIdYVEM6xD9cFVxK
+	FmdPI5fTlpncr1sJdNDjlTNwgOWqn6Iis7ejVpTqg+76vo2SJAspQVeV+P/vIVxCBox85qvqiIv
+	+ODBFQM119CeYLnLJi4e14m2tQX1A==
+X-Google-Smtp-Source: AGHT+IGp+d5/5wz9EToDwsAs/sZclicv/3NwWlUaKwP8eiCjiuP/3xnrNPYJW837KWIxXj/+vx2XUyD54y5qXOV5L3U=
+X-Received: by 2002:a05:690e:4141:b0:640:d1cc:2be7 with SMTP id
+ 956f58d0204a3-6443d747c84mr859499d50.30.1764800802673; Wed, 03 Dec 2025
+ 14:26:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Thu, 4 Dec 2025 07:26:06 +0900
+X-Gm-Features: AWmQ_bn0a3c8PlCbnz9sJEKDmhcoOOShLHZhiml7t1j0NfKqFUyXzx0yU3jJVBc
+Message-ID: <CAODzB9oSpw+SSGjG6dpJ_JqOXk4Y_xBJKOHghkDc9VgiErcUTw@mail.gmail.com>
+Subject: [kernel-cve-report] New CVE entries this week
+To: cip-dev <cip-dev@lists.cip-project.org>
+Content-Type: text/plain; charset="UTF-8"
 List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
- <cip-dev@lists.cip-project.org>; Wed, 03 Dec 2025 15:41:28 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20836
+ <cip-dev@lists.cip-project.org>; Wed, 03 Dec 2025 22:26:50 -0000
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20838
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi!
 
-commit 1a42724ac93535a3aa23a60cbb89ce2635b5075c upstream.
+It's this week's CVE report.
 
-Add the initial device tree for the Renesas RZ/V2N EVK board, based on
-the R9A09G056N48 SoC. Enable basic board functionality, including:
-  - Memory mapping (reserve the first 128MB for the secure area)
-  - Clock inputs (QEXTAL, RTXIN, AUDIO_EXTAL)
-  - PINCTRL configurations for peripherals
-  - Serial console (SCIF)
-  - SDHI1 with power control and UHS modes
+This week reported 0 new CVEs and 2 updated CVEs.
 
-Update the Makefile to include the new DTB.
+* New CVEs
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250407191628.323613-13-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
----
- arch/arm64/boot/dts/renesas/Makefile          |   2 +
- .../dts/renesas/r9a09g056n48-rzv2n-evk.dts    | 114 ++++++++++++++++++
- 2 files changed, 116 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
+No new CVE.
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 8403ef4fbe88..84aaf2ccf3f3 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -148,6 +148,8 @@ dtb-$(CONFIG_ARCH_R9A09G047) += r9a09g047e57-smarc-cru-csi-ov5645.dtbo
- r9a09g047e57-smarc-cru-csi-ov5645-dtbs := r9a09g047e57-smarc.dtb r9a09g047e57-smarc-cru-csi-ov5645.dtbo
- dtb-$(CONFIG_ARCH_R9A09G047) += r9a09g047e57-smarc-cru-csi-ov5645.dtb
- 
-+dtb-$(CONFIG_ARCH_R9A09G056) += r9a09g056n48-rzv2n-evk.dtb
-+
- dtb-$(CONFIG_ARCH_R9A09G057) += r9a09g057h44-rzv2h-evk.dtb
- dtb-$(CONFIG_ARCH_R9A09G057) += rzv2-evk-cn15-emmc.dtbo
- r9a09g057h44-rzv2h-evk-cn15-emmc-dtbs := r9a09g057h44-rzv2h-evk.dtb rzv2-evk-cn15-emmc.dtbo
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-new file mode 100644
-index 000000000000..24343fce7f53
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-@@ -0,0 +1,114 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Device Tree Source for the RZ/V2N EVK board
-+ *
-+ * Copyright (C) 2025 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include "r9a09g056.dtsi"
-+
-+/ {
-+	model = "Renesas RZ/V2N EVK Board based on r9a09g056n48";
-+	compatible = "renesas,rzv2n-evk", "renesas,r9a09g056n48", "renesas,r9a09g056";
-+
-+	aliases {
-+		mmc1 = &sdhi1;
-+		serial0 = &scif;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x1 0xf8000000>;
-+	};
-+
-+	reg_3p3v: regulator-3p3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vqmmc_sdhi1: regulator-vqmmc-sdhi1 {
-+		compatible = "regulator-gpio";
-+		regulator-name = "SDHI1 VqmmC";
-+		gpios = <&pinctrl RZV2N_GPIO(A, 2) GPIO_ACTIVE_HIGH>;
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpios-states = <0>;
-+		states = <3300000 0>, <1800000 1>;
-+	};
-+};
-+
-+&audio_extal_clk {
-+	clock-frequency = <22579200>;
-+};
-+
-+&pinctrl {
-+	scif_pins: scif {
-+		pins = "SCIF_TXD", "SCIF_RXD";
-+		renesas,output-impedance = <1>;
-+	};
-+
-+	sd1-pwr-en-hog {
-+		gpio-hog;
-+		gpios = <RZV2N_GPIO(A, 3) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "sd1_pwr_en";
-+	};
-+
-+	sdhi1_pins: sd1 {
-+		sd1-cd {
-+			pinmux = <RZV2N_PORT_PINMUX(9, 4, 14)>; /* SD1_CD */
-+		};
-+
-+		sd1-clk {
-+			pins = "SD1CLK";
-+			renesas,output-impedance = <3>;
-+			slew-rate = <0>;
-+		};
-+
-+		sd1-dat-cmd {
-+			pins = "SD1DAT0", "SD1DAT1", "SD1DAT2", "SD1DAT3", "SD1CMD";
-+			input-enable;
-+			renesas,output-impedance = <3>;
-+			slew-rate = <0>;
-+		};
-+	};
-+};
-+
-+&qextal_clk {
-+	clock-frequency = <24000000>;
-+};
-+
-+&rtxin_clk {
-+	clock-frequency = <32768>;
-+};
-+
-+&scif {
-+	pinctrl-0 = <&scif_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&sdhi1 {
-+	pinctrl-0 = <&sdhi1_pins>;
-+	pinctrl-1 = <&sdhi1_pins>;
-+	pinctrl-names = "default", "state_uhs";
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&vqmmc_sdhi1>;
-+	bus-width = <4>;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
-+	status = "okay";
-+};
+* Updated CVEs
+
+CVE-2025-38627: f2fs: compress: fix UAF of f2fs_inode_info in f2fs_free_dic
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [5d604d40cd3232b09cb339941ef958e49283ed0a]
+
+CVE-2025-38643: wifi: cfg80211: Add missing lock in cfg80211_check_and_end_cac()
+
+stable/6.6 was fixed.
+
+Fixed status
+stable/6.6: [b3d24038eb775f2f7a1dfef58d8e1dc444a12820]
+
+
+Regards,
 -- 
-2.51.0
+Masami Ichikawa
+Cybertrust Japan Co., Ltd.
 
+Email :masami.ichikawa@cybertrust.co.jp
+          :masami.ichikawa@miraclelinux.com
 
