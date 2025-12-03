@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD15D15D9A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DACD4D15D96
 	for <webhook@archiver.kernel.org>; Wed,  3 Dec 2025 15:38:27 +0000 (UTC)
 Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
  by mx.groups.io with SMTP id smtpd.msgproc01-g2.18215.1764776292894303297
  for <cip-dev@lists.cip-project.org>;
- Wed, 03 Dec 2025 07:38:19 -0800
+ Wed, 03 Dec 2025 07:38:17 -0800
 Authentication-Results: mx.groups.io;
  dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: hpgvIgBQTEefAB69RiWNjQ==
-X-CSE-MsgGUID: PhVOljljQe6HyQ1ncFpSnQ==
+X-CSE-ConnectionGUID: qHcYiUQiRi27QMVLiNme8g==
+X-CSE-MsgGUID: +RtAQOypQFKzcMWbNDGCwQ==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 04 Dec 2025 00:38:19 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 04 Dec 2025 00:38:17 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.93.82])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id E0EF440138F5;
-	Thu,  4 Dec 2025 00:38:17 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 21C4A401008C;
+	Thu,  4 Dec 2025 00:38:15 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@denx.de,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.1.y-cip 11/12] arm64: dts: renesas: Add initial device tree for RZ/V2N EVK
-Date: Wed,  3 Dec 2025 15:37:56 +0000
-Message-ID: <20251203153757.32977-12-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.1.y-cip 10/12] arm64: dts: renesas: Add initial SoC DTSI for RZ/V2N
+Date: Wed,  3 Dec 2025 15:37:55 +0000
+Message-ID: <20251203153757.32977-11-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251203153757.32977-1-ovidiu.panait.rb@renesas.com>
 References: <20251203153757.32977-1-ovidiu.panait.rb@renesas.com>
@@ -33,165 +33,321 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 03 Dec 2025 15:38:27 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20824
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20823
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 1a42724ac93535a3aa23a60cbb89ce2635b5075c upstream.
+commit 74e252ac272df5a1b468ebf9fb72a25dc38b9b1b upstream.
 
-Add the initial device tree for the Renesas RZ/V2N EVK board, based on
-the R9A09G056N48 SoC. Enable basic board functionality, including:
-  - Memory mapping (reserve the first 128MB for the secure area)
-  - Clock inputs (QEXTAL, RTXIN, AUDIO_EXTAL)
-  - PINCTRL configurations for peripherals
-  - Serial console (SCIF)
-  - SDHI1 with power control and UHS modes
-
-Update the Makefile to include the new DTB.
+Add the initial Device Tree Source Include (DTSI) file for the Renesas
+RZ/V2N (R9A09G056) SoC. Include support for the following components:
+  - CPU (Cortex-A55 cores with operating points)
+  - External clocks (audio, qextal, rtxin)
+  - Pin controller (GPIO support)
+  - Clock Pulse Generator (CPG)
+  - System controller (SYS)
+  - Serial Communication Interface (SCIF)
+  - Secure Digital Host Interface (SDHI 0/1/2)
+  - Generic Interrupt Controller (GIC)
+  - ARMv8 timer
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20250407191628.323613-13-prabhakar.mahadev-lad.rj@bp.renesas.com
+Link: https://lore.kernel.org/20250407191628.323613-12-prabhakar.mahadev-lad.rj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/Makefile          |   2 +
- .../dts/renesas/r9a09g056n48-rzv2n-evk.dts    | 114 ++++++++++++++++++
- 2 files changed, 116 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
+ arch/arm64/boot/dts/renesas/r9a09g056.dtsi | 282 +++++++++++++++++++++
+ 1 file changed, 282 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a09g056.dtsi
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 76a59db5f862..14a8255ae878 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -91,6 +91,8 @@ dtb-$(CONFIG_ARCH_R9A09G011) += r9a09g011-v2mevk2.dtb
- 
- dtb-$(CONFIG_ARCH_R9A09G047) += r9a09g047e57-smarc.dtb
- 
-+dtb-$(CONFIG_ARCH_R9A09G056) += r9a09g056n48-rzv2n-evk.dtb
-+
- dtb-$(CONFIG_ARCH_R9A09G057) += r9a09g057h44-rzv2h-evk.dtb
- dtb-$(CONFIG_ARCH_R9A09G057) += rzv2-evk-cn15-emmc.dtbo
- r9a09g057h44-rzv2h-evk-cn15-emmc-dtbs := r9a09g057h44-rzv2h-evk.dtb rzv2-evk-cn15-emmc.dtbo
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
 new file mode 100644
-index 000000000000..24343fce7f53
+index 000000000000..90964bd864cc
 --- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-@@ -0,0 +1,114 @@
++++ b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
+@@ -0,0 +1,282 @@
 +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +/*
-+ * Device Tree Source for the RZ/V2N EVK board
++ * Device Tree Source for the RZ/V2N SoC
 + *
 + * Copyright (C) 2025 Renesas Electronics Corp.
 + */
 +
-+/dts-v1/;
++#include <dt-bindings/clock/renesas,r9a09g056-cpg.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
 +
-+#include <dt-bindings/gpio/gpio.h>
-+#include "r9a09g056.dtsi"
++/* RZV2N_Px = Offset address of PFC_P_mn  - 0x20 */
++#define RZV2N_P0	0
++#define RZV2N_P1	1
++#define RZV2N_P2	2
++#define RZV2N_P3	3
++#define RZV2N_P4	4
++#define RZV2N_P5	5
++#define RZV2N_P6	6
++#define RZV2N_P7	7
++#define RZV2N_P8	8
++#define RZV2N_P9	9
++#define RZV2N_PA	10
++#define RZV2N_PB	11
++
++#define RZV2N_PORT_PINMUX(b, p, f)	RZG2L_PORT_PINMUX(RZV2N_P##b, p, f)
++#define RZV2N_GPIO(port, pin)		RZG2L_GPIO(RZV2N_P##port, pin)
 +
 +/ {
-+	model = "Renesas RZ/V2N EVK Board based on r9a09g056n48";
-+	compatible = "renesas,rzv2n-evk", "renesas,r9a09g056n48", "renesas,r9a09g056";
++	compatible = "renesas,r9a09g056";
++	#address-cells = <2>;
++	#size-cells = <2>;
 +
-+	aliases {
-+		mmc1 = &sdhi1;
-+		serial0 = &scif;
++	audio_extal_clk: audio-clk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
 +	};
 +
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial0:115200n8";
-+	};
++	/*
++	 * The default cluster table is based on the assumption that the PLLCA55 clock
++	 * frequency is set to 1.7GHz. The PLLCA55 clock frequency can be set to
++	 * 1.7/1.6/1.5/1.1 GHz based on the BOOTPLLCA_0/1 pins (and additionally can be
++	 * clocked to 1.8GHz as well). The table below should be overridden in the board
++	 * DTS based on the PLLCA55 clock frequency.
++	 */
++	cluster0_opp: opp-table-0 {
++		compatible = "operating-points-v2";
 +
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x1 0xf8000000>;
-+	};
-+
-+	reg_3p3v: regulator-3p3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vqmmc_sdhi1: regulator-vqmmc-sdhi1 {
-+		compatible = "regulator-gpio";
-+		regulator-name = "SDHI1 VqmmC";
-+		gpios = <&pinctrl RZV2N_GPIO(A, 2) GPIO_ACTIVE_HIGH>;
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpios-states = <0>;
-+		states = <3300000 0>, <1800000 1>;
-+	};
-+};
-+
-+&audio_extal_clk {
-+	clock-frequency = <22579200>;
-+};
-+
-+&pinctrl {
-+	scif_pins: scif {
-+		pins = "SCIF_TXD", "SCIF_RXD";
-+		renesas,output-impedance = <1>;
-+	};
-+
-+	sd1-pwr-en-hog {
-+		gpio-hog;
-+		gpios = <RZV2N_GPIO(A, 3) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "sd1_pwr_en";
-+	};
-+
-+	sdhi1_pins: sd1 {
-+		sd1-cd {
-+			pinmux = <RZV2N_PORT_PINMUX(9, 4, 14)>; /* SD1_CD */
++		opp-1700000000 {
++			opp-hz = /bits/ 64 <1700000000>;
++			opp-microvolt = <900000>;
++			clock-latency-ns = <300000>;
 +		};
-+
-+		sd1-clk {
-+			pins = "SD1CLK";
-+			renesas,output-impedance = <3>;
-+			slew-rate = <0>;
++		opp-850000000 {
++			opp-hz = /bits/ 64 <850000000>;
++			opp-microvolt = <800000>;
++			clock-latency-ns = <300000>;
 +		};
-+
-+		sd1-dat-cmd {
-+			pins = "SD1DAT0", "SD1DAT1", "SD1DAT2", "SD1DAT3", "SD1CMD";
-+			input-enable;
-+			renesas,output-impedance = <3>;
-+			slew-rate = <0>;
++		opp-425000000 {
++			opp-hz = /bits/ 64 <425000000>;
++			opp-microvolt = <800000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-212500000 {
++			opp-hz = /bits/ 64 <212500000>;
++			opp-microvolt = <800000>;
++			clock-latency-ns = <300000>;
++			opp-suspend;
 +		};
 +	};
-+};
 +
-+&qextal_clk {
-+	clock-frequency = <24000000>;
-+};
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+&rtxin_clk {
-+	clock-frequency = <32768>;
-+};
++		cpu0: cpu@0 {
++			compatible = "arm,cortex-a55";
++			reg = <0>;
++			device_type = "cpu";
++			next-level-cache = <&L3_CA55>;
++			enable-method = "psci";
++			clocks = <&cpg CPG_CORE R9A09G056_CA55_0_CORE_CLK0>;
++			operating-points-v2 = <&cluster0_opp>;
++		};
 +
-+&scif {
-+	pinctrl-0 = <&scif_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
++		cpu1: cpu@100 {
++			compatible = "arm,cortex-a55";
++			reg = <0x100>;
++			device_type = "cpu";
++			next-level-cache = <&L3_CA55>;
++			enable-method = "psci";
++			clocks = <&cpg CPG_CORE R9A09G056_CA55_0_CORE_CLK1>;
++			operating-points-v2 = <&cluster0_opp>;
++		};
 +
-+&sdhi1 {
-+	pinctrl-0 = <&sdhi1_pins>;
-+	pinctrl-1 = <&sdhi1_pins>;
-+	pinctrl-names = "default", "state_uhs";
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&vqmmc_sdhi1>;
-+	bus-width = <4>;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
-+	status = "okay";
++		cpu2: cpu@200 {
++			compatible = "arm,cortex-a55";
++			reg = <0x200>;
++			device_type = "cpu";
++			next-level-cache = <&L3_CA55>;
++			enable-method = "psci";
++			clocks = <&cpg CPG_CORE R9A09G056_CA55_0_CORE_CLK2>;
++			operating-points-v2 = <&cluster0_opp>;
++		};
++
++		cpu3: cpu@300 {
++			compatible = "arm,cortex-a55";
++			reg = <0x300>;
++			device_type = "cpu";
++			next-level-cache = <&L3_CA55>;
++			enable-method = "psci";
++			clocks = <&cpg CPG_CORE R9A09G056_CA55_0_CORE_CLK3>;
++			operating-points-v2 = <&cluster0_opp>;
++		};
++
++		L3_CA55: cache-controller-0 {
++			compatible = "cache";
++			cache-unified;
++			cache-size = <0x100000>;
++			cache-level = <3>;
++		};
++	};
++
++	psci {
++		compatible = "arm,psci-1.0", "arm,psci-0.2";
++		method = "smc";
++	};
++
++	qextal_clk: qextal-clk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
++
++	rtxin_clk: rtxin-clk {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board */
++		clock-frequency = <0>;
++	};
++
++	soc: soc {
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		pinctrl: pinctrl@10410000 {
++			compatible = "renesas,r9a09g056-pinctrl";
++			reg = <0 0x10410000 0 0x10000>;
++			clocks = <&cpg CPG_CORE R9A09G056_IOTOP_0_SHCLK>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&pinctrl 0 0 96>;
++			power-domains = <&cpg>;
++			resets = <&cpg 0xa5>, <&cpg 0xa6>;
++		};
++
++		cpg: clock-controller@10420000 {
++			compatible = "renesas,r9a09g056-cpg";
++			reg = <0 0x10420000 0 0x10000>;
++			clocks = <&audio_extal_clk>, <&rtxin_clk>, <&qextal_clk>;
++			clock-names = "audio_extal", "rtxin", "qextal";
++			#clock-cells = <2>;
++			#reset-cells = <1>;
++			#power-domain-cells = <0>;
++		};
++
++		sys: system-controller@10430000 {
++			compatible = "renesas,r9a09g056-sys";
++			reg = <0 0x10430000 0 0x10000>;
++			clocks = <&cpg CPG_CORE R9A09G056_SYS_0_PCLK>;
++			resets = <&cpg 0x30>;
++		};
++
++		scif: serial@11c01400 {
++			compatible = "renesas,scif-r9a09g056",
++				     "renesas,scif-r9a09g057";
++			reg = <0 0x11c01400 0 0x400>;
++			interrupts = <GIC_SPI 529 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 532 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 533 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 530 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 534 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 531 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 535 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 536 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 537 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "eri", "rxi", "txi", "bri", "dri",
++					  "tei", "tei-dri", "rxi-edge", "txi-edge";
++			clocks = <&cpg CPG_MOD 0x8f>;
++			clock-names = "fck";
++			power-domains = <&cpg>;
++			resets = <&cpg 0x95>;
++			status = "disabled";
++		};
++
++		gic: interrupt-controller@14900000 {
++			compatible = "arm,gic-v3";
++			reg = <0x0 0x14900000 0 0x20000>,
++			      <0x0 0x14940000 0 0x80000>;
++			#interrupt-cells = <3>;
++			#address-cells = <0>;
++			interrupt-controller;
++			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_LOW>;
++		};
++
++		sdhi0: mmc@15c00000  {
++			compatible = "renesas,sdhi-r9a09g056", "renesas,sdhi-r9a09g057";
++			reg = <0x0 0x15c00000 0 0x10000>;
++			interrupts = <GIC_SPI 735 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 736 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 0xa3>, <&cpg CPG_MOD 0xa5>,
++				 <&cpg CPG_MOD 0xa4>, <&cpg CPG_MOD 0xa6>;
++			clock-names = "core", "clkh", "cd", "aclk";
++			resets = <&cpg 0xa7>;
++			power-domains = <&cpg>;
++			status = "disabled";
++
++			sdhi0_vqmmc: vqmmc-regulator {
++				regulator-name = "SDHI0-VQMMC";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3300000>;
++				status = "disabled";
++			};
++		};
++
++		sdhi1: mmc@15c10000 {
++			compatible = "renesas,sdhi-r9a09g056", "renesas,sdhi-r9a09g057";
++			reg = <0x0 0x15c10000 0 0x10000>;
++			interrupts = <GIC_SPI 737 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 738 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 0xa7>, <&cpg CPG_MOD 0xa9>,
++				 <&cpg CPG_MOD 0xa8>, <&cpg CPG_MOD 0xaa>;
++			clock-names = "core", "clkh", "cd", "aclk";
++			resets = <&cpg 0xa8>;
++			power-domains = <&cpg>;
++			status = "disabled";
++
++			sdhi1_vqmmc: vqmmc-regulator {
++				regulator-name = "SDHI1-VQMMC";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3300000>;
++				status = "disabled";
++			};
++		};
++
++		sdhi2: mmc@15c20000 {
++			compatible = "renesas,sdhi-r9a09g056", "renesas,sdhi-r9a09g057";
++			reg = <0x0 0x15c20000 0 0x10000>;
++			interrupts = <GIC_SPI 739 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 740 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 0xab>, <&cpg CPG_MOD 0xad>,
++				 <&cpg CPG_MOD 0xac>, <&cpg CPG_MOD 0xae>;
++			clock-names = "core", "clkh", "cd", "aclk";
++			resets = <&cpg 0xa9>;
++			power-domains = <&cpg>;
++			status = "disabled";
++
++			sdhi2_vqmmc: vqmmc-regulator {
++				regulator-name = "SDHI2-VQMMC";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <3300000>;
++				status = "disabled";
++			};
++		};
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts-extended = <&gic GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
++				      <&gic GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
++				      <&gic GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
++				      <&gic GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>,
++				      <&gic GIC_PPI 12 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-names = "sec-phys", "phys", "virt", "hyp-phys", "hyp-virt";
++	};
 +};
 -- 
 2.51.0
