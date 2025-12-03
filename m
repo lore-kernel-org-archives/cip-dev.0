@@ -2,28 +2,28 @@ Return-Path: <ovidiu.panait.rb@renesas.com>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F172FD15DA7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6430D15D9D
 	for <webhook@archiver.kernel.org>; Wed,  3 Dec 2025 15:41:17 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlie6.idc.renesas.com [210.160.252.172])
- by mx.groups.io with SMTP id smtpd.msgproc01-g2.18297.1764776463748732008
+Received: from relmlie5.idc.renesas.com (relmlie5.idc.renesas.com [210.160.252.171])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.18296.1764776461970046583
  for <cip-dev@lists.cip-project.org>;
- Wed, 03 Dec 2025 07:41:12 -0800
+ Wed, 03 Dec 2025 07:41:10 -0800
 Authentication-Results: mx.groups.io;
- dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.172, mailfrom: ovidiu.panait.rb@renesas.com)
-X-CSE-ConnectionGUID: y8ARhvldQw2xjKr9rVyTTQ==
-X-CSE-MsgGUID: Fn3sQn4lTkmbViPeRt5i4A==
+ dkim=none (message not signed); spf=pass (domain: renesas.com, ip: 210.160.252.171, mailfrom: ovidiu.panait.rb@renesas.com)
+X-CSE-ConnectionGUID: 06zDWaL6SwGStgcj0ti04w==
+X-CSE-MsgGUID: xinQtl6pQ/GmsURNBSpm2A==
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 04 Dec 2025 00:41:11 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 04 Dec 2025 00:41:10 +0900
 Received: from vm01.adwin.renesas.com (unknown [10.226.93.82])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id BF065400CD10;
-	Thu,  4 Dec 2025 00:41:10 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0B236400CD06;
+	Thu,  4 Dec 2025 00:41:08 +0900 (JST)
 From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 To: cip-dev@lists.cip-project.org,
 	pavel@denx.de,
 	nobuhiro.iwamatsu.x90@mail.toshiba
-Subject: [PATCH 6.12.y-cip 06/11] dt-bindings: mmc: renesas,sdhi: Document RZ/V2N support
-Date: Wed,  3 Dec 2025 15:40:53 +0000
-Message-ID: <20251203154058.33022-7-ovidiu.panait.rb@renesas.com>
+Subject: [PATCH 6.12.y-cip 05/11] dt-bindings: serial: renesas: Document RZ/V2N SCIF
+Date: Wed,  3 Dec 2025 15:40:52 +0000
+Message-ID: <20251203154058.33022-6-ovidiu.panait.rb@renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251203154058.33022-1-ovidiu.panait.rb@renesas.com>
 References: <20251203154058.33022-1-ovidiu.panait.rb@renesas.com>
@@ -33,39 +33,37 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Wed, 03 Dec 2025 15:41:17 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20832
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20831
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-commit 8e127dbbf6c363e6b4bb486d631d936fd6d1646d upstream.
+commit 5eb2d4b3e9a19f08e0ccbb81e0fbfa61de229345 upstream.
 
-Add SDHI bindings for the Renesas RZ/V2N (a.k.a R9A09G056) SoC. Use
-`renesas,sdhi-r9a09g057` as a fallback since the SD/MMC block on
-RZ/V2N is identical to the one on RZ/V2H(P), allowing reuse of the
-existing driver without modifications.
+Document SCIF bindings for the Renesas RZ/V2N (a.k.a R9A09G056) SoC.
+The SCIF interface in Renesas RZ/V2N is identical to the one available
+in RZ/V2H(P), so `renesas,scif-r9a09g057` will be used as a fallback,
+allowing reuse of the existing driver without modifications.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
-Link: https://lore.kernel.org/r/20250326143945.82142-8-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Acked-by: "Rob Herring (Arm)" <robh@kernel.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20250716202923.163950-1-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
 ---
- Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/serial/renesas,scif.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
-index 773baa6c2656..7563623876fc 100644
---- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
-+++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
-@@ -69,7 +69,9 @@ properties:
-               - renesas,sdhi-r9a09g011 # RZ/V2M
-           - const: renesas,rzg2l-sdhi
+diff --git a/Documentation/devicetree/bindings/serial/renesas,scif.yaml b/Documentation/devicetree/bindings/serial/renesas,scif.yaml
+index 8e82999e6acb..24819b204ebf 100644
+--- a/Documentation/devicetree/bindings/serial/renesas,scif.yaml
++++ b/Documentation/devicetree/bindings/serial/renesas,scif.yaml
+@@ -86,6 +86,7 @@ properties:
        - items:
--          - const: renesas,sdhi-r9a09g047 # RZ/G3E
-+          - enum:
-+              - renesas,sdhi-r9a09g047 # RZ/G3E
-+              - renesas,sdhi-r9a09g056 # RZ/V2N
-           - const: renesas,sdhi-r9a09g057 # RZ/V2H(P)
+           - enum:
+               - renesas,scif-r9a09g047      # RZ/G3E
++              - renesas,scif-r9a09g056      # RZ/V2N
+           - const: renesas,scif-r9a09g057   # RZ/V2H fallback
  
    reg:
 -- 
