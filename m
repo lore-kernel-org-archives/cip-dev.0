@@ -2,67 +2,67 @@ Return-Path: <claudiu.beznea@tuxon.dev>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71BF3D2447E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AE7DD29F82
 	for <webhook@archiver.kernel.org>; Thu,  4 Dec 2025 18:14:38 +0000 (UTC)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
- by mx.groups.io with SMTP id smtpd.msgproc02-g2.50485.1764872072307327471
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+ by mx.groups.io with SMTP id smtpd.msgproc01-g2.50797.1764872076271550928
  for <cip-dev@lists.cip-project.org>;
- Thu, 04 Dec 2025 10:14:32 -0800
+ Thu, 04 Dec 2025 10:14:36 -0800
 Authentication-Results: mx.groups.io;
- dkim=pass header.i=@tuxon.dev header.s=google header.b=LzL2yEQt;
- spf=pass (domain: tuxon.dev, ip: 209.85.128.53, mailfrom: claudiu.beznea@tuxon.dev)
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-47798ded6fcso10235735e9.1
-        for <cip-dev@lists.cip-project.org>; Thu, 04 Dec 2025 10:14:32 -0800 (PST)
+ dkim=pass header.i=@tuxon.dev header.s=google header.b=f3tfc9iN;
+ spf=pass (domain: tuxon.dev, ip: 209.85.221.51, mailfrom: claudiu.beznea@tuxon.dev)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-42e2e50c233so602170f8f.3
+        for <cip-dev@lists.cip-project.org>; Thu, 04 Dec 2025 10:14:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1764872071; x=1765476871; darn=lists.cip-project.org;
+        d=tuxon.dev; s=google; t=1764872075; x=1765476875; darn=lists.cip-project.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sDwIf690mBDD3ESyYhSAiPClEx3RAxlnO+oLPXQ4tjM=;
-        b=LzL2yEQtFYADN0CwatyjO5ZZL+U3L2I80dpQWDFu5EkFdgBt9MvBqkMBv3rAzyd/Kh
-         7OhxIfEk2yJXH7g/0YIYSGkZXWaY8oZWcCr+7a4+Ree1X1xvBaRQFneNetBAqkIL02rh
-         TCIv3wdkehWDIhnSoYrm1ycW8RfvDXLj6Vf4bhG7oLzjB+nDTzCdjhEWb8K+6EJIEJmz
-         wEu4RG1AoHXIHUlX9eKSH+Fog6GfoCN6S/KrO6AViVV0YfJZxvFr/Ll4fkgQEkjR0i7M
-         /n5M08jFrLhJsJeJFl9kBYU8gyihM4qwiDu/vWqAvRcmklOA0mdNGqVQkErs9U5+c0Jm
-         jI4Q==
+        bh=7dbvLSCHcbTpL8b0fsyrawrZ/QktSuWRfM/tVSTnSWA=;
+        b=f3tfc9iNNsdt6HHR4Tvc+4bjCS53+efqvfoKJ6doWz83hWjJuOChDSm2Dk5CuIOMEJ
+         ycjhkQERqUuq4X2rrM9bFjNYEqw9HjxZxulC9G97XALAJbh+uTloK6zfWYcwFLvgMSJ6
+         YX/ScqVK3GN+dPYurxOH91AHmMUDWHQI48zoIC1GOq3/BcAZnNi8lbhgZWJ1gcZIDZlj
+         unoWI8r33lsaESbuoUJ3fPPqPSCgiq06Ic8p0if0UE10VKnxtpsOGWK4hSIXnUYaCG/M
+         oKBWXO030uFDwo1iMuToDWIjqCJbyuQyJXq3yLd7+KJvZQ2ud7awtgsqBmhmdgNmjcob
+         M74g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764872071; x=1765476871;
+        d=1e100.net; s=20230601; t=1764872075; x=1765476875;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=sDwIf690mBDD3ESyYhSAiPClEx3RAxlnO+oLPXQ4tjM=;
-        b=pMFWey0V5AFP6khVrzPiqbHrKbM84nGwD2ekajjGOEd2yXc6uNfVljrAbN741fmZS7
-         8vg6K5JSPfOj3xcQhjhYu/OXUK2okoMAVOP+5Kwynbz/JnGt5VzgXq2odvGEIzeOBnd8
-         XYJJFqD63WeOOtnji9cC2NQstpJGXXIfLoaL5BJXx4V3Fe+IU3Rj/SxI+kZ8j5ODH9OR
-         hF09Z8jRjTq9VUCYd6F1efJv3HQDE3HQ7KT9HiFedzbIgh5nnGR0ZbFJM2qGsyZW7p6+
-         44Yvt3DDmTzkBmg/1+0GmMuSrViI0elwkfIAyYVM7dMbKNmp+MK3ZAftBjCr9JLqw0ja
-         fsKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAzz3OtWxwlN3v3lBTbygwzA1M9AVBLhKACU4StounV2oT+3NKbxYlLbWR1ciVEzsLa/nZKrQT@lists.cip-project.org
-X-Gm-Message-State: AOJu0YzU7sy0GT3ZIRZYppDBoTI9Oa+xvndKCojYlJjSnhIoLekvK1VD
-	OPjA2JYTX1W3YJY/6KtrqBADZd1SZpfxvuPzFMXEKPrHx9wKJyBx7hx0lfMzfKQs2r4=
-X-Gm-Gg: ASbGnctOiXNcUYn/Cc972i04j8Lmzuw6sfJ+96bI30CgAG4hGVRiManS1HXeROEXM/r
-	cVnwRhzLkJi1GMDQbpPZDFhQpeWz1mGbfWtADDHgvPRw9VPx1Y65lXnz1JFh4yocGEKnbxBgzQn
-	2DDgmS0//fN+399FEBfI+gNTtjmwRvOOyhyokfTnaiSKWyRnyEuBlka1J4Xp98v0rBEZOflMJ8i
-	9Esszj7exSe7pOOey21IVgqCW2DmiM5OI+fo1sxzgz7y04BVBviIJDcpJqPUyj3QifN7kaZs9ZK
-	YPuqo+lV3QGxP5WXjAbo/2nTnMYFbQgy3nQinPM0VzvzD4b6J6GYHf3KctEZBBD6jS9nBGSkqla
-	EcuR4XwSKLsvosr8RIvqIpCYZ3Ey2X70O4NxKa++7o74xBZVUf2YrYXI0tOOrCqVNr4rZ7vSa+p
-	HAGbaGYel2mOveLUcnIhL+rNUy1vilOaMjsVmWNQr6
-X-Google-Smtp-Source: AGHT+IFxX99j49SArKTC/oSlQ4iaJ4rrJukHpJN/oG257b43tiri7BjNeMRAphruS1UThuMGSb4fnw==
-X-Received: by 2002:a05:6000:4203:b0:429:8d0f:e92 with SMTP id ffacd0b85a97d-42f7317453fmr7669666f8f.6.1764872070723;
-        Thu, 04 Dec 2025 10:14:30 -0800 (PST)
+        bh=7dbvLSCHcbTpL8b0fsyrawrZ/QktSuWRfM/tVSTnSWA=;
+        b=kYfXL/goUInKvpB+eV3Zib0gyU2WEalb22kElqSs/5vmmvf+v6PBazIgrY+4Dvpoiq
+         rMTJyBK0VtzmNX1rjXGZ4VjWGGY94uyKxf8fAs/1dV4EjLQ2FnQxkpkFdgtfG8ThjF3C
+         Of0PhFh7dMaKHFSTEf0aUPD36IX7fQQ2NqVPrWEN4FRobY2utwkNHyOcMkYAn5L77JgN
+         jSOT1f+rWeaBx7XgmF30itPjh7CUJpXn+hNRfXkC3oNeUI9oUoZ+Vk3L6gRBafAl7opM
+         vz5Ya6KzCITGrYjDsSZjTPdN9zNvoZ7V+lRfssk7hL41UIDssEgSxfRIxz2bb0enps9P
+         6g0A==
+X-Forwarded-Encrypted: i=1; AJvYcCWpLAgFJ2/D77s8ju0UgISYkVMltWbFtDxnM2AWBDmK2S4ZShvLnToGAsncO731yOFL+nsF2QUL@lists.cip-project.org
+X-Gm-Message-State: AOJu0YwrXY9CN92v6eRgOrd+5m0hoakazYyHqQTczUMwqWFfG12jMq63
+	m9uBTje6b6NJn32BLosYnts5oNqLkPPduQd9uxZPTmH3GTQ5Rx6wgwK94ZCloH4b/zQ=
+X-Gm-Gg: ASbGncvzTBQbXeoClr0zuktxzaVznEhk0k/jiWrQ1gOVcxie21G7DRGSwJiKBbshepp
+	qosxqivQTD/EQlgE75lnQipWA0hVjQ406aymn/5HUQzI6KwY29ijNKhV7t2LLzQk51q+p54Svkw
+	TWxsqvBCvS8eQdSX48vzAuRiZP5exWLRYSWbk8uxbSIMgu/+oNuLJxSpB+tmx1vg1v2w7Ru7Tq+
+	SZWgJxbj91v2dMddw19dcVXv8+mgAValL6oEECwpp55s/KfJgB9pcvYOzQbiUKUWxgLAL9ECoyo
+	0JMr4Cs3hogV0hvXz/ImKBtiowyCP524vy+V/QTHIbvQRwMmydImAlbvChACMMsqaH7XGQE1C/C
+	0OC5FwK+cEOb19hwTRofzcsjKTHsDK5TZt9WUpcEuJiAN9E0ZU6ZHTHa3u+Qw8t3fT8EblGcT20
+	fUhfrs0/HMxFnTpPtkA5Vl+bBXpRZcgTJJ638a2iNB
+X-Google-Smtp-Source: AGHT+IEwYVhTbOMsM3wpvcORUwekDMjwPLAgEWcBUzmKrHjZ+stvYuCJst9wQHfN3DPN/q0gJUturQ==
+X-Received: by 2002:a5d:650d:0:b0:42b:3a1b:f700 with SMTP id ffacd0b85a97d-42f73179196mr6334519f8f.20.1764872074549;
+        Thu, 04 Dec 2025 10:14:34 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42f7cc090bdsm4381629f8f.19.2025.12.04.10.14.29
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42f7cc090bdsm4381629f8f.19.2025.12.04.10.14.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Dec 2025 10:14:30 -0800 (PST)
+        Thu, 04 Dec 2025 10:14:34 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: nobuhiro1.iwamatsu@toshiba.co.jp,
 	pavel@denx.de
 Cc: claudiu.beznea@tuxon.dev,
 	cip-dev@lists.cip-project.org
-Subject: [PATCH 5.10.y-cip v2 11/18] clk: renesas: rzg2l: Move pointers after hw member
-Date: Thu,  4 Dec 2025 20:14:08 +0200
-Message-ID: <20251204181415.689009-12-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 5.10.y-cip v2 14/18] clk: renesas: r9a08g045: Drop power domain instantiation
+Date: Thu,  4 Dec 2025 20:14:11 +0200
+Message-ID: <20251204181415.689009-15-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251204181415.689009-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20251204181415.689009-1-claudiu.beznea.uj@bp.renesas.com>
@@ -72,54 +72,169 @@ List-Id: <cip-dev.lists.cip-project.org>
 X-Webhook-Received: from 45-33-107-173.ip.linodeusercontent.com [45.33.107.173] by
  aws-us-west-2-korg-lkml-1.web.codeaurora.org with HTTPS for
  <cip-dev@lists.cip-project.org>; Thu, 04 Dec 2025 18:14:38 -0000
-X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20858
+X-Groupsio-URL: https://lists.cip-project.org/g/cip-dev/message/20860
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-commit a68ea80f85bbf7b69f69ef9e17e3e1be14d948c8 upstream.
+commit c4969595274609055c71cbe831c2989361730876 upstream.
 
-Reorder the pointer members in struct mstp_clock so they appear immediately
-after the hw member. This helps avoid potential padding and eliminates the
-need for any calculations in the to_mod_clock() macro. As struct clk_hw
-currently contains only pointers, placing it first also avoids padding.
+Since the configuration order between the individual MSTOP and CLKON
+bits cannot be preserved with the power domain abstraction, drop the
+power domain instantiations.
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Link: https://lore.kernel.org/20250514090415.4098534-3-claudiu.beznea.uj@bp.renesas.com
+Link: https://lore.kernel.org/20250527112403.1254122-6-claudiu.beznea.uj@bp.renesas.com
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[claudiu.beznea: dropped USB and TSU clocks as these are not integrated
+ in v5.10 CIP]
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/renesas/r9a08g045-cpg.c | 126 ++++++++++++++++++----------
+ 1 file changed, 84 insertions(+), 42 deletions(-)
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index a6812257bf1e..fa6f9c9f4f5b 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -1183,19 +1183,19 @@ rzg2l_cpg_register_core_clk(const struct cpg_core_clk *core,
-  * struct mstp_clock - MSTP gating clock
-  *
-  * @hw: handle between common and hardware-specific interfaces
-+ * @priv: CPG/MSTP private data
-+ * @sibling: pointer to the other coupled clock
-  * @off: register offset
-  * @bit: ON/MON bit
-  * @enabled: soft state of the clock, if it is coupled with another clock
-- * @priv: CPG/MSTP private data
-- * @sibling: pointer to the other coupled clock
-  */
- struct mstp_clock {
- 	struct clk_hw hw;
-+	struct rzg2l_cpg_priv *priv;
-+	struct mstp_clock *sibling;
- 	u16 off;
- 	u8 bit;
- 	bool enabled;
--	struct rzg2l_cpg_priv *priv;
--	struct mstp_clock *sibling;
+diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
+index a1e09b1214fc..f5f0ddca4b8b 100644
+--- a/drivers/clk/renesas/r9a08g045-cpg.c
++++ b/drivers/clk/renesas/r9a08g045-cpg.c
+@@ -190,53 +190,95 @@ static const struct cpg_core_clk r9a08g045_core_clks[] __initconst = {
  };
  
- #define to_mod_clock(_hw) container_of(_hw, struct mstp_clock, hw)
+ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
+-	DEF_MOD("gic_gicclk",		R9A08G045_GIC600_GICCLK, R9A08G045_CLK_P1, 0x514, 0, 0),
+-	DEF_MOD("ia55_pclk",		R9A08G045_IA55_PCLK, R9A08G045_CLK_P2, 0x518, 0, 0),
+-	DEF_MOD("ia55_clk",		R9A08G045_IA55_CLK, R9A08G045_CLK_P1, 0x518, 1, 0),
+-	DEF_MOD("dmac_aclk",		R9A08G045_DMAC_ACLK, R9A08G045_CLK_P3, 0x52c, 0, 0),
+-	DEF_MOD("dmac_pclk",		R9A08G045_DMAC_PCLK, CLK_P3_DIV2, 0x52c, 1, 0),
+-	DEF_MOD("wdt0_pclk",		R9A08G045_WDT0_PCLK, R9A08G045_CLK_P0, 0x548, 0, 0),
+-	DEF_MOD("wdt0_clk",		R9A08G045_WDT0_CLK, R9A08G045_OSCCLK, 0x548, 1, 0),
+-	DEF_MOD("sdhi0_imclk",		R9A08G045_SDHI0_IMCLK, CLK_SD0_DIV4, 0x554, 0, 0),
+-	DEF_MOD("sdhi0_imclk2",		R9A08G045_SDHI0_IMCLK2, CLK_SD0_DIV4, 0x554, 1, 0),
+-	DEF_MOD("sdhi0_clk_hs",		R9A08G045_SDHI0_CLK_HS, R9A08G045_CLK_SD0, 0x554, 2, 0),
+-	DEF_MOD("sdhi0_aclk",		R9A08G045_SDHI0_ACLK, R9A08G045_CLK_P1, 0x554, 3, 0),
+-	DEF_MOD("sdhi1_imclk",		R9A08G045_SDHI1_IMCLK, CLK_SD1_DIV4, 0x554, 4, 0),
+-	DEF_MOD("sdhi1_imclk2",		R9A08G045_SDHI1_IMCLK2, CLK_SD1_DIV4, 0x554, 5, 0),
+-	DEF_MOD("sdhi1_clk_hs",		R9A08G045_SDHI1_CLK_HS, R9A08G045_CLK_SD1, 0x554, 6, 0),
+-	DEF_MOD("sdhi1_aclk",		R9A08G045_SDHI1_ACLK, R9A08G045_CLK_P1, 0x554, 7, 0),
+-	DEF_MOD("sdhi2_imclk",		R9A08G045_SDHI2_IMCLK, CLK_SD2_DIV4, 0x554, 8, 0),
+-	DEF_MOD("sdhi2_imclk2",		R9A08G045_SDHI2_IMCLK2, CLK_SD2_DIV4, 0x554, 9, 0),
+-	DEF_MOD("sdhi2_clk_hs",		R9A08G045_SDHI2_CLK_HS, R9A08G045_CLK_SD2, 0x554, 10, 0),
+-	DEF_MOD("sdhi2_aclk",		R9A08G045_SDHI2_ACLK, R9A08G045_CLK_P1, 0x554, 11, 0),
+-	DEF_MOD("ssi0_pclk2",		R9A08G045_SSI0_PCLK2, R9A08G045_CLK_P0, 0x570, 0, 0),
+-	DEF_MOD("ssi0_sfr",		R9A08G045_SSI0_PCLK_SFR, R9A08G045_CLK_P0, 0x570, 1, 0),
+-	DEF_MOD("ssi1_pclk2",		R9A08G045_SSI1_PCLK2, R9A08G045_CLK_P0, 0x570, 2, 0),
+-	DEF_MOD("ssi1_sfr",		R9A08G045_SSI1_PCLK_SFR, R9A08G045_CLK_P0, 0x570, 3, 0),
+-	DEF_MOD("ssi2_pclk2",		R9A08G045_SSI2_PCLK2, R9A08G045_CLK_P0, 0x570, 4, 0),
+-	DEF_MOD("ssi2_sfr",		R9A08G045_SSI2_PCLK_SFR, R9A08G045_CLK_P0, 0x570, 5, 0),
+-	DEF_MOD("ssi3_pclk2",		R9A08G045_SSI3_PCLK2, R9A08G045_CLK_P0, 0x570, 6, 0),
+-	DEF_MOD("ssi3_sfr",		R9A08G045_SSI3_PCLK_SFR, R9A08G045_CLK_P0, 0x570, 7, 0),
+-	DEF_COUPLED("eth0_axi",		R9A08G045_ETH0_CLK_AXI, R9A08G045_CLK_M0, 0x57c, 0, 0),
++	DEF_MOD("gic_gicclk",		R9A08G045_GIC600_GICCLK, R9A08G045_CLK_P1, 0x514, 0,
++					MSTOP(BUS_ACPU, BIT(3))),
++	DEF_MOD("ia55_pclk",		R9A08G045_IA55_PCLK, R9A08G045_CLK_P2, 0x518, 0,
++					MSTOP(BUS_PERI_CPU, BIT(13))),
++	DEF_MOD("ia55_clk",		R9A08G045_IA55_CLK, R9A08G045_CLK_P1, 0x518, 1,
++					MSTOP(BUS_PERI_CPU, BIT(13))),
++	DEF_MOD("dmac_aclk",		R9A08G045_DMAC_ACLK, R9A08G045_CLK_P3, 0x52c, 0,
++					MSTOP(BUS_REG1, BIT(2))),
++	DEF_MOD("dmac_pclk",		R9A08G045_DMAC_PCLK, CLK_P3_DIV2, 0x52c, 1,
++					MSTOP(BUS_REG1, BIT(3))),
++	DEF_MOD("wdt0_pclk",		R9A08G045_WDT0_PCLK, R9A08G045_CLK_P0, 0x548, 0,
++					MSTOP(BUS_REG0, BIT(0))),
++	DEF_MOD("wdt0_clk",		R9A08G045_WDT0_CLK, R9A08G045_OSCCLK, 0x548, 1,
++					MSTOP(BUS_REG0, BIT(0))),
++	DEF_MOD("sdhi0_imclk",		R9A08G045_SDHI0_IMCLK, CLK_SD0_DIV4, 0x554, 0,
++					MSTOP(BUS_PERI_COM, BIT(0))),
++	DEF_MOD("sdhi0_imclk2",		R9A08G045_SDHI0_IMCLK2, CLK_SD0_DIV4, 0x554, 1,
++					MSTOP(BUS_PERI_COM, BIT(0))),
++	DEF_MOD("sdhi0_clk_hs",		R9A08G045_SDHI0_CLK_HS, R9A08G045_CLK_SD0, 0x554, 2,
++					MSTOP(BUS_PERI_COM, BIT(0))),
++	DEF_MOD("sdhi0_aclk",		R9A08G045_SDHI0_ACLK, R9A08G045_CLK_P1, 0x554, 3,
++					MSTOP(BUS_PERI_COM, BIT(0))),
++	DEF_MOD("sdhi1_imclk",		R9A08G045_SDHI1_IMCLK, CLK_SD1_DIV4, 0x554, 4,
++					MSTOP(BUS_PERI_COM, BIT(1))),
++	DEF_MOD("sdhi1_imclk2",		R9A08G045_SDHI1_IMCLK2, CLK_SD1_DIV4, 0x554, 5,
++					MSTOP(BUS_PERI_COM, BIT(1))),
++	DEF_MOD("sdhi1_clk_hs",		R9A08G045_SDHI1_CLK_HS, R9A08G045_CLK_SD1, 0x554, 6,
++					MSTOP(BUS_PERI_COM, BIT(1))),
++	DEF_MOD("sdhi1_aclk",		R9A08G045_SDHI1_ACLK, R9A08G045_CLK_P1, 0x554, 7,
++					MSTOP(BUS_PERI_COM, BIT(1))),
++	DEF_MOD("sdhi2_imclk",		R9A08G045_SDHI2_IMCLK, CLK_SD2_DIV4, 0x554, 8,
++					MSTOP(BUS_PERI_COM, BIT(11))),
++	DEF_MOD("sdhi2_imclk2",		R9A08G045_SDHI2_IMCLK2, CLK_SD2_DIV4, 0x554, 9,
++					MSTOP(BUS_PERI_COM, BIT(11))),
++	DEF_MOD("sdhi2_clk_hs",		R9A08G045_SDHI2_CLK_HS, R9A08G045_CLK_SD2, 0x554, 10,
++					MSTOP(BUS_PERI_COM, BIT(11))),
++	DEF_MOD("sdhi2_aclk",		R9A08G045_SDHI2_ACLK, R9A08G045_CLK_P1, 0x554, 11,
++					MSTOP(BUS_PERI_COM, BIT(11))),
++	DEF_MOD("ssi0_pclk2",		R9A08G045_SSI0_PCLK2, R9A08G045_CLK_P0, 0x570, 0,
++					MSTOP(BUS_MCPU1, BIT(10))),
++	DEF_MOD("ssi0_sfr",		R9A08G045_SSI0_PCLK_SFR, R9A08G045_CLK_P0, 0x570, 1,
++					MSTOP(BUS_MCPU1, BIT(10))),
++	DEF_MOD("ssi1_pclk2",		R9A08G045_SSI1_PCLK2, R9A08G045_CLK_P0, 0x570, 2,
++					MSTOP(BUS_MCPU1, BIT(11))),
++	DEF_MOD("ssi1_sfr",		R9A08G045_SSI1_PCLK_SFR, R9A08G045_CLK_P0, 0x570, 3,
++					MSTOP(BUS_MCPU1, BIT(11))),
++	DEF_MOD("ssi2_pclk2",		R9A08G045_SSI2_PCLK2, R9A08G045_CLK_P0, 0x570, 4,
++					MSTOP(BUS_MCPU1, BIT(12))),
++	DEF_MOD("ssi2_sfr",		R9A08G045_SSI2_PCLK_SFR, R9A08G045_CLK_P0, 0x570, 5,
++					MSTOP(BUS_MCPU1, BIT(12))),
++	DEF_MOD("ssi3_pclk2",		R9A08G045_SSI3_PCLK2, R9A08G045_CLK_P0, 0x570, 6,
++					MSTOP(BUS_MCPU1, BIT(13))),
++	DEF_MOD("ssi3_sfr",		R9A08G045_SSI3_PCLK_SFR, R9A08G045_CLK_P0, 0x570, 7,
++					MSTOP(BUS_MCPU1, BIT(13))),
++	DEF_COUPLED("eth0_axi",		R9A08G045_ETH0_CLK_AXI, R9A08G045_CLK_M0, 0x57c, 0,
++					MSTOP(BUS_PERI_COM, BIT(2))),
+ 	DEF_COUPLED("eth0_chi",		R9A08G045_ETH0_CLK_CHI, R9A08G045_CLK_ZT, 0x57c, 0, 0),
+ 	DEF_MOD("eth0_refclk",		R9A08G045_ETH0_REFCLK, R9A08G045_CLK_HP, 0x57c, 8, 0),
+-	DEF_COUPLED("eth1_axi",		R9A08G045_ETH1_CLK_AXI, R9A08G045_CLK_M0, 0x57c, 1, 0),
++	DEF_COUPLED("eth1_axi",		R9A08G045_ETH1_CLK_AXI, R9A08G045_CLK_M0, 0x57c, 1,
++					MSTOP(BUS_PERI_COM, BIT(3))),
+ 	DEF_COUPLED("eth1_chi",		R9A08G045_ETH1_CLK_CHI, R9A08G045_CLK_ZT, 0x57c, 1, 0),
+ 	DEF_MOD("eth1_refclk",		R9A08G045_ETH1_REFCLK, R9A08G045_CLK_HP, 0x57c, 9, 0),
+-	DEF_MOD("i2c0_pclk",		R9A08G045_I2C0_PCLK, R9A08G045_CLK_P0, 0x580, 0, 0),
+-	DEF_MOD("i2c1_pclk",		R9A08G045_I2C1_PCLK, R9A08G045_CLK_P0, 0x580, 1, 0),
+-	DEF_MOD("i2c2_pclk",		R9A08G045_I2C2_PCLK, R9A08G045_CLK_P0, 0x580, 2, 0),
+-	DEF_MOD("i2c3_pclk",		R9A08G045_I2C3_PCLK, R9A08G045_CLK_P0, 0x580, 3, 0),
+-	DEF_MOD("scif0_clk_pck",	R9A08G045_SCIF0_CLK_PCK, R9A08G045_CLK_P0, 0x584, 0, 0),
+-	DEF_MOD("scif1_clk_pck",	R9A08G045_SCIF1_CLK_PCK, R9A08G045_CLK_P0, 0x584, 1, 0),
+-	DEF_MOD("scif2_clk_pck",	R9A08G045_SCIF2_CLK_PCK, R9A08G045_CLK_P0, 0x584, 2, 0),
+-	DEF_MOD("scif3_clk_pck",	R9A08G045_SCIF3_CLK_PCK, R9A08G045_CLK_P0, 0x584, 3, 0),
+-	DEF_MOD("scif4_clk_pck",	R9A08G045_SCIF4_CLK_PCK, R9A08G045_CLK_P0, 0x584, 4, 0),
+-	DEF_MOD("scif5_clk_pck",	R9A08G045_SCIF5_CLK_PCK, R9A08G045_CLK_P0, 0x584, 5, 0),
++	DEF_MOD("i2c0_pclk",		R9A08G045_I2C0_PCLK, R9A08G045_CLK_P0, 0x580, 0,
++					MSTOP(BUS_MCPU2, BIT(10))),
++	DEF_MOD("i2c1_pclk",		R9A08G045_I2C1_PCLK, R9A08G045_CLK_P0, 0x580, 1,
++					MSTOP(BUS_MCPU2, BIT(11))),
++	DEF_MOD("i2c2_pclk",		R9A08G045_I2C2_PCLK, R9A08G045_CLK_P0, 0x580, 2,
++					MSTOP(BUS_MCPU2, BIT(12))),
++	DEF_MOD("i2c3_pclk",		R9A08G045_I2C3_PCLK, R9A08G045_CLK_P0, 0x580, 3,
++					MSTOP(BUS_MCPU2, BIT(13))),
++	DEF_MOD("scif0_clk_pck",	R9A08G045_SCIF0_CLK_PCK, R9A08G045_CLK_P0, 0x584, 0,
++					MSTOP(BUS_MCPU2, BIT(1))),
++	DEF_MOD("scif1_clk_pck",	R9A08G045_SCIF1_CLK_PCK, R9A08G045_CLK_P0, 0x584, 1,
++					MSTOP(BUS_MCPU2, BIT(2))),
++	DEF_MOD("scif2_clk_pck",	R9A08G045_SCIF2_CLK_PCK, R9A08G045_CLK_P0, 0x584, 2,
++					MSTOP(BUS_MCPU2, BIT(3))),
++	DEF_MOD("scif3_clk_pck",	R9A08G045_SCIF3_CLK_PCK, R9A08G045_CLK_P0, 0x584, 3,
++					MSTOP(BUS_MCPU2, BIT(4))),
++	DEF_MOD("scif4_clk_pck",	R9A08G045_SCIF4_CLK_PCK, R9A08G045_CLK_P0, 0x584, 4,
++					MSTOP(BUS_MCPU2, BIT(5))),
++	DEF_MOD("scif5_clk_pck",	R9A08G045_SCIF5_CLK_PCK, R9A08G045_CLK_P0, 0x584, 5,
++					MSTOP(BUS_MCPU3, BIT(4))),
+ 	DEF_MOD("gpio_hclk",		R9A08G045_GPIO_HCLK, R9A08G045_OSCCLK, 0x598, 0, 0),
+-	DEF_MOD("adc_adclk",		R9A08G045_ADC_ADCLK, R9A08G045_CLK_TSU, 0x5a8, 0, 0),
+-	DEF_MOD("adc_pclk",		R9A08G045_ADC_PCLK, R9A08G045_CLK_TSU, 0x5a8, 1, 0),
+-	DEF_MOD("vbat_bclk",		R9A08G045_VBAT_BCLK, R9A08G045_OSCCLK, 0x614, 0, 0),
++	DEF_MOD("adc_adclk",		R9A08G045_ADC_ADCLK, R9A08G045_CLK_TSU, 0x5a8, 0,
++					MSTOP(BUS_MCPU2, BIT(14))),
++	DEF_MOD("adc_pclk",		R9A08G045_ADC_PCLK, R9A08G045_CLK_TSU, 0x5a8, 1,
++					MSTOP(BUS_MCPU2, BIT(14))),
++	DEF_MOD("vbat_bclk",		R9A08G045_VBAT_BCLK, R9A08G045_OSCCLK, 0x614, 0,
++					MSTOP(BUS_MCPU3, GENMASK(8, 7))),
+ };
+ 
+ static const struct rzg2l_reset r9a08g045_resets[] = {
 -- 
 2.43.0
 
